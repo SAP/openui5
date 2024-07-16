@@ -7,142 +7,54 @@
 
 	<script src="../../../../resources/sap-ui-integration.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-theme="sap_horizon">
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:local/CustomElementCards"
+			data-sap-ui-resource-roots='{"local":"./"}'
+	>
 	</script>
 
-	<style>
-		.styledCard {
-			display: block;
-			width: 30rem;
-			border: 2px solid red;
-			margin: 0.5rem;
-		}
-	</style>
+	<link rel="stylesheet" href="./CustomElementCards.css">
 </head>
 
 
 <body>
-	<script>
-		customElements.whenDefined("ui-integration-card").then(function () {
-			var oCard = document.createElement("ui-integration-card");
-			// oCard.loadDesigntime();
-			// oCard.refresh() ...
-		});
-	</script>
+	
 
 	<ui-integration-card id="cardWithActions" manifest="./widgets/cardmanifests/list.actions.manifest.json" data-mode="Active"></ui-integration-card>
 	<ui-integration-card manifest="./widgets/cardmanifests/table.manifest.json"></ui-integration-card>
-	<ui-integration-card class="styledCard" manifest="./widgets/cardmanifests/analytical.manifest.json" height="15rem" ></ui-integration-card>
+	<ui-integration-card class="styledCard" manifest="./widgets/cardmanifests/analytical.manifest.json" height="15rem"></ui-integration-card>
 	<ui-integration-card manifest="./widgets/cardmanifests/object.manifest.json"></ui-integration-card>
 	<ui-integration-card manifest="./widgets/cardmanifests/numeric.good.manifest.json"></ui-integration-card>
-	<ui-integration-card manifest='{
-								"sap.app": {
-									"type": "card",
-									"id": "tableCardAsAttribute"
+	<ui-integration-card manifest="{
+								&quot;sap.app&quot;: {
+									&quot;type&quot;: &quot;card&quot;,
+									&quot;id&quot;: &quot;tableCardAsAttribute&quot;
 								},
-								"sap.card": {
-									"type": "Table",
-									"header": { "title": "Table Card with Top 5 Products" },
-									"content": {
-										"data": {
-											"json": [
-												{ "Name": "Comfort Easy", "Category": "PDA & Organizers" },
-												{ "Name": "ITelO Vault", "Category": "PDA & Organizers" }
+								&quot;sap.card&quot;: {
+									&quot;type&quot;: &quot;Table&quot;,
+									&quot;header&quot;: { &quot;title&quot;: &quot;Table Card with Top 5 Products&quot; },
+									&quot;content&quot;: {
+										&quot;data&quot;: {
+											&quot;json&quot;: [
+												{ &quot;Name&quot;: &quot;Comfort Easy&quot;, &quot;Category&quot;: &quot;PDA & Organizers&quot; },
+												{ &quot;Name&quot;: &quot;ITelO Vault&quot;, &quot;Category&quot;: &quot;PDA & Organizers&quot; }
 											]
 										},
-										"row": {
-											"columns": [
-												{ "title": "Name", "value": "{Name}" },
-												{ "title": "Category", "value": "{Category}" }
+										&quot;row&quot;: {
+											&quot;columns&quot;: [
+												{ &quot;title&quot;: &quot;Name&quot;, &quot;value&quot;: &quot;{Name}&quot; },
+												{ &quot;title&quot;: &quot;Category&quot;, &quot;value&quot;: &quot;{Category}&quot; }
 											]
 										}
 									}
 								}
-							}'
-							manifest-changes='[
-								{"content":{"header":{"title":"My new title 1"}}},
-								{"content":{"header":{"title":"My new title 2"}}}
-							]'>
+							}" manifest-changes="[
+								{&quot;content&quot;:{&quot;header&quot;:{&quot;title&quot;:&quot;My new title 1&quot;}}},
+								{&quot;content&quot;:{&quot;header&quot;:{&quot;title&quot;:&quot;My new title 2&quot;}}}
+							]">
 	</ui-integration-card>
-	<script>
-
-		// set up a card through attributes
-		var oCardThroughAttributes = document.createElement("ui-integration-card");
-		oCardThroughAttributes.setAttribute('id', "dynamicCard");
-		oCardThroughAttributes.setAttribute("manifest", "./widgets/cardmanifests/list.actions.manifest.json");
-		document.body.appendChild(oCardThroughAttributes);
-
-		// set up a card through properties
-		var oCardThroughProperties = document.createElement("ui-integration-card");
-		var manifest = {
-			"sap.app": {
-				"type": "card",
-				"id": "tableCardAsProperty"
-			},
-			"sap.card": {
-				"type": "Table",
-				"header": {
-					"title": "Table Card with Top 5 Products",
-					"subTitle": "These are the top sellers this month",
-					"icon": {
-						"src": "sap-icon://sales-order"
-					},
-					"status": {
-						"text": "5 of 100"
-					}
-				},
-				"content": {
-					"data": {
-						"json": [{
-								"Name": "Comfort Easy",
-								"Category": "PDA & Organizers"
-							},
-							{
-								"Name": "ITelO Vault",
-								"Category": "PDA & Organizers"
-							},
-							{
-								"Name": "Notebook Professional 15",
-								"Category": "Notebooks"
-							},
-							{
-								"Name": "Ergo Screen E-I",
-								"Category": "Monitors"
-							},
-							{
-								"Name": "Laser Professional Eco",
-								"Category": "Printers"
-							}
-						]
-					},
-					"row": {
-						"columns": [{
-								"title": "Name",
-								"value": "{Name}"
-							},
-							{
-								"title": "Category",
-								"value": "{Category}"
-							}
-						]
-					}
-				}
-			}
-		};
-
-		oCardThroughProperties.manifest = manifest
-		document.body.appendChild(oCardThroughProperties);
-
-		// event listeners
-		document.getElementById("dynamicCard").addEventListener("action", function (oEvent) {
-			sap.m.MessageToast.show(oEvent.detail.getParameter("type") + " Action triggered! for card with Id dynamicCard")
-		});
-
-		document.body.addEventListener("action", function (oEvent) {
-			sap.m.MessageToast.show(oEvent.detail.getParameter("type") + " Action triggered! Event bubbled to the body")
-		});
-
-	</script>
+	
 </body>
 
 </html>

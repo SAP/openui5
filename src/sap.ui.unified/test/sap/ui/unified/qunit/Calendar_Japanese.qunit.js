@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/Calendar",
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/date/UniversalDate",
@@ -11,11 +12,10 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	// load all required calendars in advance
 	"sap/ui/core/date/Gregorian",
 	"sap/ui/core/date/Japanese"
-], function(qutils, Calendar, CalendarType, UniversalDate, DateFormat, LocaleData, Locale, DateRange, KeyCodes, jQuery, oCore) {
+], function(qutils, nextUIUpdate, Calendar, CalendarType, UniversalDate, DateFormat, LocaleData, Locale, DateRange, KeyCodes, jQuery) {
 	"use strict";
 
 	var oLocaleData = LocaleData.getInstance(new Locale("en-US"));
@@ -34,7 +34,7 @@ sap.ui.define([
 		oCal1.destroySelectedDates();
 		oCal1.addSelectedDate(new DateRange({startDate : oDate}));
 		oCal1.displayDate(oDate);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 	}
 
 	function checkDate(sSelectedDate, iExpectedDay, iExpectedMonth, iExpectedYear, iExpectedEra, sExpectedEra,
@@ -86,7 +86,7 @@ sap.ui.define([
 
 		initializeCalendar(sSelectedDate);
 		oCal1.$("-Head-" + (bForwardNavigation ? "next" : "prev")).trigger("click");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 
 		assert.equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpectedMonth], "Month is correct after navigation: " + aMonthNames[iExpectedMonth]);
 		assert.equal(oCal1.$("-Head-B2").text(), sExpectedYear, "Year is correct after navigation " + sExpectedYear);
@@ -96,7 +96,7 @@ sap.ui.define([
 	function checkYearPicker(sSelectedDate, sExpectedStartYear, sExpectedEndYear, sExpectedSelYear, assert) {
 		initializeCalendar(sSelectedDate);
 		oCal1.$("-Head-B2").trigger("click");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 
 		var aYears = oCal1.$("-YP").find(".sapUiCalItem"),
 			$Year;
@@ -115,7 +115,7 @@ sap.ui.define([
 
 		aYears[0].focus();
 		qutils.triggerKeydown(aYears[0], KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 		assert.equal(oCal1.$("-Head-B2").text(), sExpectedStartYear, "Year is correct after navigation");
 	}
 

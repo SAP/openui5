@@ -57,30 +57,6 @@ sap.ui.define([
 		oApp.destroy();
 	});
 
-	/**
-	 * @deprecated Since version 1.20
-	 */
-	QUnit.test("default values (deprecated properties)", async function(assert) {
-
-		// system under test
-		var oPage = new Page();
-
-		// arrange
-		var oApp = new App("myApp");
-		oApp.placeAt("page-content");
-		oApp.addPage(oPage);
-		await nextUIUpdate();
-		cacheAndInitializeDomRefs(oPage.getId());
-
-		// assertions
-		assert.strictEqual(oPage.getNavButtonText(), "");
-		assert.strictEqual(oPage.getIcon(), "");
-		assert.strictEqual(oPage.getNavButtonType(), "Back");
-
-		// cleanup
-		oApp.destroy();
-	});
-
 	/* =========================================================== */
 	/* HTML module                                                 */
 	/* =========================================================== */

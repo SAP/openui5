@@ -8,29 +8,18 @@
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-async="true"
-				data-sap-ui-compatVersion="edge"
-				src="../../../../../resources/sap-ui-core.js">
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/ui5parent"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
-		<script>
-			function selectParentPage(url) {
-				location.href = url;
-			}
-			function selectChildPage(url) {
-				document.getElementById("currentChild").innerHTML = url;
-				if (url == "sameorigin_denied.html" || url == "allowlistservice_allowed.html" ||
-					url == "allowlistservice_denied.html" || url == "allowlistservice_inactive.html" ||
-					url == "allowlistservice_metatag_allowed.html" || url == "allowlistservice_metatag_denied.html") {
-					url = location.protocol + "//" + location.hostname.substr(0,location.hostname.indexOf(".")) + ":" +
-						location.port + location.pathname.substr(0,location.pathname.lastIndexOf("/") + 1) + url;
-				}
-				document.getElementById("iframe").src = url;
-			}
-		</script>
+		
 	</head>
 	<body class="sapUiBody">
 	<h1>Frame Options Testpage</h1>
 	<p>Please open this page with full qualified domain name for tests to work properly.
-	<h2>Page Selection</h2>
+	</p><h2>Page Selection</h2>
 	<label for="parent">Parent page:</label>
 	<select id="parent" onchange="selectParentPage(event.target.value)">
 		<option value="ui5parent.html" selected>UI5 Parent</option>

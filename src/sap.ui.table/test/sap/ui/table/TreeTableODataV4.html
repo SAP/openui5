@@ -9,152 +9,19 @@
 
 <script src="shared-config.js"></script>
 <script id="sap-ui-bootstrap"
-		data-sap-ui-libs="sap.m,sap.ui.table,sap.ui.unified"
-		data-sap-ui-compatVersion="edge"
-		src="../../../../resources/sap-ui-core.js"></script>
+        data-sap-ui-libs="sap.m,sap.ui.table,sap.ui.unified"
+        src="../../../../resources/sap-ui-core.js"
+        data-sap-ui-compat-version="edge"
+        data-sap-ui-async="true"
+        data-sap-ui-on-init="module:local/TreeTableODataV4"
+        data-sap-ui-resource-roots='{"local":"./"}'
+></script>
 
 <script src="Settings.js"></script>
 
-<style>
-	html {
-		height: 100%;
-	}
+<link rel="stylesheet" href="./TreeTableODataV4.css">
 
-	body {
-		display: flex;
-		flex-direction: column;
-	}
 
-	#content {
-		display: flex;
-		flex: 1 1 auto;
-	}
-</style>
-
-<script>
-	sap.ui.require([
-		"sap/ui/table/plugins/ODataV4Selection",
-		"sap/ui/model/odata/v4/ODataModel",
-		"sap/ui/core/Core"
-	], function(ODataV4Selection, ODataModel, Core) {
-		var oTable = new sap.ui.table.TreeTable({
-			columns: [
-				new sap.ui.table.Column({
-					label: "Name",
-					sortProperty: "Name",
-					filterProperty: "Name",
-					template: new sap.m.HBox({
-						items: [
-							new sap.ui.core.Icon({
-								src: {
-									path: "FileType",
-									formatter: function(sFileType) {
-										return sFileType === "D" ? "sap-icon://folder-blank" : "sap-icon://document";
-									}
-								},
-								size: "0.8rem"
-							}).addStyleClass("sapUiTinyMarginEnd"),
-							new sap.m.Text({text: "{Name}", wrapping: false})
-						]
-					})
-				}),
-				new sap.ui.table.Column({
-					label: "File Type",
-					sortProperty: "FileType",
-					filterProperty: "FileType",
-					template: new sap.m.Text({text: "{FileType}", wrapping: false})
-				}),
-				new sap.ui.table.Column({
-					label: "File Size",
-					sortProperty: "FileSize",
-					filterProperty: "FileSize",
-					template: new sap.m.Text({text: "{FileSize}", wrapping: false})
-				}),
-				new sap.ui.table.Column({
-					label: "Created At",
-					sortProperty: "createdAt",
-					filterProperty: "createdAt",
-					template: new sap.m.Text({text: "{createdAt}", wrapping: false})
-				}),
-				new sap.ui.table.Column({
-					label: "Changed At",
-					sortProperty: "changedAt",
-					filterProperty: "changedAt",
-					template: new sap.m.Text({text: "{changedAt}", wrapping: false})
-				})
-			],
-			extension: [
-				new sap.m.OverflowToolbar({
-					content: [
-						new sap.m.Title({text: "Title of the Table ({headerContext>$count})"})
-					]
-				})
-			],
-            plugins: new ODataV4Selection({
-                enableNotification: true
-            }),
-			visibleRowCountMode: "Auto"
-		});
-		oTable._oProxy._bEnableV4 = true;
-		window.oTable = oTable;
-
-		TABLESETTINGS.addServiceSettings(oTable, "TreeTableODataV4ServiceSettings", function(mServiceSettings) {
-			mServiceSettings.hierarchyQualifier = Core.byId("TableSettings_HierarchyQualifier").getValue();
-			mServiceSettings.expandToLevel = Core.byId("TableSettings_ExpandToLevel").getValue();
-
-			oTable.setModel(new ODataModel({
-				serviceUrl: mServiceSettings.defaultProxyUrl,
-				operationMode: "Server",
-				autoExpandSelect: true
-			}));
-
-			oTable.bindRows({
-				path: "/" + mServiceSettings.collection,
-				parameters: {
-					$count: true,
-					$$aggregation: {
-						hierarchyQualifier: mServiceSettings.hierarchyQualifier,
-						expandTo: mServiceSettings.expandToLevel
-					}
-				}
-			});
-
-			oTable.setModel(oTable.getModel(), "headerContext");
-			oTable.getExtension()[0].setBindingContext(oTable.getBinding().getHeaderContext(), "headerContext");
-		}, function(oToolbar, mServiceSettings) {
-			oToolbar.addContent(new sap.m.Input("TableSettings_HierarchyQualifier", {
-				value: mServiceSettings.hierarchyQualifier,
-				tooltip: "Hierarchy Qualifier",
-				placeholder: "Enter Hierarchy Qualifier"
-			}));
-			oToolbar.addContent(new sap.m.Input("TableSettings_ExpandToLevel", {
-				value: mServiceSettings.expandToLevel || 1,
-				tooltip: "Expand To Level",
-				placeholder: "Enter Level To Expand To"
-			}));
-		});
-
-		TABLESETTINGS.init(oTable, function(oButton) {
-			var oToolbar = oTable.getExtension()[0];
-
-			if (!oToolbar) {
-				oToolbar = new sap.m.Toolbar();
-				oTable.addExtension(oToolbar);
-			}
-
-			oToolbar.addContent(oButton);
-		});
-
-		var oBindingInfo = oTable.getBindingInfo("rows");
-
-		new sap.m.VBox({
-			width: "100%",
-			items: [
-				oTable.setLayoutData(new sap.m.FlexItemData({growFactor: 1}))
-			]
-		}).placeAt("content");
-	});
-</script>
 
 </head>
 <body class="sapUiBody sapUiSizeCozy">

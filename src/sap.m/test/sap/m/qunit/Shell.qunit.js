@@ -4,14 +4,14 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
 	"sap/m/Shell",
 	"sap/m/SplitApp",
 	"sap/m/Page",
-	"sap/ui/util/Mobile",
-	"sap/ui/core/Core"
-], function(Element, Library, qutils, createAndAppendDiv, jQuery, coreLibrary, Shell, SplitApp, Page, Mobile, oCore) {
+	"sap/ui/util/Mobile"
+], function(Element, Library, qutils, createAndAppendDiv, nextUIUpdate, jQuery, coreLibrary, Shell, SplitApp, Page, Mobile) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -71,12 +71,12 @@ sap.ui.define([
 		assert.equal(oShell.$("logo").attr("alt"), sExpectedAltForLogoImage, "Logo ALT should be 'Logo''");
 	});
 
-	QUnit.test("Shell without title", function(assert) {
+	QUnit.test("Shell without title", async function(assert) {
 		var oShellNoTitle = new Shell("myShellNotitle", {
 		});
 
 		oShellNoTitle.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		assert.ok(!Element.getElementById(oShellNoTitle.getId() + "-hdrText"), "No title should be rendered if no title is passed");
@@ -107,13 +107,13 @@ sap.ui.define([
 	});
 
 	// bg image - and make it custom
-	QUnit.test("Shell background custom (tests the sap.m.BackgroundHelper as well)", function(assert) {
+	QUnit.test("Shell background custom (tests the sap.m.BackgroundHelper as well)", async function(assert) {
 		oShell.setBackgroundImage("test/x.png");
 		oShell.setBackgroundRepeat(false);
 		oShell.setBackgroundColor("#0f0");
 		oShell.setBackgroundOpacity(0.5);
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var bgDiv = oShell.getDomRef("BG"),
 			style = window.getComputedStyle(bgDiv);
@@ -126,13 +126,13 @@ sap.ui.define([
 	});
 
 	// bg image - revert to standard again
-	QUnit.test("Shell background reset (tests the sap.m.BackgroundHelper as well)", function(assert) {
+	QUnit.test("Shell background reset (tests the sap.m.BackgroundHelper as well)", async function(assert) {
 		oShell.setBackgroundImage(null);
 		oShell.setBackgroundRepeat(true);
 		oShell.setBackgroundColor(null);
 		oShell.setBackgroundOpacity(1);
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var bgDiv = oShell.getDomRef("BG"),
 			style = window.getComputedStyle(bgDiv),
@@ -147,13 +147,13 @@ sap.ui.define([
 
 	QUnit.module("custom setters");
 
-	QUnit.test("setTitle modifies the dom, sets the property and doesn't re-render", function(assert) {
+	QUnit.test("setTitle modifies the dom, sets the property and doesn't re-render", async function(assert) {
 		var $Dom,
 			sExampleTitle = "example title",
 			oSetPropertySpy;
 
 		//arrange
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oSetPropertySpy = this.spy(oShell, "setProperty");
 
 		//act
@@ -169,13 +169,13 @@ sap.ui.define([
 		assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
 	});
 
-	QUnit.test("setHeaderRightText modifies the dom, sets the property and doesn't re-render", function(assert) {
+	QUnit.test("setHeaderRightText modifies the dom, sets the property and doesn't re-render", async function(assert) {
 		var $Dom,
 			sExampleHeaderText = "username",
 			oSetPropertySpy;
 
 		//arrange
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oSetPropertySpy = this.spy(oShell, "setProperty");
 
 		//act
@@ -191,12 +191,12 @@ sap.ui.define([
 		assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
 	});
 
-	QUnit.test("setAppWidthLimited modifies the dom, sets the property and doesn't re-render", function(assert) {
+	QUnit.test("setAppWidthLimited modifies the dom, sets the property and doesn't re-render", async function(assert) {
 		var $Dom,
 			oSetPropertySpy;
 
 		//arrange
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oSetPropertySpy = this.spy(oShell, "setProperty");
 
 		//act
@@ -219,14 +219,14 @@ sap.ui.define([
 		assert.equal(oSetPropertySpy.args[1][2], true, "setProperty 2nd time called with suppressRendering === true");
 	});
 
-	QUnit.test("setBackgroundOpacity modifies the dom only when value is valid, sets the property and doesn't re-render", function(assert) {
+	QUnit.test("setBackgroundOpacity modifies the dom only when value is valid, sets the property and doesn't re-render", async function(assert) {
 		var $Dom,
 				sExampleValidOpacity = 0.5,
 				sExampleInvalidOpacity = 2.5,
 				oSetPropertySpy;
 
 		//arrange
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oSetPropertySpy = this.spy(oShell, "setProperty");
 
 		//act
@@ -252,7 +252,7 @@ sap.ui.define([
 		assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
 	});
 
-	QUnit.test("setHomeIcon calls setIcons, sets the property and doesn't re-render", function(assert) {
+	QUnit.test("setHomeIcon calls setIcons, sets the property and doesn't re-render", async function(assert) {
 		var oSetPropertySpy,
 			oMobileSetIconSpy,
 			oExampleIcons = {
@@ -265,7 +265,7 @@ sap.ui.define([
 			};
 
 		//arrange
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oSetPropertySpy = this.spy(oShell, "setProperty");
 		oMobileSetIconSpy = this.spy(Mobile, "setIcons");
 
@@ -285,7 +285,7 @@ sap.ui.define([
 
 	QUnit.module("Shell's 'titleLevel' property is configurable which prevents adding an invalid HTML header level for some scenarios.");
 
-	QUnit.test("Title has default level H1", function(assert){
+	QUnit.test("Title has default level H1", async function(assert) {
 		// Arrange
 		var oShell = new Shell({
 			title: "Test Title level of the Shell"
@@ -293,7 +293,7 @@ sap.ui.define([
 
 		// System under test
 		oShell.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var $sTitle = oShell.$("hdr");
@@ -303,7 +303,7 @@ sap.ui.define([
 		oShell.destroy();
 	});
 
-	QUnit.test("Title has level H3", function(assert){
+	QUnit.test("Title has level H3", async function(assert) {
 		// Arrange
 		var oShell = new Shell({
 			title: "Test Title level of the Shell",
@@ -312,7 +312,7 @@ sap.ui.define([
 
 		// System under test
 		oShell.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var $sTitle = oShell.$("hdr");
@@ -322,7 +322,7 @@ sap.ui.define([
 		oShell.destroy();
 	});
 
-	QUnit.test("Title level is set correctly", function(assert){
+	QUnit.test("Title level is set correctly", async function(assert) {
 		// Arrange
 		var oShell = new Shell({
 			title: "Test Title level of the Shell"
@@ -330,10 +330,10 @@ sap.ui.define([
 
 		// System under test
 		oShell.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oShell.setTitleLevel("H4");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var $sTitle = oShell.$("hdr");
@@ -343,7 +343,7 @@ sap.ui.define([
 		oShell.destroy();
 	});
 
-	QUnit.test("When set to Auto title has level H1", function(assert){
+	QUnit.test("When set to Auto title has level H1", async function(assert) {
 		// Arrange
 		var oShell = new Shell({
 			title: "Test Title level of the Shell",
@@ -352,7 +352,7 @@ sap.ui.define([
 
 		// System under test
 		oShell.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var $sTitle = oShell.$("hdr");

@@ -21,8 +21,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/library",
 	"sap/ui/Device",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Formatting,
@@ -46,8 +46,8 @@ sap.ui.define([
 	mobileLibrary,
 	coreLibrary,
 	Device,
-	oCore,
 	Element,
+	nextUIUpdate,
 	jQuery
 ) {
 	"use strict";
@@ -112,7 +112,7 @@ sap.ui.define([
 			id: "messagebox1",
 			styleClass: sClassName
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oMessageBox = Element.getElementById("messagebox1");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
@@ -126,7 +126,7 @@ sap.ui.define([
 
 	QUnit.test("simple show usage", function (assert) {
 		MessageBox.show(sMessageText);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oMessageBox = Element.getElementById(jQuery(".sapMMessageDialog")[0].getAttribute("id"));
 		assert.ok(oMessageBox, "Dialog should be created");
 		oMessageBox.destroy();
@@ -272,7 +272,7 @@ sap.ui.define([
 			id: "messagebox1",
 			styleClass: sClassName
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oMessageBox = Element.getElementById("messagebox1");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
@@ -289,7 +289,7 @@ sap.ui.define([
 		MessageBox.error(sMessageText, {
 			id: "messageboxError"
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oMessageBox = Element.getElementById("messageboxError");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
@@ -305,7 +305,7 @@ sap.ui.define([
 		MessageBox.information(sMessageText, {
 			id: "messageboxInfo"
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oMessageBox = Element.getElementById("messageboxInfo");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
@@ -321,7 +321,7 @@ sap.ui.define([
 		MessageBox.warning(sMessageText, {
 			id: "messageboxWarning"
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oMessageBox = Element.getElementById("messageboxWarning");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
@@ -337,7 +337,7 @@ sap.ui.define([
 		MessageBox.success(sMessageText, {
 			id: "messageboxSuccess"
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oMessageBox = Element.getElementById("messageboxSuccess");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
@@ -382,7 +382,7 @@ sap.ui.define([
 		);
 
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oMessageBox = Element.getElementById("messageBoxScrolling");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
@@ -406,7 +406,7 @@ sap.ui.define([
 			styleClass: sClassName,
 			initialFocus: oButton
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oMessageBox = Element.getElementById("messagebox2");
 		assert.ok(oMessageBox, "Dialog should be created");
@@ -432,14 +432,14 @@ sap.ui.define([
 			styleClass: sClassName,
 			initialFocus: oButton
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oMessageBox = Element.getElementById("messageboxWithDetails");
 		oShowMoreLink = oMessageBox.getContent()[0].getItems()[1];
 
 		//act
 		oShowMoreLink.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(document.activeElement.id, oMessageBox.getInitialFocus(), "Focus is set correctly after details are shown");
 		oMessageBox.destroy();
@@ -454,7 +454,7 @@ sap.ui.define([
 			details: "Lorem ipsum",
 			id: "messageboxWithDetails"
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oMessageBox = Element.getElementById("messageboxWithDetails");
 		oShowMoreLink = oMessageBox.getContent()[0].getItems()[1];
@@ -476,7 +476,7 @@ sap.ui.define([
 			id: "messageboxWithNullDetails",
 			styleClass: sClassName
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oMessageBox = Element.getElementById("messageboxWithNullDetails");
 		var iContent = oMessageBox.getContent()[0].getItems().length;
@@ -494,7 +494,7 @@ sap.ui.define([
 			styleClass: sClassName,
 			initialFocus: "Custom Text"
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oMessageBox = Element.getElementById("messagebox3");
 		var aButtons = oMessageBox.getButtons();
@@ -529,7 +529,7 @@ sap.ui.define([
 			styleClass: sClassName,
 			initialFocus: MessageBox.Action.NO
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oResourceBundle = Library.getResourceBundleFor("sap.m");
 		var oMessageBox = Element.getElementById("messagebox4");
@@ -563,7 +563,7 @@ sap.ui.define([
 			id: "alertbox1",
 			styleClass: sClassName
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oMessageBox = Element.getElementById("alertbox1");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
@@ -581,7 +581,7 @@ sap.ui.define([
 			id: "confirmbox1",
 			styleClass: sClassName
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oMessageBox = Element.getElementById("confirmbox1");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
@@ -594,7 +594,7 @@ sap.ui.define([
 
 	QUnit.test("show with OLD API", function (assert) {
 		MessageBox.show(sMessageText, null, sMessageTitle, [MessageBox.Action.OK, "Custom Text", MessageBox.Action.NO], callback, "messagebox1", sClassName);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oMessageBox = Element.getElementById("messagebox1");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
@@ -613,7 +613,7 @@ sap.ui.define([
 
 		// MessageBox.show(message, icon, title, [oActions], fnCallback, oDefaultAaction, sDialogId, sClassName)
 		MessageBox.show(oTextArea, null, sMessageTitle, [MessageBox.Action.OK, "Custom Text", MessageBox.Action.NO], callback, "messagebox1", sClassName);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oMessageBox = Element.getElementById("messagebox1");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
@@ -628,7 +628,7 @@ sap.ui.define([
 	QUnit.test("alert with OLD API", function (assert) {
 		// MessageBox.alert(vMessage, fnCallback, sTitle, sDialogId, sStyleClass)
 		MessageBox.alert(sMessageText, callback, sMessageTitle, "alertbox1", sClassName);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oMessageBox = Element.getElementById("alertbox1");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
@@ -640,7 +640,7 @@ sap.ui.define([
 
 	QUnit.test("confirm with OLD API", function (assert) {
 		MessageBox.confirm(sMessageText, callback, sMessageTitle, "confirmbox1", sClassName);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oMessageBox = Element.getElementById("confirmbox1");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
@@ -652,7 +652,7 @@ sap.ui.define([
 
 	QUnit.test("alert with message which contains curly bracket", function (assert) {
 		MessageBox.alert("I have {abc}");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(jQuery("span:contains('I have {abc}')").length, 1, "Text with curly bracket is rendered");
 		InstanceManager.getOpenDialogs()[0].destroy();
 	});
@@ -671,7 +671,7 @@ sap.ui.define([
 			textDirection: TextDirection.RTL
 		});
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oMessageBox = Element.getElementById(sMessageBoxId);
 		oMessageTextContainer = oMessageBox.$().find("span.sapMText");
 		assert.equal(jQuery(oMessageTextContainer).attr("dir"), "rtl", "Attribute 'dir' for Text Direction is set to RTL");
@@ -686,7 +686,7 @@ sap.ui.define([
 			textDirection: TextDirection.LTR
 		});
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oMessageBox = Element.getElementById(sMessageBoxId);
 		oMessageTextContainer = oMessageBox.$().find("span.sapMText");
 		assert.equal(jQuery(oMessageTextContainer).attr("dir"), "ltr", "Attribute 'dir' for Text Direction is set to LTR");
@@ -705,7 +705,7 @@ sap.ui.define([
 			styleClass: sClassName,
 			initialFocus: "OK"
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oMessageBox = Element.getElementById("messagedialog1");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
@@ -715,7 +715,7 @@ sap.ui.define([
 		var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
 		pressLink(sLinkText);
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
 		assert.deepEqual(oMessageBox.$().find(".sapMFT").text(), sDetails);
 		assert.ok(oMessageBox.$().hasClass(sClassName));
@@ -733,14 +733,14 @@ sap.ui.define([
 			initialFocus: "OK"
 		});
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oMessageBox = Element.getElementById("messagedialog1"),
 			oShowMoreLink = oMessageBox.getContent()[0].getItems()[1];
 
 		assert.strictEqual(oMessageBox.getAriaLabelledBy().length, 2, "MessageBox has 2 ARIA labels before 'Show more' press");
 
 		oShowMoreLink.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oDialogAriaLabelDetails = Element.getElementById(oMessageBox.getAriaLabelledBy()[2]).getHtmlText();
 		assert.strictEqual(oMessageBox.getAriaLabelledBy().length, 3, "MessageBox has 3 ARIA labels after 'Show more' press");
@@ -772,7 +772,7 @@ sap.ui.define([
 			initialFocus: "OK"
 		});
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oMessageBox = Element.getElementById("messagedialog2");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
@@ -798,7 +798,7 @@ sap.ui.define([
 			styleClass: sClassName
 		});
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oMessageBox = Element.getElementById("messagebox5");
 		var aButtons = oMessageBox.getButtons();
 		assert.strictEqual(aButtons.length, 2, "MessageBox should contain exactly 2 buttons.");
@@ -1193,7 +1193,7 @@ sap.ui.define([
 			id: "messageId",
 			details: function () {}
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oMessageBoxDialog = Element.getElementById("messageId");
 
@@ -1216,7 +1216,7 @@ sap.ui.define([
 				return oDataPromise;
 			}
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oMessageBoxDialog = Element.getElementById("messageId");
 		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText");
@@ -1225,7 +1225,7 @@ sap.ui.define([
 		pressLink(oViewDetails);
 
 		oDataPromise.then(function () {
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assert
 			assert.strictEqual(oMessageBoxDialog.$().find(".sapMMessageBoxDetails").length, 1, "Details text is displayed");
@@ -1248,7 +1248,7 @@ sap.ui.define([
 				return Promise.resolve("Data to be displayed");
 			}
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oMessageBoxDialog = Element.getElementById("messageId");
 		var oViewDetails = Element.closestTo(oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText")[0]);
@@ -1260,7 +1260,7 @@ sap.ui.define([
 		assert.ok(oViewDetails.getBusy(), "ViewDetails link should be busy");
 
 		setTimeout(function () {
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assert
 			assert.notOk(oViewDetails.getVisible(), "ViewDetails link should no longer be visible");
@@ -1282,7 +1282,7 @@ sap.ui.define([
 				return Promise.reject("Error message");
 			}
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oResourceBundle = Library.getResourceBundleFor("sap.m");
 		var oMessageBoxDialog = Element.getElementById("messageId");
 		var oViewDetails = Element.closestTo(oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText")[0]);
@@ -1294,7 +1294,7 @@ sap.ui.define([
 		assert.ok(oViewDetails.getBusy(), "ViewDetails link should be busy");
 
 		setTimeout(function () {
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			var oErrorMessage = oMessageBoxDialog.getContent()[0].getItems()[2];
 
 			// assert
@@ -1326,7 +1326,7 @@ sap.ui.define([
 				done();
 			}
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oMessageBoxDialog = Element.getElementById("messageId");
 		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText");
@@ -1346,7 +1346,7 @@ sap.ui.define([
 				return new Promise(function () { });
 			}
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oMessageBoxDialog = Element.getElementById("messageId");
 		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText");
@@ -1381,7 +1381,7 @@ sap.ui.define([
 				});
 			}
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oMessageBoxDialog = Element.getElementById("messageId");
 		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText");
@@ -1409,19 +1409,19 @@ sap.ui.define([
 				return Promise.reject("Error message");
 			}
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oMessageBoxDialog = Element.getElementById("messageId");
 		var oViewDetails = Element.closestTo(oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText")[0]);
 		pressLink(oViewDetails);
 
 		setTimeout(function () {
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			var oErrorMessage = oMessageBoxDialog.getContent()[0].getItems()[2];
 			var oTryAgain = oErrorMessage.getLink();
 
 			// act
 			pressLink(oTryAgain);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assert
 			assert.strictEqual(document.activeElement.getAttribute("id"), oViewDetails.getDomRef("busyIndicator").getAttribute("id"), "The busy indicator should be focused");
@@ -1456,7 +1456,7 @@ sap.ui.define([
 		var sLinkText = oMessageBox.$().find("a.sapMMessageBoxLinkText");
 		pressLink(sLinkText);
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oMessageBox.$().find(".sapMMessageBoxDetails").length != 0, "MessageBox has formatted link text");
 		assert.deepEqual(oMessageBox.$().find(".sapMFT").text(), JSON.stringify(oJSON, null, "\t"));
 		assert.ok(oMessageBox.$().hasClass(sClassName));
@@ -1479,7 +1479,7 @@ sap.ui.define([
 		var sLinkText = oMessageBox.$().find("a.sapMMessageBoxLinkText");
 		pressLink(sLinkText);
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oMessageBox.$().find(".sapMMessageBoxDetails").length != 0, "MessageBox has formatted link text");
 		assert.deepEqual(oMessageBox.$().find(".sapMFT").text(), deploymentErrorDetails);
 		oMessageBox.destroy();
@@ -1507,7 +1507,7 @@ sap.ui.define([
 		var sLinkText = oMessageBox.$().find("a.sapMMessageBoxLinkText");
 		pressLink(sLinkText);
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oMessageBox.$().find(".sapMMessageBoxDetails").length != 0, "MessageBox has formatted link text");
 		assert.deepEqual(oMessageBox.$().find(".sapMFT").text(), JSON.stringify(oJSON, null, "\t"));
 		assert.ok(oMessageBox.$().hasClass(sClassName));
@@ -1532,7 +1532,7 @@ sap.ui.define([
 				return oDataPromise;
 			}
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oMessageBoxDialog = Element.getElementById("messageId");
 		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText");
@@ -1541,7 +1541,7 @@ sap.ui.define([
 		pressLink(oViewDetails);
 
 		oDataPromise.then(function () {
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assert
 			assert.strictEqual(oMessageBoxDialog.$().find(".sapMMessageBoxDetails").length, 1, "Details object is displayed");
@@ -1571,7 +1571,7 @@ sap.ui.define([
 		var oMessageBox = Element.getElementById("messageId");
 		var oViewDetails = oMessageBox.$().find("a.sapMMessageBoxLinkText");
 		pressLink(oViewDetails);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oDetailsDom = oMessageBox.$().find(".sapMMessageBoxDetails")[0];
 
 		// assert

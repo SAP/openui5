@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/m/Label",
 	"sap/m/Input",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	layoutLibrary,
@@ -19,7 +19,7 @@ sap.ui.define([
 	Title,
 	Label,
 	Input,
-	oCore,
+	nextUIUpdate,
 	FlexTestAPI
 ) {
 	"use strict";
@@ -27,7 +27,7 @@ sap.ui.define([
 	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
 
 	QUnit.module("using sap.ui.layout.changeHandler.AddSimpleFormGroup on simpleform with title and having old index", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oTitle0 = new Title({id: "Title0", text: "Title 0"});
 			this.oLabel0 = new Label({id: "Label0", text: "Label 0", visible: true});
 			this.oLabel1 = new Label({id: "Label1", text: "Label 1"});
@@ -39,7 +39,7 @@ sap.ui.define([
 				content: [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oMockedComponent = {
 				createId: function (sString) {
@@ -120,7 +120,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("using sap.ui.layout.changeHandler.AddSimpleFormGroup on simpleform without title and having old index", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oLabel0 = new Label({id: "Label0", text: "Label 0", visible: true});
 			this.oLabel1 = new Label({id: "Label1", text: "Label 1"});
 			this.oInput0 = new Input({id: "Input0", visible: true});
@@ -131,7 +131,7 @@ sap.ui.define([
 				content: [this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oMockedComponent = {
 				createId: function (sString) {
@@ -200,7 +200,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("using sap.ui.layout.changeHandler.AddSimpleFormGroup on simpleform with title and having relative index", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oTitle0 = new Title({id: "Title0", text: "Title 0"});
 			this.oLabel0 = new Label({id: "Label0", text: "Label 0", visible: true});
 			this.oLabel1 = new Label({id: "Label1", text: "Label 1"});
@@ -212,7 +212,7 @@ sap.ui.define([
 				content: [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oMockedComponent = {
 				createId: function (sString) {
@@ -267,7 +267,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("using sap.ui.layout.changeHandler.AddSimpleFormGroup on simpleform without title and having relative index", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oLabel0 = new Label({id: "Label0", text: "Label 0", visible: true});
 			this.oLabel1 = new Label({id: "Label1", text: "Label 1"});
 			this.oInput0 = new Input({id: "Input0", visible: true});
@@ -278,7 +278,7 @@ sap.ui.define([
 				content: [this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oMockedComponent = {
 				createId: function (sString) {
@@ -332,7 +332,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("using sap.ui.layout.changeHandler.AddSimpleFormGroup on simpleform with two form containers having title and relative index", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oTitle0 = new Title({id: "Title0", text: "Title 0"});
 			this.oLabel0 = new Label({id: "Label0", text: "Label 0", visible: true});
 			this.oLabel1 = new Label({id: "Label1", text: "Label 1"});
@@ -351,7 +351,7 @@ sap.ui.define([
 				content: [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1, this.oTitle1, this.oLabel2, this.oInput2, this.oLabel3, this.oInput3]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oMockedComponent = {
 				createId: function (sString) {

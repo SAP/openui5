@@ -14,10 +14,6 @@ sap.ui.define([], function () {
 	 */
 	var _Calendars = {
 		get: function (sCalendarType) {
-			/** @deprecated As of version 1.120.0 */
-			if (!mRegistry.has(sCalendarType)) {
-				sap.ui.requireSync("sap/ui/core/date/" + sCalendarType); // TODO: establish full async alternative
-			}
 			if (mRegistry.has(sCalendarType)) {
 				return mRegistry.get(sCalendarType);
 			}

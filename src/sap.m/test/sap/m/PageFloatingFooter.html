@@ -2,108 +2,20 @@
 <!DOCTYPE HTML>
 <html>
 
-<head>
+<head><meta charset="utf-8">
     <title>sap.m.Page</title>
 
     <script src="shared-config.js"></script>
     <script src="../../../resources/sap-ui-core.js"
-           
             id="sap-ui-bootstrap"
-            data-sap-ui-libs="sap.m">
+            data-sap-ui-libs="sap.m"
+            data-sap-ui-async="true"
+            data-sap-ui-compat-version="edge"
+            data-sap-ui-on-init="module:local/PageFloatingFooter"
+            data-sap-ui-resource-roots='{"local":"./"}'
+    >
     </script>
-    <script>
-        var oApp = new sap.m.App("myApp", {
-            initialPage: "page"
-        });
-
-        var aBackgrounds = ["List", "Solid", "Transparent", "Standard"];
-        var iCurrentBackground = 0;
-
-        var oSetBusyButton = new sap.m.Button({
-            id: "setbusy-button", text: "Set busy",
-            tooltip: "Set the page to busy", press: function () {
-                oPage.setBusy(true);
-            }
-        });
-
-        var fnCycleBackgrounds = function () {
-            oPage.setBackgroundDesign(aBackgrounds[iCurrentBackground]);
-
-            if (iCurrentBackground < aBackgrounds.length) {
-                iCurrentBackground++;
-            } else {
-                iCurrentBackground = 0;
-            }
-        };
-
-        var oChangeBackground = new sap.m.Button({
-            id: "background-change-button", text: "Cycle background",
-            tooltip: "Cycles the backgrounds", press: fnCycleBackgrounds
-        });
-
-        var sText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras tincidunt scelerisque elit, at egestas libero elementum ac. Vivamus pulvinar felis eros, id tristique risus aliquam id. Nulla ac congue urna, eu mollis risus. Suspendisse purus magna, cursus nec volutpat at, mattis id risus. Etiam varius vestibulum lectus a sagittis. Pellentesque pharetra velit at eleifend luctus. Ut porta, tortor in sagittis ultrices, diam tellus molestie quam, et tempus lorem neque vitae tortor. Praesent mollis sodales magna, eu lobortis ligula vestibulum id. Nunc non velit turpis. Nullam euismod aliquam augue, non porta risus. Morbi aliquet id elit et cursus. Etiam sed aliquet leo. Vivamus fermentum lectus id varius consequat. Nunc vel arcu non magna lobortis finibus id nec dolor. Curabitur sapien odio, facilisis ac metus a, placerat accumsan neque. Vestibulum tempor eros mi, non dignissim tortor aliquet dignissim.";
-        var aContent = [
-                new sap.m.Button({
-                    text: "Toggle floating footer",
-                    press: function () {
-                        var ff = oPage.getFloatingFooter();
-                        oPage.setFloatingFooter(!ff);
-                    }
-                }),
-                new sap.m.Button({
-                    text: "Toggle footer visibility",
-                    press: function () {
-                        var showFooter = oPage.getShowFooter();
-                        oPage.setShowFooter(!showFooter);
-                    }
-                }),
-                new sap.m.Button({
-                    text: "Add Panel",
-                    press: function () {
-                        var sapPanel = new sap.m.Panel({
-                            content: new sap.m.Text({
-                                text: sText + sText
-                            })
-                        });
-                        oPage.addContent(sapPanel);
-                    }
-                }),
-                new sap.m.Button({
-                    text: "Remove Panel",
-                    press: function () {
-                        oPage.removeContent(5);
-                    }
-                })
-        ];
-
-
-        for (var i = 0; i < 10; i++) {
-            var sapPanel = new sap.m.Panel({
-                content: [
-                    new sap.m.Text({ text: sText + sText}),
-                    new sap.m.Button("button" + i, {text: "Test"})
-                ]
-            });
-            aContent.push(sapPanel);
-        }
-
-        var oPage = new sap.m.Page("page", {
-            landmarkInfo: new sap.m.PageAccessibleLandmarkInfo(),
-            title: "Page Control",
-            showNavButton: true,
-            contentOnlyBusy: true,
-            floatingFooter: true,
-            content: [
-                aContent
-            ],
-            footer: new sap.m.Bar({
-                contentLeft: oSetBusyButton,
-                contentRight: oChangeBackground
-            })
-        });
-
-        oApp.addPage(oPage).placeAt("content");
-    </script>
+    
 </head>
 
 <body class="sapUiBody">

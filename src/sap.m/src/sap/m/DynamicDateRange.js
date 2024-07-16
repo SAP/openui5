@@ -38,7 +38,9 @@ sap.ui.define([
 	'./library',
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/unified/calendar/CalendarUtils',
-	'sap/ui/core/CustomData'
+	'sap/ui/core/CustomData',
+	/* jQuery Plugin "firstFocusableDomRef"*/
+	"sap/ui/dom/jquery/Focusable"
 ], function(
 	Log,
 	InvisibleText,
@@ -1617,6 +1619,7 @@ sap.ui.define([
 			}
 
 			if (!oElementToFocus) {
+				// jQuery Plugin "firstFocusableDomRef"
 				oElementToFocus = jQuery(oToPage.getDomRef().querySelector("section")).firstFocusableDomRef();
 			}
 
@@ -1666,6 +1669,7 @@ sap.ui.define([
 
 			if (oToPage === oOptionDetailsPage) {
 				this.aInputControls.forEach(function(oControl) {
+					// jQuery Plugin "firstFocusableDomRef"
 					if (oControl.$().firstFocusableDomRef()) {
 						oControl.addAriaLabelledBy && oControl.addAriaLabelledBy(oToPage.getId() + "-title");
 

@@ -30,7 +30,7 @@ sap.ui.define(function() {
 			"SimpleTestWithQUnit1": {
 				module: './SimpleTest.qunit',
 				qunit: {
-					version: 1
+					version: 2
 				}
 			},
 			"SimpleTestWithQUnit2": {

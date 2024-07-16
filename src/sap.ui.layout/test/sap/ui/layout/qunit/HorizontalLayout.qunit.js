@@ -7,21 +7,21 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Label",
 	"sap/ui/Device",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], function(Element, HorizontalLayout, Button, Input, Label, Device, jQuery, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/thirdparty/jquery"
+], function(Element, HorizontalLayout, Button, Input, Label, Device, nextUIUpdate, jQuery) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	QUnit.module("", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oLayout1 = new HorizontalLayout("Layout1", {
 				content: [new Button("B1",{text:"X", tooltip:"Button tooltip"}),
 						new Input("IN1",{value:"Test",width:"50px"}),
 						new Button("B2",{text:"Y", tooltip:"Button tooltip"})]
 			}).placeAt(DOM_RENDER_LOCATION);
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oLayout1.destroy();
@@ -45,10 +45,10 @@ sap.ui.define([
 		assert.equal(oInput[0].offsetLeft, oButton[0].offsetLeft + oButton[0].offsetWidth, "Input should be exactly right of Button");
 	});
 
-	QUnit.test("NoWrap", function(assert) {
+	QUnit.test("NoWrap", async function(assert) {
 		this.oLayout1.setAllowWrapping(false);
 		Element.getElementById("IN1").setWidth("5000px");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oButton = jQuery('#B1');
 		var oInput = jQuery('#IN1');
@@ -57,10 +57,10 @@ sap.ui.define([
 		assert.ok(oInput.offset().left < oImage.offset().left, "Left offset of Input < Second button");
 	});
 
-	QUnit.test("Wrapping", function(assert) {
+	QUnit.test("Wrapping", async function(assert) {
 		this.oLayout1.setAllowWrapping(true);
 		Element.getElementById("IN1").setWidth("5000px");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oButton = jQuery('#B1');
 		var oInput = jQuery('#IN1');
@@ -69,7 +69,7 @@ sap.ui.define([
 		assert.equal(oImage.offset().left, oInput.offset().left, "Left offset of Input == Second button");
 	});
 
-	QUnit.test("Container Padding Classes", function (assert) {
+	QUnit.test("Container Padding Classes", async function(assert) {
 		// System under Test + Act
 		var oContainer = new HorizontalLayout({
 				content: [
@@ -89,7 +89,7 @@ sap.ui.define([
 
 		// Act
 		oContainer.placeAt(DOM_RENDER_LOCATION);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$();
 

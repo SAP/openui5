@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/ui/core/StaticArea",
 	"../UIArea",
 	"sap/ui/thirdparty/jquery"
-],
-function(lib, Localization, Device, Element, StaticArea, UIArea, jQuery) {
+], function(lib, Localization, Device, Element, StaticArea, UIArea, jQuery) {
 	"use strict";
 
 	var RelativeDropPosition = lib.dnd.RelativeDropPosition;
@@ -888,4 +887,4 @@ function(lib, Localization, Device, Element, StaticArea, UIArea, jQuery) {
 
 	return DnD;
 
-}, /* bExport= */ true);
+});

@@ -7,7 +7,6 @@ sap.ui.define(function() {
 			group: "",
 			ui5: {
 				libs: "",
-				theme: "sap_belize",
 				noConflict: true,
 				preload: "auto",
 				"xx-waitForTheme": true			// Whether the start of the test should be delayed until the theme is applied

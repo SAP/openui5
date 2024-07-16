@@ -13,8 +13,7 @@ sap.ui.define([
 			this.value1 = v1;
 		},
 		metadata: {
-			interfaces: ["sap.ui.base.Poolable", "sap.test.MyInterface"],
-			publicMethods: ["method1"]
+			interfaces: ["sap.ui.base.Poolable", "sap.test.MyInterface"]
 		},
 		method1: function() {
 			return this.value1;
@@ -27,8 +26,7 @@ sap.ui.define([
 			this.value2 = v2;
 		},
 		metadata: {
-			interfaces: ["sap.ui.base.Cacheable", "sap.ui.base.Poolable"],
-			publicMethods: ["method2"]
+			interfaces: ["sap.ui.base.Cacheable", "sap.ui.base.Poolable"]
 		},
 		method2: function() {
 			return this.value2;
@@ -48,27 +46,6 @@ sap.ui.define([
 		assert.ok(this.oObject.getInterface === BaseObject.prototype.getInterface, "fresh object doesn't have own getInterface implementation");
 	});
 
-	/**
-	 * @deprecated
-	 */
-	QUnit.test("GetInterface", function(assert) {
-		var oIntf1 = this.oNewClassInstance.getInterface();
-		assert.ok(oIntf1 != null, "interface returned");
-		// assert("object has interface member", this.oObject.oInterface && typeof this.oObject.oInterface === "object" );
-		assert.ok(this.oNewClassInstance.getInterface !== BaseObject.prototype.getInterface, "object has own getInterface implementation");
-		var oIntf2 = this.oNewClassInstance.getInterface();
-		assert.ok(oIntf1 === oIntf2, "stable interface");
-		for (var m in oIntf1) {
-			if (typeof oIntf1[m] === "function") {
-				assert.ok(this.oNewClassInstance.getMetadata()._aAllPublicMethods.indexOf(m) >= 0, "interface has only functions from the list");
-				// TODO the following tests only work for methods that have stable results and that don't require arguments
-				var r1 = this.oNewClassInstance[m]();
-				var r2 = oIntf1[m]();
-				assert.strictEqual(r2, r1, "same values returned");
-			}
-		}
-	});
-
 	QUnit.test("GetMetadata", function(assert) {
 		assert.ok(this.oNewClassInstance.getMetadata() != false, "metadata available");
 		assert.ok(this.oNewSubClassInstance.getMetadata() != false, "metadata available");
@@ -79,16 +56,6 @@ sap.ui.define([
 		assert.strictEqual(this.oNewClassInstance.getMetadata().getParent().getName(), "sap.ui.base.Object", "basetype as expected");
 		assert.ok(this.oNewSubClassInstance.getMetadata().getParent() != false, "basetype set");
 		assert.strictEqual(this.oNewSubClassInstance.getMetadata().getParent(), this.oNewClassInstance.getMetadata(), "basetype as expected");
-	});
-
-	/**
-	 * @deprecated As of version 1.111 All deprecated APIs
-	 */
-	QUnit.test("PublicMethods", function(assert) {
-		assert.deepEqual(this.oNewClassInstance.getMetadata().getPublicMethods(), ["method1"], "public methods");
-		assert.deepEqual(this.oNewClassInstance.getMetadata().getAllPublicMethods(), ["method1"], "public methods");
-		assert.deepEqual(this.oNewSubClassInstance.getMetadata().getPublicMethods(), ["method2"], "public methods");
-		assert.deepEqual(this.oNewSubClassInstance.getMetadata().getAllPublicMethods(), ["method1", "method2"], "public methods");
 	});
 
 	QUnit.test("Interfaces", function(assert) {
@@ -151,42 +118,6 @@ sap.ui.define([
 
 
 	QUnit.module("Base Class Functions");
-
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("isA static function", function(assert) {
-		var oIcon = new Icon();
-		assert.strictEqual(BaseObject.isA(oIcon, "sap.ui.core.Icon"), true, "self test: instance is a sap.ui.core.Icon");
-		assert.strictEqual(BaseObject.isA(oIcon, "sap.ui.base.ManagedObject"), true, "inheritance: instance is a ManagedObject");
-		assert.strictEqual(BaseObject.isA(oIcon, "sap.ui.base.Object"), true, "inheritance: instance is a BaseObject");
-		assert.strictEqual(BaseObject.isA(oIcon, [
-			"sap.ui.base.Object",
-			"sap.test.rainbow"
-		]), true, "multiple: instance is a 'sap.test.rainbow' (doesn't exist) or BaseObject");
-
-		assert.strictEqual(BaseObject.isA(oIcon, "sap.ui.core.HTML"), false, "Icon is not HTML");
-		assert.strictEqual(BaseObject.isA(oIcon, null), false, "null check");
-		assert.strictEqual(BaseObject.isA(oIcon, ""), false, "'' check");
-		assert.strictEqual(BaseObject.isA(oIcon), false, "undefined check");
-		assert.strictEqual(BaseObject.isA(oIcon), false, "undefined check");
-		assert.strictEqual(BaseObject.isA(oIcon, [
-			"sap.test.pony",
-			"sap.test.rainbow"
-		]), false, "multiple: instance is not 'sap.test.pony' or 'sap.test.rainbow'");
-
-		var MyClass = function() {};
-		MyClass.prototype.isA = function() {
-			assert.ok(false, "Custom 'isA' method should not be called");
-		};
-		var oMyObject = new MyClass();
-		assert.strictEqual(BaseObject.isA(oMyObject, "sap.ui.base.Object"), false, "MyClass is not BaseObject");
-		assert.strictEqual(BaseObject.isA({}, "sap.ui.base.Object"), false, "Plain Object is not BaseObject");
-		assert.strictEqual(BaseObject.isA(null, "sap.ui.base.Object"), false, "null is not BaseObject");
-		assert.strictEqual(BaseObject.isA(undefined, "sap.ui.base.Object"), false, "undefined is not BaseObject");
-		assert.strictEqual(BaseObject.isA(NaN, "sap.ui.base.Object"), false, "NaN is not BaseObject");
-		assert.strictEqual(BaseObject.isA("", "sap.ui.base.Object"), false, "Empty string is not BaseObject");
-	});
 
 	QUnit.test("isObjectA static function", function(assert) {
 		var oIcon = new Icon();

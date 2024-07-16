@@ -105,5 +105,4 @@ sap.ui.define([
 	};
 
 	return HideControl;
-},
-/* bExport= */true);
+});

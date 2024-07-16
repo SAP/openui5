@@ -115,7 +115,7 @@ sap.ui.define([
 			versions: {
 				1: {
 					module: "sap/ui/thirdparty/qunit",
-					css: "sap/ui/thirdparty/qunit.css"
+					css: "sap/ui/thirdparty/qunit-2.css"
 				},
 				2: {
 					module: "sap/ui/thirdparty/qunit-2",
@@ -156,7 +156,7 @@ sap.ui.define([
 			bindingSyntax: 'complex',
 			noConflict: true,
 			libs: [],
-			theme: "sap_belize"
+			theme: "sap_horizon"
 		},
 		bootCore: true,
 		autostart: true

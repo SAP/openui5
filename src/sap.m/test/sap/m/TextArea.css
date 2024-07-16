@@ -1,0 +1,9 @@
+.customClassForVisualTests {
+		caret-color: transparent;
+}
+
+#textAreaFiftyPercentWidth,
+.sapMTextArea.sapMInputBaseState,
+.sapMTextArea.sapMInputBaseReadonly {
+	margin-right: 1rem;
+}

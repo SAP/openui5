@@ -5,16 +5,16 @@ sap.ui.define([
 	"sap/f/dnd/GridKeyboardDragAndDrop",
 	"sap/f/GridContainer",
 	"sap/m/Text",
-	"sap/ui/core/Core",
 	"sap/ui/core/dnd/DragInfo",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	GridDropInfo,
 	GridKeyboardDragAndDrop,
 	GridContainer,
 	Text,
-	Core,
 	DragInfo,
+	nextUIUpdate,
 	jQuery
 ) {
 	"use strict";
@@ -41,7 +41,7 @@ sap.ui.define([
 			});
 
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
@@ -205,7 +205,7 @@ sap.ui.define([
 
 		oDragContainer.placeAt(DOM_RENDER_LOCATION);
 		oDropContainer.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		GridKeyboardDragAndDrop.fireDnD(oDraggedControl, [oDropConfig], createFakeKeydownEvent());
@@ -261,7 +261,7 @@ sap.ui.define([
 
 		oDragContainer.placeAt(DOM_RENDER_LOCATION);
 		oDropContainer.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		GridKeyboardDragAndDrop.fireDnD(oDraggedControl, [oDropConfig], createFakeKeydownEvent());
@@ -317,7 +317,7 @@ sap.ui.define([
 
 		oDragContainer.placeAt(DOM_RENDER_LOCATION);
 		oDropContainer.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		GridKeyboardDragAndDrop.fireDnD(oDraggedControl, [oDropConfig], createFakeKeydownEvent());
@@ -343,7 +343,7 @@ sap.ui.define([
 			});
 
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
@@ -476,7 +476,7 @@ sap.ui.define([
 		oDragContainer.placeAt(DOM_RENDER_LOCATION);
 		oDropContainer1.placeAt(DOM_RENDER_LOCATION);
 		oDropContainer2.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		GridKeyboardDragAndDrop.fireDnD(oDraggedControl, aDropConfigs, createFakeKeydownEvent());

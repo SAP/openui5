@@ -4,16 +4,16 @@
 		<meta charset="utf-8">
 		<title>Error Handling of Adaptive Cards</title>
 		<script src="../../../../resources/sap-ui-integration.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-theme="sap_horizon">
+				id="sap-ui-bootstrap"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/AdaptiveCardContentErrorHandling"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
 	</head>
 	<body class="sapUiBody">
 		<ui-integration-card style="width: 40%" id="my-card" manifest="./adaptivecard-error-manifest.json"></ui-integration-card>
 	</body>
-	<script>
-			document.getElementById("my-card").addEventListener("action", function (event) {
-				event.detail.getParameter("type") === "Submit" && console.log(event.detail.getParameter("parameters"));
-			});
-	</script>
+	
 </html>

@@ -562,31 +562,10 @@ sap.ui.define([
 		var aContexts = [],
 			sKey;
 
-		// OperationMode.Auto: handle synchronized count to check what the actual internal operation mode should be
-		// If the $count or $inlinecount is used, is determined by the respective
-		if (this.sOperationMode == OperationMode.Auto) {
-			// as long as we do not have a collection count, we return an empty array
-			if (this.iTotalCollectionCount == null) {
-				if (!this.bCollectionCountRequested) {
-					this._getCountForCollection();
-					this.bCollectionCountRequested = true;
-				}
-				return [];
-			}
-		}
-
 		// Set default values if startindex, threshold or length are not defined
 		iStartIndex = iStartIndex || 0;
 		iLength = iLength || this.oModel.iSizeLimit;
 		iThreshold = iThreshold || 0;
-
-		// re-set the threshold in OperationMode.Auto
-		// between binding-treshold and the threshold given as an argument, the bigger one will be taken
-		if (this.sOperationMode == OperationMode.Auto) {
-			if (this.iThreshold >= 0) {
-				iThreshold = Math.max(this.iThreshold, iThreshold);
-			}
-		}
 
 		if (!this._mLoadedSections[sNodeId]) {
 			this._mLoadedSections[sNodeId] = [];
@@ -785,92 +764,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataTreeBinding.prototype._getCountForCollection = function () {
-
-		if (!this.bHasTreeAnnotations || this.sOperationMode != OperationMode.Auto) {
-			Log.error("The Count for the collection can only be retrieved with Hierarchy Annotations and in OperationMode.Auto.");
-			return;
-		}
-
-		// create a request object for the data request
-		var aParams = [];
-
-		function _handleSuccess(oData) {
-
-			// $inlinecount is in oData.__count, the $count is just oData
-			var iCount = oData.__count ? parseInt(oData.__count) : parseInt(oData);
-
-			this.iTotalCollectionCount = iCount;
-
-			// in the OpertionMode.Auto, we check if the count is LE than the given threshold and set the client operation flag accordingly
-			if (this.sOperationMode == OperationMode.Auto) {
-				if (this.iTotalCollectionCount <= this.iThreshold) {
-					this.bClientOperation = true;
-					this.bThresholdRejected = false;
-				} else {
-					this.bClientOperation = false;
-					this.bThresholdRejected = true;
-				}
-				this._fireChange({reason: ChangeReason.Change});
-			}
-		}
-
-		function _handleError(oError) {
-			// Only perform error handling if the request was not aborted intentionally
-			if (oError && oError.statusCode === 0 && oError.statusText === "abort") {
-				return;
-			}
-			var sErrorMsg = "Request for $count failed: " + oError.message;
-			if (oError.response){
-				sErrorMsg += ", " + oError.response.statusCode + ", " + oError.response.statusText + ", " + oError.response.body;
-			}
-			Log.warning(sErrorMsg);
-		}
-
-		var sAbsolutePath = this.getResolvedPath();
-
-		// default filter is on the rootLevel
-		var sLevelFilter = "";
-		if (this.iRootLevel > 0) {
-			sLevelFilter = this._getLevelFilterParams("GE", this.getRootLevel());
-		}
-
-		// if necessary we add all other filters to the count request
-		var sFilterParams = "";
-		if (this.bUseServersideApplicationFilters) {
-			sFilterParams = this.getFilterParams();
-		}
-
-		//only build filter statement if necessary
-		if (sLevelFilter || sFilterParams) {
-			//if we have a level filter AND an application filter, we need to add an escaped "AND" to between
-			if (sFilterParams && sLevelFilter) {
-				sFilterParams = "%20and%20" + sFilterParams;
-			}
-			aParams.push("$filter=" + sLevelFilter + sFilterParams);
-		}
-
-		// figure out how to request the count
-		var sCountType = "";
-		let oHeaders;
-		if (this.sCountMode == CountMode.Request || this.sCountMode == CountMode.Both) {
-			sCountType = "/$count";
-			// this.bTransitionMessagesOnly is not relevant for $count requests -> no sap-messages header
-		} else if (this.sCountMode == CountMode.Inline || this.sCountMode == CountMode.InlineRepeat) {
-			aParams.push("$top=0");
-			aParams.push("$inlinecount=allpages");
-			oHeaders = this._getHeaders();
-		}
-
-		// send the counting request
-		if (sAbsolutePath) {
-			this.oModel.read(sAbsolutePath + sCountType, {
-				headers: oHeaders,
-				urlParameters: aParams,
-				success: _handleSuccess.bind(this),
-				error: _handleError.bind(this),
-				groupId: this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId
-			});
-		}
+		Log.error("The Count for the collection can only be retrieved with Hierarchy Annotations and in OperationMode.Auto.");
+		return;
 	};
 
 	/**
@@ -1177,7 +1072,7 @@ sap.ui.define([
 		//check if we already have a count
 		if (!this.oFinalLengths[sNodeId] || this.sCountMode == CountMode.InlineRepeat) {
 			// issue $inlinecount
-			if (this.sCountMode == CountMode.Inline || this.sCountMode == CountMode.InlineRepeat || this.sCountMode == CountMode.Both) {
+			if (this.sCountMode == CountMode.Inline || this.sCountMode == CountMode.InlineRepeat) {
 				aParams.push("$inlinecount=allpages");
 				bInlineCountRequested = true;
 			} else if (this.sCountMode == CountMode.Request) {
@@ -2689,23 +2584,6 @@ sap.ui.define([
 	 *   An OData V2 context object that points to the newly created entry, or
 	 *   <code>undefined</code> if the service metadata are not yet loaded or if a
 	 *   <code>created</code> callback parameter is given
-	 * @private
-	 * @ui5-restricted
-	 */
-
-	/**
-	 * Submits all queued hierarchy changes for this binding instance.
-	 *
-	 * This includes property changes, as well as newly created nodes and deleted nodes.
-	 * The available API is the same as for the v2.ODataModel.
-	 * See the API documentation here: {@link sap.ui.model.odata.v2.ODataModel#submitChanges submitChanges}.
-	 *
-	 * This feature is only available when the underlying OData service exposes the "hierarchy-node-descendant-count-for" annotation.
-	 * See the Constructor documentation for more details.
-	 *
-	 * @function
-	 * @name sap.ui.model.odata.v2.ODataTreeBinding.prototype.submitChanges
-	 * @deprecated Since 1.104 use {@link sap.ui.model.odata.v2.ODataModel#submitChanges} instead
 	 * @private
 	 * @ui5-restricted
 	 */

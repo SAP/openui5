@@ -46,4 +46,4 @@ sap.ui.define(function() {
 
 	return FilterType;
 
-}, /* bExport= */ true);
+});

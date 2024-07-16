@@ -4,11 +4,11 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ProgressIndicator",
 	"sap/m/Page",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
-	"sap/ui/core/ControlBehavior",
-	"sap/ui/core/Core"
-], function(Library, createAndAppendDiv, ProgressIndicator, Page, jQuery, coreLibrary, ControlBehavior, Core) {
+	"sap/ui/core/ControlBehavior"
+], function(Library, createAndAppendDiv, ProgressIndicator, Page, nextUIUpdate, jQuery, coreLibrary, ControlBehavior) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -51,7 +51,7 @@ sap.ui.define([
 	});
 
 	oProgInd4.placeAt("content");
-	Core.applyChanges();
+	nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 	QUnit.module("");
 
@@ -72,7 +72,7 @@ sap.ui.define([
 		});
 
 		oProgressIndicator.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oProgressIndicator.$().attr("title"), sTooltipText, "Tooltip is in the DOM");
 
@@ -105,7 +105,7 @@ sap.ui.define([
 		});
 
 		oProgIndicator.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oProgIndicator.setPercentValue(0);
 		assert.strictEqual(oProgIndicator.$().hasClass("sapMPIValueMin"), true, "sapMPIValueMin class added");
@@ -159,7 +159,7 @@ sap.ui.define([
 		};
 
 		oProgressIndicator.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$progressIndicator = oProgressIndicator.$();
 
 		aTestCases.forEach(function (oTestCase){
@@ -173,7 +173,7 @@ sap.ui.define([
 		var oProgressIndicator = new ProgressIndicator({percentValue: 0});
 
 		oProgressIndicator.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oProgressIndicator.setPercentValue("11");
 		assert.strictEqual(oProgressIndicator.getPercentValue(), 11, "Percent value should be cast correctly to the number 11.");
@@ -201,17 +201,17 @@ sap.ui.define([
 		});
 
 		oPage.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act - set percentValue to 0 and remove it from parent's aggregation
 		oProgressIndicator.setPercentValue(0);
 		oPage.removeContent(oProgressIndicator);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act - set percentValue to 5 and add it again to the parent's aggregation
 		oProgressIndicator.setPercentValue(5);
 		oPage.addContent(oProgressIndicator);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.notOk(oProgressIndicator.$().hasClass("sapMPIValueMin"),
@@ -228,7 +228,7 @@ sap.ui.define([
 		});
 
 		oProgIndicator.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oProgIndicator.$().find(".sapMPITextLeft").text(), "", "no text is rendered");
 		assert.strictEqual(oProgIndicator.$().find(".sapMPITextRight").text(), "", "no text is rendered");
@@ -242,12 +242,12 @@ sap.ui.define([
 		});
 
 		oProgIndicator.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oProgIndicator.$().hasClass("sapMPIDisplayOnly"), true, "should have class 'sapMPIDisplayOnly'");
 
 		oProgIndicator.setDisplayOnly(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oProgIndicator.$().hasClass("sapMPIDisplayOnly"), false, "class 'sapMPIDisplayOnly' should be removed");
 
@@ -260,7 +260,7 @@ sap.ui.define([
 		});
 
 		oProgIndicator.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuemin")), 0, "aria-valuemin should equal 0");
 		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow")), 50, "aria-valuenow should equal 50");
@@ -276,18 +276,18 @@ sap.ui.define([
 		});
 
 		oProgIndicator.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow")), 50, "aria-valuenow should equal 50");
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50%", "aria-valuetext should be 50%");
 
 		oProgIndicator.setPercentValue(15);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow")), 15, "aria-valuenow should equal 15");
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "15%", "aria-valuetext should be 15%");
 
 		oProgIndicator.setPercentValue(95);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow")), 95, "aria-valuenow should equal 95");
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "95%", "aria-valuetext should be 95%");
 
@@ -301,12 +301,12 @@ sap.ui.define([
 		});
 
 		oProgIndicator.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50/100", "aria-valuetext should be '50/100'");
 
 		oProgIndicator.setDisplayValue("65/100");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "65/100", "aria-valuetext should be '65/100'");
 
 		oProgIndicator.destroy();
@@ -319,23 +319,23 @@ sap.ui.define([
 		});
 
 		oProgIndicator.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var stateText = oProgIndicator._getStateText();
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
 
 		oProgIndicator.setState(ValueState.Error);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		stateText = oProgIndicator._getStateText();
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
 
 		oProgIndicator.setState(ValueState.Warning);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		stateText = oProgIndicator._getStateText();
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
 
 		oProgIndicator.setState(ValueState.Information);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		stateText = oProgIndicator._getStateText();
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50% " + stateText, "aria-valuetext should be '50% " + stateText + "'");
 
@@ -349,7 +349,7 @@ sap.ui.define([
 		});
 
 		oProgIndicator.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oProgIndicator.$().attr("aria-labelledby"), "id1", "aria-labelledby is set correctly");
 		assert.strictEqual(oProgIndicator.$().attr("aria-describedby"), "id2", "aria-describedby is set correctly");
@@ -430,9 +430,9 @@ sap.ui.define([
 
 		// Act
 		oProgressIndicator.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oProgressIndicator.setPercentValue(100);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oBarDomRef = oProgressIndicator.getDomRef().querySelector(".sapMPIBar");
 
 		// Assert
@@ -453,7 +453,7 @@ sap.ui.define([
 
 		// Act
 		oProgressIndicator.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oProgressIndicator.setPercentValue(100);
 
 		oBarDomRef = oProgressIndicator.getDomRef().querySelector(".sapMPIBar");
@@ -475,7 +475,7 @@ sap.ui.define([
 
 		// Act
 		oProgressIndicator.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oProgressIndicator.setPercentValue(100);
 
 		oBarDomRef = oProgressIndicator.getDomRef().querySelector(".sapMPIBar");
@@ -501,7 +501,7 @@ sap.ui.define([
 			});
 			this.oPIPopover = this.oPI._getPopover();
 			this.oPI.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oPI.destroy();
@@ -540,7 +540,7 @@ sap.ui.define([
 	QUnit.test("Popover behavior when UX requirements are not met (displayValue is not truncated)", function (assert) {
 		// Act
 		this.oPI.setDisplayValue(".");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.oPI.ontap();
 		this.clock.tick(POPOVER_WAIT_TIME);
 
@@ -552,7 +552,7 @@ sap.ui.define([
 	QUnit.test("Popover behavior when UX requirements are not met (no displayValue)", function (assert) {
 		// Act
 		this.oPI.setDisplayValue("");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.oPI.ontap();
 		this.clock.tick(POPOVER_WAIT_TIME);
 
@@ -609,14 +609,14 @@ sap.ui.define([
 
 			// act
 			oProgInd.placeAt("content");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assert
 			assert.notOk(jQuery(oProgIndBar).hasClass("sapMPIBarNegative"));
 
 			// act
 			oProgInd.setEnabled(true);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assert
 			assert.ok(jQuery(oProgIndBar).hasClass("sapMPIBarNegative"));

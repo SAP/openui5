@@ -1,0 +1,9 @@
+.sapUiVlt.sapUiCompFilterBarItem { /* TODO: only in filterbar usage */
+	display: block;
+	padding-right: 1rem;
+	padding-top: 0.5rem;
+}
+
+.sapUiVlt.sapUiCompFilterBarItem > .sapUiVltCell { /* TODO: only in filterbar usage */
+	display: block;
+}

@@ -174,4 +174,4 @@ sap.ui.define(function() {
 
 	return FilterOperator;
 
-}, /* bExport= */ true);
+});

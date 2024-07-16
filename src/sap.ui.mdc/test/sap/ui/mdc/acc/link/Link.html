@@ -2,33 +2,29 @@
 <html>
 
 	<head>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta charset="UTF-8">
 
 		<title>Link Example</title>
 
 		<script src="../../shared-config.js"></script>
-		<script id="sap-ui-bootstrap" type="text/javascript"
-			src="../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.ui.mdc, sap.m, sap.ui.layout"
-			data-sap-ui-compatVersion="edge"
-			data-sap-ui-xx-bindingSyntax="complex"
-			data-sap-ui-async="true"
-			data-sap-ui-flexibilityServices='[{"connector": "LocalStorageConnector"}]'
-			data-sap-ui-resourceroots='{
+		<script id="sap-ui-bootstrap"
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.ui.mdc, sap.m, sap.ui.layout"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-flexibility-services='[{"connector": "LocalStorageConnector"}]'
+				data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
+				data-sap-ui-resource-roots='{
 				"sap.ui.mdc.acc.link": "",
 				"sap.ui.mdc.acc" : "../",
 				"testutils/link": "../../testutils/link
 			}'
-			data-sap-ui-oninit="module:sap/ui/core/ComponentSupport">
+		>
 		</script>
 	</head>
 	<body id="content" class="sapUiBody sapUiSizeCompact" role="application">
-		<div data-sap-ui-component
-			data-id="container"
-			data-name="sap.ui.mdc.acc.link"
-			data-settings='{"id" : "LinkAccessibility"}'
-			data-handle-validation="true">
+		<div data-sap-ui-component data-id="container" data-name="sap.ui.mdc.acc.link" data-settings="{&quot;id&quot; : &quot;LinkAccessibility&quot;}" data-handle-validation="true">
    		</div>
 	</body>
 </html>

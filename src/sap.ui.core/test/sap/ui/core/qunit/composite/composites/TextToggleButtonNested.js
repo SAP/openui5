@@ -1,8 +1,7 @@
 sap.ui.define([
-	'sap/ui/core/XMLComposite'
-], function(XMLComposite) {
+], function() {
 	"use strict";
-	var TextToggleButtonNested = XMLComposite.extend("composites.TextToggleButtonNested", {
+	var TextToggleButtonNested = undefined/*XMLComposite*/.extend("composites.TextToggleButtonNested", {
 		metadata: {
 			events: {
 				refreshed: {},

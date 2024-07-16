@@ -5,13 +5,10 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 	var Component = UIComponent.extend("testdata.v2.Component", {
 
 		metadata: {
-
 			"properties": {},
 			"aggregations": {},
 			"associations": {},
 			"events": {},
-			"publicMethods": [],
-
 			"manifest": "json",
 
 			"custom.entry": {
@@ -23,7 +20,6 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 				},
 				"key4": ["value1", "value2"]
 			}
-
 		}
 
 	});

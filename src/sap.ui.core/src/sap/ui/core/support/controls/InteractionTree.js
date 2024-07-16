@@ -660,11 +660,11 @@ sap.ui.define([
 
                 var statistics = sapStatistic.statistics;
 
-                totalText.setText(that.formatDuration(parseFloat(statistics.substring(statistics.indexOf("total=") + "total=".length, statistics.indexOf(",")))));
+                totalText.setText(that.formatDuration(parseFloat(statistics.substring(statistics.indexOf("total=") + 6, statistics.indexOf(",")))));
                 statistics = statistics.substring(statistics.indexOf(",") + 1);
-                fwText.setText(that.formatDuration(parseFloat(statistics.substring(statistics.indexOf("fw=") + "fw=".length, statistics.indexOf(",")))));
+                fwText.setText(that.formatDuration(parseFloat(statistics.substring(statistics.indexOf("fw=") + 3, statistics.indexOf(",")))));
                 statistics = statistics.substring(statistics.indexOf(",") + 1);
-                appText.setText(that.formatDuration(parseFloat(statistics.substring(statistics.indexOf("app=") + "app=".length, statistics.indexOf(",")))));
+                appText.setText(that.formatDuration(parseFloat(statistics.substring(statistics.indexOf("app=") + 4, statistics.indexOf(",")))));
              } else if (statisticsTitle.getParent()) {
                 simpleForm.removeContent(statisticsTitle);
                 simpleForm.removeContent(totalLabel);

@@ -9,14 +9,15 @@
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-async="true"
-				data-sap-ui-compatVersion="true"
 				data-sap-ui-libs="sap.m,sap.ui.table,sap.ui.unified"
-				data-sap-ui-onInit="module:local/TreeTable"
-				data-sap-ui-resourceRoots='{
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/TreeTable"
+				data-sap-ui-resource-roots='{
 					"local": "./",
 					"qunit.internal.acc": "../../../../../test-resources/sap/ui/core/qunit/internal/acc"
 				}'
-				src="../../../../../resources/sap-ui-core.js"></script>
+		></script>
 	</head>
 	<body class="sapUiBody sapUiSizeCompact">
 		<h1 id="header">ACC Test Page for <code>sap.ui.table.TreeTable</code> with <code>sap.m</code> library</h1>

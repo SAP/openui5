@@ -8,11 +8,13 @@
 		<script id="sap-ui-bootstrap"
 				src="../../../../resources/sap-ui-core.js"
 				data-sap-ui-async="true"
-				data-sap-ui-resourceroots='{
+				data-sap-ui-on-init="module:local/DesignTimeMetadata"
+				data-sap-ui-resource-roots='{
 					"local": "./",
 					"test.designmode": "qunit/app/fixture/designmode/"
 				}'
-				data-sap-ui-oninit="module:local/DesignTimeMetadata">
+				data-sap-ui-compat-version="edge"
+		>
 		</script>
 	</head>
 	<body class="sapUiBody">

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head><meta charset="utf-8">
 	<title>Caching</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="../../scripts/boot.js"></script>
 </head>
@@ -42,9 +42,9 @@
 
 			<p>
 				After the host environment is prepared to enable the caching - call the useExperimentalCaching method on the host.
-				<pre class="lang-js">
+				</p><pre class="lang-js">
 oHost.useExperimentalCaching();</pre>
-			</p>
+			<p></p>
 
 			<h2 id="serviceWorker">Service Worker</h2>
 
@@ -114,12 +114,12 @@ oHost.useExperimentalCaching();</pre>
 				When fresh data is fetched after revalidation, this should be broadcasted to the cards so that they can repeat the request.
 				<br>
 				This happens with "postMessage" with the following payload:
-				<pre class="lang-json">
+				</p><pre class="lang-json">
 {
 	type: "ui-integration-card-update",
 	url: request.url
 }</pre>
-			</p>
+			<p></p>
 		</div>
 	</div>
 

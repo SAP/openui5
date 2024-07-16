@@ -16,7 +16,6 @@ sap.ui.define([
 	'sap/base/i18n/ResourceBundle',
 	'sap/ui/VersionInfo'
 ], function (createAndAppendDiv, nextUIUpdate, Component, Supportability, ComponentContainer, ComponentRegistry, Messaging, UIComponentMetadata, SamplesRoutingComponent, SamplesRouterExtension, Log, deepExtend, LoaderExtensions, Manifest, ResourceBundle, VersionInfo) {
-
 	"use strict";
 	/*global sinon, QUnit, foo*/
 
@@ -177,20 +176,7 @@ sap.ui.define([
 		oComponent.destroy();
 	});
 
-	QUnit.module("Routing classes: Loading behavior", {
-		/**
-		 * @deprecated since 1.120
-		 */
-		beforeEach() {
-			this.requireSyncSpy = sinon.spy(sap.ui, "requireSync");
-		},
-		/**
-		 * @deprecated since 1.120
-		 */
-		afterEach() {
-			this.requireSyncSpy.restore();
-		}
-	});
+	QUnit.module("Routing classes: Loading behavior", {});
 
 	QUnit.test("[Router] manifest = false", async function(assert) {
 		const oComp = await Component.create({
@@ -199,9 +185,6 @@ sap.ui.define([
 		});
 
 		assert.ok(oComp.getRouter().isA("sap.m.routing.Router"), "sap.m.routing.Router was correctly instantiated");
-
-		/** @deprecated since 1.120 */
-		assert.equal(this.requireSyncSpy.callCount, 0, "No sync request issued");
 
 		oComp.destroy();
 	});
@@ -214,9 +197,6 @@ sap.ui.define([
 
 		assert.ok(oComp.getRouter().isA("sap.m.routing.Router"), "sap.m.routing.Router was correctly instantiated");
 
-		/** @deprecated since 1.120 */
-		assert.equal(this.requireSyncSpy.callCount, 0, "No sync request issued");
-
 		oComp.destroy();
 	});
 
@@ -228,9 +208,6 @@ sap.ui.define([
 
 		assert.ok(oComp.getTargets().isA("sap.m.routing.Targets"), "sap.m.routing.Router was correctly instantiated");
 
-		/** @deprecated since 1.120 */
-		assert.equal(this.requireSyncSpy.callCount, 0, "No sync request issued");
-
 		oComp.destroy();
 	});
 
@@ -241,9 +218,6 @@ sap.ui.define([
 		});
 
 		assert.ok(oComp.getTargets().isA("sap.m.routing.Targets"), "sap.m.routing.Router was correctly instantiated");
-
-		/** @deprecated since 1.120 */
-		assert.equal(this.requireSyncSpy.callCount, 0, "No sync request issued");
 
 		oComp.destroy();
 	});
@@ -1543,32 +1517,6 @@ sap.ui.define([
 
 	});
 
-	/**
-	 * Legacy tests with an already loaded manifest.json for a Component with metadata based on a "component.json".
-	 * @deprecated
-	 */
-	QUnit.test("Component.create with loaded manifest content (legacy, component.json)", function(assert) {
-		var oProcessI18nSpy = this.spy(Manifest.prototype, "_processI18n");
-
-		return LoaderExtensions.loadResource(
-			"testdata/mixed_legacyAPIs/manifest.json",
-			{async: true}
-		).then(function(oManifest) {
-			return Component.create({
-				manifest: oManifest
-			});
-		}).then(function(oComponent) {
-			assert.ok(oComponent, "Component instance is created");
-			var iSyncCall = oProcessI18nSpy.getCalls().reduce(function(acc, oCall) {
-				if (oCall.args.length === 0 || !oCall.args[0]) {
-					acc++;
-				}
-				return acc;
-			}, 0);
-			assert.equal(iSyncCall, 0, "No sync loading of i18n is done");
-		});
-	});
-
 	QUnit.test("Component.create with loaded manifest content", function(assert) {
 		var oProcessI18nSpy = this.spy(Manifest.prototype, "_processI18n");
 
@@ -1587,35 +1535,6 @@ sap.ui.define([
 				}
 				return acc;
 			}, 0);
-			assert.equal(iSyncCall, 0, "No sync loading of i18n is done");
-		});
-	});
-
-	/**
-	 * Legacy tests with an inheritance chain that contains a "component.json" based parent.
-	 * @deprecated
-	 */
-	QUnit.test("Check the loading of i18n of a component and its inheriting parent (legacy, component.json)", function(assert) {
-		var oProcessI18nSpy = this.spy(Manifest.prototype, "_processI18n");
-
-		return Component.create({
-			name: "testdata.inherit"
-		}).then(function(oComponent) {
-			assert.ok(oComponent, "Component instance is created");
-
-			// _processI18n are called 3 times:
-			//  1. for the oComponent instance itself
-			//  2. for the testdata.inherit ComponentMetadata
-			//  3. for the inheriting parent testdata.inherit.parent ComponentMetadata (component.json based)
-			assert.equal(oProcessI18nSpy.callCount, 3, "_processI18n is called for the expected times");
-
-			var iSyncCall = oProcessI18nSpy.getCalls().reduce(function(acc, oCall) {
-				if (oCall.args.length === 0 || !oCall.args[0]) {
-					acc++;
-				}
-				return acc;
-			}, 0);
-
 			assert.equal(iSyncCall, 0, "No sync loading of i18n is done");
 		});
 	});
@@ -1916,115 +1835,6 @@ sap.ui.define([
 	});
 
 
-	/**
-	 * @deprecated Since 1.119
-	 */
-	QUnit.module("Window Event Handler", {
-		beforeEach: function() {
-
-			this.addEventListenerSpy = this.spy(window, "addEventListener");
-			this.removeEventListenerSpy = this.spy(window, "removeEventListener");
-		},
-		afterEach: function () {
-			this.addEventListenerSpy.restore();
-			this.removeEventListenerSpy.restore();
-		}
-	});
-
-	/**
-	 * @deprecated Since 1.119
-	 */
-	QUnit.test("onWindowError", function(assert) {
-		var MyOnWindowErrorComponent = Component.extend("test.onWindowError.Component");
-
-		MyOnWindowErrorComponent.prototype.onWindowError = sinon.stub();
-
-		this.oComponent = new MyOnWindowErrorComponent();
-
-		assert.equal(typeof this.oComponent._fnWindowErrorHandler, "function", "Handler has been created");
-
-		sinon.assert.calledWithExactly(this.addEventListenerSpy, "error", this.oComponent._fnWindowErrorHandler);
-		assert.equal(this.addEventListenerSpy.getCall(0).thisValue, window, "addEventListener has been called on the window object");
-
-		this.oComponent._fnWindowErrorHandler({
-			originalEvent: {
-				message: "Some error",
-				filename: "foo.js",
-				lineno: 123
-			}
-		});
-		sinon.assert.calledOnce(this.oComponent.onWindowError);
-		sinon.assert.calledWithExactly(this.oComponent.onWindowError,
-			"Some error", "foo.js", 123);
-
-
-		var handler = this.oComponent._fnWindowErrorHandler;
-
-		this.oComponent.destroy();
-
-		assert.equal(this.oComponent._fnWindowErrorHandler, undefined, "Handler has been removed");
-		sinon.assert.calledWithExactly(this.removeEventListenerSpy, "error", handler);
-		assert.equal(this.removeEventListenerSpy.getCall(0).thisValue, window, "removeEventListener has been called on the window object");
-	});
-
-	/**
-	 * @deprecated Since 1.119
-	 */
-	QUnit.test("onWindowBeforeUnload", function(assert) {
-		var MyOnWindowBeforeUnloadComponent = Component.extend("test.onWindowBeforeUnload.Component");
-
-		MyOnWindowBeforeUnloadComponent.prototype.onWindowBeforeUnload = sinon.stub();
-
-		this.oComponent = new MyOnWindowBeforeUnloadComponent();
-
-		assert.equal(typeof this.oComponent._fnWindowBeforeUnloadHandler, "function", "Handler has been created");
-		sinon.assert.calledWithExactly(this.addEventListenerSpy, "beforeunload", this.oComponent._fnWindowBeforeUnloadHandler);
-		assert.equal(this.addEventListenerSpy.getCall(0).thisValue, window, "addEventListener has been called on the window object");
-
-		var oFakeEvent = {preventDefault: function() {}};
-		this.oComponent._fnWindowBeforeUnloadHandler(oFakeEvent);
-		sinon.assert.calledOnce(this.oComponent.onWindowBeforeUnload);
-		sinon.assert.calledWithExactly(this.oComponent.onWindowBeforeUnload, oFakeEvent);
-
-
-		var handler = this.oComponent._fnWindowBeforeUnloadHandler;
-
-		this.oComponent.destroy();
-
-		assert.equal(this.oComponent._fnWindowBeforeUnloadHandler, undefined, "Handler has been removed");
-		sinon.assert.calledWithExactly(this.removeEventListenerSpy, "beforeunload", handler);
-		assert.equal(this.removeEventListenerSpy.getCall(0).thisValue, window, "removeEventListener has been called on the window object");
-	});
-
-	/**
-	 * @deprecated Since 1.119
-	 */
-	QUnit.test("onWindowUnload", function(assert) {
-		var MyOnWindowUnloadComponent = Component.extend("test.onWindowUnload.Component");
-
-		MyOnWindowUnloadComponent.prototype.onWindowUnload = sinon.stub();
-
-		this.oComponent = new MyOnWindowUnloadComponent();
-
-		assert.equal(typeof this.oComponent._fnWindowUnloadHandler, "function", "Handler has been created");
-		sinon.assert.calledWithExactly(this.addEventListenerSpy, "unload", this.oComponent._fnWindowUnloadHandler);
-		assert.equal(this.addEventListenerSpy.getCall(0).thisValue, window, "addEventListener has been called on the window object");
-
-		var oFakeEvent = {};
-		this.oComponent._fnWindowUnloadHandler(oFakeEvent);
-		sinon.assert.calledOnce(this.oComponent.onWindowUnload);
-		sinon.assert.calledWithExactly(this.oComponent.onWindowUnload, oFakeEvent);
-
-
-		var handler = this.oComponent._fnWindowUnloadHandler;
-
-		this.oComponent.destroy();
-
-		assert.equal(this.oComponent._fnWindowUnloadHandler, undefined, "Handler has been removed");
-		sinon.assert.calledWithExactly(this.removeEventListenerSpy, "unload", handler);
-		assert.equal(this.removeEventListenerSpy.getCall(0).thisValue, window, "removeEventListener has been called on the window object");
-	});
-
 	QUnit.module("Component Registry", {
 		beforeEach: function () {
 			cleanUpRegistry();
@@ -2041,10 +1851,6 @@ sap.ui.define([
 		var fnCallbackSpy = this.spy(function() {});
 		var aFilteredComponents = [];
 
-		/**
-		 * @deprecated As of 1.120, Component.registry has been deprecated
-		 */
-		assert.ok(Component.hasOwnProperty("registry"), "Component has static property to access registry");
 		assert.equal(ComponentRegistry.size, 3, "Return number of registered component instances");
 		assert.deepEqual(Object.keys(ComponentRegistry.all()).sort(), ["A", "B", "C"], "Return all registered component instances");
 		assert.ok(ComponentRegistry.get("B") === oFooB, "Return reference of component B from registry by ID");

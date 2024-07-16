@@ -120,4 +120,4 @@ sap.ui.define([
 	};
 
 	return RenameFormContainer;
-}, /* bExport= */true);
+});

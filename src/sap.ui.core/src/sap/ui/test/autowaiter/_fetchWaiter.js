@@ -68,4 +68,4 @@ sap.ui.define([
 	}
 
 	return oFetchWaiter;
-}, true);
+});

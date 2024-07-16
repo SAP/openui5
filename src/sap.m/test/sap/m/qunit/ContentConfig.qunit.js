@@ -2,16 +2,16 @@
 sap.ui.define([
 	"sap/m/TileAttribute",
 	"sap/m/library",
-	"sap/ui/core/Core",
-	"sap/m/ContentConfig"
-], function(TileAttribute,library,oCore,ContentConfig) {
+	"sap/m/ContentConfig",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(TileAttribute,library,ContentConfig,nextUIUpdate) {
 	"use strict";
 
 	//shortcut for sap.m.ContentConfigType
 	var ContentConfigType = library.ContentConfigType;
 
     QUnit.module("ContentConfig rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
             this.oTileAttribute1 =  new TileAttribute({
                     label: "Agreement Type:",
                     contentConfig: new ContentConfig("contConfig",{
@@ -28,7 +28,7 @@ sap.ui.define([
                     href:"https://www.sap.com/"
                 })
             }).placeAt("qunit-fixture");
-            oCore.applyChanges();
+            await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oTileAttribute1.destroy();

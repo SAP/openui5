@@ -30,7 +30,6 @@ sap.ui.define([
 	return Matcher.extend("sap.ui.test.matchers.AggregationFilled", /** @lends sap.ui.test.matchers.AggregationFilled.prototype */ {
 
 		metadata: {
-			publicMethods: ["isMatching"],
 			properties: {
 				/**
 				 * The name of the aggregation that is used for matching.

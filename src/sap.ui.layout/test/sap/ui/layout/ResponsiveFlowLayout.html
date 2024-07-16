@@ -6,30 +6,31 @@
 		<link href="ResponsiveFlowLayout.css" rel="stylesheet">
 		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-			data-sap-ui-async = "true"
-			data-sap-ui-compatVersion="edge"
-			data-sap-ui-libs="sap.ui.layout,sap.m"
-			data-sap-ui-onInit="module:local/ResponsiveFlowLayout"
-			data-sap-ui-resourceroots='{
+				data-sap-ui-async="true"
+				data-sap-ui-libs="sap.ui.layout,sap.m"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/ResponsiveFlowLayout"
+				data-sap-ui-resource-roots='{
 				"local": "./",
 				"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
 			}'
-			src="../../../../resources/sap-ui-core.js">
+		>
 		</script>
 	</head>
 	<body class="sapUiBody">
 		<h1 id="header">
 			Test Page for <code>sap.ui.layout.ResponsiveFlowLayout</code>
 		</h1>
-		<br />
+		<br>
 		<div id="RFLcheckBreak" class="paddingLeft10px"></div>
 		<div id="RFLcheckResponsive" class="paddingLeft10px"></div>
-		<br />
-		<div id="RFL1" class="sampleButtonBox" class="minWidth250px"></div>
-		<br />
+		<br>
+		<div id="RFL1" class="sampleButtonBox"></div>
+		<br>
 		<h2>Simple Example. Second button twice as big as the first one</h2>
-		<div id="RFL2" class="sampleButtonBox" class="minWidth150px"></div>
-		<br />
-		<div id="RFL3" class="sampleButtonBox" class="minWidth150px"></div>
+		<div id="RFL2" class="sampleButtonBox"></div>
+		<br>
+		<div id="RFL3" class="sampleButtonBox"></div>
 	</body>
 </html>

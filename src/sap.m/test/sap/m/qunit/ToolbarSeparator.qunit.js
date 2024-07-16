@@ -3,8 +3,8 @@ sap.ui.define([
 	"sap/m/ToolbarSeparator",
 	"sap/m/Button",
 	"sap/m/OverflowToolbar",
-	"sap/ui/core/Core"
-], function(ToolbarSeparator, Button, OverflowToolbar, Core) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(ToolbarSeparator, Button, OverflowToolbar, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("Test behavior in overflow toolbar");
@@ -30,7 +30,7 @@ sap.ui.define([
 			}),
 			oOverflowButton = oOverflowTB._getOverflowButton();
 		oOverflowTB.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.notOk(oSeparator1.hasStyleClass(ToolbarSeparator.CLASSNAME_OVERFLOW_TOOLBAR),

@@ -43,4 +43,4 @@ sap.ui.define([
 			changeHandler: HideControl
 		}
 	};
-}, /* bExport= */ true);
+});

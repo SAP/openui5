@@ -1,26 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head><meta charset="utf-8">
 	<title>Configurations and APIs</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="../../scripts/boot.js"></script>
-	<style>
-		.tableWrapper td {
-			vertical-align: top;
-		}
-
-		.tableWrapper caption {
-			text-align: left;
-			padding: 0.5rem 1rem;
-			font-weight: bold;
-		}
-
-		pre[caption]::before {
-			width: 800px !important;
-		}
-	</style>
+	<link rel="stylesheet" href="./api.css">
 </head>
 
 <body class="sapUiBody topicBody">
@@ -33,7 +19,7 @@
 				page/content administrator and translator.
 				Build-in configuration settings allow to easily create an appealing UI for the user.
 			</p>
-			<img src="img/ConfigurationEditorSample.png" alt="" style="margin-left:auto;width:400px;border:1px solid #f5f5f5">
+			<img src="img/ConfigurationEditorSample.png" alt style="margin-left:auto;width:400px;border:1px solid #f5f5f5">
 			<div>
 				<h2 id="createfile">Create a Configuration Module and Register it in the Cards Manifest</h2>
 				<p>
@@ -102,7 +88,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								</pre>
 							</td>
 							<td style="vertical-align: top;background-color: transparent; border:none;">
-								<img src="img/ConfigurationEditorForm.png" alt="" style="margin:2rem;width:400px;border:1px solid #f5f5f5">
+								<img src="img/ConfigurationEditorForm.png" alt style="margin:2rem;width:400px;border:1px solid #f5f5f5">
 							</td>
 						</tr>
 					</table>
@@ -1237,8 +1223,7 @@ validate : function (value) {
 							<td>false</td>
 							<td>integer/number</td>
 							<td>Whether the given minimum should be excluded.
-								<pre
-									class="lang-js">minimum: 10, exclusiveMinimum : true // 10 is not allowed, but 10.00001</pre>
+								<pre class="lang-js">minimum: 10, exclusiveMinimum : true // 10 is not allowed, but 10.00001</pre>
 							</td>
 							<td>1.86</td>
 						</tr>
@@ -1249,8 +1234,7 @@ validate : function (value) {
 							<td>false</td>
 							<td>integer/number</td>
 							<td>Whether the given maximum should be excluded.
-								<pre
-									class="lang-js">maximum: 20, exclusiveMaximum : true // 20 is not allowed, but 19.9999</pre>
+								<pre class="lang-js">maximum: 20, exclusiveMaximum : true // 20 is not allowed, but 19.9999</pre>
 							</td>
 							<td>1.86</td>
 						</tr>

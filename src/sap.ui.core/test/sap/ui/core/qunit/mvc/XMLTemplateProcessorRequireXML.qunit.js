@@ -348,27 +348,6 @@ sap.ui.define([
 			InstanceManager.closeAllDialogs();
 			InstanceManager.closeAllPopovers();
 		}
-	},
-
-	/**
-	 * @deprecated
-	 */
-	{
-		testDescription: "Parsing core:require in XMLView with fragment with missing definition in require context (future=false)",
-		viewName: ".view.XMLTemplateProcessorAsync_fragment_insufficient_require",
-		settings: {
-			async: {
-				create: createView,
-				spies: {
-					warning: [Log, "warning"]
-				}
-			}
-		},
-		future: false,
-		runAssertions: function (oView, mSpies, assert, bAsync) {
-			var oWarningSpy = mSpies.warning;
-			assert.ok(oWarningSpy.calledWith(sinon.match(/Event handler name 'Toast.show\('This is a toast'\)' could not be resolved to an event handler function/)));
-		}
 	}, {
 		testDescription: "Parsing core:require in XMLView with fragment with missing definition in require context (future=true)",
 		viewName: ".view.XMLTemplateProcessorAsync_fragment_insufficient_require",
@@ -409,27 +388,6 @@ sap.ui.define([
 			sinon.assert.neverCalledWith(oWarningSpy, "Variable: Toast isn't defined in the require context of the current XMLView/Fragment");
 			assert.ok(oWarningSpy.neverCalledWith(sinon.match(/Event handler name 'Toast.show\('This is a toast'\)' could not be resolved to an event handler function/)));
 		}
-	},
-
-	/**
-	 * @deprecated
-	 */
-	{
-		testDescription: "Parsing core:require in XMLView with fragment w/o require context (future=false)",
-		viewName: ".view.XMLTemplateProcessorAsync_fragment_require_noRequire",
-		settings: {
-			async: {
-				create: createView,
-				spies: {
-					warning: [Log, "warning"]
-				}
-			}
-		},
-		future: false,
-		runAssertions: function (oView, mSpies, assert, bAsync) {
-			var oWarningSpy = mSpies.warning;
-			assert.ok(oWarningSpy.calledWith(sinon.match(/Event handler name 'Toast.show\('Problem occurred'\)' could not be resolved to an event handler function/)));
-		}
 	}, {
 		testDescription: "Parsing core:require in XMLView with fragment w/o require context (future=true)",
 		viewName: ".view.XMLTemplateProcessorAsync_fragment_require_noRequire",
@@ -448,33 +406,6 @@ sap.ui.define([
 		future: true,
 		runAssertions: function (oView, mSpies, assert, bAsync) {
 
-		}
-	},
-
-	/**
-	 * @deprecated
-	 */
-	{
-		testDescription: "Parsing core:require in XMLView with nested view and the require context isn't forwarded to nested view (future=false)",
-		viewName: ".view.XMLTemplateProcessorAsync_require_nested",
-		settings: {
-			async: {
-				create: createView,
-				spies: {
-					create: [View, "create"],
-					warning: [Log, "warning"]
-				}
-			}
-		},
-		future: false,
-		runAssertions: async function (oView, mSpies, assert, bAsync) {
-			var oCreateSpy = mSpies.create;
-			var oWarningSpy = mSpies.warning;
-			assert.ok(oCreateSpy.calledTwice, "public create is called for the nested view");
-
-			await oCreateSpy.getCall(0).returnValue;
-
-			assert.ok(oWarningSpy.calledWith(sinon.match(/Event handler name 'Box.show\('MessageBox'\)' could not be resolved to an event handler function/)));
 		}
 	}, {
 		testDescription: "Parsing core:require in XMLView with nested view and the require context isn't forwarded to nested view (future=true)",
@@ -498,56 +429,6 @@ sap.ui.define([
 		runAssertions: function (oView, mSpies, assert, bAsync) {
 
 		}
-	},
-
-	/**
-	 * @deprecated
-	 */
-	{
-		testDescription: "Parsing core:require in ExtensionPoint (future=false)",
-		settings: {
-			async: {
-				create: function () {
-					return Component.create({
-						name: TESTDATA_PREFIX + ".extension-points.Child"
-					}).then(function (oComponent) {
-						return oComponent.getRootControl().loaded();
-					});
-				},
-				spies: {
-					warning: [Log, "warning"]
-				}
-			}
-		},
-		future: false,
-		runAssertions: function (oView, mSpies, assert, bAsync) {
-			var oWarningSpy = mSpies.warning;
-
-			var MessageBox = sap.ui.require("sap/m/MessageBox");
-			assert.ok(MessageBox, "Class is loaded");
-			var oBoxShowSpy = this.spy(MessageBox, "show");
-
-			var oMessageBoxButton = oView.getContent()[0].byId("requireBtn");
-			oMessageBoxButton.fireEvent("press");
-
-			assert.ok(oBoxShowSpy.calledOnce, "show method is called once");
-			assert.equal(oBoxShowSpy.getCall(0).args[0], "Do you really want to close?", "The method is called with correct argument");
-
-			var MessageToast = sap.ui.require("sap/m/MessageToast");
-			assert.ok(MessageToast, "Class is loaded");
-			var oToastShowSpy = this.spy(MessageToast, "show");
-
-			var oMessageToastButton = oView.getContent()[2].byId("noRequireBtn");
-			oMessageToastButton.fireEvent("press");
-			assert.equal(oToastShowSpy.callCount, 0, "Toast.show isn't called because the core:require is missing");
-
-			assert.ok(oWarningSpy.calledWith(sinon.match(/Event handler name 'Toast.show\('Do you really want to close\?'\)' could not be resolved to an event handler function/)));
-
-			return new Promise(function(resolve, reject) {
-				InstanceManager.closeAllDialogs();
-				resolve();
-			});
-		}
 	}, {
 		testDescription: "Parsing core:require in ExtensionPoint (future=true)",
 		settings: {
@@ -569,84 +450,6 @@ sap.ui.define([
 		future: true,
 		runAssertions: function (oView, mSpies, assert, bAsync) {
 
-		}
-	},
-
-	/**
-	 * @deprecated
-	 */
-	{
-		testDescription: "Parsing core:require in ExpressionBinding (future=false)",
-		viewName: ".view.XMLTemplateProcessorAsync_require_expressionFaulty",
-		settings: {
-			async: {
-				create: createView,
-				spies: {
-					/**
-					 * @deprecated As of version 1.120
-					 */
-					requireSync: [sap.ui, "requireSync"]
-				}
-			}
-		},
-		future: false,
-		runAssertions: function (oView, mSpies, assert, bAsync) {
-
-			var oModel = new JSONModel({
-				amount: 1001,
-				foobar: "bar",
-				test: "test",
-				begin: false,
-				exist: false,
-				text1: "text1",
-				text2: "text2",
-				number: 123.45678,
-				items: [{
-					title: "item1"
-				}, {
-					title: "item2"
-				}, {
-					title: "item3"
-				}, {
-					title: "item4"
-				}],
-				date: 1697125987000
-			});
-
-			oView.setModel(oModel);
-
-			var oList = oView.byId("list");
-			assert.equal(oList.getItems().length, 4, "The Aggregation binding factory works as expected");
-			assert.strictEqual(oList.getItems()[0].getTitle(), "item1", "The title is set in list item");
-
-			assert.strictEqual(oView.byId("foo").getText(), "foo", "foo is set");
-			assert.strictEqual(oView.byId("bar").getVisible(), false, "visible is set");
-			assert.strictEqual(oView.byId("formatter").getText(), "test", "text is set");
-			assert.strictEqual(oView.byId("formatterGlobal").getText(), "test", "text is set");
-			assert.strictEqual(oView.byId("formatterLocal").getText(), "TEST", "text is set");
-			assert.strictEqual(oView.byId("text").getText(), "text2", "text2 is set");
-			assert.strictEqual(oView.byId("type").getText(), "123.45678", "text is formatted with correct type");
-
-			var oController = oView.getController();
-			var oButtonPressSpy = this.spy(oController, "onButtonPress");
-
-			var oButton = oView.byId("button");
-			oButton.firePress();
-
-			assert.equal(oButtonPressSpy.callCount, 1, "Button's press handler is called");
-			sinon.assert.calledWith(oButtonPressSpy, "2023-10");
-
-			oButtonPressSpy.resetHistory();
-
-			var oButton1 = oView.byId("button1");
-			oButton1.firePress();
-
-			assert.equal(oButtonPressSpy.callCount, 1, "Button's press handler is called");
-			sinon.assert.calledWith(oButtonPressSpy, "2023");
-			/**
-			 * @deprecated As of version 1.120
-			 */
-			sinon.assert.notCalled(mSpies.requireSync);
 		}
 	}].forEach(function (oConfig) {
 		// Run async variant

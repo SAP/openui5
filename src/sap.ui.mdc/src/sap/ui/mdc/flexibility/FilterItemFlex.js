@@ -79,4 +79,4 @@ sap.ui.define([
 
 
 	return oFilterItemFlex;
-}, /* bExport= */ true);
+});

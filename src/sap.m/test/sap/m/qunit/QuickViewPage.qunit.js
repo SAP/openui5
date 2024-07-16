@@ -1,26 +1,24 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/m/App",
 	"sap/m/Avatar",
 	"sap/m/library",
 	"sap/m/Page",
 	"sap/m/QuickViewPage",
 	"sap/m/QuickViewGroup",
-	"sap/m/QuickViewGroupElement"
+	"sap/m/QuickViewGroupElement",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	JSONModel,
-	Core,
-	QUnitUtils,
 	App,
 	Avatar,
 	library,
 	Page,
 	QuickViewPage,
 	QuickViewGroup,
-	QuickViewGroupElement
+	QuickViewGroupElement,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -139,7 +137,7 @@ sap.ui.define([
 
 			this.oQuickViewPage.setModel(oModel);
 			oPage.addContent(this.oQuickViewPage);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oQuickViewPage.destroy();
@@ -156,7 +154,7 @@ sap.ui.define([
 
 		this.oQuickViewPage.setModel(oModel);
 		oPage.addContent(this.oQuickViewPage);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		// Assert
@@ -201,7 +199,7 @@ sap.ui.define([
 
 			this.oQuickViewPage.setModel(oModel);
 			oPage.addContent(this.oQuickViewPage);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oQuickViewPage.destroy();
@@ -218,7 +216,7 @@ sap.ui.define([
 		mData.description = "";
 		mData.iconVisibility = false;
 		oModel.setData(mData);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oQuickViewPage.$()[0].childElementCount, 1, "only the form should be rendered");
 	});
@@ -232,53 +230,6 @@ sap.ui.define([
 			this.oQuickViewPage.destroy();
 			this.oQuickViewPage = null;
 		}
-	});
-
-	/**
-	 * @deprecated As of version 1.92
-	 */
-	QUnit.test("Deprecated property 'icon'", function (assert) {
-		// Arrange
-		var sIcon = "sap-icon://building";
-		this.oQuickViewPage.setIcon(sIcon);
-		Core.applyChanges();
-		var oAvatar = this.oQuickViewPage._mPageContent.header.getContent()[AVATAR_INDEX];
-
-		// Assert
-		assert.strictEqual(oAvatar.getSrc(), sIcon, "'icon' property should be correctly propagated to inner avatar");
-	});
-
-	/**
-	 * @deprecated As of version 1.111
-	 */
-	QUnit.test("crossApplicationNavigation when property 'icon and 'titleUrl' are set", function (assert) {
-		// Arrange
-		var oStub = sinon.stub(this.oQuickViewPage, "_crossApplicationNavigation");
-		this.oQuickViewPage.setTitleUrl("someTitleUrl");
-		this.oQuickViewPage.setAvatar(new Avatar({src: "sap-icon://building"}));
-		Core.applyChanges();
-		var oAvatar = this.oQuickViewPage._mPageContent.header.getContent()[AVATAR_INDEX];
-
-		// Act
-		QUnitUtils.triggerMouseEvent(oAvatar.getDomRef(), "tap");
-
-		// Assert
-		assert.ok(oStub.called, "crossApplicationNavigation should happen");
-	});
-
-	/**
-	 * @deprecated As of version 1.92
-	 */
-	QUnit.test("Deprecated property 'fallbackIcon'", function (assert) {
-		// Arrange
-		var sFallbackIcon = "sap-icon://error";
-		this.oQuickViewPage.setIcon("some/invalid/image.jpg");
-		this.oQuickViewPage.setFallbackIcon(sFallbackIcon);
-		Core.applyChanges();
-		var oAvatar = this.oQuickViewPage._mPageContent.header.getContent()[AVATAR_INDEX];
-
-		// Assert
-		assert.strictEqual(oAvatar.getFallbackIcon(), sFallbackIcon, "'fallbackIcon' property should be correctly propagated to inner avatar");
 	});
 
 	QUnit.module("Avatar", {
@@ -299,7 +250,7 @@ sap.ui.define([
 			displayShape: AvatarShape.Square
 		});
 		this.oQuickViewPage.setAvatar(oAvatar);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oRenderedAvatar = this.oQuickViewPage._mPageContent.header.getContent()[AVATAR_INDEX];
 
@@ -346,7 +297,7 @@ sap.ui.define([
 
 		this.oQuickViewPage.setTitle("Title");
 		this.oQuickViewPage.setTitleUrl("www.sap.com");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oRenderedAvatar = this.oQuickViewPage._getAvatar();
 

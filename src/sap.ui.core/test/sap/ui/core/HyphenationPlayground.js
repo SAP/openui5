@@ -136,7 +136,7 @@ sap.ui.require([
 		};
 
 		var getFilteredLangs = function () {
-			var langsParam = UriParameters.fromQuery(window.location.search).get("filter-langs");
+			var langsParam = new URLSearchParams(window.location.search).get("filter-langs");
 			if (langsParam != null) {
 				return langsParam.split(",");
 			}

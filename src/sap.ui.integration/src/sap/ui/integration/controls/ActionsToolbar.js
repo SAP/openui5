@@ -147,18 +147,12 @@ sap.ui.define([
 			aButtons = [],
 			aActions = [],
 			oActionSheet = this.getAggregation("_actionSheet"),
-			oHost = oCard.getHostInstance(),
-			oExtension = oCard.getAggregation("_extension");
+			oHost = oCard.getHostInstance();
+
+		oCard.getAggregation("_extension");
 
 		if (oHost) {
 			aActions = aActions.concat(oHost.getActions() || []);
-		}
-
-		/**
-		 * @deprecated As of version 1.85
-		 */
-		if (oExtension) {
-			aActions = aActions.concat(oExtension.getActions() || []);
 		}
 
 		this._aActions = aActions;

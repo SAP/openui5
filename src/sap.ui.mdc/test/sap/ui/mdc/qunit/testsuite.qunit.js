@@ -46,6 +46,7 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				},
 				sinon: false
 			},
+
 			"ConditionModel": {
 				group: "Condition",
 				module: "./condition/ConditionModel.qunit",
@@ -54,6 +55,7 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				},
 				sinon: false
 			},
+
 			"FilterConverter": {
 				group: "Condition",
 				module: "./condition/FilterConverter.qunit",
@@ -62,6 +64,7 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				},
 				sinon: false
 			},
+
 			"ConditionConverter": {
 				group: "Condition",
 				module: "./condition/ConditionConverter.qunit",
@@ -70,6 +73,7 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				},
 				sinon: false
 			},
+
 			"FilterOperatorUtil": {
 				group: "Condition",
 				module: "./condition/FilterOperatorUtil.qunit",
@@ -78,6 +82,7 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				},
 				sinon: false
 			},
+
 			"OperatorDynamicDateOption": {
 				group: "Condition",
 				module: "./condition/OperatorDynamicDateOption.qunit",
@@ -86,6 +91,7 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				},
 				sinon: false
 			},
+
 			"ActionToolbar": {
 				group: "ActionToolbar",
 				coverage: {
@@ -95,6 +101,7 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				},
 				module: "./actiontoolbar/ActionToolbar.qunit"
 			},
+
 			"ActionToolbarAction": {
 				group: "ActionToolbar",
 				coverage: {
@@ -105,6 +112,7 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				module: "./actiontoolbar/ActionToolbarAction.qunit"
 
 			},
+
 			"ActionToolbarActionCondenser": {
 				group: "ActionToolbar",
 				module: "./actiontoolbar/Condenser.qunit",
@@ -120,29 +128,35 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				},
 				sinon: false
 			},
+
 			"Field Testsuite" : {
 				title: "Field Testsuite",
 				group: "Testsuite",
 				page: "test-resources/sap/ui/mdc/qunit/field/testsuite.field.qunit.html"
 			},
+
 			"Link Testsuite": {
 				title: "Link Testsuite",
 				group: "Testsuite",
 				page: "test-resources/sap/ui/mdc/qunit/link/testsuite.link.qunit.html"
 			},
+
 			"Table Testsuite": {
 				title: "Table Testsuite",
 				group: "Testsuite",
 				page: "test-resources/sap/ui/mdc/qunit/table/testsuite.table.qunit.html"
 			},
+
 			"FilterBar": {
 				group: "FilterBar Testsuite",
 				page: "test-resources/sap/ui/mdc/qunit/filterbar/testsuite.filterbar.qunit.html"
 			},
+
 			"FilterUtil": {
 				group: "Util",
 				module: "./util/FilterUtil.qunit"
 			},
+
 			"DateUtil": {
 				group: "Util",
 				module: "./util/DateUtil.qunit",
@@ -151,10 +165,12 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				},
 				sinon: false
 			},
+
 			"PropertyHelper": {
 				group: "Util",
 				module: "./util/{name}.qunit"
 			},
+
 			"loadModules": {
 				group: "Util",
 				module: "./util/loadModules.qunit",
@@ -163,9 +179,11 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				},
 				sinon: true
 			},
+
 			"EnforceSemanticRendering": {
 				title: "QUnit Page for Semantic Rendering Coverage"
 			},
+
 			// "ExploredSamples": {
 			// 	runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
 			// 	sinon: {
@@ -186,10 +204,12 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				group: "DesignTime",
 				module: "./designtime/Designtime.qunit"
 			},
+
 			"Designtime/Library": {
 				group: "Designtime",
 				module: "./designtime/Library.qunit"
 			},
+
 			"Designtime/Designtime_Table" : {
 				group: "Designtime",
 				module: "./designtime/Designtime_Table.qunit"
@@ -200,54 +220,25 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				module: "./mixin/DelegateMixin.qunit",
 				sinon: true
 			},
-			/**
-			 * @deprecated since 1.114
-			 */
-			"TypeUtil": {
-				group: "Util",
-				module: "./util/TypeUtil.qunit",
-				coverage: {
-					only: "[sap/ui/mdc/util]"
-				},
-				sinon: false
-			},
-			/**
-			 * @deprecated since 1.114
-			 */
-			"ODataTypeUtil": {
-				group: "Util",
-				module: "./odata/TypeUtil.qunit",
-				coverage: {
-					only: "[sap/ui/mdc/odata]"
-				},
-				sinon: true
-			},
-			/**
-			 * @deprecated since 1.114
-			 */
-			"ODataV4TypeUtil": {
-				group: "Util",
-				module: "./odata/v4/TypeUtil.qunit",
-				coverage: {
-					only: "[delegates/odata/v4]"
-				},
-				sinon: true
-			},
+
 			"AdaptationMixin": {
 				group: "Mixin",
 				module: "./mixin/AdaptationMixin.qunit",
 				sinon: true
 			},
+
 			"FilterIntegrationMixin": {
 				group: "Mixin",
 				module: "./mixin/FilterIntegrationMixin.qunit",
 				sinon: true
 			},
+
 			"InfoBar": {
 				group: "Util",
 				module: "./util/InfoBar.qunit",
 				sinon: true
 			},
+
 			"PromiseCache": {
 				group: "Util",
 				module: "./util/PromiseCache.qunit",
@@ -256,28 +247,34 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				},
 				sinon: true
 			},
+
 			"PromiseMixin": {
 				group: "Mixin",
 				module: "./mixin/PromiseMixin.qunit",
 				sinon: true
 			},
+
 			"PropertyHelperMixin": {
 				group: "Mixin",
 				module: "./mixin/PropertyHelperMixin.qunit",
 				sinon: true
 			},
+
 			"ValueHelp Testsuite" : {
 				title: "ValueHelp Testsuite",
 				group: "Testsuite",
 				page: "test-resources/sap/ui/mdc/qunit/valuehelp/testsuite.valuehelp.qunit.html"
 			},
+
 			"Generic Testsuite": {
 				page: "test-resources/sap/ui/mdc/qunit/testsuite.generic.qunit.html"
 			},
+
 			"TypeMap Testsuite": {
 				group: "util",
 				page: "test-resources/sap/ui/mdc/qunit/typemap/testsuite.typemap.qunit.html"
 			},
+
 			"Smoke Testsuite": {
 				title: "Smoke Testsuite",
 				group: "Testsuite",

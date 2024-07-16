@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/getCompatibilityVersion",
 	"sap/ui/core/Locale",
 	"sap/base/strings/formatMessage",
 	'sap/base/util/isPlainObject',
@@ -11,8 +10,7 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/base/i18n/Localization",
 	"sap/base/util/deepClone"
-], function (
-	getCompatibilityVersion,
+], function(
 	Locale,
 	formatMessage,
 	isPlainObject,
@@ -270,18 +268,6 @@ sap.ui.define([
 		}
 
 		return vData;
-	};
-
-	/**
-	 * @deprecated As of version 1.119
-	 * @returns {boolean} Whether binding syntax is complex.
-	 */
-	Utils.isBindingSyntaxComplex = function () {
-		if (Utils._isBindingSyntaxComplex === undefined) {
-			Utils._isBindingSyntaxComplex = getCompatibilityVersion("sapCoreBindingSyntax").compareTo("1.26") >= 0;
-		}
-
-		return Utils._isBindingSyntaxComplex;
 	};
 
 	/**

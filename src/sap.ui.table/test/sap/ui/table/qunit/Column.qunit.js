@@ -9,9 +9,7 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/CreationRow",
 	"sap/ui/table/menus/ColumnHeaderMenuAdapter",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/Integer",
-	"sap/ui/unified/Menu",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/table/columnmenu/Item",
@@ -20,7 +18,6 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Link",
 	"sap/m/CheckBox",
-	"sap/ui/core/Element",
 	"sap/ui/core/dnd/DragDropInfo"
 ], function(
 	TableQUnitUtils,
@@ -31,9 +28,7 @@ sap.ui.define([
 	Table,
 	CreationRow,
 	ColumnHeaderMenuAdapter,
-	JSONModel,
 	IntegerType,
-	Menu,
 	ColumnMenu,
 	QuickAction,
 	Item,
@@ -42,7 +37,6 @@ sap.ui.define([
 	Text,
 	Link,
 	CheckBox,
-	Element,
 	DragDropInfo
 ) {
 	"use strict";
@@ -84,33 +78,6 @@ sap.ui.define([
 		test(false, false, "dummy");
 		test(false, true, null);
 		test(false, false, null);
-	});
-
-	/**
-	 * @deprecated As of Version 1.119
-	 */
-	QUnit.test("shouldRender with grouping", function(assert) {
-		const that = this;
-
-		function test(bShouldRender, bVisible, bGrouped, vTemplate) {
-			that._oColumn.setVisible(bVisible);
-			if (that._oColumn.setGrouped) {
-				that._oColumn.setGrouped(bGrouped);
-			}
-			that._oColumn.setTemplate(vTemplate);
-
-			const sMessage = "Returned " + bShouldRender + ": " + (bVisible ? "Visible" : "Not visible") + ", " + (bGrouped ? "grouped" : "not grouped") + ", " + (vTemplate != null ? ",has template" : "has no template");
-			assert.strictEqual(that._oColumn.shouldRender(), bShouldRender, sMessage);
-		}
-
-		test(true, true, false, "dummy");
-		test(false, true, true, "dummy");
-		test(false, false, false, "dummy");
-		test(false, false, true, "dummy");
-		test(false, true, true, null);
-		test(false, true, false, null);
-		test(false, false, false, null);
-		test(false, false, true, null);
 	});
 
 	QUnit.test("#isDragAllowed", async function(assert) {
@@ -240,22 +207,6 @@ sap.ui.define([
 		this._oColumn._setCellContentVisibilitySettings({standard: false});
 		this._oColumn._setCellContentVisibilitySettings();
 		assert.ok(oInvalidate.notCalled, "Column is not invalidated");
-	});
-
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("'sorted' and 'sortOrder' are bound", function(assert) {
-		this._oColumn.setModel(new JSONModel());
-		this._oColumn.bindProperty("sorted", {path: "/sorted"});
-		this._oColumn.bindProperty("sortOrder", {path: "/sortOrder"});
-		this._oColumn.getModel().setData({
-			sorted: true,
-			sortOrder: "Descending"
-		});
-
-		assert.strictEqual(this._oColumn.getSorted(), true, "sorted property");
-		assert.strictEqual(this._oColumn.getSortOrder(), "Descending", "sortOrder property");
 	});
 
 	QUnit.module("#autoResize", {
@@ -652,63 +603,6 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * @deprecated As of version 1.110
-	 */
-	QUnit.test("Pre-Check Menu Item Creation - Group", function(assert) {
-
-		//######################################################################################################
-		// Group menu item
-		//######################################################################################################
-
-		// reset Column Properties
-		this._oColumn.setFilterProperty("");
-		this._oColumn.setShowFilterMenuEntry(true);
-		this._oColumn.setSortProperty("");
-		this._oColumn.setShowSortMenuEntry(true);
-
-		// check column without parent
-		this._oTable.setEnableGrouping(true);
-		this._oColumn.setSortProperty("mySortPropertyName");
-		assert.ok(!this._oColumn.isGroupableByMenu(),
-			"Not groupable by menu:"
-			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
-			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
-			+ ", enableGrouping: " + this._oTable.getEnableGrouping());
-
-		// check column with parent
-		this._oTable.addColumn(this._oColumn);
-
-		this._oTable.setEnableGrouping(true);
-		this._oColumn.setSortProperty("");
-		assert.ok(!this._oColumn.isGroupableByMenu(),
-			"Not groupable by menu:"
-			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
-			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
-			+ ", enableGrouping: " + this._oTable.getEnableGrouping());
-
-		this._oTable.setEnableGrouping(false);
-		assert.ok(!this._oColumn.isGroupableByMenu(),
-			"Not groupable by menu:"
-			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
-			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
-			+ ", enableGrouping: " + this._oTable.getEnableGrouping());
-
-		this._oColumn.setSortProperty("mySortPropertyName");
-		assert.ok(!this._oColumn.isGroupableByMenu(),
-			"Not groupable by menu:"
-			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
-			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
-			+ ", enableGrouping: " + this._oTable.getEnableGrouping());
-
-		this._oTable.setEnableGrouping(true);
-		assert.ok(this._oColumn.isGroupableByMenu(),
-			"Not groupable by menu:"
-			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
-			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
-			+ ", enableGrouping: " + this._oTable.getEnableGrouping());
-	});
-
 	QUnit.test("Pre-Check Menu Item Creation - Sort and Filter", function(assert) {
 
 		//######################################################################################################
@@ -768,158 +662,6 @@ sap.ui.define([
 			"Not sortable by menu:"
 			+ " sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
 			+ ", showSortMenuEntry: " + this._oColumn.getShowSortMenuEntry());
-	});
-
-	/**
-	 * @deprecated As of version 1.117
-	 */
-	QUnit.module("Column Menu", {
-		beforeEach: async function() {
-			const oModel = new JSONModel();
-			oModel.setData([{myProp: "someValue", myOtherProp: "someOtherValue"}]);
-			this._oTable = new Table();
-			this._oTable.bindRows("/");
-			this._oTable.setModel(oModel);
-			this._oColumnWithColumnMenu = new Column({
-				template: new TableQUnitUtils.TestControl({text: "col1value"}),
-				label: new TableQUnitUtils.TestControl({text: "col1header"}),
-				filterProperty: "myProp",
-				showFilterMenuEntry: true
-			});
-
-			this._oColumnWithUnifiedMenu = new Column({
-				template: new TableQUnitUtils.TestControl({text: "col2value"}),
-				label: new TableQUnitUtils.TestControl({text: "col2header"}),
-				filterProperty: "myOtherProp",
-				showFilterMenuEntry: true,
-				menu: new Menu()
-			});
-
-			this._oTable.addColumn(this._oColumnWithColumnMenu);
-			this._oTable.addColumn(this._oColumnWithUnifiedMenu);
-
-			this._oTable.placeAt("qunit-fixture");
-			await nextUIUpdate();
-		},
-		afterEach: function() {
-			this._oColumnWithColumnMenu.destroy();
-			this._oColumnWithUnifiedMenu.destroy();
-			this._oTable.destroy();
-		}
-	});
-
-	/**
-	 * @deprecated As of version 1.117
-	 */
-	QUnit.test("Filter on Column with ColumnMenu and UnifiedMenu", function(assert) {
-		const that = this;
-		const done = assert.async();
-		const oCellDomRef = this._oColumnWithColumnMenu.getDomRef();
-
-		this._oColumnWithColumnMenu.attachEventOnce("columnMenuOpen", function() {
-			TableQUnitUtils.wait(0).then(function() {
-				const oColumnMenu = that._oColumnWithColumnMenu.getMenu();
-				const oSpyColumnMenu = that.spy(oColumnMenu, "_setFilterValue");
-				that._oColumnWithColumnMenu.filter("filterValue");
-				that._oColumnWithColumnMenu._openHeaderMenu(oCellDomRef);
-
-				const oFilterField = Element.getElementById(oColumnMenu.getId() + "-filter");
-				assert.equal(oFilterField.getValue(), "filterValue", "Filter value set on ColumnMenu");
-				assert.ok(oSpyColumnMenu.called, "_setFilterValue called on ColumnMenu");
-
-				const oUnifiedMenu = that._oColumnWithUnifiedMenu.getMenu();
-				// implement a dummy function to allow usage of sinon.spy
-				oUnifiedMenu._setFilterValue = function() {};
-				const oSpyUnifiedMenu = that.spy(oUnifiedMenu, "_setFilterValue");
-
-				// if filter is called on a column, the filter state of the other columns must be updated as well
-				const oSpyColumnMenuFilterState = that.spy(oColumnMenu, "_setFilterState");
-				that._oColumnWithUnifiedMenu.filter("filterValue");
-				assert.ok(!oSpyUnifiedMenu.called, "_setFilterValue not called on UnifiedMenu");
-				assert.ok(oSpyColumnMenuFilterState.calledOnce, "_setFilterState called on ColumnMenu");
-				done();
-			});
-		});
-
-		this._oColumnWithColumnMenu._openHeaderMenu(oCellDomRef);
-	});
-
-	/**
-	 * @deprecated As of version 1.110
-	 */
-	QUnit.test("Set Grouping", function(assert) {
-		const done = assert.async();
-		const oTable = this._oTable;
-		const oColumn = this._oColumnWithColumnMenu;
-		const oCellDomRef = oColumn.getDomRef();
-		oTable.setGroupBy = function() {};
-		const oSetGroupSpy = sinon.spy(oTable, "setGroupBy");
-
-		oTable.setEnableGrouping(true);
-		oColumn.setSortProperty("myProp");
-
-		oColumn.attachEventOnce("columnMenuOpen", function() {
-			TableQUnitUtils.wait(0).then(function() {
-				const oGroupMenuItem = oColumn.getMenu().getItems()[3];
-				assert.strictEqual(oGroupMenuItem.getText(), TableUtils.getResourceBundle().getText("TBL_GROUP"), "The group menu item exists");
-				oGroupMenuItem.fireSelect();
-				assert.ok(oSetGroupSpy.calledOnce, "setGroupBy is called");
-				assert.ok(oSetGroupSpy.calledWithExactly(oColumn), "setGroupBy is called with the correct parameter");
-				assert.equal(document.activeElement, oTable.getDomRef("rowsel0"), "Focus moves to the row selector cell");
-
-				oTable.attachEventOnce("rowsUpdated", function() {
-					setTimeout(function() {
-						oColumn._openHeaderMenu(oCellDomRef);
-						assert.strictEqual(oGroupMenuItem.getText(), TableUtils.getResourceBundle().getText("TBL_GROUP"), "The group menu item exists");
-						oGroupMenuItem.fireSelect();
-						assert.ok(oSetGroupSpy.calledTwice, "setGroupBy is called");
-						assert.ok(oSetGroupSpy.calledWithExactly(oColumn), "setGroupBy is called with the correct parameter");
-						assert.equal(document.activeElement, oTable.getDomRef("noDataCnt"), "Focus moves to the NoData element");
-
-						done();
-					}, 0);
-				});
-				oTable.getModel().setData([]);
-			});
-		});
-
-		oColumn._openHeaderMenu(oCellDomRef);
-	});
-
-	/**
-	 * @deprecated As of version 1.117
-	 */
-	QUnit.test("Localization and Invalidation", function(assert) {
-		const done = assert.async();
-		const that = this;
-		const oCellDomRef = this._oColumnWithColumnMenu.getDomRef();
-
-		this._oColumnWithColumnMenu.attachEventOnce("columnMenuOpen", function() {
-			TableQUnitUtils.wait(0).then(function() {
-				const oColumnMenu = that._oColumnWithColumnMenu.getMenu();
-				assert.ok(!oColumnMenu._bInvalidated, "ColumnMenu not invalidated");
-				that._oTable._invalidateColumnMenus();
-				assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
-				that._oColumnWithColumnMenu._openHeaderMenu(oCellDomRef);
-				assert.ok(!oColumnMenu._bInvalidated, "ColumnMenu not invalidated");
-
-				that._oColumnWithColumnMenu.setFilterProperty("myFilterPropertyName");
-				assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
-				that._oColumnWithColumnMenu._openHeaderMenu(oCellDomRef);
-				that._oColumnWithColumnMenu.setShowFilterMenuEntry(false);
-				assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
-
-				that._oColumnWithColumnMenu._openHeaderMenu(oCellDomRef);
-				that._oColumnWithColumnMenu.setSortProperty("mySortPropertyName");
-				assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
-				that._oColumnWithColumnMenu._openHeaderMenu(oCellDomRef);
-				that._oColumnWithColumnMenu.setShowSortMenuEntry(false);
-				assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
-				done();
-			});
-		});
-
-		this._oColumnWithColumnMenu._openHeaderMenu(oCellDomRef);
 	});
 
 	QUnit.module("Changes that affect rows", {
@@ -1477,213 +1219,6 @@ sap.ui.define([
 		oUnlinkSpy.restore();
 	});
 
-	/**
-	 * @deprecated As of version 1.117
-	 */
-	QUnit.module("Column Visibility Submenu", {
-		beforeEach: async function() {
-			const oModel = new JSONModel();
-			oModel.setData([{myProp: "someValue", myOtherProp: "someOtherValue"}]);
-			this._oTable = new Table();
-			this._oTable.bindRows("/");
-			this._oTable.setModel(oModel);
-			this._oTable.setShowColumnVisibilityMenu(true);
-
-			this._oColumn1 = new Column({
-				template: new TableQUnitUtils.TestControl({text: "col1value"}),
-				label: new TableQUnitUtils.TestControl({text: "col1header"})
-			});
-
-			this._oColumn2 = new Column({
-				template: new TableQUnitUtils.TestControl({text: "col2value"}),
-				label: new TableQUnitUtils.TestControl({text: "col2header"})
-			});
-
-			this._oTable.addColumn(this._oColumn1);
-			this._oTable.addColumn(this._oColumn2);
-
-			this._oTable.placeAt("qunit-fixture");
-			await nextUIUpdate();
-		},
-		afterEach: function() {
-			this._oColumn1.destroy();
-			this._oColumn2.destroy();
-			this._oTable.destroy();
-		}
-	});
-
-	QUnit.test("Visibility Submenu number of items", function(assert) {
-		const that = this;
-		const done = assert.async();
-		const oCellDomRef = that._oColumn1.getDomRef();
-
-		this._oColumn1.attachEventOnce("columnMenuOpen", function() {
-			TableQUnitUtils.wait(0).then(function() {
-				let oColumnMenuBefore = that._oColumn1.getMenu();
-				let oVisibilitySubmenu = oColumnMenuBefore.getItems()[0].getSubmenu();
-				assert.strictEqual(oVisibilitySubmenu.getItems().length, 2, "The visibility submenu has 2 items");
-
-				that._oTable.removeColumn(that._oColumn2);
-				that._oColumn1._openHeaderMenu(oCellDomRef);
-				let oColumnMenuAfter = that._oColumn1.getMenu();
-				oVisibilitySubmenu = oColumnMenuAfter.getItems()[0].getSubmenu();
-				assert.strictEqual(oColumnMenuBefore, oColumnMenuAfter, "The column menu is not being recreated");
-				assert.strictEqual(oVisibilitySubmenu.getItems().length, 1, "The visibility submenu has 1 items");
-
-				oColumnMenuBefore = oColumnMenuAfter;
-				that._oTable.removeAllColumns();
-				that._oTable.addColumn(that._oColumn1);
-				that._oTable.addColumn(that._oColumn2);
-				that._oColumn3 = new Column({
-					template: new TableQUnitUtils.TestControl({text: "col3value"}),
-					label: new TableQUnitUtils.TestControl({text: "col3header"})
-				});
-				that._oTable.addColumn(that._oColumn3);
-				that._oColumn1._openHeaderMenu(oCellDomRef);
-				oColumnMenuAfter = that._oColumn1.getMenu();
-				oVisibilitySubmenu = oColumnMenuAfter.getItems()[0].getSubmenu();
-				assert.strictEqual(oColumnMenuBefore, oColumnMenuAfter, "The column menu is not being recreated");
-				assert.strictEqual(oVisibilitySubmenu.getItems().length, 3, "The visibility submenu has 3 items");
-
-				const spy = that.spy(that._oColumn3, "exit");
-				that._oColumn3.destroy();
-				assert.ok(spy.calledOnce, "The exit function was called");
-				done();
-			});
-		});
-
-		this._oColumn1._openHeaderMenu(oCellDomRef);
-	});
-
-	QUnit.test("Set Visibility", function(assert) {
-		const that = this;
-		const done = assert.async();
-		const oCell1DomRef = this._oColumn1.getDomRef();
-		const oCell2DomRef = this._oColumn2.getDomRef();
-
-		this._oColumn1.attachEventOnce("columnMenuOpen", function() {
-			TableQUnitUtils.wait(0).then(function() {
-				const oColumnMenuBefore = that._oColumn1.getMenu();
-				const oVisibilitySubmenuBefore = oColumnMenuBefore.getItems()[0].getSubmenu();
-				assert.strictEqual(oVisibilitySubmenuBefore.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
-				assert.strictEqual(oVisibilitySubmenuBefore.getItems()[1].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
-
-				that._oColumn2.focus();
-				that._oColumn2._openHeaderMenu(oCell2DomRef);
-				oVisibilitySubmenuBefore.getItems()[1].fireSelect();
-				assert.equal(document.activeElement, that._oColumn1.getDomRef(), "Focus moves to the other column header");
-				that._oColumn1._openHeaderMenu(oCell1DomRef);
-				const oColumnMenuAfter = that._oColumn1.getMenu();
-				const oVisibilitySubmenuAfter = oColumnMenuAfter.getItems()[0].getSubmenu();
-				assert.strictEqual(oColumnMenuBefore, oColumnMenuAfter, "The column menu is not being recreated");
-				assert.strictEqual(oVisibilitySubmenuBefore, oVisibilitySubmenuAfter, "The column visibility submenu is not being recreated");
-
-				assert.strictEqual(oVisibilitySubmenuAfter.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
-				assert.strictEqual(oVisibilitySubmenuAfter.getItems()[1].getIcon(), "", "The visibility submenu item is not checked");
-				done();
-			});
-		});
-
-		this._oColumn1._openHeaderMenu(oCell1DomRef);
-	});
-
-	QUnit.test("Reorder Columns", function(assert) {
-		const that = this;
-		const done = assert.async();
-		const oCellDomRef = this._oColumn1.getDomRef();
-
-		this._oColumn1.attachEventOnce("columnMenuOpen", function() {
-			TableQUnitUtils.wait(0).then(function() {
-				let oColumnMenu = that._oColumn1.getMenu();
-				let oVisibilitySubmenu = oColumnMenu.getItems()[0].getSubmenu();
-
-				assert.strictEqual(oVisibilitySubmenu.getItems()[0].getProperty("text"), "col1header",
-					"The columns are initially in the correct order");
-				assert.strictEqual(oVisibilitySubmenu.getItems()[1].getProperty("text"), "col2header",
-					"The columns are initially in the correct order");
-
-				that._oTable.removeColumn(that._oColumn1);
-				that._oTable.insertColumn(that._oColumn1, 1);
-				that._oColumn1._openHeaderMenu(oCellDomRef);
-				oColumnMenu = that._oColumn1.getMenu();
-				oVisibilitySubmenu = oColumnMenu.getItems()[0].getSubmenu();
-
-				assert.strictEqual(oVisibilitySubmenu.getItems()[0].getProperty("text"), "col2header",
-					"The columns are in the correct order after reordering");
-				assert.strictEqual(oVisibilitySubmenu.getItems()[1].getProperty("text"), "col1header",
-					"The columns are in the correct order after reordering");
-
-				done();
-			});
-		});
-
-		this._oColumn1._openHeaderMenu(oCellDomRef);
-	});
-
-	QUnit.test("Multiple tables", async function(assert) {
-		const done = assert.async();
-		const that = this;
-		const oModel = new JSONModel();
-		oModel.setData([{myProp: "someValue", myOtherProp: "someOtherValue"}]);
-		this._oTable2 = new Table();
-		this._oTable2.bindRows("/");
-		this._oTable2.setModel(oModel);
-		this._oTable2.setShowColumnVisibilityMenu(true);
-
-		this._oColumn21 = new Column({
-			template: new TableQUnitUtils.TestControl({text: "col1value"}),
-			label: new TableQUnitUtils.TestControl({text: "col1header"})
-		});
-
-		this._oColumn22 = new Column({
-			template: new TableQUnitUtils.TestControl({text: "col2value"}),
-			label: new TableQUnitUtils.TestControl({text: "col2header"})
-		});
-
-		this._oColumn23 = new Column({
-			template: new TableQUnitUtils.TestControl({text: "col3value"}),
-			label: new TableQUnitUtils.TestControl({text: "col3header"})
-		});
-
-		this._oTable2.addColumn(this._oColumn21);
-		this._oTable2.addColumn(this._oColumn22);
-		this._oTable2.addColumn(this._oColumn23);
-
-		this._oTable2.placeAt("qunit-fixture");
-		await nextUIUpdate();
-
-		this._oColumn2.setVisible(false);
-
-		this._oColumn1.attachEventOnce("columnMenuOpen", function() {
-			TableQUnitUtils.wait(0).then(function() {
-				const oColumnMenuTable1 = that._oColumn1.getMenu();
-				const oVisibilitySubmenuTable1 = oColumnMenuTable1.getItems()[0].getSubmenu();
-				assert.strictEqual(oVisibilitySubmenuTable1.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
-				assert.strictEqual(oVisibilitySubmenuTable1.getItems()[1].getIcon(), "", "The visibility submenu item is not checked");
-
-				that._oColumn21._openHeaderMenu(that._oColumn21.getDomRef());
-				const oColumnMenuTable2 = that._oColumn21.getMenu();
-				const oVisibilitySubmenuTable2 = oColumnMenuTable2.getItems()[0].getSubmenu();
-				assert.strictEqual(oVisibilitySubmenuTable2.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
-				assert.strictEqual(oVisibilitySubmenuTable2.getItems()[1].getIcon(), "sap-icon://accept",
-					"The visibility submenu item is checked. Changing the column visibility in the first table hasn't affected the column visibility"
-					+ " in the second table");
-				assert.notEqual(oVisibilitySubmenuTable1, oVisibilitySubmenuTable2,
-						"The visibility submenu instances for both tables are not the same instance");
-				assert.equal(oVisibilitySubmenuTable1.getItems().length, 2, "The visibility submenu of the first table has 2 items");
-				assert.equal(oVisibilitySubmenuTable2.getItems().length, 3, "The visibility submenu of the second table has 3 items");
-
-				that._oColumn21.destroy();
-				that._oColumn22.destroy();
-				that._oColumn23.destroy();
-				that._oTable2.destroy();
-				done();
-			});
-		});
-
-		this._oColumn1._openHeaderMenu(this._oColumn1.getDomRef());
-	});
-
 	QUnit.module("ColumnHeaderMenu Association", {
 		beforeEach: async function() {
 			this.oMenu1 = new ColumnMenu({
@@ -1773,24 +1308,6 @@ sap.ui.define([
 		assert.equal(this.oColumn1.$().attr("aria-haspopup"), "dialog", "aria-haspopup was set correctly");
 	});
 
-	/**
-	 * @deprecated As of version 1.118.
-	 */
-	QUnit.test("_setGrouped", function(assert) {
-		this.oTable.setEnableGrouping(true);
-
-		const oColumn = this.oColumn1;
-		const oSetGroupedSpy = sinon.spy(this.oTable, "setGroupBy");
-
-		oColumn._setGrouped(true);
-		assert.ok(oSetGroupedSpy.calledOnce, "setGroupBy is called");
-		assert.ok(oSetGroupedSpy.calledWithExactly(oColumn), "setGroupBy is called with the correct parameter");
-
-		oColumn._setGrouped(false);
-		assert.ok(oSetGroupedSpy.calledTwice, "setGroupBy is called");
-		assert.ok(oSetGroupedSpy.calledWithExactly(null), "setGroupBy is called with the correct parameter");
-	});
-
 	QUnit.test("_getFilterState", function(assert) {
 		const oColumn1 = this.oColumn1;
 		oColumn1.setFilterValue("A");
@@ -1809,11 +1326,6 @@ sap.ui.define([
 
 		vType = "sap.ui.model.type.Date";
 		oColumn1.setFilterType(vType);
-
-		/** @deprecated As of version 1.120 */
-		if (oColumn1.getFilterType()) {
-			assert.ok(oColumn1.getFilterType().isA("sap.ui.model.type.Date"), "Column type is Date.");
-		}
 
 		// Will be tested in UI5 2.0
 		if (!oColumn1.getFilterType() && sap.ui.require(vType.replaceAll(".", "/"))) {

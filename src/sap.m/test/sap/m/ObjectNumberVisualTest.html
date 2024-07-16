@@ -5,134 +5,15 @@
 		<title>ObjectNumber - Visual Test Page - sap.m</title>
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m">
+				id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/ObjectNumberVisualTest"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
-		<script>
-
-			var on1 = new sap.m.ObjectNumber("on1", {
-				number: "300,000,000",
-				unit: "Euro"
-			}).addStyleClass("sapUiSmallMargin");
-
-			var on2 = new sap.m.ObjectNumber("on2", {
-				number: "300,000,000",
-				unit: "Euro"
-			}).addStyleClass("sapMObjectNumberLarge").addStyleClass("sapUiSmallMargin");
-
-			var oButtonEmphasized =new sap.m.Button("emphasized", {
-				text:"Toggle emphasized",
-				press: function(){
-					on1.setEmphasized(!on1.getEmphasized());
-					on2.setEmphasized(!on2.getEmphasized());
-				}
-			});
-
-			var oButtonNum =new sap.m.Button("num", {
-				text:"Set number",
-				press: function(){
-					on1.setNumber("100");
-					on2.setNumber("100");
-				}
-			});
-
-			var oButtonUnit =new sap.m.Button("unit", {
-				text:"Set unit",
-				press: function(){
-					on1.setUnit("Dollars");
-					on2.setUnit("Dollars");
-				}
-			});
-
-			var oButtonStateS =new sap.m.Button("change_stateS", {
-				text:"Success state",
-				press: function(){
-					on1.setState(sap.ui.core.ValueState.Success);
-					on2.setState(sap.ui.core.ValueState.Success);
-				}
-			});
-
-			var oButtonStateE =new sap.m.Button("change_stateE", {
-				text:"Error state",
-				press: function(){
-					on1.setState(sap.ui.core.ValueState.Error);
-					on2.setState(sap.ui.core.ValueState.Error);
-				}
-			});
-
-			var oButtonStateW =new sap.m.Button("change_stateW", {
-				text:"Warning state",
-				press: function(){
-					on1.setState(sap.ui.core.ValueState.Warning);
-					on2.setState(sap.ui.core.ValueState.Warning);
-				}
-			});
-
-			var oButtonStateI =new sap.m.Button("change_stateI", {
-				text:"Information state",
-				press: function(){
-					on1.setState(sap.ui.core.ValueState.Information);
-					on2.setState(sap.ui.core.ValueState.Information);
-				}
-			});
-
-			var on3 = new sap.m.ObjectNumber("on3", {
-				number: "300",
-				unit: "Euro",
-				active: true
-			}).addStyleClass("sapUiSmallMargin");
-
-			var on4 = new sap.m.ObjectNumber("on4", {
-				number: "300000",
-				unit: "Euro",
-				active: true
-			}).addStyleClass("sapMObjectNumberLarge").addStyleClass("sapUiSmallMargin");
-
-			var on5 = new sap.m.ObjectNumber("on5", {
-				number: "1.50",
-				active: true,
-				inverted: true
-			}).addStyleClass("sapUiSmallMargin");
-
-			var on6 = new sap.m.ObjectNumber("on6", {
-				number: "1.50",
-				unit: "Euro",
-				inverted: true
-			}).addStyleClass("sapUiSmallMargin");
-
-			var on7 = new sap.m.ObjectNumber("on7", {
-				number: "300000",
-				unit: "Euro",
-				inverted: true,
-				active: true
-			}).addStyleClass("sapMObjectNumberLarge").addStyleClass("sapUiSmallMargin");
-
-			var app = new sap.m.App();
-			var page = new sap.m.Page({
-				showHeader : false,
-				enableScrolling : true,
-				content: [
-					on1,
-					on2,
-					oButtonEmphasized,
-					oButtonNum,
-					oButtonUnit,
-					oButtonStateS,
-					oButtonStateE,
-					oButtonStateW,
-					oButtonStateI,
-					on3,
-					on4,
-					on5,
-					on6,
-					on7
-				]
-			});
-			app.setInitialPage(page.getId());
-			app.addPage(page);
-
-			app.placeAt('body');
-		</script>
+		
 	</head>
 	<body id="body" class="sapUiBody">
 	</body>

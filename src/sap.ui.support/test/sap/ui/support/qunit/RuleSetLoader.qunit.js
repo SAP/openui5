@@ -8,17 +8,8 @@ sap.ui.define([
 	"sap/ui/support/supportRules/WindowCommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/base/Log",
-	"sap/base/util/deepExtend",
-	"sap/base/util/ObjectPath"
-], function (VersionInfo,
-			 Bootstrap,
-			 RuleSet,
-			 RuleSetLoader,
-			 CommunicationBus,
-			 channelNames,
-			 Log,
-			 deepExtend,
-			 ObjectPath) {
+	"sap/base/util/deepExtend"
+], function(VersionInfo, Bootstrap, RuleSet, RuleSetLoader, CommunicationBus, channelNames, Log, deepExtend) {
 	"use strict";
 
 	function createValidRule(sRuleId) {
@@ -141,29 +132,6 @@ sap.ui.define([
 		assert.strictEqual(result, testValue, "The return result should be the same as the _mRuleLibs variable");
 	});
 
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("_fetchRuleLib with ruleset of type RuleSet and library not present in the available rulesets", function (assert) {
-		// Arrange
-		sinon.stub(ObjectPath, "get", function (sLibName) {
-			return {
-				library: {
-					support: createRuleLibWithLibNRules("sap.uxap", "validRule", 1)
-				}
-			};
-		});
-
-		// Act
-		RuleSetLoader._fetchRuleLib("sap.uxap");
-
-		//Assert
-		assert.ok(RuleSetLoader.getRuleLibs()["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
-		assert.equal(Object.keys(RuleSetLoader.getRuleLibs()["sap.uxap"].ruleset.getRules()).length, 1, "Should have one fetched rule");
-
-		ObjectPath.get.restore();
-	});
-
 	QUnit.test("_fetchRuleLib with 'ruleset' of type RuleSet and library not present", function (assert) {
 		// Act
 		RuleSetLoader._fetchRuleLib("sap.uxap", createRuleLibWithLib("sap.uxap", "nice name", [createValidRule("validRule")]));
@@ -171,32 +139,6 @@ sap.ui.define([
 		//Assert
 		assert.ok(RuleSetLoader.getRuleLibs()["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
 		assert.equal(Object.keys(RuleSetLoader.getRuleLibs()["sap.uxap"].ruleset.getRules()).length, 1, "Should have one fetched rule");
-	});
-
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("_fetchRuleLib with ruleset of type RuleSet and library present", function (assert) {
-		// Arrange
-		sinon.stub(ObjectPath, "get", function (sLibName) {
-			return {
-				library: {
-					support: createRuleLibWithLibNRules("sap.uxap", "anotherValidRule", 2)
-				}
-			};
-		});
-
-		// Setup initial RuleSet
-		RuleSetLoader.addRuleLib("sap.uxap", createRuleLibWithLibNRules("sap.uxap", "initialValidRule", 2));
-
-		// Act
-		RuleSetLoader._fetchRuleLib("sap.uxap");
-
-		//Assert
-		assert.ok(RuleSetLoader.getRuleLibs()["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
-		assert.equal(Object.keys(RuleSetLoader.getRuleLibs()["sap.uxap"].ruleset.getRules()).length, 4, "Should have four fetched rules");
-
-		ObjectPath.get.restore();
 	});
 
 	QUnit.test("_fetchRuleLib with ruleset of type RuleSet and library present", function (assert) {
@@ -211,29 +153,6 @@ sap.ui.define([
 		assert.equal(Object.keys(RuleSetLoader.getRuleLibs()["sap.uxap"].ruleset.getRules()).length, 4, "Should have four fetched rules");
 	});
 
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("_fetchRuleLib with ruleset of type Object and library not present", function (assert) {
-		// Arrange
-		sinon.stub(ObjectPath, "get", function (sLibName) {
-			return {
-				library: {
-					support: createRuleLibAsObject("sap.uxap", "validRule", 3)
-				}
-			};
-		});
-
-		// Act
-		RuleSetLoader._fetchRuleLib("sap.uxap");
-
-		//Assert
-		assert.ok(RuleSetLoader.getRuleLibs()["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
-		assert.equal(Object.keys(RuleSetLoader.getRuleLibs()["sap.uxap"].ruleset.getRules()).length, 3, "Should have three fetched rules");
-
-		ObjectPath.get.restore();
-	});
-
 	QUnit.test("_fetchRuleLib with ruleset of type Object and library not present", function (assert) {
 		// Arrange
 		RuleSetLoader.addRuleLib(createRuleLibAsObject("sap.uxap", "validRule", 3));
@@ -244,38 +163,6 @@ sap.ui.define([
 		//Assert
 		assert.ok(RuleSetLoader.getRuleLibs()["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
 		assert.equal(Object.keys(RuleSetLoader.getRuleLibs()["sap.uxap"].ruleset.getRules()).length, 3, "Should have three fetched rules");
-	});
-
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("_fetchRuleLib join two types of rulesets", function (assert) {
-		// Arrange
-		sinon.stub(ObjectPath, "get", function (sLibName) {
-			var oRuleSet = createRuleLibAsObject("sap.uxap", "validRule", 2);
-
-			oRuleSet.ruleset.push(createValidRules("additionalRule", 2));
-			oRuleSet.ruleset.push(createValidRule("additionalRule_5"));
-			oRuleSet.ruleset.push(createValidRule("additionalRule_6"));
-
-			return {
-				library: {
-					support: oRuleSet
-				}
-			};
-		});
-
-		// Setup initial RuleSet
-		RuleSetLoader.addRuleLib("sap.uxap", createRuleLibWithLibNRules("sap.uxap", "initialValidRule", 2));
-
-		// Act
-		RuleSetLoader._fetchRuleLib("sap.uxap");
-
-		//Assert
-		assert.ok(RuleSetLoader.getRuleLibs()["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
-		assert.equal(Object.keys(RuleSetLoader.getRuleLibs()["sap.uxap"].ruleset.getRules()).length, 8, "Should have eight fetched rules");
-
-		ObjectPath.get.restore();
 	});
 
 	QUnit.test("_fetchRuleLib join two types of rulesets", function (assert) {
@@ -296,27 +183,6 @@ sap.ui.define([
 		assert.equal(Object.keys(RuleSetLoader.getRuleLibs()["sap.uxap"].ruleset.getRules()).length, 8, "Should have eight fetched rules");
 	});
 
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("_fetchRuleLib with unknown library", function (assert) {
-		// Arrange
-		sinon.stub(ObjectPath, "get", function (sLibName) {
-			return;
-		});
-		sinon.spy(Log, "error");
-
-		// Act
-		RuleSetLoader._fetchRuleLib("sap.test");
-
-		//Assert
-		assert.notOk(RuleSetLoader.getRuleLibs()["sap.test"], "Should be undefined");
-		assert.equal(Log.error.callCount, 1, "should have logged an error");
-
-		ObjectPath.get.restore();
-		Log.error.restore();
-	});
-
 	QUnit.test("_fetchRuleLib with unknown library", function (assert) {
 		// Arrange
 		sinon.spy(Log, "error");
@@ -329,31 +195,6 @@ sap.ui.define([
 		assert.equal(Log.error.callCount, 1, "should have logged an error");
 
 		// Clean up
-		Log.error.restore();
-	});
-
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("_fetchRuleLib with library and no library.support", function (assert) {
-		// Arrange
-		sinon.stub(ObjectPath, "get", function (sLibName) {
-			return {
-				library: {
-					support: undefined
-				}
-			};
-		});
-		sinon.spy(Log, "error");
-
-		// Act
-		RuleSetLoader._fetchRuleLib("sap.test");
-
-		//Assert
-		assert.notOk(RuleSetLoader.getRuleLibs()["sap.test"], "Should be undefined");
-		assert.equal(Log.error.callCount, 1, "Should have logged an error");
-
-		ObjectPath.get.restore();
 		Log.error.restore();
 	});
 
@@ -370,31 +211,6 @@ sap.ui.define([
 
 		// Clean up
 		Log.error.restore();
-	});
-
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("_fetchRuleLib twice for the same library with rulesets as array", function (assert) {
-		// Arrange
-		sinon.stub(ObjectPath, "get", function (sLibName) {
-			return {
-				library: {
-					support: createRuleLibAsObject("sap.test", "validRule", 1)
-				}
-			};
-		});
-		sinon.spy(RuleSetLoader, "_createRuleLib");
-
-		// Act
-		RuleSetLoader._fetchRuleLib("sap.test");
-		RuleSetLoader._fetchRuleLib("sap.test");
-
-		//Assert
-		assert.strictEqual(RuleSetLoader._createRuleLib.callCount, 1, "Should have created the ruleset only once");
-
-		ObjectPath.get.restore();
-		RuleSetLoader._createRuleLib.restore();
 	});
 
 	QUnit.test("_fetchRuleLib twice for the same library with rulesets as array", function (assert) {
@@ -493,5 +309,4 @@ sap.ui.define([
 		assert.ok(aRuleDescriptors[0].hasOwnProperty("libName"), "Rule descriptors should have libName property set");
 		assert.ok(aRuleDescriptors[0].hasOwnProperty("ruleId"), "Rule descriptors should have ruleId property set");
 	});
-
 });

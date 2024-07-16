@@ -58,4 +58,4 @@ sap.ui.define(function () {
 
 	return WizardStepRenderer;
 
-}, /* bExport= */ true);
+});

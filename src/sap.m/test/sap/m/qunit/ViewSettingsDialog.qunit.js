@@ -17,12 +17,12 @@ sap.ui.define([
 	"sap/m/ViewSettingsFilterItem",
 	"sap/m/ViewSettingsCustomItem",
 	"sap/m/ViewSettingsDialog",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/Input",
 	"sap/ui/base/ManagedObject",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
 	"sap/ui/core/StaticArea"
 ], function(
 	Element,
@@ -42,12 +42,12 @@ sap.ui.define([
 	ViewSettingsFilterItem,
 	ViewSettingsCustomItem,
 	ViewSettingsDialog,
+	nextUIUpdate,
 	jQuery,
 	Input,
 	ManagedObject,
 	Log,
 	KeyCodes,
-	oCore,
 	StaticArea
 ) {
 	"use strict";
@@ -105,30 +105,7 @@ sap.ui.define([
 
 	/* helper function to compare the filter state */
 
-	/**
-	 * @deprecated as of version 1.42
-	 */
-	var compareFilterKeys = function(o1, o2) {
-		var sKey = "",
-			result = true;
-
-		for (sKey in o1) {
-			if (o1.hasOwnProperty(sKey)) {
-				if (!o2[sKey] || o2[sKey] !== o1[sKey]) {
-					result = false;
-				}
-			}
-		}
-		for (sKey in o2) {
-			if (o2.hasOwnProperty(sKey)) {
-				if (!o1[sKey] || o1[sKey] !== o2[sKey]) {
-					result = false;
-				}
-			}
-		}
-		return result;
-	};
-
+	/* -------------------------------------- */
 	var model = new JSONModel();
 	model.setData({
 		customTabData : {
@@ -484,7 +461,7 @@ sap.ui.define([
 			this.oVSD = new ViewSettingsDialog();
 			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -507,7 +484,7 @@ sap.ui.define([
 			this.oVSD = new ViewSettingsDialog();
 			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -540,19 +517,6 @@ sap.ui.define([
 	QUnit.module("getter/setter", {
 		beforeEach : function () {
 			this.oVSD = new ViewSettingsDialog();
-			/**
-			 * @deprecated as of version 1.42
-			 */
-			this.oFilterState = {
-				"name1": true,
-				"name2": true,
-				"name5": true,
-				"name6": true,
-				"status1": true,
-				"status2": true,
-				"status3": true,
-				"value3": true
-			};
 
 			oVsdConfig.addSortItems(this.oVSD);
 			oVsdConfig.addFilterItems(this.oVSD);
@@ -565,7 +529,7 @@ sap.ui.define([
 
 			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -595,15 +559,7 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD.getSelectedPresetFilterItem(), this.oSelectedPresetFilterItem.getId(), "The selected preset filter item should be '" + this.oSelectedPresetFilterItem.getId() + "'");
 		assert.strictEqual(Element.getElementById(this.oVSD.getSelectedPresetFilterItem()).getSelected(), true, "The selected preset filter item should have the selected flag set to true");
 		// filters
-		/**
-		 * @deprecated as of version 1.42, replaced by <code>filterCompoundKeys</code> event
-		 */
-		this.oVSD.setSelectedFilterKeys(this.oFilterState);
-		/**
-		 * @deprecated as of version 1.42
-		 */
-		assert.ok(compareFilterKeys(this.oFilterState, this.oVSD.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
-
+		/* -------------------------------------- */
 		this.oVSD.setSelectedPresetFilterItem(null);
 		assert.strictEqual(this.oVSD.getSelectedPresetFilterItem(), null, "The selected preset filter item should be null");
 	});
@@ -718,7 +674,7 @@ sap.ui.define([
 		})).placeAt("qunit-fixture"),
 		oSecondItem;
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oSecondItem = oVSD.getSortItems()[1];
 
@@ -826,7 +782,7 @@ sap.ui.define([
 
 			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -862,7 +818,7 @@ sap.ui.define([
 
 			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -905,7 +861,7 @@ sap.ui.define([
 			oVsdConfig.addFilterItems(this.oVSD);
 			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 
 		afterEach: function () {
@@ -925,21 +881,21 @@ sap.ui.define([
 		}
 
 		openAndNavigateToFilterDetailsPage(this.oVSD);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oVSD._filterDetailList.getItems()[0].data("item").setSelected(true);
 		this.oVSD._dialog.getBeginButton().firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		openAndNavigateToFilterDetailsPage(this.oVSD);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oVSD._filterDetailList.getItems()[1].data("item").setSelected(true);
 		this.oVSD._dialog.getEndButton().firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oVSD.open("filter");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var done = assert.async();
 		setTimeout(function () {
@@ -979,7 +935,7 @@ sap.ui.define([
 
 			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -1211,7 +1167,7 @@ sap.ui.define([
 		this.oVSD.open("group");
 		this.oVSD.setSelectedGroupItem(this.oVSD.getGroupItems()[0]);
 		this.oVSD._getDialog().getBeginButton().firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		clock.tick(1000);
 
 		//Check
@@ -1223,7 +1179,7 @@ sap.ui.define([
 		this.oVSD.open("group");
 		this.oVSD.setSelectedGroupItem();
 		this.oVSD._getDialog().getBeginButton().firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		clock.tick(1000);
 
 		//Check
@@ -1242,7 +1198,7 @@ sap.ui.define([
 		this.oVSD.open("group");
 		this.oVSD.setSelectedGroupItem("");
 		this.oVSD._getDialog().getBeginButton().firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		clock.tick(1000);
 
 		//Check
@@ -1267,7 +1223,7 @@ sap.ui.define([
 
 			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -1478,7 +1434,7 @@ sap.ui.define([
 			});
 			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -1533,7 +1489,7 @@ sap.ui.define([
 				});
 			this.oVSD.setModel(model);
 				this.oVSD.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 			},
 			afterEach : function () {
 				this.oVSD.destroy();
@@ -1583,7 +1539,7 @@ sap.ui.define([
 			});
 			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -1630,7 +1586,7 @@ sap.ui.define([
 
 			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -1746,7 +1702,7 @@ sap.ui.define([
 		aItems = this.oVSD._filterDetailList.getItems();
 		iItems = aItems.length;
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		getItemsInfo(aItems);
 
@@ -1759,7 +1715,7 @@ sap.ui.define([
 		// simulate button press
 		oShowOnlySelected.setPressed(true);
 		oShowOnlySelected.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		getItemsInfo(aItems);
 
@@ -1781,7 +1737,7 @@ sap.ui.define([
 		// simulate button press
 		oShowOnlySelected.setPressed(false);
 		oShowOnlySelected.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		getItemsInfo(aItems);
 
@@ -1793,7 +1749,7 @@ sap.ui.define([
 		// simulate button press
 		oShowOnlySelected.setPressed(true);
 		oShowOnlySelected.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		getItemsInfo(aItems);
 
@@ -2224,7 +2180,7 @@ sap.ui.define([
 
 			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -2319,70 +2275,45 @@ sap.ui.define([
 
 	QUnit.test("Check setSelectedFilterCompoundKeys and getSelectedFilterCompoundKeys method", function (assert) {
 		var oCompoundKeys1 = {
-			"myNameFilter": {
-				"name1": true,
-				"name3": true
-			}
-		},
-		oCompoundKeys2 = {
-			"myNameFilter": {
-				"name3": true
-			}
-		},
-		oCompoundKeys3 = {
-			"myStatusFilter": {
-				"status1": true,
-				"status2": true
-			}
-		},
-		/**
-		 * @deprecated as of version 1.42
-		 */
-		aSelected,
-		oCompoundResult;
+				"myNameFilter": {
+					"name1": true,
+					"name3": true
+				}
+			},
+			oCompoundKeys2 = {
+				"myNameFilter": {
+					"name3": true
+				}
+			},
+			oCompoundKeys3 = {
+				"myStatusFilter": {
+					"status1": true,
+					"status2": true
+				}
+			},
+			oCompoundResult;
 
 		oVsdConfig.addFilterItems(this.oVSD);
 
 		// act
 		this.oVSD.setSelectedFilterCompoundKeys(oCompoundKeys1);
-		/**
-		 * @deprecated as of version 1.42, replaced by <code>filterCompoundKeys</code> event
-		 */
-		aSelected = this.oVSD.getSelectedFilterKeys();
 		oCompoundResult = this.oVSD.getSelectedFilterCompoundKeys();
 		// assert
-		/**
-		 * @deprecated as of version 1.42
-		 */
-		assert.ok(Object.keys(aSelected).length === 2 && aSelected["name1"] && aSelected["name3"], "There are proper items selected after applying the first preset");
+		/* -------------------------------------- */
 		assert.deepEqual(oCompoundResult, oCompoundKeys1, "There are proper items returned by getSelectedFilterCompoundKeys()");
 
 		// act
 		this.oVSD.setSelectedFilterCompoundKeys(oCompoundKeys2);
-		/**
-		 * @deprecated as of version 1.42
-		 */
-		aSelected = this.oVSD.getSelectedFilterKeys();
 		oCompoundResult = this.oVSD.getSelectedFilterCompoundKeys();
 		// assert
-		/**
-		 * @deprecated as of version 1.42
-		 */
-		assert.ok(Object.keys(aSelected).length === 1 && aSelected["name3"], "There are proper items selected after applying the second preset");
+		/* -------------------------------------- */
 		assert.deepEqual(oCompoundResult, oCompoundKeys2, "There are proper items returned by getSelectedFilterCompoundKeys()");
 
 		// act
 		this.oVSD.setSelectedFilterCompoundKeys(oCompoundKeys3);
-		/**
-		 * @deprecated as of version 1.42
-		 */
-		aSelected = this.oVSD.getSelectedFilterKeys();
 		oCompoundResult = this.oVSD.getSelectedFilterCompoundKeys();
 		// assert
-		/**
-		 * @deprecated as of version 1.42
-		 */
-		assert.ok(Object.keys(aSelected).length === 3 && aSelected["name3"] && aSelected["status1"] && aSelected["status2"], "There are proper items selected after applying the third preset");
+		/* -------------------------------------- */
 		assert.deepEqual(oCompoundResult, Object.assign(oCompoundKeys2, oCompoundKeys3), "There are proper items returned by getSelectedFilterCompoundKeys()");
 	});
 
@@ -2458,7 +2389,7 @@ sap.ui.define([
 
 			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		}
 	});
 
@@ -2520,7 +2451,7 @@ sap.ui.define([
 
 			this.oVSD.setModel(model);
 			this.oVSD.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -3055,20 +2986,20 @@ sap.ui.define([
 			this.oVSD.addGroupItem(oItem);
 		}, this);
 		this.oVSD.open();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(Element.getElementById(this.oVSD.getSelectedGroupItem()).getText(),
 				oResourceBundle.getText("VIEWSETTINGS_NONE_ITEM"),
 				"Should have None button selected");
 
 		this.oVSD.setSelectedGroupItem(aGroupItems[0]);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.notStrictEqual(Element.getElementById(this.oVSD.getSelectedGroupItem()).getText(),
 				oResourceBundle.getText("VIEWSETTINGS_NONE_ITEM"),
 				"Should have changed the selection");
 
 		this.oVSD._dialog.getEndButton().firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		setTimeout(function () {
 			this.oVSD.open();
@@ -3085,7 +3016,7 @@ sap.ui.define([
 			this.bindAggregations(this.oVSD);
 
 			this.oVSD.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		},
 		afterEach : function () {
@@ -3362,7 +3293,7 @@ sap.ui.define([
 				{myKey: "k1", myText: "Filter subitem 1, selected", selected: true },
 				{myKey: "k2", myText: "Filter subitem 2, selected", selected: true }
 			]);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			//Assert
 			$Counter = this.oVSD.$().find(".sapMLIBCounter");
@@ -3493,7 +3424,7 @@ sap.ui.define([
 			});
 
 		oViewSettingsDialog.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oViewSettingsDialog.open();
 
 		oViewSettingsDialog._dialog.attachAfterOpen(function () {
@@ -3567,18 +3498,18 @@ sap.ui.define([
 		//act
 		fnCreateDialog();
 		oVSD.open();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(jQuery(StaticArea.getDomRef()).find(".sapMVSD").length, 1, "ViewSettingsDialog is rendered first time");
 
 		//act
 		oVSD._dialog.getEndButton().firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oVSD.destroy();
 		fnCreateDialog();
 		oVSD.open();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(jQuery(StaticArea.getDomRef()).find(".sapMVSD").length, 1, "ViewSettingsDialog is rendered second time");
@@ -3602,7 +3533,7 @@ sap.ui.define([
 
 		//act
 		oVSD.open();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.strictEqual(oEscapeSpy.callCount, 1, "escape was called once for the setted Filter Item");
@@ -3631,7 +3562,7 @@ sap.ui.define([
 
 		//act
 		oVSD.open();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.strictEqual(oEscapeSpy.callCount, 1, "escape was called once for the setted Filter Detail Item");
@@ -3655,7 +3586,7 @@ sap.ui.define([
 
 		//act
 		oVSD.open();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.strictEqual(oEscapeSpy.callCount, 1, "escape was called once for the setted Group Item");
@@ -3857,7 +3788,7 @@ sap.ui.define([
 			this.bindAggregations(this.oVSD);
 
 			this.oVSD.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -3951,7 +3882,7 @@ sap.ui.define([
 		setTimeout(function () {
 			this.focusItem(oListItem.getId());
 			this.oVSD._dialog.invalidate();
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			this.checkItemFocus(oListItem.getId());
 			done();
 		}.bind(this), 500);
@@ -3969,7 +3900,7 @@ sap.ui.define([
 		setTimeout(function () {
 			this.focusItem(sItemToSelect + "-list-item");
 			this.oVSD._dialog.invalidate();
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			this.checkItemFocus(sItemToSelect + "-list-item");
 			done();
 		}.bind(this), 500);
@@ -4002,7 +3933,7 @@ sap.ui.define([
 
 		// Act
 		openAndNavigateToFilterDetailsPage(this.oVSD);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		aAriaLabelledBy = this.oVSD._getDialog().getAriaLabelledBy();
 
@@ -4020,7 +3951,7 @@ sap.ui.define([
 			this.bindAggregations(this.oVSD);
 
 			this.oVSD.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -4109,7 +4040,7 @@ sap.ui.define([
 	QUnit.test("Enabled/disabled state", function (assert) {
 
 		this.oVSD.open();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Check initial Reset button state
 		assert.strictEqual(this.oVSD._getResetButton().getEnabled(), false, "Reset button is initially disabled");
@@ -4161,10 +4092,10 @@ sap.ui.define([
 			]
 		});
 		oVSD.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oVSD.open();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act - select a sort item
 		oVSD.setSelectedSortItem(oVSD.getSortItems()[0]);
@@ -4247,7 +4178,7 @@ sap.ui.define([
 			sAlignment;
 
 		oVSD.open();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		sInitialAlignment = oVSD.getTitleAlignment();
 
 
@@ -4258,7 +4189,7 @@ sap.ui.define([
 		// check if all types of alignment lead to apply the proper CSS class
 		for (sAlignment in TitleAlignment) {
 			oVSD.setTitleAlignment(sAlignment);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.ok(oVSD._getHeader().hasStyleClass(sAlignmentClass + sAlignment),
 						"titleAlignment is set to '" + sAlignment + "', there is class '" + sAlignmentClass + sAlignment + "' applied to the Header");
 		}
@@ -4317,7 +4248,7 @@ sap.ui.define([
 
 		// act
 		aFilterItems[0].getItems()[0].setSelected(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		sSelectedFilterString = oVSD.getSelectedFilterString();
 
 		// assert
@@ -4327,7 +4258,7 @@ sap.ui.define([
 
 		// act
 		aFilterItems[1].getItems()[0].setSelected(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		sSelectedFilterString = oVSD.getSelectedFilterString();
 
 		// assert
@@ -4337,7 +4268,7 @@ sap.ui.define([
 
 		// act
 		aFilterItems[0].getItems()[0].setSelected(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		sSelectedFilterString = oVSD.getSelectedFilterString();
 
 		// assert
@@ -4347,7 +4278,7 @@ sap.ui.define([
 
 		// act
 		aFilterItems[1].getItems()[0].setSelected(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		sSelectedFilterString = oVSD.getSelectedFilterString();
 
 		// assert
@@ -4399,7 +4330,7 @@ sap.ui.define([
 
 		// act
 		oVSD.open();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk(oVSD._hasSubHeader(), "There is no sub-header");
@@ -4409,7 +4340,7 @@ sap.ui.define([
 		oVSD._getDialog().close();
 		oVsdConfig.addSortItems(oVSD);
 		oVSD.open();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oVSD._hasSubHeader(), "There is sub-header");
@@ -4418,5 +4349,4 @@ sap.ui.define([
 		// cleanup
 		oVSD.destroy();
 	});
-
 });

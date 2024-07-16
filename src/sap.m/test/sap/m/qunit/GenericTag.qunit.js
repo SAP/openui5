@@ -10,9 +10,9 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/ToolbarSpacer",
 	"sap/m/OverflowToolbar",
-	"sap/ui/core/Core",
-	"sap/ui/core/InvisibleText"
-], function(GenericTag, GenericTagRenderer, library, ObjectNumber, Library, coreLibrary, KeyCodes, qutils, ToolbarSpacer, OverflowToolbar, oCore, InvisibleText) {
+	"sap/ui/core/InvisibleText",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(GenericTag, GenericTagRenderer, library, ObjectNumber, Library, coreLibrary, KeyCodes, qutils, ToolbarSpacer, OverflowToolbar, InvisibleText, nextUIUpdate) {
 	"use strict";
 
 	var GenericTagDesign = library.GenericTagDesign,
@@ -127,7 +127,7 @@ sap.ui.define([
 			this.oGenericTag.setStatus(sValueState);
 
 			//act
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			//assert
 			assert.strictEqual(this.oGenericTag.getAggregation("_statusIcon").getSrc(),
@@ -352,7 +352,7 @@ sap.ui.define([
 	QUnit.module("GenericTag - setTooltip", {
 		beforeEach: function() {
 			this.oGenericTag = new GenericTag().placeAt(TESTS_DOM_CONTAINER);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.oGenericTag.destroy();
@@ -373,7 +373,7 @@ sap.ui.define([
 
 		//act
 		this.oGenericTag.setTooltip(sTooltip);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oGenericTagDomRef = this.oGenericTag.getDomRef();
 
 		//assert
@@ -438,7 +438,7 @@ sap.ui.define([
 			this.oGenericTag.setStatus(sValueState);
 
 			//act
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			//assert
 			this.assertGenericTagSemanticDecoratorRendered(this.oGenericTag, sValueState, assert);
@@ -453,7 +453,7 @@ sap.ui.define([
 		this.oGenericTag.placeAt("qunit-fixture");
 
 		//act
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		this.assertGenericTagRendered(this.oGenericTag, assert);
@@ -472,7 +472,7 @@ sap.ui.define([
 		this.oGenericTag.placeAt("qunit-fixture");
 
 		//act
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		this.assertGenericTagRendered(this.oGenericTag, assert);
@@ -490,7 +490,7 @@ sap.ui.define([
 		this.oGenericTag.placeAt("qunit-fixture");
 
 		//act
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		this.assertGenericTagRendered(this.oGenericTag, assert);
@@ -509,7 +509,7 @@ sap.ui.define([
 		this.oGenericTag.placeAt("qunit-fixture");
 
 		//act
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		this.assertGenericTagRendered(this.oGenericTag, assert);
@@ -546,7 +546,7 @@ sap.ui.define([
 			sRoleDescription = oResourceBundle.getText("GENERICTAG_ROLEDESCRIPTION"),
 			$genericTag;
 		//act
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$genericTag = this.oGenericTag.$();
 
 		//assert
@@ -563,7 +563,7 @@ sap.ui.define([
 		this.oGenericTag.setStatus(ValueState.None);
 
 		//act
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		$genericTag = this.oGenericTag.$();
@@ -587,7 +587,7 @@ sap.ui.define([
 			this.oGenericTag.setStatus(sValueState);
 
 			//act
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			//assert
 			$genericTag = this.oGenericTag.$();
@@ -613,7 +613,7 @@ sap.ui.define([
 		this.oGenericTag.setValueState(GenericTagValueState.None);
 
 		//act
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$genericTag = this.oGenericTag.$();
 		sValueId = GenericTagRenderer._getTagValueId(this.oGenericTag);
@@ -633,7 +633,7 @@ sap.ui.define([
 		this.oGenericTag.setValueState(GenericTagValueState.Error);
 
 		//act
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$genericTag = this.oGenericTag.$();
 		sErrorIconId = this.oGenericTag.getAggregation("_errorIcon").getId();
@@ -653,7 +653,7 @@ sap.ui.define([
 		this.oGenericTag.setValueState(GenericTagValueState.None);
 
 		//act
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$genericTag = this.oGenericTag.$();
 		sValueId = GenericTagRenderer._getTagValueId(this.oGenericTag);
@@ -673,7 +673,7 @@ sap.ui.define([
 		this.oGenericTag.setValueState(GenericTagValueState.Error);
 
 		//act
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$genericTag = this.oGenericTag.$();
 		sErrorIconId = this.oGenericTag.getAggregation("_errorIcon").getId();
@@ -696,7 +696,7 @@ sap.ui.define([
 		this.oGenericTag.setValueState(GenericTagValueState.Error);
 
 		//act
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$genericTag = this.oGenericTag.$();
 		sErrorIconId = this.oGenericTag.getAggregation("_errorIcon").getId();
@@ -707,7 +707,7 @@ sap.ui.define([
 		//act
 		this.oGenericTag.removeAriaLabelledBy('generic_tag_label');
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$genericTag = this.oGenericTag.$();
 
 		//assert
@@ -726,7 +726,7 @@ sap.ui.define([
 		//act
 		this.oGenericTag.addAriaLabelledBy('generic_tag_label');
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$genericTag = this.oGenericTag.$();
 
 		//assert
@@ -735,7 +735,7 @@ sap.ui.define([
 		//act
 		this.oGenericTag.removeAriaLabelledBy('generic_tag_label');
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$genericTag = this.oGenericTag.$();
 
 		//assert
@@ -755,7 +755,7 @@ sap.ui.define([
 		this.oGenericTag.setStatus('Information');
 		this.oGenericTag.getValue().setState("Information");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$genericTag = this.oGenericTag.$();
 
 		//assert
@@ -782,7 +782,7 @@ sap.ui.define([
 				content: aToolbarContent
 			});
 		oOverflowTB.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		// set small width that causes all content to move to the OverflowToolbar
 		oOverflowTB.setWidth("2rem");
 		this.clock.tick(1000);

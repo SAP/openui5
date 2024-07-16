@@ -4,8 +4,8 @@ sap.ui.define([
 	"sap/m/semantic/SortSelect",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Item",
-	"sap/ui/core/Core"
-], function(createAndAppendDiv, SortSelect, JSONModel, Item, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(createAndAppendDiv, SortSelect, JSONModel, Item, nextUIUpdate) {
 	"use strict";
 
 	var oVisibleFixture = createAndAppendDiv("qunit-fixture-visible");
@@ -22,7 +22,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("has valid behavior", function (assert) {
+	QUnit.test("has valid behavior", async function(assert) {
 		// Arrange
 		var oModel = new JSONModel(),
 				aSampleData = [
@@ -48,7 +48,7 @@ sap.ui.define([
 					}
 				});
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oModel.setData(aSampleData);
@@ -100,7 +100,7 @@ sap.ui.define([
 		oSemanticSelect.destroy();
 	});
 
-	QUnit.test("selectedKey databinding", function (assert) {
+	QUnit.test("selectedKey databinding", async function(assert) {
 		// Arrange
 		var oModel = new JSONModel(),
 				aSampleData = {
@@ -130,7 +130,7 @@ sap.ui.define([
 					selectedKey: "{/selected}"
 				});
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oModel.setData(aSampleData);

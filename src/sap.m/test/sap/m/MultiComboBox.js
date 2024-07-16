@@ -14,7 +14,12 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/FormattedText",
 	"sap/ui/core/Item",
-	"sap/ui/model/json/JSONModel"],
+	"sap/ui/model/json/JSONModel",
+	"sap/m/library",
+	"sap/m/ToggleButton",
+	"sap/ui/model/Sorter",
+	"sap/ui/core/Core"
+],
 function(
 	Log,
 	MultiComboBox,
@@ -31,9 +36,16 @@ function(
 	ToolbarSpacer,
 	FormattedText,
 	Item,
-	JSONModel){
-
+	JSONModel,
+	mobileLibrary,
+	ToggleButton,
+	Sorter,
+	Core
+) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	const ButtonType = mobileLibrary.ButtonType;
 
 	var oModel = new JSONModel();
 
@@ -451,7 +463,7 @@ function(
 		beginButton:
 			new Button({
 				text: "OK",
-				type: sap.m.ButtonType.Accept,
+				type: ButtonType.Accept,
 				press : function() {
 					oDialog.close();
 				}
@@ -459,7 +471,7 @@ function(
 		endButton:
 			new Button({
 				text: "Cancel",
-				type: sap.m.ButtonType.Reject,
+				type: ButtonType.Reject,
 				press : function() {
 					oDialog.close();
 				}
@@ -903,7 +915,7 @@ function(
 		selectedItems : [oItem]
 	});
 
-	var readOnlyButtonOneToken = new sap.m.ToggleButton({
+	var readOnlyButtonOneToken = new ToggleButton({
 		text : "Toggle Read-Only mode MC with long token",
 		press : function() {
 			oMultiComboBoxOneToken.setEditable(!oMultiComboBoxOneToken.getEditable());
@@ -993,7 +1005,7 @@ function(
 				text : "{groupedModel>text}",
 				enabled : "{groupedModel>enabled}"
 			}),
-			sorter: [new sap.ui.model.Sorter("group", false, true)]
+			sorter: [new Sorter("group", false, true)]
 		}
 	});
 	oMultiComboBoxWithGrouping.setModel(oGroupedModel, "groupedModel");
@@ -1116,7 +1128,7 @@ function(
 		})],
 		showNavButton : true,
 		navButtonPress : function() {
-			oMultiComboBox2.rerender();
+			oMultiComboBox2.invalidate();
 			var oModelNew = new JSONModel({
 				"selected" : ["AR"],
 				"items" : [{

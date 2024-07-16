@@ -1,4 +1,5 @@
 sap.ui.require([
+	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/layout/cssgrid/CSSGrid",
 	"sap/ui/codeeditor/CodeEditor",
@@ -21,8 +22,10 @@ sap.ui.require([
 	"sap/ui/model/type/String",
 	"sap/ui/model/type/Boolean",
 	"sap/ui/core/Item",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/m/ScrollContainer"
 ], function(
+	Element,
 	JSONModel,
 	CSSGrid,
 	CodeEditor,
@@ -45,7 +48,8 @@ sap.ui.require([
 	StringType,
 	BooleanType,
 	Item,
-	Core
+	Core,
+	ScrollContainer
 ) {
 	"use strict";
 
@@ -167,7 +171,7 @@ sap.ui.require([
 				new Text({text: "Additional attribute metadata", visible: "{/helperSettingsEnabled}"}),
 				oAdditionalAttributesInput,
 				new Text({text: "Attribute metadata"}),
-				new sap.m.ScrollContainer({content: oAttributeMetadataText, vertical: true})
+				new ScrollContainer({content: oAttributeMetadataText, vertical: true})
 			],
 			gridTemplateRows: "auto auto auto auto 1fr {= ${/helperSettingsEnabled} ? 'auto 2fr' : ''}"
 		});
@@ -209,7 +213,7 @@ sap.ui.require([
 					id: "TestPage",
 					enableScrolling: false,
 					title: "Test Page",
-					headerContent: new sap.m.Button({
+					headerContent: new Button({
 						text: "Attribute Overview",
 						press: function() {
 							oApp.to("AttributeOverview", "slide");
@@ -229,7 +233,7 @@ sap.ui.require([
 				new Page({
 					id: "AttributeOverview",
 					title: "Attribute Overview",
-					headerContent: new sap.m.Button({
+					headerContent: new Button({
 						text: "Test Page",
 						press: function() {
 							oApp.to("TestPage", "slide");
@@ -252,13 +256,13 @@ sap.ui.require([
 												new Button({
 													icon: "sap-icon://expand-all",
 													press: function() {
-														Core.byId("AttributeMetadataTreeTable").expandToLevel(10);
+														Element.getElementById("AttributeMetadataTreeTable").expandToLevel(10);
 													}
 												}),
 												new Button({
 													icon: "sap-icon://collapse-all",
 													press: function() {
-														Core.byId("AttributeMetadataTreeTable").collapseAll();
+														Element.getElementById("AttributeMetadataTreeTable").collapseAll();
 													}
 												})
 											]
@@ -392,7 +396,7 @@ sap.ui.require([
 									onBeforeRendering: function(oEvent) {
 										var oTable = oEvent.srcControl;
 										if (oTable.getColumns().length === 1) {
-											Core.byId("AttributeMetadataTreeTable").getColumns().forEach(function(oColumn) {
+											Element.getElementById("AttributeMetadataTreeTable").getColumns().forEach(function(oColumn) {
 												oTable.addColumn(oColumn.clone());
 											});
 										}

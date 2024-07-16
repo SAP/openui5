@@ -123,20 +123,6 @@ sap.ui.define([
 		sPressId = oEvent.oSource.getId();
 	};
 
-	const _checkException = function(assert, oField, fnFunction, sName, vArgument) {
-
-		let oException;
-
-		try {
-			fnFunction.call(oField, vArgument);
-		} catch (e) {
-			oException = e;
-		}
-
-		assert.ok(oException, sName + " fires exception");
-
-	};
-
 	const _cleanupEvents = function() {
 		iCount = 0;
 		sId = null;
@@ -667,16 +653,6 @@ sap.ui.define([
 		aContent = oFieldDisplay.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getTextDirection(), "RTL", "TextDirection set on Text control");
-
-	});
-
-	/**
-	 * @deprecated Not supported, this property is not supported for the <code>Field</code>.
-	 */
-	QUnit.test("maxConditions", function(assert) {
-
-		assert.equal(oFieldEdit.getMaxConditions(), 1, "MaxConditions is 1");
-		_checkException(assert, oFieldEdit, oFieldEdit.setMaxConditions, "setMaxConditions", 2);
 
 	});
 
@@ -1844,5 +1820,4 @@ sap.ui.define([
 		assert.notOk(oMyOriginalType, "no type used in ConditionsType as originalDateType");
 
 	});
-
 });

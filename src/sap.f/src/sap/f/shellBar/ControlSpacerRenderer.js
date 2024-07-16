@@ -2,27 +2,26 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function() {
-	"use strict";
+sap.ui.define([], function() {
+"use strict";
 
-	/**
-	 * ControlSpacer renderer.
-	 * @namespace
-	 */
-	var ControlSpacerRenderer = {
-		apiVersion: 2
-	};
+/**
+ * ControlSpacer renderer.
+ * @namespace
+ */
+var ControlSpacerRenderer = {
+	apiVersion: 2
+};
 
-	ControlSpacerRenderer.render = function(rm, oControl) {
-		rm.openStart("div", oControl);
-		rm.class("sapMTBSpacer");
+ControlSpacerRenderer.render = function(rm, oControl) {
+	rm.openStart("div", oControl);
+	rm.class("sapMTBSpacer");
 
-		rm.style("width", oControl.getWidth());
+	rm.style("width", oControl.getWidth());
 
-		rm.openEnd().close("div");
-	};
+	rm.openEnd().close("div");
+};
 
-	return ControlSpacerRenderer;
+return ControlSpacerRenderer;
 
-}, /* bExport= */ true);
+});

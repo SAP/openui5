@@ -72,4 +72,4 @@ sap.ui.define([
 
 	return [oAccessibleLabel, oAccessibleRowHighlight];
 
-}, true);
+});

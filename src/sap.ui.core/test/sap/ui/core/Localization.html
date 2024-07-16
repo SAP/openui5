@@ -10,77 +10,15 @@
 	<script id="sap-ui-bootstrap"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-libs="sap.m, sap.ui.layout"
-			data-sap-ui-theme="sap_bluecrystal"
-			data-sap-ui-originInfo="true"
-			>
+			data-sap-ui-origininfo="true"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:local/Localization"
+			data-sap-ui-resource-roots='{"local":"./"}'
+	>
 	</script>
 
-	<script>
-		jQuery.sap.require("sap.m.MessageBox");
-		function showInfo() {
-			var mInfo = this.getOriginInfo("text"),
-				sText = "Info:\n";
-
-			if (mInfo) {
-				jQuery.each(mInfo, function(key, value) {
-					sText += key + ": " + value + "\n";
-				});
-			} else {
-				sText += "Not available!";
-			}
-			sap.m.MessageBox.show(sText);
-		}
-
-		jQuery.sap.require("jquery.sap.resources");
-
-		var sLocale = sap.ui.getCore().getConfiguration().getLanguage();
-		var oBundle = jQuery.sap.resources({url : "resources/i18n.properties", locale: sLocale, includeInfo: sap.ui.getCore().getConfiguration().getOriginInfo()});
-
-		var oSimpleForm = new sap.ui.layout.form.SimpleForm({
-			editable: true,
-			content: [
-				new sap.m.Title({text: oBundle.getText("welcome", ["Administrator"])}).attachBrowserEvent("click", showInfo),
-				new sap.m.Label({text: oBundle.getText("lastname"), tooltip: oBundle.getText("lastname")}).attachBrowserEvent("click", showInfo) ,
-				new sap.m.Input(),
-				new sap.m.Label({text: oBundle.getText("firstname")}).attachBrowserEvent("click", showInfo) ,
-				new sap.m.Input(),
-				new sap.m.Label({text: oBundle.getText("street")}).attachBrowserEvent("click", showInfo) ,
-				new sap.m.Input(),
-				new sap.m.Label({text: oBundle.getText("zip")}).attachBrowserEvent("click", showInfo) ,
-				new sap.m.Input(),
-				new sap.m.Label({text: oBundle.getText("city")}).attachBrowserEvent("click", showInfo) ,
-				new sap.m.Input()
-			]
-		});
-		oSimpleForm.placeAt("resourcebundle");
-
-		var oResourceModel = new sap.ui.model.resource.ResourceModel({bundleUrl:"resources/i18n.properties"});
-		new sap.ui.layout.form.SimpleForm({
-			editable: true,
-			content: [
-				new sap.m.Title({text: oResourceModel.getResourceBundle().getText("welcome", ["Administrator"])}).attachBrowserEvent("click", showInfo),
-				new sap.m.Label({text: "{i18n>lastname}", tooltip: "{i18n>lastname}"}).attachBrowserEvent("click", showInfo) ,
-				new sap.m.Input(),
-				new sap.m.Label({text: "{i18n>firstname}"}).attachBrowserEvent("click", showInfo) ,
-				new sap.m.Input(),
-				new sap.m.Label({text: "{i18n>street}"}).attachBrowserEvent("click", showInfo) ,
-				new sap.m.Input(),
-				new sap.m.Label({text: "{i18n>zip}"}).attachBrowserEvent("click", showInfo) ,
-				new sap.m.Input(),
-				new sap.m.Label({text: "{i18n>city}"}).attachBrowserEvent("click", showInfo) ,
-				new sap.m.Input()
-			],
-			models: {
-				i18n: oResourceModel
-			}
-		}).placeAt("resourcemodel");
-
-		jQuery(function(){
-			var url = sap.ui.require.toUrl("sap/m/messagebundle.properties");
-			var oBundle = jQuery.sap.resources({url:url});
-			jQuery("#locale").html(oBundle ? oBundle.sLocale : "--");
-		});
-	</script>
+	
 
 </head>
 <body class="sapUiBody">

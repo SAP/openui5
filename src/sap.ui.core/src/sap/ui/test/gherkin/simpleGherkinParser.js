@@ -202,4 +202,4 @@ sap.ui.define([
 	};
 
 	return simpleGherkinParser;
-}, /* bExport= */ true);
+});

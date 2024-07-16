@@ -30,4 +30,4 @@ sap.ui.define([], () => {
 
 	return ActionToolbarActionRenderer;
 
-}, /* bExport= */ true);
+});

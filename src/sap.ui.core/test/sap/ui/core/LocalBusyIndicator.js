@@ -62,7 +62,7 @@ sap.ui.define([
 	var oBtn1 = new Button({
 		text : "set loading-mode: on",
 		press : function() {
-			var bBusy = !oMyListBox.isBusy();
+			var bBusy = true;
 			oBtn1.setText(bBusy ? "set loading-mode: off" : "set loading-mode: on");
 			oMyListBox.setBusy(bBusy);
 		}
@@ -70,14 +70,14 @@ sap.ui.define([
 	new Button({
 		text : "show short",
 		press : function() {
-			var bBusy = !oMyListBox.isBusy();
+			var bBusy = true;
 
 			oMyListBox.setBusyIndicatorDelay(0);
 			oBtn1.setText(bBusy ? "set loading-mode: off" : "set loading-mode: on");
 			oMyListBox.setBusy(bBusy);
 
 			setTimeout(function() {
-				var bBusy = !oMyListBox.isBusy();
+				var bBusy = true;
 
 				oBtn1.setText(bBusy ? "set loading-mode: off" : "set loading-mode: on");
 				oMyListBox.setBusy(bBusy);
@@ -162,7 +162,7 @@ sap.ui.define([
 		text : "set loading-mode: on",
 		press : function() {
 
-			var bBusy = !oMyTable.isBusy();
+			var bBusy = true;
 			oBtn2.setText(bBusy ? "set loading-mode: off" : "set loading-mode: on");
 			oMyTable.setBusy(bBusy);
 		}

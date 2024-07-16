@@ -4,6 +4,7 @@
 // Provides control sap.m.SelectionDetails.
 sap.ui.define([
 	'./library',
+	"sap/ui/core/AnimationMode",
 	'sap/ui/core/Control',
 	'sap/m/Button',
 	'sap/ui/base/Interface',
@@ -12,11 +13,11 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	'sap/ui/core/library',
 	'./SelectionDetailsRenderer',
-	'sap/base/util/uid',
-	"sap/ui/core/Configuration"
+	'sap/base/util/uid'
 ],
 function(
 	library,
+	AnimationMode,
 	Control,
 	Button,
 	Interface,
@@ -25,8 +26,7 @@ function(
 	Library,
 	CoreLibrary,
 	SelectionDetailsRenderer,
-	uid,
-	Configuration
+	uid
 ) {
 	"use strict";
 
@@ -371,7 +371,7 @@ function(
 
 			height = Math.min(SelectionDetails._POPOVER_MAX_HEIGHT, height);
 			oPopover._oControl._deregisterContentResizeHandler();
-			var bAnimationMode = ControlBehavior.getAnimationMode() !== Configuration.AnimationMode.none;
+			var bAnimationMode = ControlBehavior.getAnimationMode() !== AnimationMode.none;
 			$PopoverContent.animate({
 				"height": Math.min(height, iMaxHeight)
 			}, bAnimationMode ? 100 : 0, function() {
@@ -722,12 +722,6 @@ function(
 	SelectionDetails.prototype._updatePopoverContentHeight = function() {
 		var iContentHeight = this._getInitialPageHeight(),
 			oPopover = this._getPopover();
-
-		if (Device.browser.edge && this._oMainList.getDomRef() && this._oMainList.getDomRef().getBoundingClientRect().height === 0) {
-			// Force rendering if for some reason the main list has not been rendered in MS Edge
-			oPopover.setContentHeight(SelectionDetails._POPOVER_MAX_HEIGHT + "px");
-			return;
-		}
 
 		if (this._oNavContainer.getCurrentPage() === this._oInitialPage && iContentHeight < SelectionDetails._POPOVER_MAX_HEIGHT) {
 			oPopover.setProperty("contentHeight", iContentHeight + "px", true);

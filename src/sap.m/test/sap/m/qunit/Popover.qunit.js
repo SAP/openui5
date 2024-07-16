@@ -517,19 +517,6 @@ sap.ui.define([
 
 			assert.strictEqual(oPopover3._oCalcedPos, expectedPlace);
 
-			/**
-			 * @deprecated Since version 1.36
-			 *
-			 * Repeat the test a second time for the legacy values of PlacementType
-			 */
-			if (placement.includes("Preferred")) {
-				const legacyPlacement = placement.replace("Preferred", "Prefered");
-				oPopover3.setPlacement(legacyPlacement);
-				oPopover3._calcPlacement();
-
-				assert.strictEqual(oPopover3._oCalcedPos, expectedPlace);
-			}
-
 			stubOpenByRef.restore();
 			stubOffset.restore();
 			stubOffsetTop.restore();
@@ -2639,7 +2626,7 @@ sap.ui.define([
 		try {
 			oButton.firePress();
 			await nextUIUpdate();
-		} catch (e) { e; }
+		} catch (e) {}
 
 		// Assert
 		assert.ok(!oOpenerSpy.threw(), "Destroyed and closed silently without exception");

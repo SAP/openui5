@@ -1553,25 +1553,6 @@ sap.ui.define([
 		oPC1.setGroupAppointmentsMode(GroupAppointmentsMode.Collapsed);
 		await nextUIUpdate();
 	});
-	/**
-	 * @deprecated As of version 1.119
-	 */
-	QUnit.test("appointmentsReducedHeight", async function(assert) {
-		assert.ok(!oPC1.getAppointmentsReducedHeight(), "AppointmentsReducedHeight is disabled by default");
-		var aRows = oPC1.getRows();
-		for (var i = 0; i < aRows.length; i++) {
-			assert.ok(!_getRowTimeline(aRows[i]).getAppointmentsReducedHeight(), "Row " + i + ": AppointmentsReducedHeight not set");
-		}
-
-		oPC1.setAppointmentsReducedHeight(true);
-		await nextUIUpdate();
-		for (var i = 0; i < aRows.length; i++) {
-			assert.ok(_getRowTimeline(aRows[i]).getAppointmentsReducedHeight(), "Row " + i + ": AppointmentsReducedHeight set");
-		}
-
-		oPC1.setAppointmentsReducedHeight(false);
-		await nextUIUpdate();
-	});
 
 	QUnit.test("appointmentsVisualization", async function(assert) {
 		assert.equal(oPC1.getAppointmentsVisualization(), CalendarAppointmentVisualization.Standard, "AppointmentVisualization default set");
@@ -2936,7 +2917,7 @@ sap.ui.define([
 								startDate: UI5Date.getInstance(2023, 10, 2),
 								type: "NonWorking"
 							}),
-							new sap.ui.unified.DateTypeRange({
+							new DateTypeRange({
 								startDate: UI5Date.getInstance(2023, 10, 3),
 								type: "Working"
 							}),
@@ -4693,5 +4674,4 @@ sap.ui.define([
 		assert.strictEqual(sSecondaryButtonText, "17 Jumada I 1442 AH - 30 Jumada I 1442 AH", "button shuld have additional text '17 Jumada I 1442 AH - 30 Jumada I 1442 AH'");
 
 	});
-
 });

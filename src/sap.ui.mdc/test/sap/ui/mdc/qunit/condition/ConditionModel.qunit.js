@@ -7,13 +7,12 @@
 /*eslint max-nested-callbacks: [2, 10]*/
 
 sap.ui.define([
-		"sap/ui/mdc/condition/ConditionModel",
-		"sap/ui/mdc/condition/Condition",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/model/ChangeReason",
-		"sap/ui/mdc/enums/ConditionValidated",
-		"sap/ui/mdc/enums/OperatorName"
-		], function(ConditionModel, Condition, JSONModel, ChangeReason, ConditionValidated, OperatorName) {
+	"sap/ui/mdc/condition/ConditionModel",
+	"sap/ui/mdc/condition/Condition",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/mdc/enums/OperatorName"
+], function(ConditionModel, Condition, JSONModel, ChangeReason, OperatorName) {
 	"use strict";
 
 	let oConditionModel;
@@ -51,37 +50,6 @@ sap.ui.define([
 	QUnit.test("create condition", function(assert) {
 		const sData = JSON.stringify(oConditionModel.getData());
 		assert.ok(sData === '{"conditions":{},"fieldPath":{}}', "Default Data exist");
-	});
-
-	/**
-	 * @deprecated use the sap.ui.mdc.condition.Condition.createItemCondition or sap.ui.mdc.condition.Condition.createCondition
-	 */
-	QUnit.test("ConditionModel.createCondition", function(assert) {
-		let oCondition = oConditionModel.createCondition("fieldPath1", OperatorName.EQ, ["foo"]); // test deprecated function for compatibility reasons
-		assert.equal(oCondition.operator, OperatorName.EQ, "condition.operator must be 'EQ'");
-		assert.equal(oCondition.values.length, 1, "condition.values.length must be 1");
-		assert.equal(oCondition.values[0], "foo", "condition.value[0] must be 'foo'");
-		assert.notOk(oCondition.validated, "Condition validated unknown");
-
-		oCondition = Condition.createCondition(OperatorName.GT, [100]);
-		assert.equal(oCondition.operator, OperatorName.GT, "condition.operator must be 'GT'");
-		assert.equal(oCondition.values.length, 1, "condition.values.length must be 1");
-		assert.equal(oCondition.values[0], 100, "condition.value[0] must be 100");
-		assert.notOk(oCondition.validated, "Condition validated unknown");
-
-		oCondition = oConditionModel.createItemCondition("fieldPath3", "key", "description"); // test deprecated function for compatibility reasons
-		assert.equal(oCondition.operator, OperatorName.EQ, "condition.operator must be 'EQ'");
-		assert.equal(oCondition.values.length, 2, "condition.values.length must be 2");
-		assert.equal(oCondition.values[0], "key", "condition.value[0] must be 'key'");
-		assert.equal(oCondition.values[1], "description", "condition.value[1] must be 'description'");
-		assert.equal(oCondition.validated, ConditionValidated.Validated, "Condition is validated");
-
-		oCondition = Condition.createItemCondition("key", "description");
-		assert.equal(oCondition.operator, OperatorName.EQ, "condition.operator must be 'EQ'");
-		assert.equal(oCondition.values.length, 2, "condition.values.length must be 2");
-		assert.equal(oCondition.values[0], "key", "condition.value[0] must be 'key'");
-		assert.equal(oCondition.values[1], "description", "condition.value[1] must be 'description'");
-		assert.equal(oCondition.validated, ConditionValidated.Validated, "Condition is validated");
 	});
 
 	QUnit.test("ConditionModel.add/removeConditions", function(assert) {
@@ -822,5 +790,4 @@ sap.ui.define([
 			}, 0);
 		}, 0);
 	});
-
 });

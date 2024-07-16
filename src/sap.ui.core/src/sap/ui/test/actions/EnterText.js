@@ -73,8 +73,7 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: false
 				}
-			},
-			publicMethods : [ "executeOn" ]
+			}
 		},
 
 		constructor: function (mSettings) {

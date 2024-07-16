@@ -155,4 +155,4 @@ sap.ui.define([
 	};
 
 	return ExpandableTextRenderer;
-}, /* bExport= */ true);
+});

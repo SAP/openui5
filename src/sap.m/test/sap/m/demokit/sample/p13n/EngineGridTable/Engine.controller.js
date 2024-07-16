@@ -210,8 +210,6 @@ sap.ui.define([
 			const aSorter = [];
 			oState.Sorter.forEach(function(oSorter) {
 				const oColumn = this.byId(oSorter.key);
-				/** @deprecated As of version 1.120 */
-				oColumn.setSorted(true);
 				oColumn.setSortOrder(oSorter.descending ? CoreLibrary.SortOrder.Descending : CoreLibrary.SortOrder.Ascending);
 				aSorter.push(new Sorter(this.oMetadataHelper.getProperty(oSorter.key).path, oSorter.descending));
 			}.bind(this));

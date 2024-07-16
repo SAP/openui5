@@ -116,6 +116,7 @@ sap.ui.define([
 			interfaces: ["sap.ui.core.IFormContent", "sap.ui.core.ISemanticFormContent", "sap.m.IOverflowToolbarContent"],
 			designtime: "sap/ui/mdc/designtime/field/FieldBase.designtime",
 			library: "sap.ui.mdc",
+
 			properties: {
 				/**
 				 * The type of data handled by the field.
@@ -378,6 +379,7 @@ sap.ui.define([
 				}
 
 			},
+
 			aggregations: {
 				/**
 				 * Optional content that can be rendered.
@@ -471,26 +473,8 @@ sap.ui.define([
 					multiple: false
 				}
 			},
-			associations: {
-				/**
-				 * Optional <code>FieldHelp</code>.
-				 *
-				 * This is an association that allows the usage of one <code>ValueHelp</code> instance for multiple fields.
-				 *
-				 * <b>Note:</b> If the field is inside of a table, do not set the <code>ValueHelp</code> instance as <code>dependent</code>
-				 * to the field. If you do, every field instance in every table row gets a clone of it.
-				 * Put the <code>ValueHelp</code> instance e.g. as dependent on the table or page.
-				 * The <code>FieldHelp</code> instance must be somewhere in the control tree, otherwise there might
-				 * be rendering or update issues.
-				 *
-				 * <b>Note:</b> For <code>Boolean</code> fields, no <code>ValueHelp</code> should be added, but a default <code>ValueHelp</code> used instead.
-				 * @deprecated as of 1.114.0, replaced by {@link #setValueHelp valueHelp} association
-				 */
-				fieldHelp: {
-					type: "sap.ui.mdc.ValueHelp",
-					multiple: false
-				},
 
+			associations: {
 				/**
 				 * Optional <code>ValueHelp</code>.
 				 *
@@ -514,6 +498,7 @@ sap.ui.define([
 				 */
 				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 			},
+
 			events: {
 				/**
 				 * This event is fired when the value of the field is changed, for example, each time a key is pressed.
@@ -561,7 +546,7 @@ sap.ui.define([
 					}
 				}
 			},
-			publicMethods: [],
+
 			defaultAggregation: "content"
 		},
 		renderer: FieldBaseRenderer,
@@ -1042,27 +1027,6 @@ sap.ui.define([
 		}
 
 		return oClone;
-
-	};
-
-	/**
-	 * Gets <code>fieldPath</code>.
-	 *
-	 * If the <code>conditions</code> are bound to a <code>ConditionModel</code>, the <code>FieldPath</code> is determined from this binding.
-	 *
-	 * @returns {string} fieldPath of the field
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.filterbar.FilterBarBase
-	 * @deprecated as of 1.115.0, replaced by {@link #setPropertyKey propertyKey} property
-	 */
-	FieldBase.prototype.getFieldPath = function() {
-
-		const sBindingPath = this.getBindingPath("conditions");
-		if (sBindingPath && sBindingPath.startsWith("/conditions/")) {
-			return sBindingPath.slice(12);
-		} else {
-			return "";
-		}
 
 	};
 
@@ -2834,7 +2798,7 @@ sap.ui.define([
 	// TODO: remove this function and replace by getValueHelp once ValueHelp association is completetly removed.
 	FieldBase.prototype._getValueHelp = function() {
 
-		return this.getValueHelp() || (this.getFieldHelp && this.getFieldHelp()); // as getFieldHelp not exist in legacy-free UI5
+		return this.getValueHelp() || (undefined); // as getFieldHelp not exist in legacy-free UI5
 
 	};
 
@@ -3768,25 +3732,7 @@ sap.ui.define([
 	 * @protected
 	 * @since 1.115.0
 	 */
-	FieldBase.prototype.isSearchField = function() {
-
-		/**
-		 * @deprecated Since version 1.115.0
-		 */
-		// eslint-disable-next-line no-lone-blocks
-		{
-			let bIsSearchField = false;
-			const sFieldPath = this.getFieldPath();
-
-			if (sFieldPath) {
-				const regexp = new RegExp("^\\*(.*)\\*|\\$search$");
-				bIsSearchField = regexp.test(sFieldPath) && this.getMaxConditions() === 1;
-			}
-
-			return bIsSearchField;
-		}
-
-	};
+	FieldBase.prototype.isSearchField = function() {};
 
 	/*
 	 * checks is a operator is valid
@@ -3897,5 +3843,4 @@ sap.ui.define([
 	}
 
 	return FieldBase;
-
 });

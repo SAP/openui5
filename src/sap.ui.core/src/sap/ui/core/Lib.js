@@ -14,20 +14,17 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/isPlainObject",
 	'sap/base/util/LoaderExtensions',
-	'sap/base/util/fetch',
-	'sap/base/util/mixedFetch',
-	"sap/base/util/ObjectPath",
 	'sap/base/util/Version',
 	'sap/base/util/array/uniqueSort',
-	'sap/ui/Global', /* sap.ui.lazyRequire */
+	'sap/ui/Global',
+	/* sap.ui.lazyRequire */
 	'sap/ui/VersionInfo',
 	'sap/ui/base/DataType',
 	'sap/ui/base/EventProvider',
 	'sap/ui/base/Object',
-	'sap/ui/base/SyncPromise',
 	'sap/ui/core/_UrlResolver',
 	"sap/ui/core/Supportability"
-], function (
+], function(
 	assert,
 	BaseConfig,
 	Localization,
@@ -38,9 +35,6 @@ sap.ui.define([
 	isEmptyObject,
 	isPlainObject,
 	LoaderExtensions,
-	fetch,
-	mixedFetch,
-	ObjectPath,
 	Version,
 	uniqueSort,
 	Global,
@@ -48,7 +42,6 @@ sap.ui.define([
 	DataType,
 	EventProvider,
 	BaseObject,
-	SyncPromise,
 	_UrlResolver,
 	Supportability
 ) {
@@ -104,35 +97,6 @@ sap.ui.define([
 	 */
 	function registerModulePath(sModuleNamePrefix, sUrlPrefix) {
 		LoaderExtensions.registerResourcePath(sModuleNamePrefix.replace(/\./g, "/"), sUrlPrefix);
-	}
-
-	/**
-	 * Adds all resources from a preload bundle to the preload cache.
-	 *
-	 * When a resource exists already in the cache, the new content is ignored.
-	 *
-	 * @param {object} oData Preload bundle
-	 * @param {string} [oData.url] URL from which the bundle has been loaded
-	 * @param {string} [oData.name] Unique name of the bundle
-	 * @param {string} [oData.version='1.0'] Format version of the preload bundle
-	 * @param {object} oData.modules Map of resources keyed by their resource name; each resource must be a string or a function
-	 * @param {string} sURL URL from which the bundle has been loaded
-	 *
-	 * @private
-	 */
-	function registerPreloadedModules(oData, sURL) {
-		var modules = oData.modules,
-			fnUI5ToRJS = function(sName) {
-				return /^jquery\.sap\./.test(sName) ? sName : sName.replace(/\./g, "/");
-			};
-
-		if ( Version(oData.version || "1.0").compareTo("2.0") < 0 ) {
-			modules = {};
-			for ( var sName in oData.modules ) {
-				modules[fnUI5ToRJS(sName) + ".js"] = oData.modules[sName];
-			}
-		}
-		sap.ui.require.preload(modules, oData.name, sURL);
 	}
 
 	/**
@@ -289,7 +253,6 @@ sap.ui.define([
 	 * @public
 	 */
 	var Library = BaseObject.extend("sap.ui.core.Lib", /** @lends sap.ui.core.Lib.prototype */ {
-
 		constructor: function(mSettings) {
 			BaseObject.call(this);
 
@@ -356,7 +319,6 @@ sap.ui.define([
 		isSettingsEnhanced: function() {
 			return this._settingsEnhanced;
 		},
-
 
 		/**
 		 * Enhances a library's setting information.
@@ -425,31 +387,22 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the file type (either js, json, none, or both) that should be used for preloading this library
-		 * instance.
-		 *
-		 * When <code>bJSON</code> is set to <code>true</code>, type "json" is returned directly. When
-		 * <code>bJSON</code> is set to <code>false</code>, type "js" is returned. Otherwise it takes the configured
-		 * file type into consideration. In case of conflict between the given <code>bJSON</code> and the configured
-		 * file type, type "none" is returned.
-		 *
-		 * @param {boolean} [bJSON] Whether the "json" file type is set
-		 * @returns {string} The determined file type. It can be "js", "json", "none", or "both".
-		 * @private
-		 * @ui5-transform-hint replace-param bJSON false
-		 */
-		_getFileType: function (bJSON) {
+				 * Returns the file type (either js, json, none, or both) that should be used for preloading this library
+				 * instance.
+				 *
+				 * When <code>bJSON</code> is set to <code>true</code>, type "json" is returned directly. When
+				 * <code>bJSON</code> is set to <code>false</code>, type "js" is returned. Otherwise it takes the configured
+				 * file type into consideration. In case of conflict between the given <code>bJSON</code> and the configured
+				 * file type, type "none" is returned.
+				 *
+				 * @returns {string} The determined file type. It can be "js", "json", "none", or "both".
+				 * @private
+				 */
+		_getFileType: function() {
 			var sFileType;
 			var sConfiguredFileType = mLibraryPreloadFileTypes[this.name] || mLibraryPreloadFileTypes[''] || 'both';
 
-			if ( bJSON === true ) {
-				sFileType = 'json';
-			} else if ( bJSON === false ) {
-				sFileType = 'js';
-			} else {
-				// take the configured preload file type as default
-				sFileType = sConfiguredFileType;
-			}
+			sFileType = 'js';
 
 			if (sConfiguredFileType !== 'both' && sFileType !== 'both' &&  sConfiguredFileType !== sFileType ) {
 				// if the configured and the supported file type are not equal and the library doesn't support 'both',
@@ -495,35 +448,31 @@ sap.ui.define([
 		},
 
 		/**
-		 * Internal function for preloading a library which still supports the legacy parameters:
-		 *
-		 * <ul>
-		 * <li><code>mOptions.sync</code>: load the preload file in sync mode</li>
-		 * <li><code>mOptions.json</code>: load the preload file in "json" format</li>
-		 * </ul>
-		 *
-		 * @param [mOptions] The options object that contains the following properties
-		 * @param [mOptions.url] URL to load the library from
-		 * @param [mOptions.lazy] Whether the library-preload-lazy bundle should be loaded instead of the
-		 *  library-preload bundle
-		 * @param [mOptions.sync] @deprecated Whether to load the preload bundle in sync mode
-		 * @param [mOptions.json] @deprecated Whether to load the preload in JSON format
-		 * @returns {Promise<Lib>|Lib} A promise that resolves with the library instance in async mode and the library
-		 *  instance itself in sync mode
-		 * @private
-		 * @ui5-transform-hint replace-param mOptions.sync false
-		 * @ui5-transform-hint replace-param mOptions.json false
-		 */
+				 * Internal function for preloading a library which still supports the legacy parameters:
+				 *
+				 * <ul>
+				 * <li><code>mOptions.sync</code>: load the preload file in sync mode</li>
+				 * <li><code>mOptions.json</code>: load the preload file in "json" format</li>
+				 * </ul>
+				 *
+				 * @param [mOptions] The options object that contains the following properties
+				 * @param [mOptions.url] URL to load the library from
+				 * @param [mOptions.lazy] Whether the library-preload-lazy bundle should be loaded instead of the
+				 *  library-preload bundle
+				 * @returns {Promise<Lib>|Lib} A promise that resolves with the library instance in async mode and the library
+				 *  instance itself in sync mode
+				 * @private
+				 */
 		_preload: function(mOptions) {
 			mOptions = mOptions || {};
 
-			var sFileType = this._getFileType(mOptions.json),
+			var sFileType = this._getFileType(false),
 				sLibPackage = this.name.replace(/\./g, '/'),
 				bEntryModuleExists = !!sap.ui.loader._.getModuleState(sLibPackage + '/library.js'),
 				bHttp2 = Library.isDepCacheEnabled();
 
 			if (sFileType === 'none') {
-				return mOptions.sync ? this : Promise.resolve(this);
+				return Promise.resolve(this);
 			}
 
 			if (this._loadingStatus == null && mOptions.url) {
@@ -533,19 +482,7 @@ sap.ui.define([
 			this._loadingStatus = this._loadingStatus || {};
 
 			if (this._loadingStatus.pending) {
-				if (mOptions.sync) {
-					if (mOptions.lazy) {
-						// ignore a lazy request when an eager request is already pending
-						return this;
-					} else if (this._loadingStatus.async) {
-						Log.warning("request to load " + this.name + " synchronously while async loading is pending; this causes a duplicate request and should be avoided by caller");
-						// fall through and preload synchronously
-					} else {
-						// sync cycle -> ignore nested call (would nevertheless be a dependency cycle)
-						Log.warning("request to load " + this.name + " synchronously while sync loading is pending (cycle, ignored)");
-						return this;
-					}
-				} else if (this._loadingStatus.preloadFinished) { // async
+				if (this._loadingStatus.preloadFinished) { // async
 					// When it's already in progress for loading a library and loading its own preload file (either JS,
 					// JSON or doesn't need to load the preload at all) is finished, a dependency cycle between
 					// libraries is detected. A resolved promise is returned instead of this._loadingStatus.promise to
@@ -554,10 +491,9 @@ sap.ui.define([
 				}
 			}
 
-			if ((mOptions.sync && this._loadingStatus.pending === false)
-				|| (!mOptions.sync && this._loadingStatus.promise)) {
+			if (this._loadingStatus.promise) {
 				// in the sync case, we can do a immediate return only when the library is fully loaded.
-				return mOptions.sync ? this : this._loadingStatus.promise;
+				return this._loadingStatus.promise;
 			}
 
 			if (mOptions.lazy) {
@@ -566,27 +502,17 @@ sap.ui.define([
 				// (but the loader avoids double loading).
 				Log.debug("Lazy dependency to '" + this.name + "' encountered, loading library-preload-lazy.js");
 
-				/** @deprecated */
-				if (mOptions.sync) {
-					try {
-						sap.ui.requireSync(sLibPackage + '/library-preload-lazy'); // legacy-relevant: Sync path
-					} catch (e) {
-						Log.error("failed to load '" + sLibPackage + "/library-preload-lazy.js" + "' synchronously (" + (e && e.message || e) + ")");
-					}
-					return this;
-				}
-
 				return sap.ui.loader._.loadJSResourceAsync(
 					sLibPackage + '/library-preload-lazy.js', /* ignoreErrors = */ true);
 			}
 
 			// otherwise mark as pending
 			this._loadingStatus.pending = true;
-			this._loadingStatus.async = !mOptions.sync;
+			this._loadingStatus.async = true;
 
 			var pPreload;
 			if (bEntryModuleExists) {
-				pPreload = (mOptions.sync ? SyncPromise : Promise).resolve();
+				pPreload = (Promise).resolve();
 			} else {
 				// first preload code, resolves with list of dependencies (or undefined)
 				pPreload = sFileType !== 'json' ?
@@ -594,9 +520,9 @@ sap.ui.define([
 					this._preloadJSFormat({
 						fallbackToJSON: sFileType !== "js",
 						http2: bHttp2,
-						sync: mOptions.sync
+						sync: false
 					})
-					: this._preloadJSONFormat({sync: mOptions.sync});
+					: this._preloadJSONFormat({sync: false});
 			}
 
 			// load dependencies, if there are any
@@ -610,37 +536,33 @@ sap.ui.define([
 					aPromises;
 
 				if (aDependencies && aDependencies.length) {
-					if (!mOptions.sync) {
-						var aEagerDependencies = [],
-							aLazyDependencies = [];
+					var aEagerDependencies = [],
+						aLazyDependencies = [];
 
-						aDependencies.forEach(function(oDependency) {
-							if (oDependency.lazy) {
-								aLazyDependencies.push(oDependency);
-							} else {
-								aEagerDependencies.push(oDependency.name);
-							}
+					aDependencies.forEach(function(oDependency) {
+						if (oDependency.lazy) {
+							aLazyDependencies.push(oDependency);
+						} else {
+							aEagerDependencies.push(oDependency.name);
+						}
+					});
+					// aEagerDependencies contains string elements before executing the next line
+
+					aEagerDependencies = VersionInfo._getTransitiveDependencyForLibraries(aEagerDependencies)
+						.map(function(sDependencyName) {
+							return {
+								name: sDependencyName
+							};
 						});
-						// aEagerDependencies contains string elements before executing the next line
+					// aEagerDependencies contains object elements after executing the above line
 
-						aEagerDependencies = VersionInfo._getTransitiveDependencyForLibraries(aEagerDependencies)
-							.map(function(sDependencyName) {
-								return {
-									name: sDependencyName
-								};
-							});
-						// aEagerDependencies contains object elements after executing the above line
-
-						// combine transitive closure of eager dependencies and direct lazy dependencies,
-						// the latter might be redundant
-						aDependencies = aEagerDependencies.concat(aLazyDependencies);
-					}
+					// combine transitive closure of eager dependencies and direct lazy dependencies,
+					// the latter might be redundant
+					aDependencies = aEagerDependencies.concat(aLazyDependencies);
 
 					aPromises = aDependencies.map(function(oDependency) {
 						var oLibrary = Library._get(oDependency.name, true/* bCreate */);
 						return oLibrary._preload({
-							/** @deprecated since 1.120 */
-							sync: mOptions.sync,
 							lazy: oDependency.lazy
 						});
 					});
@@ -648,11 +570,11 @@ sap.ui.define([
 					aPromises = [];
 				}
 
-				if (!mOptions.sync && oManifest && Version(oManifest._version).compareTo("1.9.0") >= 0) {
+				if (oManifest && Version(oManifest._version).compareTo("1.9.0") >= 0) {
 					aPromises.push(this.loadResourceBundle());
 				}
 
-				var pFinish = mOptions.sync ? SyncPromise.all(aPromises) : Promise.all(aPromises);
+				var pFinish = Promise.all(aPromises);
 				return pFinish.then(function() {
 					this._loadingStatus.pending = false;
 					return this;
@@ -660,115 +582,47 @@ sap.ui.define([
 
 			}.bind(this));
 
-			return mOptions.sync ? this._loadingStatus.promise.unwrap() : this._loadingStatus.promise;
+			return this._loadingStatus.promise;
 		},
 
 		/**
-		 * Loads the library's preload bundle in JS format. In case the resource "library-preload.js" doesn't exist and
-		 * <code>mOptions.fallbackToJSON</code> is set to <code>true</code>, the library's preload in JSON format will
-		 * be loaded.
-		 *
-		 * @param {object} [mOptions] The options object that contains the following properties
-		 * @param {boolean} [mOptions.fallbackToJSON] Whether to load the preload in JSON format when loading the JS
-		 *  format fails
-		 * @param {boolean} [mOptions.http2] Whether to load the "library-h2-preload" bundle instead of the
-		 * "library-preload" bundle
-		 * @param {boolean} [mOptions.sync] Whether to load the preload in sync mode
-		 * @returns {Promise|object} A promise that resolves with the dependency information of the library in async
-		 *  mode or the dependency information directly in sync mode
-		 * @private
-		 * @ui5-transform-hint replace-param mOptions.sync false
-		 */
+				 * Loads the library's preload bundle in JS format. In case the resource "library-preload.js" doesn't exist and
+				 * <code>mOptions.fallbackToJSON</code> is set to <code>true</code>, the library's preload in JSON format will
+				 * be loaded.
+				 *
+				 * @param {object} [mOptions] The options object that contains the following properties
+				 * @param {boolean} [mOptions.fallbackToJSON] Whether to load the preload in JSON format when loading the JS
+				 *  format fails
+				 * @param {boolean} [mOptions.http2] Whether to load the "library-h2-preload" bundle instead of the
+				 * "library-preload" bundle
+				 * @returns {Promise|object} A promise that resolves with the dependency information of the library in async
+				 *  mode or the dependency information directly in sync mode
+				 * @private
+				 */
 		_preloadJSFormat: function(mOptions) {
 			mOptions = mOptions || {};
 
 			var that = this;
 			var sPreloadModule = this.name.replace(/\./g, '/')
 				+ (mOptions.http2 ? '/library-h2-preload' : '/library-preload')
-				+ (mOptions.sync ? '' : '.js');
+				+ ('.js');
 			var pResult;
 
-			if (mOptions.sync) {
-				// necessary to call sap.ui.requireSync in the "then" function to result in a rejected promise once the
-				// loading of JS preload fails
-				pResult = SyncPromise.resolve().then(function() {
-					sap.ui.requireSync(sPreloadModule); // legacy-relevant: Synchronous preloading
-				});
-			} else {
-				pResult = sap.ui.loader._.loadJSResourceAsync(sPreloadModule);
-			}
+			pResult = sap.ui.loader._.loadJSResourceAsync(sPreloadModule);
 
 			return pResult.catch(function(e) {
 				if (mOptions.fallbackToJSON) {
 					var bFallback;
-					if (mOptions.sync) {
-						var oRootCause = e;
-						while (oRootCause && oRootCause.cause) {
-							oRootCause = oRootCause.cause;
-						}
-						// fall back to JSON, but only if the root cause was an XHRLoadError
-						// ignore other errors (preload shouldn't fail)
-						bFallback = oRootCause && oRootCause.name === "XHRLoadError";
-					} else {
-						// loading library-preload.js failed, might be an old style lib with a library-preload.json only.
-						// with mOptions.fallbackToJSON === false, this fallback can be suppressed
-						bFallback = true;
-					}
+					// loading library-preload.js failed, might be an old style lib with a library-preload.json only.
+					// with mOptions.fallbackToJSON === false, this fallback can be suppressed
+					bFallback = true;
 
 					if (bFallback) {
 						Log.error("failed to load '" + sPreloadModule + "' (" + (e && e.message || e) + "), falling back to library-preload.json");
-						return that._preloadJSONFormat({sync: mOptions.sync});
+						return that._preloadJSONFormat({sync: false});
 					}
 					// ignore other errors
 				}
-			});
-		},
-
-		/**
-		 * Loads the library's preload bundle in JSON format.
-		 *
-		 * @param {object} [mOptions] The options object that contains the following properties
-		 * @param {boolean} [mOptions.sync] Whether to load the preload in sync mode
-		 * @returns {Promise|object} A promise that resolves with the dependency information of the library in async
-		 *  mode or the dependency information directly in sync mode
-		 * @private
-		 * @deprecated
-		 */
-		_preloadJSONFormat: function(mOptions) {
-			mOptions = mOptions || {};
-
-			var sURL = getModulePath(this.name, "/library-preload.json");
-
-			/**
-			 * @deprecated As of Version 1.120
-			 */
-			fetch = mixedFetch ? mixedFetch : fetch;
-			return fetch(sURL, {
-				headers: {
-					Accept: fetch.ContentTypes.JSON
-				}
-			}, mOptions.sync).then(function(response) {
-				if (response.ok) {
-					return response.json().then(function(data) {
-						if (data) {
-							registerPreloadedModules(data, sURL);
-							if (Array.isArray(data.dependencies)) {
-								// remove .library-preload suffix from dependencies
-								return data.dependencies.map(function (sDepLibraryName) {
-									return {
-										name: sDepLibraryName.replace(/\.library-preload$/, '')
-									};
-								});
-							} else {
-								return data.dependencies;
-							}
-						}
-					});
-				}  else {
-					throw Error(response.statusText || response.status);
-				}
-			}).catch(function(oError) {
-				Log.error("failed to load '" + sURL + "': " + oError.message);
 			});
 		},
 
@@ -1385,14 +1239,7 @@ sap.ui.define([
 		var oLib = Library._get(mSettings.name, true /* bCreate */);
 		oLib.enhanceSettings(mSettings);
 
-		var oLibNamespace = Object.create(null),
-			i;
-
-		/**
-		 * Creates the library namespace inside the global object.
-		 * @deprecated since 1.120
-		 */
-		oLibNamespace = ObjectPath.create(mSettings.name);
+		var oLibNamespace = Object.create(null);
 
 		// If a library states that it is using apiVersion 2, we expect types to be fully declared.
 		// In this case we don't need to create Proxies for the library namespace.
@@ -1407,83 +1254,12 @@ sap.ui.define([
 
 			// activate proxy for outer library namespace object
 			oLibNamespace = new Proxy(oLibNamespace, oLibProxyHandler);
-
-			/**
-			 * proxy must be written back to the original path (global)
-			 * @deprecated since 1.120
-			 */
-			ObjectPath.set(mSettings.name, oLibNamespace);
 		}
 
-
-		/**
-		 * Synchronously resolve dependencies
-		 * @deprecated since 1.120
-		 */
-		for (i = 0; i < oLib.dependencies.length; i++) {
-			var sDepLib = oLib.dependencies[i];
-			var oDepLib = Library._get(sDepLib, true /* bCreate */);
-			Log.debug("resolve Dependencies to " + sDepLib, null, METHOD);
-			if (!oDepLib.isSettingsEnhanced()) {
-				Log.warning("Dependency from " + mSettings.name + " to " + sDepLib + " has not been resolved by library itself", null, METHOD);
-				Library._load({name: sDepLib}, {sync: true}); // legacy-relevant: Sync fallback for missing manifest/AMD dependencies
-			}
-		}
 
 		// register interface types
 		DataType.registerInterfaceTypes(oLib.interfaces);
 
-		function createHintForType(sTypeName) {
-			const typeObj = ObjectPath.get(sTypeName);
-			if ( typeObj instanceof DataType ) {
-				return ` to ensure that the type is defined. You can then access it by calling 'DataType.getType("${sTypeName}")'.`;
-			} else if ( isPlainObject(typeObj) ) {
-				return `. You can then reference this type via the library's module export.`;
-			} else {
-				return `.`; // no further hint
-			}
-		}
-
-		/**
-		 * Declare a module for each (non-builtin) simple type.
-		 * Only needed for backward compatibility: some code 'requires' such types although they never have been modules on their own.
-		 * @deprecated since 1.120
-		 */
-		for (i = 0; i < oLib.types.length; i++) {
-			if ( !/^(any|boolean|float|int|string|object|void)$/.test(oLib.types[i]) ) {
-				// register a pseudo module that logs a deprecation warning
-				const sTypeName = oLib.types[i];
-				sap.ui.loader._.declareModule(
-					sTypeName.replace(/\./g, "/") + ".js",
-					() => (
-						`Importing the pseudo module '${sTypeName.replace(/\./g, "/")}' is deprecated.`
-						+ ` To access the type '${sTypeName}', please import '${oLib.name.replace(/\./g, "/")}/library'`
-						+ createHintForType(sTypeName)
-						+ ` For more information, see documentation under 'Best Practices for Loading Modules'.`
-					)
-				);
-
-				// ensure parent namespace of the type
-				var sNamespacePrefix = sTypeName.substring(0, sTypeName.lastIndexOf("."));
-				if (ObjectPath.get(sNamespacePrefix) === undefined) {
-					// parent type namespace does not exists, so we create its
-					ObjectPath.create(sNamespacePrefix);
-				}
-			}
-		}
-
-		/**
-		 * create lazy loading stubs for all controls and elements
-		 * @deprecated since 1.120
-		 */
-		(() => {
-			var aElements = oLib.controls.concat(oLib.elements);
-			for (i = 0; i < aElements.length; i++) {
-				sap.ui.lazyRequire(aElements[i], "new extend getMetadata"); // TODO don't create an 'extend' stub for final classes
-			}
-		})();
-
-			// include the library theme, but only if it has not been suppressed in library metadata or by configuration
 		if (!oLib.noLibraryCSS) {
 			var oLibThemingInfo = {
 				name: oLib.name,
@@ -1674,42 +1450,6 @@ sap.ui.define([
 			return oLib;
 		});
 
-		/**
-		 * sync loading
-		 * @deprecated since 1.120
-		 */
-		if (mOptions.sync) {
-			if (bPreload) {
-				aLibs.forEach(function(oLib) {
-					var mOptions = {sync: true};
-					if (mAdditionalConfig[oLib.name] && mAdditionalConfig[oLib.name].hasOwnProperty("json")) {
-						mOptions.json = mAdditionalConfig[oLib.name].json;
-					}
-					oLib._preload(mOptions);
-				});
-			}
-
-			if (bRequire) {
-				getLibraryModuleNames(aLibs).forEach(function(sModuleName, index) {
-					if (aLibs[index].isSettingsEnhanced()) {
-						// load library only once
-						return;
-					}
-
-					// require the library module (which in turn will call initLibrary())
-					sap.ui.requireSync(sModuleName); // legacy-relevant: Sync path
-
-					// check for legacy code
-					if (!aLibs[index].isSettingsEnhanced()) {
-						Log.warning("library " + aLibs[index].name + " didn't initialize itself");
-						Library.init({ name: aLibs[index].name }); // TODO redundant to generated initLibrary call....
-					}
-				});
-			}
-
-			return aLibs;
-		}
-
 		const pPreloaded = bPreload ?
 			Promise.all(aLibs.map(function(oLib) {
 				const mOptions = {};
@@ -1776,11 +1516,6 @@ sap.ui.define([
 
 		// if library has not been loaded yet, create a library
 		if (!oLibrary) {
-			/**
-             * Ensure namespace.
-             * @deprecated since 1.120
-             */
-			ObjectPath.create(sLibraryName);
 			oLibrary = Library._get(sLibraryName, true /* bCreate */);
 		}
 

@@ -6,19 +6,19 @@
 	<title>Manage Products</title>
 
 	<script id="sap-ui-bootstrap"
-		src="../../../../../../../../../../resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_horizon"
-		data-sap-ui-resourceroots='{
+			src="../../../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-frame-options="trusted"
+			data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
+			data-sap-ui-resource-roots='{
 			"mycompany.myapp.MyWorklistApp": "./"
 		}'
-		data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
-		data-sap-ui-compatVersion="edge"
-		data-sap-ui-async="true"
-		data-sap-ui-frameOptions="trusted">
+	>
 	</script>
 </head>
 
 <body class="sapUiBody">
-	<div data-sap-ui-component data-name="mycompany.myapp.MyWorklistApp" data-id="container" data-settings='{"id" : "MyWorklistApp"}'></div>
+	<div data-sap-ui-component data-name="mycompany.myapp.MyWorklistApp" data-id="container" data-settings="{&quot;id&quot; : &quot;MyWorklistApp&quot;}"></div>
 </body>
 </html>

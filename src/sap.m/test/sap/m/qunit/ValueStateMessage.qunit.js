@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/Select",
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	createAndAppendDiv,
 	Device,
@@ -17,7 +17,7 @@ sap.ui.define([
 	Select,
 	Control,
 	coreLibrary,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -153,7 +153,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oInput.focus();
 		oValueStateMessage.open();
 		oValueStateMessage.close();
@@ -176,7 +176,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oInput.focus();
 		oValueStateMessage._oControl = {
 			getDomRef: function() {
@@ -254,7 +254,7 @@ sap.ui.define([
 		});
 
 		oInputBase.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oInputBase.openValueStateMessage();

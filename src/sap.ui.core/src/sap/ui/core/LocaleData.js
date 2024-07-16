@@ -251,17 +251,6 @@ sap.ui.define([
 		 */
 		getLanguages: function() {
 			const oLanguages = this._get("languages");
-			/** @deprecated As of version 1.120.0 */
-			[
-				"ar_001", "de_AT", "de_CH", "en_AU", "en_CA", "en_GB", "en_US", "es_419", "es_ES", "es_MX", "fa_AF",
-				"fr_CA", "fr_CH", "nds_NL", "nl_BE", "pt_BR", "pt_PT", "ro_MD", "sw_CD", "zh_Hans", "zh_Hant"
-			].forEach((sLanguageTag) => {
-				// for compatibility reasons, ensure that for these language tags the corresponding language names are
-				// available
-				if (!oLanguages[sLanguageTag]) {
-					oLanguages[sLanguageTag] = this.getLanguageName(sLanguageTag);
-				}
-			});
 
 			return oLanguages;
 		},

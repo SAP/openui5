@@ -2,13 +2,11 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI"
 ], function(
 	UIComponent,
 	FlexControllerFactory,
 	ChangePersistenceFactory,
-	FakeLrepConnectorLocalStorage,
 	ControlPersonalizationWriteAPI
 ) {
 	"use strict";
@@ -69,7 +67,7 @@ sap.ui.define([
 		 */
 		_createFakeLrep() {
 			if (new URLSearchParams(window.location.search).get("sap-rta-mock-lrep") !== false) {
-				FakeLrepConnectorLocalStorage.enableFakeConnector();
+				undefined/*FakeLrepConnectorLocalStorage*/.enableFakeConnector();
 			}
 		}
 	});

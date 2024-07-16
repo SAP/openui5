@@ -1,3 +1,0 @@
-<core:FragmentDefinition xmlns:m="sap.m" xmlns:core="sap.ui.core">
-	<m:Text text="{$this>text}" />
-</core:FragmentDefinition>

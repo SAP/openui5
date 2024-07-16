@@ -1,5 +1,4 @@
-sap.ui.define("sample/ExtensionProvider",
-		["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) {
+sap.ui.define("sample/ExtensionProvider", ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) {
 	"use strict";
 
 	//this is just an example, normally they would be a lookup in the component settings and flex changes for the component
@@ -20,4 +19,4 @@ sap.ui.define("sample/ExtensionProvider",
 		}
 	};
 	return ExtensionProvider;
-}, true);
+});

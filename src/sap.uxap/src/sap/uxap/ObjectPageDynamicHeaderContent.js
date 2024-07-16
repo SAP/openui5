@@ -97,20 +97,10 @@ sap.ui.define([
 			return false;
 		};
 
-		/**
-		 * Required by the {@link sap.uxap.IHeaderContent} interface.
-		 * @param sDesign
-		 * @deprecated As of version 1.40.1
-		 */
-		ObjectPageDynamicHeaderContent.prototype.setContentDesign = function (sDesign) {
-			// implementation not supported
-		};
-
 		ObjectPageDynamicHeaderContent.prototype.setVisible = function (bVisible) {
 			this.getParent() && this.getParent().toggleStyleClass("sapUxAPObjectPageLayoutNoHeaderContent", !bVisible);
 			return this.setProperty("visible", bVisible);
 		};
 
 		return ObjectPageDynamicHeaderContent;
-
 	});

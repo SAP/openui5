@@ -1,7 +1,7 @@
 /* global QUnit */
 QUnit.config.autostart = false;
 
-sap.ui.getCore().attachInit(function() {
+sap.ui.require(["sap/ui/core/Core"], Core => Core.ready(function() {
 	"use strict";
 
 	// journeys are split in several test pages so that each one runs fast enough (<30s)
@@ -31,4 +31,4 @@ sap.ui.getCore().attachInit(function() {
 		QUnit.start();
 	});
 
-});
+}));

@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	'sap/ui/core/Core',
-	"sap/ui/thirdparty/jquery",
 	"sap/m/SplitContainer",
 	"sap/m/ScrollContainer",
 	"sap/m/Page",
@@ -26,7 +25,6 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	Core,
-	jQuery,
 	SplitContainer,
 	ScrollContainer,
 	Page,
@@ -376,36 +374,6 @@ sap.ui.define([
 		oSplitContainer.showMaster();
 	});
 
-	/**
-	 * @deprecated As of version 1.87
-	 */
-	QUnit.test("sap.ui.Device.resize event should be reacted also on phone", async function(assert) {
-		var oPortrait = {
-				landscape: false,
-				portrait: true
-			}, oLandscape = {
-				landscape: true,
-				portrait: false
-			}, oSystem = {
-				desktop: false,
-				phone: true,
-				tablet: false
-			};
-
-		this.stub(Device, "system").value(oSystem);
-		this.stub(Device, "orientation").value(oLandscape);
-
-		var oSplitContainer = new SplitContainer();
-		oSplitContainer._onOrientationChange = this.spy();
-		oSplitContainer.placeAt("content");
-		await nextUIUpdate();
-
-		this.stub(Device, "orientation").value(oPortrait);
-		oSplitContainer._fnResize();
-		assert.equal(oSplitContainer._onOrientationChange.callCount, 1, "OrientationChange event should be reacted by the SplitContainer when runs on phone.");
-		oSplitContainer.destroy();
-	});
-
 	QUnit.test("Navigate and afterNavigate events should work in phone also", async function(assert){
 		var oSystem = {
 					desktop: false,
@@ -511,13 +479,13 @@ sap.ui.define([
 		oSplitContainer.placeAt("content");
 		await nextUIUpdate();
 
-		assert.ok(jQuery.contains(oPage.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef()), "Master button is rendered");
+		assert.ok(oPage.getDomRef() !== oSplitContainer._oShowMasterBtn.getDomRef() && oPage.getDomRef().contains(oSplitContainer._oShowMasterBtn.getDomRef()), "Master button is rendered");
 
 		var oHeader = new Bar();
 		oPage.setCustomHeader(oHeader);
 		await nextUIUpdate();
 
-		assert.ok(jQuery.contains(oHeader.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef()), "Master button is inserted into the custom header");
+		assert.ok(oHeader.getDomRef() !== oSplitContainer._oShowMasterBtn.getDomRef() && oHeader.getDomRef().contains(oSplitContainer._oShowMasterBtn.getDomRef()), "Master button is inserted into the custom header");
 
 		oSplitContainer.removeDetailPage(oPage);
 		assert.strictEqual(oPage.setCustomHeader, Page.prototype.setCustomHeader, "setCustomHeader function is restored after remove the Page from SplitContainer");
@@ -1484,5 +1452,4 @@ sap.ui.define([
 		assert.strictEqual(oSplitContainer._aMasterPages[1].getDomRef().id, "initialMaster", "initialMaster should be rendered");
 		assert.strictEqual(oSplitContainer._aMasterPages[0].getDomRef(), null, "secondaryMaster should not be rendered");
 	});
-
 });

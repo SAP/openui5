@@ -725,4 +725,4 @@ sap.ui.define([
 	};
 
 	return OverlayUtil;
-}, /* bExport= */true);
+});

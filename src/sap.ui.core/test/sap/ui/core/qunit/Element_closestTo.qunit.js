@@ -1,11 +1,10 @@
-/*global QUnit, sinon*/
+/*global QUnit*/
 sap.ui.define([
 	"sap/base/future",
-	"sap/base/Log",
 	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/thirdparty/jquery"
-], function(future, Log, Element, createAndAppendDiv, jQuery) {
+], function(future, Element, createAndAppendDiv, jQuery) {
 	"use strict";
 
 	QUnit.module("Element.closestTo()");
@@ -124,31 +123,6 @@ sap.ui.define([
 
 		oContainer.remove();
 		oUI5Element.destroy();
-	});
-
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("Should support jQuery object given as parameter (future=false)", function(assert) {
-		future.active = false;
-		var oErrorLogSpy = this.spy(Log, "error");
-		var sId = "el1";
-		var oContainer = createAndAppendDiv(sId);
-		oContainer.setAttribute("data-sap-ui", sId);
-		oContainer.innerHTML = "<div id='el2' data-sap-ui-related='el2'> \
-									<span id='startPoint'></span> \
-								</div>";
-
-		var oUI5Element = new Element(sId);
-
-		var oUI5ElementFound = Element.closestTo(jQuery("#startPoint"));
-		assert.strictEqual(oUI5ElementFound, oUI5Element);
-
-		sinon.assert.calledWithExactly(oErrorLogSpy, "[FUTURE FATAL] Do not call Element.closestTo() with jQuery object as parameter. The function should be called with either a DOM Element or a CSS selector.");
-
-		oContainer.remove();
-		oUI5Element.destroy();
-		future.active = undefined;
 	});
 
 	QUnit.test("Should support jQuery object given as parameter (future=true)", function(assert) {

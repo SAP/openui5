@@ -908,4 +908,4 @@ sap.ui.define([], function () {
 		// a whitespace character
 		sWhitespace : sWhitespace
 	};
-}, /* bExport= */false);
+});

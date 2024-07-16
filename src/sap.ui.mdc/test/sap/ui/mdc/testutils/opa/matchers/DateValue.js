@@ -20,7 +20,6 @@ sap.ui.define([
 	 */
 	return Matcher.extend("sap.ui.mdc.matchers.DateValue", /** @lends sap.ui.mdc.matchers.DateValue.prototype */ {
 		metadata: {
-			publicMethods: ["isMatching"],
 			properties: {
 				/**
 				 * The dateValue which is expected.

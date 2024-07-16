@@ -65,14 +65,7 @@ sap.ui.define([
 		},
 
 		metadata : {
-			"abstract" : true,
-			publicMethods : [
-				// methods
-				"getPath", "getContext", "getModel", "attachChange", "detachChange", "refresh", "isInitial",
-				"attachDataStateChange","detachDataStateChange",
-				"attachAggregatedDataStateChange", "detachAggregatedDataStateChange",
-				"attachDataRequested","detachDataRequested","attachDataReceived","detachDataReceived","suspend","resume", "isSuspended"
-			]
+			"abstract" : true
 		}
 
 	});

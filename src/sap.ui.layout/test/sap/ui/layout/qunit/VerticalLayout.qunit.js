@@ -9,8 +9,8 @@ sap.ui.define([
 	"sap/m/RatingIndicator",
 	"sap/m/CheckBox",
 	"sap/m/Label",
-	"sap/ui/core/Core"
-], function(Device, VerticalLayout, Button, Input, Image, Slider, RatingIndicator, CheckBox, Label, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Device, VerticalLayout, Button, Input, Image, Slider, RatingIndicator, CheckBox, Label, nextUIUpdate) {
 	"use strict";
 
 	var oLayout1 = new VerticalLayout("Layout1", {
@@ -66,7 +66,7 @@ sap.ui.define([
 		assert.ok(oRatingDom.offsetTop < oCheckBDom.offsetTop, "Top offset of RatingIndicator < CheckBox");
 	});
 
-	QUnit.test("Container Padding Classes", function (assert) {
+	QUnit.test("Container Padding Classes", async function(assert) {
 		// System under Test + Act
 		var oContainer = new VerticalLayout({
 			content: [
@@ -87,7 +87,7 @@ sap.ui.define([
 		var aResponsiveSize = sResponsiveSize.split(" ");
 		// Act
 		oContainer.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$();
 

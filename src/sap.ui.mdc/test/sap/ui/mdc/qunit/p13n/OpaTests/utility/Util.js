@@ -51,7 +51,7 @@ sap.ui.define([
 	};
 
 	Util.getTextOfChartType = function(sChartType) {
-		const oBundle = Library.getResourceBundleFor("sap.chart.messages");
+		const oBundle = Library.getResourceBundleFor("sap.chart");
 		return oBundle.getText("info/" + sChartType);
 	};
 

@@ -30,6 +30,7 @@ sap.ui.define([
 		metadata: {
 			interfaces: ["sap.ui.core.IFormContent"],
 			library: "sap.ui.mdc",
+
 			properties: {
 				/**
 				 * Whether the field is editable.
@@ -72,6 +73,7 @@ sap.ui.define([
 					defaultValue: []
 				}
 			},
+
 			aggregations: {
 				_buttons: {
 					type: "sap.m.ToggleButton",
@@ -79,6 +81,7 @@ sap.ui.define([
 					visibility: "hidden"
 				}
 			},
+
 			events: {
 				/**
 				 * This event is fired when the value property of the field is changed
@@ -126,7 +129,7 @@ sap.ui.define([
 				 */
 				openHelp: {}
 			},
-			publicMethods: [],
+
 			defaultProperty: "value"
 		},
 		renderer : {

@@ -3,19 +3,19 @@
 <head>
 	<title>Application under test</title>
 	<meta charset="utf-8">
-	<script
-			id='sap-ui-bootstrap'
-			src='../../../../../resources/sap-ui-core.js'
-			data-sap-ui-async=true
-			data-sap-ui-theme='sap_horizon'
-			data-sap-ui-libs='sap.m'
-			data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
-			data-sap-ui-resourceroots='{
+	<script id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-async="true"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
+			data-sap-ui-resource-roots='{
 				"sap.ui.testrecorder.appMock" : "./"
-			}'>
+			}'
+			data-sap-ui-compat-version="edge"
+	>
 	</script>
 </head>
 <body class="sapUiBody" id="content">
-	<div data-sap-ui-component data-name="sap.ui.testrecorder.appMock" data-id="container" data-settings='{"id": "myComponent"}'></div>
+	<div data-sap-ui-component data-name="sap.ui.testrecorder.appMock" data-id="container" data-settings="{&quot;id&quot;: &quot;myComponent&quot;}"></div>
 </body>
 </html>

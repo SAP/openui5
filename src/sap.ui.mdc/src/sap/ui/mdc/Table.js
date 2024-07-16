@@ -291,15 +291,7 @@ sap.ui.define([
 					group: "Dimension",
 					defaultValue: null
 				},
-				/**
-				 * This property has no effect and will be removed soon.
-				 * @deprecated As of version 1.115, the concept has been discarded.
-				 */
-				height: {
-					type: "sap.ui.core.CSSSize",
-					group: "Dimension",
-					defaultValue: null
-				},
+
 				/**
 				 * Personalization options for the table.
 				 *
@@ -313,6 +305,7 @@ sap.ui.define([
 					group: "Behavior",
 					defaultValue: []
 				},
+
 				/**
 				 * Object related to the <code>Delegate</code> module that provides the required APIs to execute model-specific logic.<br>
 				 * The object has the following properties:
@@ -338,6 +331,7 @@ sap.ui.define([
 						payload: {}
 					}
 				},
+
 				/**
 				 * Semantic level of the header. For more information, see {@link sap.m.Title#setLevel}.
 				 *
@@ -348,6 +342,7 @@ sap.ui.define([
 					group: "Appearance",
 					defaultValue: TitleLevel.Auto
 				},
+
 				/**
 				 * Defines style of the header. For more information, see {@link sap.m.Title#setTitleStyle}.
 				 *
@@ -359,6 +354,7 @@ sap.ui.define([
 					type: "sap.ui.core.TitleLevel",
 					group: "Appearance"
 				},
+
 				/**
 				 * Determines whether to bind the table automatically after the initial creation or re-creation of the table.
 				 */
@@ -367,6 +363,7 @@ sap.ui.define([
 					group: "Behavior",
 					defaultValue: true
 				},
+
 				/**
 				 * Header text that is shown in the table. The header must always be set to comply with accessibility standards, even if other
 				 * settings make the header invisible.
@@ -376,6 +373,7 @@ sap.ui.define([
 					group: "Appearance",
 					defaultValue: null
 				},
+
 				/**
 				 * Determines whether the header text is shown in the table. Regardless of its value, the given header text is used to label the table
 				 * correctly for accessibility purposes.
@@ -387,6 +385,7 @@ sap.ui.define([
 					group: "Appearance",
 					defaultValue: true
 				},
+
 				/**
 				 * If no tooltip has been provided for a column, the column header text will automatically be applied as a tooltip for the column.
 				 *
@@ -396,6 +395,7 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: false
 				},
+
 				/**
 				 * Selection mode of the table. Specifies whether single or multiple rows can be selected and how the selection can be extended. It
 				 * may also influence the visual appearance.
@@ -409,6 +409,7 @@ sap.ui.define([
 					group: "Behavior",
 					defaultValue: TableSelectionMode.None
 				},
+
 				/**
 				 * Determines whether the number of rows is shown along with the header text.
 				 *
@@ -517,6 +518,7 @@ sap.ui.define([
 					type: "int",
 					defaultValue: 100
 				},
+
 				/**
 				 * Determines whether column resizing is enabled.
 				 *
@@ -527,6 +529,7 @@ sap.ui.define([
 					group: "Behavior",
 					defaultValue: true
 				},
+
 				/**
 				 * Determines whether the Paste button is visible.
 				 *
@@ -537,6 +540,7 @@ sap.ui.define([
 					group: "Appearance",
 					defaultValue: false
 				},
+
 				/**
 				 * Determines whether the Paste button is enabled.
 				 *
@@ -547,6 +551,7 @@ sap.ui.define([
 					group: "Behavior",
 					defaultValue: true
 				},
+
 				/**
 				 * Defines the multi-selection mode.
 				 *

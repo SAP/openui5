@@ -28,8 +28,7 @@ sap.ui.define([
 				payload: {
 					type: "object"
 				}
-			},
-			publicMethods : [ "executeOn" ]
+			}
 		},
 
 		executeOn : function (oTarget) {

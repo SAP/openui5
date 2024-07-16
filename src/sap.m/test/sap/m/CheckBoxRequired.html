@@ -6,16 +6,18 @@
 
 		<title>CheckBox - Required</title>
 
-		<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap">
+		<script src="../../../resources/sap-ui-core.js"
+				id="sap-ui-bootstrap"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/CheckBoxRequired"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
 
-		<style>
-			.formContainer:not(:last-child) {
-				margin-bottom: 1rem;
-			}
-		</style>
+		<link rel="stylesheet" href="./CheckBoxRequired.css">
 
-		<script id="SampleView" type="text/xmldata">
+		<script id="SampleView" type="text/xml">
 			<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:form="sap.ui.layout.form" controllerName="SampleController" displayBlock="true" height="100%">
 				<App>
 					<Page class="sapUiResponsiveContentPadding" title="sap.m.CheckBox with required=&quot;true&quot;" titleAlignment="Center">
@@ -42,34 +44,7 @@
 			</mvc:View>
 		</script>
 
-		<script>
-			sap.ui.require(["sap/ui/core/mvc/Controller", "sap/ui/core/mvc/XMLView", "sap/ui/model/json/JSONModel", "sap/m/MessageToast"],
-				function (Controller, XMLView, JSONModel, MessageToast) {
-					Controller.extend("SampleController", {
-						onInit: function () {
-							var model = new JSONModel();
-							model.setData({
-								selected_cb_1: false,
-								selected_cb_2: false
-							});
-							this.getView().setModel(model);
-						},
-
-						onSubmit: function (sCheckBoxId) {
-							var bSelected = this.getView().getModel().getProperty("/selected_" + sCheckBoxId);
-							if (!bSelected) {
-								MessageToast.show("Please accept the terms and conditions.");
-							} else {
-								MessageToast.show("Form submitted!");
-							}
-						}
-					});
-
-					XMLView.create({definition: jQuery('#SampleView').html()}).then(function (oView) {
-						oView.placeAt("content");
-					});
-				});
-		</script>
+		
 
 	</head>
 	<body id="content" class="sapUiBody">

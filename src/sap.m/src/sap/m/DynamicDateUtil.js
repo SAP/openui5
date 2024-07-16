@@ -272,4 +272,4 @@ sap.ui.define([
 
 	return DynamicDateUtil;
 
-}, true);
+});

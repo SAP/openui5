@@ -5,13 +5,13 @@ sap.ui.define([
 	"sap/ui/layout/SplitterLayoutData",
 	"sap/m/Button",
 	"sap/m/ScrollContainer",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	AssociativeSplitter,
 	SplitterLayoutData,
 	Button,
 	ScrollContainer,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -37,13 +37,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Events", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oSplitter = new AssociativeSplitter("splitter");
 			this.oSplitter.addAssociatedContentArea(new Button());
 			this.oSplitter.addAssociatedContentArea(new Button());
 			this.oSplitter.addAssociatedContentArea(new Button());
 			this.oSplitter.placeAt(DOM_RENDER_LOCATION);
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oSplitter._getContentAreas().forEach(function (oArea) {
@@ -88,11 +88,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Responsiveness", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oSplitter = new AssociativeSplitter("splitter");
 			this.oContainer = new ScrollContainer({content: this.oSplitter, width: "400px", height: "300px"});
 			this.oContainer.placeAt(DOM_RENDER_LOCATION);
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oSplitter._getContentAreas().forEach(function (oArea) {
@@ -103,7 +103,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Calculation of % when there is only 1 area", function (assert) {
+	QUnit.test("Calculation of % when there is only 1 area", async function(assert) {
 		// arrange
 		var oArea = new Button({
 			layoutData: new SplitterLayoutData({
@@ -111,7 +111,7 @@ sap.ui.define([
 			})
 		});
 		this.oSplitter.addContentArea(oArea);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oArea.$().parent().width(), this.oSplitter._calcAvailableContentSize(), "Single area sized with % should take the whole space");

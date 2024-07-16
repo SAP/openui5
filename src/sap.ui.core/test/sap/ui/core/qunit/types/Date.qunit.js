@@ -5,12 +5,11 @@ sap.ui.define([
 	"sap/base/future",
 	"sap/base/i18n/Localization",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/type/Date",
 	"sap/ui/test/TestUtils"
-], function (future, Localization, UI5Date, FormatException, ParseException, ValidateException, DateType, TestUtils) {
+], function(future, Localization, UI5Date, ParseException, ValidateException, DateType, TestUtils) {
 	/*global QUnit*/
 	"use strict";
 
@@ -72,21 +71,6 @@ sap.ui.define([
 		}
 	});
 
-	/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
-	QUnit.test("formatValue: unsupported type (future:false)", function (assert) {
-		try {
-			future.active = false;
-			const oDateType = new DateType({source: {pattern: "timestamp"}, pattern: "dd.MM.yy"});
-			oDateType.formatValue(1044068706007, "unsupported type");
-			assert.ok(false, "Expected FormatException not thrown");
-		} catch (e) {
-			assert.ok(e instanceof FormatException);
-			assert.strictEqual(e.message, "Don't know how to format Date to unsupported type");
-		} finally {
-			future.active = undefined;// restores configured default
-		}
-	});
-
 	//*****************************************************************************************************************
 	QUnit.test("formatValue: unsupported type (future:true)", function (assert) {
 		try {
@@ -126,21 +110,6 @@ sap.ui.define([
 		assert.strictEqual(oDateType.formatValue(oDateValue.getTime(), "string"), "01.02.03");
 		assert.strictEqual(oDateType.formatValue(null, "string"), "");
 		assert.strictEqual(oDateType.formatValue(undefined, "string"), "");
-	});
-
-	/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
-	QUnit.test("parseValue: unsupported type (future:false)", function (assert) {
-		try {
-			future.active = false;
-			const oDateType = new DateType({source: {pattern: "timestamp"}, pattern: "dd.MM.yy"});
-			oDateType.parseValue(true, "unsupported type");
-			assert.ok(false, "Expected ParseException not thrown");
-		} catch (e) {
-			assert.ok(e instanceof ParseException);
-			assert.strictEqual(e.message, "Don't know how to parse Date from unsupported type");
-		} finally {
-			future.active = undefined;// restores configured default
-		}
 	});
 
 	//*****************************************************************************************************************

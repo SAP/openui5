@@ -7,8 +7,7 @@ sap.ui.define([
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/Util",
 	"sap/base/util/isEmptyObject"
-],
-function(
+], function(
 	ManagedObject,
 	ElementUtil,
 	Util,
@@ -114,4 +113,4 @@ function(
 	}
 
 	return OverlayRegistry;
-}, /* bExport= */ true);
+});

@@ -1,16 +1,13 @@
 sap.ui.define([
 	'sap/base/future',
-	'sap/base/Log',
 	'sap/base/strings/hyphenate',
 	'sap/base/util/Deferred',
-	'sap/base/util/ObjectPath',
 	'sap/ui/core/UIComponent',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/ComponentSupport',
 	"sap/ui/core/Element",
 	'sap/ui/core/library'
-], function(future, Log, hyphenate, Deferred, ObjectPath, UIComponent, ComponentContainer, ComponentSupport, Element, library) {
-
+], function(future, hyphenate, Deferred, UIComponent, ComponentContainer, ComponentSupport, Element, library) {
 	"use strict";
 	/*global QUnit, sinon*/
 
@@ -31,59 +28,37 @@ sap.ui.define([
 	var oContentElement = createComponentDIV("content");
 	document.body.appendChild(oContentElement);
 
-	/**
-	 * @deprecated As of 1.120, the support for events is deprecated as it relies on global names
-	 */
-	ObjectPath.set("myAppController.onComponentCreated", function() {});
-
 	// settings
 	var mSettings = {
 		"div1": {
 			id: "container1",
 			name: "testdata.v2empty",
+
 			settings: {
 				id: "component1"
-			},
-			/**
-			 * @deprecated As of 1.120, the support for events is deprecated as it relies on global names
-			 */
-			componentCreated: "myAppController.onComponentCreated"
+			}
 		},
+
 		"div2": {
 			id: "container2",
 			name: "testdata.v2empty",
+
 			settings: {
 				id: "component2"
 			},
-			/**
-			 * @deprecated As of 1.120, the support for events is deprecated as it relies on global names
-			 */
-			componentCreated: "myAppController.onComponentCreated",
+
 			async: false
 		},
+
 		"div3": {
 			id: "container3",
 			name: "testdata.v2empty",
+
 			settings: {
 				id: "component3"
 			},
-			/**
-			 * @deprecated As of 1.120, the support for events is deprecated as it relies on global names
-			 */
-			componentCreated: "myAppController.onComponentCreated",
+
 			manifest: "true"
-		},
-		/**
-		 * @deprecated As of 1.120, manifest=false is no longer supported
-		 */
-		"div4": {
-			id: "container4",
-			name: "testdata.v2empty",
-			settings: {
-				id: "component4"
-			},
-			componentCreated: "myAppController.onComponentCreated",
-			manifest: "false"
 		}
 	};
 
@@ -118,19 +93,6 @@ sap.ui.define([
 
 			// check the parser
 			var mComponentSettings = ComponentSupport._parse(oElement);
-			/**
-			 * @deprecated As of 1.120, the support for events is deprecated as it relies on global names
-			 * Check event handler separately. Parser returns resolved function, whereas the expected settings
-			 * contain a global name /(string) only
-			 */
-			if ( mExpectedSettings.componentCreated ) {
-				assert.strictEqual(
-					mComponentSettings.componentCreated,
-					ObjectPath.get(mExpectedSettings.componentCreated),
-					"Event handler parsed correctly for component " + oElement.id + "!");
-				delete mComponentSettings.componentCreated;
-				delete mExpectedSettings.componentCreated;
-			}
 			assert.deepEqual(mComponentSettings, mExpectedSettings, "Component settings parsed correctly for component " + oElement.id + "!");
 
 			// check the default settings
@@ -142,29 +104,6 @@ sap.ui.define([
 			assert.deepEqual(mComponentSettings, mExpectedSettings, "Component settings defaults applied properly for component " + oElement.id + "!");
 		}
 
-	});
-
-	/**
-	 * @deprecated As of 1.120
-	 */
-	QUnit.test("Parser with unknown setting (future:false)", function(assert) {
-
-		future.active = false;
-
-		this.spy(Log, "warning");
-
-		var oElement = document.createElement("div");
-		oElement.setAttribute("data-unknown", "foo");
-
-		const expectedMessage =
-			"Property or event \"unknown\" does not exist in sap.ui.core.ComponentContainer. It will be ignored";
-
-		ComponentSupport._parse(oElement);
-		assert.ok(
-			Log.warning.calledWithMatch(expectedMessage),
-			"should log a warning with the expected message");
-
-		future.active = undefined; // restores configured default
 	});
 
 	QUnit.test("Parser with unknown setting (future:true)", function(assert) {
@@ -181,19 +120,6 @@ sap.ui.define([
 		}, new Error(expectedMessage), "should throw an error with the expected message");
 
 		future.active = undefined; // restores configured default
-	});
-
-	/**
-	 * @deprecated As of 1.120, the support for events is deprecated as it relies on global names
-	 */
-	QUnit.test("Parser with invalid event callback", function(assert) {
-
-		var oElement = document.createElement("div");
-		oElement.setAttribute("data-component-created", "does.not.exist");
-		assert.throws(function() {
-			ComponentSupport._parse(oElement);
-		}, new Error("Callback handler for event \"componentCreated\" not found"));
-
 	});
 
 	QUnit.test("ComponentContainer Factory", function(assert) {
@@ -263,5 +189,4 @@ sap.ui.define([
 		});
 
 	});
-
 });

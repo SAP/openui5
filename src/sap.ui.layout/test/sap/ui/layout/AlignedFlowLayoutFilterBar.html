@@ -6,99 +6,14 @@
 		<script id="sap-ui-bootstrap"
 				src="../../../../resources/sap-ui-core.js"
 				data-sap-ui-async="true"
-				data-sap-ui-compatVersion="edge"
 				data-sap-ui-libs="sap.ui.layout, sap.m"
-				data-sap-ui-theme="sap_horizon">
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/AlignedFlowLayoutFilterBar"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
-		<script>
-				sap.ui.require([
-					"sap/ui/core/Core",
-					"sap/m/App",
-					"sap/m/Button",
-					"sap/m/DatePicker",
-					"sap/m/Label",
-					"sap/m/Page",
-					"sap/m/Select",
-					"sap/m/Text",
-					"sap/m/ToggleButton",
-					"sap/ui/layout/AlignedFlowLayout",
-					"sap/ui/layout/VerticalLayout"
-				], async function(Core, App, Button, DatePicker, Label, Page, Select, Text, ToggleButton, AlignedFlowLayout, VerticalLayout) {
-					"use strict";
-
-					await Core.ready();
-
-					var oAlignedFlowLayout = new AlignedFlowLayout({
-						content: [
-							new VerticalLayout({
-								content: [
-									new Label({text: "Delivery Date", required: true}),
-									new DatePicker({width: "100%"})
-								]
-							}).addStyleClass("sapUiCompFilterBarItem"),
-
-							new VerticalLayout({
-								content: [
-									new Label({text: "Region", required: true}),
-									new Select({width: "100%"})
-								]
-							}).addStyleClass("sapUiCompFilterBarItem"),
-
-							new VerticalLayout({
-								content: [
-									new Label({text: "Other Date"}),
-									new DatePicker({width: "100%"})
-								]
-							}).addStyleClass("sapUiCompFilterBarItem"),
-
-							new VerticalLayout({
-								content: [
-									new Label({text: "Other State"}),
-									new Select({width: "100%"})
-								]
-							}).addStyleClass("sapUiCompFilterBarItem")
-
-						],
-						endContent: [
-							new Button({
-								text: "Adapt Filters (1)",
-								type: "Transparent"
-							}),
-							new Button({
-								text: "Go",
-								type: "Emphasized"
-							}),
-							new ToggleButton({
-								icon: "sap-icon://pushpin-off",
-								type: "Transparent"
-							})
-						]
-					});
-
-					new App({
-						pages: new Page({
-							title: "AlignedFlowLayout Test Page",
-							content: [
-								new Text({
-									text: "A FilterBar-like Layout"
-								}),
-								oAlignedFlowLayout
-							]
-						})
-					}).placeAt("content");
-				});
-		</script>
-		<style>
-			.sapUiVlt.sapUiCompFilterBarItem { /* TODO: only in filterbar usage */
-				display: block;
-				padding-right: 1rem;
-				padding-top: 0.5rem;
-			}
-
-			.sapUiVlt.sapUiCompFilterBarItem > .sapUiVltCell { /* TODO: only in filterbar usage */
-				display: block;
-			}
-		</style>
+		
+		<link rel="stylesheet" href="./AlignedFlowLayoutFilterBar.css">
 	</head>
 	<body id="content" class="sapUiBody">
 	</body>

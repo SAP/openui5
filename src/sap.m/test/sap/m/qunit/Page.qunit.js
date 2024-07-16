@@ -77,12 +77,12 @@ sap.ui.define([
 	}).placeAt("content");
 
 	/* var oPage3 = */ new Page("myThirdPage", {
-		showHeader : false,
-		enableScrolling : false,
-		content : new HTML({
-			content : "<div id='p3content'>another test content</div>"
-		})
-	}).placeAt("content");
+			showHeader : false,
+			enableScrolling : false,
+			content : new HTML({
+				content : "<div id='p3content'>another test content</div>"
+			})
+		}).placeAt("content");
 
 
 	QUnit.module("Initial Check");
@@ -470,40 +470,6 @@ sap.ui.define([
 		oPage.destroy();
 		await nextUIUpdate(clock);
 		clock.restore();
-	});
-
-	/**
-	 * @deprecated Since version 1.20
-	 */
-	QUnit.test("setNavButtonType should propagate to internal button", async function (assert) {
-		var oPage = new Page();
-
-		oPage.placeAt("content");
-		await nextUIUpdate();
-
-		assert.notOk(oPage._navBtn, "Button should not be initialized");
-
-		oPage.setShowNavButton(true);
-		await nextUIUpdate();
-
-		assert.ok(oPage._navBtn, "Button should be initialized");
-		assert.strictEqual(oPage.getNavButtonType(), oPage._navBtn.getType(), "Default button type 'Back' should be propagated");
-
-		oPage.setShowNavButton(false);
-		await nextUIUpdate();
-
-		assert.notOk(oPage._navBtn.getDomRef(), "Button should not be rendered");
-
-		oPage.setShowNavButton(true);
-		oPage.setNavButtonType("Up");
-		oPage.setNavButtonText("Up");
-		await nextUIUpdate();
-
-		assert.strictEqual(oPage.getNavButtonType(), oPage._navBtn.getType(), "Type 'Up' should be set to the nav button");
-		assert.strictEqual(oPage._navBtn.getType(), "Up", "Up should be propagated to nav button of the page");
-		assert.strictEqual(oPage._navBtn.getText(), "", "Up text should not be propagated to nav button of the page because the property is deprecated since 1.20");
-
-		oPage.destroy();
 	});
 
 	// scrolling tests only for non-IE8 browsers

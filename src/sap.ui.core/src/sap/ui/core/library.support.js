@@ -12,21 +12,20 @@ sap.ui.define([
 	"./rules/App.support",
 	"./rules/Rendering.support",
 	"./rules/Theming.support"
-],
-	function(MiscSupport, ConfigSupport, ModelSupport, ViewSupport, AppSupport, RenderingSupport, ThemingSupport) {
-	"use strict";
+], function(MiscSupport, ConfigSupport, ModelSupport, ViewSupport, AppSupport, RenderingSupport, ThemingSupport) {
+"use strict";
 
-	return {
-		name: "sap.ui.core",
-		niceName: "UI5 Core Library",
-		ruleset: [
-			MiscSupport,
-			ConfigSupport,
-			ModelSupport,
-			ViewSupport,
-			AppSupport,
-			RenderingSupport,
-			ThemingSupport
-		]
-	};
-}, true);
+return {
+	name: "sap.ui.core",
+	niceName: "UI5 Core Library",
+	ruleset: [
+		MiscSupport,
+		ConfigSupport,
+		ModelSupport,
+		ViewSupport,
+		AppSupport,
+		RenderingSupport,
+		ThemingSupport
+	]
+};
+});

@@ -365,8 +365,6 @@ sap.ui.define([
 
 		this.setBindingContext(oState.context, sModelName);
 		this.getDomRefs(true).row.toggleClass("sapUiTableRowHidden", this.isContentHidden());
-		/** @deprecated As of version 1.64 */
-		this._updateTableCells(oTable);
 	};
 
 	Row.prototype.getRowBindingContext = function() {
@@ -375,28 +373,6 @@ sap.ui.define([
 
 	Row.prototype.setBindingContext = function(oContext, sModelName) {
 		return Element.prototype.setBindingContext.call(this, oContext || null, sModelName);
-	};
-
-	/** @deprecated As of version 1.64 */
-	Row.prototype._updateTableCells = function(oTable) {
-		const aCells = this.getCells();
-		const iAbsoluteRowIndex = this.getIndex();
-		const bHasTableCellUpdate = !!oTable._updateTableCell;
-		let oCell; let $Td; let bHasCellUpdate;
-		const oBindingContext = this.getRowBindingContext();
-
-		for (let i = 0; i < aCells.length; i++) {
-			oCell = aCells[i];
-			bHasCellUpdate = !!oCell._updateTableCell;
-			$Td = bHasCellUpdate || bHasTableCellUpdate ? oCell.$().closest("td") : null;
-
-			if (bHasCellUpdate) {
-				oCell._updateTableCell(oCell, oBindingContext, $Td, iAbsoluteRowIndex);
-			}
-			if (bHasTableCellUpdate) {
-				oTable._updateTableCell(oCell, oBindingContext, $Td, iAbsoluteRowIndex);
-			}
-		}
 	};
 
 	/**

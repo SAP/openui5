@@ -7,11 +7,13 @@
 		<script id="sap-ui-bootstrap"
 				src="../../../../resources/sap-ui-core.js"
 				data-sap-ui-async="true"
-				data-sap-ui-compatVersion="edge"
-				data-sap-ui-libs='sap.ui.layout, sap.m'
-				data-sap-ui-theme="sap_horizon">
+				data-sap-ui-libs="sap.ui.layout, sap.m"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/BlockLayoutLightColors"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
-		<script id="myXml" type="text/xmldata">
+		<script id="myXml" type="text/xml">
 			<mvc:View xmlns:mvc="sap.ui.core.mvc"
 					xmlns="sap.m"
 					xmlns:l="sap.ui.layout"
@@ -64,19 +66,7 @@
 			</mvc:View>
 		</script>
 
-		<script>
-			sap.ui.getCore().attachInit(function() {
-				sap.ui.require([
-					"sap/ui/core/mvc/XMLView",
-				], function(XMLView) {
-					XMLView.create({
-						definition: document.getElementById('myXml').textContent,
-					}).then(function(oXMLView) {
-						oXMLView.placeAt("content");
-					});
-				})
-			});
-		</script>
+		
 	</head>
 	<body id="body" class="sapUiBody">
 		<div id="content"></div>

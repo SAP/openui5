@@ -128,24 +128,6 @@ sap.ui.define([
 		checkFormatException(assert, oDateInterval, ["2017", "2018"], "string",
 			"Cannot format date: null has the wrong format");
 	});
-	/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
-	QUnit.test("formatValue: unsupported type (future:false)", function (assert) {
-		try {
-			future.active = false;
-			const oDateInterval = new DateInterval({format: "yMMMd"});
-			this.oLogMock.expects("error").withExactArgs("[FUTURE FATAL] data type 'untype' could not be found.");
-
-			// code under test
-			oDateInterval.formatValue([UI5Date.getInstance(2003, 10, 6), UI5Date.getInstance(2003, 11, 6)], "untype");
-
-			assert.ok(false, "Expected FormatException not thrown");
-		} catch (e) {
-			assert.ok(e instanceof FormatException);
-			assert.strictEqual(e.message, "Don't know how to format Date to untype");
-		} finally {
-			future.active = undefined;// restores configured default
-		}
-	});
 
 	//*****************************************************************************************************************
 	QUnit.test("formatValue: unsupported type (future:true)", function (assert) {
@@ -186,24 +168,6 @@ sap.ui.define([
 
 		assert.deepEqual(oDateInterval.parseValue("Nov 6 - Dec 6, 2003", "string"),
 			["2003-11-06", "2003-12-06"], "Interval string can be parsed into an array of defined dates");
-	});
-	/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
-	QUnit.test("parseValue: unsupported type (future:false)", function (assert) {
-		try {
-			future.active = false;
-			const oDateInterval = new DateInterval({format: "yMMMd"});
-			this.oLogMock.expects("error").withExactArgs("[FUTURE FATAL] data type 'untype' could not be found.");
-
-			// code under test
-			oDateInterval.parseValue("Nov 6 - Dec 6, 2003", "untype");
-
-			assert.ok(false, "Expected ParseException not thrown");
-		} catch (e) {
-			assert.ok(e instanceof ParseException);
-			assert.strictEqual(e.message, "Don't know how to parse a date interval from untype");
-		} finally {
-			future.active = undefined;// restores configured default
-		}
 	});
 
 	//*****************************************************************************************************************

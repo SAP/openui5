@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/ControlBehavior",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/MultiComboBox",
@@ -31,9 +32,9 @@ sap.ui.define([
 	"sap/ui/core/SeparatorItem",
 	"sap/ui/core/InvisibleText",
 	"sap/m/library",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Lib"
 ], async function(
+	ControlBehavior,
 	qutils,
 	createAndAppendDiv,
 	MultiComboBox,
@@ -65,8 +66,7 @@ sap.ui.define([
 	SeparatorItem,
 	InvisibleText,
 	mLibrary,
-	Library,
-	Configuration
+	Library
 ) {
 	"use strict";
 
@@ -5872,7 +5872,7 @@ sap.ui.define([
 
 	QUnit.test("MultiComboBox with accessibility=false", async function(assert) {
 		var oMultiComboBox = new MultiComboBox();
-		this.stub(Configuration, "getAccessibility").returns(false);
+		this.stub(ControlBehavior, "isAccessibilityEnabled").returns(false);
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
 		await nextUIUpdate();

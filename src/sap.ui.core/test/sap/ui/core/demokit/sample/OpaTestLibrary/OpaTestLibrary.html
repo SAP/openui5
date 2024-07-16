@@ -6,20 +6,21 @@
 		<title>OPA5 Test Library Sample</title>
 
 		<!--add test library resource root-->
-		<script
-			id="sap-ui-bootstrap"
-			src="../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-async="true"
-			data-sap-ui-resourceroots='{
+		<script id="sap-ui-bootstrap"
+				src="../../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-resource-roots='{
 				"appUnderTest.test": "./",
 				"testLibrary": "./testLibrary"
-			}'>
+			}'
+				data-sap-ui-compat-version="edge"
+		>
 		</script>
 
 		<script src="../../../../../../../resources/sap/ui/qunit/qunit-2-css.js"></script>
 		<script src="../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 		<script src="../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script src="../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script src="../../../../../../../resources/sap/ui/qunit/qunit-coverage-istanbul.js"></script>
 
 		<script src="OpaTestLibrary.js"></script>
 	</head>

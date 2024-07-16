@@ -17,4 +17,4 @@ sap.ui.define([
 			"changeHandler": SplitMenuButtonHandler
 		}
 	};
-}, /* bExport= */ true);
+});

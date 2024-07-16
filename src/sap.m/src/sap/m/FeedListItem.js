@@ -75,7 +75,6 @@ function(
 			library: "sap.m",
 			designtime: "sap/m/designtime/FeedListItem.designtime",
 			properties: {
-
 				/**
 				 * Icon to be displayed as graphical element within the FeedListItem. This can be an image or an icon from the icon font. If no icon is provided, a default person-placeholder icon is displayed.
 				 * Icon is only shown if showIcon = true.
@@ -148,15 +147,6 @@ function(
 				iconActive: {type: "boolean", group: "Behavior", defaultValue: true},
 
 				/**
-				 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
-				 *
-				 * If bandwidth is the key for the application, set this value to false.
-				 *
-				 * @deprecated as of version 1.88. Image is replaced by {@link sap.m.Avatar }
-				*/
-				iconDensityAware: {type: "boolean", defaultValue: true},
-
-				/**
 				 * If set to "true" (default), icons will be displayed, if set to false icons are hidden
 				 */
 				showIcon: {type: "boolean", group: "Behavior", defaultValue: true},
@@ -218,13 +208,6 @@ function(
 				 */
 				senderPress: {
 					parameters: {
-
-						/**
-						 * Dom reference of the feed item's sender string to be used for positioning.
-						 * @deprecated Since version 1.28.36. This parameter is deprecated, use parameter getDomRef instead.
-						 */
-
-						domRef: {type: "string"},
 						/**
 						 * Function to retrieve the DOM reference for the <code>senderPress</code> event.
 						 * The function returns the DOM element of the sender link or null
@@ -238,13 +221,6 @@ function(
 				 */
 				iconPress: {
 					parameters: {
-
-						/**
-						 * Dom reference of the feed item's icon to be used for positioning.
-						 * @deprecated Since version 1.28.36. This parameter is deprecated, use parameter getDomRef instead.
-						 */
-						domRef: {type: "string"},
-
 						/**
 						 * Function to retrieve the DOM reference for the <code>iconPress</code> event.
 						 * The function returns the DOM element of the icon or null

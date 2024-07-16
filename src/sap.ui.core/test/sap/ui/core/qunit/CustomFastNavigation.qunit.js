@@ -106,7 +106,7 @@ sap.ui.define([
 		},
 
 		onBeforeFastNavigationFocus: function(oEvent) {
-			if (jQuery.contains(this.getDomRef(), oEvent.source)) {
+			if (this.getDomRef() !== oEvent.source && this.getDomRef().contains(oEvent.source)) {
 				return;
 			}
 			var oNewDomRef = oEvent.forward ? this.getDomRef("input-1") : this.getDomRef("input-3");

@@ -1,0 +1,16 @@
+.ButtonSpace {
+	display: inline;
+	position: relative;
+}
+
+.sapMBtn.down-left {
+	position: absolute;
+	bottom: 1px;
+	left: 1px;
+}
+
+.sapMBtn.down-right {
+	position: absolute;
+	bottom: 1px;
+	right: 1px;
+}

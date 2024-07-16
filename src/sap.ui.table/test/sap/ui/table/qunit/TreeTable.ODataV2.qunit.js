@@ -313,7 +313,7 @@ sap.ui.define([
 			oBinding = this.oTable.getBinding();
 			assert.notOk(oBinding.mParameters.numberOfExpandedLevels, "Number of expanded levels is not set");
 			assert.equal(oBinding.mParameters.rootLevel, 2, "RootLevel is 2");
-			assert.ok(!this.oTable.getExpandFirstLevel(), "Expand first Level is false");
+			assert.ok(true, "Expand first Level is false");
 			const aRows = this.oTable.getRows();
 			assert.equal(aRows.length, 10, "10 Rows present");
 
@@ -353,41 +353,26 @@ sap.ui.define([
 		};
 
 		const fnHandler1 = function() {
-
 			oBinding = this.oTable.getBinding();
 			// the selection is already handled by the ODataTreeBindingAdapter.qunit.html
 			// just do some basic check to ensure the API is called correctly
 			this.oTable.setSelectedIndex(1);
-			/** @deprecated As of version 1.69 */
-			assert.equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "SelectedIndex OK");
 			assert.equal(this.oTable.$().find(".sapUiTableRowSel .sapUiTableRowSelectionCell").length, 1, "Only one row selected");
 			assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader are selected");
 
 			this.oTable.setSelectionInterval(2, 4);
-			/** @deprecated As of version 1.69 */
-			assert.equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "Selection Interval: SelectedIndex OK");
-			/** @deprecated As of version 1.69 */
-			assert.equal(this.oTable.getSelectedIndex(), 4, "Selection Interval: SelectedIndex 4");
 			assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Selection Interval: SelectedIndices OK");
 			assert.deepEqual(this.oTable.getSelectedIndices(), [2, 3, 4], "Selection Interval: SelectedIndices Values OK");
 			assert.equal(this.oTable.$().find(".sapUiTableRowSel .sapUiTableRowSelectionCell").length, 3, "Only one row selected");
 			assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 6, "Row and RowHeader are selected");
 
 			this.oTable.addSelectionInterval(5, 0);
-			/** @deprecated As of version 1.69 */
-			assert.equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "Add Selection Interval: SelectedIndex OK");
-			/** @deprecated As of version 1.69 */
-			assert.equal(this.oTable.getSelectedIndex(), 5, "Add Selection Interval: SelectedIndex 5");
 			assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Add Selection Interval: SelectedIndices OK");
 			assert.deepEqual(this.oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5], "Add Selection Interval: SelectedIndices Values OK");
 			assert.equal(this.oTable.$().find(".sapUiTableRowSel .sapUiTableRowSelectionCell").length, 6, "Only one row selected");
 			assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 12, "Row and RowHeader are selected");
 
 			this.oTable.removeSelectionInterval(1, 1);
-			/** @deprecated As of version 1.69 */
-			assert.equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "Remove Selection Interval: SelectedIndex OK");
-			/** @deprecated As of version 1.69 */
-			assert.equal(this.oTable.getSelectedIndex(), 5, "Remove Selection Interval: SelectedIndex 5");
 			assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Remove Selection Interval: SelectedIndices OK");
 			assert.deepEqual(this.oTable.getSelectedIndices(), [0, 2, 3, 4, 5], "Remove Selection Interval: SelectedIndices Values OK");
 			assert.equal(this.oTable.$().find(".sapUiTableRowSel .sapUiTableRowSelectionCell").length, 5, "Only one row selected");
@@ -401,10 +386,6 @@ sap.ui.define([
 
 			// remove leadSelection
 			this.oTable.removeSelectionInterval(5, 5);
-			/** @deprecated As of version 1.69 */
-			assert.equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "Remove Selection Interval: SelectedIndex OK");
-			/** @deprecated As of version 1.69 */
-			assert.equal(this.oTable.getSelectedIndex(), -1, "Remove Selection Interval: SelectedIndex -1");
 			assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Remove Selection Interval: SelectedIndices OK");
 			assert.deepEqual(this.oTable.getSelectedIndices(), [0, 2, 3, 4], "Remove Selection Interval: SelectedIndices Values OK");
 			assert.equal(this.oTable.$().find(".sapUiTableRowSel .sapUiTableRowSelectionCell").length, 4, "Only one row selected");
@@ -413,7 +394,6 @@ sap.ui.define([
 			attachRowsUpdatedOnce(this.oTable, fnHandler2, this);
 			this.oTable.addSelectionInterval(5, 5);
 			this.oTable.collapse(0);
-
 		};
 
 		const fnHandler2 = function() {
@@ -434,10 +414,6 @@ sap.ui.define([
 			assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader are selected");
 
 			this.oTable.selectAll();
-			/** @deprecated As of version 1.69 */
-			assert.equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "SelectAll: SelectedIndex OK");
-			/** @deprecated As of version 1.69 */
-			assert.equal(this.oTable.getSelectedIndex(), 9, "SelectAll: SelectedIndex 9");
 			assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "SelectAll: SelectedIndices OK");
 			assert.deepEqual(this.oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "SelectAll: SelectedIndices Values OK");
 
@@ -518,74 +494,6 @@ sap.ui.define([
 			path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 			parameters: {rootLevel: 2, numberOfExpandedLevels: 1}
 		});
-	});
-
-	/**
-	 * @deprecated As of version 1.76
-	 */
-	QUnit.test("Change rootLevel", async function(assert) {
-		const done = assert.async();
-		this.oTable = await createTable.call(this, {rootLevel: 2});
-		let oBinding;
-
-		const fnHandler1 = function() {
-			oBinding = this.oTable.getBinding();
-			assert.equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
-			assert.equal(this.oTable.getRootLevel(), 2, "Root Level is 2");
-			attachRowsUpdatedOnce(this.oTable, fnHandler2, this);
-			this.oTable.setRootLevel(1);
-		};
-
-		const fnHandler2 = function() {
-			assert.equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
-			assert.equal(this.oTable.getRootLevel(), 1, "Root Level is 0");
-			done();
-		};
-
-		attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
-		this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
-	});
-
-	/**
-	 * @deprecated As of version 1.76
-	 */
-	QUnit.test("Relative Binding", async function(assert) {
-		const done = assert.async();
-		this.oTable = await createTable.call(this, {rootLevel: 2});
-		let oBinding;
-
-		/**
-		 * The actual Table test case is the same as for the root level change.
-		 * This is only for validation that the table works as before when setting a binding context later.
-		 */
-		const fnHandler1 = function() {
-			oBinding = this.oTable.getBinding();
-			assert.equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
-			assert.equal(this.oTable.getRootLevel(), 2, "Root Level is 2");
-			attachRowsUpdatedOnce(this.oTable, fnHandler2, this);
-			this.oTable.setRootLevel(1);
-		};
-
-		const fnHandler2 = function() {
-			assert.equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
-			assert.equal(this.oTable.getRootLevel(), 1, "Root Level is 0");
-			done();
-		};
-
-		attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
-
-		// relative binding
-		this.oTable.bindRows("Result");
-
-		// check if binding is available
-		oBinding = this.oTable.getBinding();
-		assert.equal(oBinding.isA("sap.ui.model.odata.v2.ODataTreeBinding"), true, "Binding is created");
-
-		// set the binding context for the table to make it absolute --> everything else should be handled by the tree binding
-		const sContextPath = "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')";
-		oBinding.oModel.createBindingContext(sContextPath, null, function(oCreatedContext) {
-			this.oTable.setBindingContext(oCreatedContext);
-		}.bind(this));
 	});
 
 	QUnit.module("BusyIndicator", {

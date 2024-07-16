@@ -33,4 +33,4 @@ sap.ui.define([
 
 
 	return JSONFilterBarDelegate;
-}, /* bExport= */false);
+});

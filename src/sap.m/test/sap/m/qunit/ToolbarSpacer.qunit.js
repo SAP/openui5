@@ -3,27 +3,27 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/ToolbarLayoutData",
 	"sap/ui/core/LayoutData",
-	"sap/ui/core/Core"
-], function(ToolbarSpacer, ToolbarLayoutData, LayoutData, Core) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(ToolbarSpacer, ToolbarLayoutData, LayoutData, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("Test behavior in overflow toolbar");
 
-	QUnit.test("Toolbar spacer ignore sap.m.ToolbarLayoutData", function (assert) {
+	QUnit.test("Toolbar spacer ignore sap.m.ToolbarLayoutData", async function(assert) {
 		var oToolbarSpacer = new ToolbarSpacer(),
 			oToolbarLayoutData = new ToolbarLayoutData(),
 			oLayoutData = new LayoutData();
 
 		// Arrange
 		oToolbarSpacer.setLayoutData(oToolbarLayoutData);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.equal(oToolbarSpacer.getLayoutData(), null,"sap.m.ToolbarLayoutData was ignorned");
 
 		// Arrange
 		oToolbarSpacer.setLayoutData(oLayoutData);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notEqual(oToolbarSpacer.getLayoutData(), null,"LayoutData aggregation was changed");

@@ -1,12 +1,19 @@
 <!DOCTYPE HTML>
 <html>
 
-<head>
+<head><meta charset="utf-8">
 
 	<title>StashedControlSupport - sap.ui.core</title>
 
 	<script src="shared-config.js"></script>
-	<script id="sap-ui-bootstrap" src="../../../../resources/sap-ui-core.js" data-sap-ui-libs="sap.m">
+	<script id="sap-ui-bootstrap"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:local/StashedControlSupport"
+			data-sap-ui-resource-roots='{"local":"./"}'
+	>
 	</script>
 
 	<script id="myview" type="text/xml">
@@ -498,31 +505,7 @@
 		</mvc:View>
 	</script>
 
-	<script>
-		var myController = sap.ui.controller("mycontroller", {
-			onInit: function() {
-				jQuery.sap.log.debug("in controller onInit");
-			}
-		});
-
-		jQuery.sap.require("sap.ui.model.json.JSONModel");
-		var oModel = new sap.ui.model.json.JSONModel({
-			stashed3: false,
-			stashed4: false
-		});
-
-
-		jQuery.sap.measure.setActive(true);
-		jQuery.sap.measure.start("view_loading");
-		sap.ui.xmlview("view1", {
-			controller: myController,
-			viewContent: document.getElementById("myview").innerHTML
-		}).setModel(oModel).placeAt("content");
-		jQuery.sap.measure.end("view_loading");
-		new sap.m.Label({
-			text: "loading time: " + jQuery.sap.measure.getMeasurement("view_loading").duration + " ms"
-		}).placeAt("result");
-	</script>
+	
 </head>
 
 <body class="sapUiBody">

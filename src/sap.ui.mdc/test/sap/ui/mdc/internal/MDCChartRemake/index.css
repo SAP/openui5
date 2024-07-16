@@ -1,0 +1,7 @@
+#container-v4demo---app--app {
+	margin-bottom: -48px;
+}
+
+.pageBox > .sapMFlexItem {
+	height: 100%;
+}

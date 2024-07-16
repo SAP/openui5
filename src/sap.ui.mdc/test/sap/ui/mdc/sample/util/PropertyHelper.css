@@ -1,0 +1,17 @@
+#content {
+	display: flex;
+	flex-direction: column;
+}
+
+#main {
+	flex: 1 1 auto;
+}
+
+#error {
+	color: red;
+	border: 2px solid red;
+}
+
+#error:empty {
+	display: none;
+}

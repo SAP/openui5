@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head><meta charset="utf-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 	<title>ToolPage</title>
 	<script src="shared-config.js"></script>
-	<script
-		src="../../../resources/sap-ui-core.js"
-		id="sap-ui-bootstrap"
-		data-sap-ui-libs="sap.tnt, sap.m">
+	<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.tnt, sap.m"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:local/ToolPageWithSubHeader"
+			data-sap-ui-resource-roots='{"local":"./"}'
+	>
 	</script>
-	<script id="myXml" type="text/xmldata">
+	<script id="myXml" type="text/xml">
 		<mvc:View xmlns:mvc="sap.ui.core.mvc"
 			xmlns="sap.m"
 			xmlns:tnt="sap.tnt"
@@ -97,13 +101,8 @@
 		</mvc:View>
 	</script>
 
-	<script>
-		sap.ui.controller("myController", {
-			onInit: function() {}
-		});
-		sap.ui.xmlview({ viewContent: jQuery('#myXml').html() }).placeAt("content");
-	</script>
+	
 </head>
-<body id='content' class='sapUiBody'>
+<body id="content" class="sapUiBody">
 </body>
 </html>

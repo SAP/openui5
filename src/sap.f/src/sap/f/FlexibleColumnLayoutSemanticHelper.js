@@ -626,4 +626,4 @@ sap.ui.define([
 
 	return FlexibleColumnLayoutSemanticHelper;
 
-}, /* bExport= */ true);
+});

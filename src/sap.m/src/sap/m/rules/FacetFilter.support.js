@@ -59,4 +59,4 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/model/BindingMode"], function(S
 		oFacetFilterGrowingOneWayBinding
 	];
 
-}, true);
+});

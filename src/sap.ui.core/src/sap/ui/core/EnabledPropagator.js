@@ -142,4 +142,4 @@ sap.ui.define([], function() {
 
 	return EnabledPropagator;
 
-}, /* bExport= */ true);
+});

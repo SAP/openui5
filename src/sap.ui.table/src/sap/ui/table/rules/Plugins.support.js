@@ -28,11 +28,6 @@ sap.ui.define([
 				const oTable = aTables[i];
 				const aSelectionPlugins = oTable.getDependents().filter((oPlugin) => oPlugin.isA("sap.ui.table.plugins.SelectionPlugin"));
 
-				/**
-				 * @deprecated As of version 1.120
-				 */
-				aSelectionPlugins.concat(oTable.getPlugins());
-
 				if (aSelectionPlugins.length > 1) {
 					SupportHelper.reportIssue(
 						oIssueManager,
@@ -47,4 +42,4 @@ sap.ui.define([
 
 	return [oSelectionPlugins];
 
-}, true);
+});

@@ -194,4 +194,4 @@ sap.ui.define([
 
 	return FlexBoxRenderer;
 
-}, /* bExport= */ true);
+});

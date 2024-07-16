@@ -4,9 +4,8 @@ sap.ui.define([
 	"sap/ui/test/utils/nextUIUpdate",
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
-	'sap/ui/core/XMLTemplateProcessor',
-	'sap/ui/core/mvc/XMLProcessingMode'
-], function(QUnitUtils, nextUIUpdate, Component, ComponentContainer, XMLTemplateProcessor, XMLProcessingMode) {
+	'sap/ui/core/XMLTemplateProcessor'
+], function(QUnitUtils, nextUIUpdate, Component, ComponentContainer, XMLTemplateProcessor) {
 	"use strict";
 
 	/**
@@ -53,10 +52,6 @@ sap.ui.define([
 		})
 		.then(function(oRootView) {
 			assert.equal(this.oXMLTPSpy.callCount, 5, "3 async XMLViews and 2 XML Fragment processed.");
-			/**
-			 * @deprecated because 'Sequential' will be the only mode that is supported in the next major release
-			 */
-			assert.equal(oRootView._sProcessingMode, XMLProcessingMode.Sequential, "Root view should be processed 'Sequential'");
 
 			var aViewContent = oRootView.getContent();
 			assert.equal(aViewContent.length, 6, "Correct amount of top-level controls.");
@@ -73,11 +68,6 @@ sap.ui.define([
 			return oExtPoint1View.loaded();
 		}.bind(this))
 		.then(function(oExtensionView) {
-			/**
-			 * @deprecated because 'Sequential' will be the only mode that is supported in the next major release
-			 */
-			assert.equal(oExtensionView._sProcessingMode, XMLProcessingMode.Sequential, "ExtPoint1View should be processed 'Sequential'");
-
 			var aExtPoint1Content = oExtensionView.getContent();
 			assert.equal(aExtPoint1Content.length, 2, "Correct amount controls inside ExtensionPoint View.");
 			assert.equal(aExtPoint1Content[0], oExtensionView.byId("buttonExtPoint1_1"), "Button1 inside ExtensionPoint View is at the correct position.");
@@ -86,14 +76,8 @@ sap.ui.define([
 
 			return oRootComponent.getRootControl()
 				.byId("myCustomerComponent---mainView--extPoint2Fragment--extPoint3View").loaded();
-
 		})
 		.then(function(oExtPoint3View) {
-			/**
-			 * @deprecated because 'Sequential' will be the only mode that is supported in the next major release
-			 */
-			assert.equal(oExtPoint3View._sProcessingMode, XMLProcessingMode.Sequential, "ExtPoint3View should be processed 'Sequential'");
-
 			var aExtPoint3Content = oExtPoint3View.getContent();
 			assert.equal(aExtPoint3Content[0],
 				oExtPoint3View.byId("extPoint4Fragment--buttonExtPoint4_1"),
@@ -131,20 +115,12 @@ sap.ui.define([
 			assert.equal(this.oXMLTPSpy.callCount, 2, "Two async XMLViews processed.");
 
 			var oView = oComponent.getRootControl();
-			/**
-			 * @deprecated because 'Sequential' will be the only mode that is supported in the next major release
-			 */
-			assert.equal(oView._sProcessingMode, XMLProcessingMode.Sequential, "Root view should be processed 'Sequential'");
 
 			var aViewContent = oView.getContent();
 			assert.equal(aViewContent.length, 1, "Correct amount of top-level controls.");
 			assert.equal(aViewContent[0], oView.byId("xmlView1"), "Nested XMLView should be available.");
 
 			var oNestedView = oView.byId("xmlView1");
-			/**
-			 * @deprecated because 'Sequential' will be the only mode that is supported in the next major release
-			 */
-			assert.equal(oNestedView._sProcessingMode, XMLProcessingMode.Sequential, "Nested view should be processed 'Sequential'");
 
 			var aNestedViewContent = oNestedView.getContent();
 			assert.equal(aNestedViewContent.length, 1, "Correct amount of controls inside nested view.");
@@ -170,10 +146,6 @@ sap.ui.define([
 			assert.equal(this.oXMLTPSpy.callCount, 2, "Two async XMLViews processed.");
 
 			var oView = oComponent.getRootControl();
-			/**
-			 * @deprecated because 'Sequential' will be the only mode that is supported in the next major release
-			 */
-			assert.equal(oView._sProcessingMode, XMLProcessingMode.Sequential, "Root view should be processed 'Sequential'");
 
 			var aViewContent = oView.getContent();
 			assert.equal(aViewContent.length, 5, "Correct amount of top-level controls.");
@@ -184,10 +156,6 @@ sap.ui.define([
 			assert.equal(aViewContent[4], oView.byId("outerView_button_after"), "Button after ExtensionPoint is at the correct position.");
 
 			var oNestedView = oView.byId("innerView");
-			/**
-			 * @deprecated because 'Sequential' will be the only mode that is supported in the next major release
-			 */
-			assert.equal(oNestedView._sProcessingMode, XMLProcessingMode.Sequential, "Nested view should be processed 'Sequential'");
 
 			var aNestedViewContent = oNestedView.getContent();
 			assert.equal(aNestedViewContent.length, 1, "Correct amount of controls inside nested view.");
@@ -213,10 +181,6 @@ sap.ui.define([
 			assert.equal(this.oXMLTPSpy.callCount, 3, "2 async XMLViews and 1 XML Fragment processed.");
 
 			var oView = oComponent.getRootControl();
-			/**
-			 * @deprecated because 'Sequential' will be the only mode that is supported in the next major release
-			 */
-			assert.equal(oView._sProcessingMode, XMLProcessingMode.Sequential, "Root view should be processed 'Sequential'");
 
 			var aViewContent = oView.getContent();
 			assert.equal(aViewContent.length, 5, "Correct amount of top-level controls.");
@@ -228,10 +192,6 @@ sap.ui.define([
 			assert.equal(aViewContent[4], oView.byId("outerView_button_after"), "Button after ExtensionPoint is at the correct position.");
 
 			var oExtPoint1View = oView.byId("extPoint1View");
-			/**
-			 * @deprecated because 'Sequential' will be the only mode that is supported in the next major release
-			 */
-			assert.equal(oExtPoint1View._sProcessingMode, XMLProcessingMode.Sequential, "ExtPoint1View should be processed 'Sequential'");
 
 			var aExtPoint1Content = oExtPoint1View.getContent();
 			assert.equal(aExtPoint1Content.length, 2, "Correct amount controls inside ExtensionPoint View.");
@@ -268,16 +228,7 @@ sap.ui.define([
 		.then(async function(oRootView) {
 			await nextUIUpdate();
 			return new Promise(function(res, rej) {
-				/**
-				 * @deprecated because 'Sequential' will be the only mode that is supported in the next major release
-				 */
-				assert.equal(oRootView._sProcessingMode, XMLProcessingMode.Sequential, "Root view should be processed 'Sequential'");
-
 				var oNestedView = oRootView.byId("xmlView1");
-				/**
-				 * @deprecated because 'Sequential' will be the only mode that is supported in the next major release
-				 */
-				assert.equal(oRootView._sProcessingMode, XMLProcessingMode.Sequential, "Nested view should be processed 'Sequential'");
 
 				var oButton = oNestedView.byId("buttonXMLView1");
 
@@ -308,10 +259,6 @@ sap.ui.define([
 			assert.equal(this.oXMLTPSpy.callCount, 3, "2 async XMLViews and 1 XML Fragment processed.");
 
 			var oRootView = oComponent.getRootControl();
-			/**
-			 * @deprecated because 'Sequential' will be the only mode that is supported in the next major release
-			 */
-			assert.equal(oRootView._sProcessingMode, XMLProcessingMode.Sequential, "Root view should be processed 'Sequential'");
 
 			var aRootViewContent = oRootView.getContent();
 			assert.equal(aRootViewContent.length, 1, "Correct amount of top-level controls");

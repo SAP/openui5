@@ -32,7 +32,6 @@ sap.ui.define([
 	return Matcher.extend("sap.ui.test.matchers.PropertyStrictEquals", /** @lends sap.ui.test.matchers.PropertyStrictEquals.prototype */ {
 
 		metadata: {
-			publicMethods: ["isMatching"],
 			properties: {
 				/**
 				 * The Name of the property that is used for matching.

@@ -1,147 +1,21 @@
 <!DOCTYPE HTML>
 <html>
-<head>
+<head><meta charset="utf-8">
 	<title>sap.m.TextArea</title>
 
 	<script src="shared-config.js"></script>
 
-	<script
-			id='sap-ui-bootstrap'
-			src='../../../resources/sap-ui-core.js'
-			data-sap-ui-theme='sap_belize'
-			data-sap-ui-libs='sap.m'
-			data-sap-ui-compatVersion="edge"
+	<script id="sap-ui-bootstrap"
+			src="../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-async="true"
+			data-sap-ui-on-init="module:local/TextArea"
+			data-sap-ui-resource-roots='{"local":"./"}'
 	>
 	</script>
-	<style type="text/css">
-		.customClassForVisualTests {
-				caret-color: transparent;
-		}
-
-		#textAreaFiftyPercentWidth,
-		.sapMTextArea.sapMInputBaseState,
-		.sapMTextArea.sapMInputBaseReadonly {
-			margin-right: 1rem;
-		}
-	</style>
-	<script>
-			sap.ui.require([
-				"sap/ui/core/Core",
-				"sap/m/Button",
-				"sap/m/Dialog",
-				"sap/m/Page",
-				"sap/m/TextArea"
-			], async function (Core, Button, Dialog, Page, TextArea) {
-
-				await Core.ready();
-
-				var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.";
-
-				var oPage = new Page({
-					title: "TextArea Controls",
-					enableScrolling: true,
-					headerContent: new Button("customCssButton", {
-						text: "Toggle custom CSS for visual test",
-						press: function () {
-							var $body = jQuery("body");
-
-							$body.toggleClass("customClassForVisualTests");
-						}
-					}),
-					content: [
-						oTextArea1 = new TextArea("textAreaFiftyPercentWidth", {
-							value : "%50 width TextArea:\n\n" + lorem + lorem,
-							width : "50%",
-							rows : 4
-						}),
-
-						oTextArea2 = new TextArea("textAreaOverLimit", {
-							value: "This is text",
-							maxLength: 6,
-							showExceededText: true
-						}),
-
-						oTextArea3 = new TextArea("textAreaGrowing", {
-							showExceededText: true,
-							value: lorem + lorem,
-							width: "100%",
-							growing: true,
-							maxLength: 40
-						}),
-						oTextArea4 = new TextArea("textAreaWithoutGrowing",{
-							placeholder: "This is a placeholder text",
-							showExceededText: true,
-							width: "100%",
-							maxLength: 40
-						}),
-						oTextArea5 = new TextArea("textAreaWarningState", {
-							value : "Default textarea rows: 2, cols: 20",
-							valueState : "Warning",
-							valueStateText: "Warning message. Extra long text used as a warning message. Extra long text used as a warning message - 2 Extra long text used as a warning message - 3..",
-							width : "30%"
-						}),
-						oTextArea6 = new TextArea("textAreaErrorState", {
-							value : "ValueState : Error",
-							valueState : "Error",
-							formattedValueStateText: new sap.m.FormattedText({
-								htmlText: "Error value state message with formatted text containing %%0 and a %%1",
-								controls: [
-									new sap.m.Link({
-										text: "link",
-										href: "#",
-										press: function() {
-											sap.m.MessageToast.show("You have pressed a link in value state message", { my: sap.ui.core.Popup.Dock.CenterCenter, at: sap.ui.core.Popup.Dock.CenterCenter });
-										}
-									}),
-									new sap.m.Link({
-										text: "second link",
-										href: "#",
-										press: function() {
-											sap.m.MessageToast.show("You have pressed a link in value state message", { my: sap.ui.core.Popup.Dock.CenterCenter, at: sap.ui.core.Popup.Dock.CenterCenter });
-										}
-									})
-								]
-							}),
-						}),
-						oTextArea6 = new TextArea("textAreaSuccessState", {
-							value : "ValueState : Success",
-							valueState : "Success",
-						}),
-						oTextArea6 = new TextArea("textAreaInformationState", {
-							value : "ValueState : Information",
-							valueState : "Information",
-						}),
-						oTextArea7 = new TextArea("textAreaReadOnly", {
-							value : "Not Editable: " + lorem,
-							editable : false,
-							width : "50%",
-							rows : 3
-						}),
-						oTextArea8 = new TextArea("textAreaDisabled", {
-							value : "Disabled Textarea:\n\n" + lorem + lorem,
-							enabled : false,
-							width : "40%",
-							rows : 4
-						}),
-						oTextArea9 = new TextArea("textAreaWithoutWrapping", {
-							value : "Wrapping: Off Scroll horizontal --- " + lorem,
-							wrapping : "Off",
-							width : "40%",
-							rows : 3
-						}),
-						oTextArea10 = new TextArea("showExceededTextWithHeight", {
-							showExceededText: true,
-							maxLength: 50,
-							value: 'This is some text to test the showExceededText + height',
-							width: '100%',
-							height: '100px'
-						})
-					]
-				}).addStyleClass("sapUiContentPadding");
-
-				new sap.m.App().addPage(oPage).placeAt("body");
-			});
-	</script>
+	<link rel="stylesheet" href="./TextArea.css">
+	
 </head>
 <body id="body" class="sapUiBody">
 </body>

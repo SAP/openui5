@@ -7,8 +7,7 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/ui/base/Object",
 	"sap/ui/test/_OpaLogger",
-	"sap/ui/test/_ParameterValidator",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/test/_ParameterValidator"
 ], function (extend, isEmptyObject, UI5Object, _OpaLogger, _ParameterValidator) {
 	"use strict";
 

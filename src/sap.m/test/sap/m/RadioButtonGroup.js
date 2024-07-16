@@ -51,10 +51,10 @@ sap.ui.define([
 		var oRBGroup = Element.getElementById("RBG5");
 
 		if (isNaN(oText.getValue())){
-			oText.setValueState(sap.ui.core.ValueState.Error);
+			oText.setValueState(ValueState.Error);
 			return;
 		} else {
-			oText.setValueState(sap.ui.core.ValueState.None);
+			oText.setValueState(ValueState.None);
 		}
 
 		oRBGroup.setSelectedIndex( parseInt(oText.getValue()) );
@@ -72,10 +72,10 @@ sap.ui.define([
 		}
 
 		if (!oButton){
-			oText.setValueState(sap.ui.core.ValueState.Error);
+			oText.setValueState(ValueState.Error);
 			return;
 		} else {
-			oText.setValueState(sap.ui.core.ValueState.None);
+			oText.setValueState(ValueState.None);
 		}
 
 		oRBGroup.setSelectedButton(oButton);

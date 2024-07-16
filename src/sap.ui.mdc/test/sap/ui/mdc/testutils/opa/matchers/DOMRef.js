@@ -20,7 +20,6 @@ sap.ui.define([
 	 */
 	return Matcher.extend("sap.ui.mdc.matchers.DOMRefMatcher", /** @lends sap.ui.mdc.matchers.DOMRefMatcher.prototype */ {
 		metadata: {
-			publicMethods: ["isMatching"],
 			properties: {
 				/**
 				 * The Name of the elenent that is used for matching.

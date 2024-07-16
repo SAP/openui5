@@ -91,4 +91,4 @@ sap.ui.define([
 
 	return oRecordListener;
 
-}, true);
+});

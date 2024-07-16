@@ -1,0 +1,11 @@
+.label {
+	font-weight: bold;
+	padding: 3rem 1rem 1rem;
+	width: auto;
+	white-space: normal;
+}
+.missingControl {
+	border: 1px solid;
+	margin: 1em 2em;
+	padding: 1em 2em;
+}

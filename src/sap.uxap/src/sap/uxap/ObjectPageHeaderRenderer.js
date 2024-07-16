@@ -20,7 +20,6 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 	 * @param {sap.uxap.ObjectPageHeader} oControl The ObjectPageHeader
 	 */
 	ObjectPageHeaderRenderer.render = function (oRm, oControl) {
-
 		var oNavigationBar = oControl.getNavigationBar(),
 			bTitleVisible = (oControl.getIsObjectIconAlwaysVisible() || oControl.getIsObjectTitleAlwaysVisible() || oControl.getIsObjectSubtitleAlwaysVisible() || oControl.getIsActionAreaAlwaysVisible()),
 			oParent = oControl.getParent(),
@@ -33,10 +32,6 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 			(oParent.getShowHeaderContent() && oParent.getShowTitleInHeaderContent()));
 
 		oRm.openStart("div", oControl).class('sapUxAPObjectPageHeader');
-		/**
-		 * @deprecated As of version 1.40.1
-		 */
-		oRm.class('sapUxAPObjectPageHeaderDesign-' + oControl.getHeaderDesign());
 		oRm.openEnd();
 
 		// if a navigationBar has been provided display it
@@ -338,29 +333,7 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 	 *
 	 * @private
 	 */
-	ObjectPageHeaderRenderer._renderMarkers = function (oRm, oControl) {
-		var aIcons = [];
-
-		// load icons based on control state
-		if (oControl.getShowMarkers()) {
-			aIcons.push(oControl._oFavIcon);
-			aIcons.push(oControl._oFlagIcon);
-
-			this._renderMarkersAria(oRm, oControl); // render hidden aria description of flag and favorite icons
-
-			// render icons
-			oRm.openStart("span", oControl.getId() + "-markers")
-				.class("sapMObjStatusMarker")
-				.attr("aria-describedby", oControl.getId() + "-markers-aria")
-				.openEnd();
-
-			for (var i = 0; i < aIcons.length; i++) {
-				oRm.renderControl(aIcons[i]);
-			}
-
-			oRm.close("span");
-		}
-	};
+	ObjectPageHeaderRenderer._renderMarkers = function (oRm, oControl) {};
 
 	/**
 	 * Renders hidden div with ARIA descriptions of the favorite and flag icons.
@@ -375,16 +348,6 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 	 */
 	ObjectPageHeaderRenderer._renderMarkersAria = function (oRm, oControl) {
 		var sAriaDescription = ""; // ARIA description message
-
-		// check if flag mark is set
-		if (oControl.getMarkFlagged()) {
-			sAriaDescription += (oControl.oLibraryResourceBundle.getText("ARIA_FLAG_MARK_VALUE") + " ");
-		}
-
-		// check if favorite mark is set
-		if (oControl.getMarkFavorite()) {
-			sAriaDescription += (oControl.oLibraryResourceBundle.getText("ARIA_FAVORITE_MARK_VALUE") + " ");
-		}
 
 		// if there is a description render ARIA node
 		if (sAriaDescription !== "") {
@@ -403,4 +366,4 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 
 	return ObjectPageHeaderRenderer;
 
-}, /* bExport= */ true);
+});

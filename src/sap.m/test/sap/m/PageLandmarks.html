@@ -1,65 +1,18 @@
 <!DOCTYPE HTML>
 <html>
-<head>
+<head><meta charset="utf-8">
 <title>sap.m.Page - Accessible Landmarks</title>
 <script src="shared-config.js"></script>
 <script src="../../../resources/sap-ui-core.js"
-		id="sap-ui-bootstrap"
-		data-sap-ui-libs="sap.m"></script>
-<script>
-	var oApp = new sap.m.App();
-	oApp.placeAt("body");
+        id="sap-ui-bootstrap"
+        data-sap-ui-libs="sap.m"
+        data-sap-ui-async="true"
+        data-sap-ui-compat-version="edge"
+        data-sap-ui-on-init="module:local/PageLandmarks"
+        data-sap-ui-resource-roots='{"local":"./"}'
+></script>
 
-	var oDefaultLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo();
-	var oCustomLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-		headerRole: sap.ui.core.AccessibleLandmarkRole.Banner,
-		headerLabel: "Header label from LandmarkInfo",
-		subHeaderRole: sap.ui.core.AccessibleLandmarkRole.Banner,
-		subHeaderLabel: "SubHeader label from LandmarkInfo",
-		rootRole: sap.ui.core.AccessibleLandmarkRole.Region,
-		rootLabel: "Root label from LandmarkInfo",
-		contentRole: sap.ui.core.AccessibleLandmarkRole.Main,
-		contentLabel: "Content label from LandmarkInfo",
-		footerRole: sap.ui.core.AccessibleLandmarkRole.Banner,
-		footerLabel: "Footer label from LandmarkInfo"
-	});
-
-	var oPage = new sap.m.Page({
-		title: "A Page",
-		subHeader: new sap.m.Bar({
-			contentMiddle: [
-				new sap.m.Title({ text: "SubHeader title" })
-			]
-		}),
-		content: [
-			new sap.m.Button({
-				text: "Clear Landmarks",
-				press: function(){
-					oPage.setLandmarkInfo(null);
-				}
-			}),
-			new sap.m.Button({
-				text: "Add Default Landmarks",
-				press: function(){
-					oPage.setLandmarkInfo(oDefaultLandmarkInfo);
-				}
-			}),
-			new sap.m.Button({
-				text: "Add Custom Landmarks",
-				press: function(){
-					oPage.setLandmarkInfo(oCustomLandmarkInfo);
-				}
-			})
-		],
-		footer: new sap.m.Bar({
-			contentMiddle: [
-				new sap.m.Title({ text: "Footer title" })
-			]
-		})
-	});
-	oApp.addPage(oPage);
-</script>
 </head>
-<body id="body" class="sapUiBody" >
+<body id="body" class="sapUiBody">
 </body>
 </html>

@@ -1,36 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head><meta charset="utf-8">
 	<title>Preview</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="../../../scripts/boot.js"></script>
-	<style>
-		.tableWrapper td {
-			vertical-align: top;
-			line-height: 1.4rem !important;
-		}
-
-		.tableWrapper caption {
-			text-align: left;
-			padding: 0.5rem 1rem;
-			font-weight: bold;
-		}
-
-		.tableWrapper span {
-			color: red;
-		}
-
-		table,
-		td {
-			font-weight: normal !important;
-		}
-
-		pre[caption]::before {
-			width: 800px !important;
-		}
-	</style>
+	<link rel="stylesheet" href="./preview.css">
 </head>
 
 <body class="sapUiBody topicBody">
@@ -65,7 +41,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 });</pre>
 						</td>
 						<td style="vertical-align: top;background-color: transparent; border:none;">
-							<img src="../img/ConfigurationEditorForm.png" alt="" style="margin:2rem;width:400px;border:1px solid #f5f5f5">
+							<img src="../img/ConfigurationEditorForm.png" alt style="margin:2rem;width:400px;border:1px solid #f5f5f5">
 						</td>
 					</tr>
 				</table>
@@ -142,22 +118,22 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 				</li>
 				<li>Abstract: (default) Only an abstract preview is available. If an own image is provided in the src
 					property, it will be used for the abstract preview.
-					<br><br><img src="../../images/CardDTAbstractPreview.png" alt="">
-					<img src="../../images/CardDTAbstractOwnPreview.png" alt=""><br><br>
+					<br><br><img src="../../images/CardDTAbstractPreview.png" alt>
+					<img src="../../images/CardDTAbstractOwnPreview.png" alt><br><br>
 				</li>
 				<li>AbstractLive: The user is able to switch from an abstract preview to a live preview and back. If an
 					own image is provided in the src property, it will be used for the abstract preview.
-					<br><br><img src="../../images/CardDTAbstractPreview.png" alt="">
-					<img src="../../images/CardDTLivePreview.png" alt=""><br><br>
+					<br><br><img src="../../images/CardDTAbstractPreview.png" alt>
+					<img src="../../images/CardDTLivePreview.png" alt><br><br>
 				</li>
 				<li>LiveAbstract: The user is able to switch from an abstract preview to a live preview and back. If an
 					own image is provided in the src property, it will be used for the abstract preview.
-					<br><br><img src="../../images/CardDTLivePreview.png" alt="">
-					<img src="../../images/CardDTAbstractPreview.png" alt=""><br><br>
+					<br><br><img src="../../images/CardDTLivePreview.png" alt>
+					<img src="../../images/CardDTAbstractPreview.png" alt><br><br>
 				</li>
 				<li>Live: The user is able to switch from an abstract preview to a live preview and back. If an own
 					image is provided in the src property, it will be used for the abstract preview.
-					<br><br><img src="../../images/CardDTLivePreview.png" alt=""><br>
+					<br><br><img src="../../images/CardDTLivePreview.png" alt><br>
 				</li>
 			</ul>
 
@@ -169,16 +145,16 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 				on the card type you chose. To avoid additional overhead the preview image should be created in a
 				themeable fashion. Working with gray shades and transparency this is easily possible. The image should
 				work with these sizes and colors.
-			<p>
-			<ul>
+			</p><p>
+			</p><ul>
 				<li>Width: 250px</li>
 				<li>Height: 300px</li>
 				<li>Background: transparent</li>
 				<li>Foreground: rgb(225,225,225) opacity 50%, rgba(225,225,225,0.5)</li>
 			</ul>
-			<img src="../../images/CardDTOwnPreviewTransparency.png" alt="">
-			<img src="../../images/CardDTOwnPreviewLight.png" alt="">
-			<img src="../../images/CardDTOwnPreviewDark.png" alt="">
+			<img src="../../images/CardDTOwnPreviewTransparency.png" alt>
+			<img src="../../images/CardDTOwnPreviewLight.png" alt>
+			<img src="../../images/CardDTOwnPreviewDark.png" alt>
 
 			<p>
 				After creation of the image save it with the card sources, ideally in the configuration folder, and refer to
@@ -209,16 +185,16 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 			</p>
 			<ul>
 				<li>left: Align the preview at the left of Card Editor.
-					<br><br><img src="../img/ConfigurationEditorPreviewAlignmentLeft.png" alt="" style="width:400px;border:1px solid #f5f5f5"><br><br>
+					<br><br><img src="../img/ConfigurationEditorPreviewAlignmentLeft.png" alt style="width:400px;border:1px solid #f5f5f5"><br><br>
 				</li>
 				<li>right: (default) Align the preview at the right of Card Editor.
-					<br><br><img src="../img/ConfigurationEditorPreviewAlignmentRight.png" alt="" style="width:400px;border:1px solid #f5f5f5"><br><br>
+					<br><br><img src="../img/ConfigurationEditorPreviewAlignmentRight.png" alt style="width:400px;border:1px solid #f5f5f5"><br><br>
 				</li>
 				<li>top: Align the preview above Card Editor.
-					<br><br><img src="../img/ConfigurationEditorPreviewAlignmentTop.png" alt="" style="width:400px;border:1px solid #f5f5f5"><br><br>
+					<br><br><img src="../img/ConfigurationEditorPreviewAlignmentTop.png" alt style="width:400px;border:1px solid #f5f5f5"><br><br>
 				</li>
 				<li>bottom: Align the preview under Card Editor.
-					<br><br><img src="../img/ConfigurationEditorPreviewAlignmentBottom.png" alt="" style="width:400px;border:1px solid #f5f5f5"><br><br>
+					<br><br><img src="../img/ConfigurationEditorPreviewAlignmentBottom.png" alt style="width:400px;border:1px solid #f5f5f5"><br><br>
 				</li>
 			</ul>
 

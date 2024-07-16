@@ -1,6 +1,7 @@
 /*global QUnit, sinon*/
 sap.ui.define([
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/upload/UploadSet",
 	"sap/m/upload/UploadSetItem",
@@ -15,7 +16,6 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/model/json/JSONModel",
 	"test-resources/sap/m/qunit/upload/UploadSetTestUtils",
-	"sap/ui/core/Core",
 	"sap/ui/core/dnd/DragAndDrop",
 	"sap/ui/base/Event",
 	"sap/m/library",
@@ -23,7 +23,7 @@ sap.ui.define([
 	"sap/m/IllustratedMessageType",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/IllustratedMessage"
-], function (Element, jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer, MenuButton, Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType, nextUIUpdate, IllustratedMessage) {
+], function (Element, Library0, jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer, MenuButton, Dialog, Device, MessageBox, JSONModel, TestUtils, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType, nextUIUpdate, IllustratedMessage) {
 	"use strict";
 
 	// shortcut for sap.m.ListMode
@@ -2199,7 +2199,7 @@ sap.ui.define([
 		assert.ok(oFileUploaderChangeSpy.notCalled, "Directory uploads aborted with restrited file types");
 	});
 
-	return oCore.loadLibrary("sap.suite.ui.commons", { async: true })
+	return Library0.load("sap.suite.ui.commons")
 	.then(function() {
 		QUnit.module("Cloud File Picker", {
 			beforeEach: async function () {

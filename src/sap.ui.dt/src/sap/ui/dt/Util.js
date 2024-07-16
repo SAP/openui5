@@ -230,4 +230,4 @@ sap.ui.define([
 	};
 
 	return Util;
-}, true);
+});

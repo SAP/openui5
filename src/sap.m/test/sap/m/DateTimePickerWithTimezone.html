@@ -1,124 +1,23 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
+	<head><meta charset="utf-8">
 
 		<title>DateTimePicker with Timezone</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.m.DatePicker.gif">
 
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-language="en_US"
-			data-sap-ui-theme="sap_horizon"
-			data-sap-ui-libs="sap.m">
+				id="sap-ui-bootstrap"
+				data-sap-ui-language="en_US"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/DateTimePickerWithTimezone"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
 
-		<script>
-
-		var app = new sap.m.App("myApp");
-		var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
-
-		var page1 = new sap.m.Page("page1", {
-			title:"DateTimePicker with Timezone",
-			content : [
-				new sap.m.VBox("VBOX1", {
-					width: "40%",
-					items: [
-						new sap.m.DateTimePicker("DTP1", {
-							displayFormat: "medium",
-							width: "100%",
-							dateValue: UI5Date.getInstance(Date.UTC(2000, 10, 20, 8, 10, 10)),
-							showTimezone: true,
-							timezone: "America/Argentina/Buenos_Aires"
-						}),
-						new sap.m.DateTimePicker("DTP2", {
-							displayFormat: "medium",
-							width: "100%",
-							dateValue: UI5Date.getInstance(Date.UTC(2000, 10, 20, 8, 10, 10)),
-							timezone: "America/Argentina/Buenos_Aires"
-						}),
-						new sap.m.DateTimePicker("DTP3", {
-							displayFormat: "medium",
-							width: "100%",
-							dateValue: UI5Date.getInstance(Date.UTC(2021, 2, 24, 22, 30)),
-							showTimezone: true
-						})
-					]
-				}),
-				new sap.m.Slider("SLD1", {
-					value: 40,
-					step: 1,
-					min: 1,
-					max: 100,
-					change: function(oEvent) {
-						sap.ui.getCore().byId("VBOX1").setWidth(this.getValue() + "%");
-					}
-				}),
-				new sap.m.Button("BTN20", {
-					text: "20%",
-					press: function() {
-						sap.ui.getCore().byId("SLD1").setValue(20);
-						sap.ui.getCore().byId("VBOX1").setWidth("20%");
-					}
-				}),
-				new sap.m.Button("BTN40", {
-					text: "40%",
-					press: function() {
-						sap.ui.getCore().byId("SLD1").setValue(40);
-						sap.ui.getCore().byId("VBOX1").setWidth("40%");
-					}
-				}),
-				new sap.m.Button("BTNBA", {
-					text: "America/Argentina/Buenos_Aires",
-					press: function() {
-						sap.ui.getCore().byId("DTP1").setTimezone(this.getText());
-						sap.ui.getCore().byId("DTP2").setTimezone(this.getText());
-					}
-				}),
-				new sap.m.Button("BTNNY", {
-					text: "America/New_York",
-					press: function() {
-						sap.ui.getCore().byId("DTP1").setTimezone(this.getText());
-						sap.ui.getCore().byId("DTP2").setTimezone(this.getText());
-					}
-				}),
-				new sap.m.Button("BTNS", {
-					text: "Europe/Sofia",
-					press: function() {
-						sap.ui.getCore().byId("DTP1").setTimezone(this.getText());
-						sap.ui.getCore().byId("DTP2").setTimezone(this.getText());
-					}
-				}),
-				new sap.m.Button("BTNLASTTIME", {
-					text: "Etc/GMT+12",
-					press: function() {
-						sap.ui.getCore().byId("DTP1").setTimezone(this.getText());
-						sap.ui.getCore().byId("DTP2").setTimezone(this.getText());
-					}
-				}),
-				new sap.m.Button("BTNCHANGEAPPTIMEZONE", {
-					text: "change app timezone",
-					press: function() {
-						var sTZ1 = "Europe/Sofia",
-							sTZ2 = "Europe/Berlin",
-							oCore = sap.ui.getCore(),
-							sCurrentTimezone = oCore.getConfiguration().getTimezone();
-
-						oCore.getConfiguration().setTimezone(sCurrentTimezone === sTZ1 ? sTZ2 : sTZ1);
-						oCore.applyChanges();
-
-						oCore.byId("DTP1").rerender();
-						oCore.byId("DTP2").rerender();
-						oCore.byId("DTP3").rerender();
-					}
-				})
-			],
-		});
-
-		app.addPage(page1);
-		app.placeAt("body");
-
-	</script>
+		
 
 	</head>
 	<body id="body" class="sapUiBody" style="width:1000px">

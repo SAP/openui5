@@ -1,0 +1,27 @@
+body {
+	overflow: hidden;
+}
+
+.positioned11 {
+	position: absolute !important;
+	top: 250px;
+}
+
+.positioned14 {
+	position: absolute !important;
+	top: 300px;
+}
+
+.positioned15 {
+	position: absolute !important;
+	top: 350px;
+}
+
+.positioned16 {
+	position: absolute !important;
+	top: 400px;
+}
+
+.customClassForVisualTests {
+	caret-color: transparent;
+}

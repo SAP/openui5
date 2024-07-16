@@ -56,8 +56,7 @@ sap.ui.define([
 				 * Set `after` to true, to drop the source immediately before the target element.
 				 */
 				after: "boolean"
-			},
-			publicMethods : [ "executeOn" ]
+			}
 		},
 
 		/**

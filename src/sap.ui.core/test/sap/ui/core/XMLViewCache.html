@@ -1,134 +1,21 @@
 <!DOCTYPE HTML>
 <html>
 
-<head>
+<head><meta charset="utf-8">
 
 	<title>XMLView cache - sap.ui.core</title>
 
 	<script src="shared-config.js"></script>
-	<script id="sap-ui-bootstrap" src="../../../../resources/sap-ui-core.js">
+	<script id="sap-ui-bootstrap"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:local/XMLViewCache"
+			data-sap-ui-resource-roots='{"local":"./"}'
+	>
 	</script>
 
-	<script>
-		sap.ui.require(["jquery.sap.global",
-			"sap/ui/model/json/JSONModel",
-			"sap/ui/core/mvc/XMLView",
-			"sap/ui/core/cache/CacheManager",
-			"sap/ui/layout/HorizontalLayout",
-			"sap/ui/layout/VerticalLayout",
-			"sap/m/Button",
-			"sap/m/Panel",
-			"sap/m/Page",
-			"sap/m/App",
-			"sap/suite/ui/microchart/ComparisonMicroChart",
-			"sap/suite/ui/microchart/ComparisonMicroChartData",
-			"sap/ui/thirdparty/sinon"],
-		function(jQuery, JSONModel, XMLView, Cache, HLayout, VLayout, Button, Panel, Page, App, ComparisonMicroChart, ComparisonMicroChartData /*, sinon*/ ) {
-
-			var oModel = new JSONModel({
-				cachedViewTime: 0,
-				notCachedViewTime: 0
-			});
-
-			function createView(sId, mCacheConfig) {
-				jQuery.sap.measure.start(sId, "create a view", "view_cache");
-				var pView = sap.ui.xmlview(sId, {
-					viewName: "cache",
-					async: true,
-					preprocessors: {
-						xml: {
-							preprocessor: function(x) {
-								return new Promise(function(resolve) {
-									setTimeout(function() {
-										if (mCacheConfig) {
-											var s = jQuery.sap.serializeXML(x);
-											s = s.replace("no", "yes");
-											s = s.replace("lateness", "physical-activity");
-											x = jQuery.sap.parseXML(s).documentElement;
-										}
-										resolve(x);
-									}, 500);
-								});
-							}
-						}
-					},
-					cache: mCacheConfig
-				});
-				pView.loaded().then(function() {
-					jQuery.sap.measure.end(sId);
-					var iDuration = Math.round(jQuery.sap.measure.getMeasurement(sId).duration);
-					oModel.setProperty("/" + sId + "ViewTime", iDuration);
-				});
-				return pView;
-			}
-
-			var fnLoadResource = jQuery.sap.loadResource;
-			jQuery.sap.loadResource = function () {
-				if (arguments[0] == "cache.view.xml") {
-					return new Promise(function(resolve) {
-						setTimeout(function() {
-							resolve(jQuery.sap.parseXML(document.getElementById("viewsource").innerHTML));
-						}, 50);
-					});
-				} else {
-					return fnLoadResource.apply(this, arguments);
-				}
-			};
-
-			// TODO check for bug in sinon - following does not work
-			// sinon.stub(jQuery.sap, "loadResource")
-			// 	.withArgs("cache.view.xml")
-			// 	.returns(new Promise(function(resolve) {
-			// 		setTimeout(function() {
-			// 			resolve(jQuery.sap.parseXML(document.getElementById("viewsource").innerHTML));
-			// 		}, 500);
-			// 	}));
-
-			// TODO bug report for microchart, formatter does not work
-			var fnTimeFormatter = function(iTime) {
-				return iTime + " ms";
-			};
-
-			new App().setModel(oModel).addPage(new Page("page", {
-				title: "XMLView Cache",
-				content: [ new VLayout({content: [
-					new HLayout({ content: [
-						new Button({
-							text: "Reset Cache",
-							icon: "sap-icon://refresh",
-							press: function() {
-								Cache.reset();
-							}
-						}).addStyleClass("sapUiResponsiveMargin"),
-						new ComparisonMicroChart({ data: [
-								new ComparisonMicroChartData({
-									title: "cached view (ms)"
-								}).bindProperty("value", {path: "/cachedViewTime"}),
-								new ComparisonMicroChartData({
-									title: "uncached view (ms)"
-								}).bindProperty("value", {path: "/notCachedViewTime"})
-						] }).addStyleClass("sapUiResponsiveMargin")
-					] }),
-					new HLayout({ content: [
-							new Panel({
-								id: "cachedPanel"
-							}).addStyleClass("sapUiResponsiveMargin"),
-							new Panel({
-								id: "notCachedPanel"
-							}).addStyleClass("sapUiResponsiveMargin")
-					] })
-				]})
-			]})).placeAt("content");
-
-			jQuery.sap.measure.setActive(true, "view_cache");
-
-			createView("cached", {
-				keys: ["staticCacheKeyForView"]
-			}).placeAt("cachedPanel");
-
-			createView("notCached").placeAt("notCachedPanel");
-		});
-	</script>
+	
 
 	<script id="viewsource" type="text/xml">
 		<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">

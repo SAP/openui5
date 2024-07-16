@@ -10,8 +10,8 @@ sap.ui.define([
 	"sap/m/PullToRefresh",
 	"sap/m/Page",
 	"sap/ui/Device",
-	"sap/ui/core/Core",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Library,
 	qutils,
@@ -23,8 +23,8 @@ sap.ui.define([
 	PullToRefresh,
 	Page,
 	Device,
-	oCore,
-	KeyCodes
+	KeyCodes,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -118,7 +118,7 @@ sap.ui.define([
 		// Test pull to refresh functionality
 		QUnit.module("Behavior");
 
-		QUnit.test("Refresh", function(assert) {
+		QUnit.test("Refresh", async function(assert) {
 			var done = assert.async();
 			var oSpy = this.spy();
 			var $P2R = oP2R.$();
@@ -126,7 +126,7 @@ sap.ui.define([
 			qutils.triggerEvent("click", oP2R.getId());
 			assert.strictEqual(oSpy.callCount, 1, "Refresh event has been fired.");
 			assert.strictEqual($P2R.children(".sapMPullDownText").text(), sLoading, "Pull down text is set correctly");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.strictEqual($P2R.children(".sapMPullDownInfo").text(), sRefresh, "Pull down description is set correctly");
 			setTimeout(function() {
 				oP2R.hide(); // Close
@@ -137,7 +137,7 @@ sap.ui.define([
 
 		QUnit.module("Accessibility");
 
-		QUnit.test("Aria attributes", function(assert) {
+		QUnit.test("Aria attributes", async function(assert) {
 			// Arrange
 			var oPullToRefresh = new PullToRefresh(),
 				sExpectedRole = "button",
@@ -146,7 +146,7 @@ sap.ui.define([
 				sAriaDescribedBy = oPullToRefresh._getAriaDescribedByReferences();
 
 			oPullToRefresh.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			sExpectedAriaControls = oPullToRefresh.getParent().sId + "-cont";
 
@@ -162,7 +162,7 @@ sap.ui.define([
 
 		QUnit.module("Keypress functions");
 
-		QUnit.test("Holding Space Key doesn't trigger an animation", function(assert) {
+		QUnit.test("Holding Space Key doesn't trigger an animation", async function(assert) {
 			// Arrange
 			var oPullToRefresh = new PullToRefresh({id: "p2r-new"}),
 			oEventMock = {
@@ -171,7 +171,7 @@ sap.ui.define([
 			};
 
 			oPullToRefresh.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// Act
 			oPullToRefresh.onsapspace(oEventMock);

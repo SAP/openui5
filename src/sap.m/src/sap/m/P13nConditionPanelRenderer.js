@@ -24,4 +24,4 @@ sap.ui.define(['sap/ui/core/Renderer'], function (Renderer) {
             }
         }
     });
-}, true);
+});

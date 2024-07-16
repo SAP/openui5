@@ -5,78 +5,21 @@
 
 	<title>PlanningCalendarHeader - sap.m</title>
 	<link rel="shortcut icon" type="image/x-icon">
-	<style>
-		body {
-			margin: 0;
-		}
-	</style>
+	<link rel="stylesheet" href="./PlanningCalendarHeader.css">
 
 	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
 			data-sap-ui-language="en_US"
-			data-sap-ui-libs="sap.m, sap.ui.unified">
+			data-sap-ui-libs="sap.m, sap.ui.unified"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:local/PlanningCalendarHeader"
+			data-sap-ui-resource-roots='{"local":"./"}'
+	>
 	</script>
 
-	<script>
-		var oPCHeader;
-		sap.ui.getCore().attachInit(function () {
-			sap.ui.require([
-				'sap/m/PlanningCalendarHeader',
-				'sap/m/Button',
-				'sap/m/SegmentedButton',
-				'sap/m/App',
-				 'sap/m/Page'
-			],
-			function (PlanningCalendarHeader, Button, SegmentedButton, App, Page) {
-				oPCHeader = new sap.m.PlanningCalendarHeader("PlanningCalendarHeader",{
-					pickerText: "Picker text",
-					actions: [
-						new SegmentedButton('ViewSwitch1', {
-							buttons: [
-								new Button({
-									text: "Days"
-								}),
-								new Button({
-									text: "Week"
-								}),
-								new Button({
-									text: "Months"
-								})
-							]}
-						),
-						new Button("firstButton", {
-							text: "hello world"
-						}),
-						new Button("firstButton1", {
-							text: "hello world"
-						}),
-						new Button("firstButton2", {
-							text: "hello world"
-						})
-					],
-					pressPrevious: function () {
-						console.log("Previous pressed!");
-					},
-					pressToday: function () {
-						console.log("Today pressed!");
-					},
-					pressNext: function () {
-						console.log("Next pressed!");
-					},
-					dateSelect: function () {
-						console.log("Date selected!");
-					}
-				});
-				new App({
-					pages: new Page({
-						title: "PlanningCalendarHeader test page",
-						content: oPCHeader
-					})
-				}).placeAt("body");
-			});
-		});
-	</script>
+	
 </head>
 <body id="body" class="sapUiBody">
 </body>

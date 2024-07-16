@@ -6,6 +6,8 @@
 sap.ui.define([
 	'sap/base/i18n/Formatting',
 	'sap/ui/core/Control',
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/CalendarUtils',
@@ -18,7 +20,6 @@ sap.ui.define([
 	'sap/ui/core/CustomData',
 	'sap/ui/events/KeyCodes',
 	'sap/base/Log',
-	'sap/ui/core/Core',
 	'./Link',
 	'./library',
 	'./PlanningCalendarLegend',
@@ -29,10 +30,12 @@ sap.ui.define([
 	'sap/ui/core/date/CalendarUtils',
 	'sap/ui/core/date/UI5Date',
 	'sap/ui/unified/DateRange'
-	],
-	function (
+],
+	function(
 		Formatting,
 		Control,
+		Element,
+		Library,
 		DateFormat,
 		CalendarDate,
 		CalendarUtils,
@@ -45,7 +48,6 @@ sap.ui.define([
 		CustomData,
 		KeyCodes,
 		Log,
-		Core,
 		Link,
 		library,
 		PlanningCalendarLegend,
@@ -333,7 +335,7 @@ sap.ui.define([
 			this.setStartDate(UI5Date.getInstance());
 			this._configureAppointmentsDragAndDrop();
 
-			this._oUnifiedRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+			this._oUnifiedRB = Library.getResourceBundleFor("sap.ui.unified");
 
 			this._aMoreCountPerDay = [];
 			this._aMoreCountPerDay.length = iCellsInView;
@@ -824,8 +826,8 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._getMoreLink = function(iAppointmentsCount, oCalendarDate, iCellIndex, sMoreLinkDescId) {
-			var sMore = Core
-					.getLibraryResourceBundle("sap.m")
+			var sMore = Library
+					.getResourceBundleFor("sap.m")
 					.getText("SPC_MORE_LINK", [iAppointmentsCount.toString()]),
 				oLink = new Link({
 					accessibleRole: LinkAccessibleRole.Button,
@@ -862,7 +864,7 @@ sap.ui.define([
 
 		SinglePlanningCalendarMonthGrid.prototype._getMoreLinkDescription = function (iAppointmentsCount, oCalendarDate) {
 			const sFormattedString = this._oFormatAriaFullDayCell.format(oCalendarDate);
-			const oBundle = Core.getLibraryResourceBundle("sap.m");
+			const oBundle = Library.getResourceBundleFor("sap.m");
 			return iAppointmentsCount === 1 ?
 				oBundle.getText("SPC_MORE_LINK_ONE_APPOINTMENT", [sFormattedString]) :
 				oBundle.getText("SPC_MORE_LINK_MULTIPLE_APPOINTMENTS", [iAppointmentsCount.toString(), sFormattedString]);
@@ -878,7 +880,7 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._getCoreLocaleData = function() {
-			var sLocale = Core.getConfiguration().getFormatSettings().getFormatLocale().toString(),
+			var sLocale = new Locale(Formatting.getLanguageTag()).toString(),
 				oLocale = new Locale(sLocale);
 
 			return LocaleData.getInstance(oLocale);
@@ -1339,8 +1341,8 @@ sap.ui.define([
 		});
 
 		SinglePlanningCalendarMonthGrid.prototype._getCellStartInfo = function(oStartDate) {
-			var sStartTime = Core
-				.getLibraryResourceBundle("sap.ui.unified")
+			var sStartTime = Library
+				.getResourceBundleFor("sap.ui.unified")
 				.getText("CALENDAR_START_TIME");
 
 				return sStartTime + ": " + this._oFormatAriaFullDayCell.format(oStartDate);
@@ -1351,7 +1353,7 @@ sap.ui.define([
 				oEndDate = oAppointment.getEndDate(),
 				bFullDay =  this._isAllDayAppointment(oStartDate, oEndDate),
 				bSingleDay =  this._isSingleDayAppointment(oStartDate, oEndDate),
-				sLegendInfo = PlanningCalendarLegend.findLegendItemForItem(Core.byId(this._sLegendId), oAppointment),
+				sLegendInfo = PlanningCalendarLegend.findLegendItemForItem(Element.getElementById(this._sLegendId), oAppointment),
 				sFormattedDate;
 
 			if (bFullDay && bSingleDay) {

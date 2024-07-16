@@ -153,4 +153,4 @@ sap.ui.define([
 
 		return FCLRenderer;
 
-	}, /* bExport= */ true);
+	});

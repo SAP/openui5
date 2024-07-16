@@ -7,10 +7,8 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterProcessor",
-	"sap/ui/model/odata/Filter",
 	"sap/ui/model/odata/ODataUtils"
-], function(Log, Formatting, CalendarType, _Helper, Filter, FilterOperator, FilterProcessor, ODataFilter, ODataUtils) {
-
+], function(Log, Formatting, CalendarType, _Helper, Filter, FilterOperator, FilterProcessor, ODataUtils) {
 	"use strict";
 	const sClassName = "sap.ui.model.odata.ODataUtils";
 
@@ -648,29 +646,6 @@ sap.ui.define([
 		assert.equal(sFilterString, "$filter=false", "Filter string should be returned.");
 	});
 
-	/** @deprecated As of version 1.22.0 reason sap.ui.model.odata.Filter*/
-	QUnit.test("createFilterParams: Use API with deprecated sap.ui.model.odata.Filter", function(assert) {
-		var oFilter1 = new ODataFilter('Customer',[{
-			operator: 'EQ',
-			value1: "test0"
-		}]);
-
-		var oFilter2 = new ODataFilter('CollectionSegment',[{
-			operator: 'EQ',
-			value1: "test1"
-		}]);
-
-		var oFilter3 = new ODataFilter('CompanyCode',[{
-			operator: 'EQ',
-			value1: "test2"
-		}]);
-
-		var aFilters = [oFilter1, oFilter2, oFilter3];
-
-		var sFilterString = ODataUtils.createFilterParams(aFilters);
-		assert.equal(sFilterString, "$filter=Customer%20eq%20test0%20and%20CollectionSegment%20eq%20test1%20and%20CompanyCode%20eq%20test2", "Filter string should be returned.");
-	});
-
 	//*********************************************************************************************
 	QUnit.test("_mergeIntervals", function (assert) {
 		// code under test: without interval
@@ -683,139 +658,139 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{
-	description : "range w/o prefetch, no elements",
-	range : [0, 10, 0],
-	aElements : [],
-	intervals : [{start : 0, end : 10}]
-}, {
-	description : "range w/o prefetch, 1 element",
-	range : [0, 10, 0],
-	aElements : [{}],
-	intervals : [{start : 1, end : 10}]
-}, {
-	description : "range w/o prefetch, 1 element, limit = 1",
-	range : [0, 10, 0],
-	aElements : [{}],
-	limit : 1,
-	intervals : []
-}, {
-	description : "range w/o prefetch, 3 elements, limit 9, 2 gaps",
-	range : [0, 10, 0],
-	aElements : [{}, undefined, undefined, {}, undefined, {}],
-	limit : 9,
-	intervals : [{start : 1, end : 3}, {start : 4, end : 5}, {start : 6, end : 9}]
-}, {
-	description : "range w/ prefetch, no elements, left gap < prefetch",
-	range : [51, 10, 100],
-	aElements : [],
-	intervals : [{start : 0, end : 161}]
-}, {
-	description : "range w/ prefetch, no elements, left gap > prefetch",
-	range : [151, 10, 100],
-	aElements : [],
-	intervals : [{start : 51, end : 261}]
-}, {
-	description : "range w/ prefetch outside of limit, 3 elements, limit 111, 2 gaps",
-	range : [6, 10, 100],
-	aElements : [{}, undefined, undefined, {}, undefined, {}],
-	limit : 111,
-	intervals : [{start : 1, end : 3}, {start : 4, end : 5}, {start : 6, end : 111}]
-}].forEach(function (oFixture) {
-	QUnit.test("_getReadIntervals: " + oFixture.description, function (assert) {
-		var aIntervals;
+	[{
+		description : "range w/o prefetch, no elements",
+		range : [0, 10, 0],
+		aElements : [],
+		intervals : [{start : 0, end : 10}]
+	}, {
+		description : "range w/o prefetch, 1 element",
+		range : [0, 10, 0],
+		aElements : [{}],
+		intervals : [{start : 1, end : 10}]
+	}, {
+		description : "range w/o prefetch, 1 element, limit = 1",
+		range : [0, 10, 0],
+		aElements : [{}],
+		limit : 1,
+		intervals : []
+	}, {
+		description : "range w/o prefetch, 3 elements, limit 9, 2 gaps",
+		range : [0, 10, 0],
+		aElements : [{}, undefined, undefined, {}, undefined, {}],
+		limit : 9,
+		intervals : [{start : 1, end : 3}, {start : 4, end : 5}, {start : 6, end : 9}]
+	}, {
+		description : "range w/ prefetch, no elements, left gap < prefetch",
+		range : [51, 10, 100],
+		aElements : [],
+		intervals : [{start : 0, end : 161}]
+	}, {
+		description : "range w/ prefetch, no elements, left gap > prefetch",
+		range : [151, 10, 100],
+		aElements : [],
+		intervals : [{start : 51, end : 261}]
+	}, {
+		description : "range w/ prefetch outside of limit, 3 elements, limit 111, 2 gaps",
+		range : [6, 10, 100],
+		aElements : [{}, undefined, undefined, {}, undefined, {}],
+		limit : 111,
+		intervals : [{start : 1, end : 3}, {start : 4, end : 5}, {start : 6, end : 111}]
+	}].forEach(function (oFixture) {
+		QUnit.test("_getReadIntervals: " + oFixture.description, function (assert) {
+			var aIntervals;
 
-		this.mock(ODataUtils).expects("_getReadRange")
-			.withExactArgs(sinon.match.same(oFixture.aElements), oFixture.range[0],
-				oFixture.range[1], oFixture.range[2])
-			.callThrough();
+			this.mock(ODataUtils).expects("_getReadRange")
+				.withExactArgs(sinon.match.same(oFixture.aElements), oFixture.range[0],
+					oFixture.range[1], oFixture.range[2])
+				.callThrough();
 
-		// code under test
-		aIntervals = ODataUtils._getReadIntervals(oFixture.aElements, oFixture.range[0],
-			oFixture.range[1], oFixture.range[2], oFixture.limit);
+			// code under test
+			aIntervals = ODataUtils._getReadIntervals(oFixture.aElements, oFixture.range[0],
+				oFixture.range[1], oFixture.range[2], oFixture.limit);
 
-		assert.deepEqual(aIntervals, oFixture.intervals);
+			assert.deepEqual(aIntervals, oFixture.intervals);
+		});
 	});
-});
 
 	//*********************************************************************************************
-[{ // no prefetch
-	range : [0, 10, 0],
-	expected : {start : 0, length : 10}
-}, {
-	range : [40, 10, 0],
-	expected : {start : 40, length : 10}
-}, {
-	current : [[40, 50]],
-	range : [40, 10, 0],
-	expected : {start : 40, length : 10}
-}, {
-	current : [[50, 110]],
-	range : [100, 20, 0],
-	expected : {start : 100, length : 20}
-}, { // initial read with prefetch
-	range : [0, 10, 100],
-	expected : {start : 0, length : 110}
-}, { // iPrefetchLength / 2 available on both sides
-	current : [[0, 110]],
-	range : [50, 10, 100],
-	expected : {start : 50, length : 10}
-}, { // missing a row at the end
-	current : [[0, 110]],
-	range : [51, 10, 100],
-	expected : {start : 51, length : 159}
-}, { // missing a row before the start
-	current : [[100, 260]],
-	range : [149, 10, 100],
-	expected : {start : 0, length : 159}
-}, { // missing a row before the start, do not read beyond 0
-	current : [[40, 200]],
-	range : [89, 10, 100],
-	expected : {start : 0, length : 99}
-}, { // missing data on both sides, do not read beyond 0
-	range : [430, 10, 100],
-	expected : {start : 330, length : 210}
-}, { // missing data on both sides, do not read beyond 0
-	current : [[40, 100]],
-	range : [89, 10, 100],
-	expected : {start : 0, length : 200}
-}, { // fetch all data
-	range : [0, 0, Infinity],
-	expected : {start : 0, length : Infinity}
-}, { // fetch all data with offset
-	range : [1, 0, Infinity],
-	expected : {start : 0, length : Infinity}
-}, { // odd prefetch length, nothing missing
-	current : [[25, 50]],
-	range : [29, 3, 5],
-	expected : {start : 29, length : 3}
-}, { // odd prefetch length, prefetch before
-	current : [[25, 50]],
-	range : [27, 3, 5],
-	expected : {start : 20, length : 10}
-}].forEach(function (oFixture) {
-	QUnit.test("_getReadRange: " + oFixture.range, function (assert) {
-		var aElements = [],
-			oResult;
+	[{ // no prefetch
+		range : [0, 10, 0],
+		expected : {start : 0, length : 10}
+	}, {
+		range : [40, 10, 0],
+		expected : {start : 40, length : 10}
+	}, {
+		current : [[40, 50]],
+		range : [40, 10, 0],
+		expected : {start : 40, length : 10}
+	}, {
+		current : [[50, 110]],
+		range : [100, 20, 0],
+		expected : {start : 100, length : 20}
+	}, { // initial read with prefetch
+		range : [0, 10, 100],
+		expected : {start : 0, length : 110}
+	}, { // iPrefetchLength / 2 available on both sides
+		current : [[0, 110]],
+		range : [50, 10, 100],
+		expected : {start : 50, length : 10}
+	}, { // missing a row at the end
+		current : [[0, 110]],
+		range : [51, 10, 100],
+		expected : {start : 51, length : 159}
+	}, { // missing a row before the start
+		current : [[100, 260]],
+		range : [149, 10, 100],
+		expected : {start : 0, length : 159}
+	}, { // missing a row before the start, do not read beyond 0
+		current : [[40, 200]],
+		range : [89, 10, 100],
+		expected : {start : 0, length : 99}
+	}, { // missing data on both sides, do not read beyond 0
+		range : [430, 10, 100],
+		expected : {start : 330, length : 210}
+	}, { // missing data on both sides, do not read beyond 0
+		current : [[40, 100]],
+		range : [89, 10, 100],
+		expected : {start : 0, length : 200}
+	}, { // fetch all data
+		range : [0, 0, Infinity],
+		expected : {start : 0, length : Infinity}
+	}, { // fetch all data with offset
+		range : [1, 0, Infinity],
+		expected : {start : 0, length : Infinity}
+	}, { // odd prefetch length, nothing missing
+		current : [[25, 50]],
+		range : [29, 3, 5],
+		expected : {start : 29, length : 3}
+	}, { // odd prefetch length, prefetch before
+		current : [[25, 50]],
+		range : [27, 3, 5],
+		expected : {start : 20, length : 10}
+	}].forEach(function (oFixture) {
+		QUnit.test("_getReadRange: " + oFixture.range, function (assert) {
+			var aElements = [],
+				oResult;
 
-		// prepare elements array
-		if (oFixture.current) {
-			oFixture.current.forEach(function (aRange) {
-				var i, n;
+			// prepare elements array
+			if (oFixture.current) {
+				oFixture.current.forEach(function (aRange) {
+					var i, n;
 
-				for (i = aRange[0], n = aRange[1]; i < n; i += 1) {
-					aElements[i] = i;
-				}
-			});
-		}
+					for (i = aRange[0], n = aRange[1]; i < n; i += 1) {
+						aElements[i] = i;
+					}
+				});
+			}
 
-		// code under test
-		oResult = ODataUtils._getReadRange(aElements, oFixture.range[0], oFixture.range[1],
-				oFixture.range[2]);
+			// code under test
+			oResult = ODataUtils._getReadRange(aElements, oFixture.range[0], oFixture.range[1],
+					oFixture.range[2]);
 
-		assert.deepEqual(oResult, oFixture.expected);
+			assert.deepEqual(oResult, oFixture.expected);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("_getReadRange with placeholder", function (assert) {
@@ -883,105 +858,105 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[true, false].forEach((bOmitBrackets) => {
-	QUnit.test("_processSingleFilter: single filter, bOmitBrackets=" + bOmitBrackets, function (assert) {
-		const oFilter = {};
-		this.mock(ODataUtils).expects("_processMultiFilter").never();
-		this.mock(ODataUtils).expects("_createFilterSegment")
-			.withExactArgs(sinon.match.same(oFilter), "~oMetadata", "~oEntityType")
-			.returns("~result");
+	[true, false].forEach((bOmitBrackets) => {
+		QUnit.test("_processSingleFilter: single filter, bOmitBrackets=" + bOmitBrackets, function (assert) {
+			const oFilter = {};
+			this.mock(ODataUtils).expects("_processMultiFilter").never();
+			this.mock(ODataUtils).expects("_createFilterSegment")
+				.withExactArgs(sinon.match.same(oFilter), "~oMetadata", "~oEntityType")
+				.returns("~result");
 
-		// code under test
-		assert.strictEqual(ODataUtils._processSingleFilter(oFilter, "~oMetadata", "~oEntityType", bOmitBrackets),
-			"~result");
+			// code under test
+			assert.strictEqual(ODataUtils._processSingleFilter(oFilter, "~oMetadata", "~oEntityType", bOmitBrackets),
+				"~result");
+		});
 	});
-});
 
 	//*********************************************************************************************
-[true, false].forEach((bOmitBrackets) => {
-	QUnit.test("_processSingleFilter: multi-filter, bOmitBrackets=" + bOmitBrackets, function (assert) {
-		const oFilter = {aFilters: []};
-		this.mock(ODataUtils).expects("_processMultiFilter")
-			.withExactArgs(sinon.match.same(oFilter), "~oMetadata", "~oEntityType", bOmitBrackets)
-			.returns("~result");
-		this.mock(ODataUtils).expects("_createFilterSegment").never();
+	[true, false].forEach((bOmitBrackets) => {
+		QUnit.test("_processSingleFilter: multi-filter, bOmitBrackets=" + bOmitBrackets, function (assert) {
+			const oFilter = {aFilters: []};
+			this.mock(ODataUtils).expects("_processMultiFilter")
+				.withExactArgs(sinon.match.same(oFilter), "~oMetadata", "~oEntityType", bOmitBrackets)
+				.returns("~result");
+			this.mock(ODataUtils).expects("_createFilterSegment").never();
 
-		// code under test
-		assert.strictEqual(ODataUtils._processSingleFilter(oFilter, "~oMetadata", "~oEntityType", bOmitBrackets),
-			"~result");
+			// code under test
+			assert.strictEqual(ODataUtils._processSingleFilter(oFilter, "~oMetadata", "~oEntityType", bOmitBrackets),
+				"~result");
+		});
 	});
-});
 
 	//*********************************************************************************************
-[true, false].forEach((bOmitBrackets) => {
-	QUnit.test("_processMultiFilter: empty filter array, bOmitBrackets=" + bOmitBrackets, function (assert) {
-		const oFilter = {aFilters: []};
+	[true, false].forEach((bOmitBrackets) => {
+		QUnit.test("_processMultiFilter: empty filter array, bOmitBrackets=" + bOmitBrackets, function (assert) {
+			const oFilter = {aFilters: []};
 
-		// code under test
-		assert.strictEqual(ODataUtils._processMultiFilter(oFilter, "~oMetadata", "~oEntityType", bOmitBrackets),
-			"false");
+			// code under test
+			assert.strictEqual(ODataUtils._processMultiFilter(oFilter, "~oMetadata", "~oEntityType", bOmitBrackets),
+				"false");
 
-		oFilter.bAnd = true;
+			oFilter.bAnd = true;
 
-		// code under test
-		assert.strictEqual(ODataUtils._processMultiFilter(oFilter, "~oMetadata", "~oEntityType", bOmitBrackets),
-			"true");
+			// code under test
+			assert.strictEqual(ODataUtils._processMultiFilter(oFilter, "~oMetadata", "~oEntityType", bOmitBrackets),
+				"true");
+		});
 	});
-});
 
 	//*********************************************************************************************
-[true, false].forEach((bOmitBrackets) => {
-	QUnit.test("_processMultiFilter: single filter in the array, bOmitBrackets=" + bOmitBrackets, function (assert) {
-		const oFilter = {aFilters: [{}]};
-		const oODataUtilsMock = this.mock(ODataUtils);
-		oODataUtilsMock.expects("_processSingleFilter")
-			.withExactArgs(sinon.match.same(oFilter.aFilters[0]), "~oMetadata", "~oEntityType", true)
-			.returns("~result");
+	[true, false].forEach((bOmitBrackets) => {
+		QUnit.test("_processMultiFilter: single filter in the array, bOmitBrackets=" + bOmitBrackets, function (assert) {
+			const oFilter = {aFilters: [{}]};
+			const oODataUtilsMock = this.mock(ODataUtils);
+			oODataUtilsMock.expects("_processSingleFilter")
+				.withExactArgs(sinon.match.same(oFilter.aFilters[0]), "~oMetadata", "~oEntityType", true)
+				.returns("~result");
 
-		// code under test
-		assert.strictEqual(ODataUtils._processMultiFilter(oFilter, "~oMetadata", "~oEntityType", bOmitBrackets),
-			"~result");
+			// code under test
+			assert.strictEqual(ODataUtils._processMultiFilter(oFilter, "~oMetadata", "~oEntityType", bOmitBrackets),
+				"~result");
 
-		oFilter.aFilters[0]._bMultiFilter = true;
-		oODataUtilsMock.expects("_processSingleFilter")
-			.withExactArgs(sinon.match.same(oFilter.aFilters[0]), "~oMetadata", "~oEntityType")
-			.returns("~result2");
+			oFilter.aFilters[0]._bMultiFilter = true;
+			oODataUtilsMock.expects("_processSingleFilter")
+				.withExactArgs(sinon.match.same(oFilter.aFilters[0]), "~oMetadata", "~oEntityType")
+				.returns("~result2");
 
-		// code under test
-		assert.strictEqual(ODataUtils._processMultiFilter(oFilter, "~oMetadata", "~oEntityType", bOmitBrackets),
-			"~result2");
+			// code under test
+			assert.strictEqual(ODataUtils._processMultiFilter(oFilter, "~oMetadata", "~oEntityType", bOmitBrackets),
+				"~result2");
+		});
 	});
-});
 
 	//*********************************************************************************************
-[
-	{bOmitBrackets: true, bAnd: true, sResult: "~a%20and%20~b%20and%20~c"},
-	{bOmitBrackets: true, bAnd: false, sResult: "~a%20or%20~b%20or%20~c"},
-	{bOmitBrackets: false, bAnd: true, sResult: "(~a%20and%20~b%20and%20~c)"},
-	{bOmitBrackets: false, bAnd: false, sResult: "(~a%20or%20~b%20or%20~c)"}
-].forEach((oFixture, i) => {
-	QUnit.test("_processMultiFilter: #" + i, function (assert) {
-		const oFilter = {
-			bAnd: oFixture.bAnd,
-			aFilters: [{}, {}, {}]
-		};
-		const oODataUtilsMock = this.mock(ODataUtils);
-		oODataUtilsMock.expects("_processSingleFilter")
-			.withExactArgs(sinon.match.same(oFilter.aFilters[0]), "~oMetadata", "~oEntityType")
-			.returns("~a");
-		oODataUtilsMock.expects("_processSingleFilter")
-			.withExactArgs(sinon.match.same(oFilter.aFilters[1]), "~oMetadata", "~oEntityType")
-			.returns("~b");
-		oODataUtilsMock.expects("_processSingleFilter")
-			.withExactArgs(sinon.match.same(oFilter.aFilters[2]), "~oMetadata", "~oEntityType")
-			.returns("~c");
+	[
+		{bOmitBrackets: true, bAnd: true, sResult: "~a%20and%20~b%20and%20~c"},
+		{bOmitBrackets: true, bAnd: false, sResult: "~a%20or%20~b%20or%20~c"},
+		{bOmitBrackets: false, bAnd: true, sResult: "(~a%20and%20~b%20and%20~c)"},
+		{bOmitBrackets: false, bAnd: false, sResult: "(~a%20or%20~b%20or%20~c)"}
+	].forEach((oFixture, i) => {
+		QUnit.test("_processMultiFilter: #" + i, function (assert) {
+			const oFilter = {
+				bAnd: oFixture.bAnd,
+				aFilters: [{}, {}, {}]
+			};
+			const oODataUtilsMock = this.mock(ODataUtils);
+			oODataUtilsMock.expects("_processSingleFilter")
+				.withExactArgs(sinon.match.same(oFilter.aFilters[0]), "~oMetadata", "~oEntityType")
+				.returns("~a");
+			oODataUtilsMock.expects("_processSingleFilter")
+				.withExactArgs(sinon.match.same(oFilter.aFilters[1]), "~oMetadata", "~oEntityType")
+				.returns("~b");
+			oODataUtilsMock.expects("_processSingleFilter")
+				.withExactArgs(sinon.match.same(oFilter.aFilters[2]), "~oMetadata", "~oEntityType")
+				.returns("~c");
 
-		// code under test
-		assert.strictEqual(
-			ODataUtils._processMultiFilter(oFilter, "~oMetadata", "~oEntityType", oFixture.bOmitBrackets),
-			oFixture.sResult);
+			// code under test
+			assert.strictEqual(
+				ODataUtils._processMultiFilter(oFilter, "~oMetadata", "~oEntityType", oFixture.bOmitBrackets),
+				oFixture.sResult);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("_resolveMultiFilter: no aFilters", function (assert) {
@@ -989,100 +964,100 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{bAnd: true, sResult: "(~a%20and%20~b%20and%20~c%20and%20~d)"},
-	{bAnd: false, sResult: "(~a%20or%20~b%20or%20~c%20or%20~d)"}
-].forEach((oFixture, i) => {
-	QUnit.test("_resolveMultiFilter", function (assert) {
-		const oFilter = {
-			bAnd: oFixture.bAnd,
-			aFilters: [{sPath: "~path0"}, {_bMultiFilter: true}, {_bMultiFilter: true}, {sPath: "~path3"}]
-		};
-		const oODataUtilsMock = this.mock(ODataUtils);
-		oODataUtilsMock.expects("_resolveMultiFilter")
-			.withExactArgs(sinon.match.same(oFilter), "~oMetadata", "~oEntityType")
-			.callThrough();
-		oODataUtilsMock.expects("_createFilterSegment")
-			.withExactArgs(sinon.match.same(oFilter.aFilters[0]), "~oMetadata", "~oEntityType")
-			.returns("~a");
-		oODataUtilsMock.expects("_resolveMultiFilter")
-			.withExactArgs(sinon.match.same(oFilter.aFilters[1]), "~oMetadata", "~oEntityType")
-			.returns("~b");
-		oODataUtilsMock.expects("_resolveMultiFilter")
-			.withExactArgs(sinon.match.same(oFilter.aFilters[2]), "~oMetadata", "~oEntityType")
-			.returns("~c");
-		oODataUtilsMock.expects("_createFilterSegment")
-			.withExactArgs(sinon.match.same(oFilter.aFilters[3]), "~oMetadata", "~oEntityType")
-			.returns("~d");
+	[
+		{bAnd: true, sResult: "(~a%20and%20~b%20and%20~c%20and%20~d)"},
+		{bAnd: false, sResult: "(~a%20or%20~b%20or%20~c%20or%20~d)"}
+	].forEach((oFixture, i) => {
+		QUnit.test("_resolveMultiFilter", function (assert) {
+			const oFilter = {
+				bAnd: oFixture.bAnd,
+				aFilters: [{sPath: "~path0"}, {_bMultiFilter: true}, {_bMultiFilter: true}, {sPath: "~path3"}]
+			};
+			const oODataUtilsMock = this.mock(ODataUtils);
+			oODataUtilsMock.expects("_resolveMultiFilter")
+				.withExactArgs(sinon.match.same(oFilter), "~oMetadata", "~oEntityType")
+				.callThrough();
+			oODataUtilsMock.expects("_createFilterSegment")
+				.withExactArgs(sinon.match.same(oFilter.aFilters[0]), "~oMetadata", "~oEntityType")
+				.returns("~a");
+			oODataUtilsMock.expects("_resolveMultiFilter")
+				.withExactArgs(sinon.match.same(oFilter.aFilters[1]), "~oMetadata", "~oEntityType")
+				.returns("~b");
+			oODataUtilsMock.expects("_resolveMultiFilter")
+				.withExactArgs(sinon.match.same(oFilter.aFilters[2]), "~oMetadata", "~oEntityType")
+				.returns("~c");
+			oODataUtilsMock.expects("_createFilterSegment")
+				.withExactArgs(sinon.match.same(oFilter.aFilters[3]), "~oMetadata", "~oEntityType")
+				.returns("~d");
 
-		// code under test
-		assert.strictEqual(ODataUtils._resolveMultiFilter(oFilter, "~oMetadata", "~oEntityType"), oFixture.sResult);
+			// code under test
+			assert.strictEqual(ODataUtils._resolveMultiFilter(oFilter, "~oMetadata", "~oEntityType"), oFixture.sResult);
+		});
 	});
-});
 
 	//*********************************************************************************************
-[
-	{sOperator: FilterOperator.EQ, sResult: "~sPath%20eq%20~encoded1"},
-	{
-		bCaseSensitive: false,
-		sOperator: FilterOperator.NE,
-		sType: "Edm.String",
-		sResult: "toupper(~sPath)%20ne%20~encoded1"
-	},
-	{bCaseSensitive: false, sOperator: FilterOperator.GT, sResult: "~sPath%20gt%20~encoded1"},
-	{sOperator: FilterOperator.GE, oValue2: null, sResult: "~sPath%20ge%20~encoded1"},
-	{sOperator: FilterOperator.LT, oValue2: undefined, sResult: "~sPath%20lt%20~encoded1"},
-	{sOperator: FilterOperator.LE, sResult: "~sPath%20le%20~encoded1"},
-	{
-		sOperator: FilterOperator.BT,
-		oValue2: "~oValue2",
-		sResult: "(~sPath%20ge%20~encoded1%20and%20~sPath%20le%20~encoded2)"
-	},
-	{
-		sOperator: FilterOperator.NB,
-		oValue2: "~oValue2",
-		sResult: "not%20(~sPath%20ge%20~encoded1%20and%20~sPath%20le%20~encoded2)"
-	},
-	{sOperator: FilterOperator.Contains, sResult: "substringof(~encoded1,~sPath)"},
-	{sOperator: FilterOperator.NotContains, sResult: "not%20substringof(~encoded1,~sPath)"},
-	{sOperator: FilterOperator.StartsWith, sResult: "startswith(~sPath,~encoded1)"},
-	{sOperator: FilterOperator.NotStartsWith, sResult: "not%20startswith(~sPath,~encoded1)"},
-	{sOperator: FilterOperator.EndsWith, sResult: "endswith(~sPath,~encoded1)"},
-	{sOperator: FilterOperator.NotEndsWith, sResult: "not%20endswith(~sPath,~encoded1)"}
-].forEach((oFixture, i) => {
-	QUnit.test("_createFilterSegment: with type information, #" + i, function (assert) {
-		const oFilter = {
-			bCaseSensitive: oFixture.bCaseSensitive,
-			sFractionalSeconds1: "~sFractionalSeconds1",
-			sFractionalSeconds2: "~sFractionalSeconds2",
-			sOperator: oFixture.sOperator,
-			sPath: "~sPath",
-			oValue1: "~oValue1",
-			oValue2: oFixture.oValue2
-		};
-		const bCaseSensitive = oFixture.bCaseSensitive !== false;
-		const sType = oFixture.sType || "~type";
-		const oMetadata = {_getPropertyMetadata() {}};
-		this.mock(oMetadata).expects("_getPropertyMetadata")
-			.withExactArgs("~oEntityType", "~sPath")
-			.returns({type : sType});
-		const oODataUtilsMock = this.mock(ODataUtils);
-		oODataUtilsMock.expects("_formatValue")
-			.withExactArgs("~oValue1", sType, bCaseSensitive, "~sFractionalSeconds1")
-			.returns("~formatted1");
-		const iValue2Calls = oFixture.oValue2 !== null && oFixture.oValue2 !== undefined ? 1 : 0;
-		oODataUtilsMock.expects("_formatValue")
-			.withExactArgs(oFixture.oValue2, sType, bCaseSensitive, "~sFractionalSeconds2")
-			.exactly(iValue2Calls)
-			.returns("~formatted2");
-		const oHelperMock = this.mock(_Helper);
-		oHelperMock.expects("encodeURL").withExactArgs("~formatted1").returns("~encoded1");
-		oHelperMock.expects("encodeURL").withExactArgs("~formatted2").exactly(iValue2Calls).returns("~encoded2");
+	[
+		{sOperator: FilterOperator.EQ, sResult: "~sPath%20eq%20~encoded1"},
+		{
+			bCaseSensitive: false,
+			sOperator: FilterOperator.NE,
+			sType: "Edm.String",
+			sResult: "toupper(~sPath)%20ne%20~encoded1"
+		},
+		{bCaseSensitive: false, sOperator: FilterOperator.GT, sResult: "~sPath%20gt%20~encoded1"},
+		{sOperator: FilterOperator.GE, oValue2: null, sResult: "~sPath%20ge%20~encoded1"},
+		{sOperator: FilterOperator.LT, oValue2: undefined, sResult: "~sPath%20lt%20~encoded1"},
+		{sOperator: FilterOperator.LE, sResult: "~sPath%20le%20~encoded1"},
+		{
+			sOperator: FilterOperator.BT,
+			oValue2: "~oValue2",
+			sResult: "(~sPath%20ge%20~encoded1%20and%20~sPath%20le%20~encoded2)"
+		},
+		{
+			sOperator: FilterOperator.NB,
+			oValue2: "~oValue2",
+			sResult: "not%20(~sPath%20ge%20~encoded1%20and%20~sPath%20le%20~encoded2)"
+		},
+		{sOperator: FilterOperator.Contains, sResult: "substringof(~encoded1,~sPath)"},
+		{sOperator: FilterOperator.NotContains, sResult: "not%20substringof(~encoded1,~sPath)"},
+		{sOperator: FilterOperator.StartsWith, sResult: "startswith(~sPath,~encoded1)"},
+		{sOperator: FilterOperator.NotStartsWith, sResult: "not%20startswith(~sPath,~encoded1)"},
+		{sOperator: FilterOperator.EndsWith, sResult: "endswith(~sPath,~encoded1)"},
+		{sOperator: FilterOperator.NotEndsWith, sResult: "not%20endswith(~sPath,~encoded1)"}
+	].forEach((oFixture, i) => {
+		QUnit.test("_createFilterSegment: with type information, #" + i, function (assert) {
+			const oFilter = {
+				bCaseSensitive: oFixture.bCaseSensitive,
+				sFractionalSeconds1: "~sFractionalSeconds1",
+				sFractionalSeconds2: "~sFractionalSeconds2",
+				sOperator: oFixture.sOperator,
+				sPath: "~sPath",
+				oValue1: "~oValue1",
+				oValue2: oFixture.oValue2
+			};
+			const bCaseSensitive = oFixture.bCaseSensitive !== false;
+			const sType = oFixture.sType || "~type";
+			const oMetadata = {_getPropertyMetadata() {}};
+			this.mock(oMetadata).expects("_getPropertyMetadata")
+				.withExactArgs("~oEntityType", "~sPath")
+				.returns({type : sType});
+			const oODataUtilsMock = this.mock(ODataUtils);
+			oODataUtilsMock.expects("_formatValue")
+				.withExactArgs("~oValue1", sType, bCaseSensitive, "~sFractionalSeconds1")
+				.returns("~formatted1");
+			const iValue2Calls = oFixture.oValue2 !== null && oFixture.oValue2 !== undefined ? 1 : 0;
+			oODataUtilsMock.expects("_formatValue")
+				.withExactArgs(oFixture.oValue2, sType, bCaseSensitive, "~sFractionalSeconds2")
+				.exactly(iValue2Calls)
+				.returns("~formatted2");
+			const oHelperMock = this.mock(_Helper);
+			oHelperMock.expects("encodeURL").withExactArgs("~formatted1").returns("~encoded1");
+			oHelperMock.expects("encodeURL").withExactArgs("~formatted2").exactly(iValue2Calls).returns("~encoded2");
 
-		// code under test
-		assert.strictEqual(ODataUtils._createFilterSegment(oFilter, oMetadata, "~oEntityType"), oFixture.sResult);
+			// code under test
+			assert.strictEqual(ODataUtils._createFilterSegment(oFilter, oMetadata, "~oEntityType"), oFixture.sResult);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("_createFilterSegment: no metadata for path", function (assert) {

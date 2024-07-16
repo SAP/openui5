@@ -944,4 +944,4 @@ sap.ui.define([
 	})(_MetadataConverter.prototype);
 
 	return _MetadataConverter;
-}, /* bExport= */false);
+});

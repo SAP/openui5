@@ -64,28 +64,13 @@ sap.ui.define([
 				group: "Form"
 			},
 
-			/**
-			 * @deprecated Since version 1.67.0
-			 */
-			"GridLayout": {
-				group: "Form"
-			},
-
 			"ResponsiveGridLayout": {
-				group: "Form"
-			},
-
-			/**
-			 * @deprecated As of version 1.93
-			 */
-			"ResponsiveLayout": {
 				group: "Form"
 			},
 
 			"SimpleForm": {
 				group: "Form"
 			},
-
 
 			// --------------------------
 			// Demokti Samples
@@ -136,6 +121,7 @@ sap.ui.define([
 				module: "./../designtime/form/AddODataFormField.qunit",
 				sinon: false
 			},
+
 			"Designtime-Form-Form": {
 				group: "Designtime",
 				title: "QUnit Page for sap.ui.layout.form.Form design time and rta enabling",
@@ -150,6 +136,7 @@ sap.ui.define([
 				module: "./../designtime/form/Form.qunit",
 				sinon: false
 			},
+
 			"Designtime-Form-FormContainer": {
 				group: "Designtime",
 				title: "QUnit Page for sap.ui.layout.form.FormContainer design time and rta enabling",
@@ -163,6 +150,7 @@ sap.ui.define([
 				module: "./../designtime/form/FormContainer.qunit",
 				sinon: false
 			},
+
 			"Designtime-Form-FormElement": {
 				group: "Designtime",
 				title: "QUnit Page for sap.ui.layout.form.FormElement design time and rta enabling",
@@ -176,6 +164,7 @@ sap.ui.define([
 				module: "./../designtime/form/FormElement.qunit",
 				sinon: false
 			},
+
 			"Designtime-Form-SimpleForm": {
 				group: "Designtime",
 				title: "QUnit Page for sap.ui.layout.form.SimpleForm design time",
@@ -271,7 +260,6 @@ sap.ui.define([
 					qunitBridge: false // bridge can't handle module with nested callback
 				}
 			}
-
 		}
 	};
 });

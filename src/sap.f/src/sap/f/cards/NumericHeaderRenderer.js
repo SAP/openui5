@@ -290,4 +290,4 @@ sap.ui.define([
 	};
 
 	return NumericHeaderRenderer;
-}, /* bExport= */ true);
+});

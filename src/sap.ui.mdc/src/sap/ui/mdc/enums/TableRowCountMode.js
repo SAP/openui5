@@ -32,4 +32,4 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 
 	return TableRowCountMode;
 
-}, /* bExport= */ true);
+});

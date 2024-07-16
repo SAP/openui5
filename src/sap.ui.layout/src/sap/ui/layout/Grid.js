@@ -5,7 +5,6 @@
 // Provides control sap.ui.layout.Grid.
 sap.ui.define([
 	'sap/ui/core/Control',
-	'./library',
 	'sap/ui/Device',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/base/ManagedObjectObserver',
@@ -14,7 +13,6 @@ sap.ui.define([
 ],
 	function(
 		Control,
-		library,
 		Device,
 		ResizeHandler,
 		ManagedObjectObserver,
@@ -145,17 +143,6 @@ sap.ui.define([
 	(function() {
 
 		Grid.prototype.init = function() {
-			/**
-			 * @deprecated As of version 1.120
-			 */
-			(() => {
-				// Library specific class
-				var sClass = library.GridHelper.getLibrarySpecificClass();
-				if (sClass) {
-					this.addStyleClass(sClass);
-				}
-			})();
-
 			this._iBreakPointTablet = Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0];
 			this._iBreakPointDesktop = Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1];
 			this._iBreakPointLargeDesktop = Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[2];

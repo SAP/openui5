@@ -3,12 +3,10 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/util/LoaderExtensions",
-	"sap/base/util/ObjectPath",
-	"sap/ui/base/DataType",
 	"sap/ui/core/Lib",
 	"sap/ui/core/theming/ThemeManager",
 	"sap/ui/dom/includeScript"
-], function(Log, ResourceBundle, LoaderExtensions, ObjectPath, DataType, Library, ThemeManager, includeScript) {
+], function(Log, ResourceBundle, LoaderExtensions, Library, ThemeManager, includeScript) {
 	"use strict";
 
 	QUnit.module("Instance methods");
@@ -60,23 +58,11 @@ sap.ui.define([
 	 */
 	QUnit.test("Instance method 'preload' and 'getManifest'", function(assert) {
 		function checkLibNotInitialized(sName) {
-			/**
-			 * @deprecated
-			 */
-			assert.notOk(ObjectPath.get(sName), "namespace for " + sName + " should not exist");
 			assert.notOk(Library.all()[sName], "The library " + sName + "is only preloaded and should not initialize itself");
 		}
 
 		this.spy(sap.ui.loader._, 'loadJSResourceAsync');
-		/**
-		 * @deprecated As of version 1.120
-		 */
-		this.spy(XMLHttpRequest.prototype, 'open');
 		this.spy(sap.ui, 'require');
-		/**
-		 * @deprecated As of version 1.120
-		 */
-		this.spy(sap.ui, 'requireSync');
 
 		// make lib3 already loaded
 		sap.ui.predefine('testlibs/scenario1/lib3/library', ["sap/ui/core/Lib"], function(Library) {
@@ -98,41 +84,21 @@ sap.ui.define([
 
 			checkLibNotInitialized('testlibs.scenario1.lib1');
 			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib1\/library-preload\.js$/));
-			/**
-			 * @deprecated As of version 1.120
-			 */
-			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs/scenario1/lib1/library');
 			sinon.assert.neverCalledWith(sap.ui.require, ['testlibs/scenario1/lib1/library']);
 
 			// lib3 should not be preloaded as its library.js has been (pre)loaded before
 			checkLibNotInitialized('testlibs.scenario1.lib3');
 			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib3\/library-preload\.js$/));
-			/**
-			 * @deprecated As of version 1.120
-			 */
-			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs.scenario1.lib3.library');
 			sinon.assert.neverCalledWith(sap.ui.require, ['testlibs/scenario1/lib3/library']);
 
 			// lib4 and lib5 should have been preloaded
 			checkLibNotInitialized('testlibs.scenario1.lib4');
 			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib4\/library-preload\.js$/));
-			/**
-			 * @deprecated As of version 1.120
-			 */
-			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs.scenario1.lib4.library');
 			sinon.assert.neverCalledWith(sap.ui.require, ['testlibs/scenario1/lib4/library']);
 
 			// lib5 should load the json format as fallback
 			checkLibNotInitialized('testlibs.scenario1.lib5');
 			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib5\/library-preload\.js$/));
-			/**
-			 * @deprecated As of version 1.120
-			 */
-			sinon.assert.calledWith(XMLHttpRequest.prototype.open, "GET", sinon.match(/scenario1\/lib5\/library-preload\.json$/));
-			/**
-			 * @deprecated As of version 1.120
-			 */
-			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs.scenario1.lib5.library');
 			sinon.assert.neverCalledWith(sap.ui.require, ['testlibs/scenario1/lib5/library']);
 		});
 	});
@@ -321,19 +287,11 @@ sap.ui.define([
 
 	QUnit.test("Static method 'load', 'init', 'all'", function(assert) {
 		function checkLibInitialized(sName) {
-			/**
-			 * @deprecated
-			 */
-			assert.ok(ObjectPath.get(sName), "namespace for " + sName + " should exist");
 			assert.ok(Library.all()[sName], "The library " + sName + " is initialized");
 		}
 
 		this.spy(Library.prototype, '_preload');
 		this.spy(sap.ui, 'require');
-		/**
-		 * @deprecated As of version 1.120
-		 */
-		this.spy(sap.ui, 'requireSync');
 
 		// make lib3 already loaded
 		sap.ui.predefine('testlibs/scenario2/lib3/library', ["sap/ui/core/Lib"], function(Library) {
@@ -353,10 +311,6 @@ sap.ui.define([
 		return vResult.then(function(oLib1) {
 			checkLibInitialized('testlibs.scenario2.lib1');
 			sinon.assert.calledOn(Library.prototype._preload, oLib1, "Library.prototype.preload is called");
-			/**
-			 * @deprecated As of version 1.120
-			 */
-			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs/scenario2/lib1/library');
 			sinon.assert.calledWith(sap.ui.require, ['testlibs/scenario2/lib1/library']);
 
 			// lib3 should not be preloaded as its library.js has been (pre)loaded before
@@ -584,172 +538,6 @@ sap.ui.define([
 				resolve();
 			}, reject);
 		});
-	});
-
-	/**
-	 * @deprecated since 1.120
-	 */
-	QUnit.module("Pseudo Module Deprecation", {
-		async before() {
-			sap.ui.define("testing/pseudo/modules/deprecation/library", [
-				"sap/ui/base/DataType",
-				"sap/ui/core/Lib"
-			], function(DataType, Library) {
-				const oThisLib = Library.init({
-					name: 'testing.pseudo.modules.deprecation',
-					apiVersion: 2,
-					noLibraryCSS: true,
-					types: [
-						"testing.pseudo.modules.deprecation.SomeEnum",
-						"testing.pseudo.modules.deprecation.HexNumber",
-						"testing.pseudo.modules.deprecation.SomethingElse"
-					]
-				});
-
-				oThisLib.SomeEnum = {
-					"A": "A",
-					"B": "B"
-				};
-				DataType.registerEnum("testing.pseudo.modules.deprecation.SomeEnum", oThisLib.SomeEnum);
-
-				oThisLib.HexNumber = DataType.createType('testing.pseudo.modules.deprecation.HexNumber', {
-						isValid : function(vValue) {
-							return /^[0-9A-F]+$/.test(vValue);
-						}
-					},
-					DataType.getType('string')
-				);
-
-				oThisLib.SomethingElse = new Date(); // something that is neither a DataType nor a plain object;
-
-				return oThisLib;
-			});
-
-			await Library.load({
-				name: "testing.pseudo.modules.deprecation"
-			});
-		},
-		beforeEach() {
-			this.oLib = sap.ui.require("testing/pseudo/modules/deprecation/library");
-			this.spy(Log, "error");
-			this.sExpectedEnumErrorMessage =
-				"Importing the pseudo module 'testing/pseudo/modules/deprecation/SomeEnum' is deprecated."
-				+ " To access the type 'testing.pseudo.modules.deprecation.SomeEnum',"
-				+ " please import 'testing/pseudo/modules/deprecation/library'."
-				+ " You can then reference this type via the library's module export."
-				+ " For more information, see documentation under 'Best Practices for Loading Modules'.";
-			this.sExpectedDataTypeErrorMessage =
-				"Importing the pseudo module 'testing/pseudo/modules/deprecation/HexNumber' is deprecated."
-				+ " To access the type 'testing.pseudo.modules.deprecation.HexNumber',"
-				+ " please import 'testing/pseudo/modules/deprecation/library' to ensure that the type is defined."
-				+ " You can then access it by calling 'DataType.getType(\"testing.pseudo.modules.deprecation.HexNumber\")'."
-				+ " For more information, see documentation under 'Best Practices for Loading Modules'.";
-			this.sExpectedOtherErrorMessage =
-				"Importing the pseudo module 'testing/pseudo/modules/deprecation/SomethingElse' is deprecated."
-				+ " To access the type 'testing.pseudo.modules.deprecation.SomethingElse',"
-				+ " please import 'testing/pseudo/modules/deprecation/library'."
-				+ " For more information, see documentation under 'Best Practices for Loading Modules'.";
-		}
-	});
-
-	QUnit.test("Enum with sap.ui.require", function(assert) {
-		// Anonymous require: Log does not contain the requesting module
-		return new Promise((resolve, reject) => {
-			sap.ui.require(["testing/pseudo/modules/deprecation/SomeEnum"], (SomeEnum) => {
-				assert.ok(Log.error.calledWith(this.sExpectedEnumErrorMessage), "Error Message for pseudo module deprecation logged.");
-				assert.deepEqual(SomeEnum, this.oLib.SomeEnum, "pseudo type module export is correct (A).");
-				resolve();
-			}, reject);
-		});
-	});
-
-	QUnit.test("DataType with sap.ui.require", function(assert) {
-		// Anonymous require: Log does not contain the requesting module
-		return new Promise((resolve, reject) => {
-			sap.ui.require(["testing/pseudo/modules/deprecation/HexNumber"], (HexNumber) => {
-				assert.ok(Log.error.calledWith(this.sExpectedDataTypeErrorMessage), "Error Message for pseudo module deprecation logged.");
-				assert.strictEqual(HexNumber, DataType.getType("testing.pseudo.modules.deprecation.HexNumber"), "pseudo type module export is correct.");
-				resolve();
-			}, reject);
-		});
-	});
-
-	QUnit.test("Something else with sap.ui.require", function(assert) {
-		// Anonymous require: Log does not contain the requesting module
-		return new Promise((resolve, reject) => {
-			sap.ui.require(["testing/pseudo/modules/deprecation/SomethingElse"], (SomethingElse) => {
-				assert.ok(Log.error.calledWith(this.sExpectedOtherErrorMessage), "Error Message for pseudo module deprecation logged.");
-				assert.strictEqual(SomethingElse, this.oLib.SomethingElse, "pseudo type module export is correct.");
-				resolve();
-			}, reject);
-		});
-	});
-
-	QUnit.test("Enum with sap.ui.define", function(assert) {
-		// sap.ui.define: Log contains the requesting module
-		return new Promise((resolve, reject) => {
-			const sModuleSpecificErrorMessage = `(dependency of 'my/old/Module1.js') ${this.sExpectedEnumErrorMessage}`;
-
-			sap.ui.define("my/old/Module1", ["testing/pseudo/modules/deprecation/SomeEnum"], (SomeEnum) => {
-				assert.ok(Log.error.calledWith(sModuleSpecificErrorMessage), "Error Message for pseudo module deprecation logged.");
-				assert.deepEqual(SomeEnum, this.oLib.SomeEnum, "pseudo type module export is correct.");
-			});
-
-			sap.ui.require(["my/old/Module1"], function() {
-				resolve();
-			}, reject);
-		});
-	});
-
-	QUnit.test("DataType with sap.ui.define", function(assert) {
-		// sap.ui.define: Log contains the requesting module
-		return new Promise((resolve, reject) => {
-			const sModuleSpecificErrorMessage = `(dependency of 'my/old/Module2.js') ${this.sExpectedDataTypeErrorMessage}`;
-
-			sap.ui.define("my/old/Module2", ["testing/pseudo/modules/deprecation/HexNumber"], (HexNumber) => {
-				assert.ok(Log.error.calledWith(sModuleSpecificErrorMessage), "Error Message for pseudo module deprecation logged.");
-				assert.strictEqual(HexNumber, DataType.getType("testing.pseudo.modules.deprecation.HexNumber"), "pseudo type module export is correct.");
-			});
-
-			sap.ui.require(["my/old/Module1"], function() {
-				resolve();
-			}, reject);
-		});
-	});
-
-	QUnit.test("Something else with sap.ui.define", function(assert) {
-		// sap.ui.define: Log contains the requesting module
-		return new Promise((resolve, reject) => {
-			const sModuleSpecificErrorMessage = `(dependency of 'my/old/Module3.js') ${this.sExpectedOtherErrorMessage}`;
-
-			sap.ui.define("my/old/Module3", ["testing/pseudo/modules/deprecation/SomethingElse"], (SomethingElse) => {
-				assert.ok(Log.error.calledWith(sModuleSpecificErrorMessage), "Error Message for pseudo module deprecation logged.");
-				assert.strictEqual(SomethingElse, this.oLib.SomethingElse, "pseudo type module export is correct.");
-				resolve();
-			});
-
-			sap.ui.require(["my/old/Module1"], function() {
-				resolve();
-			}, reject);
-		});
-	});
-
-	QUnit.test("Enum with probing require", function(assert) {
-		const SomeEnum = sap.ui.require("testing/pseudo/modules/deprecation/SomeEnum");
-		assert.deepEqual(SomeEnum, this.oLib.SomeEnum);
-		assert.ok(Log.error.calledWith(this.sExpectedEnumErrorMessage), "Error Message for pseudo module deprecation logged.");
-	});
-
-	QUnit.test("DataType with probing require", function(assert) {
-		const HexNumber = sap.ui.require("testing/pseudo/modules/deprecation/HexNumber");
-		assert.deepEqual(HexNumber, DataType.getType("testing.pseudo.modules.deprecation.HexNumber"));
-		assert.ok(Log.error.calledWith(this.sExpectedDataTypeErrorMessage), "Error Message for pseudo module deprecation logged.");
-	});
-
-	QUnit.test("Enum with probing require", function(assert) {
-		const SomethingElse = sap.ui.require("testing/pseudo/modules/deprecation/SomethingElse");
-		assert.deepEqual(SomethingElse, this.oLib.SomethingElse);
-		assert.ok(Log.error.calledWith(this.sExpectedOtherErrorMessage), "Error Message for pseudo module deprecation logged.");
 	});
 
 

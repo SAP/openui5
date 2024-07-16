@@ -1,15 +1,18 @@
 <!DOCTYPE HTML>
 <html>
-<head>
+<head><meta charset="utf-8">
 	<title>ToolHeader FLP - sap.tnt</title>
 	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-onInit="module:local/ToolHeaderFLP"
 			data-sap-ui-libs="sap.m, sap.ui.layout,sap.tnt"
-			data-sap-ui-resourceRoots='{
+			data-sap-ui-on-init="module:local/ToolHeaderFLP"
+			data-sap-ui-resource-roots='{
 					"local": "./"
-				}'>
+				}'
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+	>
 	</script>
 </head>
 <body id="body" class="sapUiBody">

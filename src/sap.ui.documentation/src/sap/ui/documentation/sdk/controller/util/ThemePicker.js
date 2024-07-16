@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
-	"sap/ui/core/EventBus"
+	"sap/ui/core/EventBus",
+	"sap/ui/core/Theming"
 ], function(
-	Core,
-	EventBus
+	EventBus,
+	Theming
 ) {
 	"use strict";
 
@@ -78,7 +78,7 @@ sap.ui.define([
 			this._toggleLightOrDarkAppearance(bIsDark);
 			this._attachPrefersColorSchemeChangeListener();
 		} else {
-			Core.applyTheme(this._getTheme()[sKey]);
+			Theming.setTheme(this._getTheme()[sKey]);
 		}
 
 		this._sLastKnownAppearanceKey = sKey;
@@ -104,10 +104,10 @@ sap.ui.define([
 	ThemePicker._toggleLightOrDarkAppearance = function (bIsDark) {
 		if (bIsDark) {
 			// dark mode
-			Core.applyTheme(this._getTheme().dark);
+			Theming.setTheme(this._getTheme().dark);
 		} else {
 			// light mode or unsupported prefers-color-scheme
-			Core.applyTheme(this._getTheme().light);
+			Theming.setTheme(this._getTheme().light);
 		}
 	};
 

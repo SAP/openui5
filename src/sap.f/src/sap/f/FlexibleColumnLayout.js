@@ -5,6 +5,7 @@
 // Provides control sap.f.FlexibleColumnLayout.
 sap.ui.define([
 	"sap/base/i18n/Localization",
+	"sap/ui/core/AnimationMode",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Lib",
 	"sap/ui/core/RenderManager",
@@ -17,7 +18,6 @@ sap.ui.define([
 	"sap/ui/util/Storage",
 	"sap/m/library",
 	"sap/m/NavContainer",
-	"sap/ui/core/Configuration",
 	'sap/ui/dom/units/Rem',
 	"./FlexibleColumnLayoutRenderer",
 	"sap/base/Log",
@@ -29,6 +29,7 @@ sap.ui.define([
 	"sap/ui/dom/jquery/Focusable"
 ], function(
 	Localization,
+	AnimationMode,
 	ControlBehavior,
 	Library,
 	RenderManager,
@@ -41,7 +42,6 @@ sap.ui.define([
 	Storage,
 	mobileLibrary,
 	NavContainer,
-	Configuration,
 	DomUnitsRem,
 	FlexibleColumnLayoutRenderer,
 	Log,
@@ -1500,7 +1500,7 @@ sap.ui.define([
 			updateDetailedActiveClasses: true,
 			updateContextualSettings: true,
 			updateMediaCSSClases: true,
-			hasAnimations: sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal
+			hasAnimations: sAnimationMode !== AnimationMode.none && sAnimationMode !== AnimationMode.minimal
 		};
 	};
 

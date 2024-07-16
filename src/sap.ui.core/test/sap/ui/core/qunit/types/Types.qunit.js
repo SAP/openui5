@@ -79,27 +79,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Calls the given function with the internal type "untype" on the given type instance and checks that the given
-	 * exception is thrown. Uses <code>future.active = false</code> to simulate the behavior of UI5 1.x.
-	 *
-	 * @param {object} assert The QUnit assert object
-	 * @param {sap.ui.model.type.Type} oType The type instance
-	 * @param {"formatValue"|"parseValue"} sFunction The function to be called on the type instance
-	 * @param {any} vValue The value to be passed to the function
-	 * @param {sap.ui.model.FormatException|sap.ui.model.ParseException} oException The expected exception instance
-	 *
-	 * @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error
-	 */
-	function checkUnsupportedTypeOld(assert, oType, sFunction, vValue, oException) {
-		future.active = false;
-		assert.throws(() => {
-			// code under test
-			oType[sFunction](vValue, "untype");
-		}, oException);
-		future.active = undefined;// restores configured default
-	}
-
-	/**
 	 * Calls the given function with the internal type "untype" on the given type instance and checks that an error is
 	 * thrown, that the internal type is not supported. Uses <code>future.active = true</code> to simulate the behavior
 	 * of UI5 2.x.
@@ -183,68 +162,68 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{preserveDecimals : true},
-	{preserveDecimals : "yes"},
-	{preserveDecimals : undefined},
-	{preserveDecimals : null},
-	{preserveDecimals : false},
-	{preserveDecimals : true, style : "short"},
-	{preserveDecimals : "yes", style : "short"},
-	{preserveDecimals : undefined, style : "short"},
-	{preserveDecimals : null, style : "short"},
-	{preserveDecimals : false, style : "short"},
-	{preserveDecimals : true, style : "long"},
-	{preserveDecimals : "yes", style : "long"},
-	{preserveDecimals : undefined, style : "long"},
-	{preserveDecimals : null, style : "long"},
-	{preserveDecimals : false, style : "long"}
-].forEach(function (oFormatOptions, i) {
-	QUnit.test("setFormatOptions: oFormatOptions.preserveDecimals given; #" + i, function (assert) {
-		var oType = {
-				_createFormats : function () {}
-			};
+	[
+		{preserveDecimals : true},
+		{preserveDecimals : "yes"},
+		{preserveDecimals : undefined},
+		{preserveDecimals : null},
+		{preserveDecimals : false},
+		{preserveDecimals : true, style : "short"},
+		{preserveDecimals : "yes", style : "short"},
+		{preserveDecimals : undefined, style : "short"},
+		{preserveDecimals : null, style : "short"},
+		{preserveDecimals : false, style : "short"},
+		{preserveDecimals : true, style : "long"},
+		{preserveDecimals : "yes", style : "long"},
+		{preserveDecimals : undefined, style : "long"},
+		{preserveDecimals : null, style : "long"},
+		{preserveDecimals : false, style : "long"}
+	].forEach(function (oFormatOptions, i) {
+		QUnit.test("setFormatOptions: oFormatOptions.preserveDecimals given; #" + i, function (assert) {
+			var oType = {
+					_createFormats : function () {}
+				};
 
-		this.mock(Log).expects("warning").never();
-		this.mock(oType).expects("_createFormats").withExactArgs();
+			this.mock(Log).expects("warning").never();
+			this.mock(oType).expects("_createFormats").withExactArgs();
 
-		// code under test
-		CurrencyType.prototype.setFormatOptions.call(oType, oFormatOptions);
+			// code under test
+			CurrencyType.prototype.setFormatOptions.call(oType, oFormatOptions);
 
-		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
-		assert.deepEqual(oType.oFormatOptions, oFormatOptions);
+			assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
+			assert.deepEqual(oType.oFormatOptions, oFormatOptions);
+		});
 	});
-});
 
 	//*********************************************************************************************
-[{
-	formatOption : {foo : "bar"},
-	result : {foo : "bar", preserveDecimals : true}
-}, {
-	formatOption : {foo : "bar", style : "standard"},
-	result : {foo : "bar", preserveDecimals : true, style : "standard"}
-}, {
-	formatOption : {foo : "bar", style : "short"},
-	result : {foo : "bar", style : "short"}
-}, {
-	formatOption : {foo : "bar", style : "long"},
-	result : {foo : "bar", style : "long"}
-}].forEach(function (oFixture, i) {
-	QUnit.test("setFormatOptions: no preserveDecimals, #" + i, function (assert) {
-		var oType = {
-				_createFormats : function () {}
-			};
+	[{
+		formatOption : {foo : "bar"},
+		result : {foo : "bar", preserveDecimals : true}
+	}, {
+		formatOption : {foo : "bar", style : "standard"},
+		result : {foo : "bar", preserveDecimals : true, style : "standard"}
+	}, {
+		formatOption : {foo : "bar", style : "short"},
+		result : {foo : "bar", style : "short"}
+	}, {
+		formatOption : {foo : "bar", style : "long"},
+		result : {foo : "bar", style : "long"}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("setFormatOptions: no preserveDecimals, #" + i, function (assert) {
+			var oType = {
+					_createFormats : function () {}
+				};
 
-		this.mock(Log).expects("warning").never();
-		this.mock(oType).expects("_createFormats").withExactArgs();
+			this.mock(Log).expects("warning").never();
+			this.mock(oType).expects("_createFormats").withExactArgs();
 
-		// code under test
-		CurrencyType.prototype.setFormatOptions.call(oType, oFixture.formatOption);
+			// code under test
+			CurrencyType.prototype.setFormatOptions.call(oType, oFixture.formatOption);
 
-		assert.notStrictEqual(oType.oFormatOptions, oFixture.formatOption);
-		assert.deepEqual(oType.oFormatOptions, oFixture.result);
+			assert.notStrictEqual(oType.oFormatOptions, oFixture.formatOption);
+			assert.deepEqual(oType.oFormatOptions, oFixture.result);
+		});
 	});
-});
 
 	QUnit.test("currency formatValue", function (assert) {
 		var currencyType = new CurrencyType();
@@ -264,32 +243,32 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{formatOptions : {}, result : null},
-	{formatOptions : {showNumber : true}, result : null},
-	{formatOptions : {showNumber : false}, result : "~formatted"}
-].forEach(function (oFixture, i) {
-	[null, undefined].forEach(function (vInputValue) {
-	var sTitle = "formatValue: showNumber=false skips invalid number check; " + i + ", "
-			+ vInputValue;
+	[
+		{formatOptions : {}, result : null},
+		{formatOptions : {showNumber : true}, result : null},
+		{formatOptions : {showNumber : false}, result : "~formatted"}
+	].forEach(function (oFixture, i) {
+		[null, undefined].forEach(function (vInputValue) {
+		var sTitle = "formatValue: showNumber=false skips invalid number check; " + i + ", "
+				+ vInputValue;
 
-	QUnit.test(sTitle, function (assert) {
-		var bSkipFormat = oFixture.result === null,
-			oType = new CurrencyType(oFixture.formatOptions),
-			aValues = [vInputValue, "EUR"];
+		QUnit.test(sTitle, function (assert) {
+			var bSkipFormat = oFixture.result === null,
+				oType = new CurrencyType(oFixture.formatOptions),
+				aValues = [vInputValue, "EUR"];
 
-		this.mock(oType).expects("getPrimitiveType").withExactArgs("string")
-			.exactly(bSkipFormat ? 0 : 1)
-			.returns("string");
-		this.mock(oType.oOutputFormat).expects("format").withExactArgs(sinon.match.same(aValues))
-			.exactly(bSkipFormat ? 0 : 1)
-			.returns("~formatted");
+			this.mock(oType).expects("getPrimitiveType").withExactArgs("string")
+				.exactly(bSkipFormat ? 0 : 1)
+				.returns("string");
+			this.mock(oType.oOutputFormat).expects("format").withExactArgs(sinon.match.same(aValues))
+				.exactly(bSkipFormat ? 0 : 1)
+				.returns("~formatted");
 
-		// code under test
-		assert.strictEqual(oType.formatValue(aValues, "string"), oFixture.result);
+			// code under test
+			assert.strictEqual(oType.formatValue(aValues, "string"), oFixture.result);
+		});
+		});
 	});
-	});
-});
 
 	QUnit.test("currency parseValue", function (assert) {
 		var currencyType = new CurrencyType();
@@ -299,9 +278,6 @@ sap.ui.define([
 		assert.deepEqual(currencyType.parseValue("EUR3.555", "string"), [3.555, "EUR"], "parse test");
 		assert.deepEqual(currencyType.parseValue("¥-3.555", "string"), [-3.555, "JPY"], "parse test");
 
-		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
-		checkUnsupportedTypeOld(assert, currencyType, "parseValue", true,
-			new ParseException("Don't know how to parse Currency from untype"));
 		checkUnsupportedType(assert, currencyType, "parseValue", true);
 		assert.throws(function () { currencyType.parseValue(true, "boolean"); }, ParseException, "parse test");
 		assert.throws(function () { currencyType.parseValue("test", "string"); }, checkParseException, "parse test");
@@ -733,21 +709,21 @@ sap.ui.define([
 		assert.deepEqual(currencyType.parseValue("", "string"), [0, undefined], "emptyString option set to 0 does not cause ParseException");
 	});
 
-[
-	{oFormatOptions : undefined, aResult : []},
-	{oFormatOptions : {}, aResult : []},
-	{oFormatOptions : {showMeasure : true}, aResult : []},
-	{oFormatOptions : {showMeasure : false}, aResult : [1]},
-	{oFormatOptions : {showNumber : true}, aResult : []},
-	{oFormatOptions : {showNumber : false}, aResult : [0]}
-].forEach(function (oFixture, i) {
-	QUnit.test("Currency: getPartsIgnoringMessages, #" + i, function (assert) {
-		var oCurrencyType = new CurrencyType(oFixture.oFormatOptions);
+	[
+		{oFormatOptions : undefined, aResult : []},
+		{oFormatOptions : {}, aResult : []},
+		{oFormatOptions : {showMeasure : true}, aResult : []},
+		{oFormatOptions : {showMeasure : false}, aResult : [1]},
+		{oFormatOptions : {showNumber : true}, aResult : []},
+		{oFormatOptions : {showNumber : false}, aResult : [0]}
+	].forEach(function (oFixture, i) {
+		QUnit.test("Currency: getPartsIgnoringMessages, #" + i, function (assert) {
+			var oCurrencyType = new CurrencyType(oFixture.oFormatOptions);
 
-		// code under test
-		assert.deepEqual(oCurrencyType.getPartsIgnoringMessages(), oFixture.aResult);
+			// code under test
+			assert.deepEqual(oCurrencyType.getPartsIgnoringMessages(), oFixture.aResult);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("Currency: getPartsListeningToTypeChanges", function (assert) {
@@ -763,32 +739,32 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{aTypes:[]}, // no types
-	{aTypes:[{}], expScale:0, oldScale:0}, // no constraints
-	{aTypes:[{oConstraints:{}}], expScale:0, oldScale:0}, // no scale
-	{aTypes:[{oConstraints:{scale:24}}], expScale:24, expCreateFormats:1}, // consider scale
-	// only the first type is considered
-	{aTypes:[{oConstraints:{scale:24}}, {oConstraints:{scale:42}}], expScale:24, expCreateFormats:1},
-	// scale unchanged, no new formats
-	{aTypes:[{oConstraints:{scale:24}}], oldScale:24, expScale:24},
-	// scale reset, recreate formats
-	{aTypes:[{oConstraints:{}}], oldScale:24, expScale:0, expCreateFormats:1}
-].forEach(({aTypes, expScale, expCreateFormats, oldScale}, i) => {
-	QUnit.test("Currency: processPartTypes, i=" + i, function (assert) {
-		const oCurrencyType = {iScale: oldScale, _createFormats() {}};
-		if (aTypes[0]) {
-			aTypes[0].isA = () => {};
-			this.mock(aTypes[0]).expects("isA").withExactArgs("sap.ui.model.odata.type.Decimal").returns(true);
-		}
-		this.mock(oCurrencyType).expects("_createFormats").withExactArgs().exactly(expCreateFormats || 0);
+	[
+		{aTypes:[]}, // no types
+		{aTypes:[{}], expScale:0, oldScale:0}, // no constraints
+		{aTypes:[{oConstraints:{}}], expScale:0, oldScale:0}, // no scale
+		{aTypes:[{oConstraints:{scale:24}}], expScale:24, expCreateFormats:1}, // consider scale
+		// only the first type is considered
+		{aTypes:[{oConstraints:{scale:24}}, {oConstraints:{scale:42}}], expScale:24, expCreateFormats:1},
+		// scale unchanged, no new formats
+		{aTypes:[{oConstraints:{scale:24}}], oldScale:24, expScale:24},
+		// scale reset, recreate formats
+		{aTypes:[{oConstraints:{}}], oldScale:24, expScale:0, expCreateFormats:1}
+	].forEach(({aTypes, expScale, expCreateFormats, oldScale}, i) => {
+		QUnit.test("Currency: processPartTypes, i=" + i, function (assert) {
+			const oCurrencyType = {iScale: oldScale, _createFormats() {}};
+			if (aTypes[0]) {
+				aTypes[0].isA = () => {};
+				this.mock(aTypes[0]).expects("isA").withExactArgs("sap.ui.model.odata.type.Decimal").returns(true);
+			}
+			this.mock(oCurrencyType).expects("_createFormats").withExactArgs().exactly(expCreateFormats || 0);
 
-		// code under test
-		CurrencyType.prototype.processPartTypes.call(oCurrencyType, aTypes);
+			// code under test
+			CurrencyType.prototype.processPartTypes.call(oCurrencyType, aTypes);
 
-		assert.strictEqual(oCurrencyType.iScale, expScale);
+			assert.strictEqual(oCurrencyType.iScale, expScale);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("Currency: processPartTypes, first part has non-Decimal type", function (assert) {
@@ -801,28 +777,28 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{iScale : undefined, oFormatOptions : {}},
-	{iScale : -1, oFormatOptions : {}}, // edge case: negative scale
-	{iScale : 0, oFormatOptions : {}, oExpectedOptions : {maxFractionDigits : 0}}, // edge case: zero scale
-	{iScale : 42, oFormatOptions : {}, oExpectedOptions : {maxFractionDigits : 42}},
-	// oFormatOptions.maxFractionDigits in favor of iScale
-	{iScale : 42, oFormatOptions : {maxFractionDigits : 24}, oExpectedOptions : {maxFractionDigits : 24}},
-	// decimals scale="variable" is mapped to Infinity and also used in favor of iScale
-	{iScale : Infinity, oFormatOptions : {}, oExpectedOptions : {maxFractionDigits : Infinity}}
-].forEach(({iScale, oFormatOptions, oExpectedOptions}, i) => {
-	QUnit.test("Currency: _createFormats: consider iScale, " + i, function (assert) {
-		const oCurrencyType = {oFormatOptions : oFormatOptions, iScale : iScale};
-		this.mock(NumberFormat).expects("getCurrencyInstance")
-			.withExactArgs(oExpectedOptions ? oExpectedOptions : sinon.match.same(oCurrencyType.oFormatOptions))
-			.returns("~CurrencyInstance");
+	[
+		{iScale : undefined, oFormatOptions : {}},
+		{iScale : -1, oFormatOptions : {}}, // edge case: negative scale
+		{iScale : 0, oFormatOptions : {}, oExpectedOptions : {maxFractionDigits : 0}}, // edge case: zero scale
+		{iScale : 42, oFormatOptions : {}, oExpectedOptions : {maxFractionDigits : 42}},
+		// oFormatOptions.maxFractionDigits in favor of iScale
+		{iScale : 42, oFormatOptions : {maxFractionDigits : 24}, oExpectedOptions : {maxFractionDigits : 24}},
+		// decimals scale="variable" is mapped to Infinity and also used in favor of iScale
+		{iScale : Infinity, oFormatOptions : {}, oExpectedOptions : {maxFractionDigits : Infinity}}
+	].forEach(({iScale, oFormatOptions, oExpectedOptions}, i) => {
+		QUnit.test("Currency: _createFormats: consider iScale, " + i, function (assert) {
+			const oCurrencyType = {oFormatOptions : oFormatOptions, iScale : iScale};
+			this.mock(NumberFormat).expects("getCurrencyInstance")
+				.withExactArgs(oExpectedOptions ? oExpectedOptions : sinon.match.same(oCurrencyType.oFormatOptions))
+				.returns("~CurrencyInstance");
 
-		// code under test
-		CurrencyType.prototype._createFormats.call(oCurrencyType);
+			// code under test
+			CurrencyType.prototype._createFormats.call(oCurrencyType);
 
-		assert.strictEqual(oCurrencyType.oOutputFormat, "~CurrencyInstance");
+			assert.strictEqual(oCurrencyType.oOutputFormat, "~CurrencyInstance");
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("Currency: _createFormats: consider oFormatOptions.source", function (assert) {
@@ -870,29 +846,29 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{
-	oFormatOptions : {},
-	sResult : "Currency.Invalid"
-}, {
-	oFormatOptions : {showMeasure : false},
-	sResult : "EnterNumber"
-}, {
-	oFormatOptions : {showNumber : false},
-	sResult : "Currency.InvalidMeasure"
-}].forEach(function (oFixture, i) {
-	QUnit.test("Currency: getParseException #" + i, function (assert) {
-		var oResult,
-			oType = new CurrencyType(oFixture.oFormatOptions);
+	[{
+		oFormatOptions : {},
+		sResult : "Currency.Invalid"
+	}, {
+		oFormatOptions : {showMeasure : false},
+		sResult : "EnterNumber"
+	}, {
+		oFormatOptions : {showNumber : false},
+		sResult : "Currency.InvalidMeasure"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("Currency: getParseException #" + i, function (assert) {
+			var oResult,
+				oType = new CurrencyType(oFixture.oFormatOptions);
 
-		TestUtils.withNormalizedMessages(function () {
-			// code under test
-			oResult = oType.getParseException();
+			TestUtils.withNormalizedMessages(function () {
+				// code under test
+				oResult = oType.getParseException();
+			});
+
+			assert.ok(oResult instanceof ParseException);
+			assert.strictEqual(oResult.message, oFixture.sResult);
 		});
-
-		assert.ok(oResult instanceof ParseException);
-		assert.strictEqual(oResult.message, oFixture.sResult);
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.DateTime", {
@@ -923,9 +899,6 @@ sap.ui.define([
 
 		assert.strictEqual(dateType.formatValue(null, "string"), "", "format test");
 		assert.strictEqual(dateType.formatValue(undefined, "string"), "", "format test");
-		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
-		checkUnsupportedTypeOld(assert, dateType, "formatValue", dateValue.getTime(),
-			new FormatException("Don't know how to format Date to untype"));
 		checkUnsupportedType(assert, dateType, "formatValue", dateValue.getTime());
 	});
 
@@ -945,9 +918,6 @@ sap.ui.define([
 		dateType = new DateTimeType({ source: { pattern: "timestamp" }, pattern: "dd.MM.yyyy HH:mm" });
 		assert.strictEqual(dateType.parseValue("24.01.2012 14:33", "string"), dateValue.getTime(), "parse test with timestamp");
 
-		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
-		checkUnsupportedTypeOld(assert, dateType, "parseValue", true,
-			new ParseException("Don't know how to parse Date from untype"));
 		checkUnsupportedType(assert, dateType, "parseValue", true);
 		assert.throws(function () { dateType.parseValue(true, "boolean"); }, ParseException, "parse test");
 		assert.throws(function () { dateType.parseValue("test", "string"); }, checkParseException, "parse test");
@@ -1090,9 +1060,6 @@ sap.ui.define([
 		assert.throws(function () { filesizeType.formatValue("1 kB", "float"); }, FormatException, "format test: 1 kB-float");
 
 		assert.strictEqual(filesizeType.formatValue(null, "untype"), null, "format test: null-untype");
-		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
-		checkUnsupportedTypeOld(assert, filesizeType, "formatValue", 1000,
-			new FormatException("Don't know how to format FileSize to untype"));
 		checkUnsupportedType(assert, filesizeType, "formatValue", 1000);
 
 		filesizeType.setFormatOptions({ source: {} });
@@ -1135,9 +1102,6 @@ sap.ui.define([
 		assert.strictEqual(filesizeType.parseValue(1000.5, "float"), 1000.5, "parse test: 1000.5 kB-float");
 
 		assert.strictEqual(filesizeType.parseValue(null, "untype"), null, "parse test: null-untype");
-		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
-		checkUnsupportedTypeOld(assert, filesizeType, "parseValue", 1000,
-			new ParseException("Don't know how to parse FileSize from untype"));
 		checkUnsupportedType(assert, filesizeType, "parseValue", 1000);
 
 		filesizeType.setFormatOptions({ source: {} });
@@ -1238,68 +1202,68 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{preserveDecimals : true},
-	{preserveDecimals : "yes"},
-	{preserveDecimals : undefined},
-	{preserveDecimals : null},
-	{preserveDecimals : false},
-	{preserveDecimals : true, style : "short"},
-	{preserveDecimals : "yes", style : "short"},
-	{preserveDecimals : undefined, style : "short"},
-	{preserveDecimals : null, style : "short"},
-	{preserveDecimals : false, style : "short"},
-	{preserveDecimals : true, style : "long"},
-	{preserveDecimals : "yes", style : "long"},
-	{preserveDecimals : undefined, style : "long"},
-	{preserveDecimals : null, style : "long"},
-	{preserveDecimals : false, style : "long"}
-].forEach(function (oFormatOptions, i) {
-	QUnit.test("setFormatOptions: oFormatOptions.preserveDecimals given; #" + i, function (assert) {
-		var oType = {
-				_createFormats : function () {}
-			};
+	[
+		{preserveDecimals : true},
+		{preserveDecimals : "yes"},
+		{preserveDecimals : undefined},
+		{preserveDecimals : null},
+		{preserveDecimals : false},
+		{preserveDecimals : true, style : "short"},
+		{preserveDecimals : "yes", style : "short"},
+		{preserveDecimals : undefined, style : "short"},
+		{preserveDecimals : null, style : "short"},
+		{preserveDecimals : false, style : "short"},
+		{preserveDecimals : true, style : "long"},
+		{preserveDecimals : "yes", style : "long"},
+		{preserveDecimals : undefined, style : "long"},
+		{preserveDecimals : null, style : "long"},
+		{preserveDecimals : false, style : "long"}
+	].forEach(function (oFormatOptions, i) {
+		QUnit.test("setFormatOptions: oFormatOptions.preserveDecimals given; #" + i, function (assert) {
+			var oType = {
+					_createFormats : function () {}
+				};
 
-		this.mock(Log).expects("warning").never();
-		this.mock(oType).expects("_createFormats").withExactArgs();
+			this.mock(Log).expects("warning").never();
+			this.mock(oType).expects("_createFormats").withExactArgs();
 
-		// code under test
-		FloatType.prototype.setFormatOptions.call(oType, oFormatOptions);
+			// code under test
+			FloatType.prototype.setFormatOptions.call(oType, oFormatOptions);
 
-		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
-		assert.deepEqual(oType.oFormatOptions, oFormatOptions);
+			assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
+			assert.deepEqual(oType.oFormatOptions, oFormatOptions);
+		});
 	});
-});
 
 	//*********************************************************************************************
-[{
-	formatOption : {foo : "bar"},
-	result : {foo : "bar", preserveDecimals : true}
-}, {
-	formatOption : {foo : "bar", style : "standard"},
-	result : {foo : "bar", preserveDecimals : true, style : "standard"}
-}, {
-	formatOption : {foo : "bar", style : "short"},
-	result : {foo : "bar", style : "short"}
-}, {
-	formatOption : {foo : "bar", style : "long"},
-	result : {foo : "bar", style : "long"}
-}].forEach(function (oFixture, i) {
-	QUnit.test("setFormatOptions: no preserveDecimals, #" + i, function (assert) {
-		var oType = {
-				_createFormats : function () {}
-			};
+	[{
+		formatOption : {foo : "bar"},
+		result : {foo : "bar", preserveDecimals : true}
+	}, {
+		formatOption : {foo : "bar", style : "standard"},
+		result : {foo : "bar", preserveDecimals : true, style : "standard"}
+	}, {
+		formatOption : {foo : "bar", style : "short"},
+		result : {foo : "bar", style : "short"}
+	}, {
+		formatOption : {foo : "bar", style : "long"},
+		result : {foo : "bar", style : "long"}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("setFormatOptions: no preserveDecimals, #" + i, function (assert) {
+			var oType = {
+					_createFormats : function () {}
+				};
 
-		this.mock(Log).expects("warning").never();
-		this.mock(oType).expects("_createFormats").withExactArgs();
+			this.mock(Log).expects("warning").never();
+			this.mock(oType).expects("_createFormats").withExactArgs();
 
-		// code under test
-		FloatType.prototype.setFormatOptions.call(oType, oFixture.formatOption);
+			// code under test
+			FloatType.prototype.setFormatOptions.call(oType, oFixture.formatOption);
 
-		assert.notStrictEqual(oType.oFormatOptions, oFixture.formatOption);
-		assert.deepEqual(oType.oFormatOptions, oFixture.result);
+			assert.notStrictEqual(oType.oFormatOptions, oFixture.formatOption);
+			assert.deepEqual(oType.oFormatOptions, oFixture.result);
+		});
 	});
-});
 
 	QUnit.test("float formatValue", function (assert) {
 		var floatType = new FloatType();
@@ -1321,9 +1285,6 @@ sap.ui.define([
 		assert.strictEqual(floatType.formatValue(134.00, "float"), 134, "format test");
 		assert.strictEqual(floatType.formatValue(134.000, "float"), 134, "format test");
 
-		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
-		checkUnsupportedTypeOld(assert, floatType, "formatValue", 22.0,
-			new FormatException("Don't know how to format Float to untype"));
 		checkUnsupportedType(assert, floatType, "formatValue", 22.0);
 	});
 
@@ -1339,9 +1300,6 @@ sap.ui.define([
 		assert.strictEqual(floatType.parseValue(-4.3657, "float"), -4.3657, "parse test");
 		assert.strictEqual(floatType.parseValue(4.657, "float"), 4.657, "parse test");
 
-		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
-		checkUnsupportedTypeOld(assert, floatType, "parseValue", true,
-			new ParseException("Don't know how to parse Float from untype"));
 		checkUnsupportedType(assert, floatType, "parseValue", true);
 		assert.throws(function () { floatType.parseValue(true, "boolean"); }, ParseException, "parse test");
 		assert.throws(function () { floatType.parseValue("test", "string"); }, ParseException, "parse test");
@@ -1468,9 +1426,6 @@ sap.ui.define([
 		assert.strictEqual(intType.formatValue(344456, "float"), 344456, "format test");
 
 		assert.throws(function () { intType.formatValue(33456, "boolean"); }, "format test");
-		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
-		checkUnsupportedTypeOld(assert, intType, "formatValue", 22,
-			new FormatException("Don't know how to format Integer to untype"));
 		checkUnsupportedType(assert, intType, "formatValue", 22);
 	});
 
@@ -1491,9 +1446,6 @@ sap.ui.define([
 			assert.throws(function () { intType.parseValue("true", "float"); },
 				new ParseException("EnterInt"), "parse test");
 		});
-		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
-		checkUnsupportedTypeOld(assert, intType, "parseValue", true,
-			new ParseException("Don't know how to parse Integer from untype"));
 		checkUnsupportedType(assert, intType, "parseValue", true);
 
 		assert.throws(function () { intType.parseValue(true, "boolean"); }, ParseException, "parse test");
@@ -1649,9 +1601,6 @@ sap.ui.define([
 		assert.strictEqual(stringType.formatValue("1.34", "float"), 1.34);
 		assert.strictEqual(stringType.formatValue("33.456", "float"), 33.456);
 
-		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
-		checkUnsupportedTypeOld(assert, stringType, "formatValue", "33.456",
-			new FormatException("Don't know how to format String to untype"));
 		checkUnsupportedType(assert, stringType, "formatValue", "33.456");
 		assert.throws(function () { stringType.formatValue("notfalse", "boolean"); },
 			FormatException);
@@ -1671,11 +1620,7 @@ sap.ui.define([
 		assert.strictEqual(stringType.parseValue(-222, "int"), "-222");
 		assert.strictEqual(stringType.parseValue(-4.3657, "float"), "-4.3657");
 
-		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
-		checkUnsupportedTypeOld(assert, stringType, "parseValue", true,
-			new ParseException("Don't know how to parse String from untype"));
 		checkUnsupportedType(assert, stringType, "parseValue", true);
-
 	});
 
 	QUnit.test("string validateValue", function (assert) {
@@ -1731,49 +1676,49 @@ sap.ui.define([
 		stringType.validateValue("ab");
 	});
 
-[
-	{contains : ""},
-	// {endsWith : ""}, /* empty string is invalid */
-	// {endsWithIgnoreCase : ""}, /* empty string is invalid */
-	{equals : ""},
-	{minLength : 0},
-	{maxLength : 0},
-	{maxLength : 10},
-	{search : ""}
-	// {startsWith : ""}, /* empty string is invalid */
-	// {startsWithIgnoreCase : ""} /* empty string is invalid */
-].forEach(function (oConstraints, i) {
-	QUnit.test("string validateValue with null, success, " + i, function (assert) {
-		var oType = new StringType(null, oConstraints);
+	[
+		{contains : ""},
+		// {endsWith : ""}, /* empty string is invalid */
+		// {endsWithIgnoreCase : ""}, /* empty string is invalid */
+		{equals : ""},
+		{minLength : 0},
+		{maxLength : 0},
+		{maxLength : 10},
+		{search : ""}
+		// {startsWith : ""}, /* empty string is invalid */
+		// {startsWithIgnoreCase : ""} /* empty string is invalid */
+	].forEach(function (oConstraints, i) {
+		QUnit.test("string validateValue with null, success, " + i, function (assert) {
+			var oType = new StringType(null, oConstraints);
 
-		assert.strictEqual(oType.validateValue(null), undefined);
-	});
-});
-
-[
-	{constraints : {contains : "ab"}, message : "String.Contains ab"},
-	{constraints : {endsWith : "ab"}, message : "String.EndsWith ab"},
-	{constraints : {endsWithIgnoreCase : "ab"}, message : "String.EndsWith ab"},
-	{constraints : {equals : "ab"}, message : "String.Equals ab"},
-	{constraints : {minLength : 3}, message : "String.MinLength 3"},
-	{constraints : {search : "ab"}, message : "String.Search"},
-	{constraints : {startsWith : "ab"}, message : "String.StartsWith ab"},
-	{constraints : {startsWithIgnoreCase : "ab"}, message : "String.StartsWith ab"}
-].forEach(function (oFixture, i) {
-	QUnit.test("string validateValue with null, exception, #" + i, function (assert) {
-		var oType = new StringType(null, oFixture.constraints);
-
-		TestUtils.withNormalizedMessages(function () {
-			try {
-				oType.validateValue(null);
-				assert.ok(false);
-			} catch (e) {
-				assert.ok(e instanceof ValidateException);
-				assert.strictEqual(e.message, oFixture.message);
-			}
+			assert.strictEqual(oType.validateValue(null), undefined);
 		});
 	});
-});
+
+	[
+		{constraints : {contains : "ab"}, message : "String.Contains ab"},
+		{constraints : {endsWith : "ab"}, message : "String.EndsWith ab"},
+		{constraints : {endsWithIgnoreCase : "ab"}, message : "String.EndsWith ab"},
+		{constraints : {equals : "ab"}, message : "String.Equals ab"},
+		{constraints : {minLength : 3}, message : "String.MinLength 3"},
+		{constraints : {search : "ab"}, message : "String.Search"},
+		{constraints : {startsWith : "ab"}, message : "String.StartsWith ab"},
+		{constraints : {startsWithIgnoreCase : "ab"}, message : "String.StartsWith ab"}
+	].forEach(function (oFixture, i) {
+		QUnit.test("string validateValue with null, exception, #" + i, function (assert) {
+			var oType = new StringType(null, oFixture.constraints);
+
+			TestUtils.withNormalizedMessages(function () {
+				try {
+					oType.validateValue(null);
+					assert.ok(false);
+				} catch (e) {
+					assert.ok(e instanceof ValidateException);
+					assert.strictEqual(e.message, oFixture.message);
+				}
+			});
+		});
+	});
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Time", {
@@ -1804,9 +1749,6 @@ sap.ui.define([
 		assert.strictEqual(timeType.formatValue(null, "string"), "", "format test");
 		assert.strictEqual(timeType.formatValue(undefined, "string"), "", "format test");
 
-		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
-		checkUnsupportedTypeOld(assert, timeType, "formatValue", timeValue.getTime(),
-			new FormatException("Don't know how to format Date to untype"));
 		checkUnsupportedType(assert, timeType, "formatValue", timeValue.getTime());
 	});
 
@@ -1826,9 +1768,6 @@ sap.ui.define([
 		timeType = new TimeType({ source: { pattern: "timestamp" }, pattern: "HH:mm:ss" });
 		assert.strictEqual(timeType.parseValue("16:58:49", "string"), timeValue.getTime(), "parse test with timestamp");
 
-		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
-		checkUnsupportedTypeOld(assert, timeType, "parseValue", true,
-			new ParseException("Don't know how to parse Date from untype"));
 		checkUnsupportedType(assert, timeType, "parseValue", true);
 		assert.throws(function () { timeType.parseValue(true, "boolean"); }, ParseException, "parse test");
 		assert.throws(function () { timeType.parseValue("test", "string"); }, checkParseException, "parse test");
@@ -1947,72 +1886,72 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{preserveDecimals : true},
-	{preserveDecimals : "yes"},
-	{preserveDecimals : undefined},
-	{preserveDecimals : null},
-	{preserveDecimals : false},
-	{preserveDecimals : true, style : "short"},
-	{preserveDecimals : "yes", style : "short"},
-	{preserveDecimals : undefined, style : "short"},
-	{preserveDecimals : null, style : "short"},
-	{preserveDecimals : false, style : "short"},
-	{preserveDecimals : true, style : "long"},
-	{preserveDecimals : "yes", style : "long"},
-	{preserveDecimals : undefined, style : "long"},
-	{preserveDecimals : null, style : "long"},
-	{preserveDecimals : false, style : "long"}
-].forEach(function (oFormatOptions, i) {
-	QUnit.test("setFormatOptions: oFormatOptions.preserveDecimals given; #" + i, function (assert) {
-		var oType = {
-				_clearInstances : function () {},
-				_createInputFormat : function () {}
-			};
+	[
+		{preserveDecimals : true},
+		{preserveDecimals : "yes"},
+		{preserveDecimals : undefined},
+		{preserveDecimals : null},
+		{preserveDecimals : false},
+		{preserveDecimals : true, style : "short"},
+		{preserveDecimals : "yes", style : "short"},
+		{preserveDecimals : undefined, style : "short"},
+		{preserveDecimals : null, style : "short"},
+		{preserveDecimals : false, style : "short"},
+		{preserveDecimals : true, style : "long"},
+		{preserveDecimals : "yes", style : "long"},
+		{preserveDecimals : undefined, style : "long"},
+		{preserveDecimals : null, style : "long"},
+		{preserveDecimals : false, style : "long"}
+	].forEach(function (oFormatOptions, i) {
+		QUnit.test("setFormatOptions: oFormatOptions.preserveDecimals given; #" + i, function (assert) {
+			var oType = {
+					_clearInstances : function () {},
+					_createInputFormat : function () {}
+				};
 
-		this.mock(Log).expects("warning").never();
-		this.mock(oType).expects("_clearInstances").withExactArgs();
-		this.mock(oType).expects("_createInputFormat").withExactArgs();
+			this.mock(Log).expects("warning").never();
+			this.mock(oType).expects("_clearInstances").withExactArgs();
+			this.mock(oType).expects("_createInputFormat").withExactArgs();
 
-		// code under test
-		UnitType.prototype.setFormatOptions.call(oType, oFormatOptions);
+			// code under test
+			UnitType.prototype.setFormatOptions.call(oType, oFormatOptions);
 
-		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
-		assert.deepEqual(oType.oFormatOptions, oFormatOptions);
+			assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
+			assert.deepEqual(oType.oFormatOptions, oFormatOptions);
+		});
 	});
-});
 
 	//*********************************************************************************************
-[{
-	formatOption : {foo : "bar"},
-	result : {foo : "bar", preserveDecimals : true}
-}, {
-	formatOption : {foo : "bar", style : "standard"},
-	result : {foo : "bar", preserveDecimals : true, style : "standard"}
-}, {
-	formatOption : {foo : "bar", style : "short"},
-	result : {foo : "bar", style : "short"}
-}, {
-	formatOption : {foo : "bar", style : "long"},
-	result : {foo : "bar", style : "long"}
-}].forEach(function (oFixture, i) {
-	QUnit.test("setFormatOptions: no preserveDecimals, #" + i, function (assert) {
-		var oType = {
-				_clearInstances : function () {},
-				_createInputFormat : function () {}
-			};
+	[{
+		formatOption : {foo : "bar"},
+		result : {foo : "bar", preserveDecimals : true}
+	}, {
+		formatOption : {foo : "bar", style : "standard"},
+		result : {foo : "bar", preserveDecimals : true, style : "standard"}
+	}, {
+		formatOption : {foo : "bar", style : "short"},
+		result : {foo : "bar", style : "short"}
+	}, {
+		formatOption : {foo : "bar", style : "long"},
+		result : {foo : "bar", style : "long"}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("setFormatOptions: no preserveDecimals, #" + i, function (assert) {
+			var oType = {
+					_clearInstances : function () {},
+					_createInputFormat : function () {}
+				};
 
-		this.mock(Log).expects("warning").never();
-		this.mock(oType).expects("_clearInstances").withExactArgs();
-		this.mock(oType).expects("_createInputFormat").withExactArgs();
+			this.mock(Log).expects("warning").never();
+			this.mock(oType).expects("_clearInstances").withExactArgs();
+			this.mock(oType).expects("_createInputFormat").withExactArgs();
 
-		// code under test
-		UnitType.prototype.setFormatOptions.call(oType, oFixture.formatOption);
+			// code under test
+			UnitType.prototype.setFormatOptions.call(oType, oFixture.formatOption);
 
-		assert.notStrictEqual(oType.oFormatOptions, oFixture.formatOption);
-		assert.deepEqual(oType.oFormatOptions, oFixture.result);
+			assert.notStrictEqual(oType.oFormatOptions, oFixture.formatOption);
+			assert.deepEqual(oType.oFormatOptions, oFixture.result);
+		});
 	});
-});
 
 	QUnit.test("unit formatValue", function (assert) {
 		var unitType = new UnitType();
@@ -2033,39 +1972,39 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{formatOptions : {}, result : null},
-	{formatOptions : {showNumber : true}, result : null},
-	{formatOptions : {showNumber : false}, result : "~formatted"}
-].forEach(function (oFixture, i) {
-	[null, undefined].forEach(function (vInputValue) {
-	var sTitle = "formatValue: showNumber=false skips invalid number check; " + i + ", "
-			+ vInputValue;
+	[
+		{formatOptions : {}, result : null},
+		{formatOptions : {showNumber : true}, result : null},
+		{formatOptions : {showNumber : false}, result : "~formatted"}
+	].forEach(function (oFixture, i) {
+		[null, undefined].forEach(function (vInputValue) {
+		var sTitle = "formatValue: showNumber=false skips invalid number check; " + i + ", "
+				+ vInputValue;
 
-	QUnit.test(sTitle, function (assert) {
-		var oOutputFormat = {format : function () {}},
-			bSkipFormat = oFixture.result === null,
-			oType = new UnitType(oFixture.formatOptions),
-			aValues = [vInputValue, "duration-hour"];
+		QUnit.test(sTitle, function (assert) {
+			var oOutputFormat = {format : function () {}},
+				bSkipFormat = oFixture.result === null,
+				oType = new UnitType(oFixture.formatOptions),
+				aValues = [vInputValue, "duration-hour"];
 
-		this.mock(oType).expects("getPrimitiveType").withExactArgs("string")
-			.exactly(bSkipFormat ? 0 : 1)
-			.returns("string");
-		this.mock(oType).expects("extractArguments").withExactArgs(sinon.match.same(aValues))
-			.exactly(bSkipFormat ? 0 : 1)
-			.returns("~aDynamicValues");
-		this.mock(oType).expects("_getInstance").withExactArgs("~aDynamicValues", "duration-hour")
-			.exactly(bSkipFormat ? 0 : 1)
-			.returns(oOutputFormat);
-		this.mock(oOutputFormat).expects("format").withExactArgs(sinon.match.same(aValues))
-			.exactly(bSkipFormat ? 0 : 1)
-			.returns("~formatted");
+			this.mock(oType).expects("getPrimitiveType").withExactArgs("string")
+				.exactly(bSkipFormat ? 0 : 1)
+				.returns("string");
+			this.mock(oType).expects("extractArguments").withExactArgs(sinon.match.same(aValues))
+				.exactly(bSkipFormat ? 0 : 1)
+				.returns("~aDynamicValues");
+			this.mock(oType).expects("_getInstance").withExactArgs("~aDynamicValues", "duration-hour")
+				.exactly(bSkipFormat ? 0 : 1)
+				.returns(oOutputFormat);
+			this.mock(oOutputFormat).expects("format").withExactArgs(sinon.match.same(aValues))
+				.exactly(bSkipFormat ? 0 : 1)
+				.returns("~formatted");
 
-		// code under test
-		assert.strictEqual(oType.formatValue(aValues, "string"), oFixture.result);
+			// code under test
+			assert.strictEqual(oType.formatValue(aValues, "string"), oFixture.result);
+		});
+		});
 	});
-	});
-});
 
 	QUnit.test("unit parseValue", function (assert) {
 		var unitType = new UnitType();
@@ -2079,29 +2018,26 @@ sap.ui.define([
 		//  this will be changed once the strict mode is implemented in
 		//  sap.ui.core.format.NumberFormat
 		assert.throws(function () { unitType.parseValue("3333", "string"); }, ParseException, "parse test");
-		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
-		checkUnsupportedTypeOld(assert, unitType, "parseValue", true,
-			new ParseException("Don't know how to parse Unit from untype"));
 		checkUnsupportedType(assert, unitType, "parseValue", true);
 		assert.throws(function () { unitType.parseValue(true, "boolean"); }, ParseException, "parse test");
 		assert.throws(function () { unitType.parseValue("test", "string"); }, ParseException, "parse test");
 	});
 
-[
-	{oFormatOptions : undefined, aResult : []},
-	{oFormatOptions : {}, aResult : []},
-	{oFormatOptions : {showMeasure : true}, aResult : []},
-	{oFormatOptions : {showMeasure : false}, aResult : [1]},
-	{oFormatOptions : {showNumber : true}, aResult : []},
-	{oFormatOptions : {showNumber : false}, aResult : [0]}
-].forEach(function (oFixture, i) {
-	QUnit.test("Unit: getPartsIgnoringMessages, #" + i, function (assert) {
-		var oUnitType = new UnitType(oFixture.oFormatOptions);
+	[
+		{oFormatOptions : undefined, aResult : []},
+		{oFormatOptions : {}, aResult : []},
+		{oFormatOptions : {showMeasure : true}, aResult : []},
+		{oFormatOptions : {showMeasure : false}, aResult : [1]},
+		{oFormatOptions : {showNumber : true}, aResult : []},
+		{oFormatOptions : {showNumber : false}, aResult : [0]}
+	].forEach(function (oFixture, i) {
+		QUnit.test("Unit: getPartsIgnoringMessages, #" + i, function (assert) {
+			var oUnitType = new UnitType(oFixture.oFormatOptions);
 
-		// code under test
-		assert.deepEqual(oUnitType.getPartsIgnoringMessages(), oFixture.aResult);
+			// code under test
+			assert.deepEqual(oUnitType.getPartsIgnoringMessages(), oFixture.aResult);
+		});
 	});
-});
 
 	QUnit.test("parseValue: format option 'showNumber'; only enter the unit", function (assert) {
 		TestUtils.withNormalizedMessages(function () {
@@ -2841,29 +2777,29 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{
-	oFormatOptions : {},
-	sResult : "Unit.Invalid"
-}, {
-	oFormatOptions : {showMeasure : false},
-	sResult : "EnterNumber"
-}, {
-	oFormatOptions : {showNumber : false},
-	sResult : "Unit.InvalidMeasure"
-}].forEach(function (oFixture, i) {
-	QUnit.test("Unit: getParseException #" + i, function (assert) {
-		var oResult,
-			oType = new UnitType(oFixture.oFormatOptions);
+	[{
+		oFormatOptions : {},
+		sResult : "Unit.Invalid"
+	}, {
+		oFormatOptions : {showMeasure : false},
+		sResult : "EnterNumber"
+	}, {
+		oFormatOptions : {showNumber : false},
+		sResult : "Unit.InvalidMeasure"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("Unit: getParseException #" + i, function (assert) {
+			var oResult,
+				oType = new UnitType(oFixture.oFormatOptions);
 
-		TestUtils.withNormalizedMessages(function () {
-			// code under test
-			oResult = oType.getParseException();
+			TestUtils.withNormalizedMessages(function () {
+				// code under test
+				oResult = oType.getParseException();
+			});
+
+			assert.ok(oResult instanceof ParseException);
+			assert.strictEqual(oResult.message, oFixture.sResult);
 		});
-
-		assert.ok(oResult instanceof ParseException);
-		assert.strictEqual(oResult.message, oFixture.sResult);
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("Unit: getPartsListeningToTypeChanges", function (assert) {
@@ -2879,64 +2815,64 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	// no scale, formatOptions from this.oFormatOptions and aArgs passed to _getInstance
-	{scale: undefined, options: {foo: "byThis"}, args: {bar: "byArgs"}, expected: {foo: "byThis", bar: "byArgs"}},
-	// no scale, same formatOptions in favor of aArgs
-	{scale: -1, options: {foo: "byThis"}, args: {foo: "byArgs"}, expected: {foo: "byArgs"}},
-	// scale egdge case -1
-	{scale: -1, options: {}, args: {}, expected: {}},
-	// scale egdge case 0
-	{scale: 0, options: {}, args: {}, expected: {maxFractionDigits: 0}},
-	// scale -> maxFractionDigits
-	{scale: 42, options: {}, args: {}, expected: {maxFractionDigits: 42}},
-	// this.oFormatOptions.maxFractionDigits not overwritten by scale
-	{scale: 42, options: {maxFractionDigits: 21}, args: {}, expected: {maxFractionDigits: 21}},
-	// aArgs.maxFractionDigits neither overwritten by this.scale, nor by this.oFormatOptions
-	{scale: 42, options: {maxFractionDigits: 21}, args: {maxFractionDigits: 22}, expected: {maxFractionDigits: 22}}
-].forEach(({scale: iScale, options: oOptions, args: oArgs, expected : oExpectedOptions}, i) => {
-	QUnit.test("Unit: _getInstance: consider scale, i=" + i, function (assert) {
-		const oMetadata = {getClass() {}};
-		const oUnitType = {
-			oFormatOptions : oOptions,
-			iScale : iScale,
-			createFormatOptions() {},
-			getMetadata : () => oMetadata
-		};
+	[
+		// no scale, formatOptions from this.oFormatOptions and aArgs passed to _getInstance
+		{scale: undefined, options: {foo: "byThis"}, args: {bar: "byArgs"}, expected: {foo: "byThis", bar: "byArgs"}},
+		// no scale, same formatOptions in favor of aArgs
+		{scale: -1, options: {foo: "byThis"}, args: {foo: "byArgs"}, expected: {foo: "byArgs"}},
+		// scale egdge case -1
+		{scale: -1, options: {}, args: {}, expected: {}},
+		// scale egdge case 0
+		{scale: 0, options: {}, args: {}, expected: {maxFractionDigits: 0}},
+		// scale -> maxFractionDigits
+		{scale: 42, options: {}, args: {}, expected: {maxFractionDigits: 42}},
+		// this.oFormatOptions.maxFractionDigits not overwritten by scale
+		{scale: 42, options: {maxFractionDigits: 21}, args: {}, expected: {maxFractionDigits: 21}},
+		// aArgs.maxFractionDigits neither overwritten by this.scale, nor by this.oFormatOptions
+		{scale: 42, options: {maxFractionDigits: 21}, args: {maxFractionDigits: 22}, expected: {maxFractionDigits: 22}}
+	].forEach(({scale: iScale, options: oOptions, args: oArgs, expected : oExpectedOptions}, i) => {
+		QUnit.test("Unit: _getInstance: consider scale, i=" + i, function (assert) {
+			const oMetadata = {getClass() {}};
+			const oUnitType = {
+				oFormatOptions : oOptions,
+				iScale : iScale,
+				createFormatOptions() {},
+				getMetadata : () => oMetadata
+			};
 
-		this.mock(oUnitType).expects("createFormatOptions").withExactArgs("~aArgs").returns(oArgs);
-		this.mock(oMetadata).expects("getClass")
-			.withExactArgs()
-			.returns(i % 2 ? UnitType : "~NotUnitType"); // alternate between UnitType and other class
-		this.mock(NumberFormat).expects("getUnitInstance").withExactArgs(oExpectedOptions).returns("~UnitInstance");
+			this.mock(oUnitType).expects("createFormatOptions").withExactArgs("~aArgs").returns(oArgs);
+			this.mock(oMetadata).expects("getClass")
+				.withExactArgs()
+				.returns(i % 2 ? UnitType : "~NotUnitType"); // alternate between UnitType and other class
+			this.mock(NumberFormat).expects("getUnitInstance").withExactArgs(oExpectedOptions).returns("~UnitInstance");
 
-		// code under test
-		assert.strictEqual(UnitType.prototype._getInstance.call(oUnitType, "~aArgs"), "~UnitInstance");
+			// code under test
+			assert.strictEqual(UnitType.prototype._getInstance.call(oUnitType, "~aArgs"), "~UnitInstance");
+		});
 	});
-});
 
 
 	//*********************************************************************************************
-[
-	{aTypes : []},
-	{aTypes : [{}], iScale : 0},
-	{aTypes : [{oConstraints : {}}], iScale : 0},
-	{aTypes : [{oConstraints : {scale : 24}}], iScale : 24},
-	{aTypes : [{oConstraints : {scale : 24}}, {oConstraints : {scale : 42}}], iScale : 24}
-].forEach(({aTypes, iScale}, i) => {
-	QUnit.test("Unit: processPartTypes, i=" + i, function (assert) {
-		const oUnitType = {};
-		if (aTypes[0]) {
-			aTypes[0].isA = () => {};
-			this.mock(aTypes[0]).expects("isA").withExactArgs("sap.ui.model.odata.type.Decimal").returns(true);
-		}
+	[
+		{aTypes : []},
+		{aTypes : [{}], iScale : 0},
+		{aTypes : [{oConstraints : {}}], iScale : 0},
+		{aTypes : [{oConstraints : {scale : 24}}], iScale : 24},
+		{aTypes : [{oConstraints : {scale : 24}}, {oConstraints : {scale : 42}}], iScale : 24}
+	].forEach(({aTypes, iScale}, i) => {
+		QUnit.test("Unit: processPartTypes, i=" + i, function (assert) {
+			const oUnitType = {};
+			if (aTypes[0]) {
+				aTypes[0].isA = () => {};
+				this.mock(aTypes[0]).expects("isA").withExactArgs("sap.ui.model.odata.type.Decimal").returns(true);
+			}
 
-		// code under test
-		UnitType.prototype.processPartTypes.call(oUnitType, aTypes);
+			// code under test
+			UnitType.prototype.processPartTypes.call(oUnitType, aTypes);
 
-		assert.strictEqual(oUnitType.iScale, iScale);
+			assert.strictEqual(oUnitType.iScale, iScale);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("Unit: processPartTypes, first part has non-Decimal type", function (assert) {

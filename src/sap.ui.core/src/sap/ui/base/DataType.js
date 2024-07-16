@@ -7,12 +7,10 @@
 // Provides class sap.ui.base.DataType
 sap.ui.define([
 	'sap/base/future',
-	'sap/base/util/ObjectPath',
 	"sap/base/assert",
-	"sap/base/Log",
 	"sap/base/util/isPlainObject",
 	'sap/base/util/resolveReference'
-], function(future, ObjectPath, assert, Log, isPlainObject, resolveReference) {
+], function(future, assert, isPlainObject, resolveReference) {
 	"use strict";
 
 	/**
@@ -527,21 +525,6 @@ sap.ui.define([
 				// check if we have a valid pre-registered enum
 				oType = mEnumRegistry[sTypeName];
 
-				/**
-				 * If an enum was not registered beforehand (either explicitly via registerEnum or
-				 * via a Proxy in the library namespace), we have to look it up in the global object.
-				 * @deprecated since 1.120
-				 */
-				if (oType == null) {
-					oType = ObjectPath.get(sTypeName);
-					if (oType != null) {
-						Log.error(`[DEPRECATED] The type '${sTypeName}' was accessed via globals. Defining types via globals is deprecated. ` +
-						`In case the referenced type is an enum: require the module 'sap/ui/base/DataType' and call the static 'DataType.registerEnum' API. ` +
-						`In case the referenced type is non-primitive, please note that only primitive types (and those derived from them) are supported for ManagedObject properties. ` +
-						`If the given type is an interface or a subclass of ManagedObject, you can define a "0..1" aggregation instead of a property`);
-					}
-				}
-
 				if ( oType instanceof DataType ) {
 					mTypes[sTypeName] = oType;
 				} else if ( isPlainObject(oType) ) {
@@ -646,16 +629,6 @@ sap.ui.define([
 	DataType.registerInterfaceTypes = function(aTypes) {
 		aTypes.forEach(function(sType) {
 			oInterfaces.add(sType);
-
-			/**
-			 * @deprecated
-			 */
-			(() => {
-				// Defining the interface on global namespace for compatibility reasons.
-				// This has never been a public feature and it is strongly discouraged it be relied upon.
-				// An interface must always be referenced by a string literal, not via the global namespace.
-				ObjectPath.set(sType, sType);
-			})();
 		});
 	};
 
@@ -730,4 +703,4 @@ sap.ui.define([
 
 	return DataType;
 
-}, /* bExport= */ true);
+});

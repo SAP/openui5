@@ -1,0 +1,163 @@
+@-ms-viewport{width:device-width;}
+		html, body, #content, .benchmarkOverview {
+			height: 100%;
+			margin: 0px;
+			padding: 0 10px 0 10px;
+			box-sizing: border-box;
+		}
+
+		.title {
+			display: block;
+			height: 2rem;
+			line-height: 2rem;
+			font-size: 1.5rem;
+			font-weight: bold;
+			text-align: center;
+			white-space: nowrap;
+		}
+
+		.controls {
+			display: block;
+			height: 2rem;
+			line-height: 2rem;
+			white-space: nowrap;
+		}
+
+		.controls > * {
+			margin: 0 5px 0 5px;
+		}
+
+		.controls > .numberInput {
+			width: 50px;
+			text-align: right;
+		}
+
+		.comparisonTable {
+			width: 100%;
+			height: calc(60% - 6rem);
+			min-height: 350px;
+			border: 0px solid black;
+		}
+
+		.comparisonTable td {
+			width: 50%;
+			height: 100%;
+			vertical-align: top;
+		}
+
+		.comparisonTable td > .benchmarkResult {
+			margin: 10px 0 10px 0;
+			list-style: none none inside;
+			min-height: 350px;
+			max-height: 100%;
+			overflow-x: hidden;
+			overflow-y: auto;
+		}
+
+		.heading {
+			display: block;
+			height: 3rem;
+			line-height: 3rem;
+			font-size: 1.25rem;
+		}
+
+		.multiBenchmarkResults {
+			width: 100%;
+			height: calc(40% - 6rem);
+			min-height: 250px;
+			white-space: nowrap;
+			border: 1px solid black;
+			overflow-x: auto;
+			padding: 10px 0 10px 0;
+			overflow-y: hidden;
+		}
+
+		.multiBenchmarkResults > .result {
+			height: 100%;
+			display: inline-block;
+			width: 100px;
+			vertical-align: top;
+			margin-right: 10px;
+			border: 1px dashed red;
+		}
+
+		.multiBenchmarkResults > .result > .resultTitle {
+			font-weight: bold;
+			text-align: center;
+			height: 2rem;
+		}
+
+		.multiBenchmarkResults > .result > .resultChart {
+			position: relative;
+			width: 100%;
+			height: calc(100% - 2rem - 20px);
+			top: 10px;
+			box-sizing: border-box;
+		}
+
+		.multiBenchmarkResults > .result > .resultChart > .resultChartBar {
+			display: block;
+			position: absolute;
+			width: 20%;
+			bottom: 0;
+			transition: height ease 1s;
+		}
+
+		.hasTooltip:hover:after{
+			background: #333;
+			background: rgba(0,0,0,.8);
+			border-radius: 8px;
+			bottom: 50%;
+			color: #fff;
+			content: attr(title);
+			left: 150%;
+			padding: 5px 15px;
+			position: absolute;
+			z-index: 98;
+			width: 150px;
+			font-weight: bold;
+			font-size: 1.25rem;
+			text-align: center;
+		}
+
+		.hasTooltip:hover:before{
+			border: solid;
+			border-color: #333 transparent;
+			bottom: calc(50% + 0.5rem);
+			content: "";
+			left: calc(150% - 0.7rem);
+			position: absolute;
+			border-top: 0.5rem solid transparent;
+			border-bottom: 0.5rem solid transparent;
+			border-right: 0.5rem solid #333;
+			z-index: 99;
+		}
+
+		.timeStamp {
+			font-family: monospace;
+			display: inline-block;
+			width: 75px;
+			text-align: right;
+			margin-right: 5px;
+		}
+
+		.preloadProgress {
+			display: block;
+			position: fixed;
+			margin: 0;
+			width: 80%;
+			top: 50%;
+			height: 5%;
+			margin-top: -2.5%;
+			background-color: transparent;
+		}
+
+		.innerPreloadProgress {
+			display: block;
+			position: absolute;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			width: 0;
+			background-color: #3333ff;
+		}

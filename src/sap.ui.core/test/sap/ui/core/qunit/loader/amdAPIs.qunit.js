@@ -1,4 +1,4 @@
-/*global QUnit, define, require, fixture */
+/*global QUnit, define, require */
 (function() {
 	"use strict";
 
@@ -8,82 +8,6 @@
 	});
 
 	QUnit.module("amd=true mode");
-
-	/**
-	 * @deprecated As of version 1.120, the ui5loader no longer implements bExport
-	 */
-	QUnit.test("amd - bExport - error message", function(assert) {
-		var done = assert.async();
-
-		require(["fixture/error-handling-standard-api/amdModule"], function () {
-			// ------ ALL parameters -------
-			define("sap/test/MockModule", [], function () {
-				return {};
-			}, /* bExport = */ true);
-
-			define("sap/test/MockModule2", [], function () {
-				return {};
-			});
-
-			// ------ Optional dependencies -------
-			define("sap/test/MockModule3", function () {
-				return {};
-			}, /* bExport = */ true);
-
-			define("sap/test/MockModule4", function () {
-				return {};
-			});
-
-
-			// Waiting for loader queue to be processed
-			setTimeout(function() {
-
-				assert.throws(
-					function() {
-						return sap.test.MockModule;
-					},
-					TypeError,
-					"sap.test.MockModule was not exported"
-				);
-
-				assert.throws(
-					function() {
-						return sap.test.MockModule2;
-					},
-					TypeError,
-					"sap.test.MockModule2 was not exported"
-				);
-
-				assert.throws(
-					function() {
-						return sap.test.MockModule3;
-					},
-					TypeError,
-					"sap.test.MockModule3 was not exported"
-				);
-
-				assert.throws(
-					function() {
-						return sap.test.MockModule4;
-					},
-					TypeError,
-					"sap.test.MockModule4 was not exported"
-				);
-
-				assert.throws(
-					function() {
-						return fixture["error-handling-standard-api"].amdModule;
-					},
-					ReferenceError,
-					"fixture.error-handling-standard-api.amdModule was not exported"
-				);
-
-				done();
-			});
-		}, function(oErr) {
-			assert.strictEqual({}, oErr, "require must not fail");
-		});
-	});
 
 	QUnit.test("amd - require string probing - simple", function(assert) {
 		var oTable = sap.ui.require("sap/m/Table");
@@ -199,5 +123,4 @@
 		new Error("Changing the ui5loader config from async to sync is not supported. Only a change from sync to async is allowed."),
 		"Changing from async to sync leads to an error");
 	});
-
 }());

@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/extend",
-	"sap/base/util/ObjectPath",
 	"sap/ui/VersionInfo",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Supportability",
@@ -20,7 +19,6 @@ sap.ui.define([
 ], function(
 	Log,
 	extend,
-	ObjectPath,
 	VersionInfo,
 	Lib,
 	Supportability,
@@ -354,18 +352,6 @@ sap.ui.define([
 				var sNormalizedLibName = sLibName.replace("." + sCustomSuffix, "").replace(".internal", ""),
 					oRuleLib = this._mRuleLibs[sNormalizedLibName];
 
-				/**
-				 * @deprecated As of 1.120
-				 */
-				if (oLibSupport == null) {
-					oLibSupport = ObjectPath.get(sLibName).library.support;
-					if (oLibSupport) {
-						Log.error(
-							`The ruleset for library '${sLibName}' could only be retrieved via globals.` +
-							`This is deprecated and won't be supported in future releases`);
-					}
-				}
-
 				if (!oLibSupport) {
 					// This case usually happens when the library flag bExport is set to true.
 					throw "The library.support file was not fetched successfully or doesn't export a value.";
@@ -522,4 +508,4 @@ sap.ui.define([
 		}
 
 		return RuleSetLoader;
-	}, true);
+	});

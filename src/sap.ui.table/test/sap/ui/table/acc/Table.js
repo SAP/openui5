@@ -65,7 +65,6 @@ sap.ui.define([
 	// create table with supported sap.m controls
 	const oTable = new Table();
 
-	oTable.setTitle("Tango");
 	oTable.setFooter("Sierra");
 	oTable.setSelectionMode(SelectionMode.MultiToggle);
 
@@ -79,7 +78,7 @@ sap.ui.define([
 	]}));
 
 	// create columns
-	let oControl; let oColumn;
+	let oControl;let oColumn;
 	// sap.m.Text
 	oControl = new Text({text: "{lastName}"});
 	oColumn = new Column({label: new Label({text: "Alfa"}), template: oControl, sortProperty: "lastName", filterProperty: "lastName", width: "120px"});

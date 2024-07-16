@@ -57,7 +57,7 @@ sap.ui.define([
 		var ColorPickerPopover = Control.extend("sap.ui.unified.ColorPickerPopover", /** @lends sap.ui.unified.ColorPickerPopover.prototype */ {
 			metadata: {
 				library: "sap.ui.unified",
-				publicMethods: ["openBy", "close"],
+
 				properties: {
 
 					/**

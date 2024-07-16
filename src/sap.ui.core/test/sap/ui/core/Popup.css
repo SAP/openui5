@@ -1,0 +1,44 @@
+body {
+	margin: 122px 22px !important;
+}
+
+#within {
+	position: absolute;
+	right: 100px;
+	bottom: 200px;
+	width: 50%;
+	height: 70%;
+	pointer-events: none;
+}
+
+#popup {
+  background-color: yellow;
+  width: 300px;
+  height: 100px;
+  position: absolute;
+  left: -560px;
+  top: 270px;
+}
+
+.popupcontent {
+  background-color: red;
+  width: 100px;
+  height: 50px;
+}
+
+.secondpopupcontent {
+  background-color: lightgreen;
+  width: 100px;
+  position: absolute;
+  left: 150px;
+  top: 40px;
+  height: 50px;
+}
+
+:focus {
+  outline: 3px dotted black;
+}
+
+.important {
+	font-weight: bold;
+}

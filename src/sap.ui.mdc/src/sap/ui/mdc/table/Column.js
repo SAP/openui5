@@ -56,6 +56,7 @@ sap.ui.define([
 					group: "Dimension",
 					defaultValue: null
 				},
+
 				/**
 				 * Defines the minimum width of the column. This property only takes effect if the column has a flexible <code>width</code>, for
 				 * example, a percentage value. The user can resize the column to a smaller width if
@@ -73,6 +74,7 @@ sap.ui.define([
 					group: "Behavior",
 					defaultValue: 8
 				},
+
 				/**
 				 * Defines the column header text.
 				 *
@@ -82,6 +84,7 @@ sap.ui.define([
 					type: "string",
 					group: "Appearance"
 				},
+
 				/**
 				 * Defines whether the column header is visible.
 				 *
@@ -92,6 +95,7 @@ sap.ui.define([
 					group: "Appearance",
 					defaultValue: true
 				},
+
 				/**
 				 * Defines the horizontal alignment of the column content.
 				 *
@@ -102,29 +106,7 @@ sap.ui.define([
 					group: "Appearance",
 					defaultValue: "Begin"
 				},
-				/**
-				 * Defines the column importance.
-				 *
-				 * The column importance is taken into consideration for calculating the <code>minScreenWidth</code>
-				 * property and for setting the <code>demandPopin</code> property of the column.
-				 * See {@link sap.m.Table#getAutoPopinMode} for more details, which is automatically set to <code>true</code>.
-				 *
-				 * @deprecated as of version 1.110, replaced with {@link sap.ui.mdc.table.ResponsiveColumnSettings#importance} <br/>
-				 * This property will be ignored whenever the {@link sap.ui.mdc.table.ResponsiveColumnSettings} are applied to the column.
-				 */
-				importance: {
-					type: "sap.ui.core.Priority",
-					group: "Behavior",
-					defaultValue: "None"
-				},
-				/**
-				 * Defines data property related to the column.
-				 * @deprecated Since 1.115. Please use <code>propertyKey</code> instead.
-				 * @since 1.84
-				 */
-				dataProperty: {
-					type: "string"
-				},
+
 				/**
 				 * Defines data property related to the column.
 				 *
@@ -133,6 +115,7 @@ sap.ui.define([
 				propertyKey: {
 					type: "string"
 				},
+
 				/**
 				 * Indicates whether the content of the column is required.
 				 * <b>Note:</b> The table only takes care of announcing the state of the column header as defined by the <code>required</code> property.
@@ -443,7 +426,7 @@ sap.ui.define([
 	//Temporary fallback for compatibility until the dataProperty can be removed
 	Column.prototype.getPropertyKey = function() {
 		const sPropertyKey = this.getProperty("propertyKey");
-		return sPropertyKey || this.getDataProperty();
+		return sPropertyKey || undefined;
 	};
 
 	/**

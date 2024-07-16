@@ -11,7 +11,6 @@ sap.ui.define([
 	'sap/ui/core/Popup',
 	'./MenuItemBase',
 	'./library',
-	"sap/ui/core/Core",
 	'sap/ui/core/library',
 	"sap/ui/core/RenderManager",
 	'sap/ui/unified/MenuRenderer',
@@ -30,7 +29,6 @@ sap.ui.define([
 	Popup,
 	MenuItemBase,
 	library,
-	oCore,
 	coreLibrary,
 	RenderManager,
 	MenuRenderer,
@@ -77,18 +75,11 @@ sap.ui.define([
 			],
 			library : "sap.ui.unified",
 			properties : {
-
 				/**
 				 * When a menu is disabled none of its items can be selected by the user.
 				 * The enabled property of an item {@link sap.ui.unified.MenuItemBase#getEnabled} has no effect when the menu of the item is disabled.
 				 */
 				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-
-				/**
-				 * Accessible label / description of the menu for assistive technologies like screenreaders.
-				 * @deprecated as of version 1.27.0, replaced by <code>ariaLabelledBy</code> association
-				 */
-				ariaDescription : {type : "string", group : "Accessibility", defaultValue : null, deprecated: true},
 
 				/**
 				 * The maximum number of items which are displayed before an overflow mechanism takes effect.
@@ -878,7 +869,7 @@ sap.ui.define([
 		// but we need the focus to remain in the menu
 		if (Device.os.name == "mac" && Device.browser.firefox && this.isOpen()) {
 			var sControlId = oEvent.relatedControlId,
-				oRelatedControl = sControlId ? oCore.byId(sControlId) : null,
+				oRelatedControl = sControlId ? Element.getElementById(sControlId) : null,
 				bMenuItem = oRelatedControl && oRelatedControl instanceof MenuItemBase;
 			if (oRelatedControl && !bMenuItem) {
 				this.getItems()[0].focus();

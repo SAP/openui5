@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/core/Supportability",
 	"sap/ui/thirdparty/URI"
 ], function(require, future, Log, deepClone, VersionInfo, Component, _UrlResolver, Supportability, URI) {
-
 	"use strict";
 	/*global QUnit*/
 
@@ -284,36 +283,10 @@ sap.ui.define([
 	}
 
 	function defineGenericTests() {
-
 		QUnit.test("Metadata API", function(assert) {
 			assert.equal(this.oMetadata.getName(), this.oExpectedMetadata.name, "Name is correct!");
 			assert.equal(this.oMetadata.getMetadataVersion(), 2, "MetadataVersion is correct!");
 			assert.equal(typeof this.oMetadata.loadDesignTime, "function", "loadDesignTime is available!");
-		});
-
-		/**
-		 * @deprecated As of version 1.111 Deprecated APIs are being tested
-		 */
-		QUnit.test("Metadata API (legacy)", function (assert) {
-			assert.equal(this.oMetadata.getVersion(), this.oExpectedMetadata.version, "Version is correct!");
-			assert.deepEqual(this.oMetadata.getIncludes(), this.oExpectedMetadata.includes, "Includes are correct!");
-			assert.deepEqual(this.oMetadata.getDependencies(), this.oExpectedMetadata.dependencies, "Dependencies are correct!");
-			assert.deepEqual(this.oMetadata.getLibs(), this.oExpectedMetadata.dependencies.libs, "Libraries are correct!");
-			assert.deepEqual(this.oMetadata.getComponents(), this.oExpectedMetadata.dependencies.components, "Components are correct!");
-			assert.equal(this.oMetadata.getUI5Version(), this.oExpectedMetadata.dependencies.ui5version, "UI5 version is correct!");
-			assert.deepEqual(this.oMetadata.getConfig(), this.oExpectedMetadata.config, "Config is correct!");
-			this.oMetadata.getConfig()["any1"] = "modified!"; // config should be immutable!
-			assert.deepEqual(this.oMetadata.getConfig("any1"), this.oExpectedMetadata.config.any1, "Config 'any1' is correct!");
-			assert.deepEqual(this.oMetadata.getConfig("any2"), this.oExpectedMetadata.config.any2, "Config 'any2' is correct!");
-			assert.deepEqual(this.oMetadata.getConfig("any3"), this.oExpectedMetadata.config.any3, "Config 'any3' is correct!");
-			assert.strictEqual(this.oMetadata.getConfig("zero"), 0, "Returned a falsy value");
-			assert.deepEqual(this.oMetadata.getConfig("something.that.does.not.exist"), {}, "Config to something that does not exist returns an empty object");
-			assert.deepEqual(this.oMetadata.getModels(), this.oExpectedMetadata.models, "Models are correct!");
-			assert.deepEqual(this.oMetadata.getCustomizing(), this.oExpectedMetadata.customizing, "Customizing is correct!");
-			assert.deepEqual(this.oMetadata.getRootView(), this.oExpectedMetadata.rootView, "RootView is correct!");
-			assert.deepEqual(this.oMetadata.getRoutingConfig(), this.oExpectedMetadata.routing.config, "RoutingConfig is correct!");
-			assert.deepEqual(this.oMetadata.getRoutes(), this.oExpectedMetadata.routing.routes, "Routes are correct!");
-			assert.deepEqual(this.oMetadata.getCustomEntry("custom.entry"), this.oExpectedMetadata["custom.entry"], "CustomEntry are correct!");
 		});
 
 		QUnit.test("ResourceRoots", function(assert) {
@@ -325,30 +298,6 @@ sap.ui.define([
 				"ResourceRoot 'foo.bar' registered (" + getModulePath("foo.bar") + ")");
 
 			// (server-)absolute resource roots are not allowed and therefore won't be registered!
-			/**
-			 * @deprecated
-			 */
-			assert.ok(!new URI("http://absolute/uri")
-				.equals(new URI(getModulePath("absolute"))),
-				"ResourceRoot 'absolute' not registered (" + getModulePath("absolute") + ")");
-			/**
-			 * @deprecated
-			 */
-			assert.ok(!new URI("/server/absolute/uri")
-				.equals(new URI(getModulePath("server.absolute"))),
-				"ResourceRoot 'server.absolute' not registered (" + getModulePath("server.absolute") + ")");
-		});
-
-		/**
-		 * @deprecated
-		 */
-		QUnit.test("Manifest Validation (future=false)", function(assert) {
-			future.active = false;
-			assert.deepEqual(this.oMetadata._getManifest(), this.oExpectedManifest, "Manifest is correct!");
-			assert.strictEqual(this.oMetadata._getManifestEntry("foo.bar"), null, "Manifest entry with string value is not allowed and should return null");
-			assert.strictEqual(this.oMetadata._getManifestEntry("foo"), null, "Manifest entry without a dot is not allowed and should return null");
-			assert.strictEqual(this.oMetadata._getManifestEntry("baz.buz"), undefined, "Not existing manifest entry should return undefined");
-			future.active = undefined;
 		});
 
 		QUnit.test("Manifest Validation (future=true)", function(assert) {
@@ -358,18 +307,6 @@ sap.ui.define([
 			assert.throws(() => this.oMetadata._getManifestEntry("foo"), null, "Manifest entry without a dot is not allowed and should return null");
 			assert.strictEqual(this.oMetadata._getManifestEntry("baz.buz"), undefined, "Not existing manifest entry should return undefined");
 			future.active = undefined;
-		});
-
-		/**
-		 * @deprecated As of version 1.111 Deprecated APIs are being tested
-		 */
-		QUnit.test("Manifest Validation (legacy APIs)", function (assert) {
-			assert.deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
-			assert.deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
-			assert.strictEqual(this.oMetadata.getManifestEntry("foo.bar"), null, "Manifest entry with string value is not allowed and should return null");
-			assert.strictEqual(this.oMetadata.getManifestEntry("foo"), null, "Manifest entry without a dot is not allowed and should return null");
-			assert.strictEqual(this.oMetadata.getManifestEntry("baz.buz"), undefined, "Not existing manifest entry should return undefined");
-
 		});
 	}
 
@@ -627,28 +564,6 @@ sap.ui.define([
 			}
 		});
 
-		/**
-		 * component.json is the deprecated predecessor to the manifest.json
-		 * @deprecated
-		 */
-		QUnit.test("Async loading of manifests with component.json", function(assert) {
-			return fnComponentFactory("./testdata/inherit/manifest.json", "testdata.inherit").then(function(oComponent) {
-				assert.ok(oComponent instanceof Component, "Component has been created.");
-
-				assert.equal(
-					oComponent.getManifest().name,
-					"testdata.inherit.Component",
-					"Check name of the the main component"
-				);
-				assert.equal(
-					oComponent.getMetadata().getParent().getName(),
-					"testdata.inherit.parent.Component",
-					"Check name of the inherited parent component"
-				);
-				oComponent.destroy();
-			});
-		});
-
 		QUnit.test("Async loading of manifests", function(assert) {
 			return fnComponentFactory("./testdata/inheritAsync/manifest.json", "testdata.inheritAsync").then(function(oComponent) {
 				assert.ok(oComponent instanceof Component, "Component has been created.");
@@ -704,37 +619,6 @@ sap.ui.define([
 		});
 	}
 
-
-	/**
-	 * @deprecated Since 1.56, sap.ui.component is deprecated
-	 */
-	runManifestLoadingTests("manifestFirst (legacy API)", function(path, name) {
-		return sap.ui.component({
-			name: name,
-			manifestFirst: true,
-			async: true
-		});
-	});
-
-	/**
-	 * @deprecated Since 1.56, sap.ui.component is deprecated
-	 */
-	runManifestLoadingTests("manifest URL (legacy API)", function(path) {
-		return sap.ui.component({
-			manifest: require.toUrl(path),
-			async: true
-		});
-	});
-
-	/**
-	 * @deprecated Since 1.56, sap.ui.component is deprecated
-	 */
-	runManifestLoadingTests("manifestUrl (legacy API)", function(path) {
-		return sap.ui.component({
-			manifestUrl: require.toUrl(path),
-			async: true
-		});
-	});
 
 	runManifestLoadingTests("manifest first", function(path, name) {
 		return Component.create({
@@ -858,5 +742,4 @@ sap.ui.define([
 			future.active = undefined;
 		});
 	});
-
 });

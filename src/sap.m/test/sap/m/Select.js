@@ -1,6 +1,5 @@
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Item",
@@ -21,9 +20,9 @@ sap.ui.define([
 	"sap/m/Bar",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/ListItem",
-	"sap/m/MessageToast"
+	"sap/m/MessageToast",
+	"sap/base/Log"
 ], function (
-	jQuery,
 	mLibrary,
 	JSONModel,
 	Item,
@@ -44,7 +43,8 @@ sap.ui.define([
 	Bar,
 	IconPool,
 	ListItem,
-	MessageToast
+	MessageToast,
+	Log
 ) {
 	"use strict";
 
@@ -436,7 +436,7 @@ sap.ui.define([
 		},
 
 		change: function (oControlEvent) {
-			jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
 		}
 	});
 
@@ -515,7 +515,7 @@ sap.ui.define([
 		],
 
 		change: function (oControlEvent) {
-			jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
 		}
 	});
 
@@ -569,14 +569,14 @@ sap.ui.define([
 		],
 
 		change: function (oControlEvent) {
-			jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
 		}
 	});
 
 	var oSelect4 = new Select({
 		items: [],
 		change: function (oControlEvent) {
-			jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
 		}
 	});
 
@@ -587,7 +587,7 @@ sap.ui.define([
 		},
 
 		change: function (oControlEvent) {
-			jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
 		}
 	});
 
@@ -616,7 +616,7 @@ sap.ui.define([
 		],
 
 		change: function (oControlEvent) {
-			jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
 		}
 	});
 
@@ -675,7 +675,7 @@ sap.ui.define([
 		],
 
 		change: function (oControlEvent) {
-			jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
 		}
 	});
 
@@ -705,7 +705,7 @@ sap.ui.define([
 		],
 
 		change: function (oControlEvent) {
-			jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
 		}
 	});
 
@@ -722,7 +722,7 @@ sap.ui.define([
 
 		selectedKey: 0,
 		change: function (oControlEvent) {
-			jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
 			oInput4.setValue(oControlEvent.getParameter("selectedItem").getKey());
 			oInput5.setValue(oControlEvent.getParameter("selectedItem").getId());
 		}
@@ -903,7 +903,7 @@ sap.ui.define([
 		],
 
 		change: function (oControlEvent) {
-			jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
 		}
 	});
 
@@ -932,7 +932,7 @@ sap.ui.define([
 		],
 
 		change: function (oControlEvent) {
-			jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
 		}
 	});
 

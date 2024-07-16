@@ -35,4 +35,4 @@ sap.ui.define([
 	DataType.registerEnum("sap.ui.core.date.CalendarWeekNumbering", CalendarWeekNumbering);
 
 	return CalendarWeekNumbering;
-}, /* bExport= */ true);
+});

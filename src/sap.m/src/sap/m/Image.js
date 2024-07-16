@@ -236,13 +236,6 @@ sap.ui.define([
 				ariaDetails: {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDetails"}
 			},
 			events : {
-
-				/**
-				 * Event is fired when the user clicks on the control.
-				 * @deprecated As of version 1.107.0. Use the {@link #event:press press} event instead.
-				 */
-				tap : {},
-
 				/**
 				 * Event is fired when the user clicks on the control.
 				 */
@@ -540,15 +533,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Image.prototype.ontouchstart = function(oEvent) {
-		/**
-		 * @deprecated event
-		 */
-		if (oEvent.srcControl.mEventRegistry["press"] || oEvent.srcControl.mEventRegistry["tap"]) {
-
-			// mark the event for components that needs to know if the event was handled by the Image
-			oEvent.setMarked();
-		}
-
 		if (oEvent.targetTouches.length === 1 && this.getActiveSrc()) {
 			// change the source only when the first finger is on the image, the following fingers doesn't affect
 			this._updateDomSrc(this._getDensityAwareActiveSrc());
@@ -606,10 +590,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Image.prototype.ontap = function(oEvent) {
-		/**
-		 * @deprecated event
-		 */
-		this.fireTap({/* no parameters */}); //	(This event is deprecated, use the press event instead)
 		this.firePress({/* no parameters */});
 	};
 

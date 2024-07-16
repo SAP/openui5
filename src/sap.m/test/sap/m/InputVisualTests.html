@@ -1,21 +1,20 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
+	<head><meta charset="utf-8">
 
 		<title>sap.m.Input - page for Visual tests</title>
 
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-oninit="module:local/InputVisualTests"
-			data-sap-ui-libs="sap.m, sap.ui.layout"
-			data-sap-ui-resourceroots='{"local" : "./"}'>
+				id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.m, sap.ui.layout"
+				data-sap-ui-on-init="module:local/InputVisualTests"
+				data-sap-ui-resource-roots='{"local" : "./"}'
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+		>
 		</script>
-		<style>
-			.customClassForVisualTests {
-				caret-color: transparent;
-			}
-		</style>
+		<link rel="stylesheet" href="./InputVisualTests.css">
 	</head>
 	<body id="body" class="sapUiBody">
 	</body>

@@ -4,9 +4,9 @@ sap.ui.define([
 	"sap/m/FormattedText",
 	"sap/m/Link",
 	"sap/base/Log",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(createAndAppendDiv, FormattedText, Link, Log, oCore, jQuery) {
+], function(createAndAppendDiv, FormattedText, Link, Log, nextUIUpdate, jQuery) {
 	"use strict";
 
 	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);
@@ -23,7 +23,7 @@ sap.ui.define([
 
 	function setText(sHtml) {
 		oFT.setHtmlText(sHtml);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	}
 
 	QUnit.module("Test the basic functions");
@@ -34,7 +34,7 @@ sap.ui.define([
 		assert.strictEqual(oFT.getDomRef().style.width, "100%", "Width of the control is correct");
 		assert.strictEqual(oFT.getDomRef().style.height, "auto", "Height of the control is correct");
 		oFT.setWidth("").setHeight("");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(!oFT.getDomRef().style.width, "The width css is cleared");
 		assert.ok(!oFT.getDomRef().style.height, "The height css is cleared");
 	});
@@ -117,7 +117,7 @@ sap.ui.define([
 			}).placeAt("content"),
 			$FormattedText;
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$FormattedText = oFormattedText.$();
 
@@ -156,7 +156,7 @@ sap.ui.define([
 		// Act
 		this.oFT._setUseLimitedRenderingRules(true);
 		this.oFT.setHtmlText(sHTMLString).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Arrange - get all html elements rendered and evaluate them as jQuery object
 		$Result = jQuery(this.oFT.$().html());
@@ -217,7 +217,7 @@ sap.ui.define([
 			if (aLinks && aLinks[iIndex]) {
 				jQuery("BODY").append('<div id="link-output"></div>');
 				aLinks[iIndex].placeAt("link-output");
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 				sResult = jQuery("#link-output").html();
 				jQuery("#link-output").html("");
 				this.oFT.insertAggregation("controls", this.aLinks[iIndex], iIndex);
@@ -227,7 +227,7 @@ sap.ui.define([
 		getControlOutput: function() {
 			var sOutput = '';
 			this.oFT.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			sOutput = jQuery("#qunit-fixture > div").html();
 			return sOutput;
 		}
@@ -236,14 +236,14 @@ sap.ui.define([
 	QUnit.test("Successful placeholder replacement with one existing link", function (assert) {
 		// Prepare
 		this.oFT.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var aLinkRefs = this.oFT.getControls().map(function(oLink) {
 			return oLink.getDomRef();
 		});
 
 		// Act
 		this.oFT.setHtmlText("My favorite sites are: <ul><li>%%1</li></ul>");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(aLinkRefs[0].style.display, "none", "The first link isn't displayed");
@@ -321,7 +321,7 @@ sap.ui.define([
 			oLinkNode, oListItemNode;
 
 		oFT.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oLinkNode = oFT.getDomRef().querySelector("a");
 		oListItemNode = oFT.getDomRef().querySelector("li");
 
@@ -342,7 +342,7 @@ sap.ui.define([
 		});
 
 		oFT.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oFT.getDomRef().classList.contains("sapMFTOverflowWidth"), "sapMFTOverflowWidth is set");
@@ -359,7 +359,7 @@ sap.ui.define([
 			});
 
 		oFT.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oFT.getDomRef().children[0].title, "Title is present");
@@ -375,7 +375,7 @@ sap.ui.define([
 		});
 
 		oFT.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oFT.getDomRef().classList.contains("sapMFTOverflowHeight"), "sapMFTOverflowHeight is set");
@@ -391,7 +391,7 @@ sap.ui.define([
 		});
 
 		oFT.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oFT.focus();
@@ -416,7 +416,7 @@ sap.ui.define([
 
 		rootElement.addEventListener("click", fnPreventNavigation, true);
 		oFT.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oFT.getDomRef().querySelector("a").dispatchEvent(new MouseEvent("click", {

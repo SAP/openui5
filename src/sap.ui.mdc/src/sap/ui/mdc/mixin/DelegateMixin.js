@@ -154,18 +154,6 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	};
 
 	/**
-	 * Returns the <code>typeUtil</code> made available by a delegate module.
-	 *
-	 * @protected
-	 * @returns {sap.ui.mdc.util.TypeUtil|module:sap/ui/mdc/util/TypeMap} <code>TypeUtil</code> object
-	 * @throws Throws an error if the delegate module is not available
-	 * @deprecated since 1.115.0 - please see {@link #getTypeMap}
-	 */
-	DelegateMixin.getTypeUtil = function() {
-		return this.getTypeMap();
-	};
-
-	/**
 	 * Returns the <code>TypeMap</code> made available by a delegate module.
 	 *
 	 * @returns {module:sap/ui/mdc/util/TypeMap} <code>TypeMap</code> object
@@ -244,9 +232,8 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 		this.isControlDelegateInitialized = DelegateMixin.isControlDelegateInitialized;
 		this.getControlDelegate = DelegateMixin.getControlDelegate;
 		this.getPayload = DelegateMixin.getPayload;
-		this.getTypeUtil = DelegateMixin.getTypeUtil;
+		this.getTypeUtil = undefined;
 		this.getTypeMap = DelegateMixin.getTypeMap;
 		this.initControlDelegate = DelegateMixin.initControlDelegate;
 	};
-
 });

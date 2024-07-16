@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ObjectIdentifier",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/IconPool",
 	"sap/ui/base/ManagedObject",
@@ -19,14 +20,14 @@ sap.ui.define([
 	"sap/m/ObjectIdentifierRenderer",
 	"sap/m/Panel",
 	"sap/m/library",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/events/KeyCodes"
 ], function(
 	Element,
 	Library,
 	qutils,
 	createAndAppendDiv,
 	ObjectIdentifier,
+	nextUIUpdate,
 	jQuery,
 	IconPool,
 	ManagedObject,
@@ -41,8 +42,7 @@ sap.ui.define([
 	ObjectIdentifierRenderer,
 	Panel,
 	mobileLibrary,
-	KeyCodes,
-	oCore
+	KeyCodes
 ) {
 	"use strict";
 
@@ -75,7 +75,7 @@ sap.ui.define([
 
 		//Act
 		sut.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.ok(sut.getDomRef(), "ObjectIdentifier should be rendered.");
@@ -89,36 +89,6 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	/**
-	 * @deprecated as of version 1.24.0
-	 */
-	QUnit.test("Render (Deprecated Properties)", function(assert) {
-
-		//SUT
-		var sTitle = "My Title";
-		var sText = "My Text";
-		var sut = new ObjectIdentifier({
-			title : sTitle,
-			text : sText,
-			badgeNotes : true,
-			badgePeople : true,
-			badgeAttachments : true,
-			visible : true
-		});
-
-		//Act
-		sut.placeAt("content");
-		oCore.applyChanges();
-
-		//Assert
-		assert.ok(sut.getDomRef("attachments-icon"), "Attachments icon is rendered.");
-		assert.ok(sut.getDomRef("notes-icon"), "Notes icon is rendered.");
-		assert.ok(sut.getDomRef("people-icon"), "People icon is rendered.");
-
-		//Cleanup
-		sut.destroy();
-	});
-
 	QUnit.test("NotVisible", function(assert) {
 		//SUT
 		var sut = new ObjectIdentifier("NotVisible");
@@ -126,7 +96,7 @@ sap.ui.define([
 
 		//Act
 		sut.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.equal(jQuery("#NotVisible").get(0), undefined, "ObjectIdentifier is not being rendered.");
@@ -134,42 +104,6 @@ sap.ui.define([
 		//Cleanup
 		sut.destroy();
 
-	});
-
-	/**
-	 * @deprecated as of version 1.24.0
-	 */
-	QUnit.test("Destroy (Deprecated Parts)", function(assert) {
-
-		//SUT
-		var sTitle = "My Title";
-		var sText = "My Text";
-		var sut = new ObjectIdentifier({
-			title : sTitle,
-			text : sText,
-			badgeNotes : true,
-			badgePeople : true,
-			badgeAttachments : true
-		});
-
-		//Act
-		sut.placeAt("content");
-		oCore.applyChanges();
-
-		//Assert
-		assert.ok(sut.getDomRef("attachments-icon"), "Attachments icon is rendered.");
-		assert.ok(sut.getDomRef("notes-icon"), "Notes icon is rendered.");
-		assert.ok(sut.getDomRef("people-icon"), "People icon is rendered.");
-
-		sut.destroy();
-
-		var sDestroyed = " should be destroyed";
-		assert.ok(!Element.getElementById(sut.getId() + "-attachments-icon"), "Attachments icon" + sDestroyed);
-		assert.ok(!Element.getElementById(sut.getId() + "-notes-icon"), "Notes icon" + sDestroyed);
-		assert.ok(!Element.getElementById(sut.getId() + "-people-icon"), "People icon" + sDestroyed);
-
-		//Cleanup
-		sut.destroy();
 	});
 
 	/***********************************************************************************************************************/
@@ -206,11 +140,11 @@ sap.ui.define([
 
 		// System under Test
 		var oObjectIdentifier = new ObjectIdentifier(oConstructor).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oResult = oObjectIdentifier.setTitle(sTextToSet);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
@@ -227,11 +161,11 @@ sap.ui.define([
 
 		// System under Test
 		var oObjectIdentifier = new ObjectIdentifier().placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oObjectIdentifier.setTitleControl(oControlToSet);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oObjectIdentifier.getTitleControl(), oControlToSet, "sap.m.Link is set as control");
@@ -276,11 +210,11 @@ sap.ui.define([
 
 		// System under Test
 		var oObjectIdentifier = new ObjectIdentifier(oConstructor).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oResult = oObjectIdentifier.setText(sTextToSet);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
@@ -299,7 +233,7 @@ sap.ui.define([
 
 		//System under test
 		oObjectIdentifier.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oObjectIdentifier.$("title").children().length, 0, "The title does not exist");
@@ -317,7 +251,7 @@ sap.ui.define([
 
 		//System under test
 		oObjectIdentifier.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oObjectIdentifier.setTitleActive(true);
@@ -342,7 +276,7 @@ sap.ui.define([
 
 		//System under test
 		oObjectIdentifier.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.equal(oObjectIdentifier.$("text").children().length, 0, "The text control does not exist");
@@ -361,7 +295,7 @@ sap.ui.define([
 
 		//System under test
 		oObjectIdentifier.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
@@ -404,7 +338,7 @@ sap.ui.define([
 			titleActive: true
 		});
 		oObjectIdentifier.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.equal(oObjectIdentifier.getTitleActive(), true, "The ObjectIdentifier's title should be active");
@@ -425,7 +359,7 @@ sap.ui.define([
 
 		});
 		oObjectIdentifier.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		var sTextDir = oObjectIdentifier.getAggregation("_textControl").getTextDirection();
@@ -445,7 +379,7 @@ sap.ui.define([
 
 		});
 		oObjectIdentifier.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		var sTextDir = oObjectIdentifier.getAggregation("_textControl").getTextDirection();
@@ -468,7 +402,7 @@ sap.ui.define([
 			});
 
 			oObjectIdentifier.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 				// act
 			var fnFireSelectSpy = this.spy(oObjectIdentifier, "fireTitlePress");
@@ -510,7 +444,7 @@ sap.ui.define([
 
 		oObjectIdentifier1.placeAt("qunit-fixture");
 		oObjectIdentifier2.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var fnFireSelectSpy1 = this.spy(oObjectIdentifier1, "fireTitlePress");
@@ -535,11 +469,11 @@ sap.ui.define([
 
 		// arrange
 		var oObjectIdentifier = new ObjectIdentifier({ text: "not empty text"}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oObjectIdentifier.setTitle("not empty title");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.equal(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), true, "Should have separator class");
@@ -552,11 +486,11 @@ sap.ui.define([
 
 		// arrange
 		var oObjectIdentifier = new ObjectIdentifier({ title: "not empty title"}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oObjectIdentifier.setText("not empty text");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.equal(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), true, "Should have separator class");
@@ -570,11 +504,11 @@ sap.ui.define([
 		// arrange
 		var oObjectIdentifier = new ObjectIdentifier({ title : "not empty title",
 															  text: "not empty text"}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oObjectIdentifier.setTitle("");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.equal(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have separator class");
@@ -588,11 +522,11 @@ sap.ui.define([
 		// arrange
 		var oObjectIdentifier = new ObjectIdentifier({ title : "not empty title",
 															  text: "not empty text"}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oObjectIdentifier.setText("");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.equal(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have separator class");
@@ -606,7 +540,7 @@ sap.ui.define([
 		// arrange
 		var oObjectIdentifier = new ObjectIdentifier({ title : "not empty title",
 															  text: "not empty text"}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), "Should have separator class");
@@ -619,7 +553,7 @@ sap.ui.define([
 
 		// System under Test
 		var oObjectIdentifier = new ObjectIdentifier({ text: "not empty text"}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.equal(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have no separator class");
@@ -632,7 +566,7 @@ sap.ui.define([
 
 		// System under Test
 		var oObjectIdentifier = new ObjectIdentifier({ title: "not empty title"}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.equal(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have no separator class");
@@ -647,49 +581,24 @@ sap.ui.define([
 			text: "test text"
 		});
 		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.equal(sut.$().find(".sapMObjectIdentifierTopRow").css("display"), "none", "top row is hidden");
 
 		//Act
 		sut.setTitle('test title');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.ok(sut.$().find(".sapMObjectIdentifierTopRow").is(":visible"), "top row is visible");
 
 		//Act
 		sut.setTitle('');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.equal(sut.$().find(".sapMObjectIdentifierTopRow").css("display"), "none", "top row is hidden");
-
-		//Cleanup
-		sut.destroy();
-	});
-
-	/**
-	 * @deprecated as of version 1.24.0
-	 */
-	QUnit.test("Should not display top row when there aren't badges (assuming there's also no title)", function(assert) {
-		//Arrange
-		var sut = new ObjectIdentifier({
-			text: "test text"
-		});
-		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
-
-		//Assert
-		assert.equal(sut.$().find(".sapMObjectIdentifierTopRow").css("display"), "none", "top row is hidden");
-
-		//Act
-		sut.setBadgeNotes(true);
-		oCore.applyChanges();
-
-		//Assert
-		assert.ok(sut.$().find(".sapMObjectIdentifierTopRow").is(":visible"), "top row is visible");
 
 		//Cleanup
 		sut.destroy();
@@ -714,7 +623,7 @@ sap.ui.define([
 		//System under test
 		oObjectIdentifier.setModel(oModel);
 		oObjectIdentifier.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.ok(oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should be active");
@@ -744,7 +653,7 @@ sap.ui.define([
 		//System under test
 		oObjectIdentifier.setModel(oModel);
 		oObjectIdentifier.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.ok(!oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should not be active");
@@ -778,7 +687,7 @@ sap.ui.define([
 		//System under test
 		oObjectIdentifier.setModel(oModel);
 		oObjectIdentifier.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.ok(oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should be active");
@@ -812,7 +721,7 @@ sap.ui.define([
 		//System under test
 		oObjectIdentifier.setModel(oModel);
 		oObjectIdentifier.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.ok(!oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should not be active");
@@ -865,7 +774,7 @@ sap.ui.define([
 		//System under test
 		oTable.setModel(oModel);
 		oTable.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		var oColumn = oTable.getColumns()[0];
@@ -883,7 +792,7 @@ sap.ui.define([
 			path:'/items',
 			template: oItemTemplate
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.equal(oTable.getColumns().length, 1, "The table has just one column");
@@ -931,7 +840,7 @@ sap.ui.define([
 		oTable.placeAt("qunit-fixture");
 
 		//Act
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.equal(oRenderSpy.callCount, 1, "The ObjectIdentifierRenderer.render does no invalidate the control");
@@ -965,10 +874,10 @@ sap.ui.define([
 		//Act
 		sut.placeAt("content");
 		sut2.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		sut.addAssociation("ariaLabelledBy", sLabelId);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.ok(sut.$("title").children(0).attr("aria-labelledby").indexOf(sLabelId) !== -1, "Correct ariaLabeldBy is set on after rendering of the control");
@@ -995,11 +904,11 @@ sap.ui.define([
 
 		oLabel.placeAt("qunit-fixture");
 		oOI.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oOI.setTitleActive(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oOI.getDomRef().querySelector(".sapMLnk").getAttribute("aria-labelledby").indexOf(sLabelId) !== -1, "Correct ariaLabeldBy is set on after rendering of the control");
@@ -1055,7 +964,7 @@ sap.ui.define([
 
 		oLabel.placeAt("qunit-fixture");
 		oObjectIdentifier.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		oInternalLink = oObjectIdentifier.getAggregation("_titleControl");
@@ -1098,7 +1007,7 @@ sap.ui.define([
 			this.oText.placeAt("content");
 			this.oPanel.placeAt("content");
 			this.oPanel1.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function() {
 			this.oText.destroy();
@@ -1119,7 +1028,7 @@ sap.ui.define([
 	QUnit.test("Indicator should not be rendered when text is not empty", function(assert) {
 		//Arrange
 		this.oText.setText("test");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(this.oText.getDomRef().childNodes[1].textContent, "test", "Empty indicator is not rendered");
@@ -1128,7 +1037,7 @@ sap.ui.define([
 	QUnit.test("Indicator should not be rendered when property is set to off", function(assert) {
 		//Arrange
 		this.oText.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(this.oText.getDomRef().childNodes[1].textContent, "", "Empty indicator is not rendered");
@@ -1145,7 +1054,7 @@ sap.ui.define([
 	QUnit.test("Indicator should not be rendered when text is available", function(assert) {
 		//Arrange
 		this.oTextEmptyAuto.setText("test");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(this.oTextEmptyAuto.getDomRef().childNodes[1].textContent, "test", "Empty indicator is not rendered");
@@ -1157,7 +1066,7 @@ sap.ui.define([
 		assert.strictEqual(window.getComputedStyle(oSpan)["display"], "none", "Empty indicator is not rendered");
 		//Arrange
 		this.oPanel1.addStyleClass("sapMShowEmpty-CTX");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(window.getComputedStyle(oSpan)["display"], "inline-block", "Empty indicator is rendered");
@@ -1167,7 +1076,7 @@ sap.ui.define([
 		//Arrange
 		this.oText.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
 		this.oText.setText("test");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(this.oText.getDomRef().childNodes[1].textContent, "test", "Empty indicator is not rendered");

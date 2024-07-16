@@ -9,8 +9,8 @@ sap.ui.define([
 	"sap/m/SuggestionsList",
 	"sap/ui/Device",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	// provides jQuery.fn.cursorPos
 	"sap/ui/dom/jquery/cursorPos"
@@ -23,8 +23,8 @@ sap.ui.define([
 	SuggestionsList,
 	Device,
 	InvisibleText,
-	Core,
 	KeyCodes,
+	nextUIUpdate,
 	jQuery
 ) {
 	"use strict";
@@ -64,7 +64,7 @@ sap.ui.define([
 
 		// arrange
 		oSF.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oSF.getSuggestionItems().length, aItems.length, "The number of suggestion items is correct");
@@ -336,7 +336,7 @@ sap.ui.define([
 				enableSuggestions: true
 			});
 			this.oSF.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oSF.destroy();

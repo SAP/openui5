@@ -20,8 +20,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/events/KeyCodes"
 ], function(
 	UI5Element,
 	Library,
@@ -43,8 +42,7 @@ sap.ui.define([
 	mobileLibrary,
 	jQuery,
 	Device,
-	KeyCodes,
-	oCore
+	KeyCodes
 ) {
 	"use strict";
 
@@ -358,7 +356,7 @@ sap.ui.define([
 		assert.ok(oTableSelectDialog1._oTable.getAriaLabelledBy()[0], 'Table has aria-labelledby value');
 		oTableSelectDialog1.setMultiSelect(true);
 		oTableSelectDialog1.setShowClearButton(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(oTableSelectDialog1.getMultiSelect(), true, 'Multi Select should now be updated to  "true"');
 		assert.strictEqual(oTableSelectDialog1.getShowClearButton(), true, 'ShowClearButton should now be updated to  "true"');
 
@@ -368,7 +366,7 @@ sap.ui.define([
 		var iDelay = 50;
 		oTableSelectDialog.setBusyIndicatorDelay(iDelay);
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(oTableSelectDialog._oTable.getBusyIndicatorDelay(), iDelay, 'The delay value should be ' + iDelay);
 		assert.strictEqual(oTableSelectDialog._oDialog.getBusyIndicatorDelay(), iDelay, 'The delay value of dialog should be ' + iDelay);
 		assert.strictEqual(oTableSelectDialog.getBusyIndicatorDelay(), iDelay, 'The delay value should be ' + iDelay);
@@ -378,7 +376,7 @@ sap.ui.define([
 		var sPlaceholderText = "Test placeholder";
 		oTableSelectDialog.setSearchPlaceholder(sPlaceholderText);
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(oTableSelectDialog._oSearchField.getPlaceholder(), sPlaceholderText, "The SearchField's placeholder text should be " + sPlaceholderText);
 	});
 
@@ -389,7 +387,7 @@ sap.ui.define([
 		oTableSelectDialog.setBusy(true);
 
 		this.clock.tick(50);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(oTableSelectDialog.getBusy(), true, 'The Dialog should be in busy state');
 
 		this.clock.tick(1000);
@@ -400,7 +398,7 @@ sap.ui.define([
 	QUnit.test("setBusy should disable the SearchField", function(assert) {
 		oTableSelectDialog.open();
 		oTableSelectDialog.setBusy(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var searchFieldEnabled = oTableSelectDialog._oSearchField.getEnabled();
 		assert.strictEqual(searchFieldEnabled, false, 'The SearchField should be disabled');
@@ -711,7 +709,7 @@ sap.ui.define([
 	QUnit.test("TableSelectDialog1 SearchField Set Value 'Mo'", function(assert){
 		var done = assert.async();
 		assert.expect(0);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var searchField = UI5Element.getElementById("oTableSelectDialog1-searchField");
 		searchField.setValue("Mo");
 		done();
@@ -811,7 +809,7 @@ sap.ui.define([
 
 	QUnit.test("TableSelectDialog1 Change to Single Select", function(assert) {
 		oTableSelectDialog1.setMultiSelect(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(oTableSelectDialog1.getMultiSelect(), false, 'Multi Select should now be updated to  "false"');
 	});
 
@@ -1095,7 +1093,7 @@ sap.ui.define([
 		searchField.setValue('m');
 		searchField.fireLiveChange({newValue: "m"});
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		var oTable = UI5Element.getElementById("oTableSelectDialog1-table");
@@ -1105,14 +1103,14 @@ sap.ui.define([
 		oTableSelectDialog1._fireConfirmAndUpdateSelection();
 		oTableSelectDialog1._oDialog.close();
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		oTableSelectDialog1.open();
 		searchField.fireLiveChange({newValue: ""});
 		searchField.fireLiveChange({newValue: "m"});
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		assert.equal(oTable.getItems().length, 3, 'filtered items are ok');
@@ -1203,7 +1201,7 @@ sap.ui.define([
 	QUnit.test("Initial loading with selected items from previous selection", function(assert) {
 		this.oTableSelectDialogClearButton.open();
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.oTableSelectDialogClearButton._getClearButton().getEnabled(), true, 'Clear button should be enabled');
 	});
@@ -1211,7 +1209,7 @@ sap.ui.define([
 	QUnit.test("Initial loading without selected items from previous selection", function(assert) {
 		this.oTableSelectDialogClearButton1.open();
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.oTableSelectDialogClearButton1._getClearButton().getEnabled(), false, 'Clear button should be disabled');
 	});
@@ -1220,7 +1218,7 @@ sap.ui.define([
 	QUnit.test("Removing selection should disable button", function(assert) {
 		this.oTableSelectDialogClearButton.open();
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.oTableSelectDialogClearButton._getClearButton().getEnabled(), true, 'Clear button should be enabled');
 
@@ -1233,7 +1231,7 @@ sap.ui.define([
 	QUnit.test("Adding selection should enable button", function(assert) {
 		this.oTableSelectDialogClearButton1.open();
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.oTableSelectDialogClearButton1._getClearButton().getEnabled(), false, 'Clear button should be disabled');
 
@@ -1246,7 +1244,7 @@ sap.ui.define([
 	QUnit.test("Clicking on enabled 'Clear' button should clear selection", function(assert) {
 		this.oTableSelectDialogClearButton.open();
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.oTableSelectDialogClearButton._getClearButton().getEnabled(), true, 'Clear button should be enabled');
 
@@ -1260,7 +1258,7 @@ sap.ui.define([
 	QUnit.test("Title of dialog should be also set", function(assert) {
 		this.oTableSelectDialogClearButton.open();
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.oTableSelectDialogClearButton.getTitle(), "Title", 'Title of TableSelectDialog should be "Title"');
 		assert.equal(this.oTableSelectDialogClearButton._oDialog.getTitle(), "Title", 'Title of Dialog  should be "Title"');
@@ -1269,7 +1267,7 @@ sap.ui.define([
 
 	QUnit.test("After clear is preset the focus should be returned to the search field", function(assert) {
 		this.oTableSelectDialogClearButton.open();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oTableSelectDialogClearButton._getClearButton().firePress();
 		assert.equal(document.activeElement.getAttribute("id"), this.oTableSelectDialogClearButton._oDialog.getId(), 'After selection is clear the focus should be returned to the TableSelectDialog"');
@@ -1278,7 +1276,7 @@ sap.ui.define([
 
 	QUnit.test("After clear is preset the focus should be returned to the search field", function(assert) {
 		this.oTableSelectDialogClearButton.open();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oTableSelectDialogClearButton._getClearButton().firePress();
 		assert.equal(document.activeElement.getAttribute("id"), this.oTableSelectDialogClearButton._oDialog.getId(), 'After selection is clear the focus should be returned to the TableSelectDialog"');
@@ -1287,18 +1285,18 @@ sap.ui.define([
 
 	QUnit.test("Disable already enabled clear button and then enable it again", function(assert) {
 		this.oTableSelectDialogClearButton.open();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oCustomHeader = this.oTableSelectDialogClearButton._oDialog.getCustomHeader();
 
 		this.oTableSelectDialogClearButton.setShowClearButton(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oCustomHeader.getContentRight()[0].getVisible(), false, 'Clear button is not visible');
 		assert.notOk(oCustomHeader.getContentRight()[0].getDomRef(), 'Clear button is not in dom');
 
 		this.oTableSelectDialogClearButton.setShowClearButton(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oCustomHeader.getContentRight()[0].getVisible(), true, 'Clear button is not visible');
 		assert.ok(oCustomHeader.getContentRight()[0].getDomRef(), 'Clear button is in dom');
@@ -1307,18 +1305,18 @@ sap.ui.define([
 
 	QUnit.test("Disable already enabled clear button and then enabled", function(assert) {
 		this.oTableSelectDialogShowClearNot.open();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oCustomHeader = this.oTableSelectDialogShowClearNot._oDialog.getCustomHeader();
 		assert.equal(oCustomHeader.getContentRight().length,  0, 'Clear button is not created');
 
 		this.oTableSelectDialogClearButton.setShowClearButton(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oCustomHeader.getContentRight().length,  0, 'Clear button is not created');
 
 		this.oTableSelectDialogShowClearNot.setShowClearButton(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oCustomHeader.getContentRight()[0].getVisible(), true, 'Clear button is not visible');
 		assert.ok(oCustomHeader.getContentRight()[0].getDomRef(), 'Clear button is in dom');
@@ -1336,11 +1334,11 @@ sap.ui.define([
 
 		// act
 		oTableSelectDialog.open("somevalue");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(oTableSelectDialog._oSearchField.getDomRef().id, KeyCodes.ESCAPE);
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oTableSelectDialog._oDialog.close();
 		oTableSelectDialog.destroy();
 	});

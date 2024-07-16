@@ -1,111 +1,23 @@
 <!DOCTYPE HTML>
 <html>
 
-<head>
+<head><meta charset="utf-8">
 
 	<title>Access Keys enablement demo page</title>
 
 	<script src="shared-config.js"></script>
-	<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m,sap.ui.layout">
+	<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m,sap.ui.layout"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:local/AccessKeys"
+			data-sap-ui-resource-roots='{"local":"./"}'
+	>
 
 	</script>
 
-	<script>
-		const label = new sap.m.Label({ text: "Random Label" });
-
-		new sap.ui.layout.VerticalLayout({
-			content: [
-				new sap.m.Button({
-					text: "Replace Device",
-					press: function () {
-						new sap.m.Dialog({
-							content: [
-								new sap.m.Button({
-									text: "Demo button starting with D",
-									press: function () {
-										new sap.m.Dialog({
-											content: [
-												new sap.m.Button({
-													text: "Inner button"
-												}),
-											]
-										}).open();
-									}
-								}),
-								new sap.m.Button({
-									text: "Remove Device"
-								}),
-								new sap.m.Button({
-									text: "Add Device"
-								}),
-								new sap.m.Button({
-									text: "Replace Order"
-								}),
-							]
-						}).open();
-					}
-				}),
-				new sap.m.Button({
-					text: "Demo button starting with D"
-				}),
-				new sap.m.Button({
-					text: "Remove Device"
-				}),
-				new sap.m.Button({
-					text: "Add Device"
-				}),
-				new sap.m.Button({
-					text: "Place Order"
-				}),
-				new sap.m.Button({
-					text: "Run Tests"
-				}),
-				new sap.m.Link({
-					text: "Close Page (not labeled)"
-				}),
-				label,
-				new sap.m.Link({
-					text: "I AM LABELED LINK",
-					ariaLabelledBy: label
-				}),
-				new sap.ui.layout.form.Form({
-					editable: true,
-					layout: new sap.ui.layout.form.FormLayout("L1"),
-					formContainers: [
-
-						new sap.ui.layout.form.FormContainer("C3", {
-							tooltip: "This container is expandable",
-							expandable: true,
-							formElements: [
-								new sap.ui.layout.form.FormElement({
-									fields: [new sap.m.CheckBox({ text: 'high school' })]
-								}),
-								new sap.ui.layout.form.FormElement({
-									fields: [new sap.m.CheckBox({ text: 'college' })]
-								}),
-								new sap.ui.layout.form.FormElement({
-									fields: [new sap.m.CheckBox({ text: 'university' })]
-								}),
-								new sap.ui.layout.form.FormElement({
-									fields: [new sap.m.Label({ text: "Order: ", labelFor: "input1" }), new sap.m.Input("input1")]
-								})
-							],
-							layoutData: new sap.ui.core.VariantLayoutData({
-								multipleLayoutData: [new sap.ui.layout.form.GridContainerData({ halfGrid: true })]
-							})
-						}),
-					]
-				})
-			]
-		}).placeAt("content");
 	
-
-		['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'].forEach(function(sLetter) {
-			new sap.m.Button({
-				text: sLetter
-			}).placeAt("content");
-		});
-	</script>
 
 </head>
 

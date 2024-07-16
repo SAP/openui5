@@ -28,4 +28,4 @@ sap.ui.define([
 		"addFormField" : AddFormField
 
 	};
-}, /* bExport= */true);
+});

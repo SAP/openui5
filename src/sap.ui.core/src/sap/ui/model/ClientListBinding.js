@@ -70,11 +70,7 @@ sap.ui.define([
 			this.update();
 		},
 
-		metadata : {
-			publicMethods : [
-				"getLength"
-			]
-		}
+		metadata : {}
 
 	});
 
@@ -289,8 +285,6 @@ sap.ui.define([
 		this.bIgnoreSuspend = true;
 
 		this._fireChange({reason: ChangeReason.Sort});
-		/** @deprecated As of version 1.11.0 */
-		this._fireSort({sorter: aSorters});
 		this.bIgnoreSuspend = false;
 
 		return this;
@@ -368,12 +362,6 @@ sap.ui.define([
 		this.bIgnoreSuspend = true;
 
 		this._fireChange({reason: ChangeReason.Filter});
-		/** @deprecated As of version 1.11.0 */
-		if (sFilterType == FilterType.Application) {
-			this._fireFilter({filters: this.aApplicationFilters});
-		} else {
-			this._fireFilter({filters: this.aFilters});
-		}
 		this.bIgnoreSuspend = false;
 
 		return this;

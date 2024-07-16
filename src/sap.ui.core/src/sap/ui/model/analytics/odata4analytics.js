@@ -28,7 +28,8 @@ sap.ui.define([
 	 * access object attributes directly.
 	 *
 	 * @author SAP SE
-	 * @experimental This module is only for experimental use!
+	 * @deprecated As of version 2.0, will be replaced by OData V4 data aggregation, see
+	 *   {@link topic:7d914317c0b64c23824bf932cc8a4ae1 Extension for Data Aggregation}
 	 * @namespace
 	 * @alias sap.ui.model.analytics.odata4analytics
 	 * @protected
@@ -170,24 +171,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Create a reference to an OData model by the URI of the related OData service.
-	 *
-	 * @param {string}
-	 *            sURI holding the URI.
-	 *
-	 * @class Handle to an OData model by the URI pointing to it.
-	 * @name sap.ui.model.analytics.odata4analytics.Model.ReferenceByURI
-	 * @deprecated Since 1.94 use
-	 *   {@link sap.ui.model.analytics.odata4analytics.Model.ReferenceByModel} instead
-	 * @public
-	 */
-	odata4analytics.Model.ReferenceByURI = function(sURI) {
-		return {
-			sServiceURI : sURI
-		};
-	};
-
-	/**
 	 * Create a reference to an OData model already loaded elsewhere with the help
 	 * of SAPUI5.
 	 *
@@ -247,8 +230,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_init : function(oModelReference, mParameter) {
-			var ODataModelClass,
-				that = this;
+			var that = this;
 
 			if (typeof mParameter == "string") {
 				throw "Deprecated second argument: Adjust your invocation by passing an object with a property sAnnotationJSONDoc as a second argument instead";
@@ -277,22 +259,6 @@ sap.ui.define([
 			if (oModelReference.oModel) {
 				this._oModel = oModelReference.oModel;
 				checkForMetadata();
-			}
-			/** @deprecated As of version 1.94.0 */
-			if (oModelReference.sServiceURI) {
-				if (mParameter && mParameter.modelVersion === 2) {
-					// Check if the user wants a V2 model
-					ODataModelClass = sap.ui.require("sap/ui/model/odata/v2/ODataModel") ||
-						sap.ui.requireSync("sap/ui/model/odata/v2/ODataModel"); // legacy-relevant: fallback for missing dependency
-					this._oModel = new ODataModelClass(oModelReference.sServiceURI);
-					checkForMetadata();
-				} else {
-					//default is V1 Model
-					ODataModelClass = sap.ui.require("sap/ui/model/odata/ODataModel") ||
-						sap.ui.requireSync("sap/ui/model/odata/ODataModel"); // legacy-relevant: fallback for missing dependency
-					this._oModel = new ODataModelClass(oModelReference.sServiceURI);
-					checkForMetadata();
-				}
 			}
 
 			if (this._oModel.getServiceMetadata()
@@ -337,7 +303,6 @@ sap.ui.define([
 
 				that._interpreteMetadata(that._oModel.getServiceMetadata().dataServices);
 			}
-
 		},
 
 		/**
@@ -5716,5 +5681,4 @@ sap.ui.define([
 	 */
 
 	return odata4analytics;
-
-}, /* bExport= */ true);
+});

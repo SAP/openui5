@@ -1,0 +1,19 @@
+.sapMLabel.specialLabelDialogPage {
+	display: block;
+	margin: 0.5em 0 0 0;
+}
+
+#p1 {
+	width: 500px;
+}
+
+#within {
+	position: absolute;
+	width: 60%;
+	height: 60%;
+	background-color: rgb(245, 219, 187);
+	border: 2px solid red;
+	z-index: 1;
+	left: 1rem;
+	bottom: 1rem;
+}

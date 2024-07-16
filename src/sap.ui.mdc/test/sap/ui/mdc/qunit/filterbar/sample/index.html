@@ -8,35 +8,17 @@
 
 	<script src="../../../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-			type="text/javascript"
 			data-sap-ui-async="true"
 			data-sap-ui-libs="sap.ui.mdc, sap.m, sap.ui.fl"
-			data-sap-ui-theme="sap_horizon"
-			data-sap-ui-flexibilityServices='[{"connector": "SessionStorageConnector"}]'
-			data-sap-ui-compatVersion="edge"
-        	data-sap-ui-resourceroots='{
-				"sap/ui/mdc/qunit/filterbar/sample": "./",
-				"delegates": "../../../delegates"
-			}'
-			src="../../../../../../../resources/sap-ui-core.js">
+			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-flexibility-services='[{"connector": "SessionStorageConnector"}]'
+			data-sap-ui-resource-roots='{"sap/ui/mdc/qunit/filterbar/sample":"./","delegates":"../../../delegates","local":"./"}'
+			data-sap-ui-on-init="module:local/index"
+	>
 	</script>
 
-	<script>
-
-		sap.ui.require(["sap/ui/core/Component", "sap/ui/core/ComponentContainer"], function(Component, ComponentContainer) {
-			return Component.create({
-				name: "sap.ui.mdc.filterbar.sample",
-				url: "./",
-				id: "Comp1"
-			}).then(function(oComponent){
-				var oCompCont = new ComponentContainer("CompCont1", {
-					component: oComponent
-				});
-				oCompCont.placeAt("target1");
-			})
-		})
-
-	</script>
+	
 
 </head>
 

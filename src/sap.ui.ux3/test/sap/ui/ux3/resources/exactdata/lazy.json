@@ -1,7 +1,0 @@
-{"atts":[
-	{"name":"Country","selected":true,"atts":[
-		{"name":"Germany","selected":false,"subVals":true,"followup":"germany"},
-		{"name":"USA","selected":false,"subVals":true,"followup":"usa"},
-		{"name":"Spain","selected":false,"subVals":false}
-	]}
-]}

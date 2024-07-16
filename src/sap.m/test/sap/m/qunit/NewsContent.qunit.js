@@ -205,7 +205,7 @@ sap.ui.define([
 
 	function hasAttribute(sAttribute, oCurrentObject) {
 		var sAttributeValue = oCurrentObject.$().attr(sAttribute);
-		if (typeof sAttributeValue !== typeof undefined && sAttributeValue !== false) {
+		if (typeof sAttributeValue !== "undefined" && sAttributeValue !== false) {
 			return true;
 		} else {
 			return false;

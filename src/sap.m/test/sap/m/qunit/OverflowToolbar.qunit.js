@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/m/ComboBox",
 	"sap/m/library",
 	"sap/ui/core/library",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Select",
@@ -40,8 +41,7 @@ sap.ui.define([
 	"sap/m/FlexItemData",
 	"sap/m/Title",
 	"sap/m/SegmentedButton",
-	"sap/m/SegmentedButtonItem",
-	"sap/ui/core/Core"
+	"sap/m/SegmentedButtonItem"
 ], function(
 	Library,
 	DomUnitsRem,
@@ -56,6 +56,7 @@ sap.ui.define([
 	ComboBox,
 	mobileLibrary,
 	coreLibrary,
+	nextUIUpdate,
 	jQuery,
 	JSONModel,
 	Select,
@@ -81,8 +82,7 @@ sap.ui.define([
 	FlexItemData,
 	Title,
 	SegmentedButton,
-	SegmentedButtonItem,
-	oCore
+	SegmentedButtonItem
 ) {
 	"use strict";
 
@@ -145,7 +145,7 @@ sap.ui.define([
 		oOverflowTB.placeAt("qunit-fixture");
 
 		if (!bSkipAplyChanges) {
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		}
 
 		return oOverflowTB;
@@ -227,7 +227,7 @@ sap.ui.define([
 
 		// Resize the toolbar
 		oOverflowTB.setWidth('400px');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// After the resize there should be less buttons visible on the toolbar
 		iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
@@ -254,7 +254,7 @@ sap.ui.define([
 
 		// Restore the toolbar to the original size
 		oOverflowTB.setWidth('600px');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// There should be no overflow button, no overflow area, all buttons visible again
 		assert.strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after restoring to full size");
@@ -290,7 +290,7 @@ sap.ui.define([
 
 		// Resize the toolbar
 		oOverflowTB.setWidth('400px');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// After the resize there should be less buttons visible on the toolbar
 		iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.MyButton");
@@ -323,7 +323,7 @@ sap.ui.define([
 
 		// Change the width of a button
 		aDefaultContent[4].setWidth("500px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// After the width change there should be less buttons visible on the toolbar
 		iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
@@ -335,7 +335,7 @@ sap.ui.define([
 
 		// Resize the button back
 		aDefaultContent[4].setWidth("100px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// There should be no overflow button, no overflow area, all buttons visible again
 		assert.strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after resizing the button back");
@@ -367,7 +367,7 @@ sap.ui.define([
 		// Insert a new button
 		var oNewButton = new Button({text: "0", width: "100px"});
 		oOverflowTB.insertContent(oNewButton, 0);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// After the insertion there should be less buttons visible on the toolbar
 		iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
@@ -379,7 +379,7 @@ sap.ui.define([
 
 		// Remove the button
 		oOverflowTB.removeContent(oNewButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// There should be no overflow button, no overflow area, all buttons visible again
 		assert.strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after resizing the button back");
@@ -504,7 +504,7 @@ sap.ui.define([
 
 		// Resize the toolbar
 		oOverflowTB.setWidth('200px');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// After the resize there should be less buttons visible on the toolbar
 		assert.strictEqual(oSpecialButton.$().is(":visible"), true, "After the resize, the special layout button is still visible");
@@ -561,7 +561,7 @@ sap.ui.define([
 			}),
 			aContent;
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Even though there is enough space on the toolbar, two of the buttons always oferflows
 		iOverflowedButtons = oOverflowTB._getPopover().getAssociatedContent().length;
@@ -580,7 +580,7 @@ sap.ui.define([
 		aContent = oOverflowTB.getContent();
 		aContent[2].setVisible(false);
 		aContent[3].setVisible(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(oOverflowTB._getOverflowButton().$().is(":visible"),
 			"Overflow button is not visible when controls with AlwaysOverflow are not visible and there is enough space for the others");
@@ -608,7 +608,7 @@ sap.ui.define([
 
 		// Shrink the toolbar
 		oOverflowTB.setWidth('300px');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Click the overflow button
 		var oOverflowButton = oOverflowTB._getOverflowButton();
@@ -693,7 +693,7 @@ sap.ui.define([
 
 		// Change the button priority from Low to High
 		oButtonUnderTest.setLayoutData(new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.High}));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Check if the button moved back to the toolbar
 		assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
@@ -726,7 +726,7 @@ sap.ui.define([
 
 		// Change the button priority from Low to NeverOverflow
 		oButtonUnderTest.setLayoutData(new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.NeverOverflow}));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Check if the button is visible in the toolbar
 		assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
@@ -759,7 +759,7 @@ sap.ui.define([
 
 		// Change the button priority from High to Low
 		oButtonUnderTest.setLayoutData(new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.Low}));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Check if the button moved back to the overflow area
 		assert.strictEqual(oButtonUnderTest.$().is(":visible"), false,
@@ -801,7 +801,7 @@ sap.ui.define([
 
 		// Change the button priority from High to AlwaysOverflow
 		oButtonUnderTest.setLayoutData(new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.AlwaysOverflow}));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Check if the button is visible in the toolbar
 		assert.strictEqual(oButtonUnderTest.$().is(":visible"), false,
@@ -838,7 +838,7 @@ sap.ui.define([
 
 		// Resize the toolbar so the buttons should overflow from right to the left
 		oOverflowTB.setWidth('300px');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Check if the button with Priority High is still visible
 		assert.strictEqual(oButtonWithHighPriority.$().is(":visible"), true,
@@ -867,7 +867,7 @@ sap.ui.define([
 
 		// Resize the toolbar so the buttons should overflow from right to the left
 		oOverflowTB.setWidth('300px');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Check if the button with Priority Low is still visible
 		assert.strictEqual(oButtonWithLowPriority.$().is(":visible"), false, "The button with Priority Low is not visible");
@@ -903,7 +903,7 @@ sap.ui.define([
 
 		// Resize the toolbar so the buttons should overflow from right to the left
 		oOverflowTB.setWidth('300px');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Check if the leftmost button is still visible
 		assert.strictEqual(oLeftMostButton.$().is(":visible"), true,
@@ -974,7 +974,7 @@ sap.ui.define([
 
 		// Shrink the toolbar with 100px
 		oOverflowTB.setWidth('400px');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Check if the buttons under test are visible in the toolbar
 		assert.strictEqual(oButtonUnderTest1.$().is(":visible"), false,
@@ -988,7 +988,7 @@ sap.ui.define([
 			priority: OverflowToolbarPriority.High,
 			group: 1
 		}));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Check if the buttons under test are visible in the toolbar
 		assert.strictEqual(oButtonUnderTest1.$().is(":visible"), true,
@@ -1020,7 +1020,7 @@ sap.ui.define([
 
 		// Shrink the toolbar with 100px
 		oOverflowTB.setWidth('400px');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Check if the buttons under test are visible in the toolbar
 		assert.strictEqual(oButtonUnderTest1.$().is(":visible"), true,
@@ -1034,7 +1034,7 @@ sap.ui.define([
 			priority: OverflowToolbarPriority.Low,
 			group: 1
 		}));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Click the overflow button
 		oOverflowTB._getOverflowButton().firePress();
@@ -1072,7 +1072,7 @@ sap.ui.define([
 
 		// Shrink the toolbar with 100px
 		oOverflowTB.setWidth('400px');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Check if the members of group number 1 are visible
 		assert.strictEqual(oGroupedButton1.$().is(":visible"), false,
@@ -1115,7 +1115,7 @@ sap.ui.define([
 
 		// Shrink the toolbar with 100px
 		oOverflowTB.setWidth('400px');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Check if the members of group number 1 are visible
 		assert.strictEqual(oGroupedButton1.$().is(":visible"), false,
@@ -1162,7 +1162,7 @@ sap.ui.define([
 
 		// Shrink the toolbar with 100px
 		oOverflowTB.setWidth('400px');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Click the overflow button
 		oOverflowTB._getOverflowButton().firePress();
@@ -1198,7 +1198,7 @@ sap.ui.define([
 
 		// Shrink the toolbar with 100px
 		oOverflowTB.setWidth('400px');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Check if the button under test is visible in the toolbar
 		assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
@@ -1206,7 +1206,7 @@ sap.ui.define([
 
 		// Change the group of the button
 		oButtonUnderTest.setLayoutData(new OverflowToolbarLayoutData({group: 1}));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Check if the button under test is visible in the toolbar
 		assert.strictEqual(oButtonUnderTest.$().is(":visible"), false,
@@ -1242,7 +1242,7 @@ sap.ui.define([
 
 		// Shrink the toolbar with 100px
 		oOverflowTB.setWidth('400px');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Check if the button under test is visible in the toolbar
 		assert.strictEqual(oButtonUnderTest.$().is(":visible"), false,
@@ -1250,7 +1250,7 @@ sap.ui.define([
 
 		// Change the group of the button
 		oButtonUnderTest.setLayoutData(new OverflowToolbarLayoutData({group: 2}));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Check if the button under test is visible in the toolbar
 		assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
@@ -1278,7 +1278,7 @@ sap.ui.define([
 
 		// Shrink the toolbar with 100px
 		oOverflowTB.setWidth('400px');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Check if the members of group number 1 are visible
 		assert.strictEqual(oGroupedButton1.$().is(":visible"), true,
@@ -1659,7 +1659,7 @@ sap.ui.define([
 				}),
 				oOverflowTB = createOverflowToolbar({width: 'auto'}, [btn]);
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		btn.destroy();
 
@@ -1724,7 +1724,7 @@ sap.ui.define([
 		//Act
 		aContent[5].setVisible(false);
 		oOverflowTB.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oOverflowTB._aMovableControls.indexOf(aContent[5]) === -1,
@@ -1862,7 +1862,7 @@ sap.ui.define([
 			//Act
 
 			oButton.setType("Emphasized");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			//Assert
 			assert.ok(oSpyInvalidation.calledWith(true), "Button property 'type' invalidates the OTB");
@@ -2080,7 +2080,7 @@ sap.ui.define([
 
 		oOverflowTB.placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oOverflowTB.onThemeChanged();
 
@@ -2108,7 +2108,7 @@ sap.ui.define([
 				}, aDefaultContent, true),
 				spyCache = this.spy(oOverflowTB, "_cacheControlsInfo");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(spyCache.callCount, 1, "After a toolbar is created, _cacheControlsInfo is called once and _bControlsInfoCached is set to true");
 		assert.strictEqual(oOverflowTB._bControlsInfoCached, true, "After a toolbar is created, _bControlsInfoCached is set to true");
@@ -2139,7 +2139,7 @@ sap.ui.define([
 				}, aDefaultContent, true),
 				oSpyCache;
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oSpyCache = this.spy(oOverflowTB, "_cacheControlsInfo");
 
 		// Act
@@ -2169,7 +2169,7 @@ sap.ui.define([
 				iNewItemWidth,
 				oSpyCache;
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oSpyCache = this.spy(oOverflowTB, "_cacheControlsInfo");
 
 		// Act
@@ -2200,7 +2200,7 @@ sap.ui.define([
 				}, aDefaultContent, true),
 				oSpyCache;
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oSpyCache = this.spy(oOverflowTB, "_cacheControlsInfo");
 
 		// Act
@@ -2226,7 +2226,7 @@ sap.ui.define([
 				}, aDefaultContent, true),
 				oSpyCache;
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oSpyCache = this.spy(oOverflowTB, "_cacheControlsInfo");
 
 		// Act
@@ -2260,7 +2260,7 @@ sap.ui.define([
 
 		oMovableControl.setVisible(true);
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oOverflowTB._aMovableControls.length, 1, "movable visible button is inclided");
 
@@ -2296,7 +2296,7 @@ sap.ui.define([
 
 	// Act
 		oLabel.setText("Text123");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	// Assert
 		assert.strictEqual(spyOTInvalidate.callCount, 0);
 	});
@@ -2725,7 +2725,7 @@ sap.ui.define([
 
 		oOverflowTB.attachEventOnce("_minWidthChange", fnCheckMinWidth);
 		oOverflowTB.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("Popover can listen to private interaction events from associative controls", function (assert) {
@@ -2744,7 +2744,7 @@ sap.ui.define([
 			spy;
 
 		oOverflowTB.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		spy = this.spy(oPopover, "_closeOnInteraction");
 
@@ -2867,7 +2867,7 @@ sap.ui.define([
 			oMathSpy = this.spy(Math, "round");
 
 		oTestButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 200);
@@ -2881,7 +2881,7 @@ sap.ui.define([
 			oOTB = createOverflowToolbar({}, [oTestButton]);
 
 		oTestButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 0);
@@ -2905,7 +2905,7 @@ sap.ui.define([
 			oOTB = createOverflowToolbar({}, [oTestToolbarSpacer]);
 
 		oTestToolbarSpacer.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oOTB._getOptimalControlWidth(oTestToolbarSpacer), 20);
@@ -2924,7 +2924,7 @@ sap.ui.define([
 			oOTB = createOverflowToolbar({}, [oTestButton]);
 
 		oOTB.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 50,
@@ -2945,7 +2945,7 @@ sap.ui.define([
 			oOTB = createOverflowToolbar({}, [oTestButton]);
 
 		oOTB.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 0,
@@ -2967,7 +2967,7 @@ sap.ui.define([
 			oOTB = createOverflowToolbar({}, [oTestButton]);
 
 		oOTB.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 200,
@@ -2996,7 +2996,7 @@ sap.ui.define([
 			iRemInPx = DomUnitsRem.toPx("1rem");
 
 		oOTB.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), (3 * iRemInPx),
@@ -3015,7 +3015,7 @@ sap.ui.define([
 			oOverflowBtnClonedSpy = this.spy(OverflowToolbar.prototype, "_recalculateOverflowButtonSize");
 
 		oOverflowTB.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oOverflowBtnClonedSpy.called, "Recalculation called from doLayout");
@@ -3064,7 +3064,7 @@ sap.ui.define([
 			oOverflowBtnClonedSpy = this.spy(oOverflowTB._getOverflowButtonClone(), "$");
 
 		oOverflowTB.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oOverflowBtnClonedSpy.called, "Recalculation is done");
@@ -3101,7 +3101,7 @@ sap.ui.define([
 
 		oOverflowTB.placeAt("qunit-fixture");
 		oOverflowTB.attachEventOnce("_contentSizeChange", fnCheckContentSize);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("Presence of overflow button is checked correctly", function (assert) {
@@ -3120,12 +3120,12 @@ sap.ui.define([
 				done = assert.async();
 
 		oOverflowTB.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oOverflowTB.addContent(oButton1.clone());
 		oButton1.setLayoutData(new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.AlwaysOverflow}));
 		oOverflowTB.attachEventOnce("_contentSizeChange", fnCheckContentSize);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("Adding tolerance on content size for fixing rounding issues", function (assert) {
@@ -3136,7 +3136,7 @@ sap.ui.define([
 			oOverflowButton;
 
 		oOTB.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		oOverflowButton = oOTB._getOverflowButton();
@@ -3177,7 +3177,7 @@ sap.ui.define([
 		});
 
 		oOverflowTB.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.module("Focusing", {
@@ -3222,7 +3222,7 @@ sap.ui.define([
 			this.oOTB.placeAt("qunit-fixture");
 			this.oOTB2.placeAt("qunit-fixture");
 			this.oOTBOverflowed.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			sinon.config.useFakeTimers = false;
 		},
@@ -3261,7 +3261,7 @@ sap.ui.define([
 		// act - child control is on focus, invalidate the toolbar.
 		this.oOTB.sFocusedChildControlId = this.oButtonUnderTest.getId();
 		this.oOTB.setWidth("1000px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("Focus on toolbar child's focusDomRef is retained after toolbar invalidation", function (assert) {
@@ -3284,7 +3284,7 @@ sap.ui.define([
 		// act - child control is on focus, invalidate the toolbar.
 		this.oOTB2.sFocusedChildControlId = this.oSelectUnderTest.getId();
 		this.oOTB2.setWidth("1000px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("Focus on overflow button is retained after toolbar invalidation", function (assert) {
@@ -3309,7 +3309,7 @@ sap.ui.define([
 		// act - overvlow button has been focused, then invalidate the toolbar.
 		this.oOTBOverflowed.sFocusedChildControlId = oOverflowButton.getId();
 		this.oOTBOverflowed.invalidate();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("Focus should move on last child after toolbar expanding", function (assert) {
@@ -3343,7 +3343,7 @@ sap.ui.define([
 
 		// act (1) - set toolbar width to larger than its content and invalidate the toolbar.
 		this.oOTBOverflowed.setWidth("500px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("Focus info is cleared upon sapfocusleave", function (assert) {
@@ -3368,7 +3368,7 @@ sap.ui.define([
 			oApplyFocusSpy;
 
 		oOverflowTBbar.setAsyncMode(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.expect(2);
 
 		setTimeout(function () {
@@ -3376,7 +3376,7 @@ sap.ui.define([
 			oApplyFocusSpy = oSpy(oOverflowTBbar, "_applyFocus");
 			oOverflowTBbar.sFocusedChildControlId = oButtonUnderTest.getId();
 			oOverflowTBbar.setWidth("1000px");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			window.requestAnimationFrame(function () {
 				// Assert
@@ -3397,7 +3397,7 @@ sap.ui.define([
 
 		// Arrange
 		oOTB.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Overwrite the OverflowToolbar exit method
 		// to simulate layoutDataChange is fired before the _popover aggregation is unregistered from the Core.
@@ -3497,7 +3497,7 @@ sap.ui.define([
 			});
 
 			this.oOTB.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		},
 		afterEach: function () {
@@ -3535,7 +3535,7 @@ sap.ui.define([
 		// act
 		this.oOTB._getOverflowButton().setPressed(true);
 		this.oOTB._getOverflowButton().firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oOverflowButtonDomRef.getAttribute("aria-pressed"), null, "aria-pressed value is as expected");
@@ -3553,7 +3553,7 @@ sap.ui.define([
 		assert.expect(3);
 
 		this.oOTB._getPopover().attachAfterClose(function () {
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			// assert
 			assert.strictEqual(oOverflowButtonDomRef.getAttribute("aria-pressed"), null, "aria-pressed value is as expected");
 			assert.strictEqual(oOverflowButtonDomRef.getAttribute("aria-expanded"), "false", "aria-expanded value is as expected");
@@ -3565,7 +3565,7 @@ sap.ui.define([
 		// act
 		this.oOTB._getOverflowButton().setPressed(true);
 		this.oOTB._getOverflowButton().firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.oOTB.closeOverflow();
 		this.clock.tick(1000);
 	});
@@ -3589,7 +3589,7 @@ sap.ui.define([
 
 		// Act
 		oOverflowTB.addContent(new SegmentedButton());
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oOverflowTB.$().attr("role"), "toolbar",
 			"OverflowToolbar hass'role' attribute, when there are at least two interactive Controls");
@@ -3612,7 +3612,7 @@ sap.ui.define([
 			],
 			oOverflowTB = createOverflowToolbar({}, aContent);
 		oOverflowTB.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oOverflowTB.$().attr("role"), undefined,
@@ -3622,7 +3622,7 @@ sap.ui.define([
 
 		//Act
 		oBtn1.setVisible(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oOverflowTB.$().attr("role"), "toolbar",
@@ -3646,7 +3646,7 @@ sap.ui.define([
 			],
 			oOverflowTB = createOverflowToolbar({}, aContent);
 		oOverflowTB.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oOverflowTB.$().attr("role"), undefined,
@@ -3656,7 +3656,7 @@ sap.ui.define([
 
 		//Act
 		oOverflowTB.addContent(oBtn1);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oOverflowTB.$().attr("role"), "toolbar",
@@ -3681,7 +3681,7 @@ sap.ui.define([
 			],
 			oOverflowTB = createOverflowToolbar({width: "1000px"}, aContent);
 		oOverflowTB.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oOverflowTB.$().attr("role"), "toolbar",
@@ -3691,7 +3691,7 @@ sap.ui.define([
 
 		//Act
 		oBtn1.setWidth("1000px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oOverflowTB.$().attr("role"), "toolbar",
@@ -3715,12 +3715,12 @@ sap.ui.define([
 		assert.strictEqual(oOverflowTB.getAccessibilityInfo().children.length, 2, "children property of accessibility info object contains correct amount of visible children");
 
 		oOverflowTB.getContent()[1].getLayoutData().setPriority(OverflowToolbarPriority.AlwaysOverflow);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oOverflowTB.getAccessibilityInfo().children.length, 2, "children property of accessibility info object contains correct amount of visible children and more button");
 
 		oOverflowTB.getContent()[0].getLayoutData().setPriority(OverflowToolbarPriority.AlwaysOverflow);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oOverflowTB.getAccessibilityInfo().children.length, 1, "children property of accessibility info object contains correct amount of visible children and more button");
 
@@ -3785,7 +3785,7 @@ sap.ui.define([
 
 		this.content[0].setText("test2");
 		this.otb._handleResize();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 	});
 
@@ -3812,7 +3812,7 @@ sap.ui.define([
 		});
 		this.otb.addContent(oButtonWithPressFunc);
 		this.otb.setWidth('200px');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act - click the overflow button
 		oOverflowButton.firePress();
@@ -3844,7 +3844,7 @@ sap.ui.define([
 
 		//Act
 		oTable.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.equal(oTable.getItems()[0].getContentAnnouncement(), "Button Test Button Button " + sExpectedTooltip, "here");
@@ -3891,7 +3891,7 @@ sap.ui.define([
 
 		//Act
 		oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oPanel.setWidth("0px");
 		oPanel.addEventDelegate(oPanelRerenderingDelegate);
@@ -3908,7 +3908,7 @@ sap.ui.define([
 
 		//Act
 		oOtb.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oOtb._getPopover().getAssociatedContent().length, 0, "SearchField is not in overflow Popover");
@@ -3927,7 +3927,7 @@ sap.ui.define([
 
 		//Act
 		oFirstControl.setVisible(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.notOk(oFirstControl.hasStyleClass("sapMBarChildFirstChild"), "First child does not have 'sapMBarChildFirstChild' class");
@@ -4032,7 +4032,7 @@ sap.ui.define([
 			oSpy;
 
 		oOTB.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oSpy = this.spy(oOTB._getPopover(), "close");
 
@@ -4059,7 +4059,7 @@ sap.ui.define([
 			content: [oButton]
 		}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Open the overflow button and obtain the reference to the popover button
 		oOTB._getOverflowButton().firePress();
@@ -4071,7 +4071,7 @@ sap.ui.define([
 		// Update the type of the button while it's inside the Popover
 		var sNewType = "Emphasized";
 		oPopoverButton.setType(sNewType);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert updated state
 		assert.strictEqual(oPopoverButton.getType(), sNewType, "Changed button type is correctly applied in the Popover");

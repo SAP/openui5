@@ -41,8 +41,7 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQuery, _OpaLogger, _FocusLis
 				idSuffix: {
 					type: "string"
 				}
-			},
-			publicMethods : [ "executeOn" ]
+			}
 		},
 
 		/**

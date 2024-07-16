@@ -39,4 +39,4 @@ sap.ui.define([
 	};
 
 	return JSONTableFilterDelegate;
-}, /* bExport= */false);
+});

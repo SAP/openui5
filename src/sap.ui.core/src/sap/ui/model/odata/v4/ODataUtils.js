@@ -338,4 +338,4 @@ sap.ui.define([
 	ODataUtils._setDateTimeFormatter();
 
 	return ODataUtils;
-}, /* bExport= */ true);
+});

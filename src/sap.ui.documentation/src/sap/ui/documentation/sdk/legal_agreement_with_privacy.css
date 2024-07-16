@@ -1,0 +1,25 @@
+div {
+	padding-bottom: 0.3rem;
+}
+ol, ul, div {
+	font-family: Arial,Helvetica,sans-serif;
+	line-height: 1.32em;
+}
+body {
+	background-color: #FFF;
+	color: #333;
+	cursor: default;
+	font-size: 0.8em;
+	margin: 8;
+	padding:0px;
+	margin-left: 20px;
+
+}
+p {
+	color: #333;
+	font-family: Arial,Helvetica,sans-serif;
+	line-height: 1.32em;
+	orphans: 2;
+	padding: 0;
+	widows: 2;
+}

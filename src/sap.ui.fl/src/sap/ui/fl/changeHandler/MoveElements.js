@@ -97,13 +97,6 @@ sap.ui.define([], function() {
 	};
 
 	/**
-	 * @deprecated
-	 */
-	MoveElements.completeChangeContent = function() {
-		throw new Error("Using deprecated change handler. Please consider using 'MoveControls' instead");
-	};
-
-	/**
 	 * Enrich the incoming change info with the change info from the setter, to get the complete data in one format
 	 *
 	 * @param {object} oModifier modifier object
@@ -136,5 +129,4 @@ sap.ui.define([], function() {
 	};
 
 	return MoveElements;
-},
-/* bExport= */true);
+});

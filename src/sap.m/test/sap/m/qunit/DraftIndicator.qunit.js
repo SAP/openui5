@@ -4,8 +4,8 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/DraftIndicator",
-	"sap/ui/core/Core"
-], function(Element, Library, createAndAppendDiv, DraftIndicator, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Element, Library, createAndAppendDiv, DraftIndicator, nextUIUpdate) {
 	"use strict";
 
 	// prepare DOM
@@ -42,7 +42,7 @@ sap.ui.define([
 
 		// System under test
 		oDraftIndi.placeAt("qunit-fixture-visible");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oDraftIndi.showDraftSaving();
@@ -66,11 +66,11 @@ sap.ui.define([
 
 		// System under test
 		oDraftIndi.placeAt("qunit-fixture-visible");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oDraftIndi.showDraftSaved();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oDraftIndi.$("label").text(), oBundle.getText("DRAFT_INDICATOR_DRAFT_SAVED"), "Draft saved is shown");
@@ -89,11 +89,11 @@ sap.ui.define([
 
 		// System under test
 		oDraftIndi.placeAt("qunit-fixture-visible");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oDraftIndi.showDraftSaving();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oDraftIndi.$("label").text(), oBundle.getText("DRAFT_INDICATOR_SAVING_DRAFT"), "Draft saved is shown");

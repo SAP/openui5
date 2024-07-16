@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/base/Log",
 	"sap/base/util/Version",
-	"sap/ui/core/Core",
 	"sap/ui/util/openWindow",
 	"sap/ui/documentation/sdk/model/formatter",
 	"sap/m/ResponsivePopover",
@@ -50,7 +49,6 @@ sap.ui.define([
 	mobileLibrary,
 	Log,
 	Version,
-	Core,
 	openWindow,
 	globalFormatter,
 	ResponsivePopover,
@@ -651,7 +649,7 @@ sap.ui.define([
 		},
 
 		getSearchPickerTitle: function (oContext) {
-			var getMessageBundle = Core.getLibraryResourceBundle("sap.ui.documentation"),
+			var getMessageBundle = Library.getResourceBundleFor("sap.ui.documentation"),
 				sTitle;
 
 			switch (this.getModel("searchData").getProperty("/preferencedCategory")) {

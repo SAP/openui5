@@ -1,0 +1,8 @@
+.sapUiRespGrid div {
+	background: silver;
+	color: white;
+}
+
+.sapUiRespGrid div p {
+	text-align: center;
+}

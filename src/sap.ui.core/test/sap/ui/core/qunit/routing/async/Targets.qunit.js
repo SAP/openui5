@@ -184,30 +184,6 @@ sap.ui.define([
 		assert.strictEqual(oTarget._oParent, this.oTargets.getTarget("myParent"), "correct parent should be set");
 	});
 
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("Should kept the existing target and log an error message if 'addTarget' is called with the same name (future=false)", function (assert) {
-		future.active = false;
-		// Arrange
-		var oStub = this.stub(Log, "error");
-
-		// Act
-		this.oTargets.addTarget("myParent", {
-			viewName: "myNewParentView"
-		});
-		var oParent = this.oTargets.getTarget("myParent");
-
-		// Assert
-		assert.strictEqual(oParent._oRawOptions.viewName, "myParentView", "options stay the same");
-		assert.strictEqual(oParent._oOptions.name, "myParentView", "config is converted to the new format");
-		assert.strictEqual(oParent._oOptions.type, "View", "config is converted to the new format");
-		assert.notOk(oParent._oOptions.viewName, "config is converted to the new format");
-		// Check whether the error message is thrown
-		sinon.assert.calledWith(oStub, sinon.match(/myParent/), sinon.match(this.oTargets));
-		future.active = undefined;
-	});
-
 	QUnit.test("Throw Error if 'addTarget' is called with the same name (future=true)", function (assert) {
 		future.active = true;
 
@@ -266,31 +242,6 @@ sap.ui.define([
 	});
 
 	QUnit.module("config - invalid parent");
-
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("Should complain about an non existing parent (future=false)", function (assert) {
-		future.active = false;
-		// Arrange
-		var oIncorrectConfig = {
-			targets: {
-				myChildWithoutParent: {
-					parent: "foo"
-				}
-			}
-		},
-			oErrorStub = this.stub(Log, "error");
-
-		// System under test + Act
-		const oTargets = new Targets(oIncorrectConfig);
-
-		// Assert
-		sinon.assert.calledWith(oErrorStub, sinon.match(/was not found/), sinon.match(oTargets));
-
-		oTargets.destroy();
-		future.active = undefined;
-	});
 
 	QUnit.test("Should complain about an non existing parent (future=true)", function (assert) {
 		future.active = true;
@@ -388,53 +339,10 @@ sap.ui.define([
 
 	});
 
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("Should log an error if user tries to display a non existing Target (future=false)", function (assert) {
-		future.active = false;
-		// Assert
-		var oErrorStub = this.stub(Log, "error");
-
-		// Act
-		return this.oTargets.display("foo").then(function(aViewInfos) {
-			assert.strictEqual(aViewInfos[0].name, "foo", "Matching target info is returned");
-			assert.ok(aViewInfos[0].error.includes("The target with the name \"foo\" does not exist!"), "Matching error message is returned");
-			// Assert
-			sinon.assert.calledWith(oErrorStub, sinon.match(/does not exist/), sinon.match(this.oTargets));
-			future.active = undefined;
-		}.bind(this));
-	});
-
 	QUnit.test("Should throw an error if user tries to display a non existing Target (future=true)", function (assert) {
 		future.active = true;
 		assert.throws(() => { this.oTargets.display("foo"); }, new Error("The target with the name \"foo\" does not exist!"), "Promise rejects because target does not exist");
 		future.active = undefined;
-	});
-
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("Should log an error if user tries to display a non existing Target, but should display existing ones (future=false)", function (assert) {
-		future.active = false;
-		// Assert
-		var oErrorStub = this.stub(Log, "error");
-		// Replace display with an empty fn
-		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "_display").callsFake(function() {
-			return Promise.resolve({name:"firstTarget"});
-		});
-
-		// Act
-		return this.oTargets.display(["foo", "firstTarget"]).then(function(aViewInfos) {
-			// Assert
-			assert.strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
-			sinon.assert.calledWith(oErrorStub, sinon.match(/does not exist/), sinon.match(this.oTargets));
-			assert.ok(Array.isArray(aViewInfos), "Did resolve with an array of the view infos");
-			assert.strictEqual(aViewInfos.length, 2, "Did resolve with two viewinfos");
-			assert.strictEqual(aViewInfos[1].name, "firstTarget", "Did resolve with first target");
-			assert.ok(aViewInfos[0].error.includes("The target with the name \"foo\" does not exist!"), "Did resolve with the error message of the erroneous target");
-			future.active = undefined;
-		}.bind(this));
 	});
 
 	function createView (aContent, sId) {
@@ -1046,32 +954,6 @@ sap.ui.define([
 		});
 	});
 
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("multiple targets - provided TitleTarget pointing to target without title (future=false)", function (assert) {
-		future.active = false;
-		// Arrange
-		var that = this,
-			oData = {some : "data"},
-			fnEventSpy = this.spy();
-
-		this.stub(this.oViews, "_getView").callsFake(function () {
-			return that.oView;
-		});
-
-		this.oTargets.attachTitleChanged(fnEventSpy);
-
-		// Act
-		var oDisplayed = this.oTargets.display(["myNoTitleTarget", "myTarget", "mySecondTarget"], oData, "myNoTitleTarget");
-
-		// Assert
-		return oDisplayed.then(function() {
-			assert.ok(fnEventSpy.notCalled, "the event isn't fired");
-			future.active = undefined;
-		});
-	});
-
 	QUnit.test("multiple targets - provided TitleTarget pointing to target without title (future=true)", function (assert) {
 		future.active = true;
 		// Arrange
@@ -1095,37 +977,6 @@ sap.ui.define([
 			"Throws an error because target does not exist.");
 		assert.ok(fnEventSpy.notCalled, "the event isn't fired");
 		future.active = undefined;
-	});
-
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("provided invalid TitleTarget (future=false)", function (assert) {
-		future.active = false;
-		// Arrange
-		var that = this,
-			oData = {some : "data"},
-			fnEventSpy = this.spy();
-
-		this.stub(this.oViews, "_getView").callsFake(function () {
-			return that.oView;
-		});
-		var oLogSpy = this.spy(Log, "error");
-
-		this.oTargets.attachTitleChanged(fnEventSpy);
-
-		// Act
-		var oDisplayed = this.oTargets.display(["myTarget"], oData, "foo");
-
-		return oDisplayed.then(function() {
-			// Assert
-			assert.ok(fnEventSpy.notCalled, "the event isn't fired");
-			assert.ok(
-				oLogSpy.calledWith(sinon.match(/The target with the name \"foo\" where the titleChanged event should be fired does not exist!/)),
-				this.oTargets
-			);
-			future.active = undefined;
-		}.bind(this));
 	});
 
 	QUnit.test("provided invalid TitleTarget (future=true)", function (assert) {

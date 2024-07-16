@@ -4,25 +4,15 @@
 		<meta charset="utf-8">
 		<title>Card As Custom Element</title>
 		<script src="../../../../../../../resources/sap-ui-integration.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-compatVersion="edge"
-			data-sap-ui-theme="sap_horizon">
+				id="sap-ui-bootstrap"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-async="true"
+		>
 		</script>
-		<style>
-			.myCard {
-				margin: 1rem;
-				width: 25rem;
-			}
-		</style>
+		<link rel="stylesheet" href="./indexTemplate.css">
 	</head>
 	<body>
-		<ui-integration-card
-			badge="New"
-			id="cardCustomElement"
-			manifest="./manifest.json"
-			data-mode="Active"
-			base-url="./"
-			class="myCard">
+		<ui-integration-card badge="New" id="cardCustomElement" manifest="./manifest.json" data-mode="Active" base-url="./" class="myCard">
 		</ui-integration-card>
 	</body>
 </html>

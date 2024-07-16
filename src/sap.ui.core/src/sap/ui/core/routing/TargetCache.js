@@ -4,14 +4,12 @@
 sap.ui.define([
 	'sap/ui/base/EventProvider',
 	'sap/ui/core/routing/async/TargetCache',
-	'sap/ui/core/routing/sync/TargetCache',
 	"sap/base/assert",
 	"sap/base/Log"
 ],
-	function (
+	function(
 		EventProvider,
 		asyncCache,
-		syncCache,
 		assert,
 		Log
 	) {
@@ -60,16 +58,14 @@ sap.ui.define([
 					this.async = true;
 				}
 
-				var CacheStub = this.async ? asyncCache : syncCache;
+				var CacheStub = this.async ? asyncCache : undefined/*syncCache*/;
 
 				for (var fn in CacheStub) {
 					this[fn] = CacheStub[fn];
 				}
 			},
 
-			metadata : {
-				publicMethods: ["get", "set"]
-			},
+			metadata : {},
 
 			/**
 			 * Returns a cached view or component, for a given name. If it does not exist yet, it will create the view or component with the provided options.

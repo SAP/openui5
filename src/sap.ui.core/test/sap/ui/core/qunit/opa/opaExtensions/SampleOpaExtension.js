@@ -12,13 +12,7 @@ sap.ui.define([
 	var oLogger = _OpaLogger.getLogger("sap.ui.test.SampleOpaExtension");
 
 	var Extension = Ui5Object.extend("sap.ui.test.SampleOpaExtension", {
-		metadata: {
-			publicMethods: [
-				"onAfterInit",
-				"onBeforeExit",
-				"getAssertions"
-			]
-		},
+		metadata: {},
 
 		onAfterInit: function () {
 			oLogger.info("Default onAfterInit called");

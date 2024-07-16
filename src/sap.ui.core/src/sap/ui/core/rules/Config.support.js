@@ -7,13 +7,11 @@
 sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/support/library",
-	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Supportability"
 ], function(
 	LoaderExtensions,
 	SupportLib,
-	XMLView,
 	Library,
 	Supportability
 ) {
@@ -191,10 +189,10 @@ sap.ui.define([
 						var sDeclaredModule = aDeclaredModules[i];
 						if (sDeclaredModule.indexOf(sLibraryWithDot) === 0 &&
 							mLibraries[sLibrary].types.indexOf(sDeclaredModule) === -1 &&
-							sDeclaredModule.lastIndexOf(".library") !== sDeclaredModule.length - ".library".length &&
-							sDeclaredModule.lastIndexOf(".library-preload") !== sDeclaredModule.length - ".library-preload".length &&
-							sDeclaredModule.lastIndexOf(".flexibility") !== sDeclaredModule.length - ".flexibility".length &&
-							sDeclaredModule.lastIndexOf(".support") !== sDeclaredModule.length - ".support".length) {
+							sDeclaredModule.lastIndexOf(".library") !== sDeclaredModule.length - 8 &&
+							sDeclaredModule.lastIndexOf(".library-preload") !== sDeclaredModule.length - 16 &&
+							sDeclaredModule.lastIndexOf(".flexibility") !== sDeclaredModule.length - 12 &&
+							sDeclaredModule.lastIndexOf(".support") !== sDeclaredModule.length - 8) {
 							delete mLibraries[sLibrary];
 							break;
 						}
@@ -431,84 +429,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * @deprecated Since 1.119
-	 */
-	var oAsynchronousXMLViews = {
-		id: "asynchronousXMLViews",
-		audiences: [Audiences.Application],
-		categories: [Categories.Performance],
-		enabled: true,
-		minversion: "1.34",
-		title: "Asynchronous XML views",
-		description: "Asynchronous XML views leads to smoother view transitions, doesn't block the UI and allows for more efficient SAPUI5 flexibility services",
-		resolution: "Adapt your application descriptor and your application coding to improve the performance and efficiency",
-		resolutionurls: [{
-			text: 'Documentation: Routing Configuration',
-			href: 'https://sdk.openui5.org/topic/902313063d6f45aeaa3388cc4c13c34e'
-		}, {
-			text: "Documentation: Instantiating Views",
-			href: "https://sdk.openui5.org/topic/68d0e58857a647d49470d9f92dd859bd"
-		}, {
-			text: "Documentation: UI Adaptation at Runtime: Enable Your App",
-			href: "https://sdk.openui5.org/topic/f1430c0337534d469da3a56307ff76af"
-		}],
-		check: function(oIssueManager, oCoreFacade, oScope) {
-			var mComponents = oCoreFacade.getComponents();
-			var mComponentsRoutingSync = {};
-
-			// 1. Collect XML views in analyzed scope
-			var aSyncXMLViews = oScope.getElementsByClassName(XMLView).filter(function(oXMLView) {
-				return oXMLView.oAsyncState === undefined && !oXMLView.isSubView();
-			});
-
-			Object.keys(mComponents).forEach(function(sComponentId) {
-				// 2. Check router instances and collect connected views (also other view types than XML)
-				var oRouter = mComponents[sComponentId].getRouter && mComponents[sComponentId].getRouter();
-				if (oRouter && oRouter._oConfig) {
-					if (oRouter._oConfig._async !== true) {
-						mComponentsRoutingSync[sComponentId] = [];
-						if (mComponents[sComponentId].getTargets() &&
-							mComponents[sComponentId].getTargets()._oViews &&
-							mComponents[sComponentId].getTargets()._oViews._oViews) {
-							var oTargetViews = mComponents[sComponentId].getTargets()._oViews._oViews;
-							Object.keys(oTargetViews).forEach(function(sViewId) {
-								var sViewName = oTargetViews[sViewId].getViewName().split("\.").pop();
-								mComponentsRoutingSync[sComponentId].push(sViewName);
-								aSyncXMLViews = aSyncXMLViews.filter(function(oXMLView) {
-									return oTargetViews[sViewId] !== oXMLView;
-								});
-							});
-						}
-					}
-				}
-			});
-
-			Object.keys(mComponentsRoutingSync).forEach(function(sComponentId) {
-				oIssueManager.addIssue({
-					severity: Severity.High,
-					details: "Routing between views (" + mComponentsRoutingSync[sComponentId].join(', ') + ") is used, but configured to be synchronous." +
-						" Please take a look at the resolution 'Routing Configuration'.",
-					context: {
-						id: sComponentId
-					}
-				});
-			});
-
-			aSyncXMLViews.forEach(function(oSyncView) {
-				var sSyncViewId = oSyncView.getId();
-				var sViewName = oSyncView.getViewName().split("\.").pop();
-				oIssueManager.addIssue({
-					severity: Severity.Medium,
-					details: "The XML view '" + sViewName + " is loaded synchronous. Please take a look at the resolution 'Instantiating Views'.",
-					context: {
-						id: sSyncViewId
-					}
-				});
-			});
-		}
-	};
-
 	return [
 		oPreloadAsyncCheck,
 		oCacheBusterToken,
@@ -516,8 +436,6 @@ sap.ui.define([
 		oLazyComponents,
 		oReuseComponents,
 		oModelPreloading,
-		oModelPreloadAndEarlyRequests,
-		/** @deprecated */
-		oAsynchronousXMLViews
+		oModelPreloadAndEarlyRequests
 	];
-}, true);
+});

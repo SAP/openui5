@@ -125,4 +125,4 @@ sap.ui.define([], function() {
 	return {
 		format: format
 	};
-}, true);
+});

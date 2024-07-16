@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/m/QuickViewPage",
 	"sap/m/QuickViewGroup",
 	"sap/m/QuickViewGroupElement",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Element,
 	JSONModel,
@@ -23,7 +23,7 @@ sap.ui.define([
 	QuickViewPage,
 	QuickViewGroup,
 	QuickViewGroupElement,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -284,7 +284,7 @@ sap.ui.define([
 			this.oQuickViewCard = getQuickViewCard();
 			oPage.addContent(this.oQuickViewCard);
 
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oQuickViewCard.destroy();
@@ -316,7 +316,7 @@ sap.ui.define([
 		mData.pages[0].description = "";
 
 		oModel.setData(mData);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		QVCardScrollContainer = document.getElementById(this.oQuickViewCard.sId + "-" + mData.pages[0].pageId + "-scroll");
 		assert.strictEqual(QVCardScrollContainer.children.length, 1, "ScrollContainer inside QuickViewCard contains only SimpleForm");
@@ -327,7 +327,7 @@ sap.ui.define([
 			this.oQuickViewCard = getQuickViewCard();
 			oPage.addContent(this.oQuickViewCard);
 
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oQuickViewCard.destroy();

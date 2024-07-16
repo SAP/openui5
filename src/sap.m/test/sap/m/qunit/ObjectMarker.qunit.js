@@ -11,8 +11,7 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Library,
 	qutils,
@@ -25,8 +24,7 @@ sap.ui.define([
 	ColumnListItem,
 	Device,
 	KeyCodes,
-	nextUIUpdate,
-	jQuery
+	nextUIUpdate
 ) {
 	"use strict";
 

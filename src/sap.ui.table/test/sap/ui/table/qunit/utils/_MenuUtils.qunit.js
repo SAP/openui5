@@ -1,26 +1,22 @@
-/*global QUnit, sinon, oTable */
+/*global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Row",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/unified/MenuItem",
-	"sap/ui/Device",
 	"sap/ui/core/Control"
 ], function(
 	TableQUnitUtils,
-	nextUIUpdate,
 	TableUtils,
 	Row,
 	RowAction,
 	RowActionItem,
 	FixedRowMode,
 	MenuItem,
-	Device,
 	Control
 ) {
 	"use strict";
@@ -577,197 +573,5 @@ sap.ui.define([
 		TableUtils.Menu.cleanupDefaultContentCellContextMenu(this.oTable);
 		assert.ok(oCellContextMenu.destroy.called, "#destroy call");
 		assert.notOk(this.oTable._oCellContextMenu, "Reference to the default context menu instance is removed");
-	});
-
-	/**
-	 * @deprecated As of version 1.54
-	 */
-	QUnit.module("Context Menus - cellContextmenu (legacy)", {
-		before: function() {
-			const oCellContextMenuEventInfo = {
-				name: "CellContextMenu",
-				lastCallParameters: null,
-				handler: sinon.spy(function(oEvent) {
-					oCellContextMenuEventInfo.lastCallParameters = oEvent.mParameters;
-				})
-			};
-			this.oCellContextMenuEventInfo = oCellContextMenuEventInfo;
-		},
-		beforeEach: async function() {
-			await window.createTables();
-			oTable.attachCellContextmenu(this.oCellContextMenuEventInfo.handler);
-		},
-		afterEach: function() {
-			window.destroyTables();
-			this.oCellContextMenuEventInfo.handler.resetHistory();
-		},
-		assertEventCalled: function(assert, oEventInfo, bCalled, mExpectedParameters) {
-			if (bCalled) {
-				assert.ok(oEventInfo.handler.calledOnce, oEventInfo.name + ": The event handler has been called");
-				assert.deepEqual(oEventInfo.lastCallParameters, Object.assign({id: oTable.getId()}, mExpectedParameters),
-					oEventInfo.name + ": The event object contains the correct parameters");
-			} else {
-				assert.ok(oEventInfo.handler.notCalled, oEventInfo.name + ": The event handler has not been called");
-			}
-
-			oEventInfo.handler.resetHistory();
-			oEventInfo.lastCallParameters = null;
-		}
-	});
-
-	/**
-	 * @deprecated As of version 1.54
-	 */
-	QUnit.test("openContextMenu - Header cells", async function(assert) {
-		const oColumnA = oTable.getColumns()[0];
-		const oColumnB = oTable.getColumns()[1];
-		const bOriginalDeviceSystemDesktop = Device.system.desktop;
-		let oEvent;
-
-		Device.system.desktop = true;
-		oColumnA.setFilterProperty("A");
-		oColumnB.setFilterProperty("A");
-
-		oEvent = createFakeEventObject(oColumnA.getDomRef());
-		TableUtils.Menu.openContextMenu(oTable, oEvent);
-		assert.ok(oEvent.preventDefault.called, "preventDefault");
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
-
-		oEvent = createFakeEventObject(oColumnB.getDomRef());
-		TableUtils.Menu.openContextMenu(oTable, oEvent);
-		assert.ok(oEvent.preventDefault.called, "preventDefault");
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
-
-		// Prevent the default action. The context menu should not be opened.
-		oTable.attachEventOnce("columnSelect", function(oEvent) {
-			oEvent.preventDefault();
-		});
-
-		oEvent = createFakeEventObject(oColumnA.getDomRef());
-		TableUtils.Menu.openContextMenu(oTable, oEvent);
-		assert.ok(oEvent.preventDefault.called, "preventDefault");
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
-
-		// Make the first column invisible and open the menu of column 2 (which is not the first visible column).
-		oColumnA.setVisible(false);
-		await nextUIUpdate();
-
-		oEvent = createFakeEventObject(oColumnB.getDomRef());
-		TableUtils.Menu.openContextMenu(oTable, oEvent);
-		assert.ok(oEvent.preventDefault.called, "preventDefault");
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
-
-		oColumnA.setVisible(true);
-		await nextUIUpdate();
-
-		Device.system.desktop = false;
-
-		oEvent = createFakeEventObject(oColumnA.getDomRef());
-		TableUtils.Menu.openContextMenu(oTable, oEvent);
-		assert.ok(oEvent.preventDefault.called, "preventDefault");
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
-
-		oTable.attachEventOnce("columnSelect", function(oEvent) {
-			oEvent.preventDefault();
-		});
-		oEvent = createFakeEventObject(oColumnA.getDomRef());
-		TableUtils.Menu.openContextMenu(oTable, oEvent);
-		assert.ok(oEvent.preventDefault.called, "preventDefault");
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
-
-		Device.system.desktop = bOriginalDeviceSystemDesktop;
-	});
-
-	/**
-	 * @deprecated As of version 1.54
-	 */
-	QUnit.test("openContextMenu - Content cells", function(assert) {
-		let oDomRef;
-		const aColumns = oTable.getColumns();
-		const aRows = oTable.getRows();
-		const oColumnA = aColumns[0];
-		const oCellA = aRows[0].getCells()[0];
-		const oColumnB = aColumns[1];
-		const oCellB = aRows[0].getCells()[1];
-		const oCustomContextMenu = new TestContextMenu();
-		let oEvent;
-
-		oDomRef = oCellA.getDomRef();
-		oEvent = createFakeEventObject(oDomRef);
-		TableUtils.Menu.openContextMenu(oTable, oEvent);
-		assert.notOk(oEvent.preventDefault.called, "preventDefault");
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
-			rowIndex: 0,
-			columnIndex: 0,
-			columnId: oColumnA.getId(),
-			cellControl: oCellA,
-			rowBindingContext: aRows[0].getBindingContext(oTable.getBindingInfo("rows").model),
-			cellDomRef: TableUtils.getCell(oTable, oDomRef)[0]
-		});
-		this.oCellContextMenuEventInfo.handler.resetHistory();
-
-		oTable.setContextMenu(oCustomContextMenu);
-		oDomRef = oCellB.getDomRef();
-		oEvent = createFakeEventObject(oDomRef);
-		TableUtils.Menu.openContextMenu(oTable, oEvent);
-		assert.ok(oEvent.preventDefault.called, "preventDefault");
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
-			rowIndex: 0,
-			columnIndex: 1,
-			columnId: oColumnB.getId(),
-			cellControl: oCellB,
-			rowBindingContext: aRows[0].getBindingContext(oTable.getBindingInfo("rows").model),
-			cellDomRef: TableUtils.getCell(oTable, oDomRef)[0]
-		});
-		this.oCellContextMenuEventInfo.handler.resetHistory();
-
-		oTable.attachEventOnce("cellContextmenu", function(oEvent) {
-			oEvent.preventDefault();
-		});
-
-		oDomRef = oCellA.getDomRef();
-		oEvent = createFakeEventObject(oDomRef);
-		TableUtils.Menu.openContextMenu(oTable, oEvent);
-		assert.ok(oEvent.preventDefault.called, "preventDefault");
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
-			rowIndex: 0,
-			columnIndex: 0,
-			columnId: oColumnA.getId(),
-			cellControl: oCellA,
-			rowBindingContext: aRows[0].getBindingContext(oTable.getBindingInfo("rows").model),
-			cellDomRef: TableUtils.getCell(oTable, oDomRef)[0]
-		});
-		this.oCellContextMenuEventInfo.handler.resetHistory();
-
-		oTable.attachEventOnce("beforeOpenContextMenu", function(oEvent) {
-			oEvent.preventDefault();
-		});
-
-		oDomRef = oCellA.getDomRef();
-		oEvent = createFakeEventObject(oDomRef);
-		TableUtils.Menu.openContextMenu(oTable, oEvent);
-		assert.notOk(oEvent.preventDefault.called, "preventDefault");
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
-			rowIndex: 0,
-			columnIndex: 0,
-			columnId: oColumnA.getId(),
-			cellControl: oCellA,
-			rowBindingContext: aRows[0].getBindingContext(oTable.getBindingInfo("rows").model),
-			cellDomRef: TableUtils.getCell(oTable, oDomRef)[0]
-		});
-		this.oCellContextMenuEventInfo.handler.resetHistory();
-
-		oDomRef = window.getRowHeader(0)[0];
-		oEvent = createFakeEventObject(oDomRef);
-		TableUtils.Menu.openContextMenu(oTable, oEvent);
-		assert.ok(oEvent.preventDefault.called, "preventDefault");
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
-
-		oTable.destroyContextMenu();
-		oDomRef = window.getRowAction(0)[0];
-		oEvent = createFakeEventObject(oDomRef);
-		TableUtils.Menu.openContextMenu(oTable, oEvent);
-		assert.notOk(oEvent.preventDefault.called, "preventDefault");
-		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 	});
 });

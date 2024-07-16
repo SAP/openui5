@@ -68,16 +68,4 @@ sap.ui.define([
 		assert.equal(oLocale.hasPrivateUseSubtag("apu"), false, "parts of PrivateUse subtag must not be detected");
 		assert.equal(oLocale.hasPrivateUseSubtag("ufmt"), false, "parts of PrivateUse subtag must not be detected");
 	});
-
-	/**
-	 * @deprecated As of 1.44
-	 */
-	QUnit.test("getSAPLogonLanguage", function(assert) {
-		aLocales.forEach(function(aLocaleData) {
-			var oLocale = new Locale(aLocaleData[0]);
-			assert.equal(oLocale.getSAPLogonLanguage(), aLocaleData[7],
-				"locale '" + aLocaleData[0] + "'"
-				+ " should return the SAP logon language '" + aLocaleData[7] + "'");
-		});
-	});
 });

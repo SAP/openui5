@@ -184,38 +184,4 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(new StaticBinding("~staticValue").getResolvedPath(), undefined);
 	});
-
-/** @deprecated since 1.120, reason ManagedObject does not support aggregations with altType "object" in 2.0 */
-(function() {
-	var MyTestObject = ManagedObject.extend("MyTestObject", {
-			metadata: {
-				aggregations: {
-					altObject: {type: "sap.ui.core.Control", altTypes: ["object"], multiple: false},
-					altMulti: {type: "sap.ui.core.Control", altTypes: ["string", "object"], multiple: false}
-				}
-			}
-		});
-
-	QUnit.test("Binding info as JS object, aggregation with altType object", function(assert) {
-		var object = new MyTestObject({
-				altObject: {
-					value: "test"
-				}
-			});
-		assert.notOk(object.getBindingInfo("altObject"), "binding info is not created");
-		assert.equal(typeof object.getAltObject(), "object",
-			"object getter returns object for aggregation with altType object");
-	});
-
-	QUnit.test("Binding info as JS object, aggregation with altType string,object", function(assert) {
-		var object = new MyTestObject({
-				altMulti: {
-					value: "test"
-				}
-			});
-		assert.notOk(object.getBindingInfo("altMulti"), "binding info is not created");
-		assert.equal(typeof object.getAltMulti(), "object",
-			"object getter returns object for aggregation with altType string,object");
-	});
-}());
 });

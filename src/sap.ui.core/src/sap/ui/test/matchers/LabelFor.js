@@ -72,7 +72,6 @@ sap.ui.define([
 	var LabelFor = Matcher.extend("sap.ui.test.matchers.LabelFor", /** @lends sap.ui.test.matchers.LabelFor.prototype */ {
 
 		metadata: {
-			publicMethods: ["isMatching"],
 			properties: {
 				/**
 				 * The text of the {@link sap.m.Label} which have the labelFor property.

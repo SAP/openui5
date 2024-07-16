@@ -248,39 +248,6 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * Defines what type is used for parse or format the operation
-	 *
-	 * @enum {string}
-	 * @private
-	 * @since 1.75
-	 * @deprecated as of 1.115.0, replaced by {@link sap.ui.mdc.enums.OperatorValueType OperatorValueType}
-	 */
-	Operator.ValueType = {
-		/**
-		 * The <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used.
-		 *
-		 * @public
-		 */
-		Self: "self",
-
-		/**
-		 * A simple string type is used to display static text.
-		 *
-		 * @public
-		 */
-		Static: "static",
-
-		/**
-		 * The <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used
-		 * for validation, but the user input is used as value.
-		 *
-		 * @public
-		 * @since 1.86
-		 */
-		SelfNoParse: "selfNoParse"
-	};
-
 	function _getText(sKey, sType) {
 
 		if (sType === "time" || sType === "datetime") {
@@ -1043,5 +1010,4 @@ sap.ui.define([
 	};
 
 	return Operator;
-
 });

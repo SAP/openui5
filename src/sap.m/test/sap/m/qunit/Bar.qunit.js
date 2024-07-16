@@ -15,8 +15,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Localization,
 	nextUIUpdate,
@@ -31,8 +30,7 @@ sap.ui.define([
 	Element,
 	ResizeHandler,
 	InvisibleText,
-	jQuery,
-	oCore
+	jQuery
 ) {
 	"use strict";
 
@@ -182,56 +180,6 @@ sap.ui.define([
 				"the getHTMLTag should behave in one and the same way- should return the tag value itself");
 		}, this.clock);
 
-	});
-
-	/**
-	 * @deprecated since version 1.16, replaced by <code>contentMiddle</code> aggregation.
-	 */
-	QUnit.test("Deprecated property 'enableFlexBox': should add and remove the flex box", async function(assert) {
-
-		var bar = new Bar("myBar2", {
-			enableFlexBox: true,
-			contentLeft: [ new Image({src: "../images/SAPUI5.jpg"})],
-			contentMiddle: [ new Label({text: "my Bar 1"})],
-			contentRight: [ new Button({text: "Edit"})]
-		}).placeAt("qunit-fixture");
-		await nextUIUpdate(this.clock);
-
-		assert.ok(jQuery("#myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should be a FlexBox with class sapMFlexBox");
-		assert.ok(jQuery("#myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should be a HBox with class sapMHBox");
-
-		bar.setEnableFlexBox(false);
-		await nextUIUpdate(this.clock);
-
-		assert.ok(!jQuery("#myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should not be a FlexBox with class sapMFlexBox");
-		assert.ok(!jQuery("#myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should not be a HBox with class sapMHBox");
-
-		bar.destroy();
-		await nextUIUpdate(this.clock);
-	});
-
-	/**
-	 * @deprecated since version 1.18.6.
-	 */
-	QUnit.test("Should set the translucent class if on a touch device", async function(assert) {
-		var //System under Test
-			sut = new Bar({
-				translucent : true
-			});
-
-		//Arrange
-		this.stub(Device.support, "touch").value(true);
-
-		//Act
-		sut.placeAt("qunit-fixture");
-		await nextUIUpdate(this.clock);
-
-		//Assert
-		assert.strictEqual(sut.$().filter(".sapMBarTranslucent").length,1,"translucent class got set");
-
-		//Cleanup
-		sut.destroy();
-		await nextUIUpdate(this.clock);
 	});
 
 	QUnit.test("Should not register resize handlers if the bar is invisible", async function(assert) {
@@ -532,25 +480,21 @@ sap.ui.define([
 
 	function testAlsoForRTL(sName, fnTest) {
 		QUnit.test(sName, async function (assert) {
-			var config = oCore.getConfiguration();
-
 			//turn on rtl for this test
-			this.stub(config, "getRTL").callsFake(function() {
+			this.stub(Localization, "getRTL").callsFake(function() {
 				return false;
 			});
 
-			await fnTest.call(this, assert, config.getRTL());
+			await fnTest.call(this, assert, Localization.getRTL());
 		});
 
 		QUnit.test(sName + " RTL", async function (assert) {
-			var config = oCore.getConfiguration();
-
 			//turn on rtl for this test
-			this.stub(config, "getRTL").callsFake(function() {
+			this.stub(Localization, "getRTL").callsFake(function() {
 				return true;
 			});
 
-			await fnTest.call(this, assert, config.getRTL());
+			await fnTest.call(this, assert, Localization.getRTL());
 		});
 	}
 
@@ -648,52 +592,6 @@ sap.ui.define([
 		jQuery("#qunit-fixture").width("");
 	});
 
-	/**
-	 * @deprecated since version 1.16, replaced by <code>contentMiddle</code> aggregation.
-	 */
-	QUnit.test("Should push the mid to the center of the remaining space, if the right content overlaps it", async function(assert) {
-		var bRtl = Localization.getRTL(),
-			sLeftOrRight = bRtl ? "right" : "left";
-		var iExtraPadding = 16;
-		//Arrange + System under Test + Act
-		//left | right | mid
-		var sut = await createAndPlaceSUT(undefined, 225, 100, this.clock);
-
-		//Act
-		jQuery("#qunit-fixture").width("500px");
-		sut.placeAt("qunit-fixture");
-		await nextUIUpdate(this.clock);
-
-		//Assert
-		var oBarInternals = getJqueryObjectsForBar(sut);
-
-		assert.strictEqual(oBarInternals.$left.outerWidth(), 0, "left outerWidth is correct");
-
-		assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 - iExtraPadding - iStartEndPadding, "mid outerWidth is the remaining space");
-		assert.strictEqual(parseInt(oBarInternals.$mid.css(sLeftOrRight)), iStartEndPadding * 0 , "mid was positioned at the " + sLeftOrRight + " edge");
-
-		assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iExtraPadding + iStartEndPadding, "right outerWidth is correct");
-
-		//Change to flexbox mode
-		sut.setEnableFlexBox(true);
-		await nextUIUpdate(this.clock);
-
-		//Assert
-		oBarInternals = getJqueryObjectsForBar(sut);
-
-		assert.strictEqual(oBarInternals.$left.outerWidth(), iExtraPadding + iStartEndPadding, "left outerWidth is correct (flexbox)");
-
-		assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 - (iExtraPadding * 2) - iStartEndPadding * 2, "mid outerWidth is the remaining space (flexbox)");
-		assert.strictEqual(parseInt(oBarInternals.$mid.css(sLeftOrRight)), iStartEndPadding + iExtraPadding, "mid was positioned at the " + sLeftOrRight + " edge (flexbox)");
-
-		assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iExtraPadding + iStartEndPadding, "right outerWidth is correct (flexbox)");
-
-		//Cleanup
-		sut.destroy();
-		await nextUIUpdate(this.clock);
-		jQuery("#qunit-fixture").width("");
-	});
-
 	testAlsoForRTL("Should hide left and mid content, if the right content is bigger than the bar", async function(assert) {
 		//Arrange + System under Test + Act
 		//left | right | mid
@@ -733,48 +631,6 @@ sap.ui.define([
 		assert.strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
 
 		assert.strictEqual(oBarInternals.$right.outerWidth(), 0, "right outerWidth is correct");
-
-		//Cleanup
-		sut.destroy();
-		await nextUIUpdate(this.clock);
-		jQuery("#qunit-fixture").width("");
-	});
-
-	/**
-	 * @deprecated since version 1.16, replaced by <code>contentMiddle</code> aggregation.
-	 */
-	testAlsoForRTL("Should make the mid content smaller, if there is a left and right content", async function(assert) {
-		//Arrange + System under Test + Act
-		//left | right | mid
-		var sut = await createAndPlaceSUT(100, 100, 500, this.clock);
-		var iExtraPadding = 16;
-
-		//Act
-		jQuery("#qunit-fixture").width("500px");
-		sut.placeAt("qunit-fixture");
-		await nextUIUpdate(this.clock);
-
-		//Assert
-		var oBarInternals = getJqueryObjectsForBar(sut);
-
-		assert.strictEqual(oBarInternals.$left.outerWidth(), 100 + iExtraPadding + iStartEndPadding, "left outerWidth is correct");
-
-		assert.strictEqual(oBarInternals.$mid.outerWidth(), 300 - (iExtraPadding * 2) -  iStartEndPadding * 2, "mid outerWidth is correct");
-
-		assert.strictEqual(oBarInternals.$right.outerWidth(), 100 + iExtraPadding + iStartEndPadding, "right outerWidth is correct");
-
-		//Change to flexbox mode
-		sut.setEnableFlexBox(true);
-		await nextUIUpdate(this.clock);
-
-		//Assert
-		oBarInternals = getJqueryObjectsForBar(sut);
-
-		assert.strictEqual(oBarInternals.$left.outerWidth(), 100 + iExtraPadding + iStartEndPadding, "left outerWidth is correct (flexbox)");
-
-		assert.strictEqual(oBarInternals.$mid.outerWidth(), 300 - (iExtraPadding * 2) - iStartEndPadding * 2, "mid outerWidth is correct (flexbox)");
-
-		assert.strictEqual(oBarInternals.$right.outerWidth(), 100 + iExtraPadding + iStartEndPadding, "right outerWidth is correct (flexbox)");
 
 		//Cleanup
 		sut.destroy();
@@ -1064,5 +920,4 @@ sap.ui.define([
 		oBar.destroy();
 		await nextUIUpdate(this.clock);
 	});
-
 });

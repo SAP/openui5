@@ -42,4 +42,4 @@ sap.ui.define(["sap/ui/core/Lib", 'sap/ui/core/Renderer', './InputBaseRenderer']
 
 	return MaskInputRenderer;
 
-}, /* bExport= */ true);
+});

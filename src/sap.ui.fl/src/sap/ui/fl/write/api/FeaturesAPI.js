@@ -25,7 +25,6 @@ sap.ui.define([
 	 */
 
 	var FeaturesAPI = /** @lends sap.ui.fl.write.api.FeaturesAPI */ {
-
 		/**
 		 * Determines if the current runtime can publish flexibility content in the connected backend.
 		 *
@@ -145,25 +144,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks if context sharing is enabled.
-		 *
-		 * @param {string} sLayer - Layer to get correct connector
-		 * @returns {Promise<boolean>} Resolves to a boolean indicating if context sharing is enabled
-		 * @private
-		 * @deprecated
-		 * @ui5-restricted sap.ui.fl.write.api.ContextSharingAPI
-		 */
-		isContextSharingEnabled(sLayer) {
-			if (sLayer !== Layer.CUSTOMER) {
-				return Promise.resolve(false);
-			}
-			return Settings.getInstance()
-			.then(function(oSettings) {
-				return oSettings.isContextSharingEnabled({layer: sLayer});
-			});
-		},
-
-		/**
 		 * Checks if the backend supports to save already viewed features via What's New.
 		 *
 		 * @returns {Promise<boolean>} Resolves to a boolean indicating if the feature is available
@@ -183,7 +163,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.rta
 		 */
 		async getSeenFeatureIds(mPropertyBag) {
-			if (!await this.isSeenFeaturesAvailable()) {
+			if (!(await this.isSeenFeaturesAvailable())) {
 				return [];
 			}
 			return Storage.getSeenFeatureIds(mPropertyBag);
@@ -200,7 +180,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.rta
 		 */
 		async setSeenFeatureIds(mPropertyBag) {
-			if (!await this.isSeenFeaturesAvailable()) {
+			if (!(await this.isSeenFeaturesAvailable())) {
 				return Promise.reject("The backend does not support saving seen features.");
 			}
 			return Storage.setSeenFeatureIds(mPropertyBag);

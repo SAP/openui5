@@ -27,4 +27,4 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'], function(Renderer
 
 	return DateTimeFieldRenderer;
 
-}, /* bExport= */ true);
+});

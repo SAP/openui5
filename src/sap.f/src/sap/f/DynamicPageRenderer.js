@@ -134,4 +134,4 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 
 	return DynamicPageRenderer;
 
-}, /* bExport= */ true);
+});

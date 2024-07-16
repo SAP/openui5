@@ -1,1 +1,0 @@
-:host{box-sizing:border-box;color:var(--sapList_TextColor);display:table-cell;font-family:"72override",var(--sapFontFamily);font-size:.875rem;height:var(--ui5-v1-18-0_table_row_height);vertical-align:middle;word-break:break-word}td{display:contents}:host([popined]){padding-left:0;padding-top:.25rem}:host([_popined-inline]){padding-top:0}::slotted([ui5-label]){color:inherit}

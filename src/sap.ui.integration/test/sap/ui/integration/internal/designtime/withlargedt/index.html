@@ -2,22 +2,17 @@
 <html>
 
 <head>
-	<meta charset="utf-8" />
+	<meta charset="utf-8">
 	<title>Editor Test Page with designtime files</title>
-	<script src="../../../../../../../resources/sap-ui-integration.js" id="sap-ui-bootstrap"
-		data-sap-ui-theme="sap_horizon" data-sap-ui-oninit="init" data-sap-ui-resourceroots='{"indexjs":"./"}'></script>
-	<script>
-		function init() {
-			sap.ui.require(["indexjs/index"]);
-		}
-
-	</script>
-	<style>
-		td {
-			vertical-align: top;
-			height: 200px;
-		}
-	</style>
+	<script src="../../../../../../../resources/sap-ui-integration.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-on-init="init"
+			data-sap-ui-resource-roots='{"indexjs":"./"}'
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+	></script>
+	<script src="./index-embedded-1.js"></script>
+	<link rel="stylesheet" href="./index.css">
 </head>
 
 <body class="sapUiBody sapUiSizeCompact">

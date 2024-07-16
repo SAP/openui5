@@ -38,4 +38,4 @@ sap.ui.define(() => {
 
 	return ConditionValidated;
 
-}, /* bExport= */ true);
+});

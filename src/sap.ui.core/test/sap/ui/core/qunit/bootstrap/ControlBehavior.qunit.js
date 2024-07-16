@@ -88,19 +88,11 @@ sap.ui.define([
 		// Check if default values are set
 		assert.equal(ControlBehavior.getAnimationMode(), AnimationMode.full, "Default animation mode is " + AnimationMode.full + ".");
 		assert.equal(getHtmlAttribute("data-sap-ui-animation-mode"), AnimationMode.full, "Default animation mode should be injected as attribute.");
-		/**
-		 * @deprecated As of version 1.50.0, replaced by {@link sap.ui.core.Configuration#getAnimationMode}
-		 */
-		assert.equal(getHtmlAttribute("data-sap-ui-animation"), "on", "Default animation should be injected as attribute.");
 
 		// Change animation mode
 		ControlBehavior.setAnimationMode(AnimationMode.none);
 		assert.equal(ControlBehavior.getAnimationMode(), AnimationMode.none, "Animation mode should switch to " + AnimationMode.none + ".");
 		assert.equal(getHtmlAttribute("data-sap-ui-animation-mode"), AnimationMode.none, "Animation mode should be injected as attribute.");
-		/**
-		 * @deprecated As of version 1.50.0, replaced by {@link sap.ui.core.Configuration#getAnimationMode}
-		 */
-		assert.equal(getHtmlAttribute("data-sap-ui-animation"), "off", "Animation should be turned off.");
 	});
 
 	QUnit.test("Invalid animation mode", function(assert) {

@@ -7,13 +7,12 @@ sap.ui.define([
 	'sap/ui/base/EventProvider',
 	'sap/ui/core/routing/Target',
 	'sap/ui/core/routing/async/Route',
-	'sap/ui/core/routing/sync/Route',
 	'sap/ui/core/Component',
 	"sap/base/future",
 	"sap/base/assert",
 	"sap/base/util/deepExtend"
 ],
-	function(EventProvider, Target, asyncRoute, syncRoute, Component, future, assert, deepExtend) {
+	function(EventProvider, Target, asyncRoute, Component, future, assert, deepExtend) {
 	"use strict";
 
 		/**
@@ -102,9 +101,7 @@ sap.ui.define([
 		 */
 		var Route = EventProvider.extend("sap.ui.core.routing.Route", /** @lends sap.ui.core.routing.Route.prototype */ {
 
-			metadata : {
-				publicMethods: ["getURL", "getPattern"]
-			},
+			metadata : {},
 
 			constructor : function(oRouter, oConfig, oParent) {
 				EventProvider.apply(this, arguments);
@@ -125,7 +122,7 @@ sap.ui.define([
 					RouteStub,
 					async = oRouter._isAsync();
 
-				RouteStub = async ? asyncRoute : syncRoute;
+				RouteStub = async ? asyncRoute : undefined/*syncRoute*/;
 				for (var fn in RouteStub) {
 					this[fn] = RouteStub[fn];
 				}

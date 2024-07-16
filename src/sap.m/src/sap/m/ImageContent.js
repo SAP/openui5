@@ -7,7 +7,6 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/m/Image',
 	'sap/ui/core/IconPool',
-	'sap/ui/Device',
 	'./ImageContentRenderer',
 	"sap/ui/events/KeyCodes"
 ], function(
@@ -15,7 +14,6 @@ sap.ui.define([
 	Control,
 	Image,
 	IconPool,
-	Device,
 	ImageContentRenderer,
 	KeyCodes
 ) {
@@ -118,9 +116,6 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent which was triggered
 	 */
 	ImageContent.prototype.ontap = function (oEvent) {
-		if (Device.browser.msie) {
-			this.$().trigger("focus");
-		}
 		this.firePress();
 	};
 

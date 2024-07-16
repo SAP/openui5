@@ -3,8 +3,7 @@
  */
 
 // Provides class sap.ui.core.ComponentMetadata
-sap.ui.define(['./ComponentMetadata', 'sap/ui/core/mvc/ViewType'],
-	function(ComponentMetadata, ViewType) {
+sap.ui.define(['./ComponentMetadata', 'sap/ui/core/mvc/ViewType'], function(ComponentMetadata, ViewType) {
 	"use strict";
 
 	/**
@@ -32,81 +31,6 @@ sap.ui.define(['./ComponentMetadata', 'sap/ui/core/mvc/ViewType'],
 	//chain the prototypes
 	UIComponentMetadata.prototype = Object.create(ComponentMetadata.prototype);
 	UIComponentMetadata.prototype.constructor = UIComponentMetadata;
-
-	/**
-	 * Synchronous loading Component metadata from "component.json" is deprecated.
-	 * @deprecated
-	 */
-	UIComponentMetadata.preprocessClassInfo = function(oClassInfo) {
-		// if the component is a string we convert this into a "_src" metadata entry
-		// the specific metadata object can decide to support this or gracefully ignore it
-		// basically the ComponentMetadata makes use of this feature
-		if (oClassInfo && typeof oClassInfo.metadata === "string") {
-			oClassInfo.metadata = {
-				_src: oClassInfo.metadata
-			};
-		}
-		return oClassInfo;
-	};
-
-	/**
-	 * Returns the root view of the component.
-	 *
-	 * <b>Important:</b></br>
-	 * If a Component is loaded using the manifest URL (or according the
-	 * "manifest first" strategy), this function ignores the entries of the
-	 * manifest file! It returns only the entries which have been defined in
-	 * the Component metadata or in the proper Component manifest.
-	 *
-	 * @param {boolean} [bDoNotMerge] Returns the local root view configuration if set to <code>true</code>.
-	 * @return {object|null} root view as configuration object or null ({@link sap.ui.view})
-	 * @protected
-	 * @since 1.15.1
-	 * @deprecated Since 1.27.1. Please use {@link sap.ui.core.Component#getManifestEntry}("/sap.ui5/rootView")
-	 */
-	UIComponentMetadata.prototype.getRootView = function(bDoNotMerge) {
-		return this.getManifestEntry("/sap.ui5/rootView", !bDoNotMerge);
-	};
-
-	/**
-	 * Returns the routing configuration.
-	 *
-	 * <b>Important:</b></br>
-	 * If a Component is loaded using the manifest URL (or according the
-	 * "manifest first" strategy), this function ignores the entries of the
-	 * manifest file! It returns only the entries which have been defined in
-	 * the Component metadata or in the proper Component manifest.
-	 *
-	 * @return {object} routing configuration
-	 * @param {boolean} [bDoNotMerge] Returns the local routing config if set to <code>true</code>
-	 * @private
-	 * @since 1.16.1
-	 * @experimental Since 1.16.1. Implementation might change.
-	 * @deprecated Since 1.27.1. Please use {@link sap.ui.core.Component#getManifestEntry}("/sap.ui5/routing/config")
-	 */
-	UIComponentMetadata.prototype.getRoutingConfig = function(bDoNotMerge) {
-		return this.getManifestEntry("/sap.ui5/routing/config", !bDoNotMerge);
-	};
-
-	/**
-	 * Returns the array of routes. If not defined the array is undefined.
-	 *
-	 * <b>Important:</b></br>
-	 * If a Component is loaded using the manifest URL (or according the
-	 * "manifest first" strategy), this function ignores the entries of the
-	 * manifest file! It returns only the entries which have been defined in
-	 * the Component metadata or in the proper Component manifest.
-	 *
-	 * @return {array} routes
-	 * @param {boolean} [bDoNotMerge] Returns the local routes if set to <code>true</code>
-	 * @private
-	 * @since 1.16.1
-	 * @experimental Since 1.16.1. Implementation might change.
-	 * @deprecated Since 1.27.1. Please use {@link sap.ui.core.Component#getManifestEntry}("/sap.ui5/routing/routes")
-	 */
-	UIComponentMetadata.prototype.getRoutes = function(bDoNotMerge) {
-		return this.getManifestEntry("/sap.ui5/routing/routes", !bDoNotMerge);
-	};
 
 
 	/**
@@ -145,5 +69,4 @@ sap.ui.define(['./ComponentMetadata', 'sap/ui/core/mvc/ViewType'],
 	};
 
 	return UIComponentMetadata;
-
-}, /* bExport= */ true);
+});

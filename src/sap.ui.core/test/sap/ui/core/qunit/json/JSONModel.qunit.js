@@ -264,44 +264,6 @@ sap.ui.define([
 		oModel.setProperty("1/firstName", "Petri", oLabel.getBindingContext());
 		assert.equal(oLabel.getText(), "Petri", "new text value from model");
 	});
-	/** @deprecated As of version 1.88.0, reason Model.prototype.setLegacySyntax */
-	QUnit.test("test model setProperty onlabel with bindingContext and relative path (legacySyntax = true)", function(assert) {
-		const {oModel, oLabel} = this.createModelAndLabel();
-		oModel.setLegacySyntax(true);
-		var oContext = oModel.createBindingContext("/teamMembers");
-		oLabel.setBindingContext(oContext);
-		oLabel.bindProperty("text", "1/firstName");
-		assert.equal(oLabel.getText(), "Peter", "text value from model");
-		// modify model value
-		oModel.setProperty("1/firstName", "Petro", oLabel.getBindingContext());
-		assert.equal(oLabel.getText(), "Petro", "new text value from model");
-		oModel.setLegacySyntax(false);
-	});
-	/** @deprecated As of version 1.88.0, reason Model.prototype.setLegacySyntax */
-	QUnit.test("test model setProperty onlabel without bindingContext and relative path (legacySyntax = true)", function(assert) {
-		const {oModel, oLabel} = this.createModelAndLabel();
-		oModel.setLegacySyntax(true);
-		oLabel.setBindingContext(undefined);
-		oLabel.bindProperty("text", "teamMembers/1/firstName");
-		assert.equal(oLabel.getText(), "Peter", "text value from model");
-		// modify model value
-		oModel.setProperty("teamMembers/1/firstName", "Petre", oLabel.getBindingContext());
-		assert.equal(oLabel.getText(), "Petre", "new text value from model");
-		oModel.setLegacySyntax(false);
-	});
-	/** @deprecated As of version 1.88.0, reason Model.prototype.setLegacySyntax */
-	QUnit.test("test model setProperty onlabel with bindingContext and absolute path (legacySyntax = true)", function(assert) {
-		const {oModel, oLabel} = this.createModelAndLabel();
-		oModel.setLegacySyntax(true);
-		var oContext = oModel.createBindingContext("/teamMembers/HorstDerGrosse");
-		oLabel.setBindingContext(oContext);
-		oLabel.bindProperty("text", "/teamMembers/1/firstName");
-		assert.equal(oLabel.getText(), "Peter", "text value from model");
-		// modify model value
-		oModel.setProperty("/teamMembers/1/firstName", "Petra", oLabel.getBindingContext());
-		assert.equal(oLabel.getText(), "Petra", "new text value from model");
-		oModel.setLegacySyntax(false);
-	});
 
 	QUnit.test("test model setProperty onlabel with bindingContext and absolute path", function(assert) {
 		const {oModel, oLabel} = this.createModelAndLabel();
@@ -891,36 +853,6 @@ sap.ui.define([
 		oModel.setJSON(sJSON,false);
 		assert.equal(oModel.getData().name, "John", "get Data test");
 		oModel.destroy();
-	});
-	/** @deprecated As of version 1.88.0, reason Model.prototype.setLegacySyntax */
-	QUnit.test("test JSON compatible syntax", function(assert) {
-		const oModel = this.createModel();
-		oModel.setLegacySyntax(true);
-		var value = oModel.getProperty("teamMembers/6/lastName");
-		assert.equal(value, "Wallace", "model value");
-		oModel.setProperty("teamMembers/4/lastName", "Jackson");
-		value = oModel.getProperty("/teamMembers/4/lastName");
-		assert.equal(value, "Jackson", "model value");
-		var oContext = oModel.createBindingContext("teamMembers/6");
-		value = oModel.getProperty("lastName", oContext);
-		assert.equal(value, "Wallace", "model value");
-	});
-	/** @deprecated As of version 1.88.0, reason Model.prototype.setLegacySyntax */
-	QUnit.test("test JSON compatible syntax fail", function(assert) {
-		const oModel = this.createModel();
-		oModel.setLegacySyntax(false);
-		var value = oModel.getProperty("teamMembers/6/lastName");
-		assert.equal(value, undefined, "model value");
-		oModel.setProperty("/teamMembers/4/lastName", "Ander");
-		try {
-			oModel.setProperty("teamMembers/4/lastName", "Jackson");
-		} catch (e) {
-			assert.ok(false, "should not happen!");
-		}
-		value = oModel.getProperty("/teamMembers/4/lastName");
-		assert.equal(value, "Ander", "model value");
-		var oContext = oModel.createBindingContext("teamMembers/6");
-		assert.equal(oContext, undefined, "model value");
 	});
 
 	QUnit.test("test JSONModel destroy", function(assert) {

@@ -28,7 +28,6 @@ sap.ui.define([
 	var Scroll = Action.extend("sap.ui.test.actions.Scroll", /** @lends sap.ui.test.actions.Scroll.prototype */ {
 
 		metadata : {
-			publicMethods : [ "executeOn" ],
 			properties: {
 				x: {
 					type: "int",

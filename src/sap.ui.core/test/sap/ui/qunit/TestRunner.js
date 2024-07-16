@@ -17,7 +17,7 @@
 		// the context path - this section makes sure to remove the duplicate
 		// test-resources segments in the path
 		if (sTestPage.indexOf("/test-resources/test-resources") === 0 || sTestPage.indexOf("/test-resources/resources") === 0) {
-			sTestPage = sTestPage.substr("/test-resources".length);
+			sTestPage = sTestPage.substr(15);
 		}
 		this.aPages.push(sTestPage);
 	};
@@ -276,25 +276,6 @@
 			}
 		}
 		printTestResultAndRemoveFrame(frame, framediv, oContext) {
-			/**
-			 * Blanket should not be possible to be used anymore since already the loader uses incompatible ES6 syntax
-			 * in case of coverage either merge it or set it on the _$blanket object
-			 * @deprecated
-			*/
-			if (frame.contentWindow._$blanket) {
-				var oBlanketCoverage = frame.contentWindow._$blanket;
-				globalThis._$blanket = globalThis._$blanket || {};
-				for (const sModule in oBlanketCoverage) {
-					const aCoverageInfo = oBlanketCoverage[sModule];
-					if (!globalThis._$blanket[sModule]) {
-						globalThis._$blanket[sModule] = aCoverageInfo;
-					} else {
-						aCoverageInfo.forEach((iIndex, iCount) => {
-							globalThis._$blanket[sModule][iIndex] += iCount;
-						});
-					}
-				}
-			}
 			frame.src = "about:blank";
 			frame.contentWindow.document.write('');
 			frame.contentWindow.close();
@@ -616,15 +597,6 @@
 	const testRunner = new TestRunner();
 
 	/**
-	 * @deprecated
-	 */
-	(() => {
-		const oScript = document.createElement('SCRIPT');
-		oScript.src = "/resources/sap/ui/thirdparty/blanket.js";
-		document.head.appendChild(oScript);
-	})();
-
-	/**
 	 * Utility class to find test pages and check them for being
 	 * a testsuite or a QUnit testpage - also it returns the coverage
 	 * results.
@@ -659,16 +631,6 @@
 			querySelector("span.total").textContent =
 			querySelector("span.passed").textContent =
 			querySelector("span.failed").textContent = "0";
-			/**
-			 * @deprecated
-			 */
-			(() => {
-				querySelector("#coverageFrame")?.remove();
-				querySelector("#coverageContent > iframe")?.remove();
-				toggleDisplay("test-coverage", false);
-				delete globalThis._$blanket;
-				delete globalThis.top.__coverage__;
-			})();
 		}
 
 		function createTestPageSelectionOptions(sFilter) {
@@ -751,10 +713,6 @@
 		function prepareNewTestDiscovery() {
 			setVisibile(["run", "stop"], false);
 			toggleDisplay(["filterElements", "select", "test-reporting"], false);
-			/**
-			 * @deprecated
-			 */
-			toggleDisplay(["test-coverage"], false);
 			byId("filter").value = "";
 			removeSelectedTest([...querySelectorAll("#select select > option")]);
 			toggleDisplay("busy", true);
@@ -763,14 +721,6 @@
 		function displayTestResults() {
 			const aAreas = ["test-reporting"];
 
-			/**
-			 * @deprecated
-			 */
-			if (testRunner.hasCoverage()) {
-				aAreas.push("test-coverage");
-				testRunner.reportCoverage(byId("coverageContent"));
-				toggleArea("test-coverage", true);
-			}
 			setVisibile(["progressSection", "stop"], false);
 			toggleDisplay(aAreas, true);
 			toggleArea("test-reporting", true);
@@ -794,19 +744,6 @@
 		});
 
 		setVisibile(["progressSection", "run", "stop"], false);
-
-		/**
-		 * @deprecated
-		 */
-		querySelector("body > div").appendChild(h("div", { id: "test-coverage", style: { display: "none" }, "class": "test-coverage uiArea expanded" }, [
-			h("div", { id: "coverageHeader", "class": "uiAreaHeader"}, [
-				h("div", {}, "Test Coverage"),
-				h("div", { id: "openCoverage", "class": "expandCollapseBtn"})
-			]),
-			h("div", { id: "coverageContent", "class": "uiAreaContent"}, [
-				h("div", { id: "blanket-main"})
-			])
-		]));
 
 		/**
 		 * Register click handler
@@ -853,13 +790,6 @@
 
 		click("openReporting", () => {
 			toggleArea("test-reporting");
-		});
-
-		/**
-		 * @deprecated
-		 */
-		click("openCoverage", () => {
-			toggleArea("test-coverage");
 		});
 
 		click("stop", testRunner.stopTests.bind(testRunner));

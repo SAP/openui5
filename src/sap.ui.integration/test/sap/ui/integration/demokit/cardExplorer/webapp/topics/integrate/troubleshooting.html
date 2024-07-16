@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head><meta charset="utf-8">
 	<title>Troubleshooting</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="../../scripts/boot.js"></script>
 </head>
@@ -31,11 +31,9 @@
 				In this case the card should not request the data service directly, but should use destination instead.
 			</p>
 			<ol>
-				<li>Configure a destination in the card manifest (<a
-						href="../../index.html#/learn/configuration/destinations" target="_parent">see card destinations</a>)
+				<li>Configure a destination in the card manifest (<a href="../../index.html#/learn/configuration/destinations" target="_parent">see card destinations</a>)
 				</li>
-				<li>Make sure that the host environment resolves the destination correctly (<a
-						href="../../index.html#/integrate/destinations" target="_parent">see resolving destinations</a>)
+				<li>Make sure that the host environment resolves the destination correctly (<a href="../../index.html#/integrate/destinations" target="_parent">see resolving destinations</a>)
 					or that you have a <code>defaultUrl</code> in the manifest which works in your testing environment
 				</li>
 				<li>Check the request made (for example using the browser's Network tab) and ensure it is requesting the

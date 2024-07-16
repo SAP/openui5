@@ -102,4 +102,4 @@ sap.ui.define([
 	};
 
 	return ResponsiveSplitterRenderer;
-}, /* bExport= */ true);
+});

@@ -1,28 +1,20 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
+	<head><meta charset="utf-8">
 
 		<title>MVC - sap.ui.core</title>
 
 		<script id="sap-ui-bootstrap"
-				src="../../../../../../resources/sap-ui-core.js"
-				data-sap-ui-libs=""
-				data-sap-ui-theme="sap_bluecrystal">
+				src="../../../../../../resources/sap-ui-core.js" data-sap-ui-libs
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/Product"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
 
 
-		<script>
-			// this test page is not below "resources", but "test-resources"
-			// usually this redirect is NOT needed - but possible if useful
-			sap.ui.loader.config({paths: {"sap/ui/core/mvctest": "../../../../../../test-resources/sap/ui/core/samples/mvc/"}});
-
-			// define View and place it onto the page
-			sap.ui.xmlview({
-				id : "id1",
-				viewName : "sap.ui.core.mvctest.views.Product"
-			}).placeAt("content");
-
-		</script>
+		
 	</head>
 
 	<body class="sapUiBody">

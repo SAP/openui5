@@ -10,7 +10,7 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/unified/calendar/CalendarUtils"
-],	function(
+], function(
 	Library,
 	Renderer,
 	YearPickerRenderer,
@@ -154,4 +154,4 @@ sap.ui.define([
 
 	return YearRangePickerRenderer;
 
-}, /* bExport= */ true);
+});

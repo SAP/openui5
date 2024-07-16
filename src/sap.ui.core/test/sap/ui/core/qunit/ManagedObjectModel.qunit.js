@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/ui/core/Element",
 	"sap/ui/core/Item",
+	"sap/ui/core/Lib",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/base/ManagedObjectModel",
 	"sap/ui/model/json/JSONModel",
@@ -16,8 +17,7 @@ sap.ui.define([
 	"sap/ui/model/Context",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator"
-], function (CustomListItem, DatePicker, Input, List, Select, Text, VBox, Element, Item, XMLView,
-			 ManagedObjectModel, JSONModel, BooleanType, DateType, Context, Filter, FilterOperator) {
+], function(CustomListItem, DatePicker, Input, List, Select, Text, VBox, Element, Item, Library, XMLView, ManagedObjectModel, JSONModel, BooleanType, DateType, Context, Filter, FilterOperator) {
 	/*global QUnit */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -814,7 +814,7 @@ sap.ui.define([
 			}, Promise.resolve(initialValue));
 		}
 
-		return sap.ui.getCore().loadLibrary("sap.m", {async: true}).then(function(oLib) {
+		return Library.load("sap.m").then(function(oLib) {
 
 			// this generic test loops over all controls in sap.m and checks whether a property binding in the model causes a change.
 			// currently there are some controls and properties excluded.

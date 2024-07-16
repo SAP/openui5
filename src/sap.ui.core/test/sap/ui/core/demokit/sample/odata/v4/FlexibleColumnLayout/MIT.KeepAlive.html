@@ -1,9 +1,7 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<style type="text/css">
-			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
-		</style>
+	<head><meta charset="utf-8">
+		<link rel="stylesheet" href="./MIT.KeepAlive.css">
 		<title>Manual Integration Test: Flexible Column Layout - Keep-alive Scenario</title>
 	</head>
 	<body>
@@ -15,7 +13,7 @@
 		<p>
 		Additionally, it is used to test the creation of a sales order together with its items using
 		a single request ("deep create") in non-draft mode.
-		<h2>PREPARATION</h2>
+		</p><h2>PREPARATION</h2>
 			To check console errors open the developer tools before starting the application and
 			check with each step, that there are no errors and warnings.
 		<h3>Testing with mock data</h3>
@@ -165,7 +163,7 @@
 			<li>Enter '1000' in the search field of the sales order table.</li>
 			<li><b>Check:</b> The table is filtered but the selected sales order is still visible on
 				the sales order table.
-			<li>Press the <code>Refresh</code> button on the sales order object page.</li>
+			</li><li>Press the <code>Refresh</code> button on the sales order object page.</li>
 			<li><b>Check</b> The object page is updated and shows new data but the sales order
 				does no longer appear in the sales order table.</li>
 		</ol>
@@ -181,7 +179,7 @@
 			<li><b>Check:</b> That the sales order '0500000004' is filtered out from the
 				<code>New Sales Orders</code> list, but still exists on the
 				<code>Sales Order Details</code> object page.
-			<li>Press the <code>Refresh</code> button on the <code>New Sales Orders</code>
+			</li><li>Press the <code>Refresh</code> button on the <code>New Sales Orders</code>
 				list.</li>
 			<li><b>Check</b> The object page <code>Sales Order Details</code> is updated and
 				shows new data and the sales order '0500000004' appears again in the
@@ -216,7 +214,7 @@
 				line items table thrice.</li>
 			<li><b>Check:</b> Three new line items occur, each with a quantity of "2.000". The
 				count for the sales order line item table is 4.
-			<li>Select the second sales order line item on the object page.</li>
+			</li><li>Select the second sales order line item on the object page.</li>
 			<li><b>Check:</b> A sub-object page with item details appears.</li>
 			<li>Press the <code>Delete</code> button of the sub-object page.</li>
 			<li><b>Check:</b> The sub object page vanishes, and the line item is removed from the

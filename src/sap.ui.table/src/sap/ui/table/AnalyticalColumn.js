@@ -269,22 +269,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether the menu has items
-	 * @returns {boolean} True if the menu has or could have items.
-	 * @deprecated As of Version 1.117
-	 */
-	AnalyticalColumn.prototype._menuHasItems = function() {
-		const fnMenuHasItems = function() {
-			const oTable = this.getParent();
-			const oBinding = oTable.getBinding();
-			const oResultSet = oBinding && oBinding.getAnalyticalQueryResult();
-			return (oTable && oResultSet && oResultSet.findMeasureByPropertyName(this.getLeadingProperty())); // totals menu entry
-		}.bind(this);
-
-		return Column.prototype._menuHasItems.apply(this) || fnMenuHasItems();
-	};
-
-	/**
 	 * This function checks whether a filter column menu item will be created. This function considers
 	 * several column properties and evaluates metadata to determine whether filtering for a column is applicable.
 	 * Since for the AnalyticalBinding metadata is very important to determine whether the column can be filtered it

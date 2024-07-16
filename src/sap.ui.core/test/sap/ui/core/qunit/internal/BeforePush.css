@@ -1,0 +1,8 @@
+.failed {background-color: red}
+.hidden {display: none}
+.running {font-weight: bold}
+.selected {background-color: lightgrey}
+.status {width: 1.5em; text-align: center}
+div {display: inline-block}
+i {font-size: smaller}
+#results {font-family: sans-serif; font-size: small}

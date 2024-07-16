@@ -110,4 +110,4 @@ sap.ui.define([
 	};
 
 	return SplitContainerRenderer;
-}, /* bExport= */ true);
+});

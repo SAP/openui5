@@ -88,7 +88,7 @@
         <raw-module name="sap/ui/thirdparty/SecondLevelDomains.js" />
         <raw-module name="sap/ui/thirdparty/signals.js" />
         <raw-module name="sap/ui/thirdparty/sinon-ie.js" depends="sap/ui/thirdparty/sinon.js" />
-        <raw-module name="sap/ui/thirdparty/sinon-qunit.js" depends="sap/ui/thirdparty/qunit.js,sap/ui/thirdparty/sinon.js,sap/ui/thirdparty/sinon-ie.js" />
+        <raw-module name="sap/ui/thirdparty/sinon-qunit.js" depends="sap/ui/thirdparty/qunit.js,sap/ui/thirdparty/sinon.js" />
         <raw-module name="sap/ui/thirdparty/sinon-server.js" depends="sap/ui/thirdparty/sinon.js" requiresTopLevelScope="false" />
         <raw-module name="sap/ui/thirdparty/sinon.js" />
         <raw-module name="sap/ui/thirdparty/sinon-4.js" />
@@ -177,13 +177,13 @@
             <copyright>2014 jQuery Foundation and other contributors</copyright>
             <pattern partial="true" otherContent="SAP" explanation="zIndex.js is overall written by SAP, but contains an implementation of the function 'fnzIndex' which is taken from jQuery UI Datepicker 1.11.1">sap/ui/dom/jquery/zIndex.js</pattern>
         </lib>
-        <lib name="qunit" displayName="QUnit" npmName="n/a" version="1.18.0" hash="f70425a06c2cd609605ee73331687a35" homepage="https://qunitjs.com" id="73554900106100002636">
+        <lib name="qunit" displayName="QUnit" npmName="n/a" version="1.18.0" hash="f10ca90de6fbb7812df25fb781f395e4" homepage="https://qunitjs.com" id="73554900106100002636">
             <license url="http://jQuery.org/license" type="MIT" />
             <copyright>jQuery Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/qunit.css</pattern>
             <pattern>sap/ui/thirdparty/qunit.js</pattern>
         </lib>
-        <lib name="qunit-2" displayName="QUnit 2" npmName="n/a" version="2.3.2" hash="9353c076aec5cfaa6d39c867cdeef863" homepage="https://qunitjs.com" id="73555000106100006951">
+        <lib name="qunit-2" displayName="QUnit 2" npmName="n/a" version="2.3.2" hash="222a695de0acac10264f4465eed7bea9" homepage="https://qunitjs.com" id="73555000106100006951">
             <license url="http://jQuery.org/license" type="MIT" />
             <copyright>jQuery Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/qunit-2.css</pattern>

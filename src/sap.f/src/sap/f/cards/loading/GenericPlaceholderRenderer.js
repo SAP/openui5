@@ -94,4 +94,4 @@ sap.ui.define(["sap/ui/core/Renderer", "./PlaceholderBaseRenderer"], function(Re
 
 	return GenericPlaceholderRenderer;
 
-}, /* bExport= */ true);
+});

@@ -128,4 +128,4 @@ sap.ui.define([
 	};
 
 	return SideNavigationRenderer;
-}, /* bExport= */ true);
+});

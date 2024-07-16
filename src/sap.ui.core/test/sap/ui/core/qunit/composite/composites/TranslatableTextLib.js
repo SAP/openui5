@@ -1,8 +1,7 @@
 sap.ui.define([
-	'sap/ui/core/XMLComposite'
-], function(XMLComposite) {
+], function() {
 	"use strict";
-	return XMLComposite.extend("composites.TranslatableTextLib", {
+	return undefined/*XMLComposite*/.extend("composites.TranslatableTextLib", {
 		metadata: {
 			library: "composites2",
 			properties: {

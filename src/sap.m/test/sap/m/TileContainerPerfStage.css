@@ -1,0 +1,9 @@
+.userCustomTile {
+	background-color: white;
+	padding-left: 2px;
+	padding-right: 2px;
+	border: 1px solid lightgrey;
+}
+.noMargins {
+	margin: 0;
+}

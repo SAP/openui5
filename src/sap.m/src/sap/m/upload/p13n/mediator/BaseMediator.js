@@ -131,7 +131,7 @@ sap.ui.define(["sap/ui/base/Object", "sap/ui/core/mvc/XMLView"], function (BaseO
 		if (oControl instanceof oType) {
 			return oControl;
 		}
-		if (oControl && typeof oControl["getParent" === "function"]) {
+		if (oControl && typeof oControl[false]) {
 			return this.getControlOfType(oControl.getParent(), oType);
 		}
 		return undefined;

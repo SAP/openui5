@@ -279,17 +279,6 @@ sap.ui.define([
 			"Plugin found on dependents aggregation via SelectionPlugin.findOn");
 		assert.ok(MultiSelectionPlugin.findOn(this.oTable) === oMultiSelectionPlugin,
 			"Plugin found on dependents aggregation via MultiSelectionPlugin.findOn");
-
-		/**
-		 * @deprecated As of version 1.120
-		 */
-		if (this.oTable.addPlugin) {
-			this.oTable.addPlugin(oMultiSelectionPlugin);
-			assert.ok(SelectionPlugin.findOn(this.oTable) === oMultiSelectionPlugin,
-				"Plugin found on plugin aggregation via SelectionPlugin.findOn");
-			assert.ok(MultiSelectionPlugin.findOn(this.oTable) === oMultiSelectionPlugin,
-				"Plugin found on plugin aggregation via MultiSelectionPlugin.findOn");
-		}
 	});
 
 	QUnit.module("Deselect All button", {

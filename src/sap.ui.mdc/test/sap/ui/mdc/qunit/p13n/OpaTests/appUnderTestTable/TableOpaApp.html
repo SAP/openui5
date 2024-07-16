@@ -2,28 +2,27 @@
 <html>
 
 <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="UTF-8">
 
 	<title>Sample Application</title>
 
 	<script src="../../../../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-			type="text/javascript"
 			src="../../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-libs="sap.m, sap.ui.mdc, sap.ui.fl, sap.ui.core"
-			data-sap-ui-compatVersion="edge"
 			data-sap-ui-async="true"
-			data-sap-ui-oninit="module:AppUnderTestTable/start"
-			data-sap-ui-flexibilityServices='[{"connector": "LocalStorageConnector"}]'
-			data-sap-ui-xx-bindingSyntax="complex"
-			data-sap-ui-resourceroots='{
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-flexibility-services='[{"connector": "LocalStorageConnector"}]'
+			data-sap-ui-on-init="module:AppUnderTestTable/start"
+			data-sap-ui-resource-roots='{
 			  "sap.ui.core.sample":"../../../../../../../../test-resources/sap/ui/core/demokit/sample",
 			  "AppUnderTestTable" : "./",
 			  "view" : "./view",
 			  "test-resources": "../../../../../../../../test-resources",
 			  "delegates": "../../../../delegates"
-		  	}'>
+		  	}'
+	>
 	</script>
 
 </head>

@@ -87,9 +87,7 @@ var sClassName = "sap.ui.model.odata.ODataMessageParser",
  * @alias sap.ui.model.odata.ODataMessageParser
  */
 var ODataMessageParser = MessageParser.extend("sap.ui.model.odata.ODataMessageParser", {
-	metadata: {
-		publicMethods: [ "parse", "setProcessor", "getHeaderField", "setHeaderField" ]
-	},
+	metadata: {},
 
 	constructor: function(sServiceUrl, oMetadata, bPersistTechnicalMessages) {
 		MessageParser.apply(this);

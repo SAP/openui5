@@ -1,4 +1,4 @@
-sap.ui.define(["sap/m/Image", "sap/m/Carousel", "sap/m/App", "sap/m/Page"], function(MImage, Carousel, App, Page) {
+sap.ui.define(["sap/m/Image", "sap/m/Carousel", "sap/m/App", "sap/m/Page", "sap/ui/qunit/utils/nextUIUpdate"], function(MImage, Carousel, App, Page, nextUIUpdate) {
 	"use strict";
 
 			// Create Images
@@ -45,5 +45,5 @@ sap.ui.define(["sap/m/Image", "sap/m/Carousel", "sap/m/App", "sap/m/Page"], func
 			appCarousel.addPage(carouselPage);
 			appCarousel.placeAt("body");
 
-			sap.ui.getCore().applyChanges();
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 });

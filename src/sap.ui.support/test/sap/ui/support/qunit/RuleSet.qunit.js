@@ -172,7 +172,7 @@ sap.ui.define([
 				}
 			});
 		},
-		teardown: function () {
+		afterEach: function () {
 			// Restores original function
 			RuleSet.clearAllRuleSets();
 			this.libraries = null;

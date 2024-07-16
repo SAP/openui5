@@ -258,4 +258,4 @@ sap.ui.define([
 	};
 
 	return SplitMenuButton;
-}, /* bExport= */true);
+});

@@ -240,4 +240,4 @@ sap.ui.define([
 
 	return CreationRowRenderer;
 
-}, /* bExport= */ true);
+});

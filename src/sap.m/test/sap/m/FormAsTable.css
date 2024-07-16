@@ -1,0 +1,97 @@
+.sapMForm.sapMListTblCnt {
+	padding : 1rem;
+	box-sizing: border-box;
+	min-width: 240px;
+}
+
+.sap-phone .sapMForm.sapMListTblCnt {
+	padding : 0;
+}
+
+.sapMForm .sapMLabelRequired:before {
+	content: "* ";
+}
+
+.sapMForm .sapMListTblSubCnt,
+.sapMForm .sapMListTblSubCntRow,
+.sapMForm .sapMListTblSubCntVal,
+.sapMForm .sapMListTblSubRow > td {
+	padding-top: 0;
+	padding-bottom: 0;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.sapMForm .sapMListTblCell  {
+	vertical-align : middle;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.sapMForm .sapMListTblCell .sapMLabel,
+.sapMForm .sapMListTblCell .sapMText {
+	font-size : 14px;
+}
+
+.sapMForm .sapMLIB, .sapMListTblSubRow {
+	border : 0;
+}
+
+.sapMForm .sapMListTblSubCntHdr {
+	display : none;
+}
+
+.sapMForm .sapMListTblSupRow > .sapMListTblCell {
+	padding-top : .5rem;
+	padding-bottom : 0;
+	text-align: left !important;
+}
+
+.sapMForm .sapMListTblSupRow > .sapMListTblCell > .sapMLabel{
+	text-align: left !important;
+}
+
+.sapMForm .sapMLIB-CTX .sapMCb, .sapMRb {
+	width : 6.5rem
+}
+
+.sapMForm .width100Percent > :first-child{
+	width : 100%;
+}
+
+
+/*rem fixes*/
+
+.sapMSlt {
+	padding: 0.25rem 0;
+	height: 3rem;
+}
+
+.sapMSlt > select {
+	height: 3.428571428571429rem;
+	top: -0.2857142857142857rem;
+}
+.sapMSlt .sapMSltLabel, .sapMSlt > select {
+	font-size: 0.875rem;
+	padding: 0 0.7142857142857143rem;
+	border-width: 0.0714285714285714rem;
+}
+
+.sapMSliCont {
+	height: 3rem;
+	padding: 1.406rem 1rem 0 1rem;
+}
+
+.sapMSli, .sapMSliProgress {
+	height: 0.1875rem;
+}
+
+.sapMSliHandle {
+	margin-left: -1rem;
+	top: -0.91rem;
+	height: 1.75rem;
+	width: 1.75rem;
+	-webkit-border-radius: 1rem;
+	border-radius: 1rem;
+	border-width: 0.125rem;
+}

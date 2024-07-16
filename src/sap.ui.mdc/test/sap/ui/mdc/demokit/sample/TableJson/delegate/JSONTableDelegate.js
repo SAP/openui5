@@ -46,4 +46,4 @@ sap.ui.define([
 	};
 
 	return JSONTableDelegate;
-}, /* bExport= */false);
+});

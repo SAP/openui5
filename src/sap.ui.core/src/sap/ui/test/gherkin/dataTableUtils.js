@@ -391,4 +391,4 @@ sap.ui.define([
 	};
 
 	return dataTableUtils;
-}, /* bExport= */ true);
+});

@@ -3,14 +3,12 @@
  */
 sap.ui.define([
 	"sap/ui/model/odata/AnnotationParser",
-	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/lib/_V2MetadataConverter",
 	"sap/ui/model/odata/v4/lib/_V4MetadataConverter",
 	"sap/ui/test/TestUtils"
-], function (AnnotationParser, ODataModelV1, ODataModelV2, ODataModelV4, V2MetadataConverter,
-		V4MetadataConverter, TestUtils) {
+], function(AnnotationParser, ODataModelV2, ODataModelV4, V2MetadataConverter, V4MetadataConverter, TestUtils) {
 	/*global QUnit, sinon */
 	"use strict";
 
@@ -160,8 +158,8 @@ sap.ui.define([
 		return repeatAsyncTest(10, function () {
 			var iStart = Date.now();
 
-			ODataModelV1.mServiceData = {}; // clear the cache for compatibility
-			return new ODataModelV1("/fake/v2/").getMetaModel().loaded().then(function () {
+			undefined/*ODataModelV1*/.mServiceData = {}; // clear the cache for compatibility
+			return new undefined/*ODataModelV1*/("/fake/v2/").getMetaModel().loaded().then(function () {
 				return {time: Date.now() - iStart};
 			});
 		}).then(function (oResult) {

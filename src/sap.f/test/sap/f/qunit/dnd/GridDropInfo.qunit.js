@@ -1,6 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/dnd/DropInfo",
 	"sap/f/dnd/GridDropInfo",
@@ -9,9 +10,8 @@ sap.ui.define([
 	"sap/f/GridList",
 	"sap/m/CustomListItem",
 	"sap/m/Text",
-	"sap/ui/base/ManagedObject",
-	"sap/ui/core/Core"
-], function(jQuery, DropInfo, GridDropInfo, GridDragOver, GridContainer, GridList, CustomListItem, Text, ManagedObject, Core) {
+	"sap/ui/base/ManagedObject"
+], function(nextUIUpdate, jQuery, DropInfo, GridDropInfo, GridDragOver, GridContainer, GridList, CustomListItem, Text, ManagedObject) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -128,7 +128,7 @@ sap.ui.define([
 
 		this.oGridList.addItem(oTestControl);
 		this.oGridList.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(this.oGridDropInfo.isDroppable(this.oGridList, oFakeEvent), "Not droppable outside the target aggregation");
 
@@ -165,7 +165,7 @@ sap.ui.define([
 			};
 
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oGridDropInfo.destroy();

@@ -86,4 +86,4 @@ sap.ui.define(["sap/ui/core/Renderer", "./PlaceholderBaseRenderer"], function(Re
 
 	return TimelinePlaceholderRenderer;
 
-}, /* bExport= */ true);
+});

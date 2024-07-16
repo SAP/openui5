@@ -1,6 +1,0 @@
-.noResponsivePaddings::part(header),
-.noResponsivePaddings::part(content),
-.noResponsivePaddings::part(footer) {
-	padding-right: 0;
-	padding-left: 0;
-}

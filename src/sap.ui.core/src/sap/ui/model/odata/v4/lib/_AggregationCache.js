@@ -2618,4 +2618,4 @@ sap.ui.define([
 	};
 
 	return _AggregationCache;
-}, /* bExport= */false);
+});

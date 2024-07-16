@@ -423,16 +423,14 @@ sap.ui.define([
 
 
 		/**
-		 * Loads the included CSS and JavaScript resources. The resources will be
-		 * resolved relative to the component location.
-		 *
-		 * @param {boolean} bAsync indicator whether the *.js resources should be loaded asynchronous
-		 * @return {Promise<void>|undefined} Promise for required *.js resources
-		 *
-		 * @private
-		 * @ui5-transform-hint replace-param bAsync true
-		 */
-		_loadIncludes: function(bAsync) {
+				 * Loads the included CSS and JavaScript resources. The resources will be
+				 * resolved relative to the component location.
+				 *
+				 * @return {Promise<void>|undefined} Promise for required *.js resources
+				 *
+				 * @private
+				 */
+		_loadIncludes: function() {
 			var mResources = this.getEntry("/sap.ui5/resources"), oPromise;
 
 			if (!mResources) {
@@ -468,11 +466,7 @@ sap.ui.define([
 							// call internal sap.ui.require variant that accepts a requireJS path and loads the module synchronously
 							var sJsUrl = sComponentName.replace(/\./g, '/') + (sFile.slice(0, 1) === '/' ? '' : '/') + sFile.slice(0, m.index);
 							Log.info("Component \"" + sComponentName + "\" is loading JS: \"" + sJsUrl + "\"");
-							if (bAsync) {
-								oPromise = oPromise.then(requireAsync(sJsUrl));
-							} else {
-								sap.ui.requireSync(sJsUrl); // legacy-relevant: Sync path
-							}
+							oPromise = oPromise.then(requireAsync(sJsUrl));
 						}
 					}
 				}
@@ -528,29 +522,26 @@ sap.ui.define([
 		},
 
 		/**
-		 * Load external dependencies (like libraries and components)
-		 *
-		 * @param {boolean} bAsync indicator whether the dependent libraries and components should be loaded asynchronous
-		 * @return {Promise<void>} Promise containing further promises of dependent libs and components requests
-		 *
-		 * @private
-		 * @ui5-transform-hint replace-param bAsync true
-		 */
-		_loadDependencies: function(bAsync) {
+				 * Load external dependencies (like libraries and components)
+				 *
+				 * @return {Promise<void>} Promise containing further promises of dependent libs and components requests
+				 *
+				 * @private
+				 */
+		_loadDependencies: function() {
 			var aPromises = [];
 			// afterwards we load our dependencies!
 			var oDep = this.getEntry("/sap.ui5/dependencies"),
 				sComponentName = this.getComponentName();
 
 			if (oDep) {
-
 				// load the libraries
 				var mLibraries = oDep["libs"];
 				if (mLibraries) {
 					for (var sLib in mLibraries) {
 						if (!mLibraries[sLib].lazy) {
 							Log.info("Component \"" + sComponentName + "\" is loading library: \"" + sLib + "\"");
-							aPromises.push(Library._load(sLib, {sync: !bAsync}));
+							aPromises.push(Library._load(sLib, {sync: false}));
 						}
 					}
 				}
@@ -566,46 +557,26 @@ sap.ui.define([
 					}
 				}
 
-				if (bAsync) {
-					// Async loading of Component, so that Component.load is available
-					var pComponentLoad = new Promise(function(fnResolve, fnReject) {
-						sap.ui.require(["sap/ui/core/Component"], function(Component) {
-							fnResolve(Component);
-						}, fnReject);
-					}).then(function(Component) {
-						// trigger Component.load for all "non-lazy" component dependencies (parallel)
-						return Promise.all(aComponentDependencies.map(function(sComponentName) {
-							// Component.load does not load the dependencies of a dependent component in case property manifest: false
-							// because this could have a negative impact on performance and we do not know if there is a necessity
-							// to load the dependencies
-							// If needed we could make this configurable via manifest.json by adding a 'manifestFirst' option
-							return Component.load({
-								name: sComponentName,
-								manifest: false
-							});
-						}));
-					});
+				// Async loading of Component, so that Component.load is available
+				var pComponentLoad = new Promise(function(fnResolve, fnReject) {
+					sap.ui.require(["sap/ui/core/Component"], function(Component) {
+						fnResolve(Component);
+					}, fnReject);
+				}).then(function(Component) {
+					// trigger Component.load for all "non-lazy" component dependencies (parallel)
+					return Promise.all(aComponentDependencies.map(function(sComponentName) {
+						// Component.load does not load the dependencies of a dependent component in case property manifest: false
+						// because this could have a negative impact on performance and we do not know if there is a necessity
+						// to load the dependencies
+						// If needed we could make this configurable via manifest.json by adding a 'manifestFirst' option
+						return Component.load({
+							name: sComponentName,
+							manifest: false
+						});
+					}));
+				});
 
-					aPromises.push(pComponentLoad);
-				} else {
-					aComponentDependencies.forEach(function(sName) {
-						// Check for and execute preloaded component controller module
-						// Don't use sap.ui.component.load in order to avoid a warning log
-						// See comments in commit 83f4b601f896dbfcab76fffd455cce841f15b2fb
-						var sControllerModule = sName.replace(/\./g, "/") + "/Component";
-						var iModuleState = sap.ui.loader._.getModuleState(sControllerModule + ".js");
-						if (iModuleState === -1 /* PRELOADED */) {
-							sap.ui.requireSync(sControllerModule); // legacy-relevant: Sync path
-						} else if (iModuleState === 0 /* INITIAL */) {
-							Log.info("Component \"" + sComponentName + "\" is loading component: \"" + sName + ".Component\"");
-							// requireSync needed because of cyclic dependency
-							sap.ui.requireSync("sap/ui/core/Component"); // legacy-relevant: Sync path
-							sap.ui.component.load({ // legacy-relevant: Sync path
-								name: sName
-							});
-						}
-					});
-				}
+				aPromises.push(pComponentLoad);
 			}
 			return Promise.all(aPromises);
 

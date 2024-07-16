@@ -1,5 +1,4 @@
 sap.ui.define([
-	"sap/f/Avatar",
 	"sap/m/HBox",
 	"sap/m/VBox",
 	"sap/m/Title",
@@ -12,7 +11,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/m/ObjectAttribute"
-], function (Avatar, HBox, VBox, Title, Label, Link, Button, InvisibleText, ObjectPageLayout, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSubSection, ObjectAttribute) {
+], function(HBox, VBox, Title, Label, Link, Button, InvisibleText, ObjectPageLayout, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSubSection, ObjectAttribute) {
 	"use strict";
 
 	new InvisibleText("phone-inv-text", { text: "Phone" }).toStatic();
@@ -22,7 +21,7 @@ sap.ui.define([
 			expandedHeading: [
 				new HBox({
 					items: [
-						new Avatar({ displayShape: "Square" }).addStyleClass("sapUiTinyMarginEnd"),
+						new undefined/*Avatar*/({ displayShape: "Square" }).addStyleClass("sapUiTinyMarginEnd"),
 						new VBox({
 							items: [
 								new Title({ text: "Denise Smith", level: "H1" }),

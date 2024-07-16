@@ -5,22 +5,22 @@ sap.ui.define([
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarButton",
 	"sap/m/OverflowToolbarLayoutData",
-	"sap/ui/core/Core",
-	"sap/ui/core/IconPool"
+	"sap/ui/core/IconPool",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	mLibrary,
 	OverflowToolbar,
 	OverflowToolbarButton,
 	OverflowToolbarLayoutData,
-	Core,
-	IconPool
+	IconPool,
+	nextUIUpdate
 ) {
 	"use strict";
 
 	var oOTBPriority = mLibrary.OverflowToolbarPriority;
 
 	QUnit.module("Private methods", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oOTB = new OverflowToolbar({
 				content: [
 					new OverflowToolbarButton({
@@ -31,7 +31,7 @@ sap.ui.define([
 			});
 
 			this.oOTB.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oOTB.destroy();
@@ -39,7 +39,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_getText value", function (assert) {
+	QUnit.test("_getText value", async function(assert) {
 		var oButton = this.oOTB.getContent()[0],
 		oLayoutData = new OverflowToolbarLayoutData({
 				priority: oOTBPriority.AlwaysOverflow
@@ -49,14 +49,14 @@ sap.ui.define([
 		assert.strictEqual(oButton._getText(), "", "OverflowToolbarButton text value is correct");
 
 		oButton.setLayoutData(oLayoutData);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(this.oOTB._getOverflowButton().$().is(":visible"), "Overflow button is visible");
 		assert.ok(oButton._bInOverflow, "OverflowToolbarButton is in the overflow area");
 		assert.strictEqual(oButton._getText(), oButton.getText(), "OverflowToolbarButton text value is correct");
 	});
 
-	QUnit.test("_getTooltip value without tooltip", function (assert) {
+	QUnit.test("_getTooltip value without tooltip", async function(assert) {
 		var oButton = this.oOTB.getContent()[0],
 			oLayoutData = new OverflowToolbarLayoutData({
 				priority: oOTBPriority.AlwaysOverflow
@@ -67,14 +67,14 @@ sap.ui.define([
 		assert.strictEqual(oButton._getTooltip(), oIconInfo.text, "OverflowToolbarButton tooltip value is correct");
 
 		oButton.setLayoutData(oLayoutData);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(this.oOTB._getOverflowButton().$().is(":visible"), "Overflow button is visible");
 		assert.ok(oButton._bInOverflow, "OverflowToolbarButton is in the overflow area");
 		assert.strictEqual(oButton._getTooltip(), undefined, "OverflowToolbarButton tooltip value is correct");
 	});
 
-	QUnit.test("_getTooltip value with tooltip", function (assert) {
+	QUnit.test("_getTooltip value with tooltip", async function(assert) {
 		var oButton = this.oOTB.getContent()[0],
 			oLayoutData = new OverflowToolbarLayoutData({
 				priority: oOTBPriority.AlwaysOverflow
@@ -82,13 +82,13 @@ sap.ui.define([
 			sTooltipText = "Simple tooltip";
 
 		oButton.setTooltip(sTooltipText);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(oButton._bInOverflow, "OverflowToolbarButton is not in the overflow area");
 		assert.strictEqual(oButton._getTooltip(), sTooltipText, "OverflowToolbarButton tooltip value is correct on icon only button");
 
 		oButton.setLayoutData(oLayoutData);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(this.oOTB._getOverflowButton().$().is(":visible"), "Overflow button is visible");
 		assert.ok(oButton._bInOverflow, "OverflowToolbarButton is in the overflow area");
@@ -97,14 +97,14 @@ sap.ui.define([
 		oLayoutData.setPriority(oOTBPriority.NeverOverflow);
 		oButton.setLayoutData(oLayoutData);
 		oButton.setTooltip(oButton.getText());
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(oButton._bInOverflow, "OverflowToolbarButton is not in the overflow area");
 		assert.strictEqual(oButton._getTooltip(), oButton.getText(), "OverflowToolbarButton tooltip value is correct on icon only button");
 
 		oLayoutData.setPriority(oOTBPriority.AlwaysOverflow);
 		oButton.setLayoutData(oLayoutData);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(this.oOTB._getOverflowButton().$().is(":visible"), "Overflow button is visible");
 		assert.ok(oButton._bInOverflow, "OverflowToolbarButton is in the overflow area");

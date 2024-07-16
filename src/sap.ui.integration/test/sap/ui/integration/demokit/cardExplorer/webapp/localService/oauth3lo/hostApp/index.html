@@ -6,20 +6,17 @@
 	<title>Simulation For 3LO</title>
 	<script id="sap-ui-bootstrap"
 			src="../../../../../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_horizon"
-			data-sap-ui-resourceroots='{
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
+			data-sap-ui-resource-roots='{
 				"sap.ui.integration.localServices.oath3lo.hostApp": "./"
 			}'
-			data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
-			data-sap-ui-compatVersion="edge"
-			data-sap-ui-async="true">
+	>
 	</script>
 </head>
 
 <body class="sapUiBody">
-<div data-sap-ui-component
-	 data-name="sap.ui.integration.localServices.oath3lo.hostApp"
-	 data-id="container"
-	 data-settings='{"id" : "hostApp"}'></div>
+<div data-sap-ui-component data-name="sap.ui.integration.localServices.oath3lo.hostApp" data-id="container" data-settings="{&quot;id&quot; : &quot;hostApp&quot;}"></div>
 </body>
 </html>

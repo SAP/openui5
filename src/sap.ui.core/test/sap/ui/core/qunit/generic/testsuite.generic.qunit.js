@@ -9,34 +9,11 @@ sap.ui.define([
 			"sap.ui.core.ComponentContainer": {
 				create: false
 			},
+
 			"sap.ui.core.UIComponent": {
 				create: false
 			},
-			/**
-			 * @deprecated since 1.56
-			 */
-			"sap.ui.core.XMLComposite": {
-				create: false
-			},
-			/**
-			 * @deprecated since 1.108
-			 */
-			"sap.ui.core.mvc.HTMLView": {
-				create: false,
-				apiVersion: 1
-			},
-			/**
-			 * @deprecated since 1.120
-			 */
-			"sap.ui.core.mvc.JSONView": {
-				create: false
-			},
-			/**
-			 * @deprecated since 1.90
-			 */
-			"sap.ui.core.mvc.JSView": {
-				create: false
-			},
+
 			"sap.ui.core.mvc.XMLView": {
 				create: function (XMLView, mParameters) {
 					var mParams = mParameters || {};
@@ -46,29 +23,13 @@ sap.ui.define([
 					return XMLView.create(mParams);
 				}
 			},
-			/**
-			 * @deprecated since 1.56
-			 */
-			"sap.ui.core.mvc.TemplateView": {
-				create: false
-			},
+
 			"sap.ui.core.mvc.XMLAfterRenderingNotifier": {
 				moduleName: "sap/ui/core/mvc/XMLView"
 			},
+
 			"sap.ui.core.mvc.View": {
 				create: false
-			},
-			/**
-			 * @deprecated since 1.56
-			 */
-			"sap.ui.core.tmpl.Template": {
-				create: false
-			},
-			/**
-			 * @deprecated since 1.56
-			 */
-			"sap.ui.core.tmpl.TemplateControl": {
-				apiVersion: 1
 			}
 		}
 	});

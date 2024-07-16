@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>UI Adaptation at Runtime</title>
 		<!-- Bootstrap the unified shell in sandbox mode for standalone usage.
 
@@ -22,21 +22,9 @@
 		<script src="../../../../../../../../resources/sap/ushell/bootstrap/sandbox2.js" id="sap-ushell-bootstrap"></script>;
 		<script src="flpSandboxConfig/flpSandboxConfig.js"></script>
 
-		<script
-			id="sap-ui-bootstrap"
-			data-sap-ui-theme="sap_horizon"
-			data-sap-ui-language="en"
-			data-sap-ui-no-conflict="true"
-			data-sap-ui-async="true"
-			data-sap-ui-libs="sap.m, sap.ushell, sap.ui.rta"
-			data-sap-ui-compat-version="edge"
-			data-sap-ui-frame-options="allow"
-			data-sap-ui-flexibility-services='[{"connector": "LocalStorageConnector"}]'
-			data-sap-ui-oninit="module:flpSandboxConfig/appStart"
-			data-sap-ui-resourceroots='{
-				"flpSandboxConfig": "./flpSandboxConfig"
-			}'
-			src="../../../../../../../../resources/sap-ui-core.js">
+		<script id="sap-ui-bootstrap" data-sap-ui-language="en" data-sap-ui-no-conflict="true" data-sap-ui-async="true" data-sap-ui-libs="sap.m, sap.ushell, sap.ui.rta" data-sap-ui-compat-version="edge" data-sap-ui-frame-options="allow" data-sap-ui-flexibility-services="[{&quot;connector&quot;: &quot;LocalStorageConnector&quot;}]" src="../../../../../../../../resources/sap-ui-core.js" data-sap-ui-on-init="module:flpSandboxConfig/appStart" data-sap-ui-resource-roots="{
+				&quot;flpSandboxConfig&quot;: &quot;./flpSandboxConfig&quot;
+			}">
 		</script>
 	</head>
 

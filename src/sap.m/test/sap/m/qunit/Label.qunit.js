@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/m/OverflowToolbar",
 	"sap/m/Select",
 	"sap/ui/core/Item",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Element,
 	createAndAppendDiv,
@@ -26,7 +26,7 @@ sap.ui.define([
 	OverflowToolbar,
 	Select,
 	Item,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -105,7 +105,7 @@ sap.ui.define([
 
 			l2.setWidth(sWidth);
 
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			assert.ok(l1, "l1 should not be null");
 			assert.ok(l2, "l2 should not be null");
@@ -162,11 +162,11 @@ sap.ui.define([
 
 	QUnit.test("When width is not set max-width should apply to control", function(assert) {
 		var sut = new Label({text : "text"}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(sut.$().hasClass("sapMLabelMaxWidth"), "Label has max width restriction for the trunctation.");
 
 		sut.setWidth("100%");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(!sut.$().hasClass("sapMLabelMaxWidth"), "Label has width and does not have max width restriction.");
 	});
 
@@ -180,7 +180,7 @@ sap.ui.define([
 
 		l1.setWrapping(true);
 		l2.setWrapping(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(l1.getWrapping(), true, "Has to be set to true.");
 		assert.strictEqual(l2.getWrapping(), true, "Has to be set to true.");
@@ -191,7 +191,7 @@ sap.ui.define([
 		//reset values
 		l1.setWrapping(false);
 		l2.setWrapping(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(l1.getWrapping(), false, "Has to be set to false.");
 		assert.strictEqual(l2.getWrapping(), false, "Has to be set to false.");
@@ -200,7 +200,7 @@ sap.ui.define([
 		assert.strictEqual(l2.$().hasClass("sapMLabelWrapped"), false, "Doesn't have a class set.");
 
 		l2.setWrapping(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(l2.getWrapping(), true, "Has to be set to true.");
 
@@ -208,20 +208,20 @@ sap.ui.define([
 
 		//reset value
 		l2.setWrapping(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("ShowColon", function(assert) {
 		assert.notOk(l1.$().hasClass("sapMLabelShowColon"), "sapMLabelShowColon class is not set");
 
 		l1.setShowColon(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(l1.$().hasClass("sapMLabelShowColon"), "sapMLabelShowColon class is set");
 
 		//reset value
 		l1.setShowColon(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("Label wrappingType (Hyphenation)", function(assert) {
@@ -231,7 +231,7 @@ sap.ui.define([
 		l1.setWidth("200px");
 		l1.setWrapping(true);
 		l1.setWrappingType(mobileLibrary.WrappingType.Hyphenated);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var fnIsHyphenated = function () {
 			if (l1.$().outerHeight() >= 2 * iHeight) {
@@ -263,7 +263,7 @@ sap.ui.define([
 			tooltip : "foo"
 		});
 		oLabel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oLabel.$().attr("title"), "foo", "Tooltip got rendered");
@@ -283,7 +283,7 @@ sap.ui.define([
 			tooltip : "foo"
 		});
 		oLabel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oDomRef = oLabel.getDomRef();
 
 		oLabel.addEventDelegate({
@@ -292,7 +292,7 @@ sap.ui.define([
 
 		// Act
 		oLabel.setTooltip("bar");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oRerenderingSpy.callCount, 1, "Label is rerendered");
@@ -330,16 +330,16 @@ sap.ui.define([
 
 		assert.ok(oLabel4.$().hasClass("sapMLabelRequired"), "Label is required");
 		oInput.setRequired(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(!oLabel4.$().hasClass("sapMLabelRequired"), "Label is not required");
 		oInput.setRequired(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oLabel4.$().hasClass("sapMLabelRequired"), "Label is required");
 		oLabel4.setLabelFor();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(!oLabel4.$().hasClass("sapMLabelRequired"), "Label is not required");
 		oLabel4.setLabelFor("I1");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oLabel4.$().hasClass("sapMLabelRequired"), "Label is required");
 
 	});
@@ -348,12 +348,12 @@ sap.ui.define([
 		beforeEach: function() {
 			this.label = new Label({text: "Label"});
 			this.label.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.oLabel = new Label('label2', {
 				text: 'Selected: 1'
 			}).placeAt('qunit-fixture');
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.oLabel.destroy();
@@ -393,9 +393,9 @@ sap.ui.define([
 
 	QUnit.test("Label rendering when labelFor association is set", function (assert) {
 		var oInput = new Input().placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.label.setLabelFor(oInput);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.label.getDomRef() instanceof HTMLLabelElement, true, "Should be rendered as a label element");
 		assert.strictEqual(this.label.$().find(".sapMLabelColonAndRequired").attr("aria-hidden"), "true", "aria-hdden correctly set on : and *");
@@ -406,7 +406,7 @@ sap.ui.define([
 	QUnit.test("Label rendering when labelFor association is set to non-labelable control", function (assert) {
 		var oLink = new Link({text: "text"}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.label.setLabelFor(oLink);
 
@@ -421,12 +421,12 @@ sap.ui.define([
 		assert.ok(!this.label.$().find(".sapMLabelColonAndRequired").attr("aria-hidden"), "aria-hdden not set on : and *");
 		this.label.setIsInColumnHeaderContext(true);
 		this.label.invalidate();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(this.label._isInColumnHeaderContext, "Label is marked as column header label");
 		assert.strictEqual(this.label.$().find(".sapMLabelColonAndRequired").attr("aria-hidden"), "true", "aria-hdden correctly set on : and *");
 		this.label.setIsInColumnHeaderContext(false);
 		this.label.invalidate();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(!this.label._isInColumnHeaderContext, "Label is not marked as column header label");
 		assert.ok(!this.label.$().find(".sapMLabelColonAndRequired").attr("aria-hidden"), "aria-hdden not set on : and *");
 	});
@@ -435,7 +435,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.label = new Label({text: "Sample Label"});
 			this.label.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.label.destroy();
@@ -452,7 +452,7 @@ sap.ui.define([
 
 		var domRef = this.label.getDomRef();
 		var result = this.label.setDisplayOnly(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.label.getDisplayOnly(), true, "The property displayOnly should be set tot true");
 		assert.strictEqual(result, this.label, "Setter should return this for chaining");
@@ -491,7 +491,7 @@ sap.ui.define([
 			oOverflowTB = new OverflowToolbar({width: 'auto', content: aToolbarContent});
 
 		oOverflowTB.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oOverflowTB.setWidth('20px'); // set small width that causes all content to move to the overflow
 		this.clock.tick(1000);
@@ -523,7 +523,7 @@ sap.ui.define([
 				text: 'Hello World'
 			}).placeAt('qunit-fixture');
 
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 
 		afterEach: function () {
@@ -539,7 +539,7 @@ sap.ui.define([
 
 		this.label.setLabelFor(this.select);
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		ariaLabelledby = this.select._getHiddenSelect().attr('aria-labelledby') || "";
 

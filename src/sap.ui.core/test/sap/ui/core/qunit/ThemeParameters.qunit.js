@@ -131,41 +131,6 @@ sap.ui.define([
 		});
 	});
 
-	/**
-	 * @deprecated
-	 */
-	QUnit.test("Read multiple given parameters (including undefined param name) (future=false)", async function(assert) {
-		future.active = false;
-		var done = assert.async();
-		var oControl = new Control();
-		var aParams = ["sapUiMultipleAsyncThemeParamWithScopeForLib7", "sapUiMultipleAsyncThemeParamWithoutScopeForLib7", "sapUiNotExistingTestParam", "sapUiBaseColor"];
-		var oExpected = {
-			"sapUiMultipleAsyncThemeParamWithScopeForLib7": "#cccccc",
-			"sapUiMultipleAsyncThemeParamWithoutScopeForLib7": "#dddddd",
-			"sapUiBaseColor": "#000000"
-		};
-
-		await Library.load({name: "testlibs.themeParameters.lib7"});
-
-		oControl.addStyleClass("sapTestScope");
-
-		assert.strictEqual(Parameters.get({
-			name: aParams,
-			scopeElement: oControl,
-			callback: function (oParamResult) {
-				aParams.forEach(function(key) {
-					if (oParamResult[key]) {
-						oParamResult[key] = unifyHexNotation(oParamResult[key]);
-					}
-				});
-				assert.deepEqual(oParamResult, oExpected, "Key-value map for the given params 'sapUiMultipleAsyncThemeParamWithScopeForLib7', 'sapUiMultipleAsyncThemeParamWithoutScopeForLib7' and 'sapUiBaseColor' should be returned");
-				assert.strictEqual(checkLibraryParametersJsonRequestForLib("7").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib7");
-				future.active = undefined;
-				done();
-			}
-		}), undefined, "Parameter 'sapUiBaseColor' should already be available but value should be returned in callback.");
-	});
-
 	QUnit.test("Read multiple given parameters (including undefined param name) (future=true)", async function (assert) {
 		future.active = true;
 		var done = assert.async();
@@ -217,26 +182,6 @@ sap.ui.define([
 			name: "sapUiThemeParam2ForLib8",
 			callback: function (sParamResult) {
 				assert.strictEqual(sParamResult, "#654321", "Different callback function should be called once with value for the given param 'sapUiThemeParam2ForLib8' should be returned");
-				done();
-			}
-		});
-	});
-
-	/**
-	 * @deprecated
-	 */
-	QUnit.test("Read not defined parameter using callback (future=false)", async function(assert) {
-		future.active = false;
-		var done = assert.async();
-
-		await Library.load({name: "testlibs.themeParameters.lib9"});
-
-		Parameters.get({
-			name: "sapUiNotExistingTestParam",
-			callback: function (oParamResult) {
-				assert.deepEqual(oParamResult, undefined, "Value for the given param 'sapUiNotExistingTestParam' does not exist and 'undefined' should be returned");
-				assert.strictEqual(checkLibraryParametersJsonRequestForLib("8").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib9");
-				future.active = undefined;
 				done();
 			}
 		});
@@ -370,8 +315,6 @@ sap.ui.define([
 	QUnit.test("Get parameter while CSS after Applied finished loading and before ThemeManager processed Applied event", function(assert) {
 		var sPrefixedLibId = "sap-ui-theme-testlibs.themeParameters.lib17";
 
-		// Setup
-		Parameters.reset();
 		var oCssPromise1 = createLinkElement(sPrefixedLibId, true);
 		var oCssPromise2 = createLinkElement(sPrefixedLibId, false);
 		return Promise.all([oCssPromise1, oCssPromise2]).then(function() {

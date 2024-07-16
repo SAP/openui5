@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head><meta charset="utf-8">
 	<title>Integration Cards API</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="../../scripts/boot.js"></script>
 </head>
@@ -36,8 +36,7 @@
 				Each card can trigger <code>action</code> event. This event should be handled by the host
 				environment to make the card interactions fully functional.
 				The type of <code>action</code> event, determines the purpose of the action.
-				The actions of each card are defined in its manifest. For more information, see <a target="_top"
-					href="../../index.html#/learn/actions">actions in Learn section</a>
+				The actions of each card are defined in its manifest. For more information, see <a target="_top" href="../../index.html#/learn/actions">actions in Learn section</a>
 			</p>
 			<p>
 				For all available event parameters, see
@@ -124,8 +123,7 @@ onConfigurationChangeLog: function (oEvent) {
 						Some parameters are mandatory, because the card relies on this information to work properly.
 						If a card needs to load data, one parameter might be the URL that should be used to trigger a data request.
 						Parameters are card specific and are declared in the corresponding cards manifest.
-						For an example with parameters usage in a manifest, see <a target="_top"
-							href="../../index.html#/explore/parameters">parameters in Explore section</a>.
+						For an example with parameters usage in a manifest, see <a target="_top" href="../../index.html#/explore/parameters">parameters in Explore section</a>.
 					</p>
 
 					<b>When using UI5</b>
@@ -167,8 +165,7 @@ document.body.appendChild(card);
 						the card enters the viewport.
 					</p>
 					<p>
-						For more information, see <a data-demokit-href="#/api/sap.ui.integration.CardDataMode"
-							target="_blank"><code>dataMode</code> property API</a>.
+						For more information, see <a data-demokit-href="#/api/sap.ui.integration.CardDataMode" target="_blank"><code>dataMode</code> property API</a>.
 					</p>
 
 					<b>When using UI5</b>
@@ -201,9 +198,7 @@ setTimeout(function () {
 						set to <code>Active</code>.
 					</p>
 					<p>
-						For more information, see <a
-							data-demokit-href="#/api/sap.ui.integration.widgets.Card/methods/refresh"
-							target="_blank"><code>refresh</code> method API</a>.
+						For more information, see <a data-demokit-href="#/api/sap.ui.integration.widgets.Card/methods/refresh" target="_blank"><code>refresh</code> method API</a>.
 					</p>
 
 					<b>When using UI5</b>
@@ -226,9 +221,7 @@ customElements.whenDefined("ui-integration-card").then(function () {
 				call the <code>refreshData</code> function of the card. It retriggers all data requests.
 			</p>
 			<p>
-				For more information, see <a
-					data-demokit-href="#/api/sap.ui.integration.widgets.Card/methods/refreshData"
-					target="_blank"><code>refreshData</code> method API</a>.
+				For more information, see <a data-demokit-href="#/api/sap.ui.integration.widgets.Card/methods/refreshData" target="_blank"><code>refreshData</code> method API</a>.
 			</p>
 
 			<b>When using UI5</b>

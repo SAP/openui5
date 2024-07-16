@@ -11388,27 +11388,6 @@ sap.ui.define([
 
 	});
 
-	/**
-	 * @deprecated As of version 1.62
-	 */
-	QUnit.module("Deprecated methods");
-
-	QUnit.test("log warning when trying to use ComboBox.getList().", function (assert) {
-		assert.expect(4);
-		var fnWarningSpy = this.spy(Log, "warning");
-
-		var oComboBox = new ComboBox();
-
-		oComboBox.getList();
-
-		assert.strictEqual(fnWarningSpy.callCount, 1, "Exactly 1 warning has been logged");
-		assert.strictEqual(fnWarningSpy.firstCall.args[0], "[Warning]:", "First argument correct.");
-		assert.strictEqual(fnWarningSpy.firstCall.args[1], "You are attempting to use deprecated method 'getList()', please refer to SAP note 2746748.", "Second argument correct.");
-		assert.strictEqual(fnWarningSpy.firstCall.args[2], oComboBox, "Third argument correct.");
-
-		oComboBox.destroy();
-	});
-
 	QUnit.module("_mapItemToListItem", {
 		beforeEach: function () {
 			this.oComboBox = new ComboBox();

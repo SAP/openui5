@@ -6,26 +6,14 @@
     <script src="shared-config.js"></script>
     <script id="sap-ui-bootstrap"
             src="../../../resources/sap-ui-core.js"
-            data-sap-ui-libs="sap.m">
+            data-sap-ui-libs="sap.m"
+            data-sap-ui-async="true"
+            data-sap-ui-compat-version="edge"
+            data-sap-ui-on-init="module:local/SplitButton"
+            data-sap-ui-resource-roots='{"local":"./"}'
+    >
     </script>
-    <script>
-		sap.ui.require(["sap/m/SplitButton"], function(SplitButton) {
-			new sap.m.App().addPage(new sap.m.Page({
-				title: "sap.m.SplitButton",
-				content: [
-					new sap.m.SplitButton({
-						text: "abc",
-						arrowPress: function(oEvent) {
-							alert("arrow down: " + oEvent.getParameter('down'));
-						},
-						press: function() {
-							alert("press");
-						}
-					})
-				]
-			})).placeAt("body");
-		});
-    </script>
+    
 </head>
 <body id="body" class="sapUiBody">
 <!--<body id="body" class="sapUiBody sapUiSizeCompact">-->

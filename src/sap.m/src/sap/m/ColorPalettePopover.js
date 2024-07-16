@@ -46,7 +46,7 @@ sap.ui.define([
 		var ColorPalettePopover = Control.extend("sap.m.ColorPalettePopover", /** @lends sap.m.ColorPalettePopover.prototype */ {
 			metadata: {
 				library: "sap.m",
-				publicMethods: ["openBy", "close"],
+
 				properties: {
 
 					/**

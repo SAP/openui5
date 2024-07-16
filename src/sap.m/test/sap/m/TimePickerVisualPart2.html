@@ -8,146 +8,17 @@
 
 <script src="shared-config.js"></script>
 <script src="../../../resources/sap-ui-core.js"
-		id="sap-ui-bootstrap"
-		data-sap-ui-libs="sap.m"
-		data-sap-ui-theme="sap_horizon">
+        id="sap-ui-bootstrap"
+        data-sap-ui-libs="sap.m"
+        data-sap-ui-async="true"
+        data-sap-ui-compat-version="edge"
+        data-sap-ui-on-init="module:local/TimePickerVisualPart2"
+        data-sap-ui-resource-roots='{"local":"./"}'
+>
 </script>
 
 </head>
 <body id="body" class="sapUiBody">
-	<script>
-		jQuery.sap.require("sap.ui.core.HTML");
-		jQuery.sap.require("sap.ui.core.IconPool");
-		var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
-
-		var app = new sap.m.App("myApp", {
-			initialPage:"page1"
-		});
-		app.placeAt("body");
-
-		var options = [
-			{
-				id: "TP12",
-				value: "09:15:16 PM",
-				localeId: "en_US",
-				title: "Departure time"
-			},
-			{
-				id: "TP24",
-				value: "09:15:16 PM",
-				localeId: "en_US",
-				displayFormat: "HH:mm"
-			},
-			{
-				id: "TP25",
-				value: "09:15:16 PM",
-				localeId: "en_US",
-				displayFormat: "B HH:mm"
-			},
-			{
-				id: "TP26",
-				value: "09:15:16 PM",
-				localeId: "en_US",
-				displayFormat: "B hh:mm"
-			}
-		];
-
-		var generateTimePickers = function() {
-			var i,
-				aControls = [],
-				sInfo,
-				oBar,
-				oTp;
-
-			for (i = 0; i < options.length; i++) {
-				options[i].change = handleChange;
-				if (options[i].value && options[i].value.path) { //data binding
-					oBar = new sap.m.Toolbar(options[i].id + "-toolbar", {
-						content: [
-							new sap.m.TimePicker(options[i]),
-							new sap.m.Text({
-								text: {
-									path: "/timeValue",
-									type: new sap.ui.model.type.Time({style: "medium", strictParsing: true})
-								}
-							})
-						]
-					});
-				} else {
-					oTp = new sap.m.TimePicker(options[i]);
-					sInfo =  JSON.stringify(options[i]).split("\"").join("").replace("{", "").replace(",", " ").replace("}", "") + ", id: " + oTp.getId();
-					oBar = new sap.m.Toolbar(options[i].id + "-toolbar", {
-						content: [
-							oTp,
-							new sap.m.Text({ text: sInfo })
-						]
-					});
-				}
-
-				aControls.push(oBar);
-			}
-
-			return aControls;
-		};
-
-
-		var oModel = new sap.ui.model.json.JSONModel();
-		oModel.setData({
-			timeValue: UI5Date.getInstance()
-		});
-		app.setModel(oModel);
-
-		var page = new sap.m.Page("page1", {
-			title: "TimePicker",
-			content : [
-				new sap.m.HBox({
-					alignItems: sap.m.FlexAlignItems.Center,
-					items: [
-						new sap.m.Text({ text: "MaskInput is:" }),
-						new sap.m.Switch({
-							state: true,
-							change: function (oEvent) {
-								var sMaskMode = oEvent.getParameter("state") ? sap.m.TimePickerMaskMode.On : sap.m.TimePickerMaskMode.Off;
-
-								for (i = 0; i < options.length; i++) {
-									var sId = options[i].id;
-
-									sap.ui.getCore().byId(sId).setMaskMode(sMaskMode);
-								}
-
-							}
-						}),
-						new sap.m.Text({ text: "Mobile simulation is:" }),
-						new sap.m.Switch("toggleMobile", {
-							state: false,
-							change: function(oEvent) {
-								var bState = oEvent.getParameter("state");
-								sap.ui.Device.system.desktop = !bState;
-								sap.ui.Device.system.phone = bState;
-							}
-						})
-					]
-				}),
-				generateTimePickers(),
-				new sap.ui.core.HTML({
-					id: "eventsDiv",
-					content: "<div style='float:right;'>Some Events:</div>"
-				})
-			]
-		});
-
-		var iEvent = 0;
-
-		function handleChange(oEvent) {
-			var oTP = oEvent.oSource;
-			var oInput = jQuery("#eventsDiv");
-			var sValue = oEvent.getParameter("value");
-			var bValid = oEvent.getParameter("valid");
-			iEvent++;
-			oInput.html("Change - Event " + iEvent + "<br>TimePicker " + oTP.getId() + ":<br>" + sValue + "<br>valid: " + bValid);
-		}
-
-		app.addPage(page);
-	</script>
+	
 </body>
 </html>

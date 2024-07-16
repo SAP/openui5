@@ -265,4 +265,4 @@ sap.ui.define([
 
 	return DynamicPageTitleRenderer;
 
-}, /* bExport= */ true);
+});

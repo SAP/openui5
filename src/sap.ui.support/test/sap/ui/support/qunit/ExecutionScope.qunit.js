@@ -1,9 +1,9 @@
 /*global sinon, QUnit*/
 sap.ui.define([
+		"sap/ui/core/ElementRegistry",
 		'sap/ui/support/supportRules/ExecutionScope',
 		'sap/ui/model/json/JSONModel',
 		'sap/ui/core/CustomData',
-		'sap/ui/core/Element',
 		'sap/m/Page',
 		'sap/m/Panel',
 		'sap/m/Button',
@@ -15,10 +15,10 @@ sap.ui.define([
 		'sap/m/StandardListItem',
 		'sap/ui/core/Core',
 		'sap/base/Log'],
-	function(ExecutionScope,
+	function(ElementRegistry,
+			 ExecutionScope,
 			 JSONModel,
 			 CustomData,
-			 Element,
 			 Page,
 			 Panel,
 			 Button,
@@ -197,7 +197,7 @@ sap.ui.define([
 			var elements = this.es.getElements();
 			assert.equal(
 				elements.length,
-				Element.registry.size,
+				ElementRegistry.size,
 				" should be equal to size of Element registry"
 			);
 		});

@@ -70,25 +70,6 @@ sap.ui.define([
 				oTable.getColumns()[oCellInfo.columnIndex]._openHeaderMenu(oCellInfo.cell);
 				oEvent.preventDefault();
 			} else if (oCellInfo.isOfType(MenuUtils.TableUtils.CELLTYPE.ANYCONTENTCELL)) {
-				/**
-				 * @deprecated As of version 1.54
-				 */
-				if (oCellInfo.columnIndex >= 0) {
-					const oRowColCell = MenuUtils.TableUtils.getRowColCell(oTable, oCellInfo.rowIndex, oCellInfo.columnIndex, true);
-					const bExecuteDefault = oTable.fireCellContextmenu({
-						rowIndex: oRowColCell.row.getIndex(),
-						columnIndex: oCellInfo.columnIndex,
-						columnId: oRowColCell.column.getId(),
-						cellControl: oRowColCell.cell,
-						rowBindingContext: oRowColCell.row.getRowBindingContext(),
-						cellDomRef: oCellInfo.cell
-					});
-
-					if (!bExecuteDefault) {
-						oEvent.preventDefault(); // We do not know whether the event handler opens a context menu, so we just assume it is done.
-					}
-				}
-
 				MenuUtils._openContentCellContextMenu(oTable, oCellInfo, oEvent);
 			}
 		},
@@ -235,4 +216,4 @@ sap.ui.define([
 
 	return MenuUtils;
 
-}, /* bExport= */ true);
+});

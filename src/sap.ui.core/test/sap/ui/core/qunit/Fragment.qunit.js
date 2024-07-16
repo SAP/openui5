@@ -2,7 +2,6 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/core/Core",
 	"sap/ui/core/Component",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Element",
@@ -16,7 +15,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/ViewType",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/thirdparty/jquery"
-], function (Log, qutils, Core, Component, Fragment, Element, XMLTemplateProcessor, Button, HorizontalLayout, JSONModel, createAndAppendDiv, nextUIUpdate, View, ViewType, LoaderExtensions, jQuery) {
+], function(Log, qutils, Component, Fragment, Element, XMLTemplateProcessor, Button, HorizontalLayout, JSONModel, createAndAppendDiv, nextUIUpdate, View, ViewType, LoaderExtensions, jQuery) {
 	"use strict";
 
 	createAndAppendDiv(["content1", "content2", "content3", "content4", "binding"]);
@@ -31,10 +30,6 @@ sap.ui.define([
 
 	var oModel = new JSONModel();
 	oModel.setData(data);
-	/**
-	 * @deprecated As of version 1.118, the use of Core.js as a model container is deprecated
-	 */
-	Core.setModel(oModel);
 
 	function triggerClickEvent(sId) {
 		qutils.triggerEvent("mousedown", sId);
@@ -59,20 +54,12 @@ sap.ui.define([
 	//
 	// There are later further tests which load this module, therefore this test should run before the other tests.
 	QUnit.test("XML Fragment loaded from file with nested XMLView", function(assert) {
-		/**
-		 * @deprecated
-		 */
-		var oRequireSyncSpy = this.spy(sap.ui, "requireSync");
 		assert.notOk(sap.ui.require("sap/ui/core/mvc/XMLView"), "XMLView module isn't loaded yet");
 		return Fragment.load({
 			fragmentName: "testdata.fragments.XMLTestFragmentWithXMLView",
 			controller: this.oDummyController
 		}).then(async function(oFragment) {
 			assert.ok(sap.ui.require("sap/ui/core/mvc/XMLView"), "XMLView module is loaded");
-			/**
-			 * @deprecated
-			 */
-			assert.notOk(oRequireSyncSpy.called, "sap.ui.requireSync shouldn't be called");
 
 			oFragment.placeAt("content1");
 			oFragment.getUIArea().setModel(oModel);
@@ -460,10 +447,6 @@ sap.ui.define([
 			window.setTimeout(function() {
 				assert.ok(oDialog.isOpen(), "Dialog should be open now");
 
-				/**
-				 * @deprecated As of version 1.118, the use of Core.js as a model container is deprecated
-				 */
-				assert.equal(oDialog.getContent()[0].getText(), DATABOUND_GLOBAL_TEXT_IN_DIALOG, "TextView should have text from global data binding");
 				oDialog.setModel(oDialogModel);
 				assert.equal(oDialog.getContent()[0].getText(), DATABOUND_TEXT_IN_DIALOG, "TextView should have text from Dialog data binding");
 
@@ -500,10 +483,6 @@ sap.ui.define([
 			window.setTimeout(async function() {
 				assert.ok(oDialog.isOpen(), "Dialog should be open now");
 
-				/**
-				 * @deprecated As of version 1.118, the use of Core.js as a model container is deprecated
-				 */
-				assert.equal(oDialog.getContent()[0].getText(), DATABOUND_GLOBAL_TEXT_IN_DIALOG, "TextView should have text from global data binding");
 				oDialog.setModel(oDialogModel);
 				await nextUIUpdate();
 				assert.equal(oDialog.getContent()[0].getText(), DATABOUND_TEXT_IN_DIALOG, "TextView should have text from Dialog data binding");

@@ -1,0 +1,11 @@
+.sapMFlexItem {
+	border: 1px dashed red;
+	background-color: #aaaaaa;
+}
+#hbox1,
+#hbox2 {
+	width: 100%;
+	height: 300px;
+	background-color: #ffff99;
+	margin: 2em 0;
+}

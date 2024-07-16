@@ -2,9 +2,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head><meta charset="utf-8">
 	<title>Data Handling</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="../../../scripts/boot.js"></script>
 </head>
@@ -175,8 +175,7 @@
 							If the method doesn't have an entity body, such as the "GET" or "HEAD" methods, the data is appended to
 							the URL.<br><br>
 							Default encoding is <code>application/x-www-form-urlencoded</code>.
-							Also JSON is supported for the body encoding (see <a target="_parent"
-								href="../../../index.html#/explore/data/graphql">sample with GraphQL</a>). If you need
+							Also JSON is supported for the body encoding (see <a target="_parent" href="../../../index.html#/explore/data/graphql">sample with GraphQL</a>). If you need
 							it add a header <code>Content-Type: application/json</code>"
 						</td>
 						<td>1.14.0</td>
@@ -231,8 +230,7 @@
 							A map of requests, which should be batched together.<br>
 							If used the main request will be sent with content type multipart/mixed and its body will contain all requests specified in the map.<br>
 							Can be used for OData V2 and V4 batch requests.<br>
-							In the binding the result from each request can be accessed by the key of the corresponding request (see <a target="_parent"
-							href="../../../index.html#/explore/data/batchRequest">sample with OData batch request</a>).<br>
+							In the binding the result from each request can be accessed by the key of the corresponding request (see <a target="_parent" href="../../../index.html#/explore/data/batchRequest">sample with OData batch request</a>).<br>
 							<b>Note:</b> This property is experimental.<br>
 						</td>
 						<td>1.33.0</td>

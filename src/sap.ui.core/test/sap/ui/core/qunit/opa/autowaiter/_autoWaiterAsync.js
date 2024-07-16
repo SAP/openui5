@@ -1,12 +1,12 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/test/autowaiter/_autoWaiter",
 	"sap/ui/test/autowaiter/_XHRWaiter",
 	"sap/ui/test/autowaiter/_timeoutWaiter",
 	"sap/ui/test/autowaiter/_autoWaiterAsync",
-	"sap/ui/test/_LogCollector"
-], function ($, _autoWaiter, _XHRWaiter, _timeoutWaiter, _autoWaiterAsync, _LogCollector) {
+	"sap/ui/test/_LogCollector",
+	"sap/base/util/isEmptyObject"
+], function (_autoWaiter, _XHRWaiter, _timeoutWaiter, _autoWaiterAsync, _LogCollector, isEmptyObject) {
 	"use strict";
 
 	var iPollInterval = 400;
@@ -37,7 +37,7 @@ sap.ui.define([
 		assert.ok(this.fnHasToWaitStub.calledTwice, "Should poll for autoWaiter conditions to be met");
 		assert.ok(this.fnCallbackSpy.calledOnce, "Should invoke the callback when the autoWaiter conditions are met");
 		assert.ok(!this.fnCallbackSpy.args[0][0], "Should invoke the callback with no arguments");
-		assert.ok($.isEmptyObject(this.clock.timers), "Should stop polling when autoWaiter conditions are met");
+		assert.ok(isEmptyObject(this.clock.timers), "Should stop polling when autoWaiter conditions are met");
 	});
 
 	QUnit.test("Should end immediately if condition is already met", function (assert) {
@@ -49,7 +49,7 @@ sap.ui.define([
 		assert.ok(this.fnHasToWaitStub.calledOnce, "Should poll for autoWaiter conditions to be met");
 		assert.ok(this.fnCallbackSpy.calledOnce, "Should invoke the callback when the autoWaiter conditions are met");
 		assert.ok(!this.fnCallbackSpy.args[0][0], "Should invoke the callback with no arguments");
-		assert.ok($.isEmptyObject(this.clock.timers), "Should stop polling when autoWaiter conditions are met");
+		assert.ok(isEmptyObject(this.clock.timers), "Should stop polling when autoWaiter conditions are met");
 	});
 
 	QUnit.test("Should timeout if conditions cannot be met in a given timeframe", function (assert) {
@@ -62,7 +62,7 @@ sap.ui.define([
 		assert.strictEqual(this.fnHasToWaitStub.callCount, iTimeoutAttempts, "Should poll for autoWaiter conditions to be met");
 		assert.ok(this.fnCallbackSpy.calledOnce, "Should invoke the callback");
 		assert.ok(this.fnCallbackSpy.calledWithMatch(/timeout/), "Should invoke the callback with the error message as an argument");
-		assert.ok($.isEmptyObject(this.clock.timers), "Should stop polling when autoWaiter conditions are met");
+		assert.ok(isEmptyObject(this.clock.timers), "Should stop polling when autoWaiter conditions are met");
 	});
 
 	QUnit.test("Should not fail if no callback was passed", function (assert) {
@@ -70,7 +70,7 @@ sap.ui.define([
 		_autoWaiterAsync.waitAsync();
 
 		this.clock.tick(iPollInterval);
-		assert.ok($.isEmptyObject(this.clock.timers), "Should stop polling when autoWaiter conditions are met");
+		assert.ok(isEmptyObject(this.clock.timers), "Should stop polling when autoWaiter conditions are met");
 	});
 
 	QUnit.test("Should be able to change the polling times", function (assert) {
@@ -133,7 +133,7 @@ sap.ui.define([
 		assert.ok(fnCallbackSpy.calledOnce, "Should invoke the callback for the waiter that is not started");
 		assert.ok(fnCallbackSecondSpy.calledWithMatch(/waitAsync is already running/),
 			"Should invoke the callback with an error message on second start");
-		assert.ok($.isEmptyObject(this.clock.timers), "Should stop polling when autoWaiter conditions are met");
+		assert.ok(isEmptyObject(this.clock.timers), "Should stop polling when autoWaiter conditions are met");
 	});
 
 	QUnit.test("Should log autoWaiter pending work on timeout", function (assert) {

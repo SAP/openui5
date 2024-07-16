@@ -64,9 +64,7 @@ sap.ui.define([
 			}
 		},
 
-		metadata : {
-			publicMethods : ["setXML", "getXML", "setNameSpace"]
-		}
+		metadata : {}
 
 	});
 
@@ -305,10 +303,6 @@ sap.ui.define([
 			return null;
 		}
 		let oNode = [];
-		/** @deprecated As of version 1.88.0 */
-		if (this.isLegacySyntax()) {
-			oNode = [oRootNode];
-		}
 		if (oContext instanceof Context) {
 			oNode = this._getObject(oContext.getPath());
 		} else if (oContext) {
@@ -467,10 +461,6 @@ sap.ui.define([
 				sResolvedPath = oContext.getPath() + "/" + sPath;
 			} else {
 				sResolvedPath = undefined;
-				/** @deprecated As of version 1.88.0 */
-				if (this.isLegacySyntax()) {
-					sResolvedPath = "/" + sPath;
-				}
 			}
 		}
 		return sResolvedPath;

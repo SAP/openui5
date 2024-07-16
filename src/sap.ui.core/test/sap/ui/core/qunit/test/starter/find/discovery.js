@@ -30,7 +30,7 @@ sap.ui.define([
 		// the context path - this section makes sure to remove the duplicate
 		// test-resources segments in the path
 		if (sTestPage.startsWith("/test-resources/test-resources") || sTestPage.startsWith("/test-resources/resources")) {
-			sTestPage = sTestPage.slice("/test-resources".length);
+			sTestPage = sTestPage.slice(15);
 		}
 		this.aPages.push(Object.assign({fullpage: sTestPage}, oConfig));
 	};

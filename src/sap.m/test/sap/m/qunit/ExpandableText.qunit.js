@@ -1,19 +1,19 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/core/Lib",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/ExpandableText",
 	"sap/ui/core/library",
 	"sap/m/library",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/createAndAppendDiv"
 ], function(
 	Library,
+	nextUIUpdate,
 	jQuery,
 	ExpandableText,
 	coreLibrary,
 	library,
-	Core,
 	createAndAppendDiv
 ) {
 	"use strict";
@@ -48,7 +48,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oExpandableText = createExpandableText();
 			this.oExpandableText.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oExpandableText.destroy();
@@ -70,7 +70,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oExpandableText = createExpandableText();
 			this.oExpandableText.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oExpandableText.destroy();
@@ -81,23 +81,23 @@ sap.ui.define([
 	QUnit.test("properties", function (assert) {
 
 		this.oExpandableText.setTextDirection(TextDirection.RTL);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oExpandableText.getDomRef().getAttribute('dir'), 'rtl', 'dir attribute is correct');
 		assert.strictEqual(this.oExpandableText.getDomRef().style.textAlign, 'right', 'text-align style is correct');
 
 		this.oExpandableText.setTextAlign(TextAlign.Left);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oExpandableText.getDomRef().style.textAlign, 'left', 'text-align style is correct');
 
 		this.oExpandableText.setRenderWhitespace(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(this.oExpandableText.$().hasClass("sapMExTextRenderWhitespaceWrap"), 'sapMExTextRenderWhitespaceWrap class is added');
 
 		this.oExpandableText.setText("Short text");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(this.oExpandableText.$().find(".sapMExTextEllipsis").length, "Ellipsis are not rendered");
 		assert.notOk(this.oExpandableText.$("showMoreLink").length, "Show more is not rendered");
@@ -107,7 +107,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oExpandableText = createExpandableText();
 			this.oExpandableText.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oExpandableText.destroy();
@@ -123,7 +123,7 @@ sap.ui.define([
 			iMaxCharacters = this.oExpandableText.getMaxCharacters();
 
 		oShowMoreLink.firePress();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oExpandableText.$("string").text(), this.oExpandableText.getText(), "text is correct");
 		assert.strictEqual(this.oExpandableText.$().find(".sapMExTextEllipsis").text(), " ", "Space is rendered");
@@ -131,7 +131,7 @@ sap.ui.define([
 		assert.notOk(this.oExpandableText.$().find(".sapUiInvisibleText").text(), "aria-labelledby control text is empty");
 
 		oShowMoreLink.firePress();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oExpandableText.$("string").text(), this.oExpandableText.getText().substring(0, iMaxCharacters), "text is correct");
 		assert.strictEqual(this.oExpandableText.$().find(".sapMExTextEllipsis").text(), "... ", "Ellipsis are rendered");
@@ -141,7 +141,7 @@ sap.ui.define([
 
 	QUnit.test("Open popover", function (assert) {
 		this.oExpandableText.setOverflowMode(ExpandableTextOverflowMode.Popover);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oExpandableText.$("showMoreLink").attr("aria-haspopup"), "dialog", "aria-haspopup attribute is set to 'dialog'");
 
@@ -149,7 +149,7 @@ sap.ui.define([
 			iMaxCharacters = this.oExpandableText.getMaxCharacters();
 
 		oShowMoreLink.firePress();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oExpandableText.$("string").text(), this.oExpandableText.getText().substring(0, iMaxCharacters), "text is correct");
 		assert.strictEqual(this.oExpandableText.$().find(".sapMExTextEllipsis").text(), "... ", "Ellipsis are rendered");
@@ -158,7 +158,7 @@ sap.ui.define([
 		assert.strictEqual(jQuery(".sapMPopover").text(), this.oExpandableText.getText(), "popover is opened with the correct text");
 
 		oShowMoreLink.firePress();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		assert.strictEqual(this.oExpandableText.$("showMoreLink").text(), TEXT_SHOW_MORE, "'Show more' text is rendered");
@@ -170,7 +170,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oExpandableText = new ExpandableText();
 			this.oExpandableText.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oExpandableText.destroy();
@@ -193,7 +193,7 @@ sap.ui.define([
 	QUnit.test("emptyIndicatorMode=On with empty text", function (assert) {
 		// Arrange
 		this.oExpandableText.setEmptyIndicatorMode(EmptyIndicatorMode.On);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oEmptyIndicator = this.oExpandableText.getDomRef("string").firstElementChild;
 
 		// Assert
@@ -206,7 +206,7 @@ sap.ui.define([
 		//Arrange
 		this.oExpandableText.setText("test");
 		this.oExpandableText.setEmptyIndicatorMode(EmptyIndicatorMode.On);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(this.oExpandableText.getDomRef("string").textContent, "test", "Empty indicator shouldn't be rendered");
@@ -216,7 +216,7 @@ sap.ui.define([
 		//Arrange
 		this.oExpandableText.setText("test");
 		this.oExpandableText.setEmptyIndicatorMode(EmptyIndicatorMode.Auto);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(this.oExpandableText.getDomRef("string").textContent, "test", "Empty indicator shouldn't be rendered");
@@ -227,7 +227,7 @@ sap.ui.define([
 		this.oExpandableText.setEmptyIndicatorMode(EmptyIndicatorMode.Auto);
 		var oContainer = createAndAppendDiv();
 		this.oExpandableText.placeAt(oContainer);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Arrange
 		var oEmptyIndicator = this.oExpandableText.getDomRef("string").firstElementChild;

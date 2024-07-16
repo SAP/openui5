@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/m/Text",
-	"sap/f/cards/util/addTooltipIfTruncated"
-], function (
+	"sap/f/cards/util/addTooltipIfTruncated",
+	"./BaseHeaderRenderer"
+], function(
 	Control,
 	IntervalTrigger,
 	Library,
@@ -20,7 +21,8 @@ sap.ui.define([
 	coreLibrary,
 	mLibrary,
 	Text,
-	addTooltipIfTruncated
+	addTooltipIfTruncated,
+	BaseHeaderRenderer
 ) {
 	"use strict";
 
@@ -157,7 +159,9 @@ sap.ui.define([
 				 */
 				bannerLines: { type: "sap.m.Text", group: "Appearance", multiple: true  }
 			}
-		}
+		},
+
+		renderer: BaseHeaderRenderer
 	});
 
 	BaseHeader.prototype.init = function () {

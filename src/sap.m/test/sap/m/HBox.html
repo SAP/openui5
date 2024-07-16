@@ -1,113 +1,21 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
+	<head><meta charset="utf-8">
 		<title>HBox - sap.m</title>
-		<style type="text/css">
-			.sapMFlexItem {
-				border: 1px dashed red;
-				background-color: #aaaaaa;
-			}
-			#hbox1,
-			#hbox2 {
-				width: 100%;
-				height: 300px;
-				background-color: #ffff99;
-				margin: 2em 0;
-			}
-		</style>
+		<link rel="stylesheet" href="./HBox.css">
 
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m">
+				id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/HBox"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
 
-		<script>
-			var app = new sap.m.App("myApp", {initialPage:"page1"});
-
-			// Create items
-			var oItem1 = new sap.m.Image({
-				src: "images/mark1.png",
-				alt: "test image",
-				decorative: false,
-				densityAware: false,
-				layoutData: new sap.m.FlexItemData({growFactor: 1})
-			});
-
-			var oItem2 = new sap.m.Image({
-				src: "images/mark2.png",
-				alt: "test image",
-				decorative: false,
-				densityAware: false,
-				layoutData: new sap.m.FlexItemData({growFactor: 2})
-			});
-
-			var oItem3 = new sap.m.Image({
-				src: "images/mark3.png",
-				alt: "test image",
-				decorative: false,
-				densityAware: false,
-				layoutData: new sap.m.FlexItemData({growFactor: 3})
-			});
-
-			// Create a horizontal flexbox with items
-			var oHBox1 = new sap.m.HBox("hbox1", {
-				items:[
-					oItem1,
-					oItem2,
-					oItem3
-				]
-			});
-
-
-			// Create items
-			var oItem4 = new sap.m.Image({
-				src: "images/mark1.png",
-				alt: "test image",
-				decorative: false,
-				densityAware: false,
-				layoutData: new sap.m.FlexItemData({growFactor: 1})
-			});
-
-			var oItem5 =new sap.m.Image({
-				src: "images/mark2.png",
-				alt: "test image",
-				decorative: false,
-				densityAware: false,
-				layoutData: new sap.m.FlexItemData({growFactor: 2})
-			});
-
-			var oItem6 = new sap.m.Image({
-				src: "images/mark3.png",
-				alt: "test image",
-				decorative: false,
-				densityAware: false,
-				layoutData: new sap.m.FlexItemData({growFactor: 3})
-			});
-
-			// Create a horizontal flexbox with items
-			var oHBox2 = new sap.m.HBox("hbox2", {
-				items:[
-					oItem4,
-					oItem5,
-					oItem6
-				]
-			});
-			oHBox2.setDirection('RowReverse');
-
-
-			var page1 = new sap.m.Page("page1", {
-				title:"Mobile HBox Control",
-				content:[
-					new sap.ui.core.HTML({content:"<h2>Horizontal layout</h2>"}),
-					oHBox1,
-					new sap.ui.core.HTML({content:"<h2>Reverse horizontal layout</h2>"}),
-					oHBox2
-				]
-			});
-
-			app.addPage(page1).placeAt("body");
-		</script>
+		
 
 	</head>
 	<body id="body" class="sapUiBody">

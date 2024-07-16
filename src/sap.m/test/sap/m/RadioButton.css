@@ -1,0 +1,24 @@
+#vboxStates {
+	padding: 2rem;
+}
+
+#vboxStates .sapMVBox {
+	padding-right: 2rem;
+}
+
+#hBoxStatesSecondLine {
+	padding-top: 2rem;
+}
+
+#flexbox2 {
+	padding: 0 2rem;
+}
+
+#heading {
+	font-size: 1rem;
+	font-weight: bold;
+}
+
+#label1, #label2, #label3 {
+	margin-top: 1rem;
+}

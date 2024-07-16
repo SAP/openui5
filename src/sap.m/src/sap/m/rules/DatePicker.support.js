@@ -177,4 +177,4 @@ sap.ui.define(["sap/ui/support/library"], function(SupportLib) {
 		oDateValueHasHoursMinutesSeconds
 	];
 
-}, true);
+});

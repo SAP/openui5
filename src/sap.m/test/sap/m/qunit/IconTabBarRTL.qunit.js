@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Element",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	IconTabBar,
@@ -13,7 +13,7 @@ sap.ui.define([
 	Button,
 	Element,
 	KeyCodes,
-	Core,
+	nextUIUpdate,
 	jQuery
 ) {
 	"use strict";
@@ -78,7 +78,7 @@ sap.ui.define([
 
 			this.oIconTabBar.placeAt('qunit-fixture');
 			this.oIconTabBar1.placeAt('qunit-fixture');
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.oMockEvent = {
 				getParameter: function(parameter) {

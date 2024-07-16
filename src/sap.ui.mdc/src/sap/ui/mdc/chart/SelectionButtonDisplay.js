@@ -37,4 +37,4 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 
 	return SelectionButtonDisplay;
 
-}, /* bExport= */ true);
+});

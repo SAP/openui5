@@ -1,0 +1,16 @@
+#text1,#text2,#text3,#text4,#text5,#text6,#text7,#text8 {
+	margin: 0.4375em 0.4375em 0em 0.4375em;
+}
+
+#text4 {
+	padding: 0em 0.4375em 0em 0.4375em;
+	border-width: 1px;
+	border-color: red;
+	border-style: solid;
+	color: blue;
+	background-color: #FFFFDD;
+}
+
+#input1 {
+	caret-color: transparent;
+}

@@ -14,24 +14,24 @@
 	<!-- set data-sap-ui-async="true" to enable the user to fix it in the
 	troubleshooting tutorial step 4: Diagnostics Window -->
 	<script id="sap-ui-bootstrap"
-		src="https://sdk.openui5.org/resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_belize"
-		data-sap-ui-libs="sap.f"
-		data-sap-ui-resourceroots='{
+			src="https://sdk.openui5.org/resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.f"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
+			data-sap-ui-resource-roots='{
 			"sap.ui.demo.HeapOfShards": "./",
 			"sap.ui.demo.DoesNotExist": "./DoesNotExist"
 		}'
-		data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
-		data-sap-ui-compatVersion="edge"
-		data-sap-ui-async="true">
+	>
 	</script>
 
-	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" href="css/style.css">
 
 </head>
 
 <body class="sapUiBody">
-	<div data-sap-ui-component data-name="sap.ui.demo.HeapOfShards" data-id="container" data-settings='{"id" : "HeapOfShards"}'></div>
+	<div data-sap-ui-component data-name="sap.ui.demo.HeapOfShards" data-id="container" data-settings="{&quot;id&quot; : &quot;HeapOfShards&quot;}"></div>
 </body>
 
 </html>

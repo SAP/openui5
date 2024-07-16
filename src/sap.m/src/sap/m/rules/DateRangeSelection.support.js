@@ -91,4 +91,4 @@ sap.ui.define(["sap/ui/support/library"], function(SupportLib) {
 		oDoNotSupportValueFormatRule
 	];
 
-}, true);
+});

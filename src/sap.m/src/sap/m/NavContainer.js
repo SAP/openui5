@@ -5,7 +5,7 @@
 // Provides control sap.m.NavContainer.
 sap.ui.define([
 	'./library',
-	"sap/ui/core/Configuration",
+	"sap/ui/core/AnimationMode",
 	'sap/ui/core/Control',
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Element",
@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/dom/jquery/Focusable"
 ], function(
 	library,
-	Configuration,
+	AnimationMode,
 	Control,
 	ControlBehavior,
 	Element,
@@ -326,7 +326,7 @@ sap.ui.define([
 
 	var fnGetDelay = function (iDelay) {
 		var sAnimationMode = ControlBehavior.getAnimationMode(),
-			bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
+			bUseAnimations = sAnimationMode !== AnimationMode.none && sAnimationMode !== AnimationMode.minimal;
 
 		return bUseAnimations ? iDelay : 0;
 	},
@@ -1862,11 +1862,6 @@ sap.ui.define([
 			if (this.getDomRef()) {
 				this._ensurePageStackInitialized();
 
-				/**
-				 * @deprecated since 1.70
-				 */
-				rerender = this.rerender.bind(this);
-
 				rerender();
 			}
 		}
@@ -1888,11 +1883,6 @@ sap.ui.define([
 			this._fireAdaptableContentChange(oPage);
 			if (this.getDomRef()) {
 				this._ensurePageStackInitialized();
-
-				/**
-				 * @deprecated since 1.70
-				 */
-				rerender = this.rerender.bind(this);
 
 				rerender();
 			}

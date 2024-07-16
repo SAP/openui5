@@ -8,11 +8,6 @@
 				var aExpectedLibraries = ["sap.ui.core", "sap.m"];
 
 				assert.ok(Core, "Core module exports a value");
-				/**
-				 * @deprecated As of version 1.118
-				 * check that SAPUI5 has been loaded
-				 */
-				assert.ok(sap.ui.getCore(), "sap.ui.getCore() returns a value");
 
 				await Core.ready();
 

@@ -22,7 +22,6 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.uxap.component.ObjectPageLayoutUXDrivenFactory", {
-
 		/**
 		 * injects the header based on configuration
 		 * @param {object} oModel model instance
@@ -64,45 +63,6 @@ sap.ui.define([
 			} else { //otherwise we apply the header factory immediately
 				fnHeaderFactory();
 			}
-		},
-
-		/**
-		 * generates a control to be used in actions, blocks or moreBlocks aggregations
-		 * known issue: bindings are not applied, the control is built with data only
-		 * @param {string} sParentId the Id of the parent
-		 * @param {object} oBindingContext binding context
-		 * @returns {*} new control
-		 * @deprecated Since version 1.120
-		 */
-		controlFactory: function (sParentId, oBindingContext) {
-			var oControlInfo = oBindingContext.getProperty(""), oControl, oControlClass, oControlMetadata;
-
-			try {
-				//retrieve the block class
-				oControlClass = sap.ui.requireSync(oControlInfo.Type.replace(/\./g, "/"));
-				oControlMetadata = oControlClass.getMetadata();
-
-				//pre-processing: substitute event handler as strings by their function instance
-				each(oControlMetadata._mAllEvents, function (sEventName, oEventProperties) {
-					if (typeof oControlInfo[sEventName] == "string") {
-						oControlInfo[sEventName] = this.convertEventHandler(oControlInfo[sEventName]);
-					}
-				}.bind(this));
-
-				//creates the control with control info = create with provided properties
-				oControl = ManagedObject.create(oControlInfo);
-
-				//post-processing: bind properties on the objectPageLayoutMetadata model
-				each(oControlMetadata._mAllProperties, function (sPropertyName, oProperty) {
-					if (oControlInfo[sPropertyName]) {
-						oControl.bindProperty(sPropertyName, "objectPageLayoutMetadata>" + oBindingContext.getPath() + "/" + sPropertyName);
-					}
-				});
-			} catch (sError) {
-				Log.error("ObjectPageLayoutFactory :: error in control creation from config: " + sError);
-			}
-
-			return oControl;
 		},
 
 		/**

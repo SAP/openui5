@@ -19,19 +19,23 @@ sap.ui.define([
 			"abstract": true,
 			interfaces: ["sap.ui.core.IAsyncContentCreation"],
 			version : "1.0",
+
+			//array of css and/or javascript files that should be used in the component
 			includes : [
 				"css/vlayout.css",
 				 "/js/includeme.js"
-			], //array of css and/or javascript files that should be used in the component
+			],
+
 			dependencies : { // external dependencies
 				libs : ['sap.ui.layout', "sap.m" ], // array of required libraries, if your component depends on them
 				components : ["samples.components.styledbutton"],
 				ui5version : "1.13.0"
 			},
-			publicMethods: [ "render" ],
+
 			aggregations: {
 				"rootControl": { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" } // needs to be set to enable databinding functionality
 			},
+
 			properties: {
 				initalText: { name:"initalText", type:"string", defaultValue:"Lorem impsum dolor sit amet" }
 			}

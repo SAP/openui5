@@ -6,86 +6,15 @@
 	<script src="shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m, sap.ui.layout"
-			src="../../../resources/sap-ui-core.js">
+			src="../../../resources/sap-ui-core.js"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:local/WizardProgressNavigator"
+			data-sap-ui-resource-roots='{"local":"./"}'
+	>
 	</script>
-	<script>
-		jQuery.sap.require("sap.m.WizardProgressNavigator");
-
-		var randomTitle = function () {
-			return Array(Math.floor(Math.random() * 10) + 2).join("-").split("").map(function (x) {
-				return Array(Math.floor(Math.random() * 10 + 4)).join("a");
-
-			}).join(" ");
-		}
-
-		var app = new sap.m.App({initialPage: "landing"});
-		var pageOne = new sap.m.Page("landing", {showHeader: false});
-
-		var steps = 3;
-		var maximumSteps = 8;
-
-		while (steps <= maximumSteps) {
-			var navId = "prog-nav-" + steps;
-
-			(function (navigatorId) {
-				var inputId = navigatorId + "-input";
-
-				pageOne.addContent(new sap.ui.layout.VerticalLayout({
-					width: "100%",
-					content: [
-						new sap.m.WizardProgressNavigator(navigatorId, {
-							stepCount: steps,
-							varyingStepCount: steps % 2 === 1,
-							stepTitles: Array(steps + 1).join("-").split("").map(function (s, i) {
-								return randomTitle();
-							})
-						}),
-						new sap.m.Button({
-							text: "Previous",
-							press: function () {
-								sap.ui.core.Element.getElementById(navigatorId).previousStep();
-							}
-						}),
-						new sap.m.Button({
-							text: "Next",
-							press: function () {
-								sap.ui.core.Element.getElementById(navigatorId).nextStep();
-							}
-						}),
-						new sap.m.Button({
-							text: "Discard After Step",
-							press: function () {
-								var inputVal = parseInt(sap.ui.core.Element.getElementById(inputId).getValue(), 10);
-
-								if (isNaN(inputVal)) {
-									return;
-								}
-
-								sap.ui.core.Element.getElementById(navigatorId).discardProgress(inputVal);
-							}
-						}),
-						new sap.m.Input(inputId, {
-							type: sap.m.InputType.Number
-						})
-					]
-				}));
-			}(navId));
-
-			steps += 1;
-		}
-
-		app.addPage(pageOne);
-		app.placeAt("content");
-	</script>
-	<style>
-		.sapUiVlt + .sapUiVlt {
-			margin-top: 4rem;
-		}
-
-		.sapUiVltCell:nth-child(n+2) {
-			display: inline-block;
-		}
-	</style>
+	
+	<link rel="stylesheet" href="./WizardProgressNavigator.css">
 </head>
 <body class="sapUiBody">
 	<div id="content">

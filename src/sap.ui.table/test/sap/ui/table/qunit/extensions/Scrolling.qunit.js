@@ -3173,9 +3173,6 @@ sap.ui.define([
 				{name: "Footer container", element: oDomRef.querySelector(".sapUiTableFtr")}
 			];
 
-			/** @deprecated As of version 1.72 */
-			aTestConfigs.push({name: "Title container", element: oDomRef.querySelector(".sapUiTableHdr")});
-
 			aTestConfigs.forEach(function(mConfig) {
 				pTestSequence = pTestSequence.then(function() {
 					return test(mConfig);

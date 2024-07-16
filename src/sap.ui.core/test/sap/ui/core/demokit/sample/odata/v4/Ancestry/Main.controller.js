@@ -2,13 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel"
-], function (Core, Controller, Filter, FilterOperator, Sorter, JSONModel) {
+], function (Library, Controller, Filter, FilterOperator, Sorter, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.Ancestry.Main", {
@@ -56,7 +56,7 @@ sap.ui.define([
 					}
 				};
 
-			Core.loadLibrary("sap.ui.export", true).then(function () {
+			Library.load("sap.ui.export").then(function () {
 				sap.ui.require(["sap/ui/export/Spreadsheet"], function (Spreadsheet) {
 					var oSheet = new Spreadsheet(oSettings);
 

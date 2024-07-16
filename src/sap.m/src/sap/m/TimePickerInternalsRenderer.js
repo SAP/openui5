@@ -14,4 +14,4 @@ sap.ui.define([], function() {
 	};
 
 	return TimePickerInternalsRenderer;
-}, /* bExport= */ true);
+});

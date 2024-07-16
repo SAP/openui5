@@ -4,8 +4,13 @@
 <head lang="en">
 	<meta charset="UTF-8">
 	<title>sap.m.Avatar test page</title>
-	<script id="sap-ui-bootstrap" src="../../../resources/sap-ui-core.js" data-sap-ui-async="true"
-		data-sap-ui-compatVersion="edge" data-sap-ui-theme="sap_horizon">
+	<script id="sap-ui-bootstrap"
+			src="../../../resources/sap-ui-core.js"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:local/AvatarWithImageCustomData"
+			data-sap-ui-resource-roots='{"local":"./"}'
+	>
 		</script>
 
 	<script id="myView" type="text/xml">
@@ -74,20 +79,7 @@
 		</mvc:View>
 	</script>
 
-	<script>
-		sap.ui.getCore().attachInit(function () {
-			function toAbsolute(relativeUrl) {
-				return new URL(relativeUrl, document.baseURI).toString();
-			}
-			var oModel = new sap.ui.model.json.JSONModel({
-				srcWithModificationsRelative: "images/Woman_avatar_01.png",
-				srcWithModificationsAbsolute: toAbsolute("images/Woman_avatar_02.png"),
-				srcWithoutModifications: toAbsolute("images/Woman_04.png"),
-			});
-
-			sap.ui.xmlview({ viewContent: $('#myView').html() }).setModel(oModel).placeAt("content");
-		});
-	</script>
+	
 </head>
 
 <body id="body" class="sapUiBody">

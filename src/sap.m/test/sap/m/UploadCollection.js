@@ -8,12 +8,9 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Item",
 	"sap/m/MultiComboBox",
-	"sap/m/UploadCollectionParameter",
 	"sap/m/ObjectAttribute",
 	"sap/m/ObjectStatus",
 	"sap/m/ObjectMarker",
-	"sap/m/UploadCollection",
-	"sap/m/UploadCollectionItem",
 	"sap/ui/model/Sorter",
 	"sap/m/Page",
 	"sap/m/Toolbar",
@@ -33,12 +30,9 @@ sap.ui.define([
 	coreLibrary,
 	Item,
 	MultiComboBox,
-	UploadCollectionParameter,
 	ObjectAttribute,
 	ObjectStatus,
 	ObjectMarker,
-	UploadCollection,
-	UploadCollectionItem,
 	Sorter,
 	Page,
 	Toolbar,
@@ -732,7 +726,7 @@ sap.ui.define([
 	var fnBeforeUploadStarts = function(oEvent) {
 		var sHeaderParameterName = "timestamp";
 		if (!oEvent.getParameters().getHeaderParameter(sHeaderParameterName) ) {
-			var oHeaderParameter = new UploadCollectionParameter({
+			var oHeaderParameter = new undefined/*UploadCollectionParameter*/({
 				name: sHeaderParameterName,
 				value: jQuery.now()
 			});
@@ -774,13 +768,13 @@ sap.ui.define([
 		press: onMarkerPress
 	});
 
-	var oUploadCollection = new UploadCollection({
+	var oUploadCollection = new undefined/*UploadCollection*/({
 		maximumFilenameLength: "{/maximumFilenameLength}",
 		multiple: "{/multiple}",
 		items: {
 			path: "/items/",
 			factory: function(id, context) {
-				var oItem = new UploadCollectionItem(id, {
+				var oItem = new undefined/*UploadCollectionItem*/(id, {
 					contributor: "{contributor}",
 					tooltip: "{tooltip}",
 					documentId: "{documentId}",

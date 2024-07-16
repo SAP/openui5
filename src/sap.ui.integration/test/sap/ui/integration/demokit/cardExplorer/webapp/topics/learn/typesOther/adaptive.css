@@ -1,0 +1,7 @@
+code {
+	font-size: 16px;
+}
+
+.sapUiSizeCompact code {
+	font-size: 14px;
+}

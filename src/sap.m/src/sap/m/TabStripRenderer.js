@@ -328,4 +328,4 @@ sap.ui.define([
 
 	return TabStripRenderer;
 
-}, /* bExport= */ true);
+});

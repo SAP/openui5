@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery", 'sap/ui/mdc/link/Factory'
-], function(jQuery, Factory) {
+	'sap/ui/mdc/link/Factory'
+], function(Factory) {
 	"use strict";
 
 	/**
@@ -111,4 +111,4 @@ sap.ui.define([
 
 	return FakeUShellConnector;
 
-}, true);
+});

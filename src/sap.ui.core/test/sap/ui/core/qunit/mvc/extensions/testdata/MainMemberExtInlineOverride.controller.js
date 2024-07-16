@@ -38,9 +38,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller", "./ReuseExtension"], function(Contr
 			return "privateMethod2OnBase";
 		},
 		reuse: ReuseExtension.override({
-			myFinalMethod: function() {
-				"Final Methods could not be overidden by an extension";
-			},
+			myFinalMethod: function() {},
 			publicMethod: function() {
 				return "myPublicMethodReuseExtensionOveridden";
 			}

@@ -1,28 +1,20 @@
 <!DOCTYPE HTML>
 <html>
-<head>
+<head><meta charset="utf-8">
 <title>Component - sap.ui.core</title>
 
 <script src="shared-config.js"></script>
 <script id="sap-ui-bootstrap"
-	src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-xx-bindingSyntax="complex">
+        src="../../../../resources/sap-ui-core.js"
+        data-sap-ui-async="true"
+        data-sap-ui-compat-version="edge"
+        data-sap-ui-on-init="module:local/ComponentSample"
+        data-sap-ui-resource-roots='{"local":"./"}'
+>
 
 </script>
 
-<script>
-	sap.ui.localResources("samples");
 
-	var oComponent = sap.ui.component({
-		manifestUrl: "samples/components/sample/manifest.json"
-	});
-
-	var oContainer = new sap.ui.core.ComponentContainer({
-		component : oComponent
-	});
-	oContainer.placeAt("target");
-
-</script>
 
 </head>
 <body class="sapUiBody">

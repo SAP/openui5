@@ -24,10 +24,11 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/MessageBox",
 	"sap/m/Button",
-	"sap/ui/core/Core",
 	"sap/m/Text",
-	"sap/m/VBox"
-], function (PluginBase, Element, Log, Library1, FileUploader, UploaderHttpRequestMethod, UploadItem, deepEqual, Library, IllustratedMessageType, IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, FilePreviewDialog, EventBase, Dialog, Label, Input, MessageBox, Button, Core, TextField, VBox) {
+	"sap/m/VBox",
+	"sap/ui/core/CustomData",
+	"sap/ui/model/BindingMode"
+], function(PluginBase, Element, Log, Library1, FileUploader, UploaderHttpRequestMethod, UploadItem, deepEqual, Library, IllustratedMessageType, IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, FilePreviewDialog, EventBase, Dialog, Label, Input, MessageBox, Button, TextField, VBox, CustomData, BindingMode) {
 	"use strict";
 
 	/**
@@ -1363,7 +1364,7 @@ sap.ui.define([
 	 */
 	UploadSetwithTable.prototype._loadCloudFilePickerDependency = function () {
 		return new Promise( (resolve, reject) => {
-			Core.loadLibrary("sap.suite.ui.commons", { async: true })
+			Library1.load("sap.suite.ui.commons")
 				.then(function (data) {
 					sap.ui.require(["sap/suite/ui/commons/CloudFilePicker"], function (cloudFilePicker) {
 						resolve(cloudFilePicker);
@@ -1472,11 +1473,11 @@ sap.ui.define([
 
 			const oUploadSetItem = new UploadItem({
 				customData: [
-					new sap.ui.core.CustomData({
+					new CustomData({
 					key: "path",
 					value: oBindingContext.getPath()
 				}),
-				new sap.ui.core.CustomData({
+				new CustomData({
 					key: "context",
 					value: oBindingContext
 				})
@@ -1566,7 +1567,7 @@ sap.ui.define([
 		return new Promise((resolve, reject) => {
 			let oBindingInfo = {
 				path: modelName ? `${modelName}>${propertyPath}` : propertyPath,
-				mode: sap.ui.model.BindingMode.TwoWay,
+				mode: BindingMode.TwoWay,
 				events: {
 					change: function () {
 						oItem?.getBinding(property)?.detachChange((oEvent) => {

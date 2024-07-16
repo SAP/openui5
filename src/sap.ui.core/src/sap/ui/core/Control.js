@@ -90,17 +90,13 @@ sap.ui.define([
 		metadata : {
 			stereotype : "control",
 			"abstract" : true,
-			publicMethods: ["placeAt", "attachBrowserEvent", "detachBrowserEvent", "getControlsByFieldGroup", "triggerValidateFieldGroup", "checkFieldGroupIds"],
 			library: "sap.ui.core",
+
 			properties : {
 				/**
 				 * Whether the control is currently in blocked state.
-				 *
-				 * @deprecated since version 1.69 The blocked property is deprecated.
-				 * There is no accessibility support for this property.
-				 * Blocked controls should not be used inside Controls, which rely on keyboard navigation, e.g. List controls.
 				 */
-				"blocked" : {type: "boolean", defaultValue: false},
+				"blocked" : {type: "boolean", defaultValue: false, visibility: "hidden"},
 				/**
 				 * Whether the control is currently in busy state.
 				 */
@@ -149,6 +145,7 @@ sap.ui.define([
 				"fieldGroupIds" : { type: "string[]", defaultValue: [] }
 
 			},
+
 			events : {
 				/**
 				 * Event is fired if a logical field group defined by <code>fieldGroupIds</code> of a control was left
@@ -399,26 +396,6 @@ sap.ui.define([
 				oParent.invalidate(this);
 			}
 		}
-	};
-
-	/**
-	 * Synchronously updates the DOM of this control to reflect the current object state.
-	 *
-	 * Note that this method can only be called when the control already has a DOM representation (it has
-	 * been rendered before) and when the control still is assigned to a UIArea.
-	 *
-	 * @deprecated As of 1.70, using this method is no longer recommended, but still works. Synchronous DOM
-	 *   updates via this method have several drawbacks: they only work when the control has been rendered
-	 *   before (no initial rendering possible), multiple state changes won't be combined automatically into
-	 *   a single re-rendering, they might cause additional layout trashing, standard invalidation might
-	 *   cause another async re-rendering.
-	 *
-	 *   The recommended alternative is to rely on invalidation and standard re-rendering.
-	 * @protected
-	 */
-	Control.prototype.rerender = function() {
-		this._bNeedsRendering = true;
-		UIArea.rerenderControl(this);
 	};
 
 	// @see sap.ui.core.Element#getDomRef
@@ -996,9 +973,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.core, sap.m, sap.viz, sap.ui.rta, sap.ui.table
-	 * @deprecated since version 1.69, the blocked property is deprecated.
-	 * There is no accessibility support for this property.
-	 * Blocked controls should not be used inside Controls, which rely on keyboard navigation, e.g. List controls.
 	 */
 	Control.prototype.setBlocked = function(bBlocked, sBlockedSection /* this is an internal parameter to apply partial blocking for a specific section of the control */) {
 		//If the new state is already set, we don't need to do anything
@@ -1060,11 +1034,8 @@ sap.ui.define([
 	/**
 	 * Gets current value of property blocked.
 	 * @returns {boolean} Whether the control is currently in blocked state. Default is 'false'.
-	 * @public
-	 *
-	 * @deprecated since version 1.69, the blocked property is deprecated.
-	 * There is no accessibility support for this property.
-	 * Blocked controls should not be used inside Controls, which rely on keyboard navigation, e.g. List controls.
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.m, sap.viz, sap.ui.rta, sap.ui.table
 	 */
 	Control.prototype.getBlocked = function() {
 		return this.getProperty("blocked");
@@ -1125,16 +1096,6 @@ sap.ui.define([
 		}
 		return this;
 	};
-
-	/**
-	 * Check if the control is currently in busy state.
-	 *
-	 * @public
-	 * @deprecated As of 1.15, use {@link #getBusy} instead
-	 * @returns {boolean}
-	 * @function
-	 */
-	Control.prototype.isBusy = Control.prototype.getBusy;
 
 	/**
 	 * Define the delay, after which the busy indicator will show up.
@@ -1306,5 +1267,4 @@ sap.ui.define([
 	};
 
 	return Control;
-
 });

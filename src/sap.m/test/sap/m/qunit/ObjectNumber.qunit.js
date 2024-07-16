@@ -58,59 +58,6 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	/**
-	 * @deprecated as of version 1.16.1, <code>numberUnit</code> has been replaced by <code>unit</code> property
-	 */
-	QUnit.test("Should render NumberUnit", async function(assert) {
-		//Arrange
-		var sNumber = "5",
-			sNumberUnit = "Euro",
-			sut = new ObjectNumber("on1", {
-				number: sNumber,
-				numberUnit: sNumberUnit
-			});
-
-		//Act
-		sut.placeAt("content");
-		await nextUIUpdate();
-
-		//Assert
-		assert.equal(jQuery(".sapMObjectNumberText:contains(" + sNumber + ")").length,1,"Number should be rendered");
-		assert.equal(jQuery(".sapMObjectNumberUnit:contains(" + sNumberUnit + ")").length,1,"Number unit should be rendered");
-
-		var $ontxt = jQuery("#on1").find(".sapMObjectNumberText");
-		var sFontWeight = $ontxt.css("font-weight");
-		assert.equal((sFontWeight === "bold" || sFontWeight === "700"), true, "font weight should be bold by default"); // IE and FF return "700" while chrome returns "bold"
-
-		//Cleanup
-		sut.destroy();
-	});
-
-	/**
-	 * @deprecated as of version 1.16.1, <code>numberUnit</code> has been replaced by <code>unit</code> property
-	 */
-	QUnit.test("Should render unit instead of numberUnit", async function(assert) {
-		//Arrange
-		var sUnit = "Dollar",
-			sNumber = "19",
-			sut = new ObjectNumber("unit", {
-				number: sNumber,
-				unit: sUnit,
-				numberUnit: "Euro"
-			});
-
-		//Act
-		sut.placeAt("content");
-		await nextUIUpdate();
-
-		//Assert
-		assert.equal(jQuery(".sapMObjectNumberText:contains(" + sNumber + ")").length,1,"Number should be there");
-		assert.equal(jQuery(".sapMObjectNumberUnit:contains(" + sUnit + ")").length,1,"unit should be used instead of numberUnit");
-
-		//Cleanup
-		sut.destroy();
-	});
-
 	QUnit.test("Should not render unit element when Unit is empty", async function(assert) {
 		// Arrange
 		var oObjectNumber = new ObjectNumber("onUnit", {

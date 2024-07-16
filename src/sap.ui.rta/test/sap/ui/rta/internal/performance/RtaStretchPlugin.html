@@ -1,44 +1,12 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
+	<head><meta charset="utf-8">
 		<title>Rta Stretch Plugin Test</title>
 
-		<style>
-			html, body, #content {
-				height : 100%;
-			}
-			.sapUiView {
-				height: 100%;
-			}
-
-			.sapUiDtOverlay {
-				background-color: rgba(255,0,0,0.1);
-			}
-			#overlay-container {
-				background-color: rgba(255,0,255,0.5);
-			}
-			#visibleLayout {
-				margin-top: 50px;
-			}
-		</style>
+		<link rel="stylesheet" href="./RtaStretchPlugin.css">
 
 		<script src="../../shared-config.js"></script>
-		<script>
-			var __sPathPrefix = document.location.pathname.match(/(.*)\/test-resources\//)[1];
-
-			window["sap-ui-config"] = window["sap-ui-config"] || {};
-			window["sap-ui-config"].onInit = "module:rta/performance/stretch/main";
-			window["sap-ui-config"].async = "true";
-			window["sap-ui-config"].libs = "sap.ui.rta, sap.ui.dt, sap.m, sap.ui.layout";
-			window["sap-ui-config"].resourceroots = {
-				"rta.performance": "./",
-				"dt.performance": "../../../../../sap/ui/dt/internal/performance/",
-				"test-resources": "../../../../../../test-resources"
-			};
-			window["sap-ui-config"].flexibilityServices = '[{"connector": "SessionStorageConnector"}]';
-
-			document.write('<script src="' + __sPathPrefix + '/resources/sap-ui-core.js"><' + '/script>');
-		</script>
+		<script src="./RtaStretchPlugin-embedded-1.js"></script>
 
 		<script src="RtaStretchPlugin.js"></script>
 	</head>

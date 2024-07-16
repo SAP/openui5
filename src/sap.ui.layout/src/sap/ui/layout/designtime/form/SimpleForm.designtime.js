@@ -4,16 +4,16 @@
 
 // Provides the Design Time Metadata for the sap.ui.layout.form.SimpleForm control
 sap.ui.define([
+	"sap/base/i18n/ResourceBundle",
 	"sap/m/Title",
 	"sap/ui/core/Element",
 	"sap/ui/core/Title",
-	"sap/ui/core/Lib",
 	"sap/ui/fl/Utils"
 ], function(
+	ResourceBundle,
 	MTitle,
 	Element,
 	CoreTitle,
-	Library,
 	FlexUtils
 ) {
 	"use strict";
@@ -220,7 +220,9 @@ sap.ui.define([
 							}
 						}
 						if (bContent) {
-							var oTextResources = Library.getResourceBundleFor("sap.ui.layout.designtime");
+							var oTextResources = ResourceBundle.create({
+								bundleName: "sap.ui.layout.designtime.messagebundle"
+							});
 							return oTextResources.getText("MSG_REMOVING_TOOLBAR");
 						}
 					}

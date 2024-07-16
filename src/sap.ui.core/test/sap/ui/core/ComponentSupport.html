@@ -1,33 +1,27 @@
 <!DOCTYPE HTML>
 <html>
-<head>
+<head><meta charset="utf-8">
 <title>Component - sap.ui.core</title>
 
 <script id="sap-ui-bootstrap"
-	src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-preload="async"
-	data-sap-ui-theme="sap_horizon"
-	data-sap-ui-resourceroots='{
+        src="../../../../resources/sap-ui-core.js"
+        data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
+        data-sap-ui-resource-roots='{
 		"samples.components.button": "./samples/components/button/",
 		"samples.components.sample": "./samples/components/sample/"
 	}'
-	data-sap-ui-oninit="module:sap/ui/core/ComponentSupport">
+        data-sap-ui-async="true"
+        data-sap-ui-compat-version="edge"
+>
 </script>
 
-<style>
-.sapUiComponentPlaceholder {
-	border: 3px dotted red;
-	border-radius: 10px;
-	margin: 10px;
-	padding: 10px;
-}
-</style>
+<link rel="stylesheet" href="./ComponentSupport.css">
 
 </head>
 <body class="sapUiBody">
 	<h1>Test Page for <code>sap.ui.core.Component</code></h1>
-	<div data-sap-ui-component class="sapUiComponentPlaceholder" id="content" data-id="cmpcnt" data-name="samples.components.styledbutton" data-url="./samples/components/styledbutton/" data-settings='{"id": "component1", "text": "Component 1"}'></div>
-	<div data-sap-ui-component class="sapUiComponentPlaceholder" data-name="samples.components.styledbutton" data-settings='{"id": "component2", "text": "Component 2"}'></div>
-	<div data-sap-ui-component class="sapUiComponentPlaceholder" data-manifest="./samples/components/sample/manifest.json" data-settings='{"id": "component3"}'></div>
+	<div data-sap-ui-component class="sapUiComponentPlaceholder" id="content" data-id="cmpcnt" data-name="samples.components.styledbutton" data-url="./samples/components/styledbutton/" data-settings="{&quot;id&quot;: &quot;component1&quot;, &quot;text&quot;: &quot;Component 1&quot;}"></div>
+	<div data-sap-ui-component class="sapUiComponentPlaceholder" data-name="samples.components.styledbutton" data-settings="{&quot;id&quot;: &quot;component2&quot;, &quot;text&quot;: &quot;Component 2&quot;}"></div>
+	<div data-sap-ui-component class="sapUiComponentPlaceholder" data-manifest="./samples/components/sample/manifest.json" data-settings="{&quot;id&quot;: &quot;component3&quot;}"></div>
 </body>
 </html>

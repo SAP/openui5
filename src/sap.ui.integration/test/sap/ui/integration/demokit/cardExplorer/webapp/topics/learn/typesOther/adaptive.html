@@ -1,20 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head><meta charset="utf-8">
 	<title>Adaptive Card</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="../../../scripts/boot.js"></script>
-	<style>
-		code {
-			font-size: 16px;
-		}
-
-		.sapUiSizeCompact code {
-			font-size: 14px;
-		}
-	</style>
+	<link rel="stylesheet" href="./adaptive.css">
 
 </head>
 
@@ -30,14 +22,13 @@
 				Default and Numeric card headers can be optionally used in order to provide a title and general
 				information about the Adaptive Card. The content of the card
 				consist of a JSON object, which defines the card structure, content, and actions. For more information
-				of all properties of Adaptive Card, see <a href="https://adaptivecards.io/explorer/"
-					target="_blank">https://adaptivecards.io</a>.
+				of all properties of Adaptive Card, see <a href="https://adaptivecards.io/explorer/" target="_blank">https://adaptivecards.io</a>.
 			</p>
 			<h2 id="properties">Usage</h2>
 			<ul>
 				<li><b>Loading</b> - The JSON-serialized card object model of a MS Adaptive Card could be added inline
 					or dynamically, requested as a JSON file in the content area of an Integration Card.</li>
-				<br/>
+				<br>
 				<li>
 					<b>Templating</b> - Templating enables the separation of data from the layout in an MS Adaptive
 					Card. To provide data directly within the card content, simply add a <code>$data</code> attribute to
@@ -51,7 +42,7 @@
 					syntax. For more information, see
 					<a target="_blank" href="https://docs.microsoft.com/en-us/adaptive-cards/templating/">Adaptive Cards
 						Templating</a>.
-					<br/><br/>
+					<br><br>
 					<i>Note: As of version 1.98 the Integration Cards of type adaptive, support the new binding syntax of
 						the Templating feature. For reference, check
 					<a target="_blank" href="https://docs.microsoft.com/en-us/adaptive-cards/templating/language">Adaptive Cards
@@ -59,17 +50,16 @@
 						and might be a subject of incompatible changes in future as well.
 					</i>
 				</li>
-				<br/>
+				<br>
 				<li><b>Markdown</b> - To support inline markup, MS Adaptive Card supports a
-					<a target="_blank"
-						href="https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features">subset of
+					<a target="_blank" href="https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features">subset of
 						Commonmark Markdown syntax</a>.
 					In order to enable this feature, set the <code>enableMarkdown</code> boolean property to
 					<code>true</code> and add it in the configuration object under <code>sap.card</code> of the
 					manifest. See the
 					<a target="_blank" href="../../../index.html#/explore/adaptive/markdown">Markdown example</a>.
 				</li>
-				<br/>
+				<br>
 				<li>
 					<b>Actions</b> - The <code>Action.OpenUrl</code> and <code>Action.Submit</code> are dispatched by the card
 					as <code>Navigation</code> and <code>Submit</code>.
@@ -78,8 +68,7 @@
 					<b>Action.OpenUrl</b>
 					<p>
 						The developers of the Adaptive Card are able to add button(s) with an URL link to navigate to.
-						For more information see the <a target="_blank"
-							href="../../../index.html#/explore/adaptive/adaptive-action-openurl">OpenURL action
+						For more information see the <a target="_blank" href="../../../index.html#/explore/adaptive/adaptive-action-openurl">OpenURL action
 							example</a>.
 					</p>
 					<table>
@@ -107,8 +96,7 @@
 						Тhe request type can be defined using the "method" property in the same configuration section.
 						This allows them to configure where the data from the card will be sent. It is essential, as
 						this information is not always
-						available for the host environment developers. For more information see the <a target="_blank"
-							href="../../../index.html#/explore/adaptive/adaptive-action-submit">Submit action
+						available for the host environment developers. For more information see the <a target="_blank" href="../../../index.html#/explore/adaptive/adaptive-action-submit">Submit action
 							example</a>.
 					</p>
 					<table>

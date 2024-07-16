@@ -1,64 +1,22 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
+	<head><meta charset="utf-8">
 
 		<title>Token - sap.m</title>
 
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m">
+				id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/Token"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
 
-		<script>
-
-		jQuery.sap.require("sap.m.MessageBox");
-		jQuery.sap.require("sap.m.Token");
-
-		var app = new sap.m.App("myApp");
-
-		var tokenPress = function(args){
-			args.oSource.setSelected(!args.oSource.getSelected());
-			sap.m.MessageBox.alert("Token pressed: " +  args.oSource.getText());
-		};
-
-		var tokenDeleted = function(args){
-			sap.m.MessageBox.alert("Token deleted: " +  args.oSource.getText());
-		};
-
-		var page1 = new sap.m.Page("page1", {
-			title:"Mobile Token Control",
-			content : [
-					new sap.m.Label({ text : "Tokens:", width: "100%"}),
-					new sap.m.Token("tokenNotSelected1", {key : "01", text : "1. Token", "delete": tokenDeleted}),
-					new sap.m.Token({key : "02", text : "2. Token with very long text example", "delete": tokenDeleted}),
-					new sap.m.Token("tokenNotSelected3", {key : "03", text : "3. no edit Token", "delete": tokenDeleted, editable: false}),
-					new sap.m.Label({ text : "Selected tokens:", width: "100%"}),
-					new sap.m.Token("tokenSelected4", {key : "04", text : "4. Token", "delete": tokenDeleted, selected: true}),
-					new sap.m.Token({key : "05", text : "5. Token with very long text example", "delete": tokenDeleted, selected: true}),
-					new sap.m.Token("tokenSelected6", {key : "06", text : "6. no edit Token", "delete": tokenDeleted, editable: false, selected: true}),
-					new sap.m.Label({ text : "Token with textDirection set to RTL", width: "100%"}),
-					new sap.m.Token("tokenRTL",{key : "07", text : "123 456", textDirection: sap.ui.core.TextDirection.RTL, "delete": tokenDeleted, selected: true}),
-					new sap.m.Label({ text : "The same token but with default textDirection", width: "100%"}),
-					new sap.m.Token({key : "08", text : "123 456", "delete": tokenDeleted, selected: true})
-					]
-		});
-		app.addPage(page1);
-
-		app.placeAt("body");
-
-</script>
-	<style>
-	body {
-		margin: 0;
-	}
-	.sapMPageScroll {
-		padding: 1rem;
-	}
-	.sapMILI-CTX .sapMInputValHelp {
-		margin-right: 0rem;
-	}
-	</style>
+		
+	<link rel="stylesheet" href="./Token.css">
 
 
 	</head>

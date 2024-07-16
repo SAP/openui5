@@ -16,7 +16,9 @@ sap.ui.define([
 	"sap/ui/unified/library",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Locale",
+	"sap/ui/core/LocaleData"
 ], function(
 	Formatting,
 	Localization,
@@ -34,7 +36,9 @@ sap.ui.define([
 	unifiedLibrary,
 	Device,
 	jQuery,
-	UI5Date
+	UI5Date,
+	Locale,
+	LocaleData
 ) {
 	"use strict";
 
@@ -1315,8 +1319,8 @@ QUnit.test("CalendarRow '_oFormatAria' formatter", function (assert) {
 QUnit.test("_oFormatAria start/end format for 12-hour clocks", function (assert) {
 	// Prepare
 	Formatting.setLanguageTag("en-US");
-	var oLocale = new sap.ui.core.Locale("en-US"),
-		oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale),
+	var oLocale = new Locale("en-US"),
+		oLocaleData = LocaleData.getInstance(oLocale),
 		oCalendarRow = new CalendarRow(),
 		oMockedDate = UI5Date.getInstance(2019, 7, 5, 15),
 		pattern = oCalendarRow._oRb.getText("APPOINTMENT_DATE_TIME_DESCRIPTION", [oLocaleData.getDatePattern("long"), oLocaleData.getTimePattern("medium")]),
@@ -1334,8 +1338,8 @@ QUnit.test("_oFormatAria start/end format for 12-hour clocks", function (assert)
 QUnit.test("_oFormatAria start/end format for 24-hour clocks", function (assert) {
 	// Prepare
 	Formatting.setLanguageTag("en-GB");
-	var oLocale = new sap.ui.core.Locale("en-GB"),
-		oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale),
+	var oLocale = new Locale("en-GB"),
+		oLocaleData = LocaleData.getInstance(oLocale),
 		oCalendarRow = new CalendarRow(),
 		oMockedDate = UI5Date.getInstance(2019, 7, 5, 15),
 		pattern = oCalendarRow._oRb.getText("APPOINTMENT_DATE_TIME_DESCRIPTION", [oLocaleData.getDatePattern("long"), oLocaleData.getTimePattern("medium")]),
@@ -1353,8 +1357,8 @@ QUnit.test("_oFormatAria start/end format for 24-hour clocks", function (assert)
 QUnit.test("_oFormatAria correctly localized and translated", function (assert) {
 	// Prepare
 	Formatting.setLanguageTag("de");
-	var oLocale = new sap.ui.core.Locale("de"),
-		oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale),
+	var oLocale = new Locale("de"),
+		oLocaleData = LocaleData.getInstance(oLocale),
 		oCalendarRow = new CalendarRow(),
 		oMockedDate = UI5Date.getInstance(2019, 7, 5, 15),
 		pattern = oCalendarRow._oRb.getText("APPOINTMENT_DATE_TIME_DESCRIPTION", [oLocaleData.getDatePattern("long"), oLocaleData.getTimePattern("medium")]),

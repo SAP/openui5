@@ -1,0 +1,1 @@
+document.location.href = "../../../../test-resources/sap/ui/dt/ControlLibrary.html?library=sap.ui.table"

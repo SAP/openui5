@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/uxap/library",
 	"sap/ui/core/library",
-	"sap/ui/core/Core",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
@@ -32,7 +31,6 @@ function(
 	jQuery,
 	lib,
 	coreLib,
-	Core,
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
@@ -55,7 +53,6 @@ function(
 	ObjectPageAccessibleLandmarkInfo,
 	nextUIUpdate
 ) {
-
 	"use strict";
 
 	//eslint-disable-next-line no-void
@@ -3603,7 +3600,7 @@ function(
 		await helpers.renderObject(oObjectPage);
 	});
 
-    QUnit.test("ObjectPage _updateMedia: Call with falsy value should not take action", function (assert) {
+	QUnit.test("ObjectPage _updateMedia: Call with falsy value should not take action", function (assert) {
         // setup
         var oObjectPage = new ObjectPageLayout({}),
             oToggleStyleClassSpy = this.spy(oObjectPage, "toggleStyleClass");
@@ -3657,13 +3654,13 @@ function(
 		assert.ok(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Desktop-XL"), "Desktop XL class is applied");
     });
 
-	QUnit.test("ObjectPage _computeLastVisibleHeight floors the top position of the spacer", function (assert) {
+	QUnit.test("ObjectPage _computeLastVisibleHeight floors the top position of the spacer", async function(assert) {
 		// setup
 		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 5),
 			oSpy;
 
 		oObjectPage.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oSpy = this.spy(Math, "floor");
@@ -3676,7 +3673,7 @@ function(
 		oObjectPage.destroy();
 	});
 
-    QUnit.module("Header DOM changes", {
+	QUnit.module("Header DOM changes", {
 		beforeEach: function () {
 			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, 5);
 			this.oObjectPage.addHeaderContent(oFactory.getHeaderContent());
@@ -3915,46 +3912,6 @@ function(
 	});
 
 
-	/**
-	 * @deprecated Since version 1.120
-	 */
-	QUnit.module("ObjectPageComponentContainer", {
-		beforeEach: function (assert) {
-			var done = assert.async();
-			XMLView.create({
-				id: "UxAP-27_ObjectPageConfig",
-				viewName: "view.UxAP-27_ObjectPageConfig"
-			}).then(function (oView) {
-				this.oView = oView;
-				this.oComponentContainer = this.oView.byId("objectPageContainer");
-				this.oView.placeAt("qunit-fixture");
-				Core.applyChanges();
-				this.oComponentContainer.attachEventOnce("componentCreated", function () {
-					done();
-				});
-			}.bind(this));
-		},
-		afterEach: function () {
-			this.oView.destroy();
-		}
-	});
-
-	/**
-	 * @deprecated Since version 1.120
-	 */
-	QUnit.test("component instance", function (assert) {
-		var oComponent = this.oComponentContainer._oComponent;
-
-		// assert init state
-		assert.ok(oComponent, "component is created");
-
-		// Act: mock rerendering of the component container
-		this.oComponentContainer.onBeforeRendering();
-
-		// Check
-		assert.strictEqual(this.oComponentContainer._oComponent, oComponent, "component instance is not changed");
-	});
-
 	QUnit.module("ObjectPageLayout - API - headerContentPinned property", {
 		beforeEach: async function () {
 
@@ -4070,5 +4027,4 @@ function(
 	function isTolerableDifference(iPos, iPos2, iTolerance) {
 		return Math.abs(iPos - iPos2) <= iTolerance;
 	}
-
 });

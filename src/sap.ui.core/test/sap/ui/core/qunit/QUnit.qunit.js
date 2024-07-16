@@ -7,13 +7,6 @@ sap.ui.define(function() {
 
 	QUnit.module("window.assert");
 
-	/**
-	 * @deprecated global assert is no longer supported by qunit-junit in 2.0
-	 */
-	QUnit.test("set by qunit-junit (clean)", function(assert) {
-		assert.equal(typeof window.assert, "object", "window.assert is an object!");
-	});
-
 	QUnit.test("overridden by external script (jQuery.sap.require)", function(assert) {
 		var done = assert.async();
 		sap.ui.require(["testdata/core/QUnitExt"], function(){
@@ -43,12 +36,4 @@ sap.ui.define(function() {
 			});
 		});
 	});
-
-	/**
-	 * @deprecated global assert is no longer cleaned-up by qunit-junit in 2.0
-	 */
-	QUnit.test("set by qunit-junit (polluted)", function(assert) {
-		assert.ok(typeof window.assert === "object", "window.assert is an object!");
-	});
-
 });

@@ -2,9 +2,8 @@
 sap.ui.define([
 	"sap/ui/test/_LogCollector",
 	"sap/ui/test/_OpaLogger",
-	"sap/ui/test/autowaiter/_moduleWaiter",
-	"sap/ui/test/autowaiter/_XHRWaiter"
-], function (_LogCollector, _OpaLogger, _moduleWaiter, _XHRWaiter) {
+	"sap/ui/test/autowaiter/_moduleWaiter"
+], function(_LogCollector, _OpaLogger, _moduleWaiter) {
 	"use strict";
 
 	var oLogCollector = _LogCollector.getInstance();
@@ -31,17 +30,6 @@ sap.ui.define([
 		});
 		assert.ok(_moduleWaiter.hasPending());
 		assert.ok(oLogCollector.getAndClearLog().match("fixture/pendingModule"));
-	});
-
-	/**
-	 * @deprecated together with sync module loading
-	 */
-	QUnit.test("Should wait for pending sync module - xhrWaiter", function (assert) {
-		sap.ui.requireSync(["fixture/pendingModuleSync"]);
-		assert.ok(!_moduleWaiter.hasPending());
-		assert.ok(!_XHRWaiter.hasPending());
-		assert.ok(oLogCollector.getAndClearLog().match(/Finished:\nXHR: URL:.*fixture\/pendingModuleSync/mg));
-		delete window.fixture; // cleanup
 	});
 
 	function testPendingScript(async, defer, assert, fnDone) {

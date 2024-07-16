@@ -1,8 +1,7 @@
-/*global QUnit, sinon, oTable */
+/*global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/TreeTable",
@@ -12,7 +11,6 @@ sap.ui.define([
 	"sap/ui/Device"
 ], function(
 	TableQUnitUtils,
-	nextUIUpdate,
 	TableUtils,
 	Table,
 	TreeTable,
@@ -23,9 +21,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	const createTables = window.createTables;
-	const destroyTables = window.destroyTables;
-	const iNumberOfRows = window.iNumberOfRows;
 	const Grouping = TableUtils.Grouping;
 
 	QUnit.module("Misc");
@@ -446,147 +441,5 @@ sap.ui.define([
 		}
 
 		Grouping.showGroupMenuButton.restore();
-	});
-
-	/**
-	 * @deprecated As of version 1.28
-	 */
-	QUnit.module("sap.ui.table.Table: Experimental Grouping", {
-		beforeEach: async function() {
-			await createTables();
-			const oData = window.oModel.getData();
-			for (let i = 0; i < iNumberOfRows; i++) {
-				oData.rows[i][window.aFields[0]] = i < 4 ? "A" : "B";
-			}
-			window.oModel.setData(oData);
-			oTable.getColumns()[0].setSortProperty(window.aFields[0]);
-			oTable.getRowMode().setRowCount(12);
-			oTable.setFixedColumnCount(0);
-			oTable.setEnableGrouping(true);
-			await nextUIUpdate();
-		},
-		afterEach: function() {
-			destroyTables();
-		},
-		testAsync: function(mTestConfig) {
-			return new Promise(function(resolve) {
-				const oOnAfterRenderingDelegate = {
-					onAfterRendering: onAfterRendering
-				};
-
-				function onRowsUpdated() {
-					mTestConfig.test();
-					resolve();
-				}
-
-				function onAfterRendering() {
-					oTable.removeEventDelegate(oOnAfterRenderingDelegate);
-					oTable.attachEventOnce("rowsUpdated", onRowsUpdated);
-				}
-
-				if (mTestConfig.onAfterRendering) {
-					oTable.addEventDelegate(oOnAfterRenderingDelegate);
-				} else {
-					oTable.attachEventOnce("rowsUpdated", onRowsUpdated);
-				}
-
-				mTestConfig.act();
-			});
-		}
-	});
-
-	/**
-	 * @deprecated As of version 1.28
-	 */
-	QUnit.test("Activate / Deactivate", function(assert) {
-		const oBinding = oTable.getBinding();
-		const that = this;
-
-		assert.equal(oBinding.getLength(), 8, "Row count before Grouping");
-
-		return this.testAsync({
-			act: function() {
-				oTable.setGroupBy(oTable.getColumns()[0]);
-			},
-			test: function() {
-				assert.equal(oTable._getTotalRowCount(), 10, "Row count after grouping");
-				for (let i = 0; i < oTable.getRows().length; i++) {
-					if (i === 0 || i === 5) {
-						assert.ok(oTable.getRows()[i].isGroupHeader(), "Row " + i + " is group header");
-					} else {
-						assert.ok(!oTable.getRows()[i].isGroupHeader(), "Row " + i + " is leaf");
-					}
-				}
-			},
-			onAfterRendering: true
-		}).then(function() {
-			return that.testAsync({
-				act: function() {
-					oTable.setEnableGrouping(false);
-				},
-				test: function() {
-					assert.equal(oTable._getTotalRowCount(), 8, "Row count after reset grouping");
-				}
-			});
-		});
-	});
-
-	/**
-	 * @deprecated As of version 1.28
-	 */
-	QUnit.test("Collapse / Expand", function(assert) {
-		const that = this;
-
-		assert.equal(oTable._getTotalRowCount(), 8, "Row count before Grouping");
-
-		return this.testAsync({
-			act: function() {
-				oTable.setGroupBy(oTable.getColumns()[0]);
-			},
-			test: function() {
-				assert.equal(oTable._getTotalRowCount(), 10, "Row count after Grouping");
-			},
-			onAfterRendering: true
-		}).then(function() {
-			return that.testAsync({
-				act: function() {
-					oTable.getRows()[0].collapse();
-				},
-				test: function() {
-					assert.equal(oTable._getTotalRowCount(), 6, "Row count after collapse");
-					assert.notOk(oTable.getRows()[0].isExpanded(), "Row expanded state");
-				}
-			});
-		}).then(function() {
-			return that.testAsync({
-				act: function() {
-					oTable.getRows()[0].expand();
-				},
-				test: function() {
-					assert.equal(oTable._getTotalRowCount(), 10, "Row count after expand");
-					assert.ok(oTable.getRows()[0].isExpanded(0), "Row expanded state");
-				}
-			});
-		}).then(function() {
-			return that.testAsync({
-				act: function() {
-					oTable.getRows()[0].toggleExpandedState();
-				},
-				test: function() {
-					assert.equal(oTable._getTotalRowCount(), 6, "Row count after toggle");
-					assert.notOk(oTable.getRows()[0].isExpanded(), "Row expanded state");
-				}
-			});
-		}).then(function() {
-			return that.testAsync({
-				act: function() {
-					oTable.getRows()[0].toggleExpandedState();
-				},
-				test: function() {
-					assert.equal(oTable._getTotalRowCount(), 10, "Row count after Toggle");
-					assert.ok(oTable.getRows()[0].isExpanded(0), "Row expanded state");
-				}
-			});
-		});
 	});
 });

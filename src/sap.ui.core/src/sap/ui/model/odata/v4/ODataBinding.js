@@ -1609,4 +1609,4 @@ sap.ui.define([
 	});
 
 	return asODataBinding;
-}, /* bExport= */ false);
+});

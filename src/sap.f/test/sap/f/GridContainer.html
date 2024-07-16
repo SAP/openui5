@@ -4,89 +4,17 @@
 		<meta charset="UTF-8">
 		<title>sap.f.GridContainer test page</title>
 
-		<script type="text/javascript"
-				src="../../../resources/sap-ui-core.js"
+		<script src="../../../resources/sap-ui-core.js"
 				id="sap-ui-bootstrap"
 				data-sap-ui-libs="sap.f, sap.m"
-				data-sap-ui-theme="sap_horizon">
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/GridContainer"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
 
-		<script>
-			sap.ui.getCore().attachInit(function () {
-				sap.ui.require([
-					"sap/m/Page",
-					"sap/m/App",
-					"sap/m/HBox",
-					"sap/f/GridContainer",
-					"sap/m/Title",
-					"sap/f/Card",
-					"sap/f/cards/Header",
-					"sap/f/GridContainerItemLayoutData"
-				], function (
-					Page,
-					App,
-					HBox,
-					GridContainer,
-					Title,
-					Card,
-					CardHeader,
-					GridContainerItemLayoutData
-				) {
-
-					var oGridContainer = new GridContainer("gridContainer", {
-						items: [
-							new Title("title", {
-								text: "This is an sap.m.Title control inside sap.f.GridContainer",
-								layoutData: new GridContainerItemLayoutData({
-									columns: 100
-								})
-							}),
-							new Card({
-								height: "100%",
-								layoutData: new GridContainerItemLayoutData({
-									minRows: 3,
-									columns: 2
-								})
-							}),
-							new Card("cardWithNestedCards", {
-								height: "100%",
-								layoutData: new GridContainerItemLayoutData({
-									minRows: 3,
-									columns: 2
-								}),
-								header: new CardHeader({
-									title: "Parent Card"
-								}),
-								content: new HBox({
-									width: "100%",
-									items: [
-										new Card({
-											header: new CardHeader({
-												title: "Child Card"
-											})
-										}),
-										new Card({
-											header: new CardHeader({
-												title: "Child Card"
-											})
-										})
-									]
-								})
-							})
-						]
-					});
-
-					var oPage = new Page("page", {
-						title: "Test Page for sap.f.GridContainer",
-						content: [ oGridContainer ]
-					}).addStyleClass("sapUiContentPadding");
-
-					var oApp = new App({
-						pages: [ oPage ]
-					}).placeAt("body");
-				});
-			});
-		</script>
+		
 	</head>
 	<body id="body" class="sapUiBody">
 	</body>

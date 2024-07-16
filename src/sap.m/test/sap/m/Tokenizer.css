@@ -1,0 +1,9 @@
+body {
+	margin: 0;
+}
+.sapMPageScroll {
+	padding: 1rem;
+}
+.sapMILI-CTX .sapMInputValHelp {
+	margin-right: 0;
+}

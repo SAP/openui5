@@ -151,4 +151,4 @@ sap.ui.define([
 	};
 
 	return UpdateIFrame;
-}, /* bExport= */true);
+});

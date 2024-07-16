@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
 	"sap/ui/core/IconPool"
-],
-function(
+], function(
 	AppVariantUtils,
 	Settings,
 	FlUtils,
@@ -259,4 +258,4 @@ function(
 	};
 
 	return Utils;
-}, /* bExport= */true);
+});

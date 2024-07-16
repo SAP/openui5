@@ -6,21 +6,23 @@
 
     <title>MDC Chart Remake OpaTest</title>
 
-    <script src="../../../../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
-        data-sap-ui-compatVersion="edge"
-        data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
-		data-sap-ui-flexibilityServices='[{"connector": "LocalStorageConnector"}]'
-        data-sap-ui-resourceroots='{
+    <script src="../../../../../../../../resources/sap-ui-core.js"
+            id="sap-ui-bootstrap"
+            data-sap-ui-async="true"
+            data-sap-ui-compat-version="edge"
+            data-sap-ui-flexibility-services='[{"connector": "LocalStorageConnector"}]'
+            data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
+            data-sap-ui-resource-roots='{
         	"applicationUnderTestMDCChart" : "./",
             "delegates": "../../../../delegates"
 		}'
-        data-sap-ui-async="true">
+    >
 	</script>
 
 </head>
 
 <body class="sapUiBody sapUiSizeCompact" id="content">
-	<div data-sap-ui-component data-name="applicationUnderTestMDCChart" data-id="container" data-settings='{"id" : "applicationUnderTestMDCChart"}'></div>
+	<div data-sap-ui-component data-name="applicationUnderTestMDCChart" data-id="container" data-settings="{&quot;id&quot; : &quot;applicationUnderTestMDCChart&quot;}"></div>
 </body>
 
 </html>

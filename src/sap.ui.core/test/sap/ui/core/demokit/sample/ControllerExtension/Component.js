@@ -1,10 +1,7 @@
 sap.ui.define([
-	"sap/ui/core/UIComponent",
-	//Only needed to simulate changes
-	"sap/ui/fl/FakeLrepConnectorLocalStorage"
+	"sap/ui/core/UIComponent"
 ], function(
-	UIComponent,
-	FakeLrepConnectorLocalStorage
+	UIComponent
 ) {
 	"use strict";
 
@@ -14,7 +11,7 @@ sap.ui.define([
 		},
 		constructor: function () {
 			//Only needed to simulate changes
-			FakeLrepConnectorLocalStorage.enableFakeConnector(null, this.getMetadata().getClass(), "1.56.0");
+			undefined/*FakeLrepConnectorLocalStorage*/.enableFakeConnector(null, this.getMetadata().getClass(), "1.56.0");
 			UIComponent.prototype.constructor.apply(this, arguments);
 		}
 	});

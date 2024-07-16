@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/MenuButton",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItemBase",
 	"sap/ui/thirdparty/jquery",
@@ -17,8 +18,7 @@ sap.ui.define([
 	"sap/m/Popover",
 	"sap/m/Button",
 	"sap/m/Label",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/events/KeyCodes"
 ], function(
 	Library,
 	qutils,
@@ -26,6 +26,7 @@ sap.ui.define([
 	MenuButton,
 	Menu,
 	MenuItem,
+	nextUIUpdate,
 	UnifiedMenu,
 	UnifiedMenuItemBase,
 	jQuery,
@@ -37,8 +38,7 @@ sap.ui.define([
 	Popover,
 	Button,
 	Label,
-	KeyCodes,
-	oCore
+	KeyCodes
 ) {
 	"use strict";
 
@@ -80,7 +80,7 @@ sap.ui.define([
 			this.oMenu.addItem(oMenuItem1);
 			this.oMenu.addItem(oMenuItem2);
 			this.sut.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.sut.destroy();
@@ -103,7 +103,7 @@ sap.ui.define([
 		// arrange
 		var oMenuButton = new MenuButton({ buttonMode: MenuButtonMode.Split });
 		oMenuButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oMenuButton.getDomRef("internalSplitBtn"), "there is an element with -internalSplitBtn suffix");
@@ -116,7 +116,7 @@ sap.ui.define([
 		// arrange
 		var oMenuButton = new MenuButton("splitButton", { buttonMode: MenuButtonMode.Split });
 		oMenuButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oMenuButtonInner = oMenuButton.getDomRef("internalSplitBtn");
 		// assert
 		assert.strictEqual(oMenuButtonInner.children[0].firstElementChild.id, "splitButton-internalSplitBtn-textButton", "there is an element with -internalSplitBtn-textButton suffix");
@@ -157,7 +157,7 @@ sap.ui.define([
 				})
 			});
 			this.sut.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.sut.destroy();
@@ -179,7 +179,7 @@ sap.ui.define([
 
 		// act
 		oButton.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oButton.$().attr("aria-expanded"), "true",
@@ -187,7 +187,7 @@ sap.ui.define([
 
 		// act
 		this.sut.getMenu().close();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oButton.$().attr("aria-expanded"), "false",
@@ -197,7 +197,7 @@ sap.ui.define([
 	QUnit.test("MenuButton (Split) aria-expanded attribute", function (assert) {
 		this.sut.setButtonMode("Split");
 		var oButton = this.sut._getButtonControl()._getArrowButton();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oButton.$().attr("aria-expanded"), "false",
@@ -205,7 +205,7 @@ sap.ui.define([
 
 		// act
 		oButton.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oButton.$().attr("aria-expanded"), "true",
@@ -213,7 +213,7 @@ sap.ui.define([
 
 		// act
 		this.sut.getMenu().close();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oButton.$().attr("aria-expanded"), "false",
@@ -240,7 +240,7 @@ sap.ui.define([
 
 	QUnit.test("MenuButton in Split aria-controls placement", function (assert) {
 		this.sut.setButtonMode(MenuButtonMode.Split);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $arrowButton = this.sut._getButtonControl()._getArrowButton().$(),
 			oGetMenuSub = this.stub(this.sut, "getMenu").callsFake(function () {
@@ -262,7 +262,7 @@ sap.ui.define([
 	QUnit.test("MenuButton in Split root aria attributes", function(assert) {
 		//arrange
 		this.sut.setButtonMode(MenuButtonMode.Split);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oInnerButton = this.sut._getButtonControl(),
 			sAriaHasPopup = oInnerButton._getArrowButton().$().attr("aria-haspopup");
@@ -279,7 +279,7 @@ sap.ui.define([
 
 		this.sut.setText(sText);
 		this.sut.setButtonMode(MenuButtonMode.Split);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oInnerButton = this.sut._getButtonControl(),
 			aAriaLabelledIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
@@ -310,7 +310,7 @@ sap.ui.define([
 		var sTooltip = "Some meaningful tooltip";
 		this.sut.setButtonMode(MenuButtonMode.Split);
 		this.sut.setTooltip(sTooltip);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oInnerButton = this.sut._getButtonControl(),
 			oArrowButton = oInnerButton._getArrowButton(),
@@ -330,7 +330,7 @@ sap.ui.define([
 		var sIconName = "add";
 		this.sut.setIcon("sap-icon://" + sIconName);
 		this.sut.setButtonMode(MenuButtonMode.Split);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oInnerButton = this.sut._getButtonControl(),
 			oTextButton = oInnerButton._getTextButton(),
@@ -355,7 +355,7 @@ sap.ui.define([
 		this.sut.setButtonMode(MenuButtonMode.Split);
 		this.sut.setTooltip(sTooltip);
 		this.sut.setIcon("sap-icon://" + sIconName);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oInnerButton = this.sut._getButtonControl();
 
@@ -367,7 +367,7 @@ sap.ui.define([
 		//arrange
 		this.sut.setButtonMode(MenuButtonMode.Split);
 		this.sut.setType(ButtonType.Emphasized);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oInnerButton = this.sut._getButtonControl(),
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
@@ -386,7 +386,7 @@ sap.ui.define([
 		this.sut.setText("Hello");
 		this.sut.setType(ButtonType.Emphasized);
 		this.sut.setButtonMode(MenuButtonMode.Split);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oInnerButton = this.sut._getButtonControl(),
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
@@ -405,7 +405,7 @@ sap.ui.define([
 		this.sut.setButtonMode(MenuButtonMode.Split);
 		this.sut.setType(ButtonType.Emphasized);
 		this.sut.setIcon("sap-icon://" + sIconName);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oInnerButton = this.sut._getButtonControl(),
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
@@ -425,7 +425,7 @@ sap.ui.define([
 		this.sut.setButtonMode(MenuButtonMode.Split);
 		this.sut.setIcon("sap-icon://" + sIconName);
 		this.sut.setTooltip(sTooltip);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oInnerButton = this.sut._getButtonControl(),
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
@@ -444,7 +444,7 @@ sap.ui.define([
 		this.sut.setText("Hello");
 		this.sut.setType(ButtonType.Emphasized);
 		this.sut.setButtonMode(MenuButtonMode.Split);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oInnerButton = this.sut._getButtonControl();
 
@@ -598,7 +598,7 @@ sap.ui.define([
 
 			this.oLabel.placeAt("content");
 			this.oMenuButton.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oLabel.destroy();
@@ -622,7 +622,7 @@ sap.ui.define([
 			sInternalButtonAriaLabelledby;
 
 		oLabel.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		sInternalButtonAriaLabelledby = this.oMenuButton._getButtonControl().$().attr("aria-labelledby");
 
@@ -650,7 +650,7 @@ sap.ui.define([
 			this.oMenu.addItem(this.oMenuItem2);
 
 			this.sut.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oMenu.close();
@@ -697,7 +697,7 @@ sap.ui.define([
 		var oMenuButton = this.sut,
 			oMenuButton2 = new MenuButton("menuButton2").placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		// simulate event handlers in the expected order
@@ -830,7 +830,7 @@ sap.ui.define([
 		oEvent.which = KeyCodes.SPACE;
 		oButton.onkeydown(oEvent);
 		oButton.onkeyup(oEvent);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(jQuery('.sapMMenu').length, 1, "Opened control is visible after SPACE is clicked");
@@ -839,7 +839,7 @@ sap.ui.define([
 		oEvent.which = KeyCodes.ESCAPE;
 		oMenu = this.sut.getMenu()._getMenu();
 		oMenu.onsapescape(oEvent);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(jQuery('.sapMMenu').length, 0, "Menu is closed after ESCAPE is pressed");
@@ -849,7 +849,7 @@ sap.ui.define([
 		oEvent.which = KeyCodes.SPACE;
 		oButton.onkeydown(oEvent);
 		oButton.onkeyup(oEvent);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(jQuery('.sapMMenu').length, 1, "Opened control is visible after SPACE is clicked");
@@ -858,7 +858,7 @@ sap.ui.define([
 		oEvent.which = KeyCodes.TAB;
 		oMenu = this.sut.getMenu()._getMenu();
 		oMenu.onsaptabnext(oEvent);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(jQuery('.sapMMenu').length, 0, "Menu is closed after TAB is pressed");
@@ -867,7 +867,7 @@ sap.ui.define([
 		oEvent.which = KeyCodes.SPACE;
 		oButton.onkeydown(oEvent);
 		oButton.onkeyup(oEvent);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(jQuery('.sapMMenu').length, 1, "Opened control is visible after SPACE is clicked");
@@ -876,7 +876,7 @@ sap.ui.define([
 	QUnit.test("Open and close if the menu contains only disabled items", function(assert) {
 		this.oMenuItem1.setEnabled(false);
 		this.oMenuItem2.setEnabled(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.sut.openMenuByKeyboard();
 
@@ -895,7 +895,7 @@ sap.ui.define([
 
 		this.oMenuItem1.setEnabled(false);
 		this.oMenuItem2.setEnabled(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.sut.openMenuByKeyboard();
 
@@ -908,7 +908,7 @@ sap.ui.define([
 
 		// Act
 		this.sut.setButtonMode("Split");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.sut.openMenuByKeyboard();
 		this.sut.onsapescape(oEvent);
 
@@ -943,7 +943,7 @@ sap.ui.define([
 		});
 		this.sut.setButtonMode(MenuButtonMode.Regular);
 		this.sut.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var fnFireBeforeMenuOpen = sinon.spy(this.sut, "fireBeforeMenuOpen");
 		this.sut.getAggregation('_button').firePress();
@@ -966,7 +966,7 @@ sap.ui.define([
 			beforeMenuOpen : function () {}
 		});
 		this.sut.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var fnFireDefaultAction = sinon.spy(this.sut, "fireDefaultAction"),
 			fnFireBeforeMenuOpen = sinon.spy(this.sut, "fireBeforeMenuOpen");
@@ -1034,7 +1034,7 @@ sap.ui.define([
 				})
 			});
 			this.sut.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.sut.destroy();
@@ -1196,7 +1196,7 @@ sap.ui.define([
 		}});
 
 		oButton.placeAt('content'); // popover opens only if opening button is rendered
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oButton.firePress(); // press to open the popover
 		this.clock.tick(1000);
@@ -1206,7 +1206,7 @@ sap.ui.define([
 
 		//act
 		oPopover.invalidate();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// check width after rerendering
 		assert.ok(oMenuButton.$().width() > 1, "width is still greater than 1 after rerendering");
@@ -1245,7 +1245,7 @@ sap.ui.define([
 			oSpyArrowButtonPress = this.spy(oSplitButtonArrow, "firePress");
 
 		this.sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		this.keydown(KeyCodes.ENTER);
@@ -1321,7 +1321,7 @@ sap.ui.define([
 
 		oMenuItem.setParent(oMenu);
 		oMenu.open(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oMenu.isOpen(), "Menu has been opened by keyboard");
 
@@ -1330,7 +1330,7 @@ sap.ui.define([
 			preventDefault: function() {}
 		});
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.equal(oMenu.bIgnoreOpenerDOMRef, false , "Focused is returned to the opener DOM ref");

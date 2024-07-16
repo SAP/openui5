@@ -3,12 +3,11 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
-	"sap/ui/model/odata/ODataModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/m/Label",
 	"sap/base/util/isEmptyObject"
-], function(MockServer, Control, Element, ODataModelV1, jQuery, ODataModelV2, Label, isEmptyObject) {
+], function(MockServer, Control, Element, jQuery, ODataModelV2, Label, isEmptyObject) {
 	"use strict";
 
 	const sMockUri = "/mock/";
@@ -2337,7 +2336,7 @@ sap.ui.define([
 		oMockServer.destroy();
 	});
 
-//*********************************************************************************************
+	//*********************************************************************************************
 	QUnit.test("test OData orderby", function (assert) {
 		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
 		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
@@ -3575,67 +3574,6 @@ sap.ui.define([
 		assert.equal(oGetAgainResponse.statusCode, 404, "Read of deleted resource intensionally failed");
 		oMockServer.destroy();
 	});
-	/**
-	 * @deprecated As of version 1.48, as ODataModel V1 has been deprecated
-	 */
-	QUnit.test("$batch - 2 GET, and 1 ChangeSet with 4 operations (2 PUT, 1 DELETE and 1 POST) (ODataModel V1)", function (assert) {
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
-		const oMockServer = new MockServer({rootUri: sMockUri});
-
-		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-		oMockServer.start();
-		assert.ok(oMockServer.isStarted(), "Mock server is started");
-		const oModel = new ODataModelV1(sMockUri, true);
-
-		oModel.setUseBatch(true);
-		var aBatchReadOperations = [];
-		var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
-
-		aBatchReadOperations.push(oFirstGetOp);
-		var oSecGetOp = oModel.createBatchOperation("/LeaveItemCollection?$top=2", "GET");
-
-		aBatchReadOperations.push(oSecGetOp);
-		var aBatchChangeOperations = [];
-		var oPutOp = oModel
-			.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-				{ "type": "Vacation", "employeeid": "Gal Roter", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" });
-
-		aBatchChangeOperations.push(oPutOp);
-		var oPutOp2 = oModel
-			.createBatchOperation(
-				"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
-				"PUT",
-				{ "type": "Vacation", "employeeid": "Gal Roter", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" });
-
-		aBatchChangeOperations.push(oPutOp2);
-		var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Unpaid Leave')", "DELETE",
-			null);
-
-		aBatchChangeOperations.push(oDeleteOp);
-		var oPostOp = oModel
-			.createBatchOperation("/LeaveHeaderCollection", "POST",
-				{ "type": "Sick Leave", "employeeid": "TRIEVISH", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" });
-
-		aBatchChangeOperations.push(oPostOp);
-		var fnSuccess = function (oData, oResponse) {
-			assert.equal(oResponse.statusCode, 202, "batch completed");
-			assert.equal(oData.__batchResponses[0].statusCode, 200, "oData first read succeeded");
-			assert.equal(oData.__batchResponses[1].statusCode, 200, "oData second read succeeded");
-			assert.equal(oResponse.data.__batchResponses[0].statusCode, 200, "oResponse first read succeeded");
-			assert.equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 204, "oData put succeeded");
-			assert.equal(oData.__batchResponses[2].__changeResponses[2].statusCode, 204, "oData delete succeeded");
-			assert.equal(oData.__batchResponses[2].__changeResponses[3].statusCode, 201, "oData post succeeded");
-		};
-		var fnError = function (oError) {
-			assert.ok(false, "fnError - batch failed");
-		};
-
-		oModel.addBatchReadOperations(aBatchReadOperations);
-		oModel.addBatchChangeOperations(aBatchChangeOperations);
-		oModel.submitBatch(fnSuccess, fnError, false);
-		oMockServer.destroy();
-	});
 
 	//*********************************************************************************************
 	QUnit.test("$batch - 2 GET, and 1 ChangeSet with 4 operations (2 PUT, 1 DELETE and 1 POST) (ODataModel V2)", function (assert) {
@@ -3710,71 +3648,6 @@ sap.ui.define([
 			success: fnSuccess,
 			error: fnError
 		});
-	});
-	/**
-	 * @deprecated As of version 1.48, as ODataModel V1 has been deprecated
-	 */
-	QUnit.test("$batch Multiple ChangeSets (ODataModel V1)", function (assert) {
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
-		const oMockServer = new MockServer({rootUri: sMockUri});
-
-		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-		oMockServer.start();
-		assert.ok(oMockServer.isStarted(), "Mock server is started");
-		const oModel = new ODataModelV1(sMockUri, true);
-
-		oModel.setUseBatch(true);
-		var aBatchReadOperations = [];
-		var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
-
-		aBatchReadOperations.push(oFirstGetOp);
-		var aBatchFirstChangeOperations = [];
-		var oPutOp = oModel
-			.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-				{ "type": "Vacation", "employeeid": "Gal Roter1", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" });
-
-		aBatchFirstChangeOperations.push(oPutOp);
-		var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Unpaid Leave')", "DELETE",
-			null);
-
-		aBatchFirstChangeOperations.push(oDeleteOp);
-		var oPostOp = oModel
-			.createBatchOperation("/LeaveHeaderCollection", "POST",
-				{ "type": "Sick Leave", "employeeid": "LIDOR1", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" });
-
-		aBatchFirstChangeOperations.push(oPostOp);
-
-		var aBatchSecondChangeOperations = [];
-		var oPutOp_2 = oModel
-			.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-				{ "type": "Vacation", "employeeid": "Gal Roter2", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" });
-
-		aBatchSecondChangeOperations.push(oPutOp_2);
-		var oPostOp_2 = oModel
-			.createBatchOperation("/LeaveHeaderCollection", "POST",
-				{ "type": "Sick Leave", "employeeid": "LIDOR2", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" });
-
-		aBatchSecondChangeOperations.push(oPostOp_2);
-		var fnSuccess = function (oData, oResponse) {
-			assert.equal(oResponse.statusCode, 202, "batch completed");
-			assert.equal(oData.__batchResponses[0].statusCode, 200, "oData first read succeeded");
-			assert.equal(oResponse.data.__batchResponses[0].statusCode, 200, "oResponse first read succeeded");
-			assert.equal(oData.__batchResponses[1].__changeResponses[0].statusCode, 204, "oData put succeeded");
-			assert.equal(oData.__batchResponses[1].__changeResponses[1].statusCode, 204, "oData delete succeeded");
-			assert.equal(oData.__batchResponses[1].__changeResponses[2].statusCode, 201, "oData post succeeded");
-			assert.equal(oData.__batchResponses[2].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
-			assert.equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 201, "oData post succeeded");
-		};
-		var fnError = function (oError) {
-			assert.ok(false, "fnError - batch failed");
-		};
-
-		oModel.addBatchReadOperations(aBatchReadOperations);
-		oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
-		oModel.addBatchChangeOperations(aBatchSecondChangeOperations);
-		oModel.submitBatch(fnSuccess, fnError, false);
-		oMockServer.destroy();
 	});
 
 	//*********************************************************************************************
@@ -3858,83 +3731,6 @@ sap.ui.define([
 			success: fnSuccess,
 			error: fnError
 		});
-	});
-	/**
-	 * @deprecated As of version 1.48, as ODataModel V1 has been deprecated
-	 */
-	QUnit.test("$batch first changeset rollback (second changeset succeed) (ODataModel V1)", function (assert) {
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
-		const oMockServer = new MockServer({rootUri: sMockUri});
-
-		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-		oMockServer.start();
-		assert.ok(oMockServer.isStarted(), "Mock server is started");
-		const oModel = new ODataModelV1(sMockUri, true);
-
-		oModel.setUseBatch(true);
-		var aBatchReadOperations = [];
-		var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
-
-		aBatchReadOperations.push(oFirstGetOp);
-		var aBatchFirstChangeOperations = [];
-		var oPutOp = oModel
-			.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-				{ "type": "Vacation", "employeeid": "Gal Roter", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" });
-
-		aBatchFirstChangeOperations.push(oPutOp);
-		var oPutOp2 = oModel
-			.createBatchOperation(
-				"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
-				"PUT",
-				{ "type": "Vacation", "employeeid": "David Freidlin", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" });
-
-		aBatchFirstChangeOperations.push(oPutOp2);
-		var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='dummy',type='Sick Leave')", "DELETE", null);
-
-		aBatchFirstChangeOperations.push(oDeleteOp);
-		var oPostOp = oModel
-			.createBatchOperation("/LeaveHeaderCollection", "POST",
-				{ "type": "Sick Leave", "employeeid": "TRIEVISH", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" });
-
-		aBatchFirstChangeOperations.push(oPostOp);
-		var aBatchSecondChangeOperations = [];
-		var oPutOp_2 = oModel
-			.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-				{ "type": "Vacation", "employeeid": "Gal Roter2", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" });
-
-		aBatchSecondChangeOperations.push(oPutOp_2);
-		var oPostOp_2 = oModel
-			.createBatchOperation("/LeaveHeaderCollection", "POST",
-				{ "type": "Sick Leave", "employeeid": "LIDOR2", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" });
-
-		aBatchSecondChangeOperations.push(oPostOp_2);
-		var fnSuccess = function (oData, oResponse) {
-			assert.equal(oResponse.statusCode, 202, "batch completed");
-			assert.equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
-			assert.equal(oData.__batchResponses[1].message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oData.__batchResponses[1].response.statusCode, 400, "StatusCode is propagated");
-			assert.equal(oData.__batchResponses[1].response.statusText, "Bad Request", "StatusText is propagated"); // TODO clarify: is reason phrase mandatory in batch response?
-			// read to verify no changes made
-			var oGetResponse = syncAjax({
-				url: '/mock/LeaveHeaderCollection',
-				type: 'GET'
-			});
-			assert.ok(oGetResponse.success, "Mock server responded the GET request");
-			assert.equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
-			assert.equal(oGetResponse.data.d.results[0].employeeid, "Gal Roter2", "no changes after rollback");
-			assert.equal(oData.__batchResponses[2].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
-			assert.equal(oData.__batchResponses[2].__changeResponses[1].statusCode, 201, "oData post succeeded");
-		};
-		var fnError = function (oError) {
-			assert.ok(false, "fnError - batch failed");
-		};
-
-		oModel.addBatchReadOperations(aBatchReadOperations);
-		oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
-		oModel.addBatchChangeOperations(aBatchSecondChangeOperations);
-		oModel.submitBatch(fnSuccess, fnError, false);
-		oMockServer.destroy();
 	});
 
 	//*********************************************************************************************
@@ -4033,81 +3829,6 @@ sap.ui.define([
 			error: fnError
 		});
 	});
-	/**
-	 * @deprecated As of version 1.48, as ODataModel V1 has been deprecated
-	 */
-	QUnit.test("$batch second changeset rollback (first changeset succeed) (ODataModel V1)", function (assert) {
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
-		const oMockServer = new MockServer({rootUri: sMockUri});
-
-		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-		oMockServer.start();
-		assert.ok(oMockServer.isStarted(), "Mock server is started");
-		const oModel = new ODataModelV1(sMockUri, true);
-
-		oModel.setUseBatch(true);
-		var aBatchReadOperations = [];
-		var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
-
-		aBatchReadOperations.push(oFirstGetOp);
-		var aBatchFirstChangeOperations = [];
-		var oPutOp = oModel
-			.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-				{ "type": "Vacation", "employeeid": "Gal Roter2", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" });
-
-		aBatchFirstChangeOperations.push(oPutOp);
-		var oPostOp = oModel
-			.createBatchOperation("/LeaveHeaderCollection", "POST",
-				{ "type": "Sick Leave", "employeeid": "LIDOR2", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" });
-
-		aBatchFirstChangeOperations.push(oPostOp);
-		var aBatchSecondChangeOperations = [];
-		var oPutOp1 = oModel
-			.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-				{ "type": "Vacation", "employeeid": "Gal Roter", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" });
-
-		aBatchSecondChangeOperations.push(oPutOp1);
-		var oPutOp2 = oModel
-			.createBatchOperation(
-				"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
-				"PUT",
-				{ "type": "Vacation", "employeeid": "David Freidlin", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" });
-
-		aBatchSecondChangeOperations.push(oPutOp2);
-		var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='dummy',type='Sick Leave')", "DELETE", null);
-
-		aBatchSecondChangeOperations.push(oDeleteOp);
-		oPostOp = oModel
-			.createBatchOperation("/LeaveHeaderCollection", "POST",
-				{ "type": "Sick Leave", "employeeid": "TRIEVISH", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" });
-
-		aBatchSecondChangeOperations.push(oPostOp);
-		var fnSuccess = function (oData, oResponse) {
-			assert.equal(oResponse.statusCode, 202, "batch completed");
-			assert.equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
-			assert.equal(oData.__batchResponses[1].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
-			assert.equal(oData.__batchResponses[1].__changeResponses[1].statusCode, 201, "oData post succeeded");
-			// read to verify no changes made
-			var oGetResponse = syncAjax({
-				url: '/mock/LeaveHeaderCollection',
-				type: 'GET'
-			});
-			assert.ok(oGetResponse.success, "Mock server responded the GET request");
-			assert.equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
-			assert.equal(oGetResponse.data.d.results[0].employeeid, "Gal Roter2", "no changes after rollback");
-			assert.equal(oData.__batchResponses[2].message, "HTTP request failed", "HTTP request failed");
-		};
-		var fnError = function (oError) {
-			assert.ok(false, "fnError - batch failed");
-		};
-
-		oModel.addBatchReadOperations(aBatchReadOperations);
-		oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
-		oModel.addBatchChangeOperations(aBatchSecondChangeOperations);
-		oModel.submitBatch(fnSuccess, fnError, false);
-		oMockServer.destroy();
-	});
 
 	//*********************************************************************************************
 	QUnit.test("$batch second changeset rollback (first changeset succeed) (ODataModel V2)", function (assert) {
@@ -4205,89 +3926,6 @@ sap.ui.define([
 			success: fnSuccess,
 			error: fnError
 		});
-	});
-	/**
-	 * @deprecated As of version 1.48, as ODataModel V1 has been deprecated
-	 *
-	 * Note: there's no corresponding test provided for ODataModel V2, because embedding
-	 *       a GET request into a change set is against the ODATA spec.
-	 */
-	QUnit.test("$batch GET in ChangeSet (ODataModel V1)", function (assert) {
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
-		const oMockServer = new MockServer({rootUri: sMockUri});
-
-		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-		oMockServer.start();
-		assert.ok(oMockServer.isStarted(), "Mock server is started");
-		const oModel = new ODataModelV1(sMockUri, true);
-
-		oModel.setUseBatch(true);
-		var aBatchFirstChangeOperations = [];
-		var oPutOp = oModel
-			.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-				{ "type": "Vacation", "employeeid": "Gal Roter2", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" });
-
-		aBatchFirstChangeOperations.push(oPutOp);
-		var oFakeGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
-
-		aBatchFirstChangeOperations.push(oFakeGetOp);
-		var oPostOp = oModel
-			.createBatchOperation("/LeaveHeaderCollection", "POST",
-				{ "type": "Sick Leave", "employeeid": "LIDOR2", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" });
-
-		aBatchFirstChangeOperations.push(oPostOp);
-		var fnSuccess = function (oData, oResponse) {
-			assert.equal(oResponse.statusCode, 202, "batch completed");
-			assert.equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
-			assert.equal(oData.__batchResponses[1].statusCode, 204, "oData  read succeeded");
-		};
-		var fnError = function (oError) {
-			assert.equal(oError.response.statusCode, 400,
-				"Get in Changeset - Respond 400 - The Data Services Request could not be understood due to malformed syntax");
-		};
-
-		// oModel.addBatchReadOperations(aBatchReadOperations);
-		oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
-		oModel.submitBatch(fnSuccess, fnError, false);
-		oMockServer.destroy();
-	});
-	/**
-	 * @deprecated As of version 1.48, as ODataModel V1 has been deprecated
-	 */
-	QUnit.test("$batch GET Operation not succeed (ODataModel V1)", function (assert) {
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
-		const oMockServer = new MockServer({rootUri: sMockUri});
-
-		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-		oMockServer.start();
-		assert.ok(oMockServer.isStarted(), "Mock server is started");
-		const oModel = new ODataModelV1(sMockUri, true);
-
-		oModel.setUseBatch(true);
-		var aBatchReadOperations = [];
-		var oFirstGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
-
-		aBatchReadOperations.push(oFirstGetOp);
-		//$to instead of $top - should return 400
-		var oSecGetOp = oModel.createBatchOperation("/LeaveItemCollection?$to=2", "GET");
-
-		aBatchReadOperations.push(oSecGetOp);
-		var fnSuccess = function (oData, oResponse) {
-			assert.equal(oResponse.statusCode, 202, "batch completed");
-			assert.equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
-			assert.equal(oData.__batchResponses[1].response.statusCode, 400, "Second Read failed due to incorrect syntax");
-		};
-		var fnError = function (oError) {
-			assert.equal(oError.response.statusCode, 400,
-				"Get in Changeset - Respond 400 - The Data Services Request could not be understood due to malformed syntax");
-		};
-
-		// oModel.addBatchReadOperations(aBatchReadOperations);
-		oModel.addBatchReadOperations(aBatchReadOperations);
-		oModel.submitBatch(fnSuccess, fnError, false);
-		oMockServer.destroy();
 	});
 
 	//*********************************************************************************************
@@ -4845,36 +4483,6 @@ sap.ui.define([
 				assert.ok(false, "Read failed");
 				cleanup(oModel, oMockServer, done);
 			}
-		});
-	});
-	/**
-	 * @deprecated as of 1.48 as the functionality is not  provided by ODataModel V2
-	 */
-	QUnit.test("test oDataModel _loadData JSON", function (assert) {
-		var done = assert.async();
-		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
-		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
-		const oMockServer = new MockServer({rootUri: sURI});
-
-		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-		oMockServer.start();
-		assert.ok(oMockServer.isStarted(), "Mock server is started");
-		const oModel = new ODataModelV1(sURI, true);
-		oModel._loadData("LeaveHeaderCollection", null, function () {
-			assert.equal(oModel.getProperty("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/type"), "Vacation",
-				"absolute path without context");
-			assert.equal(oModel.getProperty("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/employeeid"), "JSMITH",
-				"absolute path without context");
-			oModel.createBindingContext("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", null, function (newContext) {
-				assert.equal(newContext.getProperty("employeeid"), "JSMITH", "relative path with context");
-				var employee = oModel.getProperty("/");
-				var iKeys = 0;
-				jQuery.each(employee, function (iIndex, sKey) {
-					iKeys++;
-				});
-				assert.equal(iKeys, 3);
-				cleanup(oModel, oMockServer, done); // resume normal testing
-			});
 		});
 	});
 

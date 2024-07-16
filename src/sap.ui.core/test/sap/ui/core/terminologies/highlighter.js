@@ -80,7 +80,7 @@ sap.ui.define([], function () {
 	 * @returns {string} the id of the box in the svg image, e.g. "terminology-appvar1-2"
 	 */
 	var convertToSvgId = function(sAppVarId, sTerminologyId) {
-		return "terminology-" + sAppVarId + (sTerminologyId ? "-" + sTerminologyId.substring("terminology".length + 1) : "");
+		return "terminology-" + sAppVarId + (sTerminologyId ? "-" + sTerminologyId.substring(11 + 1) : "");
 	};
 
 	/**
@@ -132,7 +132,7 @@ sap.ui.define([], function () {
 	 */
 	function grayOutIrrelevantBoxes(sAppVar, sActiveTerminology) {
 		// gray out not relevant boxes by changing its class and appending Inactive
-		var sTerminologyId = sAppVar + "-" + sActiveTerminology.substring("terminology".length);
+		var sTerminologyId = sAppVar + "-" + sActiveTerminology.substring(11);
 
 		var oAppVarHierarchy = {
 			"appvar2": ["appvar2", "appvar1", "base"],

@@ -8,9 +8,8 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
-	"sap/ui/core/mvc/ViewType",
-	"sap/ui/core/mvc/JSView"
-], function(RouterExtension, Button, UIComponent, Controller, View, ViewType, JSView) {
+	"sap/ui/core/mvc/ViewType"
+], function(RouterExtension, Button, UIComponent, Controller, View, ViewType) {
 	"use strict";
 
 	// new Component

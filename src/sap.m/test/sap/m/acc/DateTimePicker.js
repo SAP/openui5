@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Page",
 	"sap/m/ToggleButton",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/library",
 	"sap/ui/unified/DateTypeRange",
@@ -28,7 +27,6 @@ sap.ui.define([
 	Label,
 	Page,
 	ToggleButton,
-	oCore,
 	Element,
 	coreLibrary,
 	DateTypeRange,
@@ -84,7 +82,7 @@ sap.ui.define([
 				var oElement = oEvent.getParameter("element");
 				var oValue = oEvent.getParameter('newValue');
 
-				var oInput = oCore.byId("I2");
+				var oInput = Element.getElementById("I2");
 				oInput.setValue( "ParseError: Entered value: " + oValue);
 
 				if (oElement.setValueState) {
@@ -97,7 +95,7 @@ sap.ui.define([
 				var oElement = oEvent.getParameter("element");
 				var oValue = oEvent.getParameter('newValue');
 
-				var oInput = oCore.byId("I2");
+				var oInput = Element.getElementById("I2");
 				oInput.setValue( "ValidationSuccess: Entered value: " + oValue);
 
 				if (oElement.setValueState) {

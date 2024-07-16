@@ -174,13 +174,6 @@ sap.ui.define([
 				const vRowMode = oTable.getRowMode();
 				let bIsTableInAutoMode = false;
 
-				/**
-				 * @deprecated As of version 1.119
-				 */
-				if (!vRowMode) {
-					bIsTableInAutoMode = oTable.getVisibleRowCountMode() === "Auto";
-				}
-
 				if (vRowMode) {
 					bIsTableInAutoMode = vRowMode === RowModeType.Auto || vRowMode.isA("sap.ui.table.rowmodes.Auto");
 				}
@@ -204,4 +197,4 @@ sap.ui.define([
 
 	return [oContentDensity, oRowHeights, oDynamicPageConfiguration];
 
-}, true);
+});

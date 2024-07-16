@@ -177,4 +177,4 @@ sap.ui.define([
 
 	return XMLCompositeMetadata;
 
-}, true);
+});

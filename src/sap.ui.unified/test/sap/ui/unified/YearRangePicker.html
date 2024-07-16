@@ -7,74 +7,16 @@
 
 		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="sap_horizon"
 				data-sap-ui-trace="false"
 				data-sap-ui-libs="sap.ui.unified, sap.m"
-				src="../../../../resources/sap-ui-core.js">
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/YearRangePicker"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
-		<script>
-			sap.ui.require([
-				"sap/m/App",
-				"sap/m/Page",
-				"sap/m/Panel",
-				"sap/ui/core/date/UniversalDate",
-				"sap/m/Label",
-				"sap/m/Input",
-				"sap/ui/unified/calendar/YearRangePicker"
-			], function(
-				App,
-				Page,
-				Panel,
-				UniversalDate,
-				Label,
-				Input,
-				YearRangePicker
-			) {
-				"use strict";
-
-				var oPage = new Page({
-					title: "Test Page for sap.ui.unified.calendar.YearRangePicker",
-					content: [
-						new Panel({
-							content: [
-								new Label({text: "selected Year", labelFor: "I1"}),
-								new Input("I1", {
-									placeholder: "Enter a year...",
-									change: function(oEvent){
-										var oInput = oEvent.oSource,
-											sValue = oEvent.getParameter('newValue'),
-											oYRP = sap.ui.getCore().byId("YRP1"),
-											iYear, oDate;
-
-										if (sValue && !isNaN(sValue)){
-											iYear = parseInt(sValue),
-											oDate = new UniversalDate();
-
-											oDate.setFullYear(iYear);
-											oDate.setMonth(0);
-											oDate.setDate(1);
-											oYRP.setDate(oDate.getJSDate());
-										}
-									}
-								}),
-								new YearRangePicker("YRP1", {
-									select: function(oEvent) {
-										var oInput = sap.ui.getCore().byId("I1"),
-											oYRP = oEvent.oSource,
-											oDate = new UniversalDate(oYRP.getDate());
-
-										oInput.setValue(oDate.getFullYear());
-									}
-								})
-							]
-						})
-					]
-				});
-
-				new App().addPage(oPage).placeAt("body");
-			});
-
-		</script>
+		
 	</head>
 	<body id="body" class="sapUiBody"></body>
 </html>

@@ -141,4 +141,4 @@ sap.ui.define([
 	};
 
 	return PropertyChange;
-}, /* bExport= */true);
+});

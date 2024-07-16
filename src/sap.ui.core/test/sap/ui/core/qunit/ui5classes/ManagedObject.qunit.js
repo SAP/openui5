@@ -17,9 +17,8 @@ sap.ui.define([
 	"sap/base/strings/escapeRegExp",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/ObjectPath",
-	"sap/base/future",
-	"sap/base/Log"
-], function(BindingInfo, BindingParser, DataType, ManagedObject, Element, JSONModel, Context, ManagedObjectModel, StringType, Control, Component, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp, isEmptyObject, ObjectPath, future, Log) {
+	"sap/base/future"
+], function(BindingInfo, BindingParser, DataType, ManagedObject, Element, JSONModel, Context, ManagedObjectModel, StringType, Control, Component, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp, isEmptyObject, ObjectPath, future) {
 	"use strict";
 	var mObjects = {};
 
@@ -357,41 +356,6 @@ sap.ui.define([
 		assert.strictEqual(obj.getPropWithUndefinedDefault(), undefined, "a property with a default value 'undefined' should have that default value");
 		assert.strictEqual(obj.getPropWithNoDefault(), undefined, "a property with no default value should have 'undefined' as default value");
 		assert.strictEqual(obj.getEnumValue(), MyEnum.Good, "a property with enum type and no own default value should inherit a default from the enum");
-	});
-
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("Property default values with invalid types", function(assert) {
-		const MyClazz = ManagedObject.extend("sap.test.InvalidMetadataTestClass", {
-			metadata: {
-				library: "sap.test",
-				properties: {
-					noType: {
-						type: "noType",
-						defaultValue: 42
-					},
-					noTypeNoDefault: {
-						type: "noType",
-						defaultValue: null
-					}
-				}
-			}
-		});
-
-		const obj = new MyClazz();
-
-		// initial default values  (from default property bag)
-		assert.strictEqual(obj.getNoType(), 42, "a property with invalid type should keep a configured default value");
-		assert.strictEqual(obj.getNoTypeNoDefault(), null, "a property with invalid type and without default should default to null");
-
-		// set 'other' values and restore default
-		obj.setNoType('other').setNoType();
-		obj.setNoTypeNoDefault('other').setNoTypeNoDefault();
-
-		// restored default values
-		assert.strictEqual(obj.getNoType(), 42, "a property with invalid type should keep a configured default value");
-		assert.strictEqual(obj.getNoTypeNoDefault(), null, "a property with invalid type and without default should default to null");
 	});
 
 	QUnit.test("Default value of dynamically created property", function(assert) {
@@ -1676,17 +1640,6 @@ sap.ui.define([
 		assert.equal(typeof this.obj.unbindSingleBindableAggr, "function", "Named unbind function for bindable single aggregation available");
 		assert.equal(typeof this.obj.bindSingleAggr, "undefined", "No named bind function for non-bindable single aggregation available");
 		assert.equal(typeof this.obj.unbindSingleAggr, "undefined", "No named unbind function for non-bindable single aggregation available");
-	});
-
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("Bind single aggregation", function(assert) {
-		// This worked in the past so I add a test to not break it accidentally
-		this.obj.bindAggregation("singleAggr", "/list", this.template);
-		assert.equal(this.obj.isBound("singleAggr"), true, "isBound must return true for bound aggregations");
-		assert.equal(this.obj.getAggregation("singleAggr") instanceof TestManagedObject, true, "Aggregation is instance of TestManagedObject");
-		assert.equal(this.obj.getAggregation("singleAggr").getValue(), "testvalue3", "Value matches the last array entry");
 	});
 
 	QUnit.test("Bind aggregation without templateShareable (default)", function(assert) {
@@ -3418,61 +3371,6 @@ sap.ui.define([
 	});
 
 	QUnit.module("init/exit");
-
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("Ensure that hooks do not return a value (future=false)", async function(assert) {
-		future.active = false;
-		const oFutureFatalSpy = sinon.spy(Log, "fatal");
-		const aPromises = [];
-
-		const MySampleManagedObject = ManagedObject.extend("sap.ui.core.MySampleManagedObject", {
-			metadata: {
-				properties: {
-					name: { type: "string", defaultValue: "hello" }
-				}
-			},
-			init: function() {
-				return "init() shouldn't return a value.";
-			},
-			exit: function() {
-				const oPromise = Promise.reject(new Error("exit() failed."));
-				aPromises.push(oPromise);
-				return oPromise;
-			}
-		});
-
-		// init
-		const oMySample = new MySampleManagedObject({
-			id: "sample1"
-		});
-		assert.ok(oFutureFatalSpy.getCall(0).calledWith("[FUTURE FATAL] The registered Event Listener 'init' must not have a return value."), "init() should be logged correctly.");
-
-		/**
-		 * @deprecated
-		 */
-		const oErrorLogSpy = sinon.spy(Log, "error");
-
-		// exit
-		oMySample.destroy();
-
-		await Promise.allSettled(aPromises);
-		assert.ok(oFutureFatalSpy.getCall(1).calledWith("[FUTURE FATAL] The registered Event Listener 'exit' must not have a return value."), "exit() should be logged correctly.");
-
-		/**
-		 * @deprecated
-	     */
-		await (async () => {
-			await Promise.allSettled(aPromises);
-			assert.ok(oErrorLogSpy.getCall(0).calledWith("The registered Event Listener 'exit' of 'sample1' failed."), "Promise rejection caught successfully.");
-			oErrorLogSpy.restore();
-		})();
-
-		oFutureFatalSpy.restore();
-
-		future.active = undefined;
-	});
 
 	QUnit.test("Ensure that hooks do not return a value - init (future=true)", function(assert) {
 		future.active = true;

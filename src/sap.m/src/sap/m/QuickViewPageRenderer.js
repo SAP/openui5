@@ -35,4 +35,4 @@ sap.ui.define([], function () {
 	};
 
 	return QuickViewPageRenderer;
-}, /* bExport= */ true);
+});

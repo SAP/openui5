@@ -196,4 +196,4 @@ sap.ui.define([
 
 	return P13nOperationsHelper;
 
-}, /* bExport= */true);
+});

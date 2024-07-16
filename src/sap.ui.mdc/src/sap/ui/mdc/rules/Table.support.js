@@ -176,4 +176,4 @@ sap.ui.define([
 
 	return [oHeaderVisibleFalseAndHiddenToolbar, oHeaderSet, oIllustratedMessageForNoData, oRowCountDisabled, oActionsAndVariantsAndQuickFilterNotUsed, oExportDisabled];
 
-}, true);
+});

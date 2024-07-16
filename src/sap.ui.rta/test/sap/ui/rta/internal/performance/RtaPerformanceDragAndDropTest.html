@@ -4,38 +4,10 @@
 		<meta charset="utf-8">
 		<title>Adaptation at runtime - Drag and Drop Test</title>
 
-		<style>
-			html {
-				height : 100%;
-			}
-			#HBox {
-				margin-top: 50px;
-			}
-			.sapUiRtaPerfTestMarginTop {
-				margin-top: 10px;
-			}
-			#content {
-				width: 700px;
-			}
-		</style>
+		<link rel="stylesheet" href="./RtaPerformanceDragAndDropTest.css">
 
 		<script src="../../shared-config.js"></script>
-		<script>
-			var __sPathPrefix = document.location.pathname.match(/(.*)\/test-resources\//)[1];
-
-			window["sap-ui-config"] = window["sap-ui-config"] || {};
-			window["sap-ui-config"].onInit = "module:rta/performance/dragAndDrop/main";
-			window["sap-ui-config"].async = "true";
-			window["sap-ui-config"].libs = "sap.ui.rta, sap.ui.dt, sap.m, sap.ui.layout, sap.ui.fl";
-			window["sap-ui-config"].resourceroots = {
-				"rta.performance": "./",
-				"dt.performance": "../../../../../sap/ui/dt/internal/performance/",
-				"test-resources": "../../../../../../test-resources"
-			};
-			window["sap-ui-config"].flexibilityServices = '[{"connector": "SessionStorageConnector"}]';
-
-			document.write('<script src="' + __sPathPrefix + '/resources/sap-ui-core.js"><' + '/script>');
-		</script>
+		<script src="./RtaPerformanceDragAndDropTest-embedded-1.js"></script>
 
 		<script src="RtaPerformanceDragAndDropTest.js"></script>
 	</head>

@@ -5,7 +5,6 @@ sap.ui.define([
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer'
 ], function(future, Log, sapUiCore, Component, ComponentContainer) {
-
 	"use strict";
 	/*global QUnit, sinon */
 
@@ -56,32 +55,6 @@ sap.ui.define([
 				assert.strictEqual(oComponent.getId(), oComponentContainer.getComponent(), "Was able to create component, componentCreated fired");
 				done();
 			}
-		});
-		oComponentContainer.onBeforeRendering();
-	});
-
-	/**
-	 * @deprecated
-	 */
-	QUnit.test("Create component async - componentFailed (default) (future=false)", function (assert) {
-		future.active = false;
-		var done = assert.async();
-		var oComponentContainer = new ComponentContainer({
-			name: "samples.components.unkown",
-			async: true,
-			componentFailed: function(oEvent) {
-				// Create Log spy within componentFailed and ignore 404 error for /samples/components/unkown/Component.js
-				var oLogErrorSpy = this.spy(Log, "error");
-				var oReason = oEvent.getParameter("reason");
-				assert.ok(true, "Was not able to create component, componentFailed fired");
-				assert.ok(oReason.message.indexOf("failed to load") === 0, "Error object is passed as reason");
-				Promise.resolve().then(function() {
-					assert.ok(oLogErrorSpy.calledWith(sinon.match(/Failed to load component for container/)));
-					assert.strictEqual(oLogErrorSpy.callCount, 1, "One error should have been logged");
-					future.active = undefined;
-					done();
-				});
-			}.bind(this)
 		});
 		oComponentContainer.onBeforeRendering();
 	});
@@ -699,5 +672,4 @@ sap.ui.define([
 		Component.create = fnFactory;
 
 	});
-
 });

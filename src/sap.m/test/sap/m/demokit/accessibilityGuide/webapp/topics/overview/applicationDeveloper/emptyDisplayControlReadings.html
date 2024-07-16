@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head><meta charset="utf-8">
 	<title>Indicating Empty Values</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="../../../scripts/boot.js"></script>
 </head>
@@ -10,7 +10,7 @@
 	<div class="topic">
 		<div class="content">
 			<h1 id="overview">Improve Screen Reader Announcements</h1>
-			<h2>sap.m.Text Empty Value Indicator</h3>
+			<h2>sap.m.Text Empty Value Indicator
 				<p>
 					An indicator should be displayed when the text value is empty. The sap.m.Text control allows developers to indicate an empty text using a dash “–” character.
 					Note, that specific symbol used may vary depending on the language.
@@ -24,7 +24,7 @@ new sap.m.Text({
 })
 </pre>
 
-			<h2>sap.m.Table Cell with Empty Value Indicator</h3>
+			<h2>sap.m.Table Cell with Empty Value Indicator
 				<p>
 					You have to set <code>visible</code> property to <code>false</code> for all <code>sap.m.Link</code> and <code>sap.m.Text</code> controls’ instances
 					that are used inside a <code>sap.m.Table</code> cell and have empty <code>text</code> properties.

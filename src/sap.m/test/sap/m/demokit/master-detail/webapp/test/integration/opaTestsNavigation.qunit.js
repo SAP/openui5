@@ -2,7 +2,7 @@
 
 QUnit.config.autostart = false;
 
-sap.ui.getCore().attachInit(function() {
+sap.ui.require(["sap/ui/core/Core"], Core => Core.ready(function() {
 	"use strict";
 
 	sap.ui.require([
@@ -19,4 +19,4 @@ sap.ui.getCore().attachInit(function() {
 
 		QUnit.start();
 	});
-});
+}));

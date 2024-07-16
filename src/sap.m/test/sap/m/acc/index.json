@@ -1,15 +1,5 @@
 {
-	"tests" : [
-		{
-			"control": "sap.m.ActionSelect",
-			"url": "ActionSelect.html",
-			"appComponent": "CA-UI5-CTR-RIL",
-			"accTest": {
-				"name": "sap.m.ActionSelect",
-				"title": "ACC test for sap.m.ActionSelect",
-				"module": "./actionselect.qunit"
-			}
-		},
+	"tests": [
 		{
 			"control": "sap.m.ActionSheet",
 			"url": "ActionSheet.html",
@@ -96,16 +86,6 @@
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
-			"control": "sap.m.DateTimeInput",
-			"url": "../DateTimeInput.html",
-			"appComponent": "CA-UI5-CTR-BAL",
-			"accTest": {
-				"name": "sap.m.DateTimeInput",
-				"title": "ACC test for sap.m.DateTimeInput",
-				"module": "./datetimeinput.qunit"
-			}
-		},
-		{
 			"control": "sap.m.DateTimePicker",
 			"url": "DateTimePicker.html",
 			"appComponent": "CA-UI5-CTR-BAL"
@@ -143,7 +123,7 @@
 		{
 			"control": "sap.m.FeedContent",
 			"url": "../FeedContent.html",
-			"appComponent" : "CA-UI5-SC"
+			"appComponent": "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.FeedInput",
@@ -163,17 +143,17 @@
 		{
 			"control": "sap.m.GenericTag",
 			"url": "GenericTag.html",
-			"appComponent" : "CA-UI5-CTR-PIR"
+			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
 			"control": "sap.m.GenericTile",
 			"url": "../GenericTile.html",
-			"appComponent" : "CA-UI5-SC"
+			"appComponent": "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.HeaderContainer",
-			"url":  "../HeaderContainer.html",
-			"appComponent" : "CA-UI5-SC"
+			"url": "../HeaderContainer.html",
+			"appComponent": "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.semantic.FullscreenPage",
@@ -228,7 +208,7 @@
 		{
 			"control": "sap.m.List",
 			"url": "../List.html",
-			"desc" : "Including StandardListItem, DisplayListItem, InputListItem, CustomListItem",
+			"desc": "Including StandardListItem, DisplayListItem, InputListItem, CustomListItem",
 			"appComponent": "CA-UI5-TBL",
 			"accTest": {
 				"name": "sap.m.List",
@@ -239,11 +219,6 @@
 		{
 			"control": "sap.m.semantic.MasterPage",
 			"url": "./semantic/MasterDetailPages.html",
-			"appComponent": "CA-UI5-CTR-PIR"
-		},
-		{
-			"control": "sap.m.MessagePage",
-			"url": "MessagePage.html",
 			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
@@ -324,27 +299,27 @@
 		{
 			"control": "sap.m.NavContainer",
 			"url": "../NavContainer.html",
-			"appComponent" : "CA-UI5-CTR-PIR"
+			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
 			"control": "sap.m.NewsContent",
 			"url": "../NewsContent.html",
-			"appComponent" : "CA-UI5-SC"
+			"appComponent": "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.NotificationListGroup",
 			"url": "NotificationListGroup.html",
-			"appComponent" : "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
 			"control": "sap.m.NotificationListItem",
 			"url": "NotificationListItem.html",
-			"appComponent" : "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
 			"control": "sap.m.NumericContent",
 			"url": "../NumericContent.html",
-			"appComponent" : "CA-UI5-SC"
+			"appComponent": "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.ObjectAttribute",
@@ -562,11 +537,6 @@
 			}
 		},
 		{
-			"control": "sap.m.StandardTile",
-			"url": "../StandardTile.html",
-			"appComponent": "CA-UI5-CTR-BAL"
-		},
-		{
 			"control": "sap.m.StepInput",
 			"url": "../StepInput.html",
 			"appComponent": "CA-UI5-CTR-BAL",
@@ -579,7 +549,7 @@
 		{
 			"control": "sap.m.SuggestionsList",
 			"url": "../SearchField_Suggestions.html",
-			"desc" : "Suggestions list of the Search Field",
+			"desc": "Suggestions list of the Search Field",
 			"appComponent": "CA-UI5-CTR-ROD",
 			"accTest": {
 				"name": "sap.m.SuggestionsList",
@@ -676,11 +646,6 @@
 				"title": "ACC test for sap.m.Tree",
 				"module": "./tree.qunit"
 			}
-		},
-		{
-			"control": "sap.m.UploadCollection",
-			"url": "../UploadCollection.html",
-			"appComponent": "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.UploadCollectionForPendingUpload",

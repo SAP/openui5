@@ -1,4 +1,4 @@
-sap.ui.getCore().attachInit(function () {
+sap.ui.require(["sap/ui/core/Core"], Core => Core.ready(function () {
 	"use strict";
 
 	sap.ui.require([
@@ -20,4 +20,4 @@ sap.ui.getCore().attachInit(function () {
 			appWidthLimited: false //false
 		}).placeAt('content');
 	});
-});
+}));

@@ -6,127 +6,13 @@
 		<script id="sap-ui-bootstrap"
 				src="../../../../resources/sap-ui-core.js"
 				data-sap-ui-async="true"
-				data-sap-ui-compatVersion="edge"
 				data-sap-ui-libs="sap.ui.layout, sap.m"
-				data-sap-ui-theme="sap_horizon">
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/AlignedFlowLayoutGallery"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
-		<script>
-				sap.ui.require([
-					"sap/ui/core/Core",
-					"sap/m/App",
-					"sap/m/Page",
-					"sap/m/Text",
-					"sap/ui/core/Icon",
-					"sap/ui/layout/AlignedFlowLayout"
-				], async function(Core, App, Page, Text, Icon, AlignedFlowLayout) {
-					"use strict";
-
-					await Core.ready();
-
-					var oAlignedFlowLayout = new AlignedFlowLayout({
-						content: [
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							}),
-							new Icon({
-								src:"sap-icon://loan",
-								size: "5rem"
-							})
-						],
-						minItemWidth: "8rem",
-						maxItemWidth: "20rem"
-					});
-
-					new App({
-						pages: new Page({
-							title: "AlignedFlowLayout Test Page",
-							content: [
-								new Text({
-									text: "A sort of Gallery"
-								}),
-								oAlignedFlowLayout
-							]
-						})
-					}).placeAt("content");
-				});
-		</script>
+		
 	</head>
 	<body id="content" class="sapUiBody">
 	</body>

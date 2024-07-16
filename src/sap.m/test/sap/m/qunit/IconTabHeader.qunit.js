@@ -11,12 +11,12 @@ sap.ui.define([
 	"sap/m/ScrollContainer",
 	"sap/m/Text",
 	"sap/m/VBox",
-	"sap/ui/core/Core",
 	"sap/ui/core/InvisibleMessage",
 	"sap/ui/core/CustomData",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Panel",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Library1,
 	QUnitUtils,
@@ -28,12 +28,12 @@ sap.ui.define([
 	ScrollContainer,
 	Text,
 	VBox,
-	Core,
 	InvisibleMessage,
 	CustomData,
 	createAndAppendDiv,
 	Panel,
-	Library
+	Library,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -117,7 +117,7 @@ sap.ui.define([
 		var oSpy = sinon.spy(IconTabFilter.prototype, "addEventDelegate"),
 			oITH = createHeaderWithItems(100);
 		oITH.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSpy.calledWith(oITH._oOverflowEventDelegate, oITH._getOverflow()), "Event delegate is added to the overflow tab");
@@ -130,7 +130,7 @@ sap.ui.define([
 		// arrange
 		var oITH = createHeaderWithItems(100);
 		oITH.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oOverflow = oITH._getOverflow(),
 			oSpy = sinon.spy(oOverflow, "removeEventDelegate"),
@@ -151,12 +151,12 @@ sap.ui.define([
 			oLastItem = oITH.getItems()[3];
 
 		oITH.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(oLastItem.$().hasClass("sapMITBFilterHidden"), "the last filter is visible");
 
 		oITH.$().width("200px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(300);
 
 		// assert
@@ -174,7 +174,7 @@ sap.ui.define([
 			oLastItem = aItems[6];
 
 		oITH.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert - all visible
 		assert.notOk(oLastSeparator.$().hasClass("sapMITBFilterHidden"), "the last separator is visible");
@@ -182,7 +182,7 @@ sap.ui.define([
 
 		// act - resize
 		oITH.$().width("200px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(300);
 
 		// assert - last item is hidden
@@ -191,7 +191,7 @@ sap.ui.define([
 
 		// act - select last item
 		oITH.setSelectedKey(oLastItem.getKey());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(300);
 
 		// assert - selected item is visible
@@ -211,7 +211,7 @@ sap.ui.define([
 			});
 
 		oContainer.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oITH._getOverflow().$().hasClass("sapMITHOverflowVisible"), "the more button is visible");
@@ -227,7 +227,7 @@ sap.ui.define([
 		var oITH = createHeaderWithItems(100);
 		var oTargetTab = oITH.getItems()[99];
 		oITH.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		var aVisibleTabs = oITH.$().find(".sapMITBItem:not(.sapMITBFilterHidden)").toArray();
@@ -236,7 +236,7 @@ sap.ui.define([
 
 		// Act
 		oITH.setSelectedKey("99");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		aVisibleTabs = oITH.$().find(".sapMITBItem:not(.sapMITBFilterHidden)").toArray();
@@ -259,7 +259,7 @@ sap.ui.define([
 
 		// Act
 		oContainer.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oITH.getDomRef("head").querySelectorAll(".sapMITBFilter:not(.sapMITBFilterHidden)").length, 2, "Only two tabs should be visible");
@@ -281,7 +281,7 @@ sap.ui.define([
 
 		// Act
 		oContainer.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		// Assert
 		assert.strictEqual(oITH._getOverflow().getText(), "+9", "Only main tabs should be calculated in overflow tab counter");
 
@@ -298,7 +298,7 @@ sap.ui.define([
 		var oTab = oITH.getItems()[0];
 		oTab.addItem(new IconTabFilter({ text: "SAP" }));
 		oITH.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oTab._expandButtonPress();
@@ -328,7 +328,7 @@ sap.ui.define([
 		var oITH = createHeaderWithItems(10);
 
 		oITH.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(oITH.$().attr("aria-label"), "'aria-label' attribute should NOT be set.");
 		assert.notOk(oITH.$("head").attr("aria-describedby"), "'aria-describedby' attribute should NOT be set.");
@@ -337,7 +337,7 @@ sap.ui.define([
 			headerLabel: "Available spaces",
 			headerDescription: "Select tab to show a space"
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oITH.$().attr("aria-label"), "Available spaces", "'aria-label' attribute should be set");
 		assert.strictEqual(oITH.$("head").attr("aria-describedby"), oITH._getInvisibleHeadText().getId(), "'aria-describedby' attribute should be set.");
@@ -352,17 +352,17 @@ sap.ui.define([
 			oFirstTab = oITH.getItems()[0];
 
 		oITH.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oFirstTab.getInteractionMode(), "Auto", "'interactionMode' property is with correct default value");
 		assert.notOk(oFirstTab.getDomRef().classList.contains("sapMITHUnselectable"), "Tab is rendered with two click areas");
 
 		oFirstTab.setInteractionMode("SelectLeavesOnly");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oITH.getItems()[0].getDomRef().classList.contains("sapMITHUnselectable"), "Tab is rendered with one click area");
 
 		oFirstTab.setInteractionMode("Select");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.notOk(oITH.getItems()[0].getDomRef().classList.contains("sapMITHUnselectable"), "Tab is rendered with two click areas");
 
 		// Clean-up
@@ -374,16 +374,16 @@ sap.ui.define([
 			oFirstTab = oITH.getItems()[0];
 
 		oITH.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oITH._isSelectable(oFirstTab), "Tab is selectable");
 
 		oFirstTab.setInteractionMode("SelectLeavesOnly");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oITH._isSelectable(oFirstTab), "Tab is selectable");
 
 		oFirstTab.setInteractionMode("Select");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oITH._isSelectable(oFirstTab), "Tab is selectable");
 
 		// Clean-up
@@ -420,7 +420,7 @@ sap.ui.define([
 			]
 		});
 		this.oITH.addItem(oTab);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oTab.$().find(".sapMBadgeIndicator").length, "Badge indicator is rendered");
@@ -436,7 +436,7 @@ sap.ui.define([
 			]
 		});
 		this.oITH.addItem(oTab);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(this.oITH.$().find(".sapMBadgeIndicator").length, "Badge indicator is rendered");
@@ -452,7 +452,7 @@ sap.ui.define([
 			]
 		});
 		this.oITH.addItem(oTab);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		this.oITH.setSelectedKey("tab2");
@@ -472,7 +472,7 @@ sap.ui.define([
 			]
 		});
 		this.oITH.addItem(oTab);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		this.oITH.setSelectedKey("tab2");
@@ -520,7 +520,7 @@ sap.ui.define([
 			]
 		});
 		this.oITH.addItem(oRootTab);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $badgeIndicator = oRootTab.$().find(".sapMBadgeIndicator");
 
@@ -540,7 +540,7 @@ sap.ui.define([
 			]
 		});
 		this.oITH.addItem(oRootTab);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $badgeIndicator = oRootTab.$().find(".sapMBadgeIndicator");
 		assert.ok(oRootTab.$().attr("aria-labelledby").indexOf($badgeIndicator.attr("id")) === 0, "aria-labelledby starts with the badge indicator id");
@@ -570,7 +570,7 @@ sap.ui.define([
 			]
 		});
 		this.oITH.addItem(oRootTab);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $badgeIndicator = oRootTab.$().find(".sapMBadgeIndicator");
 
@@ -614,7 +614,7 @@ sap.ui.define([
 			]
 		});
 		this.oITH.addItem(oRootTab);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oRootTab._expandButtonPress();
 		var oFakeEvent = {
 			srcControl: oRootTab._getSelectList().getItems()[0],
@@ -649,7 +649,7 @@ sap.ui.define([
 
 		this.oITH.placeAt("qunit-fixture");
 		this.oITH.addItem(oRootTab);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oRootTab._expandButtonPress();
 
 		oRootTab._oPopover.attachEventOnce("afterOpen", () => {
@@ -721,7 +721,7 @@ sap.ui.define([
 			]
 		});
 		this.oITH.addItem(oRootTab);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $badgeIndicator = oRootTab.$().find(".sapMBadgeIndicator");
 
@@ -751,7 +751,7 @@ sap.ui.define([
 			]
 		});
 		this.oITH.addItem(oRootTab);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $badgeIndicator1 = oRootTab.$().find(".sapMBadgeIndicator").eq(0),
 			$badgeIndicator2 = oRootTab.$().find(".sapMBadgeIndicator").eq(1);
@@ -786,7 +786,7 @@ sap.ui.define([
 				]
 			});
 		this.oITH.addItem(oRootTab);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oNestedItem.addCustomData(new BadgeCustomData());
@@ -797,7 +797,7 @@ sap.ui.define([
 			preventDefault: function () {}
 		};
 		this.oITH._getOverflow()._getSelectList().ontap(oFakeEvent);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oRootTab.getAggregation("_expandButtonBadge")._isBadgeAttached, "Badge is added to the expand button");
@@ -817,7 +817,7 @@ sap.ui.define([
 	QUnit.test("Badge is shown on the overflow tab when there are tabs with badges in it", function (assert) {
 		// Arrange
 		this.oITH.getItems()[this.iSize - 1].addCustomData(new BadgeCustomData());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(this.oITH._getOverflow().getAggregation("_expandButtonBadge")._isBadgeAttached, "Badge is rendered on the overflow tab");
@@ -828,7 +828,7 @@ sap.ui.define([
 		this.clock.restore();
 		this.oITH.getItems()[this.iSize - 1].addCustomData(new BadgeCustomData());
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		this.oITH._getOverflow()._expandButtonPress();
@@ -873,7 +873,7 @@ sap.ui.define([
 			}
 
 			this.oITH.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oITH.destroy();
@@ -886,7 +886,7 @@ sap.ui.define([
 			oInvisibleMessageInstance = InvisibleMessage.getInstance();
 
 		oRootTab.addCustomData(new BadgeCustomData());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $badgeIndicator = oRootTab.$().find(".sapMBadgeIndicator"),
 			oInvisibleMsgDomRef = document.getElementById(oInvisibleMessageInstance.getId() + "-assertive");
@@ -905,7 +905,7 @@ sap.ui.define([
 			oInvisibleMessageInstance = InvisibleMessage.getInstance();
 
 		oChildTab.addCustomData(new BadgeCustomData());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $badgeIndicator = oRootTab.$().find(".sapMBadgeIndicator"),
 			oInvisibleMsgDomRef = document.getElementById(oInvisibleMessageInstance.getId() + "-assertive");
@@ -924,7 +924,7 @@ sap.ui.define([
 			oInvisibleMessageInstance = InvisibleMessage.getInstance();
 
 		oRootTab.addCustomData(new BadgeCustomData());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $badgeIndicator = oOverflowTab.$().find(".sapMBadgeIndicator"),
 			oInvisibleMsgDomRef = document.getElementById(oInvisibleMessageInstance.getId() + "-assertive");
@@ -957,7 +957,7 @@ sap.ui.define([
 		});
 		this.oITH.addItem(oSelectedTab);
 		this.oITH.setSelectedKey("tab");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.notOk(oSelectedTab._isBadgeAttached, "The badge is removed from initially selected tab");
@@ -981,11 +981,11 @@ sap.ui.define([
 			});
 			this.oITH.addItem(oRootTab);
 			this.oITH.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oITH.destroy();
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		}
 	});
 
@@ -1018,7 +1018,7 @@ sap.ui.define([
 			fillWithItems(this.oITH, 100);
 
 			this.oScrollContainer.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oScrollContainer.destroy();
@@ -1037,7 +1037,7 @@ sap.ui.define([
 
 		// Act
 		this.oITH.setSelectedKey("50");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		aVisibleTabs = this.oITH.$().find(".sapMITBItem:not(.sapMITBFilterHidden)").toArray();
@@ -1050,7 +1050,7 @@ sap.ui.define([
 	QUnit.test("Both overflows show how many tabs they hold", function (assert) {
 		// Arrange
 		this.oITH.setSelectedKey("50");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aItems = this.oITH.getItems(),
 			aVisibleTabs = this.oITH._getItemsInStrip(),
@@ -1071,7 +1071,7 @@ sap.ui.define([
 	QUnit.test("Start overflow button is visible when fourth item is selected", function (assert) {
 		// Arrange
 		this.oITH.setSelectedKey("3");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(this.oITH._getStartOverflow().$().hasClass("sapMITHOverflowVisible"), "start overflow button is visible");
 		assert.strictEqual(this.oITH._getStartOverflow().getText(), "+2", "start overflow button text is correct");
@@ -1081,7 +1081,7 @@ sap.ui.define([
 		// Arrange
 		this.oITH.setSelectedKey("98");
 		this.oScrollContainer.setWidth("220px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(this.oITH._getOverflow().$().hasClass("sapMITHOverflowVisible"), "end overflow button is visible");
 		assert.strictEqual(this.oITH._getOverflow().getText(), "+1", "end overflow button text is correct");
@@ -1099,10 +1099,10 @@ sap.ui.define([
 			this.oITH.placeAt(DOM_RENDER_LOCATION);
 
 			this.oITH.setSelectedKey("50");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.oITH.getItems()[1].addCustomData(new BadgeCustomData());
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oITH.destroy();
@@ -1135,7 +1135,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oITH = createHeaderWithItems(40, true);
 			this.oITH.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oITH.destroy();
@@ -1145,7 +1145,7 @@ sap.ui.define([
 	QUnit.test("Separator goes to the overflow", function (assert) {
 
 		this.oITH.$().width("400px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aItems = this.oITH.getItems(),
 			oLastVisibleItem = aItems[6],
@@ -1157,7 +1157,7 @@ sap.ui.define([
 
 		// Act
 		this.oITH.setSelectedKey("10");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oLastVisibleItem.$().hasClass("sapMITBFilterHidden"), "the last item is not visible");
@@ -1168,7 +1168,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oITH = new IconTabHeader();
 			this.oITH.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oITH.destroy();
@@ -1187,7 +1187,7 @@ sap.ui.define([
 			sCountElementId = oFilter.getId() + "-count";
 
 		oITH.addItem(oFilter);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		sAriaLabelledBy = oFilter.getDomRef().getAttribute("aria-labelledby");
 
@@ -1196,7 +1196,7 @@ sap.ui.define([
 
 		// Act
 		oITH.setMode(IconTabHeaderMode.Inline);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		sAriaLabelledBy = oFilter.getDomRef().getAttribute("aria-labelledby");
 
@@ -1208,7 +1208,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oITH = new IconTabHeader();
 			this.oITH.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oITH.destroy();
@@ -1230,7 +1230,7 @@ sap.ui.define([
 		);
 
 		var oSelectSpy = sinon.spy(this.oITH, "fireSelect");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Press SPACE key on second IconTabFilter to expand
 		QUnitUtils.triggerKeyup(this.oITH.getItems()[1].$(), KeyCodes.SPACE);
@@ -1254,7 +1254,7 @@ sap.ui.define([
 			})
 		);
 		this.oITH.setSelectedKey("key1");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		var oMockEvent = {
@@ -1270,7 +1270,7 @@ sap.ui.define([
 		};
 
 		this.oITH.ontouchstart(oMockEvent);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var iActiveTouch = this.oITH._iActiveTouch;
 
@@ -1307,10 +1307,10 @@ sap.ui.define([
 			]
 		});
 		oITH.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oITH.setSelectedKey("tab4");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oITH._onItemNavigationFocusLeave();
 
@@ -1371,10 +1371,10 @@ sap.ui.define([
 		});
 
 		oScrollContainer.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oITH.setSelectedKey("tab5");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oITH._onItemNavigationFocusLeave();
 
@@ -1382,7 +1382,7 @@ sap.ui.define([
 		assert.strictEqual(oITH._oItemNavigation.getFocusedIndex(), 5, "focused index is correct");
 
 		oITH.setSelectedKey("tab62");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oITH._onItemNavigationFocusLeave();
 

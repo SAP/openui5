@@ -1,60 +1,22 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
+	<head><meta charset="utf-8">
 
 		<title>Phone numbers in RTL page - sap.m.Label</title>
-		<style>
-		#text1, #text2 {
-		padding: 15px;
-		}
-		</style>
+		<link rel="stylesheet" href="./LabelRTLTest.css">
 		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-		src="../../../resources/sap-ui-core.js"
-		data-sap-ui-libs="sap.m"
-		data-sap-ui-rtl="true">
+				src="../../../resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-rtl="true"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/LabelRTLTest"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
 
-		<script>
-
-		var app = new sap.m.App("myApp");
-		app.placeAt("body");
-
-		var page = new sap.m.Page("page", {
-			title:"Phone numbers with spaces in RTL page",
-			content: [
-				new sap.m.Label({
-					text: 'Default behaviour',
-					width: '100%'
-				}),
-				new sap.m.Label({
-					text: '(012) 345 678',
-					width: '100%'
-				}),
-				new sap.m.Label({
-					text: 'LTR content direction, wrong default alignment',
-					width: '100%'
-				}),
-				new sap.m.Label({
-					text: '(012) 345 678',
-					textDirection: 'LTR',
-					width: '100%'
-				}),
-				new sap.m.Label({
-					text: 'LTR content direction, right alignment',
-					width: '100%'
-				}),
-				new sap.m.Label({
-					text: '(012) 345 678',
-					textDirection: 'LTR',
-					textAlign: 'Right',
-					width: '100%'
-				})
-			]
-		});
-
-		app.addPage(page);
-		</script>
+		
 	</head>
 	<body id="body" class="sapUiBody">
 	</body>

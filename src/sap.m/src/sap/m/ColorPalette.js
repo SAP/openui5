@@ -16,7 +16,6 @@ sap.ui.define([
 	'./ColorPaletteRenderer',
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/unified/library",
 	"sap/ui/unified/ColorPickerDisplayMode",
 	"sap/ui/unified/ColorPicker"
@@ -33,7 +32,6 @@ sap.ui.define([
 	ColorPaletteRenderer,
 	containsOrEquals,
 	KeyCodes,
-	jQuery,
 	unifiedLibrary,
 	ColorPickerDisplayMode,
 	ColorPicker

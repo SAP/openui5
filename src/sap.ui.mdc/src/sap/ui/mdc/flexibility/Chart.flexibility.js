@@ -26,4 +26,4 @@ sap.ui.define([
 		addCondition: ConditionFlex.addCondition,
 		removeCondition: ConditionFlex.removeCondition
 	};
-}, /* bExport= */ true);
+});

@@ -1,0 +1,21 @@
+html {
+	height: 100%;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+}
+
+#content {
+	display: flex;
+	flex: 1 1 auto;
+}
+
+.vboxborder {
+	border: 1px solid #EC8B46;
+}
+
+.vboxborder > *:not(:last-child) {
+	border-bottom: 1px solid #90BFD7;
+}

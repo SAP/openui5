@@ -497,25 +497,12 @@ sap.ui.define([
 	 * @returns {object} The modified request
 	 */
 	RequestDataProvider.prototype._modifyRequestBeforeSent = function (oRequest, oSettings) {
-		var oCard = Element.getElementById(this.getCard()),
-			oHost = Element.getElementById(this.getHost());
+		var oHost = Element.getElementById(this.getHost());
+
+		Element.getElementById(this.getCard());
 
 		if (!oHost) {
 			return oRequest;
-		}
-
-		/**
-		 * @deprecated since 1.113
-		 */
-		if (oHost.modifyRequestHeaders) {
-			oRequest.options.headers = new Headers(oHost.modifyRequestHeaders(Object.fromEntries(oRequest.options.headers), oSettings, oCard));
-		}
-
-		/**
-		 * @deprecated since 1.113
-		 */
-		if (oHost.modifyRequest) {
-			oRequest = oHost.modifyRequest(oRequest, oSettings, oCard);
 		}
 
 		return oRequest;

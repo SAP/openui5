@@ -696,7 +696,6 @@ sap.ui.define([
 
 		this.selectRow(1);
 		assert.ok(oCopyButton.getEnabled(), "The copy button is enabled before rebinding");
-		this.oTable;
 
 		this.oTable.attachEventOnce("rowsUpdated", () => {
 			assert.notOk(oCopyButton.getEnabled(), "The copy button is disabled, previously selected row is not selected after rebind");

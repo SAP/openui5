@@ -21,13 +21,7 @@ sap.ui.define(['sap/ui/base/Object'],function(Ui5Object) {
      * @since 1.48
      */
     var Extension = Ui5Object.extend("sap.ui.test.OpaExtension", {
-        metadata : {
-            publicMethods : [
-                "onAfterInit",
-                "onBeforeExit" ,
-                "getAssertions"
-            ]
-        }
+        metadata : {}
 
         /**
          * Startup hook, executed after startup of the application under test.

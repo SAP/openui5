@@ -1,12 +1,11 @@
 sap.ui.define([
 	"./testfwk",
-	"jquery.sap.sjax",
 	"sap/base/strings/escapeRegExp",
 	"sap/ui/core/Core",
 	"sap/ui/util/Storage",
 	"test-resources/sap/ui/core/qunit/test/starter/find/discovery",
 	"sap/base/util/isEmptyObject"
-], function(testfwk, jQuery, escapeRegExp, oCore, Storage, discovery, isEmptyObject) {
+], function(testfwk, escapeRegExp, oCore, Storage, discovery, isEmptyObject) {
 	"use strict";
 
 	oCore.ready(function onLoadPage() {
@@ -97,7 +96,7 @@ sap.ui.define([
 	function addSampleUrl(oEvent) {
 		var oInput = document.getElementById("sampleurl");
 		var sUrl = oInput.value;
-		var oResult = jQuery.sap.sjax({type : 'HEAD', url : sUrl});
+		var oResult = undefined/*jQuery*/.sap.sjax({type : 'HEAD', url : sUrl});
 		if ( !oResult.success ) {
 			/* eslint-disable no-alert */
 			alert(sUrl + " does not exist (" + oResult.error + ")");
@@ -283,7 +282,7 @@ sap.ui.define([
 
 	function fetchJSON(sUrl) {
 		return Promise.resolve(
-			jQuery.ajax({
+			undefined/*jQuery*/.ajax({
 				url: sUrl,
 				dataType : "json"
 			})
@@ -385,7 +384,7 @@ sap.ui.define([
 				var match = /^test-resources\/(.*)\/qunit\/(.*)$/.exec(oTestConfig.module);
 				if ( match ) {
 					var libPrefix = findLibPrefix(match[1]);
-					var name = oTestConfig.module.slice("test-resources\/".length + libPrefix.length + 1) + ".js";
+					var name = oTestConfig.module.slice(15 + libPrefix.length + 1) + ".js";
 					var oUrl = new URL(oTestConfig.fullpage, document.baseURI);
 					return {
 						lib: libPrefix.replace(/\//g, "."),

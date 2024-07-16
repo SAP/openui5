@@ -11,7 +11,7 @@
  * might break in future releases.
  */
 
-/*global sap:true, Blob, console, document, Promise, URL, XMLHttpRequest */
+/*global sap:true, Blob, console, document, Promise, URL */
 
 (function(__global) {
 	"use strict";
@@ -116,15 +116,6 @@
 	let measure;
 
 	/**
-	 * Source code transformation hook.
-	 *
-	 * To be used by code coverage, only supported in sync mode.
-	 * @private
-	 * @ui5-transform-hint replace-local undefined
-	 */
-	let translate;
-
-	/**
 	 * Method used by sap.ui.require to simulate asynchronous behavior.
 	 *
 	 * The default executes the given function in a separate browser task.
@@ -139,15 +130,6 @@
 	 * - at most one anonymous module definition per file, zero for adhoc definitions
 	 */
 	const strictModuleDefinitions = true;
-
-	/**
-	 * Whether asynchronous loading can be used at all.
-	 * When activated, require will load asynchronously, else synchronously.
-	 * @type {boolean}
-	 * @private
-	 * @ui5-transform-hint replace-local true
-	 */
-	let bGlobalAsyncMode = false;
 
 
 	/**
@@ -1390,44 +1372,6 @@
 	let queue = new ModuleDefinitionQueue();
 
 	/**
-	 * Loads the source for the given module with a sync XHR.
-	 * @param {Module} oModule Module to load the source for
-	 * @throws {Error} When loading failed for some reason.
-	 */
-	function loadSyncXHR(oModule) {
-		const xhr = new XMLHttpRequest();
-
-		function createXHRLoadError(error) {
-			error = new Error(xhr.statusText ? xhr.status + " - " + xhr.statusText : xhr.status);
-			error.name = "XHRLoadError";
-			error.status = xhr.status;
-			error.statusText = xhr.statusText;
-			return error;
-		}
-
-		xhr.addEventListener('load', function(e) {
-			// File protocol (file://) always has status code 0
-			if ( xhr.status === 200 || xhr.status === 0 ) {
-				oModule.state = LOADED;
-				oModule.data = xhr.responseText;
-			} else {
-				oModule.error = createXHRLoadError();
-			}
-		});
-		// Note: according to whatwg spec, error event doesn't fire for sync send(), instead an error is thrown
-		// we register a handler, in case a browser doesn't follow the spec
-		xhr.addEventListener('error', function(e) {
-			oModule.error = createXHRLoadError();
-		});
-		xhr.open('GET', oModule.url, false);
-		try {
-			xhr.send();
-		} catch (error) {
-			oModule.error = error;
-		}
-	}
-
-	/**
 	 * Global event handler to detect script execution errors.
 	 * @private
 	 */
@@ -1510,26 +1454,24 @@
 	}
 
 	/**
-	 * Loads the given module if needed and returns the module export or a promise on it.
-	 *
-	 * If loading is still ongoing for the requested module and if there is a cycle detected between
-	 * the requesting module and the module to be loaded, then <code>undefined</code> (or a promise on
-	 * <code>undefined</code>) will be returned as intermediate module export to resolve the cycle.
-	 *
-	 * @param {Module} oRequestingModule The module in whose context the new module has to be loaded;
-	 *           this is needed to detect cycles
-	 * @param {string} sModuleName Name of the module to be loaded, in URN form and with '.js' extension
-	 * @param {boolean} bAsync Whether the operation can be executed asynchronously
-	 * @param {boolean} [bSkipShimDeps=false] Whether shim dependencies should be ignored (used by recursive calls)
-	 * @param {boolean} [bSkipBundle=false] Whether bundle information should be ignored (used by recursive calls)
-	 * @returns {any|Promise} Returns the module export in sync mode or a promise on it in async mode
-	 * @throws {Error} When loading failed in sync mode
-	 *
-	 * @private
-	 * @ui5-transform-hint replace-param bAsync true
-	 */
-	function requireModule(oRequestingModule, sModuleName, bAsync, bSkipShimDeps, bSkipBundle) {
-
+		 * Loads the given module if needed and returns the module export or a promise on it.
+		 *
+		 * If loading is still ongoing for the requested module and if there is a cycle detected between
+		 * the requesting module and the module to be loaded, then <code>undefined</code> (or a promise on
+		 * <code>undefined</code>) will be returned as intermediate module export to resolve the cycle.
+		 *
+		 * @param {Module} oRequestingModule The module in whose context the new module has to be loaded;
+		 *           this is needed to detect cycles
+		 * @param {string} sModuleName Name of the module to be loaded, in URN form and with '.js' extension
+		 * @param {boolean} bAsync Whether the operation can be executed asynchronously
+		 * @param {boolean} [bSkipShimDeps=false] Whether shim dependencies should be ignored (used by recursive calls)
+		 * @param {boolean} [bSkipBundle=false] Whether bundle information should be ignored (used by recursive calls)
+		 * @returns {any|Promise} Returns the module export in sync mode or a promise on it in async mode
+		 * @throws {Error} When loading failed in sync mode
+		 *
+		 * @private
+		 */
+	function requireModule(oRequestingModule, sModuleName, _bAsync, bSkipShimDeps, bSkipBundle) {
 		// only for robustness, should not be possible by design (all callers append '.js')
 		const oSplitName = urnToBaseIDAndSubType(sModuleName);
 		if ( !oSplitName ) {
@@ -1559,11 +1501,11 @@
 			}
 			return requireAll(oModule, oShim.deps, function() {
 				// set bSkipShimDeps to true to prevent endless recursion
-				return requireModule(oRequestingModule, sModuleName, bAsync, /* bSkipShimDeps = */ true, bSkipBundle);
+				return requireModule(oRequestingModule, sModuleName, true, /* bSkipShimDeps = */ true, bSkipBundle);
 			}, function(oErr) {
 				// Note: in async mode, this 'throw' will reject the promise returned by requireAll
 				throw oModule.failWith("Failed to resolve dependencies of {id}", oErr);
-			}, bAsync);
+			}, true);
 		}
 
 		// when there's bundle information for the module
@@ -1572,20 +1514,10 @@
 			if ( bLoggable ) {
 				log.debug(`${sLogPrefix}require bundle '${oModule.group}' containing '${sModuleName}'`);
 			}
-			if ( bAsync ) {
-				return requireModule(null, oModule.group, bAsync).catch(noop).then(function() {
-					// set bSkipBundle to true to prevent endless recursion
-					return requireModule(oRequestingModule, sModuleName, bAsync, bSkipShimDeps, /* bSkipBundle = */ true);
-				});
-			} else {
-				try {
-					requireModule(null, oModule.group, bAsync);
-				} catch (oError) {
-					if ( bLoggable ) {
-						log.error(sLogPrefix + "require bundle '" + oModule.group + "' failed (ignored)");
-					}
-				}
-			}
+			return requireModule(null, oModule.group, true).catch(noop).then(function() {
+				// set bSkipBundle to true to prevent endless recursion
+				return requireModule(oRequestingModule, sModuleName, true, bSkipShimDeps, /* bSkipBundle = */ true);
+			});
 		}
 
 		if ( bLoggable ) {
@@ -1595,21 +1527,14 @@
 
 		// check if module has been loaded already
 		if ( oModule.state !== INITIAL ) {
-
 			let bExecutedNow = false;
-
-			if ( oModule.state === EXECUTING && oModule.data != null && !bAsync && oModule.async ) {
-				oModule.state = PRELOADED;
-				oModule.async = bAsync;
-				oModule.pending = null; // TODO or is this still needed ?
-			}
 
 			if ( oModule.state === PRELOADED ) {
 				oModule.state = LOADED;
-				oModule.async = bAsync;
+				oModule.async = true;
 				bExecutedNow = true;
 				measure && measure.start(sModuleName, "Require module " + sModuleName + " (preloaded)", ["require"]);
-				execModule(sModuleName, bAsync);
+				execModule(sModuleName, true);
 				measure && measure.end(sModuleName);
 			}
 
@@ -1619,36 +1544,19 @@
 				}
 				// Note: this intentionally does not return oModule.promise() as the export might be temporary in case of cycles
 				// or it might have changed after repeated module execution
-				return bAsync ? Promise.resolve(wrapExport(oModule.value())) : wrapExport(oModule.value());
+				return Promise.resolve(wrapExport(oModule.value()));
 			} else if ( oModule.state === FAILED ) {
-				if ( bAsync ) {
-					return oModule.deferred().promise;
-				} else {
-					throw oModule.error;
-				}
+				return oModule.deferred().promise;
 			} else {
-				// currently loading or executing
-				if ( bAsync ) {
-					// break up cyclic dependencies
-					if ( oRequestingModule && oModule.dependsOn(oRequestingModule) ) {
-						if ( log.isLoggable() ) {
-							log.debug("cycle detected between '" + oRequestingModule.name + "' and '" + sModuleName + "', returning undefined for '" + sModuleName + "'");
-						}
-						// Note: this must be a separate promise as the fulfillment is not the final one
-						return Promise.resolve(wrapExport(undefined));
-					}
-					return oModule.deferred().promise;
-				}
-				if ( !bAsync && !oModule.async ) {
-					// sync pending, return undefined
+				// break up cyclic dependencies
+				if ( oRequestingModule && oModule.dependsOn(oRequestingModule) ) {
 					if ( log.isLoggable() ) {
-						log.debug("cycle detected between '" + (oRequestingModule ? oRequestingModule.name : "unknown") + "' and '" + sModuleName + "', returning undefined for '" + sModuleName + "'");
+						log.debug("cycle detected between '" + oRequestingModule.name + "' and '" + sModuleName + "', returning undefined for '" + sModuleName + "'");
 					}
-					return wrapExport(undefined);
+					// Note: this must be a separate promise as the fulfillment is not the final one
+					return Promise.resolve(wrapExport(undefined));
 				}
-				// async pending, load sync again
-				log.warning("Sync request triggered for '" + sModuleName + "' while async request was already pending." +
-					" Loading a module twice might cause issues and should be avoided by fully migrating to async APIs.");
+				return oModule.deferred().promise;
 			}
 		}
 
@@ -1656,52 +1564,12 @@
 
 		// set marker for loading modules (to break cycles)
 		oModule.state = LOADING;
-		oModule.async = bAsync;
+		oModule.async = true;
 
 		// if debug is enabled, try to load debug module first
 		const aExtensions = shouldLoadDebugVariant(sModuleName) ? ["-dbg", ""] : [""];
 
-		if ( !bAsync ) {
-
-			for (let i = 0; i < aExtensions.length && oModule.state !== LOADED; i++) {
-				// create module URL for the current extension
-				oModule.url = getResourcePath(oSplitName.baseID, aExtensions[i] + oSplitName.subType);
-				if ( bLoggable ) {
-					log.debug(sLogPrefix + "loading " + (aExtensions[i] ? aExtensions[i] + " version of " : "") + "'" + sModuleName + "' from '" + oModule.url + "' (using sync XHR)");
-				}
-
-				if ( syncCallBehavior ) {
-					const sMsg = "[nosync] loading module '" + oModule.url + "'";
-					if ( syncCallBehavior === 1 ) {
-						log.error(sMsg);
-					} else {
-						throw new Error(sMsg);
-					}
-				}
-
-				// call notification hook
-				ui5Require.load({ completeLoad:noop, async: false }, oModule.url, oSplitName.baseID);
-
-				loadSyncXHR(oModule);
-			}
-
-			if ( oModule.state === LOADING ) {
-				// transition to FAILED
-				oModule.failWith("failed to load {id} from {url}", oModule.error);
-			} else if ( oModule.state === LOADED ) {
-				// execute module __after__ loading it, this reduces the required stack space!
-				execModule(sModuleName, bAsync);
-			}
-
-			measure && measure.end(sModuleName);
-
-			if ( oModule.state !== READY ) {
-				throw oModule.error;
-			}
-
-			return wrapExport(oModule.value());
-
-		} else {
+		{
 
 			oModule.url = getResourcePath(oSplitName.baseID, aExtensions[0] + oSplitName.subType);
 			// in debug mode, fall back to the non-dbg source, otherwise try the same source again (for SSO re-connect)
@@ -1723,11 +1591,10 @@
 	}
 
 	/**
-	 * Note: `sModuleName` must be a normalized resource name of type .js
-	 * @private
-	 * @ui5-transform-hint replace-param bAsync true
-	 */
-	function execModule(sModuleName, bAsync) {
+		 * Note: `sModuleName` must be a normalized resource name of type .js
+		 * @private
+		 */
+	function execModule(sModuleName) {
 
 		const oModule = mModules[sModuleName];
 
@@ -1740,7 +1607,7 @@
 
 			try {
 
-				bForceSyncDefines = !bAsync;
+				bForceSyncDefines = false;
 				queue = new ModuleDefinitionQueue(true);
 
 				if ( bLoggable ) {
@@ -1764,7 +1631,6 @@
 				} else if ( Array.isArray(oModule.data) ) {
 					ui5Define.apply(null, oModule.data);
 				} else {
-
 					sScript = oModule.data;
 
 					// sourceURL: Firebug, Chrome and Safari debugging help, appending the string seems to cost ZERO performance
@@ -1784,12 +1650,6 @@
 							// write sourceURL if no annotation was there or when it was a sourceMappingURL
 							sScript += "\n//# sourceURL=" + resolveURL(oModule.url) + "?eval";
 						}
-					}
-
-					// framework internal hook to intercept the loaded script and modify
-					// it before executing the script - e.g. useful for client side coverage
-					if (typeof translate === "function") {
-						sScript = translate(sScript, sModuleName);
 					}
 
 					// eval the source in the global context (preventing access to the closure of this function)
@@ -1833,11 +1693,9 @@
 	}
 
 	/**
-	 * @private
-	 * @ui5-transform-hint replace-param bAsync true
-	 */
-	function requireAll(oRequestingModule, aDependencies, fnCallback, fnErrCallback, bAsync) {
-
+		 * @private
+		 */
+	function requireAll(oRequestingModule, aDependencies, fnCallback, fnErrCallback) {
 		const aModules = [];
 		let sBaseName,
 			oError;
@@ -1883,7 +1741,7 @@
 					}
 				}
 				if ( !aModules[i] ) {
-					aModules[i] = requireModule(oRequestingModule, sDepModName, bAsync);
+					aModules[i] = requireModule(oRequestingModule, sDepModName, true);
 				}
 			}
 
@@ -1891,24 +1749,16 @@
 			oError = err;
 		}
 
-		if ( bAsync ) {
+		{
 			const oPromise = oError ? Promise.reject(oError) : Promise.all(aModules);
 			return oPromise.then(fnCallback, fnErrCallback);
-		} else {
-			if ( oError ) {
-				fnErrCallback(oError);
-			} else {
-				return fnCallback(aModules);
-			}
 		}
 	}
 
 	/**
-	 * @private
-	 * @ui5-transform-hint replace-param bAsync true
-	 * @ui5-transform-hint replace-param bExport false
-	 */
-	function executeModuleDefinition(sResourceName, aDependencies, vFactory, bExport, bAsync) {
+		 * @private
+		 */
+	function executeModuleDefinition(sResourceName, aDependencies, vFactory) {
 		const bLoggable = log.isLoggable();
 		sResourceName = normalize(sResourceName);
 
@@ -1923,14 +1773,14 @@
 		function shouldSkipExecution() {
 			if ( oModule.settled ) {
 				// avoid double execution of the module, e.g. when async/sync conflict occurred before queue processing
-				if ( oModule.state >= READY && bAsync && oModule.async === false ) {
+				if ( oModule.state >= READY && oModule.async === false ) {
 					log.warning("Repeated module execution skipped after async/sync conflict for " + oModule.name);
 					return true;
 				}
 
 				// when an inline module definition is executed repeatedly, this is reported but not prevented
 				// Standard AMD loaders don't support this scenario, it needs to be fixed on caller side
-				if ( strictModuleDefinitions && bAsync ) {
+				if ( strictModuleDefinitions ) {
 					log.warning("Module '" + oModule.name + "' has been defined more than once. " +
 							"All but the first definition will be ignored, don't try to define the same module again.");
 					return true;
@@ -1954,7 +1804,6 @@
 		oModule.content = undefined;
 
 		function onSuccess(aModules) {
-
 			// avoid double execution of the module, e.g. when async/sync conflict occurred while waiting for dependencies
 			if ( shouldSkipExecution() ) {
 				return;
@@ -1963,14 +1812,6 @@
 			// factory
 			if ( bLoggable ) {
 				log.debug(sLogPrefix + "define('" + sResourceName + "'): dependencies resolved, calling factory " + typeof vFactory);
-			}
-
-			if ( bExport && syncCallBehavior !== 2 ) {
-				// ensure parent namespace
-				const aPackages = sResourceName.split('/');
-				if ( aPackages.length > 1 ) {
-					getGlobalObject(__global, aPackages, aPackages.length - 1, true);
-				}
 			}
 
 			if ( typeof vFactory === 'function' ) {
@@ -1987,59 +1828,34 @@
 					}
 					oModule.content = exports;
 				} catch (error) {
-					const wrappedError = oModule.failWith("failed to execute module factory for '{id}'", error);
-					if ( bAsync ) {
-						// Note: in async mode, the error is reported via the oModule's promise
-						return;
-					}
-					throw wrappedError;
+					oModule.failWith("failed to execute module factory for '{id}'", error);
+					// Note: in async mode, the error is reported via the oModule's promise
+					return;
 				}
 			} else {
 				oModule.content = vFactory;
 			}
 
-			// HACK: global export
-			if ( bExport && syncCallBehavior !== 2 ) {
-				if ( oModule.content == null ) {
-					log.error(`Module '${sResourceName}' returned no content, but should export to global?`);
-				} else {
-					if ( bLoggable ) {
-						log.debug(`exporting content of '${sResourceName}': as global object`);
-					}
-					// convert module name to UI5 module name syntax (might fail!)
-					const sModuleName = urnToUI5(sResourceName);
-					setGlobalProperty(sModuleName, oModule.content);
-				}
-			}
-
 			oModule.ready();
-
 		}
 
 		// Note: dependencies will be resolved and converted from RJS to URN inside requireAll
-		requireAll(oModule, aDependencies, bAsync && oModule.data ? scheduleExecution(onSuccess) : onSuccess, function(oErr) {
-			const oWrappedError = oModule.failWith("Failed to resolve dependencies of {id}", oErr);
-			if ( !bAsync ) {
-				throw oWrappedError;
-			}
-			// Note: in async mode, the error is reported via the oModule's promise
-		}, /* bAsync = */ bAsync);
+		requireAll(oModule, aDependencies, oModule.data ? scheduleExecution(onSuccess) : onSuccess, function(oErr) {
+			oModule.failWith("Failed to resolve dependencies of {id}", oErr);
+		}, true);
 
 	}
 
 	/**
-	 * @private
-	 * @ui5-transform-hint replace-param bExport false
-	 */
-	function ui5Define(sModuleName, aDependencies, vFactory, bExport) {
+		 * @private
+		 */
+	function ui5Define(sModuleName, aDependencies, vFactory) {
 		let sResourceName;
 
 		// optional id
 		if ( typeof sModuleName === 'string' ) {
 			sResourceName = sModuleName + '.js';
 		} else {
-			// shift parameters
-			bExport = vFactory;
 			vFactory = aDependencies;
 			aDependencies = sModuleName;
 			sResourceName = null;
@@ -2047,8 +1863,6 @@
 
 		// optional array of dependencies
 		if ( !Array.isArray(aDependencies) ) {
-			// shift parameters
-			bExport = vFactory;
 			vFactory = aDependencies;
 			if ( typeof vFactory === 'function' && vFactory.length > 0 ) {
 				aDependencies = ['require', 'exports', 'module'].slice(0, vFactory.length);
@@ -2057,8 +1871,8 @@
 			}
 		}
 
-		if ( bForceSyncDefines === false || (bForceSyncDefines == null && bGlobalAsyncMode) ) {
-			queue.push(sResourceName, aDependencies, vFactory, bExport);
+		if ( bForceSyncDefines === false || (bForceSyncDefines == null) ) {
+			queue.push(sResourceName, aDependencies, vFactory, false);
 			if ( sResourceName != null ) {
 				const oModule = Module.get(sResourceName);
 				// change state of PRELOADED or INITIAL modules to prevent further requests/executions
@@ -2093,7 +1907,7 @@
 			log.debug(`module names don't match: requested: ${sModuleName}, defined: ${oCurrentExecInfo.name}`);
 			Module.get(oCurrentExecInfo.name).addAlias(sModuleName);
 		}
-		executeModuleDefinition(sResourceName, aDependencies, vFactory, bExport, /* bAsync = */ false);
+		executeModuleDefinition(sResourceName, aDependencies, vFactory, false, /* bAsync = */ false);
 
 	}
 
@@ -2157,28 +1971,15 @@
 			requireAll(sContextName, vDependencies, function(aModules) {
 				aModules = aModules.map(unwrapExport);
 				if ( typeof fnCallback === 'function' ) {
-					if ( bGlobalAsyncMode ) {
-						fnCallback.apply(__global, aModules);
-					} else {
-						// enforce asynchronous execution of callback even in sync mode
-						simulateAsyncCallback(function() {
-							fnCallback.apply(__global, aModules);
-						});
-					}
+					fnCallback.apply(__global, aModules);
 				}
 			}, function(oErr) {
 				if ( typeof fnErrCallback === 'function' ) {
-					if ( bGlobalAsyncMode ) {
-						fnErrCallback.call(__global, oErr);
-					} else {
-						simulateAsyncCallback(function() {
-							fnErrCallback.call(__global, oErr);
-						});
-					}
+					fnErrCallback.call(__global, oErr);
 				} else {
 					throw oErr;
 				}
-			}, /* bAsync = */ bGlobalAsyncMode);
+			}, true);
 
 			// return undefined;
 		};
@@ -2218,24 +2019,15 @@
 	 */
 	const amdRequire = createContextualRequire(null, true);
 
-	function requireSync(sModuleName) {
-		sModuleName = getMappedName(sModuleName + '.js');
-		if ( log.isLoggable() ) {
-			log.warning(`sync require of '${sModuleName}'`);
-		}
-		return unwrapExport(requireModule(null, sModuleName, /* bAsync = */ false));
-	}
-
 	/**
-	 * @private
-	 * @ui5-transform-hint replace-param bExport false
-	 */
-	function predefine(sModuleName, aDependencies, vFactory, bExport) {
+		 * @private
+		 */
+	function predefine(sModuleName, aDependencies, vFactory) {
 		if ( typeof sModuleName !== 'string' ) {
 			throw new Error("predefine requires a module name");
 		}
 		sModuleName = normalize(sModuleName);
-		Module.get(sModuleName + '.js').preload("<unknown>/" + sModuleName, [sModuleName, aDependencies, vFactory, bExport], null);
+		Module.get(sModuleName + '.js').preload("<unknown>/" + sModuleName, [sModuleName, aDependencies, vFactory, false], null);
 	}
 
 	function preload(modules, group, url) {
@@ -2431,9 +2223,6 @@
 					vOriginalRequire = __global.require;
 					__global.define = amdDefine;
 					__global.require = amdRequire;
-
-					// Enable async loading behaviour implicitly when switching to amd mode
-					bGlobalAsyncMode = true;
 				} else {
 					__global.define = vOriginalDefine;
 					__global.require = vOriginalRequire;
@@ -2442,10 +2231,9 @@
 			}
 		},
 		async(async) {
-			if (bGlobalAsyncMode && !async) {
+			if (!async) {
 				throw new Error("Changing the ui5loader config from async to sync is not supported. Only a change from sync to async is allowed.");
 			}
-			bGlobalAsyncMode = !!async;
 		},
 		bundles(bundle, modules) {
 			bundle += '.js';
@@ -2549,7 +2337,7 @@
 		if ( cfg === undefined ) {
 			return {
 				amd: bExposeAsAMDLoader,
-				async: bGlobalAsyncMode,
+				async: true,
 				noConflict: !bExposeAsAMDLoader // TODO needed?
 			};
 		}
@@ -2572,71 +2360,62 @@
 	};
 
 	const privateAPI = {
-
 		// properties
 		get assert() {
 			return assert;
 		},
+
 		set assert(v) {
 			assert = v;
 		},
+
 		get logger() {
 			return log;
 		},
+
 		set logger(v) {
 			log = v;
 			aEarlyLogs.forEach(({level, message}) => log[level](message));
 		},
+
 		get measure() {
 			return measure;
 		},
+
 		set measure(v) {
 			measure = v;
 		},
-		/**
-		 * @deprecated As of version 1.120, sync loading is deprecated without replacement due to the deprecation
-		 *   of sync XMLHttpRequests in the web standard.
-		 */
-		get translate() {
-			return translate;
-		},
-		/**
-		 * @deprecated As of version 1.120, sync loading is deprecated without replacement due to the deprecation
-		 *   of sync XMLHttpRequests in the web standard.
-		 */
-		set translate(v) {
-			translate = v;
-		},
+
 		get callbackInMicroTask() {
 			return simulateAsyncCallback === executeInMicroTask;
 		},
+
 		set callbackInMicroTask(v) {
 			simulateAsyncCallback = v ? executeInMicroTask : executeInSeparateTask;
 		},
+
 		get maxTaskDuration() {
 			return iMaxTaskDuration;
 		},
+
 		set maxTaskDuration(v) {
 			updateMaxTaskDuration(v);
 		},
 
 		// methods
 		amdDefine,
+
 		amdRequire,
 		config: ui5Config,
-		/**
-		 * @deprecated As of version 1.120, all usages of this private API have been deprecated
-		 */
-		declareModule(sResourceName, fnDeprecationMessage) {
-			/* void */ declareModule(normalize(sResourceName), fnDeprecationMessage);
-		},
 		defineModuleSync,
 		dump: dumpInternals,
 		getAllModules,
 		getModuleContent,
+
 		getModuleState(sResourceName) {
 			return mModules[sResourceName] ? mModules[sResourceName].state : INITIAL;
 		},
+
 		getResourcePath,
 		getSyncCallBehavior,
 		getUrlPrefixes,
@@ -3267,72 +3046,40 @@
 	sap.ui.require = ui5Require;
 
 	/**
-	 * Calculates a URL from the provided resource name.
-	 *
-	 * The calculation takes any configured ID mappings or resource paths into account
-	 * (see {@link sap.ui.loader.config config options map and paths}. It also supports relative
-	 * segments such as <code>./</code> and <code>../</code> within the path, but not at its beginning.
-	 * If relative navigation would cross the root namespace (e.g. <code>sap.ui.require.toUrl("../")</code>)
-	 * or when the resource name starts with a slash or with a relative segment, an error is thrown.
-	 *
-	 * <b>Note:</b> <code>toUrl</code> does not resolve the returned URL; whether it is an absolute
-	 * URL or a relative URL depends on the configured <code>baseUrl</code> and <code>paths</code>.
-	 *
-	 * @example
-	 *   sap.ui.loader.config({
-	 *     baseUrl: "/home"
-	 *   });
-	 *
-	 *   sap.ui.require.toUrl("app/data")              === "/home/app/data"
-	 *   sap.ui.require.toUrl("app/data.json")         === "/home/app/data.json"
-	 *   sap.ui.require.toUrl("app/data/")             === "/home/app/data/"
-	 *   sap.ui.require.toUrl("app/.config")           === "/home/app/.config"
-	 *   sap.ui.require.toUrl("app/test/../data.json") === "/home/data.json"
-	 *   sap.ui.require.toUrl("app/test/./data.json")  === "/home/test/data.json"
-	 *   sap.ui.require.toUrl("app/../../data")        throws Error because root namespace is left
-	 *   sap.ui.require.toUrl("/app")                  throws Error because first character is a slash
-	 *
-	 * @param {string} sName Name of a resource e.g. <code>'app/data.json'</code>
-	 * @returns {string} Path to the resource, e.g. <code>'/home/app/data.json'</code>
-	 * @see https://github.com/amdjs/amdjs-api/wiki/require#requiretourlstring-
-	 * @throws {Error} If the input name is absolute (starts with a slash character <code>'/'</code>),
-	 *   starts with a relative segment or if resolving relative segments would cross the root
-	 *   namespace
-	 * @public
-	 * @name sap.ui.require.toUrl
-	 * @function
-	 * @ui5-global-only
-	 */
-
-	/**
-	 * Load a single module synchronously and return its module value.
-	 *
-	 * Basically, this method is a combination of {@link jQuery.sap.require} and {@link sap.ui.require}.
-	 * Its main purpose is to simplify the migration of modules to AMD style in those cases where some dependencies
-	 * have to be loaded late (lazy) and synchronously.
-	 *
-	 * The method accepts a single module name in the same syntax that {@link sap.ui.define} and {@link sap.ui.require}
-	 * already use (a simplified variation of the {@link jQuery.sap.getResourcePath unified resource name}:
-	 * slash separated names without the implicit extension '.js'). As for <code>sap.ui.require</code>,
-	 * relative names (using <code>./</code> or <code>../</code>) are not supported.
-	 * If not loaded yet, the named module will be loaded synchronously and the export value of the module will be returned.
-	 * While a module is executing, a value of <code>undefined</code> will be returned in case it is required again during
-	 * that period of time (e.g. in case of cyclic dependencies).
-	 *
-	 * <b>Note:</b> the scope of this method is limited to the sap.ui.core library. Callers are strongly encouraged to use
-	 * this method only when synchronous loading is unavoidable. Any code that uses this method won't benefit from future
-	 * performance improvements that require asynchronous module loading (e.g. HTTP/2). And such code never can comply with
-	 * a content security policies (CSP) that forbids 'eval'.
-	 *
-	 * @param {string} sModuleName Module name in requireJS syntax
-	 * @returns {any} Export value of the loaded module (can be <code>undefined</code>)
-	 * @private
-	 * @ui5-restricted sap.ui.core
-	 * @function
-	 * @ui5-global-only
-	 * @deprecated As of version 1.120, sync loading is deprecated without replacement due to the deprecation
-	 *   of sync XMLHttpRequests in the web standard.
-	 */
-	sap.ui.requireSync = requireSync;
-
+		 * Calculates a URL from the provided resource name.
+		 *
+		 * The calculation takes any configured ID mappings or resource paths into account
+		 * (see {@link sap.ui.loader.config config options map and paths}. It also supports relative
+		 * segments such as <code>./</code> and <code>../</code> within the path, but not at its beginning.
+		 * If relative navigation would cross the root namespace (e.g. <code>sap.ui.require.toUrl("../")</code>)
+		 * or when the resource name starts with a slash or with a relative segment, an error is thrown.
+		 *
+		 * <b>Note:</b> <code>toUrl</code> does not resolve the returned URL; whether it is an absolute
+		 * URL or a relative URL depends on the configured <code>baseUrl</code> and <code>paths</code>.
+		 *
+		 * @example
+		 *   sap.ui.loader.config({
+		 *     baseUrl: "/home"
+		 *   });
+		 *
+		 *   sap.ui.require.toUrl("app/data")              === "/home/app/data"
+		 *   sap.ui.require.toUrl("app/data.json")         === "/home/app/data.json"
+		 *   sap.ui.require.toUrl("app/data/")             === "/home/app/data/"
+		 *   sap.ui.require.toUrl("app/.config")           === "/home/app/.config"
+		 *   sap.ui.require.toUrl("app/test/../data.json") === "/home/data.json"
+		 *   sap.ui.require.toUrl("app/test/./data.json")  === "/home/test/data.json"
+		 *   sap.ui.require.toUrl("app/../../data")        throws Error because root namespace is left
+		 *   sap.ui.require.toUrl("/app")                  throws Error because first character is a slash
+		 *
+		 * @param {string} sName Name of a resource e.g. <code>'app/data.json'</code>
+		 * @returns {string} Path to the resource, e.g. <code>'/home/app/data.json'</code>
+		 * @see https://github.com/amdjs/amdjs-api/wiki/require#requiretourlstring-
+		 * @throws {Error} If the input name is absolute (starts with a slash character <code>'/'</code>),
+		 *   starts with a relative segment or if resolving relative segments would cross the root
+		 *   namespace
+		 * @public
+		 * @name sap.ui.require.toUrl
+		 * @function
+		 * @ui5-global-only
+		 */
 }(globalThis));

@@ -1,17 +1,20 @@
 <!DOCTYPE html>
-<html><head>
-	<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
+<html><head><meta charset="UTF-8">
+	
 
 	<title>LabelEnablement - sap.ui.core</title>
 
 	<script src="shared-config.js"></script>
-	<script id='sap-ui-bootstrap'
-		src='../../../../resources/sap-ui-core.js'
-		data-sap-ui-libs='sap.ui.core'
-		data-sap-ui-libs="sap.m"
+	<script id="sap-ui-bootstrap"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.ui.core"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:local/LabelEnablement"
+			data-sap-ui-resource-roots='{"local":"./"}'
 	></script>
 
-	<script id="view1" type="sapui5/xmlview">
+	<script id="view1" type="text/xml">
 		<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form"
 				controllerName="my.own.controller">
 
@@ -92,11 +95,7 @@
 		</mvc:View>
 	</script>
 
-	<script>
-		sap.ui.controller("my.own.controller", {});
-		var myView = sap.ui.xmlview({viewContent: jQuery('#view1').html()});
-		myView.placeAt("content");
-	</script>
+	
 
 	</head>
 	<body class="sapUiBody">

@@ -48,11 +48,7 @@ sap.ui.define([
 			this.oType = undefined;
 		},
 		metadata : {
-			"abstract" : true,
-
-		  publicMethods : [
-			  "getValue", "setValue", "setType", "getType", "setFormatter", "getFormatter", "getExternalValue", "setExternalValue", "getBindingMode"
-		  ]
+			"abstract" : true
 		}
 
 	});

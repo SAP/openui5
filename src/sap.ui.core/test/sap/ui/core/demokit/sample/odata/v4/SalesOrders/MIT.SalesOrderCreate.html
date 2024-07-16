@@ -1,9 +1,7 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<style type="text/css">
-			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
-		</style>
+	<head><meta charset="utf-8">
+		<link rel="stylesheet" href="./MIT.SalesOrderCreate.css">
 		<title>Manual Integration Test: Create Sales Order</title>
 	</head>
 	<body>
@@ -76,7 +74,7 @@
 			<li>Click on the <code>Delete</code> button in the <code>Sales Orders</code> table.</li>
 			<li><b>Check:</b> The newly created sales order is gone.</li>
 			<li><b>Check:</b> (without back end only) The sales orders count is 10.
-			<li>Click on the <code>Save</code> button in the <code>Sales Orders</code> table.</li>
+			</li><li>Click on the <code>Save</code> button in the <code>Sales Orders</code> table.</li>
 		</ol>
 		<h3>Create a sales order, save, modify again, save and delete</h3>
 		<ol>
@@ -115,7 +113,7 @@
 			<li><b>Check:</b> You get a success message for creating the sales order.</li>
 			<li>Click on <code>OK</code> in the <code>Success</code> dialog.</li>
 			<li><b>Check:</b> (without back end only) The sales orders count is 11.
-			<li>Click on <code>Refresh</code> button in the <code>Sales Orders</code> table.</li>
+			</li><li>Click on <code>Refresh</code> button in the <code>Sales Orders</code> table.</li>
 			<li><b>Check:</b> The first sales order is the same as the one from the initial
 				application start.</li>
 			<li><b>Check (with back end only): </b> The new sales order is inserted at the right
@@ -144,7 +142,7 @@
 				</li>
 				<li><b>Check:</b> The newly created sales order still exists.</li>
 			</ol>
-		</ol>
+		</li></ol>
 		<h4>Confirm refresh</h4>
 		<ol start="10">
 			<li>Click on <code>Refresh all</code> button.</li>
@@ -160,7 +158,7 @@
 				<code>Sales Orders</code> table.</li>
 			<li><b>Check:</b> The newly created sales order is gone.</li>
 			<li><b>Check:</b> (without back end only) The sales orders count is 10.
-		</ol>
+		</li></ol>
 		<h3>Cancel or resume a failed creation of a sales order</h3>
 		With back end only:
 		<ol>
@@ -192,13 +190,13 @@
 			<li><b>Check:</b> You get a success message for creating the sales order.</li>
 			<li>Click on <code>OK</code> in the <code>Success</code> dialog.</li>
 			<li><b>Check:</b> The <code>Sales Order ID</code> has been updated by the server
-			<li>Click on the <code>Delete</code> button in the <code>Sales Orders</code> table.</li>
+			</li><li>Click on the <code>Delete</code> button in the <code>Sales Orders</code> table.</li>
 			<li><b>Check:</b> The Sales Order Details become invisible.
-			<li>Click on the <code>Cancel sales order list changes</code> button in the
+			</li><li>Click on the <code>Cancel sales order list changes</code> button in the
 				<code>Sales Orders</code> table.</li>
 			<li><b>Check:</b> The sales order is restored and selected again.
-			<li><b>Check:</b> The Sales Order Details become visible again and show the restored
+			</li><li><b>Check:</b> The Sales Order Details become visible again and show the restored
 				sales order.
-		</ol>
+		</li></ol>
 	</body>
 </html>

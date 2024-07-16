@@ -6,20 +6,20 @@ sap.ui.define([
 	"sap/m/IconTabSeparator",
 	"sap/m/IconTabBarSelectList",
 	"sap/m/Text",
-	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	IconTabHeader,
 	IconTabFilter,
 	IconTabSeparator,
 	IconTabBarSelectList,
 	Text,
-	Core,
 	coreLibrary,
 	createAndAppendDiv,
-	KeyCodes
+	KeyCodes,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -51,7 +51,7 @@ sap.ui.define([
 		var oSep = new IconTabSeparator("mySeparator", {});
 		oITH.addItem(oSep);
 		oITH.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oITH._getOverflow()._expandButtonPress();
@@ -63,7 +63,7 @@ sap.ui.define([
 
 		// Clean-up
 		oITH.destroy();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.module("event handling");
@@ -182,7 +182,7 @@ sap.ui.define([
 				textDirection: TextDirection.Inherit
 			});
 		this.oSL.addItem(oFilter1).addItem(oFilter2).addItem(oFilter3);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oFilter1.$().find(".sapMITBText").attr("dir"), "ltr", "'dir' attribute is correctly set");

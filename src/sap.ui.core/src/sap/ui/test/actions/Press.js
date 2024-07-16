@@ -78,8 +78,7 @@ sap.ui.define([
 				yPercentage: {
 					type: "float"
 				}
-			},
-			publicMethods : [ "executeOn" ]
+			}
 		},
 
 		init: function () {

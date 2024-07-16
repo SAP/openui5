@@ -34,4 +34,4 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 
 	return TableMultiSelectMode;
 
-}, /* bExport= */ true);
+});

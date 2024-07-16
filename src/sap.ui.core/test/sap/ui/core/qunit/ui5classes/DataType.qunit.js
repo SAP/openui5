@@ -1,13 +1,13 @@
-/*global sinon, QUnit*/
+/*global QUnit*/
 sap.ui.define([
 	"sap/base/future",
 	"sap/base/Log",
-	"sap/base/util/ObjectPath",
 	"sap/base/util/isPlainObject",
 	"sap/ui/base/DataType",
 	"sap/ui/core/Lib",
-	'sap/ui/core/library' // provides sap.ui.core data type and enums
-], function (future, Log, ObjectPath, isPlainObject, DataType, Library) {
+	// provides sap.ui.core data type and enums
+	'sap/ui/core/library'
+], function(future, Log, isPlainObject, DataType, Library) {
 	"use strict";
 
 	function random(values) {
@@ -49,25 +49,11 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * @deprecated
-	 */
-	window.globalUtil = {
-		formatMessage: function() { return ""; }
-	};
-
 	// Note: 'module1' is a name that exists both in global namespace and as a local module in mModules
 	var mModules = {
 		module1: {
 			handler: function() { return this; }
 		}
-	};
-
-	/**
-	 * @deprecated
-	 */
-	window.module1 = {
-		globalHandler: function() { return this; }
 	};
 
 	var NAN = {};
@@ -145,24 +131,8 @@ sap.ui.define([
 			parseValue: [
 				{ input: '.handler', value: oController.handler, context: oController, compareMode: 'strict' },
 				{ input: '.nested.handler', value: oController.nested.handler, context: oController, compareMode: 'strict' },
-				/**
-				 * @deprecated
-				 */
-				{ input: 'globalUtil.formatMessage', value: window.globalUtil.formatMessage, context: oController, compareMode: 'strict' },
-				/**
-				 * @deprecated
-				 */
-				{ input: 'globalUtil.formatMessage', value: window.globalUtil.formatMessage, context: undefined, compareMode: 'strict' },
-				/**
-				 * @deprecated
-				 */
-				{ input: 'globalUtil.formatMessage', value: window.globalUtil.formatMessage, context: undefined, locals: mModules, compareMode: 'strict' },
 				{ input: 'module1.handler', context: oController, locals: mModules, thisContext: mModules.module1},
 				{ input: 'module1.handler', context: undefined, locals: mModules, thisContext: mModules.module1},
-				/**
-				 * @deprecated
-				 */
-				{ input: 'module1.globalHandler', value: window.module1.globalHandler, context: undefined, compareMode: 'strict'},
 				{ input: 'module1.globalHandler', value: ERROR, context: undefined, locals: mModules},
 				{ input: '.handler', value: oController.handler, context: oController, locals: mModules, compareMode: 'strict' },
 				{ input: '.handler', value: ERROR, context: undefined, compareMode: 'strict' },
@@ -355,34 +325,6 @@ sap.ui.define([
 
 	QUnit.module("Enum Types");
 
-	/**
-	 * @deprecated
-	 */
-	QUnit.test("Retrieve enum via global name (w/o registerEnum)", function (assert) {
-		const oColorEnum = {
-			Red: "Red",
-			Yellow: "Yellow",
-			Blue: "Blue"
-		};
-		ObjectPath.set("sap.test.GlobalColor", oColorEnum);
-
-		const type = DataType.getType("sap.test.GlobalColor");
-		assert.ok(type instanceof DataType, "type 'sap.test.GlobalColor' is a DataType");
-		assert.equal(type.getName(), 'sap.test.GlobalColor', "type name");
-		assert.equal(type.getDefaultValue(), "Red", "default value");
-		assert.equal(type.getBaseType().getName(), "string", "base type is string");
-		assert.equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
-		assert.ok(type.isEnumType(), "type should be marked as enum");
-		assert.strictEqual(type.getEnumValues(), oColorEnum, "type should return the original enum object with keys and values");
-
-		Object.entries(oColorEnum).forEach(([name, value]) => {
-			assert.equal(type.isValid(value), true, "accepts value " + value);
-			assert.equal(type.parseValue(name), value, "'" + name + "' should be parsed as '" + value + "'");
-		});
-		assert.equal(type.isValid("something"), false, "should not accept 'something'");
-		assert.ok(DataType.getType("sap.test.GlobalColor") === type, "multiple calls should return same type object");
-	});
-
 	QUnit.test("Register upfront with registerEnum", function (assert) {
 		const oColorEnum = {
 			Red: "Red",
@@ -486,51 +428,6 @@ sap.ui.define([
 
 	QUnit.module("Type Lookup");
 
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("non-existing type", function (assert) {
-		var oWarningSpy = this.spy(Log, "warning");
-		var oErrorSpy = this.spy(Log, "error");
-		Log.setLevel(Log.Level.DEBUG);
-
-		// check precondition
-		assert.equal(typeof nonExistingType, "undefined", "[precondition] There should be no global var 'nonExistingType'");
-
-		assert.strictEqual(DataType.getType("nonExistingType"), undefined, "for a non-existing type, undefined is returned");
-		assert.ok(oErrorSpy.calledWith(sinon.match(/data type/).and(sinon.match(/could not be found/))), "access to non-existing type should produce an error message in the log");
-		assert.ok(!oWarningSpy.called, "no warnings should be produced");
-
-		// eslint-disable-next-line no-undef-init, prefer-const
-		let expectedType = undefined;
-		/**
-		 * @deprecated w/o a global lookup, toString and hasOwnProperty won't be resolved to 'any'
-		 */
-		expectedType = DataType.getType("any");
-
-		assert.strictEqual(DataType.getType("toString"), expectedType, "'toString' should not resolve to something");
-		assert.strictEqual(DataType.getType("hasOwnProperty"), expectedType, "'hasOwnProperty' should not resolve to something");
-	});
-
-	/**
-	 * @deprecated
-	 */
-	QUnit.test("invalid type", function (assert) {
-		var oWarningSpy = this.spy(Log, "warning");
-		var oErrorSpy = this.spy(Log, "error");
-		Log.setLevel(Log.Level.DEBUG);
-
-		// check precondition
-		var vGlobalProperty = ObjectPath.get("sap.ui.base.Object");
-		assert.ok(vGlobalProperty && !isPlainObject(vGlobalProperty), "[precondition] Object with name sap.ui.base.Object exists and is not a plain object");
-
-
-		assert.strictEqual(DataType.getType("sap.ui.base.Object"), DataType.getType("any"), "access to an invalid type should fallback to type 'any'");
-		assert.ok(oWarningSpy.calledWith(sinon.match(/not a valid data type/)), "access to an invalid type should produce a warning message in the log");
-		assert.ok(oErrorSpy.called, "deprecation error should be logged");
-		assert.ok(oErrorSpy.calledWith(sinon.match(/Defining types via globals is deprecated/)), "deprecation error should be logged");
-	});
-
 
 
 	QUnit.module("Type Creation");
@@ -612,36 +509,6 @@ sap.ui.define([
 		assert.equal(oType.isValid('world'), false, "suffix alone is not enough");
 		assert.equal(oType.isValid('helloworld'), true, "both together are okay");
 		assert.equal(oType.isValid('hello              world'), true, "both together are okay");
-	});
-
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("re-defining a type", function (assert) {
-		var oWarningSpy = this.spy(Log, "warning");
-		var oErrorSpy = this.spy(Log, "error");
-		Log.setLevel(Log.Level.DEBUG);
-
-		var oType1 = DataType.createType("myNewType", {
-			isValid: function (oValue) {
-				return /hello.*world/.test(oValue);
-			}
-		}, DataType.getType("string"));
-
-		assert.ok(oType1 instanceof DataType, "first creation should succeed");
-		assert.ok(!oErrorSpy.called, "first creation must not log an error");
-		assert.ok(!oWarningSpy.called, "first creation must not log a warning");
-
-		var oType2 = DataType.createType("myNewType", {
-			isValid: function (oValue) {
-				return /hello.*world/.test(oValue);
-			}
-		}, DataType.getType("string"));
-		assert.ok(!oErrorSpy.called, "re-defining a type must not log an error");
-		assert.ok(oWarningSpy.calledWith(sinon.match(/re-?defined.*unsupported/i)), "re-defining a type must log a warning");
-		assert.ok(oType2 instanceof DataType, "recreation must return a type");
-		assert.notStrictEqual(oType1, oType2, "new type should differ from previous type with same name");
-		assert.strictEqual(DataType.getType("myNewType"), oType2, "lookup returns new type");
 	});
 
 
@@ -976,5 +843,4 @@ sap.ui.define([
 		assert.equal(_uri.normalize("http://www.sap.com"), "/proxy/http/www.sap.com", "the url should be normalized");
 		assert.equal(_string.normalize("test"), "test", "the normalizer must not be applied for other types");
 	});
-
 });

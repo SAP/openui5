@@ -1,22 +1,24 @@
 <!DOCTYPE HTML>
 <html>
-<head>
+<head><meta charset="utf-8">
     <title>sap.uxap.ObjectPage</title>
     <script src="shared-config.js"></script>
     <script src="../../../resources/sap-ui-core.js"
-            id="sap-ui-bootstrap" data-sap-ui-libs="sap.m,sap.uxap,sap.ui.layout,sap.ui.table">
+            id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.m,sap.uxap,sap.ui.layout,sap.ui.table"
+            data-sap-ui-async="true"
+            data-sap-ui-compat-version="edge"
+            data-sap-ui-on-init="module:local/FullscreenObjectPageWithTable"
+            data-sap-ui-resource-roots='{"local":"./"}'
+    >
     </script>
 
 
-    <style>
-        footer {
-            z-index: 1001;
-        }
-    </style>
+    <link rel="stylesheet" href="./FullscreenObjectPageWithTable.css">
 
 
     <!-- simple empty div -->
-    <script id="view1" type="sapui5/xmlview">
+    <script id="view1" type="text/xml">
 		<core:View
 				xmlns="sap.uxap"
 				xmlns:core="sap.ui.core"
@@ -80,85 +82,7 @@
 	</script>
 </head>
 <body id="body" class="sapUiBody">
-<script>
-    sap.ui.define([
-                "jquery.sap.global",
-                "sap/m/App",
-                "sap/m/Page"
-            ],
-            function (jQuery, App, Page) {
-                "use strict";
 
-                var oApp = new App(),
-                        myView = sap.ui.xmlview({viewContent:jQuery('#view1').html()}),
-                        btnToggleFooter = myView.byId("btnToggleFooter"),
-                        btnToggleUseIconTabBar = myView.byId("btnToggleUseIconTabBar"),
-                        aData = [],
-                        o,
-                        oModel;
-
-                for (var i = 1; i < 20; i++) {
-                    o = {};
-                    for (var b = 1; b < 6; b++) {
-                        o["text" + b] = "test" + i;
-                    }
-                    aData.push(o);
-                }
-                oModel = new sap.ui.model.json.JSONModel();
-                oModel.setProperty("/rows", aData);
-
-                var oTable1 = new sap.ui.table.Table("testUITable",{
-                    rows:"{model>/rows}",
-                    visibleRowCountMode: "Auto",
-                    minAutoRowCount: 2,
-
-                });
-                oTable1.setModel(oModel,"model");
-
-                oTable1.addColumn(new sap.ui.table.Column({
-                    label: "col01",
-                    autoResizable: true,
-                    template: new sap.m.Text({
-                        text:"{model>text1}"
-                    })
-                }));
-
-                oTable1.addColumn(new sap.ui.table.Column({
-                    label: "col02",
-                    autoResizable: true,
-                    template: new sap.m.Text({
-                        text:"{model>text2}"
-                    })
-                }));
-                oTable1.addColumn(new sap.ui.table.Column({
-                    label: "col03",
-                    autoResizable: true,
-                    template: new sap.m.Text({
-                        text:"{model>text3}"
-                    })
-                }));
-
-                myView.byId("section1_SS1").addBlock(oTable1);
-
-
-                btnToggleFooter.attachPress(function() {
-                    var oObjectPageLayout = myView.byId("ObjectPageLayout");
-                    oObjectPageLayout.setShowFooter(!oObjectPageLayout.getShowFooter());
-                });
-
-
-                btnToggleUseIconTabBar.attachPress(function() {
-                    var oObjectPageLayout = myView.byId("ObjectPageLayout");
-                    oObjectPageLayout.setUseIconTabBar(!oObjectPageLayout.getUseIconTabBar());
-                });
-
-                oApp.addPage(new Page({
-                    title: "ObjectPage",
-                    content: [myView]
-                })).placeAt("content");
-            });
-
-</script>
 <div id="content"></div>
 </body>
 </html>

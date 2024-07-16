@@ -19,9 +19,7 @@ sap.ui.define([
 	 */
 	var Matcher = ManagedObject.extend("sap.ui.test.matchers.Matcher", /** @lends sap.ui.test.matchers.Matcher.prototype */ {
 
-		metadata : {
-			publicMethods : [ "isMatching" ]
-		},
+		metadata : {},
 
 		constructor: function () {
 			ManagedObject.prototype.constructor.apply(this, arguments);

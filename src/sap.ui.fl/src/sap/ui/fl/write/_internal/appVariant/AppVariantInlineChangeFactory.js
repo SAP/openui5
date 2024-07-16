@@ -338,25 +338,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @enum {string}
-	 * @private
-	 * @ui5-restricted sap.ui.rta, smart business
-	 * @alias sap.ui.fl.descriptorRelated.api.AnnotationsInsertPositionType
-	 */
-	var TYPES = { // eslint-disable-line no-unused-vars
-		/**
-		 * @private
-		 * @ui5-restricted sap.ui.rta, smart business
-		 */
-		BEGINNING: "BEGINNING",
-		/**
-		 * @private
-		 * @ui5-restricted sap.ui.rta, smart business
-		 */
-		END: "END"
-	};
-
-	/**
 	 * Creates an inline change of change type <code>appdescr_app_addAnnotationsToOData</code>.
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
@@ -939,11 +920,11 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
-	 AppVariantInlineChangeFactory.create_ui5_changeModel = function(mPropertyBag) {
-		Utils.checkParameterAndType(mPropertyBag.content, "modelId", "string");
-		Utils.checkEntityPropertyChange(mPropertyBag.content);
-		return _createAppVariantInlineChange(mPropertyBag);
-	};
+	AppVariantInlineChangeFactory.create_ui5_changeModel = function(mPropertyBag) {
+	   Utils.checkParameterAndType(mPropertyBag.content, "modelId", "string");
+	   Utils.checkEntityPropertyChange(mPropertyBag.content);
+	   return _createAppVariantInlineChange(mPropertyBag);
+   };
 
 	/**
 	 * Creates an inline change of change type <code>appdescr_fiori_setAbstract</code>.
@@ -958,11 +939,11 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted SAP Web IDE
 	 */
-	 AppVariantInlineChangeFactory.create_fiori_setAbstract = function(mPropertyBag) {
-		Utils.checkParameterAndType(mPropertyBag.content, "abstract", "boolean");
-		Utils.checkParameterAndType(mPropertyBag, "changeType", "string");
-		return _createAppVariantInlineChange(mPropertyBag);
-	};
+	AppVariantInlineChangeFactory.create_fiori_setAbstract = function(mPropertyBag) {
+	   Utils.checkParameterAndType(mPropertyBag.content, "abstract", "boolean");
+	   Utils.checkParameterAndType(mPropertyBag, "changeType", "string");
+	   return _createAppVariantInlineChange(mPropertyBag);
+   };
 
 	/**
      * Creates an inline change of change type <code>appdescr_fe_changePageConfiguration</code>.

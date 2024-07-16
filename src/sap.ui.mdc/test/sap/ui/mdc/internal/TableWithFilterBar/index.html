@@ -6,25 +6,26 @@
 
 	<title>Example: Mdc.Table with Mdc.FilterBar</title>
 
-	<script src="../../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
-		data-sap-ui-compatVersion="edge"
-		data-sap-ui-oninit="module:sap/ui/v4demo/Bootstrap"
-		data-sap-ui-theme="sap_horizon"
-		data-sap-ui-flexibilityServices='[{"connector": "LocalStorageConnector"}]'
-		data-sap-ui-resourceroots='{
+	<script src="../../../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-flexibility-services='[{"connector": "LocalStorageConnector"}]'
+			data-sap-ui-on-init="module:sap/ui/v4demo/Bootstrap"
+			data-sap-ui-resource-roots='{
 			"sap.ui.v4demo" : "./",
 			"delegates": "../../delegates/",
 			"test-resources": "../../../../../../test-resources/",
 			"testutils": "../../testutils"
 		}'
-		data-sap-ui-async="true">
+	>
 	</script>
 
 	<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="sapUiBody sapUiSizeCompact" id="content">
-	<div data-sap-ui-component data-name="sap.ui.v4demo" data-id="container" data-settings='{"id" : "v4demo"}'></div>
+	<div data-sap-ui-component data-name="sap.ui.v4demo" data-id="container" data-settings="{&quot;id&quot; : &quot;v4demo&quot;}"></div>
 </body>
 
 </html>

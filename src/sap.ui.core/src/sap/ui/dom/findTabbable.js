@@ -2,8 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/dom/jquery/Selectors'
-], function() {
+], function(jQuery) {
 	"use strict";
 
 	/**

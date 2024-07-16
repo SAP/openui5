@@ -39,4 +39,4 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 
 	return TableGrowingMode;
 
-}, /* bExport= */ true);
+});

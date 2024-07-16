@@ -7,8 +7,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/layout/ResponsiveFlowLayout",
-	"sap/ui/layout/ResponsiveFlowLayoutData",
-	"sap/ui/layout/form/ResponsiveLayout" // provides layout for simple form
+	"sap/ui/layout/ResponsiveFlowLayoutData"
 ], function(Button, CheckBox, Input, Label, Popover, CoreController, XMLView, ResponsiveFlowLayout, ResponsiveFlowLayoutData) {
 	"use strict";
 

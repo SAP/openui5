@@ -49,9 +49,7 @@ sap.ui.define([
 			this._openConnection(sUrl, aProtocols);
 		},
 
-		metadata: {
-			publicMethods : [ "send", "close", "getReadyState", "getProtocol" ]
-		}
+		metadata: {}
 
 	});
 

@@ -1,4 +1,4 @@
-sap.ui.getCore().attachInit(function () {
+sap.ui.require(["sap/ui/core/Core"], Core => Core.ready(function () {
 	"use strict";
 
 	// create a mobile app and display page1 initially
@@ -39,4 +39,4 @@ sap.ui.getCore().attachInit(function () {
 		// place the app into the HTML document
 		app.placeAt("content");
 	});
-});
+}));

@@ -1,0 +1,13 @@
+.tableWrapper td {
+	vertical-align: top;
+}
+
+.tableWrapper caption {
+	text-align: left;
+	padding: 0.5rem 1rem;
+	font-weight: bold;
+}
+
+pre[caption]::before {
+	width: 800px !important;
+}

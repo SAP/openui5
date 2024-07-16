@@ -8,7 +8,6 @@ sap.ui.define([
 	'sap/ui/base/EventProvider',
 	'sap/ui/core/mvc/View',
 	'sap/ui/core/routing/async/Target',
-	'sap/ui/core/routing/sync/Target',
 	"sap/base/Log"
 ],
 	function(
@@ -16,7 +15,6 @@ sap.ui.define([
 		EventProvider,
 		View,
 		asyncTarget,
-		syncTarget,
 		Log
 	) {
 		"use strict";
@@ -281,7 +279,7 @@ sap.ui.define([
 				}
 
 				// branch by abstraction
-				var TargetStub = this._oOptions._async ?  asyncTarget : syncTarget;
+				var TargetStub = this._oOptions._async ?  asyncTarget : undefined/*syncTarget*/;
 				for (var fn in TargetStub) {
 					this[fn] = TargetStub[fn];
 				}

@@ -2,365 +2,364 @@
  * ${copyright}
  */
 
-sap.ui.define(['./SliderUtilities', "sap/base/i18n/Localization", "sap/ui/core/InvisibleText"],
-	function(SliderUtilities, Localization, InvisibleText) {
-		"use strict";
+sap.ui.define(['./SliderUtilities', "sap/base/i18n/Localization", "sap/ui/core/InvisibleText"], function(SliderUtilities, Localization, InvisibleText) {
+	"use strict";
 
-		/**
-		 * Slider renderer.
-		 * @namespace
-		 */
-		var SliderRenderer = {
-			apiVersion: 2
-		};
+	/**
+	 * Slider renderer.
+	 * @namespace
+	 */
+	var SliderRenderer = {
+		apiVersion: 2
+	};
 
-		/**
-		 * CSS class to be applied to the HTML root element of the Slider control.
-		 *
-		 * @type {string}
-		 */
-		SliderRenderer.CSS_CLASS = "sapMSlider";
+	/**
+	 * CSS class to be applied to the HTML root element of the Slider control.
+	 *
+	 * @type {string}
+	 */
+	SliderRenderer.CSS_CLASS = "sapMSlider";
 
-		/**
-		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.m.Slider} oSlider An object representation of the slider that should be rendered.
-		 */
-		SliderRenderer.render = function(oRm, oSlider) {
-			var bEnabled = oSlider.getEnabled(),
-				sTooltip = oSlider.getTooltip_AsString(),
-				CSS_CLASS = SliderRenderer.CSS_CLASS,
-				sSliderLabels = oSlider.getAriaLabelledBy().reduce(function(sAccumulator, sId){
-					return sAccumulator + " " + sId;
-				}, "");
+	/**
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.m.Slider} oSlider An object representation of the slider that should be rendered.
+	 */
+	SliderRenderer.render = function(oRm, oSlider) {
+		var bEnabled = oSlider.getEnabled(),
+			sTooltip = oSlider.getTooltip_AsString(),
+			CSS_CLASS = SliderRenderer.CSS_CLASS,
+			sSliderLabels = oSlider.getAriaLabelledBy().reduce(function(sAccumulator, sId){
+				return sAccumulator + " " + sId;
+			}, "");
 
-			oRm.openStart("div", oSlider);
-			this.addClass(oRm, oSlider);
+		oRm.openStart("div", oSlider);
+		this.addClass(oRm, oSlider);
 
-			if (!bEnabled) {
-				oRm.class(CSS_CLASS + "Disabled");
+		if (!bEnabled) {
+			oRm.class(CSS_CLASS + "Disabled");
+		}
+
+		oRm.style("width", oSlider.getWidth());
+
+		if (sTooltip && oSlider.getShowHandleTooltip()) {
+			oRm.attr("title", oSlider._formatValueByCustomElement(sTooltip));
+		}
+
+		oRm.openEnd();
+
+		oRm.openStart('div', oSlider.getId() + "-inner");
+		this.addInnerClass(oRm, oSlider);
+
+		if (!bEnabled) {
+			oRm.class(CSS_CLASS + "InnerDisabled");
+		}
+
+		oRm.openEnd();
+
+		if (oSlider.getEnableTickmarks()) {
+			this.renderTickmarks(oRm, oSlider);
+		}
+
+		if (oSlider.getProgress()) {
+			this.renderProgressIndicator(oRm, oSlider, sSliderLabels);
+		}
+
+		this.renderHandles(oRm, oSlider, sSliderLabels);
+		oRm.close("div");
+
+
+		this.renderLabels(oRm, oSlider);
+
+		if (oSlider.getName()) {
+			this.renderInput(oRm, oSlider);
+		}
+
+		oRm.close("div");
+	};
+
+	SliderRenderer.renderProgressIndicator = function(oRm, oSlider) {
+		oRm.openStart("div", oSlider.getId() + "-progress");
+		this.addProgressIndicatorClass(oRm, oSlider);
+		oRm.style("width", oSlider._sProgressValue);
+		oRm.attr("aria-hidden", "true");
+		oRm.openEnd().close("div");
+	};
+
+	/**
+	 * This hook method is reserved for derived classes to render more handles.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.m.Slider} oSlider An object representation of the slider that should be rendered.
+	 */
+	SliderRenderer.renderHandles = function(oRm, oSlider, sForwardedLabels) {
+		this.renderHandle(oRm, oSlider,  {
+			id: oSlider.getId() + "-handle",
+			forwardedLabels: sForwardedLabels
+		});
+	};
+
+	SliderRenderer.renderHandle = function(oRm, oSlider, mOptions) {
+		var bEnabled = oSlider.getEnabled();
+
+		oRm.openStart("span", mOptions && mOptions.id);
+
+		if (oSlider.getShowHandleTooltip() && !oSlider.getShowAdvancedTooltip()) {
+			this.writeHandleTooltip(oRm, oSlider);
+		}
+
+		if (oSlider.getInputsAsTooltips()) {
+			oRm.attr("aria-describedby", InvisibleText.getStaticId("sap.m", "SLIDER_INPUT_TOOLTIP"));
+			bEnabled && oRm.attr("aria-keyshortcuts", "F2");
+		}
+
+		this.addHandleClass(oRm, oSlider);
+		oRm.style(Localization.getRTL() ? "right" : "left", oSlider._sProgressValue);
+		this.writeAccessibilityState(oRm, oSlider, mOptions);
+
+
+		if (bEnabled) {
+			oRm.attr("tabindex", "0");
+		}
+
+		oRm.openEnd().close("span");
+	};
+
+	/**
+	 * Writes the handle tooltip.
+	 * To be overwritten by subclasses.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
+	 */
+	SliderRenderer.writeHandleTooltip = function(oRm, oSlider) {
+		oRm.attr("title", oSlider._formatValueByCustomElement(oSlider.toFixed(oSlider.getValue())));
+	};
+
+	SliderRenderer.renderInput = function(oRm, oSlider) {
+		oRm.voidStart("input", oSlider.getId() + "-input").attr("type", "text");
+		oRm.class(SliderRenderer.CSS_CLASS + "Input");
+
+		if (!oSlider.getEnabled()) {
+			oRm.attr("disabled");
+		}
+
+		oRm.attr("name", oSlider.getName());
+		oRm.attr("value", oSlider._formatValueByCustomElement(oSlider.toFixed(oSlider.getValue())));
+		oRm.voidEnd();
+	};
+
+	/**
+	 * Writes the accessibility state to the control.
+	 * To be overwritten by subclasses.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
+	 */
+	SliderRenderer.writeAccessibilityState = function(oRm, oSlider, mOptions) {
+		var fSliderValue = oSlider.getValue(),
+			bNotNumericalLabel = oSlider._isElementsFormatterNotNumerical(fSliderValue),
+			sScaleLabel = oSlider._formatValueByCustomElement(fSliderValue),
+			sValueNow;
+
+		if (oSlider._getUsedScale() && !bNotNumericalLabel) {
+			sValueNow = sScaleLabel;
+		} else {
+			sValueNow = oSlider.toFixed(fSliderValue);
+		}
+
+		oRm.accessibilityState(oSlider, {
+			role: "slider",
+			orientation: "horizontal",
+			valuemin: oSlider.toFixed(oSlider.getMin()),
+			valuemax: oSlider.toFixed(oSlider.getMax()),
+			valuenow: sValueNow,
+			labelledby: {
+				value: (mOptions.forwardedLabels + " " + oSlider.getAggregation("_handlesLabels")[0].getId()).trim()
 			}
+		});
 
-			oRm.style("width", oSlider.getWidth());
-
-			if (sTooltip && oSlider.getShowHandleTooltip()) {
-				oRm.attr("title", oSlider._formatValueByCustomElement(sTooltip));
-			}
-
-			oRm.openEnd();
-
-			oRm.openStart('div', oSlider.getId() + "-inner");
-			this.addInnerClass(oRm, oSlider);
-
-			if (!bEnabled) {
-				oRm.class(CSS_CLASS + "InnerDisabled");
-			}
-
-			oRm.openEnd();
-
-			if (oSlider.getEnableTickmarks()) {
-				this.renderTickmarks(oRm, oSlider);
-			}
-
-			if (oSlider.getProgress()) {
-				this.renderProgressIndicator(oRm, oSlider, sSliderLabels);
-			}
-
-			this.renderHandles(oRm, oSlider, sSliderLabels);
-			oRm.close("div");
-
-
-			this.renderLabels(oRm, oSlider);
-
-			if (oSlider.getName()) {
-				this.renderInput(oRm, oSlider);
-			}
-
-			oRm.close("div");
-		};
-
-		SliderRenderer.renderProgressIndicator = function(oRm, oSlider) {
-			oRm.openStart("div", oSlider.getId() + "-progress");
-			this.addProgressIndicatorClass(oRm, oSlider);
-			oRm.style("width", oSlider._sProgressValue);
-			oRm.attr("aria-hidden", "true");
-			oRm.openEnd().close("div");
-		};
-
-		/**
-		 * This hook method is reserved for derived classes to render more handles.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.m.Slider} oSlider An object representation of the slider that should be rendered.
-		 */
-		SliderRenderer.renderHandles = function(oRm, oSlider, sForwardedLabels) {
-			this.renderHandle(oRm, oSlider,  {
-				id: oSlider.getId() + "-handle",
-				forwardedLabels: sForwardedLabels
-			});
-		};
-
-		SliderRenderer.renderHandle = function(oRm, oSlider, mOptions) {
-			var bEnabled = oSlider.getEnabled();
-
-			oRm.openStart("span", mOptions && mOptions.id);
-
-			if (oSlider.getShowHandleTooltip() && !oSlider.getShowAdvancedTooltip()) {
-				this.writeHandleTooltip(oRm, oSlider);
-			}
-
-			if (oSlider.getInputsAsTooltips()) {
-				oRm.attr("aria-describedby", InvisibleText.getStaticId("sap.m", "SLIDER_INPUT_TOOLTIP"));
-				bEnabled && oRm.attr("aria-keyshortcuts", "F2");
-			}
-
-			this.addHandleClass(oRm, oSlider);
-			oRm.style(Localization.getRTL() ? "right" : "left", oSlider._sProgressValue);
-			this.writeAccessibilityState(oRm, oSlider, mOptions);
-
-
-			if (bEnabled) {
-				oRm.attr("tabindex", "0");
-			}
-
-			oRm.openEnd().close("span");
-		};
-
-		/**
-		 * Writes the handle tooltip.
-		 * To be overwritten by subclasses.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
-		 */
-		SliderRenderer.writeHandleTooltip = function(oRm, oSlider) {
-			oRm.attr("title", oSlider._formatValueByCustomElement(oSlider.toFixed(oSlider.getValue())));
-		};
-
-		SliderRenderer.renderInput = function(oRm, oSlider) {
-			oRm.voidStart("input", oSlider.getId() + "-input").attr("type", "text");
-			oRm.class(SliderRenderer.CSS_CLASS + "Input");
-
-			if (!oSlider.getEnabled()) {
-				oRm.attr("disabled");
-			}
-
-			oRm.attr("name", oSlider.getName());
-			oRm.attr("value", oSlider._formatValueByCustomElement(oSlider.toFixed(oSlider.getValue())));
-			oRm.voidEnd();
-		};
-
-		/**
-		 * Writes the accessibility state to the control.
-		 * To be overwritten by subclasses.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
-		 */
-		SliderRenderer.writeAccessibilityState = function(oRm, oSlider, mOptions) {
-			var fSliderValue = oSlider.getValue(),
-				bNotNumericalLabel = oSlider._isElementsFormatterNotNumerical(fSliderValue),
-				sScaleLabel = oSlider._formatValueByCustomElement(fSliderValue),
-				sValueNow;
-
-			if (oSlider._getUsedScale() && !bNotNumericalLabel) {
-				sValueNow = sScaleLabel;
-			} else {
-				sValueNow = oSlider.toFixed(fSliderValue);
-			}
-
+		if (bNotNumericalLabel) {
 			oRm.accessibilityState(oSlider, {
-				role: "slider",
-				orientation: "horizontal",
-				valuemin: oSlider.toFixed(oSlider.getMin()),
-				valuemax: oSlider.toFixed(oSlider.getMax()),
-				valuenow: sValueNow,
-				labelledby: {
-					value: (mOptions.forwardedLabels + " " + oSlider.getAggregation("_handlesLabels")[0].getId()).trim()
-				}
+				valuetext: sScaleLabel
 			});
+		}
+	};
 
-			if (bNotNumericalLabel) {
-				oRm.accessibilityState(oSlider, {
-					valuetext: sScaleLabel
-				});
+	SliderRenderer.renderTickmarks = function (oRm, oSlider) {
+		var i, iTickmarksToRender, fTickmarksDistance, iLabelsCount, fStep, fSliderSize, fSliderStep,
+			oScale = oSlider._getUsedScale();
+
+		if (!oSlider.getEnableTickmarks() || !oScale) {
+			return;
+		}
+
+		fSliderSize = Math.abs(oSlider.getMin() - oSlider.getMax());
+		fSliderStep = oSlider.getStep();
+
+		iLabelsCount = oScale.getTickmarksBetweenLabels();
+		iTickmarksToRender = oScale.calcNumberOfTickmarks(fSliderSize, fSliderStep, SliderUtilities.CONSTANTS.TICKMARKS.MAX_POSSIBLE);
+		fTickmarksDistance = oSlider._getPercentOfValue(
+			this._calcTickmarksDistance(iTickmarksToRender, oSlider.getMin(), oSlider.getMax(), fSliderStep));
+
+
+		oRm.openStart("ul")
+			.class(SliderRenderer.CSS_CLASS + "Tickmarks")
+			.openEnd();
+
+		this.renderTickmarksLabel(oRm, oSlider, oSlider.getMin());
+		oRm.openStart("li")
+			.class(SliderRenderer.CSS_CLASS + "Tick")
+			.attr("data-ui5-active-tickmark", this.shouldRenderFirstActiveTickmark(oSlider))
+			.style("width", fTickmarksDistance + "%")
+			.openEnd()
+			.close("li");
+
+		for (i = 1; i < iTickmarksToRender - 1; i++) {
+			if (iLabelsCount && (i % iLabelsCount === 0)) {
+				fStep = i * fTickmarksDistance;
+				this.renderTickmarksLabel(oRm, oSlider, oSlider._getValueOfPercent(fStep));
 			}
-		};
 
-		SliderRenderer.renderTickmarks = function (oRm, oSlider) {
-			var i, iTickmarksToRender, fTickmarksDistance, iLabelsCount, fStep, fSliderSize, fSliderStep,
-				oScale = oSlider._getUsedScale();
-
-			if (!oSlider.getEnableTickmarks() || !oScale) {
-				return;
-			}
-
-			fSliderSize = Math.abs(oSlider.getMin() - oSlider.getMax());
-			fSliderStep = oSlider.getStep();
-
-			iLabelsCount = oScale.getTickmarksBetweenLabels();
-			iTickmarksToRender = oScale.calcNumberOfTickmarks(fSliderSize, fSliderStep, SliderUtilities.CONSTANTS.TICKMARKS.MAX_POSSIBLE);
-			fTickmarksDistance = oSlider._getPercentOfValue(
-				this._calcTickmarksDistance(iTickmarksToRender, oSlider.getMin(), oSlider.getMax(), fSliderStep));
-
-
-			oRm.openStart("ul")
-				.class(SliderRenderer.CSS_CLASS + "Tickmarks")
-				.openEnd();
-
-			this.renderTickmarksLabel(oRm, oSlider, oSlider.getMin());
-			oRm.openStart("li")
-				.class(SliderRenderer.CSS_CLASS + "Tick")
-				.attr("data-ui5-active-tickmark", this.shouldRenderFirstActiveTickmark(oSlider))
-				.style("width", fTickmarksDistance + "%")
-				.openEnd()
+			oRm.openStart("li").class(SliderRenderer.CSS_CLASS + "Tick")
+				.style("width", fTickmarksDistance + "%");
+			this.applyTickmarkStyles(oRm, oSlider, i, iTickmarksToRender);
+			oRm.openEnd()
 				.close("li");
+		}
 
-			for (i = 1; i < iTickmarksToRender - 1; i++) {
-				if (iLabelsCount && (i % iLabelsCount === 0)) {
-					fStep = i * fTickmarksDistance;
-					this.renderTickmarksLabel(oRm, oSlider, oSlider._getValueOfPercent(fStep));
-				}
+		this.renderTickmarksLabel(oRm, oSlider, oSlider.getMax());
+		oRm.openStart("li")
+			.class(SliderRenderer.CSS_CLASS + "Tick")
+			.attr("data-ui5-active-tickmark", this.shouldRenderLastActiveTickmark(oSlider))
+			.style("width", "0")
+			.openEnd()
+			.close("li");
 
-				oRm.openStart("li").class(SliderRenderer.CSS_CLASS + "Tick")
-					.style("width", fTickmarksDistance + "%");
-				this.applyTickmarkStyles(oRm, oSlider, i, iTickmarksToRender);
-				oRm.openEnd()
-					.close("li");
-			}
+		oRm.close("ul");
+	};
 
-			this.renderTickmarksLabel(oRm, oSlider, oSlider.getMax());
-			oRm.openStart("li")
-				.class(SliderRenderer.CSS_CLASS + "Tick")
-				.attr("data-ui5-active-tickmark", this.shouldRenderLastActiveTickmark(oSlider))
-				.style("width", "0")
-				.openEnd()
-				.close("li");
+	SliderRenderer.renderTickmarksLabel = function (oRm, oSlider, fValue) {
+		var fOffset = oSlider._getPercentOfValue(fValue);
+		var sLeftOrRightPosition = Localization.getRTL() ? "right" : "left";
+		var sValue;
+		fValue = oSlider.toFixed(fValue, oSlider.getDecimalPrecisionOfNumber(oSlider.getStep()));
 
-			oRm.close("ul");
-		};
+		// Call Scale's callback or use the plain value. Cast to string
+		sValue = oSlider._formatValueByCustomElement(fValue, 'scale');
 
-		SliderRenderer.renderTickmarksLabel = function (oRm, oSlider, fValue) {
-			var fOffset = oSlider._getPercentOfValue(fValue);
-			var sLeftOrRightPosition = Localization.getRTL() ? "right" : "left";
-			var sValue;
-			fValue = oSlider.toFixed(fValue, oSlider.getDecimalPrecisionOfNumber(oSlider.getStep()));
+		oRm.openStart("li")
+			.class(SliderRenderer.CSS_CLASS + "TickLabel")
+			.style(sLeftOrRightPosition, (fOffset + "%"))
+			.openEnd();
 
-			// Call Scale's callback or use the plain value. Cast to string
-			sValue = oSlider._formatValueByCustomElement(fValue, 'scale');
+		oRm.openStart("div")
+			.class(SliderRenderer.CSS_CLASS + "Label")
+			.openEnd()
+			.text(sValue)
+			.close("div");
 
-			oRm.openStart("li")
-				.class(SliderRenderer.CSS_CLASS + "TickLabel")
-				.style(sLeftOrRightPosition, (fOffset + "%"))
-				.openEnd();
+		oRm.close("li");
+	};
 
-			oRm.openStart("div")
-				.class(SliderRenderer.CSS_CLASS + "Label")
-				.openEnd()
-				.text(sValue)
-				.close("div");
+	/**
+	 * Calculate the distance between tickmarks.
+	 *
+	 * Actually this calculates the distance between the first and the second tickmark, but as it's
+	 * assumed that the tickmarks are spread evenly, it doesn't matter.
+	 *
+	 * @param {int} iTickmarksCount Number of tickmarks that'd be drawn
+	 * @param {float} fStart The start value of the scale.
+	 * @param {float} fEnd The end value of the scale.
+	 * @param {float} fStep The step walking from start to end.
+	 * @returns {float} The distance between tickmarks
+	 * @private
+	 */
+	SliderRenderer._calcTickmarksDistance = function (iTickmarksCount, fStart, fEnd, fStep) {
+		var fScaleSize = Math.abs(fStart - fEnd),
+			iMaxPossibleTickmarks = Math.floor(fScaleSize / fStep),
+			iStepsCount = Math.ceil(iMaxPossibleTickmarks / iTickmarksCount);
 
-			oRm.close("li");
-		};
+		return fStart + (iStepsCount * fStep);
+	};
 
-		/**
-		 * Calculate the distance between tickmarks.
-		 *
-		 * Actually this calculates the distance between the first and the second tickmark, but as it's
-		 * assumed that the tickmarks are spread evenly, it doesn't matter.
-		 *
-		 * @param {int} iTickmarksCount Number of tickmarks that'd be drawn
-		 * @param {float} fStart The start value of the scale.
-		 * @param {float} fEnd The end value of the scale.
-		 * @param {float} fStep The step walking from start to end.
-		 * @returns {float} The distance between tickmarks
-		 * @private
-		 */
-		SliderRenderer._calcTickmarksDistance = function (iTickmarksCount, fStart, fEnd, fStep) {
-			var fScaleSize = Math.abs(fStart - fEnd),
-				iMaxPossibleTickmarks = Math.floor(fScaleSize / fStep),
-				iStepsCount = Math.ceil(iMaxPossibleTickmarks / iTickmarksCount);
+	/**
+	 * This method is reserved for derived classes to add extra CSS classes to the HTML root element of the control.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
+	 * @since 1.36
+	 */
+	SliderRenderer.addClass = function(oRm, oSlider) {
+		oRm.class(SliderRenderer.CSS_CLASS);
+	};
 
-			return fStart + (iStepsCount * fStep);
-		};
+	/**
+	 * This method is reserved for derived classes to add extra CSS classes to the inner element.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
+	 * @since 1.38
+	 */
+	SliderRenderer.addInnerClass = function(oRm, oSlider) {
+		oRm.class(SliderRenderer.CSS_CLASS + "Inner");
 
-		/**
-		 * This method is reserved for derived classes to add extra CSS classes to the HTML root element of the control.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
-		 * @since 1.36
-		 */
-		SliderRenderer.addClass = function(oRm, oSlider) {
-			oRm.class(SliderRenderer.CSS_CLASS);
-		};
+		if (oSlider.getProperty("handlePressed")) {
+			oRm.class(SliderRenderer.CSS_CLASS + "Pressed");
+		}
+	};
 
-		/**
-		 * This method is reserved for derived classes to add extra CSS classes to the inner element.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
-		 * @since 1.38
-		 */
-		SliderRenderer.addInnerClass = function(oRm, oSlider) {
-			oRm.class(SliderRenderer.CSS_CLASS + "Inner");
+	/**
+	 * This method is reserved for derived classes to add extra CSS classes to the progress indicator element.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
+	 * @since 1.38
+	 */
+	SliderRenderer.addProgressIndicatorClass = function(oRm, oSlider) {
+		oRm.class(SliderRenderer.CSS_CLASS + "Progress");
 
-			if (oSlider.getProperty("handlePressed")) {
-				oRm.class(SliderRenderer.CSS_CLASS + "Pressed");
-			}
-		};
+		if (oSlider.getEnableTickmarks()) {
+			oRm.class(SliderRenderer.CSS_CLASS + "ProgressWithTickmarks");
+		}
+	};
 
-		/**
-		 * This method is reserved for derived classes to add extra CSS classes to the progress indicator element.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
-		 * @since 1.38
-		 */
-		SliderRenderer.addProgressIndicatorClass = function(oRm, oSlider) {
-			oRm.class(SliderRenderer.CSS_CLASS + "Progress");
+	/**
+	 * This method is reserved for derived classes to add extra CSS classes to the handle element.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
+	 * @since 1.38
+	 */
+	SliderRenderer.addHandleClass = function(oRm, oSlider) {
+		oRm.class(SliderRenderer.CSS_CLASS + "Handle");
+	};
 
-			if (oSlider.getEnableTickmarks()) {
-				oRm.class(SliderRenderer.CSS_CLASS + "ProgressWithTickmarks");
-			}
-		};
+	/**
+	 * This hook method is reserved for derived classes to render the labels.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
+	 */
+	SliderRenderer.renderLabels = function (oRm, oSlider) {
+		oSlider.getAggregation("_handlesLabels").forEach(oRm.renderControl, oRm);
+	};
 
-		/**
-		 * This method is reserved for derived classes to add extra CSS classes to the handle element.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
-		 * @since 1.38
-		 */
-		SliderRenderer.addHandleClass = function(oRm, oSlider) {
-			oRm.class(SliderRenderer.CSS_CLASS + "Handle");
-		};
+	SliderRenderer.applyTickmarkStyles = function(oRm, oSlider,iTickmarkIndex, iTickmarksToRender) {
+		var iProgressTickmarks = (parseInt(oSlider._sProgressValue) / 100) * iTickmarksToRender;
+		var bRender = iTickmarkIndex <= iProgressTickmarks;
+		oRm.attr("data-ui5-active-tickmark", bRender);
+	};
 
-		/**
-		 * This hook method is reserved for derived classes to render the labels.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
-		 */
-		SliderRenderer.renderLabels = function (oRm, oSlider) {
-			oSlider.getAggregation("_handlesLabels").forEach(oRm.renderControl, oRm);
-		};
+	SliderRenderer.shouldRenderFirstActiveTickmark = function () {
+		return true;
+	};
 
-		SliderRenderer.applyTickmarkStyles = function(oRm, oSlider,iTickmarkIndex, iTickmarksToRender) {
-			var iProgressTickmarks = (parseInt(oSlider._sProgressValue) / 100) * iTickmarksToRender;
-			var bRender = iTickmarkIndex <= iProgressTickmarks;
-			oRm.attr("data-ui5-active-tickmark", bRender);
-		};
+	SliderRenderer.shouldRenderLastActiveTickmark = function (oSlider) {
+		return oSlider.getValue() === oSlider.getMax();
+	};
 
-		SliderRenderer.shouldRenderFirstActiveTickmark = function () {
-			return true;
-		};
+	return SliderRenderer;
 
-		SliderRenderer.shouldRenderLastActiveTickmark = function (oSlider) {
-			return oSlider.getValue() === oSlider.getMax();
-		};
-
-		return SliderRenderer;
-
-	}, /* bExport= */ true);
+});

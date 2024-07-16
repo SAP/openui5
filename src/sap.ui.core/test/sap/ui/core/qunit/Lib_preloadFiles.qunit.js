@@ -1,9 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/base/util/ObjectPath",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Lib"
-], function(ObjectPath, jQuery, Library) {
+], function(jQuery, Library) {
 	"use strict";
 
 	var privateLoaderAPI = sap.ui.loader._;
@@ -11,17 +10,10 @@ sap.ui.define([
 	// custom assertion
 	QUnit.assert.isLibLoaded = function(libName) {
 		var isLoaded = Library.isLoaded(libName) && sap.ui.require(libName.replace(/\./g, "/") + "/library");
-		/**
-		 * @deprecated
-		 */
-		isLoaded &&= ObjectPath.get(libName);
 		this.ok(isLoaded, "library '" + libName + "' should have been loaded");
 		if ( !isLoaded ) {
 			// provide more details in QUnit report
-			/**
-			 * @deprecated
-			 */
-			this.ok(ObjectPath.get(libName), "namespace for " + libName + " should exist");
+			/* -------------------------------------- */
 			this.ok(sap.ui.require(libName.replace(/\./g, "/") + "/library"), "library module should have been required");
 			this.ok(Library.isLoaded(libName), "Core should know and list " + libName + " as 'loaded'");
 		}

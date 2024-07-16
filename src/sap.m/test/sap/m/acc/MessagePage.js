@@ -1,11 +1,10 @@
 sap.ui.define([
-	"sap/m/App",
-	"sap/m/MessagePage"
-], function(App, MessagePage) {
+	"sap/m/App"
+], function(App) {
 	"use strict";
 
 	var oApp = new App("myApp"),
-		oMessagePage = new MessagePage({
+		oMessagePage = new undefined/*MessagePage*/({
 			showHeader: false
 		});
 

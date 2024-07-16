@@ -1,8 +1,7 @@
 sap.ui.define([
-	'sap/ui/core/XMLComposite'//, 'sap/m/Text'
-], function (XMLComposite) {
+], function() {
 	"use strict";
-	return XMLComposite.extend("composites.ForwardText2", {
+	return undefined/*XMLComposite*/.extend("composites.ForwardText2", {
 		metadata: {
 			aggregations: {
 				textItems: {

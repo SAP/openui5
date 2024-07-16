@@ -71,9 +71,6 @@ function(
 	// shortcut for sap.m.ListMode
 	var ListMode = library.ListMode;
 
-	// shortcut for sap.m.ListHeaderDesign
-	var ListHeaderDesign = library.ListHeaderDesign;
-
 	// shortcut for sap.m.Sticky
 	var Sticky = library.Sticky;
 
@@ -114,7 +111,6 @@ function(
 			library : "sap.m",
 			dnd : true,
 			properties : {
-
 				/**
 				 * Defines the indentation of the container. Setting it to <code>true</code> indents the list.
 				 */
@@ -142,13 +138,6 @@ function(
 				 * @since 1.117.0
 				 */
 				headerLevel : {type : "sap.ui.core.TitleLevel", group : "Misc", defaultValue : TitleLevel.Auto},
-
-				/**
-				 * Defines the header style of the control. Possible values are <code>Standard</code> and <code>Plain</code>.
-				 * @since 1.14
-				 * @deprecated Since version 1.16. No longer has any functionality.
-				 */
-				headerDesign : {type : "sap.m.ListHeaderDesign", group : "Appearance", defaultValue : ListHeaderDesign.Standard, deprecated: true},
 
 				/**
 				 * Defines the footer text that appears in the control.
@@ -360,22 +349,6 @@ function(
 				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 			},
 			events : {
-
-				/**
-				 * Fires when selection is changed via user interaction. In <code>MultiSelect</code> mode, this event is also fired on deselection.
-				 * @deprecated Since version 1.16.
-				 * Use the <code>selectionChange</code> event instead.
-				 */
-				select : {deprecated: true,
-					parameters : {
-
-						/**
-						 * The item which fired the select event.
-						 */
-						listItem : {type : "sap.m.ListItemBase"}
-					}
-				},
-
 				/**
 				 * Fires when selection is changed via user interaction inside the control.
 				 * @since 1.16
@@ -449,48 +422,6 @@ function(
 						 * and left to right in RTL languages)
 						 */
 						swipeDirection : {type : "sap.m.SwipeDirection"}
-					}
-				},
-
-				/**
-				 * Fires before the new growing chunk is requested from the model.
-				 * @since 1.16
-				 * @deprecated Since version 1.16.3.
-				 * Instead, use <code>updateStarted</code> event with listening <code>changeReason</code>.
-				 */
-				growingStarted : {deprecated: true,
-					parameters : {
-
-						/**
-						 * Actual number of items.
-						 */
-						actual : {type : "int"},
-
-						/**
-						 * Total number of items.
-						 */
-						total : {type : "int"}
-					}
-				},
-
-				/**
-				 * Fires after the new growing chunk has been fetched from the model and processed by the control.
-				 * @since 1.16
-				 * @deprecated Since version 1.16.3.
-				 * Instead, use "updateFinished" event.
-				 */
-				growingFinished : {deprecated: true,
-					parameters : {
-
-						/**
-						 * Actual number of items.
-						 */
-						actual : {type : "int"},
-
-						/**
-						 * Total number of items.
-						 */
-						total : {type : "int"}
 					}
 				},
 
@@ -1291,7 +1222,6 @@ function(
 	 */
 	ListBase.prototype.onBeforePageLoaded = function(oGrowingInfo, sChangeReason) {
 		this._fireUpdateStarted(sChangeReason, oGrowingInfo);
-		this.fireGrowingStarted(oGrowingInfo);
 	};
 
 	/*
@@ -1300,7 +1230,6 @@ function(
 	 */
 	ListBase.prototype.onAfterPageLoaded = function(oGrowingInfo, sChangeReason) {
 		this._fireUpdateFinished(oGrowingInfo);
-		this.fireGrowingFinished(oGrowingInfo);
 	};
 
 	/*
@@ -1614,11 +1543,6 @@ function(
 		if (this.getGrowing()) {
 			this._bSelectAll = bSelectAll;
 		}
-
-		// support old API
-		this.fireSelect({
-			listItem : oListItem
-		});
 	};
 
 	// this gets called from item when delete is triggered via delete button
@@ -1924,16 +1848,9 @@ function(
 
 	// Swipe from the end to the begin - right to left in LTR and left to right in RTL languages.
 	ListBase.prototype.onswipeleft = function(oEvent) {
-
 		var bRtl = Localization.getRTL();
 		var exceptDirection = bRtl ? SwipeDirection.EndToBegin : SwipeDirection.BeginToEnd;
 		var swipeDirection = this.getSwipeDirection();
-
-		if (swipeDirection === SwipeDirection.LeftToRight) {
-			swipeDirection = SwipeDirection.BeginToEnd;
-		} else if (swipeDirection === SwipeDirection.RightToLeft) {
-			swipeDirection = SwipeDirection.EndToBegin;
-		}
 
 		if (swipeDirection != exceptDirection) {
 			if (swipeDirection == SwipeDirection.Both) {
@@ -1948,12 +1865,6 @@ function(
 		var bRtl = Localization.getRTL();
 		var exceptDirection = bRtl ? SwipeDirection.BeginToEnd : SwipeDirection.EndToBegin;
 		var swipeDirection = this.getSwipeDirection();
-
-		if (swipeDirection === SwipeDirection.LeftToRight) {
-			swipeDirection = SwipeDirection.BeginToEnd;
-		} else if (swipeDirection === SwipeDirection.RightToLeft) {
-			swipeDirection = SwipeDirection.EndToBegin;
-		}
 
 		if (swipeDirection != exceptDirection) {
 			if (swipeDirection == SwipeDirection.Both) {
@@ -2965,5 +2876,4 @@ function(
 	};
 
 	return ListBase;
-
 });

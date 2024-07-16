@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Panel",
 	"sap/m/RatingIndicator",
-	"sap/ui/core/Core",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
@@ -11,11 +10,10 @@ sap.ui.define([
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/String",
 	"sap/ui/qunit/utils/createAndAppendDiv"
-], function (
+], function(
 	Input,
 	Panel,
 	RatingIndicator,
-	Core,
 	FormatException,
 	ParseException,
 	ValidateException,
@@ -393,32 +391,6 @@ sap.ui.define([
 		});
 	}
 
-	/**
-	 * @deprecated As of 1.118, get/setModel, parseError, validationError etc. are deprecated on the Core
-	 */
-	QUnit.module("Core and Control", {
-		beforeEach: function() {
-			oModel.setData({
-				visibleItems: 3,
-				test: "hello",
-				rating: "4"
-			});
-			this.oInput = new Input().placeAt("target1");
-			this.oParent = Core;
-			this.oParent.setModel(oModel);
-			this.placeAt = (oCtrl) => oCtrl.placeAt("target2");
-		},
-		afterEach: function() {
-			this.oInput.destroy();
-			this.oParent.setModel();
-		}
-	});
-
-	/**
-	 * @deprecated As of 1.118, get/setModel, parseError, validationError etc. are deprecated on the Core
-	 */
-	createTests();
-
 
 
 	QUnit.module("UIArea and Control", {
@@ -463,5 +435,4 @@ sap.ui.define([
 	});
 
 	createTests();
-
 });

@@ -19,11 +19,7 @@ sap.ui.define([
 	var HashChangerBase = EventProvider.extend("sap.ui.core.routing.HashChangerBase", {
 
 		metadata : {
-			"abstract" : true,
-			publicMethods : [
-				// methods
-				"getHash", "setHash", "replaceHash"
-			]
+			"abstract" : true
 		},
 
 		constructor : function() {

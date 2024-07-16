@@ -20,8 +20,7 @@ sap.ui.define([
 	"sap/ui/core/message/MessageType",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/util/restricted/_throttle",
-	"sap/base/Log"
+	"sap/base/util/restricted/_throttle"
 ], function(
 	GroupingUtils,
 	ColumnUtils,
@@ -39,8 +38,7 @@ sap.ui.define([
 	MessageType,
 	ChangeReason,
 	jQuery,
-	throttle,
-	Log
+	throttle
 ) {
 	"use strict";
 
@@ -1589,16 +1587,6 @@ sap.ui.define([
 							"anymore for the aggragations footer and title and the aggregations label and template of " +
 							"the sap.ui.table.Columns. Use concrete controls for those aggregations instead of altType string.";
 
-			/**
-			 * @deprecated As of version 1.118
-			 */
-			if (library.TableHelper) {
-				if (!bCallByAPI) {
-					Log.warning(sMessage);
-				}
-				return library.TableHelper;
-			}
-
 			throw new Error(sMessage);
 		}
 	};
@@ -1612,4 +1600,4 @@ sap.ui.define([
 
 	return TableUtils;
 
-}, /* bExport= */ true);
+});

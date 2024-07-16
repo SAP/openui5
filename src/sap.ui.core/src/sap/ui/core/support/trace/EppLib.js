@@ -125,4 +125,4 @@ sap.ui.define(function() {
 
 	return EppLib1;
 
-}, /* bExport= */ true);
+});

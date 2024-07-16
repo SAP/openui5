@@ -1,0 +1,49 @@
+#status {
+	position: fixed;
+	display: block;
+	width: 350px;
+	height: 2rem;
+	line-height: 2rem;
+	text-align: center;
+	top: 0.5rem;
+	right: 0.5rem;
+	background-color: rgba(255, 255, 255, 0.85);
+	border-radius: 0.5rem;
+}
+
+#status_renderings {
+	font-weight: bold;
+	color: red;
+}
+
+.displayTable {
+	margin: 2.5%;
+	border: 1px solid black;
+}
+.displayTable td {
+	padding: 0.5rem;
+	border: 1px dashed grey;
+}
+
+.firstRow {
+	border-bottom: 2px solid black;
+}
+.firstRow td {
+	font-weight: bold;
+	text-align: center;
+}
+
+.sapUiLbl.heading {
+	font-size: 1.5rem;
+	height: 1.5rem;
+	line-height: 1.5rem;
+}
+
+.groupsSeparator {
+	font-size: 1.5rem;
+	height: 1.5rem;
+	line-height: 1.5rem;
+	font-weight: bold;
+	text-align: center;
+	background-color: rgba(255, 255, 255, 0.5);
+}

@@ -2,14 +2,14 @@
 
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
 	"sap/m/BadgeEnabler",
-	"sap/m/BadgeCustomData"
+	"sap/m/BadgeCustomData",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Control,
-	Core,
 	BadgeEnabler,
-	BadgeCustomData
+	BadgeCustomData,
+	nextUIUpdate
 ){
 	"use strict";
 
@@ -40,11 +40,11 @@ sap.ui.define([
 	};
 
 	QUnit.module("Basic", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oCustomControl = new MyCustomControl({id: "CustomControl"});
 			this.oCustomControl.addCustomData(new BadgeCustomData({value: "10"}));
 			this.oCustomControl.placeAt('qunit-fixture');
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCustomControl.destroy();
@@ -52,7 +52,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Initialisation", function (assert) {
+	QUnit.test("Initialisation", async function(assert) {
 
 		//Assert
 		assert.equal(this.oCustomControl.getCustomData()[0].getValue(), "10", "Value is properly set on BadgeCustomData");
@@ -84,7 +84,7 @@ sap.ui.define([
 		//Act
 		this.oCustomControl.getBadgeCustomData().setValue("10");
 		this.oCustomControl.removeAllCustomData();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(this.oCustomControl._isBadgeAttached, false, "Badge Disappears when badgeCustomData is detached");
@@ -101,11 +101,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("API", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oCustomControl = new MyCustomControl({id: "CustomControl"});
 			this.oCustomControl.addCustomData(new BadgeCustomData({value: "10"}));
 			this.oCustomControl.placeAt('qunit-fixture');
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCustomControl.destroy();
@@ -200,11 +200,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("ACC", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oCustomControl = new MyCustomControl({id: "CustomControl"});
 			this.oCustomControl.addCustomData(new BadgeCustomData({value: "10"}));
 			this.oCustomControl.placeAt('qunit-fixture');
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCustomControl.destroy();

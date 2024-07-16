@@ -2,14 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', 'sap/f/DynamicPageHeaderRenderer'],
-	function(Renderer, DynamicPageHeaderRenderer) {
-		"use strict";
+sap.ui.define(['sap/ui/core/Renderer', 'sap/f/DynamicPageHeaderRenderer'], function(Renderer, DynamicPageHeaderRenderer) {
+	"use strict";
 
-		var ObjectPageDynamicHeaderContentRenderer = Renderer.extend(DynamicPageHeaderRenderer);
+	var ObjectPageDynamicHeaderContentRenderer = Renderer.extend(DynamicPageHeaderRenderer);
 
-		ObjectPageDynamicHeaderContentRenderer.apiVersion = 2;
+	ObjectPageDynamicHeaderContentRenderer.apiVersion = 2;
 
-		return ObjectPageDynamicHeaderContentRenderer;
+	return ObjectPageDynamicHeaderContentRenderer;
 
-	}, /* bExport= */ true);
+});

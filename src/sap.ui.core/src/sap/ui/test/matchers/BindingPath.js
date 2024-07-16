@@ -55,7 +55,6 @@ sap.ui.define([
 	return Matcher.extend("sap.ui.test.matchers.BindingPath", /** @lends sap.ui.test.matchers.BindingPath.prototype */ {
 
 		metadata: {
-			publicMethods: ["isMatching"],
 			properties: {
 				/**
 				 * The value of the binding context path that is used for matching.

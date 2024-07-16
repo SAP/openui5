@@ -3,61 +3,19 @@
 
 <head>
 	<meta charset="UTF-8">
-	<script
-		id="sap-ui-bootstrap"
-		src="../../../../resources/sap-ui-core.js"
-		data-sap-ui-libs="sap.m, sap.tnt, sap.ui.layout, sap.ui.core"
-		data-sap-ui-async="true"
-		data-sap-ui-compatVersion="edge"
-		data-sap-ui-onInit="module:local/HyphenationPlayground"
-		data-sap-ui-resourceroots='{
+	<script id="sap-ui-bootstrap"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m, sap.tnt, sap.ui.layout, sap.ui.core"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:local/HyphenationPlayground"
+			data-sap-ui-resource-roots='{
 			"local": "./"
-		}'></script>
+		}'
+	></script>
 
 	<title>Hyphenation Playground</title>
-	<style>
-		.custom .sapUiRFLContainer {
-			width: auto !important;
-			min-width: 0px !important;
-		}
-
-		.hyphenatedText {
-			color: dodgerblue;
-			font-weight: bold;
-		}
-
-		.sapUiHyphenation {
-			-webkit-hyphens: auto;
-			-moz-hyphens: auto;
-			hyphens: auto;
-		}
-
-		.labelForSlider {
-			margin-top: 1rem;
-		}
-
-		.labelHyphChoiseNat-true {
-			font-weight: bold;
-			background-color: #d6eaf8;
-			border: 1px solid #aed6f1;
-			border-radius: 8px;
-		}
-
-		.labelHyphChoise3rd-true {
-			font-weight: bold;
-			background-color: #e8daef;
-			border: 1px solid #d2b4de;
-			border-radius: 8px;
-		}
-
-		.sapUiSimpleForm .sapMLabel {
-			margin-right: 10px !important;
-		}
-
-		.sapUiHLayout.sapUiHLayoutNoWrap .sapMLabel.sapMLabelMaxWidth.sapMLabelDisplayOnly.sapUiSelectable {
-			margin: 0 4rem !important;
-		}
-	</style>
+	<link rel="stylesheet" href="./HyphenationPlayground.css">
 </head>
 
 <body id="body" class="sapUiBody">

@@ -14,8 +14,7 @@ sap.ui.define([
 	'sap/base/strings/escapeRegExp',
 	'sap/base/util/merge',
 	'sap/base/util/isPlainObject'
-],
-function(
+], function(
 	DataType,
 	Metadata,
 	BaseObject,
@@ -2123,4 +2122,4 @@ function(
 
 	return ManagedObjectMetadata;
 
-}, /* bExport= */ true);
+});

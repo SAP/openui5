@@ -1,8 +1,7 @@
 sap.ui.define([
-	'sap/ui/core/XMLComposite'
-], function(XMLComposite) {
+], function() {
 	"use strict";
-	var TextButton = XMLComposite.extend("composites.TextButton", {
+	var TextButton = undefined/*XMLComposite*/.extend("composites.TextButton", {
 		metadata: {
 			properties: {
 				text: {

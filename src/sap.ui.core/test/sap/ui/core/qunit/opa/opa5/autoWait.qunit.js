@@ -1,6 +1,5 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/_OpaUriParameterParser",
@@ -8,7 +7,7 @@ sap.ui.define([
 	"sap/ui/test/autowaiter/_timeoutWaiter",
 	"sap/ui/test/autowaiter/WaiterBase",
 	"fixture/waiters"
-], function ($, Opa5, opaTest, _OpaUriParameterParser, _autoWaiter, _timeoutWaiter, WaiterBase) {
+], function(Opa5, opaTest, _OpaUriParameterParser, _autoWaiter, _timeoutWaiter, WaiterBase) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {

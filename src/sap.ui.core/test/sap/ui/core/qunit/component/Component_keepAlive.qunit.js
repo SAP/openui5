@@ -1,8 +1,7 @@
 sap.ui.define([
 	"sap/base/future",
-	"sap/base/Log",
 	"sap/ui/core/Component"
-], function (future, Log, Component) {
+], function(future, Component) {
 	"use strict";
 	/*global QUnit, sinon*/
 
@@ -603,69 +602,6 @@ sap.ui.define([
 		});
 	});
 
-	/**
-	 * @deprecated
-	 */
-	QUnit.test("'onActivate' should not return a value (future=false)", async function(assert) {
-		future.active = false;
-		window.aPromises = []; // see testdata.keepAlive.child3.Component.js
-		const oComponent = await Component.create({
-			id: "component",
-			name: "testdata.keepAlive.child3OnActivateReturns"
-		});
-
-		await fnWaitUntilHomeRouteMatched(oComponent);
-		assert.ok(oComponent.isActive(), "Component: Initially, the component is active");
-
-		const oFatalLogSpy = sinon.spy(Log, "fatal");
-		oComponent.deactivate();
-		oComponent.activate();
-		assert.ok(oComponent.isActive(), "Component: The component is active after activate()");
-		assert.ok(oFatalLogSpy.getCall(0).calledWith("[FUTURE FATAL] The registered Event Listener 'onActivate' must not have a return value."), "The 'onActivate' should not return a value.");
-
-		oFatalLogSpy.restore();
-		oComponent.destroy();
-		future.active = undefined;
-	});
-
-	/**
-	 * @deprecated
-	 */
-	QUnit.test("'onDeactivate' should not return a value (future=false)", async function(assert) {
-		future.active = false;
-		window.aPromises = []; // see testdata.keepAlive.child3.Component.js
-		const oComponent = await Component.create({
-			id: "component",
-			name: "testdata.keepAlive.child3OnDeactivateReturns"
-		});
-
-		await fnWaitUntilHomeRouteMatched(oComponent);
-		assert.ok(oComponent.isActive(), "Component: Initially, the component is active");
-
-		const oFatalLogSpy = sinon.spy(Log, "fatal");
-		/**
-		 * @deprecated
-		 */
-		const oErrorLogSpy = sinon.spy(Log, "error");
-
-		oComponent.deactivate();
-		await Promise.allSettled(window.aPromises);
-		assert.notOk(oComponent.isActive(), "Component: The component is not active after deactivate()");
-		assert.ok(oFatalLogSpy.getCall(0).calledWith("[FUTURE FATAL] The registered Event Listener 'onDeactivate' must not have a return value."), "The 'onDeactivate' should not return a value.");
-
-		/**
-		 * @deprecated
-		 */
-		await Promise.resolve(() => {
-			assert.ok(oErrorLogSpy.getCall(0).calledWith("The registered Event Listener 'onDeactivate' of 'component' failed."), "The rejected Promise is caught successfully");
-			oErrorLogSpy.restore();
-		});
-
-		oFatalLogSpy.restore();
-		oComponent.destroy();
-		future.active = undefined;
-	});
-
 	QUnit.test("'onActivate' should not return a value (future=true)", async function(assert) {
 		future.active = true;
 		const oComponent = await Component.create({
@@ -704,5 +640,4 @@ sap.ui.define([
 		oComponent.destroy();
 		future.active = undefined;
 	});
-
 });

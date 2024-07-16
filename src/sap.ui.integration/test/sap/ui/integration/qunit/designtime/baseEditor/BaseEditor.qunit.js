@@ -7,17 +7,15 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/PropertyEditor",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
-], function (
+	"sap/ui/thirdparty/sinon-4"
+], function(
 	BaseEditor,
 	_omit,
 	_merge,
 	PropertyEditor,
 	StringEditor,
 	nextUIUpdate,
-	sinon,
-	oCore
+	sinon
 ) {
 	"use strict";
 
@@ -47,7 +45,7 @@ sap.ui.define([
 		QUnit.test("When config with 1 property is set", function (assert) {
 			var done = assert.async();
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync().length, 1, "Then 1 property editor is created");
 				assert.strictEqual(
 					this.oBaseEditor.getPropertyEditorsSync()[0].getValue(),
@@ -77,7 +75,7 @@ sap.ui.define([
 		QUnit.test("When config has no context", function (assert) {
 			var done = assert.async();
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(
 					this.oBaseEditor.getPropertyEditorsSync()[0].getValue(),
 					"bar1",
@@ -104,7 +102,7 @@ sap.ui.define([
 		QUnit.test("When config has a root context", function (assert) {
 			var done = assert.async();
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(
 					this.oBaseEditor.getPropertyEditorsSync()[0].getValue(),
 					"bar1",
@@ -160,7 +158,7 @@ sap.ui.define([
 			this.oBaseEditor.placeAt("qunit-fixture");
 
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync().length, 1, "Then 1 property editor is created");
 				assert.strictEqual(
 					this.oBaseEditor.getPropertyEditorsByNameSync("my.prop.name")[0].getValue(),
@@ -271,7 +269,7 @@ sap.ui.define([
 			var done = assert.async();
 
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsByNameSync("prop2")[0].getValue(), "value2", "Then property editor getter works with property name");
 
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsByTagSync("commonTag").length, 2, "Then property editor getter works with one tag (1/3)");

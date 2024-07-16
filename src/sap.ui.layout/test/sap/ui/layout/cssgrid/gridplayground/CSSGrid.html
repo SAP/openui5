@@ -5,40 +5,19 @@
 
 		<title>CSSGrid Playground</title>
 
-        <style>
-            .demoBox {
-                border: 1px dashed blue;
-            }
-        </style>
+        <link rel="stylesheet" href="./CSSGrid.css">
 
-		<link rel="stylesheet" type="text/css" href="styles/main.css">
-		<script
-			id="sap-ui-bootstrap"
-			type="text/javascript"
-			src="../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_belize"
-			data-sap-ui-libs="sap.ui.layout, sap.m"
-			data-sap-ui-preload="async"
-			data-sap-ui-compatVersion="edge"
-			data-sap-ui-xx-bindingSyntax="complex"
-			data-sap-ui-resourceroots='{
-				"sap.ui.layout.cssgrid.gridplayground": "./"
-			}'>
+		<link rel="stylesheet" href="styles/main.css">
+		<script id="sap-ui-bootstrap"
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.ui.layout, sap.m"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-resource-roots='{"sap.ui.layout.cssgrid.gridplayground":"./","local":"./"}'
+				data-sap-ui-async="true"
+				data-sap-ui-on-init="module:local/CSSGrid"
+		>
 		</script>
-		<script>
-			sap.ui.getCore().attachInit(function () {
-				sap.ui.require([
-					"sap/ui/core/ComponentContainer"
-				], function (ComponentContainer) {
-					new ComponentContainer({
-						name: "sap.ui.layout.cssgrid.gridplayground",
-						settings: {
-							id: "gridplayground"
-						}
-					}).placeAt("content");
-				});
-			});
-		</script>
+		
 	</head>
 
 	<body class="sapUiBody sapUiSizeCompact" id="content">

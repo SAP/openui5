@@ -42,6 +42,7 @@ sap.ui.define([
 				 */
 				enabled: { type: "boolean", group: "Behavior", defaultValue: true }
 			 },
+
 			aggregations: {
                 items : { type : "sap.m.SegmentedButtonItem", multiple : true, singularName : "item", bindable : "bindable" }
 			},
@@ -61,7 +62,7 @@ sap.ui.define([
 					}
 				}
 			},
-			publicMethods: [],
+
 			defaultProperty: "conditions"
 		},
         renderer: SegmentedButtonRenderer

@@ -37,4 +37,4 @@ sap.ui.define(['./RenderManager'], function(RenderManager) {
 
 	return HTMLRenderer;
 
-}, /* bExport= */ true);
+});

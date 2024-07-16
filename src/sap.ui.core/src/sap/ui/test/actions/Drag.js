@@ -30,9 +30,7 @@ sap.ui.define([
 	 */
 	var Drag = Action.extend("sap.ui.test.actions.Drag", /** @lends sap.ui.test.actions.Drag.prototype */ {
 
-		metadata : {
-			publicMethods : [ "executeOn" ]
-		},
+		metadata : {},
 
 		/**
 		 * Starts a drag event sequence for this control.

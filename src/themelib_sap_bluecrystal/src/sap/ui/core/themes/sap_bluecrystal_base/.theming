@@ -1,7 +1,0 @@
-{
-  "sEntity" : "Theme",
-  "sId" : "sap_bluecrystal_base",
-  "sVendor" : "SAP",
-  "sType": "ABSTRACT",
-  "sThemability": "PRIVATE"
-}

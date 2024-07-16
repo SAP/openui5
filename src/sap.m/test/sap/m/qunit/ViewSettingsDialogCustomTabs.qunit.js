@@ -16,8 +16,8 @@ sap.ui.define([
 	"sap/m/ViewSettingsCustomItem",
 	"sap/m/ViewSettingsDialog",
 	"sap/m/Input",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -35,8 +35,8 @@ sap.ui.define([
 	ViewSettingsCustomItem,
 	ViewSettingsDialog,
 	Input,
-	jQuery,
-	oCore
+	nextUIUpdate,
+	jQuery
 ) {
 	"use strict";
 
@@ -257,11 +257,11 @@ sap.ui.define([
 	};
 
 	QUnit.module("Custom tabs", {
-		beforeEach : function () {
+		beforeEach : async function() {
 			this.oVSD = new ViewSettingsDialog();
 			this.oVSD.placeAt("qunit-fixture");
 			this.oVSD.setModel(model);
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function () {
 			this.oVSD.destroy();

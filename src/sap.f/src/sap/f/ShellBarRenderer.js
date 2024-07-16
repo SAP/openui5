@@ -2,8 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-function() {
+sap.ui.define([], function() {
 	"use strict";
 
 	return {
@@ -77,4 +76,4 @@ function() {
 		}
 	};
 
-}, /* bExport= */ true);
+});

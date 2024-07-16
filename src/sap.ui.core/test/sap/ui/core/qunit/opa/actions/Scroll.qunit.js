@@ -3,9 +3,8 @@ sap.ui.define([
 	"sap/ui/test/actions/Scroll",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/Opa5",
-	"sap/ui/test/opaQunit",
-	"sap/ui/thirdparty/jquery"
-], function (Scroll, Press, Opa5, opaTest, $) {
+	"sap/ui/test/opaQunit"
+], function(Scroll, Press, Opa5, opaTest) {
 	"use strict";
 
 	Opa5.extendConfig({

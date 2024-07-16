@@ -254,13 +254,6 @@ sap.ui.define([
 		return library.Importance.Low;
 	};
 
-	/**@deprecated */
-	ObjectPageSection.prototype.connectToModels = function () {
-		this.getSubSections().forEach(function (oSubSection) {
-			oSubSection.connectToModels();
-		});
-	};
-
 	ObjectPageSection.prototype.connectToModelsAsync = function () {
 		var pAll  = [];
 

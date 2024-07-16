@@ -1,31 +1,19 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
+	<head><meta charset="utf-8">
 		<title>DesignTime - Massive Overlay Test</title>
 
-		<style>
-			html, body, #content {
-				height: 100%;
-			}
-			.sapUiView {
-				height: 100%;
-			}
-
-			.sapUiDtOverlay {
-				background-color: rgba(255,0,0,0.1);
-			}
-			#overlay-container {
-				background-color: rgba(255,0,255,0.5);
-			}
-		</style>
+		<link rel="stylesheet" href="./DesignTimeMassiveOverlayTest.css">
 
 		<script src="../../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				src="../../../../../../resources/sap-ui-core.js"
-				data-sap-ui-noConflict="true"
+				data-sap-ui-noconflict="true"
 				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
-				data-sap-ui-resourceroots='{"dt.performance": "./"}'
-				>
+				data-sap-ui-resource-roots='{"dt.performance": "./"}'
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+		>
 		</script>
 
 		<script src="DesignTimeMassiveOverlayTest.js"></script>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head><meta charset="utf-8">
 	<title>Integrate Destinations</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="../../scripts/boot.js"></script>
 </head>
@@ -19,9 +19,7 @@
 
 			<p>
 				Destinations that are listed in the <code>configuration</code> part of the <code>manifest</code>
-				should be resolved by the application with the help of <a
-					data-demokit-href="#/api/sap.ui.integration.Host"
-					target="_blank"><code>sap.ui.integration.Host</code></a>.
+				should be resolved by the application with the help of <a data-demokit-href="#/api/sap.ui.integration.Host" target="_blank"><code>sap.ui.integration.Host</code></a>.
 				The host application developer should set the <code>resolveDestination</code> to a function, which
 				resolves destination name to the corresponding absolute URL.
 				The card calls this function when it needs to send a request to the destination.

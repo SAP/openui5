@@ -255,4 +255,4 @@ sap.ui.define([
 	};
 
 	return oPDFViewerRenderManager;
-}, true);
+});

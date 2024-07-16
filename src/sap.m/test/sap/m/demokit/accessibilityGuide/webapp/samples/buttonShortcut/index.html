@@ -4,24 +4,21 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Panel</title>
-	<link rel="icon" href="../images/favicon.ico" type="image/x-icon" />
+	<link rel="icon" href="../images/favicon.ico" type="image/x-icon">
 	<script id="sap-ui-bootstrap"
-		src="../../../../../../../../resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_horizon"
-		data-sap-ui-resourceroots='{
+			src="../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
+			data-sap-ui-resource-roots='{
 			"sap.m.sample.buttonShortcut": "./"
 		}'
-		data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
-		data-sap-ui-compatVersion="edge"
-		data-sap-ui-async="true">
+	>
 	</script>
 </head>
 
 <body class="sapUiBody">
-	<div data-sap-ui-component
-		data-name="sap.m.sample.buttonShortcut"
-		data-id="container"
-		data-settings='{"id" : "buttonShortcut"}'>
+	<div data-sap-ui-component data-name="sap.m.sample.buttonShortcut" data-id="container" data-settings="{&quot;id&quot; : &quot;buttonShortcut&quot;}">
 	</div>
 </body>
 </html>

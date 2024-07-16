@@ -16,8 +16,14 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Theming",
 	"sap/ui/table/Table",
-	"sap/ui/table/Column"
-], function (JSONModel, App, Button, Column, ColumnListItem, Label, List, MessageBox, MultiInput, Page, StandardListItem, Table, Text, Token, coreLibrary, Theming, GridTable, GridTableColumn){
+	"sap/ui/table/Column",
+	"sap/m/CheckBox",
+	"sap/m/FormattedText",
+	"sap/m/Link",
+	"sap/m/Dialog",
+	"sap/m/ToolbarSpacer",
+	"sap/m/Title"
+], function(JSONModel, App, Button, Column, ColumnListItem, Label, List, MessageBox, MultiInput, Page, StandardListItem, Table, Text, Token, coreLibrary, Theming, GridTable, GridTableColumn, CheckBox, FormattedText, Link, Dialog, ToolbarSpacer, Title) {
 	"use strict";
 
 	// var TextDirection = coreLibrary.TextDirection;
@@ -41,7 +47,7 @@ sap.ui.define([
 	//*******************************
 
 	// MultiInput with tokens validated by custom validator
-	var oCheckBoxAcceptValidation = new sap.m.CheckBox({text: "Accept tokens", selected: true}),
+	var oCheckBoxAcceptValidation = new CheckBox({text: "Accept tokens", selected: true}),
 		oMultiInputCustomValidator = new MultiInput("multiInputCustomValidator",{
 			placeholder: "tokens validated by custom validator",
 			valueHelpRequest: fValueHelpRequested,
@@ -121,10 +127,10 @@ sap.ui.define([
 		placeholder: "Warning value message text with link",
 		valueState: "Warning",
 		width: "33%",
-		formattedValueStateText: new sap.m.FormattedText({
+		formattedValueStateText: new FormattedText({
 			htmlText: "Warning value state message with formatted text containing %%0",
 			controls: [
-				new sap.m.Link({
+				new Link({
 					text: "link",
 					href: ""
 				})
@@ -138,14 +144,14 @@ sap.ui.define([
 		valueState: "Error",
 		valueHelpRequest: fValueHelpRequested,
 		width: "33%",
-		formattedValueStateText: new sap.m.FormattedText({
+		formattedValueStateText: new FormattedText({
 			htmlText: "Warning value state message with formatted text containing %%0 %%1",
 			controls: [
-				new sap.m.Link({
+				new Link({
 					text: "multiple",
 					href: "#"
 				}),
-				new sap.m.Link({
+				new Link({
 					text: "links",
 					href: "#"
 				})
@@ -232,7 +238,7 @@ sap.ui.define([
 	var oOneLongTokenMI = new MultiInput("multiInputWithOneLongToken", {
 		placeholder: "1 item example",
 		valueHelpRequest: function () {
-			var oDialog = new sap.m.Dialog({
+			var oDialog = new Dialog({
 				endButton: new Button({
 					text: "Close",
 					press: function () {
@@ -303,7 +309,7 @@ sap.ui.define([
 	oCondensedTable.addStyleClass("sapUiSizeCondensed");
 
 	//*******************************
-	var theCompactMode = new sap.m.CheckBox("compactMode", {
+	var theCompactMode = new CheckBox("compactMode", {
 		selected: false,
 		select : function() {
 			document.getElementById("body").classList.toggle("sapUiSizeCompact");
@@ -322,13 +328,13 @@ sap.ui.define([
 
 	var oPage = new Page("page1", {
 		headerContent: [
-			new sap.m.ToolbarSpacer({
+			new ToolbarSpacer({
 				width: "500px"
 			}),
-			new sap.m.Title({
+			new Title({
 				text: "sap.m.MultiInput"
 			}),
-			new sap.m.ToolbarSpacer({
+			new ToolbarSpacer({
 				width: "650px"
 			}),
 			oCustomCssButton
@@ -359,7 +365,7 @@ sap.ui.define([
 		]
 	}).addStyleClass("sapUiContentPadding");
 
-	var oApp = new sap.m.App("myApp", {
+	var oApp = new App("myApp", {
 		initialPage: "page1"
 	});
 

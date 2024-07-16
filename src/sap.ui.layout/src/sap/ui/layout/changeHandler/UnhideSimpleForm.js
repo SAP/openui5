@@ -163,5 +163,4 @@ sap.ui.define([
 	};
 
 	return UnhideForm;
-},
-/* bExport= */true);
+});

@@ -15,7 +15,7 @@
         window['sap-ui-documentation-config'] = {
             apiInfoRootURL: 'test-resources/sap/ui/documentation/sdk/integration/mock/docs/api/api-index.json'
         };
-        Core.attachInit(function () {
+        Core.ready(function () {
 
             sap.ui.require([
                 "sap/ui/documentation/sdk/test/configureOpa",

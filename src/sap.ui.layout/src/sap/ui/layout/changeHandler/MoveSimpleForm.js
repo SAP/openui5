@@ -518,5 +518,4 @@ sap.ui.define([
 	};
 
 	return MoveSimpleForm;
-},
-/* bExport= */true);
+});

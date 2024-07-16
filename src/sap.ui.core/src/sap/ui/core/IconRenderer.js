@@ -98,4 +98,4 @@ sap.ui.define(['./_IconRegistry', './library', "sap/base/security/encodeCSS"], f
 
 	return IconRenderer;
 
-}, /* bExport= */ true);
+});

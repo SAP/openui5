@@ -18,80 +18,21 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	"sap/base/strings/camelize",
 	"sap/base/strings/capitalize",
 	"sap/base/util/extend",
-	"sap/base/util/ObjectPath",
 	"sap/ui/base/DataType",
 	"sap/ui/core/Element",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
-],
-	function(
-		Log,
-		camelize,
-		capitalize,
-		extend,
-		ObjectPath,
-		DataType,
-		Element,
-		KeyCodes,
-		jQuery
-	) {
+	"sap/ui/thirdparty/jquery"
+], function(
+	Log,
+	camelize,
+	capitalize,
+	extend,
+	DataType,
+	Element,
+	KeyCodes,
+	jQuery
+) {
 	"use strict";
-
-	/**
-	 * @deprecated As of 1.120
-	 */
-	if ( typeof QUnit !== 'undefined' ) {
-
-		// any version < 2.0 activates legacy support
-		// note that the strange negated condition properly handles NaN
-		var bLegacySupport = !(parseFloat(QUnit.version) >= 2.0);
-
-		// extract the URL parameters
-		var mParams = new URLSearchParams(window.location.search);
-
-		if ( bLegacySupport ) {
-			// TODO: Remove deprecated code once all projects adapted
-			QUnit.equals = window.equals = window.equal;
-		}
-
-		// Set a timeout for all tests, either to a value given via URL
-		// or - when no other value has been configured yet - to a static default
-		var sTimeout = mParams.get("sap-ui-qunittimeout");
-		if (sTimeout != null || !("testTimeout" in QUnit.config)) {
-			if (!sTimeout || isNaN(sTimeout)) {
-				sTimeout = "30000"; // 30s: default timeout of an individual QUnit test!
-			}
-			QUnit.config.testTimeout = parseInt(sTimeout);
-		}
-
-		if ( bLegacySupport ) {
-			// Do not reorder tests, as most of the tests depend on each other
-			QUnit.config.reorder = false;
-		}
-
-		// only when instrumentation is done on server-side blanket itself doesn't
-		// take care about rendering the report - in this case we do it manually
-		// when the URL parameter "coverage-report" is set to true or x
-		if (window["sap-ui-qunit-coverage"] !== "client" && /x|true/i.test(mParams.get("coverage-report"))) {
-			QUnit.done(function(failures, total) {
-				// only when coverage is available
-				if (window._$blanket) {
-					// we remove the QUnit object to avoid blanket to automatically
-					// trigger start on QUnit which leads to failures in qunit-reporter-junit
-					var QUnit = window.QUnit;
-					window.QUnit = undefined;
-					// load the blanket instance
-					sap.ui.requireSync("sap/ui/thirdparty/blanket"); // legacy-relevant
-					// restore the QUnit object
-					window.QUnit = QUnit;
-					// trigger blanket to display the coverage report
-					window.blanket.report({});
-				}
-			});
-		}
-
-	}
 
 	// Re-implement jQuery.now to always delegate to Date.now.
 	//
@@ -110,29 +51,6 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	 * @public
 	 */
 	var QUtils = {};
-
-	/**
-	 * Delays the start of the test until everything is rendered or - if given - for the specified milliseconds.
-	 * This function must be called before the first test function.
-	 *
-	 * @param {int} [iDelay] optional delay in milliseconds
-	 *
-	 * @public
-	 * @deprecated As of version 1.120, not needed with property async test design. If tests depend on theming,
-	 *    they rather should use the waitForTheme option or module <code>waitForThemeApplied</code>.
-	 */
-	QUtils.delayTestStart = function(iDelay){
-		QUnit.config.autostart = false;
-		if (iDelay) {
-			window.setTimeout(function() {
-				QUnit.start();
-			}, iDelay);
-		} else {
-			jQuery(function() {
-				QUnit.start();
-			});
-		}
-	};
 
 	var noop = function() {};
 
@@ -228,15 +146,6 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	var fnClosestTo = Element.closestTo && Element.closestTo.bind(Element);
 
 	/**
-	 * @deprecated Since 1.106
-	 */
-	if ( fnClosestTo == null ) {
-		fnClosestTo = function(oElement) {
-			return jQuery(oElement).control(0); // legacy-relevant: fallback for older UI5 versions
-		};
-	}
-
-	/**
 	 * Programmatically triggers a touch event specified by its name.
 	 * The onEVENTNAME functions are called directly on the "nearest" control / element of the given target.
 	 *
@@ -304,9 +213,9 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 		// remove "Digit" and "Numpad" from the resulting string as this info is present within the Location property and not the key property
 		// e.g. "Digit9" --> "9"
 		if (sKey.startsWith("Digit")) {
-			return sKey.substring("Digit".length);
+			return sKey.substring(5);
 		} else if (sKey.startsWith("Numpad")) {
-			sKey = sKey.substring("Numpad".length);
+			sKey = sKey.substring(6);
 		}
 
 		// special handling where KeyCodes[sKeyCode] does not match
@@ -415,21 +324,6 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	 */
 	QUtils.triggerKeyup = function(oTarget, sKey, bShiftKey, bAltKey, bCtrlKey) {
 		QUtils.triggerKeyEvent("keyup", oTarget, sKey, bShiftKey, bAltKey, bCtrlKey);
-	};
-
-
-	/**
-	 * @param {object} oTarget
-	 * @param {string} sKey
-	 * @param {boolean} bShiftKey
-	 * @param {boolean} bAltKey
-	 * @param {boolean} bCtrlKey
-	 * @deprecated Use <code>sap.ui.test.qunit.triggerKeydown</code> instead.
-	 * @see sap.ui.test.qunit.triggerKeydown
-	 * @public
-	 */
-	QUtils.triggerKeyboardEvent = function(oTarget, sKey, bShiftKey, bAltKey, bCtrlKey) {
-		QUtils.triggerKeydown(oTarget, sKey, bShiftKey, bAltKey, bCtrlKey);
 	};
 
 
@@ -580,57 +474,6 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 
 	// --------------------------------------------------------------------------------------------------
 
-	/**
-	 * @deprecated No longer used in DIST layer
-	 */
-	var FONT_WEIGHTS = {
-		'normal': 400,
-		'bold': 700
-	};
-
-	/**
-	 * @deprecated No longer used in DIST layer
-	 */
-	jQuery.fn.extend({
-
-		/**
-		 * jQuery plugin (function) to retrieve the internal event data even for jQuery >= 1.9
-		 *
-		 * This is only a HACK and not guaranteed to work with future versions of jQuery.
-		 * It is only intended to be used in test cases.
-		 *
-		 * @see http://jquery.com/upgrade-guide/1.9/#data-events-
-		 *
-		 * @public
-		 * @name jQuery#_sapTest_dataEvents
-		 * @deprecated Tests that rely on this function should try to substitute it with other tests
-		 */
-		_sapTest_dataEvents : function() {
-			var elem = this[0];
-			return elem ? jQuery._data(elem, "events") : null;
-		},
-
-		/**
-		 * jQuery plugin (function) that normalizes textual font-weight values to numerical ones.
-		 *
-		 * Webkit browsers preserve string values and even convert well known numerical values to
-		 * string values (e.g. 700 -> bold, 400 -> normal).
-		 *
-		 * Starting with jQuery 1.10, jQuery normalizes some of these values to a numerical value.
-		 *
-		 * This method hides all these differences (browser, jQuery version) and returns a numerical value
-		 *
-		 * @public
-		 * @name jQuery#_sapTest_cssFontWeight
-		 * @deprecated Tests that rely on this function should try to substitute it with other tests
-		 */
-		_sapTest_cssFontWeight : function() {
-			var v = this.css("font-weight");
-			return v ? FONT_WEIGHTS[v] || v : v;
-		}
-	});
-
-
 	//************************************
 	//TODO: Check JS Doc starting here -> describe and check visibility for stuff in namespace sap.ui.test.qunit
 
@@ -691,17 +534,6 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 				if ( !mDefaultTestValues[sType] ) {
 					var oType = DataType.getType(sType);
 					var oEnumValues = oType && oType.isEnum() ? oType.getEnumValues() : undefined;
-					/**
-					 * @deprecated As of 1.120
-					 */
-					if (!oType) {
-						try {
-							sap.ui.requireSync(sType.replace(/\./g, "/")); // legacy-relevant legacy fallback
-						} catch (e) {
-							// ignore
-						}
-						oEnumValues = ObjectPath.get(sType);
-					}
 					if (oEnumValues && !(oEnumValues instanceof DataType)) {
 						mDefaultTestValues[sType] = Object.keys(oEnumValues);
 					} else {
@@ -809,7 +641,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 				// rendering test
 				oControl.placeAt(sUIArea);
 				info("before explicit rerender");
-				oControl.getUIArea().rerender();
+				oControl.getUIArea().invalidate();
 				info("after explicit rerender");
 
 				info("info");
@@ -1089,19 +921,9 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 			};
 		};
 
-	}());
+	})();
 
 	// legacy global exports
-	/**
-	 *  TODO: Get rid of the old namespace and adapt the existing tests accordingly
-	 * @deprecated
-	 */
-	ObjectPath.set("sap.ui.test.qunit", QUtils);
-	/**
-	 * @deprecated
-	 */
-	window.qutils = QUtils;
-
+	/* -------------------------------------- */
 	return QUtils;
-
-}, /* bExport= */ true);
+});

@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Popup",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/dom/jquery/scrollLeftRTL",
-	"sap/ui/dom/jquery/control"
+	"sap/ui/dom/jquery/scrollLeftRTL"
 ], function(ExtensionBase, TableUtils, library, Device, Element, Popup, Log, jQuery) {
 	"use strict";
 

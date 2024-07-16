@@ -237,4 +237,4 @@ sap.ui.define([
 
 	return oControlInspector;
 
-}, true);
+});

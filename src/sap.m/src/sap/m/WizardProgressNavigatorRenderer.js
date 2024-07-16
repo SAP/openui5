@@ -207,4 +207,4 @@ sap.ui.define([
 
 	return WizardProgressNavigatorRenderer;
 
-}, /* bExport= */ true);
+});

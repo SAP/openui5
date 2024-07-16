@@ -30,7 +30,6 @@ sap.ui.define([
 	const createTables = window.createTables;
 	const destroyTables = window.destroyTables;
 	const getCell = window.getCell;
-	const getColumnHeader = window.getColumnHeader;
 	const getRowHeader = window.getRowHeader;
 	const getRowAction = window.getRowAction;
 	const iNumberOfRows = window.iNumberOfRows;
@@ -243,59 +242,6 @@ sap.ui.define([
 		assert.ok(Math.abs(iNewWidth - iWidth - 90 - 40) < 5, "check column width after resize: " + iNewWidth);
 	});
 
-	/**
-	 * @deprecated As of version 1.117
-	 */
-	QUnit.test("Resize via Resize Button", async function(assert) {
-		const oColumn = this.oColumn;
-		const oColumnDomRef = oColumn.getDomRef();
-		let iWidthBeforeResize;
-
-		async function resize() {
-			const $Resizer = oTable.$("rsz");
-			const $Column = oColumn.$();
-
-			iWidthBeforeResize = oColumnDomRef.offsetWidth;
-			oColumn._openHeaderMenu(oColumnDomRef);
-			await TableQUnitUtils.wait(0);
-
-			const $ResizeButton = $Column.find(".sapUiTableColResizer");
-			const $ResizeButtonOffset = $ResizeButton.offset();
-			const oResizeButton = $ResizeButton[0];
-			const iResizeHandlerTop = Math.floor($ResizeButtonOffset.top + (oResizeButton.offsetHeight / 2));
-			const iResizeButtonLeft = Math.floor($ResizeButtonOffset.left + (oResizeButton.offsetWidth / 2));
-
-			qutils.triggerMouseEvent($ResizeButton, "mousedown", 1, 1, iResizeButtonLeft, iResizeHandlerTop, 0);
-			qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeButtonLeft + 90, iResizeHandlerTop, 0);
-			qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeButtonLeft + 90 + 40, iResizeHandlerTop, 0);
-			qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeButtonLeft + 90 + 40, iResizeHandlerTop, 0);
-			await TableQUnitUtils.nextEvent("rowsUpdated", oTable);
-		}
-
-		oColumn.setSortProperty("dummy");
-		oColumn._openHeaderMenu(oColumnDomRef);
-		await TableQUnitUtils.nextEvent("columnMenuOpen", oColumn);
-
-		oColumn.getMenu().close();
-		this.stub(Device.system, "desktop").value(false);
-		oColumn.setResizable(true);
-
-		await nextUIUpdate();
-		await resize();
-
-		let iExpectedWidth = iWidthBeforeResize + 110;
-		assert.ok(Math.abs(oColumn.getDomRef().offsetWidth - iExpectedWidth) < 5,
-			"The column was resized to the correct width: " + iExpectedWidth);
-
-		oTable.getColumns()[0].setVisible(false);
-		await nextUIUpdate();
-		await TableQUnitUtils.nextEvent("rowsUpdated", oTable);
-
-		iExpectedWidth = iWidthBeforeResize + 110;
-		assert.ok(Math.abs(oColumn.getDomRef().offsetWidth - iExpectedWidth) < 5,
-			"With invisible columns - The column was resized to the correct width: " + iExpectedWidth);
-	});
-
 	QUnit.test("Skip trigger resize when resizing already started", function(assert) {
 		oTable._getPointerExtension()._debug();
 		const ColumnResizeHelper = oTable._getPointerExtension()._ColumnResizeHelper;
@@ -326,102 +272,6 @@ sap.ui.define([
 		triggerMouseDownEvent: function(oElement, iButton) {
 			qutils.triggerMouseEvent(oElement, "mousedown", null, null, null, null, iButton);
 		}
-	});
-
-	/**
-	 * @deprecated As of version 1.117
-	 */
-	QUnit.test("Column header", async function(assert) {
-		let oElem = getColumnHeader(0, true);
-		let oColumn = oTable.getColumns()[0];
-		const oContextMenuEvent = this.spy(this.oPointerExtension._delegate, "oncontextmenu");
-		let oContextMenuEventArgument;
-		let bFirstItemHovered;
-
-		const nextColumnMenuOpen = TableQUnitUtils.nextEvent("columnMenuOpen", oColumn);
-
-		oColumn.setSortProperty("dummy");
-		oColumn._openHeaderMenu(oColumn.getDomRef());
-
-		await nextColumnMenuOpen;
-
-		let oColumnMenu = oColumn.getMenu();
-		oColumnMenu.close();
-
-		// Open the menu with the left mouse button.
-		this.triggerMouseDownEvent(oElem, 0);
-		qutils.triggerMouseEvent(oElem, "click");
-		assert.ok(oColumnMenu.isOpen(), "Menu is opened");
-		bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
-		assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
-
-		// Close the menu with the left mouse button.
-		this.triggerMouseDownEvent(oElem, 0);
-		qutils.triggerMouseEvent(oElem, "click");
-		assert.ok(!oColumnMenu.isOpen(), "Menu is closed");
-		checkFocus(oElem, assert);
-
-		// Open the menu with the right mouse button.
-		this.triggerMouseDownEvent(oElem, 2);
-		jQuery(oElem).trigger("contextmenu");
-		assert.ok(oColumnMenu.isOpen(), "Menu is opened");
-		bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
-		assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
-		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
-		oContextMenuEvent.resetHistory();
-		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
-
-		// Close the menu with the right mouse button.
-		this.triggerMouseDownEvent(oElem, 2);
-		jQuery(oElem).trigger("contextmenu");
-		assert.ok(!oColumnMenu.isOpen(), "Menu is closed");
-		checkFocus(oElem, assert);
-		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
-		oContextMenuEvent.resetHistory();
-		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
-
-		// Open the menu with the left mouse button.
-		this.triggerMouseDownEvent(oElem, 0);
-		qutils.triggerMouseEvent(oElem, "click");
-		assert.ok(oColumnMenu.isOpen(), "Menu is opened");
-		bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
-		assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
-
-		// Close the menu with the right mouse button.
-		this.triggerMouseDownEvent(oElem, 2);
-		jQuery(oElem).trigger("contextmenu");
-		assert.ok(!oColumnMenu.isOpen(), "Menu is closed");
-		checkFocus(oElem, assert);
-		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
-		oContextMenuEvent.resetHistory();
-		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
-
-		oColumn.setVisible(false);
-		await nextUIUpdate();
-		oColumn = oTable.getColumns()[oTable.getColumns().length - 1];
-		oColumn.setSortProperty("dummy");
-		oElem = getColumnHeader(oTable._getVisibleColumns().indexOf(oColumn), true);
-		this.triggerMouseDownEvent(oElem, 0);
-		qutils.triggerMouseEvent(oElem, "click");
-		oColumnMenu = oColumn.getMenu();
-		assert.ok(oColumnMenu.isOpen(), "Menu is opened if there are invisible columns in the aggregation before this column");
-
-		oColumn = oTable.getColumns()[1];
-		oElem = getColumnHeader(1, true);
-		// Try to open the menu with the left mouse button.
-		this.triggerMouseDownEvent(oElem, 0);
-		qutils.triggerMouseEvent(oElem, "click");
-		oColumnMenu = oColumn.getMenu();
-		assert.ok(!oColumnMenu, "No column menu");
-		checkFocus(oElem, assert);
-
-		// Try to open the menu with the right mouse button.
-		this.triggerMouseDownEvent(oElem, 2);
-		jQuery(oElem).trigger("contextmenu");
-		assert.ok(!oColumnMenu, "No column menu");
-		checkFocus(oElem, assert);
-
-		oContextMenuEvent.resetHistory();
 	});
 
 	QUnit.test("Data cell", function(assert) {
@@ -497,49 +347,6 @@ sap.ui.define([
 		afterEach: function() {
 			destroyTables();
 		}
-	});
-
-	/**
-	 * @deprecated As of version 1.117
-	 */
-	QUnit.test("Column header", async function(assert) {
-		const done = assert.async();
-		const oColumn = oTable._getVisibleColumns()[3];
-		let bColumnReorderingTriggered = false;
-		const oPointerExtension = oTable._getPointerExtension();
-		const oOpenContextMenuSpy = this.spy(TableUtils.Menu, "openContextMenu");
-
-		oColumn.setSortProperty('dummy');
-
-		oPointerExtension.doReorderColumn = function() {
-			bColumnReorderingTriggered = true;
-		};
-
-		qutils.triggerMouseEvent(getColumnHeader(3), "mousedown", 1, 1, 1, 1, 0);
-		assert.ok(oPointerExtension._bShowMenu, "Show Menu flag set to be used in onSelect later");
-		qutils.triggerMouseEvent(getColumnHeader(3), "click", 1, 1, 1, 1, 0);
-		assert.ok(oOpenContextMenuSpy.calledOnce, "openContextMenu is called");
-		await TableQUnitUtils.wait(250);
-
-		assert.ok(!oPointerExtension._bShowMenu, "ShowMenu flag reset again");
-		assert.ok(bColumnReorderingTriggered, "Column Reordering triggered");
-
-		assert.ok(oColumn.getMenu().isOpen(), "Menu is open");
-		oTable.setEnableColumnReordering(false);
-		await nextUIUpdate();
-
-		// eslint-disable-next-line
-		bColumnReorderingTriggered = false;
-		oOpenContextMenuSpy.resetHistory();
-
-		qutils.triggerMouseEvent(getColumnHeader(3), "mousedown", 1, 1, 1, 1, 0);
-		assert.ok(!oPointerExtension._bShowMenu, "Menu was opened -> _bShowMenu is false");
-		qutils.triggerMouseEvent(getColumnHeader(3), "click", 1, 1, 1, 1, 0);
-		assert.ok(oOpenContextMenuSpy.notCalled, "Menu was opened -> openContextMenu is not called");
-		await TableQUnitUtils.wait(250);
-
-		assert.ok(!bColumnReorderingTriggered, "Column Reordering not triggered (enableColumnReordering == false)");
-		done();
 	});
 
 	QUnit.test("Scrollbar", function(assert) {
@@ -760,23 +567,6 @@ sap.ui.define([
 		assert.deepEqual(oTable.getSelectedIndices(), [1], "Click on data cell in second row -> Second row selected");
 	});
 
-	/**
-	 * @deprecated As of version 1.115
-	 */
-	QUnit.test("Single Selection - legacyMultiSelection", async function(assert) {
-		oTable.clearSelection();
-		oTable.setSelectionBehavior(library.SelectionBehavior.Row);
-		oTable.setSelectionMode(library.SelectionMode.Single);
-		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
-		oTable.setRowActionCount(1);
-		await nextUIUpdate();
-
-		oTable._enableLegacyMultiSelection();
-		qutils.triggerEvent("tap", getCell(0, 0), {metaKey: true, ctrlKey: true});
-		assert.deepEqual(oTable.getSelectedIndices(), [0],
-			"Ctrl+Click on data cell in first row with legacy multi selection enabled -> First row selected");
-	});
-
 	QUnit.test("MultiToggle Selection - Range", async function(assert) {
 		oTable.clearSelection();
 		oTable.setSelectionBehavior(library.SelectionBehavior.Row);
@@ -800,29 +590,6 @@ sap.ui.define([
 		assert.deepEqual(oTable.getSelectedIndices(), [0, 1, 2, 4, 5], "Range selection with Shift + Click did not deselect");
 	});
 
-	/**
-	 * @deprecated As of version 1.115
-	 */
-	QUnit.test("MultiToggle Selection - Range - legacyMultiSelection", async function(assert) {
-		oTable.clearSelection();
-		oTable.setSelectionBehavior(library.SelectionBehavior.Row);
-		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
-		oTable.setRowActionCount(1);
-		await nextUIUpdate();
-
-		oTable._enableLegacyMultiSelection();
-		oTable.setFirstVisibleRow(0);
-		await nextUIUpdate();
-
-		qutils.triggerMouseEvent(getCell(0, 0), "tap"); // Select row with index 5
-		qutils.triggerEvent("tap", getCell(2, 0), {shiftKey: true, ctrlKey: true});
-		assert.deepEqual(oTable.getSelectedIndices(), [0, 1, 2],
-			"Range selection with Shift + Click selected the correct rows,"
-			+ "even though Ctrl was also pressed and legacy multi selection was enabled");
-		assert.strictEqual(window.getSelection().toString(), "",
-			"Range selection with Shift + Click did not select text");
-	});
-
 	QUnit.test("MultiToggle Selection - Toggle", async function(assert) {
 		oTable.clearSelection();
 		oTable.setSelectionBehavior(library.SelectionBehavior.Row);
@@ -838,37 +605,6 @@ sap.ui.define([
 
 		qutils.triggerMouseEvent(getCell(0, 0), "tap");
 		assert.deepEqual(oTable.getSelectedIndices(), [1], "Click on selected row with index 0");
-	});
-
-	/**
-	 * @deprecated As of version 1.115
-	 */
-	QUnit.test("Legacy Multi Selection", async function(assert) {
-		oTable.clearSelection();
-		oTable.setSelectionBehavior(library.SelectionBehavior.Row);
-		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
-		oTable.setRowActionCount(1);
-		await nextUIUpdate();
-
-		oTable._enableLegacyMultiSelection();
-
-		qutils.triggerMouseEvent(getCell(0, 0), "tap");
-		assert.deepEqual(oTable.getSelectedIndices(), [0], "Click on unselected row with index 0");
-
-		qutils.triggerMouseEvent(getCell(1, 0), "tap");
-		assert.deepEqual(oTable.getSelectedIndices(), [1], "Click on unselected row with index 1");
-
-		qutils.triggerEvent("tap", getCell(2, 0), {metaKey: true, ctrlKey: true});
-		assert.deepEqual(oTable.getSelectedIndices(), [1, 2], "Ctrl + Click on unselected row with index 2");
-
-		qutils.triggerEvent("tap", getCell(0, 0), {metaKey: true, ctrlKey: true});
-		assert.deepEqual(oTable.getSelectedIndices(), [0, 1, 2], "Ctrl + Click on unselected row with index 0");
-
-		qutils.triggerEvent("tap", getCell(1, 0), {metaKey: true, ctrlKey: true});
-		assert.deepEqual(oTable.getSelectedIndices(), [0, 2], "Ctrl + Click on selected row with index 1");
-
-		qutils.triggerMouseEvent(getCell(2, 0), "tap");
-		assert.deepEqual(oTable.getSelectedIndices(), [2], "Click on selected row with index 2");
 	});
 
 	QUnit.module("Selection plugin integration", {

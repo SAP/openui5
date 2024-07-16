@@ -3,12 +3,12 @@
 sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/hyphenation/Hyphenation",
-	"sap/ui/core/Core"
-], function(Text, Hyphenation, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Text, Hyphenation, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("Hyphenation", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oHyphenation = Hyphenation.getInstance();
 
 			this.text = new Text({
@@ -17,7 +17,7 @@ sap.ui.define([
 				wrappingType: 'Hyphenated'
 			});
 			this.text.placeAt('content');
-			oCore.applyChanges();
+			await nextUIUpdate();
 		}
 	});
 

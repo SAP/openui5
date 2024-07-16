@@ -48,7 +48,6 @@ sap.ui.define([
 	return Matcher.extend("sap.ui.test.matchers.I18NText", /** @lends sap.ui.test.matchers.I18NText.prototype */ {
 
 		metadata: {
-			publicMethods: ["isMatching"],
 			properties: {
 				/**
 				 * The name of the control property to match the I18N text with.

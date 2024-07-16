@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Toolbar",
 	"sap/m/library",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/InvisibleRenderer",
 	"sap/m/ToolbarSeparator",
@@ -18,12 +19,12 @@ sap.ui.define([
 	"sap/m/ToolbarLayoutData",
 	"sap/m/ToolbarRenderer",
 	"sap/m/ToolbarSpacer",
-	"sap/ui/core/Core",
 	"sap/ui/core/library"
 ], function(
 	QUtils,
 	Toolbar,
 	mobileLibrary,
+	nextUIUpdate,
 	jQuery,
 	InvisibleRenderer,
 	ToolbarSeparator,
@@ -39,7 +40,6 @@ sap.ui.define([
 	ToolbarLayoutData,
 	ToolbarRenderer,
 	ToolbarSpacer,
-	Core,
 	coreLibrary
 ) {
 	"use strict";
@@ -69,14 +69,14 @@ sap.ui.define([
 		// render
 		if (bShouldRender) {
 			oTB.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 		}
 
 		return oTB;
 	}
 
 	QUnit.module("Rendering");
-	QUnit.test("test rendering and visible property", function(assert) {
+	QUnit.test("test rendering and visible property", async function(assert) {
 		var oTB = createToolbar({
 			Toolbar : {
 				content: [
@@ -89,7 +89,7 @@ sap.ui.define([
 		assert.strictEqual(oTB.$().length, 1, "Toolbar is in DOM");
 		assert.ok(oTB.$().hasClass("sapMTB"), "Toolbar has correct class name");
 		oTB.setVisible(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 		var $ToolbarPlaceHolder = jQuery("#" + InvisibleRenderer.createInvisiblePlaceholderId(oTB));
 		assert.strictEqual(oTB.$().length, 0, "Toolbar is no longer in DOM after setting it to invisible");
 		assert.strictEqual($ToolbarPlaceHolder.length, 1, "Toolbar placeholder is in DOM after setting it to invisible");
@@ -115,7 +115,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("test design property", function(assert) {
+	QUnit.test("test design property", async function(assert) {
 		var oTB = createToolbar({
 			Toolbar : {
 				content: [
@@ -129,24 +129,24 @@ sap.ui.define([
 		assert.ok(!oTB.$().hasClass("sapMTB-Transparent-CTX"), "Initially, toolbar has no transparent context class");
 
 		oTB.setDesign(ToolbarDesign.Transparent);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oTB.$().hasClass("sapMTB-Transparent-CTX"), "Toolbar has transparent context");
 
 		oTB.setDesign(ToolbarDesign.Solid);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oTB.$().hasClass("sapMTB-Solid-CTX"), "Toolbar has solid context");
 
 		oTB.setDesign(ToolbarDesign.Info);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oTB.$().hasClass("sapMTB-Info-CTX"), "Toolbar has info context");
 
 		oTB.setDesign(ToolbarDesign.Auto);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(!oTB.$().hasClass("sapMTB-Transparent-CTX"), "Transparent context has been removed again");
 
 		oTB.setDesign(ToolbarDesign.Info, true);
 		oTB.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oTB.$().hasClass("sapMTB-Info-CTX"), "Toolbar has now Info design.");
 		assert.ok(!oTB.$().hasClass("sapMTB-Transparent-CTX"), "Transparent context is not set");
 		assert.strictEqual(ToolbarDesign.Info, oTB.getActiveDesign(), "Active design should be 'Info'");
@@ -155,7 +155,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("Should add the IBar-CTX if style and tag are set", function(assert) {
+	QUnit.test("Should add the IBar-CTX if style and tag are set", async function(assert) {
 		// Arrange + System under Test
 		var oTB = createToolbar();
 
@@ -163,7 +163,7 @@ sap.ui.define([
 
 		// Act
 		oTB.applyTagAndContextClassFor("footer");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oTB.$().hasClass("sapMIBar-CTX"), "Toolbar does have the IBar context");
@@ -173,7 +173,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("test style property", function (assert) {
+	QUnit.test("test style property", async function(assert) {
 		var oTB = createToolbar({
 			Toolbar: {
 				content: [
@@ -187,7 +187,7 @@ sap.ui.define([
 
 		//act
 		oTB.setStyle(ToolbarStyle.Clear);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//check
 		assert.ok(!oTB.$().hasClass("sapMTBStandard"), "toolbar has correct style class");
@@ -213,7 +213,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("test sapMBarChildFirstChild class", function(assert) {
+	QUnit.test("test sapMBarChildFirstChild class", async function(assert) {
 		var oFirstControl = new Button({ text: "Button1" }),
 			oSecondControl = new Button({ text: "Button2" }),
 			oTB = createToolbar({
@@ -228,7 +228,7 @@ sap.ui.define([
 
 		//Act
 		oFirstControl.setVisible(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.notOk(oFirstControl.hasStyleClass("sapMBarChildFirstChild"), "First child does not have 'sapMBarChildFirstChild' class");
@@ -240,7 +240,7 @@ sap.ui.define([
 
 	QUnit.module("Accessiblity");
 
-	QUnit.test("getAccessibilityInfo method", function(assert) {
+	QUnit.test("getAccessibilityInfo method", async function(assert) {
 		var aDefaultContent = [
 			new Button({width: "150px"}),
 			new Button({width: "150px"})
@@ -250,7 +250,7 @@ sap.ui.define([
 		});
 
 		oTB.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oTB.getAccessibilityInfo().children.length, oTB.getContent().length, "children property of accessibility info object contains correct amount of children");
 
@@ -259,7 +259,7 @@ sap.ui.define([
 
 	QUnit.module("ARIA");
 
-	QUnit.test("Default ARIA attributes", function(assert) {
+	QUnit.test("Default ARIA attributes", async function(assert) {
 		// Arrange + System under Test
 		var oBtn1 = new Button({
 			text : "Button Text"
@@ -274,7 +274,7 @@ sap.ui.define([
 			content : [oTitle, oBtn1, oBtn2]
 		}).applyTagAndContextClassFor("header");
 		oTB.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(oTB.$().attr("role"), "toolbar", "Toolbar has attribute role='toolbar'");
@@ -283,7 +283,7 @@ sap.ui.define([
 
 		//Act
 		oTB.setEnabled(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(oTB.$().attr("aria-disabled"), "true", "Toolbar has attribute aria-disabled='true'");
@@ -293,7 +293,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("Role attribute and aria-labelledby with interactive Controls", function(assert) {
+	QUnit.test("Role attribute and aria-labelledby with interactive Controls", async function(assert) {
 		// Arrange + System under Test
 		var oBtn1 = new Button({
 			text : "Button Text"
@@ -308,7 +308,7 @@ sap.ui.define([
 			content : [oTitle, oBtn1]
 		});
 		oTB.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(oTB.$().attr("role"), undefined,
@@ -318,7 +318,7 @@ sap.ui.define([
 
 		//Act
 		oTB.addContent(oBtn2);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(oTB.$().attr("role"), "toolbar",
@@ -330,7 +330,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("Role attribute and aria-labelledby with visible/not visible interactive Controls", function(assert) {
+	QUnit.test("Role attribute and aria-labelledby with visible/not visible interactive Controls", async function(assert) {
 		// Arrange + System under Test
 		var oBtn1 = new Button({
 			text : "Button Text"
@@ -346,7 +346,7 @@ sap.ui.define([
 			content : [oTitle, oBtn1, oBtn2]
 		});
 		oTB.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(oTB.$().attr("role"), undefined,
@@ -356,7 +356,7 @@ sap.ui.define([
 
 		//Act
 		oBtn2.setVisible(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(oTB.$().attr("role"), "toolbar",
@@ -368,12 +368,12 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("_getToolbarInteractiveControlsCount with non interactive Controls", function(assert) {
+	QUnit.test("_getToolbarInteractiveControlsCount with non interactive Controls", async function(assert) {
 		// Arrange + System under Test
 		var oTB = new Toolbar({
 			content : [new Title(), new Label(), new Text()]
 		});
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(oTB._getToolbarInteractiveControlsCount(), 0,
@@ -383,12 +383,12 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("_getToolbarInteractiveControlsCount with interactive Controls", function(assert) {
+	QUnit.test("_getToolbarInteractiveControlsCount with interactive Controls", async function(assert) {
 		// Arrange + System under Test
 		var oTB = new Toolbar({
 			content : [new Input(), new Link(), new Button()]
 		});
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(oTB._getToolbarInteractiveControlsCount(), 3,
@@ -398,7 +398,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("If Toolbar's content is made of only a label aria-labelledby should not be present - internal labels", function(assert) {
+	QUnit.test("If Toolbar's content is made of only a label aria-labelledby should not be present - internal labels", async function(assert) {
 		// Arrange + System under Test
 		var oLabel = new Label({
 			text : "Toolbar Label"
@@ -408,7 +408,7 @@ sap.ui.define([
 			ariaLabelledBy: oLabel.getId()
 		});
 		oTB.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		var oInvisibleText = document.getElementById(oTB.getId() + "-InvisibleText");
@@ -416,14 +416,14 @@ sap.ui.define([
 		assert.strictEqual(oTB.$().attr("aria-labelledby"), undefined, "Toolbar does not have attribute aria-labelledby - external label");
 
 		oTB.applyTagAndContextClassFor("header");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Cleanup
 		oLabel.destroy();
 		oTB.destroy();
 	});
 
-	QUnit.test("If Toolbar's content is made of only a label aria-labelledby should not be present - internal and external labels", function(assert) {
+	QUnit.test("If Toolbar's content is made of only a label aria-labelledby should not be present - internal and external labels", async function(assert) {
 		// Arrange + System under Test
 		var oLabel = new Label({
 			text : "Toolbar Label"
@@ -433,7 +433,7 @@ sap.ui.define([
 			ariaLabelledBy: oLabel.getId()
 		}).applyTagAndContextClassFor("header");
 		oTB.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		var oInvisibleText = document.getElementById(oTB.getId() + "-InvisibleText");
@@ -445,7 +445,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("Active toolbar role", function(assert) {
+	QUnit.test("Active toolbar role", async function(assert) {
 		var fnDone = assert.async(),
 
 		// Arrange
@@ -457,7 +457,7 @@ sap.ui.define([
 			content : oLabel
 		});
 		oTB.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(oTB.$().attr("role") === "button", "Active toolbar should not have role button");
 
@@ -473,21 +473,21 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("Active toolbar aria-haspopup", function(assert) {
+	QUnit.test("Active toolbar aria-haspopup", async function(assert) {
 		// Arrange
 		var oToolbar = new Toolbar({
 			active: true,
 			ariaHasPopup: coreLibrary.aria.HasPopup.Dialog
 		});
 		oToolbar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(oToolbar._getActiveButton().$().attr("aria-haspopup"), coreLibrary.aria.HasPopup.Dialog, "Active toolbar focus element should have correct aria-haspopup");
 
 		// Act
 		oToolbar.setActive(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(oToolbar._getActiveButton().$().attr("aria-haspopup"), undefined, "Toolbar focus element should not have aria-haspopup if active property is false");
@@ -496,14 +496,14 @@ sap.ui.define([
 		oToolbar.destroy();
 	});
 
-	QUnit.test("_setEnableAccessibilty", function(assert) {
+	QUnit.test("_setEnableAccessibilty", async function(assert) {
 		// Arrange
 		var oTB = new Toolbar({
 			content: [ new Button(),
 				new Button() ]
 		});
 		oTB.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(oTB.$().attr("role"), "toolbar", "Toolbar has attribute role='toolbar'");
@@ -511,7 +511,7 @@ sap.ui.define([
 
 		// Arrange
 		oTB._setEnableAccessibilty(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(oTB.$().attr("role"), "none", "Toolbar hasn't attribute role");
@@ -588,7 +588,7 @@ sap.ui.define([
 			var sShrinkClass = "shrink";
 			var oControl = new fnControlClass(oConfig || {});
 			oControl.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 
 			var bShrink = Toolbar.checkShrinkable(oControl, sShrinkClass);
 			var sPrefix = (bExpected) ? "should shrink" : "should not shrink";
@@ -845,7 +845,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("LayoutData");
-	QUnit.test("should reapply layout data styles after content is rerendered", function(assert) {
+	QUnit.test("should reapply layout data styles after content is rerendered", async function(assert) {
 		var sMinWidth = "100px";
 		var oBtn = new Button({
 			text : "Button Text",
@@ -864,7 +864,7 @@ sap.ui.define([
 
 		// act
 		oBtn.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oBtn.getDomRef().style.minWidth, sMinWidth, "After rerender minWidth is still available on the DOM");
@@ -874,7 +874,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("should reapply style after layout data is changed", function(assert) {
+	QUnit.test("should reapply style after layout data is changed", async function(assert) {
 		var sInitMinWidth = "100px";
 		var sLastMinWidth = "200px";
 		var oBtn = new Button({
@@ -898,7 +898,7 @@ sap.ui.define([
 		// act
 		oBtn.getLayoutData().setMinWidth(sLastMinWidth);
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oBtn.getDomRef().style.minWidth, sLastMinWidth, "After layout data changes min width is set on the DOM.");
@@ -909,7 +909,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("setting layout data should apply changes with rerender", function(assert) {
+	QUnit.test("setting layout data should apply changes with rerender", async function(assert) {
 		var sMinWidth = "100px";
 		var oBtn = new Button({
 			text : "Button Text"
@@ -929,7 +929,7 @@ sap.ui.define([
 			shrinkable : true
 		}));
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oBtn.getDomRef().style.minWidth, sMinWidth, "After layout data is set minWidth applied to the DOM.");
@@ -941,7 +941,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Element Margins");
-	QUnit.test("Should add margins to elements in a Toolbar", function(assert) {
+	QUnit.test("Should add margins to elements in a Toolbar", async function(assert) {
 		// Arrange
 		var oFirstButton = new Button("first"),
 			oMiddleButton = new Button("middle"),
@@ -961,7 +961,7 @@ sap.ui.define([
 
 		// Act + assert
 		oTB.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		function assertButton (oButton, oWidth) {

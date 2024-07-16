@@ -717,12 +717,6 @@ sap.ui.define([
 										.close("a");
 									rm.close("div");
 								}
-								/**
-								 * @deprecated As of version 1.118
-								 */
-								if (oBinding.model.location.type !== 'control') {
-									rm.openStart("div").openEnd().openStart("span").attr("title", "Core").openEnd().text("Core").close("span").close("div");
-								}
 							} else {
 								rm.openStart("div").openEnd().openStart("span").openEnd().text("No binding").close("span").close("div");
 							}
@@ -907,9 +901,9 @@ sap.ui.define([
 			if ($li.hasClass("sapUiControlTreeElement")) {
 				$(".sapUiControlTreeElement > div").removeClass("sapUiSupportControlTreeSelected");
 				$li.children("div").addClass("sapUiSupportControlTreeSelected");
-				this._oStub.sendEvent("sapUiSupportSelectorHighlight", {id: $li.attr("id").substring("sap-debug-controltree-".length)});
+				this._oStub.sendEvent("sapUiSupportSelectorHighlight", {id: $li.attr("id").substring(22)});
 
-				var sId = $li.attr("id").substring("sap-debug-controltree-".length);
+				var sId = $li.attr("id").substring(22);
 
 				if ($span.hasClass("sapUiSupportControlTreeBreakpointCount")) {
 					this._currentTab = this._tab.breakpoints;
@@ -1161,7 +1155,7 @@ sap.ui.define([
 			if ($sret.length === 0) {
 				return undefined;
 			} else {
-				return $sret.parent().attr("id").substring("sap-debug-controltree-".length);
+				return $sret.parent().attr("id").substring(22);
 			}
 		};
 
@@ -1235,13 +1229,6 @@ sap.ui.define([
 							oViewSerializer = new ViewSerializer(oView, window, "sap.m");
 						}
 
-						/**
-						 * HTML only
-						 * @deprecated Since 1.119
-						 */
-						if (sType && sType !== "XML") {
-							mViews = oViewSerializer.serializeToHTML();
-						}
 						// XML
 						if (!(sType && sType !== "XML")) {
 							mViews = oViewSerializer.serializeToXML();
@@ -1253,13 +1240,6 @@ sap.ui.define([
 							oView.addContent(aContent[i]);
 						}
 						oViewSerializer = new ViewSerializer(oView, window, "sap.m");
-						/**
-						 * HTML only
-						 * @deprecated Since 1.119
-						 */
-						if (sType && sType !== "XML") {
-							mViews = oViewSerializer.serializeToHTML();
-						}
 						// XML
 						if (!(sType && sType !== "XML")) {
 							mViews = oViewSerializer.serializeToXML();
@@ -1422,7 +1402,6 @@ sap.ui.define([
 					var mAssoc = mElement.association[i];
 
 					if (!mAllElements[mAssoc.id]) {
-
 						var oType;
 						if (mAssoc.type) {
 							oType = sap.ui.require(mAssoc.type.replace(/\./g, "/"));
@@ -1445,14 +1424,6 @@ sap.ui.define([
 							break;
 						default:
 							break;
-						}
-
-						/**
-						 * @deprecated As of version 1.58
-						 */
-						if (sStereotype === "template") {
-							var Template = sap.ui.requireSync("sap/ui/core/tmpl/Template");
-							oObj = Template.byId(mAssoc.id);
 						}
 
 						if (!oObj) {
@@ -1724,7 +1695,6 @@ sap.ui.define([
 			mModelInfo.name = getModelName(oControl.oModels) || getModelName(oControl.oPropagatedProperties.oModels);
 
 			if (mModelInfo.name) {
-
 				var oCurrentControl = oControl;
 
 				// check for the model on control level (including all parents)
@@ -1738,27 +1708,6 @@ sap.ui.define([
 						break;
 					}
 				} while ( (oCurrentControl = oCurrentControl.getParent()) );
-
-				/**
-				 * @deprecated As of version 1.118
-				 */
-				if (!mModelInfo.location) { // check for core model if no model was found
-
-					var oCoreModel = null;
-
-					if (mModelInfo.name === 'undefined') {
-						oCoreModel = this.oCore.getModel();
-					} else {
-						oCoreModel = this.oCore.getModel(mModelInfo.name);
-					}
-
-					if (oCoreModel) {
-						mModelInfo.location = {
-							type: 'core'
-						};
-					}
-				}
-
 			}
 
 			// Get Model Type (JSON, XML, OData)

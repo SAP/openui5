@@ -1,0 +1,10 @@
+.TileContainer {
+	padding-bottom: 1rem;
+	padding-top: 1rem;
+	width: 100%;
+	min-height: 200px;
+	box-sizing: border-box;
+}
+.sapUiTheme-sap_belize .TileContainer {
+	background-color: #ebf2f7;
+}

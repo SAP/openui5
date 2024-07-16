@@ -627,8 +627,6 @@ sap.ui.define([
 		const oSapUiMock = this.mock(sap.ui);
 
 		oSapUiMock.expects("require").withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(undefined);
-		/** @deprecated As of version 1.120.0 */
-		oSapUiMock.expects("requireSync").withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(undefined);
 		// While destroying the control used in the check function, require is sometimes called
 		oSapUiMock.expects("require").withExactArgs("sap/ui/core/ResizeHandler").atLeast(0).callThrough();
 		oSapUiMock.expects("require").withExactArgs("sap/ui/core/FocusHandler").atLeast(0).callThrough();
@@ -640,21 +638,6 @@ sap.ui.define([
 
 		// code under test
 		check(assert, sExpression, "undefined");
-	});
-	/** @deprecated As of version 1.120.0 */
-	QUnit.test("odata.compare, load ODataUtils on demand", function (assert) {
-		const oDataUtils = {compare() {}};
-		const oSapUiMock = this.mock(sap.ui);
-
-		oSapUiMock.expects("require").withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(undefined);
-		oSapUiMock.expects("requireSync").withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(oDataUtils);
-		this.mock(oDataUtils).expects("compare").withExactArgs(2, 3).returns("-1");
-		// While destroying the control used in the check function, require is sometimes called
-		oSapUiMock.expects("require").withExactArgs("sap/ui/core/ResizeHandler").atLeast(0).callThrough();
-		oSapUiMock.expects("require").withExactArgs("sap/ui/core/FocusHandler").atLeast(0).callThrough();
-
-		// code under test
-		check(assert, "{=odata.compare(2,3)}", "-1");
 	});
 
 	//*********************************************************************************************
@@ -675,8 +658,6 @@ sap.ui.define([
 	QUnit.test("odata.uriEncode throws error if ODataUtils is not loaded", function (assert) {
 		const oSapUiMock = this.mock(sap.ui);
 		oSapUiMock.expects("require").withExactArgs("sap/ui/model/odata/ODataUtils").returns(undefined);
-		/** @deprecated As of version 1.120.0 */
-		oSapUiMock.expects("requireSync").withExactArgs("sap/ui/model/odata/ODataUtils").returns(undefined);
 		// While destroying the control used in the check function, require is sometimes called
 		oSapUiMock.expects("require").withExactArgs("sap/ui/core/ResizeHandler").atLeast(0).callThrough();
 		oSapUiMock.expects("require").withExactArgs("sap/ui/core/FocusHandler").atLeast(0).callThrough();
@@ -688,20 +669,6 @@ sap.ui.define([
 
 		// code under test
 		check(assert, sExpression, "undefined");
-	});
-	/** @deprecated As of version 1.120.0 */
-	QUnit.test("odata.uriEncode, load ODataUtils on demand", function (assert) {
-		const oDataUtils = {formatValue() {}};
-		const oSapUiMock = this.mock(sap.ui);
-		oSapUiMock.expects("require").withExactArgs("sap/ui/model/odata/ODataUtils").returns(undefined);
-		oSapUiMock.expects("requireSync").withExactArgs("sap/ui/model/odata/ODataUtils").returns(oDataUtils);
-		this.mock(oDataUtils).expects("formatValue").withExactArgs("foo", "Edm.String").returns("'foo'");
-		// While destroying the control used in the check function, require is sometimes called
-		oSapUiMock.expects("require").withExactArgs("sap/ui/core/ResizeHandler").atLeast(0).callThrough();
-		oSapUiMock.expects("require").withExactArgs("sap/ui/core/FocusHandler").atLeast(0).callThrough();
-
-		// code under test
-		check(assert, "{=odata.uriEncode('foo', 'Edm.String')}", "'foo'");
 	});
 
 	//*********************************************************************************************
@@ -729,8 +696,6 @@ sap.ui.define([
 	QUnit.test("odata.fillUriTemplate throws error if URITemplate is not loaded", function (assert) {
 		const oOriginalExpand = URI.expand;
 		const oSapUiMock = this.mock(sap.ui);
-		/** @deprecated As of version 1.120.0 */
-		oSapUiMock.expects("requireSync").withExactArgs("sap/ui/thirdparty/URITemplate");
 		URI.expand = undefined;
 		// While destroying the control used in the check function, require is sometimes called
 		oSapUiMock.expects("require").withExactArgs("sap/ui/core/ResizeHandler").atLeast(0).callThrough();
@@ -744,31 +709,6 @@ sap.ui.define([
 
 		// code under test
 		check(assert,sExpression, "");
-
-		// cleanup
-		URI.expand = oOriginalExpand;
-	});
-	/** @deprecated As of version 1.120.0 */
-	QUnit.test("odata.fillUriTemplate, load URITemplate on demand", function (assert) {
-		const oOriginalExpand = URI.expand;
-		const oSapUiMock = this.mock(sap.ui);
-		const oURI = {expand() {}};
-		oSapUiMock.expects("requireSync").withExactArgs("sap/ui/thirdparty/URITemplate").callsFake(function () {
-			URI.expand = oURI.expand;
-
-			return "~URITemplate";
-		});
-		this.mock(oURI).expects("expand").withExactArgs("http://foo/{t},{m}", {m : "tel", t : "mail"})
-			.returns("http://foo/mail,tel");
-		URI.expand = undefined;
-		// While destroying the control used in the check function, require is sometimes called
-		oSapUiMock.expects("require").withExactArgs("sap/ui/core/ResizeHandler").atLeast(0).callThrough();
-		oSapUiMock.expects("require").withExactArgs("sap/ui/core/FocusHandler").atLeast(0).callThrough();
-		oSapUiMock.expects("require").withExactArgs("sap/ui/core/Messaging").atLeast(0).callThrough();
-
-		// code under test
-		check(assert,"{=odata.fillUriTemplate('http://foo/{t},{m}', {'t': ${/mail}, 'm': ${/tel}})}",
-			"http://foo/mail,tel");
 
 		// cleanup
 		URI.expand = oOriginalExpand;

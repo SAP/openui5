@@ -190,18 +190,6 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/base/assert"],
 				}
 			};
 			return facade;
-		},
-		/**
-		 *
-		 * @param {sap.ui.base.ManagedObject} FNClass The class to create the registry
-		 * @param {object} oOptions The create config options
-		 * @private
-		 * @deprecated
-		 */
-		apply(FNClass, oOptions) {
-			const registry = ManagedObjectRegistry.create(oOptions);
-			registry.init(FNClass);
-			FNClass.registry = registry;
 		}
 	};
 

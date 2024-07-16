@@ -5,25 +5,18 @@
 
 		<title>GridList Playground</title>
 
-		<script
-			id="sap-ui-bootstrap"
-			type="text/javascript"
-			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_belize"
-			data-sap-ui-libs="sap.f, sap.m"
-			data-sap-ui-async="true"
-			data-sap-ui-compatVersion="edge"
-			data-sap-ui-xx-bindingSyntax="complex"
-			data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
-			data-sap-ui-resourceroots='{
+		<script id="sap-ui-bootstrap"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.f, sap.m"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
+				data-sap-ui-resource-roots='{
 				"sap.f.gridlist": "./"
-			}'>
+			}'
+		>
 		</script>
-		<style>
-			.sapFGridList.alignStart .sapFGridListGroup {
-				align-items: start;
-			}
-		</style>
+		<link rel="stylesheet" href="./GridList.css">
 	</head>
 
 	<body class="sapUiBody sapUiSizeCompact" id="content">

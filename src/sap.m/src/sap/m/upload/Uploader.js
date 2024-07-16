@@ -32,11 +32,7 @@ sap.ui.define([
 	var Uploader = Element.extend("sap.m.upload.Uploader", {
 		metadata: {
 			library: "sap.m",
-			publicMethods: [
-				"uploadItem",
-				"terminateItem",
-				"downloadItem"
-			],
+
 			properties: {
 				/**
 				 * URL where the next file is going to be uploaded to.
@@ -57,6 +53,7 @@ sap.ui.define([
 				*/
 				useMultipart: { type: "boolean", defaultValue: false }
             },
+
 			events: {
 				/**
 				 * The event is fired just after the POST request was sent.
@@ -150,10 +147,6 @@ sap.ui.define([
 		return new Promise(function(resolve, reject) {
 			oXhr.open(sHttpRequestMethod, sUrl, true);
 
-			if ((Device.browser.edge || Device.browser.internet_explorer) && oFile.type && oXhr.readyState === 1) {
-				oXhr.setRequestHeader("Content-Type", oFile.type);
-			}
-
 			if (aHeaderFields) {
 				aHeaderFields.forEach(function (oHeader) {
 					oXhr.setRequestHeader(oHeader.getKey(), oHeader.getText());
@@ -193,10 +186,6 @@ sap.ui.define([
 			sUploadUrl = oItem.getUploadUrl() || this.getUploadUrl();
 
 		oXhr.open(sHttpRequestMethod, sUploadUrl, true);
-
-		if ((Device.browser.edge || Device.browser.internet_explorer) && oFile.type && oXhr.readyState === 1) {
-			oXhr.setRequestHeader("Content-Type", oFile.type);
-		}
 
 		if (aHeaderFields) {
 			aHeaderFields.forEach(function (oHeader) {

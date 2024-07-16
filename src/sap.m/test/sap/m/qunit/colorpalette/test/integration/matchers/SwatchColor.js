@@ -19,7 +19,6 @@ sap.ui.define(['sap/ui/test/matchers/Matcher'], function (Matcher) {
 	return Matcher.extend("cp.opa.test.env.integration.matchers.SwatchColor", /** @lends cp.opa.test.env.integration.matchers.SwatchColor.prototype */ {
 
 		metadata : {
-			publicMethods : [ "isMatching" ],
 			properties : {
 				/**
 				 * The value of the color used for matching.

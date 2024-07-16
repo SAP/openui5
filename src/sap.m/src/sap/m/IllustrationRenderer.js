@@ -39,4 +39,4 @@ sap.ui.define([], function () {
 
 	return IllustrationRenderer;
 
-}, /* bExport= */ true);
+});

@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/SelectList",
-	"sap/ui/core/Core",
 	"sap/ui/core/ListItem",
 	"sap/ui/core/Item",
 	"sap/ui/core/SeparatorItem",
@@ -14,13 +13,13 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Select",
 	"sap/ui/model/Filter",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Element,
 	qutils,
 	createAndAppendDiv,
 	SelectList,
-	Core,
 	ListItem,
 	Item,
 	SeparatorItem,
@@ -30,6 +29,7 @@ sap.ui.define([
 	JSONModel,
 	Select,
 	Filter,
+	nextUIUpdate,
 	jQuery
 ) {
 	"use strict";
@@ -97,7 +97,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oSelectList.getProperty("_tabIndex"), "", "By default the Select tabindex property is empty string");
@@ -134,7 +134,7 @@ sap.ui.define([
 		});
 
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oSelectList.$().find("li>span.sapMSelectListItemIcon").length > 0, true, "Icon was rendered on the right place");
 
@@ -168,7 +168,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oSelectList.getItems()[0].getDomRef().getAttribute("aria-setsize"), "3");
@@ -409,7 +409,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oItem.getDomRef().getAttribute("dir") === TextDirection.RTL.toLowerCase());
@@ -438,7 +438,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oItemFirstCellDomRef = oItem.getDomRef().querySelector(sFirstCellSelector);
 		// assert
@@ -547,7 +547,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
@@ -585,7 +585,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
@@ -639,7 +639,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === null);
@@ -677,7 +677,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === null);
@@ -717,7 +717,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === null);
@@ -743,7 +743,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === null);
@@ -787,7 +787,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
@@ -831,7 +831,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
@@ -870,7 +870,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
@@ -890,7 +890,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === null);
@@ -928,7 +928,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === null);
@@ -966,7 +966,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === null);
@@ -1004,7 +1004,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === null);
@@ -1043,7 +1043,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
@@ -1071,7 +1071,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === null);
@@ -1115,7 +1115,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
@@ -1159,7 +1159,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
@@ -1198,7 +1198,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
@@ -1252,7 +1252,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === null);
@@ -1290,7 +1290,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === null);
@@ -1328,7 +1328,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === null);
@@ -1366,7 +1366,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === null);
@@ -1427,11 +1427,11 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oSelectList.setWidth("400px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oSelectList.$().outerWidth() + "px", "400px");
@@ -1456,11 +1456,11 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oSelectList.setEnabled(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.$().hasClass(SelectListRenderer.CSS_CLASS + "Disabled"), 'If the sap.m.SelectList control is disabled, it should have the CSS class "' + SelectListRenderer.CSS_CLASS + "Disabled");
@@ -1507,7 +1507,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getFirstItem().isActive());
@@ -1702,7 +1702,7 @@ sap.ui.define([
 
 		// act
 		oSelectList.setSelectedItem(oExpectedItem);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
@@ -1742,7 +1742,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oSelectList.setSelectedItem(null);
@@ -1831,7 +1831,7 @@ sap.ui.define([
 
 		// act
 		oSelectList.setSelectedItemId("item-id");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
@@ -1874,7 +1874,7 @@ sap.ui.define([
 
 		// act
 		oSelectList.setSelectedItemId("");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === null);
@@ -1895,7 +1895,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === null);
@@ -1935,7 +1935,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === oExpectedItem);
@@ -2016,7 +2016,7 @@ sap.ui.define([
 
 		// act
 		oSelectList.setSelectedKey("1");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(fnSetPropertySpy.callCount, 2, 'setProperty() method was called twice, once for the "id" and once for the "key"');
@@ -2063,7 +2063,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oSelectList.setSelectedKey("");
@@ -2094,7 +2094,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getItemNavigation() === null);
@@ -2117,11 +2117,11 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oSelectList.setKeyboardNavigationMode(SelectListKeyboardNavigationMode.None);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getItemNavigation() === null);
@@ -2143,7 +2143,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oModifiers = oSelectList._oItemNavigation.getDisabledModifiers();
 
@@ -2259,7 +2259,7 @@ sap.ui.define([
 		oModel.setData(mData);
 		oSelectList.setModel(oModel);
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oSelectList.removeItem(8);
@@ -2327,11 +2327,11 @@ sap.ui.define([
 		oSelectList.setModel(oModel);
 
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oSelectList.removeItem(0);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.getSelectedItem() === null);
@@ -2358,11 +2358,11 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oSelectList.removeItem(0);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oSelectList.getSelectedKey(), "");
@@ -2402,13 +2402,13 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnRemoveAllItemsSpy = this.spy(oSelectList, "removeAllItems");
 		var fnRemoveAllAggregationSpy = this.spy(oSelectList, "removeAllAggregation");
 
 		// act
 		oSelectList.removeAllItems();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(fnRemoveAllAggregationSpy.calledWith("items"), "sap.m.SelectList.prototype.removeAllAggregation() method was called with the expected argument");
@@ -2447,12 +2447,12 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnDestroyItemsSpy = this.spy(oSelectList, "destroyItems");
 
 		// act
 		oSelectList.destroyItems();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(fnDestroyItemsSpy.returned(oSelectList), "sap.m.SelectList.prototype.destroyItems() method returns the Select instance");
@@ -2473,7 +2473,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oSelectList.setBusyIndicatorDelay(0);
 		oSelectList.setBusy(true);
 
@@ -2517,7 +2517,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var oFirstEnabledItem = oSelectList.findFirstEnabledItem(aItems);
@@ -2558,7 +2558,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var oFirstEnabledItem = oSelectList.findFirstEnabledItem(aItems);
@@ -2577,7 +2577,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var oFirstEnabledItem = oSelectList.findFirstEnabledItem([]);
@@ -2620,7 +2620,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var oLastEnabledItem = oSelectList.findLastEnabledItem(aItems);
@@ -2661,7 +2661,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var oLastEnabledItem = oSelectList.findLastEnabledItem(aItems);
@@ -2680,7 +2680,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var oLastEnabledItem = oSelectList.findLastEnabledItem([]);
@@ -2816,7 +2816,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var oItem = oSelectList.getItemAt(2),
@@ -2859,7 +2859,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var oItem = oSelectList.getFirstItem();
@@ -2878,7 +2878,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var oExpectedItem = oSelectList.getFirstItem();
@@ -2919,7 +2919,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var oItem = oSelectList.getLastItem();
@@ -2938,7 +2938,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var oItem = oSelectList.getLastItem();
@@ -2981,7 +2981,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var oItem0 = oSelectList.getItemByKey("0"),
@@ -3048,7 +3048,7 @@ sap.ui.define([
 				new SeparatorItem()
 			]
 		}).placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		assert.strictEqual(oSelectList.getItems().length, 4, "Correct");
@@ -3058,7 +3058,7 @@ sap.ui.define([
 		assert.strictEqual(oSelectList._getNonSeparatorItemsCount(), 2, "Ok");
 
 		oSelectList.setProperty("hideDisabledItems", true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		// rendered items should not be rendered
 		assert.strictEqual(oSelectList.getItems().length, 4, "Correct");
 		assert.strictEqual(oSelectList.$().find(".sapMSelectListItemBase,.sapMSelectListSeparatorItem").length, 3, "Rendered correctly");
@@ -3112,11 +3112,11 @@ sap.ui.define([
 		oModel.setData(mData);
 		oSelectList.setModel(oModel);
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oSelectList.updateAggregation("items");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oSelectList.getSelectedKey(), "CU");
@@ -3195,7 +3195,7 @@ sap.ui.define([
 		oModel.setData(mData);
 		oSelectList.setModel(oModel);
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oSelectList.getBinding("items").filter(new Filter("text", "Contains", "b"));
@@ -3244,7 +3244,7 @@ sap.ui.define([
 		oSelectList.setModel(oModel);
 		oBinding = oSelectList.getBinding("items");
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act - Fake the add virtual context process.
 		oSpy.resetHistory();
@@ -3253,7 +3253,7 @@ sap.ui.define([
 			reason: "change"
 		});
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "synchronizeSelection is not called from updateItems with add virtual context (only called from beforeRendering");
@@ -3306,11 +3306,11 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oSelectList.destroy();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oSelectList.getItems().length, 0);
@@ -3346,7 +3346,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var aDomRefs = oSelectList._queryEnabledItemsDomRefs();
@@ -3368,7 +3368,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.$().length, "The list is rendered");
@@ -3388,7 +3388,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSelectList.$().hasClass(SelectListRenderer.CSS_CLASS + "Disabled"), "The disabled css class is rendered");
@@ -3412,7 +3412,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oItem.$().hasClass(SelectListRenderer.CSS_CLASS + "Item"), "The list item css class is rendered");
@@ -3437,7 +3437,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oItem.$().attr("tabindex"), undefined, "The tabindex attribute is rendered");
@@ -3461,7 +3461,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(!(oItem.$().hasClass(SelectListRenderer.CSS_CLASS + "Item")), "The list item css class is rendered");
@@ -3486,7 +3486,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "list-item");
@@ -3513,7 +3513,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "list-item");
@@ -3540,7 +3540,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "none");
@@ -3568,7 +3568,7 @@ sap.ui.define([
 		// arrange
 		var CSS_CLASS = SelectListRenderer.CSS_CLASS + "ItemBasePressed";
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		qutils.triggerTouchEvent("touchstart", oSelectList.getDomRef(), {
@@ -3620,7 +3620,7 @@ sap.ui.define([
 		// arrange
 		var CSS_CLASS = SelectListRenderer.CSS_CLASS + "ItemPressed";
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		qutils.triggerTouchEvent("touchstart", oSelectList.getDomRef(), {
@@ -3670,7 +3670,7 @@ sap.ui.define([
 		// arrange
 		var CSS_CLASS = SelectListRenderer.CSS_CLASS + "ItemPressed";
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		qutils.triggerTouchEvent("touchstart", oSelectList.getDomRef(), {
@@ -3750,7 +3750,7 @@ sap.ui.define([
 		// arrange
 		var CSS_CLASS = SelectListRenderer.CSS_CLASS + "ItemPressed";
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oSelectList.focus();
 
 		// act
@@ -3822,7 +3822,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange");
 		var fnFireItemPressSpy = this.spy(oSelectList, "fireItemPress");
 
@@ -3869,7 +3869,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange");
 		var fnFireItemPressSpy = this.spy(oSelectList, "fireItemPress");
 
@@ -3921,7 +3921,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange");
 
 		// act
@@ -3956,7 +3956,7 @@ sap.ui.define([
 		});
 
 		oSelectList.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(jQuery("#firstItem").attr("aria-posinset"), "1", "First item has correct aria-posinset");
 		assert.notOk(jQuery("#separator").attr("aria-posinset"), "Separator shouldn't have attribute aria-posinset");
@@ -3990,7 +3990,7 @@ sap.ui.define([
 
 		//Act
 		oSelect.setShowSecondaryValues(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.equal(oList._getColumnsPercentages().firstColumn, "60%", "Ratio is 3:2. First column percentage is calculated correctly");
@@ -3998,7 +3998,7 @@ sap.ui.define([
 
 		//Act
 		oSelect.setColumnRatio("2:2");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.equal(oList._getColumnsPercentages().firstColumn, "50%", "Ratio is 2:2. First column percentage is calculated correctly");
@@ -4006,7 +4006,7 @@ sap.ui.define([
 
 		//Act
 		oSelect.setColumnRatio("1:9");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.equal(oList._getColumnsPercentages().firstColumn, "10%", "Ratio is 1:9. First column percentage is calculated correctly");
@@ -4014,7 +4014,7 @@ sap.ui.define([
 
 		//Act
 		oSelect.setShowSecondaryValues(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.equal(oList._getColumnsPercentages(), undefined, "Second column is not show, we should not have columns percentages");

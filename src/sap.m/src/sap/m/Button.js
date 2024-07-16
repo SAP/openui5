@@ -221,13 +221,6 @@ sap.ui.define([
 
 			},
 			events : {
-
-				/**
-				 * Fired when the user taps the control.
-				 * @deprecated as of version 1.20, replaced by <code>press</code> event
-				 */
-				tap : {deprecated: true},
-
 				/**
 				 * Fired when the user clicks or taps on the control.
 				 */
@@ -590,10 +583,6 @@ sap.ui.define([
 					this.focus();
 			}
 
-			/**
-			 * @deprecated As of version 1.20 the <code>tap</code> event has been replaced by the <code>press</code> event
-			 */
-			this.fireTap({/* no parameters */}); // (This event is deprecated, use the "press" event instead)
 			this.firePress({/* no parameters */ });
 		}
 

@@ -53,4 +53,4 @@ sap.ui.define(function() {
 
 	return ComponentContainerRenderer;
 
-}, /* bExport= */ true);
+});

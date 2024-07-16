@@ -26,4 +26,4 @@ sap.ui.define([], function() {
 	};
 
 	return SemanticPageRenderer;
-}, /* bExport= */ true);
+});

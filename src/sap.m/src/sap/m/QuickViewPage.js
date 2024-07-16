@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/HorizontalLayout",
-	"sap/m/Avatar",
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/m/Bar",
@@ -30,8 +29,9 @@ sap.ui.define([
 	"./QuickViewPageRenderer",
 	"sap/base/Log",
 	"sap/base/security/encodeURL",
-	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "firstFocusableDomRef"
-], function (
+	// jQuery Plugin "firstFocusableDomRef"
+	"sap/ui/dom/jquery/Focusable"
+], function(
 	library,
 	Control,
 	IconPool,
@@ -39,7 +39,6 @@ sap.ui.define([
 	SimpleForm,
 	VerticalLayout,
 	HorizontalLayout,
-	Avatar,
 	Page,
 	Button,
 	Bar,
@@ -77,9 +76,6 @@ sap.ui.define([
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
 
-	// shortcut for sap.m.AvatarShape
-	var AvatarShape = library.AvatarShape;
-
 	// shortcut for sap.m.EmptyIndicator
 	var EmptyIndicatorMode = library.EmptyIndicatorMode;
 
@@ -113,7 +109,6 @@ sap.ui.define([
 
 			library: "sap.m",
 			properties: {
-
 				/**
 				 * Page id
 				 */
@@ -136,30 +131,9 @@ sap.ui.define([
 				titleUrl: { type: "string", group: "Misc", defaultValue: "" },
 
 				/**
-				 * Specifies the application which provides target and param configuration for cross-application navigation from the 'page header'.
-				 * @deprecated As of version 1.111. Attach listener to the avatar <code>press</code> event and perform navigation as appropriate in your environment instead.
-				 */
-				crossAppNavCallback: { type: "object", group: "Misc", deprecated: true },
-
-				/**
 				 * Specifies the text displayed under the header of the content section.
 				 */
-				description: { type: "string", group: "Misc", defaultValue: "" },
-
-				/**
-				 * Specifies the URL of the icon or image displayed under the header of the page.
-				 * @deprecated As of version 1.92. Use the <code>avatar</code> aggregation instead.
-				 */
-				icon: { type: "string", group: "Misc", defaultValue: "", deprecated: true },
-
-				/**
-				 * Defines the fallback icon displayed in case of wrong image src or loading issues.
-				 *
-				 * <b>Note:</b> Accepted values are only icons from the SAP icon font.
-				 * @deprecated As of version 1.92. Use the <code>avatar</code> aggregation and use its property <code>fallbackIcon</code> instead.
-				 * @since 1.69
-				 */
-				fallbackIcon: { type: "sap.ui.core.URI", group: "Appearance", defaultValue: null, deprecated: true }
+				description: { type: "string", group: "Misc", defaultValue: "" }
 			},
 			defaultAggregation: "groups",
 			aggregations: {
@@ -182,48 +156,7 @@ sap.ui.define([
 		renderer: QuickViewPageRenderer
 	});
 
-	/**
-	 * Sets a new value for property {@link #setCrossAppNavCallback crossAppNavCallback}.
-	 *
-	 * Specifies the application which provides target and param configuration for cross-application navigation from the 'page header'.
-	 *
-	 * When called with a value of <code>null</code> or <code>undefined</code>, the default value of the property will be restored.
-	 * @deprecated As of version 1.111. Attach listener to the avatar <code>press</code> event and perform navigation as appropriate in your environment instead.
-	 * @method
-	 * @param {function(): {target: object, params: object}} [oCrossAppNavCallback] New value for property <code>crossAppNavCallback</code>
-	 * @public
-	 * @name sap.m.QuickViewPage#setCrossAppNavCallback
-	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
-	 */
-
-	/**
-	 * Gets current value of property {@link #getCrossAppNavCallback crossAppNavCallback}.
-	 *
-	 * Specifies the application which provides target and param configuration for cross-application navigation from the 'page header'.
-	 * @deprecated As of version 1.111. Attach listener to the avatar <code>press</code> event and perform navigation as appropriate in your environment instead.
-	 * @method
-	 * @returns {function(): {target: object, params: object}} Value of property <code>crossAppNavCallback</code>
-	 * @public
-	 * @name sap.m.QuickViewPage#getCrossAppNavCallback
-	 */
-
-	QuickViewPage.prototype.init =  function() {
-		/**
-	 	 * @deprecated As of version 1.111.
-		 */
-		this._initCrossAppNavigationService();
-	};
-
-	/**
-	* @deprecated As of version 1.111.
-	*/
-	QuickViewPage.prototype._initCrossAppNavigationService =  function() {
-		//see API docu for sap.ushell.services.CrossApplicationNavigation
-		var fGetService =  sap.ushell && sap.ushell.Container && sap.ushell.Container.getService;
-		if (fGetService) {
-			this.oCrossAppNavigator = fGetService("CrossApplicationNavigation");
-		}
-	};
+	QuickViewPage.prototype.init =  function() {};
 
 	QuickViewPage.prototype.exit = function() {
 		if (this._oPage) {
@@ -468,17 +401,6 @@ sap.ui.define([
 				text: sTitle,
 				level: CoreTitleLevel.H3
 			});
-
-			/**
-			 * @deprecated As of version 1.111.
-			 */
-			if (this.getCrossAppNavCallback()) {
-				oTitle.destroy();
-				oTitle = new Link({
-					text: sTitle
-				});
-				oTitle.attachPress(this._crossApplicationNavigation.bind(this));
-			}
 		}
 
 		this.setPageTitleControl(oTitle);
@@ -599,29 +521,6 @@ sap.ui.define([
 	 * @private
 	 */
 	QuickViewPage.prototype._crossApplicationNavigation = function () {
-		/**
-		 * @deprecated As of version 1.111.
-		 */
-		if (this.getCrossAppNavCallback() && this.oCrossAppNavigator) {
-			var targetConfigCallback = this.getCrossAppNavCallback();
-			if (typeof targetConfigCallback == "function") {
-				var targetConfig = targetConfigCallback();
-				var href = this.oCrossAppNavigator.hrefForExternal(
-					{
-						target : {
-							semanticObject : targetConfig.target.semanticObject,
-							action : targetConfig.target.action
-						},
-						params : targetConfig.params
-					}
-				);
-
-				URLHelper.redirect(href);
-			}
-
-			return;
-		}
-
 		if (this.getTitleUrl()) {
 			URLHelper.redirect(this.getTitleUrl(), true);
 		}
@@ -734,20 +633,13 @@ sap.ui.define([
 	};
 
 	QuickViewPage.prototype._getAvatar = function () {
-		var oAvatar = null,
-			sIcon = this.getIcon && this.getIcon();
+		var oAvatar = null;
 
 		if (this.getAvatar()) {
 			// Copy the values of properties directly, don't clone bindings,
 			// as this avatar and the whole NavContainer are not aggregated by the real QuickViewPage
 			oAvatar = this.getAvatar().clone(null, null, { cloneBindings: false, cloneChildren: true });
 			this._checkAvatarProperties(oAvatar);
-		} else if (sIcon && this.getFallbackIcon) {
-			oAvatar = new Avatar({
-				displayShape: AvatarShape.Square,
-				fallbackIcon: this.getFallbackIcon(),
-				src: sIcon
-			});
 		}
 
 		if (oAvatar) {

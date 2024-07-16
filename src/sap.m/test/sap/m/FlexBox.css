@@ -1,0 +1,12 @@
+/*.sapMFlexItem {
+	border: 1px dashed red;
+	background-color: #aaaaaa;
+}*/
+#layout>div:nth-child(2) {
+	width: 200px;
+	height: 300px;
+	background-color: #ff99ff;
+}
+#flexbox1 {
+	background-color: #ffff99;
+}

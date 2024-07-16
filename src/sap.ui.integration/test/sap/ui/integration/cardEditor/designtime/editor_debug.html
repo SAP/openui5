@@ -2,16 +2,18 @@
 <html>
 
 <head>
-	<meta charset="utf-8" />
+	<meta charset="utf-8">
 	<title>Editor Test Page with designtime files</title>
 	<script src="../sharedTest.js" localstoragekey="card-designtime-"></script>
 	<script src="../../../../../../resources/sap-ui-integration.js"
-		id="sap-ui-bootstrap"
-		data-sap-ui-theme="sap_horizon"
-		data-sap-ui-oninit="init"
-		data-sap-ui-resourceroots='{"testjs":"../","sap.ui.integration.cardEditor.test":"../"}'>
+			id="sap-ui-bootstrap"
+			data-sap-ui-on-init="init"
+			data-sap-ui-resource-roots='{"testjs":"../","sap.ui.integration.cardEditor.test":"../"}'
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+	>
 	</script>
-	<link rel="stylesheet" href="../sharedTest.css" />
+	<link rel="stylesheet" href="../sharedTest.css">
 </head>
 
 <body class="sapUiBody sapUiSizeCompact">

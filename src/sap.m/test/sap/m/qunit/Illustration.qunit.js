@@ -3,27 +3,27 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/Illustration",
 	"sap/m/IllustrationPool",
-	"sap/ui/core/Core",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Theming"
+	"sap/ui/core/Theming",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function (
 	Log,
 	Illustration,
 	IllustrationPool,
-	Core,
 	InvisibleText,
-	Theming
+	Theming,
+	nextUIUpdate
 ) {
 	"use strict";
 
 	/* --------------------------- Illustration Lifecycle -------------------------------------- */
 	QUnit.module("Illustration - Lifecycle ", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			// Arrange
 			this.oIllustration = new Illustration();
 			this.oIllustration.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			// Clean
@@ -32,7 +32,7 @@ function (
 		}
 	});
 
-	QUnit.test("onBeforeRendering", function (assert) {
+	QUnit.test("onBeforeRendering", async function(assert) {
 		// Arrange
 		var fnBuildSymbolSpy = this.spy(this.oIllustration, "_buildSymbolId"),
 			fnLoadAssetSpy = this.spy(IllustrationPool, "loadAsset"),
@@ -57,7 +57,7 @@ function (
 		this.oIllustration.setSet(sDummySet, true)
 			.setMedia(sDummyMedia, true)
 			.setType(sDummyType);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(fnLoadAssetSpy.calledOnce, "loadAsset function of the IllustrationPool class called once onBeforeRendering _sSymbolId isn't empty");
@@ -87,11 +87,11 @@ function (
 
 	/* --------------------------- Illustration Private methods -------------------------------------- */
 	QUnit.module("Illustration - Private methods ", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			// Arrange
 			this.oIllustration = new Illustration();
 			this.oIllustration.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			// Clean
@@ -100,7 +100,7 @@ function (
 		}
 	});
 
-	QUnit.test("_buildSymbolId", function (assert) {
+	QUnit.test("_buildSymbolId", async function(assert) {
 		// Arrange
 		var sDummySet = "sapIllus",
 			sDummyMedia = "Dialog",
@@ -118,14 +118,14 @@ function (
 		this.oIllustration.setSet(sDummySet, true)
 			.setMedia(sDummyMedia, true)
 			.setType(sDummyType);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oIllustration._sSymbolId, sExpectedSymbol,
 			"_sSymbolId is built as expected when all of the Illustration properties are present");
 	});
 
-	QUnit.test("_buildSymbolId formats to mapped values", function (assert) {
+	QUnit.test("_buildSymbolId formats to mapped values", async function(assert) {
 		// load metadata with mappings
 		var sDummySet = "sapIllus",
 			sDummyMedia = "Dialog",
@@ -150,7 +150,7 @@ function (
 			.setType(sDummyType);
 
 		Theming.setTheme("sap_horizon");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		this.oIllustration._buildSymbolId();
 
@@ -161,11 +161,11 @@ function (
 
 	/* --------------------------- Illustrattion Associations -------------------------------------- */
 	QUnit.module("Illustrattion - Associations ", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			// Arrange
 			this.oIllustration = new Illustration();
 			this.oIllustration.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			// Clean
@@ -174,7 +174,7 @@ function (
 		}
 	});
 
-	QUnit.test("Testing ariaLabelledBy association", function (assert) {
+	QUnit.test("Testing ariaLabelledBy association", async function(assert) {
 
 		// Arrange
 		new InvisibleText("illustration_label", {text: "My label"}).toStatic();
@@ -183,7 +183,7 @@ function (
 
 		// Act
 		this.oIllustration.addAriaLabelledBy('illustration_label');
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.equal($illustration.attr("aria-labelledby"), 'illustration_label');

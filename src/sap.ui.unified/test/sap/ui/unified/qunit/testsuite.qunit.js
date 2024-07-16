@@ -16,7 +16,6 @@ sap.ui.define(function() {
 				language: "en-US",
 				rtl: false,					// Whether to run the tests in RTL mode
 				libs: ["sap.ui.unified"],	// Libraries to load upfront in addition to the library which is tested (sap.ui.unified), if null no libs are loaded
-				theme: "sap_belize",
 				"xx-waitForTheme": "init"	// Whether the start of the test should be delayed until the theme is applied
 			},
 			coverage: {
@@ -32,30 +31,6 @@ sap.ui.define(function() {
 			autostart: true					// Whether to call QUnit.start() when the test setup is done
 		},
 		tests: {
-			/**
-			 * @deprecated Since version 1.44.0
-			 */
-			"Shell": {
-				group: "Shell"
-			},
-			/**
-			 * @deprecated Since version 1.44.0
-			 */
-			"ShellLayout": {
-				group: "Shell"
-			},
-			/**
-			 * @deprecated Since version 1.44.0
-			 */
-			"ShellOverlay": {
-				group: "Shell"
-			},
-			/**
-			 * @deprecated Since version 1.44.0
-			 */
-			"SplitContainer": {
-				group: "Shell"
-			},
 			"Calendar": {
 				group: "Calendar",
 				qunit: {
@@ -65,6 +40,7 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/Calendar"]
 				}
 			},
+
 			"CalendarRow": {
 				group: "Calendar",
 				qunit: {
@@ -74,6 +50,7 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/CalendarRow"]
 				}
 			},
+
 			"CalendarDateInterval": {
 				group: "Calendar",
 				qunit: {
@@ -83,6 +60,7 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/CalendarDateInterval"]
 				}
 			},
+
 			"CalendarMonthInterval": {
 				group: "Calendar",
 				qunit: {
@@ -96,6 +74,7 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/CalendarMonthInterval"]
 				}
 			},
+
 			"CalendarOneMonthInterval": {
 				group: "Calendar",
 				qunit: {
@@ -105,6 +84,7 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/CalendarOneMonthInterval"]
 				}
 			},
+
 			"CalendarWeekInterval": {
 				group: "Calendar",
 				qunit: {
@@ -114,6 +94,7 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/CalendarWeekInterval"]
 				}
 			},
+
 			"CalendarTimeInterval": {
 				group: "Calendar",
 				qunit: {
@@ -123,6 +104,7 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/CalendarTimeInterval"]
 				}
 			},
+
 			"CalendarDate": {
 				group: "Calendar",
 				qunit: {
@@ -132,6 +114,7 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/calendar/CalendarDate"]
 				}
 			},
+
 			"Calendar_Islamic": {
 				group: "Calendar",
 				ui5: {
@@ -141,6 +124,7 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/Calendar_Islamic"]
 				}
 			},
+
 			"Calendar_Japanese": {
 				group: "Calendar",
 				ui5: {
@@ -150,24 +134,28 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/Calendar_Japanese"]
 				}
 			},
+
 			"CalendarLegend": {
 				group: "Calendar",
 				coverage: {
 					only: ["sap/ui/unified/CalendarLegend"]
 				}
 			},
+
 			"CalendarUtils": {
 				group: "Calendar",
 				coverage: {
 					only: ["sap/ui/unified/calendar/CalendarUtils"]
 				}
 			},
+
 			"Month": {
 				group: "Calendar",
 				coverage: {
 					only: ["sap/ui/unified/calendar/Month"]
 				}
 			},
+
 			"FileUploader": {
 				group: "FileUploader",
 				ui5: {
@@ -177,6 +165,7 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/FileUploader"]
 				}
 			},
+
 			"Header": {
 				group: "Header",
 				sinon: {
@@ -186,24 +175,28 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/Header"]
 				}
 			},
+
 			"ColorPicker": {
 				group: "ColorPicker",
 				coverage: {
 					only: ["sap/ui/unified/ColorPicker"]
 				}
 			},
+
 			"ColorPickerPopover": {
 				group: "ColorPickerPopover",
 				coverage: {
 					only: ["sap/ui/unified/ColorPickerPopover"]
 				}
 			},
+
 			"Currency": {
 				group: "Currency",
 				coverage: {
 					only: ["sap/ui/unified/Currency"]
 				}
 			},
+
 			"Menu": {
 				group: "Menu",
 				qunit: {
@@ -213,6 +206,7 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/Menu"]
 				}
 			},
+
 			"MenuItem": {
 				group: "Menu",
 				qunit: {
@@ -222,6 +216,7 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/MenuItem"]
 				}
 			},
+
 			"MonthPicker": {
 				group: "Calendar",
 				qunit: {
@@ -231,6 +226,7 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/calendar/MonthPicker"]
 				}
 			},
+
 			"TimesRow":{
 				group: "Calendar",
 				qunit: {
@@ -240,6 +236,7 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/calendar/TimesRow"]
 				}
 			},
+
 			"YearPicker": {
 				group: "Calendar",
 				qunit: {
@@ -249,6 +246,7 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/calendar/YearPicker"]
 				}
 			},
+
 			"IndexPicker": {
 				group: "Calendar",
 				qunit: {
@@ -258,6 +256,7 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/calendar/IndexPicker"]
 				}
 			},
+
 			"ExploredSamples": {
 				loader: {
 					map: {
@@ -274,9 +273,11 @@ sap.ui.define(function() {
 				},
 				autostart: false
 			},
+
 			"Generic Testsuite": {
 				page: "test-resources/sap/ui/unified/qunit/testsuite.generic.qunit.html"
 			},
+
 			// Design Time & RTA Enabling
 			"Designtime-Library": {
 				group: "Designtime",

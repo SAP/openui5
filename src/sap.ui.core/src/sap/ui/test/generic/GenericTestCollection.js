@@ -88,41 +88,33 @@ sap.ui.define([], function() {
 		 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 		 */
 		Test: {
-			/**
-			 * Test ControlMemoryLeaks
-			 * @private
-			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
-			 */
-			ControlMemoryLeaks: "ControlMemoryLeaks",
+		 /**
+		  * Test ControlMemoryLeaks
+		  * @private
+		  * @ui5-restricted SAPUI5 Distribution Layer Libraries
+		  */
+		 ControlMemoryLeaks: "ControlMemoryLeaks",
 
-			/**
-			 * Test ControlRenderer
-			 * @private
-			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
-			 * @deprecated As of version 1.120
-			 */
-			ControlRenderer: "ControlRenderer",
+		 /**
+		  * Test DuplicateIdCheck
+		  * @private
+		  * @ui5-restricted SAPUI5 Distribution Layer Libraries
+		  */
+		 DuplicateIdCheck: "DuplicateIdCheck",
 
-			/**
-			 * Test DuplicateIdCheck
-			 * @private
-			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
-			 */
-			DuplicateIdCheck: "DuplicateIdCheck",
+		 /**
+		  * Test EnforceSemanticRendering
+		  * @private
+		  * @ui5-restricted SAPUI5 Distribution Layer Libraries
+		  */
+		 EnforceSemanticRendering: "EnforceSemanticRendering",
 
-			/**
-			 * Test EnforceSemanticRendering
-			 * @private
-			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
-			 */
-			EnforceSemanticRendering: "EnforceSemanticRendering",
-
-			/**
-			 * Test SettersContextReturn
-			 * @private
-			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
-			 */
-			SettersContextReturn: "SettersContextReturn"
+		 /**
+		  * Test SettersContextReturn
+		  * @private
+		  * @ui5-restricted SAPUI5 Distribution Layer Libraries
+		  */
+		 SettersContextReturn: "SettersContextReturn"
 		},
 
 		/**
@@ -154,26 +146,21 @@ sap.ui.define([], function() {
 					module: "test-resources/sap/ui/core/qunit/generic/{name}.qunit"
 				},
 				tests: {
-					ControlMemoryLeaks: {
-						title: "QUnit Page for memory leak detection in UI5 controls"
-					},
-					/**
-					 * @deprecated As of 1.120
-					 * sap.ui.requireSync is deprecated, therefore it's not needed to test that no sync request is sent
-					 * when control renderer is retrieved.
-					 */
-					ControlRenderer: {
-						title: "QUnit Page for Control Renderer Tests"
-					},
-					DuplicateIdCheck: {
-						title: "QUnit Page for duplicate ID issues detection in UI5 controls"
-					},
-					SettersContextReturn: {
-						title: "All setters should return correct context (Reason: https://github.com/SAP/openui5/blob/master/docs/guidelines.md#creating-classes)"
-					},
-					EnforceSemanticRendering: {
-						title: "QUnit Page for Semantic Rendering Coverage"
-					}
+				 ControlMemoryLeaks: {
+					 title: "QUnit Page for memory leak detection in UI5 controls"
+				 },
+
+				 DuplicateIdCheck: {
+					 title: "QUnit Page for duplicate ID issues detection in UI5 controls"
+				 },
+
+				 SettersContextReturn: {
+					 title: "All setters should return correct context (Reason: https://github.com/SAP/openui5/blob/master/docs/guidelines.md#creating-classes)"
+				 },
+
+				 EnforceSemanticRendering: {
+					 title: "QUnit Page for Semantic Rendering Coverage"
+				 }
 				}
 			};
 

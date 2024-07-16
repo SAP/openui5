@@ -6,6 +6,7 @@
 sap.ui.define([
 	"./library",
 	"sap/base/i18n/Localization",
+	"sap/ui/core/AnimationMode",
 	"sap/ui/core/Control",
 	"sap/ui/core/ControlBehavior",
 	"sap/m/library",
@@ -13,7 +14,6 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"sap/ui/Device",
@@ -28,6 +28,7 @@ sap.ui.define([
 ], function(
 	library,
 	Localization,
+	AnimationMode,
 	Control,
 	ControlBehavior,
 	mLibrary,
@@ -35,7 +36,6 @@ sap.ui.define([
 	Element,
 	Library,
 	ResizeHandler,
-	Configuration,
 	InvisibleText,
 	ScrollEnablement,
 	Device,
@@ -692,7 +692,7 @@ sap.ui.define([
 		}
 
 		sAnimationMode = ControlBehavior.getAnimationMode();
-		bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
+		bUseAnimations = sAnimationMode !== AnimationMode.none && sAnimationMode !== AnimationMode.minimal;
 
 		if (exists(this.$contentFitContainer)) {
 			this.$contentFitContainer.toggleClass("sapFDynamicPageContentFitContainerFooterVisible", bShow);

@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/util/ActivityDetection",
 	"sap/ui/util/_enforceNoReturnValue",
 	"sap/base/future",
-	"sap/base/util/ObjectPath",
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/base/util/deepClone",
@@ -29,7 +28,6 @@ sap.ui.define([
 	ActivityDetection,
 	_enforceNoReturnValue,
 	future,
-	ObjectPath,
 	Log,
 	assert,
 	deepClone,
@@ -38,7 +36,6 @@ sap.ui.define([
 	extend,
 	isEmptyObject
 ) {
-
 	"use strict";
 
 	// shortcut for the sap.ui.core.ID type
@@ -270,13 +267,18 @@ sap.ui.define([
 
 		metadata : {
 			"abstract" : true,
-			publicMethods : [ "getId", "getMetadata", "getModel", "setModel", "hasModel", "bindProperty", "unbindProperty", "bindAggregation", "unbindAggregation", "bindObject", "unbindObject", "getObjectBinding"],
-			library : "sap.ui.core", // UI Library that contains this class
+
+			// UI Library that contains this class
+			library : "sap.ui.core",
+
 			properties : {
 			},
+
 			aggregations : {
 			},
+
 			associations : {},
+
 			events : {
 				/**
 				 * Fired after a new value for a bound property has been propagated to the model.
@@ -411,6 +413,7 @@ sap.ui.define([
 				 */
 				"modelContextChange" : {}
 			},
+
 			specialSettings : {
 
 				/**
@@ -1045,42 +1048,9 @@ sap.ui.define([
 			return vData;
 		}
 
-		/**
-		 * Retrieval of class constructor via global (class name string in dot notation).
-		 * @deprecated since 1.120
-		 */
-		function getClass(vType) {
-			if ( typeof vType === "function" ) {
-				return vType;
-			}
-			if (typeof vType === "string" ) {
-				const oType = ObjectPath.get(vType);
-				if (oType != null) {
-					Log.error(`Defining the object type ('${vType}') via its string name is deprecated, since it leads to accesses to the global namespace. ` +
-					`The object type either stems from an explicitly given 'Type' value or was inferred from the default aggregation type. ` +
-					`Please require the respective object type module beforehand. ` +
-					`For control development, please also refer to the runtime metadata property 'defaultClass', which allows you to specify a default aggregation class type via constructor reference.`);
-				}
-				return oType;
-			}
-		}
-
 		let FnClass;
 
-		/**
-		 * string notation via 'Type' (used by the deprecated JSONView).
-		 * @deprecated since 1.120
-		 */
-		FnClass = getClass(vData.Type);
-
 		FnClass ??= oKeyInfo?.defaultClass;
-
-		/**
-		 * The aggregation type (string) is used as a fallback in case no 'Type' is given,
-		 * and no default class is defined.
-		 * @deprecated since 1.120
-		 */
-		FnClass ??= getClass(oKeyInfo?.type);
 
 		if ( typeof FnClass === "function" ) {
 			return new FnClass(vData, oScope);
@@ -1091,38 +1061,6 @@ sap.ui.define([
 		Log.fatal(message);
 		throw new Error(message);
 	}
-
-	/**
-	 * Creates a new ManagedObject from the given data.
-	 *
-	 * If <code>vData</code> is a managed object already, that object is returned.
-	 * If <code>vData</code> is an object (literal), then a new object is created with <code>vData</code>
-	 * as settings. The type of the object is either determined by a property of name <code>Type</code>
-	 * (capital 'T') in the <code>vData</code> or by a property <code>type</code> (lower case 't')
-	 * in the <code>oKeyInfo</code> object. In both cases, the type must be specified by the dot separated
-	 * name of the class.
-	 *
-	 * @param {sap.ui.base.ManagedObject|object} vData
-	 *   The data to create the object from
-	 * @param {sap.ui.base.ManagedObject.MetadataOptions.Aggregation} [oKeyInfo]
-	 *   Info object for the aggregation to which the created object will be added;
-	 *   serves as a fallback for determining the type of the object to be created;
-	 *   If used as a fallback, the usage of a string name as the object's type is deprecated.
-	 *   Please refer to the {@link sap.ui.base.ManagedObject.MetadataOptions.Aggregation} property 'defaultClass'
-	 *   to specify a default class type for an aggregation via a constructor function.
-	 * @param {object} [oScope]
-	 *   Scope object to resolve types and formatters in bindings
-	 * @returns {sap.ui.base.ManagedObject}
-	 *   The newly created <code>ManagedObject</code>
-	 * @throws {Error}
-	 *   When there's not enough type information to create an instance from the given data
-	 * @public
-	 * @deprecated Since 1.120, as it relies on global names and potentially synchronous code loading. Please invoke the constructor of the intended ManagedObject subclass directly.
-	 * @static
-	 * @function
-	 * @ts-skip
-	 */
-	ManagedObject.create = makeObject;
 
 	/**
 	 * A global preprocessor for the ID of a ManagedObject (used internally).
@@ -1204,19 +1142,19 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.core
 	 */
-	 ManagedObject.runWithOwner = function(fn, sOwnerId, oThisArg) {
+	ManagedObject.runWithOwner = function(fn, sOwnerId, oThisArg) {
 
-		assert(typeof fn === "function", "fn must be a function");
+	   assert(typeof fn === "function", "fn must be a function");
 
-		var oldOwnerId = ManagedObject._sOwnerId;
-		try {
-			ManagedObject._sOwnerId = sOwnerId;
-			return fn.call(oThisArg);
-		} finally {
-			ManagedObject._sOwnerId = oldOwnerId;
-		}
+	   var oldOwnerId = ManagedObject._sOwnerId;
+	   try {
+		   ManagedObject._sOwnerId = sOwnerId;
+		   return fn.call(oThisArg);
+	   } finally {
+		   ManagedObject._sOwnerId = oldOwnerId;
+	   }
 
-	};
+   };
 
 	/**
 	 * Sets all the properties, aggregations, associations and event handlers as given in
@@ -2058,20 +1996,6 @@ sap.ui.define([
 					}
 				}
 			}
-		}
-
-		/**
-		 * @deprecated
-		 */
-		if ((() => {
-			// legacy validation for (unsupported) types that don't subclass BaseObject
-			oType = ObjectPath.get(oAggregation.type);
-			if ( typeof oType === "function" && oObject instanceof oType ) {
-				return true;
-			}
-			return false;
-		})()) {
-			return oObject;
 		}
 
 		// TODO make this stronger again (e.g. for FormattedText)
@@ -3069,23 +2993,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines whether a given object contains binding information instead of a
-	 * value or aggregated controls. The method is used in applySettings for processing
-	 * the JSON notation of properties/aggregations in the constructor.
-	 *
-	 * @param {object} oValue the value
-	 * @param {object} oKeyInfo the metadata of the property
-	 *
-	 * @returns {boolean} whether the value contains binding information
-	 *
-	 * @private
-	 * @deprecated
-	 */
-	ManagedObject.prototype.isBinding = function(oValue, oKeyInfo) {
-		return typeof this.extractBindingInfo(oValue) === "object";
-	};
-
-	/**
 	 * Checks whether the given value can be interpreted as a binding info and
 	 * returns that binding info or an unescaped string or undefined when it is not.
 	 *
@@ -3297,33 +3204,6 @@ sap.ui.define([
 	};
 
 	ManagedObject.prototype._unbindObject = logError.bind(null, "_unbindObject");
-
-	/**
-	 * Bind the object to the referenced entity in the model, which is used as the binding context
-	 * to resolve bound properties or aggregations of the object itself and all of its children
-	 * relatively to the given path.
-	 *
-	 * @deprecated Since 1.11.1, please use {@link #bindObject} instead.
-	 * @param {string} sPath the binding path
-	 * @returns {this} reference to the instance itself
-	 * @public
-	 */
-	ManagedObject.prototype.bindContext = function(sPath) {
-		return this.bindObject(sPath);
-	};
-
-	/**
-	 * Removes the defined binding context of this object, all bindings will now resolve
-	 * relative to the parent context again.
-	 *
-	 * @deprecated Since 1.11.1, please use {@link #unbindObject} instead.
-	 * @param {string} [sModelName] name of the model to remove the context for.
-	 * @returns {this} reference to the instance itself
-	 * @public
-	 */
-	ManagedObject.prototype.unbindContext = function(sModelName) {
-		return this.unbindObject(sModelName);
-	};
 
 	/**
 	 * Configuration for the binding of a managed property.
@@ -4833,5 +4713,4 @@ sap.ui.define([
 	ManagedObject._defaultContextualSettings = {};
 
 	return ManagedObject;
-
 });

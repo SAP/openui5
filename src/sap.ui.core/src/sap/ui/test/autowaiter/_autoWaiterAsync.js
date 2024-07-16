@@ -96,4 +96,4 @@ sap.ui.define([
 		resetConfig: resetConfig,
 		waitAsync: waitAsync
 	};
-}, true);
+});

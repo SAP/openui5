@@ -1,0 +1,65 @@
+.rangeSlider-margin {
+	margin-top: 30px;
+}
+
+.sapCustomSliderTooltip {
+	border: 1px solid #457BA9;
+	padding: 0 0.5rem;
+	border-radius: 5px;
+	min-width: 160px;
+	height: 2.5rem;
+}
+
+.sapCustomTooltipValue {
+	display: inline-flex;
+	align-items: center;
+	height: 100%;
+	width: calc(100% - 32px);
+}
+
+.sapCustomTooltipButtons {
+	display: inline-flex;
+	flex-direction: column;
+	position: relative;
+	top: -6px;
+}
+
+.sapCustomTooltipButtonUp::before {
+	font-family: "SAP-icons";
+	speak: none;
+	color: white;
+	content: "\e1f0";
+}
+
+.sapCustomTooltipButtonDown,
+.sapCustomTooltipButtonUp {
+	background-color: #457BA9;
+	opacity: 0.6;
+	height: 1rem;
+	width: 2rem;
+	text-align: center;
+	border-radius: 0.5rem;
+	margin-top: 2px;
+	cursor: pointer;
+}
+
+.sapCustomTooltipButtonDown:hover,
+.sapCustomTooltipButtonUp:hover {
+	opacity: 1;
+}
+
+.sapCustomTooltipButtonDown::before {
+	font-family: "SAP-icons";
+	speak: none;
+	color: white;
+	content: "\e1ef";
+}
+
+.sapCustomTooltipWitouthButtons.sapCustomSliderTooltip {
+	text-align: center;
+}
+
+.sapCustomTooltipWitouthButtons .sapCustomTooltipValue {
+	justify-content: center;
+	width: 100%;
+}

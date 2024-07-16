@@ -117,28 +117,28 @@ sap.ui.define([
 		}
 	});
 
-	 QUnit.test("override controllers lifecycle hooks", function(assert) {
-		var done = assert.async();
-		this.pView.then(function(oView) {
-			oView.placeAt("content");
-			var oController = oView.getController();
-			var mLifeCycleCalls = oController.getLifeCycleCalls();
-			assert.equal(mLifeCycleCalls.onInit.length, 2, "onInit called on controller and extension");
-			assert.deepEqual(mLifeCycleCalls.onInit, ["base", "reuseExtension"], "onInit call sequence ok");
-			/*timeout needed as rendering is async by timeout 0 */
-			setTimeout(function() {
-				assert.equal(mLifeCycleCalls.onBeforeRendering.length, 2, "onBeforeRendering called on controller and extension");
-				assert.deepEqual(mLifeCycleCalls.onBeforeRendering, ["reuseExtension", "base"], "onBeforeRendering call sequence ok");
-				assert.equal(mLifeCycleCalls.onAfterRendering.length, 2, "onAfterRendering called on controller and extension");
-				assert.deepEqual(mLifeCycleCalls.onAfterRendering, ["base", "reuseExtension"], "onAfterRendering call sequence ok");
-				oView.destroy();
-				assert.equal(mLifeCycleCalls.onExit.length, 2, "oExit called on controller and extension");
-				assert.deepEqual(mLifeCycleCalls.onExit, ["reuseExtension", "base"], "oExit call sequence ok");
+	QUnit.test("override controllers lifecycle hooks", function(assert) {
+	   var done = assert.async();
+	   this.pView.then(function(oView) {
+		   oView.placeAt("content");
+		   var oController = oView.getController();
+		   var mLifeCycleCalls = oController.getLifeCycleCalls();
+		   assert.equal(mLifeCycleCalls.onInit.length, 2, "onInit called on controller and extension");
+		   assert.deepEqual(mLifeCycleCalls.onInit, ["base", "reuseExtension"], "onInit call sequence ok");
+		   /*timeout needed as rendering is async by timeout 0 */
+		   setTimeout(function() {
+			   assert.equal(mLifeCycleCalls.onBeforeRendering.length, 2, "onBeforeRendering called on controller and extension");
+			   assert.deepEqual(mLifeCycleCalls.onBeforeRendering, ["reuseExtension", "base"], "onBeforeRendering call sequence ok");
+			   assert.equal(mLifeCycleCalls.onAfterRendering.length, 2, "onAfterRendering called on controller and extension");
+			   assert.deepEqual(mLifeCycleCalls.onAfterRendering, ["base", "reuseExtension"], "onAfterRendering call sequence ok");
+			   oView.destroy();
+			   assert.equal(mLifeCycleCalls.onExit.length, 2, "oExit called on controller and extension");
+			   assert.deepEqual(mLifeCycleCalls.onExit, ["reuseExtension", "base"], "oExit call sequence ok");
 
-				done();
-			},0);
-		});
-	});
+			   done();
+		   },0);
+	   });
+   });
 
 	QUnit.test("controller final method check", function(assert) {
 		var done = assert.async();
@@ -214,35 +214,6 @@ sap.ui.define([
 		});
 	});
 
-	/**
-	 * @deprecated
-	 */
-	QUnit.module("Controller Member Extension inline override", {
-		beforeEach: function() {
-			future.active = false;
-			this.pView = Controller.create({name:"my.test.MainMemberExtInlineOverride"}).then(function(oController) {
-				return XMLView.create({
-					viewName: "my.test.Main",
-					controller: oController
-				});
-			});
-		},
-		afterEach: function() {
-			future.active = undefined;
-		}
-	});
-
-	QUnit.test("extension final method check (future=false)", function(assert) {
-		var done = assert.async();
-		this.pView.then(function(oView) {
-			var oController = oView.getController();
-			var oExtension = oController.reuse;
-			//assert.expects()
-			assert.equal(oExtension.myFinalMethod(), "I am final", "final method myFinalMethod not overidden");
-			done();
-		});
-	});
-
 	QUnit.module("Controller Member Extension inline override", {
 		beforeEach: function() {
 			future.active = true;
@@ -265,31 +236,31 @@ sap.ui.define([
 		});
 	});
 
-	 QUnit.module("Extend Controller", {
-		beforeEach: function() {
-			this.pView = Controller.create({name:"my.test.AnotherMain"}).then(function(oController) {
-				return XMLView.create({
-					viewName: "my.test.Main",
-					controller: oController
-				});
-			});
-		},
-		afterEach: function() {
+	QUnit.module("Extend Controller", {
+	   beforeEach: function() {
+		   this.pView = Controller.create({name:"my.test.AnotherMain"}).then(function(oController) {
+			   return XMLView.create({
+				   viewName: "my.test.Main",
+				   controller: oController
+			   });
+		   });
+	   },
+	   afterEach: function() {
 
-		}
-	});
+	   }
+   });
 
-	 QUnit.test("change visibility", function(assert) {
-		var done = assert.async();
-		this.pView.then(function(oView) {
-			var oControllerInterface = oView.getController().getInterface();
-			var aInterfaceKeys = Object.keys(oControllerInterface);
-			assert.ok(oControllerInterface, "Controller Interface created");
-			assert.equal(aInterfaceKeys.length, 5, "5 public methods are exposed");
-			assert.deepEqual(aInterfaceKeys.sort(), aPublicControllerMethodsChangedVisibility.sort(), "All public methods exposed are correctly");
-			done();
-		});
-	});
+	QUnit.test("change visibility", function(assert) {
+	   var done = assert.async();
+	   this.pView.then(function(oView) {
+		   var oControllerInterface = oView.getController().getInterface();
+		   var aInterfaceKeys = Object.keys(oControllerInterface);
+		   assert.ok(oControllerInterface, "Controller Interface created");
+		   assert.equal(aInterfaceKeys.length, 5, "5 public methods are exposed");
+		   assert.deepEqual(aInterfaceKeys.sort(), aPublicControllerMethodsChangedVisibility.sort(), "All public methods exposed are correctly");
+		   done();
+	   });
+   });
 
 	QUnit.module("Context checks", {
 		beforeEach: function() {
@@ -306,22 +277,22 @@ sap.ui.define([
 		}
 	});
 
-	 QUnit.test("controller & ControllerExtension", function(assert) {
-		var done = assert.async();
-		assert.expect(22);
-		//register assert globally for checks in controller and extension...
-		window.assert = assert;
-		this.pView.then(function(oView) {
-			var oController = oView.getController();
-			oView.placeAt("content");
-			setTimeout(function() {
-				oController.publicMethod();
-				oController.reuse.myPublicMethod();
-				delete window.assert;
-				done();
-			}, 0);
-		});
-	});
+	QUnit.test("controller & ControllerExtension", function(assert) {
+	   var done = assert.async();
+	   assert.expect(22);
+	   //register assert globally for checks in controller and extension...
+	   window.assert = assert;
+	   this.pView.then(function(oView) {
+		   var oController = oView.getController();
+		   oView.placeAt("content");
+		   setTimeout(function() {
+			   oController.publicMethod();
+			   oController.reuse.myPublicMethod();
+			   delete window.assert;
+			   done();
+		   }, 0);
+	   });
+   });
 
 	QUnit.module("Controller final checks", {
 		beforeEach: function() {
@@ -344,36 +315,6 @@ sap.ui.define([
 		assert.rejects(this.pView);
 		await this.pView.catch((err) => {
 			assert.equal(err.message, "failed to execute module factory for ''my/test/ExtendMain.controller.js'': Method: 'myFinalMethod' of controller 'my.test.Main' is final and cannot be overridden by controller 'my.test.ExtendMain'");
-		});
-	});
-
-	/**
-	 * @deprecated
-	 */
-	QUnit.module("Controller final checks", {
-		beforeEach: function() {
-			future.active = false;
-			Controller.registerExtensionProvider("");
-			this.pView = Controller.create({name:"my.test.ExtendMainLegacy"}).then(function(oController) {
-				return XMLView.create({
-					viewName: "my.test.Main",
-					controller: oController
-				});
-			});
-		},
-		afterEach: function() {
-			future.active = undefined;
-		}
-	});
-
-	QUnit.test("override final metadata/function (future=false)", function(assert) {
-		var done = assert.async();
-		assert.expect(2);
-		this.pView.then(function(oView) {
-			var oController = oView.getController();
-			assert.equal(oController.myFinalMethod(), "final method could not be overidden", "final method not overridden by controller extend");
-			assert.equal(oController.getMetadata().isMethodFinal("myFinalMethod"), true, "metadata not changed");
-			done();
 		});
 	});
 });

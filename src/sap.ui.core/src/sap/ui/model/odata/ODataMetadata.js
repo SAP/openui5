@@ -127,9 +127,7 @@ sap.ui.define([
 			}
 		},
 
-		metadata : {
-			publicMethods : ["getServiceMetadata", "attachFailed", "detachFailed", "attachLoaded", "detachLoaded", "refresh"]
-		}
+		metadata : {}
 
 	});
 

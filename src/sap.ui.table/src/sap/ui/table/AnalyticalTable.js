@@ -64,102 +64,7 @@ sap.ui.define([
 	const AnalyticalTable = Table.extend("sap.ui.table.AnalyticalTable", /** @lends sap.ui.table.AnalyticalTable.prototype */ {metadata: {
 
 		library: "sap.ui.table",
-		properties: {
-
-			/**
-			 * Specifies if the total values should be displayed in the group headers or on bottom of the row. Does not affect the total sum.
-			 *
-			 * The value of the property is only taken into account if no parameter is given in the binding information. Changes to this property
-			 * after the table is bound do not have any effect unless an explicit (re-)bind of the <code>rows</code> aggregation is done.
-			 *
-			 * Example:
-			 * <pre>
-			 *   oTable.bindRows({
-			 *     path: "...",
-			 *     parameters: {
-			 *       sumOnTop: true
-			 *     }
-			 *   });
-			 * </pre>
-			 *
-			 * @deprecated As of version 1.44, replaced by the <code>sumOnTop</code> binding parameter
-			 */
-			sumOnTop: {type: "boolean", group: "Appearance", defaultValue: false, deprecated: true},
-
-			/**
-			 * Number of levels, which should be opened initially (on first load of data).
-			 *
-			 * The value of the property is only taken into account if no parameter is given in the binding information. Changes to this property
-			 * after the table is bound do not have any effect unless an explicit (re-)bind of the <code>rows</code> aggregation is done.
-			 *
-			 * Example:
-			 * <pre>
-			 *   oTable.bindRows({
-			 *     path: "...",
-			 *     parameters: {
-			 *       numberOfExpandedLevels: 1
-			 *     }
-			 *   });
-			 * </pre>
-			 *
-			 * @deprecated As of version 1.44, replaced by the <code>numberOfExpandedLevels</code> binding parameter
-			 */
-			numberOfExpandedLevels: {type: "int", group: "Misc", defaultValue: 0, deprecated: true},
-
-			/**
-			 * The kind of auto expansion algorithm, e.g. optimized filter conditions, per level requests, ...
-			 * Must be a value of <code>sap.ui.table.TreeAutoExpandMode</code>.
-			 *
-			 * The value of the property is only taken into account if no parameter is given in the binding information. Changes to this property
-			 * after the table is bound do not have any effect unless an explicit (re-)bind of the <code>rows</code> aggregation is done.
-			 *
-			 * Example:
-			 * <pre>
-			 *   oTable.bindRows({
-			 *     path: "...",
-			 *     parameters: {
-			 *       autoExpandMode: "Bundled"
-			 *     }
-			 *   });
-			 * </pre>
-			 *
-			 * @deprecated As of version 1.44, replaced by the <code>autoExpandMode</code> binding parameter
-			 */
-			autoExpandMode: {type: "string", group: "Misc", defaultValue: "Bundled", deprecated: true},
-
-			/**
-			 * Functions which is used to sort the column visibility menu entries e.g.: function(ColumnA, ColumnB) { return 0 = equals, <0 lower, >0
-			 * greater }; Other values than functions will be ignored.
-			 * @deprecated As of Version 1.117, see the <code>showColumnVisibilityMenu</code> property of <code>sap.ui.table.Table</code> for details.
-			 */
-			columnVisibilityMenuSorter: {type: "any", group: "Appearance", defaultValue: null},
-
-			/**
-			 * Setting collapseRecursive to true means, that when collapsing a node all subsequent child nodes will also be collapsed.
-			 *
-			 * Calling the setter of this property only has an effect when the tables <code>rows</code> aggregation is already bound and
-			 * the binding supports this feature.
-			 *
-			 * Example:
-			 * <pre>
-			 *   oTable.bindRows({
-			 *     path: "...",
-			 *     parameters: {
-			 *       collapseRecursive: true
-			 *     }
-			 *   });
-			 * </pre>
-			 *
-			 * @deprecated As of version 1.76, replaced by the <code>collapseRecursive</code> binding parameter
-			 */
-			collapseRecursive: {type: "boolean", defaultValue: true, deprecated: true},
-
-			/**
-			 * If dirty the content of the Table will be overlayed.
-			 * @deprecated As of version 1.21.2, replaced by {@link sap.ui.table.Table#setShowOverlay}
-			 */
-			dirty: {type: "boolean", group: "Appearance", defaultValue: null, deprecated: true}
-		},
+		properties: {},
 		events: {
 			/**
 			 * Fired when the table is grouped.
@@ -208,10 +113,7 @@ sap.ui.define([
 		this.addStyleClass("sapUiAnalyticalTable");
 
 		// defaulting properties
-		/**
-		 * @deprecated As of Version 1.117
-		 */
-		this.setShowColumnVisibilityMenu(true);
+		/* -------------------------------------- */
 		this.setEnableColumnFreeze(true);
 		this.setEnableCellFilter(true);
 		this.setProperty("rowCountConstraints", {
@@ -254,59 +156,6 @@ sap.ui.define([
 		return this;
 	};
 
-	AnalyticalTable.prototype.setDirty = function(bDirty) {
-		Log.error("The property dirty of control sap.ui.table.AnalyticalTable is deprecated. Please use showOverlay instead.");
-		this.setProperty("dirty", bDirty, true);
-		this.setShowOverlay(this.getDirty());
-		return this;
-	};
-
-	/**
-	 * The <code>enableGrouping</code> property is not supported by the <code>AnalyticalTable</code> control.
-	 *
-	 * @deprecated As of version 1.28, the <code>enableGrouping</code> property is not supported by the <code>AnalyticalTable</code> control.
-	 * @public
-	 * @returns {boolean}
-	 * @name sap.ui.table.AnalyticalTable#getEnableGrouping
-	 * @function
-	 */
-
-	/**
-	 * The <code>enableGrouping</code> property is not supported by the <code>AnalyticalTable</code> control.
-	 *
-	 * @deprecated As of version 1.28, the <code>enableGrouping</code> property is not supported by the <code>AnalyticalTable</code> control.
-	 * @param {boolean} bValue
-	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
-	 * @public
-	 */
-	AnalyticalTable.prototype.setEnableGrouping = function() {
-		Log.error("The property enableGrouping is not supported by the sap.ui.table.AnalyticalTable control");
-		return this;
-	};
-
-	/**
-	 * The <code>groupBy</code> association is not supported by the <code>AnalyticalTable</code> control.
-	 *
-	 * @deprecated As of version 1.28, the <code>groupBy</code> association is not supported by the <code>AnalyticalTable</code> control.
-	 * @returns {sap.ui.core.ID}
-	 * @public
-	 * @name sap.ui.table.AnalyticalTable#getGroupBy
-	 * @function
-	 */
-
-	/**
-	 * The <code>groupBy</code> association is not supported by the <code>AnalyticalTable</code> control.
-	 *
-	 * @deprecated As of version 1.28, the <code>groupBy</code> association is not supported by the <code>AnalyticalTable</code> control.
-	 * @param {sap.ui.core.ID|sap.ui.table.Column} oGroupBy
-	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
-	 * @public
-	 */
-	AnalyticalTable.prototype.setGroupBy = function() {
-		Log.warning("The groupBy association is not supported by the sap.ui.table.AnalyticalTable control");
-		return this;
-	};
-
 	AnalyticalTable.prototype.getModel = function(sName) {
 		const oModel = Table.prototype.getModel.apply(this, arguments);
 		const oRowBindingInfo = this.getBindingInfo("rows");
@@ -314,18 +163,6 @@ sap.ui.define([
 			ODataModelAdapter.apply(oModel);
 		}
 		return oModel;
-	};
-
-	/**
-	 * @deprecated As of Version 1.117
-	 * sap.ui.table.ColumnMenu is deprecated.
-	 */
-	AnalyticalTable.prototype.updateRows = function(sReason) {
-		Table.prototype.updateRows.apply(this, arguments);
-
-		if (sReason !== "sort") {
-			this._invalidateColumnMenus();
-		}
 	};
 
 	/**
@@ -344,12 +181,6 @@ sap.ui.define([
 	 */
 	AnalyticalTable.prototype._bindAggregation = function(sName, oBindingInfo) {
 		if (sName === "rows") {
-			/**
-			 * @deprecated As of Version 1.117
-			 * sap.ui.table.ColumnMenu is deprecated.
-			 */
-			this._invalidateColumnMenus(); // Metadata might change.
-
 			// make sure to reset the first visible row (currently needed for the analytical binding)
 			// TODO: think about a boundary check to reset the firstvisiblerow if out of bounds
 			this._setFirstVisibleRowIndex(0, {onlySetProperty: true});
@@ -373,34 +204,9 @@ sap.ui.define([
 		oBindingInfo.parameters = oBindingInfo.parameters || {};
 		oBindingInfo.parameters.analyticalInfo = this._getColumnInformation();
 
-		/**
-		 * @deprecated As of Version 1.44
-		 */
-		if (!oBindingInfo.parameters.hasOwnProperty("sumOnTop")) {
-			oBindingInfo.parameters.sumOnTop = this.getSumOnTop();
-		}
-
-		/**
-		 * @deprecated As of Version 1.44
-		 */
-		if (!oBindingInfo.parameters.hasOwnProperty("numberOfExpandedLevels")) {
-			oBindingInfo.parameters.numberOfExpandedLevels = this.getNumberOfExpandedLevels();
-		}
-
 		// The binding does not support the number of expanded levels to be bigger than the number of grouped columns.
 		if (oBindingInfo.parameters.numberOfExpandedLevels > this._aGroupedColumns.length) {
 			oBindingInfo.parameters.numberOfExpandedLevels = 0;
-		}
-
-		/**
-		 * @deprecated As of Version 1.44
-		 */
-		if (!oBindingInfo.parameters.hasOwnProperty("autoExpandMode")) {
-			let sExpandMode = this.getAutoExpandMode();
-			if (sExpandMode !== "Bundled" && sExpandMode !== "Sequential") {
-				sExpandMode = "Bundled";
-			}
-			oBindingInfo.parameters.autoExpandMode = sExpandMode;
 		}
 	};
 
@@ -1043,22 +849,6 @@ sap.ui.define([
 		return 0;
 	};
 
-	/**
-	 * @deprecated As of version 1.115
-	 * @private
-	 */
-	AnalyticalTable.prototype._onPersoApplied = function() {
-		Table.prototype._onPersoApplied.apply(this, arguments);
-		this._aGroupedColumns = [];
-		const aColumns = this.getColumns();
-		for (let i = 0, l = aColumns.length; i < l; i++) {
-			if (aColumns[i].getGrouped()) {
-				this._addGroupedColumn(aColumns[i].getId());
-			}
-		}
-		this._updateColumns();
-	};
-
 	AnalyticalTable.prototype._addGroupedColumn = function(sColumnId) {
 		if (this._aGroupedColumns.indexOf(sColumnId) === -1) {
 			this._aGroupedColumns.push(sColumnId);
@@ -1075,17 +865,6 @@ sap.ui.define([
 
 	AnalyticalTable.prototype.getGroupedColumns = function() {
 		return this._aGroupedColumns;
-	};
-
-	/*
-	 * Sets the node hierarchy to collapse recursive. When set to true, all child nodes will get collapsed as well.
-	 * This setting has only effect when the binding is already initialized.
-	 * @param {boolean} bCollapseRecursive
-	 */
-	AnalyticalTable.prototype.setCollapseRecursive = function(bCollapseRecursive) {
-		this._oProxy.setCollapseRecursive(bCollapseRecursive);
-		this.setProperty("collapseRecursive", !!bCollapseRecursive, true);
-		return this;
 	};
 
 	/* *************************************************

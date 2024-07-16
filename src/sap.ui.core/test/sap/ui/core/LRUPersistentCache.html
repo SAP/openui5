@@ -1,83 +1,27 @@
 <!DOCTYPE HTML>
 <html>
-<head>
+<head><meta charset="utf-8">
 
 	<title>LRUPersistentCache - sap.ui.core</title>
 
 	<script src="shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-			src="../../../../resources/sap-ui-core.js">
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:local/LRUPersistentCache"
+			data-sap-ui-resource-roots='{"local":"./"}'
+	>
 	</script>
 	<script src="resources/large_cache_content.js"></script>
 
-	<script>
-	/*global m1 -- was defined on the (now missing) large_cache_content.js */
-	sap.ui.require(["sap/ui/core/cache/CacheManager"], function (oCache) {
-		"use strict";
-
-		globalThis.addEntry = function(key, idValue) {
-			var oValue = document.getElementById(idValue).value,
-				output = document.getElementById("output").innerHTML,
-				key = "key" + Date.now();
-			oCache.set(key, oValue).then(function () {
-				output += "<br/> Added new entry with key " + key;
-			}, function (eMsg) {
-				output += "<br/> Error: key " + key + " was not added. Details: " + eMsg;
-			}).then(function () {
-				document.getElementById("output").innerHTML = output;
-			});
-		};
-
-		globalThis.getEntry = function(idKey) {
-			var key = document.getElementById(idKey).value,
-				output = document.getElementById("output").innerHTML;
-			oCache.get(key).then(function (v) {
-				output += "<br/> Got entry of type [" + typeof v + "] for key [" + key + "]";
-			}, function (eMsg) {
-				output += "<br/> Error: entry for key [" + key + "] was not gotten. Details: " + eMsg;
-			}).then(function () {
-				document.getElementById("output").innerHTML = output;
-			});
-		};
-
-		globalThis.addLargeEntry = function() {
-			var oValue = m1;//came from the large script
-			var output = document.getElementById("output").innerHTML;
-			var key = "key" + Date.now();
-			oCache.set(key, oValue).then(function () {
-				output += "<br/> Added new entry with key " + key;
-			}, function (eMsg) {
-				output += "<br/> Error: key " + key + " was not added. Details: " + eMsg;
-			}).then(function () {
-				document.getElementById("output").innerHTML = output;
-			});
-		};
-
-		globalThis.delFilters = function() {
-			var oOptions = {};
-			var oInputTimestamp = document.getElementById("timestamp");
-			var iTimestamp;
-
-			if (oInputTimestamp.value) {
-				iTimestamp = parseInt(oInputTimestamp.value);
-
-				if (!isNaN(iTimestamp)) {
-					oOptions.olderThan = new Date(iTimestamp);
-				}
-			}
-
-			oOptions.prefix = document.getElementById("prefix").value;
-
-			oCache.delWithFilters(oOptions);
-		};
-	});
-	</script>
+	
 </head>
 <body>
 <input type="text" id="idValue" placeholder="Some entry value...">
 <button onclick="addEntry('key1', 'idValue')">Add Entry</button>
 <button onclick="addLargeEntry()">Add large entry</button>
-<input type="text" id="idGetKey" value="">
+<input type="text" id="idGetKey" value>
 <button onclick="getEntry('idGetKey')">Get Entry</button>
 <input type="text" id="timestamp" placeholder="timestamp">
 <input type="text" id="prefix" placeholder="prefix">

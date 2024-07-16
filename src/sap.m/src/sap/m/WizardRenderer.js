@@ -109,5 +109,5 @@ sap.ui.define([
 
 	return WizardRenderer;
 
-}, /* bExport= */ true);
+});
 

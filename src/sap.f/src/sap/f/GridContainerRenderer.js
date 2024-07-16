@@ -193,4 +193,4 @@ sap.ui.define([], function () {
 	};
 
 	return GridContainerRenderer;
-}, /* bExport= */ true);
+});

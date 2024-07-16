@@ -3,8 +3,7 @@
  */
 
 // A renderer for the ScrollBar control
-sap.ui.define(['sap/ui/Device', "sap/ui/dom/getScrollbarSize"],
-function(Device, getScrollbarSize) {
+sap.ui.define(['sap/ui/Device', "sap/ui/dom/getScrollbarSize"], function(Device, getScrollbarSize) {
 	"use strict";
 
 
@@ -70,4 +69,4 @@ function(Device, getScrollbarSize) {
 
 	return ScrollBarRenderer;
 
-}, /* bExport= */ true);
+});

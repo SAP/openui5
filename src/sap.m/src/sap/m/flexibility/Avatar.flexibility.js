@@ -9,4 +9,4 @@ sap.ui.define([], function () {
 		"hideControl": "default",
 		"unhideControl": "default"
 	};
-}, /* bExport= */ true);
+});

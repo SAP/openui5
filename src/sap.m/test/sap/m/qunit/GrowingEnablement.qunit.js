@@ -16,13 +16,12 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(Column, ColumnListItem, CustomListItem, GrowingEnablement, mLibrary, List, Page, StandardListItem, Table, Text, HTML, Library, MockServer, KeyCodes, Sorter, JSONModel, ODataV1Model, ODataModel, qutils, createAndAppendDiv, nextUIUpdate, jQuery) {
+], function(Column, ColumnListItem, CustomListItem, GrowingEnablement, mLibrary, List, Page, StandardListItem, Table, Text, HTML, Library, MockServer, KeyCodes, Sorter, JSONModel, ODataModel, qutils, createAndAppendDiv, nextUIUpdate, jQuery) {
 	"use strict";
 	createAndAppendDiv("growing1");
 	createAndAppendDiv("growing2");
@@ -837,34 +836,4 @@ sap.ui.define([
 	});
 
 	QUnit.module("itemsPool");
-
-	/**
-	 * @deprecated as of 1.48. ODataModel V1 is deprecated.
-	 */
-	QUnit.test("should not be created for OData V1 model", async function(assert) {
-		const oMockServer = startMockServer();
-		const oList = new List({
-			growing: true,
-			models: new ODataV1Model("http://sap.com/model", true) // true is use JSON
-		});
-		const fFillItemsPoolSpy = sinon.spy(oList._oGrowingDelegate, "fillItemsPool");
-		oList.bindItems({
-			path: "/Products",
-			template: new StandardListItem({
-				title: "{Name}",
-				description: "{Category}"
-			})
-		});
-
-		oList.placeAt("qunit-fixture");
-		await nextUIUpdate();
-		await ui5Event("updateFinished", oList);
-
-		const oBinding = oList.getBinding("items");
-		assert.ok(oBinding.isA("sap.ui.model.odata.ODataListBinding"), "OData V1 binding found");
-		assert.ok(fFillItemsPoolSpy.notCalled, "fillItemsPool method was not called for OData V1");
-
-		oMockServer.stop();
-		oList.destroy();
-	});
 });

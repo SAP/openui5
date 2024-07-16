@@ -180,7 +180,7 @@ sap.ui.define([
 	QUnit.test("Inner input value - type password", async function(assert) {
 		// Arrange
 		this.clock = sinon.useFakeTimers();
-		var oInput = new sap.m.Input({
+		var oInput = new Input({
 			type: "Password",
 			value: "A"
 		});
@@ -213,7 +213,7 @@ sap.ui.define([
 
 	QUnit.test("Type password - value not cleared on invalidation", async function(assert) {
 		// Arrange
-		var oInput = new sap.m.Input({
+		var oInput = new Input({
 			type: "Password",
 			value: "Aaa"
 		});
@@ -237,7 +237,7 @@ sap.ui.define([
 
 	QUnit.test("Type password with showClearIcon - entered value is not corrupted", async function(assert) {
 		// Arrange
-		var oInput = new sap.m.Input({
+		var oInput = new Input({
 			type: "Password",
 			showClearIcon: true
 		});
@@ -259,7 +259,7 @@ sap.ui.define([
 
 	QUnit.test("Type password with showClearIcon and initial value - input value is deleted", async function(assert) {
 		// Arrange
-		var oInput = new sap.m.Input({
+		var oInput = new Input({
 			type: "Password",
 			showClearIcon: true,
 			value: "a"
@@ -285,16 +285,6 @@ sap.ui.define([
 		enabled = true;
 		this.i1.setEnabled(enabled);
 		assert.equal(this.i1.getEnabled(), enabled, "Input is enabled");
-	});
-	/**
-	* @deprecated Since 1.119.
-	* @private
-	*/
-	QUnit.test("ValueHelpOnly", function(assert) {
-		assert.equal(this.i1.getValueHelpOnly(), false, "ValueHelpOnly Default: false");
-		var helponly = true;
-		this.i1.setValueHelpOnly(helponly);
-		assert.equal(this.i1.getValueHelpOnly(), helponly, "ValueHelpOnly is true");
 	});
 
 	QUnit.test("Placeholder", function(assert) {
@@ -816,63 +806,6 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	/**
-	* @deprecated Since 1.119.
-	*/
-	QUnit.test("Submit Event with valueHelpOnly", async function(assert) {
-
-		var sEvents = "";
-		var sValue = "";
-		var oInput = new Input("hello", {
-			submit: function(oEvent){
-				sEvents += "E";
-				sValue = oEvent.getParameter("value");
-			},
-			change: function(){
-				sEvents += "C";
-			}
-		});
-		oInput.setEditable(true);
-		oInput.setShowValueHelp(true);
-		oInput.setValue("hello");
-		oInput.placeAt("content");
-
-		// change event should be fired only when the input is on focus
-		oInput.onfocusin();
-		await nextUIUpdate();
-
-		function checkSubmit(sText, bSubmitExpected, bChangeExpected, sExpectedValue) {
-			var e = "";
-			if (bChangeExpected) {
-				e += "C";
-			}
-			if (bSubmitExpected) {
-				e += "E";
-			}
-
-			sEvents = "";
-			sValue = "";
-			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ENTER);
-			assert.equal(sEvents, e, sText + ": Correct number of events fired and order correct: " + e.length + (e.length > 0 ? "/" + e : ""));
-			if (bSubmitExpected) {
-				if (sExpectedValue) {
-					assert.equal(sValue, sExpectedValue, sText + ": Correct parameter 'value' in enter event: " + sExpectedValue);
-				} else {
-					assert.ok(!sValue, sText + ": Correct parameter 'value' in enter event: Value empty");
-				}
-			}
-		}
-
-		checkSubmit("Enter pressed on field with value help", true, false, "hello");
-		oInput.setValueHelpOnly(true);
-		await nextUIUpdate();
-
-		checkSubmit("Enter pressed on field with value help only", false, false);
-		oInput.setShowValueHelp(false);
-		oInput.setValueHelpOnly(false);
-		oInput.destroy();
-	});
-
 	QUnit.test("Suggestion output", async function (assert) {
 
 		this.clock = sinon.useFakeTimers();
@@ -904,148 +837,6 @@ sap.ui.define([
 			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ENTER);
 			assert.equal(sValue, sSuggestion, ": Correct parameter 'value' in enter event");
 		}
-
-		oInput.destroy();
-	});
-
-	/**
-	* @deprecated Since 1.119.
-	*/
-	QUnit.test("Value Help Only CSS Classes and event", async function(assert) {
-		this.clock = sinon.useFakeTimers();
-		var spy = this.spy(),
-			oInputVHO = new Input( {
-				showValueHelp: true,
-				valueHelpOnly: true,
-				valueHelpRequest: spy
-			});
-
-		// place control
-		oInputVHO.placeAt("content");
-		await nextUIUpdate(this.clock);
-
-		// Value help event check
-		oInputVHO._$input.trigger("focus").trigger("tap");
-		this.clock.tick(500);
-		assert.strictEqual(spy.callCount, 1, "Value Help Request has been fired and received successfully");
-		oInputVHO.destroy();
-	});
-
-	/**
-	* @deprecated Since 1.119.
-	*/
-	QUnit.test("Conditions for Value Help Only not valid", async function(assert) {
-		this.clock = sinon.useFakeTimers();
-		// case1: showValueHelp is false
-		var spy = this.spy(),
-			oInputVHO = new Input( {
-				showValueHelp: false,
-				valueHelpOnly: true,
-				enabled: true,
-				editable: true,
-				valueHelpRequest: spy
-			});
-
-		// place control
-		oInputVHO.placeAt("content");
-		await nextUIUpdate(this.clock);
-
-		// check if valueHelpOnly class is set in addition to ValueHelp class
-		assert.ok(oInputVHO.$().hasClass("sapMInputVH") === false, "showValueHelp = false: Outer div has no additional CSS class\"sapMInputVH\"");
-		assert.ok(oInputVHO.$().hasClass("sapMInputVHO") === false, "showValueHelp = false: Outer div has no additional CSS class\"sapMInputVHO\"");
-
-		// Value help event check
-		oInputVHO._$input.trigger("focus").trigger("tap");
-		this.clock.tick(500);
-		assert.strictEqual(spy.callCount, 0, "showValueHelp = false: Tap has been fired and no Value Help Request is submitted");
-
-		// case2 ValueHelpOnly is false
-		var spy1 = this.spy(),
-			oInputVHO1 = new Input( {
-				showValueHelp: true,
-				valueHelpOnly: false,
-				enabled: true,
-				editable: true,
-				valueHelpRequest: spy1
-				});
-
-		// place control
-		oInputVHO1.placeAt("content");
-		await nextUIUpdate(this.clock);
-
-		// check if valueHelpOnly class is set in addition to ValueHelp class
-		assert.ok(oInputVHO1.$().hasClass("sapMInputVHO") === false, "valueHelponly = false: Outer div has no additional CSS class\"sapMInputVHO\"");
-
-		// Value help event check
-		oInputVHO1._$input.trigger("focus").trigger("tap");
-		this.clock.tick(500);
-		assert.strictEqual(spy1.callCount, 0, "valueHelponly = false: Tap has been fired and no Value Help Request is submitted");
-
-		// case3: Editable is false
-		var spy2 = this.spy(),
-			oInputVHO2 = new Input( {
-				showValueHelp: true,
-				valueHelpOnly: true,
-				enabled: true,
-				editable: false,
-				valueHelpRequest: spy2
-				});
-
-		// place control
-		oInputVHO2.placeAt("content");
-		await nextUIUpdate(this.clock);
-
-		// check if valueHelpOnly class is set in addition to ValueHelp class
-		assert.ok(oInputVHO2.$().hasClass("sapMInputVHO") === false, "editable = false: Outer div has no additional CSS class\"sapMInputVHO\"");
-
-		// Value help event check
-		oInputVHO2._$input.trigger("focus").trigger("tap");
-		this.clock.tick(500);
-		assert.strictEqual(spy2.callCount, 0, "editable = false: Tap has been fired and no Value Help Request is submitted");
-
-		// case4: Enabled is false
-		var spy3 = this.spy(),
-			oInputVHO3 = new Input( {
-				showValueHelp: true,
-				valueHelpOnly: true,
-				enabled: false,
-				editable: true,
-				valueHelpRequest: spy3
-			});
-
-		// place control
-		oInputVHO3.placeAt("content");
-		await nextUIUpdate(this.clock);
-
-		// check if valueHelpOnly class is set in addition to ValueHelp class
-		assert.ok(oInputVHO3.$().hasClass("sapMInputVHO") === false, "enabled = false: Outer div has no additional CSS class\"sapMInputVHO\"");
-
-		// Value help event check
-		oInputVHO3._$input.trigger("focus").trigger("tap");
-		this.clock.tick(500);
-		assert.strictEqual(spy3.callCount, 0, "enabled = false: Tap has been fired and no Value Help Request is submitted");
-
-		oInputVHO.destroy();
-		oInputVHO1.destroy();
-		oInputVHO2.destroy();
-		oInputVHO3.destroy();
-	});
-
-	/**
-	* @deprecated Since 1.119.
-	*/
-	QUnit.test("Keyboard Handling for ValueHelpOnly", function(assert) {
-		//Event check for Enter and Space
-		var evt = jQuery.Event("sapselect"),
-
-		spy = this.spy(),
-		oInput = new Input( {
-			showValueHelp: true,
-			valueHelpOnly: true,
-			valueHelpRequest: spy
-		});
-		oInput.onsapselect(evt);
-		assert.strictEqual(spy.callCount, 1, "The value help was requested by pressing Enter or Space");
 
 		oInput.destroy();
 	});
@@ -3430,39 +3221,6 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	/**
-	* @deprecated Since 1.119.
-	*/
-	QUnit.test("Property startSuggestion on Desktop (Zero, valueHelpOnly)",  async function(assert) {
-		var oSystem = {
-				desktop: true,
-				phone: false,
-				tablet: false
-			};
-
-		this.stub(Device, "system").value(oSystem);
-
-		var oSuggSpy = this.spy();
-		var oInput = new Input({
-			valueHelpOnly: true,
-			showSuggestion: true,
-			startSuggestion: 0,
-			suggest: oSuggSpy
-		});
-		var oOpenSpy = this.spy(oInput, "_openSuggestionPopup");
-
-		oInput.placeAt("content");
-		await nextUIUpdate(this.clock);
-
-		oInput._$input.trigger("focus");
-		this.clock.tick(400);
-		assert.strictEqual(oSuggSpy.callCount, 1, "Focus should fire suggest event");
-		assert.strictEqual(oOpenSpy.callCount, 0, "SuggestionsPopover should not be opened");
-
-
-		oInput.destroy();
-	});
-
 	QUnit.test("The order of setting properties: showValueHelp, bindAggregation and showSuggestion", async function(assert){
 		this.clock.restore(); // No fake timers (set at beforeEach hook) needed in that test, nextUIUpdate is called without clock as parameter
 		var oInput = new Input({
@@ -4797,44 +4555,6 @@ sap.ui.define([
 		//Clean up
 		oAnnounceSpy.restore();
 		oInput.destroy();
-	});
-
-	/**
-	* @deprecated Since 1.119.
-	*/
-	QUnit.test("Focus handling - Value Help Only 'tap' on Phone", async function(assert) {
-		this.clock = sinon.useFakeTimers();
-		//Arrange
-		const oDeviceStub = this.stub(Device, "system").value({desktop: false, phone: true, tablet: false});
-
-		var oDialog = new Dialog({});
-		var oInputValueHelpOnly = new Input({
-			showValueHelp: true,
-			valueHelpOnly:  true,
-			valueHelpRequest: function (oEvent) {
-				oDialog.open();
-			}
-		});
-
-		oInputValueHelpOnly.placeAt("content");
-		await nextUIUpdate(this.clock);
-
-		// Act
-		qutils.triggerTouchEvent("tap", oInputValueHelpOnly._$input[0]);
-		this.clock.tick(1000);
-		await nextUIUpdate(this.clock);
-
-		oDialog.close();
-		this.clock.tick(1000);
-		await nextUIUpdate(this.clock);
-
-		// Assert
-		assert.equal(document.activeElement.id, oInputValueHelpOnly._$input[0].id, 'Active element is the input');
-
-		// Cleanup
-		oDialog.destroy();
-		oInputValueHelpOnly.destroy();
-		oDeviceStub.restore();
 	});
 
 	QUnit.test("Focus handling - Leaving the input field should trigger suggestions item selection", async function(assert) {
@@ -8286,36 +8006,6 @@ sap.ui.define([
 			this.oInput.destroy();
 			this.oInput = null;
 		}
-	});
-
-	/**
-	* @deprecated Since 1.119.
-	*/
-	QUnit.test("showItems should not open the picker when valueHelpOnly is set to 'true'", async function (assert) {
-		// Arrange
-		var oSpy = this.spy(this.oInput, "_openSuggestionPopup");
-
-		this.oInput.setValueHelpOnly(true);
-		await nextUIUpdate();
-
-		// Act
-		this.oInput.showItems();
-
-		// Assert
-		assert.strictEqual(oSpy.called, false, "The picker was not opened");
-
-		// Arrange
-		this.oInput.setValueHelpOnly(false);
-		await nextUIUpdate();
-
-		// Act
-		this.oInput.showItems();
-
-		// Assert
-		assert.strictEqual(oSpy.calledOnce, true, "After setting the valueHelpOnly back to 'false', the picker was opened once");
-
-		// Clean
-		oSpy.reset();
 	});
 
 	QUnit.module("showItems functionality: List", {

@@ -1,22 +1,22 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/f/dnd/GridDragOver",
 	"sap/f/GridContainer",
 	"sap/f/GridContainerSettings",
 	"sap/m/Text",
-	"sap/ui/core/Core",
 	"sap/base/Log"
 ], function(
+	nextUIUpdate,
 	jQuery,
 	createAndAppendDiv,
 	GridDragOver,
 	GridContainer,
 	GridContainerSettings,
 	Text,
-	Core,
 	Log
 ) {
 	"use strict";
@@ -71,7 +71,7 @@ sap.ui.define([
 			});
 
 			this.oGrid.placeAt("content");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.fakeDragSession = createFakeDragSession();
 
@@ -131,7 +131,7 @@ sap.ui.define([
 			mCoreIndicatorStyle;
 
 		oText.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oFakeEvent.pageX = mTargetRect.left + window.pageXOffset;
 		oFakeEvent.pageY = mTargetRect.top + window.pageYOffset;
@@ -178,7 +178,7 @@ sap.ui.define([
 
 		// Act
 		this.oGrid.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok($grid.find(".sapUiDnDGridIndicator").length, "The indicator is restored after invalidation.");
@@ -199,7 +199,7 @@ sap.ui.define([
 
 			this.oGrid.placeAt("content");
 			this.oDragItem.placeAt("content");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.fakeDragSession = createFakeDragSession();
 
@@ -247,7 +247,7 @@ sap.ui.define([
 		this.clock.tick(250);
 		this.oGridDragOver.handleDragOver(oFakeEvent);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		// Assert
@@ -280,7 +280,7 @@ sap.ui.define([
 
 			this.oGrid1.placeAt("content");
 			this.oGrid2.placeAt("content");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.fakeDragSession = createFakeDragSession();
 
@@ -310,7 +310,7 @@ sap.ui.define([
 		this.clock.tick(250);
 		this.oGridDragOver.handleDragOver(oFakeEvent);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		assert.strictEqual(jQuery("#dragContainer").outerHeight(), 80, "The drag container has the expected height.");

@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Element"
 ], function(
 	capitalize,
 	ColumnListItem,
@@ -36,7 +37,8 @@ sap.ui.define([
 	JSONModel,
 	ODataModel,
 	nextUIUpdate,
-	jQuery
+	jQuery,
+	Element
 ) {
 	"use strict";
 
@@ -551,7 +553,7 @@ sap.ui.define([
 		assert.ok(oList.getItems().pop().getDomRef() === oNavigationRoot.children[0], "Last aggregation DOM is the first child of the list");
 
 		if (document.hasFocus()) {
-			assert.ok(jQuery(document.activeElement).control(0)?.isA("sap.m.ListItemBase"), "Focus moves to ListItem after growing");
+			assert.ok(Element.closestTo(document.activeElement)?.isA("sap.m.ListItemBase"), "Focus moves to ListItem after growing");
 		}
 	});
 

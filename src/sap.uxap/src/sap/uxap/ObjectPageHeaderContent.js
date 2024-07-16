@@ -5,7 +5,6 @@
 // Provides control sap.uxap.ObjectPageHeaderContent.
 sap.ui.define([
 	"sap/ui/core/Control",
-	"./library",
 	"sap/m/Button",
 	"./ObjectImageHelper",
 	"./ObjectPageHeaderContentRenderer",
@@ -13,16 +12,12 @@ sap.ui.define([
 ],
 	function(
 		Control,
-		library,
 		Button,
 		ObjectImageHelper,
 		ObjectPageHeaderContentRenderer,
 		Library
 	) {
 		"use strict";
-
-		// shortcut for sap.uxap.ObjectPageHeaderDesign
-		var ObjectPageHeaderDesign = library.ObjectPageHeaderDesign;
 
 		/**
 		 * Constructor for a new <code>ObjectPageHeaderContent</code>.
@@ -64,21 +59,7 @@ sap.ui.define([
 
 				library: "sap.uxap",
 				interfaces: ["sap.uxap.IHeaderContent"],
-				properties: {
-
-					/**
-					 * Determines the design of the header - Light or Dark.
-					 * <b>Note: </b>This property is deprecated. It will continue to work in the Blue Crystal theme,
-					 * but it will not be taken into account for the Belize themes.
-					 * @deprecated As of version 1.40.1 without replacement.
-					 */
-					contentDesign: {
-						type: "sap.uxap.ObjectPageHeaderDesign",
-						group: "Misc",
-						defaultValue: ObjectPageHeaderDesign.Light,
-						deprecated: true
-					}
-				},
+				properties: {},
 				aggregations: {
 
 					/**
@@ -283,5 +264,4 @@ sap.ui.define([
 		};
 
 		return ObjectPageHeaderContent;
-
 	});

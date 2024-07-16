@@ -60,4 +60,4 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/Device", "sap/ui/core/Lib"]
 	};
 
 	return TimePickerSlidersRenderer;
-}, /* bExport= */ true);
+});

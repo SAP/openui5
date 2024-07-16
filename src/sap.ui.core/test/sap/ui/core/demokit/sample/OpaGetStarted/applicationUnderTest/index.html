@@ -6,44 +6,19 @@
 
 		<title>Application under test</title>
 
-		<script
-			id='sap-ui-bootstrap'
-			src='../../../../../../../../resources/sap-ui-core.js'
-			data-sap-ui-theme='sap_belize'
-			data-sap-ui-libs='sap.m'
-			data-sap-ui-preload="async"
-			data-sap-ui-resourceroots='{
-				"appUnderTest" : "./"
-			}' >
+		<script id="sap-ui-bootstrap"
+				src="../../../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-resource-roots='{"appUnderTest":"./","local":"./"}'
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/index"
+		>
 		</script>
 
-		<script>
-			sap.ui.require([
-				"sap/ui/core/Core",
-				"appUnderTest/server",
-				"sap/m/Shell",
-				"sap/ui/core/ComponentContainer"
-			], function (Core, server, Shell, ComponentContainer) {
-				"use strict";
-
-				Core.ready().then(function () {
-					// start fake server
-					server.init();
-
-					// start app
-					new Shell({
-						app: new ComponentContainer({
-							name : 'appUnderTest',
-							settings : {
-								id : "appUnderTest"
-							}
-						})
-					}).placeAt("content");
-				});
-			});
-		</script>
+		
 	</head>
 
-	<body class='sapUiBody' id='content'></body>
+	<body class="sapUiBody" id="content"></body>
 
 </html>

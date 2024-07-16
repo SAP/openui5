@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head><meta charset="utf-8">
 	<title>Extension</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="../../../scripts/boot.js"></script>
 </head>
@@ -128,19 +128,16 @@
 
 			<h2 id="extensionApi">Extension API</h2>
 			<p>
-				In the Extension JavaScript module you can use <code>getCard()</code> method, which provides an <a
-					data-demokit-href="#/api/sap.ui.integration.widgets.CardFacade" target="_blank">interface</a> to the card API.
+				In the Extension JavaScript module you can use <code>getCard()</code> method, which provides an <a data-demokit-href="#/api/sap.ui.integration.widgets.CardFacade" target="_blank">interface</a> to the card API.
 				For example you can resolve destinations or get access to the card parameters.
-				For detailed information about all the available methods, read the <a data-demokit-href="#/api/sap.ui.integration.Extension"
-					target="_blank">sap.ui.integration.Extension API.</a>
+				For detailed information about all the available methods, read the <a data-demokit-href="#/api/sap.ui.integration.Extension" target="_blank">sap.ui.integration.Extension API.</a>
 			</p>
 
 			<h2 id="extensionRequirements">
 				Extension Requirements
 			</h2>
 			<ul>
-				<li>The extension should be defined in a UI5 Module and extend the <a data-demokit-href="#/api/sap.ui.integration.Extension"
-						target="_blank">sap.ui.integration.Extension</a> class.</li>
+				<li>The extension should be defined in a UI5 Module and extend the <a data-demokit-href="#/api/sap.ui.integration.Extension" target="_blank">sap.ui.integration.Extension</a> class.</li>
 				<li>For optimal loading performance it is recommended to avoid any dependencies that are not part of the sap.ui.integration library.</li>
 			</ul>
 			<b>Note:</b> Each card can have only one extension.
@@ -150,13 +147,13 @@
 			</h2>
 			<p>
 				Shared extensions allow one extension to be reused by multiple cards.
-				</br>
-				</br>
+				<br>
+				<br>
 				<b>Prerequisite:</b> The extension must be part of a UI5 library and this library has to be registered by the host developers. This library may also include other modules which are used in the extension if needed.
 
 				To use an extension from a shared library first define this library as dependency of the card:
 
-				<pre class="lang-json">
+				</p><pre class="lang-json">
 "sap.ui5": {
 	"dependencies": {
 		"libs": {
@@ -175,7 +172,7 @@
 			<a class="try-button sapUiSmallMarginTop" href="../../../index.html#/explore/extension/sharedExtension" target="_parent">Try
 				it Out</a>
 
-			</p>
+			<p></p>
 
 			<h2 id="examples">
 				Examples

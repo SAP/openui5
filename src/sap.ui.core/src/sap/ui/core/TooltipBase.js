@@ -10,10 +10,9 @@ sap.ui.define([
 	'./StaticArea',
 	'./library',
 	"sap/ui/core/RenderManager",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/events/KeyCodes"
 ],
-	function(Control, Element, Popup, StaticArea, library, RenderManager, KeyCodes, jQuery) {
+	function(Control, Element, Popup, StaticArea, library, RenderManager, KeyCodes) {
 	"use strict";
 
 

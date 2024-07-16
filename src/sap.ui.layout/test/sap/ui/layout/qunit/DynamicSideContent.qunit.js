@@ -10,9 +10,9 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], function(Library, DynamicSideContent, layoutLibrary, Button, List, Panel, Page, StandardListItem, Device, ResizeHandler, $, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/thirdparty/jquery"
+], function(Library, DynamicSideContent, layoutLibrary, Button, List, Panel, Page, StandardListItem, Device, ResizeHandler, nextUIUpdate, $) {
 	"use strict";
 
 	var SideContentFallDown = layoutLibrary.SideContentFallDown;
@@ -35,7 +35,7 @@ sap.ui.define([
 		SIDE_CONTENT_LABEL = "SIDE_CONTENT_LABEL";
 
 	QUnit.module("Public API", {
-		beforeEach : function () {
+		beforeEach : async function() {
 			// Replacing jQuery width method to report stable browser screen resolution for the test
 			var that = this;
 			this._ojQueryWidthMethod = $.fn.width;
@@ -49,7 +49,7 @@ sap.ui.define([
 			this._oDSC = new DynamicSideContent();
 			this._oFixture = document.getElementById("qunit-fixture");
 			this._oDSC.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function () {
 			this._oDSC.destroy();
@@ -77,10 +77,10 @@ sap.ui.define([
 		assert.ok(oSideContent.position().left > oMainContent.position().left, "Main content is before the side content by default");
 	});
 
-	QUnit.test("'sideContentPosition' property set to Begin",function(assert) {
+	QUnit.test("'sideContentPosition' property set to Begin",async function(assert) {
 
 		this._oDSC.setSideContentPosition(SideContentPosition.Begin);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oSideContent = this._oDSC.$("SCGridCell"),
 		oMainContent = this._oDSC.$("MCGridCell");
@@ -154,7 +154,7 @@ sap.ui.define([
 		assert.ok(!this._oDSC._changeGridState.calledOnce, "_changeGridState is not called when no breakpoint is set");
 	});
 
-	QUnit.test("'sideContentWidthM' property sets correct side content width for M breakpoint",function(assert) {
+	QUnit.test("'sideContentWidthM' property sets correct side content width for M breakpoint",async function(assert) {
 		// act
 		this._oDSC.setSideContentFallDown("BelowM");
 		this._oDSC.setContainerQuery(true);
@@ -163,41 +163,41 @@ sap.ui.define([
 		this._oDSC.setSideContentWidthM("256px");
 		this._oDSC.setSideContentWidthL("356px");
 		this._oDSC.setSideContentWidthXL("456px");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 256px"), -1, "Side content width for M breakpoint is properly set");
 
 		// act
 		this._oDSC.setEqualSplit(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 256px"), -1, "Side content width for M breakpoint is removed when equalSplit is set");
 
 		// act
 		this._oDSC.setEqualSplit(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 256px"), -1, "Side content width for M breakpoint is properly set when equalSplit is removed");
 
 		// act
 		this._oDSC.setShowMainContent(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 256px"), -1, "Side content width for M breakpoint is removed when main content is hidden");
 
 		// act
 		this._oDSC.setShowMainContent(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 256px"), -1, "Side content width for M breakpoint is properly set when main content is visible again");
 	});
 
-	QUnit.test("'sideContentWidthL' property sets correct side content width for L breakpoint",function(assert) {
+	QUnit.test("'sideContentWidthL' property sets correct side content width for L breakpoint",async function(assert) {
 		// act
 		this._oFixture.style.width = "1100px"; // L breakpoint, mainContent and sideContent are side by side
 		this._oDSC._adjustToScreenSize();
@@ -205,41 +205,41 @@ sap.ui.define([
 		this._oDSC.setSideContentWidthM("256px");
 		this._oDSC.setSideContentWidthL("356px");
 		this._oDSC.setSideContentWidthXL("456px");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 356px"), -1, "Side content width for L breakpoint is properly set");
 
 		// act
 		this._oDSC.setEqualSplit(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 356px"), -1, "Side content width for L breakpoint is removed when equalSplit is set");
 
 		// act
 		this._oDSC.setEqualSplit(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 356px"), -1, "Side content width for L breakpoint is properly set when equalSplit is removed");
 
 		// act
 		this._oDSC.setShowMainContent(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 356px"), -1, "Side content width for L breakpoint is removed when main content is hidden");
 
 		// act
 		this._oDSC.setShowMainContent(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 356px"), -1, "Side content width for L breakpoint is properly set when main content is visible again");
 	});
 
-	QUnit.test("'sideContentWidthXL' property sets correct side content width for XL breakpoint",function(assert) {
+	QUnit.test("'sideContentWidthXL' property sets correct side content width for XL breakpoint",async function(assert) {
 		// prepare
 		this._oFixture.style.width = "1500px"; // XL breakpoint, mainContent and sideContent are side by side
 		this._oDSC._adjustToScreenSize();
@@ -247,35 +247,35 @@ sap.ui.define([
 		this._oDSC.setSideContentWidthM("256px");
 		this._oDSC.setSideContentWidthL("356px");
 		this._oDSC.setSideContentWidthXL("456px");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 456px"), -1, "Side content width for XL breakpoint is properly set");
 
 		// act
 		this._oDSC.setEqualSplit(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 456px"), -1, "Side content width for XL breakpoint is removed when equalSplit is set");
 
 		// act
 		this._oDSC.setEqualSplit(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 456px"), -1, "Side content width for XL breakpoint is properly set when equalSplit is removed");
 
 		// act
 		this._oDSC.setShowMainContent(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 456px"), -1, "Side content width for XL breakpoint is removed when main content is hidden");
 
 		// act
 		this._oDSC.setShowMainContent(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notEqual(this._oDSC.getDomRef("SCGridCell").getAttribute("style").indexOf("width: 456px"), -1, "Side content width for XL breakpoint is properly set when main content is visible again");
@@ -378,7 +378,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Scroll delegate", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oList = new List("list1", {
 				items: new StandardListItem({
 					title : "123 456"
@@ -393,7 +393,7 @@ sap.ui.define([
 			});
 			this.oFixture = document.getElementById("qunit-fixture");
 			this.oPage.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oList.destroy();
@@ -405,15 +405,15 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("getScrollDelegate: List in mainContent, mainContent take the whole DSC height",function(assert) {
+	QUnit.test("getScrollDelegate: List in mainContent, mainContent take the whole DSC height",async function(assert) {
 		// prepare
 		this.oDSC.addMainContent(this.oList);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		this.oFixture.style.width = "1500px"; // XL breakpoint, mainContent and sideContent are side by side
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oMCScroller,
@@ -422,7 +422,7 @@ sap.ui.define([
 		// act
 		this.oFixture.style.width = "1200px"; // L breakpoint, mainContent and sideContent are side by side
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oMCScroller,
@@ -431,7 +431,7 @@ sap.ui.define([
 		// act
 		this.oFixture.style.width = "900px"; // M breakpoint, mainContent and sideContent are side by side
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oMCScroller,
@@ -440,26 +440,26 @@ sap.ui.define([
 		// act
 		this.oFixture.style.width = "700px"; // L breakpoint, mainContent and sideContent are side by side
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oMCScroller,
 			"S breakpoint: getScrollDelegate returns the scroll delegate of the DSC's mainContent aggregation");
 	});
 
-	QUnit.test("getScrollDelegate: List in mainContent, mainContent is above the sideContent",function(assert) {
+	QUnit.test("getScrollDelegate: List in mainContent, mainContent is above the sideContent",async function(assert) {
 		// prepare
 		this.oDSC.addMainContent(this.oList);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.oDSC.setSideContentFallDown("BelowXL"); // sideContent goes below mainContent on L, M, S
 		this.oDSC.setSideContentVisibility("AlwaysShow"); // sideContent is dislayed always
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		this.oFixture.style.width = "1200px"; // L breakpoint
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oPage.getScrollDelegate(),
@@ -468,7 +468,7 @@ sap.ui.define([
 		// act
 		this.oFixture.style.width = "900px"; // M breakpoint
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oPage.getScrollDelegate(),
@@ -477,22 +477,22 @@ sap.ui.define([
 		// act
 		this.oFixture.style.width = "700px"; // L breakpoint
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oPage.getScrollDelegate(),
 			"S breakpoint: getScrollDelegate returns the scroll delegate of the parent Page control");
 	});
 
-	QUnit.test("getScrollDelegate: List in sideContent, sideContent take the whole DSC height",function(assert) {
+	QUnit.test("getScrollDelegate: List in sideContent, sideContent take the whole DSC height",async function(assert) {
 		// prepare
 		this.oDSC.addSideContent(this.oList);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		this.oFixture.style.width = "1500px"; // XL breakpoint, mainContent and sideContent are side by side
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oSCScroller,
@@ -501,7 +501,7 @@ sap.ui.define([
 		// act
 		this.oFixture.style.width = "1200px"; // L breakpoint, mainContent and sideContent are side by side
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oSCScroller,
@@ -510,7 +510,7 @@ sap.ui.define([
 		// act
 		this.oFixture.style.width = "900px"; // M breakpoint, mainContent and sideContent are side by side
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oSCScroller,
@@ -520,26 +520,26 @@ sap.ui.define([
 		this.oFixture.style.width = "700px"; // L breakpoint, mainContent and sideContent are side by side
 		this.oDSC._adjustToScreenSize();
 		this.oDSC.toggle(); // displays sideContent instead of mainContent
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oSCScroller,
 			"S breakpoint: getScrollDelegate returns the scroll delegate of the DSC's sideContent aggregation");
 	});
 
-	QUnit.test("getScrollDelegate: List in sideContent, mainContent is above the sideContent",function(assert) {
+	QUnit.test("getScrollDelegate: List in sideContent, mainContent is above the sideContent",async function(assert) {
 		// prepare
 		this.oDSC.addSideContent(this.oList);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.oDSC.setSideContentFallDown("BelowXL"); // sideContent goes below mainContent on L, M, S
 		this.oDSC.setSideContentVisibility("AlwaysShow"); // sideContent is dislayed always
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		this.oFixture.style.width = "1200px"; // L breakpoint
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oPage.getScrollDelegate(),
@@ -548,7 +548,7 @@ sap.ui.define([
 		// act
 		this.oFixture.style.width = "900px"; // M breakpoint
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oPage.getScrollDelegate(),
@@ -557,26 +557,26 @@ sap.ui.define([
 		// act
 		this.oFixture.style.width = "700px"; // L breakpoint
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oPage.getScrollDelegate(),
 			"S breakpoint: getScrollDelegate returns the scroll delegate of the parent Page control");
 	});
 
-	QUnit.test("getScrollDelegate: List in Panel in mainContent",function(assert) {
+	QUnit.test("getScrollDelegate: List in Panel in mainContent",async function(assert) {
 		var oPanel = new Panel({
 			content: this.oList
 		});
 
 		// prepare
 		this.oDSC.addMainContent(oPanel);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		this.oFixture.style.width = "1500px"; // XL breakpoint, mainContent and sideContent are side by side
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oMCScroller,
@@ -585,7 +585,7 @@ sap.ui.define([
 		// act
 		this.oFixture.style.width = "1200px"; // L breakpoint, mainContent and sideContent are side by side
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oMCScroller,
@@ -594,7 +594,7 @@ sap.ui.define([
 		// act
 		this.oFixture.style.width = "900px"; // M breakpoint, mainContent and sideContent are side by side
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oMCScroller,
@@ -603,26 +603,26 @@ sap.ui.define([
 		// act
 		this.oFixture.style.width = "700px"; // L breakpoint, mainContent and sideContent are side by side
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oMCScroller,
 			"S breakpoint: getScrollDelegate returns the scroll delegate of the DSC's mainContent aggregation");
 	});
 
-	QUnit.test("getScrollDelegate: List in Panel in sideContent",function(assert) {
+	QUnit.test("getScrollDelegate: List in Panel in sideContent",async function(assert) {
 		var oPanel = new Panel({
 			content: this.oList
 		});
 
 		// prepare
 		this.oDSC.addSideContent(oPanel);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		this.oFixture.style.width = "1500px"; // XL breakpoint, mainContent and sideContent are side by side
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oSCScroller,
@@ -631,7 +631,7 @@ sap.ui.define([
 		// act
 		this.oFixture.style.width = "1200px"; // L breakpoint, mainContent and sideContent are side by side
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oSCScroller,
@@ -640,7 +640,7 @@ sap.ui.define([
 		// act
 		this.oFixture.style.width = "900px"; // M breakpoint, mainContent and sideContent are side by side
 		this.oDSC._adjustToScreenSize();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oSCScroller,
@@ -650,7 +650,7 @@ sap.ui.define([
 		this.oFixture.style.width = "700px"; // L breakpoint, mainContent and sideContent are side by side
 		this.oDSC._adjustToScreenSize();
 		this.oDSC.toggle(); // displays sideContent instead of mainContent
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oDSC.getScrollDelegate(this.oList), this.oDSC._oSCScroller,
@@ -658,7 +658,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Helper functionality", {
-		beforeEach : function () {
+		beforeEach : async function() {
 			// Replacing jQuery width method to report stable browser screen resolution for the test
 			var that = this;
 			this._ojQueryWidthMethod = $.fn.width;
@@ -672,7 +672,7 @@ sap.ui.define([
 			this._oDSC = new DynamicSideContent();
 			this._oDSC.placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function () {
 			this._oDSC.destroy();
@@ -1005,14 +1005,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("Content Query", {
-		beforeEach : function () {
+		beforeEach : async function() {
 			this._oDSC = new DynamicSideContent({
 				containerQuery: true
 			});
 			this.spy(this._oDSC, "_adjustToScreenSize");
 			$("#qunit-fixture").width(960);
 			this._oDSC.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function () {
 			$("#qunit-fixture").width(1000); // Reset qunit fixture size to original (1000px);
@@ -1027,14 +1027,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("Content positioning after rerendering", {
-		beforeEach : function () {
+		beforeEach : async function() {
 			this._oDSC = new DynamicSideContent({
 				containerQuery: true,
 				sideContentFallDown: "BelowM"
 			});
 			$("#qunit-fixture").width(200);
 			this._oDSC.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function () {
 			$("#qunit-fixture").width(1000); // Reset qunit fixture size to original (1000px);
@@ -1043,18 +1043,18 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("After rerendering the visibility of the contents remains the same",function(assert) {
+	QUnit.test("After rerendering the visibility of the contents remains the same",async function(assert) {
 		this._oDSC.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(this._oDSC._MCVisible, "The main content is visible");
 		assert.notOk(this._oDSC._SCVisible, "The side content is not visible");
 	});
 
 	QUnit.module("Construction / Destruction", {
-		beforeEach : function () {
+		beforeEach : async function() {
 			this._oDSC = new DynamicSideContent();
 			this._oDSC.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function () {
 			this._oDSC = null;
@@ -1089,10 +1089,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Interaction", {
-		beforeEach : function () {
+		beforeEach : async function() {
 			this._oDSC = new DynamicSideContent();
 			this._oDSC.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function () {
 			this._oDSC.destroy();
@@ -1172,7 +1172,7 @@ sap.ui.define([
 		$.fn.width = this._ojQueryWidthMethod;
 	});
 
-	QUnit.test("breakpointChange event not fired initially", function(assert) {
+	QUnit.test("breakpointChange event not fired initially", async function(assert) {
 		var fnDone = assert.async(2),
 			oDSC = new DynamicSideContent({containerQuery: true}),
 			oBreakpointChangedSpy = this.spy(oDSC, "fireBreakpointChanged"),
@@ -1200,14 +1200,14 @@ sap.ui.define([
 		// prepare
 		oDSC.addDelegate(oAfterRenderingDelegate);
 		oDSC.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 	});
 
 	QUnit.module("Screen reader", {
-		beforeEach : function () {
+		beforeEach : async function() {
 			this._oDSC = new DynamicSideContent({containerQuery: true});
 			this._oDSC.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function () {
 			this._oDSC = null;
@@ -1226,22 +1226,22 @@ sap.ui.define([
 	});
 
 	QUnit.module("Invalidation", {
-		beforeEach : function () {
+		beforeEach : async function() {
 			this._oDSC = new DynamicSideContent({showSideContent: false, containerQuery: true});
 			this._oDSC.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function () {
 			this._oDSC = null;
 		}
 	});
 
-	QUnit.test("Side Content invisible after invalidation",function(assert) {
+	QUnit.test("Side Content invisible after invalidation",async function(assert) {
 		var SC_GRID_CELL_SELECTOR = "SCGridCell",
 			HIDDEN_CLASS = "sapUiHidden";
 
 		this._oDSC.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(this._oDSC.$(SC_GRID_CELL_SELECTOR).hasClass(HIDDEN_CLASS), "Side content in invisible");
 	});

@@ -928,7 +928,6 @@ function(nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			fnCheckPosition = function() {
 				$mobileAnchor = oSection.$("header");
 				iPositionTopBefore = lib.Utilities.getChildPosition($mobileAnchor, oObjectPage._$contentContainer).top;
-				iPositionTopAfter;
 
 				// Act
 				oObjectPage.getDomRef().style.position = "relative";

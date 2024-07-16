@@ -87,78 +87,6 @@
 		return oResult || {};
 	}
 
-	/**
-	 * @deprecated As of Version 1.120
-	 */
-	function _createGlobalConfig() {
-		var sCfgFile = "sap-ui-config.json",
-			url = globalThis["sap-ui-config"];
-
-		if (typeof url === "string") {
-			if (globalThis.XMLHttpRequest) {
-				ui5loader._.logger.warning("Loading external bootstrap configuration from \"" + url + "\". This is a design time feature and not for productive usage!");
-				if (url !== sCfgFile) {
-					ui5loader._.logger.warning("The external bootstrap configuration file should be named \"" + sCfgFile + "\"!");
-				}
-				try {
-
-					var xhr = new XMLHttpRequest();
-					xhr.open("GET", url, false);
-					xhr.setRequestHeader("Accept", "application/json, text/javascript");
-
-					xhr.addEventListener("load", function() {
-						try {
-							if (xhr.responseType === "json") {
-								globalThis["sap-ui-config"] = xhr.response;
-							} else {
-								globalThis["sap-ui-config"] = JSON.parse(xhr.responseText);
-							}
-						} catch (error) {
-							ui5loader._.logger.error("Parsing externalized bootstrap configuration from \"" + url + "\" failed! Reason: " + error + "!");
-						}
-					});
-					xhr.addEventListener("error", function() {
-						ui5loader._.logger.error("Loading externalized bootstrap configuration from \"" + url + "\" failed! Response: " + xhr.status + "!");
-					});
-
-					xhr.send(null);
-					globalThis["sap-ui-config"].__loaded = true;
-
-				} catch (error) {
-					ui5loader._.logger.error("Loading externalized bootstrap configuration from \"" + url + "\" failed! Reason: " + error + "!");
-				}
-			}
-		}
-		var bootstrap = getBootstrapTag();
-		if (bootstrap.tag) {
-			var dataset = bootstrap.tag.dataset;
-			if (dataset["sapUiConfig"]) {
-				var sConfig = dataset["sapUiConfig"];
-				var oParsedConfig;
-				try {
-					oParsedConfig = JSON.parse("{" + sConfig + "}");
-				} catch (exc) {
-					ui5loader._.logger.error("JSON.parse on the data-sap-ui-config attribute failed. Please check the config for JSON syntax violations.");
-					/*eslint-disable no-new-func */
-					oParsedConfig = (new Function("return {" + sConfig + "};"))();
-					/*eslint-enable no-new-func */
-				}
-
-				if (oParsedConfig) {
-					if (!globalThis["sap-ui-config"]) {
-						globalThis["sap-ui-config"] = {};
-					}
-					Object.assign(globalThis["sap-ui-config"], oParsedConfig);
-				}
-			 }
-		}
-	}
-
-	/**
-	 * @deprecated As of Version 1.120
-	 */
-	_createGlobalConfig();
-
 	define("sap/base/config/GlobalConfigurationProvider", [
 		"sap/base/strings/_camelize"
 	], function (camelize) {
@@ -235,15 +163,7 @@
 			get: get,
 			set: set,
 			freeze: freeze,
-			setConfiguration: setConfiguration,
-			/**
-			 * @deprecated As of Version 1.120
-			 */
-			_: {
-				configLoaded() {
-					return !!globalThis["sap-ui-config"].__loaded;
-				}
-			}
+			setConfiguration: setConfiguration
 		};
 
 		createConfig();
@@ -407,49 +327,49 @@
 			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"Boolean": "boolean",
-			/**
-			 * defaultValue: undefined
-			 * @private
-			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
-			 * @deprecated As of Version 1.120
-			 */
-			"Code": "code",
+
 			/**
 			 * defaultValue: 0
 			 * @private
 			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"Integer": "integer",
+
 			/**
 			 * defaultValue: ""
 			 * @private
 			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"String": "string",
+
 			/**
 			 * defaultValue: []
 			 * @private
 			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"StringArray": "string[]",
+
 			/**
 			 * defaultValue: []
 			 * @private
 			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"FunctionArray": "function[]",
+
 			/**
 			 * defaultValue: undefined
 			 * @private
 			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"Function": "function",
+
 			/**
 			 * defaultValue: {}
 			 * @private
 			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"Object":  "object",
+
 			/**
 			 * defaultValue: {}
 			 * @private
@@ -530,65 +450,59 @@
 
 			if (typeof vType === "string") {
 				switch (vType) {
-					case TypeEnum.Boolean:
-						if (typeof vValue === "string") {
-							return vValue.toLowerCase() === "true" || vValue.toLowerCase() === "x";
-						} else {
-							vValue = !!vValue;
+				case TypeEnum.Boolean:
+					if (typeof vValue === "string") {
+						return vValue.toLowerCase() === "true" || vValue.toLowerCase() === "x";
+					} else {
+						vValue = !!vValue;
+					}
+					break;
+				case TypeEnum.Integer:
+					if (typeof vValue === "string") {
+						vValue = parseInt(vValue);
+					}
+					if (typeof vValue !== 'number' && isNaN(vValue)) {
+						throw new TypeError("unsupported value");
+					}
+					break;
+				case TypeEnum.String:
+					vValue = '' + vValue; // enforce string
+					break;
+				case TypeEnum.StringArray:
+					if (Array.isArray(vValue)) {
+						return vValue;
+					} else if (typeof vValue === "string") {
+						// enforce array
+						vValue = vValue ? vValue.split(/[,;]/).map(function(s) {
+							return s.trim();
+						}) : [];
+						return vValue;
+					} else {
+						throw new TypeError("unsupported value");
+					}
+				case TypeEnum.FunctionArray:
+					vValue.forEach(function(fnFunction) {
+						if ( typeof fnFunction !== "function" ) {
+							throw new TypeError("Not a function: " + fnFunction);
 						}
-						break;
-					/**
-					 * @deprecated As of Version 1.120
-					 */
-					case TypeEnum.Code:
-						vValue = typeof vValue === "function" ? vValue : String(vValue);
-						break;
-					case TypeEnum.Integer:
-						if (typeof vValue === "string") {
-							vValue = parseInt(vValue);
-						}
-						if (typeof vValue !== 'number' && isNaN(vValue)) {
-							throw new TypeError("unsupported value");
-						}
-						break;
-					case TypeEnum.String:
-						vValue = '' + vValue; // enforce string
-						break;
-					case TypeEnum.StringArray:
-						if (Array.isArray(vValue)) {
-							return vValue;
-						} else if (typeof vValue === "string") {
-							// enforce array
-							vValue = vValue ? vValue.split(/[,;]/).map(function(s) {
-								return s.trim();
-							}) : [];
-							return vValue;
-						} else {
-							throw new TypeError("unsupported value");
-						}
-					case TypeEnum.FunctionArray:
-						vValue.forEach(function(fnFunction) {
-							if ( typeof fnFunction !== "function" ) {
-								throw new TypeError("Not a function: " + fnFunction);
-							}
-						});
-						break;
-					case TypeEnum.Function:
-						if (typeof vValue !== "function") {
-							throw new TypeError("unsupported value");
-						}
-						break;
-					case TypeEnum.Object:
-					case TypeEnum.MergedObject:
-						if (typeof vValue === "string") {
-							vValue = JSON.parse(vValue);
-						}
-						if (typeof vValue !== "object") {
-							throw new TypeError("unsupported value");
-						}
-						break;
-					default:
-						throw new TypeError("unsupported type");
+					});
+					break;
+				case TypeEnum.Function:
+					if (typeof vValue !== "function") {
+						throw new TypeError("unsupported value");
+					}
+					break;
+				case TypeEnum.Object:
+				case TypeEnum.MergedObject:
+					if (typeof vValue === "string") {
+						vValue = JSON.parse(vValue);
+					}
+					if (typeof vValue !== "object") {
+						throw new TypeError("unsupported value");
+					}
+					break;
+				default:
+					throw new TypeError("unsupported type");
 				}
 			} else if (typeof vType === "object" && !Array.isArray(vType)) {
 				vValue = checkEnum(vType, vValue, sName);
@@ -945,26 +859,6 @@
 		freeze: true
 	});
 
-	/**
-	 * Evaluate legacy configuration.
-	 * @deprecated As of version 1.120
-	 */
-	(() => {
-		// xx-future implicitly sets the loader to async
-		const bAsync = BaseConfig.get({
-			name: "sapUiAsync",
-			type: BaseConfig.Type.Boolean,
-			external: true,
-			freeze: true
-		}) || bFuture;
-
-		if (bAsync) {
-			ui5loader.config({
-				async: true
-			});
-		}
-	})();
-
 	// Note: loader converts any NaN value to a default value
 	ui5loader._.maxTaskDuration = BaseConfig.get({
 		name: "sapUiXxMaxLoaderTaskDuration",
@@ -1006,21 +900,6 @@
 	} else if (/^(true|x)$/i.test(sNoSync)) {
 		syncCallBehavior = 2;
 	}
-
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	(() => {
-		const GlobalConfigurationProvider = sap.ui.require("sap/base/config/GlobalConfigurationProvider");
-		if ( syncCallBehavior && GlobalConfigurationProvider._.configLoaded()) {
-			const sMessage = "[nosync]: configuration loaded via sync XHR";
-			if (syncCallBehavior === 1) {
-				ui5loader._.logger.warning(sMessage);
-			} else {
-				ui5loader._.logger.error(sMessage);
-			}
-		}
-	})();
 
 	ui5loader.config({
 		baseUrl: sBaseUrl,
@@ -1268,5 +1147,4 @@
 	if ( sMainModule ) {
 		sap.ui.require(sMainModule.trim().split(/\s*,\s*/));
 	}
-
 }());

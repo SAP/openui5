@@ -93,17 +93,6 @@ sap.ui.define([
 					},
 
 					/**
-					 * Indicates whether the picker is opened.
-					 * @deprecated As of version 1.110 Please check the <code>showItems</code> functionality if you need to open the picker programmatically.
-					 * @private
-					 * @ui5-restricted sap.m.ComboBoxBase
-					 */
-					open: {
-						type: "boolean",
-						defaultValue: false
-					},
-
-					/**
 					 * Specifies whether clear icon is shown.
 					 * Pressing the icon will clear input's value.
 					 * @since 1.96
@@ -893,23 +882,6 @@ sap.ui.define([
 		 * Gets the <code>list</code>.
 		 *
 		 * @returns {sap.m.List|null} The list instance object or <code>null</code>.
-		 * @protected
-		 * @deprecated As of version 1.62. The list structure should not be used as per SAP note: 2746748.
-		 */
-		ComboBoxBase.prototype.getList = function() {
-			Log.warning(
-				"[Warning]:",
-				"You are attempting to use deprecated method 'getList()', please refer to SAP note 2746748.",
-				this);
-
-			// This is needed for backward compatibility
-			return this._getList();
-		};
-
-		/**
-		 * Gets the <code>list</code>.
-		 *
-		 * @returns {sap.m.List|null} The list instance object or <code>null</code>.
 		 * @private
 		 */
 		ComboBoxBase.prototype._getList = function() {
@@ -1436,19 +1408,6 @@ sap.ui.define([
 		ComboBoxBase.prototype.getLastItem = function() {
 			var aItems = this.getItems();
 			return aItems[aItems.length - 1] || null;
-		};
-
-		/**
-		 * Gets the enabled items from the aggregation named <code>items</code>.
-		 *
-		 * @param {sap.ui.core.Item[]} [aItems=getItems()] Items to filter.
-		 * @returns {sap.ui.core.Item[]} An array containing the enabled items.
-		 * @public
-		 * @deprecated As of version 1.86. The enabled items should be managed by the application.
-		 */
-		ComboBoxBase.prototype.getEnabledItems = function(aItems) {
-			// for backward compatibility
-			return ListHelpers.getEnabledItems(aItems || this.getItems());
 		};
 
 		/**

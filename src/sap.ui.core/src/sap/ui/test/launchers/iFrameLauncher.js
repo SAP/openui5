@@ -323,14 +323,6 @@ sap.ui.define([
 			return;
 		}
 
-		/**
-		 * @deprecated since 1.58 as jQuery.sap.registerResourcePath has been deprecated.
-		 */
-		if (oFrameJQuery && oFrameJQuery.sap && oFrameJQuery.sap.registerResourcePath) {
-			oFrameJQuery.sap.registerResourcePath(sResource, sAbsoluteOpaPath);
-			return;
-		}
-
 		throw new Error("iFrameLauncher.js: UI5 module system not found.");
 	}
 
@@ -339,7 +331,7 @@ sap.ui.define([
 			throw new Error("sap.ui.test.launchers.iFrameLauncher: Teardown was called before launch. No iFrame was loaded.");
 		}
 		// Workaround for IE - there are errors even after removing the frame so setting the onerror to noop again seems to be fine
-		oFrameWindow.onerror = jQuery.noop;
+		oFrameWindow.onerror = function() {};
 		for (var i = 0; i < $Frame.length; i++) {
 			$Frame[0].src = "about:blank";
 			$Frame[0].contentWindow.document.write('');
@@ -428,4 +420,4 @@ sap.ui.define([
 			return oAutoWaiter;
 		}
 	};
-}, /* export= */ true);
+});

@@ -183,4 +183,4 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 
 	return LogViewer;
 
-}, /* bExport= */ true);
+});

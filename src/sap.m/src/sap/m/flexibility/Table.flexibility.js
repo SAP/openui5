@@ -27,4 +27,4 @@ sap.ui.define([
 		"moveTableColumns": MoveTableColumns,
 		"addTableColumn": AddTableColumn
 	});
-}, /* bExport= */ true);
+});

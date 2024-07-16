@@ -26,6 +26,7 @@ sap.ui.define([
 		metadata: {
 			interfaces: ["sap.ui.core.IFormContent"],
 			library: "sap.ui.mdc",
+
 			properties: {
 				/**
 				 * Defines the value of the control.
@@ -83,6 +84,7 @@ sap.ui.define([
 				 */
 				valueHelpIconSrc : {type : "sap.ui.core.URI", group : "Behavior", defaultValue : "sap-icon://value-help"}
 			 },
+
 			aggregations: {
 				_input: {
 					type: "sap.m.Input",
@@ -95,6 +97,7 @@ sap.ui.define([
 					visibility: "hidden"
 				}
 			},
+
 			events: {
 				/**
 				 * This event is fired when the value property of the field is changed
@@ -143,7 +146,7 @@ sap.ui.define([
 				 valueHelpRequest : {
 				}
 			},
-			publicMethods: [],
+
 			defaultProperty: "value"
 		},
 		renderer : {

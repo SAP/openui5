@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Toolbar",
 	"sap/m/Title",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	layoutLibrary,
@@ -24,7 +24,7 @@ sap.ui.define([
 	Input,
 	Toolbar,
 	MobileTitle,
-	oCore,
+	nextUIUpdate,
 	FlexTestAPI
 ) {
 	"use strict";
@@ -32,7 +32,7 @@ sap.ui.define([
 	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
 
 	QUnit.module("using HideSimpleForm with old change format", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oTitle0 = new Title({id : "Title0", text : "Title 0"});
 			this.oLabel0 = new Label({id : "Label0",  text : "Label 0", visible : true});
 			this.oLabel1 = new Label({id : "Label1",  text : "Label 1"});
@@ -44,7 +44,7 @@ sap.ui.define([
 				content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oMockedComponent = {
 				createId: function (sString) {return sString;},
@@ -83,7 +83,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("using HideSimpleForm with a new change format", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oTitle0 = new Title({id : "component---Title0",  text : "Title 0"});
 			this.oLabel0 = new Label({id : "component---Label0",  text : "Label 0", visible : true});
 			this.oLabel1 = new Label({id : "component---Label1",  text : "Label 1"});
@@ -95,11 +95,11 @@ sap.ui.define([
 				content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oMockedComponent = {
 				createId: function (sString) {return "component---" + sString;},
-				getLocalId: function (sString) {return sString.substring("component---".length);}
+				getLocalId: function (sString) {return sString.substring(12);}
 			};
 
 			this.mPropertyBag = {
@@ -178,7 +178,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("using HideSimpleForm with a simpleform with toolbar", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oToolbar0 = new Toolbar({id : "Toolbar0"});
 			var oTitle0 = new MobileTitle("Title0", {text : "Title 0"});
 			this.oToolbar0.addContent(oTitle0);
@@ -201,7 +201,7 @@ sap.ui.define([
 				content : [this.oToolbar0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1, this.oToolbar1, this.oLabel10, this.oInput10, this.oLabel11, this.oInput11]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oMockedComponent = {
 				createId: function (sString) {return sString;},
@@ -285,7 +285,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("using HideSimpleForm with a simpleform with toolbar", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oLabel0 = new Label({id : "Label30",  text : "Label 0", visible : true});
 			this.oLabel1 = new Label({id : "Label31",  text : "Label 1"});
 			this.oInput0 = new Input({id : "Input30", visible : true});
@@ -305,7 +305,7 @@ sap.ui.define([
 				content : [this.oLabel0, this.oInput0, this.oLabel1, this.oInput1, this.oToolbar1, this.oLabel10, this.oInput10, this.oLabel11, this.oInput11]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oMockedComponent = {
 				createId: function (sString) {return sString;},

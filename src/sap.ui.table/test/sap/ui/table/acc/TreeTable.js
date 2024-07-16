@@ -171,7 +171,6 @@ sap.ui.define([
 		]
 	});
 
-	oTable.setTitle("Tango");
 	oTable.setFooter("Sierra");
 	oTable.setSelectionMode(SelectionMode.MultiToggle);
 

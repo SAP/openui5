@@ -473,4 +473,4 @@ sap.ui.define([], function () {
 	};
 
 	return SyncPromise;
-}, /* bExport= */ true);
+});

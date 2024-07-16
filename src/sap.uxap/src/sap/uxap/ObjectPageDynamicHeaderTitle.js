@@ -4,14 +4,12 @@
 
 // Provides control sap.uxap.ObjectPageDynamicHeaderTitle.
 sap.ui.define([
-	'./library',
 	'sap/uxap/ObjectPageDynamicHeaderContent',
 	"./ObjectPageDynamicHeaderTitleRenderer",
 	"sap/base/Log",
 	"sap/f/DynamicPageTitle"
 ],
 	function(
-		library,
 		ObjectPageDynamicHeaderContent,
 		ObjectPageDynamicHeaderTitleRenderer,
 		Log,
@@ -126,15 +124,6 @@ sap.ui.define([
 
 		/**
 		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
-		 *
-		 * @deprecated As of version 1.40.1 without replacement.
-		 */
-		ObjectPageDynamicHeaderTitle.prototype.getHeaderDesign = function () {
-			return library.ObjectPageHeaderDesign.Light;
-		};
-
-		/**
-		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
 		 */
 		ObjectPageDynamicHeaderTitle.prototype.snap = function (bUserInteraction) {
 			this._toggleState(false, bUserInteraction);
@@ -160,5 +149,4 @@ sap.ui.define([
 		};
 
 		return ObjectPageDynamicHeaderTitle;
-
 	});

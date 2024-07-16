@@ -1,0 +1,22 @@
+html, body, #content {
+	height : 100%;
+}
+.sapUiView {
+	height: 100%;
+}
+#palette {
+	float: left;
+	width: 20%;
+	height: 100%;
+	background: lightgrey;
+}
+#content {
+	float: left;
+	width: 80%;
+	height: 100%;
+}
+#palette_playground {
+	position: absolute;
+	top: -9999px;
+	left: -9999px;
+}

@@ -21,9 +21,7 @@ sap.ui.define(["sap/ui/base/Object", "sap/base/Log"],
 	 * @alias sap.ui.core.message.MessageParser
 	 */
 	var MessageParser = Object.extend("sap.ui.core.message.MessageParser", {
-		metadata: {
-			publicMethods: [ "parse", "setProcessor" ]
-		},
+		metadata: {},
 
 		constructor: function() {
 			this._processor = null;

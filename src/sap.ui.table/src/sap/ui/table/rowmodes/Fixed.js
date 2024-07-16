@@ -62,13 +62,6 @@ sap.ui.define([
 			}
 		},
 		constructor: function(sId) {
-			/**
-			 * @deprecated As of version 1.119
-			 */
-			Object.defineProperty(this, "bLegacy", {
-				value: typeof sId === "boolean" ? sId : false
-			});
-
 			RowMode.apply(this, arguments);
 		}
 	});
@@ -96,50 +89,18 @@ sap.ui.define([
 	};
 
 	FixedRowMode.prototype.getRowCount = function() {
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (this.bLegacy) {
-			const oTable = this.getTable();
-			return oTable ? oTable.getVisibleRowCount() : 0;
-		}
-
 		return this.getProperty("rowCount");
 	};
 
 	FixedRowMode.prototype.getFixedTopRowCount = function() {
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (this.bLegacy) {
-			const oTable = this.getTable();
-			return oTable ? oTable.getFixedRowCount() : 0;
-		}
-
 		return this.getProperty("fixedTopRowCount");
 	};
 
 	FixedRowMode.prototype.getFixedBottomRowCount = function() {
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (this.bLegacy) {
-			const oTable = this.getTable();
-			return oTable ? oTable.getFixedBottomRowCount() : 0;
-		}
-
 		return this.getProperty("fixedBottomRowCount");
 	};
 
 	FixedRowMode.prototype.getRowContentHeight = function() {
-		/**
-		 * @deprecated As of Version 1.119
-		 */
-		if (this.bLegacy) {
-			const oTable = this.getTable();
-			return oTable ? oTable.getRowHeight() : 0;
-		}
-
 		return this.getProperty("rowContentHeight");
 	};
 
@@ -208,13 +169,6 @@ sap.ui.define([
 	FixedRowMode.prototype.getRowContainerStyles = function() {
 		const sHeight = this.getComputedRowCounts().count * this.getBaseRowHeightOfTable() + "px";
 
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (this.bLegacy && !TableUtils.isVariableRowHeightEnabled(this.getTable())) {
-			return {minHeight: sHeight};
-		}
-
 		return {height: sHeight};
 	};
 
@@ -228,13 +182,6 @@ sap.ui.define([
 
 	FixedRowMode.prototype.renderCellContentStyles = function(oRM) {
 		let iRowContentHeight = this.getRowContentHeight();
-
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (this.bLegacy) {
-			return;
-		}
 
 		if (iRowContentHeight <= 0) {
 			iRowContentHeight = this.getDefaultRowContentHeightOfTable();

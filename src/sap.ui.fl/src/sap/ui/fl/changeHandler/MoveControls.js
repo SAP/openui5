@@ -5,8 +5,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/fl/changeHandler/condenser/Classification"
-],
-function(
+], function(
 	Log,
 	CondenserClassification
 ) {
@@ -100,9 +99,9 @@ function(
 		delete mSpecificChangeInfo.target.publicAggregation;
 
 		const oSourceParent =
-			mSpecificChangeInfo.source.parent || await oModifier.bySelector(mSpecificChangeInfo.source.id, oAppComponent);
+			mSpecificChangeInfo.source.parent || (await oModifier.bySelector(mSpecificChangeInfo.source.id, oAppComponent));
 		const oTargetParent =
-			mSpecificChangeInfo.target.parent || await oModifier.bySelector(mSpecificChangeInfo.target.id, oAppComponent);
+			mSpecificChangeInfo.target.parent || (await oModifier.bySelector(mSpecificChangeInfo.target.id, oAppComponent));
 		var sSourceAggregation = mSpecificChangeInfo.source.aggregation;
 		var sTargetAggregation = mSpecificChangeInfo.target.aggregation;
 		var mAdditionalSourceInfo = {
@@ -165,7 +164,7 @@ function(
 			let oSourceParent = oModifier.getParent(oMovedElement);
 			// mPropertyBag.sourceAggregation and mPropertyBag.targetAggregation should always be used when available
 			let sSourceAggregation =
-				mPropertyBag.sourceAggregation || await oModifier.getParentAggregationName(oMovedElement, oSourceParent);
+				mPropertyBag.sourceAggregation || (await oModifier.getParentAggregationName(oMovedElement, oSourceParent));
 			const oTargetParent = await oModifier.bySelector(oChangeContent.target.selector, oAppComponent, oView);
 			const sTargetAggregation = mPropertyBag.targetAggregation || oChangeContent.target.selector.aggregation;
 			// save the current index, sourceParent and sourceAggregation for revert
@@ -183,7 +182,7 @@ function(
 					iSourceIndex = mMovedElement.sourceIndex;
 					sSourceAggregation = mPropertyBag.sourceAggregation || oChangeContent.source.selector.aggregation;
 					bChangeAlreadyPerformed = true;
-					oSourceParent = await oModifier.bySelector(oChangeContent.source.selector, oAppComponent, oView) || oSourceParent;
+					oSourceParent = (await oModifier.bySelector(oChangeContent.source.selector, oAppComponent, oView)) || oSourceParent;
 				}
 			}
 			if (iSourceIndex > -1) {
@@ -250,7 +249,7 @@ function(
 				var mRevertData = aRevertData[iElementIndex];
 				sSourceAggregation = mRevertData.aggregation;
 				iInsertIndex = mRevertData.index;
-				oSourceParent = await oModifier.bySelector(mRevertData.sourceParent, oAppComponent, oView) || oSourceParent;
+				oSourceParent = (await oModifier.bySelector(mRevertData.sourceParent, oAppComponent, oView)) || oSourceParent;
 			}
 			await oModifier.moveAggregation(
 				oTargetParent,
@@ -296,7 +295,7 @@ function(
 		};
 
 		for (const mElement of mCompleteSpecificChangeInfo.movedElements) {
-			const oElement = mElement.element || await oModifier.bySelector(mElement.id, oAppComponent);
+			const oElement = mElement.element || (await oModifier.bySelector(mElement.id, oAppComponent));
 			oContent.movedElements.push({
 				selector: oModifier.getSelector(oElement, oAppComponent),
 				sourceIndex: mElement.sourceIndex,
@@ -358,5 +357,4 @@ function(
 		};
 	};
 	return MoveControls;
-},
-/* bExport= */true);
+});

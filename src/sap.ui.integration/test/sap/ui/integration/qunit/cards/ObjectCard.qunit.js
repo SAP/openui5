@@ -2,8 +2,9 @@
 
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/Configuration",
+	"sap/ui/core/AnimationMode",
 	"sap/m/library",
+	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/integration/library",
@@ -17,8 +18,9 @@ sap.ui.define([
 	"qunit/testResources/nextCardReadyEvent"
 ], function(
 	Log,
-	Configuration,
+	CoreAnimationMode,
 	mLibrary,
+	ControlBehavior,
 	Library,
 	coreLibrary,
 	library,
@@ -40,7 +42,7 @@ sap.ui.define([
 	var AvatarColor = mLibrary.AvatarColor;
 	var CardActionType = library.CardActionType;
 	var ValueState = coreLibrary.ValueState;
-	var AnimationMode = Configuration.AnimationMode;
+	var AnimationMode = CoreAnimationMode;
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
@@ -1236,7 +1238,7 @@ sap.ui.define([
 
 	QUnit.test("Image and Overlay - Animation turned off", async function (assert) {
 		// Act
-		Configuration.setAnimationMode(AnimationMode.none);
+		ControlBehavior.setAnimationMode(AnimationMode.none);
 
 		this.oCard.setManifest(oManifest_ObjectCardImageOverlay);
 
@@ -1258,7 +1260,7 @@ sap.ui.define([
 		});
 
 		// Restore default animation mode
-		Configuration.setAnimationMode(AnimationMode.full);
+		ControlBehavior.setAnimationMode(AnimationMode.full);
 	});
 
 	QUnit.test("Image and Overlay - No Animation", async function (assert) {

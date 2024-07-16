@@ -1,0 +1,13 @@
+html, body, #content {
+	height: 100%;
+}
+.sapUiView {
+	height: 100%;
+}
+
+.sapUiDtOverlay {
+	background-color: rgba(255,0,0,0.1);
+}
+#overlay-container {
+	background-color: rgba(255,0,255,0.5);
+}

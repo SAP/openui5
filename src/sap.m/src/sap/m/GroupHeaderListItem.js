@@ -44,7 +44,6 @@ sap.ui.define(["sap/ui/core/library", "./library", "./ListItemBase", "./GroupHea
 			],
 			library : "sap.m",
 			properties : {
-
 				/**
 				 * Defines the title of the group header.
 				 */
@@ -55,13 +54,6 @@ sap.ui.define(["sap/ui/core/library", "./library", "./ListItemBase", "./GroupHea
 				 * <b>Note:</b> Will not be displayed if not set.
 				 */
 				count : {type : "string", group : "Data", defaultValue : null},
-
-				/**
-				 * Allows to uppercase the group title.
-				 * @since 1.13.2
-				 * @deprecated As of version 1.40.10, the concept has been discarded.
-				 */
-				upperCase : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
 				/**
 				 * Defines the title text directionality with enumerated options. By default, the control inherits text direction from the DOM.

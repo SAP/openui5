@@ -6,12 +6,14 @@ sap.ui.require([
 	"dt/performance/PerformanceTestUtil",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/HorizontalLayout",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/m/Label"
 ], function(
 	PerformanceTestUtil,
 	VerticalLayout,
 	HorizontalLayout,
-	nextUIUpdate
+	nextUIUpdate,
+	Label
 ) {
 	"use strict";
 	// create Vertical Layout
@@ -21,7 +23,7 @@ sap.ui.require([
 	const oContainerLayout1 = new VerticalLayout({
 		id: "ContainerLayout1",
 		content: [
-			new sap.m.Label({
+			new Label({
 				text: "ContainerLayout1"
 			}),
 			oLayout1
@@ -33,7 +35,7 @@ sap.ui.require([
 	const oContainerLayout2 = new VerticalLayout({
 		id: "ContainerLayout2",
 		content: [
-			new sap.m.Label({
+			new Label({
 				text: "ContainerLayout2"
 			}),
 			oLayout2
@@ -45,7 +47,7 @@ sap.ui.require([
 	const oContainerLayout3 = new VerticalLayout({
 		id: "ContainerLayout3",
 		content: [
-			new sap.m.Label({
+			new Label({
 				text: "ContainerLayout3"
 			}),
 			oLayout3

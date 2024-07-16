@@ -1,0 +1,29 @@
+html, body {
+	height: 100%;
+	margin: 0;
+}
+
+.background {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	z-index: -1;
+}
+
+.logo {
+	position: absolute;
+	left: 100px;
+	top: 100px;
+	width: 200px;
+	height: 100px;
+}
+
+.branding-bar {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 4px;
+}

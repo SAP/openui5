@@ -1,152 +1,21 @@
 <!DOCTYPE HTML>
 <html>
-<head>
+<head><meta charset="utf-8">
 
 <title>sap.m.List with Growing Feature Test</title>
 
 <script src="shared-config.js"></script>
-<script src="../../../resources/sap-ui-core.js" data-sap-ui-xx-bindingSyntax="complex"
-	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
+<script src="../../../resources/sap-ui-core.js"
+        id="sap-ui-bootstrap"
+        data-sap-ui-libs="sap.m"
+        data-sap-ui-async="true"
+        data-sap-ui-compat-version="edge"
+        data-sap-ui-on-init="module:local/GrowingList"
+        data-sap-ui-resource-roots='{"local":"./"}'
+>
 </script>
 
-<script>
-	jQuery.sap.require("sap.ui.core.util.MockServer");
-	jQuery.sap.require("sap.ui.model.odata.v2.ODataModel");
 
-	var sServiceURI = "/ProductSet/" ;
-	var sMetaDataURI = "mockdata/";
-
-	// configure respond to requests delay
-	sap.ui.core.util.MockServer.config({
-		autoRespond : true,
-		autoRespondAfter : 1000
-	});
-
-	// create mockserver
-	var oMockServer = new sap.ui.core.util.MockServer({
-		rootUri : sServiceURI
-	});
-
-	// start mockserver
-	oMockServer.simulate(sMetaDataURI + "metadata.xml", sMetaDataURI);
-	oMockServer.start();
-
-	// controls
-	var oTemplate = new sap.m.StandardListItem({
-		title : "{product>Name} {product>SalesOrderID}",
-		description : "{product>Description}",
-		info : "{product>Price} {product>CurrencyCode}",
-		type : "Navigation",
-		counter: {
-			path : "product>Price",
-			formatter : function(value) {
-				return Math.ceil(Math.random() * 100);
-			}
-		},
-		selected : {
-			path : "product>Price",
-			formatter : function(value) {
-				return value > 1300 ? true : false;
-			}
-		},
-		infoState : {
-			path : "product>Price",
-			formatter : function(value) {
-				return value > 300 ? "Warning" : "Success";
-			}
-		}
-	});
-
-	var oList = new sap.m.List({
-		growing : true,
-		busyIndicatorDelay : 400,
-		growingThreshold: {
-			path : "growing>/threshold",
-			formatter : function(value) {
-				return +value;
-			}
-		},
-		growingScrollToLoad : "{growing>/scrollToLoad}",
-		mode: sap.m.ListMode.MultiSelect,
-		showNoData: true
-	});
-
-	var oPage = new sap.m.Page({
-		title : "Growing List Testpage",
-		footer : new sap.m.Bar({})
-	});
-
-	// list properties
-	var oGrowingModel = new sap.ui.model.json.JSONModel();
-	oGrowingModel.setData({ threshold : 14, scrollToLoad : true });
-	oList.setModel(oGrowingModel, "growing");
-	oPage.setModel(oGrowingModel, "growing");
-
-	// odata model
-	var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, true);
-	oList.setModel(oModel, "product");
-
-	// bind Aggregation
-	oList.bindItems({
-		path : "product>/ProductSet",
-		template : oTemplate
-	});
-
-	var oToolbar = new sap.m.Toolbar({
-		design: "Solid",
-		content : [
-			new sap.m.Label({
-				text: "Growing Threshold:"
-			}),
-			new sap.m.Input({
-				value: "{growing>/threshold}",
-				width: "4rem",
-				type: "Number"
-			}),
-			new sap.m.ToolbarSeparator(),
-			new sap.m.CheckBox({
-				text : "ScrollToLoad More",
-				selected: "{growing>/scrollToLoad}"
-			}),
-			new sap.m.ToolbarSeparator(),
-			new sap.m.ToggleButton({
-				text: "Upwards Direction",
-				press: function(oEvent) {
-					var sDir = oEvent.getSource().getPressed() ? "Upwards" : "Downwards";
-					oList.setGrowingDirection(sDir).bindItems({
-						path : "product>/ProductSet",
-						template : oTemplate
-					});
-				}
-			}),
-			new sap.m.ToolbarSpacer(),
-			new sap.m.Button({
-				text : "Group",
-				press : function () {
-					var oBinding = oList.getBinding("items");
-					oBinding.sort([
-						new sap.ui.model.Sorter("Category", false, true)
-					]);
-				}
-			}),
-			new sap.m.ToolbarSeparator(),
-			new sap.m.Button({
-				text : "Ungroup",
-				press : function () {
-					oList.getBinding("items").sort([]);
-				}
-			})
-		]
-	});
-
-	oPage.setFooter(oToolbar);
-	oPage.addContent(oList);
-
-	var oApp = new sap.m.App({
-		pages : [oPage]
-	}).placeAt("body");
-
-</script>
 
 </head>
 <body id="body" class="sapUiBody">

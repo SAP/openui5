@@ -390,4 +390,4 @@ sap.ui.define([
 	};
 
 	return CarouselRenderer;
-}, /* bExport= */ true);
+});

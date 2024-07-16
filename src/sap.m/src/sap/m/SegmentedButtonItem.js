@@ -72,10 +72,6 @@ sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/m/Button', 'sap/ui/core/Cus
 			// Create internal button with a stable ID
 			var oButton = new Button(this.getId() + "-button");
 
-			// Create objects first so they can be referenced in the button
-			this.aCustomStyleClasses;
-			this.mCustomStyleClassMap;
-
 			// Reference's between button and item objects related to customStyleClasses so they will be in sync
 			oButton.aCustomStyleClasses = this.aCustomStyleClasses;
 			oButton.mCustomStyleClassMap = this.mCustomStyleClassMap;

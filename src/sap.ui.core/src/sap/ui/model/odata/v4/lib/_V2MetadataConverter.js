@@ -1617,4 +1617,4 @@ sap.ui.define([
 	})(_V2MetadataConverter.prototype);
 
 	return _V2MetadataConverter;
-}, /* bExport= */false);
+});

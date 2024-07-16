@@ -1,14 +1,19 @@
 <!DOCTYPE HTML>
 <html>
-<head>
+<head><meta charset="utf-8">
 	<title>sap.uxap.ObjectPage</title>
 	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-xx-waitForTheme="true"
-			data-sap-ui-libs="sap.m,sap.uxap,sap.ui.layout,sap.f">
+			data-sap-ui-xx-waitfortheme="true"
+			data-sap-ui-libs="sap.m,sap.uxap,sap.ui.layout,sap.f"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:local/DynamicPageTitleShrinkFactors"
+			data-sap-ui-resource-roots='{"local":"./"}'
+	>
 	</script>
-	<script id="view1" type="sapui5/xmlview">
+	<script id="view1" type="text/xml">
 		<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap" xmlns:m="sap.m" xmlns:l="sap.ui.layout" displayBlock="true" height="100%">
 			<ObjectPageLayout id="ObjectPageLayout"
 					showTitleInHeaderContent="true"
@@ -142,46 +147,7 @@
 
 
 <body id="body" class="sapUiBody">
-<script>
-	sap.ui.require([
-		"sap/m/App",
-		"sap/m/Page",
-		"sap/ui/core/mvc/Controller"
-	], function(App, Page, Controller, XMLView) {
-		const MyController = Controller.extend("MyController", {
-			onInit: function() {
-				this.view = this.getView();
-				this.titleSlider = this.view.byId('titleSlider');
-				this.contentSlider = this.view.byId('contentSlider');
-				this.actionsSlider = this.view.byId('actionsSlider');
-			},
 
-			// implement an event handler in the Controller
-			changeShrinkRatio: function(oEvent) {
-				var oView = this.getView(),
-					sAreaShrinkRatio = this.titleSlider.getValue() + ":"
-										+ this.contentSlider.getValue() + ":"
-										+ this.actionsSlider.getValue();
-
-				oView.byId('dynamicPageTitle').setAreaShrinkRatio(sAreaShrinkRatio);
-			}
-		});
-
-		const oApp = new App({
-			pages: [
-				new Page({
-					title: "New Header",
-					content: [
-						sap.ui.xmlview({
-							controller: new MyController(),
-							viewContent: jQuery('#view1').html()
-						})
-					]
-				})
-			]
-		}).placeAt("content");
-	});
-</script>
 <div id="content"></div>
 </body>
 </html>

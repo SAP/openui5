@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head><meta charset="utf-8">
 	<title>Pagination</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="../../../scripts/boot.js"></script>
 </head>
@@ -22,10 +22,10 @@
 			<p>
 				Pagination is the process of dividing data so that
 				only a subset of the data is showed on one page at a time.
-				<br />
-				<br />
+				<br>
+				<br>
 				To enable the pagination, you have to add a "paginator" into the footer of the card:
-			<pre class="lang-json">{
+			</p><pre class="lang-json">{
 	"sap.card": {
 		...,
 		"footer": {
@@ -38,10 +38,10 @@
 			When pagination is used, the
 			<a href="../../../index.html#/learn/features/sizing/maxItems" target="_parent">maxItems</a>
 			value is ignored (if any).
-			<br />
-			<br />
+			<br>
+			<br>
 				Pagination can be handled either client side or server side.
-			</p>
+			<p></p>
 
 			<h2 id="properties">Paginator Properties</h2>
 			<div class="tableWrapper">
@@ -98,11 +98,11 @@
 				In client-side pagination for each query the server returns the data in one block.
 				As a result, it is faster to browse between the pages,
 				but because the data is retrieved all at once, the time to receive it is longer.
-				<br />
-				<br />
+				<br>
+				<br>
 				To enable client-side pagination, you have to
 				add a "paginator" into the "footer" and specify the "pageSize":
-			<pre class="lang-json">{
+			</p><pre class="lang-json">{
 	"sap.card": {
 		...,
 		"footer": {
@@ -114,10 +114,10 @@
 }</pre>
 			The total page count and the navigation between the pages
 			is calculated and handled automatically by the card.
-			<br />
-			<br />
+			<br>
+			<br>
 				<a class="try-button" href="../../../index.html#/explore/pagination/client" target="_parent">Try it Out</a>
-			</p>
+			<p></p>
 
 			<h2 id="serverSide">
 				Server-Side Pagination
@@ -126,14 +126,14 @@
 				In server-side pagination for each query the server returns only one data subset.
 				Along with the data subset, the server also sends the
 				total number of items matching the query.
-				<br />
-				<br />
+				<br>
+				<br>
 				To enable server-side pagination you have to add a "paginator"
 				to the "footer" and specify the number of items per page ("pageSize") and
 				the total items count ("totalCount").
 				In the data request the "skip" value of the "paginator"
 				is used to set how many items should be skipped by the server.
-			<pre class="lang-json">{
+			</p><pre class="lang-json">{
 	"sap.card": {
 		...,
 		"data": {
@@ -158,10 +158,10 @@
 }</pre>
 			The "skip" value, the total page count and navigation between the pages (by fetching new data)
 			are calculated and handled automatically by the card.
-			<br />
-			<br />
+			<br>
+			<br>
 				<a class="try-button" href="../../../index.html#/explore/pagination/server" target="_parent">Try it Out</a>
-			</p>
+			<p></p>
 
 			<h2 id="paginatorModel">Paginator Model</h2>
 			<p>The following values are available in the paginator model:</p>

@@ -68,4 +68,4 @@ sap.ui.define(['sap/ui/base/Object'], function(BaseObject) {
 
 	return Interface;
 
-}, /* bExport= */ true);
+});

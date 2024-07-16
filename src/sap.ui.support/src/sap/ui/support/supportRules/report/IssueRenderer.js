@@ -178,4 +178,4 @@ sap.ui.define(['sap/base/Log', 'sap/base/security/encodeXML'], function(Log, enc
 	return {
 		render: render
 	};
-}, true);
+});

@@ -2505,4 +2505,4 @@ sap.ui.define([
 	Object.defineProperty(oModule, "VIRTUAL", {value : iVIRTUAL});
 
 	return oModule;
-}, /* bExport= */ false);
+});

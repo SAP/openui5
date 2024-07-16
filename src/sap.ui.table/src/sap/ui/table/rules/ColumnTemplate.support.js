@@ -86,4 +86,4 @@ sap.ui.define([
 
 	return [oTextWrapping, oLinkWrapping];
 
-}, true);
+});

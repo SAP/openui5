@@ -80,13 +80,6 @@ sap.ui.define([
 			oRM.class("sapMDialogStretched");
 		}
 
-		/**
-		 * @deprecated As of version 1.11.2
-		 */
-		if (!bStretch && oDialog.getStretchOnPhone() && Device.system.phone) {
-			oRM.class("sapMDialogStretched");
-		}
-
 		oRM.class(DialogRenderer._mStateClasses[sState]);
 
 		// No Footer
@@ -266,4 +259,4 @@ sap.ui.define([
 
 	return DialogRenderer;
 
-}, /* bExport= */ true);
+});

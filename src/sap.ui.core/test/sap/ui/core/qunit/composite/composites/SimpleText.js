@@ -1,8 +1,7 @@
 sap.ui.define([
-	'sap/ui/core/XMLComposite'
-], function(XMLComposite) {
+], function() {
 	"use strict";
-	return XMLComposite.extend("composites.SimpleText", {
+	return undefined/*XMLComposite*/.extend("composites.SimpleText", {
 		metadata: {
 			properties: {
 				text: {

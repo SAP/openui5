@@ -161,11 +161,11 @@ sap.ui.define([
 		oTable.placeAt("qunit-fixture");
 		let oType = oTable.getType();
 		const fSetParent = sinon.spy(oType, "setParent");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		await TableQUnitUtils.waitForBinding(oTable);
 		oTable._oTable.setContextualWidth("600px");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.ok(oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
 		let oShowDetailsButton = oType._oShowDetailsButton;
 
@@ -175,11 +175,11 @@ sap.ui.define([
 		assert.notOk(oType._oShowDetailsButton, "showdetail button is destroyed");
 		fSetParent.restore();
 
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		await TableQUnitUtils.waitForBinding(oTable);
 		oType = oTable.getType();
 		oTable._oTable.setContextualWidth("600px");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
 		oShowDetailsButton = oType._oShowDetailsButton;
@@ -189,13 +189,13 @@ sap.ui.define([
 
 		oTable.setType(new ResponsiveTableType({showDetailsButton: true}));
 		oShowDetailsButton = oType._oShowDetailsButton;
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		oType = oTable.getType();
 
 		await TableQUnitUtils.waitForBinding(oTable);
 		oType = oTable.getType();
 		oTable._oTable.setContextualWidth("600px");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.ok(oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
 		oShowDetailsButton = oType._oShowDetailsButton;
 		oTable.destroyType();

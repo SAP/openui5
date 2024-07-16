@@ -149,37 +149,6 @@ sap.ui.define([
 					});
 		});
 
-		/**
-		 * @deprecated As of version 1.120
-		 */
-		QUnit.test("the modifier finds the index of the control in its parent aggregation correctly, case 1 - no overwritten methods in parent control (future=false)", function (assert) {
-			future.active = false;
-			// arrange
-			var aButtons = [];
-			return JsControlTreeModifier.createControl('sap.m.Page', this.oComponent, undefined, "myPage")
-				.then(function (oControl) {
-					this.oControl = oControl;
-					var aPromises = [];
-					[1, 2, 3].forEach(function (iIndex) {
-						aPromises.push(JsControlTreeModifier.createControl('sap.m.Button', this.oComponent, undefined, "myButton" + iIndex, {'text' : 'ButtonText' + iIndex})
-							.then(function (oButton) {
-								aButtons.push(oButton);
-								return JsControlTreeModifier.insertAggregation(this.oControl, 'content', oButton, iIndex);
-							}.bind(this)));
-					}.bind(this));
-					return Promise.all(aPromises);
-				}.bind(this))
-				.then(function () {
-					// assert
-					assert.strictEqual(this.oControl.getContent().length, 3, "There are exactly 3 buttons inside of the page");
-					return JsControlTreeModifier.findIndexInParentAggregation(aButtons[2]);
-				}.bind(this))
-				.then(function (iIndex) {
-					assert.strictEqual(iIndex, 2, "then the index of the most recently created button is found correctly");
-					future.active = undefined;
-				});
-		});
-
 		QUnit.test("the modifier finds the index of the control in its parent aggregation correctly, case 1 - no overwritten methods in parent control (future=true)", function (assert) {
 			future.active = true;
 			// arrange
@@ -206,45 +175,6 @@ sap.ui.define([
 					assert.strictEqual(iIndex, 2, "then the index of the most recently created button is found correctly");
 					future.active = undefined;
 				});
-		});
-
-		/**
-		 * @deprecated As of version 1.120
-		 */
-		QUnit.test("the modifier finds the index of the control in its parent aggregation correctly, case 2 - with overwritten methods in parent control (future=false)", function (assert) {
-			future.active = false;
-			// arrange
-			var aButtons = [];
-			return Promise.all([
-				JsControlTreeModifier.createControl('sap.f.DynamicPageTitle', this.oComponent, undefined, "myDynamicPageTitle"),
-				JsControlTreeModifier.createControl('sap.m.Button', this.oComponent, undefined, "myActionNotUsed", {'text' : 'This is not used'})
-			]).then(function (aControls) {
-				this.oControl = aControls[0];
-				this.oButtonOutsideAggregation = aControls[1];
-				var aPromises = [1, 2, 3].map(function (iIndex) {
-					return JsControlTreeModifier.createControl('sap.m.Button', this.oComponent, undefined, "myButton" + iIndex, {'text' : 'ButtonText' + iIndex})
-						.then(function (oButton) {
-							aButtons.push(oButton);
-							return JsControlTreeModifier.insertAggregation(this.oControl, 'actions', oButton, iIndex);
-						}.bind(this));
-				}.bind(this));
-				return Promise.all(aPromises);
-			}.bind(this))
-			.then(function () {
-				// assert
-				assert.strictEqual(this.oControl.getActions().length, 3, "There are exactly 3 actions inside of the dynamic page title");
-				return JsControlTreeModifier.findIndexInParentAggregation(aButtons[2]);
-			}.bind(this))
-			.then(function (iIndexInParentAggregation) {
-				assert.strictEqual(iIndexInParentAggregation, 2, "then the index of the most recently created button is found correctly");
-				return JsControlTreeModifier.findIndexInParentAggregation(this.oButtonOutsideAggregation);
-			}.bind(this))
-			.then(function (iIndexInParentAggregation) {
-				assert.strictEqual(iIndexInParentAggregation, -1, "The action is not in this aggregation and is not found.");
-				this.oButtonOutsideAggregation.destroy();
-				future.active = undefined;
-			}.bind(this));
-
 		});
 
 		QUnit.test("the modifier finds the index of the control in its parent aggregation correctly, case 2 - with overwritten methods in parent control (future=true)", function (assert) {

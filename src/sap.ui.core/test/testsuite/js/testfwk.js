@@ -18,31 +18,7 @@ sap.ui.define([
 		"sap_fiori_3": "Quartz Light",
 		"sap_fiori_3_dark": "Quartz Dark",
 		"sap_fiori_3_hcb": "Quartz High Contrast Black",
-		"sap_fiori_3_hcw": "Quartz High Contrast White",
-		/**
-		 * @deprecated As of version 1.120.2
-		 */
-		"sap_belize": "Belize",
-		/**
-		 * @deprecated As of version 1.120.2
-		 */
-		"sap_belize_plus": "Belize Plus",
-		/**
-		 * @deprecated As of version 1.120.2
-		 */
-		"sap_belize_hcb": "Belize High Contrast Black",
-		/**
-		 * @deprecated As of version 1.120.2
-		 */
-		"sap_belize_hcw": "Belize High Contrast White",
-		/**
-		 * @deprecated As of version 1.40
-		 */
-		"sap_bluecrystal": "Blue Crystal",
-		/**
-		 * @deprecated As of version 1.48
-		 */
-		"sap_hcb": "High Contrast Black"
+		"sap_fiori_3_hcw": "Quartz High Contrast White"
 	};
 
 	const THEME_NAMES_WITHOUT_BASE = Object.keys(THEMES).filter((name) => name != "base");
@@ -67,15 +43,6 @@ sap.ui.define([
 
 		// the themes supported by each library
 		LIBRARY_THEMES: {
-			/**
-			 * @deprecated As of version 1.120
-			 */
-			"sap.ui.dev" : {
-				"default" : "sap_bluecrystal",
-				"supports" : [
-					"sap_bluecrystal","sap_hcb"
-				]
-			},
 			"all" : {
 				"default" : "sap_horizon",
 				"supports": THEME_NAMES_WITHOUT_BASE

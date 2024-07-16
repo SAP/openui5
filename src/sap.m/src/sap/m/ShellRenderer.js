@@ -6,8 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	'sap/ui/core/library',
 	'sap/m/library'
-],
-function(Library, coreLibrary, library) {
+], function(Library, coreLibrary, library) {
 	"use strict";
 
 
@@ -148,4 +147,4 @@ function(Library, coreLibrary, library) {
 
 	return ShellRenderer;
 
-}, /* bExport= */ true);
+});

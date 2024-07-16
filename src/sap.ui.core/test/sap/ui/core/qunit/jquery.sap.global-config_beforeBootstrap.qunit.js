@@ -1,1 +1,0 @@
-window["sap-ui-config"] = "./sap-ui-config.json";

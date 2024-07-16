@@ -382,8 +382,7 @@ sap.ui.define([
 					function (bConfirmed) {
 						Log.info("Dialog is " + (bConfirmed ? "" : "NOT ") + "confirmed");
 					});
-					"Info MessageBox";
-					MessageBox.Icon.INFORMATION;
+			MessageBox.Icon.INFORMATION;
 		}
 	}));
 
@@ -398,8 +397,7 @@ sap.ui.define([
 					function (bConfirmed) {
 						Log.info("Dialog is " + (bConfirmed ? "" : "NOT ") + "confirmed");
 					});
-					"Info MessageBox";
-					MessageBox.Icon.INFORMATION;
+			MessageBox.Icon.INFORMATION;
 		}
 	}));
 

@@ -1,0 +1,12 @@
+html {
+	height : 100%;
+}
+#HBox {
+	margin-top: 50px;
+}
+.sapUiRtaPerfTestMarginTop {
+	margin-top: 10px;
+}
+#content {
+	width: 700px;
+}

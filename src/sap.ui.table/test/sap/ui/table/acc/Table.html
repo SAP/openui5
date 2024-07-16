@@ -9,14 +9,15 @@
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-async="true"
-				data-sap-ui-compatVersion="true"
 				data-sap-ui-libs="sap.m,sap.ui.table,sap.ui.unified"
-				data-sap-ui-onInit="module:local/Table"
-				data-sap-ui-resourceRoots='{
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/Table"
+				data-sap-ui-resource-roots='{
 					"local": "./",
 					"qunit.internal.acc": "../../../../../test-resources/sap/ui/core/qunit/internal/acc"
 				}'
-				src="../../../../../resources/sap-ui-core.js"></script>
+		></script>
 
 	</head>
 	<body class="sapUiBody sapUiSizeCozy">

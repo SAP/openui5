@@ -19,4 +19,4 @@ sap.ui.define(["sap/m/SelectRenderer", "sap/ui/core/Renderer"
 
 	return HierarchicalSelectRenderer;
 
-}, /* bExport= */ true);
+});

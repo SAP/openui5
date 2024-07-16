@@ -1,17 +1,17 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/m/PagingButton",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(PagingButton, oCore, $) {
+	function(PagingButton, nextUIUpdate, $) {
 		"use strict";
 
 
 		var helpers = {
 				renderObject: function (oSapUiObject) {
 					oSapUiObject.placeAt("qunit-fixture");
-					oCore.applyChanges();
+					nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 					return oSapUiObject;
 				},
 				objectIsInTheDom: function (sSelector) {

@@ -1,6 +1,5 @@
 sap.ui.define([
 	"sap/ui/core/library",
-	"sap/m/library",
 	"sap/ui/core/Element",
 	"sap/m/App",
 	"sap/m/Page",
@@ -8,7 +7,6 @@ sap.ui.define([
 	"sap/m/Select",
 	"sap/m/Title",
 	"sap/m/Input",
-	"sap/m/DateTimeInput",
 	"sap/m/VBox",
 	"sap/ui/core/Item",
 	"sap/ui/model/json/JSONModel",
@@ -19,7 +17,6 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date"
 ], function(
 	coreLibrary,
-	mLibrary,
 	Element,
 	App,
 	Page,
@@ -27,7 +24,6 @@ sap.ui.define([
 	Select,
 	Title,
 	Input,
-	DateTimeInput,
 	VBox,
 	Item,
 	JSONModel,
@@ -45,7 +41,6 @@ sap.ui.define([
 	var iNow = UI5Date.getInstance().getTime(),
 		oModel = new JSONModel(),
 		ValueState = coreLibrary.ValueState,
-		DateTimeInputType = mLibrary.DateTimeInputType,
 		oTypeInstances = {
 			"Date": new DateType(),
 			"Time": new TimeType(),
@@ -112,9 +107,9 @@ sap.ui.define([
 				text: "Duration:",
 				labelFor: "DTI2"
 			}).addStyleClass("sapUiSmallMarginTop"),
-			new DateTimeInput("DTI2", {
+			new undefined/*DateTimeInput*/("DTI2", {
 				placeholder : "Time Picker",
-				type : DateTimeInputType.Time,
+				type : "Time",
 				valueFormat : "HH:mm",
 				value : "11:23",
 				displayFormat : "HH:mm",
@@ -124,8 +119,8 @@ sap.ui.define([
 				text: "DateTime:",
 				labelFor: "DTI3"
 			}).addStyleClass("sapUiSmallMarginTop"),
-			new DateTimeInput("DTI3", {
-				type : DateTimeInputType.DateTime,
+			new undefined/*DateTimeInput*/("DTI3", {
+				type : "DateTime",
 				change : handleChange
 			}),
 			new Label({
@@ -133,7 +128,7 @@ sap.ui.define([
 				labelFor: "DTI4"
 			}).addStyleClass("sapUiSmallMarginTop"),
 			// free style date value assignment according to valueFormat
-			new DateTimeInput("DTI4", {
+			new undefined/*DateTimeInput*/("DTI4", {
 				value : "29-05, 2012",
 				valueFormat : "dd-MM, yyyy",
 				displayFormat : "dd MMMM, yyyy",
@@ -145,9 +140,9 @@ sap.ui.define([
 				labelFor: "DTI5"
 			}).addStyleClass("sapUiSmallMarginTop"),
 			// formats which includes zones "Z" can be used for local date time
-			new DateTimeInput("DTI5", {
+			new undefined/*DateTimeInput*/("DTI5", {
 				width : "99%",
-				type : DateTimeInputType.DateTime,
+				type : "DateTime",
 				displayFormat : new DateTimeType({style: "long"}).getOutputPattern(),
 				dateValue : UI5Date.getInstance(2012, 4, 29, 19, 14, 0),
 				valueState : "Warning",
@@ -163,7 +158,7 @@ sap.ui.define([
 				text: "Date (MMM d, y):",
 				labelFor: "DTI6"
 			}).addStyleClass("sapUiSmallMarginTop"),
-			new DateTimeInput("DTI6", {
+			new undefined/*DateTimeInput*/("DTI6", {
 				value : {
 					path : "/dateVal1",
 					type : new DateType({strictParsing: true})
@@ -184,7 +179,7 @@ sap.ui.define([
 				text: "Date (E dd, MMMM yyyy):",
 				labelFor: "DTI7"
 			}).addStyleClass("sapUiSmallMarginTop"),
-			new DateTimeInput("DTI7", {
+			new undefined/*DateTimeInput*/("DTI7", {
 				value : {
 					path : "/dateVal2",
 					type : new DateType({pattern : "E dd, MMMM yyyy", strictParsing: true})
@@ -195,7 +190,7 @@ sap.ui.define([
 				text: "Date (style short):",
 				labelFor: "DTI8"
 			}).addStyleClass("sapUiSmallMarginTop"),
-			new DateTimeInput("DTI8", {
+			new undefined/*DateTimeInput*/("DTI8", {
 				value : {
 					path : "/dateVal3",
 					type : new DateType({style : "short", strictParsing: true})
@@ -205,8 +200,8 @@ sap.ui.define([
 				text: "Time (style medium):",
 				labelFor: "DTI9"
 			}).addStyleClass("sapUiSmallMarginTop"),
-			new DateTimeInput("DTI9", {
-				type : DateTimeInputType.Time,
+			new undefined/*DateTimeInput*/("DTI9", {
+				type : "Time",
 				editable : false,
 				value : {
 					path : "/dateVal4",
@@ -217,8 +212,8 @@ sap.ui.define([
 				text: "DateTime (style medium):",
 				labelFor: "DTI10"
 			}).addStyleClass("sapUiSmallMarginTop"),
-			new DateTimeInput("DTI10", {
-				type : DateTimeInputType.DateTime,
+			new undefined/*DateTimeInput*/("DTI10", {
+				type : "DateTime",
 				enabled : false,
 				value : {
 					path : "/dateVal5",
@@ -246,11 +241,11 @@ sap.ui.define([
 					}).addStyleClass("sapUiSmallMarginTop"),
 					new Select("S1", {
 						items: [
-							new Item({text: "sap.m.DateTimeInputType.Date", key: DateTimeInputType.Date}),
-							new Item({text: "sap.m.DateTimeInputType.Time", key: DateTimeInputType.Time}),
-							new Item({text: "sap.m.DateTimeInputType.DateTime", key: DateTimeInputType.DateTime})
+							new Item({text: "sap.m.DateTimeInputType.Date", key: "Date"}),
+							new Item({text: "sap.m.DateTimeInputType.Time", key: "Time"}),
+							new Item({text: "sap.m.DateTimeInputType.DateTime", key: "DateTime"})
 						],
-						selectedKey: DateTimeInputType.Date,
+						selectedKey: "Date",
 						change: function(oEvent) {
 							var oSelectedItem = oEvent.getParameter("selectedItem"),
 								oDateTimeInput = oEvent.getSource().getParent().getCells()[2];
@@ -293,8 +288,8 @@ sap.ui.define([
 						wrapping: true,
 						labelFor: "DTIBinding"
 					}).addStyleClass("sapUiSmallMarginTop"),
-					new DateTimeInput("DTIBinding",{
-						type: DateTimeInputType.Date,
+					new undefined/*DateTimeInput*/("DTIBinding",{
+						type: "Date",
 						value: {path: "/dateVal1", type: new DateType()}
 					}).setModel(oModel)
 				]

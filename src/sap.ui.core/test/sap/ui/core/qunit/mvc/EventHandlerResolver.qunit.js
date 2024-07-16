@@ -77,39 +77,10 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * @deprecated
-	 */
-	QUnit.test("Plain handler resolution (future=false)", function(assert) {
-		future.active = false;
-		var fnController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod", oController)[0];
-		assert.equal(fnController, oController.fnControllerMethod, "Controller method should be found");
-
-		/**
-		 * @deprecated
-		 */
-		(() => {
-			var fnGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod", oController)[0];
-			assert.equal(fnGlobal, window.testEventHandlerResolver.subobject.someGlobalMethod, "Global method should be found");
-		})();
-
-		var fnGlobal = EventHandlerResolver.resolveEventHandler("ns.deepMethod", oController);
-		assert.strictEqual(fnGlobal, undefined, "Function name with deeper path shouldn't be searched in the controller");
-		future.active = undefined;
-	});
-
 	QUnit.test("Plain handler resolution (future=true)", function(assert) {
 		future.active = true;
 		var fnController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod", oController)[0];
 		assert.equal(fnController, oController.fnControllerMethod, "Controller method should be found");
-
-		/**
-		 * @deprecated
-		 */
-		(() => {
-			var fnGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod", oController)[0];
-			assert.equal(fnGlobal, window.testEventHandlerResolver.subobject.someGlobalMethod, "Global method should be found");
-		})();
 
 		assert.throws(() => {
 				EventHandlerResolver.resolveEventHandler("ns.deepMethod", oController);
@@ -129,21 +100,6 @@ sap.ui.define([
 		var fnFromController2 = EventHandlerResolver.resolveEventHandler("fnControllerMethod()", oController)[0];
 		fnFromController2(oDummyEvent);
 		assert.equal(oController.fnControllerMethod.callCount, 1, "Controller method without dot should be called");
-
-		/**
-		 * @deprecated
-		 */
-		(() => {
-			sinon.spy(window.testEventHandlerResolver.subobject, "someGlobalMethod");
-			var fnFromGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod()", oController)[0];
-			fnFromGlobal(oDummyEvent);
-			assert.equal(window.testEventHandlerResolver.subobject.someGlobalMethod.callCount, 1, "Global method should be called once");
-
-			sinon.spy(window, "someGlobalMethodOnWindow");
-			fnFromGlobal = EventHandlerResolver.resolveEventHandler("someGlobalMethodOnWindow()", oController)[0];
-			fnFromGlobal(oDummyEvent);
-			assert.equal(window.someGlobalMethodOnWindow.callCount, 1, "Global method without dot should be called once");
-		})();
 	});
 
 	QUnit.test("Handler resolution with local variables", function(assert) {
@@ -166,26 +122,6 @@ sap.ui.define([
 		// without parentheses
 		EventHandlerResolver.resolveEventHandler("Module.someMethod", null, {Module: mLocals})[0]();
 		assert.equal(oSpy.callCount, 1, "Module method should be called once");
-	});
-
-	/**
-	 * @deprecated
-	 */
-	QUnit.test("Log warning for usage of not properly XML-required modules", function(assert) {
-		future.active = false;
-		var logSpy = sinon.spy(Log, "warning");
-
-		// immediately call the resolving handler
-		EventHandlerResolver.resolveEventHandler("Module.someMethod()", oController, {Module: {}});
-		assert.ok(logSpy.calledWith(sinon.match(/Event handler name 'Module.someMethod\(\)' could not be resolved to an event handler function/)));
-		logSpy.resetHistory();
-
-		// test without associated controller
-		EventHandlerResolver.resolveEventHandler("Module.someMethod()", null, {Module: {}});
-		assert.ok(logSpy.calledWith(sinon.match(/Event handler name 'Module.someMethod\(\)' could not be resolved to an event handler function/)));
-
-		logSpy.restore();
-		future.active = undefined;
 	});
 
 	QUnit.test("Throw error for usage of not properly XML-required modules (future=true)", function(assert) {
@@ -216,23 +152,6 @@ sap.ui.define([
 		assert.equal(thisContext, oController, "Controller method without dot should be called with controller as 'this' context");
 		thisContext = "wrong";
 
-		/**
-		 * @deprecated
-		 */
-		(() => {
-			// global functions
-			vResolvedHandler = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod", oController);
-			vResolvedHandler[0].call(vResolvedHandler[1], oDummyEvent);
-			assert.equal(thisContext, oController, "Global method should be called with controller as 'this' context when there's no parenthese");
-			thisContext = "wrong";
-
-			// global functions without dot
-			vResolvedHandler = EventHandlerResolver.resolveEventHandler("someGlobalMethodOnWindow", oController);
-			vResolvedHandler[0].call(vResolvedHandler[1], oDummyEvent);
-			assert.equal(thisContext, oController, "Global method without dot should be called with oController as 'this' context when there's no parenthese");
-			thisContext = "wrong";
-		})();
-
 		// with local variables
 		vResolvedHandler = EventHandlerResolver.resolveEventHandler("Module.someMethod", oController, {Module: mLocals});
 		vResolvedHandler[0].call(vResolvedHandler[1], oDummyEvent);
@@ -252,29 +171,6 @@ sap.ui.define([
 		fnFromController(oDummyEvent);
 		assert.equal(thisContext, oController, "Controller method without dot should be called with controller as 'this' context");
 		thisContext = "wrong";
-
-		/**
-		 * @deprecated
-		 */
-		(() => {
-			// global functions
-			var fnFromGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod()", oController)[0];
-			fnFromGlobal(oDummyEvent);
-			assert.equal(thisContext, window.testEventHandlerResolver.subobject, "Global method should be called with testEventHandlerResolver.subobject as 'this' context");
-			thisContext = "wrong";
-
-			// global functions without dot
-			fnFromGlobal = EventHandlerResolver.resolveEventHandler("someGlobalMethodOnWindow()", oController)[0];
-			fnFromGlobal(oDummyEvent);
-			assert.equal(thisContext, undefined, "Global method without dot should be called with undefined as 'this' context");
-			thisContext = "wrong";
-
-			// global functions with .call()
-			fnFromGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod.call($controller)", oController)[0];
-			fnFromGlobal(oDummyEvent);
-			assert.equal(thisContext, oController, "Global method should be called with controller as 'this' context when set using .call($controller)");
-			thisContext = "wrong";
-		})();
 
 		// with local variables
 		var fnFromModule = EventHandlerResolver.resolveEventHandler("Module.someMethod()", oController, {Module: mLocals})[0];
@@ -477,99 +373,6 @@ sap.ui.define([
 			fnFromController(oDummyEvent);
 			assert.strictEqual(spy.args[0][0], mTestSet[sTestString], "Bound model property value should be correctly calculated for: " + sTestString);
 		}
-	});
-
-	/**
-	 * @deprecated
-	 */
-	QUnit.test("error cases (and edge cases) (future=false)", function(assert) {
-		future.active = false;
-		var fnFromController;
-
-		// unclosed braces
-		assert.throws(function(){
-			fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod(${/someModelProperty)", oController)[0];
-			fnFromController(oDummyEvent);
-		} , function(err){
-			return err.message.indexOf("no closing braces found") > -1;
-		}, "Correct error should be thrown for non-matching braces");
-
-		// unresolvable formatter
-		var spy = sinon.spy(Log, "error");
-		fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod(${path:'/someModelProperty', formatter: '.myNotExistingFormatter'})", oController)[0];
-		fnFromController(oDummyEvent);
-		assert.equal(spy.callCount, 1, "Error should be logged for unresolvable formatter");
-		assert.ok(spy.args[0][0].indexOf("formatter function .myNotExistingFormatter not found") > -1, "Error should be logged for unresolvable formatter");
-
-		// globals within the expression
-		spy = sinon.spy(Log, "warning");
-		fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod(Math.max(1))", oController)[0];
-		fnFromController(oDummyEvent);
-		assert.equal(spy.callCount, 2, "Warning should be logged for globals inside parameter section");
-		assert.ok(spy.args[0][0].indexOf("Unsupported global identifier") > -1, "Warning should be logged for globals inside parameter section");
-		Log.warning.restore();
-
-		// wrong expression syntax
-		assert.throws(function(){
-			fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod(${/someModelProperty} + {/someModelProperty})", oController)[0];
-			fnFromController(oDummyEvent);
-		}, function(err){
-			return err.message.indexOf("Expected IDENTIFIER") > -1;
-		}, "Error should be thrown for expression syntax error");
-
-		// no expressions within
-		spy = sinon.spy(Log, "warning");
-		fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod({= 'abc'})", oController)[0];
-		assert.equal(spy.callCount, 1, "Warning should be logged for expressions inside parameter section");
-		assert.ok(spy.args[0][0].indexOf("event handler parameter contains a binding expression") > -1, "Warning should be logged for expressions inside parameter section");
-		Log.warning.restore();
-		assert.throws(function(){
-			fnFromController(oDummyEvent);
-		}, function(err){
-			return true; // browser-dependent message
-		}, "Error should be thrown for expressions inside parameter section");
-
-		// starting with a brace
-		assert.throws(function(){
-			fnFromController = EventHandlerResolver.resolveEventHandler("(${/someModelProperty})", oController)[0];
-			fnFromController(oDummyEvent);
-		}, function(err){
-			return err.message.indexOf("starts with a bracket") > -1;
-		}, "Error should be thrown when starting with a bracket");
-
-		// wrong binding path
-		/*	TODO: help the user detect such issues without making too much noise when an empty value is perfectly fine
-		spy = sinon.spy(Log, "warning");
-		fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod(${/thisdoesnotExist})", oController)[0];
-		fnFromController(oDummyEvent);
-		assert.equal(spy.callCount, 1, "Warning should be logged for empty values (which may indicate wrong bindings)");
-		assert.ok(spy.args[0][0].indexOf("EventHandlerResolver: no value was returned") > -1, "Warning should be logged for empty values (which may indicate wrong bindings)");
-		*/
-
-		// too many closing braces
-		assert.throws(function(){
-			fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod(${/someModelProperty}})", oController)[0];
-			fnFromController(oDummyEvent);
-		}, function(err){
-			return err.message.indexOf("but instead saw }") > -1;
-		}, "Error should be thrown for too many closing braces");
-
-		// non-closed single quotes
-		assert.throws(function(){
-			fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod('x)", oController)[0];
-			fnFromController(oDummyEvent);
-		}, function(err){
-			return err.message.indexOf("Bad") > -1;
-		}, "Error should be thrown for non-closed single quotes");
-
-		// non-closed double quotes
-		assert.throws(function(){
-			fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod(\"x)", oController)[0];
-			fnFromController(oDummyEvent);
-		}, function(err){
-			return err.message.indexOf("Bad") > -1;
-		}, "Error should be thrown for non-closed double quotes");
-		future.active = undefined;
 	});
 
 	QUnit.test("error cases (and edge cases) (future=true)", function(assert) {

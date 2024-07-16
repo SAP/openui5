@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/Token",
 	"sap/ui/Device",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/IconPool",
@@ -20,7 +19,6 @@ sap.ui.define([
 	MessageToast,
 	Token,
 	Device,
-	Core,
 	Element,
 	Fragment,
 	IconPool,
@@ -32,7 +30,7 @@ sap.ui.define([
 	FilterOperator,
 	JSONModel,
 	ThemePicker
-	) {
+) {
 	"use strict";
 
 	var TYPING_DELAY = 200; // ms
@@ -187,7 +185,7 @@ sap.ui.define([
 				iAllIcons = oResultItemsBinding.oList.length;
 
 			function getRootControl(oEvent) {
-				return Core.byId(oEvent.currentTarget.id);
+				return Element.getElementById(oEvent.currentTarget.id);
 			}
 			// show total count of items
 			this.getModel("view").setProperty("/iconFilterCount", iFilteredIcons, null, true);

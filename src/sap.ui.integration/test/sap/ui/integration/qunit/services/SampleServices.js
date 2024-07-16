@@ -33,4 +33,4 @@ sap.ui.define([
 		"navigation": oNavigationFactory,
 		"brokenNavigation": oBrokenNavigationFactory
 	};
-}, true);
+});

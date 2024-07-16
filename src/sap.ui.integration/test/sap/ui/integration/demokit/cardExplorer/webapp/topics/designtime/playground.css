@@ -1,0 +1,8 @@
+.samplecontainer {
+	display: block;
+	width: 730px;
+	height: 400px;
+	border: 1px solid #f0f0f0;
+	background-color: #fff;
+	padding: 1rem
+}

@@ -20,11 +20,11 @@ describe("sap.m.SemanticPage", function() {
 					bTablet = oDevice.system.tablet,
 
 				_showPhoneMenu = function() {
-					sap.ui.getCore().byId("myApp").toMaster("menuPage"); //nav to menu-page
+					sap.ui.getCore().byId("myApp")/*Not inside AMD call*/.toMaster("menuPage"); //nav to menu-page
 				},
 				_showTabletMenu = function() {
-					sap.ui.getCore().byId("semanticPageContainer").hideMaster();
-					sap.ui.getCore().byId("myApp").showMaster();
+					sap.ui.getCore().byId("semanticPageContainer")/*Not inside AMD call*/.hideMaster();
+					sap.ui.getCore().byId("myApp")/*Not inside AMD call*/.showMaster();
 				};
 
 				if (bPhone) {
@@ -47,25 +47,25 @@ describe("sap.m.SemanticPage", function() {
 				sPageType = arguments[0],
 
 				showPageOnPhone = function() {
-					sap.ui.getCore().byId("myApp").toDetail("semanticPageContainer"); //nav to semantic (master/detail) pages container
+					sap.ui.getCore().byId("myApp")/*Not inside AMD call*/.toDetail("semanticPageContainer"); //nav to semantic (master/detail) pages container
 
 					if (sPageType === "MASTER") { //nav to requested (master/detail) semantic page type
-						sap.ui.getCore().byId("semanticPageContainer").toMaster("master");
+						sap.ui.getCore().byId("semanticPageContainer")/*Not inside AMD call*/.toMaster("master");
 						return "master";
 					} else if (sPageType === "DETAIL") {
-						sap.ui.getCore().byId("semanticPageContainer").toDetail("detail");
+						sap.ui.getCore().byId("semanticPageContainer")/*Not inside AMD call*/.toDetail("detail");
 						return "detail";
 					}
 				},
 
 				showPageOnTablet = function() {
-					sap.ui.getCore().byId("myApp").hideMaster();
+					sap.ui.getCore().byId("myApp")/*Not inside AMD call*/.hideMaster();
 
 					if (sPageType === "MASTER") {
-						sap.ui.getCore().byId("semanticPageContainer").showMaster();
+						sap.ui.getCore().byId("semanticPageContainer")/*Not inside AMD call*/.showMaster();
 						return "master";
 					} else if (sPageType === "DETAIL") {
-						sap.ui.getCore().byId("semanticPageContainer").hideMaster();
+						sap.ui.getCore().byId("semanticPageContainer")/*Not inside AMD call*/.hideMaster();
 						return "detail";
 					}
 				};

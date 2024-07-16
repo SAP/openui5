@@ -20,20 +20,22 @@
 
 		<!-- Initialization -->
 		<script src="_ignoreUncaughtErrors.js"></script>
-		<link  href="../../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen">
+		<link href="../../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen">
 		<script src="../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
 		<!-- 'broken' script tag that bears the configuration -->
 		<script id="sap-ui-bootstrap"
 				src="/my-download-app/phx/sap-ui-boot.js"
-				>
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+		>
 		</script>
 
 		<!-- include the loader and let it determine the bootstrap URL -->
 		<script src="../../shared-config.js"></script>
-		<script	src="../../../../../../resources/ui5loader.js"></script>
-		<script	src="../../../../../../resources/ui5loader-autoconfig.js"></script>
+		<script src="../../../../../../resources/ui5loader.js"></script>
+		<script src="../../../../../../resources/ui5loader-autoconfig.js"></script>
 
 		<!-- check that all expectations are met -->
 		<script src="ResourceRoot.qunit.js" data-expected-root="/my-download-app/phx/"></script>

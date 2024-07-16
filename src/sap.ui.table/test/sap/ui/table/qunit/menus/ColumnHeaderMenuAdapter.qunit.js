@@ -80,10 +80,6 @@ sap.ui.define([
 
 	QUnit.test("activateFor - default adapter", function(assert) {
 		this.oColumn1.setHeaderMenu();
-		/**
-		 * @deprecated As of Version 1.117
-		 */
-		this.oColumn1._cellPressed = this.oColumn1.getDomRef();
 
 		return ColumnHeaderMenuAdapter.activateFor(this.oColumn1).then(function() {
 			const sDefaultAdapterName = null;

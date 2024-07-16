@@ -32,12 +32,7 @@ sap.ui.define(['./Binding'],
 			this.bInitial = true;
 		},
 
-		metadata : {
-			publicMethods : [
-				// methods
-				"getBoundContext"
-			]
-		}
+		metadata : {}
 	});
 
 	/**

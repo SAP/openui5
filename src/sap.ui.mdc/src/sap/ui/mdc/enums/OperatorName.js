@@ -631,4 +631,4 @@ sap.ui.define(() => {
 
 	return OperatorName;
 
-}, /* bExport= */ true);
+});

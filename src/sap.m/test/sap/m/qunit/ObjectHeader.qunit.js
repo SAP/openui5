@@ -168,89 +168,6 @@ sap.ui.define([
 		assert.equal(document.getElementById("oa1"), null, "Object attribute should not be rendered.");
 	});
 
-	/**
-	 * @deprecated as of version 1.16, replaced by <code>statuses</code> aggregation
-	 */
-	QUnit.test("InfoRendered", async function(assert) {
-		var oFirstStatus = new ObjectStatus("os1", {
-			text : "Ñgçy Positive Text Ñgçy",
-			state : ValueState.Success
-		}),
-			oSecondStatus = new ObjectStatus("os2", {
-			text : "Negative Text Ñgçy",
-			state : ValueState.Error
-		});
-
-		this.oOH.setFirstStatus(oFirstStatus);
-		this.oOH.setSecondStatus(oSecondStatus);
-		await nextUIUpdate();
-
-		assert.notEqual(document.getElementById("os1"), null, "First status should be rendered.");
-		assert.notEqual(document.getElementById("os2"), null, "Second status info should be rendered.");
-	});
-
-	/**
-	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
-	 */
-	QUnit.test("FavoriteRendered", async function(assert) {
-		// Assert - No Favourite Markers rentered
-		assert.equal(document.getElementById(this.sID + "-favorite"), null, "Favorite marker should not be rendered.");
-
-		// Arrange - Mark Favourite
-		this.oOH.setMarkFavorite(true);
-		this.oOH.setShowMarkers(true);
-
-		// Act
-		await nextUIUpdate();
-
-		// Assert - Favourite is marked
-		assert.notEqual(document.getElementById(this.sID + "-favorite"), null, "Favorite marker should be rendered.");
-		assert.ok(jQuery("#" + this.sID + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
-	});
-
-	/**
-	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
-	 */
-	QUnit.test("FlagRendered", async function(assert) {
-		// Assert - No Favourite Markers rentered
-		assert.equal(document.getElementById(this.sID  + "-flag"), null, "Flag marker should not be rendered.");
-
-		// Arrange - Mark Flagged
-		this.oOH.setMarkFlagged(true);
-		this.oOH.setShowMarkers(true);
-
-		// Act
-		await nextUIUpdate();
-
-		// Assert - Favourite is marked
-		assert.notEqual(document.getElementById(this.sID  + "-flag"), null, "Flag marker should be rendered.");
-		assert.ok(jQuery("#" + this.sID  + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
-	});
-
-	/**
-	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
-	 */
-	QUnit.test("FlagWithAttrubuteRendered", async function(assert) {
-
-		// Assert - No Favourite Markers rentered
-		assert.equal(document.getElementById(this.sID  + "-flag"), null, "Flag marker should not be rendered.");
-
-		// Arrange - Mark Flagged and add Attribute
-		var oAttr = new ObjectAttribute("attr1", {
-			text : "Attribute number 1"
-		});
-		this.oOH.addAttribute(oAttr);
-		this.oOH.setMarkFlagged(true);
-		this.oOH.setShowMarkers(true);
-
-		// Act
-		await nextUIUpdate();
-
-		// Assert
-		assert.notEqual(jQuery("#" + this.sID  + "-flag"), null, "Flag marker should be rendered.");
-		assert.ok(jQuery("#" + this.sID  + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
-	});
-
 	QUnit.test("Flag Rendering Position", async function(assert) {
 		// Arrange - Mark Flagged and add Attribute
 		var oAttr = new ObjectAttribute(this.sID + "-attr1", {
@@ -262,26 +179,6 @@ sap.ui.define([
 
 		this.oOH.addAttribute(oAttr);
 		this.oOH.addMarker(oFlagMarker);
-
-		// Act
-		await nextUIUpdate();
-
-		assert.ok(Math.abs(jQuery("#" + this.sID + "-attr1")[0].offsetTop - jQuery("#" + this.sID + "-flag")[0].offsetTop) <= 2,
-		"Attribute and flag should be rendered on the same row");
-	});
-
-	/**
-	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
-	 */
-	QUnit.test("Flag Rendering Position with deprecated functions", async function(assert) {
-		// Arrange - Mark Flagged and add Attribute
-		var oAttr = new ObjectAttribute(this.sID + "-attr1", {
-				text : "Attribute number 1"
-			});
-
-		this.oOH.addAttribute(oAttr);
-		this.oOH.setMarkFlagged(true);
-		this.oOH.setShowMarkers(true);
 
 		// Act
 		await nextUIUpdate();
@@ -505,20 +402,6 @@ sap.ui.define([
 		assert.equal(this.oOH.getMarkers()[0].getId(), this.sID + "-flag", "Object header has flag marker");
 	});
 
-	/**
-	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
-	 */
-	QUnit.test("Deprecated Flag API", async function(assert) {
-		// Arrange
-		this.oOH.setMarkFlagged(true);
-
-		// Act
-		await nextUIUpdate();
-
-		// Assert
-		assert.ok(this.oOH.getMarkFlagged(), "Object header has flag marker");
-	});
-
 	QUnit.test("With empty status", async function(assert) {
 
 		var emptyStatus = new ObjectStatus("ose1", {
@@ -532,28 +415,6 @@ sap.ui.define([
 
 		assert.notOk(this.oOH._hasStatus(), "Object header has no rendered statuses");
 
-	});
-
-	/**
-	 *  @deprecated as of version 1.16, replaced by <code>statuses</code> aggregation.
-	 */
-	QUnit.test("With empty first & second statuses", async function(assert) {
-
-		var firstStatus = new ObjectStatus("ose3", {
-				text : "\n  \n  \t",
-				state : ValueState.Success
-			}),
-			secondStatus = new ObjectStatus("ose4", {
-				text : "\n  \n  \t",
-				state : ValueState.Error
-			});
-
-		this.oOH.setFirstStatus(firstStatus);
-		this.oOH.setSecondStatus(secondStatus);
-
-		await nextUIUpdate();
-
-		assert.notOk(this.oOH._hasStatus(), "Object header has no rendered statuses");
 	});
 
 	QUnit.test("With empty attribute", async function(assert) {
@@ -575,7 +436,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("With empty attributes and statuses", async function(assert) {
-
 		var emptyAttr1 = new ObjectAttribute("oae1", {
 				text : "\n  \n  \t"
 			}),
@@ -601,14 +461,6 @@ sap.ui.define([
 		assert.notOk(this.oOH._hasStatus(), "Object header has no rendered statuses");
 		assert.notOk(this.oOH._hasAttributes(), "Object header has no rendered attributes");
 		assert.notOk(this.oOH._hasBottomContent(), "Object header has no bottom content");
-		/**
-		 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
-		 */
-		assert.notOk(this.oOH.getMarkFlagged(), "Object header has no flag marker");
-		/**
-		 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
-		 */
-		assert.notOk(this.oOH.getMarkFavorite(), "Object header has no markFavorite marker");
 	});
 
 	QUnit.test("With a non-empty ObjectStatus", async function(assert) {
@@ -662,82 +514,6 @@ sap.ui.define([
 
 		// Assert
 		assert.ok($objectHeader.hasClass("sapMOHTitleDivFull"), "title occupies the whole available space");
-	});
-
-	/**
-	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
-	 */
-	QUnit.test("Flag marker set and unset", async function(assert) {
-		// Assert - by default flag marker unset
-		assert.notOk(jQuery("#" + this.sID + " .sapUiIcon").length, "No markers should be rendered");
-
-		// Arrange - set to flagged
-		this.oOH.setMarkFlagged(true);
-		this.oOH.setShowMarkers(true);
-
-		// Act
-		await nextUIUpdate();
-
-		// Assert
-		assert.equal(jQuery("#" + this.sID + " .sapUiIcon").length, 1, "Only one marker should be rendered");
-		assert.ok(jQuery("#" + this.sID + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker");
-
-		// Arrange - unset flagged
-		this.oOH.setMarkFlagged(false);
-		this.oOH.setShowMarkers(false);
-
-		// Act
-		await nextUIUpdate();
-
-		// Assert
-		assert.notOk(jQuery("#" + this.sID + " .sapUiIcon").length, "Flag marker is no longer renfered");
-	});
-
-	/**
-	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
-	 */
-	QUnit.test("Favorite marker set and unset", async function(assert) {
-		// Assert - by default flag marker unset
-		assert.notOk(jQuery("#" + this.sID + " .sapUiIcon").length, "No markers should be rendered");
-
-		// Arrange - set to favourite
-		this.oOH.setMarkFavorite(true);
-		this.oOH.setShowMarkers(true);
-
-		// Act
-		await nextUIUpdate();
-
-		// Assert
-		assert.equal(jQuery("#" + this.sID + " .sapUiIcon").length, 1, "Only one marker should be rendered");
-		assert.ok(jQuery("#" + this.sID + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker");
-
-		// Arrange - unset favourite
-		this.oOH.setMarkFavorite(false);
-		this.oOH.setShowMarkers(false);
-
-		// Act
-		await nextUIUpdate();
-
-		// Assert
-		assert.notOk(jQuery("#" + this.sID + " .sapUiIcon").length, "Favorite marker is no longer renfered");
-	});
-
-	/**
-	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
-	 */
-	QUnit.test("Attribute without support marker", async function(assert) {
-		// Arrange
-		var oBasicAttr = new ObjectAttribute( "basicAttr", {
-			text : "This is the only attribute in the object header"
-		});
-
-		this.oOH.setMarkFavorite(true);
-		this.oOH.setShowMarkers(false);
-		this.oOH.addAttribute(oBasicAttr);
-		await nextUIUpdate();
-
-		assert.equal(jQuery("#" + this.sID + " .sapUiIcon").length, 0, "No markers should be rendered");
-		assert.notEqual(document.getElementById("basicAttr"), null, "Attribute should be rendered.");
 	});
 
 	/******************************************************************/
@@ -1662,40 +1438,6 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	/**
-	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation
-	 */
-	QUnit.test("Test _hasMarkers function with deprecated functions", async function(assert) {
-		var oObjectHeader = new ObjectHeader({
-			title : "Markers agregation",
-			markers: [
-				new ObjectMarker({id: "draft", type: ObjectMarkerType.Draft}),
-				new ObjectMarker({id: "unsaved", type: ObjectMarkerType.Unsaved})
-			]
-		});
-
-		// System under test
-		oObjectHeader.placeAt("qunit-fixture");
-		await nextUIUpdate();
-
-		assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return true for - ObjectHeader with markers aggregation and showMarkers property set to false");
-
-		oObjectHeader.setShowMarkers(true);
-		oObjectHeader.setMarkFavorite(true);
-		assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return true for - ObjectHeader with markers aggregation and showMarkers property set to true and markFavourite set to true");
-
-		oObjectHeader.removeAggregation("markers");
-		assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return true for - ObjectHeader with no markers aggregation and showMarkers property set to true and markFavourite set to true");
-
-		oObjectHeader.setMarkFavorite(false);
-		assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return false for - ObjectHeader with no markers aggregation and showMarkers property set to true and markFavourite set to false");
-
-		oObjectHeader.setShowMarkers(false);
-		assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return false for - ObjectHeader with no markers aggregation and showMarkers property set to false and markFavourite set to false");
-
-		oObjectHeader.destroy();
-	});
-
 	/******************************************************************/
 
 	QUnit.module("Responsive Padding Enablement");
@@ -1712,5 +1454,4 @@ sap.ui.define([
 		//clean
 		oTestPage.destroy();
 	});
-
 });

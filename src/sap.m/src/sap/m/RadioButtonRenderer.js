@@ -218,4 +218,4 @@ sap.ui.define([
 	};
 
 	return RadioButtonRenderer;
-}, /* bExport= */ true);
+});

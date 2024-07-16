@@ -14,4 +14,4 @@ sap.ui.define([
 			return BindingParser.complexParser.escape(JSON.stringify(vRawValue));
 		}
 	};
-}, /* bExport= */ true);
+});

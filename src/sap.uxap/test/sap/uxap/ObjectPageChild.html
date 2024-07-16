@@ -1,27 +1,20 @@
 <!DOCTYPE html>
 <html>
-    <head>
+    <head><meta charset="utf-8">
         <title>sap.uxap.ObjectPage</title>
         <script src="shared-config.js"></script>
-        <script
-            id="sap-ui-bootstrap"
-            type="text/javascript"
-            src="../../../resources/sap-ui-core.js"
-            data-sap-ui-theme="sap_horizon"
-            data-sap-ui-libs="sap.m,sap.uxap,sap.ui.layout"
-            data-sap-ui-async="true"
-            data-sap-ui-compatVersion="edge"
-            data-sap-ui-xx-bindingSyntax="complex"
-            data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
-            data-sap-ui-resourceroots='{
+        <script id="sap-ui-bootstrap"
+                src="../../../resources/sap-ui-core.js"
+                data-sap-ui-libs="sap.m,sap.uxap,sap.ui.layout"
+                data-sap-ui-async="true"
+                data-sap-ui-compat-version="edge"
+                data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
+                data-sap-ui-resource-roots='{
 			"sap.uxap.ObjectPageChild": "./ObjectPageChild"
 		}'
         ></script>
     </head>
     <body class="sapUiBody" id="content">
-        <div
-            data-sap-ui-component
-            data-name="sap.uxap.ObjectPageChild"
-        ></div>
+        <div data-sap-ui-component data-name="sap.uxap.ObjectPageChild"></div>
     </body>
 </html>

@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Element",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/CalendarMonthInterval",
 	"sap/ui/unified/CalendarLegend",
 	"sap/ui/unified/CalendarLegendItem",
@@ -14,9 +15,8 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date"
-], function(Localization, Element, qutils, CalendarMonthInterval, CalendarLegend, CalendarLegendItem, DateRange, DateTypeRange, Button, unifiedLibrary, DateFormat, KeyCodes, jQuery, oCore, UI5Date) {
+], function(Localization, Element, qutils, nextUIUpdate, CalendarMonthInterval, CalendarLegend, CalendarLegendItem, DateRange, DateTypeRange, Button, unifiedLibrary, DateFormat, KeyCodes, jQuery, UI5Date) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
@@ -68,7 +68,7 @@ sap.ui.define([
 					new DateTypeRange({startDate: UI5Date.getInstance("2015", "9", "9"), endDate: UI5Date.getInstance("2015", "10", "10"), type: CalendarDayType.Type02, tooltip: "Text"})],
 				legend: oLegend
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oCal1.destroy();
@@ -82,7 +82,7 @@ sap.ui.define([
 		var oToday = UI5Date.getInstance();
 		oToday.setDate(1);
 		var oCal = new CalendarMonthInterval("Cal",{}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $MonthsRow = Element.getElementById("Cal").getAggregation("monthsRow").$();
 		var aMonths = $MonthsRow.find(".sapUiCalItem");
@@ -145,7 +145,7 @@ sap.ui.define([
 			this.oCal2 = new CalendarMonthInterval("Cal2",{
 				startDate: UI5Date.getInstance("2015", "7", "4")
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oCal1.destroy();
@@ -155,7 +155,7 @@ sap.ui.define([
 
 	QUnit.test("setStartDate", function(assert) {
 		this.oCal1.setStartDate(UI5Date.getInstance("2015", "2", "10"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var $MonthsRow = Element.getElementById("Cal1").getAggregation("monthsRow").$();
 		var aMonths = $MonthsRow.find(".sapUiCalItem");
 		assert.equal(jQuery(aMonths[0]).attr("data-sap-month"), "20150301", "Calendar1: new start month");
@@ -163,7 +163,7 @@ sap.ui.define([
 
 	QUnit.test("focusDate", function(assert) {
 		this.oCal2.focusDate(UI5Date.getInstance("2015", "8", "11"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oStartDate = this.oCal2.getStartDate();
 		assert.equal(oFormatYyyymmdd.format(oStartDate), "20150804", "Calendar2: start date not changed");
 		var $MonthsRow = Element.getElementById("Cal2").getAggregation("monthsRow").$();
@@ -172,7 +172,7 @@ sap.ui.define([
 		assert.equal(jQuery(aMonths[1]).attr("tabindex"), "0", "Calendar2: second month has focus");
 
 		this.oCal2.focusDate(UI5Date.getInstance("2014", "3", "11"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oStartDate = this.oCal2.getStartDate();
 		assert.equal(oFormatYyyymmdd.format(oStartDate), "20140301", "Calendar2: new start date");
 		aMonths = $MonthsRow.find(".sapUiCalItem");
@@ -195,7 +195,7 @@ sap.ui.define([
 				startDate: UI5Date.getInstance("2014", "2", "4"),
 				months: 18
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oCal2.destroy();
@@ -206,7 +206,7 @@ sap.ui.define([
 		this.oCal2.focusDate(UI5Date.getInstance("2014", "3", "11"));
 		bStartDateChanged = false;
 		qutils.triggerEvent("click", "Cal2--Head-next");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(bStartDateChanged, "Calendar2: startDateChangeEvent fired");
 		var oStartDate = this.oCal2.getStartDate();
 		assert.equal(oFormatYyyymmdd.format(oStartDate), "20150901", "Calendar2: new start date");
@@ -217,7 +217,7 @@ sap.ui.define([
 
 		bStartDateChanged = false;
 		qutils.triggerEvent("click", "Cal2--Head-prev");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(bStartDateChanged, "Calendar2: startDateChangeEvent fired");
 		oStartDate = this.oCal2.getStartDate();
 		assert.equal(oFormatYyyymmdd.format(oStartDate), "20140301", "Calendar2: new start date");
@@ -230,7 +230,7 @@ sap.ui.define([
 		//Prepare
 		var oCalendarMonthInt = new CalendarMonthInterval();
 		oCalendarMonthInt.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $MonthsRow = oCalendarMonthInt.getAggregation("monthsRow").$();
 		var aMonths = $MonthsRow.find(".sapUiCalItem");
@@ -252,7 +252,7 @@ sap.ui.define([
 
 		oCalendarMonthInt.placeAt("qunit-fixture");
 		oExternalControl.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oExternalControl.$().trigger("focus");
 		_assertFocus(oExternalControl.getDomRef(), "Prerequisites check: 'extControl' should be focused", assert);
@@ -272,7 +272,7 @@ sap.ui.define([
 			this.oCal1 = new CalendarMonthInterval("Cal1",{
 				startDate: UI5Date.getInstance("2015", "2", "10")
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oCal1.destroy();
@@ -282,7 +282,7 @@ sap.ui.define([
 	QUnit.test("displayed years", function(assert) {
 		assert.ok(!jQuery("#Cal1--YP").get(0), "Calendar1: Year picker not initial rendered");
 		qutils.triggerEvent("click", "Cal1--Head-B2");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(jQuery("#Cal1--YP").get(0), "Calendar1: Year picker rendered");
 		assert.equal(jQuery("#Cal1--YP").parent().attr("id"), "Cal1-content", "Calendar1: year picker rendered in Calendar");
 		assert.ok(jQuery(jQuery("#Cal1--YP").get(0)).is(":visible"), "Calendar1: Year picker visible");
@@ -295,9 +295,9 @@ sap.ui.define([
 
 	QUnit.test("change block", function(assert) {
 		qutils.triggerEvent("click", "Cal1--Head-B2");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		qutils.triggerEvent("click", "Cal1--Head-prev");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var $YearPicker = Element.getElementById("Cal1").getAggregation("yearPicker").$();
 		var aYears = $YearPicker.find(".sapUiCalItem");
 		assert.equal(jQuery(aYears[0]).text(), "2006", "Calendar1: first displayed year");
@@ -318,7 +318,7 @@ sap.ui.define([
 				},
 				startDateChange: handleStartDateChange
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oCal1.destroy();
@@ -328,11 +328,11 @@ sap.ui.define([
 	QUnit.test("year switch", function(assert) {
 		bStartDateChanged = false;
 		qutils.triggerEvent("click", "Cal1--Head-B2");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var $NewYear = jQuery("#Cal1--YP-y20130101"); // use keybord to select year to prevent event processing from ItemNavigation
 		$NewYear.trigger("focus");
 		qutils.triggerKeydown($NewYear.get(0), KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(!jQuery(jQuery("#Cal1--YP").get(0)).is(":visible"), "Calendar1: Year picker not visible after selecting year");
 		// \u2009 is a thin space (both introduced with CLDR version 43), \u2013 is a dash
 		assert.equal(jQuery("#Cal1--Head-B2").text(), "2013\u2009\u2013\u20092014", "Calendar1: year 2013 - 2014 shown");
@@ -365,28 +365,28 @@ sap.ui.define([
 		assert.ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled");
 		assert.ok(!jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Next Button enabled");
 		qutils.triggerEvent("click", "Cal1--Head-next");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled on max month");
 		assert.ok(jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Next Button disabled on max month");
 		qutils.triggerEvent("click", "Cal1--Head-B2");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var aYears = jQuery("#Cal1--YP").find(".sapUiCalItem");
 		assert.equal(jQuery(aYears[aYears.length - 1]).text(), "9999", "Max Year is last rendered year");
 		qutils.triggerEvent("click", "Cal1--Head-B2");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oDate = UI5Date.getInstance(2,1,1);
 		oDate.setFullYear(2);
 		this.oCal1.focusDate(oDate);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled");
 		assert.ok(!jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Next Button enabled");
 		qutils.triggerEvent("click", "Cal1--Head-prev");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button disabled on min month");
 		assert.ok(!jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Next Button enabled on min month");
 		qutils.triggerEvent("click", "Cal1--Head-B2");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		aYears = jQuery("#Cal1--YP").find(".sapUiCalItem");
 		assert.equal(jQuery(aYears[0]).text(), "0001", "Min Year is first rendered year");
 		qutils.triggerEvent("click", "Cal1--Head-B2");
@@ -396,14 +396,14 @@ sap.ui.define([
 
 	QUnit.test("select event", function(assert) {
 		this.oCal1.setStartDate(UI5Date.getInstance(2013, 0, 3));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $selectMonth = jQuery("#Cal1--MonthsRow-20130501");
 		bSelectFired = false;
 		oSelectedDate = undefined;
 		$selectMonth.trigger("focus");
 		qutils.triggerKeydown($selectMonth[0], KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(bSelectFired, "Select event fired");
 		assert.equal(oFormatYyyymmdd.format(oSelectedDate), "20130501", "Month was selected");
 		assert.ok($selectMonth.hasClass("sapUiCalItemSel"), "Month marked as selected");
@@ -419,11 +419,11 @@ sap.ui.define([
 			pickerPopup: true
 		}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(!jQuery("#CalP--Cal").get(0), "Calendar picker not initial rendered");
 		qutils.triggerEvent("click", "CalP--Head-B2");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(jQuery("#CalP--Cal").get(0), "Year picker rendered");
 		assert.ok(oCalP._oPopup.getContent()[0].isA("sap.ui.unified.Calendar"), "year picker rendered in static area");
 		assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Year picker visible");
@@ -431,7 +431,7 @@ sap.ui.define([
 		var $Date = jQuery("#CalP--Cal--YP-y20160101");
 		$Date.trigger("focus");
 		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(Element.getElementById("CalP").getStartDate().getFullYear(), 2016, "start date is set correctly");
 		assert.strictEqual(oSpyFireDateChange.callCount, 1, "CalendarMonthInterval 'fireStartDateChange' was called once after selecting year");
@@ -447,14 +447,14 @@ sap.ui.define([
 			pickerPopup: true
 		}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerEvent("click", "CalP--Head-B2");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Year picker visible");
 
 		qutils.triggerKeydown(Element.getElementById("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(!jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Year picker not visible after closing");
 		assert.strictEqual(oSpyCancel.callCount, 1, "CalendarMonthInterval 'fireCancel' was called once");
 
@@ -470,11 +470,11 @@ sap.ui.define([
 			pickerPopup: true
 		}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// open year picker
 		qutils.triggerEvent("click", "CalP--Head-B2");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(jQuery("#CalP--Cal--Head").children().length, 3, "Only arrows and year picker button are rendered");
 		assert.equal(jQuery("#CalP--Cal--Head-B2").get(0).innerHTML, "2005 - 2024", "Correct year range is shown on the button");
 
@@ -520,7 +520,7 @@ sap.ui.define([
 			pickerPopup: true
 		}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// open calendarPicker
 		qutils.triggerEvent("click", "CalP--Head-B2");
@@ -533,7 +533,7 @@ sap.ui.define([
 
 		// close calendarPicker
 		qutils.triggerKeydown(Element.getElementById("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// change the pickerPopup to false
 		oCalP.setPickerPopup(false);
@@ -564,7 +564,7 @@ sap.ui.define([
 			pickerPopup: true
 		}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// open calendarPicker
 		qutils.triggerEvent("click", "CalP--Head-B2");
@@ -585,11 +585,11 @@ sap.ui.define([
 			pickerPopup: true
 		}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		// open calendarPicker
 		qutils.triggerEvent("click", "CalP--Head-B2");
 		// Make rendering sync, so we can assert safely
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oCalP.$("contentOver").get(0).style.display, "", "After opening the picker overlay is shown");
 
@@ -611,7 +611,7 @@ sap.ui.define([
 		oCal.addSpecialDate(oRange);
 
 		oCal.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		try {
 			oCal.destroy();

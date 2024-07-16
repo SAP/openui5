@@ -88,12 +88,7 @@ sap.ui.define([
 			// cf. #attachDataStateChange, #detachDataStateChange and respective methods for AggregatedDataStateChange
 			this.fnDataStateChangeHandler = undefined;
 		},
-		metadata : {
-
-		  publicMethods : [
-				  "getBindings", "attachChange", "detachChange"
-		  ]
-		}
+		metadata : {}
 
 	});
 

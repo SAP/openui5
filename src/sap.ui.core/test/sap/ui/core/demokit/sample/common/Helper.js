@@ -494,4 +494,4 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 	};
 
 	return Helper;
-}, /* bExport= */ true);
+});

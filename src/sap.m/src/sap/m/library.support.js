@@ -31,9 +31,40 @@ sap.ui.define([
 	"./rules/Title.support",
 	"./rules/Tokenizer.support",
 	"./rules/ViewSettingsDialog.support"
-],
-	function(
-		SupportLib,
+], function(
+	SupportLib,
+	BreadcrumbsSupport,
+	ButtonSupport,
+	CheckBoxSupport,
+	DatePickerSupport,
+	DateRangeSelectionSupport,
+	DialogSupport,
+	FacetFilterSupport,
+	IconTabBarSupport,
+	ImageSupport,
+	InputSupport,
+	LinkSupport,
+	MaskInputSupport,
+	MessagePageSupport,
+	ObjectHeaderSupport,
+	ObjectListItemSupport,
+	ObjectMarkerSupport,
+	ObjectStatusSupport,
+	PanelSupport,
+	SelectSupport,
+	SelectDialogSupport,
+	StepInputSupport,
+	TableSupport,
+	TitleSupport,
+	TokenizerSupport,
+	ViewSettingsDialogSupport
+) {
+"use strict";
+
+return {
+	name: "sap.m",
+	niceName: "UI5 Main Library",
+	ruleset: [
 		BreadcrumbsSupport,
 		ButtonSupport,
 		CheckBoxSupport,
@@ -59,39 +90,7 @@ sap.ui.define([
 		TitleSupport,
 		TokenizerSupport,
 		ViewSettingsDialogSupport
-	) {
-	"use strict";
+	]
+};
 
-	return {
-		name: "sap.m",
-		niceName: "UI5 Main Library",
-		ruleset: [
-			BreadcrumbsSupport,
-			ButtonSupport,
-			CheckBoxSupport,
-			DatePickerSupport,
-			DateRangeSelectionSupport,
-			DialogSupport,
-			FacetFilterSupport,
-			IconTabBarSupport,
-			ImageSupport,
-			InputSupport,
-			LinkSupport,
-			MaskInputSupport,
-			MessagePageSupport,
-			ObjectHeaderSupport,
-			ObjectListItemSupport,
-			ObjectMarkerSupport,
-			ObjectStatusSupport,
-			PanelSupport,
-			SelectSupport,
-			SelectDialogSupport,
-			StepInputSupport,
-			TableSupport,
-			TitleSupport,
-			TokenizerSupport,
-			ViewSettingsDialogSupport
-		]
-	};
-
-}, true);
+});

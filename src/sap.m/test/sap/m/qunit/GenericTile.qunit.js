@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/GenericTile",
 	"sap/m/TileContent",
@@ -33,11 +34,11 @@ sap.ui.define([
 	"sap/m/LinkTileContent",
 	"sap/m/TileInfo",
 	"sap/ui/qunit/utils/nextUIUpdate",
+	/* jQuery custom selectors ":sapTabbable"*/
+	"sap/ui/dom/jquery/Selectors",
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension"
-], function(Localization, Element, jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, IntervalTrigger, ResizeHandler, GenericTileLineModeRenderer,
-	Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, isEmptyObject, KeyCodes, oCore, GridContainerItemLayoutData, GridContainerSettings,
-	GridContainer, FormattedText, NewsContent, Parameters, qutils, DragInfo, GridDropInfo, Theming, LinkTileContent, Badge, nextUIUpdate) {
+], function(Localization, Element, Library, jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, IntervalTrigger, ResizeHandler, GenericTileLineModeRenderer, Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, isEmptyObject, KeyCodes, oCore, GridContainerItemLayoutData, GridContainerSettings, GridContainer, FormattedText, NewsContent, Parameters, qutils, DragInfo, GridDropInfo, Theming, LinkTileContent, Badge, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.m.Size
@@ -49,7 +50,7 @@ sap.ui.define([
 	// shortcut for sap.m.FrameType
 	var FrameType = library.FrameType;
 
-        // shortcut for sap.m.TileSizeBehavior
+	// shortcut for sap.m.TileSizeBehavior
 	var TileSizeBehavior = library.TileSizeBehavior;
 
 	// shortcut for sap.m.ValueColor
@@ -106,51 +107,6 @@ sap.ui.define([
 		}
 	});
 
-	/**
-		* @deprecated Since version 1.119
-	*/
-	QUnit.test("Core initialization check - no core, no theme", function(assert) {
-		//Act
-		var oTile = new GenericTile();
-
-		//Assert
-		assert.ok(oTile._bThemeApplied, "Rendering variable has been correctly set.");
-		assert.ok(this.fnSpyReady.calledOnce, "Method Core.ready has been called once.");
-		assert.ok(this.fnSpyHandleCoreInitialized.calledOnce, "Method _handleCoreInitialized has been called once.");
-		assert.ok(this.fnStubAttachThemeApplied.calledOnce, "Method Core.attachThemeChanged has been called once.");
-		assert.ok(this.fnSpyHandleThemeApplied.calledOnce, "Method _handleThemeApplied has been called once.");
-	});
-
-	/**
-		* @deprecated Since version 1.119
-	*/
-	QUnit.test("Core initialization check - no core, but theme", function(assert) {
-		//Act
-		var oTile = new GenericTile();
-
-		//Assert
-		assert.ok(oTile._bThemeApplied, "Rendering variable has been correctly set.");
-		assert.ok(this.fnSpyReady.calledOnce, "Method Core.ready has been called once.");
-		assert.ok(this.fnSpyHandleCoreInitialized.calledOnce, "Method _handleCoreInitialized has been called once.");
-		assert.ok(this.fnStubAttachThemeApplied.calledOnce, "Method Core.attachThemeChanged has been called once.");
-		assert.ok(this.fnSpyHandleThemeApplied.calledOnce, "Method _handleThemeApplied has been called once.");
-	});
-
-	/**
-		* @deprecated Since version 1.119
-	*/
-	QUnit.test("Core initialization check - core, but no theme", function(assert) {
-		//Act
-		var oTile = new GenericTile();
-
-		//Assert
-		assert.ok(oTile._bThemeApplied, "Rendering variable has been correctly set.");
-		assert.ok(this.fnSpyReady.calledOnce, "Method Core.ready has been called once.");
-		assert.ok(this.fnSpyHandleCoreInitialized.calledOnce, "Method _handleCoreInitialized has been called once.");
-		assert.ok(this.fnStubAttachThemeApplied.calledOnce, "Method Core.attachThemeChanged has been called once.");
-		assert.ok(this.fnSpyHandleThemeApplied.calledOnce, "Method _handleThemeApplied has been called once.");
-	});
-
 	QUnit.test("Core initialization check - core and theme", function(assert) {
 		//Act
 		var oTile = new GenericTile();
@@ -197,12 +153,6 @@ sap.ui.define([
 		assert.strictEqual(this.oGenericTile.getProperty("failedText"), "");
 	});
 
-	/**
-	 * @deprecated Since version 1.38.0.
-	 */
-	QUnit.test("Default value of size", function(assert) {
-		assert.strictEqual(this.oGenericTile.getProperty("size"), Size.Auto);
-	});
 	QUnit.test("Default value of frameType", function(assert) {
 		assert.strictEqual(this.oGenericTile.getProperty("frameType"), FrameType.OneByOne);
 	});
@@ -384,195 +334,6 @@ sap.ui.define([
 		assert.strictEqual(document.getElementById("generic-tile-focus").parentNode, oTileElement, "The tile content is a child of the link.");
 	});
 
-	/**
-		* @deprecated Since version 1.40
-	*/
-	QUnit.test("GenericTile border rendered - blue crystal", function(assert) {
-		var $tile = this.oGenericTile.$();
-
-		var done = assert.async();
-		this.applyTheme("sap_bluecrystal", function() {
-			// the complete property name should be written for test in 'ie' and 'firefox'
-			assert.equal($tile.css("border-bottom-width"), "1px", "Border bottom width was rendered successfully");
-			assert.equal($tile.css("border-bottom-style"), "solid", "Border bottom style was rendered successfully");
-			assert.equal($tile.css("border-top-width"), "1px", "Border top width was rendered successfully");
-			assert.equal($tile.css("border-top-style"), "solid", "Border top style was rendered successfully");
-			assert.equal($tile.css("border-right-width"), "1px", "Border right width was rendered successfully");
-			assert.equal($tile.css("border-right-style"), "solid", "Border right style was rendered successfully");
-			assert.equal($tile.css("border-left-width"), "1px", "Border left width was rendered successfully");
-			assert.equal($tile.css("border-left-style"), "solid", "Border left style was rendered successfully");
-			done();
-		});
-	});
-
-	/**
-		* @deprecated Since version 1.40
-	*/
-	QUnit.test("GenericTile focus rendered - blue crystal", function(assert) {
-		var done = assert.async();
-		this.applyTheme("sap_bluecrystal", function() {
-			assert.ok(document.getElementById("generic-tile-hover-overlay"), "Hover overlay div was rendered successfully");
-			assert.ok(document.getElementById("generic-tile-focus"), "Focus div was rendered successfully");
-			done();
-		});
-	});
-
-	/**
-	 * @deprecated Since version 1.120
-	 */
-	QUnit.test("GenericTile border rendered - HCB", function(assert) {
-		var done = assert.async();
-		this.applyTheme("sap_hcb", async function() {
-			this.oGenericTile.invalidate();
-			await nextUIUpdate();
-			var $tile = this.oGenericTile.$();
-			// the complete property name should be written for test in 'ie' and 'firefox'
-			assert.equal($tile.css("border-bottom-style"), "solid", "Border bottom style was rendered successfully");
-			assert.equal($tile.css("border-top-style"), "solid", "Border top style was rendered successfully");
-			assert.equal($tile.css("border-right-style"), "solid", "Border right style was rendered successfully");
-			assert.equal($tile.css("border-left-style"), "solid", "Border left style was rendered successfully");
-			done();
-		}.bind(this));
-	});
-
-	/**
-	 * @deprecated Since version 1.120
-	 */
-	QUnit.test("GenericTile focus rendered - HCB", function(assert) {
-		var done = assert.async();
-		this.applyTheme("sap_hcb", async function() {
-			this.oGenericTile.invalidate();
-			await nextUIUpdate();
-			assert.ok(document.getElementById("generic-tile-hover-overlay"), "Hover overlay div was rendered successfully");
-			assert.ok(document.getElementById("generic-tile-focus"), "Focus div was rendered successfully");
-			done();
-		});
-	});
-
-	/**
-	 * @deprecated Since version 1.120
-	 */
-	QUnit.test("GenericTile border rendered - Belize", function(assert) {
-		var done = assert.async();
-		this.applyTheme("sap_belize", async function() {
-			this.oGenericTile.invalidate();
-			await nextUIUpdate();
-			var $tile = this.oGenericTile.$();
-			// the complete property name should be written for test in 'ie' and 'firefox'
-			assert.equal($tile.css("border-bottom-style"), "solid", "Border bottom style was rendered successfully");
-			assert.equal($tile.css("border-top-style"), "solid", "Border top style was rendered successfully");
-			assert.equal($tile.css("border-right-style"), "solid", "Border right style was rendered successfully");
-			assert.equal($tile.css("border-left-style"), "solid", "Border left style was rendered successfully");
-			done();
-		}.bind(this));
-	});
-
-	/**
-	 * @deprecated Since version 1.120
-	 */
-	QUnit.test("GenericTile focus and hover overlay rendered - Belize", function(assert) {
-		var done = assert.async();
-		this.applyTheme("sap_belize", async function() {
-			this.oGenericTile.invalidate();
-			await nextUIUpdate();
-			assert.ok(document.getElementById("generic-tile-focus"), "Focus div was rendered successfully");
-			assert.ok(jQuery("#generic-tile-hover-overlay").hasClass("sapMGTWithoutImageHoverOverlay"), "Hover overlay was rendered successfully");
-			assert.ok(!jQuery("#generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is not triggered");
-			this.oGenericTile.ontouchstart();
-			assert.ok(jQuery("#generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added");
-			this.oGenericTile.ontouchend();
-			assert.ok(!jQuery("#generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed");
-			done();
-		});
-	});
-
-	/**
-	 * @deprecated Since version 1.120
-	 */
-	QUnit.test("GenericTile focus and hover overlay rendered - Fiori 3", function(assert) {
-		var done = assert.async();
-		this.applyTheme("sap_fiori_3", async function() {
-			this.oGenericTile.invalidate();
-			await nextUIUpdate();
-			// hover overlay is used only in case of tiles with background image
-			assert.ok(document.getElementById("generic-tile-focus"), "Focus div was rendered successfully");
-			assert.ok(jQuery("#generic-tile-hover-overlay").hasClass("sapMGTWithoutImageHoverOverlay"), "Hover overlay was rendered successfully");
-			assert.ok(!jQuery("#generic-tile").hasClass("sapMGTPressActive"), "Press action is not triggered on GenericTile");
-			assert.ok(!jQuery("#generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is not triggered on GenericTile hover overlay");
-			this.oGenericTile.ontouchstart();
-			assert.ok(jQuery("#generic-tile").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added to GenericTile");
-			assert.ok(jQuery("#generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added to GenericTile hover overlay");
-			this.oGenericTile.ontouchend();
-			assert.ok(!jQuery("#generic-tile").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed from GenericTile");
-			assert.ok(!jQuery("#generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed from GenericTile hover overlay");
-			done();
-		});
-	});
-
-	/**
-	 * @deprecated Since version 1.120
-	 */
-	QUnit.test("GenericTile does not expand on focus - theme hcb", function(assert) {
-		var $tile = this.oGenericTile.$();
-
-		var done = assert.async();
-		this.applyTheme("sap_hcb", function() {
-
-			//get dimensions
-			var beforeWidth = $tile.outerWidth();
-			var beforeHeight = $tile.outerHeight();
-
-			//set :focus on tile
-			$tile.trigger("focus");
-			if (!this.checkFocus($tile)) {
-				assert.expect(0);
-				done();
-				return;
-			}
-
-			//get new dimensions
-			var afterWidth = $tile.outerWidth();
-			var afterHeight = $tile.outerHeight();
-
-			assert.strictEqual(afterWidth, beforeWidth, "Tile's outer width did not change");
-			assert.strictEqual(afterHeight, beforeHeight, "Tile's outer height did not change");
-
-			done();
-		});
-	});
-
-	/**
-		* @deprecated Since version 1.40
-	*/
-	QUnit.test("GenericTile does not expand on focus - theme bluecrystal", function(assert) {
-		var $tile = this.oGenericTile.$();
-
-		var done = assert.async();
-		this.applyTheme("sap_bluecrystal", function() {
-
-			//get dimensions
-			var beforeWidth = $tile.outerWidth();
-			var beforeHeight = $tile.outerHeight();
-
-			//set :focus on tile
-			$tile.trigger("focus");
-			if (!this.checkFocus($tile)) {
-				assert.expect(0);
-				done();
-				return;
-			}
-
-			//get new dimensions
-			var afterWidth = $tile.outerWidth();
-			var afterHeight = $tile.outerHeight();
-
-			assert.strictEqual(afterWidth, beforeWidth, "Tile's outer width did not change");
-			assert.strictEqual(afterHeight, beforeHeight, "Tile's outer height did not change");
-
-			done();
-		}.bind(this));
-	});
-
 	QUnit.test("Wrapping type is propagated to title", async function(assert) {
 		this.oGenericTile.setWrappingType(library.WrappingType.Hyphenated);
 		await nextUIUpdate();
@@ -627,33 +388,33 @@ sap.ui.define([
 		//Style Classes for Generic Tile should be removed from hover Overlay, once Drag is completed.
 		assert.notOk(this.oGenericTile.hasStyleClass("sapMGTPressActive"), "Press state from Generic Tile is removed.");
 	});
-        QUnit.module("Small phone Tile tests", {
-        beforeEach: async function() {
-            this.oGenericTile = new GenericTile({
-                header: "This is a header",
-                subheader: "This is a subheader",
-                sizeBehavior: TileSizeBehavior.Small
-            });
-            this.oParent = new FlexBox({
-                width: "100px",
-                items: [this.oGenericTile]
-            }).placeAt("qunit-fixture");
-            this.oParent.addStyleClass('sapUshellSection');
-            await nextUIUpdate();
-        },
-        afterEach: function() {
-            this.oGenericTile.destroy();
-            this.oGenericTile = null;
-            this.oParent.destroy();
-            this.oParent = null;
-        }
-    });
-    QUnit.test("Tiles in small phone with small behavior are working properly", async function(assert) {
+	QUnit.module("Small phone Tile tests", {
+	beforeEach: async function() {
+		this.oGenericTile = new GenericTile({
+			header: "This is a header",
+			subheader: "This is a subheader",
+			sizeBehavior: TileSizeBehavior.Small
+		});
+		this.oParent = new FlexBox({
+			width: "100px",
+			items: [this.oGenericTile]
+		}).placeAt("qunit-fixture");
+		this.oParent.addStyleClass('sapUshellSection');
+		await nextUIUpdate();
+	},
+	afterEach: function() {
+		this.oGenericTile.destroy();
+		this.oGenericTile = null;
+		this.oParent.destroy();
+		this.oParent = null;
+	}
+});
+	QUnit.test("Tiles in small phone with small behavior are working properly", async function(assert) {
         this.oGenericTile.setFrameType(FrameType.TwoByOne);
         await nextUIUpdate();
         assert.equal(this.oGenericTile.$().css('width'), '304px', 'Rendering successful');
     });
-    QUnit.test("Tiles in small phone with small behavior are working properly", async function(assert) {
+	QUnit.test("Tiles in small phone with small behavior are working properly", async function(assert) {
         this.oGenericTile.setFrameType(FrameType.TwoByHalf);
         await nextUIUpdate();
         assert.equal(this.oGenericTile.$().css('width'), '304px', 'Rendering successful');
@@ -2797,7 +2558,7 @@ sap.ui.define([
 			};
 			this.hasAttribute = function(sAttribute, oCurrentObject) {
 				var sAttributeValue = oCurrentObject.$().attr(sAttribute);
-				if (typeof sAttributeValue !== typeof undefined && sAttributeValue !== false) {
+				if (typeof sAttributeValue !== "undefined" && sAttributeValue !== false) {
 					return true;
 				} else {
 					return false;
@@ -3212,291 +2973,291 @@ sap.ui.define([
 
 	});
 
-QUnit.test("Check the max line of header if footer exists", async function(assert) {
-	this.oGenericTile.setFrameType("TwoByHalf");
-	this.oGenericTile.setSubheader("");
-	var tileContent =  new TileContent("tile-cont-two-by-half", {
-		unit: "EUR",
-		footer: "Current Quarter"
+	QUnit.test("Check the max line of header if footer exists", async function(assert) {
+		this.oGenericTile.setFrameType("TwoByHalf");
+		this.oGenericTile.setSubheader("");
+		var tileContent =  new TileContent("tile-cont-two-by-half", {
+			unit: "EUR",
+			footer: "Current Quarter"
+		});
+		this.oGenericTile.destroyTileContent();
+		this.oGenericTile.addTileContent(tileContent);
+		await nextUIUpdate();
+		var check = document.getElementById("tile-cont-two-by-half-footer-text");
+		if (check != null) {
+			assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 2, "The header has 2 lines when footer is available");
+		}
 	});
-	this.oGenericTile.destroyTileContent();
-	this.oGenericTile.addTileContent(tileContent);
-	await nextUIUpdate();
-	var check = document.getElementById("tile-cont-two-by-half-footer-text");
-	if (check != null) {
-		assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 2, "The header has 2 lines when footer is available");
-	}
-});
 
-QUnit.test("Check for the visibilty of content in header mode in 4*1 tile", async function(assert) {
-	this.oGenericTile.setFrameType("TwoByHalf");
-	await nextUIUpdate();
-	//to check if the content area is visible.
-	var oVisibilityCheck = this.spy(this.oGenericTile, "_changeTileContentContentVisibility");
-	this.oGenericTile.setMode(GenericTileMode.HeaderMode);
-	await nextUIUpdate();
-	assert.ok(oVisibilityCheck.calledWith(false), "The visibility is changed to not visible");
-});
-
-QUnit.test("Check the padding classes of the 4*1 tile", async function(assert) {
-	this.oGenericTile.setFrameType("TwoByHalf");
-	await nextUIUpdate();
-	var check = this.oGenericTile.$().find(".sapMGTHdrContent").length == 1;
-	assert.ok(check,"true","all ok");
-	var height = getComputedStyle(this.oGenericTile.getDomRef().querySelector(".sapMGTHdrContent")).height;
-	assert.ok(height,20,"all ok");
-});
-
-QUnit.test("Content Proritisation - No Content rendered in OneByHalf in case of image", async function(assert) {
-	this.oGenericTile.setFrameType("OneByHalf");
-	var tileContent =  new TileContent("tile-cont-two-by-half", {
-		unit: "EUR",
-		footer: "Current Quarter",
-		content: new ImageContent('image-cnt', {
-			src: IMAGE_PATH + "headerImg1.png",
-			description: "image descriptions ..."
-		})
+	QUnit.test("Check for the visibilty of content in header mode in 4*1 tile", async function(assert) {
+		this.oGenericTile.setFrameType("TwoByHalf");
+		await nextUIUpdate();
+		//to check if the content area is visible.
+		var oVisibilityCheck = this.spy(this.oGenericTile, "_changeTileContentContentVisibility");
+		this.oGenericTile.setMode(GenericTileMode.HeaderMode);
+		await nextUIUpdate();
+		assert.ok(oVisibilityCheck.calledWith(false), "The visibility is changed to not visible");
 	});
-	this.oGenericTile.destroyTileContent();
-	this.oGenericTile.addTileContent(tileContent);
-	await nextUIUpdate();
-	var tileContentChildren = this.oGenericTile.getTileContent()[0].getDomRef().children.length;
-	assert.equal(tileContentChildren, 0);
-	assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
-	assert.notEqual(this.oGenericTile._oSubTitle.getDomRef(), null);
-	assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, false);
-});
 
-QUnit.test("Content Proritisation - Numeric content rendered in OneByHalf ", async function(assert) {
-	this.oGenericTile.setFrameType("OneByHalf");
-	await nextUIUpdate();
-	assert.notEqual(this.oGenericTile.getTileContent()[0].getDomRef(), null);
-	assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
-	assert.equal(this.oGenericTile._oSubTitle.getDomRef(), null);
-	assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, false);
-});
-
-QUnit.test("Content Proritisation - Header has max one line when Numeric Content is present ", async function(assert) {
-	this.oGenericTile.setFrameType("OneByHalf");
-	this.oGenericTile.setHeader("this is a very long header which should exceed two lines so we can test it");
-	this.oGenericTile.setSubheader("this is a very long subheader which should exceed two lines so we can test it");
-	await nextUIUpdate();
-	assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 1, "The header has 1 lines");
-});
-
-
-QUnit.test("Content Proritisation - Header has max two lines no Numeric Content is present ", async function(assert) {
-	this.oGenericTile.setFrameType("OneByHalf");
-	var tileContent =  new TileContent("tile-cont-two-by-half", {
-		unit: "EUR",
-		footer: "Current Quarter",
-		content: new ImageContent('image-cnt', {
-			src: IMAGE_PATH + "headerImg1.png",
-			description: "image descriptions ..."
-		})
+	QUnit.test("Check the padding classes of the 4*1 tile", async function(assert) {
+		this.oGenericTile.setFrameType("TwoByHalf");
+		await nextUIUpdate();
+		var check = this.oGenericTile.$().find(".sapMGTHdrContent").length == 1;
+		assert.ok(check,"true","all ok");
+		var height = getComputedStyle(this.oGenericTile.getDomRef().querySelector(".sapMGTHdrContent")).height;
+		assert.ok(height,20,"all ok");
 	});
-	this.oGenericTile.destroyTileContent();
-	this.oGenericTile.addTileContent(tileContent);
-	this.oGenericTile.setHeader("this is a very long header which should exceed two lines so we can test it");
-	this.oGenericTile.setSubheader("this is a very long subheader which should exceed two lines so we can test it");
-	await nextUIUpdate();
-	assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 2, "The header has 2 lines");
-});
 
-QUnit.test("Content Proritisation -  Content rendered in TwoByHalf", async function(assert) {
-	this.oGenericTile.setFrameType("TwoByHalf");
-	await nextUIUpdate();
-	assert.notEqual(this.oGenericTile.getTileContent()[0].getDomRef(), null);
-	assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
-	assert.equal(this.oGenericTile._oSubTitle.getDomRef(), null);
-	assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, false);
-});
-
-QUnit.test("Content Proritisation -  Header and subtitle rendered in TwoByHalf", async function(assert) {
-	this.oGenericTile.setFrameType("TwoByHalf");
-	var tileContent =  new TileContent("tile-cont-two-by-half", {
-		unit: "EUR",
-		footer: "Current Quarter"
+	QUnit.test("Content Proritisation - No Content rendered in OneByHalf in case of image", async function(assert) {
+		this.oGenericTile.setFrameType("OneByHalf");
+		var tileContent =  new TileContent("tile-cont-two-by-half", {
+			unit: "EUR",
+			footer: "Current Quarter",
+			content: new ImageContent('image-cnt', {
+				src: IMAGE_PATH + "headerImg1.png",
+				description: "image descriptions ..."
+			})
+		});
+		this.oGenericTile.destroyTileContent();
+		this.oGenericTile.addTileContent(tileContent);
+		await nextUIUpdate();
+		var tileContentChildren = this.oGenericTile.getTileContent()[0].getDomRef().children.length;
+		assert.equal(tileContentChildren, 0);
+		assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
+		assert.notEqual(this.oGenericTile._oSubTitle.getDomRef(), null);
+		assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, false);
 	});
-	this.oGenericTile.destroyTileContent();
-	this.oGenericTile.addTileContent(tileContent);
-	await nextUIUpdate();
-	assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
-	assert.notEqual(this.oGenericTile._oSubTitle.getDomRef(), null);
-	assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, false);
-});
 
-QUnit.test("Content Proritisation -  Footer rendered in TwoByHalf", async function(assert) {
-	this.oGenericTile.setFrameType("TwoByHalf");
-	var tileContent =  new TileContent("tile-cont-two-by-half", {
-		unit: "EUR",
-		footer: "Current Quarter"
+	QUnit.test("Content Proritisation - Numeric content rendered in OneByHalf ", async function(assert) {
+		this.oGenericTile.setFrameType("OneByHalf");
+		await nextUIUpdate();
+		assert.notEqual(this.oGenericTile.getTileContent()[0].getDomRef(), null);
+		assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
+		assert.equal(this.oGenericTile._oSubTitle.getDomRef(), null);
+		assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, false);
 	});
-	this.oGenericTile.destroyTileContent();
-	this.oGenericTile.addTileContent(tileContent);
-	this.oGenericTile.setSubheader(null);
-	await nextUIUpdate();
-	assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
-	assert.equal(this.oGenericTile._oSubTitle.getDomRef(), null);
-	assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, true);
-});
 
-QUnit.test("Content Proritisation -  Subheader rendered in OneByHalf", async function(assert) {
-	this.oGenericTile.setFrameType("OneByHalf");
-	var tileContent =  new TileContent("tile-cont-one-by-half", {
-		footer: "Current Quarter"
+	QUnit.test("Content Proritisation - Header has max one line when Numeric Content is present ", async function(assert) {
+		this.oGenericTile.setFrameType("OneByHalf");
+		this.oGenericTile.setHeader("this is a very long header which should exceed two lines so we can test it");
+		this.oGenericTile.setSubheader("this is a very long subheader which should exceed two lines so we can test it");
+		await nextUIUpdate();
+		assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 1, "The header has 1 lines");
 	});
-	this.oGenericTile.destroyTileContent();
-	this.oGenericTile.addTileContent(tileContent);
-	this.oGenericTile.setSubheader("Subtitle Launch Tile");
-	await nextUIUpdate();
-	assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
-	assert.notEqual(this.oGenericTile._oSubTitle.getDomRef(), null);
-	assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, false);
-});
 
-QUnit.test("Content Proritisation -  Footer rendered in OneByHalf", async function(assert) {
-	this.oGenericTile.setFrameType("OneByHalf");
-	var tileContent =  new TileContent("tile-cont-one-by-half", {
-		unit: "EUR",
-		footer: "Current Quarter"
+
+	QUnit.test("Content Proritisation - Header has max two lines no Numeric Content is present ", async function(assert) {
+		this.oGenericTile.setFrameType("OneByHalf");
+		var tileContent =  new TileContent("tile-cont-two-by-half", {
+			unit: "EUR",
+			footer: "Current Quarter",
+			content: new ImageContent('image-cnt', {
+				src: IMAGE_PATH + "headerImg1.png",
+				description: "image descriptions ..."
+			})
+		});
+		this.oGenericTile.destroyTileContent();
+		this.oGenericTile.addTileContent(tileContent);
+		this.oGenericTile.setHeader("this is a very long header which should exceed two lines so we can test it");
+		this.oGenericTile.setSubheader("this is a very long subheader which should exceed two lines so we can test it");
+		await nextUIUpdate();
+		assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 2, "The header has 2 lines");
 	});
-	this.oGenericTile.destroyTileContent();
-	this.oGenericTile.addTileContent(tileContent);
-	this.oGenericTile.setSubheader(null);
-	await nextUIUpdate();
-	assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
-	assert.equal(this.oGenericTile._oSubTitle.getDomRef(), null);
-	assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, true);
-});
 
-QUnit.test("Height of the system Info Container for OneByOne tile", async function(assert){
+	QUnit.test("Content Proritisation -  Content rendered in TwoByHalf", async function(assert) {
+		this.oGenericTile.setFrameType("TwoByHalf");
+		await nextUIUpdate();
+		assert.notEqual(this.oGenericTile.getTileContent()[0].getDomRef(), null);
+		assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
+		assert.equal(this.oGenericTile._oSubTitle.getDomRef(), null);
+		assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, false);
+	});
+
+	QUnit.test("Content Proritisation -  Header and subtitle rendered in TwoByHalf", async function(assert) {
+		this.oGenericTile.setFrameType("TwoByHalf");
+		var tileContent =  new TileContent("tile-cont-two-by-half", {
+			unit: "EUR",
+			footer: "Current Quarter"
+		});
+		this.oGenericTile.destroyTileContent();
+		this.oGenericTile.addTileContent(tileContent);
+		await nextUIUpdate();
+		assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
+		assert.notEqual(this.oGenericTile._oSubTitle.getDomRef(), null);
+		assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, false);
+	});
+
+	QUnit.test("Content Proritisation -  Footer rendered in TwoByHalf", async function(assert) {
+		this.oGenericTile.setFrameType("TwoByHalf");
+		var tileContent =  new TileContent("tile-cont-two-by-half", {
+			unit: "EUR",
+			footer: "Current Quarter"
+		});
+		this.oGenericTile.destroyTileContent();
+		this.oGenericTile.addTileContent(tileContent);
+		this.oGenericTile.setSubheader(null);
+		await nextUIUpdate();
+		assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
+		assert.equal(this.oGenericTile._oSubTitle.getDomRef(), null);
+		assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, true);
+	});
+
+	QUnit.test("Content Proritisation -  Subheader rendered in OneByHalf", async function(assert) {
+		this.oGenericTile.setFrameType("OneByHalf");
+		var tileContent =  new TileContent("tile-cont-one-by-half", {
+			footer: "Current Quarter"
+		});
+		this.oGenericTile.destroyTileContent();
+		this.oGenericTile.addTileContent(tileContent);
+		this.oGenericTile.setSubheader("Subtitle Launch Tile");
+		await nextUIUpdate();
+		assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
+		assert.notEqual(this.oGenericTile._oSubTitle.getDomRef(), null);
+		assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, false);
+	});
+
+	QUnit.test("Content Proritisation -  Footer rendered in OneByHalf", async function(assert) {
+		this.oGenericTile.setFrameType("OneByHalf");
+		var tileContent =  new TileContent("tile-cont-one-by-half", {
+			unit: "EUR",
+			footer: "Current Quarter"
+		});
+		this.oGenericTile.destroyTileContent();
+		this.oGenericTile.addTileContent(tileContent);
+		this.oGenericTile.setSubheader(null);
+		await nextUIUpdate();
+		assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
+		assert.equal(this.oGenericTile._oSubTitle.getDomRef(), null);
+		assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, true);
+	});
+
+	QUnit.test("Height of the system Info Container for OneByOne tile", async function(assert){
+			this.oGenericTile.setFrameType("OneByOne");
+			this.oGenericTile.setAppShortcut("app shortcut");
+			this.oGenericTile.setSystemInfo("system info");
+			await nextUIUpdate();
+			assert.equal(this.oGenericTile.$().find(".sapMGTTInfoContainer").css("height"),"44px","Sufficient Height applied");
+	});
+
+	QUnit.test("Height of the system Info Container for TwoByOne tile", async function(assert){
+			this.oGenericTile.setFrameType("TwoByOne");
+			this.oGenericTile.setAppShortcut("app shortcut");
+			this.oGenericTile.setSystemInfo("system info");
+			await nextUIUpdate();
+			assert.equal(this.oGenericTile.$().find(".sapMGTTInfo").css("margin-bottom"),"11.2px","Sufficient Height applied");
+	});
+
+	QUnit.test("App shortcut and System info only rendered in OneByOne", async function(assert) {
 		this.oGenericTile.setFrameType("OneByOne");
 		this.oGenericTile.setAppShortcut("app shortcut");
 		this.oGenericTile.setSystemInfo("system info");
 		await nextUIUpdate();
-		assert.equal(this.oGenericTile.$().find(".sapMGTTInfoContainer").css("height"),"44px","Sufficient Height applied");
-});
+		assert.notEqual(this.oGenericTile._oAppShortcut.getDomRef(), null);
+		assert.notEqual(this.oGenericTile._oSystemInfo.getDomRef(), null);
 
-QUnit.test("Height of the system Info Container for TwoByOne tile", async function(assert){
+		this.oGenericTile.setFrameType("OneByHalf");
+		await nextUIUpdate();
+
+		assert.equal(this.oGenericTile._oAppShortcut.getDomRef(), null);
+		assert.equal(this.oGenericTile._oSystemInfo.getDomRef(), null);
+	});
+
+	QUnit.test("App shortcut and System info only rendered in TwoByOne", async function(assert) {
 		this.oGenericTile.setFrameType("TwoByOne");
 		this.oGenericTile.setAppShortcut("app shortcut");
 		this.oGenericTile.setSystemInfo("system info");
 		await nextUIUpdate();
-		assert.equal(this.oGenericTile.$().find(".sapMGTTInfo").css("margin-bottom"),"11.2px","Sufficient Height applied");
-});
-
-QUnit.test("App shortcut and System info only rendered in OneByOne", async function(assert) {
-	this.oGenericTile.setFrameType("OneByOne");
-	this.oGenericTile.setAppShortcut("app shortcut");
-	this.oGenericTile.setSystemInfo("system info");
-	await nextUIUpdate();
-	assert.notEqual(this.oGenericTile._oAppShortcut.getDomRef(), null);
-	assert.notEqual(this.oGenericTile._oSystemInfo.getDomRef(), null);
-
-	this.oGenericTile.setFrameType("OneByHalf");
-	await nextUIUpdate();
-
-	assert.equal(this.oGenericTile._oAppShortcut.getDomRef(), null);
-	assert.equal(this.oGenericTile._oSystemInfo.getDomRef(), null);
-});
-
-QUnit.test("App shortcut and System info only rendered in TwoByOne", async function(assert) {
-	this.oGenericTile.setFrameType("TwoByOne");
-	this.oGenericTile.setAppShortcut("app shortcut");
-	this.oGenericTile.setSystemInfo("system info");
-	await nextUIUpdate();
-	assert.equal(this.oGenericTile.getAppShortcut(), "app shortcut");
-	assert.equal(this.oGenericTile.getSystemInfo(),"system info" );
-});
-QUnit.test("App shortcut and System info only rendered in TwoByHalf", async function(assert) {
-	this.oGenericTile.setFrameType("TwoByHalf");
-	this.oGenericTile.setAppShortcut("app shortcut");
-	this.oGenericTile.setSystemInfo("system info");
-	await nextUIUpdate();
-	assert.equal(this.oGenericTile.getAppShortcut(), "app shortcut");
-	assert.equal(this.oGenericTile.getSystemInfo(),"system info" );
-});
-QUnit.test("App shortcut and System info only rendered in Linemode", async function(assert) {
-	this.oGenericTile.setMode(GenericTileMode.LineMode);
-	this.oGenericTile.setAppShortcut("app shortcut");
-	this.oGenericTile.setSystemInfo("system info");
-	await nextUIUpdate();
-	assert.equal(this.oGenericTile.getAppShortcut(), "app shortcut");
-	assert.equal(this.oGenericTile.getSystemInfo(),"system info" );
-});
-
-QUnit.test("Check the padding classes of the 2*1 small tile", async function(assert) {
-	this.oGenericTile.setFrameType("OneByHalf");
-	await nextUIUpdate();
-	var check = this.oGenericTile.$().find(".sapMGTHdrContent").length == 1;
-	assert.ok(check,"true","all ok");
-	var height = getComputedStyle(this.oGenericTile.getDomRef().querySelector(".sapMGTHdrContent")).height;
-	assert.ok(height,28,"all ok");
-});
-
-QUnit.test("Check the padding classes of the 4*1 small tile", async function(assert) {
-	this.oGenericTile.setFrameType("TwoByHalf");
-	await nextUIUpdate();
-	var check = this.oGenericTile.$().find(".sapMGTHdrContent").length == 1;
-	assert.ok(check,"true","all ok");
-	var height = getComputedStyle(this.oGenericTile.getDomRef().querySelector(".sapMGTHdrContent")).height;
-	assert.ok(height,28,"all ok");
-});
-
-QUnit.test("Header has max two lines if subheader exists for 4*1 tile", async function(assert) {
-	this.oGenericTile.setFrameType("TwoByHalf");
-	var tileContent =  new TileContent("tile-cont-one-by-half", {
-		footer: "Current Quarter"
+		assert.equal(this.oGenericTile.getAppShortcut(), "app shortcut");
+		assert.equal(this.oGenericTile.getSystemInfo(),"system info" );
 	});
-	this.oGenericTile.destroyTileContent();
-	this.oGenericTile.addTileContent(tileContent);
-	this.oGenericTile.setSubheader("Subtitle Launch Tile");
-	this.oGenericTile.setHeader("this is a very long header which should exceed two lines so we can test it");
-	await nextUIUpdate();
-	assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 2, "The header has 2 lines");
-});
-
-QUnit.test("Header has max one lines if content aggregation exists for 4*1 tile", async function(assert) {
-	this.oGenericTile.setFrameType("TwoByHalf");
-	var tileContent =  new TileContent("tile-cont-one-by-half", {
-		unit: "EUR",
-		footer: "Current Quarter",
-		content: new NumericContent("numeric-content", {
-			state: LoadState.Loaded,
-			scale: "M",
-			indicator: DeviationIndicator.Up,
-			truncateValueTo: 4,
-			value: 20,
-			nullifyValue: true,
-			formatterValue: false,
-			valueColor: ValueColor.Good,
-			icon: "sap-icon://customer-financial-fact-sheet"
-		})
+	QUnit.test("App shortcut and System info only rendered in TwoByHalf", async function(assert) {
+		this.oGenericTile.setFrameType("TwoByHalf");
+		this.oGenericTile.setAppShortcut("app shortcut");
+		this.oGenericTile.setSystemInfo("system info");
+		await nextUIUpdate();
+		assert.equal(this.oGenericTile.getAppShortcut(), "app shortcut");
+		assert.equal(this.oGenericTile.getSystemInfo(),"system info" );
 	});
-	this.oGenericTile.destroyTileContent();
-	this.oGenericTile.addTileContent(tileContent);
-	this.oGenericTile.setHeader("this is a very long header which should exceed one line so we can test it");
-	await nextUIUpdate();
-	assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 1, "The header has 1 line");
-});
-
-QUnit.test("Check the padding classes of the 2*1 tile", async function(assert) {
-	this.oGenericTile.setFrameType("OneByHalf");
-	await nextUIUpdate();
-	var check = this.oGenericTile.$().find(".sapMGTHdrContent").length == 1;
-	assert.ok(check,"true","all ok");
-});
-
-QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", async function(assert) {
-	this.oGenericTile.setFrameType("OneByHalf");
-	await nextUIUpdate();
-	//to check if the content area is visible.
-	var oVisibilitySpy = this.spy(this.oGenericTile, "_changeTileContentContentVisibility");
-	this.oGenericTile.setMode(GenericTileMode.HeaderMode);
-	await nextUIUpdate();
-	assert.ok(oVisibilitySpy.calledWith(false), "The visibility is changed to not visible");
+	QUnit.test("App shortcut and System info only rendered in Linemode", async function(assert) {
+		this.oGenericTile.setMode(GenericTileMode.LineMode);
+		this.oGenericTile.setAppShortcut("app shortcut");
+		this.oGenericTile.setSystemInfo("system info");
+		await nextUIUpdate();
+		assert.equal(this.oGenericTile.getAppShortcut(), "app shortcut");
+		assert.equal(this.oGenericTile.getSystemInfo(),"system info" );
 	});
+
+	QUnit.test("Check the padding classes of the 2*1 small tile", async function(assert) {
+		this.oGenericTile.setFrameType("OneByHalf");
+		await nextUIUpdate();
+		var check = this.oGenericTile.$().find(".sapMGTHdrContent").length == 1;
+		assert.ok(check,"true","all ok");
+		var height = getComputedStyle(this.oGenericTile.getDomRef().querySelector(".sapMGTHdrContent")).height;
+		assert.ok(height,28,"all ok");
+	});
+
+	QUnit.test("Check the padding classes of the 4*1 small tile", async function(assert) {
+		this.oGenericTile.setFrameType("TwoByHalf");
+		await nextUIUpdate();
+		var check = this.oGenericTile.$().find(".sapMGTHdrContent").length == 1;
+		assert.ok(check,"true","all ok");
+		var height = getComputedStyle(this.oGenericTile.getDomRef().querySelector(".sapMGTHdrContent")).height;
+		assert.ok(height,28,"all ok");
+	});
+
+	QUnit.test("Header has max two lines if subheader exists for 4*1 tile", async function(assert) {
+		this.oGenericTile.setFrameType("TwoByHalf");
+		var tileContent =  new TileContent("tile-cont-one-by-half", {
+			footer: "Current Quarter"
+		});
+		this.oGenericTile.destroyTileContent();
+		this.oGenericTile.addTileContent(tileContent);
+		this.oGenericTile.setSubheader("Subtitle Launch Tile");
+		this.oGenericTile.setHeader("this is a very long header which should exceed two lines so we can test it");
+		await nextUIUpdate();
+		assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 2, "The header has 2 lines");
+	});
+
+	QUnit.test("Header has max one lines if content aggregation exists for 4*1 tile", async function(assert) {
+		this.oGenericTile.setFrameType("TwoByHalf");
+		var tileContent =  new TileContent("tile-cont-one-by-half", {
+			unit: "EUR",
+			footer: "Current Quarter",
+			content: new NumericContent("numeric-content", {
+				state: LoadState.Loaded,
+				scale: "M",
+				indicator: DeviationIndicator.Up,
+				truncateValueTo: 4,
+				value: 20,
+				nullifyValue: true,
+				formatterValue: false,
+				valueColor: ValueColor.Good,
+				icon: "sap-icon://customer-financial-fact-sheet"
+			})
+		});
+		this.oGenericTile.destroyTileContent();
+		this.oGenericTile.addTileContent(tileContent);
+		this.oGenericTile.setHeader("this is a very long header which should exceed one line so we can test it");
+		await nextUIUpdate();
+		assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 1, "The header has 1 line");
+	});
+
+	QUnit.test("Check the padding classes of the 2*1 tile", async function(assert) {
+		this.oGenericTile.setFrameType("OneByHalf");
+		await nextUIUpdate();
+		var check = this.oGenericTile.$().find(".sapMGTHdrContent").length == 1;
+		assert.ok(check,"true","all ok");
+	});
+
+	QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", async function(assert) {
+		this.oGenericTile.setFrameType("OneByHalf");
+		await nextUIUpdate();
+		//to check if the content area is visible.
+		var oVisibilitySpy = this.spy(this.oGenericTile, "_changeTileContentContentVisibility");
+		this.oGenericTile.setMode(GenericTileMode.HeaderMode);
+		await nextUIUpdate();
+		assert.ok(oVisibilitySpy.calledWith(false), "The visibility is changed to not visible");
+		});
 
 	QUnit.module("GenericTile Overlay", {
 		beforeEach: async function() {
@@ -3758,7 +3519,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", async f
 
 	QUnit.test("Priority Changes for TileContent", async function(assert) {
 		var oTileContent = this.oGenericTile.getTileContent()[0];
-		var sPriority = oCore.getLibraryResourceBundle("sap.m").getText("TEXT_CONTENT_PRIORITY");
+		var sPriority = Library.getResourceBundleFor("sap.m").getText("TEXT_CONTENT_PRIORITY");
 
 		//Switch to None Priority
 		oTileContent.setPriority(Priority.None);
@@ -4455,62 +4216,6 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", async f
 
 	QUnit.test("GenericTile - Failed/TwoByOne", async function(assert) {
 		await this.fnCreateGenericTile(LoadState.Failed, LoadState.Loaded, FrameType.TwoByOne);
-		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
-	});
-
-	/**
-	 * @deprecated since 1.48.0, FrameType.TwoThird is deprecated
-	 */
-	QUnit.test("GenericTile - Loaded/TwoThirds , TileContent - Loaded", async function(assert) {
-		await this.fnCreateGenericTile(LoadState.Loaded, LoadState.Loaded, FrameType.TwoThirds);
-		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
-	});
-
-	/**
-	 * @deprecated since 1.48.0, FrameType.TwoThird is deprecated
-	 */
-	QUnit.test("GenericTile - Loaded/TwoThirds , TileContent - Loading", async function(assert) {
-		await this.fnCreateGenericTile(LoadState.Loaded, LoadState.Loading, FrameType.TwoThirds);
-		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
-	});
-
-	/**
-	 * @deprecated since 1.48.0, FrameType.TwoThird is deprecated
-	 */
-	QUnit.test("GenericTile - Loaded/TwoThirds , TileContent - Failed", async function(assert) {
-		await this.fnCreateGenericTile(LoadState.Loaded, LoadState.Failed, FrameType.TwoThirds);
-		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
-	});
-
-	/**
-	 * @deprecated since 1.48.0, FrameType.TwoThird is deprecated
-	 */
-	QUnit.test("GenericTile - Loaded/TwoThirds , TileContent - Disabled", async function(assert) {
-		await this.fnCreateGenericTile(LoadState.Loaded, LoadState.Disabled, FrameType.TwoThirds);
-		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
-	});
-
-	/**
-	 * @deprecated since 1.48.0, FrameType.TwoThird is deprecated
-	 */
-	QUnit.test("GenericTile - Loading/TwoThirds", async function(assert) {
-		await this.fnCreateGenericTile(LoadState.Loading, LoadState.Loaded, FrameType.TwoThirds);
-		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
-	});
-
-	/**
-	 * @deprecated since 1.48.0, FrameType.TwoThird is deprecated
-	 */
-	QUnit.test("GenericTile - Disabled/TwoThirds", async function(assert) {
-		await this.fnCreateGenericTile(LoadState.Disabled, LoadState.Loaded, FrameType.TwoThirds);
-		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
-	});
-
-	/**
-	 * @deprecated since 1.48.0, FrameType.TwoThird is deprecated
-	 */
-	QUnit.test("GenericTile - Failed/TwoThirds", async function(assert) {
-		await this.fnCreateGenericTile(LoadState.Failed, LoadState.Loaded, FrameType.TwoThirds);
 		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
 	});
 
@@ -5534,7 +5239,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", async f
 			});
 
 			this.oScrollContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oScrollContainer.destroy();
@@ -5611,7 +5316,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", async f
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
 	function isContained(aContainers, oRef) {
 		for (var i = 0; i < aContainers.length; i++) {
-			if (aContainers[i] === oRef || jQuery.contains(aContainers[i], oRef)) {
+			if (aContainers[i] === oRef || aContainers[i] !== oRef && aContainers[i].contains(oRef)) {
 				return true;
 			}
 		}
@@ -5624,9 +5329,11 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", async f
 
 		if (bNext) {
 			$All = jQuery.merge($Ref.find("*"), jQuery.merge($Ref.nextAll(), $Ref.parents().nextAll()));
+			// jQuery custom selectors ":sapTabbable"
 			$Tabbables = $All.find(':sapTabbable').addBack(':sapTabbable');
 		} else {
 			$All = jQuery.merge($Ref.prevAll(), $Ref.parents().prevAll());
+			// jQuery custom selectors ":sapTabbable"
 			$Tabbables = jQuery.merge($Ref.parents(':sapTabbable'), $All.find(':sapTabbable').addBack(':sapTabbable'));
 		}
 
@@ -5846,5 +5553,4 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", async f
 			fnDone();
 		}
 	});
-
 });

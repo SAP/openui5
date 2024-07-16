@@ -4,16 +4,16 @@ sap.ui.define([
 	"sap/m/SelectDialog",
 	"sap/ui/model/Filter",
 	"sap/m/StandardListItem",
-	"sap/ui/core/Core",
 	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"test-resources/sap/m/qunit/localService/mockserver"
 ],
 	function(
 		SelectDialog,
 		Filter,
 		StandardListItem,
-		Core,
 		ODataModel,
+		nextUIUpdate,
 		mockserver
 	) {
 		"use strict";
@@ -70,7 +70,7 @@ sap.ui.define([
 					} else {
 						that.oSelectDialog.getItems()[0].setSelected(true);
 						that.oSelectDialog._getOkButton().firePress();
-						Core.applyChanges();
+						nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 					}
 				});
 

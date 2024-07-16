@@ -1,0 +1,68 @@
+.progressiveView {
+	padding: 1rem;
+	box-sizing: border-box;
+}
+.sampleTileStandard {
+	width: 176px !important;
+	height: 176px !important;
+}
+.sampleTileFlat {
+	width: 176px !important;
+	height: 88px !important;
+}
+.sampleTileFlatWide {
+	width: 352px !important;
+	height: 88px !important;
+}
+.sampleTileStandardWide {
+	width: 352px !important;
+	height: 176px !important;
+}
+.sampleCompactHeader {
+	width: 300px;
+}
+.sampleSmallHeader {
+	width: 400px;
+}
+.sampleStandardHeader {
+	width: 500px;
+}
+.OuterContainer {
+	gap: 1rem;
+	margin: 1rem;
+}
+.WidthBar {
+	position: absolute;
+	width: 100%;
+	height: 4px;
+	border-bottom: 1px solid #e0e0e0;
+	margin-top: -20px;
+}
+.WidthBar>span {
+	margin-left: 6px;
+	margin-top: -7px;
+	position: absolute;
+	box-sizing: border-box;
+	display: block;
+	width: 4px;
+	height: 4px;
+	border: 5px solid transparent;
+	border-left-color: gray;
+	transform: rotate(-90deg);
+}
+.WidthBar>span:nth-child(1) {
+	left: 10.85rem;
+}
+.WidthBar>span:nth-child(2) {
+	left: 21.7rem;
+}
+.WidthBar>span:nth-child(3) {
+	left: 43.3rem;
+}
+.WidthBar>span:nth-child(4) {
+	left: 65.05rem;
+}
+.WidthText {
+	position: absolute;
+	margin-top: -15px;
+}

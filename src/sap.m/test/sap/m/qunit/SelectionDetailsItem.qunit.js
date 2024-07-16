@@ -5,8 +5,8 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Item",
 	"sap/m/library",
-	"sap/ui/core/Core"
-], function(SelectionDetailsItem, SelectionDetailsItemLine, Element, Item, library, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(SelectionDetailsItem, SelectionDetailsItemLine, Element, Item, library, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.m.SelectionDetailsActionLevel
@@ -95,7 +95,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oItem = new SelectionDetailsItem({
 				lines: [
 					new SelectionDetailsItemLine({
@@ -124,7 +124,7 @@ sap.ui.define([
 			});
 			this.oListItem = this.oItem._getListItem();
 			this.oListItem.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oListItem = null;
@@ -169,34 +169,34 @@ sap.ui.define([
 		assert.equal($ListItem.find(".sapMSDItemActions").length, 1, "The action buttons toolbar has been rendered");
 	});
 
-	QUnit.test("Internal SelectionDetailsListItem has correct type property for enabled navigation", function(assert) {
+	QUnit.test("Internal SelectionDetailsListItem has correct type property for enabled navigation", async function(assert) {
 		//Arrange
 		this.oItem.setEnableNav(true);
 		var oSetPropertySpy = sinon.spy(this.oListItem, "setType");
 		this.oListItem.invalidate();
 
 		//Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(oSetPropertySpy.withArgs(ListType.Navigation).callCount, 1, "ListItem's type property has been correctly updated.");
 	});
 
-	QUnit.test("Internal SelectionDetailsListItem has correct type property for disabled navigation", function(assert) {
+	QUnit.test("Internal SelectionDetailsListItem has correct type property for disabled navigation", async function(assert) {
 		//Arrange
 		this.oItem.setEnableNav(false);
 		var oSetPropertySpy = sinon.spy(this.oListItem, "setType");
 		this.oListItem.invalidate();
 
 		//Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(oSetPropertySpy.withArgs(ListType.Inactive).callCount, 1, "ListItem's type property has been correctly updated.");
 	});
 
 	QUnit.module("Item interaction", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oItem = new SelectionDetailsItem({
 				actions: [new Item("itemAction", {
 					text: "Action 1"
@@ -204,7 +204,7 @@ sap.ui.define([
 			});
 			this.oSelectionDetailsListItem = this.oItem._getListItem();
 			this.oSelectionDetailsListItem.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oSelectionDetailsListItem.destroy();

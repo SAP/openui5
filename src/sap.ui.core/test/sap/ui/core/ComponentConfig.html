@@ -1,29 +1,21 @@
 <!DOCTYPE HTML>
 <html>
-<head>
+<head><meta charset="utf-8">
 <title>Component - sap.ui.core</title>
 
 <script src="shared-config.js"></script>
 <script id="sap-ui-bootstrap"
-	src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_horizon"
-	data-sap-ui-libs="sap.ui.layout,sap.m">
+        src="../../../../resources/sap-ui-core.js"
+        data-sap-ui-libs="sap.ui.layout,sap.m"
+        data-sap-ui-async="true"
+        data-sap-ui-compat-version="edge"
+        data-sap-ui-on-init="module:local/ComponentConfig"
+        data-sap-ui-resource-roots='{"local":"./"}'
+>
 
 </script>
 
-<script>
 
-	sap.ui.localResources("samples");
-
-	var oComp = sap.ui.component({
-		name: "samples.components.config"
-	});
-	var oCompCont = new sap.ui.core.ComponentContainer({
-		component: oComp
-	});
-	oCompCont.placeAt("content");
-
-</script>
 
 </head>
 <body class="sapUiBody">

@@ -261,7 +261,6 @@ function(
 				 */
 				confirm : {
 					parameters : {
-
 						/**
 						 * The selected sort item.
 						 */
@@ -291,12 +290,6 @@ function(
 						 * The selected filters in an array of ViewSettingsItem.
 						 */
 						filterItems : {type : "sap.m.ViewSettingsItem[]"},
-
-						/**
-						 * The selected filter items in an object notation format: { key: boolean }. If a custom control filter was displayed (for example, the user clicked on the filter item), the value for its key is set to true to indicate that there has been an interaction with the control.
-						 * @deprecated as of version 1.42, replaced by <code>filterCompoundKeys</code> event
-						 */
-						filterKeys : {type : "object", deprecated: true},
 
 						/**
 						 * The selected filter items in an object notation format: { parentKey: { key: boolean, key2: boolean, ...  }, ...}. If a custom control filter was displayed (for example, the user clicked on the filter item), the value for its key is set to true to indicate that there has been an interaction with the control.
@@ -1364,10 +1357,6 @@ function(
 			groupItem : Element.getElementById(this._getSelectedGroupItem()),
 			groupDescending : this.getGroupDescending(),
 			presetFilterItem : Element.getElementById(this.getSelectedPresetFilterItem()),
-			/**
-			 * @deprecated as of version 1.42
-			 */
-			filterKeys : this.getSelectedFilterKeys(),
 			filterCompoundKeys: this.getSelectedFilterCompoundKeys(),
 			navPage : this._getNavContainer().getCurrentPage(),
 			contentPage : this._vContentPage,
@@ -1521,33 +1510,6 @@ function(
 	};
 
 	/**
-	 * @typedef {Object<string, boolean>} sap.m.SelectedFilterKeys
-	 * @description An object with item and sub-item keys
-	 * @public
-	 */
-
-	/**
-	 * Gets the selected filter object in format {key: boolean}.
-	 *
-	 * It can be used to create matching sorters and filters to apply the selected settings to the data.
-	 *
-	 * @public
-	 * @returns {sap.m.SelectedFilterKeys} An object with item and sub-item keys
-	 * @deprecated as of version 1.42, replaced by <code>getSelectedFilterCompoundKeys</code> method
-	 */
-	ViewSettingsDialog.prototype.getSelectedFilterKeys = function() {
-		var oSelectedFilterKeys = {},
-			aSelectedFilterItems = this.getSelectedFilterItems(), i = 0;
-
-		for (; i < aSelectedFilterItems.length; i++) {
-			oSelectedFilterKeys[aSelectedFilterItems[i].getKey()] = aSelectedFilterItems[i]
-				.getSelected();
-		}
-
-		return oSelectedFilterKeys;
-	};
-
-	/**
 	 * Gets the selected filter object in format { parent_key: { key: boolean, key2: boolean, ...}, ... }.
 	 *
 	 * @public
@@ -1587,81 +1549,6 @@ function(
 		}
 
 		return oSelectedFilterKeys;
-	};
-
-	/**
-	 * Sets the selected filter object in format {key: boolean}.
-	 * <b>Note:</b> Do not use duplicated item keys with this method.
-	 *
-	 * @public
-	 * @param {sap.m.SelectedFilterKeys} oSelectedFilterKeys
-	 *         A configuration object with filter item and sub item keys in the format: { key: boolean }.
-	 *         Setting boolean to true will set the filter to true, false or omitting an entry will set the filter to false.
-	 *         It can be used to set the dialog state based on presets.
-	 * @returns {this} Reference to <code>this</code> for method chaining
-	 * @deprecated as of version 1.42, replaced by <code>setSelectedFilterCompoundKeys</code> method
-	 */
-	ViewSettingsDialog.prototype.setSelectedFilterKeys = function(oSelectedFilterKeys) {
-		var aFilterItems    = this.getFilterItems(),
-			aSubFilterItems = {},
-			oFilterItem,
-			bMultiSelect,
-			i,
-			j,
-			k;
-
-		// clear preset filters (only one mode is allowed, preset filters or filters)
-		if (Object.keys(oSelectedFilterKeys).length) {
-			this._clearPresetFilter();
-		}
-
-		// loop through the provided object array {key -> subKey -> boolean}
-		for (var sKey in oSelectedFilterKeys) { // filter key
-			oFilterItem = null;
-			if (oSelectedFilterKeys.hasOwnProperty(sKey)) {
-				for (i = 0; i < aFilterItems.length; i++) {
-					if (BaseObject.isObjectA(aFilterItems[i], "sap.m.ViewSettingsCustomItem")) {
-						// just compare the key of this control
-						if (aFilterItems[i].getKey() === sKey) {
-							oFilterItem = aFilterItems[i];
-							aFilterItems[i].setProperty('selected', oSelectedFilterKeys[sKey], true);
-						}
-					} else if (BaseObject.isObjectA(aFilterItems[i], "sap.m.ViewSettingsFilterItem")) {
-						// find the sub filter item with the specified key
-						aSubFilterItems = aFilterItems[i].getItems();
-						bMultiSelect = aFilterItems[i].getMultiSelect();
-						for (j = 0; j < aSubFilterItems.length; j++) {
-							if (aSubFilterItems[j].getKey() === sKey) {
-								oFilterItem = aSubFilterItems[j];
-								// set all other entries to false for single select
-								// entries
-								if (!bMultiSelect) {
-									for (k = 0; k < aSubFilterItems.length; k++) {
-										aSubFilterItems[k].setProperty('selected', false, true);
-									}
-								}
-								break;
-							}
-						}
-					}
-					if (oFilterItem) {
-						break;
-					}
-				}
-
-				// skip if we don't have an item with this key
-				if (oFilterItem === null) {
-					Log.warning('Cannot set state for key "' + sKey
-					+ '" because there is no filter with these keys');
-					continue;
-				}
-
-				// set the selected state on the item
-				oFilterItem.setProperty('selected', oSelectedFilterKeys[sKey], true);
-			}
-		}
-
-		return this;
 	};
 
 	/**
@@ -3483,10 +3370,6 @@ function(
 					groupDescending     : that.getGroupDescending(),
 					presetFilterItem    : Element.getElementById(that.getSelectedPresetFilterItem()),
 					filterItems         : that.getSelectedFilterItems(),
-					/**
-					 * @deprecated as of version 1.42
-					 */
-					filterKeys          : that.getSelectedFilterKeys(),
 					filterCompoundKeys  : that.getSelectedFilterCompoundKeys(),
 					filterString        : that.getSelectedFilterString()
 				};
@@ -3783,5 +3666,4 @@ function(
 	}
 
 	return ViewSettingsDialog;
-
 });

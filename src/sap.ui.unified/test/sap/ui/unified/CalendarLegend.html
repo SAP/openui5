@@ -3,21 +3,20 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Legend - sap.ui.unified</title>
-		<link rel="shortcut icon" type="image/x-icon"
-			  href="images/controls/sap.ui.unified.Calendar.gif">
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.unified.Calendar.gif">
 		<link href="CalendarLegend.css" rel="stylesheet">
 		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-async="true"
-				data-sap-ui-compatVersion="edge"
-				data-sap-ui-onInit="module:local/CalendarLegend"
 				data-sap-ui-libs="sap.ui.unified, sap.ui.layout, sap.m"
-				data-sap-ui-resourceroots='{
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/CalendarLegend"
+				data-sap-ui-resource-roots='{
 					"local": "./",
 					"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
 				}'
-				src="../../../../resources/sap-ui-core.js"
-				>
+		>
 		</script>
 	</head>
 	<body id="body" class="sapUiBody"></body>

@@ -7,9 +7,9 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/Toolbar",
 	"sap/ui/core/Title",
-	"sap/ui/core/Core",
-	"sap/ui/core/Renderer"
-], function (createAndAppendDiv, Title, Link, mobileLibrary, coreLibrary, Toolbar, coreTitle, Core, Renderer) {
+	"sap/ui/core/Renderer",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (createAndAppendDiv, Title, Link, mobileLibrary, coreLibrary, Toolbar, coreTitle, Renderer, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -79,13 +79,13 @@ sap.ui.define([
 
 
 	QUnit.module("Rendering", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.title = new Title({
 				text : "Hello",
 				tooltip : "Tooltip"
 			});
 			this.title.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.title.destroy();
@@ -94,10 +94,10 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("When width is not set max-width should apply to control", function(assert){
+	QUnit.test("When width is not set max-width should apply to control", async function(assert) {
 		assert.ok(this.title.$().hasClass("sapMTitleMaxWidth"), "Title has max width restriction for the trunctation.");
 		this.title.setWidth("100%");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(!this.title.$().hasClass("sapMTitleMaxWidth"), "Title has width and does not have max width restriction.");
 	});
 
@@ -113,10 +113,10 @@ sap.ui.define([
 		assert.ok(this.title.$().hasClass("sapUiSelectable"), "Title has class sapUiSelectable.");
 	});
 
-	QUnit.test("Wrapping", function(assert){
+	QUnit.test("Wrapping", async function(assert) {
 		this.title.setText("Some very very very very long text");
 		this.title.setWidth("100px");
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.title.$().css("line-height", "1.2rem");
 
 		var iHeight = this.title.$().outerHeight();
@@ -124,23 +124,23 @@ sap.ui.define([
 		assert.ok(this.title.$().hasClass("sapMTitleNoWrap"), "Title has class sapMTitleNoWrap.");
 		this.title.setWrapping(true);
 
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.title.$().css("line-height", "1.2rem");
 
 		assert.ok(this.title.$().hasClass("sapMTitleWrap"), "Title has class sapMTitleWrap.");
 		assert.ok(this.title.$().outerHeight() >= 3 * iHeight, "Title height increases when wrapping is active");
 	});
 
-	QUnit.test("Title wrappingType (Hyphenation)", function(assert){
+	QUnit.test("Title wrappingType (Hyphenation)", async function(assert) {
 		var done = assert.async();
 		this.title.setText("pneumonoultramicroscopicsilicovolcanoconiosis");
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.title.$().css("line-height", "1.2rem");
 		var iHeight = this.title.$().outerHeight();
 		this.title.setWidth("200px");
 		this.title.setWrapping(true);
 		this.title.setWrappingType(mobileLibrary.WrappingType.Hyphenated);
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.title.$().css("line-height", "1.2rem");
 
 		var fnIsHyphenated = function () {
@@ -165,22 +165,22 @@ sap.ui.define([
 		}, 500);
 	});
 
-	QUnit.test("TitleStyle correct", function(assert){
+	QUnit.test("TitleStyle correct", async function(assert) {
 		for (var level in TitleLevel) {
 			this.title.setTitleStyle(level);
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.ok(this.title.$().hasClass("sapMTitleStyle" + level), "Title has correct class for style level " + level);
 		}
 	});
 
-	QUnit.test("Text direction correct", function(assert) {
+	QUnit.test("Text direction correct", async function(assert) {
 		var oTitle = this.title,
 			sTextDir,
 			sExpectedDir;
 
 		for (sTextDir in TextDirection) {
 			oTitle.setTextDirection(sTextDir);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			sExpectedDir = sTextDir !== TextDirection.Inherit ? sTextDir.toLowerCase() : "auto";
 
@@ -188,7 +188,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Alignment correct", function(assert) {
+	QUnit.test("Alignment correct", async function(assert) {
 		var oTitle = this.title,
 			sTextDir,
 			sAlign,
@@ -198,7 +198,7 @@ sap.ui.define([
 			for (sAlign in TextAlign) {
 				oTitle.setTextDirection(sTextDir);
 				oTitle.setTextAlign(sAlign);
-				Core.applyChanges();
+				await nextUIUpdate();
 
 				sExpectedAlign = Renderer.getTextAlign(sAlign, sTextDir);
 
@@ -207,12 +207,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Semantic level correct", function(assert){
+	QUnit.test("Semantic level correct", async function(assert) {
 		var sExpectedTag;
 
 		for (var level in TitleLevel) {
 			this.title.setLevel(level);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			if (level === TitleLevel.Auto) {
 				sExpectedTag = "DIV";
@@ -227,7 +227,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Title Association", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.coreTitle = new coreTitle({
 				text: "Hello2",
 				tooltip : "Tooltip2"
@@ -242,7 +242,7 @@ sap.ui.define([
 				title : this.coreTitle
 			});
 			this.title.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.title.destroy();
@@ -254,40 +254,40 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Should render a text", function(assert) {
+	QUnit.test("Should render a text", async function(assert) {
 		assert.strictEqual(this.title.$().text(), "Hello2", "Text got rendered");
 		this.coreTitle.setText("Hello3");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(this.title.$().text(), "Hello3", "Text got rendered");
 		this.title.setTitle(this.anotherTitle);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(this.title.$().text(), "Hello4", "Text got rendered");
 		this.anotherTitle.destroy();
 		this.anotherTitle = null;
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(this.title.$().text(), "Hello", "Text got rendered");
 	});
 
-	QUnit.test("Should render a tooltip", function(assert) {
+	QUnit.test("Should render a tooltip", async function(assert) {
 		assert.strictEqual(this.title.$().attr("title"), "Tooltip2", "Tooltip got rendered");
 		this.coreTitle.setTooltip("Tooltip3");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(this.title.$().attr("title"), "Tooltip3", "Tooltip got rendered");
 		this.title.setTitle(this.anotherTitle);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(this.title.$().attr("title"), "Tooltip4", "Tooltip got rendered");
 		this.anotherTitle.destroy();
 		this.anotherTitle = null;
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(this.title.$().attr("title"), "Tooltip", "Tooltip got rendered");
 	});
 
-	QUnit.test("Semantic level correct", function(assert){
+	QUnit.test("Semantic level correct", async function(assert) {
 		var sExpectedTag;
 
 		for (var level in TitleLevel) {
 			this.coreTitle.setLevel(level);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			if (level === TitleLevel.Auto) {
 				sExpectedTag = "DIV";
@@ -301,7 +301,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Should skip 'title' association properties if there is a control in 'content' aggregation", function(assert) {
+	QUnit.test("Should skip 'title' association properties if there is a control in 'content' aggregation", async function(assert) {
 		var sLevel = TitleLevel.H3,
 			sExpectedTag = sLevel;
 		this.coreTitle.setLevel(TitleLevel.H1);
@@ -311,7 +311,7 @@ sap.ui.define([
 			href: "https://sap.com",
 			target: "_blank"
 		}));
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.notEqual(this.title.$().text(), "Hello2", "Text from the 'title' association wasn't rendered");
 		assert.notEqual(this.title.$().attr("title"), "Tooltip2", "Tooltip from the 'title' association wasn't rendered");
@@ -327,7 +327,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Content Aggregation", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.link = new Link("myLink", {
 				text: "Link",
 				href: "https://sap.com",
@@ -340,7 +340,7 @@ sap.ui.define([
 				content : this.link
 			});
 			this.title.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.title.destroy();
@@ -368,12 +368,12 @@ sap.ui.define([
 
 
 	QUnit.module("Accessibility", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.title = new Title({
 				text : "Hello"
 			});
 			this.title.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.title.destroy();
@@ -400,11 +400,11 @@ sap.ui.define([
 		oTitle.destroy();
 	});
 
-	QUnit.test("Aria-level should be set", function(assert){
+	QUnit.test("Aria-level should be set", async function(assert) {
 		assert.strictEqual(this.title.$().attr("aria-level"), "2", "The aria-level of a non semantically states title should be 2 by default");
 
 		this.title.setTitleStyle(TitleLevel.H5);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(this.title.$().attr("aria-level"), "5", "The aria-level should be '5' when 'titleStyle' is set to 'H5'");
 	});
 });

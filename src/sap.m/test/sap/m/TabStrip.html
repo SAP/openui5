@@ -1,93 +1,19 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
+	<head><meta charset="utf-8">
 		<title>sap.m.TabStrip Testsuite</title>
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
 				id="sap-ui-bootstrap"
-				data-sap-ui-libs="sap.m">
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/TabStrip"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
 
-		<script>
-			jQuery.sap.require("sap.ui.core.IconPool");
-            jQuery.sap.require("sap.m.MessageToast");
-			var IconPool = sap.ui.core.IconPool;
-			var oItem2 = new sap.m.TabStripItem({
-				key: "1",
-				text: "One",
-				modified: true
-			});
-			var oTabStrip = new sap.m.TabStrip('TabStripFirst', {
-                itemClose: function(oEvent) {
-                    var oItem = oEvent.getParameter("item"),
-                        sMessage = "itemCloseRequest handler for item " + oItem.getId() + " received";
-                    if (oItem.getModified()) {
-                        sMessage += ". The tab won't close.";
-                        oEvent.preventDefault();
-                    } else {
-                        sMessage += ". The tab is closed.";
-                    }
-                    sap.m.MessageToast.show(sMessage, {autoClose: true});
-                },
-				hasSelect: true,
-				selectedItem: oItem2,
-				items: [
-					new sap.m.TabStripItem({
-						key: "0",
-						additionalText: "some text",
-						icon: "sap-icon://syringe",
-						text: "01234567890123456789012345"
-					}),
-					oItem2,
-					new sap.m.TabStripItem({
-						key: "2",
-						icon: "sap-icon://syringe",
-						iconTooltip: "syringe",
-						text: "Two"
-					}),
-					new sap.m.TabStripItem({
-						key: "3",
-						text: "Three",
-						additionalText: "intro text (2)",
-						modified: true
-					}),
-					new sap.m.TabStripItem({
-						key: "4",
-						icon: "../ui/documentation/sdk/images/HT-6120.jpg",
-						iconTooltip: "flash",
-						text: "Four"
-					}),
-					new sap.m.TabStripItem({
-						key: "5",
-						additionalText: "additional text",
-						modified: false
-					}),
-					new sap.m.TabStripItem({
-						key: "6",
-						text: "Six"
-					}),
-					new sap.m.TabStripItem({
-						key: "7",
-						text: "Seven",
-						modified: true
-					}),
-					new sap.m.TabStripItem({
-						key: "8",
-						text: "Eight"
-					}),
-					new sap.m.TabStripItem({
-						key: "9",
-						text: "Nine",
-						modified: true
-					}),
-					new sap.m.TabStripItem({
-						key: "10",
-						text: "Ten"
-					})
-				]
-			});
-			oTabStrip.placeAt('body');
-		</script>
+		
 	</head>
 	<body id="body" class="sapUiBody"></body>
 </html>

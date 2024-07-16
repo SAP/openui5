@@ -2906,7 +2906,7 @@ sap.ui.define([
 				if (bContainsNumber) {
 					sPrefix = sUnitPattern.substring(0, iNumberPatternIndex);
 					sPrefixLowerCase = sPrefix.toLocaleLowerCase(sLanguageTag);
-					sPostfix = sUnitPattern.substring(iNumberPatternIndex + "{0}".length);
+					sPostfix = sUnitPattern.substring(iNumberPatternIndex + 3);
 					sPostfixLowerCase = sPostfix.toLocaleLowerCase(sLanguageTag);
 
 					if (sValue.startsWith(sPrefix) && sValue.endsWith(sPostfix)) {

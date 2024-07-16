@@ -33,9 +33,10 @@ sap.ui.define([
 	"sap/ui/base/EventProvider",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/jqueryui/jquery-ui-position",
-	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
-	"sap/ui/dom/jquery/Focusable", // jQuery Plugin "firstFocusableDomRef"
-	"sap/ui/dom/jquery/rect" // jQuery Plugin "rect"
+	// jQuery Plugin "firstFocusableDomRef"
+	"sap/ui/dom/jquery/Focusable",
+	// jQuery Plugin "rect"
+	"sap/ui/dom/jquery/rect"
 ], function(
 	Device,
 	DataType,
@@ -347,13 +348,6 @@ sap.ui.define([
 
 		metadata : {
 			library: "sap.ui.core",
-
-			publicMethods : ["open", "close",
-							 "setContent", "getContent",
-							 "setPosition",
-							 "setShadow", "setModal", "getModal", "setAutoClose", "setAutoCloseAreas", "setExtraContent",
-							 "isOpen", "getAutoClose", "getOpenState", "setAnimations", "setDurations",
-							 "attachOpened", "attachClosed", "detachOpened", "detachClosed"],
 
 			associations : {
 				"childPopups" : {
@@ -2144,13 +2138,6 @@ sap.ui.define([
 
 		return this;
 	};
-
-	/**
-	 * @function
-	 * @public
-	 * @deprecated since 1.75, please use {@link #setExtraContent} instead.
-	 */
-	Popup.prototype.setAutoCloseAreas = Popup.prototype.setExtraContent;
 
 	/**
 	 * Sets the animation functions to use for opening and closing the Popup. Any null value will be ignored and not change the respective animation function.

@@ -3,8 +3,8 @@
  */
 
 // Provides inactive support for controls
-sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/core/Element"],
-	function(assert, Log, Element) {
+sap.ui.define(["sap/base/assert", "sap/ui/core/Element"],
+	function(assert, Element) {
 		"use strict";
 
 		/**
@@ -54,11 +54,6 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/core/Element"],
 			 */
 			fnClass.prototype.unstash = function(bAsync) {
 				if (this.isStashed()) {
-					/**@deprecated */
-					if (!bAsync) {
-						Log.fatal("Unstashing synchronous is no longer supported. Please switch to the asynchronous variant!");
-						return unstash(this);
-					}
 					return unstashAsync(this);
 				}
 				return this;
@@ -107,18 +102,6 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/core/Element"],
 		 */
 		async function unstashAsync(oWrapperControl) {
 			var aControls = await createStashedInstanceOrPromise(oWrapperControl);
-			delete stashedControls[oWrapperControl.getId()];
-			//TemplateProcessor returns an array. Should contain only one control in the stashed scenario.
-			return aControls[0];
-		}
-
-		/**
-		 * @param {sap.ui.core.Control} oWrapperControl The Control to unstash
-		 * @returns {sap.ui.core.Control} The unstashed Control
-		 * @deprecated
-		 */
-		function unstash(oWrapperControl) {
-			var aControls = createStashedInstanceOrPromise(oWrapperControl, true);
 			delete stashedControls[oWrapperControl.getId()];
 			//TemplateProcessor returns an array. Should contain only one control in the stashed scenario.
 			return aControls[0];
@@ -188,5 +171,4 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/core/Element"],
 		};
 
 		return StashedControlSupport;
-
 	});

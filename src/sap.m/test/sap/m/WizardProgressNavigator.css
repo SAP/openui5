@@ -1,0 +1,7 @@
+.sapUiVlt + .sapUiVlt {
+	margin-top: 4rem;
+}
+
+.sapUiVltCell:nth-child(n+2) {
+	display: inline-block;
+}

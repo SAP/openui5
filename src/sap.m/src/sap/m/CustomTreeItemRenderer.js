@@ -32,4 +32,4 @@ sap.ui.define([
 
 	return CustomTreeItemRenderer;
 
-}, /* bExport= */true);
+});

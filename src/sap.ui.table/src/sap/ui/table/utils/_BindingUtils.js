@@ -61,4 +61,4 @@ sap.ui.define([], function() {
 
 	return BindingUtils;
 
-}, /* bExport= */ true);
+});

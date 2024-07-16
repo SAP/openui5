@@ -760,4 +760,4 @@ sap.ui.define([
 
 	return BindingParser;
 
-}, /* bExport= */ true);
+});

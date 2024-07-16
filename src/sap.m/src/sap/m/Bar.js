@@ -71,23 +71,6 @@ sap.ui.define([
 			],
 			library : "sap.m",
 			properties : {
-
-				/**
-				 * If this flag is set to true, contentMiddle will be rendered as a HBox and layoutData can be used to allocate available space.
-				 * @deprecated since version 1.16, replaced by <code>contentMiddle</code> aggregation.
-				 * <code>contentMiddle</code> will always occupy of the 100% width when no <code>contentLeft</code> and <code>contentRight</code> are being set.
-				 */
-				enableFlexBox : {type : "boolean", group : "Misc", defaultValue : false, deprecated: true},
-
-				/**
-				 * Indicates whether the Bar is partially translucent.
-				 * It is only applied for touch devices.
-				 * @since 1.12
-				 * @deprecated since version 1.18.6.
-				 * This property has no effect since release 1.18.6 and should not be used. Translucent bar may overlay an input and make it difficult to edit.
-				 */
-				translucent : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
-
 				/**
 				 * Determines the design of the bar. If set to auto, it becomes dependent on the place where the bar is placed.
 				 * @since 1.22
@@ -103,7 +86,6 @@ sap.ui.define([
 				 * @public
 				 */
 				titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.None}
-
 			},
 			aggregations : {
 
@@ -170,16 +152,6 @@ sap.ui.define([
 	Bar.prototype.exit = function() {
 		this._removeAllListeners();
 
-		/**
-		 * @deprecated As of version 1.16
-		 */
-		if (this._oflexBox) {
-
-			this._oflexBox.destroy();
-			this._oflexBox = null;
-
-		}
-
 		this._$MidBarPlaceHolder = null;
 		this._$RightBar = null;
 		this._$LeftBar = null;
@@ -231,13 +203,6 @@ sap.ui.define([
 			bContentMiddle = !!this.getContentMiddle().length,
 			bContentRight = !!this.getContentRight().length;
 
-		/**
-		 * @deprecated As of version 1.16
-		 */
-		 if (!bContentMiddle){
-			bContentMiddle = (this._oflexBox && !!this._oflexBox.getItems().length);
-		}
-
 		//Invisible bars also do not need resize listeners
 		if (!this.getVisible()) {
 			return;
@@ -254,14 +219,6 @@ sap.ui.define([
 
 
 		this._sResizeListenerId = ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._handleResize, this));
-
-		/**
-		 * @deprecated As of version 1.16
-		 */
-		if (this.getEnableFlexBox()){
-			this._updatePosition(bContentLeft, bContentMiddle, bContentRight);
-			return;
-		}
 
 		if (bContentLeft) {
 			this._sResizeListenerIdLeft = ResizeHandler.register(this._$LeftBar[0], jQuery.proxy(this._handleResize, this));
@@ -281,7 +238,6 @@ sap.ui.define([
 		}
 
 		this._updatePosition(bContentLeft, bContentMiddle, bContentRight);
-
 	};
 
 	/**
@@ -364,22 +320,6 @@ sap.ui.define([
 		var iMidBarPlaceholderWidth = this._$MidBarPlaceHolder.outerWidth(true),
 			bRtl = Localization.getRTL(),
 			oMidBarCss = { visibility : "" };
-
-		/**
-		 * @deprecated As of version 1.16
-		 */
-		if (this.getEnableFlexBox()) {
-			var sLeftOrRight = bRtl ? "right" : "left";
-
-			iMidBarPlaceholderWidth = iBarWidth - iLeftBarWidth - iRightBarWidth - parseInt(this._$MidBarPlaceHolder.css('margin-left')) - parseInt(this._$MidBarPlaceHolder.css('margin-right'));
-
-			oMidBarCss.position = "absolute";
-			oMidBarCss.width = iMidBarPlaceholderWidth + "px";
-			oMidBarCss[sLeftOrRight] = iLeftBarWidth;
-
-			//calculation for flex is done
-			return oMidBarCss;
-		}
 
 		var iSpaceBetweenLeftAndRight = iBarWidth - iLeftBarWidth - iRightBarWidth,
 			iMidBarStartingPoint = (iBarWidth / 2) - (iMidBarPlaceholderWidth / 2),

@@ -122,4 +122,4 @@ sap.ui.define([
 	};
 
 	return PropertyBindingChange;
-}, /* bExport= */true);
+});

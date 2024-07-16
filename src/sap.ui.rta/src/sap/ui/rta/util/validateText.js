@@ -66,4 +66,4 @@ sap.ui.define([
 			throw Error(sErrorText);
 		}
 	};
-}, true);
+});

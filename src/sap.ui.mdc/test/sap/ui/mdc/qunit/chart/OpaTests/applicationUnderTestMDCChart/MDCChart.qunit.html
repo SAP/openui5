@@ -5,24 +5,23 @@
 		<title>Application under test</title>
 
 		<script id="sap-ui-bootstrap"
-			src="../../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-bindingSyntax="complex"
-			data-sap-ui-compatVersion="edge"
-			data-sap-ui-async="true"
-			data-sap-ui-language="EN"
-
-			data-sap-ui-resourceroots='{
+				src="../../../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-language="EN"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-resource-roots='{
 				"applicationUnderTestMDCChart": "./",
 				"sap.ui.mdc.integration": "../../../../integration/",
 				"sap.ui.mdc.qunit": "../../../../qunit",
 				"test-resources": "../../../../../../../../test-resources",
 				"delegates": "../../../../delegates"
-			}'>
+			}'
+		>
 		</script>
 		<script src="../../../../../../../../resources/sap/ui/qunit/qunit-2-css.js"></script>
 		<script src="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 		<script src="../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script src="../../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script src="../../../../../../../../resources/sap/ui/qunit/qunit-coverage-istanbul.js"></script>
 		<script src="../../../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="./MDCChart.qunit.js"></script>
 	</head>

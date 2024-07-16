@@ -34,4 +34,4 @@ sap.ui.define(function () {
 
 	return BlockBaseRenderer;
 
-}, /* bExport= */ true);
+});

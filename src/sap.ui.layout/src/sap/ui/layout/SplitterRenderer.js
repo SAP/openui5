@@ -2,14 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/AnimationMode",
-	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
-	"sap/ui/core/IconPool" // side effect: required when calling RenderManager#icon
+	// side effect: required when calling RenderManager#icon
+	"sap/ui/core/IconPool"
 ], function(
-	AnimationMode,
-	ControlBehavior,
 	Library,
 	coreLibrary
 ) {
@@ -45,14 +42,6 @@ sap.ui.define([
 		oRm.openStart("div", oSplitter)
 			.class("sapUiLoSplitter")
 			.class(sOrientationClass);
-
-		/**
-		 * Do not animate via CSS when liveResize is enabled
-		 * @deprecated As of version 1.21.
-		 */
-		if (!oSplitter._liveResize && ControlBehavior.getAnimationMode() !== AnimationMode.none && ControlBehavior.getAnimationMode() !== AnimationMode.minimal) {
-			oRm.class("sapUiLoSplitterAnimated");
-		}
 
 		oRm.style("width", oSplitter.getWidth())
 			.style("height", oSplitter.getHeight())
@@ -162,4 +151,4 @@ sap.ui.define([
 
 	return SplitterRenderer;
 
-}, /* bExport= */ true);
+});

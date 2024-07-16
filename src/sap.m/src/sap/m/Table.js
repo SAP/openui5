@@ -18,11 +18,10 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/m/table/Util",
 	"sap/ui/core/Lib",
-	"sap/base/Log",
-    // jQuery custom selectors ":sapTabbable"
+	// jQuery custom selectors ":sapTabbable"
 	"sap/ui/dom/jquery/Selectors"
 ],
-	function(ControlBehavior, library, ListBase, ListItemBase, CheckBox, TableRenderer, BaseObject, ResizeHandler, PasteHelper, jQuery, ListBaseRenderer, Icon, Util, Library, Log) {
+	function(ControlBehavior, library, ListBase, ListItemBase, CheckBox, TableRenderer, BaseObject, ResizeHandler, PasteHelper, jQuery, ListBaseRenderer, Icon, Util, Library) {
 	"use strict";
 
 
@@ -1406,15 +1405,7 @@ sap.ui.define([
 	Table.prototype.validateAggregation = function(sAggregationName, oObject, bMultiple) {
 		var oResult = ListBase.prototype.validateAggregation.apply(this, arguments);
 
-		/**
-		 * @deprecated as of version 1.120
-		 */
-		if (sAggregationName === "items" && !BaseObject.isA(oObject, "sap.m.ITableItem")) {
-			Log.error(oObject + " is not a valid items aggregation of " + this + ". Items aggregation in ResponsiveTable control only supports ITableItem.");
-			return oResult;
-		}
-
-		if (sAggregationName === "items" && !BaseObject.isA(oObject, "sap.m.ITableItem")) { // UI5 2.0
+		if (sAggregationName === "items" && !BaseObject.isObjectA(oObject, "sap.m.ITableItem")) { // UI5 2.0
 			throw Error(oObject + " is not a valid items aggregation of " + this + ". Items aggregation in ResponsiveTable control only supports ITableItem.");
 		}
 

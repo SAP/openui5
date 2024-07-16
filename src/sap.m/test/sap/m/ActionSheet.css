@@ -1,0 +1,7 @@
+body {
+	overflow: hidden;
+}
+
+.newButton.sapMBtn {
+	margin-right: 1em;
+}

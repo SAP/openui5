@@ -87,28 +87,9 @@ sap.ui.define([
 			rm.class("sapUiTableRowHighlights"); // show row highlights
 		}
 
-		/**
-		 * @deprecated As of version 1.118
-		 */
-		try {
-			// This class flags whether the sap.m. library is loaded or not.
-			const sSapMTableClass = TableUtils._getTableTemplateHelper(true).addTableClass();
-			if (sSapMTableClass) {
-				rm.class(sSapMTableClass);
-			}
-		} catch (e) {
-			// ignore
-		}
-
 		const oScrollExtension = oTable._getScrollExtension();
 		if (oScrollExtension.isVerticalScrollbarRequired() && !oScrollExtension.isVerticalScrollbarExternal()) {
 			rm.class("sapUiTableVScr"); // show vertical scrollbar
-		}
-		/**
-		* @deprecated As of Version 1.115
-		*/
-		if (oTable.getEditable && oTable.getEditable()) {
-			rm.class("sapUiTableEdt"); // editable (background color)
 		}
 
 		if (TableUtils.hasRowActions(oTable)) {
@@ -149,14 +130,6 @@ sap.ui.define([
 		rm.openEnd();
 
 		rm.renderControl(oTable.getAggregation("_messageStrip"));
-
-		if (oTable.getTitle()) {
-			this.renderHeader(rm, oTable, oTable.getTitle());
-		}
-
-		if (oTable.getToolbar()) {
-			this.renderToolbar(rm, oTable, oTable.getToolbar());
-		}
 
 		if (oTable.getExtension() && oTable.getExtension().length > 0) {
 			this.renderExtensions(rm, oTable, oTable.getExtension());
@@ -217,22 +190,6 @@ sap.ui.define([
 		rm.close("div");
 
 		this.renderTabElement(rm, "sapUiTableOuterAfter");
-		rm.close("div");
-	};
-
-	// =============================================================================
-	// BASIC AREAS OF THE TABLE
-	// =============================================================================
-
-	/** @deprecated As of version 1.72 */
-	TableRenderer.renderHeader = function(rm, oTable, oTitle) {
-		rm.openStart("div");
-		rm.class("sapUiTableHdr");
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TABLEHEADER");
-		rm.openEnd();
-
-		rm.renderControl(oTitle);
-
 		rm.close("div");
 	};
 
@@ -524,12 +481,7 @@ sap.ui.define([
 
 		if (bRenderIcons) {
 			const bFiltered = oColumn.getFiltered();
-			let bSorted = oColumn.getSortOrder() !== SortOrder.None;
-
-			/** @deprecated As of version 1.120 */
-			if (!oColumn.getSorted()) {
-				bSorted = false;
-			}
+			const bSorted = oColumn.getSortOrder() !== SortOrder.None;
 
 			if (bFiltered) {
 				rm.class("sapUiTableColFiltered");
@@ -552,12 +504,6 @@ sap.ui.define([
 
 		const oColumnHeaderMenu = oColumn.getHeaderMenuInstance();
 		if (oTable.getEnableColumnReordering() || oColumnHeaderMenu && oColumnHeaderMenu.getAriaHasPopupType() !== "None") {
-			rm.class("sapUiTableHeaderCellActive");
-		}
-		/**
-		 * @deprecated As of Version 1.117
-		 */
-		if (!oTable.getEnableColumnReordering() && !oTable.hasListeners("columnSelect") && !oColumnHeaderMenu && oColumn._menuHasItems()) {
 			rm.class("sapUiTableHeaderCellActive");
 		}
 		if (bIsFirstColumn) {
@@ -1369,5 +1315,4 @@ sap.ui.define([
 	};
 
 	return TableRenderer;
-
-}, /* bExport= */ true);
+});

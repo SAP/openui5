@@ -1,0 +1,23 @@
+.tableWrapper td {
+	vertical-align: top;
+	line-height: 1.4rem !important;
+}
+
+.tableWrapper caption {
+	text-align: left;
+	padding: 0.5rem 1rem;
+	font-weight: bold;
+}
+
+.tableWrapper span {
+	color: red;
+}
+
+table,
+td {
+	font-weight: normal !important;
+}
+
+pre[caption]::before {
+	width: 800px !important;
+}

@@ -1,0 +1,11 @@
+#container1,
+#content {
+	height: 90%;
+	width: 200px;
+	display: inline-block;
+}
+
+html,
+body {
+	height: 100%;
+}

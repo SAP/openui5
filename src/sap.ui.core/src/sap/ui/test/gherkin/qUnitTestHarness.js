@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/test/gherkin/GherkinTestGenerator",
 	"sap/ui/test/gherkin/StepDefinitions",
-	"sap/ui/qunit/qunit-junit",
-	"sap/ui/qunit/qunit-coverage"
+	"sap/ui/qunit/qunit-junit"
 ], function(Log, GherkinTestGenerator) {
 	'use strict';
 
@@ -88,4 +87,4 @@ sap.ui.define([
 	};
 
 	return qUnitTestHarness;
-}, /* bExport= */ true);
+});

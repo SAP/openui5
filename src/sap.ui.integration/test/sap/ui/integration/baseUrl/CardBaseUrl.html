@@ -3,17 +3,18 @@
 <head lang="en">
 	<meta charset="UTF-8">
 	<title>Card</title>
-	<script type="text/javascript"
-			src="../../../../../resources/sap-ui-core.js"
+	<script src="../../../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-bindingSyntax="complex"
 			data-sap-ui-libs="sap.m, sap.f, sap.ui.integration"
-			data-sap-ui-compatVersion="edge"
-			data-sap-ui-theme="sap_horizon"
-			data-sap-ui-language="en">
+			data-sap-ui-language="en"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-async="true"
+			data-sap-ui-on-init="module:local/CardBaseUrl"
+			data-sap-ui-resource-roots='{"local":"./"}'
+	>
 	</script>
 
-	<script id="myXml" type="text/xmldata">
+	<script id="myXml" type="text/xml">
 			<mvc:View xmlns:mvc="sap.ui.core.mvc"
 			 			xmlns="sap.m"
 			 			xmlns:f="sap.f"
@@ -43,14 +44,7 @@
 			</mvc:View>
 		</script>
 
-	<script>
-		sap.ui.controller("myController", {
-			onInit: function() {
-
-			}
-		});
-		sap.ui.xmlview({ viewContent: jQuery('#myXml').html() }).placeAt("content");
-	</script>
+	
 </head>
 <body id="content" class="sapUiBody">
 </body>

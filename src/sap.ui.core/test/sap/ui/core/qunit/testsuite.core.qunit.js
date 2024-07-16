@@ -33,7 +33,7 @@ sap.ui.define(function() {
 			QUnit: {
 				title: "sap.ui.core: General QUnit 1 checks",
 				qunit: {
-					version: 1
+					version: 2
 				}
 			},
 			QUnit2: {

@@ -38,4 +38,4 @@ sap.ui.define([], function () {
 
 	return StepInputRenderer;
 
-}, /* bExport= */ true);
+});

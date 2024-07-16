@@ -119,4 +119,4 @@ sap.ui.define(["sap/base/strings/hyphenate"], function(hyphenate) {
 	};
 
 	return FlexBoxStylingHelper;
-}, /* bExport= */ true);
+});

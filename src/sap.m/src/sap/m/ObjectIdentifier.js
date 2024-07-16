@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/base/ManagedObject',
 	'./ObjectIdentifierRenderer',
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/m/Image"
 ],
 function(
 	library,
@@ -31,7 +32,8 @@ function(
 	Device,
 	ManagedObject,
 	ObjectIdentifierRenderer,
-	KeyCodes
+	KeyCodes,
+	Image
 ) {
 	"use strict";
 
@@ -68,7 +70,6 @@ function(
 			library : "sap.m",
 			designtime: "sap/m/designtime/ObjectIdentifier.designtime",
 			properties : {
-
 				/**
 				 * Defines the object title.
 				 */
@@ -78,24 +79,6 @@ function(
 				 * Defines the object text.
 				 */
 				text : {type : "string", group : "Misc", defaultValue : null},
-
-				/**
-				 * Indicates whether or not the notes icon is displayed.
-				 * @deprecated as of version 1.24.0. There is no replacement for the moment.
-				 */
-				badgeNotes : {type : "boolean", group : "Misc", defaultValue : null, deprecated: true},
-
-				/**
-				 * Indicates whether or not the address book icon is displayed.
-				 * @deprecated as of version 1.24.0. There is no replacement for the moment.
-				 */
-				badgePeople : {type : "boolean", group : "Misc", defaultValue : null, deprecated: true},
-
-				/**
-				 * Indicates whether or not the attachments icon is displayed.
-				 * @deprecated as of version 1.24.0. There is no replacement for the moment.
-				 */
-				badgeAttachments : {type : "boolean", group : "Misc", defaultValue : null, deprecated: true},
 
 				/**
 				 * Indicates if the ObjectIdentifier is visible. An invisible ObjectIdentifier is not being rendered.
@@ -261,7 +244,7 @@ function(
 			id : sImageId + "-icon",
 			size : sSize,
 			useIconTooltip : false
-		}, sap.m.Image);
+		}, Image);
 
 		oImage.setSrc(sURI);
 
@@ -505,7 +488,7 @@ function(
 	};
 
 	ObjectIdentifier.prototype._hasTopRow = function() {
-		return this.getTitle() || this.getBadgeNotes() || this.getBadgePeople() || this.getBadgeAttachments();
+		return this.getTitle() || false || false || false;
 	};
 
 	return ObjectIdentifier;

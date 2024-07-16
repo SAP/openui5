@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/f/library",
 	"sap/f/GridContainer",
-	"sap/ui/core/Core",
 	"sap/ui/core/dnd/DragInfo",
 	"sap/m/Panel",
 	"sap/m/SearchField",
@@ -32,7 +31,6 @@ function(
 	Localization,
 	library,
 	GridContainer,
-	Core,
 	DragInfo,
 	Panel,
 	SearchField,
@@ -197,7 +195,7 @@ function(
 			items: [new Card()]
 		});
 		oGrid.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oGrid.getDomRef("before").tabIndex, 0, "tabindex of 'before' dummy area should be correct");
@@ -213,7 +211,7 @@ function(
 			items: []
 		});
 		oGrid.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oGrid.getDomRef("before").tabIndex, -1, "tabindex of 'before' dummy area should be correct");
@@ -238,7 +236,7 @@ function(
 		this.oGrid.setSnapToRow(true);
 
 		// Act
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(this.oGrid.$("listUl").hasClass("sapFGridContainerSnapToRow"), "Has class sapFGridContainerSnapToRow when snapToRow is true");
@@ -249,7 +247,7 @@ function(
 		this.oGrid.setWidth("100px");
 
 		// Act
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oGrid.$().width(), 100, "Width is as expected");
@@ -257,21 +255,21 @@ function(
 
 	QUnit.test("Min Height", function (assert) {
 		// Act
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oGrid.$("listUl").css("min-height"), "32px", "Default min height is 2rem.");
 
 		// Act
 		this.oGrid.setMinHeight("0");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oGrid.$("listUl").css("min-height"), "0px", "Min height can be set to 0.");
 
 		// Act
 		this.oGrid.setMinHeight("20px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oGrid.$("listUl").css("min-height"), "20px", "Min height can be set to 20px.");
@@ -283,7 +281,7 @@ function(
 		this.oGrid.setTooltip(sExample);
 
 		// Act
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oGrid.$("listUl").attr("title"), sExample, "The grid has the expected tooltip");
@@ -294,7 +292,7 @@ function(
 		this.oGrid.setAllowDenseFill(true);
 
 		// Act
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(this.oGrid.$("listUl").hasClass("sapFGridContainerDenseFill"), "The grid has class 'sapFGridContainerDenseFill' when allowDenseFill is true");
@@ -310,7 +308,7 @@ function(
 		this.oGrid.setInlineBlockLayout(true);
 
 		// Act
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oGrid.$("listUl").css("grid-auto-rows"), "min-content", "The grid has 'grid-auto-rows:min-content', when inlineBlockLayout is true");
@@ -341,7 +339,7 @@ function(
 			.addItem(new GenericTile({id: "tile2", header: "Travel and Expenses"}));
 
 		// Act
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(this.oGrid.getDomRef(), "GridContainer is rendered");
@@ -357,14 +355,14 @@ function(
 
 		// Act
 		this.oGrid.addItem(oItem);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oGrid.$().find("#tile1").length, 1, "Item 1 is rendered");
 
 		// Act
 		this.oGrid.removeItem(oItem);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oGrid.$().find("#tile1").length, 0, "Item 1 is not rendered inside the grid");
@@ -393,7 +391,7 @@ function(
 
 	QUnit.test("Insert items when rendered", function (assert) {
 		// Arrange
-		Core.applyChanges(); // render the grid
+		nextUIUpdate.runSync()/*fake timer is used in module*/; // render the grid
 
 		var $grid,
 			oItem1 = new GenericTile({id: "tile1", header: "Comulative Tools"}),
@@ -404,7 +402,7 @@ function(
 		this.oGrid.insertItem(oItem1, -1);
 		this.oGrid.insertItem(oItem2, 5000);
 		this.oGrid.insertItem(oItem3, 1);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		$grid = this.oGrid.$("listUl");
@@ -462,7 +460,7 @@ function(
 		}.bind(this));
 
 		// Act
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		aExamples.forEach(function (oExample, iInd) {
@@ -481,21 +479,21 @@ function(
 		// Act
 		this.oGrid.addItem(oVisibleItem);
 		this.oGrid.addItem(oInvisibleItem);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aWrappers = this.oGrid.$("listUl").children();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInvisibleItem.setVisible(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(aWrappers[1].offsetWidth > 0, "When item is turned to visible, its wrapper should take width.");
 
 		// Act
 		oVisibleItem.setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.notOk(aWrappers[0].offsetWidth > 0, "When item is turned to invisible, its wrapper should NOT take width.");
@@ -531,26 +529,26 @@ function(
 			})
 		});
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$grid = this.oGrid.$("listUl");
 
 		// Act - hide first item
 		oModel.setProperty("/0/visible", false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok($grid.children()[0].offsetWidth === 0, "The first item is not visible and wrapper is not visible.");
 
 		// Act - back to visible
 		oModel.setProperty("/0/visible", true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok($grid.children()[0].offsetWidth > 0, "The first item is visible again.");
 
 		// Act - set second item to visible
 		oModel.setProperty("/1/visible", true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok($grid.children()[1].offsetWidth > 0, "The second item is visible.");
@@ -569,7 +567,7 @@ function(
 
 		// Act
 		this.oGrid.setWidth("370px"); // place for 4 columns
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(100);
 
 		// Assert
@@ -585,7 +583,7 @@ function(
 
 		// Act
 		this.oGrid.setLayout(new GridContainerSettings({ columns: 4 })); // explicitly set 4 columns
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oItem.$().parent().css("grid-column-start"), "span 4", "Item has 4 columns as expected");
@@ -595,11 +593,11 @@ function(
 		// Arrange
 		var oItem = new Card();
 		this.oGrid.addItem(oItem);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oItem.setHeight("400px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oItem.$().parent().css("grid-row-start"), "span 5", "Item has 5 rows after resize");
@@ -612,12 +610,12 @@ function(
 			oItem = new Card();
 
 		this.oGrid.addItem(oItem);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		fnRegisterSpy.resetHistory();
 
 		// Act
 		oItem.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(fnDeregisterSpy.callCount, 1, "ResizeHandler.deregister() is called once");
@@ -639,7 +637,7 @@ function(
 		this.oGrid.setLayout(new GridContainerSettings({ rowSize: "80px", gap: "10px" }));
 		this.oGrid.addItem(oItem1);
 		this.oGrid.addItem(oItem2);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oItem1.$().parent().height(), iExpectedHeight, "Card height is equal to minRows.");
@@ -703,7 +701,7 @@ function(
 		this.oGrid.setAggregation("layout", oSettings);
 
 		// Act
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assertGridSettings(this.oGrid, oSettings, "layout", assert);
@@ -715,7 +713,7 @@ function(
 		this.oGrid.setAggregation("layout", oSettings);
 
 		// Act
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assertGridSettings(this.oGrid, oSettings, "layout", assert);
@@ -732,7 +730,7 @@ function(
 		this.oGrid.addItem(oItem);
 
 		// Act
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		var $itemWrapper = oItem.$().parent();
@@ -748,11 +746,11 @@ function(
 		this.oGrid.setAggregation("layoutS", oLayoutS);
 		this.oGrid.setContainerQuery(true);
 		this.oGrid.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		this.oGrid.$().width("350px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		// Assert
@@ -803,7 +801,7 @@ function(
 	QUnit.test("Breakpoints", function (assert) {
 		// Arrange
 		this.oGrid.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var sLayoutName,
 			iOriginalWidth = Device.resize.width;
@@ -830,7 +828,7 @@ function(
 
 		var oContainer = new Panel({content: this.oGrid});
 		oContainer.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act & Assert
 		var sLayoutName;
@@ -839,7 +837,7 @@ function(
 
 			// Act
 			oContainer.$().width(sWidth);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			this.clock.tick(500);
 
 			// Assert
@@ -861,7 +859,7 @@ function(
 		this.oGrid.setContainerQuery(true);
 
 		oContainer.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oGrid.attachLayoutChange(fnLayoutChangeSpy);
 
@@ -884,7 +882,7 @@ function(
 			this.oGrid = new GridContainer();
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
@@ -930,7 +928,7 @@ function(
 		this.oGrid.addItem(oItem);
 
 		// Act
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		// 2*80px + 1*16px = 176
@@ -956,7 +954,7 @@ function(
 
 		// Arrange
 		this.oGrid.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		for (var sWidth in mSizes) {
 
@@ -1012,7 +1010,7 @@ function(
 			});
 
 			this.oScrollContainer.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oScrollContainer.destroy();
@@ -1032,7 +1030,7 @@ function(
 			oScrollSpy = this.spy(this.oGrid.getItems()[1].getCardHeader().getDomRef(), "scrollIntoView");
 
 		oItemWrapper1.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeydown(oItemWrapper1, KeyCodes.ARROW_RIGHT, false, false, false);
@@ -1060,7 +1058,7 @@ function(
 			oItemWrapper5 = this.oGrid.getDomRef("listUl").children[4];
 
 		oItemWrapper1.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeydown(oItemWrapper1, KeyCodes.ARROW_DOWN, false, false, false);
@@ -1071,7 +1069,7 @@ function(
 		// Act
 		this.oGrid._oItemNavigation._onFocusLeave();
 		oItemWrapper5.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		qutils.triggerKeydown(oItemWrapper5.firstElementChild, KeyCodes.ARROW_DOWN, false, false, false);
 
 		// Assert
@@ -1086,7 +1084,7 @@ function(
 		// Arrange
 		var oItemWrapper3 = this.oGrid.getDomRef("listUl").children[2];
 		oItemWrapper3.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeydown(oItemWrapper3, KeyCodes.ARROW_LEFT, false, false, false);
@@ -1100,7 +1098,7 @@ function(
 		var oItemWrapper1 = this.oGrid.getDomRef("listUl").children[0],
 			oItemWrapper3 = this.oGrid.getDomRef("listUl").children[2];
 		oItemWrapper3.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeydown(oItemWrapper3, KeyCodes.ARROW_UP, false, false, false);
@@ -1114,7 +1112,7 @@ function(
 		var oItemWrapper1 = this.oGrid.getDomRef("listUl").children[0],
 			oItemWrapper5 = this.oGrid.getDomRef("listUl").children[4];
 		oItemWrapper1.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeydown(oItemWrapper1, KeyCodes.PAGE_DOWN, false, false, false);
@@ -1128,7 +1126,7 @@ function(
 		var oItemWrapper2 = this.oGrid.getDomRef("listUl").children[1],
 			oItemWrapper4 = this.oGrid.getDomRef("listUl").children[3];
 			oItemWrapper4.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeydown(oItemWrapper4, KeyCodes.PAGE_UP, false, false, false);
@@ -1145,7 +1143,7 @@ function(
 			oForwardTabSpy = this.spy(this.oGrid._oItemNavigation, "forwardTab");
 
 		oItemWrapperTile.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		// Act
 		qutils.triggerKeydown(oItemWrapperTile, KeyCodes.TAB, false, false, false);
 
@@ -1153,7 +1151,7 @@ function(
 		assert.ok(oForwardTabSpy.called, "Focus should leave the GridContainer");
 
 		oTile.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(document.activeElement, oTile.parentNode, "Focus is moved to the list item.");
@@ -1164,7 +1162,7 @@ function(
 		var done = assert.async();
 
 		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// Arrange
 			this.oGrid._oItemNavigation.setFocusedIndex(4);
@@ -1173,7 +1171,7 @@ function(
 				oForwardTabSpy = this.spy(this.oGrid._oItemNavigation, "forwardTab");
 
 			firstListItem.focus();
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			// Act
 			qutils.triggerKeydown(firstListItem, KeyCodes.TAB, false, false, false);
 
@@ -1190,7 +1188,7 @@ function(
 			oIntegrationCardFocusInSpy = this.spy(IntegrationCard.prototype, "onfocusin");
 
 		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			var oItemWrapper = this.oGrid.getDomRef("listUl").children[1];
 			oItemWrapper.focus();
@@ -1215,7 +1213,7 @@ function(
 			oAttachPressSpy = this.spy(this.oTile, "firePress");
 
 		oItemWrapper.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeyup(oItemWrapper, KeyCodes.ENTER, false, false, false);
@@ -1230,7 +1228,7 @@ function(
 		assert.strictEqual(oCard.getFocusDomRef().getAttribute("tabindex"), null, "Focus DomRef should not have tabindex");
 
 		oCard.getHeader().invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oCard.getFocusDomRef().getAttribute("tabindex"), null, "Focus DomRef should not have tabindex");
 	});
@@ -1262,7 +1260,7 @@ function(
 			});
 
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
@@ -1286,7 +1284,7 @@ function(
 		});
 
 		oFirstItemWrapper.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_LEFT, false, false, false);
@@ -1308,7 +1306,7 @@ function(
 		});
 
 		oFirstItemWrapper.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_UP, false, false, false);
@@ -1330,7 +1328,7 @@ function(
 		});
 
 		oFourthItemWrapper.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeydown(oFourthItemWrapper, KeyCodes.ARROW_RIGHT, false, false, false);
@@ -1352,7 +1350,7 @@ function(
 		});
 
 		oThirdItemWrapper.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeydown(oThirdItemWrapper, KeyCodes.ARROW_DOWN, false, false, false);
@@ -1414,7 +1412,7 @@ function(
 			});
 
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
@@ -1466,7 +1464,7 @@ function(
 		var oThirdItemWrapper = this.oGrid.getItems()[2].getDomRef().parentElement;
 
 		oThirdItemWrapper.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeydown(oThirdItemWrapper, KeyCodes.ARROW_UP, false, false, /**ctrl */ true );
@@ -1533,7 +1531,7 @@ function(
 		// Act
 		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_RIGHT, false, false, /**ctrl */ true );
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oDraggedControl.getDomRef().parentElement.id, sFirstItemWrapperId, "The dragged item wrapper's ID is preserved");
 		assert.strictEqual(this.oDroppedControl.getDomRef().parentElement.id, sSecondItemWrapperId, "The dropped item wrapper's ID is preserved");
@@ -1583,7 +1581,7 @@ function(
 			});
 
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
@@ -1673,7 +1671,7 @@ function(
 
 			this.oGrid1.placeAt(DOM_RENDER_LOCATION);
 			this.oGrid2.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oGrid1.destroy();
@@ -1738,7 +1736,7 @@ function(
 			oItemWrapperFocusSpy;
 
 		oGrid.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oItemWrapper = oGrid.getDomRef().children[1];
 		oItemWrapperFocusSpy = this.spy(oItemWrapper, "focus");
@@ -1767,7 +1765,7 @@ function(
 			});
 
 		oGrid.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerEvent("mousedown", oTile.getDomRef());
@@ -1788,7 +1786,7 @@ function(
 				items: [ oCard ]
 			});
 		oGrid.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.notOk(GridContainerUtils.getItemWrapper(oCard).classList.contains("sapFGridContainerItemWrapperNoVisualFocus"), "Class for own focus is not added");
@@ -1805,7 +1803,7 @@ function(
 			});
 
 		oGrid.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act - focus the "after" element
 		qutils.triggerEvent("focusin", oGrid.getDomRef("after"));
@@ -1828,7 +1826,7 @@ function(
 
 		oBtnBefore.placeAt(DOM_RENDER_LOCATION);
 		oGrid.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerEvent("focusin", oGrid.getDomRef());
@@ -1861,7 +1859,7 @@ function(
 			});
 
 		oGrid.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oGrid.focusItem(1);
@@ -1894,7 +1892,7 @@ function(
 			});
 
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
@@ -1956,7 +1954,7 @@ function(
 			});
 
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
@@ -1975,7 +1973,7 @@ function(
 	QUnit.test("Creating grid matrix with inlineBlockLayout enabled", function (assert) {
 		// Arrange
 		this.oGrid.setInlineBlockLayout(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var aMatrix = this.oGrid.getNavigationMatrix();
 
 		// Assert
@@ -2014,7 +2012,7 @@ function(
 		this.oGrid.attachBorderReached(oSpy);
 
 		oTopMostItemWrapper.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeydown(oTopMostItemWrapper, KeyCodes.ARROW_UP, false, false, false);
@@ -2031,7 +2029,7 @@ function(
 		this.oGrid.attachBorderReached(oSpy);
 
 		oBottomMostItemWrapper.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeydown(oBottomMostItemWrapper, KeyCodes.ARROW_DOWN, false, false, false);
@@ -2045,7 +2043,7 @@ function(
 		var oSecondItemWrapper = this.oGrid.getItems()[1].getDomRef().parentElement;
 
 		oSecondItemWrapper.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeydown(oSecondItemWrapper, KeyCodes.ARROW_LEFT, false, false, false);
@@ -2062,7 +2060,7 @@ function(
 		var oThirdItemWrapper = this.oGrid.getItems()[2].getDomRef().parentElement;
 
 		oThirdItemWrapper.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeydown(oThirdItemWrapper, KeyCodes.ARROW_LEFT, false, false, false);
@@ -2078,7 +2076,7 @@ function(
 		var oGrid = new GridContainer({});
 
 		oGrid.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oGrid._resize();
 
@@ -2086,7 +2084,7 @@ function(
 		assert.ok(oGrid._lastViewportWidth, "_lastViewportWidth is set");
 
 		oGrid.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(oGrid._lastGridWidth, "_lastGridWidth is not set");
 		assert.notOk(oGrid._lastViewportWidth, "_lastViewportWidth is not set");
@@ -2109,7 +2107,7 @@ function(
 		this.oGrid.addItem(new SearchField());
 		this.oGrid.addItem(new SearchField());
 		this.oGrid.addItem(oSf);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oSf.focus();
 
 		assert.strictEqual(document.activeElement, oSf.getFocusDomRef(), "Focus is in the search field");
@@ -2124,7 +2122,7 @@ function(
 		this.oGrid.addItem(oSf);
 		this.oGrid.addItem(new SearchField());
 		this.oGrid.addItem(new SearchField());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oSf.focus();
 
 		assert.strictEqual(document.activeElement, oSf.getFocusDomRef(), "Focus is in the search field");
@@ -2138,7 +2136,7 @@ function(
 		this.oGrid.addItem(new SearchField());
 		this.oGrid.addItem(new SearchField());
 		this.oGrid.addItem(new SearchField());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oFirstItemWrapper = this.oGrid.getDomRef("listUl").children[0];
 		var oLastItemWrapper = this.oGrid.getDomRef("listUl").children[2];
 		oLastItemWrapper.focus();
@@ -2154,7 +2152,7 @@ function(
 		this.oGrid.addItem(new SearchField());
 		this.oGrid.addItem(new SearchField());
 		this.oGrid.addItem(new SearchField());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oFirstItemWrapper = this.oGrid.getDomRef("listUl").children[0];
 		var oLastItemWrapper = this.oGrid.getDomRef("listUl").children[2];
 		oFirstItemWrapper.focus();

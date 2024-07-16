@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/Device", "sap/m/library", "sap/ui/core/Configuration", "sap/ui/core/ControlBehavior"], function(Device, library, Configuration, ControlBehavior) {
+sap.ui.define(["sap/ui/Device", "sap/m/library", "sap/ui/core/AnimationMode", "sap/ui/core/ControlBehavior"], function(Device, library, AnimationMode, ControlBehavior) {
 		"use strict";
 
 		// shortcut for sap.m.SwitchType
@@ -62,7 +62,7 @@ sap.ui.define(["sap/ui/Device", "sap/m/library", "sap/ui/core/Configuration", "s
 			oRm.openStart("div", oSwitch.getId() + "-switch");
 			oRm.attr("aria-hidden", "true");
 			oRm.class(CSS_CLASS);
-			if (sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal) {
+			if (sAnimationMode !== AnimationMode.none && sAnimationMode !== AnimationMode.minimal) {
 				oRm.class(CSS_CLASS + "Trans");
 			}
 			oRm.class(bState ? CSS_CLASS + "On" : CSS_CLASS + "Off");
@@ -224,4 +224,4 @@ sap.ui.define(["sap/ui/Device", "sap/m/library", "sap/ui/core/Configuration", "s
 
 		return SwitchRenderer;
 
-	}, /* bExport= */ true);
+	});

@@ -25,9 +25,7 @@ sap.ui.define([
 		 * @alias sap.ui.core.routing.Views
 		 */
 		var Views = TargetCache.extend("sap.ui.core.routing.Views", /** @lends sap.ui.core.routing.Views.prototype */ {
-			metadata: {
-				publicMethods: ["getView", "setView"]
-			},
+			metadata: {},
 
 			constructor: function (oOptions) {
 				if (!oOptions) {

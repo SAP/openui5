@@ -338,6 +338,5 @@ sap.ui.define(
 		ExecutionScope.possibleScopes = Object.getOwnPropertyNames(contextTypes);
 
 		return ExecutionScope;
-	},
-	true
+	}
 );

@@ -1,83 +1,18 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
+	<head><meta charset="utf-8">
 
 		<title>MVC Async XMLView - sap.ui.core</title>
 
 		<script id="sap-ui-bootstrap"
 				src="../../../../../../resources/sap-ui-core.js"
 				data-sap-ui-libs="sap.m"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/XMLViewAsync"
+				data-sap-ui-resource-roots='{"local":"./"}'
 		></script>
-		<script>
-			sap.ui.require([
-				"sap/ui/core/Element",
-				"sap/ui/thirdparty/sinon"
-			], function(Element, sinon) {
-				"use strict";
-
-				// this test page is not below "resources", but "test-resources"
-				// usually this redirect is NOT needed - but possible if useful
-				sap.ui.loader.config({paths: {"sap/ui/core/mvctest": "../../../../../../test-resources/sap/ui/core/samples/mvc/"}});
-
-				const _setTimeout = globalThis.setTimeout;
-
-				var sXml;
-				jQuery.ajax({
-					url : "../../../../../../test-resources/sap/ui/core/samples/mvc/views/Async.view.xml",
-					success : function(data) {
-						sXml = new XMLSerializer().serializeToString(data);
-					},
-					async : false
-				});
-
-				var xhr = sinon.useFakeXMLHttpRequest();
-				xhr.useFilters = true;
-				xhr.addFilter(function(method, url) {
-					return url.indexOf("sap/ui/core/samples/mvc/views/Async.view.xml") == -1;
-				});
-				xhr.onCreate = function(request) {
-					request.onSend = function() {
-						var iDelay = Element.getElementById("timeout").getValue();
-						iDelay = parseInt(iDelay);
-
-						_setTimeout(function() {
-							request.respond(200,  { "Content-Type" : "application/xml" }, sXml);
-						}, iDelay);
-					};
-				};
-
-				/*
-				* define ASYNC View and place it onto the page
-				*/
-				var oInput = new sap.m.Input("timeout", {
-					value : "1000"
-				}).placeAt("asyncInput");
-				var oButton = new sap.m.Button("showButton", {
-					text : "Show / rerender View",
-					press : function(oEvent) {
-						var oView = Element.getElementById("asyncView");
-						if (oView) {
-							oView.destroy();
-						}
-
-						sap.ui.xmlview({
-							id : "asyncView",
-							viewName : "sap.ui.core.mvctest.views.Async",
-							async : true
-						}).placeAt("contentAsync");
-					}
-				}).placeAt("asyncButton");
-
-				/*
-				* View and place it onto the page
-				*/
-				sap.ui.xmlview({
-					id : "syncView",
-					viewName : "sap.ui.core.mvctest.views.Product"
-				}).placeAt("contentSync");
-
-			});
-		</script>
+		
 	</head>
 
 	<body class="sapUiBody">

@@ -473,4 +473,4 @@ sap.ui.define([
 		}
 	};
 	return RenameHandler;
-}, true);
+});

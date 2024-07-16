@@ -95,14 +95,6 @@ sap.ui.define([
 
 			library : "sap.m",
 			properties : {
-
-				/**
-				 * Defines whether the current selection is visualized.
-				 * @deprecated As of 1.15.0.
-				 * Regarding to changes of this control this property is not needed anymore.
-				 */
-				showSelection : {type : "boolean", group : "Misc", defaultValue : true, deprecated: true},
-
 				/**
 				 * Key of the selected item.
 				 *
@@ -124,15 +116,6 @@ sap.ui.define([
 				 * @since 1.40
 				 */
 				mode : {type : "sap.m.IconTabHeaderMode", group : "Appearance", defaultValue : IconTabHeaderMode.Standard},
-
-				/**
-				 * Specifies if the overflow select list is displayed.
-				 *
-				 * The overflow select list represents a list, where all tab filters are displayed,
-				 * so the user can select specific tab filter easier.
-				 * @deprecated As of version 1.75, the concept has been discarded. All tab filters that don't fit in the header, will be displayed in overflow menu.
-				 */
-				showOverflowSelectList : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
 				/**
 				 * Specifies the background color of the header.

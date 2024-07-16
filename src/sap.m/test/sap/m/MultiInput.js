@@ -17,10 +17,26 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Theming",
 	"sap/ui/table/Table",
-	"sap/ui/table/Column"
-], function (JSONModel, App, Button, Column, ColumnListItem, Label, List, MessageBox, MessageToast, MultiInput, Page, StandardListItem, Table, Text, Token, coreLibrary, Theming, GridTable, GridTableColumn) {
-
+	"sap/ui/table/Column",
+	"sap/m/CheckBox",
+	"sap/ui/layout/form/SimpleForm",
+	"sap/m/FormattedText",
+	"sap/m/Link",
+	"sap/m/Dialog",
+	"sap/ui/core/Popup",
+	"sap/m/ToggleButton",
+	"sap/m/SelectDialog",
+	"sap/m/Tokenizer",
+	"sap/ui/model/Sorter",
+	"sap/ui/core/Item",
+	"sap/ui/core/SeparatorItem",
+	"sap/m/ToolbarSpacer",
+	"sap/m/Title"
+], function(JSONModel, App, Button, Column, ColumnListItem, Label, List, MessageBox, MessageToast, MultiInput, Page, StandardListItem, Table, Text, Token, coreLibrary, Theming, GridTable, GridTableColumn, CheckBox, SimpleForm, FormattedText, Link, Dialog, Popup, ToggleButton, SelectDialog, Tokenizer, Sorter, Item, SeparatorItem, ToolbarSpacer, Title) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	const ValueState = coreLibrary.ValueState;
 
 	var TextDirection = coreLibrary.TextDirection;
 
@@ -43,7 +59,7 @@ sap.ui.define([
 	//*******************************
 
 	// MultiInput with tokens validated by custom validator
-	var oCheckBoxAcceptValidation = new sap.m.CheckBox({ text: "Accept tokens", selected: true }),
+	var oCheckBoxAcceptValidation = new CheckBox({ text: "Accept tokens", selected: true }),
 		oMultiInputCustomValidator = new MultiInput("multiInputCustomValidator", {
 			placeholder: "tokens validated by custom validator",
 			valueHelpRequest: fValueHelpRequested,
@@ -376,7 +392,7 @@ sap.ui.define([
 		return new Token({ key: text, text: text });
 	});
 
-	var oSimpleForm = new sap.ui.layout.form.SimpleForm("simpleFrom", {
+	var oSimpleForm = new SimpleForm("simpleFrom", {
 		editable: true,
 		title: "MultiInput in SimpleForm",
 		content: [
@@ -418,17 +434,17 @@ sap.ui.define([
 		valueHelpRequest: fValueHelpRequested,
 		width: "33%",
 		suggestionColumns: aMoreSuggestionColumns,
-		formattedValueStateText: new sap.m.FormattedText({
+		formattedValueStateText: new FormattedText({
 			htmlText: "Warning value state message with formatted text containing %%0",
 			controls: [
-				new sap.m.Link({
+				new Link({
 					text: "link",
 					href: "",
 					press: function () {
-						var oDialog = new sap.m.Dialog({
+						var oDialog = new Dialog({
 							title: 'Recomendations are based on:',
-							type: sap.m.Dialog.DialogType.Message,
-							state: sap.ui.core.ValueState.Warning,
+							type: Dialog.DialogType.Message,
+							state: ValueState.Warning,
 							content: new Text({
 								text: 'Machine learning information and more details'
 							}),
@@ -459,21 +475,21 @@ sap.ui.define([
 		valueHelpRequest: fValueHelpRequested,
 		width: "33%",
 		suggestionColumns: aEvenMoreSuggestionColumns,
-		formattedValueStateText: new sap.m.FormattedText({
+		formattedValueStateText: new FormattedText({
 			htmlText: "Warning value state message with formatted text containing %%0 %%1",
 			controls: [
-				new sap.m.Link({
+				new Link({
 					text: "multiple",
 					href: "#",
 					press: function () {
-						MessageToast.show("You have pressed a link in value state message", { my: sap.ui.core.Popup.Dock.CenterCenter, at: sap.ui.core.Popup.Dock.CenterCenter });
+						MessageToast.show("You have pressed a link in value state message", { my: Popup.Dock.CenterCenter, at: Popup.Dock.CenterCenter });
 					}
 				}),
-				new sap.m.Link({
+				new Link({
 					text: "links",
 					href: "#",
 					press: function () {
-						MessageToast.show("You have pressed a link in value state message", { my: sap.ui.core.Popup.Dock.CenterCenter, at: sap.ui.core.Popup.Dock.CenterCenter });
+						MessageToast.show("You have pressed a link in value state message", { my: Popup.Dock.CenterCenter, at: Popup.Dock.CenterCenter });
 					}
 				})
 			]
@@ -489,10 +505,10 @@ sap.ui.define([
 		valueState: "Success",
 		valueHelpRequest: fValueHelpRequested,
 		width: "33%",
-		formattedValueStateText: new sap.m.FormattedText({
+		formattedValueStateText: new FormattedText({
 			htmlText: "Success value state message with formatted text containing %%0",
 			controls: [
-				new sap.m.Link({
+				new Link({
 					text: "link",
 					href: "#",
 					target: "_blank"
@@ -591,7 +607,7 @@ sap.ui.define([
 		]
 	});
 
-	var readOnlyButton = new sap.m.ToggleButton({
+	var readOnlyButton = new ToggleButton({
 		text: "Toggle Read-Only",
 		press: function () {
 			oNotEditableTokensMI.setEditable(!oNotEditableTokensMI.getEditable());
@@ -602,7 +618,7 @@ sap.ui.define([
 	var oOneLongTokenMI = new MultiInput("multiInputWithOneLongToken", {
 		placeholder: "1 item example",
 		valueHelpRequest: function () {
-			var oDialog = new sap.m.Dialog({
+			var oDialog = new Dialog({
 				endButton: new Button({
 					text: "Close",
 					press: function () {
@@ -617,7 +633,7 @@ sap.ui.define([
 		]
 	});
 
-	var oOneLongTokenReadOnlyButton = new sap.m.ToggleButton({
+	var oOneLongTokenReadOnlyButton = new ToggleButton({
 		text: "Toggle Read-Only mode MI with long token",
 		press: function () {
 			oOneLongTokenMI.setEditable(!oOneLongTokenMI.getEditable());
@@ -644,7 +660,7 @@ sap.ui.define([
 	}).addStyleClass("sapUiLargeMarginBegin");
 
 	// MultiInput with SelectDialog
-	var oSelectDialog = new sap.m.SelectDialog({
+	var oSelectDialog = new SelectDialog({
 		title: "Search Dialog"
 	});
 
@@ -702,7 +718,7 @@ sap.ui.define([
 		tokenUpdate: function (oEvent) {
 			var eventType = oEvent.getParameter("type");
 
-			if (eventType != sap.m.Tokenizer.TokenUpdateType.Removed) {
+			if (eventType != Tokenizer.TokenUpdateType.Removed) {
 				return;
 			}
 
@@ -803,33 +819,33 @@ sap.ui.define([
 	oSuggestionsMultiInput.setModel(oModel);
 	oSuggestionsMultiInput.bindAggregation("suggestionItems", {
 		path: "/",
-		sorter: [new sap.ui.model.Sorter('group', false, true)],
-		template: new sap.ui.core.Item({ text: "{name}" })
+		sorter: [new Sorter('group', false, true)],
+		template: new Item({ text: "{name}" })
 	});
 
 	const oSuggestionsMultiInputRTL = new MultiInput("mi-RTL", {
 		placeholder: "MultiInput with RTL Suggestion Items",
 		ariaLabelledBy: "suggestionsLabel",
 		suggestionItems: [
-			new sap.ui.core.Item({
+			new Item({
 				text: "Apple", textDirection: TextDirection.RTL
 			}),
-			new sap.ui.core.Item({
+			new Item({
 				text: "Pineapple", textDirection: TextDirection.RTL
 			}),
-			new sap.ui.core.Item({
+			new Item({
 				text: "Apricot", textDirection: TextDirection.RTL
 			}),
-			new sap.ui.core.Item({
+			new Item({
 				text: "Banana", textDirection: TextDirection.RTL
 			}),
-			new sap.ui.core.SeparatorItem({
+			new SeparatorItem({
 				text: "Veggies", textDirection: TextDirection.RTL
 			}),
-			new sap.ui.core.Item({
+			new Item({
 				text: "Tomato", textDirection: TextDirection.RTL
 			}),
-			new sap.ui.core.Item({
+			new Item({
 				text: "Asparagus", textDirection: TextDirection.RTL
 			})
 		]
@@ -855,7 +871,7 @@ sap.ui.define([
 	oSuggMultiInputPopoverWidth.setModel(oModel);
 	oSuggMultiInputPopoverWidth.bindAggregation("suggestionItems", {
 		path: "/",
-		template: new sap.ui.core.Item({ text: "{text}" })
+		template: new Item({ text: "{text}" })
 	});
 
 	// MultiInput with sticky suggestions header
@@ -910,14 +926,14 @@ sap.ui.define([
 		placeholder: "MultiInput with wrapping",
 		width: "30rem",
 		suggestionItems: [
-			new sap.ui.core.Item({ key: "1", text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." }),
-			new sap.ui.core.Item({ key: "2", text: "Item with very long text, wrapping enabled and wrapCharLimit set to а very large number in order to make the whole text always visible, taking as much space as needed." }),
-			new sap.ui.core.Item({ key: "3", text: "Item that not wrap" })
+			new Item({ key: "1", text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." }),
+			new Item({ key: "2", text: "Item with very long text, wrapping enabled and wrapCharLimit set to а very large number in order to make the whole text always visible, taking as much space as needed." }),
+			new Item({ key: "3", text: "Item that not wrap" })
 		]
 	});
 
 	//*******************************
-	var theCompactMode = new sap.m.CheckBox("compactMode", {
+	var theCompactMode = new CheckBox("compactMode", {
 		selected: false,
 		select: function () {
 			document.getElementById("body").classList.toggle("sapUiSizeCompact");
@@ -935,13 +951,13 @@ sap.ui.define([
 	//******************************************
 	var oPage = new Page("page1", {
 		headerContent: [
-			new sap.m.ToolbarSpacer({
+			new ToolbarSpacer({
 				width: "500px"
 			}),
-			new sap.m.Title({
+			new Title({
 				text: "sap.m.MultiInput"
 			}),
-			new sap.m.ToolbarSpacer({
+			new ToolbarSpacer({
 				width: "650px"
 			}),
 			oCustomCssButton
@@ -998,7 +1014,7 @@ sap.ui.define([
 		]
 	}).addStyleClass("sapUiContentPadding");
 
-	var oApp = new sap.m.App("myApp", {
+	var oApp = new App("myApp", {
 		initialPage: "page1"
 	});
 

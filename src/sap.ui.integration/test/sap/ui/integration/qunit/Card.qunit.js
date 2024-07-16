@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/integration/cards/filters/SelectFilter",
 	"sap/ui/integration/util/DataProvider",
 	"sap/ui/integration/util/Manifest",
-	"sap/ui/integration/util/Utils",
 	"sap/ui/integration/library",
 	"sap/ui/core/message/MessageType",
 	"sap/ui/core/Manifest",
@@ -42,7 +41,6 @@ sap.ui.define([
 		Filter,
 		DataProvider,
 		CardManifest,
-		Utils,
 		library,
 		MessageType,
 		CoreManifest,
@@ -1654,36 +1652,6 @@ sap.ui.define([
 
 			// Assert
 			assert.ok(oHeaderDomRef.querySelector(".sapUiIntBlockingMsg"), "error element is rendered in the header");
-		});
-
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		QUnit.test("Error is logged when binding syntax is not 'complex'", function (assert) {
-			// Arrange
-			var oLogSpy = this.spy(Log, "error");
-			this.stub(Utils, "isBindingSyntaxComplex").returns(false);
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.bindingSyntax"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {},
-					"content": {
-						"item": { }
-					}
-				}
-			});
-
-			// Act
-			this.oCard.startManifestProcessing();
-
-			// Assert
-			assert.ok(
-				oLogSpy.calledWith(sinon.match(/^Cannot parse manifest. Complex binding syntax is not enabled.*/)),
-				"Error message should be logged"
-			);
 		});
 
 		QUnit.test("Height of the Card should not change when error message is shown", async function (assert) {
@@ -3675,7 +3643,6 @@ sap.ui.define([
 				}
 			});
 		});
-
 	}
 );
 

@@ -17,10 +17,17 @@ sap.ui.define([
     "sap/m/upload/UploadSet",
     "sap/m/upload/UploadSetItem",
     "sap/ui/core/Item",
-    "sap/ui/model/json/JSONModel"
-], function(App, Page, Toolbar, List, ListItem, Button, CheckBox, ObjectAttribute, ObjectMarker, ObjectStatus,
-    Label, Input, StepInput, HBox, Select, UploadSet, UploadSetItem, Item, JSONModel) {
+    "sap/ui/model/json/JSONModel",
+    "sap/m/library",
+    "sap/ui/core/library"
+], function(App, Page, Toolbar, List, ListItem, Button, CheckBox, ObjectAttribute, ObjectMarker, ObjectStatus, Label, Input, StepInput, HBox, Select, UploadSet, UploadSetItem, Item, JSONModel, mobileLibrary, coreLibrary) {
     "use strict";
+
+    // shortcut for sap.ui.core.TextAlign
+    const TextAlign = coreLibrary.TextAlign;
+
+    // shortcut for sap.m.LabelDesign
+    const LabelDesign = mobileLibrary.LabelDesign;
 
     var oUploadSetData = {
         instantUpload: true,
@@ -287,7 +294,7 @@ sap.ui.define([
     var oEventList = new List("eventList", {
         headerToolbar: new Toolbar({
             content: [
-                new Label({ text: "Events", design: sap.m.LabelDesign.Bold }),
+                new Label({ text: "Events", design: LabelDesign.Bold }),
                 new Button({
                     text: "Clear",
                     press: function () {
@@ -337,7 +344,7 @@ sap.ui.define([
     oHeaderFieldList = new List("headerFieldList", {
         headerToolbar: new Toolbar({
             content: [
-                new Label({ text: "Headers", width: "3.5rem", design: sap.m.LabelDesign.Bold }),
+                new Label({ text: "Headers", width: "3.5rem", design: LabelDesign.Bold }),
                 new Button({
                     text: "Add",
                     press: function () {
@@ -360,13 +367,13 @@ sap.ui.define([
 
     var oRestrictionToolbar = new Toolbar({
         content: [
-            new Label({ text: "fileTypes:", width: "8%", textAlign: sap.ui.core.TextAlign.End }),
+            new Label({ text: "fileTypes:", width: "8%", textAlign: TextAlign.End }),
             new Input({ value: "{/fileTypes}", width: "34%" }),
-            new Label({ text: "nameLength:", width: "8%", textAlign: sap.ui.core.TextAlign.End }),
+            new Label({ text: "nameLength:", width: "8%", textAlign: TextAlign.End }),
             new StepInput({ value: "{/maxFileNameLength}", width: "120px" }),
-            new Label({ text: "fileSize:", width: "8%", textAlign: sap.ui.core.TextAlign.End }),
+            new Label({ text: "fileSize:", width: "8%", textAlign: TextAlign.End }),
             new StepInput({ value: "{/maxFileSize}", width: "120px" }),
-            new Label({ text: "mediaTypes:", width: "8%", textAlign: sap.ui.core.TextAlign.End }),
+            new Label({ text: "mediaTypes:", width: "8%", textAlign: TextAlign.End }),
             new Input({ value: "{/mediaTypes}", width: "34%" })
         ]
     });

@@ -11,9 +11,10 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSectionBase",
 	"sap/m/Text",
 	"sap/m/MessageStrip",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/m/Panel"
 ],
-function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSection, ObjectPageSectionBase, Text, MessageStrip, Button) {
+function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSection, ObjectPageSectionBase, Text, MessageStrip, Button, Panel) {
 	"use strict";
 	var Importance = library.Importance;
 
@@ -1134,7 +1135,7 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 						subSections: [
 							new ObjectPageSubSection({
 								blocks: [
-									new sap.m.Panel({
+									new Panel({
 										content: [new Text({text: "Content1"})]
 									})]
 							})
@@ -1145,7 +1146,7 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 						subSections: [
 							new ObjectPageSubSection({
 								blocks: [
-									new sap.m.Panel({
+									new Panel({
 										content: [new Text({text: "Content2"})]
 									})]
 							})

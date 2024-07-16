@@ -17,4 +17,4 @@ sap.ui.define([
 			translationTextType: "XFLD"
 		})
 	};
-}, /* bExport= */ true);
+});

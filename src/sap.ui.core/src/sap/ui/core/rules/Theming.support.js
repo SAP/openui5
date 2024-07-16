@@ -136,43 +136,8 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Checks for custom styles applied on UI elements
-	 *
-	 * @deprecated Since 1.119
-	 */
-	var oCheckForLegacyParametersGet = {
-		id: "checkForLegacyParametersGet",
-		audiences: [Audiences.Control],
-		categories: [Categories.Performance],
-		enabled: true,
-		minversion: "1.87",
-		title: "Legacy sap.ui.core.theming.Parameters#get API",
-		description: "Checks usage of the legecy variant of the Parameters.get API",
-		resolution: "Use asynchronous variant of the Parameters.get API",
-		resolutionurls: [{
-			text: 'Parameters.get API Reference',
-			href: 'https://sdk.openui5.org/api/sap.ui.core.theming.Parameters/methods/sap.ui.core.theming.Parameters.get'
-		}],
-		check: function (issueManager, oCoreFacade, oScope) {
-			var oLoggedObjects = oScope.getLoggedObjects("LegacyParametersGet");
-			oLoggedObjects.forEach(function(oLoggedObject) {
-				issueManager.addIssue({
-					severity: Severity.Medium,
-					details: oLoggedObject.message,
-					context: {
-						id: "WEBPAGE"
-					}
-				});
-			});
-		}
-	};
-
 	return [
-		/** @deprecated */
-		oCheckForLegacyParametersGet,
-
 		oCssCheckCustomStyles,
 		oCssCheckCustomStylesThatAffectControls
 	];
-}, true);
+});

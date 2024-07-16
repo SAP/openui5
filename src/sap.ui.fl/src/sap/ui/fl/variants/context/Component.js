@@ -26,10 +26,10 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.comp, sap.ui.fl
 	 */
 	return UIComponent.extend("sap.ui.fl.variants.context.Component", {
-
 		metadata: {
 			manifest: "json"
 		},
+
 		onInit() {
 			var oSelectedContextsModel = this.getModel("selectedContexts");
 			oSelectedContextsModel.setProperty("/selected", []);
@@ -80,21 +80,11 @@ sap.ui.define([
 			oSelectedContextsModel.setProperty("/selected", aSelectedRoles);
 			oSelectedContextsModel.refresh(true);
 		},
+
 		resetSelectedContexts() {
 			var oSelectedContextsModel = this.getModel("selectedContexts");
 			oSelectedContextsModel.setProperty("/selected", []);
 			oSelectedContextsModel.refresh(true);
-		},
-
-		/**
-		 * Checks whether the given context sharing component is ready to be saved.
-		 * Displays UI error message in case there is an inconsistency within the variant: The 'restricted' option is selected, but no role was chosen.
-		 *
-		 * @deprecated As of version 1.100
-		 * @returns {boolean} <code>true</code> if the component has errors, <code>false</code> if there are no errors
-		 */
-		hasErrorsAndShowErrorMessage() {
-			return false;
 		},
 
 		/**

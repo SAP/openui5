@@ -1,8 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/m/TreeItemBaseRenderer','sap/ui/core/Core', 'sap/ui/core/Renderer'],
-function(TreeItemBaseRenderer, Core, Renderer) {
+sap.ui.define(['sap/m/TreeItemBaseRenderer',"sap/ui/core/Lib", 'sap/ui/core/Renderer'], function(TreeItemBaseRenderer, Library, Renderer) {
 	"use strict";
 
 	var DemokitTreeItemRender = Renderer.extend(TreeItemBaseRenderer);
@@ -36,7 +35,7 @@ function(TreeItemBaseRenderer, Core, Renderer) {
 
 	DemokitTreeItemRender.renderLIContent = function (oRm, oControl) {
 		var renderSpanWithText = function (oRm, textKey) {
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.documentation"),
+			var oResourceBundle = Library.getResourceBundleFor("sap.ui.documentation"),
 				sText = oResourceBundle.getText(textKey);
 
 			oRm.openStart('span')
@@ -71,4 +70,4 @@ function(TreeItemBaseRenderer, Core, Renderer) {
 	};
 
 	return DemokitTreeItemRender;
-}, /* bExport= */ true);
+});

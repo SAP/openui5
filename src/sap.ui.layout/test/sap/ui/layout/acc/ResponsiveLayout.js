@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/Item",
 	"sap/ui/core/Title",
-	"sap/ui/layout/form/SimpleForm",
-	"sap/ui/layout/form/ResponsiveLayout" // provides layout "ResponsiveLayout"
+	"sap/ui/layout/form/SimpleForm"
 ], function(DatePicker, Input, Label, RadioButton, RadioButtonGroup, Select, Text, Item, Title, SimpleForm) {
 	"use strict";
 

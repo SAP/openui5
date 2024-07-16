@@ -2,18 +2,22 @@
 <html>
 
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="UTF-8">
 
 <title>ManagedObject Binding Sample</title>
 
 <script src="shared-config.js"></script>
 <script id="sap-ui-bootstrap"
-	src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-libs="sap.m"
-	data-sap-ui-xx-bindingSyntax="complex"></script>
+        src="../../../../resources/sap-ui-core.js"
+        data-sap-ui-libs="sap.m"
+        data-sap-ui-async="true"
+        data-sap-ui-compat-version="edge"
+        data-sap-ui-on-init="module:local/ManagedObjectModel"
+        data-sap-ui-resource-roots='{"local":"./"}'
+></script>
 	
-<script id="view1" type="sapui5/xmlview">
+<script id="view1" type="text/xml">
 <mvc:View
 	height="100%"
 	controllerName="managedobjectmodel.example.Controller"
@@ -52,63 +56,7 @@
 	</m:VBox>
 </mvc:View>
 </script>
-<script>
-	sap.ui.controller("managedobjectmodel.example.Controller", {
-		onInit: function(oEvent) {
-			jQuery.sap.require("sap.ui.model.base.ManagedObjectModel");
-			var oModel = new sap.ui.model.base.ManagedObjectModel(this.getView());
-			this.getView().setModel(oModel, "$ct");
-		},
-		iCount: 0,
 
-		addLabel: function(oEvent) {
-			this.getView().byId("scrollContainer1").insertContent(new sap.m.Label({text:"Hello" + this.iCount++}),0);
-		},
-
-		removeLabel: function(oEvent) {
-			this.getView().byId("scrollContainer1").removeContent(0);
-		},
-
-		addEventListener: function(oEvent) {
-			var that = this;
-			var fn = function() {
-				that.getView().byId("button3").detachPress(fn);
-			};
-			this.getView().byId("button3").attachPress(fn);
-		}
-	});
-
-	var myView = sap.ui.xmlview({viewContent: jQuery('#view1').html()});
-	myView.placeAt("content");
-	var select = new sap.m.Select();
-	select.placeAt("content");
-	select.addItem(new sap.ui.core.Item({key:"key1", text:"Text 1"}));
-	select.addItem(new sap.ui.core.Item({key:"key2", text:"Text 2"}));
-	select.addItem(new sap.ui.core.Item({key:"key3", text:"Text 3"}));
-	select.addItem(new sap.ui.core.Item({key:"key4", text:"Text 4"}));
-
-	var input = new sap.m.Input("inputField", {
-		value: "{= ${select>/items/@length}}",
-		editable: false
-	});
-	input.placeAt('content');
-
-	jQuery.sap.require("sap.ui.model.base.ManagedObjectModel");
-
-	var oModel = new sap.ui.model.base.ManagedObjectModel(select);
-	input.setModel(oModel, "select");
-	input.placeAt('content');
-				
-	var button = new sap.m.Button("button", {
-		text: "{= 'Add item number ' + ${select>/items}.length + ' to list'}",
-		press: function() {
-			 var i = select.getItems().length + 1;
-			 select.addItem(new sap.ui.core.Item({key:"key" + i, text:"Text " + i}));
-		}
-	});
-	button.setModel(oModel, "select");
-	button.placeAt("content");
-</script>
 </head>
 <body class="sapUiBody">
 	<div id="content"></div>

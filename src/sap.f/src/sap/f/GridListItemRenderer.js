@@ -130,4 +130,4 @@ sap.ui.define([
 	};
 
 	return GridListItemRenderer;
-}, /* bExport= */ true);
+});

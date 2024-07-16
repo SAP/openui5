@@ -3,32 +3,30 @@ sap.ui.define([
 	"sap/m/Bar",
 	"sap/m/Button",
 	"sap/m/Page",
-	"sap/m/StandardTile",
-	"sap/m/TileContainer",
 	"sap/m/ToggleButton",
 	"sap/ui/core/library"
-], function(App, Bar, Button, Page, StandardTile, TileContainer, ToggleButton, coreLibrary) {
+], function(App, Bar, Button, Page, ToggleButton, coreLibrary) {
 	"use strict";
 
 	var TitleLevel = coreLibrary.TitleLevel;
 
-	var oTC = new TileContainer("tc",{
+	var oTC = new undefined/*TileContainer*/("tc",{
 		width: "100%",
 		height: "100%",
 		tiles:[
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				type : "Create",
 				info : "28 days left",
 				infoState : "Success",
 				title : "Create Leave Request",
 				removable: false
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				icon : "images/action.png",
 				title : "Leave Request History",
 				type: "Monitor"
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				icon : "images/travel_expense_report.png",
 				info : "Waiting for Approval",
 				infoState : "Warning",
@@ -36,40 +34,40 @@ sap.ui.define([
 				numberUnit : "euro",
 				title : "Travel Reimbursement"
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				icon : "images/action.png",
 				title : "Travel Reimbursement History",
 				type: "Monitor"
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				type : "Create",
 				info : "On Hold",
 				infoState : "Error",
 				title : "Create Purchase Order"
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				icon : "images/analytics_64.png",
 				title : "Financial report",
 				type: "Monitor"
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				icon : "images/analytics_grey_64.png",
 				title : "Team Report",
 				type: "Monitor",
 				removable: false
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				type : "Create",
 				info : "28 days left",
 				infoState : "Success",
 				title : "Create Leave Request"
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				icon : "images/action.png",
 				title : "Leave Request History",
 				type: "Monitor"
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				icon : "images/travel_expense_report.png",
 				info : "Waiting for Approval",
 				infoState : "Warning",
@@ -77,39 +75,39 @@ sap.ui.define([
 				numberUnit : "euro",
 				title : "Travel Reimbursement"
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				icon : "images/action.png",
 				title : "Travel Reimbursement History",
 				type: "Monitor"
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				type : "Create",
 				info : "On Hold",
 				infoState : "Error",
 				title : "Create Purchase Order"
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				icon : "images/analytics_64.png",
 				title : "Financial report",
 				type: "Monitor"
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				icon : "images/analytics_grey_64.png",
 				title : "Team Report",
 				type: "Monitor"
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				type : "Create",
 				info : "28 days left",
 				infoState : "Success",
 				title : "Create Leave Request"
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				icon : "images/action.png",
 				title : "Leave Request History",
 				type: "Monitor"
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				icon : "images/travel_expense_report.png",
 				info : "Waiting for Approval",
 				infoState : "Warning",
@@ -117,23 +115,23 @@ sap.ui.define([
 				numberUnit : "euro",
 				title : "Travel Reimbursement"
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				icon : "images/action.png",
 				title : "Travel Reimbursement History",
 				type: "Monitor"
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				type : "Create",
 				info : "On Hold",
 				infoState : "Error",
 				title : "Create Purchase Order"
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				icon : "images/analytics_64.png",
 				title : "Financial report",
 				type: "Monitor"
 			}),
-			new StandardTile({
+			new undefined/*StandardTile*/({
 				icon : "images/analytics_grey_64.png",
 				title : "Team Report",
 				type: "Monitor"
@@ -177,7 +175,7 @@ sap.ui.define([
 		titleLevel: TitleLevel.H1,
 		showHeader: true
 	});
-	var tc2 = new TileContainer({
+	var tc2 = new undefined/*TileContainer*/({
 		height: '70%'
 	});
 	page2.addContent(tc2);
@@ -185,7 +183,7 @@ sap.ui.define([
 		contentMiddle: [
 			new Button({
 				text: "Add Tile", press: function () {
-					tc2.addTile(new StandardTile({
+					tc2.addTile(new undefined/*StandardTile*/({
 						icon: "images/action.png",
 						number: "Busy state test1",
 						numberUnit: "Unit",

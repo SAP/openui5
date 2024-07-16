@@ -24,6 +24,7 @@ sap.ui.define([
 		metadata: {
 			interfaces: ["sap.ui.core.IFormContent"],
 			library: "sap.ui.mdc",
+
 			properties: {
 				/**
 				 * Interacts directly with conditions of Field or FilterField
@@ -47,6 +48,7 @@ sap.ui.define([
 				 */
 				displayOnly : {type : "boolean", group : "Behavior", defaultValue : false}
 			 },
+
 			aggregations: {
 				_rating: {
 					type: "sap.m.RatingIndicator",
@@ -59,6 +61,7 @@ sap.ui.define([
 					visibility: "hidden"
 				}
 			},
+
 			events: {
 				/**
 				 * This event is fired when the value property of the field is changed
@@ -102,7 +105,7 @@ sap.ui.define([
 					}
 				}
 			},
-			publicMethods: [],
+
 			defaultProperty: "conditions"
 		},
 		renderer : {

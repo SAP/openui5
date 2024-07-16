@@ -7,15 +7,16 @@
 		<script id="sap-ui-bootstrap"
 				src="../../../resources/sap-ui-core.js"
 				data-sap-ui-async="true"
-				data-sap-ui-compatVersion="edge"
 				data-sap-ui-libs="sap.m, sap.ui.layout"
-				data-sap-ui-onInit="module:local/ExpandableText"
-				data-sap-ui-resourceRoots='{
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/ExpandableText"
+				data-sap-ui-resource-roots='{
 					"local": "./",
 					"qunit.internal.acc": "../../../test-resources/sap/ui/core/qunit/internal/acc"
-				}'>
+				}'
+		>
 		</script>
-		<script id="myXml" type="text/xmldata">
+		<script id="myXml" type="text/xml">
 			<mvc:View xmlns:mvc="sap.ui.core.mvc"
 						xmlns="sap.m"
 						xmlns:core="sap.ui.core"

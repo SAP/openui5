@@ -47,7 +47,7 @@ function(
 	InvisibleText,
 	PasteHelper
 ) {
-		"use strict";
+	"use strict";
 
 	var TokenizerRenderMode = library.TokenizerRenderMode;
 
@@ -120,18 +120,6 @@ function(
 			library: "sap.m",
 			designtime: "sap/m/designtime/MultiInput.designtime",
 			properties: {
-
-				/**
-				 * If set to true, the MultiInput will be displayed in multi-line display mode.
-				 * In multi-line display mode, all tokens can be fully viewed and easily edited in the MultiInput.
-				 * The default value is false.
-				 * <b>Note:</b> This property does not take effect on smartphones or when the editable property is set to false.
-				 * <b>Caution:</b> Do not enable multi-line mode in tables and forms.
-				 * @deprecated Since version 1.58. Replaced with N-more/N-items labels, which work in all cases.
-				 * @since 1.28
-				 */
-				enableMultiLineMode: {type: "boolean", group: "Behavior", defaultValue: false, deprecated: true},
-
 				/**
 				 * The max number of tokens that is allowed in MultiInput.
 				 * @since 1.36
@@ -166,49 +154,6 @@ function(
 				tokenizer: {type: "sap.m.Tokenizer", multiple: false, visibility: "hidden"}
 			},
 			events: {
-
-				/**
-				 * Fired when the tokens aggregation changed (add / remove token)
-				 * @deprecated Since version 1.46.
-				 * Please use the new event tokenUpdate.
-				 */
-				tokenChange: {
-					parameters: {
-
-						/**
-						 * Type of tokenChange event.
-						 * There are four TokenChange types: "added", "removed", "removedAll", "tokensChanged".
-						 * Use sap.m.Tokenizer.TokenChangeType.Added for "added", sap.m.Tokenizer.TokenChangeType.Removed for "removed", sap.m.Tokenizer.TokenChangeType.RemovedAll for "removedAll" and sap.m.Tokenizer.TokenChangeType.TokensChanged for "tokensChanged".
-						 */
-						type: {type: "string"},
-
-						/**
-						 * The added token or removed token.
-						 * This parameter is used when tokenChange type is "added" or "removed".
-						 */
-						token: {type: "sap.m.Token"},
-
-						/**
-						 * The array of removed tokens.
-						 * This parameter is used when tokenChange type is "removedAll".
-						 */
-						tokens: {type: "sap.m.Token[]"},
-
-						/**
-						 * The array of tokens that are added.
-						 * This parameter is used when tokenChange type is "tokenChanged".
-						 */
-						addedTokens: {type: "sap.m.Token[]"},
-
-						/**
-						 * The array of tokens that are removed.
-						 * This parameter is used when tokenChange type is "tokenChanged".
-						 */
-						removedTokens: {type: "sap.m.Token[]"}
-					},
-					deprecated: true
-				},
-
 				/**
 				 * Fired when the tokens aggregation changed due to a user interaction (add / remove token)
 				 * @since 1.46
@@ -309,28 +254,11 @@ function(
 				case "insert":
 					oToken.attachEvent("_change", this.invalidate, this);
 
-					/**
-					 * @deprecated As of version 1.46
-					 */
-					this.fireTokenChange({
-						type: Tokenizer.TokenChangeType.Added,
-						token: oToken,
-						tokens: [oToken],
-						removedTokens: []
-					});
 					break;
 				case "remove":
-					var sType = oChange.object.getTokens().length ? Tokenizer.TokenChangeType.Removed : Tokenizer.TokenChangeType.RemovedAll;
+					oChange.object.getTokens().length ? Tokenizer.TokenChangeType.Removed : Tokenizer.TokenChangeType.RemovedAll;
 					oToken.detachEvent("_change", this.invalidate, this);
 
-					/**
-					 * @deprecated As of version 1.46
-					 */
-					this.fireTokenChange({
-						type: sType,
-						token: oToken,
-						removedTokens: [oToken]
-					});
 					break;
 
 				default:
@@ -701,30 +629,6 @@ function(
 		}
 	};
 
-	/**
-	 * Expand multi-line MultiInput in multi-line mode
-	 *
-	 * @since 1.28
-	 * @public
-	 * @deprecated As of version 1.58, replaced by N-more/N-items labels.
-	 */
-	MultiInput.prototype.openMultiLine = function () {
-		// the multiline functionality is deprecated
-		// the method is left for backwards compatibility
-	};
-
-	/**
-	 * Close multi-line MultiInput in multi-line mode
-	 *
-	 * @since 1.28
-	 * @public
-	 * @deprecated As of version 1.58, replaced by N-more/N-items labels.
-	 */
-	MultiInput.prototype.closeMultiLine = function () {
-		// the multiline functionality is deprecated
-		// the method is left for backwards compatibility
-	};
-
 	MultiInput.prototype.showItems = function () {
 		Input.prototype.showItems.apply(this, arguments);
 
@@ -918,10 +822,6 @@ function(
 		var sOriginalText, i,aSeparatedText, aSeparatedByRows,
 			aAddedTokens = [];
 
-		if (this.getValueHelpOnly()) { // BCP: 1670448929
-			return;
-		}
-
 		// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
 		sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
 
@@ -962,15 +862,6 @@ function(
 							removedTokens: [],
 							type: Tokenizer.TokenUpdateType.Added
 						});
-
-						/**
-						 * @deprecated As of version 1.46
-						 */
-						this.fireTokenChange({
-							addedTokens : aAddedTokens,
-							removedTokens : [],
-							type : Tokenizer.TokenChangeType.TokensChanged
-						});
 					}
 				}
 
@@ -979,7 +870,6 @@ function(
 				}
 			}
 		}.bind(this), 0);
-
 	};
 
 	/**
@@ -1391,11 +1281,11 @@ function(
 	 * @returns {this} Pointer to the control instance for chaining
 	 */
 	MultiInput.prototype.setTokens = function (aTokens) {
-		 if (!Array.isArray(aTokens)) {
-			return;
-		 }
+		if (!Array.isArray(aTokens)) {
+		   return;
+		}
 
-		 this.removeAllTokens();
+		this.removeAllTokens();
 
 		aTokens.forEach(function(oToken) {
 			ManagedObjectMetadata.addAPIParentInfoBegin(oToken, this, "tokens");
@@ -1410,15 +1300,7 @@ function(
 		}, this);
 
 		// compatibility
-		/**
-		 * @deprecated As of version 1.46
-		 */
-		this.fireTokenChange({
-			type: Tokenizer.TokenChangeType.TokensChanged,
-			addedTokens: aTokens,
-			removedTokens: []
-		});
-
+		/* -------------------------------------- */
 		return this;
 	};
 
@@ -1817,18 +1699,6 @@ function(
 	};
 
 	/**
-	 * Gets the supported openers for the valueHelpOnly.
-	 *
-	 * @protected
-	 * @param {HTMLElement} oTarget The target of the event.
-	 * @deprecated As of version 1.119 the property valueHelpOnly should not be used anymore
-	 * @returns {boolean} Boolean indicating if the target is a valid opener.
-	 */
-	MultiInput.prototype.isValueHelpOnlyOpener = function (oTarget) {
-		return [this._$input[0], this._getValueHelpIcon().getDomRef()].indexOf(oTarget) > -1;
-	};
-
-	/**
 	 * Checks if suggest should be triggered.
 	 *
 	 * @private
@@ -1903,16 +1773,6 @@ function(
 				addedTokens : [oToken],
 				removedTokens : [],
 				type : Tokenizer.TokenUpdateType.Added
-			});
-
-			/**
-			 * @deprecated As of version 1.46
-			 */
-			// added for backward compatibility
-			this.fireTokenChange({
-				addedTokens : [oToken],
-				removedTokens : [],
-				type : Tokenizer.TokenChangeType.TokensChanged
 			});
 		}
 	};
@@ -2176,5 +2036,4 @@ function(
 	};
 
 	return MultiInput;
-
 });

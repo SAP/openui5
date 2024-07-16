@@ -1,0 +1,1 @@
+alert('this JS will be sanitized')

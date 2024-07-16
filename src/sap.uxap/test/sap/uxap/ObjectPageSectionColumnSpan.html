@@ -1,14 +1,17 @@
 <!DOCTYPE HTML>
 <html>
-<head>
+<head><meta charset="utf-8">
 	<title>sap.uxap.ObjectPage</title>
 	<script src="../../../resources/sap-ui-core.js"
-		id="sap-ui-bootstrap"
-			data-sap-ui-theme="sap_horizon"
-			data-sap-ui-compatVersion="edge"
-			data-sap-ui-libs="sap.uxap,sap.ui.layout,sap.tnt">
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.uxap,sap.ui.layout,sap.tnt"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-async="true"
+			data-sap-ui-on-init="module:local/ObjectPageSectionColumnSpan"
+			data-sap-ui-resource-roots='{"local":"./"}'
+	>
 	</script>
-	<script id="view1" type="sapui5/xmlview">
+	<script id="view1" type="text/xml">
 	<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap" xmlns:m="sap.m" xmlns:layout="sap.ui.layout" xmlns:form="sap.ui.layout.form" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:forms="sap.ui.layout.form" displayBlock="true" height="100%">
 
 		<ObjectPageLayout id="ObjectPageLayout"
@@ -87,61 +90,7 @@
 
 
 <body id="body" class="sapUiBody">
-<script>
-	sap.ui.getCore().attachInit(function() {
-		sap.ui.require([
-			"sap/m/App",
-			"sap/m/Page",
-			"sap/m/CheckBox",
-			"sap/m/ToggleButton",
-			"sap/uxap/ObjectPageSubSection"], 
-		function(App, Page, CheckBox, ToggleButton, ObjectPageSubSection) {
 
-			var oApp = new App(),
-				myView = sap.ui.xmlview({viewContent:jQuery('#view1').html()}),
-				oSelectionForm = myView.byId("selectionForm"),
-				oObjectPage = myView.byId("ObjectPageLayout"),
-				oSection = oObjectPage.getSections()[0];
-
-				function updateSubSection(iSubSectionIndex, bAuto) {
-					var sColumnSpan = bAuto ? ObjectPageSubSection.COLUMN_SPAN.auto : ObjectPageSubSection.COLUMN_SPAN.all,
-						oSubSection = sap.ui.getCore().byId(oObjectPage.getSelectedSection()).getSubSections()[iSubSectionIndex];
-						oSubSection._setColumnSpan(sColumnSpan);
-						oSubSection.getBlocks().forEach(function(oBlock) {
-							oBlock.getDomRef().innerHTML = 'I am a block with columnSpan = <span style="background: white">"' + sColumnSpan + '"</span>';
-						})
-				}
-				oSection.getSubSections().forEach(function(oSubSection) {
-					var oCheckBox = new CheckBox(oSubSection.getId() + "cb", {
-						text: oSubSection.getTitle(),
-						select: function(oEvent) {
-							var index = oSelectionForm.indexOfContent(this),
-								bAuto = oEvent.getParameter("selected");
-							updateSubSection(index, bAuto);	
-						}
-					});
-					oSelectionForm.addContent(oCheckBox);
-				});
-				oSelectionForm.addContent(new ToggleButton({
-					text: "Toggle all",
-					press: function(oEvent) {
-					var bPressed = oEvent.getParameter("pressed");
-					oSelectionForm.getContent().forEach(function(oItem, index) {
-						if (oItem.isA("sap.m.CheckBox")) {
-							oItem.setSelected(bPressed);
-						}
-						updateSubSection(index, bPressed);
-					});
-				}}));
-
-			oApp.addPage(new Page({
-				showHeader: false,
-				content: [myView]
-			})).placeAt("content");
-		});
-	});
-
-</script>
 <div id="content"></div>
 </body>
 </html>

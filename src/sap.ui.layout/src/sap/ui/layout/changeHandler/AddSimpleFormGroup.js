@@ -242,4 +242,4 @@ sap.ui.define([
 	};
 
 	return AddSimpleFormGroup;
-}, /* bExport= */true);
+});

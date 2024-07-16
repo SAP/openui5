@@ -4,12 +4,10 @@
 
 // Provides class sap.ui.base.Metadata
 sap.ui.define([
-	'sap/base/util/ObjectPath',
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/base/util/array/uniqueSort"
-],
-	function(ObjectPath, assert, Log, uniqueSort) {
+], function(assert, Log, uniqueSort) {
 	"use strict";
 
 	function isFunction(obj) {
@@ -35,22 +33,8 @@ sap.ui.define([
 	 * @alias sap.ui.base.Metadata
 	 */
 	var Metadata = function(sClassName, oClassInfo) {
-
 		assert(typeof sClassName === "string" && sClassName, "Metadata: sClassName must be a non-empty string");
 		assert(typeof oClassInfo === "object", "Metadata: oClassInfo must be empty or an object");
-
-		/**
-		 * Support for old usage of Metadata.
-		 * @deprecated Since 1.3.1
-		 */
-		if ( !oClassInfo || typeof oClassInfo.metadata !== "object" ) {
-			oClassInfo = {
-				metadata : oClassInfo || {},
-				// retrieve class by its name. Using a lookup costs time but avoids the need for redundant arguments to this function
-				constructor : ObjectPath.get(sClassName) // legacy-relevant, code path not used by extend call
-			};
-			oClassInfo.metadata.__version = 1.0;
-		}
 
 		oClassInfo.metadata ??= {};
 		oClassInfo.metadata.__version = oClassInfo.metadata.__version || 2.0;
@@ -91,17 +75,6 @@ sap.ui.define([
 				oParentClass = oStaticInfo.baseType;
 				if ( !isFunction(oParentClass.getMetadata) ) {
 					throw new TypeError("baseType must be a UI5 class with a static getMetadata function");
-				}
-			}
-
-			/**
-			 * @deprecated
-			 */
-			if ( !bValidBaseType ) {
-				// lookup base class by its name - same reasoning as above
-				oParentClass = ObjectPath.get(oStaticInfo.baseType); // legacy-relevant, code path not used by extend call
-				if ( !isFunction(oParentClass) ) {
-					Log.fatal("base class '" + oStaticInfo.baseType + "' does not exist");
 				}
 			}
 
@@ -215,46 +188,6 @@ sap.ui.define([
 			uniqueSort(this._aAllPublicMethods);
 			this._bInterfacesUnique = true;
 		}
-	};
-
-	/**
-	 * Returns an array with the names of the public methods declared by the described class, methods of
-	 * ancestors are not listed.
-	 *
-	 * @return {string[]} array with names of public methods declared by the described class
-	 * @deprecated As of 1.58, this method should not be used for productive code. The accuracy of the returned
-	 *       information highly depends on the concrete class and is not actively monitored. There might be
-	 *       more public methods or some of the returned methods might not really be intended for public use.
-	 *       In general, pure visibility information should not be exposed in runtime metadata but be part of the
-	 *       documentation.
-	 *       Subclasses of <code>sap.ui.base.Object</code> might decide to provide runtime metadata describing
-	 *       their public API, but this then should not be backed by this method.
-	 *       See {@link sap.ui.core.mvc.ControllerMetadata#getAllMethods} for an example.
-	 * @public
-	 */
-	Metadata.prototype.getPublicMethods = function() {
-		this._dedupInterfaces();
-		return this._aPublicMethods;
-	};
-
-	/**
-	 * Returns an array with the names of all public methods declared by the described class
-	 * and all its ancestors classes.
-	 *
-	 * @return {string[]} array with names of all public methods provided by the described class and its ancestors
-	 * @deprecated As of 1.58, this method should not be used for productive code. The accuracy of the returned
-	 *       information highly depends on the concrete class and is not actively monitored. There might be
-	 *       more public methods or some of the returned methods might not really be intended for public use.
-	 *       In general, pure visibility information should not be exposed in runtime metadata but be part of the
-	 *       documentation.
-	 *       Subclasses of <code>sap.ui.base.Object</code> might decide to provide runtime metadata describing
-	 *       their public API, but this then should not be backed by this method.
-	 *       See {@link sap.ui.core.mvc.ControllerMetadata#getAllMethods} for an example.
-	 * @public
-	 */
-	Metadata.prototype.getAllPublicMethods = function() {
-		this._dedupInterfaces();
-		return this._aAllPublicMethods;
 	};
 
 	/**
@@ -451,7 +384,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Metadata.createClass = function (fnBaseClass, sClassName, oClassInfo, FNMetaImpl) {
-
 		if ( typeof fnBaseClass === "string" ) {
 			FNMetaImpl = oClassInfo;
 			oClassInfo = sClassName;
@@ -465,16 +397,6 @@ sap.ui.define([
 		assert(!FNMetaImpl || isFunction(FNMetaImpl));
 
 		FNMetaImpl = FNMetaImpl || Metadata;
-
-		/**
-		 * allow metadata class to preprocess
-		 * Component- and UIComponentMetadata uses this to derive if "component.json"
-		 * must be loaded synchronously.
-		 * @deprecated
-		 */
-		if ( isFunction(FNMetaImpl.preprocessClassInfo) ) {
-			oClassInfo = FNMetaImpl.preprocessClassInfo(oClassInfo);
-		}
 
 		// normalize oClassInfo
 		oClassInfo = oClassInfo || {};
@@ -516,12 +438,6 @@ sap.ui.define([
 		}
 		oClassInfo.constructor = fnClass;
 
-		/**
-		 * make the class visible as JS Object
-		 * @deprecated
-		 */
-		ObjectPath.set(sClassName, fnClass);
-
 		// add metadata
 		var oMetadata = new FNMetaImpl(sClassName, oClassInfo);
 		fnClass.getMetadata = fnClass.prototype.getMetadata = function() {
@@ -539,5 +455,4 @@ sap.ui.define([
 	};
 
 	return Metadata;
-
-}, /* bExport= */ true);
+});

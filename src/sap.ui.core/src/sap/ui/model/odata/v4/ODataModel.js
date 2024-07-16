@@ -30,7 +30,6 @@ sap.ui.define([
 	"./lib/_MetadataRequestor",
 	"./lib/_Parser",
 	"./lib/_Requestor",
-	"sap/base/assert",
 	"sap/base/Log",
 	"sap/base/i18n/Localization",
 	"sap/ui/base/SyncPromise",
@@ -45,10 +44,7 @@ sap.ui.define([
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/thirdparty/URI"
-], function (ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding,
-		SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, assert, Log,
-		Localization, SyncPromise, Messaging, Rendering, Supportability, CacheManager,
-		Message, MessageType, BindingMode, BaseContext, Model, OperationMode, URI) {
+], function(ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding, SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, Log, Localization, SyncPromise, Messaging, Rendering, Supportability, CacheManager, Message, MessageType, BindingMode, BaseContext, Model, OperationMode, URI) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
@@ -85,8 +81,6 @@ sap.ui.define([
 			serviceUrl : true,
 			sharedRequests : true,
 			supportReferences : true,
-			/** @deprecated As of Version 1.110.0 */
-			synchronizationMode : true,
 			updateGroupId : true,
 			withCredentials : true
 		},
@@ -171,12 +165,6 @@ sap.ui.define([
 		 *   Whether <code>&lt;edmx:Reference></code> and <code>&lt;edmx:Include></code> directives
 		 *   are supported in order to load schemas on demand from other $metadata documents and
 		 *   include them into the current service ("cross-service references").
-		 * @param {string} [mParameters.synchronizationMode]
-		 *   <b>deprecated:</b> As of Version 1.110.0, this parameter is obsolete; see also
-		 *   {@link topic:648e360fa22d46248ca783dc6eb44531 Data Reuse}
-		 *   (Controls synchronization between different bindings which refer to the same data for
-		 *   the case data changes in one binding. Must be set to 'None' which means bindings are
-		 *   not synchronized at all; all other values are not supported and lead to an error.)
 		 * @param {string} [mParameters.updateGroupId]
 		 *   The group ID that is used for update requests. If no update group ID is specified,
 		 *   <code>mParameters.groupId</code> is used. Valid update group IDs are
@@ -184,7 +172,7 @@ sap.ui.define([
 		 * @param {boolean} [mParameters.withCredentials]
 		 *   Whether the XMLHttpRequest is called with <code>withCredentials</code>, so that user
 		 *   credentials are included in cross-origin requests by the browser (since 1.120.0)
-		 * @throws {Error} If an unsupported synchronization mode is given, if the given service
+		 * @throws {Error} If the given service
 		 *   root URL does not end with a forward slash, if an unsupported parameter is given, if
 		 *   OData system query options or parameter aliases are specified as parameters, if an
 		 *   invalid group ID or update group ID is given, if the given operation mode is not
@@ -248,7 +236,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mParameters
 	 *   The parameters
-	 * @throws {Error} If an unsupported synchronization mode is given, if the given service root
+	 * @throws {Error} If the given service root
 	 *   URL does not end with a forward slash, if an unsupported parameter is given, if OData
 	 *   system query options or parameter aliases are specified as parameters, if an invalid group
 	 *   ID or update group ID is given, if the given operation mode is not supported, if an
@@ -269,10 +257,6 @@ sap.ui.define([
 		// do not pass any parameters to Model
 		Model.call(this);
 
-		/** @deprecated As of Version 1.110.0 */
-		if ("synchronizationMode" in mParameters && mParameters.synchronizationMode !== "None") {
-			throw new Error("Synchronization mode must be 'None'");
-		}
 		sODataVersion = mParameters.odataVersion || "4.0";
 		this.sODataVersion = sODataVersion;
 		if (sODataVersion !== "4.0" && sODataVersion !== "2.0") {
@@ -2605,32 +2589,6 @@ sap.ui.define([
 
 			return this.createUI5Message(oMessage, sResourcePath, undefined, oOriginalMessage);
 		}));
-	};
-
-	/**
-	 * Returns a promise for the "canonical path" of the entity for the given context.
-	 * According to <a href=
-	 * "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html#canonical-urlurl4.1.1"
-	 * >"4.3.1 Canonical URL"</a> of the specification "OData Version 4.0 Part 2: URL Conventions",
-	 * this is the "name of the entity set associated with the entity followed by the key predicate
-	 * identifying the entity within the collection". Use the canonical path in
-	 * {@link sap.ui.core.Element#bindElement} to create an element binding.
-	 *
-	 * @param {sap.ui.model.odata.v4.Context} oEntityContext
-	 *   A context in this model which must point to a non-contained OData entity
-	 * @returns {Promise<string>}
-	 *   A promise which is resolved with the canonical path (e.g. "/SalesOrderList('0500000000')")
-	 *   in case of success, or rejected with an instance of <code>Error</code> in case of failure,
-	 *   e.g. when the given context does not point to an entity
-	 *
-	 * @deprecated since 1.39.0
-	 *   Use {@link sap.ui.model.odata.v4.Context#requestCanonicalPath} instead.
-	 * @public
-	 * @since 1.37.0
-	 */
-	ODataModel.prototype.requestCanonicalPath = function (oEntityContext) {
-		assert(oEntityContext.getModel() === this, "oEntityContext must belong to this model");
-		return oEntityContext.requestCanonicalPath();
 	};
 
 	/**

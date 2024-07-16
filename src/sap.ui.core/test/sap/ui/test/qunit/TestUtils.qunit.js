@@ -142,13 +142,6 @@ sap.ui.define([
 			this.oLogMock.expects("info").never();
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-
-			/**
-			 * workaround: Chrome extension "UI5 Inspector" calls this method which loads the
-			 * resource "sap-ui-version.json" and thus interferes with mocks for jQuery.ajax
-			 * @deprecated since 1.56, together with sap.ui.getVersioninfo
-			 */
-			this.mock(sap.ui).expects("getVersionInfo").atLeast(0);
 		}
 	});
 

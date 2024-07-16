@@ -1,9 +1,15 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/json/JSONModel"
-], function (
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/table/Table",
+	"sap/ui/table/Column",
+	"sap/m/Text"
+], function(
 	Controller,
-	JSONModel
+	JSONModel,
+	Table,
+	Column,
+	Text
 ) {
 	"use strict";
 
@@ -66,33 +72,33 @@ sap.ui.define([
         },
 
         _createTable: function (sId, sBlockId) {
-            var oTable = new sap.ui.table.Table(sId, {
+            var oTable = new Table(sId, {
                 rows: "{model>/rows}",
                 visibleRowCountMode: "Auto",
                 minAutoRowCount: 2
             });
             oTable.setModel(this.oModel, "model");
 
-            oTable.addColumn(new sap.ui.table.Column({
+            oTable.addColumn(new Column({
                 label: "col01",
                 autoResizable: true,
-                template: new sap.m.Text({
+                template: new Text({
                     text: "{model>text1}"
                 })
             }));
 
-            oTable.addColumn(new sap.ui.table.Column({
+            oTable.addColumn(new Column({
                 label: "col02",
                 autoResizable: true,
-                template: new sap.m.Text({
+                template: new Text({
                     text: "{model>text2}"
                 })
             }));
 
-            oTable.addColumn(new sap.ui.table.Column({
+            oTable.addColumn(new Column({
                 label: "col03",
                 autoResizable: true,
-                template: new sap.m.Text({
+                template: new Text({
                     text: "{model>text3}"
                 })
             }));

@@ -1,0 +1,15 @@
+svg {
+	background: #dedede;
+}
+
+#divElement {
+	position: absolute;
+	top: 200px;
+	left: 500px;
+	width: 100px;
+	height: 30px;
+	background: coral;
+}
+#container {
+	display: flex;
+}

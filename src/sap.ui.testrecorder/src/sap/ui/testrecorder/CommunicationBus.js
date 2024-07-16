@@ -34,4 +34,4 @@ sap.ui.define([
 	oRecorderCommunicationBus = new RecorderCommunicationBus();
 
 	return oRecorderCommunicationBus;
-}, true);
+});

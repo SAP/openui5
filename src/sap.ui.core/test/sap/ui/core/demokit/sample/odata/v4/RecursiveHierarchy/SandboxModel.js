@@ -386,7 +386,7 @@ sap.ui.define([
 					if (bNot) {
 						// not%20(ID%20eq%20'5.1.10'%20or%20ID%20eq%20'5.1.11')
 						mQueryOptions.$filter
-							= mQueryOptions.$filter.slice("not%20(".length, -")".length);
+							= mQueryOptions.$filter.slice(7, -1);
 					}
 					const aIDs = mQueryOptions.$filter
 						.split("%20or%20")
@@ -485,7 +485,7 @@ sap.ui.define([
 				}
 
 				const sParentId = oBody["EMPLOYEE_2_MANAGER@odata.bind"]
-					?.slice("EMPLOYEES('".length, -"')".length);
+					?.slice(11, -2);
 				if (sParentId) {
 					for (let sId = sParentId; sId; sId = mNodeById[sId].MANAGER_ID) {
 						if (sId === oChild.ID) { // cycle detected
@@ -586,7 +586,7 @@ sap.ui.define([
 		const oBody = JSON.parse(oRequest.requestBody);
 		const bFilteredOut = oBody.STATUS === "Out";
 		const sParentId = oBody["EMPLOYEE_2_MANAGER@odata.bind"]
-			?.slice("EMPLOYEES('".length, -"')".length);
+			?.slice(11, -2);
 		const oParent = mNodeById[sParentId];
 		if (sParentId && !oParent) {
 			throw new Error("Invalid parent ID: " + sParentId);

@@ -77,13 +77,6 @@ sap.ui.define([
 			}
 		},
 		constructor: function(sId) {
-			/**
-			 * @deprecated As of version 1.119
-			 */
-			Object.defineProperty(this, "bLegacy", {
-				value: typeof sId === "boolean" ? sId : false
-			});
-
 			RowMode.apply(this, arguments);
 		}
 	});
@@ -176,50 +169,18 @@ sap.ui.define([
 	};
 
 	AutoRowMode.prototype.getFixedTopRowCount = function() {
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (this.bLegacy) {
-			const oTable = this.getTable();
-			return oTable ? oTable.getFixedRowCount() : 0;
-		}
-
 		return this.getProperty("fixedTopRowCount");
 	};
 
 	AutoRowMode.prototype.getFixedBottomRowCount = function() {
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (this.bLegacy) {
-			const oTable = this.getTable();
-			return oTable ? oTable.getFixedBottomRowCount() : 0;
-		}
-
 		return this.getProperty("fixedBottomRowCount");
 	};
 
 	AutoRowMode.prototype.getMinRowCount = function() {
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (this.bLegacy) {
-			const oTable = this.getTable();
-			return oTable ? oTable.getMinAutoRowCount() : 0;
-		}
-
 		return this.getProperty("minRowCount");
 	};
 
 	AutoRowMode.prototype.getRowContentHeight = function() {
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (this.bLegacy) {
-			const oTable = this.getTable();
-			return oTable ? oTable.getRowHeight() : 0;
-		}
-
 		return this.getProperty("rowContentHeight");
 	};
 
@@ -357,16 +318,6 @@ sap.ui.define([
 
 	AutoRowMode.prototype.renderCellContentStyles = function(oRM) {
 		let iRowContentHeight = this.getRowContentHeight();
-
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (this.bLegacy) {
-			if (iRowContentHeight > 0) {
-				oRM.style("max-height", iRowContentHeight + "px");
-			}
-			return;
-		}
 
 		if (iRowContentHeight <= 0) {
 			iRowContentHeight = this.getDefaultRowContentHeightOfTable();
@@ -539,13 +490,6 @@ sap.ui.define([
 
 		_private(this).rowCount = iNewRowCount;
 		const iNewComputedRowCount = this.getComputedRowCounts().count;
-
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (this.bLegacy) {
-			oTable.setProperty("visibleRowCount", iNewComputedRowCount, true);
-		}
 
 		if (iOldComputedRowCount !== iNewComputedRowCount) {
 			this.updateTable(sReason);

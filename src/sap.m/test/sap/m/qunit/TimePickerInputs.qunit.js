@@ -4,9 +4,9 @@ sap.ui.define([
 	"sap/m/TimePickerInternals",
 	"sap/ui/core/Element",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
-	"sap/ui/core/date/UI5Date"
-], function(TimePickerInputs, TimePickerInternals, Element, KeyCodes, oCore, UI5Date) {
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(TimePickerInputs, TimePickerInternals, Element, KeyCodes, UI5Date, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("API", {
@@ -14,7 +14,7 @@ sap.ui.define([
 			this.oTPI = new TimePickerInputs();
 
 			this.oTPI.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oTPI.destroy();
@@ -30,7 +30,7 @@ sap.ui.define([
 			oSetupControlsSpy = this.spy(this.oTPI, "_createControls");
 
 		this.oTPI.setLocaleId(sLocale);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.oTPI._sAM, sExpectedAM, "_sAM property should be set to proper locale AM");
 		assert.equal(this.oTPI._sPM, sExpectedPM, "_sPM property should be set to proper locale PM");
@@ -44,7 +44,7 @@ sap.ui.define([
 			oSetupControlsSpy = this.spy(this.oTPI, "_createControls");
 
 		this.oTPI.setDisplayFormat(sDisplayFormat);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oSetPropertySpy.calledWithExactly("displayFormat", sDisplayFormat, true), true, "setProperty is called with right arguments");
 		assert.ok(oSetupControlsSpy.called, "_createControls is called to regenerate the controls");
@@ -56,7 +56,7 @@ sap.ui.define([
 			iStep = 23;
 
 		this.oTPI.setMinutesStep(iStep);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oSetPropertySpy.calledWithExactly("minutesStep", iStep, true), "setProperty is called with right arguments");
 		assert.ok(oSetupControlsSpy.called, "_createControls is called to regenerate the controls");
@@ -68,7 +68,7 @@ sap.ui.define([
 				iStep = 23;
 
 		this.oTPI.setSecondsStep(iStep);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oSetPropertySpy.calledWithExactly("secondsStep", iStep, true), "setProperty is called with right arguments");
 		assert.ok(oSetupControlsSpy.called, "_createControls is called to regenerate the controls");
@@ -79,7 +79,7 @@ sap.ui.define([
 			oSetPropertySpy = this.spy(this.oTPI, "setProperty");
 
 		this.oTPI.setValue(sValue);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oSetPropertySpy.calledWithExactly("value", sValue, true), true, "setProperty is called with right arguments");
 	});
@@ -92,7 +92,7 @@ sap.ui.define([
 		this.stub(this.oTPI, "_parseValue").returns(sExpectedDate);
 
 		this.oTPI.setValue(sValue);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oSetTimeValuesSpy.calledWithExactly(sExpectedDate, false), true, "_setTimeValues is called with parsed date");
 	});
@@ -103,7 +103,7 @@ sap.ui.define([
 
 		this.oTPI.setValueFormat("HH:mm:ss");
 		this.oTPI.setValue(sValue);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oSetPropertySpy.calledWithExactly("value", sValue, true), true, "setProperty is called with right arguments");
 	});
@@ -117,7 +117,7 @@ sap.ui.define([
 
 		this.oTPI.setValueFormat("HH:mm:ss");
 		this.oTPI.setValue(sValue);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oSetTimeValuesSpy.calledWithExactly(sExpectedDate, true), true, "_setTimeValues is called with parsed date");
 	});
@@ -141,7 +141,7 @@ sap.ui.define([
 			this.oTPI = new TimePickerInputs();
 
 			this.oTPI.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oTPI.destroy();
@@ -383,7 +383,7 @@ sap.ui.define([
 		oSecondsSetEnabled = this.spy(oSecondsInput, "setEnabled");
 
 		// act
-		this.oTPI._handleHoursChange({ getParameter: function() { "23"; } });
+		this.oTPI._handleHoursChange({ getParameter: function() {} });
 
 		// assert
 		assert.ok(oMinutesSetEnabled.calledWithExactly(true), "Minutes input should be enabled");
@@ -540,7 +540,7 @@ sap.ui.define([
 			this.oTPI._setTimeValues(UI5Date.getInstance(2017, 7, 8, 22, 58, 58));
 
 			this.oTPI.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			this.oFakeEvent = {
 				target: {
 					classList: {
@@ -609,7 +609,7 @@ sap.ui.define([
 
 		//change to minutes input
 		this.oTPI.onkeydown(this.fakeEvent(":"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent(KeyCodes.ARROW_DOWN));
@@ -628,7 +628,7 @@ sap.ui.define([
 
 		//change to seconds input
 		this.oTPI.onkeydown(this.fakeEvent(":"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent(KeyCodes.ARROW_DOWN));
@@ -678,7 +678,7 @@ sap.ui.define([
 
 		//change to minutes input
 		this.oTPI.onkeydown(this.fakeEvent(":"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent(KeyCodes.ARROW_UP));
@@ -697,7 +697,7 @@ sap.ui.define([
 
 		//change to seconds input
 		this.oTPI.onkeydown(this.fakeEvent(":"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent(KeyCodes.ARROW_UP));
@@ -728,12 +728,12 @@ sap.ui.define([
 		this.oTPI.setValueFormat("hh:mm:ss a");
 		this.oTPI.setDisplayFormat("hh:mm:ss a");
 		this.oTPI._setTimeValues(UI5Date.getInstance(2017, 7, 8, 9, 10, 11));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("1"));
 		this.oTPI.onkeydown(this.fakeEvent("1"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(100);
 
 		//assert
@@ -742,7 +742,7 @@ sap.ui.define([
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("2"));
 		this.oTPI.onkeydown(this.fakeEvent("2"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(100);
 
 		//assert
@@ -751,7 +751,7 @@ sap.ui.define([
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("3"));
 		this.oTPI.onkeydown(this.fakeEvent("3"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(100);
 
 		//assert
@@ -759,7 +759,7 @@ sap.ui.define([
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent(KeyCodes.P));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(100);
 
 		//assert
@@ -779,11 +779,11 @@ sap.ui.define([
 		this.oTPI.setValueFormat("hh:mm:ss a");
 		this.oTPI.setDisplayFormat("hh:mm:ss a");
 		this.oTPI._setTimeValues(UI5Date.getInstance(2017, 7, 8, 9, 10, 11));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("1"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(this.oTPI._getHoursInput().getValue(), 1, "Hours are set properly");
@@ -793,7 +793,7 @@ sap.ui.define([
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("2"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(this.oTPI._getMinutesInput().getValue(), 2, "Minutes are set properly");
@@ -803,7 +803,7 @@ sap.ui.define([
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("3"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(this.oTPI._getSecondsInput().getValue(), 3, "Seconds are set properly");
@@ -822,11 +822,11 @@ sap.ui.define([
 		this.oTPI.setValueFormat("hh:mm:ss");
 		this.oTPI.setDisplayFormat("hh:mm:ss");
 		this.oTPI._setTimeValues(UI5Date.getInstance(2017, 7, 8, 9, 10, 11));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("7"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(100);
 
 		//assert
@@ -834,7 +834,7 @@ sap.ui.define([
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("7"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(100);
 
 		//assert
@@ -842,7 +842,7 @@ sap.ui.define([
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("7"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(100);
 
 		//assert
@@ -865,7 +865,7 @@ sap.ui.define([
 		this.oTPI.setDisplayFormat("HH:mm:ss");
 		this.oTPI.setSupport2400(true);
 		this.oTPI._setTimeValues(UI5Date.getInstance(2017, 7, 8, 9, 10, 11));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oHoursInput = this.oTPI._getHoursInput();
 		oMinutesInput = this.oTPI._getMinutesInput();
@@ -874,7 +874,7 @@ sap.ui.define([
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("2"));
 		this.oTPI.onkeydown(this.fakeEvent("4"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(oHoursInput.getValue(), 24, "Hours are set to 24");
@@ -887,7 +887,7 @@ sap.ui.define([
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("2"));
 		this.oTPI.onkeydown(this.fakeEvent("2"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(oHoursInput.getValue(), 22, "Hours are set properly");
@@ -907,7 +907,7 @@ sap.ui.define([
 			});
 
 			this.oTPI.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oTPI.destroy();
@@ -943,7 +943,7 @@ sap.ui.define([
 			this.oTPI = new TimePickerInputs();
 
 			this.oTPI.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oTPI.destroy();

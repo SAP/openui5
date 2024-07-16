@@ -229,19 +229,6 @@ sap.ui.define([
 		});
 	});
 
-	/**
-	 * @deprecated
-	 */
-	QUnit.test("sap.ui.getCore().loadLibraries()", function(assert) {
-		sap.ui.getCore().loadLibraries(["sap.ui.failingcssimport.testlib"], {
-			async: true
-		});
-
-		return themeApplied().then(function() {
-			assert.ok(true, "Applied event has been fired");
-		});
-	});
-
 	QUnit.test("require without Library.load/Core.loadLibraries", function(assert) {
 		// Fake direct require to a library.js module by just calling initLibrary
 		Library.init({

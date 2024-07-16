@@ -33,20 +33,6 @@ sap.ui.define([], () => {
 		}
 
 		async #fetchValue() {
-			/**
-			 * @deprecated As of version 1.120.0
-			 */
-			const hostValue = await this.#tokenHandler.fetchValueByHost(this.#config);
-
-			/**
-			 * @deprecated As of version 1.120.0
-			 */
-			if (hostValue) {
-				this.#tokenHandler.onTokenFetched(this.#name, hostValue);
-				this.value = hostValue;
-				return;
-			}
-
 			let globalToken = tokensPromises.get(this.#key);
 
 			if (!globalToken || globalToken?.expired) {

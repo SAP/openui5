@@ -10,9 +10,10 @@
 		<script id="sap-ui-bootstrap"
 				src="../../resources/sap-ui-core.js"
 				data-sap-ui-async="true"
-				data-sap-ui-theme="sap_horizon"
 				data-sap-ui-modules="test-resources.testsuite.js.testframe,sap.m.library,sap.ui.layout.library"
-				data-sap-ui-resourceroots='{"test-resources":"../"}'>
+				data-sap-ui-resource-roots='{"test-resources":"../"}'
+				data-sap-ui-compat-version="edge"
+		>
 		</script>
 	</head>
 	<body>
@@ -46,7 +47,7 @@
 				</div>
 				<div id="samples" class="scrollpanel">
 
-					<div id="library-tests-node" class='node section expanded'>
+					<div id="library-tests-node" class="node section expanded">
 						<div class="caption">
 							<span>Library Tests</span>
 							<span class="matches"></span>
@@ -55,7 +56,7 @@
 						</div>
 					</div>
 
-					<div id="application-pages-node" class='node section expanded'>
+					<div id="application-pages-node" class="node section expanded">
 						<div class="caption">
 							<span>Application Pages</span>
 							<span class="matches"></span>
@@ -64,7 +65,7 @@
 						</div>
 					</div>
 
-					<div id="custom-tests-node" class='node section expanded'>
+					<div id="custom-tests-node" class="node section expanded">
 						<div class="caption">
 							<span>Custom Tests</span>
 							<span class="matches"></span>
@@ -74,7 +75,7 @@
 							<div id="add-custom-test">
 								<label>URL to HTML resource:</label>
 								<div>
-									<input id="sampleurl" value="">
+									<input id="sampleurl" value>
 									<button id="add-sampleurl">Add</button>
 								</div>
 							</div>

@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/AnimationMode",
 	'sap/ui/core/Control',
 	'./TimePickerSliderRenderer',
 	"sap/ui/core/ControlBehavior",
@@ -11,10 +12,9 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/events/KeyCodes",
 	"sap/m/Button",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/thirdparty/jquery"
 ],
-	function(Control, TimePickerSliderRenderer, ControlBehavior, IconPool, Device, Library, KeyCodes, Button, jQuery, Configuration) {
+	function(AnimationMode, Control, TimePickerSliderRenderer, ControlBehavior, IconPool, Device, Library, KeyCodes, Button, jQuery) {
 		"use strict";
 
 		/**
@@ -88,7 +88,7 @@ sap.ui.define([
 		});
 
 		var sAnimationMode = ControlBehavior.getAnimationMode();
-		var bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
+		var bUseAnimations = sAnimationMode !== AnimationMode.none && sAnimationMode !== AnimationMode.minimal;
 		var SCROLL_ANIMATION_DURATION = bUseAnimations ? 200 : 0;
 		var MIN_ITEMS = 50;
 		var LABEL_HEIGHT = 32;

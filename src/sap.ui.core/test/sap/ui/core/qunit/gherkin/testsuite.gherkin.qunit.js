@@ -11,7 +11,7 @@ sap.ui.define(function() {
 			 * the older versions until the behavior of the harnesses has been clarified
 			 */
 			qunit: {
-				version: 1,
+				version: 2,
 				noglobals: true
 			},
 			sinon: {

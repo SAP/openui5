@@ -94,10 +94,6 @@ sap.ui.define([
 		];
 		assert.deepEqual(this.oSortPanel.getP13nData(true), aSortState, "Correct sort state");
 
-		// 1) Change sort order of 'key1' to descending
-		oSegmentedButton.fireSelect({
-			key: "desc"
-		});
 		oSegmentedButton.setSelectedKey("desc");
 
 		oKeySelected.setSelection(oKeySelected.getItems()[2]);

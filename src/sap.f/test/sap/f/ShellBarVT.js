@@ -1,6 +1,6 @@
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/f/ShellBar",
 	"sap/m/OverflowToolbarButton",
 	"sap/m/App",

@@ -1,17 +1,19 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/m/upload/UploadSetwithTable",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
 	"sap/m/upload/FilePreviewDialog",
 	"./UploadSetwithTableTestUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function (UploadSetwithTable, JSONModel, oCore, FilePreviewDialog, TestUtils, jQuery) {
+], function(UploadSetwithTable, Element, Library, JSONModel, FilePreviewDialog, TestUtils, nextUIUpdate, jQuery) {
 	"use strict";
 
 
 	QUnit.module("FilePreviewDialog general functionality", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oUploadSetwithTable = new UploadSetwithTable("UploadSetwithTable", {
 				items: {
 					path: "/items",
@@ -21,7 +23,7 @@ sap.ui.define([
 			});
 			this.oUploadSetwithTable.setModel(new JSONModel(TestUtils.getData()));
 			this.oUploadSetwithTable.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oUploadSetwithTable.destroy();
@@ -34,7 +36,7 @@ sap.ui.define([
 
 		this.oUploadSetwithTable.setPreviewDialog(associatedControl);
 
-		const oAssociatedControlRef = oCore.byId(this.oUploadSetwithTable.getPreviewDialog());
+		const oAssociatedControlRef = Element.getElementById(this.oUploadSetwithTable.getPreviewDialog());
 		assert.ok(oAssociatedControlRef, "FilePreviewDialog Instance created successfully");
 	});
 
@@ -43,7 +45,7 @@ sap.ui.define([
 
 		this.oUploadSetwithTable.setPreviewDialog(associatedControl);
 
-		const oAssociatedControlRef = oCore.byId(this.oUploadSetwithTable.getPreviewDialog());
+		const oAssociatedControlRef = Element.getElementById(this.oUploadSetwithTable.getPreviewDialog());
 		assert.equal(oAssociatedControlRef.getShowCarouselArrows(), true, "showCarouselArrows is true by default");
 		oAssociatedControlRef.setShowCarouselArrows(false);
 		assert.equal(oAssociatedControlRef.getShowCarouselArrows(), false, "showCarouselArrows is set to false");
@@ -53,7 +55,7 @@ sap.ui.define([
 		assert.equal(oAssociatedControlRef.getMaxFileSizeforPreview(), 1024, "MaxFileSizeforPreview is set to 1024 units");
 	});
 
-	QUnit.test("Test for method _openFilePreview", function (assert) {
+	QUnit.test("Test for method _openFilePreview", async function(assert) {
 		var fnDone = assert.async();
 
 		var oItem = this.oUploadSetwithTable.getItems()[0];
@@ -75,7 +77,7 @@ sap.ui.define([
 
 		this.oUploadSetwithTable.setPreviewDialog(oAssociatedPreviewDialog);
 		this.oUploadSetwithTable._openFilePreview(oItem);
-		oCore.applyChanges();
+		await nextUIUpdate();
 	});
 
 	QUnit.test("Test for not showing carousel arrows", function (assert) {
@@ -136,10 +138,10 @@ sap.ui.define([
 
 	});
 
-	return oCore.loadLibrary("sap.suite.ui.commons", { async: true })
+	return Library.load("sap.suite.ui.commons")
 		.then(function (assert) {
 			QUnit.module("Supported media type", {
-				beforeEach: function () {
+				beforeEach: async function() {
 					this.$RootNode = jQuery(document.body);
 					this.oUploadSetwithTable = new UploadSetwithTable("UploadSetwithTable", {
 						items: {
@@ -149,14 +151,14 @@ sap.ui.define([
 						}
 					}).setModel(new JSONModel(TestUtils.getData()));
 					this.oUploadSetwithTable.placeAt("qunit-fixture");
-					oCore.applyChanges();
+					await nextUIUpdate();
 				},
 				afterEach: function () {
 					this.oUploadSetwithTable.destroy();
 					this.oUploadSetwithTable = null;
 				}
 			});
-			QUnit.test("Test for supported media type and Illustrated Messages", function (assert) {
+			QUnit.test("Test for supported media type and Illustrated Messages", async function(assert) {
 				var fnDone = assert.async();
 
 				var oItem = this.oUploadSetwithTable.getItems()[0];
@@ -219,7 +221,7 @@ sap.ui.define([
 
 				this.oUploadSetwithTable.setPreviewDialog(oAssociatedPreviewDialog);
 				this.oUploadSetwithTable._openFilePreview(oItem);
-				oCore.applyChanges();
+				await nextUIUpdate();
 			});
 
 		})

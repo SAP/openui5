@@ -82,5 +82,4 @@ sap.ui.define([
 		fieldSuffix: "-field"
 	});
 	return AddFormField;
-},
-/* bExport= */true);
+});

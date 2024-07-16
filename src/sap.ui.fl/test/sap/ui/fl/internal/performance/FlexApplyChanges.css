@@ -1,0 +1,9 @@
+html, body, #content {
+	height : 100%;
+}
+.sapUiView {
+	height: 100%;
+}
+#HorizontalLayout {
+	margin-top: 50px;
+}

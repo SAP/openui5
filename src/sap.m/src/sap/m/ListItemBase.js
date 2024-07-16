@@ -151,19 +151,6 @@ function(
 				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 			},
 			events : {
-
-				/**
-				 * Fires when the user taps on the control.
-				 * @deprecated Since version 1.20.0. Instead, use <code>press</code> event.
-				 */
-				tap : {deprecated: true},
-
-				/**
-				 * Fires when the user taps on the detail button of the control.
-				 * @deprecated Since version 1.20.0. Instead, use <code>detailPress</code> event.
-				 */
-				detailTap : {deprecated: true},
-
 				/**
 				 * Fires when the user clicks on the control.
 				 * <b>Note:</b> This event is not fired when the parent <code>mode</code> is <code>SingleSelectMaster</code> or when the <code>includeItemInSelection</code> property is set to <code>true</code>.
@@ -556,7 +543,6 @@ function(
 			type: ButtonType.Transparent,
 			tooltip: Library.getResourceBundleFor("sap.m").getText("LIST_ITEM_EDIT")
 		}).addStyleClass("sapMLIBType sapMLIBIconDet").setParent(this, null, true).attachPress(function() {
-			this.fireDetailTap();
 			this.fireDetailPress();
 		}, this);
 
@@ -778,17 +764,6 @@ function(
 		return false;
 	};
 
-	/**
-	 * Returns the state of the item selection as a boolean
-	 *
-	 * @public
-	 * @returns {boolean}
-	 * @deprecated Since version 1.10.2.
-	 * API Change makes this method unnecessary. Use the {@link #getSelected} method instead.
-	 * @function
-	 */
-	ListItemBase.prototype.isSelected = ListItemBase.prototype.getSelected;
-
 	ListItemBase.prototype.setSelected = function(bSelected, bDontNotifyParent) {
 		// do not handle when item is not selectable or in same status
 		bSelected = this.validateProperty("selected", bSelected);
@@ -1006,7 +981,6 @@ function(
 			}.bind(this), 180);
 
 			setTimeout(function() {
-				this.fireTap();
 				this.firePress();
 			}.bind(this), 0);
 		}
@@ -1145,7 +1119,6 @@ function(
 
 			// fire own press event
 			setTimeout(function() {
-				this.fireTap();
 				this.firePress();
 			}.bind(this), 0);
 		}
@@ -1176,7 +1149,6 @@ function(
 		// Ctrl+E fires detail event or handle editing
 		if (this.getType().startsWith("Detail") && oEvent.code == "KeyE" && (oEvent.metaKey || oEvent.ctrlKey)) {
 			if (oEvent.target === this.getDomRef() && (this.hasListeners("detailPress") || this.hasListeners("detailTap"))) {
-				this.fireDetailTap();
 				this.fireDetailPress();
 				oEvent.preventDefault();
 				oEvent.setMarked();
@@ -1273,5 +1245,4 @@ function(
 	};
 
 	return ListItemBase;
-
 });

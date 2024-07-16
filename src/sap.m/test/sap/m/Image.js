@@ -1,19 +1,20 @@
 
 sap.ui.define([
-    "jquery.sap.global",
     "sap/m/App",
     "sap/m/Page",
     "sap/m/FlexBox",
     "sap/m/Title",
     "sap/m/Image",
     "sap/m/Text",
-    "sap/m/library"
-], function (jQuery, App, Page, FlexBox, Title, Image, Text, mLibrary) {
+    "sap/m/library",
+    "sap/ui/util/Mobile",
+    "sap/base/Log"
+], function(App, Page, FlexBox, Title, Image, Text, mLibrary, Mobile, Log) {
     "use strict";
 
     var ImageMode = mLibrary.ImageMode;
 
-    jQuery.sap.initMobile();
+    Mobile.init();
 
     var oImage = new Image({
         id: "image_not_decorative",
@@ -57,7 +58,7 @@ sap.ui.define([
         alt: "test image",
         decorative: false,
         press: function () {
-            jQuery.sap.log.info("!!!oImageButton pressed!!!");
+            Log.info("!!!oImageButton pressed!!!");
         }
     });
 
@@ -66,7 +67,7 @@ sap.ui.define([
         alt: "test image",
         decorative: false,
         press: function () {
-            jQuery.sap.log.info("!!!oImageButton pressed!!!");
+            Log.info("!!!oImageButton pressed!!!");
         }
     });
     oImageButton1.setActiveSrc("images/action_pressed.png");

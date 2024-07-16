@@ -6,8 +6,10 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Locale",
-	"sap/ui/core/IconPool" // side effect: required when calling RenderManager.icon
-], function(Localization, Library, Locale) {
+	"sap/ui/base/Object",
+	// side effect: required when calling RenderManager.icon
+	"sap/ui/core/IconPool"
+], function(Localization, Library, Locale, BaseObject) {
 	"use strict";
 
 
@@ -235,9 +237,9 @@ sap.ui.define([
 	};
 
 	HeaderRenderer._isTwoMonthsCalendar = function (oHead) {
-		return (oHead.getParent() instanceof sap.ui.unified.Calendar && (oHead.getParent().getMonths() >= 2));
+		return BaseObject.isObjectA(oHead.getParent(), "sap.ui.unified.Calendar") && (oHead.getParent().getMonths() >= 2);
 	};
 
 	return HeaderRenderer;
 
-}, /* bExport= */ true);
+});

@@ -2,12 +2,12 @@
 sap.ui.define([
 	"sap/m/p13n/Popup",
 	"sap/m/Button",
-	"sap/ui/core/Element",
 	"sap/ui/core/Control",
+	"sap/ui/core/ElementRegistry",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/p13n/SelectionPanel",
 	"sap/ui/model/json/JSONModel"
-], function(P13nPopup, Button, Element, Control, nextUIUpdate, SelectionPanel, JSONModel) {
+], function(P13nPopup, Button, Control, ElementRegistry, nextUIUpdate, SelectionPanel, JSONModel) {
 	"use strict";
 
 	QUnit.module("p13n.Popup API tests", {
@@ -231,7 +231,7 @@ sap.ui.define([
 		oResetBtn.firePress();
 
 		//2) --> Find MessageBox opened by Dialog
-		var oMessageBox = Element.registry.filter(function(oElement){return oElement.getMetadata().isA("sap.m.Dialog") && oElement.getTitle() === "Warning";})[0];
+		var oMessageBox = ElementRegistry.filter(function(oElement){return oElement.getMetadata().isA("sap.m.Dialog") && oElement.getTitle() === "Warning";})[0];
 
 		//3) confirm warning
 		oMessageBox.getButtons()[0].firePress();
@@ -259,7 +259,7 @@ sap.ui.define([
 		oResetBtn.firePress();
 
 		//2) --> Find MessageBox opened by Dialog
-		var oMessageBox = Element.registry.filter(function(oElement){return oElement.getMetadata().isA("sap.m.Dialog") && oElement.getTitle() === "Warning";})[0];
+		var oMessageBox = ElementRegistry.filter(function(oElement){return oElement.getMetadata().isA("sap.m.Dialog") && oElement.getTitle() === "Warning";})[0];
 
 		//3) confirm warning
 		oMessageBox.getButtons()[0].firePress();

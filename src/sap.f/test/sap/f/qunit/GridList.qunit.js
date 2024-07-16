@@ -12,9 +12,9 @@ sap.ui.define([
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Sorter",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ],
 function (
@@ -29,9 +29,9 @@ function (
 	GroupHeaderListItem,
 	JSONModel,
 	Sorter,
-	Core,
 	qutils,
 	KeyCodes,
+	nextUIUpdate,
 	jQuery
 ) {
 	"use strict";
@@ -103,7 +103,7 @@ function (
 		var oGrid = new GridList();
 
 		oGrid.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		var oLayout = oGrid.getGridLayoutConfiguration();
@@ -240,7 +240,7 @@ function (
 		beforeEach: function () {
 			this.oGrid = new GridList();
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
@@ -252,7 +252,7 @@ function (
 		// Act
 		var oClone = this.oGrid.clone();
 		oClone.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oClone, "Should have successfully cloned the Grid");
@@ -311,7 +311,7 @@ function (
 			this.oGrid.setModel(oModel);
 
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
@@ -352,11 +352,11 @@ function (
 		// remove the sorters
 		this.oGrid.getBinding("items").sort([]);
 		this.oGrid.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// add sorter
 		this.oGrid.getBinding("items").sort([new Sorter("Category", false, true)]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(this.oGrid.$().find("ul").hasClass("sapFGridListGroup"), "sapFGridListGroup is set");
 
@@ -402,7 +402,7 @@ function (
 			});
 
 			this.oGridList.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oGridList.destroy();
@@ -414,7 +414,7 @@ function (
 		// Arrange
 		var oItem = this.oGridList.getItems()[0];
 		oItem.setBusyIndicatorDelay(0);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oItemPositionBeforeBusy = oItem.$().position(),
 			oItemPositionAfterBusy;
 
@@ -436,7 +436,7 @@ function (
 
 		// Act
 		oGridList.destroyItems();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$noDataItem = oGridList.$("nodata");
 
@@ -477,7 +477,7 @@ function (
 			});
 
 			this.oGridList.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oGridList.destroy();
@@ -532,7 +532,7 @@ function (
 		var oButton = this.oGridList.getItems()[0].getContent()[1];
 
 		oButton.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeydown(oButton.$(), KeyCodes.ARROW_LEFT, false, false, false);
@@ -576,7 +576,7 @@ function (
 			};
 			this.oGrid.setModel(new JSONModel(oData));
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
@@ -675,7 +675,7 @@ function (
 		var oSpy = this.spy();
 		oGridList.attachBorderReached(oSpy);
 		oGridList.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oGridList.onItemNavigationBorderReached({
@@ -739,7 +739,7 @@ function (
 				]
 			});
 			this.oGridList.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oGridList.destroy();
@@ -807,7 +807,7 @@ function (
 			});
 
 			this.oGridList.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oGridList.destroy();

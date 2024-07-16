@@ -5,8 +5,7 @@
 sap.ui.define([
 	"sap/ui/support/supportRules/WindowCommunicationBus",
 	"sap/ui/support/supportRules/WCBConfig"
-],
-function (CommunicationBusCommon, CommunicationBusConfig) {
+], function (CommunicationBusCommon, CommunicationBusConfig) {
 	"use strict";
 
 	var oCommunicationBus;
@@ -32,4 +31,4 @@ function (CommunicationBusCommon, CommunicationBusConfig) {
 	oCommunicationBus = new CommunicationBus();
 
 	return oCommunicationBus;
-}, true);
+});

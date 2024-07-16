@@ -1,4 +1,4 @@
-/*global QUnit, sinon */
+/*global QUnit */
 sap.ui.define([
 	"sap/base/future",
 	"sap/base/Log",
@@ -174,69 +174,6 @@ sap.ui.define([
 		assert.equal(object_data_ori.two, 3, "The object data of the original object should be changed as well, as only the reference to it is cloned");
 	});
 
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("Calling data() after destroy (future=false)", function(assert) {
-		future.active = false;
-
-		// Setup: create an element, add some custom data and destroy it
-		this.stub(Log, "error");
-		var element = new Element();
-		element.data("test", "value");
-		element.destroy();
-
-		// Act/Assert
-
-		// get value for a single key
-		Log.error.resetHistory();
-		assert.strictEqual(element.data("test"), null, "no more custom data after destroy");
-		assert.strictEqual(Log.error.callCount, 0);
-
-		// get all key/value pairs
-		Log.error.resetHistory();
-		assert.deepEqual(element.data(), {}, "no more custom data after destroy");
-		assert.strictEqual(Log.error.callCount, 0);
-
-		// destroy  all
-		Log.error.resetHistory();
-		assert.strictEqual(element.data(null), element, "data(null) should return the element itself");
-		assert.strictEqual(element.getAggregation("customData"), null, "data(null) should not have modified aggregation 'customData'");
-		assert.strictEqual(Log.error.callCount, 0);
-
-		// add single key/value pairs
-		Log.error.resetHistory();
-		assert.strictEqual(element.data("a", "b"), element, "data(key,value) should return the element itself");
-		assert.strictEqual(element.getAggregation("customData"), null, "data(key,value) should not have modified aggregation 'customData'");
-		assert.ok(Log.error.calledWith(sinon.match(/Cannot create custom data on an already destroyed element/)));
-
-		// remove single key/value pairs
-		Log.error.resetHistory();
-		assert.strictEqual(element.data("a", null), element, "data(key,null) should return the element itself");
-		assert.strictEqual(element.getAggregation("customData"), null, "data(key,value) should not have modified aggregation 'customData'");
-		assert.strictEqual(Log.error.callCount, 0);
-
-		// add single key/value pair with DOM
-		Log.error.resetHistory();
-		assert.strictEqual(element.data("a", "b", false), element, "data(key,value,bool) should return the element itself");
-		assert.strictEqual(element.getAggregation("customData"), null, "data(key,value,bool) should not have modified aggregation 'customData'");
-		assert.ok(Log.error.calledWith(sinon.match(/Cannot create custom data on an already destroyed element/)));
-
-		// add single key/value pair with DOM
-		Log.error.resetHistory();
-		assert.strictEqual(element.data("a", "b", true), element, "data(key,value,bool) should return the element itself");
-		assert.strictEqual(element.getAggregation("customData"), null, "data(key,value,bool) should not have modified aggregation 'customData'");
-		assert.ok(Log.error.calledWith(sinon.match(/Cannot create custom data on an already destroyed element/)));
-
-		// add multiple key/value pairs
-		Log.error.resetHistory();
-		assert.strictEqual(element.data({a:"b",b:"c"}), element, "data({data}) should return the element itself");
-		assert.strictEqual(element.getAggregation("customData"), null, "data({data}) should not have modified aggregation 'customData'");
-		assert.ok(Log.error.calledWith(sinon.match(/Cannot create custom data on an already destroyed element/)));
-
-		future.active = undefined;
-	});
-
 	QUnit.test("Calling data() after destroy (future=true)", function(assert) {
 		future.active = true;
 		// Setup: create an element, add some custom data and destroy it
@@ -343,33 +280,6 @@ sap.ui.define([
 			assert.equal(data.x, 100, "Data object should contain the original data");
 		});
 
-	});
-
-	/**
-	 * @deprecated As of version 1.120
-	 */
-	QUnit.test("Write Data to HTML (future=false)", async function(assert) {
-		future.active = false;
-
-		var btn = new Button({text:"Hello"});
-
-		btn.data("test", "some payload", true);
-		btn.data("test2", "some other payload");
-		btn.data("test3", 42, true);
-		btn.data("test4", true, true);
-		btn.data("test5", {"test":"nope"}, true);
-
-		btn.placeAt("content");
-		await nextUIUpdate();
-
-		var $btn = btn.$();
-		assert.equal($btn.attr("data-test"), "some payload", "the 'test' data should be written to DOM");
-		assert.equal($btn.attr("data-test2"), undefined, "the 'test2' data should NOT be written to DOM");
-		assert.equal($btn.attr("data-test3"), undefined, "the 'test3' data should NOT be written to DOM");
-		assert.equal($btn.attr("data-test4"), undefined, "the 'test4' data should NOT be written to DOM");
-		assert.equal($btn.attr("data-test5"), undefined, "the 'test5' data should NOT be written to DOM");
-
-		future.active = undefined;
 	});
 
 	QUnit.test("Write Data to HTML (future=true)", async function(assert) {

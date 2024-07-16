@@ -25,8 +25,7 @@ sap.ui.define([
 				keyCode: {
 					type: "int"
 				}
-			},
-			publicMethods : [ "executeOn" ]
+			}
 		},
 
 		init: function () {

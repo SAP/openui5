@@ -134,4 +134,4 @@ sap.ui.define([
 		return aResult;
 	}
 
-}, /* bExport= */ true);
+});

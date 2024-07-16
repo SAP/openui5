@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/ui/base/BindingInfo",
 	"sap/ui/base/Object",
-	"sap/base/util/ObjectPath",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/base/ManagedObjectMetadata"
 ], function(
@@ -33,7 +32,6 @@ sap.ui.define([
 	assert,
 	BindingInfo,
 	BaseObject,
-	ObjectPath,
 	SyncPromise,
 	ManagedObjectMetadata
 ) {
@@ -645,21 +643,6 @@ sap.ui.define([
 					var sModulePath = sTypeName.replace(/\./g, "/");
 					// 1. require probing
 					var TypeClass = sap.ui.require(sModulePath);
-
-					/**
-					 * @deprecated
-					 */
-					if (!TypeClass) {
-						// 2. Global lookup
-						TypeClass = ObjectPath.get(sTypeName);
-						if (typeof TypeClass === "function" && !TypeClass._sapUiLazyLoader) {
-							future.errorThrows("The type class '" + sTypeName + "' is exported to the global namespace without being set as an export value of a UI5 module. " +
-							"This scenario will not be supported in the future and a separate UI5 module needs to be created which exports this type class.");
-						} else {
-							// 3. requireSync fallback
-							TypeClass = sap.ui.requireSync(sModulePath); // legacy-relevant
-						}
-					}
 
 					if (typeof TypeClass !== "function") {
 						throw new Error(`Cannot find type "${sTypeName}" used in control "${oInstance.getId()}"!`);

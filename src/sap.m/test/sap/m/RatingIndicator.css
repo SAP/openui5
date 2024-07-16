@@ -1,0 +1,29 @@
+.TestPageRatingWithWhiteBackground {
+	padding: 1rem;
+	margin-bottom: 1rem;
+	margin: 1rem 2rem 0 2rem;
+}
+
+.sapMVBox {
+	margin: 0.5rem 2rem 0rem 2rem;
+}
+
+.sapMList {
+	padding-bottom: 0;
+}
+
+.TestPageHeaderLabel {
+	font-weight: bold;
+	margin: 1rem 2rem 0 2rem;
+}
+
+.descriptiveRatingLabel {
+	padding-left: 0.5rem;
+	vertical-align: sub;
+	line-height: 1.375rem;
+}
+
+.changeEvent {
+	color: green;
+	font-weight: bold;
+}

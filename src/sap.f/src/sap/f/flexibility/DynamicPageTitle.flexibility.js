@@ -29,4 +29,4 @@ sap.ui.define([
 		},
 		"moveControls": "default"
 	};
-}, /* bExport= */ true);
+});

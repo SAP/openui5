@@ -78,27 +78,6 @@ sap.ui.define([
 			assert.strictEqual(oInstance.getAndClearLog(), "", "Log should be empty");
 		});
 
-		/**
-		 * @deprecated since 1.58
-		 */
-		QUnit.test("Should only collect logs with the right component (legacy APIs)", function (assert) {
-			const done = assert.async();
-			sap.ui.require([
-				"jquery.sap.global"
-			], function($) {
-				var oIgnoredLogger = _OpaLogger.getLogger("someComponent");
-				oIgnoredLogger.error(sLogMessage, sLogDetails);
-				oIgnoredLogger.debug(sLogMessage, sLogDetails);
-				$.sap.log.debug(sLogMessage, sLogDetails);
-				$.sap.log.error(sLogMessage, sLogDetails);
-				assert.strictEqual(oInstance.getAndClearLog(), "", "Log should be empty");
-				done();
-			}, function(err) {
-				assert.notOk(err, "loading jquery.sap.global. failed");
-				done();
-			});
-		});
-
 		QUnit.test("Should guard against memory leaking", function (assert) {
 			var i;
 

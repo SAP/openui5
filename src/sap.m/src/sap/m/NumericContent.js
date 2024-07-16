@@ -120,7 +120,6 @@ sap.ui.define([
 
 			library: "sap.m",
 			properties: {
-
 				/**
 				 * If set to true, the change of the value will be animated.
 				 */
@@ -155,12 +154,6 @@ sap.ui.define([
 				 * The scaling prefix. Financial characters can be used for currencies and counters. The SI prefixes can be used for units. If the scaling prefix contains more than three characters, only the first three characters are displayed.
 				 */
 				"scale": { type: "string", group: "Appearance", defaultValue: null },
-
-				/**
-				 * Updates the size of the control. If not set, then the default size is applied based on the device tile.
-				 * @deprecated Since version 1.38.0. The NumericContent control has now a fixed size, depending on the used media (desktop, tablet or phone).
-				 */
-				"size": { type: "sap.m.Size", group: "Appearance", defaultValue: "Auto", deprecated: true },
 
 				/**
 				 * The number of characters of the <code>value</code> property to display.
@@ -202,8 +195,6 @@ sap.ui.define([
 				 * @since 1.73
 				 */
 				"adaptiveFontSize": { type: "boolean", group: "Appearance", defaultValue: true }
-
-
 			},
 			events: {
 				/**

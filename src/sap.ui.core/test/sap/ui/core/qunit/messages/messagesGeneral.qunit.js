@@ -1,7 +1,6 @@
-/*global QUnit, sinon */
+/*global QUnit */
 sap.ui.define([
 	"sap/base/future",
-	"sap/base/Log",
 	"sap/ui/core/library",
 	"sap/ui/core/message/ControlMessageProcessor",
 	"sap/ui/core/message/Message",
@@ -21,7 +20,6 @@ sap.ui.define([
 	"sap/ui/test/TestUtils"
 ], function(
 	future,
-	Log,
 	coreLibrary,
 	ControlMessageProcessor,
 	Message,
@@ -191,23 +189,6 @@ sap.ui.define([
 		var oMessageModel = Messaging.getMessageModel();
 		assert.ok(oMessageModel instanceof MessageModel, 'MessageModel created');
 		assert.equal(oMessageModel.getObject('/').length, 0, 'No Messages');
-	});
-
-	/**
-	 * @deprecated
-	 */
-	QUnit.test("addMessage: propagateMessages not implemented (future=false)", function(assert) {
-		future.active = false;
-		const WarningLogSpy = sinon.spy(Log, "warning");
-		const oTestInput = new Input("TESTID", {value:""});
-		const oMessage = createControlMessage("TEST", oTestInput.getId() + "/value");
-		const expectedMessage = "[FUTURE FATAL] Message for Element sap.m.Input#TESTID, Property value received. Control sap.m.Input does not support messaging without using data binding.";
-		Messaging.addMessages(oMessage);
-		assert.equal(WarningLogSpy.callCount, 1, "Warning logged");
-		assert.equal(WarningLogSpy.getCall(0).args[0], expectedMessage, "Not Implemented text logged logged");
-		future.active = undefined;
-		Messaging.removeAllMessages();
-		oTestInput.destroy();
 	});
 
 	QUnit.test("addMessage: propagateMessages not implemented (future=true)", function(assert) {
@@ -717,5 +698,4 @@ sap.ui.define([
 		Messaging.removeMessages(oMessage);
 
 	});
-
 });

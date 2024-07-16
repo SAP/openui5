@@ -1,182 +1,19 @@
 <!DOCTYPE HTML>
 <html>
-<head>
+<head><meta charset="utf-8">
 	<title>sap.m.QuickViewPage</title>
 	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m"
-			data-sap-ui-compatVersion="edge">
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-async="true"
+			data-sap-ui-on-init="module:local/QuickViewPage"
+			data-sap-ui-resource-roots='{"local":"./"}'
+	>
 	</script>
 
-	<script>
-
-		//		create JSON model instance
-		var oModel = new sap.ui.model.json.JSONModel();
-
-		// JSON sample data
-		var mData = {
-			pageId	: "customPageId",
-			title	: "John Doe",
-			description: "Department Manager1",
-			groups: [
-				{
-					visible : false,
-					heading: "Job",
-					elements: [
-						{
-							label: "Company address",
-							value: "Sofia, Boris III, 136A Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id."
-						},
-						{
-							label: "Company",
-							value: "SAP AG",
-							url: "http://sap.com",
-							elementType: sap.m.QuickViewGroupElementType.pageLink,
-							pageLinkId: "customPageId4"
-						}
-					]
-				},
-				{
-					heading: "Other",
-					elements: [
-						{
-							label: "Best Friend",
-							value: "Michael Muller",
-							elementType: sap.m.QuickViewGroupElementType.pageLink,
-							pageLinkId: "customPageId2"
-						},
-						{
-							label: "Favorite Player",
-							value: "Ivaylo Ivanov",
-							elementType: sap.m.QuickViewGroupElementType.pageLink,
-							pageLinkId: "customPageId3"
-						},
-						{
-							label: "Favorite Food",
-							value: "",
-							elementType: sap.m.QuickViewGroupElementType.text
-						}
-					]
-				}
-
-			]
-		};
-
-		// set the data for the model
-		oModel.setData(mData);
-
-		// create and add app
-		var app = new sap.m.App("myApp", {initialPage:"quickViewPage"});
-		app.setModel(oModel);
-		app.placeAt("body");
-
-		var oQuickViewPage = new sap.m.QuickViewPage({
-			pageId : "{/pageId}",
-			title: "{/title}",
-			description: "{/description}",
-			groups : {
-				path : '/groups',
-				templateShareable : true,
-				template : new sap.m.QuickViewGroup({
-					heading : '{heading}',
-					elements : {
-						path : 'elements',
-						templateShareable : true,
-						template : new sap.m.QuickViewGroupElement({
-							label: "{label}",
-							value: "{value}",
-							url: "{url}",
-							type: "{elementType}",
-							pageLinkId: "{pageLinkId}"
-						})
-					}
-				})
-			}
-		});
-
-		var oQuickViewPage1 = new sap.m.QuickViewPage({
-			pageId : "{/pageId}",
-			title: "Link as title - ONE line",
-			titleUrl: "https://www.sap.com",
-			groups : {
-				path : '/groups',
-				templateShareable : true,
-				template : new sap.m.QuickViewGroup({
-					heading : '{heading}',
-					elements : {
-						path : 'elements',
-						templateShareable : true,
-						template : new sap.m.QuickViewGroupElement({
-							label: "{label}",
-							value: "{value}",
-							url: "{url}",
-							type: "{elementType}",
-							pageLinkId: "{pageLinkId}"
-						})
-					}
-				})
-			}
-		});
-
-		var oQuickViewPage2 = new sap.m.QuickViewPage({
-			pageId : "{/pageId}",
-			title: "Link as title - TWO lines - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
-			titleUrl: "https://www.sap.com",
-			groups : {
-				path : '/groups',
-				templateShareable : true,
-				template : new sap.m.QuickViewGroup({
-					heading : '{heading}',
-					elements : {
-						path : 'elements',
-						templateShareable : true,
-						template : new sap.m.QuickViewGroupElement({
-							label: "{label}",
-							value: "{value}",
-							url: "{url}",
-							type: "{elementType}",
-							pageLinkId: "{pageLinkId}"
-						})
-					}
-				})
-			}
-		});
-
-		var oPanel = new sap.m.Panel('quickViewPagePanel', {
-			width : '320px',
-			content : [
-				oQuickViewPage
-			]
-		});
-
-		var oPanel1 = new sap.m.Panel({
-			width : '320px',
-			content : [
-				oQuickViewPage1
-			]
-		});
-
-		var oPanel2 = new sap.m.Panel({
-			width : '320px',
-			content : [
-				oQuickViewPage2
-			]
-		});
-
-
-		// create and add a page
-		var page = new sap.m.Page("quickViewPage", {
-			title : "Quick View Page",
-			content : [
-				oPanel,
-				oPanel1,
-				oPanel2
-			]
-		});
-		app.addPage(page);
-
-	</script>
+	
 </head>
 <body id="body" class="sapUiBody">
 </body>

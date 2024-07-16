@@ -9,16 +9,17 @@
 		<script id="sap-ui-bootstrap"
 				src="../../../resources/sap-ui-core.js"
 				data-sap-ui-async="true"
-				data-sap-ui-compatVersion="edge"
 				data-sap-ui-libs="sap.m, sap.ui.layout"
-				data-sap-ui-onInit="module:local/StepInput"
-				data-sap-ui-resourceRoots='{
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/StepInput"
+				data-sap-ui-resource-roots='{
 					"local": "./",
 					"qunit.internal.acc": "../../../test-resources/sap/ui/core/qunit/internal/acc"
-				}'>
+				}'
+		>
 		</script>
 
-		<script id="stepModeSamples" type="xml/view">
+		<script id="stepModeSamples" type="text/xml">
 		<mvc:View
 			controllerName="stepModeSamplesController"
 			xmlns:core="sap.ui.core"

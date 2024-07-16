@@ -99,4 +99,4 @@ sap.ui.define([
 
 	return FormRenderer;
 
-}, /* bExport= */ true);
+});

@@ -40,8 +40,7 @@ sap.ui.define([
 	"sap/m/MessageStrip",
 	"sap/m/NavContainer",
 	"sap/m/HBox",
-	"sap/m/App",
-	"sap/ui/thirdparty/jquery"
+	"sap/m/App"
 ], function(
 	Toolbar,
 	OverflowToolbar,
@@ -84,8 +83,7 @@ sap.ui.define([
 	MessageStrip,
 	NavContainer,
 	HBox,
-	App,
-	jQuery
+	App
 ) {
 	"use strict";
 

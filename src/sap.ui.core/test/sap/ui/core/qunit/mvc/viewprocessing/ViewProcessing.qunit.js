@@ -1,7 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/future",
-	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/UIComponent",
 	'sap/ui/core/Component',
@@ -13,8 +12,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/StashedControlSupport",
 	"sap/ui/test/utils/nextUIUpdate"
-], function(future, Log, Controller, UIComponent, Component, Element, Panel, HBox, MyGlobal, SyncPromise, XMLView, StashedControlSupport, nextUIUpdate) {
-
+], function(future, Controller, UIComponent, Component, Element, Panel, HBox, MyGlobal, SyncPromise, XMLView, StashedControlSupport, nextUIUpdate) {
 	"use strict";
 
 	// create content div
@@ -297,41 +295,6 @@ sap.ui.define([
 		assert.equal(fnOnAfterRenderingSpy.callCount, 1, "onAfterRendering was called once");
 	});
 
-
-	/**
-	 * Tests parsing of a control which is not properly defined (does not return its class)
-	 * In V1: We check if the control is retrieved via globals + an error log.
-	 * @deprecated
-	 */
-	QUnit.test("Bad control processing (future=false)", async function(assert) {
-		future.active = false;
-		const oLogSpy = this.spy(Log, "error");
-
-		// view
-		const oView = await this.viewFactory("myViewBadControl", "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingBadControl");
-
-		await this.render(oView);
-
-		// V1 and V2: Check for error concerning the missing module content
-		const sClassName = "sap.ui.core.qunit.mvc.viewprocessing.BadControl";
-		const sErrorLogMessage = `[FUTURE FATAL] Control '${sClassName}' did not return a class definition from sap.ui.define.`;
-		assert.ok(oLogSpy.calledWith(sinon.match(sErrorLogMessage)), "Error log for missing class definition is correct.");
-
-		/**
-		 * V1 only: Control is fetched from global namespace and instantiated.
-		 * @deprecated
-		 */
-		(() => {
-			// check error message again for an additional part complaining about the global access
-			assert.ok(oLogSpy.calledWith(sinon.match("This fallback behavior will be removed in the next major version (2.0).")), "Extended error log for global access is correct.");
-
-			const myBadControl = oView.byId("myBadControl");
-			assert.ok(myBadControl, "BadControl is present within view");
-		})();
-
-		oLogSpy.restore();
-		future.active = undefined;
-	});
 
 	/**
 	 * Tests parsing of a control which is not properly defined (does not return its class)

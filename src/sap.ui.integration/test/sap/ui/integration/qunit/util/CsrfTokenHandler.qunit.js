@@ -1,11 +1,9 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/integration/Host",
 	"sap/ui/integration/util/DataProviderFactory",
 	"sap/ui/integration/widgets/Card"
-], function (
-	Host,
+], function(
 	DataProviderFactory,
 	Card
 ) {
@@ -243,118 +241,6 @@ sap.ui.define([
 
 		// Act - make a request which uses a CSRF placeholder
 		this.createDataProvider(oDataProviderConfig, { csrfTokensConfig: oCsrfTokensConfig }).triggerDataUpdate();
-	});
-
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
-	QUnit.test("Get token by Host", function (assert) {
-		const done = assert.async();
-		const oCsrfTokensConfig = {
-			"token1": {
-				"data": {
-					"request": {
-						"url": "/fakeService/getToken",
-						"method": "HEAD",
-						"headers": {
-							"X-CSRF-Token": "Fetch"
-						}
-					}
-				}
-			}
-		};
-		const oDataProviderConfig = {
-			"request": {
-				"url": "/fakeService/Products",
-				"method": "GET",
-				"headers": {
-					"X-CSRF-Token": "{csrfTokens>/token1/value}"
-				}
-			},
-			"path": "/results"
-		};
-		const oHostResolveToken = new Host();
-
-		oHostResolveToken.getCsrfToken = function (csrfTokenConfig) {
-			assert.deepEqual(csrfTokenConfig, oCsrfTokensConfig.token1, "CSRF token config provided to the host is correct");
-
-			return Promise.resolve("HostTokenValue");
-		};
-
-		// respond to the actual data request
-		this.oServer.respondWith("/fakeService/Products", function (oXhr) {
-			assert.strictEqual(new Headers(oXhr.requestHeaders).get("X-CSRF-Token"), "HostTokenValue", "The data request headers contain the provided token");
-
-			oXhr.respond(200, {
-				"Content-Type": "application/json"
-			}, JSON.stringify({"results": []}));
-
-			// Clean up
-			oHostResolveToken.destroy();
-			done();
-		});
-
-		// Act - make a request which uses a CSRF placeholder
-		this.createDataProvider(oDataProviderConfig, {
-			host: oHostResolveToken,
-			csrfTokensConfig: oCsrfTokensConfig
-		}).triggerDataUpdate();
-	});
-
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
-	QUnit.test("[Deprecated Syntax] Get token by Host", function (assert) {
-		const done = assert.async();
-		const oCsrfTokensConfig = {
-			"token1": {
-				"data": {
-					"request": {
-						"url": "/fakeService/getToken",
-						"method": "HEAD",
-						"headers": {
-							"X-CSRF-Token": "Fetch"
-						}
-					}
-				}
-			}
-		};
-		const oDataProviderConfig = {
-			"request": {
-				"url": "/fakeService/Products",
-				"method": "GET",
-				"headers": {
-					"X-CSRF-Token": "{{csrfTokens.token1}}"
-				}
-			},
-			"path": "/results"
-		};
-		const oHostResolveToken = new Host();
-
-		oHostResolveToken.getCsrfToken = function (csrfTokenConfig) {
-			assert.deepEqual(csrfTokenConfig, oCsrfTokensConfig.token1, "CSRF token config provided to the host is correct");
-
-			return Promise.resolve("HostTokenValue");
-		};
-
-		// respond to the actual data request
-		this.oServer.respondWith("/fakeService/Products", function (oXhr) {
-			assert.strictEqual(new Headers(oXhr.requestHeaders).get("X-CSRF-Token"), "HostTokenValue", "The data request headers contain the provided token");
-
-			oXhr.respond(200, {
-				"Content-Type": "application/json"
-			}, JSON.stringify({"results": []}));
-
-			// Clean up
-			oHostResolveToken.destroy();
-			done();
-		});
-
-		// Act - make a request which uses a CSRF placeholder
-		this.createDataProvider(oDataProviderConfig, {
-			host: oHostResolveToken,
-			csrfTokensConfig: oCsrfTokensConfig
-		}).triggerDataUpdate();
 	});
 
 	QUnit.module("CSRF Tokens - reusability", {
@@ -1351,6 +1237,4 @@ sap.ui.define([
 
 		this.oCard.startManifestProcessing();
 	});
-
-
 });

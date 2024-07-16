@@ -20,12 +20,9 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/SorterProcessor",
 	"sap/ui/model/odata/CountMode",
-	"sap/ui/model/odata/Filter",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/OperationMode"
-], function(assert, Log, deepEqual, each, isEmptyObject,  uid, ChangeReason, Context, Filter,
-		FilterOperator, FilterProcessor, FilterType, ListBinding, Sorter, SorterProcessor,
-		CountMode, ODataFilter, ODataUtils,  OperationMode) {
+], function(assert, Log, deepEqual, each, isEmptyObject, uid, ChangeReason, Context, Filter, FilterOperator, FilterProcessor, FilterType, ListBinding, Sorter, SorterProcessor, CountMode, ODataUtils, OperationMode) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v2.ODataListBinding",
@@ -171,9 +168,7 @@ sap.ui.define([
 			this._reassignCreateActivate();
 		},
 
-		metadata : {
-			publicMethods : ["getLength"]
-		}
+		metadata : {}
 
 	});
 
@@ -202,9 +197,9 @@ sap.ui.define([
 	 * @public
 	 * @since 1.98.0
 	 */
-	 ODataListBinding.prototype.attachCreateActivate = function (fnFunction, oListener) {
-		this.attachEvent("createActivate", fnFunction, oListener);
-	};
+	ODataListBinding.prototype.attachCreateActivate = function (fnFunction, oListener) {
+	   this.attachEvent("createActivate", fnFunction, oListener);
+   };
 
 	/**
 	 * Detach event handler <code>fnFunction</code> from the 'createActivate' event of this binding.
@@ -242,16 +237,16 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	 ODataListBinding.prototype._updateLastStartAndLength = function (iStartIndex, iLength,
-			iMaximumPrefetchSize, bKeepCurrent) {
-		if (bKeepCurrent) {
-			this._checkKeepCurrentSupported(iMaximumPrefetchSize);
-		} else {
-			this.iLastStartIndex = iStartIndex;
-			this.iLastLength = iLength;
-			this.iLastMaximumPrefetchSize = iMaximumPrefetchSize;
-		}
-	};
+	ODataListBinding.prototype._updateLastStartAndLength = function (iStartIndex, iLength,
+		   iMaximumPrefetchSize, bKeepCurrent) {
+	   if (bKeepCurrent) {
+		   this._checkKeepCurrentSupported(iMaximumPrefetchSize);
+	   } else {
+		   this.iLastStartIndex = iStartIndex;
+		   this.iLastLength = iLength;
+		   this.iLastMaximumPrefetchSize = iMaximumPrefetchSize;
+	   }
+   };
 
 	/**
 	 * Returns all current contexts of this list binding in no special order. Just like
@@ -323,16 +318,6 @@ sap.ui.define([
 			return [];
 		}
 
-		// OperationMode.Auto: handle synchronized count to check what the actual internal operation mode should be
-		// but only when using CountMode.Request or Both.
-		if (!this.bLengthFinal && this.sOperationMode == OperationMode.Auto && (this.sCountMode == CountMode.Request || this.sCountMode == CountMode.Both)) {
-			if (!this.bLengthRequested) {
-				this._getLength();
-				this.bLengthRequested = true;
-			}
-			return [];
-		}
-
 		//get length
 		if (!this.bLengthFinal && !this.bPendingRequest && !this.bLengthRequested) {
 			this._getLength();
@@ -351,12 +336,6 @@ sap.ui.define([
 			iMaximumPrefetchSize = 0;
 		}
 
-		// re-set the threshold in OperationMode.Auto
-		if (this.sOperationMode == OperationMode.Auto) {
-			if (this.iThreshold >= 0) {
-				iMaximumPrefetchSize = Math.max(this.iThreshold, iMaximumPrefetchSize);
-			}
-		}
 		aContexts = this._getContexts(iStartIndex, iLength);
 		if (this.oCombinedFilter === Filter.NONE || this._hasTransientParentContext()) {
 			// skip #loadData
@@ -714,9 +693,9 @@ sap.ui.define([
 	 * @return {boolean} Whether clientmode should be used
 	 */
 	ODataListBinding.prototype.useClientMode = function() {
-		return (this.sOperationMode === OperationMode.Client ||
-			this.sOperationMode === OperationMode.Auto && !this.bThresholdRejected ||
-			this.sOperationMode !== OperationMode.Server && this.bUseExpandedList);
+		return this.sOperationMode === OperationMode.Client ||
+			false ||
+			this.sOperationMode !== OperationMode.Server && this.bUseExpandedList;
 	};
 
 	/**
@@ -827,7 +806,7 @@ sap.ui.define([
 			}
 			if (that.sCountMode == CountMode.InlineRepeat
 					|| !that.bLengthFinal
-						&& (that.sCountMode === CountMode.Inline || that.sCountMode === CountMode.Both)) {
+						&& (that.sCountMode === CountMode.Inline)) {
 				aParameters.push("$inlinecount=allpages");
 				bInlineCountRequested = true;
 			} else {
@@ -842,27 +821,6 @@ sap.ui.define([
 			if (bInlineCountRequested && oData.__count !== undefined) {
 				that.iLength = parseInt(oData.__count);
 				that.bLengthFinal = true;
-
-				// in the OpertionMode.Auto, we check if the count is LE than the given threshold (which also was requested!)
-				if (that.sOperationMode == OperationMode.Auto) {
-					if (that.iLength <= that.mParameters.threshold) {
-						//the requested data is enough to satisfy the threshold
-						that.bThresholdRejected = false;
-					} else {
-						that.bThresholdRejected = true;
-
-						//clean up successful request
-						delete that.mRequestHandles[sGuid];
-						that.bPendingRequest = false;
-
-						// If request is originating from this binding, change must be fired afterwards
-						that.bNeedsUpdate = true;
-
-						// return since we can't do anything here anymore,
-						// we have to trigger the loading again, this time with application filters
-						return;
-					}
-				}
 			}
 
 			if (bUseClientMode) {
@@ -1045,11 +1003,11 @@ sap.ui.define([
 			aParams = [],
 			that = this;
 
-		if (this.sCountMode !== CountMode.Request && this.sCountMode !== CountMode.Both) {
+		if (this.sCountMode !== CountMode.Request) {
 			return;
 		}
 
-		this._addFilterQueryOption(aParams, this.sOperationMode !== OperationMode.Auto);
+		this._addFilterQueryOption(aParams, true);
 		// use only custom params for count and not expand,select params
 		if (this.mParameters && this.mParameters.custom) {
 			var oCust = { custom: {}};
@@ -1064,18 +1022,6 @@ sap.ui.define([
 			that.bLengthFinal = true;
 			that.bLengthRequested = true;
 			that.oCountHandle = null;
-
-			// in the OperationMode.Auto, we check if the count is LE than the given threshold and
-			// set the client operation flag accordingly
-			if (that.sOperationMode == OperationMode.Auto) {
-				if (that.iLength <= that.mParameters.threshold) {
-					that.bThresholdRejected = false;
-				} else {
-					that.bThresholdRejected = true;
-				}
-				// fire change because of synchronized $count
-				that._fireChange({reason: ChangeReason.Change});
-			}
 		}
 
 		function _handleError(oError) {
@@ -1572,8 +1518,6 @@ sap.ui.define([
 				this.sChangeReason = ChangeReason.Sort;
 				this._fireRefresh({reason : this.sChangeReason});
 			}
-			/** @deprecated As of version 1.11.0 */
-			this._fireSort({sorter: aSorters});
 			bSuccess = true;
 		}
 
@@ -1744,7 +1688,6 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataListBinding.prototype.filter = function(aFilters, sFilterType, bReturnSuccess) {
-
 		var bSuccess = false;
 
 		this.bIgnoreSuspend = true;
@@ -1772,8 +1715,6 @@ sap.ui.define([
 		if (!this.aApplicationFilters || !Array.isArray(this.aApplicationFilters)) {
 			this.aApplicationFilters = [];
 		}
-		/** @deprecated As of version 1.22.0, reason sap.ui.model.odata.Filter.js */
-		this.convertFilters();
 		this.oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
 
 		if (!this.useClientMode() && this.oCombinedFilter !== Filter.NONE) {
@@ -1803,12 +1744,6 @@ sap.ui.define([
 				this.sChangeReason = ChangeReason.Filter;
 				this._fireRefresh({reason: this.sChangeReason});
 			}
-			/** @deprecated As of version 1.11.0 */
-			if (sFilterType === FilterType.Application) {
-				this._fireFilter({filters: this.aApplicationFilters});
-			} else {
-				this._fireFilter({filters: this.aFilters});
-			}
 			bSuccess = true;
 		}
 
@@ -1817,21 +1752,6 @@ sap.ui.define([
 		} else {
 			return this;
 		}
-	};
-
-	/**
-	 * Convert sap.ui.model.odata.Filter to sap.ui.model.Filter
-	 *
-	 * @deprecated As of version 1.22.0, reason sap.ui.model.odata.Filter.js
-	 * @private
-	 */
-	ODataListBinding.prototype.convertFilters = function() {
-		this.aFilters = this.aFilters.map(function(oFilter) {
-			return oFilter instanceof ODataFilter ? oFilter.convert() : oFilter;
-		});
-		this.aApplicationFilters = this.aApplicationFilters.map(function(oFilter) {
-			return oFilter instanceof ODataFilter ? oFilter.convert() : oFilter;
-		});
 	};
 
 	ODataListBinding.prototype.applyFilter = function() {
@@ -1861,8 +1781,6 @@ sap.ui.define([
 		this.addComparators(this.aSorters, true);
 		this.addComparators(this.aFilters);
 		this.addComparators(this.aApplicationFilters);
-		/** @deprecated As of version 1.22.0, reason sap.ui.model.odata.Filter.js */
-		this.convertFilters();
 		this.oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
 
 		if (!this.useClientMode()) {
@@ -2226,10 +2144,10 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	 ODataListBinding.prototype._removePersistedCreatedContexts = function () {
-		return this.oModel._getCreatedContextsCache()
-			.removePersistedContexts(this.getResolvedPath(), this.sCreatedEntitiesKey);
-	};
+	ODataListBinding.prototype._removePersistedCreatedContexts = function () {
+	   return this.oModel._getCreatedContextsCache()
+		   .removePersistedContexts(this.getResolvedPath(), this.sCreatedEntitiesKey);
+   };
 
 	/**
 	 * Returns the count of active entries in the list if the list length is final, otherwise
@@ -2245,15 +2163,15 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v2.Context#isInactive
 	 * @since 1.98.0
 	 */
-	 ODataListBinding.prototype.getCount = function () {
-		if (!this.isLengthFinal()) {
-			return undefined;
-		}
+	ODataListBinding.prototype.getCount = function () {
+	   if (!this.isLengthFinal()) {
+		   return undefined;
+	   }
 
-		return this.getLength() - this._getCreatedContexts().filter(function (oContext) {
-				return oContext.isInactive();
-			}).length;
-	};
+	   return this.getLength() - this._getCreatedContexts().filter(function (oContext) {
+			   return oContext.isInactive();
+		   }).length;
+   };
 
 	/**
 	 * Returns whether this binding is relative and has a transient parent context.
@@ -2277,9 +2195,9 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	 ODataListBinding.prototype._hasTransientParentWithoutSubContexts = function () {
-		return this._hasTransientParentContext() && !this._getCreatedContexts().length;
-	};
+	ODataListBinding.prototype._hasTransientParentWithoutSubContexts = function () {
+	   return this._hasTransientParentContext() && !this._getCreatedContexts().length;
+   };
 
 	/**
 	 * Returns whether this list binding uses the expanded list data.

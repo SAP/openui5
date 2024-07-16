@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head><meta charset="utf-8">
 	<title>Integrate Destinations</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="../../scripts/boot.js"></script>
 </head>
@@ -25,12 +25,12 @@
 			<p>
 				There are three stages in this process:
 				<br>
-				<ol>
+				</p><ol>
 					<li>If the user has not authorized the access to the third-party resource, the server must return an HTTP response with status code <code>502</code> and header <code>sap-3lo-flow</code>.</li>
 					<li>When the user starts the authorization process, the card will start polling for the same request. The server must respond with the same HTTP response with status <code>502</code> and <code>sap-3lo-flow</code> header until the user grants access or the maximum polling time is reached.</li>
 					<li>After the user has authorized the access, the server must return the requested data. The polling will stop.</li>
 				</ol>
-			</p>
+			<p></p>
 
 			<h2 id="httpHeader">
 				HTTP Header sap-3lo-flow

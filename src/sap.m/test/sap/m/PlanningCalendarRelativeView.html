@@ -1,106 +1,21 @@
 
 <!DOCTYPE HTML>
 <html>
-	<head>
+	<head><meta charset="utf-8">
 		<title>PlanningCalendar Relative Views</title>
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-language="en_US"
-			data-sap-ui-libs="sap.m, sap.ui.unified">
+				id="sap-ui-bootstrap"
+				data-sap-ui-language="en_US"
+				data-sap-ui-libs="sap.m, sap.ui.unified"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/PlanningCalendarRelativeView"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
-		<script>
-
-			var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
-			var getFirstWeekOfYear = function() {
-				return UI5Date.getInstance(2021, 0, 4);
-			};
-
-			var bToggle = false;
-
-			var PC = new sap.m.PlanningCalendar("PC2",{
-				viewKey: "test",
-				appointmentsVisualization: "Filled",
-				showIntervalHeaders: false,
-				startDate: getFirstWeekOfYear(),
-				minDate: getFirstWeekOfYear(),
-				builtInViews: [
-					"Day",
-					"Hour"
-				],
-				views: [
-					new sap.m.PlanningCalendarView({
-						key: "test",
-						intervalType: "Day",
-						relative: true,
-						description: "Project in Weeks",
-						intervalSize: 7,
-						intervalLabelFormatter: function(iIntervalIndex) {
-							return "Week " + (iIntervalIndex + 1);
-						},
-						intervalsS: 4,
-						intervalsM: 8,
-						intervalsL: 13
-					}),
-					new sap.m.PlanningCalendarView({
-						key: "not",
-						intervalType: "Day",
-						description: "Shifts",
-						relative: true,
-						intervalSize: 1,
-						intervalLabelFormatter: function(iIntervalIndex) {
-							return "Shift " + (iIntervalIndex + 1);
-						},
-						intervalsS: 4,
-						intervalsM: 8,
-						intervalsL: 11
-					})
-				],
-				rows: [
-					new sap.m.PlanningCalendarRow({
-						appointments: [
-							new sap.ui.unified.CalendarAppointment({
-								startDate: UI5Date.getInstance(2021, 0, 4),
-								endDate: UI5Date.getInstance(2021, 1, 1),
-								type: "Type05",
-								text: "first"
-							}),
-							new sap.ui.unified.CalendarAppointment({
-								startDate: UI5Date.getInstance(2021, 1, 1),
-								endDate: UI5Date.getInstance(2021, 2, 1),
-								type: "Type08",
-								text: "second"
-							})
-						]
-					})
-				],
-				specialDates: [ new sap.ui.unified.DateTypeRange({
-								startDate: getFirstWeekOfYear(),
-								endDate: getFirstWeekOfYear(),
-								type: sap.ui.unified.CalendarDayType.Type01,
-								tooltip: "Lunch"
-							})
-						  ],
-				toolbarContent: [
-					new sap.m.ToggleButton({
-						text: "Do the thing",
-						press: function() {
-							//filter and apply a custom class on your custom control
-							PC.getRows()[0].getAppointments().forEach(app => {
-								if (app.getType() === "Type05") {
-									app.getCustomControl().toggleStyleClass("sapUiCalendarAppDimmed", this.getPressed());
-								}
-							})
-						}})
-					]
-			});
-			PC.placeAt('body');
-		</script>
-			<style>
-				body {
-					margin: 0;
-				}
-			</style>
+		
+			<link rel="stylesheet" href="./PlanningCalendarRelativeView.css">
 	</head>
 	<body id="body" class="sapUiBody">
 	</body>

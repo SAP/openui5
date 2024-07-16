@@ -62,4 +62,4 @@ sap.ui.define([
       ];
 
 	return aPropertyInfos;
-}, /* bExport= */false);
+});

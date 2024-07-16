@@ -8,141 +8,16 @@
 
 	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
-		id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:local/StandardListItemWithAvatar"
+			data-sap-ui-resource-roots='{"local":"./"}'
+	>
 	</script>
 
-	<script>
-
-		jQuery.sap.require("sap.ui.core.IconPool");
-
-			var av = new sap.m.Avatar( {
-					displaySize: "L",
-					displayShape: "Square",
-					badgeIcon: "sap-icon://camera",
-					imageFitType: "Cover",
-					press: function(){alert();}
-				});
-				av.setSrc("images/Lamp_avatar_01.jpg");
-
-				var av1 = new sap.m.Avatar( {
-					displaySize: "L",
-					displayShape: "Square",
-					badgeIcon: "sap-icon://camera",
-					imageFitType: "Contain",
-					showBorder: true,
-					press: function(){alert("action press");}
-				});
-				av1.setSrc("images/Lamp_avatar_01.jpg");
-
-				var av2 = new sap.m.Avatar( {
-					displaySize: "XL",
-					imageFitType: "Cover"
-				});
-				av2.setSrc("sap-icon://lab");
-
-				var av3 = new sap.m.Avatar( {
-					displaySize: "L",
-					imageFitType: "Contain",
-					src: "sap-icon://lab"
-				});
-
-
-		var oList = new sap.m.List({
-			inset : true,
-			showUnread: true,
-			headerText : "Avatar test",
-			items : [
-				new sap.m.StandardListItem({
-					title : "Image",
-					titleTextDirection: sap.ui.core.TextDirection.LTR,
-					titleTextAlign: sap.ui.core.TextAlign.End,
-					description : "SIP Telephone Set",
-					info: "Today",
-					infoState: "Success",
-					icon: "images/Woman_avatar_01.png",
-					iconInset: true,
-					unread : true,
-					counter: 1
-				}),
-				new sap.m.StandardListItem({
-					title : "Icon no inset",
-					description : "Brilliance Monitor, Docking Station",
-					info: "Yesterday",
-					iconInset: false,
-					icon: "sap-icon://search",
-					unread : true,
-					counter: 4
-				}),
-
-				new sap.m.StandardListItem({
-					title : "Avatar no Inset",
-					description : "Mouse, Headphone, Keyboard",
-					info: "+ 359 234 567",
-					infoTextDirection: sap.ui.core.TextDirection.LTR,
-					infoState: "Warning",
-					avatar: av,
-					unread : true,
-					iconInset: false,
-					counter: 2
-				}),
-
-				new sap.m.StandardListItem({
-					title : "Avatar no Inset and contain fit of the image",
-					description : "Mouse, Headphone, Keyboard",
-					info: "+ 359 234 567",
-					infoTextDirection: sap.ui.core.TextDirection.LTR,
-					infoState: "Warning",
-					avatar: av1,
-					unread : true,
-					iconInset: false,
-					counter: 2
-				}),
-
-				new sap.m.StandardListItem({
-					title : "Avatar no Inset",
-					description : "Mouse, Headphone, Keyboard",
-					info: "+ 359 234 567",
-					infoTextDirection: sap.ui.core.TextDirection.LTR,
-					infoState: "Warning",
-					avatar: av3,
-					unread : true,
-					iconInset: false,
-					counter: 2
-				}),
-
-				new sap.m.StandardListItem({
-					title : "Avatar with Inset",
-					description : "Mouse, Headphone, Keyboard",
-					info: "+ 359 234 567",
-					infoTextDirection: sap.ui.core.TextDirection.LTR,
-					infoState: "Warning",
-					avatar: av2,
-					unread : true,
-					iconInset: true,
-					counter: 2
-				}),
-
-				new sap.m.StandardListItem({
-					title : "Icon with inset",
-					description : "Brilliance Monitor, Docking Station",
-					info: "Yesterday",
-					iconInset: true,
-					icon: "sap-icon://search",
-					unread : true,
-					counter: 4
-				})
-			]
-		});
-
-		var app = new sap.m.App().addPage(new sap.m.Page({
-				title: "Standard List Item with Avatar",
-				content: oList
-			}));
-			app.placeAt("body");
-		//	av.setDisplayShape("Circle");
-			av.setDisplaySize("XL");
-
-	</script>
+	
 
 </head>
 <body id="body" class="sapUiBody">

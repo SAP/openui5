@@ -229,4 +229,4 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "./SliderRe
 	};
 
 	return RangeSliderRenderer;
-}, /* bExport= */ true);
+});

@@ -1,0 +1,272 @@
+body {
+	overflow: hidden;
+}
+
+/* Аuto */
+.positioned1 {
+	position: absolute !important;
+	bottom: 20px;
+	right: 16px;
+}
+html[dir="rtl"] .positioned1 {
+	right: auto;
+	left: 16px;
+}
+
+/* bottom */
+.positioned2 {
+	position: absolute !important;
+	top: 68px;
+	left: 16px;
+}
+html[dir="rtl"] .positioned2 {
+	right: 16px;
+	left: auto;
+}
+
+/* horizontal */
+.positioned3 {
+	position: absolute !important;
+	top: 120px;
+	left: 16px;
+}
+html[dir="rtl"] .positioned3 {
+	left: auto;
+	right: 16px;
+}
+
+.positioned25 {
+	position: absolute !important;
+	top: 360px;
+	right: 16px;
+}
+html[dir="rtl"] .positioned25 {
+	left: 16px;
+	right: auto;
+}
+
+/* HorizontalPreferredLeft */
+.positioned5 {
+	position: absolute !important;
+	top: 174px;
+	left: 16px;
+}
+html[dir="rtl"] .positioned5 {
+	left: auto;
+	right: 16px;
+}
+
+.positioned6 {
+	position: absolute !important;
+	top: 68px;
+	right: 16px;
+}
+html[dir="rtl"] .positioned6 {
+	right: auto;
+	left: 16px;
+}
+
+/* HorizontalPreferredLeft */
+.positioned7 {
+	position: absolute !important;
+	top: 230px;
+	left: 16px;
+}
+html[dir="rtl"] .positioned7 {
+	left: auto;
+	right: 16px;
+}
+
+.positioned8 {
+	position: absolute !important;
+	top: 120px;
+	right: 16px;
+}
+html[dir="rtl"] .positioned8 {
+	left: 16px;
+	right: auto;
+}
+
+/* Left */
+.positioned9 {
+	position: absolute !important;
+	top: 170px;
+	right: 16px;
+}
+html[dir="rtl"] .positioned9 {
+	right: auto;
+	left: 16px;
+}
+
+/* Right */
+.positioned10 {
+	position: absolute !important;
+	top: 280px;
+	left: 16px;
+}
+html[dir="rtl"] .positioned10 {
+	right: 16px;
+	left: auto;
+}
+
+/* PreferredBottomOrFlip */
+.positioned11 {
+	position: absolute !important;
+	top: 330px;
+	left: 16px;
+}
+html[dir="rtl"] .positioned11 {
+	right: 16px;
+	left: auto;
+}
+
+.positioned12 {
+	position: absolute !important;
+	bottom: 70px;
+	right: 16px;
+}
+html[dir="rtl"] .positioned12 {
+	left: 16px;
+	right: auto;
+}
+
+/* PreferredLeftOrFlip */
+.positioned13 {
+	position: absolute !important;
+	top: 380px;
+	left: 16px;
+}
+html[dir="rtl"] .positioned13 {
+	right: 16px;
+	left: auto;
+}
+
+.positioned14 {
+	position: absolute !important;
+	bottom: 120px;
+	right: 16px;
+}
+html[dir="rtl"] .positioned14 {
+	left: 16px;
+	right: auto;
+}
+
+/* PreferredRightOrFlip */
+.positioned15 {
+	position: absolute !important;
+	top: 430px;
+	left: 16px;
+}
+html[dir="rtl"] .positioned15 {
+	right: 16px;
+	left: auto;
+}
+
+.positioned16 {
+	position: absolute !important;
+	bottom: 170px;
+	right: 16px;
+}
+html[dir="rtl"] .positioned16 {
+	left: 16px;
+	right: auto;
+}
+
+/* PreferredTopOrFlip */
+.positioned17 {
+	position: absolute !important;
+	top: 480px;
+	left: 16px;
+}
+html[dir="rtl"] .positioned17 {
+	right: 16px;
+	left: auto;
+}
+
+.positioned18 {
+	position: absolute !important;
+	top: 220px;
+	right: 16px;
+}
+html[dir="rtl"] .positioned18 {
+	left: 16px;
+	right: auto;
+}
+
+/* Top */
+.positioned19 {
+	position: absolute !important;
+	top: 530px;
+	left: 16px;
+}
+html[dir="rtl"] .positioned19 {
+	right: 16px;
+	left: auto;
+}
+
+/* Vertical */
+.positioned20 {
+	position: absolute !important;
+	top: 580px;
+	left: 16px;
+}
+html[dir="rtl"] .positioned20 {
+	right: 16px;
+	left: auto;
+}
+
+.positioned21 {
+	position: absolute !important;
+	top: 260px;
+	right: 16px;
+}
+html[dir="rtl"] .positioned21 {
+	left: 16px;
+	right: auto;
+}
+
+/* VerticalPreferredBottom */
+.positioned22 {
+	position: absolute !important;
+	top: 630px;
+	left: 16px;
+}
+html[dir="rtl"] .positioned22 {
+	right: 16px;
+	left: auto;
+}
+
+.positioned23 {
+	position: absolute !important;
+	top: 310px;
+	right: 16px;
+}
+html[dir="rtl"] .positioned23 {
+	left: 16px;
+	right: auto;
+}
+
+/* VerticalPreferredTop */
+.positioned24 {
+	position: absolute !important;
+	top: 680px;
+	left: 16px;
+}
+html[dir="rtl"] .positioned24 {
+	right: 16px;
+	left: auto;
+}
+
+.positioned4 {
+	position: absolute !important;
+	top: 16px;
+	right: 16px;
+}
+html[dir="rtl"] .positioned4 {
+	left: 16px;
+	right: auto;
+}
+
+.img1 {
+	width: 400px;
+}

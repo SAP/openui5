@@ -10,10 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
-	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
@@ -34,10 +31,7 @@ sap.ui.define([
 	States,
 	UIChange,
 	CompVariantMerger,
-	CompVariantUtils,
 	FlexState,
-	ManifestUtils,
-	SmartVariantManagementApplyAPI,
 	Version,
 	Settings,
 	CompVariantState,
@@ -742,72 +736,6 @@ sap.ui.define([
 				"still one entity for persistencyKeys is present"
 			);
 			assert.strictEqual(oChange2.getLayer(), Layer.USER, "The default layer is still set to USER");
-		});
-
-		/**
-		 * @deprecated Since version 1.86
-		 */
-		QUnit.test("Given setDefault is called once for USER layer and twice for CUSTOMER layer and then reverted three times", function(assert) {
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sComponentId);
-			sandbox.stub(CompVariantUtils, "getPersistencyKey").returns(this.sPersistencyKey);
-
-			var aDefaultVariants = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey).defaultVariants;
-			CompVariantState.setDefault({
-				reference: sComponentId,
-				defaultVariantId: this.sVariantId1,
-				persistencyKey: this.sPersistencyKey,
-				layer: Layer.CUSTOMER
-			});
-
-			CompVariantState.setDefault({
-				reference: sComponentId,
-				defaultVariantId: this.sVariantId2,
-				persistencyKey: this.sPersistencyKey,
-				layer: Layer.USER
-			});
-
-			CompVariantState.setDefault({
-				reference: sComponentId,
-				defaultVariantId: this.sVariantId1,
-				persistencyKey: this.sPersistencyKey,
-				layer: Layer.USER
-			});
-
-			CompVariantState.revertSetDefaultVariantId({
-				reference: sComponentId,
-				persistencyKey: this.sPersistencyKey
-			});
-
-			assert.strictEqual(aDefaultVariants.length, 2, "still 2 changes are present");
-			assert.strictEqual(
-				SmartVariantManagementApplyAPI.getDefaultVariantId({}),
-				this.sVariantId2,
-				"the default variant ID can be determined correct"
-			);
-
-			CompVariantState.revertSetDefaultVariantId({
-				reference: sComponentId,
-				persistencyKey: this.sPersistencyKey
-			});
-
-			assert.strictEqual(aDefaultVariants.length, 1, "1 change is remaining");
-			assert.strictEqual(
-				SmartVariantManagementApplyAPI.getDefaultVariantId({}),
-				this.sVariantId1,
-				"the default variant ID can be determined correct"
-			);
-
-			CompVariantState.revertSetDefaultVariantId({
-				reference: sComponentId,
-				persistencyKey: this.sPersistencyKey
-			});
-
-			assert.strictEqual(aDefaultVariants.length, 0, "the last change was removed");
-			assert.strictEqual(
-				SmartVariantManagementApplyAPI.getDefaultVariantId({}),
-				"",
-				"the default variant ID can be determined correct"
-			);
 		});
 
 		QUnit.test("Given setDefault is called with a already transported Change", function(assert) {

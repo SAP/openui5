@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/ui/core/Theming",
 	"sap/ui/demo/theming/controller/BaseController",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
@@ -10,9 +11,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/library",
-	"sap/ui/core/Fragment",
-	"sap/ui/core/Core"
+	"sap/ui/core/Fragment"
 ], function(
+	Theming,
 	BaseController,
 	JSONModel,
 	Filter,
@@ -24,8 +25,7 @@ sap.ui.define([
 	jQuery,
 	Parameters,
 	coreLibrary,
-	Fragment,
-	oCore
+	Fragment
 ) {
 	"use strict";
 
@@ -133,15 +133,6 @@ sap.ui.define([
 				var oData = this.createDataStructure(oParameterMetadata);
 				oModel.setData(oData);
 			}.bind(this));
-
-			//Called when the user chooses a new theme in the ComboBox
-			//Creates a new Data Structure for the table including the updated theme data
-			oCore.attachThemeChanged(function () {
-				this.getParameterMetadata(function (oParameterMetadata) {
-					var oData = this.createDataStructure(oParameterMetadata);
-					oModel.setData(oData);
-				}.bind(this));
-			}, this);
 		},
 		getParameterMetadata: function (fnCallback) {
 			jQuery.ajax("../../../../../../resources/sap/ui/core/themes/base/base.less", {
@@ -684,59 +675,59 @@ sap.ui.define([
 			this.onAction();
 			switch (value) {
 				case "Morning Horizon":
-					oCore.applyTheme("sap_horizon");
+					Theming.setTheme("sap_horizon");
 					this.byId("title").setText("Details for ''Morning Horizon''");
 					break;
 				case "Evening Horizon":
-					oCore.applyTheme("sap_horizon_dark");
+					Theming.setTheme("sap_horizon_dark");
 					this.byId("title").setText("Details for ''Evening Horizon''");
 					break;
 				case "Horizon High Contrast Black":
-					oCore.applyTheme("sap_horizon_hcb");
+					Theming.setTheme("sap_horizon_hcb");
 					this.byId("title").setText("Details for ''Horizon High Contrast Black''");
 					break;
 				case "Horizon High Contrast White":
-					oCore.applyTheme("sap_horizon_hcw");
+					Theming.setTheme("sap_horizon_hcw");
 					this.byId("title").setText("Details for ''Horizon High Contrast White''");
 					break;
 				case "Quartz Light":
-					oCore.applyTheme("sap_fiori_3");
+					Theming.setTheme("sap_fiori_3");
 					this.byId("title").setText("Details for ''Quartz Light''");
 					break;
 				case "Quartz Dark":
-					oCore.applyTheme("sap_fiori_3_dark");
+					Theming.setTheme("sap_fiori_3_dark");
 					this.byId("title").setText("Details for ''Quartz Dark''");
 					break;
 				case "Quartz High Contrast Black":
-					oCore.applyTheme("sap_fiori_3_hcb");
+					Theming.setTheme("sap_fiori_3_hcb");
 					this.byId("title").setText("Details for ''Quartz High Contrast Black''");
 					break;
 				case "Quartz High Contrast White":
-					oCore.applyTheme("sap_fiori_3_hcw");
+					Theming.setTheme("sap_fiori_3_hcw");
 					this.byId("title").setText("Details for ''Quartz High Contrast White''");
 					break;
 				case "Belize":
-					oCore.applyTheme("sap_belize");
+					Theming.setTheme("sap_belize");
 					this.byId("title").setText("Details for ''Belize''");
 					break;
 				case "Belize Deep":
-					oCore.applyTheme("sap_belize_plus");
+					Theming.setTheme("sap_belize_plus");
 					this.byId("title").setText("Details for ''Belize Deep''");
 					break;
 				case "Belize High Contrast Black":
-					oCore.applyTheme("sap_belize_hcb");
+					Theming.setTheme("sap_belize_hcb");
 					this.byId("title").setText("Details for ''Belize High Contrast Black''");
 					break;
 				case "Belize High Contrast White":
-					oCore.applyTheme("sap_belize_hcw");
+					Theming.setTheme("sap_belize_hcw");
 					this.byId("title").setText("Details for ''Belize High Contrast White''");
 					break;
 				case "Blue Crystal":
-					oCore.applyTheme("sap_bluecrystal");
+					Theming.setTheme("sap_bluecrystal");
 					this.byId("title").setText("Details for ''Blue Crystal''");
 					break;
 				case "High Contrast Black":
-					oCore.applyTheme("sap_hcb");
+					Theming.setTheme("sap_hcb");
 					this.byId("title").setText("Details for ''High Contrast Black''");
 					break;
 			}

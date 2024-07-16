@@ -19,8 +19,8 @@ sap.ui.define([
 	"sap/m/semantic/DetailPage",
 	"sap/m/semantic/MasterPage",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/base/strings/capitalize"
 ], function(
 	Element,
@@ -42,8 +42,8 @@ sap.ui.define([
 	DetailPage,
 	MasterPage,
 	KeyCodes,
+	nextUIUpdate,
 	jQuery,
-	Core,
 	capitalize
 ) {
 	"use strict";
@@ -385,14 +385,14 @@ sap.ui.define([
 			});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.strictEqual(oFlagAction.$().attr("aria-pressed"), "false", "aria-pressed attribute is set to false");
 
 		//act
 		oFlagAction.setPressed(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.strictEqual(oFlagAction.$().attr("aria-pressed"), "true", "aria-pressed attribute is set to true");
@@ -423,7 +423,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oEditButton.firePress();
@@ -449,7 +449,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		var $ref = oEditButton.getDomRef();
@@ -473,7 +473,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oMultiSelectAction.getPressed(), false, "multiselect off by default");
@@ -493,7 +493,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		jQuery(oMultiSelectAction.getDomRef()).trigger('tap');
@@ -518,7 +518,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		jQuery(oMultiSelectAction.getDomRef()).trigger('tap');
@@ -543,7 +543,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		qutils.triggerKeyup(oMultiSelectAction.getDomRef(), KeyCodes.SPACE);
@@ -568,7 +568,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		qutils.triggerKeyup(oMultiSelectAction.getDomRef(), KeyCodes.SPACE);
@@ -594,7 +594,7 @@ sap.ui.define([
 		oSemanticPage.setModel(oStatusModel, "status");
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oMultiSelectAction.getEnabled(), false, "baound value initialized correctly");
@@ -622,7 +622,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(callback.calledOnce, true, "delegate is called");
 
@@ -640,7 +640,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(callback.getCall(0).args[0].srcControl.getId(), "multiAction");
 		assert.strictEqual(oResult.getId(), "multiAction");
@@ -659,7 +659,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oResult.getId(), "multiAction");
 
@@ -678,14 +678,14 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(callback.calledOnce, true, "delegate is called");
 
 		oMultiSelectAction.removeEventDelegate(oDelegate);
 
 		oSemanticPage.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(callback.calledOnce, true, "delegate is called only once");
 
@@ -704,7 +704,7 @@ sap.ui.define([
 		});
 
 		oSemanticPage.placeAt("qunit-fixture-visible");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(callback.calledOnce, true, "delegate is called");
 

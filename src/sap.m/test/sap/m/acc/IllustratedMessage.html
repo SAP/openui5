@@ -1,39 +1,19 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head><meta charset="utf-8">
 	<title>IllustratedMessage ACC Test - sap.m</title>
 
 	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m"
 			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-resourceroots='{
-				"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
-			}'>
+			data-sap-ui-resource-roots='{"qunit.internal.acc":"../../../../test-resources/sap/ui/core/qunit/internal/acc","local":"./"}'
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:local/IllustratedMessage"
+	>
 	</script>
-	<script>
-
-		new sap.ui.core.InvisibleText("illustatedMessage_label", {text: "No activities Illustration"}).toStatic();
-
-		var oApp = new sap.m.App("myApp"),
-			oPage = new sap.m.Page("myPage", {
-					title: "sap.m.IllustratedMessage Test Page",
-					titleLevel: "H1",
-					content: [
-						new sap.m.IllustratedMessage({
-							illustrationType: "sapIllus-NoActivities",
-							illustrationAriaLabelledBy: "illustatedMessage_label",
-							additionalContent: [
-								new sap.m.Button({
-									text: "Add activity"
-						})]
-					})]
-			});
-
-		oApp.addPage(oPage);
-		oApp.placeAt('content');
-
-	</script>
+	
 </head>
 
 <body class="sapUiBody">

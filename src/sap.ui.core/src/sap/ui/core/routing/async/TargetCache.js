@@ -17,18 +17,17 @@ sap.ui.define([
 	return {
 
 		/**
-		 * Determines the object with the given <code>oOptions</code>, <code>sType</code> and <code>oTargetCreateInfo</code>
-		 *
-		 * @param {object} oOptions The options of the desired object
-		 * @param {string} sType The type of the desired object, e.g. 'View', 'Component', etc.
-		 * @param {object} oTargetCreateInfo The object which contains extra information for the creation of the target
-		 * @param {boolean} [bSynchronousCreate] When <code>true</code> the <code>View._create</code> is used for creating
-		 *  the view instance synchronously. In all other cases the asynchronous <code>View.create</code> factory is used.
-		 * @returns {Promise | object} The desired object, if the object already exists in the cache, if not the promise is returned
-		 * @private
-		 * @ui5-transform-hint replace-param bSynchronousCreate false
-		 */
-		_getObjectWithGlobalId : function (oOptions, sType, oTargetCreateInfo, bSynchronousCreate, bNoCreate) {
+				 * Determines the object with the given <code>oOptions</code>, <code>sType</code> and <code>oTargetCreateInfo</code>
+				 *
+				 * @param {object} oOptions The options of the desired object
+				 * @param {string} sType The type of the desired object, e.g. 'View', 'Component', etc.
+				 * @param {object} oTargetCreateInfo The object which contains extra information for the creation of the target
+				 * @param {boolean} [bSynchronousCreate] When <code>true</code> the <code>View._create</code> is used for creating
+				 *  the view instance synchronously. In all other cases the asynchronous <code>View.create</code> factory is used.
+				 * @returns {Promise | object} The desired object, if the object already exists in the cache, if not the promise is returned
+				 * @private
+				 */
+		_getObjectWithGlobalId : function (oOptions, sType, oTargetCreateInfo, _bSynchronousCreate, bNoCreate) {
 			var that = this,
 				vPromiseOrObject,
 				sName,
@@ -39,18 +38,11 @@ sap.ui.define([
 			oTargetCreateInfo = oTargetCreateInfo || {};
 
 			function fnCreateObjectAsync() {
-				/**
-				 * @ui5-transform-hint replace-local false
-				 */
-				const bLegacyCreate = !oOptions.async || bSynchronousCreate;
-
 				switch (sType) {
 					case "View":
 						oOptions.viewName = oOptions.name;
 						delete oOptions.name;
-						if (bLegacyCreate) {
-							return View._create(oOptions);
-						} else {
+						{
 							return View.create(oOptions);
 						}
 					case "Component":
@@ -143,20 +135,19 @@ sap.ui.define([
 		},
 
 		/**
-		 * Determines the view with the given <code>oOptions</code>
-		 *
-		 * @param {object} oOptions The options of the desired object
-		 * @param {boolean} [bSynchronousCreate] When <code>true</code> the <code>View._create</code> is used for creating
-		 *  the view instance synchronously. In all other cases the asynchronous <code>View.create</code> factory is used.
-		 * @returns {Promise | object} The desired object, if the object already exists in the cache, if not the promise is returned
-		 * @private
-		 * @ui5-transform-hint replace-param bSynchronousCreate false
-		 */
-		_getViewWithGlobalId : function (oOptions, bSynchronousCreate, bNoCreate) {
+				 * Determines the view with the given <code>oOptions</code>
+				 *
+				 * @param {object} oOptions The options of the desired object
+				 * @param {boolean} [bSynchronousCreate] When <code>true</code> the <code>View._create</code> is used for creating
+				 *  the view instance synchronously. In all other cases the asynchronous <code>View.create</code> factory is used.
+				 * @returns {Promise | object} The desired object, if the object already exists in the cache, if not the promise is returned
+				 * @private
+				 */
+		_getViewWithGlobalId : function (oOptions, _bSynchronousCreate, bNoCreate) {
 			if (oOptions && !oOptions.name) {
 				oOptions.name = oOptions.viewName;
 			}
-			return this._getObjectWithGlobalId(oOptions, "View", undefined, bSynchronousCreate, bNoCreate);
+			return this._getObjectWithGlobalId(oOptions, "View", undefined, false, bNoCreate);
 		},
 
 		/**

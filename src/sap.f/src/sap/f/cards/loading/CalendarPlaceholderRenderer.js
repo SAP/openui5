@@ -158,4 +158,4 @@ sap.ui.define(["sap/ui/core/Renderer", "./PlaceholderBaseRenderer"], function(Re
 
 	return CalendarPlaceholderRenderer;
 
-}, /* bExport= */ true);
+});

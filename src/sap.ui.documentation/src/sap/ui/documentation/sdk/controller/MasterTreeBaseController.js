@@ -6,12 +6,11 @@
  * Common controller for the API Reference & Documentation master controllers (as they both use a tree)
  */
 sap.ui.define([
-		"sap/ui/thirdparty/jquery",
-		"./BaseController",
-		"./util/TreeUtil",
-		"sap/ui/model/Filter",
-		"sap/ui/model/FilterOperator"
-	], function (jQuery, BaseController, TreeUtil, Filter, FilterOperator) {
+	"./BaseController",
+	"./util/TreeUtil",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator"
+], function(BaseController, TreeUtil, Filter, FilterOperator) {
 		"use strict";
 
 		var TREE_SCROLL_DURATION = 300; // The time in "ms" to scroll the tree in order to move an element to view

@@ -1,11 +1,11 @@
 /*global QUnit */
-sap.ui.define(["sap/ui/core/Core", "sap/ui/core/Element", "sap/uxap/ObjectPageLayout", "sap/uxap/ObjectPageSection", "sap/ui/documentation/ObjectPageSubSection", "sap/ui/core/HTML"],
-    function(Core, Element, ObjectPageLayout, ObjectPageSection, ObjectPageDemokitSubSection, HTML) {
+sap.ui.define(["sap/ui/core/Element", "sap/ui/qunit/utils/nextUIUpdate", "sap/uxap/ObjectPageLayout", "sap/uxap/ObjectPageSection", "sap/ui/documentation/ObjectPageSubSection", "sap/ui/core/HTML"],
+    function(Element, nextUIUpdate, ObjectPageLayout, ObjectPageSection, ObjectPageDemokitSubSection, HTML) {
     "use strict";
 
     QUnit.module("Lifecycle");
 
-    QUnit.test("rerendering", function (assert) {
+    QUnit.test("rerendering", async function(assert) {
         // Setup
         var page = new ObjectPageLayout({
             sections: [
@@ -22,11 +22,11 @@ sap.ui.define(["sap/ui/core/Core", "sap/ui/core/Element", "sap/uxap/ObjectPageLa
             ]
         });
         page.placeAt("qunit-fixture");
-        Core.applyChanges();
+        await nextUIUpdate();
 
         // Act
         Element.getElementById("htmlContent").setContent("<div>content</div>");
-        Core.applyChanges();
+        await nextUIUpdate();
 
         // Check
         assert.notEqual(Element.getElementById("htmlContent").getDomRef(), null, "The content is rendered");

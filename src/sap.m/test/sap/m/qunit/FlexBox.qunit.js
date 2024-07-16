@@ -2,24 +2,24 @@
 
 sap.ui.define([
 	"sap/m/FlexBox",
-	"sap/ui/core/Core",
 	"sap/ui/core/HTML",
 	"sap/m/Image",
 	"sap/m/FlexItemData",
 	"sap/m/Button",
 	"sap/m/VBox",
 	"sap/ui/dom/includeStylesheet",
-	"require"
+	"require",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (
 	FlexBox,
-	Core,
 	HTML,
 	Image,
 	FlexItemData,
 	Button,
 	VBox,
 	includeStylesheet,
-	require
+	require,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -68,7 +68,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Visibility", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBoxConfig = {
 				id: "flexbox",
 				visible: false
@@ -89,12 +89,12 @@ sap.ui.define([
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
 			this.fixture = document.getElementById(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oBox.destroy();
 			this.oBox = null;
-			Core.applyChanges();
+			await nextUIUpdate();
 		}
 	});
 
@@ -102,25 +102,25 @@ sap.ui.define([
 		assert.strictEqual(this.fixture.querySelector(".sapMFlexBox"), null, "Flex Box should not be rendered initially");
 	});
 
-	QUnit.test("FlexBox visible:true - Item 3 visible:false", function(assert) {
+	QUnit.test("FlexBox visible:true - Item 3 visible:false", async function(assert) {
 		this.oBox.setVisible(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 
 		assert.ok(this.fixture.querySelector(".sapMFlexBox"), "Flex Box should now be rendered");
 		assert.strictEqual(this.fixture.querySelectorAll(".sapMFlexBox > .sapMFlexItem:not(.sapUiHiddenPlaceholder)").length, 2, "Only two items should be rendered");
 	});
 
-	QUnit.test("Item 3 visible:true", function(assert) {
+	QUnit.test("Item 3 visible:true", async function(assert) {
 		this.oBox.setVisible(true);
 		this.oBox.getItems()[2].setVisible(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(this.fixture.querySelectorAll(".sapMFlexBox > .sapMFlexItem:not(.sapUiHiddenPlaceholder)").length, 3, "Three items should now be rendered");
 	});
 
 	QUnit.module("Render Type", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBoxConfig = {
 				renderType: "List"
 			};
@@ -144,12 +144,12 @@ sap.ui.define([
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oBox.destroy();
 			this.oBox = null;
-			Core.applyChanges();
+			await nextUIUpdate();
 		}
 	});
 
@@ -161,9 +161,9 @@ sap.ui.define([
 		assert.equal(oDomRef.querySelector(".sapMFlexItem:nth-child(2)").tagName, "LI", "Second item of Flex Box should be rendered as LI");
 	});
 
-	QUnit.test("Div", function(assert) {
+	QUnit.test("Div", async function(assert) {
 		this.oBox.setRenderType("Div");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oDomRef = this.oBox.getDomRef();
 		assert.equal(oDomRef.tagName, "DIV", "Flex Box should now be rendered as DIV");
@@ -171,9 +171,9 @@ sap.ui.define([
 		assert.equal(oDomRef.querySelector(".sapMFlexItem:nth-child(2)").tagName, "DIV", "Second item of Flex Box should be rendered as DIV");
 	});
 
-	QUnit.test("Bare", function(assert) {
+	QUnit.test("Bare", async function(assert) {
 		this.oBox.setRenderType("Bare");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(this.oBox.getItems()[0].getDomRef().tagName, "IMG", "First item of Flex Box should now be rendered as IMG");
 		assert.equal(this.oBox.getItems()[1].getDomRef().style.flexGrow, "2", "Inline style for grow factor is set on second item");
@@ -181,7 +181,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Inline vs. block display", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBoxConfig = {
 				displayInline: true
 			};
@@ -189,12 +189,12 @@ sap.ui.define([
 			this.vItemConfigs = 3;
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oBox.destroy();
 			this.oBox = null;
-			Core.applyChanges();
+			await nextUIUpdate();
 		}
 	});
 
@@ -205,16 +205,16 @@ sap.ui.define([
 		assert.equal(sDisplay, "inline-flex", "Flex Box display property should be set to inline-flex");
 	});
 
-	QUnit.test("Block", function(assert) {
+	QUnit.test("Block", async function(assert) {
 		this.oBox.setDisplayInline(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var sDisplay = window.getComputedStyle(this.oBox.getDomRef()).getPropertyValue("display");
 		assert.equal(sDisplay, "flex", "Flex Box display property should be set to flex");
 	});
 
 	QUnit.module("Fit Container", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBoxConfig = {
 				displayInline: true
 			};
@@ -222,21 +222,21 @@ sap.ui.define([
 			this.vItemConfigs = 3;
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oBox.destroy();
 			this.oBox = null;
-			Core.applyChanges();
+			await nextUIUpdate();
 		}
 	});
 
-	QUnit.test("Height 100%", function(assert) {
+	QUnit.test("Height 100%", async function(assert) {
 		var oFixtureDomRef = document.getElementById(DOM_RENDER_LOCATION);
 
 		oFixtureDomRef.style.height = "123px";
 		this.oBox.setFitContainer(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(window.getComputedStyle(this.oBox.getDomRef()).getPropertyValue("height"), "123px", "Flex Box height property should be set to 100%");
 
@@ -244,7 +244,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Width and height", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBoxConfig = {
 				displayInline: true
 			};
@@ -252,19 +252,19 @@ sap.ui.define([
 			this.vItemConfigs = 3;
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oBox.destroy();
 			this.oBox = null;
-			Core.applyChanges();
+			await nextUIUpdate();
 		}
 	});
 
-	QUnit.test("Set explicit dimensions", function(assert) {
+	QUnit.test("Set explicit dimensions", async function(assert) {
 		this.oBox.setWidth("388px");
 		this.oBox.setHeight("398px");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var mStyles = window.getComputedStyle(this.oBox.getDomRef());
 		assert.equal(mStyles.getPropertyValue("width"), "388px", "Flex Box width property should be set correctly");
@@ -272,7 +272,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Background Design", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBoxConfig = {
 				displayInline: true
 			};
@@ -291,18 +291,18 @@ sap.ui.define([
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oBox.destroy();
 			this.oBox = null;
-			Core.applyChanges();
+			await nextUIUpdate();
 		}
 	});
 
-	QUnit.test("FlexBox Solid", function(assert) {
+	QUnit.test("FlexBox Solid", async function(assert) {
 		this.oBox.setBackgroundDesign("Solid");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var aClasses = this.oBox.getDomRef().classList;
 		assert.strictEqual(aClasses.contains("sapMFlexBoxBGSolid"), true, "HTML class for Solid is set");
@@ -310,9 +310,9 @@ sap.ui.define([
 		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTranslucent"), false, "HTML class for Translucent is not set");
 	});
 
-	QUnit.test("FlexBox Transparent", function(assert) {
+	QUnit.test("FlexBox Transparent", async function(assert) {
 		this.oBox.setBackgroundDesign("Transparent");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var aClasses = this.oBox.getDomRef().classList;
 		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTransparent"), true, "HTML class for Transparent is set");
@@ -320,9 +320,9 @@ sap.ui.define([
 		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTranslucent"), false, "HTML class for Translucent is not set");
 	});
 
-	QUnit.test("FlexBox Translucent", function(assert) {
+	QUnit.test("FlexBox Translucent", async function(assert) {
 		this.oBox.setBackgroundDesign("Translucent");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var aClasses = this.oBox.getDomRef().classList;
 		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTranslucent"), true, "HTML class for Translucent is set");
@@ -361,41 +361,41 @@ sap.ui.define([
 	});
 
 	QUnit.module("Direction", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBoxConfig = {};
 			this.vItemTemplates = 3;
 			this.vItemConfigs = 3;
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 			this.oItem1DomRef = this.oBox.getItems()[0].getDomRef();
 			this.oItem2DomRef = this.oBox.getItems()[1].getDomRef();
 			this.oItem3DomRef = this.oBox.getItems()[2].getDomRef();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oBox.destroy();
 			this.oBox = null;
-			Core.applyChanges();
+			await nextUIUpdate();
 		}
 	});
 
-	QUnit.test("Row Reverse", function(assert) {
+	QUnit.test("Row Reverse", async function(assert) {
 		this.oBox.setDirection("RowReverse");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok((this.oItem2DomRef.getBoundingClientRect().left - this.oItem1DomRef.getBoundingClientRect().left) < 0, "Item 1 should be placed to the right of Item 2");
 		assert.ok((this.oItem3DomRef.getBoundingClientRect().left - this.oItem2DomRef.getBoundingClientRect().left) < 0, "Item 2 should be placed to the right of Item 3");
 	});
 
-	QUnit.test("Column", function(assert) {
+	QUnit.test("Column", async function(assert) {
 		this.oBox.setDirection("Column");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) > 0, "Item 1 should be placed above Item 2");
 		assert.ok((this.oItem3DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().top) > 0, "Item 2 should be placed above Item 3");
 	});
 
-	QUnit.test("Column Reverse", function(assert) {
+	QUnit.test("Column Reverse", async function(assert) {
 		this.oBox.setDirection("ColumnReverse");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) < 0, "Item 1 should be placed below Item 2");
 		assert.ok((this.oItem3DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().top) < 0, "Item 2 should be placed below Item 3");
 	});
@@ -407,7 +407,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Re-ordering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBoxConfig = {};
 			this.vItemTemplates = 3;
 			this.vItemConfigs = [
@@ -429,30 +429,30 @@ sap.ui.define([
 			this.oItem1LayoutData = this.oBox.getItems()[0].getLayoutData();
 			this.oItem2LayoutData = this.oBox.getItems()[1].getLayoutData();
 			this.oItem3LayoutData = this.oBox.getItems()[2].getLayoutData();
-			Core.applyChanges();
+			await nextUIUpdate();
 			this.oItem1DomRef = this.oBox.getItems()[0].getDomRef();
 			this.oItem2DomRef = this.oBox.getItems()[1].getDomRef();
 			this.oItem3DomRef = this.oBox.getItems()[2].getDomRef();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oBox.destroy();
 			this.oBox = null;
-			Core.applyChanges();
+			await nextUIUpdate();
 		}
 	});
 
-	QUnit.test("3 - 1 - 2", function(assert) {
+	QUnit.test("3 - 1 - 2", async function(assert) {
 		this.oItem1LayoutData.setOrder(3);
 		this.oItem2LayoutData.setOrder(1);
 		this.oItem3LayoutData.setOrder(2);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok((this.oItem2DomRef.getBoundingClientRect().left - this.oItem3DomRef.getBoundingClientRect().left) < 0, "Item 3 should be placed to the right of Item 2");
 		assert.ok((this.oItem3DomRef.getBoundingClientRect().left - this.oItem1DomRef.getBoundingClientRect().left) < 0, "Item 1 should be placed to the right of Item 3");
 	});
 
 	QUnit.module("Positioning", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBoxConfig = {
 				width: "388px",
 				height: "398px"
@@ -473,39 +473,39 @@ sap.ui.define([
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
 			this.oItem1LayoutData = this.oBox.getItems()[0].getLayoutData();
-			Core.applyChanges();
+			await nextUIUpdate();
 			this.oBoxDomRef = this.oBox.getDomRef();
 			this.oItem1DomRef = this.oBox.getItems()[0].getDomRef().parentNode;
 			this.oItem2DomRef = this.oBox.getItems()[1].getDomRef().parentNode;
 			this.oItem3DomRef = this.oBox.getItems()[2].getDomRef().parentNode;
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oBox.destroy();
 			this.oBox = null;
-			Core.applyChanges();
+			await nextUIUpdate();
 		}
 	});
 
-	QUnit.test("Justify Content/Align Items: Center/Center", function(assert) {
+	QUnit.test("Justify Content/Align Items: Center/Center", async function(assert) {
 		this.oBox.setJustifyContent("Center");
 		this.oBox.setAlignItems("Center");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 130) <= 1, "Item 1 should be placed at the horizontal center");
 		assert.ok(Math.round(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 173) <= 1, "Item 1 should be placed at the vertical center");
 	});
 
-	QUnit.test("Justify Content/Align Items: End/End", function(assert) {
+	QUnit.test("Justify Content/Align Items: End/End", async function(assert) {
 		this.oBox.setJustifyContent("End");
 		this.oBox.setAlignItems("End");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 259) <= 5, "Item 1 should be placed at the horizontal end");
 		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 346) <= 2, "Item 1 should be placed at the vertical end");
 	});
 
-	QUnit.test("Justify Content/Align Items: Space Between/Baseline", function(assert) {
+	QUnit.test("Justify Content/Align Items: Space Between/Baseline", async function(assert) {
 		this.oBox.setJustifyContent("SpaceBetween");
 		this.oBox.setAlignItems("Baseline");
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.oItem1DomRef.style.fontSize = "40px";
 		assert.ok((this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left) === 0, "Item 1 should be placed at the horizontal start");
 		assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 179) <= 1, "Item 2 should be placed at the horizontal center");
@@ -514,10 +514,10 @@ sap.ui.define([
 		this.oItem1DomRef.style.fontSize = "";
 	});
 
-	QUnit.test("Justify Content/Align Items: Space Around/Stretch", function(assert) {
+	QUnit.test("Justify Content/Align Items: Space Around/Stretch", async function(assert) {
 		this.oBox.setJustifyContent("SpaceAround");
 		this.oBox.setAlignItems("Stretch");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 43) <= 1, "Item 1 should be placed at the horizontal start");
 		assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 173) <= 1, "Item 2 should be placed at the horizontal center");
 		assert.ok(Math.abs(this.oItem3DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 302) <= 1, "Item 3 should be placed at the horizontal end");
@@ -525,18 +525,18 @@ sap.ui.define([
 		assert.ok((this.oItem1DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) === 0, "Item 1 should stretch to the vertical end");
 	});
 
-	QUnit.test("Justify Content/Align Items: Start/Start", function(assert) {
+	QUnit.test("Justify Content/Align Items: Start/Start", async function(assert) {
 		this.oBox.setJustifyContent("Start");
 		this.oBox.setAlignItems("Start");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok((this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left) === 0, "Item 1 should be placed at the horizontal start");
 		assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
 	});
 
-	QUnit.test("Align Self: Start", function(assert) {
+	QUnit.test("Align Self: Start", async function(assert) {
 		this.oBox.setAlignItems("Stretch");
 		this.oItem1LayoutData.setAlignSelf("Start");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
 		assert.ok(Math.abs(this.oBoxDomRef.getBoundingClientRect().bottom - this.oItem1DomRef.getBoundingClientRect().bottom - 346) <= 2, "Item 1 should not be stretched");
 	});
@@ -578,7 +578,7 @@ sap.ui.define([
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
 
 			this.setDOMStyles = function () {
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				this.oBoxDomRef = this.oBox.getDomRef();
 				this.oItem1DomRef = this.oBox.getItems()[0].getDomRef().parentNode;
 				this.oItem2DomRef = this.oBox.getItems()[1].getDomRef().parentNode;
@@ -599,87 +599,87 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Wrapping: No Wrap", function(assert) {
+	QUnit.test("Wrapping: No Wrap", async function(assert) {
 		this.oBox.setWrap("NoWrap");
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.setDOMStyles();
 		assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().top) === 0, "Item 1 should be on the same line as Item 2");
 		assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem3DomRef.getBoundingClientRect().top) === 0, "Item 2 should be on the same line as Item 3");
 		assert.ok((this.oItem3DomRef.getBoundingClientRect().top - this.oItem4DomRef.getBoundingClientRect().top) === 0, "Item 3 should be on the same line as Item 4");
 	});
 
-	QUnit.test("Wrapping: Wrap", function(assert) {
+	QUnit.test("Wrapping: Wrap", async function(assert) {
 		this.oBox.setWrap("Wrap");
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.setDOMStyles();
 		assert.ok((this.oItem4DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) > 0, "Item 4 should be in a line below Item 2");
 		assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) > 0, "Item 2 should be in a line below Item 1");
 		assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem3DomRef.getBoundingClientRect().top) === 0, "Item 2 should be on the same line as Item 3");
 	});
 
-	QUnit.test("Wrapping: Wrap Reverse", function(assert) {
+	QUnit.test("Wrapping: Wrap Reverse", async function(assert) {
 		this.oBox.setWrap("WrapReverse");
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.setDOMStyles();
 		assert.ok((this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().top) < 0, "Item 4 should be in a line above Item 2");
 		assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) < 0, "Item 2 should be in a line above Item 1");
 		assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem3DomRef.getBoundingClientRect().top) === 0, "Item 2 should be on the same line as Item 3");
 	});
 
-	QUnit.test("Align Content: Start", function(assert) {
+	QUnit.test("Align Content: Start", async function(assert) {
 		this.oBox.setWrap("Wrap");
 		this.oBox.setAlignContent("Start");
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.setDOMStyles();
 		assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
 		assert.ok(Math.round(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) === 0, "Item 2 should be directly below Item 1");
 		assert.ok(Math.round(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) === 0, "Item 4 should be directly below Item 2");
 	});
 
-	QUnit.test("Align Content: Center", function(assert) {
+	QUnit.test("Align Content: Center", async function(assert) {
 		this.oBox.setWrap("Wrap");
 		this.oBox.setAlignContent("Center");
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.setDOMStyles();
 		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 86) <= 2, "Item 1 should be placed towards the vertical center");
 		assert.ok(Math.round(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) === 0, "Item 2 should be directly below Item 1");
 		assert.ok(Math.round(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) === 0, "Item 4 should be directly below Item 2");
 	});
 
-	QUnit.test("Align Content: End", function(assert) {
+	QUnit.test("Align Content: End", async function(assert) {
 		this.oBox.setWrap("Wrap");
 		this.oBox.setAlignContent("End");
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.setDOMStyles();
 		assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) <= 1, "Item 4 should be placed at the vertical end");
 		assert.ok(Math.round(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) === 0, "Item 2 should be directly above Item 4");
 		assert.ok(Math.round(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) === 0, "Item 1 should be directly above Item 2");
 	});
 
-	QUnit.test("Align Content: Space Between", function(assert) {
+	QUnit.test("Align Content: Space Between", async function(assert) {
 		this.oBox.setWrap("Wrap");
 		this.oBox.setAlignContent("SpaceBetween");
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.setDOMStyles();
 		assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
 		assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 186) <= 2, "Item 2 should be placed at the vertical center");
 		assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) <= 1, "Item 4 should be placed at the vertical end");
 	});
 
-	QUnit.test("Align Content: Space Around", function(assert) {
+	QUnit.test("Align Content: Space Around", async function(assert) {
 		this.oBox.setWrap("Wrap");
 		this.oBox.setAlignContent("SpaceAround");
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.setDOMStyles();
 		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 28) <= 1, "Item 1 should be placed below the vertical start");
 		assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 186) <= 2, "Item 2 should be placed at the vertical center");
 		assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom + 28) <= 1, "Item 4 should be placed above the vertical end");
 	});
 
-	QUnit.test("Align Content: Stretch", function(assert) {
+	QUnit.test("Align Content: Stretch", async function(assert) {
 		this.oBox.setWrap("Wrap");
 		this.oBox.setAlignContent("Stretch");
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.setDOMStyles();
 		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) <= 1, "Item 1 should be placed at the vertical start");
 		assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) <= 1, "Item 2 should be placed directly below Item 1");
@@ -688,7 +688,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Flexibility", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBoxConfig = {};
 			this.vItemTemplates = 3;
 			this.vItemConfigs = [
@@ -712,15 +712,15 @@ sap.ui.define([
 			this.oItem1LayoutData = this.oBox.getItems()[0].getLayoutData();
 			this.oItem2LayoutData = this.oBox.getItems()[1].getLayoutData();
 			this.oItem3LayoutData = this.oBox.getItems()[2].getLayoutData();
-			Core.applyChanges();
+			await nextUIUpdate();
 			this.oItem1DomRef = this.oBox.getItems()[0].getDomRef().parentNode;
 			this.oItem2DomRef = this.oBox.getItems()[1].getDomRef().parentNode;
 			this.oItem3DomRef = this.oBox.getItems()[2].getDomRef().parentNode;
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oBox.destroy();
 			this.oBox = null;
-			Core.applyChanges();
+			await nextUIUpdate();
 		}
 	});
 
@@ -754,10 +754,10 @@ sap.ui.define([
 		assert.ok(Math.abs(this.oItem3DomRef.offsetWidth - 194) <= 1, "Width of Item 3 should be 194 (is " + this.oItem3DomRef.offsetWidth + ")");
 	});
 
-	QUnit.test("Min Height", function(assert) {
+	QUnit.test("Min Height", async function(assert) {
 		this.oBox.setAlignItems("Start");
 		this.oItem1LayoutData.setMinHeight("200px");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(Math.abs(this.oItem1DomRef.offsetHeight - 200) <= 1, "Height of Item 1 should be 200 (is " + this.oItem1DomRef.offsetHeight + ")");
 	});
 
@@ -778,57 +778,57 @@ sap.ui.define([
 	});
 
 	QUnit.module("Item Aggregation", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBoxConfig = {};
 			this.vItemTemplates = 3;
 			this.vItemConfigs = 3;
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oItem1 = this.oBox.getItems()[0];
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oBox.destroy();
 			this.oBox = null;
-			Core.applyChanges();
+			await nextUIUpdate();
 		}
 	});
 
-	QUnit.test("Add Item", function(assert) {
+	QUnit.test("Add Item", async function(assert) {
 		this.oItem5 = new HTML("item5", {
 			content: "<div class='items'>5</div>"
 		});
 		this.oBox.addItem(this.oItem5);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(this.oItem5.getDomRef(), "Item 5 should be rendered");
 	});
 
-	QUnit.test("Insert Item", function(assert) {
+	QUnit.test("Insert Item", async function(assert) {
 		this.oItem6 = new HTML("item6", {
 			content: "<div class='items'>6</div>"
 		});
 		this.oBox.insertItem(this.oItem6, 2);
-		Core.applyChanges();
+		await nextUIUpdate();
 		var oFlexItem6 = this.oItem6.getDomRef().parentNode;
 		assert.ok(this.oItem6.getDomRef(), "Item 6 should be rendered");
 		assert.equal(Array.prototype.indexOf.call(oFlexItem6.parentNode.children, oFlexItem6), 2, "Item 6 should be rendered as the third element");
 	});
 
-	QUnit.test("Remove Item", function(assert) {
+	QUnit.test("Remove Item", async function(assert) {
 		assert.ok((this.oItem1.getDomRef().parentElement.parentElement === this.oBox.getDomRef()), "Item 1 is present");
 		this.oBox.removeItem(this.oItem1);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok((this.oItem1.getDomRef().parentElement.parentElement !== this.oBox.getDomRef()), "Item 1 should have been removed");
 	});
 
-	QUnit.test("Remove All Items", function(assert) {
+	QUnit.test("Remove All Items", async function(assert) {
 		this.oBox.removeAllItems();
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oBox.getDomRef().children.length, 0, "All items should have been removed");
 	});
 
 	QUnit.module("Nested FlexBoxes", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBoxConfig = {};
 			this.vItemTemplates = [
 				VBox,
@@ -854,12 +854,12 @@ sap.ui.define([
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oItem1 = this.oBox.getItems()[0];
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oBox.destroy();
 			this.oBox = null;
-			Core.applyChanges();
+			await nextUIUpdate();
 		}
 	});
 
@@ -876,7 +876,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("FlexItemData", {
-		beforeEach: function() {
+		beforeEach: async function() {
 
 			this.oLayoutData = new FlexItemData({
 				styleClass: "class1",
@@ -893,43 +893,43 @@ sap.ui.define([
 			});
 
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oLayoutData = null;
 			this.oBox.destroy();
 			this.oBox = null;
-			Core.applyChanges();
+			await nextUIUpdate();
 		}
 	});
 
-	QUnit.test("FlexItemData properties", function(assert) {
+	QUnit.test("FlexItemData properties", async function(assert) {
 
 		assert.ok(this.oBox.$()[0].firstChild.classList.contains('class1'), "class1 is added");
 
 		this.oLayoutData.setStyleClass('class2');
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(this.oBox.$()[0].firstChild.classList.contains('class2'), "class2 is added");
 
 		this.oBox.setRenderType("Bare");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(this.oBox.$()[0].firstChild.classList.contains('class2'), "class2 is added");
 
 		this.oLayoutData.setStyleClass('class3');
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(this.oBox.$()[0].firstChild.classList.contains('class3'), "class3 is added");
 
 		this.oLayoutData.setGrowFactor(0);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(window.getComputedStyle(this.oBox.$()[0].firstChild).flexGrow, "0", "flex grow is correctly set");
 	});
 
 	QUnit.module("Accessibility", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBoxConfig = {};
 			this.vItemTemplates = [
 				FlexBox,
@@ -941,7 +941,7 @@ sap.ui.define([
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oBox.destroy();
@@ -963,7 +963,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Clone", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBox = new FlexBox({
 				items: [
 					new Button({ text: "Button 1"}),
@@ -971,7 +971,7 @@ sap.ui.define([
 				]
 			});
 			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oBox.destroy();

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head><meta charset="utf-8">
 	<title>Text Badge</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="../../scripts/boot.js"></script>
 </head>
@@ -25,7 +25,7 @@
 				<li>The card is added to the home page by the user.</li>
 				<li>The card is added to the user's home page by an admin or key user.</li>
 			</ul>
-			<img src="../images/Badge.PNG" height="329" width="380" alt="Badge" />
+			<img src="../images/Badge.PNG" height="329" width="380" alt="Badge">
 			<h2 id="usage">When to Use</h2>
 			<p>Use the badge when:</p>
 			<ul>
@@ -52,10 +52,9 @@
 			<h3 id="useInUi5">Use the Badge in UI5</h3>
 			To display a Badge in a Card, you need to create a BadgeCustomData
 			with a specific text and add it to the "customData" aggregation of the Card.
-			<br />
-			<br />
-			For more information, see <a data-demokit-href="#/api/sap.m.BadgeCustomData"
-				target="_blank"><code>BadgeCustomData</code></a>
+			<br>
+			<br>
+			For more information, see <a data-demokit-href="#/api/sap.m.BadgeCustomData" target="_blank"><code>BadgeCustomData</code></a>
 			<p>An example with a Card with a Badge would look like:</p>
 			<pre class="lang-xml">
 &lt;mvc:View xmlns="sap.m" xmlns:w="sap.ui.integration.widgets"&gt;
@@ -65,10 +64,10 @@
 		&lt;/w:customData&gt;
 	&lt;/w:Card&gt;
 &lt;/mvc:View&gt;</pre>
-			<br />
+			<br>
 			A typical usage using data binding would look like:
-			<br />
-			<br />
+			<br>
+			<br>
 			Controller:
 			<pre class="lang-js">
 var model = new sap.ui.model.json.JSONModel();

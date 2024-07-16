@@ -175,7 +175,6 @@ function(
 			],
 			library : "sap.m",
 			properties : {
-
 				/**
 				 * HTML type of the internal <code>input</code> tag (e.g. Text, Number, Email, Phone).
 				 * The particular effect of this property differs depending on the browser and the current language settings,
@@ -197,15 +196,6 @@ function(
 				maxLength : {type : "int", group : "Behavior", defaultValue : 0},
 
 				/**
-				 * Only used if type=date and no datepicker is available.
-				 * The data is displayed and the user input is parsed according to this format.
-				 * <b>Note:</b> The value property is always of the form RFC 3339 (YYYY-MM-dd).
-				 * @deprecated Since version 1.9.1.
-				 * <code>sap.m.DatePicker</code>, <code>sap.m.TimePicker</code> or <code>sap.m.DateTimePicker</code> should be used for date/time inputs and formating.
-				 */
-				dateFormat : {type : "string", group : "Misc", defaultValue : 'YYYY-MM-dd', deprecated: true},
-
-				/**
 				 * If set to true, a value help indicator will be displayed inside the control. When clicked the event "valueHelpRequest" will be fired.
 				 * @since 1.16
 				 */
@@ -222,18 +212,6 @@ function(
 				 * @since 1.16.1
 				 */
 				showSuggestion : {type : "boolean", group : "Behavior", defaultValue : false},
-
-				/**
-				 * If set to true, direct text input is disabled and the control will trigger the event "valueHelpRequest" for all user interactions. The properties "showValueHelp", "editable", and "enabled" must be set to true, otherwise the property will have no effect.
-				 * In this scenario, the <code>showItems</code> API will not work.<br><br>
-				 * <strong>Note:</strong> The property is deprecated, as it creates unnecessary usability and accessibility restrictions. The decision to deprecate it is based on the fact that it serves no purpose to have an input field where the user cannot type.
-				 * This property restricts even the paste functionality, which can be useful, e.g. the needed info is already in the clipboard.
-				 * If the user's input needs to match specific predefined values, the application should validate the input against the set of values and provide feedback to the user or use other mechanism for selection, where freestyle input is not allowed by design (Select, SelectDialog, etc).
-				 * <strong>Note:</strong> Please note that there is no direct replacement for this property.
-				 * @since 1.21.0
-				 * @deprecated As of version 1.119 The property valueHelpOnly should not be used anymore
-				 */
-				valueHelpOnly : {type : "boolean", group : "Behavior", defaultValue : false},
 
 				/**
 				 * Defines whether to filter the provided suggestions before showing them to the user.
@@ -281,6 +259,7 @@ function(
 				 * @since 1.24
 				 */
 				valueLiveUpdate : {type : "boolean", group : "Behavior", defaultValue : false},
+
 				/**
 				 * Defines the key of the selected item.
 				 *
@@ -288,16 +267,19 @@ function(
 				 * @since 1.44
 				 */
 				selectedKey: {type: "string", group: "Data", defaultValue: ""},
+
 				/**
 				 * Defines the display text format mode.
 				 * @since 1.44
 				 */
 				textFormatMode: {type: "sap.m.InputTextFormatMode", group: "Misc", defaultValue: InputTextFormatMode.Value},
+
 				/**
 				 * Defines the display text formatter function.
 				 * @since 1.44
 				 */
 				textFormatter: {type: "function", group: "Misc", defaultValue: null},
+
 				/**
 				 * Defines the validation callback function called when a suggestion row gets selected.
 				 * @since 1.44
@@ -1161,13 +1143,6 @@ function(
 				decorative: false,
 				noTabStop: true,
 				press: function (oEvent) {
-					/**
-					 * @deprecated As of version 1.119
-					 */
-					 if (that.getValueHelpOnly()) {
-						// if the property valueHelpOnly is set to true, the event is triggered in the ontap function
-						return;
-					 }
 					var oParent = this.getParent();
 
 					oParent.focus();
@@ -1248,21 +1223,6 @@ function(
 	};
 
 	/**
-	 * Fire valueHelpRequest event if conditions for ValueHelpOnly property are met.
-	 * @deprecated As of version 1.119 the property valueHelpOnly should not be used anymore
-	 * @private
-	 */
-	Input.prototype._fireValueHelpRequestForValueHelpOnly = function() {
-		// if all the named properties are set to true, the control triggers "valueHelpRequest" for all user interactions
-		if (this.getEnabled() && this.getEditable() && this.getShowValueHelp() && this.getValueHelpOnly()) {
-			if (Device.system.phone) {
-				this.focus();
-			}
-			this._fireValueHelpRequest(false);
-		}
-	};
-
-	/**
 	 * Fire valueHelpRequest event on tap.
 	 *
 	 * @public
@@ -1270,13 +1230,6 @@ function(
 	 */
 	Input.prototype.ontap = function(oEvent) {
 		InputBase.prototype.ontap.call(this, oEvent);
-
-		/**
-		* @deprecated As of version 1.119
-		*/
-		if (this.isValueHelpOnlyOpener(oEvent.target)) {
-			this._fireValueHelpRequestForValueHelpOnly();
-		}
 
 		if (this.shouldSuggetionsPopoverOpenOnMobile(oEvent)) {
 				this._openSuggestionsPopover();
@@ -1474,7 +1427,7 @@ function(
 		const oFocusedItem = bFocusInPopup && oSuggestionsPopover.getFocusedListItem();
 		const sText = oSelectedItem?.getTitle?.() || oSelectedItem?.getCells?.()[0]?.getText?.() || "";
 		const bPendingSuggest = !!this._iSuggestDelay && !sText.toLowerCase().includes(this._getTypedInValue().toLowerCase());
-		let bFireSubmit = this.getEnabled() && this.getEditable();
+		const bFireSubmit = this.getEnabled() && this.getEditable();
 		let iValueLength;
 
 		// when enter is pressed before the timeout of suggestion delay, suggest event is cancelled
@@ -1502,11 +1455,6 @@ function(
 		}
 
 		!bFocusInPopup && InputBase.prototype.onsapenter.apply(this, arguments);
-
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		bFireSubmit = bFireSubmit && !(this.getShowValueHelp() && this.getValueHelpOnly());
 
 		if (bFireSubmit) {
 			this.fireSubmit({value: this.getValue()});
@@ -1701,11 +1649,11 @@ function(
 		}
 	};
 
-		/**
-	 * Cancels any pending suggestions.
-	 *
-	 * @public
-	 */
+	/**
+ * Cancels any pending suggestions.
+ *
+ * @public
+ */
 	Input.prototype.cancelPendingSuggest = function() {
 		if (this._iSuggestDelay) {
 			clearTimeout(this._iSuggestDelay);
@@ -2028,11 +1976,6 @@ function(
 		iSuggestionsLength = oFilterResults.items.length;
 
 		var bOpenSuggestionsPopup = iSuggestionsLength > 0;
-
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		bOpenSuggestionsPopup = bOpenSuggestionsPopup && !this.getValueHelpOnly();
 
 		if (bOpenSuggestionsPopup) {
 			this._openSuggestionPopup(this.getValue().length >= this.getStartSuggestion());
@@ -2418,16 +2361,6 @@ function(
 	};
 
 	Input.prototype.onsaphide = Input.prototype.onsapshow;
-
-	/**
-	 * Event handler for input select.
-	 * @deprecated As of version 1.119 the property valueHelpOnly should not be used anymore
-	 * @private
-	 * @param {jQuery.Event} oEvent Keyboard event.
-	 */
-	Input.prototype.onsapselect = function(oEvent) {
-		this._fireValueHelpRequestForValueHelpOnly(false, true);
-	};
 
 	/**
 	 * Event handler for the onFocusOut event.
@@ -3252,11 +3185,6 @@ function(
 			fnFilterStore = this._getFilterFunction(),
 			bShowItems = !this.getEnabled() || !this.getEditable();
 
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		bShowItems = bShowItems || this.getValueHelpOnly();
-
 		// in case of a non-editable or disabled, the popup cannot be opened
 		if (bShowItems) {
 			return;
@@ -3354,19 +3282,6 @@ function(
 		}
 
 		return this;
-	};
-
-	/**
-	 * Gets the supported openers for the valueHelpOnly.
-	 * In the context of the Input, all targets are valid.
-	 *
-	 * @protected
-	 * @deprecated As of version 1.119 the property valueHelpOnly should not be used anymore
-	 * @param {HTMLElement|undefined} oTarget The target of the event.
-	 * @returns {boolean} Boolean indicating if the target is a valid opener.
-	 */
-	Input.prototype.isValueHelpOnlyOpener = function (oTarget) {
-		return true;
 	};
 
 	/* =========================================================== */
@@ -3643,5 +3558,4 @@ function(
 	};
 
 	return Input;
-
 });

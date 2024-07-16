@@ -1,39 +1,12 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
+	<head><meta charset="utf-8">
 		<title>DesignTime - Regular Overlay Test</title>
 
-		<style>
-			html, body, #content {
-				height: 100%;
-			}
-			.sapUiView {
-				height: 100%;
-			}
-			.sapUiDtOverlay {
-				background-color: rgba(255,0,0,0.1);
-			}
-			#overlay-container {
-				background-color: rgba(255,0,255,0.5);
-			}
-			#HorizontalLayout {
-				margin-top: 50px;
-			}
-		</style>
+		<link rel="stylesheet" href="./DesignTimeRegularOverlayTest.css">
 
 		<script src="../../shared-config.js"></script>
-		<script>
-			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
-			window["sap-ui-config"] = window["sap-ui-config"] || {};
-			window["sap-ui-config"].onInit = "module:dt/performance/designtimeRegularOverlays/main";
-			window["sap-ui-config"].async = "true";
-			window["sap-ui-config"].libs = "sap.ui.rta, sap.ui.dt, sap.m, sap.ui.layout";
-			window['sap-ui-config'].resourceroots = {
-				"dt.performance": "./",
-				"rta.performance": "../../../../../sap/ui/rta/internal/performance/"
-			};
-			window["sap-ui-config"].flexibilityServices = '[{"connector": "SessionStorageConnector"}]';
-		</script>
+		<script src="./DesignTimeRegularOverlayTest.js"></script>
 	</head>
 	<body class="sapUiBody">
 		<div id="content"></div>

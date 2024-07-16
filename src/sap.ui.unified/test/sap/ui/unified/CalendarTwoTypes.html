@@ -11,78 +11,12 @@
 				data-sap-ui-trace="false"
 				data-sap-ui-async="true"
 				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/CalendarTwoTypes"
+				data-sap-ui-resource-roots='{"local":"./"}'
 		>
 		</script>
-		<script>
-
-		sap.ui.getCore().attachInit(function() {
-			sap.ui.require([
-				"sap/ui/core/library",
-				"sap/ui/core/Core",
-				"sap/ui/unified/library",
-				"sap/m/App",
-				"sap/m/FlexBox",
-				"sap/m/Page",
-				"sap/ui/unified/Calendar",
-				"sap/ui/core/date/UI5Date"
-			], function(
-				coreLibrary,
-				Core,
-				unifiedLibrary,
-				App,
-				FlexBox,
-				Page,
-				Calendar,
-				UI5Date
-			) {
-				"use strict";
-				var CalendarType = coreLibrary.CalendarType,
-					DateRange = unifiedLibrary.DateRange;
-
-				Core.getConfiguration().setLanguage("en-US");
-
-				new App("myApp", {
-					pages: new Page({
-						title: "Calendar",
-						content : [
-							new FlexBox({
-								items: [
-									new Calendar("Cal-Gregorian-Islamic", {
-										secondaryCalendarType: CalendarType.Islamic,
-										selectedDates: [
-											new DateRange({
-												startDate: UI5Date.getInstance(2015, 0, 2)
-											})
-										]
-									}).addStyleClass("sapUiTinyMargin"),
-									new Calendar("Cal-Persian-Japanese", {
-										primaryCalendarType: CalendarType.Persian,
-										secondaryCalendarType: CalendarType.Japanese,
-										selectedDates: [
-											new DateRange({
-												startDate: UI5Date.getInstance(2015, 0, 2)
-											})
-										]
-									}).addStyleClass("sapUiTinyMargin"),
-									new Calendar("Cal-Gregorian-Buddhist", {
-										secondaryCalendarType: CalendarType.Buddhist,
-										months: 2,
-										selectedDates: [
-											new DateRange({
-												startDate: UI5Date.getInstance(2015, 0, 2)
-											})
-										]
-									}).addStyleClass("sapUiTinyMargin")
-								]
-							})
-						]
-					})
-				}).placeAt("body");
-
-			});
-		});
-
-		</script>
+		
 
 	</head>
 	<body id="body" class="sapUiBody">

@@ -1,16 +1,16 @@
-(function() {
+sap.ui.define(["sap/ui/core/IconPool", "sap/m/SearchField", "sap/ui/core/Control"], function(IconPool, SearchField, Control) {
 	"use strict";
 
 	try {
 		sap.ui.getCore().loadLibrary("sap.m");
 	} catch (e) {
-		jQuery.sap.log.error("This test page requires the library 'sap.m' which is not available.");
+		undefined/*jQuery*/.sap.log.error("This test page requires the library 'sap.m' which is not available.");
 		throw (e);
 	}
 
 
 	window.createTestSearchField = function (sId, fOnSearch){
-		var oSF =  new sap.m.SearchField(sId, {
+		var oSF =  new SearchField(sId, {
 			search: fOnSearch || function(){},
 			width: "100%"
 		});
@@ -180,7 +180,7 @@
 	"et iusto odio dignissim qui blandit praesent luptatum zzril delenit " +
 	"augue duis dolore te feugait nulla facilisi.\n\n";
 
-	sap.ui.core.Control.extend("SearchFieldPlaceHolder", {
+	Control.extend("SearchFieldPlaceHolder", {
 		metadata : {
 			events: {
 				"search" : {}
@@ -189,9 +189,6 @@
 
 		renderer: function(rm, ctrl){
 			rm.write("<div");
-			rm.writeControlData(ctrl);
-			rm.writeAttribute("class", "SearchFieldPlaceHolder");
-			rm.writeAttribute("tabindex", "0");
 			rm.write(">Placeholder for a SearchField Control</div>");
 		},
 
@@ -200,7 +197,7 @@
 		}
 	});
 
-	sap.ui.core.Control.extend("CurtainContent", {
+	Control.extend("CurtainContent", {
 		metadata : {
 			properties: {
 				"text" : "string",
@@ -214,13 +211,9 @@
 		renderer: function(rm, ctrl){
 			rm.write("<div");
 			rm.addClass("CurtainContent");
-			rm.writeClasses();
-			rm.writeControlData(ctrl);
 			rm.write("><header");
 			rm.addClass("_sapUiUfdShellSubHdr");
-			rm.writeClasses();
 			rm.write(">");
-			rm.writeEscaped(ctrl.getText());
 			rm.write("</header><div>");
 			var aContent = ctrl.getContent();
 			for (var i = 0; i < aContent.length; i++){
@@ -235,21 +228,17 @@
 		}
 	});
 
-	jQuery.sap.require("sap.ui.core.IconPool");
-
-	jQuery(function(){
-		jQuery("head").append("<link type='text/css' rel='stylesheet' href='resources/ShellTestPage.css'>");
+	undefined/*jQuery*/(function(){
+		undefined/*jQuery*/("head").append("<link type='text/css' rel='stylesheet' href='resources/ShellTestPage.css'>");
 	});
 
 
-	jQuery.sap.require("jquery.sap.script");
-	var sLogo = jQuery.sap.getUriParameters().get("logo");
+	var sLogo = undefined/*jQuery*/.sap.getUriParameters().get("logo");
 	if (sLogo){
 		sLogo = "images/" + sLogo;
 	} else {
-		sLogo = jQuery.sap.getModulePath("sap.ui.core", '/') + "mimes/logo/sap_50x26.png";
+		sLogo = undefined/*jQuery*/.sap.getModulePath("sap.ui.core", '/') + "mimes/logo/sap_50x26.png";
 	}
 
 	window.sLogo = sLogo;
-
-})();
+});

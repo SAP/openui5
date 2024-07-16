@@ -1,5 +1,5 @@
 /*global QUnit, require */
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
 	"use strict";
 
 	function requireP(deps) {

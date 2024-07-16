@@ -1,0 +1,6 @@
+html, body, #content {
+	height: 100%;
+}
+.sapUiView {
+	height: 100%;
+}

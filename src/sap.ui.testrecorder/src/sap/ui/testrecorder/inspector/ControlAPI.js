@@ -113,4 +113,4 @@ sap.ui.define([
 
 	return new ControlAPI();
 
-}, true);
+});

@@ -771,4 +771,4 @@ sap.ui.define([
 
 	return oMain;
 
-}, true);
+});

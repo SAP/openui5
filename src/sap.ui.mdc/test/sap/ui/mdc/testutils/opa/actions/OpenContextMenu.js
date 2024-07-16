@@ -19,9 +19,7 @@ sap.ui.define([
 	 * @since 1.96
 	 */
 	var ContextMenu = Action.extend("sap.ui.mdc.actions.OpenContextMenu", /** @lends sap.ui.mdc.actions.OpenContextMenu.prototype */ {
-		metadata : {
-			publicMethods : [ "executeOn" ]
-		},
+		metadata : {},
 
 		/**
 		 * Focuses on a given control and triggers a <code>contextmenu</code> event for it.

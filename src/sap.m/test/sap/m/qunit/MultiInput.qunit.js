@@ -2286,29 +2286,6 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * @deprecated Since version 1.46.
-	 */
-	QUnit.test("tokens change event", async function(assert) {
-		var eventType;
-		this.multiInput1.attachTokenChange(function(args){
-			eventType = args.getParameter("type");
-		});
-
-		var token1 = new Token();
-		this.multiInput1.addToken(token1);
-		await nextUIUpdate();
-
-		assert.equal(eventType, MultiInput.TokenChangeType.Added, "added event raised");
-
-		this.multiInput1.removeToken(token1);
-		await nextUIUpdate();
-		this.multiInput1.removeAllTokens();
-		await nextUIUpdate();
-
-		assert.equal(eventType, MultiInput.TokenChangeType.RemovedAll, "removedAll event raised");
-	});
-
 	QUnit.test("tokenUpdate event", function(assert) {
 		var eventType,
 			token1 = new Token({key: "test", text: "test", selected: true}),
@@ -2792,59 +2769,6 @@ sap.ui.define([
 		assert.strictEqual(oMultiInput.getBinding("value").getModel().getProperty("/value"), "", "The binding value should be an empty string");
 
 		oMultiInput.destroy();
-	});
-
-	/**
-	* @deprecated Since 1.119.
-	*/
-	QUnit.test("Clicking on a Token should not trigger Input.prototype._fireValueHelpRequestForValueHelpOnly", async function(assert) {
-		var oSpy = this.spy(Input.prototype, "_fireValueHelpRequestForValueHelpOnly"),
-			oToken = new Token();
-
-		this.multiInput1.addToken(oToken);
-
-		this.multiInput1.attachTokenUpdate(function(oEvent){
-			oEvent.preventDefault();
-		});
-
-		await nextUIUpdate();
-
-		qutils.triggerEvent("tap", this.multiInput1.getTokens()[0].getDomRef());
-
-		// assert
-		assert.notOk(oSpy.called, "Input's _fireValueHelpRequestForValueHelpOnly method is not called");
-
-		// clean up
-		oSpy.restore();
-	});
-
-	/**
-	* @deprecated Since 1.119.
-	*/
-	QUnit.test("Clicking on nMore should not trigger Input.prototype._fireValueHelpRequestForValueHelpOnly", async function(assert) {
-		var oSpy = this.spy(Input.prototype, "_fireValueHelpRequestForValueHelpOnly");
-
-		this.multiInput1.setWidth("200px");
-		this.multiInput1.setTokens([
-			new Token({text: "XXXX"}),
-			new Token({text: "XXXX"}),
-			new Token({text: "XXXX"}),
-			new Token({text: "XXXX"})
-		]);
-
-		this.multiInput1.attachTokenUpdate(function(oEvent){
-			oEvent.preventDefault();
-		});
-
-		await nextUIUpdate();
-
-		this.multiInput1.getAggregation("tokenizer")._handleNMoreIndicatorPress();
-
-		// assert
-		assert.notOk(oSpy.called, "Input's _fireValueHelpRequestForValueHelpOnly method is not called");
-
-		// clean up
-		oSpy.restore();
 	});
 
 	QUnit.module("Accessibility", {

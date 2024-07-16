@@ -462,7 +462,7 @@ sap.ui.define([
 			//Act
 			this.oHeaderContainer.onsaptabprevious(oEvt);
 			//Assert
-			assert.notOk(jQuery.contains(this.oHeaderContainer.getDomRef(), document.activeElement), "Focus leaves away from the ScrollContainer");
+			assert.notOk(this.oHeaderContainer.getDomRef() !== document.activeElement && this.oHeaderContainer.getDomRef().contains(document.activeElement), "Focus leaves away from the ScrollContainer");
 			assert.equal(this.oHeaderContainer._oItemNavigation.getFocusedIndex(), 0, "The focused content index is still correct after the focus leaves away from the ScrollContainer");
 		});
 

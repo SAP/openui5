@@ -8,11 +8,11 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Bar",
 	"sap/m/Button",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/NavContainer",
 	"sap/m/library",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -22,11 +22,11 @@ sap.ui.define([
 	Page,
 	Bar,
 	Button,
+	nextUIUpdate,
 	jQuery,
 	NavContainer,
 	mobileLibrary,
-	KeyCodes,
-	oCore
+	KeyCodes
 ) {
 	"use strict";
 
@@ -43,7 +43,7 @@ sap.ui.define([
 
 	QUnit.module("Initial Check");
 
-	QUnit.test("Initialization on desktop", function(assert) {
+	QUnit.test("Initialization on desktop", async function(assert) {
 		var oSystem = {
 			desktop: true,
 			tablet: false,
@@ -72,7 +72,7 @@ sap.ui.define([
 			]
 		});
 		oSplitApp.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.ok(jQuery("#master").length, "Master page should be rendered initially.");
@@ -82,7 +82,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Modes Check on desktop");
-	QUnit.test("PopoverMode_portrait", function(assert){
+	QUnit.test("PopoverMode_portrait", async function(assert) {
 		var done = assert.async();
 		var oSystem = {
 				desktop: true,
@@ -116,7 +116,7 @@ sap.ui.define([
 			mode: "PopoverMode"
 		});
 		oSplitApp.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(oSplitApp.isMasterShown(), false, "Master area is NOT shown");
@@ -145,7 +145,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("ShowHideMode_portrait", function(assert){
+	QUnit.test("ShowHideMode_portrait", async function(assert) {
 		var done = assert.async();
 		var oSystem = {
 				desktop: true,
@@ -180,7 +180,7 @@ sap.ui.define([
 			mode: "ShowHideMode"
 		});
 		oSplitApp.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
@@ -200,7 +200,7 @@ sap.ui.define([
 		}, 400);
 	});
 
-	QUnit.test("StretchCompressMode_portrait", function(assert){
+	QUnit.test("StretchCompressMode_portrait", async function(assert) {
 		var oSystem = {
 				desktop: true,
 				tablet: false,
@@ -234,7 +234,7 @@ sap.ui.define([
 			mode: "StretchCompressMode"
 		});
 		oSplitApp.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
@@ -246,7 +246,7 @@ sap.ui.define([
 		oSplitApp.destroy();
 	});
 
-	QUnit.test("PopoverMode_landscape", function(assert){
+	QUnit.test("PopoverMode_landscape", async function(assert) {
 		var oSystem = {
 				desktop: true,
 				tablet: false,
@@ -280,7 +280,7 @@ sap.ui.define([
 			mode: "PopoverMode"
 		});
 		oSplitApp.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
@@ -293,7 +293,7 @@ sap.ui.define([
 		oSplitApp.destroy();
 	});
 
-	QUnit.test("ShowHideMode_landscape", function(assert){
+	QUnit.test("ShowHideMode_landscape", async function(assert) {
 		var oSystem = {
 				desktop: true,
 				tablet: false,
@@ -327,7 +327,7 @@ sap.ui.define([
 			mode: "ShowHideMode"
 		});
 		oSplitApp.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
@@ -340,7 +340,7 @@ sap.ui.define([
 		oSplitApp.destroy();
 	});
 
-	QUnit.test("StretchCompressMode_landscape", function(assert){
+	QUnit.test("StretchCompressMode_landscape", async function(assert) {
 		var oSystem = {
 				desktop: true,
 				tablet: false,
@@ -374,7 +374,7 @@ sap.ui.define([
 			mode: "StretchCompressMode"
 		});
 		oSplitApp.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
@@ -388,7 +388,7 @@ sap.ui.define([
 		oSplitApp.destroy();
 	});
 
-	QUnit.test("HideMode", function(assert){
+	QUnit.test("HideMode", async function(assert) {
 		var oSystem = {
 			desktop: true,
 			tablet: false,
@@ -418,7 +418,7 @@ sap.ui.define([
 			mode: "HideMode"
 		});
 		oSplitApp.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
@@ -431,7 +431,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Public Methods");
-	QUnit.test("ShowMaster", function(assert){
+	QUnit.test("ShowMaster", async function(assert) {
 		var done = assert.async();
 		var oSystem = {
 				desktop: true,
@@ -466,7 +466,7 @@ sap.ui.define([
 			mode: "ShowHideMode"
 		});
 		oSplitApp.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oSplitApp.showMaster();
 
@@ -484,7 +484,7 @@ sap.ui.define([
 		}, 500);
 	});
 
-	QUnit.test("Initialization on phone", function(assert) {
+	QUnit.test("Initialization on phone", async function(assert) {
 		var oSystem = {
 			desktop: false,
 			tablet: false,
@@ -512,7 +512,7 @@ sap.ui.define([
 			mode: "ShowHideMode"
 		});
 		oSplitApp.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.ok(jQuery("#master").length, "Master Nav Container should be rendered initially.");
@@ -523,7 +523,7 @@ sap.ui.define([
 
 	// Tests for all modes
 	QUnit.module("Master / Detail page aggregation");
-	QUnit.test("Master / Detail page aggregation returns the right pages in the right order", function(assert) {
+	QUnit.test("Master / Detail page aggregation returns the right pages in the right order", async function(assert) {
 		var oMasterPage = new Page("master",{
 			title : "Master 1",
 			content: [new Button("Button", {text: "That is a Button"})]
@@ -546,7 +546,7 @@ sap.ui.define([
 			]
 		});
 		oSplitApp.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oSpyIndexOfPage = this.spy(oSplitApp._oMasterNav, "indexOfPage");
 
@@ -568,7 +568,7 @@ sap.ui.define([
 		oSplitApp.destroy();
 	});
 
-	QUnit.test("Adding / Removing Pages to/from Master / Detail", function(assert) {
+	QUnit.test("Adding / Removing Pages to/from Master / Detail", async function(assert) {
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
 				new Page("master",{
@@ -589,7 +589,7 @@ sap.ui.define([
 			]
 		});
 		oSplitApp.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oNewMasterPage = new Page("newMasterPage1",{
 			title : "Master 1"
@@ -639,7 +639,7 @@ sap.ui.define([
 		oSplitApp.destroy();
 	});
 
-	QUnit.test("Moving Page from Master to Detail", function(assert) {
+	QUnit.test("Moving Page from Master to Detail", async function(assert) {
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
 				new Page("master",{
@@ -660,7 +660,7 @@ sap.ui.define([
 			]
 		});
 		oSplitApp.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oMovePage = new Page("movePagePage1",{
 			title : "Detail 1"
@@ -691,7 +691,7 @@ sap.ui.define([
 		oSplitApp.destroy();
 	});
 
-	QUnit.test("Insert Page", function(assert) {
+	QUnit.test("Insert Page", async function(assert) {
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
 				new Page("master",{
@@ -712,7 +712,7 @@ sap.ui.define([
 			]
 		});
 		oSplitApp.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var aMaster;
 
@@ -750,7 +750,7 @@ sap.ui.define([
 		oSplitApp.destroy();
 	});
 
-	QUnit.test("Remove all pages", function(assert) {
+	QUnit.test("Remove all pages", async function(assert) {
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
 				new Page("master",{
@@ -771,7 +771,7 @@ sap.ui.define([
 			]
 		});
 		oSplitApp.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oSpyRemoveAllPages = this.spy(oSplitApp._oMasterNav, "removeAllPages");
 
@@ -788,7 +788,7 @@ sap.ui.define([
 		oSplitApp.destroy();
 	});
 
-	QUnit.test("keyboard handling with showMasterButton", function(assert){
+	QUnit.test("keyboard handling with showMasterButton", async function(assert) {
 		var done = assert.async();
 		var oSystem = {
 				desktop: true,
@@ -807,7 +807,7 @@ sap.ui.define([
 		oSplitApp1.addMasterPage(page).addDetailPage(page2);
 
 		oSplitApp1.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oMasterButton = oSplitApp1._oShowMasterBtn;
 		assert.ok(oMasterButton.getDomRef(), "Master Button is rendered");
@@ -823,10 +823,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("backgroundColor", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oSplitApp = new SplitApp();
 			this.oSplitApp.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oSplitApp.destroy();
@@ -834,14 +834,14 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("only valid color is set to DOM element", function(assert) {
+	QUnit.test("only valid color is set to DOM element", async function(assert) {
 		var oApp = this.oSplitApp;
 
 		oApp.setBackgroundColor("blue;5px solid red;");
 
 		// Act
 		oApp.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Check
 		assert.strictEqual(getBgDomElement(oApp).style.backgroundColor, '', "correct property value");
@@ -849,10 +849,10 @@ sap.ui.define([
 
 
 	QUnit.module("backgroundImage", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oSplitApp = new SplitApp();
 			this.oSplitApp.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oSplitApp.destroy();
@@ -860,12 +860,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("style is set to DOM element", function(assert) {
+	QUnit.test("style is set to DOM element", async function(assert) {
 
 		var oApp = this.oSplitApp;
 		// Act
 		oApp.setBackgroundImage(sBackgroundImageSrc);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Check
 		assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + sBackgroundImageSrc + '\")',
@@ -873,7 +873,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("url value with special characters", function(assert) {
+	QUnit.test("url value with special characters", async function(assert) {
 		var oApp = this.oSplitApp,
 			sPath = "images/",
 			sUnreservedChars = "img100-._~",
@@ -887,20 +887,20 @@ sap.ui.define([
 			sImgSrc2 = sPath + sUnreservedChars + sReservedChars1 + sReservedChars2 + sOtherChars + sReservedCharsUnencoded + sFileExtension + sQuery;
 
 		oApp.setBackgroundImage(sImgSrc1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		// Check
 		assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + sImgSrc1 + '\")',
 			"correct property value");
 
 		oApp.setBackgroundImage(sImgSrc2);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		// Check
 		assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + sImgSrc2 + '\")',
 			"correct property value");
 	});
 
 
-	QUnit.test("encodes css-specific chars in backgroundImage value", function(assert) {
+	QUnit.test("encodes css-specific chars in backgroundImage value", async function(assert) {
 		// Arrange
 		var sImageSrc = sBackgroundImageSrc + ");border:5px solid red;",
 			oApp = this.oSplitApp,
@@ -909,7 +909,7 @@ sap.ui.define([
 
 		// Act
 		oApp.setBackgroundImage(sImageSrc);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Check
 		oAppDom = getBgDomElement(oApp);
@@ -917,7 +917,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("encodes html-specific chars in backgroundImage style", function(assert) {
+	QUnit.test("encodes html-specific chars in backgroundImage style", async function(assert) {
 		// Arrange
 		var sImageSrc = sBackgroundImageSrc + ')"; onmouseover="console.log"',
 			oApp = this.oSplitApp,
@@ -926,7 +926,7 @@ sap.ui.define([
 
 		// Act
 		oApp.setBackgroundImage(sImageSrc);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Check
 		oAppDom = getBgDomElement(oApp);
@@ -934,7 +934,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Show Hide module", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			var oMasterPage = new Page("master11", {
 				title: "Master"
 			});
@@ -971,7 +971,7 @@ sap.ui.define([
 			});
 
 			this.oSplitApp.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oSplitApp.destroy();
@@ -985,26 +985,26 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("encodes html-specific chars in backgroundImage style", function(assert) {
+	QUnit.test("encodes html-specific chars in backgroundImage style", async function(assert) {
 		// Act
 		this.oHideButton.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Check
 		assert.strictEqual(this.oSplitApp._oShowMasterBtn.getTooltip(), "Show Master", 'Tooltip is should be "Show Master"');
 
 		// Act
 		this.oStrechButton.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.oHideButton.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Check
 		assert.strictEqual(this.oSplitApp._oShowMasterBtn.getTooltip(), "Show Master", 'Tooltip is should be "Show Master"');
 	});
 
 	QUnit.module("SplitApp in container with semantic rendering", {
-		beforeEach: function () {
+		beforeEach: async function() {
 
 			this.oScrollContainer = new ScrollContainer({
 				content: [
@@ -1013,7 +1013,7 @@ sap.ui.define([
 			});
 
 			this.oScrollContainer.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oScrollContainer.destroy();
@@ -1021,11 +1021,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("parents elements height", function(assert) {
+	QUnit.test("parents elements height", async function(assert) {
 		assert.strictEqual(this.oScrollContainer.getDomRef().firstChild.style.height, '100%', "height is set correctly");
 
 		this.oScrollContainer.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oScrollContainer.getDomRef().firstChild.style.height, '100%', "height is set correctly");
 	});

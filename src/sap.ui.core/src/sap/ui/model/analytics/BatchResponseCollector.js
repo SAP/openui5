@@ -130,4 +130,4 @@ sap.ui.define(function() {
 	};
 	return BatchResponseCollector;
 
-}, /* bExport= */true);
+});

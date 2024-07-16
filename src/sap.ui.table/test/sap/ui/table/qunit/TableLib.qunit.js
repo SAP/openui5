@@ -18,28 +18,4 @@ sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 			done();
 		});
 	});
-
-	/**
-	 * @deprecated As of version 1.118
-	 */
-	QUnit.test("TableHelper", function(assert) {
-		assert.expect(5);
-
-		const tableNamespace = sap.ui.require("sap/ui/table/library");
-		const oHelper = tableNamespace.TableHelper;
-
-		assert.ok(!!oHelper, "TableHelper exists");
-		assert.ok(!oHelper.bFinal, "TableHelper is not final");
-		assert.equal(oHelper.addTableClass(), "", "TableHelper.addTableClass");
-		try {
-			oHelper.createLabel();
-		} catch (e) {
-			assert.ok(true, "TableHelper.createLabel");
-		}
-		try {
-			oHelper.createTextView();
-		} catch (e) {
-			assert.ok(true, "TableHelper.createTextView");
-		}
-	});
 });

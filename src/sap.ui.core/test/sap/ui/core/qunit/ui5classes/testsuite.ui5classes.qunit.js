@@ -29,34 +29,39 @@ sap.ui.define(function() {
 					libs: "sap.ui.testlib"
 				}
 			},
+
 			DataType: {
 				coverage : {
 					only : "sap/ui/base/DataType"
 				},
 				title: "QUnit Page for sap/ui/base/DataType"
 			},
+
 			ManagedObject: {
 				title: "sap.ui.base.ManagedObject"
 			},
+
 			ManagedObject_BindingParser: {
 				title: "sap.ui.base.ManagedObject (no core boot)",
 				bootCore: false
 			},
+
 			ManagedObject_forwardAggregation: {
 				title: "sap.ui.base.ManagedObject (forward Aggregation)"
 			},
+
 			ManagedObject_isPropertyInitial: {
 				title: "sap.ui.base.ManagedObject (is Property Initial)"
 			},
+
 			ManagedObjectObserver: {
 				title: "sap.ui.base.ManagedObjectObserver"
 			},
+
 			ManagedObjectRegistry: {
 				title: "sap.ui.base.ManagedObjectRegistry"
 			},
-			ManagedObjectRegistry_legacyAPIs: {
-				title: "sap.ui.base.ManagedObjectRegistry_legacyAPIs"
-			},
+
 			ManagedObjectMetadata: {
 				title: "sap.ui.base.ManagedObjectMetadata",
 				sinon: {
@@ -64,20 +69,9 @@ sap.ui.define(function() {
 					qunitBridge: true
 				}
 			},
-			/**
-			 * @deprecated As of version 1.111 Mostly testing deprecated APIs
-			 */
-			Metadata: {
-				title: "sap.ui.base.Metadata"
-			},
+
 			Object: {
 				title: "sap.ui.base.Object"
-			},
-			/**
-			 * @deprecated As of version 1.111
-			 */
-			Object_legacyAPIs: {
-				title: "sap.ui.base.Object (legacy APIs)"
 			}
 		}
 	};

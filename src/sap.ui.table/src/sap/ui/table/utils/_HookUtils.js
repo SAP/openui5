@@ -115,56 +115,56 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 					{type: "object" /* BindingInfo */}
 				]
 			},
+
 			// Called when a binding object is created for the rows aggregation.
 			RowsBound: {
 				arguments: [
 					{type: "class:sap.ui.model.Binding"}
 				]
 			},
+
 			// Called when Table#unbindRows or Table#unbindAggregation("rows", ...) is called, before Control#unbindAggregation.
 			UnbindRows: {
 				arguments: [
 					{type: "object" /* BindingInfo */}
 				]
 			},
+
 			// Called after the Table.UnbindRows hook, if the unbind is not caused by rebind or destroy.
 			RowsUnbound: {
 				arguments: []
 			},
+
 			// Called when Table#refreshRows is called.
 			RefreshRows: {
 				arguments: [
 					{type: validateRowsUpdateReason}
 				]
 			},
+
 			// Called when Table#updateRows is called.
 			UpdateRows: {
 				arguments: [
 					{type: validateRowsUpdateReason}
 				]
 			},
+
 			// Called when Table#_updateTableSizes is called.
 			UpdateSizes: {
 				arguments: [
 					{type: validateRowsUpdateReason}
 				]
 			},
+
 			OpenContextMenu: {
 				arguments: [
 					{type: validateCellInfo},
 					{type: "class:sap.ui.unified.Menu"}
 				]
 			},
+
 			TotalRowCountChanged: {
 				arguments: []
-			},
-			/**
-			* @deprecated As of Version 1.117
-			*/
-			InvalidateColumnMenus: {
-				arguments: [
-					{type: "class:sap.ui.table.Table"}
-				]
 			}
 		},
 		TableRenderer: {
@@ -211,17 +211,7 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 				]
 			}
 		},
-		Column: {
-			/**
-			* @deprecated As of Version 1.117
-			*/
-			SetFilterState: {
-				arguments: [
-					{type: "class:sap.ui.table.Column"},
-					{type: "string"}
-				]
-			}
-		},
+		Column: {},
 		// Can be used to send any signal.
 		Signal: {
 			arguments: [
@@ -494,4 +484,4 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 	}
 
 	return HookUtils;
-}, /* bExport= */ true);
+});

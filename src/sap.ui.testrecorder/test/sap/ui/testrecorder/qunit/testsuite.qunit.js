@@ -80,7 +80,7 @@ sap.ui.define([
 	};
 
 	Object.keys(oTests).forEach(function (name) {
-		oTestSuite.tests[name + "1"] = merge({}, oTests[name], {qunit: { version: 1 }});
+		oTestSuite.tests[name + "1"] = merge({}, oTests[name], {qunit: { version: 2 }});
 		oTestSuite.tests[name + "2"] = merge({}, oTests[name], {qunit: { version: 2 }});
 
 		if (oTestSuite.tests[name + "2"].title) {

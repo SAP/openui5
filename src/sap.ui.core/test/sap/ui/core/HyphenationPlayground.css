@@ -1,0 +1,41 @@
+.custom .sapUiRFLContainer {
+	width: auto !important;
+	min-width: 0px !important;
+}
+
+.hyphenatedText {
+	color: dodgerblue;
+	font-weight: bold;
+}
+
+.sapUiHyphenation {
+	-webkit-hyphens: auto;
+	-moz-hyphens: auto;
+	hyphens: auto;
+}
+
+.labelForSlider {
+	margin-top: 1rem;
+}
+
+.labelHyphChoiseNat-true {
+	font-weight: bold;
+	background-color: #d6eaf8;
+	border: 1px solid #aed6f1;
+	border-radius: 8px;
+}
+
+.labelHyphChoise3rd-true {
+	font-weight: bold;
+	background-color: #e8daef;
+	border: 1px solid #d2b4de;
+	border-radius: 8px;
+}
+
+.sapUiSimpleForm .sapMLabel {
+	margin-right: 10px !important;
+}
+
+.sapUiHLayout.sapUiHLayoutNoWrap .sapMLabel.sapMLabelMaxWidth.sapMLabelDisplayOnly.sapUiSelectable {
+	margin: 0 4rem !important;
+}

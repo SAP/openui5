@@ -92,4 +92,4 @@ sap.ui.define(["sap/ui/support/library"], function(SupportLib) {
 		oStepInputFieldWidth
 	];
 
-}, true);
+});

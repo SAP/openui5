@@ -1,9 +1,34 @@
-sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], function (Localization, jQuery) {
+sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery", "sap/m/library", "sap/m/ActionSheet", "sap/m/Button", "sap/m/MessageToast", "sap/ui/model/json/JSONModel", "sap/m/NumericContent", "sap/m/TileContent", "sap/m/GenericTile", "sap/m/NewsContent", "sap/m/FeedContent", "sap/suite/ui/microchart/ColumnMicroChart", "sap/suite/ui/microchart/ColumnMicroChartData", "sap/m/Input", "sap/m/Label", "sap/m/Slider", "sap/m/Select", "sap/ui/core/Item", "sap/m/CheckBox", "sap/ui/layout/Grid", "sap/ui/layout/form/SimpleForm", "sap/ui/core/Title", "sap/m/Page", "sap/m/App", "sap/ui/util/Mobile", "sap/base/util/UriParameters"], function(Localization, jQuery, mobileLibrary, ActionSheet, Button, MessageToast, JSONModel, NumericContent, TileContent, GenericTile, NewsContent, FeedContent, ColumnMicroChart, ColumnMicroChartData, Input, Label, Slider, Select, Item, CheckBox, Grid, SimpleForm, Title, Page, App, Mobile, UriParameters) {
     "use strict";
-    jQuery.sap.initMobile();
+
+    // shortcut for sap.m.InputType
+    const InputType = mobileLibrary.InputType;
+
+    // shortcut for sap.m.WrappingType
+    const WrappingType = mobileLibrary.WrappingType;
+
+    // shortcut for sap.m.DeviationIndicator
+    const DeviationIndicator = mobileLibrary.DeviationIndicator;
+
+    // shortcut for sap.m.ValueColor
+    const ValueColor = mobileLibrary.ValueColor;
+
+    // shortcut for sap.m.GenericTileScope
+    const GenericTileScope = mobileLibrary.GenericTileScope;
+
+    // shortcut for sap.m.LoadState
+    const LoadState = mobileLibrary.LoadState;
+
+    // shortcut for sap.m.FrameType
+    const FrameType = mobileLibrary.FrameType;
+
+    // shortcut for sap.m.GenericTileMode
+    const GenericTileMode = mobileLibrary.GenericTileMode;
+
+    Mobile.init();
 
     var oGenericTileData = {
-        mode: sap.m.GenericTileMode.ContentMode,
+        mode: GenericTileMode.ContentMode,
         subheader: "Expenses By Region",
         header: "Comparative Annual Totals",
         tooltip: "",
@@ -14,11 +39,11 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], functi
         value: "1700",
         width: 174,
         padding: true,
-        frameType: sap.m.FrameType.OneByOne,
-        state: sap.m.LoadState.Loaded,
-        scope: sap.m.GenericTileScope.Display,
-        valueColor: sap.m.ValueColor.Error,
-        indicator: sap.m.DeviationIndicator.Up,
+        frameType: FrameType.OneByOne,
+        state: LoadState.Loaded,
+        scope: GenericTileScope.Display,
+        valueColor: ValueColor.Error,
+        indicator: DeviationIndicator.Up,
         title: "US Profit Margin",
         footer: "Current Quarter",
         description: "Maximum deviation",
@@ -34,27 +59,27 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], functi
             contentText: "@@notify Great outcome of the Presentation today. New functionality well received.",
             subheader: "About 1 minute ago in Computer Market"
         }],
-        frameTypes: [sap.m.FrameType.OneByOne, sap.m.FrameType.TwoByOne],
-        indicators: Object.keys(sap.m.DeviationIndicator),
-        modes: Object.keys(sap.m.GenericTileMode),
-        states: Object.keys(sap.m.LoadState),
-        scopes: Object.keys(sap.m.GenericTileScope),
-        wrappingTypes: Object.keys(sap.m.WrappingType),
-        wrappingType: sap.m.WrappingType.Normal
+        frameTypes: [FrameType.OneByOne, FrameType.TwoByOne],
+        indicators: Object.keys(DeviationIndicator),
+        modes: Object.keys(GenericTileMode),
+        states: Object.keys(LoadState),
+        scopes: Object.keys(GenericTileScope),
+        wrappingTypes: Object.keys(WrappingType),
+        wrappingType: WrappingType.Normal
     };
 
     var fnPress = function (oEvent) {
-        if (oEvent.getParameter("scope") === sap.m.GenericTileScope.Actions &&
+        if (oEvent.getParameter("scope") === GenericTileScope.Actions &&
                 oEvent.getParameter("action") === "Press") {
-            var oActionSheet = new sap.m.ActionSheet({
+            var oActionSheet = new ActionSheet({
                 title: "Choose Your Action",
                 showCancelButton: true,
                 placement: "Bottom",
                 buttons: [
-                    new sap.m.Button({
+                    new Button({
                         text: "Move"
                     }),
-                    new sap.m.Button({
+                    new Button({
                         text: "Whatever"
                     })
                 ],
@@ -64,13 +89,13 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], functi
             });
             oActionSheet.openBy(oEvent.getParameter("domRef"));
         } else {
-            sap.m.MessageToast.show("Action " + oEvent.getParameter("action") + " on " + oEvent.getSource().getId() + " pressed.");
+            MessageToast.show("Action " + oEvent.getParameter("action") + " on " + oEvent.getSource().getId() + " pressed.");
         }
     };
 
     function setDefaultParameters(oData) {
         var sName;
-        var oUriParameters = jQuery.sap.getUriParameters();
+        var oUriParameters = UriParameters.fromQuery(window.location.search);
 
         for (sName in oData) {
             if (oData.hasOwnProperty(sName) && typeof oData[sName] === 'string') {
@@ -83,9 +108,9 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], functi
 
     setDefaultParameters(oGenericTileData);
 
-    var oGenericTileModel = new sap.ui.model.json.JSONModel(oGenericTileData);
+    var oGenericTileModel = new JSONModel(oGenericTileData);
 
-    var oNVConfContS = new sap.m.NumericContent("numeric-cont-l", {
+    var oNVConfContS = new NumericContent("numeric-cont-l", {
         value: "{/value}",
         scale: "{/scale}",
         indicator: "{/indicator}",
@@ -97,13 +122,13 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], functi
         width: "100%"
     });
 
-    var oNVConfS = new sap.m.TileContent("numeric-tile-cont-l", {
+    var oNVConfS = new TileContent("numeric-tile-cont-l", {
         unit: "{/unit}",
         footer: "{/footerNum}",
         content: oNVConfContS
     });
 
-    var oGenericTile1 = new sap.m.GenericTile({
+    var oGenericTile1 = new GenericTile({
         mode: "{/mode}",
         subheader: "{/subheader}",
         frameType: "{/frameType}",
@@ -123,7 +148,7 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], functi
         return sValue + "px";
     });
 
-    var oNumCnt2x1 = new sap.m.NumericContent("numeric-cont-2x1", {
+    var oNumCnt2x1 = new NumericContent("numeric-cont-2x1", {
         value: "{/value}",
         scale: "{/scale}",
         indicator: "{/indicator}",
@@ -134,18 +159,18 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], functi
         width: "100%"
     });
 
-    var oTc2x1 = new sap.m.TileContent("comp-tile-cont-2x1", {
+    var oTc2x1 = new TileContent("comp-tile-cont-2x1", {
         unit: "{/unit}",
         footer: "{/footerComp}",
-        frameType: sap.m.FrameType.TwoByOne,
+        frameType: FrameType.TwoByOne,
         content: oNumCnt2x1
     });
 
-    var oGenericTile2 = new sap.m.GenericTile({
+    var oGenericTile2 = new GenericTile({
         mode: "{/mode}",
         tooltip: "{/tooltip}",
         subheader: "{/subheader}",
-        frameType: sap.m.FrameType.TwoByOne,
+        frameType: FrameType.TwoByOne,
         header: "{/header}",
         state: "{/state}",
         scope: "{/scope}",
@@ -162,19 +187,19 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], functi
     });
 
 
-    var oNewsTileContent = new sap.m.TileContent("news-tile-cont-2x1", {
+    var oNewsTileContent = new TileContent("news-tile-cont-2x1", {
         footer: "{footer}",
-        frameType: sap.m.FrameType.TwoByOne,
-        content: new sap.m.NewsContent({
+        frameType: FrameType.TwoByOne,
+        content: new NewsContent({
             contentText: "{contentText}",
             subheader: "{subheader}"
         })
     });
 
-    var oGenericTile3 = new sap.m.GenericTile({
+    var oGenericTile3 = new GenericTile({
         mode: "{/mode}",
         tooltip: "{/tooltip}",
-        frameType: sap.m.FrameType.TwoByOne,
+        frameType: FrameType.TwoByOne,
         state: "{/state}",
         scope: "{/scope}",
         headerImage: "{/headerImage}",
@@ -193,21 +218,21 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], functi
         return sValue + "px";
     });
 
-    var oFeedTileContent = new sap.m.TileContent("feed-tile-cont-2x1", {
+    var oFeedTileContent = new TileContent("feed-tile-cont-2x1", {
         footer: "{footer}",
-        frameType: sap.m.FrameType.TwoByOne,
-        content: new sap.m.FeedContent({
+        frameType: FrameType.TwoByOne,
+        content: new FeedContent({
             contentText: "{contentText}",
             subheader: "{subheader}"
         })
     });
 
-    var oGenericTile4 = new sap.m.GenericTile({
+    var oGenericTile4 = new GenericTile({
         mode: "{/mode}",
         tooltip: "{/tooltip}",
         header: "{/header}",
         subheader: "{/subheader}",
-        frameType: sap.m.FrameType.TwoByOne,
+        frameType: FrameType.TwoByOne,
         state: "{/state}",
         scope: "{/scope}",
         headerImage: "{/headerImage}",
@@ -221,12 +246,12 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], functi
         }
     });
 
-    var oGenericTile5 = new sap.m.GenericTile({
+    var oGenericTile5 = new GenericTile({
         mode: "{/mode}",
         tooltip: "{/tooltip}",
         header: "{/header}",
         subheader: "{/subheader}",
-        frameType: sap.m.FrameType.TwoByOne,
+        frameType: FrameType.TwoByOne,
         state: "{/state}",
         scope: "{/scope}",
         headerImage: "{/headerImage}",
@@ -234,27 +259,27 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], functi
         wrappingType: "{/wrappingType}",
         press: fnPress,
         failedText: "{/failedText}",
-        tileContent: new sap.m.TileContent({
-            content: new sap.suite.ui.microchart.ColumnMicroChart({
+        tileContent: new TileContent({
+            content: new ColumnMicroChart({
                 size: "Responsive",
                 columns: [
-                    new sap.suite.ui.microchart.ColumnMicroChartData({
+                    new ColumnMicroChartData({
                         value: 65,
                         color: "Error"
                     }),
-                    new sap.suite.ui.microchart.ColumnMicroChartData({
+                    new ColumnMicroChartData({
                         value: 30,
                         color: "Neutral"
                     }),
-                    new sap.suite.ui.microchart.ColumnMicroChartData({
+                    new ColumnMicroChartData({
                         value: 120,
                         color: "Neutral"
                     }),
-                    new sap.suite.ui.microchart.ColumnMicroChartData({
+                    new ColumnMicroChartData({
                         value: 5,
                         color: "Error"
                     }),
-                    new sap.suite.ui.microchart.ColumnMicroChartData({
+                    new ColumnMicroChartData({
                         value: 85,
                         color: "Error"
                     })
@@ -273,26 +298,26 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], functi
         return sValue + "px";
     });
 
-    var oTitleInput = new sap.m.Input("title-value", {
-        type: sap.m.InputType.Text,
+    var oTitleInput = new Input("title-value", {
+        type: InputType.Text,
         placeholder: 'Enter header ...'
     });
     oTitleInput.bindValue("/header");
 
-    var oTooltipInput = new sap.m.Input("tooltip-value", {
-        type: sap.m.InputType.Text,
+    var oTooltipInput = new Input("tooltip-value", {
+        type: InputType.Text,
         placeholder: 'Enter tooltip ...'
     });
     oTooltipInput.bindValue("/tooltip");
 
     // LANGUAGE
 
-    var oWidthLabel = new sap.m.Label({
+    var oWidthLabel = new Label({
         text: "Change width",
         labelFor: "width-change"
     });
 
-    var oWidthSlider = new sap.m.Slider({
+    var oWidthSlider = new Slider({
         width: "100%",
         min: 174,
         step: 5,
@@ -301,19 +326,19 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], functi
 
     oWidthSlider.bindProperty("value", "/width");
 
-    var oLanguageLabel = new sap.m.Label({
+    var oLanguageLabel = new Label({
         text: "Change language",
         labelFor: "language-change"
     });
 
-    var oUpdateLanguageSelect = new sap.m.Select("language-change", {
+    var oUpdateLanguageSelect = new Select("language-change", {
         items: [
-            new sap.ui.core.Item({key: "en-US", text: "en-US"}),
-            new sap.ui.core.Item({key: "de_CH", text: "de_CH"}),
-            new sap.ui.core.Item({key: "es", text: "es"}),
-            new sap.ui.core.Item({key: "it_CH", text: "it_CH"}),
-            new sap.ui.core.Item({key: "zh_CN", text: "zh_CN"}),
-            new sap.ui.core.Item({key: "es", text: "es"})
+            new Item({key: "en-US", text: "en-US"}),
+            new Item({key: "de_CH", text: "de_CH"}),
+            new Item({key: "es", text: "es"}),
+            new Item({key: "it_CH", text: "it_CH"}),
+            new Item({key: "zh_CN", text: "zh_CN"}),
+            new Item({key: "es", text: "es"})
         ],
         change: function (oEvent) {
             var sKey = oEvent.getParameter("selectedItem").getKey();
@@ -322,92 +347,92 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], functi
     });
 
 
-    var oUpdateValueLbl = new sap.m.Label({
+    var oUpdateValueLbl = new Label({
         text: "Update Value",
         labelFor: "update-value"
     });
 
-    var oUpdateValueInput = new sap.m.Input("update-value", {
-        type: sap.m.InputType.Text,
+    var oUpdateValueInput = new Input("update-value", {
+        type: InputType.Text,
         placeholder: 'Enter value for update ...'
     });
     oUpdateValueInput.bindValue("/value");
 
-    var oUpdateScaleLbl = new sap.m.Label({
+    var oUpdateScaleLbl = new Label({
         text: "Update Scale",
         labelFor: "update-scale"
     });
 
-    var oUpdateScaleInput = new sap.m.Input("update-scale", {
-        type: sap.m.InputType.Text,
+    var oUpdateScaleInput = new Input("update-scale", {
+        type: InputType.Text,
         placeholder: 'Enter value for scale ...'
     });
     oUpdateScaleInput.bindValue("/scale");
 
-    var oUpdatePaddingLbl = new sap.m.Label({
+    var oUpdatePaddingLbl = new Label({
         text: "Create padding",
         labelFor: "update-padding"
     });
 
-    var oUpdatePaddingCheckbox = new sap.m.CheckBox("update-padding", {
+    var oUpdatePaddingCheckbox = new CheckBox("update-padding", {
         select: function (oEvent) {
             jQuery("body").toggleClass("sapTilePaddingTest");
         }
     });
 
 
-    var oDescInput = new sap.m.Input("desc-value", {
-        type: sap.m.InputType.Text,
+    var oDescInput = new Input("desc-value", {
+        type: InputType.Text,
         placeholder: 'Enter description ...'
     });
     oDescInput.bindValue("/subheader");
 
-    var oFooterInputNum = new sap.m.Input("footer-num-value", {
-        type: sap.m.InputType.Text,
+    var oFooterInputNum = new Input("footer-num-value", {
+        type: InputType.Text,
         placeholder: 'Enter Numeric Footer ...'
     });
     oFooterInputNum.bindValue("/footerNum");
 
-    var oFooterInputComp = new sap.m.Input("footer-cmp-value", {
-        type: sap.m.InputType.Text,
+    var oFooterInputComp = new Input("footer-cmp-value", {
+        type: InputType.Text,
         placeholder: 'Enter Comp Footer ...'
     });
     oFooterInputComp.bindValue("/footerComp");
 
-    var oUnitInput = new sap.m.Input("unit-value", {
-        type: sap.m.InputType.Text,
+    var oUnitInput = new Input("unit-value", {
+        type: InputType.Text,
         placeholder: 'Enter Units ...'
     });
     oUnitInput.bindValue("/unit");
 
-    var oFailedInput = new sap.m.Input("failed-text", {
-        type: sap.m.InputType.Text,
+    var oFailedInput = new Input("failed-text", {
+        type: InputType.Text,
         placeholder: 'Enter failed message...'
     });
     oFailedInput.bindValue("/failedText");
 
 
-    var oControlForm = new sap.ui.layout.Grid("numeric-content-form", {
+    var oControlForm = new Grid("numeric-content-form", {
         defaultSpan: "XL4 L4 M6 S12",
         content: [oGenericTile1, oGenericTile2, oGenericTile3, oGenericTile4, oGenericTile5]
     });
 
-    var editableSimpleForm = new sap.ui.layout.form.SimpleForm("controls", {
+    var editableSimpleForm = new SimpleForm("controls", {
         maxContainerCols: 2,
         editable: true,
-        content: [new sap.ui.core.Title({ // this starts a new group
+        content: [new Title({ // this starts a new group
             text: "Modify Tile"
         }), oWidthLabel, oWidthSlider, oLanguageLabel, oUpdateLanguageSelect, oUpdateValueLbl, oUpdateValueInput, oUpdateScaleLbl, oUpdateScaleInput, oUpdatePaddingLbl, oUpdatePaddingCheckbox]
     });
 
-    var oPage = new sap.m.Page("initial-page", {
+    var oPage = new Page("initial-page", {
         showHeader: false,
         content: [oControlForm, editableSimpleForm]
     });
     oPage.setModel(oGenericTileModel);
 
     //create a mobile App embedding the page and place the App into the HTML document
-    new sap.m.App("myApp", {
+    new App("myApp", {
         pages: [oPage]
     }).placeAt("content");
 });

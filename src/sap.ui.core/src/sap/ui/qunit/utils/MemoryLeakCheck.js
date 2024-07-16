@@ -4,19 +4,8 @@
 
 /*global QUnit*/
 
-sap.ui.define([ 'sap/ui/core/ElementRegistry', 'sap/ui/core/Control', "sap/ui/qunit/utils/nextUIUpdate"],
-		function(ElementRegistry, Control, nextUIUpdate) {
+sap.ui.define([ 'sap/ui/core/ElementRegistry', 'sap/ui/core/Control', "sap/ui/qunit/utils/nextUIUpdate"], function(ElementRegistry, Control, nextUIUpdate) {
 	"use strict";
-
-	/**
-	 * @deprecated As of version 1.120, as sync code loading has been deprecated. The calling context must provide QUnit.
-	 */
-	if ( typeof QUnit === "undefined" ) {
-		sap.ui.requireSync("sap/ui/qunit/qunit-css"); // legacy-relevant - sync fallback when caller did not load QUnit
-		sap.ui.requireSync("sap/ui/thirdparty/qunit"); // legacy-relevant - sync fallback when caller did not load QUnit
-		sap.ui.requireSync("sap/ui/qunit/qunit-junit"); // legacy-relevant - sync fallback when caller did not load QUnit
-		sap.ui.requireSync("sap/ui/qunit/qunit-coverage"); // legacy-relevant - sync fallback when caller did not load QUnit
-	}
 
 	QUnit.config.reorder = false;   // make sure results are consistent/stable and the "statistics" test in the end is actually run in the end
 
@@ -228,4 +217,4 @@ sap.ui.define([ 'sap/ui/core/ElementRegistry', 'sap/ui/core/Control', "sap/ui/qu
 	};
 
 	return MemoryLeakCheck;
-}, /* bExport= */true);
+});

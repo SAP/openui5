@@ -16,7 +16,6 @@ sap.ui.define([
 	'sap/ui/core/Locale',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/format/DateFormat',
-	'sap/ui/core/Core',
 	'sap/ui/core/date/UniversalDate',
 	'sap/ui/core/dnd/DragDropInfo',
 	'sap/ui/unified/library',
@@ -47,7 +46,6 @@ sap.ui.define([
 		Locale,
 		InvisibleText,
 		DateFormat,
-		Core,
 		UniversalDate,
 		DragDropInfo,
 		unifiedLibrary,
@@ -2248,7 +2246,7 @@ sap.ui.define([
 				oEndDate = oAppointment.getEndDate(),
 				bFullDay = this.isAllDayAppointment(oStartDate, oEndDate),
 				bSingleDay =  this._isSingleDayAppointment(oStartDate, oEndDate),
-				sLegendInfo = PlanningCalendarLegend.findLegendItemForItem(Core.byId(this._sLegendId), oAppointment),
+				sLegendInfo = PlanningCalendarLegend.findLegendItemForItem(Element.getElementById(this._sLegendId), oAppointment),
 				sFormattedDate;
 
 			if (bFullDay && bSingleDay) {

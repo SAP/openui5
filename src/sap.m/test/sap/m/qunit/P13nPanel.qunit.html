@@ -1,63 +1,30 @@
 <!DOCTYPE HTML>
 <html>
-<head>
+<head><meta charset="utf-8">
 
     <title>Test Page for sap.m.P13nPanel</title>
     <script src="../shared-config.js"></script>
-    <script id="sap-ui-bootstrap" data-sap-ui-noConflict="true"
-            data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+    <script id="sap-ui-bootstrap"
+            data-sap-ui-noconflict="true"
+            data-sap-ui-libs="sap.m"
+            src="../../../../resources/sap-ui-core.js"
+            data-sap-ui-async="true"
+            data-sap-ui-compat-version="edge"
+            data-sap-ui-on-init="module:local/P13nPanel.qunit"
+            data-sap-ui-resource-roots='{"local":"./"}'
+    >
 
     </script>
 
-    <link rel="stylesheet"
-          href="../../../../resources/sap/ui/thirdparty/qunit.css"
-          type="text/css" media="screen"/>
-    <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+    <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit-2.css" media="screen">
+    <script src="../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
     <script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-    <script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+    <script src="../../../../resources/sap/ui/qunit/qunit-coverage-istanbul.js"></script>
     <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
     <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
     <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
-    <script>
-
-        (function () {
-            jQuery.sap.require("sap.m.P13nPanel");
-
-            QUnit.module("sap.m.P13nPanel: Initialization via JS", {
-                beforeEach: function () {
-                },
-                afterEach: function () {
-                }
-            });
-            QUnit.test("Test", function (assert) {
-                assert.ok(new sap.m.P13nPanel(), "Note: currently it is allowed to create an abstract class");
-            });
-
-            QUnit.module("sap.m.P13nPanel: Initialization via XML", {
-                beforeEach: function () {
-                },
-                afterEach: function () {
-                }
-            });
-            QUnit.test("Test", function (assert) {
-                var sXml = [
-                    '<core:View xmlns:core="sap.ui.core" xmlns:m="sap.m" xmlns="http://www.w3.org/1999/xhtml">',
-                    '	<m:P13nPanel/>',
-                    '</core:View>'
-                ].join('');
-                return sap.ui.xmlview({
-                    async: false,
-                    viewContent: sXml
-                }).loaded().then(function (oView) {
-                    assert.ok(oView);
-                    assert.ok(oView.getContent()[0], "Note: currently it is allowed to create an abstract class");
-                    assert.equal(oView.getContent()[0].getMetadata().getName(), "sap.m.P13nPanel");
-                });
-            });
-
-        }());
-    </script>
+    
 
 
 </head>

@@ -229,17 +229,5 @@ sap.ui.define([
 		this.oTable.insertDependent(this.oPlugin, 0);
 		assert.ok(PluginBase.findOn(this.oTable) === this.oPlugin, "Plugin found with findOn");
 		this.oTable.removeAllDependents();
-
-		/**
-		 * @deprecated As of version 1.120
-		 */
-		if (this.oTable.addPlugin) {
-			this.oTable.addPlugin(this.oSelectionPlugin);
-			assert.ok(PluginBase.getPlugin(this.oTable, "sap.ui.table.plugins.test.SelectionPlugin") === this.oSelectionPlugin,
-				"Plugin of type sap.ui.table.plugins.test.SelectionPlugin found in plugins aggregation");
-			assert.ok(PluginBase.getPlugin(this.oTable, TestSelectionPlugin) === this.oSelectionPlugin,
-				"Plugin of type sap.ui.table.plugins.test.SelectionPlugin Class found in plugins aggregation");
-			this.oTable.removeAllPlugins();
-		}
 	});
 });

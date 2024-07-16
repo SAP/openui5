@@ -140,8 +140,7 @@ sap.ui.define([], function() {
 			"HorizontalLayout": {
 				group: "HorizontalLayout",
 				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
+					noConflict: true
 				},
 				coverage: {
 					only: ["sap/ui/layout/HorizontalLayout"]
@@ -150,8 +149,7 @@ sap.ui.define([], function() {
 			"DynamicSideContent": {
 				group: "DynamicSideContent",
 				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
+					noConflict: true
 				},
 				coverage: {
 					only: ["sap/ui/layout/DynamicSideContent"]

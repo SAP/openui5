@@ -184,21 +184,6 @@ sap.ui.define([
 
 	};
 
-	/**
-	 * @deprecated Since version 1.115.0
-	 */
-	(() => {
-		FilterField.prototype.getPropertyKey = function() {
-			let sPropertyKey = this.getProperty("propertyKey");
-
-			if (!sPropertyKey) {
-				sPropertyKey = this.getFieldPath();
-			}
-
-			return sPropertyKey;
-		};
-	})();
-
 	FilterField.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
 
 		if (sPropertyName === "conditions" && this.isInvalidInput() && deepEqual(this.getConditions(), this.validateProperty(sPropertyName, oValue))) {
@@ -523,5 +508,4 @@ sap.ui.define([
 	};
 
 	return FilterField;
-
 });

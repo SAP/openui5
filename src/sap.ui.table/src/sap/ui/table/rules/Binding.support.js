@@ -55,4 +55,4 @@ sap.ui.define([
 
 	return [oAnalyticsNoDeviatingUnits];
 
-}, true);
+});

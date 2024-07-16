@@ -8,21 +8,20 @@
 	<title>Shopping Cart</title>
 
 	<!-- keep index.html mocked as well for consistency -->
-	<script
-		id='sap-ui-bootstrap'
-		src='../../../../../../resources/sap-ui-core.js'
-		data-sap-ui-theme='sap_horizon'
-		data-sap-ui-compatVersion="edge"
-		data-sap-ui-async="true"
-		data-sap-ui-oninit="module:sap/ui/demo/cart/initMockServer"
-		data-sap-ui-resourceroots='{
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:sap/ui/demo/cart/initMockServer"
+			data-sap-ui-resource-roots='{
 			"sap.ui.demo.cart" : "./",
 			"sap.ui.demo.mock": "./localService/mockdata"
-		}'>
+		}'
+	>
 	</script>
 
 </head>
-<body class='sapUiBody' id='content'>
-	<div data-sap-ui-component data-name="sap.ui.demo.cart" data-id="container" data-settings='{"id" : "cart"}'></div>
+<body class="sapUiBody" id="content">
+	<div data-sap-ui-component data-name="sap.ui.demo.cart" data-id="container" data-settings="{&quot;id&quot; : &quot;cart&quot;}"></div>
 </body>
 </html>

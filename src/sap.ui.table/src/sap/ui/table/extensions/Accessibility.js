@@ -719,10 +719,6 @@ sap.ui.define([
 
 					if (!bHasColSpan && oColumn) {
 						mAttributes["aria-sort"] = oColumn.getSortOrder().toLowerCase();
-						/** @deprecated As of version 1.120 */
-						if (!oColumn.getSorted()) {
-							mAttributes["aria-sort"] = "none";
-						}
 					}
 
 					if (!bHasColSpan && oColumn) {
@@ -732,12 +728,6 @@ sap.ui.define([
 							if (sPopupType !== "None") {
 								mAttributes["aria-haspopup"] = sPopupType.toLowerCase();
 							}
-						}
-						/**
-						 * @deprecated As of Version 1.117
-						 */
-						if (!oColumnHeaderMenu && oColumn._menuHasItems()) {
-							mAttributes["aria-haspopup"] = "menu";
 						}
 					}
 					break;
@@ -774,13 +764,11 @@ sap.ui.define([
 				case AccExtension.ELEMENTTYPES.CONTAINER: //The table container
 					break;
 
-				case AccExtension.ELEMENTTYPES.CONTENT: { //The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
+				case AccExtension.ELEMENTTYPES.CONTENT: {
+					//The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
 					mAttributes["role"] = TableUtils.Grouping.isInGroupMode(oTable) || TableUtils.Grouping.isInTreeMode(oTable) ? "treegrid" : "grid";
 
 					mAttributes["aria-labelledby"] = [].concat(oTable.getAriaLabelledBy());
-					if (oTable.getTitle()) {
-						mAttributes["aria-labelledby"].push(oTable.getTitle().getId());
-					}
 
 					if (oTable.getSelectionMode() === SelectionMode.MultiToggle) {
 						mAttributes["aria-multiselectable"] = "true";
@@ -931,12 +919,10 @@ sap.ui.define([
 					break;
 				}
 
-				case AccExtension.ELEMENTTYPES.OVERLAY: //The overlay container
+				case //The overlay container
+				AccExtension.ELEMENTTYPES.OVERLAY:
 					mAttributes["role"] = "region";
 					mAttributes["aria-labelledby"] = [].concat(oTable.getAriaLabelledBy());
-					if (oTable.getTitle()) {
-						mAttributes["aria-labelledby"].push(oTable.getTitle().getId());
-					}
 					mAttributes["aria-labelledby"].push(sTableId + "-ariainvalid");
 					break;
 

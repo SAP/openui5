@@ -1,145 +1,22 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
+	<head><meta charset="utf-8">
 
 		<title>Popup - sap.ui.core</title>
 
 		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				src="../../../../resources/sap-ui-core.js"
-				data-sap-ui-theme="sap_bluecrystal">
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/Popup"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
 
-		<style>
-		body {
-			margin: 122px 22px !important;
-		}
+		<link rel="stylesheet" href="./Popup.css">
 
-		#within {
-			position: absolute;
-			right: 100px;
-			bottom: 200px;
-			width: 50%;
-			height: 70%;
-			pointer-events: none;
-		}
-
-		#popup {
-		  background-color: yellow;
-		  width: 300px;
-		  height: 100px;
-		  position: absolute;
-		  left: -560px;
-		  top: 270px;
-		}
-
-		.popupcontent {
-		  background-color: red;
-		  width: 100px;
-		  height: 50px;
-		}
-
-		.secondpopupcontent {
-		  background-color: lightgreen;
-		  width: 100px;
-		  position: absolute;
-		  left: 150px;
-		  top: 40px;
-		  height: 50px;
-		}
-
-		:focus {
-		  outline: 3px dotted black;
-		}
-
-		.important {
-			font-weight: bold;
-		}
-
-		</style>
-
-		<script>
-		sap.ui.require([
-			"sap/ui/core/Popup"
-		], function(Popup) {
-			"use strict";
-
-			globalThis.openAnim = function($Ref, iDuration, fnCallback) {
-			  $Ref.slideDown(iDuration, fnCallback);
-			};
-
-			globalThis.closeAnim = function($Ref, iDuration, fnCallback) {
-			  $Ref.slideUp(iDuration, fnCallback);
-			};
-
-			var popup = null;
-			var modal = false;
-
-			globalThis.openPopup = function (iDuration, bModal, bAutoClose, fnOpenAnim, fnCloseAnim, oOf, bNotCenter) {
-				if (bModal) {
-					modal = true;
-					var oWithinArea = Popup.getWithinAreaDomRef();
-					if (oWithinArea !== window) {
-						oOf = oWithinArea;
-					}
-					//eslint-disable-next-line no-alert -- use alert to avoid conflict with UI5 popups
-					alert("Click the green rectangle to close the popup!");
-				}
-
-				if (popup) {
-					//eslint-disable-next-line no-alert -- use alert to avoid conflict with UI5 popups
-					alert("This test page only allows one open popup at a time");
-					return;
-				}
-
-				var element = jQuery.sap.domById("popup");
-
-				popup = new Popup(element, bModal, true, bAutoClose);
-				popup.attachClosed(popupClosed);
-				if (fnOpenAnim || fnCloseAnim) {
-					popup.setAnimations(fnOpenAnim, fnCloseAnim);
-				}
-
-				if (bNotCenter) {
-					popup.open(iDuration, "begin top", "end top", oOf || window, null, "fit");
-				} else {
-					popup.open(iDuration, "center center", "center center", oOf || window, null);
-				}
-			};
-
-			globalThis.closePopup = function (iDuration) {
-				if (popup) {
-					popup.close(iDuration);
-				}
-			};
-
-			function popupClosed() {
-				popup = null;
-				modal = false;
-			}
-
-			globalThis.greenClicked = function () {
-				if (modal) {
-					popup.close();
-				}
-			};
-
-			jQuery(function() {
-				document.getElementById("check").addEventListener("click", function(event) {
-					if (event.target.checked) {
-						var oWithinArea = document.getElementById("within");
-						Popup.setWithinArea(oWithinArea);
-						oWithinArea.style["background-color"] = "rgba(255, 0, 0, 0.5)";
-					} else {
-						Popup.setWithinArea(null);
-						oWithinArea.style.removeProperty("background-color");
-					}
-				});
-			});
-		});
-
-
-		</script>
+		
 	</head>
 	<body class="sapUiBody">
 		<div id="within"></div>
@@ -163,7 +40,7 @@
 		<br>
 		<button onclick="closePopup(-1)">Close Popup</button><br>
 		<button onclick="closePopup(0)">Close Popup With No Animation</button><br>
-		<input type="checkbox" id="check" />Custom Within
+		<input type="checkbox" id="check">Custom Within
 
 
 		<div id="popup" tabindex="0">

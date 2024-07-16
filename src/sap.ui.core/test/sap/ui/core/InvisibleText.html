@@ -6,69 +6,14 @@
 		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				src="../../../../resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.ui.core">
+				data-sap-ui-libs="sap.ui.core"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/InvisibleText"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
-		<script>
-
-		jQuery.sap.declare("sap.ui.core.TestControl");
-		sap.ui.core.Control.extend("sap.ui.core.TestControl", {
-			metadata: {
-				library : "sap.ui.core",
-				aggregations : {
-					_texts: {name: "_texts", type: "sap.ui.core.InvisibleText", multiple : true, visibility: "hidden"}
-				},
-				associations : {
-					ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
-					ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
-				}
-			},
-
-			init: function() {
-				if (!sap.ui.core.TestControl._STATIC_LABEL_TEXT) {
-					sap.ui.core.TestControl._STATIC_LABEL_TEXT = new sap.ui.core.InvisibleText({text: "Some static label by control"});
-					sap.ui.core.TestControl._STATIC_LABEL_TEXT.toStatic(); //Put to Static UiArea
-				}
-
-				this.addAggregation("_texts", new sap.ui.core.InvisibleText({text: "Some dynamic label by control"}), true);
-			},
-
-			renderer: {
-				apiVersion: 2,
-				render: function(rm, ctrl) {
-					rm.openStart("div", ctrl).openEnd();
-						var sLabelled = sap.ui.core.TestControl._STATIC_LABEL_TEXT.getId();
-						var aTexts = ctrl.getAggregation("_texts");
-						for (var i = 0; i < aTexts.length; i++){
-							sLabelled += " " + aTexts[i].getId();
-							rm.renderControl(aTexts[i]);
-						}
-						rm.voidStart("input");
-						rm.accessibilityState(ctrl, {
-							labelledby : {value: sLabelled, append: true}
-						});
-						rm.voidEnd();
-					rm.close("div");
-				}
-			}
-		});
-
-
-		(new sap.ui.core.InvisibleText("myText", {text: "Some static label by application"})).toStatic();
-
-		(new sap.ui.core.TestControl({ariaLabelledBy: "myText"})).placeAt("content");
-
-
-
-		sap.ui.controller("my.own.controller", {});
-		var xml = '<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-			+ '              controllerName="my.own.controller" xmlns:html="http://www.w3.org/1999/xhtml">'
-			+ '       <core:TestControl ariaLabelledBy="myViewText"/>'
-			+ '       <core:InvisibleText id="myViewText" text="Some text"/>'
-			+ '    </mvc:View>';
-		var myView = sap.ui.xmlview({viewContent:xml});
-		myView.placeAt('content');
-
-		</script>
+		
 	</head>
 	<body id="body" class="sapUiBody">
 		<div id="content"></div>

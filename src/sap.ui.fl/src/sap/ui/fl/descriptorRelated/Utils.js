@@ -83,4 +83,4 @@ sap.ui.define([
 		}
 	};
 	return new Utils();
-}, /* bExport= */true);
+});

@@ -4,11 +4,6 @@
 
 	QUnit.config.autostart = false;
 
-	/**
-	 * @ui5-transform-hint replace-local true
-	 */
-	const INITIAL_ASYNC_MODE = false;
-
 	var otherDefine = window.define;
 	var otherRequire = window.require;
 	requirejs.config({baseUrl: './'});
@@ -64,7 +59,7 @@
 		var done = assert.async();
 		startUi5Loader(function() {
 
-			assert.deepEqual(sap.ui.loader.config(), {async: INITIAL_ASYNC_MODE, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
+			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
 
 			sap.ui.loader.config({
 				amd: true,
@@ -86,7 +81,7 @@
 		var done = assert.async();
 		startUi5Loader(function() {
 
-			assert.deepEqual(sap.ui.loader.config(), {async: INITIAL_ASYNC_MODE, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
+			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
 
 			// switch to 'amd' mode, as here relative paths (defined via 'paths' option)
 			// are interpreted relative to the 'baseUrl', and not relative to document.baseURI
@@ -111,7 +106,7 @@
 		var done = assert.async();
 		startUi5Loader(function() {
 
-			assert.deepEqual(sap.ui.loader.config(), {async: INITIAL_ASYNC_MODE, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
+			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
 
 			sap.ui.loader.config({
 				noConflict: false
@@ -127,7 +122,7 @@
 		var done = assert.async();
 		startUi5Loader(function() {
 
-			assert.deepEqual(sap.ui.loader.config(), {async: INITIAL_ASYNC_MODE, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
+			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
 
 			sap.ui.loader.config({
 				amd: true
@@ -143,7 +138,7 @@
 		var done = assert.async();
 		startUi5Loader(function() {
 
-			assert.deepEqual(sap.ui.loader.config(), {async: INITIAL_ASYNC_MODE, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
+			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
 
 			sap.ui.loader.config({
 				amd: true
@@ -166,7 +161,7 @@
 		var done = assert.async();
 		startUi5Loader(function() {
 
-			assert.deepEqual(sap.ui.loader.config(), {async: INITIAL_ASYNC_MODE, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
+			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
 
 			sap.ui.loader.config({
 				async: true
@@ -186,15 +181,6 @@
 	});
 
 
-	/**
-	 * @deprecated
-	 */
-	QUnit.module("Config variants for async", {
-		afterEach: function() {
-			removeUi5Loader();
-		}
-	});
-
 	QUnit.test("xx-async=true", function(assert){
 		var done = assert.async();
 		startUi5Loader(function() {
@@ -213,19 +199,6 @@
 			done();
 
 		}, {"data-sap-ui-async": "true"});
-	});
-
-	/**
-	 * @deprecated As of version 1.120 as the loader will no longer support sync mode in the next major release
-	 */
-	QUnit.test("async=false", function(assert){
-		var done = assert.async();
-		startUi5Loader(function() {
-
-			assert.strictEqual(sap.ui.loader.config().async, false, "Async mode should have been activated by data-sap-ui-async attribute");
-			done();
-
-		}, {"data-sap-ui-async": "false"});
 	});
 
 
@@ -294,35 +267,6 @@
 				});
 			});
 		});
-	});
-
-	/**
-	 * @deprecated
-	 */
-	QUnit.test("Expose loader via bootstrap attribute", function(assert) {
-		var done = assert.async();
-
-		assert.strictEqual(window.require, otherRequire, "global require should be the 'other' loader's implementation again");
-		assert.strictEqual(window.define, otherDefine, "global define should be the 'other' loader's implementation again");
-
-		startUi5Loader(function() {
-			var privateLoaderAPI = sap.ui.loader._;
-
-			assert.notStrictEqual(window.require, otherRequire, "global require should have changed");
-			assert.notStrictEqual(window.define, otherDefine, "global define should have changed");
-			assert.strictEqual(window.require, privateLoaderAPI.amdRequire, "global require should be the UI5 implementation");
-			assert.strictEqual(window.define, privateLoaderAPI.amdDefine, "global define should be the UI5 implementation");
-
-			// hide UI5 implementation again
-			sap.ui.loader.config({
-				amd: false
-			});
-
-			assert.strictEqual(window.require, otherRequire, "global require should be the 'other' loader's implementation again");
-			assert.strictEqual(window.define, otherDefine, "global define should be the 'other' loader's implementation again");
-
-			done();
-		}, {"data-sap-ui-amd": "true"});
 	});
 
 	QUnit.module("Bootstrap config");

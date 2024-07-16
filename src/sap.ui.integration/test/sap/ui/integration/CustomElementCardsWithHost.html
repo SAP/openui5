@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 
-<head>
+<head><meta charset="utf-8">
 
 	<title>sap.ui.integration.Host Test</title>
 
@@ -10,93 +10,14 @@
 
 	<script src="../../../../resources/sap-ui-integration.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-theme="sap_horizon"
 			data-sap-ui-libs="sap.m, sap.f, sap.ui.integration"
-			data-sap-ui-resourceroots='{
-		"test" : "./"
-	}'></script>
+			data-sap-ui-resource-roots='{"test":"./","local":"./"}'
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:local/CustomElementCardsWithHost"
+	></script>
 
-	<script>
-		customElements.whenDefined("ui-integration-card").then(function () {
-			var mobileCards = [],
-					timeout = 100;
-
-			function fnCardAction(event) {
-
-				var type = event.getParameter('type'),
-						actionSource = event.getParameter('actionSource'),
-						parameters = event.getParameter('parameters');
-
-				console.error("Card Action ", parameters);
-			}
-
-			var host = new sap.ui.integration.Host('host1', {
-				actions: [
-					{
-						type: 'Navigation',
-						url: "http://www.sap.com",
-						target: "_blank",
-						text: 'AutoOpen - SAP website'
-					},
-					{
-						type: 'Navigation',
-						parameters: {
-							url: "http://www.sap.com",
-							target: "_blank"
-						},
-						text: 'Navigation - SAP website'
-					},
-					{
-						type: 'Custom',
-						icon: 'sap-icon://add',
-						text: 'Add',
-						tooltip: 'Add',
-						buttonType: 'Accept',
-						visible: function (card) {
-							return card.getId() !== 'card3';
-						},
-						enabled: function (card) {
-							return card.getId() !== 'card1';
-						},
-						action: function (card, button) {
-							alert('Card id = ' + card.getId() + ' Button = ' + button.getText());
-						}
-					},
-					{
-						type: 'Custom',
-						icon: 'sap-icon://delete',
-						text: 'Delete',
-						tooltip: 'Delete',
-						visible: function (card, button) {
-							return card.getId() !== 'card2' && card.getId() !== 'card3';
-						},
-						enabled: true,
-						action: function (card, button) {
-							alert('Card id = ' + card.getId() + ' Button = ' + button.getText());
-						}
-					}
-				],
-				onAction: function (event) {
-
-					var type = event.getParameter('type'),
-							actionSource = event.getParameter('actionSource'),
-							parameters = event.getParameter('parameters');
-
-					console.error("Host Action ", parameters);
-				},
-				resolveDestination: function(sDestinationName) {
-					if (sDestinationName == "Northwind") {
-						return "https://services.odata.org/V3/Northwind/Northwind.svc";
-
-						// or with promise
-						//return Promise.resolve("https://services.odata.org/V3/Northwind/Northwind.svc");
-					}
-				}
-			});
-
-			document.getElementById('cardWithActions1').setAttribute('host', 'host1');
-		});
-	</script>
+	
 </head>
 
 <body id="body" class="sapUiBody">
@@ -104,30 +25,16 @@
 <div id="preview">
 </div>
 
-<ui-integration-card
-		id="cardWithActions"
-		host="host1"
-		manifest="./widgets/cardmanifests/list.actions.manifest.json"
-		data-mode="Active">
+<ui-integration-card id="cardWithActions" host="host1" manifest="./widgets/cardmanifests/list.actions.manifest.json" data-mode="Active">
 </ui-integration-card>
 
-<ui-integration-card
-		id="cardWithActions1"
-		manifest="./widgets/cardmanifests/list.actions.manifest.json"
-		data-mode="Active">
+<ui-integration-card id="cardWithActions1" manifest="./widgets/cardmanifests/list.actions.manifest.json" data-mode="Active">
 </ui-integration-card>
 
-<ui-integration-card
-		id="cardWithDestinations"
-		manifest="./widgets/cardmanifests/destinations.json"
-		host="host1"
-		data-mode="Active">
+<ui-integration-card id="cardWithDestinations" manifest="./widgets/cardmanifests/destinations.json" host="host1" data-mode="Active">
 </ui-integration-card>
 
-<ui-integration-card
-		id="cardWithDestinations2"
-		manifest="./widgets/cardmanifests/destinations2.json"
-		data-mode="Active">
+<ui-integration-card id="cardWithDestinations2" manifest="./widgets/cardmanifests/destinations2.json" data-mode="Active">
 </ui-integration-card>
 
 </body>

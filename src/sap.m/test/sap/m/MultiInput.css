@@ -1,0 +1,9 @@
+body {
+	margin: 0;
+}
+.sapMILI-CTX .sapMInputValHelp {
+	margin-right: 0rem;
+}
+.customClassForVisualTests {
+	caret-color: transparent;
+}

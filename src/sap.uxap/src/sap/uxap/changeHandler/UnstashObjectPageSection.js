@@ -56,5 +56,4 @@ sap.ui.define([
 	};
 
 	return UnstashObjectPageSection;
-},
-/* bExport= */true);
+});

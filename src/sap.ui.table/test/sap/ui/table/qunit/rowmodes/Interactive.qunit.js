@@ -6,9 +6,7 @@ sap.ui.define([
 	"sap/ui/table/qunit/rowmodes/shared/RowCountConstraints",
 	"sap/ui/table/qunit/rowmodes/shared/RowsUpdated",
 	"sap/ui/table/Table",
-	"sap/ui/table/Column",
 	"sap/ui/table/rowmodes/Interactive",
-	"sap/ui/table/utils/TableUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -17,182 +15,15 @@ sap.ui.define([
 	RowCountConstraintsTest,
 	RowsUpdatedTest,
 	Table,
-	Column,
 	InteractiveRowMode,
-	TableUtils,
 	qutils,
 	jQuery
 ) {
 	"use strict";
 
-	const HeightTestControl = TableQUnitUtils.HeightTestControl;
-	const aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
-
 	TableQUnitUtils.setDefaultSettings({
 		rowMode: new InteractiveRowMode(),
 		rows: {path: "/"}
-	});
-
-	/**
-	 * @deprecated As of version 1.119
-	 */
-	QUnit.module("Legacy support", {
-		before: function() {
-			this.mDefaultSettings = TableQUnitUtils.getDefaultSettings();
-			TableQUnitUtils.setDefaultSettings();
-		},
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
-				visibleRowCountMode: "Interactive",
-				rows: {path: "/"},
-				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
-			});
-		},
-		afterEach: function() {
-			this.oTable.destroy();
-		},
-		after: function() {
-			TableQUnitUtils.setDefaultSettings(this.mDefaultSettings);
-		},
-		getDefaultRowMode: function(oTable) {
-			return oTable.getAggregation("_hiddenDependents").filter((oObject) => oObject.isA("sap.ui.table.rowmodes.Interactive"))[0];
-		}
-	});
-
-	QUnit.test("Instance", function(assert) {
-		assert.ok(TableUtils.isA(this.getDefaultRowMode(this.oTable), "sap.ui.table.rowmodes.Interactive"),
-			"The table creates an instance of sap.ui.table.rowmodes.Interactive");
-	});
-
-	QUnit.test("Property getters", async function(assert) {
-		const oTable = await TableQUnitUtils.createTable({
-			visibleRowCountMode: "Interactive",
-			visibleRowCount: 5,
-			fixedRowCount: 1,
-			fixedBottomRowCount: 2,
-			minAutoRowCount: 3,
-			rowHeight: 9
-		});
-		const oMode = this.getDefaultRowMode(oTable);
-
-		assert.strictEqual(oMode.getRowCount(), 5, "The row count is taken from the table");
-		assert.strictEqual(oMode.getFixedTopRowCount(), 1, "The fixed row count is taken from the table");
-		assert.strictEqual(oMode.getFixedBottomRowCount(), 2, "The fixed bottom row count is taken from the table");
-		assert.strictEqual(oMode.getMinRowCount(), 3, "The minimum row count is taken from the table");
-		assert.strictEqual(oMode.getRowContentHeight(), 9, "The row content height is taken from the table");
-
-		oMode.setRowCount(10);
-		oMode.setFixedTopRowCount(10);
-		oMode.setFixedBottomRowCount(10);
-		oMode.setMinRowCount(10);
-		oMode.setRowContentHeight(10);
-
-		assert.strictEqual(oMode.getRowCount(), 5,
-			"After setting the property on the mode, the row count is still taken from the table");
-		assert.strictEqual(oMode.getFixedTopRowCount(), 1,
-			"After setting the property on the mode, the fixed row count is still taken from the table");
-		assert.strictEqual(oMode.getFixedBottomRowCount(), 2,
-			"After setting the property on the mode, the fixed bottom row count is still taken from the table");
-		assert.strictEqual(oMode.getMinRowCount(), 3,
-			"After setting the property on the mode, the minimum row count is still taken from the table");
-		assert.strictEqual(oMode.getRowContentHeight(), 9,
-			"After setting the property on the mode, the row content height is still taken from the table");
-
-		oTable.setVisibleRowCount(10);
-		oTable.setFixedRowCount(2);
-		oTable.setFixedBottomRowCount(3);
-		oTable.setMinAutoRowCount(4);
-		oTable.setRowHeight(14);
-
-		assert.strictEqual(oMode.getRowCount(), 10,
-			"After setting the property on the table, the new row count is taken from the table");
-		assert.strictEqual(oMode.getFixedTopRowCount(), 2,
-			"After setting the property on the table, the new fixed row count is taken from the table");
-		assert.strictEqual(oMode.getFixedBottomRowCount(), 3,
-			"After setting the property on the table, the new fixed bottom row count is taken from the table");
-		assert.strictEqual(oMode.getMinRowCount(), 4,
-			"After setting the property on the table, the new minimum row count is taken from the table");
-		assert.strictEqual(oMode.getRowContentHeight(), 14,
-			"After setting the property on the table, the new row content height is taken from the table");
-	});
-
-	QUnit.test("Row height", function(assert) {
-		const oTable = this.oTable;
-		let sequence = Promise.resolve();
-
-		oTable.addColumn(new Column({template: new HeightTestControl()}));
-		oTable.addColumn(new Column({template: new HeightTestControl()}));
-		oTable.setFixedColumnCount(1);
-		oTable.setRowActionCount(1);
-		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
-
-		function test(mTestSettings) {
-			sequence = sequence.then(async function() {
-				oTable.setRowHeight(mTestSettings.rowHeight || 0);
-				oTable.getColumns()[1].setTemplate(new HeightTestControl({height: (mTestSettings.templateHeight || 1) + "px"}));
-				await oTable.qunit.setDensity(mTestSettings.density);
-				TableQUnitUtils.assertRowHeights(assert, oTable, mTestSettings);
-			});
-		}
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Default height",
-				density: sDensity,
-				expectedHeight: TableUtils.DefaultRowHeight[sDensity]
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Default height; With large content",
-				density: sDensity,
-				templateHeight: TableUtils.DefaultRowHeight[sDensity] * 2,
-				expectedHeight: TableUtils.DefaultRowHeight[sDensity] * 2 + 1
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application-defined height; Less than default",
-				density: sDensity,
-				rowHeight: 20,
-				expectedHeight: 21
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application-defined height; Less than default; With large content",
-				density: sDensity,
-				rowHeight: 20,
-				templateHeight: 100,
-				expectedHeight: 101
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application-defined height; Greater than default",
-				density: sDensity,
-				rowHeight: 100,
-				expectedHeight: 101
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application-defined height; Greater than default; With large content",
-				density: sDensity,
-				rowHeight: 100,
-				templateHeight: 120,
-				expectedHeight: 121
-			});
-		});
-
-		return sequence.then(function() {
-			oTable.qunit.resetDensity();
-		});
 	});
 
 	QUnit.module("Get contexts", {

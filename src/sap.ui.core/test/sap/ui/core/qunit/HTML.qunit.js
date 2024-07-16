@@ -466,16 +466,6 @@ sap.ui.define([
 		okFragment(assert, FRAGMENT_3, "uiAreaB", "UIArea contains expected HTML fragment");
 	});
 
-	/**
-	 * @deprecated As of 1.70
-	 */
-	QUnit.test("predefined content, rerender HTMLControl", async function(assert) {
-		Element.getElementById("html4").invalidate();
-		await nextUIUpdate();
-		// rerender is not async -> check immediately
-		okFragment(assert, FRAGMENT_3, "uiAreaB", "UIArea contains expected HTML fragment");
-	});
-
 	QUnit.test("predefined content, single root, nested controls", async function(assert) {
 		new VerticalLayout({
 			content: [ new HTML("html5") ]
@@ -597,5 +587,4 @@ sap.ui.define([
 		assert.notOk(oHTML.getContent().includes("onerror"), "The error handler should be removed");
 		oHTML.destroy();
 	});
-
 });

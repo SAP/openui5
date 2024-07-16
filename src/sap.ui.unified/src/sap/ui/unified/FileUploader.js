@@ -44,9 +44,6 @@ sap.ui.define([
 	jQuery,
 	FileUploaderHelper
 ) {
-
-
-
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 	var HttpRequestMethod = library.FileUploaderHttpRequestMethod;
@@ -1909,42 +1906,33 @@ sap.ui.define([
 	 * Helper to retrieve the I18N texts for a button
 	 * @private
 	 */
-	 FileUploader.prototype.getBrowseText = function() {
+	FileUploader.prototype.getBrowseText = function() {
 
-		// as the text is the same for all FileUploaders, get it only once
-		if (!FileUploader.prototype._sBrowseText) {
-			var rb = Library.getResourceBundleFor("sap.ui.unified");
-			FileUploader.prototype._sBrowseText = rb.getText("FILEUPLOAD_BROWSE");
-		}
+	   // as the text is the same for all FileUploaders, get it only once
+	   if (!FileUploader.prototype._sBrowseText) {
+		   var rb = Library.getResourceBundleFor("sap.ui.unified");
+		   FileUploader.prototype._sBrowseText = rb.getText("FILEUPLOAD_BROWSE");
+	   }
 
-		return FileUploader.prototype._sBrowseText ? FileUploader.prototype._sBrowseText : "Browse...";
+	   return FileUploader.prototype._sBrowseText ? FileUploader.prototype._sBrowseText : "Browse...";
 
-	};
+   };
 
 	/**
 	 * Helper to retrieve the I18N text for the tooltip when there is no file chosen
 	 * @private
 	 */
-	 FileUploader.prototype._getNoFileChosenText = function() {
+	FileUploader.prototype._getNoFileChosenText = function() {
 
-		// as the text is the same for all FileUploaders, get it only once
-		if (!FileUploader.prototype._sNoFileChosenText) {
-			var rb = Library.getResourceBundleFor("sap.ui.unified");
-			FileUploader.prototype._sNoFileChosenText = rb.getText("FILEUPLOAD_NO_FILE_CHOSEN");
-		}
+	   // as the text is the same for all FileUploaders, get it only once
+	   if (!FileUploader.prototype._sNoFileChosenText) {
+		   var rb = Library.getResourceBundleFor("sap.ui.unified");
+		   FileUploader.prototype._sNoFileChosenText = rb.getText("FILEUPLOAD_NO_FILE_CHOSEN");
+	   }
 
-		return FileUploader.prototype._sNoFileChosenText ? FileUploader.prototype._sNoFileChosenText : "No file chosen";
+	   return FileUploader.prototype._sNoFileChosenText ? FileUploader.prototype._sNoFileChosenText : "No file chosen";
 
-	};
-
-	/**
-	 * Getter for shortened value.
-	 * @private
-	 * @deprecated the value now is the short value (filename only)!
-	 */
-	FileUploader.prototype.getShortenValue = function() {
-		return this.getValue();
-	};
+   };
 
 	/**
 	 * Prepares the hidden IFrame for uploading the file (in static area).
@@ -2189,5 +2177,4 @@ sap.ui.define([
 	};
 
 	return FileUploader;
-
 });

@@ -72,13 +72,6 @@ sap.ui.define([
 			}
 		},
 		constructor: function(sId) {
-			/**
-			 * @deprecated As of version 1.119
-			 */
-			Object.defineProperty(this, "bLegacy", {
-				value: typeof sId === "boolean" ? sId : false
-			});
-
 			RowMode.apply(this, arguments);
 		}
 	});
@@ -123,62 +116,22 @@ sap.ui.define([
 	};
 
 	InteractiveRowMode.prototype.getRowCount = function() {
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (this.bLegacy) {
-			const oTable = this.getTable();
-			return oTable ? oTable.getVisibleRowCount() : 0;
-		}
-
 		return this.getProperty("rowCount");
 	};
 
 	InteractiveRowMode.prototype.getFixedTopRowCount = function() {
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (this.bLegacy) {
-			const oTable = this.getTable();
-			return oTable ? oTable.getFixedRowCount() : 0;
-		}
-
 		return this.getProperty("fixedTopRowCount");
 	};
 
 	InteractiveRowMode.prototype.getFixedBottomRowCount = function() {
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (this.bLegacy) {
-			const oTable = this.getTable();
-			return oTable ? oTable.getFixedBottomRowCount() : 0;
-		}
-
 		return this.getProperty("fixedBottomRowCount");
 	};
 
 	InteractiveRowMode.prototype.getMinRowCount = function() {
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (this.bLegacy) {
-			const oTable = this.getTable();
-			return oTable ? oTable.getMinAutoRowCount() : 0;
-		}
-
 		return this.getProperty("minRowCount");
 	};
 
 	InteractiveRowMode.prototype.getRowContentHeight = function() {
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (this.bLegacy) {
-			const oTable = this.getTable();
-			return oTable ? oTable.getRowHeight() : 0;
-		}
-
 		return this.getProperty("rowContentHeight");
 	};
 
@@ -215,13 +168,6 @@ sap.ui.define([
 	InteractiveRowMode.prototype.getRowContainerStyles = function() {
 		const sHeight = this.getComputedRowCounts().count * this.getBaseRowHeightOfTable() + "px";
 
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (this.bLegacy && !TableUtils.isVariableRowHeightEnabled(this.getTable())) {
-			return {minHeight: sHeight};
-		}
-
 		return {height: sHeight};
 	};
 
@@ -241,13 +187,6 @@ sap.ui.define([
 	 */
 	InteractiveRowMode.prototype.renderCellContentStyles = function(oRM) {
 		let iRowContentHeight = this.getRowContentHeight();
-
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (this.bLegacy) {
-			return;
-		}
 
 		if (iRowContentHeight <= 0) {
 			iRowContentHeight = this.getDefaultRowContentHeightOfTable();
@@ -299,16 +238,6 @@ sap.ui.define([
 	 */
 	InteractiveRowMode.prototype.getConfiguredRowCount = function() {
 		return Math.max(0, this.getMinRowCount(), this.getRowCount());
-	};
-
-	/**
-	 * @this sap.ui.table.rowmodes.Interactive
-	 * @deprecated As of version 1.119
-	 */
-	TableDelegate.onBeforeRendering = function(oEvent) {
-		if (this.bLegacy) {
-			this.getTable().setVisibleRowCount(this.getComputedRowCounts().count);
-		}
 	};
 
 	/**
@@ -390,15 +319,7 @@ sap.ui.define([
 		const iLocationY = ResizeHelper.getEventPosition(this, oEvent).y;
 		const iNewHeight = iLocationY - $Table.find(".sapUiTableCCnt").offset().top - $Ghost.height() - $Table.find(".sapUiTableFtr").height();
 		const iUserDefinedRowCount = Math.floor(iNewHeight / oMode.getBaseRowHeightOfTable());
-		let iNewRowCount = Math.max(1, iUserDefinedRowCount, oMode.getMinRowCount());
-
-		/**
-		 * @deprecated As of version 1.119
-		 */
-		if (oMode.bLegacy) {
-			iNewRowCount = Math.max(iNewRowCount, oMode.getFixedTopRowCount() + oMode.getFixedBottomRowCount() + 1);
-			this.setVisibleRowCount(iNewRowCount);
-		}
+		const iNewRowCount = Math.max(1, iUserDefinedRowCount, oMode.getMinRowCount());
 
 		oMode.setRowCount(iNewRowCount);
 

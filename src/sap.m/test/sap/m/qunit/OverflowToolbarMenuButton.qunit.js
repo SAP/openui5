@@ -5,15 +5,15 @@ sap.ui.define([
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarMenuButton",
 	"sap/m/OverflowToolbarLayoutData",
-	"sap/ui/core/Core",
-	"sap/ui/core/IconPool"
+	"sap/ui/core/IconPool",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	mLibrary,
 	OverflowToolbar,
 	OverflowToolbarMenuButton,
 	OverflowToolbarLayoutData,
-	oCore,
-	IconPool
+	IconPool,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -34,14 +34,14 @@ sap.ui.define([
 
 			// Outside of overflow
 			oMenuButton.setTooltip(expectedToolbarTooltip);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 
 			assert.notOk(oMenuButton._bInOverflow, "OverflowToolbarMenuButton is not in the overflow area");
 			assert.strictEqual(oMenuButton.getTooltip(), expectedToolbarTooltip, "OverflowToolbarMenuButton tooltip value is correct");
 
 			// In overflow
 			oMenuButton.setLayoutData(oLayoutData);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 
 			assert.ok(_inOverflowAndVisible(oOTB, oMenuButton), "Overflow button is visible and MenuButton is in the overflow area");
 			assert.strictEqual(oMenuButton.getTooltip(), expectedOverflowTooltip, "OverflowToolbarMenuButton tooltip value is correct");
@@ -60,7 +60,7 @@ sap.ui.define([
 		assert.strictEqual(oMenuButton.getTooltip(), sTooltip, "OverflowToolbarMenuButton tooltip value is correct");
 
 		oMenuButton.setLayoutData(oLayoutData);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 
 		// 2. Doesn't show anything when in overflow
 		assert.ok(_inOverflowAndVisible(oOTB, oMenuButton), "Overflow button is visible and MenuButton is in the overflow area");
@@ -70,7 +70,7 @@ sap.ui.define([
 	var oOTBPriority = mLibrary.OverflowToolbarPriority;
 
 	QUnit.module("Regular MenuButton Tests", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.sMenuButtonText = "Menu";
 			this.sIcon = "sap-icon://bullet-text";
 			this.oOTB = new OverflowToolbar({
@@ -83,7 +83,7 @@ sap.ui.define([
 			});
 
 			this.oOTB.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oOTB.destroy();
@@ -91,7 +91,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("getText value", function (assert) {
+	QUnit.test("getText value", async function(assert) {
 		var oMenuButton = this.oOTB.getContent()[0],
 			oLayoutData = new OverflowToolbarLayoutData({
 				priority: oOTBPriority.AlwaysOverflow
@@ -101,7 +101,7 @@ sap.ui.define([
 		assert.strictEqual(oMenuButton.getText(), "", "OverflowToolbarMenuButton text value is correct");
 
 		oMenuButton.setLayoutData(oLayoutData);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(this.oOTB._getOverflowButton().$().is(":visible"), "OverflowMenuButton is visible");
 		assert.ok(oMenuButton._bInOverflow, "OverflowToolbarMenuButton is in the overflow area");
@@ -128,7 +128,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Split MenuButton Tests", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.sMenuButtonText = "Menu";
 			this.sIcon = "sap-icon://bullet-text";
 			this.oOTB = new OverflowToolbar({
@@ -141,7 +141,7 @@ sap.ui.define([
 			});
 
 			this.oOTB.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oOTB.destroy();

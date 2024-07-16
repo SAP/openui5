@@ -1,0 +1,8 @@
+.customLabel {
+	margin: 0 0.5rem;
+	vertical-align: middle;
+	vertical-align: -webkit-baseline-middle;
+}
+.customClassForVisualTests {
+	caret-color: transparent;
+}

@@ -14,4 +14,4 @@ sap.ui.define([
 		"unhideControl": "default",
 		"renameField": RenameFormElement
 	};
-}, /* bExport= */true);
+});

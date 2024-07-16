@@ -14,7 +14,6 @@ sap.ui.define([
 	createAndAppendDiv("content");
 
 	function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
-
 		var view;
 		var pView;
 
@@ -206,51 +205,6 @@ sap.ui.define([
 				assert.notOk(oDomRef, "Content " + oConfig.idsToBeChecked[i] + " should no longer be there");
 			}
 		});
-
-		/**
-		 * @deprecated since 1.120
-		 */
-		QUnit.test("Cloning: Event listeners are called on the correct controller instance", function(assert) {
-			var fnWaitForNestedViews = function (oView) {
-
-				var pNestedView1 = oView.byId("MyJSView").loaded();
-				var pNestedView2 = oView.byId("MyXMLView").loaded();
-				var pNestedView3 = oView.byId("MyHTMLView").loaded();
-
-				return Promise.all([pNestedView1, pNestedView2, pNestedView3]).then(function () {
-					return oView;
-				});
-			};
-
-			return fnViewFactory().then(function(oView) {
-				assert.expect(10);
-
-				var oTmpl = oView, oClone;
-				if (!oTmpl.sViewName) {
-					// Cloning views created from string or object (via viewContent) currently fails for HTML and JSON views
-					//	We will address this in a separate change, until then we skip testing those cases
-					assert.expect(5);
-					assert.ok(true, "Skipping clone of views created from string of object");
-					return;
-				}
-				oClone = oTmpl.clone();
-
-				return oClone.loaded()
-					.then(fnWaitForNestedViews)
-					.then(function() {
-						oTmpl.fireBeforeRendering();
-						assert.ok(window.onBeforeRenderingCalled === oTmpl.getController(), "Event is called on correct controller instance");
-
-						oClone.fireBeforeRendering();
-						assert.ok(window.onBeforeRenderingCalled === oClone.getController(), "Event is called on correct controller instance");
-
-						// Cleanup
-						oTmpl.destroy();
-						oClone.destroy();
-					});
-			});
-		});
-
 	}
 
 	return testsuite;

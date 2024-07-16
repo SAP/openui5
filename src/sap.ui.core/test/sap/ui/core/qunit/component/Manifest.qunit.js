@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	'sap/ui/core/Manifest'
 ], function(future, Localization, Manifest) {
-
 	"use strict";
 	/*global QUnit */
 
@@ -55,56 +54,6 @@ sap.ui.define([
 		});
 
 		this.testGeneric(assert);
-	});
-
-	/**
-	 * @deprecated
-	 */
-	QUnit.test("getEntry (future=false)", function(assert) {
-		future.active = false;
-		this.sComponentName = "testdata.foo.bar";
-		this.oManifestJson = {
-			"sap.app": {
-				"id": this.sComponentName,
-				"title": "Foo"
-			},
-			"unit.test1": {
-				"boolean": false,
-				"string": "buz",
-				"null": null,
-				"object": {
-					"value": true
-				}
-			},
-			"unit.test2": "invalid"
-		};
-		this.oManifest = new Manifest(this.oManifestJson);
-
-		this.testGeneric(assert);
-
-		// General
-		assert.strictEqual(this.oManifest.getEntry(), null, "'getEntry' without a parameter should return null.");
-		assert.strictEqual(this.oManifest.getEntry(""), null, "'getEntry' with an empty string should return null.");
-
-		// Legacy syntax
-		assert.deepEqual(this.oManifest.getEntry("sap.app"), this.oManifestJson["sap.app"], "'getEntry' with legacy syntax should return top-level entry.");
-		assert.strictEqual(this.oManifest.getEntry("baz.buz"), undefined, "'getEntry' with legacy syntax should return 'null' for not existing entries.");
-		assert.strictEqual(this.oManifest.getEntry("foo"), null, "'getEntry' with legacy syntax should return 'null' for entries without a dot.");
-		assert.strictEqual(this.oManifest.getEntry("unit.test2"), null, "'getEntry' with legacy syntax should return 'null' for top-level entries that are not an object.");
-
-		// New syntax
-		assert.deepEqual(this.oManifest.getEntry("/sap.app"), this.oManifestJson["sap.app"], "'getEntry' with new syntax should return top-level entry.");
-		assert.strictEqual(this.oManifest.getEntry("/sap.app/title"), this.oManifestJson["sap.app"]["title"], "'getEntry' with new syntax should return deep entry.");
-		assert.strictEqual(this.oManifest.getEntry("/unit.test1/notExisting"), undefined, "'getEntry' with new syntax should return 'undefined' for not existing entries.");
-		assert.strictEqual(this.oManifest.getEntry("/unit.test1/boolean"), false, "'getEntry' with new syntax should return booleans.");
-		assert.strictEqual(this.oManifest.getEntry("/unit.test1/boolean/toString"), undefined, "'getEntry' with new syntax should not return properties of a boolean.");
-		assert.strictEqual(this.oManifest.getEntry("/unit.test1/string"), "buz", "'getEntry' with new syntax should return strings.");
-		assert.strictEqual(this.oManifest.getEntry("/unit.test1/string/length"), undefined, "'getEntry' with new syntax should not return properties of a string.");
-		assert.strictEqual(this.oManifest.getEntry("/unit.test1/null"), null, "'getEntry' with new syntax should return null values.");
-		assert.strictEqual(this.oManifest.getEntry("/unit.test1/null/foo"), undefined, "'getEntry' with new syntax should not return native properties of null values.");
-		assert.deepEqual(this.oManifest.getEntry("/unit.test1/object"), { value: true }, "'getEntry' with new syntax should return objects.");
-		assert.strictEqual(this.oManifest.getEntry("/unit.test1/object/toString"), undefined, "'getEntry' with new syntax should not return native methods of object values.");
-		future.active = undefined;
 	});
 
 	QUnit.test("getEntry (future=true)", function(assert) {
@@ -280,5 +229,4 @@ sap.ui.define([
 
 		Localization.setLanguage(sOldLanguage);
 	});
-
 });

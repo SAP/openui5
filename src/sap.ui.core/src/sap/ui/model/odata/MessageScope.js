@@ -36,4 +36,4 @@ sap.ui.define(function() {
 
 	return MessageScope;
 
-}, /* bExport= */ true);
+});

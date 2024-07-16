@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	Element,
@@ -23,7 +23,7 @@ sap.ui.define([
 	Label,
 	Input,
 	JSONModel,
-	oCore,
+	nextUIUpdate,
 	FlexTestAPI
 ) {
 	"use strict";
@@ -31,7 +31,7 @@ sap.ui.define([
 	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
 
 	QUnit.module("using sap.ui.layout.changeHandler.RenameSimpleForm with a new change format", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.sNewValue = "new label";
 
 			this.oTitle0 = new Title({id : "component---Title0",  text : "Title 0"});
@@ -59,7 +59,7 @@ sap.ui.define([
 			this.oSimpleForm.placeAt("qunit-fixture");
 			this.oSimpleForm.setModel(this.oModel);
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
 			this.oFormElement = this.oFormContainer.getAggregation("formElements")[0];
@@ -67,7 +67,7 @@ sap.ui.define([
 
 			this.oMockedComponent = {
 				createId: function (sString) {return "component---" + sString;},
-				getLocalId: function (sString) {return sString.substring("component---".length);}
+				getLocalId: function (sString) {return sString.substring(12);}
 			};
 
 			this.mPropertyBag = {

@@ -1403,4 +1403,4 @@ sap.ui.define([
 	};
 
 	return _AggregationHelper;
-}, /* bExport= */false);
+});

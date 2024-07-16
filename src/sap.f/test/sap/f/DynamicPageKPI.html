@@ -1,17 +1,22 @@
 <!DOCTYPE HTML>
 <html>
-<head>
+<head><meta charset="utf-8">
     <title>sap.f.DynamicPage test page</title>
 
     <script src="shared-config.js"></script>
     <script src="../../../resources/sap-ui-core.js"
             id="sap-ui-bootstrap"
-            data-sap-ui-libs="sap.m, sap.f">
+            data-sap-ui-libs="sap.m, sap.f"
+            data-sap-ui-async="true"
+            data-sap-ui-compat-version="edge"
+            data-sap-ui-on-init="module:local/DynamicPageKPI"
+            data-sap-ui-resource-roots='{"local":"./"}'
+    >
     </script>
 
-    <style>html, body, .container {height: 100%}</style>
+    <link rel="stylesheet" href="./DynamicPageKPI.css">
 
-    <script id="view1" type="sapui5/xmlview">
+    <script id="view1" type="text/xml">
 		<core:View
 			id="view1"
 			height="100%"
@@ -103,11 +108,7 @@
 </head>
 
 <body id="body" class="sapUiBody">
-<script>
-	(function (jQuery) {
-		sap.ui.xmlview({viewContent:jQuery('#view1').html()}).placeAt("content");
-	}(jQuery))
-</script>
+
 <div class="container" id="content"></div>
 </body>
 </html>

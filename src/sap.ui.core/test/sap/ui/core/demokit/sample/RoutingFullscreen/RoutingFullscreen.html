@@ -1,33 +1,21 @@
 <!DOCTYPE HTML>
 <html>
 
-<head>
+<head><meta charset="utf-8">
 	<title>Fullscreen Routing sample</title>
 
-	<script
-			src='../../../../../../../resources/sap-ui-core.js'
-			data-sap-ui-theme='sap_belize'
-			data-sap-ui-libs='sap.m'
-			data-sap-ui-bindingSyntax='complex'
-			data-sap-ui-resourceroots='{"sap.ui.core.sample.RoutingFullscreen.routingApp": "./routingApp"}'>
+	<script src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-resource-roots='{"sap.ui.core.sample.RoutingFullscreen.routingApp":"./routingApp","local":"./"}'
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:local/RoutingFullscreen"
+	>
 	</script>
 
 
 
-	<script>
-		sap.ui.require(["sap/ui/core/Core"], function (Core) {
-			"use strict";
-			Core.ready().then(function() {
-				new sap.ui.core.ComponentContainer({
-					height : "100%",
-					name : "sap.ui.core.sample.RoutingFullscreen.routingApp",
-					settings : {
-						id : "routingApp"
-					}
-				}).placeAt("content");
-			});
-		});
-	</script>
+	
 
 </head>
 <body id="content" style="margin: 0" class="sapUiBody">

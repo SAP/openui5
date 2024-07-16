@@ -22,9 +22,9 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/Label",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Messaging",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
@@ -49,9 +49,9 @@ sap.ui.define([
 	mobileLibrary,
 	Label,
 	InvisibleText,
-	oCore,
 	Library,
 	Messaging,
+	nextUIUpdate,
 	$
 ) {
 	"use strict";
@@ -84,7 +84,7 @@ sap.ui.define([
 		}
 
 		oPage.placeAt("qunit-fixture-visible");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 
 		return oPage;
 	}

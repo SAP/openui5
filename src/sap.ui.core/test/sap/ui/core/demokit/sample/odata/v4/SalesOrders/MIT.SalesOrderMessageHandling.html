@@ -1,9 +1,7 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<style type="text/css">
-			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
-		</style>
+	<head><meta charset="utf-8">
+		<link rel="stylesheet" href="./MIT.SalesOrderMessageHandling.css">
 		<title>Manual Integration Test: Message Handling</title>
 	</head>
 	<body>
@@ -274,16 +272,16 @@
 				<code>Sales Order Line Items</code> table.</li>
 			<li><b>Check:</b> The new sales order line item is at the end of the list.</li>
 			<li>Change the <code>Filter</code> value in the <code>Sales Order Line Items</code>
-				table from <code>Show All</code> to <code>With Error Messages</code>.<br />
+				table from <code>Show All</code> to <code>With Error Messages</code>.<br>
 				<b>Check:</b> Only the item with the error and the new item at the end are
-				displayed.<br />
+				displayed.<br>
 			</li>
 			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
 				still <code>4</code>.</li>
 			<li>Change the <code>Filter</code> value in the <code>Sales Order Line Items</code>
-				table from <code>With Error Messages</code> to <code>Show All</code>.<br />
+				table from <code>With Error Messages</code> to <code>Show All</code>.<br>
 				<b>Check:</b> All 9 line items are displayed and the new sales order line item is
-				still at the end of the list.<br />
+				still at the end of the list.<br>
 			</li>
 			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
 				still <code>4</code>.</li>
@@ -322,7 +320,7 @@
 			<li><b>Check:</b> That you got a dialog showing a warning and an error and asking
 				you whether to continue or not.</li>
 			<li>Click on <code>No</code>/li>
-			<li><b>Check:</b> The dialog was closed and the Sales Order is not yet confirmed.
+			</li><li><b>Check:</b> The dialog was closed and the Sales Order is not yet confirmed.
 				</li>
 			<li>Click again on <code>Confirm selected sales order</code> in the <code>New Sales
 				Orders</code> table.</li>

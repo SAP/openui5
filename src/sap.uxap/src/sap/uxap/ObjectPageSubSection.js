@@ -293,9 +293,9 @@ sap.ui.define([
 	 * @returns {string}
 	 * @restricted
 	 */
-	 ObjectPageSubSection.prototype._getColumnSpan = function () {
-		return this.getProperty("_columnSpan");
-	};
+	ObjectPageSubSection.prototype._getColumnSpan = function () {
+	   return this.getProperty("_columnSpan");
+   };
 
 	/**
 	 * Setter for the private "_columnSpan" property
@@ -373,21 +373,21 @@ sap.ui.define([
 	 * @override
 	 * @private
 	 */
-	 ObjectPageSubSection.prototype._getShouldLabelTitle = function () {
-		if (this._getUseTitleOnTheLeft()) {
-			// in case layout is "TitleOnTheLeft", the title of promoted section
-			// is visible and should be labeled if showTitle is true
-			return this.getShowTitle();
-		}
+	ObjectPageSubSection.prototype._getShouldLabelTitle = function () {
+	   if (this._getUseTitleOnTheLeft()) {
+		   // in case layout is "TitleOnTheLeft", the title of promoted section
+		   // is visible and should be labeled if showTitle is true
+		   return this.getShowTitle();
+	   }
 
-		if (this._sBorrowedTitleDomId) {
-			// in case section is promoted the title is not displayed
-			// on the subsection level - we don't need to include it in the aria label
-			return false;
-		}
+	   if (this._sBorrowedTitleDomId) {
+		   // in case section is promoted the title is not displayed
+		   // on the subsection level - we don't need to include it in the aria label
+		   return false;
+	   }
 
-		return this.getShowTitle();
-	};
+	   return this.getShowTitle();
+   };
 
 	/**
 	 * Returns Title DOM ID of the Title of this SubSection
@@ -511,17 +511,6 @@ sap.ui.define([
 		};
 	});
 
-	/**@deprecated */
-	ObjectPageSubSection.prototype._unStashControls = function () {
-		var oUnstashedControl;
-		this._aStashedControls.forEach(function (oControlHandle) {
-			oControlHandle.control.unstash();
-			oUnstashedControl = Element.getElementById(oControlHandle.control.getId());
-			this.addAggregation(oControlHandle.aggregationName, oUnstashedControl, true);
-		}.bind(this));
-		this._aStashedControls = [];
-	};
-
 	ObjectPageSubSection.prototype._unStashControlsAsync = function () {
 		var oUnstashedControl;
 
@@ -541,35 +530,6 @@ sap.ui.define([
 			this._aUnStashedControls = [];
 			this._aStashedControls = [];
 		});
-	};
-
-	/**@deprecated */
-	ObjectPageSubSection.prototype.connectToModels = function () {
-		var aBlocks = this.getBlocks() || [],
-			aMoreBlocks = this.getMoreBlocks() || [],
-			sCurrentMode = this.getMode();
-
-		this._unStashControls();
-
-		aBlocks.forEach(function (oBlock) {
-			if (oBlock instanceof BlockBase) {
-				if (!oBlock.getMode()) {
-					oBlock.setMode(sCurrentMode);
-				}
-				oBlock.connectToModels();
-			}
-		});
-
-		if (aMoreBlocks.length > 0 && sCurrentMode === ObjectPageSubSectionMode.Expanded) {
-			aMoreBlocks.forEach(function (oMoreBlock) {
-				if (oMoreBlock instanceof BlockBase) {
-					if (!oMoreBlock.getMode()) {
-						oMoreBlock.setMode(sCurrentMode);
-					}
-					oMoreBlock.connectToModels();
-				}
-			});
-		}
 	};
 
 	ObjectPageSubSection.prototype.connectToModelsAsync = function () {

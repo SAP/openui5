@@ -28,4 +28,4 @@ sap.ui.define([
 
 
 	return JSONValueHelpDelegate;
-}, /* bExport= */false);
+});

@@ -11,23 +11,9 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Button",
 	"sap/m/Text",
-	"sap/base/Log",
-	"sap/base/util/deepExtend",
-	"sap/base/util/ObjectPath"
-	],
-	function (Bootstrap,
-			  Main,
-			  CommunicationBus,
-			  channelNames,
-			  RuleSet,
-			  RuleSetLoader,
-			  Icon,
-			  Panel,
-			  Button,
-			  Text,
-			  Log,
-			  deepExtend,
-			  ObjectPath) {
+	"sap/base/util/deepExtend"
+],
+	function(Bootstrap, Main, CommunicationBus, channelNames, RuleSet, RuleSetLoader, Icon, Panel, Button, Text, deepExtend) {
 		"use strict";
 
 		var spyChannel = function (channelName) {
@@ -70,52 +56,6 @@ sap.ui.define([
 			return {
 				lib: oLib,
 				ruleset: oRuleSet
-			};
-		}
-
-		/**
-		 * @deprecated As of version 1.120
-		 */
-		function createValidRules(sRuleId, iNumberOfRules) {
-			var aRules = [];
-
-			for (var i = 1; i <= iNumberOfRules; i++) {
-				aRules.push(createValidRule(sRuleId + i));
-			}
-
-			return aRules;
-		}
-
-		/**
-		 * @deprecated As of version 1.120
-		 */
-		function createRuleSet(sLibName, sRuleId, iNumberOfRules) {
-			var oLib = {
-				name: sLibName,
-				niceName: "sap library"
-			};
-
-			var oRuleSet = new RuleSet(oLib);
-
-			var aRules = createValidRules(sRuleId, iNumberOfRules);
-			aRules.forEach(function (oRule) {
-				oRuleSet.addRule(oRule, {});
-			});
-
-			return {
-				lib: oLib,
-				ruleset: oRuleSet
-			};
-		}
-
-		/**
-		 * @deprecated As of version 1.120
-		 */
-		function createRuleLibAsObject(sLibName, sRuleId, iNumberOfRules) {
-			return {
-				name: sLibName,
-				niceName: "sap library",
-				ruleset: createValidRules(sRuleId, iNumberOfRules)
 			};
 		}
 
@@ -349,141 +289,5 @@ sap.ui.define([
 			// Assert
 			assert.equal(Main._aSelectedRules.length, 0, "Should reset all selected rules in _aSelectedRules");
 			assert.equal(Object.keys(Main._oSelectedRulesIds).length, 0, "Should reset all selected rules in _oSelectedRulesIds");
-		});
-
-		/**
-		 * @deprecated As of version 1.120
-		 */
-		QUnit.test("_fetchRuleLib with ruleset of type RuleSet and library not present", function (assert) {
-			// Arrange
-			sinon.stub(ObjectPath, "get", function (sLibName) {
-				return {
-					library: {
-						support: createRuleSet("sap.uxap", "validRule", 1)
-					}
-				};
-			});
-
-			// Act
-			RuleSetLoader._fetchRuleLib("sap.uxap");
-
-			//Assert
-			assert.ok(RuleSetLoader._mRuleLibs["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
-			assert.equal(Object.keys(RuleSetLoader._mRuleLibs["sap.uxap"].ruleset._mRules).length, 1, "Should have one fetched rule");
-
-			ObjectPath.get.restore();
-		});
-
-		/**
-		 * @deprecated As of version 1.120
-		 */
-		QUnit.test("_fetchRuleLib with ruleset of type RuleSet and library present in the available rulesets", function (assert) {
-			// Arrange
-			sinon.stub(ObjectPath, "get", function (sLibName) {
-				return {
-					library: {
-						support: createRuleSet("sap.uxap", "anotherValidRule", 2)
-					}
-				};
-			});
-
-			// Setup initial RuleSet
-			RuleSetLoader._mRuleLibs["sap.uxap"] = createRuleSet("sap.uxap", "initialValidRule", 2);
-
-			// Act
-			RuleSetLoader._fetchRuleLib("sap.uxap");
-
-			//Assert
-			assert.ok(RuleSetLoader._mRuleLibs["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
-			assert.equal(Object.keys(RuleSetLoader._mRuleLibs["sap.uxap"].ruleset._mRules).length, 4, "Should have four fetched rules");
-
-			ObjectPath.get.restore();
-		});
-
-		/**
-		 * @deprecated As of version 1.120
-		 */
-		QUnit.test("_fetchRuleLib with ruleset of type Object and library not present in the available rulesets", function (assert) {
-			// Arrange
-			sinon.stub(ObjectPath, "get", function (sLibName) {
-				return {
-					library: {
-						support: createRuleLibAsObject("sap.uxap", "validRule", 3)
-					}
-				};
-			});
-
-			// Act
-			RuleSetLoader._fetchRuleLib("sap.uxap");
-
-			//Assert
-			assert.ok(RuleSetLoader._mRuleLibs["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
-			assert.equal(Object.keys(RuleSetLoader._mRuleLibs["sap.uxap"].ruleset._mRules).length, 3, "Should have three fetched rules");
-
-			ObjectPath.get.restore();
-		});
-
-		/**
-		 * @deprecated As of version 1.120
-		 */
-		QUnit.test("_fetchRuleLib join two types of rulesets", function (assert) {
-			// Arrange
-			sinon.stub(ObjectPath, "get", function (sLibName) {
-				var oRuleSet = createRuleLibAsObject("sap.uxap", "validRule", 2);
-
-				// Test if a ruleset with nested arrays of rules joins them correctly
-				// ruleset: [
-				// 	rule1,
-				// 	rule2,
-				// 	[
-				// 		rule3,
-				// 		rule4
-				// 	],
-				// 	rule5,
-				// 	rule6
-				// ]
-				oRuleSet.ruleset.push(createValidRules("additionalRule", 2));
-				oRuleSet.ruleset.push(createValidRule("additionalRule_5"));
-				oRuleSet.ruleset.push(createValidRule("additionalRule_6"));
-
-				return {
-					library: {
-						support: oRuleSet
-					}
-				};
-			});
-
-			// Setup initial RuleSet
-			RuleSetLoader._mRuleLibs["sap.uxap"] = createRuleSet("sap.uxap", "initialValidRule", 2);
-
-			// Act
-			RuleSetLoader._fetchRuleLib("sap.uxap");
-
-			//Assert
-			assert.ok(RuleSetLoader._mRuleLibs["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
-			assert.equal(Object.keys(RuleSetLoader._mRuleLibs["sap.uxap"].ruleset._mRules).length, 8, "Should have eight fetched rules");
-
-			ObjectPath.get.restore();
-		});
-
-		/**
-		 * @deprecated As of version 1.120
-		 */
-		QUnit.test("_fetchRuleLib with unknown library", function (assert) {
-			// Arrange
-			sinon.stub(ObjectPath, "get", function (sLibName) {
-				return;
-			});
-			sinon.spy(Log, "error");
-
-			// Act
-			RuleSetLoader._fetchRuleLib("sap.test");
-
-			//Assert
-			assert.notOk(RuleSetLoader._mRuleLibs["sap.test"], "Should be undefined");
-			assert.equal(Log.error.callCount, 1, "should have logged an error");
-
-			ObjectPath.get.restore();
-			Log.error.restore();
 		});
 	});

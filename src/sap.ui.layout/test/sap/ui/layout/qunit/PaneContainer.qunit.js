@@ -4,13 +4,13 @@ sap.ui.define([
 	"sap/ui/layout/ResponsiveSplitter",
 	"sap/ui/layout/SplitPane",
 	"sap/m/Text",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	PaneContainer,
 	ResponsiveSplitter,
 	SplitPane,
 	Text,
-	Core
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -31,7 +31,7 @@ sap.ui.define([
 
 	QUnit.module("Reflecting properties on the internal AssociativeSplitter");
 
-	QUnit.test("Orientation", function (assert) {
+	QUnit.test("Orientation", async function(assert) {
 		// arrange
 		var oPaneContainer = new PaneContainer({
 			panes: [
@@ -44,14 +44,14 @@ sap.ui.define([
 		});
 
 		oWrapper.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oWrapper.$().find(".sapUiLoSplitterBar[aria-orientation='vertical']").length, "'Horizontal' orientation is properly passed to the internal AssociativeSplitter");
 
 		// act
 		oPaneContainer.setOrientation("Vertical");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oWrapper.$().find(".sapUiLoSplitterBar[aria-orientation='horizontal']").length, "'Vertical' orientation is properly passed to the internal AssociativeSplitter");

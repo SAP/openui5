@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/AnimationMode",
 	'sap/ui/core/Control',
 	'./WheelSliderRenderer',
 	"sap/ui/core/ControlBehavior",
@@ -10,10 +11,9 @@ sap.ui.define([
 	'sap/ui/Device',
 	"sap/ui/events/KeyCodes",
 	"sap/m/Button",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/thirdparty/jquery"
 ],
-	function(Control, WheelSliderRenderer, ControlBehavior, IconPool, Device, KeyCodes, Button, jQuery, Configuration) {
+	function(AnimationMode, Control, WheelSliderRenderer, ControlBehavior, IconPool, Device, KeyCodes, Button, jQuery) {
 		"use strict";
 
 		/**
@@ -103,7 +103,7 @@ sap.ui.define([
 		});
 
 		var sAnimationMode = ControlBehavior.getAnimationMode();
-		var bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
+		var bUseAnimations = sAnimationMode !== AnimationMode.none && sAnimationMode !== AnimationMode.minimal;
 		var SCROLL_ANIMATION_DURATION = bUseAnimations ? 200 : 0;
 		var LABEL_HEIGHT = 32;
 		var ARROW_HEIGHT = 32;

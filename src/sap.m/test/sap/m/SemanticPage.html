@@ -3,23 +3,19 @@
 	<head>
 		<meta charset="utf-8">
 		<title>sap.m.SemanticPage</title>
-		<style>
-			#statusLabel {
-				font-weight: bold;
-				color: green;
-			}
-		</style>
+		<link rel="stylesheet" href="./SemanticPage.css">
 		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				src="../../../resources/sap-ui-core.js"
 				data-sap-ui-async="true"
-				data-sap-ui-compatVersion="edge"
 				data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.core, sap.uxap"
-				data-sap-ui-onInit="module:local/SemanticPage"
-				data-sap-ui-resourceRoots='{
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/SemanticPage"
+				data-sap-ui-resource-roots='{
 					"local": "./",
 					"qunit.internal.acc": "../../../test-resources/sap/ui/core/qunit/internal/acc"
-				}'>
+				}'
+		>
 		</script>
 		
 	</head>

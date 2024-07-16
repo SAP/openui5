@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<head><meta charset="UTF-8">
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>UI Adaptation at Runtime</title>
 		<!-- Bootstrap the unified shell in sandbox mode for standalone usage.
 
@@ -19,87 +19,9 @@
 			 The sandbox platform is restricted to development or demo use cases and must NOT be used
 			 for productive scenarios.
 		-->
-		<script type="text/javascript">
-			window["sap-ushell-config"] = {
+		
 
-				defaultRenderer : "fiori2",
-
-				bootstrapPlugins: {
-					"RuntimeAuthoringPlugin" : {
-						"component": "sap.ushell.plugins.rta"
-					},
-					"PersonalizePlugin": {
-						"component": "sap.ushell.plugins.rta-personalize"
-					}
-				},
-				renderers: {
-					fiori2: {
-						componentData: {
-							config: {
-								enableMergeAppAndShellHeaders: true,
-								search: "hidden"
-							}
-						}
-					}
-				},
-				applications: {
-					"masterDetail-display": {
-						"additionalInformation": "SAPUI5.Component=sap.ui.rta.test.additionalElements",
-						"applicationType": "URL",
-						"url": "./",
-						"description": "Additional Elements Test App",
-						"title": "UI Flexibility",
-						"applicationDependencies": {
-							"self": { name: "sap.ui.rta.test.additionalElements" },
-							"manifest": true,
-							"asyncHints": {
-								"libs": [
-									{ "name": "sap.ui.core" },
-									{ "name": "sap.m" },
-									{ "name": "sap.ui.dt" },
-									{ "name": "sap.ui.rta" },
-									{ "name": "sap.ui.layout" },
-									{ "name": "sap.ui.comp" },
-									{ "name": "sap.uxap" }
-								]
-							}
-						}
-					}
-				},
-				services: {
-					EndUserFeedback: {
-						adapter: {
-							config: {
-								enabled: true
-							}
-						}
-					}
-				}
-			};
-
-			var __sPathPrefix = document.location.pathname.match(/(.*)\/test-resources\//)[1];
-
-			document.write('<script src="' + __sPathPrefix + '/resources/sap/ushell/bootstrap/sandbox2.js" id="sap-ushell-bootstrap"><' + '/script>');
-		</script>
-
-		<script>
-			document.write('\
-				<script \
-					id="sap-ui-bootstrap" \
-					data-sap-ui-theme="sap_horizon" \
-					data-sap-ui-language="en" \
-					data-sap-ui-noConflict="true" \
-					data-sap-ui-async="true" \
-					data-sap-ui-libs="sap.m, sap.ushell, sap.ui.rta" \
-					data-sap-ui-xx-bindingSyntax="complex" \
-					data-sap-ui-flexibilityServices=\'[{"connector": "LocalStorageConnector"}]\' \
-					data-sap-ui-resourceroots=\'{"flpSandboxConfig": "./flpSandboxConfig"}\'\
-					data-sap-ui-oninit="module:flpSandboxConfig/appStart" \
-					src="' +
-				document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
-				><' + '/script>'
-			);
-		</script>
+		<script src="./flpSandbox.js"></script>
 	</head>
 
 	<!-- UI Content -->

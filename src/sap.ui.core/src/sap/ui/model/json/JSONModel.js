@@ -63,9 +63,7 @@ sap.ui.define([
 			}
 		},
 
-		metadata : {
-			publicMethods : ["setJSON", "getJSON"]
-		}
+		metadata : {}
 
 	});
 
@@ -426,10 +424,6 @@ sap.ui.define([
 	 */
 	JSONModel.prototype._getObject = function (sPath, oContext) {
 		let oNode = null;
-		/** @deprecated As of version 1.88.0 */
-		if (this.isLegacySyntax()) {
-			oNode = this.oData;
-		}
 		if (oContext instanceof Context) {
 			oNode = this._getObject(oContext.getPath());
 		} else if (oContext != null) {

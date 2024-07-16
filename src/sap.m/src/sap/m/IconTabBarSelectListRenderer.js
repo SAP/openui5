@@ -109,4 +109,4 @@ sap.ui.define([
 	};
 
 	return IconTabBarSelectListRenderer;
-}, /* bExport= */ true);
+});

@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/core/date/UI5Date"
-],
-function (Log, ManagedObject, CommunicationBus, channelNames, constants, URI, UI5Date) {
+], function (Log, ManagedObject, CommunicationBus, channelNames, constants, URI, UI5Date) {
 	"use strict";
 
 	var oIFrameController = null;
@@ -187,4 +186,4 @@ function (Log, ManagedObject, CommunicationBus, channelNames, constants, URI, UI
 
 	return oIFrameController;
 
-}, true);
+});

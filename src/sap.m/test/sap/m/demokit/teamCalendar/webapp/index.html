@@ -6,30 +6,23 @@
 		<title>Team Calendar</title>
 
 		<script id="sap-ui-bootstrap"
-			src="../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_horizon"
-			data-sap-ui-resourceroots='{
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-frame-options="trusted"
+				data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
+				data-sap-ui-resource-roots='{
 				"teamCalendar": "./",
 				"model": "./model/"
 			}'
-			data-sap-ui-compatVersion="edge"
-			data-sap-ui-async="true"
-			data-sap-ui-frameOptions="trusted"
-			data-sap-ui-oninit="module:sap/ui/core/ComponentSupport">
+		>
 		</script>
 
-		<style>
-			html, body { height: 100%; }
-		</style>
+		<link rel="stylesheet" href="./index.css">
 	</head>
 
 	<body class="sapUiBody" id="content">
-		<div data-sap-ui-component
-			data-name="teamCalendar"
-			data-height="100%"
-			data-id="container"
-			data-settings='{"id" : "teamCalendar"}'
-			style="height: 100%">
+		<div data-sap-ui-component data-name="teamCalendar" data-height="100%" data-id="container" data-settings="{&quot;id&quot; : &quot;teamCalendar&quot;}" style="height: 100%">
 		</div>
 	</body>
 </html>

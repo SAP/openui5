@@ -3,7 +3,6 @@ sap.ui.define([
 	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
 	"sap/ui/core/UIAreaRegistry",
 	"sap/ui/model/ContextBinding",
 	"sap/ui/model/json/JSONModel",
@@ -12,7 +11,6 @@ sap.ui.define([
 	fakeService,
 	ManagedObject,
 	Control,
-	Core,
 	UIAreaRegistry,
 	ContextBinding,
 	JSONModel,
@@ -149,96 +147,6 @@ sap.ui.define([
 		window.fnPropListener.restore();
 	});
 
-	/**
-	 * @deprecated
-	 */
-	QUnit.module("Model propagation Core", {
-		beforeEach : function() {
-			var oDiv = document.createElement("div");
-			oUIAreas.appendChild(oDiv);
-			new Control().placeAt(oDiv).destroy();
-			this.uiArea = UIAreaRegistry.get(oDiv.id);
-
-			this.mPropagationInfo = {};
-
-			this.fnChange = function(oEvent) {
-				if (this.mPropagationInfo[oEvent.getSource().getId()]) {
-					this.mPropagationInfo[oEvent.getSource().getId()]++;
-				} else {
-					this.mPropagationInfo[oEvent.getSource().getId()] = 1;
-				}
-			}.bind(this);
-
-			this.uiArea.attachModelContextChange(this.fnChange);
-			Core.setModel(oModel1);
-			this.child = new TestControl({
-				value : "{/value}"
-			});
-			this.child.attachModelContextChange(this.fnChange);
-			this.ctrl = new TestControl({
-				value : "{/value}",
-				children : [this.child]
-			});
-			this.ctrl.attachModelContextChange(this.fnChange);
-			this.ctrl.placeAt(this.uiArea.getId());
-		},
-
-		afterEach : function() {
-			this.uiArea.detachModelContextChange(this.fnChange);
-			this.ctrl.destroy();
-			this.ctrl = null;
-			this.child = null;
-			Core.setModel();
-		}
-	});
-
-	/**
-	 * @deprecated
-	 */
-	QUnit.test("Model propagated from Core", function(assert) {
-		assert.ok(this.mPropagationInfo[this.uiArea.getId()] === 1, "ModelContextChange event on uiArea");
-		assert.ok(this.mPropagationInfo[this.ctrl.getId()] === 1, "ModelContextChange event on ctrl");
-		assert.ok(this.mPropagationInfo[this.child.getId()] === 1, "ModelContextChange event on child");
-		this.mPropagationInfo = {};
-
-		assert.equal(this.uiArea.getModel(), oModel1, "effective model of UIArea should be from Core");
-		assert.equal(this.ctrl.getModel(), oModel1, "effective model of Root Control should be from Core");
-		assert.equal(this.child.getModel(), oModel1, "effective model of Nested Control should be from Core");
-		assert.equal(this.ctrl.getValue(), "1", "value of Root Control should be inherited from Core model");
-		assert.equal(this.child.getValue(), "1", "value of Nested Control should be inherited from Core model");
-
-		// setting the same model again should have no effect
-		var oCtrlBindingBefore = this.ctrl.getBinding("value");
-		var oChildBindingBefore = this.child.getBinding("value");
-		sap.ui.getCore().setModel(oModel1);
-		assert.ok(!this.mPropagationInfo[this.uiArea.getId()], "ModelContextChange event not fired on uiArea");
-		assert.ok(!this.mPropagationInfo[this.ctrl.getId()], "ModelContextChange event not fired on ctrl");
-		assert.ok(!this.mPropagationInfo[this.child.getId()], "ModelContextChange event not fired on child");
-		this.mPropagationInfo = {};
-
-		assert.equal(this.uiArea.getModel(), oModel1, "effective model of UIArea still should be from Core");
-		assert.equal(this.ctrl.getModel(), oModel1, "effective model of Root Control still should be from Core");
-		assert.equal(this.child.getModel(), oModel1, "effective model of Nested Control still should be from Core");
-		assert.equal(this.ctrl.getValue(), "1", "value of Root Control still should be inherited from Core model");
-		assert.equal(this.child.getValue(), "1", "value of Nested Control still should be inherited from Core model");
-		assert.ok(oCtrlBindingBefore === this.ctrl.getBinding("value"), "binding should not have changed");
-		assert.ok(oChildBindingBefore === this.child.getBinding("value"), "binding should not have changed");
-
-		// model change in Core should be reflected in UIArea and controls
-		sap.ui.getCore().setModel(oModel3);
-		assert.ok(this.mPropagationInfo[this.uiArea.getId()] === 1, "ModelContextChange event on uiArea");
-		assert.ok(this.mPropagationInfo[this.ctrl.getId()] === 1, "ModelContextChange event on ctrl");
-		assert.ok(this.mPropagationInfo[this.child.getId()] === 1, "ModelContextChange event on child");
-
-		assert.equal(this.uiArea.getModel(), oModel3, "new model should have been propagated from Core to UIArea");
-		assert.equal(this.ctrl.getModel(), oModel3, "new model should have been propagated from Core to Root Control");
-		assert.equal(this.child.getModel(), oModel3, "new model should have been propagated from Core to Nested Control");
-		assert.equal(this.ctrl.getValue(), "3", "new value should be inherited from Core model");
-		assert.equal(this.child.getValue(), "3", "new value should be inherited from Core model");
-		assert.ok(oCtrlBindingBefore !== this.ctrl.getBinding("value"), "binding should have changed");
-		assert.ok(oChildBindingBefore !== this.child.getBinding("value"), "binding should have changed");
-	});
-
 	QUnit.module("Model propagation", {
 		beforeEach : function() {
 			var oDiv = document.createElement("div");
@@ -276,10 +184,6 @@ sap.ui.define([
 			this.ctrl = null;
 			this.child = null;
 			this.uiArea.setModel();
-			/**
-			 * @deprecated
-			 */
-			Core.setModel(null);
 		}
 	});
 
@@ -316,45 +220,6 @@ sap.ui.define([
 		assert.ok(oCtrlBindingBefore === this.ctrl.getBinding("value"), "binding should not have changed");
 		assert.ok(oChildBindingBefore === this.child.getBinding("value"), "binding should not have changed");
 
-		/**
-		 * @deprecated
-		 */
-		(() => {
-			// model change in Core should not be reflected in UIArea and controls
-			Core.setModel(oModel2);
-			assert.ok(!this.mPropagationInfo[this.uiArea.getId()], "ModelContextChange event not fired on uiArea");
-			assert.ok(!this.mPropagationInfo[this.ctrl.getId()], "ModelContextChange event not fired on ctrl");
-			assert.ok(!this.mPropagationInfo[this.child.getId()], "ModelContextChange event not fired on child");
-
-			assert.equal(this.uiArea.getModel(), oModel2, "model should have been propagated from UIArea");
-			assert.equal(this.ctrl.getModel(), oModel2, "model should have been propagated from UIArea");
-			assert.equal(this.child.getModel(), oModel2, "model should have been propagated from UIArea");
-			assert.equal(this.ctrl.getValue(), "2", "value should be inherited from UIArea model");
-			assert.equal(this.child.getValue(), "2", "value should be inherited from UIArea model");
-			assert.ok(oCtrlBindingBefore === this.ctrl.getBinding("value"), "binding should not have changed");
-			assert.ok(oChildBindingBefore === this.child.getBinding("value"), "binding should not have changed");
-
-			// model change in Core should not be reflected in UIArea and controls
-			Core.setModel(oModel3);
-			assert.ok(this.mPropagationInfo[this.uiArea.getId()] === 1, "ModelContextChange event on uiArea");
-			assert.ok(this.mPropagationInfo[this.ctrl.getId()] === 1, "ModelContextChange event on ctrl");
-			assert.ok(this.mPropagationInfo[this.child.getId()] === 1, "ModelContextChange event on child");
-			this.mPropagationInfo = {};
-
-			assert.equal(this.uiArea.getModel(), oModel2, "model should have been propagated from UIArea");
-			assert.equal(this.ctrl.getModel(), oModel2, "model should have been propagated from UIArea");
-			assert.equal(this.child.getModel(), oModel2, "model should have been propagated from UIArea");
-			assert.equal(this.ctrl.getValue(), "2", "value should be inherited from UIArea model");
-			assert.equal(this.child.getValue(), "2", "value should be inherited from UIArea model");
-			assert.ok(oCtrlBindingBefore === this.ctrl.getBinding("value"), "binding should not have changed");
-			assert.ok(oChildBindingBefore === this.child.getBinding("value"), "binding should not have changed");
-			Core.setModel(oModel1);
-			assert.ok(this.mPropagationInfo[this.uiArea.getId()] === 1, "ModelContextChange event on uiArea");
-			assert.ok(this.mPropagationInfo[this.ctrl.getId()] === 1, "ModelContextChange event on ctrl");
-			assert.ok(this.mPropagationInfo[this.child.getId()] === 1, "ModelContextChange event on child");
-			this.mPropagationInfo = {};
-		})();
-
 		// model change in UIArea should be reflected in UIArea and controls
 		this.uiArea.setModel(oModel3);
 		assert.ok(this.mPropagationInfo[this.uiArea.getId()] === 1, "ModelContextChange event on uiArea");
@@ -371,26 +236,6 @@ sap.ui.define([
 		assert.ok(oChildBindingBefore !== this.child.getBinding("value"), "binding should have changed");
 
 		// after removing the model from the UIArea, Core model should be effective again
-		/**
-		 * @deprecated
-		 */
-		(() => {
-			oCtrlBindingBefore = this.ctrl.getBinding("value");
-			oChildBindingBefore = this.child.getBinding("value");
-			this.uiArea.setModel();
-			assert.ok(this.mPropagationInfo[this.uiArea.getId()] === 1, "ModelContextChange event on uiArea");
-			assert.ok(this.mPropagationInfo[this.ctrl.getId()] === 1, "ModelContextChange event on ctrl");
-			assert.ok(this.mPropagationInfo[this.child.getId()] === 1, "ModelContextChange event on child");
-			this.mPropagationInfo = {};
-
-			assert.equal(this.uiArea.getModel(), oModel1, "model should have been propagated from Core");
-			assert.equal(this.ctrl.getModel(), oModel1, "model should have been propagated from Core");
-			assert.equal(this.child.getModel(), oModel1, "model should have been propagated from Core");
-			assert.equal(this.ctrl.getValue(), "1", "value should be inherited from Core model");
-			assert.equal(this.child.getValue(), "1", "value should be inherited from UIArea model");
-			assert.ok(oCtrlBindingBefore !== this.ctrl.getBinding("value"), "binding should have changed");
-			assert.ok(oChildBindingBefore !== this.child.getBinding("value"), "binding should have changed");
-		})();
 	});
 
 	QUnit.test("Model propagated from parent", function(assert) {
@@ -775,30 +620,30 @@ sap.ui.define([
 			this.child = null;
 		}
 	});
-/*
-	QUnit.test("Binding/Model types", function(assert) {
-		var done = assert.async();
-		oModel5.metadataLoaded().then(function(){
-			var child = new TestControl({
-				objectBindings: "Suppliers(1)",
-				value: "{CompanyName}"
+	/*
+		QUnit.test("Binding/Model types", function(assert) {
+			var done = assert.async();
+			oModel5.metadataLoaded().then(function(){
+				var child = new TestControl({
+					objectBindings: "Suppliers(1)",
+					value: "{CompanyName}"
 
+				});
+				var ctrl = new TestControl({
+					children : [child]
+				});
+				var spy = sinon.spy(oModel5, "read");
+				ctrl.setModel(oModel4);
+				child.setModel(oModel5);
+				assert.ok(!child.getValue(), "Value should not be resolved");
+				var oJSONContext = oModel4.createBindingContext("/");
+				child.setBindingContext(oJSONContext);
+				assert.ok(spy.callCount === 0, "no request should be sent");
+				oModel5.read.restore();
+				done();
 			});
-			var ctrl = new TestControl({
-				children : [child]
-			});
-			var spy = sinon.spy(oModel5, "read");
-			ctrl.setModel(oModel4);
-			child.setModel(oModel5);
-			assert.ok(!child.getValue(), "Value should not be resolved");
-			var oJSONContext = oModel4.createBindingContext("/");
-			child.setBindingContext(oJSONContext);
-			assert.ok(spy.callCount === 0, "no request should be sent");
-			oModel5.read.restore();
-			done();
 		});
-	});
-*/
+	*/
 	QUnit.test("Binding/Model types 2", function(assert) {
 		var done = assert.async();
 		oModel5.metadataLoaded().then(function(){

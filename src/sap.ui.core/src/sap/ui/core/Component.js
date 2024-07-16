@@ -22,7 +22,6 @@ sap.ui.define([
 	'sap/base/assert',
 	'sap/base/Log',
 	'sap/base/util/Deferred',
-	'sap/base/util/ObjectPath',
 	'sap/base/util/isPlainObject',
 	'sap/base/util/LoaderExtensions',
 	'sap/base/strings/camelize',
@@ -50,7 +49,6 @@ sap.ui.define([
 	assert,
 	Log,
 	Deferred,
-	ObjectPath,
 	isPlainObject,
 	LoaderExtensions,
 	camelize,
@@ -164,7 +162,6 @@ sap.ui.define([
 	 * @return {sap.ui.core.ComponentMetadata} a metadata proxy object
 	 */
 	function createMetadataProxy(oMetadata, oManifest) {
-
 		// create a proxy for the metadata object and simulate to be an
 		// instance of the original metadata object of the Component
 		// => retrieving the prototype from the original metadata to
@@ -184,29 +181,6 @@ sap.ui.define([
 			}
 		}
 
-		/**
-		 * Public on ComponentMetadata, kept for compatibility.
-		 *
-		 * @deprecated
-		 * @return {Object|null} manifest.
-		 */
-		oMetadataProxy.getManifest = function() {
-			return this._getManifest();
-		};
-
-		/**
-		 * Public on ComponentMetadata, kept for compatibility.
-		 * Detailed documentation see ComponentMetadata#getManifestEntry
-		 *
-		 * @param {string} sKey Either the manifest section name (namespace) or a concrete path
-		 * @param {boolean} [bMerged=false] Indicates whether the custom configuration is merged with the parent custom configuration of the Component.
-		 * @deprecated
-		 * @return {any|null} Value of the manifest section or the key (could be any kind of value)
-		 */
-		oMetadataProxy.getManifestEntry = function(sKey, bMerged) {
-			return this._getManifestEntry(sKey, bMerged);
-		};
-
 		oMetadataProxy._getManifest = function() {
 			// return the content of the manifest instead of the static metadata
 			return oManifest && oManifest.getJson();
@@ -224,7 +198,6 @@ sap.ui.define([
 		oMetadataProxy[Symbol("isProxy")] = true;
 
 		return oMetadataProxy;
-
 	}
 
 	/**
@@ -262,7 +235,6 @@ sap.ui.define([
 
 	{
 		constructor : function(sId, mSettings) {
-
 			// create a copy of arguments for later handover to ManagedObject
 			var args = Array.prototype.slice.call(arguments);
 
@@ -313,21 +285,6 @@ sap.ui.define([
 				this._aActiveTerminologies = mSettings._activeTerminologies;
 				delete mSettings._activeTerminologies;
 			}
-
-			/**
-			 * whether the component was created synchronously (e.g. via legacy-factory or constructor call)
-			 * @deprecated since 1.120
-			 */
-			(() => {
-				// Note: why is <true> the default?
-				//       Instantiating a Component via constructor is a sync creation, meaning in
-				//       UI5 1.x we must load manifest models sync. during the constructor, see _initComponentModels()
-				//       In UI5 2.x this code is not needed anymore, since only the async factory remains.
-				//       Creation via constructor does not allow for sync class loading anymore, meaning
-				//       consumers must provision the model classes before calling the constructor.
-				this._bSyncCreation = mSettings?._syncCreation ?? true;
-				delete mSettings?._syncCreation;
-			})();
 
 			// registry of preloaded models from manifest ('afterManifest' models)
 			if (mSettings && typeof mSettings._manifestModels === "object") {
@@ -690,26 +647,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Activates the Customizing configuration for the given Component.
-	 * @param {string} sComponentName the name of the component to activate
-	 * @private
-	 * @deprecated Since 1.21.0 as it is handled by component instantiation
-	 */
-	Component.activateCustomizing = function(sComponentName) {
-		// noop since it will be handled by component instantiation
-	};
-
-	/**
-	 * Deactivates the Customizing configuration for the given Component.
-	 * @param {string} sComponentName Name of the Component to activate
-	 * @private
-	 * @deprecated Since 1.21.0 as it is handled by component termination
-	 */
-	Component.deactivateCustomizing = function(sComponentName) {
-		// noop since it will be handled by component termination
-	};
-
 	// ---- Ownership functionality ------------------------------------------------------------
 
 	//
@@ -815,7 +752,6 @@ sap.ui.define([
 	 * initialize the Component and keep the component data
 	 */
 	Component.prototype._initCompositeSupport = function(mSettings) {
-
 		// make user specific data available during component instantiation
 		this.oComponentData = mSettings && mSettings.componentData;
 
@@ -838,43 +774,6 @@ sap.ui.define([
 
 		// init the component models
 		this.initComponentModels();
-
-		/**
-		 * @deprecated Since 1.119
-		 */
-		(() => {
-			// error handler (if exists)
-			if (this.onWindowError) {
-				this._fnWindowErrorHandler = function(oEvent) {
-					var oError = oEvent.originalEvent;
-					this.onWindowError(oError.message, oError.filename, oError.lineno);
-
-				}.bind(this);
-				window.addEventListener("error", this._fnWindowErrorHandler);
-			}
-
-			// before unload handler (if exists)
-			if (this.onWindowBeforeUnload) {
-				this._fnWindowBeforeUnloadHandler = function(oEvent) {
-					var vReturnValue = this.onWindowBeforeUnload.apply(this, arguments);
-					// set returnValue for Chrome
-					if (typeof (vReturnValue) === 'string') {
-						oEvent.returnValue = vReturnValue;
-						oEvent.preventDefault();
-						return vReturnValue;
-					}
-				}.bind(this);
-				window.addEventListener("beforeunload", this._fnWindowBeforeUnloadHandler);
-			}
-
-			// unload handler (if exists)
-			if (this.onWindowUnload) {
-
-				this._fnWindowUnloadHandler = this.onWindowUnload.bind(this);
-				window.addEventListener("unload", this._fnWindowUnloadHandler);
-			}
-		})();
-
 	};
 
 	/**
@@ -916,25 +815,6 @@ sap.ui.define([
 			this._mManifestModels[sModelName].destroy();
 		}
 		delete this._mManifestModels;
-
-		/**
-		 * @deprecated Since 1.119
-		 */
-		(() => {
-			// remove the event handlers
-			if (this._fnWindowErrorHandler) {
-				window.removeEventListener("error", this._fnWindowErrorHandler);
-				delete this._fnWindowErrorHandler;
-			}
-			if (this._fnWindowBeforeUnloadHandler) {
-				window.removeEventListener("beforeunload", this._fnWindowBeforeUnloadHandler);
-				delete this._fnWindowBeforeUnloadHandler;
-			}
-			if (this._fnWindowUnloadHandler) {
-				window.removeEventListener("unload", this._fnWindowUnloadHandler);
-				delete this._fnWindowUnloadHandler;
-			}
-		})();
 
 		// destroy event bus
 		if (this._oEventBus) {
@@ -1015,21 +895,6 @@ sap.ui.define([
 			if (!EventBus) {
 				var sClassName = this.getMetadata().getName();
 				future.warningThrows("The module 'sap/ui/core/EventBus' needs to be required before calling #getEventBus() on Component '" + sClassName + "'.");
-
-				/**
-				 * @deprecated
-				 */
-				(() => {
-					Log.warning("Synchronous loading of EventBus, due to #getEventBus() call on Component '" + sClassName + "'.", "SyncXHR", null, function() {
-						return {
-							type: "SyncXHR",
-							name: sClassName
-						};
-					});
-					// We don't expect the application to use this API anymore (see Dev-Guide)
-					// For the application it is recommended to declare the EventBus via sap.ui.require or sap.ui.define
-					EventBus = sap.ui.requireSync("sap/ui/core/EventBus"); // legacy-relevant
-				})();
 			}
 
 			this._oEventBus = new EventBus();
@@ -1096,13 +961,6 @@ sap.ui.define([
 			dataSources: mDataSources,
 			componentName: sComponentName
 		});
-		/**
-		 * Sync provisioning of model classes.
-		 * @deprecated since 1.120
-		 */
-		if (this._bSyncCreation) {
-			Component._loadManifestModelClasses(mAllModelConfigs, sComponentName, this._bSyncCreation);
-		}
 
 		var mAllModelConfigurations = Component._createManifestModelConfigurations({
 			models: mAllModelConfigs,
@@ -1266,27 +1124,19 @@ sap.ui.define([
 	};
 
 	/**
-	 * Internal activation function for non lazy services which should be started immediately
-	 *
-	 * @param {sap.ui.core.Component} oComponent The Component instance
-	 * @param {boolean} bAsyncMode Whether or not the component is loaded in async mode
-	 * @returns {Promise[]|null} An array of promises from then loaded services
-	 * @private
-	 * @ui5-transform-hint replace-param bAsyncMode true
-	 */
-	function activateServices(oComponent, bAsyncMode) {
+		 * Internal activation function for non lazy services which should be started immediately
+		 *
+		 * @param {sap.ui.core.Component} oComponent The Component instance
+		 * @returns {Promise[]|null} An array of promises from then loaded services
+		 * @private
+		 */
+	function activateServices(oComponent) {
 		var oServices = oComponent._getManifestEntry("/sap.ui5/services", true);
-		var aOutPromises = bAsyncMode ? [] : null;
+		var aOutPromises = [];
 		if (!oServices) {
 			return aOutPromises;
 		}
 		var aServiceKeys = Object.keys(oServices);
-		if (!bAsyncMode && aServiceKeys.some(function (sService) {
-			return oServices[sService].startup === ServiceStartupOptions.waitFor;
-		})) {
-			throw new Error("The specified component \"" + oComponent.getMetadata().getName() +
-				"\" cannot be loaded in sync mode since it has some services declared with \"startup\" set to \"waitFor\"");
-		}
 		return aServiceKeys.reduce(function (aPromises, sService) {
 			if (oServices[sService].lazy === false ||
 				oServices[sService].startup === ServiceStartupOptions.waitFor ||
@@ -1473,55 +1323,12 @@ sap.ui.define([
 	//Component.prototype.exit = function() {};
 
 
-	/**
-	 * The window before unload hook. Override this method in your Component class
-	 * implementation, to handle cleanup before the real unload or to prompt a question
-	 * to the user, if the component should be exited.
-	 *
-	 * @return {string|undefined} a string if a prompt should be displayed to the user
-	 *                  confirming closing the Component (e.g. when the Component is not yet saved),
-	 * 					or <code>undefined</code> if no prompt should be shown.
-	 *
-	 * @public
-	 * @since 1.15.1
-	 * @name sap.ui.core.Component.prototype.onWindowBeforeUnload
-	 * @function
-	 * @deprecated Since version 1.119, recommended to use the browser-native page lifecycle API,
-	 * providing events such as 'pageshow' and 'pagehide'
-	 */
 	//onWindowBeforeUnload : function() {},
 
 
-	/**
-	 * The window unload hook. Override this method in your Component class
-	 * implementation, to handle cleanup of the component once the window
-	 * will be unloaded (e.g. closed).
-	 *
-	 * @public
-	 * @since 1.15.1
-	 * @name sap.ui.core.Component.prototype.onWindowUnload
-	 * @function
-	 * @deprecated Since 1.119. Newer browser versions deprecate the browser-native 'unload' event.
-	 * Therefore, the former API won't reliably work anymore. Please have a look at the
-	 * browser-native page lifecycle API, e.g. its events 'pageshow' and 'pagehide'.
-	 */
 	//onWindowUnload : function() {},
 
 
-	/**
-	 * The window error hook. Override this method in your Component class implementation
-	 * to listen to unhandled errors.
-	 *
-	 * @param {string} sMessage The error message.
-	 * @param {string} sFile File where the error occurred
-	 * @param {int} iLine Line number of the error
-	 * @public
-	 * @since 1.15.1
-	 * @name sap.ui.core.Component.prototype.onWindowError
-	 * @function
-	 * @deprecated Since version 1.119, recommended to use the browser-native API
-	 * to listen for errors: window.addEventListener("error", function() { ... })
-	 */
 	//onWindowError : null, // function(sMessage, sFile, iLine) - function not added directly as it might result in bad stack traces in older browsers
 
 
@@ -1539,26 +1346,21 @@ sap.ui.define([
 
 
 	/**
-	 * Internal API to create a component with Component.create (async) or sap.ui.component (sync).
-	 * In case a <code>oOwnerComponent</code> is given, it will be created within the context
-	 * of it.
-	 *
-	 * @param {object} mConfig Configuration object that creates the component
-	 * @param {sap.ui.core.Component} [oOwnerComponent] Owner component
-	 * @return {sap.ui.core.Component|Promise} Component instance or Promise which will be resolved with the component instance
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.core.ComponentContainer
-	 * @ui5-transform-hint replace-param mConfig.async true
-	 */
+		 * Internal API to create a component with Component.create (async) or sap.ui.component (sync).
+		 * In case a <code>oOwnerComponent</code> is given, it will be created within the context
+		 * of it.
+		 *
+		 * @param {object} mConfig Configuration object that creates the component
+		 * @param {sap.ui.core.Component} [oOwnerComponent] Owner component
+		 * @return {sap.ui.core.Component|Promise} Component instance or Promise which will be resolved with the component instance
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.core.ComponentContainer
+		 */
 	Component._createComponent = function(mConfig, oOwnerComponent) {
 
 		function createComponent() {
-			if (mConfig.async === true) {
-				return Component.create(mConfig);
-			} else {
-				return sap.ui.component(mConfig); // legacy-relevant: use deprecated factory for sync use case only
-			}
+			return Component.create(mConfig);
 		}
 
 		if (oOwnerComponent) {
@@ -1783,13 +1585,8 @@ sap.ui.define([
 		var mModelConfigurations = {};
 		// create a model for each ["sap.ui5"]["models"] entry
 		for (var sModelName in mConfig.models) {
-
 			var oModelConfig = mConfig.models[sModelName];
 			var fnClass = sap.ui.require(oModelConfig.type.replace(/\./g, "/"));
-			/** @deprecated since 1.120 */
-			if (!fnClass) {
-				fnClass =  ObjectPath.get(oModelConfig.type);
-			}
 			// class could not be loaded by _loadManifestModelClasses, or module export is not
 			// a valid UI5 class (no metadata available) -> a legacy testcases exist for this scenario!
 			if (!fnClass?.getMetadata) {
@@ -1798,7 +1595,7 @@ sap.ui.define([
 			}
 			var oClassMetadata = fnClass.getMetadata();
 
-			var bIsV1Model = oClassMetadata.isA("sap.ui.model.odata.ODataModel");
+			var bIsV1Model = false;
 			var bIsV2Model = oClassMetadata.isA("sap.ui.model.odata.v2.ODataModel");
 			var bIsV4Model = oClassMetadata.isA("sap.ui.model.odata.v4.ODataModel");
 			var bIsResourceModel = oClassMetadata.isA("sap.ui.model.resource.ResourceModel");
@@ -2098,7 +1895,6 @@ sap.ui.define([
 
 			// Add final configuration to result map
 			mModelConfigurations[sModelName] = oModelConfig;
-
 		}
 
 		if (oManifest.getEntry("/sap.ui5/commands") || (oComponent && oComponent._getManifestEntry("/sap.ui5/commands", true))) {
@@ -2112,10 +1908,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * @private
-	 * @ui5-transform-hint replace-param bSync false
-	 */
-	Component._loadManifestModelClasses = function(mModelConfigurations, sLogComponentName, bSync) {
+		 * @private
+		 */
+	Component._loadManifestModelClasses = function(mModelConfigurations, sLogComponentName) {
 		const aLoadPromises = [];
 
 		function logLoadingError(sModelClassName, sModelName, oError) {
@@ -2125,18 +1920,6 @@ sap.ui.define([
 		for (const sModelName in mModelConfigurations) {
 			const oModelConfig = mModelConfigurations[sModelName];
 			const sModelClass = oModelConfig.type.replace(/\./g, "/");
-
-			/** @deprecated since 1.120 */
-			if (bSync) {
-				// load model class and log error message if it couldn't be loaded.
-				// error gets caught to continue creating the other models and not breaking the execution here
-				try {
-					sap.ui.requireSync(sModelClass); // legacy-relevant
-				} catch (oError) {
-					logLoadingError(oModelConfig.type, sModelName, oError);
-				}
-				continue; // note: we want to skip the below async processing!
-			}
 
 			aLoadPromises.push(new Promise((resolve, reject) => {
 				sap.ui.require([sModelClass], resolve, reject);
@@ -2164,8 +1947,6 @@ sap.ui.define([
 			// To keep those tests working, the global name is checked first. Only in a context
 			// where global names don't exist or when the model is unknown, the fallback will be used.
 			let fnModelClass;
-			/** @deprecated since 1.120 */
-			fnModelClass = ObjectPath.get(oModelConfig.type);
 
 			if (!fnModelClass) {
 				fnModelClass = sap.ui.require(oModelConfig.type.replace(/\./g, "/"));
@@ -2530,103 +2311,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a new instance of a <code>Component</code> or returns the instance
-	 * of an existing <code>Component</code>.
-	 *
-	 * If you want to look up an existing <code>Component</code> you can call
-	 * this function with a Component ID as parameter:
-	 * <pre>
-	 *   var oComponent = sap.ui.component(sComponentId);
-	 * </pre>
-	 *
-	 * To create a new instance of a component you pass a component configuration
-	 * object into this function:
-	 * <pre>
-	 *   var oComponent = sap.ui.component({
-	 *     name: "my.Component",
-	 *     url: "my/component/location",
-	 *     id: "myCompId1"
-	 *   });
-	 * </pre>
-	 *
-	 * @param {string|object} vConfig ID of an existing Component or the configuration object to create the Component
-	 * @param {string} vConfig.name Name of the Component to load, as a dot-separated name;
-	 *              Even when an alternative location is specified from which the manifest should be loaded (e.g.
-	 *              <code>vConfig.manifest</code> is set to a non-empty string), then the name specified in that
-	 *              manifest will be ignored and this name will be used instead to determine the module to be loaded.
-	 * @param {string} [vConfig.url] Alternative location from where to load the Component. If a <code>manifestUrl</code> is given, this URL specifies the location of the final component defined via that manifest, otherwise it specifies the location of the component defined via its name <code>vConfig.name</code>.
-	 * @param {object} [vConfig.componentData] Initial data of the Component, see {@link sap.ui.core.Component#getComponentData}
-	 * @param {string} [vConfig.id] sId of the new Component
-	 * @param {object} [vConfig.settings] Settings of the new Component
-	 * @param {string[]} [vConfig.activeTerminologies] List of active terminologies.
-	 *              The order of the given active terminologies is significant. The {@link module:sap/base/i18n/ResourceBundle ResourceBundle} API
-	 *              documentation describes the processing behavior in more detail.
-	 *              Please also have a look at this dev-guide chapter for general usage instructions: {@link topic:eba8d25a31ef416ead876e091e67824e Text Verticalization}.
-	 * @param {boolean} [vConfig.async] Indicates whether the Component creation should be done asynchronously; defaults to true when using the manifest property with a truthy value otherwise the default is false (experimental setting)
-	 * @param {object} [vConfig.asyncHints] @since 1.27.0 Hints for the asynchronous loading.
-	 *     <b>Beware:</b> This parameter is only used internally by the UI5 framework and compatibility cannot be guaranteed.
-	 *     The parameter must not be used in productive code, except in code delivered by the UI5 teams.
-	 * @param {string[]} [vConfig.asyncHints.libs] Libraries that should be (pre-)loaded before the Component (experimental setting)
-	 * @param {string[]} [vConfig.asyncHints.components] Components that should be (pre-)loaded before the Component (experimental setting)
-	 * @param {Promise|Promise[]} [vConfig.asyncHints.waitFor] @since 1.37.0 a <code>Promise</code> or and array of <code>Promise</code>s for which the Component instantiation should wait (experimental setting)
-	 * @param {boolean|string|object} [vConfig.manifest=undefined] @since 1.49.0 Controls when and from where to load the manifest for the Component.
-	 *              When set to any truthy value, the manifest will be loaded asynchronously by default and evaluated before the Component controller, if it is set to a falsy value
-	 *              other than <code>undefined</code>, the manifest will be loaded after the controller.
-	 *              A non-empty string value will be interpreted as the URL location from where to load the manifest.
-	 *              A non-null object value will be interpreted as manifest content.
-	 *              Setting this property to a value other than <code>undefined</code>, completely deactivates the properties
-	 *              <code>manifestUrl</code> and <code>manifestFirst</code>, no matter what their values are.
-	 * @param {string} [vConfig.manifestUrl] @since 1.33.0 Specifies the URL from where the manifest should be loaded from
-	 *              Using this property implies <code>vConfig.manifestFirst=true</code>.
-	 *              <br/><b>DEPRECATED since 1.49.0, use <code>vConfig.manifest=url</code> instead!</b>.
-	 *              Note that this property is ignored when <code>vConfig.manifest</code> has a value other than <code>undefined</code>.
-	 * @param {boolean} [vConfig.manifestFirst] @since 1.33.0 defines whether the manifest is loaded before or after the
-	 *              Component controller. Defaults to <code>sap.ui.getCore().getConfiguration().getManifestFirst()</code>
-	 *              <br/><b>DEPRECATED since 1.49.0, use <code>vConfig.manifest=true|false</code> instead!</b>
-	 *              Note that this property is ignored when <code>vConfig.manifest</code> has a value other than <code>undefined</code>.
-	 * @param {string} [vConfig.handleValidation=false] If set to <code>true</code> validation of the component is handled by the <code>Messaging</code>
-	 * @returns {sap.ui.core.Component|Promise} the Component instance or a Promise in case of asynchronous loading
-	 *
-	 * @deprecated Since 1.56, use {@link sap.ui.core.Component.get Component.get} or {@link sap.ui.core.Component.create Component.create} instead.
-	 *   Note: {@link sap.ui.core.Component.create Component.create} does not support synchronous loading or the deprecated options <em>manifestFirst</em> and <em>manifestUrl</em>.
-	 * @public
-	 * @static
-	 * @since 1.15.0
-	 * @ui5-global-only
-	 */
-	sap.ui.component = function(vConfig) {
-		// a parameter must be given!
-		if (!vConfig) {
-			throw new Error("sap.ui.component cannot be called without parameter!");
-		}
-
-		var fnLogProperties = function(name) {
-			return {
-				type: "sap.ui.component",
-				name: name
-			};
-		};
-
-		if (typeof vConfig === 'string') {
-			Log.warning("Do not use deprecated function 'sap.ui.component' (" + vConfig + ") + for Component instance lookup. " +
-				"Use 'Component.get' instead", "sap.ui.component", null, fnLogProperties.bind(null, vConfig));
-			// when only a string is given, then this function behaves like a
-			// getter and returns an existing component instance
-			return Component.getComponentById(vConfig);
-		}
-
-		if (vConfig.async) {
-			Log.info("Do not use deprecated factory function 'sap.ui.component' (" + vConfig["name"] + "). " +
-				"Use 'Component.create' instead", "sap.ui.component", null, fnLogProperties.bind(null, vConfig["name"]));
-		} else {
-			Log.warning("Do not use synchronous component creation (" + vConfig["name"] + ")! " +
-				"Use the new asynchronous factory 'Component.create' instead", "sap.ui.component", null, fnLogProperties.bind(null, vConfig["name"]));
-		}
-
-		return componentFactory(vConfig, /*bLegacy=*/true);
-	};
-
-	/**
 	 * Loads a module and logs a potential loading error as a warning.
 	 *
 	 * @param {string} sModuleName the module to be loaded
@@ -2719,11 +2403,7 @@ sap.ui.define([
 				id: sId,
 				componentData: oComponentData,
 				_cacheTokens: vConfig.asyncHints && vConfig.asyncHints.cacheTokens,
-				_activeTerminologies: aActiveTerminologies,
-				/**
-				 * @deprecated since 1.120
-				 */
-				_syncCreation: !vConfig.async
+				_activeTerminologies: aActiveTerminologies
 			}));
 			assert(oInstance instanceof Component, "The specified component \"" + sController + "\" must be an instance of sap.ui.core.Component!");
 			Log.info("Component instance Id = " + oInstance.getId());
@@ -2930,90 +2610,12 @@ sap.ui.define([
 	 * @param {string} sId ID of the component.
 	 * @returns {sap.ui.core.Component|undefined} Component instance or <code>undefined</code> when no component
 	 *     with the given ID exists.
-	 * @since 1.56.0
-	 * @static
-	 * @public
-	 * @deprecated As of version 1.120, please use the static {@link sap.ui.core.Component.getComponentById getComponentById} instead.
-	 */
-	Component.get = function (sId) {
-		// lookup and return the component
-		return Component.getComponentById(sId);
-	};
-
-	/**
-	 * Returns an existing component instance, identified by its ID.
-	 *
-	 * @param {string} sId ID of the component.
-	 * @returns {sap.ui.core.Component|undefined} Component instance or <code>undefined</code> when no component
-	 *     with the given ID exists.
 	 * @since 1.120
 	 * @static
 	 * @public
 	 */
 	Component.getComponentById = function(sId) {
 		return ComponentRegistry.get(sId);
-	};
-
-	/**
-	 * Load a component without instantiating it.
-	 *
-	 * Provides support for loading components asynchronously by setting
-	 * <code>oConfig.async</code> to true. In that case, the method returns a JavaScript 6
-	 * Promise that will be fulfilled with the component class after loading.
-	 *
-	 * Using <code>async = true</code> doesn't necessarily mean that no more synchronous loading
-	 * occurs. Both the framework as well as component implementations might still execute
-	 * synchronous requests. The contract for <code>async = true</code> just allows to use
-	 * async calls.
-	 *
-	 * When a manifest.json is referenced in oConfig this manifest is not used for the derived instances of the Component class.
-	 * The manifest/manifest url must be provided for every instance explicitly.
-	 *
-	 * Since 1.27.0, when asynchronous loading is used, additional <code>asyncHints</code> can be provided.
-	 * This parameter is only used internally by the UI5 framework and compatibility cannot be guaranteed.
-	 * The parameter must not be used in productive code, except in code delivered by the UI5 teams.
-	 *
-	 * <ul>
-	 * <li><code>oConfig.asyncHints.components : string[]</code>a list of components needed by the current component and its subcomponents
-	 *     The framework will try to preload these components (their Component-preload.js) asynchronously, errors will be ignored.
-	 *     Please note that the framework has no knowledge about whether a Component provides a preload file or whether it is bundled
-	 *     in some library preload. If Components are listed in the hints section, they will be preloaded.</li>
-	 * <li><code>oConfig.asyncHints.libs : string[]</code>libraries needed by the Component and its subcomponents.
-	 *     The framework will asynchronously load those libraries, if they're not loaded yet.</li>
-	 * <li><code>oConfig.asyncHints.preloadBundles : string[]</code>a list of additional preload bundles
-	 *     The framework will try to load these bundles asynchronously before requiring the Component, errors will be ignored.
-	 *     The named modules must only represent preload bundles. If they are normal modules, their dependencies
-	 *     will be loaded with the normal synchronous request mechanism and performance might degrade.</li>
-	 * <li><code>oConfig.asyncHints.preloadOnly : boolean (default: false)</code> whether only the preloads should be done,
-	 *     but not the loading of the Component controller class itself.
-	 * </ul>
-	 *
-	 * If Components and/or libraries are listed in the hints section, all the corresponding preload files will
-	 * be requested in parallel. The constructor class will only be required after all of them are rejected or resolved.
-	 * Instead of specifying just the name of a component or library in the hints, an object might be given that contains a
-	 * mandatory <code>name</code> property and, optionally, an <code>url</code> that will be used for a <code>registerModulePath</code>
-	 * and/or a <code>lazy</code> property. When <code>lazy</code> is set to a truthy value, only a necessary <code>registerModulePath</code>
-	 * will be executed, but the corresponding component or lib won't be preloaded. For preload bundles, also an object might be given
-	 * instead of a simple name, but there only the <code>url</code> property is supported, not the <code>lazy</code> property.
-	 *
-	 * Note: so far, only the requests for the preload files (library and/or component) are executed asynchronously.
-	 * If a preload is deactivated by configuration (e.g. debug mode), then remaining requests still might be synchronous.
-	 *
-	 * @param {object} oConfig Configuration object describing the Component to be loaded. See {@link sap.ui.component} for more information.
-	 * @returns {function|Promise} Constructor of the component class or a Promise that will be fulfilled with the same
-	 *
-	 * @deprecated since 1.56, use {@link sap.ui.core.Component.load}
-	 * @since 1.16.3
-	 * @static
-	 * @public
-	 * @ui5-global-only
-	 */
-	sap.ui.component.load = function(oConfig, bFailOnError) {
-		Log.warning("Do not use deprecated function 'sap.ui.component.load'! Use 'Component.load' instead");
-		return loadComponent(oConfig, {
-			failOnError: bFailOnError,
-			preloadOnly: oConfig.asyncHints && oConfig.asyncHints.preloadOnly
-		});
 	};
 
 	/**
@@ -3088,17 +2690,6 @@ sap.ui.define([
 		// as otherwise this would be the outer component from where it was called,
 		// which is not true - this component causes the load
 		Interaction.setStepComponent(sName);
-
-		/**
-		 * With Component.create() the manifest option cannot be undefined (default is <true>, other options see API doc for Component.create)
-		 * @deprecated since 1.120
-		 */
-		if ( vManifest === undefined ) {
-			// no manifest property set, evaluate legacy properties
-			bManifestFirst = oConfig.manifestFirst === undefined ? BaseConfig.get({name: "sapUiManifestFirst", type: BaseConfig.Type.Boolean, external: true}) : !!oConfig.manifestFirst;
-			sManifestUrl = oConfig.manifestUrl;
-			// oManifest = undefined;
-		}
 
 		if (vManifest !== undefined) {
 			// in case of manifest property is set, by default we load async
@@ -3259,10 +2850,9 @@ sap.ui.define([
 		}
 
 		/**
-		 * @private
-		 * @ui5-transform-hint replace-param bAsync true
-		 */
-		function preload(sComponentName, bAsync) {
+				 * @private
+				 */
+		function preload(sComponentName) {
 
 			var sController = sComponentName + '.Component',
 				http2 = Library.isDepCacheEnabled(),
@@ -3282,46 +2872,35 @@ sap.ui.define([
 				};
 
 			// only load the Component-preload file if the Component module is not yet available
-			if ( bComponentPreload && sComponentName != null && !sap.ui.loader._.getModuleState(sController.replace(/\./g, "/") + ".js") ) {
+			if (bComponentPreload && sComponentName != null && !sap.ui.loader._.getModuleState(sController.replace(/\./g, "/") + ".js")) {
+				// check whether component controller is included in a library preload
+				oTransitiveDependencies = VersionInfo._getTransitiveDependencyForComponent(sComponentName);
 
-				if ( bAsync ) {
-					// check whether component controller is included in a library preload
-					oTransitiveDependencies = VersionInfo._getTransitiveDependencyForComponent(sComponentName);
+				if (oTransitiveDependencies && !oTransitiveDependencies.hasOwnPreload) {
+					aLibs = [oTransitiveDependencies.library];
+					// add all dependencies to aLibs
+					Array.prototype.push.apply(aLibs, oTransitiveDependencies.dependencies);
 
-					if (oTransitiveDependencies && !oTransitiveDependencies.hasOwnPreload) {
-						aLibs = [oTransitiveDependencies.library];
-						// add all dependencies to aLibs
-						Array.prototype.push.apply(aLibs, oTransitiveDependencies.dependencies);
-
-						// load library preload for every transitive dependency
-						return Library._load( aLibs, { preloadOnly: true } ).catch(errorLogging(oTransitiveDependencies.library, true));
-					} else {
-						sPreloadName = sController.replace(/\./g, "/") + (http2 ? '-h2-preload.js' : '-preload.js'); // URN
-						return sap.ui.loader._.loadJSResourceAsync(sPreloadName).catch(errorLogging(sPreloadName, true));
-					}
+					// load library preload for every transitive dependency
+					return Library._load( aLibs, { preloadOnly: true } ).catch(errorLogging(oTransitiveDependencies.library, true));
 				} else {
-					try {
-						sPreloadName = sController + '-preload'; // Module name
-						sap.ui.requireSync(sPreloadName.replace(/\./g, "/")); // legacy-relevant: Sync path
-					} catch (e) {
-						errorLogging(sPreloadName, false)(e);
-					}
+					sPreloadName = sController.replace(/\./g, "/") + (http2 ? '-h2-preload.js' : '-preload.js'); // URN
+					return sap.ui.loader._.loadJSResourceAsync(sPreloadName).catch(errorLogging(sPreloadName, true));
 				}
-			} else if (bAsync) {
+			} else {
 				return Promise.resolve();
 			}
 		}
 
 		/**
-		 * @private
-		 * @ui5-transform-hint replace-param bAsync true
-		 */
-		function preloadDependencies(sComponentName, oManifest, bAsync) {
+				 * @private
+				 */
+		function preloadDependencies(sComponentName, oManifest) {
 
 			var aPromises = [];
-			var fnCollect = bAsync ? function(oPromise) {
+			var fnCollect = function(oPromise) {
 				aPromises.push(oPromise);
-			} : function() {};
+			};
 
 			// lookup the required libraries
 			var mLibs = oManifest.getEntry("/sap.ui5/dependencies/libs");
@@ -3336,7 +2915,7 @@ sap.ui.define([
 				if (aLibs.length > 0) {
 					Log.info("Component \"" + sComponentName + "\" is loading libraries: \"" + aLibs.join(", ") + "\"");
 					fnCollect(Library._load(aLibs, {
-						sync: !bAsync
+						sync: false
 					}));
 				}
 			}
@@ -3344,7 +2923,7 @@ sap.ui.define([
 			// lookup the extended component and preload it
 			var sExtendedComponent = oManifest.getEntry("/sap.ui5/extends/component");
 			if (sExtendedComponent) {
-				fnCollect(preload(sExtendedComponent, bAsync));
+				fnCollect(preload(sExtendedComponent, true));
 			}
 
 			// lookup the non-lazy components from component dependencies
@@ -3374,11 +2953,11 @@ sap.ui.define([
 			// preload the collected components
 			if (aComponents.length > 0) {
 				aComponents.forEach(function(sComponentName) {
-					fnCollect(preload(sComponentName, bAsync));
+					fnCollect(preload(sComponentName, true));
 				});
 			}
 
-			return bAsync ? Promise.all(aPromises) : undefined;
+			return Promise.all(aPromises);
 
 		}
 
@@ -3845,21 +3424,6 @@ sap.ui.define([
 			sap.ui.requireSync( getControllerModuleName() ) // legacy-relevant: Sync path
 		);
 	}
-
-	/**
-	 * Registry of all <code>Component</code>s that currently exist.
-	 *
-	 * @namespace sap.ui.core.Component.registry
-	 * @public
-	 * @since 1.67
-	 * @deprecated As of version 1.120. Use {@link module:sap/ui/core/ComponentRegistry} instead.
-	 * @borrows module:sap/ui/core/ComponentRegistry.size as size
-	 * @borrows module:sap/ui/core/ComponentRegistry.all as all
-	 * @borrows module:sap/ui/core/ComponentRegistry.get as get
-	 * @borrows module:sap/ui/core/ComponentRegistry.forEach as forEach
-	 * @borrows module:sap/ui/core/ComponentRegistry.filter as filter
-	 */
-	Component.registry = ComponentRegistry;
 
 	/**
 	 * Returns the information defined in the manifests command section. If a command name

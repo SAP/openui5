@@ -103,32 +103,6 @@ sap.ui.define([
 		assert.equal(oLogSpy.getCall(0).args[0], sLogMessage, "Calling the constructor should log an error");
 	});
 
-	/**
-	 * @deprecated As of version 1.110
-	 */
-	QUnit.module("[Compatibility] Legacy API");
-
-	QUnit.test("Accessing Resizehandler via globals", function(assert) {
-		assert.equal(sap.ui.core.ResizeHandler.register, ResizeHandler.register);
-		assert.equal(sap.ui.core.ResizeHandler.deregister, ResizeHandler.deregister);
-	});
-
-	QUnit.test("Module export stability", function(assert) {
-		assert.equal(ResizeHandler, sap.ui.core.ResizeHandler, "Global export and Module export are identical");
-	});
-
-	QUnit.test("Calling Constructor via globals", function(assert) {
-		var oLogSpy = this.spy(Log, "error");
-		var sLogMessage = "ResizeHandler is designed as a singleton and should not be created manually! Please require 'sap/ui/core/ResizeHandler' instead and use the module export directly without using 'new'.";
-
-		var oResizeHandler = new sap.ui.core.ResizeHandler();
-		assert.ok(oResizeHandler, "public constructor via globals works");
-
-		// check for error log
-		assert.equal(oLogSpy.callCount, 1);
-		assert.equal(oLogSpy.getCall(0).args[0], sLogMessage, "Correct error log");
-	});
-
 
 
 	QUnit.module("DOM Element Resize");

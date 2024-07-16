@@ -23,7 +23,6 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/m/library",
 	"sap/ui/core/HTML",
-	"sap/ui/core/Core",
 	"sap/m/ObjectHeader",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery"
@@ -50,7 +49,6 @@ sap.ui.define([
 	KeyCodes,
 	mobileLibrary,
 	HTML,
-	Core,
 	ObjectHeader,
 	Device,
 	jQuery
@@ -302,7 +300,7 @@ sap.ui.define([
 
 		// Act
 		oIconTabBar.setSelectedKey("key2");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oIconTabBar.getSelectedKey(), "key2", "selected item is set correctly");
@@ -310,7 +308,7 @@ sap.ui.define([
 
 		// Act
 		oIconTabBar.setSelectedKey("key1");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oIconTabBar.getSelectedKey(), "key1", "selected item is set correctly");
@@ -318,7 +316,7 @@ sap.ui.define([
 
 		// Act
 		oIconTabBar.setSelectedKey("key21");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oIconTabBar.getSelectedKey(), "key21", "selected item is set correctly");
@@ -345,45 +343,10 @@ sap.ui.define([
 		// Act
 		oIconTabBar.setSelectedKey("");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oIconTabBar.getSelectedKey(), "key1", "selected item is set correctly");
-
-		// Clean up
-		oIconTabBar.destroy();
-	});
-
-	/**
-	 * @deprecated As of 1.15.0.
-	 */
-	QUnit.test("getShowSelection()", function(assert) {
-
-		// Arrange
-		var oIconTabBar = new IconTabBar({
-			showSelection: false
-		});
-
-		// Assert
-		assert.ok(!oIconTabBar.getShowSelection(), "getShowSelection is correct");
-
-		// Clean up
-		oIconTabBar.destroy();
-	});
-
-	/**
-	 * @deprecated As of 1.15.0.
-	 */
-	QUnit.test("setShowSelection()", function(assert) {
-
-		// Arrange
-		var oIconTabBar = new IconTabBar();
-
-		// Act
-		oIconTabBar.setShowSelection(false);
-
-		// Assert
-		assert.ok(!oIconTabBar.getShowSelection(), "showSelection is set to false");
 
 		// Clean up
 		oIconTabBar.destroy();
@@ -428,14 +391,14 @@ sap.ui.define([
 		});
 
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oIconTabBar.getDomRef("content").children.length, 0, "content is not initially rendered");
 
 		// Act
 		oIconTabBar.setExpanded(undefined);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(1000);
 
 		// Assert
@@ -476,7 +439,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Add one item
 		oIconTabBar.addItem(
@@ -487,7 +450,7 @@ sap.ui.define([
 					})
 				})
 		);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oIconTabBar.getItems().length, 1, "The IconTabBar contains 1 item");
@@ -513,11 +476,11 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Remove the item
 		oIconTabBar.removeItem(0);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oIconTabBar.getItems().length, 0, "The bar contains 0 items");
@@ -544,7 +507,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oIconTabBar.$().hasClass("sapMITB"), "IconTabBar has class sapMITB");
@@ -575,7 +538,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBarNoText.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oIconTabBarNoText.$("-header").hasClass("sapMITBNoText"), "should have class for no-text version");
@@ -601,7 +564,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBarTextOnly.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(!oIconTabBarTextOnly.$("-header").hasClass("sapMITBNoText"), "should not have class for no-text version");
@@ -625,7 +588,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBarTextOnly.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oIconTabBarTextOnly.$("-header").hasClass("sapMITBTextUpperCase"), "IconTabBar has class sapMITBTextUpperCase");
@@ -650,7 +613,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		// Verify that a filter without content shows the IconTabBar content
@@ -678,7 +641,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		// Verify that the newly added content is rendered and overwrites the IconTabBar content
@@ -728,13 +691,13 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oIconTabBar.bindElement("/Data/0");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oIconTabBar.bindElement("/Data/1");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		var $itbf = oIconTabBar.$("content");
@@ -764,7 +727,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oSelectSpy = sinon.spy(IconTabBar.prototype, "_rerenderContent");
 
 		// Assert
@@ -796,7 +759,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabHeader.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oIconTabHeader.$().hasClass("sapMITH"), "oIconTabHeader has class sapMITH");
@@ -857,7 +820,7 @@ sap.ui.define([
 		oList.setModel(oModel);
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(jQuery('.sapMITBHead .sapMITBFilter').length > 0, 'IconTabFilters are rendered');
 
@@ -881,7 +844,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 
@@ -910,7 +873,7 @@ sap.ui.define([
 
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		var $itbf = oIconTabBar.getItems()[0].$();
@@ -941,7 +904,7 @@ sap.ui.define([
 
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		var $itbf = oIconTabBar.getItems()[0].$();
@@ -972,7 +935,7 @@ sap.ui.define([
 
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		var $itbf = oIconTabBar.getItems()[0].$();
@@ -1003,7 +966,7 @@ sap.ui.define([
 
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		var $itbf = oIconTabBar.getItems()[0].$();
@@ -1034,7 +997,7 @@ sap.ui.define([
 
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		var $itbf = oIconTabBar.getItems()[0].$();
@@ -1076,7 +1039,7 @@ sap.ui.define([
 
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oIconTabBar.getItems().forEach(function (oTab) {
 			var $Tab = oTab.$(),
@@ -1110,7 +1073,7 @@ sap.ui.define([
 
 		aIconColors.forEach(function (sColor) {
 			oFilter.setIconColor(sColor);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// Assert
 			assert.ok(oFilter.getDomRef("iconColor"), sColor + " color description should be added to the DOM");
@@ -1137,12 +1100,12 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		// now change the text for IconTabFilter
 		oIconTabFilter.setText("new text");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.equal(oIconTabFilter.getText(), "new text", "the text is changed");
@@ -1179,11 +1142,11 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Change the button text
 		oButton.setText("new button");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Verify that the new text is rendered
 		var $itbf = oIconTabBar.$("content");
@@ -1209,7 +1172,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		// now change the icon color for one IconTabFilter after it was rendered
@@ -1217,7 +1180,7 @@ sap.ui.define([
 		oIconTabFilter.setIconColor(IconColor.Positive);
 		oIconTabBar.addItem(new IconTabSeparator());
 		this.clock.tick(500);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oIconTabFilter.$().hasClass("sapMITBFilterPositive"), "color is changed to positive");
@@ -1225,7 +1188,7 @@ sap.ui.define([
 
 		// Clean up
 		oIconTabBar.destroy();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.module("public methods");
@@ -1248,7 +1211,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		// Try to expand the IconTabBar by pressing SPACE key
@@ -1282,7 +1245,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		// Try to expand the IconTabBar by pressing SPACE key
@@ -1316,7 +1279,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		// Collapse the IconTabBar by pressing SPACE key
@@ -1349,7 +1312,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		// Expand the IconTabBar by pressing SPACE key
@@ -1383,7 +1346,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oIconTabBar.getItems()[0].$().hasClass("sapMITBVertical"), "default design should be vertical");
@@ -1411,7 +1374,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oIconTabBar.getItems()[0].$().hasClass("sapMITBAll"), "should have class for showAll property");
@@ -1458,7 +1421,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oIconTabBar.$().find(".sapMITBHead .sapMITBCount").length == 3, '3 "counts" texts are displayed');
@@ -1466,7 +1429,7 @@ sap.ui.define([
 
 		oIconTabBar.setHeaderMode(IconTabHeaderMode.Inline);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var bRtl = Localization.getRTL();
 		var sText = bRtl ? "(10) Text 1" : "Text 1 (10)";
@@ -1492,7 +1455,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oIconTabBar.$().hasClass("sapMITBStretch"), "should have class for stretchContentHeight property");
@@ -1515,7 +1478,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oIconTabBar.$().hasClass("sapMITBNoContentPadding"), "should have class for applyContentPadding property");
@@ -1538,7 +1501,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oIconTabBar.$().hasClass("sapMITBBackgroundDesignTransparent"), "should have class for backgroundDesign: transparent");
@@ -1565,14 +1528,14 @@ sap.ui.define([
 
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$FlexChild = oIconTabBar.$("containerContent");
 
 		iFlexChildHeight = $FlexChild.height();
 
 		// Act
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(Math.abs(iFlexChildHeight - $FlexChild.height()) <= 1, "Height is not changed");
@@ -1616,15 +1579,15 @@ sap.ui.define([
 
 		// System under test - add item to page & render
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(jQuery("#PreserveContent1").length, 1, "The span node \"PreserveContent\" is in the DOM");
 		oIconTabBar.setSelectedItem(oIconTabBar.getItems()[1]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(jQuery("#PreserveContent2").length, 1, "The span node \"PreserveContent2\" is in the DOM");
 		oIconTabBar.setSelectedItem(oIconTabBar.getItems()[0]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(jQuery("#PreserveContent1").length, 1, "The span node \"PreserveContent1\" is in the DOM");
 		assert.strictEqual(jQuery("#PreserveContent2").length, 1, "The span node \"PreserveContent2\" is in the DOM");
 
@@ -1657,7 +1620,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Press SPACE key on second IconTabFilter to expand
 		qutils.triggerKeydown(oIconTabBar.getItems()[1].$(), KeyCodes.SPACE);
@@ -1697,7 +1660,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Press SPACE key on second IconTabFilter to expand
 		qutils.triggerKeydown(oIconTabBar.getItems()[1].$(), KeyCodes.SPACE);
@@ -1735,7 +1698,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Press SPACE key on first IconTabFilter to expand
 		qutils.triggerKeydown(oIconTabBar.getItems()[0].$(), KeyCodes.SPACE);
@@ -1756,7 +1719,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oIconTabBar = createIconTabBar();
 			this.oIconTabBar.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.oIconTabBar.destroy();
@@ -1948,13 +1911,13 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oIconTabBar.getSelectedKey(), "key1", "getSelectedKey() = key1");
 		assert.notOk(oIconTabBar.getProperty("selectedKey"), "selectedKey property is initially empty");
 
 		oIconTabBar.setSelectedKey("key1");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oIconTabBar.getProperty("selectedKey"), "key1", "selectedKey property is set");
 
@@ -1965,11 +1928,11 @@ sap.ui.define([
 		assert.ok($tab.hasClass('sapMITBSelected'), "first tab is selected");
 
 		oIconTabBar.setSelectedKey(oIconTabBar.getItems()[0].getKey());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok($tab.hasClass('sapMITBSelected'), "first tab is selected");
 
 		oIconTabBar.setSelectedKey(oIconTabBar.getItems()[1].getKey());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$tab = oIconTabBar.getItems()[1].$();
 		assert.ok($tab.hasClass('sapMITBSelected'), "second tab is selected");
 
@@ -2009,7 +1972,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Select the second item
 		oIconTabBar.setSelectedItem(oIconTabBar.getItems()[1]);
@@ -2067,7 +2030,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Select the last item
 		oIconTabBar.setSelectedItem(oIconTabBar.getItems()[4]);
@@ -2126,7 +2089,7 @@ sap.ui.define([
 
 		oIconTabBar.setModel(oModel);
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oSelectedItem = oIconTabBar._getIconTabHeader().oSelectedItem;
 		var oContext = oSelectedItem.getBindingContext();
@@ -2183,7 +2146,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oContent = oIconTabBar._getIconTabHeader().oSelectedItem.getContent()[0];
 		var domContent = oContent.$()[0];
@@ -2248,7 +2211,7 @@ sap.ui.define([
 
 		// System under Test
 		oObjectHeader.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// change the IconTabFilter text property
 		var sNewText = 'New Text';
@@ -2302,7 +2265,7 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oButton = oIconTabBar.$().find('.sapMITBContent .sapMBtn')[0];
 
@@ -2345,7 +2308,7 @@ sap.ui.define([
 		oITH.setModel(new JSONModel({ tabEnabled: bTabEnabled }));
 
 		oITH.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oITH._getOverflow()._expandButtonPress();
@@ -2356,7 +2319,7 @@ sap.ui.define([
 
 		// act (reopen)
 		oITH._getOverflow()._expandButtonPress();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		oSelectList = oITH._getSelectList().getItems();
@@ -2393,12 +2356,12 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oSpy = sinon.spy(oIconTabBar, "_rerenderContent");
 		oModel.checkUpdate(true);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oSpy.notCalled, "_rerenderContent is not called");
 		assert.strictEqual(oIconTabBar.getSelectedKey(), "1", "overridden 'getSelectedKey' should return correct value");
@@ -2438,7 +2401,7 @@ sap.ui.define([
 			});
 
 			this.oIconTabBar.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oIconTabBar.destroy();
@@ -2471,12 +2434,12 @@ sap.ui.define([
 
 		// Act & Assert
 		oItem.setEnabled(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oButton.$().hasClass("sapMBtnDisabled"), "Content is disabled when the tab is disabled");
 
 		// Act & Assert
 		oItem.setEnabled(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.notOk(oButton.$().hasClass("sapMBtnDisabled"), "Content is enabled when the tab is enabled again");
 	});
 
@@ -2506,7 +2469,7 @@ sap.ui.define([
 			this.oIconTabBar.$().width("500px");
 			this.oIconTabBar.placeAt('qunit-fixture');
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oIconTabBar.destroy();
@@ -2526,7 +2489,7 @@ sap.ui.define([
 		// Arrange
 		this.oIconTabBar.setSelectedKey('3');
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(document.querySelector(".sapMITBSelectList .sapMITBSelectItemSelected"), null, "Selected item should not be in the overflow list");
@@ -2543,7 +2506,7 @@ sap.ui.define([
 		var selectedControl = Element.getElementById(itemToSelect.id);
 		jQuery(itemToSelect).trigger('tap');
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var tabInStrip = this.oIconTabBar._getIconTabHeader().getDomRef("head").querySelector("#" + selectedControl._getRealTab().getId());
 
@@ -2627,7 +2590,7 @@ sap.ui.define([
 			this.oIconTabBar.$().width("500px");
 			this.oIconTabBar.placeAt('qunit-fixture');
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oIconTabBar.destroy();
@@ -2663,7 +2626,7 @@ sap.ui.define([
 			headerLabel: "Available spaces",
 			headerDescription: "Select tab to show a space"
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oITH.$().attr("aria-label"), "Available spaces", "'aria-label' attribute should be set");
 		assert.strictEqual(oITH.$("head").attr("aria-describedby"), oITH._getInvisibleHeadText().getId(), "'aria-describedby' attribute should be set.");
@@ -2708,7 +2671,7 @@ sap.ui.define([
 			});
 
 			this.oIconTabBar.placeAt('qunit-fixture');
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oIconTabBar.destroy();
@@ -2730,7 +2693,7 @@ sap.ui.define([
 			oItem.destroyItems();
 		});
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(aItems[0].getDomRef().getAttribute("aria-haspopup"), "aria-haspopup is not set");
 		assert.notOk(oIconTabHeader.getDomRef("head").getAttribute("aria-describedby"), "aria-describedby is not set");
@@ -2739,7 +2702,7 @@ sap.ui.define([
 	QUnit.test("aria-labelledby of the content", function (assert) {
 		var oNestedItem = this.oIconTabBar.getItems()[0].getItems()[1];
 		this.oIconTabBar.setSelectedKey(oNestedItem.getKey());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oSelectedItem = oNestedItem;
 
 		assert.strictEqual(this.oIconTabBar.getDomRef("content").getAttribute("aria-labelledby"), oSelectedItem._getRootTab().getId(), "aria-labelledby should be set to the id of the root tab");
@@ -2763,7 +2726,7 @@ sap.ui.define([
 
 		// Act
 		oContainer.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$().find(sContentSelector);
 
@@ -2819,7 +2782,7 @@ sap.ui.define([
 			this.oIconTabHeader = oIconTabHeader;
 			this.oIconTabHeader.placeAt('qunit-fixture');
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oIconTabHeader.destroy();
@@ -2831,14 +2794,14 @@ sap.ui.define([
 		assert.strictEqual(this.oIconTabHeader.$().find('.sapMITBSelected').length, 0, "No tab is selected");
 
 		this.oIconTabHeader.setSelectedKey('');
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.clock.tick(500);
 
 		assert.strictEqual(this.oIconTabHeader.$().find('.sapMITBSelected').length, 1, "A tab is selected");
 
 		this.oIconTabHeader.setSelectedKey('InvalidKey');
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.clock.tick(500);
 
@@ -2869,32 +2832,32 @@ sap.ui.define([
 
 		this.oIconTabBar = oIconTabBar;
 		this.oIconTabBar.placeAt('qunit-fixture');
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(this.oIconTabBar.$().find('.sapMITBSelected').length, 1, "A tab is selected");
 
 		this.oIconTabBar.setSelectedKey('');
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.clock.tick(500);
 
 		assert.strictEqual(this.oIconTabBar.$().find('.sapMITBSelected').length, 1, "A tab is selected");
 
 		this.oIconTabBar.setSelectedKey('InvalidKey');
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.clock.tick(500);
 
 		assert.strictEqual(this.oIconTabBar.$().find('.sapMITBSelected').length, 1, "A tab is selected");
 
 		this.oIconTabBar.setSelectedKey('9');
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oIconTabBar._getIconTabHeader().oSelectedItem.getText(), 'Tab 9' , "Enabled tab is correctly selected");
 
 		this.oIconTabBar.setSelectedKey('10');
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oIconTabBar._getIconTabHeader().oSelectedItem.getText(), 'Tab 9' , "Disabled tab is not selected");
 
@@ -2920,7 +2883,7 @@ sap.ui.define([
 		});
 
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oIconTabBar._getIconTabHeader().oSelectedItem, oNestedItem, "Nested item should be found and set as selected");
@@ -2942,7 +2905,7 @@ sap.ui.define([
 				]
 			});
 			this.oIconTabHeader.placeAt('qunit-fixture');
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oIconTabHeader.destroy();
@@ -2954,7 +2917,7 @@ sap.ui.define([
 		assert.strictEqual(this.oIconTabHeader.$().find('.sapMITBHead .sapMITBFilter').length, 2, "2 tabs are displayed");
 
 		this.oIconTabHeader.getItems()[0].setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oIconTabHeader.$().find('.sapMITBHead .sapMITBFilter').length, 1, "1 tab are displayed");
 	});
@@ -2967,11 +2930,11 @@ sap.ui.define([
 		var fnThemeApplied = function() {
 			Theming.detachApplied(fnThemeApplied);
 			fnThemeApplied = function() {
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 				assert.ok(!oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header has to take the Cozy mode from global scope");
 
 				oIconTabHeader.setTabDensityMode(IconTabDensityMode.Compact);
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 				assert.ok(oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header has forced Compact density mode independent of global scope");
 
 				// Clean up
@@ -2979,11 +2942,11 @@ sap.ui.define([
 				Theming.detachApplied(fnThemeApplied);
 				done();
 			};
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.ok(oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header has to take the Compact mode from global scope");
 
 			jQuery('body').removeClass("sapUiSizeCompact");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			jQuery('body').addClass("sapUiSizeCozy");
 			Theming.notifyContentDensityChanged();
 			Theming.attachApplied(fnThemeApplied);
@@ -3008,17 +2971,17 @@ sap.ui.define([
 
 		// System under Test
 		oIconTabHeader.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(!oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header is in Cozy mode by default");
 
 		oIconTabHeader.setTabDensityMode(IconTabDensityMode.Compact);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header is in Compact mode");
 
 		oIconTabHeader.setTabDensityMode(IconTabDensityMode.Inherit);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(!oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header has to take the global mode which is Cozy");
 
 		jQuery('body').addClass("sapUiSizeCompact");
@@ -3079,7 +3042,7 @@ sap.ui.define([
 			});
 			this.oIconTabBar.placeAt('qunit-fixture');
 			this.oIconTabBar1.placeAt('qunit-fixture');
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.oMockEvent = {
 				getParameter: function(parameter) {
@@ -3299,7 +3262,7 @@ sap.ui.define([
 		// arrange
 		this.oIconTabBar.$().width("150px");
 		this.oIconTabHeader.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		// assert
 		assert.strictEqual(this.oIconTabHeader._getItemsInStrip().length, 1, "There should be 1 visible item and 2 in the 'More' menu");
 		// act
@@ -3311,7 +3274,7 @@ sap.ui.define([
 	QUnit.test("Drag&Drop Keyboard Handling: Drag through invisible tab", function(assert) {
 		// arrange
 		this.oIconTabHeader.getItems()[1].setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		// act
 		this.oIconTabHeader.onsapincreasemodifiers(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
 		// assert
@@ -3325,7 +3288,7 @@ sap.ui.define([
 			this.oIconTabHeader = this.oIconTabBar.getAggregation("_header");
 			this.oSelectList = this.oIconTabHeader._getSelectList();
 			this.oIconTabHeader.setEnableTabReordering(true);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 
@@ -3404,7 +3367,7 @@ sap.ui.define([
 		// Act
 		this.oSelectList._handleDragAndDrop(this.oMockEvent);
 		this.clock.tick(500);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		iDelta = this.oIconTabHeader._getItemsInStrip().length;
 		// Assert
@@ -3476,7 +3439,7 @@ sap.ui.define([
 		// Act
 		this.oSelectList._handleDragAndDrop(this.oMockEvent2);
 		this.clock.tick(500);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 0].getText(), oTab1.getText(), "Tab at index " + (iDelta + 0) + " in items aggregation is now - " + oTab1.getText());
@@ -3498,7 +3461,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oIconTabBar = getIconTabBar();
 			this.oIconTabBar.placeAt('qunit-fixture');
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.oIconTabHeader = this.oIconTabBar.getAggregation("_header");
 			this.oSelectList = this.oIconTabHeader._getSelectList();
@@ -3611,7 +3574,7 @@ sap.ui.define([
 		// Act
 		this.oIconTabHeader._handleDragAndDrop(this.oMockEvent);
 		this.clock.tick(500);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		aTabsInStrip = this.oIconTabHeader._getItemsInStrip();
 
@@ -3645,7 +3608,7 @@ sap.ui.define([
 		// Act
 		this.oIconTabHeader._handleDragAndDrop(this.oMockEvent2);
 		this.clock.tick(500);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		aTabsInStrip = this.oIconTabHeader._getItemsInStrip();
 
@@ -3666,7 +3629,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oIconTabBar = getIconTabBar();
 			this.oIconTabBar.placeAt('qunit-fixture');
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.oIconTabHeader = this.oIconTabBar.getAggregation("_header");
 			this.oSelectList = this.oIconTabHeader._getSelectList();
@@ -3733,7 +3696,7 @@ sap.ui.define([
 		// Act
 		this.oSelectList._handleDragAndDrop(this.oMockEvent);
 		this.clock.tick(500);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 2].getText(), oTabInOverflow3.getText(), "Tab at index " + (iDelta + 2) + " in items aggregation is now - " + oTabInOverflow3.getText());
@@ -3762,7 +3725,7 @@ sap.ui.define([
 		// Act
 		this.oSelectList._handleDragAndDrop(this.oMockEvent2);
 		this.clock.tick(500);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 2].getText(), oTabInStrip2.getText(), "Tab at index " + (iDelta + 2) + " in items aggregation is now - " + oTabInStrip2.getText());
@@ -3866,7 +3829,7 @@ sap.ui.define([
 		});
 		this.oIconTabBar.placeAt('qunit-fixture');
 		this.oIconTabBar1.placeAt('qunit-fixture');
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oMockEventOn = {
 			getParameter: function(parameter) {
@@ -4179,7 +4142,7 @@ sap.ui.define([
 		});
 
 		this.oIconTabBar.placeAt('qunit-fixture');
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oMockEvent = {
 			getParameter: function(parameter) {
@@ -4267,7 +4230,7 @@ sap.ui.define([
 		var oSpy = sinon.spy(IconTabFilter.prototype, "addEventDelegate"),
 			oIconTabBar = getIconTabBar();
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		// Assert
 		assert.notOk(oSpy.calledWith(oIconTabBar.getItems()[0]._oDragEventDelegate), 'Drag&Drop aggregation configuration should be added');
 		oIconTabBar.destroy();
@@ -4304,7 +4267,7 @@ sap.ui.define([
 		oITB.addStyleClass("sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer");
 
 		oITB.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.clock.tick(500);
 
@@ -4363,7 +4326,7 @@ sap.ui.define([
 		});
 
 		oITB.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oITB.getSelectedKey(), oTab.getItems()[0].getId(), "Selected item is first available child that has content");
@@ -4389,7 +4352,7 @@ sap.ui.define([
 		});
 
 		oITB.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeydown(oTab.$(), KeyCodes.ENTER);
@@ -4428,7 +4391,7 @@ sap.ui.define([
 			items: aTabs
 		});
 		oITB.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oITH = oITB._getIconTabHeader();
 		var oSetSelectedItemSpy = this.spy(oITH, "setSelectedItem");
@@ -4486,7 +4449,7 @@ sap.ui.define([
 				textDirection: TextDirection.Inherit
 			});
 		this.oITH.addItem(oFilter1).addItem(oFilter2).addItem(oFilter3);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oFilter1.$().find(".sapMITHTextContent").attr("dir"), "ltr", "'dir' attribute is correctly set");
@@ -4510,7 +4473,7 @@ sap.ui.define([
 		});
 
 		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		var $itbf = oIconTabBar.getItems()[0].$();

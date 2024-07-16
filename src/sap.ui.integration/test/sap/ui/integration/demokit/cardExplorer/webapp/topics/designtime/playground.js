@@ -1,0 +1,404 @@
+function init() {
+	var sampleManifest = {
+		"_version": "1.14.0",
+		"sap.app": {
+			"id": "card.explorer.highlight.list.card",
+			"type": "card",
+			"title": "Sample of a List with Highlight",
+			"subTitle": "Sample of a List with Highlight",
+			"applicationVersion": {
+				"version": "1.0.0"
+			},
+			"shortTitle": "A short title for this Card",
+			"info": "Additional information about this Card",
+			"description": "A long description for this Card",
+			"tags": {
+				"keywords": [
+					"List",
+					"Highlight",
+					"Card",
+					"Sample"
+				]
+			}
+		},
+		"sap.ui": {
+			"technology": "UI5",
+			"icons": {
+				"icon": "sap-icon://list"
+			}
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "List Card with Top 5 Products",
+				"subTitle": "These are the top sellers this month",
+				"icon": {
+					"src": "sap-icon://desktop-mobile"
+				},
+				"status": {
+					"text": "5 of 20"
+				}
+			},
+			"configuration": {
+				"destinations": {
+					"sampledestination": {
+						"label": "Sample Destination",
+						"name": "Destination"
+					}
+				}
+			},
+			"content": {
+				"data": {
+					"json": [{
+						"Name": "Comfort Easy",
+						"Description": "32 GB Digital Assistant with high-resolution color screen",
+						"Highlight": "Error"
+					},
+					{
+						"Name": "ITelO Vault",
+						"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+						"Highlight": "Warning"
+					},
+					{
+						"Name": "Notebook Professional 15",
+						"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+						"Highlight": "Success"
+					},
+					{
+						"Name": "Ergo Screen E-I",
+						"Description": "Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm",
+						"Highlight": "Information"
+					},
+					{
+						"Name": "Laser Professional Eco",
+						"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+						"Highlight": "None"
+					}
+					]
+				},
+				"maxItems": 5,
+				"item": {
+					"title": "{Name}",
+					"description": "{Description}",
+					"highlight": "{Highlight}"
+				}
+			}
+		}
+	};
+	var config = {
+		"form": {
+			"items": {
+				"title": {
+					"manifestpath": "/sap.card/header/title",
+					"type": "string",
+					"translatable": true,
+					"label": "Card Title",
+					"cols": 2
+				},
+				"subtitle": {
+					"manifestpath": "/sap.card/header/subTitle",
+					"type": "string",
+					"translatable": true,
+					"label": "Card Subtitle",
+					"cols": 2
+				}
+			}
+		},
+		"preview": {
+			"modes": "LiveAbstract"
+		}
+	};
+
+	sap.ui.require(["sap-ui-integration-editor"], function () {
+		sap.ui.require(["sap/ui/codeeditor/CodeEditor", "sap/ui/integration/designtime/editor/CardEditor", "sap/ui/integration/Host", "sap/m/Select", "sap/m/Button", "sap/ui/core/ListItem"], function (CodeEditor, CardEditor, Host, Select, Button, ListItem) {
+			var oHost = new Host("host", {
+				resolveDestination: function (name) {
+					return Promise.resolve("https://" + name);
+				}
+			});
+
+			oHost.getDestinations = function () {
+				return Promise.resolve([
+					{
+						"name": "Products"
+					},
+					{
+						"name": "Orders"
+					},
+					{
+						"name": "Portal"
+					},
+					{
+						"name": "Northwind"
+					}
+				]);
+			};
+			oHost.getContextValue = function (sPath) {
+				return this.getContext().then(function (oNode) {
+					var aParts = sPath.split("/"),
+						iIndex = 0;
+					while (oNode && aParts[iIndex]) {
+						oNode = oNode[aParts[iIndex]];
+						iIndex++;
+					}
+					return oNode;
+				});
+			};
+
+			oHost.getContext = function () {
+				var context = {
+					"sap.workzone": {
+						label: "SAP Work Zone",
+						currentUser: {
+							label: "Current User",
+							id: {
+								label: "Id of the Work Zone user",
+								type: "string",
+								tags: ["technical"],
+								placeholder: "Work Zone user id",
+								description:
+									"Id of the current user. The value will change based on the logged on user. To show the users name, use 'Name of the Work Zone user'",
+								value: "MyCurrentUserId"
+							},
+							name: {
+								label: "Name of the Work Zone user",
+								type: "string",
+								placeholder: "Work Zone user name",
+								description:
+									"Name of the current user with first, middle and last name. The middle name will be abbreviated. The value will change based on the logged on user",
+								value: "Mary J. O'Anna"
+							},
+							email: {
+								label:
+									"Email address of current Work Zone user",
+								type: "string",
+								placeholder: "Work Zone user email",
+								description:
+									"Email address of current Work Zone user. The value will change based on the logged on user.",
+								value: "mary.oanna@company.com"
+							}
+						},
+						currentWorkspace: {
+							label: "Current Workspace",
+							id: {
+								label: "Id of a workspace",
+								type: "string",
+								tags: ["technical"],
+								placeholder: "Workspace Id",
+								description:
+									"Id of a workspace where the card is added by a page administrator.",
+								value: "workspaceId"
+							},
+							name: {
+								label: "Name of a Workspace",
+								type: "string",
+								placeholder: "Workspace Name",
+								description:
+									"Name of a workspace where the card is added by a page administrator.",
+								value: null
+							}
+						},
+						currentCompany: {
+							label: "Current Company",
+							id: {
+								label: "Id of the current company",
+								type: "string",
+								tags: ["technical"],
+								placeholder: "Id of the company",
+								description:
+									"Id of the company where the card is added by a page administrator.",
+								value: "CompanyId"
+							},
+							name: {
+								label: "Name of the company",
+								type: "string",
+								placeholder: "Name of the company",
+								description:
+									"Name of the company where the card is added by a page administrator.",
+								value: "Company Nice Name"
+							},
+							webHost: {
+								label: "Work Zone Hostname",
+								type: "string",
+								tags: ["technical"],
+								placeholder: "Work Zone Hostname",
+								description:
+									"The host name of your Work Zone system.",
+								value: "wz.host.name.ondemand.com"
+							}
+						}
+					},
+					"sap.successfactors": {
+						label: "SAP SucessFactors",
+						currentUser: {
+							label: "Current User",
+							id: {
+								label: "Success Factors User Id",
+								type: "string",
+								tags: ["technical"],
+								placeholder: "Success Factors User Id",
+								description:
+									"The user id of the connected Success Factors system. The value will change based on the logged on user.",
+								value: "SFUserId"
+							}
+						},
+						currentCompany: {
+							label: "Current Company",
+							id: {
+								label: "Success Factors Company Id",
+								type: "string",
+								tags: ["technical"],
+								placeholder: "Success Factors Company Id",
+								description:
+									"The company id the connected Success Factors system. The value will change in case a different SF company is used.",
+								value: "SFCompanyId"
+							},
+							webHost: {
+								label: "Success Factors Hostname",
+								type: "string",
+								placeholder: "Success Factors Hostname",
+								tags: ["technical"],
+								description:
+									"The hostname of the connected Success Factors system. The value will change in case a different SF host is used.",
+								value: "sf.host.name.ondemand.com"
+							}
+						}
+					}
+				};
+				return Promise.resolve(context);
+			};
+			var sValue;
+			var oCodeEditor = new CodeEditor({
+				height: "200px",
+				syntaxHints: false,
+				liveChange: function (oEvent) {
+					try {
+						sValue = oEvent.getParameter("value");
+						JSON.parse(sValue);
+						if (iTimeout) {
+							clearTimeout(iTimeout);
+						}
+						var iTimeout = setTimeout(function () {
+							if (oAdminEditor) {
+								oAdminEditor.destroy();
+							};
+							oAdminEditor = createEditor("admin", sValue);
+							oAdminEditor.placeAt("adminsample");
+							if (oContentEditor) {
+								oContentEditor.destroy();
+							};
+							oContentEditor = createEditor("content", sValue);
+							oContentEditor.placeAt("contentsample");
+							if (oTranslationEditor) {
+								oTranslationEditor.destroy();
+							};
+							oTranslationEditor = createEditor("translation", sValue);
+							oTranslationEditor.placeAt("translationsample");
+						}, 500);
+					} catch (ex) {
+						//not valid
+					}
+
+				}
+			});
+			oCodeEditor.setValue(JSON.stringify(config, null, "\t"));
+			oCodeEditor._oEditor.completers = [];
+			oCodeEditor.placeAt("code");
+
+			var mSamples = {
+				simplestringfield: {
+					text: "Simple String Field",
+					code: {
+						"type": "string",
+						"label": "String Label"
+					}
+				},
+				simpleintegerfield: {
+					text: "Simple Integer Field",
+					code: {
+						"type": "integer",
+						"label": "Integer Label"
+					}
+				}
+			};
+
+			var oSelect = new Select({
+				change: function (oEvent) {
+					oSelect._showSampleCode();
+				}
+			});
+			oSelect.setWidth("16rem");
+			for (var n in mSamples) {
+				oSelect.addItem(new ListItem({
+					text: mSamples[n].text,
+					key: n
+				}))
+			}
+			oSelect.setSelectedKey(Object.keys(mSamples)[0]);
+
+			oSelect._showSampleCode = function () {
+				var oCode = mSamples[oSelect.getSelectedKey() || Object.keys(mSamples)[0]].code;
+				var oCodeSample = document.getElementById("codesample");
+				oCodeSample.innerHTML = JSON.stringify(oCode, null, "\t");
+				window.hljs.highlightElement(oCodeSample);
+			}
+			oSelect._showSampleCode();
+			oSelect.placeAt("sampleselect");
+
+			var oButton = new Button({
+				text: "Insert Item",
+				press: function () {
+					try {
+						var oJson = JSON.parse(oCodeEditor.getValue()),
+							oNew = JSON.parse(oCodeEditor.getValue());
+						oNew.form.items = {};
+						var sKey = oSelect.getSelectedKey();
+						if (sKey) {
+							var sOriginalKey = sKey;
+							var i = 1;
+							while (oJson.form.items[sKey]) {
+								sKey = sOriginalKey + "" + (i++);
+							}
+							var oCode = mSamples[sOriginalKey].code;
+							oNew.form.items = {
+							}
+							oNew.form.items[sKey] = oCode;
+							for (var n in oJson.form.items) {
+								oNew.form.items[n] = oJson.form.items[n];
+							}
+							oCodeEditor.setValue(JSON.stringify(oNew, null, "\t"));
+							oCodeEditor._oEditor.find('"' + sKey + '"');
+						}
+					} catch {
+
+					}
+				}
+			});
+			oButton.setWidth("8rem");
+			oButton.placeAt("sampleselect");
+
+			var sBaseUrl = document.location.protocol + "/" + document.location.pathname.substring(0, document.location.pathname.lastIndexOf("/") + 1);
+
+			var oAdminEditor = createEditor("admin");
+			oAdminEditor.placeAt("adminsample");
+
+			var oContentEditor = createEditor("content");
+			oContentEditor.placeAt("contentsample");
+
+			var oTranslationEditor = createEditor("translation");
+			oTranslationEditor.placeAt("translationsample");
+
+			function createEditor(sMode, sDTJSON) {
+				return new CardEditor({
+					card: { manifest: sampleManifest, baseUrl: sBaseUrl, host: "host" },
+					designtime: sDTJSON !== undefined ? JSON.parse(sDTJSON) : JSON.parse(oCodeEditor.getValue()),
+					mode: sMode,
+					language: sMode === "translation" ? "fr" : "",
+					allowSettings: true,
+					allowDynamicValues: true
+				});
+			}
+
+		})
+	});
+};

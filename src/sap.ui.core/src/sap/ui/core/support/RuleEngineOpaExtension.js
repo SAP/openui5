@@ -27,11 +27,7 @@ sap.ui.define([
 	 * @public
 	 */
 	var Extension = BaseObject.extend("sap.ui.core.support.RuleEngineOpaExtension", /** @lends sap.ui.core.support.RuleEngineOpaExtension.prototype */ {
-		metadata : {
-			publicMethods : [
-				"getAssertions"
-			]
-		},
+		metadata : {},
 
 		/**
 		 * When the application under test is started in a UIComponent container instead of an iframe

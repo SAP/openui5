@@ -7,17 +7,15 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 	"sap/base/util/deepClone",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
-], function (
+	"sap/ui/thirdparty/sinon-4"
+], function(
 	BaseEditor,
 	PropertyEditors,
 	PropertyEditorFactory,
 	StringEditor,
 	deepClone,
 	nextUIUpdate,
-	sinon,
-	oCore
+	sinon
 ) {
 	"use strict";
 
@@ -249,7 +247,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[1].getValue(), "foo2 value", "then internal property editor has a correct value");
 
@@ -257,7 +255,7 @@ sap.ui.define([
 					"propertyEditorsChange",
 					sandbox.stub()
 						.onSecondCall().callsFake(function () {
-							oCore.applyChanges();
+							nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 
 							assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "bar1 value", "then internal property editor has a correct value");
 							assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[1].getValue(), "bar2 value", "then internal property editor has a correct value");
@@ -521,7 +519,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[1].getValue(), "foo2 value", "then internal property editor has a correct value");
 
@@ -556,7 +554,7 @@ sap.ui.define([
 						"propertyEditorsChange",
 						sandbox.stub()
 							.onSecondCall().callsFake(function () {
-								oCore.applyChanges();
+								nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 								assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1_2 value", "then internal editor re-rendered and received correct value from new editor");
 								assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[1].getValue(), "foo2_2 value", "then internal editor re-rendered and received correct value from new editor");
 
@@ -581,7 +579,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[1].getValue(), "foo2 value", "then internal property editor has a correct value");
 
@@ -616,7 +614,7 @@ sap.ui.define([
 						"propertyEditorsChange",
 						sandbox.stub()
 							.onSecondCall().callsFake(function () {
-								oCore.applyChanges();
+								nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 								assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1_2 value", "then internal editor re-rendered and received corrent value from new editor");
 								assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[1].getValue(), "foo2_2 value", "then internal editor re-rendered and received corrent value from new editor");
 
@@ -747,13 +745,13 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				var aPropertyEditors = this.oPropertyEditors._getPropertyEditors();
 				assert.strictEqual(aPropertyEditors[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 				assert.strictEqual(aPropertyEditors[1].getValue(), "foo2 value", "then internal property editor has a correct value");
 
 				this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-					oCore.applyChanges();
+					nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 					assert.ok(!this.oPropertyEditors._getPropertyEditors(), "then internal editor is removed");
 					assert.ok(aPropertyEditors[0].bIsDestroyed, "then internal property editor is destroyed");
 					assert.ok(aPropertyEditors[1].bIsDestroyed, "then internal property editor is destroyed");
@@ -770,13 +768,13 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				var aPropertyEditors = this.oPropertyEditors._getPropertyEditors();
 				assert.strictEqual(aPropertyEditors[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 				assert.strictEqual(aPropertyEditors[1].getValue(), "foo2 value", "then internal property editor has a correct value");
 
 				this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-					oCore.applyChanges();
+					nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 					assert.ok(!this.oPropertyEditors._getPropertyEditors(), "then internal editor is removed");
 					assert.ok(aPropertyEditors[0].bIsDestroyed, "then internal property editor is destroyed");
 					assert.ok(aPropertyEditors[1].bIsDestroyed, "then internal property editor is destroyed");
@@ -857,7 +855,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[1].getValue(), "foo2 value", "then internal property editor has a correct value");
 				fnDone();
@@ -871,7 +869,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[1].getValue(), "foo2 value", "then internal property editor has a correct value");
 				fnDone();
@@ -933,7 +931,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				var aPropertyEditors = this.oPropertyEditors._getPropertyEditors();
 
 				assert.strictEqual(aPropertyEditors[0].getValue(), "foo1 value", "then internal property editor has a correct value");

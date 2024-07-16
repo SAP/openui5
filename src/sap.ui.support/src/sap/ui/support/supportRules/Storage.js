@@ -305,4 +305,4 @@ sap.ui.define([
 		}
 	};
 
-}, true);
+});

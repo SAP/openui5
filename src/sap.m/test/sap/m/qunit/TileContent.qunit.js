@@ -1,14 +1,12 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/m/TileContent",
-	"sap/m/NewsContent",
-	"sap/m/FeedContent",
 	"sap/m/Text",
 	"sap/m/library",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/NumericContent",
 	"sap/m/GenericTile"
-], function(TileContent, NewsContent, FeedContent, Text, library, nextUIUpdate, NumericContent, GenericTile ) {
+], function(TileContent, Text, library, nextUIUpdate, NumericContent, GenericTile) {
 	"use strict";
 
 
@@ -24,13 +22,6 @@ sap.ui.define([
 		afterEach : function() {
 			this.oTileContent.destroy();
 		}
-	});
-
-	/**
-	 * @deprecated Since version 1.38.0.
-	 */
-	QUnit.test("Property 'size'", function(assert) {
-		assert.equal(this.oTileContent.getSize(), "Auto", "Property 'size' default value is correct.");
 	});
 
 	QUnit.test("Property 'footer'", function(assert) {
@@ -89,36 +80,6 @@ sap.ui.define([
 		assert.equal(this.tile.getDomRef("content").classList[1], "appInfoWithFooter", "The CSS class is applied properly");
 	});
 
-	/**
-	 * @deprecated Since version 1.38.0.
-	 */
-	QUnit.module("Rendering", {
-		beforeEach : async function() {
-			this.oNewsTileContent = new TileContent("tc1", {
-				footer : "Current Quarter",
-				unit : "EUR",
-				size : "Auto",
-				content : new NewsContent("news", {
-					size : "Auto",
-					contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
-					subheader : "SAP News"
-				})
-			});
-			this.oNewsTileContent.placeAt("qunit-fixture");
-			await nextUIUpdate();
-		},
-		afterEach : function() {
-			this.oNewsTileContent.destroy();
-		}
-	});
-
-	QUnit.test("DOM structure created", function(assert) {
-		assert.equal(this.oNewsTileContent._getContentType(), "News", "Type was get successfully");
-		assert.ok(document.getElementById("tc1"), "TileContent1 was rendered successfully");
-		assert.ok(document.getElementById("news"), "News content was rendered successfully");
-		assert.ok(document.getElementById("tc1-footer-text"), "TileContent1 footer was rendered successfully");
-	});
-
 	QUnit.module("Rendering of colored footer", {
 		beforeEach : async function() {
 			this.oTileContent = new TileContent();
@@ -156,37 +117,6 @@ sap.ui.define([
 		await nextUIUpdate();
 		//Assert
 		assert.ok(this.oTileContent.$("footer-text").hasClass("sapMTileCntFooterTextColorGood"), "Correct CSS class added");
-	});
-
-	/**
-	 * @deprecated Since version 1.38.0.
-	 */
-	QUnit.module("Functional test", {
-		beforeEach : async function() {
-			this.oFeedTileContent = new TileContent("tc2", {
-				footer : "Current Quarter",
-				unit : "EUR",
-				size : "Auto",
-				content : new FeedContent("feed", {
-					size : "Auto",
-					contentText : "@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London",
-					subheader : "about 1 minute ago in Computer Market",
-					value : "7"
-				})
-			});
-			this.oFeedTileContent.placeAt("qunit-fixture");
-			await nextUIUpdate();
-		},
-		afterEach : function() {
-			this.oFeedTileContent.destroy();
-		}
-	});
-
-	QUnit.test("Getting content type.", function(assert) {
-		assert.ok(document.getElementById("tc2"), "TileContent2 was rendered successfully");
-		assert.ok(document.getElementById("feed"), "Feed content was rendered successfully");
-		assert.ok(document.getElementById("tc2-footer-text"), "TileContent2 footer was rendered successfully");
-		assert.equal(this.oFeedTileContent._getContentType(), undefined, "Type was get successfully");
 	});
 
 	QUnit.module("Protected property bRenderFooter", {
@@ -297,57 +227,4 @@ sap.ui.define([
 			this.oTileContent.destroy();
 		}
 	});
-
-	/**
-	 * @deprecated Since version 1.38.0.
-	 */
-	QUnit.test("when both content and tile have tooltip", async function(assert) {
-		this.oTileContent =  new TileContent("tileContent", {
-			size : "Auto",
-			content : new FeedContent({
-				size : "Auto",
-				contentText : "content"
-			}),
-			tooltip: "fulltile"
-		});
-		this.oTileContent.placeAt("qunit-fixture");
-		await nextUIUpdate();
-		var tooltip = "fulltile" + "\n" + "content " + "\n";
-		//Assert
-		assert.equal(document.getElementById("tileContent").title,tooltip);
-	});
-
-	/**
-	 * @deprecated Since version 1.38.0.
-	 */
-	QUnit.test("when only content has tooltip", async function(assert) {
-		this.oTileContent =  new TileContent("tileContent1", {
-			size : "Auto",
-			content : new FeedContent("feeditem", {
-				size : "Auto",
-				contentText : "content"
-			})
-		});
-		this.oTileContent.placeAt("qunit-fixture");
-		await nextUIUpdate();
-		//Assert
-		assert.equal(document.getElementById("tileContent1").title,"content " + "\n");
-	});
-
-	/**
-	 * @deprecated Since version 1.38.0.
-	 */
-	QUnit.test("when only tile has tooltip", async function(assert) {
-		this.oTileContent =  new TileContent("tileContent2", {
-			content : new FeedContent("feed2", {
-				size : "Auto"
-			}),
-			tooltip: "fulltile"
-		});
-		this.oTileContent.placeAt("qunit-fixture");
-		await nextUIUpdate();
-		//Assert
-		assert.equal(document.getElementById("tileContent2").title,"fulltile");
-	});
-
 });

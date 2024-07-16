@@ -4,8 +4,12 @@
 	<meta charset="utf-8">
 	<title>QUnit tests: ui5loader AMD APIs (global define/require)</title>
 	<script src="../../shared-config.js"></script>
-	<script src="../../../../../../resources/ui5loader.js" id="sap-ui-bootstrap"></script>
-	<link  href="../../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen">
+	<script src="../../../../../../resources/ui5loader.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+	></script>
+	<link href="../../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen">
 	<script src="../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 	<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script src="../../../../../../resources/sap/ui/thirdparty/sinon-4.js"></script>

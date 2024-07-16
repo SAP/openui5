@@ -6,55 +6,28 @@
 	<title>Custom Elements for sap.ui.integration</title>
 	<script src="../../../../resources/sap-ui-integration.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-theme="sap_horizon"
-			data-sap-ui-libs="sap.m">
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:local/CustomElementCardTypeComponent"
+			data-sap-ui-resource-roots='{"local":"./"}'
+	>
 	</script>
 
-	<style>
-		.customSize{
-			width: 400px;
-			height: 400px;
-		}
-	</style>
+	<link rel="stylesheet" href="./CustomElementCardTypeComponent.css">
 </head>
 
 <body class="sapUiBody sapUiSizeCompact" style="margin:2rem">
 
-	<ui-integration-card
-		class="customSize"
-		manifest="./widgets/components/component1/webapp/manifest.json"
-		manifest-changes='[{"content": {"configuration": {"settings": {"stringProperty": "changed value"}}}}]'
-		host="host1">
+	<ui-integration-card class="customSize" manifest="./widgets/components/component1/webapp/manifest.json" manifest-changes="[{&quot;content&quot;: {&quot;configuration&quot;: {&quot;settings&quot;: {&quot;stringProperty&quot;: &quot;changed value&quot;}}}}]" host="host1">
 	</ui-integration-card>
 
-	<ui-integration-card
-		class="customSize"
-		manifest="./widgets/components/component1/webapp/manifest.json"
-		parameters='{
-			"text": "modifiedParameterValue"
-		}'
-		host="host1">
+	<ui-integration-card class="customSize" manifest="./widgets/components/component1/webapp/manifest.json" parameters="{
+			&quot;text&quot;: &quot;modifiedParameterValue&quot;
+		}" host="host1">
 	</ui-integration-card>
 
-	<script>
-		function handleAction(event) {
-			sap.m.MessageToast.show("Event Type: " + event.type);
-		}
-
-		document.querySelectorAll("ui-integration-card").forEach(function (oCard) {
-			oCard.addEventListener("action", handleAction);
-		});
-
-		customElements.whenDefined("ui-integration-card").then(function () {
-			var host = new sap.ui.integration.Host('host1', {
-				resolveDestination: function(sDestinationName) {
-					if (sDestinationName == "Northwind") {
-						return Promise.resolve("https://services.odata.org/V3/Northwind/Northwind.svc");
-					}
-				}
-			});
-		});
-	</script>
+	
 
 </body>
 

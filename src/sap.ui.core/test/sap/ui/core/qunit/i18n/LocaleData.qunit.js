@@ -8,13 +8,11 @@ sap.ui.define([
 	"sap/base/i18n/date/TimezoneUtils",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/CalendarType",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/date/CalendarWeekNumbering"
-], function(timezones, Log, Formatting, LanguageTag, Localization, TimezoneUtils, LoaderExtensions, CalendarType,
-		Configuration, Lib, Locale, LocaleData, CalendarWeekNumbering) {
+], function(timezones, Log, Formatting, LanguageTag, Localization, TimezoneUtils, LoaderExtensions, CalendarType, Lib, Locale, LocaleData, CalendarWeekNumbering) {
 	"use strict";
 	const aSupportedLanguages = ["ar", "ar_EG", "ar_SA", "bg", "ca", "cnr", "cs", "cy", "da", "de", "de_AT", "de_CH",
 		"el", "el_CY", "en", "en_AU", "en_GB", "en_HK", "en_IE", "en_IN", "en_NZ", "en_PG", "en_SG", "en_ZA", "es",
@@ -112,37 +110,37 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{sLocale: "cnr", sName: "crnogorski"},
-	{sLocale: "cnr_ME", sName: "crnogorski (Crna Gora)"},
-	{sLocale: "he", sName: "עברית"},
-	{sLocale: "iw", sName: "עברית"},
-	{sLocale: "mk", sName: "македонски"},
-	{sLocale: "mk_MK", sName: "македонски (Северна Македонија)"},
-	{sLocale: "sh", sName: "srpskohrvatski"},
-	{sLocale: "sr-Latn", sName: "srpskohrvatski"},
-	{sLocale: "sr_Latn_RS", sName: "srpskohrvatski (Srbija)"},
-	{sLocale: "sr", sName: "српски"},
-	{sLocale: "sr_RS", sName: "српски (Србија)"},
-	{sLocale: "sr_Cyrl", sName: "српски (ћирилица)"},
-	{sLocale: "sr_Cyrl_RS", sName: "српски (ћирилица)"},
-	{sLocale: "de-x-sapufmt", sName: "Deutsch"},
-	{sLocale: "en-GB-x-sapufmt", sName: "British English"},
-	{sLocale: "he-x-sapufmt", sName: "עברית"},
-	{sLocale: "iw-x-sapufmt", sName: "עברית"},
-	{sLocale: "sr-Cyrl-x-sapufmt", sName: "српски (ћирилица)"},
-	{sLocale: "sr-Latn-x-sapufmt", sName: "srpskohrvatski"},
-	{sLocale: "zh-Hant-x-sapufmt", sName: "繁體中文"},
-	// neither ji nor yi is present as CLDR data (en.json is used then)
-	{sLocale: "ji", sName: "Yiddish"},
-	{sLocale: "yi", sName: "Yiddish"}
-].forEach((oFixture) => {
-	QUnit.test("getCurrentLanguageName specific " + oFixture.sLocale, function(assert) {
-		const oLocaleData = LocaleData.getInstance(new Locale(oFixture.sLocale));
-		assert.ok(Object.keys(oLocaleData.getLanguages()).length > 0, "languages are present");
-		assert.equal(oLocaleData.getCurrentLanguageName(), oFixture.sName, "current language is present");
+	[
+		{sLocale: "cnr", sName: "crnogorski"},
+		{sLocale: "cnr_ME", sName: "crnogorski (Crna Gora)"},
+		{sLocale: "he", sName: "עברית"},
+		{sLocale: "iw", sName: "עברית"},
+		{sLocale: "mk", sName: "македонски"},
+		{sLocale: "mk_MK", sName: "македонски (Северна Македонија)"},
+		{sLocale: "sh", sName: "srpskohrvatski"},
+		{sLocale: "sr-Latn", sName: "srpskohrvatski"},
+		{sLocale: "sr_Latn_RS", sName: "srpskohrvatski (Srbija)"},
+		{sLocale: "sr", sName: "српски"},
+		{sLocale: "sr_RS", sName: "српски (Србија)"},
+		{sLocale: "sr_Cyrl", sName: "српски (ћирилица)"},
+		{sLocale: "sr_Cyrl_RS", sName: "српски (ћирилица)"},
+		{sLocale: "de-x-sapufmt", sName: "Deutsch"},
+		{sLocale: "en-GB-x-sapufmt", sName: "British English"},
+		{sLocale: "he-x-sapufmt", sName: "עברית"},
+		{sLocale: "iw-x-sapufmt", sName: "עברית"},
+		{sLocale: "sr-Cyrl-x-sapufmt", sName: "српски (ћирилица)"},
+		{sLocale: "sr-Latn-x-sapufmt", sName: "srpskohrvatski"},
+		{sLocale: "zh-Hant-x-sapufmt", sName: "繁體中文"},
+		// neither ji nor yi is present as CLDR data (en.json is used then)
+		{sLocale: "ji", sName: "Yiddish"},
+		{sLocale: "yi", sName: "Yiddish"}
+	].forEach((oFixture) => {
+		QUnit.test("getCurrentLanguageName specific " + oFixture.sLocale, function(assert) {
+			const oLocaleData = LocaleData.getInstance(new Locale(oFixture.sLocale));
+			assert.ok(Object.keys(oLocaleData.getLanguages()).length > 0, "languages are present");
+			assert.equal(oLocaleData.getCurrentLanguageName(), oFixture.sName, "current language is present");
+		});
 	});
-});
 
 	QUnit.test("getCurrentLanguageName: calls getLanguageName", function(assert) {
 		const oLocaleData = {
@@ -216,49 +214,49 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["abbreviated", "narrow", "wide"].forEach(function (sFormatType) {
-	[true, false].forEach(function (bStandAlone) {
-	var sMethod = bStandAlone ? "getFlexibleDayPeriodsStandAlone" : "getFlexibleDayPeriods",
-		sTitle = sMethod + ": " + sFormatType;
+	["abbreviated", "narrow", "wide"].forEach(function (sFormatType) {
+		[true, false].forEach(function (bStandAlone) {
+		var sMethod = bStandAlone ? "getFlexibleDayPeriodsStandAlone" : "getFlexibleDayPeriods",
+			sTitle = sMethod + ": " + sFormatType;
 
-	QUnit.test(sTitle, function (assert) {
-		var oLocaleData = LocaleData.getInstance(new Locale("de_DE")),
-			sParseType =  bStandAlone ? "stand-alone" : "format";
+		QUnit.test(sTitle, function (assert) {
+			var oLocaleData = LocaleData.getInstance(new Locale("de_DE")),
+				sParseType =  bStandAlone ? "stand-alone" : "format";
 
-		this.mock(oLocaleData).expects("_get")
-			.withExactArgs("ca-gregorian", "flexibleDayPeriods", sParseType, sFormatType)
-			.returns("~flexibleDayPeriods");
+			this.mock(oLocaleData).expects("_get")
+				.withExactArgs("ca-gregorian", "flexibleDayPeriods", sParseType, sFormatType)
+				.returns("~flexibleDayPeriods");
 
-		assert.strictEqual(oLocaleData[sMethod](sFormatType, "Gregorian"), "~flexibleDayPeriods");
+			assert.strictEqual(oLocaleData[sMethod](sFormatType, "Gregorian"), "~flexibleDayPeriods");
+		});
+		});
 	});
-	});
-});
 
 	//*********************************************************************************************
-[
-	{sCalenderType : CalendarType.Gregorian, sCLDRCalenderType : "ca-gregorian"},
-	{sCalenderType : CalendarType.Islamic, sCLDRCalenderType : "ca-islamic"},
-	{sCalenderType : CalendarType.Japanese, sCLDRCalenderType : "ca-japanese"},
-	{sCalenderType : CalendarType.Persian, sCLDRCalenderType : "ca-persian"},
-	{sCalenderType : CalendarType.Buddhist, sCLDRCalenderType : "ca-buddhist"}
-].forEach(function (oFixture) {
-	[true, false].forEach(function (bStandAlone) {
-	var sMethod = bStandAlone ? "getFlexibleDayPeriodsStandAlone" : "getFlexibleDayPeriods",
-		sTitle = sMethod + ": " + oFixture.sCLDRCalenderType;
+	[
+		{sCalenderType : CalendarType.Gregorian, sCLDRCalenderType : "ca-gregorian"},
+		{sCalenderType : CalendarType.Islamic, sCLDRCalenderType : "ca-islamic"},
+		{sCalenderType : CalendarType.Japanese, sCLDRCalenderType : "ca-japanese"},
+		{sCalenderType : CalendarType.Persian, sCLDRCalenderType : "ca-persian"},
+		{sCalenderType : CalendarType.Buddhist, sCLDRCalenderType : "ca-buddhist"}
+	].forEach(function (oFixture) {
+		[true, false].forEach(function (bStandAlone) {
+		var sMethod = bStandAlone ? "getFlexibleDayPeriodsStandAlone" : "getFlexibleDayPeriods",
+			sTitle = sMethod + ": " + oFixture.sCLDRCalenderType;
 
-	QUnit.test(sTitle, function (assert) {
-		var oLocaleData = LocaleData.getInstance(new Locale("de_DE")),
-			sParseType =  bStandAlone ? "stand-alone" : "format";
+		QUnit.test(sTitle, function (assert) {
+			var oLocaleData = LocaleData.getInstance(new Locale("de_DE")),
+				sParseType =  bStandAlone ? "stand-alone" : "format";
 
-		this.mock(oLocaleData).expects("_get")
-			.withExactArgs(oFixture.sCLDRCalenderType, "flexibleDayPeriods", sParseType, "wide")
-			.returns("~flexibleDayPeriods");
+			this.mock(oLocaleData).expects("_get")
+				.withExactArgs(oFixture.sCLDRCalenderType, "flexibleDayPeriods", sParseType, "wide")
+				.returns("~flexibleDayPeriods");
 
-		assert.strictEqual(oLocaleData[sMethod]("wide", oFixture.sCalenderType),
-			"~flexibleDayPeriods");
+			assert.strictEqual(oLocaleData[sMethod]("wide", oFixture.sCalenderType),
+				"~flexibleDayPeriods");
+		});
+		});
 	});
-	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getFlexibleDayPeriods; integrative test", function (assert) {
@@ -299,45 +297,45 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{iHour : 5, iMinute : 59, sResult : "night"},
-	{iHour : 6, iMinute : 0, sResult : "morning1"},
-	{iHour : 6, iMinute : 1, sResult : "morning1"},
-	{iHour : 21, iMinute : 59, sResult : "evening"},
-	{iHour : 22, iMinute : 0, sResult : "night"},
-	{iHour : 11, iMinute : 59, sResult : "morning1"},
-	{iHour : 36, iMinute : 40, sResult : "morning2"},
-	{iHour : 12, iMinute : 0, sResult : "noon"},
-	{iHour : 11, iMinute : 60, sResult : "noon"},
-	{iHour : 36, iMinute : 0, sResult : "noon"},
-	{iHour : 24, iMinute : 0, sResult : "midnight"},
-	{iHour : 23, iMinute : 60, sResult : "midnight"},
-	{iHour : 23, iMinute : 61, sResult : "night"},
-	{iHour : 23, iMinute : 59, sResult : "night"},
-	{iHour : 24, iMinute : 1, sResult : "night"},
-	{iHour : 99, iMinute : 100, sResult : "night"}
-].forEach(function (oFixture) {
-	var sTitle = "getFlexibleDayPeriodOfTime testing period edges for time " + oFixture.iHour + ":"
-		+ oFixture.iMinute;
+	[
+		{iHour : 5, iMinute : 59, sResult : "night"},
+		{iHour : 6, iMinute : 0, sResult : "morning1"},
+		{iHour : 6, iMinute : 1, sResult : "morning1"},
+		{iHour : 21, iMinute : 59, sResult : "evening"},
+		{iHour : 22, iMinute : 0, sResult : "night"},
+		{iHour : 11, iMinute : 59, sResult : "morning1"},
+		{iHour : 36, iMinute : 40, sResult : "morning2"},
+		{iHour : 12, iMinute : 0, sResult : "noon"},
+		{iHour : 11, iMinute : 60, sResult : "noon"},
+		{iHour : 36, iMinute : 0, sResult : "noon"},
+		{iHour : 24, iMinute : 0, sResult : "midnight"},
+		{iHour : 23, iMinute : 60, sResult : "midnight"},
+		{iHour : 23, iMinute : 61, sResult : "night"},
+		{iHour : 23, iMinute : 59, sResult : "night"},
+		{iHour : 24, iMinute : 1, sResult : "night"},
+		{iHour : 99, iMinute : 100, sResult : "night"}
+	].forEach(function (oFixture) {
+		var sTitle = "getFlexibleDayPeriodOfTime testing period edges for time " + oFixture.iHour + ":"
+			+ oFixture.iMinute;
 
-	QUnit.test(sTitle, function (assert) {
-		var oLocaleData = LocaleData.getInstance(new Locale("de_DE"));
+		QUnit.test(sTitle, function (assert) {
+			var oLocaleData = LocaleData.getInstance(new Locale("de_DE"));
 
-		this.mock(oLocaleData).expects("_get")
-			.withExactArgs("dayPeriodRules")
-			.returns({
-				evening : {_before : "22:00", _from : "18:00"},
-				midnight : {_at : "00:00"},
-				morning1 : {_before : "12:00", _from : "06:00"},
-				morning2 : {_before : "18:00", _from : "12:00"},
-				night : {_before : "06:00", _from : "22:00"},
-				noon : {_at : "12:00"}
-			});
+			this.mock(oLocaleData).expects("_get")
+				.withExactArgs("dayPeriodRules")
+				.returns({
+					evening : {_before : "22:00", _from : "18:00"},
+					midnight : {_at : "00:00"},
+					morning1 : {_before : "12:00", _from : "06:00"},
+					morning2 : {_before : "18:00", _from : "12:00"},
+					night : {_before : "06:00", _from : "22:00"},
+					noon : {_at : "12:00"}
+				});
 
-		assert.strictEqual(oLocaleData.getFlexibleDayPeriodOfTime(oFixture.iHour, oFixture.iMinute),
-			oFixture.sResult);
+			assert.strictEqual(oLocaleData.getFlexibleDayPeriodOfTime(oFixture.iHour, oFixture.iMinute),
+				oFixture.sResult);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("Unit Display Name L10N", function(assert) {
@@ -361,20 +359,20 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{sUnit: "acceleration-meter-per-square-second", oReturn: "m/s²"},
-	{sUnit: "fooBar", oReturn: undefined}
-].forEach(function (oFixture, i) {
-	QUnit.test("getUnitFormat without legacy unit mapping " + i, function(assert) {
-		var oLocaleData = LocaleData.getInstance(new Locale("en"));
+	[
+		{sUnit: "acceleration-meter-per-square-second", oReturn: "m/s²"},
+		{sUnit: "fooBar", oReturn: undefined}
+	].forEach(function (oFixture, i) {
+		QUnit.test("getUnitFormat without legacy unit mapping " + i, function(assert) {
+			var oLocaleData = LocaleData.getInstance(new Locale("en"));
 
-		this.mock(oLocaleData).expects("_get")
-			.withExactArgs("units", "short", oFixture.sUnit)
-			.returns(oFixture.oReturn);
+			this.mock(oLocaleData).expects("_get")
+				.withExactArgs("units", "short", oFixture.sUnit)
+				.returns(oFixture.oReturn);
 
-		assert.strictEqual(oLocaleData.getUnitFormat(oFixture.sUnit), oFixture.oReturn);
+			assert.strictEqual(oLocaleData.getUnitFormat(oFixture.sUnit), oFixture.oReturn);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getUnitFormat with legacy unit mapping", function(assert) {
@@ -786,181 +784,181 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-// See: https://unicode.org/reports/tr35/tr35-numbers.html#table-plural-operand-meanings
-[{
-	sNumber: "1",
-	sPluralRule: "one",
-	oOperands: {n: 1, i: 1, v: 0, w: 0, f: 0, t: 0, c: 0}
-}, {
-	sNumber: "12",
-	sPluralRule: "other",
-	oOperands: {n: 12, i: 12, v: 0, w: 0, f: 0, t: 0, c: 0}
-}, {
-	sNumber: "5000000",
-	sPluralRule: "many",
-	oOperands: {n: 5000000, i: 5000000, v: 0, w: 0, f: 0, t: 0, c: 0}
-}, {
-	sNumber: "5000000.0000",
-	sPluralRule: "other",
-	oOperands: {n: 5000000, i: 5000000, v: 4, w: 0, f: 0, t: 0, c: 0}
-}, {
-	sNumber: "5e6",
-	sPluralRule: "many",
-	oOperands: {n: 5000000, i: 5000000, v: 0, w: 0, f: 0, t: 0, c: 6}
-}, {
-	sNumber: "5.2e6",
-	sPluralRule: "many",
-	oOperands: {n: 5200000, i: 5200000, v: 0, w: 0, f: 0, t: 0, c: 6}
-}, {
-	sNumber: "5200000",
-	sPluralRule: "other",
-	oOperands: {n: 5200000, i: 5200000, v: 0, w: 0, f: 0, t: 0, c: 0}
-}, {
-	sNumber: "1.2E1",
-	sPluralRule: "other",
-	oOperands: {n: 12, i: 12, v: 0, w: 0, f: 0, t: 0, c: 1}
-}].forEach(function (oFixture, i) {
-	QUnit.test("Plural categories and operands, " + i, function (assert) {
-		var oLocaleData = LocaleData.getInstance(new Locale("es"));
+	// See: https://unicode.org/reports/tr35/tr35-numbers.html#table-plural-operand-meanings
+	[{
+		sNumber: "1",
+		sPluralRule: "one",
+		oOperands: {n: 1, i: 1, v: 0, w: 0, f: 0, t: 0, c: 0}
+	}, {
+		sNumber: "12",
+		sPluralRule: "other",
+		oOperands: {n: 12, i: 12, v: 0, w: 0, f: 0, t: 0, c: 0}
+	}, {
+		sNumber: "5000000",
+		sPluralRule: "many",
+		oOperands: {n: 5000000, i: 5000000, v: 0, w: 0, f: 0, t: 0, c: 0}
+	}, {
+		sNumber: "5000000.0000",
+		sPluralRule: "other",
+		oOperands: {n: 5000000, i: 5000000, v: 4, w: 0, f: 0, t: 0, c: 0}
+	}, {
+		sNumber: "5e6",
+		sPluralRule: "many",
+		oOperands: {n: 5000000, i: 5000000, v: 0, w: 0, f: 0, t: 0, c: 6}
+	}, {
+		sNumber: "5.2e6",
+		sPluralRule: "many",
+		oOperands: {n: 5200000, i: 5200000, v: 0, w: 0, f: 0, t: 0, c: 6}
+	}, {
+		sNumber: "5200000",
+		sPluralRule: "other",
+		oOperands: {n: 5200000, i: 5200000, v: 0, w: 0, f: 0, t: 0, c: 0}
+	}, {
+		sNumber: "1.2E1",
+		sPluralRule: "other",
+		oOperands: {n: 12, i: 12, v: 0, w: 0, f: 0, t: 0, c: 1}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("Plural categories and operands, " + i, function (assert) {
+			var oLocaleData = LocaleData.getInstance(new Locale("es"));
 
-		this.mock(oLocaleData)
-			.expects("_get")
-			.withExactArgs("plurals")
-			.returns({
-				one: "n = 1",
-				many: "e = 0 and i != 0 and i % 1000000 = 0 and v = 0 or e != 0..5"
-			});
+			this.mock(oLocaleData)
+				.expects("_get")
+				.withExactArgs("plurals")
+				.returns({
+					one: "n = 1",
+					many: "e = 0 and i != 0 and i % 1000000 = 0 and v = 0 or e != 0..5"
+				});
 
-		// code under test: check plural rule
-		assert.strictEqual(oLocaleData.getPluralCategory(oFixture.sNumber), oFixture.sPluralRule);
+			// code under test: check plural rule
+			assert.strictEqual(oLocaleData.getPluralCategory(oFixture.sNumber), oFixture.sPluralRule);
 
-		// code under test: check plural operands for number
-		// note: plural test function for "one" is always called as this is the first category
-		assert.deepEqual(oLocaleData._pluralTest.one(oFixture.sNumber).oOperands, oFixture.oOperands);
+			// code under test: check plural operands for number
+			// note: plural test function for "one" is always called as this is the first category
+			assert.deepEqual(oLocaleData._pluralTest.one(oFixture.sNumber).oOperands, oFixture.oOperands);
+		});
 	});
-});
 
 	//*********************************************************************************************
-// Tests from https://unicode.org/reports/tr35/tr35-numbers.html#table-plural-operand-meanings
-// with the following changes (as the "e" operand may be redefined in the future):
-// - leave out the "e" operand, as this is a deprecated alias for "c" and code in LocaleData only uses "c"
-// - number literals containing "c" are also tested with an "e" variant as this is the scientific notation in JavaScript
-[{
-	sNumber: "1",
-	oOperands: {n: 1, i: 1, v: 0, w: 0, f: 0, t: 0, c: 0}
-}, {
-	sNumber: "1.0",
-	oOperands: {n: 1, i: 1, v: 1, w: 0, f: 0, t: 0, c: 0}
-}, {
-	sNumber: "1.00",
-	oOperands: {n: 1, i: 1, v: 2, w: 0, f: 0, t: 0, c: 0}
-}, {
-	sNumber: "1.3",
-	oOperands: {n: 1.3, i: 1, v: 1, w: 1, f: 3, t: 3, c: 0}
-}, {
-	sNumber: "1.30",
-	oOperands: {n: 1.3, i: 1, v: 2, w: 1, f: 30, t: 3, c: 0}
-}, {
-	sNumber: "1.03",
-	oOperands: {n: 1.03, i: 1, v: 2, w: 2, f: 3, t: 3, c: 0}
-}, {
-	sNumber: "1.230",
-	oOperands: {n: 1.230, i: 1, v: 3, w: 2, f: 230, t: 23, c: 0}
-}, {
-	sNumber: "1200000",
-	oOperands: {n: 1200000, i: 1200000, v: 0, w: 0, f: 0, t: 0, c: 0}
-}, {
-	sNumber: "1.2c6",
-	oOperands: {n: 1200000, i: 1200000, v: 0, w: 0, f: 0, t: 0, c: 6}
-}, {
-	sNumber: "1.2e6",
-	oOperands: {n: 1200000, i: 1200000, v: 0, w: 0, f: 0, t: 0, c: 6}
-}, {
-	sNumber: "123c6",
-	oOperands: {n: 123000000, i: 123000000, v: 0, w: 0, f: 0, t: 0, c: 6}
-}, {
-	sNumber: "123e6",
-	oOperands: {n: 123000000, i: 123000000, v: 0, w: 0, f: 0, t: 0, c: 6}
-}, {
-	sNumber: "123c5",
-	oOperands: {n: 12300000, i: 12300000, v: 0, w: 0, f: 0, t: 0, c: 5}
-}, {
-	sNumber: "123e5",
-	oOperands: {n: 12300000, i: 12300000, v: 0, w: 0, f: 0, t: 0, c: 5}
-}, {
-	sNumber: "1200.50",
-	oOperands: {n: 1200.50, i: 1200, v: 2, w: 1, f: 50, t: 5, c: 0}
-}, {
-	sNumber: "1.20050c3",
-	oOperands: {n: 1200.5, i: 1200, v: 2, w: 1, f: 50, t: 5, c: 3}
-}, {
-	sNumber: "1.20050e3",
-	oOperands: {n: 1200.5, i: 1200, v: 2, w: 1, f: 50, t: 5, c: 3}
-}].forEach(function (oFixture, i) {
-	QUnit.test("Plural operands samples from Unicode page, " + i, function (assert) {
-		var oLocaleData = LocaleData.getInstance(new Locale("es"));
+	// Tests from https://unicode.org/reports/tr35/tr35-numbers.html#table-plural-operand-meanings
+	// with the following changes (as the "e" operand may be redefined in the future):
+	// - leave out the "e" operand, as this is a deprecated alias for "c" and code in LocaleData only uses "c"
+	// - number literals containing "c" are also tested with an "e" variant as this is the scientific notation in JavaScript
+	[{
+		sNumber: "1",
+		oOperands: {n: 1, i: 1, v: 0, w: 0, f: 0, t: 0, c: 0}
+	}, {
+		sNumber: "1.0",
+		oOperands: {n: 1, i: 1, v: 1, w: 0, f: 0, t: 0, c: 0}
+	}, {
+		sNumber: "1.00",
+		oOperands: {n: 1, i: 1, v: 2, w: 0, f: 0, t: 0, c: 0}
+	}, {
+		sNumber: "1.3",
+		oOperands: {n: 1.3, i: 1, v: 1, w: 1, f: 3, t: 3, c: 0}
+	}, {
+		sNumber: "1.30",
+		oOperands: {n: 1.3, i: 1, v: 2, w: 1, f: 30, t: 3, c: 0}
+	}, {
+		sNumber: "1.03",
+		oOperands: {n: 1.03, i: 1, v: 2, w: 2, f: 3, t: 3, c: 0}
+	}, {
+		sNumber: "1.230",
+		oOperands: {n: 1.230, i: 1, v: 3, w: 2, f: 230, t: 23, c: 0}
+	}, {
+		sNumber: "1200000",
+		oOperands: {n: 1200000, i: 1200000, v: 0, w: 0, f: 0, t: 0, c: 0}
+	}, {
+		sNumber: "1.2c6",
+		oOperands: {n: 1200000, i: 1200000, v: 0, w: 0, f: 0, t: 0, c: 6}
+	}, {
+		sNumber: "1.2e6",
+		oOperands: {n: 1200000, i: 1200000, v: 0, w: 0, f: 0, t: 0, c: 6}
+	}, {
+		sNumber: "123c6",
+		oOperands: {n: 123000000, i: 123000000, v: 0, w: 0, f: 0, t: 0, c: 6}
+	}, {
+		sNumber: "123e6",
+		oOperands: {n: 123000000, i: 123000000, v: 0, w: 0, f: 0, t: 0, c: 6}
+	}, {
+		sNumber: "123c5",
+		oOperands: {n: 12300000, i: 12300000, v: 0, w: 0, f: 0, t: 0, c: 5}
+	}, {
+		sNumber: "123e5",
+		oOperands: {n: 12300000, i: 12300000, v: 0, w: 0, f: 0, t: 0, c: 5}
+	}, {
+		sNumber: "1200.50",
+		oOperands: {n: 1200.50, i: 1200, v: 2, w: 1, f: 50, t: 5, c: 0}
+	}, {
+		sNumber: "1.20050c3",
+		oOperands: {n: 1200.5, i: 1200, v: 2, w: 1, f: 50, t: 5, c: 3}
+	}, {
+		sNumber: "1.20050e3",
+		oOperands: {n: 1200.5, i: 1200, v: 2, w: 1, f: 50, t: 5, c: 3}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("Plural operands samples from Unicode page, " + i, function (assert) {
+			var oLocaleData = LocaleData.getInstance(new Locale("es"));
 
-		// set plural rule function for oLocaleData object
-		oLocaleData.getPluralCategory(oFixture.sNumber);
+			// set plural rule function for oLocaleData object
+			oLocaleData.getPluralCategory(oFixture.sNumber);
 
-		// code under test: check plural operands for number
-		// note: plural test function for "one" is always called as this is the first category
-		assert.deepEqual(oLocaleData._pluralTest.one(oFixture.sNumber).oOperands, oFixture.oOperands);
+			// code under test: check plural operands for number
+			// note: plural test function for "one" is always called as this is the first category
+			assert.deepEqual(oLocaleData._pluralTest.one(oFixture.sNumber).oOperands, oFixture.oOperands);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	// See: https://unicode-org.github.io/cldr-staging/charts/41/supplemental/language_plural_rules.html
 	// Interesting: "1c6" and "1000000.0" have the same numeric value but lead to another plural category
-[{
-	category: "one",
-	examples: ["0", "1", "1.5"]
-}, {
-	category: "many",
-	examples: ["1000000", "1c6", "2c6", "3c6", "4c6", "5c6", "6c6",
-		"1.0000001c6", "1.1c6", "2.0000001c6", "2.1c6", "3.0000001c6", "3.1c6"]
-}, {
-	category: "other",
-	examples: ["2", "16", "100", "1000", "10000", "100000", "1c3", "2c3", "3c3", "4c3", "5c3", "6c3",
-		"2.0", "3.5", "10.0", "100.0", "1000.0", "10000.0", "100000.0", "1000000.0", "1.0001c3", "1.1c3",
-		"2.0001c3", "2.1c3", "3.0001c3", "3.1c3"]
-}].forEach(function (oFixture) {
-	QUnit.test("getPluralCategory: 'fr' examples; category=" + oFixture.category, function (assert) {
-		var oLocaleData = LocaleData.getInstance(new Locale("fr"));
+	[{
+		category: "one",
+		examples: ["0", "1", "1.5"]
+	}, {
+		category: "many",
+		examples: ["1000000", "1c6", "2c6", "3c6", "4c6", "5c6", "6c6",
+			"1.0000001c6", "1.1c6", "2.0000001c6", "2.1c6", "3.0000001c6", "3.1c6"]
+	}, {
+		category: "other",
+		examples: ["2", "16", "100", "1000", "10000", "100000", "1c3", "2c3", "3c3", "4c3", "5c3", "6c3",
+			"2.0", "3.5", "10.0", "100.0", "1000.0", "10000.0", "100000.0", "1000000.0", "1.0001c3", "1.1c3",
+			"2.0001c3", "2.1c3", "3.0001c3", "3.1c3"]
+	}].forEach(function (oFixture) {
+		QUnit.test("getPluralCategory: 'fr' examples; category=" + oFixture.category, function (assert) {
+			var oLocaleData = LocaleData.getInstance(new Locale("fr"));
 
-		oFixture.examples.forEach(function (sNumber) {
-			assert.strictEqual(oLocaleData.getPluralCategory(sNumber), oFixture.category);
+			oFixture.examples.forEach(function (sNumber) {
+				assert.strictEqual(oLocaleData.getPluralCategory(sNumber), oFixture.category);
+			});
 		});
 	});
-});
 
 	//*********************************************************************************************
-[
-	{vValue: 1, sResult : "1"},
-	{vValue: 1e-6, sResult : "0.000001"},
-	{vValue: 1e+20, sResult : "100000000000000000000"},
-	// exponent can be "e" in lower-case or upper-case
-	{vValue: "1.23e2", sResult : "123"},
-	{vValue: "1.23E2", sResult : "123"},
-	// positive exponent, exponent < fraction length
-	{vValue: "1.0123456789012345678901e+21", sResult : "1012345678901234567890.1"},
-	// positive exponent, exponent >= fraction length
-	{vValue: "1.0123e+21", sResult : "1012300000000000000000"},
-	{vValue: "1.012345678901234567890e+21", sResult : "1012345678901234567890"},
-	// negative exponent, abs(exponent) < integer length
-	{vValue: "12345678e-7", sResult : "1.2345678"},
-	// negative exponent, abs(exponent) >= integer length
-	{vValue: "12345e-7", sResult : "0.0012345"},
-	{vValue: "12.345e-7", sResult : "0.0000012345"},
-	// values with sign
-	{vValue: "-1.0123456789012345678901e+21", sResult : "-1012345678901234567890.1"},
-	{vValue: "+1.0123456789012345678901e+21", sResult : "1012345678901234567890.1"}
-].forEach(function (oFixture, i) {
-	QUnit.test("convertToDecimal, " + i, function (assert) {
-		// code under test
-		assert.strictEqual(LocaleData.convertToDecimal(oFixture.vValue), oFixture.sResult);
+	[
+		{vValue: 1, sResult : "1"},
+		{vValue: 1e-6, sResult : "0.000001"},
+		{vValue: 1e+20, sResult : "100000000000000000000"},
+		// exponent can be "e" in lower-case or upper-case
+		{vValue: "1.23e2", sResult : "123"},
+		{vValue: "1.23E2", sResult : "123"},
+		// positive exponent, exponent < fraction length
+		{vValue: "1.0123456789012345678901e+21", sResult : "1012345678901234567890.1"},
+		// positive exponent, exponent >= fraction length
+		{vValue: "1.0123e+21", sResult : "1012300000000000000000"},
+		{vValue: "1.012345678901234567890e+21", sResult : "1012345678901234567890"},
+		// negative exponent, abs(exponent) < integer length
+		{vValue: "12345678e-7", sResult : "1.2345678"},
+		// negative exponent, abs(exponent) >= integer length
+		{vValue: "12345e-7", sResult : "0.0012345"},
+		{vValue: "12.345e-7", sResult : "0.0000012345"},
+		// values with sign
+		{vValue: "-1.0123456789012345678901e+21", sResult : "-1012345678901234567890.1"},
+		{vValue: "+1.0123456789012345678901e+21", sResult : "1012345678901234567890.1"}
+	].forEach(function (oFixture, i) {
+		QUnit.test("convertToDecimal, " + i, function (assert) {
+			// code under test
+			assert.strictEqual(LocaleData.convertToDecimal(oFixture.vValue), oFixture.sResult);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getRelativePatterns: Unknown plural categories are not added to return value", function(assert) {
@@ -984,28 +982,6 @@ sap.ui.define([
 			{scale: "day", sign: 1, pattern: "bar {0}"}
 		]);
 	});
-	/** @deprecated As of version 1.113.0 */
-	QUnit.test("CustomLocaleData: getFirstDayOfWeek", function(assert) {
-		var oCustomLocaleData = LocaleData.getInstance(new Locale("en_US-x-sapufmt")),
-			oFormatSettings = Configuration.getFormatSettings();
-
-		// code under test - first day of week from CLDR
-		assert.strictEqual(oCustomLocaleData.getFirstDayOfWeek(), 0);
-
-		oFormatSettings.setFirstDayOfWeek(6);
-
-		// code under test - first day of week from FormatSettings
-		assert.strictEqual(oCustomLocaleData.getFirstDayOfWeek(), 6);
-
-		Formatting.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601);
-
-		// code under test - first day of week from CalendarWeekNumbering.ISO_8601
-		assert.strictEqual(oCustomLocaleData.getFirstDayOfWeek(), 1);
-
-		// clean up configuration
-		Formatting.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
-		//TODO oFormatSettings.setFirstDayOfWeek(null); - does not work currently
-	});
 
 	//*********************************************************************************************
 	QUnit.test("CustomLocaleData: getMinimalDaysInFirstWeek", function(assert) {
@@ -1024,29 +1000,29 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{fallbackPattern: "{0} \u2013 {1}", result: "~pattern \u2013 ~pattern"},
-	{fallbackPattern: "{0} - {1}", result: "~pattern - ~pattern"},
-	{fallbackPattern: "{0}-{1}", result: "~pattern-~pattern"},
-	{fallbackPattern: "{0} a el {1}", result: "~pattern 'a el' ~pattern"},
-	{fallbackPattern: "{0}\u2013{1}", result: "~pattern\u2013~pattern"},
-	{fallbackPattern: "{0} \u2018al\u2019 {1}", result: "~pattern '\u2018al\u2019' ~pattern"},
-	{fallbackPattern: "{0} \u062a\u0627 {1}", result: "~pattern \u062a\u0627 ~pattern"},
-	{fallbackPattern: "du {0} au {1}", result: "'du' ~pattern 'au' ~pattern"},
-	{fallbackPattern: "{0}\uff5e{1}", result: "~pattern\uff5e~pattern"},
-	{fallbackPattern: "{0} ~ {1}", result: "~pattern ~ ~pattern"},
-	{fallbackPattern: "{0}\u81f3{1}", result: "~pattern\u81f3~pattern"}
-].forEach((oFixture, i) => {
-	QUnit.test("getCombinedIntervalPattern: integrative #" + i, function (assert) {
-		const oLocaleData = {_get() {}};
-		this.mock(oLocaleData).expects("_get").withExactArgs("ca-~calendar", "dateTimeFormats", "intervalFormats")
-			.returns({intervalFormatFallback: oFixture.fallbackPattern});
+	[
+		{fallbackPattern: "{0} \u2013 {1}", result: "~pattern \u2013 ~pattern"},
+		{fallbackPattern: "{0} - {1}", result: "~pattern - ~pattern"},
+		{fallbackPattern: "{0}-{1}", result: "~pattern-~pattern"},
+		{fallbackPattern: "{0} a el {1}", result: "~pattern 'a el' ~pattern"},
+		{fallbackPattern: "{0}\u2013{1}", result: "~pattern\u2013~pattern"},
+		{fallbackPattern: "{0} \u2018al\u2019 {1}", result: "~pattern '\u2018al\u2019' ~pattern"},
+		{fallbackPattern: "{0} \u062a\u0627 {1}", result: "~pattern \u062a\u0627 ~pattern"},
+		{fallbackPattern: "du {0} au {1}", result: "'du' ~pattern 'au' ~pattern"},
+		{fallbackPattern: "{0}\uff5e{1}", result: "~pattern\uff5e~pattern"},
+		{fallbackPattern: "{0} ~ {1}", result: "~pattern ~ ~pattern"},
+		{fallbackPattern: "{0}\u81f3{1}", result: "~pattern\u81f3~pattern"}
+	].forEach((oFixture, i) => {
+		QUnit.test("getCombinedIntervalPattern: integrative #" + i, function (assert) {
+			const oLocaleData = {_get() {}};
+			this.mock(oLocaleData).expects("_get").withExactArgs("ca-~calendar", "dateTimeFormats", "intervalFormats")
+				.returns({intervalFormatFallback: oFixture.fallbackPattern});
 
-		// code under test
-		assert.strictEqual(LocaleData.prototype.getCombinedIntervalPattern.call(oLocaleData, "~pattern", "~calendar"),
-			oFixture.result);
+			// code under test
+			assert.strictEqual(LocaleData.prototype.getCombinedIntervalPattern.call(oLocaleData, "~pattern", "~calendar"),
+				oFixture.result);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getCombinedIntervalPattern", function (assert) {
@@ -1110,57 +1086,57 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{languageTag: "en", result: "~EN"},
-	{languageTag: "en_US", result: "~EN~US"},
-	{languageTag: "en-US", result: "~EN~US"}
-].forEach((oFixture, i) => {
-	QUnit.test(`getLanguageName: found in languages object, ${oFixture.languageTag}`, function (assert) {
-		const oLocaleData = {_get() {}};
-		this.mock(Localization).expects("getModernLanguage").withExactArgs("en").returns("en");
-		this.mock(oLocaleData).expects("_get").withExactArgs("languages").returns({"en": "~EN", "en_US": "~EN~US"});
+	[
+		{languageTag: "en", result: "~EN"},
+		{languageTag: "en_US", result: "~EN~US"},
+		{languageTag: "en-US", result: "~EN~US"}
+	].forEach((oFixture, i) => {
+		QUnit.test(`getLanguageName: found in languages object, ${oFixture.languageTag}`, function (assert) {
+			const oLocaleData = {_get() {}};
+			this.mock(Localization).expects("getModernLanguage").withExactArgs("en").returns("en");
+			this.mock(oLocaleData).expects("_get").withExactArgs("languages").returns({"en": "~EN", "en_US": "~EN~US"});
 
-		// code under test
-		assert.strictEqual(LocaleData.prototype.getLanguageName.call(oLocaleData, oFixture.languageTag),
-			oFixture.result);
+			// code under test
+			assert.strictEqual(LocaleData.prototype.getLanguageName.call(oLocaleData, oFixture.languageTag),
+				oFixture.result);
+		});
 	});
-});
 
 	//*********************************************************************************************
-[
-	{languageTag: "zh_Hant", result: "~Chinese (~Traditional)"},
-	{languageTag: "zh-Hant", result: "~Chinese (~Traditional)"}
-].forEach((oFixture, i) => {
-	QUnit.test(`getLanguageName: using script, ${oFixture.languageTag}`, function (assert) {
-		const oLocaleData = {_get() {}};
-		const oLocaleDataMock = this.mock(oLocaleData);
-		this.mock(Localization).expects("getModernLanguage").withExactArgs("zh").returns("zh");
-		oLocaleDataMock.expects("_get").withExactArgs("languages").returns({"zh": "~Chinese"});
-		oLocaleDataMock.expects("_get").withExactArgs("scripts").returns({"Hant": "~Traditional"});
+	[
+		{languageTag: "zh_Hant", result: "~Chinese (~Traditional)"},
+		{languageTag: "zh-Hant", result: "~Chinese (~Traditional)"}
+	].forEach((oFixture, i) => {
+		QUnit.test(`getLanguageName: using script, ${oFixture.languageTag}`, function (assert) {
+			const oLocaleData = {_get() {}};
+			const oLocaleDataMock = this.mock(oLocaleData);
+			this.mock(Localization).expects("getModernLanguage").withExactArgs("zh").returns("zh");
+			oLocaleDataMock.expects("_get").withExactArgs("languages").returns({"zh": "~Chinese"});
+			oLocaleDataMock.expects("_get").withExactArgs("scripts").returns({"Hant": "~Traditional"});
 
-		// code under test
-		assert.strictEqual(LocaleData.prototype.getLanguageName.call(oLocaleData, oFixture.languageTag),
-			oFixture.result);
+			// code under test
+			assert.strictEqual(LocaleData.prototype.getLanguageName.call(oLocaleData, oFixture.languageTag),
+				oFixture.result);
+		});
 	});
-});
 
 	//*********************************************************************************************
-[
-	{languageTag: "en_AU", result: "~ENGLISH (~Australia)"},
-	{languageTag: "en-AU", result: "~ENGLISH (~Australia)"}
-].forEach((oFixture, i) => {
-	QUnit.test(`getLanguageName: using territories, ${oFixture.languageTag}`, function (assert) {
-		const oLocaleData = {_get() {}};
-		const oLocaleDataMock = this.mock(oLocaleData);
-		this.mock(Localization).expects("getModernLanguage").withExactArgs("en").returns("en");
-		oLocaleDataMock.expects("_get").withExactArgs("languages").returns({"en": "~ENGLISH"});
-		oLocaleDataMock.expects("_get").withExactArgs("territories").returns({"AU": "~Australia"});
+	[
+		{languageTag: "en_AU", result: "~ENGLISH (~Australia)"},
+		{languageTag: "en-AU", result: "~ENGLISH (~Australia)"}
+	].forEach((oFixture, i) => {
+		QUnit.test(`getLanguageName: using territories, ${oFixture.languageTag}`, function (assert) {
+			const oLocaleData = {_get() {}};
+			const oLocaleDataMock = this.mock(oLocaleData);
+			this.mock(Localization).expects("getModernLanguage").withExactArgs("en").returns("en");
+			oLocaleDataMock.expects("_get").withExactArgs("languages").returns({"en": "~ENGLISH"});
+			oLocaleDataMock.expects("_get").withExactArgs("territories").returns({"AU": "~Australia"});
 
-		// code under test
-		assert.strictEqual(LocaleData.prototype.getLanguageName.call(oLocaleData, oFixture.languageTag),
-			oFixture.result);
+			// code under test
+			assert.strictEqual(LocaleData.prototype.getLanguageName.call(oLocaleData, oFixture.languageTag),
+				oFixture.result);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getLanguageName: language not found", function (assert) {
@@ -1230,191 +1206,90 @@ sap.ui.define([
 		assert.strictEqual(LocaleData.prototype.getLanguageName.call(oLocaleData, "sr_Latn"), "~SH");
 	});
 
-	/** @deprecated As of version 1.120.0 */
-	QUnit.test("getLanguages: ensure missing entries are added", function (assert) {
-		const oLocaleData = {
-			_get() {},
-			getLanguageName() {}
-		};
-		const oLocaleDataMock = this.mock(oLocaleData);
-		const oLanguages = {de: "~DE", en: "~EN"};
-		oLocaleDataMock.expects("_get").withExactArgs("languages").returns(oLanguages);
-		[
-			"ar_001", "de_AT", "de_CH", "en_AU", "en_CA", "en_GB", "en_US", "es_419", "es_ES", "es_MX", "fa_AF",
-			"fr_CA", "fr_CH", "nds_NL", "nl_BE", "pt_BR", "pt_PT", "ro_MD", "sw_CD", "zh_Hans", "zh_Hant"
-		].forEach((sLanguageTag) => {
-			oLocaleDataMock.expects("getLanguageName").withExactArgs(sLanguageTag).returns("~" + sLanguageTag);
+	["narrow", "abbreviated", "wide"].forEach((sWidth) => {
+		QUnit.test("getMonths: returns first alternative, " + sWidth, function (assert) {
+			const oLocalData = {
+				_get() {}
+			};
+			this.mock(oLocalData).expects("_get")
+				.withExactArgs("ca-~scalendartype", "months", "format", sWidth)
+				.returns([["a", "b"], "c", "d", ["e", "f", "g"], "h"]);
+
+			// code under test
+			assert.deepEqual(LocaleData.prototype.getMonths.call(oLocalData, sWidth, "~sCalendarType"),
+				["a", "c", "d", "e", "h"]);
 		});
-		const oExpectedResult = {
-			"de": "~DE",
-			"en": "~EN",
-			"ar_001": "~ar_001",
-			"de_AT": "~de_AT",
-			"de_CH": "~de_CH",
-			"en_AU": "~en_AU",
-			"en_CA": "~en_CA",
-			"en_GB": "~en_GB",
-			"en_US": "~en_US",
-			"es_419": "~es_419",
-			"es_ES": "~es_ES",
-			"es_MX": "~es_MX",
-			"fa_AF": "~fa_AF",
-			"fr_CA": "~fr_CA",
-			"fr_CH": "~fr_CH",
-			"nds_NL": "~nds_NL",
-			"nl_BE": "~nl_BE",
-			"pt_BR": "~pt_BR",
-			"pt_PT": "~pt_PT",
-			"ro_MD": "~ro_MD",
-			"sw_CD": "~sw_CD",
-			"zh_Hans": "~zh_Hans",
-			"zh_Hant": "~zh_Hant"
-		};
-
-		// code under test
-		assert.deepEqual(LocaleData.prototype.getLanguages.call(oLocaleData), oExpectedResult);
-
-		// original languages object has been enhanced - no need to do replacement twice
-		assert.deepEqual(oExpectedResult, oLanguages);
 	});
+	//*********************************************************************************************
+	["narrow", "abbreviated", "wide"].forEach((sWidth) => {
+		QUnit.test("_getMonthsWithAlternatives: " + sWidth, function (assert) {
+			const oLocalData = {
+				_get() {}
+			};
+			this.mock(oLocalData).expects("_get")
+				.withExactArgs("ca-~scalendartype", "months", "format", sWidth)
+				.returns("~result");
 
-/** @deprecated As of version 1.120.0 */
-[
-	"ar_001", "de_AT", "de_CH", "en_AU", "en_CA", "en_GB", "en_US", "es_419", "es_ES", "es_MX", "fa_AF",
-	"fr_CA", "fr_CH", "nds_NL", "nl_BE", "pt_BR", "pt_PT", "ro_MD", "sw_CD", "zh_Hans", "zh_Hant"
-].forEach((sLanguageTag) => {
-	QUnit.test(`getLanguages: don't overwrite existing entry ${sLanguageTag}`, function (assert) {
-		const oLocaleData = {
-			_get() {},
-			getLanguageName() {}
-		};
-		const oLocaleDataMock = this.mock(oLocaleData);
-		const oLanguages = {};
-		oLanguages[sLanguageTag] = "~" + sLanguageTag + "_original";
-		oLocaleDataMock.expects("_get").withExactArgs("languages").returns(oLanguages);
-		[
-			"ar_001", "de_AT", "de_CH", "en_AU", "en_CA", "en_GB", "en_US", "es_419", "es_ES", "es_MX", "fa_AF",
-			"fr_CA", "fr_CH", "nds_NL", "nl_BE", "pt_BR", "pt_PT", "ro_MD", "sw_CD", "zh_Hans", "zh_Hant"
-		].forEach((sLanguageTag0) => {
-			if (sLanguageTag0 !== sLanguageTag) {
-				oLocaleDataMock.expects("getLanguageName").withExactArgs(sLanguageTag0).returns("~" + sLanguageTag0);
-			}
+			// code under test
+			assert.deepEqual(LocaleData.prototype._getMonthsWithAlternatives.call(oLocalData, sWidth, "~sCalendarType"),
+				"~result");
 		});
-		const oExpectedResult = {
-			"ar_001": "~ar_001",
-			"de_AT": "~de_AT",
-			"de_CH": "~de_CH",
-			"en_AU": "~en_AU",
-			"en_CA": "~en_CA",
-			"en_GB": "~en_GB",
-			"en_US": "~en_US",
-			"es_419": "~es_419",
-			"es_ES": "~es_ES",
-			"es_MX": "~es_MX",
-			"fa_AF": "~fa_AF",
-			"fr_CA": "~fr_CA",
-			"fr_CH": "~fr_CH",
-			"nds_NL": "~nds_NL",
-			"nl_BE": "~nl_BE",
-			"pt_BR": "~pt_BR",
-			"pt_PT": "~pt_PT",
-			"ro_MD": "~ro_MD",
-			"sw_CD": "~sw_CD",
-			"zh_Hans": "~zh_Hans",
-			"zh_Hant": "~zh_Hant"
-		};
-		oExpectedResult[sLanguageTag] = "~" + sLanguageTag + "_original"; // don't overwrite existing entry
-
-		// code under test
-		assert.deepEqual(LocaleData.prototype.getLanguages.call(oLocaleData), oExpectedResult);
 	});
-});
 
 	//*********************************************************************************************
-["narrow", "abbreviated", "wide"].forEach((sWidth) => {
-	QUnit.test("getMonths: returns first alternative, " + sWidth, function (assert) {
-		const oLocalData = {
-			_get() {}
-		};
-		this.mock(oLocalData).expects("_get")
-			.withExactArgs("ca-~scalendartype", "months", "format", sWidth)
-			.returns([["a", "b"], "c", "d", ["e", "f", "g"], "h"]);
+	["narrow", "abbreviated", "wide"].forEach((sWidth) => {
+		QUnit.test("getMonthsStandAlone: returns first alternative, " + sWidth, function (assert) {
+			const oLocalData = {
+				_get() {}
+			};
+			this.mock(oLocalData).expects("_get")
+				.withExactArgs("ca-~scalendartype", "months", "stand-alone", sWidth)
+				.returns([["a", "b"], "c", "d", ["e", "f", "g"], "h"]);
 
-		// code under test
-		assert.deepEqual(LocaleData.prototype.getMonths.call(oLocalData, sWidth, "~sCalendarType"),
-			["a", "c", "d", "e", "h"]);
+			// code under test
+			assert.deepEqual(LocaleData.prototype.getMonthsStandAlone.call(oLocalData, sWidth, "~sCalendarType"),
+				["a", "c", "d", "e", "h"]);
+		});
 	});
-});
 	//*********************************************************************************************
-["narrow", "abbreviated", "wide"].forEach((sWidth) => {
-	QUnit.test("_getMonthsWithAlternatives: " + sWidth, function (assert) {
-		const oLocalData = {
-			_get() {}
-		};
-		this.mock(oLocalData).expects("_get")
-			.withExactArgs("ca-~scalendartype", "months", "format", sWidth)
-			.returns("~result");
+	["narrow", "abbreviated", "wide"].forEach((sWidth) => {
+		QUnit.test("_getMonthsStandAloneWithAlternatives: " + sWidth, function (assert) {
+			const oLocalData = {
+				_get() {}
+			};
+			this.mock(oLocalData).expects("_get")
+				.withExactArgs("ca-~scalendartype", "months", "stand-alone", sWidth)
+				.returns("~result");
 
-		// code under test
-		assert.deepEqual(LocaleData.prototype._getMonthsWithAlternatives.call(oLocalData, sWidth, "~sCalendarType"),
-			"~result");
+			// code under test
+			assert.deepEqual(
+				LocaleData.prototype._getMonthsStandAloneWithAlternatives.call(oLocalData, sWidth, "~sCalendarType"),
+				"~result");
+		});
 	});
-});
-
-	//*********************************************************************************************
-["narrow", "abbreviated", "wide"].forEach((sWidth) => {
-	QUnit.test("getMonthsStandAlone: returns first alternative, " + sWidth, function (assert) {
-		const oLocalData = {
-			_get() {}
-		};
-		this.mock(oLocalData).expects("_get")
-			.withExactArgs("ca-~scalendartype", "months", "stand-alone", sWidth)
-			.returns([["a", "b"], "c", "d", ["e", "f", "g"], "h"]);
-
-		// code under test
-		assert.deepEqual(LocaleData.prototype.getMonthsStandAlone.call(oLocalData, sWidth, "~sCalendarType"),
-			["a", "c", "d", "e", "h"]);
-	});
-});
-	//*********************************************************************************************
-["narrow", "abbreviated", "wide"].forEach((sWidth) => {
-	QUnit.test("_getMonthsStandAloneWithAlternatives: " + sWidth, function (assert) {
-		const oLocalData = {
-			_get() {}
-		};
-		this.mock(oLocalData).expects("_get")
-			.withExactArgs("ca-~scalendartype", "months", "stand-alone", sWidth)
-			.returns("~result");
-
-		// code under test
-		assert.deepEqual(
-			LocaleData.prototype._getMonthsStandAloneWithAlternatives.call(oLocalData, sWidth, "~sCalendarType"),
-			"~result");
-	});
-});
 
 	//*********************************************************************************************
-[
-	{aArguments: ["~anyNumber"], sKey: "date.week.calendarweek.wide", sNumber: "~anyNumber", sStyle: "wide"},
-	{aArguments: ["~anyNumber"], sKey: "date.week.calendarweek.narrow", sNumber: "~anyNumber", sStyle: "narrow"},
-	{aArguments: undefined, sKey: "date.week.calendarweek.wide", sNumber: "", sStyle: "wide"},
-	{aArguments: undefined, sKey: "date.week.calendarweek.narrow", sNumber: undefined, sStyle: "narrow"}
-].forEach((oFixture, i) => {
-	QUnit.test("getCalendarWeek: #" + i, function (assert) {
-		const oLocaleData = {
-			oLocale: {
-				toString() { return "~locale"; }
-			}
-		};
-		const oBundle = {getText() {}};
-		this.mock(Lib).expects("getResourceBundleFor").withExactArgs("sap.ui.core", "~locale").returns(oBundle);
-		this.mock(oBundle).expects("getText").withExactArgs(oFixture.sKey, oFixture.aArguments).returns("~result");
+	[
+		{aArguments: ["~anyNumber"], sKey: "date.week.calendarweek.wide", sNumber: "~anyNumber", sStyle: "wide"},
+		{aArguments: ["~anyNumber"], sKey: "date.week.calendarweek.narrow", sNumber: "~anyNumber", sStyle: "narrow"},
+		{aArguments: undefined, sKey: "date.week.calendarweek.wide", sNumber: "", sStyle: "wide"},
+		{aArguments: undefined, sKey: "date.week.calendarweek.narrow", sNumber: undefined, sStyle: "narrow"}
+	].forEach((oFixture, i) => {
+		QUnit.test("getCalendarWeek: #" + i, function (assert) {
+			const oLocaleData = {
+				oLocale: {
+					toString() { return "~locale"; }
+				}
+			};
+			const oBundle = {getText() {}};
+			this.mock(Lib).expects("getResourceBundleFor").withExactArgs("sap.ui.core", "~locale").returns(oBundle);
+			this.mock(oBundle).expects("getText").withExactArgs(oFixture.sKey, oFixture.aArguments).returns("~result");
 
-		// code under test
-		assert.strictEqual(LocaleData.prototype.getCalendarWeek.call(oLocaleData, oFixture.sStyle, oFixture.sNumber),
-			"~result");
+			// code under test
+			assert.strictEqual(LocaleData.prototype.getCalendarWeek.call(oLocaleData, oFixture.sStyle, oFixture.sNumber),
+				"~result");
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("_resetLocaleDataCache", function(assert) {

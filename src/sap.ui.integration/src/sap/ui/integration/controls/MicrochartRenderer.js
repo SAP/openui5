@@ -59,4 +59,4 @@ sap.ui.define([
 
 	return MicrochartRenderer;
 
-}, /* bExport= */ true);
+});

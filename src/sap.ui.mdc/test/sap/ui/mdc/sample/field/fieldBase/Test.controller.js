@@ -290,7 +290,7 @@ sap.ui.define([
 					for (var k = 0; k < aFields.length; k++) {
 						var oField = aFields[k];
 						if (oField.isA("sap.ui.mdc.field.FieldBase")) {
-							oDataTypes[oField.getFieldPath()] = { type: oField._oContentFactory.getDataType() };
+							oDataTypes[""] = { type: oField._oContentFactory.getDataType() };
 						}
 					}
 				}

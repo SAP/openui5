@@ -356,11 +356,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * @deprecated As of Version 1.120
-		 */
-		_set: _set,
-
-		/**
 		 * Definition of a custom unit.
 		 *
 		 * @typedef {object} module:sap/base/i18n/Formatting.CustomUnit
@@ -734,14 +729,6 @@ sap.ui.define([
 			const sABAPDateFormat = oWritableConfig.get({
 				name: "sapUiABAPDateFormat",
 				type: BaseConfig.Type.String,
-				/**
-				 * @deprecated As of Version 1.120
-				 */
-				defaultValue: oWritableConfig.get({
-					name: "sapUiLegacyDateFormat",
-					type: BaseConfig.Type.String,
-					external: true
-				}),
 				external: true
 			});
 			return sABAPDateFormat ? sABAPDateFormat.toUpperCase() : undefined;
@@ -793,14 +780,6 @@ sap.ui.define([
 			const sABAPTimeFormat = oWritableConfig.get({
 				name: "sapUiABAPTimeFormat",
 				type: BaseConfig.Type.String,
-				/**
-				 * @deprecated As of Version 1.120
-				 */
-				defaultValue: oWritableConfig.get({
-					name: "sapUiLegacyTimeFormat",
-					type: BaseConfig.Type.String,
-					external: true
-				}),
 				external: true
 			});
 			return sABAPTimeFormat ? sABAPTimeFormat.toUpperCase() : undefined;
@@ -854,14 +833,6 @@ sap.ui.define([
 			const sABAPNumberFormat = oWritableConfig.get({
 				name: "sapUiABAPNumberFormat",
 				type: BaseConfig.Type.String,
-				/**
-				 * @deprecated As of Version 1.120
-				 */
-				defaultValue: oWritableConfig.get({
-					name: "sapUiLegacyNumberFormat",
-					type: BaseConfig.Type.String,
-					external: true
-				}),
 				external: true
 			});
 			return sABAPNumberFormat ? sABAPNumberFormat.toUpperCase() : undefined;

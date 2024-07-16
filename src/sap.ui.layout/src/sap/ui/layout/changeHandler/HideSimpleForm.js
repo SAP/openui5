@@ -285,5 +285,4 @@ sap.ui.define([
 	};
 
 	return HideForm;
-},
-/* bExport= */true);
+});

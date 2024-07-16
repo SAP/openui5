@@ -1,67 +1,20 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
+	<head><meta charset="utf-8">
 
 		<title>Theme Parameters - sap.ui.core</title>
 		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-libs="sap.m"
-				src="../../../../resources/sap-ui-core.js">
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/ThemeParameters"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
 
-		<script>
-			sap.ui.require([
-				"sap/ui/core/Theming",
-				"sap/ui/core/theming/Parameters"
-			], function(Theming, Parameters) {
-
-				var oList = new sap.m.Table({
-					columns: [
-						new sap.m.Column({
-							header: new sap.m.Text({
-								text: "Parameter Name"
-							})
-						}),
-						new sap.m.Column({
-							width: "20em",
-							header: new sap.m.Text({
-								text: "Value" 
-							})
-						})
-					]
-				}).placeAt("content");
-
-
-				function fetchParameters() {
-					var mAllParameters = Parameters.get();
-
-					oList.destroyItems();
-					for (var name in mAllParameters) {
-						var oItem = new sap.m.ColumnListItem({
-							cells: [
-								new sap.m.Text({
-									text: name
-								}),
-								new sap.m.Text({
-									text: mAllParameters[name]
-								})
-							]
-						});
-						oList.addItem(oItem);
-					}
-				}
-
-
-				// react on theme change
-				Theming.attachApplied(function(evt){
-					fetchParameters();
-				});
-
-
-				fetchParameters();
-			});
-		</script>
+		
 	</head>
 
 	<body class="sapUiBody">

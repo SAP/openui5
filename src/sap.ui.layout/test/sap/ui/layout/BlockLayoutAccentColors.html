@@ -4,14 +4,16 @@
 		<meta charset="utf-8">
 		<title>sap.ui.layout.BlockLayout</title>
 		<script src="shared-config.js"></script>
-		<script id='sap-ui-bootstrap'
-				src='../../../../resources/sap-ui-core.js'
+		<script id="sap-ui-bootstrap"
+				src="../../../../resources/sap-ui-core.js"
 				data-sap-ui-async="true"
-				data-sap-ui-compatVersion="edge"
-				data-sap-ui-libs='sap.ui.layout, sap.m'
-				data-sap-ui-theme="sap_horizon">
+				data-sap-ui-libs="sap.ui.layout, sap.m"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/BlockLayoutAccentColors"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		>
 		</script>
-		<script id="myXml" type="text/xmldata">
+		<script id="myXml" type="text/xml">
 			<mvc:View xmlns:mvc="sap.ui.core.mvc"
 					xmlns="sap.m"
 					xmlns:m="sap.m"
@@ -77,37 +79,7 @@
 			</mvc:View>
 		</script>
 
-		<script>
-			sap.ui.getCore().attachInit(function() {
-				sap.ui.require([
-					"sap/ui/core/mvc/XMLView",
-					"sap/ui/layout/library",
-					"sap/ui/model/json/JSONModel"
-				], function(XMLView, layoutLibrary, JSONModel) {
-					"use strict";
-
-					var BlockLayoutCellColorShade = layoutLibrary.BlockLayoutCellColorShade;
-
-					XMLView.create({
-						definition: document.getElementById('myXml').textContent,
-						models: new JSONModel({
-							selectEnabled: true,
-							colorSet: "ColorSet5",
-							shades: [
-								BlockLayoutCellColorShade.ShadeA,
-								BlockLayoutCellColorShade.ShadeB,
-								BlockLayoutCellColorShade.ShadeC,
-								BlockLayoutCellColorShade.ShadeD,
-								BlockLayoutCellColorShade.ShadeE,
-								BlockLayoutCellColorShade.ShadeF
-							]
-						})
-					}).then(function(oXMLView) {
-						oXMLView.placeAt("content");
-					});
-				});
-			});
-		</script>
+		
 	</head>
 	<body id="body" class="sapUiBody">
 		<div id="content"></div>

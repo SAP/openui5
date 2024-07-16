@@ -1,12 +1,12 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/test/TestUtils",
-	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/odata/v2/ODataModel"
 ], function(
+	nextUIUpdate,
 	TestUtils,
-	Core,
 	XMLView,
 	ODataModel
 ) {
@@ -69,7 +69,7 @@ sap.ui.define([
 			this.oModelV2.attachEventOnce("requestCompleted", function() {
 				var oDTP, oDTP2;
 
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				oDTP = oView.byId("picker1");
 				oDTP2 = oView.byId("picker2");
 

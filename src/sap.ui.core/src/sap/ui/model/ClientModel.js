@@ -47,9 +47,7 @@ sap.ui.define([
 			}
 		},
 
-		metadata : {
-			publicMethods : ["loadData", "setData", "getData", "setProperty", "forceNoCache"]
-		}
+		metadata : {}
 
 	});
 

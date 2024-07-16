@@ -6,43 +6,17 @@
 		<title>Cards caching</title>
 
 		<script src="../../../../../resources/sap-ui-integration.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_horizon"
-			data-sap-ui-compatVersion="edge"></script>
+				id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-async="true"
+				data-sap-ui-on-init="module:local/index"
+				data-sap-ui-resource-roots='{"local":"./"}'
+		></script>
 
-		<script>
+		
 
-			if ('serviceWorker' in navigator) {
-				navigator.serviceWorker.register('./service-worker.js');
-			}
-
-			customElements.whenDefined("ui-integration-card").then(function () {
-				createHost();
-			});
-
-			function createHost() {
-				let host = new sap.ui.integration.Host(),
-					cards = document.getElementsByTagName("ui-integration-card");
-
-				host.useExperimentalCaching();
-
-				for (let i = 0; i < cards.length; i++) {
-					cards[i]._getControl().setHost(host);
-				}
-
-				return host;
-			}
-
-		</script>
-
-		<style>
-			ui-integration-card {
-				margin: 1rem;
-				width: 500px!important;
-				min-height: 480px;
-			}
-		</style>
+		<link rel="stylesheet" href="./index.css">
 	</head>
 
 

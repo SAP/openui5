@@ -79,20 +79,6 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 	}
 
 	/**
-	 * @deprecated since 1.120
-	 */
-	Object.defineProperty(sap.ui, "versioninfo", {
-		configurable: true,
-		enumerable: true,
-		get: function() {
-			return oVersionInfo;
-		},
-		set: function(oNewVersionInfo) {
-			updateVersionInfo(oNewVersionInfo);
-		}
-	});
-
-	/**
 	 * Version retrieval. Used by {@link sap.ui.getVersionInfo} and {@link module:sap/ui/VersionInfo.load}
 	 *
 	 * @param {string|object} [mOptions] name of the library (e.g. "sap.ui.core") or an object map (see below)

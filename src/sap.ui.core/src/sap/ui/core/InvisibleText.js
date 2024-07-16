@@ -41,7 +41,7 @@ sap.ui.define([
 	var InvisibleText = Control.extend("sap.ui.core.InvisibleText", /** @lends sap.ui.core.InvisibleText.prototype */ {
 		metadata : {
 			library : "sap.ui.core",
-			publicMethods: ["toStatic"],
+
 			properties : {
 
 				/**

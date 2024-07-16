@@ -5,4 +5,4 @@ sap.ui.define([
 
 	return { getTypeMap: () => TypeMap };
 
-}, /* bExport= */false);
+});

@@ -2,12 +2,11 @@
 sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Button",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/StaticArea",
 	"sap/ui/core/UIAreaRegistry",
 	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(Panel, Button, oCore, Element, StaticArea, UIAreaRegistry, createAndAppendDiv) {
+], function(Panel, Button, Element, StaticArea, UIAreaRegistry, createAndAppendDiv) {
 	"use strict";
 
 	createAndAppendDiv(["uiArea1", "uiArea2", "uiArea3", "uiArea4"]);
@@ -83,59 +82,4 @@ sap.ui.define([
 	QUnit.test("Container Control via ID", function(assert) {
 		doTestPlaceAt(assert, "myPanel", "myPanel", false);
 	});
-
-	/**
-	 * @deprecated As of version 1.1
-	 */
-	(function() {
-
-		var oPanel2 = new Panel("myPanel2");
-		oCore.setRoot("uiArea3", oPanel2);
-
-		function doCheckSetRootResult(assert, aCallResult) {
-			var oContainer = aCallResult[1];
-			assert.ok(oContainer, "Container available after setRoot");
-			if (oContainer) {
-				assert.equal(oContainer.getContent().length, 1, "# Container children after setRoot");
-				assert.equal(oContainer.getContent()[0].getId(), aCallResult[0], "Correct Position of child after setRoot");
-			}
-		}
-
-		function doTestSetRoot(assert, oContainerRef, sContainerId, bIsUiArea) {
-			function setRoot() {
-				var oControl = new Button();
-				oCore.setRoot(oContainerRef, oControl);
-				var oCont = bIsUiArea ? UIAreaRegistry.get(sContainerId) : Element.getElementById(sContainerId);
-				return [oControl.getId(), oCont];
-			}
-
-			var aResult = setRoot();
-			doCheckSetRootResult(assert, aResult);
-			aResult = setRoot();
-			doCheckSetRootResult(assert, aResult);
-		}
-
-		QUnit.module("sap.ui.core.Core.setRoot");
-
-		QUnit.test("Deferred call", function(assert) {
-			doCheckSetRootResult(assert, ["myPanel2", UIAreaRegistry.get("uiArea3")]);
-		});
-
-		QUnit.test("UIArea via ID", function(assert) {
-			doTestSetRoot(assert, "uiArea4", "uiArea4", true);
-		});
-
-		QUnit.test("UIArea via DomRef", function(assert) {
-			doTestSetRoot(assert, document.getElementById("uiArea4"), "uiArea4", true);
-		});
-
-		QUnit.test("Container Control via Control reference", function(assert) {
-			doTestSetRoot(assert, oPanel2, "myPanel2", false);
-		});
-
-		QUnit.test("Container Control via ID", function(assert) {
-			doTestSetRoot(assert, "myPanel2", "myPanel2", false);
-		});
-
-	}());
 });

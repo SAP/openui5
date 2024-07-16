@@ -5,22 +5,22 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/enablement/elementActionTest",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/CustomData",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Localization,
 	Element,
 	Controller,
 	elementDesigntimeTest,
+	nextUIUpdate,
 	elementActionTest,
 	JSONModel,
 	CustomData,
 	sinon,
-	oCore,
 	jQuery
 ) {
 	"use strict";
@@ -175,7 +175,7 @@ sap.ui.define([
 		var fnPreviousActionFiredCorrectlyAfterCombine = function (oButton, oViewAfterAction, assert) {
 			var oCreatedMenuButton = oViewAfterAction.byId("bar0").getContentMiddle()[0];
 			oCreatedMenuButton.setButtonMode("Split");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 
 			var oFirstMenuItem = oCreatedMenuButton.getMenu().getItems()[0];
 			var oTextButton = Element.getElementById(oCreatedMenuButton.getFocusDomRef().id);

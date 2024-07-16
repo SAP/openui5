@@ -72,15 +72,11 @@ sap.ui.define([
 				 * Defines the content inside the flexible part.
 				 */
 				item: { type: "sap.tnt.NavigationList", multiple: false, bindable: "bindable" },
+
 				/**
 				 * Defines the content inside the fixed part.
 				 */
-				fixedItem: { type: "sap.tnt.NavigationList", multiple: false },
-				/**
-				 * Defines the content inside the footer.
-				 * @deprecated Since version 1.120. Use the aggregation <code>fixedItem</code> instead.
-				 */
-				footer: { type: "sap.tnt.NavigationList", multiple: false }
+				fixedItem: { type: "sap.tnt.NavigationList", multiple: false }
 			},
 			associations: {
 				/**

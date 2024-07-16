@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
+	<head><meta charset="utf-8">
 		<title>sap.f.SemanticPage test page</title>
 
 		<link href="SemanticPage.css" rel="stylesheet">
@@ -8,16 +8,16 @@
 		<script src="../../../resources/sap-ui-core.js"
 				id="sap-ui-bootstrap"
 				data-sap-ui-async="true"
-				data-sap-ui-compatVersion="edge"
 				data-sap-ui-libs="sap.m, sap.f"
-				data-sap-ui-onInit="module:local/SemanticPage"
-				data-sap-ui-resourceroots='{
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-on-init="module:local/SemanticPage"
+				data-sap-ui-resource-roots='{
 					"local": "./",
 					"qunit.internal.acc": "../../../test-resources/sap/ui/core/qunit/internal/acc"
 				}'
-				>
+		>
 		</script>
-		<script id="view1" type="sapui5/xmlview">
+		<script id="view1" type="text/xml">
 		<mvc:View
 			height="100%"
 			xmlns:mvc="sap.ui.core.mvc"

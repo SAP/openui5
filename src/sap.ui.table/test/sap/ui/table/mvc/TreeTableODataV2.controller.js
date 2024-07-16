@@ -468,7 +468,7 @@ sap.ui.define([
 		 * Cut out logic
 		 */
 		onCut: function() {
-			const iSelectedIndex = oTable.getSelectedIndex();
+			const iSelectedIndex = -1;
 			const oBinding = oTable.getBinding();
 			const oModel = oBinding.getModel();
 
@@ -534,26 +534,12 @@ sap.ui.define([
 		 */
 		onSave: function() {
 			MessageToast.show("Submitting changes...");
-			const oBinding = oTable.getBinding();
+			oTable.getBinding();
 
 			oTable.setBusyIndicatorDelay(1);
 			oTable.setEnableBusyIndicator(true);
 			oTable.setBusy(true);
 
-			// send collected change data to the back-end
-			oBinding.submitChanges({
-				success: function(oData) {
-					// remove busy state of table
-					oTable.setBusy(false);
-					// re-setup and clear the clipboard
-					this.setupCutAndPaste();
-
-					this.getView().getModel().setProperty("/pendingChanges", false);
-				}.bind(this),
-				error: function(oEvent) {
-					oTable.setBusy(false);
-				}
-			});
 			// scroll to top after submitting
 			oTable.setFirstVisibleRow(0);
 		},
@@ -592,7 +578,7 @@ sap.ui.define([
 		onExpandNodeToLevel4: function() {
 			const oBinding = oTable.getBinding();
 
-			const iSelectedIndex = oTable.getSelectedIndex();
+			const iSelectedIndex = -1;
 			MessageToast.show("Expanding node with index " + iSelectedIndex + " to level 4...");
 			oBinding.expandNodeToLevel(iSelectedIndex, 4).then(function() {
 				MessageToast.show("Expanded node with index " + iSelectedIndex + " to level 4.");
@@ -638,7 +624,7 @@ sap.ui.define([
 				const oTreeHandle = this._mTreeHandles[sKey];
 
 				// insert in currently selected index
-				const iSelectedIndex = oTable.getSelectedIndex();
+				const iSelectedIndex = -1;
 				if (iSelectedIndex !== -1 && oTreeHandle) {
 					const oBinding = oTable.getBinding();
 					const oNewParentContext = oTable.getContextByIndex(iSelectedIndex);

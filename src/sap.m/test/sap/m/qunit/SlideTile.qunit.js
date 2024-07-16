@@ -16,7 +16,9 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/f/GridContainerItemLayoutData",
 	"sap/f/GridContainer",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	/* jQuery custom selectors ":sapTabbable"*/
+	"sap/ui/dom/jquery/Selectors"
 ], function(Localization, Library, Theming, jQuery, SlideTile, GenericTile, JSONModel, TileContent, NewsContent, Device, NumericContent, library, KeyCodes, qutils, GridContainerItemLayoutData, GridContainer, nextUIUpdate) {
 	"use strict";
 
@@ -1326,7 +1328,7 @@ var FrameType = library.FrameType;
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
 	function isContained(aContainers, oRef) {
 		for (var i = 0; i < aContainers.length; i++) {
-			if (aContainers[i] === oRef || jQuery.contains(aContainers[i], oRef)) {
+			if (aContainers[i] === oRef || aContainers[i] !== oRef && aContainers[i].contains(oRef)) {
 				return true;
 			}
 		}
@@ -1340,9 +1342,11 @@ var FrameType = library.FrameType;
 
 		if (bNext) {
 			$All = jQuery.merge($Ref.find("*"), jQuery.merge($Ref.nextAll(), $Ref.parents().nextAll()));
+			// jQuery custom selectors ":sapTabbable"
 			$Tabbables = $All.find(':sapTabbable').addBack(':sapTabbable');
 		} else {
 			$All = jQuery.merge($Ref.prevAll(), $Ref.parents().prevAll());
+			// jQuery custom selectors ":sapTabbable"
 			$Tabbables = jQuery.merge($Ref.parents(':sapTabbable'), $All.find(':sapTabbable').addBack(':sapTabbable'));
 		}
 

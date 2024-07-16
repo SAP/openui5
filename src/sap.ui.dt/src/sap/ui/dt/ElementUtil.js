@@ -591,4 +591,4 @@ sap.ui.define([
 	};
 
 	return ElementUtil;
-}, /* bExport= */true);
+});

@@ -1,15 +1,13 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor",
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
-], function (
-	Core,
+], function(
 	JsonEditor,
 	BaseEditor,
 	EditorQunitUtils,
@@ -23,7 +21,7 @@ sap.ui.define([
 
 	function setCodeEditorValue (oCodeEditor, sInput) {
 		oCodeEditor.setValue(sInput);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 	}
 
 	QUnit.module("JSON Data Editor: Given an editor config", {

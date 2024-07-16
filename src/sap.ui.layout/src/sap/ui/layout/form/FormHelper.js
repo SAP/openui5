@@ -102,33 +102,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @deprecated as of version 1.38 sap.ui.commons is deprecated, so test should only be executed if still available
-	 */
-	const _CommonsHelper = {
-		init: function() {
-			return null;
-		},
-		createLabel: function(sText, sId){
-			return new sap.ui.commons.Label(sId, {text: sText});
-		},
-		createButton: function(sId, fPressFunction, oListener){
-			const oButton = new sap.ui.commons.Button(sId, {lite: true});
-			oButton.attachEvent('press', fPressFunction, oListener); // attach event this way to have the right this-reference in handler
-			return oButton;
-		},
-		setButtonContent: function(oButton, sText, sTooltip, sIcon, sIconHovered){
-			oButton.setText(sText);
-			oButton.setTooltip(sTooltip);
-			oButton.setIcon(sIcon);
-			oButton.setIconHovered(sIconHovered);
-		},
-		getToolbarTitle: function(oToolbar) {
-			// as no Title control as ToolbarItem exust just use Toolbar ID. (Let application point to the wanted control.)
-			return oToolbar && oToolbar.getId();
-		}
-	};
-
-	/**
 	 * Provides helper functions to create library dependen controls, like label, button, toolbar,
 	 * used in {@link sap.ui.layout.form.Form Form}, {@link sap.ui.layout.form.FormContainer FormContainer}, {@link sap.ui.layout.form.FormElement FormElement},
 	 * and {@link sap.ui.layout.form.SemanticFormElement SemanticFormElement}.
@@ -139,18 +112,11 @@ sap.ui.define([
 	 * @alias sap.ui.layout.form.FormHelper
 	 */
 	const FormHelper = {
-		init: function() { /* must return a Promise if modules still needs to be loaded. The promise must be fulfilled if everything is loaded. */
+		init: function() {
+			/* must return a Promise if modules still needs to be loaded. The promise must be fulfilled if everything is loaded. */
 			// initially check the library. If found, overwrite functions
 			if (Library.isLoaded("sap.m")) {
 				merge(FormHelper, _MHelper);
-				return this.init();
-			}
-
-			/**
-			 * @deprecated as of version 1.38 sap.ui.commons is deprecated, so test should only be executed if still available
-			 */
-			if (Library.isLoaded("sap.ui.commons") && !Library.isLoaded("sap.m")) {
-				merge(FormHelper, _CommonsHelper);
 				return this.init();
 			}
 
@@ -170,5 +136,4 @@ sap.ui.define([
 	};
 
 	return FormHelper;
-
-}, /* bExport= */ false);
+});
