@@ -105,7 +105,6 @@ sap.ui.define([
 
 		this.renderEmphasizedInfoElement(oRm, oON);
 		this.renderHiddenARIAElement(oRm, oON);
-		this.renderRoleDescriptionInfo(oRm, oON);
 
 		oRm.close("div");
 	};
@@ -181,14 +180,6 @@ sap.ui.define([
 		oRm.class("sapUiPseudoInvisibleText");
 		oRm.openEnd();
 		oRm.text(oON._getStateText());
-		oRm.close("span");
-	};
-
-	ObjectNumberRenderer.renderRoleDescriptionInfo = function(oRm, oON) {
-		oRm.openStart("span", oON.getId() + "-roledescription");
-		oRm.class("sapUiPseudoInvisibleText");
-		oRm.openEnd();
-		oRm.text(Library.getResourceBundleFor("sap.m").getText("OBJECTNUMBER_NAME"));
 		oRm.close("span");
 	};
 
