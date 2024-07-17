@@ -37,7 +37,8 @@ sap.ui.define([
 					var oVariant = {
 						getVariantId() {
 							return sVariantId;
-						}
+						},
+						setContent() {}
 					};
 					var oAddVariantAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "addVariant").returns(oVariant);
 					var oRemoveVariantAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "removeVariant");
@@ -51,6 +52,15 @@ sap.ui.define([
 
 					var oRemoveStub = sandbox.stub();
 					this.oControl.removeWeakVariant = oRemoveStub;
+
+					var oVariantByIdStub = sandbox.stub().returns(oVariant);
+					this.oControl._getVariantById = oVariantByIdStub;
+
+					var oCurrentVariantIdStub = sandbox.stub();
+					this.oControl.getCurrentVariantId = oCurrentVariantIdStub;
+
+					var oModifiedStub = sandbox.stub();
+					this.oControl.setModified = oModifiedStub;
 
 					function assertExecute(oControl, bRedo) {
 						assert.equal(oAddVariantAPIStub.callCount, 1, "the FL API was called");
@@ -130,6 +140,11 @@ sap.ui.define([
 							variantId: sVariantId
 						};
 						assert.deepEqual(oRemoveStub.lastCall.args[0], oExpectedProperties, "the first parameter is correct");
+
+						assert.equal(oCurrentVariantIdStub.callCount, 2, "the Control API to get current variant id was called twice");
+						assert.equal(oVariantByIdStub.callCount, 1, "the Control API to get by variant id was called");
+						assert.equal(oModifiedStub.callCount, 1, "the Control API to set modified was called");
+						assert.deepEqual(oModifiedStub.lastCall.args[0], oExpectedProperties.previousDirtyFlag, "modified is set correct");
 
 						sandbox.resetHistory();
 						return oSaveAsCommand.execute();
