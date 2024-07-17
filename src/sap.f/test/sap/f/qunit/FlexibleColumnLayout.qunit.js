@@ -1320,6 +1320,37 @@ function(
 		}.bind(this));
 	});
 
+	QUnit.module("Livecycle", {
+		beforeEach: function () {
+			this.oFCL = oFactory.createFCL({
+				layout: LT.TwoColumnsBeginExpanded
+			});
+		},
+		afterEach: function () {
+			this.oFCL.destroy();
+			this.oFCL = null;
+		}
+	});
+
+	QUnit.test("move listeners are detached on destroy", function (assert) {
+		var oSpyMoveListener = this.spy(this.oFCL, "_boundColumnSeparatorMove"),
+			oSeparator = this.oFCL._oColumnSeparators.begin[0],
+			iStartX = oSeparator.getBoundingClientRect().x;
+
+		// mock resize start
+		this.oFCL._onColumnSeparatorMoveStart({pageX: iStartX}, oSeparator);
+
+		// Act: destroy before resize completed
+		this.oFCL.destroy();
+		oSpyMoveListener.resetHistory();
+
+		// mock mousemove event after destroy
+		document.dispatchEvent(new MouseEvent("mousemove"));
+
+		// Assert
+		assert.strictEqual(oSpyMoveListener.callCount, 0, "listener is not called");
+	});
+
 	QUnit.module("ScreenReader supprot", {
 		beforeEach: function () {
 			this.oFCL = oFactory.createFCL();
