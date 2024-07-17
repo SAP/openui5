@@ -3187,13 +3187,14 @@ sap.ui.define([
 		const oCondition = oEvent.getParameter("condition");
 		const sFilterValue = oEvent.getParameter("filterValue");
 		const sItemId = oEvent.getParameter("itemId");
+		const iItems = oEvent.getParameter("items");
 		const bCaseSensitive = oEvent.getParameter("caseSensitive");
 		const oContent = this.getControlForSuggestion();
 		const oOperator = FilterOperatorUtil.getEQOperator(this.getSupportedOperators()); /// use EQ operator of Field (might be different one)
 		const sCurrentValue = this._vLiveChangeValue || this._sFilterValue; // as FilterValue is updated delayed
 
 
-		if (_isFocused.call(this) && !this._bPreventAutocomplete && sCurrentValue === sFilterValue && // skip if user changes text after result was determined
+		if (_isFocused.call(this) && !this._bPreventAutocomplete && oCondition && sCurrentValue === sFilterValue && // skip if user changes text after result was determined
 			oContent && oContent.setDOMValue && oContent.selectText && (!oContent.isComposingCharacter || !oContent.isComposingCharacter())) { // Autocomplete only possible if content supports it
 			const oContentFactory = this.getContentFactory();
 			const bIsMeasure = oContentFactory.isMeasure();
@@ -3277,6 +3278,11 @@ sap.ui.define([
 				// in Typeahead we don't have to wait for onOpened as we know that something is found
 				oContent.removeStyleClass("sapMFocus"); // to have focus outline on selected item in valueHelp only
 			}
+		}
+
+		// announce number of found items, even on backspace
+		if (oContent?._applySuggestionAcc) {
+			oContent._applySuggestionAcc(iItems);
 		}
 
 	}

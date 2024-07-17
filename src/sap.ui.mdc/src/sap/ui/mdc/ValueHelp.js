@@ -311,6 +311,11 @@ sap.ui.define([
 						 */
 						itemId: { type: "string" },
 						/**
+						 * Number of found items
+						 * @since 1.127.0
+						 */
+						items: { type: "int" },
+						/**
 						 * If <code>true</code> the filtering was executed case sensitive
 						 * @since 1.121.0
 						 */
@@ -966,8 +971,9 @@ sap.ui.define([
 		const oCondition = oEvent.getParameter("condition");
 		const sFilterValue = oEvent.getParameter("filterValue");
 		const sItemId = oEvent.getParameter("itemId");
+		const iItems = oEvent.getParameter("items");
 		const bCaseSensitive = oEvent.getParameter("caseSensitive");
-		this.fireTypeaheadSuggested({ condition: oCondition, filterValue: sFilterValue, itemId: sItemId, caseSensitive: bCaseSensitive });
+		this.fireTypeaheadSuggested({ condition: oCondition, filterValue: sFilterValue, itemId: sItemId, items: iItems, caseSensitive: bCaseSensitive });
 	}
 
 

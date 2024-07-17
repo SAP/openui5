@@ -226,6 +226,11 @@ sap.ui.define([
 						 */
 						itemId: { type: "string" },
 						/**
+						 * Number of found items
+						 * @since 1.127.0
+						 */
+						items: { type: "int" },
+						/**
 						 * If <code>true</code> the filtering was executed case sensitive
 						 * @since 1.121.0
 						 */

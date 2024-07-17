@@ -446,12 +446,14 @@ sap.ui.define([
 		let oCondition;
 		let sFilterValue;
 		let sItemId;
+		let iItems;
 		let bTypeaheadCaseSensitive;
 		oContainer.attachEvent("typeaheadSuggested", function(oEvent) {
 			iTypeaheadSuggested++;
 			oCondition = oEvent.getParameter("condition");
 			sFilterValue = oEvent.getParameter("filterValue");
 			sItemId = oEvent.getParameter("itemId");
+			iItems = oEvent.getParameter("items");
 			bTypeaheadCaseSensitive = oEvent.getParameter("caseSensitive");
 		});
 
@@ -459,11 +461,12 @@ sap.ui.define([
 		const oContent = new Content("Content1");
 		oContainer.addContent(oContent);
 		oContainer.openContainer(); // just fake opening as only bound if open
-		oContent.fireTypeaheadSuggested({condition: Condition.createItemCondition("X", "Text"), filterValue: "T", itemId:"X", caseSensitive: true});
+		oContent.fireTypeaheadSuggested({condition: Condition.createItemCondition("X", "Text"), filterValue: "T", itemId:"X", items: 3, caseSensitive: true});
 		assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
 		assert.deepEqual(oCondition, Condition.createItemCondition("X", "Text"), "typeaheadSuggested event condition");
 		assert.equal(sFilterValue, "T", "typeaheadSuggested event filterValue");
 		assert.equal(sItemId, "X", "typeaheadSuggested event itemId");
+		assert.equal(iItems, 3, "typeaheadSuggested event items");
 		assert.equal(bTypeaheadCaseSensitive, true, "Typeahead caseSensitive");
 
 	});
