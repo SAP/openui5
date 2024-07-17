@@ -564,8 +564,7 @@ sap.ui.define([
 		this._oSearchField.setValue(sSearchValue);
 		this._sSearchFieldValue = sSearchValue || "";
 
-		// open the dialog
-		this._setInitialFocus();
+		this._oDialog.setInitialFocus(this._getInitialFocus());
 		this._oDialog.open();
 
 		// open dialog with busy state if a list update is still in progress
@@ -1160,8 +1159,7 @@ sap.ui.define([
 				press: function() {
 					this._removeSelection();
 					this._updateSelectionIndicator();
-					//when clear is executed focus should stay in sap.mTableSelectDialog
-					this._oDialog.focus();
+					this._getInitialFocus().focus();
 				}.bind(this)
 			});
 		}
