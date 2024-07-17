@@ -305,10 +305,8 @@ sap.ui.define([
 						return oDiscardInfo;
 					});
 				}
-				// invalidate flexState to trigger getFlexData for the current active version after discard
-				FlexState.clearState(sReference);
-				return oDiscardInfo;
 			}
+			FlexState.clearState(sReference);
 			return oDiscardInfo;
 		});
 	};
