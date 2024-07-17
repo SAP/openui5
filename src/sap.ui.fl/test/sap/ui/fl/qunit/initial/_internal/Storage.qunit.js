@@ -111,8 +111,7 @@ sap.ui.define([
 				isAtoAvailable: false,
 				isAtoEnabled: false,
 				versioning: {
-					CUSTOMER: false,
-					USER: false
+					CUSTOMER: false
 				},
 				isProductiveSystem: true,
 				isPublicLayerAvailable: false,
