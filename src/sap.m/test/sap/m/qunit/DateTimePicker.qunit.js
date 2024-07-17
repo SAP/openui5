@@ -747,6 +747,26 @@ sap.ui.define([
 		assert.strictEqual(oDTP.getRenderer().getAriaRole() , "", "The role attribute is empty");
 	});
 
+	QUnit.test("Dialog accessible name", async function(assert) {
+		// Prepare
+		var oDTP = new DateTimePicker("DTP"),
+			sAriaLabelledbyText = Library.getResourceBundleFor("sap.m").getText("DATETIMEPICKER_POPOVER_ACCESSIBLE_NAME"),
+			sLabelId;
+
+		oDTP.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Act
+		qutils.triggerEvent("click", "DTP-icon");
+		await nextUIUpdate();
+		sLabelId = oDTP._oPopup.getDomRef().getAttribute("aria-labelledby");
+
+		// Assert
+		assert.strictEqual(Element.getElementById(sLabelId).getDomRef().textContent, sAriaLabelledbyText, "The dialog has the correct accessible name");
+
+		oDTP.destroy();
+	});
+
 	QUnit.module("Calendar and TimePicker");
 
 	QUnit.test("Open picker on small screen", async function(assert) {

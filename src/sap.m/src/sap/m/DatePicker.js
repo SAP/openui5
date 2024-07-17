@@ -34,6 +34,7 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CalendarUtils",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/date/CalendarWeekNumbering",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/dom/jquery/cursorPos"
 ],
 	function(
@@ -65,7 +66,8 @@ sap.ui.define([
 		unifiedLibrary,
 		CalendarUtils,
 		UI5Date,
-		CalendarWeekNumbering
+		CalendarWeekNumbering,
+		InvisibleText
 	) {
 	"use strict";
 
@@ -1231,7 +1233,8 @@ sap.ui.define([
 					press: this._handleOKButton.bind(this)
 				}),
 				afterOpen: _handleOpen.bind(this),
-				afterClose: _handleClose.bind(this)
+				afterClose: _handleClose.bind(this),
+				ariaLabelledBy: InvisibleText.getStaticId("sap.m", this._getAccessibleNameLabel())
 			}).addStyleClass("sapMRPCalendar");
 
 			if (this.getShowFooter()) {
@@ -1267,6 +1270,15 @@ sap.ui.define([
 			// define a parent-child relationship between the control's and the _picker pop-up
 			this.setAggregation("_popup", this._oPopup, true);
 		}
+	};
+
+	/**
+	 * Returns the message bundle key of the invisible text for the accessible name of the popover.
+	 * @private
+	 * @returns {string} The message bundle key
+	 */
+	DatePicker.prototype._getAccessibleNameLabel = function() {
+		return "DATEPICKER_POPOVER_ACCESSIBLE_NAME";
 	};
 
 	// to be overwritten by DateTimePicker
