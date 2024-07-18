@@ -430,34 +430,31 @@ sap.ui.define([
 	_AggregationCache.prototype.countDescendants = function (oGroupNode, iIndex) {
 		var i;
 
-		let iGroupNodeLevel = oGroupNode["@$ui5.node.level"]; // max level of oGroupNode's cache
-		// We have to check a candidate's rank if oGroupNode is in oFirstLevel
-		// Note: expandTo may be undefined (when using data aggregation)
-		let bCheckRank = iGroupNodeLevel <= this.oAggregation.expandTo;
+		const iGroupNodeLevel = oGroupNode["@$ui5.node.level"];
+		// Note: iExpandTo may be undefined (when using data aggregation)
+		const iExpandTo = this.bUnifiedCache ? Infinity : this.oAggregation.expandTo;
+		// Note: "descendants" refers to LimitedDescendantCount and counts descendants within
+		// "top pyramid" only!
 		let iDescendants = _Helper.getPrivateAnnotation(oGroupNode, "descendants");
-		if (iDescendants) { // => this.oAggregation.expandTo > 1
-			// Note: "descendants" refers to LimitedDescendantCount and counts descendants within
-			// "top pyramid" only!
-			iGroupNodeLevel = this.oAggregation.expandTo;
-		}
-		if (this.bUnifiedCache) {
-			iGroupNodeLevel = Infinity;
-			bCheckRank = true;
-		}
-		const aElements = this.aElements;
-		for (i = iIndex + 1; i < aElements.length; i += 1) {
-			// If the candidate is not in a nested level cache and (in oFirstLevel) it has a rank,
-			// it counts as descendant. Or it is a sibling if oGroupNode did not have descendants.
-			if (aElements[i]["@$ui5.node.level"] <= iGroupNodeLevel
-					&& (!bCheckRank || _Helper.hasPrivateAnnotation(aElements[i], "rank"))) {
-				// Note: level 0 or 1 is used for initial placeholders of 1st level cache!
+		for (i = iIndex + 1; i < this.aElements.length; i += 1) {
+			const oCandidate = this.aElements[i];
+			const iCandidateLevel = oCandidate["@$ui5.node.level"];
+			// level 0 means "don't know" for a placeholder, otherwise candidate is grand total
+			const bLevelUnknown = iCandidateLevel === 0
+				&& _Helper.hasPrivateAnnotation(oCandidate, "placeholder");
+			if (!bLevelUnknown && iCandidateLevel <= iGroupNodeLevel) {
+				break; // not a descendant
+			}
+			if (iCandidateLevel <= iExpandTo && _Helper.hasPrivateAnnotation(oCandidate, "rank")) {
+				// a node w/ rank in oFirstLevel => counted in "descendants"
+				// Note: a placeholder w/ level 0 has a rank
 				if (!iDescendants) {
-					break; // we've reached a sibling of the collapsed node
+					break; // not a descendant
 				}
 				iDescendants -= 1;
-				if (aElements[i]["@$ui5.node.isExpanded"] === false) {
+				if (oCandidate["@$ui5.node.isExpanded"] === false) {
 					// skip descendants of manually collapsed node
-					iDescendants -= _Helper.getPrivateAnnotation(aElements[i], "descendants", 0);
+					iDescendants -= _Helper.getPrivateAnnotation(oCandidate, "descendants", 0);
 				}
 			}
 		}

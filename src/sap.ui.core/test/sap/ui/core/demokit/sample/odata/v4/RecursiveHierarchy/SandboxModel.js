@@ -650,7 +650,7 @@ sap.ui.define([
 			}
 		}
 
-		const oCopy = SandboxModel.update([oNewChild])[0];
+		const oCopy = {...SandboxModel.update([oNewChild])[0]};
 		// RAP would not respond w/ DescendantCount,DistanceFromRoot,DrillState!
 		delete oCopy.DescendantCount;
 		delete oCopy.DistanceFromRoot;

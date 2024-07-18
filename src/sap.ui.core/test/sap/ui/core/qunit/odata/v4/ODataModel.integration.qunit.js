@@ -1196,6 +1196,52 @@ sap.ui.define([
 		},
 
 		/**
+		 * Creates an employee in a hierarchy and waits for its creation in the back end.
+		 *
+		 * @param {object} assert - The QUnit assert object
+		 * @param {sap.ui.model.odata.v4.ODataListBinding} oListBinding - The list binding
+		 * @param {sap.ui.model.odata.v4.Context|null} oParent - The parent or <code>null</code>
+		 * @param {string} sId - The employee ID
+		 * @param {string} sName - The name
+		 * @param {string} [sRankUrl] - The base URL for the LimitedRank request
+		 * @param {number} [iRank] - The LimitedRank
+		 * @return {Promise<sap.ui.model.odata.v4.Context>} - The created context
+		 */
+		createEmployee : async function (assert, oListBinding, oParent, sId, sName, sRankUrl,
+				iRank) {
+			const oPayload = {Name : sName};
+			if (oParent) {
+				oPayload["EMPLOYEE_2_MANAGER@odata.bind"] = oParent.getPath().slice(1);
+			}
+			this.expectRequest({
+					method : "POST",
+					url : "EMPLOYEES",
+					payload : oPayload
+				}, {
+					ID : sId,
+					Name : sName
+				});
+			if (sRankUrl) {
+				this.expectRequest(sRankUrl + `&$filter=ID eq '${sId}'&$select=LimitedRank`, {
+						value : iRank === undefined ? [] : [{LimitedRank : `${iRank}`}]
+					});
+			}
+
+			// code under test
+			const oNode = oListBinding.create({
+				"@$ui5.node.parent" : oParent,
+				Name : sName
+			}, /*bSkipRefresh*/true);
+
+			await Promise.all([
+				oNode.created(),
+				this.waitForChanges(assert, `create ${sName}`)
+			]);
+
+			return oNode;
+		},
+
+		/**
 		 * Creates a view containing a list report and an object page. The list report contains a
 		 * list of sales orders and the object page the details of a sales order. The list report is
 		 * initially filtered to only show sales orders with a gross amount less than 150.
@@ -32213,7 +32259,7 @@ sap.ui.define([
 	// that #isAncestorOf and #collapse work if there are only nodes w/o rank, but also if there is
 	// a mixture of nodes w/ and w/o rank.
 	// JIRA: CPOUI5ODATAV4-2524
-	QUnit.test("Recursive Hierarchy: create w/o rank", async function (assert) {
+	QUnit.test("Recursive Hierarchy: create w/o rank, expand all", async function (assert) {
 		const sBaseUrl = "EMPLOYEES?$apply=ancestors($root/EMPLOYEES,OrgChart,ID"
 			+ ",filter(not startswith(Name, 'Out')),keep start)"
 			+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
@@ -32296,36 +32342,8 @@ sap.ui.define([
 		const oListBinding = oTable.getBinding("rows");
 		const [oAlpha, oBeta, oGamma] = oListBinding.getCurrentContexts();
 
-		const create = async (oParent, sName, iRank) => {
-			const oPayload = {Name : sName};
-			if (oParent) {
-				oPayload["EMPLOYEE_2_MANAGER@odata.bind"] = oParent.sPath.slice(1);
-			}
-			this.expectRequest({
-				method : "POST",
-				url : "EMPLOYEES",
-				payload : oPayload
-			}, {
-				ID : sName,
-				Name : sName
-			})
-			.expectRequest(sBaseUrl + `&$filter=ID eq '${sName}'&$select=LimitedRank`, {
-				value : iRank === undefined ? [] : [{LimitedRank : `${iRank}`}]
-			});
-
-			// code under test
-			const oChild = oListBinding.create({
-				"@$ui5.node.parent" : oParent,
-				Name : sName
-			}, /*bSkipRefresh*/true);
-
-			await Promise.all([
-				oChild.created(),
-				this.waitForChanges(assert, `create ${sName}`)
-			]);
-
-			return oChild;
-		};
+		const create = (oParent, sName, iRank) => this.createEmployee(assert, oListBinding, oParent,
+			sName, sName, sBaseUrl, iRank);
 
 		await create(null, "Out1");
 
@@ -33630,37 +33648,8 @@ sap.ui.define([
 		const oListBinding = oTable.getBinding("rows");
 		const [oAlpha, oBeta, oGamma] = oListBinding.getCurrentContexts();
 
-		const create = async (oParent, sId, sName, iLimitedRank) => {
-			this.expectRequest({
-					method : "POST",
-					payload : {
-						"EMPLOYEE_2_MANAGER@odata.bind"
-							: `EMPLOYEES('${oParent.getProperty("ID")}')`,
-						Name : sName
-					},
-					url : "EMPLOYEES"
-				}, {
-					ID : sId,
-					Name : sName
-				})
-				.expectRequest(sBaseUrl + `&$filter=ID eq '${sId}'&$select=LimitedRank`, {
-					value : [{
-						LimitedRank : "" + iLimitedRank // Edm.Int64
-					}]
-				});
-
-			const oCreated = oListBinding.create({
-				"@$ui5.node.parent" : oParent,
-				Name : sName
-			}, /*bSkipRefresh*/true);
-
-			await Promise.all([
-				oCreated.created(),
-				this.waitForChanges(assert, `create ${sId} (${sName})`)
-			]);
-
-			return oCreated;
-		};
+		const create = (oParent, sId, sName, iRank) => this.createEmployee(assert, oListBinding,
+			oParent, sId, sName, sBaseUrl, iRank);
 
 		const oDelta = await create(oAlpha, "3", "Delta", 3);
 		const oEpsilon = await create(oDelta, "3.1", "Epsilon", 4);
@@ -36927,8 +36916,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: A hierarchy uses expandTo=1. Create a new root node. After a side-effects refresh,
-	// the new root is still out of place.
+	// Scenario: A hierarchy uses expandTo=1. Create two new root nodes Beta and Gamma and a child
+	// below Gamma. Collapse Gamma; Beta must remain visible.
+	// JIRA: CPOUI5ODATAV4-2641
+	//
+	// After a side-effects refresh, the new root nodes are still out of place.
 	// SNOW: DINC0197354
 	QUnit.test("Recursive Hierarchy: out of place, root, expandTo=1", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
@@ -36939,16 +36931,19 @@ sap.ui.define([
 <t:Table id="table" rows="{path : '/EMPLOYEES',
 		parameters : {
 			$$aggregation : {hierarchyQualifier : 'OrgChart'}
-		}}" threshold="0" visibleRowCount="2">
+		}}" threshold="0" visibleRowCount="4">
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>
 	<Text text="{= %{@$ui5.node.level} }"/>
 	<Text text="{ID}"/>
 	<Text text="{Name}"/>
 </t:Table>`;
 
-		// 1 Alpha
-		// 2 Beta (created)
-		this.expectRequest(sUrl + "&$select=DrillState,ID,Name&$count=true&$skip=0&$top=2", {
+		// UI:                     Server:
+		// 3 Gamma (created)       1 Alpha
+		//   3.1 Delta (created)   2 Beta
+		// 2 Beta (created)        3 Gamma
+		// 1 Alpha                   3.1 Delta
+		this.expectRequest(sUrl + "&$select=DrillState,ID,Name&$count=true&$skip=0&$top=4", {
 				"@odata.count" : "1",
 				value : [{
 					DrillState : "leaf",
@@ -36967,35 +36962,46 @@ sap.ui.define([
 		]);
 		const oListBinding = oTable.getBinding("rows");
 
-		this.expectRequest({
-				method : "POST",
-				url : "EMPLOYEES",
-				payload : {
-					Name : "Beta"
-				}
-			}, {
-				ID : "2",
-				Name : "Beta"
-			});
+		const create = (oParent, sId, sName) => this.createEmployee(assert, oListBinding, oParent,
+			sId, sName);
 
 		// code under test
-		const oBeta = oListBinding.create({Name : "Beta"}, /*bSkipRefresh*/true);
+		const oBeta = await create(null, "2", "Beta");
 
-		await Promise.all([
-			oBeta.created(),
-			this.waitForChanges(assert, "create Beta")
-		]);
+		// code under test
+		const oGamma = await create(null, "3", "Gamma");
 
-		checkTable("after create Beta", assert, oTable, [
+		// code under test
+		const oDelta = await create(oGamma, "3.1", "Delta");
+
+		checkTable("after create Beta, Gamma, Delta", assert, oTable, [
+			oGamma,
+			oDelta,
 			oBeta,
 			"/EMPLOYEES('1')"
 		], [
+			[true, 1, "3", "Gamma"],
+			[undefined, 2, "3.1", "Delta"],
 			[undefined, 1, "2", "Beta"],
 			[undefined, 1, "1", "Alpha"]
 		]);
 
-		this.expectRequest(sUrl + "&$select=DrillState,ID,Name&$count=true&$skip=0&$top=2", {
-				"@odata.count" : "2",
+		oGamma.collapse();
+
+		await this.waitForChanges(assert, "collapse Gamma");
+
+		checkTable("after collapse Gamma", assert, oTable, [
+			oGamma,
+			oBeta,
+			"/EMPLOYEES('1')"
+		], [
+			[false, 1, "3", "Gamma"],
+			[undefined, 1, "2", "Beta"],
+			[undefined, 1, "1", "Alpha"]
+		]);
+
+		this.expectRequest(sUrl + "&$select=DrillState,ID,Name&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "3",
 				value : [{
 					DrillState : "leaf",
 					ID : "1",
@@ -37004,22 +37010,43 @@ sap.ui.define([
 					DrillState : "leaf",
 					ID : "2",
 					Name : "Beta*"
+				}, {
+					DrillState : "collapsed",
+					ID : "3",
+					Name : "Gamma*"
 				}]
 			})
 			.expectRequest(sUrl + "&$select=DistanceFromRoot,DrillState,ID,LimitedRank"
-				+ "&$filter=ID eq '2'&$top=1", {
+				+ "&$filter=ID eq '2' or ID eq '3' or ID eq '3.1'&$top=3", {
 				value : [{
 					DistanceFromRoot : "0",
 					DrillState : "leaf",
 					ID : "2",
 					LimitedRank : "1"
+				}, {
+					DistanceFromRoot : "0",
+					DrillState : "collapsed",
+					ID : "3",
+					LimitedRank : "2"
+				}, {
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "3.1",
+					LimitedRank : "3"
 				}]
 			})
-			.expectRequest(sUrl + "&$select=ID,Name&$filter=ID eq '2'&$top=1", {
-				value : [{
-					ID : "2",
-					Name : "Beta*"
-				}]
+			.expectRequest(sUrl + "&$select=ID,Name&$filter=ID eq '2' or ID eq '3'&$top=2", {
+				value : [
+					{ID : "2", Name : "Beta*"},
+					{ID : "3", Name : "Gamma*"}
+				]
+			})
+			.expectRequest("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
+				+ ",filter(ID eq '3'),1)"
+				+ "&$select=ID,Name&$filter=ID eq '3.1'&$top=1", {
+				value : [
+					{ID : "3.1", Name : "Delta*"}
+				]
 			});
 
 		await Promise.all([
@@ -37029,9 +37056,11 @@ sap.ui.define([
 		]);
 
 		checkTable("after side-effects refresh", assert, oTable, [
+			oGamma,
 			oBeta,
 			"/EMPLOYEES('1')"
 		], [
+			[false, 1, "3", "Gamma*"],
 			[undefined, 1, "2", "Beta*"],
 			[undefined, 1, "1", "Alpha*"]
 		]);
