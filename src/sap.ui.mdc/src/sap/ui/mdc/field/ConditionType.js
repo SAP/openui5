@@ -893,20 +893,6 @@ sap.ui.define([
 
 		};
 
-		function _getValueHelp() {
-
-			const sID = this.oFormatOptions.valueHelpID;
-			if (sID) {
-				const oValueHelp = Element.getElementById(sID);
-				if (oValueHelp && oValueHelp.isValidationSupported()) {
-					return oValueHelp;
-				}
-			}
-
-			return null;
-
-		}
-
 		function _attachCurrentValueAtType(oCondition, oType) {
 
 			if (this._isCompositeType(oType)) {
@@ -949,7 +935,7 @@ sap.ui.define([
 
 		function _isInputValidationEnabled() {
 
-			const oValueHelp = _getValueHelp.call(this);
+			const oValueHelp = this._getValueHelp();
 			const oDelegate = this._getDelegate();
 
 			return oDelegate.isInputValidationEnabled(this.oFormatOptions.control, oValueHelp);
@@ -958,7 +944,7 @@ sap.ui.define([
 
 		function _isInvalidInputAllowed() {
 
-			const oValueHelp = _getValueHelp.call(this);
+			const oValueHelp = this._getValueHelp();
 			const oDelegate = this._getDelegate();
 
 			return oDelegate.isInvalidInputAllowed(this, oValueHelp);
@@ -967,7 +953,7 @@ sap.ui.define([
 
 		function _getItemForValue(vValue, vParsedValue, vParsedDescription, oType, oAdditionalType, oBindingContext, bCheckKey, bCheckDescription, bExactMatch) {
 
-			const oValueHelp = _getValueHelp.call(this);
+			const oValueHelp = this._getValueHelp();
 			const oDelegate = this._getDelegate();
 			const oControl = this.oFormatOptions.control;
 			const oConfig = {
@@ -990,7 +976,7 @@ sap.ui.define([
 
 		function _getDescription(vKey, oCondition, oType, oAdditionalType, oBindingContext) {
 
-			const oValueHelp = _getValueHelp.call(this);
+			const oValueHelp = this._getValueHelp();
 			const oDelegate = this._getDelegate();
 			const oControl = this.oFormatOptions.control;
 

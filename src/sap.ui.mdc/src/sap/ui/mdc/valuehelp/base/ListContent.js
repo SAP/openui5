@@ -131,6 +131,17 @@ sap.ui.define([
 	 * @public
 	 */
 
+	/**
+	 * Gets an item for a <code>BindingContext</code>.
+	 * @param {sap.ui.model.Context} oBindingContext BindingContext
+	 * @param {object} [oOptions] Options
+	 * @name sap.ui.mdc.valuehelp.base.ListContent#getItemFromContext
+	 * @method
+	 * @abstract
+	 * @returns {object} Item object containing <code>key</code>, <code>description</code>, and <code>payload</code>
+	 * @protected
+	 */
+
 	return ListContent;
 
 });
