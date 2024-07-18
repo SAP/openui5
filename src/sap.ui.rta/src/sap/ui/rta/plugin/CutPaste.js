@@ -180,7 +180,7 @@ sap.ui.define([
 			enabled: function(aElementOverlays) {
 				return this.isElementPasteable(aElementOverlays[0]);
 			}.bind(this),
-			rank: 80,
+			rank: this.getRank("CTX_PASTE"),
 			icon: "sap-icon://paste"
 		}, aElementOverlays, ["move"]);
 		var aResponsibleElementOverlays = oPasteMenuItem.responsible || aElementOverlays;
@@ -195,7 +195,7 @@ sap.ui.define([
 				enabled(aElementOverlays) {
 					return aElementOverlays.length === 1;
 				},
-				rank: 70,
+				rank: this.getRank("CTX_CUT"),
 				icon: "sap-icon://scissors"
 			}, aElementOverlays, ["move"]);
 			aMenuItems.push(oCutMenuItem, oPasteMenuItem);

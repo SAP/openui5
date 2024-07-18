@@ -363,7 +363,7 @@ sap.ui.define([
 					text: this.getActionText(oElementOverlay, this.getAction(oElementOverlay)),
 					handler: changeContent.bind(this),
 					enabled: true,
-					rank: 250,
+					rank: this.getRank("CTX_COMP_VARIANT_CONTENT"),
 					icon: "sap-icon://key-user-settings"
 				});
 			} else {
@@ -380,7 +380,7 @@ sap.ui.define([
 						text: oLibraryBundle.getText("CTX_RENAME"),
 						handler: renameVariant.bind(this),
 						enabled: true,
-						rank: 210,
+						rank: this.getRank("CTX_COMP_VARIANT_RENAME"),
 						icon: "sap-icon://edit"
 					});
 				}
@@ -391,7 +391,7 @@ sap.ui.define([
 						text: oLibraryBundle.getText("CTX_VARIANT_SAVE"),
 						handler: saveVariant.bind(this),
 						enabled: isSaveEnabled,
-						rank: 220,
+						rank: this.getRank("CTX_COMP_VARIANT_SAVE"),
 						icon: "sap-icon://save"
 					});
 				}
@@ -401,7 +401,7 @@ sap.ui.define([
 					text: oLibraryBundle.getText("CTX_VARIANT_SAVEAS"),
 					handler: saveAsNewVariant.bind(this),
 					enabled: true,
-					rank: 230,
+					rank: this.getRank("CTX_COMP_VARIANT_SAVE_AS"),
 					icon: "sap-icon://duplicate"
 				});
 
@@ -410,7 +410,7 @@ sap.ui.define([
 					text: oLibraryBundle.getText("CTX_VARIANT_MANAGE"),
 					handler: configureVariants.bind(this),
 					enabled: true,
-					rank: 240,
+					rank: this.getRank("CTX_COMP_VARIANT_MANAGE"),
 					icon: "sap-icon://action-settings"
 				});
 
@@ -431,7 +431,7 @@ sap.ui.define([
 					handler: switchVariant.bind(this),
 					enabled: isSwitchEnabled,
 					submenu: aSubmenuItems,
-					rank: 250,
+					rank: this.getRank("CTX_COMP_VARIANT_SWITCH"),
 					icon: "sap-icon://switch-views"
 				});
 			}

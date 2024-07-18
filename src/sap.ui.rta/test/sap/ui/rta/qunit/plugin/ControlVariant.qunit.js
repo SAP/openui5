@@ -619,28 +619,28 @@ sap.ui.define([
 			var aMenuItems = this.oControlVariantPlugin.getMenuItems([this.oVariantManagementOverlay]);
 
 			assert.equal(aMenuItems[0].id, "CTX_VARIANT_SET_TITLE", "there is an entry for rename variant");
-			assert.equal(aMenuItems[0].rank, 210, "and the entry has the correct rank");
+			assert.equal(aMenuItems[0].rank, 140, "and the entry has the correct rank");
 			aMenuItems[0].handler([this.oVariantManagementOverlay]);
 			assert.ok(aMenuItems[0].enabled([this.oVariantManagementOverlay]), "and the entry is enabled");
 
 			assert.equal(aMenuItems[1].id, "CTX_VARIANT_SAVE", "there is an entry for save variant");
-			assert.equal(aMenuItems[1].rank, 220, "and the entry has the correct rank");
+			assert.equal(aMenuItems[1].rank, 150, "and the entry has the correct rank");
 			aMenuItems[1].handler([this.oVariantManagementOverlay]);
 			assert.ok(aMenuItems[1].enabled([this.oVariantManagementOverlay]), "and the entry is enabled");
 
 			assert.equal(aMenuItems[2].id, "CTX_VARIANT_SAVEAS", "there is an entry for saveAs variant");
-			assert.equal(aMenuItems[2].rank, 225, "and the entry has the correct rank");
+			assert.equal(aMenuItems[2].rank, 160, "and the entry has the correct rank");
 			aMenuItems[2].handler([this.oVariantManagementOverlay]);
 			assert.ok(aMenuItems[2].enabled([this.oVariantManagementOverlay]), "and the entry is enabled");
 
 			assert.equal(aMenuItems[3].id, "CTX_VARIANT_MANAGE", "there is an entry for configure variant");
-			assert.equal(aMenuItems[3].rank, 230, "and the entry has the correct rank");
+			assert.equal(aMenuItems[3].rank, 170, "and the entry has the correct rank");
 			aMenuItems[3].handler([this.oVariantManagementOverlay]);
 			assert.ok(aMenuItems[3].enabled([this.oVariantManagementOverlay]), "and the entry is enabled");
 			assert.equal(aMenuItems[3].startSection, true, "the configure variant starts a new section on the menu");
 
 			assert.equal(aMenuItems[4].id, "CTX_VARIANT_SWITCH_SUBMENU", "there is an entry for switch variant");
-			assert.equal(aMenuItems[4].rank, 240, "and the entry has the correct rank");
+			assert.equal(aMenuItems[4].rank, 180, "and the entry has the correct rank");
 			assert.ok(aMenuItems[4].enabled([this.oVariantManagementOverlay]), "and the entry is enabled");
 			assert.propEqual(aMenuItems[4].submenu, aExpectedSubmenu, "and the submenu array is correct");
 			aMenuItems[4].handler([this.oVariantManagementOverlay], mPropertyBag);
@@ -1303,7 +1303,7 @@ sap.ui.define([
 			var aMenuItems = this.oControlVariantPlugin.getMenuItems([this.oVariantManagementOverlay]);
 
 			assert.equal(aMenuItems[4].id, "CTX_VARIANT_SWITCH_SUBMENU", "there is an entry for switch variant");
-			assert.equal(aMenuItems[4].rank, 240, "and the entry has the correct rank");
+			assert.equal(aMenuItems[4].rank, 180, "and the entry has the correct rank");
 			assert.notOk(aMenuItems[4].enabled([this.oVariantManagementOverlay]), "and the entry is disabled");
 		});
 	});

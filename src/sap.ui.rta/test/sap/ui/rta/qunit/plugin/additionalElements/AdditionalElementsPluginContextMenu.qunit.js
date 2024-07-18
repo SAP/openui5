@@ -108,7 +108,7 @@ sap.ui.define([
 
 		QUnit.test("when there are only children from the same aggregation", function(assert) {
 			var sExpectedContextMenuText = "CONTEXT_MENU_TEXT";
-			var iExpectedRank = 20;
+			var iExpectedRank = 25;
 			var sExpectedIcon = "sap-icon://add";
 			var sAggregationName = "DummyAggregation";
 
@@ -177,7 +177,7 @@ sap.ui.define([
 			var sExpectedContextMenuText = "Add to...";
 			var sExpectedContextMenuTextSibling = "CONTEXT_MENU_TEXT_SIBLING";
 			var sExpectedContextMenuTextChild = "CONTEXT_MENU_TEXT_CHILD";
-			var iExpectedRank = 20;
+			var iExpectedRank = 30;
 			var sExpectedIcon = "sap-icon://add";
 			var sChildAggregationName = "ChildAggregationName";
 			var sSiblingAggregationName = "SiblingAggregationName";
@@ -278,7 +278,7 @@ sap.ui.define([
 			var sExpectedContextMenuTextChild = "CONTEXT_MENU_TEXT_CHILD";
 			var sFirstChildAggregationName = "childAggregationName";
 			var sSecondChildAggregationName = "childAggregationName2";
-			var iExpectedRank = 20;
+			var iExpectedRank = 25;
 			var sExpectedIcon = "sap-icon://add";
 
 			var oDummyOverlay = {
@@ -363,7 +363,7 @@ sap.ui.define([
 			var sSiblingAggregationName = "SiblingAggregation";
 			var sFirstChildAggregationName = "FirstChildAggregation";
 			var sSecondChildAggregationName = "SecondChildAggregation";
-			var iExpectedRank = 20;
+			var iExpectedRank = 30;
 			var sExpectedIcon = "sap-icon://add";
 
 			var oDummyOverlay = {

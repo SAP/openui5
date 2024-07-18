@@ -606,7 +606,7 @@ sap.ui.define([
 				enabled: bHasSubMenu || function(bOverlayIsSibling, aElementOverlays) {
 					return this.isEnabled(aElementOverlays, bOverlayIsSibling, sAggregationName);
 				}.bind(this, bOverlayIsSibling),
-				rank: 20,
+				rank: this.getRank(sPluginId),
 				icon: "sap-icon://add",
 				handler: vHandler
 			};

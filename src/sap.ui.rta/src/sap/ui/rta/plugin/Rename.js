@@ -211,7 +211,7 @@ sap.ui.define([
 	 * @return {object[]} - array of the items with required data
 	 */
 	Rename.prototype.getMenuItems = function(vElementOverlays) {
-		return this._getMenuItems(vElementOverlays, { pluginId: "CTX_RENAME", rank: 10, icon: "sap-icon://edit" });
+		return this._getMenuItems(vElementOverlays, { pluginId: "CTX_RENAME", icon: "sap-icon://edit" });
 	};
 
 	/**

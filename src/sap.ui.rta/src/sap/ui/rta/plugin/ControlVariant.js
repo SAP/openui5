@@ -637,7 +637,7 @@ sap.ui.define([
 				text: Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_RENAME"),
 				handler: this.renameVariant.bind(this),
 				enabled: this.isRenameEnabled.bind(this),
-				rank: 210,
+				rank: this.getRank("CTX_VARIANT_SET_TITLE"),
 				icon: "sap-icon://edit"
 			});
 		}
@@ -648,7 +648,7 @@ sap.ui.define([
 				text: Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_VARIANT_SAVE"),
 				handler: this.createSaveCommand.bind(this),
 				enabled: this.isVariantSaveEnabled.bind(this),
-				rank: 220,
+				rank: this.getRank("CTX_VARIANT_SAVE"),
 				icon: "sap-icon://save"
 			});
 		}
@@ -659,7 +659,7 @@ sap.ui.define([
 				text: Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_VARIANT_SAVEAS"),
 				handler: this.createSaveAsCommand.bind(this),
 				enabled: this.isVariantSaveAsEnabled.bind(this),
-				rank: 225,
+				rank: this.getRank("CTX_VARIANT_SAVEAS"),
 				icon: "sap-icon://duplicate"
 			});
 		}
@@ -671,7 +671,7 @@ sap.ui.define([
 				handler: this.configureVariants.bind(this),
 				enabled: this.isVariantConfigureEnabled.bind(this),
 				startSection: true,
-				rank: 230,
+				rank: this.getRank("CTX_VARIANT_MANAGE"),
 				icon: "sap-icon://action-settings"
 			});
 		}
@@ -705,7 +705,7 @@ sap.ui.define([
 				}.bind(this),
 				enabled: this.isVariantSwitchEnabled.bind(this),
 				submenu: aSubmenuItems,
-				rank: 240,
+				rank: this.getRank("CTX_VARIANT_SWITCH_SUBMENU"),
 				icon: "sap-icon://switch-views"
 			});
 		}
