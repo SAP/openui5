@@ -35,10 +35,11 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Control} the content
 		 */
 		createContent() {
-			var oApp = new App();
+			const oApp = new App();
 
-			var oModel = new JSONModel({
-				showAdaptButton: this._bShowAdaptButton
+			const oModel = new JSONModel({
+				showAdaptButton: this._bShowAdaptButton,
+				extensibilityEnabled: !!this._bExtensibilityEnabled
 			});
 			this.oView = XMLView.create({
 				id: this.createId("idMain1"),
@@ -57,13 +58,15 @@ sap.ui.define([
 		 * @private
 		 */
 		_enableExtensibility() {
-			var aExtensionData;
 			ABAPAccess.getExtensionData = function(sServiceUri, sEntityTypeName, sEntitySetName) {
 				if (Element.getElementById("application-masterDetail-display-component---idMain1--ExtensionDataRadioButtonGroup")
 				.getSelectedIndex() === 3) {
 					return Promise.resolve(undefined);
 				}
-				aExtensionData = [{ businessContext: `${sEntityTypeName} EntityTypeContext`, description: "Other BusinessContext description" }, { businessContext: `${sEntitySetName} EntitySetContext`, description: "Some BusinessContext description"}];
+				const aExtensionData = [
+					{ businessContext: `${sEntityTypeName} EntityTypeContext`, description: "Other BusinessContext description" },
+					{ businessContext: `${sEntitySetName} EntitySetContext`, description: "Some BusinessContext description"}
+				];
 				return Promise.resolve({
 					extensionData: aExtensionData,
 					entityType: sEntityTypeName,
@@ -135,11 +138,12 @@ sap.ui.define([
 				`);
 			};
 
-			var oUshellContainer = sap.ui.require("sap/ushell/Container");
+			const oUshellContainer = sap.ui.require("sap/ushell/Container");
 			if (oUshellContainer) {
 				ABAPAccess.isExtensibilityEnabled = function() {
 					return Promise.resolve(true);
 				};
+				this._bExtensibilityEnabled = true;
 			}
 		}
 	});
