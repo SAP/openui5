@@ -21,7 +21,9 @@
 					footerRole="Region"
 					footerLabel="Order Footer"
 					navigationRole="Navigation"
-					navigationLabel="Order navigation"/>
+					navigationLabel="Order navigation"
+					headerContentLabel ="Header Content Label"
+					/>
 		</landmarkInfo>
 		<headerTitle>
 			<ObjectPageHeader objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png"
