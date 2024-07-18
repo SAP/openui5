@@ -1249,6 +1249,17 @@ sap.ui.define([
 					only: ["sap/ui/fl/support"]
 				}
 			},
+			"support/api/SupportAPI": {
+				group: "Support",
+				coverage: {
+					only: ["sap/ui/fl/support"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponentAsync: "test-resources/sap/ui/fl/qunit/testComponentAsync"
+					}
+				}
+			},
 			"support/apps/contentbrowser/controller/ContentDetails.controller": {
 				group: "Support",
 				coverage: {
