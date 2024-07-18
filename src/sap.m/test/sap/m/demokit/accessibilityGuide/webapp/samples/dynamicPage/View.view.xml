@@ -9,7 +9,7 @@
 	<core:InvisibleText id="inv-text-desc" text="Additional description"/>
 
 	<f:DynamicPage id="dynamicPageId"
-				   stickySubheaderProvider="iconTabBar"
+				stickySubheaderProvider="iconTabBar"
 				   class="sapUiNoContentPadding"
 				   toggleHeaderOnTitleClick="{/titleClickable}">
 		<f:landmarkInfo>
@@ -21,7 +21,8 @@
 					footerRole="ContentInfo"
 					footerLabel="Product Footer"
 					headerRole="Banner"
-					headerLabel="Product Header"/>
+					headerLabel="Product Header"
+					headerContentLabel ="Header Content Label"/>
 		</f:landmarkInfo>
 		<f:title>
 			<f:DynamicPageTitle ariaDescribedBy="inv-text-desc">
