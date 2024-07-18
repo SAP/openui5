@@ -111,7 +111,10 @@ sap.ui.define([
 	 * @return {object[]} Array of the items with required data
 	 */
 	LocalReset.prototype.getMenuItems = function(vElementOverlays) {
-		return this._getMenuItems(vElementOverlays, { pluginId: "CTX_LOCAL_RESET", rank: 61, icon: "sap-icon://reset" });
+		return this._getMenuItems(vElementOverlays, {
+			pluginId: "CTX_LOCAL_RESET",
+			icon: "sap-icon://reset"
+		});
 	};
 
 	/**

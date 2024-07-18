@@ -113,7 +113,7 @@ sap.ui.define([
 	CreateContainer.prototype.getMenuItems = function(aElementOverlays) {
 		var bOverlayIsSibling = true;
 		var sPluginId = "CTX_CREATE_SIBLING_CONTAINER";
-		var iRank = 40;
+		var iRank = this.getRank(sPluginId);
 		var aMenuItems = [];
 
 		var isMenuItemEnabled = function(bOverlayIsSibling, aOverlays) {
@@ -133,7 +133,7 @@ sap.ui.define([
 			}
 			bOverlayIsSibling = false;
 			sPluginId = "CTX_CREATE_CHILD_CONTAINER";
-			iRank = 50;
+			iRank = this.getRank(sPluginId);
 		}
 		return aMenuItems;
 	};

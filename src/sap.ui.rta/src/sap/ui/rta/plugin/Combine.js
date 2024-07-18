@@ -198,7 +198,6 @@ sap.ui.define([
 			aElementOverlays,
 			{
 				pluginId: "CTX_GROUP_FIELDS",
-				rank: 90,
 				icon: "sap-icon://combine"
 			}
 		);

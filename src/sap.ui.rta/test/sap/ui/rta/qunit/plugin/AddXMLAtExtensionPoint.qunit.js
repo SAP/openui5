@@ -211,7 +211,7 @@ sap.ui.define([
 				"CTX_ADDXML_AT_EXTENSIONPOINT",
 				"'getMenuItems' returns the context menu item for the plugin with the correct id"
 			);
-			assert.strictEqual(aMenuItems[0].rank, 110, "'getMenuItems' returns the context menu item with the correct rank");
+			assert.strictEqual(aMenuItems[0].rank, 105, "'getMenuItems' returns the context menu item with the correct rank");
 			assert.strictEqual(aMenuItems[0].icon, "sap-icon://add-equipment", "'getMenuItems' returns the context menu item with the correct icon");
 		});
 

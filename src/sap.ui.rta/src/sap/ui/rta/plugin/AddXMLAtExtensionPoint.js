@@ -256,7 +256,10 @@ sap.ui.define([
 	 * @returns {object[]} Array of the items with required data
 	 */
 	AddXMLAtExtensionPoint.prototype.getMenuItems = function(aElementOverlays) {
-		return this._getMenuItems(aElementOverlays, {pluginId: "CTX_ADDXML_AT_EXTENSIONPOINT", rank: 110, icon: "sap-icon://add-equipment"});
+		return this._getMenuItems(aElementOverlays, {
+			pluginId: "CTX_ADDXML_AT_EXTENSIONPOINT",
+			icon: "sap-icon://add-equipment"
+		});
 	};
 
 	/**
