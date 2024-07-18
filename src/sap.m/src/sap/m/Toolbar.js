@@ -376,7 +376,7 @@ function(
 			this.firePress({
 				srcControl : oEvent.srcControl
 			});
-			this.focus();
+			this.focus({preventScroll: true});
 		}
 	};
 

@@ -792,6 +792,32 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
+	QUnit.test("toolbar should not scroll on focus when tapped", function(assert) {
+		// Arrange
+		var oTB = createToolbar({
+			/* toolbar is inactive by default */
+			Toolbar : {
+				active: true
+			}
+		});
+		var fnFocusSpy = this.spy(oTB, "focus");
+
+		// Act simulate tap with dummy event object
+		oTB.ontap({
+			srcControl: oTB,
+			isMarked: function() { return false; },
+			setMarked: function() {}
+		});
+
+		// Assert
+		assert.ok(fnFocusSpy.calledOnce, "focus called once");
+		assert.ok(fnFocusSpy.calledWithExactly({preventScroll: true}), "scroll prevented");
+
+		// Cleanup
+		fnFocusSpy.reset();
+		oTB.destroy();
+	});
+
 	QUnit.test("active toolbar should not fire press when the event is handled by the child control", function(assert) {
 		var oButton = new Button({text : "text"});
 		var fnPressSpy = this.spy();
