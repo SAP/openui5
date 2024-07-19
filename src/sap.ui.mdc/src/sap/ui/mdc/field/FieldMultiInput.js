@@ -3,8 +3,13 @@
  */
 
 sap.ui.define([
-	'sap/m/MultiInput', 'sap/ui/mdc/field/FieldMultiInputRenderer', "sap/ui/Device", 'sap/m/Tokenizer'
+	'sap/ui/core/Element',
+	'sap/m/MultiInput',
+	'sap/ui/mdc/field/FieldMultiInputRenderer',
+	'sap/ui/Device',
+	'sap/m/Tokenizer'
 ], (
+	Element,
 	MultiInput,
 	FieldMultiInputRenderer,
 	Device,
@@ -130,6 +135,20 @@ sap.ui.define([
 
 	};
 
+	FieldMultiInput.prototype.shouldSuggetionsPopoverOpenOnMobile = function(oEvent) {
+
+		const oField = this.getParent();
+		const sValueHelpID = oField?.getValueHelp();
+		const oValueHelp = sValueHelpID && Element.getElementById(sValueHelpID);
+
+		if (oValueHelp?.getTypeahead()) {
+			// don't open MultiInputs own suggestion popup to display tokens as ValueHelp implements own one
+			return false;
+		} else {
+			return MultiInput.prototype.shouldSuggetionsPopoverOpenOnMobile.apply(this, arguments);
+		}
+
+	};
 
 	/*
 	 * MultiInput/Tokenizer may sometimes trigger _fillClipboard twice.
