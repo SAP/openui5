@@ -2123,7 +2123,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		// Assert
-		assert.ok($oAppointmentRef.attr("aria-labelledby").indexOf(sHiddenSelectedTextId) > -1, "Selected appointments have a hidden \"Selected\" text in aria-labelledby");
+		assert.ok($oAppointmentRef.attr("aria-describedby").indexOf(sHiddenSelectedTextId) > -1, "Selected appointments have a hidden \"Selected\" text in aria-describedby");
 
 		// Clean up
 		oSPC.destroy();
