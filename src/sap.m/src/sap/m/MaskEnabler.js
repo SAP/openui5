@@ -372,6 +372,19 @@ sap.ui.define([
 		};
 
 		/**
+		 * Returns whether there is something entered in the field or not.
+		 *
+		 * @protected
+		 * @returns {boolean} True if there are placeholder characters displayed, but nothing is entered.
+		 */
+		this._isValueEmpty = function() {
+			var sValue = this._$input.val(),
+				sPlaceholder = this._oTempValue._aInitial.join('');
+
+			return sValue == sPlaceholder;
+		};
+
+		/**
 		 * @name _getAlteredUserInputValue
 		 * Subclasses can override it in order to alter the value entered by the user right before it is transmitted
 		 * to the InputBase#value
