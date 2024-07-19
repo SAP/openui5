@@ -5988,7 +5988,11 @@ sap.ui.define([
 				name: "lastname",
 				label: "Last Name",
 				path: "lastname",
-				dataType: "String"
+				dataType: "String",
+				exportSettings: {
+					property: "lastname",
+					textAlign: "Center"
+				}
 			}, {
 				name: "age",
 				path: "age",

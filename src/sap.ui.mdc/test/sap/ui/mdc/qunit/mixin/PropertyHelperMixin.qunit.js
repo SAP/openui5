@@ -328,13 +328,13 @@ sap.ui.define([
 	QUnit.test("Automatic PropertyHelper initialization and updates", function(assert) {
 		fnCreateTestClass(true);
 		const aInitialProperties = [{name: "A", label: "A", dataType: "String"}];
-		const aUpdatedProperties = [{name: "B", label: "B", dataType: "String"}, {name: "C", label: "C", dataType: "String"}];
-		const aIgnoredProperties = [{name: "X", label: "X", dataType: "String"}, {name: "Y", label: "Y", dataType: "String"}];
-		const aFinalProperties = [
+		const aUpdatedProperties = [...aInitialProperties, {name: "B", label: "B", dataType: "String"}, {name: "C", label: "C", dataType: "String"}];
+		const aFinalProperties = [...aUpdatedProperties,
 			{name : "D", label: "D", dataType: "String"},
 			{name : "E", label: "E", dataType: "String"},
 			{name : "F", label: "F", dataType: "String"}
 		];
+		const aIgnoredProperties = [...aUpdatedProperties, {name: "X", label: "X", dataType: "String"}, {name: "Y", label: "Y", dataType: "String"}];
 
 		sinon.stub(AggregationBaseDelegate, "fetchProperties").returns(
 			Promise.resolve(aFinalProperties)

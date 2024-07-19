@@ -23,7 +23,7 @@
                 selectionMode="Multi"
                 enableAutoColumnWidth="true"
                 propertyInfo='[\{
-                    "key": "Name",
+                    "name": "Name",
                     "path": "Name",
                     "label": "Name",
                     "dataType": "Edm.String",
@@ -32,7 +32,7 @@
                         "maxLength": 30
                     \}
                 \},\{
-                    "key": "SupplierName",
+                    "name": "SupplierName",
                     "path": "SupplierName",
                     "label": "SupplierName",
                     "dataType": "Edm.String",

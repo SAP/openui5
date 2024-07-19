@@ -160,7 +160,7 @@ sap.ui.define([
 		createPropertyHelper: function() {
 			const CustomHelper = PropertyHelper.extend("TestHelper");
 
-			CustomHelper.prototype.prepareProperty = function(oProperty) {
+			CustomHelper.prototype.prepareProperty = function(oProperty, mProperties) {
 				PropertyHelper.prototype.prepareProperty.apply(this, arguments);
 				const oParent = this.getParent();
 				const oTypeUtil = oParent._oDelegate.getTypeMap(oParent);
