@@ -5,7 +5,7 @@
 
 .sapMAT{
     width: 20rem;
-    height: 22.875rem;
+    height: 23.125rem;
     border-radius: @sapTile_BorderCornerRadius;
     position: relative;
     padding: 1rem;
@@ -138,7 +138,7 @@
 }
 
 .sapMAT.sapMATHideActionButton {
-    height: 19.625rem;
+    height: 20.75rem;
  }
 
 .sapMAT:hover {
@@ -257,10 +257,12 @@
     height: auto;
     display: inline-flex;
     flex-direction: column;
+    padding-bottom: 0.4375rem;
     .sapMGTContent {
         height: auto;
         .sapMATC {
             height: auto;
+            margin-bottom: 1.0625rem;
         }
         .sapMTileCnt {
             height: auto;
@@ -294,6 +296,7 @@
         top: 0.1875rem;
     }
     &.sapMATHideActionButton {
+    padding-bottom: 1rem;
         .sapMTileCntContent {
             .sapMFT {
                 span {
@@ -304,6 +307,12 @@
                     -webkit-line-clamp: initial !important;
                     max-height: none;
                 }
+            }
+        }
+        .sapMGTContent {
+            height: auto;
+            .sapMATC {
+                margin-bottom: 0;
             }
         }
     }
