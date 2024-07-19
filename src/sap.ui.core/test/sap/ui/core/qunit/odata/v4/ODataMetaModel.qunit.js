@@ -1807,6 +1807,7 @@ sap.ui.define([
 		"/T€AMS/@sapui.name" : "tea_busi.TEAM",
 		"/T€AMS/Team_Id@sapui.name" : "Team_Id",
 		"/T€AMS/TEAM_2_EMPLOYEES@sapui.name" : "TEAM_2_EMPLOYEES",
+		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES@sapui.name" : "EMPLOYEES", // no slash
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/@sapui.name" : "tea_busi.Worker",
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/AGE@sapui.name" : "AGE",
 		"/T€AMS@T€AMS@sapui.name" : "@T€AMS",
@@ -1824,8 +1825,10 @@ sap.ui.define([
 		"/T€AMS/tea_busi.NewAction/Team_Id/@sapui.name" : "name.space.Id", // due to $Type insertion
 		"/name.space.OverloadedAction@sapui.name" : "name.space.OverloadedAction",
 		"/name.space.OverloadedAction/_it@sapui.name" : "_it",
-		// "/TEAMS/$NavigationPropertyBinding/TEAM_2_CONTAINED_S%2FS_2_EMPLOYEE/@sapui.name"
-		//  : "TEAM_2_CONTAINED_S%2FS_2_EMPLOYEE",
+		"/TEAMS/$NavigationPropertyBinding/TEAM_2_CONTAINED_S%2FS_2_EMPLOYEE@sapui.name"
+			: "EMPLOYEES",
+		"/TEAMS/$NavigationPropertyBinding/TEAM_2_CONTAINED_S%2FS_2_EMPLOYEE/@sapui.name"
+			: "tea_busi.Worker", // slash makes a difference!
 		// .../$ ----------------------------------------------------------------------------------
 		"/$" : mScope, // @see #fetchData, but no clone
 		// "/$@sapui.name" --> "Unsupported path before @sapui.name"
