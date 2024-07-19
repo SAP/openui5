@@ -1632,7 +1632,8 @@ function(
 				oResourceBundle,
 				sOKButtonText,
 				sCancelButtonText,
-				sLocaleId  = this._getLocale().getLanguage();
+				sLocaleId = this._getLocale().getLanguage(),
+				oHeader = this._getValueStateHeader();
 
 			oResourceBundle = Library.getResourceBundleFor("sap.m");
 			sOKButtonText = oResourceBundle.getText("TIMEPICKER_SET");
@@ -1644,6 +1645,9 @@ function(
 				horizontalScrolling: false,
 				verticalScrolling: false,
 				placement: PlacementType.VerticalPreferredBottom,
+				customHeader: [
+					oHeader
+				],
 				content: [
 					new TimePickerInputs(this.getId() + "-inputs", {
 						support2400: this.getSupport2400(),
