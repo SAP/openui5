@@ -520,23 +520,34 @@ sap.ui.define([
 	};
 
 	/*
-	 * Intercept any changes for properties named "enabled".
+	 * Intercept any changes for properties named "enabled" and "visible".
 	 *
-	 * If such a change is detected, inform all descendants that use the `EnabledPropagator`
+	 * If a change for "enabled" property is detected, inform all descendants that use the `EnabledPropagator`
 	 * so that they can recalculate their own, derived enabled state.
 	 * This is required in the context of rendering V4 to make the state of controls/elements
 	 * self-contained again when they're using the `EnabledPropagator` mixin.
+	 *
+	 * Fires "focusfail" event, if the "enabled" or "visible" property is changed to "false" and the element was focused.
 	 */
 	Element.prototype.setProperty = function(sPropertyName, vValue, bSuppressInvalidate) {
-		if (sPropertyName != "enabled" || bSuppressInvalidate) {
+
+		if ((sPropertyName != "enabled" && sPropertyName != "visible") || bSuppressInvalidate) {
 			return ManagedObject.prototype.setProperty.apply(this, arguments);
 		}
 
-		var bOldEnabled = this.mProperties.enabled;
-		ManagedObject.prototype.setProperty.apply(this, arguments);
-		if (bOldEnabled != this.mProperties.enabled) {
-			// the EnabledPropagator knows better which descendants to update
-			EnabledPropagator.updateDescendants(this);
+		if (sPropertyName == "enabled") {
+			var bOldEnabled = this.mProperties.enabled;
+			ManagedObject.prototype.setProperty.apply(this, arguments);
+
+			if (bOldEnabled != this.mProperties.enabled) {
+				// the EnabledPropagator knows better which descendants to update
+				EnabledPropagator.updateDescendants(this);
+			}
+		} else if (sPropertyName === "visible") {
+			ManagedObject.prototype.setProperty.apply(this, arguments);
+			if (vValue === false && this.getDomRef()?.contains(document.activeElement)) {
+				Element.fireFocusFail.call(this);
+			}
 		}
 
 		return this;
@@ -594,6 +605,20 @@ sap.ui.define([
 	 */
 	Element.prototype.getUIArea = function() {
 		return this.oParent ? this.oParent.getUIArea() : null;
+	};
+
+	/**
+	 * Fires a "focusfail" event.
+	 * The event is propagated to the parent of the current element.
+	 *
+	 * @private
+	 */
+	Element.fireFocusFail = function() {
+		const oEvent = jQuery.Event("focusfail");
+		oEvent.srcControl = this;
+
+		const oParent = this.getParent();
+		oParent?._handleEvent?.(oEvent);
 	};
 
 	/**
@@ -1044,16 +1069,19 @@ sap.ui.define([
 	 * @param {object} [oFocusInfo={}] Options for setting the focus
 	 * @param {boolean} [oFocusInfo.preventScroll=false] @since 1.60 if it's set to true, the focused
 	 *   element won't be shifted into the viewport if it's not completely visible before the focus is set
- 	 * @param {any} [oFocusInfo.targetInfo] Further control-specific setting of the focus target within the control @since 1.98
+	 * @param {any} [oFocusInfo.targetInfo] Further control-specific setting of the focus target within the control @since 1.98
 	 * @public
 	 */
 	Element.prototype.focus = function (oFocusInfo) {
 		var oFocusDomRef = this.getFocusDomRef(),
-			aScrollHierarchy = [];
+		aScrollHierarchy = [];
 
-		oFocusInfo = oFocusInfo || {};
+		if (!oFocusDomRef) {
+			return;
+		}
 
-		if (oFocusDomRef) {
+		if (jQuery(oFocusDomRef).is(":sapFocusable")) {
+			oFocusInfo = oFocusInfo || {};
 			// save the scroll position of all ancestor DOM elements
 			// before the focus is set, because preventScroll is not supported by the following browsers
 			if (Device.browser.safari) {
@@ -1068,6 +1096,15 @@ sap.ui.define([
 				}
 			} else {
 				oFocusDomRef.focus(oFocusInfo);
+			}
+		} else {
+			const oDomRef = this.getDomRef();
+			// In case the control already contains the active element, we
+			// should not fire 'FocusFail' even when the oFocusDomRef isn't
+			// focusable because not all controls defines the 'getFocusDomRef'
+			// method properly
+			if (oDomRef && !oDomRef.contains(document.activeElement) && !this._bIsBeingDestroyed) {
+				Element.fireFocusFail.call(this);
 			}
 		}
 	};
