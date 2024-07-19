@@ -169,7 +169,7 @@ sap.ui.define([
 
 	QUnit.test("open", function(assert) {
 
-		sinon.stub(oContainer, "openContainer").callsFake(function(oContainer) {
+		sinon.stub(oContainer, "openContainer").callsFake(function(oContainer, bTypeahead) {
 			this.handleOpened();
 		});
 		sinon.stub(oContainer, "getContainerControl").returns(oField);
@@ -179,7 +179,7 @@ sap.ui.define([
 			iOpened++;
 		});
 
-		const oPromise = oContainer.open(Promise.resolve());
+		const oPromise = oContainer.open(Promise.resolve(), true, true);
 		assert.ok(oPromise instanceof Promise, "open returns promise");
 
 		if (oPromise) {
@@ -188,7 +188,7 @@ sap.ui.define([
 
 			const fnDone = assert.async();
 			oPromise.then(function() {
-				assert.ok(oContainer.openContainer.calledWith(oField), "openContainer called");
+				assert.ok(oContainer.openContainer.calledWith(oField, true), "openContainer called");
 				assert.equal(iOpened, 1, "Opened event fired once");
 
 				fnDone();
@@ -399,22 +399,25 @@ sap.ui.define([
 		let oCondition;
 		let bLeaveFocus;
 		let sItemId;
+		let bCaseSensitive;
 		oContainer.attachEvent("navigated", function(oEvent) {
 			iNavigated++;
 			oCondition = oEvent.getParameter("condition");
 			bLeaveFocus = oEvent.getParameter("leaveFocus");
 			sItemId = oEvent.getParameter("itemId");
+			bCaseSensitive = oEvent.getParameter("caseSensitive");
 		});
 
 		// add
 		const oContent = new Content("Content1");
 		oContainer.addContent(oContent);
 		oContainer.openContainer(); // just fake opening as only bound if open
-		oContent.fireNavigated({condition: Condition.createItemCondition("X", "Text"), leaveFocus: true, itemId:"X"});
+		oContent.fireNavigated({condition: Condition.createItemCondition("X", "Text"), leaveFocus: true, itemId:"X", caseSensitive: true});
 		assert.equal(iNavigated, 1, "navigated event fired");
 		assert.deepEqual(oCondition, Condition.createItemCondition("X", "Text"), "navigated event condition");
 		assert.equal(bLeaveFocus, true, "navigated event leaveFocus");
 		assert.equal(sItemId, "X", "navigated event itemId");
+		assert.equal(bCaseSensitive, true, "navigated event caseSensitive");
 
 	});
 
@@ -468,6 +471,22 @@ sap.ui.define([
 		assert.equal(sItemId, "X", "typeaheadSuggested event itemId");
 		assert.equal(iItems, 3, "typeaheadSuggested event items");
 		assert.equal(bTypeaheadCaseSensitive, true, "Typeahead caseSensitive");
+
+	});
+
+	QUnit.test("visualFocusSet event", function(assert) {
+
+		let iVisualFocusSet = 0;
+		oContainer.attachEvent("visualFocusSet", function(oEvent) {
+			iVisualFocusSet++;
+		});
+
+		// add
+		const oContent = new Content("Content1");
+		oContainer.addContent(oContent);
+		oContainer.openContainer(); // just fake opening as only bound if open
+		oContent.fireVisualFocusSet();
+		assert.equal(iVisualFocusSet, 1, "visualFocusSet event fired");
 
 	});
 

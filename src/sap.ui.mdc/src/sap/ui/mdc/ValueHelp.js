@@ -276,7 +276,12 @@ sap.ui.define([
 						/**
 						 * ID of the navigated item. (This is needed to set the corresponding aria-attribute)
 						 */
-						itemId: { type: "string" }
+						itemId: { type: "string" },
+						/**
+						 * If <code>true</code> the filtering was executed case sensitive
+						 * @since 1.127.0
+						 */
+						caseSensitive: { type: "boolean" }
 					}
 				},
 				/**
@@ -321,6 +326,17 @@ sap.ui.define([
 						 */
 						caseSensitive: { type: "boolean" }
 					}
+				},
+				/**
+				 * This event is fired if the visual focus is set to the value help.
+				 *
+				 * In this case the visual focus needs to be removed from the opening field, but the real focus must stay there.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.field.FieldBase
+				 * @since 1.127.0
+				 */
+				visualFocusSet: {
 				}
 			},
 			defaultProperty: "filterValue"
@@ -752,11 +768,26 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
-	ValueHelp.prototype.removeFocus = function() {
+	ValueHelp.prototype.removeVisualFocus = function() {
 		const oTypeahead = this.getTypeahead();
 		if (oTypeahead) {
 			// could be done sync. as it only occurs if open
-			oTypeahead.removeFocus();
+			oTypeahead.removeVisualFocus();
+		}
+	};
+
+	/**
+	 * The focus visualization of the field help needs to be set as the user starts naigation into the value help items.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @since 1.127.0
+	 */
+	ValueHelp.prototype.setVisualFocus = function() {
+		const oTypeahead = this.getTypeahead();
+		if (oTypeahead) {
+			// could be done sync. as it only occurs if open
+			oTypeahead.setVisualFocus();
 		}
 	};
 
@@ -963,7 +994,14 @@ sap.ui.define([
 	function _handleNavigated(oEvent) {
 
 		const oCondition = oEvent.getParameter("condition");
-		this.fireNavigated({ condition: oCondition, itemId: oEvent.getParameter("itemId"), leaveFocus: oEvent.getParameter("leaveFocus") });
+		this.fireNavigated({ condition: oCondition, itemId: oEvent.getParameter("itemId"), leaveFocus: oEvent.getParameter("leaveFocus"), caseSensitive: oEvent.getParameter("caseSensitive") });
+
+	}
+
+	function _handleVisualFocusSet(oEvent) {
+
+		this.fireVisualFocusSet();
+
 	}
 
 	function _handleTypeaheadSuggested(oEvent) {
@@ -974,8 +1012,8 @@ sap.ui.define([
 		const iItems = oEvent.getParameter("items");
 		const bCaseSensitive = oEvent.getParameter("caseSensitive");
 		this.fireTypeaheadSuggested({ condition: oCondition, filterValue: sFilterValue, itemId: sItemId, items: iItems, caseSensitive: bCaseSensitive });
-	}
 
+	}
 
 	function _handleSelect(oEvent) {
 
@@ -1087,6 +1125,10 @@ sap.ui.define([
 
 			if (oContainer.attachNavigated) {
 				fnEvent("navigated", _handleNavigated, this);
+			}
+
+			if (oContainer.attachVisualFocusSet) {
+				fnEvent("visualFocusSet", _handleVisualFocusSet, this);
 			}
 
 			if (oContainer.attachTypeaheadSuggested) {

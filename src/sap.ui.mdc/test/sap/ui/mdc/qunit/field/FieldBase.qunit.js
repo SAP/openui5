@@ -3310,6 +3310,7 @@ sap.ui.define([
 		assert.notOk(oField.hasPendingUserInput(), "no user interaction after select");
 
 		oValueHelp.fireNavigated({ condition: Condition.createItemCondition("Y", "Navigate") });
+		oValueHelp.fireVisualFocusSet();
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
 		aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
@@ -3332,6 +3333,15 @@ sap.ui.define([
 		assert.equal(aConditions[1].values[1], "Navigate", "condition value[1]");
 		assert.equal(aConditions[1].operator, OperatorName.EQ, "condition operator");
 		assert.notOk(oField.hasPendingUserInput(), "no user interaction after ENTER");
+
+
+		oContent.focus.reset();
+		oField._sFilterValue = "X"; // fake filter enetered before
+		oField._oNavigateCondition = Condition.createItemCondition("XX", "X-Condition");
+		oValueHelp.fireNavigated({ condition: undefined, leaveFocus: true });
+		assert.equal(iLiveCount, 2, "LiveChange Event fired");
+		assert.equal(oContent._$input.val(), "X-Condition", "Field shown value"); // Autocompletre restored
+		assert.ok(oContent.focus.called, "focus set on content");
 
 		const fnDone = assert.async();
 		// simulate value help request to see if ValueHelp opens
@@ -3399,6 +3409,7 @@ sap.ui.define([
 		// check navigation
 		iCount = 0; iLiveCount = 0; sLiveValue = undefined;
 		oValueHelp.fireNavigated({ condition: Condition.createItemCondition("Y", "Navigate") });
+		oValueHelp.fireVisualFocusSet();
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
 		assert.equal(sLiveValue, "Y", "liveChange event value");
 		aConditions = oCM.getConditions("Name");
@@ -4242,7 +4253,7 @@ sap.ui.define([
 		sinon.spy(oContent, "onsapnext");
 
 		qutils.triggerKeydown(oField.getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
-		assert.ok(oValueHelp.navigate.calledWith(1), "navigate called");
+		assert.ok(oValueHelp.navigate.calledWith(0), "navigate called");
 		assert.ok(oContent.onsapnext.notCalled, "onsapnext not called on content control");
 
 		qutils.triggerKeydown(oField.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
@@ -4251,6 +4262,7 @@ sap.ui.define([
 
 		let oCondition = Condition.createItemCondition("I3", "Item 3");
 		oValueHelp.fireNavigated({ condition: oCondition });
+		oValueHelp.fireVisualFocusSet();
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
 		let aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
@@ -4270,6 +4282,7 @@ sap.ui.define([
 		oCondition = Condition.createItemCondition("X");
 		oCondition.validated = ConditionValidated.Validated;
 		oValueHelp.fireNavigated({ condition: oCondition });
+		oValueHelp.fireVisualFocusSet();
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
 		aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 2, "condition in Codition model not changed");
@@ -4304,7 +4317,7 @@ sap.ui.define([
 		const oContent = aContent && aContent.length > 0 && aContent[0];
 
 		qutils.triggerKeydown(oField.getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
-		assert.ok(oValueHelp.navigate.calledWith(1), "navigate called");
+		assert.ok(oValueHelp.navigate.calledWith(0), "navigate called");
 
 		qutils.triggerKeydown(oField.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
 		assert.ok(oValueHelp.navigate.calledWith(-1), "navigate called");
@@ -4323,6 +4336,7 @@ sap.ui.define([
 
 		const oCondition = Condition.createItemCondition("I3", "Item 3");
 		oValueHelp.fireNavigated({ condition: oCondition });
+		oValueHelp.fireVisualFocusSet();
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
 		let aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
@@ -4694,6 +4708,7 @@ sap.ui.define([
 
 		oCondition = Condition.createItemCondition("I2", "Item2");
 		oValueHelp.fireNavigated({ condition: oCondition });
+		oValueHelp.fireVisualFocusSet();
 		assert.equal(oContent._$input.val(), "Item2", "Field shown value");
 		assert.equal(oContent2._$input.val(), "", "Field2 show no value");
 
@@ -4711,6 +4726,7 @@ sap.ui.define([
 
 		oCondition = Condition.createItemCondition("I3", "Item3");
 		oValueHelp.fireNavigated({ condition: oCondition });
+		oValueHelp.fireVisualFocusSet();
 		assert.equal(oContent._$input.val(), "", "Field shows no value");
 		assert.equal(oContent2._$input.val(), "Item3", "Field2 shown value");
 
@@ -5223,6 +5239,7 @@ sap.ui.define([
 		assert.notOk($FocusDomRef.attr("aria-describedby") && $FocusDomRef.attr("aria-describedby").search(sValueHelpEnabledID) >= 0, "ValueHelpEnabled text not set");
 
 		oValueHelp.fireNavigated({ condition: Condition.createItemCondition("I3", "Item 3"), itemId: "ItemId"});
+		oValueHelp.fireVisualFocusSet();
 		await nextUIUpdate();
 		assert.equal($FocusDomRef.attr("aria-expanded"), "true", "Navigation: aria-expanded set to true");
 		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Navigation: aria-controls set");
@@ -5274,12 +5291,14 @@ sap.ui.define([
 		});
 		oVHIcon.firePress();
 		sinon.stub(oValueHelp, "isOpen").returns(true);
-		oValueHelp.fireOpened({itemId: "myItem"});
+		oField._bFocusOnValueHelp = true; // fake open with focus
+		oValueHelp.fireOpened({itemId: "myItem", focused: true});
 		await nextUIUpdate();
 		assert.equal($FocusDomRef.attr("aria-expanded"), "true", "Open: aria-expanded set to true");
 		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Open: aria-controls set");
 		assert.equal($FocusDomRef.attr("aria-activedescendant"), "myItem", "Open: aria-activedescendant set");
 		assert.notOk(oContent.hasStyleClass("sapMFocus"), "Focus outline removed");
+		assert.ok(oValueHelp.navigate.calledWith(0), "Navigated to first item");
 
 		oValueHelp.close();
 		oValueHelp.fireClosed();
@@ -5292,6 +5311,7 @@ sap.ui.define([
 		assert.ok(oContent.hasStyleClass("sapMFocus"), "Focus outline restored");
 
 		oValueHelp.fireNavigated({ condition: Condition.createItemCondition("I3", "Item 3"), itemId: "ItemId"});
+		oValueHelp.fireVisualFocusSet();
 		await nextUIUpdate();
 		assert.equal($FocusDomRef.attr("aria-expanded"), "true", "Navigation: aria-expanded set to true");
 		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Navigation: aria-controls set");
@@ -5419,7 +5439,7 @@ sap.ui.define([
 			assert.equal(oContent.getFocusDomRef().selectionEnd, 5, "Selection end");
 			assert.ok(oContent._applySuggestionAcc.calledWith(1), "_applySuggestionAcc called");
 			const oAriaAttributes = oField.getProperty("_ariaAttributes");
-			assert.equal(oAriaAttributes.aria.activedescendant, "myItem", "Aria-activedescendant");
+			assert.notOk(oAriaAttributes.aria.activedescendant, "Aria-activedescendant not set");
 
 			oField.setDisplay(FieldDisplay.Value); // destroys and creates new content
 			await nextUIUpdate();
@@ -5859,6 +5879,7 @@ sap.ui.define([
 
 		oContent2.focus(); // as ValueHelp is connected with focus
 		oValueHelp.fireNavigated({ condition: Condition.createItemCondition("EUR", "EUR"), itemId: "ItemId"});
+		oValueHelp.fireVisualFocusSet();
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
 		assert.equal(oContent1._$input.val(), "123.45", "number-Field shown value");
 		assert.equal(oContent2._$input.val(), "EUR", "currency-Field shown value");
@@ -6014,6 +6035,7 @@ sap.ui.define([
 		oContent2.focus(); // as ValueHelp is connected with focus
 		const oCondition = Condition.createCondition(OperatorName.EQ, ["EUR", "EUR"], {inTest: "X"}, {outTest: "Y"}, ConditionValidated.Validated, {payloadTest: "Z"});
 		oValueHelp.fireNavigated({ condition: oCondition });
+		oValueHelp.fireVisualFocusSet();
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
 		assert.equal(oContent1.getDOMValue(), "", "value in inner number-control");
 		assert.equal(oContent2.getDOMValue(), "EUR", "value in inner unit-control");
@@ -6046,6 +6068,7 @@ sap.ui.define([
 			oCM.removeAllConditions();
 			setTimeout(function() { // wait for Model update
 				oValueHelp.fireNavigated({ condition: oCondition });
+				oValueHelp.fireVisualFocusSet();
 				qutils.triggerKeydown(oContent2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 				aConditions = oCM.getConditions("Price");
 				assert.equal(aConditions.length, 1, "one condition in Codition model");

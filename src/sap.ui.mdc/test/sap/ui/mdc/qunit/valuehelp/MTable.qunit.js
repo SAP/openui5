@@ -269,6 +269,9 @@ sap.ui.define([
 			assert.equal(oTable.getMode(), ListMode.SingleSelectMaster, "Table mode");
 			// assert.equal(oMTable.getDisplayContent(), oTable, "Table stored in displayContent"); // TODO: overwrite getDisplayContent here?
 			assert.ok(oTable.hasStyleClass("sapMComboBoxList"), "List has style class sapMComboBoxList");
+			assert.notOk(oTable.hasStyleClass("sapMListFocus"), "Table has no style class sapMListFocus");
+
+			oMTable.setVisualFocus();
 			assert.ok(oTable.hasStyleClass("sapMListFocus"), "Table has style class sapMListFocus");
 
 			const aItems = oTable.getItems();
@@ -276,7 +279,7 @@ sap.ui.define([
 			assert.notOk(oItem.getSelected(), "Item0 not selected");
 			oItem = aItems[1];
 			assert.ok(oItem.getSelected(), "Item1 is selected");
-			assert.ok(oItem.hasStyleClass("sapMLIBFocused"), "Item1 is focused");
+			assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "Item1 is focused");
 			assert.equal(sItemId, oItem.getId(), "OnShow returns selected itemId");
 			oItem = aItems[2];
 			assert.notOk(oItem.getSelected(), "Item2 not selected");
@@ -430,6 +433,8 @@ sap.ui.define([
 			const aItems = oTable.getItems();
 			assert.equal(aItems.length, 1, "number of items");
 			assert.equal(aItems[0].getCells()[0].getText(), "I3", "Key of item");
+			assert.notOk(aItems[0].hasStyleClass("sapMLIBFocused"), "Item has style no class sapMLIBFocused");
+			assert.notOk(oTable.hasStyleClass("sapMListFocus"), "Table has style no class sapMListFocus");
 
 			ValueHelpDelegate.getFilterConditions.restore();
 			fnDone();
@@ -1217,6 +1222,7 @@ sap.ui.define([
 	let oNavigateCondition;
 	let sNavigateItemId;
 	let bNavigateLeaveFocus;
+	let iVisualFocusSet = 0;
 
 	function _attachNavigated() {
 
@@ -1224,19 +1230,24 @@ sap.ui.define([
 		oNavigateCondition = undefined;
 		sNavigateItemId = undefined;
 		bNavigateLeaveFocus = undefined;
+		iVisualFocusSet = 0;
 		oMTable.attachEvent("navigated", function(oEvent) {
 			iNavigate++;
 			oNavigateCondition = oEvent.getParameter("condition");
 			sNavigateItemId = oEvent.getParameter("itemId");
 			bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
 		});
+		oMTable.attachEvent("visualFocusSet", function(oEvent) {
+			iVisualFocusSet++;
+		});
 
 	}
 
-	function _checkNavigatedItem(assert, oTable, iNavigatedIndex, iSelectedIndex, oCondition, bLeaveFocus) {
+	function _checkNavigatedItem(assert, oTable, bOpen, iNavigatedIndex, iSelectedIndex, oCondition, bLeaveFocus) {
 
 		const aItems = oTable.getItems();
-		assert.ok(oTable.hasStyleClass("sapMListFocus"), "Table has style class sapMListFocus");
+		assert.equal(oTable.hasStyleClass("sapMListFocus"), bOpen && iNavigatedIndex >= 0, "Table has style class sapMListFocus");
+		assert.equal(iVisualFocusSet, bOpen && iNavigatedIndex >= 0 && !bNavigateLeaveFocus ? 1 : 0, "visualFocusSet event fired");
 
 		for (let i = 0; i < aItems.length; i++) {
 			const oItem = aItems[i];
@@ -1271,6 +1282,7 @@ sap.ui.define([
 		oNavigateCondition = undefined;
 		sNavigateItemId = undefined;
 		bNavigateLeaveFocus = undefined;
+		iVisualFocusSet = 0;
 		if (bIsOpen) {
 			oTable.scrollToIndex.reset();
 		}
@@ -1287,30 +1299,30 @@ sap.ui.define([
 		oMTable.setConditions([]);
 		oMTable.onShow(); // to update selection and scroll
 		oMTable.navigate(1);
-		_checkNavigatedItem(assert, oTable, 0, 0, Condition.createItemCondition("I1", "Item 1"), false);
+		_checkNavigatedItem(assert, oTable, true, 0, 0, Condition.createItemCondition("I1", "Item 1"), false);
 
 		// no previous item
 		oMTable.navigate(-1);
-		_checkNavigatedItem(assert, oTable, 0, 0, Condition.createItemCondition("I1", "Item 1"), true);
+		_checkNavigatedItem(assert, oTable, true, 0, 0, Condition.createItemCondition("I1", "Item 1"), true);
 
 		// next item of selected one
 		oMTable.navigate(1);
-		_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I2", "Item 2"), false);
+		_checkNavigatedItem(assert, oTable, true, 1, 1, Condition.createItemCondition("I2", "Item 2"), false);
 		oTable.getItems()[1].setSelected(false); // initialize
 		oMTable.onConnectionChange(); // simulate new assignment
 		oMTable.setConditions([]);
 
 		// no item selected -> navigate to last
 		oMTable.navigate(-1);
-		_checkNavigatedItem(assert, oTable, 2, 2, Condition.createItemCondition("I3", "X-Item 3"), false);
+		_checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "X-Item 3"), false);
 
 		// first match -> navigation starts there
 		oTable.getItems()[2].setSelected(false); // initialize
 		oMTable.onConnectionChange(); // simulate new assignment
 		oMTable.setConditions([]);
 		oMTable.setHighlightId(oTable.getItems()[0].getId());
-		oMTable.navigate(1);
-		_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I2", "Item 2"), false);
+		oMTable.navigate(0);
+		_checkNavigatedItem(assert, oTable, true, 0, 0, Condition.createItemCondition("I1", "Item 1"), false);
 
 		oMTable.onHide();
 		assert.notOk(oTable.hasStyleClass("sapMListFocus"), "Table removed style class sapMListFocus");
@@ -1341,12 +1353,12 @@ sap.ui.define([
 				oMTable.onShow(); // to update selection and scroll
 				oMTable._iNavigateIndex = 2; // fake last item navigated
 				oMTable.navigate(1);
-				_checkNavigatedItem(assert, oTable, -1, -1, undefined, false);
+				_checkNavigatedItem(assert, oTable, true, -1, -1, undefined, false);
 				assert.ok(oButton.focus.called, "Button focused");
 				sinon.stub(oContainer, "getDomRef").returns(undefined); // to fake focus in field (outside Popover)
 
 				qutils.triggerKeydown(oButton.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
-				_checkNavigatedItem(assert, oTable, 2, 2, Condition.createItemCondition("I3", "X-Item 3"), false);
+				_checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "X-Item 3"), false);
 
 				oContainer.getDomRef.restore();
 				oFooterContent.destroy();
@@ -1494,7 +1506,7 @@ sap.ui.define([
 		oMTable.navigate(1);
 		const fnDone = assert.async();
 		setTimeout( function(){ // as waiting for Promise
-			_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
+			_checkNavigatedItem(assert, oTable, false, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
 			let oItem = oTable.getItems()[0];
 			assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
 			oItem = oTable.getItems()[3];
@@ -1502,23 +1514,23 @@ sap.ui.define([
 
 			// next item
 			oMTable.navigate(1);
-			_checkNavigatedItem(assert, oTable, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
+			_checkNavigatedItem(assert, oTable, false, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
 
 			// next item (ignoring group header)
 			oMTable.navigate(1);
-			_checkNavigatedItem(assert, oTable, 4, 4, Condition.createItemCondition("I2", "Item 2"), false);
+			_checkNavigatedItem(assert, oTable, false, 4, 4, Condition.createItemCondition("I2", "Item 2"), false);
 
 			// previous item (ignoring group header)
 			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
+			_checkNavigatedItem(assert, oTable, false, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
 
 			// previous item
 			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
+			_checkNavigatedItem(assert, oTable, false, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
 
 			// no previous item
 			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I1", "Item 1"), true);
+			_checkNavigatedItem(assert, oTable, false, 1, 1, Condition.createItemCondition("I1", "Item 1"), true);
 
 			oMTable.onConnectionChange(); // simulate new assignment
 
@@ -1557,7 +1569,7 @@ sap.ui.define([
 		oMTable.navigate(1);
 		const fnDone = assert.async();
 		setTimeout( function(){ // as waiting for Promise
-			_checkNavigatedItem(assert, oTable, 0, 0, undefined, false);
+			_checkNavigatedItem(assert, oTable, true, 0, 0, undefined, false);
 			let oItem = oTable.getItems()[0];
 			assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
 			oItem = oTable.getItems()[3];
@@ -1565,39 +1577,39 @@ sap.ui.define([
 
 			// next item
 			oMTable.navigate(1);
-			_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
+			_checkNavigatedItem(assert, oTable, true, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
 
 			// next item
 			oMTable.navigate(1);
-			_checkNavigatedItem(assert, oTable, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
+			_checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
 
 			// next item (group header)
 			oMTable.navigate(1);
-			_checkNavigatedItem(assert, oTable, 3, 3, undefined, false);
+			_checkNavigatedItem(assert, oTable, true, 3, 3, undefined, false);
 
 			// next item
 			oMTable.navigate(1);
-			_checkNavigatedItem(assert, oTable, 4, 4, Condition.createItemCondition("I2", "Item 2"), false);
+			_checkNavigatedItem(assert, oTable, true, 4, 4, Condition.createItemCondition("I2", "Item 2"), false);
 
 			// previous item (group header)
 			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, 3, 3, undefined, false);
+			_checkNavigatedItem(assert, oTable, true, 3, 3, undefined, false);
 
 			// previous item
 			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
+			_checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
 
 			// previous item
 			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
+			_checkNavigatedItem(assert, oTable, true, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
 
 			// previous item (group header)
 			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, 0, 0, undefined, false);
+			_checkNavigatedItem(assert, oTable, true, 0, 0, undefined, false);
 
 			// no previous item
 			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, 0, 0, undefined, true);
+			_checkNavigatedItem(assert, oTable, true, 0, 0, undefined, true);
 
 			oMTable.onHide();
 
@@ -1966,14 +1978,15 @@ sap.ui.define([
 		const aItems = oTable.getItems();
 
 		oMTable.setHighlightId(aItems[0].getId());
-		assert.ok(aItems[0].hasStyleClass("sapMLIBFocused"), "setHighlightId added class sapMLIBFocused");
+		assert.notOk(aItems[0].hasStyleClass("sapMLIBFocused"), "setHighlightId not added class sapMLIBFocused");
 
 		oMTable.setHighlightId(aItems[1].getId());
-		assert.notOk(aItems[0].hasStyleClass("sapMLIBFocused"), "setHighlightId removed class sapMLIBFocused");
-		assert.ok(aItems[1].hasStyleClass("sapMLIBFocused"), "setHighlightId added class sapMLIBFocused");
+		assert.notOk(aItems[0].hasStyleClass("sapMLIBFocused"), "setHighlightId don't have class sapMLIBFocused");
+		assert.notOk(aItems[1].hasStyleClass("sapMLIBFocused"), "setHighlightId not added class sapMLIBFocused");
 
-		oMTable.navigate(1);
-		assert.notOk(aItems[1].hasStyleClass("sapMLIBFocused"), "navigation removed class sapMLIBFocused");
+		sinon.spy(aItems[1], "focus");
+		oMTable.navigate(0);
+		assert.ok(aItems[1].focus.called, "navigation focused item");
 
 		oMTable.setHighlightId();
 	});
