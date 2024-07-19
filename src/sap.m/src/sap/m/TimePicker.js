@@ -400,6 +400,18 @@ function(
 			}
 		};
 
+		/**
+		 * Onmouseup handler assures moving of the cursor at the beginning of the input field
+		 * if there is mask set and there is no entry in the input field.
+		 *
+		 * @private
+		 */
+		TimePicker.prototype.onmouseup = function() {
+			if (this._isMaskEnabled() && this._isValueEmpty()) {
+				this._setCursorPosition(0);
+			}
+		};
+
 		TimePicker.prototype._isIconClicked = function (oEvent) {
 			return jQuery(oEvent.target).hasClass("sapUiIcon") || jQuery(oEvent.target).hasClass("sapMInputBaseIconContainer");
 		};
