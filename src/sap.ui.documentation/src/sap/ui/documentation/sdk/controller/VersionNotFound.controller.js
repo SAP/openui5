@@ -35,14 +35,14 @@ sap.ui.define([
 		},
 
 		_onError: function () {
-			var oMessagePage = this.getView().byId("page");
+			var oPage = this.getView().byId("page");
 
-			oMessagePage.setBusy(false);
-			oMessagePage.setText(this._getLibraryResourceBundle().getText("NOT_FOUND_UNAVAILABLE_TEXT"));
+			oPage.setBusy(false);
+			oPage.setDescription(this._getLibraryResourceBundle().getText("NOT_FOUND_UNAVAILABLE_TEXT"));
 		},
 
 		_onVersionInfo: function (oVersionInfo) {
-			var oMessagePage = this.getView().byId("page"),
+			var oPage = this.getView().byId("page"),
 				oReadMoreBtn = this.getView().byId("readMoreButton"),
 				sUrl = document.location.href,
 				sRedirectUrl,
@@ -51,7 +51,7 @@ sap.ui.define([
 				isRemoved = oPatchInfo && oPatchInfo.removed,
 				isRuntimeOnly = oPatchInfo && oPatchInfo.runtimeOnly;
 
-			oMessagePage.setBusy(false);
+			oPage.setBusy(false);
 
 			if ((isRemoved || isRuntimeOnly) && DemokitURLUtil.requestsDemokitView(sUrl)) {
 				// redirect to the latest (version-less) URL
@@ -70,16 +70,16 @@ sap.ui.define([
 
 			if (isRemoved) {
 				// show removed message
-				oMessagePage.setText(this._getLibraryResourceBundle().getText("NOT_FOUND_REMOVED_TEXT"));
+				oPage.setDescription(this._getLibraryResourceBundle().getText("NOT_FOUND_REMOVED_TEXT"));
 				oReadMoreBtn.setVisible(true);
 			} else if (isRuntimeOnly) {
 				// show removed message
-				oMessagePage.setText(this._getLibraryResourceBundle().getText("NOT_FOUND_DK_REMOVED_TEXT"));
+				oPage.setDescription(this._getLibraryResourceBundle().getText("NOT_FOUND_DK_REMOVED_TEXT"));
 				oReadMoreBtn.setVisible(true);
 			} else {
 				// show unavailable message
 				oReadMoreBtn.setVisible(false);
-				oMessagePage.setText(this._getLibraryResourceBundle().getText("NOT_FOUND_UNAVAILABLE_TEXT"));
+				oPage.setDescription(this._getLibraryResourceBundle().getText("NOT_FOUND_UNAVAILABLE_TEXT"));
 			}
 		},
 

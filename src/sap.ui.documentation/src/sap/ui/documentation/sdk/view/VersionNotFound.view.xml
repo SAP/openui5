@@ -14,30 +14,26 @@
 				>
 				</f:ShellBar>
 			</customHeader>
-			<MessagePage
-					id="page"
-					icon="sap-icon://document"
-					description=""
-					showHeader="false"
-					text=""
-					busy="true"
-					>
-					<buttons>
-						<Button
-								id="readMoreButton"
-								visible="false"
-								text="Read More"
-								press="onReadMore"
-								type="Emphasized"
-								width="100%" />
-							<Button
-								id="homePageButton"
-								visible="true"
-								text="Home Page"
-								press="onHomePress"
-								width="100%" />
-					</buttons>
-			</MessagePage>
+			<f:IllustratedMessage
+				id="page"
+				illustrationType="sapIllus-PageNotFound"
+				title=" "
+				description=" "
+				busy="true">
+				<f:additionalContent>
+					<Button
+						id="readMoreButton"
+						visible="false"
+						text="Read More"
+						press="onReadMore"
+						type="Emphasized" />
+					<Button
+						id="homePageButton"
+						visible="true"
+						text="Home Page"
+						press="onHomePress" />
+				</f:additionalContent>
+			</f:IllustratedMessage>
 		</Page>
 	</App>
 
