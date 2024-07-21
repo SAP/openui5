@@ -43,5 +43,21 @@
         "text": " sap.ui.core.format.DateFormat.qunit: Fix flaky tests"
       }
     ]
+  },
+  "1.126.1": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "1a9126b92de0f065abba51a04be4c44144309dbe",
+        "type": "FIX",
+        "text": " ControllerExtension support for TypeScript",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

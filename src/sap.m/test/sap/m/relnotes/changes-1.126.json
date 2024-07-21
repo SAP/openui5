@@ -130,5 +130,15 @@
         "text": " Tables: Announce required state of columns with 'custom' label controls"
       }
     ]
+  },
+  "1.126.1": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "fd7c5498dec233b1e2a7d51392e1cc663d6e1afe",
+        "type": "FIX",
+        "text": " sap.m.Page: Show footer after calling setShowFooter twice"
+      }
+    ]
   }
 }
