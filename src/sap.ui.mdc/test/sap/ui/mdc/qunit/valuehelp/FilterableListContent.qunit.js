@@ -55,7 +55,7 @@ sap.ui.define([
 
 	QUnit.module("basic features", {
 		beforeEach: function() {
-			oContent = new FilterableListContent();
+			oContent = new FilterableListContent("FLC1");
 		},
 		afterEach: _teardown
 	});
@@ -144,6 +144,29 @@ sap.ui.define([
 				ValueHelpDelegate.getFilterConditions.restore();
 				FilterBarDelegate.fetchProperties.restore();
 			});
+		});
+
+	});
+
+	QUnit.test("clone", function(assert) {
+
+		const oMyFilterBar = new FilterBar("FB1");
+		oContent.setFilterBar(oMyFilterBar);
+		const oClone = oContent.clone("MyClone");
+		const oCloneFilterBar = oClone.getFilterBar();
+
+		sinon.spy(oContent, "applyFilters");
+		oCloneFilterBar.fireSearch();
+		assert.notOk(oContent.applyFilters.called, "search of FilterBar");
+		oClone.destroy();
+
+		return oContent.onBeforeShow(true).then(() => {
+			const oClone = oContent.clone("MyClone");
+			const oCloneFilterBar = oClone.getFilterBar();
+
+			oCloneFilterBar.fireSearch();
+			assert.notOk(oContent.applyFilters.called, "search of FilterBar");
+			oClone.destroy();
 		});
 
 	});
