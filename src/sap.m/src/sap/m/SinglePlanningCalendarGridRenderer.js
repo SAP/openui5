@@ -137,6 +137,9 @@ sap.ui.define([
 				if (oControl._sLegendId && sLegendItemType) {
 					oRm.text(sLegendItemType);
 				}
+				if (oControl._doesContainBlockers(oColumnCalDate)) {
+					oRm.text(oControl._getCellDescription());
+				}
 				oRm.close("span");
 
 				oRm.close("div"); // END .sapMSinglePCColumn
@@ -459,6 +462,10 @@ sap.ui.define([
 				oRm.class("sapUiInvisibleText");
 				oRm.openEnd();
 				oRm.text(oControl._getCellStartEndInfo(oCellStartDate, oCellEndDate));
+
+				if (oControl._doesContainAppointments(oCellStartDate, oCellEndDate)) {
+					oRm.text(oControl._getCellDescription());
+				}
 				oRm.close("span");
 
 				oRm.close("div"); // END .sapMSinglePCRow
