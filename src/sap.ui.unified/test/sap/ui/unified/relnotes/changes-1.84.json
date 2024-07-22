@@ -620,5 +620,20 @@
         ]
       }
     ]
+  },
+  "1.84.47": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "e5eefb3c5215a43de29087d3ed0de3c7c01918d2",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Header buttons are displayed correctly in two months view"
+      },
+      {
+        "id": "ca833d0838e898b0c16ac0da980ddaa73551b39f",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: change event listener is reattached correctly now"
+      }
+    ]
   }
 }

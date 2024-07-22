@@ -825,5 +825,20 @@
         "text": " sap.ui.core.format.DateFormat.qunit: Fix flaky tests"
       }
     ]
+  },
+  "1.84.47": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "5bbde6fdb018d93f6cb9fae622bfcd7c8bb50347",
+        "type": "FIX",
+        "text": " sap.ui.model.json.JSONModel#loadData: Don't use JSONP"
+      },
+      {
+        "id": "e9bedb0d925ff07ad784f5dd4fb2103dbb38ec6f",
+        "type": "FIX",
+        "text": " sap/ui/core/.library: Remove wrong component for sap/ui/core/util/MockServer"
+      }
+    ]
   }
 }
