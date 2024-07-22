@@ -299,14 +299,20 @@ sap.ui.define([
 	 * Checks that the given context looks "persisted, not created".
 	 *
 	 * @param {object} assert - The QUnit assert object
-	 * @param {sap.ui.model.odata.v4.Context} oContext - A context
+	 * @param {sap.ui.model.odata.v4.Context|sap.ui.model.odata.v4.Context[]} vContexts
+	 *   A single context or a list
 	 */
-	function checkPersisted(assert, oContext) {
-		assert.strictEqual(oContext.created(), undefined, "persisted, not created");
-		assert.strictEqual(oContext.getProperty("@$ui5.context.isTransient"), undefined);
-		assert.strictEqual(oContext.isTransient(), undefined);
-		// Note: due to cloning, undefined values are dropped anyway
-		// assert.notOk("@$ui5.context.isTransient" in oContext.getObject());
+	function checkPersisted(assert, vContexts) {
+		if (!Array.isArray(vContexts)) {
+			vContexts = [vContexts];
+		}
+		vContexts.forEach((oContext) => {
+			assert.strictEqual(oContext.created(), undefined, "persisted, not created");
+			assert.strictEqual(oContext.getProperty("@$ui5.context.isTransient"), undefined);
+			assert.strictEqual(oContext.isTransient(), undefined);
+			// Note: due to cloning, undefined values are dropped anyway
+			// assert.notOk("@$ui5.context.isTransient" in oContext.getObject());
+		});
 	}
 
 	/**
@@ -328,6 +334,40 @@ sap.ui.define([
 		}
 		assert.strictEqual(oContext.getProperty("@$ui5.context.isSelected"), bSelected,
 			sText || "JIRA: CPOUI5ODATAV4-1944");
+	}
+
+	/**
+	 * Checks the sibling order (previous/next) of the given in-place sibling nodes and optional
+	 * (additional) out-of-place sibling nodes.
+	 *
+	 * @param {object} assert - The QUnit assert object
+	 * @param {sap.ui.model.odata.v4.Context[]} aInPlaceNodes - In-place nodes
+	 * @param {sap.ui.model.odata.v4.Context[]} [aOutOfPlaceNodes] - Out-of-place nodes
+	 */
+	function checkSiblingOrder(assert, aInPlaceNodes, aOutOfPlaceNodes = []) {
+		function expectSibling(oNode, iOffset, oExpectedSibling) {
+			const oActualSibling = oNode.getSibling(iOffset);
+			// use path to make diff readable ;-)
+			assert.strictEqual(oActualSibling && oActualSibling.getPath(),
+				oExpectedSibling && oExpectedSibling.getPath(),
+				`CPOUI5ODATAV4-2558/CPOUI5ODATAV4-2652: ${oNode.getPath()}.getSibling(${iOffset})`);
+		}
+
+		const oFirstInPlace = aInPlaceNodes[0] ?? null;
+		aOutOfPlaceNodes.forEach((oNode) => {
+			checkCreatedPersisted(assert, oNode);
+			// code under test
+			expectSibling(oNode, -1, null);
+			expectSibling(oNode, +1, oFirstInPlace);
+		});
+		for (let i = 0; i < aInPlaceNodes.length; i += 1) {
+			const oNode = aInPlaceNodes[i];
+			checkPersisted(assert, oNode);
+
+			// code under test
+			expectSibling(oNode, -1, i > 0 ? aInPlaceNodes[i - 1] : null);
+			expectSibling(oNode, +1, i + 1 < aInPlaceNodes.length ? aInPlaceNodes[i + 1] : null);
+		}
 	}
 
 	/**
@@ -27204,18 +27244,21 @@ sap.ui.define([
 	//
 	// Use LimitedRank after #create (JIRA: CPOUI5ODATAV4-2430)
 	// Get previous or next sibling (JIRA: CPOUI5ODATAV4-2558)
+	// Siblings and move down of out-of-place nodes (JIRA: CPOUI5ODATAV4-2652)
 	QUnit.test("Recursive Hierarchy: expand to 2, collapse & expand root etc.", function (assert) {
 		var oCollapsed,
 			oListBinding,
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oNewRoot,
+			oNewRootCreated,
+			oOutOfPlaceRoot,
 			oRoot,
+			sSelect = "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name",
 			oTable,
 			sTopLevelsUrl = "EMPLOYEES?$apply=orderby(AGE desc)"
 				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
 					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)",
-			sTopLevelsSelectUrl = sTopLevelsUrl
-				+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name",
+			sTopLevelsSelectUrl = sTopLevelsUrl + sSelect,
 			sView = '\
 <Text id="count" text="{$count}"/>\
 <t:Table firstVisibleRow="1" id="table" rows="{path : \'/EMPLOYEES\',\
@@ -27237,6 +27280,8 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
+		// (9 Aleph) (moved here)
+		// 10 Beth (created after Aleph's move, JIRA: CPOUI5ODATAV4-2652))
 		// 0 Alpha
 		//   1 Beta (initially collapsed)
 		//     1.1 Gamma
@@ -27557,7 +27602,12 @@ sap.ui.define([
 				[undefined, 2, "3", "0", "Lambda", 57],
 				[false, 2, "4", "0", "Mu", 58],
 				[false, 2, "5", "0", "Xi", 59]
-			], 8);
+			]);
+			const [, oBeta,,, oKappa, oLambda, oMu, oXi]
+				= oRoot.getBinding().getAllCurrentContexts();
+
+			// code under test (JIRA: CPOUI5ODATAV4-2652)
+			checkSiblingOrder(assert, [oBeta, oKappa, oLambda, oMu, oXi]);
 
 			// code under test
 			oRoot.collapse();
@@ -27602,7 +27652,6 @@ sap.ui.define([
 					url : sTopLevelsUrl + "&$filter=ID eq '9'&$select=LimitedRank"
 				}, {
 					value : [{
-						ID : "9",
 						LimitedRank : "6" // Edm.Int64
 					}]
 				});
@@ -27617,9 +27666,10 @@ sap.ui.define([
 				AGE : 99,
 				Name : "Aleph"
 			}, "no LimitedRank");
+			oNewRootCreated = oNewRoot.created();
 
 			return Promise.all([
-				oNewRoot.created(),
+				oNewRootCreated,
 				// code under test
 				oListBinding.getHeaderContext().requestSideEffects(["AGE"]),
 				that.waitForChanges(assert, "create new root, side effect: AGE for all rows")
@@ -27632,14 +27682,10 @@ sap.ui.define([
 				[undefined, 1, "9", "", "Aleph: ℵ", 199],
 				[false, 1, "0", "", "Alpha", 160]
 			]);
-			checkCreatedPersisted(assert, oNewRoot);
+			checkCreatedPersisted(assert, oNewRoot, oNewRootCreated);
 
-			const [oAleph, oAlpha] = oListBinding.getCurrentContexts();
-			// code under test
-			assert.strictEqual(oAlpha.getSibling(+1), oAleph,
-				"CPOUI5ODATAV4-2558 ignoring out-of-place nodes");
-			assert.strictEqual(oAleph.getSibling(-1), oAlpha,
-				"CPOUI5ODATAV4-2558 ignoring out-of-place nodes");
+			// code under test (JIRA: CPOUI5ODATAV4-2652)
+			checkSiblingOrder(assert, /*in place*/[oRoot], /*out of place*/[oNewRoot]);
 
 			that.expectRequest(sTopLevelsSelectUrl + "&$skip=1&$top=1", {
 					value : [{
@@ -27715,6 +27761,178 @@ sap.ui.define([
 				[false, 3, "1.2", "1", "Zeta", 142],
 				[undefined, 2, "2", "0", "Kappa: κ", 166]
 			], 9);
+
+			// code under test
+			oTable.setFirstVisibleRow(0);
+
+			return Promise.all([
+				resolveLater(undefined, 0), // table update takes a moment
+				that.waitForChanges(assert, "scroll up again")
+			]);
+		}).then(function () {
+			checkTable("after scroll up again", assert, oTable, [
+				"/EMPLOYEES('9')",
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('1.1')",
+				"/EMPLOYEES('1.2')",
+				"/EMPLOYEES('2')"
+			], [
+				[undefined, 1, "9", "", "Aleph: ℵ", 199],
+				[true, 1, "0", "", "Alpha", 160],
+				[true, 2, "1", "0", "Beta", 155]
+			], 9);
+			checkCreatedPersisted(assert, oNewRoot, oNewRootCreated); // still out-of-place
+
+			// simplify out-of-place tests below
+			oRoot.collapse();
+
+			return that.waitForChanges(assert, "collapse root again");
+		}).then(function () {
+			// 9 Aleph (moved here)
+			// 0 Alpha (collapsed)
+			//   (1 Beta) (still expanded, but does not matter)
+			that.expectRequest({
+					batchNo : 10,
+					headers : {
+						Prefer : "return=minimal"
+					},
+					method : "PATCH",
+					payload : {
+						"EMPLOYEE_2_MANAGER@odata.bind" : null
+					},
+					url : "EMPLOYEES('9')"
+				}) // 204 No Content
+				.expectRequest({
+					batchNo : 10,
+					headers : {
+						Prefer : "return=minimal"
+					},
+					method : "POST",
+					payload : {
+						NextSibling : {ID : "0"}
+					},
+					url : "EMPLOYEES('9')" + sNextSiblingAction
+				}) // 204 No Content
+				.expectRequest({
+					batchNo : 10,
+					url : sTopLevelsUrl.slice(0, -1) + ",ExpandLevels="
+						+ JSON.stringify([{NodeID : "1", Levels : 1}, {NodeID : "0", Levels : 0}])
+						+ ")&$filter=ID eq '9'&$select=LimitedRank"
+				}, {
+					value : [{
+						LimitedRank : "0" // Edm.Int64
+					}]
+				})
+				.expectRequest({
+					batchNo : 10,
+					url : "EMPLOYEES?$select=AGE,ID,MANAGER_ID,Name&$filter=ID eq '9'"
+				}, {
+					value : [{ // this response has no real effect, the one below wins!
+						AGE : -1, // no effect
+						ID : "9",
+						MANAGER_ID : "no effect",
+						Name : "copy of Aleph w/ no effect"
+					}]
+				})
+				.expectRequest({
+					batchNo : 10,
+					url : "EMPLOYEES/$count"
+				}, 24 + 1)
+				.expectRequest({
+					batchNo : 10,
+					url : sTopLevelsUrl.slice(0, -1) + ",ExpandLevels="
+						+ JSON.stringify([{NodeID : "1", Levels : 1}, {NodeID : "0", Levels : 0}])
+						+ ")" + sSelect + "&$count=true&$skip=0&$top=3"
+				}, {
+					"@odata.count" : "2",
+					value : [{
+						AGE : 299, // side effect
+						DescendantCount : "0", // Edm.Int64
+						DistanceFromRoot : "0", // Edm.Int64
+						DrillState : "leaf",
+						ID : "9",
+						MANAGER_ID : null,
+						Name : "Aleph" // side effect
+					}, {
+						AGE : 260, // side effect
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "collapsed",
+						ID : "0",
+						MANAGER_ID : null,
+						Name : "Alpha"
+					}]
+				})
+				.expectChange("count", "25");
+
+			assert.strictEqual(oNewRoot.getParent(), null, "parent readily available");
+			assert.strictEqual(oNewRoot.getSibling(+1), oRoot, "next sibling readily available");
+			oNewRoot.setKeepAlive(true); // this MUST not cause issues w.r.t. "created" state!
+
+			return Promise.all([
+				// code under test (JIRA: CPOUI5ODATAV4-2652)
+				oNewRoot.move({nextSibling : oRoot, parent : null}),
+				that.waitForChanges(assert, "move down out-of-place node")
+			]);
+		}).then(function () {
+			checkTable("after move down out-of-place node", assert, oTable, [
+				"/EMPLOYEES('9')",
+				"/EMPLOYEES('0')"
+			], [
+				[undefined, 1, "9", "", "Aleph", 299],
+				[false, 1, "0", "", "Alpha", 260]
+			]);
+			checkPersisted(assert, oNewRoot); // not out-of-place anymore
+
+			// 9 Aleph
+			// 10 Beth (created)
+			// 0 Alpha (collapsed)
+			//   (1 Beta) (still expanded, but does not matter)
+			that.expectRequest({
+					batchNo : 11,
+					method : "POST",
+					url : "EMPLOYEES",
+					payload : {
+						// not needed: "EMPLOYEE_2_MANAGER@odata.bind" : null,
+						Name : "Beth"
+					}
+				}, {
+					AGE : 277,
+					ID : "10",
+					MANAGER_ID : null,
+					Name : "Beth, not Beta" // side effect
+				})
+				.expectRequest({
+					batchNo : 12,
+					url : sTopLevelsUrl.slice(0, -1) + ",ExpandLevels="
+						+ JSON.stringify([{NodeID : "1", Levels : 1}, {NodeID : "0", Levels : 0}])
+						+ ")&$filter=ID eq '10'&$select=LimitedRank"
+				}, {
+					value : [{ // in between Aleph and Alpha
+						LimitedRank : "1" // Edm.Int64
+					}]
+				});
+
+			oOutOfPlaceRoot = oListBinding.create({Name : "Beth"}, /*bSkipRefresh*/true);
+
+			return Promise.all([
+				oOutOfPlaceRoot.created(),
+				that.waitForChanges(assert, "create new out-of-place root")
+			]);
+		}).then(function () {
+			checkTable("after create new out-of-place root", assert, oTable, [
+				"/EMPLOYEES('10')",
+				"/EMPLOYEES('9')",
+				"/EMPLOYEES('0')"
+			], [
+				[undefined, 1, "10", "", "Beth, not Beta", 277],
+				[undefined, 1, "9", "", "Aleph", 299],
+				[false, 1, "0", "", "Alpha", 260]
+			]);
+
+			// code under test (JIRA: CPOUI5ODATAV4-2652)
+			checkSiblingOrder(assert, /*in*/[oNewRoot, oRoot], /*out*/[oOutOfPlaceRoot]);
 		});
 	});
 
@@ -28219,7 +28437,6 @@ sap.ui.define([
 					url : sTopLevelsUrl + "&$filter=ID eq 'B'&$select=LimitedRank"
 				}, {
 					value : [{
-						ID : "B",
 						LimitedRank : "0" // Edm.Int64
 					}]
 				});
@@ -28347,7 +28564,6 @@ sap.ui.define([
 					url : sTopLevelsUrl + "&$filter=ID eq 'C'&$select=LimitedRank"
 				}, {
 					value : [{
-						ID : "C",
 						LimitedRank : "5" // Edm.Int64
 					}]
 				});
@@ -33580,6 +33796,8 @@ sap.ui.define([
 	// 7. Move a node (Beta) before a next sibling which is a created node (Delta) makes that node
 	//    and all of its descendants "in place" (JIRA: CPOUI5ODATAV4-2581).
 	// JIRA: CPOUI5ODATAV4-2466
+	//
+	// Siblings of out-of-place nodes (JIRA: CPOUI5ODATAV4-2652)
 [1, 2, 3, 4, 5, 6, 7].forEach(function (iScenario) {
 	const sTitle = `Recursive Hierarchy: nodes affected by a move; #${iScenario}`;
 
@@ -33673,6 +33891,11 @@ sap.ui.define([
 			[undefined, undefined, 2, "1", "Beta"],
 			[undefined, undefined, 2, "2", "Gamma"]
 		]);
+
+		// code under test (JIRA: CPOUI5ODATAV4-2652)
+		checkSiblingOrder(assert, /*in place*/[oBeta, oGamma], /*out of place*/[oDelta]);
+		checkSiblingOrder(assert, /*in place*/[], /*out of place*/[oEpsilon, oEta]);
+		checkSiblingOrder(assert, /*in place*/[], /*out of place*/[oZeta]);
 
 		switch (iScenario) {
 			case 1: // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -33776,6 +33999,7 @@ sap.ui.define([
 					[undefined, undefined, 5, "1", "Beta"],
 					[undefined, undefined, 3, "3.2", "Eta"]
 				]);
+				checkPersisted(assert, [oDelta, oEpsilon, oZeta, oEta]);
 			break;
 
 			case 2: // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -33879,6 +34103,7 @@ sap.ui.define([
 					[undefined, undefined, 4, "3.2", "Eta"],
 					[undefined, undefined, 2, "2", "Gamma"]
 				]);
+				checkPersisted(assert, [oDelta, oEpsilon, oZeta, oEta]);
 			break;
 
 			case 3: // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -34036,6 +34261,9 @@ sap.ui.define([
 					ID : "0",
 					Name : "Alpha"
 				}, "no LimitedRank");
+				//TODO checkCreatedPersisted(assert, oDelta);
+				//TODO checkCreatedPersisted(assert, oEta);
+				checkPersisted(assert, [oEpsilon, oZeta]);
 			break;
 
 			case 4: // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -34187,6 +34415,9 @@ sap.ui.define([
 					[undefined, true, 1, "3.1", "Epsilon"], // now "in place"...
 					[undefined, undefined, 2, "3.1.1", "Zeta"] // ...and not created anymore
 				]);
+				//TODO checkCreatedPersisted(assert, oDelta);
+				//TODO checkCreatedPersisted(assert, oEta);
+				checkPersisted(assert, [oEpsilon, oZeta]);
 			break;
 
 			case 5: // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -34290,6 +34521,7 @@ sap.ui.define([
 					[undefined, true, 4, "3.1", "Epsilon"], // ...
 					[undefined, undefined, 5, "3.1.1", "Zeta"] // ...and not created anymore
 				]);
+				checkPersisted(assert, [oDelta, oEpsilon, oZeta, oEta]);
 			break;
 
 			case 6: // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -34480,6 +34712,7 @@ sap.ui.define([
 					[undefined, undefined, 4, "3.1.1", "Zeta"], // ...
 					[undefined, undefined, 3, "3.2", "Eta"] // ...and not created anymore
 				]);
+				checkPersisted(assert, [oDelta, oEpsilon, oZeta, oEta]);
 			break;
 
 			default: // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -35493,6 +35726,8 @@ sap.ui.define([
 	// (11) Refresh the binding (out-of-place information is no longer kept, tree is collapsed again
 	//      to 1 level)
 	// JIRA: CPOUI5ODATAV4-2454
+	//
+	// Siblings of out-of-place nodes (JIRA: CPOUI5ODATAV4-2652)
 	QUnit.test("Recursive Hierarchy: out of place", async function (assert) {
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
 		const sFriend = "Artists(ArtistID='99',IsActiveEntity=false)/_Friend";
@@ -35669,8 +35904,8 @@ sap.ui.define([
 			return oContext;
 		};
 
-		await create("11", "New1", oAlpha);
-		await create("12", "New2", oAlpha);
+		const oNew1 = await create("11", "New1", oAlpha);
+		const oNew2 = await create("12", "New2", oAlpha);
 		const oNew3 = await create("13", "New3", oAlpha);
 		await create("14", "New4", oBeta);
 		await create("15", "New5", oGamma);
@@ -35692,6 +35927,9 @@ sap.ui.define([
 			[true, 2, "13", "New3"],
 			[undefined, 3, "16", "New6"]
 		]);
+
+		// code under test (JIRA: CPOUI5ODATAV4-2652)
+		checkSiblingOrder(assert, /*in place*/[oBeta], /*out of place*/[oNew1, oNew2, oNew3]);
 
 		this.expectRequest(sCountUrl, 10)
 			.expectRequest({
@@ -35987,13 +36225,13 @@ sap.ui.define([
 			]);
 
 		// this context has been destroyed by the refresh because it was not visible
-		const [oNew1] = await oBinding.requestContexts(4, 1);
+		const [oCopyOfNew1] = await oBinding.requestContexts(4, 1);
 
 		this.expectRequest("DELETE Artists(ArtistID='11',IsActiveEntity=false)");
 
 		await Promise.all([
 			// code under test
-			oNew1.delete(),
+			oCopyOfNew1.delete(),
 			this.waitForChanges(assert, "(5) delete New1")
 		]);
 
@@ -36611,6 +36849,8 @@ sap.ui.define([
 	//     nodes are moved to the front and the in-place range is shifted)
 	// (4) Check all contexts
 	// JIRA: CPOUI5ODATAV4-2454
+	//
+	// Siblings of out-of-place nodes (JIRA: CPOUI5ODATAV4-2652)
 	QUnit.test("Recursive Hierarchy: out of place, root, expandTo > 1", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sCountUrl = "EMPLOYEES/$count?$filter=AGE gt 20&custom=foo&$search=covfefe";
@@ -36780,6 +37020,11 @@ sap.ui.define([
 			[true, 1, "Alpha"],
 			[undefined, 2, "Theta"]
 		]);
+		const [,,,, oBeta,, oEpsilon] = oBinding.getAllCurrentContexts();
+
+		// code under test (JIRA: CPOUI5ODATAV4-2652)
+		checkSiblingOrder(assert, /*in place*/[], /*out of place*/[oTheta]);
+		checkSiblingOrder(assert, /*in*/[oAlpha, oBeta, oGamma, oEpsilon], /*out*/[oEta, oZeta]);
 
 		this.expectRequest(sCountUrl, 8)
 			.expectRequest({
@@ -36913,6 +37158,11 @@ sap.ui.define([
 				[false, 1, "Gamma*"],
 				[undefined, 1, "Epsilon*"]
 			]);
+
+		//TODO oTheta, oEta, oZeta not "created" anymore and thus not OOP :-(
+		// code under test (JIRA: CPOUI5ODATAV4-2652)
+		// checkSiblingOrder(assert, /*in place*/[], /*out of place*/[oTheta]);
+		// checkSiblingOrder(assert, /*in*/[oAlpha, oBeta, oGamma, oEpsilon], /*out*/[oEta, oZeta]);
 	});
 
 	//*********************************************************************************************

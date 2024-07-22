@@ -998,6 +998,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the index in <code>this.aElements</code> of the first in-place child of the given
+	 * parent node, or the first in-place root if no parent is given.
+	 *
+	 * @param {number} iParentIndex
+	 *   The parent node's index, or -1 if looking for a root node
+	 * @returns {number}
+	 *   The array index, or -1 if there is no such first in-place node
+	 *
+	 * @public
+	 */
+	_AggregationCache.prototype.get1stInPlaceChildIndex = function (iParentIndex) {
+		const iLevel = iParentIndex >= 0
+			? this.aElements[iParentIndex]["@$ui5.node.level"] + 1
+			: 1;
+
+		return this.aElements.findIndex(
+			(oElement, iIndex) => iIndex > iParentIndex
+				&& oElement["@$ui5.node.level"] === iLevel
+				&& oElement["@$ui5.context.isTransient"] === undefined);
+	};
+
+	/**
 	 * Returns an array containing all current elements of this aggregation cache's flat list; the
 	 * array is annotated with the collection's $count. If there are placeholders, the corresponding
 	 * objects will be ignored and set to <code>undefined</code>.
@@ -1131,7 +1153,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the index of the given node's sibling, either the next one (via offset +1) or the
-	 * previous one (via offset -1).
+	 * previous one (via offset -1), skipping out-of-place nodes.
 	 *
 	 * @param {number} iIndex - The index of a node
 	 * @param {number} iOffset - An offset, either -1 or +1
@@ -1169,8 +1191,16 @@ sap.ui.define([
 
 		if (iSiblingRank >= 0) {
 			const iSiblingIndex = this.findIndex(iSiblingRank, oCache);
+			if (iSiblingIndex < 0) {
+				return -1; // no such sibling
+			}
+			const oSibling = this.aElements[iSiblingIndex];
 			if (bSingleLevelCache && bAllowPlaceholder
-				|| !_Helper.hasPrivateAnnotation(this.aElements[iSiblingIndex], "placeholder")) {
+				|| !_Helper.hasPrivateAnnotation(oSibling, "placeholder")) {
+				if (oSibling["@$ui5.context.isTransient"] !== undefined) {
+					// sibling is out of place, skip it!
+					return this.getSiblingIndex(iSiblingIndex, iOffset, bAllowPlaceholder);
+				}
 				return iSiblingIndex; // sibling found
 			}
 		} // else: iSiblingRank === undefined => return undefined;
@@ -1425,6 +1455,7 @@ sap.ui.define([
 		if (this.oTreeState.isOutOfPlace(sChildPredicate)) {
 			// remove OOP for all descendants (incl. itself) of a moved OOP node
 			this.oTreeState.deleteOutOfPlace(sChildPredicate);
+			delete oChildNode["@$ui5.context.isTransient"];
 			bRefreshNeeded = true;
 		}
 

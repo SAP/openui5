@@ -2068,7 +2068,17 @@ sap.ui.define([
 		}
 		this.checkSuspended();
 
-		const iSibling = this.oCache.getSiblingIndex(oNode.iIndex, iOffset);
+		let iSibling;
+		if (oNode.created()) {
+			if (iOffset < 0) { // out-of-place nodes have no previous sibling
+				return null;
+			}
+			const oParent = oNode.getParent(); // Note: always sync for out-of-place nodes
+			iSibling = this.oCache.get1stInPlaceChildIndex(oParent ? oParent.iIndex : -1);
+		} else {
+			iSibling = this.oCache.getSiblingIndex(oNode.iIndex, iOffset);
+		}
+
 		if (iSibling < 0) {
 			return null;
 		}
