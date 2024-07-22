@@ -3,10 +3,10 @@
 		xmlns:f="sap.f"
 		xmlns:grid="sap.ui.layout.cssgrid"
 		xmlns:core="sap.ui.core"
-		xmlns:html="http://www.w3.org/1999/xhtml">
+		xmlns:custom="sap.ui.documentation">
 	<Dialog title="{i18n>COOKIE_SETTINGS_DIALOG_TITLE}" contentWidth="45rem">
 		<content>
-			<html:div class="sapUiSmallMargin">
+			<custom:DivContainer class="sapUiSmallMargin">
 				<Text text="{i18n>COOKIE_SETTINGS_DIALOG_SUMMARY}"
 					  visible="{= !${cookieData>/showCookieDetails} }"/>
 				<Text text="{i18n>COOKIE_SETTINGS_DIALOG_REQUIRED_COOKIES_TEXT}"
@@ -41,7 +41,7 @@
 						</Panel>
 					</f:GridListItem>
 				</f:GridList>
-			</html:div>
+			</custom:DivContainer>
 		</content>
 	<buttons>
 		<Button text="{i18n>COOKIE_SETTINGS_DIALOG_ACCEPT_ALL}" type="Emphasized" press="onAcceptAllCookies" visible="{=! ${cookieData>/showCookieDetails} }">
