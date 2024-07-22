@@ -93,7 +93,7 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> If the title is provided as a string, the title is rendered with a theme-dependent default level.
 				 * As the <code>Form</code> control cannot know the structure of the page, this might not fit the page structure.
-				 * In this case provide the title using a <code>Title</code> element and set its {@link sap.ui.core.Title#setLevel level} to the needed value.
+				 * In this case, provide the title using a <code>Title</code> element and set its {@link sap.ui.core.Title#setLevel level} to the needed value.
 				 */
 				title : {type : "sap.ui.core.Title", altTypes : ["string"], multiple : false},
 
@@ -102,7 +102,7 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> If a <code>Toolbar</code> is used, the <code>Title</code> is ignored.
 				 * If a title is needed inside the <code>Toolbar</code> it must be added at content to the <code>Toolbar</code>.
-				 * In this case add the <code>Title</code> to the <code>ariaLabelledBy</code> association.
+				 * In this case, add the <code>Title</code> to the <code>ariaLabelledBy</code> association.
 				 * Use the right title level to meet the visual requirements. This might be theme-dependent.
 				 * @since 1.36.0
 				 */
@@ -119,6 +119,10 @@ sap.ui.define([
 
 				/**
 				 * Association to controls / IDs that label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
+				 *
+				 * <b>Note:</b> Every <code>Form</code> needs to have some title or label (at least for screen reader support). If no <code>Title</code>
+				 * is set, and the <code>Form</code> is not a child or a control with a title, such as {@link sap.m.Panel Panel} or {@link sap.m.Dialog Dialog},
+				 * a label or title needs to be assigned using the <code>ariaLabelledBy</code> association.
 				 * @since 1.28.0
 				 */
 				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
