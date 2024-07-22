@@ -252,8 +252,6 @@ sap.ui.define([
 			const oContent = oChanges.child;
 			if (oChanges.mutation === "remove") {
 				this.unbindContentFromContainer(oContent);
-				// } else {
-				// 	this.bindContentToContainer(oContent);
 			}
 		}
 	};
@@ -1024,6 +1022,32 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
 	Container.prototype.setHighlightId = function(sHighlightId) {
+
+	};
+
+	Container.prototype.clone = function(sIdSuffix, aLocalIds) {
+
+		// detach event handler before cloning to not have it twice on the clone
+		// attach it after clone again
+		const aContent = this.getContent();
+
+		for (let i = 0; i < aContent.length; i++) {
+			if (aContent[i]._bContentBound) {
+				aContent[i]._bRebindContent = true;
+				this.unbindContentFromContainer(aContent[i]);
+			}
+		}
+
+		const oClone = Element.prototype.clone.apply(this, arguments);
+
+		for (let i = 0; i < aContent.length; i++) { // for Dialog overwrite to only bind shown content
+			if (aContent[i]._bRebindContent) {
+				this.bindContentToContainer(aContent[i]);
+				delete aContent[i]._bRebindContent;
+			}
+		}
+
+		return oClone;
 
 	};
 
