@@ -106,6 +106,7 @@ sap.ui.define([
 					sPredicate = sParentPredicate;
 				}
 			}
+			this.mPredicate2OutOfPlace[sPredicate].context.setOutOfPlace(false);
 			delete this.mPredicate2OutOfPlace[sPredicate];
 			Object.values(this.mPredicate2OutOfPlace).forEach((oOutOfPlace) => {
 				if (oOutOfPlace.parentPredicate === sPredicate) {
@@ -245,27 +246,49 @@ sap.ui.define([
 		 * @public
 		 */
 		resetOutOfPlace() {
-			this.mPredicate2OutOfPlace = {};
+			this.getOutOfPlacePredicates()
+				.forEach((sPredicate) => this.deleteOutOfPlace(sPredicate));
 		}
 
 		/**
-		 * Makes the node out of place.
+		 * Makes the ("created persisted"!) node out of place.
 		 *
 		 * @param {object} oNode - The node
 		 * @param {object} [oParent] - The parent, unless the node is a root
+		 * @throws {Error} If the node is not 'created persisted'
 		 *
 		 * @public
 		 */
 		setOutOfPlace(oNode, oParent) {
+			if (oNode["@$ui5.context.isTransient"] !== false) {
+				throw new Error("Not 'created persisted'");
+			}
 			const oOutOfPlace = {
+				context : _Helper.getPrivateAnnotation(oNode, "context"),
 				nodeFilter : this.fnGetKeyFilter(oNode),
 				nodePredicate : _Helper.getPrivateAnnotation(oNode, "predicate")
 			};
+			oOutOfPlace.context.setOutOfPlace(true);
 			if (oParent) {
 				oOutOfPlace.parentFilter = this.fnGetKeyFilter(oParent);
 				oOutOfPlace.parentPredicate = _Helper.getPrivateAnnotation(oParent, "predicate");
 			}
 			this.mPredicate2OutOfPlace[oOutOfPlace.nodePredicate] = oOutOfPlace;
+		}
+
+		/**
+		 * The given node is still out of place and thus must keep a client-side annotation
+		 * <code>"@$ui5.context.isTransient"</code> as well as a private annotation "context".
+		 *
+		 * @param {object} oNode - The node
+		 * @param {string} sPredicate - The node's key predicate
+		 *
+		 * @public
+		 */
+		stillOutOfPlace(oNode, sPredicate) {
+			oNode["@$ui5.context.isTransient"] = false;
+			_Helper.setPrivateAnnotation(oNode, "context",
+				this.mPredicate2OutOfPlace[sPredicate].context);
 		}
 	}
 

@@ -4434,13 +4434,16 @@ sap.ui.define([
 	{hasFilter : false, hasSearch : false, inCollection : true, secondQuery : false},
 	/*{hasFilter : false, hasSearch : false, inCollection : false, secondQuery : false}, invalid*/
 	{hasFilter : true, hasSearch : false, inCollection : true, secondQuery : true},
-	{hasFilter : false, hasSearch : true, inCollection : false, secondQuery : true}
+	{hasFilter : false, hasSearch : true, inCollection : false, secondQuery : true},
+	{hasFilter : false, hasSearch : true, inCollection : false, secondQuery : true,
+		isTransient : true}
 ].forEach(function (oFixture) {
 	var sTitle = "refreshSingleWithRemove: for (still existing) kept-alive element (in collection)"
 		+ (oFixture.hasFilter ? ", binding has own filter" : "")
 		+ (oFixture.hasSearch ? ", implicit filter via $search" : "")
 		+ "; after refresh the entity exists and the context is"
-		+ (oFixture.inCollection ? " in the collection" : " not in the collection");
+		+ (oFixture.inCollection ? " in the collection" : " not in the collection")
+		+ (oFixture.isTransient ? " and is transient" : "");
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS", {/*mQueryOptions*/}),
@@ -4532,6 +4535,9 @@ sap.ui.define([
 			.exactly(oFixture.inCollection ? 0 : 1)
 			.withExactArgs(sinon.match.same(aElements.$byPredicate["('13')"]),
 				sinon.match.same(oReadResponse.value[0]));
+		if (oFixture.isTransient) {
+			oElement["@$ui5.context.isTransient"] = undefined; // value MUST not matter
+		}
 		oRemoveExpectation = oCacheMock.expects("removeElement")
 			.exactly(oFixture.inCollection ? 0 : 1)
 			.withExactArgs(0, "('13')", sinon.match.same(aElements), "~");
@@ -4556,6 +4562,8 @@ sap.ui.define([
 					assert.ok(oReplaceExpectation.calledAfter(oRemoveExpectation));
 					sinon.assert.calledOnceWithExactly(fnOnRemove, true);
 				}
+				assert.deepEqual(oReadResponse.value[0],
+					oFixture.isTransient ? {"@$ui5.context.isTransient" : false} : {});
 		});
 	});
 });

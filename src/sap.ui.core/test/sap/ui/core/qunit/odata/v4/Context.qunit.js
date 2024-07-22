@@ -55,6 +55,7 @@ sap.ui.define([
 		assert.strictEqual(oContext.isDeleted(), false);
 		assert.strictEqual(oContext.isInactive(), undefined);
 		assert.strictEqual(oContext.isKeepAlive(), false);
+		assert.strictEqual(oContext.isOutOfPlace(), false);
 		assert.strictEqual(oContext.isSelected(), false);
 		assert.ok(oContext.hasOwnProperty("fnOnBeforeDestroy"));
 		assert.strictEqual(oContext.fnOnBeforeDestroy, undefined);
@@ -5091,6 +5092,43 @@ sap.ui.define([
 
 		assert.ok(oPromise instanceof Promise);
 		assert.strictEqual(await oPromise, "~result~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setOutOfPlace, isOutOfPlace", function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')", 42);
+		const oContextMock = this.mock(oContext);
+		oContextMock.expects("setPersisted").never();
+		oContextMock.expects("created").withExactArgs().returns(SyncPromise.resolve());
+
+		// code under test
+		assert.strictEqual(oContext.isOutOfPlace(), false);
+
+		// code under test
+		oContext.setOutOfPlace(true);
+
+		// code under test
+		assert.strictEqual(oContext.isOutOfPlace(), true);
+
+		oContextMock.expects("setPersisted").withExactArgs();
+
+		// code under test
+		oContext.setOutOfPlace(false);
+
+		// code under test
+		assert.strictEqual(oContext.isOutOfPlace(), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setOutOfPlace: Not 'created persisted'", function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')", 42);
+		this.mock(oContext).expects("setPersisted").never();
+		this.mock(oContext).expects("created").withExactArgs().returns(undefined);
+
+		assert.throws(function () {
+			// code under test
+			oContext.setOutOfPlace(true);
+		}, new Error("Not 'created persisted'"));
 	});
 
 	//*********************************************************************************************

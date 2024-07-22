@@ -2496,9 +2496,9 @@ sap.ui.define([
 		 * Searches all properties in oOld annotated with "@$ui5.updating" and restores the property
 		 * value in oNew.
 		 *
-		 * @param {object} oOld
+		 * @param {object} [oOld]
 		 *   The old element
-		 * @param {object} oNew
+		 * @param {object} [oNew]
 		 *   The new element
 		 * @returns {object}
 		 *   The new element with the restored properties
