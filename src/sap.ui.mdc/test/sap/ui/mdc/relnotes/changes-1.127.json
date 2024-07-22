@@ -3,6 +3,11 @@
     "date": "July 2024",
     "notes": [
       {
+        "id": "b412ad51c3de64789f77b37d68edbc1518b07e39",
+        "type": "FIX",
+        "text": " Field: on typeahead no information about result announced"
+      },
+      {
         "id": "c384f11e59b4286dd43217d55404a5c43c9cabca",
         "type": "FIX",
         "text": " sap.m.Table: Announce required state of columns with 'custom' label controls"

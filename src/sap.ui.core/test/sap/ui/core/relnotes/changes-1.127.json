@@ -3,6 +3,11 @@
     "date": "July 2024",
     "notes": [
       {
+        "id": "becce31d29382136c869622d9acc13ae7bac5b64",
+        "type": "FIX",
+        "text": " core/Element: avoid 'focusfail' when the control still has focus"
+      },
+      {
         "id": "8963a855f10a017f234057f4828de65bc13fbb0d",
         "type": "FIX",
         "text": " BindingInfo: Ensure that named models are only parsed once"

@@ -3,6 +3,51 @@
     "date": "July 2024",
     "notes": [
       {
+        "id": "52da17e9c7346d7b94ad69c724ad396e1db3f571",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: add value state message to mobile numeric picker"
+      },
+      {
+        "id": "98c64b988c0994ae49adcf5c3c4f3e1fa556e0b8",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: fix cursor position when there is mask and no entry"
+      },
+      {
+        "id": "2308a12acebc78d37f31dc7e75cbb1962777b908",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: fix SR announcements when appointments are selected with keyboard."
+      },
+      {
+        "id": "6589001a928be6de9b00cfff69a92223c31fc044",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Prevent unnecessary scroll"
+      },
+      {
+        "id": "7a2c530bb7bb52919339e6a77b7e719f13727850",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: remove roledescription announcement"
+      },
+      {
+        "id": "dfcd9323b66f424ce5b2fc0dd408d74592cb5481",
+        "type": "FEATURE",
+        "text": " sap.m.DatePicker, sap.m.DateTimePicker, sap.m.DateRangeSelection: add picker accessible name"
+      },
+      {
+        "id": "abc5e532e9544c9be10ab05b3486d886f3c89ece",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog,TableSelectDialog: Set focus to the initially focusable element after selection is reset"
+      },
+      {
+        "id": "48f45256367188d128e3246fa4786ce47b8c904e",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarGrid: Prevent appointment selection by pressing the Tab key"
+      },
+      {
+        "id": "a4dd3af89f7b1a843e513bdb8d0c5c3dd9330e64",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: propagate row selection to table"
+      },
+      {
         "id": "942e64040aa762643499a0d17ccf5a9791a66309",
         "type": "FIX",
         "text": " We've made the subheader dynamic in the NewsContent when it is in a stretch tile"
@@ -11,6 +56,11 @@
         "id": "3787be03c7cee2f6fda1ce5f8db699215f5e8709",
         "type": "FIX",
         "text": " sap.m.TimePicker: Provide additional testing control instance for the visual test"
+      },
+      {
+        "id": "218ea696fac477e089f7ebabfcf28af32fceb936",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Remove warning message when using sap.ui.core.HTML"
       },
       {
         "id": "0af11a405c94b851c037cdc8cdd8da30b0325a01",
@@ -28,9 +78,24 @@
         "text": " sap.m.Column: add missing check for parent Table in _onLabelPropertyChange"
       },
       {
+        "id": "0d8c69fb15c4dea0d0d2bf0bbdada13c52e24fbd",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Fix title / text alignment of inverted status"
+      },
+      {
+        "id": "274b4ba5ae041a84075ce72c252274a69d276811",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: align test page example"
+      },
+      {
         "id": "80bd16c5888a257476af29ffbf2d8cd3c8dbbf0e",
         "type": "FIX",
         "text": " Fiori20Adapter: Strengthened the check for the navigation back button"
+      },
+      {
+        "id": "da8d4212606e3466314194608c8af7bf136bb75e",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Dragging is no longer interrupted by selection at the same time"
       },
       {
         "id": "d3da60c83a73b3c41d7628cbb8bfa5fcd97bcfb4",

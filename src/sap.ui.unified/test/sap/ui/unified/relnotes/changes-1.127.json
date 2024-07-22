@@ -3,6 +3,11 @@
     "date": "July 2024",
     "notes": [
       {
+        "id": "2308a12acebc78d37f31dc7e75cbb1962777b908",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: fix SR announcements when appointments are selected with keyboard."
+      },
+      {
         "id": "88c9e07a1ed2f2d1e591ef5238c936e9296bc500",
         "type": "FIX",
         "text": " sap.ui.unified.CalendarRow: Appointments ARIA texts are correctly translated and localized now"

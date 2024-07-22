@@ -3,6 +3,11 @@
     "date": "July 2024",
     "notes": [
       {
+        "id": "efba7a537e0d983428c8e7df7ad5e21ca5a0b333",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Cleanup move listeners on destroy"
+      },
+      {
         "id": "10d088e11f19ba715d51fec93d296384c102c61a",
         "type": "FIX",
         "text": " sap.f.DynamicPage: Syncronization issue corrected"
