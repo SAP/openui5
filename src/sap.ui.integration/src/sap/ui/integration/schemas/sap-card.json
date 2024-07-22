@@ -1726,6 +1726,10 @@
           "type": "string",
           "description": "Represents image source URL"
         },
+        "fallbackSrc": {
+          "type": "string",
+          "description": "Represents fallback image source URL"
+        },
         "alt": {
           "type": "string",
           "description": "The alternative text that is displayed in case the image is not available, or cannot be displayed."
