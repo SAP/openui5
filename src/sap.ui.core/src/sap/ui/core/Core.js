@@ -11,7 +11,6 @@ sap.ui.define([
 	"./Element",
 	"./ElementRegistry",
 	"./Lib",
-	"./LocaleData",
 	"./Rendering",
 	"./RenderManager",
 	"./UIArea",
@@ -24,7 +23,6 @@ sap.ui.define([
 	"sap/base/Event",
 	"sap/base/Log",
 	"sap/base/i18n/Formatting",
-	"sap/base/i18n/Localization",
 	"sap/base/util/Deferred",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/ObjectPath",
@@ -64,7 +62,6 @@ sap.ui.define([
 		Element,
 		ElementRegistry,
 		Library,
-		LocaleData,
 		Rendering,
 		RenderManager,
 		UIArea,
@@ -77,7 +74,6 @@ sap.ui.define([
 		BaseEvent,
 		Log,
 		Formatting,
-		Localization,
 		Deferred,
 		isEmptyObject,
 		ObjectPath,
@@ -1164,14 +1160,14 @@ sap.ui.define([
 			aModules.push(/^jquery\.sap\./.test(sModule) ? sModule : sModule.replace(/\./g, "/"));
 		});
 
+		// TODO: require libs and modules in parallel or define a sequence?
 		return Promise.all([
 			Library._load(this.aLibs),
 			new Promise(function(resolve) {
 				sap.ui.require(aModules, function() {
 					resolve(Array.prototype.slice.call(arguments));
 				});
-			}),
-			LocaleData.requestInstance(Localization.getLanguageTag())
+			})
 		]);
 	};
 
