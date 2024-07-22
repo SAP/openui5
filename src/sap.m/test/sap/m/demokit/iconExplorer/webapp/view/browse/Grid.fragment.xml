@@ -26,7 +26,7 @@
 			<grid:GridBoxLayout boxWidth="8.125rem"/>
 		</f:customLayout>
 
-		<f:GridListItem class="sapUiTinyMargin" press=".expandSidePanel" type="Active">
+		<f:GridListItem class="sapUiTinyMargin" type="Active">
 			<VBox alignItems="Center">
 				<core:Icon
 					class="sapUiTinyMarginTop"
