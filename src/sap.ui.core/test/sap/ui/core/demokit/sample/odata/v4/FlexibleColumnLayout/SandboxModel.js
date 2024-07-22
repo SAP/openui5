@@ -95,12 +95,11 @@ sap.ui.define([
 				"SalesOrderList?$filter=SalesOrderID%20eq%20'0500000004'&$select=ChangedAt,CreatedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
 					source : "SalesOrderList('0500000004')-Refresh_Existence.json"
 				},
-				"SalesOrderList?$filter=SalesOrderID%20eq%20'0500000000'&$select=GrossAmount,SalesOrderID" : {
-					message : {value : [{
+				"SalesOrderList('0500000000')?$select=GrossAmount" : {
+					message : {
 						"@odata.etag" : "W/\"20210113145715.2782530 \"",
-						GrossAmount : "24540.06",
-						SalesOrderID : "0500000000"
-					}]}
+						GrossAmount : "24540.06"
+					}
 				},
 				"POST SalesOrderList('0500000000')/com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrderIncreaseItemsQuantity?$select=GrossAmount,Note" : {
 					message : {
@@ -125,12 +124,9 @@ sap.ui.define([
 						}
 					}
 				},
-				"SalesOrderList?$filter=SalesOrderID%20eq%20'0500000005'&$select=GrossAmount,SalesOrderID" : {
+				"SalesOrderList('0500000005')?$select=GrossAmount" : {
 					message : {
-						value : [{
-							GrossAmount : "12404.77",
-							SalesOrderID : "0500000005"
-						}]
+						GrossAmount : "12404.77"
 					}
 				}
 			},
