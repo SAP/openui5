@@ -275,6 +275,7 @@ sap.ui.define([
 
 
 		const fnDone = assert.async();
+		oValueHelp.connect(oField); // to attach events
 		oValueHelp.open(false); //-> check nothing happens
 		assert.notOk(oContainer.open.called, "Container open not called for Dialog opening");
 
@@ -324,6 +325,7 @@ sap.ui.define([
 
 	QUnit.test("close handling", function(assert) {
 
+		oValueHelp.connect(oField); // to attach events
 		sinon.spy(oValueHelp, "close");
 		oContainer.handleClosed(); // TODO: change to event?
 		assert.equal(iClosed, 1, "Close event fired");
@@ -600,6 +602,7 @@ sap.ui.define([
 
 	QUnit.test("navigate", function(assert) {
 
+		oValueHelp.connect(oField); // to attach events
 		sinon.spy(oContainer, "navigate");
 		sinon.spy(oContainer, "open");
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
@@ -619,6 +622,7 @@ sap.ui.define([
 
 	QUnit.test("navigate with opening", function(assert) {
 
+		oValueHelp.connect(oField); // to attach events
 		sinon.spy(oContainer, "navigate");
 		sinon.stub(oContainer, "open").returns(Promise.resolve());
 		sinon.stub(oContainer, "shouldOpenOnNavigate").returns(true);
@@ -640,6 +644,7 @@ sap.ui.define([
 
 	QUnit.test("navigated event", function(assert) {
 
+		oValueHelp.connect(oField); // to attach events
 		const oCondition = Condition.createItemCondition("Test");
 		oContainer.fireNavigated({condition: oCondition, itemId: "I1", leaveFocus: true});
 
@@ -652,6 +657,7 @@ sap.ui.define([
 
 	QUnit.test("typeahedSuggested event", function(assert) {
 
+		oValueHelp.connect(oField); // to attach events
 		const oCondition = Condition.createItemCondition("kéy", "Description");
 		oContainer.fireTypeaheadSuggested({condition: oCondition, filterValue: "k", itemId: "I1", caseSensitive: true});
 
@@ -685,6 +691,7 @@ sap.ui.define([
 	QUnit.test("Selection handling", function(assert) {
 
 		return oValueHelp.initControlDelegate().then(function () {
+			oValueHelp.connect(oField); // to attach events
 			// set
 			let aSelectConditions = [
 				Condition.createCondition(OperatorName.EQ, ["X"]),
@@ -758,6 +765,7 @@ sap.ui.define([
 
 		const fnDone = assert.async();
 		oValueHelp.initControlDelegate().then(function () {
+			oValueHelp.connect(oField); // to attach events
 			oValueHelp.setConditions(aConditions);
 			oContainer.fireConfirm({});
 			assert.equal(iSelect, 1, "Select event fired");
@@ -795,6 +803,7 @@ sap.ui.define([
 
 	QUnit.test("Cancelling handling", function(assert) {
 
+		oValueHelp.connect(oField); // to attach events
 		sinon.spy(oValueHelp, "close");
 		oContainer.fireCancel({});
 		assert.ok(oValueHelp.close.called, "ValueHelp close called");
@@ -802,6 +811,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("RequestDelegateContent event", function(assert) {
+
+		oValueHelp.connect(oField); // to attach events
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
 		oContainer.fireRequestDelegateContent({container: oContainer});
 
@@ -823,8 +834,67 @@ sap.ui.define([
 			bFired = true;
 		});
 
+		oValueHelp.connect(oField); // to attach events
 		oContainer.fireRequestSwitchToDialog({container: oContainer});
 		assert.ok(bFired, "Event fired");
+
+	});
+
+	function _testClonedTypeahead(assert) {
+
+		const oClone = oValueHelp.clone("MyClone");
+		const oCloneContainer = oClone.getTypeahead();
+
+		assert.ok(oCloneContainer, "Typeahead cloned");
+
+		// events of clone must not be handled by original
+		sinon.spy(oValueHelp, "close");
+		sinon.spy(oValueHelp, "fireOpened");
+		sinon.spy(oValueHelp, "fireClosed");
+		sinon.spy(oValueHelp, "fireSelect");
+		sinon.spy(oValueHelp, "fireSwitchToValueHelp");
+		sinon.spy(oValueHelp, "fireNavigated");
+		sinon.spy(oValueHelp, "fireTypeaheadSuggested");
+		return Promise.all([oValueHelp.initControlDelegate(), oClone.initControlDelegate()]).then(() => {
+			if (!oValueHelp.getControl()) {
+				oValueHelp.connect(oField); // to attach events
+			}
+			oClone.connect(oField2); // to attach events
+			const aSelectConditions = [
+				Condition.createCondition(OperatorName.EQ, ["X"])
+			];
+			oCloneContainer.fireSelect({type: ValueHelpSelectionType.Set, conditions: aSelectConditions});
+			const aConditions = oValueHelp.getConditions();
+			assert.equal(aConditions.length, 0, "Select");
+			oCloneContainer.fireConfirm();
+			assert.notOk(oValueHelp.fireSelect.called, "Confirm");
+			oCloneContainer.fireCancel({});
+			assert.notOk(oValueHelp.close.called, "Cancel");
+			oCloneContainer.fireOpened({});
+			assert.notOk(oValueHelp.fireOpened.called, "Opened");
+			oCloneContainer.fireClosed();
+			assert.notOk(oValueHelp.fireClosed.called, "Closed");
+			oCloneContainer.fireRequestSwitchToDialog();
+			assert.notOk(oValueHelp.fireSwitchToValueHelp.called, "RequestSwitchToDialog");
+			oCloneContainer.fireNavigated();
+			assert.notOk(oValueHelp.fireNavigated.called, "Navigated");
+			oCloneContainer.fireTypeaheadSuggested();
+			assert.notOk(oValueHelp.fireTypeaheadSuggested.called, "TypeaheadSuggested");
+			oClone.destroy();
+		});
+
+	}
+
+	QUnit.test("Clone", function(assert) {
+
+		return _testClonedTypeahead(assert);
+
+	});
+
+	QUnit.test("Clone - connected", function(assert) {
+
+		oValueHelp.connect(oField); // to attach events
+		return _testClonedTypeahead(assert);
 
 	});
 
@@ -865,6 +935,7 @@ sap.ui.define([
 		sinon.spy(oValueHelp, "fireOpened");
 
 		const fnDone = assert.async();
+		oValueHelp.connect(oField); // to attach events
 		oValueHelp.open(true); //-> check nothing happens
 		assert.notOk(oContainer.open.called, "Container open not called for typeahead opening");
 
@@ -892,6 +963,7 @@ sap.ui.define([
 		sinon.spy(oContainer, "close");
 
 		//var fnDone = assert.async();
+		oValueHelp.connect(oField); // to attach events
 		oValueHelp.open(false);
 		assert.ok(oContainer.open.called, "Container open called for dialog opening");
 		oValueHelp.open(true);
@@ -902,6 +974,7 @@ sap.ui.define([
 
 		sinon.spy(oContainer, "close");
 
+		oValueHelp.connect(oField); // to attach events
 		oValueHelp.close();
 		assert.notOk(oContainer.close.called, "Container close not called if not open");
 
@@ -914,6 +987,7 @@ sap.ui.define([
 	QUnit.test("close handling", function(assert) {
 
 		sinon.spy(oValueHelp, "close");
+		oValueHelp.connect(oField); // to attach events
 		oContainer.handleClosed(); // TODO: change to event?
 		assert.equal(iClosed, 1, "Close event fired");
 
@@ -924,6 +998,7 @@ sap.ui.define([
 		sinon.spy(oValueHelp, "open");
 		sinon.spy(oValueHelp, "close");
 
+		oValueHelp.connect(oField); // to attach events
 		oValueHelp.toggleOpen(true);
 		assert.notOk(oValueHelp.open.called, "ValueHelp open not called for Typeahed opening");
 
@@ -1114,6 +1189,7 @@ sap.ui.define([
 	QUnit.test("navigate", function(assert) {
 
 		// nothing must happen as onyl supported for Typeahead
+		oValueHelp.connect(oField); // to attach events
 		sinon.spy(oContainer, "navigate");
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
 		const oPromise = oValueHelp.navigate(1);
@@ -1139,6 +1215,7 @@ sap.ui.define([
 
 
 		return oValueHelp.initControlDelegate().then(function () {
+			oValueHelp.connect(oField); // to attach events
 			// Just test event is processed, Details are tested in TypeAhead (there is no check for kind of content)
 			const aSelectConditions = [
 				Condition.createCondition(OperatorName.EQ, ["X"]),
@@ -1156,6 +1233,7 @@ sap.ui.define([
 		const fnDone = assert.async();
 		oValueHelp.initControlDelegate().then(function () {
 			sinon.spy(oValueHelp, "close");
+			oValueHelp.connect(oField); // to attach events
 			oContainer.fireConfirm({});
 			assert.equal(iSelect, 1, "Select event fired");
 			assert.deepEqual(aSelectConditions, [], "conditions");
@@ -1169,8 +1247,58 @@ sap.ui.define([
 	QUnit.test("Cancelling handling", function(assert) {
 
 		sinon.spy(oValueHelp, "close");
+		oValueHelp.connect(oField); // to attach events
 		oContainer.fireCancel({});
 		assert.ok(oValueHelp.close.called, "ValueHelp close called");
+
+	});
+
+	function _testClonedDialog(assert) {
+
+		const oClone = oValueHelp.clone("MyClone");
+		const oCloneContainer = oClone.getDialog();
+
+		assert.ok(oCloneContainer, "Typeahead cloned");
+
+		// events of clone must not be handled by original
+		sinon.spy(oValueHelp, "close");
+		sinon.spy(oValueHelp, "fireOpened");
+		sinon.spy(oValueHelp, "fireClosed");
+		sinon.spy(oValueHelp, "fireSelect");
+		return Promise.all([oValueHelp.initControlDelegate(), oClone.initControlDelegate()]).then(() => {
+			if (!oValueHelp.getControl()) {
+				oValueHelp.connect(oField); // to attach events
+			}
+			oClone.connect(oField2); // to attach events
+			const aSelectConditions = [
+				Condition.createCondition(OperatorName.EQ, ["X"])
+			];
+			oCloneContainer.fireSelect({type: ValueHelpSelectionType.Set, conditions: aSelectConditions});
+			const aConditions = oValueHelp.getConditions();
+			assert.equal(aConditions.length, 0, "Select");
+			oCloneContainer.fireConfirm();
+			assert.notOk(oValueHelp.fireSelect.called, "Confirm");
+			oCloneContainer.fireCancel({});
+			assert.notOk(oValueHelp.close.called, "Cancel");
+			oCloneContainer.fireOpened({});
+			assert.notOk(oValueHelp.fireOpened.called, "Opened");
+			oCloneContainer.fireClosed();
+			assert.notOk(oValueHelp.fireClosed.called, "Closed");
+			oClone.destroy();
+		});
+
+	}
+
+	QUnit.test("Clone", function(assert) {
+
+		return _testClonedDialog(assert);
+
+	});
+
+	QUnit.test("Clone - connected", function(assert) {
+
+		oValueHelp.connect(oField); // to attach events
+		return _testClonedDialog(assert);
 
 	});
 
