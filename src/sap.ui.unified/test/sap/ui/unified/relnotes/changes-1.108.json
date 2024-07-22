@@ -293,5 +293,20 @@
         "text": " sap.ui.unified.Calendar: adjust header buttons width"
       }
     ]
+  },
+  "1.108.31": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "e4e87341e82610d6edb0a658181834163807d04a",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarRow: Appointments ARIA texts are correctly translated and localized now"
+      },
+      {
+        "id": "cd99264f81717c245f0dc4aac2c4ebc887586e97",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: add tooltips for calendar legend types"
+      }
+    ]
   }
 }

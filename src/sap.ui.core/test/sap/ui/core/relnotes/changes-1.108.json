@@ -622,5 +622,15 @@
         "text": " sap.ui.core.format.DateFormat.qunit: Fix flaky tests"
       }
     ]
+  },
+  "1.108.31": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "485e68f9b015fad5249d6af671511c4652bd82d6",
+        "type": "FIX",
+        "text": " sap.ui.model.json.JSONModel#loadData: Don't use JSONP"
+      }
+    ]
   }
 }

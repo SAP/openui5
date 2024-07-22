@@ -236,5 +236,20 @@
         "text": " sap.f.DynamicPage: Scrollbar issue fixed"
       }
     ]
+  },
+  "1.108.31": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "f7ffadb845eda4d755613f2944910ee6f7b1ce47",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Syncronization issue corrected"
+      },
+      {
+        "id": "6b199670af10703eae8193c6fadd2b974f5bcb32",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Correct header placement after expanded state change"
+      }
+    ]
   }
 }

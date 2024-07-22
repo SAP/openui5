@@ -1653,5 +1653,50 @@
         "text": " sap.m.Select: Required label fixed"
       }
     ]
+  },
+  "1.108.31": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "ed7ec40d24d2cf425cf96d09104918121c3e7aba",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: fix cursor position when there is mask and no entry"
+      },
+      {
+        "id": "24e30b593b609cb1fce65bd3c8523af0e8afdef0",
+        "type": "FIX",
+        "text": " sap.m.Column: add missing check for parent Table in _onLabelPropertyChange"
+      },
+      {
+        "id": "e4e87341e82610d6edb0a658181834163807d04a",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarRow: Appointments ARIA texts are correctly translated and localized now"
+      },
+      {
+        "id": "6102a03875763c170d58e8e6d2d14bef270edf53",
+        "type": "FIX",
+        "text": " We've updated the event parameters for status and readystate"
+      },
+      {
+        "id": "efc3e2b35f9986666fcfd9e006d6e29a5f9503f6",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Dates label is now correct when used with utc formatter"
+      },
+      {
+        "id": "39582149be4748a3bbbffbbdfe949cedcee579e8",
+        "type": "FIX",
+        "text": " sap.m.semantic.MessagesIndicator: Add default tooltip"
+      },
+      {
+        "id": "7570248525871962a309ab6fb0ee47d6a35db44f",
+        "type": "FIX",
+        "text": " We've now fixed the overlap issue in GenericTile when sap.m.TileSizeBehaviour.Small was being used"
+      },
+      {
+        "id": "8bb143195b71d2dd909e55b94ca52e53b0336815",
+        "type": "FIX",
+        "text": " sap.m.Input: Stop initial re-rendering of the input field when type password and clear icon are set"
+      }
+    ]
   }
 }
