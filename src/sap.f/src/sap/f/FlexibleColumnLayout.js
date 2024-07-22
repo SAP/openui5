@@ -1718,6 +1718,7 @@ sap.ui.define([
 			sSeparator = getSeparatorName(this._oMoveInfo.separator),
 			bForwardResizeDirection = this._oMoveInfo.offsetFromStartPosition > 0,
 			sColumnEnlargedByDragging = aResizedColumns[bForwardResizeDirection ? 0 : 1],
+			sInitiallyHiddenColumn = aResizedColumns.find((sColumn) => this._oMoveInfo.columnWidths[sColumn] === 0),
 			iSeparatorsCount = this._getVisibleColumnSeparatorsCount(),
 			iSeparatorsCountDiff = 0,
 			iOffsetOnSeparatorsCountChange = 0,
@@ -1727,6 +1728,10 @@ sap.ui.define([
 			bLayoutChange,
 			oNewColumnWidths,
 			bResizeWithPinning;
+
+		if (sInitiallyHiddenColumn && sInitiallyHiddenColumn !== sColumnEnlargedByDragging) {
+			return; // atempt to resize in direction that is not allowed
+		}
 
 		this._oMoveInfo.columnWidths[aResizedColumns[0]] += this._oMoveInfo.offsetFromPreviousPosition;
 		this._oMoveInfo.columnWidths[aResizedColumns[1]] -= this._oMoveInfo.offsetFromPreviousPosition;

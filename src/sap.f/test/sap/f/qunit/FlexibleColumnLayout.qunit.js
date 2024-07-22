@@ -1320,6 +1320,29 @@ function(
 		}.bind(this));
 	});
 
+	QUnit.test("prevents resize in invalid direction", function(assert){
+		// arrange
+		var fnDone = assert.async();
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsMidExpandedEndHidden
+		});
+
+
+		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function() {
+			// assert
+			assertColumnsVisibility(assert, this.oFCL, 1, 1, 0);
+
+			// act: drag towards outside the viewport (invalid direction)
+			dragSeparator("end", 1, this.oFCL);
+
+			// assert: no change in columns visibility
+			assertColumnsVisibility(assert, this.oFCL, 1, 1, 0);
+
+			fnDone();
+		}.bind(this));
+	});
+
 	QUnit.module("Livecycle", {
 		beforeEach: function () {
 			this.oFCL = oFactory.createFCL({
