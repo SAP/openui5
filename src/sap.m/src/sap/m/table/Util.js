@@ -553,14 +553,8 @@ sap.ui.define([
 		}
 
 		const oDetailsList = oPopover.getContent()[0];
-		const oItemsTemplate = oDetailsList.getBindingInfo("items")?.template || createItemTemplate(mSettings.listItemContentTemplate);
 
-		if (!mSettings.listItemContentTemplate) {
-			const oItems = oItemsTemplate.getContent()[0].getItems();
-
-			oItems[0].bindText(mSettings.amountBindingInfo);
-			oItems[1].bindText(mSettings.unitBindingInfo);
-		}
+		const oItemsTemplate = oDetailsList.getBindingInfo("items")?.template || new CustomListItem({content: [mSettings.listItemContentTemplate]});
 
 		oDetailsList.bindItems({
 			...mSettings.itemsBindingInfo,
@@ -592,38 +586,6 @@ sap.ui.define([
 				ariaLabelledBy: sId + "-title"
 			}).addStyleClass("sapUiContentPadding")
 		}).addStyleClass("sapMMultiUnitPopover");
-	}
-
-	function createItemTemplate(oTemplate) {
-		if (!oTemplate) {
-			var oAmountText = new Text({
-				textDirection: "LTR",
-				wrapping: false,
-				textAlign: "End"
-			}).addStyleClass("sapMMultiUnitPopoverAmount");
-
-			var oUnitText = new Text({
-				textDirection: "LTR",
-				wrapping: false,
-				textAlign: "End",
-				width: "3em"
-			}).addStyleClass("sapMMultiUnitPopoverUnit");
-
-			oTemplate = new HBox({
-				renderType: "Bare",
-				justifyContent: "End",
-				items: [
-					oAmountText,
-					oUnitText
-				]
-			});
-		} else {
-			oTemplate = oTemplate.clone();
-		}
-
-		return new CustomListItem({
-			content: [oTemplate]
-		});
 	}
 
 	return Util;

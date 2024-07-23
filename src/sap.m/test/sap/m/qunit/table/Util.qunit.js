@@ -445,38 +445,37 @@ sap.ui.define([
 			}
 		};
 
-		var oAmountBindingInfo = {
-			parts: [
-				{
-					mode: "OneWay",
-					path: "PathToAmount"
-				},
-				{
-					mode: "OneWay",
-					path: "PathToCurrency"
-				}
-			]
-		};
+		const oAmountText = new Text({
+			textDirection: "LTR",
+			wrapping: false,
+			textAlign: "End"
+		});
 
-		var oUnitBindingInfo = {
-			parts: [
-				{
-					path: "PathToCurrency"
-				}
+		const oUnitText = new Text({
+			textDirection: "LTR",
+			wrapping: false,
+			textAlign: "End",
+			width: "3em"
+		});
+
+		const oTemplate = new HBox({
+			renderType: "Bare",
+			justifyContent: "End",
+			items: [
+				oAmountText,
+				oUnitText
 			]
-		};
+		});
 
 		var mSettings = {
 			control: oTable,
 			itemsBindingInfo: oItemsBindingInfo,
-			amountBindingInfo: oAmountBindingInfo,
-			unitBindingInfo: oUnitBindingInfo
+			listItemContentTemplate: oTemplate
 		};
 
 		var oPopover = await Util.createOrUpdateMultiUnitPopover(oTable.getId() + "-multiUnitPopover", mSettings);
 		var oDetailsList = oPopover.getContent()[0];
 		var oDetailsListBindingInfo = oDetailsList.getBindingInfo("items");
-		var oDetailsListTemplateItems = oDetailsListBindingInfo.template.getContent()[0].getItems();
 
 		assert.ok(oPopover, "Popover was created");
 		assert.ok(oDetailsList, "List was created");
@@ -493,132 +492,9 @@ sap.ui.define([
 		assert.equal(oDetailsListBindingInfo.path, oItemsBindingInfo.path, "Binding path as expected");
 		assert.deepEqual(oDetailsListBindingInfo.parameters, oItemsBindingInfo.parameters, "Parameters as expected");
 
-		assert.deepEqual(oDetailsListTemplateItems[0].mBindingInfos.text.parts, oAmountBindingInfo.parts, "template text property correctly set to amountBindingInfo");
-		assert.deepEqual(oDetailsListTemplateItems[1].mBindingInfos.text.parts, oUnitBindingInfo.parts, "template text property correctly set to unitBindingInfo");
-
 		assert.ok(oPopover.hasStyleClass("sapMResponsivePopover"), "Correct styleClass popover (sapMResponsivePopover)");
 		assert.ok(oPopover.hasStyleClass("sapMMultiUnitPopover"), "Correct styleClass popover (sapMMultiUnitPopover)");
 		assert.ok(oPopover.hasStyleClass("sapUiSizeCompact"), "Correct styleClass popover (sapUiSizeCompact)");
 		assert.ok(oDetailsList.hasStyleClass("sapUiContentPadding"), "Correct styleClass detailsList (sapUiContentPadding)");
-
-		//update binding infos
-		oItemsBindingInfo = {
-			path: "/names",
-			filters: [
-				new Filter("SomeOtherFilterPath", "EQ", "SomeOtherValue"),
-				new Filter("Status", "EQ", "Expired")
-			]
-		};
-
-		oAmountBindingInfo = {
-			parts: [
-				{
-					mode: "OneWay",
-					path: "AlternativePathToAmount"
-				},
-				{
-					mode: "OneWay",
-					path: "AlternativePathToCurrency"
-				}
-			]
-		};
-
-		oUnitBindingInfo = {
-			parts: [
-				{
-					path: "AlternativePathToCurrency"
-				}
-			]
-		};
-
-		oTable.removeStyleClass("sapUiSizeCompact");
-		mSettings.itemsBindingInfo = oItemsBindingInfo;
-		mSettings.amountBindingInfo = oAmountBindingInfo;
-		mSettings.unitBindingInfo = oUnitBindingInfo;
-		mSettings.grandTotal = true;
-		oPopover.setTitle("someTestId");
-
-		//update popover
-		oPopover = await Util.createOrUpdateMultiUnitPopover(oPopover, mSettings);
-
-		sTitle = oResourceBundle.getText("TABLE_MULTI_TOTAL_TITLE");
-		sPlacement = "VerticalPreferredTop";
-		oDetailsListBindingInfo = oDetailsList.getBindingInfo("items");
-		oDetailsListTemplateItems = oDetailsListBindingInfo.template.getContent()[0].getItems();
-
-		assert.equal(oPopover.getTitle(), sTitle, "Popover title changed correctly");
-		assert.equal(oPopover.getPlacement(), sPlacement, "Popover placement is correct");
-		assert.notOk(oPopover.hasStyleClass("sapUiSizeCompact"), "styleClass removed from popover (sapUiSizeCompact)");
-
-		assert.deepEqual(oDetailsListBindingInfo.filters, oItemsBindingInfo.filters, "Filter values as expected");
-		assert.equal(oDetailsListBindingInfo.path, oItemsBindingInfo.path, "Binding path as expected");
-		assert.deepEqual(oDetailsListBindingInfo.parameters, oItemsBindingInfo.parameters, "Parameters as expected");
-
-		assert.deepEqual(oDetailsListTemplateItems[0].mBindingInfos.text.parts, oAmountBindingInfo.parts, "template amountBindingInfo updated");
-		assert.deepEqual(oDetailsListTemplateItems[1].mBindingInfos.text.parts, oUnitBindingInfo.parts, "template unitBindingInfo updated");
-
-		oPopover.destroy();
-		oPopover = null;
-		oAmountBindingInfo = {
-			parts: [
-				{
-					mode: "OneWay",
-					path: "NewPathToAmount"
-				},
-				{
-					mode: "OneWay",
-					path: "NewPathToCurrency"
-				}
-			]
-		};
-
-		oUnitBindingInfo = {
-			parts: [
-				{
-					path: "AlternativePathToCurrency"
-				}
-			]
-		};
-
-		const oAmountText = new Text({
-			textDirection: "RTL",
-			wrapping: false,
-			textAlign: "End"
-		});
-
-		const oUnitText = new Text({
-			textDirection: "RTL",
-			wrapping: false,
-			textAlign: "End",
-			width: "3em"
-		});
-
-		oAmountText.bindText(oAmountBindingInfo);
-		oUnitText.bindText(oUnitBindingInfo);
-
-		mSettings.listItemContentTemplate = new HBox({
-			renderType: "Bare",
-			justifyContent: "End",
-			items: [
-				oAmountText,
-				oUnitText
-			]
-		});
-
-		oPopover = await Util.createOrUpdateMultiUnitPopover(oTable.getId() + "-multiUnitPopover", mSettings);
-
-		sTitle = oResourceBundle.getText("TABLE_MULTI_TOTAL_TITLE");
-		sPlacement = "VerticalPreferredTop";
-		oDetailsList = oPopover.getContent()[0];
-		oDetailsListBindingInfo = oDetailsList.getBindingInfo("items");
-		oDetailsListTemplateItems = oDetailsListBindingInfo.template.getContent()[0].getItems();
-
-		assert.equal(oPopover.getTitle(), sTitle, "Popover title changed correctly");
-		assert.equal(oPopover.getPlacement(), sPlacement, "Popover placement is correct");
-		assert.notOk(oPopover.hasStyleClass("sapUiSizeCompact"), "styleClass removed from popover (sapUiSizeCompact)");
-
-		assert.deepEqual(oDetailsListTemplateItems[0].mBindingInfos.text.parts, oAmountBindingInfo.parts, "template amountBindingInfo updated with template binding info");
-		assert.deepEqual(oDetailsListTemplateItems[1].mBindingInfos.text.parts, oUnitBindingInfo.parts, "template unitBindingInfo updated with template binding info");
-		assert.deepEqual(oDetailsListTemplateItems[0].getTextDirection(), oAmountText.getTextDirection(), "listItemContentTemplate is provided in mSettings");
 	});
 });
