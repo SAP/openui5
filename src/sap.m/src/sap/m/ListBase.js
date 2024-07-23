@@ -2172,7 +2172,7 @@ function(
 	 *
 	 * @param {sap.m.ListItemBase|null} oItem The list item to receive fake focus, null to remove it
 	 * @private
-	 * @restricted sap.m, sap.ui.mdc
+	 * @ui5-restricted sap.m, sap.ui.mdc
 	 */
 	ListBase.prototype.setFakeFocus = function(oItem) {
 		if (this._oLastFakeFocusedItem) {
