@@ -1221,4 +1221,22 @@ sap.ui.define([
 		assert.ok(this.oColumnMenu.isOpen());
 		this.oColumnMenu.close();
 	});
+
+	QUnit.test("Close menu before opening by another control", function(assert) {
+		const oCloseSpy = sinon.spy(this.oColumnMenu, "close");
+
+		this.oColumnMenu.openBy(this.oButton);
+		assert.ok(this.oColumnMenu.isOpen());
+		assert.ok(oCloseSpy.notCalled, "Menu was not closed");
+
+		this.oColumnMenu.openBy(this.oButton);
+		assert.ok(this.oColumnMenu.isOpen());
+		assert.ok(oCloseSpy.notCalled, "Menu was not closed");
+
+		this.oColumnMenu.openBy(this.oButton1);
+		assert.ok(this.oColumnMenu.isOpen());
+		assert.ok(oCloseSpy.calledOnce, "Menu was closed before opening it again.");
+
+		oCloseSpy.restore();
+	});
 });

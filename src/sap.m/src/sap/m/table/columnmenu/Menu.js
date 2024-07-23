@@ -161,27 +161,38 @@ sap.ui.define([
 			return;
 		}
 
-		this._initPopover();
+		const fnOpen = () => {
+			this._initPopover();
 
-		if (this._oQuickActionContainer) {
-			this._oQuickActionContainer.destroy();
-			this._oQuickActionContainer = null;
+			if (this._oQuickActionContainer) {
+				this._oQuickActionContainer.destroy();
+				this._oQuickActionContainer = null;
+			}
+			this._initQuickActionContainer();
+
+			if (this._oItemsContainer) {
+				this._oItemsContainer.destroy();
+				this._oItemsContainer = null;
+			}
+			this._initItemsContainer();
+
+			if (!this.getParent()) {
+				StaticArea.getUIArea().addContent(this, true);
+			}
+
+			this._oPopover.openBy(oAnchor);
+			this._oIsOpenBy = oAnchor;
+			ControlEvents.bindAnyEvent(this.fAnyEventHandlerProxy);
+		};
+
+		if (this.isOpen()) {
+			// If the menu is already opened, close it before rerendering content and opening it at another position
+			// Otherwise, there is a short time frame, where users can see the popover "flicker"
+			this._oPopover.attachEventOnce("afterClose", fnOpen);
+			this.close();
+		} else {
+			fnOpen();
 		}
-		this._initQuickActionContainer();
-
-		if (this._oItemsContainer) {
-			this._oItemsContainer.destroy();
-			this._oItemsContainer = null;
-		}
-		this._initItemsContainer();
-
-		if (!this.getParent()) {
-			StaticArea.getUIArea().addContent(this, true);
-		}
-
-		this._oPopover.openBy(oAnchor);
-		this._oIsOpenBy = oAnchor;
-		ControlEvents.bindAnyEvent(this.fAnyEventHandlerProxy);
 	};
 
 	/**
