@@ -15,7 +15,7 @@ sap.ui.define([
 
 	var PREFIX = "/flex/all";
 	var API_VERSION = "/v3";
-	const ROOT = `${PREFIX}/${API_VERSION}`;
+	const ROOT = `${PREFIX}${API_VERSION}`;
 
 	/**
 	 * Connector for requesting all data from SAPUI5 Flexibility KeyUser service - including personalization.
