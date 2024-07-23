@@ -88,6 +88,7 @@ sap.ui.define([
 		 */
 		onEnter: function(oEvent){
 			var oInput = oEvent.getSource(),
+				sSearch = oEvent.getSource().getValue(),
 				aVisibleSuggestions = oEvent.getSource().getSuggestionRows().filter(function (oRow) {
 					return oRow.getVisible();
 				}),
@@ -98,6 +99,7 @@ sap.ui.define([
 				this.getRouter().navTo("overview",{
 					fontName : oBindingContext.font,
 					query: {
+						search: sSearch,
 						icon: oBindingContext.name
 					}
 				});
