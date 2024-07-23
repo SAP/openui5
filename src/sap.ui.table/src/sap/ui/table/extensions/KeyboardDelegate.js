@@ -989,7 +989,19 @@ sap.ui.define([
 		}
 	};
 
+	KeyboardDelegate.prototype.onfocusout = function(oEvent) {
+		if (this.getRows().length || this.getColumnHeaderVisible()) {
+			this.$().find(".sapUiTableCtrlBefore").attr("tabindex", "0");
+			this.$().find(".sapUiTableCtrlAfter").attr("tabindex", "0");
+		}
+	};
+
 	KeyboardDelegate.prototype.onfocusin = function(oEvent) {
+		if (this.getDomRef("sapUiTableCnt").contains(oEvent.target)) {
+			this.$().find(".sapUiTableCtrlBefore").attr("tabindex", "-1");
+			this.$().find(".sapUiTableCtrlAfter").attr("tabindex", "-1");
+		}
+
 		if (oEvent.isMarked("sapUiTableIgnoreFocusIn")) {
 			return;
 		}
@@ -1002,15 +1014,23 @@ sap.ui.define([
 
 		} else if ($Target.hasClass("sapUiTableCtrlBefore")) {
 			const bNoData = TableUtils.isNoDataVisible(this);
-			if (!bNoData || bNoData && this.getColumnHeaderVisible()) {
+			const oBusyIndicator = this.getDomRef("busyIndicator");
+			if (oBusyIndicator) {
+				this._getKeyboardExtension().setSilentFocus(oBusyIndicator);
+			} else if (this.getColumnHeaderVisible() && (TableUtils.getVisibleColumnCount(this) || this.getSelectionMode() !== SelectionMode.None)) {
 				setFocusOnColumnHeaderOfLastFocusedDataCell(this, oEvent);
-			} else {
+			} else if (bNoData) {
 				this._getKeyboardExtension().setSilentFocus(this.$("noDataCnt"));
 			}
 
 		} else if ($Target.hasClass("sapUiTableCtrlAfter")) {
-			if (!TableUtils.isNoDataVisible(this)) {
+			const oBusyIndicator = this.getDomRef("busyIndicator");
+			if (oBusyIndicator) {
+				this._getKeyboardExtension().setSilentFocus(oBusyIndicator);
+			} else if (this.getRows().length && !TableUtils.isNoDataVisible(this)) {
 				restoreFocusOnLastFocusedDataCell(this, oEvent);
+			} else if (this.getColumnHeaderVisible() && (TableUtils.getVisibleColumnCount(this) || this.getSelectionMode() !== SelectionMode.None)) {
+				setFocusOnColumnHeaderOfLastFocusedDataCell(this, oEvent);
 			}
 		}
 
@@ -1380,7 +1400,7 @@ sap.ui.define([
 			}
 
 		} else if (oCellInfo.isOfType(CellType.ANYCONTENTCELL) || oEvent.target === this.getDomRef("noDataCnt")) {
-			if (this.getColumnHeaderVisible() && !oCellInfo.isOfType(CellType.ROWACTION)) {
+			if (this.getColumnHeaderVisible() && (TableUtils.getVisibleColumnCount(this) || this.getSelectionMode() !== SelectionMode.None) && !oCellInfo.isOfType(CellType.ROWACTION)) {
 				setFocusOnColumnHeaderOfLastFocusedDataCell(this, oEvent);
 				oEvent.preventDefault();
 			} else {
