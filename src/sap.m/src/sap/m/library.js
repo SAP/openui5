@@ -215,6 +215,7 @@ sap.ui.define([
 			"sap.m.p13n.IContent",
 			"sap.m.IconTab",
 			"sap.m.IScale",
+			"sap.m.IMenuItem",
 			"sap.m.semantic.IGroup",
 			"sap.m.semantic.IFilter",
 			"sap.m.semantic.ISort",
@@ -2335,6 +2336,17 @@ sap.ui.define([
 	 *
 	 * @since 1.52
 	 * @name sap.m.IBreadcrumbs
+	 * @interface
+	 * @public
+	 */
+
+	/**
+	 *
+	 * Interface for controls which are suitable to be added as items of sap.m.Menu.
+	 *
+	 *
+	 * @since 1.127.0
+	 * @name sap.m.IMenuItem
 	 * @interface
 	 * @public
 	 */

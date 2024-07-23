@@ -70,24 +70,29 @@ sap.ui.define(["sap/ui/core/ControlBehavior"],
 	};
 
 	MenuRenderer.renderItems = function(oRm, oMenu) {
-		var aItems = oMenu.getItems(),
+		var aItems = oMenu._getItems(),
 			bAccessible = ControlBehavior.isAccessibilityEnabled(),
 			bHasIcons = false,
 			bHasSubMenus = false,
 			iNumberOfVisibleItems = 0,
 			index = 0,
 			i,
-			oItem;
+			oItem,
+			sCurrentGroup = null,
+			sItemGroup = null,
+			bGroupOpened = false,
+			oSubmenu;
 
 		oRm.openStart("ul");
 		oRm.attr("role", "menu");
 		oRm.class("sapUiMnuLst");
 
 		for (i = 0; i < aItems.length; i++) {
+			oSubmenu = aItems[i].getSubmenu();
 			if (aItems[i].getIcon && aItems[i].getIcon()) {
 				bHasIcons = true;
 			}
-			if (aItems[i].getSubmenu()) {
+			if (oSubmenu && oSubmenu._getItems().length) {
 				bHasSubMenus = true;
 			}
 		}
@@ -101,7 +106,6 @@ sap.ui.define(["sap/ui/core/ControlBehavior"],
 
 		oRm.openEnd();
 
-		iNumberOfVisibleItems = 0;
 		for (i = 0; i < aItems.length; i++) {
 			if (aItems[i].getVisible() && aItems[i].render) {
 				iNumberOfVisibleItems++;
@@ -113,35 +117,57 @@ sap.ui.define(["sap/ui/core/ControlBehavior"],
 			oItem = aItems[i];
 			if (oItem.getVisible() && oItem.render) {
 				index++;
+				sItemGroup = oItem.getAssociation("_group");
 
-				if (oItem.getStartsSection()) {
-					oRm.openStart("li");
-					if (bAccessible) {
-						oRm.attr("role", "separator");
-					}
-					oRm.class("sapUiMnuDiv");
-					oRm.openEnd();
-
-					oRm.openStart("div");
-					oRm.class("sapUiMnuDivL");
-					oRm.openEnd();
+				if (bGroupOpened && sCurrentGroup !== sItemGroup) {
+					// group closing tag
 					oRm.close("div");
-
-					oRm.voidStart("hr").voidEnd();
-
-					oRm.openStart("div");
-					oRm.class("sapUiMnuDivR");
-					oRm.openEnd();
-					oRm.close("div");
-
-					oRm.close("li");
+					bGroupOpened = false;
 				}
+				if (sItemGroup && !bGroupOpened) {
+					oRm.openStart("div");
+					oRm.attr("role", "group");
+					oRm.openEnd();
+					bGroupOpened = true;
+				}
+
+				if ((sCurrentGroup !== sItemGroup || oItem.getStartsSection()) && index !== 1) {
+					MenuRenderer.renderSeparator(oRm, bAccessible);
+				}
+				sCurrentGroup = sItemGroup;
 
 				oItem.render(oRm, oItem, oMenu, {bAccessible: bAccessible, iItemNo: index, iTotalItems: iNumberOfVisibleItems});
 			}
 		}
 
+		if (bGroupOpened) {
+			oRm.close("div");
+		}
+
 		oRm.close("ul");
+	};
+
+	MenuRenderer.renderSeparator = function(oRm, bAccessible) {
+		oRm.openStart("li");
+		if (bAccessible) {
+			oRm.attr("role", "separator");
+		}
+		oRm.class("sapUiMnuDiv");
+		oRm.openEnd();
+
+		oRm.openStart("div");
+		oRm.class("sapUiMnuDivL");
+		oRm.openEnd();
+		oRm.close("div");
+
+		oRm.voidStart("hr").voidEnd();
+
+		oRm.openStart("div");
+		oRm.class("sapUiMnuDivR");
+		oRm.openEnd();
+		oRm.close("div");
+
+		oRm.close("li");
 	};
 
 	return MenuRenderer;

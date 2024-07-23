@@ -3,11 +3,24 @@
  */
 
 // Provides control sap.ui.unified.MenuItem.
-sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library', 'sap/ui/core/library'],
-	function(IconPool, MenuItemBase, library, coreLibrary) {
+sap.ui.define([
+	'sap/ui/core/Element',
+	'sap/ui/core/IconPool',
+	'./MenuItemBase',
+	'./library',
+	'sap/ui/core/library'
+], function(
+	Element,
+	IconPool,
+	MenuItemBase,
+	library,
+	coreLibrary
+) {
+
 	"use strict";
 
-
+	// shortcut for sap.ui.core.ItemSelectionMode
+	var ItemSelectionMode = coreLibrary.ItemSelectionMode;
 
 	/**
 	 * Constructor for a new MenuItem element.
@@ -19,6 +32,7 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library', 'sap/ui/co
 	 * Standard item to be used inside a menu. A menu item represents an action which can be selected by the user in the menu or
 	 * it can provide a submenu to organize the actions hierarchically.
 	 * @extends sap.ui.unified.MenuItemBase
+	 * @implements sap.ui.unified.IMenuItem
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -30,6 +44,9 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library', 'sap/ui/co
 	 */
 	var MenuItem = MenuItemBase.extend("sap.ui.unified.MenuItem", /** @lends sap.ui.unified.MenuItem.prototype */ { metadata : {
 
+		interfaces: [
+			"sap.ui.unified.IMenuItem"
+		],
 		library : "sap.ui.unified",
 		properties : {
 
@@ -42,6 +59,15 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library', 'sap/ui/co
 			 * Defines the icon of the {@link sap.ui.core.IconPool sap.ui.core.IconPool} or an image which should be displayed on the item.
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : ''},
+
+			/**
+			 * Determines whether the <code>MenuItem</code> is selected (default is set to <code>false</code>).
+			 * A selected <code>MenuItem</code> has a check mark rendered at its end.
+			 * <b>Note: </b> selection functionality works only if the menu item is a member of <code>MenuItemGroup</code> with
+			 * <code>itemSelectionMode</code> set to {@link sap.ui.core.ItemSelectionMode.SingleSelect} or {@link sap.ui.unified.ItemSelectionMode.MultiSelect}.
+			 * @since 1.127.0
+			 */
+			selected : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
 			 * Defines the shortcut text that should be displayed on the menu item on non-mobile devices.
@@ -57,8 +83,15 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library', 'sap/ui/co
 			/**
 			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
-			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"},
+
+			/**
+			 * MenuItemGroup associated with this item.
+			 */
+			_group : {type : "sap.ui.unified.MenuItemGroup",  group : "Behavior", visibility : "hidden"}
+
 		}
+
 	}});
 
 	IconPool.insertFontFaceStyle(); //Ensure Icon Font is loaded
@@ -67,7 +100,9 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library', 'sap/ui/co
 		var rm = oRenderManager,
 			oSubMenu = oItem.getSubmenu(),
 			bIsEnabled = oItem.getEnabled(),
+			bIsSelected = oItem.getSelected() && oItem._getItemSelectionMode() !== ItemSelectionMode.None,
 			sShortcutText = oItem.getShortcutText(),
+			sRole,
 			oIcon;
 
 		rm.openStart("li", oItem);
@@ -99,11 +134,25 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library', 'sap/ui/co
 
 		// ARIA
 		if (oInfo.bAccessible) {
+
+			switch (oItem._getItemSelectionMode()) {
+				case ItemSelectionMode.SingleSelect:
+					sRole = "menuitemradio";
+					break;
+				case ItemSelectionMode.MultiSelect:
+					sRole = "menuitemcheckbox";
+					break;
+				default:
+					sRole = "menuitem";
+			}
+
 			rm.accessibilityState(oItem, {
-				role: "menuitem",
+				role: sRole,
 				disabled: !bIsEnabled,
 				posinset: oInfo.iItemNo,
 				setsize: oInfo.iTotalItems,
+				selected: null,
+				checked: bIsSelected ? true : undefined,
 				labelledby: { value: this.getId() + "-txt", append: true }
 			});
 			if (oSubMenu) {
@@ -140,8 +189,8 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library', 'sap/ui/co
 		}
 		rm.close("div");
 
-		// Submenu column
 		if (oSubMenu) {
+			// Submenu column
 			rm.openStart("div");
 			rm.class("sapUiMnuItmSbMnu");
 			rm.openEnd();
@@ -149,6 +198,12 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library', 'sap/ui/co
 			rm.class("sapUiIconMirrorInRTL");
 			rm.openEnd();
 			rm.close("div");
+			rm.close("div");
+		} else if (bIsSelected) {
+			// Selection column
+			rm.openStart("div", this.getId() + "-sel");
+			rm.class("sapUiMnuItmSel");
+			rm.openEnd();
 			rm.close("div");
 		}
 
@@ -165,6 +220,46 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library', 'sap/ui/co
 		} else {
 			oMenu.focus();
 		}
+	};
+
+	MenuItem.prototype._getItemSelectionMode = function() {
+		var sGroup = this.getAssociation("_group");
+
+		return sGroup ? Element.getElementById(sGroup).getItemSelectionMode() : ItemSelectionMode.None;
+	};
+
+	/**
+	 * Sets the <code>selected</code> state of the <code>MenuItem</code> and deselect other selected <code>MenuItem</code> controls
+	 * if selection mode is <code>SingleSelect</code>.
+	 *
+	 * @since 1.127.0
+	 * @public
+	 * @override
+	 * @param {boolean} bState Whether the state is selected or not
+	 * @returns {this} Returns <code>this</code> to allow method chaining
+	 */
+	MenuItem.prototype.setSelected = function(bState) {
+		var oGroup = Element.getElementById(this.getAssociation("_group"));
+
+		// in case of single selection, clear selected state of all other items in the group to ensure that only one item is selected
+		if (bState && oGroup && oGroup.getItemSelectionMode() === ItemSelectionMode.SingleSelect) {
+			oGroup._clearSelectedItems();
+		}
+
+		this.setProperty("selected", bState);
+
+		return this;
+	};
+
+	/**
+	 * @since 1.127.0
+	 * @public
+	 * @override
+	 * @returns {boolean} Returns <code>true</code> if the <code>MenuItem</code> is selected and is part of group
+	 * with single or multi selection mode, <code>false</code> otherwise.
+	 */
+	MenuItem.prototype.getSelected = function() {
+		return this.getProperty("selected") && this._getItemSelectionMode() !== ItemSelectionMode.None;
 	};
 
 	return MenuItem;

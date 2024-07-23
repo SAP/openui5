@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/unified/MenuItem",
 	"sap/ui/unified/MenuItemBase",
 	"sap/ui/unified/MenuTextFieldItem",
+	"sap/ui/unified/MenuItemGroup",
 	"sap/m/Button",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
@@ -17,7 +18,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos"
-], function(Localization, Element, qutils, nextUIUpdate, Menu, MenuItem, MenuItemBase, MenuTextFieldItem, Button, Device, KeyCodes, Popup, jQuery, Control) {
+], function(Localization, Element, qutils, nextUIUpdate, Menu, MenuItem, MenuItemBase, MenuTextFieldItem, MenuItemGroup, Button, Device, KeyCodes, Popup, jQuery, Control) {
 	"use strict";
 
 	var Dock = Popup.Dock;
@@ -1142,6 +1143,241 @@ sap.ui.define([
 
 		// clean up
 		oLanguageStub.restore();
+	});
+
+	QUnit.module("Item Selection", {
+		beforeEach: function () {
+			this.oMenu = new Menu({
+				items: [
+					new MenuItem({text: "Item 1"}),
+					new MenuItem({text: "Item 2"}),
+					new MenuItem({text: "Item 3"}),
+					new MenuItemGroup("singleGroup",{
+						itemSelectionMode: "SingleSelect",
+						items: [
+							new MenuItem({text: "Item 4"}),
+							new MenuItem({text: "Item 5"}),
+							new MenuItem({text: "Item 6"})
+						]
+					}),
+					new MenuItemGroup("multiGroup",{
+						itemSelectionMode: "MultiSelect",
+						items: [
+							new MenuItem({text: "Item 7"}),
+							new MenuItem({text: "Item 8"}),
+							new MenuItem({text: "Item 9"})
+						]
+					}),
+					new MenuItemGroup("noneGroup",{
+						itemSelectionMode: "None",
+						items: [
+							new MenuItem({text: "Item 10"}),
+							new MenuItem({text: "Item 11"}),
+							new MenuItem({text: "Item 12"})
+						]
+					}),
+					new MenuItem({text: "Item 13"})
+				]
+			}).placeAt("qunit-fixture");
+		},
+		afterEach : function () {
+			this.oMenu.destroy();
+			this.oMenu = null;
+		}
+	});
+
+	QUnit.test("All items (including those in groups) are rendered", function(assert) {
+		// Act
+		openMenu(this.oMenu, undefined, assert);
+
+		// Assert
+		assert.equal(this.oMenu._getItems().length, 13, "Total number of items is correct");
+		assert.equal(this.oMenu.getDomRef().querySelectorAll(".sapUiMnuItm").length, 13, "All items are rendered");
+	});
+
+	QUnit.test("Items selection in single-selection group", async function(assert) {
+		var oGroup = this.oMenu.getItems()[3],
+			aGroupItems = oGroup.getItems();
+
+		// Act - setelct one item
+		openMenu(this.oMenu, undefined, assert);
+		aGroupItems[0].setSelected(true);
+		await nextUIUpdate();
+
+		// Assert
+		assert.equal(aGroupItems[0].getDomRef().getAttribute("aria-checked"), "true", "First item has 'aria-checked' attribute set");
+		assert.ok(aGroupItems[0].getDomRef().querySelector(".sapUiMnuItmSel"), "First item has selection mark rendered");
+
+		// Act - deselect selected item
+		aGroupItems[0].setSelected(false);
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(aGroupItems[0].getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(aGroupItems[0].getDomRef().querySelector(".sapUiMnuItmSel"), "First item has no selection mark rendered");
+
+		// Act - select more than one item
+		aGroupItems[0].setSelected(true);
+		aGroupItems[1].setSelected(true);
+		aGroupItems[2].setSelected(true);
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(aGroupItems[0].getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(aGroupItems[0].getDomRef().querySelector(".sapUiMnuItmSel"), "First item has no selection mark rendered");
+		assert.notOk(aGroupItems[1].getDomRef().getAttribute("aria-checked"), "Second item has no 'aria-checked' attribute set");
+		assert.notOk(aGroupItems[1].getDomRef().querySelector(".sapUiMnuItmSel"), "Second item has no selection mark rendered");
+		assert.equal(aGroupItems[2].getDomRef().getAttribute("aria-checked"), "true", "Third item has 'aria-checked' attribute set");
+		assert.ok(aGroupItems[2].getDomRef().querySelector(".sapUiMnuItmSel"), "Third item has selection mark rendered");
+	});
+
+	QUnit.test("Items selection in multi-selection group", async function(assert) {
+		var oGroup = this.oMenu.getItems()[4],
+			aGroupItems = oGroup.getItems();
+
+		// Act - setelct one item
+		openMenu(this.oMenu, undefined, assert);
+		aGroupItems[0].setSelected(true);
+		await nextUIUpdate();
+
+		// Assert
+		assert.equal(aGroupItems[0].getDomRef().getAttribute("aria-checked"), "true", "First item has 'aria-checked' attribute set");
+		assert.ok(aGroupItems[0].getDomRef().querySelector(".sapUiMnuItmSel"), "First item has selection mark rendered");
+
+		// Act - deselect selected item
+		aGroupItems[0].setSelected(false);
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(aGroupItems[0].getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(aGroupItems[0].getDomRef().querySelector(".sapUiMnuItmSel"), "First item has no selection mark rendered");
+
+		// Act - select more than one item
+		aGroupItems[0].setSelected(true);
+		aGroupItems[1].setSelected(true);
+		aGroupItems[2].setSelected(true);
+		await nextUIUpdate();
+
+		// Assert
+		assert.equal(aGroupItems[0].getDomRef().getAttribute("aria-checked"), "true", "First item has 'aria-checked' attribute set");
+		assert.ok(aGroupItems[0].getDomRef().querySelector(".sapUiMnuItmSel"), "First item has selection mark rendered");
+		assert.equal(aGroupItems[1].getDomRef().getAttribute("aria-checked"), "true", "Second item has 'aria-checked' attribute set");
+		assert.ok(aGroupItems[1].getDomRef().querySelector(".sapUiMnuItmSel"), "Second item has selection mark rendered");
+		assert.equal(aGroupItems[2].getDomRef().getAttribute("aria-checked"), "true", "Third item has 'aria-checked' attribute set");
+		assert.ok(aGroupItems[2].getDomRef().querySelector(".sapUiMnuItmSel"), "Third item has selection mark rendered");
+	});
+
+	QUnit.test("Items selection in group with no selection set", async function(assert) {
+		var oGroup = this.oMenu.getItems()[5],
+			aGroupItems = oGroup.getItems();
+
+		// Act - setelct one item
+		openMenu(this.oMenu, undefined, assert);
+		aGroupItems[0].setSelected(true);
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(aGroupItems[0].getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(aGroupItems[0].getDomRef().querySelector(".sapUiMnuItmSel"), "First item has no selection mark rendered");
+
+		// Act - deselect selected item
+		aGroupItems[0].setSelected(false);
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(aGroupItems[0].getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(aGroupItems[0].getDomRef().querySelector(".sapUiMnuItmSel"), "First item has no selection mark rendered");
+	});
+
+	QUnit.test("Items selection of item outside of a group", async function(assert) {
+		// Act - setelct one item
+		openMenu(this.oMenu, undefined, assert);
+		this.oMenu.getItems()[0].setSelected(true);
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(this.oMenu.getItems()[0].getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(this.oMenu.getItems()[0].getDomRef().querySelector(".sapUiMnuItmSel"), "First item has no selection mark rendered");
+
+		// Act - deselect selected item
+		this.oMenu.getItems()[0].setSelected(false);
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(this.oMenu.getItems()[0].getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(this.oMenu.getItems()[0].getDomRef().querySelector(".sapUiMnuItmSel"), "First item has no selection mark rendered");
+	});
+
+
+	QUnit.test("Items selection with click in single-selection group", async function(assert) {
+		var oGroup = this.oMenu.getItems()[3],
+			aGroupItems = oGroup.getItems();
+
+		// Act - setelct one item
+		openMenu(this.oMenu, undefined, assert);
+		aGroupItems[0].$().trigger("click");
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(aGroupItems[0].getSelected(), "First item is selected");
+
+		// Act - deselect selected item
+		openMenu(this.oMenu, undefined, assert);
+		await nextUIUpdate();
+		aGroupItems[1].$().trigger("click");
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(aGroupItems[0].getSelected(), "First item is not selected");
+		assert.ok(aGroupItems[1].getSelected(), "Second item is selected");
+	});
+
+	QUnit.test("Items selection with click in multi-selection group", async function(assert) {
+		var oGroup = this.oMenu.getItems()[4],
+			aGroupItems = oGroup.getItems();
+
+		// Act - setelct one item
+		openMenu(this.oMenu, undefined, assert);
+		aGroupItems[0].$().trigger("click");
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(aGroupItems[0].getSelected(), "First item is selected");
+
+		// Act - deselect selected item
+		openMenu(this.oMenu, undefined, assert);
+		await nextUIUpdate();
+		aGroupItems[1].$().trigger("click");
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(aGroupItems[0].getSelected(), "First item is selected");
+		assert.ok(aGroupItems[1].getSelected(), "Second item is selected");
+	});
+
+	QUnit.test("Items selection with click in group with no selection", async function(assert) {
+		var oGroup = this.oMenu.getItems()[5],
+			aGroupItems = oGroup.getItems();
+
+		// Act - setelct one item
+		openMenu(this.oMenu, undefined, assert);
+
+		aGroupItems[0].$().trigger("click");
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(aGroupItems[0].getSelected(), "First item is not selected");
+	});
+
+	QUnit.test("Items selection with click for item outside a group", async function(assert) {
+		// Act - setelct one item
+		openMenu(this.oMenu, undefined, assert);
+
+		this.oMenu.getItems()[0].$().trigger("click");
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(this.oMenu.getItems()[0].getSelected(), "First item is not selected");
 	});
 
 	QUnit.module("Aria");
