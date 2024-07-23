@@ -997,6 +997,7 @@ sap.ui.define([
 
 		if (!this._bHeaderInTitleArea) {
 			this._moveHeaderToTitleArea(true);
+			this._adjustStickyContent();
 			this._updateTitlePositioning();
 		}
 
