@@ -1,14 +1,13 @@
 /* global QUnit */
 sap.ui.define([
 	"sap/ui/mdc/p13n/panels/ActionToolbarPanel",
-	"sap/m/StandardListItem",
 	"sap/m/ColumnListItem",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/base/Event",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/message/MessageType",
 	"sap/m/Text"
-], function (ActionToolbarPanel, StandardListItem, ColumnListItem, sinon, Event, nextUIUpdate, MessageType, Text) {
+], function(ActionToolbarPanel, ColumnListItem, sinon, Event, nextUIUpdate, MessageType, Text) {
 	"use strict";
 
 	QUnit.module("ActionToolbarPanel API tests", {
@@ -111,7 +110,7 @@ sap.ui.define([
 		assert.equal(aItems[2].getCells()[0].getItems()[0].getText(), "Test2");
 	});
 
-	QUnit.test("disables 'Clear All' button correctly without disabled elements", function(assert){
+	QUnit.test("disables 'Clear All' button correctly without disabled elements", function(assert) {
 		// arrange
 		this.oActionToolbarPanel.setMessageStrip(null);
 		const oModelItems = this.oActionToolbarPanel._getP13nModel().getProperty("/items");
@@ -125,7 +124,7 @@ sap.ui.define([
 		assert.ok(bEnabled, "'Clear-All' Button is enabled");
 	});
 
-	QUnit.test("disables 'Clear All' button correctly if disabled elements exist", function(assert){
+	QUnit.test("disables 'Clear All' button correctly if disabled elements exist", function(assert) {
 		// arrange
 		this.oActionToolbarPanel.setMessageStrip(null);
 		const oModelItems = this.oActionToolbarPanel._getP13nModel().getProperty("/items");
@@ -139,7 +138,7 @@ sap.ui.define([
 		assert.notOk(bEnabled, "'Clear-All' Button is disabled");
 	});
 
-	QUnit.test("_updateMessageStripForItemEnablement: shows no MessageStrip without disabled elements", function(assert){
+	QUnit.test("_updateMessageStripForItemEnablement: shows no MessageStrip without disabled elements", function(assert) {
 		// arrange
 		this.oActionToolbarPanel.setMessageStrip(null);
 		const oModelItems = this.oActionToolbarPanel._getP13nModel().getProperty("/items");
@@ -153,7 +152,7 @@ sap.ui.define([
 		assert.notOk(oMessageStrip, "MessageStrip does not exists");
 	});
 
-	QUnit.test("_updateMessageStripForItemEnablement: shows MessageStrip if disabled elements exist", function(assert){
+	QUnit.test("_updateMessageStripForItemEnablement: shows MessageStrip if disabled elements exist", function(assert) {
 		// arrange
 		this.oActionToolbarPanel.setMessageStrip(null);
 		const oModelItems = this.oActionToolbarPanel._getP13nModel().getProperty("/items");
@@ -193,7 +192,7 @@ sap.ui.define([
 			const oTemplate = new ColumnListItem({
 				cells: [
 					new Text({
-						text: "{" + this.oActionToolbarPanel.P13N_MODEL  + ">label}"
+						text: "{" + this.oActionToolbarPanel.P13N_MODEL + ">label}"
 					})
 				]
 			});
@@ -210,7 +209,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("works correctly for 'sap.m.ColumnListItem' controls", function(assert){
+	QUnit.test("works correctly for 'sap.m.ColumnListItem' controls", function(assert) {
 		// arrange
 		const fnDisableListElementSpy = sinon.spy(this.oActionToolbarPanel, "_updateCheckboxEnablement");
 
@@ -221,10 +220,10 @@ sap.ui.define([
 		assert.ok(fnDisableListElementSpy.called, "_updateCheckboxEnablement of ActionToolbarPanel not called");
 	});
 
-	QUnit.test("works correctly for 'sap.m.ColumnListItem' controls", function(assert){
+	QUnit.test("works correctly for 'sap.m.ColumnListItem' controls", function(assert) {
 		// arrange
 		this.oActionToolbarPanel._oListControl.removeAllItems();
-		this.oActionToolbarPanel._oListControl.addItem(new StandardListItem());
+		this.oActionToolbarPanel._oListControl.addItem(new ColumnListItem());
 
 		const fnDisableListElementSpy = sinon.spy(this.oActionToolbarPanel, "_updateCheckboxEnablement");
 
@@ -232,6 +231,6 @@ sap.ui.define([
 		this.oActionToolbarPanel._updateItemEnableState();
 
 		// assert
-		assert.ok(fnDisableListElementSpy.notCalled, "_updateCheckboxEnablement of ActionToolbarPanel not called");
+		assert.ok(fnDisableListElementSpy.calledOnce, "_updateCheckboxEnablement of ActionToolbarPanel called");
 	});
 });
