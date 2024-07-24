@@ -3,9 +3,19 @@
     "date": "July 2024",
     "notes": [
       {
+        "id": "7eb17a6be9d1f0ee6b3047ebd59f3cf7bc7ddf30",
+        "type": "FEATURE",
+        "text": " sap.m.Menu, sap.ui.unified.Menu: add menu item selection functionality"
+      },
+      {
         "id": "2308a12acebc78d37f31dc7e75cbb1962777b908",
         "type": "FIX",
         "text": " sap.m.SinglePlanningCalendar: fix SR announcements when appointments are selected with keyboard."
+      },
+      {
+        "id": "aa88ac386da8f9117fdf04c02f22fb72ca8ae19e",
+        "type": "FIX",
+        "text": " Calendar controls: fixed visual glitches"
       },
       {
         "id": "88c9e07a1ed2f2d1e591ef5238c936e9296bc500",

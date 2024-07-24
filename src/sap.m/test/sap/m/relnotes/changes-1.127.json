@@ -3,6 +3,11 @@
     "date": "July 2024",
     "notes": [
       {
+        "id": "7eb17a6be9d1f0ee6b3047ebd59f3cf7bc7ddf30",
+        "type": "FEATURE",
+        "text": " sap.m.Menu, sap.ui.unified.Menu: add menu item selection functionality"
+      },
+      {
         "id": "52da17e9c7346d7b94ad69c724ad396e1db3f571",
         "type": "FIX",
         "text": " sap.m.TimePicker: add value state message to mobile numeric picker"

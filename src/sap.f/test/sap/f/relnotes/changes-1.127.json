@@ -3,6 +3,16 @@
     "date": "July 2024",
     "notes": [
       {
+        "id": "423b46a352f16356480aa33e14827135d73eb907",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fix table overlapping"
+      },
+      {
+        "id": "b2b743e0953501e23f4d9c25b4f70575797e0acc",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Invalid resize prevented"
+      },
+      {
         "id": "efba7a537e0d983428c8e7df7ad5e21ca5a0b333",
         "type": "FIX",
         "text": " sap.f.FlexibleColumnLayout: Cleanup move listeners on destroy"

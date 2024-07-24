@@ -6,6 +6,11 @@
         "id": "5a3abd99d8c006e32c37a6a74586cdcbfdff5fb4",
         "type": "FIX",
         "text": " Integration Cards: Avoid more than one WebPage card load timeout"
+      },
+      {
+        "id": "aa88ac386da8f9117fdf04c02f22fb72ca8ae19e",
+        "type": "FIX",
+        "text": " Calendar controls: fixed visual glitches"
       }
     ]
   }

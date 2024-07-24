@@ -3,6 +3,11 @@
     "date": "July 2024",
     "notes": [
       {
+        "id": "eadcbaebbed4c8feb351e982590683f8335a4075",
+        "type": "FIX",
+        "text": " Demokit: Replace deprecated sap.m.MessagePage"
+      },
+      {
         "id": "19806a0dde1864b774cf0fe94c335e5991ee970a",
         "type": "FIX",
         "text": " Demo Kit: Entity updated"
