@@ -4,6 +4,7 @@ QUnit.dump.maxDepth = 50;
 
 sap.ui.define([
 	"sap/m/Button",
+	"sap/m/Label",
 	"sap/m/Page",
 	"sap/ui/base/DesignTime",
 	"sap/ui/core/mvc/Controller",
@@ -29,6 +30,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
+	Label,
 	Page,
 	DesignTimeConfig,
 	Controller,
@@ -445,10 +447,12 @@ sap.ui.define([
 				targetId: "layout0",
 				targetAggregation: "content",
 				element: {
-					id: "newButton",
-					technicalName: "sap.m.Button",
+					id: "newLabelId",
+					instanceName: "newLabel",
+					name: "Label",
+					technicalName: "sap.m.Label",
 					editable: false,
-					icon: "sap/m/designtime/Button.icon.svg",
+					icon: "sap/m/designtime/Label.icon.svg",
 					type: "element",
 					visible: true
 				}
@@ -456,7 +460,7 @@ sap.ui.define([
 			const oExpectedResponse2 = {
 				type: "editableChange",
 				element: {
-					id: "newButton",
+					id: "newLabelId",
 					editable: true
 				}
 			};
@@ -464,11 +468,11 @@ sap.ui.define([
 				aUpdates.some(function(oUpdate) {
 					switch (oUpdate.type) {
 						case "new": {
-							const oNewButton = this.oLayout.getContent().find((oControl) => oControl.getId() === "newButton");
-							const oNewButtonOverlay = OverlayRegistry.getOverlay(oNewButton);
-							oExpectedResponse1.element.visible = oNewButtonOverlay.isVisible();
+							const oNewLabel = this.oLayout.getContent().find((oControl) => oControl.getId() === "newLabelId");
+							const oNewLabelOverlay = OverlayRegistry.getOverlay(oNewLabel);
+							// oExpectedResponse1.element.visible = oNewLabelOverlay.isVisible();
 							assert.deepEqual(oUpdate, oExpectedResponse1, "then expected response for new update was received");
-							oNewButtonOverlay.setEditable(true);
+							oNewLabelOverlay.setEditable(true);
 							break;
 						}
 						case "editableChange":
@@ -481,9 +485,9 @@ sap.ui.define([
 			}
 			this.oOutline.attachEvent("update", onUpdate, this);
 			this.oLayout.addContent(
-				new Button({
-					id: "newButton",
-					text: "newButton"
+				new Label({
+					id: "newLabelId",
+					text: "newLabel"
 				})
 			);
 		});
