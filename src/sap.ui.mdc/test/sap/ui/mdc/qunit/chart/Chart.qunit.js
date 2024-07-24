@@ -631,7 +631,7 @@ sap.ui.define([
 
 			this.oMDCChart.initialized().then(function () {
 
-				const mSettings = {};
+				const mSettings = {propertyInfo: [{ name: "name1", label: "name1", dataType: "String" }, { name: "name2", label: "name2", dataType: "String" }]};
 				const oScope = {};
 
 				function isPromise(p) {

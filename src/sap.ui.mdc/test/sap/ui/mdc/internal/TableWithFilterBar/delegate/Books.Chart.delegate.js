@@ -189,9 +189,9 @@ sap.ui.define([
 						oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"] = true;
 					}
 
-					const mConstraints = {};
+					let vConstraints = null;
 					if (oObj.$Precision > 0) {
-						mConstraints.precision = oObj.$Precision;
+						vConstraints = {precision: oObj.$Precision};
 					}
 
 					//TODO: Check what we want to do with properties neither aggregatable nor groupable
@@ -228,11 +228,11 @@ sap.ui.define([
 							aggregatable: false,
 							maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo[sKey]?.allowedExpressions) ? -1 : 1,
 							// visible: sKey !== "modifiedAt", via visible a dimension can be removed from the settings dialog.
-							constraints: mConstraints,
+							constraints: vConstraints,
 							dataType: oObj.$Type,
 							role: ChartItemRoleType.category, //standard, normally this should be interpreted from UI.Chart annotation
 							textProperty: sTextProperty,
-							textFormatter: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.UI.v1.TextArrangement"]
+							textFormatter: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.UI.v1.TextArrangement"] || null
 						});
 
 					}

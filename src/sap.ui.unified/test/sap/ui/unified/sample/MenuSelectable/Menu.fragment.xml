@@ -1,0 +1,37 @@
+<core:FragmentDefinition
+		xmlns="sap.ui.unified"
+		xmlns:core="sap.ui.core">
+	<Menu>
+		<MenuItem text="New" icon="sap-icon://create"/>
+		<MenuItem text="Open" icon="sap-icon://open-folder"/>
+		<MenuItem text="Save" icon="sap-icon://save">
+			<submenu>
+				<Menu>
+					<MenuItemGroup itemSelectionMode="SingleSelect">
+						<items>
+							<MenuItem text="Save locally" icon="sap-icon://save"/>
+							<MenuItem text="Save to cloud" icon="sap-icon://upload-to-cloud"/>
+							<MenuItem text="Save to memory" icon="sap-icon://approvals"/>
+						</items>
+					</MenuItemGroup>
+				</Menu>
+			</submenu>
+		</MenuItem>
+		<MenuItemGroup itemSelectionMode="MultiSelect">
+			<items>
+				<MenuItem text="Bold" icon="sap-icon://bold-text" selected="true"/>
+				<MenuItem text="Italic" icon="sap-icon://italic-text" selected="true"/>
+				<MenuItem text="Underline" icon="sap-icon://underline-text"/>
+			</items>
+		</MenuItemGroup>
+		<MenuItemGroup itemSelectionMode="SingleSelect">
+			<items>
+				<MenuItem text="Left Alignment" icon="sap-icon://text-align-left" selected="true"/>
+				<MenuItem text="Center Alignment" icon="sap-icon://text-align-center"/>
+				<MenuItem text="Right Alignment" icon="sap-icon://text-align-right"/>
+			</items>
+		</MenuItemGroup>
+		<MenuItem text="Properties" icon="sap-icon://action-settings"/>
+		<MenuItem text="Exit" icon="sap-icon://decline"/>
+	</Menu>
+</core:FragmentDefinition>

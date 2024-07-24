@@ -280,7 +280,6 @@ sap.ui.define([
 				 * Sets the offset for the Drop Area associated with a Generic Tile.
 				 * The offset is applied uniformly to all the tile edges.
 				 * @experimental Since 1.113
-				 * @internal
 				 * @since 1.118
 				 * @ui5-restricted Used by S/4 MyHome (ux.eng.s4producthomes1)
 				 */

@@ -3,10 +3,10 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/Device",
 	"sap/ui/core/Element",
-	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
+	"sap/m/MenuItemGroup",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Button",
 	"sap/ui/model/Filter",
@@ -15,15 +15,16 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/m/MenuListItem",
 	"sap/ui/core/CustomData",
-	"sap/ui/core/Control"
+	"sap/ui/core/Control",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	merge,
 	Device,
 	Element,
-	nextUIUpdate,
 	jQuery,
 	Menu,
 	MenuItem,
+	MenuItemGroup,
 	JSONModel,
 	Button,
 	Filter,
@@ -32,7 +33,8 @@ sap.ui.define([
 	Item,
 	MenuListItem,
 	CustomData,
-	Control
+	Control,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -82,9 +84,10 @@ sap.ui.define([
 		}));
 	}
 
-	function destroyMenu() {
+	async function destroyMenu() {
 		this.sut.destroy();
 		this.sut = null;
+		await nextUIUpdate(this.clock);
 	}
 
 	function pressListItemAtIndex(iIndex) {
@@ -197,8 +200,8 @@ sap.ui.define([
 			prepareMobilePlatform.call(this);
 			initMenu.call(this);
 		},
-		afterEach : function () {
-			destroyMenu.call(this);
+		afterEach : async function () {
+			await destroyMenu.call(this);
 
 			jQuery('#qunit-fixture').removeClass('sap-phone');
 			jQuery('body').removeClass('sap-phone');
@@ -270,8 +273,8 @@ sap.ui.define([
 		beforeEach: function () {
 			initMenu.call(this);
 		},
-		afterEach : function () {
-			destroyMenu.call(this);
+		afterEach : async function () {
+			await destroyMenu.call(this);
 		}
 	});
 
@@ -478,8 +481,8 @@ sap.ui.define([
 			prepareMobilePlatform.call(this);
 			initMenu.call(this);
 		},
-		afterEach: function() {
-			destroyMenu.call(this);
+		afterEach: async function() {
+			await destroyMenu.call(this);
 
 			jQuery('#qunit-fixture').removeClass('sap-phone');
 			jQuery('body').removeClass('sap-phone');
@@ -676,17 +679,17 @@ sap.ui.define([
 	});
 
 	QUnit.module("Data binding", {
-		beforeEach : function () {
+		beforeEach : async function () {
 			this.sut = new Menu();
 			this.oButton = new Button();
 			this.oButton.placeAt('qunit-fixture');
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
 
 		},
-		afterEach : function () {
+		afterEach : async function () {
 			this.oButton.destroy();
 			this.oButton = null;
-			destroyMenu.call(this);
+			await destroyMenu.call(this);
 		},
 		getFirstModelData: getFirstModelData,
 		getSecondModelData: getSecondModelData,
@@ -757,7 +760,7 @@ sap.ui.define([
 		assert.strictEqual(jQuery("#" + sFirstSubSubItemId).length, 1, 'First sub sub item is changed in DOM after model property change.');
 	});
 
-	QUnit.test("filtering", function(assert) {
+	QUnit.test("filtering", async function(assert) {
 		var aItems,
 			oItemId,
 			oThirdData;
@@ -776,13 +779,13 @@ sap.ui.define([
 
 		// filter the model
 		this.sut.getBinding('items').filter(new Filter("type", FilterOperator.EQ, 'world'));
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		assert.ok(!Element.getElementById(oItemId), 'The item that does not fit in the filter is destroyed');
 	});
 
 	QUnit.module('MenuItem(inside Menu)', {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.sut = new MenuItem({
 				text: "mi",
 				icon: 'sap-icon://accidental-leave',
@@ -801,13 +804,14 @@ sap.ui.define([
 			this.sutRootMenu = new Menu({items: this.sut});
 			this.oLabel = new Label(); //.openBy needs a reference
 			this.sutRootMenu.openBy(this.oLabel);
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
 		},
-		afterEach : function () {
+		afterEach : async function () {
 			this.sutRootMenu.close();
 			this.sut.destroy();
 			this.sutRootMenu.destroy();
 			this.oLabel.destroy();
+			await nextUIUpdate(this.clock);
 
 			this.sut = null;
 			this.sutRootMenu = null;
@@ -1010,9 +1014,11 @@ sap.ui.define([
 				menuItem: this.menuItem.getId()
 			});
 		},
-		afterEach : function () {
+		afterEach : async function () {
 			this.sut.destroy();
 			this.menuItem.destroy();
+			await nextUIUpdate(this.clock);
+
 			this.sut = null;
 			this.menuItem = null;
 		}
@@ -1059,9 +1065,11 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oMenu = new Menu();
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.oMenu.destroy();
 			this.oMenu = null;
+			await nextUIUpdate(this.clock);
+
 		},
 		addMenuItems: function () {
 			this.oMenu.addItem(new MenuItem({
@@ -1197,9 +1205,11 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oMenu = new Menu();
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.oMenu.destroy();
 			this.oMenu = null;
+			await nextUIUpdate(this.clock);
+
 		}
 	});
 
@@ -1247,7 +1257,7 @@ sap.ui.define([
 		oAssert.strictEqual(oUfdItem.data("customKey"), "customValue", "Custom data is propagated properly to the Unified menu item");
 	});
 
-	QUnit.test("Custom data is propagated properly when binding with binding string", function (oAssert) {
+	QUnit.test("Custom data is propagated properly when binding with binding string", async function (oAssert) {
 		// Arrange
 		var oModel = new JSONModel([{
 				bar : 'barche'
@@ -1278,7 +1288,7 @@ sap.ui.define([
 		oMenu.setModel(oModel, "myModel");
 
 		oButton.placeAt('qunit-fixture');
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oMenu.openBy(oButton);
@@ -1302,7 +1312,7 @@ sap.ui.define([
 	});
 
 	QUnit.module('MenuItem Shortcut', {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.sut = new Menu({
 				items: [
 					new MenuItem({
@@ -1337,14 +1347,18 @@ sap.ui.define([
 				]
 			});
 			this.oLabel = new Label("Opener").placeAt("qunit-fixture");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
+
 			this.sut.openBy(this.oLabel);
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
+
 		},
-		afterEach : function () {
+		afterEach : async function () {
 			this.sut.close();
 			this.sut.destroy();
+			await nextUIUpdate(this.clock);
 			this.oLabel.destroy();
+			await nextUIUpdate(this.clock);
 
 			this.sut = null;
 			this.oLabel = null;
@@ -1371,6 +1385,759 @@ sap.ui.define([
 		assert.notOk(aItems[1].getDomRef().getAttribute("aria-keyshortcuts"), "aria-keyshortcuts attribute of the second MenuItem is not rendered, because it has submenu");
 		assert.notOk(aItems[2].getDomRef().getAttribute("aria-keyshortcuts"), "aria-keyshortcuts attribute of the third MenuItem is not rendered because it has no value");
 
+	});
+
+	QUnit.module("Item Selection", {
+		beforeEach: async function() {
+			this.oMenu = new Menu({
+				items: [
+					new MenuItem({text: "Item 1"}),
+					new MenuItem({text: "Item 2"}),
+					new MenuItem({text: "Item 3"}),
+					new MenuItemGroup("singleGroup",{
+						itemSelectionMode: "SingleSelect",
+						items: [
+							new MenuItem({text: "Item 4"}),
+							new MenuItem({text: "Item 5"}),
+							new MenuItem({text: "Item 6"})
+						]
+					}),
+					new MenuItemGroup("multiGroup",{
+						itemSelectionMode: "MultiSelect",
+						items: [
+							new MenuItem({text: "Item 7"}),
+							new MenuItem({text: "Item 8"}),
+							new MenuItem({text: "Item 9"})
+						]
+					}),
+					new MenuItemGroup("noneGroup",{
+						itemSelectionMode: "None",
+						items: [
+							new MenuItem({text: "Item 10"}),
+							new MenuItem({text: "Item 11"}),
+							new MenuItem({text: "Item 12"})
+						]
+					}),
+					new MenuItem({text: "Item 13"})
+				]
+			}).placeAt("qunit-fixture");
+			await nextUIUpdate(this.clock);
+		},
+		afterEach : async function() {
+			this.oMenu.destroy();
+			this.oMenu = null;
+			await nextUIUpdate(this.clock);
+		}
+	});
+
+	QUnit.test("All items (including those in groups) are rendered", function(assert) {
+		// Act
+		this.oMenu.openBy();
+		var oUnifiedMenu = this.oMenu._getMenu();
+
+		// Assert
+		assert.equal(oUnifiedMenu._getItems().length, 13, "Total number of items is correct");
+		assert.equal(oUnifiedMenu.getDomRef().querySelectorAll(".sapUiMnuItm").length, 13, "All items are rendered");
+	});
+
+	QUnit.test("Items selection in single-selection group", async function(assert) {
+		var oGroup = this.oMenu.getItems()[3],
+			aItems = oGroup.getItems(),
+			oInnerItem0,
+			oInnerItem1,
+			oInnerItem2;
+
+		// Act - select one item
+		this.oMenu.openBy();
+		oInnerItem0 = Element.getElementById(aItems[0]._getVisualControl());
+		oInnerItem1 = Element.getElementById(aItems[1]._getVisualControl());
+		oInnerItem2 = Element.getElementById(aItems[2]._getVisualControl());
+
+		aItems[0].setSelected(true);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.equal(oInnerItem0.getDomRef().getAttribute("aria-checked"), "true", "First item has 'aria-checked' attribute set");
+		assert.ok(oInnerItem0.getDomRef().querySelector(".sapUiMnuItmSel"), "First item has selection mark rendered");
+
+		// Act - deselect selected item
+		aItems[0].setSelected(false);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(oInnerItem0.getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(oInnerItem0.getDomRef().querySelector(".sapUiMnuItmSel"), "First item has no selection mark rendered");
+
+		// Act - select more than one item
+		aItems[0].setSelected(true);
+		aItems[1].setSelected(true);
+		aItems[2].setSelected(true);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(oInnerItem0.getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(oInnerItem0.getDomRef().querySelector(".sapUiMnuItmSel"), "First item has no selection mark rendered");
+		assert.notOk(oInnerItem1.getDomRef().getAttribute("aria-checked"), "Second item has no 'aria-checked' attribute set");
+		assert.notOk(oInnerItem1.getDomRef().querySelector(".sapUiMnuItmSel"), "Second item has no selection mark rendered");
+		assert.equal(oInnerItem2.getDomRef().getAttribute("aria-checked"), "true", "Third item has 'aria-checked' attribute set");
+		assert.ok(oInnerItem2.getDomRef().querySelector(".sapUiMnuItmSel"), "Third item has selection mark rendered");
+	});
+
+	QUnit.test("Items selection in multi-selection group", async function(assert) {
+		var oGroup = this.oMenu.getItems()[4],
+			aItems = oGroup.getItems(),
+			oInnerItem0,
+			oInnerItem1,
+			oInnerItem2;
+
+		// Act - select one item
+		this.oMenu.openBy();
+		oInnerItem0 = Element.getElementById(aItems[0]._getVisualControl());
+		oInnerItem1 = Element.getElementById(aItems[1]._getVisualControl());
+		oInnerItem2 = Element.getElementById(aItems[2]._getVisualControl());
+
+		aItems[0].setSelected(true);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.equal(oInnerItem0.getDomRef().getAttribute("aria-checked"), "true", "First item has 'aria-checked' attribute set");
+		assert.ok(oInnerItem0.getDomRef().querySelector(".sapUiMnuItmSel"), "First item has selection mark rendered");
+
+		// Act - deselect selected item
+		aItems[0].setSelected(false);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(oInnerItem0.getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(oInnerItem0.getDomRef().querySelector(".sapUiMnuItmSel"), "First item has no selection mark rendered");
+
+		// Act - select more than one item
+		aItems[0].setSelected(true);
+		aItems[1].setSelected(true);
+		aItems[2].setSelected(true);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.equal(oInnerItem0.getDomRef().getAttribute("aria-checked"), "true", "First item has 'aria-checked' attribute set");
+		assert.ok(oInnerItem0.getDomRef().querySelector(".sapUiMnuItmSel"), "First item has selection mark rendered");
+		assert.equal(oInnerItem1.getDomRef().getAttribute("aria-checked"), "true", "Second item has 'aria-checked' attribute set");
+		assert.ok(oInnerItem1.getDomRef().querySelector(".sapUiMnuItmSel"), "Second item has selection mark rendered");
+		assert.equal(oInnerItem2.getDomRef().getAttribute("aria-checked"), "true", "Third item has 'aria-checked' attribute set");
+		assert.ok(oInnerItem2.getDomRef().querySelector(".sapUiMnuItmSel"), "Third item has selection mark rendered");
+	});
+
+	QUnit.test("Items selection in group with no selection set", async function(assert) {
+		var oGroup = this.oMenu.getItems()[5],
+			oItem0 = oGroup.getItems()[0],
+			oInnerItem0;
+
+		// Act - select one item
+		this.oMenu.openBy();
+		oInnerItem0 = Element.getElementById(oItem0._getVisualControl());
+
+		oItem0.setSelected(true);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(oInnerItem0.getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(oInnerItem0.getDomRef().querySelector(".sapUiMnuItmSel"), "First item has no selection mark rendered");
+
+		// Act - deselect selected item
+		oItem0.setSelected(false);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(oInnerItem0.getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(oInnerItem0.getDomRef().querySelector(".sapUiMnuItmSel"), "First item has no selection mark rendered");
+	});
+
+	QUnit.test("Items selection of item outside of a group", async function(assert) {
+		var oItem0 = this.oMenu.getItems()[0],
+			oInnerItem0;
+
+		// Act - select one item
+		this.oMenu.openBy();
+		oInnerItem0 = Element.getElementById(oItem0._getVisualControl());
+
+		oItem0.setSelected(true);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(oInnerItem0.getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(oInnerItem0.getDomRef().querySelector(".sapUiMnuItmSel"), "First item has no selection mark rendered");
+
+		// Act - deselect selected item
+		oItem0.setSelected(false);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(oInnerItem0.getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(oInnerItem0.getDomRef().querySelector(".sapUiMnuItmSel"), "First item has no selection mark rendered");
+	});
+
+	QUnit.test("Items selection with click in single-selection group", async function(assert) {
+		var oGroup = this.oMenu.getItems()[3],
+			aItems = oGroup.getItems(),
+			oInnerItem0,
+			oInnerItem1;
+
+		// Act - select one item
+		this.oMenu.openBy();
+		oInnerItem0 = Element.getElementById(aItems[0]._getVisualControl());
+		oInnerItem1 = Element.getElementById(aItems[1]._getVisualControl());
+
+		oInnerItem0.$().trigger("click");
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.ok(aItems[0].getSelected(), "First item is selected");
+
+		// Act - deselect selected item
+		this.oMenu.openBy();
+		oInnerItem1.$().trigger("click");
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(aItems[0].getSelected(), "First item is not selected");
+		assert.ok(aItems[1].getSelected(), "Second item is selected");
+	});
+
+	QUnit.test("Items selection with click in multi-selection group", async function(assert) {
+		var oGroup = this.oMenu.getItems()[4],
+			aItems = oGroup.getItems(),
+			oInnerItem0,
+			oInnerItem1;
+
+		// Act - select one item
+		this.oMenu.openBy();
+		oInnerItem0 = Element.getElementById(aItems[0]._getVisualControl());
+		oInnerItem1 = Element.getElementById(aItems[1]._getVisualControl());
+
+		oInnerItem0.$().trigger("click");
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.ok(aItems[0].getSelected(), "First item is selected");
+
+		// Act - deselect selected item
+		this.oMenu.openBy();
+		oInnerItem1.$().trigger("click");
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.ok(aItems[0].getSelected(), "First item is selected");
+		assert.ok(aItems[1].getSelected(), "Second item is selected");
+	});
+
+	QUnit.test("Items selection with click in group with no selection", async function(assert) {
+		var oGroup = this.oMenu.getItems()[5],
+			oItem0 = oGroup.getItems()[0],
+			oInnerItem0;
+
+		// Act - select one item
+		this.oMenu.openBy();
+		oInnerItem0 = Element.getElementById(oItem0._getVisualControl());
+
+		oInnerItem0.$().trigger("click");
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(oItem0.getSelected(), "First item is not selected");
+	});
+
+	QUnit.test("Items selection with click for item outside a group", async function(assert) {
+		var oItem0 = this.oMenu.getItems()[0],
+			oInnerItem0;
+
+		// Act - select one item
+		this.oMenu.openBy();
+		oInnerItem0 = Element.getElementById(oItem0._getVisualControl());
+
+		oInnerItem0.$().trigger("click");
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(oItem0.getSelected(), "First item is not selected");
+	});
+
+	QUnit.module('[PHONE] Item Selection', {
+		beforeEach: async function () {
+			prepareMobilePlatform.call(this);
+			this.oMenu = new Menu({
+				items: [
+					new MenuItem({text: "Item 1"}),
+					new MenuItem({text: "Item 2"}),
+					new MenuItem({text: "Item 3"}),
+					new MenuItemGroup("singleGroup",{
+						itemSelectionMode: "SingleSelect",
+						items: [
+							new MenuItem({text: "Item 4"}),
+							new MenuItem({text: "Item 5"}),
+							new MenuItem({text: "Item 6"})
+						]
+					}),
+					new MenuItemGroup("multiGroup",{
+						itemSelectionMode: "MultiSelect",
+						items: [
+							new MenuItem({text: "Item 7"}),
+							new MenuItem({text: "Item 8"}),
+							new MenuItem({text: "Item 9"})
+						]
+					}),
+					new MenuItemGroup("noneGroup",{
+						itemSelectionMode: "None",
+						items: [
+							new MenuItem({text: "Item 10"}),
+							new MenuItem({text: "Item 11"}),
+							new MenuItem({text: "Item 12"})
+						]
+					}),
+					new MenuItem({text: "Item 13"})
+				]
+			}).placeAt("qunit-fixture");
+			await nextUIUpdate(this.clock);
+		},
+		afterEach : async function () {
+			this.oMenu.destroy();
+			this.oMenu = null;
+			await nextUIUpdate(this.clock);
+
+			jQuery('#qunit-fixture').removeClass('sap-phone');
+			jQuery('body').removeClass('sap-phone');
+		}
+	});
+
+	QUnit.test("All items (including those in groups) are rendered", function(assert) {
+		// Act
+		this.oMenu.openBy();
+		var oMenuList = this.oMenu._getDialog().getContent()[0].getPages()[0].getContent()[0];
+
+		// Assert
+		assert.equal(oMenuList.getItems().length, 13, "Total number of items is correct");
+		assert.equal(oMenuList.getDomRef().querySelectorAll(".sapMLIB").length, 13, "All items are rendered");
+	});
+
+	QUnit.test("Items selection in single-selection group", async function(assert) {
+		var oGroup = this.oMenu.getItems()[3],
+			aItems = oGroup.getItems(),
+			oInnerItem0,
+			oInnerItem1,
+			oInnerItem2;
+
+		// Act - select one item
+		this.oMenu.openBy();
+
+		oInnerItem0 = Element.getElementById(aItems[0]._getVisualControl());
+		oInnerItem1 = Element.getElementById(aItems[1]._getVisualControl());
+		oInnerItem2 = Element.getElementById(aItems[2]._getVisualControl());
+
+		aItems[0].setSelected(true);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.equal(oInnerItem0.getDomRef().getAttribute("aria-checked"), "true", "First item has 'aria-checked' attribute set");
+		assert.ok(oInnerItem0.getDomRef().querySelector(".sapMMenuLISel"), "First item has selection mark rendered");
+
+		// Act - deselect selected item
+		aItems[0].setSelected(false);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(oInnerItem0.getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(oInnerItem0.getDomRef().querySelector(".sapMMenuLISel"), "First item has no selection mark rendered");
+
+		// Act - select more than one item
+		aItems[0].setSelected(true);
+		aItems[1].setSelected(true);
+		aItems[2].setSelected(true);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(oInnerItem0.getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(oInnerItem0.getDomRef().querySelector(".sapMMenuLISel"), "First item has no selection mark rendered");
+		assert.notOk(oInnerItem1.getDomRef().getAttribute("aria-checked"), "Second item has no 'aria-checked' attribute set");
+		assert.notOk(oInnerItem1.getDomRef().querySelector(".sapMMenuLISel"), "Second item has no selection mark rendered");
+		assert.equal(oInnerItem2.getDomRef().getAttribute("aria-checked"), "true", "Third item has 'aria-checked' attribute set");
+		assert.ok(oInnerItem2.getDomRef().querySelector(".sapMMenuLISel"), "Third item has selection mark rendered");
+
+		this.oMenu.close();
+		this.clock.tick(1000);
+	});
+
+	QUnit.test("Items selection in multi-selection group", async function(assert) {
+		var oGroup = this.oMenu.getItems()[4],
+			aItems = oGroup.getItems(),
+			oInnerItem0,
+			oInnerItem1,
+			oInnerItem2;
+
+		// Act - select one item
+		this.oMenu.openBy();
+
+		oInnerItem0 = Element.getElementById(aItems[0]._getVisualControl());
+		oInnerItem1 = Element.getElementById(aItems[1]._getVisualControl());
+		oInnerItem2 = Element.getElementById(aItems[2]._getVisualControl());
+
+		aItems[0].setSelected(true);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.equal(oInnerItem0.getDomRef().getAttribute("aria-checked"), "true", "First item has 'aria-checked' attribute set");
+		assert.ok(oInnerItem0.getDomRef().querySelector(".sapMMenuLISel"), "First item has selection mark rendered");
+
+		// Act - deselect selected item
+		aItems[0].setSelected(false);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(oInnerItem0.getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(oInnerItem0.getDomRef().querySelector(".sapMMenuLISel"), "First item has no selection mark rendered");
+
+		// Act - select more than one item
+		aItems[0].setSelected(true);
+		aItems[1].setSelected(true);
+		aItems[2].setSelected(true);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.equal(oInnerItem0.getDomRef().getAttribute("aria-checked"), "true", "First item has 'aria-checked' attribute set");
+		assert.ok(oInnerItem0.getDomRef().querySelector(".sapMMenuLISel"), "First item has selection mark rendered");
+		assert.equal(oInnerItem1.getDomRef().getAttribute("aria-checked"), "true", "Second item has 'aria-checked' attribute set");
+		assert.ok(oInnerItem1.getDomRef().querySelector(".sapMMenuLISel"), "Second item has selection mark rendered");
+		assert.equal(oInnerItem2.getDomRef().getAttribute("aria-checked"), "true", "Third item has 'aria-checked' attribute set");
+		assert.ok(oInnerItem2.getDomRef().querySelector(".sapMMenuLISel"), "Third item has selection mark rendered");
+
+		this.oMenu.close();
+		this.clock.tick(1000);
+	});
+
+	QUnit.test("Items selection in group with no selection set", async function(assert) {
+		var oGroup = this.oMenu.getItems()[5],
+			oItem0 = oGroup.getItems()[0],
+			oInnerItem0;
+
+		// Act - select one item
+		this.oMenu.openBy();
+
+		oInnerItem0 = Element.getElementById(oItem0._getVisualControl());
+
+		oItem0.setSelected(true);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(oInnerItem0.getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(oInnerItem0.getDomRef().querySelector(".sapMMenuLISel"), "First item has no selection mark rendered");
+
+		// Act - deselect selected item
+		oItem0.setSelected(false);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(oInnerItem0.getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(oInnerItem0.getDomRef().querySelector(".sapMMenuLISel"), "First item has no selection mark rendered");
+
+		this.oMenu.close();
+		this.clock.tick(1000);
+	});
+
+	QUnit.test("Items selection of item outside of a group", async function(assert) {
+		var oItem0 = this.oMenu.getItems()[0],
+			oInnerItem0;
+
+		// Act - select one item
+		this.oMenu.openBy();
+
+		oInnerItem0 = Element.getElementById(oItem0._getVisualControl());
+
+		oItem0.setSelected(true);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(oInnerItem0.getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(oInnerItem0.getDomRef().querySelector(".sapMMenuLISel"), "First item has no selection mark rendered");
+
+		// Act - deselect selected item
+		oItem0.setSelected(false);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(oInnerItem0.getDomRef().getAttribute("aria-checked"), "First item has no 'aria-checked' attribute set");
+		assert.notOk(oInnerItem0.getDomRef().querySelector(".sapMMenuLISel"), "First item has no selection mark rendered");
+
+		this.oMenu.close();
+		this.clock.tick(1000);
+	});
+
+	QUnit.module("Group overriden aggregation methods", {
+		beforeEach: async function() {
+			this.oMenu = new Menu({
+				items: [
+					new MenuItem({text: "Item 1"}),
+					new MenuItem({text: "Item 2"}),
+					new MenuItem({text: "Item 3"}),
+					new MenuItemGroup("singleGroup",{
+						itemSelectionMode: "SingleSelect",
+						items: [
+							new MenuItem({text: "Group Item 1"}),
+							new MenuItem({text: "Group Item 2"}),
+							new MenuItem({text: "Group Item 3"})
+						]
+					}),
+					new MenuItem({text: "Last Item"})
+				]
+			}).placeAt("qunit-fixture");
+			await nextUIUpdate(this.clock);
+		},
+		afterEach : async function() {
+			this.oMenu.destroy();
+			this.oMenu = null;
+			await nextUIUpdate(this.clock);
+		}
+	});
+
+	QUnit.test("addItem method", function(assert) {
+		var oItem = new MenuItem({text: "Group Item 4"}),
+			oGroup = this.oMenu.getItems()[3],
+			oUnifiedMenu,
+			oUnifiedGroup,
+			aUnifiedItems;
+
+		// Act
+		this.oMenu.openBy();
+		oUnifiedMenu = this.oMenu._getMenu();
+		oUnifiedGroup = oUnifiedMenu.getItems()[3];
+		oGroup.addItem(oItem);
+		aUnifiedItems = oUnifiedMenu._getItems();
+
+		// Assert
+		assert.equal(this.oMenu._getItems().length, 8, "Item is added to the items aggregation");
+		assert.equal(aUnifiedItems.length, 8, "Item is added to unified menu");
+		assert.equal(aUnifiedItems[6].getText(), "Group Item 4", "Item is added to the unified menu at right position");
+		assert.equal(oUnifiedGroup.getItems().length, 4, "Item is added to the unified menu group");
+		assert.equal(oUnifiedGroup.getItems()[3].getText(), "Group Item 4", "Item is added to the unified menu group at right position");
+	});
+
+	QUnit.test("insertItem method", function(assert) {
+		var oItem = new MenuItem({text: "Group Item 2-3"}),
+			oGroup = this.oMenu.getItems()[3],
+			oUnifiedMenu,
+			oUnifiedGroup,
+			aUnifiedItems;
+
+		// Act
+		this.oMenu.openBy();
+		oUnifiedMenu = this.oMenu._getMenu();
+		oUnifiedGroup = oUnifiedMenu.getItems()[3];
+		oGroup.insertItem(oItem, 2);
+		aUnifiedItems = oUnifiedMenu._getItems();
+
+		// Assert
+		assert.equal(this.oMenu._getItems().length, 8, "Item is inserted in the items aggregation");
+		assert.equal(aUnifiedItems.length, 8, "Item is inserted in unified menu");
+		assert.equal(aUnifiedItems[5].getText(), "Group Item 2-3", "Item is inserted in the unified menu at right position");
+		assert.equal(oUnifiedGroup.getItems().length, 4, "Item is inserted in the unified menu group");
+		assert.equal(oUnifiedGroup.getItems()[2].getText(), "Group Item 2-3", "Item is inserted in the unified menu group at right position");
+	});
+
+	QUnit.test("removeItem method", function(assert) {
+		var oGroup = this.oMenu.getItems()[3],
+			oUnifiedMenu,
+			oUnifiedGroup;
+
+		// Act - remove as object
+		this.oMenu.openBy();
+		oUnifiedMenu = this.oMenu._getMenu();
+		oUnifiedGroup = oUnifiedMenu.getItems()[3];
+		oGroup.removeItem(oGroup.getItems()[0]);
+
+		// Assert
+		assert.equal(this.oMenu._getItems().length, 6, "Item is removed from the items aggregation");
+		assert.equal(oUnifiedMenu._getItems().length, 6, "Item is removed from the unified menu");
+		assert.equal(oUnifiedGroup.getItems().length, 2, "Item is removed from the unified menu group");
+
+		// Act remove by index
+		oGroup.removeItem(0);
+
+		// Assert
+		assert.equal(this.oMenu._getItems().length, 5, "Item is removed from the items aggregation");
+		assert.equal(oUnifiedMenu._getItems().length, 5, "Item is removed from the unified menu");
+		assert.equal(oUnifiedGroup.getItems().length, 1, "Item is removed from the unified menu group");
+
+		// Act remove by id
+		oGroup.removeItem(oGroup.getItems()[0].getId());
+
+		// Assert
+		assert.equal(this.oMenu._getItems().length, 4, "Item is removed from the items aggregation");
+		assert.equal(oUnifiedMenu._getItems().length, 4, "Item is removed from the unified menu");
+		assert.equal(oUnifiedGroup.getItems().length, 0, "Item is removed from the unified menu group");
+	});
+
+	QUnit.test("removeAllItems method", function(assert) {
+		var oGroup = this.oMenu.getItems()[3],
+			oItems,
+			oUnifiedMenu,
+			oUnifiedGroup;
+
+		// Act - remove as object
+		this.oMenu.openBy();
+		oUnifiedMenu = this.oMenu._getMenu();
+		oUnifiedGroup = oUnifiedMenu.getItems()[3];
+		oItems = oGroup.removeAllItems();
+
+		// Assert
+		assert.equal(this.oMenu._getItems().length, 4, "All items are removed from the items aggregation");
+		assert.equal(oUnifiedMenu._getItems().length, 4, "All items are removed from the unified menu");
+		assert.equal(oUnifiedGroup.getItems().length, 0, "All items are removed from the unified menu group");
+		assert.equal(oItems.length, 3, "All removed items are returned");
+	});
+
+	QUnit.test("destroyItems method", function(assert) {
+		var oGroup = this.oMenu.getItems()[3],
+			oResult,
+			oUnifiedMenu,
+			oUnifiedGroup;
+
+		// Act - remove as object
+		this.oMenu.openBy();
+		oUnifiedMenu = this.oMenu._getMenu();
+		oUnifiedGroup = oUnifiedMenu.getItems()[3];
+		oResult = oGroup.destroyItems();
+
+		// Assert
+		assert.equal(this.oMenu._getItems().length, 4, "All items are removed from the items aggregation");
+		assert.equal(oUnifiedMenu._getItems().length, 4, "All items are removed from the unified menu");
+		assert.equal(oUnifiedGroup.getItems().length, 0, "All items are removed from the unified menu group");
+		assert.equal(oResult.getId(), oGroup.getId(), "Group is returned (as this)");
+	});
+
+	QUnit.module("[PHONE] Group overriden aggregation methods", {
+		beforeEach: async function() {
+			prepareMobilePlatform.call(this);
+			this.oMenu = new Menu({
+				items: [
+					new MenuItem({text: "Item 1"}),
+					new MenuItem({text: "Item 2"}),
+					new MenuItem({text: "Item 3"}),
+					new MenuItemGroup("singleGroup",{
+						itemSelectionMode: "SingleSelect",
+						items: [
+							new MenuItem({text: "Group Item 1"}),
+							new MenuItem({text: "Group Item 2"}),
+							new MenuItem({text: "Group Item 3"})
+						]
+					}),
+					new MenuItem({text: "Last Item"})
+				]
+			}).placeAt("qunit-fixture");
+			await nextUIUpdate(this.clock);
+		},
+		afterEach : async function() {
+			this.oMenu.destroy();
+			this.oMenu = null;
+			await nextUIUpdate(this.clock);
+
+			jQuery('#qunit-fixture').removeClass('sap-phone');
+			jQuery('body').removeClass('sap-phone');
+		}
+	});
+
+	QUnit.test("addItem method", function(assert) {
+		var oItem = new MenuItem({text: "Group Item 4"}),
+			oGroup = this.oMenu.getItems()[3],
+			oMenuList,
+			aMenuListItems;
+
+		// Act
+		this.oMenu.openBy();
+		oMenuList = this.oMenu._getDialog().getContent()[0].getPages()[0].getContent()[0];
+		oGroup.addItem(oItem);
+		aMenuListItems = oMenuList.getItems();
+
+		// Assert
+		assert.equal(this.oMenu._getItems().length, 8, "Item is added to the items aggregation");
+		assert.equal(aMenuListItems.length, 8, "Item is added to menu");
+		assert.equal(aMenuListItems[6].getTitle(), "Group Item 4", "Item is added to the menu at right position");
+
+		this.oMenu.close();
+		this.clock.tick(1000);
+	});
+
+	QUnit.test("insertItem method", function(assert) {
+		var oItem = new MenuItem({text: "Group Item 2-3"}),
+			oGroup = this.oMenu.getItems()[3],
+			oMenuList,
+			aMenuListItems;
+
+		// Act
+		this.oMenu.openBy();
+		oMenuList = this.oMenu._getDialog().getContent()[0].getPages()[0].getContent()[0];
+		oGroup.insertItem(oItem, 2);
+		aMenuListItems = oMenuList.getItems();
+
+		// Assert
+		assert.equal(this.oMenu._getItems().length, 8, "Item is inserted in the items aggregation");
+		assert.equal(oMenuList.getItems().length, 8, "Item is added to menu");
+		assert.equal(aMenuListItems[5].getTitle(), "Group Item 2-3", "Item is inserted in the menu at right position");
+	});
+
+	QUnit.test("removeItem method", function(assert) {
+		var oGroup = this.oMenu.getItems()[3],
+			oMenuList;
+
+		// Act - remove as object
+		this.oMenu.openBy();
+		oMenuList = this.oMenu._getDialog().getContent()[0].getPages()[0].getContent()[0];
+		oGroup.removeItem(oGroup.getItems()[0]);
+
+		// Assert
+		assert.equal(this.oMenu._getItems().length, 6, "Item is removed from the items aggregation");
+		assert.equal(oMenuList.getItems().length, 6, "Item is removed from the menu");
+
+		// Act remove by index
+		oGroup.removeItem(0);
+
+		// Assert
+		assert.equal(this.oMenu._getItems().length, 5, "Item is removed from the items aggregation");
+		assert.equal(oMenuList.getItems().length, 5, "Item is removed from the menu");
+
+		// Act remove by id
+		oGroup.removeItem(oGroup.getItems()[0].getId());
+
+		// Assert
+		assert.equal(this.oMenu._getItems().length, 4, "Item is removed from the items aggregation");
+		assert.equal(oMenuList.getItems().length, 4, "Item is removed from the menu");
+	});
+
+	QUnit.test("removeAllItems method", function(assert) {
+		var oGroup = this.oMenu.getItems()[3],
+			oItems,
+			oMenuList;
+
+		// Act - remove as object
+		this.oMenu.openBy();
+		oMenuList = this.oMenu._getDialog().getContent()[0].getPages()[0].getContent()[0];
+		oItems = oGroup.removeAllItems();
+
+		// Assert
+		assert.equal(this.oMenu._getItems().length, 4, "All items are removed from the items aggregation");
+		assert.equal(oMenuList.getItems().length, 4, "All items are removed from the menu");
+		assert.equal(oItems.length, 3, "All removed items are returned");
+	});
+
+	QUnit.test("destroyItems method", function(assert) {
+		var oGroup = this.oMenu.getItems()[3],
+			oMenuList,
+			oResult;
+
+		// Act - remove as object
+		this.oMenu.openBy();
+		oMenuList = this.oMenu._getDialog().getContent()[0].getPages()[0].getContent()[0];
+		oResult = oGroup.destroyItems();
+
+		// Assert
+		assert.equal(this.oMenu._getItems().length, 4, "All items are removed from the items aggregation");
+		assert.equal(oMenuList.getItems().length, 4, "All items are removed from the menu");
+		assert.equal(oResult.getId(), oGroup.getId(), "Group is returned (as this)");
 	});
 
 });

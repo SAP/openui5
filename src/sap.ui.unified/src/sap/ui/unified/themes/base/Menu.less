@@ -101,6 +101,23 @@
 	}
 }
 
+.sapUiMnuItmSel {
+	padding-inline-start: 0.5rem;
+	padding-inline-end: 0;
+	font-weight: normal;
+	text-align: center;
+	&::after {
+		color: @sapSelectedColor;
+		content: "\e05b";
+		font-family: 'SAP-icons';
+		outline: none;
+		line-height: inherit;
+		padding-inline-end: 0.125rem;
+		width: 2rem;
+		height: 2rem;
+	}
+}
+
 .sapUiMnuItmIco {
 	min-width: 1.125rem;
 	max-width: 1.125rem;
@@ -134,7 +151,8 @@
 	filter: alpha(opacity=50);
 }
 
-.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmIco {
+.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmIco,
+.sapUiMnuNoIco > div > .sapUiMnuItm > .sapUiMnuItmIco {
 	width: 0px;
 	display: none;
 }

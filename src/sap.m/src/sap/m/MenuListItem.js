@@ -21,6 +21,9 @@ sap.ui.define([
 		// shortcut for sap.m.ListType
 		var ListType = library.ListType;
 
+		// shortcut for sap.ui.core.ItemSelectionMode
+		var ItemSelectionMode = coreLibrary.ItemSelectionMode;
+
 		/**
 		 * Constructor for a new <code>MenuListItem</code>.
 		 *
@@ -66,6 +69,11 @@ sap.ui.define([
 					iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true},
 
 					/**
+					 * Defines the selection mode of the child items (e.g. <code>None</code>, <code>SingleSelect</code>, <code>MultiSelect</code>)
+					 */
+					itemSelectionMode : {type : "sap.ui.core.ItemSelectionMode", group : "Behavior", defaultValue : ItemSelectionMode.None},
+
+					/**
 					 * Defines the <code>title</code> text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 					 */
 					titleTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
@@ -77,6 +85,12 @@ sap.ui.define([
 					startsSection : {type : "boolean", group : "Behavior", defaultValue : false}
 				},
 				associations: {
+
+					/**
+					 * MenuItemGroup associated with this item.
+					 */
+					_group : {type : "sap.ui.unified.MenuItemGroup",  group : "Behavior", visibility : "hidden"},
+
 					/**
 					 * The <code>MenuItem</code> that this control renders.
 					 * Used internally in sap.m.Menu.
@@ -154,7 +168,7 @@ sap.ui.define([
 		};
 
 		MenuListItem.prototype._hasSubItems = function() {
-			return !!(this.getMenuItem() && Element.getElementById(this.getMenuItem()).getItems().length);
+			return !!(this.getMenuItem() && Element.getElementById(this.getMenuItem())._getItems().length);
 		};
 
 		MenuListItem.prototype.setProperty = function(sPropertyKey, vPropertyValue) {
@@ -163,6 +177,35 @@ sap.ui.define([
 			if (sPropertyKey === "enabled") {
 				this.setType(vPropertyValue ? ListType.Active : ListType.Inactive);
 			}
+		};
+
+		MenuListItem.prototype._getMenuItemGroup = function() {
+			return Element.getElementById(this.getAssociation("_group"));
+		};
+
+		MenuListItem.prototype._getItemSelectionMode = function() {
+			var oGroup = this._getMenuItemGroup();
+			return oGroup ? oGroup.getItemSelectionMode() : ItemSelectionMode.None;
+		};
+
+		MenuListItem.prototype._hasGroupSeparator = function() {
+			var oMenuItem = Element.getElementById(this.getMenuItem()),
+				oMenuItemParent = oMenuItem && oMenuItem.getParent(),
+				aItems,
+				iIndex;
+
+			if (!oMenuItemParent) {
+				return false;
+			}
+
+			if (oMenuItemParent.getItemSelectionMode) {
+				oMenuItemParent = oMenuItemParent.getParent();
+			}
+
+			aItems = oMenuItemParent._getItems();
+			iIndex = aItems.indexOf(oMenuItem);
+
+			return iIndex > 0 && aItems[iIndex - 1] && aItems[iIndex - 1].getAssociation("_group") !== oMenuItem.getAssociation("_group");
 		};
 
 		return MenuListItem;

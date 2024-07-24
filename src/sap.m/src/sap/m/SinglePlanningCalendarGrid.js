@@ -1286,6 +1286,17 @@ sap.ui.define([
 			}
 		};
 
+		SinglePlanningCalendarGrid.prototype._findGridHeaderCell = function (oEvent) {
+			const oGridCell = oEvent.target;
+			const oColumnGridHeaderCell = oGridCell.classList.contains("sapUiCalItem") ? oGridCell : oGridCell.parentElement;
+
+			if (!oColumnGridHeaderCell?.getAttribute("data-sap-day") || !oColumnGridHeaderCell.classList.contains("sapUiCalItem")) {
+				return null;
+			}
+
+			return oColumnGridHeaderCell;
+		};
+
 		SinglePlanningCalendarGrid.prototype.onmouseup = function (oEvent) {
 			var bMultiDateSelection = SinglePlanningCalendarSelectionMode.MultiSelect === this.getDateSelectionMode();
 			if (!bMultiDateSelection && !(oEvent.metaKey || oEvent.ctrlKey)) {
@@ -1305,13 +1316,13 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		SinglePlanningCalendarGrid.prototype.onkeyup = function(oEvent) {
+			if (!this._findGridHeaderCell(oEvent)){
+				return;
+			}
+
 			const bMultiDateSelection = SinglePlanningCalendarSelectionMode.MultiSelect === this.getDateSelectionMode();
 			const bArrowNavigation = oEvent.which === KeyCodes.ARROW_LEFT || oEvent.which === KeyCodes.ARROW_RIGHT;
 			const bSpaceOrEnter = oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER;
-
-			if (!bArrowNavigation && !bSpaceOrEnter){
-				return;
-			}
 
 			if (bArrowNavigation && oEvent.shiftKey && bMultiDateSelection) {
 				this._bMultiDateSelectWithArrow = true;
@@ -1335,9 +1346,8 @@ sap.ui.define([
 		SinglePlanningCalendarGrid.prototype.onkeydown = function (oEvent) {
 			const bMultiDateSelection = SinglePlanningCalendarSelectionMode.MultiSelect === this.getDateSelectionMode();
 			const bSpaceOrEnter = oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER;
-			const bArrowNavigation = oEvent.which === KeyCodes.ARROW_LEFT || oEvent.which === KeyCodes.ARROW_RIGHT;
 
-			if (bSpaceOrEnter || bArrowNavigation) {
+			if (bSpaceOrEnter) {
 				if (oEvent.which === KeyCodes.SPACE && oEvent.shiftKey && bMultiDateSelection) {
 					this._bCurrentWeekSelection = true;
 				}
@@ -1345,9 +1355,8 @@ sap.ui.define([
 				this._fireSelectionEvent(oEvent);
 
 				var oControl = this._findSrcControl(oEvent);
-				if (oControl && oControl.isA("sap.ui.unified.CalendarAppointment")) {
-					var sBundleKey = oControl.getSelected() ? "APPOINTMENT_SELECTED" : "APPOINTMENT_UNSELECTED";
-					this._oInvisibleMessage.announce(this._oUnifiedRB.getText(sBundleKey), InvisibleMessageMode.Polite);
+				if (oControl && oControl.isA("sap.ui.unified.CalendarAppointment") && !oControl.getSelected()) {
+					this._oInvisibleMessage.announce(this._oUnifiedRB.getText("APPOINTMENT_UNSELECTED"), InvisibleMessageMode.Polite);
 				}
 
 				// Prevent scrolling
@@ -1381,7 +1390,9 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		SinglePlanningCalendarGrid.prototype._fireSelectionEvent = function (oEvent) {
+			const oColumnGridHeaderCell = this._findGridHeaderCell(oEvent);
 			const bArrowNavigation = oEvent.which === KeyCodes.ARROW_LEFT || oEvent.which === KeyCodes.ARROW_RIGHT;
+
 			var oControl = this._findSrcControl(oEvent),
 				oGridCell = oEvent.target;
 
@@ -1397,7 +1408,7 @@ sap.ui.define([
 					appointment: undefined,
 					appointments: this._toggleAppointmentSelection(undefined, true)
 				});
-			} else if (oControl && oControl.isA("sap.ui.unified.CalendarAppointment") && !bArrowNavigation) {
+			} else if (oControl && oControl.isA("sap.ui.unified.CalendarAppointment") && !oColumnGridHeaderCell && !bArrowNavigation) {
 
 				// add suffix in appointment
 				if (oGridCell.parentElement && oGridCell.parentElement.getAttribute("id")) {
@@ -1415,17 +1426,7 @@ sap.ui.define([
 					appointment: oControl,
 					appointments: this._toggleAppointmentSelection(oControl, !(oEvent.ctrlKey || oEvent.metaKey))
 				});
-			} else {
-				var oColumnGridHeaderCell;
-				if (!oGridCell.classList.contains("sapUiCalItem")){
-					oColumnGridHeaderCell = oGridCell.parentElement;
-				} else {
-					oColumnGridHeaderCell = oGridCell;
-				}
-
-				if (!oColumnGridHeaderCell.getAttribute("data-sap-day")) {
-					return;
-				}
+			} else if (oColumnGridHeaderCell?.getAttribute("data-sap-day")) {
 				var oStartDateFromGrid = this._oFormatYyyymmdd.parse(oColumnGridHeaderCell.getAttribute("data-sap-day"));
 				var oStartDate = new CalendarDate(oStartDateFromGrid.getFullYear(),oStartDateFromGrid.getMonth(), oStartDateFromGrid.getDate());
 				this._handelMultiDateSelection(oStartDate, oColumnGridHeaderCell);

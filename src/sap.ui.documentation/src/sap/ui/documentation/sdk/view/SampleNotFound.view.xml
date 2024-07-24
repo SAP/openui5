@@ -1,17 +1,26 @@
 <mvc:View
 		controllerName="sap.ui.documentation.sdk.controller.SampleNotFound"
-		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f"
 		xmlns="sap.m">
 
-	<MessagePage
+	<f:IllustratedMessage
 			id="page"
+			illustrationType="sapIllus-PageNotFound"
 			title="{i18n>NOT_FOUND_SAMPLE_TITLE}"
-			text="{i18n>NOT_FOUND_SAMPLE_TEXT}"
-			description="&lt;a target='_self' href='controls' &gt;Samples page&lt;/a&gt;"
-			icon="sap-icon://document"
-			enableFormattedText="true"
-			showNavButton="{device>/system/phone}"
-			navButtonPress="onNavBack">
-	</MessagePage>
+			description="{i18n>NOT_FOUND_SAMPLE_TEXT}">
+			<f:additionalContent>
+				<VBox>
+					<Button
+						visible="{device>/system/phone}"
+						text="{i18n>NOT_FOUND_BACK}"
+						press="onNavBack"
+						type="Emphasized"/>
+					<Button
+						text="{i18n>NOT_FOUND_SAMPLE_NAV_TO_SAMPLES}"
+						press="onNavToSamples"
+						type="Emphasized"/>
+				</VBox>
+			</f:additionalContent>
+	</f:IllustratedMessage>
 
 </mvc:View>

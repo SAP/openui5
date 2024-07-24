@@ -1,16 +1,20 @@
 <mvc:View
 		controllerName="sap.ui.documentation.sdk.controller.NotFound"
-		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f"
 		xmlns="sap.m">
 
-	<MessagePage
+	<f:IllustratedMessage
 			id="page"
+			illustrationType="sapIllus-PageNotFound"
 			title="{i18n>NOT_FOUND_TITLE}"
-			text="{i18n>NOT_FOULD_TEXT}"
-			icon="sap-icon://document"
-			description=""
-			showNavButton="{device>/system/phone}"
-			navButtonPress="onNavBack">
-	</MessagePage>
+			description="{i18n>NOT_FOULD_TEXT}">
+			<f:additionalContent>
+				<Button
+						visible="{device>/system/phone}"
+						text="{i18n>NOT_FOUND_BACK}"
+						press="onNavBack"
+						type="Emphasized"/>
+			</f:additionalContent>
+	</f:IllustratedMessage>
 
 </mvc:View>

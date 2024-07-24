@@ -14,7 +14,9 @@ sap.ui.define([
 	"sap/ui/model/ParseException",
 	"sap/ui/model/FormatException",
 	"sap/m/library",
+	"sap/m/ScrollContainer",
 	"sap/ui/core/library",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/base/strings/whitespaceReplacer"
 ], function (
 		ValueHelpDelegate,
@@ -26,13 +28,16 @@ sap.ui.define([
 		ParseException,
 		FormatException,
 		mLibrary,
+		ScrollContainer,
 		coreLibrary,
+		nextUIUpdate,
 		whitespaceReplacer
 	) {
 	"use strict";
 
 	let oFixedList;
 	let bIsOpen = true;
+	let oScrollContainer = null;
 
 	const oContainer = { //to fake Container
 		getScrollDelegate: function() {
@@ -70,7 +75,25 @@ sap.ui.define([
 		oFixedList.destroy();
 		oFixedList = null;
 		bIsOpen = true;
+		if (oScrollContainer) {
+			oScrollContainer.getContent.restore();
+			oScrollContainer.destroy();
+			oScrollContainer = null;
+			delete oContainer.getUIAreaForContent;
+		}
 	};
+
+	async function _renderScrollContainer(oList) {
+
+		oScrollContainer = new ScrollContainer(); // to test scrolling
+		sinon.stub(oScrollContainer, "getContent").returns([oList]); // to render List
+		oContainer.getUIAreaForContent = function() {
+			return oScrollContainer.getUIArea();
+		};
+		oScrollContainer.placeAt("content"); // render ScrollContainer
+		await nextUIUpdate();
+
+	}
 
 	QUnit.module("basic features", {
 		beforeEach: function() {
@@ -116,7 +139,7 @@ sap.ui.define([
 				const sItemId = oFixedList.onShow(); // to update selection and scroll
 				assert.ok(oContent, "Content returned");
 				assert.ok(oContent.isA("sap.m.List"), "Content is sap.m.List");
-				assert.ok(oContent.hasStyleClass("sapMListFocus"), "List has style class sapMListFocus");
+				assert.notOk(oContent.hasStyleClass("sapMListFocus"), "List has no style class sapMListFocus");
 				assert.equal(oFixedList.getDisplayContent(), oContent, "sap.m.List stored in displayContent");
 				assert.equal(oContent.getWidth(), "100%", "List width");
 				assert.notOk(oContent.getShowNoData(), "List showNoData");
@@ -142,7 +165,7 @@ sap.ui.define([
 				assert.equal(oItem.getValue(), whitespaceReplacer("Item   2"), "Item1 value");
 				assert.ok(oItem.getSelected(), "Item1 selected");
 				assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item1 has style class sapMComboBoxNonInteractiveItem");
-				assert.ok(oItem.hasStyleClass("sapMLIBFocused"), "Item is focused");
+				assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "Item is not focused");
 				assert.equal(sItemId, oItem.getId(), "OnShow returns selected itemId");
 				oItem = oContent.getItems()[2];
 				assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item2 is DisplayListItem");
@@ -182,9 +205,12 @@ sap.ui.define([
 		if (oContent) {
 			const fnDone = assert.async();
 			oContent.then(function(oContent) {
-				oFixedList.onShow(); // to update selection and scroll
+				oFixedList.onShow(true); // to update selection and scroll
+				oFixedList.setVisualFocus(); // fake focus
+
 				assert.ok(oContent, "Content returned");
 				assert.ok(oContent.isA("sap.m.List"), "Content is sap.m.List");
+				assert.ok(oContent.hasStyleClass("sapMListFocus"), "List has style class sapMListFocus");
 				assert.equal(oContent.getItems().length, 5, "Number of items");
 				let oItem = oContent.getItems()[0];
 				assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
@@ -274,12 +300,14 @@ sap.ui.define([
 		let oCondition;
 		let sFilterValue;
 		let sItemId;
+		let iItems;
 		let bTypeaheadCaseSensitive;
 		oFixedList.attachEvent("typeaheadSuggested", function(oEvent) {
 			iTypeaheadSuggested++;
 			oCondition = oEvent.getParameter("condition");
 			sFilterValue = oEvent.getParameter("filterValue");
 			sItemId = oEvent.getParameter("itemId");
+			iItems = oEvent.getParameter("items");
 			bTypeaheadCaseSensitive = oEvent.getParameter("caseSensitive");
 		});
 
@@ -314,6 +342,7 @@ sap.ui.define([
 				assert.deepEqual(oCondition, Condition.createItemCondition("I2", "My Item   2"), "typeaheadSuggested event condition");
 				assert.equal(sFilterValue, "M", "typeaheadSuggested event filterValue");
 				assert.equal(sItemId, oItem.getId(), "typeaheadSuggested event itemId");
+				assert.equal(iItems, 3, "typeaheadSuggested event items");
 				assert.equal(bTypeaheadCaseSensitive, true, "typeaheadSuggested event caseSensitive");
 
 				fnDone();
@@ -585,16 +614,19 @@ sap.ui.define([
 	let oNavigateCondition;
 	let sNavigateItemId;
 	let bNavigateLeaveFocus;
+	let bNavigateCaseSensitive;
+	let iVisualFocusSet = 0;
 
 	function _checkNavigatedItem(assert, oContent, iNavigatedIndex, iSelectedIndex, oCondition, bLeaveFocus) {
 
 		const aItems = oContent.getItems();
-		assert.ok(oContent.hasStyleClass("sapMListFocus"), "List has style class sapMListFocus");
+		assert.equal(oContent.hasStyleClass("sapMListFocus"), bIsOpen, "List has style class sapMListFocus");
+		assert.equal(iVisualFocusSet, bIsOpen && iNavigatedIndex >= 0 && !bNavigateLeaveFocus ? 1 : 0, "visualFocusSet event fired");
 
 		for (let i = 0; i < aItems.length; i++) {
 			const oItem = aItems[i];
 			if (i === iSelectedIndex) {
-				assert.ok(oItem.hasStyleClass("sapMLIBFocused"), "Item" + i + " is focused");
+				assert.equal(oItem.hasStyleClass("sapMLIBFocused"), bIsOpen, "Item" + i + " is focused");
 				if (!oItem.isA("sap.m.GroupHeaderListItem")) {
 					assert.ok(oItem.getSelected(), "Item" + i + " is selected");
 				}
@@ -610,9 +642,13 @@ sap.ui.define([
 		if (!bLeaveFocus) {
 			assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
 			assert.equal(sNavigateItemId, aItems[iNavigatedIndex].getId(), "Navigated itemId");
+			if (oCondition) { // not set for group-items
+				assert.equal(bNavigateCaseSensitive, oFixedList.getCaseSensitive(), "Navigated caseSensitive");
+			}
 		} else {
 			assert.deepEqual(oNavigateCondition, undefined, "Navigated condition");
 			assert.equal(sNavigateItemId, undefined, "Navigated itemId");
+			assert.equal(bNavigateCaseSensitive, undefined, "Navigated caseSensitive");
 		}
 		assert.equal(bNavigateLeaveFocus, bLeaveFocus, "Navigated leaveFocus");
 		assert.deepEqual(oFixedList.getConditions(), oCondition ? [oCondition] : [], "FixedList conditions");
@@ -621,7 +657,8 @@ sap.ui.define([
 		oNavigateCondition = undefined;
 		sNavigateItemId = undefined;
 		bNavigateLeaveFocus = undefined;
-
+		bNavigateCaseSensitive = undefined;
+		iVisualFocusSet = 0;
 	}
 
 	QUnit.test("navigate", function(assert) {
@@ -630,19 +667,27 @@ sap.ui.define([
 		oNavigateCondition = undefined;
 		sNavigateItemId = undefined;
 		bNavigateLeaveFocus = undefined;
+		bNavigateCaseSensitive = undefined;
 		oFixedList.attachEvent("navigated", function(oEvent) {
 			iNavigate++;
 			oNavigateCondition = oEvent.getParameter("condition");
 			sNavigateItemId = oEvent.getParameter("itemId");
 			bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
+			bNavigateCaseSensitive = oEvent.getParameter("caseSensitive");
+		});
+		iVisualFocusSet = 0;
+		oFixedList.attachEvent("visualFocusSet", function(oEvent) {
+			iVisualFocusSet++;
 		});
 
+		oFixedList.setCaseSensitive(true);
 		oFixedList.setConditions([]);
 		const oContent = oFixedList.getContent(); // as content needs to be crated before navigation is possible
 
 		if (oContent) {
 			const fnDone = assert.async();
-			oContent.then(function(oContent) {
+			oContent.then(async function(oContent) {
+				await _renderScrollContainer(oContent);
 				// oFixedList.onShow(); // to update selection and scroll
 				oFixedList.navigate(1);
 				_checkNavigatedItem(assert, oContent, 0, 0, Condition.createItemCondition("I1", "Item 1"), false);
@@ -679,11 +724,17 @@ sap.ui.define([
 		oNavigateCondition = undefined;
 		sNavigateItemId = undefined;
 		bNavigateLeaveFocus = undefined;
+		bNavigateCaseSensitive = undefined;
 		oFixedList.attachEvent("navigated", function(oEvent) {
 			iNavigate++;
 			oNavigateCondition = oEvent.getParameter("condition");
 			sNavigateItemId = oEvent.getParameter("itemId");
 			bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
+			bNavigateCaseSensitive = oEvent.getParameter("caseSensitive");
+		});
+		iVisualFocusSet = 0;
+		oFixedList.attachEvent("visualFocusSet", function(oEvent) {
+			iVisualFocusSet++;
 		});
 
 		oFixedList.setGroupable(true);
@@ -738,11 +789,17 @@ sap.ui.define([
 		oNavigateCondition = undefined;
 		sNavigateItemId = undefined;
 		bNavigateLeaveFocus = undefined;
+		bNavigateCaseSensitive = undefined;
 		oFixedList.attachEvent("navigated", function(oEvent) {
 			iNavigate++;
 			oNavigateCondition = oEvent.getParameter("condition");
 			sNavigateItemId = oEvent.getParameter("itemId");
 			bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
+			bNavigateCaseSensitive = oEvent.getParameter("caseSensitive");
+		});
+		iVisualFocusSet = 0;
+		oFixedList.attachEvent("visualFocusSet", function(oEvent) {
+			iVisualFocusSet++;
 		});
 
 		oFixedList.setGroupable(true);
@@ -754,7 +811,8 @@ sap.ui.define([
 
 		if (oContent) {
 			const fnDone = assert.async();
-			oContent.then(function(oContent) {
+			oContent.then(async function(oContent) {
+				await _renderScrollContainer(oContent);
 				oFixedList.navigate(1);
 				_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
 
@@ -873,15 +931,17 @@ sap.ui.define([
 		const oContent = await oFixedList.getContent();
 		const aItems = oContent.getItems();
 
+		await _renderScrollContainer(oContent);
+
 		oFixedList.setHighlightId(aItems[0].getId());
-		assert.ok(aItems[0].hasStyleClass("sapMLIBFocused"), "setHighlightId added class sapMLIBFocused");
+		assert.notOk(aItems[0].hasStyleClass("sapMLIBFocused"), "setHighlightId not added class sapMLIBFocused");
 
 		oFixedList.setHighlightId(aItems[1].getId());
-		assert.notOk(aItems[0].hasStyleClass("sapMLIBFocused"), "setHighlightId removed class sapMLIBFocused");
-		assert.ok(aItems[1].hasStyleClass("sapMLIBFocused"), "setHighlightId added class sapMLIBFocused");
+		assert.notOk(aItems[0].hasStyleClass("sapMLIBFocused"), "setHighlightId not added class sapMLIBFocused");
+		assert.notOk(aItems[1].hasStyleClass("sapMLIBFocused"), "setHighlightId not added class sapMLIBFocused");
 
-		oFixedList.navigate(1);
-		assert.notOk(aItems[1].hasStyleClass("sapMLIBFocused"), "navigation removed class sapMLIBFocused");
+		oFixedList.navigate(0);
+		assert.ok(aItems[1].hasStyleClass("sapMLIBFocused"), "navigation added class sapMLIBFocused");
 
 		oFixedList.setHighlightId();
 	});

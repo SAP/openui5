@@ -812,7 +812,8 @@
 				"category": "Action",
 				"since": "1.38",
 				"samples": [
-					"sap.m.sample.Menu"
+					"sap.m.sample.Menu",
+					"sap.m.sample.MenuSelectable"
 				]
 			},
 			{
@@ -3321,6 +3322,11 @@
 				"id": "sap.m.sample.Menu",
 				"name": "Menu",
 				"description": "This control is used to show a menu in both desktop and mobile."
+			},
+			{
+				"id": "sap.m.sample.MenuSelectable",
+				"name": "Menu with Selectable Items",
+				"description": "Some menu items can be added to groups to allow single or multiple item selection."
 			},
 			{
 				"id": "sap.m.sample.MenuButton",

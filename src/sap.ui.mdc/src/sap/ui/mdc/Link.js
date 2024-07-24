@@ -13,10 +13,10 @@ sap.ui.define([
 	"sap/ui/mdc/link/Panel",
 	"sap/ui/mdc/link/PanelItem",
 	"sap/ui/layout/form/SimpleForm",
-	"sap/ui/core/Title",
+	"sap/m/Title",
 	"sap/ui/layout/library",
 	"sap/ui/mdc/enums/LinkType"
-], (Element, Library, FieldInfoBase, jQuery, BindingMode, JSONModel, Log, SapBaseLog, Panel, PanelItem, SimpleForm, CoreTitle, layoutLibrary, LinkType) => {
+], (Element, Library, FieldInfoBase, jQuery, BindingMode, JSONModel, Log, SapBaseLog, Panel, PanelItem, SimpleForm, Title, layoutLibrary, LinkType) => {
 	"use strict";
 
 	// shortcut for sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout
@@ -254,7 +254,11 @@ sap.ui.define([
 		const oAdditionalContentPromise = this.retrieveAdditionalContent();
 		const [aLinkItems, aAdditionalContent] = await Promise.all([oLinkItemsPromise, oAdditionalContentPromise]);
 
-		return this._getContent(aLinkItems, aAdditionalContent, fnGetAutoClosedControl, Panel);
+		this._setConvertedLinkItems(aLinkItems);
+		const aMLinkItems = this._getInternalModel().getProperty("/linkItems");
+		const oPanelAdditionalContent = !aAdditionalContent.length && !aMLinkItems.length ? this._getNoContent() : aAdditionalContent;
+
+		return this._getContent(aLinkItems, oPanelAdditionalContent, fnGetAutoClosedControl, Panel);
 	};
 
 	/**
@@ -269,11 +273,7 @@ sap.ui.define([
 	 */
 	Link.prototype._getContent = async function(aLinkItems, aAdditionalContent, fnGetAutoClosedControl, PanelClass) {
 		const sPanelId = await this.retrievePanelId();
-		this._setConvertedLinkItems(aLinkItems);
-		const aMLinkItems = this._getInternalModel().getProperty("/linkItems");
 		const aMBaselineLinkItems = this._getInternalModel().getProperty("/baselineLinkItems");
-
-		const oPanelAdditionalContent = !aAdditionalContent.length && !aMLinkItems.length ? this._getNoContent() : aAdditionalContent;
 
 		const oExistingPanel = Element.getElementById(sPanelId);
 		if (oExistingPanel) {
@@ -300,7 +300,7 @@ sap.ui.define([
 				oPanelItem.setText(oMLinkItem.text);
 				return oPanelItem;
 			}),
-			additionalContent: oPanelAdditionalContent,
+			additionalContent: aAdditionalContent,
 			beforeSelectionDialogOpen: function() {
 				if (fnGetAutoClosedControl && fnGetAutoClosedControl()) {
 					fnGetAutoClosedControl().setModal(true);
@@ -381,7 +381,7 @@ sap.ui.define([
 		const oSimpleForm = new SimpleForm({
 			layout: ResponsiveGridLayout,
 			content: [
-				new CoreTitle({
+				new Title({
 					text: Library.getResourceBundleFor("sap.ui.mdc").getText("info.POPOVER_MSG_NO_CONTENT")
 				})
 			]

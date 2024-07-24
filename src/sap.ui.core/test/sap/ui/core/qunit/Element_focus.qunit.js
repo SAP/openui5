@@ -1,14 +1,16 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/core/BusyIndicator",
+	"sap/ui/core/Element",
 	"sap/m/Button",
 	"sap/m/Dialog",
 	"sap/m/Popover",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/Input",
-	"sap/m/Panel"
-], function(BusyIndicator, Button, Dialog, Popover, createAndAppendDiv, nextUIUpdate, Input, Panel) {
+	"sap/m/Panel",
+	"sap/m/Text"
+], function(BusyIndicator, Element, Button, Dialog, Popover, createAndAppendDiv, nextUIUpdate, Input, Panel, Text) {
 	"use strict";
 
 	QUnit.module("Focus Issue");
@@ -395,5 +397,43 @@ sap.ui.define([
 
 		// test start, open popover
 		oBtn_openPopover.firePress();
+	});
+
+	QUnit.test("Event 'FocusFail' shouldn't be fired when the control isn't focusable but the current focus is within the control", async function(assert) {
+		const oUIArea = createAndAppendDiv("uiarea_focus");
+
+		const oPanel = new Panel({
+			expandable: true,
+			headerText: "Panel with a header text",
+			width: "auto",
+			content: new Text({
+				text: "Lorem ipsum dolor st amet"
+			})
+		});
+
+		oPanel.placeAt("uiarea_focus");
+		await nextUIUpdate();
+
+		const oDomRef = oPanel.getDomRef();
+		const oFocusableDom = oDomRef.querySelector("[tabindex='0']");
+		oFocusableDom.focus();
+
+		const oSpy = this.spy(Element, "fireFocusFail");
+
+		oPanel.invalidate();
+		await nextUIUpdate();
+
+		assert.equal(oSpy.callCount, 0, "fireFocusFail isn't called");
+
+		return new Promise((resolve, reject) => {
+			setTimeout(() => {
+				assert.ok(oDomRef.contains(document.activeElement), "Panel still has the focus");
+
+				oPanel.destroy();
+				oUIArea.remove();
+
+				resolve();
+			}, 0);
+		});
 	});
 });

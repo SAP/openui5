@@ -1695,12 +1695,17 @@ sap.ui.define([
 		assert.ok(oClearButton.getDomRef(), 'Clear button is in dom');
 	});
 
-	QUnit.test("After selection reset the focus should be returned to the dialog", function(assert) {
+	QUnit.test("After selection reset the focus should be returned to the initially focusable element", function(assert) {
 		this.oSelectDialog.open();
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oSelectDialog._oClearButton.firePress();
-		assert.equal(document.activeElement.getAttribute("id"), this.oSelectDialog._oDialog.getId(), 'After selection is reset the focus should be returned to the dialog"');
+
+		assert.strictEqual(
+			document.activeElement.getAttribute("id"),
+			this.oSelectDialog._oList.getItems()[0].getFocusDomRef().getAttribute("id"),
+			"After selection is reset the focus should be returned to the initially focusable element"
+		);
 	});
 
 	QUnit.test("Clear button pressed should fire search event with the correct clearButtonPressed value passed from SearchField", function (assert) {

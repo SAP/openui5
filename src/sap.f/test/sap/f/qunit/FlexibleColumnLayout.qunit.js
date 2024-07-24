@@ -1319,6 +1319,60 @@ function(
 		}.bind(this));
 	});
 
+	QUnit.test("prevents resize in invalid direction", function(assert){
+		// arrange
+		var fnDone = assert.async();
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsMidExpandedEndHidden
+		});
+
+
+		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function() {
+			// assert
+			assertColumnsVisibility(assert, this.oFCL, 1, 1, 0);
+
+			// act: drag towards outside the viewport (invalid direction)
+			dragSeparator("end", 1, this.oFCL);
+
+			// assert: no change in columns visibility
+			assertColumnsVisibility(assert, this.oFCL, 1, 1, 0);
+
+			fnDone();
+		}.bind(this));
+	});
+
+	QUnit.module("Livecycle", {
+		beforeEach: function () {
+			this.oFCL = oFactory.createFCL({
+				layout: LT.TwoColumnsBeginExpanded
+			});
+		},
+		afterEach: function () {
+			this.oFCL.destroy();
+			this.oFCL = null;
+		}
+	});
+
+	QUnit.test("move listeners are detached on destroy", function (assert) {
+		var oSpyMoveListener = this.spy(this.oFCL, "_boundColumnSeparatorMove"),
+			oSeparator = this.oFCL._oColumnSeparators.begin[0],
+			iStartX = oSeparator.getBoundingClientRect().x;
+
+		// mock resize start
+		this.oFCL._onColumnSeparatorMoveStart({pageX: iStartX}, oSeparator);
+
+		// Act: destroy before resize completed
+		this.oFCL.destroy();
+		oSpyMoveListener.resetHistory();
+
+		// mock mousemove event after destroy
+		document.dispatchEvent(new MouseEvent("mousemove"));
+
+		// Assert
+		assert.strictEqual(oSpyMoveListener.callCount, 0, "listener is not called");
+	});
+
 	QUnit.module("ScreenReader supprot", {
 		beforeEach: function () {
 			this.oFCL = oFactory.createFCL();

@@ -46,12 +46,9 @@ sap.ui.define([
 
 
 	/**
-	 * Applies default values and resolves property references.
-	 *
-	 * @param {object} oProperty The passed property
-	 * @protected
+	 * @inheritDoc
 	 */
-	PropertyHelper.prototype.prepareProperty = function(oProperty) {
+	PropertyHelper.prototype.prepareProperty = function(oProperty, mProperties) {
 
 		if (!oProperty.typeConfig) {
 

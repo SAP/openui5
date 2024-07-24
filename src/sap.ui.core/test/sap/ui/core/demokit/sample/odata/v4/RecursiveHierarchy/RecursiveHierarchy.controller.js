@@ -235,7 +235,11 @@ sap.ui.define([
 					return;
 				}
 
-				await oSibling.move({nextSibling : oNode, parent : oParent});
+				if (oNode.created()) { // out-of-place, move it to become the 1st child/root
+					await oNode.move({nextSibling : oSibling, parent : oParent});
+				} else {
+					await oSibling.move({nextSibling : oNode, parent : oParent});
+				}
 
 				this.scrollTo(oNode, oTable);
 			} catch (oError) {
@@ -261,7 +265,9 @@ sap.ui.define([
 				]);
 
 				if (!oSibling) {
-					this.scrollTo(oParent, oTable);
+					if (oParent) {
+						this.scrollTo(oParent, oTable);
+					}
 					MessageBox.alert("Cannot move up",
 						{icon : MessageBox.Icon.INFORMATION, title : "Already first sibling"});
 					return;

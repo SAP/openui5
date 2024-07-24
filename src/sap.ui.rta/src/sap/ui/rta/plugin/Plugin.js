@@ -22,6 +22,39 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	// The ranks define the order of the plugin actions in the context menu
+	const CONTEXT_MENU_RANKS = {
+		CTX_RENAME: 10,
+		CTX_ADD_ELEMENTS_AS_SIBLING: 20,
+		CTX_ADD_ELEMENTS_AS_CHILD: 25,
+		CTX_ADD_ELEMENTS_CHILD_AND_SIBLING: 30,
+		CTX_CREATE_SIBLING_CONTAINER: 40,
+		CTX_CREATE_CHILD_CONTAINER: 50,
+		CTX_REMOVE: 60,
+		CTX_LOCAL_RESET: 65,
+		CTX_CUT: 70,
+		CTX_PASTE: 80,
+		CTX_GROUP_FIELDS: 90,
+		CTX_UNGROUP_FIELDS: 100,
+		CTX_ADDXML_AT_EXTENSIONPOINT: 105,
+		// Settings ranks go up 1 by 1 for each setting
+		CTX_SETTINGS: 110,
+		// IFrame ranks go up 1 by 1 for each possible child target
+		CTX_CREATE_SIBLING_IFRAME: 130,
+		// Variant types are mutually exclusive
+		CTX_VARIANT_SET_TITLE: 140,
+		CTX_COMP_VARIANT_RENAME: 140,
+		CTX_VARIANT_SAVE: 150,
+		CTX_COMP_VARIANT_SAVE: 150,
+		CTX_VARIANT_SAVEAS: 160,
+		CTX_COMP_VARIANT_SAVE_AS: 160,
+		CTX_VARIANT_MANAGE: 170,
+		CTX_COMP_VARIANT_MANAGE: 170,
+		CTX_VARIANT_SWITCH_SUBMENU: 180,
+		CTX_COMP_VARIANT_SWITCH: 180,
+		CTX_COMP_VARIANT_CONTENT: 190
+	};
+
 	function _handleEditableByPlugin(mPropertyBag, aPromises, oSourceElementOverlay) {
 		// when a control gets destroyed it gets deregistered before it gets removed from the parent aggregation.
 		// this means that getElementInstance is undefined when we get here via removeAggregation mutation
@@ -434,6 +467,31 @@ sap.ui.define([
 			}.bind(this));
 		}
 		return Promise.resolve(false);
+	};
+
+	/**
+	 * Returns the rank (order) of the plugin action in the context menu.
+	 * @param {string} sPluginId Plugin ID
+	 * @return {number} Rank of the plugin action
+	 */
+	BasePlugin.prototype.getRank = function(sPluginId) {
+		return CONTEXT_MENU_RANKS[sPluginId];
+	};
+
+	/**
+	 * Generic function to return the menu items for a context menu.
+	 * Retrieves the rank and then calls the method from the DT Plugin.
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
+	 * @param {object} mPropertyBag Additional properties for the menu item
+	 * @param {string} mPropertyBag.pluginId The ID of the plugin
+	 * @param {string} mPropertyBag.icon an icon for the Button inside the context menu
+	 * @param {string} mPropertyBag.group A group for buttons which should be grouped together in the MiniMenu
+	 * @param {number} [mPropertyBag.rank] The rank (order) of the plugin action in the context menu
+	 * @return {object[]} Returns an array with the object containing the required data for a context menu item
+	 */
+	BasePlugin.prototype._getMenuItems = function(aElementOverlays, mPropertyBag) {
+		mPropertyBag.rank ||= this.getRank(mPropertyBag.pluginId);
+		return Plugin.prototype._getMenuItems.apply(this, [aElementOverlays, mPropertyBag]);
 	};
 
 	return BasePlugin;

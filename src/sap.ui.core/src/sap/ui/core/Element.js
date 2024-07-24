@@ -1116,8 +1116,15 @@ sap.ui.define([
 				} else {
 					oFocusDomRef.focus(oFocusInfo);
 				}
-			} else if (!this._bIsBeingDestroyed) {
-				Element.fireFocusFail.call(this);
+			} else {
+				const oDomRef = this.getDomRef();
+				// In case the control already contains the active element, we
+				// should not fire 'FocusFail' even when the oFocusDomRef isn't
+				// focusable because not all controls defines the 'getFocusDomRef'
+				// method properly
+				if (oDomRef && !oDomRef.contains(document.activeElement) && !this._bIsBeingDestroyed) {
+					Element.fireFocusFail.call(this);
+				}
 			}
 		};
 

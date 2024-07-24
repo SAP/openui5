@@ -834,6 +834,31 @@ sap.ui.define([
 				assert.deepEqual(oDiscardStub.getCall(0).args[0].layer, Layer.CUSTOMER, "the layer was passed");
 			});
 		});
+
+		QUnit.test("when backendChangesDiscarded is false", function(assert) {
+			const mPropertyBag = {
+				layer: Layer.CUSTOMER,
+				control: new Control()
+			};
+
+			const sReference = "com.sap.app";
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
+			const oClearStub = sandbox.stub(FlexState, "clearState");
+			const oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves({
+				backendChangesDiscarded: false, dirtyChangesDiscarded: true
+			});
+			const oAdaptationsDiscardStub = sandbox.stub(ContextBasedAdaptationsAPI, "refreshAdaptationModel");
+			return VersionsAPI.discardDraft(mPropertyBag)
+			.then(function(oDiscardInfo) {
+				assert.strictEqual(oAdaptationsDiscardStub.calledOnce, false, "then the Adaptation Model was not called");
+				assert.strictEqual(oClearStub.calledOnce, true, "then the FlexState was cleared");
+				assert.strictEqual(oDiscardInfo.backendChangesDiscarded, false, "then the discard outcome was returned");
+				assert.strictEqual(oDiscardInfo.dirtyChangesDiscarded, true, "then the discard outcome was returned");
+				assert.strictEqual(oDiscardStub.calledOnce, true, "then the discard was called");
+				assert.deepEqual(oDiscardStub.getCall(0).args[0].reference, sReference, "the reference was passed");
+				assert.deepEqual(oDiscardStub.getCall(0).args[0].layer, Layer.CUSTOMER, "the layer was passed");
+			});
+		});
 	});
 
 	QUnit.module("Given VersionsAPI.publish is called", {

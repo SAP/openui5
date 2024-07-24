@@ -3,11 +3,24 @@
  */
 
 // Provides control sap.m.MenuItem.
-sap.ui.define(['./library', "sap/ui/core/Element", 'sap/ui/core/Item', 'sap/ui/base/ManagedObjectObserver'],
-	function(library, Element, Item, ManagedObjectObserver) {
+sap.ui.define([
+	'./library',
+	'sap/ui/core/library',
+	'sap/ui/core/Element',
+	'sap/ui/core/Item',
+	'sap/ui/base/ManagedObjectObserver'
+], function(
+	library,
+	coreLibrary,
+	Element,
+	Item,
+	ManagedObjectObserver
+) {
 		"use strict";
 
 
+		// shortcut for sap.ui.core.ItemSelectionMode
+		var ItemSelectionMode = coreLibrary.ItemSelectionMode;
 
 		/**
 		 * Constructor for a new <code>MenuItem</code>.
@@ -19,6 +32,7 @@ sap.ui.define(['./library', "sap/ui/core/Element", 'sap/ui/core/Item', 'sap/ui/b
 		 * The <code>MenuItem</code> control is used for creating items for the <code>sap.m.Menu</code>.
 		 * It is derived from a core <code>sap.ui.core.Item</code>.
 		 * @extends sap.ui.core.Item
+		 * @implements sap.m.IMenuItem
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -30,6 +44,9 @@ sap.ui.define(['./library', "sap/ui/core/Element", 'sap/ui/core/Item', 'sap/ui/b
 		 */
 		var MenuItem = Item.extend("sap.m.MenuItem", /** @lends sap.m.MenuItem.prototype */ { metadata : {
 
+			interfaces: [
+				"sap.m.IMenuItem"
+			],
 			library : "sap.m",
 			properties : {
 
@@ -46,10 +63,17 @@ sap.ui.define(['./library', "sap/ui/core/Element", 'sap/ui/core/Item', 'sap/ui/b
 				visible : {type: "boolean", group : "Appearance", defaultValue: true},
 
 				/**
+				 * Determines whether the <code>MenuItem</code> is selected.
+				 * A selected <code>MenuItem</code> has a check mark rendered at its end.
+				 * <b>Note: </b> selection functionality works only if the menu item is a member of <code>MenuItemGroup</code> with
+				 * <code>itemSelectionMode</code> set to {@link sap.ui.core.ItemSelectionMode.SingleSelect} or {@link sap.ui.unified.ItemSelectionMode.MultiSelect}.
+				 * @since 1.127.0
+				 */
+				selected : {type : "boolean", group : "Behavior", defaultValue : false},
+
+				/**
 				 * Defines the shortcut text that should be displayed on the menu item on non-mobile devices.
 				 * <b>Note:</b> The text is only displayed and set as а value of the <code>aria-keyshortcuts</code> attribute.
-				 * There is no built-in functionality that selects the item when the corresponding shortcut is pressed.
-				 * This should be implemented by the application developer.
 				 */
 				shortcutText : {type : "string", group : "Appearance", defaultValue : ''},
 
@@ -58,15 +82,27 @@ sap.ui.define(['./library', "sap/ui/core/Element", 'sap/ui/core/Item', 'sap/ui/b
 				 * <b>Note:</b> If an item is invisible its separator is also not displayed.
 				 */
 				startsSection : {type : "boolean", group : "Behavior", defaultValue : false}
+
 			},
 			defaultAggregation: "items",
 			aggregations: {
+
 				/**
 				 * Defines the sub-items contained within this element.
 				 */
-				items: { type: "sap.m.MenuItem", multiple: true, singularName: "item", bindable: "bindable" }
+				items: { type: "sap.m.IMenuItem", multiple: true, singularName: "item", bindable: "bindable" }
+
+			},
+			associations : {
+
+				/**
+				 * MenuItemGroup associated with this item.
+				 */
+				_group : {type : "sap.ui.unified.MenuItemGroup",  group : "Behavior", visibility : "hidden"}
+
 			},
 			events: {
+
 				/**
 				 * Fired after the item has been pressed.
 				 */
@@ -109,6 +145,7 @@ sap.ui.define(['./library', "sap/ui/core/Element", 'sap/ui/core/Item', 'sap/ui/b
 						methodParams: {type: "object"}
 					}
 				}
+
 			}
 		}});
 
@@ -246,6 +283,26 @@ sap.ui.define(['./library', "sap/ui/core/Element", 'sap/ui/core/Item', 'sap/ui/b
 		};
 
 		/**
+		 * Sets the <code>selected</code> state of the <code>MenuItem</code> if it is allowed.
+		 *
+		 * @override
+		 * @param {boolean} bState Whether the menu item should be selected
+		 * @returns {this} Returns <code>this</code> to allow method chaining
+		 */
+		MenuItem.prototype.setSelected = function(bState) {
+			var oGroup = Element.getElementById(this.getAssociation("_group"));
+
+			// in case of single selection, clear selected state of all other items in the group to ensure that only one item is selected
+			if (bState && oGroup && oGroup.getItemSelectionMode() === ItemSelectionMode.SingleSelect) {
+				oGroup._clearSelectedItems();
+			}
+
+			this.setProperty("selected", bState);
+
+			return this;
+		};
+
+		/**
 		 * Observes the value property of the passed menu item
 		 *
 		 * @param {sap.ui.unified.MenuItem} oVisualItem the sap.ui.unified.MenuItem, which property will be observed
@@ -308,7 +365,7 @@ sap.ui.define(['./library', "sap/ui/core/Element", 'sap/ui/core/Item', 'sap/ui/b
 		//Internal methods used to identify the item in the Menu's hierarchy.
 
 		/**
-		 * Sets visual child of the control.
+		 * Sets visual child of the control (unified Menu).
 		 * @private
 		 */
 		MenuItem.prototype._setVisualChild = function(vControl) {
@@ -316,7 +373,7 @@ sap.ui.define(['./library', "sap/ui/core/Element", 'sap/ui/core/Item', 'sap/ui/b
 		};
 
 		/**
-		 * Sets visual parent of the control.
+		 * Sets visual parent of the control (unified Menu).
 		 * @private
 		 */
 		MenuItem.prototype._setVisualParent = function(vControl) {
@@ -324,7 +381,7 @@ sap.ui.define(['./library', "sap/ui/core/Element", 'sap/ui/core/Item', 'sap/ui/b
 		};
 
 		/**
-		 * Sets visual control of the control.
+		 * Sets visual control of the control (unified MenuItem).
 		 * @private
 		 */
 		MenuItem.prototype._setVisualControl = function(vControl) {
@@ -340,7 +397,7 @@ sap.ui.define(['./library', "sap/ui/core/Element", 'sap/ui/core/Item', 'sap/ui/b
 		};
 
 		/**
-		 * Gets visual child of the control.
+		 * Gets visual child of the control (unified Menu).
 		 * @private
 		 */
 		MenuItem.prototype._getVisualChild = function() {
@@ -348,7 +405,7 @@ sap.ui.define(['./library', "sap/ui/core/Element", 'sap/ui/core/Item', 'sap/ui/b
 		};
 
 		/**
-		 * Gets visual parent of the control.
+		 * Gets visual parent of the control (unified Menu).
 		 * @private
 		 */
 		MenuItem.prototype._getVisualParent = function() {
@@ -356,11 +413,28 @@ sap.ui.define(['./library', "sap/ui/core/Element", 'sap/ui/core/Item', 'sap/ui/b
 		};
 
 		/**
-		 * Gets visual control of the control.
+		 * Gets visual control of the control (unified MenuItem).
 		 * @private
 		 */
 		MenuItem.prototype._getVisualControl = function() {
 			return this._sVisualControl;
+		};
+
+		MenuItem.prototype._getItems = function() {
+			var aItems = [];
+
+			const findItems = (aItemItems) => {
+				aItemItems.forEach((oItem) => {
+					if (!oItem.getItemSelectionMode) {
+						aItems.push(oItem);
+					} else {
+						findItems(oItem.getItems());
+					}
+				});
+			};
+
+			findItems(this.getItems());
+			return aItems;
 		};
 
 		return MenuItem;

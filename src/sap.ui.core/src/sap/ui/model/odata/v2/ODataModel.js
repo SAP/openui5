@@ -377,6 +377,9 @@ sap.ui.define([
 			this.oMetadata = null;
 			this.oAnnotations = null;
 			this.aUrlParams = [];
+			this.fnRetryAfter = null;
+			this.oRetryAfterError = null;
+			this.pRetryAfter = null;
 
 			// for sequentialized requests, keep a promise of the last request
 			this.pSequentialRequestCompleted = Promise.resolve();
@@ -3357,11 +3360,91 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks for a 503 HTTP "Retry-After" error response. Invokes the "Retry-After" handler if registered
+	 * and remembers the <code>pRetryAfter</code> returned by the handler. Repeats the failed request once
+	 * the promise resolves, or calls the given error handler once the promise rejects.
+	 *
+	 * @param {object} oRequest The request object
+	 * @param {object} oErrorResponse The error response from the back end
+	 * @param {function} fnSuccess The success callback function
+	 * @param {function} fnError The error callback function
+	 * @returns {boolean} Whether it is a 503 "Retry-After" error response and the error is processed
+	 *   by the "Retry-After" handler
+	 * @private
+	 */
+	ODataModel.prototype.checkAndProcessRetryAfterError = function(oRequest, oErrorResponse, fnSuccess, fnError) {
+		if (oErrorResponse.response?.statusCode === 503
+			&& this._getHeader("retry-after", oErrorResponse.response.headers)
+			&& this.fnRetryAfter
+			&& !this.bSequentializeRequests) {
+			if (!this.pRetryAfter) {
+				this.oRetryAfterError = this.createRetryAfterError(oErrorResponse);
+				this.pRetryAfter = this.fnRetryAfter(this.oRetryAfterError);
+			}
+			this.pRetryAfter.then(() => {
+				this.pRetryAfter = this.oRetryAfterError = null;
+				this._submitRequest(oRequest, fnSuccess, fnError);
+			}, (oReason) => {
+				this.pRetryAfter = null; // this.oRetryAfterError must not be reset!
+				this.onRetryAfterRejected(fnError, oErrorResponse, oReason);
+			});
+			return true;
+		}
+		return false;
+	};
+
+	/**
+	 * Creates an {@link module:sap/ui/model/odata/v2/RetryAfterError} for a 503 "Retry-After" error response.
+	 *
+	 * @param {object} oErrorResponse The 503 "Retry-After" error response from the back end
+	 * @returns {module:sap/ui/model/odata/v2/RetryAfterError} The created "Retry-After" error object
+	 * @private
+	 */
+	ODataModel.prototype.createRetryAfterError = function (oErrorResponse) {
+		const oError = new Error(oErrorResponse.message);
+		const sRetryAfter = this._getHeader("retry-after", oErrorResponse.response.headers);
+		const iRetryAfter = parseInt(sRetryAfter);
+		oError.retryAfter
+			= new Date(Number.isNaN(iRetryAfter) ? sRetryAfter : Date.now() + iRetryAfter * 1000);
+		return oError;
+	};
+
+	/**
+	 * Reject handler for <code>this.pRetryAfter</code>.
+	 *
+	 * If the given <code>oReason</code> and <code>this.oRetryAfterError</code> originally passed to the "Retry-after"
+	 * handler are the same, then the <code>fnError</code> callback is called with <code>oErrorResponse</code> and
+	 * <code>this.oRetryAfterError</code> is logged and reported to the message model. Otherwise the given
+	 * <code>oReason</code> is only logged.
+	 * Note:
+	 * An undefined <code>oErrorResponse</code> results from those requests that are NOT sent out at all because
+	 * they were just registered for an already existing <code>this.pRetryAfter</code> in order to be send out
+	 * later on once the promise will be resolved. In case the promise is rejected, the inline error response here
+	 * passed to <code>fnError</code> ensures that nothing is reported/logged but further error processing happens
+	 * (e.g. call error callback).
+	 *
+	 * @param {function} fnError The error callback function
+	 * @param {object} [oErrorResponse] The 503 "Retry-After" error response from the back end
+	 * @param {Error} [oReason] The <code>Error</code> reason the promise was rejected with
+	 * @private
+	 */
+	ODataModel.prototype.onRetryAfterRejected = function(fnError, oErrorResponse, oReason) {
+		const sReason = oReason?.message
+			? "Retry-After handler rejected with: " + oReason.message
+			: "Retry-After handler rejected w/o reason";
+		if (oErrorResponse && this.oRetryAfterError !== oReason) {
+			oErrorResponse.$ownReason = true;
+			Log.error(sReason, oReason.stack, sClassName);
+		}
+		fnError(oErrorResponse || {$ownReason : true, message : sReason});
+	};
+
+	/**
 	 * Submit changes from the request queue (queue can currently have only one request).
 	 *
 	 * @param {object} oRequest The request object
-	 * @param {function} [fnSuccess] Success callback function
-	 * @param {function} [fnError] Error callback function
+	 * @param {function} fnSuccess Success callback function
+	 * @param {function} fnError Error callback function
 	 * @returns {object} request handle
 	 * @private
 	 */
@@ -3396,6 +3479,9 @@ sap.ui.define([
 					submitWithToken();
 					return;
 				}
+			}
+			if (that.checkAndProcessRetryAfterError(oRequest, oError, fnSuccess, fnError)) {
+				return;
 			}
 
 			if (fnError) {
@@ -3473,17 +3559,25 @@ sap.ui.define([
 			}
 		}
 
-		//handler only needed for $batch; datajs gets the handler from the accept header
-		oHandler = that._getODataHandler(oRequest.requestUri);
-
-		// If requests are serialized, chain it to the current request, otherwise just submit
-		if (this.bSequentializeRequests) {
-			this.pSequentialRequestCompleted.then(function() {
-				submitWithToken();
+		if (this.pRetryAfter) {
+			this.pRetryAfter.then(() => {
+				this._submitRequest(oRequest, fnSuccess, fnError);
+			}, (oReason) => {
+				this.onRetryAfterRejected(fnError, undefined, oReason);
 			});
-			this.pSequentialRequestCompleted = pRequestCompleted;
 		} else {
-			submitWithToken();
+			//handler only needed for $batch; datajs gets the handler from the accept header
+			oHandler = that._getODataHandler(oRequest.requestUri);
+
+			// If requests are serialized, chain it to the current request, otherwise just submit
+			if (this.bSequentializeRequests) {
+				this.pSequentialRequestCompleted.then(function() {
+					submitWithToken();
+				});
+				this.pSequentialRequestCompleted = pRequestCompleted;
+			} else {
+				submitWithToken();
+			}
 		}
 
 		return {
@@ -3721,8 +3815,8 @@ sap.ui.define([
 			if (bAborted) {
 				that._processAborted(oBatchRequest, oError, true);
 			} else {
-				// ensure that the error is reported for the complete $batch
-				oError.$reported = false;
+				// ensure that the error is reported for the complete $batch, except for those rejected with own reason
+				oError.$reported = oError.$ownReason || false;
 				that._processError(oBatchRequest, oError, fnError, true, aRequests);
 			}
 		}
@@ -7491,6 +7585,42 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.setRefreshAfterChange = function (bRefreshAfterChange) {
 		this.bRefreshAfterChange = bRefreshAfterChange;
+	};
+
+	/**
+	 * The error object passed to the retry after callback.
+	 *
+	 * @typedef {Error} module:sap/ui/model/odata/v2/RetryAfterError
+	 *
+	 * @property {string} message Error message returned by the 503 HTTP status response
+	 * @property {Date} retryAfter The earliest point in time the request may be repeated
+	 *
+	 * @private
+	 * @ui5-restricted sap.suite.ui.generic.template
+	 * @since 1.127.0
+	 */
+
+	/**
+	 * Sets a "Retry-After" handler, which is called when an OData request fails with HTTP status
+	 * 503 (Service Unavailable) and the response has a "Retry-After" header.
+	 *
+	 * The handler is called with an <code>Error</code> having a property <code>retryAfter</code> of
+	 * type <code>Date</code>, which is the earliest point in time when the request should be
+	 * repeated. The handler has to return a promise. With this promise, you can control the
+	 * repetition of all pending requests including the failed HTTP request. If the promise is
+	 * resolved, the requests are repeated; if it is rejected, the requests are not repeated. If it
+	 * is rejected with the same <code>Error</code> reason as previously passed to the handler, then
+	 * this reason is reported to the message model.
+	 *
+	 * @param {function(module:sap/ui/model/odata/v2/RetryAfterError):Promise<undefined>} fnRetryAfter
+	 *   A "Retry-After" handler
+	 *
+	 * @private
+	 * @ui5-restricted sap.suite.ui.generic.template
+	 * @since 1.127.0
+	 */
+	ODataModel.prototype.setRetryAfterHandler = function (fnRetryAfter) {
+		this.fnRetryAfter = fnRetryAfter;
 	};
 
 	/**

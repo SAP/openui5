@@ -89,6 +89,8 @@ sap.ui.define([
 	 *     the Table control to handle huge amounts of data. Nevertheless, restrictions apply regarding the number of displayed
 	 *     columns. Keep the number as low as possible to improve performance. Due to the nature of tables, the used
 	 *     control for column templates also has a big influence on the performance.
+	 *     Because of the described reuse of the controls during scrolling, all data-related changes must be based on bindings. Static changes, such as
+	 *     calling mutator functions or defining a one-time binding, must be avoided.
 	 * </p>
 	 * <p>
 	 *     The Table control relies completely on data binding, and its supported feature set is tightly coupled to

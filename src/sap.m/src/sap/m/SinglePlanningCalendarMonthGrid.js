@@ -578,9 +578,8 @@ sap.ui.define([
 				}
 
 				var oControl = this._findSrcControl(oEvent);
-				if (oControl && oControl.isA("sap.ui.unified.CalendarAppointment")) {
-					var sBundleKey = oControl.getSelected() ? "APPOINTMENT_SELECTED" : "APPOINTMENT_UNSELECTED";
-					this._oInvisibleMessage.announce(this._oUnifiedRB.getText(sBundleKey), InvisibleMessageMode.Polite);
+				if (oControl && oControl.isA("sap.ui.unified.CalendarAppointment") && !oControl.getSelected()) {
+					this._oInvisibleMessage.announce(this._oUnifiedRB.getText("APPOINTMENT_UNSELECTED"), InvisibleMessageMode.Polite);
 				}
 
 				// Prevent scrolling

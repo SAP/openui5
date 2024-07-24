@@ -494,6 +494,10 @@ sap.ui.define([
 				oQuery.tab = this._oPreviousQueryContext.tab;
 			}
 
+			if (oQuery.icon) {
+				this.expandSidePanel();
+			}
+
 			// check tab value against an allowlist
 			var aValidKeys = ["details", "grid", "favorites"];
 			if (aValidKeys.indexOf(oQuery.tab) < 0) {

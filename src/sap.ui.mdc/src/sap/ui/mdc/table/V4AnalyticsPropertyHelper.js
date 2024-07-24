@@ -75,7 +75,7 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	PropertyHelper.prototype.prepareProperty = function(oProperty) {
+	PropertyHelper.prototype.prepareProperty = function(oProperty, mProperties) {
 		TablePropertyHelper.prototype.prepareProperty.apply(this, arguments);
 
 		Object.defineProperty(oProperty, "getAggregatableProperties", {

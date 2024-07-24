@@ -298,6 +298,15 @@ sap.ui.define([
 			return sPlaceholder;
 		};
 
+		/**
+		 * Returns the message bundle key of the invisible text for the accessible name of the popover.
+		 * @private
+		 * @returns {string} The message bundle key
+		 */
+		DateRangeSelection.prototype._getAccessibleNameLabel = function() {
+			return "DATERANGESELECTION_POPOVER_ACCESSIBLE_NAME";
+		};
+
 		DateRangeSelection.prototype._getDateFormatPlaceholderText = function (oFormatOptions) {
 			return  DateFormat.getDateInstance(oFormatOptions).getPlaceholderText();
 		};

@@ -253,7 +253,7 @@ sap.ui.define([
 
 		const aMenuItems = [];
 		if (vSettingsActions) {
-			const iRank = 110;
+			const iRank = this.getRank("CTX_SETTINGS");
 
 			if (vSettingsActions.handler) {
 				vSettingsActions = {

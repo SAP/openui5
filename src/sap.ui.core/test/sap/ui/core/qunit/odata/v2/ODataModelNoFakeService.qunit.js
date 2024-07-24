@@ -147,6 +147,9 @@ sap.ui.define([
 			assert.deepEqual(oModel.aSideEffectCleanUpFunctions, []);
 			assert.ok(oModel.oTransitionMessagesOnlyGroups instanceof Set);
 			assert.strictEqual(oModel.oTransitionMessagesOnlyGroups.size, 0);
+			assert.strictEqual(oModel.fnRetryAfter, null);
+			assert.strictEqual(oModel.oRetryAfterError, null);
+			assert.strictEqual(oModel.pRetryAfter, null);
 		});
 	});
 
@@ -4342,121 +4345,123 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_submitBatchRequest: with error responses", function (assert) {
-		var oBatchRequest = {},
-			oBatchRequestHandle = {abort : function () {/*not relevant for this test*/}},
-			oBatchResponse = {headers : "~headers", statusCode : 200},
-			oChangesetError = {message : "complete changeset failed"},
-			oData = {__batchResponses : [
-				oChangesetError
-				// don't care about successful requests in the changeset in this test
-			]},
-			oError = {message : "an error message"},
-			fnHandleError,
-			oHandlers = {
-				fnError : function () {},
-				fnSuccess : function () {}
-			},
-			fnHandleSuccess,
-			oModel = {
-				_getHeader : function () {},
-				_invalidatePathCache : function () {},
-				_processAfterUpdate : function () {},
-				_processError : function () {},
-				_processSuccess : function () {},
-				_setSessionContextIdHeader : function () {},
-				_submitRequest : function () {},
-				checkUpdate : function () {}
-			},
-			oModelMock = this.mock(oModel),
-			oPart0_0 = {fnError : "~fnErrorPart0_0", request : {}},
-			oPart1_0 = {fnError : "~fnErrorPart1_0", request : {}},
-			oPart1_1 = {fnError : "~fnErrorPart1_1", request : {}},
-			oPart2_0 = {fnError : "~fnErrorPart2_0", request : {}},
-			oRequest0 = {parts : [oPart0_0]},
-			oRequest1 = {parts : [oPart1_0, oPart1_1]},
-			oRequest2 = {parts : [oPart2_0]},
-			aRequests = [
-				// changeset
-				[oRequest1, oRequest2],
-				// single request
-				oRequest0
-			],
-			oEventInfo = {
-				batch : true,
-				requests : aRequests
-			};
+	[false, true].forEach((bOwnReason) => {
+		QUnit.test("_submitBatchRequest: with error responses: " + (bOwnReason ? "$ownReason" : ""), function (assert) {
+			var oBatchRequest = {},
+				oBatchRequestHandle = {abort : function () {/*not relevant for this test*/}},
+				oBatchResponse = {headers : "~headers", statusCode : 200},
+				oChangesetError = {message : "complete changeset failed"},
+				oData = {__batchResponses : [
+					oChangesetError
+					// don't care about successful requests in the changeset in this test
+				]},
+				oError = {message : "an error message", $ownReason : bOwnReason},
+				fnHandleError,
+				oHandlers = {
+					fnError : function () {},
+					fnSuccess : function () {}
+				},
+				fnHandleSuccess,
+				oModel = {
+					_getHeader : function () {},
+					_invalidatePathCache : function () {},
+					_processAfterUpdate : function () {},
+					_processError : function () {},
+					_processSuccess : function () {},
+					_setSessionContextIdHeader : function () {},
+					_submitRequest : function () {},
+					checkUpdate : function () {}
+				},
+				oModelMock = this.mock(oModel),
+				oPart0_0 = {fnError : "~fnErrorPart0_0", request : {}},
+				oPart1_0 = {fnError : "~fnErrorPart1_0", request : {}},
+				oPart1_1 = {fnError : "~fnErrorPart1_1", request : {}},
+				oPart2_0 = {fnError : "~fnErrorPart2_0", request : {}},
+				oRequest0 = {parts : [oPart0_0]},
+				oRequest1 = {parts : [oPart1_0, oPart1_1]},
+				oRequest2 = {parts : [oPart2_0]},
+				aRequests = [
+					// changeset
+					[oRequest1, oRequest2],
+					// single request
+					oRequest0
+				],
+				oEventInfo = {
+					batch : true,
+					requests : aRequests
+				};
 
-		oModelMock.expects("_submitRequest")
-			.withExactArgs(sinon.match.same(oBatchRequest), sinon.match.func, sinon.match.func)
-			.callsFake(function (oBatchRequest0, fnHandleSuccess0, fnHandleError0) {
-				fnHandleError = fnHandleError0;
-				fnHandleSuccess = fnHandleSuccess0;
-				return oBatchRequestHandle;
-			});
+			oModelMock.expects("_submitRequest")
+				.withExactArgs(sinon.match.same(oBatchRequest), sinon.match.func, sinon.match.func)
+				.callsFake(function (oBatchRequest0, fnHandleSuccess0, fnHandleError0) {
+					fnHandleError = fnHandleError0;
+					fnHandleSuccess = fnHandleSuccess0;
+					return oBatchRequestHandle;
+				});
 
-		// code under test
-		ODataModel.prototype._submitBatchRequest.call(oModel, oBatchRequest, aRequests,
-			oHandlers.fnSuccess, oHandlers.fnError);
+			// code under test
+			ODataModel.prototype._submitBatchRequest.call(oModel, oBatchRequest, aRequests,
+				oHandlers.fnSuccess, oHandlers.fnError);
 
-		assert.deepEqual(oBatchRequest.eventInfo, oEventInfo);
+			assert.deepEqual(oBatchRequest.eventInfo, oEventInfo);
 
-		// complete $batch fails
+			// complete $batch fails
 
-		oModelMock.expects("_processError") // for oRequest1 - part 0
-			.withExactArgs(sinon.match.same(oPart1_0.request),
-				sinon.match.same(oError).and(sinon.match({$reported : true})),
-				"~fnErrorPart1_0");
-		oModelMock.expects("_processError") // for oRequest1 - part 1
-			.withExactArgs(sinon.match.same(oPart1_1.request),
-				sinon.match.same(oError).and(sinon.match({$reported : true})),
-				"~fnErrorPart1_1");
-		oModelMock.expects("_processError") // for oRequest2
-			.withExactArgs(sinon.match.same(oPart2_0.request),
-				sinon.match.same(oError).and(sinon.match({$reported : true})),
-				"~fnErrorPart2_0");
-		oModelMock.expects("_processError") // for oRequest0
-			.withExactArgs(sinon.match.same(oPart0_0.request),
-				sinon.match.same(oError).and(sinon.match({$reported : true})),
-				"~fnErrorPart0_0");
-		oModelMock.expects("_processAfterUpdate").withExactArgs();
-		oModelMock.expects("_processError")
-			.withExactArgs(sinon.match.same(oBatchRequest),
-				sinon.match.same(oError).and(sinon.match({$reported : false})),
-				sinon.match.same(oHandlers.fnError), true, sinon.match.same(aRequests));
+			oModelMock.expects("_processError") // for oRequest1 - part 0
+				.withExactArgs(sinon.match.same(oPart1_0.request),
+					sinon.match.same(oError).and(sinon.match({$reported : true})),
+					"~fnErrorPart1_0");
+			oModelMock.expects("_processError") // for oRequest1 - part 1
+				.withExactArgs(sinon.match.same(oPart1_1.request),
+					sinon.match.same(oError).and(sinon.match({$reported : true})),
+					"~fnErrorPart1_1");
+			oModelMock.expects("_processError") // for oRequest2
+				.withExactArgs(sinon.match.same(oPart2_0.request),
+					sinon.match.same(oError).and(sinon.match({$reported : true})),
+					"~fnErrorPart2_0");
+			oModelMock.expects("_processError") // for oRequest0
+				.withExactArgs(sinon.match.same(oPart0_0.request),
+					sinon.match.same(oError).and(sinon.match({$reported : true})),
+					"~fnErrorPart0_0");
+			oModelMock.expects("_processAfterUpdate").withExactArgs();
+			oModelMock.expects("_processError")
+				.withExactArgs(sinon.match.same(oBatchRequest),
+					sinon.match.same(oError).and(sinon.match({$reported : bOwnReason})),
+					sinon.match.same(oHandlers.fnError), true, sinon.match.same(aRequests));
 
-		// code under test
-		fnHandleError(oError);
+			// code under test
+			fnHandleError(oError);
 
-		// $batch succeeds but single request in the batch fail
+			// $batch succeeds but single request in the batch fail
 
-		oModelMock.expects("_processError") // for oRequest1 - part 0
-			.withExactArgs(sinon.match.same(oPart1_0.request),
-				sinon.match.same(oChangesetError).and(sinon.match({$reported : false})),
-				"~fnErrorPart1_0")
-			.callsFake(function (oRequest, oResponse, fnError0) {
-				oResponse.$reported = true;
-			});
-		oModelMock.expects("_processError") // for oRequest1 - part 1
-			.withExactArgs(sinon.match.same(oPart1_1.request),
-				sinon.match.same(oChangesetError).and(sinon.match({$reported : true})),
-				"~fnErrorPart1_1");
-		oModelMock.expects("_processError") // for oRequest2
-			.withExactArgs(sinon.match.same(oPart2_0.request),
-				sinon.match.same(oChangesetError).and(sinon.match({$reported : false})),
-				"~fnErrorPart2_0");
-		oModelMock.expects("_invalidatePathCache").withExactArgs();
-		oModelMock.expects("checkUpdate").withExactArgs(false, false, {/*mGetEntities*/});
-		oModelMock.expects("_processSuccess")
-			.withExactArgs(sinon.match.same(oBatchRequest), sinon.match.same(oBatchResponse),
-				sinon.match.same(oHandlers.fnSuccess), {/*mGetEntities*/}, {/*mChangeEntities*/},
-				{/*mEntityTypes*/}, true, sinon.match.same(aRequests));
-		oModelMock.expects("_getHeader").withExactArgs("sap-contextid", "~headers")
-			.returns("~contextid");
-		oModelMock.expects("_setSessionContextIdHeader").withExactArgs("~contextid");
+			oModelMock.expects("_processError") // for oRequest1 - part 0
+				.withExactArgs(sinon.match.same(oPart1_0.request),
+					sinon.match.same(oChangesetError).and(sinon.match({$reported : false})),
+					"~fnErrorPart1_0")
+				.callsFake(function (oRequest, oResponse, fnError0) {
+					oResponse.$reported = true;
+				});
+			oModelMock.expects("_processError") // for oRequest1 - part 1
+				.withExactArgs(sinon.match.same(oPart1_1.request),
+					sinon.match.same(oChangesetError).and(sinon.match({$reported : true})),
+					"~fnErrorPart1_1");
+			oModelMock.expects("_processError") // for oRequest2
+				.withExactArgs(sinon.match.same(oPart2_0.request),
+					sinon.match.same(oChangesetError).and(sinon.match({$reported : false})),
+					"~fnErrorPart2_0");
+			oModelMock.expects("_invalidatePathCache").withExactArgs();
+			oModelMock.expects("checkUpdate").withExactArgs(false, false, {/*mGetEntities*/});
+			oModelMock.expects("_processSuccess")
+				.withExactArgs(sinon.match.same(oBatchRequest), sinon.match.same(oBatchResponse),
+					sinon.match.same(oHandlers.fnSuccess), {/*mGetEntities*/}, {/*mChangeEntities*/},
+					{/*mEntityTypes*/}, true, sinon.match.same(aRequests));
+			oModelMock.expects("_getHeader").withExactArgs("sap-contextid", "~headers")
+				.returns("~contextid");
+			oModelMock.expects("_setSessionContextIdHeader").withExactArgs("~contextid");
 
-		// code under test
-		fnHandleSuccess(oData, oBatchResponse);
+			// code under test
+			fnHandleSuccess(oData, oBatchResponse);
+		});
 	});
 
 	//*********************************************************************************************
@@ -9007,6 +9012,379 @@ sap.ui.define([
 			assert.deepEqual(
 				ODataModel.prototype.getForeignKeysFromReferentialConstraints.call(oModel, "~sNormalizedPath"),
 				oFixture.oResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setRetryAfterHandler", function (assert) {
+		const oModel = {};
+
+		// code under test (set)
+		ODataModel.prototype.setRetryAfterHandler.call(oModel, "~setRetryAfterHandler0");
+		assert.strictEqual(oModel.fnRetryAfter, "~setRetryAfterHandler0");
+
+		// code under test (overwrite)
+		ODataModel.prototype.setRetryAfterHandler.call(oModel, "~setRetryAfterHandler1");
+		assert.strictEqual(oModel.fnRetryAfter, "~setRetryAfterHandler1");
+
+		// code under test (reset)
+		ODataModel.prototype.setRetryAfterHandler.call(oModel, null);
+		assert.strictEqual(oModel.fnRetryAfter, null);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createRetryAfterError", function (assert) {
+		const oErrorResponse = {
+			message : "foo",
+			response : {
+				headers : "~headers"
+			}
+		};
+		const oModel = {_getHeader() {}};
+		const oModelMock = this.mock(oModel);
+		oModelMock.expects("_getHeader").withExactArgs("retry-after", "~headers").returns("5");
+		this.mock(Date).expects("now").withExactArgs().returns(0);
+
+		// code under test (seconds as number)
+		let oError = ODataModel.prototype.createRetryAfterError.call(oModel, oErrorResponse);
+
+		assert.ok(oError instanceof Error);
+		assert.strictEqual(oError.message, "foo");
+		assert.ok(oError.retryAfter instanceof Date);
+		assert.strictEqual(oError.retryAfter.getTime(), 5000);
+
+		oModelMock.expects("_getHeader")
+			.withExactArgs("retry-after", "~headers")
+			.returns("Sun, 06 Nov 1994 08:49:37 GMT");
+
+		// code under test (IMF-fixdate see https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1)
+		oError = ODataModel.prototype.createRetryAfterError.call(oModel, oErrorResponse);
+
+		assert.ok(oError.retryAfter instanceof Date);
+		assert.strictEqual(oError.retryAfter.getTime(), new Date("Sun, 06 Nov 1994 08:49:37 GMT").getTime());
+	});
+
+	//*********************************************************************************************
+	QUnit.test("onRetryAfterRejected", function (assert) {
+		const oHelper = {processError() {}};
+		const oHelperMock = this.mock(oHelper);
+		oHelperMock.expects("processError").withExactArgs({
+			$ownReason : true,
+			message : "Retry-After handler rejected w/o reason"
+		});
+		const oModel = {};
+
+		// code under test (no error response, no reason)
+		ODataModel.prototype.onRetryAfterRejected.call(oModel, oHelper.processError, undefined, undefined);
+
+		oHelperMock.expects("processError").withExactArgs(sinon.match(
+			{$ownReason : true, message : "Retry-After handler rejected w/o reason"}
+		));
+
+		// code under test (no error response, empty reason)
+		ODataModel.prototype.onRetryAfterRejected.call(oModel, oHelper.processError, undefined, new Error(""));
+
+		oHelperMock.expects("processError").withExactArgs(sinon.match(
+			{$ownReason : true, message : "Retry-After handler rejected with: own reason"}
+		));
+
+		// code under test (no error response, own reason)
+		ODataModel.prototype.onRetryAfterRejected.call(oModel,
+			oHelper.processError, undefined, new Error("own reason"));
+
+		let oErrorResponse = {};
+		oModel.oRetryAfterError = {message: "Service Unavailable"};
+		const oOwnError = new Error("own reason");
+		this.oLogMock.expects("error")
+			.withExactArgs("Retry-After handler rejected with: own reason", oOwnError.stack,
+				"sap.ui.model.odata.v2.ODataModel");
+		oHelperMock.expects("processError")
+			.withExactArgs(sinon.match.same(oErrorResponse).and(sinon.match.has("$ownReason", true)));
+
+		// code under test (oErrorResponse and own oReason)
+		ODataModel.prototype.onRetryAfterRejected.call(oModel,
+			oHelper.processError, oErrorResponse, oOwnError);
+
+		oErrorResponse = {};
+		oHelperMock.expects("processError")
+			.withExactArgs(sinon.match.same(oErrorResponse).and(sinon.match(
+				(oErrorResponse0) => !oErrorResponse0.hasOwnProperty("$ownReason")
+			)));
+
+		// code under test (oErrorResponse, this.oRetryAfterError and oReason are same)
+		ODataModel.prototype.onRetryAfterRejected.call(oModel,
+			oHelper.processError, oErrorResponse, oModel.oRetryAfterError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkAndProcessRetryAfterError: returns false", function (assert) {
+		const oModel = {_getHeader() {}};
+		const oModelMock = this.mock(oModel);
+		const oErrorResponse = {};
+
+		function test(sRetryAfterValue) {
+			oModelMock.expects("_getHeader")
+				.withExactArgs("retry-after", sinon.match.object)
+				.exactly(sRetryAfterValue === undefined ? 0 : 1)
+				.returns(sRetryAfterValue);
+
+			// code under test
+			assert.strictEqual(ODataModel.prototype.checkAndProcessRetryAfterError.call(oModel,
+				"~oRequest", oErrorResponse, "~fnSuccess", "~fnError"), false);
+		}
+
+		// no response in oErrorResponse
+		test();
+
+		// no statusCode in response
+		oErrorResponse.response = {};
+		test();
+
+		// statusCode !== 503
+		oErrorResponse.response.statusCode = 502;
+		test();
+
+		// no retry-after value
+		oErrorResponse.response.statusCode = 503;
+		oErrorResponse.response.headers = {};
+		test(null);
+
+		// retry-after header value, but no handler registered
+		test("~retryAfterHeaderValue");
+
+		// code under test (model parameter sequentializeRequests set)
+		oModel.fnRetryAfter = "~fnRetryAfter";
+		oModel.bSequentializeRequests = true;
+		test("~retryAfterHeaderValue");
+	});
+
+	//*********************************************************************************************
+	[true, false].forEach((bResolve) => {
+		const sTitle = "checkAndProcessRetryAfterError: returns true, register and handle "
+			+ (bResolve ? "resolve" : "reject");
+		QUnit.test(sTitle, function (assert) {
+			const oModel = {
+				_getHeader() {},
+				_submitRequest() {},
+				createRetryAfterError() {},
+				fnRetryAfter() {},
+				onRetryAfterRejected() {}
+			};
+			const oModelMock = this.mock(oModel);
+			const oRequest0 = {};
+			const oErrorResponse0 = {response: {statusCode: 503, headers: {}}};
+			oModelMock.expects("_getHeader")
+				.withExactArgs("retry-after", sinon.match.same(oErrorResponse0.response.headers))
+				.returns("~retryAfterHeader");
+			oModelMock.expects("createRetryAfterError")
+				.withExactArgs(sinon.match.same(oErrorResponse0))
+				.returns("~oRetryAfterError");
+			let fnResolve;
+			let fnReject;
+			const pRetryAfter = new Promise(function(resolve, reject) {
+				fnResolve = resolve;
+				fnReject = reject;
+			});
+			oModelMock.expects("fnRetryAfter").withExactArgs("~oRetryAfterError").returns(pRetryAfter);
+
+			// code under test (creates and remembers pRetryAfter)
+			assert.strictEqual(ODataModel.prototype.checkAndProcessRetryAfterError.call(oModel,
+				oRequest0, oErrorResponse0, "~fnSuccess0", "~fnError0"), true);
+
+			assert.strictEqual(oModel.pRetryAfter, pRetryAfter);
+			assert.strictEqual(oModel.oRetryAfterError, "~oRetryAfterError");
+
+			const oRequest1 = {};
+			const oErrorResponse1 = {response: {statusCode: 503, headers: {}}};
+			oModelMock.expects("_getHeader")
+				.withExactArgs("retry-after", sinon.match.same(oErrorResponse1.response.headers))
+				.returns("~retryAfterHeader");
+
+			// code under test (reuse existing pRetryAfter)
+			assert.strictEqual(ODataModel.prototype.checkAndProcessRetryAfterError.call(oModel,
+				oRequest1, oErrorResponse1, "~fnSuccess1", "~fnError1"), true);
+
+			assert.strictEqual(oModel.pRetryAfter, pRetryAfter);
+			assert.strictEqual(oModel.oRetryAfterError, "~oRetryAfterError");
+
+			if (bResolve) {
+				oModelMock.expects("_submitRequest")
+					.withExactArgs(sinon.match.same(oRequest0), "~fnSuccess0", "~fnError0")
+					.callsFake(() => {
+						assert.strictEqual(oModel.pRetryAfter, null, "promise reset before repeated");
+						assert.strictEqual(oModel.oRetryAfterError, null);
+					});
+				oModelMock.expects("_submitRequest")
+					.withExactArgs(sinon.match.same(oRequest1),"~fnSuccess1", "~fnError1")
+					.callsFake(() => {
+						assert.strictEqual(oModel.pRetryAfter, null);
+						assert.strictEqual(oModel.oRetryAfterError, null);
+					});
+
+				// code under test (pRetryAfter resolves, both registrations executed)
+				fnResolve();
+			} else {
+				oModelMock.expects("onRetryAfterRejected")
+					.withExactArgs("~fnError0", sinon.match.same(oErrorResponse0), "~oReason")
+					.callsFake(() => {
+						assert.strictEqual(oModel.pRetryAfter, null, "promise reset before repeated");
+						assert.strictEqual(oModel.oRetryAfterError, "~oRetryAfterError");
+					});
+				oModelMock.expects("onRetryAfterRejected")
+					.withExactArgs("~fnError1", sinon.match.same(oErrorResponse1), "~oReason")
+					.callsFake(() => {
+						assert.strictEqual(oModel.pRetryAfter, null);
+						assert.strictEqual(oModel.oRetryAfterError, "~oRetryAfterError");
+					});
+
+				// code under test (pRetryAfter rejects, both registrations rejected)
+				fnReject("~oReason");
+			}
+
+			return oModel.pRetryAfter.then(() => {
+				assert.ok(bResolve);
+				assert.strictEqual(oModel.oRetryAfterError, null);
+			}, () => {
+				assert.notOk(bResolve);
+				assert.strictEqual(oModel.oRetryAfterError, "~oRetryAfterError");
+			}).finally(() => {
+				assert.strictEqual(oModel.pRetryAfter, null);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	[true, false].forEach((bResolve) => {
+		const sTitle = "_submitRequest: retryAfterPromise already set, " + (bResolve ? "resolve" : "reject");
+		QUnit.test(sTitle, function (assert) {
+			let fnResolve;
+			let fnReject;
+			const oModel = {
+				pRetryAfter: new Promise((resolve, reject) => {
+					fnResolve = resolve;
+					fnReject = reject;
+				})
+			};
+			const oRequest = {};
+
+			// code under test (register for repetition)
+			let oResult = ODataModel.prototype._submitRequest.call(oModel, oRequest, "~fnSuccess", "~fnError");
+
+			assert.ok(typeof oResult.abort === "function");
+
+			if (bResolve) {
+				oModel._submitRequest = () => {};
+				this.mock(oModel).expects("_submitRequest").withExactArgs(oRequest, "~fnSuccess", "~fnError");
+
+				// code under test (resolve -> repeat)
+				fnResolve();
+			} else {
+				oModel.onRetryAfterRejected = () => {};
+				this.mock(oModel).expects("onRetryAfterRejected").withExactArgs("~fnError", undefined, "~reason");
+
+				// code under test (reject -> onRetryAfterRejected)
+				fnReject("~reason");
+			}
+
+			assert.ok(typeof oResult.abort === "function");
+
+			return oModel.pRetryAfter.then(() => {
+				assert.ok(bResolve);
+			}, () => {
+				assert.notOk(bResolve);
+			}).finally(() => {
+				// simulate reset of pRetryAfter in #checkAndProcessRetryAfterError
+				oModel.pRetryAfter = null;
+				// preparations and artefacts needed to see that we reach #_request
+				oModel.pReadyForRequest = Promise.resolve();
+				oModel._getODataHandler = () => {};
+				oModel.getServiceMetadata = () => {};
+				oModel._request = () => {};
+				oRequest.requestUri = "~requestUrl";
+				this.mock(oModel).expects("_getODataHandler").withExactArgs("~requestUrl").returns("~handler");
+				this.mock(oModel).expects("getServiceMetadata").withExactArgs().returns("~serviceMetadata");
+				this.mock(oModel).expects("_request")
+					.withExactArgs(oRequest, sinon.match.func, sinon.match.func, "~handler", undefined, "~serviceMetadata");
+
+				// code under test (normal behavior after pRetryAfter reset to null)
+				oResult = ODataModel.prototype._submitRequest.call(oModel, oRequest, "~fnSuccess", "~fnError");
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_submitRequest: handleError calls checkAndProcessRetryAfterError w/ 503 error: ", function (assert) {
+		const oModel = {
+			_getODataHandler() {},
+			_request() {},
+			getServiceMetadata() {}
+		};
+		const oRequest = {requestUri : "~requestUrl"};
+		// preparations and artefacts needed to see that we reach #_request
+		oModel.pReadyForRequest = Promise.resolve();
+		this.mock(oModel).expects("_getODataHandler")
+			.withExactArgs("~requestUrl")
+			.returns("~handler");
+		this.mock(oModel).expects("getServiceMetadata")
+			.withExactArgs()
+			.returns("~serviceMetadata");
+		const oExpectation = this.mock(oModel).expects("_request")
+			.withExactArgs(oRequest, sinon.match.func, sinon.match.func, "~handler", undefined, "~serviceMetadata");
+		ODataModel.prototype._submitRequest.call(oModel, oRequest, "~fnSuccess", "~fnError");
+
+		return oModel.pReadyForRequest.then(() => {
+			oModel.checkAndProcessRetryAfterError = () => {};
+			this.mock(oModel).expects("checkAndProcessRetryAfterError")
+				.withExactArgs(sinon.match.same(oRequest), "~oErrorResponse", "~fnSuccess", "~fnError")
+				.returns(true);
+
+			// code under test
+			oExpectation.args[0][2]("~oErrorResponse");
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach((bWithErrorCallback) => {
+		const sTitle = `_submitRequest: handleError calls checkAndProcessRetryAfterError w/o 503`
+			+ ` error: ${bWithErrorCallback ? "w/" : "w/o"} errorCallback`;
+		QUnit.test(sTitle, function (assert) {
+			const oModel = {
+				_getODataHandler() {},
+				_request() {},
+				checkAndProcessRetryAfterError() {},
+				getServiceMetadata() {}
+			};
+			let bCalled = false;
+			const oRequest = {requestUri : "~requestUrl"};
+			// preparations and artefacts needed to see that we reach #_request
+			oModel.pReadyForRequest = Promise.resolve();
+			this.mock(oModel).expects("_getODataHandler")
+				.withExactArgs("~requestUrl")
+				.returns("~handler");
+			this.mock(oModel).expects("getServiceMetadata")
+				.withExactArgs()
+				.returns("~serviceMetadata");
+			const oExpectation = this.mock(oModel).expects("_request")
+				.withExactArgs(oRequest, sinon.match.func, sinon.match.func, "~handler", undefined, "~serviceMetadata");
+			const fnErrorCallback = bWithErrorCallback
+				? function (oError) {
+					bCalled = true;
+					assert.strictEqual(oError, "~oErrorResponse");
+				}
+				: undefined;
+			ODataModel.prototype._submitRequest.call(oModel, oRequest, "~fnSuccess", fnErrorCallback);
+
+			return oModel.pReadyForRequest.then(() => {
+				this.mock(oModel).expects("checkAndProcessRetryAfterError")
+					.withExactArgs(sinon.match.same(oRequest), "~oErrorResponse", "~fnSuccess",
+						sinon.match.same(fnErrorCallback))
+					.returns(false);
+
+				// code under test
+				oExpectation.args[0][2]("~oErrorResponse");
+
+				assert.strictEqual(bCalled, bWithErrorCallback);
+			});
 		});
 	});
 });

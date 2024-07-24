@@ -27,7 +27,7 @@
 								<mdc:FilterBar id="idFilterBarCtrl"
 									delegate='\{"name": "sap/ui/mdc/qunit/filterbar/sample/FilterBarTest.delegate", "payload": \{\}\}'
 									filtersChanged="onFiltersChanged"
-								    propertyInfo = '[\{"name": "prop1", "dataType": "sap.ui.model.type.Boolean", "label": "\{i18n>prop1_label\}"\}]'
+								    propertyInfo = '[\{"name": "prop1", "dataType": "sap.ui.model.type.Boolean", "label": "Boolean", "maxConditions": 1\}]'
 									p13nMode="Item,Value">
 									<mdc:filterItems>
 										<mdc:FilterField

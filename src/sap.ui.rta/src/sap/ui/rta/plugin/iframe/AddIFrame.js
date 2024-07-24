@@ -175,7 +175,7 @@ sap.ui.define([
 		});
 		await IconPool.fontLoaded("tnt");
 
-		var iBaseRank = 140;
+		var iBaseRank = this.getRank("CTX_CREATE_SIBLING_IFRAME");
 		var aMenuItems = [];
 
 		var bIsSibling = true;
@@ -189,18 +189,17 @@ sap.ui.define([
 				}, getCommonProperties.call(this));
 
 				aMenuItems.push(this.enhanceItemWithResponsibleElement(oSiblingMenuItem, aElementOverlays));
-				iBaseRank += 10;
 			}
 		}
 
 		bIsSibling = false;
 		if (this.isAvailable(aElementOverlays, bIsSibling)) {
 			aMenuItems = aMenuItems.concat(this.getCreateActions(bIsSibling, aElementOverlays[0])
-			.map(function(oAction, iIndex) {
+			.map(function(oAction) {
 				var oParentMenuItem = Object.assign({
 					action: oAction,
 					id: `CTX_CREATE_CHILD_IFRAME_${oAction.aggregation.toUpperCase()}`,
-					rank: iBaseRank + 10 * iIndex
+					rank: ++iBaseRank
 				}, getCommonProperties.call(this, oAction.aggregation));
 
 				return this.enhanceItemWithResponsibleElement(oParentMenuItem, aElementOverlays);

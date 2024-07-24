@@ -48,8 +48,8 @@
 					<mdc:FilterBar id="booksFilterBar" variantBackreference="IDVariantManagementOfTable"
 						filtersChanged="onFiltersChanged" search="onSearch"
 						filterConditions='\{"stock" : [\{"operator":"BT","values":[100,50000]}]\}'
-						propertyInfo='[\{"name": "stock", "dataType":"Edm.Int32", "maxConditions":-1, "required":false, "label":"foo"\},
-						               \{"name": "author_ID", "dataType":"Edm.Int32", "required":false, "label":"Author ID", "formatOptions":\{"groupingEnabled":false\} \}]'
+						propertyInfo='[\{"name": "stock", "dataType":"Edm.Int32", "maxConditions": 1, "required": false, "label": "Stock range", "group": "CatalogService.Books", "groupLabel": "Books"\},
+						               \{"name": "author_ID", "dataType":"Edm.Int32", "required":false, "label":"Author ID", "formatOptions":\{"groupingEnabled":false\}, "group": "CatalogService.Books", "groupLabel": "Books"\}]'
 						liveMode="false"
 						delegate='\{"name": "sap/ui/v4demo/delegate/Books.FB.delegate", "payload": \{"collectionName": "Books"\}\}'
 						p13nMode="Item,Value">
@@ -268,7 +268,7 @@
 									<mdcv:Dialog id="FH1-Dialog" title="Author ID">
 										<mdcvc:MDCTable id="FH1-Dialog-MDCTable_default" title="Default" keyPath="ID"
 											descriptionPath="name" group="colsearch" forceBind="true" />
-										<mdcvc:MDCTable id="FH1-Dialog-MDCTable_withCountry" title="with Country"
+										<mdcvc:MDCTable id="FH1-Dialog-MDCTable_withCountry" title="Search for Authors using Country. (some long text for testing)"
 											keyPath="ID" descriptionPath="name" group="colsearch" forceBind="true" />
 										<mdcvc:Conditions label="Author ID" valueHelp="FH1_DEFCOND" />
 									</mdcv:Dialog>
@@ -893,7 +893,7 @@
                     		"criticality": null,
                     		"textProperty": null,
                     		"visible": true,
-							"dataType": "String",
+							"dataType": "Edm.String",
                     		"group": "",
                     		"groupLabel": "",
                     		"caseSensitive": true
@@ -908,10 +908,10 @@
 							"aggregatable": true,
 							"aggregationMethod": "average",
 							"maxConditions": -1,
-							"role": "axis1",
+							"role": "",
 							"datapoint": null,
 							"visible": true,
-							"dataType": "String",
+							"dataType": "Edm.Int32",
 							"group": "",
 							"groupLabel": "",
 							"caseSensitive": true

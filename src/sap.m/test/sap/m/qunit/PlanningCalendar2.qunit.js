@@ -1560,21 +1560,21 @@ sap.ui.define([
 		$appointmentRef = jQuery("#PC-R1A1");
 
 		// Assert
-		assert.ok($appointmentRef.attr("aria-labelledby").indexOf(sUnselectedTextId) > -1, "The appointment should have a hidden 'Unselected' text");
-		assert.strictEqual($appointmentRef.attr("aria-labelledby").indexOf(sSelectedTextId), -1, "The appointment shouldn't have a hidden 'Selected' text");
+		assert.ok($appointmentRef.attr("aria-describedby").indexOf(sUnselectedTextId) > -1, "The appointment should have a hidden 'Unselected' text");
+		assert.strictEqual($appointmentRef.attr("aria-describedby").indexOf(sSelectedTextId), -1, "The appointment shouldn't have a hidden 'Selected' text");
 
 		// Act - click on an appointment to select it
 		qutils.triggerEvent("tap", "PC-R1A1");
 
 		// Assert
-		assert.ok($appointmentRef.attr("aria-labelledby").indexOf(sSelectedTextId) > -1, "The appointment should have a hidden 'Selected' text");
-		assert.strictEqual($appointmentRef.attr("aria-labelledby").indexOf(sUnselectedTextId), -1, "The appointment shouldn't have a hidden 'Unselected' text");
+		assert.ok($appointmentRef.attr("aria-describedby").indexOf(sSelectedTextId) > -1, "The appointment should have a hidden 'Selected' text");
+		assert.strictEqual($appointmentRef.attr("aria-describedby").indexOf(sUnselectedTextId), -1, "The appointment shouldn't have a hidden 'Unselected' text");
 
 		// Act - click on an appointment again to deselect it
 		qutils.triggerEvent("tap", "PC-R1A1");
 
-		assert.strictEqual($appointmentRef.attr("aria-labelledby").indexOf(sSelectedTextId), -1, "The 'Selected' text should be removed from the references");
-		assert.ok($appointmentRef.attr("aria-labelledby").indexOf(sUnselectedTextId) > -1, "The appointment should have a hidden 'Unselected' text");
+		assert.strictEqual($appointmentRef.attr("aria-describedby").indexOf(sSelectedTextId), -1, "The 'Selected' text should be removed from the references");
+		assert.ok($appointmentRef.attr("aria-describedby").indexOf(sUnselectedTextId) > -1, "The appointment should have a hidden 'Unselected' text");
 
 		oSut.destroy();
 	});

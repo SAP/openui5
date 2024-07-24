@@ -485,7 +485,7 @@ sap.ui.define([
 				}
 
 				const sParentId = oBody["EMPLOYEE_2_MANAGER@odata.bind"]
-					?.slice(11, -2);
+					?.slice(11, -2) ?? null;
 				if (sParentId) {
 					for (let sId = sParentId; sId; sId = mNodeById[sId].MANAGER_ID) {
 						if (sId === oChild.ID) { // cycle detected
@@ -536,7 +536,7 @@ sap.ui.define([
 				oChild.MANAGER_ID = sParentId;
 				const iParentDistanceFromRoot = sParentId
 					? mNodeById[sParentId].DistanceFromRoot
-					: 0;
+					: -1;
 				adjustDistanceFromRoot(oChild,
 					iParentDistanceFromRoot + 1 - oChild.DistanceFromRoot);
 				break;
@@ -650,7 +650,7 @@ sap.ui.define([
 			}
 		}
 
-		const oCopy = SandboxModel.update([oNewChild])[0];
+		const oCopy = {...SandboxModel.update([oNewChild])[0]};
 		// RAP would not respond w/ DescendantCount,DistanceFromRoot,DrillState!
 		delete oCopy.DescendantCount;
 		delete oCopy.DistanceFromRoot;
@@ -783,7 +783,7 @@ sap.ui.define([
 	 * @param {boolean} [bSkipCopy]
 	 *   Whether "copy on write" may safely be skipped
 	 * @returns {object[]}
-	 *   An updated copy
+	 *   An updated copy or the original(!) in case no update is needed
 	 */
 	SandboxModel.update = function (aNodes, bSkipCopy = false) {
 		return aNodes.map((oNode) => {

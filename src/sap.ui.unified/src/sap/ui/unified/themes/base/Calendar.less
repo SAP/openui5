@@ -369,6 +369,16 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 	min-height: 20.25rem;
 }
 
+.sapUiCalMulti {
+	.sapUiCalContent {
+		min-height: auto;
+	}
+
+	&.sapUiCalSecType .sapUiCalContent {
+		min-height: 20.25rem;
+	}
+}
+
 .sapUiCalInt .sapUiCalContent {
 	min-height: 8.875rem;
 }
@@ -672,7 +682,7 @@ html[dir='rtl'] .sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB4 {
 
 .sapUiCalMulti > .sapUiCalContent > .sapUiCalMonthPicker,
 .sapUiCalMulti > .sapUiCalContent > .sapUiCalYearPicker{
-	top: 1rem;
+	top: 0.25rem;
 	bottom: auto;
 	padding: 1rem;
 	margin-left: -10rem;
@@ -1063,5 +1073,31 @@ html.sap-phone [data-sap-ui-popup] .sapUiCal > .sapUiCalContent > .sapUiCalYearP
 				width: 11rem;
 			}
 		}
+	}
+}
+
+.sapUiCalMonthInt {
+	.sapUiCalMonthPicker,
+	.sapUiCalYearPicker {
+		display: inline-block;
+	}
+	.sapUiCalHeadB1,
+	.sapUiCalHeadB2 {
+		margin: 0 3.125rem;
+	}
+}
+
+.sapUiCalDateInt {
+	.sapUiCalMonthPicker,
+	.sapUiCalYearPicker {
+		display: inline-block;
+	}
+	.sapUiCalHeadB1,
+	.sapUiCalHeadB2 {
+		margin: inherit;
+		width: 5.75rem;
+	}
+	&.sapUiCalIntLarge .sapUiCalHeadB1 {
+		width: 12.5rem;
 	}
 }

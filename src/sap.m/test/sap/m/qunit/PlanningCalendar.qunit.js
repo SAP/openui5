@@ -717,6 +717,36 @@ sap.ui.define([
 		assert.equal(oRowHeader.getTooltip(), "tooltip", "tooltip is set correctly");
 	});
 
+	QUnit.test("PlanningCalendarRow - propagate selected property to table", async function(assert) {
+		const oRow1 = new PlanningCalendarRow({
+				title: "Row 1",
+				selected: true
+			}),
+			oRow2 = new PlanningCalendarRow({
+				title: "Row 2"
+			}),
+			oPC = new PlanningCalendar({
+				rows: [
+					oRow1,
+					oRow2
+				]
+			});
+
+		// act
+		oPC.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		const oPCSelectedRows = oPC.getSelectedRows(),
+			aTableSelectedItems = oPC.getAggregation("table").getSelectedItems(),
+			oTableItem = _getListItem(oRow1);
+
+		// assert
+		assert.equal(oPCSelectedRows.length, 1, "One row is selected in the Planning Calendar");
+		assert.equal(oPCSelectedRows[0], oRow1, "Correct row is selected in the Planning Calendar");
+		assert.equal(aTableSelectedItems.length, 1, "One row is selected in the Table");
+		assert.equal(aTableSelectedItems[0], oTableItem, "The selected row in Planning Calendar is synched with the Table");
+	});
+
 	QUnit.test("Table", function(assert) {
 		var oTable = Element.getElementById("PC1-Table");
 

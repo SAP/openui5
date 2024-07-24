@@ -9,7 +9,8 @@ sap.ui.define(
 		"sap/ui/mdc/filterbar/aligned/FilterItemLayout",
 		"sap/ui/mdc/valuehelp/FilterContainer",
 		"sap/m/Button",
-		"sap/m/p13n/enums/PersistenceMode"
+		"sap/m/p13n/enums/PersistenceMode",
+		"sap/m/OverflowToolbarLayoutData"
 	],
 	(
 		mLibrary,
@@ -18,16 +19,11 @@ sap.ui.define(
 		FilterItemLayout,
 		FilterContainer,
 		Button,
-		PersistenceMode
+		PersistenceMode,
+		OverflowToolbarLayoutData
 	) => {
 		"use strict";
-		/**
-		 * Modules for value help dialog {@link sap.ui.mdc.valuehelp.FilterBar FilterBar}
-		 * @namespace
-		 * @name sap.ui.mdc.valuehelp.FilterBar
-		 * @since 1.84.0
-		 * @public
-		 */
+		const {OverflowToolbarPriority} = mLibrary;
 
 		/**
 		 * Constructor for a new <code>FilterBar</code> for a value help dialog.
@@ -192,13 +188,29 @@ sap.ui.define(
 		 */
 		FilterBar.prototype.setCollectiveSearch = function(oCollectiveSearch) {
 			if (this._oCollectiveSearch) {
+				const oLD = this._oCollectiveSearch.getLayoutData();
+				if (oLD && oLD._bSetByFilterBar) {
+					// remove internal LayoutData
+					this._oCollectiveSearch.setMaxWidth(oLD.getMaxWidth());
+					this._oCollectiveSearch.destroyLayoutData();
+				}
 				if (this._oFilterBarLayout) {
 					this._oFilterBarLayout.removeControl(this._oCollectiveSearch);
 				}
 			}
 			this._oCollectiveSearch = oCollectiveSearch;
-			if (this._oFilterBarLayout && this._oCollectiveSearch) {
-				this._oFilterBarLayout.insertControl(this._oCollectiveSearch, 0);
+			if (this._oCollectiveSearch) {
+				if (!this._oCollectiveSearch.getLayoutData()) {
+					// set LayouData to have better overflow behaviour in toolbar
+					const oLD = new OverflowToolbarLayoutData(this._oCollectiveSearch.getId() + "--LD", {priority: OverflowToolbarPriority.NeverOverflow, shrinkable: true, minWidth: "5rem", maxWidth: this._oCollectiveSearch.getMaxWidth()});
+					oLD._bSetByFilterBar = true;
+					this._oCollectiveSearch.setLayoutData(oLD);
+					this._oCollectiveSearch.setMaxWidth(); // move to layoutData
+				}
+
+				if (this._oFilterBarLayout) {
+					this._oFilterBarLayout.insertControl(this._oCollectiveSearch, 0);
+				}
 			}
 
 			return this;
@@ -238,6 +250,11 @@ sap.ui.define(
 
 		FilterBar.prototype.setBasicSearchField = function(oBasicSearchField) {
 			if (this._oBasicSearchField) {
+				const oLD = this._oBasicSearchField.getLayoutData();
+				if (oLD && oLD._bSetByFilterBar) {
+					// remove internal LayoutData
+					this._oBasicSearchField.destroyLayoutData();
+				}
 				if (this._oFilterBarLayout) {
 					this._oFilterBarLayout.removeControl(this._oBasicSearchField);
 				}
@@ -246,6 +263,13 @@ sap.ui.define(
 			this._oBasicSearchField = oBasicSearchField;
 
 			if (oBasicSearchField) {
+				if (!this._oBasicSearchField.getLayoutData()) {
+					// set LayouData to have better overflow behaviour in toolbar
+					const oLD = new OverflowToolbarLayoutData(this._oBasicSearchField.getId() + "--LD", {shrinkable: true, minWidth: "6rem", maxWidth: this._oBasicSearchField.getWidth()});
+					oLD._bSetByFilterBar = true;
+					this._oBasicSearchField.setLayoutData(oLD);
+				}
+
 				if (this.isPropertyInitial("expandFilterFields")) {
 					this.setExpandFilterFields(false);
 				}

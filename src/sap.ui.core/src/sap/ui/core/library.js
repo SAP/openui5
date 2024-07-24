@@ -64,6 +64,7 @@ sap.ui.define([
 			 "sap.ui.core.IconColor",
 			 "sap.ui.core.ImeMode",
 			 "sap.ui.core.IndicationColor",
+			 "sap.ui.core.ItemSelectionMode",
 			 "sap.ui.core.MessageType",
 			 "sap.ui.core.OpenState",
 			 "sap.ui.core.Orientation",
@@ -2357,6 +2358,37 @@ sap.ui.define([
 	 DataType.registerEnum("sap.ui.core.dnd.DropEffect", thisLib.dnd.DropEffect);
 
 	 thisLib.mvc = thisLib.mvc || {};
+
+	 /**
+	  * Defines the selection mode of the menu items.
+	  *
+	  * @enum {string}
+	  * @public
+	  * @name sap.ui.core.ItemSelectionMode
+	  * @since 1.127.0
+	  */
+	 thisLib.ItemSelectionMode = {
+
+		 /**
+		  * No selection mode.
+		  * @public
+		  */
+		 None : "None",
+
+		 /**
+		  * Single selection mode (only one menu item can be selected).
+		  * @public
+		  */
+		 SingleSelect : "SingleSelect",
+
+		 /**
+		  * Multi selection mode (more than one menu item can be selected).
+		  * @public
+		  */
+		 MultiSelect : "MultiSelect"
+
+	 };
+	 DataType.registerEnum("sap.ui.core.ItemSelectionMode", thisLib.ItemSelectionMode);
 
 	 /**
 	  * Specifies possible message types.

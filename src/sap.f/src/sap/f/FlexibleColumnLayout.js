@@ -1089,6 +1089,7 @@ sap.ui.define([
 		this._oLocalStorage = null;
 		this._deregisterResizeHandler();
 		this._handleEvent(jQuery.Event("Destroy"));
+		this._detachMoveListeners();
 	};
 
 	FlexibleColumnLayout.prototype._removeNavContainersFocusOutDelegate = function () {
@@ -1665,14 +1666,7 @@ sap.ui.define([
 		this.toggleStyleClass("sapFFLActiveResize", true);
 		this._$overlaySeparator.css(oSeparatorPosition.direction, oSeparatorPosition.x);
 		this._oMoveInfo.separator.style.visibility = "hidden";
-
-		if (bTouch) {
-			document.addEventListener("touchend", this._boundColumnSeparatorMoveEnd);
-			document.addEventListener("touchmove", this._boundColumnSeparatorMove);
-		} else {
-			document.addEventListener("mouseup", this._boundColumnSeparatorMoveEnd);
-			document.addEventListener("mousemove", this._boundColumnSeparatorMove);
-		}
+		this._attachMoveListeners(bTouch);
 	};
 
 	FlexibleColumnLayout.prototype._exitInteractiveResizeMode = function () {
@@ -1682,6 +1676,20 @@ sap.ui.define([
 		this._ignoreMouse = false;
 		this._ignoreTouch = false;
 		this._oMoveInfo = null;
+		this._detachMoveListeners();
+	};
+
+	FlexibleColumnLayout.prototype._attachMoveListeners = function (bTouch) {
+		if (bTouch) {
+			document.addEventListener("touchend", this._boundColumnSeparatorMoveEnd);
+			document.addEventListener("touchmove", this._boundColumnSeparatorMove);
+		} else {
+			document.addEventListener("mouseup", this._boundColumnSeparatorMoveEnd);
+			document.addEventListener("mousemove", this._boundColumnSeparatorMove);
+		}
+	};
+
+	FlexibleColumnLayout.prototype._detachMoveListeners = function () {
 		document.removeEventListener("mouseup", this._boundColumnSeparatorMoveEnd);
 		document.removeEventListener("mousemove", this._boundColumnSeparatorMove);
 		document.removeEventListener("touchend", this._boundColumnSeparatorMoveEnd);
@@ -1710,6 +1718,7 @@ sap.ui.define([
 			sSeparator = getSeparatorName(this._oMoveInfo.separator),
 			bForwardResizeDirection = this._oMoveInfo.offsetFromStartPosition > 0,
 			sColumnEnlargedByDragging = aResizedColumns[bForwardResizeDirection ? 0 : 1],
+			sInitiallyHiddenColumn = aResizedColumns.find((sColumn) => this._oMoveInfo.columnWidths[sColumn] === 0),
 			iSeparatorsCount = this._getVisibleColumnSeparatorsCount(),
 			iSeparatorsCountDiff = 0,
 			iOffsetOnSeparatorsCountChange = 0,
@@ -1719,6 +1728,10 @@ sap.ui.define([
 			bLayoutChange,
 			oNewColumnWidths,
 			bResizeWithPinning;
+
+		if (sInitiallyHiddenColumn && sInitiallyHiddenColumn !== sColumnEnlargedByDragging) {
+			return; // atempt to resize in direction that is not allowed
+		}
 
 		this._oMoveInfo.columnWidths[aResizedColumns[0]] += this._oMoveInfo.offsetFromPreviousPosition;
 		this._oMoveInfo.columnWidths[aResizedColumns[1]] -= this._oMoveInfo.offsetFromPreviousPosition;

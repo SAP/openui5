@@ -1265,21 +1265,17 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("After clear is preset the focus should be returned to the search field", function(assert) {
+	QUnit.test("After selection reset the focus should be returned to the initially focusable element", function(assert) {
 		this.oTableSelectDialogClearButton.open();
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oTableSelectDialogClearButton._getClearButton().firePress();
-		assert.equal(document.activeElement.getAttribute("id"), this.oTableSelectDialogClearButton._oDialog.getId(), 'After selection is clear the focus should be returned to the TableSelectDialog"');
 
-	});
-
-	QUnit.test("After clear is preset the focus should be returned to the search field", function(assert) {
-		this.oTableSelectDialogClearButton.open();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
-
-		this.oTableSelectDialogClearButton._getClearButton().firePress();
-		assert.equal(document.activeElement.getAttribute("id"), this.oTableSelectDialogClearButton._oDialog.getId(), 'After selection is clear the focus should be returned to the TableSelectDialog"');
+		assert.strictEqual(
+			document.activeElement.getAttribute("id"),
+			this.oTableSelectDialogClearButton._oTable.getItems()[0].getFocusDomRef().getAttribute("id"),
+			"After selection is reset the focus should be returned to the initially focusable element"
+		);
 
 	});
 

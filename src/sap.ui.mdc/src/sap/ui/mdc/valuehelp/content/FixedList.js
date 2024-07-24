@@ -188,7 +188,9 @@ sap.ui.define([
 				const oListItem = aItems.find((oItem) => oItem.getBindingContext("$help") === oFirstMatchContext);
 				const oOriginalItem = _getOriginalItem.call(this, oListItem);
 				const oCondition = this.createCondition(_getKey.call(this, oOriginalItem), _getText.call(this, oOriginalItem));
-				this.fireTypeaheadSuggested({ condition: oCondition, filterValue: sFilterValue, itemId: oListItem?.getId(), caseSensitive: bCaseSensitive });
+				const aRelevantContexts = this.getListBinding()?.getCurrentContexts();
+				const iItems = aRelevantContexts?.length;
+				this.fireTypeaheadSuggested({ condition: oCondition, filterValue: sFilterValue, itemId: oListItem?.getId(), items: iItems, caseSensitive: bCaseSensitive });
 			}
 		}
 	};
@@ -284,21 +286,13 @@ sap.ui.define([
 			const aListItems = oList.getItems();
 
 			aListItems.forEach((oListItem, iIndex) => {
-				if (iIndex === this._iNavigateIndex) {
-					oListItem.addStyleClass("sapMLIBFocused");
-				} else {
-					oListItem.removeStyleClass("sapMLIBFocused");
-				}
-
 				if (oListItem.isA("sap.m.DisplayListItem")) { // check if it's not a group header
 					const oOriginalItem = _getOriginalItem.call(this, oListItem);
 					if (aConditions.length > 0 && _getKey.call(this, oOriginalItem) === vSelectedKey) {
 						// conditions given -> use them to show selected items
 						oListItem.setSelected(true);
-						oListItem.addStyleClass("sapMLIBFocused"); // show item as focused if open
 					} else if (aConditions.length === 0 && this._iNavigateIndex < 0 && !bFirstFilterItemSelected && this._sHighlightId === oListItem.getId()) {
 						oListItem.setSelected(true);
-						oListItem.addStyleClass("sapMLIBFocused"); // show item as focused if open
 						bFirstFilterItemSelected = true;
 					} else {
 						oListItem.setSelected(false);
@@ -409,11 +403,18 @@ sap.ui.define([
 		ListContent.prototype.handleFilterValueUpdate.apply(this, arguments);
 	};
 
-	FixedList.prototype.removeFocus = function() {
+	FixedList.prototype.removeVisualFocus = function() {
 
 		const oList = _getList.call(this);
-		if (oList) {
-			oList.removeStyleClass("sapMListFocus");
+		oList?.removeStyleClass("sapMListFocus");
+
+	};
+
+	FixedList.prototype.setVisualFocus = function() {
+
+		const oList = _getList.call(this);
+		if (!oList?.hasStyleClass("sapMListFocus")) {
+			oList?.addStyleClass("sapMListFocus");
 		}
 
 	};
@@ -425,8 +426,6 @@ sap.ui.define([
 		if (!oList) {
 			return; // TODO: should not happen? Create List?
 		}
-
-		oList.addStyleClass("sapMListFocus"); // to show focus outline on navigated item
 
 		const aItems = oList.getItems();
 		const iItems = aItems.length;
@@ -493,7 +492,7 @@ sap.ui.define([
 			}
 		};
 
-		if (!bIsOpen) { // if closed, ignore headers
+		if (!bIsOpen || iStep === 0) { // if closed, ignore headers
 			fSkipGroupHeader();
 			if (iSelectedIndex < 0 || iSelectedIndex > iItems - 1) {
 				// find last not groupable item
@@ -507,7 +506,7 @@ sap.ui.define([
 		const oItem = aItems[iSelectedIndex];
 		if (oItem) {
 			const bUseFirstMatch = this.getUseFirstMatch(); // if item for first match is selected, navigate to it needs to fire the event
-			if (oItem !== oSelectedItem || (bUseFirstMatch && !bLeaveFocus)) {
+			if (oItem !== oSelectedItem || (bUseFirstMatch && !bLeaveFocus) || iStep === 0) { // new item or already shown item is navigated again (focus set on dropdown)
 				let oOriginalItem, vKey, vDescription;
 
 				this._iNavigateIndex = iSelectedIndex;
@@ -516,8 +515,8 @@ sap.ui.define([
 
 				if (bIsOpen) {
 					oList.scrollToIndex(iSelectedIndex); // only possible if open
-					// in case of a single value field trigger the focusin on the new selected item to update the screenreader invisible text
-					oItem.$().trigger("focusin");
+					// in case of a single value field fake the focus on the new selected item to update the screenreader invisible text
+					oList.setFakeFocus(oItem);
 				}
 
 				if (oItem.isA("sap.m.GroupHeaderListItem")) {
@@ -528,7 +527,13 @@ sap.ui.define([
 					vKey = _getKey.call(this, oOriginalItem);
 					vDescription = _getText.call(this, oOriginalItem);
 					const oCondition = _setConditions.call(this, vKey, vDescription);
-					this.fireNavigated({ condition: oCondition, itemId: oItem.getId(), leaveFocus: false });
+					const oValueHelpDelegate = this.getValueHelpDelegate();
+					const bCaseSensitive = oValueHelpDelegate.isFilteringCaseSensitive(this.getValueHelpInstance(), this);
+					this.fireNavigated({ condition: oCondition, itemId: oItem.getId(), leaveFocus: false, caseSensitive: bCaseSensitive });
+				}
+				if (bIsOpen) {
+					this.setVisualFocus(); // to show focus outline on navigated item
+					this.fireVisualFocusSet();
 				}
 			} else if (bLeaveFocus) {
 				this.fireNavigated({ condition: undefined, itemId: undefined, leaveFocus: bLeaveFocus });
@@ -537,7 +542,7 @@ sap.ui.define([
 
 	};
 
-	FixedList.prototype.onShow = function() { // TODO: name
+	FixedList.prototype.onShow = function(bInitial) {
 
 		ListContent.prototype.onShow.apply(this, arguments);
 
@@ -554,7 +559,6 @@ sap.ui.define([
 			const iSelectedIndex = oList.indexOfItem(oSelectedItem);
 			oList.scrollToIndex(iSelectedIndex);
 			sItemId = oSelectedItem.getId();
-			oList.addStyleClass("sapMListFocus"); // to show focus outline on selected item
 		}
 
 		return sItemId;
@@ -563,7 +567,7 @@ sap.ui.define([
 
 	FixedList.prototype.onHide = function() {
 
-		this.removeFocus();
+		this.removeVisualFocus();
 
 		this._iNavigateIndex = -1; // initialize after closing
 

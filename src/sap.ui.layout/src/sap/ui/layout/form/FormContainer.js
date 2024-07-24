@@ -111,6 +111,10 @@ sap.ui.define([
 			 *
 			 * <b>Note:</b> This attribute is only rendered if the <code>FormContainer</code> has it's own
 			 * DOM representation in the used <code>FormLayout</code>.
+			 *
+			 * <b>Note:</b> If there is more than one <code>FormContainers</code>, every <code>FormContainer</code> needs to have some title or label
+			 * (at least for screen reader support).
+			 * If no <code>Title</code> is set, a label or title needs to be assigned using the <code>ariaLabelledBy</code> association.
 			 * @since 1.36.0
 			 */
 			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }

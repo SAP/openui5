@@ -63,24 +63,33 @@ sap.ui.define([
 	let oNavigateCondition;
 	let sNavigateItemId;
 	let bNavigateLeaveFocus;
+	let bNavigateCaseSensitive;
 	const _myNavigateHandler = function(oEvent) {
 		iNavigate++;
 		oNavigateCondition = oEvent.getParameter("condition");
 		sNavigateItemId = oEvent.getParameter("itemId");
 		bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
+		bNavigateCaseSensitive = oEvent.getParameter("caseSensitive");
 	};
 
 	let iTypeaheadSuggested = 0;
 	let oTypeaheadCondition;
 	let sTypeaheadFilterValue;
 	let sTypeaheadItemId;
+	let iTypeaheadItems;
 	let bTypeaheadCaseSensitive;
 	const _myTypeaheadHandler = function(oEvent) {
 		iTypeaheadSuggested++;
 		oTypeaheadCondition = oEvent.getParameter("condition");
 		sTypeaheadFilterValue = oEvent.getParameter("filterValue");
 		sTypeaheadItemId = oEvent.getParameter("itemId");
+		iTypeaheadItems = oEvent.getParameter("items");
 		bTypeaheadCaseSensitive = oEvent.getParameter("caseSensitive");
+	};
+
+	let iVisualFocusSet = 0;
+	const _myVisualFocusSetHandler = function(oEvent) {
+		iVisualFocusSet++;
 	};
 
 	let iClosed;
@@ -125,11 +134,14 @@ sap.ui.define([
 		oNavigateCondition = undefined;
 		sNavigateItemId = undefined;
 		bNavigateLeaveFocus = undefined;
+		bNavigateCaseSensitive = undefined;
 		iTypeaheadSuggested = 0;
 		oTypeaheadCondition = undefined;
 		sTypeaheadFilterValue = undefined;
 		sTypeaheadItemId = undefined;
+		iTypeaheadItems = undefined;
 		bTypeaheadCaseSensitive = undefined;
+		iVisualFocusSet = 0;
 		iClosed = 0;
 		if (oModel) {
 			oModel.destroy();
@@ -245,6 +257,7 @@ sap.ui.define([
 				delegate: {name: "sap/ui/mdc/ValueHelpDelegate", payload: {x: "X"}},
 				disconnect: _myDisconnectHandler,
 				navigated: _myNavigateHandler,
+				visualFocusSet: _myVisualFocusSetHandler,
 				typeaheadSuggested: _myTypeaheadHandler,
 				select: _mySelectHandler,
 				closed: _myClosedHandler
@@ -283,9 +296,10 @@ sap.ui.define([
 		assert.equal(oValueHelp.fireOpen.lastCall.args[0].container, oContainer, "ValueHelp open event carries correct container");
 
 		setTimeout(function() { // Delegate is called async
-			assert.ok(oContainer.open.called, "Container open called for typeahead opening");
+			assert.ok(oContainer.open.calledOnce, "Container open called for typeahead opening");
+			assert.equal(oContainer.open.lastCall.args[1], true, "Container open called with bTypeahead");
 			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called for typeahead opening");
-			oContainer.fireOpened({itemId: "MyItem"});
+			oContainer.fireOpened({itemId: "MyItem", focused: true});
 			assert.ok(oValueHelp.fireOpened.called, "ValueHelp opened event fired for typeahead opening");
 			assert.equal(oValueHelp.fireOpened.lastCall.args[0].container, oContainer, "ValueHelp opened event carries correct container");
 			assert.equal(oValueHelp.fireOpened.lastCall.args[0].itemId, "MyItem", "ValueHelp opened event carries itemId");
@@ -590,11 +604,19 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("removeFocus", function(assert) {
+	QUnit.test("removeVisualFocus", function(assert) {
 
-		sinon.spy(oContainer, "removeFocus");
-		oValueHelp.removeFocus();
-		assert.ok(oContainer.removeFocus.called, "Container.removeFocus called");
+		sinon.spy(oContainer, "removeVisualFocus");
+		oValueHelp.removeVisualFocus();
+		assert.ok(oContainer.removeVisualFocus.called, "Container.removeVisualFocus called");
+
+	});
+
+	QUnit.test("setVisualFocus", function(assert) {
+
+		sinon.spy(oContainer, "setVisualFocus");
+		oValueHelp.setVisualFocus();
+		assert.ok(oContainer.setVisualFocus.called, "Container.setVisualFocus called");
 
 	});
 
@@ -641,25 +663,34 @@ sap.ui.define([
 	QUnit.test("navigated event", function(assert) {
 
 		const oCondition = Condition.createItemCondition("Test");
-		oContainer.fireNavigated({condition: oCondition, itemId: "I1", leaveFocus: true});
+		oContainer.fireNavigated({condition: oCondition, itemId: "I1", leaveFocus: true, caseSensitive: true});
 
 		assert.equal(iNavigate, 1, "Navigated Event fired");
 		assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
 		assert.equal(sNavigateItemId, "I1", "Navigated itemId");
 		assert.ok(bNavigateLeaveFocus, "Navigated leaveFocus");
+		assert.ok(bNavigateCaseSensitive, "Navigated caseSensitive");
 
 	});
 
 	QUnit.test("typeahedSuggested event", function(assert) {
 
 		const oCondition = Condition.createItemCondition("kéy", "Description");
-		oContainer.fireTypeaheadSuggested({condition: oCondition, filterValue: "k", itemId: "I1", caseSensitive: true});
+		oContainer.fireTypeaheadSuggested({condition: oCondition, filterValue: "k", itemId: "I1", items: 3, caseSensitive: true});
 
 		assert.equal(iTypeaheadSuggested, 1, "TypeahedSuggested Event fired");
 		assert.deepEqual(oTypeaheadCondition, oCondition, "Typeahead condition");
 		assert.equal(sTypeaheadFilterValue, "k", "Typeahead filterValue");
 		assert.equal(sTypeaheadItemId, "I1", "Typeahead itemId");
+		assert.equal(iTypeaheadItems, 3, "Typeahead items");
 		assert.equal(bTypeaheadCaseSensitive, true, "Typeahead caseSensitive");
+
+	});
+
+	QUnit.test("visualFocusSet event", function(assert) {
+
+		oContainer.fireVisualFocusSet();
+		assert.equal(iVisualFocusSet, 1, "visualFocusSet event fired");
 
 	});
 
@@ -1103,11 +1134,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("removeFocus", function(assert) {
+	QUnit.test("removeVisualFocus", function(assert) {
 
-		sinon.spy(oContainer, "removeFocus");
-		oValueHelp.removeFocus();
-		assert.notOk(oContainer.removeFocus.called, "Container.removeFocus not called as only supported for Typeahead");
+		sinon.spy(oContainer, "removeVisualFocus");
+		oValueHelp.removeVisualFocus();
+		assert.notOk(oContainer.removeVisualFocus.called, "Container.removeVisualFocus not called as only supported for Typeahead");
 
 	});
 
@@ -1193,6 +1224,7 @@ sap.ui.define([
 				delegate: {name: "sap/ui/mdc/ValueHelpDelegate", payload: {x: "X"}},
 				disconnect: _myDisconnectHandler,
 				navigated: _myNavigateHandler,
+				visualFocusSet: _myVisualFocusSetHandler,
 				typeaheadSuggested: _myTypeaheadHandler,
 				select: _mySelectHandler,
 				closed: _myClosedHandler

@@ -5,9 +5,9 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter",
-	"sap/ui/Device",
 	"sap/ui/demo/theming/model/formatter",
 	"sap/m/MessageToast",
+	"sap/m/MessageBox",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/library",
@@ -19,9 +19,9 @@ sap.ui.define([
 	Filter,
 	FilterOperator,
 	Sorter,
-	Device,
 	formatter,
 	MessageToast,
+	MessageBox,
 	jQuery,
 	Parameters,
 	coreLibrary,
@@ -49,6 +49,7 @@ sap.ui.define([
 			//Keeps the filter and search state
 			this._oTableFilterState = {
 				aFilter: [],
+				aCPFilter: [],
 				aSearch: [],
 				aControlgroup: [],
 				aTheming: [],
@@ -121,7 +122,7 @@ sap.ui.define([
 			};
 			oComboBoxModel.setData(mData);
 			this.getView().byId("comboBox").setModel(oComboBoxModel);
-			var oValue = "Details for ''Fiori 3''";
+			var oValue = "Details for ''Morning Horizon''";
 			this.byId("title").setText(oValue);
 
 			this.getView().setModel(oModel);
@@ -129,189 +130,137 @@ sap.ui.define([
 
 			oTable.bindAggregation("items", "/Data", oTableItem);
 
-			this.getParameterMetadata(function (oParameterMetadata) {
-				var oData = this.createDataStructure(oParameterMetadata);
+			this.getParameterMetadata().then((aParameterMetadata) => {
+				var oData = this.createDataStructure(aParameterMetadata);
 				oModel.setData(oData);
-			}.bind(this));
+			});
+
+			this.byId("colTP").setVisible(false);
+			this._oTableFilterState.aCPFilter = [
+				new Filter("nameCP", FilterOperator.NE, "")
+			];
+			this._applyFilterSearch();
 		},
-		getParameterMetadata: function (fnCallback) {
-			jQuery.ajax("../../../../../../resources/sap/ui/core/themes/base/base.less", {
-				success: function (data) {
-					jQuery.ajax("../../../../../../resources/sap/ui/core/themes/base/global.less", {
-						success: function (namedata) {
-							var oFileThemeParameters = data.replace("\\", ""),
-								oFileBase = namedata.replace("\\", ""),
-								aBaseMapping = [],
-								aThemeParameters = [];
-							var aBase, oThemeParameter, sElement, aProperties, oThemeParameter, aAllThemes, oBase;
-							var pattern = /[^[\]]+(?=])/gmi,
-								patternAnf = /"(.*?)"/gmi,
-								patternTheme = /[^\@]+(?=:)/gmi,
-								patternThemeUi = /[^\@]+(?=:)/gmi,
-								patternThemeNormal = /[^\@]+(?=;)/gmi,
-								patternThemeNormalKomma = /[^\@]+(?=,)/gmi,
-								patternThemeFull = /\[([^;]+)/gmi,
-								patternWithAt = /\@(.*?)\;/gmi;
+		getParameterMetadata: async function () {
+			const [baseLessResponse, globalLessResponse, skeletonLessResponse] = await Promise.all([
+				fetch(`${sap.ui.require.toUrl("sap/ui/core")}/themes/base/base.less`),
+				fetch(`${sap.ui.require.toUrl("sap/ui/core")}/themes/base/global.less`),
+				fetch(`${sap.ui.require.toUrl("sap/ui/core")}/themes/base/skeleton.less`)
+			]);
 
-							aAllThemes = oFileThemeParameters.match(patternThemeFull);
+			const data = await baseLessResponse.text();
+			const namedata = await globalLessResponse.text();
+			const skeletondata = await skeletonLessResponse.text();
 
-							aAllThemes.forEach(function (element) {
-								oFileThemeParameters.indexOf(element);
-								oThemeParameter = {};
+			const patternTPMB = /\/\/.*(?:\n\/\/.*)*\n(@.*(?:\n@.*)*)/g;
+			const patternTP = /^(@[^:]+):\s([^;]+)/gmi,
+				  patternTPl = /^(@[^:]+):\s([^;]+)/i,
+				  patternCP = /(--[^:]+):\s(@[^;]+)/gmi,
+				  patternCPl = /(--[^:]+):\s(@[^;]+)/i;
 
-								sElement = JSON.stringify(element);
-
-								aProperties = sElement.match(pattern);
-
-								aProperties.forEach(function (element) {
-									element = element.replace(/\\/g, "");
-									if (element.indexOf("Label") > -1) {
-										oThemeParameter.label = element.substring(element.indexOf('"') + 1, element.lastIndexOf('"'));
-									} else if (element.indexOf("Description") > -1) {
-										oThemeParameter.desc = element.substring(element.indexOf('"') + 1, element.lastIndexOf('"'));
-									} else if (element.indexOf("TranslationKey") > -1) {
-										oThemeParameter.trans = element.substring(element.indexOf('"') + 1, element.lastIndexOf('"'));
-									} else if (element.indexOf("Tags") > -1) {
-										oThemeParameter.tags = element.match(patternAnf);
-									}
-								});
-								oThemeParameter.themeName = sElement.match(patternTheme)[0];
-								aThemeParameters.push(oThemeParameter);
-							});
-							aBase = oFileBase.match(patternWithAt);
-							aBase.forEach(function (element, index) {
-								oBase = {};
-								if (element.indexOf(",") > -1) {
-									oBase.themeNameUI = element.substring(0, element.indexOf(",") + 1).match(patternThemeNormalKomma)[0];
-								} else if (element.indexOf(":", element.indexOf(":") + 1)) {
-									if ((element.match(/@/g) || []).length == 2) {
-										oBase.themeNameUI = element.match(patternThemeUi)[0];
-									}
-								} else {
-									oBase.themeNameUI = element.match(patternThemeNormal)[0];
-								}
-								oBase.themeName = element.match(patternThemeNormal)[0];
-								aBaseMapping.push(oBase);
-							});
-							for (var i = 0; i < aThemeParameters.length; i++) {
-								for (var j = 0; j < aBaseMapping.length; j++) {
-									if (aBaseMapping[j].themeName === aThemeParameters[i].themeName) {
-										aThemeParameters[i].themeNameUI = aBaseMapping[j].themeNameUI;
-										break;
-									}
-								}
-							}
-							fnCallback(aThemeParameters);
+			// find all theme parameter metadata blocks in the base.less
+			// and extract the theme parameters incl. metadata
+			const oMetadata = {};
+			let matchTPMB;
+			while ((matchTPMB = patternTPMB.exec(data)) !== null) {
+				const metadata = {};
+				const block = matchTPMB[0];
+				block.split("\n").forEach((line) => {
+					const matchMD = /\/\/ \[(.*?) "(.*?)"\]/.exec(line);
+					if (matchMD) {
+						if (matchMD[1] === "Tags") {
+							let tags = matchMD[2].split('", "');
+							tags = (tags || []).filter((t) => t !== "Protected");
+							metadata[matchMD[1]] = tags;
+						} else if (matchMD[1] !== "Protected") {
+							metadata[matchMD[1]] = matchMD[2];
 						}
+					} else {
+						const matchTP = /^(@[^:]+):\s([^;]+);/.exec(line);
+						// the parameter is already found => let's ignore the rest
+						// as this is only controlling the protected info for HCW theme
+						if (matchTP && !oMetadata[matchTP[1]]) {
+							oMetadata[matchTP[1]] = metadata;
+						}
+					}
+				});
+			}
+
+			const aCustomProperties = skeletondata.match(patternCP);
+			const mCustomProperties = {};
+			aCustomProperties.forEach((customProp) => {
+				const match = patternCPl.exec(customProp);
+				if (match) {
+					mCustomProperties[match[2]] = match[1];
+				}
+			});
+
+			const aThemeParameters = namedata.match(patternTP);
+			/*
+			const mThemeParameters = {};
+			aThemeParameters.forEach((customProp) => {
+				const match = patternTPl.exec(customProp);
+				if (match) {
+					mThemeParameters[match[1]] = match[2];
+				}
+			});
+			*/
+
+			const aParameterMetadata = [];
+			aThemeParameters.forEach((themeParam) => {
+				const match = patternTPl.exec(themeParam);
+				if (match) {
+					const name = match[1];
+					const value = match[2];
+
+					aParameterMetadata.push({
+						name: name.substr(1), // remove the leading @
+						value,
+						nameTP: name,
+						nameCP: mCustomProperties[value],
+						label: oMetadata[value]?.Label,
+						desc: oMetadata[value]?.Description,
+						trans: oMetadata[value]?.TranslationKey,
+						tags: oMetadata[value]?.Tags
 					});
 				}
 			});
+
+			return aParameterMetadata;
 		},
 
 		//Creates the Data Structure for the table
-		createDataStructure: function (oParameterMetadata) {
-			var oParams = Parameters.get();
+		createDataStructure: function (aParameterMetadata) {
+			const oData = {};
+			const oClass = this.getView().getModel('class').getData();
+			const oThemeParameters = Parameters.get();
 
-			var oData = {Data: []};
-			for (var sName in oParams) {
-				var sNameCheck  = sName;
-				theming = "";
-				characteristic = "";
-				controlgroup = "";
-				text = "";
-				for (var i = 0; i < oParameterMetadata.length - 1; i++) {
-					var description;
-					var controlgroup;
-					var theming;
-					var tags;
-					var text;
-					var characteristic;
-					if (oParameterMetadata[i].themeNameUI === sName) {
-						description = oParameterMetadata[i].desc;
-						tags = oParameterMetadata[i].tags;
-						if (sNameCheck != sName) {
-							theming = "";
-							characteristic = "";
-							controlgroup = "";
-							text = "";
-						}
-						if (tags) {
-							if (tags.indexOf('"Color"') > -1) {
-								characteristic = "Color";
-							}
-							if (tags.indexOf('"Dimension"') > -1) {
-								characteristic = "Dimension";
-							}
-							if (tags.indexOf('"Image"') > -1) {
-								characteristic = "Image";
-							}
-							if (tags.indexOf('"Opacity"') > -1) {
-								characteristic = "Opacity";
-							}
-							if (tags.indexOf('"Base"') > -1) {
-								theming = "Expert";
-							}
-							if (tags.indexOf('"Quick"') > -1) {
-								theming = "Quick";
-							}
-							if (tags.indexOf('"Button"') > -1) {
-								controlgroup = "Button";
-							}
-							if (tags.indexOf('"Chart"') > -1) {
-								controlgroup = "Chart";
-							}
-							if (tags.indexOf('"Content"') > -1) {
-								controlgroup = "Content";
-							}
-							if (tags.indexOf('"Field"') > -1) {
-								controlgroup = "Field";
-							}
-							if (tags.indexOf('"Group"') > -1) {
-								controlgroup = "Group";
-							}
-							if (tags.indexOf('"Link"') > -1) {
-								controlgroup = "Link";
-							}
-							if (tags.indexOf('"List"') > -1) {
-								controlgroup = "List";
-							}
-							if (tags.indexOf('"Page"') > -1) {
-								controlgroup = "Page";
-							}
-							if (tags.indexOf('"Scrollbar"') > -1) {
-								controlgroup = "Scrollbar";
-							}
-							if (tags.indexOf('"Shell"') > -1) {
-								controlgroup = "Shell";
-							}
-							if (tags.indexOf('"Tile"') > -1) {
-								controlgroup = "Tile";
-							}
-							if (tags.indexOf('"Toolbar"') > -1) {
-								controlgroup = "Toolbar";
-							}
-							if (tags.indexOf('"Font"') > -1) {
-								text = "Text";
-							}
-						}
-					}
-				}
-				var oClass = this.getView().getModel('class').getData();
-				if (sName.toLocaleLowerCase().startsWith("sapui")) {
-					var oEntry = {
-						name: sName,
-						color: oParams[sName],
-						colors: coreLibrary.CSSColor.isValid(oParams[sName]) ? oParams[sName] : undefined,
-						'class': oClass[sName],
-						controlgroup: controlgroup,
-						theming: theming,
-						parameter: characteristic,
-						text: text,
-						description: description
-					};
-					oData.Data.push(oEntry);
-				}
-			}
+			// create the Data structure for the table
+			oData.Data = aParameterMetadata.map((oParam) => {
+				const { name, nameTP, nameCP, label, desc, tags } = oParam;
+				const sThemeParameterValue = oThemeParameters[name];
+
+				return {
+					name,
+					nameTP,
+					nameCP,
+					label,
+					color: sThemeParameterValue,
+					colors: coreLibrary.CSSColor.isValid(sThemeParameterValue) ? sThemeParameterValue : undefined,
+					'class': oClass[name],
+					controlgroup: tags?.find((tag) => [
+						"Button", "Chart", "Content", "Field", "Group", "Link",
+						"List",	"Page", "Scrollbar", "Shell", "Tile", "Toolbar"
+					].includes(tag)),
+					theming: tags?.find((tag) => ["Expert", "Quick"].includes(tag)),
+					parameter /* characteristic */: tags?.find((tag) => [
+						"Color", "Dimension", "Image", "Opacity"
+					].includes(tag)),
+					text: tags?.includes("Font") ? "Text" : "",
+					description: desc
+				};
+			});
+
 			return oData;
 		},
 		//Sets the other Control Group ToggleButtons to unpressed
@@ -637,6 +586,21 @@ sap.ui.define([
 			}
 			this._applyFilterSearch();
 		},
+
+		onPressLessParam: function (evt) {
+			if (evt.getSource().getPressed()) {
+				MessageBox.warning(this.getModel("i18n").getResourceBundle().getText("TextLessParamDeprecation"));
+				this.byId("colTP").setVisible(true);
+				this._oTableFilterState.aCPFilter = [];
+			} else {
+				this.byId("colTP").setVisible(false);
+				this._oTableFilterState.aCPFilter = [
+					new Filter("nameCP", FilterOperator.NE, "")
+				];
+			}
+			this._applyFilterSearch();
+		},
+
 		//Event handler for the class information Button
 		//Opens a QuickView with detailed information about the semantic parameter structure
 		onPressInformation: function (oEvent) {
@@ -674,10 +638,12 @@ sap.ui.define([
 			var value = oEvent.getParameter("value");
 			this.onAction();
 			switch (value) {
+				/* see default below
 				case "Morning Horizon":
-					Theming.setTheme("sap_horizon");
+					oCore.applyTheme("sap_horizon");
 					this.byId("title").setText("Details for ''Morning Horizon''");
 					break;
+				*/
 				case "Evening Horizon":
 					Theming.setTheme("sap_horizon_dark");
 					this.byId("title").setText("Details for ''Evening Horizon''");
@@ -730,6 +696,9 @@ sap.ui.define([
 					Theming.setTheme("sap_hcb");
 					this.byId("title").setText("Details for ''High Contrast Black''");
 					break;
+				default:
+					Theming.setTheme("sap_horizon");
+					this.byId("title").setText("Details for ''Morning Horizon''");
 			}
 		},
 		// Event handler for pressing the copy to clipboard button
@@ -737,6 +706,10 @@ sap.ui.define([
 		onCopyCodeToClipboard: function (oEvt) {
 			var sString = oEvt.getSource().getParent().getCells()[2].getText(),
 				$temp = jQuery("<input>");
+			if (!sString) {
+				MessageToast.show("No UI5 Parameter to copy to clipboard");
+				return;
+			}
 			try {
 				jQuery("body").append($temp);
 				$temp.val(sString).trigger("select");
@@ -752,15 +725,22 @@ sap.ui.define([
 		onSearch: function (oEvt) {
 			var sQuery = oEvt.getSource().getValue();
 			if (sQuery && sQuery.length > 0) {
-				this._oTableFilterState.aSearch = [new Filter("name", FilterOperator.Contains, sQuery)];
+				this._oTableFilterState.aFilter = [
+					new Filter("nameCP", FilterOperator.Contains, sQuery)
+					//new Filter("nameTP", FilterOperator.Contains, sQuery) // TODO: support filter of Custom Prop and Theme Param
+				];
 			} else {
-				this._oTableFilterState.aSearch = [];
+				this._oTableFilterState.aFilter = [];
 			}
 			this._applyFilterSearch();
 		},
 		//Internal helper method to apply both filter and search state together on the list binding
 		_applyFilterSearch: function () {
-			var aFilters = this._oTableFilterState.aSearch.concat(this._oTableFilterState.aFilter, this._oTableFilterState.aControlgroup, this._oTableFilterState.aCharacteristic, this._oTableFilterState.aTheming, this._oTableFilterState.aText);
+			var aFilters = this._oTableFilterState.aSearch.concat(
+				this._oTableFilterState.aFilter, this._oTableFilterState.aCPFilter,
+				this._oTableFilterState.aControlgroup, this._oTableFilterState.aCharacteristic,
+				this._oTableFilterState.aTheming, this._oTableFilterState.aText
+			);
 			this._oTable.getBinding("items").filter(aFilters);
 		},
 		//Event handler for the class ToggleButton

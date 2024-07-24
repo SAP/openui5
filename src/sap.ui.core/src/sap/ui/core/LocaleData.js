@@ -2597,7 +2597,8 @@ sap.ui.define([
 		}
 
 		function getOrLoad(sId) {
-			if (!mLocaleIdToData[sId] && (!M_SUPPORTED_LOCALES || M_SUPPORTED_LOCALES[sId] === true)) {
+			if (!mLocaleIdToData[sId] && (!M_SUPPORTED_LOCALES || M_SUPPORTED_LOCALES[sId] === true)
+					|| mLocaleIdToData[sId] instanceof Promise && !bAsync) {
 				mLocaleIdToData[sId] = SyncPromise.resolve(LoaderExtensions.loadResource(`sap/ui/core/cldr/${sId}.json`,
 					{
 						"async" : bAsync,

@@ -1390,4 +1390,55 @@ sap.ui.define([
 			assert.deepEqual(oLocaleData.getScripts(), {"baz": "foo"});
 		});
 	});
+
+	//*********************************************************************************************
+	// SNOW: DINC0216128 - As described in the ticket, as of now must allow synchronous request to overtake the async
+	// loading of the locale data
+	QUnit.test("requestInstance: loadResource is called for synchronous request while async request is still running",
+			function(assert) {
+		LocaleData._resetLocaleDataCache();
+		const oLoaderExtensionsMock = this.mock(LoaderExtensions);
+		oLoaderExtensionsMock.expects("loadResource")
+			.withExactArgs("sap/ui/core/cldr/de.json", {"async": true, dataType: "json", failOnError: false})
+			.returns(Promise.resolve({"scripts": {"baz": "foo"}}));
+		oLoaderExtensionsMock.expects("loadResource")
+			.withExactArgs("sap/ui/core/cldr/de.json", {"async": undefined, dataType: "json", failOnError: false})
+			.returns({"scripts": {"baz": "foo"}});
+
+		// code under test
+		const pLocaleData = LocaleData.requestInstance(new LanguageTag("de"));
+		const oSyncLocaleData = LocaleData.getInstance(new LanguageTag("de"));
+
+		assert.ok(pLocaleData instanceof Promise);
+		assert.ok(oSyncLocaleData instanceof LocaleData);
+		assert.deepEqual(oSyncLocaleData.getScripts(), {"baz": "foo"});
+
+		return pLocaleData.then((oLocaleData) => {
+			assert.deepEqual(oLocaleData, oSyncLocaleData);
+		});
+	});
+
+	//*********************************************************************************************
+	// SNOW: DINC0216128 - If a second async request for locale data is triggered it must be ignored
+	QUnit.test("requestInstance: loadResource is only called once for async requestInstance",
+			function(assert) {
+		LocaleData._resetLocaleDataCache();
+		const oLoaderExtensionsMock = this.mock(LoaderExtensions);
+		oLoaderExtensionsMock.expects("loadResource")
+			.withExactArgs("sap/ui/core/cldr/de.json", {"async": true, dataType: "json", failOnError: false})
+			.returns(Promise.resolve({"scripts": {"baz": "foo"}}));
+
+		// code under test
+		const pLocaleData = LocaleData.requestInstance(new LanguageTag("de"));
+		// this request must not trigger another loading of resources
+		LocaleData.requestInstance(new LanguageTag("de"));
+
+		assert.ok(pLocaleData instanceof Promise);
+
+		return pLocaleData.then((oLocaleData) => {
+			assert.ok(oLocaleData instanceof LocaleData);
+			assert.strictEqual(oLocaleData.sCLDRLocaleId, "de");
+			assert.deepEqual(oLocaleData.getScripts(), {"baz": "foo"});
+		});
+	});
 });

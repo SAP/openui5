@@ -202,6 +202,9 @@ sap.ui.define([
 
 	function onInteractionFinished(oFinishedInteraction) {
 		if (oFinishedInteraction) {
+			// add root context ID to Interaction;
+			oFinishedInteraction.rootId = Passport.getRootId();
+
 			var sStepName = oFinishedInteraction.semanticStepName ? oFinishedInteraction.semanticStepName : oFinishedInteraction.trigger + "_" + oFinishedInteraction.event;
 			var oFESRHandle = FESR.onBeforeCreated({
 				stepName: sStepName,

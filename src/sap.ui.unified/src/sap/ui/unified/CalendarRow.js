@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/unified/CalendarAppointment",
-	'sap/ui/core/InvisibleMessage',
 	'sap/ui/core/library',
 	"sap/ui/core/date/UI5Date"
 ], function(
@@ -42,7 +41,6 @@ sap.ui.define([
 	containsOrEquals,
 	jQuery,
 	CalendarAppointment,
-	InvisibleMessage,
 	corelibrary,
 	UI5Date
 ) {
@@ -65,8 +63,6 @@ sap.ui.define([
 
 	// shortcut for sap.ui.unified.CalendarAppointmentRoundWidth
 	var CalendarAppointmentRoundWidth = library.CalendarAppointmentRoundWidth;
-
-	var InvisibleMessageMode = corelibrary.InvisibleMessageMode;
 
 	/*
 	 * <code>UniversalDate</code> objects are used inside the <code>CalendarRow</code>, whereas UI5Date or JavaScript dates are used in the API.
@@ -402,8 +398,6 @@ sap.ui.define([
 				this._updateSelectedAppointmentsArray(oApp);
 			}.bind(this));
 		}
-
-		this._oInvisibleMessage = InvisibleMessage.getInstance();
 	};
 
 	CalendarRow.prototype.onAfterRendering = function(){
@@ -607,7 +601,7 @@ sap.ui.define([
 	CalendarRow.prototype.onsapselect = function(oEvent){
 		// focused appointment must be selected
 		var aVisibleAppointments = this._getVisibleAppointments(),
-			oAppointment, sBundleKey;
+			oAppointment;
 
 
 		for (var i = 0; i < aVisibleAppointments.length; i++) {
@@ -618,9 +612,6 @@ sap.ui.define([
 				break;
 			}
 		}
-
-		sBundleKey = oAppointment.getSelected() ? "APPOINTMENT_SELECTED" : "APPOINTMENT_UNSELECTED";
-		this._oInvisibleMessage.announce(this._oRb.getText(sBundleKey), InvisibleMessageMode.Polite);
 
 		//To prevent bubbling into PlanningCalendar.
 		//For appointments, this will prevent tap event on ColumnListItem, which in turn fires rowSelectionChange.
@@ -1674,9 +1665,9 @@ sap.ui.define([
 
 		var i = 0;
 		var oApp;
-		var sAriaLabel;
-		var sAriaLabelNotSelected;
-		var sAriaLabelSelected;
+		var sAriaDescribedBy;
+		var sAriaDescribedByNotSelected;
+		var sAriaDescribedBySelected;
 		var sSelectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 		var sUnselectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_UNSELECTED");
 		var bSelect = !oAppointment.getSelected();
@@ -1697,25 +1688,25 @@ sap.ui.define([
 							this.aSelectedAppointments.splice(j);
 						}
 					}
-					sAriaLabel = oApp.$().attr("aria-labelledby");
-					sAriaLabelNotSelected = sAriaLabel ? sAriaLabel.replace(sSelectedTextId, sUnselectedTextId) : "";
-					oApp.$().attr("aria-labelledby", sAriaLabelNotSelected);
+					sAriaDescribedBy = oApp.$().attr("aria-describedby");
+					sAriaDescribedByNotSelected = sAriaDescribedBy ? sAriaDescribedBy.replace(sSelectedTextId, sUnselectedTextId) : "";
+					oApp.$().attr("aria-describedby", sAriaDescribedByNotSelected);
 				}
 			}
 		}
 
-		sAriaLabelSelected = oAppointment.$().attr("aria-labelledby").replace(sUnselectedTextId, sSelectedTextId).trim();
-		sAriaLabelNotSelected = oAppointment.$().attr("aria-labelledby").replace(sSelectedTextId, sUnselectedTextId).trim();
+		sAriaDescribedBySelected = oAppointment.$().attr("aria-describedby").replace(sUnselectedTextId, sSelectedTextId).trim();
+		sAriaDescribedByNotSelected = oAppointment.$().attr("aria-describedby").replace(sSelectedTextId, sUnselectedTextId).trim();
 
 		if (oAppointment.getSelected()) {
 			oAppointment.setProperty("selected", false, true); // do not invalidate CalendarRow
 			oAppointment.$().removeClass("sapUiCalendarAppSel");
-			oAppointment.$().attr("aria-labelledby", sAriaLabelNotSelected);
+			oAppointment.$().attr("aria-describedby", sAriaDescribedByNotSelected);
 			_removeAllAppointmentSelections(this, bRemoveOldSelection);
 		} else {
 			oAppointment.setProperty("selected", true, true); // do not invalidate CalendarRow
 			oAppointment.$().addClass("sapUiCalendarAppSel");
-			oAppointment.$().attr("aria-labelledby", sAriaLabelSelected);
+			oAppointment.$().attr("aria-describedby", sAriaDescribedBySelected);
 			_removeAllAppointmentSelections(this, bRemoveOldSelection);
 		}
 		// removes or adds the selected appointments from this.aSelectedAppointments

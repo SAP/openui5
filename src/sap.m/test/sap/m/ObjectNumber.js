@@ -5,8 +5,10 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/m/Select",
 	"sap/m/App",
-	"sap/m/Page"
-], function(Label, ObjectNumber, coreLibrary, Item, Select, App, Page) {
+	"sap/m/Page",
+	"sap/m/Title",
+	"sap/m/VBox"
+], function(Label, ObjectNumber, coreLibrary, Item, Select, App, Page, Title, VBox) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -45,8 +47,8 @@ sap.ui.define([
 		emptyIndicatorMode: "On"
 	});
 
-	var txt3 = new Label({
-		text:"ObjectNumber state changes: "
+	var txt3 = new Title({
+		text:"ObjectNumber state changes"
 	});
 
 	var on3 = new ObjectNumber("on3", {
@@ -200,7 +202,7 @@ sap.ui.define([
 
 	//Object Number control to demonstrate state changes
 	oSelectLabel = new Label({
-		text:"ObjectNumber value state: ",
+		text:"Select a state from the dropdown:",
 		labelFor: "select"
 	}),
 
@@ -212,6 +214,12 @@ sap.ui.define([
 			on3.setState(oControlEvent.getParameter("selectedItem").getKey());
 		}
 	});
+
+	var oVBox = new VBox().addStyleClass("sapUiSmallMargin");
+		oVBox.addItem(txt3);
+		oVBox.addItem(oSelectLabel);
+		oVBox.addItem(oStateSelect);
+		oVBox.addItem(on3.addStyleClass("sapUiTinyMarginTop"));
 
 	var app = new App();
 	var page = new Page({
@@ -225,10 +233,7 @@ sap.ui.define([
 			on2,
 			txt23,
 			on23,
-			txt3,
-			oSelectLabel,
-			oStateSelect,
-			on3,
+			oVBox,
 			txt4,
 			on4,
 			txt5,

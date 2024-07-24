@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Toolbar",
@@ -19,7 +19,9 @@ sap.ui.define([
 	"sap/m/ToolbarLayoutData",
 	"sap/m/ToolbarRenderer",
 	"sap/m/ToolbarSpacer",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/core/HTML",
+	"sap/base/Log"
 ], function(
 	QUtils,
 	Toolbar,
@@ -40,7 +42,9 @@ sap.ui.define([
 	ToolbarLayoutData,
 	ToolbarRenderer,
 	ToolbarSpacer,
-	coreLibrary
+	coreLibrary,
+	HTML,
+	Log
 ) {
 	"use strict";
 
@@ -236,6 +240,25 @@ sap.ui.define([
 
 		//Cleanup
 		oTB.destroy();
+	});
+
+	QUnit.test("should not log warnings when using sap.ui.core.HTML control", function (assert) {
+		// Arrange
+		var oLogErrorSpy = sinon.spy(Log, "warning");
+		var oHtmlContent = new HTML({
+			content: "<span>Example</span>"
+		});
+
+		var oToolbar = createToolbar({
+			Toolbar: { content: oHtmlContent }
+		});
+
+		// Assert
+		assert.strictEqual(oLogErrorSpy.callCount, 0, "sap.ui.core.HTML control didn't log error for style classes");
+
+		// Cleanup
+		oToolbar.destroy();
+		oLogErrorSpy.restore();
 	});
 
 	QUnit.module("Accessiblity");
@@ -766,6 +789,32 @@ sap.ui.define([
 
 		//Cleanup
 		oLabel.destroy();
+		oTB.destroy();
+	});
+
+	QUnit.test("toolbar should not scroll on focus when tapped", function(assert) {
+		// Arrange
+		var oTB = createToolbar({
+			/* toolbar is inactive by default */
+			Toolbar : {
+				active: true
+			}
+		});
+		var fnFocusSpy = this.spy(oTB, "focus");
+
+		// Act simulate tap with dummy event object
+		oTB.ontap({
+			srcControl: oTB,
+			isMarked: function() { return false; },
+			setMarked: function() {}
+		});
+
+		// Assert
+		assert.ok(fnFocusSpy.calledOnce, "focus called once");
+		assert.ok(fnFocusSpy.calledWithExactly({preventScroll: true}), "scroll prevented");
+
+		// Cleanup
+		fnFocusSpy.reset();
 		oTB.destroy();
 	});
 

@@ -142,78 +142,56 @@ sap.ui.define([
 				sQuery = getLibraryCssQueryParams(vQueryOrLibInfo);
 			}
 
+			// no variant?
+			if (!sVariant) {
+				sVariant = "";
+			}
+
+			// determine RTL
+			var sRtl = (Localization.getRTL() ? "-RTL" : "");
+
+
 			/*
-			* by specifying a library name containing a colon (":") you can specify
-			* the file name of the CSS file to include (ignoring RTL)
-			*/
+			 * Create the library file name.
+			 * By specifying a library name containing a colon (":") you can specify
+			 * the file name of the CSS file to include (ignoring RTL).
+			 */
+			var sLibFileName,
+				sLibId = sLibName + (sVariant.length > 0 ? "-[" + sVariant + "]" : sVariant);
+			if (sLibName && sLibName.indexOf(":") == -1) {
+				sLibFileName = "library" + sVariant + sRtl;
+			} else {
+				sLibFileName = sLibName.substring(sLibName.indexOf(":") + 1) + sVariant;
+				sLibName = sLibName.substring(0, sLibName.indexOf(":"));
+			}
 
-			// include the stylesheet for the library (except for "classic" and "legacy" lib)
-			if ((sLibName != "sap.ui.legacy") && (sLibName != "sap.ui.classic")) {
-				var sCssVariablesParam = BaseConfig.get({
-					name: "sapUiXxCssVariables",
-					type: BaseConfig.Type.String,
-					external: true
-				});
+			var sLinkId = "sap-ui-theme-" + sLibId;
+			if (!document.querySelector("LINK[id='" + sLinkId + "']")) {
+				var sCssBasePath = new URL(ThemeManager._getThemePath(sLibName, Theming.getTheme()), document.baseURI).toString();
+				// Create a link tag and set the URL as href in order to ensure AppCacheBuster handling.
+				// AppCacheBuster ID is added to the href by defineProperty for the "href" property of
+				// HTMLLinkElement in AppCacheBuster.js
+				// Note: Considered to use AppCacheBuster.js#convertURL for adding the AppCachebuster ID
+				//       but there would be a dependency to AppCacheBuster as trade-off
+				var oTmpLink = document.createElement("link");
+				oTmpLink.href = sCssBasePath + sLibFileName + ".css" + (sQuery ? sQuery : "");
+				var sCssPathAndName = oTmpLink.href;
 
-				// no variant?
-				if (!sVariant) {
-					sVariant = "";
+				// use the special FOUC handling for initially existing stylesheets
+				// to ensure that they are not just replaced when using the
+				// includeStyleSheet API and to be removed later
+				fnAddFoucmarker(sLinkId);
+
+				// log and include
+				Log.info("Including " + sCssPathAndName + " -  sap.ui.core.theming.ThemeManager.includeLibraryTheme()");
+				includeStylesheet(sCssPathAndName, sLinkId);
+
+				// if parameters have been used, update them with the new style sheet
+				var Parameters = sap.ui.require("sap/ui/core/theming/Parameters");
+				if (Parameters) {
+					Parameters._addLibraryTheme(sLibId);
 				}
-				// determine CSS Variables / RTL
-				var sCssVars = /^(true|x)$/i.test(sCssVariablesParam) ? "_skeleton" : "";
-				var sRtl = (Localization.getRTL() ? "-RTL" : "");
-
-				// create the library file name
-				var sLibFileName,
-					sLibId = sLibName + (sVariant.length > 0 ? "-[" + sVariant + "]" : sVariant);
-				if (sLibName && sLibName.indexOf(":") == -1) {
-					sLibFileName = "library" + sVariant + sCssVars + sRtl;
-				} else {
-					sLibFileName = sLibName.substring(sLibName.indexOf(":") + 1) + sVariant;
-					sLibName = sLibName.substring(0, sLibName.indexOf(":"));
-				}
-
-				var sLinkId = "sap-ui-theme-" + sLibId;
-				var sSkeletonLinkId = "sap-ui-themeskeleton-" + sLibId;
-				var bCssVariables = /^(true|x|additional)$/i.test(sCssVariablesParam);
-				if (!document.querySelector("LINK[id='" + sLinkId + "']") || (bCssVariables && !document.querySelector("LINK[id='" + sSkeletonLinkId + "']"))) {
-					var sCssBasePath = new URL(ThemeManager._getThemePath(sLibName, Theming.getTheme()), document.baseURI).toString();
-					// Create a link tag and set the URL as href in order to ensure AppCacheBuster handling.
-					// AppCacheBuster ID is added to the href by defineProperty for the "href" property of
-					// HTMLLinkElement in AppCacheBuster.js
-					// Note: Considered to use AppCacheBuster.js#convertURL for adding the AppCachebuster ID
-					//       but there would be a dependency to AppCacheBuster as trade-off
-					var oTmpLink = document.createElement("link");
-					oTmpLink.href = sCssBasePath + sLibFileName + ".css" + (sQuery ? sQuery : "");
-					var sCssPathAndName = oTmpLink.href;
-					oTmpLink.href = sCssBasePath + "css_variables.css" + (sQuery ? sQuery : "");
-					var sCssVariablesPathAndName = oTmpLink.href;
-
-					// use the special FOUC handling for initially existing stylesheets
-					// to ensure that they are not just replaced when using the
-					// includeStyleSheet API and to be removed later
-					fnAddFoucmarker(sLinkId);
-
-					// include the css variables
-					if (bCssVariables) {
-						Log.info("Including " + sCssVariablesPathAndName + " -  sap.ui.core.theming.ThemeManager.includeLibraryTheme()");
-						includeStylesheet(sCssVariablesPathAndName, sLinkId);
-						// include the skeleton css next to the css variables
-						sLinkId = "sap-ui-themeskeleton-" + sLibId;
-						fnAddFoucmarker(sLinkId);
-					}
-
-					// log and include
-					Log.info("Including " + sCssPathAndName + " -  sap.ui.core.theming.ThemeManager.includeLibraryTheme()");
-					includeStylesheet(sCssPathAndName, sLinkId);
-
-					// if parameters have been used, update them with the new style sheet
-					var Parameters = sap.ui.require("sap/ui/core/theming/Parameters");
-					if (Parameters) {
-						Parameters._addLibraryTheme(sLibId);
-					}
-					ThemeManager.checkThemeApplied();
-				}
+				ThemeManager.checkThemeApplied();
 			}
 		},
 
@@ -245,7 +223,7 @@ sap.ui.define([
 		 */
 		_updateThemeUrls: function(sThemeName, bSuppressFOUC) {
 			// select "our" stylesheets
-			var oQueryResult = document.querySelectorAll("link[id^=sap-ui-theme-],link[id^=sap-ui-themeskeleton-]");
+			var oQueryResult = document.querySelectorAll("link[id^=sap-ui-theme-]");
 
 			Array.prototype.forEach.call(oQueryResult, function(oHTMLElement) {
 				updateThemeUrl(oHTMLElement, sThemeName, bSuppressFOUC);
@@ -310,10 +288,7 @@ sap.ui.define([
 		function checkLib(lib) {
 			var sStyleId = "sap-ui-theme-" + lib;
 			var currentRes = ThemeHelper.checkAndRemoveStyle({ prefix: "sap-ui-theme-", id: lib });
-			if (currentRes && document.getElementById("sap-ui-themeskeleton-" + lib)) {
-				// remove also the skeleton if present in the DOM
-				currentRes = ThemeHelper.checkAndRemoveStyle({ prefix: "sap-ui-themeskeleton-", id: lib });
-			}
+
 			res = res && currentRes;
 			if (res) {
 
@@ -602,7 +577,7 @@ sap.ui.define([
 		    pos;
 
 		// derive lib name from id via regex
-		var mLinkId = /^sap-ui-theme(?:skeleton)?-(.*)$/i.exec(oLink.id);
+		var mLinkId = /^sap-ui-theme-(.*)$/i.exec(oLink.id);
 		if (Array.isArray(mLinkId)) {
 			sLibName = mLinkId[1];
 		} else {

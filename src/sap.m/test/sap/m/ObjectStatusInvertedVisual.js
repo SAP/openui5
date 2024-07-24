@@ -558,6 +558,22 @@ sap.ui.define([
 	  inverted: true
   }), oPage);
 
+  addToPage(new ObjectStatus({
+	  title: "Status",
+	  icon: "sap-icon://alert",
+	  state: "Indication11",
+	  text : "Indication 11",
+	  active:true,
+	  inverted: true
+  }), oPage);
+
+  addToPage(new ObjectStatus({
+	  title: "Status",
+	  state: "Indication17",
+	  text : "aligned",
+	  inverted: true
+  }), oPage);
+
   addToPage(new SimpleForm({
 	  editable: true,
 	  content: [

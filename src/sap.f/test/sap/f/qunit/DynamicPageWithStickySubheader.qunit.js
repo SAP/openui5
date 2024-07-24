@@ -49,9 +49,10 @@ sap.ui.define([
 
 			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
 			oDynamicPage._pin();
-			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
+			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
 			oDynamicPage._unPin();
-			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
+			// before scroll - header is still expanded
+			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
 			oDynamicPage._setScrollPosition(iIntermediateHeightInHeader);
 
 			oDynamicPage._toggleHeaderOnScroll();

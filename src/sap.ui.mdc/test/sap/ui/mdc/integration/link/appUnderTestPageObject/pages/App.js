@@ -19,7 +19,7 @@ sap.ui.define([
 					return oDependent.isA("sap.m.ResponsivePopover");
 				});
 
-				Opa5.assert.equal(bPopoverFound, bOpen, "Found " + bOpen ? "" : "no" + " open Popover for given Link");
+				Opa5.assert.equal(bPopoverFound, bOpen, `should ${bOpen ? "" : "not"} see an open Popover for given Link`);
 			}
 		});
 	};

@@ -176,7 +176,12 @@ sap.ui.define([
 						/**
 						 * ID of the navigated item. (This is needed to set the corresponding aria-attribute)
 						 */
-						itemId: { type: "string" }
+						itemId: { type: "string" },
+						/**
+						 * If <code>true</code> the filtering was executed case sensitive
+						 * @since 1.127.0
+						 */
+						caseSensitive: { type: "boolean" }
 					}
 				},
 				/**
@@ -204,11 +209,27 @@ sap.ui.define([
 						 */
 						itemId: { type: "string" },
 						/**
+						 * Number of found items
+						 * @since 1.127.0
+						 */
+						items: { type: "int" },
+						/**
 						 * If <code>true</code> the filtering was executed case sensitive
 						 * @since 1.121.0
 						 */
 						caseSensitive: { type: "boolean" }
 					}
+				},
+				/**
+				 * This event is fired if the visual focus is set to the value help.
+				 *
+				 * In this case the visual focus needs to be removed from the opening field, but the real focus must stay there.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.field.FieldBase
+				 * @since 1.127.0
+				 */
+				visualFocusSet: {
 				}
 			}
 		}
@@ -253,6 +274,10 @@ sap.ui.define([
 				oContent.attachNavigated(this.handleNavigated, this);
 			}
 
+			if (oContent.attachVisualFocusSet) {
+				oContent.attachVisualFocusSet(this.handleVisualFocusSet, this);
+			}
+
 			if (oContent.attachTypeaheadSuggested) {
 				oContent.attachTypeaheadSuggested(this.handleTypeaheadSuggested, this);
 			}
@@ -290,6 +315,10 @@ sap.ui.define([
 				oContent.detachNavigated(this.handleNavigated, this);
 			}
 
+			if (oContent.detachVisualFocusSet) {
+				oContent.detachVisualFocusSet(this.handleVisualFocusSet, this);
+			}
+
 			if (oContent.detachTypeaheadSuggested) {
 				oContent.detachTypeaheadSuggested(this.handleTypeaheadSuggested, this);
 			}
@@ -308,6 +337,15 @@ sap.ui.define([
 	 */
 	Container.prototype.handleNavigated = function(oEvent) {
 		this.fireNavigated(oEvent.mParameters);
+	};
+
+	/**
+	 * Handles the <code>visualFocusSet</code> event of the content.
+	 * @param {sap.ui.base.Event} oEvent event
+	 * @protected
+	 */
+	Container.prototype.handleVisualFocusSet = function(oEvent) {
+		this.fireVisualFocusSet(oEvent.mParameters);
 	};
 
 	/**
@@ -613,7 +651,17 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
-	Container.prototype.removeFocus = function() {};
+	Container.prototype.removeVisualFocus = function() {};
+
+	/**
+	 * The focus visualization of the field help needs to be set as the user starts naigation into the value help items.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.ValueHelp
+	 * @since 1.127.0
+	 */
+	Container.prototype.setVisualFocus = function() {
+	};
 
 	/**
 	 * Determines if the container is used as typeahead inside the value help.

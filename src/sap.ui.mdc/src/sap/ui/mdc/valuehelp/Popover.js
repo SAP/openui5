@@ -638,6 +638,10 @@ sap.ui.define([
 
 	// Workaround to prevent the popup from closing unexpectedly should formatting lead to field size adjustments
 	Popover.prototype._disableFollowOfTemporarily = function () {
+		if (Device.system.phone) { // in phone mode dialog is used
+			return;
+		}
+
 		if (this._followOfTimer) {
 			clearTimeout(this._followOfTimer);
 		}
@@ -671,11 +675,14 @@ sap.ui.define([
 		Container.prototype.handleClosed.apply(this, arguments);
 	};
 
-	Popover.prototype.removeFocus = function() {
+	Popover.prototype.removeVisualFocus = function() {
 		const oContent = this._getContent();
-		if (oContent) {
-			oContent.removeFocus();
-		}
+		oContent?.removeVisualFocus();
+	};
+
+	Popover.prototype.setVisualFocus = function() {
+		const oContent = this._getContent();
+		oContent?.setVisualFocus();
 	};
 
 	Popover.prototype.navigateInContent = function(iStep) {

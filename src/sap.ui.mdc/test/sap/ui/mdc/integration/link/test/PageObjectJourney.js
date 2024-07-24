@@ -14,6 +14,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	const sLinkId = "container-LinkIntegrationTesting.appUnderTestPageObject---app--Field-inner";
+	const oLinkIdentifier = { id: sLinkId };
+
 	Opa5.extendConfig({
 
 		// TODO: increase the timeout timer from 15 (default) to 45 seconds
@@ -28,10 +31,10 @@ sap.ui.define([
 
 		arrangements: {
 			iClearTheLocalStorageFromRtaRestart: function() {
-                window.localStorage.removeItem("sap.ui.rta.restart.CUSTOMER");
-                window.localStorage.removeItem("sap.ui.rta.restart.USER");
-                localStorage.clear();
-            }
+				window.localStorage.removeItem("sap.ui.rta.restart.CUSTOMER");
+				window.localStorage.removeItem("sap.ui.rta.restart.USER");
+				localStorage.clear();
+			}
 		}
 	});
 
@@ -39,50 +42,50 @@ sap.ui.define([
 		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/integration/link/appUnderTestPageObject/index.html");
 		Given.iClearTheLocalStorageFromRtaRestart();
 
-		When.onTheMDCLink.iPressTheLink({ id: "container-LinkIntegrationTesting.appUnderTestPageObject---app--Field-inner" });
-		Then.onAppUnderTestPageObject.iShouldSeeAnOpenPopover({ id: "container-LinkIntegrationTesting.appUnderTestPageObject---app--Field-inner" });
+		When.onTheMDCLink.iPressTheLink(oLinkIdentifier);
+		Then.onAppUnderTestPageObject.iShouldSeeAnOpenPopover(oLinkIdentifier);
 
 		When.onTheMDCLink.iCloseThePopover();
-		Then.onAppUnderTestPageObject.iShouldNotSeeAnOpenPopover({ id: "container-LinkIntegrationTesting.appUnderTestPageObject---app--Field-inner" });
+		Then.onAppUnderTestPageObject.iShouldNotSeeAnOpenPopover(oLinkIdentifier);
 	});
 
 	opaTest("Test 'iPressTheLink', 'iShouldSeeAPopover' and 'iShouldSeeLinksOnPopover'", function(Given, When, Then) {
-		When.onTheMDCLink.iPressTheLink({ id: "container-LinkIntegrationTesting.appUnderTestPageObject---app--Field-inner" });
+		When.onTheMDCLink.iPressTheLink(oLinkIdentifier);
 
-		Then.onTheMDCLink.iShouldSeeAPopover({ id: "container-LinkIntegrationTesting.appUnderTestPageObject---app--Field-inner" });
-		Then.onTheMDCLink.iShouldSeeLinksOnPopover({ id: "container-LinkIntegrationTesting.appUnderTestPageObject---app--Field-inner" }, []);
+		Then.onTheMDCLink.iShouldSeeAPopover(oLinkIdentifier);
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover(oLinkIdentifier, []);
 
 		When.onTheMDCLink.iCloseThePopover();
-		Then.onAppUnderTestPageObject.iShouldNotSeeAnOpenPopover({ id: "container-LinkIntegrationTesting.appUnderTestPageObject---app--Field-inner" });
+		Then.onAppUnderTestPageObject.iShouldNotSeeAnOpenPopover(oLinkIdentifier);
 	});
 
 	opaTest("Test 'iPersonalizeTheLinks' and 'iShouldSeeLinksOnPopover'", function(Given, When, Then) {
-		When.onTheMDCLink.iPersonalizeTheLinks({ id: "container-LinkIntegrationTesting.appUnderTestPageObject---app--Field-inner" }, ["TextLinkItem00", "TextLinkItem01", "TextLinkItem02"]);
+		When.onTheMDCLink.iPersonalizeTheLinks(oLinkIdentifier, ["TextLinkItem00", "TextLinkItem01", "TextLinkItem02"]);
 
-		When.onTheMDCLink.iPressTheLink({ id: "container-LinkIntegrationTesting.appUnderTestPageObject---app--Field-inner" });
+		When.onTheMDCLink.iPressTheLink(oLinkIdentifier);
 
-		Then.onTheMDCLink.iShouldSeeAPopover({ id: "container-LinkIntegrationTesting.appUnderTestPageObject---app--Field-inner" });
-		Then.onTheMDCLink.iShouldSeeLinksOnPopover({ id: "container-LinkIntegrationTesting.appUnderTestPageObject---app--Field-inner" }, ["TextLinkItem00", "TextLinkItem01", "TextLinkItem02"]);
+		Then.onTheMDCLink.iShouldSeeAPopover(oLinkIdentifier);
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover(oLinkIdentifier, ["TextLinkItem00", "TextLinkItem01", "TextLinkItem02"]);
 	});
 
 	opaTest("Test 'iPressLinkOnPopover'", function(Given, When, Then) {
-		When.onTheMDCLink.iPressLinkOnPopover({ id: "container-LinkIntegrationTesting.appUnderTestPageObject---app--Field-inner" }, "TextLinkItem01");
+		When.onTheMDCLink.iPressLinkOnPopover(oLinkIdentifier, "TextLinkItem01");
 
 		Then.onAppUnderTestPageObject.theApplicationURLContains("#link01");
 
 		When.onTheMDCLink.iCloseThePopover();
-		Then.onAppUnderTestPageObject.iShouldNotSeeAnOpenPopover({ id: "container-LinkIntegrationTesting.appUnderTestPageObject---app--Field-inner" });
+		Then.onAppUnderTestPageObject.iShouldNotSeeAnOpenPopover(oLinkIdentifier);
 	});
 
 	opaTest("Test 'iResetThePersonalization'", function(Given, When, Then) {
-		When.onTheMDCLink.iResetThePersonalization({ id: "container-LinkIntegrationTesting.appUnderTestPageObject---app--Field-inner" });
+		When.onTheMDCLink.iResetThePersonalization(oLinkIdentifier);
 
-		When.onTheMDCLink.iPressTheLink({ id: "container-LinkIntegrationTesting.appUnderTestPageObject---app--Field-inner" });
-		Then.onTheMDCLink.iShouldSeeAPopover({ id: "container-LinkIntegrationTesting.appUnderTestPageObject---app--Field-inner" });
-		Then.onTheMDCLink.iShouldSeeLinksOnPopover({ id: "container-LinkIntegrationTesting.appUnderTestPageObject---app--Field-inner" }, []);
+		When.onTheMDCLink.iPressTheLink(oLinkIdentifier);
+		Then.onTheMDCLink.iShouldSeeAPopover(oLinkIdentifier);
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover(oLinkIdentifier, []);
 
 		When.onTheMDCLink.iCloseThePopover();
-		Then.onAppUnderTestPageObject.iShouldNotSeeAnOpenPopover({ id: "container-LinkIntegrationTesting.appUnderTestPageObject---app--Field-inner" });
+		Then.onAppUnderTestPageObject.iShouldNotSeeAnOpenPopover(oLinkIdentifier);
 		Then.iTeardownMyAppFrame();
 	});
 

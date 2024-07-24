@@ -32,11 +32,18 @@
 				</uxap:headerTitle>
 				<uxap:sections>
 
-					<uxap:ObjectPageSection id="ObjectPageSectionWithRadioButtons" title="Select Extension Data">
+					<uxap:ObjectPageSection id="ObjectPageSectionWithRadioButtons" title="Extension Data Mock">
 						<uxap:ObjectPageSubSection>
 							<layout:VerticalLayout class="sapUiContentPadding" width="100%" id="RadioButtonVerticalLayout">
-								<Text text="Please restart RTA to change the case" />
-								<RadioButtonGroup id="ExtensionDataRadioButtonGroup">
+								<FormattedText 
+									htmlText="&lt;p style=&quot;font-weight:bold&quot;>Restart RTA for the change to take effect:&lt;/p>"
+									visible="{view>/extensibilityEnabled}"
+								/>
+								<FormattedText 
+									htmlText="&lt;p style=&quot;color:red; font-weight:bold&quot;>The Extension Data Mock only works with FLP&lt;/p>"
+									visible="{= !${view>/extensibilityEnabled} }"
+								/>
+								<RadioButtonGroup id="ExtensionDataRadioButtonGroup" enabled="{view>/extensibilityEnabled}">
 										<RadioButton text="Extension Data with multiple Options" selected="true" />
 										<RadioButton text="Extension Data with one Option" />
 										<RadioButton text="Extension Data with no Options (Legacy)"  />

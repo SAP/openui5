@@ -474,7 +474,7 @@ sap.ui.define([
 		var oProperty = {
 				name: sKey,
 				label: sLabel,
-				tooltip: sTooltip,
+				tooltip: sTooltip || '',
 				hiddenFilter: bHiddenFilter,
 				caseSensitive: !bIsUpperCase
 		};
@@ -566,7 +566,7 @@ sap.ui.define([
 			}
 
 			var sEntityName = oMetaModel.getObject(sEntitySetPath + "/@sapui.name");
-			var sGroup = sEntityName;
+			var sGroup = sEntityName.replace("Test", "");
 			var sGroupLabel = oMetaModel.getObject(sEntitySetPath + "@com.sap.vocabularies.Common.v1.Label");
 			if (!sGroupLabel ) {
 				sGroupLabel = sGroup.split(".")[1];

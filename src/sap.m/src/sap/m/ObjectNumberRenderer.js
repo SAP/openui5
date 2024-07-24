@@ -104,7 +104,6 @@ ObjectNumberRenderer.render = function(oRm, oON) {
 
 	this.renderEmphasizedInfoElement(oRm, oON);
 	this.renderHiddenARIAElement(oRm, oON);
-	this.renderRoleDescriptionInfo(oRm, oON);
 
 	oRm.close("div");
 };
@@ -166,14 +165,6 @@ ObjectNumberRenderer.renderHiddenARIAElement = function(oRm, oON) {
 	oRm.class("sapUiPseudoInvisibleText");
 	oRm.openEnd();
 	oRm.text(oON._getStateText());
-	oRm.close("span");
-};
-
-ObjectNumberRenderer.renderRoleDescriptionInfo = function(oRm, oON) {
-	oRm.openStart("span", oON.getId() + "-roledescription");
-	oRm.class("sapUiPseudoInvisibleText");
-	oRm.openEnd();
-	oRm.text(Library.getResourceBundleFor("sap.m").getText("OBJECTNUMBER_NAME"));
 	oRm.close("span");
 };
 

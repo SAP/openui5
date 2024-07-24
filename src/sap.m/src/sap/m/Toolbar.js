@@ -247,6 +247,10 @@ function(
 	 * @returns {true|false|undefined|Object}
 	 */
 	Toolbar.checkShrinkable = function(oControl, sShrinkClass) {
+		if (oControl.isA("sap.ui.core.HTML")) {
+			return;
+		}
+
 		if (oControl instanceof ToolbarSpacer) {
 			return this.isRelativeWidth(oControl.getWidth());
 		}
@@ -372,7 +376,7 @@ function(
 			this.firePress({
 				srcControl : oEvent.srcControl
 			});
-			this.focus();
+			this.focus({preventScroll: true});
 		}
 	};
 

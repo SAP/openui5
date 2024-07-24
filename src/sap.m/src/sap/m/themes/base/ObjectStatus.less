@@ -33,7 +33,6 @@
 		line-height: normal;
 		display: inline-block;
 		height: inherit;
-		vertical-align: top;
 	}
 
 	&.sapMObjectStatusLongText{
@@ -57,6 +56,10 @@
 	}
 }
 
+.sapMObjStatus:not(.sapMObjStatusInverted) .sapMObjStatusTitle {
+	vertical-align: top;
+}
+
 .sapMLIBActive {
 	.sapMObjStatus:not(.sapMObjStatusInverted) .sapMObjStatusText,
 	.sapMObjStatus:not(.sapMObjStatusInverted) .sapMObjStatusIcon {
@@ -64,7 +67,7 @@
 	}
 }
 
-.sapMObjStatusLink {
+.sapMObjStatus:not(.sapMObjStatusInverted) .sapMObjStatusLink {
 	min-height: 1rem;
 	vertical-align: top;
 }

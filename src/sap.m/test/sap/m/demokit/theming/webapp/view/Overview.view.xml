@@ -116,6 +116,16 @@
 								text="{i18n>ToggleButtonQuickText}"
 								ariaLabelledBy="textFilter"
 								tooltip="{i18n>TooltipQuick}"/>
+							<ToolbarSeparator
+								visible="{= ${device>/system/desktop} }"/>
+							<ToggleButton
+								type="Transparent"
+								id="tbLessParam"
+								press=".onPressLessParam"
+								icon="sap-icon://vds-file"
+								text="{i18n>ToggleButtonLessParamText}"
+								ariaLabelledBy="textFilter"
+								tooltip="{i18n>TooltipLessParam}"/>
 					</OverflowToolbar>
 				</headerToolbar>
 			</Panel>
@@ -228,6 +238,9 @@
 					<Column width="50px">
 					</Column>
 					<Column>
+						<Text text="{i18n>TableColumnCSSCustomPropertyText}"/>
+					</Column>
+					<Column id="colTP">
 						<Text text="{i18n>TableColumnUI5ParameterText}"/>
 					</Column>
 					<Column
@@ -297,7 +310,12 @@
 								ariaLabelledBy="textCopy"/>
 							<Label
 								id="previewCopyCode"
-								text="{name}"
+								text="{nameCP}"
+								class="sapUiCopyCode"
+								design="Bold"/>
+							<Label
+								id="previewCopyCodeTP"
+								text="{nameTP}"
 								class="sapUiCopyCode"
 								design="Bold"/>
 							<Text text="{color}"/>

@@ -1544,6 +1544,10 @@ sap.ui.define([
 						}
 
 						if (sSegment === "@sapui.name") {
+							if (sName === undefined && bSplitSegment && i
+								&& aSegments[i - 1] === "$NavigationPropertyBinding") {
+								sName = vResult;
+							}
 							return terminal(sName);
 						}
 						if (sSegment === "@$ui5.target") {
@@ -2873,6 +2877,13 @@ sap.ui.define([
 	 *     as the annotation does not have a "$Type" property.
 	 *   <li> A technical property (that is, a numerical segment or one starting with a "$")
 	 *     immediately before "@sapui.name" is invalid, for example "/$EntityContainer@sapui.name".
+	 *   <li> Since 1.127.0, "@sapui.name" can also be used to access the resulting name of an
+	 *     entity set via a navigation property binding. This allows XML Templating to use
+	 *     "${entitySet>@sapui.name}" no matter whether the variable "entitySet" refers to "/TEAMS"
+	 *     or "/TEAMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES". This way, "/TEAMS@sapui.name"
+	 *     results in "TEAMS" and "/TEAMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES@sapui.name"
+	 *     results either in a simple name like "EMPLOYEES" or maybe in a path like
+	 *     "some.other.EntityContainer/SomeEntitySet".
 	 * </ul>
 	 * The path must not continue after "@sapui.name".
 	 *

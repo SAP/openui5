@@ -3401,7 +3401,6 @@ sap.ui.define([
 		oCache.aElements = [{
 			// "@$ui5.node.level" : ignored
 		}, {
-			"@$ui5.node.isExpanded" : true,
 			"@$ui5.node.level" : 5
 		}, {
 			"@$ui5.node.level" : 6 // child
@@ -3421,7 +3420,6 @@ sap.ui.define([
 		oCache.aElements = [{
 			// "@$ui5.node.level" : ignored
 		}, {
-			"@$ui5.node.isExpanded" : true,
 			"@$ui5.node.level" : 5
 		}, {
 			"@$ui5.node.level" : 6 // child
@@ -3437,7 +3435,94 @@ sap.ui.define([
 		assert.strictEqual(oCache.countDescendants(oCache.aElements[1], 1), 3,
 			"number of removed elements");
 	});
+
+	QUnit.test("countDescendants: sibling on level 1, hierarchy=${bHierarchy}", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation);
+		oCache.aElements = [{
+			// "@$ui5.node.level" : ignored
+		}, {
+			"@$ui5.node.level" : 1
+		}, {
+			"@$ui5.node.level" : 2 // child
+		}, {
+			"@$ui5.node.level" : 3 // grandchild
+		}, {
+			"@$ui5.node.level" : 2 // child
+		}, {
+			// no rank
+			"@$ui5.node.level" : 1 // sibling
+		}]; // simulate a read
+
+		// code under test
+		assert.strictEqual(oCache.countDescendants(oCache.aElements[1], 1), 3,
+			"number of removed elements");
+	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("countDescendants: do not collapse grand total", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {},
+			{aggregate : {}, group : {}, groupLevels : ["foo"]});
+		oCache.aElements = [{
+			// "@$ui5.node.level" : ignored
+		}, {
+			"@$ui5.node.level" : 5
+		}, {
+			"@$ui5.node.level" : 6 // child
+		}, {
+			"@$ui5.node.level" : 7 // grandchild
+		}, {
+			"@$ui5.node.level" : 6 // child
+		}, {
+			"@$ui5.node.level" : 0 // grand total
+		}]; // simulate a read
+
+		// code under test
+		assert.strictEqual(oCache.countDescendants(oCache.aElements[1], 1), 3,
+			"number of removed elements");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("countDescendants: level 0 placeholder as sibling", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {},
+			{expandTo : 2, hierarchyQualifier : "X"});
+		oCache.aElements = [{
+			// "@$ui5.node.level" : ignored
+		}, {
+			"@$ui5._" : {
+				descendants : 2
+			},
+			"@$ui5.node.level" : 1
+		}, {
+			// no rank
+			"@$ui5.node.level" : 2 // created child, filtered out
+		}, {
+			"@$ui5._" : {
+				placeholder : 1,
+				rank : "~" // the actual rank does not matter
+			},
+			"@$ui5.node.level" : 0 // child
+		}, {
+			// rank does not matter at all
+			"@$ui5.node.level" : 3 // grandchild
+		}, {
+			"@$ui5._" : {
+				placeholder : true,
+				rank : "~" // the actual rank does not matter
+			},
+			"@$ui5.node.level" : 0 // child
+		}, {
+			"@$ui5._" : {
+				placeholder : true,
+				rank : "~" // the actual rank does not matter
+			},
+			"@$ui5.node.level" : 0 // sibling
+		}]; // simulate a read
+
+		// code under test
+		assert.strictEqual(oCache.countDescendants(oCache.aElements[1], 1), 4,
+			"number of removed elements");
+	});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bUnifiedCache) {
@@ -4608,16 +4693,20 @@ sap.ui.define([
 
 [undefined, "~iRank~"].forEach((vRank, i) => {
 	//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-	function test(self, assert, oCache, sParent = null) {
-		oCache.aElements.$byPredicate["('23')"] = "~oChildNode~";
+	function test(self, assert, oCache, sParent = null, fnAssert = () => {}) {
+		const oChildNode = {
+			"@$ui5.context.isTransient" : "n/a"
+		};
+		oCache.aElements.$byPredicate["('23')"] = oChildNode;
 		self.mock(self.oRequestor).expects("request")
 			.withExactArgs("PATCH", "Foo('23')", "~oGroupLock~", {
-					"If-Match" : "~oChildNode~",
+					"If-Match" : sinon.match.same(oChildNode),
 					Prefer : "return=minimal"
 				}, {"myParent@odata.bind" : sParent},
 				/*fnSubmit*/null, /*fnCancel*/sinon.match.func)
 			.returns("A");
-		self.mock(oCache).expects("requestRank").withExactArgs("~oChildNode~", "~oGroupLock~", true)
+		self.mock(oCache).expects("requestRank")
+			.withExactArgs(sinon.match.same(oChildNode), "~oGroupLock~", true)
 			.returns("C");
 		self.mock(SyncPromise).expects("all").withExactArgs(["A", undefined, "C", undefined])
 			.returns(SyncPromise.resolve([,, vRank]));
@@ -4638,6 +4727,8 @@ sap.ui.define([
 			vRank ? "~findIndex~" : undefined,
 			undefined
 		]);
+
+		fnAssert(oChildNode);
 	}
 
 	//*********************************************************************************************
@@ -4673,7 +4764,9 @@ sap.ui.define([
 		oTreeStateMock.expects("expand").never();
 		this.mock(_Helper).expects("hasPrivateAnnotation").never();
 
-		test(this, assert, oCache);
+		test(this, assert, oCache, null, (oChildNode) => {
+			assert.notOk("@$ui5.context.isTransient" in oChildNode);
+		});
 	});
 
 	//*********************************************************************************************
@@ -6211,6 +6304,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getSiblingIndex: group level", function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			// expandTo : 1, // @see _AggregationHelper.buildApply4Hierarchy
 			hierarchyQualifier : "X"
 		});
 		const oCacheMock = this.mock(oCache);
@@ -6275,12 +6369,70 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oCache.getSiblingIndex(5, -1), "D");
+
+		oCacheMock.expects("findIndex").withExactArgs(1, sinon.match.same(oGroupLevel))
+			.returns("E");
+		oCache.aElements.E = {
+			"@$ui5._" : {parent : oGroupLevel},
+			"@$ui5.context.isTransient" : false // OOP
+		};
+		oCacheMock.expects("getSiblingIndex").withExactArgs(2, +1, "~bAllowPlaceholder~")
+			.callThrough(); // c.u.t.
+		oCacheMock.expects("getSiblingIndex").withExactArgs("E", +1, "~bAllowPlaceholder~")
+			.returns("E++");
+
+		// code under test ("sibling is out of place, skip it!")
+		assert.strictEqual(oCache.getSiblingIndex(2, +1, "~bAllowPlaceholder~"), "E++");
+
+		oCacheMock.expects("findIndex").withExactArgs(0, sinon.match.same(oGroupLevel))
+			.returns("F");
+		oCache.aElements.F = {
+			"@$ui5._" : {parent : oGroupLevel},
+			"@$ui5.context.isTransient" : false // OOP
+		};
+		oCacheMock.expects("getSiblingIndex").withExactArgs(4, -1, "~bAllowPlaceholder~")
+			.callThrough(); // c.u.t.
+		oCacheMock.expects("getSiblingIndex").withExactArgs("F", -1, "~bAllowPlaceholder~")
+			.returns("F--");
+
+		// code under test ("sibling is out of place, skip it!")
+		assert.strictEqual(oCache.getSiblingIndex(4, -1, "~bAllowPlaceholder~"), "F--");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getSiblingIndex: group level, index not found", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			// expandTo : 1, // @see _AggregationHelper.buildApply4Hierarchy
+			hierarchyQualifier : "X"
+		});
+		const oCacheMock = this.mock(oCache);
+		const oGroupLevel = {};
+		oCache.aElements = [/*first level*/, {
+			"@$ui5._" : {
+				parent : oGroupLevel,
+				rank : undefined // OOP
+			},
+			"@$ui5.node.level" : 2
+		}, {
+			"@$ui5._" : {
+				parent : oGroupLevel,
+				rank : 0
+			},
+			"@$ui5.node.level" : 2
+		}];
+		oGroupLevel.aElements = [oCache.aElements[1], oCache.aElements[2]];
+		oGroupLevel.aElements.$count = 2;
+		oCacheMock.expects("findIndex").withExactArgs(1, sinon.match.same(oGroupLevel))
+			.returns(-1);
+
+		// code under test
+		assert.strictEqual(oCache.getSiblingIndex(2, +1), -1);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("getSiblingIndex: 1st level, expandTo : 1", function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
-			expandTo : 1, // @see _AggregationHlper.buildApply4Hierarchy
+			expandTo : 1, // @see _AggregationHelper.buildApply4Hierarchy
 			hierarchyQualifier : "X"
 		});
 		const oCacheMock = this.mock(oCache);
@@ -6640,6 +6792,78 @@ sap.ui.define([
 
 		// code under test
 		oCache.resetOutOfPlace();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("get1stInPlaceChildIndex: no first in-place root", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		oCache.aElements = [{
+			"@$ui5.context.isTransient" : false, // OOP
+			"@$ui5.node.level" : 1
+		}];
+
+		// code under test
+		assert.strictEqual(oCache.get1stInPlaceChildIndex(-1), -1);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("get1stInPlaceChildIndex: first in-place root", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		oCache.aElements = [{
+			"@$ui5.context.isTransient" : false, // OOP
+			"@$ui5.node.level" : 1
+		}, {
+			"@$ui5.node.level" : 2
+		}, { // first in-place root
+			"@$ui5.node.level" : 1
+		}];
+
+		// code under test
+		assert.strictEqual(oCache.get1stInPlaceChildIndex(-1), 2);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("get1stInPlaceChildIndex: first in-place child", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		oCache.aElements = [{ // avoid this trap!
+			"@$ui5.node.level" : 2
+		}, { // parent
+			"@$ui5.node.level" : 1
+		}, {
+			"@$ui5.context.isTransient" : false, // OOP
+			"@$ui5.node.level" : 2
+		}, {
+			"@$ui5.node.level" : 3
+		}, { // first in-place child
+			"@$ui5.node.level" : 2
+		}];
+
+		// code under test
+		assert.strictEqual(oCache.get1stInPlaceChildIndex(1), 4);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("get1stInPlaceChildIndex: no first in-place child", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		oCache.aElements = [{ // avoid this trap!
+			"@$ui5.node.level" : 2
+		}, { // parent
+			"@$ui5.node.level" : 1
+		}, {
+			"@$ui5.context.isTransient" : false, // OOP
+			"@$ui5.node.level" : 2
+		}];
+
+		// code under test
+		assert.strictEqual(oCache.get1stInPlaceChildIndex(1), -1);
 	});
 
 	//*********************************************************************************************

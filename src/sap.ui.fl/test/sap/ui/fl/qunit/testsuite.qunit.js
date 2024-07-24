@@ -1307,6 +1307,13 @@ sap.ui.define([
 			},
 
 			// Support
+			"support/_internal/getFlexSettings": {
+				group: "Support",
+				coverage: {
+					only: ["sap/ui/fl/support"]
+				}
+			},
+
 			"support/apps/contentbrowser/controller/ContentDetails.controller": {
 				group: "Support",
 				coverage: {

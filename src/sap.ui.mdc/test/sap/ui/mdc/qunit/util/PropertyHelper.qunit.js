@@ -754,6 +754,102 @@ sap.ui.define([
 		}, new Error("Invalid property definition: The values of legacy-attribute 'name' and it's replacement 'key' must be identical." + '\n{"key":"propA","name":"propB","label":"prop A","dataType":"String"}'));
 	});
 
+	QUnit.test("Property info consistency: Property missing", function(assert) {
+		const oPropertyHelper = new PropertyHelper([{
+			key: "foo",
+			label: "bar",
+			dataType: "String"
+		}]);
+		assert.throws(function() {
+			oPropertyHelper.setProperties([]);
+		}, new Error("Invalid property definition: Detected property info modifications after update:"
+					 + '\n[{"foo":"PROPERTY_MISSING"}]'));
+
+		oPropertyHelper.destroy();
+	});
+
+	QUnit.test("Property info consistency: Attribute value mismatch - Previous attribute value ->  New attribute value", function(assert) {
+		const oPropertyHelper = new PropertyHelper([{
+			key: "foo",
+			label: "foo",
+			dataType: "String"
+		}]);
+		assert.throws(function() {
+			oPropertyHelper.setProperties([{
+				key: "foo",
+				label: "bar",
+				dataType: "Integer"
+			}]);
+		}, new Error("Invalid property definition: Detected property info modifications after update:"
+					 + '\n[{"foo":[{"label":["foo","bar"]},{"dataType":["String","Integer"]}]}]'));
+		oPropertyHelper.destroy();
+	});
+
+	QUnit.test("Property info consistency: Attribute value mismatch - Default value -> New attribute value", function(assert) {
+		const oPropertyHelper = new PropertyHelper([{
+			key: "foo",
+			label: "foo",
+			dataType: "String"
+		}]);
+		assert.throws(function() {
+			oPropertyHelper.setProperties([{
+				key: "foo",
+				label: "foo",
+				dataType: "String",
+				tooltip: "bar"
+			}]);
+		}, new Error("Invalid property definition: Detected property info modifications after update:"
+					 + '\n[{"foo":[{"tooltip":["","bar"]}]}]'));
+		oPropertyHelper.destroy();
+	});
+
+	QUnit.test("Property info consistency: Attribute value mismatch - Previous attribute value -> Default value", function(assert) {
+		const oPropertyHelper = new PropertyHelper([{
+			key: "foo",
+			label: "foo",
+			dataType: "String",
+			tooltip: "bar"
+		}]);
+		assert.throws(function() {
+			oPropertyHelper.setProperties([{
+				key: "foo",
+				label: "foo",
+				dataType: "String"
+			}]);
+		}, new Error("Invalid property definition: Detected property info modifications after update:"
+					 + '\n[{"foo":[{"tooltip":["bar",""]}]}]'));
+		oPropertyHelper.destroy();
+	});
+
+	QUnit.test("Property info consistency: Complex attribute value mismatch - Default value -> New attribute value", function(assert) {
+		const oPropertyHelper = new PropertyHelper([{
+			key: "foo",
+			label: "foo",
+			dataType: "String"
+		}], null, {
+			foo: {
+				type: {
+					bar: {type: "string", "default": {value: "ABC"}}
+				},
+				"default": {value: {}}
+			}
+		});
+
+		assert.throws(function() {
+			oPropertyHelper.setProperties([{
+				key: "foo",
+				label: "foo",
+				dataType: "String",
+				foo: {
+					bar: "XYZ"
+				}
+			}]);
+		}, new Error("Invalid property definition: Detected property info modifications after update:"
+					 + '\n[{"foo":[{"foo":[{"bar":"ABC"},{"bar":"XYZ"}]}]}]'));
+
+		oPropertyHelper.destroy();
+	});
+
 	QUnit.module("Validation of additional attributes");
 
 	QUnit.test("Provide a reserved standard attribute that is not added", function(assert) {
@@ -1776,7 +1872,7 @@ sap.ui.define([
 		const oValidatePropertiesSpy = sinon.spy();
 		const oValidatePropertySpy = sinon.spy();
 
-		const aReplacementProperties = [{
+		const aUpdatedProperties = [...this.aOriginalProperties, {
 			key: "ReplacedPropA",
 			label: "Replaced Property A",
 			dataType: "String",
@@ -1806,21 +1902,21 @@ sap.ui.define([
 
 		oValidatePropertiesSpy.resetHistory();
 		oValidatePropertySpy.resetHistory();
-		oMyPropertyHelper.setProperties(aReplacementProperties);
+		oMyPropertyHelper.setProperties(aUpdatedProperties);
 		const aProperties = oMyPropertyHelper.getProperties();
 
-		assert.equal(aProperties.length, aReplacementProperties.length,
+		assert.equal(aProperties.length, aUpdatedProperties.length,
 			"The property array contains as many entries as there are replaced properties");
-		aReplacementProperties.forEach(function(oReplacementProperty, iIndex) {
+			aUpdatedProperties.forEach(function(oReplacementProperty, iIndex) {
 			assert.strictEqual(aProperties[iIndex].key, oReplacementProperty.key,
 				"The property array references the correct replaced property at index " + iIndex);
 		});
-		assert.ok(oValidatePropertiesSpy.calledOnceWithExactly(aReplacementProperties, this.aOriginalProperties),
+		assert.ok(oValidatePropertiesSpy.calledOnceWithExactly(aUpdatedProperties, this.aOriginalProperties),
 			"#validateProperties called once with the correct arguments");
-		assert.equal(oValidatePropertySpy.callCount, 2, "#validateProperty called twice");
-		assert.ok(oValidatePropertySpy.getCall(0).calledWithExactly(aReplacementProperties[0], aReplacementProperties, this.aOriginalProperties),
+		assert.equal(oValidatePropertySpy.callCount, aUpdatedProperties.length, "#validateProperty called for every incoming property");
+		assert.ok(oValidatePropertySpy.getCall(0).calledWithExactly(aUpdatedProperties[0], aUpdatedProperties, this.aOriginalProperties),
 			"Arguments of first call");
-		assert.ok(oValidatePropertySpy.getCall(1).calledWithExactly(aReplacementProperties[1], aReplacementProperties, this.aOriginalProperties),
+		assert.ok(oValidatePropertySpy.getCall(1).calledWithExactly(aUpdatedProperties[1], aUpdatedProperties, this.aOriginalProperties),
 			"Arguments of first call");
 
 		assert.throws(function() {
@@ -2137,13 +2233,16 @@ sap.ui.define([
 		const oPreparePropertySpy = sinon.spy();
 		const aProperties = [{
 			key: "prop",
+			name: "prop",
 			label: "Property",
 			dataType: "String"
 		}, {
 			key: "complexProp",
+			name: "complexProp",
 			label: "Complex property",
 			propertyInfos: ["prop"]
 		}];
+
 		const oCustomPropertyAttribute = {prop: "value"};
 		const MyPropertyHelper = PropertyHelper.extend("sap.ui.mdc.test.table.PropertyHelper", {
 			prepareProperty: function(oProperty) {
@@ -2159,8 +2258,8 @@ sap.ui.define([
 		const oProperty = oMyPropertyHelper.getProperties()[0];
 
 		assert.equal(oPreparePropertySpy.callCount, 2, "#prepareProperty called twice");
-		assert.ok(oPreparePropertySpy.firstCall.calledWithExactly({...aProperties[0], name: aProperties[0].key}), "Arguments of first #prepareProperty call");
-		assert.ok(oPreparePropertySpy.secondCall.calledWithExactly({...aProperties[1], name: aProperties[1].key}), "Arguments of second #prepareProperty call");
+		assert.ok(oPreparePropertySpy.firstCall.calledWithExactly({...aProperties[0], name: aProperties[0].key}, {prop: aProperties[0], complexProp: aProperties[1]}), "Arguments of first #prepareProperty call");
+		assert.ok(oPreparePropertySpy.secondCall.calledWithExactly({...aProperties[1], name: aProperties[1].key}, {prop: oProperty, complexProp: aProperties[1]}), "Arguments of second #prepareProperty call");
 		assert.deepEqual(oProperty.myAttribute, oCustomPropertyAttribute, "Attributes can be added");
 		assert.ok(Object.isFrozen(oProperty.myAttribute), "Added attributes are frozen");
 		assert.deepEqual(oProperty.myMethod(), "MyMethod", "Methods can be added");

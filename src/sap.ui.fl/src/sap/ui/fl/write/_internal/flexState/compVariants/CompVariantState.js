@@ -253,6 +253,27 @@ sap.ui.define([
 		return oVariant;
 	}
 
+	function revertAllVariantUpdate(oVariant) {
+		if (oVariant && oVariant.getRevertData().length) {
+			let oRevertDataContent;
+			oVariant.getRevertData().reverse().some((oRevertData) => {
+				oRevertDataContent = oRevertData.getContent();
+				return oRevertDataContent.previousAction === CompVariantState.updateActionType.SAVE;
+			});
+			revertVariantUpdate(
+				oVariant,
+				Object.assign({
+					name: oRevertDataContent.previousName,
+					content: oRevertDataContent.previousContent,
+					favorite: oRevertDataContent.previousFavorite,
+					executeOnSelection: oRevertDataContent.previousExecuteOnSelection,
+					contexts: oRevertDataContent.previousContexts
+				})
+			);
+			oVariant.setState(oRevertDataContent.previousState);
+		}
+	}
+
 	function setAuthor(oChangeSpecificData) {
 		if (oChangeSpecificData.layer === Layer.VENDOR) {
 			oChangeSpecificData.support = {
@@ -421,6 +442,10 @@ sap.ui.define([
 		oMapOfPersistencyKey.variants.push(oFlexObject);
 		oMapOfPersistencyKey.byId[oFlexObject.getId()] = oFlexObject;
 		FlexState.addDirtyFlexObject(mPropertyBag.reference, oFlexObject);
+		if (oChangeSpecificData.layer === Layer.CUSTOMER) {
+			mPropertyBag.id = mPropertyBag.control.getCurrentVariantId();
+			revertAllVariantUpdate(getVariantById(mPropertyBag));
+		}
 		return oFlexObject;
 	};
 

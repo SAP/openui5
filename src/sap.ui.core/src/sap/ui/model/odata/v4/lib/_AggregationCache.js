@@ -430,34 +430,31 @@ sap.ui.define([
 	_AggregationCache.prototype.countDescendants = function (oGroupNode, iIndex) {
 		var i;
 
-		let iGroupNodeLevel = oGroupNode["@$ui5.node.level"]; // max level of oGroupNode's cache
-		// We have to check a candidate's rank if oGroupNode is in oFirstLevel
-		// Note: expandTo may be undefined (when using data aggregation)
-		let bCheckRank = iGroupNodeLevel <= this.oAggregation.expandTo;
+		const iGroupNodeLevel = oGroupNode["@$ui5.node.level"];
+		// Note: iExpandTo may be undefined (when using data aggregation)
+		const iExpandTo = this.bUnifiedCache ? Infinity : this.oAggregation.expandTo;
+		// Note: "descendants" refers to LimitedDescendantCount and counts descendants within
+		// "top pyramid" only!
 		let iDescendants = _Helper.getPrivateAnnotation(oGroupNode, "descendants");
-		if (iDescendants) { // => this.oAggregation.expandTo > 1
-			// Note: "descendants" refers to LimitedDescendantCount and counts descendants within
-			// "top pyramid" only!
-			iGroupNodeLevel = this.oAggregation.expandTo;
-		}
-		if (this.bUnifiedCache) {
-			iGroupNodeLevel = Infinity;
-			bCheckRank = true;
-		}
-		const aElements = this.aElements;
-		for (i = iIndex + 1; i < aElements.length; i += 1) {
-			// If the candidate is not in a nested level cache and (in oFirstLevel) it has a rank,
-			// it counts as descendant. Or it is a sibling if oGroupNode did not have descendants.
-			if (aElements[i]["@$ui5.node.level"] <= iGroupNodeLevel
-					&& (!bCheckRank || _Helper.hasPrivateAnnotation(aElements[i], "rank"))) {
-				// Note: level 0 or 1 is used for initial placeholders of 1st level cache!
+		for (i = iIndex + 1; i < this.aElements.length; i += 1) {
+			const oCandidate = this.aElements[i];
+			const iCandidateLevel = oCandidate["@$ui5.node.level"];
+			// level 0 means "don't know" for a placeholder, otherwise candidate is grand total
+			const bLevelUnknown = iCandidateLevel === 0
+				&& _Helper.hasPrivateAnnotation(oCandidate, "placeholder");
+			if (!bLevelUnknown && iCandidateLevel <= iGroupNodeLevel) {
+				break; // not a descendant
+			}
+			if (iCandidateLevel <= iExpandTo && _Helper.hasPrivateAnnotation(oCandidate, "rank")) {
+				// a node w/ rank in oFirstLevel => counted in "descendants"
+				// Note: a placeholder w/ level 0 has a rank
 				if (!iDescendants) {
-					break; // we've reached a sibling of the collapsed node
+					break; // not a descendant
 				}
 				iDescendants -= 1;
-				if (aElements[i]["@$ui5.node.isExpanded"] === false) {
+				if (oCandidate["@$ui5.node.isExpanded"] === false) {
 					// skip descendants of manually collapsed node
-					iDescendants -= _Helper.getPrivateAnnotation(aElements[i], "descendants", 0);
+					iDescendants -= _Helper.getPrivateAnnotation(oCandidate, "descendants", 0);
 				}
 			}
 		}
@@ -1001,6 +998,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the index in <code>this.aElements</code> of the first in-place child of the given
+	 * parent node, or the first in-place root if no parent is given.
+	 *
+	 * @param {number} iParentIndex
+	 *   The parent node's index, or -1 if looking for a root node
+	 * @returns {number}
+	 *   The array index, or -1 if there is no such first in-place node
+	 *
+	 * @public
+	 */
+	_AggregationCache.prototype.get1stInPlaceChildIndex = function (iParentIndex) {
+		const iLevel = iParentIndex >= 0
+			? this.aElements[iParentIndex]["@$ui5.node.level"] + 1
+			: 1;
+
+		return this.aElements.findIndex(
+			(oElement, iIndex) => iIndex > iParentIndex
+				&& oElement["@$ui5.node.level"] === iLevel
+				&& oElement["@$ui5.context.isTransient"] === undefined);
+	};
+
+	/**
 	 * Returns an array containing all current elements of this aggregation cache's flat list; the
 	 * array is annotated with the collection's $count. If there are placeholders, the corresponding
 	 * objects will be ignored and set to <code>undefined</code>.
@@ -1134,7 +1153,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the index of the given node's sibling, either the next one (via offset +1) or the
-	 * previous one (via offset -1).
+	 * previous one (via offset -1), skipping out-of-place nodes.
 	 *
 	 * @param {number} iIndex - The index of a node
 	 * @param {number} iOffset - An offset, either -1 or +1
@@ -1172,8 +1191,16 @@ sap.ui.define([
 
 		if (iSiblingRank >= 0) {
 			const iSiblingIndex = this.findIndex(iSiblingRank, oCache);
+			if (iSiblingIndex < 0) {
+				return -1; // no such sibling
+			}
+			const oSibling = this.aElements[iSiblingIndex];
 			if (bSingleLevelCache && bAllowPlaceholder
-				|| !_Helper.hasPrivateAnnotation(this.aElements[iSiblingIndex], "placeholder")) {
+				|| !_Helper.hasPrivateAnnotation(oSibling, "placeholder")) {
+				if (oSibling["@$ui5.context.isTransient"] !== undefined) {
+					// sibling is out of place, skip it!
+					return this.getSiblingIndex(iSiblingIndex, iOffset, bAllowPlaceholder);
+				}
 				return iSiblingIndex; // sibling found
 			}
 		} // else: iSiblingRank === undefined => return undefined;
@@ -1428,6 +1455,7 @@ sap.ui.define([
 		if (this.oTreeState.isOutOfPlace(sChildPredicate)) {
 			// remove OOP for all descendants (incl. itself) of a moved OOP node
 			this.oTreeState.deleteOutOfPlace(sChildPredicate);
+			delete oChildNode["@$ui5.context.isTransient"];
 			bRefreshNeeded = true;
 		}
 

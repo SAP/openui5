@@ -691,8 +691,7 @@ sap.ui.define([
 				if (bShouldOpen) {
 					this._iFocusTimer = setTimeout(() => {
 						if (!this.isFieldDestroyed() && !oValueHelp.isOpen() && _isFocused.call(this)) {
-							_handleValueHelpRequest.call(this, oEvent, true); // open typeahead
-							this._redirectFocus(oEvent, oValueHelp);
+							_handleValueHelpRequest.call(this, oEvent, true); // open typeahead, keep focus in field
 						}
 						this._iFocusTimer = null;
 					}, 300);
@@ -906,10 +905,12 @@ sap.ui.define([
 				if (oValueHelp.isNavigationEnabled(iStep) && // if open let ValueHelp decide if and how to navigate
 					(!this.getContentFactory().isMeasure() || oSource.getShowValueHelp())) { // for Currenncy/Unit field navigate only in part with valueHelp
 					// if only type-ahead but no real value help, only navigate if open
+					const oContent = this.getControlForSuggestion();
+					const bFocusInField = oContent.hasStyleClass("sapMFocus");
 					oEvent.preventDefault();
 					oEvent.stopPropagation();
 					oValueHelp.setFilterValue(this._sFilterValue); // to be sure to filter for typed value
-					oValueHelp.navigate(iStep);
+					oValueHelp.navigate(oValueHelp.isOpen() && bFocusInField && iStep === 1 ? 0 : iStep); // on first navigation just initial selected item should be navigated
 				}
 			}
 		}
@@ -945,8 +946,7 @@ sap.ui.define([
 	FieldBase.prototype._redirectFocus = function(oEvent, oValueHelp) {
 		const oSource = oEvent.srcControl;
 		if (!Device.system.phone && oValueHelp.isOpen() && (!this.getContentFactory().isMeasure() || (oSource.getShowValueHelp && oSource.getShowValueHelp()))) {
-			oSource.addStyleClass("sapMFocus"); // to show focus outline again after navigation
-			oValueHelp.removeFocus();
+			_setVisualFocusToField(oSource, oValueHelp); // to show focus outline again after navigation
 		}
 	};
 
@@ -970,7 +970,7 @@ sap.ui.define([
 						if (bTapBeforeFocus) {
 							oSuggestControl.focus(); // if focus not already set (on phone) set it now before the popover opens
 						}
-						_handleValueHelpRequest.call(this, oEvent, true); // open typeahead
+						_handleValueHelpRequest.call(this, oEvent, true); // open typeahead, keep focus in field
 					}
 				});
 			}
@@ -2549,11 +2549,9 @@ sap.ui.define([
 
 		if (this._oNavigateCondition) {
 			oValueHelp.setHighlightId();
+			this._oNavigateCondition = undefined; // navigation item is not longer valid
+			this.getContentFactory().updateConditionType();
 		}
-
-
-		this._oNavigateCondition = undefined; // navigation item is not longer valid
-		this.getContentFactory().updateConditionType();
 
 		if ("previousValue" in oEvent.getParameters()) {
 			vPreviousValue = oEvent.getParameter("previousValue");
@@ -2876,6 +2874,7 @@ sap.ui.define([
 				const aConditions = this.getConditions();
 				_setConditionsOnValueHelp.call(this, aConditions, oValueHelp);
 				oValueHelp.toggleOpen(!!bOpenAsTypeahed);
+				this._bFocusOnValueHelp = !!oEvent.getSource; // show focus on dropdown if opened via F4 (set it only after really opened)
 				const oContent = oEvent.srcControl || oEvent.getSource(); // as, if called from Tap or other browser event getSource is not available
 				if (!oValueHelp.isFocusInHelp()) {
 					// need to reset bValueHelpRequested in Input, otherwise on focusout no change event and navigation don't work
@@ -3048,52 +3047,40 @@ sap.ui.define([
 		let sValue = oEvent.getParameter("value");
 		let vKey = oEvent.getParameter("key");
 		let oCondition = oEvent.getParameter("condition");
-		const sItemId = oEvent.getParameter("itemId");
+		let sItemId = oEvent.getParameter("itemId");
 		const bLeaveFocus = oEvent.getParameter("leaveFocus");
+		const bCaseSensitive = oEvent.getParameter("caseSensitive");
 
 		if (!oCondition && vKey) {
 			oCondition = Condition.createItemCondition(vKey, sValue); // TODO: delete if outdated?
 		}
 
 		let sNewValue;
-		let sDOMValue;
 		const oContent = this.getControlForSuggestion();
-		const oOperator = FilterOperatorUtil.getEQOperator(this.getSupportedOperators()); /// use EQ operator of Field (might be different one)
 		const oValueHelp = _getValueHelp.call(this);
+		const bOpen = oValueHelp.isOpen();
+		const sCurrentValue = this._vLiveChangeValue || this._sFilterValue; // as FilterValue is updated delayed
 
 		if (bLeaveFocus) {
 			// nothing to navigate, just set focus visualization back to field
-			oContent.addStyleClass("sapMFocus");
-			oContent.focus();
-			oValueHelp.removeFocus();
+			_setVisualFocusToField(oContent, oValueHelp);
+			oContent.focus(); // in multi-select case real focus might be on value help
+
+			if (sCurrentValue && this._oNavigateCondition && oContent.getDOMValue && oContent.getDOMValue() !== this._oNavigateCondition.output) {
+				// restore autocomplete
+				_doAutocomplete.call(this, this._oNavigateCondition, sCurrentValue, oContent, bCaseSensitive);
+				sItemId = this._oNavigateCondition.itemId;
+				this.fireLiveChange({ value: this._oNavigateCondition.output });
+			}
+
+			_setAriaAttributes.call(this, bOpen, sItemId);
+
 			return;
 		}
 
-		if (oCondition) {
-			this._oNavigateCondition = merge({}, oCondition); // to keep In- and OutParameters
-			this._oNavigateCondition.operator = oOperator.name;
-			vKey = oCondition.values[0];
-			sValue = oCondition.values[1];
-		} else {
-			this._oNavigateCondition = Condition.createCondition(oOperator.name, [vKey, sValue], undefined, undefined, ConditionValidated.Validated);
-		}
-
-		if (this.getContentFactory().isMeasure()) {
-			const aConditions = this.getConditions();
-			// use number of first condition. In Multicase all conditions must be updated in change event
-			if (aConditions.length > 0) {
-				this._oNavigateCondition.operator = aConditions[0].operator;
-				this._oNavigateCondition.values[0] = [aConditions[0].values[0][0], vKey];
-				if (aConditions[0].operator === OperatorName.BT) {
-					this._oNavigateCondition.values[1] = [aConditions[0].values[1][0], this._oNavigateCondition.values[0][1]];
-				} else if (this._oNavigateCondition.values.length > 1) {
-					this._oNavigateCondition.values.splice(1);
-				}
-			} else {
-				this._oNavigateCondition.values = [
-					[null, vKey]
-				];
-			}
+		this._oNavigateCondition = _createNavigateCondition.call(this, oCondition, sItemId);
+		if (this._oNavigateCondition) {
+			[vKey, sValue] = this._oNavigateCondition.values;
 		}
 
 		this._bPreventGetDescription = true; // if no description in navigated condition, no description exist. Don't try to read one
@@ -3111,10 +3098,17 @@ sap.ui.define([
 			sNewValue = vKey;
 		}
 
-		const bOpen = oValueHelp.isOpen();
-
 		if (oContent && oContent.setDOMValue) {
-			if (!sDOMValue) {
+			let sDOMValue;
+
+			if (sCurrentValue && this._oNavigateCondition) { // navigation while typeahead - use autocomplete
+				sDOMValue = _doAutocomplete.call(this, this._oNavigateCondition, sCurrentValue, oContent, bCaseSensitive);
+				if (sDOMValue) {
+					this._oNavigateCondition.output = sDOMValue; // store for parsing as in ConditionType normally the user input is compared with formatted value. But here the output could be different because of delegate implementation.
+				}
+			}
+
+			if (!sDOMValue) { // no typeahead or text don't match filterValue
 				if (this.getContentFactory().isMeasure() && this.getContentFactory().getUnitConditionsType(true) && this._oNavigateCondition) {
 					sDOMValue = this.getContentFactory().getUnitConditionsType().formatValue([this._oNavigateCondition]);
 				} else if (this.getContentFactory().getConditionType(true) && this._oNavigateCondition) {
@@ -3124,13 +3118,11 @@ sap.ui.define([
 				} else {
 					sDOMValue = sValue || vKey;
 				}
-			}
-			oContent.setDOMValue(sDOMValue);
-			if (oContent._doSelect) {
-				oContent._doSelect();
-			}
-			if (bOpen) {
-				oContent.removeStyleClass("sapMFocus"); // to have focus outline on navigated item only
+
+				oContent.setDOMValue(sDOMValue);
+				if (oContent._doSelect) {
+					oContent._doSelect();
+				}
 			}
 		}
 
@@ -3151,97 +3143,123 @@ sap.ui.define([
 		const oCondition = oEvent.getParameter("condition");
 		const sFilterValue = oEvent.getParameter("filterValue");
 		const sItemId = oEvent.getParameter("itemId");
+		const iItems = oEvent.getParameter("items");
 		const bCaseSensitive = oEvent.getParameter("caseSensitive");
 		const oContent = this.getControlForSuggestion();
-		const oOperator = FilterOperatorUtil.getEQOperator(this.getSupportedOperators()); /// use EQ operator of Field (might be different one)
 		const sCurrentValue = this._vLiveChangeValue || this._sFilterValue; // as FilterValue is updated delayed
 
 
-		if (_isFocused.call(this) && !this._bPreventAutocomplete && sCurrentValue === sFilterValue && // skip if user changes text after result was determined
+		if (_isFocused.call(this) && !this._bPreventAutocomplete && oCondition && sCurrentValue === sFilterValue && // skip if user changes text after result was determined
 			oContent && oContent.setDOMValue && oContent.selectText && (!oContent.isComposingCharacter || !oContent.isComposingCharacter())) { // Autocomplete only possible if content supports it
 			const oContentFactory = this.getContentFactory();
-			const bIsMeasure = oContentFactory.isMeasure();
-			const oDelegate = this.getControlDelegate(); // on typeahead it must be initialized
-			let oDataType;
-			const oAdditionalDataType = oContentFactory.getAdditionalDataType();
 
-			if (bIsMeasure) {
-				const aCompositeTypes = this.getContentFactory().getCompositeTypes();
-				if (aCompositeTypes && aCompositeTypes.length > 1) { // if no type is defined the default (String) will be used
-					oDataType = aCompositeTypes[1];
-				}
-			} else {
-				oDataType = oContentFactory.getDataType();
-			}
-
-			// determine formattes value used for output
-			let sKey;
-			let sDescription;
-
-			// get output texts
-			if (oDataType) {
-				sKey = oDataType.formatValue(oCondition.values[0], "string");
-			} else {
-				sKey = oCondition.values[0];
-			}
-
-			if (oCondition.values.length > 1) { // as condition could only contain a key
-				if (oAdditionalDataType) {
-					sDescription = oAdditionalDataType.formatValue(oCondition.values[1], "string");
-				} else {
-					sDescription = oCondition.values[1];
-				}
-			}
-
-			// check if entered text matches result
-			const bKeyMatch = !!sKey && oDelegate.isInputMatchingText(this, sFilterValue, sKey, false, bCaseSensitive);
-			const bDescriptionMatch = !!sDescription && oDelegate.isInputMatchingText(this, sFilterValue, sDescription, true, bCaseSensitive);
-			let sOutput = oDelegate.getAutocompleteOutput(this, oCondition, sKey, sDescription, bKeyMatch, bDescriptionMatch);
-
+			const sOutput = _doAutocomplete.call(this, oCondition, sFilterValue, oContent, bCaseSensitive);
 			if (sOutput) { // only if something returned
-
 				const oValueHelp = _getValueHelp.call(this);
 				if (oValueHelp?.isOpen()) {
 					oValueHelp.setHighlightId(!this._bPreventAutocomplete && sItemId);
 				}
 
-				this._oNavigateCondition = merge({}, oCondition); // to keep Payload
-				this._oNavigateCondition.operator = oOperator.name;
-
-				if (bIsMeasure) {
-					const aConditions = this.getConditions();
-					// use number of first condition. In Multicase all conditions must be updated in change event
-					if (aConditions.length > 0) {
-						this._oNavigateCondition.operator = aConditions[0].operator;
-						this._oNavigateCondition.values[0] = [aConditions[0].values[0][0], oCondition.values[0]];
-						if (aConditions[0].operator === OperatorName.BT) {
-							this._oNavigateCondition.values[1] = [aConditions[0].values[1][0], this._oNavigateCondition.values[0][1]];
-						} else if (this._oNavigateCondition.values.length > 1) {
-							this._oNavigateCondition.values.splice(1);
-						}
-					} else {
-						this._oNavigateCondition.values = [
-							[null, oCondition.values[0]]
-						];
-					}
-				}
-
-				// while typing the types user input should not be changed. As the output might have a diffrent upper/lower case, replace the beginning with the user input.
-				sOutput = typeof sOutput === 'string' ? sFilterValue + sOutput.substr(sFilterValue.length) : sFilterValue;
+				this._oNavigateCondition = _createNavigateCondition.call(this, oCondition, sItemId);
 				this._oNavigateCondition.output = sOutput; // store for parsing as in ConditionType normally the user input is compared with formatted value. But here the output could be different because of delegate implementation.
 
-				oContent.setDOMValue(sOutput);
-				oContent.selectText(sFilterValue.length, sOutput.length);
-
 				oContentFactory.updateConditionType();
-				_setAriaAttributes.call(this, true, sItemId); // TODO: check if still open?
-			}
-
-			if (sItemId) {
-				// in Typeahead we don't have to wait for onOpened as we know that something is found
-				oContent.removeStyleClass("sapMFocus"); // to have focus outline on selected item in valueHelp only
+				_setAriaAttributes.call(this, true, null); // as visual focus stays in Field - no connection to item
 			}
 		}
+
+		// announce number of found items, even on backspace
+		if (oContent?._applySuggestionAcc) {
+			oContent._applySuggestionAcc(iItems);
+		}
+
+	}
+
+	function _createNavigateCondition(oCondition, sItemId) {
+
+		const oOperator = FilterOperatorUtil.getEQOperator(this.getSupportedOperators()); /// use EQ operator of Field (might be different one)
+		let oNavigateCondition;
+
+		if (oCondition) {
+			oNavigateCondition = merge({}, oCondition); // to keep In- and OutParameters
+			oNavigateCondition.operator = oOperator.name;
+			const vKey = oCondition.values[0];
+
+			if (this.getContentFactory().isMeasure()) {
+				const aConditions = this.getConditions();
+				// use number of first condition. In Multicase all conditions must be updated in change event
+				if (aConditions.length > 0) {
+					oNavigateCondition.operator = aConditions[0].operator;
+					oNavigateCondition.values[0] = [aConditions[0].values[0][0], vKey];
+					if (aConditions[0].operator === OperatorName.BT) {
+						oNavigateCondition.values[1] = [aConditions[0].values[1][0], oNavigateCondition.values[0][1]];
+					} else if (oNavigateCondition.values.length > 1) {
+						oNavigateCondition.values.splice(1);
+					}
+				} else {
+					oNavigateCondition.values = [
+						[null, vKey]
+					];
+				}
+			}
+			oNavigateCondition.itemId = sItemId;
+		}
+
+		return oNavigateCondition;
+
+	}
+
+	function _doAutocomplete(oCondition, sFilterValue, oContent, bCaseSensitive) {
+
+		const oContentFactory = this.getContentFactory();
+		const bIsMeasure = oContentFactory.isMeasure();
+		const oDelegate = this.getControlDelegate(); // on typeahead it must be initialized
+		let oDataType;
+		const oAdditionalDataType = oContentFactory.getAdditionalDataType();
+
+		if (bIsMeasure) {
+			const aCompositeTypes = this.getContentFactory().getCompositeTypes();
+			if (aCompositeTypes && aCompositeTypes.length > 1) { // if no type is defined the default (String) will be used
+				oDataType = aCompositeTypes[1];
+			}
+		} else {
+			oDataType = oContentFactory.getDataType();
+		}
+
+		// determine formatted value used for output
+		let sKey;
+		let sDescription;
+
+		// get output texts
+		if (oDataType) {
+			sKey = oDataType.formatValue(oCondition.values[0], "string");
+		} else {
+			sKey = oCondition.values[0];
+		}
+
+		if (oCondition.values.length > 1) { // as condition could only contain a key
+			if (oAdditionalDataType) {
+				sDescription = oAdditionalDataType.formatValue(oCondition.values[1], "string");
+			} else {
+				sDescription = oCondition.values[1];
+			}
+		}
+
+		// check if entered text matches result
+		const bKeyMatch = !!sKey && oDelegate.isInputMatchingText(this, sFilterValue, sKey, false, bCaseSensitive);
+		const bDescriptionMatch = !!sDescription && oDelegate.isInputMatchingText(this, sFilterValue, sDescription, true, bCaseSensitive);
+		let sOutput = oDelegate.getAutocompleteOutput(this, oCondition, sKey, sDescription, bKeyMatch, bDescriptionMatch);
+
+		if (sOutput) { // only if something returned
+			// while typing the types user input should not be changed. As the output might have a diffrent upper/lower case, replace the beginning with the user input.
+			sOutput = typeof sOutput === 'string' ? sFilterValue + sOutput.substr(sFilterValue.length) : sFilterValue;
+
+			oContent.setDOMValue(sOutput);
+			oContent.focus(); // otherwise focus stays in table in some cases
+			oContent.selectText(sFilterValue.length, sOutput.length);
+		}
+
+		return sOutput;
 
 	}
 
@@ -3269,29 +3287,43 @@ sap.ui.define([
 		_setConditionsOnValueHelp.call(this, aConditions, oValueHelp);
 
 		if (_isFocused.call(this)) { // restore focus visualization
-			oContent.addStyleClass("sapMFocus");
+			_setVisualFocusToField(oContent, oValueHelp);
 		} else if (this._oFocusInHelp) {
 			// focus was in ValueHelp but focus is not back in Field - validate user input
 			oContent.onsapfocusleave(this._oFocusInHelp); // TODO: do we need a new Event with current focused control?
 		}
-
+		delete this._bFocusOnValueHelp; // only used while opening
 
 	}
 
 	function _handleValueHelpOpened(oEvent) {
 
 		let sItemId;
-		if (this.getMaxConditionsForHelp() === 1 || this._sFilterValue) { // set aria-activedescendant only in singleValue or typeahead
-			sItemId = oEvent.getParameter("itemId");
-			if (sItemId) {
-				const oContent = this.getControlForSuggestion();
-				oContent.removeStyleClass("sapMFocus"); // to have focus outline on selected item in valueHelp only
+
+		if (this._bFocusOnValueHelp) {
+			const oContent = this.getControlForSuggestion();
+			const oValueHelp = oEvent.getSource();
+			_setVisualFocusToValueHelp(oContent, oValueHelp);
+
+			if (this.getMaxConditionsForHelp() === 1 || this._sFilterValue) { // set aria-activedescendant only in singleValue or typeahead and visual focus in value help
+				sItemId = oEvent.getParameter("itemId");
 			}
+
+			// to focus selected item, typeahead match, or fist item (if none selected)
+			oValueHelp.navigate(0);
 		}
 		_setAriaAttributes.call(this, true, sItemId);
 		_setShowValueStateMessage.call(this, false);
+		delete this._bFocusOnValueHelp; // only used while opening
 
 		// close ValueState message on opening, because opened is sometimes very delayed what would lead to strange effect
+
+	}
+
+	function _handleValueHelpVisualFocusSet(oEvent) {
+
+		const oContent = this.getControlForSuggestion();
+		_setVisualFocusToValueHelp(oContent); // not needed to set it on ValueHelp as triggers from there
 
 	}
 
@@ -3325,6 +3357,7 @@ sap.ui.define([
 			oValueHelp.detachEvent("closed", _handleValueHelpAfterClose, this);
 			oValueHelp.detachEvent("opened", _handleValueHelpOpened, this);
 			oValueHelp.detachEvent("typeaheadSuggested", _handleValueHelpTypeaheadSuggested, this);
+			oValueHelp.detachEvent("visualFocusSet", _handleValueHelpVisualFocusSet, this);
 			this._bConnected = false;
 		}
 
@@ -3369,6 +3402,7 @@ sap.ui.define([
 				oValueHelp.attachEvent("closed", _handleValueHelpAfterClose, this);
 				oValueHelp.attachEvent("opened", _handleValueHelpOpened, this);
 				oValueHelp.attachEvent("typeaheadSuggested", _handleValueHelpTypeaheadSuggested, this);
+				oValueHelp.attachEvent("visualFocusSet", _handleValueHelpVisualFocusSet, this);
 				const aConditions = this.getConditions();
 				_setConditionsOnValueHelp.call(this, aConditions, oValueHelp);
 
@@ -3839,6 +3873,22 @@ sap.ui.define([
 
 		const oFocusedElement = document.activeElement;
 		return (oFocusedElement && (containsOrEquals(this.getDomRef(), oFocusedElement)));
+
+	}
+
+	// set visual focus on field ad remove it from ValueHelp
+	function _setVisualFocusToField(oContent, oValueHelp) {
+
+		oContent.addStyleClass("sapMFocus"); // to show focus outline again after navigation
+		oValueHelp?.removeVisualFocus();
+
+	}
+
+	// set visual focus on value help ad remove it from field
+	function _setVisualFocusToValueHelp(oContent, oValueHelp) {
+
+		oContent.removeStyleClass("sapMFocus");
+		oValueHelp?.setVisualFocus();
 
 	}
 

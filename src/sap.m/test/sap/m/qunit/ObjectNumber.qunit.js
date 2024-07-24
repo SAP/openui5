@@ -242,17 +242,11 @@ sap.ui.define([
 	QUnit.test("Default ObjectNumber", function (assert) {
 		var oStateElement = document.getElementById(this.oONStateId),
 			oEmphasizedInfoElement = document.getElementById(this.oONEmphasizedInfoId),
-			oRoleDescriptionElement = document.getElementById(this.oONRoleDescriptionId),
-			sControlName = Library.getResourceBundleFor("sap.m").getText("OBJECTNUMBER_NAME"),
 			oControlRef = this.oON.getDomRef();
 
 		assert.notOk(oEmphasizedInfoElement, "Additional SPAN for emphasized information isn't created");
 		assert.notOk(oStateElement, "Additional SPAN for the state isn't created");
 		assert.strictEqual(oControlRef.getAttribute("role"), null, "Inactive ObjectNumbers don't have a role");
-		assert.strictEqual(
-			oRoleDescriptionElement.innerText,
-			sControlName,
-			"Control's name is added in aria-roledescription");
 	});
 
 	QUnit.test("Active ObjectNumber", async function (assert) {

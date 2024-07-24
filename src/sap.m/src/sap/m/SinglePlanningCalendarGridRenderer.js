@@ -558,7 +558,10 @@ sap.ui.define([
 		}
 
 		if (oAppointment.getSelected()) {
-			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
+			mAccProps["describedby"] = {
+				value: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED"),
+				append: true
+			};
 		}
 
 		oRm.openStart("div", oAppointment.getId() + "-" + iColumn + "_" + iIndex);
