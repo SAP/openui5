@@ -2,51 +2,68 @@
 sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/Opa5",
-	"test-resources/sap/ui/fl/api/FlexTestAPI",
+	"test-resources/sap/ui/rta/integration/pages/Common",
 	"test-resources/sap/ui/rta/integration/pages/Adaptation",
 	"test-resources/sap/ui/rta/integration/pages/ChangeVisualization",
 	"test-resources/sap/ui/fl/testutils/opa/TestLibrary"
 ], (
 	opaTest,
 	Opa5,
-	FlexTestAPI
+	Common
 ) => {
 	"use strict";
 
 	Opa5.extendConfig({
 		autoWait: true,
 		timeout: 60,
-		arrangements: new Opa5({
-			iClearTheSessionLRep() {
-				FlexTestAPI.clearStorage("SessionStorage");
-				window.sessionStorage.removeItem("sap.ui.rta.restart.CUSTOMER");
-				window.sessionStorage.removeItem("sap.ui.rta.restart.USER");
-				localStorage.clear();
-			}
-		})
+		arrangements: new Common()
 	});
 
 	const sVMControlId = "__component0---app--variantManagementOrdersTable";
+	const sContainedVMControlId = "__component0---app--variantManagementContained";
+	const sNewContainedVariantName = "ContainedVariant";
 	const sCVizDropDownId = "__component0---changeVisualization_changesList--popover";
 	const sStandardVariantName = "Standard";
 	const sNewVariantName = "TestVariant1";
+	const sTitleId = "__component0---app--TitleForVM1";
 
 	QUnit.module("VariantManagement");
 
 	opaTest("I open the App and start RTA", (Given, When, Then) => {
 		Given.iClearTheSessionLRep();
-		Given.iStartMyAppInAFrame("./test-resources/sap/ui/rta/internal/testdata/variantManagement/sites/standalone.html");
+		// the flpSandbox seems to not work in the voter, so the standalone has to be used
+		Given.iStartMyAppInAFrame({
+			source: "./test-resources/sap/ui/rta/internal/testdata/variantManagement/sites/standalone.html",
+			autoWait: true
+		});
 
 		When.onPageWithRTA.iPressOnAdaptUiWithNoFlp();
 
 		Then.onPageWithRTA.iShouldSeeTheToolbar();
 	});
 
+	opaTest("I create a Change in context of the second VM control", (Given, When, Then) => {
+		When.onPageWithRTA.iRightClickOnAnElementOverlay(sTitleId)
+		.and.iClickOnAContextMenuEntry(1);
+
+		Then.onFlVariantManagement.theModifiedIndicatorShouldBeDisplayed(sContainedVMControlId);
+	});
+
+	opaTest("I save the change in a new Variant", (Given, When, Then) => {
+		When.onPageWithRTA.iRightClickOnAnElementOverlay(sContainedVMControlId)
+		.and.iClickOnAContextMenuEntry(2); // save as
+		When.onFlVariantManagement.iCreateNewVariant(sContainedVMControlId, sNewContainedVariantName, true);
+
+		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sContainedVMControlId, sNewContainedVariantName)
+		.and.theModifiedIndicatorShouldBeHidden();
+	});
+
 	opaTest("I rename a Group", (Given, When, Then) => {
 		const sElementId = "__component0---app--EntityType02.Title1";
 		const sLabel = "Rename Label";
 
-		When.onPageWithRTA.iRightClickOnAnElementOverlay(sElementId)
+		When.onPageWithRTA.iScrollIntoView(sElementId)
+		.and.iRightClickOnAnElementOverlay(sElementId)
 		.and.iClickOnAContextMenuEntry(0)
 		.and.iEnterANewName(sLabel);
 
@@ -56,12 +73,12 @@ sap.ui.define([
 
 	opaTest("I check the change in the visualization mode", (Given, When, Then) => {
 		const oChangesCount = {
-			all: 1,
+			all: 2,
 			add: 0,
 			move: 0,
 			rename: 1,
 			combineSplit: 0,
-			remove: 0,
+			remove: 1,
 			other: 0
 		};
 
@@ -69,7 +86,7 @@ sap.ui.define([
 		When.onPageWithCViz.iClickOnTheChangesDropDownMenuButton()
 		.and.iClickOnTheUnsavedButton();
 
-		Then.onPageWithCViz.iShouldSeeTheChangeIndicators(1)
+		Then.onPageWithCViz.iShouldSeeTheChangeIndicators(2)
 		.and.iShouldSeeTheCorrectChangesCategoriesCount(sCVizDropDownId, oChangesCount);
 
 		When.onPageWithRTA.iSwitchToAdaptationMode();
@@ -83,18 +100,19 @@ sap.ui.define([
 
 		Then.onPageWithRTA.iShouldSeeTheElementWithText(sLabel);
 		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sNewVariantName)
+		.and.theVariantShouldBeDisplayed(sContainedVMControlId, sNewContainedVariantName)
 		.and.theModifiedIndicatorShouldBeHidden();
 	});
 
 	opaTest("I check if the variant changes are correctly displayed in the visualization mode", (Given, When, Then) => {
-		const iNotVisualizedChanges = 2;
+		const iNotVisualizedChanges = 4;
 		const oChangesCount = {
-			all: 1,
+			all: 2,
 			add: 0,
 			move: 0,
 			rename: 1,
 			combineSplit: 0,
-			remove: 0,
+			remove: 1,
 			other: 0
 		};
 
@@ -102,7 +120,7 @@ sap.ui.define([
 		When.onPageWithCViz.iClickOnTheChangesDropDownMenuButton()
 		.and.iClickOnTheUnsavedButton();
 
-		Then.onPageWithCViz.iShouldSeeTheChangeIndicators(1)
+		Then.onPageWithCViz.iShouldSeeTheChangeIndicators(2)
 		.and.iShouldSeeTheCorrectChangesCategoriesCount(sCVizDropDownId, oChangesCount)
 		.and.iShouldSeeTheHiddenChangesStrip(sCVizDropDownId, iNotVisualizedChanges);
 		When.onPageWithRTA.iSwitchToAdaptationMode();
@@ -134,6 +152,7 @@ sap.ui.define([
 		When.onPageWithRTA.iClickTheButtonWithText(sButton);
 
 		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sStandardVariantName)
+		.and.theVariantShouldBeDisplayed(sContainedVMControlId, sNewContainedVariantName)
 		.and.theModifiedIndicatorShouldBeHidden();
 	});
 
@@ -143,23 +162,25 @@ sap.ui.define([
 
 		Then.onPageWithRTA.iShouldSeeTheElementWithText(sLabelAfterUndo);
 		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sNewVariantName)
+		.and.theVariantShouldBeDisplayed(sContainedVMControlId, sNewContainedVariantName)
 		.and.theModifiedIndicatorShouldBeDisplayed();
 
 		When.onPageWithRTA.iClickTheRedoButton();
 
 		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sStandardVariantName)
+		.and.theVariantShouldBeDisplayed(sContainedVMControlId, sNewContainedVariantName)
 		.and.theModifiedIndicatorShouldBeHidden();
 	});
 
 	opaTest("I check if the variant changes are correctly displayed in the visualization mode", (Given, When, Then) => {
-		const iNotVisualizedChanges = 2;
+		const iNotVisualizedChanges = 4;
 		const oChangesCount = {
-			all: 0,
+			all: 1,
 			add: 0,
 			move: 0,
 			rename: 0,
 			combineSplit: 0,
-			remove: 0,
+			remove: 1,
 			other: 0
 		};
 
@@ -179,25 +200,26 @@ sap.ui.define([
 
 		Then.onPageWithRTA.iShouldSeeTheElementWithText(sLabel);
 		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sNewVariantName)
+		.and.theVariantShouldBeDisplayed(sContainedVMControlId, sNewContainedVariantName)
 		.and.theModifiedIndicatorShouldBeHidden();
 	});
 
 	opaTest("I check if the variant changes are correctly displayed in the visualization mode", (Given, When, Then) => {
-		const iNotVisualizedChanges = 2;
+		const iNotVisualizedChanges = 4;
 		const oChangesCount = {
-			all: 2,
+			all: 3,
 			add: 0,
 			move: 0,
 			rename: 2,
 			combineSplit: 0,
-			remove: 0,
+			remove: 1,
 			other: 0
 		};
 
 		When.onPageWithRTA.iSwitchToVisualizationMode();
 		When.onPageWithCViz.iClickOnTheChangesDropDownMenuButton();
 
-		Then.onPageWithCViz.iShouldSeeTheChangeIndicators(2)
+		Then.onPageWithCViz.iShouldSeeTheChangeIndicators(3)
 		.and.iShouldSeeTheCorrectChangesCategoriesCount(sCVizDropDownId, oChangesCount, iNotVisualizedChanges)
 		.and.iShouldSeeTheHiddenChangesStrip(sCVizDropDownId, iNotVisualizedChanges);
 		When.onPageWithRTA.iSwitchToAdaptationMode();
@@ -238,6 +260,7 @@ sap.ui.define([
 		When.onPageWithRTA.iClickTheButtonWithText(sButton);
 
 		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sStandardVariantName)
+		.and.theVariantShouldBeDisplayed(sContainedVMControlId, sNewContainedVariantName)
 		.and.theModifiedIndicatorShouldBeHidden();
 	});
 
@@ -249,6 +272,7 @@ sap.ui.define([
 
 		Then.onPageWithRTA.iShouldSeeTheElementWithText(sLabel);
 		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sNewVariantName)
+		.and.theVariantShouldBeDisplayed(sContainedVMControlId, sNewContainedVariantName)
 		.and.theModifiedIndicatorShouldBeHidden();
 	});
 
@@ -259,7 +283,8 @@ sap.ui.define([
 		.and.iEnterANewName(sNewVariantName);
 		When.onPageWithRTA.iPressOnEscape();
 
-		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sNewVariantName);
+		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sNewVariantName)
+		.and.theVariantShouldBeDisplayed(sContainedVMControlId, sNewContainedVariantName);
 	});
 
 	opaTest("I rename the variant via the Manage Views dialog", (Given, When, Then) => {
@@ -275,11 +300,12 @@ sap.ui.define([
 		When.onFlVariantManagement.iRenameVariant(sPreviousVariantName, sNewVariantName)
 		.and.iPressTheManageViewsSave(sVMControlId);
 
-		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sNewVariantName);
+		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sNewVariantName)
+		.and.theVariantShouldBeDisplayed(sContainedVMControlId, sNewContainedVariantName);
 	});
 
 	opaTest("I check if the variant changes are correctly displayed in the visualization mode", (Given, When, Then) => {
-		const iNotVisualizedChangesAll = 4;
+		const iNotVisualizedChangesAll = 6;
 		const iNotVisualizedChangesDraft = 2;
 		const oChangesCount = {
 			all: 0,
@@ -294,7 +320,7 @@ sap.ui.define([
 		When.onPageWithRTA.iSwitchToVisualizationMode();
 		When.onPageWithCViz.iClickOnTheChangesDropDownMenuButton();
 
-		Then.onPageWithCViz.iShouldSeeTheChangeIndicators(2)
+		Then.onPageWithCViz.iShouldSeeTheChangeIndicators(3)
 		.and.iShouldSeeTheHiddenChangesStrip(sCVizDropDownId, iNotVisualizedChangesAll);
 
 		When.onPageWithCViz.iClickOnTheUnsavedButton();
@@ -321,7 +347,8 @@ sap.ui.define([
 
 		Then.onPageWithRTA.iShouldSeeTheToolbar()
 		.and.iShouldSeeTheElementWithText(sLabel);
-		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sDefaultVariantName);
+		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sDefaultVariantName)
+		.and.theVariantShouldBeDisplayed(sContainedVMControlId, sNewContainedVariantName);
 	});
 
 	opaTest("I check if the draft change button is disabled in CViz", (Given, When, Then) => {
@@ -345,14 +372,16 @@ sap.ui.define([
 		.and.iPressTheManageViewsSave(sVMControlId);
 
 		Then.onPageWithRTA.iShouldSeeTheElementWithText(sLabelText);
-		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sStandardVariantName);
+		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sStandardVariantName)
+		.and.theVariantShouldBeDisplayed(sContainedVMControlId, sNewContainedVariantName);
 	});
 
 	opaTest("Clean Up", (Given, When, Then) => {
 		When.onPageWithRTA.iExitRtaMode()
 		.and.enableAndDeleteLrepLocalStorageAfterRta();
 
-		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sStandardVariantName);
+		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sStandardVariantName)
+		.and.theVariantShouldBeDisplayed(sContainedVMControlId, sNewContainedVariantName);
 		Then.iTeardownMyApp();
 	});
 });
