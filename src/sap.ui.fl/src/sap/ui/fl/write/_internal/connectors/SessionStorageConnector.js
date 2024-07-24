@@ -28,6 +28,7 @@ sap.ui.define([
 		.then(function(oFeatures) {
 			return merge({
 				isPublicLayerAvailable: true,
+				isPublicFlVariantEnabled: true,
 				isVariantAdaptationEnabled: true
 			}, oFeatures);
 		});
