@@ -299,6 +299,13 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 		} );
 	});
 
+	QUnit.test("CurrentLocation IS NOT a link by default", function (assert) {
+		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl.clone();
+		helpers.renderObject(oStandardBreadCrumbsControl);
+
+		assert.equal(oStandardBreadCrumbsControl.$().find(".sapMBreadcrumbsCurrentLocation").prop("tagName"), "SPAN", "Current location IS NOT a link");
+	});
+
 	QUnit.test("CurrentLocation is a link", function (assert) {
 		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl.clone(),
 			oLink = new Link({text: "currentLocation"});
