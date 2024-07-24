@@ -72,9 +72,9 @@
 		<Column width="27em">
 			<template>
 				<m:FlexBox justifyContent="SpaceBetween">
-					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}"
+					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false }"
 						icon="sap-icon://create" press=".onCreate" tooltip="Create New Child"/>
-					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}"
+					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false }"
 						icon="sap-icon://hide" press=".onCreate($event, true)"
 						tooltip="Create New Child (filtered out)"/>
 					<m:Button icon="sap-icon://up" press=".onMoveUp" tooltip="Move Up"/>
@@ -85,15 +85,15 @@
 						tooltip="Move Just Before Sibling..."/>
 					<m:Button icon="sap-icon://arrow-bottom" press=".onMove($event, null)"
 						tooltip="Move As Last Child Of..."/>
-					<m:Button enabled="{= %{@$ui5.node.level} > 1}" icon="sap-icon://back-to-top"
+					<m:Button enabled="{= %{@$ui5.node.level} > 1 }" icon="sap-icon://back-to-top"
 						press=".onMakeRoot($event, undefined)" tooltip="Make Root"/>
 					<m:Button icon="sap-icon://pull-down" press=".onMakeRoot($event, null)"
 						tooltip="Make Last Root"/>
 					<m:Button icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
-					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined}"
+					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined }"
 						icon="sap-icon://expand-group" press=".onExpandLevels"
 						tooltip="Expand By Number Of Levels..."/>
-					<m:CheckBox selected="{= %{@$ui5.context.isSelected}}" tooltip="Selected"/>
+					<m:CheckBox selected="{= %{@$ui5.context.isSelected} }" tooltip="Selected"/>
 				</m:FlexBox>
 			</template>
 		</Column>

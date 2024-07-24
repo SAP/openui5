@@ -128,7 +128,7 @@
 						dataRequested : '.onDataEvents'
 					}
 				}"
-			mode="{= ${ui>/bCreateItemPending} ? 'None' : 'SingleSelectMaster'}"
+			mode="{= ${ui>/bCreateItemPending} ? 'None' : 'SingleSelectMaster' }"
 			selectionChange="onSalesOrdersSelect">
 			<dependents>
 				<plugins:DataStateIndicator/>
@@ -145,34 +145,34 @@
 						icon="sap-icon://add" id="createSalesOrder" press="onCreateSalesOrder"
 						tooltip="Create sales order"/>
 					<Button
-						enabled="{= ${ui>/bSalesOrderSelected}}"
+						enabled="{= ${ui>/bSalesOrderSelected} }"
 						icon="sap-icon://delete"
 						id="deleteSalesOrder" press="onDeleteSalesOrder"
 						tooltip="Delete selected sales order"/>
 					<Button
 						enabled="{= ${ui>/bSalesOrderSelected}
 							&amp;&amp; !${ui>/bSelectedSalesOrderTransient}
-							&amp;&amp; !${ui>/bCreateItemPending}}"
+							&amp;&amp; !${ui>/bCreateItemPending} }"
 						icon="sap-icon://synchronize"
 						id="refreshSelectedSalesOrder" press="onRefreshSelectedSalesOrder"
 						tooltip="Refresh selected sales order"/>
 					<Button
 						enabled="{= ${ui>/bSalesOrderSelected}
 							&amp;&amp; !${ui>/bSelectedSalesOrderTransient}
-							&amp;&amp; !${ui>/bCreateItemPending}}"
+							&amp;&amp; !${ui>/bCreateItemPending} }"
 						id="confirmSalesOrder"
 						icon="sap-icon://accept"
 						press="onConfirmSalesOrder" tooltip="Confirm selected sales order"/>
 					<Button
 						enabled="{= ${ui>/bSalesOrderSelected}
-							&amp;&amp; !${ui>/bSelectedSalesOrderTransient}}"
+							&amp;&amp; !${ui>/bSelectedSalesOrderTransient} }"
 						id="cancelSelectedSalesOrderChanges" icon="sap-icon://reset"
 						press="onCancelSelectedSalesOrderChanges"
 						tooltip="Reset changes for selected sales order"/>
 					<Button
 							enabled="{= ${ui>/bSalesOrderSelected}
 								&amp;&amp; !${ui>/bSelectedSalesOrderTransient}
-								&amp;&amp; !${ui>/bCreateItemPending}}"
+								&amp;&amp; !${ui>/bCreateItemPending} }"
 							id="openSimulateDiscountDialog"
 							icon="sap-icon://simulate"
 							press="onOpenSimulateDiscountDialog"
@@ -205,7 +205,7 @@
 									<Label text="Approver"/>
 									<Input id="SimulateDiscountForm::Approver"
 										editable="true"
-										enabled="{= %{parameterContext>Discount} > 50}"
+										enabled="{= %{parameterContext>Discount} > 50 }"
 										value="{parameterContext>Approver}"/>
 								</form:SimpleForm>
 								<form:SimpleForm ariaLabelledBy="SimulateDiscountDialog"
@@ -226,7 +226,7 @@
 					<Button id="cancelSalesOrderListChanges" icon="sap-icon://sys-cancel-2"
 						press="onCancelSalesOrderListChanges"
 						tooltip="Cancel sales order list changes"/>
-					<Button enabled="{= ${ui>/bSalesOrderDeleted}}"
+					<Button enabled="{= ${ui>/bSalesOrderDeleted} }"
 						id="undoSalesOrderDeletion" press="onUndoSalesOrderDeletion"
 							icon="sap-icon://undo" tooltip="Undo sales order deletion"/>
 					<ToolbarSpacer/>
@@ -279,7 +279,7 @@
 			</ColumnListItem>
 		</Table>
 		<VBox id="objectPage"
-			visible="{=${ui>/bSalesOrderSelected} &amp;&amp; !${ui>/bSelectedSalesOrderTransient}}"
+			visible="{= ${ui>/bSalesOrderSelected} &amp;&amp; !${ui>/bSelectedSalesOrderTransient} }"
 			binding="{
 					events : {
 						dataReceived : '.onDataEvents',
@@ -360,7 +360,7 @@
 				<Label text="Lifecycle Status"/>
 				<Input value="{LifecycleStatusDesc}" editable="false"/>
 				<Label text="Note"/>
-				<Input id="Note::detail" value="{Note}" editable="{= %{LifecycleStatus} === 'N'}"/>
+				<Input id="Note::detail" value="{Note}" editable="{= %{LifecycleStatus} === 'N' }"/>
 				<Toolbar design="Transparent" id="SO_2_BP::detail" binding="{SO_2_BP}">
 					<Title text="Business Partner" level="H2"/>
 					<Button enabled="{:= !${ui>/bRealOData} }" icon="sap-icon://delete"
@@ -491,9 +491,9 @@
 						selectionChanged="onProductIDChanged" qualifier="additional"/>
 					<Text id="SOITEM_2_PRODUCT:Name" text="{SOITEM_2_PRODUCT/Name}"/>
 					<demo:ValueHelp id="SOITEM_2_PRODUCT:Category"
-						value="{SOITEM_2_PRODUCT/Category}" enabled="{= %{ItemPosition} !== ''}"/>
+						value="{SOITEM_2_PRODUCT/Category}" enabled="{= %{ItemPosition} !== '' }"/>
 					<demo:ValueHelp id="SOITEM_2_PRODUCT:TypeCode"
-						value="{SOITEM_2_PRODUCT/TypeCode}" enabled="{= %{ItemPosition} !== ''}"/>
+						value="{SOITEM_2_PRODUCT/TypeCode}" enabled="{= %{ItemPosition} !== '' }"/>
 					<Text text="{SOITEM_2_PRODUCT/SupplierName}"/>
 					<Input id="SO_2_SOITEM:Quantity" value="{Quantity}" textAlign="Right"/>
 					<Input value="{QuantityUnit}"/>
@@ -503,8 +503,8 @@
 				</ColumnListItem>
 			</Table>
 		</VBox>
-		<VBox visible="{=${ui>/bLineItemSelected} &amp;&amp;
-				!${ui>/bSelectedSalesOrderItemTransient}}">
+		<VBox visible="{= ${ui>/bLineItemSelected} &amp;&amp;
+				!${ui>/bSelectedSalesOrderItemTransient} }">
 			<form:SimpleForm binding="{SOITEM_2_PRODUCT/PRODUCT_2_BP}" editable="true"
 				id="PRODUCT_2_BP" title="Supplier Details" layout="ResponsiveGridLayout">
 				<Toolbar>
@@ -514,7 +514,7 @@
 				<Input value="{CompanyName} {LegalForm}" editable="false"/>
 				<Label text="Phone Number"/>
 				<Input id="PRODUCT_2_BP:PhoneNumber" value="{PhoneNumber}"
-					enabled="{= !!%{CompanyName}}"/>
+					enabled="{= !!%{CompanyName} }"/>
 			</form:SimpleForm>
 			<List headerText="Supplier Contact Information" id="BP_2_CONTACT"
 				items="{

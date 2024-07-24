@@ -29,7 +29,7 @@
 					type="Active">
 				<firstStatus>
 					<ObjectStatus state="None"
-						text="{= %{HasDraftEntity} === true ? 'Draft' : ''}"/>
+						text="{= %{HasDraftEntity} === true ? 'Draft' : '' }"/>
 				</firstStatus>
 				<attributes>
 					<ObjectAttribute text="{CountryOfOrigin_Text}"/>

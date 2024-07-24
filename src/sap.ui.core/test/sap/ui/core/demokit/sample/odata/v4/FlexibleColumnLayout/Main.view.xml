@@ -79,7 +79,7 @@
 			</VBox>
 		</f:beginColumnPages>
 		<f:midColumnPages>
-			<VBox id="objectPage" visible="{=${ui>/bSalesOrderSelected}}">
+			<VBox id="objectPage" visible="{= ${ui>/bSalesOrderSelected} }">
 				<form:SimpleForm ariaLabelledBy="objectPageTitle" backgroundDesign="Transparent"
 					editable="true" id="SalesOrderList::detail" layout="ColumnLayout">
 					<form:toolbar>
@@ -174,7 +174,7 @@
 			</VBox>
 		</f:midColumnPages>
 		<f:endColumnPages>
-			<VBox id="subObjectPage" visible="{=${ui>/bSalesOrderItemSelected}}">
+			<VBox id="subObjectPage" visible="{= ${ui>/bSalesOrderItemSelected} }">
 				<form:SimpleForm ariaLabelledBy="lineItemDetailsTitle" editable="true"
 						layout="ColumnLayout" title="Line Item Details">
 					<form:toolbar>

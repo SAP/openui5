@@ -100,7 +100,7 @@
 												: (%{@$ui5.context.isTransient} === undefined
 													? 'sap-icon://cloud'
 													: 'sap-icon://sys-enter'
-												))}"
+												)) }"
 									tooltip="{= %{@$ui5.context.isInactive}
 											? 'Inactive'
 											: (%{@$ui5.context.isTransient}
@@ -108,11 +108,11 @@
 												: (%{@$ui5.context.isTransient} === undefined
 													? 'From Server'
 													: 'Persisted'
-												))}"
+												)) }"
 								/>
 								<CheckBox editable="false" selected="{= !%{IsActiveEntity} }"/>
 								<Input id="productId" value="{ID}"
-									enabled="{= %{@$ui5.context.isInactive} !== undefined}" />
+									enabled="{= %{@$ui5.context.isInactive} !== undefined }" />
 								<Input id="name" value="{name}"/>
 								<Input id="amount" value="{amount}"/>
 								<Button id="productDelete"
@@ -164,7 +164,7 @@
 												: (%{@$ui5.context.isTransient} === undefined
 													? 'sap-icon://cloud'
 													: 'sap-icon://sys-enter'
-												))}"
+												)) }"
 											tooltip="{= %{@$ui5.context.isInactive}
 											? 'Inactive'
 											: (%{@$ui5.context.isTransient}
@@ -172,7 +172,7 @@
 												: (%{@$ui5.context.isTransient} === undefined
 													? 'From Server'
 													: 'Persisted'
-												))}"
+												)) }"
 										/>
 									</t:template>
 								</t:Column>
@@ -181,7 +181,7 @@
 									<t:template>
 										<Input id="partId" value="{ID}"
 											enabled="{= %{@$ui5.context.isInactive}
-												!== undefined}"/>
+												!== undefined }"/>
 									</t:template>
 								</t:Column>
 								<t:Column width="auto">
