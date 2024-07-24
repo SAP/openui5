@@ -833,7 +833,7 @@ sap.ui.define([
 			var aChanges;
 
 			oChangeContent1 = {
-				fileName: "Gizorillus1",
+				fileName: "ChangeFileName1",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -843,7 +843,7 @@ sap.ui.define([
 			};
 
 			oChangeContent2 = {
-				fileName: "Gizorillus2",
+				fileName: "ChangeFileName2",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "removeField",
@@ -853,7 +853,7 @@ sap.ui.define([
 			};
 
 			oChangeContent3 = {
-				fileName: "Gizorillus3",
+				fileName: "ChangeFileName3",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -900,7 +900,7 @@ sap.ui.define([
 
 		QUnit.test("When call addChanges with 3 changes, 3 new changes are returned and the dependencies map also got updated", function(assert) {
 			var aChangeContents = [{
-				fileName: "Gizorillus1",
+				fileName: "ChangeFileName1",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -909,7 +909,7 @@ sap.ui.define([
 				originalLanguage: "DE"
 			},
 			{
-				fileName: "Gizorillus2",
+				fileName: "ChangeFileName2",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "removeField",
@@ -918,7 +918,7 @@ sap.ui.define([
 				originalLanguage: "DE"
 			},
 			{
-				fileName: "Gizorillus3",
+				fileName: "ChangeFileName3",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -972,7 +972,7 @@ sap.ui.define([
 		QUnit.test("Shall not add the same change twice", function(assert) {
 			// possible scenario: change gets saved, then without reload undo and redo gets called. both would add a dirty change
 			var oChangeContent = {
-				fileName: "Gizorillus",
+				fileName: "ChangeFileName",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -1005,7 +1005,7 @@ sap.ui.define([
 			assert.equal(aRegisteredFlexPropagationListeners.length, 0, "no initial propagation listener is present at startup");
 
 			var oChangeContent = {
-				fileName: "Gizorillus",
+				fileName: "ChangeFileName",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -1032,7 +1032,7 @@ sap.ui.define([
 			assert.equal(aRegisteredFlexPropagationListeners.length, 0, "no propagation listener is present at startup");
 
 			var oChangeContent = {
-				fileName: "Gizorillus",
+				fileName: "ChangeFileName",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -1056,7 +1056,7 @@ sap.ui.define([
 			});
 
 			var oChangeContent = {
-				fileName: "Gizorillus",
+				fileName: "ChangeFileName",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -1089,7 +1089,7 @@ sap.ui.define([
 			fnAssertFlPropagationListenerCount(0, "no FL propagation listener was added");
 
 			var oChangeContent = {
-				fileName: "Gizorillus",
+				fileName: "ChangeFileName",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -1114,7 +1114,7 @@ sap.ui.define([
 	function addTwoChanges(oChangePersistence, oComponentInstance, sLayer1, sLayer2, oCustomContent1, oCustomContent2) {
 		var oChangeContent = merge(
 			{
-				fileName: "Gizorillus",
+				fileName: "ChangeFileName",
 				layer: sLayer1,
 				fileType: "change",
 				changeType: "addField",
@@ -1127,7 +1127,7 @@ sap.ui.define([
 
 		var oChangeContent1 = merge(
 			{
-				fileName: "Gizorillus1",
+				fileName: "ChangeFileName1",
 				layer: sLayer2 || sLayer1,
 				fileType: "change",
 				changeType: "addField",
@@ -1173,7 +1173,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("Shall save the dirty changes when adding a new change and return a promise", function(assert) {
 			var oChangeContent = {
-				fileName: "Gizorillus",
+				fileName: "ChangeFileName",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -1384,7 +1384,7 @@ sap.ui.define([
 			});
 			setURLParameterForCondensing("true");
 			var oChangeContent = {
-				fileName: "Gizorillus",
+				fileName: "ChangeFileName",
 				layer: Layer.CUSTOMER,
 				fileType: "change",
 				changeType: "addField",
@@ -1404,7 +1404,7 @@ sap.ui.define([
 
 		QUnit.test("Shall not call condenser when no appComponent gets passed to saveDirtyChanges", function(assert) {
 			var oChangeContent = {
-				fileName: "Gizorillus",
+				fileName: "ChangeFileName",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -1762,7 +1762,7 @@ sap.ui.define([
 
 		QUnit.test("Shall save the dirty changes for a draft when adding a new change and return a promise", function(assert) {
 			var oChangeContent = {
-				fileName: "Gizorillus",
+				fileName: "ChangeFileName",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -1782,7 +1782,7 @@ sap.ui.define([
 
 		QUnit.test("(Save As scenario) Shall save the dirty changes for the created app variant when pressing a 'Save As' button and return a promise", function(assert) {
 			var oChangeContent = {
-				fileName: "Gizorillus",
+				fileName: "ChangeFileName",
 				layer: Layer.CUSTOMER,
 				fileType: "change",
 				changeType: "addField",
@@ -1815,7 +1815,7 @@ sap.ui.define([
 
 		QUnit.test("Shall save all dirty changes with changes in DELETE state", function(assert) {
 			var oChangeContent = {
-				fileName: "Gizorillus",
+				fileName: "ChangeFileName",
 				fileType: "change",
 				changeType: "addField",
 				selector: {id: "control1"}
@@ -1834,14 +1834,14 @@ sap.ui.define([
 
 		QUnit.test("Shall save passed dirty changes with changes in DELETE state", function(assert) {
 			var oChangeNotToBeSaved = FlexObjectFactory.createFromFileContent({
-				fileName: "Gizorillus1",
+				fileName: "ChangeFileName1",
 				fileType: "change",
 				changeType: "addField",
 				selector: {id: "control1"}
 			});
 
 			var oChangeToBeSaved = FlexObjectFactory.createFromFileContent({
-				fileName: "Gizorillus2",
+				fileName: "ChangeFileName2",
 				fileType: "change",
 				changeType: "addField",
 				selector: {id: "control2"}
@@ -1865,14 +1865,14 @@ sap.ui.define([
 
 		QUnit.test("Shall save all dirty changes in a bulk", function(assert) {
 			var oChangeContent1 = {
-				fileName: "Gizorillus1",
+				fileName: "ChangeFileName1",
 				fileType: "change",
 				changeType: "addField",
 				selector: {id: "control1"}
 			};
 
 			var oChangeContent2 = {
-				fileName: "Gizorillus2",
+				fileName: "ChangeFileName2",
 				fileType: "change",
 				changeType: "addField",
 				selector: {id: "control1"}
@@ -1893,14 +1893,14 @@ sap.ui.define([
 
 		QUnit.test("Shall save passed dirty changes in a bulk", function(assert) {
 			var oChangeContent1 = {
-				fileName: "Gizorillus1",
+				fileName: "ChangeFileName1",
 				fileType: "change",
 				changeType: "addField",
 				selector: {id: "control1"}
 			};
 
 			var oChangeContent2 = {
-				fileName: "Gizorillus2",
+				fileName: "ChangeFileName2",
 				fileType: "change",
 				changeType: "addField",
 				selector: {id: "control2"}
@@ -1923,7 +1923,7 @@ sap.ui.define([
 			var oChangeContent2;
 
 			oChangeContent1 = {
-				fileName: "Gizorillus1",
+				fileName: "ChangeFileName1",
 				layer: Layer.CUSTOMER,
 				fileType: "change",
 				changeType: "addField",
@@ -1933,7 +1933,7 @@ sap.ui.define([
 			};
 
 			oChangeContent2 = {
-				fileName: "Gizorillus2",
+				fileName: "ChangeFileName2",
 				layer: Layer.CUSTOMER,
 				fileType: "change",
 				changeType: "addField",
@@ -2001,7 +2001,7 @@ sap.ui.define([
 				}
 			};
 			var oChangeContent5 = {
-				fileName: "Gizorillus",
+				fileName: "ChangeFileName",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -2038,7 +2038,7 @@ sap.ui.define([
 
 		QUnit.test("shall remove the change from the dirty changes, after it has been saved", function(assert) {
 			var oChangeContent = {
-				fileName: "Gizorillus",
+				fileName: "ChangeFileName",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -2056,7 +2056,7 @@ sap.ui.define([
 
 		QUnit.test("(Save As scenario) shall remove the change from the dirty changes, after it has been saved for the new app variant", function(assert) {
 			var oChangeContent = {
-				fileName: "Gizorillus",
+				fileName: "ChangeFileName",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -2086,7 +2086,7 @@ sap.ui.define([
 
 		QUnit.test("shall delete a change from the dirty changes, if it has just been added to the dirty changes, having a NEW state", function(assert) {
 			var oChangeContent = {
-				fileName: "Gizorillus",
+				fileName: "ChangeFileName",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -2104,7 +2104,7 @@ sap.ui.define([
 
 		QUnit.skip("shall not change the state of a dirty change in case of a connector error", function(assert) {
 			var oChangeContent = {
-				fileName: "Gizorillus",
+				fileName: "ChangeFileName",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -2138,7 +2138,7 @@ sap.ui.define([
 
 		QUnit.test("shall keep a change in the dirty changes, if it has a DELETE state", function(assert) {
 			var oChangeContent = {
-				fileName: "Gizorillus",
+				fileName: "ChangeFileName",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -2159,7 +2159,7 @@ sap.ui.define([
 		QUnit.test("shall delete a change from the dirty changes after the deletion has been saved", function(assert) {
 			// this test requires a slightly different setup
 			sandbox.stub(FlexState.getFlexObjectsDataSelector(), "get").returns([
-				createChange("Gizorillus", Layer.VENDOR, null, null, {id: "view1--button1", idIsLocal: true})
+				createChange("ChangeFileName", Layer.VENDOR, null, null, {id: "view1--button1", idIsLocal: true})
 			]);
 
 			return this.oChangePersistence.getChangesForComponent().then(function(aChanges) {
@@ -2177,7 +2177,7 @@ sap.ui.define([
 			var oChangeContent3;
 
 			oChangeContent1 = {
-				fileName: "Gizorillus1",
+				fileName: "ChangeFileName1",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -2187,7 +2187,7 @@ sap.ui.define([
 			};
 
 			oChangeContent2 = {
-				fileName: "Gizorillus2",
+				fileName: "ChangeFileName2",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -2197,7 +2197,7 @@ sap.ui.define([
 			};
 
 			oChangeContent3 = {
-				fileName: "Gizorillus3",
+				fileName: "ChangeFileName3",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -2205,19 +2205,36 @@ sap.ui.define([
 				content: {},
 				originalLanguage: "DE"
 			};
+
+			this.oWriteStub.callsFake((oWriteObject) => {
+				if (oWriteObject.flexObjects[0].fileName === "ChangeFileName1") {
+					return Promise.resolve({
+						response: [oChangeContent1]
+					});
+				} else if (oWriteObject.flexObjects[0].fileName === "ChangeFileName3") {
+					return Promise.resolve({
+						response: [oChangeContent3]
+					});
+				}
+				return Promise.reject();
+			});
+
 			var oDirtyChange1 = this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
 			var oDirtyChange2 = this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
 			var oDirtyChange3 = this.oChangePersistence.addChange(oChangeContent3, this._oComponentInstance);
 
 			var aDirtyChanges = [oDirtyChange1, oDirtyChange3];
 
-			return this.oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges).then(function() {
+			return this.oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges).then(function(oResponse) {
 				assert.equal(this.oWriteStub.callCount, 2, "the create method of the connector is called for each selected change");
 				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[0].fileName,
 					oChangeContent1.fileName, "the first change was processed first");
 				assert.deepEqual(this.oWriteStub.getCall(1).args[0].flexObjects[0].fileName,
 					oChangeContent3.fileName, "the second change was processed afterwards");
 				assert.strictEqual(oDirtyChange2.getState(), States.LifecycleState.NEW, "the state was not changed");
+				assert.deepEqual(oResponse, {
+					response: [oChangeContent1, oChangeContent3]
+				}, "the collected storage response is returned");
 			}.bind(this));
 		});
 
@@ -2227,7 +2244,7 @@ sap.ui.define([
 			var oChangeContent3;
 
 			oChangeContent1 = {
-				fileName: "Gizorillus1",
+				fileName: "ChangeFileName1",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -2237,7 +2254,7 @@ sap.ui.define([
 			};
 
 			oChangeContent2 = {
-				fileName: "Gizorillus2",
+				fileName: "ChangeFileName2",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -2247,7 +2264,7 @@ sap.ui.define([
 			};
 
 			oChangeContent3 = {
-				fileName: "Gizorillus3",
+				fileName: "ChangeFileName3",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
@@ -2259,9 +2276,23 @@ sap.ui.define([
 			this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
 			this.oChangePersistence.addChange(oChangeContent3, this._oComponentInstance);
 
+			this.oWriteStub.callsFake((oWriteObject) => {
+				if (oWriteObject.flexObjects[0].fileName === "ChangeFileName1") {
+					return Promise.resolve({
+						response: [oChangeContent1]
+					});
+				} else if (oWriteObject.flexObjects[0].fileName === "ChangeFileName3") {
+					return Promise.resolve({
+						response: [oChangeContent3]
+					});
+				}
+				return Promise.reject();
+			});
+
 			var aDirtyChanges = [this.oChangePersistence._aDirtyChanges[0], this.oChangePersistence._aDirtyChanges[2]];
 
-			return this.oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges, undefined, Version.Number.Original).then(function() {
+			return this.oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges, undefined, Version.Number.Original)
+			.then(function(oResponse) {
 				assert.equal(this.oWriteStub.callCount, 2, "the create method of the connector is called for each selected change");
 				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[0].fileName,
 					oChangeContent1.fileName, "the first change was processed first");
@@ -2271,6 +2302,9 @@ sap.ui.define([
 					oChangeContent3.fileName, "the second change was processed afterwards");
 				assert.equal(this.oWriteStub.getCall(1).args[0].parentVersion,
 					Version.Number.Draft, "the version parameter is set to draft for further requests");
+				assert.deepEqual(oResponse, {
+					response: [oChangeContent1, oChangeContent3]
+				}, "the collected storage response is returned");
 			}.bind(this));
 		});
 	});
