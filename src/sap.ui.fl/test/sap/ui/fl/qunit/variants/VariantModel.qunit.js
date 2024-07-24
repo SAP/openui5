@@ -1359,7 +1359,7 @@ sap.ui.define([
 					changeType: "setExecuteOnSelect",
 					executeOnSelect: false,
 					originalExecuteOnSelect: true,
-					layer: Layer.CUSTOMER
+					layer: Layer.PUBLIC
 				}, "the setExecuteOnSelect change is correct");
 				assert.deepEqual(aChanges[3], {
 					variantReference: "variant0",
