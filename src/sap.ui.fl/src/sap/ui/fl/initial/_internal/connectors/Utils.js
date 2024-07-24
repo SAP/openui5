@@ -146,6 +146,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.dataType] Expected data type of the response
 		 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to actual component
 		 * @param {string} [mPropertyBag.siteId] <code>sideId</code> that belongs to actual component
+		 * @param {boolean} [mPropertyBag.cacheable] <code>true</code> if the request can be cached in browsers
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
 		 */
 		sendRequest(sUrl, sMethod, mPropertyBag) {
@@ -156,7 +157,7 @@ sap.ui.define([
 				var xhr = new XMLHttpRequest();
 				xhr.open(sMethod, sUrl);
 				xhr.timeout = DEFAULT_TIMEOUT; // TODO Implement logic for connectors to configure dedicated timeout values which overwrite the default
-				if ((sMethod === "GET" || sMethod === "HEAD") && (!mPropertyBag || !mPropertyBag.initialConnector || !mPropertyBag.initialConnector.xsrfToken)) {
+				if ((sMethod === "GET" || sMethod === "HEAD") && (!mPropertyBag || (!mPropertyBag.initialConnector || !mPropertyBag.initialConnector.xsrfToken) && !mPropertyBag.cacheable)) {
 					xhr.setRequestHeader("X-CSRF-Token", "fetch");
 				}
 				if ((sMethod === "POST" || sMethod === "PUT" || sMethod === "DELETE") && mPropertyBag && mPropertyBag.initialConnector && mPropertyBag.initialConnector.xsrfToken) {
@@ -198,12 +199,9 @@ sap.ui.define([
 							}
 							oResult.status = xhr.status;
 							if (xhr.getResponseHeader("X-CSRF-Token")) {
-								// Only obtain token from non-cacheable request
-								if (!sUrl.match(/\/~.*~/g)) {
-									oResult.xsrfToken = xhr.getResponseHeader("X-CSRF-Token");
-									if (mPropertyBag && mPropertyBag.initialConnector) {
-										mPropertyBag.initialConnector.xsrfToken = oResult.xsrfToken;
-									}
+								oResult.xsrfToken = xhr.getResponseHeader("X-CSRF-Token");
+								if (mPropertyBag && mPropertyBag.initialConnector) {
+									mPropertyBag.initialConnector.xsrfToken = oResult.xsrfToken;
 								}
 							}
 							if (xhr.getResponseHeader("Etag")) {
