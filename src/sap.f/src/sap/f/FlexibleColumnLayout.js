@@ -763,6 +763,7 @@ sap.ui.define([
 
 		if (this._hasAnyColumnPagesRendered() !== bHadAnyColumnPagesRendered) {
 			this._hideShowColumnSeparators();
+			this._updateSeparatorsAriaPositionInfo();
 		}
 	};
 
@@ -1321,6 +1322,12 @@ sap.ui.define([
 		if (oOptions.updateDetailedActiveClasses) {
 			this._addDetailedActiveClasses(sLayout);
 		}
+
+		if (bHasAnimations) {
+			this._attachAfterAllColumnsResizedOnce(this._updateSeparatorsAriaPositionInfo.bind(this));
+		} else {
+			this._updateSeparatorsAriaPositionInfo();
+		}
 	};
 
 	/**
@@ -1673,6 +1680,7 @@ sap.ui.define([
 		this.toggleStyleClass("sapFFLActiveResize", false);
 		this._oMoveInfo.separator.style.visibility = "";
 		this._oMoveInfo.separator.focus();
+		this._updateAriaPositionInfo(this._oMoveInfo.separator);
 		this._ignoreMouse = false;
 		this._ignoreTouch = false;
 		this._oMoveInfo = null;
@@ -2164,6 +2172,78 @@ sap.ui.define([
 				}
 			};
 		return oLayoutMatchers[sLayout]();
+	};
+
+	/**
+	 * Obtains the range of the possible possitions along the X-axis of this separator (allowed by the current layout)
+	 * where the start of the axis is the edge of the FlexibleColumnLayout closest to the begin column.
+	 * @param {object} oSeparator the separator HTML element
+	 * @returns {object} the start and end positions
+	 */
+	FlexibleColumnLayout.prototype._getSeparatorMovementRange = function (oSeparator) {
+		var sSeparator = getSeparatorName(oSeparator),
+			sLayout = this.getLayout(),
+			iMaxColumnsForWidth = this.getMaxColumnsCount(),
+			iMaxColumnsForLayoutType = this._getMaxColumnsCountForLayout(sLayout, FlexibleColumnLayout.DESKTOP_BREAKPOINT),
+			bDesktop = iMaxColumnsForWidth === 3,
+			bTablet = iMaxColumnsForWidth === 2,
+			bIsThreeColumnLayout = iMaxColumnsForLayoutType === 3,
+			iTotalSpace = this._iWidth,
+			iSpaceBeforeRange = FlexibleColumnLayout.COLUMN_MIN_WIDTH, // space for the preceding column
+			iSpaceAfterRange = FlexibleColumnLayout.COLUMN_MIN_WIDTH, // space for the suceeding column
+			iRangeLength;
+
+		if (bDesktop && sSeparator === "end") {
+			// (the width of the 'begin' column is fixed, as the user cannot resize it by moving the 'end' separator)
+			iSpaceBeforeRange = this._$columns["begin"].get(0).offsetWidth + FlexibleColumnLayout.COLUMN_MIN_WIDTH; // space for the preceding columns
+			if (sLayout === LT.ThreeColumnsMidExpandedEndHidden) {
+				iSpaceAfterRange = 0; // the 'end' separator is adjacent to the FCL edge, nothing follows it
+			}
+		}
+
+		if (bTablet) {
+			if (sSeparator === "begin" & bIsThreeColumnLayout) {
+				iSpaceBeforeRange = 0; // the 'begin' separator is adjacent to the FCL edge, nothing precedes it
+			}
+			if (sSeparator === "end" && sLayout === LT.ThreeColumnsMidExpandedEndHidden) {
+				iSpaceAfterRange = 0; // the 'end' separator is adjacent to the FCL edge, nothing follows it
+			}
+		}
+
+		// provision space to render the separator itself
+		iSpaceAfterRange += FlexibleColumnLayout.COLUMN_SEPARATOR_WIDTH;
+
+		iRangeLength = iTotalSpace - iSpaceBeforeRange - iSpaceAfterRange;
+
+		return {
+			from: iSpaceBeforeRange,
+			to: iSpaceBeforeRange + iRangeLength
+		};
+	};
+
+	FlexibleColumnLayout.prototype._updateAriaPositionInfo = function (oSeparator) {
+		// obtain the range [fromX ... toX] of the possible positions along the X-axis
+		// of this separator (as allowed by the current layout)
+		var oRange = this._getSeparatorMovementRange(oSeparator),
+			iRangeLength = oRange.to - oRange.from,
+			iSeparatorEarliestPossibleX = oRange.from,
+			iSeparatorCurrentX = oSeparator.offsetLeft,
+			iSeparatorAdvanceInsideRange = iSeparatorCurrentX - iSeparatorEarliestPossibleX,
+			 // convert to value inside [0, ..., 100] interval
+			iSeparatorRelativePositionInsideRange = iSeparatorAdvanceInsideRange / iRangeLength * 100,
+			sSeparatorRelativePositionInsideRange = iSeparatorRelativePositionInsideRange.toFixed(2);
+		oSeparator.setAttribute("aria-valuenow", sSeparatorRelativePositionInsideRange);
+	};
+
+	FlexibleColumnLayout.prototype._updateSeparatorsAriaPositionInfo = function () {
+		if (!this._oColumnSeparators) {
+			return;
+		}
+		Object.values(this._oColumnSeparators).forEach(function($separator) {
+			if ($separator.get(0).style.display !== "none") {
+				this._updateAriaPositionInfo($separator.get(0));
+			}
+		}, this);
 	};
 
 	/**
