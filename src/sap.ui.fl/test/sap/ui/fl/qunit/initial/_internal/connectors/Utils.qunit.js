@@ -98,15 +98,15 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when sendRequest is called with GET method, with initial conncetor, no payload", function(assert) {
+		QUnit.test("when sendRequest is called with GET method, with initial conncetor, no payload, no csrf token and cacheable", function(assert) {
 			var sUrl = "/flexKeyuser/flex/keyuser/v2/data/sap.ui.demoapps.rta.fiorielements.Component?sap-language=de-DE";
 			var sMethod = "GET";
 			var mPropertyBag = {};
 			mPropertyBag.initialConnector = {};
-			mPropertyBag.initialConnector.xsrfToken = "84343258f9d94804-gaFfTNfclP5uThxHR7StXFwu_GU";
 			mPropertyBag.contentType = "Content-Type";
 			mPropertyBag.siteId = "X-LRep-Site-Id";
 			mPropertyBag.sAppDescriptorId = "X-LRep-AppDescriptor-Id";
+			mPropertyBag.cacheable = true;
 
 			this.server.respondWith("GET", "/flexKeyuser/flex/keyuser/v2/data/sap.ui.demoapps.rta.fiorielements.Component?sap-language=de-DE",
 				[200, {"Content-Type": "application/json"}, '{ "message": "GET request successful"}']);
@@ -156,22 +156,6 @@ sap.ui.define([
 				assert.equal(oResponse.etag, "Etag");
 				assert.equal(oResponse.reponse, undefined);
 				assert.equal(oResponse.status, 204);
-			});
-		});
-
-		QUnit.test("when sendRequest is called test with cachable request", function(assert) {
-			var sUrl = "/flexKeyuser/flex/keyuser/v2/data/~dummytoken~/sap.ui.demoapps.rta.fiorielements.Component?sap-language=de-DE";
-			var sMethod = "HEAD";
-			var mPropertyBag = {};
-			mPropertyBag.initialConnector = {};
-
-			this.server.respondWith("HEAD", sUrl,
-				[204, {"Content-Type": "application/json", "X-CSRF-Token": "84343258f9d94804-gaFfTNfclP5uThxHR7StXFwu_GU"},
-					'{ "message": "POST request successful", "status": 204 }']);
-
-			return Utils.sendRequest(sUrl, sMethod, mPropertyBag).then(function(oResponse) {
-				assert.equal(oResponse.xsrfToken, undefined);
-				assert.equal(mPropertyBag.initialConnector.xsrfToken, undefined);
 			});
 		});
 

@@ -109,6 +109,7 @@ sap.ui.define([
 				initialConnector: this,
 				xsrfToken: this.xsrfToken,
 				siteId: mPropertyBag.siteId,
+				cacheable: true,
 				sAppDescriptorId: sAppDescriptorId
 			}).then(function (oResult) {
 				var oResponse = oResult.response;
