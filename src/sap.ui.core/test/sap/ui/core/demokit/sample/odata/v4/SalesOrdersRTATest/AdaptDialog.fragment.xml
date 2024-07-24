@@ -5,11 +5,11 @@
 		<List items="{ui>/adaptationProperties}">
 			<CustomListItem>
 				<CheckBox enabled="{ui>enabled}" selected="{ui>displayed}" text="{ui>name}"
-					  select="onAdaptColumnOrField"/>
+					select=".onAdaptColumnOrField"/>
 			</CustomListItem>
 		</List>
 		<buttons>
-			<Button id="ApplyChangesInFragment" text="Apply changes" press="onApplyChanges"/>
+			<Button id="ApplyChangesInFragment" text="Apply changes" press=".onApplyChanges"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

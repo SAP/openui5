@@ -25,10 +25,10 @@
 				<m:Button icon="sap-icon://create" press=".onCreateRoot" tooltip="Create New Root"/>
 				<m:Button icon="sap-icon://hide" press=".onCreateRoot($event, true)"
 					tooltip="Create New Root (filtered out)"/>
-				<m:Button icon="sap-icon://synchronize" id="synchronize" press="onSynchronize"
+				<m:Button icon="sap-icon://synchronize" id="synchronize" press=".onSynchronize"
 					tooltip="Side Effect"/>
-				<m:Button icon="sap-icon://response" press="onRefresh" tooltip="Refresh"/>
-				<m:Button icon="sap-icon://refresh" press="onRefresh($event, true)"
+				<m:Button icon="sap-icon://response" press=".onRefresh" tooltip="Refresh"/>
+				<m:Button icon="sap-icon://refresh" press=".onRefresh($event, true)"
 					tooltip="Refresh (keeping tree state)"/>
 				<m:Button icon="sap-icon://multiselect-all" press=".onShowSelected"
 					tooltip="Show Selected Elements"/>
@@ -76,7 +76,7 @@
 		<Column>
 			<m:Label text="Name"/>
 			<template>
-				<m:Input id="name" value="{Name}" change="onNameChanged"/>
+				<m:Input id="name" value="{Name}" change=".onNameChanged"/>
 			</template>
 		</Column>
 		<Column>
@@ -155,9 +155,9 @@
 				<m:Button icon="sap-icon://hide" press=".onCreateRootInTreeTable($event, true)"
 					tooltip="Create New Root (filtered out)"/>
 				<m:Button icon="sap-icon://synchronize" id="synchronizeTreeTable"
-					press="onSynchronizeTreeTable" tooltip="Side effect"/>
-				<m:Button icon="sap-icon://response" press="onRefreshTreeTable" tooltip="Refresh"/>
-				<m:Button icon="sap-icon://refresh" press="onRefreshTreeTable($event, true)"
+					press=".onSynchronizeTreeTable" tooltip="Side effect"/>
+				<m:Button icon="sap-icon://response" press=".onRefreshTreeTable" tooltip="Refresh"/>
+				<m:Button icon="sap-icon://refresh" press=".onRefreshTreeTable($event, true)"
 					tooltip="Refresh (keeping tree state)"/>
 				<m:Button icon="sap-icon://multiselect-all"
 					press=".onShowSelected($event, 'treeTable')"
@@ -191,7 +191,7 @@
 		<Column>
 			<m:Label text="Name"/>
 			<template>
-				<m:Input id="nameInTreeTable" value="{Name}" change="onNameChanged"/>
+				<m:Input id="nameInTreeTable" value="{Name}" change=".onNameChanged"/>
 			</template>
 		</Column>
 		<Column>

@@ -12,7 +12,7 @@
 							id="resetChangesButton"
 							text="{i18n>resetChangesButtonText}"
 							enabled="{= !${appView>/hasUIChanges}}"
-							press="onResetDataSource"
+							press=".onResetDataSource"
 							type="Emphasized">
 						</Button>
 					</headerContent>

@@ -13,7 +13,7 @@
 	<Page id="page" floatingFooter="true" showHeader="false">
 	<VBox>
 		<HBox>
-			<ToggleButton icon="sap-icon://syntax" press="onSourceCode"
+			<ToggleButton icon="sap-icon://syntax" press=".onSourceCode"
 				text="Source Code after Templating"/>
 		</HBox>
 		<Panel expandable="false" visible="{ui>/bCodeVisible}"
@@ -35,13 +35,13 @@
 						<Title level="H1" text="Products"/>
 						<ToolbarSpacer/>
 						<Button id="resetChanges" icon="sap-icon://sys-cancel-2"
-							press="onResetChanges" text="Reset Changes"
+							press=".onResetChanges" text="Reset Changes"
 							tooltip="Reset Products Changes"/>
 						<Link text="Unit Codes" target="unitCodes" href="{ui>/sUnitUrl}"/>
 						<Link text="Currency Codes" target="currencyCodes"
 							href="{ui>/sCurrencyUrl}"/>
 						<Button icon="sap-icon://message-popup" id="messagesButton"
-							press="onToggleMessagePopover" text="{ui>/iMessages}"
+							press=".onToggleMessagePopover" text="{ui>/iMessages}"
 							tooltip="Show messages"
 							type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
 					</Toolbar>
@@ -82,8 +82,8 @@
 					<Toolbar>
 						<Title id="newEntryTitle" level="H1" text="New Entry"/>
 						<ToolbarSpacer/>
-						<Button id="addButton" press="onAdd" text="Add"/>
-						<Button id="clearRowButton" press="onClearRow" text="Clear Row"/>
+						<Button id="addButton" press=".onAdd" text="Add"/>
+						<Button id="clearRowButton" press=".onClearRow" text="Clear Row"/>
 					</Toolbar>
 				</form:toolbar>
 				<template:repeat list="{lineItem>}" var="field">

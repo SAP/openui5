@@ -67,7 +67,7 @@ sap.ui.define([
 			function onStrictHandlingFailed(aMessages) {
 				oView.getModel("ui").setProperty("/aStrictMessages", aMessages);
 				oView.setBusy(false);
-				oView.byId("onStrictMessagesDialog").open();
+				oView.byId("strictMessagesDialog").open();
 				return new Promise(function (fnResolve) {
 					that.fnStrictResolve = fnResolve;
 				});
@@ -98,12 +98,12 @@ sap.ui.define([
 			oView.byId("SalesOrderList").getSelectedItem().getBindingContext()
 				.refresh("confirm", true);// in order to filter out the now "confirmed" sales order
 			oView.getModel().submitBatch("confirm");
-			oView.byId("onStrictMessagesDialog").close();
+			oView.byId("strictMessagesDialog").close();
 		},
 
 		onCancelStrictMessages : function () {
 			this.fnStrictResolve(false);
-			this.oView.byId("onStrictMessagesDialog").close();
+			this.oView.byId("strictMessagesDialog").close();
 		},
 
 		onCloseSalesOrderDialog : function () {

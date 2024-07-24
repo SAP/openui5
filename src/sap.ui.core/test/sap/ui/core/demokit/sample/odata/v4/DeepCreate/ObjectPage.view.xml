@@ -39,9 +39,9 @@
 					<Title id="lineItemsTitle" level="H2"
 						text="{headerContext>$count} Sales Order Line Items"/>
 					<ToolbarSpacer/>
-					<Button press="onCreateLineItem" tooltip="Create Line Item"
+					<Button press=".onCreateLineItem" tooltip="Create Line Item"
 						id="createLineItem" icon="sap-icon://add" text="Create"/>
-					<Button press="onDeleteLineItem" tooltip="Delete Selected Line Items"
+					<Button press=".onDeleteLineItem" tooltip="Delete Selected Line Items"
 						id="deleteLineItem" icon="sap-icon://delete" text="Delete"/>
 				</Toolbar>
 			</headerToolbar>
@@ -81,11 +81,11 @@
 		<footer>
 			<OverflowToolbar>
 				<Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
-					press="onToggleMessagePopover" text="{ui>/iMessages} Messages"
+					press=".onToggleMessagePopover" text="{ui>/iMessages} Messages"
 					type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
 				<ToolbarSpacer/>
-				<Button id="resetChanges" press="onResetChanges" text="Reset Changes"/>
-				<Button id="save" press="onSave" text="Save" type="Emphasized"/>
+				<Button id="resetChanges" press=".onResetChanges" text="Reset Changes"/>
+				<Button id="save" press=".onSave" text="Save" type="Emphasized"/>
 			</OverflowToolbar>
 		</footer>
 	</Page>

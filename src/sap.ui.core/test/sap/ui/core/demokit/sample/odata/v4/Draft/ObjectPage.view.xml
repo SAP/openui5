@@ -9,17 +9,17 @@
 				editable="true" id="Products::detail" layout="ColumnLayout">
 			<form:toolbar>
 				<Toolbar design="Transparent">
-					<Button icon="{ui>/sShowListIcon}" id="showList" press="onShowList"
+					<Button icon="{ui>/sShowListIcon}" id="showList" press=".onShowList"
 							tooltip="{ui>/sShowListTooltip}"/>
 					<Title id="objectPageTitle" level="H2" text="Product Details"/>
 					<Button enabled="{= %{IsActiveEntity} }"
-							icon="sap-icon://edit" id="edit" press="onEdit" text="Edit"
+							icon="sap-icon://edit" id="edit" press=".onEdit" text="Edit"
 							tooltip="Start editing"/>
 					<Button enabled="{= !%{IsActiveEntity} }"
-							icon="sap-icon://save" id="save" press="onSave" text="Save"
+							icon="sap-icon://save" id="save" press=".onSave" text="Save"
 							tooltip="Save changes"/>
 					<Button enabled="{= !%{IsActiveEntity} }"
-							icon="sap-icon://sys-cancel-2" id="cancel" press="onCancel"
+							icon="sap-icon://sys-cancel-2" id="cancel" press=".onCancel"
 							text="Cancel" tooltip="Cancel changes"/>
 				</Toolbar>
 			</form:toolbar>

@@ -6,7 +6,7 @@
 	<VBox>
 		<Table id="SalesOrderList" growing="true" growingThreshold="5"
 				items="{path : '/SalesOrderList', suspended : true}"
-				mode="SingleSelectMaster" selectionChange="onSalesOrderSelect">
+				mode="SingleSelectMaster" selectionChange=".onSalesOrderSelect">
 			<headerToolbar>
 				<Toolbar>
 					<Title text="Sales Order" level="H1"/>

@@ -19,9 +19,9 @@
 				<m:Title id="title" level="H1"
 					text="{$count} Flight Bookings per Flight &amp; Status"/>
 				<m:ToolbarSpacer/>
-				<m:SearchField id="search" placeholder="Search for anything..." search="onSearch"
+				<m:SearchField id="search" placeholder="Search for anything..." search=".onSearch"
 					width="40%"/>
-				<m:Button icon="sap-icon://download" press="onDownload" tooltip="Download"/>
+				<m:Button icon="sap-icon://download" press=".onDownload" tooltip="Download"/>
 			</m:Toolbar>
 		</extension>
 		<rowMode>
