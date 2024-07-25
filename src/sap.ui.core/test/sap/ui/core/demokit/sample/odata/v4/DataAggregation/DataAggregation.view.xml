@@ -44,16 +44,16 @@
 		</Column>
 		<Column width="4em">
 			<template>
-				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined}"
+				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined }"
 					id="expand"
 					icon="{= %{@$ui5.node.isExpanded} === true
 						? 'sap-icon://collapse'
 						: (%{@$ui5.node.isExpanded} === false
-							? 'sap-icon://expand' : 'sap-icon://e-care')}"
+							? 'sap-icon://expand' : 'sap-icon://e-care') }"
 					press=".onToggleExpand"
 					tooltip="{= %{@$ui5.node.isExpanded} === true
 						? 'Collapse'
-						: (%{@$ui5.node.isExpanded} === false ? 'Expand' : 'Leaf')}"
+						: (%{@$ui5.node.isExpanded} === false ? 'Expand' : 'Leaf') }"
 					/>
 			</template>
 		</Column>

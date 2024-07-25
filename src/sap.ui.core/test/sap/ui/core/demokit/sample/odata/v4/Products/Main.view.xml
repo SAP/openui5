@@ -56,20 +56,20 @@
 				<ColumnListItem>
 					<template:repeat list="{lineItem>}" var="field">
 						<template:if test="{= ${field>Value/$Path@com.sap.vocabularies.Common.v1.FieldControl/$EnumMember}
-							=== 'com.sap.vocabularies.Common.v1.FieldControlType/ReadOnly'}">
+							=== 'com.sap.vocabularies.Common.v1.FieldControlType/ReadOnly' }">
 							<template:then>
 								<Input id="{field>Value/$Path}"
-									editable="{= %{@$ui5.context.isTransient} === true}"
+									editable="{= %{@$ui5.context.isTransient} === true }"
 									textAlign="{= ${field>Value/$Path@com.sap.vocabularies.UI.v1.Visualization/$EnumMember}
 										=== 'com.sap.vocabularies.UI.v1.VisualizationType/Number'
-										? 'Right' : 'Left'}"
+										? 'Right' : 'Left' }"
 									value="{field>Value/@@format}"/>
 							</template:then>
 							<template:else>
 								<Input id="{field>Value/$Path}"
 									textAlign="{= ${field>Value/$Path@com.sap.vocabularies.UI.v1.Visualization/$EnumMember}
 										=== 'com.sap.vocabularies.UI.v1.VisualizationType/Number'
-										? 'Right' : 'Left'}"
+										? 'Right' : 'Left' }"
 									value="{field>Value/@@format}"/>
 							</template:else>
 						</template:if>
