@@ -778,6 +778,9 @@ sap.ui.define([
 			// add CalendarClass to list of modules
 			this.aModules.push("sap/ui/core/date/" + Formatting.getCalendarType());
 
+			// add FieldHelpEndpoint to list of modules
+			this.aModules.push("sap/ui/core/boot/FieldHelpEndpoint");
+
 			// load all modules now
 			if ( bAsync ) {
 				return this._requireModulesAsync().then(function() {

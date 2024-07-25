@@ -131,8 +131,14 @@ sap.ui.define([
 				"SalesOrderList('0500000004')?custom-option=value&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
 					source : "SalesOrderList_4_refresh.json"
 				},
-				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'0500000004'&$select=ChangedAt,GrossAmount,Messages,Note,SalesOrderID" : {
-					source : "SalesOrderList_4_sideEffects1.json"
+				"SalesOrderList('0500000004')?custom-option=value&$select=ChangedAt,GrossAmount,Messages,Note" : {
+					message : {
+						"@odata.etag" : "W/\"20160619220000.0000000\"",
+						ChangedAt : "2016-06-26T22:00:00.000000Z",
+						GrossAmount : "195.16",
+						Messages : [],
+						Note : "EPM DG: SO ID 0500000004 Deliver as fast as possible"
+					}
 				},
 				"SalesOrderList('0500000004')?custom-option=value&$select=ChangedAt,Note" : {
 					message : {
@@ -163,8 +169,14 @@ sap.ui.define([
 				"SalesOrderList('0500000005')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$orderby=ItemPosition&$filter=ItemPosition%20gt%20'0000000000'%20and%20(ProductID%20eq%20'HT-1061')&$select=DeliveryDate,GrossAmount,ItemPosition,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$skip=0&$top=100" : {
 					source : "SalesOrderItemsList_5_Filter_via_changeParameter.opa.json"
 				},
-				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'0500000005'&$select=ChangedAt,GrossAmount,Messages,Note,SalesOrderID" : {
-					source : "SalesOrderList_5_sideEffects1.json"
+				"SalesOrderList('0500000005')?custom-option=value&$select=ChangedAt,GrossAmount,Messages,Note" : {
+					message : {
+					"@odata.etag" : "W/\"20160619220000.0000000\"",
+					ChangedAt : "2016-06-26T22:00:00.000000Z",
+					GrossAmount : "25867.03",
+					Messages : [],
+					Note : "EPM DG: SO ID 0500000005 Deliver as fast as possible"
+				}
 				},
 				"SalesOrderList('0500000005')?custom-option=value&$select=ChangedAt,Note" : {
 					message : {
@@ -225,8 +237,14 @@ sap.ui.define([
 				"SalesOrderList('NEW1')?custom-option=value&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
 					source : "SalesOrderList('NEW1')_refresh.json"
 				},
-				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'NEW1'&$select=ChangedAt,GrossAmount,Messages,Note,SalesOrderID" : {
-					source : "SalesOrderList('NEW1')_sideEffects1.json"
+				"SalesOrderList('NEW1')?custom-option=value&$select=ChangedAt,GrossAmount,Messages,Note" : {
+					message : {
+						"@odata.etag" : "W/\"20160619220000.0000000\"",
+						ChangedAt : "2016-06-26T22:00:00.000000Z",
+						GrossAmount : "0.0",
+						Messages : [],
+						Note : "new 1"
+					}
 				},
 				"SalesOrderList('NEW1')?custom-option=value&$select=ChangedAt,Note" : {
 					message : {
@@ -299,8 +317,14 @@ sap.ui.define([
 				"SalesOrderList('NEW3')?custom-option=value&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
 					source : "SalesOrderList('NEW3')_refresh.json"
 				},
-				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'NEW3'&$select=ChangedAt,GrossAmount,Messages,Note,SalesOrderID" : {
-					source : "SalesOrderList('NEW3')_sideEffects1.json"
+				"SalesOrderList('NEW3')?custom-option=value&$select=ChangedAt,GrossAmount,Messages,Note" : {
+					message : {
+						"@odata.etag" : "W/\"20160619220000.0000000\"",
+						ChangedAt : "2016-06-26T22:00:00.000000Z",
+						GrossAmount : "15",
+						Messages : [],
+						Note : "new 3"
+					}
 				},
 				"SalesOrderList('NEW3')?custom-option=value&$select=ChangedAt,Note" : {
 					message : {
@@ -406,13 +430,30 @@ sap.ui.define([
 					source : "SalesOrderList_CompanyName_top10_sideEffects.json"
 				},
 				"SalesOrderList('0500000000')?custom-option=value&$select=SO_2_BP&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
-					source : "SalesOrderList('0500000000')_CompanyName_sideEffects.json"
+					message : {
+						"@odata.etag" : "W/\"20200827203729.1868430 \"",
+						SO_2_BP : {
+							"@odata.etag" : "W/\"20200827203846.6460540 \"",
+							BusinessPartnerID : "0100000000",
+							CompanyName : "SAP - modified by OPA"
+						}
+					}
 				},
-				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'0500000000'&$select=ChangedAt,GrossAmount,Messages,Note,SalesOrderID" : {
-					source : "SalesOrderList('0500000000')_ChangeAt-GrossAmount-Note_sideEffects.json"
+				"SalesOrderList('0500000000')?custom-option=value&$select=ChangedAt,GrossAmount,Messages,Note" : {
+					message : {
+						"@odata.etag" : "W/\"20200827200558.2641450 \"",
+						ChangedAt : "2020-08-27T20:05:58.264145Z",
+						GrossAmount : "25867.03",
+						Messages : [],
+						Note : "EPM DG: SO ID 0500000000 Deliver as fast as possible"
+					}
 				},
 				"SalesOrderList('0500000000')?custom-option=value&$select=ChangedAt,Note" : {
-					source : "SalesOrderList('0500000000')_ChangeAt-Note_sideEffects.json"
+					message : {
+						"@odata.etag" : "W/\"20200827200558.2641450 \"",
+						ChangedAt : "2020-08-27T20:05:58.264145Z",
+						Note : "EPM DG: SO ID 0500000000 Deliver as fast as possible"
+					}
 				},
 				"POST SalesOrderList?custom-option=value" : [{
 					code : 400,
@@ -524,8 +565,14 @@ sap.ui.define([
 						}
 					}
 				}],
-				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'0500000006'&$select=ChangedAt,GrossAmount,Messages,Note,SalesOrderID" : {
-					source : "SalesOrderList_6_sideEffects1.json"
+				"SalesOrderList('0500000006')?custom-option=value&$select=ChangedAt,GrossAmount,Messages,Note" : {
+					message : {
+						"@odata.etag" : "W/\"20160619220000.0000000\"",
+						ChangedAt : "2016-06-13T06:53:13.000000Z",
+						GrossAmount : "250.73",
+						Messages : [],
+						Note : "EPM DG: SO ID 0500000002 Deliver as fast as possible"
+					}
 				},
 				"SalesOrderList('0500000006')?custom-option=value&$select=ChangedAt,Note" : {
 					source : "SalesOrderList_6.json"

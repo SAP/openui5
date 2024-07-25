@@ -10036,13 +10036,6 @@ sap.ui.define([
 		iLength : 40,
 		iStart : 24,
 		aValues : [{key : "y"}, {key : "z"}, {key : "g"}, {key : "h"}]
-	}, { // single row, requestSideEffects on element from server
-		sExpectedKeys : "abcdefghij",
-		iExpectedLength : 10,
-		sFilter : "key eq 'a1'",
-		iLength : undefined,
-		iStart : 1,
-		aValues : [{key : "b"}]
 	}].forEach(function (oFixture, iFixtureIndex) {
 		QUnit.test("CollectionCache#requestSideEffects, " + iFixtureIndex, function (assert) {
 			var oCreatedElement, // undefined or transient
@@ -10098,7 +10091,6 @@ sap.ui.define([
 						},
 						sTransientPredicate = "($uid=id-1-23)",
 						oResult = {value : oFixture.aValues},
-						bSingle = iLength === undefined,
 						oTransient = {
 							"@$ui5._" : {
 								transient : "group",
@@ -10125,7 +10117,7 @@ sap.ui.define([
 					} else {
 						oCache.aElements.$created = 0;
 					}
-					aPredicates = aPredicates.slice(iStart, iStart + (bSingle ? 1 : iLength));
+					aPredicates = aPredicates.slice(iStart, iStart + iLength);
 					if (oFixture.bTransientElement && iStart === 0) {
 						aPredicates.shift(); // transient element not requested from binding
 					}
@@ -10154,7 +10146,7 @@ sap.ui.define([
 						.callsFake(function (mQueryOptions2) {
 							mQueryOptions2.foo = "baz";
 						});
-					oCacheMock.expects("keepOnlyGivenElements").exactly(bSingle ? 0 : 1)
+					oCacheMock.expects("keepOnlyGivenElements")
 						.withExactArgs(aPredicates).callThrough(); // too hard to refactor :-(
 					// Note: fetchTypes() would have been invoked by read() already
 					oCacheMock.expects("getTypes").withExactArgs().returns(mTypeForMetaPath);
@@ -10202,8 +10194,8 @@ sap.ui.define([
 					}
 
 					// code under test
-					return oCache.requestSideEffects(oGroupLock, aPaths, aPredicates, bSingle,
-							"~bWithMessages~")
+					return oCache.requestSideEffects(oGroupLock, aPaths, aPredicates,
+							/*bSingle*/false, "~bWithMessages~")
 						.then(function () {
 							var oElement,
 								sKeys = "";
@@ -10246,7 +10238,11 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [null, {}].forEach(function (mLateQueryOptions, i) {
-	QUnit.test("CollectionCache#requestSideEffects: nothing to do #" + i, function (assert) {
+	[false, true].forEach((bSingle) => {
+		const sTitle = "CollectionCache#requestSideEffects: nothing to do #" + i
+			+ ", bSingle=" + bSingle;
+
+	QUnit.test(sTitle, function (assert) {
 		var mByPredicate = { // some dummy content
 				"($uid=id-1-23)" : -1,
 				"('@')" : -1,
@@ -10304,13 +10300,14 @@ sap.ui.define([
 		this.oRequestorMock.expects("request").never();
 
 		// code under test
-		oPromise = oCache.requestSideEffects(null, aPaths, 0, 1);
+		oPromise = oCache.requestSideEffects(null, aPaths, undefined, bSingle);
 
 		assert.ok(oPromise instanceof SyncPromise);
 		assert.strictEqual(oPromise.getResult(), undefined);
 		assert.strictEqual(JSON.stringify(oCache.aElements), sElementsJSON);
 		assert.strictEqual(oCache.aElements.$created, 1);
 		assert.strictEqual(JSON.stringify(oCache.aElements.$byPredicate), sByPredicateJSON);
+	});
 	});
 });
 
@@ -10339,6 +10336,83 @@ sap.ui.define([
 				assert.strictEqual(oCache.aElements.$count, 26, "$count is preserved");
 			});
 	});
+
+	//*********************************************************************************************
+[false, true].forEach((bBeforeUpdateSelected) => {
+	[false, true].forEach((bBeforeRequestSideEffects) => {
+		const sTitle = "CollectionCache#requestSideEffects: bSingle; #beforeUpdateSelected="
+			+ bBeforeUpdateSelected + ", #beforeRequestSideEffects="
+			+ bBeforeRequestSideEffects;
+
+	QUnit.test(sTitle, async function (assert) {
+		const oCache = this.createCache("TEAMS('42')/Foo");
+		this.mock(oCache).expects("getTypes").withExactArgs().returns("~mTypeForMetaPath~");
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
+		const mQueryOptions = {
+			$apply : "A.P.P.L.E.", // must be kept
+			$count : true, // dropped
+			$expand : {expand : null},
+			$filter : "filter", // dropped
+			$orderby : "orderby", // dropped
+			$search : "search", // dropped
+			$select : ["Name"],
+			foo : "bar",
+			"sap-client" : "123"
+		};
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions),
+				sinon.match.same(oCache.mLateQueryOptions))
+			.returns("~mQueryOptions~");
+		this.mock(_Helper).expects("intersectQueryOptions")
+			.withExactArgs("~mQueryOptions~", "~aPaths~",
+				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
+				"/TEAMS/Foo", "", "~bWithMessages~")
+			.returns(mQueryOptions);
+		oCache.beforeRequestSideEffects = bBeforeRequestSideEffects
+			? function (mQueryOptions0) {
+				mQueryOptions0.foo = "baz";
+			}
+			: undefined;
+		this.mock(oCache).expects("keepOnlyGivenElements").never();
+		this.mock(_Helper).expects("getKeyFilter").never();
+		this.mock(_Helper).expects("selectKeyProperties").never();
+		const mExpectedQueryOptions = {
+			$apply : "A.P.P.L.E.",
+			$expand : {expand : null},
+			$select : ["Name"],
+			foo : bBeforeRequestSideEffects ? "baz" : "bar",
+			"sap-client" : "123"
+		};
+		const oExtractMergeableQueryOptionsExpectation
+			 = this.mock(_Helper).expects("extractMergeableQueryOptions")
+				.withExactArgs(mExpectedQueryOptions).returns("~mMergeableQueryOptions~");
+		const oBuildQueryStringExpectation = this.mock(this.oRequestor).expects("buildQueryString")
+			.withExactArgs("/TEAMS/Foo", mExpectedQueryOptions, false, true).returns("?bar");
+		this.oRequestorMock.expects("request").withExactArgs("GET", "TEAMS('42')/Foo('a')?bar",
+				"~oGroupLock~", undefined, undefined, undefined, undefined, oCache.sMetaPath,
+				undefined, false, "~mMergeableQueryOptions~", sinon.match.same(oCache),
+				sinon.match.func)
+			.resolves("~oResult~");
+		this.mock(oCache).expects("visitResponse")
+			.withExactArgs("~oResult~", "~mTypeForMetaPath~", undefined, "('a')", undefined, true);
+		oCache.beforeUpdateSelected = bBeforeUpdateSelected ? mustBeMocked : undefined;
+		if (bBeforeUpdateSelected) {
+			this.mock(oCache).expects("beforeUpdateSelected").withExactArgs("('a')", "~oResult~");
+		}
+		oCache.aElements.$byPredicate["('a')"] = "~oOldElement~";
+		this.mock(_Helper).expects("updateSelected")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('a')", "~oOldElement~",
+				"~oResult~", "~aPaths~", sinon.match.func);
+
+		// code under test
+		await oCache.requestSideEffects("~oGroupLock~", "~aPaths~", ["('a')", "n/a"],
+			/*bSingle*/true, "~bWithMessages~");
+
+		assert.ok(oExtractMergeableQueryOptionsExpectation
+			.calledBefore(oBuildQueryStringExpectation));
+	});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#keepOnlyGivenElements: no data left", function (assert) {
@@ -10462,7 +10536,11 @@ sap.ui.define([
 	{error : false, path : "EMPLOYEE_2_TEAM/TEAM_2_MANAGER"},
 	{error : true, path : "EMPLOYEE_2_EQUIPMENT"} // key predicate must not change here
 ].forEach(function (oFixture, i) {
-	QUnit.test("CollectionCache#requestSideEffects: key property change #" + i, function (assert) {
+	[false, true].forEach((bSingle) => {
+		const sTitle = "CollectionCache#requestSideEffects: key property change #" + i
+			+ "; bSingle=" + bSingle;
+
+	QUnit.test(sTitle, function (assert) {
 		var oError = new Error(),
 			oGroupLock = {},
 			oHelperMock = this.mock(_Helper),
@@ -10498,23 +10576,26 @@ sap.ui.define([
 						sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
 						"/TEAMS/Foo", "", undefined)
 					.returns(mMergedQueryOptions);
-				that.mock(oCache).expects("keepOnlyGivenElements").withExactArgs(["('c')"])
-					.returns([oCache.aElements[2]]);
-				oHelperMock.expects("getKeyFilter")
+				that.mock(oCache).expects("keepOnlyGivenElements").exactly(bSingle ? 0 : 1)
+					.withExactArgs(["('c')"]).returns([oCache.aElements[2]]);
+				oHelperMock.expects("getKeyFilter").exactly(bSingle ? 0 : 1)
 					.withExactArgs(sinon.match.same(oCache.aElements[2]), "/TEAMS/Foo",
 						sinon.match.same(mTypeForMetaPath))
 					.returns("~key_filter~");
+				const mExpectedQueryOptions = bSingle ? {} : {$filter : "~key_filter~"};
 				that.mock(_Helper).expects("extractMergeableQueryOptions")
-					.withExactArgs({$filter : "~key_filter~"}).returns(mMergeableQueryOptions);
+					.withExactArgs(mExpectedQueryOptions).returns(mMergeableQueryOptions);
 				that.mock(that.oRequestor).expects("buildQueryString")
-					.withExactArgs("/TEAMS/Foo", {$filter : "~key_filter~"}, false, true)
+					.withExactArgs("/TEAMS/Foo", mExpectedQueryOptions, false, true)
 					.returns("?bar");
 				that.oRequestorMock.expects("request")
-					.withExactArgs("GET", "TEAMS('42')/Foo?bar", sinon.match.same(oGroupLock),
-						undefined, undefined, undefined, undefined, oCache.sMetaPath, undefined,
-						false, sinon.match.same(mMergeableQueryOptions), sinon.match.same(oCache),
+					.withExactArgs("GET",
+						bSingle ? "TEAMS('42')/Foo('c')?bar" : "TEAMS('42')/Foo?bar",
+						sinon.match.same(oGroupLock), undefined, undefined, undefined, undefined,
+						oCache.sMetaPath, undefined, false,
+						sinon.match.same(mMergeableQueryOptions), sinon.match.same(oCache),
 						sinon.match.func)
-					.resolves({value : [oNewValue]});
+					.resolves(bSingle ? oNewValue : {value : [oNewValue]});
 				oHelperMock.expects("updateSelected")
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('c')",
 						sinon.match.same(oCache.aElements[2]), sinon.match.same(oNewValue),
@@ -10528,7 +10609,7 @@ sap.ui.define([
 
 				// code under test
 				return oCache
-					.requestSideEffects(oGroupLock, aPaths, ["('c')"])
+					.requestSideEffects(oGroupLock, aPaths, ["('c')"], bSingle)
 					.then(function () {
 						assert.notOk(oFixture.error);
 					}, function (oResult) {
@@ -10536,6 +10617,7 @@ sap.ui.define([
 						assert.strictEqual(oResult, oError);
 					});
 			});
+	});
 	});
 });
 
@@ -10614,8 +10696,10 @@ sap.ui.define([
 	//            Helper.updateSelected is not skipped.
 	// true: the resulting GET request is merged. Helper.updateSelected is skipped (It would be
 	//       done by the "other" request).
+[false, true].forEach((bSingle) => {
 	[false, undefined, true].forEach(function (bSkip) {
-		var sTitle = "CollectionCache#requestSideEffects: skip updateSelected: " + bSkip;
+		var sTitle = "CollectionCache#requestSideEffects: skip updateSelected: " + bSkip
+			+ "; bSingle=" + bSingle;
 
 		QUnit.test(sTitle, function (assert) {
 			var oElement = {"@$ui5._" : {predicate : "('c')"}},
@@ -10627,16 +10711,16 @@ sap.ui.define([
 					$select : ["Name"]
 				},
 				mMergeableQueryOptions = {},
-				oNewValue = {value : [{"@$ui5._" : {predicate : "('c')"}}]},
+				oNewValue = {"@$ui5._" : {predicate : "('c')"}},
 				aPaths = ["EMPLOYEE"],
 				mQueryOptions = {},
-				mQueryOptionsForExtract
-					= Object.assign({$filter : "~key_filter~"}, mIntersectedQueryOptions),
-				sResourcePath = "TEAMS('42')/Foo",
+				mQueryOptionsForExtract = Object.assign(bSingle ? {} : {$filter : "~key_filter~"},
+					mIntersectedQueryOptions),
+				oResult = bSingle ? oNewValue : {value : [oNewValue]},
 				mTypeForMetaPath = {"/TEAMS/Foo" : "~type~"},
 				oUpdateSelectedExpectation,
 				oVisitResponseExpectation,
-				oCache = this.createCache(sResourcePath);
+				oCache = this.createCache("TEAMS('42')/Foo");
 
 			oCache.aElements.push(oElement);
 			oCache.aElements.$byPredicate["('c')"] = oElement;
@@ -10652,13 +10736,13 @@ sap.ui.define([
 					sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 					"/TEAMS/Foo", "", undefined)
 				.returns(mIntersectedQueryOptions);
-			this.mock(oCache).expects("keepOnlyGivenElements").withExactArgs(["('c')"])
-				.returns([oCache.aElements[0]]);
-			this.mock(_Helper).expects("getKeyFilter")
+			this.mock(oCache).expects("keepOnlyGivenElements").exactly(bSingle ? 0 : 1)
+				.withExactArgs(["('c')"]).returns([oCache.aElements[0]]);
+			this.mock(_Helper).expects("getKeyFilter").exactly(bSingle ? 0 : 1)
 				.withExactArgs(sinon.match.same(oCache.aElements[0]), "/TEAMS/Foo",
 					sinon.match.same(mTypeForMetaPath))
 				.returns("~key_filter~");
-			this.mock(_Helper).expects("selectKeyProperties")
+			this.mock(_Helper).expects("selectKeyProperties").exactly(bSingle ? 0 : 1)
 				.withExactArgs(sinon.match.same(mIntersectedQueryOptions), "~type~");
 			this.mock(_Helper).expects("extractMergeableQueryOptions")
 				.withExactArgs(mQueryOptionsForExtract).returns(mMergeableQueryOptions);
@@ -10666,10 +10750,10 @@ sap.ui.define([
 				.withExactArgs("/TEAMS/Foo", mQueryOptionsForExtract, false, true)
 				.returns("?bar");
 			this.oRequestorMock.expects("request")
-				.withExactArgs("GET", sResourcePath + "?bar", sinon.match.same(oGroupLock),
-					undefined, undefined, undefined, undefined, "/TEAMS/Foo", undefined, false,
-					sinon.match.same(mMergeableQueryOptions), sinon.match.same(oCache),
-					sinon.match.func)
+				.withExactArgs("GET", bSingle ? "TEAMS('42')/Foo('c')?bar" : "TEAMS('42')/Foo?bar",
+					sinon.match.same(oGroupLock), undefined, undefined, undefined, undefined,
+					"/TEAMS/Foo", undefined, false, sinon.match.same(mMergeableQueryOptions),
+					sinon.match.same(oCache), sinon.match.func)
 				.callsFake(function () {
 					if (bSkip === true) {
 						assert.deepEqual(arguments[12](), aPaths,
@@ -10678,18 +10762,18 @@ sap.ui.define([
 						assert.strictEqual(arguments[12](["~another~", "~path~"]), undefined,
 							"arguments[12]: fnMergeRequests, gets other parts as parameter");
 					}
-					return Promise.resolve(oNewValue);
+					return Promise.resolve(oResult);
 				});
 
 			oVisitResponseExpectation = this.mock(oCache).expects("visitResponse")
 				.exactly(bSkip ? 0 : 1)
-				.withExactArgs(sinon.match.same(oNewValue), sinon.match.same(mTypeForMetaPath),
-					undefined, "", NaN, true);
+				.withExactArgs(sinon.match.same(oResult), sinon.match.same(mTypeForMetaPath),
+					undefined, bSingle ? "('c')" : "", bSingle ? undefined : NaN, true);
 
 			oUpdateSelectedExpectation = this.mock(_Helper).expects("updateSelected")
 				.exactly(bSkip ? 0 : 1)
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('c')",
-					sinon.match.same(oElement), sinon.match.same(oNewValue.value[0]),
+					sinon.match.same(oElement), sinon.match.same(oNewValue),
 					bSkip === undefined ? ["EMPLOYEE", "~another~", "~path~"]
 						: sinon.match.same(aPaths),
 					sinon.match.func)
@@ -10707,7 +10791,7 @@ sap.ui.define([
 
 			// code under test
 			return oCache
-				.requestSideEffects(oGroupLock, aPaths, ["('c')"])
+				.requestSideEffects(oGroupLock, aPaths, ["('c')"], bSingle)
 				.then(function () {
 					if (bSkip === false) {
 						assert.deepEqual(oGetRelativePathExpectation.args, [["", "EMPLOYEE"]]);
@@ -10723,6 +10807,7 @@ sap.ui.define([
 				});
 		});
 	});
+});
 
 	//*********************************************************************************************
 [[], ["('3')"]].forEach(function (aKeptElementPredicates, i) {

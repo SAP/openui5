@@ -54,6 +54,13 @@ sap.ui.define(function() {
 				}
 			},
 
+			Core_FieldHelpEndpoint: {
+				title: "sap.ui.core: prepare listeners for FieldHelp Endpoint",
+				qunit: {
+					reorder: false
+				}
+			},
+
 			Lib: {
 				title: "sap.ui.core: Unit tests for class sap/ui/core/Lib",
 				loader: {

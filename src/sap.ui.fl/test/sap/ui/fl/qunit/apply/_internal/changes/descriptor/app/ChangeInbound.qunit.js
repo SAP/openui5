@@ -214,6 +214,36 @@ sap.ui.define([
 					]
 				}
 			});
+
+			this.oChangeComplexPopertyPathSingle = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeInbound"
+				},
+				content: {
+					inboundId: "Risk-configure",
+					entityPropertyChange:
+						{
+							propertyPath: "signature/parameters/Company\\/Name/value/value",
+							operation: "UPSERT",
+							propertyValue: "newValue"
+						}
+				}
+			});
+
+			this.oChangeComplexPopertyPath = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeInbound"
+				},
+				content: {
+					inboundId: "Risk-configure",
+					entityPropertyChange:
+						{
+							propertyPath: "signature/parameters/Company\\/Name/To\\/Value/value",
+							operation: "UPSERT",
+							propertyValue: "newValue"
+						}
+				}
+			});
 		}
 	}, function() {
 		QUnit.test("when calling '_applyChange' with several changes in array", function(assert) {
@@ -506,6 +536,64 @@ sap.ui.define([
 			assert.throws(function() {
 				ChangeInbound.applyChange(oManifest, this.oChangeUnsupportedPattern);
 			}, Error("Not supported format for propertyPath semanticObject. The supported pattern is ^[\\w\\*]{0,30}$"), "throws an error");
+		});
+
+		QUnit.test("when calling '_applyChange' with single complex propertyPath", function(assert) {
+			var oManifest = {
+				"sap.app": {
+					crossNavigation: {
+						inbounds: {
+							"Risk-configure": {
+								semanticObject: "Address",
+								action: "display",
+								additionalParameters: "ignored",
+								signature: {
+									parameters: {
+										"Company/Name": {
+											value: {
+												value: "oldValue",
+												format: "plain"
+											},
+											required: true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+			var oNewManifest = ChangeInbound.applyChange(oManifest, this.oChangeComplexPopertyPathSingle);
+			assert.equal(oNewManifest["sap.app"].crossNavigation.inbounds["Risk-configure"].signature.parameters["Company/Name"].value.value, "newValue", "inbound is updated correctly");
+		});
+
+		QUnit.test("when calling '_applyChange' with two complex propertyPaths", function(assert) {
+			var oManifest = {
+				"sap.app": {
+					crossNavigation: {
+						inbounds: {
+							"Risk-configure": {
+								semanticObject: "Address",
+								action: "display",
+								additionalParameters: "ignored",
+								signature: {
+									parameters: {
+										"Company/Name": {
+											"To/Value": {
+												value: "oldValue",
+												format: "plain"
+											},
+											required: true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+			var oNewManifest = ChangeInbound.applyChange(oManifest, this.oChangeComplexPopertyPath);
+			assert.equal(oNewManifest["sap.app"].crossNavigation.inbounds["Risk-configure"].signature.parameters["Company/Name"]["To/Value"].value, "newValue", "inbound is updated correctly");
 		});
 	});
 

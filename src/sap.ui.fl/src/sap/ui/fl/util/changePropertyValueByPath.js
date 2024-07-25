@@ -9,8 +9,24 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	function splitEscapePath(sPropertyPath) {
+		var sReplaceEscapeWithDummy = sPropertyPath.replaceAll("\\/", "*");
+		var aPath = sReplaceEscapeWithDummy.split("/");
+		aPath.forEach((sPath, index) => {
+			if (sPath.includes("*")) {
+				aPath[index] = aPath[index].replace("*", "/");
+			}
+		});
+		return aPath;
+	}
+
 	function setPropValueByPath(oEntityProp, oRoot) {
-		var aPath = oEntityProp.propertyPath.split("/");
+		var aPath;
+		if (oEntityProp.propertyPath.includes("\\")) {
+			aPath = splitEscapePath(oEntityProp.propertyPath);
+		} else {
+			aPath = oEntityProp.propertyPath.split("/");
+		}
 		var valueByPath = ObjectPath.get(aPath, oRoot);
 
 		if (valueByPath && oEntityProp.operation === "INSERT") {
