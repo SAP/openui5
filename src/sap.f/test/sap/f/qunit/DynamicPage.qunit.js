@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
-	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"./DynamicPageUtil",
 	"sap/f/DynamicPage",
@@ -24,14 +23,14 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/IntervalTrigger',
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
 	AnimationMode,
 	ControlBehavior,
 	Element,
 	Library,
-	nextUIUpdate,
 	$,
 	DynamicPageUtil,
 	DynamicPage,
@@ -51,7 +50,8 @@ function(
 	Control,
 	IntervalTrigger,
 	QUnitUtils,
-	KeyCodes
+	KeyCodes,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -105,7 +105,7 @@ function(
 		assert.ok(!oStateChangeListener.called, "stateChange event was not fired");
 	});
 
-	QUnit.test("DynamicPage landmark info is set correctly", function (assert) {
+	QUnit.test("DynamicPage landmark info is set correctly", async function (assert) {
 		var oLandmarkInfo = new DynamicPageAccessibleLandmarkInfo({
 			rootRole: "Region",
 			rootLabel: "Root",
@@ -128,6 +128,18 @@ function(
 		assert.strictEqual(this.oDynamicPage.$("header").attr("aria-label"), "Header", "Header label is set correctly.");
 		assert.strictEqual(this.oDynamicPage.$("footerWrapper").attr("role"), "region", "Footer role is set correctly.");
 		assert.strictEqual(this.oDynamicPage.$("footerWrapper").attr("aria-label"), "Footer", "Footer label is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("headerWrapper").find("section").attr("aria-label"), "Expanded header", "Default header content label is set correctly.");
+
+		oLandmarkInfo = new DynamicPageAccessibleLandmarkInfo({
+			headerContentLabel: "Header content label"
+		});
+
+		this.oDynamicPage.setLandmarkInfo(oLandmarkInfo);
+		await nextUIUpdate();
+
+		assert.strictEqual(this.oDynamicPage.$("headerWrapper").find("section").attr("aria-label"), "Header content label", "Custom header content label is set correctly.");
+
+
 	});
 
 	QUnit.test("DynamicPage - backgroundDesign property", function(assert) {

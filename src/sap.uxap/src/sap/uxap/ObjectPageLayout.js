@@ -1241,6 +1241,10 @@ sap.ui.define([
 			});
 			this._initialABButtonsColorUpdateDone = true;
 		}
+		if (exists(oHeaderContent) && oHeaderContent._setLandmarkInfo) {
+			oHeaderContent._setLandmarkInfo(this.getLandmarkInfo());
+		}
+
 	};
 
 	ObjectPageLayout.prototype._onAfterRenderingDomReady = function () {
@@ -5126,6 +5130,7 @@ sap.ui.define([
 			this.$("stickyAnchorBar").attr("aria-label", sNavigationText);
 		}
 		this.$("anchBar").attr("aria-label", sToolbarText);
+
 	};
 
 	/**

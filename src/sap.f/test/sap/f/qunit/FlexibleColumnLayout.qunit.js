@@ -1373,7 +1373,7 @@ function(
 		assert.strictEqual(oSpyMoveListener.callCount, 0, "listener is not called");
 	});
 
-	QUnit.module("ScreenReader supprot", {
+	QUnit.module("ScreenReader basic supprot", {
 		beforeEach: function () {
 			this.oFCL = oFactory.createFCL();
 		},
@@ -2330,4 +2330,349 @@ function(
 		assert.ok(oFCL._iWidth > oFCL._getTotalColumnsWidth(oFCL.getLayout()), "Some space for arrows is allocated");
 		assert.ok(oFCL._getVisibleColumnSeparatorsCount() > 0, "Visible arrows count is greater than 0");
 	}
+
+	QUnit.module("ScreenReader aria-valuenow DESKTOP SIZE", {
+		beforeEach: function () {
+			this.sOldAnimationSetting = $("html").attr("data-sap-ui-animation");
+			this.sOldAnimationMode = ControlBehavior.getAnimationMode();
+			$("html").attr("data-sap-ui-animation", "off");
+			$("#" + sQUnitFixture).width(DESKTOP_SIZE); // > 1280px
+			ControlBehavior.setAnimationMode("none");
+		},
+		afterEach: function () {
+			$("html").attr("data-sap-ui-animation", this.sOldAnimationSetting);
+			$("#" + sQUnitFixture).width("");
+			ControlBehavior.setAnimationMode(this.sOldAnimationMode);
+			this.oFCL.destroy();
+			window.localStorage.removeItem(FlexibleColumnLayout.STORAGE_PREFIX_DESKTOP + "-begin");
+		},
+		after: clearStoredResizeInfo
+	});
+
+	QUnit.test("begin separator in two-column layouts", function (assert) {
+		var iSeparatorValuenow;
+		this.oFCL = oFactory.createFCL({
+			layout: LT.TwoColumnsBeginExpanded,
+			beginColumnPages: [new Page()]
+		});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
+
+		// check initial valuenow
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.begin.get(0).getAttribute("aria-valuenow"));
+		assert.ok(iSeparatorValuenow > 0, "valuenow attribute shows begin column is expanded");
+		assert.ok(iSeparatorValuenow < 100, "valuenow attribute shows begin column not fully expanded");
+
+		// act
+		dragSeparator("begin", 10, this.oFCL); // drag to expand the begin column slightly
+		assertSeparatorVisibility(assert, this.oFCL, 1, 0);
+		assert.equal(this.oFCL.getLayout(), LT.TwoColumnsBeginExpanded, "assert setup is as expected");
+
+		// check
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.begin.get(0).getAttribute("aria-valuenow"));
+		assert.ok(iSeparatorValuenow > 0, "valuenow attribute shows begin column is expanded");
+		assert.ok(iSeparatorValuenow < 100, "valuenow attribute shows begin column not fully expanded");
+	});
+
+	QUnit.test("begin separator min value in two-column layouts", function (assert) {
+		var iSeparatorValuenow;
+		this.oFCL = oFactory.createFCL({
+			layout: LT.TwoColumnsBeginExpanded,
+			beginColumnPages: [new Page()]
+		});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
+
+		// act
+		dragSeparator("begin", -1000, this.oFCL); // drag to the earliest possible possition (shrink begin column to the min)
+		assertSeparatorVisibility(assert, this.oFCL, 1, 0);
+		assert.equal(this.oFCL.getLayout(), LT.TwoColumnsMidExpanded, "assert setup is as expected");
+		assert.equal(this.oFCL._$columns.begin.get(0).offsetWidth, FlexibleColumnLayout.COLUMN_MIN_WIDTH, "begin column is shrinked to the min");
+
+		// check
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.begin.get(0).getAttribute("aria-valuenow"));
+		assert.equal(iSeparatorValuenow, 0.00, "valuenow attribute shows begin column is shrinked to the min");
+	});
+
+	QUnit.test("begin separator max value in two-column layouts", function (assert) {
+		var iSeparatorValuenow;
+		this.oFCL = oFactory.createFCL({
+			layout: LT.TwoColumnsBeginExpanded,
+			beginColumnPages: [new Page()]
+		});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
+
+		// act
+		dragSeparator("begin", 1000, this.oFCL); // drag to the farthest possible possition (expand begin column to the max)
+		assertSeparatorVisibility(assert, this.oFCL, 1, 0);
+		assert.equal(this.oFCL.getLayout(), LT.TwoColumnsBeginExpanded, "assert setup is as expected");
+		assert.equal(this.oFCL._$columns.mid.get(0).offsetWidth, FlexibleColumnLayout.COLUMN_MIN_WIDTH, "mid column is shrinked to the min");
+
+		// check
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.begin.get(0).getAttribute("aria-valuenow"));
+		assert.equal(iSeparatorValuenow, 100.00, "valuenow attribute shows begin column is expanded to the max");
+	});
+
+	QUnit.test("begin separator in three-column layouts", function (assert) {
+		var iSeparatorValuenow;
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsMidExpanded,
+			beginColumnPages: [new Page()]
+		});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
+
+		// check initial valuenow
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.begin.get(0).getAttribute("aria-valuenow"));
+		assert.ok(iSeparatorValuenow > 0, "valuenow attribute shows begin column is expanded");
+		assert.ok(iSeparatorValuenow < 100, "valuenow attribute shows begin column not fully expanded");
+
+		// act
+		dragSeparator("begin", 10, this.oFCL); // drag to expand the begin column slightly
+		assertSeparatorVisibility(assert, this.oFCL, 1, 1);
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsMidExpanded, "assert setup is as expected");
+
+		// check
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.begin.get(0).getAttribute("aria-valuenow"));
+		assert.ok(iSeparatorValuenow > 0, "valuenow attribute shows begin column is expanded");
+		assert.ok(iSeparatorValuenow < 100, "valuenow attribute shows begin column not fully expanded");
+	});
+
+	QUnit.test("begin separator min value in three-column layout", function (assert) {
+		var iSeparatorValuenow;
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsMidExpanded,
+			beginColumnPages: [new Page()]
+		});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
+
+		// act
+		dragSeparator("begin", -1000, this.oFCL); // drag to the earliest possible possition (shrink begin column to the min)
+		assertSeparatorVisibility(assert, this.oFCL, 1, 1);
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsMidExpanded, "assert setup is as expected");
+		assert.equal(this.oFCL._$columns.begin.get(0).offsetWidth, FlexibleColumnLayout.COLUMN_MIN_WIDTH, "begin column is shrinked to the min");
+
+		// check
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.begin.get(0).getAttribute("aria-valuenow"));
+		assert.equal(iSeparatorValuenow, 0.00, "valuenow attribute shows begin column is shrinked to the min");
+	});
+
+	QUnit.test("begin separator max value in three-column layouts", function (assert) {
+		var iSeparatorValuenow;
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsBeginExpandedEndHidden,
+			beginColumnPages: [new Page()]
+		});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
+
+		dragSeparator("begin", 1000, this.oFCL); // drag to the farthest possible possition (expand begin column to the max)
+		assertSeparatorVisibility(assert, this.oFCL, 1, 0);
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsBeginExpandedEndHidden, "assert setup is as expected");
+
+		// check
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.begin.get(0).getAttribute("aria-valuenow"));
+		assert.equal(this.oFCL._$columns.mid.get(0).offsetWidth, FlexibleColumnLayout.COLUMN_MIN_WIDTH, "mid column is shrinked to the min");
+		assert.equal(iSeparatorValuenow, 100.00, "valuenow attribute shows begin column is expanded to the max");
+	});
+
+	QUnit.test("end separator in three-column layouts", function (assert) {
+		var iSeparatorValuenow;
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsMidExpanded,
+			beginColumnPages: [new Page()],
+			endColumnPages: [new Page()]
+		});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_endColumnNav")});
+
+		// check initial valuenow
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.end.get(0).getAttribute("aria-valuenow"));
+		assert.ok(iSeparatorValuenow > 0, "valuenow attribute shows mid column is expanded");
+		assert.ok(iSeparatorValuenow < 100, "valuenow attribute shows mid column not fully expanded");
+
+		// act
+		dragSeparator("end", -10, this.oFCL); // drag to shrink the mid column slightly
+		assertSeparatorVisibility(assert, this.oFCL, 1, 1);
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsMidExpanded, "assert setup is as expected");
+
+		// check
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.end.get(0).getAttribute("aria-valuenow"));
+		assert.ok(iSeparatorValuenow > 0, "valuenow attribute shows mid column is expanded");
+		assert.ok(iSeparatorValuenow < 100, "valuenow attribute shows mid column not fully expanded");
+	});
+
+	QUnit.test("end separator min value in three-column layouts", function (assert) {
+		var iSeparatorValuenow;
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsEndExpanded,
+			beginColumnPages: [new Page()],
+			endColumnPages: [new Page()]
+		});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_endColumnNav")});
+
+		// act
+		dragSeparator("end", -1000, this.oFCL); // drag to shrink the mid column to the min
+		assertSeparatorVisibility(assert, this.oFCL, 0, 1);
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsEndExpanded, "assert setup is as expected");
+
+		// check
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.end.get(0).getAttribute("aria-valuenow"));
+		assert.strictEqual(iSeparatorValuenow,  0.00, "valuenow attribute shows mid column is shrinked to the min");
+	});
+
+	QUnit.test("end separator max value in three-column layouts", function (assert) {
+		var iSeparatorValuenow;
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsMidExpanded,
+			beginColumnPages: [new Page()],
+			endColumnPages: [new Page()]
+		});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_endColumnNav")});
+
+		// act
+		dragSeparator("end", 1000, this.oFCL); // drag to expand the mid column to the max
+		assertSeparatorVisibility(assert, this.oFCL, 1, 1);
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsMidExpanded, "assert setup is as expected");
+
+		// check
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.end.get(0).getAttribute("aria-valuenow"));
+		assert.strictEqual(iSeparatorValuenow,  100.00, "valuenow attribute shows mid column is expanded to the max");
+	});
+
+	QUnit.module("ScreenReader aria-valuenow TABLET SIZE", {
+		beforeEach: function () {
+			this.sOldAnimationSetting = $("html").attr("data-sap-ui-animation");
+			this.sOldAnimationMode = ControlBehavior.getAnimationMode();
+			$("html").attr("data-sap-ui-animation", "off");
+			$("#" + sQUnitFixture).width(TABLET_SIZE); // Between 960 and 1280
+			ControlBehavior.setAnimationMode("none");
+		},
+		afterEach: function () {
+			$("html").attr("data-sap-ui-animation", this.sOldAnimationSetting);
+			$("#" + sQUnitFixture).width("");
+			ControlBehavior.setAnimationMode(this.sOldAnimationMode);
+			this.oFCL.destroy();
+			window.localStorage.removeItem(FlexibleColumnLayout.STORAGE_PREFIX_TABLET + "-begin");
+		},
+		after: clearStoredResizeInfo
+	});
+
+	QUnit.test("begin separator in three-column layouts", function (assert) {
+		var iSeparatorValuenow;
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsMidExpanded,
+			beginColumnPages: [new Page()],
+			midColumnPages: [new Page()]
+		});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_midColumnNav")});
+
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.begin.get(0).getAttribute("aria-valuenow"));
+		assert.strictEqual(iSeparatorValuenow, 0.00, "valuenow attribute shows begin column is shrinked to the min");
+
+		// act
+		dragSeparator("begin", 10, this.oFCL); // drag to expand the begin column slightly
+		assertSeparatorVisibility(assert, this.oFCL, 1, 1);
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsMidExpandedEndHidden, "assert setup is as expected");
+
+		// check
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.begin.get(0).getAttribute("aria-valuenow"));
+		assert.ok(iSeparatorValuenow > 0, "valuenow attribute shows begin column is expanded");
+		assert.ok(iSeparatorValuenow < 100, "valuenow attribute shows begin column not fully expanded");
+	});
+
+	QUnit.test("begin separator min value in three-column layouts", function (assert) {
+		var iSeparatorValuenow;
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsMidExpandedEndHidden,
+			beginColumnPages: [new Page()],
+			midColumnPages: [new Page()]
+		});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_midColumnNav")});
+
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.begin.get(0).getAttribute("aria-valuenow"));
+		assert.ok(iSeparatorValuenow > 0, "valuenow attribute shows begin column is expanded");
+		assert.ok(iSeparatorValuenow < 100, "valuenow attribute shows begin column not fully expanded");
+
+		// act
+		dragSeparator("begin", -1000, this.oFCL); // drag to completely hide the begin column
+		assertSeparatorVisibility(assert, this.oFCL, 1, 1);
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsMidExpanded, "assert layout is as expected");
+
+		// check
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.begin.get(0).getAttribute("aria-valuenow"));
+		assert.strictEqual(iSeparatorValuenow, 0, "valuenow attribute shows begin column is shrinked to the min");
+	});
+
+	QUnit.test("begin separator max value in three-column layouts", function (assert) {
+		var iSeparatorValuenow;
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsBeginExpandedEndHidden,
+			beginColumnPages: [new Page()],
+			midColumnPages: [new Page()]
+		});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_midColumnNav")});
+
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.begin.get(0).getAttribute("aria-valuenow"));
+		assert.ok(iSeparatorValuenow > 0, "valuenow attribute shows begin column is expanded");
+		assert.ok(iSeparatorValuenow < 100, "valuenow attribute shows begin column not fully expanded");
+
+		// act
+		dragSeparator("begin", 1200, this.oFCL); // drag to expand the begin column to the max
+		assertSeparatorVisibility(assert, this.oFCL, 1, 0);
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsBeginExpandedEndHidden, "assert layout is as expected");
+
+		// check
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.begin.get(0).getAttribute("aria-valuenow"));
+		assert.strictEqual(iSeparatorValuenow, 100.00, "valuenow attribute shows begin column is expanded to the max");
+	});
+
+	QUnit.test("end separator in three-column layouts", function (assert) {
+		var iSeparatorValuenow;
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsMidExpandedEndHidden,
+			beginColumnPages: [new Page()],
+			midColumnPages: [new Page()]
+		});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_midColumnNav")});
+
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.end.get(0).getAttribute("aria-valuenow"));
+		assert.strictEqual(iSeparatorValuenow, 100.00, "valuenow attribute shows mid column is fully expanded");
+
+		// act
+		dragSeparator("end", -10, this.oFCL); // drag to expand the end column slightly
+		assertSeparatorVisibility(assert, this.oFCL, 1, 1);
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsMidExpanded, "assert setup is as expected");
+
+		// check
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.end.get(0).getAttribute("aria-valuenow"));
+		assert.ok(iSeparatorValuenow > 0, "valuenow attribute shows mid column is expanded");
+		assert.ok(iSeparatorValuenow < 100, "valuenow attribute shows mid column not fully expanded");
+	});
+
+	QUnit.test("end separator min value in three-column layouts", function (assert) {
+		var iSeparatorValuenow;
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsEndExpanded,
+			beginColumnPages: [new Page()],
+			midColumnPages: [new Page()]
+		});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
+		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_midColumnNav")});
+
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.end.get(0).getAttribute("aria-valuenow"));
+		assert.ok(iSeparatorValuenow > 0, "valuenow attribute shows mid column is expanded");
+		assert.ok(iSeparatorValuenow < 100, "valuenow attribute shows mid column not fully expanded");
+
+		// act
+		dragSeparator("end", -1000, this.oFCL); // drag to shrink the mid column to the min
+		assertSeparatorVisibility(assert, this.oFCL, 0, 1);
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsEndExpanded, "assert setup is as expected");
+
+		// check
+		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.end.get(0).getAttribute("aria-valuenow"));
+		assert.strictEqual(iSeparatorValuenow, 0.00, "valuenow attribute shows mid column is shrinked to the min");
+	});
 });
