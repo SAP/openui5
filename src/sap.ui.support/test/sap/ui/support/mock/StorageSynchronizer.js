@@ -3,10 +3,12 @@
  */
 sap.ui.define([
 	"./LocalStorageMock",
-	"sap/ui/support/supportRules/Storage"
+	"sap/ui/support/supportRules/Storage",
+	"sap/base/util/Deferred"
 ], function (
 	LocalStorageMock,
-	Storage
+	Storage,
+	Deferred
 ) {
 	"use strict";
 
@@ -19,7 +21,8 @@ sap.ui.define([
 	var StorageSynchronizer = {
 		_fnAfterInitFrame: null,
 		_mOpenerStorageData: {},
-		_sOpenerCookie: ""
+		_sOpenerCookie: "",
+		_preserveCompleted: null
 	};
 
 	// Serves as an interface for setting and getting document.cookie
@@ -60,6 +63,9 @@ sap.ui.define([
 			} else if (event.data.id === CHANNELS.PRESERVE) {
 				this._mOpenerStorageData = event.data.storage;
 				this._sOpenerCookie = event.data.cookie;
+
+				this._preserveCompleted.resolve();
+				this._preserveCompleted = null;
 			}
 		}.bind(this));
 	};
@@ -67,11 +73,16 @@ sap.ui.define([
 	/**
 	 * To be called from the opening window
 	 * @param {window} oFrame The frame from which opener will request data
+	 * @returns {Promise} A promise that will be resolved once the data is preserved
 	 */
 	StorageSynchronizer.preserve = function (oFrame) {
+		this._preserveCompleted = new Deferred();
+
 		oFrame.postMessage({
 			id: CHANNELS.PRESERVE
 		}, oFrame.location.origin);
+
+		return this._preserveCompleted.promise;
 	};
 
 	/**
