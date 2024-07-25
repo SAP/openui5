@@ -5601,8 +5601,20 @@ sap.ui.define([
 	// refreshSingle is able to calculate the key predicates in its response and a subsequent PATCH
 	// is possible.
 	// BCP: 2070137560
+	//
+	// A header message is returned in the response. The targets of the message are pointing to the
+	// binding parameter. The UI5 message contains the adjusted targets. (SNOW: DINC0122620)
 	QUnit.test("Context.refresh() in a list relative to a return value context", function (assert) {
-		var oTable,
+		var oMessage = {
+				additionalTargets : [
+					"$Parameter/SalesOrder/SO_2_SOITEM(ProductID='HT-1000')/ProductID"
+				],
+				code : "foo-42",
+				message : "text",
+				numericSeverity : 1,
+				target : "$Parameter/SalesOrder/SO_2_SOITEM(ProductID='HT-1000')/Name"
+			},
+			oTable,
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'1\')}">\
 	<Text id="id" text="{SalesOrderID}"/>\
@@ -5639,7 +5651,22 @@ sap.ui.define([
 							ProductID : "HT-1000"
 						}
 					}]
-			});
+				}, {
+					"sap-messages" : JSON.stringify([oMessage])
+				})
+				.expectMessages([{
+					code : "foo-42",
+					message : "text",
+					persistent : true,
+					targets : [
+						"/SalesOrderList('1')/SO_2_SOITEM(ProductID='HT-1000')/Name",
+						"/SalesOrderList('1')/SO_2_SOITEM(ProductID='HT-1000')/ProductID"
+					],
+					technicalDetails : {
+						originalMessage : oMessage
+					},
+					type : "Success"
+				}]);
 
 			return Promise.all([
 				that.oView.byId("action").getObjectBinding().execute(),
@@ -18807,8 +18834,18 @@ sap.ui.define([
 	// result.
 	// JIRA: CPOUI5UISERVICESV3-965
 	// BCP: 2070134549
+	//
+	// A header message is returned in the response. The target of the message is pointing to the
+	// binding parameter. The UI5 message contains the adjusted target. (SNOW: DINC0122620)
 	QUnit.test("Rel. bound function, auto-$expand/$select (BCP 2070134549)", function (assert) {
-		var sFunctionName = "com.sap.gateway.default.iwbep.tea_busi.v0001"
+		var oMessage = {
+				// additional targets are missing intentionally
+				code : "foo-42",
+				message : "text",
+				numericSeverity : 1,
+				target : "$Parameter/_it/Name"
+			},
+			sFunctionName = "com.sap.gateway.default.iwbep.tea_busi.v0001"
 				+ ".__FAKE__FuGetEmployeesByManager",
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
@@ -18834,7 +18871,21 @@ sap.ui.define([
 					ID : "6",
 					Name : "Susan Bay"
 				}]
+			}, {
+				"sap-messages" : JSON.stringify([oMessage])
 			})
+			.expectMessages([{
+				code : "foo-42",
+				message : "text",
+				persistent : true,
+				targets : [
+					"/MANAGERS('1')/Name"
+				],
+				technicalDetails : {
+					originalMessage : oMessage
+				},
+				type : "Success"
+			}])
 			.expectChange("TEAM_ID", "TEAM_03")
 			.expectChange("id", ["3", "6"])
 			.expectChange("name", ["Jonathan Smith", "Susan Bay"]);
