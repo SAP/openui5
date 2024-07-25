@@ -1847,11 +1847,6 @@ sap.ui.define([
 					}
 				}
 
-				function readableUrl(sUrl0) {
-					return sUrl0.replaceAll(/%([0-9a-fA-F]{2})/g,
-						(_s, n) => String.fromCharCode(Number.parseInt(n, 16)));
-				}
-
 				if (iBatchNo === undefined) {
 					that.iBatchNo += 1;
 				}
@@ -1885,9 +1880,9 @@ sap.ui.define([
 						oActualRequest.$ContentID = sContentID;
 					}
 					assert.deepEqual(oActualRequest, oExpectedRequest,
-						sMethod + " " + readableUrl(sUrl) + " (batchNo: " + iBatchNo + ")");
+						`${sMethod} ${TestUtils.makeUrlReadable(sUrl)} (batchNo: ${iBatchNo})`);
 				} else {
-					assert.ok(false, sMethod + " " + readableUrl(sUrl) + " (unexpected)");
+					assert.ok(false, `${sMethod} ${TestUtils.makeUrlReadable(sUrl)} (unexpected)`);
 					oResponse = {value : []}; // dummy response to avoid further errors
 					mResponseHeaders = {};
 				}
@@ -2311,9 +2306,9 @@ sap.ui.define([
 		 *
 		 * @param {string|object} vRequest
 		 *   The request with the properties "method", "url" and "headers". A string is interpreted
-		 *   as URL with method "GET" and no headers. Spaces inside the URL are percent-encoded
-		 *   automatically. Additionally the following properties may be given for requests within a
-		 *   $batch:
+		 *   as URL with method "GET" and no headers. Spaces, double quotes, square brackets, and
+		 *   curly brackets inside the URL are percent-encoded automatically. Additionally, the
+		 *   following properties may be given for requests within a $batch:
 		 *   <ul>
 		 *      <li> groupId: the group ID by which the $batch was sent
 		 *      <li> batchNo: the number of the ($direct or $batch) request within the test
@@ -2357,8 +2352,7 @@ sap.ui.define([
 					// With GET it must be visible that there is no content, with the other
 					// methods it must be possible to insert the ETag from the header
 					|| (vRequest.method === "GET" ? null : {});
-			vRequest.url = vRequest.url.replaceAll(/[ "\[\]{}]/g,
-				(s) => `%${s.charCodeAt(0).toString(16).padStart(2, 0).toUpperCase()}`);
+			vRequest.url = TestUtils.encodeReadableUrl(vRequest.url);
 			if (vResponse && !(vResponse instanceof Error || vResponse instanceof Promise
 					|| typeof vResponse === "function")) { // vResponse may be inspected
 				if (rCountTrue.test(vRequest.url)) { // $count=true

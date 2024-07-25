@@ -44,6 +44,9 @@ sap.ui.define([
 		}],
 		mServerFixture = {
 			"/Foo/bar" : {source : "bar.json"},
+			"/Foo/bar?$filter=baz eq 42" : {source : "bar.json"},
+			"GET /Foo/bar?$filter=baz eq 23" : {source : "bar.json"},
+			'/Foo/bar?ExpandLevels=[{NodeId:"1",Level:0}]' : {source : "bar.json"},
 			"/Foo/baz" : [{
 				ifMatch : function (oRequest) {
 					return oRequest.requestHeaders["SAP-ContextId"] === "session";
@@ -87,7 +90,7 @@ sap.ui.define([
 	 * @param {string} [sValue] The expected header value
 	 */
 	function checkHeader(assert, sHeaderString, sName, sValue) {
-		sHeaderString = sHeaderString + "\r\n";
+		sHeaderString += "\r\n";
 
 		if (sValue) {
 			assert.ok(sHeaderString.includes("\r\n" + sName + ": " + sValue + "\r\n"), sName);
@@ -190,6 +193,36 @@ sap.ui.define([
 	}, {
 		method : "GET",
 		url : "/Foo/bar",
+		status : 200,
+		responseBody : '{"foo":"bar","@odata.etag":"abc123"}',
+		responseHeaders : {
+			"OData-Version" : "4.0",
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+		}
+	}, {
+		expectedLogMessage : "GET /Foo/bar?$filter=baz eq 42",
+		method : "GET",
+		url : "/Foo/bar?$filter=baz%20eq%2042",
+		status : 200,
+		responseBody : '{"foo":"bar","@odata.etag":"abc123"}',
+		responseHeaders : {
+			"OData-Version" : "4.0",
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+		}
+	}, {
+		expectedLogMessage : "GET /Foo/bar?$filter=baz eq 23",
+		method : "GET",
+		url : "/Foo/bar?$filter=baz%20eq%2023",
+		status : 200,
+		responseBody : '{"foo":"bar","@odata.etag":"abc123"}',
+		responseHeaders : {
+			"OData-Version" : "4.0",
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+		}
+	}, {
+		expectedLogMessage : 'GET /Foo/bar?ExpandLevels=[{NodeId:"1",Level:0}]',
+		method : "GET",
+		url : "/Foo/bar?ExpandLevels=%5B%7BNodeId:%221%22,Level:0%7D%5D",
 		status : 200,
 		responseBody : '{"foo":"bar","@odata.etag":"abc123"}',
 		responseHeaders : {
@@ -857,5 +890,23 @@ sap.ui.define([
 				""
 			].join("\r\n"));
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("makeUrlReadable/encodeReadableUrl", function (assert) {
+		function test(sReadableUrl, sCorrectUrl) {
+			assert.strictEqual(TestUtils.makeUrlReadable(sCorrectUrl), sReadableUrl);
+			assert.strictEqual(TestUtils.encodeReadableUrl(sReadableUrl), sCorrectUrl);
+			assert.strictEqual(encodeURI(sReadableUrl), sCorrectUrl);
+		}
+
+		test(
+			"foo?$select=a,b&$expand=c($select=d;$expand=e)&$filter=bar eq 42",
+			"foo?$select=a,b&$expand=c($select=d;$expand=e)&$filter=bar%20eq%2042"
+		);
+		test(
+			'foo?ExpandLevels=[{NodeId:"1",Level:0}]',
+			"foo?ExpandLevels=%5B%7BNodeId:%221%22,Level:0%7D%5D"
+		);
 	});
 });
