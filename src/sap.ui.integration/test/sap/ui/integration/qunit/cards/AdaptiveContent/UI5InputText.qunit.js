@@ -120,7 +120,7 @@ function (
 			assert.strictEqual(oTextArea.tagName.toLowerCase(), "ui5-textarea", "ui5-textarea webcomponent is rendered");
 			assert.ok(oTextArea, "The text input is created");
 			assert.strictEqual(oTextArea.placeholder, "Comments", "The placeholder is mapped correctly");
-			assert.strictEqual(oTextArea.maxlength, null, "The maximum length is  not specified.");
+			assert.notOk(oTextArea.maxlength, "The maximum length is  not specified.");
 			assert.strictEqual(oTextArea.value, "", "There is no value set initially");
 			assert.notOk(oTextArea.required, "required attribute should not be set");
 
