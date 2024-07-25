@@ -532,6 +532,39 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Only SHIFT + Arrow Keys should select", function(assert) {
+		const oTable = this.oTable;
+		const oCellSelector = this.oCellSelector;
+		const oSelectCellsSpy = sinon.spy(oCellSelector, "_selectCells");
+
+		const oCell = getCell(oTable, 1, 0); // first cell of first row
+		oCell.focus();
+		qutils.triggerKeydown(oCell, KeyCodes.SPACE);
+		qutils.triggerKeyup(oCell, KeyCodes.SPACE);
+
+		qutils.triggerKeydown(oCell, KeyCodes.ARROW_RIGHT, true, false, false);
+		qutils.triggerKeyup(oCell, KeyCodes.ARROW_RIGHT, true, false, false);
+
+		assert.equal(oSelectCellsSpy.callCount, 2, "Cells were selected");
+		assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 1}}, "Change in selection");
+
+		oSelectCellsSpy.reset();
+
+		qutils.triggerKeydown(oCell, KeyCodes.ARROW_RIGHT, true, true /* ALT */, false);
+		qutils.triggerKeyup(oCell, KeyCodes.ARROW_RIGHT, true, true /* ALT */, false);
+
+		assert.equal(oSelectCellsSpy.callCount, 0, "Cells were not selected");
+		assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 1}}, "No change in selection");
+
+		qutils.triggerKeydown(oCell, KeyCodes.ARROW_RIGHT, true, false, true /* CTRL */);
+		qutils.triggerKeyup(oCell, KeyCodes.ARROW_RIGHT, true, false, true /* CTRL */);
+
+		assert.equal(oSelectCellsSpy.callCount, 0, "Cells were not selected");
+		assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 1}}, "No change in selection");
+
+		oSelectCellsSpy.restore();
+	});
+
 	QUnit.test("Remove selection on updateFinished", function(assert) {
 		const oTable = this.oTable;
 		const oCellSelector = this.oCellSelector;

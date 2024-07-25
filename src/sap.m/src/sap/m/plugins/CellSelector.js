@@ -534,7 +534,7 @@ sap.ui.define([
 	};
 
 	CellSelector.prototype._onsaparrowmodifiers = function(oEvent, sDirectionType, iRowDiff, iColDiff) {
-		if (!this._shouldBeHandled(oEvent) || !oEvent.shiftKey || !this._getSelectableCell(oEvent.target)) {
+		if (!this._shouldBeHandled(oEvent) || !oEvent.shiftKey || !this._getSelectableCell(oEvent.target) || oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) {
 			this._oPreviousCell = undefined;
 			return;
 		}
