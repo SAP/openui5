@@ -2737,9 +2737,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fills the given range of currently available elements with the given promise. If it is not
-	 * an option to enlarge the array to accommodate <code>iEnd - 1</code>, the promise is also
-	 * stored in <code>aElements.$tail</code>.
+	 * Fills the given range of currently available elements with the given promise. If the
+	 * collection count is unknown and it is not an option to enlarge the array to accommodate
+	 * <code>iEnd - 1</code>, the promise is stored in <code>aElements.$tail</code>.
 	 *
 	 * @param {sap.ui.base.SyncPromise} oPromise
 	 *   The promise
@@ -2747,13 +2747,19 @@ sap.ui.define([
 	 *   The start index
 	 * @param {number} iEnd
 	 *   The end index (will not be filled)
+	 * @throws {Error}
+	 *   If the array cannot be filled and the promise was stored in <code>aElements.$tail</code> in
+	 *   a previous call already
 	 *
 	 * @private
 	 */
 	_CollectionCache.prototype.fill = function (oPromise, iStart, iEnd) {
 		var i;
 
-		if (iEnd > this.aElements.length && iEnd - iStart > 1024) {
+		// iEnd = Infinity is not an issue here. If $count is known, it is taken care of that iEnd
+		// is never higher than $count (using iLimit) @see #read, @see ODataUtils#_getReadIntervals.
+		// If not, iEnd is reduced to this.aElements.length here.
+		if (!this.aElements.$count && iEnd > this.aElements.length && iEnd - iStart > 1024) {
 			if (this.aElements.$tail && oPromise) {
 				throw new Error("Cannot fill from " + iStart + " to " + iEnd
 					+ ", $tail already in use, # of elements is " + this.aElements.length);
