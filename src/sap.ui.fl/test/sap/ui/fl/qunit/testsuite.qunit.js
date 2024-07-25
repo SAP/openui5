@@ -285,6 +285,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/SetTitle"]
 				}
 			},
+			"apply/_internal/changes/descriptor/app/SetDescription": {
+				group: "Apply Internal - Descriptor Change Merger",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/SetDescription"]
+				}
+			},
 			"apply/_internal/changes/descriptor/fiori/SetRegistrationIds": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
