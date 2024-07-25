@@ -6240,12 +6240,16 @@ sap.ui.define([
 	//
 	// A header message is returned in the response. The targets of the message are pointing to the
 	// binding parameter. The UI5 message contains the adjusted targets. (SNOW: DINC0122620)
+	//
+	// The header message contains the property "longtextUrl", which points one level up. See that
+	// the UI5 message contains the resolved "descriptionUrl". (SNOW: DINC0197984)
 	QUnit.test("Context.refresh() in a list relative to a return value context", function (assert) {
 		var oMessage = {
 				additionalTargets : [
 					"$Parameter/SalesOrder/SO_2_SOITEM(ProductID='HT-1000')/ProductID"
 				],
 				code : "foo-42",
+				longtextUrl : "../LongText('0815')",
 				message : "text",
 				numericSeverity : 1,
 				target : "$Parameter/SalesOrder/SO_2_SOITEM(ProductID='HT-1000')/Name"
@@ -6292,6 +6296,7 @@ sap.ui.define([
 				})
 				.expectMessages([{
 					code : "foo-42",
+					descriptionUrl : sSalesOrderService + "LongText('0815')",
 					message : "text",
 					persistent : true,
 					targets : [
