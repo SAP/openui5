@@ -144,7 +144,6 @@ sap.ui.define([
 						isVariantSharingEnabled: true
 					}
 				},
-				xsrfToken: "newToken",
 				status: "200",
 				etag: "abc123"
 			});
@@ -157,6 +156,7 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "with correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "with correct method");
 				assert.equal(oStubSendRequest.getCall(0).args[2].xsrfToken, undefined, "with correct token");
+				assert.equal(oStubSendRequest.getCall(0).args[2].cacheable, true, "with correct cacheable value");
 				assert.deepEqual(KeyUserConnector.settings, { isKeyUser: true, isVariantSharingEnabled: true}, "new settings is stored");
 				assert.equal(oFlexData[0].changes.length, 2, "two entries are in the customer change section");
 				assert.equal(oFlexData[0].changes[0], 1, "the change entry is contained");
@@ -185,7 +185,6 @@ sap.ui.define([
 						}
 					]
 				},
-				xsrfToken: "newToken",
 				status: "200",
 				etag: "abc123"
 			});

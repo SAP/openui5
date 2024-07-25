@@ -120,7 +120,7 @@
 				</contentLeft>
 				<contentRight>
 					<!--Button press="onRefresh" text="Refresh"/-->
-					<Button enabled="{= !${ui-op>/bEditMode}}" press="onEdit" text="Edit"/>
+					<Button enabled="{= !${ui-op>/bEditMode} }" press="onEdit" text="Edit"/>
 					<Button enabled="{ui-op>/bEditMode}" press="onDiscard" text="Discard"/>
 					<Button enabled="{ui-op>/bEditMode}" press="onSave" text="Save"/>
 				</contentRight>

@@ -29,6 +29,58 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	// list of available themes
+	const mThemes = {
+		"sap_horizon": {
+			"text": "Morning Horizon"
+		},
+		"sap_horizon_dark": {
+			"text": "Evening Horizon"
+		},
+		"sap_horizon_hcb": {
+			"text": "Horizon High Contrast Black"
+		},
+		"sap_horizon_hcw": {
+			"text": "Horizon High Contrast White"
+		},
+		"sap_fiori_3": {
+			"text": "Quartz Light"
+		},
+		"sap_fiori_3_dark": {
+			"text": "Quartz Dark"
+		},
+		"sap_fiori_3_hcb": {
+			"text": "Quartz High Contrast Black"
+		},
+		"sap_fiori_3_hcw": {
+			"text": "Quartz High Contrast White"
+		},
+		"sap_belize": {
+			"text": "Belize",
+			"deprecated": true
+		},
+		"sap_belize_plus": {
+			"text": "Belize Deep",
+			"deprecated": true
+		},
+		"sap_belize_hcb": {
+			"text": "Belize High Contrast Black",
+			"deprecated": true
+		},
+		"sap_belize_hcw": {
+			"text": "Belize High Contrast White",
+			"deprecated": true
+		},
+		"sap_bluecrystal": {
+			"text": "Blue Crystal",
+			"deprecated": true
+		},
+		"sap_hcb": {
+			"text": "High Contrast Black",
+			"deprecated": true
+		}
+	};
+
 	return BaseController.extend("sap.ui.demo.theming.controller.Overview", {
 
 		formatter: formatter,
@@ -61,83 +113,35 @@ sap.ui.define([
 
 			//Contains the Data for the ComboBox
 			var mData = {
-				"items": [
-					{
-						"key": "1",
-						"text": "Morning Horizon"
-					},
-					{
-						"key": "2",
-						"text": "Evening Horizon"
-					},
-					{
-						"key": "3",
-						"text": "Horizon High Contrast Black"
-					},
-					{
-						"key": "4",
-						"text": "Horizon High Contrast White"
-					},
-					{
-						"key": "5",
-						"text": "Quartz Light"
-					},
-					{
-						"key": "6",
-						"text": "Quartz Dark"
-					},
-					{
-						"key": "7",
-						"text": "Quartz High Contrast Black"
-					},
-					{
-						"key": "8",
-						"text": "Quartz High Contrast White"
-					},
-					{
-						"key": "9",
-						"text": "Belize"
-					},
-					{
-						"key": "10",
-						"text": "Belize Deep"
-					},
-					{
-						"key": "11",
-						"text": "Belize High Contrast Black"
-					},
-					{
-						"key": "12",
-						"text": "Belize High Contrast White"
-					},
-					{
-						"key": "13",
-						"text": "Blue Crystal"
-					},
-					{
-						"key": "14",
-						"text": "High Contrast Black"
-					}
-				]
+				"items": Object.keys(mThemes).map((theme) => Object.assign({
+					theme
+				}, mThemes[theme]))
 			};
 			oComboBoxModel.setData(mData);
-			this.getView().byId("comboBox").setModel(oComboBoxModel);
-			var oValue = "Details for ''Morning Horizon''";
-			this.byId("title").setText(oValue);
+
+			// set the default values
+			var sCurrentTheme = Theming.getTheme();
+			var oComboBox = this.getView().byId("comboBox");
+			oComboBox.setModel(oComboBoxModel);
+			oComboBox.setSelectedKey(sCurrentTheme);
+			this.byId("title").setText(`Details for ''${mThemes[sCurrentTheme].text}''`);
 
 			this.getView().setModel(oModel);
 			oModel.setSizeLimit(100000);
 
 			oTable.bindAggregation("items", "/Data", oTableItem);
 
-			this.getParameterMetadata().then((aParameterMetadata) => {
+			// cache the parameter metadata
+			let aParameterMetadata = [];
+			this.getParameterMetadata().then((aLoadedParameterMetadata) => {
+				aParameterMetadata = aLoadedParameterMetadata;
 				var oData = this.createDataStructure(aParameterMetadata);
 				oModel.setData(oData);
 			});
 
 			this.byId("colTP").setVisible(false);
 			this._oTableFilterState.aCPFilter = [
-				new Filter("nameCP", FilterOperator.NE, "")
+				new Filter("cp", FilterOperator.EQ, true)
 			];
 			this._applyFilterSearch();
 		},
@@ -168,10 +172,10 @@ sap.ui.define([
 				block.split("\n").forEach((line) => {
 					const matchMD = /\/\/ \[(.*?) "(.*?)"\]/.exec(line);
 					if (matchMD) {
-						if (matchMD[1] === "Tags") {
-							let tags = matchMD[2].split('", "');
-							tags = (tags || []).filter((t) => t !== "Protected");
-							metadata[matchMD[1]] = tags;
+						if (matchMD[1] === "Tags" || matchMD[1] === "Category") {
+							let entries = matchMD[2].split('", "');
+							entries = (entries || []).filter((t) => t !== "Protected");
+							metadata[matchMD[1]] = entries;
 						} else if (matchMD[1] !== "Protected") {
 							metadata[matchMD[1]] = matchMD[2];
 						}
@@ -244,6 +248,7 @@ sap.ui.define([
 					name,
 					nameTP,
 					nameCP,
+					cp: !!nameCP, // flag for being a custom property
 					label,
 					color: sThemeParameterValue,
 					colors: coreLibrary.CSSColor.isValid(sThemeParameterValue) ? sThemeParameterValue : undefined,
@@ -635,76 +640,34 @@ sap.ui.define([
 		//Applies a new theme and sets the Text for the current theme
 
 		onThemeChange: function (oEvent) {
-			var value = oEvent.getParameter("value");
+			var theme = oEvent.getSource().getSelectedKey();
+			var themeName = oEvent.getParameter("value");
 			this.onAction();
-			switch (value) {
-				/* see default below
-				case "Morning Horizon":
-					oCore.applyTheme("sap_horizon");
-					this.byId("title").setText("Details for ''Morning Horizon''");
-					break;
-				*/
-				case "Evening Horizon":
-					Theming.setTheme("sap_horizon_dark");
-					this.byId("title").setText("Details for ''Evening Horizon''");
-					break;
-				case "Horizon High Contrast Black":
-					Theming.setTheme("sap_horizon_hcb");
-					this.byId("title").setText("Details for ''Horizon High Contrast Black''");
-					break;
-				case "Horizon High Contrast White":
-					Theming.setTheme("sap_horizon_hcw");
-					this.byId("title").setText("Details for ''Horizon High Contrast White''");
-					break;
-				case "Quartz Light":
-					Theming.setTheme("sap_fiori_3");
-					this.byId("title").setText("Details for ''Quartz Light''");
-					break;
-				case "Quartz Dark":
-					Theming.setTheme("sap_fiori_3_dark");
-					this.byId("title").setText("Details for ''Quartz Dark''");
-					break;
-				case "Quartz High Contrast Black":
-					Theming.setTheme("sap_fiori_3_hcb");
-					this.byId("title").setText("Details for ''Quartz High Contrast Black''");
-					break;
-				case "Quartz High Contrast White":
-					Theming.setTheme("sap_fiori_3_hcw");
-					this.byId("title").setText("Details for ''Quartz High Contrast White''");
-					break;
-				case "Belize":
-					Theming.setTheme("sap_belize");
-					this.byId("title").setText("Details for ''Belize''");
-					break;
-				case "Belize Deep":
-					Theming.setTheme("sap_belize_plus");
-					this.byId("title").setText("Details for ''Belize Deep''");
-					break;
-				case "Belize High Contrast Black":
-					Theming.setTheme("sap_belize_hcb");
-					this.byId("title").setText("Details for ''Belize High Contrast Black''");
-					break;
-				case "Belize High Contrast White":
-					Theming.setTheme("sap_belize_hcw");
-					this.byId("title").setText("Details for ''Belize High Contrast White''");
-					break;
-				case "Blue Crystal":
-					Theming.setTheme("sap_bluecrystal");
-					this.byId("title").setText("Details for ''Blue Crystal''");
-					break;
-				case "High Contrast Black":
-					Theming.setTheme("sap_hcb");
-					this.byId("title").setText("Details for ''High Contrast Black''");
-					break;
-				default:
-					Theming.setTheme("sap_horizon");
-					this.byId("title").setText("Details for ''Morning Horizon''");
+			Theming.setTheme(theme);
+			this.byId("title").setText(`Details for ''${themeName}''`);
+			var isDeprecated = mThemes[theme].deprecated;
+			if (isDeprecated) {
+				this.byId("tbLessParam").setPressed();
+				this.byId("tbLessParam").setEnabled(false);
+				this.byId("colCP").setVisible(false);
+				this.byId("colTP").setVisible(true);
+				this._oTableFilterState.aCPFilter = [];
+			} else {
+				this.byId("tbLessParam").setEnabled(true);
+				this.byId("colCP").setVisible(true);
+				this.byId("colTP").setVisible(false);
+				this._oTableFilterState.aCPFilter = [
+					new Filter("cp", FilterOperator.EQ, true)
+				];
 			}
+			this._applyFilterSearch();
 		},
 		// Event handler for pressing the copy to clipboard button
 		// Copies the UI5 parameter to the clipboard
 		onCopyCodeToClipboard: function (oEvt) {
-			var sString = oEvt.getSource().getParent().getCells()[2].getText(),
+			var sTheme = Theming.getTheme(),
+				isDeprecated = mThemes[sTheme].deprecated,
+				sString = oEvt.getSource().getParent().getCells()[isDeprecated ? 3 : 2].getText(),
 				$temp = jQuery("<input>");
 			if (!sString) {
 				MessageToast.show("No UI5 Parameter to copy to clipboard");
@@ -725,8 +688,10 @@ sap.ui.define([
 		onSearch: function (oEvt) {
 			var sQuery = oEvt.getSource().getValue();
 			if (sQuery && sQuery.length > 0) {
+				var sTheme = Theming.getTheme(),
+					isDeprecated = mThemes[sTheme].deprecated;
 				this._oTableFilterState.aFilter = [
-					new Filter("nameCP", FilterOperator.Contains, sQuery)
+					new Filter(isDeprecated ? "nameTP" : "nameCP", FilterOperator.Contains, sQuery)
 					//new Filter("nameTP", FilterOperator.Contains, sQuery) // TODO: support filter of Custom Prop and Theme Param
 				];
 			} else {

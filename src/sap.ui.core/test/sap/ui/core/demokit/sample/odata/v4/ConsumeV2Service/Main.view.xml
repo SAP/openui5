@@ -29,11 +29,11 @@
 			<Label labelFor="double" text="Double"/>
 			<!-- expected tooltip has no leading 0; typeof Double is "number" -->
 			<Text id="double" text="{Double}"
-				tooltip="{= String(0 + %{Double})}"/>
+				tooltip="{= String(0 + %{Double}) }"/>
 			<Label labelFor="float" text="Float"/>
 			<!-- expected tooltip has no leading 0; typeof Float is "number" -->
 			<Text id="float" text="{Float}"
-				tooltip="{= String(0 + %{Float})}"/>
+				tooltip="{= String(0 + %{Float}) }"/>
 			<Label labelFor="guid" text="Guid"/>
 			<Text id="guid" text="{GlobalUID}"/>
 			<Label labelFor="int16" text="Int16"/>
@@ -47,7 +47,7 @@
 			<Label labelFor="single" text="Single"/>
 			<!-- expected tooltip has no leading 0; typeof Single is "number" -->
 			<Text id="single" text="{Single}"
-				tooltip="{= String(0 + %{Single})}"/>
+				tooltip="{= String(0 + %{Single}) }"/>
 			<Label labelFor="string" text="String"/>
 			<Text id="string" text="{String}"/>
 			<Label labelFor="time" text="Time"/>
