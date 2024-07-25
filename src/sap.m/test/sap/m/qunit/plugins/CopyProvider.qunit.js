@@ -617,10 +617,10 @@ sap.ui.define([
 		assert.ok(oCopyButton.getVisible(), "The copy button is visible since cellClick event is removed and the cell selection is supported");
 
 		this.oTable.setSelectionBehavior("RowOnly");
-		assert.notOk(oCopyButton.getVisible(), "The copy button is not visible since selectionBehavior=RowOnly blocks the cell selection");
+		assert.ok(oCopyButton.getVisible(), "The copy button is visible since selectionBehavior=RowOnly allows the cell selection");
 
 		this.oTable.setSelectionBehavior("RowSelector");
-		assert.ok(oCopyButton.getVisible(), "The copy button is visible since the cell selection is supported with selectionBehavior=RowSelector");
+		assert.ok(oCopyButton.getVisible(), "The copy button is visible since selectionBehavior=RowSelector allows the cell selection");
 
 		this.oTable.removeDependent(oCellSelector);
 		assert.notOk(oCopyButton.getVisible(), "The copy button is not visible since the CellSelector is removed");

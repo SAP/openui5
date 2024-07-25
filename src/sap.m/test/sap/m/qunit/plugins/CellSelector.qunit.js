@@ -481,34 +481,6 @@ sap.ui.define([
 		assert.ok(oRemoveSelectionSpy.called, "removeSelection is called");
 	});
 
-	QUnit.test("No cell selection with RowOnly", async function(assert) {
-		const oTable = this.oTable;
-		const oSelectionPlugin = this.oTable.getDependents().find((oPlugin) => oPlugin.isA("sap.ui.table.plugins.SelectionPlugin"));
-		const oCellSelector = this.oCellSelector;
-		const oSelectCellsSpy = sinon.spy(oCellSelector, "_selectCells");
-		oTable.setSelectionBehavior("RowOnly");
-
-		await nextUIUpdate();
-
-		return new Promise(function(resolve) {
-			oTable.attachEventOnce("rowsUpdated", resolve);
-		}).then(() => {
-			const oCell = getCell(oTable, 1, 0); // first cell of first row
-			oCell.focus();
-			qutils.triggerKeydown(oCell, KeyCodes.SPACE);
-			qutils.triggerKeyup(oCell, KeyCodes.SPACE);
-			assert.deepEqual(oCellSelector.getSelectionRange(), null, "Cell has not been selected");
-			assert.equal(oSelectCellsSpy.callCount, 0, "_selectCells was not called");
-
-			return new Promise(function(resolve) {
-				setTimeout(resolve, 100);
-			});
-		}).then(() => {
-			assert.ok(oSelectionPlugin.isIndexSelected(1), "Row is selected");
-			oSelectCellsSpy.restore();
-		});
-	});
-
 	QUnit.module("Interaction - ResponsiveTable", {
 		beforeEach: async function() {
 			this.oMockServer = new MockServer({ rootUri : sServiceURI });
