@@ -901,6 +901,7 @@ sap.ui.define([
 		 * @param {string} [sVariant] the variant to include (optional)
 		 * @param {string} [sQuery] to be used only by the Core
 		 * @private
+		 * @deprecated
 		 */
 		_includeTheme: function(sVariant, sQuery) {
 			var sName = this.name,
