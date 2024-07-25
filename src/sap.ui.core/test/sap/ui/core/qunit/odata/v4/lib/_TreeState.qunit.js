@@ -70,7 +70,14 @@ sap.ui.define([
 ].forEach(function (oFixture) {
 	QUnit.test("expand by levels: " + oFixture.iLevels, function (assert) {
 		const oTreeState = new _TreeState("~sNodeProperty~");
-
+		if (oFixture.vResult === null) {
+			oTreeState.mPredicate2ExpandLevels["~predicate~"] = "~old~";
+		}
+		this.mock(oTreeState).expects("deleteExpandLevels")
+			.exactly(oFixture.vResult ? 0 : 1).withExactArgs("~oNode~")
+			.callsFake(function () {
+				delete oTreeState.mPredicate2ExpandLevels["~predicate~"];
+			});
 		this.mock(_Helper).expects("getPrivateAnnotation").twice()
 			.withExactArgs("~oNode~", "predicate").returns("~predicate~");
 		this.mock(_Helper).expects("drillDown")
@@ -138,6 +145,29 @@ sap.ui.define([
 
 		// code under test
 		oTreeState.delete("~oNode~");
+
+		assert.deepEqual(oTreeState.mPredicate2ExpandLevels, {foo : "bar"});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deleteExpandLevels", function (assert) {
+		const oTreeState = new _TreeState("~sNodeProperty~");
+		oTreeState.mPredicate2ExpandLevels["foo"] = "bar";
+		oTreeState.mPredicate2ExpandLevels["~predicate~"] = "~";
+
+		const oTreeStateMock = this.mock(oTreeState);
+		// initial call
+		oTreeStateMock.expects("deleteExpandLevels").withExactArgs("~oNode~").callThrough();
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs("~oNode~", "predicate").returns("~predicate~");
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oNode~", "spliced", [])
+			.returns(["~oChild0~", "~oChild1~"]);
+		oTreeStateMock.expects("deleteExpandLevels").withExactArgs("~oChild0~");
+		oTreeStateMock.expects("deleteExpandLevels").withExactArgs("~oChild1~");
+
+		// code under test
+		oTreeState.deleteExpandLevels("~oNode~");
 
 		assert.deepEqual(oTreeState.mPredicate2ExpandLevels, {foo : "bar"});
 	});

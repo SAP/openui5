@@ -643,8 +643,9 @@ sap.ui.define([
 	 *   <code>iLevels >= Number.MAX_SAFE_INTEGER</code> can be used to expand all levels. If a node
 	 *   is expanded a second time, the expand state of the descendants is not changed.
 	 * @throws {Error}
-	 *   If the context points to a node that is not expandable or already expanded, or the given
-	 *   number of levels is not a positive number
+	 *   If the context points to a node that is not expandable or already expanded, the given
+	 *   number of levels is not a positive number, or the given number of levels is greater than
+	 *   1 without a recursive hierarchy
 	 *
 	 * @public
 	 * @see #collapse
