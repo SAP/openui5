@@ -1797,10 +1797,10 @@ sap.ui.define([
 
 		oModelMock.expects("getMetaModel").returns(oMetaModel);
 		this.mock(_Helper).expects("getMetaPath")
-			.withExactArgs(sResourcePath)
+			.withExactArgs("/" + sResourcePath)
 			.returns("~metaPath~");
 		this.mock(oMetaModel).expects("getObject")
-			.withExactArgs("/~metaPath~")
+			.withExactArgs("~metaPath~")
 			.returns("~metadata~"); // not an array
 
 		oModelMock.expects("createUI5Message")
@@ -1858,32 +1858,34 @@ sap.ui.define([
 		oModelMock.expects("getMetaModel").returns(oMetaModel);
 		const oHelperMock = this.mock(_Helper);
 		oHelperMock.expects("getMetaPath")
-			.withExactArgs("resource/path/operation")
+			.withExactArgs("/resource/path/operation")
 			.returns("~metaPath~");
 		const oMetaModelMock = this.mock(oMetaModel);
 		oMetaModelMock.expects("getObject")
-			.withExactArgs("/~metaPath~")
+			.withExactArgs("~metaPath~")
 			.returns(["~metadata~"]);
 		oMetaModelMock.expects("getObject")
-			.withExactArgs("/~metaPath~/@$ui5.overload/0")
+			.withExactArgs("~metaPath~/@$ui5.overload/0")
 			.returns("~operationMetadata~");
 		const oClonedMessage0 = {};
 		oHelperMock.expects("clone").withExactArgs("~message0~").returns(oClonedMessage0);
 		const oClonedMessage1 = {};
 		oHelperMock.expects("clone").withExactArgs("~message1~").returns(oClonedMessage1);
 		oHelperMock.expects("adjustTargets")
-			.withExactArgs(sinon.match.same(oClonedMessage0), "~operationMetadata~");
+			.withExactArgs(sinon.match.same(oClonedMessage0), "~operationMetadata~", undefined,
+				"/resource/path");
 		oHelperMock.expects("adjustTargets")
-			.withExactArgs(sinon.match.same(oClonedMessage1), "~operationMetadata~");
+			.withExactArgs(sinon.match.same(oClonedMessage1), "~operationMetadata~", undefined,
+				"/resource/path");
 		oModelMock.expects("createUI5Message")
 			.withExactArgs(sinon.match(function (oMessage) {
 				return oMessage === oClonedMessage0 && oMessage.transition === true;
-			}), "resource/path", undefined, "~message0~")
+			}), "resource/path/operation?~queryOptions~", undefined, "~message0~")
 			.returns("~UI5msg0~");
 		oModelMock.expects("createUI5Message")
 			.withExactArgs(sinon.match(function (oMessage) {
 				return oMessage === oClonedMessage1 && oMessage.transition === true;
-			}), "resource/path", undefined, "~message1~")
+			}), "resource/path/operation?~queryOptions~", undefined, "~message1~")
 			.returns("~UI5msg1~");
 		this.mock(Messaging).expects("updateMessages")
 			.withExactArgs(undefined, sinon.match(["~UI5msg0~", "~UI5msg1~"]));

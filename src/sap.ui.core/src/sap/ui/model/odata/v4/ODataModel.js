@@ -2560,7 +2560,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.reportTransitionMessages = function (aMessages, sResourcePath) {
-		var oOperationMetadata;
+		var sContextPath, oOperationMetadata;
 
 		if (!aMessages.length) {
 			return;
@@ -2568,14 +2568,14 @@ sap.ui.define([
 
 		if (sResourcePath) {
 			const oMetaModel = this.getMetaModel();
-			sResourcePath = sResourcePath.split("?")[0]; // remove query string
-			const sMetaPath = "/" + _Helper.getMetaPath(sResourcePath);
+			sContextPath = "/" + sResourcePath.split("?")[0]; // remove query string
+			const sMetaPath = _Helper.getMetaPath(sContextPath);
 			const vMetadata = oMetaModel.getObject(sMetaPath);
 			if (Array.isArray(vMetadata)) {
 				// normally, ODCB#_invoke has already checked that there is exactly one overload;
 				// in rare case w/o #invoke, such a check is missing
 				oOperationMetadata = oMetaModel.getObject(sMetaPath + "/@$ui5.overload/0");
-				sResourcePath = sResourcePath.slice(0, sResourcePath.lastIndexOf("/"));
+				sContextPath = sContextPath.slice(0, sContextPath.lastIndexOf("/"));
 			}
 		}
 
@@ -2583,7 +2583,8 @@ sap.ui.define([
 			const oOriginalMessage = oMessage;
 			if (oOperationMetadata) {
 				oMessage = _Helper.clone(oMessage);
-				_Helper.adjustTargets(oMessage, oOperationMetadata);
+				// make targets absolute, will not be adjusted again in #createUI5Message
+				_Helper.adjustTargets(oMessage, oOperationMetadata, undefined, sContextPath);
 			}
 			oMessage.transition = true;
 
