@@ -51,7 +51,7 @@
 							placeholder="{i18n>ComboBoxPlaceholder}"
 							tooltip="{i18n>ComboBoxTooltip}"
 							ariaLabelledBy="textComboBox">
-							<core:Item key="{key}" text="{text}"/>
+							<core:Item key="{theme}" text="{text}"/>
 								<layoutData>
 									<OverflowToolbarLayoutData />
 								</layoutData>
@@ -237,7 +237,7 @@
 					</Column>
 					<Column width="50px">
 					</Column>
-					<Column>
+					<Column id="colCP">
 						<Text text="{i18n>TableColumnCSSCustomPropertyText}"/>
 					</Column>
 					<Column id="colTP">
