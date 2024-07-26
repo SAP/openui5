@@ -272,6 +272,7 @@ sap.ui.define([
 					 * Specifies the chart metadata.<br>
 					 * <b>Note:</b> This property must not be bound.<br>
 					 * <b>Note:</b> This property is exclusively used for handling SAPUI5 flexibility changes. Do not use it otherwise.<br>
+					 * <b>Note</b>: Existing properties (set via <code>sap.ui.mdc.Chart#setPropertyInfo</code>) must not be removed and their attributes must not be changed during the {@link module:sap/ui/mdc/ChartDelegate.fetchProperties fetchProperties} callback. Otherwise validation errors might occur whenever personalization-related control features (such as the opening of any personalization dialog) are activated.
 					 *
 					 * <b>Note</b>: For more information about the supported inner elements, see {@link sap.ui.mdc.chart.PropertyInfo PropertyInfo}.
 					 *
