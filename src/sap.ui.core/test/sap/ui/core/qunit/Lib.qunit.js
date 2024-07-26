@@ -137,6 +137,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated
+	 */
 	QUnit.test("Instance method 'includeTheme'", function(assert) {
 		var done = assert.async();
 		var oLib1 = Library._get('testlibs.scenario1.lib1', true);
