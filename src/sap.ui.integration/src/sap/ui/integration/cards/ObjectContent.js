@@ -935,6 +935,18 @@ sap.ui.define([
 			oControl.addStyleClass("sapFCardObjectImageFullWidth");
 		}
 
+		const fallbackSrcHandler = () => {
+			oImage.detachError(fallbackSrcHandler);
+
+			const sFallbackSrc = this._oIconFormatter.formatSrc(BindingResolver.resolveValue(oItem.fallbackSrc, this));
+
+			if (sFallbackSrc && sFallbackSrc !== oImage.getSrc()) {
+				oImage.setSrc(sFallbackSrc);
+			}
+		};
+
+		oImage.attachError(fallbackSrcHandler);
+
 		return oControl;
 	};
 
