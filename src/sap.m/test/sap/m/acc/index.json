@@ -96,16 +96,6 @@
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
-			"control": "sap.m.DateTimeInput",
-			"url": "../DateTimeInput.html",
-			"appComponent": "CA-UI5-CTR-BAL",
-			"accTest": {
-				"name": "sap.m.DateTimeInput",
-				"title": "ACC test for sap.m.DateTimeInput",
-				"module": "./datetimeinput.qunit"
-			}
-		},
-		{
 			"control": "sap.m.DateTimePicker",
 			"url": "DateTimePicker.html",
 			"appComponent": "CA-UI5-CTR-BAL"
