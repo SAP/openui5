@@ -72,6 +72,7 @@ sap.ui.define([
 		 * Makes it easy to wait until your UI is in the state you need for testing, for example waiting for back-end data.
 		 *
 		 * @extends sap.ui.base.Object
+		 * @param {object} [extensionObject] An object containing properties and functions. The newly created Opa will be extended by these properties and functions using jQuery.extend.
 		 * @public
 		 * @alias sap.ui.test.Opa5
 		 * @see {@link topic:2696ab50faad458f9b4027ec2f9b884d Opa5}
@@ -79,7 +80,7 @@ sap.ui.define([
 		 * @since 1.22
 		 */
 		var Opa5 = Ui5Object.extend("sap.ui.test.Opa5", extend({}, Opa.prototype, {
-			constructor: function () {
+			constructor: function (extensionObject) {
 				Opa.apply(this, arguments);
 			}
 		}));
