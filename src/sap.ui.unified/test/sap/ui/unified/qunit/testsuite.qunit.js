@@ -231,6 +231,33 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/calendar/MonthPicker"]
 				}
 			},
+			"NonWorkingPeriod":{
+				group: "NonWorkingPeriod",
+				qunit: {
+					reorder: false
+				},
+				coverage: {
+					only: ["sap/ui/unified/NonWorkingPeriod"]
+				}
+			},
+			"RecurringNonWorkingPeriod":{
+				group: "RecurringNonWorkingPeriod",
+				qunit: {
+					reorder: false
+				},
+				coverage: {
+					only: ["sap/ui/unified/RecurringNonWorkingPeriod"]
+				}
+			},
+			"TimeRange":{
+				group: "TimeRange",
+				qunit: {
+					reorder: false
+				},
+				coverage: {
+					only: ["sap/ui/unified/TimesRange"]
+				}
+			},
 			"TimesRow":{
 				group: "Calendar",
 				qunit: {
