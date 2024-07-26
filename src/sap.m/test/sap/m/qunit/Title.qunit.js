@@ -351,14 +351,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should render a link instead of text", function(assert) {
-		var content = this.title.getDomRef().firstChild.innerHTML,
+		var content = this.title.getDomRef().firstChild,
 			childTag = this.title.getDomRef().firstChild && this.title.getDomRef().firstChild.firstChild ? this.title.getDomRef().firstChild.firstChild.tagName : "",
 			sLevel = "H3",
 			sExpectedTag = sLevel;
 
-		assert.notEqual(content, this.title.getText(), "Title's 'text' wasn't rendered");
+		assert.notEqual(content.innerHTML, this.title.getText(), "Title's 'text' wasn't rendered");
 		assert.equal(childTag.toUpperCase(), "A", "Link is rendered");
-		assert.notEqual(content.indexOf(">" + this.link.getText() + "</a>"), -1, "Link's 'text' is rendered instead of the Title's text");
+		assert.equal(content.querySelector(".sapMLnkText").textContent, this.link.getText(), "Link's 'text' is rendered instead of the Title's text");
 		assert.strictEqual(this.title.getDomRef().tagName.toUpperCase(), sExpectedTag, "Title has correct level" + sLevel);
 
 	});

@@ -12,11 +12,14 @@ sap.ui.define([
 	"sap/ui/core/AccessKeysEnablement",
 	"sap/ui/core/LabelEnablement",
 	"sap/ui/core/Lib",
+	"sap/ui/core/Icon",
+	"sap/ui/core/IconPool",
 	"sap/ui/core/library",
 	"sap/ui/Device",
 	"./LinkRenderer",
 	"sap/ui/events/KeyCodes",
-	"sap/base/security/URLListValidator"
+	"sap/base/security/URLListValidator",
+	"sap/base/Log"
 ],
 function(
 	library,
@@ -27,11 +30,14 @@ function(
 	AccessKeysEnablement,
 	LabelEnablement,
 	Library,
+	Icon,
+	IconPool,
 	coreLibrary,
 	Device,
 	LinkRenderer,
 	KeyCodes,
-	URLListValidator
+	URLListValidator,
+	Log
 ) {
 	"use strict";
 
@@ -117,6 +123,26 @@ function(
 				 * Defines the displayed link text.
 				 */
 				text : {type : "string", group : "Data", defaultValue : ''},
+
+				/**
+				 * Defines the icon to be displayed as graphical element in the beginning of the <code>Link</code>.
+				 * It can be an icon from the icon font.
+				 * <b>Note:</b> Usage of icon-only link is not supported, the link must always have a text.
+				 * <b>Note:</b> We recommend using аn icon in the beginning or the end only, and always with text.
+				 * <b>Note:</b> Using an image instead of icon is not supported.
+				 * @since 1.128.0
+				 */
+				icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue: "" },
+
+				/**
+				 * Defines the icon to be displayed as graphical element in the end of the <code>Link</code>.
+				 * It can be an icon from the icon font.
+				 * <b>Note:</b> Usage of icon-only link is not supported, the link must always have a text.
+				 * <b>Note:</b> We recommend using аn icon in the beginning or the end only, and always with text.
+				 * <b>Note:</b> Using an image instead of icon is not supported.
+				 * @since 1.128.0
+				 */
+				endIcon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue: "" },
 
 				/**
 				 * Determines whether the link can be triggered by the user.
@@ -241,6 +267,21 @@ function(
 				 */
 				accesskey: { type: "string", defaultValue: "", visibility: "hidden" }
 			},
+			aggregations: {
+
+				/**
+				 * The icon control to be displayed as graphical element in the beginning of the <code>Link</code>.
+				 * @since 1.128.0
+				 */
+				_icon: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"},
+
+				/**
+				 * The icon control to be displayed as graphical element at the end of the <code>Link</code>.
+				 * @since 1.128.0
+				 */
+				_endIcon: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"}
+
+			},
 			associations : {
 
 				/**
@@ -326,12 +367,25 @@ function(
 	};
 
 	Link.prototype.exit = function() {
+		var oIcon = this.getAggregation("_icon"),
+			oEndIcon = this.getAggregation("_endIcon");
+
 		if (Device.system.phone || Device.system.tablet) {
 			var oAnchorElement = this.getDomRef();
 			if (!oAnchorElement) {
 				return;
 			}
 			oAnchorElement.removeEventListener("click", this._onClick);
+		}
+
+		if (oIcon) {
+			oIcon.destroy();
+			oIcon = null;
+		}
+
+		if (oEndIcon) {
+			oEndIcon.destroy();
+			oEndIcon = null;
 		}
 	};
 
@@ -397,7 +451,6 @@ function(
 		}
 	};
 
-
 	/**
 	 * Handler for the <code>press</code> event of the link.
 	 *
@@ -460,6 +513,32 @@ function(
 
 		if (bEmphasized && !Link.prototype._sAriaLinkEmphasizedId) {
 			Link.prototype._sAriaLinkEmphasizedId = InvisibleText.getStaticId("sap.m", "LINK_EMPHASIZED");
+		}
+
+		return this;
+	};
+
+	Link.prototype.setIcon = function(sSrc) {
+		if (!IconPool.isIconURI(sSrc)) {
+			Log.error("setIcon: The provided URI ' + sSrc + ' is is not a valid Icon URI!");
+		} else {
+			var oIcon = this._getIcon();
+
+			oIcon.setSrc(sSrc);
+			this.setProperty("icon", sSrc);
+		}
+
+		return this;
+	};
+
+	Link.prototype.setEndIcon = function(sSrc) {
+		if (!IconPool.isIconURI(sSrc)) {
+			Log.error("setEndIcon: The provided URI ' + sSrc + ' is is not a valid Icon URI!");
+		} else {
+			var oIcon = this._getEndIcon();
+
+			oIcon.setSrc(sSrc);
+			this.setProperty("endIcon", sSrc);
 		}
 
 		return this;
@@ -587,6 +666,42 @@ function(
 
 	Link.prototype.getFormRenderAsControl = function () {
 		return true;
+	};
+
+	/**
+	 * Returns the icon control instance of the icon displayed in the beginning of the link. If it is not yet created, it will be created.
+	 * @private
+	 * @returns {sap.ui.core.Icon} icon control instance of the icon displayed in the beginning of the link
+	 */
+	Link.prototype._getIcon = function () {
+		var oIcon = this.getAggregation("_icon");
+
+		if (!oIcon) {
+			oIcon = new Icon(this.getId() + "-icon", {
+				useIconTooltip: false
+			}).addStyleClass("sapMLnkIcon");
+			this.setAggregation("_icon", oIcon);
+		}
+
+		return oIcon;
+	};
+
+	/**
+	 * Returns the icon control instance of the icon displayed at the end of the link. If it is not yet created, it will be created.
+	 * @private
+	 * @returns {sap.ui.core.Icon} icon control instance of the icon displayed at the end of the link
+	 */
+	Link.prototype._getEndIcon = function () {
+		var oIcon = this.getAggregation("_endIcon");
+
+		if (!oIcon) {
+			oIcon = new Icon(this.getId() + "-endIcon", {
+				useIconTooltip: false
+			}).addStyleClass("sapMLnkEndIcon");
+			this.setAggregation("_endIcon", oIcon);
+		}
+
+		return oIcon;
 	};
 
 	return Link;
