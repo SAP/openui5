@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/Page",
 	"sap/ui/core/library",
-	"sap/ui/layout/VerticalLayout"
-], function(App, Label, mobileLibrary, Menu, MenuButton, MenuItem, OverflowToolbar, MText, Title, Page, coreLibrary, VerticalLayout) {
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/layout/HorizontalLayout"
+], function(App, Label, mobileLibrary, Menu, MenuButton, MenuItem, OverflowToolbar, MText, Title, Page, coreLibrary, VerticalLayout, HorizontalLayout) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -44,6 +45,7 @@ sap.ui.define([
 	function getTitle(sText) {
 		return new Title({
 			text: sText,
+			wrapping: true,
 			titleStyle: TitleLevel.H2
 		}).addStyleClass("sapUiMediumMarginTop");
 	}
@@ -141,45 +143,69 @@ sap.ui.define([
 		]
 	}).addStyleClass("sapUiLargeMarginBeginEnd");
 
-	var oStandardRegularModeTypesLayoutTitle = getTitle("Types: Standard - Regular mode ").addStyleClass("sapUiLargeMarginBeginEnd");
-	var oStandardRegularModeTypesLayout = new OverflowToolbar({
+	var oStandardRegularModeTypesLayout = new VerticalLayout({
+		width:"100%",
 		content: [
-			new MenuButton({ text: "Something", type: ButtonType.Accept, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
-			new MenuButton({ text: "Something", type: ButtonType.Reject, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
-			new MenuButton({ text: "Something", type: ButtonType.Emphasized, menu: generateMenu() }),
-			new MenuButton({ text: "Something", type: ButtonType.Attention, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd")
+			getTitle("Types: Standard - Regular mode ").addStyleClass("sapUiLargeMarginBeginEnd"),
+			new OverflowToolbar({
+				width: "100%",
+				content: [
+					new MenuButton({ text: "Something", type: ButtonType.Accept, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+					new MenuButton({ text: "Something", type: ButtonType.Reject, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+					new MenuButton({ text: "Something", type: ButtonType.Emphasized, menu: generateMenu() }),
+					new MenuButton({ text: "Something", type: ButtonType.Attention, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd")
+				]
+			}).addStyleClass("sapUiSmallMarginTop").addStyleClass("sapUiLargeMarginBeginEnd")
 		]
-	}).addStyleClass("sapUiSmallMarginTop").addStyleClass("sapUiLargeMarginBeginEnd");
+	});
 
-	var oIconOnlyRegularModeTypesLayoutTitle = getTitle("Types: Icon only - Regular mode ").addStyleClass("sapUiLargeMarginBeginEnd");
-	var oIconOnlyRegularModeTypesLayout = new OverflowToolbar({
+	var oIconOnlyRegularModeTypesLayout = new VerticalLayout({
+		width: "100%",
 		content: [
-			new MenuButton({ icon: "sap-icon://action", type: ButtonType.Accept, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
-			new MenuButton({ icon: "sap-icon://action", type: ButtonType.Reject, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
-			new MenuButton({ icon: "sap-icon://action", type: ButtonType.Emphasized, menu: generateMenu() }),
-			new MenuButton({ icon: "sap-icon://action", type: ButtonType.Attention, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd")
+			getTitle("Types: Icon only - Regular mode ").addStyleClass("sapUiLargeMarginBeginEnd"),
+			new OverflowToolbar({
+				width: "100%",
+				content: [
+					new MenuButton({ icon: "sap-icon://action", type: ButtonType.Accept, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+					new MenuButton({ icon: "sap-icon://action", type: ButtonType.Reject, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+					new MenuButton({ icon: "sap-icon://action", type: ButtonType.Emphasized, menu: generateMenu() }),
+					new MenuButton({ icon: "sap-icon://action", type: ButtonType.Attention, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd")
+				]
+			}).addStyleClass("sapUiSmallMarginTop").addStyleClass("sapUiLargeMarginBeginEnd")
 		]
-	}).addStyleClass("sapUiSmallMarginTop").addStyleClass("sapUiLargeMarginBeginEnd");
+	});
 
-	var oStandardSplitModeTypesLayoutTitle = getTitle("Types: Standard - Split mode ").addStyleClass("sapUiLargeMarginBeginEnd");
-	var oStandardSplitModeTypesLayout = new OverflowToolbar({
+	var oStandardSplitModeTypesLayout = new VerticalLayout({
+		width: "100%",
 		content: [
-			new MenuButton({ text: "Something", type: ButtonType.Accept, buttonMode: MenuButtonMode.Split, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
-			new MenuButton({ text: "Something", type: ButtonType.Reject, buttonMode: MenuButtonMode.Split, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
-			new MenuButton({ text: "Something", type: ButtonType.Emphasized, buttonMode: MenuButtonMode.Split, menu: generateMenu() }),
-			new MenuButton({ text: "Something", type: ButtonType.Attention, buttonMode: MenuButtonMode.Split, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd")
+			getTitle("Types: Standard - Split mode ").addStyleClass("sapUiLargeMarginBeginEnd"),
+			new OverflowToolbar({
+				width: "100%",
+				content: [
+					new MenuButton({ text: "Something", type: ButtonType.Accept, buttonMode: MenuButtonMode.Split, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+					new MenuButton({ text: "Something", type: ButtonType.Reject, buttonMode: MenuButtonMode.Split, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
+					new MenuButton({ text: "Something", type: ButtonType.Emphasized, buttonMode: MenuButtonMode.Split, menu: generateMenu() }),
+					new MenuButton({ text: "Something", type: ButtonType.Attention, buttonMode: MenuButtonMode.Split, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd")
+				]
+			}).addStyleClass("sapUiSmallMarginTop").addStyleClass("sapUiLargeMarginBeginEnd")
 		]
-	}).addStyleClass("sapUiSmallMarginTop").addStyleClass("sapUiLargeMarginBeginEnd");
+	});
 
-	var oIconOnlySplitModeTypesLayoutTitle = getTitle("Types: Icon only - Regular mode ").addStyleClass("sapUiLargeMarginBeginEnd");
-	var oIconOnlySplitModeTypesLayout = new OverflowToolbar({
+	var oIconOnlySplitModeTypesLayout = new VerticalLayout({
+		width: "100%",
 		content: [
-			new MenuButton({ icon: "sap-icon://action", type: ButtonType.Accept, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }).addStyleClass("sapUiSmallMarginEnd"),
-			new MenuButton({ icon: "sap-icon://action", type: ButtonType.Reject, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }).addStyleClass("sapUiSmallMarginEnd"),
-			new MenuButton({ icon: "sap-icon://action", type: ButtonType.Emphasized, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }),
-			new MenuButton({ icon: "sap-icon://action", type: ButtonType.Attention, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }).addStyleClass("sapUiSmallMarginEnd")
+			getTitle("Types: Icon only - Regular mode ").addStyleClass("sapUiLargeMarginBeginEnd"),
+			new OverflowToolbar({
+				width: "100%",
+				content: [
+					new MenuButton({ icon: "sap-icon://action", type: ButtonType.Accept, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }).addStyleClass("sapUiSmallMarginEnd"),
+					new MenuButton({ icon: "sap-icon://action", type: ButtonType.Reject, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }).addStyleClass("sapUiSmallMarginEnd"),
+					new MenuButton({ icon: "sap-icon://action", type: ButtonType.Emphasized, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }),
+					new MenuButton({ icon: "sap-icon://action", type: ButtonType.Attention, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }).addStyleClass("sapUiSmallMarginEnd")
+				]
+			}).addStyleClass("sapUiSmallMarginTop").addStyleClass("sapUiLargeMarginBeginEnd")
 		]
-	}).addStyleClass("sapUiSmallMarginTop").addStyleClass("sapUiLargeMarginBeginEnd");
+	});
 
 	// -----------------
 	// Final page
@@ -194,13 +220,9 @@ sap.ui.define([
 				oIconOnlyRegularMenuButtonsLayout,
 				oStandardSplitModeLayout,
 				oIconOnlySplitModeLayout,
-				oStandardRegularModeTypesLayoutTitle,
 				oStandardRegularModeTypesLayout,
-				oIconOnlyRegularModeTypesLayoutTitle,
 				oIconOnlyRegularModeTypesLayout,
-				oStandardSplitModeTypesLayoutTitle,
 				oStandardSplitModeTypesLayout,
-				oIconOnlySplitModeTypesLayoutTitle,
 				oIconOnlySplitModeTypesLayout
 			]
 		});
