@@ -63803,6 +63803,76 @@ make root = ${bMakeRoot}`;
 });
 
 	//*********************************************************************************************
+	// Scenario: Removing a message from the model causes it to disappear from DataStateIndicator's
+	// message strip after a table rebind
+	//
+	// SNOW: DINC0147646
+	QUnit.test("DINC0147646: DataStateIndicator, rebind and messages", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{/TEAMS}">
+	<Input id="id" value="{Team_Id}"/>
+	<dependents><plugins:DataStateIndicator/></dependents>\
+</Table>`;
+
+		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
+				value : [
+					{Team_Id : "1"}
+				]
+			})
+			.expectChange("id", ["1"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+
+		this.expectMessages([{
+			message : "Some message",
+			type : "Error",
+			targets : ["/TEAMS"]
+		}]);
+		const oMessage = new Message({
+			message : "Some message",
+			processor : oModel,
+			target : "/TEAMS",
+			type : "Error"
+		});
+		Messaging.addMessages(oMessage);
+
+		await resolveLater(undefined, 0); // table update takes a moment
+
+		assert.deepEqual(oTable.getAggregation("_messageStrip").getText(), "Some message");
+
+		this.expectCanceledError("Cache discarded as a new cache has been created");
+		const sId0 = this.addToTable(oTable, "Name", assert); // Note: causes a "rebind"
+
+		this.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", {
+				value : [
+					{Name : "Team #01", Team_Id : "1"}
+				]
+			})
+			.expectChange("id", ["1"])
+			.expectChange(sId0, ["Team #01"]);
+
+		oTable.getBinding("items").resume();
+
+		await this.waitForChanges(assert, "table rebind");
+
+		assert.deepEqual(oTable.getAggregation("_messageStrip").getText(), "Some message");
+
+		this.expectMessages([]);
+
+		// code under test
+		Messaging.removeMessages(oMessage);
+
+		await resolveLater(undefined, 0); // table update takes a moment
+
+		assert.deepEqual(oTable.getAggregation("_messageStrip").getText(), "");
+
+		await this.waitForChanges(assert, "message is removed and no longer visible");
+	});
+
+	//*********************************************************************************************
 	// Scenario: A list binding with $$sharedRequest (e.g. from a value list) is refreshed. Other
 	// bindings share that cache and must follow, one binding while resumed and one binding while
 	// suspended.

@@ -8093,15 +8093,15 @@ sap.ui.define([
 				oBindingMock = this.mock(oBinding),
 				oDependent0 = {
 					oContext : {
-						isEffectivelyKeptAlive : function () {}
+						isEffectivelyKeptAlive : mustBeMocked
 					},
-					resumeInternal : function () {}
+					resumeInternal : mustBeMocked
 				},
 				oDependent1 = {
 					oContext : {
-						isEffectivelyKeptAlive : function () {}
+						isEffectivelyKeptAlive : mustBeMocked
 					},
-					resumeInternal : function () {}
+					resumeInternal : mustBeMocked
 				},
 				oFetchCacheExpectation,
 				oFireExpectation,
@@ -8112,7 +8112,10 @@ sap.ui.define([
 			oBinding.bSharedRequest = true; // this must not have an influence
 			oBinding.sChangeReason = bInitial ? "AddVirtualContext" : undefined;
 			oBinding.sResumeChangeReason = sChangeReason;
-			oBindingMock.expects("removeCachesAndMessages").withExactArgs("");
+			const oCheckDataStateExpectation = oBindingMock
+				.expects("checkDataState").withExactArgs();
+			const oRemoveCachesAndMessagesExpectation = oBindingMock
+				.expects("removeCachesAndMessages").withExactArgs("");
 			oResetExpectation = oBindingMock.expects("reset").withExactArgs();
 			oFetchCacheExpectation = oBindingMock.expects("fetchCache")
 				.withExactArgs(sinon.match.same(oContext), true);
@@ -8143,6 +8146,7 @@ sap.ui.define([
 			oBinding.resumeInternal(true/*ignored*/);
 
 			assert.strictEqual(oBinding.sResumeChangeReason, undefined);
+			assert.ok(oRemoveCachesAndMessagesExpectation.calledAfter(oCheckDataStateExpectation));
 			assert.ok(oFetchCacheExpectation.calledAfter(oResetExpectation));
 			assert.ok(oGetDependentBindingsExpectation.calledAfter(oFetchCacheExpectation));
 			assert.ok(oFireExpectation.calledAfter(oGetDependentBindingsExpectation));
@@ -8165,6 +8169,7 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding);
 
+		oBindingMock.expects("checkDataState").withExactArgs();
 		oBinding.sResumeChangeReason = "~sResumeChangeReason~";
 		if (bAutoExpandSelect) {
 			oBinding.sChangeReason = "AddVirtualContext";
@@ -8184,19 +8189,21 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("resumeInternal: no sResumeChangeReason", function () {
+	QUnit.test("resumeInternal: no sResumeChangeReason", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
-			oDependent0 = {resumeInternal : function () {}},
-			oDependent1 = {resumeInternal : function () {}};
+			oDependent0 = {resumeInternal : mustBeMocked},
+			oDependent1 = {resumeInternal : mustBeMocked};
 
 		oBinding.sResumeChangeReason = undefined;
 
+		const oCheckDataStateExpectation = this.mock(oBinding).expects("checkDataState")
+			.withExactArgs();
 		this.mock(oBinding).expects("removeCachesAndMessages").never();
 		this.mock(oBinding).expects("reset").never();
 		this.mock(oBinding).expects("fetchCache").never();
 		this.mock(oBinding).expects("refreshKeptElements").never();
-		this.mock(oBinding).expects("getDependentBindings").withExactArgs()
-			.returns([oDependent0, oDependent1]);
+		const oGetDependentBindingsExpectation = this.mock(oBinding).expects("getDependentBindings")
+			.withExactArgs().returns([oDependent0, oDependent1]);
 		this.mock(oDependent0).expects("resumeInternal").withExactArgs(true, false);
 		this.mock(oDependent1).expects("resumeInternal").withExactArgs(true, false);
 		this.mock(oBinding).expects("_fireRefresh").never();
@@ -8204,6 +8211,8 @@ sap.ui.define([
 
 		// code under test
 		oBinding.resumeInternal(true/*ignored*/);
+
+		assert.ok(oCheckDataStateExpectation.calledBefore(oGetDependentBindingsExpectation));
 	});
 
 	//*********************************************************************************************
@@ -8217,6 +8226,7 @@ sap.ui.define([
 
 		oBinding.sResumeChangeReason = undefined;
 		oBinding.bRefreshKeptElements = bRefreshKeptElements;
+		this.mock(oBinding).expects("checkDataState").withExactArgs();
 		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("");
 		this.mock(oBinding).expects("reset").withExactArgs();
 		this.mock(oBinding).expects("getGroupId").exactly(bRefreshKeptElements ? 1 : 0)
@@ -8241,6 +8251,7 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES");
 
 		oBinding.sResumeChangeReason = ChangeReason.Filter;
+		this.mock(oBinding).expects("checkDataState").withExactArgs();
 		this.mock(oBinding).expects("_fireRefresh").withExactArgs({reason : ChangeReason.Filter})
 			.callsFake(function () {
 				// simulate a suspend and a sort
@@ -8258,6 +8269,7 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES", null, null, null, {$$sharedRequest : true});
 
 		oBinding.sResumeAction = "resetCache";
+		this.mock(oBinding).expects("checkDataState").withExactArgs();
 		this.mock(oBinding).expects("getDependentBindings").never();
 		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("");
 		this.mock(oBinding.oCache).expects("reset").withExactArgs([]);
@@ -8276,6 +8288,7 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES", null, null, null, {$$sharedRequest : true});
 
 		oBinding.sResumeAction = "onChange";
+		this.mock(oBinding).expects("checkDataState").withExactArgs();
 		this.mock(oBinding).expects("getDependentBindings").never();
 		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("");
 		this.mock(oBinding.oCache).expects("reset").never();
@@ -8291,22 +8304,26 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("resumeInternal: reset selection", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES");
+		const oBinding = this.bindList("/EMPLOYEES");
+		const oBindingMock = this.mock(oBinding);
 
 		oBinding.sResumeChangeReason = ChangeReason.Filter;
 		oBinding.mParameters = {$$clearSelectionOnFilter : true};
 
+		const oCheckDataStateExpectation = oBindingMock.expects("checkDataState").withExactArgs();
 		const oSetSelectedExpectation = this.mock(oBinding.oHeaderContext).expects("setSelected")
 			.withExactArgs(false);
-		const oRemoveCacheExpectation = this.mock(oBinding).expects("removeCachesAndMessages")
+		const oRemoveCacheExpectation = oBindingMock.expects("removeCachesAndMessages")
 			.withExactArgs("");
 
 		// code under test
 		oBinding.resumeInternal();
 
+		assert.ok(oCheckDataStateExpectation.calledBefore(oSetSelectedExpectation));
 		assert.ok(oSetSelectedExpectation.calledBefore(oRemoveCacheExpectation));
 
 		oBinding.mParameters = {};
+		oBindingMock.expects("checkDataState").withExactArgs();
 
 		// code under test - no reset
 		oBinding.resumeInternal();
