@@ -63,9 +63,13 @@
 									<Label id="sapUiRtaAddIFrameDialog_WidthLabel" class="sapUiRtaAddIFrameDialogWidthLabel" labelFor="sapUiRtaAddIFrameDialog_WidthInput"
 										text="{dialogInfo>/text/widthLabel}">
 									</Label>
-									<Input id="sapUiRtaAddIFrameDialog_WidthInput" class="sapUiRtaAddIFrameDialogWidthInput"
+									<Input
+										id="sapUiRtaAddIFrameDialog_WidthInput"
+										class="sapUiRtaAddIFrameDialogWidthInput"
 										value="{path: 'dialogInfo>/frameWidth/value', type: 'FloatType', constraints: {minimum: 1}}"
-										valueState="{dialogInfo>/frameWidth/valueState}"/>
+										valueState="{dialogInfo>/frameWidth/valueState}"
+										valueStateText="{dialogInfo>/text/dimensionsErrorText}"
+									/>
 									<Select
 										id="sapUiRtaAddIFrameDialog_WidthUnit"
 										class="sapUiRtaAddIFrameDialogWidthUnit"
@@ -89,9 +93,13 @@
 								<form:content>
 									<Label id="sapUiRtaAddIFrameDialog_HeightLabel" class="sapUiRtaAddIFrameDialogHeightLabel" labelFor="sapUiRtaAddIFrameDialog_HeightInput"
 										text="{dialogInfo>/text/heightLabel}"/>
-									<Input id="sapUiRtaAddIFrameDialog_HeightInput" class="sapUiRtaAddIFrameDialogHeightInput"
+									<Input
+										id="sapUiRtaAddIFrameDialog_HeightInput"
+										class="sapUiRtaAddIFrameDialogHeightInput"
 										value="{path: 'dialogInfo>/frameHeight/value', type: 'FloatType', constraints: {minimum: 1}}"
-										valueState="{dialogInfo>/frameHeight/valueState}"/>
+										valueState="{dialogInfo>/frameHeight/valueState}"
+										valueStateText="{dialogInfo>/text/dimensionsErrorText}"
+									/>
 									<Select
 										id="sapUiRtaAddIFrameDialog_HeightUnit"
 										class="sapUiRtaAddIFrameDialogHeightUnit"
