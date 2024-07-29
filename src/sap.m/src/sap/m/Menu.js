@@ -13,6 +13,7 @@ sap.ui.define([
 	'./List',
 	'./Page',
 	'./MenuListItem',
+	'./MenuItem',
 	"sap/ui/core/Lib",
 	'sap/ui/unified/Menu',
 	'sap/ui/unified/MenuItem',
@@ -33,6 +34,7 @@ sap.ui.define([
 		List,
 		Page,
 		MenuListItem,
+		MenuItem,
 		Library,
 		UfdMenu,
 		UfdMenuItem,
@@ -100,7 +102,7 @@ sap.ui.define([
 					/**
 					 * Defines the items contained within this control.
 					 */
-					items: { type: "sap.m.IMenuItem", multiple: true, singularName: "item", bindable: "bindable" },
+					items: { type: "sap.m.IMenuItem", multiple: true, singularName: "item", bindable: "bindable", defaultClass: MenuItem },
 
 					/**
 					 * Internal aggregation that contains the inner <code>sap.m.Dialog</code> for mobile.
