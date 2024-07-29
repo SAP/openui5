@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/Popup',
 	'./MenuItemBase',
+	'./MenuItem',
 	'./library',
 	"sap/ui/core/Core",
 	'sap/ui/core/library',
@@ -29,6 +30,7 @@ sap.ui.define([
 	Device,
 	Popup,
 	MenuItemBase,
+	MenuItem,
 	library,
 	oCore,
 	coreLibrary,
@@ -116,7 +118,7 @@ sap.ui.define([
 				/**
 				 * The available actions to be displayed as items of the menu.
 				 */
-				items : {type : "sap.ui.unified.IMenuItem", multiple : true, singularName : "item"}
+				items : {type : "sap.ui.unified.IMenuItem", multiple : true, singularName : "item", defaultClass: MenuItem}
 
 			},
 			associations : {
