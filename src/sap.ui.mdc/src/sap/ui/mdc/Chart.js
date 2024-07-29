@@ -65,7 +65,7 @@ sap.ui.define([
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class The <code>Chart</code> control creates a chart based on metadata and the configuration specified.<br>
-		 * <b>Note:</b> The inner chart needs to be assigned <code>ChartDelegate</code>.
+		 * <b>Note:</b> The inner chart needs to be created inside the <code>ChartDelegate</code>.
 		 * @extends sap.ui.mdc.Control
 		 * @borrows sap.ui.mdc.mixin.FilterIntegrationMixin.rebind as #rebind
 		 * @author SAP SE
@@ -485,8 +485,8 @@ sap.ui.define([
 		 * 	The text formatter object which can be used to format the textProperty
 		 * @property {object} [unitPath]
 		 *  The name of the unit property which will be used to display and format measure values with a unit value on a selectionDetails popover
-		 * @property {object} [timeUnitType]
-		 *  The timeUnit type for a TimeDimension
+		 * @property {string} [timeUnitType]
+		 *  The <code>timeUnitType</code> type for a <code>TimeDimension</code>. If set, a <code>TimeDimension</code> is created instead of a <code>Dimension</code>
 		 * @public
 		 * @experimental As of version 1.80
 		 */
