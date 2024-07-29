@@ -199,5 +199,50 @@
         "text": " sap.m.Button: Back type button has correct hover colour"
       }
     ]
+  },
+  "1.124.3": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "893b895e7fda8b3aafd485f9050bbeb5fe882033",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: fix cursor position when there is mask and no entry"
+      },
+      {
+        "id": "1157ee243da433d8a3f6769e615b558cbbeba394",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: fix SR announcements when appointments are selected with keyboard."
+      },
+      {
+        "id": "946e3d8c23243049bb808bf0acf60cdf0d995987",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Prevent appointment selection by pressing the Tab key"
+      },
+      {
+        "id": "db2e01086c6b015d5830519e29b8533e2a407fc2",
+        "type": "FIX",
+        "text": " We've now added space between attributes and the action buttons in the ActionTile"
+      },
+      {
+        "id": "3ccd7b675d9cb1e5c82cba9579dac0310050ce83",
+        "type": "FIX",
+        "text": " We've made the subheader dynamic in the NewsContent when it is in a stretch tile"
+      },
+      {
+        "id": "c8babebf9d64a58e2ab974e73264f2cd6ab82ff4",
+        "type": "FIX",
+        "text": " We've updated the event parameters for status and readystate"
+      },
+      {
+        "id": "ba26d712c6b2763088aff54a124d16240981edb3",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: Icons visual issue fixed"
+      },
+      {
+        "id": "cb8592e9cc92e4a29226ddb05e5fe76626fe67ef",
+        "type": "FIX",
+        "text": " We've now fixed the overlap issue in GenericTile when sap.m.TileSizeBehaviour.Small was being used."
+      }
+    ]
   }
 }

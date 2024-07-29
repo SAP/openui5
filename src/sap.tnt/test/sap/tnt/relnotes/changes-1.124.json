@@ -8,5 +8,15 @@
         "text": " sap-icons-tnt: Fixed wrong icon names"
       }
     ]
+  },
+  "1.124.3": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "3e053ab7220e0dd902bb5de8f6614715006e374a",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: fixed ushell styles for Horizon theme"
+      }
+    ]
   }
 }

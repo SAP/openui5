@@ -33,5 +33,15 @@
         "text": " sap.ui.unified.Calendar: is displayed correctly in RTL for two months view"
       }
     ]
+  },
+  "1.124.3": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "1157ee243da433d8a3f6769e615b558cbbeba394",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: fix SR announcements when appointments are selected with keyboard."
+      }
+    ]
   }
 }

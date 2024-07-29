@@ -43,5 +43,20 @@
         "text": " sap.f.ShellBar: New Assistant color added"
       }
     ]
+  },
+  "1.124.3": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "3e053ab7220e0dd902bb5de8f6614715006e374a",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: fixed ushell styles for Horizon theme"
+      },
+      {
+        "id": "cb8592e9cc92e4a29226ddb05e5fe76626fe67ef",
+        "type": "FIX",
+        "text": " We've now fixed the overlap issue in GenericTile when sap.m.TileSizeBehaviour.Small was being used."
+      }
+    ]
   }
 }

@@ -54,5 +54,25 @@
         "text": " sap.f.GridContainer: Fixed lost focus item navigation"
       }
     ]
+  },
+  "1.124.3": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "c710619c687311fa4d810388abd38fc533734162",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Support aria-valuenow attribute"
+      },
+      {
+        "id": "569e283eb14f5cd2f3355b8dcc729665cabe6310",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fix table overlapping"
+      },
+      {
+        "id": "43f76adf54c8cd2c052acd560fd482b9fba92828",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Resize issue with iframe content fixed"
+      }
+    ]
   }
 }

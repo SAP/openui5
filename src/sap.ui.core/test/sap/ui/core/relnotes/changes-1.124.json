@@ -93,5 +93,26 @@
         "text": " sap\\ui\\core\\format\\DateFormat.fnCreateDate: set UTCFullYear must be set with all components"
       }
     ]
+  },
+  "1.124.3": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "440ece41d85e9e5e2f47f3445df06e3916219c5e",
+        "type": "FIX",
+        "text": " BindingInfo: Ensure that named models are only parsed once"
+      },
+      {
+        "id": "5b5c1d9cee0f56f4deeb8d1c61b3f8bacda2c3a4",
+        "type": "FIX",
+        "text": " ControllerExtension support for TypeScript",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
