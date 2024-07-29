@@ -159,6 +159,7 @@ sap.ui.define([
 		var oVariantManagementControl = aOverlays[0].getElement();
 		var mComponentPropertyBag = this.getCommandFactory().getFlexSettings();
 		mComponentPropertyBag.variantManagementControl = oVariantManagementControl;
+		const sSelectedVariantId = oVariantManagementControl.getCurrentVariantId();
 		var mPropertyBag = {
 			layer: this.getCommandFactory().getFlexSettings().layer,
 			contextSharingComponentContainer: ContextSharingAPI.createComponent(mComponentPropertyBag),
@@ -169,7 +170,8 @@ sap.ui.define([
 				createCommandAndFireEvent.call(this, aOverlays[0], ["compVariantUpdate"], {
 					newVariantProperties: _omit(oData, ["default"]),
 					newDefaultVariantId: oData.default,
-					oldDefaultVariantId: oVariantManagementControl.getDefaultVariantId()
+					oldDefaultVariantId: oVariantManagementControl.getDefaultVariantId(),
+					oldSelectedVariantId: sSelectedVariantId
 				});
 			}
 		}.bind(this));
