@@ -269,6 +269,10 @@ sap.ui.define([
 			text: "Thisisaerynnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongvvaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylong",
 			timestamp: "Jul 02, 2014",
 			maxCharacters: 20
+		}, {
+			sender: "Trail",
+			text: "Lorem <strong>ipsum dolor sit amet</strong>, <em>consetetur sadipscing elitr</em>, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, <a class='_class' id='xyz' href='http://www.sap.com'>sed diam voluptua</a>. At vero eos et accusam et justo duo dolores et ea rebum.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod <strong>tempor invidunt ut labore et dolore magna</strong> aliquyam erat, sed diam voluptua. <em>At vero eos et accusam et justo</em> duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, seddiamnonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, <u>sed diam nonumy eirmod tempor invidunt ut labore</u> et dolore magna aliquyam erat, sed diam voluptua. <strong>At vero eos et accusam</strong> et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod <a href='//www.sap.com'>tempor invidunt</a> ut labore et dolore magna aliquyam erat, sed diam voluptua. <em>At vero eos et accusam</em> et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.",
+			timestamp: "Jul 02, 2014"
 		}]
 	};
 
@@ -282,6 +286,27 @@ sap.ui.define([
 	feedListPage.addContent(oFeedList);
 	appFeedList.addPage(feedListPage);
 	appFeedList.placeAt("qunit-fixture");
+
+	QUnit.module("Tab Order");
+
+	QUnit.test("Tab Order of Feed List Item", async function (assert) {
+		// Arrange
+		feedListPage.addContent(oFeedList);
+		appFeedList.addPage(feedListPage);
+		appFeedList.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Assert
+		var oFocusFeedListItem = oFeedList.getItems()[11];
+		assert.ok(oFocusFeedListItem.getTabbables()[0] == oFocusFeedListItem.oAvatar.getDomRef());
+		assert.ok(oFocusFeedListItem.getTabbables()[1] == oFocusFeedListItem._oLinkControl.getDomRef());
+		assert.ok(oFocusFeedListItem.getTabbables()[2] == document.getElementsByClassName("_class")[0]);
+		assert.ok(oFocusFeedListItem.getTabbables()[3] == document.getElementById("__link14"));
+
+		// Cleanup
+		oFocusFeedListItem.destroy();
+		oFocusFeedListItem = null;
+	});
 
 	QUnit.module("Properties");
 

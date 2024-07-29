@@ -8,7 +8,7 @@
 		},
 		{
 			"control" : "sap.ui.unified.CalendarDateInterval",
-			"url" : "../CalendarDateInterval.html",
+			"url" : "./CalendarDateInterval.html",
 			"appComponent" : "CA-UI5-CTR-BAL"
 		},
 		{

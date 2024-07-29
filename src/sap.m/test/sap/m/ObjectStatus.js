@@ -20,7 +20,8 @@ sap.ui.define([
   "sap/m/Label",
   "sap/ui/table/TreeTable",
   "sap/m/Page",
-  "sap/m/App"
+  "sap/m/App",
+  "sap/ui/core/IconPool"
 ], function(
   ObjectStatus,
   ObjectHeader,
@@ -43,7 +44,8 @@ sap.ui.define([
   Label,
   TreeTable,
   Page,
-  App
+  App,
+  IconPool
 ) {
   "use strict";
 
@@ -642,6 +644,19 @@ sap.ui.define([
 	  text : "Image",
 	  inverted: true,
 	  icon : "https://i.pinimg.com/originals/40/6e/2d/406e2db1e9a9e65bd7d32f4071dad2a2.png"
+  }), oPage);
+
+  addToPage(new ObjectStatus({
+	  icon: "sap-icon://download",
+	  state: "Information"
+  }), oPage);
+
+  addToPage(new ObjectStatus({
+	  icon: "images/favorite_24.png"
+  }), oPage);
+
+  addToPage(new ObjectStatus({
+	  icon: IconPool.getIconURI("inbox")
   }), oPage);
 
   addToPage(new ObjectStatus({

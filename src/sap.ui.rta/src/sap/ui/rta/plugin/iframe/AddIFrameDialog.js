@@ -40,6 +40,7 @@ sap.ui.define([
 		widthUnitLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_WIDTH_UNITLABEL"),
 		heightLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_HEIGHT_LABEL"),
 		heightUnitLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_HEIGHT_UNITLABEL"),
+		dimensionsErrorText: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_DIMENSIONS_ERROR"),
 		saveText: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_BUTTON_SAVE"),
 		cancelText: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_BUTTON_CANCEL"),
 		previewUrlLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_PREVIEW_URL_LABEL"),

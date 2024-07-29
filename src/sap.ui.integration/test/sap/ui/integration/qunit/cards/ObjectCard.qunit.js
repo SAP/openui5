@@ -216,72 +216,6 @@ sap.ui.define([
 		}
 	};
 
-	var oManifest_ObjectCardImageOverlay = {
-		"sap.app": {
-			"id": "test.cards.object.card2",
-			"type": "card"
-		},
-		"sap.card": {
-			"type": "Object",
-			"header": {
-				"title": "Title",
-				"visible": false
-			},
-			"content": {
-				"groups": [{
-					"items": [
-						{
-							"type": "Image",
-							"src": "/images/grass.jpg",
-							"alt": "Picture of grass",
-							"tooltip": "Green grass",
-							"fullWidth": true,
-							"height": "200px",
-							"imageFit": "cover",
-							"imagePosition": "center",
-							"overlay": {
-								"supertitle": "Sun, May 28",
-								"title": "Hello, John",
-								"subTitle": "Today will be a good day!",
-								"textColor": "#fff",
-								"verticalPosition": "Center",
-								"horizontalPosition": "End",
-								"background": "rgb(34, 38, 43, 0.4)",
-								"animation": "FadeIn"
-							}
-						},
-						{
-							"type": "Image",
-							"src": "/images/grass.jpg",
-							"overlay": {
-								"title": "Hello, John",
-								"background": "rgb(34, 38, 43, 0.4)",
-								"animation": "FadeIn"
-							}
-						},
-						{
-							"type": "Image",
-							"src": "/images/grass.jpg",
-							"overlay": {
-								"title": "Hello, John",
-								"background": "rgb(34, 38, 43, 0.4)",
-								"animation": "None"
-							}
-						},
-						{
-							"type": "Image",
-							"src": "/images/grass.jpg",
-							"overlay": {
-								"title": "Hello, John",
-								"background": "rgb(34, 38, 43, 0.4)"
-							}
-						}
-					]
-				}]
-			}
-		}
-	};
-
 	var oManifest_ObjectCard_Visible = {
 		"sap.app": {
 			"id": "test.cards.object.card2",
@@ -1184,127 +1118,6 @@ sap.ui.define([
 		assert.equal(aGroups[2].getItems()[12].getMaxValue(), 7, "RatingIndicator's maxValue is correctly set.");
 		assert.equal(aGroups[2].getItems()[12].getValue(), 4.5, "RatingIndicator's value is correctly set.");
 		assert.equal(aGroups[2].getItems()[12].getVisualMode(), "Full", "RatingIndicator's visualMode is correctly set.");
-	});
-
-	QUnit.test("Image and Overlay", async function (assert) {
-		// Act
-		this.oCard.setManifest(oManifest_ObjectCardImageOverlay);
-
-		await nextCardReadyEvent(this.oCard);
-		await nextUIUpdate();
-
-		var oObjectContent = this.oCard.getAggregation("_content");
-		var oContent = oObjectContent.getAggregation("_content");
-		var aGroups = oContent.getItems()[0].getContent();
-
-		// Image
-		assert.ok(aGroups[0].getItems()[0].isA("sap.ui.core.Control"), "Image with overlay is rendered.");
-		assert.equal(aGroups[0].getItems()[0].getAggregation("image").getSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/grass.jpg", "Image's source is correctly set.");
-		assert.equal(aGroups[0].getItems()[0].getAggregation("image").getAlt(), "Picture of grass", "Image's alt text is correctly set.");
-		assert.equal(aGroups[0].getItems()[0].getTooltip(), "Green grass", "Image's tooltip is correctly set.");
-		assert.equal(aGroups[0].getItems()[0].getSupertitle(), "Sun, May 28", "Image's supertitle is correctly set.");
-		assert.equal(aGroups[0].getItems()[0].getTitle(), "Hello, John", "Image's title is correctly set.");
-		assert.equal(aGroups[0].getItems()[0].getSubTitle(), "Today will be a good day!", "Image's subtitle is correctly set.");
-		assert.equal(aGroups[0].getItems()[0].getVerticalPosition(), "Center", "Image's verticalPosition is correctly set.");
-		assert.equal(aGroups[0].getItems()[0].getHorizontalPosition(), "End", "Image's horizontalPosition is correctly set.");
-		assert.equal(aGroups[0].getItems()[0].getTextColor(), "#fff", "Image's textColor is correctly set.");
-		assert.equal(aGroups[0].getItems()[0].getBackground(), "rgb(34, 38, 43, 0.4)", "Image's background is correctly set.");
-		assert.equal(aGroups[0].getItems()[0].getAggregation("image").getHeight(), "200px", "Image's height is correctly set.");
-		assert.equal(aGroups[0].getItems()[0].getAggregation("image").getBackgroundSize(), "cover", "Image's imageFit is correctly set.");
-		assert.equal(aGroups[0].getItems()[0].getAggregation("image").getBackgroundPosition(), "center", "Image's imagePosition is correctly set.");
-	});
-
-	QUnit.test("Image and Overlay - Animation", async function (assert) {
-		// Act
-		this.oCard.setManifest(oManifest_ObjectCardImageOverlay);
-
-		await nextCardReadyEvent(this.oCard);
-		await nextUIUpdate();
-
-		var oObjectContent = this.oCard.getAggregation("_content");
-		var oContent = oObjectContent.getAggregation("_content");
-		var aGroups = oContent.getItems()[0].getContent();
-
-		var done = assert.async();
-		assert.equal(aGroups[0].getItems()[0].getAnimation(), "FadeIn", "Image overlay animation is correctly set.");
-
-		var oImage = aGroups[0].getItems()[0].getImage();
-
-		oImage.attachLoad(function(){
-			assert.ok(this.getParent().getDomRef().classList.contains("sapUiIntImgWithOverlayLoaded"), "Image is loaded and animation is active.");
-			done();
-		});
-	});
-
-	QUnit.test("Image and Overlay - Animation turned off", async function (assert) {
-		// Act
-		ControlBehavior.setAnimationMode(AnimationMode.none);
-
-		this.oCard.setManifest(oManifest_ObjectCardImageOverlay);
-
-		await nextCardReadyEvent(this.oCard);
-		await nextUIUpdate();
-
-		var oObjectContent = this.oCard.getAggregation("_content");
-		var oContent = oObjectContent.getAggregation("_content");
-		var aGroups = oContent.getItems()[0].getContent();
-
-		var done = assert.async();
-		assert.equal(aGroups[0].getItems()[1].getAnimation(), "FadeIn", "Image overlay animation is correctly set.");
-
-		var oImage = aGroups[0].getItems()[1].getImage();
-
-		oImage.attachLoad(function(){
-			assert.notOk(this.getParent().getDomRef().classList.contains("sapUiIntImgWithOverlayLoaded"), "There is no animation.");
-			done();
-		});
-
-		// Restore default animation mode
-		ControlBehavior.setAnimationMode(AnimationMode.full);
-	});
-
-	QUnit.test("Image and Overlay - No Animation", async function (assert) {
-		// Act
-		this.oCard.setManifest(oManifest_ObjectCardImageOverlay);
-
-		await nextCardReadyEvent(this.oCard);
-		await nextUIUpdate();
-
-		var oObjectContent = this.oCard.getAggregation("_content");
-		var oContent = oObjectContent.getAggregation("_content");
-		var aGroups = oContent.getItems()[0].getContent();
-
-		var done = assert.async();
-		assert.equal(aGroups[0].getItems()[2].getAnimation(), "None", "Image overlay animation is correctly set.");
-
-		var oImage = aGroups[0].getItems()[2].getImage();
-
-		oImage.attachLoad(function(){
-			assert.notOk(this.getParent().getDomRef().classList.contains("sapUiIntImgWithOverlayLoaded"), "There is no animation.");
-			done();
-		});
-	});
-
-	QUnit.test("Image and Overlay - No Animation (default)", async function (assert) {
-		// Act
-		this.oCard.setManifest(oManifest_ObjectCardImageOverlay);
-
-		await nextCardReadyEvent(this.oCard);
-		await nextUIUpdate();
-
-		var oObjectContent = this.oCard.getAggregation("_content");
-		var oContent = oObjectContent.getAggregation("_content");
-		var aGroups = oContent.getItems()[0].getContent();
-
-		var done = assert.async();
-		assert.equal(aGroups[0].getItems()[3].getAnimation(), "None", "Image overlay animation is correctly set.");
-
-		var oImage = aGroups[0].getItems()[3].getImage();
-
-		oImage.attachLoad(function(){
-			assert.notOk(this.getParent().getDomRef().classList.contains("sapUiIntImgWithOverlayLoaded"), "There is no animation.");
-			done();
-		});
 	});
 
 	QUnit.test("Spacing between groups are correctly calculated", async function (assert) {
@@ -3121,5 +2934,219 @@ sap.ui.define([
 		this.oCard.validateControls();
 
 		assert.strictEqual(oTextArea.getValueState(), ValueState.None, "Validation passed");
+	});
+
+	QUnit.module("'Image' items", {
+		beforeEach: function() {
+			this.oCard = new Card({
+				width: "400px",
+				height: "600px",
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/",
+				manifest: {
+					"sap.app": {
+						"id": "test.cards.object.card2",
+						"type": "card"
+					},
+					"sap.card": {
+						"type": "Object",
+						"header": {
+							"title": "Title",
+							"visible": false
+						},
+						"content": {
+							"groups": [{
+								"items": [
+									{
+										"type": "Image",
+										"src": "/images/grass.jpg",
+										"alt": "Picture of grass",
+										"tooltip": "Green grass",
+										"fullWidth": true,
+										"height": "200px",
+										"imageFit": "cover",
+										"imagePosition": "center",
+										"overlay": {
+											"supertitle": "Sun, May 28",
+											"title": "Hello, John",
+											"subTitle": "Today will be a good day!",
+											"textColor": "#fff",
+											"verticalPosition": "Center",
+											"horizontalPosition": "End",
+											"background": "rgb(34, 38, 43, 0.4)",
+											"animation": "FadeIn"
+										}
+									},
+									{
+										"type": "Image",
+										"src": "/images/grass.jpg",
+										"overlay": {
+											"title": "Hello, John",
+											"background": "rgb(34, 38, 43, 0.4)",
+											"animation": "FadeIn"
+										}
+									},
+									{
+										"type": "Image",
+										"src": "/images/grass.jpg",
+										"overlay": {
+											"title": "Hello, John",
+											"background": "rgb(34, 38, 43, 0.4)",
+											"animation": "None"
+										}
+									},
+									{
+										"type": "Image",
+										"src": "/images/grass.jpg",
+										"overlay": {
+											"title": "Hello, John",
+											"background": "rgb(34, 38, 43, 0.4)"
+										}
+									},
+									{
+										"type": "Image",
+										"src": "/some/invalid/path.jpg",
+										"fallbackSrc": "/images/grass.jpg",
+										"overlay": {
+											"title": "Hello, John",
+											"background": "rgb(34, 38, 43, 0.4)"
+										}
+									}
+								]
+							}]
+						}
+					}
+				}
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Image and Overlay", async function (assert) {
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oObjectContent = this.oCard.getAggregation("_content");
+		var oContent = oObjectContent.getAggregation("_content");
+		var aGroups = oContent.getItems()[0].getContent();
+
+		// Image
+		assert.ok(aGroups[0].getItems()[0].isA("sap.ui.core.Control"), "Image with overlay is rendered.");
+		assert.equal(aGroups[0].getItems()[0].getAggregation("image").getSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/grass.jpg", "Image's source is correctly set.");
+		assert.equal(aGroups[0].getItems()[0].getAggregation("image").getAlt(), "Picture of grass", "Image's alt text is correctly set.");
+		assert.equal(aGroups[0].getItems()[0].getTooltip(), "Green grass", "Image's tooltip is correctly set.");
+		assert.equal(aGroups[0].getItems()[0].getSupertitle(), "Sun, May 28", "Image's supertitle is correctly set.");
+		assert.equal(aGroups[0].getItems()[0].getTitle(), "Hello, John", "Image's title is correctly set.");
+		assert.equal(aGroups[0].getItems()[0].getSubTitle(), "Today will be a good day!", "Image's subtitle is correctly set.");
+		assert.equal(aGroups[0].getItems()[0].getVerticalPosition(), "Center", "Image's verticalPosition is correctly set.");
+		assert.equal(aGroups[0].getItems()[0].getHorizontalPosition(), "End", "Image's horizontalPosition is correctly set.");
+		assert.equal(aGroups[0].getItems()[0].getTextColor(), "#fff", "Image's textColor is correctly set.");
+		assert.equal(aGroups[0].getItems()[0].getBackground(), "rgb(34, 38, 43, 0.4)", "Image's background is correctly set.");
+		assert.equal(aGroups[0].getItems()[0].getAggregation("image").getHeight(), "200px", "Image's height is correctly set.");
+		assert.equal(aGroups[0].getItems()[0].getAggregation("image").getBackgroundSize(), "cover", "Image's imageFit is correctly set.");
+		assert.equal(aGroups[0].getItems()[0].getAggregation("image").getBackgroundPosition(), "center", "Image's imagePosition is correctly set.");
+	});
+
+	QUnit.test("Image and Overlay - Animation", async function (assert) {
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oObjectContent = this.oCard.getAggregation("_content");
+		var oContent = oObjectContent.getAggregation("_content");
+		var aGroups = oContent.getItems()[0].getContent();
+
+		var done = assert.async();
+		assert.equal(aGroups[0].getItems()[0].getAnimation(), "FadeIn", "Image overlay animation is correctly set.");
+
+		var oImage = aGroups[0].getItems()[0].getImage();
+
+		oImage.attachLoad(function(){
+			assert.ok(this.getParent().getDomRef().classList.contains("sapUiIntImgWithOverlayLoaded"), "Image is loaded and animation is active.");
+			done();
+		});
+	});
+
+	QUnit.test("Image and Overlay - Animation turned off", async function (assert) {
+		// Act
+		ControlBehavior.setAnimationMode(AnimationMode.none);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oObjectContent = this.oCard.getAggregation("_content");
+		var oContent = oObjectContent.getAggregation("_content");
+		var aGroups = oContent.getItems()[0].getContent();
+
+		var done = assert.async();
+		assert.equal(aGroups[0].getItems()[1].getAnimation(), "FadeIn", "Image overlay animation is correctly set.");
+
+		var oImage = aGroups[0].getItems()[1].getImage();
+
+		oImage.attachLoad(function(){
+			assert.notOk(this.getParent().getDomRef().classList.contains("sapUiIntImgWithOverlayLoaded"), "There is no animation.");
+			done();
+		});
+
+		// Restore default animation mode
+		ControlBehavior.setAnimationMode(AnimationMode.full);
+	});
+
+	QUnit.test("Image and Overlay - No Animation", async function (assert) {
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oObjectContent = this.oCard.getAggregation("_content");
+		var oContent = oObjectContent.getAggregation("_content");
+		var aGroups = oContent.getItems()[0].getContent();
+
+		var done = assert.async();
+		assert.equal(aGroups[0].getItems()[2].getAnimation(), "None", "Image overlay animation is correctly set.");
+
+		var oImage = aGroups[0].getItems()[2].getImage();
+
+		oImage.attachLoad(function(){
+			assert.notOk(this.getParent().getDomRef().classList.contains("sapUiIntImgWithOverlayLoaded"), "There is no animation.");
+			done();
+		});
+	});
+
+	QUnit.test("Image and Overlay - No Animation (default)", async function (assert) {
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oObjectContent = this.oCard.getAggregation("_content");
+		var oContent = oObjectContent.getAggregation("_content");
+		var aGroups = oContent.getItems()[0].getContent();
+
+		var done = assert.async();
+		assert.equal(aGroups[0].getItems()[3].getAnimation(), "None", "Image overlay animation is correctly set.");
+
+		var oImage = aGroups[0].getItems()[3].getImage();
+
+		oImage.attachLoad(function(){
+			assert.notOk(this.getParent().getDomRef().classList.contains("sapUiIntImgWithOverlayLoaded"), "There is no animation.");
+			done();
+		});
+	});
+
+	QUnit.test("Image fails to load, fallback image is loaded", async function (assert) {
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		const oObjectContent = this.oCard.getAggregation("_content");
+		const oContent = oObjectContent.getAggregation("_content");
+		const aGroups = oContent.getItems()[0].getContent();
+		const oImage = aGroups[0].getItems()[4].getImage();
+		const done = assert.async();
+
+		oImage.attachEventOnce("load", function(){
+			assert.ok(oImage.getSrc().endsWith("/images/grass.jpg"), "Fallback image is loaded.");
+
+			done();
+		});
 	});
 });

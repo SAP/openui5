@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddLibrary",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddComponentUsages",
 	"sap/ui/fl/apply/_internal/changes/descriptor/app/SetTitle",
+	"sap/ui/fl/apply/_internal/changes/descriptor/app/SetDescription",
 	"sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeDataSource",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModelEnhanceWith",
 	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
@@ -19,6 +20,7 @@ sap.ui.define([
 	AddLibrary,
 	AddComponentUsages,
 	SetTitle,
+	SetDescription,
 	ChangeDataSource,
 	AddNewModelEnhanceWith,
 	AppDescriptorChange,
@@ -56,6 +58,7 @@ sap.ui.define([
 			this.fnAddLibrarySpy = sandbox.spy(AddLibrary, "applyChange");
 			this.fnAddComponentUsageSpy = sandbox.spy(AddComponentUsages, "applyChange");
 			this.fnSetTitleSpy = sandbox.spy(SetTitle, "applyChange");
+			this.fnSetDescriptionSpy = sandbox.spy(SetDescription, "applyChange");
 			this.fnChangeDataSourceSpy = sandbox.spy(ChangeDataSource, "applyChange");
 			this.fnAddNewModelEnhanceWithSpy = sandbox.spy(AddNewModelEnhanceWith, "applyChange");
 
@@ -276,6 +279,86 @@ sap.ui.define([
 
 			return Applier.applyChanges(this.oManifest, aChanges, this.RuntimeStrategy).then(function(oNewManifest) {
 				assert.equal(oNewManifest["sap.app"].title, "{{sap.app.descriptor.test_sap.app.title}}", "title is replaced correctly");
+				assert.equal(fnProcessTextsSpy.callCount, 0, "Strategy.processTexts is not called");
+			});
+		});
+
+		QUnit.test("when calling 'applyChange' with change that needs text postprocessing correctly ", function(assert) {
+			var aChanges = [
+				 {
+					changeType: "appdescr_app_setDescription",
+					content: {
+
+					},
+					texts: {
+						"sap.app.descriptor.test_sap.app.description": {
+							type: "XTIT",
+							value: {
+								"": "English Description - Descriptor Variant Description"
+							}
+						}
+					}
+				}
+			];
+
+			aChanges = convertChanges(aChanges);
+
+			var mStrategy = this.RuntimeStrategy;
+			var fnProcessTextsSpy = sandbox.spy(mStrategy, "processTexts");
+
+			return Applier.applyChanges(this.oManifest, aChanges, mStrategy).then(function(oNewManifest) {
+				assert.equal(fnProcessTextsSpy.callCount, 1, "BuildStrategy.processTexts is called once");
+				assert.equal(this.fnSetDescriptionSpy.callCount, 1, "SetDescription.applyChange is called once");
+				assert.equal(oNewManifest["sap.app"].description, "English Description - Descriptor Variant Description", "sap.app/description is replaced correctly");
+				assert.equal(oNewManifest["sap.app"].i18n, "i18n/i18n.properties", "sap.app/i18n is not touched");
+			}.bind(this));
+		});
+
+		QUnit.test("when calling 'applyChange' with change that needs text postprocessing with unexpected language value ", function(assert) {
+			var aChanges = [
+				 {
+					changeType: "appdescr_app_setDescription",
+					content: {
+
+					},
+					texts: {
+						"sap.app.descriptor.test_sap.app.description": {
+							type: "XTIT",
+							value: {
+								de: "Deutsche Beschreibung - Descriptor Variante"
+							}
+						}
+					}
+				}
+			];
+
+			aChanges = convertChanges(aChanges);
+
+			var mStrategy = this.RuntimeStrategy;
+			var fnProcessTextsSpy = sandbox.spy(mStrategy, "processTexts");
+
+			return Applier.applyChanges(this.oManifest, aChanges, mStrategy).then(function(oNewManifest) {
+				assert.equal(fnProcessTextsSpy.callCount, 1, "BuildStrategy.processTexts is called once");
+				assert.equal(this.fnSetDescriptionSpy.callCount, 1, "SetDescription.applyChange is called once");
+				assert.equal(oNewManifest["sap.app"].description, "{{sap.app.descriptor.test_sap.app.description}}", "sap.app/description is not replaced");
+				assert.equal(oNewManifest["sap.app"].i18n, "i18n/i18n.properties", "sap.app/i18n is not touched");
+				assert.equal(this.fnLogSpy.callCount, 1, "1 error logged");
+			}.bind(this));
+		});
+
+		QUnit.test("when calling 'applyChange' for text change without text property ", function(assert) {
+			var aChanges = [
+				 {
+					changeType: "appdescr_app_setDescription",
+					content: {}
+				}
+			];
+
+			aChanges = convertChanges(aChanges);
+			var fnProcessTextsSpy = sandbox.spy(this.RuntimeStrategy, "processTexts");
+
+			return Applier.applyChanges(this.oManifest, aChanges, this.RuntimeStrategy).then(function(oNewManifest) {
+				assert.equal(oNewManifest["sap.app"].description, "{{sap.app.descriptor.test_sap.app.description}}", "description is replaced correctly");
 				assert.equal(fnProcessTextsSpy.callCount, 0, "Strategy.processTexts is not called");
 			});
 		});

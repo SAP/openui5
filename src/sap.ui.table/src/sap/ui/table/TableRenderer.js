@@ -127,6 +127,7 @@ sap.ui.define([
 		this.renderTabElement(rm, "sapUiTableOuterBefore");
 
 		rm.openStart("div", oTable.getId() + "-before");
+		rm.class("sapUiTableBefore");
 		rm.openEnd();
 
 		rm.renderControl(oTable.getAggregation("_messageStrip"));

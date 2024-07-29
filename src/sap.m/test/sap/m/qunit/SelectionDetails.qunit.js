@@ -387,21 +387,10 @@ sap.ui.define([
 		this.oSelectionDetails._getPopover.apply(this.oSelectionDetails, this._aGetPopoverArgs);
 
 		//Assert
-		assert.equal(oAddEventDelegateSpy.callCount, 2, "Method addEventDelegate has been called twice (one call for WrapLabels) on Popover.");
+		assert.equal(oAddEventDelegateSpy.callCount, 1, "Method addEventDelegate has been called once (one call for WrapLabels) on Popover.");
 
 		//Cleanup
 		oAddEventDelegateSpy.restore();
-	});
-
-	QUnit.test("Popover height is updated after rendering on non-phone devices", function(assert) {
-		//Arrange
-		var oUpdateContentHeightSpy = sinon.spy(this.oSelectionDetails, "_updatePopoverContentHeight");
-
-		//Act
-		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-
-		//Assert
-		assert.equal(oUpdateContentHeightSpy.callCount, 1, "Method _updatePopoverContentHeight has been called.");
 	});
 
 	QUnit.test("Popover height is capped at _POPOVER_MAX_HEIGHT", function(assert) {
@@ -410,11 +399,8 @@ sap.ui.define([
 		this.oSelectionDetails._getPopover.apply(this.oSelectionDetails, this._aGetPopoverArgs);
 		var oSetPropertySpy = sinon.spy(this.oSelectionDetails._getPopover(), "setProperty");
 
-		//Act
-		this.oSelectionDetails._updatePopoverContentHeight();
-
 		//Assert
-		assert.equal(oSetPropertySpy.withArgs("contentHeight", SelectionDetails._POPOVER_MAX_HEIGHT + "px").callCount, 1, "Property contentHeight has been updated.");
+		assert.equal(oSetPropertySpy.withArgs("contentHeight", SelectionDetails._POPOVER_MAX_HEIGHT + "px").callCount, 0, "Property contentHeight has been updated.");
 	});
 
 	QUnit.test("Popover does not exceed viewport", async function(assert) {
@@ -444,11 +430,8 @@ sap.ui.define([
 		this.oSelectionDetails._getPopover.apply(this.oSelectionDetails, this._aGetPopoverArgs);
 		var oSetPropertySpy = sinon.spy(this.oSelectionDetails._getPopover(), "setProperty");
 
-		//Act
-		this.oSelectionDetails._updatePopoverContentHeight();
-
 		//Assert
-		assert.equal(oSetPropertySpy.withArgs("contentHeight", 425 + "px").callCount, 1, "Property contentHeight has been updated.");
+		assert.equal(oSetPropertySpy.withArgs("contentHeight", 425 + "px").callCount, 0, "Property contentHeight has been updated.");
 	});
 
 	QUnit.module("Navigation", {

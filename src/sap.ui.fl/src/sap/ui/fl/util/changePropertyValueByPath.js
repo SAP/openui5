@@ -10,24 +10,19 @@ sap.ui.define([
 	"use strict";
 
 	function splitEscapePath(sPropertyPath) {
-		var sReplaceEscapeWithDummy = sPropertyPath.replaceAll("\\/", "*");
-		var aPath = sReplaceEscapeWithDummy.split("/");
-		aPath.forEach((sPath, index) => {
-			if (sPath.includes("*")) {
-				aPath[index] = aPath[index].replace("*", "/");
-			}
-		});
-		return aPath;
+		const sReplaceEscapeWithDummy = sPropertyPath.replaceAll("\\/", "*");
+		const aPath = sReplaceEscapeWithDummy.split("/");
+		return aPath.map((element) => element.replaceAll("*", "/"));
 	}
 
 	function setPropValueByPath(oEntityProp, oRoot) {
-		var aPath;
+		let aPath;
 		if (oEntityProp.propertyPath.includes("\\")) {
 			aPath = splitEscapePath(oEntityProp.propertyPath);
 		} else {
 			aPath = oEntityProp.propertyPath.split("/");
 		}
-		var valueByPath = ObjectPath.get(aPath, oRoot);
+		const valueByPath = ObjectPath.get(aPath, oRoot);
 
 		if (valueByPath && oEntityProp.operation === "INSERT") {
 			throw new Error("Path has already a value. 'INSERT' operation is not appropriate.");

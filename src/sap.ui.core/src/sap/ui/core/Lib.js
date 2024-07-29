@@ -749,30 +749,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Includes the library theme into the current page (if a variant is specified it will include the variant
-		 * library theme)
-		 *
-		 * @param {string} [sVariant] the variant to include (optional)
-		 * @param {string} [sQuery] to be used only by the Core
-		 * @private
-		 */
-		_includeTheme: function(sVariant, sQuery) {
-			var sName = this.name,
-				bLibCssPreloaded = getPreloadLibCss().indexOf(sName) !== -1;
-
-			aAllLibrariesRequiringCss.push({
-				name: sName,
-				version: this.version,
-				variant: sVariant,
-				preloadedCss: bLibCssPreloaded
-			});
-
-			_getThemeManager().then(function(ThemeManager) {
-				ThemeManager.includeLibraryTheme(sName, sVariant, sQuery);
-			});
-		},
-
-		/**
 		 * Returns a resource bundle for the given locale.
 		 *
 		 * The locale's default value is read from {@link module:sap/base/i18n/Localization.getLanguage session locale}.

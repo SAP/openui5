@@ -4,9 +4,8 @@ sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/Lib",
-	"sap/ui/core/theming/ThemeManager",
 	"sap/ui/dom/includeScript"
-], function(Log, ResourceBundle, LoaderExtensions, Library, ThemeManager, includeScript) {
+], function(Log, ResourceBundle, LoaderExtensions, Library, includeScript) {
 	"use strict";
 
 	QUnit.module("Instance methods");
@@ -101,26 +100,6 @@ sap.ui.define([
 			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib5\/library-preload\.js$/));
 			sinon.assert.neverCalledWith(sap.ui.require, ['testlibs/scenario1/lib5/library']);
 		});
-	});
-
-	QUnit.test("Instance method 'includeTheme'", function(assert) {
-		var done = assert.async();
-		var oLib1 = Library._get('testlibs.scenario1.lib1', true);
-
-		this.spy(ThemeManager, "includeLibraryTheme");
-		var aLibsRequiringCss = Library.getAllInstancesRequiringCss();
-		var iLength = aLibsRequiringCss.length;
-
-		oLib1._includeTheme();
-
-		aLibsRequiringCss = Library.getAllInstancesRequiringCss();
-		assert.equal(aLibsRequiringCss.length - iLength, 1, "One lib more is requiring CSS");
-		assert.equal(aLibsRequiringCss[iLength].name, "testlibs.scenario1.lib1");
-
-		setTimeout(function() {
-			sinon.assert.calledOnce(ThemeManager.includeLibraryTheme);
-			done();
-		}, 0);
 	});
 
 	QUnit.test("Instance method 'loadResourceBundle' and 'getResourceBundle'", function(assert) {

@@ -294,7 +294,7 @@ sap.ui.define([
 		intro: "On behalf of John Smith",
 		title: "First status using icon font",
 		number: "3.62449",
-		firstStatus: new ObjectStatus({icon: IconPool.getIconURI("inbox")})
+		firstStatus: new ObjectStatus({icon: IconPool.getIconURI("inbox")}).setTooltip("inbox")
 	});
 	list.addItem(withFirstStatusIcon);
 
@@ -354,7 +354,7 @@ sap.ui.define([
 		intro: "On behalf of John Smith",
 		title: "First status using image",
 		number: "3.62449",
-		firstStatus: new ObjectStatus({icon: "images/favorite_24.png"})
+		firstStatus: new ObjectStatus({icon: "images/favorite_24.png"}).setTooltip("golden star")
 	});
 	list.addItem(withFirstStatusImage);
 

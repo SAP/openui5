@@ -22,6 +22,7 @@ sap.ui.define([
 	var Registration = {
 		appdescr_ui5_addLibraries: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddLibrary"),
 		appdescr_app_setTitle: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/app/SetTitle"),
+		appdescr_app_setDescription: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/app/SetDescription"),
 		appdescr_ovp_changeCard: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/ovp/ChangeCard"),
 		appdescr_ovp_addNewCard: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/ovp/AddNewCard"),
 		appdescr_ovp_removeCard: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/ovp/DeleteCard"),

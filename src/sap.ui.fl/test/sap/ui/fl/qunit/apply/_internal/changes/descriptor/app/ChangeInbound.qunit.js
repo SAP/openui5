@@ -244,6 +244,21 @@ sap.ui.define([
 						}
 				}
 			});
+
+			this.oChangeMoreComplexPopertyPath = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeInbound"
+				},
+				content: {
+					inboundId: "Risk-configure",
+					entityPropertyChange:
+						{
+							propertyPath: "signature/parameters/Company\\/Name\\/End/To\\/Value\\/End/value",
+							operation: "UPSERT",
+							propertyValue: "newValue"
+						}
+				}
+			});
 		}
 	}, function() {
 		QUnit.test("when calling '_applyChange' with several changes in array", function(assert) {
@@ -594,6 +609,35 @@ sap.ui.define([
 			};
 			var oNewManifest = ChangeInbound.applyChange(oManifest, this.oChangeComplexPopertyPath);
 			assert.equal(oNewManifest["sap.app"].crossNavigation.inbounds["Risk-configure"].signature.parameters["Company/Name"]["To/Value"].value, "newValue", "inbound is updated correctly");
+		});
+
+		QUnit.test("when calling '_applyChange' with three complex propertyPaths", function(assert) {
+			var oManifest = {
+				"sap.app": {
+					crossNavigation: {
+						inbounds: {
+							"Risk-configure": {
+								semanticObject: "Address",
+								action: "display",
+								additionalParameters: "ignored",
+								signature: {
+									parameters: {
+										"Company/Name/End": {
+											"To/Value/End": {
+												value: "oldValue",
+												format: "plain"
+											},
+											required: true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+			var oNewManifest = ChangeInbound.applyChange(oManifest, this.oChangeMoreComplexPopertyPath);
+			assert.equal(oNewManifest["sap.app"].crossNavigation.inbounds["Risk-configure"].signature.parameters["Company/Name/End"]["To/Value/End"].value, "newValue", "inbound is updated correctly");
 		});
 	});
 

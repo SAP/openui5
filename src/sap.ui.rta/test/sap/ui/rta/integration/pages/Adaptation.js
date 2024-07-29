@@ -416,6 +416,18 @@ sap.ui.define([
 					window.dispatchEvent(new KeyboardEvent("keydown", {
 						key: "escape"
 					}));
+				},
+				iScrollIntoView(sElementId) {
+					return this.waitFor({
+						controlType: "sap.ui.dt.ElementOverlay",
+						matchers(oOverlay) {
+							return oOverlay.getElement().getId() === sElementId;
+						},
+						success(aOverlays) {
+							aOverlays[0].getDomRef().scrollIntoView();
+						},
+						errorMessage: "Did not find the Element Overlay"
+					});
 				}
 			},
 

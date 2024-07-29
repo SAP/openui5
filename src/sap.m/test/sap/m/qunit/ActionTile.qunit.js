@@ -468,4 +468,13 @@ sap.ui.define([
 		var oHeaderContainer = this.oSituation.getDomRef("header-container");
 		assert.equal(getComputedStyle(oHeaderContainer).justifyContent,"center","Text aligned to the center");
 	});
+
+	QUnit.test("Space between attributes and the action buttons has been added", async function (assert) {
+		this.oToDo.setEnableDynamicHeight(true);
+		this.oToDo.setEnableNavigationButton(true);
+		await nextUIUpdate();
+		//setup action tile content
+		var oTileContent = this.oToDo.getTileContent()[0];
+		assert.ok(getComputedStyle(oTileContent.getDomRef()).marginBottom.slice(0,-2) !== '0',"Margin Bottom has been added to create space between the button and the tile");
+	});
 });

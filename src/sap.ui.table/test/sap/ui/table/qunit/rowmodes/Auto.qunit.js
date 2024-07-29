@@ -111,6 +111,18 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Elements with margins", async function(assert) {
+		this.oTable.getExtension()[0].addStyleClass("sapUiLargeMargin");
+		this.oTable.addExtension(this.oTable.getExtension()[0].clone());
+		this.oTable.getFooter().addStyleClass("sapUiLargeMargin");
+		this.oTable.destroyAggregation("creationRow");
+		await this.oTable.qunit.whenRenderingFinished();
+
+		const oTableContainer = this.oTable.getDomRef().parentNode;
+
+		assert.equal(oTableContainer.clientHeight, oTableContainer.scrollHeight, "The table container has no vertical overflow");
+	});
+
 	QUnit.module("Hide empty rows", {
 		beforeEach: async function() {
 			this.oTable = await TableQUnitUtils.createTable({

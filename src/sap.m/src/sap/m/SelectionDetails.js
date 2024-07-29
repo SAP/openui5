@@ -679,12 +679,6 @@ function(
 			oNavContainer.addPage(oPage);
 			oPopover.addAggregation("content", oNavContainer, true);
 
-			if (!Device.system.phone) {
-				oPopover.addEventDelegate({
-					onAfterRendering: this._updatePopoverContentHeight.bind(this)
-				});
-			}
-
 			oPopover.addEventDelegate({
 				onBeforeRendering: function () {
 					this.getWrapLabels() ? oPopover.addStyleClass("sapMSDWrapLabels") : oPopover.removeStyleClass("sapMSDWrapLabels");
@@ -712,22 +706,6 @@ function(
 			this._oControl.setProperty.apply(this._oControl, arguments);
 		}
 		return Control.prototype.setProperty.apply(this, arguments);
-	};
-
-	/**
-	 * Adds an event delegate to the popover instance in order to minimize white space inside its contents.
-	 * @private
-	 * @static
-	 */
-	SelectionDetails.prototype._updatePopoverContentHeight = function() {
-		var iContentHeight = this._getInitialPageHeight(),
-			oPopover = this._getPopover();
-
-		if (this._oNavContainer.getCurrentPage() === this._oInitialPage && iContentHeight < SelectionDetails._POPOVER_MAX_HEIGHT) {
-			oPopover.setProperty("contentHeight", iContentHeight + "px", true);
-		} else {
-			oPopover.setProperty("contentHeight", SelectionDetails._POPOVER_MAX_HEIGHT + "px", true);
-		}
 	};
 
 	/**

@@ -1440,16 +1440,36 @@
 
 	}
 
-	function preloadDependencies(sModuleName) {
+	/**
+	 * If we have knowledge about the dependencies of the given module,
+	 * we require them upfront, in parallel to the request for the module or
+	 * its containing bundle.
+	 *
+	 * Note: a dependency is required even when it is in state PRELOADED already.
+	 * Reason is that its transitive dependencies might not have been required yet.
+	 */
+	function requireDependenciesUpfront(sModuleName) {
 		const knownDependencies = mDepCache[sModuleName];
 		if ( Array.isArray(knownDependencies) ) {
-			log.debug(`preload dependencies for ${sModuleName}: ${knownDependencies}`);
+			mDepCache[sModuleName] = undefined;
+			const missingDeps = [];
 			knownDependencies.forEach((dep) => {
 				dep = getMappedName(dep, sModuleName);
-				if ( /\.js$/.test(dep) ) {
-					requireModule(null, dep, /* always async */ true);
-				} // else: TODO handle non-JS resources, e.g. link rel=prefetch
+				// even if a module is PRELOADED, its transitive dependencies might not
+				if ( Module.get(dep).state <= INITIAL ) {
+					missingDeps.push(dep);
+				}
 			});
+			if ( missingDeps.length > 0 ) {
+				log.info(`preload missing dependencies for ${sModuleName}: ${missingDeps}`);
+				missingDeps.forEach((dep) => {
+					if (/\.js$/.test(dep)) {
+						// The resulting promise is ignored here intentionally.
+						// Error handling will happen while module `sModuleName`` is processed
+						requireModule(null, dep, /* always async */ true);
+					} // else: TODO handle non-JS resources, e.g. link rel=prefetch
+				});
+			}
 		}
 	}
 
@@ -1511,13 +1531,18 @@
 		// when there's bundle information for the module
 		// require the bundle first before requiring the module again with bSkipBundle = true
 		if ( oModule.state === INITIAL && oModule.group && oModule.group !== sModuleName && !bSkipBundle ) {
-			if ( bLoggable ) {
-				log.debug(`${sLogPrefix}require bundle '${oModule.group}' containing '${sModuleName}'`);
+			if ( log.isLoggable(/* INFO */ 3) && Module.get(oModule.group).state === INITIAL ) {
+				log.info(`${sLogPrefix}require bundle '${oModule.group}' containing '${sModuleName}'`);
 			}
-			return requireModule(null, oModule.group, true).catch(noop).then(function() {
-				// set bSkipBundle to true to prevent endless recursion
-				return requireModule(oRequestingModule, sModuleName, true, bSkipShimDeps, /* bSkipBundle = */ true);
-			});
+			{
+				const pResult = requireModule(null, oModule.group, true).catch(noop).then(function() {
+					// set bSkipBundle to true to prevent endless recursion
+					return requireModule(oRequestingModule, sModuleName, true, bSkipShimDeps, /* bSkipBundle = */ true);
+				});
+				// start loading of dependencies in parallel
+				requireDependenciesUpfront(sModuleName);
+				return pResult;
+			}
 		}
 
 		if ( bLoggable ) {
@@ -1583,8 +1608,10 @@
 			ui5Require.load({ completeLoad:noop, async: true }, sAltUrl, oSplitName.baseID);
 			loadScript(oModule, /* sAlternativeURL= */ sAltUrl);
 
-			// process dep cache info
-			preloadDependencies(sModuleName);
+			// process dep cache info, if this was not done already together with the bundle
+			if ( !bSkipBundle ) {
+				requireDependenciesUpfront(sModuleName);
+			}
 
 			return oModule.deferred().promise;
 		}

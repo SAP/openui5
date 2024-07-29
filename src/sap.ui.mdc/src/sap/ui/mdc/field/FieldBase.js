@@ -2874,9 +2874,10 @@ sap.ui.define([
 				const aConditions = this.getConditions();
 				_setConditionsOnValueHelp.call(this, aConditions, oValueHelp);
 				oValueHelp.toggleOpen(!!bOpenAsTypeahed);
-				this._bFocusOnValueHelp = !!oEvent.getSource; // show focus on dropdown if opened via F4 (set it only after really opened)
+				const bIsFocusInHelp = oValueHelp.isFocusInHelp();
+				this._bFocusOnValueHelp = !!oEvent.getSource && !bIsFocusInHelp; // show focus on dropdown if opened via F4 (set it only after really opened)
 				const oContent = oEvent.srcControl || oEvent.getSource(); // as, if called from Tap or other browser event getSource is not available
-				if (!oValueHelp.isFocusInHelp()) {
+				if (!bIsFocusInHelp) {
 					// need to reset bValueHelpRequested in Input, otherwise on focusout no change event and navigation don't work
 					if (oContent.bValueHelpRequested) {
 						oContent.bValueHelpRequested = false; // TODO: need API

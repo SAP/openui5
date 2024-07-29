@@ -418,11 +418,16 @@ sap.ui.define([
 										url: '/samples/object/image/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
+									},
+									{
+										url: "/samples/object/image/images/workingWithTablet.jpg",
+										name: "images/workingWithTablet.jpg",
+										key: "images/workingWithTablet.jpg"
 									}
 								]
 							},
 							{
-								title: 'Image With Overlay',
+								title: 'Image with Overlay',
 								key: 'objectCardWithImageWithOverlay',
 								experimental: true,
 								settings: {
@@ -433,6 +438,31 @@ sap.ui.define([
 										url: '/samples/object/imageWithOverlay/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
+									},
+									{
+										url: "/samples/object/imageWithOverlay/images/natureAndChildren.jpg",
+										name: "images/natureAndChildren.jpg",
+										key: "images/natureAndChildren.jpg"
+									}
+								]
+							},
+							{
+								title: 'Image with Fallback',
+								key: 'objectCardWithFallbackImage',
+								experimental: true,
+								settings: {
+									columns: 4
+								},
+								files: [
+									{
+										url: '/samples/object/imageFallback/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: "/samples/object/imageFallback/images/workingWithTablet.jpg",
+										name: "images/workingWithTablet.jpg",
+										key: "images/workingWithTablet.jpg"
 									}
 								]
 							}
