@@ -432,6 +432,12 @@ sap.ui.define([
 		this._detachResizableHandlers();
 
 		this._oInvisibleMessage = InvisibleMessage.getInstance();
+
+		if (this._isSingleItem()) {
+			var oSelectedItem = bActionBarExpanded ? this.getItems()[0] : null;
+			this.setProperty("sideContentExpanded", bActionBarExpanded);
+			this.setAssociation("selectedItem", oSelectedItem, true);
+		}
 	};
 
 	SidePanel.prototype.onAfterRendering = function() {
@@ -661,6 +667,7 @@ sap.ui.define([
 	};
 
 	SidePanel.prototype._setSideContentExpanded = function(bState) {
+		this._isSingleItem() && this.setActionBarExpanded(bState);
 		return this.setProperty("sideContentExpanded", bState);
 	};
 

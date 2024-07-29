@@ -742,7 +742,6 @@ sap.ui.define([
 	QUnit.module("Misc", {
 		beforeEach : function() {
 			this.oSP = new SidePanel();
-			addItems(this.oSP, 3);
 		},
 		afterEach : function() {
 			this.oSP.destroy();
@@ -751,6 +750,7 @@ sap.ui.define([
 
 	QUnit.test("Calculating and storing default side panel width", function (assert) {
 		// act
+		addItems(this.oSP, 3);
 		this.oSP.setSidePanelWidth("50%");
 
 		// assert
@@ -763,6 +763,26 @@ sap.ui.define([
 		// assert
 		assert.ok(this.oSP._sSidePanelWidth, "After the rendering of the control, the width can be calculated and stored properly");
 
+	});
+
+	QUnit.test("actionBarExpanded in Side panel when there is one action icon added", function (assert) {
+		// act
+		addItems(this.oSP, 1);
+		this.oSP.setActionBarExpanded(true);
+		this.oSP.placeAt("test-parent");
+		oCore.applyChanges();
+
+		// assert
+		assert.ok(this.oSP._getSideContentExpanded(), "Expanded: side content is expanded");
+		assert.ok(this.oSP.getSelectedItem(), "Expanded: there is selected item");
+
+		// act
+		this.oSP.setActionBarExpanded(false);
+		oCore.applyChanges();
+
+		// assert
+		assert.notOk(this.oSP._getSideContentExpanded(), "Collapsed: side content is expanded");
+		assert.notOk(this.oSP.getSelectedItem(), "Collapsed: there is selected item");
 	});
 
 });
