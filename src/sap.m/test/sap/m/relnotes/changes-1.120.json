@@ -839,5 +839,30 @@
         "text": " sap.m.semantic.MessagesIndicator: Add default tooltip"
       }
     ]
+  },
+  "1.120.19": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "b3b2e85b9bdf197f19f7b87cc5d7d4547205cec8",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: fix cursor position when there is mask and no entry"
+      },
+      {
+        "id": "99076ea0dffdb493bbfef54604fafb4e8a2264f8",
+        "type": "FIX",
+        "text": " ColumnMenu: Check for container instance when setting visibility"
+      },
+      {
+        "id": "9768c98f620ba325b9b50000cd12e3af3958ed81",
+        "type": "FIX",
+        "text": " We've made the subheader dynamic in the NewsContent when it is in a stretch tile"
+      },
+      {
+        "id": "78a7c698573ef61e7407d95f2a75b2ca8e413f44",
+        "type": "FIX",
+        "text": " sap.m.Column: add missing check for parent Table in _onLabelPropertyChange"
+      }
+    ]
   }
 }

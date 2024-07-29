@@ -65,5 +65,15 @@
         "text": " AnalyticalTable: Error when binding to named model"
       }
     ]
+  },
+  "1.120.19": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "8857e2c11c6f65bc6b0fbf3df83763da7ded98f8",
+        "type": "FIX",
+        "text": " rowmodes.Auto: Height calculation with margins"
+      }
+    ]
   }
 }

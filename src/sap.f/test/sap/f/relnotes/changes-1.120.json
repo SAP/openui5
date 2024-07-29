@@ -183,5 +183,31 @@
         "text": " sap.f.FlexibleColumnLayout: Resize issue with iframe content fixed"
       }
     ]
+  },
+  "1.120.19": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "ccf7bb82745204529e0f9995cf7ab95ba2758442",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: actionBarExpanded now works when there is only one action item",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370132714"
+          }
+        ]
+      },
+      {
+        "id": "ee775a394a19f5d19764b2530f10204635774fc6",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Syncronization issue corrected"
+      },
+      {
+        "id": "bb5b4cba7ee7923f7865db454fde33daea9c3b19",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Correct header placement after expanded state change"
+      }
+    ]
   }
 }
