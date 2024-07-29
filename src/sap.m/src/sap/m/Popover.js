@@ -470,6 +470,7 @@ sap.ui.define([
 
 				if (Device.system.desktop &&
 					this.oPopup.isTopmost() &&
+					!this.getModal() &&
 					isElementCovered(this._getOpenByDomRef(), this.getDomRef())) {
 					this.close();
 					return;
