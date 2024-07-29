@@ -415,7 +415,7 @@ sap.ui.define([
 	 * @param {string[]} [aDraftFilenames] - Filenames from persisted changes draft version
 	 * @param {boolean} [bCondenseAnyLayer] - This will enable condensing regardless of the current layer
 	 * @param {string} [sLayer] - Layer for which the changes should be saved
-	 * @returns {Promise} Resolving after all changes have been saved
+	 * @returns {Promise<object>} Resolving with the storage response after all changes have been saved
 	 */
 	ChangePersistence.prototype.saveDirtyChanges = function(
 		oAppComponent,
@@ -489,9 +489,9 @@ sap.ui.define([
 	 * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
 	 * @param {string} [sParentVersion] - Indicates if changes should be written as a draft and on which version the changes should be based on
-	 * @returns {Promise} resolving after all changes have been saved
+	 * @returns {Promise<object>} resolving with the collected storage response after all changes have been saved
 	 */
-	ChangePersistence.prototype.saveSequenceOfDirtyChanges = function(aDirtyChanges, bSkipUpdateCache, sParentVersion) {
+	ChangePersistence.prototype.saveSequenceOfDirtyChanges = async function(aDirtyChanges, bSkipUpdateCache, sParentVersion) {
 		var oFirstNewChange;
 		if (sParentVersion) {
 			// in case of changes saved for a draft only the first writing operation must have the parentVersion targeting the basis
@@ -502,11 +502,20 @@ sap.ui.define([
 			oFirstNewChange = [].concat(aNewChanges).shift();
 		}
 
-		return aDirtyChanges.reduce(function(oPreviousPromise, oDirtyChange) {
-			return oPreviousPromise
-			.then(performSingleSaveAction.bind(undefined, oDirtyChange, oFirstNewChange, sParentVersion))
-			.then(this._updateCacheAndDirtyState.bind(this, oDirtyChange, bSkipUpdateCache));
-		}.bind(this), Promise.resolve());
+		// A successful save operation returns the flexObject in the response
+		// The flexObjects are returned to the calling function where they will be set to persisted
+		const oCollectedResponse = {
+			response: []
+		};
+
+		for (const oDirtyChange of aDirtyChanges) {
+			const oResponse = await performSingleSaveAction(oDirtyChange, oFirstNewChange, sParentVersion);
+			this._updateCacheAndDirtyState(oDirtyChange, bSkipUpdateCache);
+			if (oResponse?.response) {
+				oCollectedResponse.response.push(...oResponse.response);
+			}
+		}
+		return oCollectedResponse;
 	};
 
 	function performSingleSaveAction(oDirtyChange, oFirstChange, sParentVersion) {

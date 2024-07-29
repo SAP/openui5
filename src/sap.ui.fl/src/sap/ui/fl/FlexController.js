@@ -169,7 +169,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} [aDirtyChanges] - Dirty changes to be saved
 	 * @param {sap.ui.core.UIComponent} [oAppComponent] - AppComponent instance
-	 * @returns {Promise<object>} Resolves when all changes have been saved with the backend response
+	 * @returns {Promise<object>} Resolves with the backend response when all changes have been saved
 	 * @public
 	 */
 	FlexController.prototype.saveSequenceOfDirtyChanges = async function(aDirtyChanges, oAppComponent) {
