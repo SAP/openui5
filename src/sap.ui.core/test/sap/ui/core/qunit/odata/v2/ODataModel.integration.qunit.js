@@ -155,6 +155,23 @@ sap.ui.define([
 	}
 
 	/**
+	 * Creates an error response object for a 503 "Retry-after" HTTP error.
+	 *
+	 * @param {string} [sMessageCode="HTTP 503"] The message code
+	 * @param {boolean} [bCrashBatch=true] Whether the complete batch request shall fail
+	 * @returns {object} The 503 error response
+	 */
+	function create503ErrorResponse(sMessageCode = "HTTP 503", bCrashBatch = true) {
+		return createErrorResponse({
+			crashBatch: bCrashBatch,
+			message: "Service Unavailable",
+			statusCode: 503,
+			headers: {"retry-after" : 5},
+			messageCode: sMessageCode
+		});
+	}
+
+	/**
 	 * Creates a V2 OData model.
 	 *
 	 * @param {string} sServiceUrl
@@ -1074,7 +1091,7 @@ sap.ui.define([
 					if (oResponseBody.statusCode >= 200 && oResponseBody.statusCode < 300) {
 						return fnSuccess({}, oResponseBody);
 					} else {
-						return fnError(oResponseBody);
+						return fnError({message: "HTTP request failed", response: oResponseBody.response});
 					}
 				}).finally(function () {
 					if (bWaitForResponse) {
@@ -1319,15 +1336,23 @@ sap.ui.define([
 		 *
 		 * @param {object} [mAdditionalHeaders]
 		 *   Request headers additional to the "x-csrf-token" header
+		 * @param {boolean} [bUseGet=false]
+		 *   Whether to use "GET" instead of "HEAD" as method for the token fetch
+		 * @param {boolean} [oErrorResponse={}]
+		 *   The returned error response
+		 * @param {string} [sResponseToken=""]
+		 *   The token to be returned
 		 * @returns {object}
 		 *   The test instance for chaining
 		 */
-		expectHeadRequest : function (mAdditionalHeaders) {
+		expectHeadRequest : function (mAdditionalHeaders, bUseGet = false, oErrorResponse = {}, sResponseToken = "") {
 			this.aRequests.push({
 				deepPath : "",
 				headers : Object.assign({"x-csrf-token" : "Fetch"}, mAdditionalHeaders),
-				method : "HEAD",
-				requestUri : ""
+				method : bUseGet ? "GET" : "HEAD",
+				requestUri : "",
+				response : oErrorResponse,
+				responseHeaders : sResponseToken ? {"x-csrf-token" : sResponseToken} : {}
 			});
 
 			return this;
@@ -23478,24 +23503,29 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
-	// Scenario: Server responds with 503 HTTP status code and "Retry-after" response header
-	// 1) $batch with GET request answered with 503, no error no change, callback waiting
-	// 1a) Deferred binding request data, no request happen because pending promise, callback not called again,
+	// Scenario: "Retry-after" handler in place, server responds with 503 HTTP status code and "Retry-after"
+	// response header.
+	// 1) GET request answered with 503, no error no change, callback waiting
+	// 1a) Deferred binding requests data, no request happen because pending promise, callback not called again,
 	//   callback promise reused.
-	// 2) Callback resolves promise -> first $batch repeated, second $batch for deferred binding also sent
-	// 3) ODataBinding#refresh results in different $batches, first $batch response processing reuses already
-	//   existing promise of 2nd $batch which responded faster with 503.
+	// 2) Callback resolves promise -> first GET repeated, second GET for deferred binding also sent
+	// 3) ODataBinding#refresh results in 3 GET requests, response processing of first GET processing reuses already
+	//   existing promise of 2nd GET which was responded faster with 503.
 	// 3a) Callback rejects promise with supplied error -> requests rejected, error reported only once
-	// 4) 3 $batch, 2nd and 3rd answered with 503, 1st answer pending
-	// 4a) 1st $batch gets 503 answer, reuses already existing retry-after promise
-	// 4b) resolve retry-after promise and see all 3 $batch repeated
+	// 4) 3 GET, 2nd and 3rd answered with 503, 1st answer pending
+	// 4a) 1st GET was answered with 503, reuses already existing retry-after promise
+	// 4b) Resolve retry-after promise and see all 3 GET request are repeated
 	// 5) Callback rejects promise with own Error reason
-	// 5a) preparation, GET and MERGE request answered with 503
-	// 5b) reject with own reason, error is not reported, only logged
-	// 5c) after rejection the change is still present and can be repeated via #submitChanges wereas GET is not repeated
-	//
-	// JIRA: CPOUI5MODELS-1750
-	QUnit.test("503 retry-after handling", function (assert) {
+	// 5a) Preparation: GET answered with 503 and 2 successor MERGE requests queued afterwards
+	// 5b) Reject with own reason, error is not reported, only logged
+	// 5c) After rejection the change is still present and can be repeated via #submitChanges wereas GET is not
+	//   repeated
+	// JIRA: CPOUI5MODELS-1750, CPOUI5MODELS-1776
+[true, false].forEach((bDisableHeadRequestForToken) => {
+	[true, false].forEach((bUseBatch) => {
+	const sTitle = `503 retry-after handling, bUseBatch:${bUseBatch}, `
+		+ `disableHeadRequest:${bDisableHeadRequestForToken}`;
+	QUnit.test(sTitle, function (assert) {
 		let iCallbackCounter = 0;
 		let bCallbackWaiting = false;
 		let iErrorHandlerCalled = 0;
@@ -23506,13 +23536,18 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},
 			success() {
 				assert.ok(false);
-			}};
+			}
+		};
 		let fnRejectRetryAfter;
 		let pRetryAfterFinished;
 		let fnResolveRetryAfter;
 		let fnRolveLate503Response;
 		let oSuppliedError;
-		const oModel = createSalesOrdersModel({refreshAfterChange : false});
+		const oModel = createSalesOrdersModel({
+			refreshAfterChange: false,
+			useBatch: bUseBatch,
+			disableHeadRequestForToken: bDisableHeadRequestForToken
+		});
 		const sView = `
 <FlexBox id="objectPage1" binding="{/SalesOrderSet('1')}">
 	<Text id="note1" text="{Note}" />
@@ -23539,18 +23574,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return pRetryAfter;
 		});
 
-		function create503ErrorResponse(sCode) {
-			return createErrorResponse({
-				crashBatch : true,
-				message : "Service Unavailable",
-				statusCode : 503,
-				headers : {"retry-after" : 5},
-				messageCode : sCode
-			});
+		if (bUseBatch) {
+			this.expectHeadRequest(undefined, bDisableHeadRequestForToken);
 		}
-
-		this.expectHeadRequest()
-			.expectRequest("SalesOrderSet('1')", create503ErrorResponse("1)"));
+		this.expectRequest("SalesOrderSet('1')", create503ErrorResponse("1)", bUseBatch));
 
 		// code under test (1)
 		return this.createView(assert, sView, oModel).then(() => {
@@ -23566,12 +23593,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.ok(bCallbackWaiting);
 			assert.strictEqual(iCallbackCounter, 1);
 
-			this.expectRequest("SalesOrderSet('1')", {
-					SalesOrderID : "1", Note : "Foo1"
-				})
-				.expectRequest("SalesOrderSet('2')", {
-					SalesOrderID : "2", Note : "Foo2"
-				})
+			this.expectRequest("SalesOrderSet('1')", {SalesOrderID: "1", Note: "Foo1"})
+				.expectRequest("SalesOrderSet('2')", {SalesOrderID: "2", Note: "Foo2"})
 				.expectValue("note1", "Foo1")
 				.expectValue("note2", "Foo2");
 
@@ -23587,12 +23610,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.strictEqual(iCallbackCounter, 1);
 
 			this.expectRequest("SalesOrderSet('1')", resolveLater(() => {
-					// process 503 a little later than 2nd request's response, callback promise reused
-					assert.ok(bCallbackWaiting);
-					assert.strictEqual(iCallbackCounter, 2);
-					return {response : create503ErrorResponse("3) late")};
-				}))
-				.expectRequest("SalesOrderSet('2')", create503ErrorResponse("3) early"));
+				// process 503 a little later than 2nd request's response, callback promise reused
+				assert.ok(bCallbackWaiting);
+				assert.strictEqual(iCallbackCounter, 2);
+				return {response: create503ErrorResponse("3) late", bUseBatch)};
+			}))
+				.expectRequest("SalesOrderSet('2')", create503ErrorResponse("3) early", bUseBatch));
 
 			// code under test (refresh via different groups in order to get separate batches)
 			this.oView.byId("objectPage1").getElementBinding().refresh(true, "refresh1");
@@ -23608,23 +23631,43 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			this.expectValue("note1", "")
 				.expectValue("note2", "")
-				.expectMessages([{
-					code : "3) late",  // 3) early was overwritten because same target "/batch"
-					message : "Service Unavailable",
-					persistent : false,
-					fullTarget : "/$batch",
-					target : "/$batch",
-					technical : true,
-					type : "Error"
+				.expectMessages(bUseBatch ? [{
+						code: "3) late",  // 3) early was overwritten because same target "/batch"
+						message: "Service Unavailable",
+						persistent: false,
+						fullTarget: "/$batch",
+						target: "/$batch",
+						technical: true,
+						type: "Error"
+					}] : [{
+						code: "3) early",
+						message: "Service Unavailable",
+						persistent: false,
+						fullTarget: "/SalesOrderSet('2')",
+						target: "/SalesOrderSet('2')",
+						technical: true,
+						type: "Error"
+					}, {
+						code: "3) late",
+						message: "Service Unavailable",
+						persistent: false,
+						fullTarget: "/SalesOrderSet('1')",
+						target: "/SalesOrderSet('1')",
+						technical: true,
+						type: "Error"
 				}]);
 
+			let sRequest = bUseBatch
+				? "POST /sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/$batch"
+				: "GET /sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('2')";
 			this.oLogMock.expects("error")
-				.withExactArgs("Request failed with status code 503: "
-					+ "POST /sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/$batch", sinon.match("3) early"),
+				.withExactArgs("Request failed with status code 503: " + sRequest, sinon.match("3) early"),
 					sODataMessageParserClassName);
+			sRequest = bUseBatch
+				? "POST /sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/$batch"
+				: "GET /sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('1')";
 			this.oLogMock.expects("error")
-				.withExactArgs("Request failed with status code 503: "
-					+ "POST /sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/$batch", sinon.match("3) late"),
+				.withExactArgs("Request failed with status code 503: " + sRequest, sinon.match("3) late"),
 					sODataMessageParserClassName);
 
 			// code under test
@@ -23640,8 +23683,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			this.removePersistentAndTechnicalMessages(); // reset messages
 
 			this.expectRequest("SalesOrderSet('1')", new Promise((resolve) => {fnRolveLate503Response = resolve;}))
-				.expectRequest("SalesOrderSet('2')", create503ErrorResponse("3) for SalesOrder 2"))
-				.expectRequest("SalesOrderSet('3')", create503ErrorResponse("3) for SalesOrder 3"))
+				.expectRequest("SalesOrderSet('2')", create503ErrorResponse("3) for SalesOrder 2", bUseBatch))
+				.expectRequest("SalesOrderSet('3')", create503ErrorResponse("3) for SalesOrder 3", bUseBatch))
 				.expectMessages([]);
 
 			// code under test
@@ -23653,9 +23696,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		}).then(() => {
 			assert.ok(bCallbackWaiting);
 			assert.strictEqual(iCallbackCounter, 3);
+			assert.ok(oModel.hasPendingRequests());
 
 			// code under test
-			fnRolveLate503Response({response : create503ErrorResponse("4) for SalesOrder 1")});
+			fnRolveLate503Response({response: create503ErrorResponse("4) for SalesOrder 1", bUseBatch)});
 
 			return Promise.all([
 				resolveLater(), // wait until error processing for 1st $batch is done
@@ -23665,9 +23709,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.ok(bCallbackWaiting);
 			assert.strictEqual(iCallbackCounter, 3);
 
-			this.expectRequest("SalesOrderSet('1')", {SalesOrderID : "1", Note : "Bar1"})
-				.expectRequest("SalesOrderSet('2')", {SalesOrderID : "2", Note : "Bar2"})
-				.expectRequest("SalesOrderSet('3')", {SalesOrderID : "3", Note : "Bar3"});
+			this.expectRequest("SalesOrderSet('1')", {SalesOrderID: "1", Note: "Bar1"})
+				.expectRequest("SalesOrderSet('2')", {SalesOrderID: "2", Note: "Bar2"})
+				.expectRequest("SalesOrderSet('3')", {SalesOrderID: "3", Note: "Bar3"});
 
 			this.expectValue("note1", "Bar1")
 				.expectValue("note2", "Bar2")
@@ -23683,9 +23727,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		}).then(() => {
 			assert.notOk(bCallbackWaiting);
 			assert.strictEqual(iCallbackCounter, 3);
+			assert.notOk(oModel.hasPendingRequests());
 
 			this.removePersistentAndTechnicalMessages(); // reset messages
-			this.expectRequest("SalesOrderSet('2')", create503ErrorResponse("5)"))
+			this.expectRequest("SalesOrderSet('2')", create503ErrorResponse("5)", bUseBatch))
 				.expectMessages([]);
 
 			this.oView.byId("objectPage2").getElementBinding().refresh(true, "refresh2");
@@ -23704,10 +23749,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oModel.setProperty("/SalesOrderSet('1')/Note", "Note1 5)");
 			oModel.submitChanges(mParameters);
 
-			return this.waitForChanges(assert, "5a) preparation (2nd request queued)");
+			return this.waitForChanges(assert, "5a) preparation (2nd request, a MERGE, is queued)");
 		}).then(() => {
 			assert.ok(bCallbackWaiting);
 			assert.strictEqual(iCallbackCounter, 4);
+			assert.strictEqual(oModel.hasPendingChanges(true), true);
+			assert.notOk(oModel.hasPendingRequests());
 
 			this.expectValue("note3", "Note3 5)");
 
@@ -23715,10 +23762,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oModel.setProperty("/SalesOrderSet('3')/Note", "Note3 5)");
 			oModel.submitChanges(mParameters);
 
-			return this.waitForChanges(assert, "5a) preparation (3nd request queued)");
+			return this.waitForChanges(assert, "5a) preparation (3nd request, another MERGE is queued)");
 		}).then(() => {
 			assert.ok(bCallbackWaiting);
 			assert.strictEqual(iCallbackCounter, 4);
+			assert.ok(oModel.hasPendingChanges(true));
+			assert.notOk(oModel.hasPendingRequests());
 
 			this.expectValue("note2", "")
 				.expectMessages([]);
@@ -23734,26 +23783,33 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				this.waitForChanges(assert, "5b) rejection with own error, only logged")
 			]);
 		}).then(() => {
-			assert.strictEqual(iErrorHandlerCalled, 2);
+			// Note: for bUseBatch:false the supplied errorhandler is not called because in
+			// ODataModel#_processRequestQueue fnError is NOT passed to #_submitSingleRequest.
+			assert.strictEqual(iErrorHandlerCalled, bUseBatch ? 2 : 0);
 			assert.strictEqual(oModel.hasPendingChanges(true), true);
 
+			if (!bUseBatch) {
+				this.expectHeadRequest(undefined, bDisableHeadRequestForToken);
+			}
 			this.expectRequest({
-					data : {
-						__metadata : {uri : "SalesOrderSet('3')"},
-						Note : "Note3 5)"
+					data: {
+						__metadata: {uri: "SalesOrderSet('3')"},
+						Note: "Note3 5)"
 					},
-					key : "SalesOrderSet('3')",
-					method : "MERGE",
-					requestUri : "SalesOrderSet('3')"
+					key: "SalesOrderSet('3')",
+					method: bUseBatch ? "MERGE" : "POST",
+					headers: bUseBatch ? {} : {"x-http-method": "MERGE"},
+					requestUri: "SalesOrderSet('3')"
 				}, NO_CONTENT)
 				.expectRequest({
 					data : {
-						__metadata : {uri : "SalesOrderSet('1')"},
-						Note : "Note1 5)"
+						__metadata: {uri: "SalesOrderSet('1')"},
+						Note: "Note1 5)"
 					},
-					key : "SalesOrderSet('1')",
-					method : "MERGE",
-					requestUri : "SalesOrderSet('1')"
+					key: "SalesOrderSet('1')",
+					method: bUseBatch ? "MERGE" : "POST",
+					headers: bUseBatch ? {} : {"x-http-method": "MERGE"},
+					requestUri: "SalesOrderSet('1')"
 				}, NO_CONTENT)
 				.expectMessages([]);
 
@@ -23762,9 +23818,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return this.waitForChanges(assert, "5c) changes still present and sent");
 		}).then(() => {
-			assert.strictEqual(oModel.hasPendingChanges(true), false);
+			assert.notOk(oModel.hasPendingChanges(true));
+			assert.notOk(oModel.hasPendingRequests());
 		});
 	});
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario: HTTP status 503 retry-after handling in combination with sequentializeRequests
@@ -23783,21 +23842,15 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		});
 
 		this.expectHeadRequest()
-			.expectRequest("SalesOrderSet('1')", createErrorResponse({
-				crashBatch : true,
-				message : "Service Unavailable",
-				statusCode : 503,
-				headers : {"retry-after" : 5},
-				messageCode : "HTTP 503"
-			}))
+			.expectRequest("SalesOrderSet('1')", create503ErrorResponse())
 			.expectMessages([{
-				code : "HTTP 503",
-				message : "Service Unavailable",
-				persistent : false,
-				fullTarget : "/$batch",
-				target : "/$batch",
-				technical : true,
-				type : "Error"
+				code: "HTTP 503",
+				message: "Service Unavailable",
+				persistent: false,
+				fullTarget: "/$batch",
+				target: "/$batch",
+				technical: true,
+				type: "Error"
 			}]);
 		this.oLogMock.expects("error").withExactArgs("Request failed with status code 503: "
 			+ "POST /sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/$batch", sinon.match.string,
@@ -23826,21 +23879,19 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// JIRA: CPOUI5MODELS-1769
 [true, false].forEach((bDisableHeadRequestForToken) => {
 	[true, false, null].forEach((bResolve) => {
-	const sTitle = "503 retry-after handling (fetch securityToken): resolve:" + bResolve
-		+ ", disableHeadRequest:" + bDisableHeadRequestForToken;
+	const sTitle = `503 retry-after handling (fetch securityToken): resolve:${bResolve}, `
+		+ `disableHeadRequest:${bDisableHeadRequestForToken}`;
 	QUnit.test(sTitle, function (assert) {
-		let oRetryAfterError;
-		const oModel = createSalesOrdersModel({
-			disableHeadRequestForToken : bDisableHeadRequestForToken,
-			refreshAfterChange : false,
-			useBatch : false
-		});
 		const sView = `
 <FlexBox id="objectPage1" binding="{/SalesOrderSet('1')}">
 	<Text id="note1" text="{Note}"/>
 </FlexBox>`;
-
-		let fnResolveRetryAfter, fnRejectRetryAfter;
+		const oModel = createSalesOrdersModel({
+			disableHeadRequestForToken: bDisableHeadRequestForToken,
+			refreshAfterChange: false,
+			useBatch: false
+		});
+		let oRetryAfterError, fnResolveRetryAfter, fnRejectRetryAfter;
 		oModel.setRetryAfterHandler((oError) => {
 			oRetryAfterError = oError;
 			return new Promise((resolve, reject) => {
@@ -23848,26 +23899,15 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				fnRejectRetryAfter = reject;
 			});
 		});
-
 		clearCaches(); // do not fail on cached "x-csrf-token" from other tests
-		this.expectRequest("SalesOrderSet('1')", {SalesOrderID : "1", Note : "Foo"})
+		this.expectRequest("SalesOrderSet('1')", {SalesOrderID: "1", Note: "Foo"})
 			.expectValue("note1", "Foo")
 			.expectMessages([]);
 
 		// code under test
 		return this.createView(assert, sView, oModel).then(() => {
 			this.expectValue("note1", "Foo*")
-				.expectRequest({
-					deepPath : "",
-					headers : {"x-csrf-token" : "Fetch"},
-					method : (bDisableHeadRequestForToken ? "GET" : "HEAD"),
-					requestUri : ""
-				}, createErrorResponse({
-					message : "Service Unavailable",
-					statusCode : 503,
-					headers : {"retry-after" : 5},
-					messageCode : "HTTP 503"
-				}, {"retry-after" : 5}));
+				.expectHeadRequest(undefined, bDisableHeadRequestForToken, create503ErrorResponse());
 
 			// code under test (1)
 			oModel.setProperty("/SalesOrderSet('1')/Note", "Foo*");
@@ -23876,89 +23916,93 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return this.waitForChanges(assert, "1)");
 		}).then(() => {
 			if (bResolve) {
-				this.expectRequest({
-						deepPath : "",
-						headers : {"x-csrf-token" : "Fetch"},
-						method : (bDisableHeadRequestForToken ? "GET" : "HEAD"),
-						requestUri : ""
-					}, {}, {"x-csrf-token" : "token1"})
+				this.expectHeadRequest(undefined, bDisableHeadRequestForToken, undefined, "token1")
 					.expectRequest({
-						data : {
-							__metadata : {uri : "SalesOrderSet('1')"},
-							Note : "Foo*"
+						data: {
+							__metadata: {uri: "SalesOrderSet('1')"},
+							Note: "Foo*"
 						},
-						headers : {
-							"x-csrf-token" : "token1",
+						headers: {
+							"x-csrf-token": "token1",
 							"x-http-method": "MERGE"
 						},
-						key : "SalesOrderSet('1')",
-						method : "POST",
-						requestUri : "SalesOrderSet('1')"
+						key: "SalesOrderSet('1')",
+						method: "POST",
+						requestUri: "SalesOrderSet('1')"
 					}, NO_CONTENT);
 
 				// code under test (2a)
 				fnResolveRetryAfter();
 			} else {
-				// Note: still no messages expected here
+				this.expectMessages(bResolve === null ? [/*own reason not reported*/] : [{
+					code: "HTTP 503",
+					message: "Service Unavailable",
+					persistent: false,
+					fullTarget: "/SalesOrderSet('1')",
+					target: "/SalesOrderSet('1')",
+					technical: true,
+					type: "Error"
+				}]);
+
 				this.oLogMock.expects("error")
-					.withExactArgs("Retry-After handler rejected with: Own Reason", sinon.match.string,
-						sODataModelClassName)
-					.exactly(bResolve === null ? 1 : 0);
+					.withArgs(
+						bResolve === null
+							? "Retry-After handler rejected with: Own Reason"
+							: "Request failed with status code 503: "
+								+ "POST /sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('1')"
+						, sinon.match.string
+						, bResolve === null ? sODataModelClassName : sODataMessageParserClassName);
 
 				// code under test (2b)
 				fnRejectRetryAfter(bResolve === null ? new Error("Own Reason") : oRetryAfterError);
 			}
 
-			return this.waitForChanges(assert, bResolve ? "2a) resolve" : "2b) reject");
+			return resolveLater().then(() => { // message processing may take some time
+				return this.waitForChanges(assert, bResolve ? "2a) resolve" : "2b) reject");
+			});
 		}).then(() => {
 			if (bResolve) {
-				// we only proceed  with repetition if the promise was rejected in the .then() before
+				// we only proceed with repetition if the promise was rejected in the .then() before
 				return Promise.resolve();
 			}
-			this.expectRequest({
-					deepPath : "",
-					headers : {"x-csrf-token" : "Fetch"},
-					method : (bDisableHeadRequestForToken ? "GET" : "HEAD"),
-					requestUri : ""
-				}, {}, {"x-csrf-token" : "token2"})
+			Messaging.removeAllMessages(); // simulate confirmation of prior messages by user
+			this.expectMessages([]);
+			this.expectHeadRequest(undefined, bDisableHeadRequestForToken, undefined, "token2")
 				.expectRequest({
-					data : {
-						__metadata : {uri : "SalesOrderSet('1')"},
-						Note : "Foo*"
+					data: {
+						__metadata: {uri: "SalesOrderSet('1')"},
+						Note: "Foo*"
 					},
-					headers : {
-						"x-csrf-token" : "token2",
+					headers: {
+						"x-csrf-token": "token2",
 						"x-http-method": "MERGE"
 					},
-					key : "SalesOrderSet('1')",
-					method : "POST",
-					requestUri : "SalesOrderSet('1')"
-				}, createErrorResponse({
-					message : "Service Unavailable",
-					statusCode : 503,
-					headers : {"retry-after" : 5},
-					messageCode : "HTTP 503"
-				}, {"retry-after" : 5}));
+					key: "SalesOrderSet('1')",
+					method: "POST",
+					requestUri: "SalesOrderSet('1')"
+				}, create503ErrorResponse(undefined, false));
 
 			// code under test (repeat sending changes via "save")
 			oModel.submitChanges();
 
-			return this.waitForChanges(assert, "3a)").then(() => {
+			return resolveLater().then(() => { // message processing may take some time
+				return this.waitForChanges(assert, "3a)");
+			}).then(() => {
 				let sScenario;
 				if (bResolve === null) {
 					sScenario = "3b";
 					this.expectRequest({
-						data : {
-							__metadata : {uri : "SalesOrderSet('1')"},
-							Note : "Foo*"
+						data: {
+							__metadata: {uri: "SalesOrderSet('1')"},
+							Note: "Foo*"
 						},
-						headers : {
-							"x-csrf-token" : "token2",
-							"x-http-method" : "MERGE"
+						headers: {
+							"x-csrf-token": "token2",
+							"x-http-method": "MERGE"
 						},
-						key : "SalesOrderSet('1')",
-						method : "POST",
-						requestUri : "SalesOrderSet('1')"
+						key: "SalesOrderSet('1')",
+						method: "POST",
+						requestUri: "SalesOrderSet('1')"
 					}, NO_CONTENT);
 
 					// code under test (3b)
@@ -23966,14 +24010,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				} else {
 					sScenario = bDisableHeadRequestForToken && "3c" || "3d";
 					this.expectMessages(sScenario === "3c" ? [{
-						code : "HTTP 503",
-						message : "Service Unavailable",
-						persistent : false,
-						fullTarget : "/SalesOrderSet('1')",
-						target : "/SalesOrderSet('1')",
-						technical : true,
-						type : "Error"
-					}] : []);
+						code: "HTTP 503",
+						message: "Service Unavailable",
+						persistent: false,
+						fullTarget: "/SalesOrderSet('1')",
+						target: "/SalesOrderSet('1')",
+						technical: true,
+						type: "Error"
+					}] : [/*own reason not reported*/]);
 					this.oLogMock.expects("error")
 						.withExactArgs(sScenario === "3c"
 								? "Request failed with status code 503: "
