@@ -7,7 +7,7 @@
 @_sap_m_Popover_Scroll_Width_Buffer: 20px;
 
 .sapMActionSheetDialog.sapMDialog {
-	top: auto !important; // We need to overwrite the inline top style
+	top: auto !important; /* We need to overwrite the inline top style */
 	bottom: 0;
 	width: 100%;
 	max-width: 20rem;
@@ -18,7 +18,7 @@
 	}
 }
 
-.sapMActionSheet:focus{
+.sapMActionSheet:focus {
 	outline: none;
 }
 
@@ -35,7 +35,7 @@
 }
 
 .sapMActionSheetDialogWithTitle .sapMBarMiddle .sapMBarPH {
-	// The left/right padding should be 1rem, but there is already 0.25rem right/left padding from the Dialog title
+	/* The left/right padding should be 1rem, but there is already 0.25rem right/left padding from the Dialog title */
 	padding: 0 0.75rem 0.5rem;
 	justify-content: flex-start;
 }
@@ -51,7 +51,7 @@
 }
 
 .sapMDialog.sapMActionSheetDialog > section {
-	background-color: @sapUiGroupContentBackground;
+	background-color: var(--sapGroup_ContentBackground);
 	border-radius: 0.25rem 0.25rem 0 0;
 }
 
@@ -94,24 +94,28 @@
 }
 
 .sapUiSizeCompact {
+
 	.sapMActionSheetPopover.sapMPopover {
+
 		.sapMPopoverCont {
 			padding: 0.1875rem 0.375rem;
-			max-height: calc(~"100% - 0.375rem");
+			max-height: calc(~'100% - 0.375rem');
 		}
 
 		.sapMActionSheet .sapMActionSheetButton .sapMBtnInner.sapMBtnIconFirst {
 			padding-left: 0.4375rem;
-    		padding-right: 0.4375rem;
+			padding-right: 0.4375rem;
 		}
 	}
 }
 
 .sapMActionSheetPopover.sapMPopover {
+
 	.sapMPopoverCont {
 		padding: 0.25rem 0.5rem;
-		max-height: calc(~"100% - 0.5rem");
+		max-height: calc(~'100% - 0.5rem');
 	}
+
 	&.sapMPopoverVerticalScrollIncluded .sapMPopoverCont {
 		padding: 0.25rem calc(~'0.5rem + ' @_sap_m_Popover_Scroll_Width_Buffer) 0.25rem 0.5rem;
 	}
