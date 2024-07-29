@@ -1,0 +1,42 @@
+{
+  "1.128.0": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "7fddf0f4c1abb1e4d9d283314ef6b3a85908b5fb",
+        "type": "FIX",
+        "text": " We now ensure that the height of the Selection Details popover can be adjusted without the use of custom code"
+      },
+      {
+        "id": "4e9ea14f8324b8581885a9f596b70c734697b564",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: fix SR announcements when all-day appointments are selected with keyboard."
+      },
+      {
+        "id": "f68f7cf2ebf5cee720dba0058ed8f4992f730ab0",
+        "type": "FIX",
+        "text": " sap.m.Button: Accessible Improvement for Button test page"
+      },
+      {
+        "id": "c0034d3f3b6b2a464e3b0b0a7d112624dc0a21b5",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Accessible Improvement for MenuButton test page"
+      },
+      {
+        "id": "f83041bae6e5d78d9e166fe440325febbe681e0e",
+        "type": "FIX",
+        "text": " We've now added space between attributes and the action buttons in the ActionTile"
+      },
+      {
+        "id": "fe572463fcd87f9365621503d3afda321d1f0d66",
+        "type": "FIX",
+        "text": " We've now updated the tab reading order for the FeedListItem control"
+      },
+      {
+        "id": "e4a299048180369048106e6e63c82d51a516ac11",
+        "type": "FIX",
+        "text": " sap.m.DateTimeInput: Remove an accessibility test page"
+      }
+    ]
+  }
+}

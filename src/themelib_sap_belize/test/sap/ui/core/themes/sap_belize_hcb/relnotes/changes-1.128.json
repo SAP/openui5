@@ -1,0 +1,12 @@
+{
+  "1.128.0": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "f83041bae6e5d78d9e166fe440325febbe681e0e",
+        "type": "FIX",
+        "text": " We've now added space between attributes and the action buttons in the ActionTile"
+      }
+    ]
+  }
+}
