@@ -1,4 +1,3 @@
-/*global QUnit*/
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/Device",
@@ -6,18 +5,14 @@ sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/testlib/TestButton"
-], function(
-	Log,
-	Device,
-	BindingMode,
-	ResourceModel,
-	ResourceBundle,
-	TestButton
-) {
+], function(Log, Device, BindingMode, ResourceModel, ResourceBundle, TestButton) {
+	/*global sinon, QUnit*/
 	/*eslint no-new: 0 */
 	"use strict";
-	//add divs for control tests
-	var oContent = document.createElement("div");
+
+	var sClassname = "sap.ui.model.resource.ResourceModel",
+		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		oContent = document.createElement("div"); //add divs for control tests
 	oContent.id = "target1";
 	document.body.appendChild(oContent);
 
@@ -30,6 +25,7 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.model.resource.ResourceModel: Resources bundle loaded via name", {
 		beforeEach: function() {
+			sap.ui.getCore().getConfiguration().setLanguage("en");
 			oModel = new ResourceModel({bundleName: "testdata.messages"});
 			sap.ui.getCore().setModel(oModel);
 		},
@@ -37,6 +33,7 @@ sap.ui.define([
 			sap.ui.getCore().setModel(null);
 			oModel.destroy();
 			oModel = undefined;
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -77,6 +74,7 @@ sap.ui.define([
 	QUnit.module("sap.ui.model.resource.ResourceModel: "
 			+ "Resources bundle loaded via name / set Model with alias", {
 		beforeEach: function() {
+			sap.ui.getCore().getConfiguration().setLanguage("en");
 			oModel = new ResourceModel({bundleName: "testdata.messages"});
 			sap.ui.getCore().setModel(oModel, "i18n");
 		},
@@ -84,6 +82,7 @@ sap.ui.define([
 			sap.ui.getCore().setModel(null, "i18n");
 			oModel.destroy();
 			oModel = undefined;
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -123,6 +122,7 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.model.resource.ResourceModel: Resources bundle loaded via url", {
 		beforeEach: function() {
+			sap.ui.getCore().getConfiguration().setLanguage("en");
 			oModel = new ResourceModel({bundleUrl: sMessagesProperties});
 			sap.ui.getCore().setModel(oModel, "i18n");
 		},
@@ -130,6 +130,7 @@ sap.ui.define([
 			sap.ui.getCore().setModel(null, "i18n");
 			oModel.destroy();
 			oModel = undefined;
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
 	//model created
@@ -226,14 +227,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.ui.model.resource.ResourceModel: Resources bundle passed as parameter", {
-		prepare: function(opts) {
+		beforeEach: function(){
 			sap.ui.getCore().getConfiguration().setLanguage("en");
-
+		},
+		prepare: function(opts) {
 			// Load the bundle beforehand
 			this.oBundle = jQuery.sap.resources({url: sMessagesProperties});
-
-			// Spy on resource bundle loading
-			this.jQuerySapResources = this.spy(ResourceBundle, "create");
 
 			// Create the model with the existing bundle
 			this.oModel = new ResourceModel({
@@ -247,13 +246,13 @@ sap.ui.define([
 				this.oModel.destroy();
 				this.oModel = null;
 			}
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
 
 	QUnit.test("Basic", function(assert) {
 		this.prepare();
 
-		assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
 		assert.equal(this.oModel.getResourceBundle(), this.oBundle, "The passed bundle is returned by the model");
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle are available");
 
@@ -323,18 +322,16 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.model.resource.ResourceModel: Resources bundle passed as parameter -"
 			+ "Language change on enhanced model", {
-		prepare: function(opts) {
+		beforeEach: function(){
 			sap.ui.getCore().getConfiguration().setLanguage("en");
-
+		},
+		prepare: function(opts) {
 			// Load the bundle beforehand
 			if (opts && typeof opts.bundle === "function") {
 				this.oBundle = opts.bundle.apply(this);
 			} else {
 				this.oBundle = jQuery.sap.resources({url: sMessagesProperties});
 			}
-
-			// Spy on resource bundle loading
-			this.jQuerySapResources = this.spy(ResourceBundle, "create");
 
 			if (opts && typeof opts.model === "function") {
 				this.oModel = opts.model.apply(this);
@@ -352,48 +349,36 @@ sap.ui.define([
 			this.localizationChangeSpy = this.spy(this.oModel, "_handleLocalizationChange");
 		},
 		testEnhanceAndLanguageChange: function(assert) {
-			assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
 			assert.equal(this.oModel.getResourceBundle(), this.oBundle, "The passed bundle is returned by the model");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle are available");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 
 			this.oModel.enhance({bundleUrl: sCustomMessagesProperties});
 
-			assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
-
-			// Reset the jQuery.sap.resources callCount
-			this.jQuerySapResources.reset();
 
 			sap.ui.getCore().getConfiguration().setLanguage("de");
 
 			assert.equal(this.localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
-			assert.equal(this.jQuerySapResources.callCount, 2, "jQuery.sap.resources should be called twice after changing the language");
-			assert.notEqual(this.oModel.getResourceBundle(), this.oBundle, "A new bundle has been created");
+			assert.notStrictEqual(this.oModel.getResourceBundle(), this.oBundle, "A new bundle has been created");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are now in 'de'");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "Texts from enhancement are now in 'de'");
 		},
 		testEnhanceAndLanguageChangeWithFixedLocale: function(assert) {
-			assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
 			assert.equal(this.oModel.getResourceBundle(), this.oBundle, "The passed bundle is returned by the model");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are available");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein angepasster Text", "text TEST_TEXT_CUSTOM of original model is correct");
 
 			this.oModel.enhance({bundleUrl: sCustomMessagesProperties, bundleLocale: "de"});
 
-			assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "text TEST_TEXT of enhanced model is correct");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
-
-			// Reset the jQuery.sap.resources callCount
-			this.jQuerySapResources.reset();
 
 			sap.ui.getCore().getConfiguration().setLanguage("it");
 
 			assert.equal(this.localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
-			assert.equal(this.jQuerySapResources.callCount, 2, "jQuery.sap.resources should not be called after changing the language");
-			assert.notEqual(this.oModel.getResourceBundle(), this.oBundle, "A new bundle has been created");
+			assert.notStrictEqual(this.oModel.getResourceBundle(), this.oBundle, "A new bundle has been created");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are still in 'de'");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "Texts from enhancement are still in 'de'");
 		},
@@ -403,33 +388,27 @@ sap.ui.define([
 				this.oModel.destroy();
 				this.oModel = null;
 			}
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
 
 	QUnit.test("bundle", function(assert) {
 		this.prepare();
 
-		assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
 		assert.equal(this.oModel.getResourceBundle(), this.oBundle, "The passed bundle is returned by the model");
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle are available");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 
 		this.oModel.enhance({bundleUrl: sCustomMessagesProperties});
 
-		assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
-
-		// Reset the jQuery.sap.resources callCount
-		this.jQuerySapResources.reset();
 
 		sap.ui.getCore().getConfiguration().setLanguage("de");
 
 		assert.equal(this.localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
-		assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called after changing the language");
-		assert.equal(this.oModel.getResourceBundle(), this.oBundle, "The passed bundle is still returned by the model");
-		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle are still in 'en'");
-		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "Texts from enhancement are still in 'en'");
+		assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts are in 'de'");
+		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text");
 	});
 
 	QUnit.test("bundle, bundleUrl", function(assert) {
@@ -493,25 +472,19 @@ sap.ui.define([
 			}
 		});
 
-		assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
 		assert.equal(this.oModel.getResourceBundle(), this.oBundle, "The passed bundle is returned by the model");
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are available");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein angepasster Text", "text TEST_TEXT_CUSTOM of original model is correct");
 
 		this.oModel.enhance({bundleUrl: sCustomMessagesProperties, bundleLocale: "de"});
 
-		assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "text TEST_TEXT of enhanced model is correct");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
-
-		// Reset the jQuery.sap.resources callCount
-		this.jQuerySapResources.reset();
 
 		sap.ui.getCore().getConfiguration().setLanguage("it");
 
 		assert.equal(this.localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
-		assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called after changing the language");
-		assert.equal(this.oModel.getResourceBundle(), this.oBundle, "The passed bundle is still returned by the model");
+		assert.notStrictEqual(this.oModel.getResourceBundle(), this.oBundle, "A new bundle has been created");
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are still in 'de'");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "Texts from enhancement are still in 'de'");
 	});
@@ -582,18 +555,16 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.model.resource.ResourceModel: Async -"
 			+ "Resources bundle passed as parameter", {
-		prepare: function(opts) {
+		beforeEach: function() {
 			sap.ui.getCore().getConfiguration().setLanguage("en");
-
+		},
+		prepare: function(opts) {
 			// Load the bundle beforehand
 			return jQuery.sap.resources({
 				url: sMessagesProperties,
 				async: true
 			}).then(function(oBundle) {
 				this.oBundle = oBundle;
-
-				// Spy on resource bundle loading
-				this.jQuerySapResources = this.spy(ResourceBundle, "create");
 
 				// Create the model with the existing bundle
 				this.oModel = new ResourceModel({
@@ -610,14 +581,12 @@ sap.ui.define([
 				this.oModel.destroy();
 				this.oModel = null;
 			}
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
 
 	QUnit.test("Basic", function(assert) {
 		return this.prepare().then(function() {
-
-			assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
-
 			var pBundle = this.oModel.getResourceBundle();
 			assert.ok(pBundle instanceof Promise, "getResourceBundle returns a Promise");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle are already available");
@@ -701,9 +670,10 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.model.resource.ResourceModel Async: Resources bundle passed as parameter -"
 			+ " Language change on enhanced model", {
-		prepare: function(opts) {
+		beforeEach: function() {
 			sap.ui.getCore().getConfiguration().setLanguage("en");
-
+		},
+		prepare: function(opts) {
 			// Load the bundle beforehand
 			var p;
 			if (opts && typeof opts.bundle === "function") {
@@ -717,9 +687,6 @@ sap.ui.define([
 
 			return p.then(function(oBundle) {
 				this.oBundle = oBundle;
-
-				// Spy on resource bundle loading
-				this.jQuerySapResources = this.spy(ResourceBundle, "create");
 
 				if (opts && typeof opts.model === "function") {
 					this.oModel = opts.model.apply(this);
@@ -736,45 +703,34 @@ sap.ui.define([
 
 				// Spy on "localizationChange" method
 				this.localizationChangeSpy = this.spy(this.oModel, "_handleLocalizationChange");
+				this.oRecreateSpy = this.spy(oBundle, "_recreate");
 			}.bind(this));
 		},
 		testEnhanceAndLanguageChange: function(assert) {
-			assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle are available");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 
 			var pEnhance = this.oModel.enhance({bundleUrl: sCustomMessagesProperties});
 
 			return pEnhance.then(function() {
-				assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
 				assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 				assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
-
-				// Reset the jQuery.sap.resources callCount
-				this.jQuerySapResources.reset();
 
 				sap.ui.getCore().getConfiguration().setLanguage("de");
 
 				assert.equal(this.localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
-
 				assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle should still be in 'en'");
 				assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "Texts from enhancement are still in 'en'");
 
 				return this.oModel.getResourceBundle();
-			}.bind(this)).then(function(oModelBundle) {
-				assert.notEqual(oModelBundle, this.oBundle, "A new bundle has been created");
-
-				assert.equal(this.jQuerySapResources.callCount, 2, "jQuery.sap.resources should be called twice after changing the language (async)");
-
-				// Wait for enhanced bundle to be re-loaded (return value is a Promise)
-				return this.jQuerySapResources.getCall(1).returnValue;
+			}.bind(this)).then(function() {
+				return this.oRecreateSpy.getCall(0).returnValue;
 			}.bind(this)).then(function() {
 				assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are now in 'de'");
-				assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "Texts from enhancement are now in 'de'");
+				assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein angepasster Text", "Texts from enhancement are now in 'de'");
 			}.bind(this));
 		},
 		testEnhanceAndLanguageChangeWithFixedLocale: function(assert) {
-			assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are available");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein angepasster Text", "text TEST_TEXT_CUSTOM of original model is correct");
 
@@ -784,31 +740,21 @@ sap.ui.define([
 			});
 
 			return pEnhance.then(function() {
-				assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
 				assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "text TEST_TEXT of enhanced model is correct");
 				assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
-
-				// Reset the jQuery.sap.resources callCount
-				this.jQuerySapResources.reset();
 
 				sap.ui.getCore().getConfiguration().setLanguage("it");
 
 				assert.equal(this.localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
-
 				assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are still in 'de'");
 				assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "Texts from enhancement are still in 'de'");
 
 				return this.oModel.getResourceBundle();
-			}.bind(this)).then(function(oModelBundle) {
-				assert.notEqual(oModelBundle, this.oBundle, "A new bundle has been created");
-
-				assert.equal(this.jQuerySapResources.callCount, 2, "jQuery.sap.resources should be called twice after changing the language (async)");
-
-				// Wait for enhanced bundle to be re-loaded (return value is a Promise)
-				return this.jQuerySapResources.getCall(1).returnValue;
+			}.bind(this)).then(function() {
+				return this.oRecreateSpy.getCall(0).returnValue;
 			}.bind(this)).then(function() {
 				assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are still in 'de'");
-				assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "Texts from enhancement are still in 'de'");
+				assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein angepasster Text", "Texts from enhancement are still in 'de'");
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -817,37 +763,31 @@ sap.ui.define([
 				this.oModel.destroy();
 				this.oModel = null;
 			}
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
 
 	QUnit.test("bundle", function(assert) {
 		return this.prepare().then(function() {
 
-			assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle are available");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 
 			var pEnhance = this.oModel.enhance({bundleUrl: sCustomMessagesProperties});
 
 			return pEnhance.then(function() {
-				assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
 				assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 				assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
-
-				// Reset the jQuery.sap.resources callCount
-				this.jQuerySapResources.reset();
 
 				sap.ui.getCore().getConfiguration().setLanguage("de");
 
 				assert.equal(this.localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
-				assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called after changing the language");
-
 				assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle are still in 'en'");
 				assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "Texts from enhancement are still in 'en'");
 
 				return this.oModel.getResourceBundle();
-			}.bind(this)).then(function(oModelBundle) {
-				assert.equal(oModelBundle, this.oBundle, "The passed bundle is still returned by the model");
+			}.bind(this)).then(function () {
+				return this.oRecreateSpy.getCall(0).returnValue;
 			}.bind(this));
 		}.bind(this));
 	});
@@ -907,9 +847,6 @@ sap.ui.define([
 			locale: "de"
 		});
 
-		// Spy on resource bundle loading
-		var jQuerySapResources = this.spy(ResourceBundle, "create");
-
 		// Create the model with the existing bundle
 		var oModel = new ResourceModel({
 			bundle: oBundle,
@@ -924,25 +861,18 @@ sap.ui.define([
 		// Spy on "localizationChange" method
 		var localizationChangeSpy = this.spy(oModel, "_handleLocalizationChange");
 
-		assert.equal(jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
 		assert.equal(oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are available");
 		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein angepasster Text", "text TEST_TEXT_CUSTOM of original model is correct");
 
 		var pEnhance = oModel.enhance({bundleUrl: sCustomMessagesProperties, bundleLocale: "de"});
 
 		return pEnhance.then(function() {
-			assert.equal(jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
 			assert.equal(oModel.getProperty("TEST_TEXT"), "Ein Text de", "text TEST_TEXT of enhanced model is correct");
 			assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
-
-			// Reset the jQuery.sap.resources callCount
-			jQuerySapResources.reset();
 
 			sap.ui.getCore().getConfiguration().setLanguage("it");
 
 			assert.equal(localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
-			assert.equal(jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called after changing the language");
-
 			assert.equal(oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are still in 'de'");
 			assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "Texts from enhancement are still in 'de'");
 
@@ -1027,6 +957,7 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.model.resource.ResourceModel: Async", {
 		beforeEach: function() {
+			sap.ui.getCore().getConfiguration().setLanguage("en");
 			oLabel = new TestButton("myLabel", {text: "{async>TEST_TEXT}"});
 			oLabel.placeAt("target1");
 			oLabel2 = new TestButton("myLabel2", {text: "{async>TEST_TEXT}"});
@@ -1040,6 +971,7 @@ sap.ui.define([
 			oModel = undefined;
 			oLabel.destroy();
 			oLabel2.destroy();
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -1211,7 +1143,14 @@ sap.ui.define([
 
 	});
 
-	QUnit.module("sap.ui.model.resource.ResourceModel: constructor enhanceWith parameter");
+	QUnit.module("sap.ui.model.resource.ResourceModel: constructor enhanceWith parameter", {
+		beforeEach: function () {
+			sap.ui.getCore().getConfiguration().setLanguage("en");
+		},
+		afterEach: function () {
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+		}
+	});
 
 	QUnit.test("Model enhancement with bundleUrl and enhanceWith with configurations",
 			function(assert) {
@@ -1328,7 +1267,14 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("sap.ui.model.resource.ResourceModel: constructor enhanceWith error handling");
+	QUnit.module("sap.ui.model.resource.ResourceModel: constructor enhanceWith error handling", {
+		beforeEach: function () {
+			sap.ui.getCore().getConfiguration().setLanguage("en");
+		},
+		afterEach: function () {
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+		}
+	});
 
 	QUnit.test("invalid parameter terminologies async", function(assert) {
 		var oBundle = ResourceBundle.create({
@@ -1401,7 +1347,14 @@ sap.ui.define([
 	});
 
 
-	QUnit.module("sap.ui.model.resource.ResourceModel: enhance error handling");
+	QUnit.module("sap.ui.model.resource.ResourceModel: enhance error handling", {
+		beforeEach: function () {
+			sap.ui.getCore().getConfiguration().setLanguage("en");
+		},
+		afterEach: function () {
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+		}
+	});
 
 	QUnit.test("invalid parameter terminologies async", function(assert) {
 		var oBundle = ResourceBundle.create({
@@ -1438,7 +1391,14 @@ sap.ui.define([
 		"'terminologies' parameter is not supported for enhancement");
 	});
 
-	QUnit.module("sap.ui.model.resource.ResourceModel: Parameters passed to ResourceBundle");
+	QUnit.module("sap.ui.model.resource.ResourceModel: Parameters passed to ResourceBundle", {
+		beforeEach: function () {
+			sap.ui.getCore().getConfiguration().setLanguage("en");
+		},
+		afterEach: function () {
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+		}
+	});
 
 	QUnit.test("supportedLocales parameter", function() {
 		var aSupportedLocales = ["de", "fr", "de_CH"],
@@ -1524,7 +1484,17 @@ sap.ui.define([
 		oResourceModel.destroy();
 	});
 
-	QUnit.module("sap.ui.model.resource.ResourceModel: private functions");
+	QUnit.module("sap.ui.model.resource.ResourceModel: private functions", {
+		beforeEach: function () {
+			this.oLogMock = this.mock(Log);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
+			sap.ui.getCore().getConfiguration().setLanguage("en");
+		},
+		afterEach: function () {
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+		}
+	});
 
 	QUnit.test("loadResourceBundle", function() {
 		var mTerminologies = {},
@@ -1554,39 +1524,212 @@ sap.ui.define([
 	});
 
 	QUnit.test("_sanitizeBundleName", function(assert){
-		var oLogMock = this.mock(Log);
-
 		// input ".testdata.messages"
-		oLogMock.expects("error").withExactArgs("Incorrect resource bundle name " +
+		this.oLogMock.expects("error").withExactArgs("Incorrect resource bundle name " +
 			"\".testdata.messages\"",
 		"Leading slashes or dots in resource bundle names are ignored, since such names are " +
 			"invalid UI5 module names. Please check whether the resource bundle " +
 			"\".testdata.messages\" is actually needed by your application.",
-			"sap.base.i18n.ResourceBundle");
+			sClassname);
 
 		// code under test
 		assert.equal(ResourceModel._sanitizeBundleName(".testdata.messages"), "testdata.messages");
 
 		// input "/testdata.messages"
-		oLogMock.expects("error").withExactArgs("Incorrect resource bundle name " +
+		this.oLogMock.expects("error").withExactArgs("Incorrect resource bundle name " +
 			"\"/testdata.messages\"",
 		"Leading slashes or dots in resource bundle names are ignored, since such names are " +
 			"invalid UI5 module names. Please check whether the resource bundle " +
 			"\"/testdata.messages\" is actually needed by your application.",
-			"sap.base.i18n.ResourceBundle");
+			sClassname);
 
 		// code under test
 		assert.equal(ResourceModel._sanitizeBundleName("/testdata.messages"), "testdata.messages");
 
 		// input "i18n.testdata.messages"
-		oLogMock.expects("error").never();
+		this.oLogMock.expects("error").never();
 
 		// code under test
 		assert.equal(ResourceModel._sanitizeBundleName("i18n.testdata.messages"), "i18n.testdata.messages",
 			"sanitized bundle name for input which does not need to be sanitized");
 	});
 
-	QUnit.module("sap.ui.model.resource.ResourceModel: Exotic scenarios");
+	//*********************************************************************************************
+	QUnit.test("_handleLocalizationChange: succesful reload; sync case", function (assert) {
+		var oNewResourceBundle = {},
+			oResourceBundle = {
+				_recreate: function () {}
+			},
+			oResourceModel = {
+				_reenhance: function () {},
+				checkUpdate: function () {},
+				getResourceBundle: function () {}
+			};
+
+		this.mock(oResourceModel).expects("getResourceBundle")
+			.withExactArgs()
+			.returns(oResourceBundle);
+		this.mock(oResourceBundle).expects("_recreate")
+			.withExactArgs()
+			.returns(oNewResourceBundle);
+		this.mock(oResourceModel).expects("_reenhance").withExactArgs();
+		this.mock(oResourceModel).expects("checkUpdate").withExactArgs(true);
+
+		// code under test
+		ResourceModel.prototype._handleLocalizationChange.call(oResourceModel);
+
+		assert.strictEqual(oResourceModel._oResourceBundle, oNewResourceBundle);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_handleLocalizationChange: succesful reload; async case", function (assert) {
+		var oEventParameters = {async: true, url: "~url"},
+			oNewResourceBundle = {},
+			oNewResourcBundlePromise = Promise.resolve(oNewResourceBundle),
+			oResourceBundle = {
+				_recreate: function () {}
+			},
+			oResourcBundlePromise = Promise.resolve(oResourceBundle),
+			oResourceModel = {
+				oData: {bundleName: "~bundleName", bundleUrl: "~bundleUrl"},
+				_reenhance: function () {},
+				checkUpdate: function () {},
+				fireRequestCompleted: function () {},
+				fireRequestSent: function () {},
+				getResourceBundle: function () {}
+			},
+			that = this;
+
+		this.mock(oResourceModel).expects("getResourceBundle")
+			.withExactArgs()
+			.returns(oResourcBundlePromise);
+		oResourcBundlePromise.then(function () {
+			that.mock(ResourceModel).expects("_sanitizeBundleName")
+				.withExactArgs("~bundleName")
+				.returns("~sanitizedBundleName");
+			that.mock(ResourceBundle).expects("_getUrl")
+				.withExactArgs("~bundleUrl", "~sanitizedBundleName")
+				.returns("~url");
+			that.mock(oResourceModel).expects("fireRequestSent").withExactArgs(oEventParameters);
+		});
+
+		// code under test
+		ResourceModel.prototype._handleLocalizationChange.call(oResourceModel);
+
+		// called async
+		this.mock(oResourceBundle).expects("_recreate")
+			.withExactArgs()
+			.returns(oNewResourcBundlePromise);
+		oNewResourcBundlePromise.then(function () {
+			// this then handler is executed before the then handler in productive code;
+			// recreation promise is used to delay getResourceBundle resolution
+			assert.strictEqual(oResourceModel._oPromise, oNewResourcBundlePromise);
+		});
+
+		return oResourcBundlePromise.then(function () {
+			that.mock(oResourceModel).expects("_reenhance").withExactArgs()
+				.callsFake(function () {
+					assert.strictEqual(oResourceModel._oPromise, oNewResourcBundlePromise);
+				});
+			that.mock(oResourceModel).expects("checkUpdate").withExactArgs(true)
+				.callsFake(function () {
+					assert.strictEqual(oResourceModel._oPromise, undefined);
+				});
+			that.mock(oResourceModel).expects("fireRequestCompleted").withExactArgs(oEventParameters);
+
+			return oNewResourcBundlePromise.then(function () {
+				assert.strictEqual(oResourceModel._oResourceBundle, oNewResourceBundle);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_handleLocalizationChange: failed reload; sync case", function (assert) {
+		var oError = new Error(),
+			oResourceBundle = {
+				_recreate: function () {}
+			},
+			oResourceModel = {
+				_oResourceBundle: "~oldBundle",
+				getResourceBundle: function () {}
+			};
+
+		this.mock(oResourceModel).expects("getResourceBundle")
+			.withExactArgs()
+			.returns(oResourceBundle);
+		this.mock(oResourceBundle).expects("_recreate").throws(oError);
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to reload bundles after localization change",
+				sinon.match.same(oError), sClassname);
+
+		// code under test
+		ResourceModel.prototype._handleLocalizationChange.call(oResourceModel);
+
+		assert.strictEqual(oResourceModel._oResourceBundle, "~oldBundle");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_handleLocalizationChange: failed reload; async case", function (assert) {
+		var oPromise,
+			oResourceBundle = {
+				_recreate: function () {}
+			},
+			oResourcBundlePromise = Promise.resolve(oResourceBundle),
+			oResourceModel = {
+				_oResourceBundle: "~oldBundle",
+				oData: {bundleName: "~bundleName", bundleUrl: "~bundleUrl"},
+				fireRequestCompleted: function () {},
+				fireRequestSent: function () {},
+				getResourceBundle: function () {}
+			},
+			that = this;
+
+		this.mock(oResourceModel).expects("getResourceBundle")
+			.withExactArgs()
+			.returns(oResourcBundlePromise);
+
+		oPromise = oResourcBundlePromise.then(function () {
+			var oError = new Error(),
+				oEventParameters = {async: true, url: "~url"},
+				oRejectedResourcBundlePromise = Promise.reject(oError);
+
+			oRejectedResourcBundlePromise.catch(function () {
+				that.oLogMock.expects("error")
+					.withExactArgs("Failed to reload bundles after localization change",
+						sinon.match.same(oError), sClassname);
+				that.mock(oResourceModel).expects("fireRequestCompleted").withExactArgs(oEventParameters);
+			});
+
+			that.mock(ResourceModel).expects("_sanitizeBundleName")
+				.withExactArgs("~bundleName")
+				.returns("~sanitizedBundleName");
+			that.mock(ResourceBundle).expects("_getUrl")
+				.withExactArgs("~bundleUrl", "~sanitizedBundleName")
+				.returns("~url");
+			that.mock(oResourceModel).expects("fireRequestSent").withExactArgs(oEventParameters);
+			that.mock(oResourceBundle).expects("_recreate")
+				.withExactArgs()
+				.returns(oRejectedResourcBundlePromise);
+
+			return oRejectedResourcBundlePromise.catch(function () {
+				assert.strictEqual(oResourceModel._oResourceBundle, "~oldBundle");
+			});
+		});
+
+		// code under test
+		ResourceModel.prototype._handleLocalizationChange.call(oResourceModel);
+
+		return oPromise;
+	});
+
+	QUnit.module("sap.ui.model.resource.ResourceModel: Exotic scenarios", {
+		beforeEach: function () {
+			sap.ui.getCore().getConfiguration().setLanguage("en");
+		},
+		afterEach: function () {
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+		}
+	});
 
 	QUnit.test("Invalid resource bundle name", function(assert){
 		var fnToUrlSpy = this.spy(sap.ui.require, "toUrl");
