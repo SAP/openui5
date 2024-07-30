@@ -254,15 +254,18 @@ sap.ui.define([
 
 			/**
 			 * Template (cell renderer) of this column.
+			 *
 			 * A template is decoupled from the column. Each time the template's properties or aggregations have been changed, the template has to be
 			 * applied again via <code>setTemplate</code> for the changes to take effect.
-			 * If a string is defined, a default text control will be created with its text property bound to the value of the string. The default
-			 * template depends on the libraries loaded.
+			 *
 			 * If there is no template, the column will not be rendered in the table.
+			 *
 			 * The set of supported controls is limited. See section "{@link topic:148892ff9aea4a18b912829791e38f3e Tables: Which One Should I
 			 * Choose?}" in the documentation for more details. While it is technically possible to also use other controls, doing so might lead to
 			 * issues with regards to scrolling, alignment, condensed mode, screen reader support, and keyboard support.
 			 *
+			 * If a string is defined, this string is interpreted as the binding path. Internally, a default text control will be created with its <code>text</code> property
+			 * bound to the value of the string. The default template depends on the libraries loaded.
 			 * <b>Note:</b> The <code>altType</code> string is deprecated as of version 1.118. Use a <code>Control</code> instead.
 			 */
 			template: {type: "sap.ui.core.Control", altTypes: ["string"], multiple: false},

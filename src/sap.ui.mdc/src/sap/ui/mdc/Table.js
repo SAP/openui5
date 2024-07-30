@@ -347,7 +347,6 @@ sap.ui.define([
 				 * Defines style of the header. For more information, see {@link sap.m.Title#setTitleStyle}.
 				 *
 				 * @ui5-restricted sap.fe
-				 * @experimental
 				 * @since 1.116
 				 */
 				headerStyle: {
@@ -676,7 +675,6 @@ sap.ui.define([
 				 * <b>Note:</b> Once the binding supports creating transient records, this aggregation will be removed.
 				 *
 				 * @ui5-restricted sap.fe
-				 * @experimental Do not use
 				 * @deprecated As of version 1.124, the concept has been discarded.
 				 */
 				creationRow: {

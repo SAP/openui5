@@ -1531,6 +1531,44 @@ sap.ui.define([
 		};
 
 		/**
+		 * Checks whether there are appointments related to a given grid cell
+		 * @param {Date} oStart The start date date of the grid cell
+		 * @param {Date} oEnd The end date of the grid cell
+		 * @returns {boolean} Indicator if there are appointments related to a given grid cell
+		 */
+		SinglePlanningCalendarGrid.prototype._doesContainAppointments = function(oStart, oEnd) {
+			const oStartDate = UI5Date.getInstance(oStart);
+			const oEndDate = UI5Date.getInstance(oEnd);
+			return this.getAppointments().some((oAppointment) => {
+				const oAppStartDate = UI5Date.getInstance(oAppointment.getStartDate());
+				const oAppEndDate = UI5Date.getInstance(oAppointment.getEndDate());
+				return oAppStartDate.getTime() >= oStartDate.getTime() && oAppStartDate.getTime() < oEndDate.getTime()
+					|| oAppEndDate.getTime() > oStartDate.getTime() &&  oAppEndDate.getTime() <= oEndDate.getTime();
+			});
+		};
+
+		/**
+		 * Checks whether there are appointments related to a given grid cell
+		 * @param {sap.ui.unified.calendar.CalendarDate} oDay The date of the grid cell
+		 * @returns {boolean} Indicator if there are appointments realted to the grid cell
+		 */
+		SinglePlanningCalendarGrid.prototype._doesContainBlockers = function(oDay) {
+			return this.getAppointments().some((oAppointment) => {
+				if (oAppointment.getStartDate() && oAppointment.getEndDate()) {
+					const oStartDate = CalendarDate.fromLocalJSDate(oAppointment.getStartDate());
+					const oEndDate = CalendarDate.fromLocalJSDate(oAppointment.getEndDate());
+
+					return oDay.isSameOrAfter(oStartDate) && oDay.isBefore(oEndDate);
+				}
+				return false;
+			});
+		};
+
+		SinglePlanningCalendarGrid.prototype._getCellDescription = function () {
+			return Library.getResourceBundleFor("sap.m").getText("SPC_CELL_DESCRIPTION");
+		};
+
+		/**
 		 * Determines which is the first visible hour of the grid.
 		 *
 		 * @returns {int} the first visible hour of the grid

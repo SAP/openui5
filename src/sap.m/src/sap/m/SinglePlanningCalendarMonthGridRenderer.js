@@ -119,12 +119,6 @@ sap.ui.define([
 			oRm.attr("role", "row");
 			oRm.openEnd();
 
-			for (j = 0; j < iColumns; j++) {
-				iCellIndex = i * iColumns + j;
-				oDay = aCells[iCellIndex];
-				this.renderDay(oRm, oControl, oDay, oLocaleData, aMoreCountPerCell[iCellIndex], iCellIndex);
-			}
-
 			oRm.openStart("div");
 			oRm.class("sapMSinglePCBlockers");
 			oRm.class("sapUiCalendarRowVisFilled");
@@ -144,6 +138,12 @@ sap.ui.define([
 			}
 
 			oRm.close("div"); // end appointments
+
+			for (j = 0; j < iColumns; j++) {
+				iCellIndex = i * iColumns + j;
+				oDay = aCells[iCellIndex];
+				this.renderDay(oRm, oControl, oDay, oLocaleData, aMoreCountPerCell[iCellIndex], iCellIndex);
+			}
 			oRm.close("div"); // end cells
 			oRm.close("div"); // end grid
 		}
@@ -234,6 +234,9 @@ sap.ui.define([
 		//acc for day view + special dates + legend
 		if (oControl._sLegendId && sLegendItemType) {
 			oRm.text(sLegendItemType);
+		}
+		if (oControl._doesContainAppointments(oDay)) {
+			oRm.text(oControl._getCellDescription());
 		}
 		oRm.close("span");
 

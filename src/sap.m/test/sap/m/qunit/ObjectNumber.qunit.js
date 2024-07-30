@@ -302,6 +302,41 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("ObjectNumber with only Unit (no number) with EmptyIndicatorMode Off", async function (assert) {
+		var oLabel = new Label("label", {
+				text: "Label",
+				labelFor: "ON"
+			}),
+			oControlRef;
+
+		oLabel.placeAt("content");
+		this.oON.setNumber("");
+		await nextUIUpdate();
+
+		oControlRef = this.oON.getDomRef();
+		assert.strictEqual(oControlRef.getAttribute("aria-labelledby"), "label ON-unit",
+			"ObjectNumber's unit information is added in aria-labelledby alongside the label when there is no number and EmptyIndicatoMode is Off");
+		oLabel.destroy();
+	});
+
+	QUnit.test("empty ObjectNumber (without number) with EmptyIndicatorMode On", async function (assert) {
+		var oLabel = new Label("label", {
+				text: "Label",
+				labelFor: "ON"
+			}),
+			oControlRef;
+
+		oLabel.placeAt("content");
+		this.oON.setEmptyIndicatorMode("On");
+		this.oON.setNumber("");
+		await nextUIUpdate();
+
+		oControlRef = this.oON.getDomRef();
+		assert.strictEqual(oControlRef.getAttribute("aria-labelledby"), "label ",
+			"ObjectNumber's content information is not added in aria-labelledby alongside the label when there is no number and EmptyIndicatoMode is On");
+		oLabel.destroy();
+	});
+
 	QUnit.test("ObjectNumber with ariaDescribedBy association", async function (assert) {
 		var oDescription = new Text({ text: "Description" }),
 			sAriaDescribedByReferences;

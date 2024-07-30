@@ -1940,7 +1940,7 @@ sap.ui.define([
 		}));
 		this.oTable.setModel(new JSONModel({
 			testPath: [
-				{}, {}, {}, {}, {}
+				{visible: false}, {visible: true}, {visible: false}, {visible: false}, {visible: false}
 			]
 		}));
 
@@ -1954,8 +1954,61 @@ sap.ui.define([
 			return new Promise(function(resolve) {
 				oTable._oTable.attachEventOnce("updateFinished", resolve);
 			});
-		}).then(function() {
+		}).then(async function() {
+			// RowPress Event
+			oTable.attachRowPress(fnEvent);
 			checkRowPress(true, oTable, oTable._oTable.getItems()[0], true);
+			oTable.detachRowPress(fnEvent);
+
+			// RowAction -> visible with property
+			let oRowSettings = new RowSettings();
+			oRowSettings.addRowAction(new RowActionItem({
+				type: "Navigation",
+				visible: true,
+				press: fnEvent
+			}));
+			oTable.setRowSettings(oRowSettings);
+
+			await nextUIUpdate();
+
+			// row action triggers same rowPress event
+			checkRowPress(true, oTable, oTable._oTable.getItems()[0], true);
+			checkRowPress(true, oTable, oTable._oTable.getItems()[1], true);
+
+			// RowAction -> not visible with property
+			oRowSettings = new RowSettings();
+			oRowSettings.addRowAction(new RowActionItem({
+				type: "Navigation",
+				visible: false,
+				press: fnEvent
+			}));
+			oTable.setRowSettings(oRowSettings);
+
+			await nextUIUpdate();
+
+			checkRowPress(true, oTable, oTable._oTable.getItems()[0], false);
+
+			// Row Action not visible BUT rowPress event attached
+			oTable.attachRowPress(fnEvent);
+			checkRowPress(true, oTable, oTable._oTable.getItems()[0], true);
+			oTable.detachRowPress(fnEvent);
+
+			// RowAction -> visible with bound property
+			oRowSettings = new RowSettings();
+			oRowSettings.addRowAction(new RowActionItem({
+				type: "Navigation",
+				visible: "{visible}",
+				press: fnEvent
+			}));
+			oTable.setRowSettings(oRowSettings);
+
+			await nextUIUpdate();
+
+			assert.equal(oTable._oTable.getItems()[0].getType(), "Inactive");
+			checkRowPress(true, oTable, oTable._oTable.getItems()[1], true);
+
+			oTable.setRowSettings();
+			await nextUIUpdate();
 
 			oTable.setType("Table");
 			return oTable.initialized();

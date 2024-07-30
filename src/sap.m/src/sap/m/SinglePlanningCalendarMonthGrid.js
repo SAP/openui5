@@ -444,6 +444,27 @@ sap.ui.define([
 			return false;
 		};
 
+		/**
+		 * Checks whether there are appointments related to a given grid cell
+		 * @param {sap.ui.unified.calendar.CalendarDate} oDay The date of the grid cell
+		 * @returns {boolean} Indicator if there are appointments realted to the grid cell
+		 */
+		SinglePlanningCalendarMonthGrid.prototype._doesContainAppointments = function(oDay) {
+			return this.getAppointments().some((oAppointment) => {
+				if (oAppointment.getStartDate() && oAppointment.getEndDate()) {
+					const oStartDate = CalendarDate.fromLocalJSDate(oAppointment.getStartDate());
+					const oEndDate = CalendarDate.fromLocalJSDate(oAppointment.getEndDate());
+
+					return oDay.isSameOrAfter(oStartDate) && oDay.isBefore(oEndDate);
+				}
+				return false;
+			});
+		};
+
+		SinglePlanningCalendarMonthGrid.prototype._getCellDescription = function () {
+			return Library.getResourceBundleFor("sap.m").getText("SPC_CELL_DESCRIPTION");
+		};
+
 		SinglePlanningCalendarMonthGrid.prototype.onAfterRendering = function() {
 			this._initItemNavigation();
 			this._aMoreCountPerDay.fill(0);
@@ -520,7 +541,7 @@ sap.ui.define([
 				return;
 			}
 
-			const oFirstSiblingElement = oEvent.originalEvent.target.nextSibling.children[0];
+			const oFirstSiblingElement = oEvent.target.nextSibling.querySelectorAll(".sapMSPCMonthDay")[0];
 			const iIndex =  this._aGridCells.indexOf(oFirstSiblingElement);
 			this._oItemNavigation.focusItem(iIndex);
 		};
@@ -584,6 +605,45 @@ sap.ui.define([
 
 				// Prevent scrolling
 				oEvent.preventDefault();
+			}
+
+			if (oEvent.which !== KeyCodes.TAB) {
+				return;
+			}
+
+			if (oEvent.target.classList.contains("sapMSPCMonthDay")) {
+				const parentContainer = oEvent.target.parentElement;
+				const aAppointments = parentContainer.querySelectorAll(".sapUiCalendarRowApps");
+				if (aAppointments.length) {
+					oEvent.preventDefault();
+					aAppointments[0].focus();
+				}
+			} else if (oEvent.shiftKey && oEvent.target.classList.contains("sapMLnk")) {
+				const parentContainer = oEvent.target.parentElement.parentElement.parentElement;
+				const aLinks = parentContainer.querySelectorAll(".sapMSPCMonthLnkMore");
+				const oFirstLink = aLinks[0].querySelector(".sapMLnk");
+
+				if (oFirstLink.id === oEvent.target.id) {
+					const aAppointments = parentContainer.querySelectorAll(".sapUiCalendarRowApps");
+					if (aAppointments.length) {
+						const oLastApp = aAppointments[aAppointments.length - 1];
+						oEvent.preventDefault();
+						oLastApp.focus();
+					}
+				}
+			} else if (!oEvent.shiftKey && oEvent.target.classList.contains("sapUiCalendarRowApps")) {
+				const parentContainer = oEvent.target.parentElement;
+				const aAppointments = parentContainer.children;
+				if (aAppointments.length) {
+					const oLastApp = aAppointments[aAppointments.length - 1];
+					if (oLastApp.id === oEvent.target.id) {
+						const oMoreLink = parentContainer.parentElement.querySelector(".sapMSPCMonthLnkMore > .sapMLnk");
+						if (oMoreLink) {
+							oEvent.preventDefault();
+							oMoreLink.focus();
+						}
+					}
+				}
 			}
 		};
 
@@ -754,7 +814,9 @@ sap.ui.define([
 		SinglePlanningCalendarMonthGrid.prototype._fireGridCellSelectionEvent = function (oEvent, bWeekNumberSelect){
 			const iExtraDayCount = 6;
 			const iSingleDay = 1;
-			const oSelectedCell = bWeekNumberSelect ? oEvent.originalEvent.target.nextSibling.children[0] : this._findSelectCell(oEvent.target);
+			const oSelectedCell = bWeekNumberSelect
+				? oEvent.target.nextSibling.querySelectorAll(".sapMSPCMonthDay")[0]
+				: this._findSelectCell(oEvent.target);
 			const iNextDays = bWeekNumberSelect ? iExtraDayCount : iSingleDay;
 			const iTimestamp = parseInt(oSelectedCell.getAttribute("sap-ui-date"));
 			let oStartDate = UI5Date.getInstance(iTimestamp);

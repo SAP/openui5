@@ -274,6 +274,13 @@ sap.ui.define([
 				}
 			},
 
+			"apply/_internal/changes/descriptor/app/AddTechnicalAttributes": {
+				group: "Apply Internal - Descriptor Change Merger",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/AddTechnicalAttributes", "sap/ui/fl/util/DescriptorChangeCheck"]
+				}
+			},
+
 			"apply/_internal/changes/descriptor/ui5/SetMinUI5Version": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {

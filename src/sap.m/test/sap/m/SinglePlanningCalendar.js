@@ -773,6 +773,7 @@ sap.ui.define([
 
 	oSPC = new SinglePlanningCalendar("SinglePlanningCalendar", {
 		title: "SinglePlanningCalendar",
+		dateSelectionMode: "MultiSelect",
 		startDate: UI5Date.getInstance(2018, 6, 9),
 		startHour: 8,
 		endHour: 20,

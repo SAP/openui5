@@ -2690,6 +2690,55 @@ sap.ui.define([
 		oOtherButton.destroy();
 	});
 
+	QUnit.test("Modal popover is not auto-closed if the opener is currently not visible", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+		// Arrange
+		var oOpenButton = new Button({
+			text: "Open Popover"
+		});
+		var oOtherButton = new Button({
+			text: "Other Button"
+		});
+
+		page.addContent(oOpenButton);
+		page.addContent(oOtherButton);
+
+		var oPopover = new Popover({
+			modal: true,
+			title: "Popover Title",
+			content: [
+				new Button({
+					text: "Popover Button"
+				})
+			]
+		});
+
+		oPopover._followOfTolerance = 100000000;
+
+		// Act
+		await nextUIUpdate(this.clock);
+		oPopover.openBy(oOpenButton);
+		await nextUIUpdate(this.clock);
+		this.clock.tick(500);
+
+		oOpenButton.getDomRef().style.position = "absolute";
+		oOpenButton.getDomRef().style.width = "100px";
+
+		Popup.checkDocking.call(oPopover.oPopup);
+
+		this.clock.tick(500);
+
+		// Assert
+		assert.ok(oPopover.isOpen(), "Popover is not auto closed");
+
+		// Clean
+		runAllFakeTimersAndRestore(this.clock);
+
+		oPopover.destroy();
+		oOpenButton.destroy();
+		oOtherButton.destroy();
+	});
+
 	QUnit.module("Popover scroll width",{
 		beforeEach: async function() {
 			this.clock = sinon.useFakeTimers();

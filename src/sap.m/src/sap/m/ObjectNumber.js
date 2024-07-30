@@ -302,15 +302,15 @@ sap.ui.define([
 			sResult += sId + "-number ";
 		}
 
-		if (this.getUnit()) {
+		if (this.getUnit() && this.getEmptyIndicatorMode() === EmptyIndicatorMode.Off) {
 			sResult += sId + "-unit ";
 		}
 
-		if (this.getEmphasized()) {
+		if ((this.getNumber() && this.getEmphasized())) {
 			sResult += sId + "-emphasized ";
 		}
 
-		if (this.getState() !== ValueState.None) {
+		if ((this.getNumber() && this.getState() !== ValueState.None)) {
 			sResult += sId + "-state";
 		}
 

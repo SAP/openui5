@@ -412,9 +412,6 @@ sap.ui.define([
 
 				// TODO: adopt this to NavContainer's public API once a parameter for back navigation transition name is available
 				this._navContainer._pageStack[this._navContainer._pageStack.length - 1].transition = "slide";
-			} else {
-				// if the update is just on the item's props, do not navigate back and forward
-				this._updateDescriptionPage(aItems[0], aListItems[0]);
 			}
 		} else if (aListItems.length === 0) {
 			this._navContainer.backToTop();
@@ -422,6 +419,12 @@ sap.ui.define([
 
 		// Bind automatically to the MessageModel if no items are bound
 		this._makeAutomaticBinding();
+	};
+
+	MessageView.prototype._updateDescription = function (oItem) {
+		if (!this._isListPage() && oItem._oListItem) {
+			this._updateDescriptionPage(oItem, oItem._oListItem);
+		}
 	};
 
 	/**
@@ -816,6 +819,7 @@ sap.ui.define([
 		}
 
 		oListItem._oMessageItem = oMessageItem;
+		oMessageItem._oListItem = oListItem;
 
 		return oListItem;
 	};
