@@ -3,19 +3,19 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/Utils",
 	"sap/base/util/isEmptyObject",
-	"sap/base/i18n/Localization",
-	"sap/ui/fl/Utils"
+	"sap/base/i18n/Localization"
 ], function(
 	FlexObjectState,
 	ManifestUtils,
 	Storage,
+	Utils,
 	isEmptyObject,
-	Localization,
-	Utils
+	Localization
 ) {
 	"use strict";
 
@@ -39,7 +39,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> in case translatable texts are present
 	 */
 	TranslationAPI.hasTranslationRelevantDirtyChanges = function(mPropertyBag) {
-		return FlexObjectState.getDirtyFlexObjects(mPropertyBag).some(function(oChange) {
+		return FlexObjectState.getDirtyFlexObjects(ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector)).some(function(oChange) {
 			return !isEmptyObject(oChange.getTexts());
 		});
 	};

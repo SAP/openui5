@@ -2,20 +2,20 @@
 
 sap.ui.define([
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/Control",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Utils,
-	LayerUtils,
 	SmartVariantManagementApplyAPI,
 	UIComponent,
 	Control,
+	States,
 	FlexState,
 	LrepConnector,
 	LoaderExtensions,
@@ -70,19 +70,18 @@ sap.ui.define([
 				name: "A Variant",
 				content: {}
 			}];
+			var oStandardVariant = {
+				name: sStandardVariantTitle
+			};
 
 			var oExternalDataStored = {
 				variants: aVariants,
-				standardVariant: {
-					name: sStandardVariantTitle
-				},
+				standardVariant: oStandardVariant,
 				controlId: "controlId1"
 			};
 			return SmartVariantManagementApplyAPI.loadVariants({
 				control: this.oControl,
-				standardVariant: {
-					name: sStandardVariantTitle
-				},
+				standardVariant: oStandardVariant,
 				variants: aVariants
 			})
 			.then(function(oResponse) {
@@ -102,6 +101,11 @@ sap.ui.define([
 				assert.strictEqual(oStandardVariant.getFavorite(), true, "which is by default a favorite");
 				assert.strictEqual(oStandardVariant.getChanges().length, 1, "one change was applied on the standard variant");
 				assert.strictEqual(oStandardVariant.getChanges()[0].getId(), "id_1607667712160_48_standardVariant", "with the correct id");
+				assert.strictEqual(
+					oStandardVariant.getState(),
+					States.LifecycleState.PERSISTED,
+					"the state of the standard variant is set to persisted"
+				);
 
 				assert.strictEqual(oResponse.defaultVariantId, "variant_2", "the correct variant is returned as default");
 
@@ -122,6 +126,10 @@ sap.ui.define([
 				assert.strictEqual(aVariants[0].getFavorite(), true, "which was changed to be a favorite");
 				assert.strictEqual(aVariants[0].getExecuteOnSelection(), false, "and is not executed on selection by default");
 				assert.strictEqual(aVariants[0].getName(), "C Variant", "and the oData variant has the correct title");
+				assert.ok(
+					aVariants.every((oVariant) => oVariant.getState() === States.LifecycleState.PERSISTED),
+					"the state of other variants is set to persisted"
+				);
 				assert.strictEqual(aVariants[1].getVariantId(), "variant_4", "variant_4 is found");
 				assert.strictEqual(aVariants[1].getFavorite(), false, "which is NOT a favorite");
 				assert.strictEqual(

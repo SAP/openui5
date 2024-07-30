@@ -44,7 +44,6 @@ sap.ui.define([
 		var sReference = getFlexReferenceForControl(mPropertyBag.control);
 
 		return Versions.getVersionsModel({
-			nonNormalizedReference: sReference,
 			reference: sReference,
 			layer: mPropertyBag.layer
 		});
@@ -253,7 +252,6 @@ sap.ui.define([
 		FlexInfoSession.setByReference(oFlexInfo, sReference);
 
 		return Versions.activate({
-			nonNormalizedReference: sReference,
 			reference: sReference,
 			layer: mPropertyBag.layer,
 			title: mPropertyBag.title,
@@ -284,7 +282,6 @@ sap.ui.define([
 		const oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
 		const sReference = getFlexReferenceForControl(oAppComponent);
 		return Versions.discardDraft({
-			nonNormalizedReference: sReference,
 			reference: sReference,
 			layer: mPropertyBag.layer
 		})

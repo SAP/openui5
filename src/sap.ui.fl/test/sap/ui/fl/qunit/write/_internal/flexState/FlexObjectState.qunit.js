@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/api/Version",
@@ -23,6 +24,7 @@ sap.ui.define([
 	Control,
 	UIComponent,
 	FlexObjectFactory,
+	ApplyFlexObjectState,
 	FlexState,
 	ManifestUtils,
 	Version,
@@ -433,41 +435,22 @@ sap.ui.define([
 			assert.strictEqual(aFlexObjects[3].getChangeType(), "dirtyAddGroup", "the fourth change from the persistence is present");
 		});
 
-		QUnit.test("GetDirty - Given flex objects and dirty changes are present in the ChangePersistence", async function(assert) {
-			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {
-				changes: createTwoChangeDefs()
-			});
-			addDirtyChanges();
-			const aFlexObjects = await FlexObjectState.getDirtyFlexObjects({
-				selector: this.oAppComponent
-			});
-			assert.strictEqual(aFlexObjects.length, 2, "an array with two entries is returned");
-			assert.strictEqual(aFlexObjects[0].getChangeType(), "dirtyRenameField", "the first change from the persistence is present");
-			assert.strictEqual(aFlexObjects[1].getChangeType(), "dirtyAddGroup", "the second change from the persistence is present");
-		});
-
 		QUnit.test("hasDirtyObjects - Given flex objects and dirty changes are present in the ChangePersistence", function(assert) {
-			var oStubGetChangePersistenceForComponent = sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns({
-				getDirtyChanges() {
-					return ["mockDirty"];
-				}
-			});
-			var oStubCompStateHasDirtyChanges = sandbox.stub(CompVariantState, "hasDirtyChanges").returns(true);
-			assert.strictEqual(FlexObjectState.hasDirtyFlexObjects({selector: this.oAppComponent}), true, "hasDirtyFlexObjects return true");
-			assert.strictEqual(oStubGetChangePersistenceForComponent.calledOnce, true, "getChangePersistenceForComponent called one");
-			assert.strictEqual(oStubCompStateHasDirtyChanges.calledOnce, false, "CompVariantState.hasDirtyChanges is not called");
+			const oGetDirtyFlexObjectsStub = sandbox.stub(ApplyFlexObjectState, "getDirtyFlexObjects").returns(["mockDirty"]);
+			const oStubCompStateHasDirtyChanges = sandbox.stub(CompVariantState, "hasDirtyChanges").returns(true);
+			const bHasDirtyFlexObjects = FlexObjectState.hasDirtyFlexObjects({selector: this.oAppComponent});
+			assert.ok(bHasDirtyFlexObjects, "hasDirtyFlexObjects returns true");
+			assert.strictEqual(oGetDirtyFlexObjectsStub.callCount, 1, "getDirtyFlexObjects is called once");
+			assert.strictEqual(oStubCompStateHasDirtyChanges.callCount, 0, "CompVariantState.hasDirtyChanges is not called");
 		});
 
 		QUnit.test("hasDirtyObjects - Given flex objects and dirty changes are present in the CompVariantState", function(assert) {
-			var oStubGetChangePersistenceForComponent = sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns({
-				getDirtyChanges() {
-					return [];
-				}
-			});
-			var oStubCompStateHasDirtyChanges = sandbox.stub(CompVariantState, "hasDirtyChanges").returns(true);
-			assert.strictEqual(FlexObjectState.hasDirtyFlexObjects({selector: this.oAppComponent}), true, "hasDirtyFlexObjects return true");
-			assert.strictEqual(oStubGetChangePersistenceForComponent.calledOnce, true, "getChangePersistenceForComponent called once");
-			assert.strictEqual(oStubCompStateHasDirtyChanges.calledOnce, true, "CompVariantState.hasDirtyChanges is not called");
+			const oGetDirtyFlexObjectsStub = sandbox.stub(ApplyFlexObjectState, "getDirtyFlexObjects").returns([]);
+			const oStubCompStateHasDirtyChanges = sandbox.stub(CompVariantState, "hasDirtyChanges").returns(true);
+			const bHasDirtyFlexObjects = FlexObjectState.hasDirtyFlexObjects({selector: this.oAppComponent});
+			assert.ok(bHasDirtyFlexObjects, "hasDirtyFlexObjects returns true");
+			assert.strictEqual(oGetDirtyFlexObjectsStub.callCount, 1, "getDirtyFlexObjects is called once");
+			assert.strictEqual(oStubCompStateHasDirtyChanges.callCount, 1, "CompVariantState.hasDirtyChanges is called");
 		});
 
 		QUnit.test("Save", function(assert) {

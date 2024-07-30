@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/_internal/Versions",
@@ -22,6 +23,7 @@ sap.ui.define([
 	Reverter,
 	FlexObjectFactory,
 	States,
+	FlexObjectState,
 	FlexState,
 	Version,
 	Versions,
@@ -259,7 +261,7 @@ sap.ui.define([
 
 		QUnit.test("when saveSequenceOfDirtyChanges is called without changes and the persistence returning an empty array", async function(assert) {
 			const oExpectedResponse = {response: []};
-			sandbox.stub(this.oFlexController._oChangePersistence, "getDirtyChanges").returns([{fileName: "foo"}]);
+			sandbox.stub(FlexObjectState, "getDirtyFlexObjects").returns([{fileName: "foo"}]);
 			const oSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves(oExpectedResponse);
 			const oCheckUpdateStub = sandbox.stub();
 			sandbox.stub(FlexState, "getFlexObjectsDataSelector").returns({

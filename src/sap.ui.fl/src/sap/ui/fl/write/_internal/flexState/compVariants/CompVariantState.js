@@ -99,7 +99,7 @@ sap.ui.define([
 		}
 	}
 
-	function updateObjectAndStorage(oFlexObject, oStoredResponse, sParentVersion) {
+	function updateObjectAndStorage(oFlexObject, oStoredResponse, sParentVersion, sReference) {
 		return Storage.update({
 			flexObject: oFlexObject.convertToFileContent(),
 			layer: oFlexObject.getLayer(),
@@ -123,6 +123,7 @@ sap.ui.define([
 			// update StorageResponse
 			var aObjectArray = getSubSection(oStoredResponse.changes.comp, oFlexObject);
 			var oFileContent = oFlexObject.convertToFileContent();
+			FlexState.getFlexObjectsDataSelector().checkUpdate({ reference: sReference });
 			updateArrayByName(aObjectArray, oFileContent);
 			return oFileContent;
 		});
@@ -150,7 +151,7 @@ sap.ui.define([
 		}
 	}
 
-	function deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion) {
+	function deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion, sReference) {
 		var oFileContent = oFlexObject.convertToFileContent();
 		return Storage.remove({
 			flexObject: oFileContent,
@@ -169,6 +170,7 @@ sap.ui.define([
 				getSubSection(oStoredResponse.changes.comp, oFlexObject),
 				oFileContent.fileName
 			);
+			FlexState.getFlexObjectsDataSelector().checkUpdate({ reference: sReference });
 			return oFileContent;
 		});
 	}
@@ -890,6 +892,7 @@ sap.ui.define([
 				// update StorageResponse
 				const oFileContent = oFlexObject.convertToFileContent();
 				getSubSection(oStoredResponse.changes.comp, oFlexObject).push(oFileContent);
+				FlexState.getFlexObjectsDataSelector().checkUpdate({ reference: mPropertyBag.reference });
 				return oFileContent;
 			});
 		}
@@ -901,10 +904,10 @@ sap.ui.define([
 					return writeObjectAndAddToState(oFlexObject, oStoredResponse, sParentVersion);
 				case States.LifecycleState.DIRTY:
 					ifVariantClearRevertData(oFlexObject);
-					return updateObjectAndStorage(oFlexObject, oStoredResponse, sParentVersion);
+					return updateObjectAndStorage(oFlexObject, oStoredResponse, sParentVersion, mPropertyBag.reference);
 				case States.LifecycleState.DELETED:
 					ifVariantClearRevertData(oFlexObject);
-					return deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion);
+					return deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion, mPropertyBag.reference);
 				default:
 					return undefined;
 			}

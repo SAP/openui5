@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
@@ -28,6 +29,7 @@ sap.ui.define([
 	Reverter,
 	ChangeUtils,
 	FlexObjectFactory,
+	States,
 	UIChange,
 	FlexState,
 	DependencyHandler,
@@ -271,6 +273,17 @@ sap.ui.define([
 				{ id: "controlId1" }, oAppComponent
 			);
 			assert.strictEqual(aOpenDependentChanges.length, 0, "then there are no dependencies found");
+		});
+
+		QUnit.test("getDirtyFlexObjects", function(assert) {
+			const oDataSelector = FlexState.getFlexObjectsDataSelector();
+			const aFlexObjects = oDataSelector.get({reference: sReference});
+			assert.strictEqual(FlexObjectState.getDirtyFlexObjects(sReference).length, 0, "initially there are no dirty changes");
+			aFlexObjects[0].setState(States.LifecycleState.DELETED);
+			aFlexObjects[2].setState(States.LifecycleState.NEW);
+			aFlexObjects[4].setState(States.LifecycleState.DIRTY);
+			oDataSelector.checkUpdate();
+			assert.strictEqual(FlexObjectState.getDirtyFlexObjects(sReference).length, 3, "then there are three dirty changes");
 		});
 	});
 
