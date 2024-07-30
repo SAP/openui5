@@ -2174,6 +2174,48 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
+	QUnit.test("Grid cells accessibility description", async function (assert) {
+		// Prepare
+		var oCalendarStartDate = UI5Date.getInstance(2018, 11, 24),
+			oAppointment = new CalendarAppointment({
+				title: "Appointment",
+				startDate: UI5Date.getInstance(2018, 11, 24, 15, 30, 0),
+				endDate: UI5Date.getInstance(2018, 11, 24, 16, 30, 0)
+			}),
+			oBlokcer = new CalendarAppointment({
+				title: "Blocker",
+				startDate: UI5Date.getInstance(2018, 11, 24),
+				endDate: UI5Date.getInstance(2018, 11, 27)
+			}),
+			oSPC = new SinglePlanningCalendar({
+				startDate: oCalendarStartDate,
+				appointments: [oAppointment, oBlokcer]
+			});
+
+		oSPC.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		var cell14 = oSPC.getDomRef().querySelector("[data-sap-start-date='20181224-1400']");
+		var cell15 = oSPC.getDomRef().querySelector("[data-sap-start-date='20181224-1500']");
+		var cell16 = oSPC.getDomRef().querySelector("[data-sap-start-date='20181224-1600']");
+		var cell17 = oSPC.getDomRef().querySelector("[data-sap-start-date='20181224-1700']");
+
+		var cell25 = oSPC.getDomRef().querySelector("[data-sap-start-date='20181225-0000']");
+		var cell28 = oSPC.getDomRef().querySelector("[data-sap-start-date='20181228-0000']");
+
+		// Assert
+		assert.notOk(cell14.querySelector("span").innerText.includes("Contains Appointments"), "Cells description properly set");
+		assert.ok(cell15.querySelector("span").innerText.includes("Contains Appointments"), "Cells description properly set");
+		assert.ok(cell16.querySelector("span").innerText.includes("Contains Appointments"), "Cells description properly set");
+		assert.notOk(cell17.querySelector("span").innerText.includes("Contains Appointments"), "Cells description properly set");
+
+		assert.ok(cell25.querySelector("span").innerText.includes("Contains Appointments"), "Cells description properly set");
+		assert.notOk(cell28.querySelector("span").innerText.includes("Contains Appointments"), "Cells description properly set");
+
+		// Clean up
+		oSPC.destroy();
+	});
+
 	QUnit.module("Misc");
 
 	QUnit.test("isAllDayAppointment", function (assert) {
