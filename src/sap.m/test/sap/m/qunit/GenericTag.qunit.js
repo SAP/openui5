@@ -155,6 +155,7 @@ sap.ui.define([
 			this.oGenericTag = new GenericTag({
 				press: this.onPressCallback
 			}).placeAt(TESTS_DOM_CONTAINER);
+			this.clickSpy = this.spy(this.oGenericTag, "_firePress");
 		},
 		afterEach: function() {
 			this.oGenericTag.destroy();
@@ -169,6 +170,7 @@ sap.ui.define([
 
 		//assert
 		assert.strictEqual(this.onPressCallback.callCount, 1, "'press' event should be triggered.");
+		assert.strictEqual(this.clickSpy.getCall(0).args[0].isMarked(), true, "Original event is marked as handled by control");
 	});
 
 	QUnit.test("GenericTag - onkeyup should fire press event when pressing SPACE", function(assert) {
@@ -177,6 +179,7 @@ sap.ui.define([
 
 		//assert
 		assert.strictEqual(this.onPressCallback.callCount, 1, "'press' event should be triggered.");
+		assert.strictEqual(this.clickSpy.getCall(0).args[0].isMarked(), true, "Original event is marked as handled by control");
 	});
 
 	QUnit.test("GenericTag - onkeydown should fire press event when pressing ENTER", function(assert) {
@@ -185,6 +188,7 @@ sap.ui.define([
 
 		//assert
 		assert.strictEqual(this.onPressCallback.callCount, 1, "'press' event should be triggered.");
+		assert.strictEqual(this.clickSpy.getCall(0).args[0].isMarked(), true, "Original event is marked as handled by control");
 	});
 
 	QUnit.test("GenericTag - action interupt", function(assert) {
