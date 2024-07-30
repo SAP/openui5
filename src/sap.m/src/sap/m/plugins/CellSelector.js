@@ -402,7 +402,7 @@ sap.ui.define([
 	CellSelector.prototype._deregisterEvents = function() {
 		var oControl = this.getControl();
 		if (oControl) {
-			oControl.detachEvent(this.getConfig("scrollEvent"), this._fnControlUpdate);
+			this.getConfig("scrollEvent") && oControl.detachEvent(this.getConfig("scrollEvent"), this._fnControlUpdate);
 			this.getConfig("detachSelectionChange", oControl, this._fnRemoveSelection);
 			this.getConfig("detachBindingUpdate", oControl, this._fnOnBindingUpdate);
 			var oScrollArea = oControl.getDomRef(this.getConfig("scrollArea"));
