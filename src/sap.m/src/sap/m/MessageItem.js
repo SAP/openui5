@@ -111,6 +111,8 @@ sap.ui.define([
 				sType = this.getType().toLowerCase(),
 				// Exclude list properties. Some properties have already been set and shouldn't be changed in the StandardListItem
 				aPropertiesNotToUpdateInList = ["description", "type", "groupName"],
+				// properties affecting details page rendering
+				aDetailsPageUpdatingProps = ["type", "title", "subtitle", "description", "markupDescription", "longtextUrl", "counter", "groupName", "activeTitle"],
 				// TODO: the '_oMessagePopoverItem' needs to be updated to proper name in the eventual sap.m.MessageView control
 				fnUpdateProperty = function (sName, oItem) {
 					if (oItem._oMessagePopoverItem.getId() === this.getId() && oItem.getMetadata().getProperty(sName)) {
@@ -129,7 +131,13 @@ sap.ui.define([
 				this._updatePropertiesFn();
 			}
 
-			return Item.prototype.setProperty.apply(this, arguments);
+			Item.prototype.setProperty.apply(this, arguments);
+
+			if (aDetailsPageUpdatingProps.includes(sPropertyName) && oParent && oParent._updateDescription) {
+				oParent._updateDescription(this);
+			}
+
+			return this;
 		};
 
 		/**

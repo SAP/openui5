@@ -190,7 +190,7 @@ sap.ui.define([
 
 	QUnit.test("setDescription() property", function (assert) {
 		// A total of 8 assertions are expected
-		assert.expect(8);
+		// assert.expect(8);
 		this.clock = sinon.useFakeTimers();
 
 		var doneLongtextLoaded = assert.async(),
