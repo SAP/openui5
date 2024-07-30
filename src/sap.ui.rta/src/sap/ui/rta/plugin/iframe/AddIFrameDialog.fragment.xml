@@ -160,8 +160,15 @@
 									<items>
 										<ColumnListItem type="Active" press="onParameterPress">
 											<cells>
-												<Text text="{dialogInfo>label}"/>
-												<Text text="{dialogInfo>value}" wrapping="false"/>
+												<Text
+													text="{dialogInfo>label}"
+													tooltip="{dialogInfo>label}"
+												/>
+												<Text
+													text="{dialogInfo>value}"
+													tooltip="{=${dialogInfo>value}.toString()}"
+													wrapping="false"
+												/>
 											</cells>
 										</ColumnListItem>
 									</items>
