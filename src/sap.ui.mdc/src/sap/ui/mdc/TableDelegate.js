@@ -72,6 +72,9 @@ sap.ui.define([
 	 * The result of this function must be kept stable throughout the lifecycle of your application.
 	 * Any changes of the returned values might result in undesired effects.
 	 *
+	 * <b>Note</b>:
+	 * Existing properties (set via <code>sap.ui.mdc.Table#setPropertyInfo</code>) must not be removed and their attributes must not be changed during the {@link module:sap/ui/mdc/TableDelegate.fetchProperties fetchProperties} callback. Otherwise validation errors might occur whenever personalization-related control features (such as the opening of any personalization dialog) are activated.
+	 *
 	 * @name module:sap/ui/mdc/TableDelegate.fetchProperties
 	 * @function
 	 * @param {sap.ui.mdc.Table} oTable Instance of the table
