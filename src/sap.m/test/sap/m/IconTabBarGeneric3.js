@@ -81,6 +81,11 @@ function (App,
 			});
 			label4a.addStyleClass("labelGen3");
 
+			var label4b = new Label({
+				text: "IconTabBar text only with Hindi texts"
+			});
+			label4b.addStyleClass("labelGen3");
+
 			var label5 = new Label({
 				text: "IconTabBar with sub filters"
 			});
@@ -1761,6 +1766,17 @@ function (App,
 					]
 				});
 
+				var itb4b = new sap.m.IconTabBar("itb4b", {
+					items: [
+						new sap.m.IconTabFilter({
+							text: "खोजें और चयन करें"
+						}),
+						new sap.m.IconTabFilter({
+							text: "खोजें और चयन करें 1"
+						})
+					]
+				});
+
 				var itb5 = new sap.m.IconTabBar("itb5", {
 					expandable: false,
 					items: [
@@ -2262,6 +2278,8 @@ function (App,
 					itb4,
 					label4a,
 					itb4a,
+					label4b,
+					itb4b,
 					label5,
 					itb5,
 					label5a,
