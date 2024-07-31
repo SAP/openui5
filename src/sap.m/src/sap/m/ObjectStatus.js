@@ -213,10 +213,10 @@ sap.ui.define([
 	ObjectStatus.prototype._getAriaIconTitle = function() {
 		var vIconInfo;
 		if (this._oImageControl.isA("sap.ui.core.Icon")) {
-			vIconInfo = _IconRegistry.getIconInfo(this._oImageControl.getSrc(), undefined, "mixed").text;
+			vIconInfo = _IconRegistry.getIconInfo(this._oImageControl.getSrc(), undefined, "mixed");
 		}
 
-		return vIconInfo ? vIconInfo : Library.getResourceBundleFor("sap.m").getText("OBJECT_STATUS_ICON");
+		return vIconInfo ? vIconInfo.text : Library.getResourceBundleFor("sap.m").getText("OBJECT_STATUS_ICON");
 	};
 
 	/**

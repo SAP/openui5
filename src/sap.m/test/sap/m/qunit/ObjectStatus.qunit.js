@@ -751,6 +751,22 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
+		QUnit.test("Internal icon ARIA for icon-only ObjectStatus that can't be find in the Icon Registry", async function (assert) {
+		// Arrange
+		var oObjectStatus = new ObjectStatus("iconTooltipStatus", {
+				icon: "sap-icon://test"
+			});
+
+		oObjectStatus.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(document.getElementById("iconTooltipStatus-icon-title").innerHTML, Library.getResourceBundleFor("sap.m").getText("OBJECT_STATUS_ICON"), "Icon has alternative text if it is not found in the IconRegistry");
+
+		// Cleanup
+		oObjectStatus.destroy();
+	});
+
 	QUnit.test("Internal icon ARIA for non-icon-only ObjectStatus", async function (assert) {
 		// Arrange
 		var oObjectStatus = new ObjectStatus({
