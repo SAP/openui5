@@ -35,7 +35,7 @@ sap.ui.define([
 		TestUtils;
 
 	if (bRealOData) {
-		document.title = document.title + " (real OData)";
+		document.title += " (real OData)";
 	}
 
 	/**
@@ -107,8 +107,8 @@ sap.ui.define([
 		try {
 			deeplyContains(oActual, oExpected, "/");
 			QUnit.assert.pushResult({
-				result: bExpectSuccess,
-				actual:oActual,
+				result : bExpectSuccess,
+				actual : oActual,
 				expected : oExpected,
 				message : sMessage
 			});
@@ -179,7 +179,7 @@ sap.ui.define([
 		 * @see sap.ui.model.odata.v4.lib._Helper.createRequestMethod
 		 * @ui5-restricted sap.ui.model.odata.v4
 		 */
-		checkGetAndRequest: function (oTestContext, oTestee, assert, sMethodName, aArguments,
+		checkGetAndRequest : function (oTestContext, oTestee, assert, sMethodName, aArguments,
 				bThrow) {
 			var oExpectation,
 				sGetMethodName = sMethodName.replace("fetch", "get"),
@@ -392,8 +392,7 @@ sap.ui.define([
 
 				if (oFixtureResponse.source) {
 					oResponse.message = readMessage(sBase + oFixtureResponse.source);
-					oResponse.headers["Content-Type"] = oResponse.headers["Content-Type"]
-						|| contentType(oFixtureResponse.source);
+					oResponse.headers["Content-Type"] ||= contentType(oFixtureResponse.source);
 				} else if (typeof oFixtureResponse.message === "object") {
 					oResponse.headers["Content-Type"] = sJson;
 					oResponse.message = JSON.stringify(oFixtureResponse.message);
@@ -514,7 +513,7 @@ sap.ui.define([
 
 				if (mUrlToResponses[sRequestLine]) {
 					return {
-						responses: mUrlToResponses[sRequestLine]
+						responses : mUrlToResponses[sRequestLine]
 					};
 				}
 
@@ -525,6 +524,7 @@ sap.ui.define([
 				aMatches = [];
 				aMatchingResponses = aRegexpResponses.filter(function (oResponse) {
 					var aMatch = sRequestLine.match(oResponse.regExp);
+
 					if (aMatch) {
 						aMatches.push(aMatch);
 					}
@@ -574,11 +574,11 @@ sap.ui.define([
 					oResponse,
 					aResponses = oMatch && oMatch.responses;
 
-				aResponses = (aResponses || []).filter(function (oResponse) {
-					if (typeof oResponse.ifMatch === "function") {
-						return oResponse.ifMatch(oRequest);
+				aResponses = (aResponses || []).filter(function (oResponse0) {
+					if (typeof oResponse0.ifMatch === "function") {
+						return oResponse0.ifMatch(oRequest);
 					}
-					return !oResponse.ifMatch || oResponse.ifMatch.test(oRequest.requestBody);
+					return !oResponse0.ifMatch || oResponse0.ifMatch.test(oRequest.requestBody);
 				});
 				if (aResponses.length) {
 					oResponse = aResponses[0];
@@ -621,7 +621,7 @@ sap.ui.define([
 							? ", alternative (ifMatch) #" + iAlternative
 							: ""),
 						// Note: JSON.stringify(oRequest.requestHeaders) outputs too much for now
-						'{"If-Match":' + JSON.stringify(oRequest.requestHeaders["If-Match"]) + '}',
+						'{"If-Match":' + JSON.stringify(oRequest.requestHeaders["If-Match"]) + "}",
 						"sap.ui.test.TestUtils");
 				} else {
 					oResponse = error(404, oRequest, "No mock data found");
@@ -685,9 +685,9 @@ sap.ui.define([
 					oRequest.method = aMatches[1];
 					oRequest.url = sServiceBase + aMatches[2];
 					aLines.forEach(function (sLine) {
-						var aMatches = rHeaderLine.exec(sLine);
-						if (aMatches) {
-							oRequest.requestHeaders[aMatches[1]] = aMatches[2];
+						const aMatches0 = rHeaderLine.exec(sLine);
+						if (aMatches0) {
+							oRequest.requestHeaders[aMatches0[1]] = aMatches0[2];
 						}
 					});
 				}
@@ -697,6 +697,7 @@ sap.ui.define([
 			// POST handler which recognizes a $batch
 			function post(oRequest) {
 				var sUrl = oRequest.url;
+
 				if (rBatch.test(sUrl)) {
 					batch(sUrl.slice(0, sUrl.indexOf("/$batch") + 1), oRequest);
 				} else {
@@ -869,10 +870,10 @@ sap.ui.define([
 			}
 
 			try {
-				var fnGetBundle = Library.prototype._loadResourceBundle;
+				const fnGetBundle = Library.prototype._loadResourceBundle;
+				oSandbox.stub(Library.prototype, "_loadResourceBundle").callsFake(function () {
+					var oResourceBundle = fnGetBundle.apply(this, [arguments[0], /*sync*/true]);
 
-				oSandbox.stub(Library.prototype, "_loadResourceBundle").callsFake(function() {
-					var oResourceBundle = fnGetBundle.apply(this, [arguments[0], true /* sync */]);
 					return {
 						getText : function (sKey, aArgs) {
 							var sResult = sKey,
@@ -1063,7 +1064,7 @@ sap.ui.define([
 		 *   a Sinon sandbox as created using <code>sinon.sandbox.create()</code>
 		 * @return {object} Returns the spy
 		 */
-		spyFetch : function(oSandbox) {
+		spyFetch : function (oSandbox) {
 			var spy = oSandbox.spy(XMLHttpRequest.prototype, "open");
 
 			/**
@@ -1071,7 +1072,7 @@ sap.ui.define([
 			 * @param  {number} iCall The 'nth' call
 			 * @return {string} Returns the request URL
 			 */
-			spy.calledWithUrl = function(iCall) {
+			spy.calledWithUrl = function (iCall) {
 				return spy.getCall(iCall).args[1];
 			};
 

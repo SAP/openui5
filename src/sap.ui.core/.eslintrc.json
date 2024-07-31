@@ -18,12 +18,14 @@
 			"files": [
 				"src/sap/ui/core/util/XMLPreprocessor.js",
 				"src/sap/ui/model/odata/v4/**/*.js",
+				"src/sap/ui/test/TestUtils.js",
 				"test/sap/ui/core/demokit/sample/common/**/*.js",
 				"test/sap/ui/core/demokit/sample/odata/v4/**/*.js",
 				"test/sap/ui/core/demokit/sample/ViewTemplate/types/**/*.js",
 				"test/sap/ui/core/demokit/tutorial/odatav4/**/*.js",
 				"test/sap/ui/core/qunit/odata/v4/**/*.js",
-				"test/sap/ui/core/qunit/util/XMLPreprocessor.qunit.js"
+				"test/sap/ui/core/qunit/util/XMLPreprocessor.qunit.js",
+				"test/sap/ui/test/qunit/TestUtils.qunit.js"
 			],
 			"rules": {
 				"consistent-return": "off", // override "warn"
