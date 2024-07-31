@@ -590,6 +590,20 @@ sap.ui.define([
 				.getItems()[0]);
 	};
 
+	Panel.prototype._getLabelControls = function() {
+		return this._getLinkArea().getItems().map((HorizontalLayout) /* see _fnLinkItemFactory */ => // Label
+			HorizontalLayout.getContent()[0] // HBox
+				.getItems()[1] // VBox
+				.getItems()[1]);
+	};
+
+	Panel.prototype._getDescriptionTextControls = function() {
+		return this._getLinkArea().getItems().map((HorizontalLayout) /* see _fnLinkItemFactory */ => // Text
+			HorizontalLayout.getContent()[0] // HBox
+				.getItems()[1] // VBox
+				.getItems()[2]);
+	};
+
 	Panel.prototype._getFooterArea = function() {
 		return this.getAggregation("_content").getContent()[iFooterAreaIndex];
 	};

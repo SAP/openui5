@@ -47,36 +47,44 @@ sap.ui.define([
 		})
 	];
 
-	const fnHasVisibleLink = function(assert, oPanel, sText, bVisible) {
-		const aElements = oPanel.getAggregation("_content").$().find("a:visible");
+	const fnHasVisibleControlWithText = (aControls, sText, bVisible) => {
 		let bFound = false;
-		aElements.each(function(iIndex) {
-			if (aElements[iIndex].text === sText) {
+		for (const oControl of aControls) {
+			if (oControl.getText() === sText && oControl.getVisible()) {
 				bFound = true;
 			}
-		});
-		assert.equal(bFound, bVisible);
+		}
+		return bFound;
 	};
 
-	const fnHasVisibleText = function(assert, oPanel, sText, bVisible) {
-		const aElements = oPanel.getAggregation("_content").$().find("span:visible");
-		let bFound = false;
-		aElements.each(function(iIndex) {
-			if (aElements[iIndex].textContent === sText) {
-				bFound = true;
-			}
-		});
-		assert.equal(bFound, bVisible);
+	const fnHasVisibleLink = function(assert, oPanel, sText, bVisible) {
+		const aLinks = oPanel._getLinkControls();
+		const bFound = fnHasVisibleControlWithText(aLinks, sText, bVisible);
+		assert.equal(bFound, bVisible, `Should see ${bVisible ? "visible" : "invisible"} link with text ${sText}`);
 	};
+
+	const fnHasVisibleLabel = function(assert, oPanel, sText, bVisible) {
+		const aLabels = oPanel._getLabelControls();
+		const bFound = fnHasVisibleControlWithText(aLabels, sText, bVisible);
+		assert.equal(bFound, bVisible, `Should see ${bVisible ? "visible" : "invisible"} label with text ${sText}`);
+	};
+
+	/*
+	const fnHasVisibleText = function(assert, oPanel, sText, bVisible) {
+		const aTextControls = oPanel._getDescriptionTextControls();
+		const bFound = fnHasVisibleControlWithText(aTextControls, sText, bVisible);
+		assert.equal(bFound, bVisible, `Should see ${bVisible ? "visible" : "invisible"} description with text ${sText}`);
+	};
+ */
 
 	const fnHasVisibleMoreLinksButton = function(assert, oPanel, bVisible) {
-		assert.equal(oPanel.getAggregation("_content").$().find("button:visible").length, bVisible ? 1 : 0);
+		assert.equal(oPanel._getPersonalizationButton().getVisible(), bVisible, `Should see ${bVisible ? "visible" : "invisible"} personalization button`);
 		// fnHasVisibleText(assert, oPanel, Library.getResourceBundleFor("sap.ui.mdc").getText("info.POPOVER_DEFINE_LINKS"), bVisible);
 	};
 
 	const fnCheckAdditionalLinks = function(assert, oPanel) {
 		aAdditionaLinkItems.forEach(function(oLinkItem) {
-			fnHasVisibleText(assert, oPanel, oLinkItem.getText(), false);
+			fnHasVisibleLabel(assert, oPanel, oLinkItem.getText(), false);
 			fnHasVisibleLink(assert, oPanel, oLinkItem.getText(), false);
 		});
 	};
@@ -278,15 +286,15 @@ sap.ui.define([
 			];
 			this.checkLinks = function(assert, oPanel) {
 				fnHasVisibleLink(assert, oPanel, "item 00", false);
-				fnHasVisibleText(assert, oPanel, "item 00", false);
+				fnHasVisibleLabel(assert, oPanel, "item 00", false);
 
-				fnHasVisibleText(assert, oPanel, "item 01", false);
+				fnHasVisibleLabel(assert, oPanel, "item 01", false);
 				fnHasVisibleLink(assert, oPanel, "item 01", false);
 
-				fnHasVisibleText(assert, oPanel, "item 02", false);
+				fnHasVisibleLabel(assert, oPanel, "item 02", false);
 				fnHasVisibleLink(assert, oPanel, "item 02", false);
 
-				fnHasVisibleText(assert, oPanel, "item 03", false);
+				fnHasVisibleLabel(assert, oPanel, "item 03", false);
 				fnHasVisibleLink(assert, oPanel, "item 03", false);
 			};
 		},
@@ -370,16 +378,16 @@ sap.ui.define([
 				})
 			];
 			this.checkLinks = function(assert, oPanel) {
-				fnHasVisibleText(assert, oPanel, "item 00", true);
+				fnHasVisibleLabel(assert, oPanel, "item 00", true);
 				fnHasVisibleLink(assert, oPanel, "item 00", false);
 
-				fnHasVisibleText(assert, oPanel, "item 01", false);
+				fnHasVisibleLabel(assert, oPanel, "item 01", false);
 				fnHasVisibleLink(assert, oPanel, "item 01", true);
 
-				fnHasVisibleText(assert, oPanel, "item 02", false);
+				fnHasVisibleLabel(assert, oPanel, "item 02", false);
 				fnHasVisibleLink(assert, oPanel, "item 02", false);
 
-				fnHasVisibleText(assert, oPanel, "item 03", false);
+				fnHasVisibleLabel(assert, oPanel, "item 03", false);
 				fnHasVisibleLink(assert, oPanel, "item 03", false);
 			};
 		},
@@ -389,7 +397,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("superior 'item' and less items", function(assert) {
+	QUnit.test("superior 'item' and less items", async function(assert) {
 		const done = assert.async();
 		const oLink = new Link({
 			delegate: {
@@ -400,20 +408,19 @@ sap.ui.define([
 			}
 		});
 
-		oLink.getContent().then(async function(oPanel) {
-			oPanel.placeAt("qunit-fixture");
-			await nextUIUpdate();
+		const oPanel = await oLink.getContent();
+		oPanel.placeAt("qunit-fixture");
+		await nextUIUpdate();
 
-			fnHasVisibleMoreLinksButton(assert, oPanel, true);
+		fnHasVisibleMoreLinksButton(assert, oPanel, true);
 
-			this.checkLinks(assert, oPanel);
+		this.checkLinks(assert, oPanel);
 
-			done();
-			oPanel.destroy();
-		}.bind(this));
+		oPanel.destroy();
+		done();
 	});
 
-	QUnit.test("superior 'item' and many items", function(assert) {
+	QUnit.test("superior 'item' and many items", async function(assert) {
 		const done = assert.async();
 		const oLink = new Link({
 			delegate: {
@@ -424,19 +431,19 @@ sap.ui.define([
 			}
 		});
 
-		oLink.getContent().then(async function(oPanel) {
-			oPanel.placeAt("qunit-fixture");
-			await nextUIUpdate();
 
-			fnHasVisibleMoreLinksButton(assert, oPanel, true);
+		const oPanel = await oLink.getContent();
+		oPanel.placeAt("qunit-fixture");
+		await nextUIUpdate();
 
-			this.checkLinks(assert, oPanel);
+		fnHasVisibleMoreLinksButton(assert, oPanel, true);
 
-			fnCheckAdditionalLinks(assert, oPanel);
+		this.checkLinks(assert, oPanel);
 
-			done();
-			oPanel.destroy();
-		}.bind(this));
+		fnCheckAdditionalLinks(assert, oPanel);
+
+		oPanel.destroy();
+		done();
 	});
 
 	QUnit.module("sap.ui.mdc.Link: visibility of superior item and invalid item", {
@@ -462,16 +469,16 @@ sap.ui.define([
 				})
 			];
 			this.checkLinks = function(assert, oPanel) {
-				fnHasVisibleText(assert, oPanel, "item 00", false);
+				fnHasVisibleLabel(assert, oPanel, "item 00", false);
 				fnHasVisibleLink(assert, oPanel, "item 00", false);
 
-				fnHasVisibleText(assert, oPanel, "item 01", false);
+				fnHasVisibleLabel(assert, oPanel, "item 01", false);
 				fnHasVisibleLink(assert, oPanel, "item 01", true);
 
-				fnHasVisibleText(assert, oPanel, "item 02", false);
+				fnHasVisibleLabel(assert, oPanel, "item 02", false);
 				fnHasVisibleLink(assert, oPanel, "item 02", false);
 
-				fnHasVisibleText(assert, oPanel, "item 03", false);
+				fnHasVisibleLabel(assert, oPanel, "item 03", false);
 				fnHasVisibleLink(assert, oPanel, "item 03", false);
 			};
 		},
@@ -481,7 +488,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("superior 'item', invalid 'item' and less items", function(assert) {
+	QUnit.test("superior 'item', invalid 'item' and less items", async function(assert) {
 		const done = assert.async();
 		const oLink = new Link({
 			delegate: {
@@ -492,20 +499,19 @@ sap.ui.define([
 			}
 		});
 
-		oLink.getContent().then(async function(oPanel) {
-			oPanel.placeAt("qunit-fixture");
-			await nextUIUpdate();
+		const oPanel = await oLink.getContent();
+		oPanel.placeAt("qunit-fixture");
+		await nextUIUpdate();
 
-			fnHasVisibleMoreLinksButton(assert, oPanel, true);
+		fnHasVisibleMoreLinksButton(assert, oPanel, true);
 
-			this.checkLinks(assert, oPanel);
+		this.checkLinks(assert, oPanel);
 
-			done();
-			oPanel.destroy();
-		}.bind(this));
+		oPanel.destroy();
+		done();
 	});
 
-	QUnit.test("superior 'item', invalid 'item' and many items", function(assert) {
+	QUnit.test("superior 'item', invalid 'item' and many items", async function(assert) {
 		const done = assert.async();
 		const oLink = new Link({
 			delegate: {
@@ -516,19 +522,18 @@ sap.ui.define([
 			}
 		});
 
-		oLink.getContent().then(async function(oPanel) {
-			oPanel.placeAt("qunit-fixture");
-			await nextUIUpdate();
+		const oPanel = await oLink.getContent();
+		oPanel.placeAt("qunit-fixture");
+		await nextUIUpdate();
 
-			fnHasVisibleMoreLinksButton(assert, oPanel, true);
+		fnHasVisibleMoreLinksButton(assert, oPanel, true);
 
-			this.checkLinks(assert, oPanel);
+		this.checkLinks(assert, oPanel);
 
-			fnCheckAdditionalLinks(assert, oPanel);
+		fnCheckAdditionalLinks(assert, oPanel);
 
-			done();
-			oPanel.destroy();
-		}.bind(this));
+		oPanel.destroy();
+		done();
 	});
 
 	QUnit.module("sap.ui.mdc.Link: LinkDelegate tests");
