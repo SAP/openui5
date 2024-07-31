@@ -4,22 +4,25 @@
 /* ================================== */
 
 .sapMAT:hover {
-    outline:solid 0.1875rem @sapTile_Interactive_BorderColor;
-    background-color: @sapTile_Background;
-    box-shadow: none;
+	outline:solid 0.1875rem var(--sapTile_Interactive_BorderColor);
+	background-color: var(--sapTile_Background);
+	box-shadow: none;
 }
 
 .sapMAT:focus {
-    .sapMATFocusDiv {
-        border: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor !important;
-    }
-    .sapMGTFocusDiv {
-        border: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor !important;
-    }
+
+	.sapMATFocusDiv {
+		border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor) !important;
+	}
+
+	.sapMGTFocusDiv {
+		border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor) !important;
+	}
 }
 
 .sapMAT:active {
-    .sapMATFocusDiv {
-        border: none;
-    }
+
+	.sapMATFocusDiv {
+		border: none;
+	}
 }
