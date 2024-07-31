@@ -770,6 +770,60 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("and a connector is configured and a draft exists on an other version which was displayed while discard is called with only backend changes", function(assert) {
+			var sActiveVersion = "2";
+			var mPropertyBag = {
+				layer: Layer.CUSTOMER,
+				reference: this.reference,
+				appComponent: this.oAppComponent,
+				discardDraftAndKeepActiveVersion: true,
+				control: new Control(),
+				version: sActiveVersion
+			};
+			var oFirstVersion = {
+				activatedBy: "qunit",
+				activatedAt: "a while ago",
+				version: sActiveVersion
+			};
+			var oSecondVersion = {
+				activatedBy: "qunit",
+				activatedAt: "a while longer ago",
+				version: sActiveVersion
+			};
+
+			var aReturnedVersions = [
+				{version: Version.Number.Draft},
+				oFirstVersion,
+				oSecondVersion
+			];
+
+			stubStorageVersionsLoad(aReturnedVersions);
+			var oDiscardStub = sandbox.stub(KeyUserConnector.versions, "discardDraft").resolves();
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.app");
+
+			return Versions.initialize(mPropertyBag)
+			.then(function(oVersionsModel) {
+				this.oVersionsModel = oVersionsModel;
+			}.bind(this))
+			// switch to another version
+			.then(VersionsAPI.loadVersionForApplication.bind(this, mPropertyBag))
+			.then(Versions.discardDraft.bind(undefined, mPropertyBag))
+			.then(Versions.getVersionsModel.bind(undefined, mPropertyBag))
+			.then(function(oModel) {
+				var oData = oModel.getData();
+				var aVersions = oData.versions;
+				assert.equal(aVersions.length, 2, "and a getting the versions a new will return two version");
+				assert.equal(oDiscardStub.callCount, 1, "discardDraft was called once");
+				assert.equal(aVersions[0], oFirstVersion, "which is the activated version");
+				assert.equal(oData.backendDraft, false, "the backendDraft flag is still false");
+				assert.equal(oData.dirtyChanges, false, "the dirtyChanges flag is set to false");
+				assert.equal(oData.draftAvailable, false, "as well as draftAvailable false");
+				assert.equal(oData.activateEnabled, false, "as well as activateEnabled false");
+				assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), sActiveVersion, ", a displayedVersion property set to the active version");
+				assert.equal(this.oVersionsModel.getProperty("/persistedVersion"), sActiveVersion, ", a displayedVersion property set to the active version");
+			}.bind(this));
+		});
+
 		QUnit.test("and a connector is configured and a draft does NOT exists while discard is called", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,

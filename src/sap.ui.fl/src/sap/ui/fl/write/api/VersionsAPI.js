@@ -285,6 +285,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Property bag
 	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
+	 * @param {boolean} [mPropertyBag.discardDraftAndKeepActiveVersion] - discard draft and keep active version
 	 * @returns {Promise<boolean>} Promise resolving with a flag if a discarding took place;
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
@@ -308,12 +309,16 @@ sap.ui.define([
 		}
 		return Versions.discardDraft({
 			reference: sReference,
-			layer: mPropertyBag.layer
+			layer: mPropertyBag.layer,
+			discardDraftAndKeepActiveVersion: mPropertyBag.discardDraftAndKeepActiveVersion
 		})
 		.then(function(oDiscardInfo) {
 			// in case of a existing draft known by the backend;
 			// we remove dirty changes only after successful DELETE request
-			const bDirtyChangesRemoved = removeDirtyChanges();
+			var bDirtyChangesRemoved = false;
+			if (!mPropertyBag.discardDraftAndKeepActiveVersion) {
+				bDirtyChangesRemoved = removeDirtyChanges();
+			}
 			oDiscardInfo.dirtyChangesDiscarded = bDirtyChangesRemoved;
 
 			if (oDiscardInfo.backendChangesDiscarded) {
@@ -328,12 +333,16 @@ sap.ui.define([
 						const oFlexInfo = FlexInfoSession.getByReference(sReference);
 						oFlexInfo.displayedAdaptationId = sDisplayedAdaptationId;
 						FlexInfoSession.setByReference(oFlexInfo, sReference);
-						FlexState.clearState(sReference);
+						if (!mPropertyBag.discardDraftAndKeepActiveVersion) {
+							FlexState.clearState(sReference);
+						}
 						return oDiscardInfo;
 					});
 				}
 			}
-			FlexState.clearState(sReference);
+			if (!mPropertyBag.discardDraftAndKeepActiveVersion) {
+				FlexState.clearState(sReference);
+			}
 			return oDiscardInfo;
 		});
 	};

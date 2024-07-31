@@ -1029,11 +1029,19 @@ sap.ui.define([
 	/**
 	 * Adapt the enablement of undo/redo/reset button
 	 */
-	function onStackModified() {
+	async function onStackModified() {
 		const bOnlySwitchVersion = !this.getShowToolbars() || !this.getCommandStack().canUndo();
-		// warn the user: the existing draft would be discarded in case the user saves
-		Utils.checkDraftOverwrite(this._oVersionsModel, bOnlySwitchVersion)
-		.then(() => {
+		try {
+			// warn the user: the existing draft would be discarded in case the user saves
+			const bDiscardDraft = await Utils.checkDraftOverwrite(this._oVersionsModel, bOnlySwitchVersion);
+			if (bDiscardDraft) {
+				await VersionsAPI.discardDraft({
+					layer: this.getLayer(),
+					control: this.getRootControlInstance(),
+					updateState: true,
+					discardDraftAndKeepActiveVersion: true
+				});
+			}
 			if (this.getShowToolbars()) {
 				const oCommandStack = this.getCommandStack();
 				const bCanUndo = oCommandStack.canUndo();
@@ -1055,10 +1063,9 @@ sap.ui.define([
 				);
 			}
 			this.fireUndoRedoStackModified();
-		})
-		.catch(() => {
+		} catch (e) {
 			this.undo();
-		});
+		}
 	}
 
 	function checkToolbarAndExecuteFunction(sName, vValue) {
