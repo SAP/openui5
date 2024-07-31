@@ -35,6 +35,9 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @abstract
+	 *
+	 * @borrows sap.ui.mdc.valuehelp.ITypeaheadContent.isMultiSelect as #isMultiSelect
+	 *
 	 * @public
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.base.Content
@@ -751,7 +754,7 @@ sap.ui.define([
 
 	};
 
-	/**
+	/*
 	 * Determines if multiselection is active.
 	 *
 	 * @returns {boolean} if true, multi-selection is active.
