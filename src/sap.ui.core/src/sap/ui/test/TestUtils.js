@@ -32,10 +32,13 @@ sap.ui.define([
 		rODataHeaders = /^(OData-Version|DataServiceVersion)$/,
 		bRealOData = sRealOData === "true" || sRealOData === "direct",
 		fnOnRequest = null,
+		rNonReadableChars = /[ "[\]{}]/g,
+		rNonReadableEscaped = /%(20|22|5B|5D|7B|7D)/gi,
+		rMethod = /^\w+ /,
 		TestUtils;
 
 	if (bRealOData) {
-		document.title = document.title + " (real OData)";
+		document.title += " (real OData)";
 	}
 
 	/**
@@ -256,6 +259,34 @@ sap.ui.define([
 		},
 
 		/**
+		 * Fixes a human readable URL by percent-encoding space, double quotes, square brackets, and
+		 * curly brackets.
+		 *
+		 * @param {string} sUrl - The human readable URL
+		 * @return {string} The fixed URL
+		 *
+		 * @see #.makeUrlReadable
+		 */
+		encodeReadableUrl : function (sUrl) {
+			return sUrl.replaceAll(rNonReadableChars,
+				(s) => `%${s.charCodeAt(0).toString(16).padStart(2, "0").toUpperCase()}`);
+		},
+
+		/**
+		 * Makes a URL better readable for humans by replacing the percent-encoding for space,
+		 * double quotes, square brackets and curly brackets.
+		 *
+		 * @param {string} sUrl - The URL
+		 * @return {string} The human readable URL
+		 *
+		 * @see #.encodeReadableUrl
+		 */
+		makeUrlReadable : function (sUrl) {
+			return sUrl.replaceAll(rNonReadableEscaped,
+				(_s, n) => String.fromCharCode(Number.parseInt(n, 16)));
+		},
+
+		/**
 		 * Companion to <code>QUnit.notDeepEqual</code> and {@link #deepContains}.
 		 *
 		 * @param {object} oActual
@@ -312,8 +343,9 @@ sap.ui.define([
 		 *   Example: <code>"sap/ui/core/qunit/model"</code>
 		 * @param {map} mFixture
 		 *   The fixture. Each key represents a method and a URL to respond to, in the form
-		 *   "METHOD URL". The method "GET" may be omitted. The value is an array or single response
-		 *   object that may have the following properties:
+		 *   "METHOD URL". The method "GET" may be omitted. Spaces, double quotes, square brackets,
+		 *   and curly brackets inside the URL are percent-encoded automatically. The value is an
+		 *   array or single response object that may have the following properties:
 		 *   <ul>
 		 *     <li> {number} <code>code</code>: The response code (<code>200</code> if not given)
 		 *     <li> {map} <code>headers</code>: A map of headers to set in the response
@@ -417,9 +449,13 @@ sap.ui.define([
 
 				for (sUrl in mFixture) {
 					oFixtureResponse = mFixture[sUrl];
-					if (!sUrl.includes(" ")) {
-						sUrl = "GET " + sUrl;
+					let sMethod = "GET ";
+					const aMatch = rMethod.exec(sUrl);
+					if (aMatch) {
+						sMethod = aMatch[0];
+						sUrl = sUrl.slice(sMethod.length);
 					}
+					sUrl = sMethod + TestUtils.encodeReadableUrl(sUrl);
 					if (Array.isArray(oFixtureResponse)) {
 						mUrls[sUrl] = oFixtureResponse.map(buildResponse);
 					} else {
@@ -442,7 +478,8 @@ sap.ui.define([
 
 			// Logs and returns a response for the given error
 			function error(iCode, oRequest, sMessage) {
-				Log.error(oRequest.requestLine || oRequest.method + " " + oRequest.url, sMessage,
+				Log.error(oRequest.requestLine
+					|| oRequest.method + " " + TestUtils.makeUrlReadable(oRequest.url), sMessage,
 					"sap.ui.test.TestUtils");
 
 				return {
@@ -616,7 +653,7 @@ sap.ui.define([
 					}
 				}
 				if (oResponse) {
-					Log.info(oRequest.method + " " + oRequest.url
+					Log.info(oRequest.method + " " + TestUtils.makeUrlReadable(oRequest.url)
 						+ (iAlternative !== undefined
 							? ", alternative (ifMatch) #" + iAlternative
 							: ""),
