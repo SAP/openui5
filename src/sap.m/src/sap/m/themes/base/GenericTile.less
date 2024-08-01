@@ -1913,24 +1913,49 @@ html[data-sap-ui-browser*='ff'] {
 		}
 	}
 	.sapMGTContent {
-		height: 6.1rem;
+		height: 6.25rem;
 		.sapMGTLinkTileContentWrapper{
 			height: 7.15rem;
 			display: flex;
 			flex-direction: column;
-			gap: 0.22rem;
+			.sapMHBox {
+				height: 1.5rem;
+				.sapMFlexItem {
+					height: 1.5rem;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					.sapMLnk {
+						line-height: 1.5rem;
+					}
+				}
+			}
 		}
 		&.sapMGTFtrMarginTop {
-			height: 7.1rem;
+			height: 7.25rem;
+		}
+		&:not(.sapMGTFtrMarginTop) {
+			.sapMGTLinkTileContentWrapper.saMGTLinkSubheaderNotPresent {
+				gap: 2.5px;
+			}
 		}
 	}
 }
 
 .TwoByOne.sapMGTLinkTileContent.sapMTileSmallPhone {
+	.sapMGTHdrContent {
+		margin: 0.5rem;
+	}
 	.sapMGTContent {
-		height: 4.85rem;
+		height: 5.75rem;
+		.sapMGTLinkTileContentWrapper {
+			gap: 0 !important;
+		}
 		&.sapMGTFtrMarginTop {
-			height: 5.95rem;
+			height: 6.6875rem;
+			.sapMGTLinkTileContentWrapper {
+				gap: 0.3125rem !important;
+			}
 		}
 	}
 }
