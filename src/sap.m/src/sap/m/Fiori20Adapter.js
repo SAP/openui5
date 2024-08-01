@@ -876,7 +876,7 @@ sap.ui.define([
 	}
 
 	function isListBasedControl (oControl) {
-		return isInstanceOfGroup(oControl, ["sap/m/List", "sap/m/Table", "sap/ui/table/Table", "sap/ui/table/TreeTable"]);
+		return isInstanceOfGroup(oControl, ["sap/m/List", "sap/m/SelectList", "sap/m/Table", "sap/ui/table/Table", "sap/ui/table/TreeTable", "sap/ui/comp/variants/VariantManagement"]);
 	}
 
 	function isInstanceOfGroup(oControl, aTypes) {

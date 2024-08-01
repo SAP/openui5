@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/m/SelectDialog",
 	"sap/m/Dialog",
 	"sap/m/Table",
+	"sap/m/SelectList",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
@@ -42,6 +43,7 @@ sap.ui.define([
 	SelectDialog,
 	Dialog,
 	Table,
+	SelectList,
 	XMLView,
 	Core,
 	nextUIUpdate
@@ -2149,12 +2151,12 @@ sap.ui.define([
 	QUnit.test("Adaptation is not required for list-based-controls", function(assert) {
 
 		var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
-			oNode = new Table();
+			aNodes = [new Table(), new SelectList()];
 
-		var bRequired = Fiori20Adapter._isAdaptationRequired(oNode, oAdaptOptions);
-
-		// Assert
-		assert.strictEqual(bRequired, false, "adaptation is not required");
+		aNodes.forEach(function(oNode) {
+			var bRequired = Fiori20Adapter._isAdaptationRequired(oNode, oAdaptOptions);
+			assert.strictEqual(bRequired, false, "adaptation is not required");
+		});
 	});
 
 	QUnit.test("Adaptation is not required if all disabled", function(assert) {
