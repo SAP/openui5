@@ -8,17 +8,17 @@
 .sapFAvatarImageContain,
 .sapFAvatarIcon,
 .sapFAvatarInitials {
-	border: 0.0625rem solid @sapUiFieldBorderColor;
+	border: 0.0625rem solid var(--sapField_BorderColor);
 }
 
 .sapFAvatarIcon,
 .sapFAvatarInitialsHolder {
-	color: @sapUiContentForegroundColor;
+	color: var(--sapContent_ForegroundColor);
 }
 
 .sapFAvatarIcon,
 .sapFAvatarInitialsHolder {
-	color: @sapUiBaseText;
+	color: var(--sapTextColor);
 }
 
 .sapFAvatarFocusable:focus {
@@ -28,10 +28,10 @@
 .sapFAvatarColorTransparent,
 .sapFAvatarColorTileIcon,
 .sapFAvatarColorPlaceholder {
-	background-color: @sapUiBaseBG;
+	background-color: var(--sapBackgroundColor);
 }
 
-.sapFAvatarXL{
+.sapFAvatarXL {
 	font-size: 3rem;
 }
 
@@ -61,15 +61,16 @@
 
 	// Build the real CSS selector.
 	.@{css-selector} {
-		background-color: @sapUiBaseBG;
+		background-color: var(--sapBackgroundColor);
 	}
 }
 
 .sapFAvatarBadgeIcon {
 
-	background-color: @sapUiBaseBG;
-	border: 0.0625rem solid @sapUiFieldBorderColor;
+	background-color: var(--sapBackgroundColor);
+	border: 0.0625rem solid var(--sapField_BorderColor);
+
 	> .sapUiIcon {
-		color: @sapUiBaseText;
+		color: var(--sapTextColor);
 	}
 }

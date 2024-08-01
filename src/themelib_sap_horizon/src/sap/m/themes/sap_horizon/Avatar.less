@@ -10,10 +10,10 @@
 @_sap_m_Avatar_Font_Size_XS: 1rem;
 
 .sapFAvatarSquare {
-	border-radius: @sapUiElementBorderCornerRadius;
+	border-radius: var(--sapElement_BorderCornerRadius);
 
 	.sapFAvatarImageHolder {
-		border-radius: @sapUiElementBorderCornerRadius;
+		border-radius: var(--sapElement_BorderCornerRadius);
 	}
 }
 
@@ -22,23 +22,24 @@
 }
 
 .sapFAvatarFocusable.sapMAvatarPressed {
-	box-shadow: 0px 0px 0px @sapUiButtonBorderWidth @sapUiButtonSelectedBorderColor;
+	box-shadow: 0 0 0 var(--sapButton_BorderWidth) var(--sapButton_Selected_BorderColor);
 
 	&:hover {
-		box-shadow: 0px 0px 0px @sapUiButtonBorderWidth @sapUiButtonSelectedHoverBorderColor;
+		box-shadow: 0 0 0 var(--sapButton_BorderWidth) var(--sapButton_Selected_Hover_BorderColor);
 	}
 }
 
 .sapFAvatarFocusable:focus {
-	outline-offset: .125rem;
+	outline-offset: 0.125rem;
+
 	&.sapFAvatarSquare {
-		outline-offset: .125rem;
+		outline-offset: 0.125rem;
 	}
 }
 
 .sapFAvatarColorTileIcon {
-	background-color: @sapUiTileBackground;
-	color: @sapUiTileIconColor;
+	background-color: var(--sapTile_Background);
+	color: var(--sapTile_IconColor);
 
 	.sapFAvatarInitialsHolder {
 		color: currentColor;
@@ -46,8 +47,9 @@
 }
 
 .sapFAvatarColorPlaceholder {
-	background-color: @sapUiContentImagePlaceholderBackground;
-	color: @sapUiContentImagePlaceholderForegroundColor;;
+	background-color: var(--sapContent_ImagePlaceholderBackground);
+	color: var(--sapContent_ImagePlaceholderForegroundColor);
+
 	.sapFAvatarInitialsHolder {
 		color: currentColor;
 	}
