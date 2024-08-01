@@ -442,7 +442,7 @@ sap.ui.define([
 		oMapOfPersistencyKey.variants.push(oFlexObject);
 		oMapOfPersistencyKey.byId[oFlexObject.getId()] = oFlexObject;
 		FlexState.addDirtyFlexObject(mPropertyBag.reference, oFlexObject);
-		if (oChangeSpecificData.layer === Layer.CUSTOMER) {
+		if (oChangeSpecificData.layer !== Layer.USER && oChangeSpecificData.layer !== Layer.PUBLIC) {
 			mPropertyBag.id = mPropertyBag.control.getCurrentVariantId();
 			revertAllVariantUpdate(getVariantById(mPropertyBag));
 		}
