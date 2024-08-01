@@ -72,7 +72,7 @@ sap.ui.define([
 	thisLibrary._getAppInfo = function(fnCallback, sReqVersion) {
 		var sUrl;
 		if (sReqVersion){
-			sUrl = ResourcesUtil.getResourceOriginPath(`${sReqVersion}/resources/sap-ui-version.json`);
+			sUrl = `/${sReqVersion}/resources/sap-ui-version.json`;
 		} else {
 			sUrl = ResourcesUtil.getResourceOriginPath("resources/sap-ui-version.json");
 		}

@@ -13,7 +13,7 @@ sap.ui.define([
 ], function(jQuery, BaseController, JSONModel, library, Version, Log, ResourcesUtil) {
 		"use strict";
 
-		var sNeoAppJsonPath = ResourcesUtil.getResourceOriginPath("neo-app.json"),
+		var sNeoAppJsonPath = "/neo-app.json",
 			sSapUiVersionJsonPath = ResourcesUtil.getResourceOriginPath("resources/sap-ui-version.json");
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ReleaseNotes", {
@@ -69,9 +69,11 @@ sap.ui.define([
 					if (!versionFormat.test(oVersion.target.version)) {
 						return result;
 					}
-					var sMajorMinorVersion = oVersion.target.version.split(".")[0] + "." + oVersion.target.version.split(".")[1];
+					var	sItemMajorVersion = oVersion.target.version.split(".")[0],
+						sItemMinorVersion = oVersion.target.version.split(".")[1],
+						sMajorMinorVersion = sItemMajorVersion + "." + sItemMinorVersion;
 
-					if (!result.some((o) => o.key == sMajorMinorVersion)) {
+					if (!result.some((o) => o.key == sMajorMinorVersion) && sItemMinorVersion <= iMinor) {
 						result.push({ key: sMajorMinorVersion, value: sMajorMinorVersion });
 					}
 					return result;
