@@ -9,9 +9,11 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/InvisibleText",
+	"sap/ui/core/InvisibleMessage",
 	"sap/m/ColumnListItem",
 	"sap/m/Label",
 	"sap/m/TableSelectDialog",
+	"sap/m/SelectDialogBase",
 	"sap/m/Column",
 	"sap/m/Input",
 	"sap/m/Button",
@@ -31,9 +33,11 @@ sap.ui.define([
 	FilterOperator,
 	JSONModel,
 	InvisibleText,
+	InvisibleMessage,
 	ColumnListItem,
 	Label,
 	TableSelectDialog,
+	SelectDialogBase,
 	Column,
 	Input,
 	Button,
@@ -393,6 +397,10 @@ sap.ui.define([
 		this.clock.tick(1000);
 		oTableSelectDialog.setBusy(false);
 		assert.strictEqual(oTableSelectDialog.getBusy(), false, 'The Dialog should not be in busy state');
+
+		// cleanup
+		oTableSelectDialog._dialog.close();
+		this.clock.tick(1000);
 	});
 
 	QUnit.test("setBusy should disable the SearchField", function(assert) {
@@ -406,6 +414,10 @@ sap.ui.define([
 		oTableSelectDialog.setBusy(false);
 		searchFieldEnabled = oTableSelectDialog._oSearchField.getEnabled();
 		assert.strictEqual(searchFieldEnabled, true, 'The SearchField should be enabled');
+
+		// cleanup
+		oTableSelectDialog._dialog.close();
+		this.clock.tick(1000);
 	});
 
 	QUnit.test("draggable: true on desktop", function (assert) {
@@ -600,22 +612,48 @@ sap.ui.define([
 		oTableSelectDialog24.destroy();
 	});
 
-	QUnit.module("MultiSelect proper selection reset", {
+	QUnit.module("Multi selection", {
 		beforeEach : function () {
 			sinon.config.useFakeTimers = true;
+			this.oTableSelectDialog = new TableSelectDialog({
+				title: "Title",
+				multiSelect: true,
+				columns : [
+					new Column({
+						header : new Label({
+							text : "Name"
+						})
+					}),
+					new Column({
+						header : new Label({
+							text : "Qty"
+						})
+					}),
+					new Column({
+						header : new Label({
+							text : "Value"
+						})
+					}),
+					new Column({
+						header : new Label({
+							text : "Price"
+						})
+					})
+				]
+			});
 		},
 		afterEach : function () {
+			this.oTableSelectDialog.destroy();
 			sinon.config.useFakeTimers = false;
 		}
 	});
 
-	QUnit.test("TableSelectDialog1 proper selection reset after canceling filtered table with selected items", function(assert) {
+	QUnit.test("Proper selection reset after canceling filtered table with selected items", function(assert) {
+		this.oTableSelectDialog.setModel(oModel);
+		this.oTableSelectDialog.bindAggregation("items", "/navigation", template);
+		this.oTableSelectDialog.open();
 
-		oTableSelectDialog1.setMultiSelect(true);
-
-		oTableSelectDialog1.open();
-
-		var oTable = UI5Element.getElementById("oTableSelectDialog1-table");
+		var oTable = this.oTableSelectDialog._oTable;
 		var aItems = oTable.getItems();
 
 		aItems[0].setSelected(true);
@@ -625,22 +663,60 @@ sap.ui.define([
 
 		// Executing search that trigger change in the binding model
 		// of the table causing a filter to be applied to the model
-		oTableSelectDialog1._executeSearch("tt", "search");
+		this.oTableSelectDialog._executeSearch("tt", "search");
 		this.clock.tick(500);
 
-		oTableSelectDialog1._onCancel();
+		this.oTableSelectDialog._onCancel();
 		this.clock.tick(500);
 
-		oTableSelectDialog1.open();
+		this.oTableSelectDialog.open();
 		this.clock.tick(500);
 
 		assert.equal(oTable.getItems().length, 5, "Selection after search should be reset nevertheless");
 		assert.equal(oTable.getSelectedItems().length, 0, "The selected items array should be empty after canceling ");
 		assert.equal(oTable.getBinding("items").aFilters.length, 0, "No filter should be applied to the bindings model of the table");
+	});
 
-		oTableSelectDialog1._onCancel();
-		this.clock.tick(500);
+	QUnit.test("Toolbar displaying selected items count", async function (assert) {
+		// arrange
+		this.oTableSelectDialog.setModel(new JSONModel({
+			navigation: [
+				{
+					Title : "Title1",
+					Description: "Description1",
+					Selected: false
+				}, {
+					Title : "Title2",
+					Description: "Description2",
+					Selected: false
+				}
+			]
+		}));
+		this.oTableSelectDialog.bindAggregation("items", "/navigation", template);
+		this.oTableSelectDialog.setRememberSelections(true);
+		this.oTableSelectDialog.open();
 
+		// assert
+		assert.notOk(this.oTableSelectDialog._oTable.getInfoToolbar().getVisible(), "The toolbar is not visible when there are no selected items");
+
+		// act
+		const oAnnounceSpy = this.spy(InvisibleMessage.getInstance(), "announce");
+
+		this.oTableSelectDialog._oTable.selectAll(true);
+		await nextUIUpdate(this.clock);
+
+		// assert
+		assert.ok(this.oTableSelectDialog._oTable.getInfoToolbar().getVisible(), "The toolbar is visible when there are selected items");
+		assert.strictEqual(this.oTableSelectDialog._oTable.getInfoToolbar().getContent()[0].getText(), Library.getResourceBundleFor("sap.m").getText("TABLESELECTDIALOG_SELECTEDITEMS", [2]), "The toolbar displays the correct number of selected items");
+		assert.ok(oAnnounceSpy.called, "Toolbar text is announced");
+
+		// act
+		this.oTableSelectDialog._oOkButton.firePress();
+		this.clock.tick(350);
+
+		this.oTableSelectDialog.open();
+
+		assert.ok(this.oTableSelectDialog._oDialog.getAriaDescribedBy().includes(SelectDialogBase.getSelectionIndicatorInvisibleText().getId()), "The dialog has the correct aria-describedby");
 	});
 
 	QUnit.module("Open and Close");

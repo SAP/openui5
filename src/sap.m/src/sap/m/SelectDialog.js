@@ -623,15 +623,14 @@ function(
 		this._sSearchFieldValue = sSearchValue || "";
 
 		this._oDialog.setInitialFocus(this._getInitialFocus());
+		this._updateSelectionIndicator();
+		this.updateDialogAriaDescribedBy();
 		this._oDialog.open();
 
 		// open dialog with busy state if a list update is still in progress
 		if (this._bInitBusy) {
 			this._setBusy(true);
 		}
-
-		// refresh the selection indicator to be in sync with the model
-		this._updateSelectionIndicator();
 
 		// store the current selection for the cancel event
 		this._aInitiallySelectedContextPaths = this._oList.getSelectedContextPaths();
@@ -1206,15 +1205,19 @@ function(
 			this._oClearButton.setEnabled(iSelectedContexts > 0);
 		}
 
-		// update the selection label
 		if (oInfoBar.getVisible() !== bVisible) {
 			oInfoBar.setVisible(bVisible);
 		}
 
 		oInfoBar.getContent()[0].setText(this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [iSelectedContexts]));
+		SelectDialogBase.getSelectionIndicatorInvisibleText().setText(iSelectedContexts > 0 ? this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS_SR", [iSelectedContexts]) : "");
+	};
 
-		if (this._oDialog.isOpen()) {
-			InvisibleMessage.getInstance().announce(iSelectedContexts > 0 ? this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS_SR", [iSelectedContexts]) : "", InvisibleMessageMode.Polite);
+	SelectDialog.prototype._announceSelectionIndicator = function () {
+		const selectedContexts = this._oList.getSelectedContextPaths(true).length;
+
+		if (selectedContexts) {
+			InvisibleMessage.getInstance().announce(this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS_SR", [selectedContexts]), InvisibleMessageMode.Polite);
 		}
 	};
 
@@ -1256,8 +1259,10 @@ function(
 		// -- the selectDialog is in multi select mode - only update the indicator
 		if (this.getMultiSelect()) {
 			this._updateSelectionIndicator();
+			this._announceSelectionIndicator();
 			return; // the SelectDialog should remain open
 		}
+
 		// -- the selectDialog in single select mode - close and update the selection of the dialog
 		if (!this._bAfterCloseAttached) {
 			// if the resetAfterclose function is not attached already

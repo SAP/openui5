@@ -380,8 +380,8 @@ sap.ui.define([
 						that._oDialog.attachAfterClose(fnResetAfterClose);
 						that._oDialog.close();
 					} else {
-						// update the selection label
 						that._updateSelectionIndicator();
+						that._announceSelectionIndicator();
 					}
 				}
 			},
@@ -565,6 +565,8 @@ sap.ui.define([
 		this._sSearchFieldValue = sSearchValue || "";
 
 		this._oDialog.setInitialFocus(this._getInitialFocus());
+		this._updateSelectionIndicator();
+		this.updateDialogAriaDescribedBy();
 		this._oDialog.open();
 
 		// open dialog with busy state if a list update is still in progress
@@ -574,9 +576,6 @@ sap.ui.define([
 
 		// store the current selection for the cancel event
 		this._aInitiallySelectedItems = this._oTable.getSelectedItems();
-
-		// refresh the selection indicator to be in sync with the model
-		this._updateSelectionIndicator();
 
 		//now return the control for chaining
 		return this;
@@ -1208,12 +1207,17 @@ sap.ui.define([
 		if (this.getShowClearButton() && this._oClearButton) {
 			this._oClearButton.setEnabled(iSelectedContexts > 0);
 		}
-		// update the selection label
+
 		oInfoBar.setVisible(!!iSelectedContexts);
 		oInfoBar.getContent()[0].setText(this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [iSelectedContexts]));
+		SelectDialogBase.getSelectionIndicatorInvisibleText().setText(iSelectedContexts > 0 ? this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS_SR", [iSelectedContexts]) : "");
+	};
 
-		if (this._oDialog.isOpen()) {
-			InvisibleMessage.getInstance().announce(iSelectedContexts > 0 ? this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS_SR", [iSelectedContexts]) : "", InvisibleMessageMode.Polite);
+	TableSelectDialog.prototype._announceSelectionIndicator = function () {
+		const selectedContexts = this._oTable.getSelectedContextPaths(true).length;
+
+		if (selectedContexts) {
+			InvisibleMessage.getInstance().announce(this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS_SR", [selectedContexts]), InvisibleMessageMode.Polite);
 		}
 	};
 

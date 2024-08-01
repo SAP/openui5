@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/m/SelectDialog",
+	"sap/m/SelectDialogBase",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/model/Filter",
@@ -18,12 +19,14 @@ sap.ui.define([
 	"sap/m/StandardListItemRenderer",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/InvisibleText",
+	"sap/ui/core/InvisibleMessage",
 	"sap/ui/core/mvc/XMLView",
 	"sap/m/library",
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		SelectDialog,
+		SelectDialogBase,
 		UI5Element,
 		Library,
 		Filter,
@@ -40,6 +43,7 @@ sap.ui.define([
 		StandardListItemRenderer,
 		Fragment,
 		InvisibleText,
+		InvisibleMessage,
 		XMLView,
 		mobileLibrary,
 		jQuery
@@ -385,7 +389,6 @@ sap.ui.define([
 			this.oSelectDialog.open();
 			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.strictEqual(that.oSelectDialog._oList.getInfoToolbar().getVisible(), false, "The should be no toolbar shown");
-			assert.strictEqual(that.oSelectDialog.$().attr("aria-labelledby").indexOf(that.oSelectDialog._oList.getInfoToolbar().getId()),  -1, "the info toolbar id is not added to the dialog aria-labelledby");
 		});
 
 		QUnit.test("ClearSelection selection should clear the selection from the SelectDialog and the list", function (assert) {
@@ -543,7 +546,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.module("Multiselection", {
+		QUnit.module("Multi selection", {
 			beforeEach: function() {
 				// arrange
 				this.oSelectDialog = new SelectDialog('selectDialog', {
@@ -612,7 +615,6 @@ sap.ui.define([
 			this.clock.tick(350);
 		});
 
-
 		QUnit.test("Remember Selections true mode", function (assert) {
 			// arrange
 			this.oSelectDialog.setRememberSelections(true);
@@ -641,6 +643,49 @@ sap.ui.define([
 			this.oSelectDialog._oDialog.close();
 
 			this.clock.tick(350);
+		});
+
+		QUnit.test("Toolbar displaying selected items count", async function (assert) {
+			// arrange
+			const oData = {
+				items: [
+					{
+						Title : "Title1",
+						Description: "Description1",
+						Selected: false
+					}, {
+						Title : "Title2",
+						Description: "Description2",
+						Selected: false
+					}
+				]
+			};
+
+			bindItems(this.oSelectDialog, { oData, path: "/items", template: createTemplateListItem() });
+			this.oSelectDialog.setRememberSelections(true);
+			this.oSelectDialog.open();
+
+			// assert
+			assert.notOk(this.oSelectDialog._oList.getInfoToolbar().getVisible(), "The toolbar is not visible when there are no selected items");
+
+			// act
+			const oAnnounceSpy = this.spy(InvisibleMessage.getInstance(), "announce");
+
+			this.oSelectDialog._oList.selectAll(true);
+			await nextUIUpdate(this.clock);
+
+			// assert
+			assert.ok(this.oSelectDialog._oList.getInfoToolbar().getVisible(), "The toolbar is visible when there are selected items");
+			assert.strictEqual(this.oSelectDialog._oList.getInfoToolbar().getContent()[0].getText(), Library.getResourceBundleFor("sap.m").getText("TABLESELECTDIALOG_SELECTEDITEMS", [2]), "The toolbar displays the correct number of selected items");
+			assert.ok(oAnnounceSpy.called, "Toolbar text is announced");
+
+			// act
+			this.oSelectDialog._oOkButton.firePress();
+			this.clock.tick(350);
+
+			this.oSelectDialog.open();
+
+			assert.ok(this.oSelectDialog._oDialog.getAriaDescribedBy().includes(SelectDialogBase.getSelectionIndicatorInvisibleText().getId()), "The dialog has the correct aria-describedby");
 		});
 
 		QUnit.module("Open and Close", {
