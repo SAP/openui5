@@ -1115,9 +1115,6 @@ sap.ui.define([
 					// reuse the previous context, unless it is created (and persisted), but not
 					// kept alive; always reuse created contexts in a recursive hierarchy
 					delete this.mPreviousContextsByPath[sContextPath];
-					if (oContext.created() && !("@$ui5.context.isTransient" in aResults[i])) {
-						oContext.setPersisted();
-					}
 					oContext.iIndex = i$skipIndex;
 					oContext.checkUpdate();
 				} else if (_Helper.hasPrivateAnnotation(aResults[i], "context")) {
@@ -1348,7 +1345,7 @@ sap.ui.define([
 
 				if (oContext) {
 					if (aPathsToDelete && (oContext.isEffectivelyKeptAlive()
-							|| oContext.oDeletePromise && oContext.oDeletePromise.isPending())) {
+							|| oContext.isOutOfPlace() || oContext.oDeletePromise?.isPending())) {
 						oContext.iIndex = undefined;
 					} else {
 						if (!oContext.isTransient()) {

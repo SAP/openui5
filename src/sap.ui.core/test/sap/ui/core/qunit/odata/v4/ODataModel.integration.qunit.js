@@ -157,6 +157,10 @@ sap.ui.define([
 						_Helper.getPrivateAnnotation(oElement, "context").isTransient(),
 						`"@$ui5.context.isTransient" @ level ${iLevel}`, oElement);
 				}
+				strictEqual(oListBinding.oCache.oTreeState.isOutOfPlace(
+						_Helper.getPrivateAnnotation(oElement, "predicate")),
+					oElement["@$ui5.context.isTransient"] === false, "OOP = created persisted",
+					oElement);
 
 				if (oElement["@$ui5.node.isExpanded"] === undefined) {
 					strictEqual(_Helper.getPrivateAnnotation(oElement, "descendants") === undefined,
@@ -239,6 +243,10 @@ sap.ui.define([
 		}
 		checkCache(oListBinding.oCache.oFirstLevel);
 		visitElements(aElements);
+		if (oListBinding.getAggregation().createInPlace) {
+			strictEqual(oListBinding.oCache.oTreeState.getOutOfPlacePredicates().length, 0,
+				"no OOP w/ createInPlace");
+		}
 
 		if (iExpandTo > 1) {
 			const aElements0 = oListBinding.oCache.oFirstLevel.aElements;
@@ -28667,15 +28675,28 @@ sap.ui.define([
 				[undefined, 1, "9", "", "Aleph", 169]
 			]);
 
+			assert.strictEqual(oNewChild.getObject(), undefined, "currently unavailable");
+			assert.strictEqual(oBeta.getBinding(), undefined, "destroyed");
+			oBeta = null;
+
+			//TODO must not drop "context" from Gimel's data once supported
+			//  return Promise.all([
+			//   // code under test
+			//   oNewChild.requestRefresh(undefined, /*bAllowRemoval*/true),
+			//   that.waitForChanges(assert, "refresh C (Gimel)")
+			//  ]);
+			// }).then(function () {
+
 			// code under test
+			// Note: oNewChild (Gimel) restored from "context" here
 			oAlpha.expand();
 
 			return that.waitForChanges(assert, "expand 0 (Alpha) again");
 		}).then(function () {
-			checkTable("after create new child beneath 0 (Alpha)", assert, oTable, [
-				"/EMPLOYEES('B')",
-				"/EMPLOYEES('0')",
-				"/EMPLOYEES('C')",
+			checkTable("after expand 0 (Alpha) again", assert, oTable, [
+				oNewRoot, // "/EMPLOYEES('B')",
+				oAlpha, // "/EMPLOYEES('0')",
+				oNewChild, // "/EMPLOYEES('C')",
 				"/EMPLOYEES('1')",
 				"/EMPLOYEES('2')",
 				"/EMPLOYEES('9')"
@@ -28686,8 +28707,6 @@ sap.ui.define([
 				[false, 2, "1", "0", "Beta", 155],
 				[undefined, 2, "2", "0", "Kappa", 156]
 			], 11);
-			assert.strictEqual(oNewChild.getBinding().getCurrentContexts()[2], oNewChild,
-				"still the same");
 			checkCreatedPersisted(assert, oNewChild);
 		});
 	});
@@ -32470,7 +32489,7 @@ sap.ui.define([
 		}, new Error("Not currently part of the hierarchy: " + oZeta));
 
 		oAlpha.expand();
-		// reinsert oZeta into aContexts
+		// reinsert oZeta into aContexts (Note: oZeta restored from "context" here)
 		oAlpha.getBinding().getAllCurrentContexts();
 
 		// code under test
@@ -32559,6 +32578,7 @@ sap.ui.define([
 					}
 				}]
 			});
+		// Note: 9 (New) restored from "context" here
 
 		await this.checkAllContexts("after loading all rows", assert, oListBinding,
 			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
@@ -32575,6 +32595,8 @@ sap.ui.define([
 				[undefined, 2, "6", "Iota"],
 				[undefined, 2, "7", "Kappa"]
 			]);
+
+		assert.strictEqual(oListBinding.getAllCurrentContexts()[2], oNewChild, "still the same");
 
 		this.expectRequest("DELETE Artists(ArtistID='8',IsActiveEntity=false)")
 			.expectRequest("DELETE Artists(ArtistID='9',IsActiveEntity=false)");
@@ -32819,6 +32841,7 @@ sap.ui.define([
 		], 10);
 
 		// code under test
+		// Note: oOut5 restored from "context" here
 		oGamma.expand();
 
 		await this.waitForChanges(assert, "expand Gamma");
@@ -32830,7 +32853,7 @@ sap.ui.define([
 			"/EMPLOYEES('0')",
 			"/EMPLOYEES('1')",
 			"/EMPLOYEES('1.1')",
-			"/EMPLOYEES('Out5')",
+			oOut5, // "/EMPLOYEES('Out5')",
 			"/EMPLOYEES('2')"
 		], [
 			[true, 1, "Alpha"],
@@ -34047,6 +34070,12 @@ sap.ui.define([
 		checkSiblingOrder(assert, /*in place*/[], /*out of place*/[oEpsilon, oEta]);
 		checkSiblingOrder(assert, /*in place*/[], /*out of place*/[oZeta]);
 
+		//TODO this MUST not cause issues w.r.t. "created" state!
+		// oDelta.setKeepAlive(true);
+		// oEpsilon.setKeepAlive(true);
+		// oEta.setKeepAlive(true);
+		// oZeta.setKeepAlive(true);
+
 		switch (iScenario) {
 			case 1: // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 				// 0 Alpha
@@ -34398,8 +34427,8 @@ sap.ui.define([
 					oGamma // "/EMPLOYEES('2')"
 				], [
 					[undefined, true, 1, "0", "Alpha"],
-					[/*TODO false*/undefined, true, 2, "3", "Delta"], // still created
-					[/*TODO false*/undefined, undefined, 3, "3.2", "Eta"], // still created
+					[false, true, 2, "3", "Delta"], // still created
+					[false, undefined, 3, "3.2", "Eta"], // still created
 					[undefined, true, 2, "1", "Beta"],
 					[undefined, true, 3, "3.1", "Epsilon"], // now "in place"...
 					[undefined, undefined, 4, "3.1.1", "Zeta"], // ...and not created anymore
@@ -34411,8 +34440,8 @@ sap.ui.define([
 					ID : "0",
 					Name : "Alpha"
 				}, "no LimitedRank");
-				//TODO checkCreatedPersisted(assert, oDelta);
-				//TODO checkCreatedPersisted(assert, oEta);
+				checkCreatedPersisted(assert, oDelta);
+				checkCreatedPersisted(assert, oEta);
 				checkPersisted(assert, [oEpsilon, oZeta]);
 			break;
 
@@ -34558,15 +34587,15 @@ sap.ui.define([
 					oZeta // "/EMPLOYEES('3.1.1')"
 				], [
 					[undefined, true, 1, "0", "Alpha"],
-					[/*TODO false*/undefined, true, 2, "3", "Delta"], // still created
-					[/*TODO false*/undefined, undefined, 3, "3.2", "Eta"], // still created
+					[false, true, 2, "3", "Delta"], // still created
+					[false, undefined, 3, "3.2", "Eta"], // still created
 					[undefined, undefined, 2, "1", "Beta"],
 					[undefined, undefined, 2, "2", "Gamma"],
 					[undefined, true, 1, "3.1", "Epsilon"], // now "in place"...
 					[undefined, undefined, 2, "3.1.1", "Zeta"] // ...and not created anymore
 				]);
-				//TODO checkCreatedPersisted(assert, oDelta);
-				//TODO checkCreatedPersisted(assert, oEta);
+				checkCreatedPersisted(assert, oDelta);
+				checkCreatedPersisted(assert, oEta);
 				checkPersisted(assert, [oEpsilon, oZeta]);
 			break;
 
@@ -36374,14 +36403,11 @@ sap.ui.define([
 				[undefined, 1, "4", "Delta*"]
 			]);
 
-		// this context has been destroyed by the refresh because it was not visible
-		const [oCopyOfNew1] = await oBinding.requestContexts(4, 1);
-
 		this.expectRequest("DELETE Artists(ArtistID='11',IsActiveEntity=false)");
 
 		await Promise.all([
 			// code under test
-			oCopyOfNew1.delete(),
+			oNew1.delete(),
 			this.waitForChanges(assert, "(5) delete New1")
 		]);
 
@@ -37061,7 +37087,7 @@ sap.ui.define([
 
 		const oTable = this.oView.byId("table");
 		const oBinding = oTable.getBinding("rows");
-		const oGamma = oTable.getRows()[0].getBindingContext();
+		let oGamma = oTable.getRows()[0].getBindingContext();
 		checkTable("initial page", assert, oTable, [
 			"/EMPLOYEES('3')",
 			"/EMPLOYEES('4')"
@@ -37170,7 +37196,7 @@ sap.ui.define([
 			[true, 1, "Alpha"],
 			[undefined, 2, "Theta"]
 		]);
-		const [,,,, oBeta,, oEpsilon] = oBinding.getAllCurrentContexts();
+		let [,,,, oBeta,, oEpsilon] = oBinding.getAllCurrentContexts();
 
 		// code under test (JIRA: CPOUI5ODATAV4-2652)
 		checkSiblingOrder(assert, /*in place*/[], /*out of place*/[oTheta]);
@@ -37281,6 +37307,7 @@ sap.ui.define([
 			[undefined, 2, "Theta*"]
 		], 7);
 		assert.deepEqual(oBinding.getAllCurrentContexts()[0].getObject(), {
+			"@$ui5.context.isTransient" : false,
 			"@$ui5.node.level" : 1,
 			ID : "7",
 			Name : "Eta*"
@@ -37308,11 +37335,11 @@ sap.ui.define([
 				[false, 1, "Gamma*"],
 				[undefined, 1, "Epsilon*"]
 			]);
+		[,,,, oBeta, oGamma, oEpsilon] = oBinding.getAllCurrentContexts();
 
-		//TODO oTheta, oEta, oZeta not "created" anymore and thus not OOP :-(
 		// code under test (JIRA: CPOUI5ODATAV4-2652)
-		// checkSiblingOrder(assert, /*in place*/[], /*out of place*/[oTheta]);
-		// checkSiblingOrder(assert, /*in*/[oAlpha, oBeta, oGamma, oEpsilon], /*out*/[oEta, oZeta]);
+		checkSiblingOrder(assert, /*in place*/[], /*out of place*/[oTheta]);
+		checkSiblingOrder(assert, /*in*/[oAlpha, oBeta, oGamma, oEpsilon], /*out*/[oEta, oZeta]);
 	});
 
 	//*********************************************************************************************
@@ -37779,9 +37806,13 @@ sap.ui.define([
 		expectSideEffectsRequests();
 
 		// code under test
+		// Note: oNew1, oNew2 restored from "context" here
 		oAlpha.expand();
 
 		await this.waitForChanges(assert, "(6) expand Alpha");
+
+		assert.strictEqual(oNew1.getBinding().getAllCurrentContexts()[1], oNew1, "still the same");
+		assert.strictEqual(oNew1.getBinding().getAllCurrentContexts()[2], oNew2, "still the same");
 
 		await checkAllContexts(7);
 	});
@@ -39114,7 +39145,7 @@ make root = ${bMakeRoot}`;
 			[undefined, 2, "Beta"]
 		]);
 
-		//TODO checkCreatedPersisted(assert, oEpsilon, oEpsilonCreated);
+		checkCreatedPersisted(assert, oEpsilon, oEpsilonCreated);
 		const oGamma = oListBinding.getAllCurrentContexts()[2];
 		assert.strictEqual(oGamma.getProperty("Name"), "Gamma",
 			"double check that index was right");
@@ -52167,6 +52198,7 @@ make root = ${bMakeRoot}`;
 	// JIRA: CPOUI5UISERVICESV3-1814
 	QUnit.test("Create on a relative binding with $expand", function (assert) {
 		var oCreatedContext,
+			oCreatedPromise,
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
 			oTableBinding,
@@ -52259,9 +52291,10 @@ make root = ${bMakeRoot}`;
 
 			// code under test
 			oCreatedContext = oTableBinding.create();
+			oCreatedPromise = oCreatedContext.created();
 
 			return Promise.all([
-				oCreatedContext.created(),
+				oCreatedPromise,
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -52305,6 +52338,8 @@ make root = ${bMakeRoot}`;
 
 			return that.checkValueState(assert, oProductField, "Information", "Best Product Ever");
 		}).then(function () {
+			checkCreatedPersisted(assert, oCreatedContext, oCreatedPromise);
+
 			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
 					+ "?$select=ItemPosition,Messages,Quantity,SalesOrderID"
 					+ "&$expand=SOITEM_2_PRODUCT($select=ProductID)"
@@ -52342,6 +52377,8 @@ make root = ${bMakeRoot}`;
 
 			return that.checkValueState(assert, oProductField, "Success", "Keep on buying!");
 		}).then(function () {
+			checkCreatedPersisted(assert, oCreatedContext, oCreatedPromise);
+
 			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
 					+ "?$select=ItemPosition,Messages,Quantity,SalesOrderID"
 					+ "&$expand=SOITEM_2_PRODUCT($select=ProductID)"
@@ -52359,6 +52396,8 @@ make root = ${bMakeRoot}`;
 				oCreatedContext.requestRefresh("$auto", true),
 				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			assert.strictEqual(oCreatedContext.getBinding(), undefined, "destroyed");
 		});
 	});
 
@@ -57231,7 +57270,7 @@ make root = ${bMakeRoot}`;
 	// First one succeeds with a warning state message.
 	// Second one fails due to a strict handling error, but without error details.
 	// Show that the warning state message of the first action can be retrieved in the
-	// fnStrictHandlingFailed callback.
+	// fnOnStrictHandlingFailed callback.
 	//
 	// JIRA: CPOUI5ODATAV4-1034
 	QUnit.test("CPOUI5ODATAV4-1034: handling=strict, simulate draft save", function (assert) {
@@ -57263,7 +57302,7 @@ make root = ${bMakeRoot}`;
 				}, 412),
 				oGoodsBinding = oModel.bindContext(sGoodsAction + "(...)", oContext);
 
-			function fnStrictHandlingFailed(aMessages) {
+			function fnOnStrictHandlingFailed(aMessages) {
 				assert.deepEqual(aMessages, [], "no details in strict error response");
 				// code under test
 				aMessages = oContext.getMessages();
@@ -57316,7 +57355,7 @@ make root = ${bMakeRoot}`;
 				oConfirmBinding.invoke("confirm"),
 				oModel.submitBatch("confirm"),
 				checkCanceled(assert,
-					oGoodsBinding.invoke("confirm", false, fnStrictHandlingFailed)),
+					oGoodsBinding.invoke("confirm", false, fnOnStrictHandlingFailed)),
 				oModel.submitBatch("confirm"),
 				that.waitForChanges(assert)
 			]);
@@ -64613,6 +64652,7 @@ make root = ${bMakeRoot}`;
 ].forEach(function (sMethod) {
 	QUnit.test("CPOUI5ODATAV4-2053: browse & collect via " + sMethod, function (assert) {
 		var oBinding,
+			oCreated,
 			oCreatedContext,
 			oContext_01,
 			oContext_03,
@@ -64685,12 +64725,13 @@ make root = ${bMakeRoot}`;
 				.expectChange("memberCount", ["0", "9", "10"]);
 
 			oCreatedContext = oBinding.create({MEMBER_COUNT : 0, Team_Id : "NEW"}, true);
+			oCreated = oCreatedContext.created();
 
 			// code under test
 			oCreatedContext.setSelected(true);
 
 			return Promise.all([
-				oCreatedContext.created(),
+				oCreated,
 				that.waitForChanges(assert, "create")
 			]);
 		}).then(function () {
@@ -64786,6 +64827,7 @@ make root = ${bMakeRoot}`;
 				Name : "Team #1",
 				Team_Id : "TEAM_01"
 			});
+			checkCreatedPersisted(assert, oCreatedContext, oCreated);
 			checkSelected(assert, oCreatedContext, true);
 			assert.deepEqual(oCreatedContext.getObject(), oExpectedNewObject);
 
@@ -64830,6 +64872,7 @@ make root = ${bMakeRoot}`;
 			assert.strictEqual(aAllContexts[0], oCreatedContext);
 			assert.strictEqual(aAllContexts[1], oContext_01);
 			assert.strictEqual(aAllContexts[2], oContext_03);
+			checkCreatedPersisted(assert, oCreatedContext, oCreated);
 			checkSelected(assert, oCreatedContext, true);
 			assert.deepEqual(oCreatedContext.getObject(), oExpectedNewObject);
 			checkSelected(assert, oContext_01, true);
@@ -64939,9 +64982,8 @@ make root = ${bMakeRoot}`;
 			assert.strictEqual(aAllContexts.length, 2);
 			assert.strictEqual(aAllContexts[0], oContext_01);
 			assert.strictEqual(aAllContexts[1], oCreatedContext, "implicitly kept alive");
+			checkCreatedPersisted(assert, oCreatedContext, oCreated);
 			checkSelected(assert, oCreatedContext, true);
-			assert.strictEqual(oCreatedContext.isTransient(), false, "created");
-			delete oExpectedNewObject["@$ui5.context.isTransient"]; //TODO bug?!
 			assert.deepEqual(oCreatedContext.getObject(), oExpectedNewObject);
 		});
 	});
@@ -65080,6 +65122,7 @@ make root = ${bMakeRoot}`;
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding,
+			oCreated,
 			oCreatedContext,
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			that = this;
@@ -65101,6 +65144,7 @@ make root = ${bMakeRoot}`;
 				});
 
 			oCreatedContext = oBinding.create({MEMBER_COUNT : 0, Team_Id : "NEW"}, true);
+			oCreated = oCreatedContext.created();
 
 			// code under test
 			setSelected(bUseAnnotation, oCreatedContext, true);
@@ -65108,7 +65152,7 @@ make root = ${bMakeRoot}`;
 			assert.ok(oCreatedContext.isSelected());
 
 			return Promise.all([
-				oCreatedContext.created(),
+				oCreated,
 				that.waitForChanges(assert, "create")
 			]);
 		}).then(function () {
@@ -65118,6 +65162,7 @@ make root = ${bMakeRoot}`;
 				MEMBER_COUNT : 1,
 				Team_Id : "NEW"
 			});
+			checkCreatedPersisted(assert, oCreatedContext, oCreated);
 			checkSelected(assert, oCreatedContext, true);
 
 			that.expectRequest("TEAMS?$filter=Team_Id eq 'NEW'", {
@@ -65143,14 +65188,9 @@ make root = ${bMakeRoot}`;
 
 			assert.strictEqual(aAllContexts.length, 1);
 			assert.strictEqual(aAllContexts[0], oCreatedContext, "implicitly kept alive");
+			checkCreatedPersisted(assert, oCreatedContext, oCreated);
 			checkSelected(assert, oCreatedContext, true);
-			assert.strictEqual(oCreatedContext.isTransient(), false, "created");
-			assert.deepEqual(oCreatedContext.getObject(), bSingle ? {
-				//TODO "@$ui5.context.isTransient" : false,
-				"@$ui5.context.isSelected" : true,
-				MEMBER_COUNT : 2,
-				Team_Id : "NEW"
-			} : {
+			assert.deepEqual(oCreatedContext.getObject(), {
 				"@$ui5.context.isSelected" : true,
 				"@$ui5.context.isTransient" : false,
 				MEMBER_COUNT : 2,
