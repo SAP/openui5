@@ -89,15 +89,15 @@ sap.ui.define([
 					defaultValue: true
 				},
 				/**
-				 * Object related to the <code>Delegate</code> module that provides the required APIs to execute model-specific logic.<br>
+				 * Object related to the <code>LinkDelegate</code> module that provides the required APIs to execute model-specific logic.<br>
 				 * The object has the following properties:
 				 * <ul>
-				 * 	<li><code>name</code> defines the path to the <code>Delegate</code> module</li>
+				 * 	<li><code>name</code> defines the path to the <code>LinkDelegate</code> module</li>
 				 * 	<li><code>payload</code> (optional) defines application-specific information that can be used in the given delegate</li>
 				 * </ul>
 				 * <i>Sample delegate object:</i>
 				 * <pre><code>{
-				 * 	name: "sap/ui/mdc/BaseDelegate",
+				 * 	name: "sap/ui/mdc/LinkDelegate",
 				 * 	payload: {}
 				 * }</code></pre>
 				 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
@@ -396,7 +396,7 @@ sap.ui.define([
 	 * Retrieves the relevant metadata for the panel and returns a property info array.
 	 * @param {sap.ui.mdc.link.Panel} oPanel Instance of a <code>Panel</code> control
 	 * @returns {object[]} Array of copied property info
-	 * @protected
+	 * @private
 	 */
 	Link.retrieveAllMetadata = function(oPanel) {
 		if (!oPanel.getModel || !oPanel.getModel("$sapuimdcLink")) {
@@ -420,7 +420,7 @@ sap.ui.define([
 	 * Retrieves the items that are initially part of the baseline which is used when a reset is done.
 	 * @param {sap.ui.mdc.link.Panel} oPanel Instance of a <code>Panel</code> control
 	 * @returns {sap.ui.mdc.link.BaseLineObject[]} Array containing the <code>ID</code> and <code>visible</code> property of every {@link sap.ui.mdc.link.LinkItem}
-	 * @protected
+	 * @private
 	 */
 	Link.retrieveBaseline = function(oPanel) {
 		if (!oPanel.getModel || !oPanel.getModel("$sapuimdcLink")) {
