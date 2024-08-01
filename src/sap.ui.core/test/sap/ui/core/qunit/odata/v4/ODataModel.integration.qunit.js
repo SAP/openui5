@@ -42841,6 +42841,8 @@ make root = ${bMakeRoot}`;
 	// (6) Expand Alpha again; Beta and Gamma are now invisible placeholders w/o rank
 	// (7) Quickly scroll to 4 and 3; Gamma must not be requested twice
 	// JIRA: CPOUI5ODATAV4-2432
+	//
+	// (8) Make sure "created persisted" nodes remain as such (JIRA: CPOUI5ODATAV4-2707)
 	QUnit.test("CPOUI5ODATAV4-2432: Recursive Hierarchy, prefetch, rank", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sView = `
@@ -42887,16 +42889,21 @@ make root = ${bMakeRoot}`;
 			"@$ui5.node.parent" : oAlpha,
 			Name : "Gamma"
 		}, true);
+		const oGammaCreated = oGamma.created();
 		const oBeta = oBinding.create({
 			"@$ui5.node.parent" : oAlpha,
 			Name : "Beta"
 		}, true);
+		const oBetaCreated = oBeta.created();
 
 		await Promise.all([
-			oBeta.created(),
-			oGamma.created(),
+			oBetaCreated,
+			oGammaCreated,
 			this.waitForChanges(assert, "(2) create Beta & Gamma")
 		]);
+
+		checkCreatedPersisted(assert, oBeta, oBetaCreated);
+		checkCreatedPersisted(assert, oGamma, oGammaCreated);
 
 		this.expectChange("name", [, "Delta"]);
 
@@ -42945,6 +42952,13 @@ make root = ${bMakeRoot}`;
 
 		await this.waitForChanges(assert, "(6) expand Alpha");
 
+		assert.strictEqual(oBeta.isTransient(), false, "created persisted");
+		assert.strictEqual(oBeta.getProperty("@$ui5.context.isTransient"), undefined, "not now");
+		assert.strictEqual(oBeta.created(), oBetaCreated);
+		assert.strictEqual(oGamma.isTransient(), false, "created persisted");
+		assert.strictEqual(oGamma.getProperty("@$ui5.context.isTransient"), undefined, "not now");
+		assert.strictEqual(oGamma.created(), oGammaCreated);
+
 		this.expectRequest("EMPLOYEES('0.0')?$select=DrillState,ID,Name",
 				{DrillState : "leaf", ID : "0.0", Name : "Beta*"})
 			.expectRequest("EMPLOYEES('0.1')?$select=DrillState,ID,Name",
@@ -42956,6 +42970,29 @@ make root = ${bMakeRoot}`;
 		oTable.setFirstVisibleRow(3);
 
 		await this.waitForChanges(assert, "(7) quickly scroll to 4 and 3");
+
+		this.expectChange("name", [, "Beta*", "Gamma*"]);
+
+		oTable.setFirstVisibleRow(1);
+
+		await this.waitForChanges(assert, "(8) scroll to Beta, Gamma");
+
+		checkTable("after (8) scroll to Beta, Gamma", assert, oTable, [
+			oAlpha, // "/EMPLOYEES('0')",
+			oBeta, // "/EMPLOYEES('0.0')",
+			oGamma, // "/EMPLOYEES('0.1')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('4')",
+			"/EMPLOYEES('5')",
+			"/EMPLOYEES('6')"
+		], [
+			["Beta*"],
+			["Gamma*"]
+		], 22);
+		checkCreatedPersisted(assert, oBeta, oBetaCreated);
+		checkCreatedPersisted(assert, oGamma, oGammaCreated);
 	});
 
 	//*********************************************************************************************
@@ -44193,6 +44230,163 @@ make root = ${bMakeRoot}`;
 			[true, 2, "1", "Beta"],
 			[true, 3, "1.1", "Gamma"]
 		], 5);
+	});
+
+	//*********************************************************************************************
+	// Scenario: An out-of-place node is preserved by side-effects (no refresh!), even when hidden
+	// via collapsing the parent beforehand (and expanding it again afterwards).
+	// JIRA: CPOUI5ODATAV4-2707
+	QUnit.test("Recursive Hierarchy: side-effects and hidden OOP", async function (assert) {
+		const sBaseUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+			+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
+			+ ",Levels=2)";
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				expandTo : 2,
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="3">
+	<Text text="{= %{@$ui5.context.isTransient} }"/>
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 0 Alpha
+		//   2 Gamma (created)
+		//   1 Beta
+		this.expectRequest(sBaseUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "2",
+				value : [{
+					DescendantCount : "1",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "0",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "1",
+					Name : "Beta"
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oListBinding = oTable.getBinding("rows");
+		checkTable("initial page", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')"
+		], [
+			[undefined, true, 1, "0", "Alpha"],
+			[undefined, undefined, 2, "1", "Beta"]
+		]);
+		const [oAlpha, oBeta] = oListBinding.getCurrentContexts();
+
+		this.expectRequest({
+				method : "POST",
+				url : "EMPLOYEES",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('0')",
+					Name : "Gamma"
+				}
+			}, {
+				ID : "2",
+				Name : "Gamma"
+			})
+			.expectRequest(sBaseUrl + "&$filter=ID eq '2'&$select=LimitedRank", {
+				value : [{
+					LimitedRank : "2"
+				}]
+			});
+
+		// code under test
+		const oGamma = oListBinding.create({
+			"@$ui5.node.parent" : oAlpha,
+			Name : "Gamma"
+		}, /*bSkipRefresh*/true);
+		const oGammaCreated = oGamma.created();
+
+		await Promise.all([
+			oGammaCreated,
+			this.waitForChanges(assert, "create Gamma")
+		]);
+
+		checkTable("after create Gamma", assert, oTable, [
+			oAlpha, // "/EMPLOYEES('0')",
+			oGamma, // "/EMPLOYEES('2')"
+			oBeta // "/EMPLOYEES('1')"
+		], [
+			[undefined, true, 1, "0", "Alpha"],
+			[false, undefined, 2, "2", "Gamma"],
+			[undefined, undefined, 2, "1", "Beta"]
+		]);
+		checkCreatedPersisted(assert, oGamma, oGammaCreated);
+
+		oAlpha.collapse();
+
+		this.expectRequest("EMPLOYEES?$select=ID,Name&$filter=ID eq '0'", {
+				value : [{
+					ID : "0",
+					Name : "Alpha #1"
+				}]
+			});
+
+		await Promise.all([
+			oListBinding.getHeaderContext().requestSideEffects(["Name"]),
+			this.waitForChanges(assert, "collapse Alpha, side effect: Name for all rows")
+		]);
+
+		checkTable("after collapse Alpha, side effect: Name for all rows", assert, oTable, [
+			oAlpha // "/EMPLOYEES('0')"
+		], [
+			[undefined, false, 1, "0", "Alpha #1"]
+		]);
+		assert.strictEqual(oBeta.getBinding(), undefined, "destroyed");
+
+		this.expectRequest(sBaseUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$skip=2&$top=1", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Gamma #1"
+				}]
+			})
+			.expectRequest(sBaseUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$skip=1&$top=1", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "1",
+					Name : "Beta #1"
+				}]
+			});
+
+		// code under test
+		oAlpha.expand();
+
+		await this.waitForChanges(assert, "expand Alpha");
+
+		checkTable("after expand Alpha", assert, oTable, [
+			oAlpha, // "/EMPLOYEES('0')",
+			oGamma, // "/EMPLOYEES('2')"
+			"/EMPLOYEES('1')"
+		], [
+			[undefined, true, 1, "0", "Alpha #1"],
+			[false, undefined, 2, "2", "Gamma #1"],
+			[undefined, undefined, 2, "1", "Beta #1"]
+		]);
+		checkCreatedPersisted(assert, oGamma, oGammaCreated);
 	});
 
 	//*********************************************************************************************
