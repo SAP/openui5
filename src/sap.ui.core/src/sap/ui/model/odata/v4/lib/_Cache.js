@@ -2561,6 +2561,8 @@ sap.ui.define([
 		// number of all (client-side) created elements (active or inactive)
 		this.aElements.$created = 0;
 		// this.aElements.$deleted = []; // only created on demand
+		// "select all", only created on demand
+		// this.aElements["@$ui5.context.isSelected"] = false;
 		this.aElements.$tail = undefined; // promise for a read w/o $top
 		// upper limit for @odata.count, maybe sharp; assumes #getQueryString can $filter out all
 		// created elements
