@@ -7,10 +7,6 @@
 	color: @sapUiLink;
 	text-decoration: @sapUiLinkTextDecoration;
 	display: inline-block;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	word-wrap: normal;
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
 	cursor: pointer;
@@ -25,6 +21,32 @@
 			text-decoration: @sapUiLinkActiveTextDecoration;
 		}
 	}
+
+	&:not(.sapMLnkWrapping) {
+		display: inline-flex;
+		align-items: baseline;
+
+		.sapMLnkText {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.sapMLnkEndIcon {
+			float: inline-end;
+		}
+	}
+}
+
+.sapMLnkIcon {
+	float: inline-start;
+	margin-inline-end: 0.125rem;
+	cursor: pointer;
+}
+
+.sapMLnkEndIcon {
+	margin-inline-start: 0.125rem;
+	cursor: pointer;
 }
 
 html.sap-desktop .sapMLnk:not(.sapMLnkDsbl) {

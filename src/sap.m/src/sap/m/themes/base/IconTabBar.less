@@ -357,11 +357,15 @@
 
 		.sapMITBText {
 			height: 1rem;
-			line-height: 1rem;
+			line-height: normal;
 			margin: 0;
 			padding: 0;
 			text-align: left;
 			width: auto;
+
+			.sapMITHShowSubItemsIcon {
+				line-height: 1rem;
+			}
 		}
 
 		.sapMITBCount {
@@ -1194,8 +1198,12 @@ html.sap-desktop {
 			}
 
 			.sapMITBText {
-				line-height: @_sap_m_IconTabBar_Compact_TextOnlyTextLineHeight;
+				line-height: normal;
 				padding: @_sap_m_IconTabBar_Compact_TextOnlyTextPadding;
+
+				.sapMITHShowSubItemsIcon {
+					line-height: @_sap_m_IconTabBar_Compact_TextOnlyTextLineHeight;
+				}
 			}
 		}
 

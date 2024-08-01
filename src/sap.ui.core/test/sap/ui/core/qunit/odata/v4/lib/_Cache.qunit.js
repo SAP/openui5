@@ -6667,6 +6667,20 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("CollectionCache#fill, $count known, iEnd = 1025, [many rows]", function (assert) {
+		const oCache = this.createCache("Employees");
+		oCache.aElements.$count = 1025;
+		oCache.aElements.$tail = "~oPromiseOld~";
+		assert.deepEqual(oCache.aElements, []);
+
+		// code under test
+		oCache.fill("~oPromiseNew~", 0, 1025);
+
+		assert.deepEqual(oCache.aElements, new Array(1025).fill("~oPromiseNew~"));
+		assert.strictEqual(oCache.aElements.$tail, "~oPromiseOld~", "unchanged");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("CollectionCache#fill, iEnd = 1025, []", function (assert) {
 		var oCache = this.createCache("Employees"),
 			oPromise = "~oPromise~";

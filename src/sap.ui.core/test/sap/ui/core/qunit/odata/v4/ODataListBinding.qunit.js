@@ -4459,6 +4459,8 @@ sap.ui.define([
 			.returns(oNewContext);
 		this.mock(oBinding.oHeaderContext).expects("isSelected")
 			.withExactArgs().returns("~selected~");
+		this.mock(oCreatedContext).expects("isEffectivelyKeptAlive").twice()
+			.withExactArgs().returns(false);
 		this.mock(oNewContext).expects("doSetSelected").withExactArgs("~selected~");
 		this.mock(this.oModel).expects("addPrerenderingTask")
 			.withExactArgs(sinon.match.func).callsArg(0);

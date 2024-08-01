@@ -397,9 +397,8 @@ sap.ui.define([
 		}
 
 		for (let i = iIndex + 1; i < iIndex + 1 + iCount; i += 1) {
-			// selected elements are effectively kept alive (with recursive hierarchy)
-			if (!this.oAggregation.hierarchyQualifier
-				|| !aElements[i]["@$ui5.context.isSelected"]) {
+			// exceptions of selection are effectively kept alive (with recursive hierarchy)
+			if (!this.isSelectionDifferent(aElements[i])) {
 				delete aElements.$byPredicate[
 					_Helper.getPrivateAnnotation(aElements[i], "predicate")];
 				delete aElements.$byPredicate[
@@ -726,6 +725,7 @@ sap.ui.define([
 			this.aElements.$byPredicate = aOldElements.$byPredicate;
 			iCount = aSpliced.length;
 			this.aElements.$count = aOldElements.$count + iCount;
+			_Helper.copySelected(aOldElements, this.aElements);
 			const iLevelDiff = oGroupNode["@$ui5.node.level"] - aSpliced.$level;
 			const iRankDiff = _Helper.getPrivateAnnotation(oGroupNode, "rank") - aSpliced.$rank;
 			aSpliced.forEach(function (oElement) {
@@ -743,7 +743,7 @@ sap.ui.define([
 					}
 				}
 				if (!_Helper.hasPrivateAnnotation(oElement, "placeholder")) {
-					if (aSpliced.$stale && !oElement["@$ui5.context.isSelected"]) {
+					if (aSpliced.$stale && !that.isSelectionDifferent(oElement)) {
 						that.turnIntoPlaceholder(oElement, sPredicate);
 					} else {
 						that.aElements.$byPredicate[sPredicate] = oElement;
@@ -1352,6 +1352,23 @@ sap.ui.define([
 		return this.oAggregation.createInPlace
 			&& oParent["@$ui5.node.isExpanded"] === undefined
 			&& oParent["@$ui5.node.level"] >= this.oAggregation.expandTo;
+	};
+
+	/**
+	 * Determines if the "@$ui5.context.isSelected" annotation of the given element differs from the
+	 * annotation at the collection. Only relevant in case of a recursive hierarchy. Note: A missing
+	 * annotation is treated as <code>false</code>.
+	 *
+	 * @param {object} oElement - The element
+	 * @returns {boolean} Whether recursive hierarchy is used and the selection state of the element
+	 *   differs from the collection
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.isSelectionDifferent = function (oElement) {
+		return this.oAggregation.hierarchyQualifier
+			&& (oElement["@$ui5.context.isSelected"] ?? false)
+				!== (this.aElements["@$ui5.context.isSelected"] ?? false);
 	};
 
 	/**

@@ -1847,11 +1847,6 @@ sap.ui.define([
 					}
 				}
 
-				function readableUrl(sUrl0) {
-					return sUrl0.replaceAll(/%([0-9a-fA-F]{2})/g,
-						(_s, n) => String.fromCharCode(Number.parseInt(n, 16)));
-				}
-
 				if (iBatchNo === undefined) {
 					that.iBatchNo += 1;
 				}
@@ -1885,9 +1880,9 @@ sap.ui.define([
 						oActualRequest.$ContentID = sContentID;
 					}
 					assert.deepEqual(oActualRequest, oExpectedRequest,
-						sMethod + " " + readableUrl(sUrl) + " (batchNo: " + iBatchNo + ")");
+						`${sMethod} ${TestUtils.makeUrlReadable(sUrl)} (batchNo: ${iBatchNo})`);
 				} else {
-					assert.ok(false, sMethod + " " + readableUrl(sUrl) + " (unexpected)");
+					assert.ok(false, `${sMethod} ${TestUtils.makeUrlReadable(sUrl)} (unexpected)`);
 					oResponse = {value : []}; // dummy response to avoid further errors
 					mResponseHeaders = {};
 				}
@@ -2311,9 +2306,9 @@ sap.ui.define([
 		 *
 		 * @param {string|object} vRequest
 		 *   The request with the properties "method", "url" and "headers". A string is interpreted
-		 *   as URL with method "GET" and no headers. Spaces inside the URL are percent-encoded
-		 *   automatically. Additionally the following properties may be given for requests within a
-		 *   $batch:
+		 *   as URL with method "GET" and no headers. Spaces, double quotes, square brackets, and
+		 *   curly brackets inside the URL are percent-encoded automatically. Additionally, the
+		 *   following properties may be given for requests within a $batch:
 		 *   <ul>
 		 *      <li> groupId: the group ID by which the $batch was sent
 		 *      <li> batchNo: the number of the ($direct or $batch) request within the test
@@ -2357,8 +2352,7 @@ sap.ui.define([
 					// With GET it must be visible that there is no content, with the other
 					// methods it must be possible to insert the ETag from the header
 					|| (vRequest.method === "GET" ? null : {});
-			vRequest.url = vRequest.url.replaceAll(/[ "\[\]{}]/g,
-				(s) => `%${s.charCodeAt(0).toString(16).padStart(2, 0).toUpperCase()}`);
+			vRequest.url = TestUtils.encodeReadableUrl(vRequest.url);
 			if (vResponse && !(vResponse instanceof Error || vResponse instanceof Promise
 					|| typeof vResponse === "function")) { // vResponse may be inspected
 				if (rCountTrue.test(vRequest.url)) { // $count=true
@@ -17060,6 +17054,62 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Create a list binding w/o UI. Parameter $count is set. The first call of
+	// #requestContexts is used to get the count of the entity set. Call #requestContexts in
+	// parallel to request a large number of contexts (more than 1024) both with the same explicit
+	// group ID. See that both requests are sent in one batch.
+	//
+	// SNOW: DINC0216566
+	QUnit.test("DINC0216566", async function (assert) {
+		const aValues = [];
+
+		for (let i = 0; i < 5000; i += 1) {
+			aValues[i] = {Team_Id : "TEAM_" + i};
+		}
+
+		await this.createView(assert);
+
+		const oListBinding = this.oModel.bindList("/TEAMS", undefined, undefined, undefined, {
+			$count : true
+		});
+
+		this.expectRequest("TEAMS?$count=true&$skip=0&$top=1", {
+			"@odata.count" : aValues.length.toString(),
+			value : aValues.slice(0, 1)
+		});
+
+		await Promise.all([
+			oListBinding.requestContexts(0, 1),
+			this.waitForChanges(assert, "1st GET")
+		]);
+
+		this.expectRequest({
+				batchNo : 2,
+				url : "TEAMS?$count=true&$skip=1&$top=2000",
+				method : "GET"
+			}, {
+				"@odata.count" : aValues.length.toString(),
+				value : aValues.slice(1, 2001)
+			})
+			.expectRequest({
+				batchNo : 2,
+				url : "TEAMS?$count=true&$skip=2001&$top=2999",
+				method : "GET"
+			}, {
+				"@odata.count" : aValues.length.toString(),
+				value : aValues.slice(2001, 5000)
+			});
+
+		await Promise.all([
+			// does not matter if group ID is $auto.* or something else, but cannot be omitted
+			// code under test
+			oListBinding.requestContexts(1, 2000, "$auto.foo"),
+			oListBinding.requestContexts(2001, Infinity, "$auto.foo"),
+			this.waitForChanges(assert, "2nd and 3rd GET")
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Retrieve existing data from cache and prefetch further entries. Make sure that a
 	// dataReceived event is sent after each dataRequested.
 	//
@@ -30991,6 +31041,10 @@ sap.ui.define([
 	//
 	// Such a node is also updated by requesting side effects for all rows
 	// JIRA: CPOUI5ODATAV4-2646
+	//
+	// "Select all", deselect a node, collapse its parent. The (effectively kept-alive) node now is
+	// not part of the hierarchy. It still holds its data and is affected by side-effects requests.
+	// JIRA: CPOUI5ODATAV4-2624
 	[false, true].forEach(function (bResetViaModel) {
 		const sTitle = `Recursive Hierarchy: create new children, move 'em, model=${bResetViaModel}`;
 		QUnit.test(sTitle, function (assert) {
@@ -31517,8 +31571,8 @@ sap.ui.define([
 				oBeta = null;
 
 				that.expectRequest(sFriend.slice(1)
-						+ "?$filter=ArtistID eq '0' and IsActiveEntity eq false or "
-							+ "ArtistID eq '2' and IsActiveEntity eq false"
+						+ "?$filter=ArtistID eq '0' and IsActiveEntity eq false"
+							+ " or ArtistID eq '2' and IsActiveEntity eq false"
 						+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID&$top=2", {
 						value : [{
 							"@odata.etag" : "etag0.2",
@@ -31624,6 +31678,107 @@ sap.ui.define([
 				});
 				checkPersisted(assert, oBeta);
 
+				// prepare CPOUI5ODATAV4-2624: select all
+				oListBinding.getHeaderContext().setSelected(true);
+
+				// deselect a node while "select all" is active: node becomes kept-alive
+				oGamma.setSelected(false);
+
+				// code under test
+				oRoot.collapse();
+
+				return that.waitForChanges(assert, "select all, deselect Gamma, collapse its parent");
+			}).then(function () {
+				// code under test (CPOUI5ODATAV4-2624)
+				assert.deepEqual(oGamma.getObject(), {
+					"@$ui5.context.isSelected" : false,
+					"@$ui5.node.level" : 2,
+					"@odata.etag" : "etag2.3",
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Gamma #1",
+					_ : {
+						NodeID : "2,false"
+					}
+				});
+
+				that.expectRequest(sFriend.slice(1)
+						+ "?$filter=ArtistID eq '0' and IsActiveEntity eq false"
+							+ " or ArtistID eq '2' and IsActiveEntity eq false"
+						+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID&$top=2", {
+						value : [{
+							"@odata.etag" : "etag0.3",
+							ArtistID : "0",
+							IsActiveEntity : false,
+							Name : "Alpha #2", // "side effect"
+							_ : null // not available w/ RAP for a non-hierarchical request
+						}, {
+							"@odata.etag" : "etag2.4",
+							ArtistID : "2",
+							IsActiveEntity : false,
+							Name : "Gamma #2", // "side effect"
+							_ : null // not available w/ RAP for a non-hierarchical request
+						}]
+					})
+					.expectChange("etag", ["etag0.3"])
+					.expectChange("name", ["Alpha #2"]);
+
+				return Promise.all([
+					// code under test (CPOUI5ODATAV4-2624)
+					oListBinding.getHeaderContext().requestSideEffects(["Name"]),
+					that.waitForChanges(assert, "side effect: Name for all rows")
+				]);
+			}).then(function () {
+				assert.deepEqual(oGamma.getObject(), {
+					"@$ui5.context.isSelected" : false,
+					"@$ui5.node.level" : 2,
+					"@odata.etag" : "etag2.4",
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Gamma #2",
+					_ : {
+						NodeID : "2,false"
+					}
+				});
+
+				that.expectRequest(sBaseUrl + "&$select=ArtistID,IsActiveEntity,Name"
+						+ ",_/DescendantCount,_/DistanceFromRoot,_/DrillState,_/NodeID"
+						+ "&$skip=2&$top=1", {
+						value : [{
+							"@odata.etag" : "etag1.4",
+							ArtistID : "1",
+							IsActiveEntity : false,
+							Name : "Beta #2",
+							_ : {
+								DescendantCount : "0",
+								DistanceFromRoot : "1",
+								DrillState : "leaf",
+								NodeID : "1,false"
+							}
+						}]
+					})
+					.expectChange("etag", [, "etag2.4", "etag1.4"])
+					.expectChange("name", [, "Gamma #2", "Beta #2"]);
+
+				oRoot.expand();
+
+				return that.waitForChanges(assert, "expand root again #2");
+			}).then(function () {
+				checkTable("after expand root again #2", assert, oTable, [
+					oRoot, //sFriend + "(ArtistID='0',IsActiveEntity=false)"
+					oGamma, //sFriend + "(ArtistID='2',IsActiveEntity=false)"
+					sFriend + "(ArtistID='1',IsActiveEntity=false)"
+				], [
+					[undefined, true, 1, "etag0.3", "Alpha #2", "0,false"],
+					[undefined, undefined, 2, "etag2.4", "Gamma #2", "2,false"],
+					[undefined, undefined, 2, "etag1.4", "Beta #2", "1,false"]
+				]);
+				oBeta = oListBinding.getCurrentContexts()[2];
+				checkSelected(assert, oBeta, true);
+
+				oListBinding.getHeaderContext().setSelected(false);
+				oGamma.setSelected(true);
+
 				that.expectRequest(sBaseUrl + "&$filter=ArtistID eq '2' and IsActiveEntity eq false"
 						+ "&$select=_/Limited_Rank", {
 						value : [{
@@ -31642,9 +31797,9 @@ sap.ui.define([
 				]);
 			}).then(function () {
 				that.expectRequest({
-						batchNo : 11,
+						batchNo : 13,
 						headers : {
-							"If-Match" : "etag1.3",
+							"If-Match" : "etag1.4",
 							Prefer : "return=minimal"
 						},
 						method : "PATCH",
@@ -31652,9 +31807,9 @@ sap.ui.define([
 						payload : {
 							"BestFriend@odata.bind" : "Artists(ArtistID='2',IsActiveEntity=false)"
 						}
-					}, null, {ETag : "etag1.4"}) // 204 No Content
+					}, null, {ETag : "etag1.5"}) // 204 No Content
 					.expectRequest({
-						batchNo : 11,
+						batchNo : 13,
 						url : sBaseUrl + "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
 							+ "&$select=_/Limited_Rank"
 					}, {
@@ -31665,7 +31820,7 @@ sap.ui.define([
 							}
 						}]
 					})
-					.expectChange("etag", [,, "etag1.4"]);
+					.expectChange("etag", [,, "etag1.5"]);
 
 				return Promise.all([
 					// code under test
@@ -31678,9 +31833,9 @@ sap.ui.define([
 					sFriend + "(ArtistID='2',IsActiveEntity=false)",
 					sFriend + "(ArtistID='1',IsActiveEntity=false)"
 				], [
-					[undefined, true, 1, "etag0.2", "Alpha #1", "0,false"],
-					[undefined, true, 2, "etag2.3", "Gamma #1", "2,false"],
-					[undefined, undefined, 3, "etag1.4", "Beta #1", "1,false"]
+					[undefined, true, 1, "etag0.3", "Alpha #2", "0,false"],
+					[undefined, true, 2, "etag2.4", "Gamma #2", "2,false"],
+					[undefined, undefined, 3, "etag1.5", "Beta #2", "1,false"]
 				]);
 				const aCurrentContexts = oListBinding.getCurrentContexts();
 				assert.strictEqual(oRoot, aCurrentContexts[0]);
@@ -31692,10 +31847,10 @@ sap.ui.define([
 					"@$ui5.context.isSelected" : true,
 					"@$ui5.node.isExpanded" : true,
 					"@$ui5.node.level" : 2,
-					"@odata.etag" : "etag2.3",
+					"@odata.etag" : "etag2.4",
 					ArtistID : "2",
 					IsActiveEntity : false,
-					Name : "Gamma #1",
+					Name : "Gamma #2",
 					_ : {
 						NodeID : "2,false"
 					}
@@ -31704,21 +31859,22 @@ sap.ui.define([
 
 				assert.strictEqual(oBeta.getIndex(), 2); // unchanged by #move
 				assert.deepEqual(oBeta.getObject(), {
+					"@$ui5.context.isSelected" : false,
 					"@$ui5.node.level" : 3,
-					"@odata.etag" : "etag1.4",
+					"@odata.etag" : "etag1.5",
 					ArtistID : "1",
 					IsActiveEntity : false,
-					Name : "Beta #1",
+					Name : "Beta #2",
 					_ : {
 						NodeID : "1,false"
 					}
 				});
 				checkPersisted(assert, oBeta);
 
-				that.expectChange("etag", [undefined, "etag0.2", "etag2.3"])
-					.expectChange("name", ["Aleph", "Alpha #1", "Gamma #1"])
+				that.expectChange("etag", [undefined, "etag0.3", "etag2.4"])
+					.expectChange("name", ["Aleph", "Alpha #2", "Gamma #2"])
 					.expectRequest({
-						batchNo : 12,
+						batchNo : 14,
 						method : "POST",
 						url : sFriend.slice(1),
 						payload : {
@@ -31735,7 +31891,7 @@ sap.ui.define([
 					.expectChange("etag", ["etag9.0"])
 					.expectChange("name", ["Aleph: ℵ"])
 					.expectRequest({
-						batchNo : 13,
+						batchNo : 15,
 						url : sBaseUrl + "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
 							+ "&$select=_/Limited_Rank"
 					}, {
@@ -31747,7 +31903,7 @@ sap.ui.define([
 						}]
 					})
 					.expectRequest({ // no "filter(sendsAutographs)" (SNOW: DINC0087713)
-						batchNo : 13,
+						batchNo : 15,
 						url : sBaseUrlNoFilter + "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
 							+ "&$select=_/NodeID"
 					}, {
@@ -31779,8 +31935,8 @@ sap.ui.define([
 					sFriend + "(ArtistID='1',IsActiveEntity=false)"
 				], [
 					[false, undefined, 1, "etag9.0", "Aleph: ℵ", "9,false"],
-					[undefined, true, 1, "etag0.2", "Alpha #1", "0,false"],
-					[undefined, true, 2, "etag2.3", "Gamma #1", "2,false"]
+					[undefined, true, 1, "etag0.3", "Alpha #2", "0,false"],
+					[undefined, true, 2, "etag2.4", "Gamma #2", "2,false"]
 				]);
 				checkCreatedPersisted(assert, oNewRoot);
 
@@ -31791,16 +31947,16 @@ sap.ui.define([
 						+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
 						+ "&$top=3", {
 						value : [{
-							"@odata.etag" : "etag0.3",
+							"@odata.etag" : "etag0.4",
 							ArtistID : "0",
 							IsActiveEntity : false,
-							Name : "Alpha #2",
+							Name : "Alpha #3",
 							_ : null // not available w/ RAP for a non-hierarchical request
 						}, {
-							"@odata.etag" : "etag2.4",
+							"@odata.etag" : "etag2.5",
 							ArtistID : "2",
 							IsActiveEntity : false,
-							Name : "Gamma #2",
+							Name : "Gamma #3",
 							_ : null // not available w/ RAP for a non-hierarchical request
 						}, {
 							"@odata.etag" : "etag9.1",
@@ -31810,8 +31966,8 @@ sap.ui.define([
 							_ : null // not available w/ RAP for a non-hierarchical request
 						}]
 					})
-					.expectChange("etag", ["etag9.1", "etag0.3", "etag2.4"])
-					.expectChange("name", ["Aleph #2", "Alpha #2", "Gamma #2"]);
+					.expectChange("etag", ["etag9.1", "etag0.4", "etag2.5"])
+					.expectChange("name", ["Aleph #2", "Alpha #3", "Gamma #3"]);
 
 				return Promise.all([
 					// code under test
@@ -31827,8 +31983,8 @@ sap.ui.define([
 					sFriend + "(ArtistID='2',IsActiveEntity=false)"
 				], [
 					[false, undefined, 1, "etag9.1", "Aleph #2", "9,false"],
-					[undefined, true, 1, "etag0.3", "Alpha #2", "0,false"],
-					[undefined, true, 2, "etag2.4", "Gamma #2", "2,false"]
+					[undefined, true, 1, "etag0.4", "Alpha #3", "0,false"],
+					[undefined, true, 2, "etag2.5", "Gamma #3", "2,false"]
 				], 4);
 				oBeta = null;
 
@@ -31836,10 +31992,10 @@ sap.ui.define([
 						+ ",_/DescendantCount,_/DistanceFromRoot,_/DrillState,_/NodeID"
 						+ "&$skip=2&$top=1", {
 						value : [{
-							"@odata.etag" : "etag1.5",
+							"@odata.etag" : "etag1.6",
 							ArtistID : "1",
 							IsActiveEntity : false,
-							Name : "Beta #2",
+							Name : "Beta #3",
 							_ : {
 								DescendantCount : "0",
 								DistanceFromRoot : "2",
@@ -31848,8 +32004,8 @@ sap.ui.define([
 							}
 						}]
 					})
-					.expectChange("etag", [, "etag0.3", "etag2.4", "etag1.5"])
-					.expectChange("name", [, "Alpha #2", "Gamma #2", "Beta #2"]);
+					.expectChange("etag", [, "etag0.4", "etag2.5", "etag1.6"])
+					.expectChange("name", [, "Alpha #3", "Gamma #3", "Beta #3"]);
 
 				oTable.setFirstVisibleRow(1);
 
@@ -31861,16 +32017,16 @@ sap.ui.define([
 					sFriend + "(ArtistID='2',IsActiveEntity=false)",
 					sFriend + "(ArtistID='1',IsActiveEntity=false)"
 				], [
-					[undefined, true, 1, "etag0.3", "Alpha #2", "0,false"],
-					[undefined, true, 2, "etag2.4", "Gamma #2", "2,false"],
-					[undefined, undefined, 3, "etag1.5", "Beta #2", "1,false"]
+					[undefined, true, 1, "etag0.4", "Alpha #3", "0,false"],
+					[undefined, true, 2, "etag2.5", "Gamma #3", "2,false"],
+					[undefined, undefined, 3, "etag1.6", "Beta #3", "1,false"]
 				]);
 				oBeta = oListBinding.getCurrentContexts()[2];
 
 				that.expectRequest({
-						batchNo : 16,
+						batchNo : 18,
 						headers : {
-							"If-Match" : "etag1.5",
+							"If-Match" : "etag1.6",
 							Prefer : "return=minimal"
 						},
 						method : "PATCH",
@@ -31878,9 +32034,9 @@ sap.ui.define([
 						payload : {
 							"BestFriend@odata.bind" : null
 						}
-					}, null, {ETag : "etag1.6"}) // 204 No Content
+					}, null, {ETag : "etag1.7"}) // 204 No Content
 					.expectRequest({
-						batchNo : 16,
+						batchNo : 18,
 						url : sBaseUrl + "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
 							+ "&$select=_/Limited_Rank"
 					}, {
@@ -31891,9 +32047,9 @@ sap.ui.define([
 							}
 						}]
 					})
-					.expectChange("etag", [,,, "etag1.6"])
-					.expectChange("etag", [, "etag1.6", "etag0.3", "etag2.4"])
-					.expectChange("name", [, "Beta #2", "Alpha #2", "Gamma #2"]);
+					.expectChange("etag", [,,, "etag1.7"])
+					.expectChange("etag", [, "etag1.7", "etag0.4", "etag2.5"])
+					.expectChange("name", [, "Beta #3", "Alpha #3", "Gamma #3"]);
 
 				return Promise.all([
 					// code under test
@@ -31909,13 +32065,13 @@ sap.ui.define([
 					oListBinding, ["@$ui5.context.isTransient", "@$ui5.node.isExpanded",
 						"@$ui5.node.level", "@odata.etag", "Name", "_/NodeID"], [
 						[false, undefined, 1, "etag9.1", "Aleph #2", "9,false"], // still out-of-place
-						[undefined, undefined, 1, "etag1.6", "Beta #2", "1,false"],
-						[undefined, true, 1, "etag0.3", "Alpha #2", "0,false"],
-						[undefined, undefined, 2, "etag2.4", "Gamma #2", "2,false"]
+						[undefined, undefined, 1, "etag1.7", "Beta #3", "1,false"],
+						[undefined, true, 1, "etag0.4", "Alpha #3", "0,false"],
+						[undefined, undefined, 2, "etag2.5", "Gamma #3", "2,false"]
 					]);
 			}).then(function () {
-				that.expectChange("etag", ["etag9.1", "etag1.6", "etag0.3"])
-					.expectChange("name", ["Aleph #2", "Beta #2", "Alpha #2"]);
+				that.expectChange("etag", ["etag9.1", "etag1.7", "etag0.4"])
+					.expectChange("name", ["Aleph #2", "Beta #3", "Alpha #3"]);
 
 				oRoot.collapse();
 
@@ -31925,8 +32081,8 @@ sap.ui.define([
 
 				that.expectRequest(sFriend.slice(1) + "(ArtistID='2',IsActiveEntity=false)"
 						+ "?$select=Name,_/NodeID", {
-						"@odata.etag" : "etag2.5",
-						Name : "Gamma: #3", // "side effect"
+						"@odata.etag" : "etag2.6",
+						Name : "Gamma: #4", // "side effect"
 						_ : null // not available w/ RAP for a non-hierarchical request
 					});
 
@@ -31940,10 +32096,10 @@ sap.ui.define([
 				assert.deepEqual(oGamma.getObject(), {
 					"@$ui5.context.isSelected" : true,
 					"@$ui5.node.level" : 2,
-					"@odata.etag" : "etag2.5",
+					"@odata.etag" : "etag2.6",
 					ArtistID : "2",
 					IsActiveEntity : false,
-					Name : "Gamma: #3",
+					Name : "Gamma: #4",
 					_ : {
 						NodeID : "2,false"
 					}

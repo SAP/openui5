@@ -1198,7 +1198,8 @@ sap.ui.define([
 
 		return this.bKeepAlive
 			|| !mParameters.$$sharedRequest
-			&& this.isSelected() && this !== this.oBinding.getHeaderContext()
+			&& this.oBinding.getHeaderContext?.()
+			&& this.oBinding.getHeaderContext().isSelected() !== this.isSelected()
 			&& !(this.oBinding.isRelative() && !mParameters.$$ownRequest)
 			&& !_Helper.isDataAggregation(mParameters)
 			// check for key predicate in the last path segment

@@ -56,6 +56,7 @@
 		 },
 		 bEnabled = oControl.getEnabled(),
 		 sTypeSemanticInfo = "",
+		 sText = oControl.getText(),
 		 sAcccessKey = oControl.getProperty("accesskey");
 
 	 // Link is rendered as a "<a>" element
@@ -140,10 +141,27 @@
 	 // opening <a> tag
 	 oRm.openEnd();
 
+	 // Render icon only if there is text
+	 if (sText && oControl.getIcon()) {
+		 oRm.renderControl(oControl._getIcon());
+	 }
+
+	 // Text is rendered in "<span>" element to apply ellipsis only on the text
+	 oRm.openStart("span");
+	 oRm.class("sapMLnkText");
+	 oRm.openEnd();
+
 	 if (this.writeText) {
 		 this.writeText(oRm, oControl);
 	 } else {
 		 this.renderText(oRm, oControl);
+	 }
+
+	 oRm.close("span");
+
+	 // Render end icon only if there is text
+	 if (sText && oControl.getEndIcon()) {
+		 oRm.renderControl(oControl._getEndIcon());
 	 }
 
 	 oRm.close("a");

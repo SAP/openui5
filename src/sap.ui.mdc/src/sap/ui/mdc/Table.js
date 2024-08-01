@@ -608,6 +608,7 @@ sap.ui.define([
 				 *
 				 * <b>Note</b>: This property must not be bound.
 				 * <b>Note</b>: This property is used exclusively for SAPUI5 flexibility / Fiori Elements. Do not use it otherwise.
+				 * <b>Note</b>: Existing properties (set via <code>sap.ui.mdc.Table#setPropertyInfo</code>) must not be removed and their attributes must not be changed during the {@link module:sap/ui/mdc/TableDelegate.fetchProperties fetchProperties} callback. Otherwise validation errors might occur whenever personalization-related control features (such as the opening of any personalization dialog) are activated.
 				 *
 				 * @since 1.111
 				 */

@@ -628,7 +628,7 @@ sap.ui.define([
 		//Assert
 		assert.ok(oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should be active");
 		assert.ok(oObjectIdentifier.$("title").children(0).hasClass("sapMLnk"), "A Link control should be rendered inside the title");
-		assert.equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
+		assert.equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").find(".sapMLnkText").html(), "The title text is rendered");
 
 		//Cleanup
 		oObjectIdentifier.destroy();

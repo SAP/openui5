@@ -75,6 +75,11 @@ function(App, IconTabBar, IconTabFilter, IconTabSeparator, Input, Label, Library
 	});
 	label4a.addStyleClass("labelGen3");
 
+	var label4b = new Label({
+		text: "IconTabBar text only with Hindi texts"
+	});
+	label4b.addStyleClass("labelGen3");
+
 	var label5 = new Label({
 		text: "IconTabBar with sub filters"
 	});
@@ -1755,6 +1760,17 @@ function(App, IconTabBar, IconTabFilter, IconTabSeparator, Input, Label, Library
 		]
 	});
 
+	var itb4b = new IconTabBar("itb4b", {
+		items: [
+			new IconTabFilter({
+				text: "खोजें और चयन करें"
+			}),
+			new IconTabFilter({
+				text: "खोजें और चयन करें 1"
+			})
+		]
+	});
+
 	var itb5 = new IconTabBar("itb5", {
 		expandable: false,
 		items: [
@@ -2256,6 +2272,8 @@ function(App, IconTabBar, IconTabFilter, IconTabSeparator, Input, Label, Library
 			itb4,
 			label4a,
 			itb4a,
+			label4b,
+			itb4b,
 			label5,
 			itb5,
 			label5a,

@@ -723,7 +723,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Indicator should be rendered", function(assert) {
-		var oSpan = this.oLink.getDomRef().childNodes[0];
+		var oSpan = this.oLink.getDomRef().querySelector(".sapMEmptyIndicator");
 		assert.strictEqual(oSpan.firstChild.textContent, oRb.getText("EMPTY_INDICATOR"), "Empty indicator is rendered");
 		assert.strictEqual(oSpan.firstElementChild.getAttribute("aria-hidden"), "true", "Accessibility attribute is set");
 		assert.strictEqual(oSpan.lastElementChild.textContent, "Empty Value", "Accessibility text is added");
@@ -749,7 +749,7 @@ sap.ui.define([
 
 	QUnit.test("Indicator should be rendered, when sapMShowEmpty-CTX is added to parent", function(assert) {
 		//Assert
-		var oSpan = this.oLinkEmptyAuto.getDomRef().childNodes[0];
+		var oSpan = this.oLinkEmptyAuto.getDomRef().querySelector(".sapMEmptyIndicator");
 		assert.strictEqual(oSpan.firstElementChild.textContent, oRb.getText("EMPTY_INDICATOR"), "Empty indicator is rendered");
 		assert.strictEqual(oSpan.firstElementChild.getAttribute("aria-hidden"), "true", "Accessibility attribute is set");
 		assert.strictEqual(oSpan.lastElementChild.textContent, "Empty Value", "Accessibility text is added");
@@ -765,7 +765,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Indicator should be rendered when 'sapMShowEmpty-CTX' is added", async function(assert) {
-		var oSpan = this.oLinkEmptyAutoNoClass.getDomRef().childNodes[0];
+		var oSpan = this.oLinkEmptyAutoNoClass.getDomRef().querySelector(".sapMEmptyIndicator");
 		//Assert
 		assert.strictEqual(window.getComputedStyle(oSpan)["display"], "none", "Empty indicator is not rendered");
 		//Arrange
@@ -786,4 +786,91 @@ sap.ui.define([
 		assert.strictEqual(this.oLink.getDomRef().childNodes[0].textContent, "test", "Empty indicator is not rendered");
 	});
 
+	QUnit.module("Link with icons", {
+		beforeEach : async function() {
+			this.oLink = new Link({
+				text: "Click me"
+			});
+			this.oLink.placeAt("qunit-fixture");
+			await nextUIUpdate();
+		},
+		afterEach : function() {
+			this.oLink.destroy();
+		}
+	});
+
+	QUnit.test("Icons are created when icon URI is set", async function(assert) {
+		var oLinkDomRef = this.oLink.getDomRef();
+
+		// Act
+		this.oLink.setIcon("sap-icon://add");
+		this.oLink.setEndIcon("sap-icon://add");
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(this.oLink.getAggregation("_icon"), "Icon control is created and added to private _icon aggregation");
+		assert.strictEqual(this.oLink.getAggregation("_icon").getSrc(), "sap-icon://add", "Icon control in _icon aggregation has proper URI set");
+		assert.ok(oLinkDomRef.querySelector(".sapUiIcon.sapMLnkIcon"), "Icon is rendered");
+
+		assert.ok(this.oLink.getAggregation("_endIcon"), "Icon control is created and added to private _endIcon aggregation");
+		assert.strictEqual(this.oLink.getAggregation("_endIcon").getSrc(), "sap-icon://add", "Icon control in _endIcon aggregation has proper URI set");
+		assert.ok(oLinkDomRef.querySelector(".sapUiIcon.sapMLnkEndIcon"), "End Icon is rendered");
+	});
+
+	QUnit.test("Icons are not rendered when Link doesn't have text", async function(assert) {
+		var oLinkDomRef = this.oLink.getDomRef();
+
+		// Act
+		this.oLink.setText("");
+		this.oLink.setIcon("sap-icon://add");
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(oLinkDomRef.querySelector(".sapUiIcon.sapMLnkIcon"), "Icon is not rendered");
+
+		// Act
+		this.oLink.setIcon("");
+		this.oLink.setEndIcon("sap-icon://add");
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(oLinkDomRef.querySelector(".sapUiIcon.sapMLnkEndIcon"), "End Icon is not rendered");
+
+		// Act
+		this.oLink.setIcon("sap-icon://add");
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(oLinkDomRef.querySelector(".sapUiIcon.sapMLnkIcon"), "Icon is not rendered");
+		assert.notOk(oLinkDomRef.querySelector(".sapUiIcon.sapMLnkEndIcon"), "End Icon is not rendered");
+	});
+
+	QUnit.test("Icons URI is not set when provided URI is not valid icon URI", async function(assert) {
+		// Act
+		this.oLink.setIcon("sap-icon://add");
+		this.oLink.setEndIcon("sap-icon://add");
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(this.oLink.getAggregation("_icon").getSrc(), "sap-icon://add", "Icon control in _icon aggregation has proper URI set");
+		assert.strictEqual(this.oLink.getAggregation("_endIcon").getSrc(), "sap-icon://add", "Icon control in _endIcon aggregation has proper URI set");
+
+		// Act
+		this.oLink.setIcon("https://openui5nightly.hana.ondemand.com/resources/sap/ui/documentation/sdk/images/ui5-logo-dark.svg");
+		this.oLink.setEndIcon("https://openui5nightly.hana.ondemand.com/resources/sap/ui/documentation/sdk/images/ui5-logo-dark.svg");
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(this.oLink.getAggregation("_icon").getSrc(), "sap-icon://add", "Icon control in _icon aggregation is not changed when invalid URI is set");
+		assert.strictEqual(this.oLink.getAggregation("_endIcon").getSrc(), "sap-icon://add", "Icon control in _endIcon aggregation is not changed when invalid URI is set");
+
+		// Act
+		this.oLink.setIcon("badURI");
+		this.oLink.setEndIcon("badURI");
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(this.oLink.getAggregation("_icon").getSrc(), "sap-icon://add", "Icon control in _icon aggregation is not changed when invalid URI is set");
+		assert.strictEqual(this.oLink.getAggregation("_endIcon").getSrc(), "sap-icon://add", "Icon control in _endIcon aggregation is not changed when invalid URI is set");
+	});
 });

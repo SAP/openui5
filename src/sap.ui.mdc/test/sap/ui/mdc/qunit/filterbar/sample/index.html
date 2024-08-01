@@ -8,13 +8,17 @@
 
 	<script src="../../../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-			data-sap-ui-async="true"
-			data-sap-ui-libs="sap.ui.mdc, sap.m, sap.ui.fl"
 			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-async="true"
 			data-sap-ui-compat-version="edge"
 			data-sap-ui-flexibility-services='[{"connector": "SessionStorageConnector"}]'
-			data-sap-ui-resource-roots='{"sap/ui/mdc/qunit/filterbar/sample":"./","delegates":"../../../delegates","local":"./"}'
+			data-sap-ui-libs="sap.ui.mdc, sap.m, sap.ui.fl"
 			data-sap-ui-on-init="module:local/index"
+			data-sap-ui-resource-roots='{
+				"sap/ui/mdc/qunit/filterbar/sample": "./",
+				"delegates": "../../../delegates",
+				"local": "./"
+			}'
 	>
 	</script>
 

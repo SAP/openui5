@@ -71,6 +71,13 @@
 			});
 		});
 
+		it("should see text in Hindi", function() {
+			var itb4b = element(by.id("itb4b"));
+			browser.executeScript("document.getElementById('itb4b').scrollIntoView()").then(function() {
+				expect(takeScreenshot(itb4b)).toLookAs(sType + "_8b_text_in_Hindi");
+			});
+		});
+
 		it("should see IconTabBar with sub filters", function() {
 			var itb5 = element(by.id("itb5"));
 			browser.executeScript("document.getElementById('itb5').scrollIntoView()").then(function() {

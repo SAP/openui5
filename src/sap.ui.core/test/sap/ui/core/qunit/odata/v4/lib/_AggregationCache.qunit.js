@@ -2918,7 +2918,6 @@ sap.ui.define([
 						"@$ui5._" : {
 							predicate : "('selected')"
 						},
-						"@$ui5.context.isSelected" : true,
 						"@$ui5.node.level" : 12
 					}],
 					rank : 42
@@ -2952,6 +2951,9 @@ sap.ui.define([
 			.callThrough(); // "@$ui5.node.isExpanded" is checked once read has finished
 		this.mock(oCache.oTreeState).expects("expand")
 			.withExactArgs(sinon.match.same(oGroupNode), "~iLevels~");
+		this.mock(_Helper).expects("copySelected")
+			.withExactArgs(sinon.match.same(oCache.aElements),
+				sinon.match((aElements0) => aElements0 === oCache.aElements));
 		oCacheMock.expects("createGroupLevelCache").never();
 		this.mock(oGroupLevelCache).expects("read").never();
 		oCacheMock.expects("addElements").never();
@@ -2963,15 +2965,26 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), sinon.match.same(aSpliced[2]))
 			.returns(SyncPromise.resolve(100));
 		if (bStale) {
+			oCacheMock.expects("isSelectionDifferent")
+				.withExactArgs(sinon.match.same(aSpliced[2])).returns(false);
 			oCacheMock.expects("turnIntoPlaceholder")
 				.withExactArgs(sinon.match.same(aSpliced[2]), "('C')");
+			oCacheMock.expects("isSelectionDifferent")
+				.withExactArgs(sinon.match.same(aSpliced[3])).returns(false);
 			oCacheMock.expects("turnIntoPlaceholder")
 				.withExactArgs(sinon.match.same(aSpliced[3]), "('created')");
+			oCacheMock.expects("isSelectionDifferent")
+				.withExactArgs(sinon.match.same(aSpliced[4])).returns(false);
 			oCacheMock.expects("turnIntoPlaceholder")
 				.withExactArgs(sinon.match.same(aSpliced[4]), "('A')");
+			oCacheMock.expects("isSelectionDifferent")
+				.withExactArgs(sinon.match.same(aSpliced[5])).returns(true);
+			oCacheMock.expects("isSelectionDifferent")
+				.withExactArgs(sinon.match.same(aSpliced[200000])).returns(false);
 			oCacheMock.expects("turnIntoPlaceholder")
 				.withExactArgs(sinon.match.same(aSpliced[200000]), "('D')");
 		} else {
+			oCacheMock.expects("isSelectionDifferent").never();
 			oCacheMock.expects("turnIntoPlaceholder").never();
 		}
 
@@ -3252,25 +3265,18 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bUntilEnd) { // whether the collapsed children span until the end
 	[undefined, false, true].forEach(function (bSubtotalsAtBottomOnly) {
-		[false, true].forEach(function (bRecursiveHierarchy) {
-			const bSubtotalsAtBottom = bSubtotalsAtBottomOnly !== undefined;
-			const sTitle = `collapse: until end = ${bUntilEnd},
-				subtotalsAtBottomOnly = ${bSubtotalsAtBottomOnly},
-				recursiveHierarchy = ${bRecursiveHierarchy}`;
-
-			if (bSubtotalsAtBottom && bRecursiveHierarchy) {
-				return;
-			}
+		const bSubtotalsAtBottom = bSubtotalsAtBottomOnly !== undefined;
+		const sTitle = `collapse: until end = ${bUntilEnd},
+			subtotalsAtBottomOnly = ${bSubtotalsAtBottomOnly}`;
 
 	QUnit.test(sTitle, function (assert) {
-		var oAggregation = bRecursiveHierarchy
-				? {hierarchyQualifier : "X"}
-				: { // filled before by buildApply
+		var oAggregation = { // filled before by buildApply
 					aggregate : {},
 					group : {},
 					groupLevels : ["foo"]
 				},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation),
+			oCacheMock = this.mock(oCache),
 			bCollapseBottom = bUntilEnd || bSubtotalsAtBottom, // whether bottom line is affected
 			oCollapsed = {
 				"@$ui5.node.isExpanded" : false,
@@ -3290,9 +3296,8 @@ sap.ui.define([
 			}, {
 				"@$ui5._" : {predicate : "('3')"}
 			}, {
-				// element kept in $byPredicate if recursive hierarchy
-				"@$ui5._" : {predicate : "('4')", transientPredicate : "($uid=1-234)"},
-				"@$ui5.context.isSelected" : true
+				// element kept in $byPredicate if recursive hierarchy & selection state differs
+				"@$ui5._" : {predicate : "('4')", transientPredicate : "($uid=1-234)"}
 			}, {
 				"@$ui5._" : {predicate : "('5')"}
 				// Note: for bSubtotalsAtBottom, this represents the extra row for subtotals
@@ -3303,7 +3308,7 @@ sap.ui.define([
 				"@$ui5._" : {
 					collapsed : oCollapsed,
 					predicate : "('1')",
-					spliced : [aElements[2], aElements[3], aElements[4], aElements[5]],
+					spliced : aElements.slice(2, 6),
 					rank : "~rank~"
 				},
 				"@$ui5.node.isExpanded" : false,
@@ -3333,15 +3338,26 @@ sap.ui.define([
 			"($uid=1-234)" : aElements[4],
 			"('5')" : aElements[5]
 		};
-		this.mock(oCache).expects("getValue").withExactArgs("~path~").returns(aElements[1]);
+		oCacheMock.expects("getValue").withExactArgs("~path~").returns(aElements[1]);
 		this.mock(_Helper).expects("updateAll")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
 				sinon.match.same(aElements[1]), sinon.match.same(oCollapsed))
 			.callThrough();
-		this.mock(oCache).expects("countDescendants")
-			.withExactArgs(sinon.match.same(aElements[1]), 1).returns(bUntilEnd ? 4 : 3);
 		this.mock(oCache.oTreeState).expects("collapse")
 			.withExactArgs(sinon.match.same(aElements[1]));
+		oCacheMock.expects("countDescendants")
+			.withExactArgs(sinon.match.same(aElements[1]), 1).returns(bUntilEnd ? 4 : 3);
+
+		oCacheMock.expects("isSelectionDifferent")
+			.withExactArgs(sinon.match.same(aElements[2])).returns(false);
+		oCacheMock.expects("isSelectionDifferent")
+			.withExactArgs(sinon.match.same(aElements[3])).returns(false);
+		oCacheMock.expects("isSelectionDifferent")
+			.withExactArgs(sinon.match.same(aElements[4])).returns(true);
+		oCacheMock.expects("isSelectionDifferent")
+			.withExactArgs(sinon.match.same(aElements[5]))
+			.exactly(bCollapseBottom ? 1 : 0)
+			.returns(false);
 
 		// code under test
 		assert.strictEqual(oCache.collapse("~path~"), bCollapseBottom ? 4 : 3,
@@ -3357,35 +3373,22 @@ sap.ui.define([
 		assert.strictEqual(oCache.aElements[1], aElements[1]);
 		assert.strictEqual(oCache.aElements[2], bCollapseBottom ? undefined : aElements[5]);
 		assert.strictEqual(oCache.aElements.$count, aExpectedElements.length);
-		if (bRecursiveHierarchy) {
-			assert.deepEqual(oCache.aElements.$byPredicate, bCollapseBottom
-				? {
-					"('0')" : aElements[0],
-					"('1')" : aElements[1],
-					"('4')" : aElements[4],
-					"($uid=1-234)" : aElements[4]
-				} : {
-					"('0')" : aElements[0],
-					"('1')" : aElements[1],
-					"('4')" : aElements[4],
-					"($uid=1-234)" : aElements[4],
-					"('5')" : aElements[5]
-				});
-		} else {
-			assert.deepEqual(oCache.aElements.$byPredicate, bCollapseBottom
-				? {
-					"('0')" : aElements[0],
-					"('1')" : aElements[1]
-				} : {
-					"('0')" : aElements[0],
-					"('1')" : aElements[1],
-					"('5')" : aElements[5]
-				});
-		}
+		assert.deepEqual(oCache.aElements.$byPredicate, bCollapseBottom
+			? {
+				"('0')" : aElements[0],
+				"('1')" : aElements[1],
+				"('4')" : aElements[4],
+				"($uid=1-234)" : aElements[4]
+			} : {
+				"('0')" : aElements[0],
+				"('1')" : aElements[1],
+				"('4')" : aElements[4],
+				"($uid=1-234)" : aElements[4],
+				"('5')" : aElements[5]
+			});
 		assert.strictEqual(aElements[1]["@$ui5._"].spliced.$level, "~level~");
 		assert.strictEqual(aElements[1]["@$ui5._"].spliced.$rank, "~rank~");
 	});
-		});
 	});
 });
 
@@ -4592,6 +4595,37 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oCache.isAncestorOf(23, 42), i > 0);
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach((bRecursiveHierarchy) => {
+	[undefined, false, true].forEach((bElementSelected) => {
+		[undefined, false, true].forEach((bCollectionSelected) => {
+			const sTitle = `isSelectionDifferent: recursive hierarchy = ${bRecursiveHierarchy},
+				element selected = ${bElementSelected},
+				collection selected = ${bCollectionSelected}`;
+
+	QUnit.test(sTitle, function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {},
+			bRecursiveHierarchy ? {
+				hierarchyQualifier : "X"
+			} : { // filled before by buildApply
+				aggregate : {},
+				group : {},
+				groupLevels : ["foo"]
+			});
+		oCache.aElements["@$ui5.context.isSelected"] = bCollectionSelected;
+		const oElement = {"@$ui5.context.isSelected" : bElementSelected};
+
+		const bExpectation = bRecursiveHierarchy
+			? !!bElementSelected !== !!bCollectionSelected
+			: undefined;
+
+		// code under test
+		assert.strictEqual(oCache.isSelectionDifferent(oElement), bExpectation);
+	});
+		});
 	});
 });
 

@@ -477,6 +477,8 @@ sap.ui.define([
 	 * The result of this function must be kept stable throughout the lifecycle of your application.
 	 * Any changes of the returned values might result in undesired effects.
 	 *
+	 * <b>Note</b>: Existing properties (set via <code>sap.ui.mdc.Chart#setPropertyInfo</code>) must not be removed and their attributes must not be changed during the {@link module:sap/ui/mdc/ChartDelegate.fetchProperties fetchProperties} callback. Otherwise validation errors might occur whenever personalization-related control features (such as the opening of any personalization dialog) are activated.
+	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @returns {Promise<sap.ui.mdc.chart.PropertyInfo[]>} Array of the property infos that is used within the chart
 	 *

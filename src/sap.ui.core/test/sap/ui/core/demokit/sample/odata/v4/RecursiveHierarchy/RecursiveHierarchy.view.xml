@@ -29,7 +29,9 @@
 					tooltip="Side Effect"/>
 				<m:Button icon="sap-icon://response" press="onRefresh" tooltip="Refresh"/>
 				<m:Button icon="sap-icon://refresh" press="onRefresh($event, true)"
-						tooltip="Refresh (keeping tree state)"/>
+					tooltip="Refresh (keeping tree state)"/>
+				<m:Button icon="sap-icon://multiselect-all" press=".onShowSelected"
+					tooltip="Show Selected Elements"/>
 			</m:Toolbar>
 		</extension>
 		<rowMode>
@@ -89,6 +91,14 @@
 				<m:CheckBox editable="false" selected="{= %{STATUS} === 'Out' }"/>
 			</template>
 		</Column>
+		<Column>
+			<m:CheckBox selected="{path : 'header>@$ui5.context.isSelected', targetType: 'any'}"
+				text="Select" tooltip="Select All"/>
+			<template>
+				<m:CheckBox selected="{path : '@$ui5.context.isSelected', targetType: 'any'}"
+					tooltip="Select"/>
+			</template>
+		</Column>
 		<Column width="27em">
 			<template>
 				<m:FlexBox justifyContent="SpaceBetween">
@@ -117,7 +127,6 @@
 					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined }"
 						icon="sap-icon://expand-group" press=".onExpandLevels"
 						tooltip="Expand By Number Of Levels..."/>
-					<m:CheckBox selected="{= %{@$ui5.context.isSelected} }" tooltip="Selected"/>
 				</m:FlexBox>
 			</template>
 		</Column>
@@ -148,6 +157,9 @@
 				<m:Button icon="sap-icon://response" press="onRefreshTreeTable" tooltip="Refresh"/>
 				<m:Button icon="sap-icon://refresh" press="onRefreshTreeTable($event, true)"
 					tooltip="Refresh (keeping tree state)"/>
+				<m:Button icon="sap-icon://multiselect-all"
+					press=".onShowSelected($event, 'treeTable')"
+					tooltip="Show Selected Elements"/>
 			</m:Toolbar>
 		</extension>
 		<rowMode>
@@ -192,6 +204,14 @@
 				<m:CheckBox editable="false" selected="{= %{STATUS} === 'Out' }"/>
 			</template>
 		</Column>
+		<Column>
+			<m:CheckBox selected="{path : 'treeHeader>@$ui5.context.isSelected', targetType: 'any'}"
+				text="Select" tooltip="Select All"/>
+			<template>
+				<m:CheckBox selected="{path : '@$ui5.context.isSelected', targetType: 'any'}"
+					tooltip="Select"/>
+			</template>
+		</Column>
 		<Column width="27em">
 			<template>
 				<m:FlexBox justifyContent="SpaceBetween">
@@ -220,7 +240,6 @@
 					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined }"
 						icon="sap-icon://expand-group" press=".onExpandLevels"
 						tooltip="Expand By Number Of Levels..."/>
-					<m:CheckBox selected="{= %{@$ui5.context.isSelected} }" tooltip="Selected"/>
 				</m:FlexBox>
 			</template>
 		</Column>

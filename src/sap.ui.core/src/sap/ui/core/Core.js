@@ -119,9 +119,14 @@ sap.ui.define([
 		Object.freeze(oBuildinfo);
 
 		// getComputedStyle polyfill + syncXHR fix for firefox
-		if ( Device.browser.firefox ) {
+		if (Device.browser.firefox) {
 			getComputedStyleFix();
-			syncXHRFix();
+			if (Device.browser.version < 129) {
+				// Firefox fixes the issue from its version 129. See
+				// https://bugzilla.mozilla.org/show_bug.cgi?id=697151
+				// https://wpt.fyi/results/xhr/send-sync-blocks-async.htm?label=experimental&label=master&aligned
+				syncXHRFix();
+			}
 		}
 
 		if (BaseConfig.get({

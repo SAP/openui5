@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/jquery"
-], function(Log, TestUtils, jQuery) {
+], function (Log, TestUtils, jQuery) {
 	/*global QUnit */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -32,6 +32,7 @@ sap.ui.define([
 				source : "bar.json",
 				buildResponse : function (oMatch, oResponse) {
 					var oMessage = JSON.parse(oResponse.message);
+
 					oMessage.foo = oMatch[1];
 					oResponse.message = JSON.stringify(oMessage);
 				}
@@ -44,29 +45,32 @@ sap.ui.define([
 		}],
 		mServerFixture = {
 			"/Foo/bar" : {source : "bar.json"},
+			"/Foo/bar?$filter=baz eq 42" : {source : "bar.json"},
+			"GET /Foo/bar?$filter=baz eq 23" : {source : "bar.json"},
+			'/Foo/bar?ExpandLevels=[{NodeId:"1",Level:0}]' : {source : "bar.json"},
 			"/Foo/baz" : [{
 				ifMatch : function (oRequest) {
 					return oRequest.requestHeaders["SAP-ContextId"] === "session";
 				},
 				headers : {"Content-Type" : "application/json;charset=utf-8"},
-				message: '{"@odata.etag":"abc123"}'
+				message : '{"@odata.etag":"abc123"}'
 			}, {
-				code: 404,
+				code : 404,
 				headers : {"Content-Type" : "text/plain"},
-				message: "Missing SAP-ContextId"
+				message : "Missing SAP-ContextId"
 			}],
 			"DELETE /Foo/bar" : {
 				code : 500,
 				message : "Guru meditation"
 			},
 			"MERGE /Foo/bar" : {
-				code: 204
+				code : 204
 			},
 			"PATCH /Foo/bar" : {
-				code: 200,
-				message: '{"@odata.etag":"abc123"}'
+				code : 200,
+				message : '{"@odata.etag":"abc123"}'
 			},
-			"POST /Foo/bar" : {code: 200, source: "bar.json"},
+			"POST /Foo/bar" : {code : 200, source : "bar.json"},
 			"POST /Foo/baz" : [{
 				code : 400,
 				headers : {"Content-Type" : "application/json;charset=utf-8"},
@@ -87,7 +91,7 @@ sap.ui.define([
 	 * @param {string} [sValue] The expected header value
 	 */
 	function checkHeader(assert, sHeaderString, sName, sValue) {
-		sHeaderString = sHeaderString + "\r\n";
+		sHeaderString += "\r\n";
 
 		if (sValue) {
 			assert.ok(sHeaderString.includes("\r\n" + sName + ": " + sValue + "\r\n"), sName);
@@ -167,7 +171,7 @@ sap.ui.define([
 		method : "GET",
 		url : "/Foo/regexp/baz",
 		status : 200,
-		responseBody : 'RegExp2',
+		responseBody : "RegExp2",
 		responseHeaders : {
 			"OData-Version" : "4.0"
 		}
@@ -183,6 +187,36 @@ sap.ui.define([
 	}, {
 		method : "GET",
 		url : "/Foo/bar",
+		status : 200,
+		responseBody : '{"foo":"bar","@odata.etag":"abc123"}',
+		responseHeaders : {
+			"OData-Version" : "4.0",
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+		}
+	}, {
+		expectedLogMessage : "GET /Foo/bar?$filter=baz eq 42",
+		method : "GET",
+		url : "/Foo/bar?$filter=baz%20eq%2042",
+		status : 200,
+		responseBody : '{"foo":"bar","@odata.etag":"abc123"}',
+		responseHeaders : {
+			"OData-Version" : "4.0",
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+		}
+	}, {
+		expectedLogMessage : "GET /Foo/bar?$filter=baz eq 23",
+		method : "GET",
+		url : "/Foo/bar?$filter=baz%20eq%2023",
+		status : 200,
+		responseBody : '{"foo":"bar","@odata.etag":"abc123"}',
+		responseHeaders : {
+			"OData-Version" : "4.0",
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+		}
+	}, {
+		expectedLogMessage : 'GET /Foo/bar?ExpandLevels=[{NodeId:"1",Level:0}]',
+		method : "GET",
+		url : "/Foo/bar?ExpandLevels=%5B%7BNodeId:%221%22,Level:0%7D%5D",
 		status : 200,
 		responseBody : '{"foo":"bar","@odata.etag":"abc123"}',
 		responseHeaders : {
@@ -236,11 +270,11 @@ sap.ui.define([
 		requestBody : '{"foo":"bar"}',
 		status : 204,
 		responseHeaders : {
-			"DataServiceVersion" : "2.0"
+			DataServiceVersion : "2.0"
 		},
-		responseBody : ''
+		responseBody : ""
 	}, {
-		method: "MERGE",
+		method : "MERGE",
 		url : "/Foo/bar",
 		requestHeaders : {
 			"Content-Type" : "application/json"
@@ -248,9 +282,9 @@ sap.ui.define([
 		requestBody : '{"foo":"bar"}',
 		status : 204,
 		responseHeaders : {
-			"DataServiceVersion" : "2.0"
+			DataServiceVersion : "2.0"
 		},
-		responseBody : ''
+		responseBody : ""
 	}, { // "auto responder"
 		method : "PATCH",
 		url : "/Foo/any",
@@ -262,7 +296,7 @@ sap.ui.define([
 		responseHeaders : {
 			"OData-Version" : "4.0"
 		},
-		responseBody : ''
+		responseBody : ""
 	}, { // "server fixture"
 		method : "PATCH",
 		url : "/Foo/bar",
@@ -335,7 +369,7 @@ sap.ui.define([
 		var sTitle = oFixture.method + " " + oFixture.url + ", status : " + oFixture.status;
 
 		QUnit.test("useFakeServer: " + sTitle + " (direct)", function (assert) {
-			var mHeaders = oFixture.method === "MERGE" ? {"DataServiceVersion" : "2.0"}
+			var mHeaders = oFixture.method === "MERGE" ? {DataServiceVersion : "2.0"}
 				: {"OData-Version" : "4.0"};
 
 			Object.keys(oFixture.requestHeaders || {}).forEach(function (sKey) {
@@ -440,7 +474,7 @@ sap.ui.define([
 			.withExactArgs("Multiple matches found for GET /Foo/regexp/bar", undefined,
 				"sap.ui.test.TestUtils");
 
-		return request("GET", "/Foo/regexp/bar", {"OData-Version": "4.0"}).then(function (oXHR) {
+		return request("GET", "/Foo/regexp/bar", {"OData-Version" : "4.0"}).then(function (oXHR) {
 			assert.strictEqual(oXHR.status, 404, "status");
 		});
 	});
@@ -451,10 +485,11 @@ sap.ui.define([
 		this.oLogMock.expects("info").withExactArgs("HEAD /Foo/any", '{"If-Match":undefined}',
 			"sap.ui.test.TestUtils");
 
-		return request("HEAD", "/Foo/any", {"OData-Version": "4.0"}).then(function (oXHR) {
+		return request("HEAD", "/Foo/any", {"OData-Version" : "4.0"}).then(function (oXHR) {
 			assert.strictEqual(oXHR.status, 200, "status");
 			assert.strictEqual(oXHR.responseText, "", "body");
-			assert.strictEqual(oXHR.getAllResponseHeaders(), headerString({"OData-Version": "4.0"}),
+			assert.strictEqual(
+				oXHR.getAllResponseHeaders(), headerString({"OData-Version" : "4.0"}),
 				"headers");
 		});
 	});
@@ -619,23 +654,23 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
-		requestHeaders : { "OData-Version" : "Foo" },
+		requestHeaders : {"OData-Version" : "Foo"},
 		responseHeaders : {},
 		expectedODataVersion : "Foo",
 		expectedDataServiceVersion : null
 	}, {
-		requestHeaders : { "OData-Version" : "4.0" },
-		responseHeaders : { "OData-Version" : "4.01" },
+		requestHeaders : {"OData-Version" : "4.0"},
+		responseHeaders : {"OData-Version" : "4.01"},
 		expectedODataVersion : "4.01",
 		expectedDataServiceVersion : null
 	}, {
-		requestHeaders : { "DataServiceVersion" : "Foo" },
+		requestHeaders : {DataServiceVersion : "Foo"},
 		responseHeaders : {},
 		expectedODataVersion : null,
 		expectedDataServiceVersion : "Foo"
 	}, {
-		requestHeaders : { "DataServiceVersion" : "Foo" },
-		responseHeaders : { "DataServiceVersion" : "Bar" },
+		requestHeaders : {DataServiceVersion : "Foo"},
+		responseHeaders : {DataServiceVersion : "Bar"},
 		expectedODataVersion : null,
 		expectedDataServiceVersion : "Bar"
 	}, {
@@ -714,7 +749,7 @@ sap.ui.define([
 			expectedODataVersion : "Foo",
 			expectedDataServiceVersion : null
 		}, {
-			requestHeaders : { "DataServiceVersion" : "Foo" },
+			requestHeaders : {DataServiceVersion : "Foo"},
 			expectedODataVersion : null,
 			expectedDataServiceVersion : "Foo"
 		}, {
@@ -788,14 +823,15 @@ sap.ui.define([
 					message : '{"d":{"results":[]}}'
 				}
 			};
+
 		TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mFixture);
 		this.oLogMock.expects("info")
 			.withExactArgs("POST /Foo/Any", '{"If-Match":undefined}', "sap.ui.test.TestUtils");
 		this.oLogMock.expects("info")
-			.withExactArgs("GET /Foo/Any?$skip=0&$top=4",'{"If-Match":undefined}',
+			.withExactArgs("GET /Foo/Any?$skip=0&$top=4", '{"If-Match":undefined}',
 				"sap.ui.test.TestUtils");
 
-		return request("POST", "/Foo/$batch", {"DataServiceVersion" : "2.0"}, [
+		return request("POST", "/Foo/$batch", {DataServiceVersion : "2.0"}, [
 			"--batch_c35a-0361-5112",
 			"Content-Type: multipart/mixed; boundary=changeset_ab4e-9114-8adf",
 			"",
@@ -850,5 +886,23 @@ sap.ui.define([
 				""
 			].join("\r\n"));
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("makeUrlReadable/encodeReadableUrl", function (assert) {
+		function test(sReadableUrl, sCorrectUrl) {
+			assert.strictEqual(TestUtils.makeUrlReadable(sCorrectUrl), sReadableUrl);
+			assert.strictEqual(TestUtils.encodeReadableUrl(sReadableUrl), sCorrectUrl);
+			assert.strictEqual(encodeURI(sReadableUrl), sCorrectUrl);
+		}
+
+		test(
+			"foo?$select=a,b&$expand=c($select=d;$expand=e)&$filter=bar eq 42",
+			"foo?$select=a,b&$expand=c($select=d;$expand=e)&$filter=bar%20eq%2042"
+		);
+		test(
+			'foo?ExpandLevels=[{NodeId:"1",Level:0}]',
+			"foo?ExpandLevels=%5B%7BNodeId:%221%22,Level:0%7D%5D"
+		);
 	});
 });

@@ -6,11 +6,14 @@
 	<script src="shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
 			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-resource-roots='{"samples":"samples/","local":"./"}'
 			data-sap-ui-async="true"
 			data-sap-ui-compat-version="edge"
+			data-sap-ui-libs="sap.m"
 			data-sap-ui-on-init="module:local/ComponentManifestFirst"
+			data-sap-ui-resource-roots='{
+				"samples": "samples/",
+				"local": "./"
+			}'
 	></script>
 	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 	<link rel="stylesheet" href="./ComponentManifestFirst.css">
