@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/ui/mdc/BaseDelegate',
 	'sap/ui/mdc/DefaultTypeMap',
 	'sap/ui/mdc/condition/Condition',
+	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/enums/FieldDisplay',
 	'sap/ui/model/FormatException',
@@ -18,6 +19,7 @@ sap.ui.define([
 	BaseDelegate,
 	DefaultTypeMap,
 	Condition,
+	FilterOperatorUtil,
 	ConditionValidated,
 	FieldDisplay,
 	FormatException,
@@ -132,7 +134,7 @@ sap.ui.define([
 	 * <br/>By default, this method checks if the assigned {@link sap.ui.mdc.ValueHelp ValueHelp} supports input validation.
 	 *
 	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
-	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the <code>Field</code> or <code>FilterField</code> control
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Value help assigned to the <code>Field</code> or <code>FilterField</code> control
 	 * @returns {boolean} If <code>true</code>, the input is checked
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
@@ -154,7 +156,7 @@ sap.ui.define([
 	 * <br/>By default, this method checks if the {@link sap.ui.mdc.ValueHelp#validateInput validateInput} property of the assigned {@link sap.ui.mdc.ValueHelp ValueHelp} is set.
 	 *
 	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
-	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the <code>Field</code> or <code>FilterField</code> control
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Value help assigned to the <code>Field</code> or <code>FilterField</code> control
 	 * @returns {boolean} If <code>true</code>, invalid input is accepted
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
@@ -179,7 +181,7 @@ sap.ui.define([
 	 * If the item cannot be determined, a corresponding {@link sap.ui.model.ParseException ParseException} is thrown.
 	 *
 	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
-	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField}, or {@link sap.ui.mdc.MultiValueField MultiValueField} control
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Value help assigned to the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField}, or {@link sap.ui.mdc.MultiValueField MultiValueField} control
 	 * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration} [oConfig] Configuration
 	 * @returns {sap.ui.mdc.valuehelp.ValueHelpItem|Promise<sap.ui.mdc.valuehelp.ValueHelpItem>} Object containing description, key, and payload. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.ParseException} if item cannot be determined
@@ -208,7 +210,7 @@ sap.ui.define([
 	 * If the description cannot be determined, a corresponding {@link sap.ui.model.FormatException FormatException} is thrown.
 	 *
 	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
-	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField}, or {@link sap.ui.mdc.MultiValueField MultiValueField} control
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Value help assigned to the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField}, or {@link sap.ui.mdc.MultiValueField MultiValueField} control
 	 * @param {any} vKey Key
 	 * @param {object} oInParameters In parameters for the key (as a key is not necessarily unique.) (Only filled in conditions of old variants.)
 	 * @param {object} oOutParameters Out parameters for the key (as a key is not necessarily unique.) (Only filled in conditions of old variants.)
@@ -325,6 +327,42 @@ sap.ui.define([
 		}
 
 		return sOutput;
+
+	};
+
+	/**
+	 * Returns the index of a condition in an array of conditions.
+	 *
+	 * This function is called when a <code>Condition</code> is created by user input or value help selection to determine if a similar <code>Condition</code> already exists.
+	 * This is done to prevent duplicates.
+	 *
+	 * By default, if a <code>ValueHelp</code> exists, the <code>ValueHelp</code> logic is used to compare each condition. (See {@link sap.ui.mdc.ValueHelpDelegate#compareConditions ValueHelpDelegate.compareConditions})
+	 *
+	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Value help assigned to the <code>Field</code> or <code>FilterField</code> control
+	 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition to check
+	 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions Array of conditions
+	 * @returns {int} Index of the condition, -1 if not found
+	 * @protected
+	 * @since: 1.128.0
+	 */
+	FieldBaseDelegate.indexOfCondition = function(oField, oValueHelp, oCondition, aConditions) {
+
+		if (oValueHelp && oValueHelp.bDelegateInitialized) { // on comparing new conditions ValueHelp needs to be somehow initialized (Call via Select, Navigated or getItemForValue)
+			const oValueHelpDelegate = oValueHelp.getControlDelegate();
+			let iIndex = -1;
+
+			for (let i = 0; i < aConditions.length; i++) {
+				if (oValueHelpDelegate.compareConditions(oValueHelp, oCondition, aConditions[i])) {
+					iIndex = i;
+					break;
+				}
+			}
+
+			return iIndex;
+		} else {
+			return FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
+		}
 
 	};
 

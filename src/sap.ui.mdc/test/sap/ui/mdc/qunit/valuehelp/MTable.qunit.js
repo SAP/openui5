@@ -464,9 +464,24 @@ sap.ui.define([
 				assert.equal(iItems, 3, "typeaheadSuggested event items");
 				assert.equal(bTypeaheadCaseSensitive, false, "typeaheadSuggested event caseSensitive");
 
-				oContainer.getValueHelpDelegate.restore();
-				ValueHelpDelegateV4.updateBinding.restore();
-				fnDone();
+				oMTable.setConditions([Condition.createItemCondition("I1", "Item 1")]);
+				oMTable.setFilterValue("I");
+				assert.ok(oListBinding.changeParameters.calledWith({$search: "I"}), "ListBinding.changeParameters called with search string");
+
+				iTypeaheadSuggested = 0;
+				setTimeout( function(){ // as waiting for Promise
+					// as JSOM-Model does not support $search all items are returned, but test for first of result
+					assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
+					assert.deepEqual(oCondition, Condition.createItemCondition("I2", "Item 2"), "typeaheadSuggested event condition");
+					assert.equal(sFilterValue, "I", "typeaheadSuggested event filterValue");
+					assert.equal(sItemId, aItems[1].getId(), "typeaheadSuggested event itemId");
+					assert.equal(iItems, 3, "typeaheadSuggested event items");
+					assert.equal(bTypeaheadCaseSensitive, false, "typeaheadSuggested event caseSensitive");
+
+					oContainer.getValueHelpDelegate.restore();
+					ValueHelpDelegateV4.updateBinding.restore();
+					fnDone();
+				}, 0);
 			}, 0);
 		}, 0);
 

@@ -188,20 +188,31 @@ sap.ui.define([
 		assert.deepEqual(oTreeState.getOutOfPlaceGroupedByParent(), []);
 
 		const oTreeStateMock = this.mock(oTreeState);
-		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oNode1~").returns("~node1Filter~");
+		oTreeStateMock.expects("deleteOutOfPlace").never();
+		const oNode1 = {"@$ui5.context.isTransient" : false};
+		const oContext1 = {
+			ID : "~oContext1~", // for #deepEqual
+			setOutOfPlace : mustBeMocked
+		};
 		const oHelperMock = this.mock(_Helper);
-		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oNode1~", "predicate")
-			.returns("~node1Predicate~");
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oNode1), "context").returns(oContext1);
+		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs(sinon.match.same(oNode1))
+			.returns("~node1Filter~");
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oNode1), "predicate").returns("~node1Predicate~");
+		this.mock(oContext1).expects("setOutOfPlace").withExactArgs(true);
 		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oParent1~")
 			.returns("~parent1Filter~");
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oParent1~", "predicate")
 			.returns("~parent1Predicate~");
 
 		// code under test
-		oTreeState.setOutOfPlace("~oNode1~", "~oParent1~");
+		oTreeState.setOutOfPlace(oNode1, "~oParent1~");
 
 		assert.deepEqual(oTreeState.mPredicate2OutOfPlace, {
 			"~node1Predicate~" : {
+				context : oContext1,
 				nodeFilter : "~node1Filter~",
 				nodePredicate : "~node1Predicate~",
 				parentFilter : "~parent1Filter~",
@@ -211,25 +222,36 @@ sap.ui.define([
 		assert.strictEqual(oTreeState.getOutOfPlaceCount(), 1);
 		assert.deepEqual(oTreeState.getOutOfPlacePredicates(), ["~node1Predicate~"]);
 
-		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oNode3~").returns("~node3Filter~");
-		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oNode3~", "predicate")
-			.returns("~node3Predicate~");
+		const oNode3 = {"@$ui5.context.isTransient" : false};
+		const oContext3 = {
+			ID : "~oContext3~", // for #deepEqual
+			setOutOfPlace : mustBeMocked
+		};
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oNode3), "context").returns(oContext3);
+		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs(sinon.match.same(oNode3))
+			.returns("~node3Filter~");
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oNode3), "predicate").returns("~node3Predicate~");
+		this.mock(oContext3).expects("setOutOfPlace").withExactArgs(true);
 		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oParent2~")
 			.returns("~parent2Filter~");
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oParent2~", "predicate")
 			.returns("~parent2Predicate~");
 
 		// code under test
-		oTreeState.setOutOfPlace("~oNode3~", "~oParent2~");
+		oTreeState.setOutOfPlace(oNode3, "~oParent2~");
 
 		assert.deepEqual(oTreeState.mPredicate2OutOfPlace, {
 			"~node1Predicate~" : {
+				context : oContext1,
 				nodeFilter : "~node1Filter~",
 				nodePredicate : "~node1Predicate~",
 				parentFilter : "~parent1Filter~",
 				parentPredicate : "~parent1Predicate~"
 			},
 			"~node3Predicate~" : {
+				context : oContext3,
 				nodeFilter : "~node3Filter~",
 				nodePredicate : "~node3Predicate~",
 				parentFilter : "~parent2Filter~",
@@ -240,74 +262,99 @@ sap.ui.define([
 		assert.deepEqual(oTreeState.getOutOfPlacePredicates(),
 			["~node1Predicate~", "~node3Predicate~"]);
 
-		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oNode2~").returns("~node2Filter~");
-		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oNode2~", "predicate")
-			.returns("~node2Predicate~");
+		const oNode2 = {"@$ui5.context.isTransient" : false};
+		const oContext2 = {
+			ID : "~oContext2~", // for #deepEqual
+			setOutOfPlace : mustBeMocked
+		};
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oNode2), "context").returns(oContext2);
+		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs(sinon.match.same(oNode2))
+			.returns("~node2Filter~");
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oNode2), "predicate").returns("~node2Predicate~");
+		this.mock(oContext2).expects("setOutOfPlace").withExactArgs(true);
 		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oParent1~")
 			.returns("~parent1Filter~");
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oParent1~", "predicate")
 			.returns("~parent1Predicate~");
 
 		// code under test
-		oTreeState.setOutOfPlace("~oNode2~", "~oParent1~");
+		oTreeState.setOutOfPlace(oNode2, "~oParent1~");
 
-		// code under test
 		assert.deepEqual(oTreeState.mPredicate2OutOfPlace, {
 			"~node1Predicate~" : {
+				context : oContext1,
 				nodeFilter : "~node1Filter~",
 				nodePredicate : "~node1Predicate~",
 				parentFilter : "~parent1Filter~",
 				parentPredicate : "~parent1Predicate~"
 			},
 			"~node3Predicate~" : {
+				context : oContext3,
 				nodeFilter : "~node3Filter~",
 				nodePredicate : "~node3Predicate~",
 				parentFilter : "~parent2Filter~",
 				parentPredicate : "~parent2Predicate~"
 			},
 			"~node2Predicate~" : {
+				context : oContext2,
 				nodeFilter : "~node2Filter~",
 				nodePredicate : "~node2Predicate~",
 				parentFilter : "~parent1Filter~",
 				parentPredicate : "~parent1Predicate~"
 			}
 		});
+		// code under test
 		assert.strictEqual(oTreeState.getOutOfPlaceCount(), 3);
 		assert.deepEqual(oTreeState.getOutOfPlacePredicates(),
 			["~node1Predicate~", "~node3Predicate~", "~node2Predicate~"]);
 
-		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oNode4~").returns("~node4Filter~");
-		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oNode4~", "predicate")
-			.returns("~node4Predicate~");
+		const oNode4 = {"@$ui5.context.isTransient" : false};
+		const oContext4 = {
+			ID : "~oContext4~", // for #deepEqual
+			setOutOfPlace : mustBeMocked
+		};
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oNode4), "context").returns(oContext4);
+		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs(sinon.match.same(oNode4))
+			.returns("~node4Filter~");
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oNode4), "predicate").returns("~node4Predicate~");
+		this.mock(oContext4).expects("setOutOfPlace").withExactArgs(true);
 
 		// code under test
-		oTreeState.setOutOfPlace("~oNode4~");
+		oTreeState.setOutOfPlace(oNode4);
 
-		// code under test
 		assert.deepEqual(oTreeState.mPredicate2OutOfPlace, {
 			"~node1Predicate~" : {
+				context : oContext1,
 				nodeFilter : "~node1Filter~",
 				nodePredicate : "~node1Predicate~",
 				parentFilter : "~parent1Filter~",
 				parentPredicate : "~parent1Predicate~"
 			},
 			"~node3Predicate~" : {
+				context : oContext3,
 				nodeFilter : "~node3Filter~",
 				nodePredicate : "~node3Predicate~",
 				parentFilter : "~parent2Filter~",
 				parentPredicate : "~parent2Predicate~"
 			},
 			"~node2Predicate~" : {
+				context : oContext2,
 				nodeFilter : "~node2Filter~",
 				nodePredicate : "~node2Predicate~",
 				parentFilter : "~parent1Filter~",
 				parentPredicate : "~parent1Predicate~"
 			},
 			"~node4Predicate~" : {
+				context : oContext4,
 				nodeFilter : "~node4Filter~",
 				nodePredicate : "~node4Predicate~"
 			}
 		});
+		// code under test
 		assert.deepEqual(oTreeState.getOutOfPlaceGroupedByParent(), [{
 			nodeFilters : ["~node1Filter~", "~node2Filter~"],
 			nodePredicates : ["~node1Predicate~", "~node2Predicate~"],
@@ -327,19 +374,50 @@ sap.ui.define([
 
 		// code under test
 		assert.deepEqual(oTreeState.getOutOfPlace("~node3Predicate~"), {
+			context : oContext3,
 			nodeFilter : "~node3Filter~",
 			nodePredicate : "~node3Predicate~",
 			parentFilter : "~parent2Filter~",
 			parentPredicate : "~parent2Predicate~"
 		});
 
+		oTreeStateMock.expects("getOutOfPlacePredicates").withExactArgs().returns(["a", "b", "c"]);
+		oTreeStateMock.expects("deleteOutOfPlace").withExactArgs("a");
+		oTreeStateMock.expects("deleteOutOfPlace").withExactArgs("b");
+		oTreeStateMock.expects("deleteOutOfPlace").withExactArgs("c");
+
 		// code under test
 		oTreeState.resetOutOfPlace();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setOutOfPlace: Not 'created persisted'", function (assert) {
+		const oTreeState = new _TreeState("~sNodeProperty~");
+
+		[{}, {"@$ui5.context.isTransient" : undefined}, {"@$ui5.context.isTransient" : true}]
+			.forEach((oNode) => {
+				assert.throws(function () {
+					oTreeState.setOutOfPlace(oNode);
+				}, new Error("Not 'created persisted'"));
+			});
 
 		assert.deepEqual(oTreeState.mPredicate2OutOfPlace, {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("stillOutOfPlace", function (assert) {
+		const oTreeState = new _TreeState("~sNodeProperty~");
+		oTreeState.mPredicate2OutOfPlace["('a')"] = {
+			context : "~context~"
+		};
+		const oNode = {};
+		this.mock(_Helper).expects("setPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oNode), "context", "~context~");
+
 		// code under test
-		assert.strictEqual(oTreeState.getOutOfPlaceCount(), 0);
-		assert.deepEqual(oTreeState.getOutOfPlacePredicates(), []);
+		oTreeState.stillOutOfPlace(oNode, "('a')");
+
+		assert.deepEqual(oNode, {"@$ui5.context.isTransient" : false});
 	});
 
 	//*********************************************************************************************
@@ -353,6 +431,9 @@ sap.ui.define([
 				parentPredicate : "~parent1Predicate~"
 			},
 			"~node1Predicate~" : {
+				context : {
+					setOutOfPlace : mustBeMocked
+				},
 				nodePredicate : "~node1Predicate~",
 				parentPredicate : "~node0Predicate~"
 			},
@@ -360,10 +441,16 @@ sap.ui.define([
 				nodePredicate : "~node2Predicate~"
 			},
 			"~node3Predicate~" : {
+				context : {
+					setOutOfPlace : mustBeMocked
+				},
 				nodePredicate : "~node3Predicate~",
 				parentPredicate : "~node1Predicate~"
 			},
 			"~node4Predicate~" : {
+				context : {
+					setOutOfPlace : mustBeMocked
+				},
 				nodePredicate : "~node4Predicate~",
 				parentPredicate : "~node3Predicate~"
 			}
@@ -379,6 +466,13 @@ sap.ui.define([
 				"~node3Predicate~",
 				"~node4Predicate~"
 			], "unchanged");
+
+		this.mock(oTreeState.mPredicate2OutOfPlace["~node1Predicate~"].context)
+			.expects("setOutOfPlace").withExactArgs(false);
+		this.mock(oTreeState.mPredicate2OutOfPlace["~node3Predicate~"].context)
+			.expects("setOutOfPlace").withExactArgs(false);
+		this.mock(oTreeState.mPredicate2OutOfPlace["~node4Predicate~"].context)
+			.expects("setOutOfPlace").withExactArgs(false);
 
 		// code under test
 		oTreeState.deleteOutOfPlace("~node1Predicate~");
@@ -408,6 +502,9 @@ sap.ui.define([
 		// node2
 		oTreeState.mPredicate2OutOfPlace = {
 			"~node1Predicate~" : {
+				context : {
+					setOutOfPlace : mustBeMocked
+				},
 				nodePredicate : "~node1Predicate~",
 				parentPredicate : "~parent1Predicate~"
 			},
@@ -415,22 +512,44 @@ sap.ui.define([
 				nodePredicate : "~node2Predicate~"
 			},
 			"~node3Predicate~" : {
+				context : {
+					setOutOfPlace : mustBeMocked
+				},
 				nodePredicate : "~node3Predicate~",
 				parentPredicate : "~node1Predicate~"
 			},
 			"~node4Predicate~" : {
+				context : {
+					setOutOfPlace : mustBeMocked
+				},
 				nodePredicate : "~node4Predicate~",
 				parentPredicate : "~node3Predicate~"
 			},
 			"~node5Predicate~" : {
+				context : {
+					setOutOfPlace : mustBeMocked
+				},
 				nodePredicate : "~node5Predicate~",
 				parentPredicate : "~node3Predicate~"
 			},
 			"~node6Predicate~" : {
+				context : {
+					setOutOfPlace : mustBeMocked
+				},
 				nodePredicate : "~node6Predicate~",
 				parentPredicate : "~node1Predicate~"
 			}
 		};
+		this.mock(oTreeState.mPredicate2OutOfPlace["~node1Predicate~"].context)
+			.expects("setOutOfPlace").withExactArgs(false);
+		this.mock(oTreeState.mPredicate2OutOfPlace["~node3Predicate~"].context)
+			.expects("setOutOfPlace").withExactArgs(false);
+		this.mock(oTreeState.mPredicate2OutOfPlace["~node4Predicate~"].context)
+			.expects("setOutOfPlace").withExactArgs(false);
+		this.mock(oTreeState.mPredicate2OutOfPlace["~node5Predicate~"].context)
+			.expects("setOutOfPlace").withExactArgs(false);
+		this.mock(oTreeState.mPredicate2OutOfPlace["~node6Predicate~"].context)
+			.expects("setOutOfPlace").withExactArgs(false);
 
 		// code under test
 		oTreeState.deleteOutOfPlace("~node4Predicate~", true);

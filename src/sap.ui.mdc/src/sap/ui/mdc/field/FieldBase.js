@@ -2911,6 +2911,7 @@ sap.ui.define([
 		const oContent = this.getControlForSuggestion();
 		let sDOMValue;
 		let i = 0;
+		const oDelegate = this.getControlDelegate();
 
 		if (this.getContentFactory().isMeasure()) {
 			if (aNewConditions.length > 1) {
@@ -2962,8 +2963,8 @@ sap.ui.define([
 					continue;
 				}
 
-				// take what ever comes from field help as valid - even if it is an empty key
-				const iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions); // check if already exist
+				// take what ever comes from value help as valid - even if it is an empty key
+				const iIndex = oDelegate.indexOfCondition(this, oValueHelp, oCondition, aConditions); // check if already exist
 				if (iIndex === -1) { // new -> add
 					aConditions.push(oCondition);
 				} else if (oCondition.validated === ConditionValidated.Validated && oCondition.values.length > 1 && (aConditions[iIndex].values.length === 1 || oCondition.values[1] !== aConditions[iIndex].values[1])) {

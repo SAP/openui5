@@ -182,13 +182,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Gets an item for a <code>BindingContext</code>.
-	 * @param {sap.ui.model.Context} oBindingContext BindingContext
-	 * @param {object} [oOptions] Options
-	 * @returns {object} Item object containing <code>key</code>, <code>description</code>, and <code>payload</code>
-	 * @protected
-	 */
 	FilterableListContent.prototype.getItemFromContext = function(oBindingContext, oOptions) {
 
 		const sKeyPath = (oOptions && oOptions.keyPath) || this.getKeyPath();

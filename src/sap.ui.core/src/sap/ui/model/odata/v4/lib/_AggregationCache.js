@@ -1605,6 +1605,7 @@ sap.ui.define([
 		aOutOfPlacePredicates.forEach((sNodePredicate) => {
 			const oNode = this.aElements.$byPredicate[sNodePredicate];
 			if (oNode) {
+				this.oTreeState.stillOutOfPlace(oNode, sNodePredicate);
 				const bExpanded = oNode["@$ui5.node.isExpanded"];
 				if (bExpanded) {
 					this.collapse(sNodePredicate);

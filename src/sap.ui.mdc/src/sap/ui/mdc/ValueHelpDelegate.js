@@ -31,8 +31,11 @@ sap.ui.define([
 ) => {
 	"use strict";
 
-	const _applyFilters = (aItems, oFilter) => FilterProcessor.apply(aItems, oFilter, (oBindingContext, sPath) => oBindingContext && oBindingContext.getProperty(sPath))?.[0];
-
+	const _applyFilters = function(aItems, oFilter, oValueHelp, oContent) {
+		const aConditions = oContent.getConditions();
+		const aContexts = FilterProcessor.apply(aItems, oFilter, (oBindingContext, sPath) => oBindingContext && oBindingContext.getProperty(sPath));
+		return aContexts.find((oContext) => !this.findConditionsForContext(oValueHelp, oContent, oContext, aConditions).length);
+	};
 
 	/**
 	 * Delegate for {@link sap.ui.mdc.ValueHelp}.
@@ -382,7 +385,7 @@ sap.ui.define([
 						new Filter({ path: sPath, operator: FilterOperator.StartsWith, value1: sInputValue, caseSensitive: bCaseSensitive })
 					];
 					for (const oFilter of aFilters) {
-						oResult = _applyFilters(aRelevantContexts, oFilter);
+						oResult = _applyFilters.call(this, aRelevantContexts, oFilter, oValueHelp, oContent);
 						if (oResult) {
 							return oResult;
 						}

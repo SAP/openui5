@@ -1615,7 +1615,11 @@ sap.ui.define([
 						.reportStateMessages(that.sResourcePath, {}, [sPath + sPredicate]);
 					fnOnRemove(false);
 				} else if (bRemoveFromCollection) {
-					_Helper.copySelected(aElements.$byPredicate[sPredicate], aReadResult[0]);
+					const oOldElement = aElements.$byPredicate[sPredicate];
+					_Helper.copySelected(oOldElement, aReadResult[0]);
+					if ("@$ui5.context.isTransient" in oOldElement) {
+						aReadResult[0]["@$ui5.context.isTransient"] = false;
+					}
 					that.removeElement(iIndex, sPredicate, aElements, sPath);
 					// element no longer in cache -> re-insert via replaceElement
 					that.replaceElement(aElements, undefined, sPredicate, aReadResult[0],

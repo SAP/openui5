@@ -98,6 +98,7 @@ sap.ui.define([
 		this.bInactive = bInactive || undefined; // be in sync with the annotation
 		this.iIndex = iIndex;
 		this.bKeepAlive = false;
+		this.bOutOfPlace = false;
 		this.bSelected = false;
 		this.fnOnBeforeDestroy = undefined;
 	}
@@ -1267,6 +1268,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Tells whether the created node that this context points to is currently shown out of place.
+	 * It is even shown if it doesn't match current search or filter criteria! All out-of-place
+	 * nodes are shown as the first children of their parent or as the first roots, but not in their
+	 * usual position as defined by the service and the current sort order.
+	 *
+	 * @returns {boolean}
+	 *   Whether the created node that this context points to is currently shown out of place
+	 *
+	 * @private
+	 * @see #setOutOfPlace
+	 */
+	Context.prototype.isOutOfPlace = function () {
+		return this.bOutOfPlace;
+	};
+
+	/**
 	 * Tells whether this context is currently selected, but not {@link #delete deleted} on the
 	 * client. Since 1.122.0 the selection state can also be accessed via instance annotation
 	 * "@$ui5.context.isSelected" at the entity. Note that the annotation does not take the deletion
@@ -2187,6 +2204,29 @@ sap.ui.define([
 	Context.prototype.setNewGeneration = function () {
 		iGenerationCounter += 1;
 		this.iGeneration = iGenerationCounter;
+	};
+
+	/**
+	 * Determines whether the created node that this context points to is shown out of place (see
+	 * {@link #isOutOfPlace}). Once it is shown in place again, it becomes 'persisted' (see also
+	 * "Context states" of {@link topic:c9723f8265f644af91c0ed941e114d46 Creating an Entity}).
+	 *
+	 * @param {boolean} bOutOfPlace
+	 *   Whether the created node that this context points to is shown out of place
+	 * @throws {Error}
+	 *   If this context is not currently 'created persisted'
+	 *
+	 * @private
+	 * @see #created
+	 */
+	Context.prototype.setOutOfPlace = function (bOutOfPlace) {
+		if (!bOutOfPlace) {
+			this.setPersisted();
+		} else if (!this.created()) {
+			// Note: due to timing issues, #isTransient may still return true
+			throw new Error("Not 'created persisted'");
+		}
+		this.bOutOfPlace = bOutOfPlace;
 	};
 
 	/**

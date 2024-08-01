@@ -954,7 +954,12 @@ sap.ui.define([
 	 * Show or hide the overflow button and action sheet according to visible buttons inside
 	 * @private
 	 */
-	ObjectPageHeader.prototype._adaptOverflow = function () {
+	ObjectPageHeader.prototype._adaptOverflow = function (oEvent) {
+		// Do not update the overflow button if _change event is fired for other properties' modifications
+		if (oEvent.getParameter("name") !== "visible") {
+			return;
+		}
+
 		var aActionSheetButtons = this._oOverflowActionSheet.getButtons();
 
 		var bHasVisible = aActionSheetButtons.some(function (oActionSheetButton) {

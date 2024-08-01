@@ -371,10 +371,7 @@ sap.ui.define([
 			if (this.getUseFirstMatch() && !oConfig.exactMatch) {
 				const oContext = this.getValueHelpDelegate().getFirstMatch(this.getValueHelpInstance(), this, oConfig);
 				if (oContext) {
-					const oOriginalItem = _getItemFromContext.call(this, oContext);
-					vKey = _getKey.call(this, oOriginalItem);
-					vText = _getText.call(this, oOriginalItem);
-					return { key: vKey, description: vText };
+					return this.getItemFromContext(oContext);
 				}
 			}
 
@@ -384,6 +381,13 @@ sap.ui.define([
 
 		});
 
+	};
+
+	FixedList.prototype.getItemFromContext = function(oBindingContext, oOptions) {
+		const oOriginalItem = _getItemFromContext.call(this, oBindingContext);
+		const vKey = _getKey.call(this, oOriginalItem);
+		const vText = _getText.call(this, oOriginalItem);
+		return { key: vKey, description: vText };
 	};
 
 	FixedList.prototype.isValidationSupported = function(oConfig) {

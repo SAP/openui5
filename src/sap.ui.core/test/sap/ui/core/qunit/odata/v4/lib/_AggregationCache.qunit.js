@@ -6773,6 +6773,13 @@ sap.ui.define([
 		};
 
 		this.mock(oCache).expects("findIndex").withExactArgs("~iParentRank~").returns(1);
+		const oTreeStateMock = this.mock(oCache.oTreeState);
+		oTreeStateMock.expects("stillOutOfPlace")
+			.withExactArgs("~node2~", "~predicate2~");
+		oTreeStateMock.expects("stillOutOfPlace")
+			.withExactArgs(sinon.match.same(oNode3), "~predicate3~");
+		oTreeStateMock.expects("stillOutOfPlace")
+			.withExactArgs("~node1~", "~predicate1~");
 		this.mock(oCache).expects("collapse").withExactArgs("~predicate3~")
 			.callsFake(function () {
 				assert.strictEqual(oCache.aElements.indexOf(oNode3), 5, "not yet moved");
@@ -6807,6 +6814,9 @@ sap.ui.define([
 		};
 
 		this.mock(oCache).expects("findIndex").never();
+		const oTreeStateMock = this.mock(oCache.oTreeState);
+		oTreeStateMock.expects("stillOutOfPlace").withExactArgs("~node1~", "~predicate1~");
+		oTreeStateMock.expects("stillOutOfPlace").withExactArgs("~node2~", "~predicate2~");
 		this.mock(oCache).expects("collapse").never();
 		this.mock(oCache).expects("expand").never();
 

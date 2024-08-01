@@ -929,7 +929,12 @@ sap.ui.define([
 					favorite: true
 				},
 				reference: sComponentId,
-				persistencyKey: this.sPersistencyKey
+				persistencyKey: this.sPersistencyKey,
+				control: {
+					getCurrentVariantId() {
+						return "";
+					}
+				}
 			};
 
 			this.oVariant = CompVariantState.addVariant(this.oVariantData);

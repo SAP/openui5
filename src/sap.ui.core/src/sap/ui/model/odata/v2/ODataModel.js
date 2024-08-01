@@ -3325,6 +3325,13 @@ sap.ui.define([
 		}
 
 		function handleGetError(oError) {
+			if (oError.$rejected) {
+				// request answered with a 503 retry-after error and was rejected later on
+				that.resetSecurityToken();
+				// reset only the securityToken, do not reject this.pSecurityToken by calling fnError(...)
+				// this would lead to a repetition of the change request in submitWithToken via submit()
+				return;
+			}
 			// Disable token handling, if token request returns an error
 			that.resetSecurityToken();
 			that.bTokenHandling = false;
@@ -3336,6 +3343,14 @@ sap.ui.define([
 		}
 
 		function handleHeadError(oError) {
+			if (oError.$rejected) {
+				// request answered with a 503 retry-after error and was rejected later on
+				// -> no fallback to requestToken via "GET"
+				that.resetSecurityToken();
+				// reset only the securityToken, do not reject this.pSecurityToken by calling fnError(...)
+				// this would lead to a repetition of the change request in submitWithToken via submit()
+				return;
+			}
 			// Disable token handling, if token request returns an error
 			mTokenRequest.request = requestToken("GET", handleGetError);
 		}
@@ -3368,11 +3383,15 @@ sap.ui.define([
 	 * @param {object} oErrorResponse The error response from the back end
 	 * @param {function} fnSuccess The success callback function
 	 * @param {function} fnError The error callback function
+	 * @param {object} oHandler The request handler object
+	 * @param {object} oHttpClient The HttpClient object
+	 * @param {object} oMetadata The metadata object
 	 * @returns {boolean} Whether it is a 503 "Retry-After" error response and the error is processed
 	 *   by the "Retry-After" handler
 	 * @private
 	 */
-	ODataModel.prototype.checkAndProcessRetryAfterError = function(oRequest, oErrorResponse, fnSuccess, fnError) {
+	ODataModel.prototype.checkAndProcessRetryAfterError = function(oRequest, oErrorResponse, fnSuccess, fnError,
+			oHandler, oHttpClient, oMetadata) {
 		if (oErrorResponse.response?.statusCode === 503
 			&& this._getHeader("retry-after", oErrorResponse.response.headers)
 			&& this.fnRetryAfter
@@ -3383,7 +3402,7 @@ sap.ui.define([
 			}
 			this.pRetryAfter.then(() => {
 				this.pRetryAfter = this.oRetryAfterError = null;
-				this._submitRequest(oRequest, fnSuccess, fnError);
+				this._request(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata);
 			}, (oReason) => {
 				this.pRetryAfter = null; // this.oRetryAfterError must not be reset!
 				this.onRetryAfterRejected(fnError, oErrorResponse, oReason);
@@ -3432,9 +3451,13 @@ sap.ui.define([
 		const sReason = oReason?.message
 			? "Retry-After handler rejected with: " + oReason.message
 			: "Retry-After handler rejected w/o reason";
-		if (oErrorResponse && this.oRetryAfterError !== oReason) {
-			oErrorResponse.$ownReason = true;
-			Log.error(sReason, oReason.stack, sClassName);
+		if (oErrorResponse) {
+			oErrorResponse.$rejected = true; // skip fallback in #refreshSecurityToken
+			if (this.oRetryAfterError !== oReason) {
+				oErrorResponse.$ownReason = true;
+				oErrorResponse.$reported = true;
+				Log.error(sReason, oReason.stack, sClassName);
+			}
 		}
 		fnError(oErrorResponse || {$ownReason : true, message : sReason});
 	};
@@ -3479,9 +3502,6 @@ sap.ui.define([
 					submitWithToken();
 					return;
 				}
-			}
-			if (that.checkAndProcessRetryAfterError(oRequest, oError, fnSuccess, fnError)) {
-				return;
 			}
 
 			if (fnError) {
@@ -3559,25 +3579,17 @@ sap.ui.define([
 			}
 		}
 
-		if (this.pRetryAfter) {
-			this.pRetryAfter.then(() => {
-				this._submitRequest(oRequest, fnSuccess, fnError);
-			}, (oReason) => {
-				this.onRetryAfterRejected(fnError, undefined, oReason);
-			});
-		} else {
-			//handler only needed for $batch; datajs gets the handler from the accept header
-			oHandler = that._getODataHandler(oRequest.requestUri);
+		//handler only needed for $batch; datajs gets the handler from the accept header
+		oHandler = that._getODataHandler(oRequest.requestUri);
 
-			// If requests are serialized, chain it to the current request, otherwise just submit
-			if (this.bSequentializeRequests) {
-				this.pSequentialRequestCompleted.then(function() {
-					submitWithToken();
-				});
-				this.pSequentialRequestCompleted = pRequestCompleted;
-			} else {
+		// If requests are serialized, chain it to the current request, otherwise just submit
+		if (this.bSequentializeRequests) {
+			this.pSequentialRequestCompleted.then(function() {
 				submitWithToken();
-			}
+			});
+			this.pSequentialRequestCompleted = pRequestCompleted;
+		} else {
+			submitWithToken();
 		}
 
 		return {
@@ -7701,19 +7713,38 @@ sap.ui.define([
 			};
 		}
 
-		// create request with wrapped handlers
-		oRequestHandle = OData.request(
+		function handle503Error(fnError0) {
+			return function (oErrorResponse) {
+				if (that.checkAndProcessRetryAfterError(oRequest, oErrorResponse, fnSuccess, fnError0, oHandler,
+						oHttpClient, oMetadata)) {
+					return;
+				}
+				fnError0(oErrorResponse);
+			};
+		}
+
+		if (this.pRetryAfter) {
+			this.pRetryAfter.then(() => {
+				this._request(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata);
+			}, (oReason) => {
+				this.onRetryAfterRejected(fnError, undefined, oReason);
+			});
+			oRequestHandle = {abort() {}};
+		} else {
+			// create request with wrapped handlers
+			oRequestHandle = OData.request(
 				oRequest,
 				wrapHandler(fnSuccess || OData.defaultSuccess),
-				wrapHandler(fnError || OData.defaultError),
+				handle503Error(wrapHandler(fnError || OData.defaultError)),
 				oHandler,
 				oHttpClient,
 				oMetadata
-		);
+			);
 
-		// add request handle to array and return it (only for async requests)
-		if (oRequest.async !== false) {
-			this.aPendingRequestHandles.push(oRequestHandle);
+			// add request handle to array and return it (only for async requests)
+			if (oRequest.async !== false) {
+				this.aPendingRequestHandles.push(oRequestHandle);
+			}
 		}
 
 		return oRequestHandle;

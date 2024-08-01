@@ -846,6 +846,52 @@ function(nextUIUpdate, jQuery, Element, IconPool, ObjectPageLayout, ObjectPageHe
 		assert.ok(oSpy.called, "_adaptLayout is called, when visibility of a button is changed");
 	});
 
+	QUnit.test("Overflow button hidden correctly", async function(assert) {
+		// Arrange
+		var oButton = new Button({
+			icon: "sap-icon://home",
+			visible: true
+		}),
+		$qunitFixture = jQuery("#qunit-fixture"),
+		iOrigWidth = $qunitFixture.width(),
+		fnDone = assert.async();
+
+		assert.expect(1);
+		this._oHeader.addAction(oButton);
+		await nextUIUpdate();
+
+		// Act - make screen size smaller, so that overflow button will appear
+		$qunitFixture.width(400);
+		// Do not wait for ResizeHandler
+		this._oHeader._onHeaderResize({ size: {
+			width: 400,
+			height: 1000
+		}});
+
+		this._oHeader._oOverflowActionSheet.attachAfterOpen(function () {
+			// Back to original screen size, so that overflow button is not needed
+			$qunitFixture.width(iOrigWidth);
+			// Do not wait for ResizeHandler
+			this._oHeader._onHeaderResize({ size: {
+				width: iOrigWidth,
+				height: 1000
+			}});
+
+			// Act - update a property of the Header, so that it will be invalidated
+			this._oHeader.setObjectTitle("New object title");
+			this._oHeader._oOverflowActionSheet.addEventDelegate({
+				onAfterRendering: function () {
+					// Assert - overflow button should not be shown after rerendering of the header
+					assert.ok(this._oHeader._oOverflowButton.$().is(':hidden'), "There is no overflow button");
+					fnDone();
+				}.bind(this)
+			});
+		}.bind(this));
+
+		 // Act - opent ActionSheet menu
+		this._oHeader._oOverflowButton.firePress();
+	});
+
 	QUnit.test("Correct hook states", async function(assert) {
 		var aActionButtons = [
 			new ObjectPageHeaderActionButton("test", {

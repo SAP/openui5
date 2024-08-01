@@ -70,6 +70,16 @@ sap.ui.define([
 		rTemporaryKey = /id(?:-[0-9]+){2}/;
 
 	/**
+	 * Resets ODataModel's shared data caches. Some tests may create cached data e.g. an "x-csrf-token"
+	 * that is unexpected/unknown within other tests. In case the tests are reordered, this cached data may
+	 * influence their outcome.
+	 */
+	function clearCaches() {
+		ODataModel.mSharedData.server = {};
+		ODataModel.mSharedData.service = {};
+	}
+
+	/**
 	 * Clones the given OData message object and replaces the target property of the clone by
 	 * the given target path.
 	 *
@@ -21766,11 +21776,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				aTokens.sort());
 		}
 
-		function clearCaches() {
-			ODataModel.mSharedData.server = {};
-			ODataModel.mSharedData.service = {};
-		}
-
 		clearCaches(); // clear static caches on ODataModel to prevent effects from previous tests
 		// create model *after* clearing the caches as the token is lost otherwise
 		const oModel0 = createSalesOrdersModel({tokenHandling : "skipServerCache"});
@@ -23334,5 +23339,192 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		// code under test
 		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: HTTP status 503 retry-after handling, !useBatch and #refreshSecurityToken
+	// Changing data triggers HEAD or GET (depending on disableHeadRequestForToken) request for fetching
+	// an "x-csrf-token" before the POST happens. The HEAD/GET request returns a 503 "Retry-after" error and
+	// the POST request is queued.
+	// 1) If the "Retry-after" promise is resovled, the HEAD/GET request is repeated and the POST is send out.
+	// 2a) If the promise is rejected with an own error, the HEAD/GET request was rejected, no fallback to
+	//   GET request for "x-csrf-token" happens, the own error is logged, but not reported
+	// 2b) If the promise is rejected with the retry-after error, same happen as in 2a) no error is reported
+	//   Note: Why no messages for rejection with oRetryAfterError? This is ok because the rejection case
+	//   is unlikely at all and b) the head request could anyhow not be related to a target
+	// 3) retry save after rejection (securityToken has to refetched again)
+	// 3a) HEAD and POST are send out but now HEAD succeeds and following POST runs into 503
+	// 3b) resolving retry-after promise repeats only POST
+	// 3c) rejecting retry-after promise with original error own reason -> 503 error is logged and reported
+	// 3d) rejecting retry-after promise with own error -> 503 error is only logged
+	// JIRA: CPOUI5MODELS-1769
+	[true, false].forEach((bDisableHeadRequestForToken) => {
+		[true, false, null].forEach((bResolve) => {
+		const sTitle = "503 retry-after handling (fetch securityToken): resolve:" + bResolve
+			+ ", disableHeadRequest:" + bDisableHeadRequestForToken;
+		QUnit.test(sTitle, function (assert) {
+			let oRetryAfterError;
+			const oModel = createSalesOrdersModel({
+				disableHeadRequestForToken : bDisableHeadRequestForToken,
+				refreshAfterChange : false,
+				useBatch : false
+			});
+			const sView = `
+	<FlexBox id="objectPage1" binding="{/SalesOrderSet('1')}">
+		<Text id="note1" text="{Note}"/>
+	</FlexBox>`;
+
+			let fnResolveRetryAfter, fnRejectRetryAfter;
+			oModel.setRetryAfterHandler((oError) => {
+				oRetryAfterError = oError;
+				return new Promise((resolve, reject) => {
+					fnResolveRetryAfter = resolve;
+					fnRejectRetryAfter = reject;
+				});
+			});
+
+			clearCaches(); // do not fail on cached "x-csrf-token" from other tests
+			this.expectRequest("SalesOrderSet('1')", {SalesOrderID : "1", Note : "Foo"})
+				.expectValue("note1", "Foo")
+				.expectMessages([]);
+
+			// code under test
+			return this.createView(assert, sView, oModel).then(() => {
+				this.expectValue("note1", "Foo*")
+					.expectRequest({
+						deepPath : "",
+						headers : {"x-csrf-token" : "Fetch"},
+						method : (bDisableHeadRequestForToken ? "GET" : "HEAD"),
+						requestUri : ""
+					}, createErrorResponse({
+						message : "Service Unavailable",
+						statusCode : 503,
+						headers : {"retry-after" : 5},
+						messageCode : "HTTP 503"
+					}, {"retry-after" : 5}));
+
+				// code under test (1)
+				oModel.setProperty("/SalesOrderSet('1')/Note", "Foo*");
+				oModel.submitChanges();
+
+				return this.waitForChanges(assert, "1)");
+			}).then(() => {
+				if (bResolve) {
+					this.expectRequest({
+							deepPath : "",
+							headers : {"x-csrf-token" : "Fetch"},
+							method : (bDisableHeadRequestForToken ? "GET" : "HEAD"),
+							requestUri : ""
+						}, {}, {"x-csrf-token" : "token1"})
+						.expectRequest({
+							data : {
+								__metadata : {uri : "SalesOrderSet('1')"},
+								Note : "Foo*"
+							},
+							headers : {
+								"x-csrf-token" : "token1",
+								"x-http-method": "MERGE"
+							},
+							key : "SalesOrderSet('1')",
+							method : "POST",
+							requestUri : "SalesOrderSet('1')"
+						}, NO_CONTENT);
+
+					// code under test (2a)
+					fnResolveRetryAfter();
+				} else {
+					// Note: still no messages expected here
+					this.oLogMock.expects("error")
+						.withExactArgs("Retry-After handler rejected with: Own Reason", sinon.match.string,
+							sODataModelClassName)
+						.exactly(bResolve === null ? 1 : 0);
+
+					// code under test (2b)
+					fnRejectRetryAfter(bResolve === null ? new Error("Own Reason") : oRetryAfterError);
+				}
+
+				return this.waitForChanges(assert, bResolve ? "2a) resolve" : "2b) reject");
+			}).then(() => {
+				if (bResolve) {
+					// we only proceed  with repetition if the promise was rejected in the .then() before
+					return Promise.resolve();
+				}
+				this.expectRequest({
+						deepPath : "",
+						headers : {"x-csrf-token" : "Fetch"},
+						method : (bDisableHeadRequestForToken ? "GET" : "HEAD"),
+						requestUri : ""
+					}, {}, {"x-csrf-token" : "token2"})
+					.expectRequest({
+						data : {
+							__metadata : {uri : "SalesOrderSet('1')"},
+							Note : "Foo*"
+						},
+						headers : {
+							"x-csrf-token" : "token2",
+							"x-http-method": "MERGE"
+						},
+						key : "SalesOrderSet('1')",
+						method : "POST",
+						requestUri : "SalesOrderSet('1')"
+					}, createErrorResponse({
+						message : "Service Unavailable",
+						statusCode : 503,
+						headers : {"retry-after" : 5},
+						messageCode : "HTTP 503"
+					}, {"retry-after" : 5}));
+
+				// code under test (repeat sending changes via "save")
+				oModel.submitChanges();
+
+				return this.waitForChanges(assert, "3a)").then(() => {
+					let sScenario;
+					if (bResolve === null) {
+						sScenario = "3b";
+						this.expectRequest({
+							data : {
+								__metadata : {uri : "SalesOrderSet('1')"},
+								Note : "Foo*"
+							},
+							headers : {
+								"x-csrf-token" : "token2",
+								"x-http-method" : "MERGE"
+							},
+							key : "SalesOrderSet('1')",
+							method : "POST",
+							requestUri : "SalesOrderSet('1')"
+						}, NO_CONTENT);
+
+						// code under test (3b)
+						fnResolveRetryAfter();
+					} else {
+						sScenario = bDisableHeadRequestForToken && "3c" || "3d";
+						this.expectMessages(sScenario === "3c" ? [{
+							code : "HTTP 503",
+							message : "Service Unavailable",
+							persistent : false,
+							fullTarget : "/SalesOrderSet('1')",
+							target : "/SalesOrderSet('1')",
+							technical : true,
+							type : "Error"
+						}] : []);
+						this.oLogMock.expects("error")
+							.withExactArgs(sScenario === "3c"
+									? "Request failed with status code 503: "
+										+ "POST /sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('1')"
+									: "Retry-After handler rejected with: Own reason",
+								sinon.match.string,
+								sScenario === "3c" ? sODataMessageParserClassName : sODataModelClassName);
+
+						// code under test (3c/3d)
+						fnRejectRetryAfter(sScenario === "3c" ? oRetryAfterError : new Error("Own reason"));
+					}
+					return resolveLater().then(() => { // message processing may take some time
+						return this.waitForChanges(assert, sScenario + ")");
+					});
+				});
+			}).finally(clearCaches);
+		});
+		});
 	});
 });
