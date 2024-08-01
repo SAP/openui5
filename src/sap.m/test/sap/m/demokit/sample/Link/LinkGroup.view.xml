@@ -19,4 +19,24 @@
 				href="http://www.sap.com" />
 		</l:content>
 	</l:VerticalLayout>
+
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
+			<Label text="Links with Icons" design="Bold" wrapping="true" class="sapUiSmallMarginTop"/>
+			<Link
+				text="Show more information"
+				endIcon="sap-icon://inspect"
+				press="handleLinkPress" />
+			<Link
+				text="Open SAP Homepage"
+				icon="sap-icon://globe"
+				href="http://www.sap.com" />
+			<Link
+				text="Disabled link with two icons"
+				icon="sap-icon://cart"
+				endIcon="sap-icon://begin" />
+		</l:content>
+	</l:VerticalLayout>
 </mvc:View>
