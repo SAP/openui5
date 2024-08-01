@@ -2,8 +2,6 @@
  * ${copyright}
  */
 
-/*global URLSearchParams */
-
 /**
  * This module is used only for testing purposes.
  */

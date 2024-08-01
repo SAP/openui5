@@ -19,15 +19,31 @@ sap.ui.define([
 		autoWait: true,
 		assertions: new Opa5({
 			iTeardownSupportAssistantFrame: function () {
-				return this.waitFor({
-					check: function () {
-						StorageSynchronizer.preserve(Opa5.getWindow());
+				let preserved = false;
 
-						return this.iTeardownMyAppFrame().done(function () {
-							CommunicationMock.destroy();
+				return this.waitFor({
+					success: () => {
+						StorageSynchronizer.preserve(Opa5.getWindow())
+						.then(() => {
+							preserved = true;
 						});
+
+						Opa5.assert.ok(true, "Requested preserve frame");
 					}
-				});
+				}).and.waitFor({
+					check: () => {
+						return preserved;
+					},
+					success: function (e) {
+						Opa5.assert.ok(true, "Frame preserved");
+					},
+					errorMessage: "Failed to preserve frame"
+				}).and.waitFor({
+					success: function () {
+						CommunicationMock.destroy();
+						Opa5.assert.ok(true, "CommunicationMock destroyed");
+					}
+				}).and.iTeardownMyAppFrame();
 			}
 		})
 	});
