@@ -46,6 +46,20 @@ sap.ui.define([
 					.catch(function () {
 						this.onRouteNotFound();
 					}.bind(this));
+
+					this._oSearchField = this.byId("searchField");
+					this._oSearchField.attachLiveChange(this.onSearchFieldLiveChange, this);
+			},
+
+			onSearchFieldLiveChange: function(oEvent) {
+				var sQuery = oEvent.getParameter("newValue");
+				var oSearchDataModel = this.getOwnerComponent().getModel("searchData");
+
+				this._sFilter = sQuery;
+
+				oSearchDataModel.setProperty("/topicQuery", sQuery);
+
+				this.onTreeFilter({ getParameter: function() { return sQuery; } });
 			},
 
 			_onTopicMatched: function (event) {
