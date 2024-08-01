@@ -120,7 +120,7 @@ sap.ui.define([
 			},
 			events: {
 				/**
-				 * This event is fired when the <code>value</code> property of the field is changed.
+				 * This event is fired when the <code>conditions</code> property of the <code>FilterField</code> is changed by a user interaction.
 				 *
 				 * <b>Note</b> This event is only triggered if the used content control has a change event.
 				 */
