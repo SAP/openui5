@@ -27,6 +27,7 @@ sap.ui.define([
 		checkDescription: true,
 		caseSensitive: false
 	};
+	let aConditions = [];
 
 	const oFakeValueHelp = {
 		getDisplay: () => sDisplay
@@ -38,7 +39,14 @@ sap.ui.define([
 		getDescriptionPath: () => sDescriptionPath,
 		getListBinding: () => ({
 			getCurrentContexts: () => aRelevantContexts
-		})
+		}),
+		getConditions: () => aConditions,
+		getItemFromContext: (oBindingContext, oOptions) => {
+			return {key: oBindingContext.getProperty("key"), description: oBindingContext.getProperty("text")};
+		},
+		createCondition: (vKey, sDescription, oPayload) => {
+			return Condition.createItemCondition(vKey, sDescription, undefined, undefined, oPayload);
+		}
 	};
 
 	const FakeContext = function (oData) {
@@ -70,6 +78,10 @@ sap.ui.define([
 		oConfig.value = "a";
 		oConfig.checkDescription = true;
 		sDisplay = FieldDisplay.Value;
+	},
+	afterEach: function () {
+		oConfig.value = "";
+		aConditions = [];
 	}});
 
 	QUnit.test("FieldDisplay.Value", function(assert) {
@@ -90,6 +102,17 @@ sap.ui.define([
 		];
 
 		_testIndex(assert, [1, 2], {caseSensitive: true});
+
+		aRelevantContexts = [
+			new FakeContext({key: "A", text: "", message: "ci match"}), // key match ci
+			new FakeContext({key: "a", text: "", message: "match"}), // key match
+			new FakeContext({key: "AA", text: "", message: "ci startsWith"}), // startsWith key ci
+			new FakeContext({key: "aa", text: "", message: "startsWith"}) // startsWith key
+		];
+		aConditions.push(oFakeContent.createCondition("A", "", undefined));
+
+		_testIndex(assert, [1, 1, 1], undefined); // selected item must be ignored
+
 	});
 
 
@@ -124,6 +147,22 @@ sap.ui.define([
 
 		_testIndex(assert, [1, 2, 3, 4], {caseSensitive: true});
 
+		aRelevantContexts = [
+			new FakeContext({key: "A", text: "", message: "key match ci"}), // key match ci
+			new FakeContext({key: "a", text: "", message: "key match"}), // key match
+			new FakeContext({key: "AA", text: "", message: "startsWith key ci"}), // startsWith key ci
+			new FakeContext({key: "aa", text: "", message: "startsWith key"}), // startsWith key
+
+			new FakeContext({key: "B", text: "A", message: "description match ci"}), // description match ci
+			new FakeContext({key: "b", text: "a", message: "description match"}), // description match
+			new FakeContext({key: "BB", text: "AA", message: "startsWith description ci"}), // startsWith description ci
+			new FakeContext({key: "bb", text: "aa", message: "startsWith description"}) // startsWith description
+		];
+		aConditions.push(oFakeContent.createCondition("A", "", undefined));
+		aConditions.push(oFakeContent.createCondition("B", "A", undefined));
+
+		_testIndex(assert, [1, 1, 1, 2, 2, 2], undefined); // selected item must be ignored
+
 	});
 
 	QUnit.test("FieldDisplay.Description", function(assert) {
@@ -146,6 +185,17 @@ sap.ui.define([
 		];
 
 		_testIndex(assert, [1, 2], {caseSensitive: true});
+
+		aRelevantContexts = [
+			new FakeContext({key: "B", text: "A", message: "description match ci"}), // description match ci
+			new FakeContext({key: "b", text: "a", message: "description match"}), // description match
+			new FakeContext({key: "BB", text: "AA", message: "startsWith description ci"}), // startsWith description ci
+			new FakeContext({key: "bb", text: "aa", message: "startsWith description"}) // startsWith description
+		];
+		aConditions.push(oFakeContent.createCondition("B", "A", undefined));
+
+		_testIndex(assert, [1, 1, 1], undefined); // selected item must be ignored
+
 	});
 
 	QUnit.test("FieldDisplay.DescriptionValue", function(assert) {
@@ -179,6 +229,22 @@ sap.ui.define([
 		];
 
 		_testIndex(assert, [1, 2, 3, 4], {caseSensitive: true});
+
+		aRelevantContexts = [
+			new FakeContext({key: "B", text: "A", message: "description match ci"}), // description match ci
+			new FakeContext({key: "b", text: "a", message: "description match"}), // description match
+			new FakeContext({key: "BB", text: "AA", message: "startsWith description ci"}), // startsWith description ci
+			new FakeContext({key: "bb", text: "aa", message: "startsWith description"}), // startsWith description
+
+			new FakeContext({key: "A", text: "", message: "key match ci"}), // key match ci
+			new FakeContext({key: "a", text: "", message: "key match"}), // key match
+			new FakeContext({key: "AA", text: "", message: "startsWith key ci"}), // startsWith key ci
+			new FakeContext({key: "aa", text: "", message: "startsWith key"}) // startsWith key
+		];
+		aConditions.push(oFakeContent.createCondition("A", "", undefined));
+		aConditions.push(oFakeContent.createCondition("B", "A", undefined));
+
+		_testIndex(assert, [1, 1, 1, 2, 2, 2], undefined); // selected item must be ignored
 
 	});
 

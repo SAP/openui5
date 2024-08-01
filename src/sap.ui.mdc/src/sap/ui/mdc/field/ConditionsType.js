@@ -378,6 +378,9 @@ sap.ui.define([
 
 			const bIsUnit = this._isUnit(this.oFormatOptions.valueType);
 			const iMaxConditions = this._getMaxConditions();
+			const oValueHelp = this._getValueHelp();
+			const oDelegate = this._getDelegate();
+			const oControl = this.oFormatOptions.control;
 
 			if (iMaxConditions !== 1 && this.oFormatOptions.getConditions) {
 				// if more than one condition is allowed add the new condition to the existing ones. (Only if not already exist)
@@ -389,7 +392,7 @@ sap.ui.define([
 						// if there is already a condition containing only a unit and no numeric value, remove it and use the new condition
 						aConditions.splice(0, 1);
 					}
-					if (FilterOperatorUtil.indexOfCondition(oCondition, aConditions) === -1) { // check if already exist (compare with old conditions as multiple values are not checked for duplicates before)
+					if (oDelegate.indexOfCondition(oControl, oValueHelp, oCondition, aConditions) === -1) { // check if already exist (compare with old conditions as multiple values are not checked for duplicates before)
 						if (iIndex >= 0 && aConditions.length > iIndex) {
 							// insert new condition
 							aConditions.splice(iIndex, 0, oCondition);

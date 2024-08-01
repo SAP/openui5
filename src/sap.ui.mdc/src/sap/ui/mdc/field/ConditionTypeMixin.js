@@ -6,14 +6,16 @@ sap.ui.define([
 	'sap/ui/mdc/enums/FieldDisplay',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/field/FieldBaseDelegate',
-	'sap/ui/model/type/String'
-	],
+	'sap/ui/model/type/String',
+	'sap/ui/core/Element'
+],
 	(
 		BaseType,
 		FieldDisplay,
 		FilterOperatorUtil,
 		FieldBaseDelegate,
-		StringType
+		StringType,
+		Element
 	) => {
 		"use strict";
 
@@ -272,6 +274,20 @@ sap.ui.define([
 				}
 
 				return oDelegate;
+
+			};
+
+			this._getValueHelp = function() {
+
+				const sID = this.oFormatOptions.valueHelpID;
+				if (sID) {
+					const oValueHelp = Element.getElementById(sID);
+					if (oValueHelp && oValueHelp.isValidationSupported()) {
+						return oValueHelp;
+					}
+				}
+
+				return null;
 
 			};
 

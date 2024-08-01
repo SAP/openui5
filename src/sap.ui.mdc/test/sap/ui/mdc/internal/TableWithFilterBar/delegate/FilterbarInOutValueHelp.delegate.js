@@ -60,13 +60,13 @@ sap.ui.define([
 		var oField = oValueHelp.getControl();
 		var mAllOutValues = {};
 
-		aOutParameters.forEach(function(oOutParameter) {
+		aOutParameters.forEach((oOutParameter) => {
 
 			// find all conditions carrying outParameter.source information
-			var aOutValues = oField.getConditions().reduce(function (aResult, oCondition) {
+			var aOutValues = oField.getConditions().reduce((aResult, oCondition) => {
 				if (oCondition.payload) {
-					Object.values(oCondition.payload).forEach(function (aSegments) {
-						aSegments.forEach(function (oSegment) {
+					Object.values(oCondition.payload).forEach((aSegments) => {
+						aSegments.forEach((oSegment) => {
 							var sSource = oSegment[oOutParameter.source];
 							if (sSource && aResult.indexOf(sSource) === -1) {
 								aResult.push(sSource);
@@ -84,13 +84,13 @@ sap.ui.define([
 		var oFilterBar = oField.getParent();
 		if (oFilterBar.isA("sap.ui.mdc.filterbar.FilterBarBase")) {
 
-			StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
-				aOutParameters.forEach(function(oOutParameter) {
+			StateUtil.retrieveExternalState(oFilterBar).then((oState) => {
+				aOutParameters.forEach((oOutParameter) => {
 
 					var sTarget = oOutParameter.target;
 					var aAllOutValues = mAllOutValues[oOutParameter.target];
 
-					aAllOutValues.forEach(function(vValue) {
+					aAllOutValues.forEach((vValue) => {
 						var aFilters = oState.filter && oState.filter[sTarget] ? oState.filter[sTarget] : [];
 						if (oOutParameter.mode !== "WhenEmpty" || aFilters.length === 0) {
 							var oView = IdentifierUtil.getView(oValueHelp);
@@ -109,21 +109,21 @@ sap.ui.define([
 									exception: ParseException,
 									control: oOutFilterField
 								};
-								oNewCondition = oOutValueHelp.getItemForValue(oConfig).then(function(oItem) { // if this is an In-Parameter for another this update would need to wait until this one
+								oNewCondition = oOutValueHelp.getItemForValue(oConfig).then((oItem) => { // if this is an In-Parameter for another this update would need to wait until this one
 									oNewCondition = Condition.createCondition(OperatorName.EQ, [oItem.key], undefined, undefined, ConditionValidated.Validated, oItem.payload);
 									if (oItem.description) {
 										oNewCondition.values.push(oItem.description);
 									}
 									return oNewCondition;
-								}).catch(function(oError) { // if not found just use the given Out-value
+								}).catch((oError) => { // if not found just use the given Out-value
 									return Condition.createCondition(OperatorName.EQ, [vValue], undefined, undefined, ConditionValidated.Validated, {});
 								});
 							} else {
 								oNewCondition = Condition.createCondition(OperatorName.EQ, [vValue], undefined, undefined, ConditionValidated.Validated, {});
 							}
-							Promise.all([oNewCondition]).then(function(aResult) {
+							Promise.all([oNewCondition]).then((aResult) => {
 								var oNewCondition = aResult[0];
-								var iIndex = aFilters.findIndex((oFiltersCondition) => this.compareConditions(oNewCondition, oFiltersCondition)); // check if already exist
+								var iIndex = aFilters.findIndex((oFiltersCondition) => this.compareConditions(oValueHelp, oNewCondition, oFiltersCondition)); // check if already exist
 								if (iIndex < 0) {
 									oState.filter[sTarget] = oState.filter && oState.filter[sTarget] || [];
 									oState.filter[sTarget].push(oNewCondition);
