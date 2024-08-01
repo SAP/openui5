@@ -6,13 +6,14 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/util/LibraryInfo",
 	"sap/ui/model/odata/ODataModel",
+	"sap/ui/Device",
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
-], function(Log, Component, ComponentContainer, LibraryInfo, ODataModel, App, Page, jQuery, URI) {
+], function(Log, Component, ComponentContainer, LibraryInfo, ODataModel, Device, App, Page, jQuery, URI) {
 
 	"use strict";
 
@@ -83,6 +84,18 @@ sap.ui.define([
 		this._sLibraryName = sLibraryName;
 		this._aExcludes = aExcludes || [];
 		this._iTimeout = 200;
+
+		if (Device.browser.safari) {
+			// In Safari, if an iframe is destroyed before the resources it contains are fully loaded,
+			// the incomplete loading of these resources can cause the browser to hang or become unresponsive.
+			//
+			// The code below code does not resolve this issue (it needs to be addressed by the
+			// respective components), but aims to make tests rather stable by delaying
+			// cleanup/destruction of the Page content, respectively trying to keep the iFrames
+			// live a bit longer.
+			oLog.info("Setting timeout in Safari to 500ms");
+			this._iTimeout = 500;
+		}
 
 		this._oApp = new App({
 			initialPage: "page",
