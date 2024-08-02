@@ -12,6 +12,7 @@ sap.ui.require([
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/m/Label",
+	"sap/m/Switch",
 	"sap/m/Button",
 	"sap/m/Select",
 	"sap/ui/core/Item",
@@ -23,6 +24,7 @@ sap.ui.require([
 	App,
 	Page,
 	Label,
+	Switch,
 	Button,
 	Select,
 	Item,
@@ -36,6 +38,7 @@ sap.ui.require([
 		"javascript": document.getElementById("javascriptSample").textContent,
 		"css": document.getElementById("cssSample").textContent,
 		"xquery": document.getElementById("xquerySample").textContent,
+		"java": document.getElementById("javaSample").textContent,
 		"coffee": document.getElementById("coffeeSample").textContent,
 		"plain_text": document.getElementById("plainText").textContent,
 		"json": document.getElementById("json").textContent,
@@ -57,6 +60,14 @@ sap.ui.require([
 			new Page({
 				title: "Code Editor",
 				headerContent: [
+					new Label({ text: "syntaxHints:"}),
+					new Switch({
+						state: true,
+						change : function(oEvent) {
+							var bState = oEvent.getParameter("state");
+							oCodeEditor.setSyntaxHints(bState);
+						}
+					}),
 					new Label({ text: "type:"}),
 					new Select({
 						items: [
@@ -67,7 +78,8 @@ sap.ui.require([
 							new Item({ key: "coffee", text: "coffee"}),
 							new Item({ key: "plain_text", text: "plain text"}),
 							new Item({ key: "json", text: "json"}),
-							new Item({ key: "properties", text: "i18n.properties"})
+							new Item({ key: "properties", text: "i18n.properties"}),
+							new Item({ key: "java", text: "java"})
 						],
 						change: function (e) {
 							var sKey = e.getSource().getSelectedKey();
