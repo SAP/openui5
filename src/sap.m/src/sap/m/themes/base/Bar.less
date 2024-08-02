@@ -3,8 +3,8 @@
 /* Base theme                 */
 /* ========================== */
 
-@_sap_m_Bar_AppHeight: 3333px; // Ux decision: never show the header, so make this value large enough even for zoom-out cases
-@_sap_m_Bar_HeaderHeight: 68px; // should be 4.25rem
+@_sap_m_Bar_AppHeight: 3333px; /* Ux decision: never show the header, so make this value large enough even for zoom-out cases */
+@_sap_m_Bar_HeaderHeight: 68px; /* should be 4.25rem */
 @_sap_m_Bar_MinHeightForHeader: (@_sap_m_Bar_AppHeight + @_sap_m_Bar_HeaderHeight);
 
 .sapMBarShadow(@color) {
@@ -17,12 +17,12 @@
 	position: relative;
 	height: 3rem;
 	line-height: 3rem;
-	color: @sapUiPageHeaderTextColor;
-	background-color: @sapUiPageHeaderBackground;
+	color: var(--sapPageHeader_TextColor);
+	background-color: var(--sapPageHeader_Background);
 	/* 1px down white shadow with 50% opacity */
 	text-shadow: @sapUiShadowText;
 	/* 1px inside border line at the bottom of a bar */
-	.sapMBarShadow(@sapUiPageHeaderBorderColor);
+	.sapMBarShadow(var(--sapPageHeader_BorderColor));
 }
 
 .sapMBarLeft.sapMBarContainer.sapMBarEmpty,
@@ -37,9 +37,9 @@
 	text-overflow: ellipsis;
 }
 
-
 /* fix for ff */
 html[data-sap-ui-browser^="ff"].sap-desktop {
+
 	.sapMBarContainer {
 		display: flex;
 		align-items: center;
@@ -63,7 +63,6 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 		flex : initial;
 	}
 }
-
 
 .sapMBarLeft,
 .sapMBarRight {
@@ -115,13 +114,13 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 /* this "sapMBrandingBar-CTX" CSS class can be set by any container control that comes with its own branding bar, so any pages inside will not display their branding bar */
 .sapMBrandingBar-CTX .sapMBar.sapMPageHeader:before,
 /* since Shell may run without sap.m and we can run without the shell this selector is currently in our lib */
-.sapUiUfdShell .sapMBar.sapMPageHeader:before {
+.sapUiUfdShell .sapMBar.sapMPageHeader::before {
 	display: none;
 }
 
 @media (min-height: @_sap_m_Bar_MinHeightForHeader) {
 	/* Shell draws its own branding bar */
-	.sap-desktop .sapMShell .sapMBar.sapMPageHeader:before {
+	.sap-desktop .sapMShell .sapMBar.sapMPageHeader::before {
 		display: none;
 	}
 }
@@ -161,12 +160,16 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 }
 
 /* Compact size */
-.sapUiSizeCompact{
+.sapUiSizeCompact {
+
 	.sapMBar {
 		height: 2rem;
 		line-height: 2rem;
 	}
-	.sapMBarLeft, .sapMBarRight, .sapMBarPH {
+
+	.sapMBarLeft,
+	.sapMBarRight,
+	.sapMBarPH {
 		height: 2rem;
 		line-height: 2rem;
 	}
@@ -178,7 +181,8 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	margin-right: 0;
 }
 
-.sapUiSizeCompact{
+.sapUiSizeCompact {
+
 	.sapMBarRight > .sapMBarChild:not(.sapMTB) {
 		margin-bottom: 0;
 		margin-right: 0;
@@ -195,6 +199,7 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 .sapMBarLeft,
 .sapMBarPH {
 	box-sizing: border-box;
+
 	.sapMObjectAttributeDiv .sapMText {
 		vertical-align: text-top;
 	}
