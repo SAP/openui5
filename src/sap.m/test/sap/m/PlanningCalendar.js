@@ -44,7 +44,9 @@ sap.ui.define([
 	"sap/m/IllustratedMessageType",
 	"sap/m/IllustratedMessageSize",
 	"sap/base/Log",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/unified/RecurringNonWorkingPeriod",
+	"sap/ui/unified/TimeRange"
 ], function(
 	Element,
 	unifiedLibrary,
@@ -91,7 +93,9 @@ sap.ui.define([
 	IllustratedMessageType,
 	IllustratedMessageSize,
 	Log,
-	UI5Date
+	UI5Date,
+	RecurringNonWorkingPeriod,
+	TimeRange
 ) {
 	"use strict";
 
@@ -838,6 +842,31 @@ sap.ui.define([
 						type: CalendarDayType.Working
 					})
 				],
+				nonWorkingPeriods: [
+					new RecurringNonWorkingPeriod({
+						recurrenceType: "Daily",
+						recurrenceEndDate: UI5Date.getInstance(2015, 0, 30),
+						recurrencePattern: 1,
+						date: UI5Date.getInstance(2015, 0, 1),
+						timeRange: new TimeRange({
+							start: "09:00",
+							end: "10:00",
+							valueFormat:"HH:mm"
+						})
+
+					}),
+					new RecurringNonWorkingPeriod({
+						recurrenceType: "Daily",
+						recurrenceEndDate: UI5Date.getInstance(2015, 0, 30),
+						recurrencePattern: 1,
+						date: UI5Date.getInstance(2015, 0, 1),
+						timeRange: new TimeRange({
+							start: "11:30",
+							end: "12:30",
+							valueFormat:"HH:mm"
+						})
+					})
+				],
 				intervalHeaders: [
 					new CalendarAppointment("R1H1", {
 						startDate: UI5Date.getInstance("2015", "0", "1", "09", "00"),
@@ -880,7 +909,7 @@ sap.ui.define([
 										]
 									})
 								]
-							})
+						})
 						],
 						title: "2 days meeting",
 						icon: "../ui/unified/images/m_01.png",

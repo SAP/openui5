@@ -30,6 +30,10 @@ describe("sap.m.SinglePlanningCalendar", function() {
 		expect(takeScreenshot(oSPC)).toLookAs("work_week_view");
 	});
 
+	it('Should check that non-work periods are displayed correctly in work week view', function () {
+		expect(takeScreenshot(element(by.id("SinglePlanningCalendar")))).toLookAs("non_working_work_week_view");
+	});
+
 	it("should navigate to month view", function () {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 

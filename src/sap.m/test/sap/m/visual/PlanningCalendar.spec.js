@@ -3,6 +3,9 @@
 describe("sap.m.PlanningCalendar", function() {
 	"use strict";
 
+	it("Should check that non-work periods are displayed correctly in hours view", function() {
+		expect(takeScreenshot(element(by.id("PC1-TimesRow")))).toLookAs("non_working_hours_view");
+	});
 	 /*
 		 Back and next button functionality
 	  */

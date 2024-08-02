@@ -249,6 +249,15 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/RecurringNonWorkingPeriod"]
 				}
 			},
+			"RecurrenceUtils":{
+				group: "RecurringNonWorkingPeriod",
+				qunit: {
+					reorder: false
+				},
+				coverage: {
+					only: ["sap/ui/unified/RecurrenceUtils"]
+				}
+			},
 			"TimeRange":{
 				group: "TimeRange",
 				qunit: {

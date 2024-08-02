@@ -1,0 +1,78 @@
+<mvc:View
+	controllerName="sap.m.sample.PlanningCalendarRecurringItem.Page"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:unified="sap.ui.unified"
+	xmlns="sap.m">
+	<VBox class="sapUiSmallMargin">
+		<PlanningCalendar
+			id="PC1"
+			startDate="{path: '/startDate'}"
+			rows="{path: '/people'}"
+			appointmentsVisualization="Filled"
+			rowHeaderPress="handleRowHeaderPress"
+			showEmptyIntervalHeaders="false"
+			viewKey="A"
+			showWeekNumbers="true">
+			<toolbarContent>
+				<Title text="Title" titleStyle="H4"/>
+			</toolbarContent>
+			<views>
+				<PlanningCalendarView
+					key="A"
+					intervalType="Hour"
+					description="hours view"
+					intervalsS="2"
+					intervalsM="4"
+					intervalsL="6"
+					showSubIntervals="true">
+				</PlanningCalendarView>
+			</views>
+			<rows>
+				<PlanningCalendarRow
+					icon="{pic}"
+					title="{name}"
+					text="{role}"
+					intervalHeaders="{path: 'headers', templateShareable: false}"
+					nonWorkingPeriods="{path : 'nonWorkingPeriods', templateShareable: false}">
+					<customData>
+						<core:CustomData key="emp-name" value="{name}" writeToDom="true"/>
+					</customData>
+					<appointments>
+						<unified:CalendarAppointment
+							startDate="{start}"
+							endDate="{end}"
+							icon="{pic}"
+							title="{title}"
+							text="{info}"
+							type="{type}"
+							tentative="{tentative}">
+						</unified:CalendarAppointment>
+					</appointments>
+					<nonWorkingPeriods>
+						<unified:RecurringNonWorkingPeriod
+							recurrenceType= "{recurrenceType}"
+							recurrenceEndDate= "{recurrenceEndDate}"
+							recurrencePattern= "{recurrencePattern}"
+							date="{date}">
+							<unified:TimeRange
+								start="{start}"
+								end="{end}"
+								valueFormat="{valueFormat}"
+							/>
+						</unified:RecurringNonWorkingPeriod>
+					</nonWorkingPeriods>
+					<intervalHeaders>
+						<unified:CalendarAppointment
+							startDate="{start}"
+							endDate="{end}"
+							icon="{pic}"
+							title="{title}"
+							type="{type}">
+						</unified:CalendarAppointment>
+					</intervalHeaders>
+				</PlanningCalendarRow>
+			</rows>
+		</PlanningCalendar>
+	</VBox>
+</mvc:View>

@@ -29,7 +29,9 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/library",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/unified/RecurringNonWorkingPeriod",
+	"sap/ui/unified/TimeRange"
 ], function(
 	App,
 	Bar,
@@ -61,7 +63,9 @@ sap.ui.define([
 	CalendarLegendItem,
 	DateTypeRange,
 	unifiedLibrary,
-	UI5Date
+	UI5Date,
+	RecurringNonWorkingPeriod,
+	TimeRange
 ) {
 	"use strict";
 
@@ -861,6 +865,31 @@ sap.ui.define([
 				endDate: "{endDate}"
 			})
 		},
+		nonWorkingPeriods: [
+			new RecurringNonWorkingPeriod({
+				recurrenceType: "Daily",
+				recurrenceEndDate: UI5Date.getInstance(2018, 6, 30),
+				recurrencePattern: 1,
+				date: UI5Date.getInstance(2018, 6, 9),
+				timeRange: new TimeRange({
+					start: "08:30",
+					end: "09:00",
+					valueFormat:"HH:mm"
+				})
+
+			}),
+			new RecurringNonWorkingPeriod({
+				recurrenceType: "Daily",
+				recurrenceEndDate: UI5Date.getInstance(2018, 6, 30),
+				recurrencePattern: 1,
+				date: UI5Date.getInstance(2018, 6, 9),
+				timeRange: new TimeRange({
+					start: "09:30",
+					end: "10:30",
+					valueFormat:"HH:mm"
+				})
+			})
+		],
 		specialDates: [
 			new DateTypeRange({
 				startDate: UI5Date.getInstance(2018, 6, 8),

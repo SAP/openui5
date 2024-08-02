@@ -36,7 +36,7 @@ sap.ui.define([
 		assert.equal(oRecurringNonWorkingPeriod.getRecurrenceEndDate().toString(), oExpectedEndDate.toString(), "EndDate is set to 20.1.2024: 20:00");
 	});
 
-	QUnit.test("hasNonWorkingAtHours", function (assert) {
+	QUnit.test("hasNonWorkingAtHour", function (assert) {
 		// Prepare
 		const oRecurringNonWorkingPeriod = new RecurringNonWorkingPeriod({
 			recurrenceType: RecurrenceType.Daily,
@@ -48,21 +48,21 @@ sap.ui.define([
 		const oExpectedDate = UI5Date.getInstance(UI5Date.getInstance(2024, 0, 1, 13, 0));
 
 		// Assert
-		assert.ok(oRecurringNonWorkingPeriod.hasNonWorkingAtHours(oExpectedDate), "RecurringNonWorkingPeriod for a date outside the time frame of recurrences is correct.");
+		assert.ok(oRecurringNonWorkingPeriod.hasNonWorkingAtHour(oExpectedDate), "RecurringNonWorkingPeriod for a date outside the time frame of recurrences is correct.");
 
 		for (let i = 2; i <= 22; i++) {
 			//Act
 			oExpectedDate.setDate(i);
 
 			// Assert
-			assert.ok(oRecurringNonWorkingPeriod.hasNonWorkingAtHours(oExpectedDate), "RecurringNonWorkingPeriod for 20 days is correct");
+			assert.ok(oRecurringNonWorkingPeriod.hasNonWorkingAtHour(oExpectedDate), "RecurringNonWorkingPeriod for 20 days is correct");
 		}
 
 		//Act
 		oExpectedDate.setDate(23);
 
 		// Assert
-		assert.ok(oRecurringNonWorkingPeriod.hasNonWorkingAtHours(oExpectedDate), "RecurringNonWorkingPeriod for a date outside the time frame of recurrences is correct.");
+		assert.ok(oRecurringNonWorkingPeriod.hasNonWorkingAtHour(oExpectedDate), "RecurringNonWorkingPeriod for a date outside the time frame of recurrences is correct.");
 
 	});
 

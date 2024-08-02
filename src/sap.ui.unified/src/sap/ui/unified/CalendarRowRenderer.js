@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/unified/library',
 	'sap/ui/core/InvisibleText',
-	"sap/ui/core/date/UI5Date",
+	'sap/ui/core/date/UI5Date',
+	'sap/ui/unified/calendar/RecurrenceUtils',
 	'sap/base/Log',
 	// side effect: required by RenderManager#icon
 	'sap/ui/core/IconPool'
@@ -26,6 +27,7 @@ sap.ui.define([
 		library,
 		InvisibleText,
 		UI5Date,
+		RecurrenceUtils,
 		Log
 	) {
 		"use strict";
@@ -262,12 +264,28 @@ sap.ui.define([
 	};
 
 	CalendarRowRenderer.renderInterval = function(oRm, oRow, iInterval, iWidth,  aIntervalHeaders, aNonWorkingItems, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax, bFirstOfType, bLastOfType){
+		const oStartDateInterval = oRow.getStartDate();
+		const oEndDate = UI5Date.getInstance(oRow.getStartDate());
+		oEndDate.setDate(oEndDate.getDate() + 1);
+		const oCellStartDate = UI5Date.getInstance(oStartDateInterval);
+		oCellStartDate.setHours(iInterval + iStartOffset);
 
 		var sId = oRow.getId() + "-AppsInt" + iInterval;
 		var i;
 		var bShowIntervalHeaders = oRow.getShowIntervalHeaders() && (oRow.getShowEmptyIntervalHeaders() || aIntervalHeaders.length > 0);
 		var iMonth = oRow.getStartDate().getMonth();
 		var iDaysLength = UI5Date.getInstance(oRow.getStartDate().getFullYear(), iMonth + 1, 0).getDate();
+
+		const aFilteredNonWorkingRange = oRow.getIntervalType() !== CalendarIntervalType.Hour ?
+			[] :
+			oRow.getNonWorkingPeriods().filter((oPeriod) => {
+				const hasOccurrenceOnDate = RecurrenceUtils.hasOccurrenceOnDate.bind(oPeriod);
+				return hasOccurrenceOnDate(oStartDateInterval);
+			});
+
+		const aFilteredItemsForCurrentHours = aFilteredNonWorkingRange.filter((oPeriod) => {
+			return oPeriod.hasNonWorkingAtHour(oCellStartDate);
+		});
 
 		oRm.openStart("div", sId);
 		oRm.class("sapUiCalendarRowAppsInt");
@@ -295,6 +313,16 @@ sap.ui.define([
 
 		this.writeCustomAttributes(oRm, oRow);
 		oRm.openEnd(); // div element
+
+		if (aFilteredItemsForCurrentHours.length) {
+			RecurrenceUtils.getWorkingAndNonWorkingSegments(oCellStartDate, aFilteredItemsForCurrentHours).forEach((oHourParts) => {
+				if (oHourParts.type === "working") {
+					this.renderWorkingParts(oRm, oHourParts.duration);
+				} else {
+					this.renderNonWorkingParts(oRm, oHourParts.duration);
+				}
+			});
+		}
 
 		if (bShowIntervalHeaders) {
 			oRm.openStart("div");
@@ -877,6 +905,29 @@ sap.ui.define([
 			}
 		}
 		return aResult;
+	};
+
+	CalendarRowRenderer.renderWorkingParts = function (oRm, iDuration){
+		const iWidth = iDuration / 60 * 100;
+
+		oRm.openStart("div");
+		oRm.style("width", `${iWidth}%`);
+		oRm.style("height", "inherit" );
+		oRm.style("display","inline-block");
+		oRm.openEnd();
+		oRm.close("div");
+	};
+
+	CalendarRowRenderer.renderNonWorkingParts = function (oRm, iDuration){
+		const iWidth = iDuration / 60 * 100;
+
+		oRm.openStart("div");
+		oRm.style("width", `${iWidth}%`);
+		oRm.class("sapUiCalendarRowAppsNoWork");
+		oRm.style("height", "inherit" );
+		oRm.style("display","inline-block");
+		oRm.openEnd();
+		oRm.close("div");
 	};
 
 	/**
