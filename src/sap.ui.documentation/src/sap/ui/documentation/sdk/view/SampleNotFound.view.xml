@@ -1,14 +1,14 @@
 <mvc:View
 		controllerName="sap.ui.documentation.sdk.controller.SampleNotFound"
-		xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f"
+		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
 
-	<f:IllustratedMessage
+	<IllustratedMessage
 			id="page"
 			illustrationType="sapIllus-PageNotFound"
 			title="{i18n>NOT_FOUND_SAMPLE_TITLE}"
 			description="{i18n>NOT_FOUND_SAMPLE_TEXT}">
-			<f:additionalContent>
+			<additionalContent>
 				<VBox>
 					<Button
 						visible="{device>/system/phone}"
@@ -20,7 +20,7 @@
 						press="onNavToSamples"
 						type="Emphasized"/>
 				</VBox>
-			</f:additionalContent>
-	</f:IllustratedMessage>
+			</additionalContent>
+	</IllustratedMessage>
 
 </mvc:View>

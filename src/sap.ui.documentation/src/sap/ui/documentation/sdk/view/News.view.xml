@@ -1,16 +1,15 @@
 <mvc:View controllerName="sap.ui.documentation.sdk.controller.News"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m"
-		xmlns:f="sap.f"
 		xmlns:l="sap.ui.layout"
 		xmlns:core="sap.ui.core">
 
-	<f:IllustratedMessage
+	<IllustratedMessage
 		visible="{=!!${/preparationFailureMessage}}"
 		title="{i18n>NEWS_PREP_FAILURE_TITLE}"
 		description="{/preparationFailureMessage}"
 		illustrationType="sapIllus-ErrorScreen">
-	</f:IllustratedMessage>
+	</IllustratedMessage>
 	<VBox visible="{=!${/preparationFailureMessage}}">
 		<NotificationList>
 

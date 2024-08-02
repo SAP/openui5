@@ -14,13 +14,13 @@
 				>
 				</f:ShellBar>
 			</customHeader>
-			<f:IllustratedMessage
+			<IllustratedMessage
 				id="page"
 				illustrationType="sapIllus-PageNotFound"
 				title=" "
 				description=" "
 				busy="true">
-				<f:additionalContent>
+				<additionalContent>
 					<Button
 						id="readMoreButton"
 						visible="false"
@@ -32,8 +32,8 @@
 						visible="true"
 						text="Home Page"
 						press="onHomePress" />
-				</f:additionalContent>
-			</f:IllustratedMessage>
+				</additionalContent>
+			</IllustratedMessage>
 		</Page>
 	</App>
 
