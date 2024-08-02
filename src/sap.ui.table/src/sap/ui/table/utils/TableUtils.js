@@ -1605,6 +1605,40 @@ sap.ui.define([
 			}
 
 			throw new Error(sMessage);
+		},
+
+		/**
+		 * Returns the pageX and pageY position of the given mouse/touch event.
+		 *
+		 * @param {jQuery.Event} oEvent The event object
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @returns {{x: int, y: int}} The event position
+		 */
+		getEventPosition: function(oEvent, oTable) {
+			const oPosition = getTouchObject(oEvent) || oEvent;
+
+			function getTouchObject(oTouchEvent) {
+				if (!oTable._isTouchEvent(oTouchEvent)) {
+					return null;
+				}
+
+				const aTouchEventObjectNames = ["touches", "targetTouches", "changedTouches"];
+
+				for (let i = 0; i < aTouchEventObjectNames.length; i++) {
+					const sTouchEventObjectName = aTouchEventObjectNames[i];
+
+					if (oEvent[sTouchEventObjectName] && oEvent[sTouchEventObjectName][0]) {
+						return oEvent[sTouchEventObjectName][0];
+					}
+					if (oEvent.originalEvent[sTouchEventObjectName] && oEvent.originalEvent[sTouchEventObjectName][0]) {
+						return oEvent.originalEvent[sTouchEventObjectName][0];
+					}
+				}
+
+				return null;
+			}
+
+			return {x: oPosition.pageX, y: oPosition.pageY};
 		}
 	};
 

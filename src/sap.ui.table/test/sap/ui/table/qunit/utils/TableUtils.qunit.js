@@ -9,11 +9,11 @@ sap.ui.define([
 	"sap/ui/table/CreationRow",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/library",
+	"sap/ui/table/RowSettings",
 	"sap/ui/core/Control",
 	"sap/ui/core/Theming",
 	"sap/ui/core/InvisibleMessage",
 	"sap/ui/core/message/MessageType",
-	"sap/ui/table/RowSettings",
 	"sap/ui/base/Object",
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/i18n/Localization",
@@ -29,11 +29,11 @@ sap.ui.define([
 	CreationRow,
 	FixedRowMode,
 	TableLibrary,
+	RowSettings,
 	Control,
 	Theming,
 	InvisibleMessage,
 	MessageType,
-	RowSettings,
 	BaseObject,
 	ResourceBundle,
 	Localization,
@@ -1511,6 +1511,43 @@ sap.ui.define([
 		Theming.attachApplied(fnThemeChanged);
 	});
 
+	QUnit.test("getEventPosition", function(assert) {
+		let oEvent;
+		let oPos;
+		const x = 15;
+		const y = 20;
+		const oCoord = {pageX: x, pageY: y};
+
+		oEvent = jQuery.extend({originalEvent: {}}, oCoord);
+
+		oPos = TableUtils.getEventPosition(oEvent, oTable);
+		assert.equal(oPos.x, x, "MouseEvent - X");
+		assert.equal(oPos.y, y, "MouseEvent - Y");
+
+		oEvent = {
+			targetTouches: [oCoord],
+			originalEvent: {
+				touches: []
+			}
+		};
+
+		oPos = TableUtils.getEventPosition(oEvent, oTable);
+		assert.equal(oPos.x, x, "TouchEvent - X");
+		assert.equal(oPos.y, y, "TouchEvent - Y");
+
+		oEvent = {
+			touches: [oCoord],
+			originalEvent: {
+				touches: [],
+				targetTouches: [oCoord]
+			}
+		};
+
+		oPos = TableUtils.getEventPosition(oEvent, oTable);
+		assert.equal(oPos.x, x, "TouchEvent (wrapped) - X");
+		assert.equal(oPos.y, y, "TouchEvent (wrapped) - Y");
+	});
+
 	QUnit.module("Resize Handler", {
 		beforeEach: function() {
 			jQuery("#qunit-fixture").append("<div id='__table-outer'>" +
@@ -1992,5 +2029,4 @@ sap.ui.define([
 		this.oClock.runToFrame();
 		this.assertCalled(assert, oContext, ["animation frame"]);
 	});
-
 });
