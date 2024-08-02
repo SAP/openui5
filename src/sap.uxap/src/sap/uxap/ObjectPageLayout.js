@@ -3137,6 +3137,9 @@ sap.ui.define([
 
 		this._adjustHeaderHeights();
 		this._requestAdjustLayout(true); // call adjust layout to calculate the new section sizes
+		if (this.getEnableLazyLoading() && this._oLazyLoading) {
+			this._oLazyLoading.doLazyLoading();
+		}
 	};
 
 	ObjectPageLayout.prototype.triggerPendingLayoutUpdates = function () {

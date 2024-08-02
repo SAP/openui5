@@ -280,4 +280,27 @@ function(nextUIUpdate, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayout
 			oObjectPageLayout.destroy();
 		}, oLazyLoading.LAZY_LOADING_EXTRA_SUBSECTION);
 	});
+
+	QUnit.test("lazyLoading called when content size is updated", async function (assert) {
+		// Setup
+		var oObjectPageLayout = new ObjectPageLayout({enableLazyLoading: true}),
+			fnDone = assert.async(),
+			oSpy;
+		oObjectPageLayout.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		oSpy = this.spy(oObjectPageLayout._oLazyLoading, "doLazyLoading");
+
+		// Act: call _onUpdateContentSize (when content is updated)
+		oObjectPageLayout._onUpdateContentSize({
+			size: {
+				height: 1000,
+				width: 600
+			}
+		});
+
+		// Check
+		assert.ok(oSpy.callCount, 1, "lazy loading is called after content update");
+		fnDone();
+	});
 });
