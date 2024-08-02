@@ -74,7 +74,7 @@ sap.ui.define([
 				 * Defines the icon of the item.
 				 */
 				icon: {
-					type: "string"
+					type: "sap.ui.core.URI"
 				},
 				/**
 				 * Determines the initial visibility of the <code>LinkItem</code>. If set to <code>true</code>, the item will appear on the <code>Popover</code>

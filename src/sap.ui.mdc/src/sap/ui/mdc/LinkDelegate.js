@@ -25,11 +25,10 @@ sap.ui.define([
 	 * @public
 	 * @param {sap.ui.mdc.Link} oLink Instance of the <code>Link</code>
 	 * @param {sap.ui.model.Context|null|undefined} oBindingContext Binding context of the <code>Link</code> control
-	 * @param {sap.ui.mdc.link.Log} oInfoLog InfoLog of the <code>Link</code> control
 	 * @returns {Promise<null|sap.ui.mdc.link.LinkItem[]>} Once resolved, <code>null</code> or an array of {@link sap.ui.mdc.link.LinkItem} is returned
 	 * If <code>null</code> is returned, the link won't cache <code>LinkItem</code>.
 	 */
-	LinkDelegate.fetchLinkItems = function(oLink, oBindingContext, oInfoLog) {
+	LinkDelegate.fetchLinkItems = function(oLink, oBindingContext) {
 		return Promise.resolve(null);
 	};
 
