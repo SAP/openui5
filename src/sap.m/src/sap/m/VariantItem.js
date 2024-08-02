@@ -180,6 +180,7 @@ sap.ui.define([
 
 	VariantItem.prototype.setTitle = function(sValue) {
 		this.setProperty("title", sValue);
+		this.setProperty("text", sValue);
 		if (!this._bOriginalTitleSet) {
 			this._bOriginalTitleSet = true;
 			this._setOriginalTitle(sValue);

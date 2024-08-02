@@ -623,6 +623,39 @@ sap.ui.define([
 		oLink.destroy();
 	});
 
+	QUnit.test("Prevent default event when there is no href", async function(assert) {
+		// Prepare
+		var oLink = new Link({text: "text"}),
+			oClickEvent = new Event("click", {bubbles: true, cancelable: true}),
+			oPressSpy = this.spy(oLink, "firePress"),
+			oPreventDefaultSpy = this.spy(oClickEvent, "preventDefault");
+
+		oLink.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Act
+		oLink.getDomRef().firstChild.dispatchEvent(oClickEvent);
+
+		// Assert
+		assert.ok(oPressSpy.calledOnce, "Press event still fired");
+		assert.ok(oPreventDefaultSpy.calledOnce, "Default action is prevented if clicked on inner span element");
+
+		// Clean
+		oPreventDefaultSpy.resetHistory();
+		oPressSpy.resetHistory();
+
+		// Act
+		oLink.getDomRef().dispatchEvent(oClickEvent);
+
+		// Assert
+		assert.ok(oPressSpy.calledOnce, "Press event still fired");
+		assert.ok(oPreventDefaultSpy.calledOnce, "Default action is prevented if clicked on outer element");
+
+		// Clean
+		oPreventDefaultSpy.resetHistory();
+		oLink.destroy();
+	});
+
 	QUnit.test("Prevent navigation", async function(assert) {
 		// Prepare
 		var oLink = new Link({text: "text"}),

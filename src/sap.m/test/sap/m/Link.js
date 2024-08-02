@@ -101,6 +101,25 @@ sap.ui.define([
 			  emptyIndicatorMode: "On"
 		  }).addStyleClass("sapUiSmallMargin"),
 
+		  new Link({
+			  id: "link_icon1",
+			  text : "link with icon",
+			  icon: "sap-icon://globe",
+		  }).addStyleClass("sapUiSmallMargin"),
+
+		  new Link({
+			  id: "link_icon2",
+			  text : "link with end icon",
+			  endIcon: "sap-icon://inspect",
+		  }).addStyleClass("sapUiSmallMargin"),
+
+		  new Link({
+			  id: "link_icon3",
+			  text : "link with two icons",
+			  icon: "sap-icon://cart",
+			  endIcon: "sap-icon://begin",
+		  }).addStyleClass("sapUiSmallMargin"),
+
 		  table
 	  ]
 

@@ -557,6 +557,7 @@ sap.ui.define([
 			} else if (oChangeIndicator.getOverlayId() !== sOverlayId) {
 				// Overlay id might change, e.g. during undo/redo of dirty changes
 				oChangeIndicator.setOverlayId(sOverlayId);
+				oChangeIndicator.setVisible(true);
 			}
 			return undefined;
 		}.bind(this));
