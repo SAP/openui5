@@ -795,8 +795,7 @@ sap.ui.define([
 
 		this._oPrevButton = new Button({
 			icon: IconPool.getIconURI("navigation-left-arrow"),
-			//tooltip: "Show Previous",
-			tooltip: this._oRb.getText("WIZARD_FINISH"), //TODO create new resoucre
+			tooltip: this._oRb.getText("p13n.PREVIOUS"),
 			visible: true,
 			press: function(oEvent) {
 				that._iFirstConditionIndex = Math.max(0, that._iFirstConditionIndex - that._iConditionPageSize);
@@ -810,8 +809,7 @@ sap.ui.define([
 
 		this._oNextButton = new Button({
 			icon: IconPool.getIconURI("navigation-right-arrow"),
-			//tooltip: "Show Next",
-			tooltip: this._oRb.getText("WIZARD_NEXT"), //TODO create new resoucre
+			tooltip: this._oRb.getText("p13n.NEXT"),
 			visible: true,
 			press: function(oEvent) {
 				that._iFirstConditionIndex += that._iConditionPageSize;
