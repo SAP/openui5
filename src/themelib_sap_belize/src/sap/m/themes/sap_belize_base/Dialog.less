@@ -290,7 +290,7 @@ html.sap-desktop .sapMDialog {
 	-webkit-transition: none;
 }
 
-.sapMDialogResizeHandler {
+.sapMDialogResizeHandle {
 	bottom: 0;
 	cursor: se-resize;
 	position: absolute;
@@ -299,10 +299,9 @@ html.sap-desktop .sapMDialog {
 	z-index: 2;
 	line-height: 1rem;
 
-	&:before {
-		left: 0;
-		position: relative;
-		top: 0;
+	.sapMDialogResizeHandleIcon {
+		display: block;
+		cursor: inherit;
 	}
 }
 

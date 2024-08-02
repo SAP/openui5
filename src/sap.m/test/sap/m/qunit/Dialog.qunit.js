@@ -226,7 +226,7 @@ sap.ui.define([
 		this.clock.tick(100);
 
 		// Assert
-		var oIconDomRef = oDialog.getDomRef().querySelector(".sapMDialogResizeHandler");
+		var oIconDomRef = oDialog.getDomRef().querySelector(".sapMDialogResizeHandle");
 		assert.strictEqual(oIconDomRef.getAttribute("title"), null, "title attribute is not set");
 		assert.strictEqual(oIconDomRef.getAttribute("aria-label"), null, "aria-label attribute is not set");
 
@@ -2229,7 +2229,7 @@ sap.ui.define([
 			offsetY: 35,
 			preventDefault: function () {},
 			stopPropagation: function () {},
-			target: oDialog.$().find(".sapMDialogResizeHandler")[0]
+			target: oDialog.$().find(".sapMDialogResizeHandle")[0]
 		};
 
 		var oClientRect = oDialog.getDomRef().getBoundingClientRect();
@@ -2454,7 +2454,7 @@ sap.ui.define([
 			});
 
 			this.fnMockResizeEvent = function () {
-				var oResizeHandler = this.oDialog.$().find(".sapMDialogResizeHandler")[0],
+				var oResizeHandler = this.oDialog.$().find(".sapMDialogResizeHandle")[0],
 					oResizeHandlerRect = oResizeHandler.getBoundingClientRect();
 
 				// event in which the mouse is on the resize handler
