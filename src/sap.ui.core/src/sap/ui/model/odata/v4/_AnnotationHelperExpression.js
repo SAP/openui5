@@ -519,7 +519,7 @@ sap.ui.define([
 			return oModel.fetchObject(sPath + "/$").then(function (oTarget) {
 				var sCompositeConstraints
 						= oModel.getObject(oPathValue.path
-							+ "@com.sap.vocabularies.UI.v1.DoNotCheckScaleOfMeasureQuantity")
+							+ "@com.sap.vocabularies.UI.v1.DoNotCheckScaleOfMeasuredQuantity")
 						? ",constraints:{'skipDecimalsValidation':true}"
 						: "";
 

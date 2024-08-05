@@ -35,7 +35,7 @@ sap.ui.define([
 					"@Org.OData.Measures.V1.ISOCurrency" : {
 						$Path : "Currency"
 					},
-					"@com.sap.vocabularies.UI.v1.DoNotCheckScaleOfMeasureQuantity" : true
+					"@com.sap.vocabularies.UI.v1.DoNotCheckScaleOfMeasuredQuantity" : true
 				},
 				"tea_busi.TEAM" : {
 					"@UI.LineItem" : [{

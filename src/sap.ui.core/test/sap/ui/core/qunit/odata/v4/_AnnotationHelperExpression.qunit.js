@@ -301,7 +301,7 @@ sap.ui.define([
 					.returns(SyncPromise.resolve(oTarget));
 				oModelMock.expects("getObject")
 					.withExactArgs(
-						"~path~@com.sap.vocabularies.UI.v1.DoNotCheckScaleOfMeasureQuantity")
+						"~path~@com.sap.vocabularies.UI.v1.DoNotCheckScaleOfMeasuredQuantity")
 					.returns(bSkipDecimalsValidation || undefined);
 				oExpressionMock.expects("pathResult")
 					.withExactArgs(sinon.match.same(oPathValue), sType, "~value~",
