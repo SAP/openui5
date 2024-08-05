@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Button",
-	"sap/ui/integration/controls/LinkWithIcon",
+	"sap/m/Link",
 	"sap/m/OverflowToolbarButton",
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarLayoutData",
@@ -30,7 +30,7 @@ sap.ui.define([
 	BindingResolver,
 	JSONModel,
 	Button,
-	LinkWithIcon,
+	Link,
 	OverflowToolbarButton,
 	OverflowToolbar,
 	OverflowToolbarLayoutData,
@@ -274,7 +274,7 @@ sap.ui.define([
 	};
 
 	ActionsStrip.prototype._createLink = function (mConfig) {
-		var oLink = new LinkWithIcon({
+		var oLink = new Link({
 			icon: mConfig.icon,
 			text: mConfig.text,
 			tooltip: mConfig.tooltip,
