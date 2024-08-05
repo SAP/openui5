@@ -32,10 +32,10 @@ describe("sap.ui.unified.CalendarVisual", function() {
 		expect(takeScreenshot(oCal)).toLookAs("today_button_focus");
 	});
 
-	it("should show calendar with current date button", function () {
+	it("should show arabic two months calendar in RTL", function () {
 		_initCalendar("RTL");
 
-		expect(takeScreenshot(oCal)).toLookAs("Arabic two months calendar");
+		expect(takeScreenshot(oCal)).toLookAs("Arabic_two_months_calendar");
 	});
 
 	function _initCalendar(sVersion) {
