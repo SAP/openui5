@@ -1769,10 +1769,10 @@ function (App,
 				var itb4b = new sap.m.IconTabBar("itb4b", {
 					items: [
 						new sap.m.IconTabFilter({
-							text: "खोजें और चयन करें"
+							text: "\u0936\u0940\u0930\u094D\u0937\u0932\u0947\u0916"
 						}),
 						new sap.m.IconTabFilter({
-							text: "खोजें और चयन करें 1"
+							text: "\u0936\u0940\u0930\u094D\u0937\u0932\u0947\u0916 1"
 						})
 					]
 				});
