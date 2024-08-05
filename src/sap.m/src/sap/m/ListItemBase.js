@@ -528,7 +528,7 @@ function(
 			this._oDeleteControl, {
 				messageBundleKey: "LIST_ITEM_DELETE_SHORTCUT"
 			},
-		this);
+		this._oDeleteControl);
 
 		this._oDeleteControl.useEnabledPropagator(false);
 
@@ -569,7 +569,7 @@ function(
 			this._oDetailControl, {
 				messageBundleKey: Device.os.macintosh ? "LIST_ITEM_EDIT_SHORTCUT_MAC" : "LIST_ITEM_EDIT_SHORTCUT"
 			},
-		this);
+		this._oDetailControl);
 
 		this._oDetailControl.useEnabledPropagator(false);
 
