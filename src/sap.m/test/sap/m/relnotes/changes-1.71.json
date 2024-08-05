@@ -3907,5 +3907,25 @@
         "text": " sap.m.Input: Value is not cleared on invalidation when type password is used"
       }
     ]
+  },
+  "1.71.67": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "bd687a93f3be18871aaf68e5dabfd44d6d4782aa",
+        "type": "FIX",
+        "text": " sap.m.Fiori20Adapter: Performance issue fixed"
+      },
+      {
+        "id": "87eb8ef64ed1c752abcb2f2b498738f7733e06d4",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: fix cursor position when there is mask and no entry"
+      },
+      {
+        "id": "30d5709fcd6af1fc0ca7d1ae43f475e052406735",
+        "type": "FIX",
+        "text": " sap.m.Input: Stop initial re-rendering the input field when type password and clear icon are set"
+      }
+    ]
   }
 }

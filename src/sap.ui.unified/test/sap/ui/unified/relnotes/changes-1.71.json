@@ -631,5 +631,15 @@
         ]
       }
     ]
+  },
+  "1.71.67": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "2392459a7d58beeacc28d01b161ccab0552136e1",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Header buttons are displayed correctly in two months view"
+      }
+    ]
   }
 }
