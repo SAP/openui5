@@ -1,0 +1,12 @@
+{
+  "1.128.0": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "a47490175157994f06a5999c5819611993c31c0f",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Prevent focus outline overflow"
+      }
+    ]
+  }
+}

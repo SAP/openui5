@@ -1,7 +1,57 @@
 {
   "1.128.0": {
-    "date": "July 2024",
+    "date": "August 2024",
     "notes": [
+      {
+        "id": "c88a3bfea79241db9baaa7f5f9b985bfa0082eab",
+        "type": "FIX",
+        "text": " sap.m.Link: links with empty href attribute work correctly now"
+      },
+      {
+        "id": "c321314cb48c00ca2abbf1d3d7a9c3748567d0b9",
+        "type": "FIX",
+        "text": " sap.m.Fiori20Adapter: Performance issue fixed"
+      },
+      {
+        "id": "4a493c21b9ccf0cb99253e80d985fcb93edf8eda",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: default alternative text is set for icon only statuses which icons can't be found in the Icon Registry"
+      },
+      {
+        "id": "eef373a07ce043fdd95dc97d0ee353c192bcf3be",
+        "type": "FEATURE",
+        "text": " sap.m.Link: Add icon and endIcon functionality"
+      },
+      {
+        "id": "b7847bb6b3b127469ac4484de85c7549e9555050",
+        "type": "FIX",
+        "text": " sap.m.Page: Fix failing tests"
+      },
+      {
+        "id": "b46bff7a737526803ef2c5b2d98cc272114001c9",
+        "type": "FIX",
+        "text": " sap.m.Popover: modal popover is not auto closed"
+      },
+      {
+        "id": "33ebeaf51b3065ed8758dd43a960a205124de33f",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: ARIA in empty mode is correct now"
+      },
+      {
+        "id": "b216adc02824cb33f442c489be12021fa8f3074b",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Text only filter line-height is fixed for Hindi"
+      },
+      {
+        "id": "a75d7f48d666b5a9155608695f6c438fa9e33d2a",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Update details page on model update"
+      },
+      {
+        "id": "abaddd260430a2fbf6ca499234cfe9fe0e21551c",
+        "type": "FIX",
+        "text": " sap.m.Menu, sap.ui.unified.Menu: added defaultClass to the items aggregation"
+      },
       {
         "id": "7fddf0f4c1abb1e4d9d283314ef6b3a85908b5fb",
         "type": "FIX",
@@ -11,6 +61,11 @@
         "id": "4e9ea14f8324b8581885a9f596b70c734697b564",
         "type": "FIX",
         "text": " sap.m.SinglePlanningCalendar: fix SR announcements when all-day appointments are selected with keyboard."
+      },
+      {
+        "id": "41fa03a91693bad0d5f787a5eaaf615303e6cfb0",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Icon only status has a tooltip if the provided icon / image has default one"
       },
       {
         "id": "f68f7cf2ebf5cee720dba0058ed8f4992f730ab0",
@@ -23,9 +78,29 @@
         "text": " sap.m.MenuButton: Accessible Improvement for MenuButton test page"
       },
       {
+        "id": "c787d39737c96bc20a9a1fa8df343106ec5bc243",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog,TableSelectDialog: Ensure that selection count is announced after title"
+      },
+      {
         "id": "f83041bae6e5d78d9e166fe440325febbe681e0e",
         "type": "FIX",
         "text": " We've now added space between attributes and the action buttons in the ActionTile"
+      },
+      {
+        "id": "03316b4da33c69f39a7f189f0ca585cdea59c1b5",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: adjust more link tab order",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380128055"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380129002"
+          }
+        ]
       },
       {
         "id": "fe572463fcd87f9365621503d3afda321d1f0d66",

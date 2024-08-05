@@ -1,7 +1,12 @@
 {
   "1.128.0": {
-    "date": "July 2024",
+    "date": "August 2024",
     "notes": [
+      {
+        "id": "abaddd260430a2fbf6ca499234cfe9fe0e21551c",
+        "type": "FIX",
+        "text": " sap.m.Menu, sap.ui.unified.Menu: added defaultClass to the items aggregation"
+      },
       {
         "id": "401dd84f359dcae3d46aa1a1bc701a4e37402ef9",
         "type": "FIX",

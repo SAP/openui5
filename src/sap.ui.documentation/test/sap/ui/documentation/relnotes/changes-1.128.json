@@ -1,0 +1,12 @@
+{
+  "1.128.0": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "d85e5a90d10e36fc671a594b6a3b831f3e7b6f83",
+        "type": "FIX",
+        "text": " Demokit: Remove deprecated sap.f.IllustratedMessage"
+      }
+    ]
+  }
+}

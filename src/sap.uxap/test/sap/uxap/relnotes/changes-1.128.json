@@ -1,0 +1,17 @@
+{
+  "1.128.0": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "f43e2d451094953f758e69ea470137b273326f3f",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: lazyloading with content size update"
+      },
+      {
+        "id": "b35940ec8053542e3d0cd309bd38e9e34abe1e0c",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: fix duplicated buttons"
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "1.128.0": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "1cd1036a5cf2e83f0f450381a81d619b232d8711",
+        "type": "FIX",
+        "text": " FieldBase: Typeahead opens too if Dialog opens"
+      }
+    ]
+  }
+}
