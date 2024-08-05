@@ -684,7 +684,7 @@ sap.ui.define([
 	 *   The count of nodes affected by the collapse, in case the cache already performed it
 	 * @throws {Error}
 	 *   If the binding's root binding is suspended or if the given context is not part of a
-	 *   recursive hierarchy
+	 *   hierarchy
 	 *
 	 * @private
 	 * @see #expand
@@ -1589,8 +1589,8 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved when the expand is successful and rejected when it fails
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended or if the given context is not part of a
-	 *   recursive hierarchy
+	 *   If the binding's root binding is suspended, if the given context is not part of a
+	 *   hierarchy, or <code>iLevels > 1</code> without a recursive hierarchy
 	 *
 	 * @private
 	 * @see #collapse
@@ -1599,6 +1599,9 @@ sap.ui.define([
 		this.checkSuspended();
 		if (this.aContexts[oContext.iIndex] !== oContext) {
 			throw new Error("Not currently part of the hierarchy: " + oContext);
+		}
+		if (iLevels > 1 && !this.mParameters.$$aggregation?.hierarchyQualifier) {
+			throw new Error("Missing recursive hierarchy");
 		}
 
 		let bDataRequested = false;

@@ -9702,8 +9702,10 @@ sap.ui.define([
 		// iCount=-1 means unified cache
 		[-1, 0, 3].forEach(function (iCount) {
 			[false, true].forEach((bSilent) => {
-				var sTitle = "expand: success=" + bSuccess + ", data requested=" + bDataRequested
-						+ ", count=" + iCount + ", silent=" + bSilent;
+				[false, true].forEach((bHierarchy) => {
+					var sTitle = "expand: success=" + bSuccess + ", data requested="
+						+ bDataRequested + ", count=" + iCount + ", silent=" + bSilent
+						+ ", hierarchy=" + bHierarchy;
 
 	if (!bSuccess && iCount === 0 || bDataRequested && iCount < 0) {
 		return; // skip useless combinations
@@ -9723,6 +9725,7 @@ sap.ui.define([
 			oExpectation,
 			oGapCall,
 			oGroupLock = {},
+			iLevels = bHierarchy ? 42 : 1,
 			oPromise,
 			that = this;
 
@@ -9730,6 +9733,11 @@ sap.ui.define([
 			expand : function () {}
 		};
 		oBinding.aContexts["~iIndex~"] = oContext;
+		if (bHierarchy) {
+			// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that
+			// leads too far :-(
+			oBinding.mParameters = {$$aggregation : {hierarchyQualifier : "X"}};
+		}
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("lockGroup").withExactArgs().returns(oGroupLock);
@@ -9740,7 +9748,7 @@ sap.ui.define([
 			.withExactArgs("~contextpath~", "~bindingpath~").returns("~cachepath~");
 
 		oExpectation = this.mock(oBinding.oCache).expects("expand")
-			.withExactArgs(sinon.match.same(oGroupLock), "~cachepath~", "~iLevels~",
+			.withExactArgs(sinon.match.same(oGroupLock), "~cachepath~", iLevels,
 				sinon.match.func)
 			.returns(Promise.resolve().then(function () {
 				if (bSuccess) {
@@ -9770,7 +9778,7 @@ sap.ui.define([
 			}));
 
 		// code under test
-		oPromise = oBinding.expand(oContext, "~iLevels~", bSilent).then(function (vResult) {
+		oPromise = oBinding.expand(oContext, iLevels, bSilent).then(function (vResult) {
 			assert.ok(bSuccess);
 			if (bDataRequested && iCount) {
 				if (bSilent) {
@@ -9795,6 +9803,7 @@ sap.ui.define([
 
 		return oPromise;
 	});
+				});
 			});
 		});
 	});
@@ -9816,6 +9825,24 @@ sap.ui.define([
 			// code under test
 			oBinding.expand(oContext);
 		}, new Error("Not currently part of the hierarchy: ~oContext~"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("expand: Missing recursive hierarchy", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		const oContext = {
+			iIndex : 0
+		};
+		oBinding.aContexts = [oContext];
+
+		this.mock(oBinding).expects("checkSuspended").twice().withExactArgs();
+
+		[2, 42].forEach((iLevels) => {
+			assert.throws(function () {
+				// code under test
+				oBinding.expand(oContext, iLevels);
+			}, new Error("Missing recursive hierarchy"));
+		});
 	});
 
 	//*********************************************************************************************

@@ -3098,6 +3098,30 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[1E16, Number.MAX_SAFE_INTEGER].forEach(function (iLevels) {
+	QUnit.test(`expand: all below node, iLevels=${iLevels}`, function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		this.mock(oCache).expects("getValue").withExactArgs("~path~").returns("~oGroupNode~");
+		this.mock(_Helper).expects("getPrivateAnnotation")
+			.withExactArgs("~oGroupNode~", "spliced").returns("~aSpliced~");
+		this.mock(_Helper).expects("updateAll")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~", "~oGroupNode~",
+				{"@$ui5.node.isExpanded" : true});
+		this.mock(oCache.oTreeState).expects("expand")
+			.withExactArgs("~oGroupNode~", iLevels);
+		this.mock(_Helper).expects("deletePrivateAnnotation").never();
+		this.mock(oCache).expects("createGroupLevelCache").never();
+
+		// code under test
+		const oPromise = oCache.expand("~oGroupLock~", "~path~", iLevels, "~fnDataRequested~");
+
+		assert.strictEqual(oPromise.getResult(), -1);
+	});
+});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bSelf) {
 	[1, undefined].forEach(function (iLevels) {
 	var sTitle = "expand: collapse " + (bSelf ? "self" : "parent") + " before expand has finished";

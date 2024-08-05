@@ -716,7 +716,9 @@ sap.ui.define([
 			this.oTreeState.expand(oGroupNode, iLevels);
 		} // else: no update needed!
 
-		if (aSpliced) {
+		if (iLevels >= Number.MAX_SAFE_INTEGER) { // expand all below oGroupNode
+			// nothing to do
+		} else if (aSpliced) {
 			_Helper.deletePrivateAnnotation(oGroupNode, "spliced");
 			const aOldElements = this.aElements;
 			const iIndex = aOldElements.indexOf(oGroupNode) + 1;
