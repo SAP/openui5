@@ -94,7 +94,7 @@ sap.ui.define([
 		beforeEach: () => {
 			this.mCompVariantsMap = {
 				defaultVariants: [],
-				variants: []
+				byId: {}
 			};
 		},
 		afterEach: () => {
@@ -110,15 +110,10 @@ sap.ui.define([
 					};
 				}
 			};
-			this.mCompVariantsMap.variants = [{
-				getId: () => {
-					return sVariantName;
-				}
-			}, {
-				getId: () => {
-					return "AnotherVariant";
-				}
-			}];
+			this.mCompVariantsMap.byId = {
+				[sVariantName]: {},
+				AnotherVariant: {}
+			};
 
 			assert.strictEqual(
 				Utils.getDefaultVariantId(this.mCompVariantsMap),
@@ -144,15 +139,10 @@ sap.ui.define([
 					};
 				}
 			};
-			this.mCompVariantsMap.variants = [{
-				getId: () => {
-					return sFirstVariantName;
-				}
-			}, {
-				getId: () => {
-					return sSecondVariantName;
-				}
-			}];
+			this.mCompVariantsMap.byId = {
+				[sSecondVariantName]: {},
+				[sFirstVariantName]: {}
+			};
 
 			assert.strictEqual(
 				Utils.getDefaultVariantId(this.mCompVariantsMap),
@@ -178,11 +168,9 @@ sap.ui.define([
 					};
 				}
 			};
-			this.mCompVariantsMap.variants = [{
-				getId: () => {
-					return sSecondVariantName;
-				}
-			}];
+			this.mCompVariantsMap.byId = {
+				[sSecondVariantName]: {}
+			};
 
 			assert.strictEqual(
 				Utils.getDefaultVariantId(this.mCompVariantsMap),
@@ -192,15 +180,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("No defaultVariant changes", (assert) => {
-			this.mCompVariantsMap.variants = [{
-				getId: () => {
-					return "FirstVariant";
-				}
-			}, {
-				getId: () => {
-					return "SecondVariant";
-				}
-			}];
+			this.mCompVariantsMap.byId = {
+				FirstVariant: {},
+				SecondVariant: {}
+			};
 
 			assert.strictEqual(
 				Utils.getDefaultVariantId(this.mCompVariantsMap),
@@ -210,15 +193,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("No valid variants", (assert) => {
-			this.mCompVariantsMap.variants = [{
-				getId: () => {
-					return "FirstVariant";
-				}
-			}, {
-				getId: () => {
-					return "SecondVariant";
-				}
-			}];
+			this.mCompVariantsMap.byId = {
+				FirstVariant: {},
+				SecondVariant: {}
+			};
 			this.mCompVariantsMap.defaultVariants[0] = {
 				getContent: () => {
 					return {
@@ -281,11 +259,9 @@ sap.ui.define([
 					};
 				}
 			};
-			this.mCompVariantsMap.variants = [{
-				getId: () => {
-					return sFirstVariantName;
-				}
-			}];
+			this.mCompVariantsMap.byId = {
+				[sFirstVariantName]: {}
+			};
 
 			assert.strictEqual(
 				Utils.getDefaultVariantId(this.mCompVariantsMap),
