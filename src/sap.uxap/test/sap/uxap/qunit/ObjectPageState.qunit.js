@@ -388,7 +388,7 @@ function(
 
 			setTimeout(function() {
 
-				var oTabButton = oPage.getAggregation("_anchorBar").getContent()[1];
+				var oTabButton = oPage.getAggregation("_anchorBar").getItems()[1];
 				assert.ok(oTabButton.getText() === "Changed", "section title is updated in the anchorBar");
 				done();
 			}, 1000); //calc delay
@@ -500,12 +500,10 @@ function(
 			oBlock.setHeight("600px"); //add 300px more
 			setTimeout(function() {
 
-				var sSelectedButtonId = oPage.getAggregation("_anchorBar").getSelectedButton(),
-					oSelectedButton = Element.getElementById(sSelectedButtonId),
-					sSelectedSectionId = oPage.getSelectedSection(),
-					oSelectedSection = Element.getElementById(sSelectedSectionId);
+				var sSelectedKey = oPage.getAggregation("_anchorBar").getSelectedKey(),
+					sSelectedSectionId = oPage.getSelectedSection();
 
-				assert.strictEqual(oSelectedButton.getText(), oSelectedSection.getTitle(), "section selection is preserved in the anchorBar");
+				assert.strictEqual(sSelectedKey, sSelectedSectionId, "section selection is preserved in the anchorBar");
 				done();
 			}, 1000); //dom calc delay
 		}, 1000); //dom calc delay
@@ -515,9 +513,9 @@ function(
 		var bSnapped = oExpected.bSnapped,
 			iAnchorBarSelectionIndex = oExpected.iAnchorBarSelectionIndex,
 			oAnchorBar = oPage.getAggregation("_anchorBar"),
-			sSelectedBtnId = oAnchorBar.getSelectedButton(),
-			oSelectedButton = Element.getElementById(sSelectedBtnId),
-			iSelectedBtnIndex = oAnchorBar.indexOfContent(oSelectedButton);
+			sSelectedKey = oAnchorBar.getSelectedKey(),
+			oSelectedButton = oAnchorBar.getItems().find((i) => i.getKey() === sSelectedKey),
+			iSelectedBtnIndex = oAnchorBar.indexOfItem(oSelectedButton);
 
 		assert.strictEqual(oPage._bStickyAnchorBar, bSnapped, "header snapped state is correct");
 		assert.strictEqual(iSelectedBtnIndex, iAnchorBarSelectionIndex, "index of anchorBar selected button is correct");

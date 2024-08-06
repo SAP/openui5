@@ -53,7 +53,7 @@ function(nextUIUpdate, $, XMLView, App) {
 		assert.notOk(this.referencedObjectPage1.$().hasClass("sapUxAPObjectPageLayoutTitleClickEnabled"), "DynamicPageTitle titleClickEnabled class is still not applied");
 	});
 	QUnit.test("ObjectPageId 1: AnchorBar ", function (assert) {
-		var objectPageToBar331 = $("#UxAP-331_ObjectPageRules1--objectPage1").find(".sapUxAPAnchorBar").is(":visible");
+		var objectPageToBar331 = $("#UxAP-331_ObjectPageRules1--objectPage1").find(".sapUxAPObjectPageNavigation .sapMITH").is(":visible");
 		assert.strictEqual(objectPageToBar331, true, "ObjectPageLayout 1 AnchorBar is display");
 	});
 	QUnit.test("ObjectPageId 1: No block - subsection not display", function (assert) {
@@ -224,6 +224,7 @@ function(nextUIUpdate, $, XMLView, App) {
 				this.oOPView = oView;
 				this.oOPView.placeAt("qunit-fixture");
 				await nextUIUpdate();
+				this.oObjectPage = this.oOPView.byId("objectPageLayout");
 				this.oSection3 = this.oOPView.byId("section_3");
 				this.oSection4 = this.oOPView.byId("section_4");
 				this.oSubSection11 = this.oOPView.byId("sub_section_1_1");
@@ -247,8 +248,8 @@ function(nextUIUpdate, $, XMLView, App) {
 	});
 
 	QUnit.test("SubSection configured properly", function (assert) {
-		assert.strictEqual(this.oSubSection11._getTitleDomId(),
-			"UxAP-ObjectPageTitlePropagationSupport--objectPageLayout-anchBar-UxAP-ObjectPageTitlePropagationSupport--section_1-anchor-content",
+		var oAnchorId = this.oObjectPage.getAggregation("_anchorBar").getItems()[0].getId() + "-content";
+		assert.strictEqual(this.oSubSection11._getTitleDomId(), oAnchorId,
 			"Title DOM ID of the Anchor Bar first button text containing element");
 
 		assert.strictEqual(this.oSubSection21._getTitleDomId(),

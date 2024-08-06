@@ -68,8 +68,8 @@ sap.ui.define([
 		var oSourceControl = Element.getElementById(mSpecificChangeInfo.source.id),
 			oTargetControl = Element.getElementById(mSpecificChangeInfo.target.id);
 		var oPromise = Promise.resolve();
-		if (oSourceControl.isA("sap.uxap.AnchorBar")
-			&& oTargetControl.isA("sap.uxap.AnchorBar")
+		if (oSourceControl.isA("sap.m.IconTabHeader")
+			&& oTargetControl.isA("sap.m.IconTabHeader")
 		) {
 			oPromise = oPromise.then(this._mapAnchorsToSections.bind(this, mSpecificChangeInfo, mPropertyBag));
 		}
@@ -98,7 +98,7 @@ sap.ui.define([
 
 				function getSectionForAnchor(sAnchorId) {
 					var oAnchor = Element.getElementById(sAnchorId),
-						sSectionId = oAnchor.data("sectionId");
+						sSectionId = oAnchor.getKey();
 					return Element.getElementById(sSectionId);
 				}
 				var aPromiseArray = [];
@@ -149,15 +149,10 @@ sap.ui.define([
 		var aAffectedControls = [oMovedElementSelector];
 		var aDisplayControls = [oMovedElementSelector];
 
-		oAnchorBar.getAggregation("content").forEach(function(oAnchorBarItem) {
-			oAnchorBarItem.getAggregation("customData").some(function(oCustomData) {
-				if (
-					oCustomData.getKey() === "sectionId" &&
-					oMovedElement.getId() === oCustomData.getProperty("value")
-				) {
-					aDisplayControls.push(oAnchorBarItem.getId());
-				}
-			});
+		oAnchorBar.getAggregation("items").forEach(function(oAnchorBarItem) {
+			if (oMovedElement.getId() === oAnchorBarItem.getKey()) {
+				aDisplayControls.push(oAnchorBarItem.getId());
+			}
 		});
 
 		return {

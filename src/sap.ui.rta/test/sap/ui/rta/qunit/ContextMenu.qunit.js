@@ -775,7 +775,7 @@ sap.ui.define([
 
 		QUnit.test("when context menu (context menu) is opened on ObjectPageSection on the anchor bar", function(assert) {
 			assert.expect(13);
-			var oOverlay = OverlayRegistry.getOverlay(this.oObjectPageLayout.getAggregation("_anchorBar").getContent()[0]);
+			var oOverlay = OverlayRegistry.getOverlay(this.oObjectPageLayout.getAggregation("_anchorBar").getItems()[0]);
 			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", function() {
 				assert.ok(true, "the contextMenu is open");
 			});
@@ -831,7 +831,7 @@ sap.ui.define([
 			this.oObjectPageLayout.insertSection(oObjectPageSection4, 0);
 			await nextUIUpdate();
 			await DtUtil.waitForSynced(this.oRta._oDesignTime)();
-			const oOverlay = OverlayRegistry.getOverlay(this.oObjectPageLayout.getAggregation("_anchorBar").getContent()[0]);
+			const oOverlay = OverlayRegistry.getOverlay(this.oObjectPageLayout.getAggregation("_anchorBar").getItems()[0]);
 			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", function() {
 				assert.ok(true, "the contextMenu is open");
 			});

@@ -16,8 +16,10 @@ function(
 	"use strict";
 
 	function getSectionForAnchorBarButton (oAnchorButton) {
-		var sSectionId = oAnchorButton.data("sectionId");
-		return Element.getElementById(sSectionId);
+		if (oAnchorButton) {
+			var sSectionId = oAnchorButton.getKey();
+			return Element.getElementById(sSectionId);
+		}
 	}
 
 	function isHeaderInTitleArea(oPage) {
@@ -61,8 +63,8 @@ function(
 							var oAnchorBar = oObjectPageLayout.getAggregation("_anchorBar");
 							var oSectionButton;
 							if (oAnchorBar) {
-								oSectionButton = oAnchorBar.getContent().filter(function (oButton) {
-									return oButton.data("sectionId") === sNewControlID;
+								oSectionButton = oAnchorBar.getItems().filter(function (oButton) {
+									return oButton.getKey() === sNewControlID;
 								})[0];
 							}
 							if (oSectionButton) {
@@ -94,10 +96,10 @@ function(
 				},
 				propagateRelevantContainer: true,
 				propagateMetadata : function(oElement) {
-					if (oElement.isA("sap.uxap.AnchorBar")) {
+					if (oElement.isA("sap.m.IconTabHeader")) {
 						return {
 							aggregations : {
-								content : {
+								items : {
 									childNames : {
 										singular : function(){
 											return Library.getResourceBundleFor("sap.uxap").getText("SECTION_CONTROL_NAME");
@@ -108,19 +110,15 @@ function(
 									},
 									actions : {
 										move : function(oElement){
-											if (oElement.isA("sap.m.Button") || oElement.isA("sap.m.MenuButton")) {
+											if (oElement.isA("sap.m.IconTabFilter")) {
 												return "moveControls";
 											}
 										}
 									}
 								}
-							},
-							scrollContainers : [{
-								domRef: "> .sapUxAPAnchorBarScrollContainer",
-								aggregations: ["content"]
-							}]
+							}
 						};
-					} else if (oElement.isA("sap.m.Button") || oElement.isA("sap.m.MenuButton")) {
+					} else if (oElement.isA("sap.m.IconTabFilter")) {
 						// getResponsibleElement() replaces with the responsible element, which is then asked for:
 						// the action in the context menu and the handler
 						return {

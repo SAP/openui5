@@ -215,12 +215,12 @@ sap.ui.define([
 		action : {
 			name : "move",
 			control : function(oView) {
-				return oView.byId("layout").getAggregation("_anchorBar").getContent()[0];
+				return oView.byId("layout").getAggregation("_anchorBar").getItems()[0];
 			},
 			parameter : function(oView){
 				return {
 					movedElements : [{
-						element : oView.byId("layout").getAggregation("_anchorBar").getContent()[0],
+						element : oView.byId("layout").getAggregation("_anchorBar").getItems()[0],
 						sourceIndex : 0,
 						targetIndex : 1
 					}],
@@ -309,7 +309,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("when DT is loaded and trying to move the anchor representation of a section into the headerContent...", function(assert) {
-		var oMovedAnchorBarButton = this.oObjectPageLayout.getAggregation("_anchorBar").getContent()[0];
+		var oMovedAnchorBarButton = this.oObjectPageLayout.getAggregation("_anchorBar").getItems()[0];
 		var oMovedAnchorBarButtonOverlay = OverlayRegistry.getOverlay(oMovedAnchorBarButton);
 		this.oElementMover.setMovedOverlay(oMovedAnchorBarButtonOverlay);
 		return this.oElementMover.checkTargetZone(this.oHeaderContentAggregationOverlay)
@@ -320,7 +320,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("when DT is loaded and trying to move the section into the anchor bar...", function(assert) {
-		var oMovedAnchorBarButton = this.oObjectPageLayout.getAggregation("_anchorBar").getContent()[0];
+		var oMovedAnchorBarButton = this.oObjectPageLayout.getAggregation("_anchorBar").getItems()[0];
 		var oMovedAnchorBarButtonOverlay = OverlayRegistry.getOverlay(oMovedAnchorBarButton);
 		var oAnchorBarAggregationOverlay = oMovedAnchorBarButtonOverlay.getParentAggregationOverlay();
 		var oMovedSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection);

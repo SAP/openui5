@@ -1313,17 +1313,15 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, Log, ObjectPag
 		// note that selected section is the last visible one
 		var oLastSubSection = this.oObjectPageLayout.getSections()[1].getSubSections()[0],
 		oObjectPageLayout = this.oObjectPageLayout,
-		fnOnScrollSpy =	this.fnOnScrollSpy,
 		done = assert.async(),
 		iReRenderingCount = 0,
-		iScrollTop;
+		oScrollToSectionSpy = this.spy(oObjectPageLayout, "scrollToSection"),
+		oSelectedSection;
 
 		assert.expect(1);
 
 		this.oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
-			// save the scrollTop position
-			iScrollTop = oObjectPageLayout._$opWrapper.scrollTop();
-
+			oSelectedSection = oObjectPageLayout.getSelectedSection();
 			//act
 			//makes a change that causes invalidates of the subsection and anchorBar
 			oLastSubSection.setTitle("changed");
@@ -1337,10 +1335,8 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, Log, ObjectPag
 				if (iReRenderingCount < 2) {
 					return;
 				}
-				setTimeout(function() {
-					assert.equal(fnOnScrollSpy.alwaysCalledWithMatch({target: {scrollTop: iScrollTop}}), true, "the correct scroll top is preserved");
-					done();
-				}, 0);
+				assert.ok(oScrollToSectionSpy.alwaysCalledWithMatch(oSelectedSection), "the correct scroll top is preserved");
+				done();
 			}});
 		});
 	});

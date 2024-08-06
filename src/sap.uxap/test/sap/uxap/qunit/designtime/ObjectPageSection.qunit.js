@@ -178,7 +178,7 @@ sap.ui.define([
 				displayElementId: "section1",
 				info: {
 					affectedControls: ["section1"],
-					displayControls: ["section1", oView.byId("op").getAggregation("_anchorBar").getContent()[2].getId()]
+					displayControls: ["section1", oView.byId("op").getAggregation("_anchorBar").getItems()[2].getId()]
 				}
 			};
 		}
@@ -262,7 +262,7 @@ sap.ui.define([
 				displayElementId: oView.byId("iFrameSection").getId(),
 				info: {
 					affectedControls: [oView.byId("iFrameSection").getId()],
-					displayControls: [oView.byId("iFrameSection").getId(), oView.byId("op").getAggregation("_anchorBar").getContent()[1].getId()]
+					displayControls: [oView.byId("iFrameSection").getId(), oView.byId("op").getAggregation("_anchorBar").getItems()[1].getId()]
 				}
 			};
 		}
@@ -430,12 +430,12 @@ sap.ui.define([
 		action: {
 			name: "rename",
 			control : function(oView) {
-				return oView.byId("layout").getAggregation("_anchorBar").getContent()[0];
+				return oView.byId("layout").getAggregation("_anchorBar").getItems()[0];
 			},
 			parameter: function (oView) {
 				return {
 					newValue: 'Title 2',
-					renamedElement: oView.byId("layout").getAggregation("_anchorBar").getContent()[0]
+					renamedElement: oView.byId("layout").getAggregation("_anchorBar").getItems()[0]
 				};
 			}
 		},
@@ -447,7 +447,7 @@ sap.ui.define([
 				displayElementId: "section",
 				info: {
 					affectedControls: ["section"],
-					displayControls: ["section", oView.byId("layout").getAggregation("_anchorBar").getContent()[0].getId()]
+					displayControls: ["section", oView.byId("layout").getAggregation("_anchorBar").getItems()[0].getId()]
 				}
 			};
 		}
@@ -645,11 +645,11 @@ sap.ui.define([
 		action: {
 			name: "remove",
 			control : function(oView) {
-				return oView.byId("layout").getAggregation("_anchorBar").getContent()[0];
+				return oView.byId("layout").getAggregation("_anchorBar").getItems()[0];
 			},
 			parameter: function (oView) {
 				return {
-					removedElement: oView.byId("layout").getAggregation("_anchorBar").getContent()[0]
+					removedElement: oView.byId("layout").getAggregation("_anchorBar").getItems()[0]
 				};
 			}
 		},
@@ -697,7 +697,7 @@ sap.ui.define([
 			},
 			name: "reveal",
 			control : function(oView) {
-				return oView.byId("layout").getAggregation("_anchorBar").getContent()[0];
+				return oView.byId("layout").getAggregation("_anchorBar").getItems()[0];
 			}
 		},
 		afterAction: fnConfirmSectionIsVisible,
@@ -741,7 +741,7 @@ sap.ui.define([
 			},
 			name: "reveal",
 			control : function(oView) {
-				return oView.byId("layout").getAggregation("_anchorBar").getContent()[0];
+				return oView.byId("layout").getAggregation("_anchorBar").getItems()[0];
 			},
 			label: "SubSection Title 1"
 		},
@@ -753,7 +753,7 @@ sap.ui.define([
 				displayElementId: "section",
 				info: {
 					affectedControls: ["section"],
-					displayControls: ["section", oView.byId("layout").getAggregation("_anchorBar").getContent()[0].getId()]
+					displayControls: ["section", oView.byId("layout").getAggregation("_anchorBar").getItems()[0].getId()]
 				}
 			};
 		}
