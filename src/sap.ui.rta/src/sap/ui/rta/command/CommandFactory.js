@@ -380,6 +380,10 @@ sap.ui.define([
 			clazz: "sap/ui/rta/command/AppDescriptorCommand",
 			noSelector: true
 		},
+		annotation: {
+			clazz: "sap/ui/rta/command/Annotation",
+			noSelector: true
+		},
 		addIFrame: {
 			clazz: "sap/ui/rta/command/AddIFrame",
 			configure: configureAddIFrame
