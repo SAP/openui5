@@ -92,6 +92,37 @@ sap.ui.define([
 					});
 				}
 				return Promise.resolve(aLinks);
+			},
+			getPrimaryIntent(sSemanticObject) {
+				let oLink = null;
+				const aSemanticObjectLinks = mSetting[sSemanticObject]?.links;
+				if (aSemanticObjectLinks === undefined) {
+					return Promise.resolve(oLink);
+				}
+
+				let aLinks = aSemanticObjectLinks.filter((oSemanticObjectLink) => {
+					return oSemanticObjectLink.tags?.includes("primaryAction");
+				});
+
+				if (aLinks.length === 0) {
+					aLinks = aSemanticObjectLinks.filter((oSemanticObjectLink) => {
+						return oSemanticObjectLink.action === "displayFactSheet";
+					});
+				}
+
+				if (aLinks.length === 0) {
+					return Promise.resolve(oLink);
+				}
+
+				[oLink] = aLinks.sort((oLink, oOtherLink) => {
+					if (oLink.intent === oOtherLink.intent) {
+						return 0;
+					}
+
+					return oLink.intent < oOtherLink.intent ? -1 : 1;
+				});
+
+				return Promise.resolve(oLink);
 			}
 		};
 	}
