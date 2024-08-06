@@ -50,7 +50,7 @@ sap.ui.define([
 	DependencyHandler,
 	Switcher,
 	VariantManagementState,
-	ApplyFlexObjectState,
+	FlexObjectState,
 	ManifestUtils,
 	VariantUtil,
 	ContextBasedAdaptationsAPI,
@@ -296,7 +296,7 @@ sap.ui.define([
 			}
 			return aCurrentControls;
 		}, []);
-		return aSelectors.length ? ApplyFlexObjectState.waitForFlexObjectsToBeApplied(aSelectors) : Promise.resolve();
+		return aSelectors.length ? FlexObjectState.waitForFlexObjectsToBeApplied(aSelectors) : Promise.resolve();
 	}
 
 	/**
@@ -346,7 +346,7 @@ sap.ui.define([
 			// Initialize data
 			this.updateData();
 
-			const oLiveDependencyMap = ApplyFlexObjectState.getLiveDependencyMap(this.sFlexReference);
+			const oLiveDependencyMap = FlexObjectState.getLiveDependencyMap(this.sFlexReference);
 			VariantManagementState.getInitialUIChanges(
 				{reference: this.sFlexReference},
 				this.oAppComponent.getId(),
@@ -787,7 +787,8 @@ sap.ui.define([
 	};
 
 	VariantModel.prototype.removeVariant = function(mPropertyBag) {
-		var aChangesToBeDeleted = this.oChangePersistence.getDirtyChanges().filter(function(oChange) {
+		var aChangesToBeDeleted = FlexObjectState.getDirtyFlexObjects(this.sFlexReference)
+		.filter(function(oChange) {
 			return (oChange.getVariantReference && oChange.getVariantReference() === mPropertyBag.variant.getId()) ||
 				oChange.getId() === mPropertyBag.variant.getId();
 		});
@@ -1499,7 +1500,7 @@ sap.ui.define([
 			return oChange.getId();
 		});
 
-		return this.oChangePersistence.getDirtyChanges().filter(function(oChange) {
+		return FlexObjectState.getDirtyFlexObjects(this.sFlexReference).filter(function(oChange) {
 			return aChangeFileNames.includes(oChange.getId()) && !oChange.getSavedToVariant();
 		});
 	};

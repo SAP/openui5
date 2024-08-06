@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/registry/Settings",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/BindingMode"
 ], function(
+	FlexObjectState,
 	Version,
 	FlexInfoSession,
 	Settings,
@@ -140,14 +142,13 @@ sap.ui.define([
 	// TODO: the handling should move to the FlexState as soon as it is ready
 	function _removeDirtyChanges(mPropertyBag) {
 		const oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference);
-		const aDirtyChanges = oChangePersistence.getDirtyChanges();
+		const aDirtyChanges = FlexObjectState.getDirtyFlexObjects(mPropertyBag.reference);
 		oChangePersistence.deleteChanges(aDirtyChanges, true);
 		return aDirtyChanges.length > 0;
 	}
 
 	function doDirtyChangesExist(sReference) {
-		const oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-		const aDirtyChanges = oChangePersistence.getDirtyChanges();
+		const aDirtyChanges = FlexObjectState.getDirtyFlexObjects(sReference);
 		return aDirtyChanges.length > 0;
 	}
 

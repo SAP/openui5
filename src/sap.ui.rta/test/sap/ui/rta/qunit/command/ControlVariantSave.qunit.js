@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/rta/command/CommandFactory",
@@ -16,6 +17,7 @@ sap.ui.define([
 	// needs to be included so that the ElementOverlay prototype is enhanced
 	"sap/ui/rta/plugin/ControlVariant"
 ], function(
+	FlexObjectState,
 	Layer,
 	FlLayerUtils,
 	CommandFactory,
@@ -115,7 +117,7 @@ sap.ui.define([
 				this.oGetCurrentLayerStub = sinon.stub(FlLayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
 				sinon.stub(VariantManagementState, "getControlChangesForVariant").returns([this.oChange1, this.oChange2]);
 				sinon.stub(this.oModel, "getVariant").returns(this.oVariant);
-				sinon.stub(this.oModel.oChangePersistence, "getDirtyChanges").returns([this.oChange1, this.oChange2]);
+				sinon.stub(FlexObjectState, "getDirtyFlexObjects").returns([this.oChange1, this.oChange2]);
 				PersistenceWriteAPI.add({
 					flexObjects: [this.oVariantInstance, this.oChange1, this.oChange2],
 					selector: this.oMockedAppComponent

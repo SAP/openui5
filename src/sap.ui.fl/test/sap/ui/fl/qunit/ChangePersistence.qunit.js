@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/ChangePersistence",
@@ -32,6 +33,7 @@ sap.ui.define([
 	DependencyHandler,
 	UIChangesState,
 	VariantManagementState,
+	FlexObjectState,
 	FlexState,
 	ManifestUtils,
 	ChangePersistence,
@@ -125,7 +127,11 @@ sap.ui.define([
 				this.oChangePersistence.removeChange(aNewDirtyChanges[0]);
 				this.oChangePersistence.removeChange(aNewDirtyChanges[1]);
 
-				assert.equal(this.oChangePersistence.getDirtyChanges().length, 0, "both dirty changes were removed from the persistence");
+				assert.strictEqual(
+					FlexObjectState.getDirtyFlexObjects(sComponentName).length,
+					0,
+					"then both dirty changes are removed from the state"
+				);
 				assert.equal(oDeleteChangeInMapStub.callCount, 4, "all changes got removed from the map");
 			}.bind(this));
 		});
@@ -234,11 +240,11 @@ sap.ui.define([
 				assert.strictEqual(aChangesToBeRemoved.length, 1, "one change is removed");
 				assert.strictEqual(aChangesToBeRemoved[0], oVendorChange, "the removed change is on the specified layer");
 				assert.strictEqual(
-					this.oChangePersistence.getDirtyChanges().length,
+					FlexObjectState.getDirtyFlexObjects(sComponentName).length,
 					1,
-					"only one change remains in the ChangePersistence"
+					"then only one dirty change remains in the state"
 				);
-			}.bind(this));
+			});
 		});
 
 		QUnit.test("when calling removeDirtyChanges with multiple layers", function(assert) {
@@ -264,11 +270,11 @@ sap.ui.define([
 				assert.ok(aChangesToBeRemoved.includes(oVendorChange), "the VENDOR change is removed");
 				assert.ok(aChangesToBeRemoved.includes(oUserChange), "the USER change is removed");
 				assert.strictEqual(
-					this.oChangePersistence.getDirtyChanges().length,
+					FlexObjectState.getDirtyFlexObjects(sComponentName).length,
 					1,
-					"only one change remains in the ChangePersistence"
+					"then only one dirty change remains in the state"
 				);
-			}.bind(this));
+			});
 		});
 
 		QUnit.test("when calling removeDirtyChanges without any layer specified", function(assert) {
@@ -340,8 +346,16 @@ sap.ui.define([
 			this.oChangePersistence.addChange(oCustomerChange, this._oComponentInstance);
 
 			this.oChangePersistence.removeDirtyChanges(Layer.VENDOR, this._oComponentInstance, this.oControl, sGenerator);
-			assert.equal(this.oChangePersistence.getDirtyChanges().length, 1, "only one change is present");
-			assert.equal(this.oChangePersistence.getDirtyChanges()[0], oCustomerChange, "which is the change with a different Layer");
+			assert.strictEqual(
+				FlexObjectState.getDirtyFlexObjects(sComponentName).length,
+				1,
+				"then only one dirty change remains in the state"
+			);
+			assert.strictEqual(
+				FlexObjectState.getDirtyFlexObjects(sComponentName)[0],
+				oCustomerChange,
+				"which is the change with a different Layer"
+			);
 		});
 
 		QUnit.test("when calling removeDirtyChanges with a generator and a change is in a different layer and localIDs", function(assert) {
@@ -390,8 +404,16 @@ sap.ui.define([
 			this.oChangePersistence.addChange(oVendorChange1, this._oComponentInstance);
 			this.oChangePersistence.addChange(oVendorChange2, this._oComponentInstance);
 			this.oChangePersistence.removeDirtyChanges(Layer.VENDOR, this._oComponentInstance, this.oControlWithComponentId, sGenerator);
-			assert.equal(this.oChangePersistence.getDirtyChanges().length, 1, "only one change is present");
-			assert.equal(this.oChangePersistence.getDirtyChanges()[0], oVendorChange2, "which is the change with a different id (non-local)");
+			assert.strictEqual(
+				FlexObjectState.getDirtyFlexObjects(sComponentName).length,
+				1,
+				"then only one dirty change remains in the state"
+			);
+			assert.strictEqual(
+				FlexObjectState.getDirtyFlexObjects(sComponentName)[0],
+				oVendorChange2,
+				"which is the change with a different id (non-local)"
+			);
 		});
 
 		QUnit.test("when calling removeDirtyChanges with a generator", function(assert) {
@@ -437,8 +459,16 @@ sap.ui.define([
 			this.oChangePersistence.addChange(oVENDORChange1, this._oComponentInstance);
 			this.oChangePersistence.addChange(oVENDORChange2, this._oComponentInstance);
 			this.oChangePersistence.removeDirtyChanges(Layer.VENDOR, this._oComponentInstance, this.oControl, sGenerator);
-			assert.equal(this.oChangePersistence.getDirtyChanges().length, 1, "only one change is present");
-			assert.equal(this.oChangePersistence.getDirtyChanges()[0], oVENDORChange1, "which is the change with a different generator");
+			assert.strictEqual(
+				FlexObjectState.getDirtyFlexObjects(sComponentName).length,
+				1,
+				"then only one dirty change remains in the state"
+			);
+			assert.strictEqual(
+				FlexObjectState.getDirtyFlexObjects(sComponentName)[0],
+				oVENDORChange1,
+				"which is the change with a different generator"
+			);
 		});
 
 		QUnit.test("when calling removeDirtyChanges with a controlId", function(assert) {
@@ -507,9 +537,19 @@ sap.ui.define([
 			this.oChangePersistence.addChange(oVENDORChange3, this._oComponentInstance);
 
 			this.oChangePersistence.removeDirtyChanges(Layer.VENDOR, this.oControl, this.oControl);
-			assert.equal(this.oChangePersistence.getDirtyChanges().length, 2, "only two changes are present");
-			assert.equal(this.oChangePersistence.getDirtyChanges()[0], oVENDORChange2, "which is the second change");
-			assert.equal(this.oChangePersistence.getDirtyChanges()[1], oVENDORChange3, "which is the third change");
+			assert.strictEqual(
+				FlexObjectState.getDirtyFlexObjects(sComponentName).length,
+				2,
+				"then two dirty change remain in the state"
+			);
+			assert.strictEqual(
+				FlexObjectState.getDirtyFlexObjects(sComponentName)[0],
+				oVENDORChange2
+			);
+			assert.strictEqual(
+				FlexObjectState.getDirtyFlexObjects(sComponentName)[1],
+				oVENDORChange3
+			);
 		});
 
 		QUnit.test("when calling resetChanges without generator, aSelectorIds and aChangeTypes (application reset)", function(assert) {
@@ -891,7 +931,7 @@ sap.ui.define([
 				3,
 				"_addRunTimeCreatedChangeToDependencyMap is called three times"
 			);
-			aChanges = this.oChangePersistence.getDirtyChanges();
+			aChanges = FlexObjectState.getDirtyFlexObjects(this._mComponentProperties.name);
 			assert.ok(aChanges);
 			assert.strictEqual(aChanges.length, 3);
 			assert.strictEqual(aChanges[0], newChange1);
@@ -944,7 +984,7 @@ sap.ui.define([
 				3,
 				"_addRunTimeCreatedChangeToDependencyMap is called three times"
 			);
-			var aChanges = this.oChangePersistence.getDirtyChanges();
+			var aChanges = FlexObjectState.getDirtyFlexObjects(this._mComponentProperties.name);
 			assert.ok(aChanges);
 			assert.strictEqual(aChanges.length, 3);
 			assert.strictEqual(aChanges[0], aNewChanges[0]);
@@ -989,7 +1029,7 @@ sap.ui.define([
 
 			assert.ok(fnAddDirtyChangeSpy.calledWith(oChangeContent), "then addDirtyChange called with the change content");
 			assert.ok(fnAddDirtyChangeSpy.callCount, 2, "addDirtyChange was called twice");
-			var aChanges = this.oChangePersistence.getDirtyChanges();
+			var aChanges = FlexObjectState.getDirtyFlexObjects(this._mComponentProperties.name);
 			assert.ok(aChanges);
 			assert.strictEqual(aChanges.length, 1);
 			assert.strictEqual(aChanges[0].getId(), oChangeContent.fileName);
@@ -1150,8 +1190,9 @@ sap.ui.define([
 			this.oCondenserStub = sandbox.stub(Condenser, "condense").callsFake(function(oAppComponent, aChanges) {
 				return Promise.resolve(aChanges);
 			});
+			this.sReference = "sap.ui.fl.qunit.integration.testComponentComplex";
 			this._mComponentProperties = {
-				name: "sap.ui.fl.qunit.integration.testComponentComplex"
+				name: this.sReference
 			};
 			const oComponent = await Component.create({
 				name: "sap/ui/fl/qunit/integration/testComponentComplex",
@@ -1823,11 +1864,19 @@ sap.ui.define([
 
 			this.oChangePersistence.deleteChange(oChange);
 
-			assert.equal(this.oChangePersistence.getDirtyChanges().length, 1, "then one dirty change exists initially");
+			assert.strictEqual(
+				FlexObjectState.getDirtyFlexObjects(this.sReference).length,
+				1,
+				"then one dirty change exists initially"
+			);
 			return this.oChangePersistence.saveDirtyChanges().then(function() {
 				assert.equal(this.oRemoveStub.callCount, 1);
 				assert.equal(this.oWriteStub.callCount, 0);
-				assert.equal(this.oChangePersistence.getDirtyChanges().length, 0, "then no dirty changes exist anymore");
+				assert.strictEqual(
+					FlexObjectState.getDirtyFlexObjects(this.sReference).length,
+					0,
+					"then no dirty changes exist anymore"
+				);
 			}.bind(this));
 		});
 
@@ -1849,16 +1898,27 @@ sap.ui.define([
 			this.oChangePersistence.deleteChange(oChangeNotToBeSaved);
 			this.oChangePersistence.deleteChange(oChangeToBeSaved);
 
-			assert.equal(this.oChangePersistence.getDirtyChanges().length, 2, "then two dirty changes exists initially");
+			assert.strictEqual(
+				FlexObjectState.getDirtyFlexObjects(this.sReference).length,
+				2,
+				"then two dirty changes exist initially"
+			);
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, false, [oChangeToBeSaved], Version.Number.Original)
 			.then(function() {
 				assert.equal(this.oRemoveStub.callCount, 1);
 				assert.equal(this.oRemoveStub.getCall(0).args[0].parentVersion,
 					Version.Number.Original, "the (original) version parameter was passed");
 				assert.equal(this.oWriteStub.callCount, 0);
-				assert.equal(this.oChangePersistence.getDirtyChanges().length, 1, "then one dirty change still exists");
-				assert.deepEqual(this.oChangePersistence.getDirtyChanges()[0],
-					oChangeNotToBeSaved, "the the correct dirty change was not saved");
+				assert.strictEqual(
+					FlexObjectState.getDirtyFlexObjects(this.sReference).length,
+					1,
+					"then one dirty change still exists"
+				);
+				assert.deepEqual(
+					FlexObjectState.getDirtyFlexObjects(this.sReference)[0],
+					oChangeNotToBeSaved,
+					"the the correct dirty change was not saved"
+				);
 			}.bind(this));
 		});
 
@@ -1879,7 +1939,11 @@ sap.ui.define([
 			this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
 			this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
 
-			assert.equal(this.oChangePersistence.getDirtyChanges().length, 2, "then two dirty changes exist initially");
+			assert.strictEqual(
+				FlexObjectState.getDirtyFlexObjects(this.sReference).length,
+				2,
+				"then two dirty changes exist initially"
+			);
 			return this.oChangePersistence.saveDirtyChanges().then(function() {
 				assert.equal(this.oWriteStub.callCount, 1, "the create method of the connector is called once");
 				assert.strictEqual(this.oWriteStub.getCall(0).args[0].flexObjects[0].fileName,
@@ -1907,7 +1971,11 @@ sap.ui.define([
 			var oChangeToBeSaved = this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
 			this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
 
-			assert.equal(this.oChangePersistence.getDirtyChanges().length, 2, "then two dirty changes exist initially");
+			assert.strictEqual(
+				FlexObjectState.getDirtyFlexObjects(this.sReference).length,
+				2,
+				"then two dirty changes exist initially"
+			);
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, false, [oChangeToBeSaved]).then(function() {
 				assert.equal(this.oWriteStub.callCount, 1, "the create method of the connector is called once");
 			}.bind(this));
@@ -2045,8 +2113,11 @@ sap.ui.define([
 			var oChange = this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 			this.oChangePersistence.deleteChange(oChange);
 
-			var aDirtyChanges = this.oChangePersistence.getDirtyChanges();
-			assert.strictEqual(aDirtyChanges.length, 0);
+			assert.strictEqual(
+				FlexObjectState.getDirtyFlexObjects(this.sReference).length,
+				0,
+				"then no dirty changes remain in the state"
+			);
 		});
 
 		QUnit.skip("shall not change the state of a dirty change in case of a connector error", function(assert) {
@@ -2077,7 +2148,7 @@ sap.ui.define([
 			}.bind(this))
 			.then(function(aChanges) {
 				assert.equal(aChanges.length, 1, "Change is not deleted from the cache");
-				var aDirtyChanges = this.oChangePersistence.getDirtyChanges();
+				const aDirtyChanges = FlexObjectState.getDirtyFlexObjects(this.sReference);
 				assert.equal(aDirtyChanges.length, 1, "Change is still a dirty change");
 				assert.equal(this._updateCacheAndDirtyStateSpy.callCount, 0, "no update of cache and dirty state took place");
 			}.bind(this));
@@ -2099,7 +2170,7 @@ sap.ui.define([
 
 			this.oChangePersistence.deleteChange(oChange);
 
-			var aDirtyChanges = this.oChangePersistence.getDirtyChanges();
+			const aDirtyChanges = FlexObjectState.getDirtyFlexObjects(this.sReference);
 			assert.strictEqual(aDirtyChanges.length, 1);
 		});
 
@@ -2221,7 +2292,10 @@ sap.ui.define([
 				return Promise.reject();
 			});
 
-			var aDirtyChanges = [this.oChangePersistence.getDirtyChanges()[0], this.oChangePersistence.getDirtyChanges()[2]];
+			const aDirtyChanges = [
+				FlexObjectState.getDirtyFlexObjects(this.sReference)[0],
+				FlexObjectState.getDirtyFlexObjects(this.sReference)[2]
+			];
 
 			return this.oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges, undefined, Version.Number.Original)
 			.then(function(oResponse) {

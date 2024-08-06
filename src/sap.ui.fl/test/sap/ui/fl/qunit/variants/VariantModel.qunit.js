@@ -2681,7 +2681,7 @@ sap.ui.define([
 					"then the text is resolved"
 				);
 				assert.strictEqual(
-					this.oModel.oChangePersistence.getDirtyChanges().length,
+					FlexObjectState.getDirtyFlexObjects(sReference).length,
 					0,
 					"and no dirty change was added for the title resolution"
 				);
@@ -2799,7 +2799,7 @@ sap.ui.define([
 				sandbox.stub(VariantManagementState, "getCurrentVariantReference").returns("variant1");
 				sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns([]);
 				sandbox.stub(this.oVariantModel.oChangePersistence, "deleteChanges");
-				sandbox.stub(this.oVariantModel.oChangePersistence, "getDirtyChanges");
+				this.oGetDirtyFlexObjectsStub = sandbox.stub(FlexObjectState, "getDirtyFlexObjects");
 				sandbox.stub(Switcher, "switchVariant").resolves();
 				sandbox.stub(Reverter, "revertMultipleChanges").resolves();
 
@@ -2894,7 +2894,7 @@ sap.ui.define([
 				FlexObjectFactory.createFromFileContent({fileName: "dirtyChange2"})
 			];
 			VariantManagementState.getControlChangesForVariant.returns(aMockDirtyChanges);
-			this.oVariantModel.oChangePersistence.getDirtyChanges.returns(aMockDirtyChanges);
+			this.oGetDirtyFlexObjectsStub.returns(aMockDirtyChanges);
 
 			this.oUpdateCurrentVariantStub.callsFake(function() {
 				// Modified flag will immediately be set to false by the VariantManagementState
@@ -2939,7 +2939,7 @@ sap.ui.define([
 				FlexObjectFactory.createFromFileContent({fileName: "dirtyChange2"})
 			];
 			VariantManagementState.getControlChangesForVariant.returns(aMockDirtyChanges);
-			this.oVariantModel.oChangePersistence.getDirtyChanges.returns(aMockDirtyChanges);
+			this.oGetDirtyFlexObjectsStub.returns(aMockDirtyChanges);
 
 			// when new item is selected from the variants list
 			oVMControl.attachEventOnce("select", function() {
@@ -2982,7 +2982,7 @@ sap.ui.define([
 				FlexObjectFactory.createFromFileContent({fileName: "dirtyChange2"})
 			];
 			VariantManagementState.getControlChangesForVariant.returns(aMockDirtyChanges);
-			this.oVariantModel.oChangePersistence.getDirtyChanges.returns(aMockDirtyChanges);
+			this.oGetDirtyFlexObjectsStub.returns(aMockDirtyChanges);
 
 			// when new item is selected from the variants list
 			oVMControl.attachEventOnce("select", function() {

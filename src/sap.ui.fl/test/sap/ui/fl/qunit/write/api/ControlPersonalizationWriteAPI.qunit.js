@@ -21,11 +21,11 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
-	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
@@ -50,11 +50,11 @@ sap.ui.define([
 	VariantModel,
 	ChangesWriteAPI,
 	ControlPersonalizationWriteAPI,
-	ChangePersistence,
 	ChangePersistenceFactory,
 	FlexControllerFactory,
 	Layer,
 	Utils,
+	FlexObjectState,
 	FlexState,
 	nextUIUpdate,
 	sinon
@@ -1043,7 +1043,7 @@ sap.ui.define([
 			this.oControl = new Control(this.oAppComponent.createId(this.sControlId));
 			this.oGetAppComponentStub = sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(FlexState, "isInitialized").returns(true);
-			this.oGetDirtyFOStub = sandbox.stub(ChangePersistence.prototype, "getDirtyChanges");
+			this.oGetDirtyFOStub = sandbox.stub(FlexObjectState, "getDirtyFlexObjects");
 		},
 		afterEach() {
 			sandbox.restore();
