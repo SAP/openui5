@@ -72,56 +72,79 @@ sap.ui.define([
 		threshold: 0
 	});
 
-	QUnit.module("Basic checks", {
+	QUnit.module("Selection API", {
 		beforeEach: async function() {
 			this.oTable = await TableQUnitUtils.createTable(Table, {}, function(oTable) {
 				oTable.getBinding("rows").resume();
 			});
+			this.oSelectionPlugin = this.oTable.getDependents()[0];
+			this.oSelectionChangeHandler = this.spy();
+			this.oSelectionPlugin.attachSelectionChange(this.oSelectionChangeHandler);
+			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-		},
-		triggerRowSelectorClick: function(oTable, iIndex, bShiftKey) {
-			QUnitUtils.triggerEvent("tap", oTable.qunit.getRowHeaderCell(iIndex), {shiftKey: bShiftKey});
 		}
 	});
 
-	QUnit.test("Selection", function(assert) {
-		const oTable = this.oTable;
-		const oODataV4Selection = oTable.getDependents()[0];
+	QUnit.test("#getSelectedContexts", async function(assert) {
+		const aRows = this.oTable.getRows();
 
-		return oTable.qunit.whenRenderingFinished().then(function() {
-			this.triggerRowSelectorClick(oTable, 0, false);
-			assert.strictEqual(oODataV4Selection.isSelected(oTable.getRows()[0]), false, 'Row 1 is not selected (sum row)');
-			this.triggerRowSelectorClick(oTable, 1, false);
-			assert.strictEqual(oODataV4Selection.isSelected(oTable.getRows()[1]), false, 'Row 2 is not selected (group row)');
-			this.triggerRowSelectorClick(oTable, 4, false);
-			assert.strictEqual(oODataV4Selection.isSelected(oTable.getRows()[4]), false, 'Row 5 is not selected (empty row)');
+		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "No contexts selected");
 
-			oTable.getRows()[3].getBindingContext().expand();
-			return oTable.qunit.whenBindingChange();
-		}.bind(this)).then(function() {
-			oTable.setFirstVisibleRow(6);
-			return oTable.qunit.whenBindingChange();
-		}).then(function() {
-			oTable.getRows()[4].getBindingContext().expand();
-			return oTable.qunit.whenBindingChange();
-		}).then(function() {
-			oTable.setFirstVisibleRow(9);
-			return oTable.qunit.whenVSbScrolled();
-		}).then(function() {
-			oTable.getRows()[4].getBindingContext().expand();
-			return oTable.qunit.whenBindingChange();
-		}).then(function() {
-			oTable.setFirstVisibleRow(11);
-			return oTable.qunit.whenVSbScrolled();
-		}).then(function() {
-			this.triggerRowSelectorClick(oTable, 3, false);
-			assert.strictEqual(oODataV4Selection.isSelected(oTable.getRows()[3]), true, 'Row 4 is selected (leaf)');
-			this.triggerRowSelectorClick(oTable, 4, false);
-			assert.strictEqual(oODataV4Selection.isSelected(oTable.getRows()[4]), true, 'Row 5 is selected (leaf)');
-			oODataV4Selection.onHeaderSelectorPress();
-			assert.strictEqual(oODataV4Selection.getSelectedCount(), 0, 'all rows are deselected');
-		}.bind(this));
+		aRows[3].getBindingContext().expand();
+		await this.oTable.qunit.whenNextRenderingFinished();
+		this.oTable.setFirstVisibleRow(6);
+		await this.oTable.qunit.whenBindingChange();
+		await this.oTable.qunit.whenRenderingFinished();
+		aRows[4].getBindingContext().expand();
+		await this.oTable.qunit.whenNextRenderingFinished();
+		this.oTable.setFirstVisibleRow(9);
+		await this.oTable.qunit.whenRenderingFinished();
+		aRows[4].getBindingContext().expand();
+		await this.oTable.qunit.whenNextRenderingFinished();
+		this.oTable.setFirstVisibleRow(11);
+		await this.oTable.qunit.whenRenderingFinished();
+
+		aRows[0].getBindingContext().setSelected(true); // Group header row
+		aRows[4].getBindingContext().setSelected(true); // Sum row
+		aRows[2].getBindingContext().setSelected(true); // Leaf row
+		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 1, "Only contexts of leaf rows are returned");
+	});
+
+	QUnit.test("#setSelected", async function(assert) {
+		const aRows = this.oTable.getRows();
+
+		this.oSelectionPlugin.setSelected(aRows[0]);
+		this.oSelectionPlugin.setSelected(aRows[1]);
+		this.oSelectionPlugin.setSelected(aRows[4]);
+		await TableQUnitUtils.wait(10);
+		assert.equal(this.oSelectionChangeHandler.callCount, 0, "selectionChange event");
+		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[0]), false, "Row 1 is not selected (sum row)");
+		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[1]), false, "Row 2 is not selected (group header row)");
+		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[4]), false, "Row 5 is not selected (empty row)");
+		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Selected contexts");
+
+		aRows[3].getBindingContext().expand();
+		await this.oTable.qunit.whenNextRenderingFinished();
+		this.oTable.setFirstVisibleRow(6);
+		await this.oTable.qunit.whenBindingChange();
+		await this.oTable.qunit.whenRenderingFinished();
+		aRows[4].getBindingContext().expand();
+		await this.oTable.qunit.whenNextRenderingFinished();
+		this.oTable.setFirstVisibleRow(9);
+		await this.oTable.qunit.whenRenderingFinished();
+		aRows[4].getBindingContext().expand();
+		await this.oTable.qunit.whenNextRenderingFinished();
+		this.oTable.setFirstVisibleRow(11);
+		await this.oTable.qunit.whenRenderingFinished();
+
+		this.oSelectionPlugin.setSelected(aRows[3], true);
+		this.oSelectionPlugin.setSelected(aRows[4], true);
+		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
+		assert.equal(this.oSelectionChangeHandler.callCount, 1, "selectionChange event");
+		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[3]), true, "Row 4 is selected (leaf)");
+		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[4]), true, "Row 5 is selected (leaf)");
+		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 2, "Selected contexts");
 	});
 });
