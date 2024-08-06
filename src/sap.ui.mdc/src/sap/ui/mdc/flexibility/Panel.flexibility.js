@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.flexibility.Panel
 	 */
 	return {
-		createChanges: function(oPanel, aDeltaMItems) {
+		createChanges: function (oPanel, aDeltaMItems) {
 			// Create a 'create' change only for items which does not exist
 			const aNotExistingItems = aDeltaMItems.filter((oDeltaMItem) => {
 				return !Element.getElementById(oDeltaMItem.id);
@@ -74,7 +74,7 @@ sap.ui.define([
 						const aMetadataItems = MetadataHelper.retrieveAllMetadata(oPanel);
 						let iItemsIndex;
 
-						const fnIndexOfItemId = function(sId, aItems) {
+						const fnIndexOfItemId = function (sId, aItems) {
 							let iFoundIndex = -1;
 							aItems.some((oItem, iIndex) => {
 								if (oItem.getId() === sId) {
@@ -111,6 +111,7 @@ sap.ui.define([
 									text: oMetadataOfNewItem.text,
 									description: oMetadataOfNewItem.description,
 									href: oMetadataOfNewItem.href,
+									internalHref: oMetadataOfNewItem.internalHref,
 									target: oMetadataOfNewItem.target,
 									icon: oMetadataOfNewItem.icon,
 									visible: false
