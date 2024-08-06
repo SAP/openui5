@@ -479,8 +479,6 @@ sap.ui.define([
 		const sFlexReference = mProperties.reference;
 
 		const oOldInitPromise = _mInitPromises[sFlexReference];
-		// TODO-350
-		// TODO: Switch to native promises once lazyLoadModules is removed, todos#2
 		const oNewInitPromise = new Deferred();
 		_mInitPromises[sFlexReference] = oNewInitPromise;
 

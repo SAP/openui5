@@ -581,6 +581,48 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when initialize is called multiple times with the same reference without waiting", async function(assert) {
+			assert.expect(3);
+			this.oLoadFlexDataStub.callsFake((mProperties) => {
+				// Simulate the following scenario:
+				// First initialization takes some time and second and third are called before the first one is finished
+				// The second one takes longer than then third one
+				// Expectation is that the initializations still finish in order
+				const oPromise = (mProperties.expectedOrder === 3)
+					? Promise.resolve()
+					: new Promise((resolve) => {
+						setTimeout(() => {
+							resolve();
+						}, 0);
+					});
+				return oPromise.then(() => {
+					assert.strictEqual(
+						this.oLoadFlexDataStub.callCount,
+						mProperties.expectedOrder,
+						"then the initializations are executed in order and wait for each other"
+					);
+					return mEmptyResponse;
+				});
+			});
+			FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId,
+				expectedOrder: 1
+			});
+			FlexState.initialize({
+				reference: sReference,
+				reInitialize: true,
+				componentId: sComponentId,
+				expectedOrder: 2
+			});
+			await FlexState.initialize({
+				reference: sReference,
+				reInitialize: true,
+				componentId: sComponentId,
+				expectedOrder: 3
+			});
+		});
+
 		QUnit.test("when getAppDescriptorChanges / getVariantsState is called without initialization", function(assert) {
 			return FlexState.initialize({
 				reference: "sap.ui.fl.other.reference",
