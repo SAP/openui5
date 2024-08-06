@@ -1221,6 +1221,41 @@ sap.ui.define([
 		checkFocus(getColumnHeader(0), assert);
 	});
 
+	QUnit.test("No columns", async function(assert) {
+		let oElem;
+
+		oTable.removeAllColumns();
+		await nextUIUpdate();
+
+		oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus1");
+		simulateTabEvent(oElem);
+		oElem = checkFocus(oTable.getDomRef("selall"), assert);
+		simulateTabEvent(oElem);
+		oElem = checkFocus(oTable.getDomRef("noDataCnt"), assert);
+		simulateTabEvent(oElem);
+		oElem = checkFocus(document.getElementById("Focus2"), assert);
+
+		simulateTabEvent(oElem, true);
+		oElem = checkFocus(oTable.getDomRef("noDataCnt"), assert);
+		simulateTabEvent(oElem, true);
+		oElem = checkFocus(oTable.getDomRef("selall"), assert);
+		simulateTabEvent(oElem, true);
+		oElem = checkFocus(document.getElementById("Focus1"), assert);
+
+		oTable.setSelectionMode(library.SelectionMode.None);
+		await nextUIUpdate();
+
+		simulateTabEvent(oElem);
+		oElem = checkFocus(oTable.getDomRef("noDataCnt"), assert);
+		simulateTabEvent(oElem);
+		oElem = checkFocus(document.getElementById("Focus2"), assert);
+
+		simulateTabEvent(oElem, true);
+		oElem = checkFocus(oTable.getDomRef("noDataCnt"), assert);
+		simulateTabEvent(oElem, true);
+		checkFocus(document.getElementById("Focus1"), assert);
+	});
+
 	QUnit.test("CreationRow when hideEmptyRows is set to true", async function(assert) {
 		let oElem;
 		const oCreationRow = new CreationRow();
