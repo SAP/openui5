@@ -612,25 +612,25 @@ sap.ui.define([
 		var iColumns = 1;
 
 		if (iWidth <= this._iBreakPointTablet) {
-			$DomRef.toggleClass("sapUiFormCLMedia-Std-Phone", true);
-			$DomRef.toggleClass("sapUiFormCLMedia-Std-Desktop", false).toggleClass("sapUiFormCLMedia-Std-Tablet", false).toggleClass("sapUiFormCLMedia-Std-LargeDesktop", false);
+			this.toggleStyleClass("sapUiFormCLMedia-Std-Phone", true);
+			this.toggleStyleClass("sapUiFormCLMedia-Std-Desktop", false).toggleStyleClass("sapUiFormCLMedia-Std-Tablet", false).toggleStyleClass("sapUiFormCLMedia-Std-LargeDesktop", false);
 		} else if ((iWidth > this._iBreakPointTablet) && (iWidth <= this._iBreakPointDesktop)) {
-			$DomRef.toggleClass("sapUiFormCLMedia-Std-Tablet", true);
-			$DomRef.toggleClass("sapUiFormCLMedia-Std-Desktop", false).toggleClass("sapUiFormCLMedia-Std-Phone", false).toggleClass("sapUiFormCLMedia-Std-LargeDesktop", false);
+			this.toggleStyleClass("sapUiFormCLMedia-Std-Tablet", true);
+			this.toggleStyleClass("sapUiFormCLMedia-Std-Desktop", false).toggleStyleClass("sapUiFormCLMedia-Std-Phone", false).toggleStyleClass("sapUiFormCLMedia-Std-LargeDesktop", false);
 			iColumns = this.getColumnsM();
 		} else if ((iWidth > this._iBreakPointDesktop) && (iWidth <= this._iBreakPointLargeDesktop)) {
-			$DomRef.toggleClass("sapUiFormCLMedia-Std-Desktop", true);
-			$DomRef.toggleClass("sapUiFormCLMedia-Std-Phone", false).toggleClass("sapUiFormCLMedia-Std-Tablet", false).toggleClass("sapUiFormCLMedia-Std-LargeDesktop", false);
+			this.toggleStyleClass("sapUiFormCLMedia-Std-Desktop", true);
+			this.toggleStyleClass("sapUiFormCLMedia-Std-Phone", false).toggleStyleClass("sapUiFormCLMedia-Std-Tablet", false).toggleStyleClass("sapUiFormCLMedia-Std-LargeDesktop", false);
 			iColumns = this.getColumnsL();
 		} else {
-			$DomRef.toggleClass("sapUiFormCLMedia-Std-LargeDesktop", true);
-			$DomRef.toggleClass("sapUiFormCLMedia-Std-Desktop", false).toggleClass("sapUiFormCLMedia-Std-Phone", false).toggleClass("sapUiFormCLMedia-Std-Tablet", false);
+			this.toggleStyleClass("sapUiFormCLMedia-Std-LargeDesktop", true);
+			this.toggleStyleClass("sapUiFormCLMedia-Std-Desktop", false).toggleStyleClass("sapUiFormCLMedia-Std-Phone", false).toggleStyleClass("sapUiFormCLMedia-Std-Tablet", false);
 			iColumns = this.getColumnsXL();
 		}
 
 		var bWideColumns = this.getLabelCellsLarge() < 12 && iWidth / iColumns > this._iBreakPointTablet;
-		$DomRef.toggleClass("sapUiFormCLWideColumns", bWideColumns);
-		$DomRef.toggleClass("sapUiFormCLSmallColumns", !bWideColumns);
+		this.toggleStyleClass("sapUiFormCLWideColumns", bWideColumns);
+		this.toggleStyleClass("sapUiFormCLSmallColumns", !bWideColumns);
 	}
 
 	ColumnLayout.prototype.getLayoutDataForDelimiter = function() {
