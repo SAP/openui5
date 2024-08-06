@@ -121,7 +121,7 @@ sap.ui.define([
 		const aItems = oActionsStrip._getToolbar().getContent();
 
 		// Assert
-		assert.ok(aItems[1].isA("sap.ui.integration.controls.LinkWithIcon"), "If type is Link we create sap.ui.integration.controls.LinkWithIcon");
+		assert.ok(aItems[1].isA("sap.m.Link"), "If type is Link we create sap.m.Link");
 		assert.strictEqual(aItems[2].getIcon(), "sap-icon://email", "Link with icon works correctly");
 
 		// Clean up
