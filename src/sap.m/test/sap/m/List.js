@@ -2038,11 +2038,10 @@ sap.ui.define([
 	function showPopup(message) {
 		if (!message) {message = "List item was tapped!";}
 
-		var oMessageContent = new HTML({content:"<p>" + message + "<p>"});
+		var oMessageContent = new HTML({content:"<p>" + message + "</p>"});
 
 		var oMessageDialog1 = new Dialog({
 			title: "Important Message",
-			ariaDescribedBy: oMessageContent,
 			content: [
 				oMessageContent
 			],
