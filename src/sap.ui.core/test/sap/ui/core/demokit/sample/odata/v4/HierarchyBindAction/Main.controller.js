@@ -40,6 +40,10 @@ sap.ui.define([
 			oView.setBindingContext(oRowsBinding.getHeaderContext(), "header");
 		},
 
+		onCollapseAll : function (oEvent) {
+			oEvent.getSource().getBindingContext().collapse(true);
+		},
+
 		onCreate : function (oEvent, bFilteredOut) {
 			this.create(oEvent.getSource().getBindingContext(), bFilteredOut);
 		},

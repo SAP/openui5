@@ -2769,17 +2769,20 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("expand: at end", function (assert) {
-		var oAggregation = { // filled before by buildApply
-				aggregate : {},
-				group : {},
-				groupLevels : ["group"]
-			},
+[false, true].forEach(function (bRecursiveHierarchy) {
+	QUnit.test("expand: at end, hierarchy=" + bRecursiveHierarchy, function (assert) {
+		var oAggregation = bRecursiveHierarchy
+				? {expandTo : 5, hierarchyQualifier : "X"}
+				: { // filled before by buildApply
+					aggregate : {},
+					group : {},
+					groupLevels : ["group"]
+				},
 			oAggregationHelperMock = this.mock(_AggregationHelper),
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation),
 			aElements = [{}, {}, {
 				"@$ui5.node.isExpanded" : false,
-				"@$ui5.node.level" : 0
+				"@$ui5.node.level" : 5
 			}],
 			oExpanded = {"@$ui5.node.isExpanded" : true},
 			oExpandResult = {
@@ -2828,9 +2831,9 @@ sap.ui.define([
 				sinon.match.same(oGroupLevelCache), 0)
 			.callsFake(addElements); // so that oCache.aElements is actually filled
 		oAggregationHelperMock.expects("createPlaceholder")
-			.withExactArgs(1, 5, sinon.match.same(oGroupLevelCache)).returns("~placeholder~1");
+			.withExactArgs(6, 5, sinon.match.same(oGroupLevelCache)).returns("~placeholder~1");
 		oAggregationHelperMock.expects("createPlaceholder")
-			.withExactArgs(1, 6, sinon.match.same(oGroupLevelCache)).returns("~placeholder~2");
+			.withExactArgs(6, 6, sinon.match.same(oGroupLevelCache)).returns("~placeholder~2");
 
 		// code under test
 		oPromise = oCache.expand(
@@ -2863,6 +2866,7 @@ sap.ui.define([
 
 		return oPromise;
 	});
+});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bStale) {
@@ -3072,7 +3076,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [2, 42].forEach(function (iLevels) {
-	QUnit.test("expand: refresh needed", function (assert) {
+	QUnit.test("expand: refresh needed, iLevels=" + iLevels, function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, {
 			hierarchyQualifier : "X"
 		});
@@ -3096,6 +3100,32 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("expand: refresh needed, oFirstLevel without aSpliced", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, {
+			expandTo : 5,
+			hierarchyQualifier : "X"
+		});
+		const oGroupNode = {"@$ui5.node.level" : 4};
+
+		// Note: no cache in private annotation "parent"
+		this.mock(oCache).expects("getValue").withExactArgs("~path~").returns(oGroupNode);
+		this.mock(_Helper).expects("updateAll")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
+				sinon.match.same(oGroupNode), {"@$ui5.node.isExpanded" : true});
+		this.mock(oCache.oTreeState).expects("expand")
+			.withExactArgs(sinon.match.same(oGroupNode), 1);
+		this.mock(_Helper).expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oGroupNode), "spliced").returns(undefined);
+		this.mock(oCache).expects("createGroupLevelCache").never();
+
+		assert.strictEqual(
+			// code under test
+			oCache.expand("~oGroupLock~", "~path~", 1, "~fnDataRequested~").getResult(),
+			-1
+		);
+	});
 
 	//*********************************************************************************************
 [1E16, Number.MAX_SAFE_INTEGER].forEach(function (iLevels) {
@@ -3318,7 +3348,8 @@ sap.ui.define([
 			}, {
 				"@$ui5._" : {predicate : "('2')", transientPredicate : "($uid=1-23)"}
 			}, {
-				"@$ui5._" : {predicate : "('3')"}
+				"@$ui5._" : {predicate : "('3')"},
+				"@$ui5.node.isExpanded" : true // must not lead into the recursion
 			}, {
 				// element kept in $byPredicate if recursive hierarchy & selection state differs
 				"@$ui5._" : {predicate : "('4')", transientPredicate : "($uid=1-234)"}
@@ -3368,7 +3399,7 @@ sap.ui.define([
 				sinon.match.same(aElements[1]), sinon.match.same(oCollapsed))
 			.callThrough();
 		this.mock(oCache.oTreeState).expects("collapse")
-			.withExactArgs(sinon.match.same(aElements[1]));
+			.withExactArgs(sinon.match.same(aElements[1]), undefined);
 		oCacheMock.expects("countDescendants")
 			.withExactArgs(sinon.match.same(aElements[1]), 1).returns(bUntilEnd ? 4 : 3);
 
@@ -3412,6 +3443,113 @@ sap.ui.define([
 			});
 		assert.strictEqual(aElements[1]["@$ui5._"].spliced.$level, "~level~");
 		assert.strictEqual(aElements[1]["@$ui5._"].spliced.$rank, "~rank~");
+	});
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bUnifiedCache) {
+	[1, 2].forEach(function (iExpandTo) {
+		const sTitle = "collapse all, bUnifiedCache=" + bUnifiedCache + ", expandTo=" + iExpandTo;
+
+	QUnit.test(sTitle, function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {},
+			{expandTo : iExpandTo, hierarchyQualifier : "X"});
+		const aElements = [{
+			"@$ui5._" : {predicate : "('0')"}
+		}, {
+			"@$ui5._" : {
+				predicate : "('1')",
+				rank : "~rank~"
+			},
+			"@$ui5.node.level" : "1"
+		}, {
+			"@$ui5._" : {predicate : "('2')", transientPredicate : "($uid=1-23)"}
+		}, {
+			"@$ui5._" : {predicate : "('3')", transientPredicate : "($uid=1-24)"}
+		}, {
+			"@$ui5._" : {predicate : "('4')"},
+			"@$ui5.node.isExpanded" : true
+		}, {
+			"@$ui5._" : {predicate : "('4.1')"}
+		}, {
+			"@$ui5._" : {predicate : "('4.2')"}
+		}, {
+			"@$ui5._" : {predicate : "('99')"}
+		}];
+		const aExpectedElements = [{
+			"@$ui5._" : {predicate : "('0')"}
+		}, {
+			"@$ui5._" : {
+				predicate : "('1')",
+				spliced : aElements.slice(2, 5),
+				rank : "~rank~"
+			},
+			"@$ui5.node.level" : "1"
+		}, {
+			"@$ui5._" : {predicate : "('99')"}
+		}];
+
+		if (bUnifiedCache || iExpandTo === 2) {
+			delete aExpectedElements[1]["@$ui5._"].spliced;
+		}
+
+		oCache.bUnifiedCache = bUnifiedCache;
+		oCache.aElements = aElements.slice(); // simulate a read
+		oCache.aElements.$count = aElements.length;
+		oCache.aElements.$byPredicate = {
+			"('0')" : aElements[0],
+			"('1')" : aElements[1],
+			"('2')" : aElements[2],
+			"($uid=1-23)" : aElements[2],
+			"('3')" : aElements[3],
+			"($uid=1-24)" : aElements[3],
+			"('4')" : aElements[4],
+			// "('4.1')" : aElements[5], // would be deleted by the recursion
+			// "('4.2')" : aElements[6], // would be deleted by the recursion
+			"('99')" : aElements[7]
+		};
+		const oCacheMock = this.mock(oCache);
+		oCacheMock.expects("collapse").withExactArgs("~path~", true)
+			.callThrough(); // initial call
+		oCacheMock.expects("getValue").withExactArgs("~path~").returns(aElements[1]);
+		this.mock(_AggregationHelper).expects("getCollapsedObject")
+			.withExactArgs(sinon.match.same(aElements[1])).returns("~collapsedObject~");
+		this.mock(_Helper).expects("updateAll")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
+				sinon.match.same(aElements[1]), "~collapsedObject~");
+		this.mock(oCache.oTreeState).expects("collapse")
+			.withExactArgs(sinon.match.same(aElements[1]), true);
+		oCacheMock.expects("countDescendants")
+			.withExactArgs(sinon.match.same(aElements[1]), 1).returns(5);
+		oCacheMock.expects("isSelectionDifferent")
+			.withExactArgs(sinon.match.same(aElements[2])).returns(false);
+		oCacheMock.expects("isSelectionDifferent")
+			.withExactArgs(sinon.match.same(aElements[3])).returns(true);
+		oCacheMock.expects("collapse").withExactArgs("('4')", 1)
+			.callsFake(function () {
+				oCache.aElements.splice(5, 2);
+				oCache.aElements.$count -= 2;
+
+				return 2;
+			});
+		oCacheMock.expects("isSelectionDifferent")
+			.withExactArgs(sinon.match.same(aElements[4])).returns(false);
+
+		assert.strictEqual(
+			// code under test
+			oCache.collapse("~path~", true),
+			5);
+
+		assert.deepEqual(oCache.aElements, aExpectedElements);
+		assert.strictEqual(oCache.aElements.$count, aExpectedElements.length);
+		assert.deepEqual(oCache.aElements.$byPredicate, {
+			"('0')" : aExpectedElements[0],
+			"('1')" : aExpectedElements[1],
+			"('3')" : aElements[3], // because its selection is different
+			"($uid=1-24)" : aElements[3],
+			"('99')" : aElements[7]
+		});
 	});
 	});
 });

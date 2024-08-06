@@ -746,13 +746,13 @@ sap.ui.define([
 				}
 				const iExpandLevels = oExpandLevels.get(oNode.MANAGER_ID);
 				if (iExpandLevels > 0) {
-					if (iExpandLevels > 1) {
+					if (!oExpandLevels.has(oNode.ID)) {
 						oExpandLevels.set(oNode.ID, iExpandLevels - 1);
 					}
 
 					return true; // node is part of hierarchy if parent is expanded
 				}
-				return oNode.DistanceFromRoot <= iMaxDistanceFromRoot;
+				return oNode.DistanceFromRoot <= iMaxDistanceFromRoot && !(iExpandLevels === 0);
 			})
 			.map((oNode) => {
 				oNode = {...oNode, DescendantCount : limitedDescendantCount(oNode)};
