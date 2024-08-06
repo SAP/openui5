@@ -71,7 +71,7 @@ sap.ui.define([
 	opaTest("Test 'iPressLinkOnPopover'", function(Given, When, Then) {
 		When.onTheMDCLink.iPressLinkOnPopover(oLinkIdentifier, "TextLinkItem01");
 
-		Then.onAppUnderTestPageObject.theApplicationURLContains("#link01");
+		Then.onAppUnderTestPageObject.theApplicationURLContains("#internalLink01");
 
 		When.onTheMDCLink.iCloseThePopover();
 		Then.onAppUnderTestPageObject.iShouldNotSeeAnOpenPopover(oLinkIdentifier);
