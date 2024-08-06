@@ -42960,11 +42960,11 @@ sap.ui.define([
 </t:Table>`;
 
 		// 0 Alpha
-		//  1 Beta
-		//    1.2 Gamma
-		//  2 Delta
-		//    2.1 Epsilon
-		//      2.1.1 Zeta
+		//   1 Beta
+		//     1.2 Gamma
+		//   2 Delta
+		//     2.1 Epsilon
+		//       2.1.1 Zeta
 
 		this.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=5", {
 				"@odata.count" : "3",
@@ -43152,7 +43152,6 @@ sap.ui.define([
 			[false, 3, "2.1", "Epsilon**"]
 		]);
 
-		// code under test
 		oBeta.collapse();
 
 		// table update takes a moment
@@ -43218,6 +43217,305 @@ sap.ui.define([
 			[false, 2, "1", "Beta***"],
 			[true, 2, "2", "Delta***"],
 			[false, 3, "2.1", "Epsilon***"]
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 2. Expand Beta.
+	// Collapse Beta. Expand Beta completely and see that all nodes under Beta are expanded.
+	// Collapse Delta, Gamma, and Beta. Expand Beta again completely and see that all nodes under
+	// Beta are expanded.
+	// JIRA: CPOUI5ODATAV4-2667
+	QUnit.test("Recursive Hierarchy: expand all below a node", async function (assert) {
+		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+				+ ",NodeProperty='ID',Levels=2";
+		const sSelect = ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name";
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				expandTo : 2,
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="6">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 0 Alpha
+		//   1 Beta
+		//     1.1 Gamma
+		//       1.1.1 Delta
+		//         1.1.1.1 Epsilon
+		//   2 Zeta
+
+		this.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=6", {
+				"@odata.count" : "3",
+				value : [{
+					DescendantCount : "2",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "0",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "collapsed",
+					ID : "1",
+					Name : "Beta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Zeta"
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oBeta = oTable.getRows()[1].getBindingContext();
+
+		this.expectRequest("EMPLOYEES?$apply=descendants("
+				+ "$root/EMPLOYEES,OrgChart,ID,filter(ID eq '1'),1)&$select=DrillState,ID,Name"
+				+ "&$count=true&$skip=0&$top=6", {
+				"@odata.count" : "1",
+				value : [{
+					DrillState : "collapsed",
+					ID : "1.1",
+					Name : "Gamma"
+				}]
+			});
+
+		oBeta.expand();
+		oBeta.collapse();
+
+		this.expectRequest(sUrl + ",ExpandLevels=" + JSON.stringify([{NodeID : "1", Levels : null}])
+				+ sSelect + "&$count=true&$skip=0&$top=6", {
+				"@odata.count" : "6",
+				value : [{
+					DescendantCount : "5",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "0",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "3",
+					DistanceFromRoot : "1",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Beta"
+				}, {
+					DescendantCount : "2",
+					DistanceFromRoot : "2",
+					DrillState : "expanded",
+					ID : "1.1",
+					Name : "Gamma"
+				}, {
+					DescendantCount : "1",
+					DistanceFromRoot : "3",
+					DrillState : "expanded",
+					ID : "1.1.1",
+					Name : "Delta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "4",
+					DrillState : "leaf",
+					ID : "1.1.1.1",
+					Name : "Epsilon"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Zeta"
+				}]
+			});
+
+		// code under test
+		oBeta.expand(Number.MAX_SAFE_INTEGER);
+
+		await this.waitForChanges(assert, "expand all below Beta");
+
+		checkTable("after expand all below Beta", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('1.1.1')",
+			"/EMPLOYEES('1.1.1.1')",
+			"/EMPLOYEES('2')"
+		], [
+			[true, 1, "0", "Alpha"],
+			[true, 2, "1", "Beta"],
+			[true, 3, "1.1", "Gamma"],
+			[true, 4, "1.1.1", "Delta"],
+			[undefined, 5, "1.1.1.1", "Epsilon"],
+			[undefined, 2, "2", "Zeta"]
+		]);
+		const [,, oGamma, oDelta] = oTable.getBinding("rows").getCurrentContexts();
+
+		oDelta.collapse();
+		oGamma.collapse();
+		oBeta.collapse();
+
+		this.expectRequest(sUrl + ",ExpandLevels=" + JSON.stringify([{NodeID : "1", Levels : null}])
+				+ sSelect + "&$count=true&$skip=0&$top=6", {
+				"@odata.count" : "6",
+				value : [{
+					DescendantCount : "5",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "0",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "3",
+					DistanceFromRoot : "1",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Beta"
+				}, {
+					DescendantCount : "2",
+					DistanceFromRoot : "2",
+					DrillState : "expanded",
+					ID : "1.1",
+					Name : "Gamma"
+				}, {
+					DescendantCount : "1",
+					DistanceFromRoot : "3",
+					DrillState : "expanded",
+					ID : "1.1.1",
+					Name : "Delta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "4",
+					DrillState : "leaf",
+					ID : "1.1.1.1",
+					Name : "Epsilon"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Zeta"
+				}]
+			});
+
+		// code under test
+		oBeta.expand(Number.MAX_SAFE_INTEGER);
+
+		await this.waitForChanges(assert, "expand all below Beta again");
+
+		checkTable("after expand all below Beta again", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('1.1.1')",
+			"/EMPLOYEES('1.1.1.1')",
+			"/EMPLOYEES('2')"
+		], [
+			[true, 1, "0", "Alpha"],
+			[true, 2, "1", "Beta"],
+			[true, 3, "1.1", "Gamma"],
+			[true, 4, "1.1.1", "Delta"],
+			[undefined, 5, "1.1.1.1", "Epsilon"],
+			[undefined, 2, "2", "Zeta"]
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 2.
+	// Collapse Alpha. Expand Alpha completely and see that all nodes under Alpha are expanded.
+	// JIRA: CPOUI5ODATAV4-2667
+	QUnit.test("Recursive Hierarchy: expand all within expandTo", async function (assert) {
+		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+				+ ",NodeProperty='ID',Levels=2";
+		const sSelect = ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name";
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				expandTo : 2,
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="3">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 0 Alpha
+		//   1 Beta
+		//     1.1 Gamma
+
+		this.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "2",
+				value : [{
+					DescendantCount : "1",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "0",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "collapsed",
+					ID : "1",
+					Name : "Beta"
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oAlpha = oTable.getRows()[0].getBindingContext();
+
+		oAlpha.collapse();
+
+		this.expectRequest(sUrl + ",ExpandLevels=" + JSON.stringify([{NodeID : "0", Levels : null}])
+				 + sSelect + "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "3",
+				value : [{
+					DescendantCount : "2",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "0",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "1",
+					DistanceFromRoot : "1",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Beta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "2",
+					DrillState : "leaf",
+					ID : "1.1",
+					Name : "Gamma"
+				}]
+			});
+
+		// code under test
+		oAlpha.expand(Number.MAX_SAFE_INTEGER);
+
+		await this.waitForChanges(assert, "expand all below Alpha");
+
+		checkTable("after expand all below Alpha", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')"
+		], [
+			[true, 1, "0", "Alpha"],
+			[true, 2, "1", "Beta"],
+			[undefined, 3, "1.1", "Gamma"]
 		]);
 	});
 

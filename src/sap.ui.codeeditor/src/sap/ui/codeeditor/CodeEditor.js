@@ -141,7 +141,9 @@ sap.ui.define([
 				 */
 				colorTheme: { type: "string", group: "Behavior", defaultValue: "default" },
 				/**
-				 * Sets whether to show syntax hints in the editor. This flag is only available if line numbers are shown.
+				 * Sets whether to show syntax hints in the editor. Those hints are visualized as value state icons in the line numbers area.
+				 * The hint text is shown in tooltip of those icons.
+				 * <b>Note:</b> This flag is only available if line numbers are shown.
 				 */
 				syntaxHints: { type: "boolean", group: "Behavior", defaultValue: true }
 			},

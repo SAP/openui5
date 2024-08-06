@@ -86,6 +86,20 @@ sap.ui.define([
 		}
 
 		/**
+		 * Deletes the expand levels for the given node and all its descendants.
+		 *
+		 * @param {object} oNode - The node
+		 *
+		 * @private
+		 */
+		deleteExpandLevels(oNode) {
+			delete this.mPredicate2ExpandLevels[_Helper.getPrivateAnnotation(oNode, "predicate")];
+			_Helper.getPrivateAnnotation(oNode, "spliced", []).forEach((oChild) => {
+				this.deleteExpandLevels(oChild);
+			});
+		}
+
+		/**
 		 * Deletes a node and all its descendants from the out-of-place list (making them in-place).
 		 *
 		 * @param {string} sPredicate - The node's key predicate
@@ -130,6 +144,10 @@ sap.ui.define([
 				return;
 			}
 
+			if (iLevels >= Number.MAX_SAFE_INTEGER) {
+				iLevels = null;
+				this.deleteExpandLevels(oNode);
+			}
 			const sPredicate = _Helper.getPrivateAnnotation(oNode, "predicate");
 			const oExpandLevel = this.mPredicate2ExpandLevels[sPredicate];
 			if (oExpandLevel && !oExpandLevel.Levels) {
@@ -137,9 +155,6 @@ sap.ui.define([
 			} else {
 				// must have NodeId as the node may be missing when calling #getExpandLevels
 				const sNodeId = _Helper.drillDown(oNode, this.sNodeProperty);
-				if (iLevels >= Number.MAX_SAFE_INTEGER) {
-					iLevels = null;
-				}
 				this.mPredicate2ExpandLevels[sPredicate] = {NodeID : sNodeId, Levels : iLevels};
 			}
 		}
