@@ -1,11 +1,16 @@
 {
   "1.127.0": {
-    "date": "July 2024",
+    "date": "August 2024",
     "notes": [
       {
         "id": "7eb17a6be9d1f0ee6b3047ebd59f3cf7bc7ddf30",
         "type": "FEATURE",
         "text": " sap.m.Menu, sap.ui.unified.Menu: add menu item selection functionality"
+      },
+      {
+        "id": "7f04bc3333aac8e5de99f217c87d24ed53ebc4fc",
+        "type": "FIX",
+        "text": " sap.ui.core.LocaleData#requestInstance: Enable synchronous instance creation"
       },
       {
         "id": "becce31d29382136c869622d9acc13ae7bac5b64",
