@@ -186,7 +186,7 @@ sap.ui.define([
 
 		iClickOnTheSelectionDetailsItem: function() {
 			return this.waitFor({
-				controlType: "sap.m.SelectionDetailsListItem",
+				controlType: "sap.m.ListItemBase",
 				actions: new Press()
 			});
 		},
