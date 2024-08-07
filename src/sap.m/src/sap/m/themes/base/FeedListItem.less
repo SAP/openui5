@@ -266,15 +266,11 @@ html.sap-phone .sapMFeedListItemText {
 
 .sapMFeedListItemImageInactive:focus,
 .sapMFeedListItemImage:focus {
-	outline-style: dotted;
-	outline-color: @sapUiContentFocusColor;
-	outline-width: 0.0625rem;
+	outline: @sapUiContentFocusColor @sapUiContentFocusStyle @sapUiContentFocusWidth;
 }
 
 html.sap-tablet .sapMFeedListItem .sapMLnk:focus {
-	outline-style: dotted;
-	outline-color: @sapUiContentFocusColor;
-	outline-width: 0.0625rem;
+	outline: @sapUiContentFocusColor @sapUiContentFocusStyle @sapUiContentFocusWidth;
 }
 
 /* Allow image outline(-left) to be rendered completely */
