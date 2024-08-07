@@ -61,11 +61,12 @@ sap.ui.define([
 					 * Optional <code>FieldHelp</code>.
 					 *
 					 * This is an association that allows the usage of one <code>FieldHelp</code> instance for the value fields for the <code>Conditions</code>.
-
+					 *
 					 * <b>Note:</b> The value fields on the conditions UI cannot be accessed from outside.
-					 The fields are single-value input, and the display is always set to <code>FieldDisplay.Value</code>. Only a <code>ValueHelp>/code> with a <code>TypeAhead</code> and a single-selection <code>MTable</code> can be used.
-
+					 The fields are single-value input, and the display is always set to <code>FieldDisplay.Value</code>. Only a <code>ValueHelp</code> with a <code>TypeAhead</code> and a single-selection <code>MTable</code> can be used.
+					 *
 					 * <b>Note:</b> For <code>Boolean</code>, <code>Date</code>, or <code>Time</code> types, no <code>FieldHelp</code> should be added, but a default <code>FieldHelp</code> used instead.
+					 *
 					 * @deprecated as of 1.114.0, replaced by {@link #setValueHelp valueHelp} association
 					 */
 					fieldHelp: {
@@ -79,7 +80,7 @@ sap.ui.define([
 					 * This is an association that allows the usage of one <code>ValueHelp</code> instance for the value fields for the <code>Conditions</code>.
 					 *
 					 * <b>Note:</b> The value fields on the conditions UI cannot be accessed from outside.
-					 The fields are single-value input, and the display is always set to <code>FieldDisplay.Value</code>. Only a <code>ValueHelp>/code> with a <code>TypeAhead</code> and a single-selection <code>MTable</code> can be used.
+					 The fields are single-value input, and the display is always set to <code>FieldDisplay.Value</code>. Only a <code>ValueHelp</code> with a <code>TypeAhead</code> and a single-selection <code>MTable</code> can be used.
 					 *
 					 * <b>Note:</b> For <code>Boolean</code>, <code>Date</code>, or <code>Time</code> types, no <code>ValueHelp</code> should be added, but a default <code>ValueHelp</code> used instead.
 					 */

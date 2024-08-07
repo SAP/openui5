@@ -36,7 +36,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Base-modules for {@link sap.ui.mdc.ValueHelp ValueHelp}
+	 * Base modules for {@link sap.ui.mdc.ValueHelp ValueHelp}
 	 *
 	 * These modules must not be used stand-alone.
 	 * @namespace
@@ -46,7 +46,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Content-modules that is used in {@link sap.ui.mdc.valueHelp.Popover Popover} or {@link sap.ui.mdc.valueHelp.Dialog Dialog}
+	 * Content modules that are used in {@link sap.ui.mdc.valuehelp.Popover Popover} or {@link sap.ui.mdc.valuehelp.Dialog Dialog}
 	 *
 	 * These modules must not be used stand-alone.
 	 * @namespace

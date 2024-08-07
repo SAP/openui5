@@ -64,7 +64,7 @@ sap.ui.define([
 				 *
 				 * If it is empty, no suggestion is available.
 				 *
-				 * @deprecated since 1.120.2 - please see <code>{@link module:sap/ui/mdc/ValueHelpDelegate.isSearchSupported isSearchSupported}</code>
+				 * @deprecated As of version 1.120.2, replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.isSearchSupported isSearchSupported}
 				 */
 				filterFields: {
 					type: "string",
