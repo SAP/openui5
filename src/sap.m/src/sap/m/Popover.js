@@ -1068,7 +1068,6 @@ sap.ui.define([
 			oStyle.bottom = "";
 			oStyle.width = "";
 			oStyle.height = "";
-			oStyle.overflow = "";
 
 			oScrollAreaStyle.width = "";
 			oScrollAreaStyle.display = "";
@@ -1250,7 +1249,7 @@ sap.ui.define([
 		 */
 		Popover.prototype.onmousedown = function (oEvent) {
 			var bRTL = Localization.getRTL();
-			if (!oEvent.target.classList || !oEvent.target.classList.contains("sapMPopoverResizeHandle")) {
+			if (!oEvent.target.closest(".sapMPopoverResizeHandle")) {
 				return;
 			}
 
@@ -2148,9 +2147,6 @@ sap.ui.define([
 				if (bUseContrastContainer) {
 					$arrow.addClass("sapContrast sapContrastPlus");
 				}
-
-				// Prevent the popover from hiding the arrow
-				$popover.css("overflow", "visible");
 			}
 
 			this._afterAdjustPositionAndArrowHook();

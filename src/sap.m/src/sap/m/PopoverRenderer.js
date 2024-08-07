@@ -53,9 +53,7 @@ sap.ui.define([
 				.openEnd();
 
 			if (oControl.getResizable()) {
-				oRm.icon("sap-icon://resize-corner", ["sapMPopoverResizeHandle"], {
-					"aria-hidden": true
-				});
+				PopoverRenderer.renderResizeHandle(oRm);
 			}
 
 			this.renderContent(oRm, oControl);
@@ -273,6 +271,18 @@ sap.ui.define([
 
 			// add custom classes set by the application as well
 			return aClassNames.concat(oControl.aCustomStyleClasses);
+		};
+
+		PopoverRenderer.renderResizeHandle = function(oRm) {
+			oRm.openStart("div")
+				.class("sapMPopoverResizeHandle")
+				.openEnd();
+
+			oRm.icon("sap-icon://resize-corner", ["sapMPopoverResizeHandleIcon"], {
+				"aria-hidden": true
+			});
+
+			oRm.close("div");
 		};
 
 		return PopoverRenderer;
