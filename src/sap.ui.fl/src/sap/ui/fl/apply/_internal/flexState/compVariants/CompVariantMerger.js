@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
 	"sap/base/Log"
 ], function(
 	CompVariant,
 	FlexObjectFactory,
+	States,
 	CompVariantUtils,
 	Log
 ) {
@@ -147,6 +149,11 @@ sap.ui.define([
 					return !oVariant.getContent() || !oVariant.getContent().standardvariant;
 				});
 			}
+
+			// with setting the state to persisted it is made sure that they not show up as a dirty flex object
+			(mCompData.nonPersistedVariants.concat([oStandardVariant])).forEach((oVariant) => {
+				oVariant.setState(States.LifecycleState.PERSISTED);
+			});
 
 			// apply all changes on non-standard variants
 			aVariants.forEach(applyChangesOnVariant.bind(undefined, mChanges));

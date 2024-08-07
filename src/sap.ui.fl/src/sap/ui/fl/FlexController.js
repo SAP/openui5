@@ -3,20 +3,20 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/write/_internal/Versions",
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/Layer",
 	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
-	Layer,
-	ChangePersistenceFactory,
-	Versions,
 	Reverter,
 	States,
 	FlexState,
+	Versions,
+	ChangePersistenceFactory,
+	Layer,
 	JsControlTreeModifier
 ) {
 	"use strict";

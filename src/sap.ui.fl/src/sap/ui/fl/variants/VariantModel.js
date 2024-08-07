@@ -24,11 +24,11 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/json/JSONModel"
 ], function(
@@ -50,14 +50,14 @@ sap.ui.define([
 	DependencyHandler,
 	Switcher,
 	VariantManagementState,
-	FlexObjectState,
+	ApplyFlexObjectState,
 	ManifestUtils,
 	VariantUtil,
+	ContextBasedAdaptationsAPI,
 	Layer,
 	LayerUtils,
 	Utils,
 	Settings,
-	ContextBasedAdaptationsAPI,
 	BindingMode,
 	JSONModel
 ) {
@@ -296,7 +296,7 @@ sap.ui.define([
 			}
 			return aCurrentControls;
 		}, []);
-		return aSelectors.length ? FlexObjectState.waitForFlexObjectsToBeApplied(aSelectors) : Promise.resolve();
+		return aSelectors.length ? ApplyFlexObjectState.waitForFlexObjectsToBeApplied(aSelectors) : Promise.resolve();
 	}
 
 	/**
@@ -346,7 +346,7 @@ sap.ui.define([
 			// Initialize data
 			this.updateData();
 
-			const oLiveDependencyMap = FlexObjectState.getLiveDependencyMap(this.sFlexReference);
+			const oLiveDependencyMap = ApplyFlexObjectState.getLiveDependencyMap(this.sFlexReference);
 			VariantManagementState.getInitialUIChanges(
 				{reference: this.sFlexReference},
 				this.oAppComponent.getId(),
@@ -626,7 +626,7 @@ sap.ui.define([
 				.then((oReturn) => {
 					if (!oReturn.success) {
 						var oException = oReturn.error || new Error("The change could not be applied.");
-						this._oChangePersistence.deleteChange(oChange, true);
+						this.oChangePersistence.deleteChange(oChange, true);
 						throw oException;
 					}
 				});

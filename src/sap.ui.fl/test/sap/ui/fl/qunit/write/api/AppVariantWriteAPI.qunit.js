@@ -1201,7 +1201,7 @@ sap.ui.define([
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(false);
 
-			var oGetFlexReferenceStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl");
+			var oGetFlexReferenceStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("customer.reference.app.id");
 			var getAppComponentForControlStub = sandbox.stub(FlexUtils, "getAppComponentForControl");
 			var oGetAppDescriptorStub = sandbox.stub(FlexUtils, "getAppDescriptor");
 

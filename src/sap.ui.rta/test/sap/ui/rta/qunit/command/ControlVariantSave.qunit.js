@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
@@ -23,6 +24,7 @@ sap.ui.define([
 	ElementOverlay,
 	VariantManagement,
 	VariantManagementState,
+	PersistenceWriteAPI,
 	FlexTestAPI,
 	sinon,
 	RtaQunitUtils
@@ -77,6 +79,20 @@ sap.ui.define([
 					reference: "Dummy",
 					variantReference: "variantMgmtId1"
 				});
+				this.oVariantInstance = RtaQunitUtils.createUIChange({
+					fileName: "variant0",
+					content: {
+						title: "myNewVariant"
+					},
+					variantManagementReference: "variantMgmtId1",
+					variantReference: "variant00",
+					support: {
+						user: "Me"
+					},
+					layer: Layer.CUSTOMER,
+					reference: "myReference",
+					generator: "myGenerator"
+				});
 
 				this.oVariant = {
 					content: {
@@ -100,6 +116,10 @@ sap.ui.define([
 				sinon.stub(VariantManagementState, "getControlChangesForVariant").returns([this.oChange1, this.oChange2]);
 				sinon.stub(this.oModel, "getVariant").returns(this.oVariant);
 				sinon.stub(this.oModel.oChangePersistence, "getDirtyChanges").returns([this.oChange1, this.oChange2]);
+				PersistenceWriteAPI.add({
+					flexObjects: [this.oVariantInstance, this.oChange1, this.oChange2],
+					selector: this.oMockedAppComponent
+				});
 			}.bind(this));
 		},
 		after() {
