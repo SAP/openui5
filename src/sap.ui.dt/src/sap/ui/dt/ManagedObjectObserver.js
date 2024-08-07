@@ -159,9 +159,13 @@ sap.ui.define([
 		this._fnOriginalBindAggregation = oTarget.bindAggregation;
 		oTarget.bindAggregation = function(...aArgs) {
 			const [sAggregationName] = aArgs;
-			var vOriginalReturn = this._fnOriginalBindAggregation.apply(oTarget, aArgs);
+			const vOriginalReturn = this._fnOriginalBindAggregation.apply(oTarget, aArgs);
 			if (this._isAggregationObservable(sAggregationName)) {
-				this.fireModified();
+				this.fireModified({
+					type: "bindAggregation",
+					name: sAggregationName,
+					target: oTarget
+				});
 			}
 			return vOriginalReturn;
 		}.bind(this);
@@ -170,9 +174,13 @@ sap.ui.define([
 		this._fnOriginalUnBindAggregation = oTarget.unbindAggregation;
 		oTarget.unbindAggregation = function(...aArgs) {
 			const [sAggregationName] = aArgs;
-			var vOriginalReturn = this._fnOriginalUnBindAggregation.apply(oTarget, aArgs);
+			const vOriginalReturn = this._fnOriginalUnBindAggregation.apply(oTarget, aArgs);
 			if (this._isAggregationObservable(sAggregationName)) {
-				this.fireModified();
+				this.fireModified({
+					type: "unbindAggregation",
+					name: sAggregationName,
+					target: oTarget
+				});
 			}
 			return vOriginalReturn;
 		}.bind(this);
