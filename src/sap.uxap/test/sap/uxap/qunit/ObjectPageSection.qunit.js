@@ -1168,11 +1168,10 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 	QUnit.test("anchorBarButtonColor property", function (assert) {
 		var oObjectPage = this.oObjectPageLayout,
 			oAnchorBar = oObjectPage.getAggregation("_anchorBar"),
-			oAnchorBarBtn = oAnchorBar.getContent()[0],
-			oSection = oObjectPage.getAggregation("sections")[0],
-			sExpectedStyleClass = "sapUxAPAnchorBarButtonColor" + oSection.getProperty("anchorBarButtonColor");
+			oAnchorBarBtn = oAnchorBar.getItems()[0],
+			oSection = oObjectPage.getAggregation("sections")[0];
 
-		assert.ok(oAnchorBarBtn.hasStyleClass(sExpectedStyleClass), "The anchorBarButtonColor property is correctly set and color is applied to the anchorbar button");
+		assert.strictEqual(oAnchorBarBtn.getIconColor(), oSection.getAnchorBarButtonColor(), "The anchorBarButtonColor property is correctly set and color is applied to the anchorbar button");
 
 	});
 });

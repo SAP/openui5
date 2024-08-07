@@ -298,15 +298,9 @@ sap.ui.define([
 	};
 
 	ObjectPageSection.prototype.setAnchorBarButtonColor = function(value) {
-		var sSectionId = this.getId(),
-			oParent = this.getParent();
-
 		if (value !== this.getProperty("anchorBarButtonColor")) {
 			this.setProperty("anchorBarButtonColor", value, true);
-		}
-
-		if (oParent && oParent.getDomRef() && oParent._updateAnchorBarButtonColor) {
-			oParent._updateAnchorBarButtonColor(sSectionId);
+			this._notifyObjectPageLayout();
 		}
 
 		return this;

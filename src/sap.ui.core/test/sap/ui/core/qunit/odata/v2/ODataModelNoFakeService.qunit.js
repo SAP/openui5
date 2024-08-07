@@ -6384,9 +6384,7 @@ sap.ui.define([
 			this.mock(oModel).expects("_handleError")
 				.withExactArgs(sinon.match.same(oError), sinon.match.same(oRequest))
 				.exactly(bRejected ? 0 : 1);
-			oHelperMock.expects("error")
-				.withExactArgs(oError)
-				.exactly(bRejected ? 0 : 1);
+			oHelperMock.expects("error").withExactArgs(oError);
 
 			// code under test - call error handler
 			fnError(oError);
@@ -6452,9 +6450,10 @@ sap.ui.define([
 					.returns("~requestHandle1");
 			}
 			oModelMock.expects("resetSecurityToken").withExactArgs().exactly(bRejected ? 1 : 0);
+			const oError = {$rejected: bRejected};
+			oHelperMock.expects("error").withExactArgs(sinon.match.same(oError)).exactly(bRejected ? 1 : 0);
 
 			// code under test - call HEAD error handler
-			const oError = {$rejected : bRejected};
 			fnHandleHeadError(oError);
 
 			assert.strictEqual(oModel.bTokenHandling, undefined);
@@ -6468,9 +6467,103 @@ sap.ui.define([
 
 				// code under test - call GET error handler
 				fnHandleGetError(oError);
+
+				oModelMock.expects("resetSecurityToken").withExactArgs();
+				oError.$rejected = true;
+				oHelperMock.expects("error").withExactArgs(sinon.match.same(oError));
+
+				// code under test - call GET error handler with rejected error
+				// UseCase: HEAD via get returns non 503 error; fallback to token via GET returns 503 error and
+				// "Retry-after" promise was rejected
+				fnHandleGetError(oError);
 			}
 			assert.strictEqual(oModel.bTokenHandling, bRejected ? undefined : false);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("securityTokenAvailable: forward rejection reason on error", function (assert) {
+		const oModel = {
+			oSharedServiceData: {},
+			refreshSecurityToken() {}
+		};
+		const oExpectation = this.mock(oModel).expects("refreshSecurityToken")
+			.withExactArgs(sinon.match.func, sinon.match.func, true);
+
+		const pSecurityPromise = ODataModel.prototype.securityTokenAvailable.call(oModel).then(() => {
+			assert.notOk("must not be called");
+		}, (oError0) => {
+			assert.strictEqual(oError0, "~oError");
+		});
+
+		// code under test (call error handler)
+		oExpectation.args[0][1]("~oError");
+
+		return pSecurityPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_submitRequest: submitWithToken, call errorhandler if $rejected", function (assert) {
+		const oError0 = {$rejected: true};
+		const oHelper = {error() {}};
+		const oModel = {
+			bTokenHandling: true,
+			_getODataHandler() {},
+			_request() {},
+			securityTokenAvailable() {},
+			getServiceMetadata() {}
+		};
+		let fnReject;
+		const pReadyForRequest0 = new Promise((_resolve, reject) => {
+			fnReject = reject;
+		});
+		const oModelMock = this.mock(oModel);
+		oModelMock.expects("securityTokenAvailable").withExactArgs().returns(pReadyForRequest0);
+
+		const oRequest = {
+			headers: {"x-csrf-token": "token"},
+			method: "!GET",
+			requestUri: "~requestUri"
+		};
+		oModelMock.expects("_getODataHandler").withExactArgs("~requestUri").returns("~oHandler");
+		const oHelperMock = this.mock(oHelper);
+		oHelperMock.expects("error").withExactArgs(sinon.match.same(oError0));
+		oModelMock.expects("getServiceMetadata").withExactArgs().never();
+		ODataModel.prototype._submitRequest.call(oModel, oRequest, "~fnSuccess", oHelper.error);
+
+
+		// code under test, test with $rejected -> no fallback to submit but handlError()
+		fnReject(oError0);
+
+		const pReadyForRequest1 = new Promise((_resolve, reject) => {
+			fnReject = reject;
+		});
+		oModelMock.expects("securityTokenAvailable").withExactArgs().returns(pReadyForRequest1);
+		oModelMock.expects("_getODataHandler").withExactArgs("~requestUri").returns("~oHandler1");
+		const oError1 = {/*w/o $rejected: true*/};
+		oHelperMock.expects("error").never();
+		oModelMock.expects("getServiceMetadata").returns("~serviceMetadata");
+		oModelMock.expects("_request")
+			.withExactArgs(sinon.match.same(oRequest), sinon.match.func, sinon.match.func, "~oHandler1",
+				undefined, "~serviceMetadata")
+			.returns("~oRequestHAndle");
+		ODataModel.prototype._submitRequest.call(oModel, oRequest, "~fnSuccess", oHelper.error);
+
+		// code under test, test w/o $rejected) -> fallback to submit()
+		fnReject(oError1);
+
+		return Promise.all([
+			pReadyForRequest0.then(() => {
+				assert.notOk("must not be called");
+			}, (oError) => {
+				assert.strictEqual(oError, oError0);
+			}),
+			pReadyForRequest1.then(() => {
+				assert.notOk("must not be called");
+			}, (oError) => {
+				assert.strictEqual(oError, oError1);
+			})
+		]);
 	});
 
 	//*********************************************************************************************
@@ -9158,7 +9251,9 @@ sap.ui.define([
 		const oHelper = {processError() {}};
 		const oHelperMock = this.mock(oHelper);
 		oHelperMock.expects("processError").withExactArgs({
-			$ownReason : true,
+			$ownReason: true,
+			$rejected: true,
+			$reported: true,
 			message : "Retry-After handler rejected w/o reason"
 		});
 		const oModel = {};
@@ -9167,16 +9262,20 @@ sap.ui.define([
 		ODataModel.prototype.onRetryAfterRejected.call(oModel, oHelper.processError, undefined, undefined);
 
 		oHelperMock.expects("processError").withExactArgs({
-			$ownReason : true,
-			message : "Retry-After handler rejected w/o reason"
+			$ownReason: true,
+			$rejected: true,
+			$reported: true,
+			message: "Retry-After handler rejected w/o reason"
 		});
 
 		// code under test (no error response, empty reason)
 		ODataModel.prototype.onRetryAfterRejected.call(oModel, oHelper.processError, undefined, new Error(""));
 
 		oHelperMock.expects("processError").withExactArgs({
-			$ownReason : true,
-			message : "Retry-After handler rejected with: own reason"
+			$ownReason: true,
+			$rejected: true,
+			$reported: true,
+			message: "Retry-After handler rejected with: own reason"
 		});
 
 		// code under test (no error response, own reason)
@@ -9351,17 +9450,21 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[true, false].forEach((bResolve) => {
-		const sTitle = "_request: retryAfterPromise, " + (bResolve ? "resolve" : "reject");
+		const sTitle = "_request: with pending pRetryAfter promise, " + (bResolve ? "resolve" : "reject");
 		QUnit.test(sTitle, function (assert) {
 			let fnResolve;
 			let fnReject;
 			const oModel = {
+				aPendingRequestHandles: [],
 				pRetryAfter: new Promise((resolve, reject) => {
 					fnResolve = resolve;
 					fnReject = reject;
 				})
 			};
-			const oRequest = {};
+			const oRequest = {async: "!==false"};
+			const oHelper0 = {success() {}};
+			const oHelper0Mock = this.mock(oHelper0);
+			oHelper0Mock.expects("success").never();
 
 			// code under test (register for repetition)
 			let oResult = ODataModel.prototype._request.call(oModel, oRequest, "~fnSuccess", "~fnError",
@@ -9392,22 +9495,21 @@ sap.ui.define([
 			}).finally(() => {
 				// simulate reset of pRetryAfter in #checkAndProcessRetryAfterError
 				oModel.pRetryAfter = null;
+				assert.deepEqual(oModel.aPendingRequestHandles, []);
 
-				oRequest.async = false;
 				const oODataMock = this.mock(OData);
-				oODataMock.expects("request")
+				const oExpectation0 = oODataMock.expects("request")
 					.withExactArgs(sinon.match.same(oRequest), sinon.match.func, sinon.match.func, "~oHandler0",
 						"~oHttpClient0", "~oMetadata0")
 					.returns("~oRequestHandle0");
 
 				// code under test (normal behavior after pRetryAfter reset to null, oRequest.async === false)
-				oResult = ODataModel.prototype._request.call(oModel, oRequest, "~fnSuccess", "~fnError", "~oHandler0",
+				oResult = ODataModel.prototype._request.call(oModel, oRequest, oHelper0.success, "~fnError", "~oHandler0",
 					"~oHttpClient0", "~oMetadata0");
 
 				assert.strictEqual(oResult, "~oRequestHandle0");
+				assert.deepEqual(oModel.aPendingRequestHandles, ["~oRequestHandle0"]);
 
-				oRequest.async = "~!false";
-				oModel.aPendingRequestHandles = [];
 				oODataMock.expects("request")
 					.withExactArgs(sinon.match.same(oRequest), sinon.match.func, sinon.match.func, "~oHandler1",
 						"~oHttpClient1", "~oMetadata1")
@@ -9418,41 +9520,54 @@ sap.ui.define([
 					"~oHttpClient1", "~oMetadata1");
 
 				assert.strictEqual(oResult, "~oRequestHandle1");
-				assert.deepEqual(oModel.aPendingRequestHandles, ["~oRequestHandle1"]);
+				assert.deepEqual(oModel.aPendingRequestHandles, ["~oRequestHandle0", "~oRequestHandle1"]);
 
 				let oExpectation = oODataMock.expects("request")
 					.withExactArgs(sinon.match.same(oRequest), sinon.match.func, sinon.match.func, "~oHandler2",
 						"~oHttpClient2", "~oMetadata2")
-					.returns("~oRequestHandle1");
+					.returns("~oRequestHandle2");
 				oModel.checkAndProcessRetryAfterError = () => {};
 				const oModelMock = this.mock(oModel);
 				oModelMock.expects("checkAndProcessRetryAfterError")
-					.withExactArgs(sinon.match.same(oRequest), "~oErrorResponse2", "~fnSuccess2", sinon.match.func,
+					.withExactArgs(sinon.match.same(oRequest), "~oErrorResponse2", "~fnSuccess2", "~fnError2",
 						"~oHandler2", "~oHttpClient2", "~oMetadata2")
 					.returns(true);
 
 				oResult = ODataModel.prototype._request.call(oModel, oRequest, "~fnSuccess2", "~fnError2",
 					"~oHandler2", "~oHttpClient2", "~oMetadata2");
+				assert.strictEqual(oResult, "~oRequestHandle2");
+				assert.deepEqual(oModel.aPendingRequestHandles,
+					["~oRequestHandle0", "~oRequestHandle1", "~oRequestHandle2"]);
 
 				// code under test (OData error callback invokes checkAndProcessRetryAfterError which returns true)
 				oExpectation.args[0][2]("~oErrorResponse2");
 
+				assert.deepEqual(oModel.aPendingRequestHandles, ["~oRequestHandle0", "~oRequestHandle1"]);
 				oExpectation = oODataMock.expects("request")
 					.withExactArgs(sinon.match.same(oRequest), sinon.match.func, sinon.match.func, "~oHandler3",
 						"~oHttpClient3", "~oMetadata3")
-					.returns("~oRequestHandle1");
+					.returns("~oRequestHandle3");
 				oModelMock.expects("checkAndProcessRetryAfterError")
 					.withExactArgs(sinon.match.same(oRequest), "~oErrorResponse3", "~fnSuccess3", sinon.match.func,
 						"~oHandler3", "~oHttpClient3", "~oMetadata3")
 					.returns(false);
-
-				const oHelper = {error() {}};
-				this.mock(oHelper).expects("error").withExactArgs("~oErrorResponse3");
-				oResult = ODataModel.prototype._request.call(oModel, oRequest, "~fnSuccess3", oHelper.error,
+				const oHelper3 = {error() {}};
+				this.mock(oHelper3).expects("error").withExactArgs("~oErrorResponse3");
+				oResult = ODataModel.prototype._request.call(oModel, oRequest, "~fnSuccess3", oHelper3.error,
 					"~oHandler3", "~oHttpClient3", "~oMetadata3");
+				assert.deepEqual(oModel.aPendingRequestHandles,
+					["~oRequestHandle0", "~oRequestHandle1", "~oRequestHandle3"]);
 
 				// code under test (OData error callback invokes checkAndProcessRetryAfterError which returns false)
 				oExpectation.args[0][2]("~oErrorResponse3");
+
+				assert.deepEqual(oModel.aPendingRequestHandles, ["~oRequestHandle0", "~oRequestHandle1"]);
+				oHelper0Mock.expects("success").withExactArgs("~oResponse0");
+
+				// code under test (invocation of success handler removes "~oRequestHandle0")
+				oExpectation0.args[0][1]("~oResponse0");
+
+				assert.deepEqual(oModel.aPendingRequestHandles, ["~oRequestHandle1"]);
 			});
 		});
 	});

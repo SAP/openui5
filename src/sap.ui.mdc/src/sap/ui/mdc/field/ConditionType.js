@@ -117,6 +117,16 @@ sap.ui.define([
 
 		};
 
+		ConditionType.prototype.getPrimitiveType = function (sInternalType) {
+
+			if (sInternalType === sTargetTypeRaw || _getIndexOfRawValue(sInternalType) >= 0) {
+				return sInternalType;
+			} else {
+				return SimpleType.prototype.getPrimitiveType.apply(this, arguments);
+			}
+
+		};
+
 		/**
 		 * Formats the given condition to an output value of the given target type.
 		 * These values are formatted using the given data type. Depending on the operator

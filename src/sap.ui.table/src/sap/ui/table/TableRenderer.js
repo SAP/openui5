@@ -149,6 +149,9 @@ sap.ui.define([
 		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "CONTAINER");
 		rm.openEnd();
 
+		const bDummyTabbable = oTable.getRows().length || oTable.getColumnHeaderVisible();
+		this.renderTabElement(rm, "sapUiTableCtrlBefore", bDummyTabbable ? "0" : "-1");
+
 		rm.openStart("div", oTable.getId() + "-sapUiTableGridCnt");
 		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "CONTENT");
 		rm.openEnd();
@@ -158,6 +161,9 @@ sap.ui.define([
 		this.renderTable(rm, oTable);
 
 		rm.close("div");
+
+		this.renderTabElement(rm, "sapUiTableCtrlAfter", bDummyTabbable ? "0" : "-1");
+		this.renderTabElement(rm, null, "-1", oTable.getId() + "-focusDummy");
 
 		const oCreationRow = oTable.getCreationRow();
 		if (oCreationRow && oCreationRow.getVisible()) {
@@ -238,10 +244,6 @@ sap.ui.define([
 	};
 
 	TableRenderer.renderTable = function(rm, oTable) {
-		const bHasRows = oTable.getRows().length > 0;
-
-		this.renderTabElement(rm, "sapUiTableCtrlBefore", bHasRows ? "0" : "-1");
-
 		rm.openStart("div", oTable.getId() + "-tableCCnt");
 		TableUtils.Hook.call(oTable, Hook.RenderRowContainerStyles, rm);
 		rm.class("sapUiTableCCnt");
@@ -249,9 +251,6 @@ sap.ui.define([
 
 		this.renderTableCCnt(rm, oTable);
 		rm.close("div");
-
-		this.renderTabElement(rm, "sapUiTableCtrlAfter", bHasRows ? "0" : "-1");
-		this.renderTabElement(rm, null, "-1", oTable.getId() + "-focusDummy");
 
 		const oCreationRow = oTable.getCreationRow();
 		if (!oCreationRow || !oCreationRow.getVisible()) {

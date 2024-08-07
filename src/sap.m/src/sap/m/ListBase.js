@@ -238,7 +238,7 @@ function(
 				/**
 				 * If set to true, this control remembers and retains the selection of the items after a binding update has been performed (e.g. sorting, filtering).
 				 * <b>Note:</b> This feature works only if two-way data binding for the <code>selected</code> property of the item is not used. It also needs to be turned off if the binding context of the item does not always point to the same entry in the model, for example, if the order of the data in the <code>JSONModel</code> is changed.
-				 * <b>Note:</b> This feature leverages the built-in selection mechanism of the corresponding binding context when the OData V4 model is used. Therefore, all binding-relevant limitations apply in this context as well. For more details, see the {@link sap.ui.model.odata.v4.Context#setSelected setSelected}, the {@link sap.ui.model.odata.v4.ODataModel#bindList bindList}, and the {@link sap.ui.model.odata.v4.ODataMetaModel#requestValueListInfo requestValueListInfo} API documentation. Do not enable this feature when <code>$$SharedRequests</code> is active.
+				 * <b>Note:</b> This feature leverages the built-in selection mechanism of the corresponding binding context when the OData V4 model is used. Therefore, all binding-relevant limitations apply in this context as well. For more details, see the {@link sap.ui.model.odata.v4.Context#setSelected setSelected}, the {@link sap.ui.model.odata.v4.ODataModel#bindList bindList}, and the {@link sap.ui.model.odata.v4.ODataMetaModel#requestValueListInfo requestValueListInfo} API documentation. Do not enable this feature when <code>$$SharedRequests</code> or <code>$$clearSelectionOnFilter</code> is active.
 				 * @since 1.16.6
 				 */
 				rememberSelections : {type : "boolean", group : "Behavior", defaultValue : true},
@@ -688,6 +688,10 @@ function(
 		}
 
 		Control.prototype._bindAggregation.call(this, sName, oBindingInfo);
+
+		if (sName === "items" && this.getModel(oBindingInfo.model).isA("sap.ui.model.odata.v4.ODataModel")) {
+			this.getBinding("items").attachEvent("selectionChanged", onBindingSelectionChanged, this);
+		}
 	};
 
 	ListBase.prototype._onBindingDataRequestedListener = function(oEvent) {
@@ -719,6 +723,44 @@ function(
 			this._oGrowingDelegate._onBindingDataReceivedListener(oEvent);
 		}
 	};
+
+	async function onBindingSelectionChanged(oEvent) {
+		const oContext = oEvent.getParameter("context");
+
+		if (!this._bSelectionMode) {
+			return;
+		}
+
+		if (oContext.getBinding().getHeaderContext() === oContext) {
+			if (oContext.isSelected()) {
+				Log.warning("Selecting the header context does not affect the list selection", this);
+			} else {
+				this.removeSelections(true, true);
+			}
+			return;
+		}
+
+		const sModelName = this.getBindingInfo("items").model;
+		const oItem = this.getItems().find((oItem) => oItem.getBindingContext(sModelName) === oContext);
+
+		if (!oItem) {
+			Log.warning("Selecting a context that is not related to a visible item does not affect the list selection", this);
+			return;
+		}
+
+		await Promise.resolve(); // ListItemBase first needs to update its selected property, otherwise the selectionChange event is fired too often.
+
+		const bContextIsSelected = oContext.isSelected();
+		this.setSelectedItem(oItem, bContextIsSelected, bContextIsSelected !== oItem.getSelected());
+
+		if (bContextIsSelected && this.getMode().includes("SingleSelect")) {
+			oContext.getBinding().getAllCurrentContexts().forEach((oCurrentContext) => {
+				if (oCurrentContext !== oContext) {
+					oCurrentContext.setSelected(false);
+				}
+			});
+		}
+	}
 
 	ListBase.prototype.destroyItems = function(bSuppressInvalidate) {
 		// check whether we have items to destroy or not

@@ -3268,8 +3268,8 @@ sap.ui.define([
 				this.pSecurityToken = new Promise(function(resolve, reject) {
 					this.refreshSecurityToken(function() {
 						resolve(this.oSharedServiceData.securityToken);
-					}.bind(this),function(){
-						reject();
+					}.bind(this), function(oError) {
+						reject(oError);
 					}, true);
 				}.bind(this));
 			}
@@ -3328,8 +3328,7 @@ sap.ui.define([
 			if (oError.$rejected) {
 				// request answered with a 503 retry-after error and was rejected later on
 				that.resetSecurityToken();
-				// reset only the securityToken, do not reject this.pSecurityToken by calling fnError(...)
-				// this would lead to a repetition of the change request in submitWithToken via submit()
+				fnError(oError);
 				return;
 			}
 			// Disable token handling, if token request returns an error
@@ -3347,8 +3346,7 @@ sap.ui.define([
 				// request answered with a 503 retry-after error and was rejected later on
 				// -> no fallback to requestToken via "GET"
 				that.resetSecurityToken();
-				// reset only the securityToken, do not reject this.pSecurityToken by calling fnError(...)
-				// this would lead to a repetition of the change request in submitWithToken via submit()
+				fnError(oError);
 				return;
 			}
 			// Disable token handling, if token request returns an error
@@ -3459,7 +3457,7 @@ sap.ui.define([
 				Log.error(sReason, oReason.stack, sClassName);
 			}
 		}
-		fnError(oErrorResponse || {$ownReason : true, message : sReason});
+		fnError(oErrorResponse || {$ownReason: true, $rejected: true, $reported: true, message: sReason});
 	};
 
 	/**
@@ -3531,7 +3529,13 @@ sap.ui.define([
 					oRequest.headers["x-csrf-token"] = sToken;
 				}
 				submit();
-			}, function() {
+			}, function(oError) {
+				if (oError.$rejected) {
+					// request answered with a 503 retry-after error and was rejected later on
+					// -> no fallback on submit() w/o token
+					handleError(oError);
+					return;
+				}
 				submit();
 			});
 		}
@@ -7735,7 +7739,7 @@ sap.ui.define([
 			oRequestHandle = OData.request(
 				oRequest,
 				wrapHandler(fnSuccess || OData.defaultSuccess),
-				handle503Error(wrapHandler(fnError || OData.defaultError)),
+				wrapHandler(handle503Error(fnError || OData.defaultError)),
 				oHandler,
 				oHttpClient,
 				oMetadata

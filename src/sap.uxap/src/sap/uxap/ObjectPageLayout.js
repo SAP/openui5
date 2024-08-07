@@ -410,7 +410,7 @@ sap.ui.define([
 				/**
 				 * Internal aggregation to hold the reference to the AnchorBar.
 				 */
-				_anchorBar: {type: "sap.uxap.AnchorBar", multiple: false, visibility: "hidden"},
+				_anchorBar: {type: "sap.m.IconTabHeader", multiple: false, visibility: "hidden"},
 
 				/**
 				 * Internal aggregation to hold the reference to the IconTabBar.
@@ -747,7 +747,7 @@ sap.ui.define([
 
 		this._createHeaderContent();
 
-		this._oABHelper._getAnchorBar().setProperty("upperCase", this.getUpperCaseAnchorBar(), true);
+		this._oABHelper._getAnchorBar().toggleStyleClass("sapUxAPAnchorBarUpperCase", this.getUpperCaseAnchorBar());
 
 		this._storeScrollLocation(); // store location *before* applying the UXRules (=> while the old sectionInfo with positionTop of sections is still available)
 		this._applyUxRules();
@@ -1234,13 +1234,6 @@ sap.ui.define([
 		// Attach expand button event
 		this._handleExpandButtonPressEventLifeCycle(true);
 
-		if (!this._initialABButtonsColorUpdateDone) {
-			this.getSections().forEach((section) => {
-				var sSectionId = section.getId();
-				this._updateAnchorBarButtonColor(sSectionId);
-			});
-			this._initialABButtonsColorUpdateDone = true;
-		}
 		if (exists(oHeaderContent) && oHeaderContent._setLandmarkInfo) {
 			oHeaderContent._setLandmarkInfo(this.getLandmarkInfo());
 		}
@@ -1576,34 +1569,6 @@ sap.ui.define([
 		}
 	};
 
-	ObjectPageLayout.prototype._updateAnchorBarButtonColor = function(sSectionId) {
-		if (!this.getDomRef()) {
-			return;
-		}
-
-		this.oAnchorbar = this._oABHelper._getAnchorBar();
-		this.oAnchorbarButtons = this.oAnchorbar.getAggregation("content");
-		this.oOPSections = this.getSections().filter((section) =>
-			section.getAggregation("subSections").length !== 0
-		);
-
-		if (this.oAnchorbarButtons) {
-			this.oAnchorbarButtons.forEach((btn, index) => {
-				const sUniqueKey = btn.getCustomData().find((data) => data.getKey() === "sectionId").getValue();
-				if (sUniqueKey === sSectionId) {
-					const sNewStyleClass = "sapUxAPAnchorBarButtonColor" + this.oOPSections[index].getProperty("anchorBarButtonColor");
-					// Remove the old style class and add the new one
-					btn.aCustomStyleClasses.forEach((sStyleClass) => {
-						if (sStyleClass.startsWith("sapUxAPAnchorBarButtonColor")) {
-							btn.removeStyleClass(sStyleClass);
-						}
-					});
-					btn.addStyleClass(sNewStyleClass);
-				}
-			});
-		}
-	};
-
 	/**
 	 * if our container has not set a height, we need to enforce it or nothing will get displayed
 	 * the reason is the objectPageLayout has 2 containers with position:absolute, height:100%
@@ -1658,8 +1623,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._toggleHeaderTitle = function (bExpand, bUserInteraction) {
-		var oHeaderTitle = this.getHeaderTitle(),
-			oAnchorBar = this._oABHelper._getAnchorBar();
+		var oHeaderTitle = this.getHeaderTitle();
 
 		// note that <code>this._$titleArea</code> is the placeholder [of the sticky area] where both the header title and header content are placed
 		if (this._$titleArea.length) {
@@ -1673,8 +1637,6 @@ sap.ui.define([
 		} else {
 			oHeaderTitle && oHeaderTitle.snap(bUserInteraction);
 		}
-
-		oAnchorBar.scrollToCurrentlySelectedSection();
 	};
 
 	/**
@@ -1856,7 +1818,7 @@ sap.ui.define([
 
 		if (bFirstSectionTitleHidden && (iFirstVisibleSectionVisibleSubSections === 1)) {
 			// Title propagation support - set the borrowed title Dom ID to the first AnchorBar button
-			aContent = this.getAggregation("_anchorBar").getContent();
+			aContent = this.getAggregation("_anchorBar").getItems();
 			if (aContent.length) {
 				this._oFirstVisibleSubSection._setBorrowedTitleDomId(aContent[0].getId() + "-content");
 			}
@@ -1967,11 +1929,12 @@ sap.ui.define([
 			return this;
 		}
 
-		this._oABHelper._getAnchorBar().setShowPopover(bValue);
+		this.setProperty("showAnchorBarPopover", bValue, true /* don't re-render the whole objectPageLayout */);
+
 		this._oABHelper._buildAnchorBar();
 		this._setSelectedSectionId(sSelectedSectionId);
 
-		return this.setProperty("showAnchorBarPopover", bValue, true /* don't re-render the whole objectPageLayout */);
+		return this;
 	};
 
 	ObjectPageLayout.prototype._getInternalAnchorBarVisible = function () {
@@ -1989,7 +1952,7 @@ sap.ui.define([
 
 
 	ObjectPageLayout.prototype.setUpperCaseAnchorBar = function (bValue) {
-		this._oABHelper._getAnchorBar().setProperty("upperCase", bValue);
+		this._oABHelper._getAnchorBar().toggleStyleClass("sapUxAPAnchorBarUpperCase", bValue);
 		return this.setProperty("upperCaseAnchorBar", bValue, true /* don't re-render the whole objectPageLayout */);
 	};
 
@@ -2119,8 +2082,8 @@ sap.ui.define([
 			return;
 		}
 
-		if (oAnchorBar && oSelectedSectionInfo.buttonId) {
-			oAnchorBar.setSelectedButton(oSelectedSectionInfo.buttonId);
+		if (oAnchorBar) {
+			this._oABHelper.selectAnchorForSection(sSelectedSectionId);
 			this.setAssociation("selectedSection", sSelectedSectionId, true);
 		}
 	};
@@ -2136,12 +2099,6 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._cleanMemory = function () {
-		var oAnchorBar = this.getAggregation("_anchorBar");
-
-		if (oAnchorBar) {
-			oAnchorBar._resetControl();
-		}
-
 		this._oSectionInfo = {};
 		this._aSectionBases = [];
 	};
@@ -2254,7 +2211,7 @@ sap.ui.define([
 			oToSelect._allowPropagationToLoadedViews(true); /* include the newly selected tab back to the propagation chain */
 
 			this._setCurrentTabSection(oSection);
-			this.getAggregation("_anchorBar").setSelectedButton(this._oSectionInfo[oToSelect.getId()].buttonId);
+			this._oABHelper.selectAnchorForSection(oToSelect.getId());
 			this.setAssociation("selectedSection", oToSelect.getId(), true);
 			this._checkSubSectionVisibilityChange();
 		}
@@ -2339,8 +2296,8 @@ sap.ui.define([
 		}
 	};
 
-	ObjectPageLayout.prototype.onAnchorBarTabPress = function (oEvent) {
-		var oSectionBase = Element.getElementById(oEvent.getParameter("sectionBaseId")),
+	ObjectPageLayout.prototype.onAnchorBarTabPress = function (sectionBaseId) {
+		var oSectionBase = Element.getElementById(sectionBaseId),
 			bIsSubSection = oSectionBase.isA("sap.uxap.ObjectPageSubSection"),
 			oSection,
 			oSubSection;
@@ -3102,7 +3059,7 @@ sap.ui.define([
 		}
 
 		if (oSectionBase && this._oSectionInfo[sSectionId]) {
-			bUpdateAnchorBar && oAnchorBar.setSelectedButton(this._oSectionInfo[sSectionId].buttonId);
+			bUpdateAnchorBar && this._oABHelper.selectAnchorForSection(sSectionId);
 			this.setAssociation("selectedSection", ObjectPageSection._getClosestSection(sSectionId).getId(), true);
 			this._setSectionsFocusValues(sSectionId);
 		}
@@ -3155,7 +3112,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._adjustTitlePositioning = function (oEvent) {
-		if (!this._$titleArea.length || !this._$opWrapper.length) {
+		if (!this._$titleArea?.length || !this._$opWrapper?.length) {
 			return;
 		}
 

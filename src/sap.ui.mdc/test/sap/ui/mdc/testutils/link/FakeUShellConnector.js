@@ -15,7 +15,7 @@ sap.ui.define([
 	 * @private
 	 * @since 1.120.0
 	 */
-	function FakeUShellConnector() {}
+	function FakeUShellConnector() { }
 
 	FakeUShellConnector.getURLParsing = function(oSetting) {
 		return {
@@ -27,7 +27,7 @@ sap.ui.define([
 					});
 					return aLink[0];
 				};
-				for ( const sSemanticObject in oSetting) {
+				for (const sSemanticObject in oSetting) {
 					const oLink = fnFindAction(oSetting[sSemanticObject].links);
 					if (oLink) {
 						return {
@@ -54,7 +54,7 @@ sap.ui.define([
 			},
 			getSemanticObjects: function() {
 				const aSemanticObjects = [];
-				for ( const sSemanticObject in oSetting) {
+				for (const sSemanticObject in oSetting) {
 					aSemanticObjects.push(sSemanticObject);
 				}
 				return Promise.resolve(aSemanticObjects);
@@ -69,6 +69,37 @@ sap.ui.define([
 					});
 				}
 				return Promise.resolve(aLinks);
+			},
+			getPrimaryIntent(sSemanticObject) {
+				let oLink = null;
+				const aSemanticObjectLinks = oSetting[sSemanticObject]?.links;
+				if (aSemanticObjectLinks === undefined) {
+					return Promise.resolve(oLink);
+				}
+
+				let aLinks = aSemanticObjectLinks.filter((oSemanticObjectLink) => {
+					return oSemanticObjectLink.tags?.includes("primaryAction");
+				});
+
+				if (aLinks.length === 0) {
+					aLinks = aSemanticObjectLinks.filter((oSemanticObjectLink) => {
+						return oSemanticObjectLink.action === "displayFactSheet";
+					});
+				}
+
+				if (aLinks.length === 0) {
+					return Promise.resolve(oLink);
+				}
+
+				[oLink] = aLinks.sort((oLink, oOtherLink) => {
+					if (oLink.intent === oOtherLink.intent) {
+						return 0;
+					}
+
+					return oLink.intent < oOtherLink.intent ? -1 : 1;
+				});
+
+				return Promise.resolve(oLink);
 			}
 		};
 	};

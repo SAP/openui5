@@ -1272,8 +1272,8 @@ sap.ui.define([
 										mSettings[name].push(oControl);
 									}
 								} else {
-									// 1..1 AGGREGATION
-									assert(!mSettings[name], "multiple aggregates defined for aggregation with cardinality 0..1");
+									// 0..1 AGGREGATION
+									assert(!mSettings[name], "multiple aggregates defined for aggregation " + name + " with cardinality 0..1");
 									mSettings[name] = oControl;
 								}
 							}

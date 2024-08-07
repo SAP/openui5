@@ -30,12 +30,6 @@ sap.ui.define(function () {
 			autostart: true
 		},
 		tests: {
-			"AnchorBar": {
-				coverage: {
-					only: ["sap/uxap/AnchorBar"]
-				}
-			},
-
 			"BlockBase": {
 				coverage: {
 					only: ["sap/uxap/BlockBase"]

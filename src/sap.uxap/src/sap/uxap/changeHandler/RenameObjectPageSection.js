@@ -124,15 +124,10 @@ sap.ui.define([
 		var oAnchorBar = oElement.getParent().getAggregation("_anchorBar");
 		var aAffectedControls = [oElement.getId()];
 		var aDisplayControls = [oElement.getId()];
-		oAnchorBar.getAggregation("content").forEach(function(oAnchorBarItem) {
-			oAnchorBarItem.getAggregation("customData").some(function(oCustomData) {
-				if (
-					oCustomData.getKey() === "sectionId" &&
-					oElement.getId() === oCustomData.getProperty("value")
-				) {
-					aDisplayControls.push(oAnchorBarItem.getId());
-				}
-			});
+		oAnchorBar.getAggregation("items").forEach(function(oAnchorBarItem) {
+			if (oElement.getId() === oAnchorBarItem.getKey()) {
+				aDisplayControls.push(oAnchorBarItem.getId());
+			}
 		});
 		return {
 			descriptionPayload: {

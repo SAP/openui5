@@ -95,8 +95,8 @@ function(nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		},
 		getSectionAnchor: function(oSection) {
 			var oObjectPage = oSection.getParent(),
-				aResult = oObjectPage._oABHelper._getAnchorBar().getContent().filter(function(oButton) {
-				return oButton.data("sectionId") === oSection.getId();
+				aResult = oObjectPage._oABHelper._getAnchorBar().getItems().filter(function(oItem) {
+				return oItem.getKey() === oSection.getId();
 			});
 			return aResult.length && aResult[0];
 		}
@@ -767,7 +767,6 @@ function(nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			}),
 			sSectionId = oObjectPageSection.getId(),
 			oAnchorBar = oObjectPage._oABHelper._getAnchorBar(),
-			oSpy = this.spy(oAnchorBar, "scrollToSection"),
 			done = assert.async();
 
 		assert.expect(2);
@@ -781,15 +780,13 @@ function(nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			oObjectPage.setSelectedSection(sSectionId);
 
 			setTimeout(function() {
-				oSpy.reset();
-
 				//Act
 				oObjectPage._scrollTo(oObjectPage._getSnapPosition() + 100);
 
 				setTimeout(function() {
 					// Assert
 					assert.ok(isObjectPageHeaderStickied(oObjectPage), "ObjectHeader is in stickied mode");
-					assert.strictEqual(oSpy.callCount, 1, "scrollToSection is called");
+					assert.strictEqual(oAnchorBar.getSelectedKey(), sSectionId, "the section is selected in the anchorBar");
 					done();
 				}, 1000); //scroll delay
 
@@ -984,7 +981,10 @@ function(nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			oSection2Anchor = helpers.getSectionAnchor(oSection2);
 
 			// simulate user press on the anchorBar button
-			oSection2Anchor.fireDefaultAction();
+			oObjectPage.getAggregation("_anchorBar").fireSelect({
+				key: oSection2Anchor.getKey()
+			});
+
 			// simulate change in structure during scroll
 			oSection3.setVisible(false);
 
@@ -1064,7 +1064,7 @@ function(nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			oObjectPageLayout._onScroll({target: {scrollTop: iTargetPosition}});
 
 			// Assert
-			assert.strictEqual(oObjectPageLayout._oABHelper._getAnchorBar().getSelectedButton(), oScrollToSectionInfo.buttonId,
+			assert.strictEqual(oObjectPageLayout._oABHelper._getAnchorBar().getSelectedKey(), oScrollToSection.getId(),
 				"Scrolled to Section is selected correctly in the AnchorBar");
 
 			// Clean up

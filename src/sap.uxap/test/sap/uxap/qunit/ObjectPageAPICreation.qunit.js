@@ -399,7 +399,7 @@ function(
 	});
 
 	QUnit.test("test IconTabBar is empty", function (assert) {
-		assert.strictEqual(this.oObjectPage.getAggregation("_anchorBar").getContent().length, 0, 'The IconTabBar content aggregation is empty');
+		assert.strictEqual(this.oObjectPage._oABHelper._getAnchorBar().getItems().length, 0, 'The IconTabBar content aggregation is empty');
 	});
 
 	QUnit.test("test IconTabBar shoud not be created when 0 section is provided", function (assert) {
@@ -919,11 +919,7 @@ function(
 			oSpy.reset();
 
 			// Act
-			oObjectPage.onAnchorBarTabPress({getParameter:
-				function () {
-					return oSecondSection.getId();
-				}
-			});
+			oObjectPage.onAnchorBarTabPress(oSecondSection.getId());
 
 			// Assert
 			assert.ok(oSpy.notCalled, "scroll to selected section is prevented");
@@ -1128,13 +1124,14 @@ function(
 
 	function sectionIsSelected(oObjectPage, assert, oExpected) {
 
-		var sSelectedBtnId = oObjectPage.getAggregation('_anchorBar').getSelectedButton(),
-			oSelectedBtn = Element.getElementById(sSelectedBtnId),
+		var oAnchorBar = oObjectPage.getAggregation('_anchorBar'),
+			sSelectedSectionId = oAnchorBar.getSelectedKey(),
+			oSelectedFilter = oAnchorBar.getItems().find((i) => i.getKey() === sSelectedSectionId),
 			bExpectedSnapped = oExpected.bSnapped,
 			iExpectedScrollTop = oExpected.iScrollTop;
 
-		assert.ok(oSelectedBtn, "anchorBar has selected button");
-		assert.strictEqual(oSelectedBtn.getText(), oExpected.sSelectedTitle, "section is selected in anchorBar");
+		assert.ok(oSelectedFilter, "anchorBar has selected filter");
+		assert.strictEqual(oSelectedFilter.getText(), oExpected.sSelectedTitle, "section is selected in anchorBar");
 		assert.strictEqual(oObjectPage.getSelectedSection(), oExpected.oSelectedSection.getId(), "section is selected in objectPage");
 		assert.ok(oObjectPage.$().find("#" + oExpected.oSelectedSection.getId() + "*").length, "section is rendered");
 
@@ -1730,21 +1727,21 @@ function(
 		await nextUIUpdate();
 
 		assert.equal(oObjectPage.getShowAnchorBar(), true);
-		assert.equal(checkObjectExists(".sapUxAPAnchorBar"), true);
+		assert.equal(checkObjectExists(".sapUxAPObjectPageNavigation .sapMITH"), true);
 	});
 
 	QUnit.test("test AnchorBar showPopover setting through ObjectPageLayout", async function(assert) {
 		var oObjectPage = this.oSampleView.byId("objectPage13"),
 			oAnchorBar =  oObjectPage.getAggregation("_anchorBar"),
-			oSectionButton = oAnchorBar.getContent()[0];
+			oSectionButton = oAnchorBar.getItems()[0];
 
-		assert.ok(oSectionButton.$().hasClass("sapMMenuBtnSplit"), "Drop-down icon in AnchorBar button is shown initially");
+		assert.ok(oSectionButton.getDomRef().querySelector(".sapMITBFilterExpandIcon"), "Drop-down icon in AnchorBar button is shown initially");
 
 		oObjectPage.setShowAnchorBarPopover(false);
 		await nextUIUpdate();
-		oSectionButton = oAnchorBar.getContent()[0];
+		oSectionButton = oAnchorBar.getItems()[0];
 
-		assert.notOk(oSectionButton.$().hasClass("sapMMenuBtnSplit"), "Drop-down icon in AnchorBar button is not shown");
+		assert.notOk(oSectionButton.getDomRef().querySelector(".sapMITBFilterExpandIcon"), "Drop-down icon in AnchorBar button is not shown");
 	});
 
 	QUnit.test("test AnchorBar menu items IDs build correctly", async function(assert) {
@@ -1772,7 +1769,7 @@ function(
 				});
 
 				// Check MenuItems IDs if match stored IDs
-				oAnchorBar.getContent().forEach(function (oAggregation) {
+				oAnchorBar.getItems().forEach(function (oAggregation) {
 					if (oAggregation.getMenu) {
 						oMenuItems = oAggregation.getMenu().getItems();
 						oMenuItems.forEach(function (item) {
@@ -1808,9 +1805,11 @@ function(
 			oLastSection = oPage.getSections()[iSectionCount - 1],
 			fnOnDomReady = function () {
 				// Arrange
-				oLastSectionButton = oAnchorBar.getContent()[iSectionCount - 1];
+				oLastSectionButton = oAnchorBar.getItems()[iSectionCount - 1];
 				// Act
-				oLastSectionButton.firePress();
+				oAnchorBar.fireSelect({
+					key: oLastSectionButton.getKey()
+				});
 
 				// Assert
 				assert.strictEqual(document.activeElement, oLastSection.getDomRef(), "Section is focused synchronously");

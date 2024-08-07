@@ -10,14 +10,14 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/events/F6Navigation",
 	"sap/ui/core/mvc/XMLView",
-	"sap/uxap/AnchorBar",
+	"sap/uxap/ObjectPageLayoutABHelper",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/dom/jquery/Focusable" /* jQuery Plugin "firstFocusableDomRef" */
 ],
-function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes, QUtils, Device, F6Navigation, XMLView, AnchorBar, ObjectPageSubSection) {
+function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes, QUtils, Device, F6Navigation, XMLView, ObjectPageLayoutABHelper, ObjectPageSubSection) {
 	"use strict";
 
-	var sAnchorSelector = ".sapUxAPAnchorBarScrollContainer .sapUxAPAnchorBarButton";
+	var sAnchorSelector = ".sapUxAPObjectPageNavigation .sapMITBHead .sapMITBFilter";
 
 	function getAnchorBar() {
 		return Element.getElementById("UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar");
@@ -124,7 +124,6 @@ function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes
 				};
 				this.anchorBarView.placeAt("qunit-fixture");
 				await nextUIUpdate(this.clock);
-				this.clock.tick(500);
 				done();
 			}.bind(this));
 		},
@@ -138,15 +137,18 @@ function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes
 
 	QUnit.test("TAB/SHIFT+TAB", function (assert) {
 		var aAnchors = jQuery(sAnchorSelector),
+			oAnchorBar = Element.getElementById(this.oObjectPage.$().find(".sapMITH")[0].id),
 			oFirstAnchorButton = Element.getElementById(aAnchors[0].id),
 			oAnchor4Button = Element.getElementById(aAnchors[4].id),
 			aSections = this.oObjectPage.getSections(),
 			oAnchor4Section = aSections[4];
 
+		oAnchorBar.focus();
 		this.assertCorrectTabIndex(oFirstAnchorButton.$(), "If no previously selected anchor button, " +
 			"the first focusable anchor button should be the first one in the container", assert);
 
 		this.oObjectPage._setAsCurrentSection(oAnchor4Section.sId);
+		QUtils.triggerKeydown(aAnchors[4], KeyCodes.ENTER);
 
 		this.assertCorrectTabIndex(oAnchor4Button.$(), "Given a previously selected anchor button, " +
 			"than it should be the first one to be focused on", assert);
@@ -178,33 +180,34 @@ function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes
 	});
 
 	QUnit.test("DOWN", function (assert) {
-		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
-			oEvent = {
-				keyCode: KeyCodes.ARROW_DOWN,
-				preventDefault: function () {}
-			},
-			oSpy = this.spy(oEvent, "preventDefault");
+		var aAnchors = jQuery(sAnchorSelector),
+			iFirstAnchorId = aAnchors[0].id,
+			iSecondAnchorId = aAnchors[1].id;
 
-		oAnchorBar.onsapdown(oEvent);
-		assert.ok(oSpy.calledOnce, "preventDefault is called on DOWN key for the AnchorBar");
+		document.getElementById(iFirstAnchorId).focus();
+		this.clock.tick(500);
+		QUtils.triggerKeydown(iFirstAnchorId, KeyCodes.ARROW_DOWN);
+		QUtils.triggerKeyup(iFirstAnchorId, KeyCodes.ARROW_DOWN);
+		assert.equal(document.getElementById(iSecondAnchorId), document.activeElement, "Next button should be focused after arrow right");
 	});
 
 	QUnit.test("UP", function (assert) {
-		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
-			oEvent = {
-				keyCode: KeyCodes.ARROW_UP,
-				preventDefault: function () {}
-			},
-			oSpy = this.spy(oEvent, "preventDefault");
+		var aAnchors = jQuery(sAnchorSelector),
+			iSecondAnchorId = aAnchors[1].id,
+			iThirdAnchorId = aAnchors[2].id;
 
-		oAnchorBar.onsapdown(oEvent);
-		assert.ok(oSpy.calledOnce, "preventDefault is called on UP key for the AnchorBar");
+		document.getElementById(iThirdAnchorId).focus();
+		this.clock.tick(500);
+		QUtils.triggerKeydown(iThirdAnchorId, KeyCodes.ARROW_UP);
+		QUtils.triggerKeyup(iThirdAnchorId, KeyCodes.ARROW_UP);
+		assert.equal(document.getElementById(iSecondAnchorId), document.activeElement, "Previous button should be focused after arrow left");
 	});
 
 	QUnit.test("HOME/END", function (assert) {
 		var aAnchors = jQuery(sAnchorSelector),
+			oEndOverflow = jQuery(".sapMITH .sapMITHEndOverflow .sapMITBFilter"),
 			iFirstAnchorId = aAnchors[0].id,
-			iLastAnchorId = aAnchors[aAnchors.length - 1].id + "-internalSplitBtn";
+			iLastAnchorId = oEndOverflow[0].id;
 
 		document.getElementById(iFirstAnchorId).focus();
 		this.clock.tick(500);
@@ -218,7 +221,7 @@ function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes
 
 	QUnit.test("PAGE UP: Anchor level", function (assert) {
 		var oAncorBar = getAnchorBar(),
-			aAnchors = oAncorBar.getContent(),
+			aAnchors = oAncorBar.getItems(),
 			oFirstAnchor = aAnchors[0].getDomRef(),
 			oSecondAnchor = aAnchors[1].getDomRef(),
 			oSeventhAnchor = aAnchors[6].getDomRef();
@@ -242,8 +245,8 @@ function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes
 
 	QUnit.test("PAGE DOWN: Anchor level", function (assert) {
 		var oAncorBar = getAnchorBar(),
-			aAnchors = oAncorBar.getContent(),
-			oLastAnchor = aAnchors[aAnchors.length - 1].getAggregation("_button").getDomRef(),
+			aAnchors = oAncorBar.getItems(),
+			oLastAnchor = aAnchors[aAnchors.length - 1].getDomRef(),
 			oSecondLastAnchor = aAnchors[aAnchors.length - 2].getDomRef(),
 			oSeventhLastAnchor = aAnchors[aAnchors.length - 7].getDomRef();
 			oLastAnchor.focus = function () {
@@ -264,10 +267,10 @@ function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes
 		QUtils.triggerKeydown(oSeventhLastAnchor, KeyCodes.PAGE_DOWN);
 	});
 
-	QUnit.test("Focus of stickyAnchorBar menu buttons", function (assert) {
+	QUnit.test("Focus of stickyAnchorBar filter buttons", function (assert) {
 		var iSectionIndex = 7,
 			oAncorBar = getAnchorBar(),
-			oSectionAnchor = oAncorBar.getContent()[iSectionIndex];
+			oSectionAnchor = oAncorBar.getItems()[iSectionIndex];
 
 		oSectionAnchor.focus =  function fakeFn() {
 			// Check
@@ -276,10 +279,12 @@ function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes
 
 		// Setup
 		// assert init state
-		assert.equal(oSectionAnchor.isA("sap.m.MenuButton"), true, "anchor is a menu button");
+		assert.equal(oSectionAnchor.isA("sap.m.IconTabFilter"), true, "anchor is a menu button");
 
 		// Act
-		oSectionAnchor.getAggregation("_button").firePress();
+		oAncorBar.fireSelect({
+			key: oSectionAnchor.getKey()
+		});
 	});
 
 	QUnit.module("Section/Subsection", {
@@ -562,7 +567,7 @@ function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes
 		assert.expect(1);
 		var fDone = assert.async(),
 			sSectionId = this.oObjectPage.getSections()[1].sId,
-			sButtonId = "UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar-" + sSectionId + "-anchor",
+			sButtonId = getAnchorBar().getItems()[1].getId(),
 			sKeyPressed = "SPACE",
 			oStub;
 
@@ -590,7 +595,7 @@ function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes
 		assert.expect(1);
 		var fDone = assert.async(),
 			sSectionId = this.oObjectPage.getSections()[2].sId,
-			sButtonId = "UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar-" + sSectionId + "-anchor",
+			sButtonId = getAnchorBar().getItems()[2].getId(),
 			sKeyPressed = "ENTER",
 			oStub;
 
@@ -618,7 +623,7 @@ function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes
 		assert.expect(1);
 		var fDone = assert.async(),
 			sSectionId = this.oObjectPage.getSections()[5].sId,
-			sButtonId = "UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar-" + sSectionId + "-anchor",
+			sButtonId = getAnchorBar().getItems()[5].getId(),
 			oStub;
 
 		setTimeout(function () {
@@ -638,7 +643,9 @@ function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes
 
 			$anchorBarButton.trigger("focus");
 
-			oAnchorBarButtonControl.firePress();
+			getAnchorBar().fireSelect({
+				key: oAnchorBarButtonControl.getKey()
+			});
 		}.bind(this), 0);
 	});
 
@@ -697,7 +704,7 @@ function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes
 			}).then(async function(oView) {
 				this.anchorBarView = oView;
 				this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
-				this.oScrollSpy = this.spy(AnchorBar.prototype, "onButtonPress");
+				this.oScrollSpy = this.spy(this.oObjectPage, "scrollToSection");
 				this.oFocusSpy = this.spy(this.oObjectPage._oABHelper, "_moveFocusOnSection");
 				this.anchorBarView.placeAt("qunit-fixture");
 				await nextUIUpdate();
@@ -711,7 +718,8 @@ function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes
 	});
 
 	QUnit.test("Focus from toolbar to section", function (assert) {
-		var oSectionButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[1],
+		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
+			oSectionButton = oAnchorBar.getItems()[1],
 			oOrigAnimationMode = ControlBehavior.getAnimationMode();
 
 		assert.expect(3);
@@ -722,7 +730,9 @@ function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes
 		this.oFocusSpy.resetHistory();
 
 		// Act
-		oSectionButton.firePress();
+		oAnchorBar.fireSelect({
+			key: oSectionButton.getKey()
+		});
 
 		// Check
 		assert.strictEqual(this.oScrollSpy.called, true, "Scroll to section is called");
@@ -756,7 +766,7 @@ function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes
 	//This test is written to cover a timing problem in IE, when focus outruns scrolling to section
 	QUnit.test("Focus a section on selection with animation mode 'none'", function (assert) {
 		var oAnchorBar = getAnchorBar(),
-			oSectionButton = oAnchorBar.getContent()[2],
+			oSectionButton = oAnchorBar.getItems()[2],
 			oOrigAnimationMode = ControlBehavior.getAnimationMode(),
 			done = assert.async();
 
@@ -770,10 +780,10 @@ function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes
 		setTimeout(function() {
 
 			// Act
-			oSectionButton.firePress();
+			oAnchorBar.fireSelect({ key: oSectionButton.getKey() });
 			setTimeout(function() {
 
-				assert.strictEqual(this.oObjectPage.getSelectedSection(), oSectionButton.data("sectionId"), "Section is properly selected");
+				assert.strictEqual(this.oObjectPage.getSelectedSection(), oSectionButton.getKey(), "Section is properly selected");
 
 				// restore state
 				ControlBehavior.setAnimationMode(oOrigAnimationMode);
