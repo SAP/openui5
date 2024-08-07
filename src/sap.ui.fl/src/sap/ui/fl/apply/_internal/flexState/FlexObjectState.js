@@ -272,7 +272,6 @@ sap.ui.define([
 
 	/**
 	 * Collects modified changes from the different states within the <code>sap.ui.fl</code> library.
-	 * TODO: move to write package once Versions and CompVariantState are refactored
 	 * TODO: remove special CompVariant handling
 	 *
 	 * @param {object} sReference - Flex Reference

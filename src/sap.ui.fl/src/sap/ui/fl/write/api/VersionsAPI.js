@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
@@ -10,8 +11,10 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Utils"
 ], function(
+	FlexObjectState,
 	FlexState,
 	ManifestUtils,
 	FlexInfoSession,
@@ -19,18 +22,24 @@ sap.ui.define([
 	Versions,
 	ContextBasedAdaptationsAPI,
 	FeaturesAPI,
+	ChangePersistenceFactory,
 	Utils
 ) {
 	"use strict";
 
-	function getFlexReferenceForControl(control) {
-		var sReference = ManifestUtils.getFlexReferenceForControl(control);
+	function getFlexReferenceForControl(oControl) {
+		const sReference = ManifestUtils.getFlexReferenceForControl(oControl);
 
 		if (!sReference) {
 			throw Error("The application ID could not be determined");
 		}
 
 		return sReference;
+	}
+
+	function doDirtyChangesExist(sReference) {
+		const aDirtyChanges = FlexObjectState.getDirtyFlexObjects(sReference);
+		return aDirtyChanges.length > 0;
 	}
 
 	function getVersionsModel(mPropertyBag) {
@@ -43,10 +52,15 @@ sap.ui.define([
 
 		var sReference = getFlexReferenceForControl(mPropertyBag.control);
 
-		return Versions.getVersionsModel({
+		const oVersionModel = Versions.getVersionsModel({
 			reference: sReference,
 			layer: mPropertyBag.layer
 		});
+
+		if (doDirtyChangesExist(sReference)) {
+			oVersionModel.updateDraftVersion();
+		}
+		return oVersionModel;
 	}
 
 	function incorporateAdaptationIdInSwitch(mPropertyBag) {
@@ -246,6 +260,9 @@ sap.ui.define([
 		}
 
 		const sReference = getFlexReferenceForControl(mPropertyBag.control);
+		if (doDirtyChangesExist(sReference)) {
+			return Promise.reject("Unsaved changes exist");
+		}
 
 		const oFlexInfo = FlexInfoSession.getByReference(sReference);
 		delete oFlexInfo.version;
@@ -272,6 +289,13 @@ sap.ui.define([
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
 	VersionsAPI.discardDraft = function(mPropertyBag) {
+		function removeDirtyChanges(mPropertyBag) {
+			const oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference);
+			const aDirtyChanges = FlexObjectState.getDirtyFlexObjects(mPropertyBag.reference);
+			oChangePersistence.deleteChanges(aDirtyChanges, true);
+			return aDirtyChanges.length > 0;
+		}
+
 		if (!mPropertyBag.control) {
 			return Promise.reject("No control was provided");
 		}
@@ -286,6 +310,11 @@ sap.ui.define([
 			layer: mPropertyBag.layer
 		})
 		.then(function(oDiscardInfo) {
+			// in case of a existing draft known by the backend;
+			// we remove dirty changes only after successful DELETE request
+			const bDirtyChangesRemoved = removeDirtyChanges(mPropertyBag);
+			oDiscardInfo.dirtyChangesDiscarded = bDirtyChangesRemoved;
+
 			if (oDiscardInfo.backendChangesDiscarded) {
 				const bHasAdaptationsModel = ContextBasedAdaptationsAPI.hasAdaptationsModel({
 					layer: mPropertyBag.layer,
