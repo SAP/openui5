@@ -56,7 +56,9 @@ sap.ui.define([
 				"appdescr_card",
 				"appdescr_card_designtime",
 				"appdescr_fiori_setAbstract",
-				"appdescr_fe_changePageConfiguration"
+				"appdescr_fe_changePageConfiguration",
+				"appdescr_ui_generic_app_addNewObjectPage",
+				"appdescr_ui_generic_app_changePageConfiguration"
 			];
 		},
 		getCondensableChangeTypes() {
