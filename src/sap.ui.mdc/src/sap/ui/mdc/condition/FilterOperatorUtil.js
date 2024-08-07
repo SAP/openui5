@@ -80,6 +80,7 @@ sap.ui.define([
 					tokenTest: "^=(.+)?$", // To check if operator used, it needs to start with "="
 					tokenParse: "^=?(.+)?$", // if "=" not entered the complete text should be parsed
 					tokenFormat: "{1} ({0})", // all placeholder should use the {x} format - the text could be store in the resourcebundle file.
+					longText: _getText(OperatorName.EQ, true),
 					valueTypes: [OperatorValueType.Self, null],
 					displayFormats: {
 						DescriptionValue: "{1} ({0})",
@@ -258,6 +259,7 @@ sap.ui.define([
 					tokenTest: "^([^!].*)\\.\\.\\.(.+)$", // TODO: does this work?? At least also matches crap like ".....". I guess validation of value types needs to get rid of those.
 					tokenParse: "^(.*)\\.\\.\\.(.*)$|^(.+)$",
 					tokenFormat: "{0}...{1}",
+					longText: _getText(OperatorName.BT, true),
 					valueTypes: [OperatorValueType.Self, OperatorValueType.Self],
 					validate: function(aValues, oType) {
 						// in Between 2 different Values must be defined
@@ -289,6 +291,7 @@ sap.ui.define([
 					tokenTest: ["^!\\((.+)\\.\\.\\.(.+)\\)$", "^!(.+)\\.\\.\\.(.+)$"].join("|"),
 					tokenParse: ["^!\\((.*)\\.\\.\\.(.*)\\)$", "^!(.*)\\.\\.\\.(.*)$", "^(.+)$"].join("|"),
 					tokenFormat: "!({0}...{1})",
+					longText: _getText(OperatorName.NOTBT, true),
 					valueTypes: [OperatorValueType.Self, OperatorValueType.Self],
 					exclude: true,
 					validate: function(aValues, oType) {
@@ -305,6 +308,8 @@ sap.ui.define([
 					tokenTest: "^<([^=].*)?$", // To check if operator used, it needs to start with "<"
 					tokenParse: "^<?(.+)?$", // if "<" not entered the complete text should be parsed
 					tokenFormat: "<{0}",
+					longText: _getText(OperatorName.LT, true),
+					longTextForTypes: _getLongTextForTypes(OperatorName.LT, [BaseType.Date]),
 					valueTypes: [OperatorValueType.Self]
 				}),
 				/*
@@ -317,6 +322,8 @@ sap.ui.define([
 					tokenTest: ["^!\\(<([^=].*)?\\)$", "^!<([^=].*)?$"].join("|"),
 					tokenParse: ["^!\\(<?(.+)?\\)$", "^(!<)?(.+)?$"].join("|"),
 					tokenFormat: "!(<{0})",
+					longText: _getText(OperatorName.NOTLT, true),
+					longTextForTypes: _getLongTextForTypes(OperatorName.NOTLT, [BaseType.Date]),
 					valueTypes: [OperatorValueType.Self],
 					exclude: true
 				}),
@@ -330,6 +337,8 @@ sap.ui.define([
 					tokenTest: "^>([^=].*)?$", // To check if operator used, it needs to start with ">"
 					tokenParse: "^>?(.+)?$", // if ">" not entered the complete text should be parsed
 					tokenFormat: ">{0}",
+					longText: _getText(OperatorName.GT, true),
+					longTextForTypes: _getLongTextForTypes(OperatorName.GT, [BaseType.Date]),
 					valueTypes: [OperatorValueType.Self]
 				}),
 				/*
@@ -342,6 +351,8 @@ sap.ui.define([
 					tokenTest: ["^!\\(>([^=].*)?\\)$","^!>([^=].*)?$"].join("|"),
 					tokenParse: ["^!\\(>(.+)?\\)$", "^(!>)?(.+)?$"].join("|") ,
 					tokenFormat: "!(>{0})",
+					longText: _getText(OperatorName.NOTGT, true),
+					longTextForTypes: _getLongTextForTypes(OperatorName.NOTGT, [BaseType.Date]),
 					valueTypes: [OperatorValueType.Self],
 					exclude: true
 				}),
@@ -356,6 +367,8 @@ sap.ui.define([
 					tokenTest: "^<=(.+)?$",
 					tokenParse: "^(<=)?(.+)?$",
 					tokenFormat: "<={0}",
+					longText: _getText(OperatorName.LE, true),
+					longTextForTypes: _getLongTextForTypes(OperatorName.LE, [BaseType.Date]),
 					valueTypes: [OperatorValueType.Self]
 				}),
 				/*
@@ -368,6 +381,8 @@ sap.ui.define([
 					tokenTest: ["^!\\(<=(.+)?\\)$", "^!<=(.+)?$"].join("|"),
 					tokenParse: ["^!\\(<=(.+)?\\)$", "^(!<=)?(.+)?$"].join("|"),
 					tokenFormat: "!(<={0})",
+					longText: _getText(OperatorName.NOTLE, true),
+					longTextForTypes: _getLongTextForTypes(OperatorName.NOTLE, [BaseType.Date]),
 					valueTypes: [OperatorValueType.Self],
 					exclude: true
 				}),
@@ -382,6 +397,8 @@ sap.ui.define([
 					tokenTest: "^>=(.+)?$",
 					tokenParse: "^(>=)?(.+)?$",
 					tokenFormat: ">={0}",
+					longText: _getText(OperatorName.GE, true),
+					longTextForTypes: _getLongTextForTypes(OperatorName.GE, [BaseType.Date]),
 					valueTypes: [OperatorValueType.Self]
 				}),
 				/*
@@ -394,6 +411,8 @@ sap.ui.define([
 					tokenTest: ["^!\\(>=(.+)?\\)$", "^!>=(.+)?$"].join("|"),
 					tokenParse: ["^!\\(>=(.+)?\\)$", "^(!>=)?(.+)?$"].join("|"),
 					tokenFormat: "!(>={0})",
+					longText: _getText(OperatorName.NOTGE, true),
+					longTextForTypes: _getLongTextForTypes(OperatorName.NOTGE, [BaseType.Date]),
 					valueTypes: [OperatorValueType.Self],
 					exclude: true
 				}),
@@ -407,6 +426,7 @@ sap.ui.define([
 					tokenTest: "^([^!\\*]+.*)\\*$",
 					tokenParse: "^(.+)\\*$|^(.*[^\\*])$",
 					tokenFormat: "{0}*",
+					longText: _getText(OperatorName.StartsWith, true),
 					valueTypes: [OperatorValueType.SelfNoParse]
 				}),
 				/*
@@ -419,6 +439,7 @@ sap.ui.define([
 					tokenTest: ["^!\\(([^\\*].*)\\*\\)$", "^!([^\\*].*)\\*$"].join("|"),
 					tokenParse: ["^!\\((.+)\\*\\)$", "^!?(.+)\\*$", "^(.*[^\\*])$"].join("|"),
 					tokenFormat: "!({0}*)",
+					longText: _getText(OperatorName.NotStartsWith, true),
 					valueTypes: [OperatorValueType.SelfNoParse],
 					exclude: true
 				}),
@@ -432,6 +453,7 @@ sap.ui.define([
 					tokenTest: "^\\*(.*[^\\*])$",
 					tokenParse: "^\\*?(.+)?$",
 					tokenFormat: "*{0}",
+					longText: _getText(OperatorName.EndsWith, true),
 					valueTypes: [OperatorValueType.SelfNoParse]
 				}),
 				/*
@@ -444,6 +466,7 @@ sap.ui.define([
 					tokenTest: ["^!\\(\\*(.*[^\\*])\\)$", "^!\\*(.*[^\\*])$"].join("|"),
 					tokenParse: ["^!\\(\\*(.+)?\\)$", "^(!\\*)?(.+)?$"].join("|"),
 					tokenFormat: "!(*{0})",
+					longText: _getText(OperatorName.NotEndsWith, true),
 					valueTypes: [OperatorValueType.SelfNoParse],
 					exclude: true
 				}),
@@ -457,6 +480,7 @@ sap.ui.define([
 					tokenTest: "^\\*(.*)\\*$",
 					tokenParse: "^\\*(.+)?\\*$|^([^\\*]?.*[^\\*]?)$",
 					tokenFormat: "*{0}*",
+					longText: _getText(OperatorName.Contains, true),
 					valueTypes: [OperatorValueType.SelfNoParse]
 				}),
 				/*
@@ -469,6 +493,7 @@ sap.ui.define([
 					tokenTest: ["^!\\(\\*(.*)\\*\\)$", "^!\\*(.*)\\*$"].join("|"),
 					tokenParse: ["^!\\(\\*(.+)?\\*\\)$", "^!\\*(.+)?\\*$", "^!?(.+)$"].join("|"),
 					tokenFormat: "!(*{0}*)",
+					longText: _getText(OperatorName.NotContains, true),
 					valueTypes: [OperatorValueType.SelfNoParse],
 					exclude: true
 				}),
@@ -482,6 +507,7 @@ sap.ui.define([
 					tokenTest: ["^!\\(=(.+)?\\)$", "^!=(.+)?$"].join("|"),
 					tokenParse: ["^!\\(=(.+)?\\)$", "^(!=)?(.+)?$"].join("|"),
 					tokenFormat: "!(={0})",
+					longText: _getText(OperatorName.NE, true),
 					valueTypes: [OperatorValueType.Self],
 					exclude: true
 				}),
@@ -493,6 +519,8 @@ sap.ui.define([
 					filterOperator: ModelOperator.EQ,
 					tokenParse: "^<#tokenText#>$",
 					tokenFormat: "<#tokenText#>",
+					longText: _getText(OperatorName.Empty, true),
+					tokenText: _getText(OperatorName.Empty, false),
 					valueTypes: [],
 					getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
 						let isNullable = false;
@@ -523,6 +551,8 @@ sap.ui.define([
 					filterOperator: ModelOperator.NE,
 					tokenParse: ["^!\\(<#tokenText#>\\)$", "^!<#tokenText#>$"].join("|"),
 					tokenFormat: "!(<#tokenText#>)",
+					longText: _getText(OperatorName.NotEmpty, true),
+					tokenText: _getText(OperatorName.NotEmpty, false),
 					valueTypes: [],
 					exclude: true,
 					getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
@@ -551,6 +581,7 @@ sap.ui.define([
 				 */
 				yesterday: new RangeOperator({
 					name: OperatorName.YESTERDAY,
+					longText: _getText(OperatorName.YESTERDAY, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.yesterday();
@@ -564,6 +595,7 @@ sap.ui.define([
 				 */
 				today: new RangeOperator({
 					name: OperatorName.TODAY,
+					longText: _getText(OperatorName.TODAY, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.today();
@@ -577,6 +609,7 @@ sap.ui.define([
 				 */
 				tomorrow: new RangeOperator({
 					name: OperatorName.TOMORROW,
+					longText: _getText(OperatorName.TOMORROW, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.tomorrow();
@@ -590,6 +623,7 @@ sap.ui.define([
 				 */
 				lastDays: new RangeOperator({
 					name: OperatorName.LASTDAYS,
+					tokenText: _getText(OperatorName.LASTDAYS, false),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 					paramTypes: ["(\\d+)"],
 					additionalInfo: "",
@@ -602,6 +636,7 @@ sap.ui.define([
 				 */
 				firstDayWeek: new RangeOperator({
 					name: OperatorName.FIRSTDAYWEEK,
+					longText: _getText(OperatorName.FIRSTDAYWEEK, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.firstDayOfWeek();
@@ -615,6 +650,7 @@ sap.ui.define([
 				 */
 				lastDayWeek: new RangeOperator({
 					name: OperatorName.LASTDAYWEEK,
+					longText: _getText(OperatorName.LASTDAYWEEK, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.lastDayOfWeek();
@@ -628,6 +664,7 @@ sap.ui.define([
 				 */
 				firstDayMonth: new RangeOperator({
 					name: OperatorName.FIRSTDAYMONTH,
+					longText: _getText(OperatorName.FIRSTDAYMONTH, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.firstDayOfMonth();
@@ -641,6 +678,7 @@ sap.ui.define([
 				 */
 				lastDayMonth: new RangeOperator({
 					name: OperatorName.LASTDAYMONTH,
+					longText: _getText(OperatorName.LASTDAYMONTH, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.lastDayOfMonth();
@@ -654,6 +692,7 @@ sap.ui.define([
 				 */
 				firstDayQuarter: new RangeOperator({
 					name: OperatorName.FIRSTDAYQUARTER,
+					longText: _getText(OperatorName.FIRSTDAYQUARTER, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.firstDayOfQuarter();
@@ -667,6 +706,7 @@ sap.ui.define([
 				 */
 				lastDayQuarter: new RangeOperator({
 					name: OperatorName.LASTDAYQUARTER,
+					longText: _getText(OperatorName.LASTDAYQUARTER, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.lastDayOfQuarter();
@@ -680,6 +720,7 @@ sap.ui.define([
 				 */
 				firstDayYear: new RangeOperator({
 					name: OperatorName.FIRSTDAYYEAR,
+					longText: _getText(OperatorName.FIRSTDAYYEAR, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.firstDayOfYear();
@@ -693,6 +734,7 @@ sap.ui.define([
 				 */
 				lastDayYear: new RangeOperator({
 					name: OperatorName.LASTDAYYEAR,
+					longText: _getText(OperatorName.LASTDAYYEAR, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.lastDayOfYear();
@@ -706,6 +748,7 @@ sap.ui.define([
 				 */
 				todayFromTo: new RangeOperator({
 					name: OperatorName.TODAYFROMTO,
+					tokenText: _getText(OperatorName.TODAYFROMTO, false),
 					valueTypes: [
 						{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null } }, { name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null } }
 					],
@@ -728,6 +771,7 @@ sap.ui.define([
 				 */
 				nextDays: new RangeOperator({
 					name: OperatorName.NEXTDAYS,
+					tokenText: _getText(OperatorName.NEXTDAYS, false),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 					paramTypes: ["(\\d+)"],
 					additionalInfo: "",
@@ -740,6 +784,7 @@ sap.ui.define([
 				 */
 				lastWeek: new RangeOperator({
 					name: OperatorName.LASTWEEK,
+					longText: _getText(OperatorName.LASTWEEK, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.lastWeek();
@@ -750,6 +795,7 @@ sap.ui.define([
 				 */
 				thisWeek: new RangeOperator({
 					name: OperatorName.THISWEEK,
+					longText: _getText(OperatorName.THISWEEK, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.currentWeek();
@@ -760,6 +806,7 @@ sap.ui.define([
 				 */
 				nextWeek: new RangeOperator({
 					name: OperatorName.NEXTWEEK,
+					longText: _getText(OperatorName.NEXTWEEK, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.nextWeek();
@@ -770,6 +817,7 @@ sap.ui.define([
 				 */
 				lastWeeks: new RangeOperator({
 					name: OperatorName.LASTWEEKS,
+					tokenText: _getText(OperatorName.LASTWEEKS, false),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 					paramTypes: ["(\\d+)"],
 					additionalInfo: "",
@@ -782,6 +830,7 @@ sap.ui.define([
 				 */
 				nextWeeks: new RangeOperator({
 					name: OperatorName.NEXTWEEKS,
+					tokenText: _getText(OperatorName.NEXTWEEKS, false),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 					paramTypes: ["(\\d+)"],
 					additionalInfo: "",
@@ -794,6 +843,7 @@ sap.ui.define([
 				 */
 				lastMonth: new RangeOperator({
 					name: OperatorName.LASTMONTH,
+					longText: _getText(OperatorName.LASTMONTH, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.lastMonth();
@@ -804,6 +854,7 @@ sap.ui.define([
 				 */
 				thisMonth: new RangeOperator({
 					name: OperatorName.THISMONTH,
+					longText: _getText(OperatorName.THISMONTH, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.currentMonth();
@@ -814,6 +865,7 @@ sap.ui.define([
 				 */
 				nextMonth: new RangeOperator({
 					name: OperatorName.NEXTMONTH,
+					longText: _getText(OperatorName.NEXTMONTH, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.nextMonth();
@@ -824,6 +876,7 @@ sap.ui.define([
 				 */
 				lastMonths: new RangeOperator({
 					name: OperatorName.LASTMONTHS,
+					tokenText: _getText(OperatorName.LASTMONTHS, false),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 					paramTypes: ["(\\d+)"],
 					additionalInfo: "",
@@ -836,6 +889,7 @@ sap.ui.define([
 				 */
 				nextMonths: new RangeOperator({
 					name: OperatorName.NEXTMONTHS,
+					tokenText: _getText(OperatorName.NEXTMONTHS, false),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 					paramTypes: ["(\\d+)"],
 					additionalInfo: "",
@@ -848,6 +902,7 @@ sap.ui.define([
 				 */
 				lastQuarter: new RangeOperator({
 					name: OperatorName.LASTQUARTER,
+					longText: _getText(OperatorName.LASTQUARTER, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.lastQuarter();
@@ -858,6 +913,7 @@ sap.ui.define([
 				 */
 				thisQuarter: new RangeOperator({
 					name: OperatorName.THISQUARTER,
+					longText: _getText(OperatorName.THISQUARTER, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.currentQuarter();
@@ -868,6 +924,7 @@ sap.ui.define([
 				 */
 				nextQuarter: new RangeOperator({
 					name: OperatorName.NEXTQUARTER,
+					longText: _getText(OperatorName.NEXTQUARTER, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.nextQuarter();
@@ -878,6 +935,7 @@ sap.ui.define([
 				 */
 				lastQuarters: new RangeOperator({
 					name: OperatorName.LASTQUARTERS,
+					tokenText: _getText(OperatorName.LASTQUARTERS, false),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 					paramTypes: ["(\\d+)"],
 					additionalInfo: "",
@@ -890,6 +948,7 @@ sap.ui.define([
 				 */
 				nextQuarters: new RangeOperator({
 					name: OperatorName.NEXTQUARTERS,
+					tokenText: _getText(OperatorName.NEXTQUARTERS, false),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 					paramTypes: ["(\\d+)"],
 					additionalInfo: "",
@@ -902,6 +961,7 @@ sap.ui.define([
 				 */
 				quarter1: new RangeOperator({
 					name: OperatorName.QUARTER1,
+					longText: _getText(OperatorName.QUARTER1, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.quarter(1);
@@ -912,6 +972,7 @@ sap.ui.define([
 				 */
 				quarter2: new RangeOperator({
 					name: OperatorName.QUARTER2,
+					longText: _getText(OperatorName.QUARTER2, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.quarter(2);
@@ -922,6 +983,7 @@ sap.ui.define([
 				 */
 				quarter3: new RangeOperator({
 					name: OperatorName.QUARTER3,
+					longText: _getText(OperatorName.QUARTER3, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.quarter(3);
@@ -932,6 +994,7 @@ sap.ui.define([
 				 */
 				quarter4: new RangeOperator({
 					name: OperatorName.QUARTER4,
+					longText: _getText(OperatorName.QUARTER4, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.quarter(4);
@@ -942,6 +1005,7 @@ sap.ui.define([
 				 */
 				lastYear: new RangeOperator({
 					name: OperatorName.LASTYEAR,
+					longText: _getText(OperatorName.LASTYEAR, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.lastYear();
@@ -952,6 +1016,7 @@ sap.ui.define([
 				 */
 				thisYear: new RangeOperator({
 					name: OperatorName.THISYEAR,
+					longText: _getText(OperatorName.THISYEAR, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.currentYear();
@@ -962,6 +1027,7 @@ sap.ui.define([
 				 */
 				nextYear: new RangeOperator({
 					name: OperatorName.NEXTYEAR,
+					longText: _getText(OperatorName.NEXTYEAR, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.nextYear();
@@ -972,6 +1038,7 @@ sap.ui.define([
 				 */
 				lastYears: new RangeOperator({
 					name: OperatorName.LASTYEARS,
+					tokenText: _getText(OperatorName.LASTYEARS, false),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 					paramTypes: ["(\\d+)"],
 					additionalInfo: "",
@@ -984,6 +1051,7 @@ sap.ui.define([
 				 */
 				nextYears: new RangeOperator({
 					name: OperatorName.NEXTYEARS,
+					tokenText: _getText(OperatorName.NEXTYEARS, false),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 					paramTypes: ["(\\d+)"],
 					additionalInfo: "",
@@ -996,6 +1064,8 @@ sap.ui.define([
 				 */
 				specificMonth: new RangeOperator({
 					name: OperatorName.SPECIFICMONTH,
+					longText: _getText(OperatorName.SPECIFICMONTH, true),
+					tokenText: _getText(OperatorName.SPECIFICMONTH, false),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", constraints: { minimum: 0, maximum: 11 } }],
 					paramTypes: ["(.+)"],
 					additionalInfo: "",
@@ -1056,6 +1126,8 @@ sap.ui.define([
 				 */
 				specificMonthInYear: new RangeOperator({
 					name: OperatorName.SPECIFICMONTHINYEAR,
+					longText: _getText(OperatorName.SPECIFICMONTHINYEAR, true),
+					tokenText: _getText(OperatorName.SPECIFICMONTHINYEAR, false),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", constraints: { minimum: 0, maximum: 11 } }, { name: "sap.ui.model.type.Integer", constraints: { minimum: 1, maximum: 9999 } }],
 					paramTypes: ["(.+)", "(.+)"],
 					additionalInfo: "",
@@ -1136,6 +1208,7 @@ sap.ui.define([
 				 */
 				yearToDate: new RangeOperator({
 					name: OperatorName.YEARTODATE,
+					longText: _getText(OperatorName.YEARTODATE, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.yearToDate();
@@ -1146,6 +1219,7 @@ sap.ui.define([
 				 */
 				dateToYear: new RangeOperator({
 					name: OperatorName.DATETOYEAR,
+					longText: _getText(OperatorName.DATETOYEAR, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.dateToYear();
@@ -1156,6 +1230,7 @@ sap.ui.define([
 				 */
 				lastMinutes: new RangeOperator({
 					name: OperatorName.LASTMINUTES,
+					tokenText: _getText(OperatorName.LASTMINUTES, false),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 					paramTypes: ["(\\d+)"],
 					additionalInfo: "",
@@ -1168,6 +1243,7 @@ sap.ui.define([
 				 */
 				nextMinutes: new RangeOperator({
 					name: OperatorName.NEXTMINUTES,
+					tokenText: _getText(OperatorName.NEXTMINUTES, false),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 					paramTypes: ["(\\d+)"],
 					additionalInfo: "",
@@ -1180,6 +1256,7 @@ sap.ui.define([
 				 */
 				lastHours: new RangeOperator({
 					name: OperatorName.LASTHOURS,
+					tokenText: _getText(OperatorName.LASTHOURS, false),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 					paramTypes: ["(\\d+)"],
 					additionalInfo: "",
@@ -1192,6 +1269,7 @@ sap.ui.define([
 				 */
 				nextHours: new RangeOperator({
 					name: OperatorName.NEXTHOURS,
+					tokenText: _getText(OperatorName.NEXTHOURS, false),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 					paramTypes: ["(\\d+)"],
 					additionalInfo: "",
@@ -2140,6 +2218,25 @@ sap.ui.define([
 			}
 
 			return sId;
+
+		}
+
+		function _getText(sName, bLongText) {
+
+			const sTextKey = "operators." + sName + (bLongText ? ".longText" : ".tokenText");
+			return oMessageBundle.getText(sTextKey, undefined, true); // use bIgnoreKeyFallback=true to avoid assert messages in the console
+
+		}
+
+		function _getLongTextForTypes(sName, aBaseTypes) {
+
+			const sTextKey = "operators." + sName + ".longText";
+			const oTexts = {};
+
+			for (let i = 0; i < aBaseTypes.length; i++) {
+				oTexts[aBaseTypes[i]] = oMessageBundle.getText(sTextKey + "." + aBaseTypes[i].toLowerCase(), undefined, true);
+			}
+			return oTexts;
 
 		}
 

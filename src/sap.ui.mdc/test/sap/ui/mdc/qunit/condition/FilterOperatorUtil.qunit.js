@@ -239,9 +239,7 @@ sap.ui.define([
 			const oOperator = aOperators[i];
 			const sOperator = oOperator.name;
 			assert.ok(true, "--------------------   Checking Operator " + sOperator + "   -----------------------------------------");
-			assert.strictEqual(oOperator.shortText !== "", true, "Operator " + sOperator + " has a valid shortText " + oOperator.shortText);
 			assert.strictEqual(oOperator.longText !== "", true, "Operator " + sOperator + " has a valid longText " + oOperator.longText);
-			assert.strictEqual(oOperator.tokenText !== "", true, "Operator " + sOperator + " has a valid tokenText " + oOperator.tokenText);
 			assert.strictEqual(oOperator.tokenParse !== null, true, "Operator " + sOperator + " has a valid tokenParse " + oOperator.tokenParse);
 			assert.strictEqual(oOperator.tokenFormat !== null, true, "Operator " + sOperator + " has a valid tokenFormat " + oOperator.tokenFormat);
 			assert.strictEqual(oOperator.tokenParseRegExp !== null && oOperator.tokenParseRegExp instanceof RegExp, true, "Operator " + sOperator + " has a valid tokenParseRegExp " + oOperator.tokenParseRegExp);
@@ -1563,7 +1561,8 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				tokenText: mdcMessageBundle.getText("operators.TOMORROW.longText")
+				longText: mdcMessageBundle.getText("operators.TOMORROW.longText"),
+				tokenText: ""
 			}],
 			[OperatorName.LASTDAYS]: [{
 				formatArgs: [Condition.createCondition(OperatorName.LASTDAYS, [4])],
