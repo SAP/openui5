@@ -264,12 +264,10 @@ sap.ui.define([
 			return aColumnExportSettings;
 		}
 
-		const aPaths = [];
 		let oColumnExportSettings;
 
 		if (!oProperty.isComplex()) {
 			oColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oExportSettings);
-			oColumnExportSettings.property = oProperty.path;
 			aColumnExportSettings.push(oColumnExportSettings);
 
 			return aColumnExportSettings;
@@ -278,10 +276,6 @@ sap.ui.define([
 		const aPropertiesFromComplexProperty = oProperty.getSimpleProperties();
 		if (Object.keys(oExportSettings).length) {
 			oColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oExportSettings);
-			aPropertiesFromComplexProperty.forEach((oProperty) => {
-				aPaths.push(oProperty.path);
-			});
-			oColumnExportSettings.property = aPaths;
 			aColumnExportSettings.push(oColumnExportSettings);
 		} else {
 			// when there are no exportSettings given for a ComplexProperty
@@ -292,7 +286,6 @@ sap.ui.define([
 
 				const oCurrentColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oProperty.exportSettings);
 
-				oCurrentColumnExportSettings.property = oProperty.path;
 				if (iIndex > 0) {
 					oCurrentColumnExportSettings.columnId = oColumn.getId() + "-additionalProperty" + iIndex;
 				}
@@ -327,12 +320,19 @@ sap.ui.define([
 	 * @private
 	 */
 	function getColumnExportSettingsObject(oColumn, oProperty, oExportSettings) {
+		const aPaths = [];
+		if (oProperty.isComplex()) {
+			oProperty.getSimpleProperties().forEach((oProperty) => {
+				aPaths.push(oProperty.path);
+			});
+		}
 		return Object.assign({
 			columnId: oColumn.getId(),
 			label: oProperty.label,
 			width: getColumnWidthNumber(oColumn.getWidth()),
 			textAlign: oColumn.getHAlign(),
-			type: "String"
+			type: "String",
+			property: aPaths.length ? aPaths : oProperty.path
 		}, oExportSettings);
 	}
 

@@ -306,6 +306,20 @@ sap.ui.define([
 				key: "complexPropD",
 				label: "Complex Property D",
 				propertyInfos: ["propA", "propB", "propC"]
+			}, {
+				key: "complexPropExport",
+				label: "Complex Property Export",
+				propertyInfos: ["noDataColumn1", "noDataColumn2"],
+				exportSettings: {
+					property: "propAPath"
+				}
+			}, {
+				key: "complexPropExportA",
+				label: "Complex Property Export A",
+				propertyInfos: ["noDataColumn1", "noDataColumn2"],
+				exportSettings: {
+					property: "propAPath"
+				}
 			}]);
 			this.aProperties = this.oPropertyHelper.getProperties();
 
@@ -375,6 +389,18 @@ sap.ui.define([
 				header: "Complex Property D",
 				propertyKey: "complexPropD"
 			});
+
+			this.oColumnComplexPropExport = new Column({
+				id: "columnComplexPropExport",
+				header: "Complex Property Export",
+				propertyKey: "complexPropExport"
+			});
+
+			this.oColumnComplexPropExportA = new Column({
+				id: "columnComplexPropExportA",
+				header: "Complex Property Export A",
+				propertyKey: "complexPropExportA"
+			});
 		},
 		afterEach: function() {
 			PropertyHelper.prototype.getParent.restore();
@@ -391,6 +417,8 @@ sap.ui.define([
 			this.oInvalidColumn.destroy();
 			this.oNoDataColumn1.destroy();
 			this.oNoDataColumn2.destroy();
+			this.oColumnComplexPropExport.destroy();
+			this.oColumnComplexPropExportA.destroy();
 		}
 	});
 
@@ -487,6 +515,24 @@ sap.ui.define([
 			width: "",
 			property: "propBPath"
 		}], "Complex property without exportSettings referencing property with exportSettings=null");
+
+		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oColumnComplexPropExport), [{
+			columnId: "columnComplexPropExport",
+			label: "Complex Property Export",
+			property: "propAPath",
+			textAlign: "Begin",
+			type: "String",
+			width: ""
+		}], "Expected column export settings returned");
+
+		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oColumnComplexPropExportA), [{
+			columnId: "columnComplexPropExportA",
+			label: "Complex Property Export A",
+			property: "propAPath",
+			textAlign: "Begin",
+			type: "String",
+			width: ""
+		}], "Expected column export settings returned");
 	});
 
 	QUnit.test("getColumnClipboardSettings", function(assert) {
