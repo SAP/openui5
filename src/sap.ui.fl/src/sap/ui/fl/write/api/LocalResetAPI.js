@@ -5,22 +5,22 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/base/util/restricted/_union"
 ], function(
 	States,
 	UIChangesState,
+	FlexObjectState,
 	ManifestUtils,
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
 	JsControlTreeModifier,
 	Utils,
-	ChangePersistenceFactory,
 	union
 ) {
 	"use strict";
@@ -109,8 +109,7 @@ sap.ui.define([
 				oChange.restorePreviousState();
 				var oControl = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
 				if (oChange.getState() === States.LifecycleState.PERSISTED) {
-					var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
-					var aDirtyChanges = oChangePersistence.getDirtyChanges();
+					const aDirtyChanges = FlexObjectState.getDirtyFlexObjects(oAppComponent.name);
 					var iIndex = aDirtyChanges.indexOf(oChange);
 					if (iIndex >= 0) {
 						aDirtyChanges.splice(iIndex, 1);

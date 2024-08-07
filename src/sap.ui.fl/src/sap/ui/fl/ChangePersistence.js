@@ -616,10 +616,6 @@ sap.ui.define([
 		return aChanges;
 	}
 
-	ChangePersistence.prototype.getDirtyChanges = function() {
-		return ApplyFlexObjectState.getDirtyFlexObjects(this._mComponent.name);
-	};
-
 	/**
 	 * Prepares a change to be deleted with the next call to
 	 * @see {ChangePersistence#saveDirtyChanges};
