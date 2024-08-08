@@ -120,7 +120,7 @@ sap.ui.define([
 			var sDescription = this.getDescription();
 
 			if (bActiveTitle) {
-				return this.getDomRef().querySelector("a");
+				return this.getDomRef().querySelector(".sapMLnkText");
 			}
 
 			if (sDescription) {
