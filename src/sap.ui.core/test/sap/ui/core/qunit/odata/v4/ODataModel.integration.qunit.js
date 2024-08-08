@@ -71226,6 +71226,74 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
+	// Scenario: A context binding with empty path has a hidden context binding to the draft as
+	// parent. Request a property and set a hidden context binding to the active entity as parent.
+	// Before the request finished, set the binding context to null. In the end, request side
+	// effects for the complete model to see that no change listeners remained in the hidden ODCB
+	// for the active entity. (The issue is that registering is delayed due to the pending
+	// request, but deregistering happens immediately when the binding loses its parent context. So
+	// it deregisters when there is no registration yet, and registers afterwards when there is no
+	// more deregistration to be expected.)
+	// SNOW: DINC0117588
+	QUnit.test("DINC0117588 #2", async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sView = `
+<FlexBox id="root" binding="{}">
+	<Text id="id" text="{ArtistID}"/>
+	<Text id="active" text="{IsActiveEntity}"/>
+</FlexBox>`;
+
+		this.expectChange("id")
+			.expectChange("active");
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectRequest("Artists(ArtistID='1',IsActiveEntity=false)"
+				+ "?$select=ArtistID,IsActiveEntity",
+				{ArtistID : "1", IsActiveEntity : false})
+			.expectChange("id", "1")
+			.expectChange("active", "No");
+
+		const oForm = this.oView.byId("root");
+		oForm.setBindingContext(
+			oModel.bindContext("/Artists(ArtistID='1',IsActiveEntity=false)").getBoundContext());
+
+		await this.waitForChanges(assert, "inactive entity");
+
+		let fnResolve;
+		this.expectRequest("Artists(ArtistID='1',IsActiveEntity=true)"
+				+ "?$select=ArtistID,IsActiveEntity",
+				new Promise((resolve) => {
+					fnResolve = resolve;
+				})
+			);
+
+		const oContext
+			= oModel.bindContext("/Artists(ArtistID='1',IsActiveEntity=true)").getBoundContext();
+		const oPropertyPromise = oContext.requestProperty("ArtistID");
+		oForm.setBindingContext(oContext);
+
+		await this.waitForChanges(assert, "active entity");
+
+		this.expectChange("id", null)
+			.expectChange("active", null);
+
+		oForm.setBindingContext(null);
+
+		fnResolve({ArtistID : "1", IsActiveEntity : true});
+
+		await Promise.all([
+			oPropertyPromise,
+			this.waitForChanges(assert, "no entity")
+		]);
+
+		await Promise.all([
+			oContext.requestSideEffects(["/special.cases.Container/Artists"]),
+			this.waitForChanges(assert, "request full side-effects refresh")
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Create an item, persist it, select it and sort the cache. Because of the selected
 	// (and thus effectively kept-alive) element, the cache cannot be recreated. Then delete the
 	// created persisted item again and create another item. See that it is excluded when paging,

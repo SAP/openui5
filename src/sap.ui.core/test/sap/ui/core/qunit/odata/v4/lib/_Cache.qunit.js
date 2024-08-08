@@ -11207,9 +11207,10 @@ sap.ui.define([
 		oCacheMock = this.mock(oCache);
 		assert.strictEqual(oCache.oPromise, null);
 
-		oCacheMock.expects("registerChangeListener").never();
+		const oRegisterExpectation = oCacheMock.expects("registerChangeListener")
+			.withExactArgs(undefined, "~oListener1~");
 		this.mock(oGroupLock1).expects("unlock").never();
-		this.oRequestorMock.expects("request")
+		const oRequestExpectation = this.oRequestorMock.expects("request")
 			.withExactArgs("GET", sResourcePath + "?~", sinon.match.same(oGroupLock1), undefined,
 				undefined, sinon.match.same(fnDataRequested1), undefined, sMetaPath)
 			.returns(Promise.resolve(oExpectedResult).then(function () {
@@ -11219,8 +11220,6 @@ sap.ui.define([
 				oResponseExpectation = oCacheMock.expects("visitResponse")
 					.withExactArgs(sinon.match.same(oExpectedResult),
 						sinon.match.same(mTypeForMetaPath));
-				oCacheMock.expects("registerChangeListener")
-					.withExactArgs(undefined, "~oListener1~");
 				oCacheMock.expects("drillDown")
 					.withExactArgs(sinon.match.same(oExpectedResult), undefined,
 						sinon.match.same(oGroupLock1), bCreateOnDemand)
@@ -11243,6 +11242,7 @@ sap.ui.define([
 					bCreateOnDemand, "fnGetOriginalResourcePath")
 				.then(function (oResult) {
 					assert.strictEqual(oResult, oExpectedResult);
+					assert.ok(oRegisterExpectation.calledBefore(oRequestExpectation));
 				})
 		];
 		oOldPromise = oCache.oPromise;
