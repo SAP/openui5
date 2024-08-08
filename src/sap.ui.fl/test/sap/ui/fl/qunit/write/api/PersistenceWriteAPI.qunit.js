@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
-	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
@@ -34,7 +34,7 @@ sap.ui.define([
 	UIComponent,
 	DescriptorChangeTypes,
 	FlexCustomData,
-	ApplyFlexObjectState,
+	FlexObjectState,
 	FlexState,
 	ManifestUtils,
 	FlexObjectFactory,
@@ -43,7 +43,7 @@ sap.ui.define([
 	Settings,
 	Condenser,
 	KeyUserConnector,
-	WriteFlexObjectState,
+	FlexObjectManager,
 	Storage,
 	FeaturesAPI,
 	PersistenceWriteAPI,
@@ -251,7 +251,7 @@ sap.ui.define([
 				await FlQUnitUtils.initializeFlexStateWithData(sandbox, "appComponent", {changes: testSetup.persistencyChanges});
 				sandbox.stub(FlexState, "getCompVariantsMap").returns(testSetup.compEntities);
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(this.oAppComponent.getId());
-				const oVMSFilterStub = sandbox.stub(WriteFlexObjectState, "filterHiddenFlexObjects").callsFake((aFlexObjects) => {
+				const oVMSFilterStub = sandbox.stub(FlexObjectManager, "filterHiddenFlexObjects").callsFake((aFlexObjects) => {
 					return testSetup.filterVariants ? [] : aFlexObjects;
 				});
 
@@ -266,13 +266,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("when save is called", function(assert) {
-			var oFlexObjectStateSaveStub = sandbox.stub(WriteFlexObjectState, "saveFlexObjects").resolves();
+			var oFlexObjectManagerSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves();
 			var mPropertyBag = { foo: "bar" };
 			PersistenceWriteAPI.save(mPropertyBag);
 
-			assert.equal(oFlexObjectStateSaveStub.callCount, 1, "the FlexObjectState save method was called");
-			assert.deepEqual(oFlexObjectStateSaveStub.firstCall.args[0], mPropertyBag,
-				"the FlexObjectState was called with the same arguments");
+			assert.equal(oFlexObjectManagerSaveStub.callCount, 1, "the FlexObjectManager save method was called");
+			assert.deepEqual(oFlexObjectManagerSaveStub.firstCall.args[0], mPropertyBag,
+				"the FlexObjectManager was called with the same arguments");
 		});
 
 		QUnit.test("when save dirty change and update flex info session", function(assert) {
@@ -289,7 +289,7 @@ sap.ui.define([
 				initialAllContexts: true,
 				saveChangeKeepSession: true
 			});
-			var oFlexObjectStateSaveStub = sandbox.stub(WriteFlexObjectState, "saveFlexObjects").resolves({change: "test"});
+			var oFlexObjectManagerSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves({change: "test"});
 			var oFlexInfo = {
 				isResetEnabled: true
 			};
@@ -304,9 +304,9 @@ sap.ui.define([
 			var mPropertyBag = { foo: "bar" };
 			return PersistenceWriteAPI.save(mPropertyBag).then(function(oFlexObject) {
 				assert.equal(
-					oFlexObjectStateSaveStub.callCount,
+					oFlexObjectManagerSaveStub.callCount,
 					1,
-					"the FlexObjectState save method was called"
+					"the FlexObjectManager save method was called"
 				);
 				assert.deepEqual(
 					oFlexObject,
@@ -314,9 +314,9 @@ sap.ui.define([
 					"Flex objects returned from saveFlexObjects are returned"
 				);
 				assert.deepEqual(
-					oFlexObjectStateSaveStub.firstCall.args[0],
+					oFlexObjectManagerSaveStub.firstCall.args[0],
 					mPropertyBag,
-					"the FlexObjectState was called with the same arguments"
+					"the FlexObjectManager was called with the same arguments"
 				);
 				assert.equal(
 					oPersistenceWriteGetFlexInfoStub.callCount,
@@ -360,7 +360,7 @@ sap.ui.define([
 				})
 			);
 
-			sandbox.stub(WriteFlexObjectState, "getFlexObjects");
+			sandbox.stub(FlexObjectManager, "getFlexObjects");
 			sandbox.stub(FlexState, "getCompVariantsMap");
 			sandbox.stub(oChangePersistence, "saveDirtyChanges").resolves();
 			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
@@ -374,7 +374,7 @@ sap.ui.define([
 			};
 			return PersistenceWriteAPI.save(mPropertyBag).then(function() {
 				assert.strictEqual(
-					ApplyFlexObjectState.getDirtyFlexObjects("testComponent").length,
+					FlexObjectState.getDirtyFlexObjects("testComponent").length,
 					1,
 					"then dirty changes on other layers are removed"
 				);
@@ -466,7 +466,7 @@ sap.ui.define([
 				invalidateCache: true
 			};
 			var aObjects = [];
-			var fnGetFlexObjectsStub = sandbox.stub(WriteFlexObjectState, "getFlexObjects").resolves(aObjects);
+			var fnGetFlexObjectsStub = sandbox.stub(FlexObjectManager, "getFlexObjects").resolves(aObjects);
 			return PersistenceWriteAPI._getUIChanges(mPropertyBag)
 			.then(function(aGetResponse) {
 				assert.equal(fnGetFlexObjectsStub.callCount, 1, "the getFlexObjects was called once");
@@ -1146,9 +1146,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("when hasDirtyChanges is called", function(assert) {
-			var oStubFlexObjectStateHasDirtyObjects = sandbox.stub(WriteFlexObjectState, "hasDirtyFlexObjects").returns(true);
+			var oStubFlexObjectManagerHasDirtyObjects = sandbox.stub(FlexObjectManager, "hasDirtyFlexObjects").returns(true);
 			assert.equal(PersistenceWriteAPI.hasDirtyChanges({selector: this.appComponent}), true, "hasDirtyChanges return true");
-			assert.equal(oStubFlexObjectStateHasDirtyObjects.calledOnce, true, "FlexObjectState.hasDirtyFlexObjects called one");
+			assert.equal(oStubFlexObjectManagerHasDirtyObjects.calledOnce, true, "FlexObjectManager.hasDirtyFlexObjects called one");
 		});
 
 		QUnit.test("When setAdaptationLayer is called", function(assert) {

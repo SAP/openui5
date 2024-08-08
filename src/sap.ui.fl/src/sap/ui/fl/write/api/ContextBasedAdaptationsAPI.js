@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
-	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
@@ -31,7 +31,7 @@ sap.ui.define([
 	LayerUtils,
 	FlexUtils,
 	FlexInfoSession,
-	FlexObjectState,
+	FlexObjectManager,
 	CompVariantMerger,
 	CompVariantState,
 	VariantManagementState,
@@ -779,7 +779,7 @@ sap.ui.define([
 			flexObjects: []
 		};
 
-		return FlexObjectState.getFlexObjects({
+		return FlexObjectManager.getFlexObjects({
 			selector: mPropertyBag.control,
 			invalidateCache: false,
 			includeCtrlVariants: true,
@@ -832,7 +832,7 @@ sap.ui.define([
 		if (oContextBasedAdaptationModel.getProperty("/count") !== 0) {
 			return Promise.resolve(false);
 		}
-		return FlexObjectState.getFlexObjects({
+		return FlexObjectManager.getFlexObjects({
 			selector: mPropertyBag.control,
 			invalidateCache: false,
 			includeCtrlVariants: true,
@@ -886,7 +886,7 @@ sap.ui.define([
 
 		return createContextBasedAdaptation.call(this, mPropertyBag, mPropertyBag.contextBasedAdaptation)
 		.then(function() {
-			return FlexObjectState.getFlexObjects({
+			return FlexObjectManager.getFlexObjects({
 				selector: mPropertyBag.control,
 				invalidateCache: false,
 				includeCtrlVariants: true,
@@ -895,7 +895,7 @@ sap.ui.define([
 			});
 		}).then(function(aFlexObjects) {
 			// currently getFlexObjects contains also VENDOR layer ctrl variant changes which need to be removed before copy
-			// TODO refactor when FlexObjectState.getFlexObjects will be refactored
+			// TODO refactor when FlexObjectManager.getFlexObjects will be refactored
 			var aCustomerFlexObjects = LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aFlexObjects, Layer.CUSTOMER);
 			var aCopiedChanges = copyVariantsAndChanges(aCustomerFlexObjects, mPropertyBag.contextBasedAdaptation.id);
 			return writeChangesToBackend(mPropertyBag, aCopiedChanges);

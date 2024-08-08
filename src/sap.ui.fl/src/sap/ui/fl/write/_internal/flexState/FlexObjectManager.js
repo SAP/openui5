@@ -20,7 +20,7 @@ sap.ui.define([
 	UIChangesState,
 	CompVariantMerger,
 	VariantManagementState,
-	ApplyFlexObjectState,
+	FlexObjectState,
 	FlexState,
 	ManifestUtils,
 	CompVariantState,
@@ -33,13 +33,13 @@ sap.ui.define([
 
 	/**
 	 * @namespace
-	 * @alias sap.ui.fl.write._internal.flexState.FlexObjectState
+	 * @alias sap.ui.fl.write._internal.flexState.FlexObjectManager
 	 * @since 1.83
 	 * @version ${version}
 	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
-	var FlexObjectState = {};
+	var FlexObjectManager = {};
 
 	function getCompVariantEntities(mPropertyBag) {
 		const aEntities = [];
@@ -97,7 +97,7 @@ sap.ui.define([
 	 * @param {string} sReference - Flex reference of the application
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Filtered list of FlexObjects
 	 */
-	FlexObjectState.filterHiddenFlexObjects = function(aFlexObjects, sReference) {
+	FlexObjectManager.filterHiddenFlexObjects = function(aFlexObjects, sReference) {
 		const aFilteredFlexObjects = VariantManagementState.filterHiddenFlexObjects(aFlexObjects, sReference);
 		return CompVariantState.filterHiddenFlexObjects(aFilteredFlexObjects, sReference);
 	};
@@ -115,7 +115,7 @@ sap.ui.define([
 	 * @param {boolean} [mPropertyBag.version] - The version for which the objects are retrieved if the Cache should be invalidated
 	 * @returns {Promise<sap.ui.fl.apply._internal.flexObjects.FlexObject[]>} Flex objects, containing changes, compVariants & changes as well as ctrl_variant and changes
 	 */
-	FlexObjectState.getFlexObjects = async function(mPropertyBag) {
+	FlexObjectManager.getFlexObjects = async function(mPropertyBag) {
 		mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
 		if (mPropertyBag.invalidateCache) {
 			await FlexState.update(mPropertyBag);
@@ -159,9 +159,9 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector To retrieve the associated flex persistence
 	 * @returns {boolean} <code>true</code> if dirty flex objects exist
 	 */
-	FlexObjectState.hasDirtyFlexObjects = function(mPropertyBag) {
+	FlexObjectManager.hasDirtyFlexObjects = function(mPropertyBag) {
 		var sReference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
-		return ApplyFlexObjectState.getDirtyFlexObjects(sReference).length > 0 || CompVariantState.hasDirtyChanges(sReference);
+		return FlexObjectState.getDirtyFlexObjects(sReference).length > 0 || CompVariantState.hasDirtyChanges(sReference);
 	};
 
 	/**
@@ -180,7 +180,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.adaptationId] - Adaptation to load into Flex State after saving (e.g. undefined when exiting RTA)
 	 * @returns {Promise<sap.ui.fl.apply._internal.flexObjects.FlexObject[]>} Flex objects, containing changes, compVariants & changes as well as ctrl_variant and changes
 	 */
-	FlexObjectState.saveFlexObjects = async function(mPropertyBag) {
+	FlexObjectManager.saveFlexObjects = async function(mPropertyBag) {
 		var oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
 		mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
 		await saveCompEntities(mPropertyBag);
@@ -197,8 +197,8 @@ sap.ui.define([
 		// with invalidation more parameters are required to make a new storage request
 		mPropertyBag.componentId = oAppComponent.getId();
 		mPropertyBag.invalidateCache = true;
-		return FlexObjectState.getFlexObjects(_omit(mPropertyBag, "skipUpdateCache"));
+		return FlexObjectManager.getFlexObjects(_omit(mPropertyBag, "skipUpdateCache"));
 	};
 
-	return FlexObjectState;
+	return FlexObjectManager;
 });

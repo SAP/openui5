@@ -723,10 +723,10 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/_internal/Versions"]
 				}
 			},
-			"write/_internal/flexState/FlexObjectState": {
+			"write/_internal/flexState/FlexObjectManager": {
 				group: "Write Internal",
 				coverage: {
-					only: ["sap/ui/fl/write/_internal/flexState/FlexObjectState"]
+					only: ["sap/ui/fl/write/_internal/flexState/FlexObjectManager"]
 				},
 				ui5: {
 					flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
