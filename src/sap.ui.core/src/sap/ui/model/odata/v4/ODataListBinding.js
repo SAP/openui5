@@ -4368,6 +4368,7 @@ sap.ui.define([
 		this.sResumeAction = undefined;
 		this.sResumeChangeReason = undefined;
 
+		this.checkDataState();
 		if (bRefresh) {
 			if (this.mParameters.$$clearSelectionOnFilter
 				&& sResumeChangeReason === ChangeReason.Filter) {
