@@ -123,13 +123,13 @@ sap.ui.define([
 
 		oSetMarkedSpy.reset();
 
-		oSelectionPlugin.onKeyboardShortcut("toggle");
+		oSelectionPlugin.onKeyboardShortcut("toggle", oEvent);
 		assert.ok(oSelectAllSpy.callCount, 2, "select all called");
 		assert.ok(oSetMarkedSpy.notCalled, "Event has not been marked");
 
-		oSelectionPlugin.onKeyboardShortcut("toggle");
+		oSelectionPlugin.onKeyboardShortcut("toggle", oEvent);
 		assert.ok(oClearSelectionSpy.calledThrice, "clear all called");
-		assert.ok(oSetMarkedSpy.notCalled, `Event has not been marked, as there was no event passed`);
+		assert.ok(oSetMarkedSpy.calledOnceWithExactly(sEventMarker), `Event has been marked with ${sEventMarker}`);
 
 		oSetMarkedSpy.reset();
 		oClearSelectionSpy.reset();

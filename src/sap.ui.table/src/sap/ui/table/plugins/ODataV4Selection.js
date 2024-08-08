@@ -7,19 +7,22 @@ sap.ui.define([
 	"../library",
 	"../utils/TableUtils",
 	"sap/ui/core/Icon",
-	"sap/ui/core/IconPool"
+	"sap/ui/core/IconPool",
+	"sap/base/Log"
 ], function(
 	SelectionPlugin,
 	PluginBase,
 	library,
 	TableUtils,
 	Icon,
-	IconPool
+	IconPool,
+	Log
 ) {
 	"use strict";
 
 	const SelectionMode = library.plugins.SelectionMode;
 	const TableSelectionMode = library.SelectionMode;
+	const _private = TableUtils.createWeakMapFacade();
 
 	/**
 	 * Constructs an instance of sap.ui.table.plugins.ODataV4Selection.
@@ -88,12 +91,13 @@ sap.ui.define([
 
 	ODataV4Selection.prototype.init = function() {
 		SelectionPlugin.prototype.init.apply(this, arguments);
+
 		const oIcon = new Icon({src: IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), useIconTooltip: false});
 		oIcon.addStyleClass("sapUiTableSelectClear");
 		this.setAggregation("icon", oIcon, true);
 
-		this._bLimitReached = false;
-		this._oRangeSelectionStartContext = null;
+		_private(this).bLimitReached = false;
+		_private(this).oRangeSelectionStartContext = null;
 	};
 
 	ODataV4Selection.prototype.onActivate = function(oTable) {
@@ -105,17 +109,17 @@ sap.ui.define([
 		SelectionPlugin.prototype.onDeactivate.apply(this, arguments);
 		oTable.setProperty("selectionMode", TableSelectionMode.None);
 		detachFromBinding(this, this.getTableBinding());
-		this.clearSelection();
+		clearTimeout(this.iSelectionChangeTimeout);
 	};
 
 	ODataV4Selection.prototype.setSelected = function(oRow, bSelected, mConfig) {
 		const oContext = oRow.getRowBindingContext();
 
-		if (!oContext || !isContextSelectable(oContext)) {
+		if (!this.isActive() || !oContext || !isContextSelectable(oContext)) {
 			return;
 		}
 
-		if (mConfig && mConfig.range) {
+		if (mConfig?.range) {
 			extendLastSelectionTo(this, oRow);
 			return;
 		}
@@ -124,22 +128,16 @@ sap.ui.define([
 			return;
 		}
 
-		if (this.getSelectionMode() === SelectionMode.Single) {
-			this._bSuppressSelectionChangeEvent = true;
-			this.clearSelection();
-		}
-
 		oContext.setSelected(bSelected);
-		this._oRangeSelectionStartContext = bSelected && this.getSelectionMode() === SelectionMode.MultiToggle ? oContext : null;
-		this.fireSelectionChange();
+		_private(this).oRangeSelectionStartContext = bSelected && this.getSelectionMode() === SelectionMode.MultiToggle ? oContext : null;
 	};
 
 	function extendLastSelectionTo(oPlugin, oRow) {
-		if (!oPlugin._oRangeSelectionStartContext) {
+		if (!_private(oPlugin).oRangeSelectionStartContext) {
 			return;
 		}
 
-		let iIndexFrom = oPlugin._oRangeSelectionStartContext.getIndex();
+		let iIndexFrom = _private(oPlugin).oRangeSelectionStartContext.getIndex();
 		const oContext = oRow.getRowBindingContext();
 		const iIndexTo = oContext ? oContext.getIndex() : -1;
 
@@ -153,7 +151,7 @@ sap.ui.define([
 
 	ODataV4Selection.prototype.isSelected = function(oRow) {
 		const oContext = oRow.getRowBindingContext();
-		return oContext ? oContext.isSelected() : false;
+		return oContext ? this.isActive() && oContext.isSelected() && isContextSelectable(oContext) : false;
 	};
 
 	ODataV4Selection.prototype.getSelectedCount = function() {
@@ -164,10 +162,41 @@ sap.ui.define([
 	 * Returns the number of selectable rows.
 	 *
 	 * @param {sap.ui.table.plugins.ODataV4Selection} oPlugin The plugin to getthe number of selectable rows from.
-	 * @returns {int} The number of selectable rows.
+	 * @returns {int} The number of selectable rows, or -1 if the number cannot be determined.
 	 */
 	function getSelectableCount(oPlugin) {
-		return oPlugin.getTableBinding()?.getLength() ?? 0;
+		const oBinding = oPlugin.getTableBinding();
+
+		if (!oBinding) {
+			return 0;
+		}
+
+		// isLengthFinal is checked in case the count is not requested. Even though it is documented that the count is required if the limit is
+		// disabled (SelectAll enabled), it could still happen.
+		if (!oBinding.isLengthFinal()) {
+			return -1;
+		}
+
+		const oAggregation = oBinding.getAggregation();
+		const bIsHierarchy = "hierarchyQualifier" in (oAggregation || {});
+		const bIsDataAggregation = !bIsHierarchy && !!oAggregation;
+		let iNumberOfSelectableContexts = -1;
+
+		if (bIsDataAggregation) {
+			const aAllCurrentContexts = oBinding.getAllCurrentContexts();
+
+			// If not all contexts are available, we cannot determine the number of selectable contexts, and therefore cannot determine if all are
+			// selected.
+			if (oBinding.getLength() === aAllCurrentContexts.length) {
+				iNumberOfSelectableContexts = aAllCurrentContexts.filter(function(oContext) {
+					return isContextSelectable(oContext);
+				}).length;
+			}
+		} else {
+			iNumberOfSelectableContexts = oBinding.getLength();
+		}
+
+		return iNumberOfSelectableContexts;
 	}
 
 	/**
@@ -176,18 +205,21 @@ sap.ui.define([
 	 * @param {sap.ui.table.plugins.ODataV4Selection} oPlugin The plugin to change the header selection icon on.
 	 */
 	function updateHeaderSelectorIcon(oPlugin) {
-		if (!oPlugin._isLimitDisabled()) {
-			const oIcon = oPlugin.getAggregation("icon");
-			const iSelectedCount = oPlugin.getSelectedCount();
+		if (oPlugin._isLimitDisabled()) {
+			return;
+		}
 
-			if (getSelectableCount(oPlugin) === iSelectedCount) {
-				oIcon.setSrc(IconPool.getIconURI(TableUtils.ThemeParameters.allSelectedIcon));
-			} else if (iSelectedCount !== 0) {
-				oIcon.setSrc(IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon));
+		let sIconURI = IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon);
+
+		if (oPlugin.getSelectedCount() > 0) {
+			if (areAllRowsSelected(oPlugin)) {
+				sIconURI = IconPool.getIconURI(TableUtils.ThemeParameters.allSelectedIcon);
 			} else {
-				oIcon.setSrc(IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon));
+				sIconURI = IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon);
 			}
 		}
+
+		oPlugin.getAggregation("icon").setSrc(sIconURI);
 	}
 
 	ODataV4Selection.prototype.getRenderConfig = function() {
@@ -202,7 +234,7 @@ sap.ui.define([
 				type: this._isLimitDisabled() ? "toggle" : "custom",
 				icon: this.getAggregation("icon"),
 				visible: this.getSelectionMode() === SelectionMode.MultiToggle && !this.getHideHeaderSelector(),
-				enabled: getSelectableCount(this) > 0,
+				enabled: getSelectableCount(this) !== 0,
 				selected: areAllRowsSelected(this),
 				tooltip: this.getSelectedCount() === 0 ? TableUtils.getResourceText("TBL_SELECT_ALL") : TableUtils.getResourceText("TBL_DESELECT_ALL")
 			}
@@ -236,25 +268,15 @@ sap.ui.define([
 	 * @returns {boolean} Whether all rows are selected.
 	 */
 	function areAllRowsSelected(oPlugin) {
-		const oBinding = oPlugin.getTableBinding();
-
-		// isLengthFinal is checked in case the count is not requested. Even though it is documented that the count is required if the limit is
-		// disabled (SelectAll enabled), it could still happen.
-		if (!oBinding || !oBinding.isLengthFinal()) {
-			return false;
-		}
-
-		const iNumberOfSelectableContexts = oBinding.getAllCurrentContexts().filter(function(oContext) {
-			return isContextSelectable(oContext);
-		}).length;
-		const iNumberOfSelectedContexts = oPlugin.getSelectedContexts().filter(function(oContext) {
-			return isContextSelectable(oContext);
-		}).length;
-
-		return iNumberOfSelectableContexts > 0 && iNumberOfSelectableContexts === iNumberOfSelectedContexts;
+		const iSelectableCount = getSelectableCount(oPlugin);
+		return iSelectableCount > 0 && iSelectableCount === oPlugin.getSelectedCount();
 	}
 
 	ODataV4Selection.prototype.onHeaderSelectorPress = function() {
+		if (!this.isActive()) {
+			return;
+		}
+
 		const mRenderConfig = this.getRenderConfig();
 
 		if (!mRenderConfig.headerSelector.visible || !mRenderConfig.headerSelector.enabled) {
@@ -276,6 +298,10 @@ sap.ui.define([
 	};
 
 	ODataV4Selection.prototype.onKeyboardShortcut = function(sType, oEvent) {
+		if (!this.isActive()) {
+			return;
+		}
+
 		if (sType === "toggle") { // ctrl + a
 			if (this.getSelectionMode() !== SelectionMode.MultiToggle) {
 				return;
@@ -283,7 +309,7 @@ sap.ui.define([
 
 			if (this._isLimitDisabled()) {
 				if (toggleSelectAll(this) === false) {
-					oEvent?.setMarked("sapUiTableClearAll");
+					oEvent.setMarked("sapUiTableClearAll");
 				}
 			} else {
 				const oBinding = this.getTableBinding();
@@ -293,7 +319,7 @@ sap.ui.define([
 			}
 		} else if (sType === "clear") { // ctrl + shift + a
 			this.clearSelection();
-			oEvent?.setMarked("sapUiTableClearAll");
+			oEvent.setMarked("sapUiTableClearAll");
 		}
 	};
 
@@ -301,7 +327,7 @@ sap.ui.define([
 		const oTable = this.getTable();
 
 		this.setProperty("selectionMode", sSelectionMode, true);
-		this._oRangeSelectionStartContext = null;
+		_private(this).oRangeSelectionStartContext = null;
 		this.clearSelection();
 
 		if (oTable) {
@@ -311,26 +337,69 @@ sap.ui.define([
 		return this;
 	};
 
+	ODataV4Selection.prototype.setLimit = function(iLimit) {
+		this.setProperty("limit", iLimit);
+		_private(this).bLimitReached = false;
+		return this;
+	};
+
 	ODataV4Selection.prototype.onTableRowsBound = function(oBinding) {
-		// TODO: Same as V4Aggregation plugin, check comment there!
 		if (!oBinding.getModel().isA("sap.ui.model.odata.v4.ODataModel")) {
-			this.deactivate();
-		} else {
-			SelectionPlugin.prototype.onTableRowsBound.apply(this, arguments);
-			attachToBinding(this, oBinding);
+			throw new Error("This plugin only works with a sap.ui.model.odata.v4.ODataModel.");
 		}
+
+		SelectionPlugin.prototype.onTableRowsBound.apply(this, arguments);
+
+		if (this.getSelectionMode() === SelectionMode.Single) {
+			const oHeaderContext = oBinding.getHeaderContext();
+
+			if (oHeaderContext.isSelected()) {
+				oHeaderContext.setSelected(false);
+				Log.error("The header context must not be selected in selection mode 'Single'.", this);
+			}
+		}
+
+		attachToBinding(this, oBinding);
 	};
 
 	function attachToBinding(oPlugin, oBinding) {
 		if (oBinding) {
-			oBinding.attachChange(oPlugin._onBindingChange, oPlugin);
+			oBinding.attachEvent("selectionChanged", onBindingSelectionChanged, oPlugin);
 		}
 	}
 
 	function detachFromBinding(oPlugin, oBinding) {
 		if (oBinding) {
-			oBinding.detachChange(oPlugin._onBindingChange, oPlugin);
+			oBinding.detachEvent("selectionChanged", onBindingSelectionChanged, oPlugin);
 		}
+	}
+
+	function onBindingSelectionChanged(oEvent) {
+		const oContext = oEvent.getParameter("context");
+		const bIsHeaderContext = oContext === oEvent.getSource().getHeaderContext();
+
+		if (!bIsHeaderContext && !isContextSelectable(oContext)) {
+			return;
+		}
+
+		if (this.getSelectionMode() === SelectionMode.Single && oContext.isSelected()) {
+			if (bIsHeaderContext) {
+				oContext.setSelected(false);
+				Log.error("The header context must not be selected in selection mode 'Single'.", this);
+			} else if (this.getSelectedCount() > 1) {
+				this.clearSelection();
+				oContext.setSelected(true);
+			}
+		}
+
+		if (this.iSelectionChangeTimeout) {
+			return;
+		}
+
+		this.iSelectionChangeTimeout = setTimeout(() => {
+			this.fireSelectionChange();
+			delete this.iSelectionChangeTimeout;
+		}, 0);
 	}
 
 	/**
@@ -341,15 +410,6 @@ sap.ui.define([
 	 */
 	ODataV4Selection.prototype._isLimitDisabled = function() {
 		return this.getLimit() === 0;
-	};
-
-	/**
-	 * Returns <code>true</code> if the selection limit has been reached (only the last selection), <code>false</code> otherwise.
-	 *
-	 * @return {boolean}
-	 */
-	ODataV4Selection.prototype.isLimitReached = function() {
-		return this._bLimitReached;
 	};
 
 	/**
@@ -367,9 +427,9 @@ sap.ui.define([
 		let iGetContextsLength = Math.abs(iIndexTo - iIndexFrom) + 1;
 
 		if (!oPlugin._isLimitDisabled()) {
-			oPlugin._bLimitReached = iGetContextsLength > iLimit;
+			_private(oPlugin).bLimitReached = iGetContextsLength > iLimit;
 
-			if (oPlugin._bLimitReached) {
+			if (_private(oPlugin).bLimitReached) {
 				if (bUpwardSelection) {
 					iIndexTo = iIndexFrom - iLimit + 1;
 					iGetContextsStartIndex = iIndexTo;
@@ -383,7 +443,6 @@ sap.ui.define([
 			}
 		}
 
-		let bSelectionChange = false;
 		TableUtils.loadContexts(oPlugin.getTableBinding(), iGetContextsStartIndex, iGetContextsLength).then(function(aContexts) {
 			aContexts.forEach(function(oContext) {
 				if (!isContextSelectable(oContext) || oContext.isSelected()) {
@@ -391,65 +450,42 @@ sap.ui.define([
 				}
 				if (bUpwardSelection && oContext.getIndex() >= iIndexTo || oContext.getIndex() <= iIndexTo) {
 					oContext.setSelected(true);
-					bSelectionChange = true;
 				}
 				if (oContext.getIndex() === iIndexTo) {
-					oPlugin._oRangeSelectionStartContext = oContext;
+					_private(oPlugin).oRangeSelectionStartContext = oContext;
 				}
 			});
 
-			if (oPlugin.isLimitReached()) {
+			if (_private(oPlugin).bLimitReached) {
 				TableUtils.scrollTableToIndex(oTable, iIndexTo, bUpwardSelection).then(function() {
 					if (oPlugin.getEnableNotification()) {
 						TableUtils.showNotificationPopoverAtIndex(oTable, iIndexTo, oPlugin.getLimit());
 					}
 				});
 			}
-
-			if (bSelectionChange) {
-				oPlugin.fireSelectionChange();
-			}
 		});
 	}
 
 	function isContextSelectable(oContext) {
-		const bIsTree = "hierarchyQualifier" in (oContext.getBinding().getAggregation() || {});
-		return bIsTree || (oContext.getProperty("@$ui5.node.isExpanded") === undefined && !oContext.getProperty("@$ui5.node.isTotal"));
+		const bIsHierarchy = "hierarchyQualifier" in (oContext.getBinding().getAggregation() || {});
+		return bIsHierarchy || (oContext.getProperty("@$ui5.node.isExpanded") === undefined && !oContext.getProperty("@$ui5.node.isTotal"));
 	}
 
 	ODataV4Selection.prototype.clearSelection = function() {
-		let bContextDeselected = false;
-
-		this.getSelectedContexts().forEach(function(oContext) {
-			if (!bContextDeselected && oContext.isSelected()) {
-				bContextDeselected = true;
-			}
+		for (const oContext of this.getSelectedContexts()) {
 			oContext.setSelected(false);
-		});
-
-		if (bContextDeselected && !this._bSuppressSelectionChangeEvent) {
-			this.fireSelectionChange();
 		}
-		this._bSuppressSelectionChangeEvent = false;
 	};
 
 	ODataV4Selection.prototype.getSelectedContexts = function() {
 		const oBinding = this.getTableBinding();
 
-		return oBinding ? oBinding.getAllCurrentContexts().filter(function(oContext) {
-			return oContext.isSelected();
+		return this.isActive() && oBinding ? oBinding.getAllCurrentContexts().filter(function(oContext) {
+			return oContext.isSelected() && isContextSelectable(oContext);
 		}) : [];
 	};
 
 	ODataV4Selection.prototype.onThemeChanged = function() {
-		updateHeaderSelectorIcon(this);
-	};
-
-	/**
-	 * Handler for change events of the binding.
-	 * @private
-	 */
-	ODataV4Selection.prototype._onBindingChange = function() {
 		updateHeaderSelectorIcon(this);
 	};
 

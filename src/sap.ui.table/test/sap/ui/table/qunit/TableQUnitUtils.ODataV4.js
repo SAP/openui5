@@ -26,6 +26,7 @@ sap.ui.define([
 
 		for (let i = iStartIndex; i < iStartIndex + iLength; i++) {
 			aData.push({
+				ID: i,
 				Name: "Test Product (" + i + ")"
 			});
 		}
@@ -69,6 +70,20 @@ sap.ui.define([
 
 					if (bWithCount) {
 						mResponse.message["@odata.count"] = iCount;
+					}
+
+					oResponse.message = JSON.stringify(mResponse.message);
+				}
+			}
+		}, {
+			regExp: /^GET \/MyService?\/Products\?(\$count=true&)?\$filter=Name%20eq%20'DoesNotExist'/,
+			response: {
+				buildResponse: function(aMatches, oResponse) {
+					const bWithCount = !!aMatches[1];
+					const mResponse = createResponse(0, 0);
+
+					if (bWithCount) {
+						mResponse.message["@odata.count"] = 0;
 					}
 
 					oResponse.message = JSON.stringify(mResponse.message);
