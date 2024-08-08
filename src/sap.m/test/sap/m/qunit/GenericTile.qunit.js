@@ -5517,6 +5517,11 @@ sap.ui.define([
 		assert.ok(this.isRepeatedTwice(this.oGenericTile.getDomRef().getAttribute("aria-label"),"tile"),"The word tile has been announced only once");
 	});
 
+	QUnit.test("Line-height set to 1.5rem inside the LinkTileContent", function (assert) {
+		var oLink = this.oGenericTile.getLinkTileContents()[0]._getLink().getDomRef();
+		assert.equal(getComputedStyle(oLink).lineHeight,"24px","Line-height has been set to 24px as per the guidelines");
+	});
+
 	QUnit.module("GenericTile when badge is used", {
 		beforeEach: async function () {
 			this.oGenericTile = new GenericTile({

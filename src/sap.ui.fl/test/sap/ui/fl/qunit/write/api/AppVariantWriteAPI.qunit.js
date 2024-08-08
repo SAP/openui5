@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/Log",
 	"sap/ui/core/Manifest",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
@@ -28,6 +29,7 @@ sap.ui.define([
 	_omit,
 	Log,
 	Manifest,
+	FlexObjectState,
 	ManifestUtils,
 	ChangeHandlerStorage,
 	InitialUtils,
@@ -53,6 +55,7 @@ sap.ui.define([
 
 	document.getElementById("qunit-fixture").style.display = "none";
 	var sandbox = sinon.createSandbox();
+	const sReference = "testComponent";
 
 	function createAppComponent() {
 		var oDescriptor = {
@@ -250,7 +253,7 @@ sap.ui.define([
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(false);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
 				displayedVersion: "versionGUID"
@@ -264,7 +267,11 @@ sap.ui.define([
 				assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the app variant id is correct");
 				assert.equal(oNewConnectorCall.getCalls()[0].args[0], "/sap/bc/lrep/appdescr_variants/?parentVersion=versionGUID&sap-language=EN", "true", "then backend call is triggered with correct parameters");
 				assert.equal(oNewConnectorCall.getCalls()[0].args[1], "POST", "true", "then backend call is triggered with POST");
-				assert.equal(FlexControllerFactory.createForControl(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then changes has been removed from the persistence");
+				assert.strictEqual(
+					FlexObjectState.getDirtyFlexObjects(sReference).length,
+					0,
+					"then all dirty changes have been removed from the state"
+				);
 			});
 		});
 
@@ -272,7 +279,7 @@ sap.ui.define([
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(false);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(false);
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(FlexUtils, "getAppComponentForControl").withArgs(oAppComponent).returns(oAppComponent);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
@@ -331,8 +338,11 @@ sap.ui.define([
 				return PersistenceWriteAPI.add({change: oUIChange, selector: oAppComponent});
 			})
 			.then(function() {
-				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
-				assert.equal(oChangePersistence.getDirtyChanges().length, 5, "then 5 changes has been added to the persistence");
+				assert.strictEqual(
+					FlexObjectState.getDirtyFlexObjects(sReference).length,
+					5,
+					"then five dirty changes have been added to the state"
+				);
 				return AppVariantWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0", layer: Layer.CUSTOMER})
 				.then(function() {
 					var oFlexObjectMetadata = oUIChange.getFlexObjectMetadata();
@@ -346,7 +356,11 @@ sap.ui.define([
 					assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the app variant id is correct");
 					assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?sap-language=EN", "POST"), "then backend call is triggered with correct parameters");
-					assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then all changes has been removed from the persistence");
+					assert.strictEqual(
+						FlexObjectState.getDirtyFlexObjects(sReference).length,
+						0,
+						"then all dirty changes have been removed from the state"
+					);
 				});
 			});
 		});
@@ -356,7 +370,7 @@ sap.ui.define([
 			simulateSystemConfig(false);
 
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(false);
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(FlexUtils, "getAppComponentForControl").withArgs(oAppComponent).returns(oAppComponent);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
@@ -416,18 +430,30 @@ sap.ui.define([
 			})
 			.then(function() {
 				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
-				assert.equal(oChangePersistence.getDirtyChanges().length, 5, "then 5 changes has been added to the persistence");
+				assert.strictEqual(
+					FlexObjectState.getDirtyFlexObjects(sReference).length,
+					5,
+					"then five dirty changes have been added to the state"
+				);
 				return AppVariantWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0", layer: Layer.CUSTOMER})
 				.catch(function(oError) {
 					assert.ok("then the promise got rejected");
 					assert.equal(oError.messageKey, "MSG_SAVE_APP_VARIANT_FAILED", "then the messagekey is correct");
-					assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then a UI change is still present in the persistence but the reference has been changed");
+					assert.strictEqual(
+						FlexObjectState.getDirtyFlexObjects(sReference).length,
+						1,
+						"then one UI change remains in the state"
+					);
 					var oFlexObjectMetadata = oUIChange.getFlexObjectMetadata();
 					assert.equal(oFlexObjectMetadata.reference, "customer.reference.app.id", "the reference of the UI Change has been changed with the app variant id");
 					assert.equal(oFlexObjectMetadata.namespace, "apps/customer.reference.app.id/changes/", "the namespace of the UI Change has been changed");
 					// Delete the UI change from persistence
 					oChangePersistence.deleteChange(oUIChange);
-					assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then a UI change has been removed from the persistence");
+					assert.strictEqual(
+						FlexObjectState.getDirtyFlexObjects(sReference).length,
+						0,
+						"then all dirty changes have been removed from the state"
+					);
 				});
 			});
 		});
@@ -437,7 +463,7 @@ sap.ui.define([
 			simulateSystemConfig(false);
 
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(false);
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(FlexUtils, "getAppComponentForControl").withArgs(oAppComponent).returns(oAppComponent);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
@@ -500,12 +526,20 @@ sap.ui.define([
 			})
 			.then(function() {
 				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
-				assert.equal(oChangePersistence.getDirtyChanges().length, 5, "then 5 changes has been added to the persistence");
+				assert.strictEqual(
+					FlexObjectState.getDirtyFlexObjects(sReference).length,
+					5,
+					"then five dirty changes have been added to the state"
+				);
 				return AppVariantWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0", layer: Layer.CUSTOMER})
 				.catch(function(oError) {
 					assert.ok("then the promise got rejected");
 					assert.equal(oError.messageKey, "MSG_COPY_UNSAVED_CHANGES_FAILED", "then the messagekey is correct");
-					assert.equal(oChangePersistence.getDirtyChanges().length, 5, "then 5 changes is still in the persistence");
+					assert.strictEqual(
+						FlexObjectState.getDirtyFlexObjects(sReference).length,
+						0,
+						"then all dirty changes are still part of the state"
+					);
 					var oFlexObjectMetadata = oUIChange.getFlexObjectMetadata();
 					assert.equal(oFlexObjectMetadata.reference, "customer.reference.app.id", "the reference of the UI Change has been changed with the app variant id");
 					assert.equal(oFlexObjectMetadata.namespace, "apps/customer.reference.app.id/changes/", "the namespace of the UI Change has been changed");
@@ -514,12 +548,16 @@ sap.ui.define([
 					// Delete the UI change from persistence
 					oChangePersistence.deleteChange(oUIChange);
 					// Delete dirty inline changes from persistence
-					var aDescrChanges = oChangePersistence.getDirtyChanges();
+					var aDescrChanges = FlexObjectState.getDirtyFlexObjects(sReference);
 					aDescrChanges = aDescrChanges.slice();
 					aDescrChanges.forEach(function(oChange) {
 						oChangePersistence.deleteChange(oChange);
 					});
-					assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then all changes has been removed from the persistence");
+					assert.strictEqual(
+						FlexObjectState.getDirtyFlexObjects(sReference).length,
+						0,
+						"then all dirty changes have been removed from the state"
+					);
 				});
 			});
 		});
@@ -529,7 +567,7 @@ sap.ui.define([
 			simulateSystemConfig(true);
 
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(false);
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(FlexUtils, "getAppComponentForControl").withArgs(oAppComponent).returns(oAppComponent);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
@@ -564,8 +602,11 @@ sap.ui.define([
 				return PersistenceWriteAPI.add({change: oUIChange, selector: oAppComponent});
 			})
 			.then(function() {
-				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
-				assert.equal(oChangePersistence.getDirtyChanges().length, 2, "then 2 changes has been added to the persistence");
+				assert.strictEqual(
+					FlexObjectState.getDirtyFlexObjects(sReference).length,
+					2,
+					"then two dirty changes have been added to the state"
+				);
 				return AppVariantWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0", layer: Layer.CUSTOMER})
 				.then(function() {
 					var oFlexObjectMetadata = oUIChange.getFlexObjectMetadata();
@@ -579,7 +620,11 @@ sap.ui.define([
 					assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the app variant id is correct");
 					assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?sap-language=EN", "POST"), "then backend call is triggered with correct parameters");
-					assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then all changes has been removed from the persistence");
+					assert.strictEqual(
+						FlexObjectState.getDirtyFlexObjects(sReference).length,
+						0,
+						"then dirty changes have been removed from the state"
+					);
 				});
 			});
 		});
@@ -710,7 +755,7 @@ sap.ui.define([
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(false);
 
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 
 			var oTransportResponse = {
@@ -1201,11 +1246,11 @@ sap.ui.define([
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(false);
 
-			var oGetFlexReferenceStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl");
+			var oGetFlexReferenceStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("customer.reference.app.id");
 			var getAppComponentForControlStub = sandbox.stub(FlexUtils, "getAppComponentForControl");
 			var oGetAppDescriptorStub = sandbox.stub(FlexUtils, "getAppDescriptor");
 
-			oGetFlexReferenceStub.withArgs(oAppComponent).returns("testComponent");
+			oGetFlexReferenceStub.withArgs(oAppComponent).returns(sReference);
 			oGetAppDescriptorStub.withArgs(oAppComponent).returns(oAppComponent.getManifest());
 			getAppComponentForControlStub.withArgs(oAppComponent).returns(oAppComponent);
 
@@ -1259,11 +1304,18 @@ sap.ui.define([
 				return PersistenceWriteAPI.add({change: oUIChange, selector: oAppComponent});
 			})
 			.then(function() {
-				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(vSelector.appId);
-				assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then no Descriptor changes have been added to the persistence");
+				assert.strictEqual(
+					FlexObjectState.getDirtyFlexObjects(vSelector.appId).length,
+					0,
+					"then no dirty changes have been added to the state"
+				);
 				return AppVariantWriteAPI.saveAs({selector: vSelector, id: "customer.reference.app.variant.id_456789", version: "1.0.0", layer: Layer.CUSTOMER})
 				.then(function() {
-					assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there were no Descriptor changes to be removed from the persistence");
+					assert.strictEqual(
+						FlexObjectState.getDirtyFlexObjects(vSelector.appId).length,
+						0,
+						"then there were no dirty changes to be added to the state"
+					);
 					// Get the UI change to be saved to backend
 					assert.equal(fnCreateBackendCall.callCount, 0, "then backend call to save the UI change is not triggered");
 					// Get the app variant to be saved to backend

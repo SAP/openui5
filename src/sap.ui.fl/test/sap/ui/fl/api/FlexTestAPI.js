@@ -3,7 +3,9 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
@@ -13,7 +15,9 @@ sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer"
 ], function(
+	FlexObjectState,
 	FlexState,
+	FlexRuntimeInfoAPI,
 	ChangesWriteAPI,
 	LocalStorageConnector,
 	SessionStorageConnector,
@@ -55,7 +59,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	FlexTestAPI.getDirtyChanges = function(mPropertyBag) {
-		return FlexControllerFactory.createForSelector(mPropertyBag.selector)._oChangePersistence.getDirtyChanges();
+		const sReference = FlexRuntimeInfoAPI.getFlexReference({element: mPropertyBag.selector});
+		return FlexObjectState.getDirtyFlexObjects(sReference);
 	};
 
 	/**

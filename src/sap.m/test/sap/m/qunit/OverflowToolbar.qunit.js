@@ -2808,7 +2808,7 @@ sap.ui.define([
 			content: [oOFT]
 		}),
 		fnMockResizeEvent = function () {
-			var oResizeHandler = oDialog.$().find(".sapMDialogResizeHandler")[0],
+			var oResizeHandler = oDialog.$().find(".sapMDialogResizeHandle")[0],
 				oResizeHandlerRect = oResizeHandler.getBoundingClientRect();
 
 			// event in which the mouse is on the resize handler

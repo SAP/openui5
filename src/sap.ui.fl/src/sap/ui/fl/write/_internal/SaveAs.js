@@ -7,6 +7,8 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/Log",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
@@ -18,6 +20,8 @@ sap.ui.define([
 	merge,
 	Log,
 	DescriptorChangeTypes,
+	FlexObjectState,
+	ManifestUtils,
 	Settings,
 	AppVariantFactory,
 	AppVariantInlineChangeFactory,
@@ -133,23 +137,15 @@ sap.ui.define([
 	}
 
 	function _getDirtyDescrChanges(vSelector) {
-		var oFlexControllerPersistence = FlexControllerFactory.createForSelector(vSelector)._oChangePersistence;
-		if (!oFlexControllerPersistence) {
-			return [];
-		}
-		return oFlexControllerPersistence.getDirtyChanges().filter(function(oChange) {
+		const sReference = ManifestUtils.getFlexReferenceForSelector(vSelector);
+		return FlexObjectState.getDirtyFlexObjects(sReference).filter(function(oChange) {
 			return DescriptorChangeTypes.getChangeTypes().includes(oChange.getChangeType());
 		});
 	}
 
 	function _getDirtyChanges(vSelector) {
-		var oFlexControllerPersistence = FlexControllerFactory.createForSelector(vSelector)._oChangePersistence;
-		if (!oFlexControllerPersistence) {
-			return [];
-		}
-		var aChanges = oFlexControllerPersistence.getDirtyChanges();
-		aChanges = aChanges.slice();
-		return aChanges;
+		const sReference = ManifestUtils.getFlexReferenceForSelector(vSelector);
+		return FlexObjectState.getDirtyFlexObjects(sReference).slice();
 	}
 
 	function _deleteDescrChangesFromPersistence(vSelector) {
@@ -226,6 +222,9 @@ sap.ui.define([
 				if (aUIChanges.length) {
 					// Save the dirty UI changes to backend => firing PersistenceWriteApi.save
 					return oFlexController.saveAll(Utils.getAppComponentForSelector(mPropertyBag.selector), true)
+					.then(function() {
+						oFlexController._oChangePersistence.removeDirtyChanges();
+					})
 					.catch(function(oError) {
 						// Delete the inconsistent app variant if the UI changes failed to save
 						return this.deleteAppVariant({

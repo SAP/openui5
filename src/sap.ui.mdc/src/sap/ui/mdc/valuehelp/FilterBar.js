@@ -57,7 +57,7 @@ sap.ui.define(
 						 * </ul>
 						 * <i>Sample delegate object:</i>
 						 * <pre><code>{
-						 * 	name: "sap/ui/mdc/BaseDelegate",
+						 * 	name: "sap/ui/valuehelp/FilterBarDelegate",
 						 * 	payload: {}
 						 * }</code></pre>
 						 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>

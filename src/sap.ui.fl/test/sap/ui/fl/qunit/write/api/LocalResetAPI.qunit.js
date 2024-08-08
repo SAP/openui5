@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
@@ -18,6 +19,7 @@ sap.ui.define([
 ], function(
 	sinon,
 	UIChangesState,
+	FlexObjectState,
 	FlexState,
 	ManifestUtils,
 	FlexObjectFactory,
@@ -148,7 +150,7 @@ sap.ui.define([
 						"then the original change states are restored"
 					);
 					assert.notOk(
-						this.oChangePersistence.getDirtyChanges().includes(aNestedChanges[0]),
+						FlexObjectState.getDirtyFlexObjects("MyComponent").includes(aNestedChanges[0]),
 						"then dirty changes from deletion are removed"
 					);
 				}.bind(this));

@@ -277,7 +277,7 @@ sap.ui.define([
 				mOriginsNeedingCredentials[sThemeOrigin] = bCurrentWithCredentials;
 
 				if (Array.isArray(data)) {
-					// in the sap-ui-merged use case, multiple JSON files are merged into and transfered as a single JSON array
+					// in the sap-ui-merged use case, multiple JSON files are merged into and transferred as a single JSON array
 					for (var j = 0; j < data.length; j++) {
 						var oParams = data[j];
 						mergeParameters(oParams, sThemeBaseUrl);
@@ -301,7 +301,7 @@ sap.ui.define([
 	 * @returns {object} a map of all parameters
 	 */
 	function getParameters(bAsync) {
-		// Inital loading
+		// Initial loading
 		if (!mParameters) {
 			// Merge an empty parameter set to initialize the internal object
 			mergeParameters({}, "");
@@ -599,7 +599,7 @@ sap.ui.define([
 	 *        // merge the current parameters with the actual parameters in case they are retrieved asynchronously
 	 *        Object.assign(mMyParams, mParams);
 	 *     }
-	 *  });
+	 *  }));
 	 *
 	 * @param {string | string[] | object} vName the (array with) CSS parameter name(s) or an object containing the (array with) CSS parameter name(s),
 	 *     the scopeElement and a callback for async retrieval of parameters.

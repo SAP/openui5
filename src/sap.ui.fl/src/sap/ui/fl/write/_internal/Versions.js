@@ -3,19 +3,21 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/BindingMode"
 ], function(
-	ChangePersistenceFactory,
+	FlexObjectState,
 	Version,
 	FlexInfoSession,
 	Settings,
 	Storage,
+	ChangePersistenceFactory,
 	JSONModel,
 	BindingMode
 ) {
@@ -95,14 +97,12 @@ sap.ui.define([
 				oVersion.type = Version.Type.Draft;
 				oVersion.isPublished = false;
 				aDraftFilenames = oVersion.filenames;
+			} else if (sActiveVersion === Version.Number.Original) {
+				// no active version found yet; the first non-draft version is always the active version
+				oVersion.type = Version.Type.Active;
+				sActiveVersion = oVersion.version;
 			} else {
-				if (sActiveVersion === Version.Number.Original) {
-					// no active version found yet; the first non-draft version is always the active version
-					oVersion.type = Version.Type.Active;
-					sActiveVersion = oVersion.version;
-				} else {
-					oVersion.type = Version.Type.Inactive;
-				}
+				oVersion.type = Version.Type.Inactive;
 			}
 		});
 
@@ -140,39 +140,16 @@ sap.ui.define([
 		return oVersionsModel;
 	}
 	// TODO: the handling should move to the FlexState as soon as it is ready
-	function _removeDirtyChanges(mPropertyBag, oDirtyChangeInfo) {
-		// remove all dirty changes
-		var aDirtyChanges = [];
-		var aChangePersistences = oDirtyChangeInfo.changePersistences;
-		aChangePersistences.forEach(function(oChangePersistence) {
-			aDirtyChanges = oChangePersistence.getDirtyChanges().concat();
-			oChangePersistence.deleteChanges(aDirtyChanges, true);
-		});
+	function _removeDirtyChanges(mPropertyBag) {
+		const oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference);
+		const aDirtyChanges = FlexObjectState.getDirtyFlexObjects(mPropertyBag.reference);
+		oChangePersistence.deleteChanges(aDirtyChanges, true);
 		return aDirtyChanges.length > 0;
 	}
 
-	function _getDirtyChangesInfo(mPropertyBag) {
-		var oDirtyChangesInfo = {
-			dirtyChangesExist: false,
-			changePersistences: []
-		};
-
-		if (mPropertyBag.reference) {
-			var oChangePersistenceForAppDescriptorChanges =
-				ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference);
-			if (oChangePersistenceForAppDescriptorChanges.getDirtyChanges().length > 0) {
-				oDirtyChangesInfo.dirtyChangesExist = true;
-				oDirtyChangesInfo.changePersistences.push(oChangePersistenceForAppDescriptorChanges);
-			}
-		}
-		if (mPropertyBag.nonNormalizedReference) {
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.nonNormalizedReference);
-			if (oChangePersistence.getDirtyChanges().length > 0) {
-				oDirtyChangesInfo.dirtyChangesExist = true;
-				oDirtyChangesInfo.changePersistences.push(oChangePersistence);
-			}
-		}
-		return oDirtyChangesInfo;
+	function doDirtyChangesExist(sReference) {
+		const aDirtyChanges = FlexObjectState.getDirtyFlexObjects(sReference);
+		return aDirtyChanges.length > 0;
 	}
 
 	function _doesDraftExistInVersions(aVersions) {
@@ -254,8 +231,7 @@ sap.ui.define([
 			throw Error(`Versions Model for reference '${sReference}' and layer '${sLayer}' were not initialized.`);
 		}
 
-		var oDirtyChangesInfo = _getDirtyChangesInfo(mPropertyBag);
-		if (oDirtyChangesInfo.dirtyChangesExist) {
+		if (doDirtyChangesExist(mPropertyBag.reference)) {
 			_mInstances[sReference][sLayer].updateDraftVersion(mPropertyBag);
 		}
 		return _mInstances[sReference][sLayer];
@@ -322,7 +298,6 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag - Property Bag
 	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested (this reference must not contain the ".Component" suffix)
-	 * @param {string} mPropertyBag.nonNormalizedReference - ID of the application for which the versions are requested
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 * @param {string} mPropertyBag.title - Title of the to be activated version
 	 * @param {string} mPropertyBag.appComponent - Application Component
@@ -342,13 +317,7 @@ sap.ui.define([
 		}
 		mPropertyBag.version = mPropertyBag.displayedVersion;
 
-		var oDirtyChangeInfo = _getDirtyChangesInfo(mPropertyBag);
-		var aChangePersistences = oDirtyChangeInfo.changePersistences;
-		var bDirtyChangesExists = aChangePersistences.some(function(oChangePersistence) {
-			return oChangePersistence.getDirtyChanges().length > 0;
-		});
-
-		if (bDirtyChangesExists) {
+		if (doDirtyChangesExist(mPropertyBag.reference)) {
 			return Promise.reject("unsaved changes exists");
 		}
 
@@ -375,14 +344,12 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag - Property Bag
 	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested (this reference must not contain the ".Component" suffix)
-	 * @param {string} mPropertyBag.nonNormalizedReference - ID of the application for which the versions are requested
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 * @returns {Promise<object>} Promise resolving to an object to indicate if a discarding took place on backend side and/or dirty changes were discarded;
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
 	Versions.discardDraft = function(mPropertyBag) {
 		var oModel = Versions.getVersionsModel(mPropertyBag);
-		var oDirtyChangesInfo = _getDirtyChangesInfo(mPropertyBag);
 		var bBackendDraftExists = oModel.getProperty("/backendDraft");
 		var oDiscardPromise = bBackendDraftExists ? Storage.versions.discardDraft(mPropertyBag) : Promise.resolve();
 
@@ -392,7 +359,7 @@ sap.ui.define([
 			_updateVersionModelWhenDiscardOrActivate(oModel, oModel.getProperty("/activeVersion"));
 			// in case of a existing draft known by the backend;
 			// we remove dirty changes only after successful DELETE request
-			var bDirtyChangesRemoved = _removeDirtyChanges(mPropertyBag, oDirtyChangesInfo);
+			const bDirtyChangesRemoved = _removeDirtyChanges(mPropertyBag);
 			return {
 				backendChangesDiscarded: bBackendDraftExists,
 				dirtyChangesDiscarded: bDirtyChangesRemoved

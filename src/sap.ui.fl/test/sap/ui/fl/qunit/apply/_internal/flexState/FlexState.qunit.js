@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/DataSelector",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/InitialPrepareFunctions",
@@ -16,13 +17,13 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Log,
 	merge,
 	UIComponent,
 	FlexObjectFactory,
+	States,
 	DataSelector,
 	FlexState,
 	InitialPrepareFunctions,
@@ -34,7 +35,6 @@ sap.ui.define([
 	Layer,
 	LayerUtils,
 	Utils,
-	ChangePersistenceFactory,
 	sinon
 ) {
 	"use strict";
@@ -136,7 +136,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("When a FlexObject is added and removed", async function(assert) {
+		QUnit.test("When a FlexObject is added and removed multiple times", async function(assert) {
 			await FlexState.initialize({
 				reference: sReference,
 				componentId: sComponentId
@@ -150,10 +150,28 @@ sap.ui.define([
 				"then the flexObject is added to the selector"
 			);
 			assert.strictEqual(
+				FlexState.getFlexObjectsDataSelector().get({reference: sReference}).length,
+				1,
+				"then the selector returns one flexObject"
+			);
+			assert.strictEqual(
 				this.oCheckUpdateSelectorStub.callCount,
 				1,
 				"then the selector is updated after adding a flexObject"
 			);
+
+			FlexState.addDirtyFlexObject(sReference, oDummyFlexObject);
+			assert.strictEqual(
+				FlexState.getFlexObjectsDataSelector().get({reference: sReference}).length,
+				1,
+				"then the selector returns one flexObject"
+			);
+			assert.strictEqual(
+				this.oCheckUpdateSelectorStub.callCount,
+				1,
+				"then the selector is not updated again"
+			);
+
 			FlexState.removeDirtyFlexObject(sReference, oDummyFlexObject);
 			assert.strictEqual(
 				FlexState.getFlexObjectsDataSelector().get({reference: sReference}).length,
@@ -165,6 +183,19 @@ sap.ui.define([
 				2,
 				"then the selector is updated after removing a flexObject"
 			);
+
+			FlexState.removeDirtyFlexObject(sReference, oDummyFlexObject);
+			assert.strictEqual(
+				FlexState.getFlexObjectsDataSelector().get({reference: sReference}).length,
+				0,
+				"then the selector still returns no flexObjects"
+			);
+			assert.strictEqual(
+				this.oCheckUpdateSelectorStub.callCount,
+				2,
+				"then the selector is not updated again"
+			);
+
 			assert.deepEqual(
 				FlexState.getFlexObjectsDataSelector().get({reference: "wrongReference"}),
 				[],
@@ -430,10 +461,15 @@ sap.ui.define([
 				componentId: sComponentId
 			})
 			.then(function() {
+				const aFlexObjects = FlexState.getFlexObjectsDataSelector().get({reference: sReference});
+				assert.strictEqual(aFlexObjects.length, 4, "then two additional flex objects are created");
 				assert.strictEqual(
-					FlexState.getFlexObjectsDataSelector().get({reference: sReference})[1].getVariantReference(),
-					"vmReference",
+					aFlexObjects[1].getVariantReference(), "vmReference",
 					"then the variant reference is changed to the standard variant"
+				);
+				assert.ok(
+					aFlexObjects.every((oFlexObject) => oFlexObject.getState() === States.LifecycleState.PERSISTED),
+					"all flex objects are set to persisted"
 				);
 			});
 		});
@@ -545,6 +581,48 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when initialize is called multiple times with the same reference without waiting", async function(assert) {
+			assert.expect(3);
+			this.oLoadFlexDataStub.callsFake((mProperties) => {
+				// Simulate the following scenario:
+				// First initialization takes some time and second and third are called before the first one is finished
+				// The second one takes longer than then third one
+				// Expectation is that the initializations still finish in order
+				const oPromise = (mProperties.expectedOrder === 3)
+					? Promise.resolve()
+					: new Promise((resolve) => {
+						setTimeout(() => {
+							resolve();
+						}, 0);
+					});
+				return oPromise.then(() => {
+					assert.strictEqual(
+						this.oLoadFlexDataStub.callCount,
+						mProperties.expectedOrder,
+						"then the initializations are executed in order and wait for each other"
+					);
+					return mEmptyResponse;
+				});
+			});
+			FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId,
+				expectedOrder: 1
+			});
+			FlexState.initialize({
+				reference: sReference,
+				reInitialize: true,
+				componentId: sComponentId,
+				expectedOrder: 2
+			});
+			await FlexState.initialize({
+				reference: sReference,
+				reInitialize: true,
+				componentId: sComponentId,
+				expectedOrder: 3
+			});
+		});
+
 		QUnit.test("when getAppDescriptorChanges / getVariantsState is called without initialization", function(assert) {
 			return FlexState.initialize({
 				reference: "sap.ui.fl.other.reference",
@@ -581,24 +659,6 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when clearState is called while there are dirty changes", function(assert) {
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-			return FlexState.initialize({
-				reference: sReference,
-				component: {},
-				componentId: sComponentId
-			})
-			.then(function() {
-				oChangePersistence.addDirtyChange({});
-				FlexState.clearState(sReference);
-				assert.strictEqual(
-					oChangePersistence.getDirtyChanges().length,
-					0,
-					"then dirty changes are removed"
-				);
-			});
-		});
-
 		QUnit.test("when external comp variant data is stored and retrieved", function(assert) {
 			var oStoredData = FlexState.getInitialNonFlCompVariantData(this.sFlexReference);
 			assert.equal(oStoredData, undefined, "when no external data is stored, retrieve function return undefined");
@@ -631,9 +691,11 @@ sap.ui.define([
 			FlexState.setInitialNonFlCompVariantData(this.sFlexReference, "persistencyKey", oStandardVariant1, aVariants1, "controlId1");
 			oStoredData = FlexState.getInitialNonFlCompVariantData(this.sFlexReference);
 			assert.deepEqual(oStoredData, {persistencyKey: oStoredData1}, "retrieve function return stored data correctly");
+
 			FlexState.setInitialNonFlCompVariantData(this.sFlexReference, "persistencyKey", oStandardVariant2, aVariants2, "controlId2");
 			oStoredData = FlexState.getInitialNonFlCompVariantData(this.sFlexReference);
 			assert.deepEqual(oStoredData, {persistencyKey: oStoredData2}, "store the data will overwrite existing stored data");
+
 			FlexState.setInitialNonFlCompVariantData(this.sFlexReference, "persistencyKey2", oStandardVariant1, aVariants1, "controlId1");
 			oStoredData = FlexState.getInitialNonFlCompVariantData(this.sFlexReference);
 			assert.deepEqual(oStoredData, {persistencyKey: oStoredData2, persistencyKey2: oStoredData1},
@@ -1027,10 +1089,15 @@ sap.ui.define([
 				1,
 				"then the standard variant flex object is added"
 			);
-			assert.strictEqual(
+			assert.deepEqual(
 				aFlexObjects[0],
 				this.oVariant,
 				"then the standard variant is returned by the data selector"
+			);
+			assert.strictEqual(
+				aFlexObjects[0].getState(),
+				States.LifecycleState.PERSISTED,
+				"the standard variant state is set to persisted"
 			);
 		});
 
@@ -1457,7 +1524,6 @@ sap.ui.define([
 			await FlexState.initialize({
 				reference: sReference
 			});
-			const oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
 			// initial data
 			const aInitialChanges = [
 				FlexObjectFactory.createUIChange({id: "initialUIChange1"}),
@@ -1473,9 +1539,7 @@ sap.ui.define([
 					}
 				})
 			];
-			aInitialChanges.forEach(function(oFlexObject) {
-				oChangePersistence.addDirtyChange(oFlexObject);
-			});
+			FlexState.addDirtyFlexObjects(sReference, aInitialChanges);
 			FlexState.updateStorageResponse(sReference, aInitialChanges.map((flexObject) => ({
 				type: "add",
 				flexObject: flexObject.convertToFileContent()

@@ -2069,7 +2069,7 @@
 	/**
 	 * Dumps information about the current set of modules and their state.
 	 *
-	 * @param {int} [iThreshold=-1] Earliest module state for which odules should be reported
+	 * @param {int} [iThreshold=-1] Earliest module state for which modules should be reported
 	 * @private
 	 */
 	function dumpInternals(iThreshold) {
@@ -2921,7 +2921,7 @@
 	 *   // module 'Something' wants to use third party library 'URI.js'
 	 *   // It is packaged by UI5 as non-UI5-module 'sap/ui/thirdparty/URI'
 	 *   // the following shim helps UI5 to correctly load URI.js and to retrieve the module's export value
-	 *   // Apps don't have to define that shim, it is already applied by ui5loader-autconfig.js
+	 *   // Apps don't have to define that shim, it is already applied by ui5loader-autoconfig.js
 	 *   sap.ui.loader.config({
 	 *     shim: {
 	 *       'sap/ui/thirdparty/URI': {

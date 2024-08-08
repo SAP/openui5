@@ -4,30 +4,28 @@
 
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
-	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils"
 ], function(
 	_omit,
-	States,
 	UIChangesState,
 	CompVariantMerger,
 	VariantManagementState,
+	ApplyFlexObjectState,
 	FlexState,
 	ManifestUtils,
 	CompVariantState,
 	Versions,
 	FlexControllerFactory,
-	ChangePersistenceFactory,
 	LayerUtils,
 	Utils
 ) {
@@ -78,11 +76,6 @@ sap.ui.define([
 	function saveCompEntities(mPropertyBag) {
 		var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
 		return CompVariantState.persistAll(sReference);
-	}
-
-	function getChangePersistence(mPropertyBag) {
-		mPropertyBag.reference ||= ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
-		return ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference);
 	}
 
 	function saveChangePersistenceEntities(mPropertyBag, oAppComponent) {
@@ -159,25 +152,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Collects modified changes from the different states within the <code>sap.ui.fl</code> library.
-	 * This includes the flexState entities as well as the <code>sap.ui.fl.ChangePersistence</code>.
-	 *
-	 * @param {object} mPropertyBag - Object with parameters as properties
-	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Retrieves the associated flex persistence
-	 * @param {boolean} mPropertyBag.includeCtrlVariants - Flag if control variant changes should be included
-	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Flex objects, containing changes, compVariants & changes as well as ctrl_variant and changes
-	 */
-	FlexObjectState.getDirtyFlexObjects = function(mPropertyBag) {
-		mPropertyBag.includeDirtyChanges = true;
-		var oChangePersistence = getChangePersistence(mPropertyBag);
-		var aChangePersistenceEntities = oChangePersistence.getDirtyChanges();
-		var aCompVariantEntities = getCompVariantEntities(mPropertyBag);
-		return aChangePersistenceEntities.concat(aCompVariantEntities).filter(function(oFlexObject) {
-			return oFlexObject.getState() !== States.LifecycleState.PERSISTED;
-		});
-	};
-
-	/**
 	 * Checks if dirty flex objects exist for the flex persistence associated with the selector control;
 	 * Includes dirty changes on the descriptor as well as dirty changes on SmartVariantManagement of the application.
 	 *
@@ -187,10 +161,7 @@ sap.ui.define([
 	 */
 	FlexObjectState.hasDirtyFlexObjects = function(mPropertyBag) {
 		var sReference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
-		if (ChangePersistenceFactory.getChangePersistenceForComponent(sReference).getDirtyChanges().length > 0) {
-			return true;
-		}
-		return CompVariantState.hasDirtyChanges(sReference);
+		return ApplyFlexObjectState.getDirtyFlexObjects(sReference).length > 0 || CompVariantState.hasDirtyChanges(sReference);
 	};
 
 	/**
@@ -209,25 +180,24 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.adaptationId] - Adaptation to load into Flex State after saving (e.g. undefined when exiting RTA)
 	 * @returns {Promise<sap.ui.fl.apply._internal.flexObjects.FlexObject[]>} Flex objects, containing changes, compVariants & changes as well as ctrl_variant and changes
 	 */
-	FlexObjectState.saveFlexObjects = function(mPropertyBag) {
+	FlexObjectState.saveFlexObjects = async function(mPropertyBag) {
 		var oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
 		mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
-		return saveCompEntities(mPropertyBag)
-		.then(saveChangePersistenceEntities.bind(this, mPropertyBag, oAppComponent))
-		.then(function() {
-			if (mPropertyBag.version !== undefined && Versions.hasVersionsModel(mPropertyBag)) {
-				var oModel = Versions.getVersionsModel(mPropertyBag);
-				mPropertyBag.version = oModel.getProperty("/displayedVersion");
-			}
-			if (mPropertyBag.layer) {
-				// TODO: sync the layer parameter name with new persistence and remove this line
-				mPropertyBag.currentLayer = mPropertyBag.layer;
-			}
-			// with invalidation more parameters are required to make a new storage request
-			mPropertyBag.componentId = oAppComponent.getId();
-			mPropertyBag.invalidateCache = true;
-			return FlexObjectState.getFlexObjects(_omit(mPropertyBag, "skipUpdateCache"));
-		});
+		await saveCompEntities(mPropertyBag);
+		await saveChangePersistenceEntities(mPropertyBag, oAppComponent);
+
+		if (mPropertyBag.version !== undefined && Versions.hasVersionsModel(mPropertyBag)) {
+			var oModel = Versions.getVersionsModel(mPropertyBag);
+			mPropertyBag.version = oModel.getProperty("/displayedVersion");
+		}
+		if (mPropertyBag.layer) {
+			// TODO: sync the layer parameter name with new persistence and remove this line
+			mPropertyBag.currentLayer = mPropertyBag.layer;
+		}
+		// with invalidation more parameters are required to make a new storage request
+		mPropertyBag.componentId = oAppComponent.getId();
+		mPropertyBag.invalidateCache = true;
+		return FlexObjectState.getFlexObjects(_omit(mPropertyBag, "skipUpdateCache"));
 	};
 
 	return FlexObjectState;

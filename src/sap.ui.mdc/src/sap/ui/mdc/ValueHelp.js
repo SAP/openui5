@@ -36,7 +36,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Base-modules for {@link sap.ui.mdc.ValueHelp ValueHelp}
+	 * Base modules for {@link sap.ui.mdc.ValueHelp ValueHelp}
 	 *
 	 * These modules must not be used stand-alone.
 	 * @namespace
@@ -46,7 +46,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Content-modules that is used in {@link sap.ui.mdc.valueHelp.Popover Popover} or {@link sap.ui.mdc.valueHelp.Dialog Dialog}
+	 * Content modules that are used in {@link sap.ui.mdc.valuehelp.Popover Popover} or {@link sap.ui.mdc.valuehelp.Dialog Dialog}
 	 *
 	 * These modules must not be used stand-alone.
 	 * @namespace
@@ -140,6 +140,9 @@ sap.ui.define([
 				 * If this property is not set, the user input is still checked against the value help.
 				 * But if no entry is found, the user input is set to the field if the used data type allows this.
 				 * (A type parsing error is shown if the user input adheres to the requirements of the used data type.)
+				 *
+				 * <b>Note:</b> The input is validated and compared against the content assigned to the <code>typeahead</code> aggregation.
+				 * If no content is assigned to the <code>typeahead</code> aggregation, the input is not validated.
 				 */
 				validateInput: {
 					type: "boolean",

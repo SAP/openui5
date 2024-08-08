@@ -2046,7 +2046,7 @@ function(
 			var $w = jQuery(document);
 
 			var $target = jQuery(e.target);
-			var bResize = $target.hasClass('sapMDialogResizeHandler') && this.getResizable();
+			var bResize = e.target.closest(".sapMDialogResizeHandle") && this.getResizable();
 			var fnMouseMoveHandlerDelayed = function (action) {
 				timeout = timeout ? clearTimeout(timeout) : setTimeout(function () {
 					action();

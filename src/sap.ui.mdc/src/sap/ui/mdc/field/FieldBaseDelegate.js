@@ -336,7 +336,7 @@ sap.ui.define([
 	 * This function is called when a <code>Condition</code> is created by user input or value help selection to determine if a similar <code>Condition</code> already exists.
 	 * This is done to prevent duplicates.
 	 *
-	 * By default, if a <code>ValueHelp</code> exists, the <code>ValueHelp</code> logic is used to compare each condition. (See {@link sap.ui.mdc.ValueHelpDelegate#compareConditions ValueHelpDelegate.compareConditions})
+	 * By default, if a <code>ValueHelp</code> exists, the <code>ValueHelp</code> logic is used to compare each condition. (See {@link module:sap/ui/mdc/ValueHelpDelegate.compareConditions ValueHelpDelegate.compareConditions})
 	 *
 	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Value help assigned to the <code>Field</code> or <code>FilterField</code> control

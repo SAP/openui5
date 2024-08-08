@@ -35,7 +35,6 @@
 	background-clip: padding-box;
 	min-height: 6rem;
 	outline: none;
-	overflow: hidden;
 	position: fixed !important;
 	display: flex !important;
 	flex-direction: column;
@@ -76,6 +75,30 @@ html.sap-phone .sapMDialog.sapMDialogStretched {
 	border: none;
 	box-shadow: none;
 	border-radius: 0;
+}
+
+html:not(.sap-phone) .sapMDialog {
+	header .sapMHeader-CTX {
+		border-radius: @sapUiElementBorderCornerRadius @sapUiElementBorderCornerRadius 0 0;
+	}
+
+	&.sapMDialog-NoHeader header .sapMSubHeader-CTX {
+		border-radius: @sapUiElementBorderCornerRadius @sapUiElementBorderCornerRadius 0 0;
+	}
+
+	&.sapMDialog-NoHeader:not(.sapMDialogWithSubHeader) .sapMDialogSection {
+		border-top-right-radius: @sapUiElementBorderCornerRadius;
+		border-top-left-radius: @sapUiElementBorderCornerRadius;
+	}
+
+	footer .sapMFooter-CTX {
+		border-radius: 0 0 @sapUiElementBorderCornerRadius @sapUiElementBorderCornerRadius;
+	}
+
+	&.sapMDialog-NoFooter .sapMDialogSection {
+		border-bottom-right-radius: @sapUiElementBorderCornerRadius;
+		border-bottom-left-radius: @sapUiElementBorderCornerRadius;
+	}
 }
 
 html.sap-phone .sapMDialog {
@@ -288,19 +311,25 @@ html.sap-desktop .sapMDialog {
 	-webkit-transition: none;
 }
 
-.sapMDialogResizeHandler {
-	bottom: 0;
-	cursor: se-resize;
+.sapMDialogResizeHandle {
 	position: absolute;
-	right: 0;
-	width: .5rem;
+	right: -0.5rem;
+	bottom: -0.5rem;
+	width: 1.5rem;
+	height: 1.5rem;
 	z-index: 2;
 	line-height: 1rem;
+	cursor: se-resize;
+	border-radius: 50%;
 
-	&:before {
-		left: 0;
+	.sapMDialogResizeHandleIcon {
 		position: relative;
+		left: 0;
 		top: 0;
+		width: 1rem;
+		height: 1rem;
+		color: @sapUiButtonLiteTextColor;
+		cursor: inherit;
 	}
 }
 

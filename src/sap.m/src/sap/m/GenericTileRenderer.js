@@ -402,7 +402,11 @@ GenericTileRenderer.render = function(oRm, oControl) {
 			}
 			oRm.openEnd();
 			if (aLinkTileContent.length > 0) {
-				oRm.openStart("div", oControl.getId() + "-linkTileContent").class("sapMGTLinkTileContentWrapper").openEnd();
+				oRm.openStart("div", oControl.getId() + "-linkTileContent").class("sapMGTLinkTileContentWrapper");
+				if (!oControl.getSubheader()) {
+					oRm.class("saMGTLinkSubheaderNotPresent");
+				}
+				oRm.openEnd();
 				for (var i = 0; i < aLinkTileContent.length; i++) {
 					oRm.renderControl(aLinkTileContent[i].getLinkTileContentInstance());
 				}

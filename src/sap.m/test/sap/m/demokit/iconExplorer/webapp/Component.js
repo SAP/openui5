@@ -60,6 +60,10 @@ sap.ui.define([
 				// set the device model
 				this.setModel(models.createDeviceModel(), "device");
 
+				// set the current year model
+				var oModel = models.createSharedParamsModel();
+				this.setModel(oModel, "sharedParams");
+
 				var aFontsLoaded = [];
 				var sLocalFontFolder = sap.ui.require.toUrl("sap/ui/demo/iconexplorer/fonts/base/");
 

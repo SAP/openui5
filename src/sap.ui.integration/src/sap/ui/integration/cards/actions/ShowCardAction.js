@@ -71,7 +71,7 @@ sap.ui.define([
 
 		const oDelegate = {
 			onmousedown: (e) => {
-				if (e.target.classList.contains("sapMDialogResizeHandler")) {
+				if (e.target.closest(".sapMDialogResizeHandle")) {
 					oChildCard.setHeight("100%");
 					oDialog.setContentHeight(oDialog.getDomRef("cont").offsetHeight + "px");
 					oDialog.setVerticalScrolling(false);

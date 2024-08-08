@@ -40,6 +40,11 @@ sap.ui.define([
 		oCellSelector._onmousemove(oEvent);
 	}
 
+	function click(oTarget, oParams) {
+		triggerMouseEvent(oTarget, "mousedown", oParams);
+		triggerMouseEvent(oTarget, "mouseup", oParams);
+	}
+
 	Opa5.createPageObjects({
 		Mouse: {
 			actions: {
@@ -67,6 +72,14 @@ sap.ui.define([
 							if (bRelease) {
 								triggerMouseEvent(oCellRef, "mouseup");
 							}
+						}
+					});
+				},
+				iExtendSelection: function(iRow, iCol) {
+					Util.waitForTable.call(this, {
+						success: function(oTable) {
+							const oCellRef = Util.getCell(oTable, iRow, iCol);
+							click(oCellRef, { button: 0, shiftKey: true });
 						}
 					});
 				},

@@ -13,6 +13,8 @@ sap.ui.define([
 
 	const mdcMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
 	/**
+	 * Delegate for {@link sap.ui.mdc.valuehelp.FilterBar FilterBar}.<br>
+	 * @public
 	 * @since 1.124.0
 	 */
 	const ValueHelpFilterBarDelegate = Object.assign({}, FilterBarDelegate);

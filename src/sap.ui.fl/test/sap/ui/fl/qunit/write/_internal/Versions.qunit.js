@@ -2,6 +2,8 @@
 
 sap.ui.define([
 	"sap/ui/core/Control",
+	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
@@ -21,6 +23,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Control,
+	UIChangesState,
+	FlexObjectState,
 	ManifestUtils,
 	Version,
 	FlexConfiguration,
@@ -51,11 +55,17 @@ sap.ui.define([
 		});
 	}
 
-	function _prepareResponsesAndStubMethod(sReference, aReturnedVersions, sFunctionName, aDirtyChanges) {
+	function prepareStubsForSave(sReference, aReturnedVersions) {
 		sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-		sandbox.stub(oChangePersistence, "getDirtyChanges").returns(aDirtyChanges);
-		return sandbox.stub(oChangePersistence, sFunctionName).resolves();
+		return sandbox.stub(oChangePersistence, "saveDirtyChanges").resolves();
+	}
+
+	function prepareStubsForDiscardDraft(sReference, aReturnedVersions, aDirtyChanges) {
+		sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
+		sandbox.stub(FlexObjectState, "getDirtyFlexObjects").returns(aDirtyChanges);
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
+		return sandbox.stub(oChangePersistence, "deleteChanges").resolves();
 	}
 
 	QUnit.module("Initialization", {
@@ -425,7 +435,6 @@ sap.ui.define([
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: this.sReference,
-				nonNormalizedReference: this.sReference,
 				appComponent: this.oAppComponent
 			};
 
@@ -449,7 +458,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			var oSaveStub = _prepareResponsesAndStubMethod(this.sReference, aReturnedVersions, "saveDirtyChanges", []);
+			var oSaveStub = prepareStubsForSave(this.sReference, aReturnedVersions);
 
 			var oActivatedVersion = {
 				activatedBy: "qunit",
@@ -494,7 +503,6 @@ sap.ui.define([
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: this.sReference,
-				nonNormalizedReference: this.sReference,
 				appComponent: this.oAppComponent
 			};
 
@@ -515,7 +523,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			var oSaveStub = _prepareResponsesAndStubMethod(this.sReference, aReturnedVersions, "saveDirtyChanges", []);
+			var oSaveStub = prepareStubsForSave(this.sReference, aReturnedVersions);
 
 			var oActivatedVersion = {
 				activatedBy: "qunit",
@@ -549,7 +557,6 @@ sap.ui.define([
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: this.sReference,
-				nonNormalizedReference: this.sReference,
 				appComponent: this.oAppComponent,
 				displayedVersion: "1"
 			};
@@ -564,7 +571,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			var oSaveStub = _prepareResponsesAndStubMethod(this.sReference, aReturnedVersions, "saveDirtyChanges", []);
+			var oSaveStub = prepareStubsForSave(this.sReference, aReturnedVersions);
 
 			var oActivatedVersion = {
 				activatedBy: "qunit",
@@ -605,7 +612,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			_prepareResponsesAndStubMethod(mPropertyBag.reference, aReturnedVersions, "saveDirtyChanges", [{}]);
+			prepareStubsForSave(mPropertyBag.reference, aReturnedVersions);
 
 			var oActivatedVersion = {
 				activatedBy: "qunit",
@@ -641,7 +648,6 @@ sap.ui.define([
 	QUnit.module("Calling the Storage: Given Versions.discardDraft is called", {
 		before() {
 			this.reference = "com.sap.app";
-			this.nonNormalizedReference = `${this.reference}.Component`;
 			this.sComponentId = "sComponentId";
 			this.oAppComponent = {
 				getManifest() {
@@ -667,7 +673,6 @@ sap.ui.define([
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: this.reference,
-				nonNormalizedReference: this.nonNormalizedReference,
 				appComponent: this.oAppComponent
 			};
 
@@ -691,7 +696,7 @@ sap.ui.define([
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedBackendVersions);
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.reference);
 			var oDeleteStub = sandbox.stub(oChangePersistence, "deleteChange").resolves();
-			var oGetDirtyChangesStub = sandbox.stub(oChangePersistence, "getDirtyChanges").returns([{}]);
+			var oGetDirtyChangesStub = sandbox.stub(FlexObjectState, "getDirtyFlexObjects").returns([{}]);
 			var oDiscardStub = sandbox.stub(KeyUserConnector.versions, "discardDraft").resolves();
 
 			return Versions.initialize(mPropertyBag)
@@ -736,7 +741,6 @@ sap.ui.define([
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: this.reference,
-				nonNormalizedReference: this.nonNormalizedReference,
 				appComponent: this.oAppComponent
 			};
 			var sActiveVersion = "1";
@@ -751,7 +755,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			var oSaveStub = _prepareResponsesAndStubMethod(this.reference, aReturnedVersions, "saveDirtyChanges", []);
+			var oSaveStub = prepareStubsForSave(this.reference, aReturnedVersions);
 			var oDiscardStub = sandbox.stub(KeyUserConnector.versions, "discardDraft").resolves();
 
 			return Versions.initialize(mPropertyBag)
@@ -782,7 +786,6 @@ sap.ui.define([
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: this.reference,
-				nonNormalizedReference: this.nonNormalizedReference,
 				appComponent: this.oAppComponent
 			};
 
@@ -796,7 +799,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			_prepareResponsesAndStubMethod(this.reference, aReturnedVersions, "saveDirtyChanges", []);
+			prepareStubsForSave(this.reference, aReturnedVersions);
 
 			return Versions.initialize(mPropertyBag)
 			.then(function(oVersionsModel) {
@@ -815,7 +818,6 @@ sap.ui.define([
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: this.reference,
-				nonNormalizedReference: this.nonNormalizedReference,
 				appComponent: this.oAppComponent
 			};
 
@@ -829,13 +831,13 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			var oDeleteStub = _prepareResponsesAndStubMethod(this.reference, aReturnedVersions, "deleteChange", [{}, {}]);
+			var oDeleteStub = prepareStubsForDiscardDraft(this.reference, aReturnedVersions, [{}, {}]);
 
 			return Versions.initialize(mPropertyBag)
 			.then(Versions.discardDraft.bind(undefined, mPropertyBag))
 			.then(function(oDiscardInfo) {
 				assert.equal(oDiscardInfo.dirtyChangesDiscarded, true, "some discarding took place");
-				assert.equal(oDeleteStub.callCount, 2, "two changes were deleted");
+				assert.equal(oDeleteStub.getCall(0).args[0].length, 2, "two changes were deleted");
 			});
 		});
 
@@ -844,7 +846,6 @@ sap.ui.define([
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: this.reference,
-				nonNormalizedReference: this.nonNormalizedReference,
 				appComponent: this.oAppComponent
 			};
 
@@ -858,7 +859,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			var oDeleteStub = _prepareResponsesAndStubMethod(this.reference, aReturnedVersions, "deleteChange", [{}, {}]);
+			var oDeleteStub = prepareStubsForDiscardDraft(this.reference, aReturnedVersions, [{}, {}]);
 
 			return Versions.initialize(mPropertyBag)
 			.then(function(oVersionsModel) {
@@ -867,7 +868,7 @@ sap.ui.define([
 			.then(Versions.discardDraft.bind(undefined, mPropertyBag))
 			.then(function(oDiscardInfo) {
 				assert.equal(oDiscardInfo.dirtyChangesDiscarded, true, "discarding took place");
-				assert.equal(oDeleteStub.callCount, 2, "two changes were deleted");
+				assert.equal(oDeleteStub.getCall(0).args[0].length, 2, "two changes were deleted");
 				assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), 1, ", a displayedVersion property set to the active version");
 			}.bind(this));
 		});
@@ -877,7 +878,6 @@ sap.ui.define([
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: this.reference,
-				nonNormalizedReference: this.nonNormalizedReference,
 				appComponent: this.oAppComponent
 			};
 
@@ -898,7 +898,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			var oDeleteStub = _prepareResponsesAndStubMethod(this.reference, aReturnedVersions, "deleteChange", [{}, {}]);
+			var oDeleteStub = prepareStubsForDiscardDraft(this.reference, aReturnedVersions, [{}, {}]);
 			var oDiscardStub = sandbox.stub(KeyUserConnector.versions, "discardDraft").resolves();
 
 			return Versions.initialize(mPropertyBag)
@@ -910,7 +910,7 @@ sap.ui.define([
 				assert.equal(oDiscardInfo.backendChangesDiscarded, true, "some discarding took place");
 				assert.equal(oDiscardInfo.dirtyChangesDiscarded, true, "some discarding took place");
 				assert.equal(oDiscardStub.callCount, 1, "discarding the draft was called");
-				assert.equal(oDeleteStub.callCount, 2, "two changes were deleted");
+				assert.equal(oDeleteStub.getCall(0).args[0].length, 2, "two changes were deleted");
 				assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), "1", ", a displayedVersion property set to the active version");
 			}.bind(this));
 		});
@@ -946,7 +946,6 @@ sap.ui.define([
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: this.sReference,
-				nonNormalizedReference: this.sReference,
 				appComponent: this.oAppComponent,
 				version: "3"
 			};
@@ -986,7 +985,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			_prepareResponsesAndStubMethod(this.sReference, aReturnedVersions, "saveDirtyChanges", []);
+			prepareStubsForSave(this.sReference, aReturnedVersions);
 			sandbox.stub(LrepConnector.versions, "publish").resolves("Success");
 
 			return Versions.initialize(mPropertyBag)
@@ -1032,7 +1031,6 @@ sap.ui.define([
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: sReference,
-				nonNormalizedReference: sReference,
 				appComponent: this.oAppComponent,
 				version: "3",
 				draftFilenames: ["filename1", "filename2"]
@@ -1055,7 +1053,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			_prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", []);
+			prepareStubsForSave(sReference, aReturnedVersions);
 
 			return Versions.initialize(mPropertyBag)
 			.then(Versions.onAllChangesSaved.bind(Versions, mPropertyBag))
@@ -1080,7 +1078,6 @@ sap.ui.define([
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: sReference,
-				nonNormalizedReference: sReference,
 				appComponent: this.oAppComponent,
 				version: "3",
 				contextBasedAdaptation: true
@@ -1097,7 +1094,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			_prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", []);
+			prepareStubsForSave(sReference, aReturnedVersions);
 
 			return Versions.initialize(mPropertyBag)
 			.then(Versions.onAllChangesSaved.bind(Versions, mPropertyBag))

@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/getVariantAuthor",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/Layer"
 ], function(
@@ -13,6 +14,7 @@ sap.ui.define([
 	ControlVariantUtils,
 	FlexObjectFactory,
 	getVariantAuthor,
+	States,
 	DependencyHandler,
 	Layer
 ) {
@@ -88,6 +90,7 @@ sap.ui.define([
 					user: ControlVariantUtils.DEFAULT_AUTHOR,
 					reference: oFlexObject.reference
 				});
+				oNewVariant.setState(States.LifecycleState.PERSISTED);
 				oUpdate.runtimeOnlyData.flexObjects.push(oNewVariant);
 				aVariantIds.push(sVariantReference);
 			}

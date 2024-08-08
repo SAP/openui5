@@ -24,11 +24,11 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/json/JSONModel"
 ], function(
@@ -53,11 +53,11 @@ sap.ui.define([
 	FlexObjectState,
 	ManifestUtils,
 	VariantUtil,
+	ContextBasedAdaptationsAPI,
 	Layer,
 	LayerUtils,
 	Utils,
 	Settings,
-	ContextBasedAdaptationsAPI,
 	BindingMode,
 	JSONModel
 ) {
@@ -626,7 +626,7 @@ sap.ui.define([
 				.then((oReturn) => {
 					if (!oReturn.success) {
 						var oException = oReturn.error || new Error("The change could not be applied.");
-						this._oChangePersistence.deleteChange(oChange, true);
+						this.oChangePersistence.deleteChange(oChange, true);
 						throw oException;
 					}
 				});
@@ -787,7 +787,8 @@ sap.ui.define([
 	};
 
 	VariantModel.prototype.removeVariant = function(mPropertyBag) {
-		var aChangesToBeDeleted = this.oChangePersistence.getDirtyChanges().filter(function(oChange) {
+		var aChangesToBeDeleted = FlexObjectState.getDirtyFlexObjects(this.sFlexReference)
+		.filter(function(oChange) {
 			return (oChange.getVariantReference && oChange.getVariantReference() === mPropertyBag.variant.getId()) ||
 				oChange.getId() === mPropertyBag.variant.getId();
 		});
@@ -1499,7 +1500,7 @@ sap.ui.define([
 			return oChange.getId();
 		});
 
-		return this.oChangePersistence.getDirtyChanges().filter(function(oChange) {
+		return FlexObjectState.getDirtyFlexObjects(this.sFlexReference).filter(function(oChange) {
 			return aChangeFileNames.includes(oChange.getId()) && !oChange.getSavedToVariant();
 		});
 	};

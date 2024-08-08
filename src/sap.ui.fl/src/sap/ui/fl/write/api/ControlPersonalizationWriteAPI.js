@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Element",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
@@ -21,6 +22,7 @@ sap.ui.define([
 	Log,
 	JsControlTreeModifier,
 	Element,
+	FlexObjectState,
 	FlexState,
 	VariantUtils,
 	ControlVariantApplyAPI,
@@ -303,8 +305,8 @@ sap.ui.define([
 				throw Error("App Component could not be determined");
 			}
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
-			var aDirtyFlexObjects = oChangePersistence.getDirtyChanges();
+			const sReference = FlexRuntimeInfoAPI.getFlexReference({element: mPropertyBag.selector});
+			var aDirtyFlexObjects = FlexObjectState.getDirtyFlexObjects(sReference);
 
 			return aDirtyFlexObjects.some(function(oFlexObject) {
 				if (oFlexObject.getLayer() !== Layer.USER) {

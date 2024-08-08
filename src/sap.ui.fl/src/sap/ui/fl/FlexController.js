@@ -3,20 +3,22 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/write/_internal/Versions",
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/Layer",
 	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
-	Layer,
-	ChangePersistenceFactory,
-	Versions,
 	Reverter,
 	States,
+	FlexObjectState,
 	FlexState,
+	Versions,
+	ChangePersistenceFactory,
+	Layer,
 	JsControlTreeModifier
 ) {
 	"use strict";
@@ -174,7 +176,7 @@ sap.ui.define([
 	 */
 	FlexController.prototype.saveSequenceOfDirtyChanges = async function(aDirtyChanges, oAppComponent) {
 		// the same fallback is used in the ChangePersistence, but to update the state we need the changes also here
-		const aChanges = aDirtyChanges || this._oChangePersistence.getDirtyChanges();
+		const aChanges = aDirtyChanges || FlexObjectState.getDirtyFlexObjects(this._sComponentName);
 		const oResponse = await this._oChangePersistence.saveDirtyChanges(oAppComponent, false, aChanges);
 
 		if (oResponse?.response?.length) {

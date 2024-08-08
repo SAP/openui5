@@ -33,7 +33,7 @@ sap.ui.define([
 	UIChangesState,
 	VariantManagementState,
 	DataSelector,
-	FlexObjectState,
+	ApplyFlexObjectState,
 	FlexState,
 	Version,
 	Settings,
@@ -80,7 +80,6 @@ sap.ui.define([
 			throw new Error("Missing component name.");
 		}
 
-		this._aDirtyChanges = [];
 		this._oMessagebundle = undefined;
 		oVariantIndependentUIChangesDataSelector.clearCachedResult({reference: this._mComponent.name});
 	};
@@ -167,7 +166,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangePersistence.prototype.getDependencyMapForComponent = function() {
-		return FlexObjectState.getLiveDependencyMap(this._mComponent.name);
+		return ApplyFlexObjectState.getLiveDependencyMap(this._mComponent.name);
 	};
 
 	function finalizeChangeCreation(oChange, oAppComponent) {
@@ -205,29 +204,25 @@ sap.ui.define([
 		return aNewChanges;
 	};
 
+	function createChange(vChange) {
+		return (
+			typeof vChange.isA === "function"
+			&& vChange.isA("sap.ui.fl.apply._internal.flexObjects.FlexObject")
+		)
+			? vChange
+			: FlexObjectFactory.createFromFileContent(vChange);
+	}
+
 	/**
 	 * Adds a new dirty change.
 	 *
 	 * @param {object} vChange - JSON object of change or change object
-	 * @param {boolean} [bSkipAddToState] - If set to true, the change won't be added to the FlexState
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} The prepared change object
 	 * @public
 	 */
-	ChangePersistence.prototype.addDirtyChange = function(vChange, bSkipAddToState) {
-		var oNewChange;
-		if (typeof vChange.isA === "function" && vChange.isA("sap.ui.fl.apply._internal.flexObjects.FlexObject")) {
-			oNewChange = vChange;
-		} else {
-			oNewChange = FlexObjectFactory.createFromFileContent(vChange);
-		}
-
-		// don't add the same change twice
-		if (this._aDirtyChanges.indexOf(oNewChange) === -1) {
-			this._aDirtyChanges.push(oNewChange);
-			if (!bSkipAddToState) {
-				FlexState.addDirtyFlexObject(this._mComponent.name, oNewChange);
-			}
-		}
+	ChangePersistence.prototype.addDirtyChange = function(vChange) {
+		const oNewChange = createChange(vChange);
+		FlexState.addDirtyFlexObject(this._mComponent.name, oNewChange);
 		return oNewChange;
 	};
 
@@ -239,9 +234,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangePersistence.prototype.addDirtyChanges = function(aChanges) {
-		var aNewChanges = aChanges.map(function(oChange) {
-			return this.addDirtyChange(oChange, true);
-		}.bind(this));
+		const aNewChanges = aChanges.map(createChange);
 		FlexState.addDirtyFlexObjects(this._mComponent.name, aNewChanges);
 		return aNewChanges;
 	};
@@ -426,7 +419,7 @@ sap.ui.define([
 		bCondenseAnyLayer,
 		sLayer
 	) {
-		var aDirtyChanges = aChanges || this._aDirtyChanges;
+		var aDirtyChanges = aChanges || ApplyFlexObjectState.getDirtyFlexObjects(this._mComponent.name);
 		var sCurrentLayer = aDirtyChanges.length && aDirtyChanges[0].getLayer() || sLayer;
 		var aRelevantChangesForCondensing = getAllRelevantChangesForCondensing.call(
 			this,
@@ -549,10 +542,6 @@ sap.ui.define([
 	 * therefore, the cache update of the current app is skipped
 	 */
 	ChangePersistence.prototype._updateCacheAndDirtyState = function(oDirtyChange, bSkipUpdateCache) {
-		this._aDirtyChanges = this._aDirtyChanges.filter(function(oExistingDirtyChange) {
-			return oDirtyChange.getId() !== oExistingDirtyChange.getId();
-		});
-
 		if (!bSkipUpdateCache) {
 			switch (oDirtyChange.getState()) {
 				case States.LifecycleState.NEW:
@@ -575,6 +564,8 @@ sap.ui.define([
 					break;
 				default:
 			}
+			oDirtyChange.setState(States.LifecycleState.PERSISTED);
+			FlexState.getFlexObjectsDataSelector().checkUpdate({reference: this._mComponent.name});
 		}
 	};
 
@@ -625,10 +616,6 @@ sap.ui.define([
 		return aChanges;
 	}
 
-	ChangePersistence.prototype.getDirtyChanges = function() {
-		return this._aDirtyChanges;
-	};
-
 	/**
 	 * Prepares a change to be deleted with the next call to
 	 * @see {ChangePersistence#saveDirtyChanges};
@@ -644,13 +631,12 @@ sap.ui.define([
 	 * @param {boolean} [bSkipRemoveFromFlexState] set if the change should not be removed from the FlexState
 	 */
 	ChangePersistence.prototype.deleteChange = function(oChange, bRunTimeCreatedChange, bSkipRemoveFromFlexState) {
-		var nIndexInDirtyChanges = this._aDirtyChanges.indexOf(oChange);
+		const nIndexInDirtyChanges = ApplyFlexObjectState.getDirtyFlexObjects(this._mComponent.name).indexOf(oChange);
 
 		if (nIndexInDirtyChanges > -1) {
 			if (oChange.getState() === States.LifecycleState.DELETED) {
 				return;
 			}
-			this._aDirtyChanges.splice(nIndexInDirtyChanges, 1);
 			if (!bSkipRemoveFromFlexState) {
 				FlexState.removeDirtyFlexObject(this._mComponent.name, oChange);
 			}
@@ -680,12 +666,7 @@ sap.ui.define([
 	};
 
 	ChangePersistence.prototype.removeChange = function(oChange) {
-		var nIndexInDirtyChanges = this._aDirtyChanges.indexOf(oChange);
-
-		if (nIndexInDirtyChanges > -1) {
-			this._aDirtyChanges.splice(nIndexInDirtyChanges, 1);
-			FlexState.removeDirtyFlexObject(this._mComponent.name, oChange);
-		}
+		FlexState.removeDirtyFlexObject(this._mComponent.name, oChange);
 		this._deleteChangeInMap(oChange);
 	};
 
@@ -763,7 +744,7 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.removeDirtyChanges = function(vLayer, oComponent, oControl, sGenerator, aChangeTypes) {
 		var aLayers = [].concat(vLayer || []);
-		var aDirtyChanges = this._aDirtyChanges;
+		var aDirtyChanges = ApplyFlexObjectState.getDirtyFlexObjects(this._mComponent.name);
 
 		var aChangesToBeRemoved = aDirtyChanges.filter(function(oChange) {
 			var bChangeValid = true;

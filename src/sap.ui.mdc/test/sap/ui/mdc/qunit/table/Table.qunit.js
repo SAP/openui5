@@ -6369,8 +6369,21 @@ sap.ui.define([
 		});
 
 		QUnit.test(sTheme + "; Toolbar", async function(assert) {
+			let sExpectedDesigntype;
+
+			switch (sTheme) {
+				case "sap_horizon":
+				case "sap_horizon_dark":
+				case "sap_horizon_hcw":
+				case "sap_horizon_hcb":
+					sExpectedDesigntype = ToolbarDesign.Solid;
+					break;
+				default:
+					sExpectedDesigntype = ToolbarDesign.Transparent;
+			}
+
 			await this.applyTheme(sTheme);
-			assert.deepEqual(this.oTable._oToolbar.getDesign(), ToolbarDesign.Transparent, "design property");
+			assert.deepEqual(this.oTable._oToolbar.getDesign(), sExpectedDesigntype, "design property");
 		});
 
 		QUnit.test(sTheme + "; Title", async function(assert) {

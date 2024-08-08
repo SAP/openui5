@@ -876,7 +876,7 @@ sap.ui.define([
 		};
 
 		Core.prototype._executeInitialization = function() {
-			// chain ready to be the firstone that is executed
+			// chain ready to be the first one that is executed
 			var METHOD = "sap.ui.core.Core.init()"; // Because it's only used from init
 			if (this.bInitialized) {
 				return;

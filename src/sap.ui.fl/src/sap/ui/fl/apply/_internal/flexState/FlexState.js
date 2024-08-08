@@ -19,8 +19,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/requireAsync"
+	"sap/ui/fl/LayerUtils"
 ], function(
 	_omit,
 	Deferred,
@@ -38,8 +37,7 @@ sap.ui.define([
 	ManifestUtils,
 	FlexInfoSession,
 	StorageUtils,
-	LayerUtils,
-	requireAsync
+	LayerUtils
 ) {
 	"use strict";
 
@@ -94,7 +92,6 @@ sap.ui.define([
 
 	var _mInstances = {};
 	var _mInitPromises = {};
-	var _oChangePersistenceFactory;
 	var _mFlexObjectInfo = {
 		appDescriptorChanges: {
 			pathInResponse: []
@@ -431,17 +428,6 @@ sap.ui.define([
 		}
 	}
 
-	// TODO: get rid of the following module dependencies as soon as the change state
-	// is migrated from changePersistenceFactory to the FlexState
-	function lazyLoadModules() {
-		return requireAsync("sap/ui/fl/ChangePersistenceFactory").then(function(oModule) {
-			_oChangePersistenceFactory = oModule;
-		})
-		.catch(function(oError) {
-			Log.error(`Error loading modules: ${oError.message}`);
-		});
-	}
-
 	function rebuildResponseIfMaxLayerChanged(sReference) {
 		if (_mInstances[sReference]?.maxLayer !== FlexInfoSession.getByReference(sReference).maxLayer) {
 			FlexState.rebuildFilteredResponse(sReference);
@@ -493,10 +479,8 @@ sap.ui.define([
 		const sFlexReference = mProperties.reference;
 
 		const oOldInitPromise = _mInitPromises[sFlexReference];
-		// TODO: Switch to native promises once lazyLoadModules is removed, todos#2
 		const oNewInitPromise = new Deferred();
 		_mInitPromises[sFlexReference] = oNewInitPromise;
-		await lazyLoadModules();
 
 		if (oOldInitPromise) {
 			await oOldInitPromise.promise;
@@ -562,15 +546,6 @@ sap.ui.define([
 		enhancePropertyBag(mPropertyBag);
 		var sReference = mPropertyBag.reference;
 		var oCurrentRuntimePersistence = _mInstances[sReference].runtimePersistence;
-
-		// TODO: get rid of the following persistence operations as soon as the change state
-		// is migrated from ChangePersistenceFactory to the FlexState
-		if (
-			_oChangePersistenceFactory
-			&& (_oChangePersistenceFactory._instanceCache || {}).hasOwnProperty(sReference)
-		) {
-			_oChangePersistenceFactory._instanceCache[sReference].removeDirtyChanges();
-		}
 
 		const oOldInitPromise = _mInitPromises[sReference].promise;
 		const oNewInitPromise = new Deferred();
@@ -673,14 +648,6 @@ sap.ui.define([
 
 	FlexState.clearState = function(sReference) {
 		if (sReference) {
-			// TODO: get rid of the following deletes as soon as the change state
-			// is migrated from changePersistenceFactory to the FlexState
-			if (
-				_oChangePersistenceFactory
-				&& (_oChangePersistenceFactory._instanceCache || {}).hasOwnProperty(sReference)
-			) {
-				_oChangePersistenceFactory._instanceCache[sReference].removeDirtyChanges();
-			}
 			delete _mInstances[sReference];
 			delete _mInitPromises[sReference];
 			oFlexObjectsDataSelector.clearCachedResult({ reference: sReference });
@@ -719,6 +686,8 @@ sap.ui.define([
 	 * @param {object} oFlexObject - Flex object to be added as runtime-steady
 	 */
 	FlexState.addRuntimeSteadyObject = function(sReference, sComponentId, oFlexObject) {
+		// with setting the state to persisted it is made sure that they not show up as a dirty flex object
+		oFlexObject.setState(States.LifecycleState.PERSISTED);
 		_mExternalData.flexObjects[sReference] ||= {};
 		_mExternalData.flexObjects[sReference][sComponentId] ||= [];
 		_mExternalData.flexObjects[sReference][sComponentId].push(oFlexObject);
@@ -776,11 +745,12 @@ sap.ui.define([
 		const sAdaptationLayer = FlexInfoSession.getByReference(sReference).adaptationLayer;
 		const bFlexObjectsOverAdaptationLayer = !!sAdaptationLayer
 			&& LayerUtils.isOverLayer(oFlexObject.getLayer(), sAdaptationLayer);
+		const bAlreadyInRuntimePersistence = _mInstances[sReference].runtimePersistence.flexObjects.includes(oFlexObject);
 		// FIXME: Currently called from the ChangePersistence which might be
 		// independent of FlexState in some test cases
 		// Once the ChangePersistence is no longer used
 		// make sure to remove the safeguard
-		if (!bFlexObjectsOverAdaptationLayer && _mInstances[sReference]) {
+		if (!bFlexObjectsOverAdaptationLayer && _mInstances[sReference] && !bAlreadyInRuntimePersistence) {
 			_mInstances[sReference].runtimePersistence.flexObjects.push(oFlexObject);
 			oFlexObjectsDataSelector.checkUpdate(
 				{ reference: sReference },
@@ -800,8 +770,12 @@ sap.ui.define([
 			initializeEmptyState(sReference);
 		}
 		const sAdaptationLayer = FlexInfoSession.getByReference(sReference).adaptationLayer;
-		aFlexObjects = !sAdaptationLayer ? aFlexObjects : aFlexObjects
-		.filter((oFlexObject) => !LayerUtils.isOverLayer(oFlexObject.getLayer(), sAdaptationLayer));
+		aFlexObjects = aFlexObjects
+		.filter((oFlexObject) => !sAdaptationLayer || !LayerUtils.isOverLayer(oFlexObject.getLayer(), sAdaptationLayer))
+		.filter((oFlexObject) => (
+			!_mInstances[sReference].runtimePersistence.flexObjects
+			.some((oExistingFlexObject) => (oExistingFlexObject.getId() === oFlexObject.getId()))
+		));
 
 		if (aFlexObjects.length > 0 && _mInstances[sReference]) {
 			_mInstances[sReference].runtimePersistence.flexObjects =

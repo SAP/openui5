@@ -2358,21 +2358,21 @@ sap.ui.define([
 			newAppPos;
 
 		//act
-		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 10);
+		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 20);
 
 		//assert
 		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2017, 10, 13, 5, 0, 0), "Correct new start position");
 		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 10, 13, 6, 0, 0), "Correct new end position");
 
 		//act
-		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 16);
+		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 32);
 
 		//assert
 		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2017, 10, 13, 8, 0, 0), "Correct new start position");
 		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 10, 13, 9, 0, 0), "Correct new end position");
 
 		//act
-		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 8);
+		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 16);
 
 		//assert
 		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2017, 10, 13, 4, 0, 0), "Correct new start position");
@@ -2387,28 +2387,28 @@ sap.ui.define([
 			newAppPos;
 
 		//act
-		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 4);
+		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 8);
 
 		//assert
 		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2019, 9, 27, 2, 0, 0), "Correct new start position");
 		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2019, 9, 27, 4, 0, 0), "Correct new end position");
 
 		//act
-		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 6);
+		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 12);
 
 		//assert
 		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2019, 9, 27, 3, 0, 0), "Correct new start position");
 		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2019, 9, 27, 5, 0, 0), "Correct new end position");
 
 		//act
-		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 8);
+		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 16);
 
 		//assert
 		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2019, 9, 27, 4, 0, 0), "Correct new start position");
 		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2019, 9, 27, 6, 0, 0), "Correct new end position");
 
 		//act
-		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 14);
+		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 28);
 
 		//assert
 		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2019, 9, 27, 7, 0, 0), "Correct new start position");
@@ -2610,8 +2610,8 @@ sap.ui.define([
 	QUnit.test("_calcCreateNewAppHours: Calculate proper position of the new appointment in 'Hours' view", function (assert) {
 		//arrange
 		var oRowStartDate = UI5Date.getInstance(2017, 10, 13, 0, 38, 11),
-			iStartIndex = 3,
-			iEndIndex = 6,
+			iStartIndex = 6,
+			iEndIndex = 13,
 			newAppPos;
 
 		//act
@@ -2669,7 +2669,7 @@ sap.ui.define([
 			newAppPos;
 
 		// act - resize appointment's end with 5 hours (10 x 30 mins) from the beginning of the line
-		newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 9);
+		newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 19);
 
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
@@ -2680,7 +2680,7 @@ sap.ui.define([
 
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
-		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 10, 13, 1, 30, 0), "End date hour is correct");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 10, 13, 1, 15, 0), "End date hour is correct");
 	});
 
 	QUnit.test("_calcResizeNewHoursAppPos: Calculate new size of the appointment in 'Hours' view near DST change", function (assert) {
@@ -2691,28 +2691,28 @@ sap.ui.define([
 			newAppPos;
 
 		// act - resize appointment's end to the 6th hour
-		newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 11);
+		newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 23);
 
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
 		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2019, 9, 27, 6, 0, 0), "End date hour is correct (6:00)");
 
 		// act - resize appointment's end to the 5th hour
-		newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 9);
+		newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 19);
 
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
 		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2019, 9, 27, 5, 0, 0), "End date hour is correct (5:00)");
 
 		// act - resize appointment's end to the 4th hour
-		newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 7);
+		newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 15);
 
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
 		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2019, 9, 27, 4, 0, 0), "End date hour is correct (4:00)");
 
 		// act - resize appointment's end to the 3th hour
-		newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 5);
+		newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 11);
 
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
@@ -2934,28 +2934,28 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("startIndex and endIndex are the same: indexes = 0 - (30 minutes event at the beginning of the row)", function (assert) {
-		this.test(assert, 0, 0, this.oRowStartDate, UI5Date.getInstance(2017, 10, 13, 0, 30, 0));
+	QUnit.test("startIndex and endIndex are the same: indexes = 0 - (15 minutes event at the beginning of the row)", function (assert) {
+		this.test(assert, 0, 0, this.oRowStartDate, UI5Date.getInstance(2017, 10, 13, 0, 15, 0));
 	});
 
-	QUnit.test("startIndex and endIndex are the same: indexes = 3 - (30 minutes event in 1 hour and 30 mins from the row's startDate)", function (assert) {
-		this.test(assert, 3, 3, UI5Date.getInstance(2017, 10, 13, 1, 30, 0), UI5Date.getInstance(2017, 10, 13, 2, 0, 0));
+	QUnit.test("startIndex and endIndex are the same: indexes = 6 - (30 minutes event in 1 hour and 30 mins from the row's startDate)", function (assert) {
+		this.test(assert, 6, 7, UI5Date.getInstance(2017, 10, 13, 1, 30, 0), UI5Date.getInstance(2017, 10, 13, 2, 0, 0));
 	});
 
-	QUnit.test("startIndex is lower than the endIndex: startIndex = 0, endIndex = 1 - (1h event at the beginning of the row)", function (assert) {
-		this.test(assert, 0, 1, this.oRowStartDate, UI5Date.getInstance(2017, 10, 13, 1, 0, 0));
+	QUnit.test("startIndex is lower than the endIndex: startIndex = 0, endIndex = 3 - (1h event at the beginning of the row)", function (assert) {
+		this.test(assert, 0, 3, this.oRowStartDate, UI5Date.getInstance(2017, 10, 13, 1, 0, 0));
 	});
 
-	QUnit.test("startIndex is lower than the endIndex: startIndex = 3, endIndex = 6 - (2h event in 1h and 30 mins from the row's startDate)", function (assert) {
-		this.test(assert, 3, 6, UI5Date.getInstance(2017, 10, 13, 1, 30, 0), UI5Date.getInstance(2017, 10, 13, 3, 30, 0));
+	QUnit.test("startIndex is lower than the endIndex: startIndex = 6, endIndex = 13 - (2h event in 1h and 30 mins from the row's startDate)", function (assert) {
+		this.test(assert, 6, 13, UI5Date.getInstance(2017, 10, 13, 1, 30, 0), UI5Date.getInstance(2017, 10, 13, 3, 30, 0));
 	});
 
-	QUnit.test("startIndex is greater than the end Index: startIndex = 1, endIndex = 0 -  (1h event at the beginning of the row)", function (assert) {
-		this.test(assert, 1, 0, this.oRowStartDate, UI5Date.getInstance(2017, 10, 13, 1, 0, 0));
+	QUnit.test("startIndex is greater than the end Index: startIndex = 3, endIndex = 0 -  (1h event at the beginning of the row)", function (assert) {
+		this.test(assert, 3, 0, this.oRowStartDate, UI5Date.getInstance(2017, 10, 13, 1, 0, 0));
 	});
 
-	QUnit.test("startIndex is greater than the end Index: startIndex = 6, endIndex = 3 - (2h event in 1h and 30 mins from the row's startDate)", function (assert) {
-		this.test(assert, 6, 3, UI5Date.getInstance(2017, 10, 13, 1, 30, 0), UI5Date.getInstance(2017, 10, 13, 3, 30, 0));
+	QUnit.test("startIndex is greater than the end Index: startIndex = 13, endIndex = 6 - (2h event in 1h and 30 mins from the row's startDate)", function (assert) {
+		this.test(assert, 13, 6, UI5Date.getInstance(2017, 10, 13, 1, 30, 0), UI5Date.getInstance(2017, 10, 13, 3, 30, 0));
 	});
 
 	QUnit.module("Create Appointments near DST change: _calcCreateNewAppHours", {
@@ -2980,20 +2980,20 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("startIndex and endIndex are on the same side of DST (inside): startIndex = 0, endIndex = 2", function (assert) {
-		this.test(assert, 0, 1, this.oRowStartDate, UI5Date.getInstance(2019, 9, 27, 1, 0, 0));
+	QUnit.test("startIndex and endIndex are on the same side of DST (inside): startIndex = 0, endIndex = 3", function (assert) {
+		this.test(assert, 0, 3, this.oRowStartDate, UI5Date.getInstance(2019, 9, 27, 1, 0, 0));
 	});
 
-	QUnit.test("startIndex and endIndex are on the same side of DST (outside): startIndex = 10, endIndex = 12", function (assert) {
-		this.test(assert, 10, 11, UI5Date.getInstance(2019, 9, 27, 5, 0, 0), UI5Date.getInstance(2019, 9, 27, 6, 0, 0));
+	QUnit.test("startIndex and endIndex are on the same side of DST (outside): startIndex = 20, endIndex = 23", function (assert) {
+		this.test(assert, 20, 23, UI5Date.getInstance(2019, 9, 27, 5, 0, 0), UI5Date.getInstance(2019, 9, 27, 6, 0, 0));
 	});
 
-	QUnit.test("startIndex and endIndex are on the different sides of DST (inside-outside): startIndex = 6, endIndex = 7", function (assert) {
-		this.test(assert, 6, 7, UI5Date.getInstance(2019, 9, 27, 3, 0, 0), UI5Date.getInstance(2019, 9, 27, 4, 0, 0));
+	QUnit.test("startIndex and endIndex are on the different sides of DST (inside-outside): startIndex = 12, endIndex = 15", function (assert) {
+		this.test(assert, 12, 15, UI5Date.getInstance(2019, 9, 27, 3, 0, 0), UI5Date.getInstance(2019, 9, 27, 4, 0, 0));
 	});
 
-	QUnit.test("startIndex and endIndex are on the different sides of DST (inside-outside): startIndex = 6, endIndex = 7", function (assert) {
-		this.test(assert, 4, 9, UI5Date.getInstance(2019, 9, 27, 2, 0, 0), UI5Date.getInstance(2019, 9, 27, 5, 0, 0));
+	QUnit.test("startIndex and endIndex are on the different sides of DST (inside-outside): startIndex = 8, endIndex = 19", function (assert) {
+		this.test(assert, 8, 19, UI5Date.getInstance(2019, 9, 27, 2, 0, 0), UI5Date.getInstance(2019, 9, 27, 5, 0, 0));
 	});
 
 	QUnit.module("Create Appointments: _calcCreateNewAppDays", {

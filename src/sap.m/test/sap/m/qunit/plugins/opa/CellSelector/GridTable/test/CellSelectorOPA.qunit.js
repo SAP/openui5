@@ -585,6 +585,30 @@ sap.ui.define([
 			Then.iSeeCellsSelected();
 		});
 
+		opaTest("Extend Selection with SHIFT + Click", function(Given, When, Then) {
+			When.Mouse.iExtendSelection(1, 1);
+			Then.iSeeCellsSelected();
+
+			When.Mouse.iSelectDeselectCell(1, 1);
+			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 1, colIndex: 1 });
+			Then.iSeeCellFocused({ rowIndex: 1, colIndex: 1 });
+
+			When.Mouse.iExtendSelection(3, 3);
+			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 3, colIndex: 3 });
+			Then.iSeeCellFocused({ rowIndex: 3, colIndex: 3 });
+
+			When.Mouse.iExtendSelection(0, 1);
+			Then.iSeeCellsSelected({ rowIndex: 0, colIndex: 1 }, { rowIndex: 1, colIndex: 1 });
+			Then.iSeeCellFocused({ rowIndex: 0, colIndex: 1 });
+
+			When.Mouse.iExtendSelection(0, 1);
+			Then.iSeeCellsSelected({ rowIndex: 0, colIndex: 1 }, { rowIndex: 1, colIndex: 1 });
+			Then.iSeeCellFocused({ rowIndex: 0, colIndex: 1 });
+
+			When.Mouse.iSelectDeselectCell(1, 1);
+			Then.iSeeCellsSelected();
+		});
+
 		opaTest("Border & Edge Selection", function(Given, When, Then) {
 			const bIsRTL = oConfig.dir == "RTL";
 

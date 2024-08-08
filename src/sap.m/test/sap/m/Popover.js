@@ -190,6 +190,7 @@ sap.ui.define([
   });
 
   var oPopover = new Popover("pop1", {
+	  resizable: true,
 	  placement: PlacementType.Auto,
 	  title: "Popover",
 	  showHeader: true,

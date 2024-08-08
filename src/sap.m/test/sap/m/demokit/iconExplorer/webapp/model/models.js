@@ -10,7 +10,14 @@ sap.ui.define([
 			var oModel = new JSONModel(Device);
 			oModel.setDefaultBindingMode("OneWay");
 			return oModel;
+		},
+
+		createSharedParamsModel: function () {
+			var currentYear = new Date().getFullYear();
+			var oModel = new JSONModel({
+				currentYear: currentYear
+			});
+			return oModel;
 		}
 	};
-
 });

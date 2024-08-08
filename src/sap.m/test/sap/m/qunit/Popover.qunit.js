@@ -1684,7 +1684,7 @@ sap.ui.define([
 			assert.equal(domQueryLength,  0, "Arrow not found in popover because not desktop device");
 		} else {
 			// Assert when resizable
-			var domQuery = this.oPopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandle');
+			var domQuery = this.oPopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandleIcon');
 			assert.equal(domQuery.length,  1, "Arrow found in popover");
 			assert.equal(domQuery[0].getAttribute("aria-hidden"), "true", "Aria-hidden should be added to the icon.");
 

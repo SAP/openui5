@@ -1857,6 +1857,11 @@ sap.ui.define([
 			var mCompData = FlexState.getCompVariantsMap(sComponentId);
 			CompVariantMerger.merge(this.sPersistencyKey, mCompData._getOrCreate(this.sPersistencyKey), {});
 
+			assert.strictEqual(
+				mCompData[this.sPersistencyKey].standardVariant.getState(), States.LifecycleState.PERSISTED,
+				"then the standard variant is set to persisted"
+			);
+
 			CompVariantState.overrideStandardVariant({
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey,

@@ -243,12 +243,25 @@ sap.ui.define([
 			}
 
 			var oSelectableCell = this._getSelectableCell(oEvent.target);
-			if (oSelectableCell) {
-				this._bMouseDown = true;
-				this._mClickedCell = this.getConfig("getCellInfo", this.getControl(), oSelectableCell, this._oPreviousCell);
-				this._oPreviousCell = this._mClickedCell;
+
+			if (!oSelectableCell) {
+				return;
 			}
 
+			const oInfo = this.getConfig("getCellInfo", this.getControl(), oSelectableCell, this._oPreviousCell);
+			this._bMouseDown = true;
+
+			if (oEvent.shiftKey) {
+				if (this._oPreviousCell?.rowIndex !== oInfo.rowIndex || this._oPreviousCell?.colIndex !== oInfo.colIndex) {
+					window.getSelection().removeAllRanges();
+
+					if (this._oOriginCell) {
+						this._selectCells(this._oOriginCell, oInfo);
+					}
+				}
+			}
+
+			this._mClickedCell = this._oPreviousCell = oInfo;
 			if (oEvent.ctrlKey || oEvent.metaKey) {
 				this._startSelection(oEvent);
 				if (this._mClickedCell) {
@@ -262,7 +275,6 @@ sap.ui.define([
 			this._bBorderDown = false;
 			this._mClickedCell = undefined;
 			this._bScrolling = false;
-			this._oPreviousCell = undefined;
 			this._mTempCell = undefined;
 			this._oHoveredCell = undefined;
 			this._endSelection(oEvent);
@@ -526,7 +538,7 @@ sap.ui.define([
 
 		const bSelectionChange = this._oSession?.mSource || this._oSession?.mTarget;
 		this._bSelecting = false;
-		this._mClickedCell = this._oPreviousCell = this._oHoveredCell = null;
+		this._mClickedCell = this._oPreviousCell = this._oHoveredCell = this._oOriginCell = null;
 		this._oSession = { cellRefs: [], cellTypes: [] };
 		if (bSelectionChange) {
 			this._onSelectionChange();
@@ -821,6 +833,7 @@ sap.ui.define([
 			this._oSession.mSource = oCellInfo;
 			this._selectCells(mStart, oCellInfo);
 			this._oPreviousCell = oCellInfo;
+			this._oOriginCell = mStart;
 		}
 
 		oEvent.preventDefault();

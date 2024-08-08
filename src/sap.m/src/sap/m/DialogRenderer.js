@@ -150,9 +150,8 @@ sap.ui.define([
 		oRM.openEnd();
 
 		if (Device.system.desktop) {
-
 			if (oDialog.getResizable() && !bStretch) {
-				oRM.icon("sap-icon://resize-corner", ["sapMDialogResizeHandler"], {"title": null, "aria-label": null});
+				DialogRenderer.renderResizeHandle(oRM);
 			}
 
 			// Invisible element which is used to determine when desktop keyboard navigation
@@ -257,6 +256,15 @@ sap.ui.define([
 		oRM.close("div");
 	};
 
-	return DialogRenderer;
+	DialogRenderer.renderResizeHandle = function(oRM) {
+		oRM.openStart("div")
+			.class("sapMDialogResizeHandle")
+			.openEnd();
 
+		oRM.icon("sap-icon://resize-corner", ["sapMDialogResizeHandleIcon"], { "title": null, "aria-label": null });
+
+		oRM.close("div");
+	};
+
+	return DialogRenderer;
 });

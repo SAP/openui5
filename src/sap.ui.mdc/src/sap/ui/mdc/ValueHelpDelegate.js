@@ -122,7 +122,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns filters that are used when updating the binding of the <code>ValueHelp</code>.<br/>By default, this method returns a set of {@link sap.ui.model.Filter Filters} originating from an available {@link sap.ui.mdc.FilterBar FilterBar}, the delegate's own {@link #getFilterConditions}, and/or the {@link sap.ui.mdc.valuehelp.base.FilterableListContent#getFilterFields filterFields} configuration of the given {@link sap.ui.mdc.valuehelp.base.FilterableListContent FilterableListContent}.
+	 * Returns filters that are used when updating the binding of the <code>ValueHelp</code>.<br/>By default, this method returns a set of {@link sap.ui.model.Filter Filters} originating from an available {@link sap.ui.mdc.FilterBar FilterBar}, the delegate's own {@link module:sap/ui/mdc/ValueHelpDelegate.getFilterConditions getFilterConditions}, and/or the {@link sap.ui.mdc.valuehelp.base.FilterableListContent#getFilterFields filterFields} configuration of the given {@link sap.ui.mdc.valuehelp.base.FilterableListContent FilterableListContent}.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content requesting conditions configuration
@@ -253,10 +253,10 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
 	 * @param {object} oChange Selection event configuration
 	 * @param {sap.ui.mdc.enums.ValueHelpSelectionType} oChange.type Type of the selection change (add, remove)
-	 * @param {object[]} oChange.conditions Array of changed conditions with structure {@link sap.ui.mdc.condition.ConditionObject ConditionObject}
-	 * @returns {object} oRestult Selection event configuration object
-	 * @returns {sap.ui.mdc.enums.ValueHelpSelectionType} oRestult.type Type of the selection change (add, remove)
-	 * @returns {object[]} oRestult.conditions Array of changed conditions with structure {@link sap.ui.mdc.condition.ConditionObject ConditionObject}
+	 * @param {sap.ui.mdc.condition.ConditionObject[]} oChange.conditions Array of changed conditions
+	 * @returns {object} oResult Selection event configuration object
+	 * @returns {sap.ui.mdc.enums.ValueHelpSelectionType} oResult.type Type of the selection change (add, remove)
+	 * @returns {sap.ui.mdc.condition.ConditionObject[]} oResult.conditions Array of changed conditions
 	 * @public
 	 * @since 1.101.0
 	 */
@@ -334,11 +334,11 @@ sap.ui.define([
 	 * By default, this method searches and returns an entry from a set of relevant contexts of the given {@link sap.ui.mdc.valuehelp.base.ListContent ListContent}.
 	 *
 	 * To determine which columns are relevant for the search, the currently active displayMode {@link sap.ui.mdc.enums.FieldDisplay Display} of the connected control will be used.
-	 * While a 'Value' configuration will lead to a 'key'-only search, 'DescriptionValue' leads to searching 'description' first and 'key' afterwards. Other modes work accordingly.
+	 * While a <code>Value</code> configuration will lead to a 'key'-only search, <code>DescriptionValue</code> leads to searching the description first and the key afterwards. Other modes work the same way.
 	 *
 	 * For each relevant column all items are searched for an exact match first and again with a startsWith filter afterwards, if necessary.
 	 *
-	 * If the caseSensitive property is disabled, the letter case of the user's input and the corresponding column value are completely ignored. Whichever entry comes first, wins.
+	 * If the <code>caseSensitive</code> property is disabled, whichever entry comes first, wins, whether the user's input is in lowercase or uppercase letters.
 	 *
 	 *
 	 *
@@ -398,7 +398,7 @@ sap.ui.define([
 
 	/**
 	 * Determines is the filtering used for type-ahead is case sensitive.
-	 * <br/>By default the value of the {@link sap.ui.mdc.base.ListContent#getCaseSensitive CaseSensitive} property of the content instance is returned.
+	 * <br/>By default the value of the {@link sap.ui.mdc.valuehelp.base.ListContent#getCaseSensitive CaseSensitive} property of the content instance is returned.
 	 * If <code>$search</code> or other methods are used this might depend on the backend logic.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance

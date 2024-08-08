@@ -32,8 +32,8 @@ sap.ui.define([], function() {
 			if (oChange?.getContent().defaultVariantName === "*standard*") {
 				return true;
 			}
-			return mCompVariantsMap.variants.some((oVariant) => {
-				return oChange?.getContent().defaultVariantName === oVariant.getId();
+			return Object.keys(mCompVariantsMap.byId).some((sId) => {
+				return oChange?.getContent().defaultVariantName === sId;
 			});
 		});
 		return oChange?.getContent().defaultVariantName || "";
