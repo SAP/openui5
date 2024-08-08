@@ -646,8 +646,8 @@ sap.ui.define([
 			 * @returns {sap.ui.core.Core} the API of the current SAPUI5 Core instance.
 			 * @public
 			 * @function
-			 * @deprecated since 1.118. Please require 'sap/ui/core/Core' instead and use the
-			 * 				module export directly without using 'new'."
+			 * @deprecated as of version 1.118. Please require 'sap/ui/core/Core' instead and use the
+			 * 				module export directly without using 'new'.
 			 * @ui5-global-only
 			 */
 			sap.ui.getCore = function() {
@@ -1176,7 +1176,7 @@ sap.ui.define([
 	 * @return {this} the Core, to allow method chaining
 	 * @since 1.10
 	 * @deprecated As of version 1.119, without replacement. The need to define the location for a theme
-	 *   should be fully covered with the capabiltites of the {@link sap/base/config base configuration}.
+	 *   should be fully covered with the capabilities of the {@link sap/base/config base configuration}.
 	 * @public
 	 */
 	Core.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sThemeBaseUrl, bForceUpdate) {
@@ -1474,7 +1474,7 @@ sap.ui.define([
 	 *
 	 * @return {sap.ui.core.Configuration} the Configuration of the current Core.
 	 * @public
-	 * @deprecated As of Version 1.120. Please see {@link sap.ui.core.Configuration Configuration} for the corrsponding replacements.
+	 * @deprecated As of Version 1.120. Please see {@link sap.ui.core.Configuration Configuration} for the corresponding replacements.
 	 */
 	Core.prototype.getConfiguration = function () {
 		return Configuration;
