@@ -33,7 +33,7 @@ sap.ui.define([
 	UIChangesState,
 	VariantManagementState,
 	DataSelector,
-	ApplyFlexObjectState,
+	FlexObjectState,
 	FlexState,
 	Version,
 	Settings,
@@ -166,7 +166,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangePersistence.prototype.getDependencyMapForComponent = function() {
-		return ApplyFlexObjectState.getLiveDependencyMap(this._mComponent.name);
+		return FlexObjectState.getLiveDependencyMap(this._mComponent.name);
 	};
 
 	function finalizeChangeCreation(oChange, oAppComponent) {
@@ -419,7 +419,7 @@ sap.ui.define([
 		bCondenseAnyLayer,
 		sLayer
 	) {
-		var aDirtyChanges = aChanges || ApplyFlexObjectState.getDirtyFlexObjects(this._mComponent.name);
+		var aDirtyChanges = aChanges || FlexObjectState.getDirtyFlexObjects(this._mComponent.name);
 		var sCurrentLayer = aDirtyChanges.length && aDirtyChanges[0].getLayer() || sLayer;
 		var aRelevantChangesForCondensing = getAllRelevantChangesForCondensing.call(
 			this,
@@ -631,7 +631,7 @@ sap.ui.define([
 	 * @param {boolean} [bSkipRemoveFromFlexState] set if the change should not be removed from the FlexState
 	 */
 	ChangePersistence.prototype.deleteChange = function(oChange, bRunTimeCreatedChange, bSkipRemoveFromFlexState) {
-		const nIndexInDirtyChanges = ApplyFlexObjectState.getDirtyFlexObjects(this._mComponent.name).indexOf(oChange);
+		const nIndexInDirtyChanges = FlexObjectState.getDirtyFlexObjects(this._mComponent.name).indexOf(oChange);
 
 		if (nIndexInDirtyChanges > -1) {
 			if (oChange.getState() === States.LifecycleState.DELETED) {
@@ -744,7 +744,7 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.removeDirtyChanges = function(vLayer, oComponent, oControl, sGenerator, aChangeTypes) {
 		var aLayers = [].concat(vLayer || []);
-		var aDirtyChanges = ApplyFlexObjectState.getDirtyFlexObjects(this._mComponent.name);
+		var aDirtyChanges = FlexObjectState.getDirtyFlexObjects(this._mComponent.name);
 
 		var aChangesToBeRemoved = aDirtyChanges.filter(function(oChange) {
 			var bChangeValid = true;
