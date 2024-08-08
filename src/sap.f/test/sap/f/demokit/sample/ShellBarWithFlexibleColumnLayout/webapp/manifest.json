@@ -1,6 +1,13 @@
 {
+	"_version": "1.38.0",
+	"sap.app": {
+		"id": "sap.f.sample.ShellBarWithFlexibleColumnLayout",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
 	"sap.ui5": {
-        "rootView": {
+		"rootView": {
 			"viewName": "sap.f.ShellBarWithFlexibleColumnLayout.view.FlexibleColumnLayout",
 			"type": "XML",
 			"async": true,

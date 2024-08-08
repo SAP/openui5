@@ -1,5 +1,5 @@
 {
-	"_version": "1.21.0",
+	"_version": "1.38.0",
 	"sap.app": {
 		"id": "sap.ui.demo.bulletinboard",
 		"type": "application",

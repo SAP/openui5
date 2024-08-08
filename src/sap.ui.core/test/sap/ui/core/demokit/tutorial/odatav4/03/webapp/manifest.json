@@ -1,5 +1,5 @@
 {
-	"_version": "1.21.0",
+	"_version": "1.37.0",
 	"sap.app": {
 		"ach" : "CA-UI5-COR",
 		"id": "sap.ui.core.tutorial.odatav4",

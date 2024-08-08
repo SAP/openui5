@@ -8,6 +8,6 @@
 		"start": "cd ../../../../../../../../.. && npm run sdk"
 	},
 	"devDependencies": {
-		"@ui5/cli": "^3"
+		"@ui5/cli": "^4"
 	}
 }

@@ -1,4 +1,4 @@
-specVersion: "3.0"
+specVersion: "4.0"
 metadata:
   name: ui5.walkthrough
 type: application
@@ -16,4 +16,3 @@ server:
     mountPath: /V2
     configuration:
       baseUri: "https://services.odata.org"
-

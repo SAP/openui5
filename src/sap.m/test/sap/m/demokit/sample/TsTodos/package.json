@@ -19,7 +19,7 @@
     "@babel/preset-typescript": "^7",
     "@types/mocha": "^9",
     "@types/openui5": "^1",
-    "@ui5/cli": "^3",
+    "@ui5/cli": "^4",
     "@wdio/cli": "^8",
     "@wdio/local-runner": "^8",
     "@wdio/mocha-framework": "^8",

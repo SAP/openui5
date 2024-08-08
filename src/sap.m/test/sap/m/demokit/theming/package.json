@@ -5,6 +5,6 @@
   "author": "SAP SE",
   "description": "UI5 Demo App - Theme Parameter Toolbox",
   "devDependencies": {
-    "@ui5/cli": "^3"
+    "@ui5/cli": "^4"
   }
 }

@@ -1,4 +1,11 @@
 {
+	"_version": "1.38.0",
+	"sap.app": {
+		"id": "sap.m.sample.TableScrollToIndex",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.m.TableScrollToIndex.view.FlexibleColumnLayout",
