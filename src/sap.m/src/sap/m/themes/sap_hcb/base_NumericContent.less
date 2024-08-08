@@ -205,7 +205,7 @@ html[dir=rtl] .sapMNCValue {
 }
 
 .sapMNC:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 }
 
 .sapMNC:focus:not([tabindex]) {
@@ -265,26 +265,6 @@ html[dir=rtl] .sapMNCValue {
 	.sapMGTHdrTxt > .sapMText {
 		font-size: @sapMFontHeader6Size;
 	}
-}
-
-.sapMNCContentPlaceholder {
-	outline: none;
-	width: 300px;
-    height: 100px;
-    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.10);
-    border-radius: 4px;
-}
-
-.sapMNCContentPlaceholder:focus::before {
-	content: '';
-	display: block;
-	position: absolute;
-	left: 1px;
-	bottom: 1px;
-	right: 1px;
-	top: 1px;
-	border: 1px dotted @sapUiContentFocusColor;
-	pointer-events: none;
 }
 
 .sapMNCContentShimmerPlaceholderItem {
