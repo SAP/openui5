@@ -6,13 +6,16 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Element",
+	"sap/ui/fl/apply/_internal/changes/Reverter",
+	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FlexControllerFactory",
@@ -22,13 +25,16 @@ sap.ui.define([
 	Log,
 	JsControlTreeModifier,
 	Element,
+	Reverter,
+	VariantUtils,
 	FlexObjectState,
 	FlexState,
-	VariantUtils,
 	ControlVariantApplyAPI,
 	FlexRuntimeInfoAPI,
 	ChangeHandlerStorage,
 	Settings,
+	UIChangeManager,
+	FlexObjectManager,
 	ChangesWriteAPI,
 	ChangePersistenceFactory,
 	FlexControllerFactory,
@@ -174,7 +180,7 @@ sap.ui.define([
 					});
 				}, Promise.resolve())
 				.then(function() {
-					oChangePersistence.addChanges(aChangesToBeAdded, oAppComponent);
+					UIChangeManager.addDirtyChanges(sFlexReference, aChangesToBeAdded, oAppComponent);
 					return aChanges;
 				})
 				.catch(function(oError) {
@@ -267,7 +273,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		restore(mPropertyBag) {
+		async restore(mPropertyBag) {
 			if (!mPropertyBag || !mPropertyBag.selector) {
 				return Promise.reject("No selector was provided");
 			}
@@ -278,12 +284,30 @@ sap.ui.define([
 				return Promise.reject("App Component could not be determined");
 			}
 
-			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
+			const sReference = FlexRuntimeInfoAPI.getFlexReference({element: mPropertyBag.selector});
 			if (FlexState.isInitialized({control: oAppComponent})) {
 				// limit the deletion to the passed selector control only
-				return oFlexController.removeDirtyChanges(Layer.USER, oAppComponent, mPropertyBag.selector, mPropertyBag.generator, mPropertyBag.changeTypes);
+				const aRemovedChanges = FlexObjectManager.removeDirtyFlexObjects({
+					reference: sReference,
+					layers: Layer.USER,
+					component: oAppComponent,
+					control: mPropertyBag.selector,
+					generator: mPropertyBag.generator,
+					changeTypes: mPropertyBag.changeTypes
+				});
+				if (aRemovedChanges.length !== 0) {
+					await Reverter.revertMultipleChanges(
+						// Always revert changes in reverse order
+						[...aRemovedChanges].reverse(),
+						{
+							appComponent: oAppComponent,
+							modifier: JsControlTreeModifier,
+							reference: sReference
+						}
+					);
+				}
 			}
-			return Promise.resolve();
+			return undefined;
 		},
 
 		/**

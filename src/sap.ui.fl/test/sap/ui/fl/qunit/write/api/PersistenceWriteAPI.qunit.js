@@ -7,21 +7,22 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
+	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/ChangePersistence",
+	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -34,21 +35,22 @@ sap.ui.define([
 	UIComponent,
 	DescriptorChangeTypes,
 	FlexCustomData,
+	FlexObjectFactory,
 	FlexObjectState,
 	FlexState,
 	ManifestUtils,
-	FlexObjectFactory,
 	FlexConfiguration,
 	FlexInfoSession,
 	Settings,
 	Condenser,
 	KeyUserConnector,
+	UIChangeManager,
 	FlexObjectManager,
 	Storage,
 	FeaturesAPI,
 	PersistenceWriteAPI,
-	ChangePersistenceFactory,
 	ChangePersistence,
+	ChangePersistenceFactory,
 	FlexControllerFactory,
 	Layer,
 	Utils,
@@ -289,7 +291,7 @@ sap.ui.define([
 				initialAllContexts: true,
 				saveChangeKeepSession: true
 			});
-			var oFlexObjectManagerSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves({change: "test"});
+			var oFlexObjectManagerSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves([{change: "test"}]);
 			var oFlexInfo = {
 				isResetEnabled: true
 			};
@@ -310,7 +312,7 @@ sap.ui.define([
 				);
 				assert.deepEqual(
 					oFlexObject,
-					{change: "test"},
+					[{ change: "test" }],
 					"Flex objects returned from saveFlexObjects are returned"
 				);
 				assert.deepEqual(
@@ -347,17 +349,18 @@ sap.ui.define([
 			oComp.name = "testComponent";
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
 			var oChangePersistence = new ChangePersistence(oComp);
-			oChangePersistence.addDirtyChange(
-				FlexObjectFactory.createFromFileContent({
-					selector: {id: "someControl"},
-					layer: Layer.CUSTOMER
-				})
-			);
-			oChangePersistence.addDirtyChange(
-				FlexObjectFactory.createFromFileContent({
-					selector: {id: "someControl"},
-					layer: Layer.USER
-				})
+			FlexObjectManager.addDirtyFlexObjects(
+				"sap.ui.core",
+				[
+					FlexObjectFactory.createFromFileContent({
+						selector: {id: "someControl"},
+						layer: Layer.CUSTOMER
+					}),
+					FlexObjectFactory.createFromFileContent({
+						selector: {id: "someControl"},
+						layer: Layer.USER
+					})
+				]
 			);
 
 			sandbox.stub(FlexObjectManager, "getFlexObjects");
@@ -374,7 +377,7 @@ sap.ui.define([
 			};
 			return PersistenceWriteAPI.save(mPropertyBag).then(function() {
 				assert.strictEqual(
-					FlexObjectState.getDirtyFlexObjects("testComponent").length,
+					FlexObjectState.getDirtyFlexObjects("sap.ui.core").length,
 					1,
 					"then dirty changes on other layers are removed"
 				);
@@ -483,12 +486,12 @@ sap.ui.define([
 				selector: this.vSelector
 			};
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
-			sandbox.stub(ChangePersistence.prototype, "addChange").returns(sReturnValue);
+			sandbox.stub(UIChangeManager, "addDirtyChanges").returnsArg(1);
 
 			assert.strictEqual(
 				PersistenceWriteAPI.add(mPropertyBag),
-				sReturnValue,
-				"then the flex persistence was called with correct parameters"
+				mPropertyBag.change,
+				"then the manager was called with correct parameters"
 			);
 		});
 
@@ -501,14 +504,12 @@ sap.ui.define([
 				selector: this.vSelector
 			};
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
-			sandbox.stub(ChangePersistence.prototype, "addChanges")
-			.withArgs(mPropertyBag.flexObjects)
-			.returns(sReturnValue);
+			sandbox.stub(UIChangeManager, "addDirtyChanges").returnsArg(1);
 
-			assert.strictEqual(
+			assert.deepEqual(
 				PersistenceWriteAPI.add(mPropertyBag),
-				sReturnValue,
-				"then the flex persistence was called"
+				mPropertyBag.flexObjects,
+				"then the manager was called with correct parameters"
 			);
 		});
 
@@ -571,12 +572,10 @@ sap.ui.define([
 				selector: this.vSelector
 			};
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
-			sandbox.stub(ChangePersistence.prototype, "addChange")
-			.withArgs(mPropertyBag.flexObjects[0])
-			.returns(sReturnValue);
+			sandbox.stub(UIChangeManager, "addDirtyChanges").returnsArg(1);
 
 			var aAddResult = PersistenceWriteAPI.add(mPropertyBag);
-			assert.strictEqual(aAddResult[0], sReturnValue, "then addChange was called first");
+			assert.strictEqual(aAddResult[0], mPropertyBag.flexObjects[0], "then addDirtyChanges was called first");
 			assert.strictEqual(aAddResult[1], "storeWasCalled", "then store was called second");
 		});
 

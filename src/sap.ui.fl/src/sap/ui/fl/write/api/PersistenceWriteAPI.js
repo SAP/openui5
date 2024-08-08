@@ -6,15 +6,16 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
+	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
+	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
@@ -24,15 +25,16 @@ sap.ui.define([
 	_omit,
 	Log,
 	JsControlTreeModifier,
-	FlexCustomData,
 	DescriptorChangeTypes,
+	FlexCustomData,
 	ManifestUtils,
+	FlexInfoSession,
 	Settings,
 	Condenser,
+	UIChangeManager,
 	FlexObjectManager,
 	Storage,
 	FeaturesAPI,
-	FlexInfoSession,
 	ChangePersistenceFactory,
 	FlexControllerFactory,
 	Layer,
@@ -148,20 +150,20 @@ sap.ui.define([
 		var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 		oFlexInfoSession.saveChangeKeepSession = true;
 		FlexInfoSession.setByReference(oFlexInfoSession, sReference);
-		return FlexObjectManager.saveFlexObjects(mPropertyBag).then(function(oFlexObject) {
-			if (oFlexObject && oFlexObject.length !== 0) {
+		return FlexObjectManager.saveFlexObjects(mPropertyBag).then(function(aFlexObjects) {
+			if (aFlexObjects?.length > 0) {
 				return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function(oResult) {
 					// other attributes like adaptationId, isEndUserAdaptation, init needs to be taken from flex info session if available
 					oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 					delete oFlexInfoSession.saveChangeKeepSession;
 					FlexInfoSession.setByReference(Object.assign(oFlexInfoSession, oResult), sReference);
-					return oFlexObject;
+					return aFlexObjects;
 				});
 			}
 			oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 			delete oFlexInfoSession.saveChangeKeepSession;
 			FlexInfoSession.setByReference(oFlexInfoSession, sReference);
-			return oFlexObject;
+			return aFlexObjects;
 		});
 	};
 
@@ -295,13 +297,12 @@ sap.ui.define([
 	PersistenceWriteAPI.add = function(mPropertyBag) {
 		var oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
 		var sFlexReference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
-		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference);
 
 		function addSingleFlexObject(oFlexObject) {
 			if (isDescriptorChange(oFlexObject)) {
 				return oFlexObject.store();
 			}
-			return oChangePersistence.addChange(oFlexObject, oAppComponent);
+			return UIChangeManager.addDirtyChanges(sFlexReference, [oFlexObject], oAppComponent)?.[0];
 		}
 
 		if (mPropertyBag.change && mPropertyBag.flexObjects) {
@@ -321,7 +322,7 @@ sap.ui.define([
 			return mPropertyBag.flexObjects.map(addSingleFlexObject);
 		}
 
-		return oChangePersistence.addChanges(mPropertyBag.flexObjects, oAppComponent);
+		return UIChangeManager.addDirtyChanges(sFlexReference, mPropertyBag.flexObjects, oAppComponent);
 	};
 
 	/**

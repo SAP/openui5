@@ -1,34 +1,36 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/FlexController",
-	"sap/ui/fl/Layer",
+	"sap/ui/core/Component",
 	"sap/ui/core/Control",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Versions",
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/FlexController",
+	"sap/ui/fl/Layer",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Component",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	FlexController,
-	Layer,
+	Component,
 	Control,
-	ChangePersistenceFactory,
 	Reverter,
 	FlexObjectFactory,
 	States,
 	FlexObjectState,
 	FlexState,
 	Version,
+	FlexObjectManager,
 	Versions,
+	ChangePersistenceFactory,
+	FlexController,
+	Layer,
 	JSONModel,
-	Component,
 	sinon
 ) {
 	"use strict";
@@ -112,12 +114,22 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
-			var oRemoveStub = sandbox.stub(this.oFlexController._oChangePersistence, "removeDirtyChanges").resolves([]);
+			const aCurrentChanges = [
+				{ id: "someChange" },
+				{ id: "someOtherChange" }
+			];
+			const oRemoveStub = sandbox.stub(FlexObjectManager, "removeDirtyFlexObjects").returns(aCurrentChanges);
+			const oRevertStub = sandbox.stub(Reverter, "revertMultipleChanges").resolves();
 			return this.oFlexController.saveAll(oComp, true, false, Layer.CUSTOMER, true)
 			.then(function() {
-				var aLayersToReset = oRemoveStub.firstCall.args[0];
+				const aLayersToReset = oRemoveStub.firstCall.args[0].layers;
 				assert.ok(aLayersToReset.includes(Layer.USER), "then dirty changes on higher layers are removed");
 				assert.ok(aLayersToReset.includes(Layer.VENDOR), "then dirty changes on lower layers are removed");
+				assert.deepEqual(
+					oRevertStub.firstCall.args[0],
+					[...aCurrentChanges].reverse(),
+					"then the changes are reverted in reverse order"
+				);
 			});
 		});
 
@@ -314,7 +326,7 @@ sap.ui.define([
 			return this.oFlexController.resetChanges(sLayer, sGenerator, oComp, sSelectorString, sChangeTypeString)
 			.then(function() {
 				assert.ok(oRevertMultipleChangesStub.calledOnce, "the revertMultipleChanges is called once");
-				assert.deepEqual(oRevertMultipleChangesStub.args[0][0], aDeletedChanges, "with the correct changes");
+				assert.deepEqual(oRevertMultipleChangesStub.args[0][0], [...aDeletedChanges].reverse(), "with the correct changes");
 				assert.deepEqual(oRevertMultipleChangesStub.args[0][0][0].getId(), "change2", "with the correct reverse order");
 			});
 		});

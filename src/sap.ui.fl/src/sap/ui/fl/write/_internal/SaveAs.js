@@ -9,9 +9,11 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils"
@@ -22,9 +24,11 @@ sap.ui.define([
 	DescriptorChangeTypes,
 	FlexObjectState,
 	ManifestUtils,
+	FlexRuntimeInfoAPI,
 	Settings,
 	AppVariantFactory,
 	AppVariantInlineChangeFactory,
+	FlexObjectManager,
 	FlexControllerFactory,
 	Layer,
 	Utils
@@ -223,7 +227,8 @@ sap.ui.define([
 					// Save the dirty UI changes to backend => firing PersistenceWriteApi.save
 					return oFlexController.saveAll(Utils.getAppComponentForSelector(mPropertyBag.selector), true)
 					.then(function() {
-						oFlexController._oChangePersistence.removeDirtyChanges();
+						const sReference = FlexRuntimeInfoAPI.getFlexReference({ element: mPropertyBag.selector });
+						FlexObjectManager.removeDirtyFlexObjects({ reference: sReference });
 					})
 					.catch(function(oError) {
 						// Delete the inconsistent app variant if the UI changes failed to save
