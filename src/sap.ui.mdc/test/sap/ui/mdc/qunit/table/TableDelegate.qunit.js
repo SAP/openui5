@@ -323,10 +323,12 @@ sap.ui.define([
 						})
 					})
 				],
+				threshold: 3,
 				models: new JSONModel([
 					{Name: "Hans"},
 					{Name: "Frans"},
-					{Name: "Susi"}
+					{Name: "Susi"},
+					{Name: "Peter"}
 				])
 			}, mSettings));
 
@@ -502,12 +504,20 @@ sap.ui.define([
 		const testMultiSelection = (oDelegate, aContexts, sTestTitle) => {
 			oSelectionChangeListener.resetHistory();
 			oDelegate.setSelectedContexts(this.oTable, aContexts.slice(1, 3));
-			assert.deepEqual(oDelegate.getSelectedContexts(this.oTable), aContexts.slice(1, 3), sTestTitle + " - Selected contexts");
+			assert.deepEqual(
+				oDelegate.getSelectedContexts(this.oTable).map((oContext) => oContext.getPath()),
+				aContexts.slice(1, 3).map((oContext) => oContext.getPath()),
+				sTestTitle + " - Selected contexts"
+			);
 			assert.ok(oSelectionChangeListener.notCalled, "selectionChange event not fired");
 
 			oSelectionChangeListener.resetHistory();
 			oDelegate.setSelectedContexts(this.oTable, aContexts.slice(2, 4));
-			assert.deepEqual(oDelegate.getSelectedContexts(this.oTable), aContexts.slice(2, 4), sTestTitle + " - Selected contexts");
+			assert.deepEqual(
+				oDelegate.getSelectedContexts(this.oTable).map((oContext) => oContext.getPath()),
+				aContexts.slice(2, 4).map((oContext) => oContext.getPath()),
+				sTestTitle + " - Selected contexts"
+			);
 			assert.ok(oSelectionChangeListener.notCalled, "selectionChange event not fired");
 		};
 
@@ -524,12 +534,20 @@ sap.ui.define([
 
 			oSelectionChangeListener.resetHistory();
 			oDelegate.setSelectedContexts(this.oTable, [aContexts[1]]);
-			assert.deepEqual(oDelegate.getSelectedContexts(this.oTable), [aContexts[1]], sTestTitle + " - Selected contexts");
+			assert.deepEqual(
+				oDelegate.getSelectedContexts(this.oTable).map((oContext) => oContext.getPath()),
+				[aContexts[1]].map((oContext) => oContext.getPath()),
+				sTestTitle + " - Selected contexts"
+			);
 			assert.ok(oSelectionChangeListener.notCalled, "selectionChange event not fired");
 
 			oSelectionChangeListener.resetHistory();
 			oDelegate.setSelectedContexts(this.oTable, [aContexts[2]]);
-			assert.deepEqual(oDelegate.getSelectedContexts(this.oTable), [aContexts[2]], sTestTitle + " - Selected contexts");
+			assert.deepEqual(
+				oDelegate.getSelectedContexts(this.oTable).map((oContext) => oContext.getPath()),
+				[aContexts[2]].map((oContext) => oContext.getPath()),
+				sTestTitle + " - Selected contexts"
+			);
 			assert.ok(oSelectionChangeListener.notCalled, "selectionChange event not fired");
 		};
 

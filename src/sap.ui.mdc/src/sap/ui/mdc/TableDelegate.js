@@ -504,21 +504,6 @@ sap.ui.define([
 		return Promise.resolve();
 	}
 
-	function setSelectedResponsiveTableConditions(oTable, aContexts) {
-		const aContextPaths = aContexts.map((oContext) => {
-			return oContext.getPath();
-		});
-
-		oTable.clearSelection();
-		oTable._oTable.setSelectedContextPaths(aContextPaths);
-		oTable._oTable.getItems().forEach((oItem) => {
-			const sPath = oItem.getBindingContextPath();
-			if (sPath && aContextPaths.indexOf(sPath) > -1) {
-				oItem.setSelected(true);
-			}
-		});
-	}
-
 	/**
 	 * Provides the possibility to set a selection state for the table programmatically.
 	 *
@@ -539,7 +524,18 @@ sap.ui.define([
 				throw Error("Unsupported operation: Cannot select the given number of contexts in the current selection mode");
 			}
 
-			setSelectedResponsiveTableConditions(oTable, aContexts);
+			const aContextPaths = aContexts.map((oContext) => {
+				return oContext.getPath();
+			});
+
+			oTable.clearSelection();
+			oTable._oTable.setSelectedContextPaths(aContextPaths);
+			oTable._oTable.getItems().forEach((oItem) => {
+				const sPath = oItem.getBindingContextPath();
+				if (sPath && aContextPaths.indexOf(sPath) > -1) {
+					oItem.setSelected(true);
+				}
+			});
 		} else {
 			throw Error("Unsupported operation: Not supported for the current table type");
 		}
@@ -558,20 +554,19 @@ sap.ui.define([
 		}
 
 		if (oTable._isOfType(TableType.Table, true)) {
-			const oGridTable = oTable._oTable;
-			const oMultiSelectionPlugin = PluginBase.getPlugin(oGridTable, "sap.ui.table.plugins.MultiSelectionPlugin");
+			const oMultiSelectionPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
 
 			if (!oMultiSelectionPlugin) {
 				return [];
 			}
 
 			return oMultiSelectionPlugin.getSelectedIndices().map((iIndex) => {
-				return oGridTable.getContextByIndex(iIndex);
+				return oTable._oTable.getContextByIndex(iIndex);
 			}, this);
 		}
 
 		if (oTable._isOfType(TableType.ResponsiveTable)) {
-			return oTable._oTable.getSelectedContexts();
+			return oTable._oTable.getSelectedContexts(true);
 		}
 
 		return [];
