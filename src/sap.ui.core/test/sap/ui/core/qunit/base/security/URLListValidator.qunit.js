@@ -140,6 +140,16 @@ sap.ui.define(["sap/base/security/URLListValidator"], function(URLListValidator)
 		assert.notOk(URLListValidator.validate({}), "object is not a valid URL");
 	});
 
+	QUnit.test("object urls", function(assert) {
+		var sUrlBase = "blob:[ORIGIN]/c56a4180-65aa-42ec-a945-5fd21dec0538";
+
+		var sUrlInvalid = sUrlBase.replace("[ORIGIN]", "http://www.sap.com");
+		assert.notOk(URLListValidator.validate(sUrlInvalid), "object urls from another host are not valid");
+
+		var sUrlValid = sUrlBase.replace("[ORIGIN]", window.location.origin);
+		assert.ok(URLListValidator.validate(sUrlValid), "object urls from same host are valid");
+	});
+
 	QUnit.test("unknown protocol", function(assert) {
 		var sUrl = "httpg://www.example.com";
 		assert.ok(URLListValidator.validate(sUrl), sUrl + " valid");
