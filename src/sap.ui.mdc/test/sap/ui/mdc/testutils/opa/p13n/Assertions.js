@@ -32,6 +32,7 @@ sap.ui.define([
 	"use strict";
 
 	var oMDCBundle = Library.getResourceBundleFor("sap.ui.mdc");
+	var oMBundle = Library.getResourceBundleFor("sap.m");
 
 	var waitForNavigationControl = function (oP13nDialog, oSettings) {
 		oSettings = oSettings || {};
@@ -275,7 +276,7 @@ sap.ui.define([
 								matchers: {
 									ancestor: aFilterPanels[0],
 									properties: {
-										placeholder: "Filter by"
+										placeholder: oMBundle.getText("p13n.FILTER_PLACEHOLDER")
 									}
 								},
 								actions: new Press(),

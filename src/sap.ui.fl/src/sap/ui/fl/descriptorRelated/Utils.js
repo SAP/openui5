@@ -18,6 +18,25 @@ sap.ui.define([
 		};
 	};
 
+	Utils.prototype.checkChildPageChange = function(mParameters) {
+		this.checkParameterAndType(mParameters, "childPage", "object");
+		if (mParameters.childPage instanceof Array) {
+			for (var i = 0; i < mParameters.childPage.length; i++) {
+				var oChange = mParameters.childPage[i];
+				this.checkChildPageChangeContent(oChange);
+			}
+		} else if (mParameters.childPage instanceof Object) {
+			this.checkChildPageChangeContent(mParameters.childPage);
+		}
+	};
+
+	Utils.prototype.checkChildPageChangeContent = function(oChange) {
+		this.checkParameterAndType(oChange, "id", "string");
+		this.checkParameterAndType(oChange, "definition", "object");
+		this.checkParameterAndType(oChange.definition, "navigationProperty", "string");
+		this.checkParameterAndType(oChange.definition, "entitySet", "string");
+	};
+
 	Utils.prototype.checkEntityPropertyChange = function(mParameters) {
 		this.checkParameterAndType(mParameters, "entityPropertyChange", "object");
 		if (mParameters.entityPropertyChange instanceof Array) {

@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
-	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
@@ -29,7 +29,7 @@ sap.ui.define([
 	ManifestUtils,
 	Settings,
 	Condenser,
-	FlexObjectState,
+	FlexObjectManager,
 	Storage,
 	FeaturesAPI,
 	FlexInfoSession,
@@ -91,7 +91,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.rta
 	 */
 	PersistenceWriteAPI.hasDirtyChanges = function(mPropertyBag) {
-		return FlexObjectState.hasDirtyFlexObjects(mPropertyBag);
+		return FlexObjectManager.hasDirtyFlexObjects(mPropertyBag);
 	};
 
 	/**
@@ -109,7 +109,7 @@ sap.ui.define([
 	PersistenceWriteAPI.hasHigherLayerChanges = function(mPropertyBag) {
 		mPropertyBag.upToLayer ||= LayerUtils.getCurrentLayer();
 
-		return FlexObjectState.getFlexObjects(mPropertyBag)
+		return FlexObjectManager.getFlexObjects(mPropertyBag)
 		.then(function(aFlexObjects) {
 			return aFlexObjects.filter(function(oFlexObject) {
 				return LayerUtils.isOverLayer(oFlexObject.getLayer(), mPropertyBag.upToLayer);
@@ -121,7 +121,7 @@ sap.ui.define([
 			}
 			// Hidden control variants and their related changes might be necessary for referenced variants, but are not relevant for this check
 			// Same apply for changes of deleted comp variants
-			return FlexObjectState.filterHiddenFlexObjects(aFilteredFlexObjects, mPropertyBag.reference).length > 0;
+			return FlexObjectManager.filterHiddenFlexObjects(aFilteredFlexObjects, mPropertyBag.reference).length > 0;
 		});
 	};
 
@@ -148,7 +148,7 @@ sap.ui.define([
 		var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 		oFlexInfoSession.saveChangeKeepSession = true;
 		FlexInfoSession.setByReference(oFlexInfoSession, sReference);
-		return FlexObjectState.saveFlexObjects(mPropertyBag).then(function(oFlexObject) {
+		return FlexObjectManager.saveFlexObjects(mPropertyBag).then(function(oFlexObject) {
 			if (oFlexObject && oFlexObject.length !== 0) {
 				return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function(oResult) {
 					// other attributes like adaptationId, isEndUserAdaptation, init needs to be taken from flex info session if available
@@ -466,8 +466,8 @@ sap.ui.define([
 		}
 
 		mPropertyBag.invalidateCache = false;
-		// TODO: Check the mPropertyBag.selector parameter name - the methods called on FlexObjectState expect a control
-		return FlexObjectState.getFlexObjects(mPropertyBag);
+		// TODO: Check the mPropertyBag.selector parameter name - the methods called on FlexObjectManager expect a control
+		return FlexObjectManager.getFlexObjects(mPropertyBag);
 	};
 
 	/**

@@ -1236,9 +1236,9 @@ sap.ui.define([
 		/**
 		 * Removes all given operators from the list of known operators.
 		 *
-		 * @param {sap.ui.mdc.condition.Operator[]} aOperators Array of operators
-		 *
 		 * <b>Note</b>: <code>aOperators</code> can be the name of an {@link sap.ui.mdc.condition.Operator Operator}, the instance itself, or multiple operators inside an array.
+		 *
+		 * @param {sap.ui.mdc.condition.Operator[]|sap.ui.mdc.condition.Operator|string[]} aOperators Array of operators
 		 *
 		 * @since: 1.88.0
 		 * @public
@@ -1277,12 +1277,13 @@ sap.ui.define([
 		/**
 		 * Adds operators to the list of valid operators for a type.
 		 *
-		 * @param {sap.ui.mdc.enums.BaseType} sType Basic type
-		 * @param {sap.ui.mdc.condition.Operator[]} aOperators Operators
-		 * @param {sap.ui.mdc.condition.Operator|string} vDefaultOperator The default operator instance or default operator name
-		 *
 		 * <b>Note</b>: <code>aOperators</code> can be the name of an {@link sap.ui.mdc.condition.Operator Operator}, the instance itself, or multiple operators inside an array.
+		 *
 		 * <b>Note</b>: <code>vDefaultOperator</code> must exist as a valid operator for the type.
+		 *
+		 * @param {sap.ui.mdc.enums.BaseType} sType Basic type
+		 * @param {sap.ui.mdc.condition.Operator[]|sap.ui.mdc.condition.Operator|string[]} aOperators Operators
+		 * @param {sap.ui.mdc.condition.Operator|string} vDefaultOperator The default operator instance or default operator name
 		 *
 		 * @public
 		 */

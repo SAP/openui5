@@ -216,14 +216,14 @@ sap.ui.define([
 
 			if (this._bLimitDisabled) {
 				if (!toggleSelection(this)) {
-					oEvent?.setMarked("sapUiTableClearAll");
+					oEvent.setMarked("sapUiTableClearAll");
 				}
 			} else {
 				this.addSelectionInterval(0, this._getHighestSelectableIndex());
 			}
 		} else if (sType === "clear") { // ctrl + shift + a
 			this.clearSelection();
-			oEvent?.setMarked("sapUiTableClearAll");
+			oEvent.setMarked("sapUiTableClearAll");
 		}
 	};
 

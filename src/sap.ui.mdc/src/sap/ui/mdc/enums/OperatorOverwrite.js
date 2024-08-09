@@ -7,7 +7,7 @@ sap.ui.define(() => {
 	"use strict";
 
 	/**
-	 * Enumeration of the <code>OperatorOverwrite</code> in <code>Operator</code>.
+	 * Enumeration of the {@link sap.ui.mdc.condition.Operator#OperatorOverwrite OperatorOverwrite} in {@link sap.ui.mdc.condition.Operator Operator}.
 	 * @enum {string}
 	 * @alias sap.ui.mdc.enums.OperatorOverwrite
 	 * @public
@@ -15,13 +15,13 @@ sap.ui.define(() => {
 	 */
 	const OperatorOverwrite = {
 		/**
-		 * Overwrite the <code>getModelFilter</code> function of the operator.
+		 * Overwrites the <code>getModelFilter</code> function of the operator.
 		 * @public
 		 */
 		getModelFilter: "getModelFilter",
 
 		/**
-		 * Overwrite the <code>getTypeText</code> function of the operator.
+		 * Overwrites the <code>getLongText</code> function of the operator.
 		 * @public
 		 */
 		getLongText: "getLongText"

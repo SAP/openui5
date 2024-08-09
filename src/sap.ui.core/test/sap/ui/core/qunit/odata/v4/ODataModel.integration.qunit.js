@@ -63788,6 +63788,76 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Removing a message from the model causes it to disappear from DataStateIndicator's
+	// message strip after a table rebind
+	//
+	// SNOW: DINC0147646
+	QUnit.test("DINC0147646: DataStateIndicator, rebind and messages", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{/TEAMS}">
+	<Input id="id" value="{Team_Id}"/>
+	<dependents><plugins:DataStateIndicator/></dependents>\
+</Table>`;
+
+		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
+				value : [
+					{Team_Id : "1"}
+				]
+			})
+			.expectChange("id", ["1"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+
+		this.expectMessages([{
+			message : "Some message",
+			type : "Error",
+			targets : ["/TEAMS"]
+		}]);
+		const oMessage = new Message({
+			message : "Some message",
+			processor : oModel,
+			target : "/TEAMS",
+			type : "Error"
+		});
+		Messaging.addMessages(oMessage);
+
+		await resolveLater(undefined, 0); // table update takes a moment
+
+		assert.deepEqual(oTable.getAggregation("_messageStrip").getText(), "Some message");
+
+		this.expectCanceledError("Cache discarded as a new cache has been created");
+		const sId0 = this.addToTable(oTable, "Name", assert); // Note: causes a "rebind"
+
+		this.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", {
+				value : [
+					{Name : "Team #01", Team_Id : "1"}
+				]
+			})
+			.expectChange("id", ["1"])
+			.expectChange(sId0, ["Team #01"]);
+
+		oTable.getBinding("items").resume();
+
+		await this.waitForChanges(assert, "table rebind");
+
+		assert.deepEqual(oTable.getAggregation("_messageStrip").getText(), "Some message");
+
+		this.expectMessages([]);
+
+		// code under test
+		Messaging.removeMessages(oMessage);
+
+		await resolveLater(undefined, 0); // table update takes a moment
+
+		assert.deepEqual(oTable.getAggregation("_messageStrip").getText(), "");
+
+		await this.waitForChanges(assert, "message is removed and no longer visible");
+	});
+
+	//*********************************************************************************************
 	// Scenario: A list binding with $$sharedRequest (e.g. from a value list) is refreshed. Other
 	// bindings share that cache and must follow, one binding while resumed and one binding while
 	// suspended.
@@ -71208,6 +71278,74 @@ sap.ui.define([
 		await this.waitForChanges(assert);
 
 		await this.oView.byId("root").getBindingContext().requestRefresh();
+	});
+
+	//*********************************************************************************************
+	// Scenario: A context binding with empty path has a hidden context binding to the draft as
+	// parent. Request a property and set a hidden context binding to the active entity as parent.
+	// Before the request finished, set the binding context to null. In the end, request side
+	// effects for the complete model to see that no change listeners remained in the hidden ODCB
+	// for the active entity. (The issue is that registering is delayed due to the pending
+	// request, but deregistering happens immediately when the binding loses its parent context. So
+	// it deregisters when there is no registration yet, and registers afterwards when there is no
+	// more deregistration to be expected.)
+	// SNOW: DINC0117588
+	QUnit.test("DINC0117588 #2", async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sView = `
+<FlexBox id="root" binding="{}">
+	<Text id="id" text="{ArtistID}"/>
+	<Text id="active" text="{IsActiveEntity}"/>
+</FlexBox>`;
+
+		this.expectChange("id")
+			.expectChange("active");
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectRequest("Artists(ArtistID='1',IsActiveEntity=false)"
+				+ "?$select=ArtistID,IsActiveEntity",
+				{ArtistID : "1", IsActiveEntity : false})
+			.expectChange("id", "1")
+			.expectChange("active", "No");
+
+		const oForm = this.oView.byId("root");
+		oForm.setBindingContext(
+			oModel.bindContext("/Artists(ArtistID='1',IsActiveEntity=false)").getBoundContext());
+
+		await this.waitForChanges(assert, "inactive entity");
+
+		let fnResolve;
+		this.expectRequest("Artists(ArtistID='1',IsActiveEntity=true)"
+				+ "?$select=ArtistID,IsActiveEntity",
+				new Promise((resolve) => {
+					fnResolve = resolve;
+				})
+			);
+
+		const oContext
+			= oModel.bindContext("/Artists(ArtistID='1',IsActiveEntity=true)").getBoundContext();
+		const oPropertyPromise = oContext.requestProperty("ArtistID");
+		oForm.setBindingContext(oContext);
+
+		await this.waitForChanges(assert, "active entity");
+
+		this.expectChange("id", null)
+			.expectChange("active", null);
+
+		oForm.setBindingContext(null);
+
+		fnResolve({ArtistID : "1", IsActiveEntity : true});
+
+		await Promise.all([
+			oPropertyPromise,
+			this.waitForChanges(assert, "no entity")
+		]);
+
+		await Promise.all([
+			oContext.requestSideEffects(["/special.cases.Container/Artists"]),
+			this.waitForChanges(assert, "request full side-effects refresh")
+		]);
 	});
 
 	//*********************************************************************************************

@@ -1353,13 +1353,13 @@ sap.ui.define([
 	 *     "persisted"; otherwise, their states remain unaffected by the move.
 	 * </ul>
 	 *
-	 * Note that a node in the "created" state is not shown in its usual position as defined by the
-	 * service and the current sort order, but out of place as the first child of its parent. It is
-	 * even shown if it doesn't match current search or filter criteria! Once it becomes simply
-	 * "persisted" due to the move (as described above), this special handling ends. The node is
-	 * then shown in place again, or it might even not be shown anymore due to the search or filter
-	 * criteria. If the latter happens to this context, its {@link #getIndex index} becomes
-	 * <code>undefined</code>.
+	 * Note that nodes in the "created" state are not shown in their usual position as defined by
+	 * the service and the current sort order, but out of place as the first children of their
+	 * parent or as the first roots. They are even shown if they don't match current search or
+	 * filter criteria! Once they become simply "persisted" due to the move (as described above),
+	 * this special handling ends. These nodes are then shown in place again, or they might even not
+	 * be shown anymore due to the search or filter criteria. If the latter happens to this context,
+	 * its {@link #getIndex index} becomes <code>undefined</code>.
 	 *
 	 * @param {object} oParameters - A parameter object
 	 * @param {sap.ui.model.odata.v4.Context|null} [oParameters.nextSibling]

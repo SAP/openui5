@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
-	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FlexControllerFactory",
@@ -24,14 +24,14 @@ sap.ui.define([
 	Control,
 	UIComponent,
 	FlexObjectFactory,
-	ApplyFlexObjectState,
+	FlexObjectState,
 	FlexState,
 	ManifestUtils,
 	Version,
 	Settings,
 	SessionStorageConnector,
 	CompVariantState,
-	FlexObjectState,
+	FlexObjectManager,
 	Versions,
 	ChangePersistenceFactory,
 	FlexControllerFactory,
@@ -113,7 +113,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("Get - Given no flex objects are present", async function(assert) {
 			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference);
-			return FlexObjectState.getFlexObjects({
+			return FlexObjectManager.getFlexObjects({
 				selector: this.oAppComponent,
 				currentLayer: Layer.CUSTOMER
 			})
@@ -142,7 +142,7 @@ sap.ui.define([
 				}]
 			});
 
-			const aFlexObjects = await FlexObjectState.getFlexObjects({
+			const aFlexObjects = await FlexObjectManager.getFlexObjects({
 				selector: this.oAppComponent,
 				includeCtrlVariants: true
 			});
@@ -179,7 +179,7 @@ sap.ui.define([
 				persistencyKey: sPersistencyKey
 			});
 
-			return FlexObjectState.getFlexObjects({
+			return FlexObjectManager.getFlexObjects({
 				selector: this.oAppComponent
 			})
 			.then(function(aFlexObjects) {
@@ -203,7 +203,7 @@ sap.ui.define([
 					name: "Standard"
 				}
 			);
-			return FlexObjectState.getFlexObjects({
+			return FlexObjectManager.getFlexObjects({
 				selector: this.oAppComponent,
 				invalidateCache: true
 			})
@@ -255,7 +255,7 @@ sap.ui.define([
 					name: "EntityType"
 				}]
 			);
-			const aFlexObjects = await FlexObjectState.getFlexObjects({
+			const aFlexObjects = await FlexObjectManager.getFlexObjects({
 				selector: this.oAppComponent,
 				invalidateCache: true
 			});
@@ -312,7 +312,7 @@ sap.ui.define([
 					id: "#PS1",
 					name: "EntityType"
 				}]);
-			const aFlexObjects = await FlexObjectState.getFlexObjects({
+			const aFlexObjects = await FlexObjectManager.getFlexObjects({
 				selector: this.oAppComponent,
 				invalidateCache: true
 			});
@@ -371,7 +371,7 @@ sap.ui.define([
 				}
 			});
 
-			return FlexObjectState.getFlexObjects({
+			return FlexObjectManager.getFlexObjects({
 				selector: this.oAppComponent,
 				currentLayer: Layer.CUSTOMER
 			})
@@ -412,7 +412,7 @@ sap.ui.define([
 				persistencyKey: sPersistencyKey
 			});
 
-			return FlexObjectState.getFlexObjects({
+			return FlexObjectManager.getFlexObjects({
 				selector: this.oAppComponent
 			})
 			.then(function(aFlexObjects) {
@@ -425,7 +425,7 @@ sap.ui.define([
 				changes: createTwoChangeDefs()
 			});
 			addDirtyChanges();
-			const aFlexObjects = await FlexObjectState.getFlexObjects({
+			const aFlexObjects = await FlexObjectManager.getFlexObjects({
 				selector: this.oAppComponent
 			});
 			assert.strictEqual(aFlexObjects.length, 4, "an array with four entries is returned");
@@ -436,18 +436,18 @@ sap.ui.define([
 		});
 
 		QUnit.test("hasDirtyObjects - Given flex objects and dirty changes are present in the ChangePersistence", function(assert) {
-			const oGetDirtyFlexObjectsStub = sandbox.stub(ApplyFlexObjectState, "getDirtyFlexObjects").returns(["mockDirty"]);
+			const oGetDirtyFlexObjectsStub = sandbox.stub(FlexObjectState, "getDirtyFlexObjects").returns(["mockDirty"]);
 			const oStubCompStateHasDirtyChanges = sandbox.stub(CompVariantState, "hasDirtyChanges").returns(true);
-			const bHasDirtyFlexObjects = FlexObjectState.hasDirtyFlexObjects({selector: this.oAppComponent});
+			const bHasDirtyFlexObjects = FlexObjectManager.hasDirtyFlexObjects({selector: this.oAppComponent});
 			assert.ok(bHasDirtyFlexObjects, "hasDirtyFlexObjects returns true");
 			assert.strictEqual(oGetDirtyFlexObjectsStub.callCount, 1, "getDirtyFlexObjects is called once");
 			assert.strictEqual(oStubCompStateHasDirtyChanges.callCount, 0, "CompVariantState.hasDirtyChanges is not called");
 		});
 
 		QUnit.test("hasDirtyObjects - Given flex objects and dirty changes are present in the CompVariantState", function(assert) {
-			const oGetDirtyFlexObjectsStub = sandbox.stub(ApplyFlexObjectState, "getDirtyFlexObjects").returns([]);
+			const oGetDirtyFlexObjectsStub = sandbox.stub(FlexObjectState, "getDirtyFlexObjects").returns([]);
 			const oStubCompStateHasDirtyChanges = sandbox.stub(CompVariantState, "hasDirtyChanges").returns(true);
-			const bHasDirtyFlexObjects = FlexObjectState.hasDirtyFlexObjects({selector: this.oAppComponent});
+			const bHasDirtyFlexObjects = FlexObjectManager.hasDirtyFlexObjects({selector: this.oAppComponent});
 			assert.ok(bHasDirtyFlexObjects, "hasDirtyFlexObjects returns true");
 			assert.strictEqual(oGetDirtyFlexObjectsStub.callCount, 1, "getDirtyFlexObjects is called once");
 			assert.strictEqual(oStubCompStateHasDirtyChanges.callCount, 1, "CompVariantState.hasDirtyChanges is called");
@@ -458,9 +458,9 @@ sap.ui.define([
 			var oPersistAllStub = sandbox.stub(CompVariantState, "persistAll").resolves();
 			var oFlexController = FlexControllerFactory.createForControl(this.oAppComponent);
 			var oSaveAllStub1 = sandbox.stub(oFlexController, "saveAll").resolves();
-			var oGetFlexObjectsStub = sandbox.stub(FlexObjectState, "getFlexObjects").resolves("foo");
+			var oGetFlexObjectsStub = sandbox.stub(FlexObjectManager, "getFlexObjects").resolves("foo");
 
-			return FlexObjectState.saveFlexObjects({
+			return FlexObjectManager.saveFlexObjects({
 				selector: this.oAppComponent,
 				skipUpdateCache: true,
 				draft: true,
@@ -496,13 +496,13 @@ sap.ui.define([
 			var oPersistAllStub = sandbox.stub(CompVariantState, "persistAll").resolves();
 			var oFlexController = FlexControllerFactory.createForControl(this.oAppComponent);
 			var oSaveAllStub1 = sandbox.stub(oFlexController, "saveAll").resolves();
-			var oGetFlexObjectsStub = sandbox.stub(FlexObjectState, "getFlexObjects").resolves("foo");
+			var oGetFlexObjectsStub = sandbox.stub(FlexObjectManager, "getFlexObjects").resolves("foo");
 			sandbox.stub(Versions, "hasVersionsModel").returns(true);
 			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
 				displayedVersion: Version.Number.Draft
 			}));
 
-			return FlexObjectState.saveFlexObjects({
+			return FlexObjectManager.saveFlexObjects({
 				selector: this.oAppComponent,
 				skipUpdateCache: true,
 				draft: true,
@@ -542,9 +542,9 @@ sap.ui.define([
 			var oPersistAllStub = sandbox.stub(CompVariantState, "persistAll").resolves();
 			var oFlexController = FlexControllerFactory.createForControl(this.oAppComponent);
 			var oSaveAllStub1 = sandbox.stub(oFlexController, "saveAll").resolves();
-			var oGetFlexObjectsStub = sandbox.stub(FlexObjectState, "getFlexObjects").resolves("foo");
+			var oGetFlexObjectsStub = sandbox.stub(FlexObjectManager, "getFlexObjects").resolves("foo");
 
-			return FlexObjectState.saveFlexObjects({
+			return FlexObjectManager.saveFlexObjects({
 				selector: this.oAppComponent,
 				skipUpdateCache: true,
 				draft: true,

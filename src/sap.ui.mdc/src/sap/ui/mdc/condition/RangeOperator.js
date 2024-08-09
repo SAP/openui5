@@ -28,10 +28,10 @@ sap.ui.define([
 	 * If a function or property is initial, the default implementation is used.
 	 *
 	 * @extends sap.ui.mdc.condition.Operator
-	 * @param {object} oConfiguration Included all parameters of {@link sap.ui.mdc.condition.Operator Operator} and adds some special ones
-	 * @param {string} [oConfiguration.label] additional array of labels for the values of the operator. Will be shown as placeholder text or label on the value fields.
-	 * @param {function} oConfiguration.calcRange function to calculate the date range of the operation. The function returns an array of UniversalDates. In case of a single <code>filterOperator</code> the array can return a single value.
-	 * @param {function} [oConfiguration.formatRange] function to format the date range.
+	 * @param {object} oConfiguration Includes all parameters of {@link sap.ui.mdc.condition.Operator Operator} and adds some special ones
+	 * @param {string[]} [oConfiguration.label] Additional array of labels for the values of the operator. Will be shown as placeholder text or label of the value fields.
+	 * @param {function} oConfiguration.calcRange Function to calculate the date range of the operation. The function returns an array of <code>UniversalDates</code>. In case of a single <code>filterOperator</code> the array can return a single value.
+	 * @param {function} [oConfiguration.formatRange] Function to format the date range.
 	 * @param {int[]|function} [oConfiguration.defaultValues] Array of values for the defaults of <code>RangeOperators</code> parameter. This can be a function, which returns the array of values. If not used the default for the values is 1.
 	 * @constructor
 	 * @author SAP SE

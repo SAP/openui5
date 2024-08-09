@@ -4,7 +4,7 @@
 sap.ui.define(() => {
 	"use strict";
 	/**
-	 * Enumeration of the propagation reason in the condition propagation callback of the {@link sap.ui.mdc.ValueHelp ValueHelp}
+	 * Enumeration of the propagation reason in the {@link sap.ui.mdc.ValueHelpDelegate#onConditionPropagation condition propagation callback} of the {@link sap.ui.mdc.ValueHelp ValueHelp}
 	 *
 	 * @enum {string}
 	 * @public

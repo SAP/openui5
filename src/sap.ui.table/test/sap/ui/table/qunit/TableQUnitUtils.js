@@ -1327,15 +1327,14 @@ sap.ui.define([
 
 	/**
 	 * Attachs an event handler for the next event with the given name to the given EventProvider instance.
-	 * Returns a Promise that resolves with the sap.ui.base.Event instance.
 	 *
 	 * @param {string} sEventName Name of the event
 	 * @param {sap.ui.base.EventProvider} oEventProvider EventProvider where the event handler is attached
-	 * @returns {Promise} Resolves with the sap.ui.base.Event instance
+	 * @returns {Promise<sap.ui.base.Event>} Resolves with the event instance
 	 */
-	TableQUnitUtils.nextEvent = async (sEventName, oEventProvider) => {
-		return await new Promise((fnResolve) => {
-			oEventProvider?.attachEventOnce(sEventName, fnResolve);
+	TableQUnitUtils.nextEvent = (sEventName, oEventProvider) => {
+		return new Promise((fnResolve) => {
+			oEventProvider.attachEventOnce(sEventName, fnResolve);
 		});
 	};
 

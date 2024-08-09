@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/variants/VariantModel",
-	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
@@ -41,7 +41,7 @@ sap.ui.define([
 	Version,
 	Settings,
 	VariantModel,
-	FlexObjectState,
+	FlexObjectManager,
 	Storage,
 	Versions,
 	ContextBasedAdaptationsAPI,
@@ -152,7 +152,7 @@ sap.ui.define([
 	}
 
 	function verifyChangesAreCopiedCorrectly(aCopiedChangeDefinitions, assert) {
-		return FlexObjectState.getFlexObjects({ selector: this.mPropertyBag.control, invalidateCache: false, includeCtrlVariants: true, includeDirtyChanges: true })
+		return FlexObjectManager.getFlexObjects({ selector: this.mPropertyBag.control, invalidateCache: false, includeCtrlVariants: true, includeDirtyChanges: true })
 		.then(function(aFlexObjects) {
 			var aCustomerFlexObjects = LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aFlexObjects, Layer.CUSTOMER);
 			assert.strictEqual(aCustomerFlexObjects.length, aCopiedChangeDefinitions.length, "we have the length of objects");

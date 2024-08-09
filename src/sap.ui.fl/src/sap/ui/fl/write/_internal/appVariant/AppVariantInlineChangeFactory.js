@@ -946,24 +946,73 @@ sap.ui.define([
    };
 
 	/**
-     * Creates an inline change of change type <code>appdescr_fe_changePageConfiguration</code>.
-     *
-     * @param {object} mPropertyBag Parameters of the change type
-     * @param {string} mPropertyBag.changeType Inline change type of an app variant
-     * @param {object} mPropertyBag.content Content of an inline change
-     * @param {object} mPropertyBag.content.page The ID of the page for which the configuration is to be changed.
-     * @param {object} mPropertyBag.content.entityPropertyChange Entity property change
-     * @param {object} mPropertyBag.content.entityPropertyChange.propertyPath The path in the page settings for which the configuration is to be changed.
-     * @param {object} mPropertyBag.content.entityPropertyChange.operation Operation (currently only UPSERT supported)
-     * @param {object} mPropertyBag.content.entityPropertyChange.propertyValue The new value of the configuration. This could be a plain value like a string, or a Boolean, or a structured object.
-     *
-     * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
-     *
-     * @private
-     */
+	 * Creates an inline change of change type <code>appdescr_fe_changePageConfiguration</code>.
+	 *
+	 * @param {object} mPropertyBag Parameters of the change type
+	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
+	 * @param {object} mPropertyBag.content.page The ID of the page for which the configuration is to be changed.
+	 * @param {object} mPropertyBag.content.entityPropertyChange Entity property change
+	 * @param {object} mPropertyBag.content.entityPropertyChange.propertyPath The path in the page settings for which the configuration is to be changed.
+	 * @param {object} mPropertyBag.content.entityPropertyChange.operation Operation (currently only UPSERT supported)
+	 * @param {object} mPropertyBag.content.entityPropertyChange.propertyValue The new value of the configuration. This could be a plain value like a string, or a Boolean, or a structured object.
+	 *
+	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
+	 *
+	 * @private
+	 */
 	AppVariantInlineChangeFactory.create_fe_changePageConfiguration = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "page", "string");
 		Utils.checkEntityPropertyChange(mPropertyBag.content);
+		return _createAppVariantInlineChange(mPropertyBag);
+	};
+
+	/**
+	 * Creates an inline change of change type <code>appdescr_ui_generic_app_changePageConfiguration</code>.
+	 *
+	 * @param {object} mPropertyBag Parameters of the change type
+	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
+	 * @param {object} mPropertyBag.content.parentPage Source page details
+	 * @param {string} mPropertyBag.content.parentPage.component The ID of the page for which the configuration is to be changed.
+	 * @param {string} mPropertyBag.content.parentPage.entitySet Entity Set of the page.
+	 * @param {object} mPropertyBag.content.entityPropertyChange Entity property change
+	 * @param {object} mPropertyBag.content.entityPropertyChange.propertyPath The path in the page settings for which the configuration is to be changed.
+	 * @param {object} mPropertyBag.content.entityPropertyChange.operation Operation (currently only UPSERT supported)
+	 * @param {object} mPropertyBag.content.entityPropertyChange.propertyValue The new value of the configuration. This could be a plain value like a string, or a Boolean, or a structured object.
+	 *
+	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
+	 *
+	 * @private
+	 */
+	AppVariantInlineChangeFactory.create_ui_generic_app_changePageConfiguration = function(mPropertyBag) {
+		Utils.checkParameterAndType(mPropertyBag.content, "parentPage", "object");
+		Utils.checkEntityPropertyChange(mPropertyBag.content);
+		return _createAppVariantInlineChange(mPropertyBag);
+	};
+
+	/**
+	 * Adds a new object page to the manifest with change type <code>appdescr_ui_generic_app_addNewObjectPage</code>.
+	 *
+	 * @param {object} mPropertyBag - Contains the Page details which the user would like to add for the newly created node
+	 * @param {string} mPropertyBag.changeType - The app descriptor change type name
+	 * @param {object} mPropertyBag.content - Content of the change
+	 * @param {object} mPropertyBag.content.parentPage - Source page details
+	 * @param {string} mPropertyBag.content.parentPage.component - Source page component where the new page will be added
+	 * @param {string} mPropertyBag.content.parentPage.entitySet - Source page entityset name where the new page will be added
+	 * @param {object} mPropertyBag.content.childPage - Newly being added page's details
+	 * @param {string} mPropertyBag.content.childPage.id - PageId of the new page being added
+	 * @param {object} mPropertyBag.content.childPage.definition - Definition of the new page being added
+	 * @param {string} mPropertyBag.content.childPage.definition.navigationProperty - Navigation property of the new page being added
+	 * @param {string} mPropertyBag.content.childPage.definition.entitySet - Entityset name of the new page being added
+	 *
+	 * @returns {object} Resolving when creating the app variant inline change was successful (without back end access)
+	 *
+	 * @private
+	 */
+	AppVariantInlineChangeFactory.create_ui_generic_app_addNewObjectPage = function(mPropertyBag) {
+		Utils.checkParameterAndType(mPropertyBag.content, "parentPage", "object");
+		Utils.checkChildPageChange(mPropertyBag.content);
 		return _createAppVariantInlineChange(mPropertyBag);
 	};
 

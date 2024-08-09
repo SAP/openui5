@@ -16,8 +16,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Modules to handle conditions used in {@link sap.ui.mdc.FilterField FilterField},
-	 * {@link sap.ui.mdc.FilterBar FilterBar}, or {@link sap.ui.mdc.condition.ConditionModel ConditionModel}.
+	 * Modules to handle conditions used in {@link sap.ui.mdc.FilterField FilterField} or
+	 * {@link sap.ui.mdc.FilterBar FilterBar}.
 	 * @namespace
 	 * @name sap.ui.mdc.condition
 	 * @since 1.61.0
@@ -25,8 +25,8 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Utilities to create conditions to be used in {@link sap.ui.mdc.FilterField FilterField},
-	 * {@link sap.ui.mdc.FilterBar FilterBar}, or {@link sap.ui.mdc.condition.ConditionModel ConditionModel}.
+	 * Utilities to create conditions to be used in {@link sap.ui.mdc.FilterField FilterField} or
+	 * {@link sap.ui.mdc.FilterBar FilterBar}.
 	 *
 	 * @namespace
 	 * @author SAP SE
@@ -45,7 +45,7 @@ sap.ui.define([
 		 * @constant
 		 * @typedef {object} sap.ui.mdc.condition.ConditionObject
 		 * @property {string} operator Operator of the condition. The standard operators can are mentioned in {@link sap.ui.mdc.enums.OperatorName OperatorName}.
-		 * @property {any[]} values Array of values of the condition. Depending on the <code>operator</code>, this contains one or more entries. The entries are sored in internal format regarding the used data type.
+		 * @property {any[]} values Array of values of the condition. Depending on the <code>operator</code>, this contains one or more entries. The entries are stored in an internal format regarding the used data type.
 		 * @property {object} [inParameters] In parameters of the condition. For each field path, a value is stored. (It is obsolete and only filled for conditions stored on old user-variants.)
 		 * @property {object} [outParameters] Out parameters of the condition. For each field path, a value is stored. (It is obsolete and only filled for conditions stored on old user-variants.)
 		 * @property {boolean} [isEmpty] If set, the condition is empty (used as initially empty condition in {@link sap.ui.mdc.valuehelp.content.Conditions Conditions})
@@ -60,7 +60,7 @@ sap.ui.define([
 		 * This is a "equal to" (EQ) condition with key and description. It is used for entries selected in the field help
 		 * and for everything entered in the {@link sap.ui.mdc.Field Field} control.
 		 *
-		 * @param {string} sKey Operator for the condition
+		 * @param {any} vKey Key value for the condition
 		 * @param {string} sDescription Description of the operator
 		 * @param {object} [oInParameters] In parameters of the condition. (Do not use it for new conditions, use payload instead.)
 		 * @param {object} [oOutParameters] Out parameters of the condition. (Do not use it for new conditions, use payload instead.)
@@ -69,9 +69,9 @@ sap.ui.define([
 		 * @public
 		 *
 		 */
-		createItemCondition: function(sKey, sDescription, oInParameters, oOutParameters, oPayload) {
+		createItemCondition: function(vKey, sDescription, oInParameters, oOutParameters, oPayload) {
 			let sValidated = ConditionValidated.NotValidated;
-			const aValues = [sKey, sDescription];
+			const aValues = [vKey, sDescription];
 			if (sDescription === null || sDescription === undefined) {
 				aValues.pop();
 			} else {
@@ -87,7 +87,7 @@ sap.ui.define([
 		 * @param {any[]} aValues Array of values for the condition
 		 * @param {object} [oInParameters] In parameters of the condition. (Do not use it for new conditions, use payload instead.)
 		 * @param {object} [oOutParameters] Out parameters of the condition. (Do not use it for new conditions, use payload instead.)
-		 * @param {sap.ui.mdc.enums.ConditionValidated} sValidated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the field help) and not shown in the {@link sap.ui.mdc.valuehelp.content.Conditions Conditions} content
+		 * @param {sap.ui.mdc.enums.ConditionValidated} sValidated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the value help) and not shown in the {@link sap.ui.mdc.valuehelp.content.Conditions Conditions} content
 		 * @param {object} [oPayload] Payload of the condition
 		 * @returns {sap.ui.mdc.condition.ConditionObject} The new condition object with the given operator and values
 		 * @public

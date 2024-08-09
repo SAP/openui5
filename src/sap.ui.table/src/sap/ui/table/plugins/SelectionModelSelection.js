@@ -173,10 +173,10 @@ sap.ui.define([
 	 */
 	SelectionModelSelection.prototype.onKeyboardShortcut = function(sType, oEvent) {
 		if (sType === "toggle" && toggleSelectAll(this) === false) {
-			oEvent?.setMarked("sapUiTableClearAll");
+			oEvent.setMarked("sapUiTableClearAll");
 		} else if (sType === "clear") {
 			this.clearSelection();
-			oEvent?.setMarked("sapUiTableClearAll");
+			oEvent.setMarked("sapUiTableClearAll");
 		}
 	};
 

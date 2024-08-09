@@ -2070,6 +2070,156 @@ sap.ui.define([
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_fe_changePageConfiguration");
 			});
 		});
+
+		QUnit.test("create_ui_generic_app_changePageConfiguration", function(assert) {
+			return AppVariantInlineChangeFactory.create_ui_generic_app_changePageConfiguration({
+				changeType: "appdescr_ui_generic_app_changePageConfiguration",
+				content: {
+					parentPage: {
+						component: "sap.suite.ui.generic.template.ListReport",
+						entitySet: "STTA_C_MP_Product"
+					},
+					entityPropertyChange: {
+						propertyPath: "component/settings/tableSettings",
+						operation: "UPSERT",
+						propertyValue: {
+							type: "ResponsiveTable",
+							multiSelect: true
+						}
+					}
+				}
+			}).then(function(oDescriptorInlineChange) {
+				assert.notEqual(oDescriptorInlineChange, null);
+				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui_generic_app_changePageConfiguration");
+			});
+		});
+		QUnit.test("create_ui_generic_app_changePageConfiguration failure", function(assert) {
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_ui_generic_app_changePageConfiguration({
+					changeType: "appdescr_ui_generic_app_changePageConfiguration",
+					content: {
+						parentPage: "Invalid",
+						entityPropertyChange: {
+							propertyPath: "component/settings/tableSettings",
+							operation: "UPSERT",
+							propertyValue: {
+								type: "ResponsiveTable",
+								multiSelect: true
+							}
+						}
+					}
+				});
+			});
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_ui_generic_app_changePageConfiguration({
+					changeType: "appdescr_ui_generic_app_changePageConfiguration",
+					content: {
+						parentPage: {
+							component: "sap.suite.ui.generic.template.ListReport",
+							entitySet: "STTA_C_MP_Product"
+						},
+						entityPropertyChange: {
+
+						}
+					}
+				});
+			});
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_ui_generic_app_changePageConfiguration({
+					changeType: "appdescr_ui_generic_app_changePageConfiguration",
+					content: {
+						parentPage: {
+							component: "sap.suite.ui.generic.template.ListReport",
+							entitySet: "STTA_C_MP_Product"
+						},
+						entityPropertyChange: {
+							propertyPath: "component/settings/tableSettings",
+							propertyValue: {
+								type: "ResponsiveTable",
+								multiSelect: true
+							}
+						}
+					}
+				});
+			});
+		});
+
+		QUnit.test("create_ui_generic_app_addNewObjectPage", function(assert) {
+			return AppVariantInlineChangeFactory.create_ui_generic_app_addNewObjectPage({
+				changeType: "appdescr_ui_generic_app_addNewObjectPage",
+				content: {
+					parentPage: {
+						component: "sap.suite.ui.generic.template.ObjectPage",
+						entitySet: "C_STTA_SalesOrder_WD_20"
+					},
+					childPage: {
+						id: "customer.ObjectPage|to_extendedNode",
+						definition: {
+							navigationProperty: "to_extendedNode",
+							entitySet: "C_STTA_ExtendedNode"
+						}
+					}
+				}
+			}).then(function(oDescriptorInlineChange) {
+				assert.notEqual(oDescriptorInlineChange, null);
+				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui_generic_app_addNewObjectPage");
+			});
+		});
+		QUnit.test("create_ui_generic_app_addNewObjectPage failure", function(assert) {
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_ui_generic_app_addNewObjectPage({
+					changeType: "appdescr_ui_generic_app_addNewObjectPage",
+					content: {
+						parentPage: "Invalid",
+						childPage: {
+							id: "customer.ObjectPage|to_extendedNode"
+						}
+					}
+				});
+			});
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_ui_generic_app_addNewObjectPage({
+					changeType: "appdescr_ui_generic_app_addNewObjectPage",
+					content: {
+						parentPage: {
+							component: "sap.suite.ui.generic.template.ObjectPage",
+							entitySet: "C_STTA_SalesOrder_WD_20"
+						}
+					}
+				});
+			});
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_ui_generic_app_addNewObjectPage({
+					changeType: "appdescr_ui_generic_app_addNewObjectPage",
+					content: {
+						parentPage: {
+							component: "sap.suite.ui.generic.template.ObjectPage",
+							entitySet: "C_STTA_SalesOrder_WD_20"
+						},
+						childPage: {
+							id: "customer.ObjectPage|to_extendedNode"
+						}
+					}
+				});
+			});
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_ui_generic_app_addNewObjectPage({
+					changeType: "appdescr_ui_generic_app_addNewObjectPage",
+					content: {
+						parentPage: {
+							component: "sap.suite.ui.generic.template.ObjectPage",
+							entitySet: "C_STTA_SalesOrder_WD_20"
+						},
+						childPage: {
+							id: "customer.ObjectPage|to_extendedNode",
+							definition: {
+								entitySet: "C_STTA_ExtendedNode"
+							}
+						}
+					}
+				});
+			});
+		});
 	});
 
 	QUnit.done(function() {

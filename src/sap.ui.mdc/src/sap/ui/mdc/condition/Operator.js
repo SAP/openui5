@@ -64,7 +64,7 @@ sap.ui.define([
 	 * @extends sap.ui.base.Object
 	 * @param {object} oConfiguration Properties of the operator
 	 * @param {string} oConfiguration.name Name of the operator used in the condition
-	 * @param {object} [oConfiguration.alias] Alias names based on <code>BaseType</code>, used to map to <code>DynamicDateOption</code> if <code>DynamicDateRange</code> is used
+	 * @param {object} [oConfiguration.alias] Alias names based on {@link sap.ui.mdc.enums.BaseType BaseType}, used to map to {@link sap.m.DynamicDateOption DynamicDateOption} if {@link sap.m.DynamicDateRange DynamicDateRange} is used to visualize the filter
 	 * @param {string} oConfiguration.filterOperator The operator's default filter operator that is created as defined in {@link sap.ui.model.FilterOperator FilterOperator}
 	 * @param {string} oConfiguration.tokenParse The string representation of the regular expression that is used by the operator to parse a value
 	 *                 to eliminate the operator and get the data string. A placeholder that refers to the translated tokenText can be used. <code>#tokenText#</code> refers to the
@@ -104,12 +104,11 @@ sap.ui.define([
 	 * @param {function} [oConfiguration.getValues] Function to get the real values without operator symbol
 	 * @param {function} [oConfiguration.checkValidated] Function to check if a condition is validated (sets the <code>validated</code> property)
 	 * @param {boolean} [oConfiguration.exclude] If set, the operator is handled as exclude filter when creating the filters of all conditions
-	 * @param {boolean} [oConfiguration.validateInput] If set, the user input for this operator needs to be validated using a field help
+	 * @param {boolean} [oConfiguration.validateInput] If set, the user input for this operator needs to be validated using a value help
 	 * @param {string} [oConfiguration.additionalInfo] additionalInfo text for the operator. Will be shown in the operator suggest as second column. If not used (undefined) the Include or Exclude information of the operator is used.
 	 * @param {object} [oConfiguration.group] Additional group settings for the operator. Will be used by the <code>DynamicDateRange</code>. If not used (undefined), the operators will be added to the include and exclude groups.
 	 * @param {string} oConfiguration.group.id Group ID for the operator.
-	 * @param {function} [oConfiguration.getTextForCopy] Function to determine the text copied into clipboard
-	 * The following groups are available for the <code>DynamicDateRange</code> control:<br>
+	 * The following groups are available for the {@link sap.m.DynamicDateRange DynamicDateRange} control:<br>
 	 * <ul>
 	 * <li>1 - Single Dates</li>
 	 * <li>2 - Date Ranges</li>
@@ -126,6 +125,7 @@ sap.ui.define([
 	 * group: {id : 2, text: "new group"} - inserts a new group with id 2. Existing group 2 will be shifted to 3, 4....<br>
 	 * group: {id : 10, text: "new group at the end"} - adds a new group with id 10 and text "new group as the end" to the end of all groups<br>
 	 * @param {string} [oConfiguration.group.text] Group title for the operator. When used a new group with this title will be added.
+	 * @param {function} [oConfiguration.getTextForCopy] Function to determine the text copied into clipboard
 	 * @constructor
 	 * @author SAP SE
 	 * @version ${version}

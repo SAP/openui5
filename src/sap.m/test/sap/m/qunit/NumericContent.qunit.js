@@ -20,8 +20,9 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/util/Mobile",
-	"sap/ui/qunit/QUnitUtils"
-], function(Localization, Library, nextUIUpdate, jQuery, Button, GenericTile, Label, NumericContent, Table, Toolbar, ToolbarSpacer, Column, ColumnListItem, JSONModel, TileContent, TooltipBase, ResizeHandler, library, KeyCodes, Mobile, qutils) {
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/core/theming/Parameters"
+], function(Localization, Library, nextUIUpdate, jQuery, Button, GenericTile, Label, NumericContent, Table, Toolbar, ToolbarSpacer, Column, ColumnListItem, JSONModel, TileContent, TooltipBase, ResizeHandler, library, KeyCodes, Mobile, qutils, Parameters) {
 	"use strict";
 
 	var oResourceBundle = Library.getResourceBundleFor("sap.m");
@@ -51,11 +52,20 @@ sap.ui.define([
 			this.oNumericContent = null;
 		}
 	});
+
 	QUnit.test("Numeric Content rendered.", async function(assert) {
 		this.oNumericContent.setValue("12");
 		await nextUIUpdate();
 		fnAssertNumericContentHasRendered(assert);
 	});
+
+	QUnit.test("Numeric Content Focus.", function (assert) {
+		this.oNumericContent.$().focus();
+		assert.ok(getComputedStyle(this.oNumericContent.$().get(0)).outline.indexOf(Parameters.get("sapUiContentFocusStyle")), "Focus Style applied.");
+		assert.ok(getComputedStyle(this.oNumericContent.$().get(0)).outline.indexOf(Parameters.get("sapUiContentFocusColor")), "Focus Color applied.");
+		assert.ok(getComputedStyle(this.oNumericContent.$().get(0)).outline.indexOf(Parameters.get("sapUiContentFocusWidth")), "Focus Width applied.");
+	});
+
 	QUnit.test("Fire Event Not triggered when pressing enter key", async function(assert) {
 		this.oNumericContent.setValue("12");
 		await nextUIUpdate();
