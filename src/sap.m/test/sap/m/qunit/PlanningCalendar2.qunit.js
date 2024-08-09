@@ -1551,7 +1551,6 @@ sap.ui.define([
 		// Arrange
 		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), UI5Date.getInstance(2015, 0, 1)),
 			sSelectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED"),
-			sUnselectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_UNSELECTED"),
 			$appointmentRef;
 
 		oSut.placeAt("bigUiArea");
@@ -1560,23 +1559,38 @@ sap.ui.define([
 		$appointmentRef = jQuery("#PC-R1A1");
 
 		// Assert
-		assert.ok($appointmentRef.attr("aria-describedby").indexOf(sUnselectedTextId) > -1, "The appointment should have a hidden 'Unselected' text");
-		assert.strictEqual($appointmentRef.attr("aria-describedby").indexOf(sSelectedTextId), -1, "The appointment shouldn't have a hidden 'Selected' text");
+		assert.notOk($appointmentRef.attr("aria-describedby"), "The appointment shouldn't have a hidden 'Selected' text");
 
 		// Act - click on an appointment to select it
 		qutils.triggerEvent("tap", "PC-R1A1");
 
 		// Assert
 		assert.ok($appointmentRef.attr("aria-describedby").indexOf(sSelectedTextId) > -1, "The appointment should have a hidden 'Selected' text");
-		assert.strictEqual($appointmentRef.attr("aria-describedby").indexOf(sUnselectedTextId), -1, "The appointment shouldn't have a hidden 'Unselected' text");
 
 		// Act - click on an appointment again to deselect it
 		qutils.triggerEvent("tap", "PC-R1A1");
 
-		assert.strictEqual($appointmentRef.attr("aria-describedby").indexOf(sSelectedTextId), -1, "The 'Selected' text should be removed from the references");
-		assert.ok($appointmentRef.attr("aria-describedby").indexOf(sUnselectedTextId) > -1, "The appointment should have a hidden 'Unselected' text");
+		assert.notOk($appointmentRef.attr("aria-describedby"), "The 'Selected' text should be removed from the references");
 
 		oSut.destroy();
+	});
+
+	QUnit.test("Appointments accessibility type", function(assert) {
+		// Prepare
+		var oPC = createPlanningCalendar("PC", new SearchField(), new Button(), UI5Date.getInstance(2015, 0, 1)),
+			sTypeTextId = InvisibleText.getStaticId("sap.m", "ACC_CTR_TYPE_LISTITEM"),
+			$appointmentRef;
+
+		oPC.placeAt("bigUiArea");
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		$appointmentRef = jQuery("#PC-R1A1");
+
+		// Assert
+		assert.ok($appointmentRef.attr("aria-labelledby").indexOf(sTypeTextId) > -1, "Appointment has type announcement");
+
+		// Clean
+		oPC.destroy();
 	});
 
 	//Aria appointments & special dates for Hours view

@@ -502,11 +502,11 @@ CalendarRowRenderer.renderAppointment = function(oRm, oRow, oAppointmentInfo, aT
 	var bAppointmentSelected = oAppointment.getSelected();
 	var mAccProps = {
 		role: "listitem",
-		labelledby: {value: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT") + " " + sId + "-Descr", append: true},
-		describedby: {value: bAppointmentSelected
-							? InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED")
-							: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_UNSELECTED"),
-							append: true},
+		labelledby: {
+			value: `${InvisibleText.getStaticId("sap.m", "ACC_CTR_TYPE_LISTITEM")} ${InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT")} ${sId.concat("-Descr")}`,
+			append: true
+		},
+		describedby: {value: bAppointmentSelected ? InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED") : "", append: true},
 		selected: null
 	};
 	var iRowCount = oRow._getAppointmentRowCount(oAppointmentInfo, bReducedHeight);

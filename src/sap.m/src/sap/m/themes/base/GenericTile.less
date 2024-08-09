@@ -2501,6 +2501,17 @@ html.sap-desktop .sapMGT.sapMGTTwoByHalf.sapMGTIconMode.HighContrastTile:not(.sa
 	}
 }
 
+.sapMGT:focus .sapMGTFocusDiv{
+	border: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
+}
+
+html.sap-desktop .sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapMGTFocusDiv, // focus inside GridContainer
+html.sap-desktop .sapMGT:focus .sapMGTFocusDiv,
+html.sap-desktop .sapMGT:active .sapMGTFocusDiv,
+html.sap-desktop .sapMGTLineModePress .sapMGTFocusDiv {
+	border:@sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
+}
+
 //Badge Styles
 
 //Styles when Icon and Text are present

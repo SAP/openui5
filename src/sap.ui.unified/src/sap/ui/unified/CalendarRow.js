@@ -1667,9 +1667,10 @@ sap.ui.define([
 		var oApp;
 		var sAriaDescribedBy;
 		var sAriaDescribedByNotSelected;
-		var sAriaDescribedBySelected;
+		var sCurrentAriaDescribedBy;
+		var sCurrentAriaDescribedBySelected;
+		var sCurrentAriaDescribedByNotSelected;
 		var sSelectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
-		var sUnselectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_UNSELECTED");
 		var bSelect = !oAppointment.getSelected();
 
 		if (bRemoveOldSelection) {
@@ -1689,24 +1690,29 @@ sap.ui.define([
 						}
 					}
 					sAriaDescribedBy = oApp.$().attr("aria-describedby");
-					sAriaDescribedByNotSelected = sAriaDescribedBy ? sAriaDescribedBy.replace(sSelectedTextId, sUnselectedTextId) : "";
+					sAriaDescribedByNotSelected = sAriaDescribedBy ? sAriaDescribedBy.replace(sSelectedTextId, "") : "";
 					oApp.$().attr("aria-describedby", sAriaDescribedByNotSelected);
 				}
 			}
 		}
 
-		sAriaDescribedBySelected = oAppointment.$().attr("aria-describedby").replace(sUnselectedTextId, sSelectedTextId).trim();
-		sAriaDescribedByNotSelected = oAppointment.$().attr("aria-describedby").replace(sSelectedTextId, sUnselectedTextId).trim();
+		sCurrentAriaDescribedBy = oAppointment.$().attr("aria-describedby");
+		sCurrentAriaDescribedByNotSelected = (sCurrentAriaDescribedBy ? sCurrentAriaDescribedBy.replace(sSelectedTextId, "") : "").trim();
+		sCurrentAriaDescribedBySelected = (sCurrentAriaDescribedByNotSelected + " " + sSelectedTextId).trim();
 
 		if (oAppointment.getSelected()) {
 			oAppointment.setProperty("selected", false, true); // do not invalidate CalendarRow
 			oAppointment.$().removeClass("sapUiCalendarAppSel");
-			oAppointment.$().attr("aria-describedby", sAriaDescribedByNotSelected);
+			if (sCurrentAriaDescribedByNotSelected) {
+				oAppointment.$().attr("aria-describedby", sCurrentAriaDescribedByNotSelected);
+			} else {
+				oAppointment.$().removeAttr("aria-describedby");
+			}
 			_removeAllAppointmentSelections(this, bRemoveOldSelection);
 		} else {
 			oAppointment.setProperty("selected", true, true); // do not invalidate CalendarRow
 			oAppointment.$().addClass("sapUiCalendarAppSel");
-			oAppointment.$().attr("aria-describedby", sAriaDescribedBySelected);
+			oAppointment.$().attr("aria-describedby", sCurrentAriaDescribedBySelected);
 			_removeAllAppointmentSelections(this, bRemoveOldSelection);
 		}
 		// removes or adds the selected appointments from this.aSelectedAppointments

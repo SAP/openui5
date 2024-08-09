@@ -622,6 +622,7 @@ sap.ui.define([
 						width: "100%",
 						showValueHelp: false,
 						editable: true,
+						showSuggestion: false,
 						ariaAttributes: { role: "listbox", aria: { readonly: true, roledescription: this._oResourceBundle.getText("valuehelp.TOKENIZER_ARIA_ROLE_DESCRIPTION") } },
 						// ariaLabelledBy: this.oTokenizerPanel,
 						tokenUpdate: function(oEvent) {

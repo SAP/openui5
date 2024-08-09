@@ -450,6 +450,8 @@ sap.ui.define([
 				assert.deepEqual(oBindingType.getFormatOptions(), oFormatOptions, "FormatOptions of ConditionType");
 				const oButton = aItems[1];
 				assert.ok(oTokenMultiInput.isA("sap.m.MultiInput"), "Tokenizer is first HBox item");
+				assert.notOk(oTokenMultiInput.getShowSuggestion(), "Tokenizer has no suggestion");
+				assert.notOk(oTokenMultiInput.getShowValueHelp(), "Tokenizer has no value help");
 				assert.ok(oButton.isA("sap.m.Button"), "Button is first HBox item");
 				assert.equal(oButton.getType(), mLibrary.ButtonType.Transparent, "Button type");
 				assert.equal(oButton.getIcon(), "sap-icon://decline", "Button icon");

@@ -18,16 +18,19 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	const ValueHelpSelectionType = {
 		/**
 		 * The given conditions are set and replace the existing ones.
+		 * @public
 		 */
 		Set: "Set",
 
 		/**
 		 * The given conditions are just added to the existing ones, if they don't already exist.
+		 * @public
 		 */
 		Add: "Add",
 
 		/**
 		 * The given conditions are removed.
+		 * @public
 		 */
 		Remove: "Remove"
 	};

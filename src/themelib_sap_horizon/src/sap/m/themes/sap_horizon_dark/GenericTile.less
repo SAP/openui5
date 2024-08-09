@@ -437,8 +437,8 @@ html.sap-desktop .sapMGTIconMode.sapMGT:hover:not(.sapMGTPressActive) {
 }
 
 html.sap-desktop .sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapMGTFocusDiv, html.sap-desktop .sapMGT:focus .sapMGTFocusDiv, html.sap-desktop .sapMGT:active .sapMGTFocusDiv, html.sap-desktop .sapMGTLineModePress .sapMGTFocusDiv {
-	border-radius: @sapElement_BorderCornerRadius;
-	box-shadow: inset 0 0 0 0.063rem @sapContent_ContrastFocusColor, 0 0 0 @sapContent_FocusWidth @sapContent_FocusColor;
+	border-radius:  @sapTile_BorderCornerRadius;
+	inset: -1px;
 }
 
 html.sap-desktop .sapMGT:active{
@@ -458,7 +458,6 @@ html.sap-desktop .sapMGT:active{
 }
 
 html.sap-desktop .sapMGT:focus .sapMGTFocusDiv{
-	border: 0.125rem solid @sapContent_FocusColor;
 	border-radius:  @sapTile_BorderCornerRadius;
 	box-shadow: none;
 	inset: -1px;
