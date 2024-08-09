@@ -1,4 +1,4 @@
-/* global QUnit */
+/* global QUnit, sinon */
 
 // Test only the things relevant for ColumnLayout. The basic Form functionality
 // is tested in Form, FormContainer and FormElement qUnit tests.
@@ -213,13 +213,23 @@ sap.ui.define([
 
 		// assert
 		window.requestAnimationFrame(function() {
-			var $Layout = jQuery("#CL1");
-			assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has Phone size");
-			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has not Tablet size");
-			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has not Desktop size");
-			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has not LargeDesktop size");
-			assert.ok($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has small columns");
-			assert.notOk($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has not large columns");
+			var fnTest = function(assert) {
+				var $Layout = jQuery("#CL1");
+				assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has Phone size");
+				assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has not Tablet size");
+				assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has not Desktop size");
+				assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has not LargeDesktop size");
+				assert.ok($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has small columns");
+				assert.notOk($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has not large columns");
+			};
+			fnTest(assert); // test classes set after rendering
+
+			sinon.stub(oColumnLayout, "onAfterRendering").callsFake(function(oEvent) {
+				fnTest(assert); // classes should still exist after re-rendering
+				oColumnLayout.onAfterRendering.wrappedMethod.call(this, oEvent);
+			});
+			oForm.invalidate();
+			oCore.applyChanges();
 			done();
 		});
 	});
@@ -235,13 +245,23 @@ sap.ui.define([
 
 		// assert
 		window.requestAnimationFrame(function() {
-			var $Layout = jQuery("#CL1");
-			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has not Phone size");
-			assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has Tablet size");
-			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has not Desktop size");
-			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has not LargeDesktop size");
-			assert.notOk($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has not small columns");
-			assert.ok($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has large columns");
+			var fnTest = function(assert) {
+				var $Layout = jQuery("#CL1");
+				assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has not Phone size");
+				assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has Tablet size");
+				assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has not Desktop size");
+				assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has not LargeDesktop size");
+				assert.notOk($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has not small columns");
+				assert.ok($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has large columns");
+			};
+			fnTest(assert); // test classes set after rendering
+
+			sinon.stub(oColumnLayout, "onAfterRendering").callsFake(function(oEvent) {
+				fnTest(assert); // classes should still exist after re-rendering
+				oColumnLayout.onAfterRendering.wrappedMethod.call(this, oEvent);
+			});
+			oForm.invalidate();
+			oCore.applyChanges();
 			done();
 		});
 	});
@@ -257,13 +277,23 @@ sap.ui.define([
 
 		// assert
 		window.requestAnimationFrame(function() {
-			var $Layout = jQuery("#CL1");
-			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has not Phone size");
-			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has not Tablet size");
-			assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has Desktop size");
-			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has not LargeDesktop size");
-			assert.notOk($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has not small columns");
-			assert.ok($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has large columns");
+			var fnTest = function(assert) {
+				var $Layout = jQuery("#CL1");
+				assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has not Phone size");
+				assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has not Tablet size");
+				assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has Desktop size");
+				assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has not LargeDesktop size");
+				assert.notOk($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has not small columns");
+				assert.ok($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has large columns");
+			};
+			fnTest(assert); // test classes set after rendering
+
+			sinon.stub(oColumnLayout, "onAfterRendering").callsFake(function(oEvent) {
+				fnTest(assert); // classes should still exist after re-rendering
+				oColumnLayout.onAfterRendering.wrappedMethod.call(this, oEvent);
+			});
+			oForm.invalidate();
+			oCore.applyChanges();
 			done();
 		});
 	});
@@ -279,13 +309,23 @@ sap.ui.define([
 
 		// assert
 		window.requestAnimationFrame(function() {
-			var $Layout = jQuery("#CL1");
-			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has not Phone size");
-			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has not Tablet size");
-			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has not Desktop size");
-			assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has LargeDesktop size");
-			assert.notOk($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has not small columns");
-			assert.ok($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has large columns");
+			var fnTest = function(assert) {
+				var $Layout = jQuery("#CL1");
+				assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has not Phone size");
+				assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has not Tablet size");
+				assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has not Desktop size");
+				assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has LargeDesktop size");
+				assert.notOk($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has not small columns");
+				assert.ok($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has large columns");
+			};
+			fnTest(assert); // test classes set after rendering
+
+			sinon.stub(oColumnLayout, "onAfterRendering").callsFake(function(oEvent) {
+				fnTest(assert); // classes should still exist after re-rendering
+				oColumnLayout.onAfterRendering.wrappedMethod.call(this, oEvent);
+			});
+			oForm.invalidate();
+			oCore.applyChanges();
 			done();
 		});
 	});
