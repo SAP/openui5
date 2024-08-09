@@ -463,6 +463,36 @@ function(nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		});
 	});
 
+	QUnit.test("Scrolls to correct Section when header is expanded", async function(assert) {
+		// Arrange
+		var oObjectPage = helpers.generateObjectPageWithDynamicHeaderTitle(),
+			aSections = oObjectPage.getSections(),
+			oLastSection = aSections[aSections.length - 1],
+			oExpandButton,
+			done = assert.async();
+
+		assert.expect(1);
+
+		oObjectPage.setSelectedSection(aSections[3]);
+		oObjectPage.placeAt('qunit-fixture');
+		await nextUIUpdate();
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			// Act - expand header and scroll to last Section
+			oExpandButton = oObjectPage.getHeaderTitle()._getExpandButton();
+			oExpandButton.firePress();
+			oObjectPage.scrollToSection(oLastSection.getId(), 0);
+
+			setTimeout(function () {
+				// Assert - check the delta between current scroll position and the top position of the scrolled to Section, due to rounding diffs (1px diff is OK)
+				assert.ok(Math.abs(oObjectPage._$opWrapper.scrollTop() - oObjectPage._oSectionInfo[oLastSection.getId()].positionTop) < 2,
+					"Scroll position is correct");
+				done();
+			}, 1000);
+
+		});
+	});
+
 	QUnit.module("ObjectPage Content scrolling", {
 		beforeEach: function (assert) {
 			var done = assert.async();
