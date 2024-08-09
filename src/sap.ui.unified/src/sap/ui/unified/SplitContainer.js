@@ -186,6 +186,7 @@ sap.ui.define([
 			var sDir, sOtherDir;
 			var sSizeValue = this.getSecondaryContentSize();
 			var bShow = this.getShowSecondaryContent();
+			var oSecondaryContentContainer = this.getDomRef("pane");
 
 			if (bVertical) {
 				// Vertical mode
@@ -227,10 +228,14 @@ sap.ui.define([
 				// Maybe we could also allow "s"-values and then multiply everything below 20 with 1000...?
 
 				this._closeContentDelayId = setTimeout(function() {
-					this._secondaryContentContainer.toggleClass("sapUiUfdSplitContSecondClosed", true);
-				}.bind(this), iHideDelay);
+					if (oSecondaryContentContainer) {
+						oSecondaryContentContainer.classList.toggle("sapUiUfdSplitContSecondClosed", true);
+					}
+				}, iHideDelay);
 			} else {
-				this._secondaryContentContainer.toggleClass("sapUiUfdSplitContSecondClosed", false);
+				if (oSecondaryContentContainer) {
+					oSecondaryContentContainer.classList.toggle("sapUiUfdSplitContSecondClosed", false);
+				}
 			}
 
 		}
