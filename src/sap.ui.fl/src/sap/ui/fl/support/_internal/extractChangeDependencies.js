@@ -5,52 +5,21 @@
 sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Element",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState"
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils"
 ], function(
 	JsControlTreeModifier,
 	Element,
-	ManifestUtils,
-	UIChangesState
+	FlexObjectState,
+	ManifestUtils
 ) {
 	"use strict";
 
-	/**
-	 * Searches for a component instance on the UI with the same name as given in the parameter
-	 * The instance is searched via a styleclass search on the UI and comparison of the component name
-	 * Currently there is no proper way to retrieve component instance by name
-	 * THIS IS ONLY A WORKAROUND! Should be changed as soon as there is an API for this
-	 *
-	 * @param {string} sComponentName name of the component
-	 * @returns {sap.ui.core.Component} Returns an instance of the component
-	 * @private
-	 * @restricted sap.ui.fl
-	 */
-	function getAppComponentInstance(sComponentName) {
-		var oCorrectAppComponent;
-		var aComponentContainers = document.querySelector(".sapUiComponentContainer");
-		aComponentContainers = Array.isArray(aComponentContainers) ? aComponentContainers : [aComponentContainers];
-		aComponentContainers.some(function(oComponentContainerDomRef) {
-			var oComponentContainer = Element.getElementById(oComponentContainerDomRef.id);
-			var oAppComponent = oComponentContainer && oComponentContainer.getComponentInstance();
-
-			if (oAppComponent && ManifestUtils.getFlexReferenceForControl(oAppComponent) === sComponentName) {
-				oCorrectAppComponent = oAppComponent;
-				return true;
-			}
-		});
-
-		return oCorrectAppComponent;
-	}
-
-	// TODO with regards to variants, what is the expected outcome here? All UI Changes, all vm-independent + current variant UI Changes,
-	// all vm-independent + all vm-dependent UI Changes?
-	// as of now, _mChangesEntries is extremely unreliable. After creating a variant it includes all variants and all vm-dependent changes,
-	// after a reload only the initial vm-dependent change is available.
-	function enhanceExportWithChangeData(oChangePersistence, oExport) {
-		var oAppComponent = getAppComponentInstance(oExport.sComponentName);
-		for (var sChangeId in oChangePersistence._mChangesEntries) {
-			var oChange = oChangePersistence._mChangesEntries[sChangeId];
+	// The dependencies are retrieved for VM-independent changes + the changes from the currently selected variant(s) in the app
+	function enhanceExportWithChangeData(oExport, oAppComponent) {
+		const mInitialDependencies = FlexObjectState.getCompleteDependencyMap(oExport.sComponentName).mDependencies;
+		for (const sChangeId in mInitialDependencies) {
+			const oChange = mInitialDependencies[sChangeId].changeObject;
 			oExport.mChangesEntries[sChangeId] = {
 				mDefinition: oChange.convertToFileContent(),
 				aControlsDependencies: [],
@@ -59,7 +28,7 @@ sap.ui.define([
 
 			if (oChange._aDependentSelectorList && oAppComponent) {
 				oChange._aDependentSelectorList.forEach(function(oSelector) {
-					var mControlData = {
+					const mControlData = {
 						bPresent: !!JsControlTreeModifier.bySelector(oSelector, oAppComponent),
 						aAppliedChanges: [],
 						aFailedChangesJs: [],
@@ -76,9 +45,9 @@ sap.ui.define([
 	}
 
 	function enhanceExportWithDependencyData(sReference, oExport) {
-		const mInitialDependencies = UIChangesState.getCompleteDependencyMap(sReference);
-		for (var sChangeId in mInitialDependencies) {
-			var mChangeSpecificDependencies = mInitialDependencies[sChangeId];
+		const mInitialDependencies = FlexObjectState.getCompleteDependencyMap(sReference).mDependencies;
+		for (const sChangeId in mInitialDependencies) {
+			const mChangeSpecificDependencies = mInitialDependencies[sChangeId];
 			oExport.mChangesEntries[sChangeId].aControlsDependencies = mChangeSpecificDependencies.controlsDependencies;
 			oExport.mChangesEntries[sChangeId].aDependencies = mChangeSpecificDependencies.dependencies;
 		}
@@ -96,10 +65,10 @@ sap.ui.define([
 	}
 
 	function getChangesForControlFromCustomData(oControl, sIdentifier) {
-		var aCustomData = oControl.getCustomData();
-		var aChangeIds = [];
+		const aCustomData = oControl.getCustomData();
+		const aChangeIds = [];
 		aCustomData.forEach(function(oCustomData) {
-			var sKey = oCustomData.getKey();
+			const sKey = oCustomData.getKey();
 			if (sKey.startsWith(sIdentifier)) {
 				aChangeIds.push(sKey.replace(sIdentifier, ""));
 			}
@@ -107,11 +76,11 @@ sap.ui.define([
 		return aChangeIds;
 	}
 
-	function enhanceExportWithControlData(oChangePersistence, oExport) {
+	function enhanceExportWithControlData(oExport) {
 		// collect applied changes
 
-		for (var sControlId in oChangePersistence.getDependencyMapForComponent().mChanges) {
-			var mControlData = {
+		for (const sControlId in FlexObjectState.getLiveDependencyMap(oExport.sComponentName).mChanges) {
+			const mControlData = {
 				bPresent: false,
 				aAppliedChanges: [],
 				aFailedChangesJs: [],
@@ -119,7 +88,7 @@ sap.ui.define([
 				aNotApplicableChanges: []
 			};
 
-			var oControl = Element.getElementById(sControlId);
+			const oControl = Element.getElementById(sControlId);
 
 			if (oControl) {
 				mControlData.bPresent = true;
@@ -156,12 +125,14 @@ sap.ui.define([
 		}
 	}
 
-	return function(oChangePersistence) {
-		if (!oChangePersistence) {
-			return;
+	return function(oAppComponent) {
+		if (!oAppComponent) {
+			return undefined;
 		}
 
-		var oExport = {
+		const sComponentName = ManifestUtils.getFlexReferenceForControl(oAppComponent);
+
+		const oExport = {
 			sVersion: "1",
 			bIsInvestigationExport: true,
 			mControlData: {},
@@ -170,11 +141,11 @@ sap.ui.define([
 			aNotApplicableChanges: [],
 			mChangesEntries: {},
 			mVariantsChanges: {},
-			sComponentName: oChangePersistence._mComponent.name
+			sComponentName
 		};
 
-		enhanceExportWithChangeData(oChangePersistence, oExport);
-		enhanceExportWithControlData(oChangePersistence, oExport);
+		enhanceExportWithChangeData(oExport, oAppComponent);
+		enhanceExportWithControlData(oExport);
 
 		return oExport;
 	};
