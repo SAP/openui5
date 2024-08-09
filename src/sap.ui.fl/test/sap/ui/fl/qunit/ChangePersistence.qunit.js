@@ -448,9 +448,15 @@ sap.ui.define([
 				);
 
 				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-					assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
-					assert.equal(this.oWriteStub.callCount, 1, "the write function was called");
-					assert.equal(this.oStorageCondenseStub.callCount, 0, "the condenser route was not called");
+					if (bBackendEnablement) {
+						assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
+						assert.equal(this.oWriteStub.callCount, 0, "the write function was not called");
+						assert.equal(this.oStorageCondenseStub.callCount, 1, "the condenser route was called");
+					} else {
+						assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
+						assert.equal(this.oWriteStub.callCount, 1, "the write function was called");
+						assert.equal(this.oStorageCondenseStub.callCount, 0, "the condenser route was not called");
+					}
 				}.bind(this));
 			});
 
@@ -500,7 +506,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Shall not call condenser when persisted changes contain different namespaces", function(assert) {
+		QUnit.test("Shall call condenser when persisted changes contain different namespaces", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled() {
 					return true;
@@ -540,10 +546,11 @@ sap.ui.define([
 						namespace: "namespace1"
 					}
 				);
+
 				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
 					assert.equal(this.oCondenserStub.callCount, 2, "the condenser was called");
-					assert.equal(this.oWriteStub.callCount, 2, "the write function was called");
-					assert.equal(this.oStorageCondenseStub.callCount, 0, "the condenser route was not called");
+					assert.equal(this.oWriteStub.callCount, 0, "the write function was not called");
+					assert.equal(this.oStorageCondenseStub.callCount, 2, "the condenser route was called");
 				}.bind(this));
 			}.bind(this));
 		});
