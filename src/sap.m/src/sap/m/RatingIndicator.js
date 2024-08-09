@@ -45,10 +45,11 @@ sap.ui.define([
 	 * You can display icons in 4 recommended sizes:
 	 * <ul>
 	 * <li>large - 32px</li>
-	 * <li>medium(default) - 22px</li>
-	 * <li>small - 16px</li>
+	 * <li>medium(default) - 24px</li>
+	 * <li>small - 22px</li>
 	 * <li>XS - 12px</li>
 	 * </ul>
+	 * <b>Note:</b> It is not recommended to use the XS size as an editable rating indicator. If an editable rating indicator is needed then it is recommended to set the size S or above to be compliant with minimum touch size.</h4>
 	 * <b>Note:</b> If no icon size is set, the rating indicator will set it according to the content density.</h4>
 	 * @extends sap.ui.core.Control
 	 *
@@ -83,7 +84,7 @@ sap.ui.define([
 				value: {type: "float", group: "Behavior", defaultValue: 0, bindable: "bindable"},
 
 				/**
-				 * The Size of the image or icon to be displayed. The default value depends on the theme. Please be sure that the size is corresponding to a full pixel value as some browsers don't support subpixel calculations. Recommended size is 1.375rem (22px) for normal, 1rem (16px) for small, and 2rem (32px) for large icons correspondingly.
+				 * The Size of the image or icon to be displayed. The default value depends on the theme. Please be sure that the size is corresponding to a full pixel value as some browsers don't support subpixel calculations. Recommended size is 1.5rem (24px) for normal, 1.375rem (22px) for small, and 2rem (32px) for large icons correspondingly.
 				 */
 				iconSize: {type: "sap.ui.core.CSSSize", group: "Behavior", defaultValue: null},
 
@@ -289,17 +290,10 @@ sap.ui.define([
 			return;
 		}
 
-		var sDensityMode = this._getDensityMode();
-
-		if (sDensityMode === "Compact") {
-			sIconSize = "sapUiRIIconSizeCompact";
-			sIconPaddingSize = "sapUiRIIconPaddingCompact";
-		}
-
 		var mParamеters = Object.assign({
 				// add global styles as default
-				"sapUiRIIconSizeDisplayOnly": "1rem",
-				"sapUiRIIconPaddingDisplayOnly": "0.125rem"
+				"sapUiRIIconSizeDisplayOnly": "1.5rem",
+				"sapUiRIIconPaddingDisplayOnly": "0.1875rem"
 			}, Parameters.get({
 				name: [sIconSize, sIconPaddingSize],
 				callback: function(mParams) {
@@ -433,9 +427,9 @@ sap.ui.define([
 		switch (true) {
 			case (iPxIconSize >= 32):
 				return "L";
-			case (iPxIconSize >= 22):
+			case (iPxIconSize >= 24):
 				return "M";
-			case (iPxIconSize >= 16):
+			case (iPxIconSize >= 22):
 				return "S";
 			case (iPxIconSize >= 12):
 				return "XS";
@@ -470,7 +464,6 @@ sap.ui.define([
 	 * @private
 	 */
 	RatingIndicator.prototype._updateUI = function (fValue, bHover) {
-
 		// save a reference on all needed DOM elements
 		var $SelectedDiv = this.$("sel"),
 			$UnselectedContainerDiv = this.$("unsel-wrapper"),
