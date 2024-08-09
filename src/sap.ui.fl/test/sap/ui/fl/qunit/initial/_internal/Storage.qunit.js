@@ -476,7 +476,7 @@ sap.ui.define([
 
 			return Storage.loadFlexData({reference: sFlexReference}).then(function(oResult) {
 				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
-				assert.equal(Object.keys(oResult).length, 9, "nine entries are in the result");
+				assert.equal(Object.keys(oResult).length, 10, "ten entries are in the result");
 			});
 		});
 
@@ -539,7 +539,7 @@ sap.ui.define([
 				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
 				assert.deepEqual(oResult.ui2personalization, oUI2PersonalizationResponse, "then the UI2 personalization change is correct");
 				assert.deepEqual(oResult.variants[0], oVariantContent, "then the variant change is correct");
-				assert.equal(Object.keys(oResult).length, 9, "nine entries are in the result");
+				assert.equal(Object.keys(oResult).length, 10, "ten entries are in the result");
 			});
 		});
 
@@ -582,7 +582,7 @@ sap.ui.define([
 			return Storage.loadFlexData({reference: sFlexReference}).then(function(oResult) {
 				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
 				assert.deepEqual(oResult.ui2personalization, oUI2PersonalizationResponse, "then the UI2 personalization change is correct");
-				assert.equal(Object.keys(oResult).length, 9, "nine entries are in the result");
+				assert.equal(Object.keys(oResult).length, 10, "ten entries are in the result");
 			});
 		});
 
@@ -626,7 +626,7 @@ sap.ui.define([
 			return Storage.loadFlexData({reference: sFlexReference}).then(function(oResult) {
 				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
 				assert.deepEqual(oResult.ui2personalization, oUI2PersonalizationResponse, "then the UI2 personalization change is correct");
-				assert.equal(Object.keys(oResult).length, 9, "nine entries are in the result");
+				assert.equal(Object.keys(oResult).length, 10, "ten entries are in the result");
 			});
 		});
 
@@ -670,7 +670,7 @@ sap.ui.define([
 			return Storage.loadFlexData({reference: sFlexReference}).then(function(oResult) {
 				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
 				assert.deepEqual(oResult.ui2personalization, oUI2PersonalizationResponse, "then the UI2 personalization change is correct");
-				assert.equal(Object.keys(oResult).length, 9, "nine entries are in the result");
+				assert.equal(Object.keys(oResult).length, 10, "ten entries are in the result");
 			});
 		});
 
@@ -714,7 +714,7 @@ sap.ui.define([
 
 			return Storage.loadFlexData({reference: sFlexReference}).then(function(oResult) {
 				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
-				assert.equal(Object.keys(oResult).length, 9, "nine entries are in the result");
+				assert.equal(Object.keys(oResult).length, 10, "ten entries are in the result");
 			});
 		});
 

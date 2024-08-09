@@ -83,6 +83,7 @@ sap.ui.define([
 	StorageResultMerger.merge = function(aResponses) {
 		var oResult = {
 			appDescriptorChanges: concatFlexObjects(aResponses, "appDescriptorChanges"),
+			annotationChanges: concatFlexObjects(aResponses, "annotationChanges"),
 			changes: concatFlexObjects(aResponses, "changes"),
 			ui2personalization: concatUi2personalization(aResponses),
 			comp: {

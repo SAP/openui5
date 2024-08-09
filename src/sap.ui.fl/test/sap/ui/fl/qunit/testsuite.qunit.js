@@ -384,6 +384,12 @@ sap.ui.define([
 				}
 			},
 
+			"apply/_internal/flexObjects/AnnotationChange": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexObjects/AnnotationChange"]
+				}
+			},
 			"apply/_internal/flexObjects/AppDescriptorChange": {
 				group: "Apply Internal",
 				coverage: {

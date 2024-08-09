@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/base/util/restricted/_pick",
 	"sap/base/util/ObjectPath",
+	"sap/ui/fl/apply/_internal/flexObjects/AnnotationChange",
 	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/ControllerExtensionChange",
@@ -19,6 +20,7 @@ sap.ui.define([
 ], function(
 	_pick,
 	ObjectPath,
+	AnnotationChange,
 	AppDescriptorChange,
 	CompVariant,
 	ControllerExtensionChange,
@@ -40,6 +42,7 @@ sap.ui.define([
 		FL_VARIANT_OBJECT: FlVariant,
 		CONTROLLER_EXTENSION: ControllerExtensionChange,
 		APP_DESCRIPTOR_CHANGE: AppDescriptorChange,
+		ANNOTATION_CHANGE: AnnotationChange,
 		UI_CHANGE: UIChange
 	};
 
@@ -52,6 +55,8 @@ sap.ui.define([
 			return FLEX_OBJECT_TYPES.CONTROLLER_EXTENSION;
 		} else if (oNewFileContent.appDescriptorChange) {
 			return FLEX_OBJECT_TYPES.APP_DESCRIPTOR_CHANGE;
+		} else if (oNewFileContent.fileType === "annotation_change") {
+			return FLEX_OBJECT_TYPES.ANNOTATION_CHANGE;
 		}
 		return FLEX_OBJECT_TYPES.UI_CHANGE;
 	}
@@ -151,6 +156,12 @@ sap.ui.define([
 		mPropertyBag.compositeCommand ||= mPropertyBag.support && mPropertyBag.support.compositeCommand;
 		var mProperties = createBasePropertyBag(mPropertyBag);
 		return new AppDescriptorChange(mProperties);
+	};
+
+	FlexObjectFactory.createAnnotationChange = function(mPropertyBag) {
+		mPropertyBag.compositeCommand ||= mPropertyBag.support && mPropertyBag.support.compositeCommand;
+		var mProperties = createBasePropertyBag(mPropertyBag);
+		return new AnnotationChange(mProperties);
 	};
 
 	/**

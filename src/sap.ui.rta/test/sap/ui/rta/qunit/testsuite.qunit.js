@@ -172,6 +172,17 @@ sap.ui.define([
 					"xx-designMode": true
 				}
 			},
+			"command/Annotation": {
+				group: "Command",
+				coverage: {
+					only: ["sap/ui/rta/command/Annotation"]
+				},
+				ui5: {
+					resourceroots: {
+						"rta/test": "test-resources/sap/ui/rta/"
+					}
+				}
+			},
 			"command/AppDescriptorCommand": {
 				group: "Command",
 				coverage: {
