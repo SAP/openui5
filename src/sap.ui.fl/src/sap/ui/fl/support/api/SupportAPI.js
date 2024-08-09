@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/ComponentRegistry",
 	"sap/ui/fl/support/_internal/getAllUIChanges",
+	"sap/ui/fl/support/_internal/getFlexObjectInfos",
 	"sap/ui/fl/support/_internal/getFlexSettings",
 	"sap/ui/fl/support/_internal/getChangeDependencies",
 	"sap/ui/fl/Utils"
@@ -13,6 +14,7 @@ sap.ui.define([
 	Log,
 	ComponentRegistry,
 	getAllUIChanges,
+	getFlexObjectInfos,
 	getFlexSettings,
 	getChangeDependencies,
 	Utils
@@ -69,6 +71,9 @@ sap.ui.define([
 	var SupportAPI = /** @lends sap.ui.fl.support.api.SupportAPI */{
 		getAllUIChanges() {
 			return findComponentAndCallFunction(getAllUIChanges, "sap/ui/fl/support/_internal/getAllUIChanges");
+		},
+		getFlexObjectInfos() {
+			return findComponentAndCallFunction(getFlexObjectInfos, "sap/ui/fl/support/_internal/getFlexObjectInfos");
 		},
 		getChangeDependencies,
 		getFlexSettings
