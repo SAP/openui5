@@ -3291,13 +3291,16 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.refreshSecurityToken = function(fnSuccess, fnError, bAsync) {
 		var oRequest, sToken,
-			mTokenRequest = {
+			that = this,
+			oRequestHandle = {
 				abort: function() {
+					if (that.pRetryAfter) {
+						throw new Error("abort() during HTTP 503 'Retry-after' processing not supported");
+					}
 					this.request.abort();
 				}
 			},
-			sUrl = this._createRequestUrlWithNormalizedPath("/"),
-			that = this;
+			sUrl = this._createRequestUrlWithNormalizedPath("/");
 
 		function handleSuccess(oData, oResponse) {
 			if (oResponse) {
@@ -3350,7 +3353,7 @@ sap.ui.define([
 				return;
 			}
 			// Disable token handling, if token request returns an error
-			mTokenRequest.request = requestToken("GET", handleGetError);
+			oRequestHandle.request = requestToken("GET", handleGetError);
 		}
 
 		function requestToken(sRequestType, fnError) {
@@ -3364,11 +3367,11 @@ sap.ui.define([
 
 		// Initially try method "HEAD", error handler falls back to "GET" unless the flag forbids HEAD request
 		if (this.bDisableHeadRequestForToken) {
-			mTokenRequest.request = requestToken("GET", handleGetError);
+			oRequestHandle.request = requestToken("GET", handleGetError);
 		} else {
-			mTokenRequest.request = requestToken("HEAD", handleHeadError);
+			oRequestHandle.request = requestToken("HEAD", handleHeadError);
 		}
-		return mTokenRequest;
+		return oRequestHandle;
 
 	};
 
@@ -3446,6 +3449,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.onRetryAfterRejected = function(fnError, oErrorResponse, oReason) {
+		if (this.bDestroyed) {
+			// Analog to ODM#_request we do nothing once the Model is destroyed
+			return;
+		}
+
 		const sReason = oReason?.message
 			? "Retry-After handler rejected with: " + oReason.message
 			: "Retry-After handler rejected w/o reason";
@@ -5104,6 +5112,9 @@ sap.ui.define([
 		}
 		oRequestHandle = {
 				abort : function () {
+					if (that.pRetryAfter) {
+						throw new Error("abort() during HTTP 503 'Retry-after' processing not supported");
+					}
 					if (bDeferred && !bAborted){
 						// Since in some scenarios no request object was created yet, the counter is
 						// decreased manually
@@ -6402,6 +6413,10 @@ sap.ui.define([
 
 		oRequestHandle = {
 			abort: function() {
+				if (that.pRetryAfter) {
+					throw new Error("abort() during HTTP 503 'Retry-after' processing not supported");
+				}
+
 				if (vRequestHandleInternal) {
 					if (Array.isArray(vRequestHandleInternal)) {
 						vRequestHandleInternal.forEach(function(oRequestHandle) {
@@ -7627,6 +7642,11 @@ sap.ui.define([
 	 * resolved, the requests are repeated; if it is rejected, the requests are not repeated. If it
 	 * is rejected with the same <code>Error</code> reason as previously passed to the handler, then
 	 * this reason is reported to the message model.
+	 *
+	 * <b>Note:</b>
+	 * For APIs, like e.g. {@link #submitChanges}, which return an object having an <code>abort</code>
+	 * function to abort the request triggered by the API, this abort function must not be called as
+	 * long as the above promise is pending. Otherwise an error will be thrown.
 	 *
 	 * @param {function(module:sap/ui/model/odata/v2/RetryAfterError):Promise<undefined>} fnRetryAfter
 	 *   A "Retry-After" handler

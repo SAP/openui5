@@ -23571,4 +23571,95 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		});
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: HTTP status 503 retry-after handling in combination with abort() (erroneous usecases)
+	// 1) Calling abort() during a pending retry-after promise handler causes an error.
+	// 1a) via ODataModel#refreshSecurityToken
+	// 1b) via ODataModel#read
+	// 1b) via ODataModel#submitChanges
+	// 2) ODataModel#destroy must NOT fail with the same reason when calling itself abort() for existing request handles
+	// 3) Resolving or rejecting a retry-after promise after its ODataModel was destroyed results on:
+	// 3a) resolving -> no request
+	// 3b) rejecting -> no error log, no error reporting
+	//
+	// JIRA: CPOUI5MODELS-1766
+	[false, true].forEach((bResolve) => {
+		const sTitle = "503 retry-after handling and erroneous abort(): " + (bResolve ? "resolve" : "reject");
+		QUnit.test(sTitle, function (assert) {
+			let oAbortChange;
+			let oAbortRead;
+			let oAbortSecurityToken;
+			let oRetryAfterError;
+			const oModel = createSalesOrdersModel({refreshAfterChange : false});
+			const sView = `
+	<FlexBox id="objectPage1" binding="{/SalesOrderSet('1')}">
+		<Text id="note1" text="{Note}"/>
+	</FlexBox>`;
+
+			let fnResolveRetryAfter, fnRejectRetryAfter;
+			oModel.setRetryAfterHandler((oError) => {
+				oRetryAfterError = oError;
+				return new Promise((resolve, reject) => {
+					fnResolveRetryAfter = resolve;
+					fnRejectRetryAfter = reject;
+				});
+			});
+
+			this.expectHeadRequest()
+				.expectRequest("SalesOrderSet('1')", createErrorResponse({
+					crashBatch: true,
+					message: "Service Unavailable",
+					statusCode: 503,
+					headers: {"retry-after": 5},
+					messageCode: "HTTP 503"
+				}));
+
+			// code under test
+			return this.createView(assert, sView, oModel).then(() => {
+				// preparation (1a)
+				oAbortSecurityToken = oModel.refreshSecurityToken();
+
+				return resolveLater();
+			}).then(() => {
+				assert.throws(() => {
+					// code under test (1a)
+					oAbortSecurityToken.abort();
+				}, new Error("abort() during HTTP 503 'Retry-after' processing not supported"));
+			}).then(() => {
+				// preparation (1b)
+				oAbortRead = oModel.read("/SalesOrderSet('1')");
+
+				return resolveLater();
+			}).then(() => {
+				assert.throws(() => {
+					// code under test (1b)
+					oAbortRead.abort();
+				}, new Error("abort() during HTTP 503 'Retry-after' processing not supported"));
+			}).then(() => {
+				// preparation (1c)
+				oModel.setProperty("/SalesOrderSet('3')/Note", "Note3");
+				oAbortChange = oModel.submitChanges();
+
+				return resolveLater();
+			}).then(() => {
+				assert.throws(() => {
+					// code under test (1c)
+					oAbortChange.abort();
+				}, new Error("abort() during HTTP 503 'Retry-after' processing not supported"));
+			}).then(() => {
+				// code under test (2)
+				oModel.destroy();
+			}).then(() => {
+				if (bResolve) {
+					// code under test (3a)
+					fnResolveRetryAfter();
+				} else {
+					// code under test (3b)
+					fnRejectRetryAfter(oRetryAfterError);
+				}
+				return resolveLater();
+			});
+		});
+	});
 });

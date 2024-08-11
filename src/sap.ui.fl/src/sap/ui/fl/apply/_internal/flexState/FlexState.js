@@ -42,6 +42,7 @@ sap.ui.define([
 	"use strict";
 
 	const sAppDescriptorNamespace = "sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange";
+	const sAnnotationNamespace = "sap.ui.fl.apply._internal.flexObjects.AnnotationChange";
 
 	/**
 	 * Flex state class to persist maps and raw state (cache) for a given component reference.
@@ -53,6 +54,8 @@ sap.ui.define([
 	 * 		},
 	 * 		storageResponse: {
 	 * 			changes: {
+	 * 				annotationChanges: [...],
+	 * 				appDescriptorChanges: [...],
 	 * 				changes: [...],
 	 * 				comp: {
 	 * 					variants: [...],
@@ -94,6 +97,9 @@ sap.ui.define([
 	var _mInitPromises = {};
 	var _mFlexObjectInfo = {
 		appDescriptorChanges: {
+			pathInResponse: []
+		},
+		annotationChanges: {
 			pathInResponse: []
 		},
 		changes: {
@@ -217,6 +223,20 @@ sap.ui.define([
 		checkInvalidation(mParameters, oUpdateInfo) {
 			const bRelevantType = ["addFlexObject", "removeFlexObject"].includes(oUpdateInfo.type);
 			return bRelevantType && oUpdateInfo.updatedObject?.isA(sAppDescriptorNamespace);
+		}
+	});
+
+	const oAnnotationChangesDataSelector = new DataSelector({
+		id: "annotationChanges",
+		parentDataSelector: oFlexObjectsDataSelector,
+		executeFunction(aFlexObjects) {
+			return aFlexObjects.filter((oFlexObject) => {
+				return oFlexObject.isA(sAnnotationNamespace);
+			});
+		},
+		checkInvalidation(mParameters, oUpdateInfo) {
+			const bRelevantType = ["addFlexObject", "removeFlexObject"].includes(oUpdateInfo.type);
+			return bRelevantType && oUpdateInfo.updatedObject?.isA(sAnnotationNamespace);
 		}
 	});
 
@@ -583,6 +603,8 @@ sap.ui.define([
 				return "variantManagementChanges";
 			case "variant":
 				return ["comp", "variants"];
+			case "annotation_change":
+				return "annotationChanges";
 			default:
 				return "";
 		}
@@ -843,6 +865,10 @@ sap.ui.define([
 
 	FlexState.getAppDescriptorChanges = function(sReference) {
 		return oAppDescriptorChangesDataSelector.get({ reference: sReference });
+	};
+
+	FlexState.getAnnotationChanges = function(sReference) {
+		return oAnnotationChangesDataSelector.get({ reference: sReference });
 	};
 
 	FlexState.getUI2Personalization = function(sReference) {

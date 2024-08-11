@@ -6394,6 +6394,45 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("refreshSecurityToken: abort() forbidden during 'Retry-after'", function (assert) {
+		const oModel = {
+			_createRequest() {},
+			_createRequestUrlWithNormalizedPath() {},
+			_getHeaders() {},
+			_request() {},
+			getServiceMetadata() {},
+			resetSecurityToken() {}
+		};
+		this.mock(oModel).expects("_createRequestUrlWithNormalizedPath")
+			.withExactArgs("/")
+			.returns("~sUrl");
+		this.mock(oModel).expects("_getHeaders").withExactArgs(undefined, true).returns("~headers");
+		const oRequest = {headers: {}};
+		this.mock(oModel).expects("_createRequest")
+			.withExactArgs("~sUrl", "", "HEAD", "~headers", null, null, false)
+			.returns(oRequest);
+		this.mock(oModel).expects("getServiceMetadata").withExactArgs().returns("~serviceMetadata");
+		const oRequestHandle = {};
+		this.mock(oModel).expects("_request")
+			.withExactArgs(sinon.match.same(oRequest), sinon.match.func, sinon.match.func, undefined,
+				undefined, "~serviceMetadata")
+			.returns(oRequestHandle);
+		const oAbort = ODataModel.prototype.refreshSecurityToken.call(oModel, "~fnSuccess",  "~fnError");
+		assert.strictEqual(oAbort.request, oRequestHandle);
+		oRequestHandle.abort = function() {};
+		this.mock(oRequestHandle).expects("abort").withExactArgs();
+
+		// code under test: abort() w/o "Retry-after" promise is allowed
+		oAbort.abort();
+
+		oModel.pRetryAfter = {};
+		assert.throws(() => {
+			// code under test: abort() w/ "Retry-after" promise forbidden
+			oAbort.abort();
+		}, new Error("abort() during HTTP 503 'Retry-after' processing not supported"));
+	});
+
+	//*********************************************************************************************
 	[false, true].forEach((bRejected) => {
 		const sTitle = `refreshSecurityToken: call handleHeadError -> handleGetError, $rejected: ${bRejected}`;
 		QUnit.test(sTitle, function (assert) {
@@ -9307,7 +9346,12 @@ sap.ui.define([
 		// code under test (oErrorResponse, this.oRetryAfterError and oReason are same)
 		ODataModel.prototype.onRetryAfterRejected.call(oModel,
 			oHelper.processError, oErrorResponse, oModel.oRetryAfterError);
-	});
+
+		oModel.bDestroyed = true;
+
+		// code under test (do nothing if already destroyed)
+		ODataModel.prototype.onRetryAfterRejected.call(oModel);
+});
 
 	//*********************************************************************************************
 	QUnit.test("checkAndProcessRetryAfterError: returns false", function (assert) {
@@ -9349,6 +9393,51 @@ sap.ui.define([
 		oModel.fnRetryAfter = "~fnRetryAfter";
 		oModel.bSequentializeRequests = true;
 		test("~retryAfterHeaderValue");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_processRequest: : abort() forbidden during 'Retry-after'", function (assert) {
+		const oModel = {oMetadata: {loaded() {}}, pRetryAfter: {}};
+		const oMetadataMock = this.mock(oModel.oMetadata);
+		oMetadataMock.expects("loaded").returns(new Promise(() => {}));
+
+		let oAbort = ODataModel.prototype._processRequest.call(oModel);
+
+		assert.throws(() => {
+			// code under test: abort() w/ "Retry-after" promise forbidden
+			oAbort.abort();
+		}, new Error("abort() during HTTP 503 'Retry-after' processing not supported"));
+
+		oMetadataMock.expects("loaded").returns(new Promise(() => {}));
+		oModel.pRetryAfter = null;
+		oAbort = ODataModel.prototype._processRequest.call(oModel);
+
+		// code under test: abort() w/o "Retry-after" promise is allowed
+		oAbort.abort();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitChangesWithChangeHeaders: : abort() forbidden during 'Retry-after'", function (assert) {
+		const oModel = {oMetadata: {loaded() {}}, pRetryAfter: {}, getBindings() {}};
+		const oModelMock = this.mock(oModel);
+		oModelMock.expects("getBindings").returns([]);
+		const oMetadataMock = this.mock(oModel.oMetadata);
+		oMetadataMock.expects("loaded").returns(new Promise(() => {}));
+
+		let oAbort = ODataModel.prototype.submitChangesWithChangeHeaders.call(oModel);
+
+		assert.throws(() => {
+			// code under test: abort() w/ "Retry-after" promise forbidden
+			oAbort.abort();
+		}, new Error("abort() during HTTP 503 'Retry-after' processing not supported"));
+
+		oModelMock.expects("getBindings").returns([]);
+		oMetadataMock.expects("loaded").returns(new Promise(() => {}));
+		oModel.pRetryAfter = null;
+		oAbort = ODataModel.prototype.submitChangesWithChangeHeaders.call(oModel);
+
+		// code under test: abort() w/o "Retry-after" promise is allowed
+		oAbort.abort();
 	});
 
 	//*********************************************************************************************

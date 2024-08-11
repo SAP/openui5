@@ -3,15 +3,18 @@
  */
 
 sap.ui.define([
-	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/rta/Utils",
+	"sap/base/Log",
 	"sap/ui/dt/Util",
-	"sap/base/Log"
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/rta/Utils"
+
 ], function(
-	Plugin,
-	Utils,
+	BaseLog,
 	DtUtil,
-	BaseLog
+	FlUtils,
+	Plugin,
+	Utils
 ) {
 	"use strict";
 
@@ -164,6 +167,22 @@ sap.ui.define([
 		});
 	};
 
+	Settings.prototype._handleAnnotationChangeCommand = function(mChange, oElement, oCompositeCommand) {
+		var mChangeSpecificData = mChange.changeSpecificData;
+
+		return this.getCommandFactory().getCommandFor(
+			oElement,
+			"annotation",
+			{
+				content: mChangeSpecificData.content,
+				changeType: mChangeSpecificData.annotationChangeType
+			}
+		)
+		.then(function(oAnnotationCommand) {
+			return oCompositeCommand.addCommand(oAnnotationCommand);
+		});
+	};
+
 	Settings.prototype._handleCompositeCommand = function(aElementOverlays, oElement, aChanges, oSettingsAction) {
 		var oCompositeCommand;
 
@@ -178,17 +197,22 @@ sap.ui.define([
 				var mChangeSpecificData = mChange.changeSpecificData;
 				// Flex Change
 				if (mChangeSpecificData.changeType) {
-					return this._handleFlexChangeCommand(mChange, aElementOverlays, oCompositeCommand, oSettingsAction);
+					return () => this._handleFlexChangeCommand(mChange, aElementOverlays, oCompositeCommand, oSettingsAction);
 				// App Descriptor Change
 				} else if (mChangeSpecificData.appDescriptorChangeType) {
-					return this._handleAppDescriptorChangeCommand(mChange, oElement, oCompositeCommand);
+					return () => this._handleAppDescriptorChangeCommand(mChange, oElement, oCompositeCommand);
+				// Annotation Change
+				} else if (mChangeSpecificData.annotationChangeType) {
+					return () => this._handleAnnotationChangeCommand(mChange, oElement, oCompositeCommand);
 				}
 				return undefined;
 			}, this);
 		}.bind(this))
 
 		.then(function(aPromises) {
-			return Promise.all(aPromises);
+			// Since oCompositeCommand gets modified by each handler, the promise execution must be sequential
+			// to ensure the correct order of the commands
+			return FlUtils.execPromiseQueueSequentially(aPromises);
 		})
 
 		.then(function() {
