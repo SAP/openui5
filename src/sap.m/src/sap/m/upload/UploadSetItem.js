@@ -1065,7 +1065,7 @@ sap.ui.define([
 			this._bSizeRestricted = bRestricted;
 			this.invalidate();
 			if (bRestricted && this.getParent()) {
-				this.getParent().fireFileSizeExceeded({item: this});
+				this.getParent().fireFileSizeExceeded({item: this, fileSize: this._fFileSize});
 			}
 		}
 	};
