@@ -1,0 +1,12 @@
+{
+  "1.128.0": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "679bb81d40f2977197f8c81018f57463f2e25c54",
+        "type": "FIX",
+        "text": " ColumnLayout: keep breakpoint classes stable on invalidation"
+      }
+    ]
+  }
+}

@@ -3,6 +3,16 @@
     "date": "August 2024",
     "notes": [
       {
+        "id": "0b3c7979c57680ac44f0d3007057ad852582ce84",
+        "type": "FEATURE",
+        "text": " sap.m.Dialog: Increase resize handle size"
+      },
+      {
+        "id": "ba9ac09a8c43dfa325b9fa4f9e584796b17928c5",
+        "type": "FIX",
+        "text": " Integration Cards: The text of the Object Status is aligned vertically with the icon"
+      },
+      {
         "id": "231c8f03a147ba290d0b624b40f0b69c6cf40c4a",
         "type": "FEATURE",
         "text": " Integration Cards: Add fallbackSrc to images in Object cards"

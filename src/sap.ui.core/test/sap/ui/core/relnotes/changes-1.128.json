@@ -1,0 +1,12 @@
+{
+  "1.128.0": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "8669c4d06e24cda88534fe1bf28e5bac427f6540",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.AnnotationHelper: DoNotCheckScaleOfMeasuredQuantity"
+      }
+    ]
+  }
+}

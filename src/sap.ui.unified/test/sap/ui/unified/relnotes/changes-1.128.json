@@ -3,6 +3,17 @@
     "date": "August 2024",
     "notes": [
       {
+        "id": "45059d574a42ece60673cb9596baf65381d2d671",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: remove appointments not selected announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280162468"
+          }
+        ]
+      },
+      {
         "id": "abaddd260430a2fbf6ca499234cfe9fe0e21551c",
         "type": "FIX",
         "text": " sap.m.Menu, sap.ui.unified.Menu: added defaultClass to the items aggregation"

@@ -1,0 +1,12 @@
+{
+  "1.128.0": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "0b3c7979c57680ac44f0d3007057ad852582ce84",
+        "type": "FEATURE",
+        "text": " sap.m.Dialog: Increase resize handle size"
+      }
+    ]
+  }
+}

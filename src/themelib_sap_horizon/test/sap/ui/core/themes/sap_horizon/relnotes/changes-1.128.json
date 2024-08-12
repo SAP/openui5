@@ -3,6 +3,16 @@
     "date": "August 2024",
     "notes": [
       {
+        "id": "0b3c7979c57680ac44f0d3007057ad852582ce84",
+        "type": "FEATURE",
+        "text": " sap.m.Dialog: Increase resize handle size"
+      },
+      {
+        "id": "b3d02ff877ee9285e739dc54741c5a8ee1a1c05b",
+        "type": "FEATURE",
+        "text": " sap.m.Popover: Increase resize handle size"
+      },
+      {
         "id": "a47490175157994f06a5999c5819611993c31c0f",
         "type": "FIX",
         "text": " sap.m.Tokenizer: Prevent focus outline overflow"

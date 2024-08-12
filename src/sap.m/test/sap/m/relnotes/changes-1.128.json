@@ -3,6 +3,37 @@
     "date": "August 2024",
     "notes": [
       {
+        "id": "0b3c7979c57680ac44f0d3007057ad852582ce84",
+        "type": "FEATURE",
+        "text": " sap.m.Dialog: Increase resize handle size"
+      },
+      {
+        "id": "b3d02ff877ee9285e739dc54741c5a8ee1a1c05b",
+        "type": "FEATURE",
+        "text": " sap.m.Popover: Increase resize handle size"
+      },
+      {
+        "id": "f3c28514e0a3225ef2dbedd08f03a0b92e037227",
+        "type": "FEATURE",
+        "text": " We now ensure that as per the guidelines the line-height on the linkTileContents has been set to 1.5rem"
+      },
+      {
+        "id": "45059d574a42ece60673cb9596baf65381d2d671",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: remove appointments not selected announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280162468"
+          }
+        ]
+      },
+      {
+        "id": "8a6159b2d9725df1b27075b9c96c620d01c30899",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Drag and drop in Hours view is now with 15 minutes minimum step"
+      },
+      {
         "id": "c88a3bfea79241db9baaa7f5f9b985bfa0082eab",
         "type": "FIX",
         "text": " sap.m.Link: links with empty href attribute work correctly now"
@@ -41,6 +72,11 @@
         "id": "b216adc02824cb33f442c489be12021fa8f3074b",
         "type": "FIX",
         "text": " sap.m.IconTabBar: Text only filter line-height is fixed for Hindi"
+      },
+      {
+        "id": "2498cde5725ade9b0210647f41b31eb5126f1647",
+        "type": "FEATURE",
+        "text": " CellSelector: Shift + Click now extends the selection"
       },
       {
         "id": "a75d7f48d666b5a9155608695f6c438fa9e33d2a",

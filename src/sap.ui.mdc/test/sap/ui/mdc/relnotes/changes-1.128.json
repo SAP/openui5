@@ -3,6 +3,11 @@
     "date": "August 2024",
     "notes": [
       {
+        "id": "4208bb1782e8597d0db6b6cf565d9b2a746799bf",
+        "type": "FIX",
+        "text": " ValueHelp: Screenreader announces \"has Dialog\" on Tokenizer"
+      },
+      {
         "id": "1cd1036a5cf2e83f0f450381a81d619b232d8711",
         "type": "FIX",
         "text": " FieldBase: Typeahead opens too if Dialog opens"
