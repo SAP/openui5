@@ -248,10 +248,6 @@
                   "$ref": "#/definitions/simpleBinding"
                 }
               ]
-            },
-            "visible": {
-              "description": "Represents the visibility of the paginator",
-              "$ref": "#/definitions/visibility"
             }
           }
         },

@@ -1,9 +1,9 @@
 {
 	"_version": "1.14.0",
 	"sap.app": {
-		"id": "sap.f.cardsDemo.pagination.table.serverSide",
+		"id": "card.explorer.pagination.table",
 		"type": "card",
-		"title": "Cards with Server-Side Pagination",
+		"title": "Table Card with Server-Side Pagination",
 		"subTitle": "",
 		"applicationVersion": {
 			"version": "1.0.0"
@@ -23,7 +23,7 @@
 	"sap.card": {
 		"type": "Table",
 		"header": {
-			"title": "Server-Side Pagination",
+			"title": "Table Pagination",
 			"status": {
 				"text": {
 					"format": {
@@ -46,23 +46,6 @@
 					{
 						"title": "Units in Stock",
 						"value": "{UnitsInStock}"
-					},
-					{
-						"title": "Quantity per Unit",
-						"value": "{QuantityPerUnit}",
-						"visible": "{= size('wide') || size('regular') || size('extraWide')}"
-					},
-					{
-						"title": "Unit Price",
-						"value": "{UnitPrice}",
-						"visible": "{= size('wide') || size('regular') || size('extraWide')}"
-
-					},
-					{
-						"title": "Discontinued",
-						"value": "{Discontinued}",
-						"visible": "{= size('wide') || size('regular') || size('extraWide')}"
-
 					}
 				]
 			}
@@ -79,7 +62,7 @@
 				"parameters": {
 					"$count": true,
 					"$skip": "{paginator>/skip}",
-					"$top": 5
+					"$top": "{paginator>/size}"
 				}
 			},
 			"path": "/value"

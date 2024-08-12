@@ -36,8 +36,6 @@ sap.ui.define([
 			sName = oCardContent.getMetadata().getName(),
 			sType = sName.slice(sName.lastIndexOf(".") + 1),
 			oCard = oCardContent.getCardInstance(),
-			bLoading = oCardContent.isLoading(),
-			bIsAbstractPreviewMode =  oCard && oCard.getPreviewMode() === CardPreviewMode.Abstract,
 			oMessageContainer = oCardContent.getAggregation("_messageContainer"),
 			oBlockingMessage = oCardContent.getAggregation("_blockingMessage");
 
@@ -56,15 +54,11 @@ sap.ui.define([
 			oRm.style("min-height", sHeight);
 		}
 
-		if (bLoading || bIsAbstractPreviewMode) {
-			oRm.class("sapFCardContentLoading");
-		}
+		this.renderLoadingClass(oRm, oCardContent);
 
 		oRm.openEnd();
 
-		if (bLoading || bIsAbstractPreviewMode) {
-			oRm.renderControl(oCardContent.getAggregation("_loadingPlaceholder"));
-		}
+		this.renderLoadingPlaceholder(oRm, oCardContent);
 
 		if (oMessageContainer) {
 			oRm.renderControl(oMessageContainer);
@@ -86,6 +80,34 @@ sap.ui.define([
 	 */
 	BaseContentRenderer.renderContent = function (oRm, oCardContent) {
 		oRm.renderControl(oCardContent.getAggregation("_content"));
+	};
+
+	/**
+	 * @protected
+	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.integration.cards.BaseContent} oCardContent an object representation of the control that should be rendered
+	 */
+	BaseContentRenderer.renderLoadingClass = function (oRm, oCardContent) {
+		const oCard = oCardContent.getCardInstance();
+		const bIsAbstractPreviewMode =  oCard && oCard.getPreviewMode() === CardPreviewMode.Abstract;
+
+		if (oCardContent.isLoading() || bIsAbstractPreviewMode) {
+			oRm.class("sapFCardContentLoading");
+		}
+	};
+
+	/**
+	 * @protected
+	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.integration.cards.BaseContent} oCardContent an object representation of the control that should be rendered
+	 */
+	BaseContentRenderer.renderLoadingPlaceholder = function (oRm, oCardContent) {
+		const oCard = oCardContent.getCardInstance();
+		const bIsAbstractPreviewMode = oCard && oCard.getPreviewMode() === CardPreviewMode.Abstract;
+
+		if (oCardContent.isLoading() || bIsAbstractPreviewMode) {
+			oRm.renderControl(oCardContent.getAggregation("_loadingPlaceholder"));
+		}
 	};
 
 	/**

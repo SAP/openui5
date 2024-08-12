@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-	"./BaseContentRenderer",
+	"./BaseListContentRenderer",
 	"../controls/ListContentItem",
 	"../controls/ActionsStrip"
 ], function (
-	BaseContentRenderer,
+	BaseListContentRenderer,
 	ListContentItem,
 	ActionsStrip
 ) {
@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @namespace
 	 */
-	var ListContentRenderer = BaseContentRenderer.extend("sap.ui.integration.cards.ListContentRenderer", {
+	var ListContentRenderer = BaseListContentRenderer.extend("sap.ui.integration.cards.ListContentRenderer", {
 		apiVersion: 2
 	});
 
@@ -31,6 +31,8 @@ sap.ui.define([
 		if (oListContent.getAggregation("_legend")) {
 			oRm.renderControl(oListContent.getAggregation("_legend"));
 		}
+
+		oListContent.getPaginator()?.render(oRm);
 	};
 
 	/**
