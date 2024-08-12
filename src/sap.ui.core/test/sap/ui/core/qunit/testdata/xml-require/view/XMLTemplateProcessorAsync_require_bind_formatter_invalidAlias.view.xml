@@ -1,0 +1,11 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m" displayBlock="true">
+	<App core:require="{
+			$invalidAlias: 'testdata/xml-require/helper/Helper'
+		}">
+		<Page title="Hello">
+			<Button id="btn_1" text="{path: '/buttonText', formatter: '$invalidAlias.formatter.bind($controller)'}"/>
+		</Page>
+	</App>
+</mvc:View>

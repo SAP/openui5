@@ -1237,6 +1237,25 @@ sap.ui.define([
 		oBindingInfo.formatter();
 	});
 
+	QUnit.test("Error Handling: Check invalid syntax when binding formatter functions", function(assert) {
+		const sBinding1 = "{path : '/', formatter : 'MyFormatter.format.bind($control).bind($controller)'}";
+		const sBinding2 = "{path : '/', formatter : 'MyFormatter.format.bind($control, $controller)'}";
+		const sBinding3 = "{path : '/', formatter : 'MyFormatter.format.bind($control).doSomething'}";
+
+		assert.throws(function() {
+			parse(sBinding1, {}, false, false, true);
+		}, "'MyFormatter.format.bind($control).bind($controller)': Invalid syntax, error should be thrown");
+		assert.throws(function() {
+			parse(sBinding2, {}, false, false, true);
+		}, "'MyFormatter.format.bind($control, $controller)': Invalid syntax, error should be thrown");
+		assert.throws(function() {
+			parse(sBinding3, {}, false, false, true);
+		}, "'MyFormatter.format.bind($control).doSomething': Invalid syntax, error should be thrown");
+	});
+
+	/**
+	 * @deprecated
+	 */
 	QUnit.test("Scope access w/o dot", function (assert) {
 		var sBinding1 = "{path : '/', formatter : 'foo'}",
 			/**
@@ -1270,6 +1289,9 @@ sap.ui.define([
 		})();
 	});
 
+	/**
+	 * @deprecated
+	 */
 	QUnit.test("Scope access w/o dot by given static context", function (assert) {
 		var sBinding1 = "{path : '/', formatter : 'foo'}",
 			sBinding2 = "{path : '/', formatter : 'Global.formatter'}",
