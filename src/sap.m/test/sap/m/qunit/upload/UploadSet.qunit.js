@@ -1323,6 +1323,7 @@ sap.ui.define([
 
 			var oItem = oEvent.getParameter("item");
 			assert.equal(oItem.getFileName(), "Sample File 2.txt", "event contain correct invalid file name");
+			assert.ok(oEvent.getParameter("fileSize"), "event contains invalid file size");
 			done();
 		});
 
