@@ -2594,6 +2594,35 @@ sap.ui.define([
 		assert.ok(true, "Should not throw an error when there is no dom ref");
 	});
 
+	QUnit.test("Height that includes scrollbars height is preserved after invalidation", function(assert) {
+		var oPopover = new Popover({
+			contentHeight: "auto",
+			content: [
+				new HTML({
+					content: "<div style='width: 10000px;'>hello world</div>"
+				})
+			]
+		});
+
+		oPopover.openBy(this.oButton);
+		this.clock.tick(500);
+
+		var iHeightAfterOpen = oPopover.getDomRef("cont").getBoundingClientRect().height;
+
+		assert.ok(iHeightAfterOpen > 0, "Height is greater than 0");
+
+		// act
+		oPopover.invalidate();
+		this.clock.tick(500);
+
+		assert.ok(oPopover.getDomRef("cont").getBoundingClientRect().height >= iHeightAfterOpen, "Height is preserved after invalidation");
+
+		// clean up
+		this.clock.runToLast();
+		this.clock.restore();
+		oPopover.destroy();
+	});
+
 	QUnit.module("Responsive paddings");
 
 	QUnit.test("_initResponsivePaddingsEnablement is called on init", function (assert) {
