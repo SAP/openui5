@@ -244,5 +244,25 @@
         "text": " We've now fixed the overlap issue in GenericTile when sap.m.TileSizeBehaviour.Small was being used."
       }
     ]
+  },
+  "1.124.4": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "8cc01c0efc384e19f88e10adee2b79b4780bc50b",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: adjust more link tab order",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380128055"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380129002"
+          }
+        ]
+      }
+    ]
   }
 }
