@@ -84,7 +84,16 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	Delegate.updateBindingInfo = function(oTable, oBindingInfo) {
+		const oCurrentAggregation = oTable.getRowBinding()?.getAggregation();
+
 		TableDelegate.updateBindingInfo.apply(this, arguments);
+
+		if ("expandTo" in (oCurrentAggregation ?? {})) {
+			// The binding throws an error if expandTo is set without the hierarchyQualifier parameter. We assume that once a hierarchyQualifier is
+			// set, it is always set. If the delegate decides to no longer add the hierarchyQualifier, it needs to actively remove the automatically
+			// added $$aggregation parameter.
+			oBindingInfo.parameters.$$aggregation = {expandTo: oCurrentAggregation.expandTo};
+		}
 
 		if (!isAnalyticsEnabled(oTable)) {
 			const aInResultPropertyKeys = getInResultPropertyKeys(oTable);
@@ -167,7 +176,19 @@ sap.ui.define([
 				oRootBinding.suspend();
 			}
 
-			setAggregation(oTable, oBindingInfo);
+			const oAggregation = oBindingInfo.parameters?.$$aggregation;
+
+			// Multiple setAggregation calls with different parameters can lead to an unnecessary request. For example, if the aggregation is set
+			// to undefined and then to the previous value, it's basically a refresh.
+			// Custom $$aggregation is not supported in analytical scenarios and is deleted to avoid an error in changeParameters.
+
+			if (isAnalyticsEnabled(oTable)) {
+				setAggregation(oTable, oBindingInfo);
+			} else {
+				oBinding.setAggregation(oAggregation);
+			}
+
+			delete oBindingInfo.parameters?.$$aggregation;
 			oBinding.changeParameters(oBindingInfo.parameters);
 			oBinding.filter(oBindingInfo.filters, "Application");
 			oBinding.sort(oBindingInfo.sorter);
