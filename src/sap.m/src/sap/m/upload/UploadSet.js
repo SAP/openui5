@@ -1582,18 +1582,19 @@ sap.ui.define([
 			sMessageText = this._oRb.getText("UPLOAD_SET_DELETE_TEXT", oItem.getFileName());
 		}
 		this._oItemToBeDeleted = UploadSetItem._findById(oItem.getId(), this._getAllItems());
-		MessageBox.show(sMessageText, {
+		MessageBox.warning(sMessageText, {
 			id: this.getId() + "-deleteDialog",
 			title: this._oRb.getText("UPLOAD_SET_DELETE_TITLE"),
-			actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+			actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL],
 			onClose: this._handleClosedDeleteDialog.bind(this),
 			dialogId: "messageBoxDeleteFile",
-			styleClass: this.hasStyleClass("sapUiSizeCompact") ? "sapUiSizeCompact" : ""
+			styleClass: this.hasStyleClass("sapUiSizeCompact") ? "sapUiSizeCompact" : "",
+			emphasizedAction: MessageBox.Action.DELETE
 		});
 	};
 
 	UploadSet.prototype._handleClosedDeleteDialog = function (sAction) {
-		if (sAction !== MessageBox.Action.OK) {
+		if (sAction !== MessageBox.Action.DELETE) {
 			return;
 		}
 		this.removeItem(this._oItemToBeDeleted);
