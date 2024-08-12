@@ -271,7 +271,7 @@ sap.ui.define([
 	 * <code>unit</code>, are also included in the result. Please also see the restrictions in the description of the {@link module:sap/ui/mdc/odata/v4/TableDelegate TableDelegate}.<br>
 	 * For more information about properties, see {@link sap.ui.mdc.odata.v4.TablePropertyInfo PropertyInfo}.
 	 *
-	 * @param {sap.ui.mdc.Table} Instance of the table
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
 	 * @returns {string[]} Property keys
 	 * @protected
 	 */
@@ -477,17 +477,6 @@ sap.ui.define([
 		});
 	}
 
-	function setSelectedGridTableConditions(oTable, aContexts) {
-		oTable.clearSelection();
-
-		for (const oContext of aContexts) {
-			oContext.setSelected(true);
-		}
-
-		// There's currently no way for the plugin to detect that selection of a context changed, so an update needs to be triggered manually.
-		oTable._oTable.invalidate();
-	}
-
 	/**
 	 * @inheritDoc
 	 */
@@ -503,7 +492,11 @@ sap.ui.define([
 				throw Error("Unsupported operation: Cannot select the given number of contexts in the current selection mode");
 			}
 
-			setSelectedGridTableConditions(oTable, aContexts);
+			oTable.clearSelection();
+
+			for (const oContext of aContexts) {
+				oContext.setSelected(true);
+			}
 		} else {
 			TableDelegate.setSelectedContexts.apply(this, arguments);
 		}
@@ -513,13 +506,8 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	Delegate.getSelectedContexts = function(oTable) {
-		if (!oTable._oTable) {
-			return [];
-		}
-
 		if (oTable._isOfType(TableType.Table, true)) {
-			const oODataV4SelectionPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.ODataV4Selection");
-			return oODataV4SelectionPlugin ? oODataV4SelectionPlugin.getSelectedContexts() : [];
+			return PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.ODataV4Selection")?.getSelectedContexts() ?? [];
 		}
 
 		return TableDelegate.getSelectedContexts.apply(this, arguments);
