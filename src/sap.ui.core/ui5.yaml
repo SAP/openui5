@@ -1,5 +1,5 @@
 ---
-specVersion: "3.0"
+specVersion: "4.0"
 type: library
 metadata:
   name: sap.ui.core
@@ -82,7 +82,6 @@ builder:
             renderer: true
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
     - bundleDefinition:
         name: jquery-sap.js
         sections:
@@ -132,7 +131,6 @@ builder:
               - jquery.sap.xml.js
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
     - bundleDefinition:
         name: sap-ui-core.js
         sections:
@@ -153,7 +151,6 @@ builder:
             declareRawModules: false
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
         decorateBootstrapModule: true
         addTryCatchRestartWrapper: true
     - bundleDefinition:
@@ -171,7 +168,6 @@ builder:
             declareRawModules: false
       bundleOptions:
         optimize: false
-        usePredefineCalls: true
     - bundleDefinition:
         name: sap-ui-core-nojQuery.js
         sections:
@@ -200,7 +196,6 @@ builder:
             declareRawModules: false
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
         decorateBootstrapModule: true
         addTryCatchRestartWrapper: true
     - bundleDefinition:
@@ -226,7 +221,6 @@ builder:
             declareRawModules: false
       bundleOptions:
         optimize: false
-        usePredefineCalls: true
     - bundleDefinition:
         name: sap-ui-core-lean.js
         sections:
@@ -242,7 +236,6 @@ builder:
             declareRawModules: false
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
     - bundleDefinition:
         name: sap-ui-debug.js
         sections:
@@ -260,7 +253,6 @@ builder:
               - sap/ui/debug/DebugEnv.js
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
     - bundleDefinition:
         name: sap-ui-testenv.js
         sections:
@@ -277,7 +269,6 @@ builder:
               - sap/ui/test/TestEnv.js
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
     - bundleDefinition:
         name: sap/ui/test/starter/runTest.js
         sections:
@@ -307,7 +298,6 @@ builder:
             declareRawModules: false
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
         decorateBootstrapModule: true
         addTryCatchRestartWrapper: true
     - bundleDefinition:
@@ -331,7 +321,6 @@ builder:
             declareRawModules: false
       bundleOptions:
         optimize: false
-        usePredefineCalls: true
     - bundleDefinition:
         name: sap-ui-boot.js
         sections:
@@ -388,7 +377,6 @@ builder:
               - sap/ui/core/boot/_runBoot.js
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
         decorateBootstrapModule: true
         addTryCatchRestartWrapper: true
     - bundleDefinition:
@@ -417,7 +405,6 @@ builder:
               - sap/ui/core/boot/_runBoot.js
       bundleOptions:
         optimize: false
-        usePredefineCalls: true
     - bundleDefinition:
         name: Calendar-preload.js
         defaultFileTypes:
@@ -435,7 +422,6 @@ builder:
             resolveConditional: false
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
         numberOfParts: 1
     - bundleDefinition:
         name: Library-preload.js
@@ -454,7 +440,6 @@ builder:
             resolveConditional: false
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
         numberOfParts: 1
     - bundleDefinition:
         name: Theming-preload.js
@@ -475,7 +460,6 @@ builder:
             resolveConditional: false
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
         numberOfParts: 1
     - bundleDefinition:
         name: Eventing-preload.js
@@ -495,7 +479,6 @@ builder:
             resolveConditional: false
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
         numberOfParts: 2
   jsdoc:
     excludes:

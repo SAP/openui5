@@ -1,5 +1,5 @@
 ---
-specVersion: "3.0"
+specVersion: "4.0"
 type: library
 metadata:
   name: sap.f

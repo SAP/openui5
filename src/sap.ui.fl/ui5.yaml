@@ -1,5 +1,5 @@
 ---
-specVersion: "3.0"
+specVersion: "4.0"
 type: library
 metadata:
   name: sap.ui.fl
@@ -67,7 +67,6 @@ builder:
             resolve: true
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
     - bundleDefinition:
         name: sap/ui/fl/library-preload-apply.js
         sections:
@@ -83,7 +82,6 @@ builder:
             resolve: true
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
     - bundleDefinition:
         name: sap/ui/fl/library-preload-write.js
         sections:
@@ -102,4 +100,3 @@ builder:
             resolve: true
       bundleOptions:
         optimize: true
-        usePredefineCalls: true

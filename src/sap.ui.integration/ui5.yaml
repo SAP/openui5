@@ -1,5 +1,5 @@
 ---
-specVersion: "3.0"
+specVersion: "4.0"
 type: library
 metadata:
   name: sap.ui.integration
@@ -86,7 +86,6 @@ builder:
             renderer: true
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
         decorateBootstrapModule: true
         addTryCatchRestartWrapper: true
     - bundleDefinition:
@@ -150,7 +149,6 @@ builder:
             renderer: true
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
     - bundleDefinition:
         name: sap-ui-integration-nojQuery.js
         sections:
@@ -201,7 +199,6 @@ builder:
             declareRawModules: false
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
         decorateBootstrapModule: true
         addTryCatchRestartWrapper: true
     - bundleDefinition:
@@ -249,7 +246,6 @@ builder:
             declareRawModules: false
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
     - bundleDefinition:
         name: sap-ui-integration-cardEditor.js
         sections:
@@ -291,7 +287,6 @@ builder:
             renderer: true
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
     - bundleDefinition:
         name: sap-ui-integration-editor.js
         sections:
@@ -336,7 +331,6 @@ builder:
             declareRawModules: false
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
     - bundleDefinition:
         name: sap-ui-integration-shell-toolkit.js
         sections:
@@ -384,7 +378,6 @@ builder:
             declareRawModules: false
       bundleOptions:
         optimize: true
-        usePredefineCalls: true
         decorateBootstrapModule: true
         addTryCatchRestartWrapper: true
   jsdoc:
