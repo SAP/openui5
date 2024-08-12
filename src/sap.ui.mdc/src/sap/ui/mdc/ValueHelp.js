@@ -171,14 +171,14 @@ sap.ui.define([
 				 * Container that is used and opened if the value help icon of the input field is pressed.
 				 */
 				dialog: {
-					type: "sap.ui.mdc.valuehelp.IDialogContainer",
+					type: "sap.ui.mdc.valuehelp.base.IDialogContainer",
 					multiple: false
 				},
 				/**
 				 * Container that is used and opened in typeahead
 				 */
 				typeahead: {
-					type: "sap.ui.mdc.valuehelp.ITypeaheadContainer",
+					type: "sap.ui.mdc.valuehelp.base.ITypeaheadContainer",
 					multiple: false
 				}
 			},
