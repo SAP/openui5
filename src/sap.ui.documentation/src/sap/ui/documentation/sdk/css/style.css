@@ -314,12 +314,12 @@ html.sap-desktop .sapContrast.sapMSlt.sapUiDocumentationSelect:not(.sapMSltExpan
 
 .sapUiTheme-sap_horizon .sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent .sapMText,
 .sapUiTheme-sap_horizon .sapFDynamicPageHeaderWithContent .sapUiDocumentationTopicSubtitle {
-	color: #556b82;
+	color: var(--sapObjectHeader_Subtitle_TextColor);
 }
 
 .sapUiTheme-sap_horizon_dark .sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent .sapMText,
 .sapUiTheme-sap_horizon_dark .sapFDynamicPageHeaderWithContent .sapUiDocumentationTopicSubtitle {
-	color: #8396a8;
+	color: var(--sapObjectHeader_Subtitle_TextColor);
 }
 
 .sapUiDocumentation2ColumnsEqualTable {
@@ -364,11 +364,11 @@ html[dir="rtl"] #CompactModeButtons, html[dir="rtl"] #RTLButtons {
 
 .sapMIBar .sapMBtn.sapUiExploredWarningIcon .sapMBtnInner.sapMBtnDefault .sapUiIcon,
 .sapMIBar .sapUiExploredWarningIcon.sapMBtn:hover:not(.sapMBtnDisabled):not(.sapMSBActive) > .sapMBtnHoverable:not(.sapMBtnDisabled):not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnTransparent).sapMBtnDefault .sapUiIcon {
-	color: #e76500;
+	color: var(--sapCriticalColor);
 }
 
 html.sap-desktop .sapUiExploredWarningIcon.sapMBtn:focus > .sapMFocusable:not(.sapMBadgeIndicator):before {
-	border-color: #e76500;
+	border-color: var(--sapCriticalColor);
 }
 .sapUiExploredWarning {
 	padding : 1rem;
@@ -947,15 +947,6 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiT
 	color: #fff;
 }
 
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .demokitInitialPagesWhiteText .sapMLnk:hover:not(.sapMLnkDsbl) {
-	color: #7ed0ff;
-}
-
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .demokitInitialPagesBrightLink.sapMLnk,
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .demokitInitialPagesBrightLink.sapMLnk:hover {
-	color: #d1e8ff;
-}
-
 .demokitInitialPagesBrightLinkSmallerText {
 	font-size: 0.8rem;
 }
@@ -997,7 +988,7 @@ html.sapUiTheme-sap_belize_hcw .sapUiJSD a {
 
 html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw)
 .sapUiJSD a {
-	color: #0070b1;
+	color: var(--sapLinkColor);
 }
 
 html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw):not(.sapUiTheme-sap_horizon):not(.sapUiTheme-sap_horizon_dark)
@@ -1684,7 +1675,7 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 	box-sizing: border-box;
 	border: none;
 	background: #FFFFFF;
-	color: #346187;
+	color: var(--sapButton_IconColor);
 }
 
 
