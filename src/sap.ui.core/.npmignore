@@ -1,5 +1,5 @@
 target/
-test/
+test/**
 .eslintignore
 pom.xml
 
