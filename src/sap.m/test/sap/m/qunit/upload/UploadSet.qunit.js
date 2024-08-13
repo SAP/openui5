@@ -570,6 +570,12 @@ sap.ui.define([
 		assert.equal(this.oUploadSet._oList.getNoDataText(), sNoDataText + " " + sNoDataDescription, "Nodata Text is set in the List");
 		assert.equal(oIllustratedMessage.getTitle(), sNoDataText, "default text is rendered in Upload set");
 		assert.equal(oIllustratedMessage.getDescription(), sNoDataDescription, "default discription is rendered in Upload set");
+
+		this.oUploadSet.setUploadEnabled(false);
+		await nextUIUpdate();
+		assert.equal(oIllustratedMessage.getTitle(), sNoDataText, "default title is rendered in Upload set (uploadEnabled=false)");
+		assert.equal(oIllustratedMessage.getDescription(), " ", "Empty string discription is rendered in Upload set (uploadEnabled=false)");
+
 	});
 
 	QUnit.test("No data type illustrated message rendering if not set via aggregation", async function (assert) {

@@ -534,7 +534,7 @@ sap.ui.define([
 				illustrationType: IllustratedMessageType.NoData,
 				illustrationSize: IllustratedMessageSize.Auto,
 				title: this._oRb.getText("UPLOAD_SET_NO_DATA_TEXT"),
-				description: this._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION")
+				description: this.getUploadEnabled() ? this._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION") : " "
 			});
 		}
 		this._oIllustratedMessage.addIllustrationAriaLabelledBy(this._oInvisibleText.getId());
@@ -765,12 +765,12 @@ sap.ui.define([
 		var sNoDataText = "";
 		var oIllustratedMessage = this.getAggregation("illustratedMessage");
 		if (!sText) {
-			sNoDataText = oIllustratedMessage.getTitle() + " " + oIllustratedMessage.getDescription();
+			sNoDataText = oIllustratedMessage.getTitle() + " " + this.getUploadEnabled() ? oIllustratedMessage.getDescription() : " ";
 		} else if (sText) {
 			if (bIsDescription) {
 				sNoDataText = oIllustratedMessage.getTitle() + " " + sText;
 			} else {
-				sNoDataText = sText + " " + oIllustratedMessage.getDescription();
+				sNoDataText = sText + " " + this.getUploadEnabled() ? oIllustratedMessage.getDescription() : " ";
 			}
 		}
 		return sNoDataText;
@@ -1005,7 +1005,7 @@ sap.ui.define([
 			if (this._getDragIndicator()) {
 				oAggregation.setIllustrationType(IllustratedMessageType.UploadCollection);
 				oAggregation.setTitle(this.getDragDropText());
-				oAggregation.setDescription(this.getDragDropDescription());
+				oAggregation.setDescription(this.getUploadEnabled() ? this.getDragDropDescription() : " ");
 				oAggregation.removeAllAdditionalContent();
 			} else {
 				oAggregation.setIllustrationType(this._oIllustratedMessageClone.getIllustrationType());
@@ -1015,9 +1015,9 @@ sap.ui.define([
 					oAggregation.setTitle(this._oRb.getText("UPLOAD_SET_NO_DATA_TEXT"));
 				}
 				if (this._oIllustratedMessageClone.getDescription()) {
-					oAggregation.setDescription(this._oIllustratedMessageClone.getDescription());
+					oAggregation.setDescription(this.getUploadEnabled() ? this._oIllustratedMessageClone.getDescription() : " ");
 				} else {
-					oAggregation.setDescription(this._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION"));
+					oAggregation.setDescription(this.getUploadEnabled() ? this._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION") : " ");
 				}
 				if (this._oIllustratedMessageClone.getAdditionalContent().length) {
 					oAggregation.removeAllAdditionalContent();
