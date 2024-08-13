@@ -1,6 +1,6 @@
 /*global QUnit, */
-sap.ui.define(["sap/ui/qunit/utils/nextUIUpdate", "sap/ui/thirdparty/jquery", "sap/ui/core/Core", "sap/ui/model/json/JSONModel", "sap/m/Button", "sap/m/Title", "sap/uxap/ObjectPageDynamicHeaderTitle", "sap/uxap/ObjectPageLayout", "sap/ui/core/mvc/XMLView"],
-function(nextUIUpdate, jQuery, Core, JSONModel, Button, Title, ObjectPageDynamicHeaderTitle, ObjectPageLayout, XMLView) {
+sap.ui.define(["sap/ui/qunit/utils/nextUIUpdate", "sap/ui/thirdparty/jquery", "sap/ui/core/Core", "sap/ui/model/json/JSONModel", "sap/m/Button", "sap/m/Title", "sap/uxap/ObjectPageDynamicHeaderTitle", "sap/uxap/ObjectPageLayout", "sap/uxap/ObjectPageSection", "sap/uxap/ObjectPageSubSection", "sap/ui/core/mvc/XMLView"],
+function(nextUIUpdate, jQuery, Core, JSONModel, Button, Title, ObjectPageDynamicHeaderTitle, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, XMLView) {
 	"use strict";
 
 	// utility function that will be used in these tests
@@ -381,7 +381,18 @@ function(nextUIUpdate, jQuery, Core, JSONModel, Button, Title, ObjectPageDynamic
 	QUnit.module("ObjectPageAfterRendering");
 
 	QUnit.test("triggering visible subsections calculations should not fail before rendering", function (assert) {
-		var oObjectPageLayout = new ObjectPageLayout({enableLazyLoading: true});
+		var oObjectPageLayout = new ObjectPageLayout({
+			enableLazyLoading: true,
+			sections: new ObjectPageSection("mySection1", {
+				subSections: [
+					new ObjectPageSubSection({
+						title: "Title",
+						blocks: [new Title({text: "test"})]
+					})
+				]
+			}),
+			selectedSection: "mySection1"
+		});
 		oObjectPageLayout._triggerVisibleSubSectionsEvents();
 		assert.ok("passes before rendering (noop)");
 		oObjectPageLayout.destroy();
