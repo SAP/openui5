@@ -581,6 +581,7 @@ sap.ui.define([
 						return StateUtil.applyExternalState(oFilterBar, oStateDiff);
 					});
 
+					oFilterBar.cleanUpAllFilterFieldsInErrorState();
 					return pHandleConditions.then(() => oFilterBar.awaitPendingModification());
 				}
 			});
