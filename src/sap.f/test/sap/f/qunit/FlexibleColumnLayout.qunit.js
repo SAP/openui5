@@ -543,13 +543,15 @@ function(
 			layout: LT.TwoColumnsBeginExpanded,
 			beginColumnPages: [new Page()]
 		});
-		var oEventSpy = this.spy(this.oFCL, "fireEvent"),
+		var oEventSpy = this.spy(this.oFCL, "fireColumnsDistributionChange"),
 			fnDone = assert.async(),
 			oColumnPercentWidths,
 			sNewWidthsDistribution,
 			iBeginColumnWidth,
-			iMidColumnWidth;
-
+			iMidColumnWidth,
+			fnRoundColumnWidths = function (sColumnWidths) {
+				return sColumnWidths.split("/").map((sWidth) => parseFloat(sWidth).toFixed(0)).join("/");
+			};
 
 		dragSeparator("begin", -150, this.oFCL);
 		this.oFCL._attachAfterAllColumnsResizedOnce(function() {
@@ -559,9 +561,14 @@ function(
 			oColumnPercentWidths = this.oFCL._convertColumnPxWidthToPercent({ begin: iBeginColumnWidth, mid: iMidColumnWidth, end: 0 }, LT.TwoColumnsBeginExpanded);
 			sNewWidthsDistribution = Object.values(oColumnPercentWidths).join("/");
 
+			var spyCallArgs = oEventSpy.getCalls()[0].args[0];
+
 			// assert
-			assert.ok(oEventSpy.calledWithMatch("columnsDistributionChange", { media: "desktop", layout: LT.TwoColumnsBeginExpanded, columnsSizes: sNewWidthsDistribution }),
-				"columnsDistributionChange event is fired with correct parameters uppon dragging to change the width of a column");
+			assert.ok(oEventSpy.calledOnce, "columnsDistributionChange fired once");
+			assert.strictEqual(spyCallArgs.media, "desktop", "Media is Desktop");
+			assert.strictEqual(spyCallArgs.layout, LT.TwoColumnsBeginExpanded, "Layout is TwoColumnsBeginExpanded");
+			// round the widths to avoid floating point pression issues
+			assert.strictEqual(fnRoundColumnWidths(spyCallArgs.columnsSizes), fnRoundColumnWidths(sNewWidthsDistribution), "columnSizes is correct");
 
 			fnDone();
 		}.bind(this), 500);
