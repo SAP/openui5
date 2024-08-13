@@ -11,37 +11,33 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	 * Enumeration of the possible reasons for the search event.
 	 *
 	 * @enum {string}
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @public
 	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.ReasonMode
 	 */
 	const ReasonMode = {
 		/**
 		 * The applied variant is marked as Apply Automatically.
-		 * @private
 		 * @ui5-restricted sap.ui.mdc
+		 * @public
 		 */
 		Variant: "Variant",
 
 		/**
 		 * Enter pressed in filter field.
-		 * @private
-		 * @ui5-restricted sap.ui.mdc
+		 * @public
 		 */
 		Enter: "Enter",
 
 		/**
 		 * Go button pressed.
-		 * @private
-		 * @ui5-restricted sap.ui.mdc
+		 * @public
 		 */
 		Go: "Go",
 
 		/**
 		 * Used if the mentioned reasons are not applicable.
-		 * @private
-		 * @ui5-restricted sap.ui.mdc
+		 * @public
 		 */
 		Unclear: ""
 	};
