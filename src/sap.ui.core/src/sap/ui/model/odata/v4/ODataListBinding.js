@@ -3063,6 +3063,7 @@ sap.ui.define([
 					? ChangeReason.Change
 					: ChangeReason.Refresh;
 			} else if (this.sChangeReason === "AddVirtualContext") {
+				this.checkDataState();
 				this._fireChange({
 					detailedReason : "AddVirtualContext",
 					reason : ChangeReason.Change
