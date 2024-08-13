@@ -3,7 +3,6 @@ sap.ui.define([
 	"../../table/QUnitUtils",
 	"../../util/createAppEnvironment",
 	"sap/ui/core/Lib",
-	"sap/ui/mdc/TableDelegate",
 	"sap/ui/mdc/odata/v4/TableDelegate",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/GridTableType",
@@ -30,7 +29,6 @@ sap.ui.define([
 	TableQUnitUtils,
 	createAppEnvironment,
 	Library,
-	BaseTableDelegate,
 	TableDelegate,
 	Table,
 	GridTableType,
@@ -64,8 +62,14 @@ sap.ui.define([
 		const TestDelegate = Object.assign({}, TableDelegate);
 
 		TestDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
+			const oPayload = oTable.getPayload();
+
 			TableDelegate.updateBindingInfo.apply(this, arguments);
-			oBindingInfo.path = oTable.getPayload() ? oTable.getPayload().collectionPath : "/ProductList";
+			oBindingInfo.path = oPayload?.collectionPath ?? "/Products";
+
+			if (oPayload?.bindingParameters) {
+				oBindingInfo.parameters = oPayload.bindingParameters;
+			}
 		};
 
 		return TestDelegate;
@@ -80,6 +84,7 @@ sap.ui.define([
 
 		for (let i = iStartIndex; i < iStartIndex + iLength; i++) {
 			aData.push({
+				ID: i,
 				Name: "Test Product (" + i + ")"
 			});
 		}
@@ -103,6 +108,20 @@ sap.ui.define([
 
 				if (bWithCount) {
 					mResponse["@odata.count"] = iDataCount;
+				}
+
+				oResponse.message = JSON.stringify(mResponse);
+			}
+		}
+	}, {
+		regExp: /^GET \/MyService?\/Products\?(\$count=true&)?\$filter=Name%20eq%20'Test%20Product%20\(0\)'/,
+		response: {
+			buildResponse: function(aMatches, oResponse) {
+				const bWithCount = !!aMatches[1];
+				const mResponse = {value: createData(0, 1)};
+
+				if (bWithCount) {
+					mResponse["@odata.count"] = 1;
 				}
 
 				oResponse.message = JSON.stringify(mResponse);
@@ -770,7 +789,8 @@ sap.ui.define([
 
 		const oBindingInfo = {};
 		oTable.getControlDelegate().updateBindingInfo(oTable, oBindingInfo);
-		assert.deepEqual(oBindingInfo, {parameters: {$select: ["Value"]}, sorter: [], filters: [], path: "/ProductList"}, "Correct $select parameter in bindingInfo from aInResultPropertyKeys");
+		assert.deepEqual(oBindingInfo, {parameters: {$select: ["Value"]}, sorter: [], filters: [], path: "/Products"},
+			"Correct $select parameter in bindingInfo from aInResultPropertyKeys");
 	});
 
 	QUnit.module("Tests with specific propertyInfos", {
@@ -1214,7 +1234,7 @@ sap.ui.define([
 		const oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
 		oUpdateBindingInfoStub.callsFake(function(oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
-			oBindingInfo.path = "/ProductList";
+			oBindingInfo.path = "/Products";
 			oBindingInfo.filters = aFilters;
 		});
 
@@ -1264,17 +1284,17 @@ sap.ui.define([
 
 		oUpdateBindingInfoStub.onCall(0).callsFake(function(oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
-			oBindingInfo.path = "/ProductList";
+			oBindingInfo.path = "/Products";
 			oBindingInfo.parameters.$search = "x";
 		});
 		oUpdateBindingInfoStub.onCall(1).callsFake(function(oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
-			oBindingInfo.path = "/ProductList";
+			oBindingInfo.path = "/Products";
 			oBindingInfo.parameters.$search = undefined;
 		});
 		oUpdateBindingInfoStub.onCall(2).callsFake(function(oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
-			oBindingInfo.path = "/ProductList";
+			oBindingInfo.path = "/Products";
 			oBindingInfo.parameters.$$canonicalPath = true;
 		});
 
@@ -1729,9 +1749,9 @@ sap.ui.define([
 	QUnit.module("Selection", {
 		before: function() {
 			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
-				name: "Name",
-				path: "Name_Path",
-				label: "Name_Label",
+				name: "ProductName",
+				path: "Name",
+				label: "Product Name",
 				dataType: "String"
 			}]);
 		},
@@ -1750,10 +1770,7 @@ sap.ui.define([
 
 			this.oTable = new Table(Object.assign({
 				delegate: {
-					name: "odata.v4.TestDelegate",
-					payload: {
-						collectionPath: "/Products"
-					}
+					name: "odata.v4.TestDelegate"
 				},
 				columns: [
 					new Column({
@@ -1767,7 +1784,8 @@ sap.ui.define([
 					})
 				],
 				models: new ODataModel({
-					serviceUrl: "/MyService/"
+					serviceUrl: "/MyService/",
+					operationMode: "Server"
 				})
 			}, mSettings));
 
@@ -1921,10 +1939,12 @@ sap.ui.define([
 					resolve(oTable);
 				});
 			});
-		}).then(function(oTable) {
+		}).then((oTable) => {
+			this.spy(oTable._oTable, "getSelectedContexts");
 			oTable._oTable.getItems()[1].setSelected(true);
 			assert.deepEqual(oTable.getSelectedContexts(), [oTable._oTable.getItems()[1].getBindingContext()],
 				"#getSelectedContexts after initialization");
+			assert.ok(oTable._oTable.getSelectedContexts.calledOnceWithExactly(true), "sap.m.Table#getSelectedContexts called once with 'true'");
 		});
 	});
 
@@ -1934,12 +1954,20 @@ sap.ui.define([
 		const testMultiSelection = (oDelegate, aContexts, sTestTitle) => {
 			oSelectionChangeListener.resetHistory();
 			oDelegate.setSelectedContexts(this.oTable, aContexts.slice(1, 3));
-			assert.deepEqual(oDelegate.getSelectedContexts(this.oTable), aContexts.slice(1, 3), sTestTitle + " - Selected contexts");
+			assert.deepEqual(
+				oDelegate.getSelectedContexts(this.oTable).map((oContext) => oContext.getPath()),
+				aContexts.slice(1, 3).map((oContext) => oContext.getPath()),
+				sTestTitle + " - Selected contexts"
+			);
 			assert.ok(oSelectionChangeListener.notCalled, "selectionChange event not fired");
 
 			oSelectionChangeListener.resetHistory();
-			oDelegate.setSelectedContexts(this.oTable, aContexts.slice(2, 4));
-			assert.deepEqual(oDelegate.getSelectedContexts(this.oTable), aContexts.slice(2, 4), sTestTitle + " - Selected contexts");
+			oDelegate.setSelectedContexts(this.oTable, aContexts.slice(2, 4).concat(aContexts.slice(-1)));
+			assert.deepEqual(
+				oDelegate.getSelectedContexts(this.oTable).map((oContext) => oContext.getPath()),
+				aContexts.slice(2, 4).concat(aContexts.slice(-1)).map((oContext) => oContext.getPath()),
+				sTestTitle + " - Selected contexts"
+			);
 			assert.ok(oSelectionChangeListener.notCalled, "selectionChange event not fired");
 		};
 
@@ -1956,12 +1984,20 @@ sap.ui.define([
 
 			oSelectionChangeListener.resetHistory();
 			oDelegate.setSelectedContexts(this.oTable, [aContexts[1]]);
-			assert.deepEqual(oDelegate.getSelectedContexts(this.oTable), [aContexts[1]], sTestTitle + " - Selected contexts");
+			assert.deepEqual(
+				oDelegate.getSelectedContexts(this.oTable).map((oContext) => oContext.getPath()),
+				[aContexts[1]].map((oContext) => oContext.getPath()),
+				sTestTitle + " - Selected contexts"
+			);
 			assert.ok(oSelectionChangeListener.notCalled, "selectionChange event not fired");
 
 			oSelectionChangeListener.resetHistory();
 			oDelegate.setSelectedContexts(this.oTable, [aContexts[2]]);
-			assert.deepEqual(oDelegate.getSelectedContexts(this.oTable), [aContexts[2]], sTestTitle + " - Selected contexts");
+			assert.deepEqual(
+				oDelegate.getSelectedContexts(this.oTable).map((oContext) => oContext.getPath()),
+				[aContexts[2]].map((oContext) => oContext.getPath()),
+				sTestTitle + " - Selected contexts"
+			);
 			assert.ok(oSelectionChangeListener.notCalled, "selectionChange event not fired");
 		};
 
@@ -2018,5 +2054,42 @@ sap.ui.define([
 			await nextBindingChange();
 			testSelection();
 		}
+	});
+
+	QUnit.test("Filter with ResponsiveTableType and $$clearSelectionOnFilter=true", async function(assert) {
+		await this.initTable({
+			selectionMode: SelectionMode.Multi,
+			type: new ResponsiveTableType(),
+			p13nMode: ["Filter"],
+			delegate: {
+				name: "odata.v4.TestDelegate",
+				payload: {
+					bindingParameters: {
+						$$clearSelectionOnFilter: true
+					}
+				}
+			}
+		});
+		await new Promise((resolve) => {
+			this.oTable.attachEventOnce("_bindingChange", resolve);
+		});
+
+		const oBinding = this.oTable.getRowBinding();
+
+		this.oTable.getControlDelegate().setSelectedContexts(this.oTable, [oBinding.getAllCurrentContexts()[0]]);
+		assert.deepEqual(
+			this.oTable.getSelectedContexts().map((oContext) => oContext.getPath()),
+			[oBinding.getAllCurrentContexts()[0]].map((oContext) => oContext.getPath()),
+			"Selected contexts"
+		);
+
+		this.oTable.setFilterConditions({
+			Name: [{operator: OperatorName.EQ, values: ["Test Product (0)"]}]
+		});
+		await this.oTable.rebind();
+		await new Promise((resolve) => {
+			this.oTable.attachEventOnce("_bindingChange", resolve);
+		});
+		assert.deepEqual(this.oTable.getSelectedContexts().map((oContext) => oContext.getPath()), [], "Selected contexts");
 	});
 });

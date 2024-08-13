@@ -1100,106 +1100,20 @@ sap.ui.define([
 		oBindingInfo.formatter();
 	});
 
-	QUnit.test("Scope access w/o dot", function (assert) {
-		var sBinding1 = "{path : '/', formatter : 'foo'}",
-			oBindingInfo,
-			oScope = {
-				foo : function () {}
-			};
+	QUnit.test("Error Handling: Check invalid syntax when binding formatter functions", function(assert) {
+		const sBinding1 = "{path : '/', formatter : 'MyFormatter.format.bind($control).bind($controller)'}";
+		const sBinding2 = "{path : '/', formatter : 'MyFormatter.format.bind($control, $controller)'}";
+		const sBinding3 = "{path : '/', formatter : 'MyFormatter.format.bind($control).doSomething'}";
 
-		oBindingInfo = parse(sBinding1, oScope, /*bUnescape*/false,
-			/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/true);
-
-		assert.strictEqual(oBindingInfo.formatter, undefined);
-		assert.deepEqual(oBindingInfo.functionsNotFound, ["foo"]);
-
-		oBindingInfo = parse(sBinding1, oScope, /*bUnescape*/false,
-			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/true, /*bPreferContext*/true);
-
-		assert.strictEqual(oBindingInfo.formatter, oScope.foo);
-	});
-
-	QUnit.test("Scope access w/o dot by given static context", function (assert) {
-		var sBinding1 = "{path : '/', formatter : 'foo'}",
-			sBinding2 = "{path : '/', formatter : 'Global.formatter'}",
-			sBinding3 = "{path : '/', formatter : 'module1.formatter'}",
-			sBinding4 = "{path : '/', formatter : 'module1.fn'}",
-			sBinding5 = "{path : '/', formatter : 'module1.ns.fn'}",
-			sBinding6 = "{path : '/', formatter : 'Global.ns.global'}",
-			sBinding7 = "{path : '/', formatter : 'formatter'}",
-			oBindingInfo,
-			oScope = {
-				foo : function () {}
-			};
-
-		oBindingInfo = parse(sBinding1, oScope, /*bUnescape*/false,
-			/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/false, /*bPreferContext*/false,
-			/*mGlobals*/oGlobalContext);
-
-		assert.strictEqual(oBindingInfo.formatter, undefined);
-		assert.deepEqual(oBindingInfo.functionsNotFound, ["foo"]);
-
-		oBindingInfo = parse(sBinding1, oScope, /*bUnescape*/false,
-			/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/true, /*bPreferContext*/true,
-			/*mGlobals*/oGlobalContext);
-
-		assert.strictEqual(oBindingInfo.formatter, oScope.foo);
-		assert.deepEqual(oBindingInfo.functionsNotFound, undefined);
-
-		oBindingInfo = parse(sBinding2, oScope, /*bUnescape*/false,
-			/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/false, /*bPreferContext*/false,
-			/*mGlobals*/oGlobalContext);
-
-		assert.strictEqual(oBindingInfo.formatter, undefined);
-		assert.deepEqual(oBindingInfo.functionsNotFound, ["Global.formatter"]);
-
-		oBindingInfo = parse(sBinding3, oScope, /*bUnescape*/false,
-			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/false,
-			/*mGlobals*/oGlobalContext);
-
-		assert.strictEqual(oBindingInfo.formatter.toString(),
-			oGlobalContext.module1.formatter.bind(oGlobalContext.module1).toString());
-		assert.deepEqual(oBindingInfo.functionsNotFound, undefined);
-
-		oBindingInfo = parse(sBinding4, oScope, /*bUnescape*/false,
-			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/false,
-			/*mGlobals*/oGlobalContext);
-
-		assert.strictEqual(oBindingInfo.formatter.toString(),
-			oGlobalContext.module1.fn.bind(oGlobalContext.module1).toString());
-
-		oBindingInfo.formatter();
-		assert.strictEqual(enclosingContext, oGlobalContext.module1);
-		assert.deepEqual(oBindingInfo.functionsNotFound, undefined);
-
-		oBindingInfo = parse(sBinding5, oScope, /*bUnescape*/false,
-			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/false,
-			/*mGlobals*/oGlobalContext);
-
-		assert.strictEqual(oBindingInfo.formatter.toString(),
-			oGlobalContext.module1.ns.fn.bind(oGlobalContext.module1.ns.fn).toString());
-
-		oBindingInfo.formatter();
-		assert.strictEqual(enclosingContext, oGlobalContext.module1.ns);
-		assert.deepEqual(oBindingInfo.functionsNotFound, undefined);
-
-		oBindingInfo = parse(sBinding6, oScope, /*bUnescape*/false,
-			/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/false, /*bPreferContext*/false,
-			/*mGlobals*/oGlobalContext);
-
-		assert.strictEqual(oBindingInfo.formatter, undefined);
-		assert.deepEqual(oBindingInfo.functionsNotFound, ["Global.ns.global"]);
-
-		oBindingInfo = parse(sBinding7, oScope, /*bUnescape*/false,
-			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/false,
-			/*mGlobals*/oGlobalContext);
-
-		assert.strictEqual(oBindingInfo.formatter,
-			oGlobalContext.formatter, "function module");
-		assert.deepEqual(oBindingInfo.functionsNotFound, undefined);
-
-		// cleanup
-		enclosingContext = null;
+		assert.throws(function() {
+			parse(sBinding1, {}, false, false, true);
+		}, "'MyFormatter.format.bind($control).bind($controller)': Invalid syntax, error should be thrown");
+		assert.throws(function() {
+			parse(sBinding2, {}, false, false, true);
+		}, "'MyFormatter.format.bind($control, $controller)': Invalid syntax, error should be thrown");
+		assert.throws(function() {
+			parse(sBinding3, {}, false, false, true);
+		}, "'MyFormatter.format.bind($control).doSomething': Invalid syntax, error should be thrown");
 	});
 
 	QUnit.test("Expression binding with embedded composite binding - local formatter", function (assert) {

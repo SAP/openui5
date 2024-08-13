@@ -1,0 +1,17 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m" displayBlock="true"
+	controllerName="testdata.xml-require.view.XMLTemplateProcessorAsync_require_bind_formatter">
+	<App core:require="{
+			Helper: 'testdata/xml-require/helper/Helper',
+			OutputText: 'testdata/xml-require/helper/OutputText',
+			$InvalidAlias: 'testdata/xml-require/helper/Formatter'
+		}">
+		<Page title="Hello">
+			<Button id="btn_1" text="{path: '/buttonText', formatter: 'Helper.formatter.bind($control)'}" press="Helper.doSomething.call($controller)"/>
+			<Button id="btn_2" text="$controller"/>
+			<Button id="btn_3" text="{path: '/buttonText', formatter: 'Helper.formatter2.bind(OutputText)'}"/>
+			<Button id="btn_4" text="{path: '/buttonText', formatter: '$controller.formatter'}"/>
+		</Page>
+	</App>
+</mvc:View>

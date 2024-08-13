@@ -44,12 +44,12 @@ sap.ui.define([
 	 * Depending on the available space, the {@link sap.ui.layout.form.FormContainer FormContainers} are rendered in one or different columns and the labels are rendered in the same row as the fields or above the fields.
 	 * This behavior can be influenced by the properties of this layout control.
 	 *
-	 * On the {@link sap.ui.layout.form.FormContainer FormContainers}, labels and content fields, {@link sap.ui.layout.GridGata GridData} can be used to change the default rendering.
-	 * {@link sap.ui.layout.GridGata GridData} is not supported for {@link sap.ui.layout.form.FormElement FormElements}.
+	 * On the {@link sap.ui.layout.form.FormContainer FormContainers}, labels and content fields, {@link sap.ui.layout.GridData GridData} can be used to change the default rendering.
+	 * {@link sap.ui.layout.GridData GridData} is not supported for {@link sap.ui.layout.form.FormElement FormElements}.
 	 *
-	 * <b>Note:</b> If {@link sap.ui.layout.GridGata GridData} is used, this may result in a much more complex layout than the default one.
+	 * <b>Note:</b> If {@link sap.ui.layout.GridData GridData} is used, this may result in a much more complex layout than the default one.
 	 * This means that in some cases, the calculation for the other content may not bring the expected result.
-	 * In such cases, {@link sap.ui.layout.GridGata GridData} should be used for all content controls to disable the default behavior.
+	 * In such cases, {@link sap.ui.layout.GridData GridData} should be used for all content controls to disable the default behavior.
 	 *
 	 * This control cannot be used stand-alone, it just renders a {@link sap.ui.layout.form.Form Form}, so it must be assigned to a {@link sap.ui.layout.form.Form Form} using the <code>layout</code> aggregation.
 	 * @extends sap.ui.layout.form.FormLayout

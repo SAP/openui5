@@ -47,7 +47,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function parseScalarType(sType, sValue, sName, oContext, oRequireModules, aTypePromises) {
+	function parseScalarType(sType, sValue, sName, oContext, oRequireModules, aTypePromises, mAdditionalBindableValues) {
 		var bResolveTypesAsync = !!aTypePromises;
 		var oBindingInfo;
 
@@ -57,7 +57,8 @@ sap.ui.define([
 			oRequireModules,
 			/* bResolveTypesAsync: Whether we want the type classes to be resolved,
 			        true if async == true, false otherwise */
-			bResolveTypesAsync);
+			bResolveTypesAsync,
+			mAdditionalBindableValues);
 
 		// asynchronously resolved types result in a Promise we need to unwrap here
 		if (bResolveTypesAsync && oBindingParseResult) {
@@ -358,37 +359,47 @@ sap.ui.define([
 	 * Validate the parsed require context object
 	 *
 	 * The require context object should be an object. Every key in the object should be a valid
-	 * identifier (shouldn't contain '.'). Every value in the object should be a non-empty string.
+	 * identifier. Every key shouldn't contain '.' or shouldn't start with '$'. For latter case, future message is logged.
+	 * Every value in the object should be a non-empty string.
 	 *
 	 * @param {object} oRequireContext The parsed require context
 	 * @return {string} The error message if the validation fails, otherwise it returns undefined
 	 */
 	function validateRequireContext(oRequireContext) {
-		var sErrorMessage,
-			rIdentifier = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/;
+		const rIdentifier = /^[a-zA-Z_][a-zA-Z0-9_$]*$/;
+		const oResult = {
+			throwError: false,
+			errorMessage: ""
+		};
 
 		if (!oRequireContext || typeof oRequireContext !== "object") {
-			sErrorMessage = "core:require in XMLView can't be parsed to a valid object";
-		} else {
-			Object.keys(oRequireContext).some(function(sKey) {
-				if (!rIdentifier.test(sKey)) {
-					// '.' is not allowed to use in sKey
-					sErrorMessage = "core:require in XMLView contains invalid identifier: '"
-						+ sKey + "'";
-					return true;
-				}
-
-				if (!oRequireContext[sKey] || typeof oRequireContext[sKey] !== "string") {
-					// The value should be a non-empty string
-					sErrorMessage = "core:require in XMLView contains invalid value '"
-						+ oRequireContext[sKey] + "'under key '" + sKey + "'";
-					return true;
-				}
-				return false;
-			});
+			oResult.errorMessage = "core:require in XMLView can't be parsed to a valid object";
+			oResult.throwError = true;
+			return oResult;
 		}
 
-		return sErrorMessage;
+		for (const sKey of Object.keys(oRequireContext)) {
+			if (!rIdentifier.test(sKey)) {
+				// '.' is not allowed to use in sKey
+				oResult.errorMessage = `core:require in XMLView contains an invalid identifier: '${sKey}'`;
+
+				if (!sKey.startsWith("$")) { // otherwise future log
+					oResult.throwError = true;
+				}
+
+				return oResult;
+			}
+
+			const sValue = oRequireContext[sKey];
+			if (!sValue || typeof sValue !== "string") {
+				// The value should be a non-empty string
+				oResult.errorMessage = `core:require in XMLView contains an invalid value '${sValue}' under key '${sKey}'`;
+				oResult.throwError = true;
+				return oResult;
+			}
+
+		}
+		return oResult;
 	}
 
 	/**
@@ -403,7 +414,7 @@ sap.ui.define([
 		var sCoreContext = xmlNode.getAttributeNS(CORE_NAMESPACE, "require"),
 			oRequireContext,
 			oModules,
-			sErrorMessage;
+			oResult;
 
 		if (sCoreContext) {
 			try {
@@ -413,9 +424,15 @@ sap.ui.define([
 				throw e;
 			}
 
-			sErrorMessage = validateRequireContext(oRequireContext);
-			if (sErrorMessage) {
-				throw new Error(sErrorMessage + " on Node: " + xmlNode.nodeName);
+			oResult = validateRequireContext(oRequireContext);
+			if (oResult.errorMessage) {
+				const sErrorMessage = `${oResult.errorMessage} on Node: ${xmlNode.nodeName}`;
+
+				if (oResult.throwError) {
+					throw new Error(sErrorMessage);
+				} else {
+					future.fatalThrows(`${sErrorMessage}. Keys that begin with '$' are reserved by the framework.`);
+				}
 			}
 
 			if (!isEmptyObject(oRequireContext)) {
@@ -521,6 +538,12 @@ sap.ui.define([
 			sInternalPrefix = findNamespacePrefix(xmlNode, UI5_INTERNAL_NAMESPACE, "__ui5"),
 			pResultChain = parseAndLoadRequireContext(xmlNode, true) || SyncPromise.resolve(),
 			collectControl = (pContent) => aResult.push(pContent);
+
+		// object containing reserved values for binding formatter functions.
+		const mAdditionalBindableValues = {
+			"$control": null,
+			"$controller": oView._oContainingView.oController
+		};
 
 		Log.debug("XML will be processed " + ("asynchronously") + ".", "", "XMLTemplateProcessor");
 
@@ -1031,16 +1054,15 @@ sap.ui.define([
 
 						} else if (oInfo && oInfo._iKind === 0 /* PROPERTY */ ) {
 							// other PROPERTY
-							mSettings[sName] = parseScalarType(oInfo.type, sValue, sName, oView._oContainingView.oController, oRequireModules, aTypePromises); // View._oContainingView.oController is null when [...]
+							mSettings[sName] = parseScalarType(oInfo.type, sValue, sName, oView._oContainingView.oController, oRequireModules, aTypePromises, mAdditionalBindableValues);
 							// FIXME: ._oContainingView might be the original Fragment for an extension fragment or a fragment in a fragment - so it has no controller bit ITS containingView.
 
 						} else if (oInfo && oInfo._iKind === 1 /* SINGLE_AGGREGATION */ && oInfo.altTypes ) {
 							// AGGREGATION with scalar type (altType)
 							if (!bStashedControl) {
-								mSettings[sName] = parseScalarType(oInfo.altTypes[0], sValue, sName, oView._oContainingView.oController, oRequireModules);
+								mSettings[sName] = parseScalarType(oInfo.altTypes[0], sValue, sName, oView._oContainingView.oController, oRequireModules, null, mAdditionalBindableValues);
 							}
-
-						} else if (oInfo && oInfo._iKind === 2 /* MULTIPLE_AGGREGATION */ ) {
+							} else if (oInfo && oInfo._iKind === 2 /* MULTIPLE_AGGREGATION */ ) {
 							if (!bStashedControl) {
 								var oBindingInfo = BindingInfo.parse(sValue, oView._oContainingView.oController, false, false, false, false, oRequireModules);
 								if ( oBindingInfo ) {

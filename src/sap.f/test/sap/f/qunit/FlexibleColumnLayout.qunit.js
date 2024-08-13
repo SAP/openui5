@@ -7,6 +7,8 @@ sap.ui.define([
 	"sap/f/FlexibleColumnLayout",
 	"sap/f/FlexibleColumnLayoutAccessibleLandmarkInfo",
 	"sap/f/FlexibleColumnLayoutSemanticHelper",
+	"sap/f/FlexibleColumnLayoutData",
+	"sap/f/FlexibleColumnLayoutDataForTablet",
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/ui/core/ResizeHandler",
@@ -21,6 +23,8 @@ function(
 	FlexibleColumnLayout,
 	FlexibleColumnLayoutAccessibleLandmarkInfo,
 	FlexibleColumnLayoutSemanticHelper,
+	FlexibleColumnLayoutData,
+	FlexibleColumnLayoutDataForTablet,
 	Page,
 	Button,
 	ResizeHandler,
@@ -48,27 +52,6 @@ function(
 			TwoColumnsBeginExpanded: 2,
 			TwoColumnsMidExpanded: 2
 		};
-
-	// clear the stored resized column % widths upon changing the container width (e.g. the QUnitFixture width)
-	// to prevent using the same stored % widths after switching to the new QUnitFixture width,
-	// as the stored column % widths may then resolve to new px values that break constaints (e.g.
-	// min-column-width constraint)
-	function clearStoredResizeInfo() {
-		var sBeginItem1 = FlexibleColumnLayout.STORAGE_PREFIX_DESKTOP + "-begin";
-		var sBeginItem2 = FlexibleColumnLayout.STORAGE_PREFIX_TABLET + "-begin";
-		window.localStorage.removeItem(sBeginItem1);
-		window.localStorage.removeItem(sBeginItem2);
-
-		Object.keys(library.LayoutType).forEach(function(sLayoutType) {
-			var sItem1 = FlexibleColumnLayout.STORAGE_PREFIX_DESKTOP + "-" + sLayoutType;
-			var sItem2 = FlexibleColumnLayout.STORAGE_PREFIX_TABLET + "-" + sLayoutType;
-
-			window.localStorage.removeItem(sItem1);
-			window.localStorage.removeItem(sItem2);
-		});
-	}
-
-	clearStoredResizeInfo();
 
 	var fnCreatePage = function (sId, oContent) {
 		return new Page(sId, {
@@ -163,9 +146,7 @@ function(
 			$("#" + sQUnitFixture).width("");
 			ControlBehavior.setAnimationMode(this.sOldAnimationMode);
 			this.oFCL.destroy();
-			window.localStorage.removeItem(FlexibleColumnLayout.STORAGE_PREFIX_DESKTOP + "-begin");
-		},
-		after: clearStoredResizeInfo
+		}
 	});
 
 	QUnit.test("Instantiation", function (assert) {
@@ -557,6 +538,35 @@ function(
 		assert.notOk(oEventSpy.calledWithMatch("stateChange"), "Layout change event is not fired");
 	});
 
+	QUnit.test("columnsDistributionChange event is fired upon dragging to change the width of a column", function (assert) {
+		this.oFCL = oFactory.createFCL({
+			layout: LT.TwoColumnsBeginExpanded,
+			beginColumnPages: [new Page()]
+		});
+		var oEventSpy = this.spy(this.oFCL, "fireEvent"),
+			fnDone = assert.async(),
+			oColumnPercentWidths,
+			sNewWidthsDistribution,
+			iBeginColumnWidth,
+			iMidColumnWidth;
+
+
+		dragSeparator("begin", -150, this.oFCL);
+		this.oFCL._attachAfterAllColumnsResizedOnce(function() {
+			iBeginColumnWidth = this.oFCL.$("beginColumn").width();
+			iMidColumnWidth = this.oFCL.$("midColumn").width();
+
+			oColumnPercentWidths = this.oFCL._convertColumnPxWidthToPercent({ begin: iBeginColumnWidth, mid: iMidColumnWidth, end: 0 }, LT.TwoColumnsBeginExpanded);
+			sNewWidthsDistribution = Object.values(oColumnPercentWidths).join("/");
+
+			// assert
+			assert.ok(oEventSpy.calledWithMatch("columnsDistributionChange", { media: "desktop", layout: LT.TwoColumnsBeginExpanded, columnsSizes: sNewWidthsDistribution }),
+				"columnsDistributionChange event is fired with correct parameters uppon dragging to change the width of a column");
+
+			fnDone();
+		}.bind(this), 500);
+	});
+
 	QUnit.module("TABLET - API", {
 		beforeEach: function () {
 			this.sOldAnimationSetting = $("html").attr("data-sap-ui-animation");
@@ -570,9 +580,7 @@ function(
 			$("#" + sQUnitFixture).width("");
 			ControlBehavior.setAnimationMode(this.sOldAnimationMode);
 			this.oFCL.destroy();
-			window.localStorage.removeItem(FlexibleColumnLayout.STORAGE_PREFIX_TABLET + "-begin");
-		},
-		after: clearStoredResizeInfo
+		}
 	});
 
 	QUnit.test("Layout: OneColumn", function (assert) {
@@ -730,8 +738,7 @@ function(
 			$("html").attr("data-sap-ui-animation", this.sOldAnimationSetting);
 			$("#" + sQUnitFixture).width("");
 			this.oFCL.destroy();
-		},
-		after: clearStoredResizeInfo
+		}
 	});
 
 	QUnit.test("Layout: OneColumn", function (assert) {
@@ -1278,7 +1285,7 @@ function(
 
 		setTimeout(function () {
 			// Assert
-			dragSeparator("begin", -300, this.oFCL);
+			dragSeparator("begin", -500, this.oFCL);
 			this.oFCL._attachAfterAllColumnsResizedOnce(function() {
 				iPercentBeginColumnUserWidth = this.oFCL._getColumnWidthDistributionForLayout("TwoColumnsMidExpanded", true, 3)[0];
 
@@ -1678,13 +1685,18 @@ function(
 
 	QUnit.test("_getColumnWidthDistributionForLayout converts percent widths to integers", function (assert) {
 		// setup
-		this.oFCL = new FlexibleColumnLayout();
-		this.stub(this.oFCL, "_getLocalStorage").returns({
-			get: function() {
-				return "33.5/66.5/0";
-			}
+		this.oFCL = new FlexibleColumnLayout({
+			layoutData: new FlexibleColumnLayoutData({
+				tabletLayoutData: new FlexibleColumnLayoutDataForTablet({
+					twoColumnsMidExpanded: "33.5/66.5/0"
+				})
+			})
 		});
+
 		var oExpectedResult = [34, 66, 0];
+
+		this.oFCL.placeAt(sQUnitFixture);
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.deepEqual(this.oFCL._getColumnWidthDistributionForLayout(LT.TwoColumnsMidExpanded, true, 2),
@@ -1742,7 +1754,6 @@ function(
 	});
 
 	QUnit.module("Keyboard Handling", {
-		before: clearStoredResizeInfo,
 		beforeEach: function () {
 			this.oFCL = oFactory.createFCL({
 				layout: LT.TwoColumnsBeginExpanded
@@ -1757,8 +1768,7 @@ function(
 			this.beginColumnDOM = null;
 			this.midColumnDOM = null;
 			this.beginColumnInitialWidth = null;
-		},
-		after: clearStoredResizeInfo
+		}
 	});
 
 	QUnit.test("Left arrow", function (assert) {
@@ -2345,8 +2355,7 @@ function(
 			ControlBehavior.setAnimationMode(this.sOldAnimationMode);
 			this.oFCL.destroy();
 			window.localStorage.removeItem(FlexibleColumnLayout.STORAGE_PREFIX_DESKTOP + "-begin");
-		},
-		after: clearStoredResizeInfo
+		}
 	});
 
 	QUnit.test("begin separator in two-column layouts", function (assert) {
@@ -2552,8 +2561,7 @@ function(
 			ControlBehavior.setAnimationMode(this.sOldAnimationMode);
 			this.oFCL.destroy();
 			window.localStorage.removeItem(FlexibleColumnLayout.STORAGE_PREFIX_TABLET + "-begin");
-		},
-		after: clearStoredResizeInfo
+		}
 	});
 
 	QUnit.test("begin separator in three-column layouts", function (assert) {

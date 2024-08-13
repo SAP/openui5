@@ -398,58 +398,6 @@
 			this._bStopped = true;
 		}
 
-		/**
-		 * @deprecated
-		 */
-		hasCoverage() {
-			return !!this.getCoverage();
-		}
-
-		/**
-		 * @deprecated
-		 */
-		getCoverage() {
-			return globalThis._$blanket || globalThis.top.__coverage__;
-		}
-
-		/**
-		 * @deprecated
-		 */
-		async reportCoverage(reportToEl) {
-			var oCoverage = this.getCoverage();
-			if (!oCoverage) {
-				return;
-			}
-			if ( globalThis.blanket && !globalThis.top.__coverage__ ) {
-				globalThis.blanket.report({});
-				return;
-			}
-
-			const response = await fetch("/.ui5/coverage/report", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify(globalThis.top.__coverage__)
-			});
-			const oData = await response.json();
-			// HTML is the only one that makes sense and provides understandable information
-			const oHTMLReport = oData.availableReports.find((report) => report.report === "html");
-			if (!oHTMLReport) { // Do not render reports if HTML or lcov are not provided
-				return;
-			}
-			reportToEl.appendChild(
-				h("iframe", {
-					style : {
-						border : "none",
-						width : "100%",
-						height : "100vh"
-					},
-					sandbox: "allow-scripts",
-					src: "/.ui5/coverage/report/" + oHTMLReport.destination
-				})
-			);
-		}
 		getTestPageUrl(sFallbackUrl) {
 			// TODO rewrite using URL
 			const sTestPageUrl = this.getUrlParameter("testpage");

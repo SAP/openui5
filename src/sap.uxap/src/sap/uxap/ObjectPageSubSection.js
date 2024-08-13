@@ -824,7 +824,7 @@ sap.ui.define([
 			//define if F7 is pressed from SubSection itself or active element inside SubSection
 			if (oTarget instanceof ObjectPageSubSection) {
 				this._handleSubSectionF7();
-			} else {
+			} else if (!oEvent.isMarked()) {
 				this._handleInteractiveElF7();
 				this._oLastFocusedControlF7 = oTarget;
 			}

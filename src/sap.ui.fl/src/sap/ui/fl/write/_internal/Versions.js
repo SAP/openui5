@@ -3,21 +3,17 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/BindingMode"
 ], function(
-	FlexObjectState,
 	Version,
 	FlexInfoSession,
 	Settings,
 	Storage,
-	ChangePersistenceFactory,
 	JSONModel,
 	BindingMode
 ) {
@@ -139,18 +135,6 @@ sap.ui.define([
 
 		return oVersionsModel;
 	}
-	// TODO: the handling should move to the FlexState as soon as it is ready
-	function _removeDirtyChanges(mPropertyBag) {
-		const oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference);
-		const aDirtyChanges = FlexObjectState.getDirtyFlexObjects(mPropertyBag.reference);
-		oChangePersistence.deleteChanges(aDirtyChanges, true);
-		return aDirtyChanges.length > 0;
-	}
-
-	function doDirtyChangesExist(sReference) {
-		const aDirtyChanges = FlexObjectState.getDirtyFlexObjects(sReference);
-		return aDirtyChanges.length > 0;
-	}
 
 	function _doesDraftExistInVersions(aVersions) {
 		return aVersions.some(function(oVersion) {
@@ -229,10 +213,6 @@ sap.ui.define([
 
 		if (!Versions.hasVersionsModel(mPropertyBag)) {
 			throw Error(`Versions Model for reference '${sReference}' and layer '${sLayer}' were not initialized.`);
-		}
-
-		if (doDirtyChangesExist(mPropertyBag.reference)) {
-			_mInstances[sReference][sLayer].updateDraftVersion(mPropertyBag);
 		}
 		return _mInstances[sReference][sLayer];
 	};
@@ -317,10 +297,6 @@ sap.ui.define([
 		}
 		mPropertyBag.version = mPropertyBag.displayedVersion;
 
-		if (doDirtyChangesExist(mPropertyBag.reference)) {
-			return Promise.reject("unsaved changes exists");
-		}
-
 		return Storage.versions.activate(mPropertyBag)
 		.then(function(oVersion) {
 			aVersions.forEach(function(oVersionEntry) {
@@ -357,12 +333,9 @@ sap.ui.define([
 			var aVersions = oModel.getProperty("/versions");
 			aVersions.shift();
 			_updateVersionModelWhenDiscardOrActivate(oModel, oModel.getProperty("/activeVersion"));
-			// in case of a existing draft known by the backend;
-			// we remove dirty changes only after successful DELETE request
-			const bDirtyChangesRemoved = _removeDirtyChanges(mPropertyBag);
+
 			return {
-				backendChangesDiscarded: bBackendDraftExists,
-				dirtyChangesDiscarded: bDirtyChangesRemoved
+				backendChangesDiscarded: bBackendDraftExists
 			};
 		});
 	};

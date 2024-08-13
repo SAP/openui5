@@ -2,8 +2,6 @@
 
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
-	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
@@ -15,7 +13,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
@@ -23,8 +20,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Control,
-	UIChangesState,
-	FlexObjectState,
 	ManifestUtils,
 	Version,
 	FlexConfiguration,
@@ -36,7 +31,6 @@ sap.ui.define([
 	LrepConnector,
 	VersionsAPI,
 	FeaturesAPI,
-	ChangePersistenceFactory,
 	Layer,
 	Utils,
 	JSONModel,
@@ -55,17 +49,8 @@ sap.ui.define([
 		});
 	}
 
-	function prepareStubsForSave(sReference, aReturnedVersions) {
+	function stubStorageVersionsLoad(aReturnedVersions) {
 		sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
-		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-		return sandbox.stub(oChangePersistence, "saveDirtyChanges").resolves();
-	}
-
-	function prepareStubsForDiscardDraft(sReference, aReturnedVersions, aDirtyChanges) {
-		sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
-		sandbox.stub(FlexObjectState, "getDirtyFlexObjects").returns(aDirtyChanges);
-		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-		return sandbox.stub(oChangePersistence, "deleteChanges").resolves();
 	}
 
 	QUnit.module("Initialization", {
@@ -124,7 +109,10 @@ sap.ui.define([
 				assert.equal(aCallArguments.layer, sLayer, "the layer was passed");
 				assert.equal(aCallArguments.limit, 10, "and the limit was passed");
 				assert.ok(oResponse instanceof JSONModel, "a model was returned");
-				assert.equal(oResponse.getProperty("/versions"), this.aReturnedVersions, "and the versions list is returned in the model data");
+				assert.strictEqual(
+					oResponse.getProperty("/versions"), this.aReturnedVersions,
+					"and the versions list is returned in the model data"
+				);
 			}.bind(this));
 		});
 
@@ -137,14 +125,20 @@ sap.ui.define([
 			};
 
 			return Versions.initialize(mPropertyBag).then(function(oResponse) {
-				assert.equal(this.oStorageLoadVersionsStub.callCount, 1, "then a request was sent");
+				assert.strictEqual(this.oStorageLoadVersionsStub.callCount, 1, "then a request was sent");
 				assert.ok(oResponse instanceof JSONModel, "a model was returned");
-				assert.equal(oResponse.getProperty("/versions"), this.aReturnedVersions, "and the versions list is returned in the model data");
+				assert.strictEqual(
+					oResponse.getProperty("/versions"), this.aReturnedVersions,
+					"and the versions list is returned in the model data"
+				);
 				return Versions.initialize(mPropertyBag);
 			}.bind(this)).then(function(oResponse) {
-				assert.equal(this.oStorageLoadVersionsStub.callCount, 1, "no further request is send");
+				assert.strictEqual(this.oStorageLoadVersionsStub.callCount, 1, "no further request is send");
 				assert.ok(oResponse instanceof JSONModel, "a model was returned");
-				assert.equal(oResponse.getProperty("/versions"), this.aReturnedVersions, "and the versions list is returned in the model data");
+				assert.strictEqual(
+					oResponse.getProperty("/versions"), this.aReturnedVersions,
+					"and the versions list is returned in the model data"
+				);
 			}.bind(this));
 		});
 
@@ -165,14 +159,20 @@ sap.ui.define([
 			sandbox.stub(KeyUserConnector.versions, "load").resolves(aReturnedVersions);
 
 			return Versions.initialize(mPropertyBag1).then(function(oResponse) {
-				assert.equal(this.oStorageLoadVersionsStub.callCount, 1, "then a request was sent");
+				assert.strictEqual(this.oStorageLoadVersionsStub.callCount, 1, "then a request was sent");
 				assert.ok(oResponse instanceof JSONModel, "a model was returned");
-				assert.equal(oResponse.getProperty("/versions"), this.aReturnedVersions, "and the versions list is returned in the model data");
+				assert.strictEqual(
+					oResponse.getProperty("/versions"), this.aReturnedVersions,
+					"and the versions list is returned in the model data"
+				);
 				return Versions.initialize(mPropertyBag2);
 			}.bind(this)).then(function(oResponse) {
-				assert.equal(this.oStorageLoadVersionsStub.callCount, 2, "a further request is sent");
+				assert.strictEqual(this.oStorageLoadVersionsStub.callCount, 2, "a further request is sent");
 				assert.ok(oResponse instanceof JSONModel, "a model was returned");
-				assert.equal(oResponse.getProperty("/versions"), this.aReturnedVersions, "and the versions list is returned in the model data");
+				assert.strictEqual(
+					oResponse.getProperty("/versions"), this.aReturnedVersions,
+					"and the versions list is returned in the model data"
+				);
 			}.bind(this));
 		});
 
@@ -328,7 +328,10 @@ sap.ui.define([
 
 			return Versions.initialize(mPropertyBag)
 			.then(function(oModel) {
-				assert.equal(oModel.getProperty("/displayedVersion"), Version.Number.Draft, "when initial version model with flex info session displayedVersion is set correct");
+				assert.strictEqual(
+					oModel.getProperty("/displayedVersion"), Version.Number.Draft,
+					"when initial version model with flex info session displayedVersion is set correct"
+				);
 			})
 			// switch to another version
 			.then(VersionsAPI.loadVersionForApplication.bind(this, mPropertyBag))
@@ -458,7 +461,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			var oSaveStub = prepareStubsForSave(this.sReference, aReturnedVersions);
+			stubStorageVersionsLoad(aReturnedVersions);
 
 			var oActivatedVersion = {
 				activatedBy: "qunit",
@@ -477,9 +480,6 @@ sap.ui.define([
 
 			return Versions.initialize(mPropertyBag)
 			.then(Versions.activate.bind(undefined, mPropertyBag))
-			.then(function() {
-				assert.equal(oSaveStub.callCount, 0, "no save changes was called");
-			})
 			.then(Versions.getVersionsModel.bind(Versions, mPropertyBag))
 			.then(function(oResponse) {
 				var aVersions = oResponse.getProperty("/versions");
@@ -523,7 +523,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			var oSaveStub = prepareStubsForSave(this.sReference, aReturnedVersions);
+			stubStorageVersionsLoad(aReturnedVersions);
 
 			var oActivatedVersion = {
 				activatedBy: "qunit",
@@ -534,9 +534,6 @@ sap.ui.define([
 
 			return Versions.initialize(mPropertyBag)
 			.then(Versions.activate.bind(undefined, mPropertyBag))
-			.then(function() {
-				assert.equal(oSaveStub.callCount, 0, "no save changes was called");
-			})
 			.then(Versions.getVersionsModel.bind(Versions, mPropertyBag))
 			.then(function(oResponse) {
 				var aVersions = oResponse.getProperty("/versions");
@@ -571,7 +568,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			var oSaveStub = prepareStubsForSave(this.sReference, aReturnedVersions);
+			stubStorageVersionsLoad(aReturnedVersions);
 
 			var oActivatedVersion = {
 				activatedBy: "qunit",
@@ -583,7 +580,6 @@ sap.ui.define([
 			return Versions.initialize(mPropertyBag)
 			.then(Versions.activate.bind(undefined, mPropertyBag))
 			.catch(function(sErrorMessage) {
-				assert.equal(oSaveStub.callCount, 0, "no save changes was called");
 				assert.equal(sErrorMessage, "Version is already active", "then the promise is rejected with an error message");
 			});
 		});
@@ -612,7 +608,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			prepareStubsForSave(mPropertyBag.reference, aReturnedVersions);
+			stubStorageVersionsLoad(aReturnedVersions);
 
 			var oActivatedVersion = {
 				activatedBy: "qunit",
@@ -694,9 +690,6 @@ sap.ui.define([
 			];
 
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedBackendVersions);
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.reference);
-			var oDeleteStub = sandbox.stub(oChangePersistence, "deleteChange").resolves();
-			var oGetDirtyChangesStub = sandbox.stub(FlexObjectState, "getDirtyFlexObjects").returns([{}]);
 			var oDiscardStub = sandbox.stub(KeyUserConnector.versions, "discardDraft").resolves();
 
 			return Versions.initialize(mPropertyBag)
@@ -718,9 +711,7 @@ sap.ui.define([
 			})
 			.then(Versions.discardDraft.bind(undefined, mPropertyBag))
 			.then(function() {
-				assert.equal(oDeleteStub.callCount, 1, "deleteChange was called");
 				assert.equal(oDiscardStub.callCount, 0, "no discardDraft was called");
-				oGetDirtyChangesStub.restore();
 			})
 			.then(Versions.getVersionsModel.bind(undefined, mPropertyBag))
 			.then(function(oModel) {
@@ -755,7 +746,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			var oSaveStub = prepareStubsForSave(this.reference, aReturnedVersions);
+			stubStorageVersionsLoad(aReturnedVersions);
 			var oDiscardStub = sandbox.stub(KeyUserConnector.versions, "discardDraft").resolves();
 
 			return Versions.initialize(mPropertyBag)
@@ -763,9 +754,6 @@ sap.ui.define([
 				this.oVersionsModel = oVersionsModel;
 			}.bind(this))
 			.then(Versions.discardDraft.bind(undefined, mPropertyBag))
-			.then(function() {
-				assert.equal(oSaveStub.callCount, 0, "no save changes was called");
-			})
 			.then(Versions.getVersionsModel.bind(undefined, mPropertyBag))
 			.then(function(oModel) {
 				var oData = oModel.getData();
@@ -799,7 +787,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			prepareStubsForSave(this.reference, aReturnedVersions);
+			stubStorageVersionsLoad(aReturnedVersions);
 
 			return Versions.initialize(mPropertyBag)
 			.then(function(oVersionsModel) {
@@ -808,37 +796,8 @@ sap.ui.define([
 			.then(Versions.discardDraft.bind(undefined, mPropertyBag))
 			.then(function(oDiscardInfo) {
 				assert.equal(oDiscardInfo.backendChangesDiscarded, false, "no discarding took place");
-				assert.equal(oDiscardInfo.dirtyChangesDiscarded, false, "no discarding took place");
 				assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), 1, ", a displayedVersion property set to the active version");
 			}.bind(this));
-		});
-
-		QUnit.test("and a connector is configured and a draft does NOT exists but dirty changes exists " +
-			"while discard is called with a flag to discard the dirty changes", function(assert) {
-			var mPropertyBag = {
-				layer: Layer.CUSTOMER,
-				reference: this.reference,
-				appComponent: this.oAppComponent
-			};
-
-			var oFirstVersion = {
-				activatedBy: "qunit",
-				activatedAt: "a while ago",
-				version: "1"
-			};
-
-			var aReturnedVersions = [
-				oFirstVersion
-			];
-
-			var oDeleteStub = prepareStubsForDiscardDraft(this.reference, aReturnedVersions, [{}, {}]);
-
-			return Versions.initialize(mPropertyBag)
-			.then(Versions.discardDraft.bind(undefined, mPropertyBag))
-			.then(function(oDiscardInfo) {
-				assert.equal(oDiscardInfo.dirtyChangesDiscarded, true, "some discarding took place");
-				assert.equal(oDeleteStub.getCall(0).args[0].length, 2, "two changes were deleted");
-			});
 		});
 
 		QUnit.test("and a connector is configured and a draft does NOT exists but dirty changes exists " +
@@ -859,16 +818,14 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			var oDeleteStub = prepareStubsForDiscardDraft(this.reference, aReturnedVersions, [{}, {}]);
+			stubStorageVersionsLoad(aReturnedVersions);
 
 			return Versions.initialize(mPropertyBag)
 			.then(function(oVersionsModel) {
 				this.oVersionsModel = oVersionsModel;
 			}.bind(this))
 			.then(Versions.discardDraft.bind(undefined, mPropertyBag))
-			.then(function(oDiscardInfo) {
-				assert.equal(oDiscardInfo.dirtyChangesDiscarded, true, "discarding took place");
-				assert.equal(oDeleteStub.getCall(0).args[0].length, 2, "two changes were deleted");
+			.then(function() {
 				assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), 1, ", a displayedVersion property set to the active version");
 			}.bind(this));
 		});
@@ -898,7 +855,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			var oDeleteStub = prepareStubsForDiscardDraft(this.reference, aReturnedVersions, [{}, {}]);
+			stubStorageVersionsLoad(aReturnedVersions);
 			var oDiscardStub = sandbox.stub(KeyUserConnector.versions, "discardDraft").resolves();
 
 			return Versions.initialize(mPropertyBag)
@@ -908,9 +865,7 @@ sap.ui.define([
 			.then(Versions.discardDraft.bind(undefined, mPropertyBag))
 			.then(function(oDiscardInfo) {
 				assert.equal(oDiscardInfo.backendChangesDiscarded, true, "some discarding took place");
-				assert.equal(oDiscardInfo.dirtyChangesDiscarded, true, "some discarding took place");
 				assert.equal(oDiscardStub.callCount, 1, "discarding the draft was called");
-				assert.equal(oDeleteStub.getCall(0).args[0].length, 2, "two changes were deleted");
 				assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), "1", ", a displayedVersion property set to the active version");
 			}.bind(this));
 		});
@@ -985,7 +940,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			prepareStubsForSave(this.sReference, aReturnedVersions);
+			stubStorageVersionsLoad(aReturnedVersions);
 			sandbox.stub(LrepConnector.versions, "publish").resolves("Success");
 
 			return Versions.initialize(mPropertyBag)
@@ -1053,7 +1008,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			prepareStubsForSave(sReference, aReturnedVersions);
+			stubStorageVersionsLoad(aReturnedVersions);
 
 			return Versions.initialize(mPropertyBag)
 			.then(Versions.onAllChangesSaved.bind(Versions, mPropertyBag))
@@ -1094,7 +1049,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			prepareStubsForSave(sReference, aReturnedVersions);
+			stubStorageVersionsLoad(aReturnedVersions);
 
 			return Versions.initialize(mPropertyBag)
 			.then(Versions.onAllChangesSaved.bind(Versions, mPropertyBag))

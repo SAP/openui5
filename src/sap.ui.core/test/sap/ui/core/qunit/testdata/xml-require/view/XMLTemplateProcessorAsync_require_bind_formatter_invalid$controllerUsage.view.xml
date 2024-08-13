@@ -1,0 +1,9 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m" displayBlock="true">
+	<App>
+		<Page title="Hello">
+			<Button id="btn_1" text="{path: '/buttonText', formatter: '$controller.formatter'}"/>
+		</Page>
+	</App>
+</mvc:View>
