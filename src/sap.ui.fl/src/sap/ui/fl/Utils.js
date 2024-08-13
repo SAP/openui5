@@ -179,7 +179,7 @@ sap.ui.define([
 			}
 
 			if (oComponent?.getManifestEntry) {
-				var oSapApp = oComponent.getManifestEntry("sap.app");
+				const oSapApp = oComponent.getManifestEntry("sap.app");
 
 				if (oSapApp?.type && oSapApp.type !== "application") {
 					if (oComponent instanceof Component) {
@@ -450,18 +450,19 @@ sap.ui.define([
 		 * @param {array.<function>} aPromiseQueue - List of asynchronous functions that returns promises
 		 * @param {boolean} bThrowError - true: errors will be rethrown and therefore break the execution
 		 * @param {boolean} bAsync - true: asynchronous processing with Promise, false: synchronous processing with FakePromise
+		 * @param {boolean} bSupressAdditionalErrorMessage - true: additional error message will be suppressed
 		 * @returns {Promise} Returns empty resolved Promise or FakePromise when all passed promises inside functions have been executed
 		 */
-		execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync) {
+		execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync, bSupressAdditionalErrorMessage) {
 			if (aPromiseQueue.length === 0) {
 				if (bAsync) {
 					return Promise.resolve();
 				}
 				return (Utils.FakePromise ? new Utils.FakePromise() : Promise.resolve());
 			}
-			var fnPromise = aPromiseQueue.shift();
+			const fnPromise = aPromiseQueue.shift();
 			if (typeof fnPromise === "function") {
-				var vResult;
+				let vResult;
 				try {
 					vResult = fnPromise();
 				} catch (e) {
@@ -474,21 +475,25 @@ sap.ui.define([
 					}
 				})
 				.catch(function(e) {
-					var sErrorMessage = "Error during execPromiseQueueSequentially processing occurred";
+					let sErrorMessage = "Error during execPromiseQueueSequentially processing occurred";
 					sErrorMessage += e ? `: ${e.message}` : "";
 					Log.error(sErrorMessage, e);
 
 					if (bThrowError) {
-						throw new Error(sErrorMessage);
+						if (bSupressAdditionalErrorMessage) {
+							throw new Error(e.message);
+						} else {
+							throw new Error(sErrorMessage);
+						}
 					}
 				})
 				.then(function() {
-					return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync);
+					return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync, bSupressAdditionalErrorMessage);
 				}.bind(this));
 			}
 
 			Log.error("Changes could not be applied, promise not wrapped inside function.");
-			return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync);
+			return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync, bSupressAdditionalErrorMessage);
 		},
 
 		/**
@@ -513,15 +518,15 @@ sap.ui.define([
 			this.vError = vError;
 			this.bContinueWithFakePromise = arguments.length < 3 || (sInitialPromiseIdentifier === Utils.FakePromise.fakePromiseIdentifier);
 
-			var fnResolveOrReject = function(vParam, fn) {
+			const fnResolveOrReject = function(vParam, fn) {
 				try {
-					var vResolve = fn(vParam, Utils.FakePromise.fakePromiseIdentifier);
+					const vResolve = fn(vParam, Utils.FakePromise.fakePromiseIdentifier);
 					if (SyncPromise.isThenable(vResolve)) {
 						return vResolve;
 					}
 					return new Utils.FakePromise(vResolve);
 				} catch (oError) {
-					var vReject = oError;
+					const vReject = oError;
 					return new Utils.FakePromise(undefined, vReject);
 				}
 			};
