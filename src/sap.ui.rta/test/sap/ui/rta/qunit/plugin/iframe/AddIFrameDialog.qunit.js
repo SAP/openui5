@@ -638,14 +638,14 @@ sap.ui.define([
 			this.oAddIFrameDialog.attachOpened(async function() {
 				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
 				const oPreviewLink = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewLink");
-				oUrlTextArea.setValue("{$user>/fullName}");
+				oUrlTextArea.setValue("https://www.example.com/{$user>/fullName}");
 				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
 				await nextUIUpdate();
 
 				this.oAddIFrameDialog._oController.onShowPreview();
 				assert.strictEqual(
 					oPreviewLink.getText(),
-					"Test User",
+					"https://www.example.com/Test%20User",
 					"then it is properly resolved"
 				);
 				clickOnCancel();
@@ -657,15 +657,34 @@ sap.ui.define([
 			this.oAddIFrameDialog.attachOpened(async function() {
 				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
 				const oPreviewLink = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewLink");
-				oUrlTextArea.setValue("{= ${ProductCategory}}");
+				oUrlTextArea.setValue("https://www.example.com/{= ${ProductCategory}}");
 				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
 				await nextUIUpdate();
 
 				this.oAddIFrameDialog._oController.onShowPreview();
 				assert.strictEqual(
 					oPreviewLink.getText(),
-					"Ice Cream",
+					"https://www.example.com/Ice%20Cream",
 					"then it is properly resolved"
+				);
+				clickOnCancel();
+			}.bind(this));
+			return this.oAddIFrameDialog.open(mTestURLBuilderData, oReferenceControl);
+		});
+
+		QUnit.test("when a relative url is entered", function(assert) {
+			this.oAddIFrameDialog.attachOpened(async function() {
+				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
+				const oPreviewLink = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewLink");
+				oUrlTextArea.setValue("potato.html");
+				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
+				await nextUIUpdate();
+
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.strictEqual(
+					oPreviewLink.getText(),
+					`${window.location.href.substring(0, window.location.href.indexOf("qunit/") + 6)}potato.html`,
+					"then the preview shows the full url"
 				);
 				clickOnCancel();
 			}.bind(this));

@@ -53,6 +53,10 @@ sap.ui.define(function() {
 
 			"CalendarDateInterval": {
 				group: "Calendar",
+				ui5: {
+					theme: "sap_horizon"
+				},
+
 				qunit: {
 					reorder: false
 				},

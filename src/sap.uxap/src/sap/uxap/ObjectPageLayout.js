@@ -668,6 +668,7 @@ sap.ui.define([
 		this._bInternalAnchorBarVisible = true;
 		this._oVisibleSubSections = 0;
 		this._initialABButtonsColorUpdateDone = false;
+		this._bDomElementsCached = false;
 
 		this._$footerWrapper = [];                  //dom reference to the floating footer wrapper
 		this._$opWrapper = [];                      //dom reference to the header for Dark mode background image scrolling scenario
@@ -2133,14 +2134,15 @@ sap.ui.define([
 	ObjectPageLayout.prototype._triggerVisibleSubSectionsEvents = function () {
 		var sSelectedSectionId = this.getSelectedSection(),
 			oSelectedSection = Element.getElementById(sSelectedSectionId),
-			sSelectedSubSectionId = oSelectedSection?.getSelectedSubSection();
+			sSelectedSubSectionId = oSelectedSection?.getSelectedSubSection(),
+			bScrollDomReady = this._bDomElementsCached;
 
 		this._bDelayDOMBasedCalculations = false;
 
 		// Making sure lazyloading is executed with the correct selected Section/SubSection (if any) and the scroll is at the relevant position
-		if (sSelectedSubSectionId && this._oSectionInfo[sSelectedSubSectionId]?.positionTop !== this._$opWrapper.scrollTop()) {
+		if (sSelectedSubSectionId && bScrollDomReady && this._oSectionInfo[sSelectedSubSectionId]?.positionTop !== this._$opWrapper.scrollTop()) {
 			this.scrollToSection(sSelectedSubSectionId, 0);
-		} else if (sSelectedSectionId && this._oSectionInfo[sSelectedSectionId]?.positionTop !== this._$opWrapper.scrollTop()) {
+		} else if (sSelectedSectionId && bScrollDomReady && this._oSectionInfo[sSelectedSectionId]?.positionTop !== this._$opWrapper.scrollTop()) {
 			this.scrollToSection(sSelectedSectionId, 0);
 		}
 

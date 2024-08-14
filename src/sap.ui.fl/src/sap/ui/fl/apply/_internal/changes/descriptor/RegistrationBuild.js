@@ -33,6 +33,7 @@ sap.ui.define([
 		appdescr_app_addAnnotationsToOData: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/app/AddAnnotationsToOData"),
 		appdescr_app_removeAllInboundsExceptOne: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/app/RemoveAllInboundsExceptOne"),
 		appdescr_app_changeInbound: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeInbound"),
+		appdescr_app_changeOutbound: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeOutbound"),
 		appdescr_app_addNewInbound: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/app/AddNewInbound"),
 		appdescr_app_setAch: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/app/SetAch"),
 		appdescr_app_addTechnicalAttributes: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/app/AddTechnicalAttributes"),

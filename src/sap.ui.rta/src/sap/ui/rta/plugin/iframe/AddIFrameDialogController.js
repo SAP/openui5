@@ -134,6 +134,7 @@ sap.ui.define([
 		onShowPreview() {
 			const sReturnedURL = this._buildReturnedURL();
 			const sURL = this._buildPreviewURL();
+
 			if (!isValidUrl(sURL).result) {
 				return;
 			}
@@ -148,11 +149,12 @@ sap.ui.define([
 				oPanelButton.setEnabled(false);
 			}
 			try {
-				this._oJSONModel.setProperty("/previewUrl/value", sURL);
 				this._oJSONModel.setProperty("/previousFrameUrl/value", sReturnedURL);
 				this._oJSONModel.setProperty("/settingsUpdate/value", false);
 
 				oIFrame.applySettings({ url: sURL, advancedSettings: {...this._oJSONModel.getProperty("/advancedSettings/value")} });
+				// Use the URL from the IFrame to ensure that the complete path is shown
+				this._oJSONModel.setProperty("/previewUrl/value", oIFrame.getUrl());
 			} catch (oError) {
 				Log.error("Error previewing the URL: ", oError);
 			}

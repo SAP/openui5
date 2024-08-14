@@ -431,7 +431,13 @@ sap.ui.define([
 						 * The file that fails to meet the file size restriction specified in the
 						 * <code>maxFileSize</code> property.
 						 */
-						item: {type: "sap.m.upload.UploadSetItem"}
+						item: {type: "sap.m.upload.UploadSetItem"},
+
+						/**
+						 * The size of a file in MB, that fails to meet the file size restriction specified in the <code>maxFileSize</code> property.
+						 * @since 1.128.0
+						 */
+						fileSize: {type: "float"}
 					}
 				},
 				/**
@@ -1881,7 +1887,7 @@ sap.ui.define([
 	UploadSet.prototype._fireFileSizeExceed = function (oItem) {
 		var oSendItem = new UploadSetItem();
 		oSendItem.setFileName(oItem.getParameter('fileName'));
-		this.fireFileSizeExceeded({item: oSendItem});
+		this.fireFileSizeExceeded({item: oSendItem, fileSize: oItem.getParameter("fileSize") });
 	};
 
 	UploadSet.prototype._fireFilenameLengthExceed = function (oItem) {

@@ -1115,6 +1115,15 @@ sap.ui.define([
 			return oFilterField;
 		};
 
+		/**
+		 * Sets the focus on the first filter in error state.
+		 * @public
+		 * @returns {sap.ui.mdc.FilterField | null} The first filter field in error state
+		 */
+		FilterBarBase.prototype.setFocusOnFirstErroneousField = function() {
+			return this._setFocusOnFirstErroneousField();
+		};
+
 		FilterBarBase.prototype._handleAsyncValidation = function(bFireSearch, fnCallBack) {
 
 			if (!fnCallBack) {

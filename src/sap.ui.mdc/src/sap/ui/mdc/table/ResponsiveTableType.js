@@ -132,7 +132,6 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype._updateShowDetailsButton = function(oTable, bValue) {
-		// avoid execution of the if and else if block if bValue has not changed
 		if (bValue && !this._oShowDetailsButton) {
 			oTable.getHeaderToolbar().insertEnd(this._getShowDetailsButton(), 0);
 			oTable.attachEvent("popinChanged", this._onPopinChanged, this);
@@ -140,7 +139,7 @@ sap.ui.define([
 		} else if (!bValue && this._oShowDetailsButton) {
 			oTable.detachEvent("popinChanged", this._onPopinChanged, this);
 			oTable.getHeaderToolbar().removeEnd(this._oShowDetailsButton);
-			oTable.setHiddenInPopin([]);
+			oTable.setHiddenInPopin();
 			this._oShowDetailsButton.destroy();
 			delete this._oShowDetailsButton;
 		}
@@ -427,7 +426,7 @@ sap.ui.define([
 			oResponsiveTable.setHiddenInPopin(this._getImportanceToHide());
 			this._oShowDetailsButton.setSelectedKey("hideDetails");
 		} else {
-			oResponsiveTable.setHiddenInPopin([]);
+			oResponsiveTable.setHiddenInPopin();
 			this._oShowDetailsButton.setSelectedKey("showDetails");
 		}
 	};
@@ -482,13 +481,13 @@ sap.ui.define([
 	/**
 	 * Helper function to get the importance of the columns to be hidden based on <code>Table</code> configuration.
 	 *
-	 * @returns {array} sap.ui.core.Priority[] Array of column priorities
+	 * @returns {sap.ui.core.Priority[]} Array of column priorities
 	 * @private
 	 */
 	ResponsiveTableType.prototype._getImportanceToHide = function() {
 		const aDetailsButtonSetting = this.getDetailsButtonSetting() || [];
 
-		if (aDetailsButtonSetting.length) {
+		if (aDetailsButtonSetting.length > 0) {
 			return aDetailsButtonSetting;
 		} else {
 			return Device.system.phone ? ["Low", "Medium"] : ["Low"];
@@ -612,7 +611,7 @@ sap.ui.define([
 		const oResponsiveTable = this.getInnerTable();
 
 		if (PersonalizationUtils.isUserPersonalizationActive(oTable) &&
-			oResponsiveTable.getHiddenInPopin().includes(oColumn.getInnerColumn().getImportance()) &&
+			oResponsiveTable.getHiddenInPopin()?.includes(oColumn.getInnerColumn().getImportance()) &&
 			(oTable.getColumns().pop() === oColumn)) {
 			this._toggleShowDetails(false);
 		}
