@@ -60,7 +60,15 @@ sap.ui.define([
 			aNewControls.forEach(function(oNewControl, iIterator) {
 				var fnPromise = function() {
 					return Promise.resolve()
-					.then(oModifier.insertAggregation.bind(oModifier, oControl, sAggregationName, oNewControl, iIndex + iIterator, oView, mChangeInfo.skipAdjustIndex))
+					.then(oModifier.insertAggregation.bind(
+						oModifier,
+						oControl,
+						sAggregationName,
+						oNewControl,
+						iIndex + iIterator,
+						oView,
+						mChangeInfo.skipAdjustIndex
+					))
 					.then(function() {
 						aRevertData.push({
 							id: oModifier.getId(oNewControl),
@@ -70,7 +78,7 @@ sap.ui.define([
 				};
 				aPromises.push(fnPromise);
 			});
-			return FlUtils.execPromiseQueueSequentially(aPromises, true, true)
+			return FlUtils.execPromiseQueueSequentially(aPromises, true, true, true)
 			.then(function() {
 				oChange.setRevertData(aRevertData);
 				return aNewControls;
@@ -105,11 +113,12 @@ sap.ui.define([
 							BaseAddXml._destroyArrayOfControls(aNewControls);
 							return Promise.reject(new Error(`The content of the xml fragment does not match the type of the targetAggregation: ${oAggregationDefinition.type}`));
 						}
+						return undefined;
 					});
 				};
 				aPromises.push(fnPromise);
 			});
-			return FlUtils.execPromiseQueueSequentially(aPromises, true, true)
+			return FlUtils.execPromiseQueueSequentially(aPromises, true, true, true)
 			.then(fnAddControls);
 		});
 	};
