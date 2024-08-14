@@ -31,7 +31,7 @@ sap.ui.define([
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
-	var {TitleLevel} = coreLibrary;
+	var { TitleLevel } = coreLibrary;
 
 	/**
 	 * Constructor for a new <code>VariantManagement</code>.
@@ -137,11 +137,11 @@ sap.ui.define([
 				},
 
 				/**
-                 * Semantic level of the header.
-                 * For more information, see {@link sap.m.Title#setLevel}.
-                 *
-                 * @since 1.104
-                 */
+								 * Semantic level of the header.
+								 * For more information, see {@link sap.m.Title#setLevel}.
+								 *
+								 * @since 1.104
+								 */
 				headerLevel: {
 					type: "sap.ui.core.TitleLevel",
 					group: "Appearance",
@@ -686,23 +686,23 @@ sap.ui.define([
 	};
 
 	/**
- 	 * Special handling of the rendering of this control.
+		 * Special handling of the rendering of this control.
 	 * @param {boolean} bValue Defines the intended rendering
 	 * @returns {sap.ui.fl.variants.VariantManagement} The current instance
 	 * @private
 	 * @restricted sap.ui.mdc
- 	 */
+		 */
 	VariantManagement.prototype.setShowAsText = function(bValue) {
 		this._oVM.setShowAsText(bValue);
 		return this;
 	};
 
 	/**
- 	 * Special handling of the rendering of this control.
+		 * Special handling of the rendering of this control.
 	 * @returns {boolean} The current intent
 	 * @private
 	 * @restricted sap.ui.mdc
- 	 */
+		 */
 	VariantManagement.prototype.getShowAsText = function() {
 		return this._oVM.getShowAsText();
 	};
@@ -918,7 +918,7 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._createItemsModel = function(sModelName) {
-		var oItemsTemplate = new VariantItem({
+		this._oItemsTemplate = new VariantItem({
 			key: `{${sModelName}>key}`,
 			title: `{${sModelName}>title}`,
 			sharing: `{${sModelName}>sharing}`,
@@ -935,7 +935,7 @@ sap.ui.define([
 		this._oVM.bindAggregation("items", {
 			path: `${this.oContext}/variants`,
 			model: sModelName,
-			template: oItemsTemplate,
+			template: this._oItemsTemplate,
 			filters: new Filter({
 				path: "visible",
 				operator: FilterOperator.EQ,
@@ -1033,8 +1033,15 @@ sap.ui.define([
 		this._oVM.detachSelect(this._fireSelect, this);
 		this._oVM.detachSave(this._fireSave, this);
 
-		Control.prototype.exit.apply(this, aArgs);
-		this._oVM = undefined;
+		if (this._oVM) {
+			this._oVM.destroy();
+			this._oVM = undefined;
+		}
+
+		if (this._oItemsTemplate) {
+			this._oItemsTemplate.destroy();
+			this._oItemsTemplate = undefined;
+		}
 
 		this._fRegisteredApplyAutomaticallyOnStandardVariant = null;
 		this.oContext = undefined;
@@ -1044,6 +1051,8 @@ sap.ui.define([
 		this._aSaveEventHandlers = undefined;
 		this._aManageEventHandlers = undefined;
 		this._aSelectEventHandlers = undefined;
+
+		Control.prototype.exit.apply(this, aArgs);
 	};
 
 	// <overwrite for docu>
