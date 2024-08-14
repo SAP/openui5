@@ -287,6 +287,8 @@ sap.ui.define([
 
 		assert.strictEqual(this.oMessageView._oLists.all.getItems().length, 7, "Item should be 7");
 		assert.ok(this.oMessageView._oLists.all.getItems()[0].isA("sap.m.GroupHeaderListItem"), "Item should be GroupHeaderItem");
+		assert.strictEqual(this.oMessageView._oLists.all.getItems()[0].getDomRef().getAttribute("role"), "group", "Item should have role=group");
+		assert.strictEqual(this.oMessageView._oLists.all.getItems()[1].getDomRef().getAttribute("aria-posinset"), "1", "Group item should be skipped from aria-posinset");
 	});
 
 	QUnit.test("_restoreItemsType should not throw an exception when there the groupItems property is set to true", async function (assert) {
