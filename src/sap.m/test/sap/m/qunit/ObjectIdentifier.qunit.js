@@ -68,9 +68,9 @@ sap.ui.define([
 		var sTitle = "My Title";
 		var sText = "My Text";
 		var sut = new ObjectIdentifier({
-			title : sTitle,
-			text : sText,
-			visible : true
+			title: sTitle,
+			text: sText,
+			visible: true
 		});
 
 		//Act
@@ -98,12 +98,12 @@ sap.ui.define([
 		var sTitle = "My Title";
 		var sText = "My Text";
 		var sut = new ObjectIdentifier({
-			title : sTitle,
-			text : sText,
-			badgeNotes : true,
-			badgePeople : true,
-			badgeAttachments : true,
-			visible : true
+			title: sTitle,
+			text: sText,
+			badgeNotes: true,
+			badgePeople: true,
+			badgeAttachments: true,
+			visible: true
 		});
 
 		//Act
@@ -145,11 +145,11 @@ sap.ui.define([
 		var sTitle = "My Title";
 		var sText = "My Text";
 		var sut = new ObjectIdentifier({
-			title : sTitle,
-			text : sText,
-			badgeNotes : true,
-			badgePeople : true,
-			badgeAttachments : true
+			title: sTitle,
+			text: sText,
+			badgeNotes: true,
+			badgePeople: true,
+			badgeAttachments: true
 		});
 
 		//Act
@@ -172,6 +172,44 @@ sap.ui.define([
 		sut.destroy();
 	});
 
+	QUnit.test("Press event is fired over the title", function(assert) {
+		// Prepare
+		var oObjectIdentifier = new ObjectIdentifier({
+				title: "navigate",
+				titleActive: true
+			}),
+			oTitlePressSpy = this.spy(oObjectIdentifier, "fireTitlePress");
+
+		oObjectIdentifier.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+
+		var oFakeMouseEvent = {
+			target: oObjectIdentifier.getDomRef("link").querySelector("span"),
+			setMarked: function() {}
+		};
+
+		// Act
+		oObjectIdentifier._handlePress(oFakeMouseEvent);
+
+		// Assert
+		assert.ok(oTitlePressSpy.calledOnce, "Title press handler is called");
+
+		var oFakeKeyboardEvent = {
+			target: oObjectIdentifier.getDomRef("link"),
+			setMarked: function() {}
+		};
+
+		// Act
+		oObjectIdentifier._handlePress(oFakeKeyboardEvent);
+
+		// Assert
+		assert.ok(oTitlePressSpy.calledTwice, "Title press handler is called");
+
+		// Clean
+		oObjectIdentifier.destroy();
+	});
+
 	/***********************************************************************************************************************/
 	QUnit.module("Internals");
 
@@ -181,16 +219,16 @@ sap.ui.define([
 		var sTitle = "My Title";
 		var sText = "My Text";
 		var sut = new ObjectIdentifier({
-			title : sTitle,
-			text : sText,
-			badgeNotes : true,
-			badgePeople : true,
-			badgeAttachments : true
+			title: sTitle,
+			text: sText,
+			badgeNotes: true,
+			badgePeople: true,
+			badgeAttachments: true
 		});
 
 		//Assert
 		assert.equal(sut._getAttachmentsIcon().getSrc(), IconPool.getIconURI("attachment"),
-				"Attachments icon is returned.");
+			"Attachments icon is returned.");
 		assert.equal(sut._getNotesIcon().getSrc(), IconPool.getIconURI("notes"), "Notes icon is returned.");
 		assert.equal(sut._getPeopleIcon().getSrc(), IconPool.getIconURI("group"), "People icon is returned.");
 
@@ -202,7 +240,7 @@ sap.ui.define([
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
 			oResult,
-			oConstructor = { title : "not empty text"};
+			oConstructor = { title: "not empty text" };
 
 		// System under Test
 		var oObjectIdentifier = new ObjectIdentifier(oConstructor).placeAt("qunit-fixture");
@@ -244,8 +282,8 @@ sap.ui.define([
 		// Arrange
 		var oEscapeSpy = this.spy(ManagedObject, "escapeSettingsValue"),
 			oObjectIdentifier = new ObjectIdentifier({
-			title: "Evil { string"
-		}).placeAt("qunit-fixture");
+				title: "Evil { string"
+			}).placeAt("qunit-fixture");
 
 		// Assert
 		assert.strictEqual(oEscapeSpy.callCount, 1, "escaped was called once for the setted Title");
@@ -258,8 +296,8 @@ sap.ui.define([
 		// Arrange
 		var oEscapeSpy = this.spy(ManagedObject, "escapeSettingsValue"),
 			oObjectIdentifier = new ObjectIdentifier({
-			text: "Evil { string"
-		}).placeAt("qunit-fixture");
+				text: "Evil { string"
+			}).placeAt("qunit-fixture");
 
 		// Assert
 		assert.strictEqual(oEscapeSpy.callCount, 1, "escaped was called once for the setted Text");
@@ -272,7 +310,7 @@ sap.ui.define([
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
 			oResult,
-			oConstructor = { text : "not empty text"};
+			oConstructor = { text: "not empty text" };
 
 		// System under Test
 		var oObjectIdentifier = new ObjectIdentifier(oConstructor).placeAt("qunit-fixture");
@@ -337,7 +375,7 @@ sap.ui.define([
 
 		//Arrange
 		var oObjectIdentifier = new ObjectIdentifier({
-			title : "Title"
+			title: "Title"
 		});
 
 		//System under test
@@ -355,8 +393,8 @@ sap.ui.define([
 
 		//Arrange
 		var oObjectIdentifier = new ObjectIdentifier({
-			title : "Title",
-			text : "Text"
+			title: "Title",
+			text: "Text"
 		});
 
 		//System under test
@@ -470,7 +508,7 @@ sap.ui.define([
 			oObjectIdentifier.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-				// act
+			// act
 			var fnFireSelectSpy = this.spy(oObjectIdentifier, "fireTitlePress");
 			if (bKeyDown) {
 				qutils.triggerKeydown(oObjectIdentifier.$('title').children()[0], oOptions.keyCode);
@@ -484,17 +522,17 @@ sap.ui.define([
 			assert.strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired");
 
 			// cleanup
-			 oObjectIdentifier.destroy();
+			oObjectIdentifier.destroy();
 
 		});
 	}
 
 	checkKeyboardEventhandling("Firing ENTER event", {
-		keyCode : KeyCodes.ENTER
+		keyCode: KeyCodes.ENTER
 	}, true);
 
 	checkKeyboardEventhandling("Firing SPACE event", {
-		keyCode : KeyCodes.SPACE
+		keyCode: KeyCodes.SPACE
 	});
 
 	QUnit.module("Event testing");
@@ -534,7 +572,7 @@ sap.ui.define([
 	QUnit.test("Should add separator class if title added at runtime", function(assert) {
 
 		// arrange
-		var oObjectIdentifier = new ObjectIdentifier({ text: "not empty text"}).placeAt("qunit-fixture");
+		var oObjectIdentifier = new ObjectIdentifier({ text: "not empty text" }).placeAt("qunit-fixture");
 		oCore.applyChanges();
 
 		// act
@@ -551,7 +589,7 @@ sap.ui.define([
 	QUnit.test("Should add separator class if text added at runtime", function(assert) {
 
 		// arrange
-		var oObjectIdentifier = new ObjectIdentifier({ title: "not empty title"}).placeAt("qunit-fixture");
+		var oObjectIdentifier = new ObjectIdentifier({ title: "not empty title" }).placeAt("qunit-fixture");
 		oCore.applyChanges();
 
 		// act
@@ -568,8 +606,10 @@ sap.ui.define([
 	QUnit.test("Should remove separator class if title removed at runtime", function(assert) {
 
 		// arrange
-		var oObjectIdentifier = new ObjectIdentifier({ title : "not empty title",
-															  text: "not empty text"}).placeAt("qunit-fixture");
+		var oObjectIdentifier = new ObjectIdentifier({
+			title: "not empty title",
+			text: "not empty text"
+		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
 
 		// act
@@ -586,8 +626,10 @@ sap.ui.define([
 	QUnit.test("Should remove separator class if text removed at runtime", function(assert) {
 
 		// arrange
-		var oObjectIdentifier = new ObjectIdentifier({ title : "not empty title",
-															  text: "not empty text"}).placeAt("qunit-fixture");
+		var oObjectIdentifier = new ObjectIdentifier({
+			title: "not empty title",
+			text: "not empty text"
+		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
 
 		// act
@@ -604,8 +646,10 @@ sap.ui.define([
 	QUnit.test("Should have separator class if both title and text nonempty initially", function(assert) {
 
 		// arrange
-		var oObjectIdentifier = new ObjectIdentifier({ title : "not empty title",
-															  text: "not empty text"}).placeAt("qunit-fixture");
+		var oObjectIdentifier = new ObjectIdentifier({
+			title: "not empty title",
+			text: "not empty text"
+		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
 
 		// Assert
@@ -618,7 +662,7 @@ sap.ui.define([
 	QUnit.test("Should have no separator class if title is empty initially", function(assert) {
 
 		// System under Test
-		var oObjectIdentifier = new ObjectIdentifier({ text: "not empty text"}).placeAt("qunit-fixture");
+		var oObjectIdentifier = new ObjectIdentifier({ text: "not empty text" }).placeAt("qunit-fixture");
 		oCore.applyChanges();
 
 		// Assert
@@ -631,7 +675,7 @@ sap.ui.define([
 	QUnit.test("Should have no separator class if text is empty initially", function(assert) {
 
 		// System under Test
-		var oObjectIdentifier = new ObjectIdentifier({ title: "not empty title"}).placeAt("qunit-fixture");
+		var oObjectIdentifier = new ObjectIdentifier({ title: "not empty title" }).placeAt("qunit-fixture");
 		oCore.applyChanges();
 
 		// Assert
@@ -702,13 +746,13 @@ sap.ui.define([
 		//Arrange
 		var oModel = new JSONModel({
 			"text": "Title Active",
-			"titleActive" : true
+			"titleActive": true
 		});
 
 		var oObjectIdentifier = new ObjectIdentifier({
-			title : "{/text}",
-			text : "Model sets true",
-			titleActive : "{/titleActive}"
+			title: "{/text}",
+			text: "Model sets true",
+			titleActive: "{/titleActive}"
 		});
 
 		//System under test
@@ -732,13 +776,13 @@ sap.ui.define([
 		//Arrange
 		var oModel = new JSONModel({
 			"text": "Title Not Active",
-			"titleActive" : false
+			"titleActive": false
 		});
 
 		var oObjectIdentifier = new ObjectIdentifier({
-			title : "{/text}",
-			text : "Model sets false",
-			titleActive : "{/titleActive}"
+			title: "{/text}",
+			text: "Model sets false",
+			titleActive: "{/titleActive}"
 		});
 
 		//System under test
@@ -761,13 +805,13 @@ sap.ui.define([
 		//Arrange
 		var oModel = new JSONModel({
 			"text": "Title Active",
-			"formatterString" : "active"
+			"formatterString": "active"
 		});
 
 		var oObjectIdentifier = new ObjectIdentifier({
-			title : "{/text}",
-			text : "Model sets true",
-			titleActive : {
+			title: "{/text}",
+			text: "Model sets true",
+			titleActive: {
 				path: "/formatterString",
 				formatter: function(e) {
 					return (e == "active") ? true : false;
@@ -795,13 +839,13 @@ sap.ui.define([
 		//Arrange
 		var oModel = new JSONModel({
 			"text": "Title Active",
-			"formatterString" : "notActive"
+			"formatterString": "notActive"
 		});
 
 		var oObjectIdentifier = new ObjectIdentifier({
-			title : "{/text}",
-			text : "Model sets true",
-			titleActive : {
+			title: "{/text}",
+			text: "Model sets true",
+			titleActive: {
 				path: "/formatterString",
 				formatter: function(e) {
 					return (e == "active") ? true : false;
@@ -857,7 +901,7 @@ sap.ui.define([
 		});
 
 		var oModel = new JSONModel({
-			items:[
+			items: [
 				{ "title": "New Title" }
 			]
 		});
@@ -876,11 +920,11 @@ sap.ui.define([
 
 		var oItemTemplate = Element.getElementById('item');
 		oItemTemplate.getCells()[0].bindProperty('title', {
-			path:'title'
+			path: 'title'
 		});
 
 		oTable.bindAggregation('items', {
-			path:'/items',
+			path: '/items',
 			template: oItemTemplate
 		});
 		oCore.applyChanges();
@@ -898,14 +942,14 @@ sap.ui.define([
 
 		//Arrange
 		oSut = new ObjectIdentifier({
-			title : "{Name}",
-			titleActive : "{active}"
+			title: "{Name}",
+			titleActive: "{active}"
 		});
 
 		var aColumns = [
 			new Column({
-				header : new Label({
-					text : "Product"
+				header: new Label({
+					text: "Product"
 				})
 			})
 		];
@@ -913,11 +957,11 @@ sap.ui.define([
 		oRenderSpy = sinon.spy(ObjectIdentifierRenderer, "render");
 
 		oTemplate = new ColumnListItem({
-			cells : [ oSut ]
+			cells: [oSut]
 		});
 
 		oTable = new Table({
-			columns : aColumns
+			columns: aColumns
 		});
 		oModel = new JSONModel({
 			"ProductCollection": [
@@ -925,7 +969,8 @@ sap.ui.define([
 					"active": true,
 					"ProductId": "1239102",
 					"Name": "Power Projector 4713"
-				}]});
+				}]
+		});
 		oTable.setModel(oModel);
 		oTable.bindItems("/ProductCollection", oTemplate);
 		oTable.placeAt("qunit-fixture");
@@ -949,16 +994,16 @@ sap.ui.define([
 		//SUT
 		var sTitle = "My Title",
 			sText = "My Text",
-			sLabelId = new Label({text: "column name"}).getId(),
+			sLabelId = new Label({ text: "column name" }).getId(),
 			sut = new ObjectIdentifier("sut", {
-				title : sTitle,
+				title: sTitle,
 				titleActive: true,
-				text : sText
+				text: sText
 			}),
 			sut2 = new ObjectIdentifier("sut1", {
-				title : sTitle,
+				title: sTitle,
 				titleActive: true,
-				text : sText,
+				text: sText,
 				ariaLabelledBy: sLabelId
 			});
 
@@ -1017,14 +1062,14 @@ sap.ui.define([
 			sTitle = "My Title",
 			sText = "My Text",
 			activeObjectIdentifier = new ObjectIdentifier({
-				title : sTitle,
+				title: sTitle,
 				titleActive: true,
-				text : sText
+				text: sText
 			}),
 			inactiveObjectIdentifier = new ObjectIdentifier({
-				title : sTitle,
+				title: sTitle,
 				titleActive: false,
-				text : sText
+				text: sText
 			});
 
 		//Act
@@ -1071,7 +1116,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("EmptyIndicator", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oText = new ObjectIdentifier({
 				text: "",
 				emptyIndicatorMode: EmptyIndicatorMode.On
@@ -1100,7 +1145,7 @@ sap.ui.define([
 			this.oPanel1.placeAt("content");
 			oCore.applyChanges();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oText.destroy();
 			this.oTextEmptyAuto.destroy();
 			this.oTextEmptyAutoNoClass.destroy();
