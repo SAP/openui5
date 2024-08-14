@@ -156,10 +156,17 @@ sap.ui.define([
 		When.iClickOnStandardListItem("Title_1");
 
 		Then.iShouldSeeLinksOnPopover(["Link_1"]);
+	});
+
+	opaTest("When I select a datapoint and drill down, I should see the correct dimensions", function(Given, When, Then) {
+		When.onTheMDCChart.iSelectTheDatapoint([{
+			index: 0,
+			measures: ["averagemetricsWords"]
+		}], sChartId);
 
 		When.onTheMDCChart.iDrillDownInDimension(sChartId, "Genre");
 
-		Then.onTheMDCChart.iShouldSeeVisibleDimensionsInOrder(["language_code", "genre_code"], sChartId);
+		Then.onTheMDCChart.iShouldSeeVisibleDimensionsInOrder(["genre_code"], sChartId);
 	});
 
 	opaTest("When I personalize the chart, the chart should change", function(Given, When, Then) {

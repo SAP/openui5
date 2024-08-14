@@ -729,6 +729,7 @@ sap.ui.define([
 			const itemSelectedDrillDown = function(oEvent) {
 				const sDimensionName = oEvent.getParameter("item").key;
 
+				this._bDrillDown = true;
 				//Call flex to capture current state before adding an item to the chart aggregation
 				this.getEngine().createChanges({
 					control: this,
@@ -1000,11 +1001,11 @@ sap.ui.define([
 			if (!_oBreadcrumbs && !this._bIsDestroyed) {
 				_oBreadcrumbs = ToolbarControlFactory.createDrillBreadcrumbs(this.getId(), {
 					linkPressed: function(oEvent) {
-						const index = oEvent.getParameter("index");
+						const index = oEvent.getParameter("index") + 1;
 
 						// get drill-path which was drilled-up and needs to be removed from mdc chart
 						const aCurrentDrillStack = this.getControlDelegate().getDrillableItems(this);
-						const aDrilledItems = aCurrentDrillStack.slice(index + 1);
+						const aDrilledItems = aCurrentDrillStack.slice(index);
 						const aFlexItemChanges = aDrilledItems.map((oDrillItem) => {
 							return {
 								name: oDrillItem.getPropertyKey(),
@@ -1012,6 +1013,7 @@ sap.ui.define([
 							};
 						});
 
+						this._iDrillUpIndex = index;
 						this.getEngine().createChanges({
 							control: this,
 							key: "Item",

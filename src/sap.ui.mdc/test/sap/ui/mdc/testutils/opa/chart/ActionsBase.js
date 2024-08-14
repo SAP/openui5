@@ -37,12 +37,14 @@ sap.ui.define([
 				this.waitFor({
 					controlType: oSettings.controlType,
 					matchers: oSettings.matchers,
-					actions: new Press()
+					actions: new Press(),
+					success: function() {
+						if (oSettings && typeof oSettings.success === "function") {
+							oSettings.success.call(this);
+						}
+					}
 				});
 
-				if (oSettings && typeof oSettings.success === "function") {
-					oSettings.success.call(this);
-				}
 			}
 		});
 	};
