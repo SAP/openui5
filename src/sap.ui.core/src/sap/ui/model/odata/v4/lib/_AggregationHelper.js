@@ -536,7 +536,8 @@ sap.ui.define([
 			if (mQueryOptions.$$filterBeforeAggregate) { // children of a given parent
 				sApply += "descendants($root" + oAggregation.$path
 					+ "," + oAggregation.hierarchyQualifier + "," + sNodeProperty
-					+ ",filter(" + mQueryOptions.$$filterBeforeAggregate + "),1)";
+					+ ",filter(" + mQueryOptions.$$filterBeforeAggregate
+					+ (bAllLevels ? "))" : "),1)");
 				delete mQueryOptions.$$filterBeforeAggregate;
 				if (mQueryOptions.$orderby) {
 					sApply += "/orderby(" + mQueryOptions.$orderby + ")";

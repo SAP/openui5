@@ -83,6 +83,7 @@ sap.ui.define([
 			this.oRequestor = {
 				buildQueryString : function () { return ""; },
 				getServiceUrl : function () { return "/~/"; },
+				getUnlockedAutoCopy : mustBeMocked,
 				request : mustBeMocked
 			};
 
@@ -3166,13 +3167,21 @@ sap.ui.define([
 				{"@$ui5.node.isExpanded" : true});
 		this.mock(oCache.oTreeState).expects("expand")
 			.withExactArgs("~oGroupNode~", iLevels);
+		this.mock(oCache).expects("validateAndDeleteExpandInfo")
+			.withExactArgs("~oGroupLock~", "~oGroupNode~")
+			.resolves("n/a");
 		this.mock(_Helper).expects("deletePrivateAnnotation").never();
 		this.mock(oCache).expects("createGroupLevelCache").never();
 
 		// code under test
 		const oPromise = oCache.expand("~oGroupLock~", "~path~", iLevels, "~fnDataRequested~");
 
-		assert.strictEqual(oPromise.getResult(), -1);
+		assert.ok(oPromise instanceof SyncPromise);
+		assert.ok(oPromise.isPending());
+
+		return oPromise.then((iCount) => {
+			assert.strictEqual(iCount, -1);
+		});
 	});
 });
 
@@ -7175,4 +7184,110 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("validateAndDeleteExpandInfo: no filters", function () {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		this.mock(oCache.oTreeState).expects("getExpandFilters")
+			.withExactArgs(sinon.match.func)
+			.returns([]);
+		this.mock(this.oRequestor).expects("request").never();
+
+		// code under test
+		return oCache.validateAndDeleteExpandInfo();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("validateAndDeleteExpandInfo", async function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo(42)/toBars", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		// restore _AggregationHelper.buildApply4Hierarchy of beforeEach to allow mocking it again
+		_AggregationHelper.buildApply4Hierarchy.restore();
+		oCache.mQueryOptions = {
+			$count : true,
+			$expand : {},
+			$filter : "~filter~",
+			$select : ["n/a"],
+			$orderby : "n/a",
+			foo : "bar"
+		};
+		const sQueryOptions = JSON.stringify(oCache.mQueryOptions);
+		const oTreeStateMock = this.mock(oCache.oTreeState);
+		oTreeStateMock.expects("getExpandFilters")
+			.withExactArgs(sinon.match.func)
+			.callsFake(function (fnFilter) {
+				oCache.aElements.$byPredicate = {
+					"~predicate1~" : "~in~",
+					"~predicate2~" : "~out~"
+				};
+				oCache.aElements[0] = "~in~";
+
+				assert.strictEqual(fnFilter("~predicate1~"), false);
+				assert.strictEqual(fnFilter("~predicate2~"), true, "not in the flat list");
+
+				return ["~filter2~", "~filter1~"]; // intentionally reversed order
+			});
+		const mTypes = {"/Foo/toBars" : "~Type~"};
+		const oCacheMock = this.mock(oCache);
+		oCacheMock.expects("getTypes").withExactArgs().returns(mTypes);
+		this.mock(_Helper).expects("getKeyFilter")
+			.withExactArgs("~oGroupNode~", "/Foo/toBars", sinon.match.same(mTypes))
+			.returns("~filterBeforeAggregate~");
+		this.mock(_AggregationHelper).expects("buildApply4Hierarchy")
+			.withExactArgs(sinon.match.same(oCache.oAggregation), {
+				$$filterBeforeAggregate : "~filterBeforeAggregate~",
+				// no $count, $expand, $orderby anymore
+				$filter : "~filter~",
+				$select : ["n/a"],
+				foo : "bar"
+			}, true)
+			.returns({
+				// Note: buildApply4Hierarchy moves $$filterBeforeAggregate and $filter into $apply!
+				$apply : "A.P.P.L.E.",
+				$select : ["n/a"],
+				foo : "bar"
+			});
+		this.mock(_Helper).expects("selectKeyProperties")
+			.withExactArgs({
+				$apply : "A.P.P.L.E.",
+				$filter : "~filter1~ or ~filter2~",
+				$select : [],
+				foo : "bar"
+			}, "~Type~")
+			.callsFake((mQueryOptions) => {
+				mQueryOptions.$select.push("~key~");
+			});
+		this.mock(this.oRequestor).expects("buildQueryString")
+			.withExactArgs("/Foo/toBars", {
+				$apply : "A.P.P.L.E.",
+				$filter : "~filter1~ or ~filter2~",
+				$select : ["~key~"],
+				$top : 2,
+				foo : "bar"
+			}, false, true, true)
+			.returns("?~query~");
+		this.mock(this.oRequestor).expects("getUnlockedAutoCopy").withExactArgs("~oGroupLock~")
+			.returns("~oUnlockedAutoCopy~");
+		this.mock(this.oRequestor).expects("request")
+			.withExactArgs("GET", "Foo(42)/toBars?~query~", "~oUnlockedAutoCopy~")
+			.resolves({value : ["~oResult0~", "~oResult1~"]});
+
+		const aExpectations = [
+			oCacheMock.expects("calculateKeyPredicate")
+				.withExactArgs("~oResult0~", sinon.match.same(mTypes), "/Foo/toBars"),
+			oTreeStateMock.expects("deleteExpandInfo").withExactArgs("~oResult0~"),
+			oCacheMock.expects("calculateKeyPredicate")
+				.withExactArgs("~oResult1~", sinon.match.same(mTypes), "/Foo/toBars"),
+			oTreeStateMock.expects("deleteExpandInfo").withExactArgs("~oResult1~")
+		];
+
+		// code under test
+		await oCache.validateAndDeleteExpandInfo("~oGroupLock~", "~oGroupNode~");
+
+		assert.strictEqual(JSON.stringify(oCache.mQueryOptions), sQueryOptions, "unchanged");
+		sinon.assert.callOrder(...aExpectations);
+	});
 });

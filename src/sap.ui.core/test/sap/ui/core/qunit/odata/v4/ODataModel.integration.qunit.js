@@ -44845,10 +44845,430 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
-	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 1.
-	// Expand Alpha, Beta, and Gamma. Collapse Alpha completely. Expand Alpha, Beta, and Gamma
-	// again. See that their children are collapsed and that no request is sent. Collapse Alpha
-	// completely again. Expand all below Alpha and see that the request is sent with "Levels=null".
+	// Scenario: Show a recursive hierarchy, fully expanded. Collapse Zeta and afterwards Delta to
+	// guarantee that the filter statements in the 'descendants' request are sorted. Collapse Iota
+	// and afterwards Theta to add a filter for Iota to the 'descendants' request (Iota is not a
+	// decendant of Alpha, therefore Iota will not be part of the response). Collapse Beta to see
+	// that for a decendant where it is possible to determine the parent a filter is not set.
+	// Collapse Alpha. Perform a side-effects refresh (transforms the already read data again to
+	// placeholders), see that Alpha and Theta are still collapsed. Expand Alpha completely and see
+	// that the 'descendants' request is sent to determine which of the collapsed nodes are
+	// descendants of Alpha and must be expanded again. Afterwards see that all nodes under Alpha
+	// are expanded, but Theta is still collapsed.
+	// JIRA: CPOUI5ODATAV4-2701
+	QUnit.test("Recursive Hierarchy: clean up tree state before expand all",
+			async function (assert) {
+		const sCountRequestUrl = "Artists/$count?$filter=lastUsedChannel eq 'All'"
+			+ " and (sendsAutographs)&custom=foo&$search=covfefe";
+		const sFilterSearch = "ancestors($root/Artists,OrgChart,_/NodeID,"
+			+ "filter(lastUsedChannel eq 'All' and (sendsAutographs))/search(covfefe),keep start)";
+		const sUrl = "Artists?$expand=_Publication($select=Price)"
+			+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot,"
+			+ "_/DrillState,_/NodeID,lastUsedChannel"
+			+ "&custom=foo&$apply=" + sFilterSearch + "/orderby(defaultChannel desc)/"
+			+ "com.sap.vocabularies.Hierarchy.v1.TopLevels("
+			+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart',NodeProperty='_/NodeID'";
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/Artists',
+		filters : {path : 'lastUsedChannel', operator : 'EQ', value1 : 'All'},
+		parameters : {
+			$$aggregation : {
+				expandTo : 1E16,
+				hierarchyQualifier : 'OrgChart',
+				search : 'covfefe'
+			},
+			$count : true,
+			$expand : {'_Publication' : {$select : 'Price'}},
+			$filter : 'sendsAutographs',
+			$orderby : 'defaultChannel desc',
+			$select : 'lastUsedChannel',
+			custom : 'foo'
+		}}" threshold="0" visibleRowCount="10">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ArtistID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 1 Alpha
+		//   1.1 Beta
+		//     1.1.1 Gamma
+		//   1.2 Delta
+		//     1.2.1 Epsilon
+		//   1.3 Zeta
+		//     1.3.1 Eta
+		// 2 Theta
+		//   2.1 Iota
+		//     2.1.1 Kappa
+		this.expectRequest(sCountRequestUrl, 10)
+			.expectRequest(sUrl + ")&$count=true&$skip=0&$top=10", {
+				"@odata.count" : "10",
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DescendantCount : "6",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.1",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "1.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.1.1",
+					IsActiveEntity : false,
+					Name : "Gamma",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "1.1.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.2",
+					IsActiveEntity : false,
+					Name : "Delta",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "1.2,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.2.1",
+					IsActiveEntity : false,
+					Name : "Epsilon",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "1.2.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.3",
+					IsActiveEntity : false,
+					Name : "Zeta",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "1.3,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.3.1",
+					IsActiveEntity : false,
+					Name : "Eta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "1.3.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Theta",
+					_ : {
+						DescendantCount : "2",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "2,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "2.1",
+					IsActiveEntity : false,
+					Name : "Iota",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "2.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "2.1.1",
+					IsActiveEntity : false,
+					Name : "Kappa",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "2.1.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oAlpha = oTable.getRows()[0].getBindingContext();
+		const oBeta = oTable.getRows()[1].getBindingContext();
+		const oDelta = oTable.getRows()[3].getBindingContext();
+		const oZeta = oTable.getRows()[5].getBindingContext();
+		const oTheta = oTable.getRows()[7].getBindingContext();
+		const oIota = oTable.getRows()[8].getBindingContext();
+
+		// collapsing Zeta before Delta guarantees that the filters in the request are sorted
+		oZeta.collapse();
+		oDelta.collapse();
+		// collapsing Iota and Theta adds a filter for Iota, which is not a descendant of Alpha
+		oIota.collapse();
+		oTheta.collapse();
+		// we know that Beta is a descendant of Alpha, therefore there will be no filter for Beta
+		oBeta.collapse();
+		oAlpha.collapse();
+
+		await this.waitForChanges(assert, "collapse Zeta, Delta, Iota, Theta, Beta, Alpha");
+
+		this.expectRequest(sCountRequestUrl, 10)
+			.expectRequest(sUrl + ",ExpandLevels="
+				+ JSON.stringify([
+					{NodeID : "1.3,false", Levels : 0},
+					{NodeID : "1.2,false", Levels : 0},
+					{NodeID : "2.1,false", Levels : 0},
+					{NodeID : "2,false", Levels : 0},
+					{NodeID : "1.1,false", Levels : 0},
+					{NodeID : "1,false", Levels : 0}
+				])
+				+ ")&$count=true&$skip=0&$top=10", {
+				"@odata.count" : "2",
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "collapsed",
+						NodeID : "1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Theta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "collapsed",
+						NodeID : "2,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}]
+			});
+
+		await Promise.all([
+			oTable.getBinding("rows").getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "perform side-effects refresh")
+		]);
+
+		checkTable("after side-effects refresh", assert, oTable, [
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='2',IsActiveEntity=false)"
+		], [
+			[false, 1, "1", "Alpha"],
+			[false, 1, "2", "Theta"]
+		]);
+
+		this.expectRequest({
+				batchNo : 3,
+				url : "Artists?custom=foo&$apply=" + sFilterSearch
+					+ "/descendants($root/Artists,OrgChart,_/NodeID"
+					+ ",filter(ArtistID eq '1' and IsActiveEntity eq false))"
+					+ "&$filter=ArtistID eq '1.1' and IsActiveEntity eq false"
+					+ " or ArtistID eq '1.2' and IsActiveEntity eq false"
+					+ " or ArtistID eq '1.3' and IsActiveEntity eq false"
+					+ " or ArtistID eq '2.1' and IsActiveEntity eq false"
+					+ "&$select=ArtistID,IsActiveEntity&$top=4"
+				// sort order changed intentionally, without $orderby response needs not be sorted!
+			}, {
+				value : [{
+					ArtistID : "1.3",
+					IsActiveEntity : false
+				}, {
+					ArtistID : "1.2",
+					IsActiveEntity : false
+				}, {
+					ArtistID : "1.1",
+					IsActiveEntity : false
+				}]
+			})
+			.expectRequest({
+				batchNo : 4,
+				url : sCountRequestUrl
+			}, 10)
+			.expectRequest({
+				batchNo : 4,
+				url : sUrl + ",ExpandLevels="
+					+ JSON.stringify([
+						{NodeID : "2.1,false", Levels : 0},
+						{NodeID : "2,false", Levels : 0},
+						{NodeID : "1,false", Levels : null}
+					])
+					+ ")&$count=true&$skip=0&$top=10"
+			}, {
+				"@odata.count" : "8",
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DescendantCount : "6",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.1",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						nodeID : "1.1, false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.1.1",
+					IsActiveEntity : false,
+					Name : "Gamma",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "1.1.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.2",
+					IsActiveEntity : false,
+					Name : "Delta",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "1.2,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.2.1",
+					IsActiveEntity : false,
+					Name : "Epsilon",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "1.2.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.3",
+					IsActiveEntity : false,
+					Name : "Zeta",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "1.3,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.3.1",
+					IsActiveEntity : false,
+					Name : "Eta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "1.3.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Theta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "collapsed",
+						NodeID : "2,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}]
+			});
+
+		// code under test
+		oAlpha.expand(Number.MAX_SAFE_INTEGER);
+
+		await this.waitForChanges(assert, "expand all below Alpha");
+
+		checkTable("after expand all below Alpha", assert, oTable, [
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.1.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.3',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.3.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='2',IsActiveEntity=false)"
+		], [
+			[true, 1, "1", "Alpha"],
+			[true, 2, "1.1", "Beta"],
+			[undefined, 3, "1.1.1", "Gamma"],
+			[true, 2, "1.2", "Delta"],
+			[undefined, 3, "1.2.1", "Epsilon"],
+			[true, 2, "1.3", "Zeta"],
+			[undefined, 3, "1.3.1", "Eta"],
+			[false, 1, "2", "Theta"]
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Show the single root node of a recursive hierarchy. Expand Alpha, Beta, and Gamma.
+	// Collapse Alpha completely. Expand Alpha, Beta, and Gamma again. See that their children are
+	// collapsed and that no request is sent. Collapse Alpha completely again. Expand all below
+	// Alpha and see that the request is sent with "Levels=null".
 	// JIRA: CPOUI5ODATAV4-2668
 	QUnit.test("Recursive Hierarchy: collapse all, expandTo=1", async function (assert) {
 		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
@@ -45075,9 +45495,9 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
-	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 1.
-	// Expand Alpha completely. Collapse Alpha completely and see that all nodes under Alpha
-	// are collapsed. Expand Alpha and Beta again and see that their children are collapsed.
+	// Scenario: Show the single root node of a recursive hierarchy. Expand Alpha completely.
+	// Collapse Alpha completely and see that all nodes under Alpha are collapsed. Expand Alpha and
+	// Beta again and see that their children are collapsed.
 	// JIRA: CPOUI5ODATAV4-2668
 	QUnit.test("Recursive Hierarchy: expand all, collapse all, expand", async function (assert) {
 		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
