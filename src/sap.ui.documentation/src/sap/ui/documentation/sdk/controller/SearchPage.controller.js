@@ -137,7 +137,9 @@ sap.ui.define([
 					sHref,
 					sTarget = "_self",
 					bExternal,
-					bFormatTitle = true;
+					bFormatTitle = true,
+					oSearchDataModel = this.getOwnerComponent().getModel("searchData"),
+					sQuery = oSearchDataModel.getProperty("/query");
 
 				while (iLen--) {
 					oItem = aItems[iLen];
@@ -148,9 +150,13 @@ sap.ui.define([
 						if (bModifyHref) {
 							sHref = oItem.getCustomData()[0].getValue();
 							bExternal = oItem.getCustomData()[1].getValue();
+
 							if (bExternal) {
 								sHref = new URL(sHref, document.baseURI).href;
 								sTarget = "_blank";
+							}
+							if (sQuery) {
+								sHref = `${sHref}?q=${sQuery}`;
 							}
 							oLink.setHref(sHref);
 							oLink.setTarget(sTarget);
