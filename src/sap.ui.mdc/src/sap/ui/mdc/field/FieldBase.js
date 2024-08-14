@@ -270,10 +270,10 @@ sap.ui.define([
 				/**
 				 * Sets the conditions that represent the values of the field.
 				 *
-				 * These should be bound to a {@link sap.ui.mdc.condition.ConditionModel ConditionModel} using the corresponding <code>fieldPath</code>.
+				 * These should be bound to a {@link sap.ui.mdc.FilterBar FilterBar} using the corresponding <code>propertyPath</code>.
 				 *
 				 * <b>Note:</b> For {@link sap.ui.mdc.FilterField FilterField} controls, the <code>conditions</code> property must be used to bind
-				 * {@link sap.ui.mdc.FilterField FilterField} to a {@link sap.ui.mdc.condition.ConditionModel ConditionModel}.</br>
+				 * {@link sap.ui.mdc.FilterField FilterField} to a {@link @link sap.ui.mdc.FilterBar FilterBar}.</br>
 				 * For example, for a {@link sap.ui.mdc.FilterField FilterField} control inside a {@link sap.ui.mdc.FilterBar FilterBar} control, the binding looks like this:</br>
 				 * <code>conditions="{$filters>/conditions/propertyPath}"</code> with the following data:
 				 * <ul>
