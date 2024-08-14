@@ -215,8 +215,8 @@ sap.ui.define([
 	 * @param {object} oInParameters In parameters for the key (as a key is not necessarily unique.) (Only filled in conditions of old variants.)
 	 * @param {object} oOutParameters Out parameters for the key (as a key is not necessarily unique.) (Only filled in conditions of old variants.)
 	 * @param {sap.ui.model.Context} oBindingContext <code>BindingContext</code> of the checked field; Inside a table, the <code>ValueHelp</code> element might be connected to a different row.
-	 * @param {undefined} [oConditionModel] <code>ConditionModel</code>, if bound to one - NO LONGER USED
-	 * @param {undefined} [sConditionModelName] Name of the <code>ConditionModel</code>, if bound to one - NO LONGER USED
+	 * @param {undefined} [oDoNotUse] NO LONGER USED
+	 * @param {undefined} [sDoNotUse] NO LONGER USED
 	 * @param {object} oConditionPayload Additional context information for this key
 	 * @param {sap.ui.core.Control} oControl Instance of the calling control if it is not the field itself
 	 * @param {sap.ui.model.Type} oType Type of the value
@@ -225,7 +225,7 @@ sap.ui.define([
 	 * @since: 1.78.0
 	 * @public
 	 */
-	FieldBaseDelegate.getDescription = function(oField, oValueHelp, vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName, oConditionPayload, oControl, oType) {
+	FieldBaseDelegate.getDescription = function(oField, oValueHelp, vKey, oInParameters, oOutParameters, oBindingContext, oDoNotUse, sDoNotUse, oConditionPayload, oControl, oType) {
 		const oConfig = {
 			value: vKey,
 			parsedValue: vKey,

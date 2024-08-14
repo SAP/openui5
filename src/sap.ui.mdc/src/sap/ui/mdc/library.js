@@ -727,7 +727,7 @@ sap.ui.define([
 	 * The function 'getConditions' is used to retrieve a set of present conditions as defined per {@link sap.ui.mdc.IFilterSource} interface.
 	 *
 	 * @name sap.ui.mdc.IFilterSource.getConditions
-	 * @returns {map} a map containing the conditions according to the definition of the {@link sap.ui.mdc.condition.ConditionModel}
+	 * @returns {map} a map containing the conditions as used in the {@link sap.ui.mdc.FilterBar}
 	 * @since 1.80
 	 * @method
 	 */
