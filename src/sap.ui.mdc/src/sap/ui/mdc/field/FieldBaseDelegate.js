@@ -45,14 +45,15 @@ sap.ui.define([
  	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
 	 * @param {sap.ui.mdc.enums.ContentMode} sContentMode A given content mode
 	 * @param {string} sId ID of the internal control to be created.
-	 * @returns {Promise<sap.ui.core.Control[]>} Array containing the created controls
+	 * @param {boolean} bProvideDefaultValueHelp If set, a default value help should be provided.
+	 * @returns {Promise<sap.ui.core.Element[]>} Array containing the created controls and the default value help, if needed
 	 *
 	 * @protected
 	 * @since 1.124.0
 	 */
-	FieldBaseDelegate.createContent = function(oField, sContentMode, sId) {
+	FieldBaseDelegate.createContent = function(oField, sContentMode, sId, bProvideDefaultValueHelp) {
 		const oContentType = oField.getContentFactory().getContentType(oField.getBaseType(), oField.getMaxConditions(), oField._bTriggerable);
-		return oField.getContentFactory().createContent(oContentType, sContentMode, sId);
+		return oField.getContentFactory().createContent(oContentType, sContentMode, sId, bProvideDefaultValueHelp);
 	};
 
 	FieldBaseDelegate.getTypeMap = function() {

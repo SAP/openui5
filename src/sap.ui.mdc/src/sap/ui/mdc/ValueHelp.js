@@ -431,6 +431,16 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Returns the control the value help is connected to.
+	 *
+	 * <b>Note:</b> This function must only be called by the control the <code>ValueHelp</code> element
+	 * belongs to, not by the application.
+	 *
+	 * @returns {sap.ui.core.Control} Control to which the <code>ValueHelp</code> element is connected to
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.valueHelp.base.Container
+	 */
 	ValueHelp.prototype.getControl = function() {
 		return this._oControl;
 	};
