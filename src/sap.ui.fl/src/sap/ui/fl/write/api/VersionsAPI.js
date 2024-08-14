@@ -289,9 +289,11 @@ sap.ui.define([
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
 	VersionsAPI.discardDraft = function(mPropertyBag) {
-		function removeDirtyChanges(mPropertyBag) {
-			const oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference);
-			const aDirtyChanges = FlexObjectState.getDirtyFlexObjects(mPropertyBag.reference);
+		const oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
+		const sReference = getFlexReferenceForControl(oAppComponent);
+		function removeDirtyChanges() {
+			const oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
+			const aDirtyChanges = FlexObjectState.getDirtyFlexObjects(sReference);
 			oChangePersistence.deleteChanges(aDirtyChanges, true);
 			return aDirtyChanges.length > 0;
 		}
@@ -302,9 +304,6 @@ sap.ui.define([
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
 		}
-
-		const oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
-		const sReference = getFlexReferenceForControl(oAppComponent);
 		return Versions.discardDraft({
 			reference: sReference,
 			layer: mPropertyBag.layer
@@ -312,7 +311,7 @@ sap.ui.define([
 		.then(function(oDiscardInfo) {
 			// in case of a existing draft known by the backend;
 			// we remove dirty changes only after successful DELETE request
-			const bDirtyChangesRemoved = removeDirtyChanges(mPropertyBag);
+			const bDirtyChangesRemoved = removeDirtyChanges();
 			oDiscardInfo.dirtyChangesDiscarded = bDirtyChangesRemoved;
 
 			if (oDiscardInfo.backendChangesDiscarded) {
