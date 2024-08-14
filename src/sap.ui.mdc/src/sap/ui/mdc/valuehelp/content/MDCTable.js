@@ -122,8 +122,7 @@ sap.ui.define([
 		if (oChanges.name === "table") { // outer table
 			const oTable = oChanges.child;
 			if (oChanges.mutation === "remove") {
-				this._oTable.detachEvent('_bindingChange', this._handleUpdateFinishedThrottled, this);
-				this._oTable.detachEvent('selectionChange', this._handleSelectionChange, this);
+				_detachTableEvents.call(this, this._oTable);
 				this._oTable = null;
 				this.resetListBinding();
 			} else {
@@ -142,11 +141,6 @@ sap.ui.define([
 							oItem.setType("Active");
 						}
 					}
-				});
-
-				this._oTable.initialized().then(() => {
-					this._oTable.attachEvent('_bindingChange', this._handleUpdateFinishedThrottled, this);
-					this._oTable.attachEvent('selectionChange', this._handleSelectionChange, this);
 				});
 			}
 			return;
@@ -324,6 +318,9 @@ sap.ui.define([
 		return Promise.resolve(FilterableListContent.prototype.onBeforeShow.apply(this, arguments)).then(() => {
 			const oTable = this.getTable();
 			if (oTable) {
+				this._oTable.initialized().then(() => {
+					_attachTableEvents.call(this, this._oTable);
+				});
 				const bTableBound = oTable.isTableBound();
 				const bOverlay = bTableBound && oTable._oTable.getShowOverlay();
 				if (this._bRebindTable || bOverlay) {
@@ -338,6 +335,14 @@ sap.ui.define([
 				}
 			}
 		});
+	};
+
+	MDCTable.prototype.onHide = function() {
+		FilterableListContent.prototype.onHide.apply(this, arguments);
+
+		if (this._oTable) {
+			_detachTableEvents.call(this, this._oTable);
+		}
 	};
 
 	MDCTable.prototype.getScrollDelegate = function() {
@@ -369,6 +374,45 @@ sap.ui.define([
 		}
 
 	};
+
+	MDCTable.prototype.clone = function(sIdSuffix, aLocalIds) {
+
+		// detach event handler before cloning to not have it twice on the clone
+		// attach it after clone again
+		const bAttached = this._oTable?._bAttached;
+		if (bAttached) {
+			_detachTableEvents.call(this, this._oTable);
+		}
+
+		const oClone = FilterableListContent.prototype.clone.apply(this, arguments);
+
+		if (bAttached) {
+			_attachTableEvents.call(this, this._oTable);
+		}
+
+		return oClone;
+
+	};
+
+	function _attachTableEvents(oTable) {
+
+		if (!oTable._bAttached) {
+			oTable.attachEvent('_bindingChange', this._handleUpdateFinishedThrottled, this);
+			oTable.attachEvent('selectionChange', this._handleSelectionChange, this);
+			oTable._bAttached = true;
+		}
+
+	}
+
+	function _detachTableEvents(oTable) {
+
+		if (oTable._bAttached) {
+			oTable.detachEvent('_bindingChange', this._handleUpdateFinishedThrottled, this);
+			oTable.detachEvent('selectionChange', this._handleSelectionChange, this);
+			oTable._bAttached = false;
+		}
+
+	}
 
 	MDCTable.prototype.exit = function name(params) {
 		Common.cleanup(this, [
