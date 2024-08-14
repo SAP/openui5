@@ -24,7 +24,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/library",
 	"sap/ui/core/library",
-	"sap/m/MessageStrip",
+	"sap/m/p13n/MessageStrip",
 	"sap/ui/core/InvisibleText"
 ], (
 	Element,

@@ -4,7 +4,7 @@
 sap.ui.define([
 	"sap/m/p13n/SelectionPanel",
 	"sap/ui/model/Sorter",
-	"sap/m/MessageStrip",
+	"sap/m/p13n/MessageStrip",
 	"sap/ui/core/message/MessageType"
 ], (SelectionPanel, Sorter, MessageStrip, MessageType) => {
 	"use strict";
