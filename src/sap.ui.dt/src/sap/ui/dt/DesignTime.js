@@ -949,6 +949,46 @@ sap.ui.define([
 	}
 
 	/**
+	 * Destroy children of an aggregation binding template.
+	 * @param {sap.ui.dt.ElementOverlay} oTargetOverlay - ElementOverlay to destroy children for
+	 * @param {string} sAggregationName - Aggregation name
+	 */
+	DesignTime.prototype._destroyChildrenForAggregationBindingTemplate = function(oTargetOverlay, sAggregationName) {
+		const oTemplateRootOverlays = oTargetOverlay.getAggregationBindingTemplateOverlays();
+		oTemplateRootOverlays.forEach((oTemplateRootOverlay) => {
+			if (oTemplateRootOverlay.getAggregationName() === sAggregationName) {
+				oTemplateRootOverlay.destroy();
+			}
+		});
+	};
+
+	/**
+	 * Create children of an aggregation binding template. It is called when the aggregation binding
+	 * is changed during runtime.
+	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - ElementOverlay to create children for
+	 * @returns {Promise} Resolves when whole hierarchy of children for specified ElementOverlay is created
+	 * @private
+	 */
+	DesignTime.prototype._createChildrenForAggregationBindingTemplate = function(oElementOverlay) {
+		const aAggregationNames = oElementOverlay.getAggregationNames();
+		const mParentAggregationMetadata = oElementOverlay.getDesignTimeMetadata().getData();
+		const mAggregationBindingTemplates = getAggregationBindingTemplates(oElementOverlay, aAggregationNames);
+		const aTemplateAggregationNames = Object.keys(mAggregationBindingTemplates);
+
+		// Consider each aggregation binding template which is not nested inside an existing template structure as a root template
+		// Separate root templates and their children from the instances of the root template as well as all nested template instances
+		const bHasTemplateAggregation = !isEmptyObject(mAggregationBindingTemplates);
+
+		return this._createChildrenOverlays(
+			oElementOverlay,
+			mParentAggregationMetadata,
+			aTemplateAggregationNames,
+			bHasTemplateAggregation,
+			mAggregationBindingTemplates
+		);
+	};
+
+	/**
 	 * Creates children for specified ElementOverlay.
 	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - ElementOverlay to create children for
 	 * @param {object} mParams - Property bag
@@ -1257,6 +1297,12 @@ sap.ui.define([
 				} else {
 					this.fireElementPropertyChanged(oParams);
 				}
+				break;
+			case "bindAggregation":
+				this._createChildrenForAggregationBindingTemplate(oElementOverlay);
+				break;
+			case "unbindAggregation":
+				this._destroyChildrenForAggregationBindingTemplate(oElementOverlay, oParams.name);
 				break;
 			default:
 				break;
