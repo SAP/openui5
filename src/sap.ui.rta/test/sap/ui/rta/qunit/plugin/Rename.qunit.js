@@ -506,9 +506,9 @@ sap.ui.define([
 			}.bind(this));
 		},
 		afterEach() {
+			sandbox.restore();
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
-			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when the Label gets renamed", function(assert) {
@@ -887,6 +887,23 @@ sap.ui.define([
 			await triggerAndWaitForStartEdit(this.oRenamePlugin, this.oInnerButtonOverlay);
 			this.oInnerButtonOverlay.destroy();
 			assert.ok(oHandlePostRenameSpy.notCalled, "then _handlePostRename is not called");
+		});
+
+		QUnit.test("when the edited overlay loses focus right after receiving it (simulate 'discard draft' pop up)", async function(assert) {
+			const fnDone = assert.async();
+			const oHandleInvalidRenameSpy = sandbox.spy(RenameHandler, "_handleInvalidRename");
+			// When this method is called we can be sure that the editable field exists
+			const oSetEditableFieldPositionStub = sandbox.stub(RenameHandler, "_setEditableFieldPosition").callsFake((...aArgs) => {
+				oSetEditableFieldPositionStub.wrappedMethod(aArgs);
+				sandbox.stub(this.oRenamePlugin._oEditableField, "focus").callsFake(() => {
+					RenameHandler._onEditableFieldBlur.call(this.oRenamePlugin);
+					assert.strictEqual(oHandleInvalidRenameSpy.called, false, "then _handleInvalidRename is not called (no errors occur)");
+					oSetEditableFieldPositionStub.restore();
+					fnDone();
+				});
+			});
+
+			await triggerAndWaitForStartEdit(this.oRenamePlugin, this.oInnerButtonOverlay);
 		});
 	});
 
