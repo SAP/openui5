@@ -30,6 +30,7 @@ sap.ui.define([
 	"use strict";
 
 	let InnerTable, InnerColumn, InnerRow;
+
 	/**
 	 * Constructor for a new <code>ResponsiveTableType</code>.
 	 *
@@ -42,7 +43,6 @@ sap.ui.define([
 	 * @since 1.65
 	 * @alias sap.ui.mdc.table.ResponsiveTableType
 	 */
-
 	const ResponsiveTableType = TableTypeBase.extend("sap.ui.mdc.table.ResponsiveTableType", {
 		metadata: {
 			library: "sap.ui.mdc",
@@ -107,10 +107,8 @@ sap.ui.define([
 
 	ResponsiveTableType.prototype.setParent = function() {
 		TableTypeBase.prototype.setParent.apply(this, arguments);
-		if (this._oShowDetailsButton) {
-			this._oShowDetailsButton.destroy();
-			this._oShowDetailsButton = null;
-		}
+		this._oShowDetailsButton?.destroy();
+		delete this._oShowDetailsButton;
 		return this;
 	};
 
@@ -131,15 +129,16 @@ sap.ui.define([
 		}
 	};
 
-	ResponsiveTableType.prototype._updateShowDetailsButton = function(oTable, bValue) {
+	ResponsiveTableType.prototype._updateShowDetailsButton = function(oResponsiveTable, bValue) {
+		// avoid execution of the if and else if block if bValue has not changed
 		if (bValue && !this._oShowDetailsButton) {
-			oTable.getHeaderToolbar().insertEnd(this._getShowDetailsButton(), 0);
-			oTable.attachEvent("popinChanged", this._onPopinChanged, this);
-			oTable.setHiddenInPopin(this._getImportanceToHide());
+			oResponsiveTable.getHeaderToolbar().insertEnd(this._getShowDetailsButton(), 0);
+			oResponsiveTable.attachEvent("popinChanged", this._onPopinChanged, this);
+			oResponsiveTable.setHiddenInPopin(this._getImportanceToHide());
 		} else if (!bValue && this._oShowDetailsButton) {
-			oTable.detachEvent("popinChanged", this._onPopinChanged, this);
-			oTable.getHeaderToolbar().removeEnd(this._oShowDetailsButton);
-			oTable.setHiddenInPopin();
+			oResponsiveTable.detachEvent("popinChanged", this._onPopinChanged, this);
+			oResponsiveTable.getHeaderToolbar().removeEnd(this._oShowDetailsButton);
+			oResponsiveTable.setHiddenInPopin([]);
 			this._oShowDetailsButton.destroy();
 			delete this._oShowDetailsButton;
 		}
@@ -182,7 +181,12 @@ sap.ui.define([
 			contextualWidth: "Auto",
 			growing: true,
 			sticky: ["ColumnHeaders", "HeaderToolbar", "InfoToolbar"],
-			growingThreshold: this.getThreshold(),
+			growingThreshold: {
+				path: "$sap.ui.mdc.Table>/threshold",
+				formatter: function(iThreshold) {
+					return iThreshold > -1 ? iThreshold : undefined;
+				}
+			},
 			noData: oTable._getNoDataText(),
 			headerToolbar: oTable._oToolbar,
 			ariaLabelledBy: [oTable._oTitle]
@@ -619,10 +623,8 @@ sap.ui.define([
 
 	ResponsiveTableType.prototype.exit = function() {
 		TableTypeBase.prototype.exit.apply(this, arguments);
-		if (this._oShowDetailsButton) {
-			this._oShowDetailsButton.destroy();
-			this._oShowDetailsButton = null;
-		}
+		this._oShowDetailsButton?.destroy();
+		delete this._oShowDetailsButton;
 	};
 
 	return ResponsiveTableType;
