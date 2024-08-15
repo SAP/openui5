@@ -21,7 +21,8 @@ sap.ui.define([
 		"sap/m/MessageToast",
 		"sap/ui/dom/includeStylesheet",
 		"sap/ui/dom/includeScript",
-		"sap/ui/util/openWindow"
+		"sap/ui/util/openWindow",
+		"sap/ui/documentation/sdk/controller/util/Highlighter"
 	],
 	function (
 		jQuery,
@@ -42,7 +43,8 @@ sap.ui.define([
 		MessageToast,
 		includeStylesheet,
 		includeScript,
-		openWindow
+		openWindow,
+		Highlighter
 	) {
 		"use strict";
 
@@ -173,6 +175,10 @@ sap.ui.define([
 
 				ResizeHandler.deregister(this._onResize.bind(this));
 				Device.orientation.detachHandler(this._onOrientationChange, this);
+
+				if (this.highlighter) {
+					this.highlighter.destroy();
+				}
 			},
 
 			/* =========================================================== */
@@ -272,12 +278,16 @@ sap.ui.define([
 				var sId = decodeURIComponent(event.getParameter("arguments").id),
 					aUrlParts = sId.split("#"),
 					sTopicId = aUrlParts[0],
-					sSubTopicId = aUrlParts[1];
+					sSubTopicId = aUrlParts[1],
+					oOptions = event.getParameter("arguments")["?options"];
 
 				this.sTopicId = sTopicId.replace(".html", "");
 				this.sSubTopicId = sSubTopicId;
 				this.sTopicURL = ResourcesUtil.getResourceOriginPath(this._oConfig.docuPath + sTopicId + (sTopicId.match(/\.html/) ? "" : ".html"));
 				this.sSubTopicId = event.getParameter("arguments").subId || sSubTopicId;
+
+				this.sQueryFromUrl = oOptions && oOptions.q ? decodeURIComponent(oOptions.q) : "";
+
 				jQuery.ajax(this.sTopicURL)
 					.done(this._onHtmlResourceLoaded.bind(this))
 					.fail(this.onRouteNotFound.bind(this));
@@ -338,6 +348,31 @@ sap.ui.define([
 					document.querySelectorAll('pre:not([class*="lines"])').forEach(function(block) {
 						window.hljs.highlightElement(block);
 					});
+				}
+
+				var oSearchDataModel = this.getOwnerComponent().getModel("searchData");
+				var sQuery = oSearchDataModel.getProperty("/topicQuery");
+
+				 if (sQuery) {
+					this._updateHighlighting(sQuery);
+				}
+
+				if (this.sQueryFromUrl) {
+					this._updateHighlighting(this.sQueryFromUrl);
+				}
+			},
+
+			_updateHighlighting: function (sQuery) {
+				var oDomRef = this.getView().getDomRef();
+				if (this.highlighter) {
+					this.highlighter.highlight(sQuery);
+				} else if (sQuery) {
+					this.highlighter = new Highlighter(oDomRef, {
+						useExternalStyles: false,
+						shouldBeObserved: true,
+						isCaseSensitive: false
+					});
+					this.highlighter.highlight(sQuery);
 				}
 			},
 

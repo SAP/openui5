@@ -66,6 +66,46 @@ sap.ui.define([
 		Unit: UnitContent
 	};
 
+	let mDefaultHelps;
+
+	// private function to initialize globals for qUnit tests
+	ContentFactory._init = function() {
+
+		if (mDefaultHelps && mDefaultHelps.bool && mDefaultHelps.bool.control) {
+			mDefaultHelps.bool.control.destroy();
+		}
+		if (mDefaultHelps && mDefaultHelps.defineConditions && mDefaultHelps.defineConditions.control) {
+			mDefaultHelps.defineConditions.control.destroy();
+		}
+
+		mDefaultHelps = {
+			bool: {
+				modules: ["sap/ui/mdc/ValueHelp", "sap/ui/mdc/valuehelp/Popover", "sap/ui/mdc/valuehelp/content/Bool"],
+				id: "BoolDefaultHelp",
+				contentProperties: {},
+				dialog: false,
+				control: undefined,
+				updateTitle: function(oValueHelp, sTitle) {
+					// no title needed for boolean help (just dropdown)
+				}
+			},
+			defineConditions: {
+				modules: ["sap/ui/mdc/ValueHelp", "sap/ui/mdc/valuehelp/Dialog", "sap/ui/mdc/valuehelp/content/Conditions"],
+				id: "Field-DefineConditions-Help",
+				contentProperties: {},
+				dialog: true,
+				control: undefined,
+				updateTitle: function(oValueHelp, sTitle) {
+					oValueHelp.getDialog().setTitle(sTitle);
+					oValueHelp.getDialog().getContent()[0].setLabel(sTitle);
+				}
+			}
+		};
+
+	};
+
+	ContentFactory._init();
+
 	ContentFactory.prototype.init = function() {
 		this._oContentTypeClass = undefined;
 		this._sOperator = undefined;
@@ -100,12 +140,15 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.field.content.DefaultContent} oContentType The content type object
 	 * @param {sap.ui.mdc.enums.ContentMode} sContentMode A given content mode
 	 * @param {string} sId ID of the {@link sap.ui.mdc.field.FieldBase}
-	 * @returns {Promise<sap.ui.core.Control[]>} Array containing the created controls
+	 * @param {boolean} bProvideDefaultValueHelp If set, a default value help should be provided.
+	 * @returns {Promise<sap.ui.core.Element[]>} Array containing the created controls and the default value help, if needed
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
-	ContentFactory.prototype.createContent = function(oContentType, sContentMode, sId) {
-		const aControlNames = oContentType.getControlNames(sContentMode, this._sOperator);
+	ContentFactory.prototype.createContent = function(oContentType, sContentMode, sId, bProvideDefaultValueHelp) {
+		let aControlNames = oContentType.getControlNames(sContentMode, this._sOperator);
+		const sDefaultValueHelpName = bProvideDefaultValueHelp && oContentType.getUseDefaultValueHelp().name;
+		const oDefaultHelp = sDefaultValueHelpName && mDefaultHelps[sDefaultValueHelpName];
 		let oLoadModulesPromise;
 
 		this.setNoFormatting(oContentType.getNoFormatting(sContentMode));
@@ -125,6 +168,17 @@ sap.ui.define([
 			}
 		}
 
+		if (oDefaultHelp) {
+			if (oDefaultHelp.control && oDefaultHelp.control.isDestroyed()) {
+				// someone destroyed ValueHelp -> initialize
+				oDefaultHelp.control = undefined;
+			}
+
+			if (!oDefaultHelp.control) { // default help not created right now
+				aControlNames = aControlNames.concat(oDefaultHelp.modules);
+			}
+		}
+
 		try {
 			oLoadModulesPromise = loadModules(aControlNames)
 				.catch((oError) => {
@@ -132,8 +186,14 @@ sap.ui.define([
 				})
 				.then((aControls) => {
 					if (this.getField() && !this.getField().isFieldDestroyed()) {
+						const oValueHelp = _createDefaultValueHelp.call(this, oDefaultHelp, aControls);
+
 						this.updateConditionType(); // to make sure to have current FormatOptions if Condition(s)Type already exist
-						return oContentType.create(this, sContentMode, this._sOperator, aControls, sId);
+						const aContentControls = oContentType.create(this, sContentMode, this._sOperator, aControls, sId);
+						if (oValueHelp) {
+							aContentControls.push(oValueHelp);
+						}
+						return aContentControls;
 					} else {
 						return [];
 					}
@@ -591,6 +651,96 @@ sap.ui.define([
 	ContentFactory.prototype.getNoFormatting = function() {
 		return this._bNoFormatting;
 	};
+
+	/**
+	 * Determines if a default value help is needed
+	 *
+	 * @param {sap.ui.mdc.field.content.DefaultContent} oContentType The content type object
+	 * @param {string[]} aOperators Names of the operators if the <code>EditOperator</code> content mode is used
+	 * @param {sap.ui.mdc.enums.FieldEditMode} sEditMode The display mode of the {@link sap.ui.mdc.field.FieldBase}
+	 * @param {int} iMaxConditions Maximum number of conditions of the {@link sap.ui.mdc.field.FieldBase}
+	 * @param {boolean} bIsSingleValue If set, there is only one operator and it is a single-value operator
+	 * @returns {boolean} <code>true</code> id a default value help is needed
+	 *
+	 * @private
+	 * @ui5-restricted only for controls inherit from FieldBase
+	 * @since 1.128.0
+	 */
+	ContentFactory.prototype.getProvideDefaultValueHelp = function(oContentType, aOperators, sEditMode, iMaxConditions, bIsSingleValue) {
+
+		const oUseDefaultValueHelp = oContentType.getUseDefaultValueHelp();
+		if (oUseDefaultValueHelp && sEditMode !== FieldEditMode.Display) {
+			if ((iMaxConditions === 1 && oUseDefaultValueHelp.single) || (iMaxConditions !== 1 && oUseDefaultValueHelp.multi)) {
+				if (aOperators.length === 1) {
+					// not if operator is handled by special control (like DatePicker)
+					if (iMaxConditions === 1) {
+						if (!(oContentType.getEditOperator() && oContentType.getEditOperator()[aOperators[0]]) &&
+							(oUseDefaultValueHelp.oneOperatorSingle || !bIsSingleValue)) {
+							// "bool" case (always default field help) or operator needs more than one value (e.g. between)
+							return true;
+						}
+					} else if (oUseDefaultValueHelp.oneOperatorMulti || !bIsSingleValue) {
+						// DatePicker case - in multi-value use default help to get DatePicker controls
+						return true;
+					}
+				} else {
+					// multiple operators -> default help needed
+					return true;
+				}
+			}
+		}
+
+		return false;
+
+	};
+
+	/**
+	 * Updates the title of the default value help.
+	 *
+	 * This is used to forward the label of the current connected control.
+	 *
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp value help
+	 * @param {string} sTitle title
+	 *
+	 * @private
+	 * @ui5-restricted only for controls inherit from FieldBase
+	 * @since 1.128.0
+	 */
+	ContentFactory.prototype.updateDefaultValueHelpTitle = function(oValueHelp, sTitle) {
+
+		for (const sType in mDefaultHelps) {
+			if (mDefaultHelps[sType].control === oValueHelp) {
+				mDefaultHelps[sType].updateTitle(oValueHelp, sTitle);
+				break;
+			}
+		}
+
+	};
+
+	function _createDefaultValueHelp(oDefaultHelp, aModules) {
+
+		if (oDefaultHelp && !oDefaultHelp.control) {
+			const ValueHelp = aModules[aModules.length - 3]; // assume that the VH-modules are the last ones
+			const Container = aModules[aModules.length - 2];
+			const Content = aModules[aModules.length - 1];
+			const oValueHelp = new ValueHelp(oDefaultHelp.id, {
+				delegate: { name: "sap/ui/mdc/ValueHelpDelegate", payload: { isDefaultHelp: true } } // use base-delegate as TypeUtil of delegate is not used in current ValueHelp implementation as we transfer the Type of the Field into the ValueHelp (oConfig)
+			});
+			const oContainer = new Container(oDefaultHelp.id + "-container", {
+				content: [new Content(oDefaultHelp.id + "-content", oDefaultHelp.contentProperties)]
+			});
+			oValueHelp._bIsDefaultHelp = true;
+			oDefaultHelp.control = oValueHelp;
+			if (oDefaultHelp.dialog) {
+				oValueHelp.setDialog(oContainer);
+			} else {
+				oValueHelp.setTypeahead(oContainer);
+			}
+		}
+
+		return oDefaultHelp?.control;
+
+	}
 
 	return ContentFactory;
 });

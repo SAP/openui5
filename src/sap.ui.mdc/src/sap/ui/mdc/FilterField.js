@@ -26,8 +26,8 @@ sap.ui.define([
 	 *
 	 * @class
 	 * The <code>FilterField</code> control is used to filter data based on the conditions. The conditions are managed
-	 * in the corresponding {@link sap.ui.mdc.condition.ConditionModel ConditionModel}.
-	 * That is why the <code>conditions</code> property must be bound to the related conditions in the {@link sap.ui.mdc.condition.ConditionModel ConditionModel}.
+	 * in the corresponding {@link sap.ui.mdc.FilterBar FilterBar}.
+	 * That is why the <code>conditions</code> property must be bound to the related conditions in the {@link sap.ui.mdc.FilterBar FilterBar}.
 	 * The type of this data must be defined in the <code>dataType</code> property.
 	 *
 	 * Based on the data type settings, a default control is rendered by the <code>FilterField</code> as follows:

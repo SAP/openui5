@@ -300,9 +300,9 @@ function(
 	};
 
 	/**
-	 * Add hover effect to the specified overlays.
+	 * Adds hover effect to the specified overlays.
 	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]|sap.ui.core.Control|sap.ui.core.Control[]|String|String[]} vObjects
-	 *     Objects to be set can be:
+	 *     Objects can be:
 	 *         - a single overlay
 	 *         - an array of overlays
 	 *         - an element which has an overlay
@@ -312,15 +312,24 @@ function(
 	 */
 	SelectionManager.prototype.addHover = function(vObjects) {
 		getOverlays(vObjects).forEach(function(oElementOverlay) {
-			// TODO: Replace with DT CSS class after refactoring
-			oElementOverlay.addStyleClass("sapUiRtaOverlayHover");
+			oElementOverlay.addStyleClass("sapUiDtOverlayHover");
 		});
 	};
 
+	/**
+	 * Removes hover effect from the specified overlays.
+	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]|sap.ui.core.Control|sap.ui.core.Control[]|String|String[]} vObjects
+	 *     Objects can be:
+	 *         - a single overlay
+	 *         - an array of overlays
+	 *         - an element which has an overlay
+	 *         - an array of elements
+	 *         - a single control ID or Overlay ID
+	 *         - an array of control IDs or overlay IDs
+	 */
 	SelectionManager.prototype.removeHover = function(vObjects) {
 		getOverlays(vObjects).forEach(function(oElementOverlay) {
-			// TODO: Replace with DT CSS class after refactoring
-			oElementOverlay.removeStyleClass("sapUiRtaOverlayHover");
+			oElementOverlay.removeStyleClass("sapUiDtOverlayHover");
 		});
 	};
 

@@ -54,7 +54,7 @@ function(
 	 * @class
 	 * The ObjectIdentifier is a display control that enables the user to easily identify a specific object. The ObjectIdentifier title is the key identifier of the object and additional text can be used to further distinguish it from other objects.
 	 *
-     * <b>Note:</b> This control should not be used with {@link sap.m.Label} or in Forms along with {@link sap.m.Label}.
+	* <b>Note:</b> This control should not be used with {@link sap.m.Label} or in Forms along with {@link sap.m.Label}.
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
@@ -392,10 +392,17 @@ function(
 	 * @private
 	 */
 	ObjectIdentifier.prototype._handlePress = function(oEvent) {
-		var oClickedItem = oEvent.target;
-		if (this.getTitleActive() && this.$("title")[0].firstChild == oClickedItem) { // checking if the title is clicked
+		if (!this.getTitleActive()) {
+			return;
+		}
+
+		const oPressedItem = oEvent.target;
+		const oLinkDomRef = this.getTitleControl().getDomRef();
+		const bTitlePressed = oPressedItem.parentElement.id === oLinkDomRef.id || oPressedItem.id === oLinkDomRef.id;
+
+		if (bTitlePressed) {
 			this.fireTitlePress({
-				domRef: oClickedItem
+				domRef: oLinkDomRef
 			});
 
 			// mark the event that it is handled by the control

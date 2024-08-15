@@ -45,14 +45,15 @@ sap.ui.define([
  	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
 	 * @param {sap.ui.mdc.enums.ContentMode} sContentMode A given content mode
 	 * @param {string} sId ID of the internal control to be created.
-	 * @returns {Promise<sap.ui.core.Control[]>} Array containing the created controls
+	 * @param {boolean} bProvideDefaultValueHelp If set, a default value help should be provided.
+	 * @returns {Promise<sap.ui.core.Element[]>} Array containing the created controls and the default value help, if needed
 	 *
 	 * @protected
 	 * @since 1.124.0
 	 */
-	FieldBaseDelegate.createContent = function(oField, sContentMode, sId) {
+	FieldBaseDelegate.createContent = function(oField, sContentMode, sId, bProvideDefaultValueHelp) {
 		const oContentType = oField.getContentFactory().getContentType(oField.getBaseType(), oField.getMaxConditions(), oField._bTriggerable);
-		return oField.getContentFactory().createContent(oContentType, sContentMode, sId);
+		return oField.getContentFactory().createContent(oContentType, sContentMode, sId, bProvideDefaultValueHelp);
 	};
 
 	FieldBaseDelegate.getTypeMap = function() {
@@ -215,8 +216,8 @@ sap.ui.define([
 	 * @param {object} oInParameters In parameters for the key (as a key is not necessarily unique.) (Only filled in conditions of old variants.)
 	 * @param {object} oOutParameters Out parameters for the key (as a key is not necessarily unique.) (Only filled in conditions of old variants.)
 	 * @param {sap.ui.model.Context} oBindingContext <code>BindingContext</code> of the checked field; Inside a table, the <code>ValueHelp</code> element might be connected to a different row.
-	 * @param {undefined} [oConditionModel] <code>ConditionModel</code>, if bound to one - NO LONGER USED
-	 * @param {undefined} [sConditionModelName] Name of the <code>ConditionModel</code>, if bound to one - NO LONGER USED
+	 * @param {undefined} [oDoNotUse] NO LONGER USED
+	 * @param {undefined} [sDoNotUse] NO LONGER USED
 	 * @param {object} oConditionPayload Additional context information for this key
 	 * @param {sap.ui.core.Control} oControl Instance of the calling control if it is not the field itself
 	 * @param {sap.ui.model.Type} oType Type of the value
@@ -225,7 +226,7 @@ sap.ui.define([
 	 * @since: 1.78.0
 	 * @public
 	 */
-	FieldBaseDelegate.getDescription = function(oField, oValueHelp, vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName, oConditionPayload, oControl, oType) {
+	FieldBaseDelegate.getDescription = function(oField, oValueHelp, vKey, oInParameters, oOutParameters, oBindingContext, oDoNotUse, sDoNotUse, oConditionPayload, oControl, oType) {
 		const oConfig = {
 			value: vKey,
 			parsedValue: vKey,

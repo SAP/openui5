@@ -1,19 +1,16 @@
 /******************************************************************
 	Style of the RTA Add Fields Dialog  - Horizon Dark Theme
 *******************************************************************/
-@_sap_ui_rta_FieldRepository_ListSelect: @sapUiListHoverSelectionBackground;
-@_sap_ui_rta_FieldRepository_BtnHoverOutline: @sapUiButtonActiveBorderColor;
+@_sap_ui_rta_FieldRepository_BtnHoverOutlineColor: @sapUiButtonSelectedHoverBorderColor; //#4db1ff
 @_sap_ui_rta_FieldRepository_ListItmBorderRadius: @sapUiButtonBorderCornerRadius; //0.5rem
+@_sap_ui_rta_FieldRepository_BtnHoverBorderColor: @sapUiButtonHoverBorderColor; //#3a4a5a
+@_sap_ui_rta_FieldRepository_BtnEmphasizedFocusBorderColor: @sapUiButtonEmphasizedHoverTextColor; //#eaecee
 
 .sapUiRtaMode {
 
 	.sapUIRtaFieldRepositoryDialog {
 
 		.sapMLIBHoverable {
-			&.sapMLIBSelected:hover {
-				background: @_sap_ui_rta_FieldRepository_ListSelect;
-			}
-
 			&.sapMLIB.sapMLIBSelected {
 				border-bottom: 0.0625rem solid transparent;
 			}
@@ -25,7 +22,36 @@
 
 		// Search field
 		.sapMSF.sapMFocus:hover .sapMSFF {
-			outline: 0.0625rem solid @_sap_ui_rta_FieldRepository_BtnHoverOutline; //1px
+			outline: 0.0625rem solid @_sap_ui_rta_FieldRepository_BtnHoverOutlineColor; //1px
+		}
+
+		// Sort-Button
+		.sapMTB:not(.sapMIBar-CTX){
+			.sapMBtn {
+				&:hover {
+					.sapMBtnInner {
+						border: 0.0625rem solid @_sap_ui_rta_FieldRepository_BtnHoverBorderColor!important; //1px
+					}
+				}
+			}
+		}
+		.sapMBtn {
+
+			>.sapMBtnInner {
+				border: 0.0625rem solid transparent; //1px
+			}
+
+			&:focus {
+				> .sapMBtnInner{
+					outline: none;
+				}
+				&:not(:hover) > .sapMFocusable {
+					outline: none;
+				}
+				&:not(:hover) > .sapMFocusable.sapMBtnEmphasized {
+					border-color:transparent;
+				}
+			}
 		}
 	}
 }

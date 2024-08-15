@@ -271,10 +271,10 @@ sap.ui.define([
 				/**
 				 * Sets the conditions that represent the values of the field.
 				 *
-				 * These should be bound to a {@link sap.ui.mdc.condition.ConditionModel ConditionModel} using the corresponding <code>fieldPath</code>.
+				 * These should be bound to a {@link sap.ui.mdc.FilterBar FilterBar} using the corresponding <code>propertyPath</code>.
 				 *
 				 * <b>Note:</b> For {@link sap.ui.mdc.FilterField FilterField} controls, the <code>conditions</code> property must be used to bind
-				 * {@link sap.ui.mdc.FilterField FilterField} to a {@link sap.ui.mdc.condition.ConditionModel ConditionModel}.</br>
+				 * {@link sap.ui.mdc.FilterField FilterField} to a {@link @link sap.ui.mdc.FilterBar FilterBar}.</br>
 				 * For example, for a {@link sap.ui.mdc.FilterField FilterField} control inside a {@link sap.ui.mdc.FilterBar FilterBar} control, the binding looks like this:</br>
 				 * <code>conditions="{$filters>/conditions/propertyPath}"</code> with the following data:
 				 * <ul>
@@ -577,41 +577,10 @@ sap.ui.define([
 		onsapenter: _handleEnter
 	};
 
-	let mDefaultHelps;
-
 	// private function to initialize globals for qUnit tests
 	FieldBase._init = function() {
 
-		if (mDefaultHelps && mDefaultHelps.bool && mDefaultHelps.bool.control) {
-			mDefaultHelps.bool.control.destroy();
-		}
-		if (mDefaultHelps && mDefaultHelps.defineConditions && mDefaultHelps.defineConditions.control) {
-			mDefaultHelps.defineConditions.control.destroy();
-		}
-
-		mDefaultHelps = {
-			bool: {
-				modules: ["sap/ui/mdc/ValueHelp", "sap/ui/mdc/valuehelp/Popover", "sap/ui/mdc/valuehelp/content/Bool"],
-				id: "BoolDefaultHelp",
-				contentProperties: {},
-				dialog: false,
-				control: undefined,
-				updateTitle: function(oValueHelp, sTitle) {
-					// no title needed for boolean help (just dropdown)
-				}
-			},
-			defineConditions: {
-				modules: ["sap/ui/mdc/ValueHelp", "sap/ui/mdc/valuehelp/Dialog", "sap/ui/mdc/valuehelp/content/Conditions"],
-				id: "Field-DefineConditions-Help",
-				contentProperties: {},
-				dialog: true,
-				control: undefined,
-				updateTitle: function(oValueHelp, sTitle) {
-					oValueHelp.getDialog().setTitle(sTitle);
-					oValueHelp.getDialog().getContent()[0].setLabel(sTitle);
-				}
-			}
-		};
+		ContentFactory._init();
 
 	};
 
@@ -2050,21 +2019,29 @@ sap.ui.define([
 				this.getContentFactory().updateConditionType();
 			}
 
-			if (_useDefaultValueHelp.call(this, oContentType, aOperators, sEditMode, iMaxConditions)) {
-				// use default field help
-				_createDefaultValueHelp.call(this, oContentType.getUseDefaultValueHelp().name);
-			} else if (this._sDefaultValueHelp) {
+			const bProvideDefaultValueHelp = !this._getValueHelp() && this.getContentFactory().getProvideDefaultValueHelp(oContentType, aOperators, sEditMode, iMaxConditions, _isOnlyOneSingleValue.call(this, aOperators));
+			if (!bProvideDefaultValueHelp && this._sDefaultValueHelp) {
 				delete this._sDefaultValueHelp; // do not destroy as might used on other Fields too
 			}
 
 			const sId = _getIdForInternalControl.call(this);
 			const oDelegate = this.getControlDelegate();
-			this._oCreateContentPromise = oDelegate.createContent(this, sContentMode, sId);
+			this._oCreateContentPromise = oDelegate.createContent(this, sContentMode, sId, bProvideDefaultValueHelp);
 			this._oCreateContentPromise.then((aControls) => {
 				delete this._oCreateContentPromise; // after finished new creation request can be sync again (clear at the beginning as error might break function before end)
 
 				// if already destroyed ContentFactory will not create any content control
 				for (const oControl of aControls) {
+					if (oControl.isA("sap.ui.mdc.ValueHelp")) { // it's a default value help
+						this._sDefaultValueHelp = oControl.getId();
+						if (!oControl.getControl()) {
+							oControl.connect(this); // if not already connected connect it to transfer data type
+						}
+						this.getContentFactory().updateConditionType();
+						_defaultValueHelpUpdate.call(this, this._sDefaultValueHelp);
+						_setAriaAttributes.call(this, false);
+						continue;
+					}
 					oControl.attachEvent("parseError", _handleParseError, this);
 					oControl.attachEvent("validationError", _handleValidationError, this);
 					oControl.attachEvent("validationSuccess", _handleValidationSuccess, this);
@@ -2216,88 +2193,9 @@ sap.ui.define([
 
 	}
 
-
-	function _createDefaultValueHelp(sType) {
-
-		this._sDefaultValueHelp = mDefaultHelps[sType].id;
-
-		let oValueHelp = mDefaultHelps[sType].control;
-
-		if (oValueHelp && oValueHelp.isDestroyed()) {
-			// someone destroyed ValueHelp -> initialize
-			mDefaultHelps[sType].control = undefined;
-			oValueHelp = undefined;
-		}
-
-		if (!oValueHelp) {
-			if (mDefaultHelps[sType].promise) {
-				mDefaultHelps[sType].promise.then(_defaultValueHelpUpdate.bind(this, mDefaultHelps[sType].id));
-			} else {
-				mDefaultHelps[sType].promise = loadModules(mDefaultHelps[sType].modules).catch((oError) => {
-					throw new Error("loadModules promise rejected in sap.ui.mdc.field.FieldBase:_createDefaultValueHelp function call - could not load controls " + JSON.stringify(mDefaultHelps[sType].modules));
-				}).then((aModules) => {
-					const ValueHelp = aModules[0];
-					const Container = aModules[1];
-					const Content = aModules[2];
-					oValueHelp = new ValueHelp(mDefaultHelps[sType].id, {
-						delegate: { name: "sap/ui/mdc/ValueHelpDelegate", payload: { isDefaultHelp: true } } // use base-delegate as TypeUtil of delegate is not used in current ValueHelp implementation as we transfer the Type of the Field into the ValueHelp (oConfig)
-					});
-					const oContainer = new Container(mDefaultHelps[sType].id + "-container", {
-						content: [new Content(mDefaultHelps[sType].id + "-content", mDefaultHelps[sType].contentProperties)]
-					});
-					oValueHelp._bIsDefaultHelp = true;
-					oValueHelp._sDefaultHelpType = sType;
-					mDefaultHelps[sType].control = oValueHelp;
-					if (mDefaultHelps[sType].dialog) {
-						oValueHelp.setDialog(oContainer);
-					} else {
-						oValueHelp.setTypeahead(oContainer);
-					}
-					//				this.addDependent(oValueHelp); // TODO: where to add to control tree
-					oValueHelp.connect(this); // to forward dataType
-					_defaultValueHelpUpdate.call(this, mDefaultHelps[sType].id);
-				}).unwrap();
-			}
-		} else {
-			_defaultValueHelpUpdate.call(this, mDefaultHelps[sType].id);
-		}
-
-		_setAriaAttributes.call(this, false);
-
-	}
-
 	function _defaultValueHelpUpdate(sId) {
 
 		_valueHelpChanged.call(this, sId, "insert");
-
-	}
-
-	function _useDefaultValueHelp(oContentType, aOperators, sEditMode, iMaxConditions) {
-
-		const oUseDefaultValueHelp = oContentType.getUseDefaultValueHelp();
-		if (oUseDefaultValueHelp && !this._getValueHelp() && sEditMode !== FieldEditMode.Display) {
-			if ((iMaxConditions === 1 && oUseDefaultValueHelp.single) || (iMaxConditions !== 1 && oUseDefaultValueHelp.multi)) {
-				if (aOperators.length === 1) {
-					const bIsSingleValue = _isOnlyOneSingleValue.call(this, aOperators); // if operator not exists unse no field help
-					// not if operator is handled by special control (like DatePicker)
-					if (iMaxConditions === 1) {
-						if (!(oContentType.getEditOperator() && oContentType.getEditOperator()[aOperators[0]]) &&
-							(oUseDefaultValueHelp.oneOperatorSingle || !bIsSingleValue)) {
-							// "bool" case (always default field help) or operator needs more than one value (e.g. between)
-							return true;
-						}
-					} else if (oUseDefaultValueHelp.oneOperatorMulti || !bIsSingleValue) {
-						// DatePicker case - in multi-value use default help to get DatePicker controls
-						return true;
-					}
-				} else {
-					// multiple operators -> default help needed
-					return true;
-				}
-			}
-		}
-
-		return false;
 
 	}
 
@@ -3410,7 +3308,7 @@ sap.ui.define([
 
 				if (oValueHelp._bIsDefaultHelp) {
 					// use label as default title for FilterField
-					mDefaultHelps[oValueHelp._sDefaultHelpType].updateTitle(oValueHelp, this.getLabel());
+					this.getContentFactory().updateDefaultValueHelpTitle(oValueHelp, this.getLabel());
 				}
 			}
 		}

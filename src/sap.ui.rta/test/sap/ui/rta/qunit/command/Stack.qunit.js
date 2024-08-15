@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/rta/command/AddXMLAtExtensionPoint",
 	"sap/ui/rta/command/BaseCommand",
 	"sap/ui/rta/command/CompositeCommand",
 	"sap/ui/rta/command/CommandFactory",
@@ -20,6 +21,7 @@ sap.ui.define([
 	DesignTimeMetadata,
 	ChangesWriteAPI,
 	PersistenceWriteAPI,
+	AddXMLAtExtensionPointCommand,
 	BaseCommand,
 	CompositeCommand,
 	CommandFactory,
@@ -35,7 +37,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a Selection plugin and designtime in MultiSelection mode and controls with custom dt metadata...", {
 		beforeEach() {
@@ -75,10 +77,10 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when 2 Changes get executed at the same time", function(assert) {
-			var done = assert.async();
+			const done = assert.async();
 
-			var iCounter = 0;
-			var aInputs = [this.oInput1, this.oInput2];
+			let iCounter = 0;
+			const aInputs = [this.oInput1, this.oInput2];
 			this.oCommandStack.attachCommandExecuted(function(oEvent) {
 				assert.deepEqual(
 					oEvent.getParameter("command").getElement(),
@@ -111,8 +113,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when execute is called and command.execute fails", function(assert) {
-			var fnDone = assert.async();
-			var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
+			const fnDone = assert.async();
+			const oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 			sandbox.stub(MessageBox, "error").callsFake(function(sMessage, mOptions) {
 				assert.strictEqual(
 					sMessage,
@@ -132,13 +134,31 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when execute is called and command.execute fails, and the error was in a AddXMLAtExtensionPoint command", function(assert) {
+			const fnDone = assert.async();
+			const oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
+			sandbox.stub(MessageBox, "error").callsFake(function(sMessage, mOptions) {
+				assert.strictEqual(
+					sMessage,
+					"My Error",
+					"then only the actual error message is shown without the generic error message prefix"
+				);
+				assert.deepEqual(mOptions, {title: oRtaResourceBundle.getText("HEADER_ERROR")}, "then the message title is correct");
+				fnDone();
+			});
+			// Create commands
+			const oAddXmlAtExtensionPointCommand = new AddXMLAtExtensionPointCommand();
+			sandbox.stub(oAddXmlAtExtensionPointCommand, "execute").rejects(new Error("My Error"));
+			this.oCommandStack.pushAndExecute(oAddXmlAtExtensionPointCommand);
+		});
+
 		QUnit.test("when 2 Changes get executed and one gets an error after execution", function(assert) {
-			var done = assert.async();
+			const done = assert.async();
 			sandbox.stub(MessageBox, "error");
-			var iCounter = 0;
-			var aInputs = [this.oInput1, this.oInput2];
+			let iCounter = 0;
+			const aInputs = [this.oInput1, this.oInput2];
 			this.oCommandStack.attachCommandExecuted(function(oEvent) {
-				var bFirstCommand = oEvent.getParameter("command").getElement() === aInputs[0];
+				const bFirstCommand = oEvent.getParameter("command").getElement() === aInputs[0];
 				assert.ok(bFirstCommand, `then command number ${iCounter + 1} gets executed`);
 				iCounter++;
 
@@ -171,12 +191,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("execute / undo / redo with CommandExecutionHandler", function(assert) {
-			var oCommandExecutionHandlerStub = sandbox.stub().resolves();
+			const oCommandExecutionHandlerStub = sandbox.stub().resolves();
 			this.oCommandStack.addCommandExecutionHandler(oCommandExecutionHandlerStub);
-			var oFireExecutedStub = sandbox.stub(this.oCommandStack, "fireCommandExecuted");
-			var oFireModifiedStub = sandbox.stub(this.oCommandStack, "fireModified");
+			const oFireExecutedStub = sandbox.stub(this.oCommandStack, "fireCommandExecuted");
+			const oFireModifiedStub = sandbox.stub(this.oCommandStack, "fireModified");
 
-			var oCommand;
+			let oCommand;
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement: this.oInput1
 			}, this.oInputDesignTimeMetadata)
@@ -373,11 +393,11 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when calling function 'initializeWithChanges' with the array...", function(assert) {
-			var aChanges = [RtaQunitUtils.createUIChange(this.oChangeDefinition1), RtaQunitUtils.createUIChange(this.oChangeDefinition2)];
+			const aChanges = [RtaQunitUtils.createUIChange(this.oChangeDefinition1), RtaQunitUtils.createUIChange(this.oChangeDefinition2)];
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aChanges);
 
 			return CommandStack.initializeWithChanges(this.oControl, ["fileName1", "fileName2"]).then(function(oStack) {
-				var aCommands = oStack.getCommands();
+				const aCommands = oStack.getCommands();
 				assert.ok(oStack, "an instance of the CommandStack has been created");
 				assert.equal(aCommands.length, 2, "the CommandStack contains two commands");
 				assert.equal(aCommands[0]._oPreparedChange, aChanges[1], "the first command contains the last change");
@@ -386,7 +406,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling function 'initializeWithChanges' with the array containing changes from a composite command...", function(assert) {
-			var aCompositeChanges = [
+			const aCompositeChanges = [
 				RtaQunitUtils.createUIChange(this.oChangeDefinitionForComposite11),
 				RtaQunitUtils.createUIChange(this.oChangeDefinitionForComposite12),
 				RtaQunitUtils.createUIChange(this.oChangeDefinitionForComposite21),
@@ -397,9 +417,9 @@ sap.ui.define([
 			return CommandStack.initializeWithChanges(
 				this.oControl, ["fileName11", "fileName12", "fileName21", "fileName22"]
 			).then(function(oStack) {
-				var aCommands = oStack.getCommands();
-				var aSubCommands1 = oStack.getSubCommands(aCommands[0]);
-				var aSubCommands2 = oStack.getSubCommands(aCommands[1]);
+				const aCommands = oStack.getCommands();
+				const aSubCommands1 = oStack.getSubCommands(aCommands[0]);
+				const aSubCommands2 = oStack.getSubCommands(aCommands[1]);
 				assert.ok(oStack, "an instance of the CommandStack has been created");
 				assert.equal(aCommands.length, 2, "the CommandStack contains two commands");
 				assert.equal(aSubCommands1.length, 2, "the first command contains two sub-commands");
@@ -427,12 +447,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling function 'initializeWithChanges' for a non existent change...", function(assert) {
-			var aChanges = [RtaQunitUtils.createUIChange(this.oChangeDefinition1), RtaQunitUtils.createUIChange(this.oChangeDefinition2)];
+			const aChanges = [RtaQunitUtils.createUIChange(this.oChangeDefinition1), RtaQunitUtils.createUIChange(this.oChangeDefinition2)];
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aChanges);
 
 			return CommandStack.initializeWithChanges(this.oControl, ["unavailableChangeFileName"]).then(function(oStack) {
 				assert.ok(oStack, "an instance of the CommandStack has been created");
-				var aCommands = oStack.getCommands();
+				const aCommands = oStack.getCommands();
 				assert.equal(aCommands.length, 0, "the CommandStack contains no commands");
 			});
 		});
@@ -450,7 +470,7 @@ sap.ui.define([
 		QUnit.test("canUndo", function(assert) {
 			assert.notOk(this.oCommandStack.canUndo(), "then canUndo returns false when the stack is empty");
 
-			var oBaseCommand = new BaseCommand();
+			const oBaseCommand = new BaseCommand();
 			this.oCommandStack.push(oBaseCommand);
 			assert.notOk(this.oCommandStack.canUndo(), "then canUndo returns false when the command was not executed");
 
@@ -462,7 +482,7 @@ sap.ui.define([
 
 		QUnit.test("canSave and all commands are relevant for save", function(assert) {
 			assert.notOk(this.oCommandStack.canSave(), "then canSave returns false when the stack is empty");
-			var oBaseCommand = new BaseCommand();
+			const oBaseCommand = new BaseCommand();
 			this.oCommandStack.push(oBaseCommand);
 			assert.notOk(this.oCommandStack.canSave(), "then canSave returns false when the command was not executed");
 
@@ -473,8 +493,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("canSave and only some commands are relevant for save", function(assert) {
-			var oBaseCommand = new BaseCommand();
-			var oBaseCommand2 = new BaseCommand();
+			const oBaseCommand = new BaseCommand();
+			const oBaseCommand2 = new BaseCommand();
 			oBaseCommand.setRelevantForSave(false);
 			this.oCommandStack.push(oBaseCommand);
 			this.oCommandStack.push(oBaseCommand2);
@@ -488,7 +508,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("canSave and no commands are relevant for save", function(assert) {
-			var oBaseCommand = new BaseCommand();
+			const oBaseCommand = new BaseCommand();
 			oBaseCommand.setRelevantForSave(false);
 			this.oCommandStack.push(oBaseCommand);
 			assert.notOk(this.oCommandStack.canSave(), "then canSave returns false when the command was not executed");
@@ -500,10 +520,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("canSave with composite command - some are relevant for save", function(assert) {
-			var oBaseCommand = new BaseCommand();
+			const oBaseCommand = new BaseCommand();
 			oBaseCommand.setRelevantForSave(false);
-			var oBaseCommand2 = new BaseCommand();
-			var oCompositeCommand = new CompositeCommand();
+			const oBaseCommand2 = new BaseCommand();
+			const oCompositeCommand = new CompositeCommand();
 			oCompositeCommand.addCommand(oBaseCommand);
 			oCompositeCommand.addCommand(oBaseCommand2);
 
@@ -514,11 +534,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("canSave with composite command - none are relevant for save", function(assert) {
-			var oBaseCommand = new BaseCommand();
+			const oBaseCommand = new BaseCommand();
 			oBaseCommand.setRelevantForSave(false);
-			var oBaseCommand2 = new BaseCommand();
+			const oBaseCommand2 = new BaseCommand();
 			oBaseCommand2.setRelevantForSave(false);
-			var oCompositeCommand = new CompositeCommand();
+			const oCompositeCommand = new CompositeCommand();
 			oCompositeCommand.addCommand(oBaseCommand);
 			oCompositeCommand.addCommand(oBaseCommand2);
 
@@ -529,13 +549,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("compositeLastTwoCommands", function(assert) {
-			var oBaseCommand1 = new BaseCommand();
-			var oBaseCommand2 = new BaseCommand();
+			const oBaseCommand1 = new BaseCommand();
+			const oBaseCommand2 = new BaseCommand();
 			this.oCommandStack.push(oBaseCommand1);
 			this.oCommandStack.push(oBaseCommand2);
 
 			this.oCommandStack.compositeLastTwoCommands();
-			var oCompositeCommand = this.oCommandStack.top();
+			const oCompositeCommand = this.oCommandStack.top();
 			assert.deepEqual(
 				oCompositeCommand.getCommands(),
 				[oBaseCommand1, oBaseCommand2],

@@ -619,15 +619,20 @@ sap.ui.define([
 			}.bind(this)
 		};
 		this._oList.addDelegate(this._oListEventDelegate);
+		var aList = this.getList();
 		if (this._bItemRemoved) {
 			this._bItemRemoved = false;
-			var aList = this.getList();
 			var aListItems = aList.getItems();
 			if (aListItems.length > 0) {
 				aListItems[0].focus();
 			} else {
 				aList.getDomRef().querySelector(".sapMUCNoDataPage").focus();
 			}
+		}
+		var oNoDataDom = aList?.getDomRef()?.querySelector(".sapMUCNoDataPage");
+		var iCurrentHeight = oNoDataDom?.offsetHeight;
+		if (iCurrentHeight){
+			oNoDataDom.style.height = iCurrentHeight + "px";
 		}
 
 		if (this.getCloudFilePickerEnabled()) {

@@ -280,7 +280,7 @@
 					]
 				},
 				{
-					"pattern": "topic/{id}",
+					"pattern": "topic/{id}:?options:",
 					"name": "topicId",
 					"target": [
 						"topicMaster",

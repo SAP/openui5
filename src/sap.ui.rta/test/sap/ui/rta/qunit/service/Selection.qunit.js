@@ -242,11 +242,9 @@ sap.ui.define([
 		QUnit.test("addHover() and RemoveHover()", async function(assert) {
 			await this.oSelectionService.addHover(this.oButton1.getId());
 			const oOverlay = OverlayRegistry.getOverlay(this.oButton1);
-			// TODO: Replace with DT CSS class after refactoring
-			assert.ok(oOverlay.hasStyleClass("sapUiRtaOverlayHover"));
+			assert.ok(oOverlay.hasStyleClass("sapUiDtOverlayHover"));
 			await this.oSelectionService.removeHover(this.oButton1.getId());
-			// TODO: Replace with DT CSS class after refactoring
-			assert.notOk(oOverlay.hasStyleClass("sapUiRtaOverlayHover"));
+			assert.notOk(oOverlay.hasStyleClass("sapUiDtOverlayHover"));
 		});
 	});
 

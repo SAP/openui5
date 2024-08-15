@@ -158,12 +158,15 @@ sap.ui.define([
 				if ((bBindingSuspended || bBindingWillBeSuspended) && (!this.isTypeahead() || Device.system.phone)) { // in dialog or phone case do not resume suspended table on opening
 					return undefined;
 				}
+
+				const oTable = this._getTable();
+				_attachTableEvents.call(this, oTable);
+
 				return this.applyFilters();
 			});
 		}
 		return undefined;
 	};
-
 
 	MTable.prototype.applyFilters = function() {
 
@@ -353,6 +356,7 @@ sap.ui.define([
 			if (oTable.hasStyleClass("sapMComboBoxList")) {
 				oTable.removeStyleClass("sapMComboBoxList");
 			}
+			_detachTableEvents.call(this, oTable);
 		}
 
 		this._iNavigateIndex = -1; // initialize after closing
@@ -1002,10 +1006,7 @@ sap.ui.define([
 
 			if (oChanges.mutation === "remove") {
 				this._oObserver.unobserve(oTable);
-				oTable.removeDelegate(this._oTableDelegate);
-				this._oTable.detachItemPress(this._handleItemPress, this);
-				this._oTable.detachSelectionChange(this._handleSelectionChange, this);
-				this._oTable.detachUpdateFinished(this._handleUpdateFinished, this);
+				_detachTableEvents.call(this, oTable);
 				this._oTable = null;
 				this._removePromise("footer");
 				this.resetListBinding();
@@ -1013,15 +1014,6 @@ sap.ui.define([
 				this._oTable = oTable;
 				this._oTable.addStyleClass("sapMdcValueHelpMTable");
 				_adjustTable.call(this);
-				this._oTable.attachItemPress(this._handleItemPress, this);
-				this._oTable.attachSelectionChange(this._handleSelectionChange, this);
-				this._oTable.attachUpdateFinished(this._handleUpdateFinished, this);
-				this._oTableDelegate = this._oTableDelegate || {
-					onsapprevious: this._handleTableEvent,
-					onsapnext: this._handleTableEvent,
-					cellClick: this._handleTableEvent
-				};
-				oTable.addDelegate(this._oTableDelegate, true, this);
 
 				if (!this.resolveListBinding()) {
 					this._oObserver.observe(oChanges.child, { bindings: ["items"] });
@@ -1115,6 +1107,55 @@ sap.ui.define([
 		this._sHighlightId = sHighlightId;
 		_updateSelection.call(this);
 	};
+
+	MTable.prototype.clone = function(sIdSuffix, aLocalIds) {
+
+		// detach event handler before cloning to not have it twice on the clone
+		// attach it after clone again
+		const oTable = this._getTable();
+		const bAttached = oTable?._bAttached;
+		if (bAttached) {
+			_detachTableEvents.call(this, oTable);
+		}
+
+		const oClone = FilterableListContent.prototype.clone.apply(this, arguments);
+
+		if (bAttached) {
+			_attachTableEvents.call(this, oTable);
+		}
+
+		return oClone;
+
+	};
+
+	function _attachTableEvents(oTable) {
+
+		if (!oTable._bAttached) {
+			oTable.attachItemPress(this._handleItemPress, this);
+			oTable.attachSelectionChange(this._handleSelectionChange, this);
+			oTable.attachUpdateFinished(this._handleUpdateFinished, this);
+			this._oTableDelegate = this._oTableDelegate || {
+				onsapprevious: this._handleTableEvent,
+				onsapnext: this._handleTableEvent,
+				cellClick: this._handleTableEvent
+			};
+			oTable.addDelegate(this._oTableDelegate, true, this);
+			oTable._bAttached = true;
+		}
+
+	}
+
+	function _detachTableEvents(oTable) {
+
+		if (oTable._bAttached) {
+			oTable.removeDelegate(this._oTableDelegate);
+			this._oTable.detachItemPress(this._handleItemPress, this);
+			this._oTable.detachSelectionChange(this._handleSelectionChange, this);
+			this._oTable.detachUpdateFinished(this._handleUpdateFinished, this);
+			oTable._bAttached = false;
+		}
+
+	}
 
 	return MTable;
 });

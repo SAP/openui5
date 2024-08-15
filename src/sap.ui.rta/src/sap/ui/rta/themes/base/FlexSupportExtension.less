@@ -1,14 +1,19 @@
 /******************************************************************
 	Style used by flex support chrome extension  - base Theme
 *******************************************************************/
+@_sap_ui_rta_FlexSupportExtension_BoxShadow: @sapUiUx3ToolPopupShadow; //0px 6px 12px 0px fade(black, 30);
+@_sap_ui_rta_FlexSupportExtension_BackgroundColor: fade(@sapUiSelected, 5%); //rgba(143, 181, 255, 0.05);
+@_sap_ui_rta_FlexSupportExtension_BorderRadius: @sapUiButtonBorderCornerRadius; //0.375rem
+@_sap_ui_rta_FlexSupportExtension_OutlineColor: @sapUiSelected; //#8fb5ff
+
 .sapUiFlexibilitySupportExtension_Selected {
-	box-shadow: @sapUiUx3ToolPopupShadow;
+	box-shadow: @_sap_ui_rta_FlexSupportExtension_BoxShadow;
 	&:after {
 		content: " ";
-		background: @sapUiMessageSuccessBorderColor;
+		background: @_sap_ui_rta_FlexSupportExtension_BackgroundColor;
 		opacity: 0.40;
-		border-radius: @sapUiButtonBorderCornerRadius;
-		outline: 0.125rem solid @sapUiSelected; //1px
+		border-radius: @_sap_ui_rta_FlexSupportExtension_BorderRadius;
+		outline: 0.125rem solid @_sap_ui_rta_FlexSupportExtension_OutlineColor; //1px
 		outline-offset: -0.125rem; //1px
 	}
 }

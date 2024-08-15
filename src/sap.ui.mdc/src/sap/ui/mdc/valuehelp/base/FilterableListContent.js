@@ -354,29 +354,15 @@ sap.ui.define([
 				if (oChanges.mutation === "insert") {
 					this._updateBasicSearchField();
 					this._assignCollectiveSearchSelect();
-
-					if (oChanges.name !== "_defaultFilterBar" || !this.getFilterBar()) { // DefaultFilterBar only used if no other FilterBar assigned
-						oFilterBar.attachSearch(this._handleSearch, this);
-					}
-					if (oChanges.name === "filterBar") {
-						oDefaultFilterBar = this.getAggregation("_defaultFilterBar");
-						if (oDefaultFilterBar) {
-							oDefaultFilterBar.detachSearch(this._handleSearch, this);
-						}
-					}
 				} else { // remove case
 					const oExistingBasicSearchField = oFilterBar.getBasicSearchField();
 					if (oExistingBasicSearchField && oExistingBasicSearchField._bCreatedByValueHelp) {
 						oFilterBar.setBasicSearchField(); // remove to reuse on other FilterBar
 					}
 
-					oFilterBar.detachSearch(this._handleSearch, this);
-
 					if (oChanges.name === "filterBar") {
 						oDefaultFilterBar = this.getAggregation("_defaultFilterBar");
-						if (oDefaultFilterBar) {
-							oDefaultFilterBar.attachSearch(this._handleSearch, this);
-						} else {
+						if (!oDefaultFilterBar) {
 							this._createDefaultFilterBar();
 						}
 					}
@@ -525,11 +511,25 @@ sap.ui.define([
 						return StateUtil.applyExternalState(oFilterBar, oStateDiff);
 					});
 
+					oFilterBar.cleanUpAllFilterFieldsInErrorState();
+					oFilterBar.attachSearch(this._handleSearch, this); // event only needed if shown
+					oFilterBar._bAttached = true;
+
 					return pHandleConditions.then(() => oFilterBar.awaitPendingModification());
 				}
 			});
 		}
 		return undefined;
+	};
+
+	FilterableListContent.prototype.onHide = function() {
+		ListContent.prototype.onHide.apply(this, arguments);
+
+		const oFilterBar = this.getActiveFilterBar();
+		if (oFilterBar?._bAttached) {
+			oFilterBar.detachSearch(this._handleSearch, this); // if hidden, event not needed
+			oFilterBar._bAttached = false;
+		}
 	};
 
 	/**
@@ -606,6 +606,28 @@ sap.ui.define([
 		return this.getConditions().filter((oCondition) => {
 			return oCondition.validated === ConditionValidated.Validated;
 		});
+	};
+
+	FilterableListContent.prototype.clone = function(sIdSuffix, aLocalIds) {
+
+		// detach event handler before cloning to not have it twice on the clone
+		// attach it after clone again
+		const oFilterBar = this.getActiveFilterBar();
+		const bAttached = oFilterBar?._bAttached;
+		if (bAttached) {
+			oFilterBar.detachSearch(this._handleSearch, this);
+			oFilterBar._bAttached = false;
+		}
+
+		const oClone = ListContent.prototype.clone.apply(this, arguments);
+
+		if (bAttached) {
+			oFilterBar.attachSearch(this._handleSearch, this);
+			oFilterBar._bAttached = true;
+		}
+
+		return oClone;
+
 	};
 
 	function _addSearchConditionToConditionMap(oConditions, sSearchPath, sFilterValue) {

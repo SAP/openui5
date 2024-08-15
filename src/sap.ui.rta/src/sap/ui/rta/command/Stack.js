@@ -262,8 +262,11 @@ sap.ui.define([
 					oError.command = this.removeCommand(this._toBeExecuted); // remove failing command
 					this._toBeExecuted--;
 					var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
+					// AddXMLAtExtensionPoint errors explain to the user what they did wrong, so they shouldn't open an incident
+					const sErrorMessage = oCommand.isA("sap.ui.rta.command.AddXMLAtExtensionPoint") ?
+						oError.message : oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", [oError.message]);
 					showMessageBox(
-						oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", [oError.message]),
+						sErrorMessage,
 						{title: oRtaResourceBundle.getText("HEADER_ERROR")},
 						"error"
 					);

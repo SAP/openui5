@@ -1,6 +1,7 @@
 /******************************************************************
 	Style of the DT Overlays - sap_fiori_3 Theme
 *******************************************************************/
+@_sap_ui_dt_Overlay_DropZoneBackgroundColor: fade(@sapUiSelected, 5%); //RGBA(8,84,160,0.05)
 
 .sapUiDtOverlayDropZone {
 	> .sapUiDtOverlayChildren {
@@ -11,9 +12,22 @@
 				content: none;
 			}
 
+			&.sapUiDtOverlayHover {
+				&:after {
+					content: none;
+				}
+			}
+
 			&.sapUiDtOverlaySelected {
 				box-shadow: none;
 			}
 		}
+	}
+}
+
+.sapUiDtOverlayTargetZone {
+	&:after {
+		transition: box-shadow .25s;
+		box-shadow: @_sap_ui_dt_Overlay_BoxShadow;
 	}
 }

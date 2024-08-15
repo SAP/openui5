@@ -1,22 +1,16 @@
 /***********************************************************************
 	Style of the RTA Toolbar (type: adaptation) - sap_fiori_3_hcb Theme
 ************************************************************************/
-@_sap_ui_rta_Toolbar_Adaptation_BaseColor: @sapUiNeutralBG; //#000000
-@_sap_ui_rta_Toolbar_Adaptation_TextColor: @sapUiNeutralElement; //#ffffff
-@_sap_ui_rta_Toolbar_Adaptation_BtnFocusBorder: @sapUiNeutralElement; //#ffffff
-@_sap_ui_rta_Toolbar_Adaptation_FocusOutlineCol: @sapUiNeutralBorder; //#fff
-@_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor: @sapUiCriticalText; //#ffab1d
-@_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor: @sapUiPositiveElement; //#9c9
-@_sap_ui_rta_Toolbar_Adaptation_BaseColorLight: @sapUiContentDisabledTextColor; //#666
-@_sap_ui_rta_Toolbar_Adaptation_BoxShadow_DarkColor: fade(@sapUiNeutralElement, 80%); //rgba(255, 255, 255, 0.8)
-@_sap_ui_rta_Toolbar_Adaptation_BoxShadow_LightColor: @sapUiNeutralElement; //#ffffff
-@_sap_ui_rta_Toolbar_Adaptation_VersionHistoryHover: @sapUiButtonHoverBackground; //#7a5100
+@_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor: @sapUiShellCriticalColor; //#ffab1d
+@_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor: @sapUiShellPositiveColor; //#9c9
+@_sap_ui_rta_Toolbar_Adaptation_BoxShadowDarkColor: fade(@sapUiContentShadowColor, 60%); //rgba(255, 255, 255, 0.6)
+@_sap_ui_rta_Toolbar_Adaptation_SegBBtnBackgroundColor: @sapUiShellBackground; //#000
 
 .sapUiRtaMode {
 	.sapUiRtaToolbar.sapUiRtaToolbarAdaptation {
 		.sapMBtn {
 			&:focus .sapMFocusable {
-				outline: 0.125rem dotted @_sap_ui_rta_Toolbar_Adaptation_FocusOutlineCol;
+				outline: 0.125rem dotted @_sap_ui_rta_Toolbar_Adaptation_FocusOutlineColor;
 				outline-offset: -0.125rem; //2px
 				border-color: transparent;
 			}
@@ -24,10 +18,47 @@
 
 		.sapMSegB {
 			.sapMSegBBtn {
+				&:not(:hover) {
+					&.sapMSegBBtnFocusable {
+						.sapMSegBBtnInner {
+							background-color: @_sap_ui_rta_Toolbar_Adaptation_SegBBtnBackgroundColor;
+						}
+					}
+				}
 				&.sapMSegBBtnFocusable {
 					&:focus .sapMSegBBtnInner {
 						outline-width: 0.125rem; //2px
 						outline-offset: -0.125rem; //2px
+					}
+				}
+			}
+		}
+		// set text to white on hover for better accessibility
+		.sapUiRtaVersionButton {
+			&:hover {
+				> span > span > bdi {
+					color: @_sap_ui_rta_Toolbar_Adaptation_TextColor;
+				}
+			}
+		}
+	}
+	// set text to white on hover for better accessibility
+	.sapUiRtaVersionHistory {
+		.sapMLIBHoverable:hover {
+			.sapMLIBContent {
+				.sapMFeedListItem {
+					.sapMFeedListItemText {
+						.sapMFeedListItemTextText {
+							.sapMFeedListItemTextString {
+								color: @_sap_ui_rta_Toolbar_Adaptation_TextColor;
+							}
+						}
+						.sapMFeedListItemFooter {
+							.sapMFeedListItemInfoText,
+							.sapMFeedListItemTimestampText {
+								color: @_sap_ui_rta_Toolbar_Adaptation_TextColor;
+							}
+						}
 					}
 				}
 			}

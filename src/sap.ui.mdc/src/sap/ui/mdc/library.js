@@ -118,7 +118,8 @@ sap.ui.define([
   * @since 1.95
   * @name sap.ui.mdc.valuehelp.ITypeaheadContent
   * @interface
-  * @public
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
   */
 
  /**
@@ -128,6 +129,8 @@ sap.ui.define([
   * @event
   * @param {sap.ui.base.Event} oControlEvent
   * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
   */
 
  /**
@@ -139,6 +142,8 @@ sap.ui.define([
   * @param {sap.ui.base.EventProvider} oControlEvent.getSource
   * @param {object} oControlEvent.getParameters
   * @param {boolean} oControlEvent.getParameters.close <code>true</code> if the value help needs to be closed
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
   */
 
  /**
@@ -151,29 +156,37 @@ sap.ui.define([
   * @param {object} oControlEvent.getParameters
   * @param {sap.ui.mdc.enums.ValueHelpSelectionType} oControlEvent.getParameters.type Type of the selection change (add, remove)
   * @param {object[]} oControlEvent.getParameters.conditions Changed conditions <br> <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
   */
 
  /**
   * Returns a title for the given Content
   *
   * @name sap.ui.mdc.valuehelp.ITypeaheadContent.getTitle
-  * @method
+  * @function
   * @returns {string} Content title as string
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
   */
 
  /**
   * Returns info if the given content is in multi select mode
   *
   * @name sap.ui.mdc.valuehelp.ITypeaheadContent.isMultiSelect
-  * @method
+  * @function
   * @returns {boolean} <code>true</code> if multi-selection is active.
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
   */
 
  /**
   * Loads additional dependencies, creates and returns displayed content.
   * @name sap.ui.mdc.valuehelp.ITypeaheadContent.getContent
-  * @method
+  * @function
   * @returns {Promise<sap.ui.core.Control>} Promise resolving in displayed content
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
   */
 
 
@@ -184,18 +197,22 @@ sap.ui.define([
   *
   * <b>Note:</b> This function must only be called by the <code>Container</code> element.
   * @name sap.ui.mdc.valuehelp.ITypeaheadContent.getItemForValue
-  * @method
+  * @function
   * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration}} oConfig Configuration
   * @returns {Promise<sap.ui.mdc.valuehelp.ValueHelpItem>} Promise returning object containing description, key and payload.
   * @throws {sap.ui.model.FormatException|sap.ui.model.ParseException} if entry is not found or not unique
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
   */
 
  /**
   * Navigates the typeaheads values (optional)
   *
   * @name sap.ui.mdc.valuehelp.ITypeaheadContent.navigate
-  * @method
+  * @function
   * @param {int} iStep Number of steps for navigation (e.g. 1 means next item, -1 means previous item)
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
   */
 
  /**
@@ -210,6 +227,8 @@ sap.ui.define([
   * @param {object} oControlEvent.getParameters.condition Provides the target condition of the navigation <br> <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
   * @param {string} oControlEvent.getParameters.itemId Provides the navigated item's ID (used for ARIA attributes)
   * @param {boolean} oControlEvent.getParameters.caseSensitive If <code>true</code> the filtering was executed case sensitive
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
   */
 
  /**
@@ -225,6 +244,8 @@ sap.ui.define([
   * @param {string} oControlEvent.getParameters.itemId Provides the ID of the suggested item (used for ARIA attributes)
   * @param {string} oControlEvent.getParameters.items Provides number of found items
   * @param {boolean} oControlEvent.getParameters.caseSensitive If <code>true</code> the filtering was executed case sensitive
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
   * @since 1.120.0
   */
 
@@ -235,6 +256,8 @@ sap.ui.define([
   * @event
   * @param {sap.ui.base.Event} oControlEvent
   * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
   */
 
  /**
@@ -246,6 +269,8 @@ sap.ui.define([
   * @event
   * @param {sap.ui.base.Event} oControlEvent
   * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
   * @since 1.127.0
   */
 
@@ -253,44 +278,56 @@ sap.ui.define([
   * If the container is used for typeahead it might be wanted that the same content should also be shown as valuehelp. If not, the field should not show a valuehelp icon.
   *
   * @name sap.ui.mdc.valuehelp.ITypeaheadContent.getUseAsValueHelp
-  * @method
+  * @function
   * @returns {boolean} <code>true</code> if the typeahead content can be used as value help
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
   */
 
  /**
   * Defines if the typeahead can be used for input validation.
   *
   * @name sap.ui.mdc.valuehelp.ITypeaheadContent.isValidationSupported
-  * @method
+  * @function
   * @returns {boolean} True if the typeahead container can be used for input validation
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
   */
 
  /**
   * Defines if the typeahead containers values can be navigated without visibly opening the help
   *
   * @name sap.ui.mdc.valuehelp.ITypeaheadContent.shouldOpenOnNavigate
-  * @method
+  * @function
   * @returns {boolean} If <code>true</code>, the value help should open when user used the arrow keys in the connected field control
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
   */
 
  /**
   * Defines if the typeahead content desires opening the typeahead whenever a user clicks on a connected control
   *
   * @name sap.ui.mdc.valuehelp.ITypeaheadContent.shouldOpenOnClick
-  * @method
+  * @function
   * @returns {boolean} If <code>true</code>, the value help should open when user clicks into the connected field control
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
   */
 
  /**
   * The focus visualization of the field help needs to be removed as the user starts typing into the source control.
   * @name sap.ui.mdc.valuehelp.ITypeaheadContent.removeVisualFocus
-  * @method
+  * @function
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
   */
 
  /**
   * The focus visualization of the field help needs to be set as the user starts naigation into the value help items.
   * @name sap.ui.mdc.valuehelp.ITypeaheadContent.setVisualFocus
-  * @method
+  * @function
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
   * @since 1.127.0
   */
 
@@ -303,7 +340,8 @@ sap.ui.define([
   * @since 1.95
   * @name sap.ui.mdc.valuehelp.ITypeaheadContainer
   * @interface
-  * @public
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
@@ -313,6 +351,8 @@ sap.ui.define([
   * @event
   * @param {sap.ui.base.Event} oControlEvent
   * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
@@ -324,6 +364,8 @@ sap.ui.define([
   * @param {sap.ui.base.EventProvider} oControlEvent.getSource
   * @param {object} oControlEvent.getParameters
   * @param {boolean} oControlEvent.getParameters.close <code>true</code> if the value help needs to be closed
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
@@ -335,6 +377,8 @@ sap.ui.define([
   * @param {sap.ui.base.EventProvider} oControlEvent.getSource
   * @param {object} oControlEvent.getParameters
   * @param {string} oControlEvent.getParameters.contentId Content wrapper ID for which contents are requested
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
@@ -347,6 +391,8 @@ sap.ui.define([
   * @param {object} oControlEvent.getParameters
   * @param {sap.ui.mdc.enums.ValueHelpSelectionType} oControlEvent.getParameters.type Type of the selection change (add, remove)
   * @param {object[]} oControlEvent.getParameters.conditions Changed conditions <br> <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
@@ -358,6 +404,8 @@ sap.ui.define([
   * @param {sap.ui.base.EventProvider} oControlEvent.getSource
   * @param {object} oControlEvent.getParameters
   * @param {string} oControlEvent.getParameters.itemId ID of the initially selected item
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
@@ -367,23 +415,29 @@ sap.ui.define([
   * @event
   * @param {sap.ui.base.Event} oControlEvent
   * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
   * Opens the container
   *
   * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.open
-  * @method
+  * @function
   * @param {Promise} oValueHelpContentPromise Promise for content request
   * @param {boolean} bTypeahead Flag indicating whether the container is opened as type-ahead or dialog-like help
   * @returns {Promise} This promise resolves after the container completely opened.
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
   * Closes the container
   *
   * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.close
-  * @method
+  * @function
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
@@ -394,10 +448,12 @@ sap.ui.define([
   * <b>Note:</b> This function must only be called by the control the <code>ValuedHelp</code> element
   * belongs to, not by the application.
   * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.getItemForValue
-  * @method
+  * @function
   * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration} oConfig Configuration
   * @returns {Promise<sap.ui.mdc.valuehelp.ValueHelpItem>} Promise returning object containing description, key and payload.
   * @throws {sap.ui.model.FormatException|sap.ui.model.ParseException} if entry is not found or not unique
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
@@ -406,9 +462,11 @@ sap.ui.define([
   * As this could be asyncronous as data might be loaded a promise is returned.
   *
   * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.navigate
-  * @method
+  * @function
   * @param {int} iStep Number of steps for navigation (e.g. 1 means next item, -1 means previous item)
   * @returns {Promise<object>} Promise fulfilled after navigation is evecuted
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
@@ -423,6 +481,8 @@ sap.ui.define([
   * @param {object} oControlEvent.getParameters.condition Provides the target condition of the navigation <br> <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
   * @param {string} oControlEvent.getParameters.itemId Provides the navigated item's ID (used for ARIA attributes)
   * @param {boolean} oControlEvent.getParameters.caseSensitive If <code>true</code> the filtering was executed case sensitive
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
@@ -438,6 +498,8 @@ sap.ui.define([
   * @param {string} oControlEvent.getParameters.itemId Provides the ID of the suggested item (used for ARIA attributes)
   * @param {string} oControlEvent.getParameters.items Provides number of found items
   * @param {boolean} oControlEvent.getParameters.caseSensitive If <code>true</code> the filtering was executed case sensitive
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   * @since 1.120.0
   */
 
@@ -448,6 +510,8 @@ sap.ui.define([
   * @event
   * @param {sap.ui.base.Event} oControlEvent
   * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
@@ -459,6 +523,8 @@ sap.ui.define([
   * @event
   * @param {sap.ui.base.Event} oControlEvent
   * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   * @since 1.127.0
   */
 
@@ -466,52 +532,66 @@ sap.ui.define([
   If the container is used for type-ahead it might be wanted that the same content should also be shown as valuehelp. If not, the field should not show a valuehelp icon.
   *
   * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.getUseAsValueHelp
-  * @method
+  * @function
   * @returns {boolean} <code>true</code> if the typeahead content can be used as value help
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
   * Defines if the typeahead can be used for input validation.
   *
   * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.isValidationSupported
-  * @method
+  * @function
   * @returns {boolean} True if the typeahead container can be used for input validation
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
   * Defines if the typeahead containers values can be navigated without visibly opening the help
   *
   * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.shouldOpenOnNavigate
-  * @method
+  * @function
   * @returns {boolean} If <code>true</code>, the value help should open when user used the arrow keys in the connected field control
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
   * Defines if the typeahead container desires to be opened whenever a user focuses a connected control
   *
   * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.shouldOpenOnFocus
-  * @method
+  * @function
   * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user focuses the connected field control
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
   * Defines if the typeahead container desires to be opened whenever a user clicks on a connected control
   *
   * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.shouldOpenOnClick
-  * @method
+  * @function
   * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user clicks into the connected field control
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
   * The focus visualization of the field help needs to be removed as the user starts typing into the source control.
   * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.removeVisualFocus
-  * @method
+  * @function
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
   * The focus visualization of the field help needs to be set as the user starts naigation into the value help items.
   * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.setVisualFocus
-  * @method
+  * @function
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
 
@@ -519,12 +599,12 @@ sap.ui.define([
   *
   * Interface for valuehelp containers / contents supporting dialog functionality
   *
-  *
   * @since 1.95
   * @name sap.ui.mdc.valuehelp.IDialogContent
   * @interface
   * @borrows sap.ui.mdc.valuehelp.ITypeaheadContent.isMultiSelect as #isMultiSelect
-  * @public
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.IDialogContainer
   */
 
  /**
@@ -534,6 +614,8 @@ sap.ui.define([
   * @event
   * @param {sap.ui.base.Event} oControlEvent
   * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.IDialogContainer
   */
 
  /**
@@ -545,6 +627,8 @@ sap.ui.define([
   * @param {sap.ui.base.EventProvider} oControlEvent.getSource
   * @param {object} oControlEvent.getParameters
   * @param {boolean} oControlEvent.getParameters.close <code>true</code> if the value help needs to be closed
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.IDialogContainer
   */
 
  /**
@@ -557,6 +641,8 @@ sap.ui.define([
   * @param {object} oControlEvent.getParameters
   * @param {sap.ui.mdc.enums.ValueHelpSelectionType} oControlEvent.getParameters.type Type of the selection change (add, remove)
   * @param {object[]} oControlEvent.getParameters.conditions Changed conditions <br> <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.IDialogContainer
   */
 
  /**
@@ -564,32 +650,40 @@ sap.ui.define([
   * Returns number of relevant conditions for this content
   *
   * @name sap.ui.mdc.valuehelp.IDialogContent.getCount
-  * @method
+  * @function
   * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions Array of conditions
   * @returns {number} Number of relevant conditions
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.IDialogContainer
   */
 
  /**
   * Returns a title for the given Content
   *
   * @name sap.ui.mdc.valuehelp.IDialogContent.getTitle
-  * @method
+  * @function
   * @returns {string} Content title as string
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.IDialogContainer
   */
 
  /*
   * Returns info if the given content is in multi select mode
   *
   * @name sap.ui.mdc.valuehelp.IDialogContent.isMultiSelect
-  * @method
+  * @function
   * @returns {boolean} <code>true</code> if multi-selection is active.
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.IDialogContainer
   */
 
  /**
   * Loads additional dependencies, creates and returns displayed content.
   * @name sap.ui.mdc.valuehelp.IDialogContent.getContent
-  * @method
+  * @function
   * @returns {Promise<sap.ui.core.Control>} Promise resolving in displayed content
+  * @private
+  * @ui5-restricted sap.ui.mdc.valuehelp.IDialogContainer
   */
 
 
@@ -600,7 +694,8 @@ sap.ui.define([
   * @since 1.95
   * @name sap.ui.mdc.valuehelp.IDialogContainer
   * @interface
-  * @public
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
@@ -610,6 +705,8 @@ sap.ui.define([
   * @event
   * @param {sap.ui.base.Event} oControlEvent
   * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
@@ -621,6 +718,8 @@ sap.ui.define([
   * @param {sap.ui.base.EventProvider} oControlEvent.getSource
   * @param {object} oControlEvent.getParameters
   * @param {boolean} oControlEvent.getParameters.close <code>true</code> if the value help needs to be closed
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
@@ -632,6 +731,8 @@ sap.ui.define([
   * @param {sap.ui.base.EventProvider} oControlEvent.getSource
   * @param {object} oControlEvent.getParameters
   * @param {string} oControlEvent.getParameters.contentId Content wrapper ID for which contents are requested
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
@@ -644,6 +745,8 @@ sap.ui.define([
   * @param {object} oControlEvent.getParameters
   * @param {sap.ui.mdc.enums.ValueHelpSelectionType} oControlEvent.getParameters.type Type of the selection change (add, remove)
   * @param {object[]} oControlEvent.getParameters.conditions Changed conditions <br> <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
@@ -655,6 +758,8 @@ sap.ui.define([
   * @param {sap.ui.base.EventProvider} oControlEvent.getSource
   * @param {object} oControlEvent.getParameters
   * @param {string} oControlEvent.getParameters.itemId ID of the initially selected item
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
@@ -664,23 +769,29 @@ sap.ui.define([
   * @event
   * @param {sap.ui.base.Event} oControlEvent
   * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
   * Opens the container
   *
   * @name sap.ui.mdc.valuehelp.IDialogContainer.open
-  * @method
+  * @function
   * @param {Promise} oValueHelpContentPromise Promise for content request
   * @param {boolean} bTypeahead Flag indicating whether the container is opened as type-ahead or dialog-like help
   * @returns {Promise} This promise resolves after the container completely opened.
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
  /**
   * Closes the container
   *
   * @name sap.ui.mdc.valuehelp.IDialogContainer.close
-  * @method
+  * @function
+  * @private
+  * @ui5-restricted sap.ui.mdc.ValueHelp
   */
 
 
@@ -716,7 +827,7 @@ sap.ui.define([
   * The function 'getConditions' is used to retrieve a set of present conditions as defined per {@link sap.ui.mdc.IFilterSource} interface.
   *
   * @name sap.ui.mdc.IFilterSource.getConditions
-  * @returns {map} a map containing the conditions according to the definition of the {@link sap.ui.mdc.condition.ConditionModel}
+  * @returns {map} a map containing the conditions as used in the {@link sap.ui.mdc.FilterBar}
   * @since 1.80
   * @method
   */

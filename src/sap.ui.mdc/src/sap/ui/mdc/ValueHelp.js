@@ -406,13 +406,14 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	ValueHelp.prototype.connect = function(oControl, oConfig) {
+		const oTypeahead = this.getTypeahead();
+		const oDialog = this.getDialog();
+
 		if (this._oControl && this._oControl !== oControl) {
 			this.close();
 			this.setFilterValue("");
 			this.setConditions([]);
 
-			const oTypeahead = this.getTypeahead();
-			const oDialog = this.getDialog();
 			if (oTypeahead) {
 				oTypeahead.onConnectionChange();
 			}
@@ -428,9 +429,26 @@ sap.ui.define([
 
 		_updateBindingContext.call(this); //to get the right values for InParameters ect.
 
+		if (oTypeahead) {
+			attachContainerEvents.call(this, oTypeahead, !!this._oControl);
+		}
+		if (oDialog) {
+			attachContainerEvents.call(this, oDialog, !!this._oControl);
+		}
+
 		return this;
 	};
 
+	/**
+	 * Returns the control the value help is connected to.
+	 *
+	 * <b>Note:</b> This function must only be called by the control the <code>ValueHelp</code> element
+	 * belongs to, not by the application.
+	 *
+	 * @returns {sap.ui.core.Control} Control to which the <code>ValueHelp</code> element is connected to
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.valueHelp.base.Container
+	 */
 	ValueHelp.prototype.getControl = function() {
 		return this._oControl;
 	};
@@ -808,7 +826,7 @@ sap.ui.define([
 	ValueHelp.prototype.navigate = function(iStep) { // pass through to container
 		const oTypeahead = this.getTypeahead();
 		if (oTypeahead) {
-			const _fnOnNavigatable = function() {
+			const _fnOnNavigatable = () => {
 				if (oTypeahead.shouldOpenOnNavigate() && !oTypeahead.isOpening() && !oTypeahead.isOpen()) {
 					return oTypeahead.open(true).then(() => {
 						oTypeahead.navigate(iStep);
@@ -1113,29 +1131,9 @@ sap.ui.define([
 			const oContainer = oChanges.child;
 
 			const bAdded = oChanges.mutation === "insert";
-			const fnEvent = bAdded ? oContainer.attachEvent.bind(oContainer) : oContainer.detachEvent.bind(oContainer);
 
-			fnEvent("select", _handleSelect, this);
-			fnEvent("requestDelegateContent", _handleRequestDelegateContent, this);
-			fnEvent("confirm", _handleConfirm, this);
-			fnEvent("cancel", _handleCancel, this);
-			fnEvent("opened", _handleOpened, this);
-			fnEvent("closed", _handleClosed, this);
-
-			if (oContainer.attachRequestSwitchToDialog) {
-				fnEvent("requestSwitchToDialog", _handleRequestSwitchToDialog, this);
-			}
-
-			if (oContainer.attachNavigated) {
-				fnEvent("navigated", _handleNavigated, this);
-			}
-
-			if (oContainer.attachVisualFocusSet) {
-				fnEvent("visualFocusSet", _handleVisualFocusSet, this);
-			}
-
-			if (oContainer.attachTypeaheadSuggested) {
-				fnEvent("typeaheadSuggested", _handleTypeaheadSuggested, this);
+			if (this._oControl || !bAdded) { // remove event handlers if container removed, but add it only if already connected
+				attachContainerEvents.call(this, oContainer, bAdded);
 			}
 
 			if (bAdded) {
@@ -1145,6 +1143,41 @@ sap.ui.define([
 				oContainer.setModel(this._oManagedObjectModel, "$valueHelp");
 			}
 		}
+	}
+
+	function attachContainerEvents (oContainer, bAttach) {
+
+		if (oContainer._bAttached === bAttach) {
+			return; // if already attached or detached, nothing to do
+		}
+
+		const fnEvent = bAttach ? oContainer.attachEvent.bind(oContainer) : oContainer.detachEvent.bind(oContainer);
+
+		fnEvent("select", _handleSelect, this);
+		fnEvent("requestDelegateContent", _handleRequestDelegateContent, this);
+		fnEvent("confirm", _handleConfirm, this);
+		fnEvent("cancel", _handleCancel, this);
+		fnEvent("opened", _handleOpened, this);
+		fnEvent("closed", _handleClosed, this);
+
+		if (oContainer.attachRequestSwitchToDialog) {
+			fnEvent("requestSwitchToDialog", _handleRequestSwitchToDialog, this);
+		}
+
+		if (oContainer.attachNavigated) {
+			fnEvent("navigated", _handleNavigated, this);
+		}
+
+		if (oContainer.attachVisualFocusSet) {
+			fnEvent("visualFocusSet", _handleVisualFocusSet, this);
+		}
+
+		if (oContainer.attachTypeaheadSuggested) {
+			fnEvent("typeaheadSuggested", _handleTypeaheadSuggested, this);
+		}
+
+		oContainer._bAttached = bAttach;
+
 	}
 
 	function _updateBindingContext() {
@@ -1191,6 +1224,35 @@ sap.ui.define([
 	 */
 	ValueHelp.prototype.setHighlightId = function(sHighlightId) {
 		this.getTypeahead()?.setHighlightId(sHighlightId);
+	};
+
+	ValueHelp.prototype.clone = function(sIdSuffix, aLocalIds) {
+
+		// detach event handler before cloning to not have it twice on the clone
+		// attach it after clone again
+		const oTypeahead = this.getTypeahead();
+		const bTypeaheadAttached = oTypeahead?._bAttached;
+		const oDialog = this.getDialog();
+		const bDialogAttached = oDialog?._bAttached;
+
+		if (bTypeaheadAttached) {
+			attachContainerEvents.call(this, oTypeahead, false);
+		}
+		if (bDialogAttached) {
+			attachContainerEvents.call(this, oDialog, false);
+		}
+
+		const oClone = Element.prototype.clone.apply(this, arguments);
+
+		if (bTypeaheadAttached) {
+			attachContainerEvents.call(this, oTypeahead, true);
+		}
+		if (bDialogAttached) {
+			attachContainerEvents.call(this, oDialog, true);
+		}
+
+		return oClone;
+
 	};
 
 	PromiseMixin.call(ValueHelp.prototype);

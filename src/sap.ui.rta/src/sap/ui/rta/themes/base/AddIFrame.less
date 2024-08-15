@@ -1,10 +1,9 @@
 /******************************************************************
 	Style of the RTA Add IFrame Dialog  - base Theme
 *******************************************************************/
-@_sap_ui_rta_AddIFrame_Title: @sapUiTextTitle; //#000
-@_sap_ui_rta_AddIFrame_DelimiterLineColor: @sapUiInfobarActiveBackground; //#d9d9d9
-@_sap_ui_rta_AddIFrame_BorderColor: @sapUiNeutralBorder; //#fff;
-@_sap_ui_rta_AddIFrame_PreviewBG: @sapUiListTableGroupHeaderBackground; //#f2f2f2
+@_sap_ui_rta_AddIFrame_BorderColor: @sapUiGroupContentBorderColor; //#000;
+@_sap_ui_rta_AddIFrame_PreviewBackgroundColor: @sapUiContentImagePlaceholderBackground; //#fff
+@_sap_ui_rta_AddIFrame_PreviewTextColor: @sapUiContentForegroundTextColor; //#000
 
 .sapUiRtaMode {
 	.sapUiRtaAddIFrameDialog {
@@ -15,10 +14,6 @@
 		&.sapMDialog > header .sapMDialogTitleGroup {
 			&:focus::after {
 				content: none;
-			}
-
-			.sapMTitle {
-				color: @_sap_ui_rta_AddIFrame_Title;
 			}
 		}
 
@@ -48,7 +43,7 @@
 			.sapUiRtaAddIFrameDialogPercentGrid {
 				padding: 0.25rem 0 0 0;
 				margin: 0 1rem;
-				border-bottom: 0.0625rem solid @_sap_ui_rta_AddIFrame_DelimiterLineColor; //1px
+				border-bottom: 0.0625rem solid @_sap_ui_rta_AddIFrame_BorderColor; //1px
 
 				> div {
 					margin-bottom: 0.25rem;
@@ -119,7 +114,7 @@
 			.sapUiRtaAddIFrameDialogPreviewGrid {
 				padding: 0;
 				margin: 0 1rem 1rem;
-				background: @_sap_ui_rta_AddIFrame_PreviewBG;
+				background: @_sap_ui_rta_AddIFrame_PreviewBackgroundColor;
 				border: 0.0625rem solid @_sap_ui_rta_AddIFrame_BorderColor; //1px
 
 				> div {
@@ -129,6 +124,9 @@
 
 				.sapUiRtaAddIFrameDialogNoPreviewLabel {
 					margin-top: 4rem;
+				}
+				.sapMLabelTextWrapper {
+					color: @_sap_ui_rta_AddIFrame_PreviewTextColor;
 				}
 			}
 		}

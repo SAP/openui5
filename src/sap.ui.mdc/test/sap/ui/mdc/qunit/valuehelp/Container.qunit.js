@@ -640,6 +640,62 @@ sap.ui.define([
 
 	});
 
+	function _testClone(assert) {
+
+		const oClone = oContainer.clone("MyClone");
+		const oCloneContent = oClone.getContent()[0];
+
+		assert.ok(oCloneContent, "Content cloned");
+
+		// events of clone must not be handled by original
+		sinon.spy(oContainer, "fireConfirm");
+		sinon.spy(oContainer, "fireCancel");
+		sinon.spy(oContainer, "fireSelect");
+		sinon.spy(oContainer, "fireNavigated");
+		sinon.spy(oContainer, "fireVisualFocusSet");
+		sinon.spy(oContainer, "fireTypeaheadSuggested");
+		sinon.spy(oContainer, "fireRequestSwitchToDialog");
+
+		oContainer.openContainer(); // just fake opening as only bound if open
+		oClone.openContainer(); // just fake opening as only bound if open
+
+		oCloneContent.fireConfirm();
+		assert.notOk(oContainer.fireConfirm.called, "Confirm");
+		oCloneContent.fireCancel();
+		assert.notOk(oContainer.fireCancel.called, "Cancel");
+		oCloneContent.fireSelect();
+		assert.notOk(oContainer.fireSelect.called, "Select");
+		oCloneContent.fireNavigated();
+		assert.notOk(oContainer.fireNavigated.called, "Navigated");
+		oCloneContent.fireVisualFocusSet();
+		assert.notOk(oContainer.fireVisualFocusSet.called, "VisualFocusSet");
+		oCloneContent.fireTypeaheadSuggested();
+		assert.notOk(oContainer.fireTypeaheadSuggested.called, "TypeaheadSuggested");
+		oCloneContent.fireRequestSwitchToDialog();
+		assert.notOk(oContainer.fireRequestSwitchToDialog.called, "RequestSwitchToDialog");
+		oClone.destroy();
+
+	}
+
+	QUnit.test("clone", function(assert) {
+
+		const oContent = new Content("Content1");
+		oContainer.addContent(oContent);
+
+		return _testClone(assert);
+
+	});
+
+	QUnit.test("clone - opened", function(assert) {
+
+		const oContent = new Content("Content1");
+		oContainer.addContent(oContent);
+		oContainer.openContainer(); // just fake opening as only bound if open
+
+		return _testClone(assert);
+
+	});
+
 	// TODO: Test Operator determination on Content
 	// TODO: Test condition creation on Content
 

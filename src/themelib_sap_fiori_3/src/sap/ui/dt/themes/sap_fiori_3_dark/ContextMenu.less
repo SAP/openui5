@@ -1,85 +1,62 @@
 /******************************************************************
 	Style of the DT Contextmenu - sap_fiori_3_dark Theme
 *******************************************************************/
-@_sap_ui_dt_ContextMenu_OpenFocusColor: @sapUiContentFocusColor; //#000
-@_sap_ui_dt_ContextMenu_MnuItemColor: @sapUiSelected; //#91c8f6
-@_sap_ui_dt_ContextMenu_Border_Radius: @sapUiButtonBorderCornerRadius; // 0.25rem
-@_sap_ui_dt_ContextMenu_OpenSubMenuBG: @sapUiShellBackground; //#232a31
-@_sap_ui_dt_ContextMenu_OpenSubMenuBorder: transparent;
-@_sap_ui_dt_ContextMenu_Disabled_Hover: @sapUiSelected; //#91c8f6
+@_sap_ui_dt_ContextMenu_MnuItemTextColor: @sapUiListSelectionBorderColor; //#91c8f6
+@_sap_ui_dt_ContextMenu_MnuItemBackgroundColor: @sapUiListBackground; // #29313a
+@_sap_ui_dt_ContextMenu_MnuItemHoverBackgroundColor: @sapUiListSelectionBackgroundColor; // #334b5f
+@_sap_ui_dt_ContextMenu_BorderRadius: @sapUiButtonBorderCornerRadius; // 0.25rem
+@_sap_ui_dt_ContextMenu_FocusColor: @sapUiListSelectionBorderColor; //#91c8f6
+@_sap_ui_dt_ContextMenu_DisabledMnuItemHoverTextColor: @sapUiListSelectionBorderColor; //#91c8f6
 
 .sapUiDtContextMenu {
 	.sapUiMnuLst {
 		.sapUiMnuItm {
-			color: @_sap_ui_dt_ContextMenu_MnuItemColor;
+			color: @_sap_ui_dt_ContextMenu_MnuItemTextColor;
+			background: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
 			border: 0.0625rem dotted transparent;
 
 			.sapUiMnuItmIco {
-				color: @_sap_ui_dt_ContextMenu_MnuItemColor;
+				color: @_sap_ui_dt_ContextMenu_MnuItemTextColor;
 			}
 
 			.sapUiMnuItmSbMnu > div:after,
 			.sapUiMnuItm.sapUiMnuItmHov .sapUiMnuItmSbMnu > div:after {
-				color: @_sap_ui_dt_ContextMenu_MnuItemColor;
+				color: @_sap_ui_dt_ContextMenu_MnuItemTextColor;
+				background: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
 			}
 
-			&:focus {
-				outline: none;
-				border: 0.0625rem dotted !important;
-				border-radius: @_sap_ui_dt_ContextMenu_Border_Radius;
+			&.sapUiMnuItmHov {
+				color: @_sap_ui_dt_ContextMenu_MnuItemTextColor;
+				background-color: @_sap_ui_dt_ContextMenu_MnuItemHoverBackgroundColor;
+
+				.sapUiMnuItmIco {
+					color: @_sap_ui_dt_ContextMenu_MnuItemTextColor;
+					background: @_sap_ui_dt_ContextMenu_MnuItemHoverBackgroundColor;
+				}
+				&.sapUiMnuItmDsbl {
+					background: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
+					.sapUiMnuItmIco {
+						background: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
+					}
+				}
+			}
+
+			&:focus:not(.sapUiMnuItmDsbl) {
+				outline: 0.0625rem dotted @_sap_ui_dt_ContextMenu_FocusColor;
+				outline-offset: -0.0625rem;
+				border-radius: @_sap_ui_dt_ContextMenu_BorderRadius;
 			}
 
 			&.sapUiMnuItmSubMnuOpen {
-				background-color: @_sap_ui_dt_ContextMenu_OpenSubMenuBG;
-				border-bottom: 0.0625rem solid @_sap_ui_dt_ContextMenu_OpenSubMenuBorder !important; //1px
-				&.sapUiMnuItm:focus {
-					border: 0.0625rem dotted @_sap_ui_dt_ContextMenu_OpenFocusColor !important;
+				border-bottom: none !important;
+			}
+
+			&.sapUiMnuItmDsbl {
+				&.sapUiMnuItmHov {
+					color: @_sap_ui_dt_ContextMenu_DisabledMnuItemHoverTextColor;
 				}
-			}
-
-			&.sapUiMnuItmDsbl.sapUiMnuItmHov {
-				color: @_sap_ui_dt_ContextMenu_Disabled_Hover;
-			}
-		}
-	}
-}
-
-.sapUiDtContextMenu.sapUiDtContextMiniMenu {
-	&:not(.sapUiSubmenu) {
-		.sapUiMnuLst {
-			.sapUiMnuItm {
-
 				&:focus {
 					outline: none;
-					border-color: transparent !important;
-
-					.sapUiIcon {
-						border-radius: @_sap_ui_dt_ContextMenu_Border_Radius;
-					}
-
-					&.sapUiMnuItmSubMnuOpen {
-						background-color: @_sap_ui_dt_ContextMenu_OpenSubMenuBorder !important;
-						border: 0.0625rem dotted @_sap_ui_dt_ContextMenu_OpenSubMenuBorder !important;
-
-						.sapUiIcon {
-							border-color: @_sap_ui_dt_ContextMenu_OpenSubMenuBorder;
-						}
-					}
-
-					&:hover {
-						.sapUiIcon {
-							border-color: @_sap_ui_dt_ContextMenu_OpenFocusColor;
-						}
-					}
-				}
-
-				&.sapUiMnuItmSubMnuOpen {
-					background-color: @_sap_ui_dt_ContextMenu_OpenSubMenuBorder;
-					border: 0.0625rem dotted @_sap_ui_dt_ContextMenu_OpenSubMenuBorder !important;
-
-					.sapUiIcon {
-						background-color: @_sap_ui_dt_ContextMenu_OpenSubMenuBG;
-					}
 				}
 			}
 		}

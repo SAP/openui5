@@ -1,13 +1,15 @@
 /******************************************************************
 	Style of the DT Overlays - base Theme
 *******************************************************************/
-@_sap_ui_dt_Overlay_FocusColor: @sapUiContentFocusColor; //#000
-@_sap_ui_dt_Overlay_TargetZoneColor: @sapUiSelected; //#8fb5ff
-@_sap_ui_dt_Overlay_SelectionColor: lighten(@sapUiChart1, 20); //#6fa0e2
-@_sap_ui_dt_Overlay_CuttedColor: @sapUiNeutralBG; // #fff
-@_sap_ui_dt_Overlay_CuttedBorder: @sapUiSelected; //#8fb5ff
-@_sap_ui_dt_Overlay_HighlightColor: @sapUiShellActiveBackground; //#ec8b46
-@_sap_ui_dt_Overlay_ActiveBG: fade(@sapUiSelected, 10%); //rgba(143, 181, 255, 0.1);
+@_sap_ui_dt_Overlay_FocusBorderColor: @sapUiContentFocusColor; //#000
+@_sap_ui_dt_Overlay_TargetZoneOutlineColor: @sapUiSelected; //#8fb5ff
+@_sap_ui_dt_Overlay_SelectionOutlineColor: @sapUiSelected; //#8fb5ff
+@_sap_ui_dt_Overlay_CuttedBackgroundColor: @sapUiContentImagePlaceholderBackground; // #fff
+@_sap_ui_dt_Overlay_CuttedBorderColor: @sapUiSelected; //#8fb5ff
+@_sap_ui_dt_Overlay_HighlightOutlineColor: @sapUiShellSelectedBackground; //#8fb5ff
+@_sap_ui_dt_Overlay_HoverBackgroundColor: fade(@sapUiSelected, 5%); //rgba(143, 181, 255, 0.1);
+@_sap_ui_dt_Overlay_DropZoneBackgroundColor: fade(@sapUiSelected, 10%); //rgba(143, 181, 255, 0.1);
+@_sap_ui_dt_Overlay_BoxShadow: @sapUiUx3ToolPopupShadow; //0px 6px 12px 0px fade(black, 30);
 
 #overlay-container {
 	position: absolute;
@@ -42,7 +44,7 @@
 	&:focus {
 		&:before {
 			content: " ";
-			border: 0.0625rem dotted @_sap_ui_dt_Overlay_FocusColor; //1px
+			border: 0.0625rem dotted @_sap_ui_dt_Overlay_FocusBorderColor; //1px
 		}
 	}
 }
@@ -59,7 +61,7 @@
 
 	> .sapUiDtOverlayChildren {
 		> .sapUiDtOverlayMovable {
-			background: @_sap_ui_dt_Overlay_ActiveBG;
+			background: @_sap_ui_dt_Overlay_DropZoneBackgroundColor;
 			// no "border"
 			&:after {
 				content: none;
@@ -71,7 +73,7 @@
 .sapUiDtOverlayTargetZone {
 	&:after {
 		content: " ";
-		outline: 0.125rem dashed @_sap_ui_dt_Overlay_TargetZoneColor; //2px
+		outline: 0.125rem dashed @_sap_ui_dt_Overlay_TargetZoneOutlineColor; //2px
 		outline-offset: -0.125rem; //2px
 	}
 }
@@ -79,7 +81,7 @@
 .sapUiDtOverlaySelected {
 	&:after {
 		content: " ";
-		outline: 0.125rem solid @_sap_ui_dt_Overlay_SelectionColor; //2px
+		outline: 0.125rem solid @_sap_ui_dt_Overlay_SelectionOutlineColor; //2px
 		outline-offset: -0.125rem; //2px
 		border: none;
 	}
@@ -110,9 +112,9 @@
 .sapUiDtOverlayHighlighted:not(.sapUiDtOverlaySelected) {
 	&:after {
 		content: " ";
-		outline: 0.0625rem solid @_sap_ui_dt_Overlay_HighlightColor; //1px
+		outline: 0.0625rem solid @_sap_ui_dt_Overlay_HighlightOutlineColor; //1px
 		outline-offset: -0.0625rem; //1px
-		box-shadow: 0 0.1875rem 0.375rem 0 rgba(0, 0, 0, 0.3);
+		box-shadow: @_sap_ui_dt_Overlay_BoxShadow;
 	}
 }
 
@@ -126,12 +128,12 @@
 }
 
 .sapUiDtOverlayCutted {
-	background-color: @_sap_ui_dt_Overlay_CuttedColor !important;
+	background-color: @_sap_ui_dt_Overlay_CuttedBackgroundColor !important;
 	opacity: 0.5;
 
 	&:after {
 		content: " ";
-		outline: 0.063rem solid @_sap_ui_dt_Overlay_CuttedBorder; //1px
+		outline: 0.063rem solid @_sap_ui_dt_Overlay_CuttedBorderColor; //1px
 		outline-offset: -0.125rem; //2px
 	}
 }
@@ -159,10 +161,6 @@
 	top: 100vh;
 }
 
-.sapUiDtDragGhost {
-	background: @_sap_ui_dt_Overlay_ActiveBG;
-}
-
 .sapUiDtClonedDom {
 	position: absolute;
 	top: 0;
@@ -176,4 +174,20 @@
 
 .sapUiDtOverlayScrollContainer {
 	position: absolute;
+}
+
+.sapUiDtOverlayHover {
+	-webkit-transition: background 0.1s cubic-bezier(1, .01, 1, 0);
+	-moz-transition: background 0.1s cubic-bezier(1, .01, 1, 0);
+	-o-transition: background 0.1s cubic-bezier(1, .01, 1, 0);
+	transition: background 0.1s cubic-bezier(1, .01, 1, 0);
+	background: @_sap_ui_dt_Overlay_HoverBackgroundColor;
+
+	&:after {
+		content: " ";
+		transition: box-shadow .25s;
+		box-shadow: @_sap_ui_dt_Overlay_BoxShadow;
+		outline: 0.0625rem solid @_sap_ui_dt_Overlay_SelectionOutlineColor; //1px
+		outline-offset: -0.0625rem; //1px
+	}
 }

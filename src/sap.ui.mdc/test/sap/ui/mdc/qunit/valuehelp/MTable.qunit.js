@@ -34,6 +34,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/library",
 	"sap/ui/qunit/utils/nextUIUpdate",
+	'sap/ui/mdc/p13n/StateUtil',
 	"sap/m/p13n/Engine",
 	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment"
 ], function(
@@ -65,10 +66,13 @@ sap.ui.define([
 	KeyCodes,
 	coreLibrary,
 	nextUIUpdate,
+	StateUtil,
 	Engine,
 	createAppEnvironment
 ) {
 	"use strict";
+
+	sinon.stub(StateUtil, "applyExternalState").returns(null); // don't test StateUtil here
 
 	const ListMode = mLibrary.ListMode;
 
@@ -263,47 +267,49 @@ sap.ui.define([
 		const oContent = oMTable.getContent();
 
 		if (oContent) {
-			const sItemId = oMTable.onShow(); // to update selection and scroll
-			assert.ok(oContent, "Content returned");
-			assert.equal(oContent, oTable, "Content is given Table");
-			assert.equal(oTable.getMode(), ListMode.SingleSelectMaster, "Table mode");
-			// assert.equal(oMTable.getDisplayContent(), oTable, "Table stored in displayContent"); // TODO: overwrite getDisplayContent here?
-			assert.ok(oTable.hasStyleClass("sapMComboBoxList"), "List has style class sapMComboBoxList");
-			assert.notOk(oTable.hasStyleClass("sapMListFocus"), "Table has no style class sapMListFocus");
+			return oMTable.onBeforeShow(true).then(() => {
+				const sItemId = oMTable.onShow(); // to update selection and scroll
+				assert.ok(oContent, "Content returned");
+				assert.equal(oContent, oTable, "Content is given Table");
+				assert.equal(oTable.getMode(), ListMode.SingleSelectMaster, "Table mode");
+				// assert.equal(oMTable.getDisplayContent(), oTable, "Table stored in displayContent"); // TODO: overwrite getDisplayContent here?
+				assert.ok(oTable.hasStyleClass("sapMComboBoxList"), "List has style class sapMComboBoxList");
+				assert.notOk(oTable.hasStyleClass("sapMListFocus"), "Table has no style class sapMListFocus");
 
-			oMTable.setVisualFocus();
-			assert.ok(oTable.hasStyleClass("sapMListFocus"), "Table has style class sapMListFocus");
+				oMTable.setVisualFocus();
+				assert.ok(oTable.hasStyleClass("sapMListFocus"), "Table has style class sapMListFocus");
 
-			const aItems = oTable.getItems();
-			let oItem = aItems[0];
-			assert.notOk(oItem.getSelected(), "Item0 not selected");
-			oItem = aItems[1];
-			assert.ok(oItem.getSelected(), "Item1 is selected");
-			assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "Item1 is focused");
-			assert.equal(sItemId, oItem.getId(), "OnShow returns selected itemId");
-			oItem = aItems[2];
-			assert.notOk(oItem.getSelected(), "Item2 not selected");
+				const aItems = oTable.getItems();
+				let oItem = aItems[0];
+				assert.notOk(oItem.getSelected(), "Item0 not selected");
+				oItem = aItems[1];
+				assert.ok(oItem.getSelected(), "Item1 is selected");
+				assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "Item1 is focused");
+				assert.equal(sItemId, oItem.getId(), "OnShow returns selected itemId");
+				oItem = aItems[2];
+				assert.notOk(oItem.getSelected(), "Item2 not selected");
 
-			const aNewConditions = [
-				Condition.createItemCondition("I3", "X-Item 3")
-			];
+				const aNewConditions = [
+					Condition.createItemCondition("I3", "X-Item 3")
+				];
 
-			oItem.setSelected(true); // In SingleSelectMaster MTable will not update the items selection, as the table already did it.
-			oTable.fireItemPress({listItem: oItem});
+				oItem.setSelected(true); // In SingleSelectMaster MTable will not update the items selection, as the table already did it.
+				oTable.fireItemPress({listItem: oItem});
 
-			assert.equal(iSelect, 1, "select event fired");
-			assert.deepEqual(aConditions, aNewConditions, "select event conditions");
-			assert.equal(sType, ValueHelpSelectionType.Add, "select event type");
-			assert.equal(iConfirm, 1, "confirm event fired");
-			// TODO: clarify if Conditions should really not be updated and items not selected - so it is somehow not in sync
-			// assert.deepEqual(oMTable.getConditions(), aNewConditions, "MTable conditions");
-			// oItem = aItems[1];
-			// assert.notOk(oItem.getSelected(), "Item1 is not selected");
-			// oItem = aItems[2];
-			// assert.ok(oItem.getSelected(), "Item2 is selected");
+				assert.equal(iSelect, 1, "select event fired");
+				assert.deepEqual(aConditions, aNewConditions, "select event conditions");
+				assert.equal(sType, ValueHelpSelectionType.Add, "select event type");
+				assert.equal(iConfirm, 1, "confirm event fired");
+				// TODO: clarify if Conditions should really not be updated and items not selected - so it is somehow not in sync
+				// assert.deepEqual(oMTable.getConditions(), aNewConditions, "MTable conditions");
+				// oItem = aItems[1];
+				// assert.notOk(oItem.getSelected(), "Item1 is not selected");
+				// oItem = aItems[2];
+				// assert.ok(oItem.getSelected(), "Item2 is selected");
 
-			oMTable.onHide();
-			assert.notOk(oTable.hasStyleClass("sapMComboBoxList"), "List style class sapMComboBoxList removed");
+				oMTable.onHide();
+				assert.notOk(oTable.hasStyleClass("sapMComboBoxList"), "List style class sapMComboBoxList removed");
+			});
 		}
 
 	});
@@ -1147,6 +1153,7 @@ sap.ui.define([
 		_fakeV4Binding();
 
 		assert.notOk(oMTable.getItemForValue(oConfig), "getItemForValue returns null");
+		getFilterConditionsStub.restore();
 	});
 
 	QUnit.test("isValidationSupported", function(assert) {
@@ -1337,29 +1344,31 @@ sap.ui.define([
 		sinon.spy(aItems[0], "focus");
 
 		oMTable.setConditions([]);
-		oMTable.onShow(); // to update selection and scroll
-		oMTable.navigate(1);
-		assert.ok(aItems[0].focus.called, "First item focused");
-		assert.equal(iNavigate, 0, "Navigated Event not fired");
+		return oMTable.onBeforeShow(true).then(() => {
+			oMTable.onShow(); // to update selection and scroll
+			oMTable.navigate(1);
+			assert.ok(aItems[0].focus.called, "First item focused");
+			assert.equal(iNavigate, 0, "Navigated Event not fired");
 
-		qutils.triggerKeydown(aItems[0].getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
-		assert.equal(iNavigate, 1, "Navigate event fired");
-		assert.notOk(oNavigateCondition, "Navigate condition");
-		assert.notOk(sNavigateItemId, "Navigate event itemId");
-		assert.ok(bNavigateLeaveFocus, "Navigate event leave");
+			qutils.triggerKeydown(aItems[0].getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
+			assert.equal(iNavigate, 1, "Navigate event fired");
+			assert.notOk(oNavigateCondition, "Navigate condition");
+			assert.notOk(sNavigateItemId, "Navigate event itemId");
+			assert.ok(bNavigateLeaveFocus, "Navigate event leave");
 
-		// selection via SelectionChangeEvent (selection of items done normally in table)
-		iSelect = 0;
-		iConfirm = 0;
-		const aNewConditions = [
-			Condition.createItemCondition("I2", "Item 2")
-		];
-		aItems[1].setSelected(false);
-		oTable.fireSelectionChange({listItems: [aItems[1]]});
-		assert.equal(iSelect, 1, "select event fired");
-		assert.deepEqual(aConditions, aNewConditions, "select event conditions");
-		assert.equal(sType, ValueHelpSelectionType.Remove, "select event type");
-		assert.equal(iConfirm, 1, "confirm event fired");
+			// selection via SelectionChangeEvent (selection of items done normally in table)
+			iSelect = 0;
+			iConfirm = 0;
+			const aNewConditions = [
+				Condition.createItemCondition("I2", "Item 2")
+			];
+			aItems[1].setSelected(false);
+			oTable.fireSelectionChange({listItems: [aItems[1]]});
+			assert.equal(iSelect, 1, "select event fired");
+			assert.deepEqual(aConditions, aNewConditions, "select event conditions");
+			assert.equal(sType, ValueHelpSelectionType.Remove, "select event type");
+			assert.equal(iConfirm, 1, "confirm event fired");
+		});
 
 	});
 
@@ -1385,30 +1394,32 @@ sap.ui.define([
 
 		if (oFooterContent) {
 			const fnDone = assert.async();
-			oFooterContent.then(async function(oFooterContent) {
-				oFooterContent.placeAt("content"); // render Footer
-				await nextUIUpdate();
-				const aToolbarContent = oFooterContent.getContent();
-				const oButton = aToolbarContent[1];
-				sinon.spy(oButton, "focus");
+			oMTable.onBeforeShow(true).then( () => {
+				oFooterContent.then(async function(oFooterContent) {
+					oFooterContent.placeAt("content"); // render Footer
+					await nextUIUpdate();
+					const aToolbarContent = oFooterContent.getContent();
+					const oButton = aToolbarContent[1];
+					sinon.spy(oButton, "focus");
 
-				oMTable.setConditions([]);
-				oMTable.onShow(); // to update selection and scroll
-				oMTable.navigate(3);
-				assert.ok(aItems[2].focus.called, "3rd item focused");
-				assert.equal(iNavigate, 0, "Navigated Event not fired");
+					oMTable.setConditions([]);
+					oMTable.onShow(); // to update selection and scroll
+					oMTable.navigate(3);
+					assert.ok(aItems[2].focus.called, "3rd item focused");
+					assert.equal(iNavigate, 0, "Navigated Event not fired");
 
-				qutils.triggerKeydown(aItems[2].getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
-				assert.equal(iNavigate, 0, "Navigated Event not fired");
-				assert.ok(oButton.focus.called, "Button focused");
+					qutils.triggerKeydown(aItems[2].getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
+					assert.equal(iNavigate, 0, "Navigated Event not fired");
+					assert.ok(oButton.focus.called, "Button focused");
 
-				aItems[2].focus.reset();
-				qutils.triggerKeydown(oButton.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
-				assert.ok(aItems[2].focus.called, "3rd item focused");
-				assert.equal(iNavigate, 0, "Navigated Event not fired");
+					aItems[2].focus.reset();
+					qutils.triggerKeydown(oButton.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
+					assert.ok(aItems[2].focus.called, "3rd item focused");
+					assert.equal(iNavigate, 0, "Navigated Event not fired");
 
-				oFooterContent.destroy();
-				fnDone();
+					oFooterContent.destroy();
+					fnDone();
+				});
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
 				fnDone();
@@ -1498,60 +1509,62 @@ sap.ui.define([
 		_attachNavigated();
 
 		oMTable.setConditions([]);
-		oMTable.onShow(); // to simulate Open
-		oModel.checkUpdate(true); // force model update
-		sinon.stub(oListBinding, "getLength").onFirstCall().returns(undefined); // to fake pending binding
-		oListBinding.getLength.callThrough();
+		return oMTable.onBeforeShow(true).then(() => {
+			oMTable.onShow(); // to simulate Open
+			oModel.checkUpdate(true); // force model update
+			sinon.stub(oListBinding, "getLength").onFirstCall().returns(undefined); // to fake pending binding
+			oListBinding.getLength.callThrough();
 
-		oMTable.navigate(1);
-		const fnDone = assert.async();
-		setTimeout( function(){ // as waiting for Promise
-			_checkNavigatedItem(assert, oTable, true, 0, 0, undefined, false);
-			let oItem = oTable.getItems()[0];
-			assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
-			oItem = oTable.getItems()[3];
-			assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item3 is GroupHeaderListItem");
-
-			// next item
 			oMTable.navigate(1);
-			_checkNavigatedItem(assert, oTable, true, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
+			const fnDone = assert.async();
+			setTimeout( function(){ // as waiting for Promise
+				_checkNavigatedItem(assert, oTable, true, 0, 0, undefined, false);
+				let oItem = oTable.getItems()[0];
+				assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
+				oItem = oTable.getItems()[3];
+				assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item3 is GroupHeaderListItem");
 
-			// next item
-			oMTable.navigate(1);
-			_checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
+				// next item
+				oMTable.navigate(1);
+				_checkNavigatedItem(assert, oTable, true, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
 
-			// next item (group header)
-			oMTable.navigate(1);
-			_checkNavigatedItem(assert, oTable, true, 3, 3, undefined, false);
+				// next item
+				oMTable.navigate(1);
+				_checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
 
-			// next item
-			oMTable.navigate(1);
-			_checkNavigatedItem(assert, oTable, true, 4, 4, Condition.createItemCondition("I2", "Item 2"), false);
+				// next item (group header)
+				oMTable.navigate(1);
+				_checkNavigatedItem(assert, oTable, true, 3, 3, undefined, false);
 
-			// previous item (group header)
-			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, true, 3, 3, undefined, false);
+				// next item
+				oMTable.navigate(1);
+				_checkNavigatedItem(assert, oTable, true, 4, 4, Condition.createItemCondition("I2", "Item 2"), false);
 
-			// previous item
-			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
+				// previous item (group header)
+				oMTable.navigate(-1);
+				_checkNavigatedItem(assert, oTable, true, 3, 3, undefined, false);
 
-			// previous item
-			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, true, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
+				// previous item
+				oMTable.navigate(-1);
+				_checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
 
-			// previous item (group header)
-			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, true, 0, 0, undefined, false);
+				// previous item
+				oMTable.navigate(-1);
+				_checkNavigatedItem(assert, oTable, true, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
 
-			// no previous item
-			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, true, 0, 0, undefined, true);
+				// previous item (group header)
+				oMTable.navigate(-1);
+				_checkNavigatedItem(assert, oTable, true, 0, 0, undefined, false);
 
-			oMTable.onHide();
+				// no previous item
+				oMTable.navigate(-1);
+				_checkNavigatedItem(assert, oTable, true, 0, 0, undefined, true);
 
-			fnDone();
-		}, 0);
+				oMTable.onHide();
+
+				fnDone();
+			}, 0);
+		});
 
 	});
 
@@ -1638,6 +1651,33 @@ sap.ui.define([
 
 	});
 
+	function _testClone(assert) {
+
+		const oClone = oMTable.clone("MyClone");
+		const oCloneTable = oClone.getTable();
+		const aClonedItems = oCloneTable?.getItems();
+
+		sinon.spy(oMTable, "fireSelect");
+		oCloneTable.fireItemPress({listItem: aClonedItems[0]});
+		assert.notOk(oMTable.fireSelect.called, "fireSelect of Table");
+		oClone.destroy();
+
+	}
+
+	QUnit.test("clone", function(assert) {
+
+		return _testClone(assert);
+
+	});
+
+	QUnit.test("clone - opened", function(assert) {
+
+		return oMTable.onBeforeShow(true).then(() => {
+			return _testClone(assert);
+		});
+
+	});
+
 	QUnit.module("Dialog", {
 		beforeEach: function() {
 			bIsTypeahead = false;
@@ -1666,75 +1706,77 @@ sap.ui.define([
 		if (oContent) {
 			const fnDone = assert.async();
 			oContent.then(function(oContent) {
-				oMTable.onShow(); // to update selection and scroll
-				assert.ok(oContent, "Content returned");
-				assert.ok(oContent.isA("sap.ui.layout.FixFlex"), "Content is sap.m.FixFlex");
-				assert.equal(oContent.getFixContent().length, 1, "FixFlex number of Fix items");
-				const oFixContent = oContent.getFixContent()[0];
-				assert.ok(oFixContent.isA("sap.m.VBox"), "FixContent is sap.m.VBox");
-				assert.ok(oFixContent.hasStyleClass("sapMdcValueHelpPanelFilterbar"), "VBox has style class sapMdcValueHelpPanelFilterbar");
-				assert.equal(oFixContent.getItems().length, 1, "VBox number of items");
-				const oFilterBar = oFixContent.getItems()[0];
-				assert.ok(oFilterBar.isA("sap.ui.mdc.valuehelp.FilterBar"), "VBox item is FilterBar");
-				// const oConditions = oFilterBar.getInternalConditions();
-				// assert.equal(oConditions["*text,additionalText*"][0].values[0], "X", "Search condition in FilterBar");
-				const oFlexContent = oContent.getFlexContent();
-				assert.ok(oFlexContent.isA("sap.m.Panel"), "FlexContent is sap.m.Panel");
-				assert.ok(oFlexContent.getExpanded(), "Panel is expanded");
-				assert.equal(oFlexContent.getHeight(), "100%", "Panel height");
-				assert.equal(oFlexContent.getHeaderText(), oResourceBundle.getText("valuehelp.TABLETITLENONUMBER"), "Panel headerText");
-				assert.ok(oFlexContent.hasStyleClass("sapMdcTablePanel"), "Panel has style class sapMdcTablePanel");
-				assert.equal(oFlexContent.getContent().length, 1, "Panel number of items");
-				const oScrollContainer = oFlexContent.getContent()[0];
-				assert.ok(oScrollContainer.isA("sap.m.ScrollContainer"), "Panel item is ScrollContainer");
-				assert.equal(oScrollContainer.getContent().length, 1, "ScrollContainer number of items");
-				assert.equal(oScrollContainer.getContent()[0], oTable, "Table inside ScrollContainer");
+				oMTable.onBeforeShow(true).then(() => {
+					oMTable.onShow(); // to update selection and scroll
+					assert.ok(oContent, "Content returned");
+					assert.ok(oContent.isA("sap.ui.layout.FixFlex"), "Content is sap.m.FixFlex");
+					assert.equal(oContent.getFixContent().length, 1, "FixFlex number of Fix items");
+					const oFixContent = oContent.getFixContent()[0];
+					assert.ok(oFixContent.isA("sap.m.VBox"), "FixContent is sap.m.VBox");
+					assert.ok(oFixContent.hasStyleClass("sapMdcValueHelpPanelFilterbar"), "VBox has style class sapMdcValueHelpPanelFilterbar");
+					assert.equal(oFixContent.getItems().length, 1, "VBox number of items");
+					const oFilterBar = oFixContent.getItems()[0];
+					assert.ok(oFilterBar.isA("sap.ui.mdc.valuehelp.FilterBar"), "VBox item is FilterBar");
+					// const oConditions = oFilterBar.getInternalConditions();
+					// assert.equal(oConditions["*text,additionalText*"][0].values[0], "X", "Search condition in FilterBar");
+					const oFlexContent = oContent.getFlexContent();
+					assert.ok(oFlexContent.isA("sap.m.Panel"), "FlexContent is sap.m.Panel");
+					assert.ok(oFlexContent.getExpanded(), "Panel is expanded");
+					assert.equal(oFlexContent.getHeight(), "100%", "Panel height");
+					assert.equal(oFlexContent.getHeaderText(), oResourceBundle.getText("valuehelp.TABLETITLENONUMBER"), "Panel headerText");
+					assert.ok(oFlexContent.hasStyleClass("sapMdcTablePanel"), "Panel has style class sapMdcTablePanel");
+					assert.equal(oFlexContent.getContent().length, 1, "Panel number of items");
+					const oScrollContainer = oFlexContent.getContent()[0];
+					assert.ok(oScrollContainer.isA("sap.m.ScrollContainer"), "Panel item is ScrollContainer");
+					assert.equal(oScrollContainer.getContent().length, 1, "ScrollContainer number of items");
+					assert.equal(oScrollContainer.getContent()[0], oTable, "Table inside ScrollContainer");
 
-				assert.equal(oTable.getMode(), ListMode.MultiSelect, "Table mode");
-				// assert.equal(oMTable.getDisplayContent(), oTable, "Table stored in displayContent"); // TODO: overwrite getDisplayContent here?
-				assert.ok(oTable.hasStyleClass("sapMComboBoxList"), "List has style class sapMComboBoxList");
+					assert.equal(oTable.getMode(), ListMode.MultiSelect, "Table mode");
+					// assert.equal(oMTable.getDisplayContent(), oTable, "Table stored in displayContent"); // TODO: overwrite getDisplayContent here?
+					assert.ok(oTable.hasStyleClass("sapMComboBoxList"), "List has style class sapMComboBoxList");
 
-				const aItems = oTable.getItems();
-				let oItem = aItems[0];
-				assert.notOk(oItem.getSelected(), "Item0 not selected");
-				oItem = aItems[1];
-				assert.ok(oItem.getSelected(), "Item1 is selected");
-				oItem = aItems[2];
-				assert.notOk(oItem.getSelected(), "Item2 not selected");
+					const aItems = oTable.getItems();
+					let oItem = aItems[0];
+					assert.notOk(oItem.getSelected(), "Item0 not selected");
+					oItem = aItems[1];
+					assert.ok(oItem.getSelected(), "Item1 is selected");
+					oItem = aItems[2];
+					assert.notOk(oItem.getSelected(), "Item2 not selected");
 
-				let aNewConditions = [
-					Condition.createItemCondition("I3", "X-Item 3")
-				];
-				oTable.fireItemPress({listItem: oItem});
-				assert.equal(iSelect, 1, "select event fired");
-				assert.deepEqual(aConditions, aNewConditions, "select event conditions");
-				assert.equal(sType, ValueHelpSelectionType.Add, "select event type");
-				assert.equal(iConfirm, 0, "confirm event not fired");
-				oItem = aItems[0];
-				assert.notOk(oItem.getSelected(), "Item0 not selected");
-				oItem = aItems[1];
-				assert.ok(oItem.getSelected(), "Item1 is selected");
-				oItem = aItems[2];
-				assert.ok(oItem.getSelected(), "Item2 is selected");
-				// TODO: clarify if Conditions should really not be updated - so they are not in sync with Selection
-				// assert.deepEqual(oMTable.getConditions(), aNewConditions, "MTable conditions");
+					let aNewConditions = [
+						Condition.createItemCondition("I3", "X-Item 3")
+					];
+					oTable.fireItemPress({listItem: oItem});
+					assert.equal(iSelect, 1, "select event fired");
+					assert.deepEqual(aConditions, aNewConditions, "select event conditions");
+					assert.equal(sType, ValueHelpSelectionType.Add, "select event type");
+					assert.equal(iConfirm, 0, "confirm event not fired");
+					oItem = aItems[0];
+					assert.notOk(oItem.getSelected(), "Item0 not selected");
+					oItem = aItems[1];
+					assert.ok(oItem.getSelected(), "Item1 is selected");
+					oItem = aItems[2];
+					assert.ok(oItem.getSelected(), "Item2 is selected");
+					// TODO: clarify if Conditions should really not be updated - so they are not in sync with Selection
+					// assert.deepEqual(oMTable.getConditions(), aNewConditions, "MTable conditions");
 
-				// selection via SelectionChangeEvent (selection of items done normally in table)
-				iSelect = 0;
-				iConfirm = 0;
-				aNewConditions = [
-					Condition.createItemCondition("I2", "Item 2")
-				];
-				aItems[1].setSelected(false);
-				oTable.fireSelectionChange({listItems: [aItems[1]]});
-				assert.equal(iSelect, 1, "select event fired");
-				assert.deepEqual(aConditions, aNewConditions, "select event conditions");
-				assert.equal(sType, ValueHelpSelectionType.Remove, "select event type");
-				assert.equal(iConfirm, 0, "confirm event not fired");
+					// selection via SelectionChangeEvent (selection of items done normally in table)
+					iSelect = 0;
+					iConfirm = 0;
+					aNewConditions = [
+						Condition.createItemCondition("I2", "Item 2")
+					];
+					aItems[1].setSelected(false);
+					oTable.fireSelectionChange({listItems: [aItems[1]]});
+					assert.equal(iSelect, 1, "select event fired");
+					assert.deepEqual(aConditions, aNewConditions, "select event conditions");
+					assert.equal(sType, ValueHelpSelectionType.Remove, "select event type");
+					assert.equal(iConfirm, 0, "confirm event not fired");
 
-				oMTable.onHide();
-				assert.notOk(oTable.hasStyleClass("sapMComboBoxList"), "List style class sapMComboBoxList removed");
-				fnDone();
+					oMTable.onHide();
+					assert.notOk(oTable.hasStyleClass("sapMComboBoxList"), "List style class sapMComboBoxList removed");
+					fnDone();
+				});
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
 				fnDone();
@@ -1752,7 +1794,6 @@ sap.ui.define([
 	QUnit.test("Filter with FilterBar", function(assert) {
 
 		const oListBinding = oTable.getBinding("items");
-		sinon.spy(oListBinding, "filter");
 		sinon.stub(ValueHelpDelegate, "isSearchSupported").returns(true);
 
 		const oFilterBar = new FilterBar("FB1");
@@ -1763,49 +1804,57 @@ sap.ui.define([
 		oMTable.setFilterBar(oFilterBar);
 		assert.ok(oFilterBar.getBasicSearchField(), "SearchField added to FilterBar");
 
-		oFilterBar.fireSearch();
+		return oMTable.onBeforeShow(true).then(() => {
+			sinon.spy(oListBinding, "filter");
+			oFilterBar.fireSearch();
 
-		// compare arguments of filter as Filter object is changed during filtering
-		assert.equal(oListBinding.filter.args.length, 1, "ListBinding filter called once");
-		assert.equal(oListBinding.filter.args[0].length, 2, "ListBinding filter number of arguments");
-		assert.equal(oListBinding.filter.args[0][0].length, 1, "ListBinding filter is array with one filter");
-		assert.equal(oListBinding.filter.args[0][0][0].sPath, "additionalText", "ListBinding filter1 path");
-		assert.equal(oListBinding.filter.args[0][0][0].sOperator, FilterOperator.Contains, "ListBinding filter1 operator");
-		assert.equal(oListBinding.filter.args[0][0][0].oValue1, "2", "ListBinding filter1 value1");
-		assert.equal(oListBinding.filter.args[0][1], FilterType.Application, "ListBinding filter type");
-		let aItems = oTable.getItems();
-		assert.equal(aItems.length, 1, "number of items");
-		assert.equal(aItems[0].getCells()[0].getText(), "I2", "Key of item");
+			// compare arguments of filter as Filter object is changed during filtering
+			assert.equal(oListBinding.filter.args.length, 1, "ListBinding filter called once");
+			assert.equal(oListBinding.filter.args[0].length, 2, "ListBinding filter number of arguments");
+			assert.equal(oListBinding.filter.args[0][0].length, 1, "ListBinding filter is array with one filter");
+			assert.equal(oListBinding.filter.args[0][0][0].sPath, "additionalText", "ListBinding filter1 path");
+			assert.equal(oListBinding.filter.args[0][0][0].sOperator, FilterOperator.Contains, "ListBinding filter1 operator");
+			assert.equal(oListBinding.filter.args[0][0][0].oValue1, "2", "ListBinding filter1 value1");
+			assert.equal(oListBinding.filter.args[0][1], FilterType.Application, "ListBinding filter type");
+			let aItems = oTable.getItems();
+			assert.equal(aItems.length, 1, "number of items");
+			assert.equal(aItems[0].getCells()[0].getText(), "I2", "Key of item");
 
-		// removed FilterBar should not trigger filtering
-		oListBinding.filter.reset();
-		oMTable.setFilterBar();
-		oFilterBar.getConditions.returns({
-			additionalText: [Condition.createCondition(OperatorName.Contains, "3")]
+			// removed FilterBar should not trigger filtering
+			oMTable.onHide();
+			oMTable.setFilterBar();
+			return oMTable.onBeforeShow(true).then(() => {
+				oFilterBar.getConditions.returns({
+					additionalText: [Condition.createCondition(OperatorName.Contains, "3")]
+				});
+				assert.notOk(oFilterBar.getBasicSearchField(), "SearchField removed from FilterBar");
+
+				oListBinding.filter.reset();
+				oFilterBar.fireSearch();
+				assert.notOk(oListBinding.filter.called, "No filtering called");
+				oFilterBar.destroy();
+
+				// Default filterbar used now
+				const oDefaultFilterBar = oMTable.getAggregation("_defaultFilterBar");
+				sinon.stub(oDefaultFilterBar, "getConditions").returns({
+					additionalText: [Condition.createCondition(OperatorName.Contains, "1")]
+				});
+				oListBinding.filter.reset();
+				oDefaultFilterBar.fireSearch();
+				assert.equal(oListBinding.filter.args.length, 1, "ListBinding filter called once");
+				assert.equal(oListBinding.filter.args[0].length, 2, "ListBinding filter number of arguments");
+				assert.equal(oListBinding.filter.args[0][0].length, 1, "ListBinding filter is array with one filter");
+				assert.equal(oListBinding.filter.args[0][0][0].sPath, "additionalText", "ListBinding filter1 path");
+				assert.equal(oListBinding.filter.args[0][0][0].sOperator, FilterOperator.Contains, "ListBinding filter1 operator");
+				assert.equal(oListBinding.filter.args[0][0][0].oValue1, "1", "ListBinding filter1 value1");
+				assert.equal(oListBinding.filter.args[0][1], FilterType.Application, "ListBinding filter type");
+				aItems = oTable.getItems();
+				assert.equal(aItems.length, 1, "number of items");
+				assert.equal(aItems[0].getCells()[0].getText(), "I1", "Key of item");
+
+				ValueHelpDelegate.isSearchSupported.restore();
+			});
 		});
-		assert.notOk(oFilterBar.getBasicSearchField(), "SearchField removed from FilterBar");
-
-		oFilterBar.fireSearch();
-		assert.notOk(oListBinding.filter.called, "No filtering called");
-		oFilterBar.destroy();
-
-		// Default filterbar used now
-		const oDefaultFilterBar = oMTable.getAggregation("_defaultFilterBar");
-		sinon.stub(oDefaultFilterBar, "getConditions").returns({
-			additionalText: [Condition.createCondition(OperatorName.Contains, "1")]
-		});
-		oListBinding.filter.reset();
-		oDefaultFilterBar.fireSearch();
-		assert.equal(oListBinding.filter.args.length, 1, "ListBinding filter called once");
-		assert.equal(oListBinding.filter.args[0].length, 2, "ListBinding filter number of arguments");
-		assert.equal(oListBinding.filter.args[0][0].length, 1, "ListBinding filter is array with one filter");
-		assert.equal(oListBinding.filter.args[0][0][0].sPath, "additionalText", "ListBinding filter1 path");
-		assert.equal(oListBinding.filter.args[0][0][0].sOperator, FilterOperator.Contains, "ListBinding filter1 operator");
-		assert.equal(oListBinding.filter.args[0][0][0].oValue1, "1", "ListBinding filter1 value1");
-		assert.equal(oListBinding.filter.args[0][1], FilterType.Application, "ListBinding filter type");
-		aItems = oTable.getItems();
-		assert.equal(aItems.length, 1, "number of items");
-		assert.equal(aItems[0].getCells()[0].getText(), "I1", "Key of item");
 
 	});
 
@@ -1839,18 +1888,16 @@ sap.ui.define([
 
 		oMTable.setFilterValue("i");
 		oMTable.setFilterBar(oFilterBar);
-		oMTable.onBeforeShow(true); // filtering should happen only if open
-		assert.ok(oFilterBar.getBasicSearchField(), "SearchField added to FilterBar");
+		return oMTable.onBeforeShow(true).then(() => {
+			// filtering should happen only if open
+			assert.ok(oFilterBar.getBasicSearchField(), "SearchField added to FilterBar");
 
-		sinon.spy(oListBinding, "filter");
-		sinon.spy(oListBinding, "changeParameters");
-		sinon.spy(oListBinding, "suspend");
+			sinon.spy(oListBinding, "filter");
+			sinon.spy(oListBinding, "changeParameters");
+			sinon.spy(oListBinding, "suspend");
 
-		oFilterBar.fireSearch();
+			oFilterBar.fireSearch();
 
-		const fnDone = assert.async();
-		setTimeout( function(){
-			// as waiting for Promise
 			assert.ok(ValueHelpDelegateV4.isSearchSupported.called, "ValueHelpDelegateV4.isSearchSupported called");
 			assert.ok(ValueHelpDelegateV4.updateBindingInfo.called, "ValueHelpDelegateV4.updateBindingInfo called");
 			assert.equal(oListBindingInfo.parameters.$search, "I", "ListBindingInfo: search string set to $search");
@@ -1875,8 +1922,7 @@ sap.ui.define([
 			oContainer.getValueHelpDelegate.restore();
 			ValueHelpDelegateV4.isSearchSupported.restore();
 			ValueHelpDelegateV4.updateBindingInfo.restore();
-			fnDone();
-		}, 0);
+		});
 	});
 
 	QUnit.test("isSingleSelect", function(assert) {
