@@ -873,7 +873,7 @@ sap.ui.define([
 	 *
 	 * @static
 	 * @constant
-	 * @typedef {object} sap.ui.mdc.valuehelp.ValueHelpItem
+	 * @typedef {object} sap.ui.mdc.valuehelp.base.ValueHelpItem
 	 * @property {any} key Key
 	 * @property {any} [description] Description
 	 * @property {object} [payload] Payload of the condition. Set by application. Data needs to be stringified. (as stored and loaded in variants)
@@ -911,7 +911,7 @@ sap.ui.define([
 	 * belongs to, not by the application.
 	 *
 	 * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration} oConfig Configuration
-	 * @returns {Promise<sap.ui.mdc.valuehelp.ValueHelpItem>} Promise returning object containing description, key and payload.
+	 * @returns {Promise<sap.ui.mdc.valuehelp.base.ValueHelpItem>} Promise returning object containing description, key and payload.
 	 * @throws {sap.ui.model.FormatException|sap.ui.model.ParseException} if entry is not found or not unique
 	 *
 	 * @private
