@@ -2,7 +2,6 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Lib",
 	"sap/ui/dom/units/Rem",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -44,7 +43,6 @@ sap.ui.define([
 	"sap/m/SegmentedButtonItem",
 	"sap/ui/core/Core"
 ], function(
-	nextUIUpdate,
 	Library,
 	DomUnitsRem,
 	createAndAppendDiv,
@@ -3389,87 +3387,58 @@ sap.ui.define([
 		}, 200);
 	});
 
-	QUnit.test("onsapfocusfail will restore the focus to the Overflow Button when Dialog is closed or to next Button, if Button gets invisible", async function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		var oOverflowToolbar = new sap.m.OverflowToolbar({
+	QUnit.test("onsapfocusfail will restore the focus to the Overflow Button when Dialog is closed or to next Button, if Button gets invisible", function (assert) {
+		var oOverflowToolbar = new OverflowToolbar({
 			width: "400px",
 			content: [
-				new sap.m.ToolbarSpacer(),
-				new sap.m.Button({ text: "b1" }),
-				new sap.m.Button({ text: "b2" }),
-				new sap.m.Button({ id: "busyBtn" }),
-				new sap.m.Button({ id: "destroy", text: "destroy", press: function () { this.setVisible(false); } }),
-				new sap.m.Button({ id: "disable", text: "disable" }),
-				new sap.m.Button({ text: "open", press: function (oEvent) { openDialog(oEvent); } }),
-				new sap.m.Button({ id: "b3", text: "b3" })
-			]
-		}),
-		oDialog,
-		oFocusedElement,
-		oDestroyBtn;
-
-		function openDialog() {
-			if (!oDialog) {
-				oDialog = new sap.m.Dialog({
-					type: sap.m.DialogType.Message,
-					title: "Confirm",
-					content: new sap.m.Text({ text: "Are you sure?" }),
-					beginButton: new sap.m.Button({
-						type: sap.m.ButtonType.Emphasized,
-						text: "Ok",
-						press: function () {
-							oDialog.close();
-						}
-					}),
-					afterOpen: function () {
-						var oOkButton = oDialog.getBeginButton();
-
-						// Act - press on the OK button to close the Dialog
-						oOkButton.firePress();
-					},
-					afterClose: function () {
-						// Assert
-						oFocusedElement = document.activeElement;
-						oDestroyBtn = sap.ui.getCore().byId("destroy");
-						assert.strictEqual(oFocusedElement, oOverflowToolbar._getOverflowButton().getDomRef(),
-							"Overflow Buttion is focused");
-
-						// Act - press Destroy button, which will become invisible and the focus should be moved to the next button
-						// Focus - as firePress does not simulate the focus (like in real case, upon pressing the button will receive the focus)
-						oDestroyBtn.focus();
-						oDestroyBtn.firePress();
-
-						oOverflowToolbar.addEventDelegate({
-							onAfterRendering: function () {
-								// Assert
-								oFocusedElement = document.activeElement;
-								assert.strictEqual(oFocusedElement, oOverflowToolbar.getContent()[5].getDomRef(),
-									"Next button is focused, when the previously focused one is getting invisible");
-
-								// Clean-up
-								oOverflowToolbar.destroy();
-								oDialog.destroy();
-								done();
-							}
-						});
+				new ToolbarSpacer(),
+				new Button({ text: "b1" }),
+				new Button({ text: "b2" }),
+				new Button({ id: "busyBtn" }),
+				new Button({
+					id: "destroy",
+					text: "destroy",
+					press: function () {
+						this.setVisible(false);
 					}
-				});
-			}
-			oDialog.open();
-		}
-
-		oOverflowToolbar.placeAt("qunit-fixture");
-		await nextUIUpdate();
-
-		oOverflowToolbar._getPopover().attachAfterOpen(function () {
-			var oOpenButton = oOverflowToolbar.getContent()[6];
-			oOpenButton.firePress();
+				}),
+				new Button({ id: "disable", text: "disable" }),
+				new Button({
+					text: "open"
+				}),
+				new Button({ id: "b3", text: "b3" }),
+				new Button({
+					id: "b4",
+					text: "b4",
+					layoutData: new OverflowToolbarLayoutData({ priority: OverflowToolbarPriority.AlwaysOverflow })
+				})
+			]
 		});
 
-		// Act - simulate user interaction, overflow menu button is pressed
-		oOverflowToolbar._getOverflowButton().firePress();
+		oOverflowToolbar.placeAt("qunit-fixture");
+
+		oCore.applyChanges();
+
+		var oOpenButton = oOverflowToolbar.getContent()[4];
+
+		oOverflowToolbar.onfocusfail({ srcControl: oOpenButton });
+
+		assert.strictEqual(document.activeElement, oOverflowToolbar.getContent()[5].getDomRef(),
+			"Next button is focused, when the previously focused one is getting invisible");
+
+		var oOpenButton2 = oOverflowToolbar.getContent()[6];
+
+		oOverflowToolbar.onfocusfail({ srcControl: oOpenButton2 });
+
+		assert.strictEqual(document.activeElement, oOverflowToolbar._getOverflowButton().getDomRef(),
+			"Overflow toggle button is focused, when the previously focused one is getting invisible but it is the last button");
+
+		var oOpenButton3 = oOverflowToolbar.getContent()[7];
+
+		oOverflowToolbar.onfocusfail({ srcControl: oOpenButton3 });
+
+		assert.strictEqual(document.activeElement, oOverflowToolbar._getOverflowButton().getDomRef(),
+			"Overflow toggle button is focused, when not part of the rendered content");
 	});
 
 	QUnit.module("Control destroy");
