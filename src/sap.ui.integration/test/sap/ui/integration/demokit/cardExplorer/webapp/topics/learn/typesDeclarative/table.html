@@ -523,13 +523,13 @@
 					"value": "{status}",
 					"state": "{statusState}",
 					"visible": "{/columns/3/visibleFlag}"
-				}],
-				"group": {
-					"title": "{= ${statusState} === 'Success' ? 'Delivered' : 'Not Delivered'}",
-					"order": {
-						"path": "statusState",
-						"dir": "ASC"
-					}
+				}]
+			},
+			"group": {
+				"title": "{= ${statusState} === 'Success' ? 'Delivered' : 'Not Delivered'}",
+				"order": {
+					"path": "statusState",
+					"dir": "ASC"
 				}
 			}
 		}
