@@ -30,6 +30,12 @@ sap.ui.define([
 					propertyName: "text",
 					selectorControlId: "labelId",
 					sourceControlId: "labelId"
+				},
+				// Default advanced settings
+				advancedSettings: {
+					allowForms: true,
+					allowScript: true,
+					allowSameOrigin: true
 				}
 			});
 			this.oLabel = new Label("labelId", {text: "myInitialTitle"});
@@ -86,7 +92,12 @@ sap.ui.define([
 					frameHeight: "100",
 					frameHeightUnit: "px",
 					frameUrl: "https://example.com",
-					title: "myNewTitle"
+					title: "myNewTitle",
+					advancedSettings: {
+						allowForms: true,
+						allowScript: true,
+						allowSameOrigin: true
+					}
 				},
 				renameContent: {
 					value: "myNewTitle"
@@ -100,12 +111,22 @@ sap.ui.define([
 					frameHeight: "100",
 					frameHeightUnit: "px",
 					frameUrl: "https://example.com",
-					title: "myInitialTitle"
+					title: "myInitialTitle",
+					advancedSettings: {
+						allowForms: true,
+						allowScript: true,
+						allowSameOrigin: true
+					}
 				},
 				updateContent: {
 					url: "https://example.com",
 					width: "50px",
-					height: "100px"
+					height: "100px",
+					advancedSettings: {
+						allowForms: true,
+						allowScript: true,
+						allowSameOrigin: true
+					}
 				}
 			},
 			{
@@ -116,12 +137,22 @@ sap.ui.define([
 					frameHeight: "100",
 					frameHeightUnit: "%",
 					frameUrl: "https://example.com",
-					title: "myInitialTitle"
+					title: "myInitialTitle",
+					advancedSettings: {
+						allowForms: true,
+						allowScript: true,
+						allowSameOrigin: true
+					}
 				},
 				updateContent: {
 					url: "https://example.com",
 					width: "100px",
-					height: "100%"
+					height: "100%",
+					advancedSettings: {
+						allowForms: true,
+						allowScript: true,
+						allowSameOrigin: true
+					}
 				}
 			},
 			{
@@ -164,7 +195,12 @@ sap.ui.define([
 					frameHeight: "100",
 					frameHeightUnit: "px",
 					frameUrl: "https://example.com",
-					title: "myInitialTitle"
+					title: "myInitialTitle",
+					advancedSettings: {
+						allowForms: true,
+						allowScript: true,
+						allowSameOrigin: true
+					}
 				}
 			},
 			{
