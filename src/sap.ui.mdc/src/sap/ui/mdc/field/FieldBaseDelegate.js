@@ -184,7 +184,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Value help assigned to the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField}, or {@link sap.ui.mdc.MultiValueField MultiValueField} control
 	 * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration} [oConfig] Configuration
-	 * @returns {sap.ui.mdc.valuehelp.ValueHelpItem|Promise<sap.ui.mdc.valuehelp.ValueHelpItem>} Object containing description, key, and payload. If it is not available right now (must be requested), a <code>Promise</code> is returned.
+	 * @returns {sap.ui.mdc.valuehelp.base.ValueHelpItem|Promise<sap.ui.mdc.valuehelp.base.ValueHelpItem>} Object containing description, key, and payload. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.ParseException} if item cannot be determined
 	 * @since: 1.78.0
 	 * @public
@@ -221,7 +221,7 @@ sap.ui.define([
 	 * @param {object} oConditionPayload Additional context information for this key
 	 * @param {sap.ui.core.Control} oControl Instance of the calling control if it is not the field itself
 	 * @param {sap.ui.model.Type} oType Type of the value
-	 * @returns {string|sap.ui.mdc.valuehelp.ValueHelpItem|Promise<string|sap.ui.mdc.valuehelp.ValueHelpItem>} Description for key or object containing description, key, and payload. If it is not available right away (must be requested), a <code>Promise</code> is returned.
+	 * @returns {string|sap.ui.mdc.valuehelp.base.ValueHelpItem|Promise<string|sap.ui.mdc.valuehelp.base.ValueHelpItem>} Description for key or object containing description, key, and payload. If it is not available right away (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.FormatException} if the description cannot be determined
 	 * @since: 1.78.0
 	 * @public
