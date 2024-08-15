@@ -25,8 +25,10 @@ sap.ui.define([
 	"./library",
 	"sap/uxap/AnchorBarRenderer",
 	"sap/base/Log",
+	"sap/ui/base/ManagedObject",
+	// jQuery Plugin "scrollLeftRTL"
 	"sap/ui/dom/jquery/scrollLeftRTL"
-], function(Localization, Element, Library, Theming, jQuery, Button, MenuButton, mobileLibrary, Toolbar, IconPool, Item, ResizeHandler, ScrollEnablement, HorizontalLayout, Device, CustomData, Control, HierarchicalSelect, library, AnchorBarRenderer, Log) {
+], function(Localization, Element, Library, Theming, jQuery, Button, MenuButton, mobileLibrary, Toolbar, IconPool, Item, ResizeHandler, ScrollEnablement, HorizontalLayout, Device, CustomData, Control, HierarchicalSelect, library, AnchorBarRenderer, Log, ManagedObject) {
 	"use strict";
 
 	// shortcut for sap.m.SelectType
@@ -303,7 +305,7 @@ sap.ui.define([
 		if (bButtonHasText && (!bIsSecondLevel || oButton.data("bTitleVisible") === true)) {
 			var oPhoneItem = new Item({
 				key: oButton.data("sectionId"),
-				text: oButton.getText(),
+				text: ManagedObject.escapeSettingsValue(oButton.getText()),
 				customData: [
 					new CustomData({
 						key: "secondLevel",
