@@ -741,7 +741,7 @@ sap.ui.define([
 		});
 
 		var oButton5 = new Button({
-			text: "Open Quick View with links as title - TWO lines",
+			text: "Open Quick View with links as title - TWO lines (Belize) / THREE lines (Fiori3/Horizon)",
 			ariaHasPopup: HasPopup.Dialog,
 			press: function() {
 				oQuickView5.openBy(this);
