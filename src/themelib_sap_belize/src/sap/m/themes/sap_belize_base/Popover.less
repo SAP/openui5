@@ -35,6 +35,12 @@
 	}
 }
 
+.sapMPopoverContWrapper {
+	overflow: hidden;
+	border-radius: inherit;
+	max-height: 100vh;
+}
+
 .sapMPopoverCont::-webkit-scrollbar {
 	border-bottom-right-radius:  @sapUiPopoverBorderCornerRadius;
 	border-top-right-radius:  @sapUiPopoverBorderCornerRadius;
@@ -300,7 +306,7 @@ html[data-sap-ui-browser^="sf"] .sapMPopover {
 }
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
-.sapUiContainerContentPadding(~".sapMPopover", ~"> .sapMPopoverCont > .sapMPopoverScroll");
+.sapUiContainerContentPadding(~".sapMPopover", ~".sapMPopoverCont > .sapMPopoverScroll");
 
 .sapMPopoverResizeHandle {
 	transform: rotate(270deg);

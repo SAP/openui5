@@ -35,6 +35,12 @@
 	}
 }
 
+.sapMPopoverContWrapper {
+	overflow: hidden;
+	border-radius: inherit;
+	max-height: 100vh;
+}
+
 .sapMPopoverCont::-webkit-scrollbar {
 	border-bottom-right-radius:  @sapUiPopoverBorderCornerRadius;
 	border-top-right-radius:  @sapUiPopoverBorderCornerRadius;
@@ -50,9 +56,14 @@
 	box-sizing: border-box;
 }
 
-.sapMPopover .sapMIBar.sapMHeader-CTX {
+.sapMPopoverWithoutSubHeader .sapMPopoverHeader .sapMIBar.sapMHeader-CTX,
+.sapMPopoverSubHeader .sapMIBar.sapMSubHeader-CTX {
 	background-color: @sapUiGroupContentBackground;
-	box-shadow: inset 0 -1px @sapUiGroupContentBorderColor;
+	box-shadow: var(--sapContent_HeaderShadow);
+}
+
+.sapMPopoverWithSubHeader .sapMPopoverHeader .sapMIBar.sapMHeader-CTX {
+	box-shadow: none;
 }
 
 .sapMPopover .sapMIBar.sapMSubHeader-CTX {
@@ -300,7 +311,7 @@ html[data-sap-ui-browser^="sf"] .sapMPopover {
 }
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
-.sapUiContainerContentPadding(~".sapMPopover", ~"> .sapMPopoverCont > .sapMPopoverScroll");
+.sapUiContainerContentPadding(~".sapMPopover", ~".sapMPopoverCont > .sapMPopoverScroll");
 
 .sapMPopoverResizeHandle {
 	position: absolute;

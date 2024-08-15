@@ -11,22 +11,22 @@
 
 		.positioned11 {
 			position: absolute !important;
-			top: 250px;
+			top: 300px;
 		}
 
 		.positioned14 {
 			position: absolute !important;
-			top: 300px;
+			top: 350px;
 		}
 
 		.positioned15 {
 			position: absolute !important;
-			top: 350px;
+			top: 400px;
 		}
 
 		.positioned16 {
 			position: absolute !important;
-			top: 400px;
+			top: 450px;
 		}
 
 		.customClassForVisualTests {
@@ -394,6 +394,36 @@
 						oPopover.openBy(this);
 					}
 				}),
+				new sap.m.Button({
+					text: "WithH WithS",
+					press() {
+						new sap.m.Popover({
+							title: "Popover with Header and Subheader",
+							subHeader: new sap.m.Bar({
+								contentMiddle: [
+									new sap.m.SearchField({
+										placeholder: "Search ...",
+										width: "100%"
+									})
+								]
+							}),
+							content: [
+								new sap.m.List({
+									inset: true,
+									items: [
+										new sap.m.StandardListItem({
+											title: "Title",
+											description: "Description"
+										})
+									]
+								})
+							],
+							afterClose() {
+								this.destroy();
+							}
+						}).openBy(this);
+					}
+				}),
 				oButton10
 			]
 		});
@@ -429,7 +459,11 @@
 				oCustomCssButton,
 			],
 			content: [
-				oOverflowingPopover, oVBox, oButton14, oButton15, oButton16
+				oOverflowingPopover,
+				oVBox,
+				oButton14,
+				oButton15,
+				oButton16
 			]
 		}).addStyleClass("sapUiContentPadding");
 
