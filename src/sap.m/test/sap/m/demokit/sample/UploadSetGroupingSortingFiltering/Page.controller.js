@@ -165,6 +165,14 @@ sap.ui.define([
 			return new GroupHeaderListItem({
 				title: oGroup ? (oGroup.text ? oGroup.text : "Uploaded By") + ": " + oGroup.key : ''
 			});
+		},
+		onMediaTypeMismatch: function(oEvent) {
+			MessageToast.show("Media Type Missmatch event triggered.");
+		},
+		onFileTypeMismatch: function(oEvent) {
+			var oUploadSet = this.byId("UploadSet");
+			oUploadSet.removeIncompleteItem(oEvent.getParameter("item"));
+			MessageToast.show("File Type Missmatch event triggered.");
 		}
 	});
 });
