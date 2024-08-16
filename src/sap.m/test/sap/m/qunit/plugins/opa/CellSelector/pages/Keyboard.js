@@ -116,6 +116,14 @@ sap.ui.define([
 						}
 					});
 				},
+				iSelectRowsWithSpace: function() {
+					Util.waitForTable.call(this, {
+						success: function(oTable) {
+							var oFocus = Util.getFocusedElement(oTable);
+							pressKey(KeyCodes.ENTER, oFocus);
+						}
+					});
+				},
 				iSelectColumns: function() {
 					Util.waitForTable.call(this, {
 						success: function(oTable) {
