@@ -3,24 +3,19 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/f/library",
-	"sap/m/library",
 	"sap/ui/core/InvisibleText",
-	"sap/m/BadgeEnabler",
 	"sap/f/CardRenderer",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Lib",
+	"sap/f/cards/util/CardBadgeEnabler"
 ], function (
 	Control,
-	library,
-	mLibrary,
 	InvisibleText,
-	BadgeEnabler,
 	CardRenderer,
-	Library
+	Library,
+	CardBadgeEnabler
 ) {
 	"use strict";
 
-	var BadgeState = mLibrary.BadgeState;
 	var BADGE_AUTOHIDE_TIME = 3000;
 
 	/**
@@ -60,12 +55,22 @@ sap.ui.define([
 				 */
 				height: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "auto"}
 			},
-			aggregations: {}
+			aggregations: {
+
+				/**
+				 * Defines the internally used <code>sap.m.ObjectStatus</code>.
+				 */
+				_cardBadges: {
+					type: "sap.m.ObjectStatus",
+					multiple: true,
+					visibility: "hidden"
+				}
+			}
 		},
 		renderer: CardRenderer
 	});
 
-	BadgeEnabler.call(CardBase.prototype);
+	CardBadgeEnabler.call(CardBase.prototype);
 
 	/**
 	 * Initialization hook.
@@ -81,8 +86,7 @@ sap.ui.define([
 
 		this._ariaText = new InvisibleText({id: this.getId() + "-ariaText"});
 		this._ariaText.setText(this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD"));
-
-		this.initBadgeEnablement();
+		this.initCardBadgeEnablement();
 	};
 
 	CardBase.prototype.exit = function () {
@@ -191,47 +195,13 @@ sap.ui.define([
 	};
 
 	CardBase.prototype._hideBadge = function () {
+		const oCardBadgeCustomData = this._getCardBadgeCustomData();
 
-		var oBadgeCustomData = this.getBadgeCustomData();
-		if (oBadgeCustomData) {
-			oBadgeCustomData.setVisible(false);
+		if (oCardBadgeCustomData?.length > 0) {
+			this._hideBadges();
 		}
 
 		this._iHideBadgeTimeout = null;
-	};
-
-	CardBase.prototype.onBadgeUpdate = function (sValue, sState, sBadgeId) {
-
-		var oHeader = this.getCardHeader(),
-			oDomRef,
-			sAriaLabelledBy;
-
-		if (oHeader) {
-			oDomRef = oHeader.getFocusDomRef();
-		} else {
-			oDomRef = this.getDomRef("contentSection");
-		}
-
-		if (!oDomRef) {
-			return;
-		}
-
-		sAriaLabelledBy = oDomRef.getAttribute("aria-labelledby") || "";
-
-		switch (sState) {
-			case BadgeState.Appear:
-				sAriaLabelledBy = sBadgeId + " " + sAriaLabelledBy;
-				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy);
-				break;
-			case BadgeState.Disappear:
-				sAriaLabelledBy = sAriaLabelledBy.replace(sBadgeId, "").trim();
-				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy);
-				break;
-		}
-	};
-
-	CardBase.prototype.getAriaLabelBadgeText = function () {
-		return this.getBadgeCustomData().getValue();
 	};
 
 	/**

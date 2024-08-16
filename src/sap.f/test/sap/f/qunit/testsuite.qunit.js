@@ -48,6 +48,11 @@ sap.ui.define(function () {
 				}
 			},
 			"cards/util/addTooltipIfTruncated": {},
+			"cards/CardBadgeCustomData": {
+				sinon: {
+					useFakeTimers: true
+				}
+			},
 			"DynamicPage": {
 				coverage: {
 					only: ["sap/f/DynamicPage"]

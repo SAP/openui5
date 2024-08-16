@@ -1,0 +1,63 @@
+.sapFCardBadgePlaceholder {
+	z-index: 100;
+	position: absolute;
+	top: -0.6125rem;
+	right: 0.75rem;
+	height: auto;
+	display: inline-flex;
+	max-width: 95%; /* long text will not go outside the card */
+}
+
+.sapUiIntCard .sapFCardBadgePlaceholder .sapMObjStatus:not(.sapMObjStatusShowCustomIcon) {
+	.sapMObjStatusIcon {
+		display: initial;
+	}
+}
+
+.sapFCardBadge.sapFCardBadgeHidden {
+	display: none;
+}
+
+.sapFCardBadgePlaceholder .sapMObjStatus.sapMObjStatusInverted {
+	margin-inline-start: 0.25rem;
+	height: 1rem;
+
+	.sapMObjStatusWrapper {
+		border: 0;
+		max-width: 100%;
+		display: flex;
+		align-items: center;
+
+		.sapMObjStatusIcon.sapMObjStatusIconOnly {
+			padding: 0 0.25rem;
+		}
+
+		.sapMObjStatusIcon{
+			padding: 0;
+		}
+
+		.sapMObjStatusText {
+			padding: 0 0.375rem;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			max-width: inherit;
+		}
+
+	}
+
+}
+
+/* Padding between icon and text is too much */
+.sapFCardBadgePlaceholder .sapMObjStatus.sapMObjStatusInverted.sapFCardBadgeTextIcon{
+	.sapMObjStatusWrapper {
+
+		.sapMObjStatusIcon {
+			padding-left: 0.375rem;
+		}
+
+		.sapMObjStatusText {
+			padding: 0 0.375rem 0 0.25rem;
+		}
+	}
+}
