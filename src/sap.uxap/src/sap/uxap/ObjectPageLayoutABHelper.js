@@ -68,7 +68,7 @@ sap.ui.define([
 			oAnchorBar = new IconTabHeader({
 				id: oObjectPageLayout.getId() + "-anchBar",
 				tabsOverflowMode: TabsOverflowMode.StartAndEnd,
-				backgroundDesign: oObjectPageLayout.getBackgroundDesignAnchorBar(),
+				backgroundDesign: ManagedObject.escapeSettingsValue(oObjectPageLayout.getBackgroundDesignAnchorBar()),
 				mode: IconTabHeaderMode.Inline
 			});
 
@@ -109,7 +109,7 @@ sap.ui.define([
 				oSectionFilter = new IconTabFilter(sSectionFilterId, {
 					text: ManagedObject.escapeSettingsValue(oSection._getTitle()),
 					key: oSection.getId(),
-					iconColor: oSection.getAnchorBarButtonColor()
+					iconColor: ManagedObject.escapeSettingsValue(oSection.getAnchorBarButtonColor())
 				}),
 				aSubSections = oSection._getVisibleSubSections();
 
