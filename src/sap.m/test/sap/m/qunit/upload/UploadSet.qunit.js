@@ -947,7 +947,7 @@ sap.ui.define([
 					assert.equal(this.oUploadSet._bItemRemoved, false, "_bItemRemoved flag is reset to false");
 					assert.equal(document.activeElement,  this.oUploadSet.getList().getItems()[0].getDomRef(), "Focus is set correctly");
 					this.oUploadSet._oItemToBeDeleted = oItemsList[1];
-					this.oUploadSet._handleClosedDeleteDialog("OK");
+					this.oUploadSet._handleClosedDeleteDialog(MessageBox.Action.DELETE);
 				} else {
 					assert.equal(this.oUploadSet._bItemRemoved, false, "_bItemRemoved flag is reset to false");
 					assert.equal(document.activeElement,  this.oUploadSet.getList().getDomRef().querySelector(".sapMUCNoDataPage"), "Focus is set correctly");
@@ -958,7 +958,7 @@ sap.ui.define([
 
 		};
 		this.oUploadSet.addEventDelegate(afterRenderDelegate);
-		this.oUploadSet._handleClosedDeleteDialog("OK");
+		this.oUploadSet._handleClosedDeleteDialog(MessageBox.Action.DELETE);
 	});
 
 	QUnit.module("UploadSet general functionality", {
