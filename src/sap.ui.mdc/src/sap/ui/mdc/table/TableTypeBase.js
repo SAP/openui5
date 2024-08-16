@@ -42,32 +42,14 @@ sap.ui.define([
 	};
 
 	TableTypeBase.prototype.exit = function() {
-		this._disconnectFromTable();
 		this._oManagedObjectModel.destroy();
 		delete this._oManagedObjectModel;
 		Element.prototype.exit.apply(this, arguments);
 	};
 
 	TableTypeBase.prototype.setParent = function() {
-		this._disconnectFromTable();
 		Element.prototype.setParent.apply(this, arguments);
-		this._connectToTable();
-	};
-
-	TableTypeBase.prototype._connectToTable = function() {
-		const oTable = this.getTable();
-
-		if (oTable) {
-			oTable.setModel(this._oManagedObjectModel, "$sap.ui.mdc.Table#type");
-		}
-	};
-
-	TableTypeBase.prototype._disconnectFromTable = function() {
-		const oTable = this.getTable();
-
-		if (oTable && !oTable.isDestroyStarted()) {
-			oTable.setModel(null, "$sap.ui.mdc.Table#type");
-		}
+		this.getTable()?.setModel(this._oManagedObjectModel, "$sap.ui.mdc.Table#type");
 	};
 
 	TableTypeBase.prototype.getSupportedP13nModes = function() {
@@ -133,12 +115,6 @@ sap.ui.define([
 			busyIndicatorDelay: oTable.getBusyIndicatorDelay(),
 			paste: [this._onPaste, this]
 		};
-	};
-
-	TableTypeBase.prototype.getThreshold = function() {
-		const oTable = this.getTable();
-		const iThreshold = oTable ? oTable.getThreshold() : -1;
-		return iThreshold > -1 ? iThreshold : undefined;
 	};
 
 	TableTypeBase.prototype.getRowSettingsConfig = function() {

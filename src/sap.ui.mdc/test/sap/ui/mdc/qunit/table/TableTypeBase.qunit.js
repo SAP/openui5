@@ -9,7 +9,16 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	const TestTableType = TableTypeBase.extend("sap.ui.mdc.test.TestTableType");
+	const TestTableType = TableTypeBase.extend("sap.ui.mdc.test.TestTableType", {
+		metadata: {
+			properties: {
+				testProperty: {
+					type: "int",
+					defaultValue: 0
+				}
+			}
+		}
+	});
 
 	QUnit.module("API", {
 		beforeEach: function() {
@@ -46,7 +55,7 @@ sap.ui.define([
 		createTable: function() {
 			this.destroyTable();
 			this.oTable = new Table({
-				type: new TestTableType()
+				type: new TestTableType({testProperty: 1})
 			});
 			return this.oTable;
 		},
@@ -64,37 +73,64 @@ sap.ui.define([
 		assert.ok(oModel, "The table has a model with the name '" + this.sModelName + "'");
 		assert.ok(oModel.isA("sap.ui.model.base.ManagedObjectModel"), "The model is of type sap.ui.model.base.ManagedObjectModel");
 		assert.ok(!oModel.bDestroyed, "The model is not destroyed");
+		assert.equal(oModel.getProperty("/testProperty"), 1, "The model provides the correct data");
 	});
 
-	QUnit.test("Remove the type from the table", function(assert) {
-		const oModel = this.oTable.getModel(this.sModelName);
+	QUnit.test("Remove the type", function(assert) {
+		const oPreviousModel = this.oTable.getModel(this.sModelName);
+		this.oTable.setType(); // The table creates a new default type instance.
+		const oNewModel = this.oTable.getModel(this.sModelName);
 
-		this.oTable.setAggregation("type", null); // Table#setType immediately creates a new default type instance.
+		assert.ok(!oPreviousModel.bDestroyed, "The model of the removed type is not destroyed");
+		assert.ok(oNewModel, "The table has a model with the name '" + this.sModelName + "'");
+		assert.ok(oPreviousModel !== oNewModel, "The model is a new instance");
+		assert.equal(oNewModel.getProperty("/testProperty"), null, "The model provides the correct data");
+	});
 
-		assert.equal(this.oTable.getModel(this.sModelName), null, "The table does not have a model with the name '" + this.sModelName + "'");
-		assert.ok(!oModel.bDestroyed, "The model is not destroyed");
+	QUnit.test("Replace the type", function(assert) {
+		const oPreviousType = this.oTable.getType();
+		const oPreviousModel = this.oTable.getModel(this.sModelName);
+		this.oTable.setType(new TestTableType({testProperty: 2}));
+		const oNewModel = this.oTable.getModel(this.sModelName);
+
+		assert.ok(!oPreviousModel.bDestroyed, "The model of the removed type is not destroyed");
+		assert.ok(oNewModel, "The table has a model with the name '" + this.sModelName + "'");
+		assert.ok(oPreviousModel !== oNewModel, "The model is a new instance");
+		assert.equal(oNewModel.getProperty("/testProperty"), 2, "The model provides the correct data");
+
+		oPreviousType.destroy();
+	});
+
+	QUnit.test("Replace the default type", function(assert) {
+		this.oTable.destroyType(); // The table creates a new default type instance.
+		const oPreviousModel = this.oTable.getModel(this.sModelName);
+		this.oTable.setType(new TestTableType({testProperty: 2}));
+		const oNewModel = this.oTable.getModel(this.sModelName);
+
+		assert.ok(oPreviousModel.bDestroyed, "The model of the removed default type is destroyed");
+		assert.ok(oNewModel, "The table has a model with the name '" + this.sModelName + "'");
+		assert.ok(oPreviousModel !== oNewModel, "The model is a new instance");
+		assert.equal(oNewModel.getProperty("/testProperty"), 2, "The model provides the correct data");
 	});
 
 	QUnit.test("Destroy the type", function(assert) {
-		const oModel = this.oTable.getModel(this.sModelName);
-		const sModelName = this.sModelName;
-		const fnExit = this.oTable.getType().exit;
+		const oPreviousModel = this.oTable.getModel(this.sModelName);
+		this.oTable.getType().destroy(); // The table creates a new default type instance.
+		const oNewModel = this.oTable.getModel(this.sModelName);
 
-		// Injecting into the exit hook is necessary, because the table immediately creates a new default type instance.
-		this.oTable.getType().exit = function() {
-			fnExit.apply(this, arguments);
-			assert.equal(this.getTable().getModel(sModelName), null, "The table does not have a model with the name '" + sModelName + "'");
-			assert.ok(oModel.bDestroyed, "The model is destroyed");
-		};
-
-		this.oTable.getType().destroy();
+		assert.ok(oPreviousModel.bDestroyed, "The model of the destroyed type is destroyed");
+		assert.ok(oNewModel, "The table has a model with the name '" + this.sModelName + "'");
+		assert.ok(oPreviousModel !== oNewModel, "The model is a new instance");
+		assert.equal(oNewModel.getProperty("/testProperty"), null, "The model provides the correct data");
 	});
 
 	QUnit.test("Destroy the table", function(assert) {
+		const oModel = this.oTable.getModel(this.sModelName);
 		this.oTable.destroy();
 
-		const oModel = this.oTable.getModel(this.sModelName);
-		assert.ok(oModel, "The table has a model with the name '" + this.sModelName + "'");
+		// To avoid unneccesary property updates in a table being destroyed, the model should be kept.
+		assert.ok(oModel === this.oTable.getModel(this.sModelName), "The table still has the model instance");
 		assert.ok(oModel.bDestroyed, "The model is destroyed");
+		assert.equal(oModel.getProperty("/testProperty"), 1, "The model provides the correct data");
 	});
 });

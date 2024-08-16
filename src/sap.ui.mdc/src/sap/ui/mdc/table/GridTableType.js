@@ -122,8 +122,6 @@ sap.ui.define([
 			this._updateTableRowCount();
 		} else if (sProperty === "rowCount") {
 			this._updateTableRowCount();
-		} else if (sProperty === "fixedColumnCount") {
-			oGridTable.setFixedColumnCount(vValue);
 		}
 	};
 
@@ -195,7 +193,12 @@ sap.ui.define([
 		const mSettings = {
 			enableBusyIndicator: true,
 			enableColumnReordering: false,
-			threshold: this.getThreshold(),
+			threshold: {
+				path: "$sap.ui.mdc.Table>/threshold",
+				formatter: function(iThreshold) {
+					return iThreshold > -1 ? iThreshold : undefined;
+				}
+			},
 			noData: oTable._getNoDataText(),
 			extension: [oTable._oToolbar],
 			ariaLabelledBy: [oTable._oTitle],
@@ -206,7 +209,8 @@ sap.ui.define([
 				formatter: function(sSelectionMode) {
 					return mSelectionBehaviorMap[sSelectionMode]; // Default is "RowSelector"
 				}
-			}
+			},
+			fixedColumnCount: "{$sap.ui.mdc.Table#type>/fixedColumnCount}"
 		};
 
 		if (oTable.hasListeners("rowPress")) {
