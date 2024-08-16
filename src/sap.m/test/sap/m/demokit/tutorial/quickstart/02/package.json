@@ -9,6 +9,6 @@
     "build": "ui5 build"
   },
   "devDependencies": {
-    "@ui5/cli": "^3"
+    "@ui5/cli": "^4"
   }
 }

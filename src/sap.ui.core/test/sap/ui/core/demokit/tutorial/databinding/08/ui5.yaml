@@ -1,4 +1,4 @@
-specVersion: "3.0"
+specVersion: "4.0"
 metadata:
   name: data-binding-tutorial
 type: application

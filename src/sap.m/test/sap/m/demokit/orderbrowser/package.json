@@ -9,6 +9,6 @@
     "build": "ui5 build --all --clean-dest"
   },
   "devDependencies": {
-    "@ui5/cli": "^3"
+    "@ui5/cli": "^4"
   }
 }

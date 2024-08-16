@@ -8,6 +8,6 @@
     "start": "ui5 serve --open 'index.html'"
   },
   "devDependencies": {
-    "@ui5/cli": "^3"
+    "@ui5/cli": "^4"
   }
 }

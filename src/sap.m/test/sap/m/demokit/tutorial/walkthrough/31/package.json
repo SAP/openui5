@@ -8,7 +8,7 @@
     "start": "ui5 serve -o test/mockServer.html"
   },
   "devDependencies": {
-    "@ui5/cli": "^3",
+    "@ui5/cli": "^4",
     "ui5-middleware-simpleproxy": "^3"
   }
 }
