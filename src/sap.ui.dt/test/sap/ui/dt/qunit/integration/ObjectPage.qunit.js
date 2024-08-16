@@ -74,26 +74,35 @@ function(
 			const oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 
 			const checkPositions = () => {
+				// Collect the values before outputing results so the changes in the DOM do not affect the results
+				const iSectionOverlayTop = Math.ceil(this.oSection.getDomRef().getBoundingClientRect().top);
+				const iSectionTop = Math.ceil(oSectionOverlay.getDomRef().getBoundingClientRect().top);
+				const iSectionOverlayLeft = Math.ceil(oSectionOverlay.getDomRef().getBoundingClientRect().left);
+				const iSectionLeft = Math.ceil(this.oSection.getDomRef().getBoundingClientRect().left);
+				const iButtonOverlayLeft = Math.ceil(oButtonOverlay.getDomRef().getBoundingClientRect().left);
+				const iButtonLeft = Math.ceil(this.oButton.getDomRef().getBoundingClientRect().left);
+				const iButtonOverlayTop = Math.ceil(oButtonOverlay.getDomRef().getBoundingClientRect().top);
+				const iButtonTop = Math.ceil(this.oButton.getDomRef().getBoundingClientRect().top);
 				assert.ok(this.oSection.getDomRef(), "Section is placed on DOM tree");
 				assert.ok(oSectionOverlay.getDomRef(), "Section overlay is placed on the DOM tree");
 				assert.deepEqual(
-					Math.ceil(oSectionOverlay.getDomRef().getBoundingClientRect().top),
-					Math.ceil(this.oSection.getDomRef().getBoundingClientRect().top),
+					iSectionOverlayTop,
+					iSectionTop,
 					"top position of the Section overlay is correct"
 				);
 				assert.deepEqual(
-					Math.ceil(oSectionOverlay.getDomRef().getBoundingClientRect().left),
-					Math.ceil(this.oSection.getDomRef().getBoundingClientRect().left),
+					iSectionOverlayLeft,
+					iSectionLeft,
 					"left position of the Section overlay is correct"
 				);
 				assert.deepEqual(
-					Math.ceil(oButtonOverlay.getDomRef().getBoundingClientRect().top),
-					Math.ceil(this.oButton.getDomRef().getBoundingClientRect().top),
+					iButtonOverlayTop,
+					iButtonTop,
 					"top position of the Button overlay is correct"
 				);
 				assert.deepEqual(
-					Math.ceil(oButtonOverlay.getDomRef().getBoundingClientRect().left),
-					Math.ceil(this.oButton.getDomRef().getBoundingClientRect().left),
+					iButtonOverlayLeft,
+					iButtonLeft,
 					"left position of the Button overlay is correct"
 				);
 				fnDone();
@@ -101,7 +110,6 @@ function(
 
 			this.oDesignTime.attachEventOnce("synced", () => {
 				oSectionOverlay.attachEventOnce("geometryChanged", checkPositions);
-				assert.ok(true, "DesignTime synced after Section was set to visible");
 			});
 
 			this.oSection.setVisible(true);

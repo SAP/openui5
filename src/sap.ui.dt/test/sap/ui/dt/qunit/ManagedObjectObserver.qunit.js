@@ -148,13 +148,19 @@ sap.ui.define([
 		this.oManagedObject.insertAggregation("myAggregation", this.oOtherObject);
 	});
 
-	whenThisHappensThenOneModifiedEventShouldBeFired("when an object in the multiple aggregation is removed via removeAggregation", function() {
-		this.oManagedObject.removeAggregation("myAggregation", this.oOtherObject);
-	});
+	whenThisHappensThenOneModifiedEventShouldBeFired(
+		"when an object in the multiple aggregation is removed via removeAggregation",
+		function() {
+			this.oManagedObject.removeAggregation("myAggregation", this.oOtherObject);
+		}
+	);
 
-	whenThisHappensThenOneModifiedEventShouldBeFired("when an object in the multiple aggregation is removed via removeAggregation", function() {
-		this.oManagedObject.removeMyAggregation(this.oOtherObject);
-	});
+	whenThisHappensThenOneModifiedEventShouldBeFired(
+		"when an object in the multiple aggregation is removed via removeAggregation",
+		function() {
+			this.oManagedObject.removeMyAggregation(this.oOtherObject);
+		}
+	);
 
 	whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple aggregation is destroyed via destroyAggregation", function() {
 		this.oManagedObject.destroyAggregation("myAggregation");
@@ -207,13 +213,19 @@ sap.ui.define([
 		this.oManagedObject.addAssociation("myAssociation", this.oOtherObject);
 	});
 
-	whenThisHappensThenOneModifiedEventShouldBeFired("when an object in the multiple association is removed via removeAssociation", function() {
-		this.oManagedObject.removeAssociation("myAssociation", this.oOtherObject);
-	});
+	whenThisHappensThenOneModifiedEventShouldBeFired(
+		"when an object in the multiple association is removed via removeAssociation",
+		function() {
+			this.oManagedObject.removeAssociation("myAssociation", this.oOtherObject);
+		}
+	);
 
-	whenThisHappensThenOneModifiedEventShouldBeFired("when an object in the multiple association is removed via removeAssociation", function() {
-		this.oManagedObject.removeMyAssociation(this.oOtherObject);
-	});
+	whenThisHappensThenOneModifiedEventShouldBeFired(
+		"when an object in the multiple association is removed via removeAssociation",
+		function() {
+			this.oManagedObject.removeMyAssociation(this.oOtherObject);
+		}
+	);
 
 	whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple association is emptied via mutator", function() {
 		this.oManagedObject.removeAllMyAssociation();
@@ -229,6 +241,14 @@ sap.ui.define([
 
 	whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten Association is emptied via removeAll mutator", function() {
 		this.oManagedObject.removeAllMyOverwrittenAssociation(this.oOtherObject);
+	});
+
+	whenThisHappensThenOneModifiedEventShouldBeFired("when the aggregation gets a new aggregation binding", function() {
+		this.oManagedObject.bindAggregation("myAggregation", "/", this.oOtherObject);
+	});
+
+	whenThisHappensThenOneModifiedEventShouldBeFired("when the aggregation gets unbound from an aggregation binding", function() {
+		this.oManagedObject.unbindAggregation("myAggregation", "/", this.oOtherObject);
 	});
 
 	function fnObserverModifiedCalled(assert, oEvent) {
@@ -263,7 +283,11 @@ sap.ui.define([
 		assert.ok(oOtherManagedObjectObserver._bIsObserved, "then _bIsObserved flag is set on setting the target");
 		this.oManagedObject.destroy();
 		assert.strictEqual(oOtherManagedObjectObserver._bIsObserved, false, "then _bIsObserved flag is unset on destroying the target");
-		assert.strictEqual(this.oManagedObject.destroy, Element.prototype.destroy, "then original base functions (like destroy) are set back on destroying the target");
+		assert.strictEqual(
+			this.oManagedObject.destroy,
+			Element.prototype.destroy,
+			"then original base functions (like destroy) are set back on destroying the target"
+		);
 	});
 
 	QUnit.test("when an observed element cannot be found by id and is unobserved", function(assert) {
@@ -279,7 +303,11 @@ sap.ui.define([
 		this.oManagedObject.destroy();
 
 		assert.strictEqual(oOtherManagedObjectObserver._bIsObserved, false, "then _bIsObserved flag is unset on destroying the target");
-		assert.strictEqual(this.oManagedObject.destroy, Element.prototype.destroy, "then original base functions (like destroy) are set back on destroying the target");
+		assert.strictEqual(
+			this.oManagedObject.destroy,
+			Element.prototype.destroy,
+			"then original base functions (like destroy) are set back on destroying the target"
+		);
 	});
 
 	QUnit.test("when the event from setParent action is suppressed", function(assert) {

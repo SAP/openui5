@@ -199,7 +199,7 @@ sap.ui.define([
   * @name sap.ui.mdc.valuehelp.ITypeaheadContent.getItemForValue
   * @function
   * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration}} oConfig Configuration
-  * @returns {Promise<sap.ui.mdc.valuehelp.ValueHelpItem>} Promise returning object containing description, key and payload.
+  * @returns {Promise<sap.ui.mdc.valuehelp.base.ValueHelpItem>} Promise returning object containing description, key and payload.
   * @throws {sap.ui.model.FormatException|sap.ui.model.ParseException} if entry is not found or not unique
   * @private
   * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
@@ -450,7 +450,7 @@ sap.ui.define([
   * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.getItemForValue
   * @function
   * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration} oConfig Configuration
-  * @returns {Promise<sap.ui.mdc.valuehelp.ValueHelpItem>} Promise returning object containing description, key and payload.
+  * @returns {Promise<sap.ui.mdc.valuehelp.base.ValueHelpItem>} Promise returning object containing description, key and payload.
   * @throws {sap.ui.model.FormatException|sap.ui.model.ParseException} if entry is not found or not unique
   * @private
   * @ui5-restricted sap.ui.mdc.ValueHelp
@@ -795,7 +795,7 @@ sap.ui.define([
   */
 
 
- /**
+ /*
   * Item object type. This represents an abstract item from the {@link sap.ui.mdc.ValueHelp ValueHelp}.
   *
   * If an item is requested using a description or key, an object with the following

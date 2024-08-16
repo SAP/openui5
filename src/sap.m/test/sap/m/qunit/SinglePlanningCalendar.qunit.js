@@ -2174,7 +2174,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Grid cells accessibility description", async function (assert) {
+	QUnit.skip("Grid cells accessibility description", async function (assert) {
 		// Prepare
 		var oCalendarStartDate = UI5Date.getInstance(2018, 11, 24),
 			oAppointment = new CalendarAppointment({

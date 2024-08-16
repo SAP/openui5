@@ -677,7 +677,7 @@ sap.ui.define([
 			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns({
 				deleteChanges: oDeleteStub
 			});
-			sandbox.stub(FlexObjectState, "getDirtyFlexObjects").returns(["foo"]);
+			const oGetDirtyFlexObjectsStub = sandbox.stub(FlexObjectState, "getDirtyFlexObjects").returns(["foo"]);
 			const oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves({
 				backendChangesDiscarded: true
 			});
@@ -689,6 +689,8 @@ sap.ui.define([
 				assert.strictEqual(oDeleteStub.callCount, 1, "then the dirty changes were deleted");
 				assert.strictEqual(oClearStub.callCount, 1, "then the FlexState was cleared");
 				assert.strictEqual(oAdaptationsRefreshStub.callCount, 1, "then the Adaptation Model was refreshed");
+				assert.strictEqual(oGetDirtyFlexObjectsStub.callCount, 1, "then getDirtyFlexObjects was called");
+				assert.ok(oGetDirtyFlexObjectsStub.calledWith("com.sap.test"), "and has been called with the correct reference");
 				const oInfoSession = FlexInfoSession.getByReference(sReference);
 				assert.strictEqual(
 					oInfoSession.displayedAdaptationId, sDisplayedAdaptationId,
