@@ -909,6 +909,17 @@ function(
 		};
 
 		/**
+		 * Gets current value of property width.
+		 *
+		 * @returns {string} The value of property width or "100%"
+		 * @public
+		 * @override
+		 */
+		TimePicker.prototype.getWidth = function() {
+			return this.getProperty("width") || "100%";
+		};
+
+		/**
 		 * Handles data validation.
 		 *
 		 * @param {Date|module:sap/ui/core/date/UI5Date} oDate date instance
