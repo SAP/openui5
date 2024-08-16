@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/mdc/chart/ChartImplementationContainer",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/mdc/p13n/panels/ChartItemPanel",
-	"sap/m/MessageStrip",
+	"sap/m/p13n/MessageStrip",
 	"sap/ui/mdc/FilterBarDelegate",
 	"sap/ui/model/Filter",
 	"sap/ui/mdc/chart/PropertyHelper",
