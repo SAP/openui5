@@ -679,7 +679,14 @@ function(
 
     QUnit.test("removeItemFromInnerChart", function(assert) {
 
-        const oInnerChartMock = {getVisibleDimensions: function(){return ["Dimension3", "Dimension1", "Dimension2"];}, getVisibleMeasures: function(){return ["Measure3", "Measure1", "Measure2"];}, setVisibleDimensions: function(){}, setVisibleMeasures: function(){}, getMeasureByName: function(){}, removeMeasure: function(){}};
+        const oInnerChartMock = {
+            getVisibleDimensions: function(){return ["Dimension3", "Dimension1", "Dimension2"];},
+            getVisibleMeasures: function(){return ["Measure3", "Measure1", "Measure2"];},
+            setVisibleDimensions: function(){},
+            setVisibleMeasures: function(){},
+            getMeasureByName: function(){},
+            removeMeasure: function(){},
+            getDrillStack() {}};
 
         ChartDelegate._setChart(this.oMDCChart, oInnerChartMock);
         ChartDelegate._getState(this.oMDCChart).inResultDimensions = [];
@@ -689,17 +696,24 @@ function(
         const oSetVisibleDimensionSpy = sinon.spy(oInnerChartMock, "setVisibleDimensions");
         const oSetVisibleMeasuresSpy = sinon.spy(oInnerChartMock, "setVisibleMeasures");
 
-        const oDim = new Item({propertyKey: "Dimension1", type: "groupable"});
+        const oDim1 = new Item({propertyKey: "Dimension1", type: "groupable"});
+        const oDim2 = new Item({propertyKey: "Dimension2", type: "groupable"});
+        const oDim3 = new Item({propertyKey: "Dimension3", type: "groupable"});
         const oMeas1 = new Item({propertyKey: "Measure1", type: "aggregatable"});
         const oMeas2 = new Item({propertyKey: "Measure2", type: "aggregatable"});
         const oMeas3 = new Item({propertyKey: "Measure3", type: "aggregatable"});
 
-        this.oMDCChart.addItem(oDim);
+        this.oMDCChart.addItem(oDim3);
+        this.oMDCChart.addItem(oDim1);
+        this.oMDCChart.addItem(oDim2);
         this.oMDCChart.addItem(oMeas3);
         this.oMDCChart.addItem(oMeas1);
         this.oMDCChart.addItem(oMeas2);
 
-        ChartDelegate.removeItemFromInnerChart(this.oMDCChart, oDim);
+
+        this.oMDCChart.removeItem(oDim1);
+        ChartDelegate.removeItemFromInnerChart(this.oMDCChart, oDim1);
+        this.oMDCChart.removeItem(oMeas1);
         ChartDelegate.removeItemFromInnerChart(this.oMDCChart, oMeas1);
 
         assert.ok(oSetVisibleDimensionSpy.calledWithExactly(["Dimension3", "Dimension2"]), "Dimension were set correctly");

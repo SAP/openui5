@@ -46,8 +46,10 @@ sap.ui.define([
 			oConfiguration.filterOperator = oConfiguration.filterOperator || FilterOperator.BT;
 			if (oConfiguration.valueTypes && oConfiguration.valueTypes.length > 0) {
 				if (oConfiguration.valueTypes[0] === OperatorValueType.Static) { // as static operators cannot hold any value only the text is interesting
-					if (oConfiguration.longText && oConfiguration.longText !== oConfiguration.tokenText) {
+					if (oConfiguration.longText && oConfiguration.longText !== oConfiguration.tokenText && oConfiguration.tokenText) {
 						oConfiguration.tokenTest = oConfiguration.tokenTest || "^" + oConfiguration.longText + "$|^#tokenText#$"; // as static text don't need to be entered allow longText too
+					} else if (oConfiguration.longText && !oConfiguration.tokenText) {
+						oConfiguration.tokenTest = oConfiguration.tokenTest || "^" + oConfiguration.longText + "$"; // as static text don't need to be entered allow longText too
 					} else {
 						oConfiguration.tokenTest = oConfiguration.tokenTest || "^#tokenText#$";
 					}
@@ -59,7 +61,7 @@ sap.ui.define([
 			} else {
 				oConfiguration.tokenParse = oConfiguration.tokenParse || "^#tokenText#$";
 			}
-			oConfiguration.tokenFormat = oConfiguration.tokenFormat || "#tokenText#";
+			oConfiguration.tokenFormat = oConfiguration.tokenFormat || (!!oConfiguration.tokenText && "#tokenText#");
 
 			Operator.apply(this, arguments);
 

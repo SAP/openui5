@@ -570,6 +570,12 @@ sap.ui.define([
 		assert.equal(this.oUploadSet._oList.getNoDataText(), sNoDataText + " " + sNoDataDescription, "Nodata Text is set in the List");
 		assert.equal(oIllustratedMessage.getTitle(), sNoDataText, "default text is rendered in Upload set");
 		assert.equal(oIllustratedMessage.getDescription(), sNoDataDescription, "default discription is rendered in Upload set");
+
+		this.oUploadSet.setUploadEnabled(false);
+		await nextUIUpdate();
+		assert.equal(oIllustratedMessage.getTitle(), sNoDataText, "default title is rendered in Upload set (uploadEnabled=false)");
+		assert.equal(oIllustratedMessage.getDescription(), " ", "Empty string discription is rendered in Upload set (uploadEnabled=false)");
+
 	});
 
 	QUnit.test("No data type illustrated message rendering if not set via aggregation", async function (assert) {
@@ -947,7 +953,7 @@ sap.ui.define([
 					assert.equal(this.oUploadSet._bItemRemoved, false, "_bItemRemoved flag is reset to false");
 					assert.equal(document.activeElement,  this.oUploadSet.getList().getItems()[0].getDomRef(), "Focus is set correctly");
 					this.oUploadSet._oItemToBeDeleted = oItemsList[1];
-					this.oUploadSet._handleClosedDeleteDialog("OK");
+					this.oUploadSet._handleClosedDeleteDialog(MessageBox.Action.DELETE);
 				} else {
 					assert.equal(this.oUploadSet._bItemRemoved, false, "_bItemRemoved flag is reset to false");
 					assert.equal(document.activeElement,  this.oUploadSet.getList().getDomRef().querySelector(".sapMUCNoDataPage"), "Focus is set correctly");
@@ -958,7 +964,7 @@ sap.ui.define([
 
 		};
 		this.oUploadSet.addEventDelegate(afterRenderDelegate);
-		this.oUploadSet._handleClosedDeleteDialog("OK");
+		this.oUploadSet._handleClosedDeleteDialog(MessageBox.Action.DELETE);
 	});
 
 	QUnit.module("UploadSet general functionality", {

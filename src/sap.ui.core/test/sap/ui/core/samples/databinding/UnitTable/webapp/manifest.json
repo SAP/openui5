@@ -1,5 +1,5 @@
 {
-	"_version": "1.12.0",
+	"_version": "1.62.0",
 
 	"sap.app": {
 		"id": "sap.ui.core.samples.unittable",

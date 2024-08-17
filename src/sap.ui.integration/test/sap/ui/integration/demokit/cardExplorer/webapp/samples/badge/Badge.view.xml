@@ -1,7 +1,9 @@
 <mvc:View
 	controllerName="sap.ui.integration.sample.Badge.Badge"
 	xmlns:w="sap.ui.integration.widgets"
+	xmlns:ic="sap.ui.integration.controls"
 	xmlns:f="sap.f"
+	xmlns:card="sap.f.cards"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	class="badgeView">
@@ -9,7 +11,8 @@
 	<f:GridContainer>
 		<w:Card id="cardId1" manifest="./cardManifest.json">
 			<w:customData>
-				<BadgeCustomData value="New" />
+				<card:CardBadgeCustomData icon="sap-icon://pushpin-off" visibilityMode="Persist" announcementText="The card is pinned on top."/>
+				<card:CardBadgeCustomData value="New" announcementText="Card is newly added."/>
 			</w:customData>
 			<w:layoutData>
 				<f:GridContainerItemLayoutData columns="4" />
@@ -17,7 +20,7 @@
 		</w:Card>
 		<w:Card id="cardId2" manifest="./cardManifest.json">
 			<w:customData>
-				<BadgeCustomData value="New" />
+				<card:CardBadgeCustomData icon="sap-icon://status-in-process" value="Updated" state="Indication03" announcementText="The card is recently updated."/>
 			</w:customData>
 			<w:layoutData>
 				<f:GridContainerItemLayoutData columns="4" />

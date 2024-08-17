@@ -50,8 +50,6 @@ sap.ui.define([
 	 * <ul>
 	 * 	<li>Drag for rows is active</li>
 	 *	<li>If used in combination with {@link sap.ui.table.Table#cellClick} or {@link sap.m.Table#itemPress}</li>
-	 *	<li>If the <code>sap.ui.table.SelectionBehavior.RowOnly</code> or <code>sap.ui.table.SelectionBehavior.Row</code> selection behavior is used
-	 * in the <code>sap.ui.table.Table</code></li>
 	 * 	<li>If the <code>sap.m.ListType.SingleSelectMaster</code> mode is used in the <code>sap.m.Table</code></li>
 	 * </ul>
 	 *
@@ -1186,7 +1184,6 @@ sap.ui.define([
 			 */
 			isSupported: function(oTable, oPlugin) {
 				return !oTable.hasListeners("cellClick")
-					&& oTable.getSelectionBehavior() == "RowSelector"
 					&& !hasDragEnabled(oTable, "rows");
 			},
 			isBottomToTop: function(oTable) {

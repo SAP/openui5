@@ -10,7 +10,7 @@
     "serve-dist": "ws --compress -d dist --open"
   },
   "devDependencies": {
-    "@ui5/cli": "^3",
+    "@ui5/cli": "^4",
     "local-web-server": "^5",
     "ui5-middleware-simpleproxy": "^3"
   }

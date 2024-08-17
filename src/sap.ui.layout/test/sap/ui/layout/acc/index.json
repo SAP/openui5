@@ -18,7 +18,7 @@
 		},
 		{
 			"control": "sap.ui.layout.ResponsiveFlowLayout",
-			"url": "../ResponsiveFlowLayout.html",
+			"url": "ResponsiveFlowLayout.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{

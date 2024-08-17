@@ -2697,47 +2697,11 @@ sap.ui.define([
 			await nextCardReadyEvent(this.oCard);
 			await nextUIUpdate();
 
-			var $badgeIndicator = this.oCard.$().find(".sapMBadgeIndicator");
+			var $badgeIndicator = this.oCard.$().find(".sapFCardBadgePlaceholder .sapMObjStatusText");
 
 			// Assert
-			assert.strictEqual(this.oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "New", "Badge indicator is correctly rendered");
-			assert.strictEqual($badgeIndicator.attr("aria-label"), "New", "Badge aria-label correctly rendered");
-			assert.ok(this.oCard.getCardHeader().$("focusable").attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) > -1, "aria-labelledby contains the badge indicator id");
-		});
 
-		QUnit.test("Auto hide", async function (assert) {
-			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			this.clock = sinon.useFakeTimers();
-			var $badgeIndicator = this.oCard.$().find(".sapMBadgeIndicator");
-
-			// Assert
-			assert.ok(this.oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "Badge indicator is rendered");
-
-			this.oCard.focus();
-
-			this.clock.tick(4000);
-
-			assert.equal(this.oCard._isBadgeAttached, false, "Badge indicator is not rendered");
-			assert.notOk($badgeIndicator.attr("aria-label"), "Badge aria-label is removed");
-			assert.ok(this.oCard.getCardHeader().$("focusable").attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) === -1, "aria-labelledby does not contain the badge indicator id");
-
-			this.oCard.addCustomData(new BadgeCustomData({value: "New"}));
-			await nextUIUpdate(this.clock);
-
-			$badgeIndicator = this.oCard.$().find(".sapMBadgeIndicator");
-
-			// Assert
-			assert.ok(this.oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "Badge indicator is rendered");
-
-			this.oCard.onsapenter();
-			assert.equal(this.oCard._isBadgeAttached, false, "Badge indicator is not rendered");
-
-			this.clock.restore();
+			assert.strictEqual($badgeIndicator.text(), "New", "Badge is correctly rendered");
 		});
 
 		QUnit.module("Translations", {

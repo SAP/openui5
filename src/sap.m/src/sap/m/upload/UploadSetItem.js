@@ -804,7 +804,7 @@ sap.ui.define([
 		if (!this._oDeleteButton) {
 			this._oDeleteButton = new Button({
 				id: this.getId() + "-deleteButton",
-				icon: "sap-icon://decline",
+				icon: "sap-icon://delete",
 				type: MobileLibrary.ButtonType.Standard,
 				enabled: this.getEnabledRemove(),
 				visible: this.getVisibleRemove(),

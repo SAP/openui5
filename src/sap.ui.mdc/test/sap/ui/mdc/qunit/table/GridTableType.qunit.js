@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/table/RowSettings",
 	"sap/ui/mdc/table/RowActionItem",
-	"sap/ui/mdc/enums/TableType",
 	"sap/ui/mdc/enums/TableRowCountMode",
 	"sap/ui/mdc/enums/TableRowActionType",
 	"sap/m/Text",
@@ -19,7 +18,6 @@ sap.ui.define([
 	GridTableType,
 	RowSettings,
 	RowActionItem,
-	TableType,
 	RowCountMode,
 	RowActionType,
 	Text,
@@ -29,33 +27,85 @@ sap.ui.define([
 
 	const sDelegatePath = "test-resources/sap/ui/mdc/delegates/TableDelegate";
 
-	QUnit.module("Inner table initialization", {
-		afterEach: function() {
-			this.destroyTable();
-		},
-		createTable: function() {
-			this.destroyTable();
+	QUnit.module("Inner table settings", {
+		beforeEach: async function() {
 			this.oTable = new Table({
 				type: new GridTableType()
 			});
-			return this.oTable;
+			await this.oTable.initialized();
 		},
-		destroyTable: function() {
-			if (this.oTable) {
-				this.oTable.destroy();
-			}
+		afterEach: function() {
+			this.oTable.destroy();
 		}
 	});
 
-	QUnit.test("Shorthand type='GridTable'", function(assert) {
-		const oTable = new Table({type: TableType.Table});
+	QUnit.test("Control types", async function(assert) {
+		await this.oTable.initialized();
+		assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"), "Inner table type is sap.ui.table.Table");
+	});
 
-		return oTable.initialized().then(function() {
-			assert.ok(oTable._getType().isA("sap.ui.mdc.table.GridTableType"), "Default type instance is a sap.ui.mdc.table.GridTableType");
-			assert.ok(oTable._oTable.isA("sap.ui.table.Table"), "Is a sap.ui.table.Table");
-		}).finally(function() {
-			oTable.destroy();
+	QUnit.test("Default settings", function(assert) {
+		const oInnerTable = this.oTable._oTable;
+
+		assert.equal(oInnerTable.getEnableColumnReordering(), false, "enableColumnReordering");
+		assert.equal(oInnerTable.getSelectionMode(), "None", "selectionMode");
+		assert.equal(oInnerTable.getSelectionBehavior(), "RowSelector", "selectionBehavior");
+		assert.equal(oInnerTable.getThreshold(), 100, "threshold");
+		assert.deepEqual(oInnerTable.getAriaLabelledBy(), [this.oTable._oTitle.getId()], "ariaLabelledBy");
+		assert.deepEqual(oInnerTable.getExtension(), [this.oTable._oToolbar], "extension");
+		assert.equal(oInnerTable.getEnableBusyIndicator(), true, "enableBusyIndicator");
+		assert.equal(oInnerTable.getRowMode().isA("sap.ui.table.rowmodes.Auto"), true, "rowMode");
+		assert.equal(oInnerTable.getRowMode().getMinRowCount(), 10, "rowMode.minRowCount");
+		assert.equal(oInnerTable.getFixedColumnCount(), 0, "fixedColumnCount");
+	});
+
+	QUnit.test("Initial settings", async function(assert) {
+		this.oTable.destroy();
+		this.oTable = new Table({
+			type: new GridTableType({
+				rowCountMode: RowCountMode.Fixed,
+				rowCount: 12,
+				fixedColumnCount: 1
+			}),
+			threshold: 30,
+			selectionMode: "SingleMaster"
 		});
+		await this.oTable.initialized();
+
+		const oInnerTable = this.oTable._oTable;
+
+		assert.equal(oInnerTable.getEnableColumnReordering(), false, "enableColumnReordering");
+		assert.equal(oInnerTable.getSelectionBehavior(), "RowOnly", "selectionBehavior");
+		assert.equal(oInnerTable.getThreshold(), 30, "threshold");
+		assert.deepEqual(oInnerTable.getAriaLabelledBy(), [this.oTable._oTitle.getId()], "ariaLabelledBy");
+		assert.deepEqual(oInnerTable.getExtension(), [this.oTable._oToolbar], "extension");
+		assert.equal(oInnerTable.getEnableBusyIndicator(), true, "enableBusyIndicator");
+		assert.equal(oInnerTable.getRowMode().isA("sap.ui.table.rowmodes.Fixed"), true, "rowMode");
+		assert.equal(oInnerTable.getRowMode().getRowCount(), 12, "rowMode.minRowCount");
+		assert.equal(oInnerTable.getFixedColumnCount(), 1, "fixedColumnCount");
+	});
+
+	QUnit.test("Change settings", function(assert) {
+		const oType = this.oTable.getType();
+		const oInnerTable = this.oTable._oTable;
+
+		this.oTable.setThreshold(30);
+		assert.equal(oInnerTable.getThreshold(), 30, "Table.threshold=30: threshold");
+
+		oType.setRowCountMode(RowCountMode.Fixed);
+		assert.equal(oInnerTable.getRowMode().isA("sap.ui.table.rowmodes.Fixed"), true, "Type.rowCountMode=Fixed: rowMode");
+
+		oType.setRowCount(12);
+		assert.equal(oInnerTable.getRowMode().getRowCount(), 12, "Type.rowCount=12: rowMode.minRowCount");
+
+		oType.setFixedColumnCount(1);
+		assert.equal(oInnerTable.getFixedColumnCount(), 1, "Type.fixedColumnCount=1: fixedColumnCount");
+
+		this.oTable.setSelectionMode("SingleMaster");
+		assert.equal(oInnerTable.getSelectionBehavior(), "RowOnly", "Table.selectionMode=SingleMaster: selectionBehavior");
+
+		this.oTable.setSelectionMode("Multi");
+		assert.equal(oInnerTable.getSelectionBehavior(), "RowSelector", "Table.selectionMode=MultiToggle: selectionBehavior");
 	});
 
 	QUnit.module("API", {

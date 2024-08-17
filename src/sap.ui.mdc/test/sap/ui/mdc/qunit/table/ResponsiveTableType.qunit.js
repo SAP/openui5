@@ -13,7 +13,10 @@ sap.ui.define([
 	"sap/ui/mdc/enums/TableRowActionType",
 	"sap/m/Text",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Icon"
+	"sap/ui/core/Lib",
+	"sap/ui/core/Icon",
+	"sap/ui/model/Filter",
+	"sap/ui/Device"
 ], function(
 	TableQUnitUtils,
 	nextUIUpdate,
@@ -26,64 +29,117 @@ sap.ui.define([
 	RowActionType,
 	Text,
 	JSONModel,
-	Icon
+	Lib,
+	Icon,
+	Filter,
+	Device
 ) {
 	"use strict";
 
 	const sDelegatePath = "test-resources/sap/ui/mdc/delegates/TableDelegate";
 
-	QUnit.module("popinLayout");
-
-	QUnit.test("default popinLayout - ResponsiveTable type (before table creation)", function (assert) {
-		const oTable = new Table({
-			type: new ResponsiveTableType({
-				popinLayout: "Block"
-			})
-		});
-
-		return oTable.initialized().then(function () {
-			assert.equal(oTable._oTable.getPopinLayout(), "Block", "popinLayout set to Block or default type on the inner table");
-			oTable.destroy();
-		});
+	QUnit.module("Inner table settings", {
+		beforeEach: async function() {
+			this.oTable = new Table({
+				type: new ResponsiveTableType()
+			});
+			await this.oTable.initialized();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
 	});
 
-	QUnit.test("non-default popinLayout - ResponsiveTable type (before table creation)", function (assert) {
-		const oTable = new Table({
+	QUnit.test("Control types", function(assert) {
+		assert.ok(this.oTable._oTable.isA("sap.m.Table"), "Inner table type is sap.m.Table");
+		assert.ok(this.oTable._oRowTemplate.isA("sap.m.ColumnListItem"), "Row template type is sap.m.ColumnListItem");
+	});
+
+	QUnit.test("Row template when changing type", function(assert) {
+		this.spy(this.oTable._oRowTemplate, "destroy");
+		const oRowTemplate = this.oTable._oRowTemplate;
+		this.oTable.setType(new ResponsiveTableType());
+		assert.ok(oRowTemplate.isDestroyed(), "Row template is destroyed when changing type");
+		assert.notOk(this.oTable._oRowTemplate, "Reference to destroyed row template is removed");
+	});
+
+	QUnit.test("Default settings", function(assert) {
+		const oInnerTable = this.oTable._oTable;
+
+		assert.equal(oInnerTable.getAutoPopinMode(), true, "autoPopinMode");
+		assert.equal(oInnerTable.getContextualWidth(), "Auto", "contextualWidth");
+		assert.equal(oInnerTable.getGrowing(), true, "growing");
+		assert.equal(oInnerTable.getGrowingScrollToLoad(), false, "growingScrollToLoad");
+		assert.equal(oInnerTable.getGrowingThreshold(), 20, "growingThreshold");
+		assert.deepEqual(oInnerTable.getSticky(), ["ColumnHeaders", "HeaderToolbar", "InfoToolbar"], "sticky");
+		assert.equal(oInnerTable.getPopinLayout(), "Block", "popinLayout");
+		assert.deepEqual(oInnerTable.getAriaLabelledBy(), [this.oTable._oTitle.getId()], "ariaLabelledBy");
+		assert.equal(oInnerTable.getHeaderToolbar(), this.oTable._oToolbar, "headerToolbar");
+		assert.equal(oInnerTable.getEnableBusyIndicator(), true, "enableBusyIndicator");
+	});
+
+	QUnit.test("Initial settings", async function(assert) {
+		this.oTable.destroy();
+		this.oTable = new Table({
 			type: new ResponsiveTableType({
+				growingMode: "None",
 				popinLayout: "GridSmall"
-			})
+			}),
+			threshold: 30
 		});
+		await this.oTable.initialized();
 
-		return oTable.initialized().then(function () {
-			assert.equal(oTable._oTable.getPopinLayout(), "GridSmall", "popinLayout set to GridSmall type on the inner table");
-			oTable.destroy();
-		});
+		const oInnerTable = this.oTable._oTable;
+
+		assert.equal(oInnerTable.getAutoPopinMode(), true, "autoPopinMode");
+		assert.equal(oInnerTable.getContextualWidth(), "Auto", "contextualWidth");
+		assert.equal(oInnerTable.getGrowing(), false, "growingMode=None: growing");
+		assert.equal(oInnerTable.getGrowingScrollToLoad(), false, "growingMode=None: growingScrollToLoad");
+		assert.equal(oInnerTable.getGrowingThreshold(), 30, "growingThreshold");
+		assert.deepEqual(oInnerTable.getSticky(), ["ColumnHeaders", "HeaderToolbar", "InfoToolbar"], "sticky");
+		assert.equal(oInnerTable.getPopinLayout(), "GridSmall", "popinLayout");
+		assert.deepEqual(oInnerTable.getAriaLabelledBy(), [this.oTable._oTitle.getId()], "ariaLabelledBy");
+		assert.equal(oInnerTable.getHeaderToolbar(), this.oTable._oToolbar, "headerToolbar");
 	});
 
-	QUnit.test("popinLayout - ResponsiveTable type (after table creation)", function (assert) {
-		const oTable = new Table({
-			type: new ResponsiveTableType({
-			})
-		});
+	QUnit.test("Change settings", function(assert) {
+		const oType = this.oTable.getType();
+		const oInnerTable = this.oTable._oTable;
 
-		return oTable.initialized().then(function () {
-			assert.equal(oTable._oTable.getPopinLayout(), "Block", "popinLayout set to Block type on the inner table");
-			const oType = oTable.getType();
-			oType.setPopinLayout("GridSmall");
-			assert.equal(oTable._oTable.getPopinLayout(), "GridSmall", "popinLayout is set to GridSmall type on the inner table");
-			oTable.destroy();
-		});
+		oType.setGrowingMode("Scroll");
+		assert.equal(oInnerTable.getGrowingScrollToLoad(), true, "Type.growingMode=Scroll: growingScrollToLoad");
+		assert.equal(oInnerTable.getGrowing(), true, "Type.growingMode=Scroll: growing");
+
+		oType.setGrowingMode("None");
+		assert.equal(oInnerTable.getGrowingScrollToLoad(), false, "Type.growingMode=None: growingScrollToLoad");
+		assert.equal(oInnerTable.getGrowing(), false, "Type.growingMode=None: growing");
+
+		oType.setPopinLayout("GridSmall");
+		assert.equal(oInnerTable.getPopinLayout(), "GridSmall", "Type.popinLayout=GridSmall: popinLayout");
+
+		this.oTable.setThreshold(30);
+		assert.equal(oInnerTable.getGrowingThreshold(), 30, "Table.threshold=30: growingThreshold");
 	});
 
-	QUnit.skip("ShowDetails button lifecycle", async function(assert) { // unstbale
-		const oModel = new JSONModel();
+	QUnit.module("Show Details", {
+		beforeEach: async function() {
+			this.createTable();
+			await this.oTable.initialized();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		createTable: function() {
+			this.oTable?.destroy();
+
+			const oModel = new JSONModel();
 			oModel.setData({
 				testPath: [
 					{test: "Test1"}, {test: "Test2"}, {test: "Test3"}, {test: "Test4"}, {test: "Test5"}
 				]
 			});
 
-		const oTable = new Table({
+			this.oTable = new Table({
 				delegate: {
 					name: sDelegatePath,
 					payload: {
@@ -157,50 +213,140 @@ sap.ui.define([
 				]
 			});
 
-		oTable.setModel(oModel);
-		oTable.placeAt("qunit-fixture");
-		let oType = oTable.getType();
-		const fSetParent = sinon.spy(oType, "setParent");
-		await nextUIUpdate();
+			this.oTable.setModel(oModel);
+			this.oTable.placeAt("qunit-fixture");
+			this.oType = this.oTable.getType();
+		}
+	});
 
-		await TableQUnitUtils.waitForBinding(oTable);
-		oTable._oTable.setContextualWidth("600px");
-		await nextUIUpdate();
-		assert.ok(oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
-		let oShowDetailsButton = oType._oShowDetailsButton;
+	QUnit.test("Button creation", async function(assert) {
+		const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
 
-		oTable.setType(new ResponsiveTableType({showDetailsButton: true}));
-		assert.equal(fSetParent.callCount, 1);
-		assert.strictEqual(oShowDetailsButton.bIsDestroyed, true);
-		assert.notOk(oType._oShowDetailsButton, "showdetail button is destroyed");
-		fSetParent.restore();
+		await TableQUnitUtils.waitForBinding(this.oTable);
 
-		await nextUIUpdate();
-		await TableQUnitUtils.waitForBinding(oTable);
-		oType = oTable.getType();
-		oTable._oTable.setContextualWidth("600px");
-		await nextUIUpdate();
+		assert.ok(this.oType._oShowDetailsButton, "button is created");
+		assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is hidden since there are no popins");
+		assert.strictEqual(this.oType._oShowDetailsButton.getItems()[0].getIcon(), "sap-icon://detail-more", "correct icon is set on the button");
+		assert.strictEqual(this.oType._oShowDetailsButton.getItems()[0].getTooltip(), oRb.getText("table.SHOWDETAILS_TEXT"), "Correct tooltip");
+		assert.strictEqual(this.oType._oShowDetailsButton.getItems()[1].getIcon(), "sap-icon://detail-less", "correct icon is set on the button");
+		assert.strictEqual(this.oType._oShowDetailsButton.getItems()[1].getTooltip(), oRb.getText("table.HIDEDETAILS_TEXT"), "Correct tooltip");
 
-		assert.ok(oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
+		this.oTable._oTable.setContextualWidth("600px");
+		await nextUIUpdate();
+		assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
+		assert.strictEqual(this.oType._oShowDetailsButton.getSelectedKey(), "hideDetails", "hideDetails button selected");
+
+		this.oType._oShowDetailsButton.getItems()[0].firePress();
+		assert.strictEqual(this.oType._oShowDetailsButton.getSelectedKey(), "showDetails", "showDetails button selected");
+
+		this.oTable._oTable.setContextualWidth("4444px");
+		await nextUIUpdate();
+		assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is hidden there are no popins");
+	});
+
+	QUnit.test("Button placement", async function(assert) {
+		this.oTable._oTable.setContextualWidth("Tablet");
+		await nextUIUpdate();
+		let bButtonAddedToToolbar = this.oTable._oTable.getHeaderToolbar().getEnd().some(function(oControl) {
+			return oControl.getId() === this.oType._oShowDetailsButton.getId();
+		}, this);
+		assert.ok(bButtonAddedToToolbar, "Button is correctly added to the table header toolbar");
+
+		this.oType.setShowDetailsButton(false);
+		await nextUIUpdate();
+		assert.notOk(this.oType.getShowDetailsButton(), "showDetailsButton = false");
+		bButtonAddedToToolbar = this.oTable._oTable.getHeaderToolbar().getEnd().some(function(oControl) {
+			return this.oType._oShowDetailsButton && oControl.getId() === this.oType._oShowDetailsButton.getId();
+		}, this);
+		assert.notOk(bButtonAddedToToolbar, "Button is removed from the table header toolbar");
+		assert.ok(!this.oType._oShowDetailsButton, "Button does not exist anymore");
+	});
+
+	QUnit.test("Inner table hiddenInPopin property in Desktop mode", function(assert) {
+		assert.strictEqual(this.oTable._oTable.getHiddenInPopin().length, 1, "getHiddenInPopin() contains only 1 value");
+		assert.strictEqual(this.oTable._oTable.getHiddenInPopin()[0], "Low", "Low importance is added to the hiddenInPopin property");
+	});
+
+	QUnit.test("Inner table hiddenInPopin property in Phone mode", async function(assert) {
+		const oPhoneStub = sinon.stub(Device.system, "phone").value(true);
+
+		this.createTable();
+		await this.oTable.initialized();
+
+		assert.deepEqual(this.oTable._oTable.getHiddenInPopin(), ["Low", "Medium"]);
+
+		oPhoneStub.restore();
+	});
+
+	QUnit.test("Button should be hidden with filtering leads to no data and viceversa", async function(assert) {
+		await TableQUnitUtils.waitForBinding(this.oTable);
+		this.oTable._oTable.setContextualWidth("600px");
+		await nextUIUpdate();
+		assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
+
+		this.oTable._oTable.getBinding("items").filter(new Filter("test", "EQ", "foo"));
+		assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is hidden since there are no visible items");
+
+		this.oTable._oTable.getBinding("items").filter();
+		assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has visible items and popins");
+	});
+
+	QUnit.test("detailsButtonSetting property", function(assert) {
+		const bDesktop = Device.system.desktop;
+		const bTablet = Device.system.tablet;
+		const bPhone = Device.system.phone;
+
+		Device.system.desktop = false;
+		Device.system.tablet = false;
+		Device.system.phone = true;
+
+		this.oType.setDetailsButtonSetting(["Medium", "High"]);
+
+		this.oType._oShowDetailsButton.getItems()[0].firePress();
+		assert.strictEqual(this.oTable._oTable.getHiddenInPopin(), undefined, "Inner table property 'hiddenInPopin'");
+
+		this.oType._oShowDetailsButton.getItems()[1].firePress();
+		assert.deepEqual(this.oTable._oTable.getHiddenInPopin(), ["Medium", "High"], "Inner table property 'hiddenInPopin'");
+
+		Device.system.desktop = bDesktop;
+		Device.system.tablet = bTablet;
+		Device.system.phone = bPhone;
+	});
+
+	QUnit.test("Show Details button lifecycle", async function(assert) {
+		let oType = this.oTable.getType();
+		let oShowDetailsButton;
+
+		await TableQUnitUtils.waitForBinding(this.oTable);
+		this.oTable._oTable.setContextualWidth("600px");
+		await nextUIUpdate();
+		assert.ok(oType._oShowDetailsButton.getVisible(), "Show Details button is visible since table has popins");
+
+		oShowDetailsButton = oType._oShowDetailsButton;
+		this.oTable.setType(new ResponsiveTableType({showDetailsButton: true}));
+		assert.strictEqual(oShowDetailsButton.isDestroyed(), true, "Show Details button is destroyed when changing the type");
+		assert.notOk(oType._oShowDetailsButton, "Reference to Show Details button is removed when changing the type");
+
+		await TableQUnitUtils.waitForBinding(this.oTable);
+		this.oTable._oTable.setContextualWidth("600px");
+		await nextUIUpdate();
+		oType = this.oTable.getType();
 		oShowDetailsButton = oType._oShowDetailsButton;
 		oType.destroy();
-		assert.strictEqual(oShowDetailsButton.bIsDestroyed, true);
-		assert.notOk(oType._oShowDetailsButton, "showdetail button is destroyed");
+		assert.strictEqual(oShowDetailsButton.isDestroyed(), true, "Show Details button is destroyed when the type is destroyed with Type#destroy");
+		assert.notOk(oType._oShowDetailsButton, "Reference to Show Details button is removed when the type is destroyed Type#destroy");
 
-		oTable.setType(new ResponsiveTableType({showDetailsButton: true}));
-		oShowDetailsButton = oType._oShowDetailsButton;
+		this.oTable.setType(new ResponsiveTableType({showDetailsButton: true}));
+		oType = this.oTable.getType();
+		await TableQUnitUtils.waitForBinding(this.oTable);
+		this.oTable._oTable.setContextualWidth("600px");
 		await nextUIUpdate();
-		oType = oTable.getType();
-
-		await TableQUnitUtils.waitForBinding(oTable);
-		oType = oTable.getType();
-		oTable._oTable.setContextualWidth("600px");
-		await nextUIUpdate();
-		assert.ok(oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
+		oType = this.oTable.getType();
 		oShowDetailsButton = oType._oShowDetailsButton;
-		oTable.destroyType();
-		assert.strictEqual(oShowDetailsButton.bIsDestroyed, true);
-		assert.notOk(oType._oShowDetailsButton, "showdetail button is destroyed");
+		this.oTable.destroyType();
+		assert.strictEqual(oShowDetailsButton.isDestroyed(), true,
+			"Show Details button is destroyed when the type is destroyed with Table#destroyType");
+		assert.notOk(oType._oShowDetailsButton, "Reference to Show Details button is removed when the type is destroyed Table#destroyType");
 	});
 
 	QUnit.module("extendedSettings");

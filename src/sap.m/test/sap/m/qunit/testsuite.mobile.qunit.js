@@ -1193,6 +1193,11 @@ sap.ui.define([
 				}
 			},
 
+			"p13n.MessageStrip": {
+				title: "Test Page for sap.m.p13n.MessageStrip",
+				module: "test-resources/sap/m/qunit/p13n/MessageStrip.qunit"
+			},
+
 			"p13n.Smoke": {
 				title: "Test Page for sap.m.p13n Demokit samples",
 				page: "test-resources/sap/m/qunit/p13n/smoke/testsuite.qunit.html"

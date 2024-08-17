@@ -1212,7 +1212,7 @@ sap.ui.define([
 	};
 
 	Table.prototype.setType = function(vType) {
-		if (!this.bCreated ) {
+		if (!this.bCreated) {
 			return this.setAggregation("type", vType, true);
 		}
 
@@ -1222,9 +1222,31 @@ sap.ui.define([
 		if (this._oToolbar) {
 			this._getType().removeToolbar();
 		}
-
-		this._destroyDefaultType();
 		this.setAggregation("type", vType);
+		this._applyCurrentType();
+
+		return this;
+	};
+
+	Table.prototype.destroyType = function() {
+		if (!this.getType()) {
+			return this.destroyAggregation("type", true);
+		}
+
+		// Remove the toolbar from the table to avoid its destruction when the table is destroyed. Do this only when a toolbar exists to not
+		// create an unnecessary default type instance. Because the removal operation is specific to a table type, the old type has to remove the
+		// toolbar before the new type is set.
+		if (this._oToolbar) {
+			this._getType().removeToolbar();
+		}
+		this.destroyAggregation("type");
+		this._applyCurrentType();
+
+		return this;
+	};
+
+	Table.prototype._applyCurrentType = function() {
+		this._destroyDefaultType();
 
 		if (this._oTable) {
 			// store and remove the noData otherwise it gets destroyed
@@ -1251,8 +1273,6 @@ sap.ui.define([
 
 		this._createInitPromises();
 		this._initializeContent();
-
-		return this;
 	};
 
 	/**
@@ -1620,18 +1640,7 @@ sap.ui.define([
 	}
 
 	Table.prototype.setThreshold = function(iThreshold) {
-		this.setProperty("threshold", iThreshold, true);
-		if (!this._oTable) {
-			return this;
-		}
-
-		iThreshold = this.getThreshold() > -1 ? this.getThreshold() : undefined;
-		if (this._isOfType(TableType.ResponsiveTable)) {
-			this._oTable.setGrowingThreshold(iThreshold);
-		} else {
-			this._oTable.setThreshold(iThreshold);
-		}
-		return this;
+		return this.setProperty("threshold", iThreshold, true);
 	};
 
 	// Start: FilterIntegrationMixin hooks

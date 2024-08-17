@@ -232,7 +232,6 @@ sap.ui.define([
 			jQuery(_oWrapperDomRef).offset({left: DOMUtil.getOffset(this._oEditableControlDomRef).left});
 			RenameHandler._setEditableFieldPosition.apply(this);
 			this._oEditableField.style.visibility = "";
-			this._oEditableField.focus();
 
 			// If scrolling happens during startEdit, the position of the editable field can be wrong
 			// To avoid this, the position is recalculated after the scrollbar synchronization is ready
@@ -240,6 +239,10 @@ sap.ui.define([
 			this._aOverlaysWithScrollbar.forEach(function(oOverlayWithScrollbar) {
 				oOverlayWithScrollbar.attachScrollSynced(RenameHandler._setEditableFieldPosition, this);
 			}.bind(this));
+
+			// The focus can trigger an immediate blur event (e.g. when the "discard draft" pop-up is opened),
+			// therefore the entire editable field preparation has to be finalized before the focus is set.
+			this._oEditableField.focus();
 
 			// keep Overlay selected while renaming
 			mPropertyBag.overlay.setSelected(true);

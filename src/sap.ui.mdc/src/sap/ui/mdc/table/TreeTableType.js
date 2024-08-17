@@ -23,7 +23,6 @@ sap.ui.define([
 	 * @since 1.109
 	 * @alias sap.ui.mdc.table.TreeTableType
 	 */
-
 	const TreeTableType = GridTableType.extend("sap.ui.mdc.table.TreeTableType", {
 		metadata: {
 			library: "sap.ui.mdc"

@@ -51,7 +51,7 @@
 			"async": true
 		},
 		"dependencies": {
-			"minUI5Version": "1.30",
+			"minUI5Version": "1.77.0",
 			"libs": {
 				"sap.m": {},
 				"sap.suite.ui.microchart": {

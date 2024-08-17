@@ -14,7 +14,9 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/m/IllustratedMessage",
 	"sap/ui/mdc/chart/DrillBreadcrumbs",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/core/Theming",
+	"sap/base/util/Deferred"
 ],
 	function (
 		Chart,
@@ -30,7 +32,9 @@ sap.ui.define([
 		VM,
 		IllustratedMessage,
 		Breadcrumbs,
-		nextUIUpdate
+		nextUIUpdate,
+		Theming,
+		Deferred
 	) {
 		"use strict";
 
@@ -1073,4 +1077,85 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+
+
+		QUnit.module("Theming", {
+			before: function() {
+				this.sDefaultTheme = Theming.getTheme();
+			},
+			beforeEach: async function () {
+				const TestComponent = UIComponent.extend("test", {
+					metadata: {
+						manifest: {
+							"sap.app": {
+								"id": "",
+								"type": "application"
+							}
+						}
+					},
+					createContent: function () {
+						return new Chart({
+							autoBindOnInit: false,
+							delegate: {
+								name: sDelegatePath,
+								payload: {
+									collectionPath: "/testPath"
+								}
+							},
+							propertyInfo: [{ name: "name1", label: "name1", dataType: "String" }, { name: "name2", label: "name2", dataType: "String" }]
+						});
+					}
+				});
+				this.oUiComponent = new TestComponent();
+				this.oUiComponentContainer = new ComponentContainer({
+					component: this.oUiComponent,
+					async: false
+				});
+				this.oMDCChart = this.oUiComponent.getRootControl();
+
+				this.oUiComponentContainer.placeAt("qunit-fixture");
+				await nextUIUpdate();
+			},
+			afterEach: function () {
+				this.oUiComponentContainer.destroy();
+				this.oUiComponent.destroy();
+			},
+			after: async function() {
+				await this.applyTheme(this.sDefaultTheme);
+			},
+			applyTheme: async function(sTheme) {
+				const oThemeApplied = new Deferred();
+				const fnThemeApplied = function() {
+					Theming.detachApplied(fnThemeApplied);
+					oThemeApplied.resolve();
+				};
+				Theming.setTheme(sTheme);
+				Theming.attachApplied(fnThemeApplied);
+				await oThemeApplied.promise;
+			}
+		});
+		for (const sTheme of [
+			"sap_horizon",
+			"sap_horizon_dark",
+			"sap_horizon_hcb",
+			"sap_horizon_hcw",
+			"sap_fiori_3"
+		]) {
+
+			QUnit.test(sTheme + "; Toolbar", async function(assert) {
+				let sExpectedDesigntype;
+				switch (sTheme) {
+					case "sap_horizon":
+					case "sap_horizon_dark":
+					case "sap_horizon_hcw":
+					case "sap_horizon_hcb":
+						sExpectedDesigntype = "Transparent"; //"Solid";
+						break;
+					default:
+						sExpectedDesigntype = "Transparent";
+				}
+				await this.applyTheme(sTheme);
+				assert.deepEqual(this.oMDCChart._getToolbar().getDesign(), sExpectedDesigntype, "design property");
+			});
+		}
 	});

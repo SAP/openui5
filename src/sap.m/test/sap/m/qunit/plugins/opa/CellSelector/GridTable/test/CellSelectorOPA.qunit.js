@@ -250,6 +250,45 @@ sap.ui.define([
 			Then.iSeeCellsSelected();
 		});
 
+		opaTest("Selection Behavior", function(Given, When, Then) {
+			Given.iChangeSelectionBehavior("RowSelector");
+
+			When.iFocusCell(1, 1);
+			When.Keyboard.iSelectDeselectCell();
+			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 1, colIndex: 1 });
+			Then.iSeeRowsSelected();
+
+			When.Keyboard.iSelectRowsWithSpace();
+			Then.iSeeRowsSelected();
+
+			When.Keyboard.iRemoveSelection();
+			Then.iSeeCellsSelected();
+
+			Given.iChangeSelectionBehavior("Row");
+			When.iFocusCell(1, 1);
+			When.Keyboard.iSelectDeselectCell();
+			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 1, colIndex: 1 });
+			Then.iSeeRowsSelected();
+
+			When.Keyboard.iSelectRowsWithSpace();
+			Then.iSeeRowsSelected(1, 1);
+
+			When.Keyboard.iRemoveSelection();
+			Then.iSeeCellsSelected();
+
+			Given.iChangeSelectionBehavior("RowOnly");
+			When.iFocusCell(1, 1);
+			When.Keyboard.iSelectDeselectCell();
+			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 1, colIndex: 1 });
+			Then.iSeeRowsSelected();
+
+			When.Keyboard.iSelectRowsWithSpace();
+			Then.iSeeRowsSelected(1, 1);
+
+			When.Keyboard.iRemoveSelection();
+			Then.iSeeCellsSelected();
+		});
+
 		opaTest("Removing Selection", function(Given, When, Then) {
 			function selectBlock() {
 				// Select single cell. Then extend.

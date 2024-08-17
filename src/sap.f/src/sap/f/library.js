@@ -86,6 +86,7 @@ sap.ui.define([
 			 "sap.f.FlexibleColumnLayoutData",
 			 "sap.f.FlexibleColumnLayoutDataForDesktop",
 			 "sap.f.FlexibleColumnLayoutDataForTablet",
+			 "sap.f.cards.CardBadgeCustomData",
 			 "sap.f.semantic.AddAction",
 			 "sap.f.semantic.CloseAction",
 			 "sap.f.semantic.CopyAction",
@@ -558,6 +559,30 @@ sap.ui.define([
 	};
 
 	 DataType.registerEnum("sap.f.SidePanelPosition", thisLib.SidePanelPosition);
+
+	 /**
+	  * Enumeration for different visibility options for the card badge.
+	  *
+	  * @enum {string}
+	  * @public
+	  * @since 1.128
+	  */
+	 thisLib.CardBadgeVisibilityMode = {
+		 /**
+		  * Badge will not be hidden after header is focused.
+		  *
+		  * @public
+		  */
+		 Persist: "Persist",
+		 /**
+		  * Badge will be hidden after header is focused.
+		  *
+		  * @public
+		  */
+		 Disappear: "Disappear"
+	 };
+
+	 DataType.registerEnum("sap.f.CardBadgeVisibilityMode", thisLib.CardBadgeVisibilityMode);
 
 	 /*
 	 * Register all of the above defined enums.

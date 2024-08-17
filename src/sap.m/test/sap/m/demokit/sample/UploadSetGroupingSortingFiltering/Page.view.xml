@@ -12,10 +12,10 @@
 				showIcons="true"
 				uploadEnabled="true"
 				terminationEnabled="true"
-				fileTypes="txt,doc,png"
+				fileTypes="txt,doc,png,pdf,jpg"
 				maxFileNameLength="30"
 				maxFileSize="200"
-				mediaTypes="text/plain,application/msword,image/jpeg"
+				mediaTypes="text/plain,application/msword,image/jpeg,image/png,application/pdf,image/jpg"
 				uploadUrl="../../../../upload"
 				items="{path: '/items',
 				templateShareable: false,
@@ -26,7 +26,9 @@
 				},
 				groupHeaderFactory: '.getGroupHeader'
 				}"
-				mode="None">
+				mode="None"
+				mediaTypeMismatch="onMediaTypeMismatch"
+				fileTypeMismatch="onFileTypeMismatch" >
 			<upload:toolbar>
 				<OverflowToolbar>
 				<ToolbarSpacer/>

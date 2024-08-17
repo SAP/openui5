@@ -5,12 +5,13 @@
 sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/base/Object",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/m/IconTabFilter",
 	"sap/m/IconTabHeader",
 	"sap/m/library",
 	"sap/uxap/ObjectPageSection"
-], function(Element, BaseObject, ManagedObjectObserver, IconTabFilter, IconTabHeader, mobileLibrary, ObjectPageSection) {
+], function(Element, BaseObject, ManagedObject, ManagedObjectObserver, IconTabFilter, IconTabHeader, mobileLibrary, ObjectPageSection) {
 	"use strict";
 
 	// shortcut for sap.m.TabsOverflowMode
@@ -67,7 +68,7 @@ sap.ui.define([
 			oAnchorBar = new IconTabHeader({
 				id: oObjectPageLayout.getId() + "-anchBar",
 				tabsOverflowMode: TabsOverflowMode.StartAndEnd,
-				backgroundDesign: oObjectPageLayout.getBackgroundDesignAnchorBar(),
+				backgroundDesign: ManagedObject.escapeSettingsValue(oObjectPageLayout.getBackgroundDesignAnchorBar()),
 				mode: IconTabHeaderMode.Inline
 			});
 
@@ -106,9 +107,9 @@ sap.ui.define([
 		oObjectPage._getVisibleSections().forEach(function (oSection) {
 			var sSectionFilterId = oIconTabHeader.getId() + "-" + oSection.getId() + "-anchor",
 				oSectionFilter = new IconTabFilter(sSectionFilterId, {
-					text: oSection._getTitle(),
+					text: ManagedObject.escapeSettingsValue(oSection._getTitle()),
 					key: oSection.getId(),
-					iconColor: oSection.getAnchorBarButtonColor()
+					iconColor: ManagedObject.escapeSettingsValue(oSection.getAnchorBarButtonColor())
 				}),
 				aSubSections = oSection._getVisibleSubSections();
 
@@ -119,7 +120,7 @@ sap.ui.define([
 					aSubSections.forEach(function (oSubSection) {
 						var sSubSectionFilterId = oIconTabHeader.getId() + "-" + oSubSection.getId() + "-anchor",
 							oSubSectionFilter = new IconTabFilter(sSubSectionFilterId, {
-							text: oSubSection._getTitle(),
+							text: ManagedObject.escapeSettingsValue(oSubSection._getTitle()),
 							key: oSubSection.getId()
 						});
 

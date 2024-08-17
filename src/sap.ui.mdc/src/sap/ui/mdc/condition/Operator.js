@@ -13,6 +13,7 @@ sap.ui.define([
 	'sap/base/i18n/Localization',
 	'sap/base/strings/escapeRegExp',
 	'./Condition',
+	'sap/ui/mdc/enums/BaseType',
 	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/enums/FieldDisplay',
 	'sap/ui/mdc/enums/OperatorOverwrite',
@@ -29,6 +30,7 @@ sap.ui.define([
 	Localization,
 	escapeRegExp,
 	Condition,
+	BaseType,
 	ConditionValidated,
 	FieldDisplay,
 	OperatorOverwrite,
@@ -87,12 +89,16 @@ sap.ui.define([
 	 *                 If set to <code>null</code>, the corresponding value is interpreted as a description that holds no required data. To display this value,
 	 *                 the additional <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used.<br>
 	 * @param {string[]} [oConfiguration.paramTypes] Array of type parameters regexp
-	 * @param {string} [oConfiguration.longText] String representation of the operator as a long text.<br>
-	 *                If longText is not given , it is looked up in the resource bundle of the <code>sap.ui.mdc</code> library by the key
-	 *                <code>operators.{oConfiguration.name}.longText</code>
+	 * @param {string} [oConfiguration.longText] String representation of the operator as a long text.<br> This text is shown in the operator dropdown of the value help.<br>
+	 *					If <code>longText</code> is not given , the <code>tokenText</code> is used, replacing the placeholders "{0}" and "{1}" with "X" and "Y".
 	 * @param {string} [oConfiguration.tokenText] String representation of the operator as a short text.<br>
-	 *                If the token text is not given, it is looked up in the resource bundle of the <code>sap.ui.mdc</code> library by the key
-	 *                <code>operators.{oConfiguration.name}.tokenText</code>
+	 * 					This text is only needed if there any language dependent text should be shown on the token, like "Next 5 days".
+	 * 					(In this case <code>#tokenText#</code> is used in <code>tokenFormat</code>, <code>tokenTest</code>, or <code>tokenParse</code>.)
+	 * 					For operators just showing the value and a operator symbol, no token text is needed.<br>
+	 *					If the token text is not given, the <code>longText</code> is used.
+	 * @param {object} [oConfiguration.longTextForTypes] Object holding String representation of the operator as a long text for single basic types.<br>
+	 * 					This text is shown in the operator dropdown of the value help.<br>
+	 * 					This is needed if the text depends on the used data type. For example the "less than" operator should be named "before" if a date or time type is used.
 	 * @param {object} [oConfiguration.displayFormats] Pattern how different {@link sap.ui.mdc.enums.FieldDisplay displayFormats} are rendered
 	 * @param {function} [oConfiguration.format] Function to format condition
 	 * @param {function} [oConfiguration.parse] Function to parse input into condition
@@ -161,67 +167,59 @@ sap.ui.define([
 			this.paramTypes = oConfiguration.paramTypes;
 			this.displayFormats = oConfiguration.displayFormats;
 
-			const sTextKey = "operators." + this.name;
-			const sLongTextKey = sTextKey + ".longText";
-			const sTokenTextKey = sTextKey + ".tokenText";
-			this.longText = oConfiguration.longText || _getText(sLongTextKey) || "";
-			this.tokenText = oConfiguration.tokenText || _getText(sTokenTextKey) || "";
-			if (this.longText === sLongTextKey) {
-				//use the tokenText as longText and replace the {0} and {1} placeholder
-				//Example:
-				//#XTIT: token text for "last x days" operator
-				//operators.LASTDAYS.tokenText=Last {0} days
-				//#XTIT: token long text for "last X days" operator
-				//__operators.LASTDAYS.longText=Last X days
-				this.longText = this.tokenText.replace(/\{0\}/g, "X")
-					.replace(/\{1\}/g, "Y");
+			this.longText = oConfiguration.longText || "";
+			this.tokenText = oConfiguration.tokenText || "";
+			this.longTextForTypes = oConfiguration.longTextForTypes || {};
+			if (!this.longText) {
+				if (this.tokenText) {
+					//use the tokenText as longText and replace the {0} and {1} placeholder
+					//Example:
+					//#XTIT: token text for "last x days" operator
+					//operators.LASTDAYS.tokenText=Last {0} days
+					//#XTIT: token long text for "last X days" operator
+					//__operators.LASTDAYS.longText=Last X days
+					this.longText = this.tokenText.replace(/\{0\}/g, "X")
+						.replace(/\{1\}/g, "Y");
+				} else {
+					this.longText = this.name; // to show at least the technical name of operator in DefineConditionPanel operator-selection (Helps in problem analysis)
+				}
 			}
-			if (this.tokenText === sTokenTextKey) {
-				this.tokenText = this.longText;
+			// create token parsing RegExp
+			let sRegExp;
+			let sTokenText = this.tokenText && escapeRegExp(this.tokenText);
+			if (oConfiguration.tokenParse) {
+				this.tokenParse = oConfiguration.tokenParse.replace(/#tokenText#/g, sTokenText);
+				for (let i = 0; i < this.valueTypes.length; i++) {
+					const sReplace = this.paramTypes ? this.paramTypes[i] : "(.+)";
+					// the regexp will replace placeholder like $0, 0$ and {0}
+					// the four \ are required, because the excapeRegExp will escape existing \\
+					this.tokenParse = this.tokenParse.replace(new RegExp("\\\\\\$" + i + "|" + i + "\\\\\\$" + "|" + "\\\\\\{" + i + "\\\\\\}", "g"), sReplace);
+				}
+				sRegExp = this.tokenParse;
+			} else {
+				sRegExp = sTokenText; // operator without value
 			}
-
-			if (this.tokenText) {
-				// create token parsing RegExp
-				let sRegExp;
-				let sTokenText;
-				if (oConfiguration.tokenParse) {
-					sTokenText = escapeRegExp(this.tokenText);
-
-					this.tokenParse = oConfiguration.tokenParse.replace(/#tokenText#/g, sTokenText);
-					for (let i = 0; i < this.valueTypes.length; i++) {
-						const sReplace = this.paramTypes ? this.paramTypes[i] : "(.+)";
-						// the regexp will replace placeholder like $0, 0$ and {0}
-						// the four \ are required, because the excapeRegExp will escape existing \\
-						this.tokenParse = this.tokenParse.replace(new RegExp("\\\\\\$" + i + "|" + i + "\\\\\\$" + "|" + "\\\\\\{" + i + "\\\\\\}", "g"), sReplace);
-					}
-					sRegExp = this.tokenParse;
-				} else {
-					sRegExp = escapeRegExp(this.tokenText); // operator without value
+			this.tokenParseRegExp = new RegExp(sRegExp, "i");
+			if (oConfiguration.tokenTest) {
+				this.tokenTest = oConfiguration.tokenTest.replace(/#tokenText#/g, sTokenText);
+				for (let i = 0; i < this.valueTypes.length; i++) {
+					const sReplace = this.paramTypes ? this.paramTypes[i] : "(.+)";
+					// the regexp will replace placeholder like $0, 0$ and {0}
+					// the four \ are required, because the excapeRegExp will escape existing \\
+					this.tokenTest = this.tokenTest.replace(new RegExp("\\\\\\$" + i + "|" + i + "\\\\\\$" + "|" + "\\\\\\{" + i + "\\\\\\}", "g"), sReplace);
 				}
-				this.tokenParseRegExp = new RegExp(sRegExp, "i");
-				if (oConfiguration.tokenTest) {
-					sTokenText = escapeRegExp(this.tokenText);
+				this.tokenTestRegExp = new RegExp(this.tokenTest, "i");
+			} else {
+				this.tokenTestRegExp = this.tokenParseRegExp;
+			}
+			this.hiddenOperatorRegExp = new RegExp("^(.+)$", "is"); // empty is not valid (also allown line-breaks and tabs)
 
-					this.tokenTest = oConfiguration.tokenTest.replace(/#tokenText#/g, sTokenText);
-					for (let i = 0; i < this.valueTypes.length; i++) {
-						const sReplace = this.paramTypes ? this.paramTypes[i] : "(.+)";
-						// the regexp will replace placeholder like $0, 0$ and {0}
-						// the four \ are required, because the excapeRegExp will escape existing \\
-						this.tokenTest = this.tokenTest.replace(new RegExp("\\\\\\$" + i + "|" + i + "\\\\\\$" + "|" + "\\\\\\{" + i + "\\\\\\}", "g"), sReplace);
-					}
-					this.tokenTestRegExp = new RegExp(this.tokenTest, "i");
-				} else {
-					this.tokenTestRegExp = this.tokenParseRegExp;
-				}
-				this.hiddenOperatorRegExp = new RegExp("^(.+)$", "is"); // empty is not valid (also allown line-breaks and tabs)
-
-				// create token formatter
-				if (oConfiguration.tokenFormat) {
-					sTokenText = this.tokenText;
-					this.tokenFormat = oConfiguration.tokenFormat.replace(/\#tokenText\#/g, sTokenText);
-				} else {
-					this.tokenFormat = this.tokenText; // static operator with no value (e.g. "THIS YEAR")
-				}
+			// create token formatter
+			if (oConfiguration.tokenFormat) {
+				sTokenText = this.tokenText;
+				this.tokenFormat = oConfiguration.tokenFormat.replace(/\#tokenText\#/g, sTokenText);
+			} else {
+				this.tokenFormat = this.tokenText || this.longText; // static operator with no value (e.g. "THIS YEAR")
 			}
 
 			if (oConfiguration.additionalInfo !== undefined) {
@@ -248,31 +246,6 @@ sap.ui.define([
 		}
 	});
 
-	function _getText(sKey, sType) {
-
-		if (sType === "time" || sType === "datetime") {
-			sType = "date"; // use the date type operator longname (e.g. before) for all Time and DateTime types.
-		}
-
-		const key = sKey + (sType ? "." + sType : "");
-		let sText;
-
-		// try to get the resource bundle text (the key might not exist)
-		sText = oMessageBundle.getText(key, undefined, true); // use bIgnoreKeyFallback=true to avoid assert messages in the console
-		if (sText === key || sText === undefined) {
-			if (sType) {
-				sText = oMessageBundle.getText(sKey, undefined, true);
-				if (sText === key || sText === undefined) {
-					sText = sKey;
-				}
-			} else {
-				sText = key;
-			}
-		}
-		return sText;
-
-	}
-
 	/**
 	 * Gets the long text for an operator.
 	 *
@@ -286,11 +259,14 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.DefineConditionPanel
 	 */
 	Operator.prototype.getLongText = function(sBaseType) {
-		const sTxtKey = this.textKey || "operators." + this.name + ".longText";
-		let sLongText = _getText(sTxtKey, sBaseType.toLowerCase());
 
-		if (sLongText === sTxtKey) {
-			// when the returned text is the key, a type dependent longText does not exist and we use the default (custom) longText for the operator
+		if (sBaseType === BaseType.Time || sBaseType === BaseType.DateTime) {
+			sBaseType = BaseType.Date; // use the date type operator longname (e.g. before) for all Time and DateTime types.
+		}
+		let sLongText = this.longTextForTypes[sBaseType];
+
+		if (!sLongText) {
+				// when the returned text is the key, a type dependent longText does not exist and we use the default (custom) longText for the operator
 			sLongText = this.longText;
 		}
 

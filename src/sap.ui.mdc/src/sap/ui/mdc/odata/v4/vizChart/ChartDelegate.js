@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/mdc/chart/ChartImplementationContainer",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/mdc/p13n/panels/ChartItemPanel",
-	"sap/m/MessageStrip",
+	"sap/m/p13n/MessageStrip",
 	"sap/ui/mdc/FilterBarDelegate",
 	"sap/ui/model/Filter",
 	"sap/ui/mdc/chart/PropertyHelper",
@@ -528,9 +528,15 @@ sap.ui.define([
 				oDim.setRole(oItem.getRole() ? oItem.getRole() : "category");
 			}
 
-			const aVisibleDimension = this._getChart(oChart).getVisibleDimensions();
-			aVisibleDimension.splice(iIndex, 0, sInnerDimName); //Insert Item without deleting existing dimension
-			this._getChart(oChart).setVisibleDimensions(aVisibleDimension);
+			const bDrill = oChart._bDrillDown;
+			if (bDrill && oDim) {
+				this._getChart(oChart).drillDown(oDim);
+				oChart._bDrillDown = false;
+			} else if (!bDrill) {
+				const aVisibleDimension = this._getChart(oChart).getVisibleDimensions();
+				aVisibleDimension.splice(iIndex, 0, sInnerDimName); //Insert Item without deleting existing dimension
+				this._getChart(oChart).setVisibleDimensions(aVisibleDimension);
+			}
 
 		} else if (oItem.getType() === "aggregatable") {
 			this.createInnerMeasure(oChart, oItem);
@@ -560,17 +566,24 @@ sap.ui.define([
 	 */
 	ChartDelegate.removeItemFromInnerChart = function(oChart, oItem) {
 		if (oItem.getType() === "groupable" && this._getChart(oChart).getVisibleDimensions().includes(this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oChart))) {
-			const sInnerDimName = this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oChart);
-
-			const aNewVisibleDimensions = this._getChart(oChart).getVisibleDimensions().filter((e) => {
-				return e !== sInnerDimName;
-			});
 
 			if (this._getState(oChart).inResultDimensions.length > 0) {
 				this._getChart(oChart).setInResultDimensions(this._getState(oChart).inResultDimensions);
 			}
 
-			this._getChart(oChart).setVisibleDimensions(aNewVisibleDimensions);
+			if (oChart._iDrillUpIndex) {
+				this._getChart(oChart).drillUp(oChart._iDrillUpIndex);
+				oChart._iDrillUpIndex = 0;
+			} else {
+				let aNewVisibleDimensions = oChart.getItems().filter((oItem) => {
+					return oItem.getType() === "groupable";
+				});
+				aNewVisibleDimensions = aNewVisibleDimensions.map( function(oItem) {
+					return this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oChart);
+				}.bind(this));
+
+				this._getChart(oChart).setVisibleDimensions(aNewVisibleDimensions);
+			}
 
 			//this._getChart(oChart).removeDimension(this._getChart(oChart).getDimensionByName(oChartItem.getPropertyKey()));
 
@@ -1488,6 +1501,10 @@ sap.ui.define([
 	ChartDelegate._addInnerDimension = function(oChart, oChartItem, oPropertyInfo) {
 		const oDimension = this.innerDimensionFactory(oChart, oChartItem, oPropertyInfo);
 		this._getChart(oChart).addDimension(oDimension);
+		if (oChart._bDrillDown) {
+			this._getChart(oChart).drillDown(oDimension);
+			oChart._bDrillDown = false;
+		}
 	};
 
     /**

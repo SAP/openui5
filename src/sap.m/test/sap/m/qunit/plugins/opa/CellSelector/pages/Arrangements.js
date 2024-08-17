@@ -62,6 +62,13 @@ sap.ui.define([
 					oTable.getParent().setEnableScrolling(bEnable);
 				}
 			});
+		},
+		iChangeSelectionBehavior: function(sBehavior) {
+			return Util.waitForTable.call(this, {
+				success: function(oTable) {
+					oTable.setSelectionBehavior(sBehavior);
+				}
+			});
 		}
 	};
 });

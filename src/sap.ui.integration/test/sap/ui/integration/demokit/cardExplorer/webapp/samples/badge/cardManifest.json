@@ -1,10 +1,10 @@
 {
 	"_version": "1.15.0",
 	"sap.app": {
-		"id": "card.explorer.actions.list.card",
+		"id": "card.explorer.badge.cardBadge.card",
 		"type": "card",
-		"title": "Sample of Host Actions in Cards",
-		"subTitle": "Sample of  Host Actions in Cards",
+		"title": "Sample of Card Badges in Cards",
+		"subTitle": "Sample of Card Badges in Cards",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
@@ -13,8 +13,7 @@
 		"description": "A long description for this Card",
 		"tags": {
 			"keywords": [
-				"Action",
-				"Host",
+				"Badge",
 				"Card",
 				"Sample"
 			]

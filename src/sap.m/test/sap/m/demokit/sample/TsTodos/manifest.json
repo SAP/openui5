@@ -1,12 +1,12 @@
 {
-	"_version": "1.12.0",
+	"_version": "1.21.0",
 	"sap.app": {
 		"id": "sap.m.sample.TsTodos.webapp",
 		"type": "application"
 	},
 	"sap.ui5": {
 		"dependencies": {
-			"minUI5Version": "1.75.0",
+			"minUI5Version": "1.77.0",
 			"libs": {
 				"sap.f": {},
 				"sap.m": {},

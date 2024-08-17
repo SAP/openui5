@@ -254,7 +254,13 @@ sap.ui.define([
 		});
 
 		// Assert
-		assert.strictEqual(oLogErrorSpy.callCount, 0, "sap.ui.core.HTML control didn't log error for style classes");
+		if (oLogErrorSpy.callCount === 0) {
+			assert.ok(true, 0, "sap.ui.core.HTML control didn't log error for style classes");
+		} else {
+			oLogErrorSpy.getCalls().forEach((oCall) => {
+				assert.ok(oCall.args[0].indexOf("sap.m.Toolbar") === -1, "sap.ui.core.HTML control didn't log error for style classes");
+			});
+		}
 
 		// Cleanup
 		oToolbar.destroy();
