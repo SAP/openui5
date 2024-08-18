@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/events/PseudoEvents",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Lib",
+	"sap/m/Button"
 ],
 	function(
 		library,
@@ -26,12 +27,17 @@ sap.ui.define([
 		PseudoEvents,
 		jQuery,
 		InvisibleText,
-		CoreLib
+		CoreLib,
+		Button
 	) {
 	"use strict";
 
 	var GenericTileScope = library.GenericTileScope;
 	var TileSizeBehavior = library.TileSizeBehavior;
+	var ButtonType = library.ButtonType,
+	FrameType = library.FrameType,
+	//The following value provides the size of the each dot within its indicator
+	INDICATOR_SIZE = 24;
 
 	/**
 	 * Constructor for a new sap.m.SlideTile control.
@@ -149,6 +155,28 @@ sap.ui.define([
 		}), true);
 
 		this._oInvisibleText = new InvisibleText(this.getId() + "-ariaText");
+		this._oLeftScroll = new Button({
+			icon : "sap-icon://navigation-left-arrow",
+			type: ButtonType.Transparent,
+			ariaDescribedBy: this._oInvisibleText,
+			press: () => {
+				this._scrollToNextTile(true,true,null,true);
+				this._setInvisibleText(this._getPrefixText());
+			}
+		});
+		this._oRightScroll = new Button({
+			icon : "sap-icon://navigation-right-arrow",
+			type: ButtonType.Transparent,
+			ariaDescribedBy: this._oInvisibleText,
+			press: () => {
+				this._scrollToNextTile(true,false,null,true);
+				this._setInvisibleText(this._getPrefixText());
+			}
+		});
+		this._tabKeyPressedTile = false;
+		this._tabKeyPressedButton = false;
+		this.addDependent(this._oLeftScroll);
+		this.addDependent(this._oRightScroll);
 		this.setAggregation("_invisibleText", this._oInvisibleText, true);
 	};
 
@@ -196,6 +224,7 @@ sap.ui.define([
 		}
 		if (cTiles > 1 && sScope === GenericTileScope.Display) {
 			this._startAnimation();
+			this._resetIndicator(true);
 		}
 		// in actions scope, the more icon color is changed when the displayed tile has news content (dark background)
 		if (sScope === GenericTileScope.Actions && this._iCurrentTile >= 0 &&
@@ -211,7 +240,7 @@ sap.ui.define([
 				oCurrentTile._oNavigateAction._bExcludeFromTabChain = false;
 				oCurrentTile._oNavigateAction.invalidate();
 			}
-			oCurrentBullet = document.querySelector('span[id$="tileIndicator-' + i + '"]');
+			oCurrentBullet = document.querySelector('div[id$="indicatorTap-' + i + '"]');
 			if (oCurrentBullet) {
 				oCurrentBullet.addEventListener("click", function(event) {
 					var sId = event.currentTarget.id,
@@ -224,7 +253,7 @@ sap.ui.define([
 				}.bind(this));
 			}
 		}
-		this._attachFocusEvents();
+		this._attachEvents();
 
 		//Removing the child aria attributes becasuse its interfering with the Jaws when its in VPC mode on
 		this._removeChildAria();
@@ -309,9 +338,16 @@ sap.ui.define([
 	 */
 	SlideTile.prototype.onkeydown = function (oEvent) {
 		if (this.getScope() === GenericTileScope.Display) {
-			if (PseudoEvents.events.sapenter.fnCheck(oEvent)) {
+			if (PseudoEvents.events.sapenter.fnCheck(oEvent) && oEvent.target?.tagName !== "BUTTON") {
 				var oGenericTile = this.getTiles()[this._iCurrentTile];
 				oGenericTile.onkeydown(oEvent);
+			}
+			if (oEvent.which === KeyCodes.TAB && oEvent.target?.tagName !== "BUTTON") {
+				this._tabKeyPressedTile = true;
+				this._tabKeyPressedButton = false;
+			} else if (oEvent.which === KeyCodes.TAB && oEvent.target?.tagName === "BUTTON") {
+				this._tabKeyPressedButton = true;
+				this._tabKeyPressedTile = false;
 			}
 		}
 	};
@@ -324,12 +360,12 @@ sap.ui.define([
 	SlideTile.prototype.onkeyup = function (oEvent) {
 		var oParams;
 		if (this.getScope() === GenericTileScope.Display) {
-			if (PseudoEvents.events.sapenter.fnCheck(oEvent)) {
+			if (PseudoEvents.events.sapenter.fnCheck(oEvent) && oEvent.target?.tagName !== "BUTTON") {
 				var oGenericTile = this.getTiles()[this._iCurrentTile];
 				oGenericTile.onkeyup(oEvent);
 				return;
 			}
-			if (PseudoEvents.events.sapspace.fnCheck(oEvent)) {
+			if (PseudoEvents.events.sapspace.fnCheck(oEvent) && oEvent?.target?.tagName !== 'BUTTON') {
 				this._toggleAnimation();
 				// Saving the current state in the following variable so that when the focus goes out it would remain in the present state
 				this.bIsPrevStateNormal = !this._bAnimationPause;
@@ -383,8 +419,8 @@ sap.ui.define([
 	SlideTile.prototype.onmousedown = function (oEvent) {
 		if (jQuery(oEvent.target).hasClass("sapMSTIconClickTapArea")) {
 			this.addStyleClass("sapMSTIconPressed");
+			this.mouseDown = true;
 		}
-		this.mouseDown = true;
 	};
 
 	/* --- Public methods --- */
@@ -427,30 +463,93 @@ sap.ui.define([
 	};
 
 	/**
-	 *Attaching focusin and foucusout event handles, and activating them when the tile is focused by tabnavigating
+	 *Attaching events to the tiles and scroll buttons
 	 * @private
 	 */
 
-	SlideTile.prototype._attachFocusEvents = function() {
+	SlideTile.prototype._attachEvents = function() {
+		/**
+		 * ACC guidelines for SlideTile
+		 *
+		 * When the focus moves to the tile, we pause the tile and read the speech accordingly
+		 * When the focus moves to the inner scrolling buttons via tab navigation on the tile, we do not re-read the tile since it has already been read as mentioned in the previous point
+		 * If the user navigates directly to a scrolling button using "Shift + Tab," we will read the tile's history to provide context
+		 * The original state (pause/play) of the tile will be preserved when the focus moves out of the SlideTile
+		 */
 		var oSlideTile = this.getDomRef();
-		//These Event Listeners should be activated only when the tile gets it focus by tab navigation not by clicking on the tile
+		var oLeftScroll = this._oLeftScroll.getDomRef();
+		var oRightScroll = this._oRightScroll.getDomRef();
+		var aTileInnerIds = [this.getId(),this._oLeftScroll.getId(),this._oRightScroll.getId()];
+
+		 // In "focusin" events the "target" would give the newly focused item where as in "focusout" events "relatedTarget" gives you the newly focused item
 		if (oSlideTile) {
-			oSlideTile.addEventListener('focusin', function() {
+			oSlideTile.addEventListener('focusin', function(oEvent) {
+				var bIsTileGettingFocus = oEvent.target.id === oSlideTile.id;
 				if (!this.mouseDown) {
 					this.bIsPrevStateNormal = this.getDomRef().classList.contains("sapMSTPauseIcon");
-					this._stopAnimation();
+					// When the tile is not getting focused, we let the buttons inside the tile to dictate the speech
+					this._stopAnimation(null,!bIsTileGettingFocus);
 					this._updatePausePlayIcon();
 				}
 			}.bind(this));
-			oSlideTile.addEventListener('focusout', function(){
+			oSlideTile.addEventListener('focusout', function(oEvent){
+				var bIsNextFocusableItemInsideTile = aTileInnerIds.find((sId) => sId === oEvent?.relatedTarget?.id);
 				if (!this.mouseDown) {
 					if (this.bIsPrevStateNormal) {
-						this._startAnimation(true);
+						//Suppressing the tiles speech history to stop any unwanted speech coming out of the tile when the focus has been completely went outside
+						this._startAnimation(true,!bIsNextFocusableItemInsideTile);
+						this._updatePausePlayIcon();
 					}
-					this._updatePausePlayIcon();
 				}
 				this.mouseDown = false;
+				//Resetting the tab values when we go outside of the tile
+				if (this.getTiles().length === 1 || !bIsNextFocusableItemInsideTile) {
+					this._tabKeyPressedTile = false;
+					this._tabKeyPressedButton = false;
+				}
 			}.bind(this));
+		}
+		if (oLeftScroll) {
+			oLeftScroll.addEventListener('focusin',() => {
+				//This means that the focus is coming to the arrow directly without touching the tile through backward navigation
+				if (!this._tabKeyPressedTile && !this._tabKeyPressedButton && !this._focusToggled) {
+					this._setInvisibleText(this._getPrefixText(true));
+				} else {
+					//If tab key is pressed that means the speech history is already been told and no need to repeat ourselves
+					this._setInvisibleText();
+				}
+				this._focusToggled = false;
+			});
+
+			oLeftScroll.addEventListener('focusout',(oEvent) => {
+				//Checking if the next focusable item is part of the current control
+				var bIsNextFocusableItemInsideTile = aTileInnerIds.find((sId) => sId === oEvent.relatedTarget?.id);
+				if (!bIsNextFocusableItemInsideTile) {
+					this._tabKeyPressedTile = false;
+					this._tabKeyPressedButton = false;
+				}
+			});
+		}
+
+		if (oRightScroll) {
+			oRightScroll.addEventListener('focusin',() => {
+				//This means that the focus is coming to the arrow directly without touching the tile
+				if (!this._tabKeyPressedTile && !this._tabKeyPressedButton && !this._focusToggled) {
+					this._setInvisibleText(this._getPrefixText(true));
+				} else {
+					//If tab key is pressed that means the speech history is already been told and no need to reread the history again
+					this._setInvisibleText();
+				}
+				this._focusToggled = false;
+			});
+
+			oRightScroll.addEventListener('focusout',(oEvent) => {
+				var bIsNextFocusableItemInsideTile = aTileInnerIds.find((sId) => sId === oEvent.relatedTarget?.id);
+				if (!bIsNextFocusableItemInsideTile) {
+					this._tabKeyPressedTile = false;
+					this._tabKeyPressedButton = false;
+				}
+			});
 		}
 	};
 
@@ -508,25 +607,18 @@ sap.ui.define([
 	 * Stops the animation
 	 *
 	 * @param {boolean} needInvalidate decides whether invalidates the control for setScope
+	 * @param {boolean} bAvoidAriaUpdate decides whether the aria text should be updated
 	 * @private
 	 */
-	SlideTile.prototype._stopAnimation = function (needInvalidate) {
+	SlideTile.prototype._stopAnimation = function (needInvalidate,bAvoidAriaUpdate) {
 		this._iCurrAnimationTime += Date.now() - this._iStartTime;
 		clearTimeout(this._sTimerId);
-		if (this._iCurrentTile != undefined) {
-			var oWrapperTo = this.$("wrapper-" + this._iCurrentTile);
-			oWrapperTo.stop();
-		}
-		if (this._iPreviousTile != undefined) {
-			var oWrapperFrom = this.$("wrapper-" + this._iPreviousTile);
-			oWrapperFrom.stop();
-		}
 		this._bAnimationPause = true;
 		if (this._iCurrAnimationTime > this.getDisplayTime()) {
-			this._scrollToNextTile(true); //Completes the animation and stops
+			this._scrollToNextTile(true,null,null,bAvoidAriaUpdate); //Completes the animation and stops
 		} else {
 			if (this.getTiles()[this._iCurrentTile]) {
-				this._setAriaDescriptor();
+				this._setAriaDescriptor(bAvoidAriaUpdate);
 			}
 			if (needInvalidate) {
 				this.invalidate();
@@ -537,9 +629,10 @@ sap.ui.define([
 	/**
 	 * Starts the animation
 	 * @param {boolean} bIsFocusOut Checks if the focus is moving out
+	 * @param {boolean} bAvoidAriaUpdate decides whether the aria text should be updated
 	 * @private
 	 */
-	SlideTile.prototype._startAnimation = function (bIsFocusOut) {
+	SlideTile.prototype._startAnimation = function (bIsFocusOut,bAvoidAriaUpdate) {
 		var iDisplayTime = this.getDisplayTime() - this._iCurrAnimationTime;
 
 		clearTimeout(this._sTimerId);
@@ -550,7 +643,7 @@ sap.ui.define([
 		this._bAnimationPause = false;
 		//Restricting the updation of aria text while focusing out because its causing the aria text to read twice
 		if (this.getTiles()[this._iCurrentTile] && !bIsFocusOut) {
-			this._setAriaDescriptor();
+			this._setAriaDescriptor(bAvoidAriaUpdate);
 		}
 	};
 
@@ -583,8 +676,9 @@ sap.ui.define([
 	 * @param {boolean} pause Triggers if the animation gets paused or not
 	 * @param {boolean} backward Sets the direction backward or forward
 	 * @param {int} iNextTile Scrolls to custom tile
+	 * @param {boolean} bAvoidAriaUpdate decides whether the aria text should be updated
 	 */
-	SlideTile.prototype._scrollToNextTile = function (pause, backward, iNextTile) {
+	SlideTile.prototype._scrollToNextTile = function (pause, backward, iNextTile,bAvoidAriaUpdate) {
 		var iTransitionTime = this._iCurrAnimationTime - this.getDisplayTime(),
 			bFirstAnimation, iNxtTile, oWrapperFrom, oWrapperTo, sWidthFrom, fWidthTo, fWidthFrom, bChangeSizeBefore, sDir, oDir;
 
@@ -601,7 +695,7 @@ sap.ui.define([
 			this._iCurrentTile = iNxtTile;
 		}
 
-		if (iNextTile >= 0) {
+		if (iNextTile && iNextTile >= 0) {
 			this._iCurrentTile = iNextTile;
 		}
 
@@ -674,26 +768,127 @@ sap.ui.define([
 		}
 
 		if (this.getTiles()[this._iCurrentTile]) {
-			this._setAriaDescriptor();
+			this._setAriaDescriptor(bAvoidAriaUpdate);
 		}
 		this._updateTilesIndicator();
+		this._enableIndicatorScrolling(backward);
+	};
+
+	/**
+	 * It adds an animation to the scroller when an indicator moves out of the boundary
+	 *
+	 * @private
+	 * @param {boolean} bBackward Sets the direction backward or forward
+	 */
+
+	SlideTile.prototype._enableIndicatorScrolling = function (bBackward) {
+		//If the bForward is set to null it means that the tile is in non-paused state
+		var bForward = (bBackward === undefined) ? null : !bBackward;
+		// Adding a delay to ensure that when the focus changes, the current ARIA text is read completely before the new one is read.
+		setTimeout(() => {
+			this._oLeftScroll.setEnabled((this._iCurrentTile === this._iIndexOfStartIndicator) ? false : true);
+			this._oRightScroll.setEnabled((this._iCurrentTile === this._iIndexOfEndIndicator) ? false : true);
+		}, 200);
+		var {overflow} = this._getIndicatorLastIndexInfo();
+		 if (this._iCurrentTile === 0 && overflow) {
+			this._resetIndicator(true);
+		} else if (this._iCurrentTile === this._iIndexOfEndIndicator && overflow) {
+			this._resetIndicator(false);
+		} else if ( (bForward === null && this._iCurrentTile > this._iIndexOfVisibleEndIndicator) || (bForward && this._iCurrentTile > this._iIndexOfVisibleEndIndicator)) {
+			//Forward navigation that makes the next indicator visible from its hidden state
+			//The forward navigation occurs when the tile automatically moves right or when the user clicks on the right scroller button
+			//Both the scenarios are valid only when the active marker is at the indicator on the far right
+			this._iIndexOfVisibleEndIndicator++;
+			this._iIndexOfVisibleStartIndicator++;
+			this._iIndicatorScrolling -= INDICATOR_SIZE;
+			this._scrollIndicator();
+		} else if (!bForward && this._iCurrentTile < this._iIndexOfVisibleStartIndicator){
+			//Backward navigation that makes the previous indicator visible from its hidden state
+			//The backward navigation occurs when the user clicks on the left scroller button
+			//Both the scenarios are valid only when the active marker is at the indicator on the far left
+			this._iIndexOfVisibleEndIndicator--;
+			this._iIndexOfVisibleStartIndicator--;
+			this._iIndicatorScrolling += INDICATOR_SIZE;
+			this._scrollIndicator();
+		}
+	};
+
+	SlideTile.prototype.onfocusfail = function() {
+			setTimeout(() => {
+				var oScroll = (this._oLeftScroll.getEnabled()) ? this._oLeftScroll : this._oRightScroll;
+				this._focusToggled = true;
+				oScroll.getDomRef().focus();
+			}, 100);
+	};
+
+	/**
+	 * It resets the indicator when it is present either at the starting tile or at the last tile
+	 * @param {boolean} bStart True when the indicator is on the starting tile, and false when the indicator is on the last tile
+	 * @private
+	 */
+
+	SlideTile.prototype._resetIndicator = function(bStart) {
+		this._iIndexOfStartIndicator = 0;
+		this._iIndexOfEndIndicator = this.getTiles().length - 1;
+		var {index,overflow} = this._getIndicatorLastIndexInfo();
+		if (bStart) {
+			this._iIndexOfVisibleStartIndicator = 0;
+			this._iIndexOfVisibleEndIndicator = index;
+			this._iIndicatorScrolling = 0;
+		} else if (overflow){
+			//iScrolls calculates how many times the animation moves to the right before the last indicator becomes visible
+			var iScrolls = this._iIndexOfEndIndicator - index;
+			this._iIndicatorScrolling = -1 * INDICATOR_SIZE * iScrolls;
+			this._iIndexOfVisibleStartIndicator = this._iIndexOfEndIndicator - index;
+			this._iIndexOfVisibleEndIndicator = this._iIndexOfEndIndicator;
+		}
+		this._scrollIndicator();
+	};
+
+
+	/**
+	 * The scrolling happens by the respective _iIndicatorScrolling value
+	 * @private
+	 */
+	SlideTile.prototype._scrollIndicator = function() {
+		for (var i = 0; i <= this._iIndexOfEndIndicator; i++) {
+			this.getDomRef("indicatorTap-" + i).style.transform = `translateX(${this._iIndicatorScrolling}px)`;
+		}
+	};
+
+
+	/**
+	 * It returns the last visible indicator's index and if an overflow exists
+	 * @private
+	 * @returns {{index: number, overflow: boolean}} - The resulting object containing the index and overflow status
+	 */
+	SlideTile.prototype._getIndicatorLastIndexInfo = function() {
+		var sTileType = this.getTiles()[0]?.getFrameType();
+		var sTileSize = this.getTiles()[0]?.getSizeBehavior();
+		if (sTileType === FrameType.TwoByOne || sTileType === FrameType.Stretch) {
+			return (this._iIndexOfEndIndicator > 4) ? {index: 4,overflow:true} : {index: this._iIndexOfEndIndicator,overflow:false};
+		} else if (sTileType === FrameType.OneByOne && (sTileSize === TileSizeBehavior.Small || this.getDomRef().classList.contains("sapMTileSmallPhone"))) {
+			return (this._iIndexOfEndIndicator > 2) ? {index: 2,overflow:true} : {index: this._iIndexOfEndIndicator,overflow:false};
+		} else if (sTileType === FrameType.OneByOne) {
+			return (this._iIndexOfEndIndicator > 3) ? {index: 3,overflow:true} : {index: this._iIndexOfEndIndicator,overflow:false};
+		}
+		return {};
 	};
 
 	/**
 	 * Sets the ARIA descriptor
 	 *
 	 * @private
+	 * @param {boolean} bAvoidAriaUpdate decides whether the aria text should be updated
 	 */
-	SlideTile.prototype._setAriaDescriptor = function () {
-		var sText = "", sScope, aTiles, oCurrentTile,iTiles,sPrefixText,sState;
+	SlideTile.prototype._setAriaDescriptor = function (bAvoidAriaUpdate) {
+		if (bAvoidAriaUpdate) {
+			return;
+		}
+		var sText = "", aTiles,
 		sScope = this.getScope();
 		aTiles = this.getTiles();
-		iTiles = aTiles.length;
-		sState = (this._bAnimationPause) ? "SLIDETILE_INSTANCE_FOCUS_PAUSE" : "SLIDETILE_INSTANCE_FOCUS_SCROLL";
-		sPrefixText = this._oRb.getText(sState,[this._iCurrentTile + 1,iTiles]);
-		sText += sPrefixText;
-		oCurrentTile = aTiles[this._iCurrentTile];
-		sText += oCurrentTile._getAriaText(true).replace(/\s/g, " ");// Gets Tile's ARIA text and collapses whitespaces
+		sText += this._getPrefixText();
 
 		if (sScope === GenericTileScope.Actions) {
 			sText = this._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + "\n" + sText;
@@ -706,6 +901,33 @@ sap.ui.define([
 			}
 		}
 		sText += "\n" + this._oRb.getText("SLIDETILE_ACTIVATE");
+		this._setInvisibleText(sText);
+	};
+
+	/**
+	 * Gets the text which includes the GenericTile information and state
+	 * @returns {String} Returns the text which includes the information of the currently focused tile
+	 * @private
+	 */
+	SlideTile.prototype._getPrefixText = function(bPause) {
+		var sText = "", aTiles, oCurrentTile,iTiles,sPrefixText,sState;
+		aTiles = this.getTiles();
+		iTiles = aTiles.length;
+		sState = (bPause || this._bAnimationPause) ? "SLIDETILE_INSTANCE_FOCUS_PAUSE" : "SLIDETILE_INSTANCE_FOCUS_SCROLL";
+		sPrefixText = this._oRb.getText(sState,[this._iCurrentTile + 1,iTiles]);
+		sText += sPrefixText;
+		oCurrentTile = aTiles[this._iCurrentTile];
+		sText += oCurrentTile._getAriaText(true).replace(/\s/g, " ");// Gets Tile's ARIA text and collapses whitespaces
+		return sText;
+	};
+
+	/**
+	 * Sets the text for the InvisibleText
+	 *
+	 * @private
+	 * @param {boolean} sText Text to be updated inside
+	 */
+	SlideTile.prototype._setInvisibleText = function(sText) {
 		this.getAggregation("_invisibleText").setText(sText);
 	};
 
