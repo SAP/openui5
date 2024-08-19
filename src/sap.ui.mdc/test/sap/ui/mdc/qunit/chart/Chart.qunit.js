@@ -1149,7 +1149,7 @@ sap.ui.define([
 					case "sap_horizon_dark":
 					case "sap_horizon_hcw":
 					case "sap_horizon_hcb":
-						sExpectedDesigntype = "Transparent"; //"Solid";
+						sExpectedDesigntype = "Solid";
 						break;
 					default:
 						sExpectedDesigntype = "Transparent";
