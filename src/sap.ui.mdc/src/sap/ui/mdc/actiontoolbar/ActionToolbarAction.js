@@ -43,6 +43,16 @@ sap.ui.define([
 						aggregationName: "end",
 						alignment: ActionToolbarActionAlignment.Begin
 					}
+				},
+				/**
+				 * Contains the label that is displayed in key user adaptation dialog.
+				 * First fallback for this is the <code>text</code> property of the inner action aggregation.
+				 * Second fallback for this is the <code>id</code> of this <code>ActionToolbarAction</code>.
+				 * @ui5-restricted sap.fe
+				 * @since 1.128
+				 */
+				label: {
+					type: "string"
 				}
 			},
 			defaultAggregation: "action",
@@ -135,11 +145,12 @@ sap.ui.define([
 		};
 	};
 
-	/**
-	 *
-	 * @returns {string} a text defining the label of this <code>ActionToolbarAction</code> defined by the inner action.
-	 */
 	ActionToolbarAction.prototype.getLabel = function() {
+		const sLabel = this.getProperty("label");
+		if (sLabel) {
+			return sLabel;
+		}
+
 		const oAction = this.getAction();
 		return oAction && oAction.getText ? oAction.getText() : this.getId();
 	};
