@@ -59,10 +59,21 @@ sap.ui.define([
 	 * @return {boolean} True if there is an occurrence for these hours
 	 * @private
 	 */
-	RecurringNonWorkingPeriod.prototype.hasNonWorkingAtHours = function (oDate) {
-		const startHours = this.getStartDate().getHours();
+	RecurringNonWorkingPeriod.prototype.hasNonWorkingAtHour = function (oDate) {
+		const iStartHours = this.getStartDate().getHours();
+		const iTimeCalendarItem = iStartHours + (this.getStartDate().getMinutes() + this.getDurationInMinutes()) / 60;
+		const iTimeData = oDate.getHours() + oDate.getMinutes() / 60;
 
-		return oDate.getHours() === startHours || (this.getDurationInMinutes() / 60 + startHours >= oDate.getHours() && startHours <= oDate.getHours());
+		return oDate.getHours() === iStartHours || (iTimeCalendarItem >= iTimeData && iStartHours <= oDate.getHours());
+	};
+
+	/**
+	 * Determines whether the current instance has recurrence or not.
+	 * @return {boolean} The result is <code>true</code> when the instance has recurrence.
+	 * @private
+	 */
+	RecurringNonWorkingPeriod.prototype.isRecurring = function () {
+		return true;
 	};
 
 	return RecurringNonWorkingPeriod;

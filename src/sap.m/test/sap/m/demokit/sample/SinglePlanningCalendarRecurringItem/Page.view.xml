@@ -1,0 +1,39 @@
+
+<mvc:View
+	controllerName="sap.m.sample.SinglePlanningCalendarRecurringItem.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:unified="sap.ui.unified"
+	xmlns="sap.m">
+	<VBox class="sapUiSmallMargin">
+			<OverflowToolbar height="100%" width="100%">
+				<ToolbarSeparator/>
+			</OverflowToolbar>
+		<SinglePlanningCalendar
+			id="SPC1"
+			class="sapUiSmallMarginTop"
+			title= "My Calendar"
+			viewChange="handleViewChange"
+			startDate="{path: '/startDate'}"
+			nonWorkingPeriods="{path: '/nonWorkingPeriods'}">
+			<views>
+				<SinglePlanningCalendarDayView key="DayView" title="Day" />
+				<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
+				<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
+			</views>
+			<nonWorkingPeriods>
+				<unified:RecurringNonWorkingPeriod
+					recurrenceType= "{recurrenceType}"
+					recurrenceEndDate= "{recurrenceEndDate}"
+					recurrencePattern= "{recurrencePattern}"
+					date="{date}">
+					<unified:TimeRange
+						start="{start}"
+						end="{end}"
+						valueFormat="{valueFormat}"
+					/>
+				</unified:RecurringNonWorkingPeriod>
+			</nonWorkingPeriods>
+		</SinglePlanningCalendar>
+	</VBox>
+</mvc:View>

@@ -226,6 +226,12 @@ sap.ui.define([
 			appointments : {type : "sap.ui.unified.CalendarAppointment", multiple : true, singularName : "appointment", dnd : {draggable: true}},
 
 			/**
+			 * Sets the provided period to be displayed as a non-working.
+			 * @since 1.128
+			 */
+			nonWorkingPeriods: {type: "sap.ui.unified.NonWorkingPeriod", multiple: true},
+
+			/**
 			 * The appointments to be displayed at the top of the intervals (for example, for public holidays).
 			 * Appointments outside the visible time frame are not rendered.
 			 *
