@@ -1,0 +1,12 @@
+{
+  "1.128.0": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "0983b36e51ec640ab7f359851a1b8f7b2af563c0",
+        "type": "FEATURE",
+        "text": " sap.f.CardBase: Introduced CardBadgeCustomData"
+      }
+    ]
+  }
+}

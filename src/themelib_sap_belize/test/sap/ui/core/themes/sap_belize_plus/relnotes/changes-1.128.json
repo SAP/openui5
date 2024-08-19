@@ -3,6 +3,21 @@
     "date": "August 2024",
     "notes": [
       {
+        "id": "0983b36e51ec640ab7f359851a1b8f7b2af563c0",
+        "type": "FEATURE",
+        "text": " sap.f.CardBase: Introduced CardBadgeCustomData"
+      },
+      {
+        "id": "7077d8b429cefffaa2eddd4f1e24a5fea63726cb",
+        "type": "FIX",
+        "text": " sap.m.Popover: Arrow is now visible in Belize themes"
+      },
+      {
+        "id": "3fa077fa9397ecdf1e42f133d21979bd38bd2cd1",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Fix failing qUNit test"
+      },
+      {
         "id": "0b3c7979c57680ac44f0d3007057ad852582ce84",
         "type": "FEATURE",
         "text": " sap.m.Dialog: Increase resize handle size"

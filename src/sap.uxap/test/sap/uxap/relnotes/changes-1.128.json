@@ -3,6 +3,31 @@
     "date": "August 2024",
     "notes": [
       {
+        "id": "936ab59dfdad4c2273d7aed52b015f9f006ae47f",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayoutABHelper: Address SyntaxError"
+      },
+      {
+        "id": "6b3f1dfbb21f18428399bbf7100028f42dfcf148",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeaderContent: correct box-shadow styles"
+      },
+      {
+        "id": "117bb3341f3b97e616463759aaeba9070d6db4e3",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayoutABHelper: Address SyntaxError"
+      },
+      {
+        "id": "3aa9d6c58789a096baf58aad097de4bc7f05c844",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: CSS issue for sap_hcb corected"
+      },
+      {
+        "id": "23fddad4ff2049146a38283df5fb58e5cb569d73",
+        "type": "FIX",
+        "text": " sap.uxpa.ObjectPageSubSection: Improved key handling"
+      },
+      {
         "id": "f43e2d451094953f758e69ea470137b273326f3f",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: lazyloading with content size update"

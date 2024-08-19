@@ -3,6 +3,11 @@
     "date": "August 2024",
     "notes": [
       {
+        "id": "6b3f1dfbb21f18428399bbf7100028f42dfcf148",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeaderContent: correct box-shadow styles"
+      },
+      {
         "id": "0b3c7979c57680ac44f0d3007057ad852582ce84",
         "type": "FEATURE",
         "text": " sap.m.Dialog: Increase resize handle size"

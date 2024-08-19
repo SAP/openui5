@@ -3,6 +3,21 @@
     "date": "August 2024",
     "notes": [
       {
+        "id": "9797569ba0289cb35b72a8e1daee229c92c6c37c",
+        "type": "FIX",
+        "text": " Operator: do not use Messagebundle to check if a text exist"
+      },
+      {
+        "id": "f1ddb549a59bf37bc889c27b24be9d686bb0fb26",
+        "type": "FIX",
+        "text": " Field: wrong icon for default value help"
+      },
+      {
+        "id": "361d58d5a7adb3e493d45b38b0c03d7964f50a08",
+        "type": "FIX",
+        "text": " ValueHelp: wrong input still shown on reopen"
+      },
+      {
         "id": "4208bb1782e8597d0db6b6cf565d9b2a746799bf",
         "type": "FIX",
         "text": " ValueHelp: Screenreader announces \"has Dialog\" on Tokenizer"
@@ -11,6 +26,11 @@
         "id": "1cd1036a5cf2e83f0f450381a81d619b232d8711",
         "type": "FIX",
         "text": " FieldBase: Typeahead opens too if Dialog opens"
+      },
+      {
+        "id": "8542563717e9c3d6d2ad452bc69c8b80e9a575ad",
+        "type": "FIX",
+        "text": " Table: Size of filter field in column menu"
       }
     ]
   }

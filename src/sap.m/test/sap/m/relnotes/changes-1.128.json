@@ -3,6 +3,36 @@
     "date": "August 2024",
     "notes": [
       {
+        "id": "385edb7fc6689d65bf322dd001406b126ac91231",
+        "type": "FIX",
+        "text": " We've now removed the no data description for cases where uploadEnabled is set to false"
+      },
+      {
+        "id": "bfbd5332caf8063543f3379b5768bce0f30f6a23",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: adjust internal title press handling"
+      },
+      {
+        "id": "3fa077fa9397ecdf1e42f133d21979bd38bd2cd1",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Fix failing qUNit test"
+      },
+      {
+        "id": "62655c68f8e0465b540305e76c5000e1d8cb0b62",
+        "type": "FEATURE",
+        "text": " We've now introduced the fileSize parameter in fileSizeExceeded event of UploadSet"
+      },
+      {
+        "id": "23dd0a44b50c6a63ac623f973b085a1ec3ef8ea9",
+        "type": "FEATURE",
+        "text": " CellSelector: Allow selection with Row/RowOnly"
+      },
+      {
+        "id": "61913b0b795cf76e2b5a14adf4cb6185edca4dc8",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust display in a form"
+      },
+      {
         "id": "0b3c7979c57680ac44f0d3007057ad852582ce84",
         "type": "FEATURE",
         "text": " sap.m.Dialog: Increase resize handle size"

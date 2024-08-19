@@ -3,6 +3,22 @@
     "date": "August 2024",
     "notes": [
       {
+        "id": "d05c11cbbcd5af1955e82188b2d4d7b7d4713b0c",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveFlowLayout: adding an accessibility test page"
+      },
+      {
+        "id": "5967170c9eab55db093a1ae50852c7543333620d",
+        "type": "FIX",
+        "text": " sap.ui.layout.form.ResponsiveGridLayout: fix JSDoc links to sap.ui.layout.GridData",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
         "id": "679bb81d40f2977197f8c81018f57463f2e25c54",
         "type": "FIX",
         "text": " ColumnLayout: keep breakpoint classes stable on invalidation"

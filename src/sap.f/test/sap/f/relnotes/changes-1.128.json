@@ -3,6 +3,16 @@
     "date": "August 2024",
     "notes": [
       {
+        "id": "0983b36e51ec640ab7f359851a1b8f7b2af563c0",
+        "type": "FEATURE",
+        "text": " sap.f.CardBase: Introduced CardBadgeCustomData"
+      },
+      {
+        "id": "25e2536b8fa7073e30796fc36b1e797ca062eaa1",
+        "type": "FEATURE",
+        "text": " sap.f.FlexibleColumnLayout: New layoutData introduced"
+      },
+      {
         "id": "3447d807380fe57401c8ff071f3a02be08e03d95",
         "type": "FEATURE",
         "text": " sap.f.FlexibleColumnLayout: Support aria-valuenow attribute"

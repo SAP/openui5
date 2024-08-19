@@ -3,6 +3,11 @@
     "date": "August 2024",
     "notes": [
       {
+        "id": "0983b36e51ec640ab7f359851a1b8f7b2af563c0",
+        "type": "FEATURE",
+        "text": " sap.f.CardBase: Introduced CardBadgeCustomData"
+      },
+      {
         "id": "0b3c7979c57680ac44f0d3007057ad852582ce84",
         "type": "FEATURE",
         "text": " sap.m.Dialog: Increase resize handle size"
