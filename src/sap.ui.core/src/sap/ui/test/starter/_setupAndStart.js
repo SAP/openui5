@@ -139,11 +139,6 @@ sap.ui.define([
 
 		document.title = oConfig.title;
 
-		// first configure the loader if needed
-		if ( oConfig.loader ) {
-			sap.ui.loader.config(oConfig.loader);
-		}
-
 		if ( oConfig.runAfterLoader ) {
 			pAfterLoader = requireP( oConfig.runAfterLoader );
 		} else {

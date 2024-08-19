@@ -1,6 +1,6 @@
 {
 	"extends": "sap/ui/test/starter/qunitBoot.json",
 	"preBoot": [
-		"test-resources/sap/ui/core/qunit/bootstrap/customBootTask"
+		"boot/customBootTask"
 	]
 }

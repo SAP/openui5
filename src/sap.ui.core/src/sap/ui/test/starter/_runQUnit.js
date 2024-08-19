@@ -18,6 +18,11 @@ sap.ui.define([
 		const bootManifest = oTestConfig.bootManifest;
 		globalThis["sap-ui-config"] = Object.assign({}, globalThis["sap-ui-config"]);
 		globalThis["sap-ui-config"].bootManifest = bootManifest || globalThis["sap-ui-config"].bootManifest;
+
+		// first configure the loader if needed
+		if (oTestConfig.loader) {
+			sap.ui.loader.config(oTestConfig.loader);
+		}
 	}).then(() => {
 		sap.ui.require([
 			"sap/ui/core/Core"

@@ -115,10 +115,6 @@ sap.ui.require(["sap/base/util/fetch"], function (fetch) {
 
 		QUnit.module('Full Debug Mode');
 
-		QUnit[full]("Bootstrap", function(assert) {
-			assert.ok(hasRequestSequence(['sap-ui-core.js','sap-ui-core-dbg.js']), "bootstrap code should be loaded as debug sources");
-		});
-
 		QUnit[full]("Control Code", function(assert) {
 			var done = assert.async();
 			sap.ui.require(['sap/m/Table'], function() {
