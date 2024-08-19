@@ -943,12 +943,14 @@ sap.ui.define([
 		 * @param {object} oTable The table control
 		 * @param {string} sPropertyPath The property path to bind the text property
 		 * @param {object} assert The QUnit assert object
+		 * @param {object} [bSuspended] Whether the rebound table is initially suspended
 		 * @returns {string} The ID of the text control which can be used for {@link #expectChange}
 		 */
-		addToTable : function (oTable, sPropertyPath, assert) {
+		addToTable : function (oTable, sPropertyPath, assert, bSuspended) {
 			var sId = "id" + sPropertyPath.replace("/", "_"),
 				bRelative = oTable.getBinding("items").isRelative(),
-				oTemplate = oTable.getBindingInfo("items").template,
+				oBindingInfo = oTable.getBindingInfo("items"),
+				oTemplate = oBindingInfo.template,
 				oText = new Text({
 					id : this.oView.createId(sId),
 					text : "{" + sPropertyPath + "}"
@@ -958,11 +960,15 @@ sap.ui.define([
 			this.setFormatter(assert, oText, sId, true);
 			oTemplate.addCell(oText);
 			// ensure template control is not destroyed on re-creation of the "items" aggregation
-			delete oTable.getBindingInfo("items").template;
+			delete oBindingInfo.template;
 			// It is not possible to modify the aggregation's template on an existing binding.
 			// Hence, we have to re-create.
-			oTable.bindItems(Object.assign({}, oTable.getBindingInfo("items"),
-				{suspended : !bRelative, template : oTemplate}));
+			oTable.bindItems({
+				path : oBindingInfo.path,
+				parameters : oBindingInfo.parameters,
+				suspended : bSuspended ?? !bRelative,
+				template : oTemplate
+			});
 
 			return sId;
 		},
@@ -2469,13 +2475,18 @@ sap.ui.define([
 		 */
 		removeFromTable : function (oTable, sControlId) {
 			var bRelative = oTable.getBinding("items").isRelative(),
-				oTemplate = oTable.getBindingInfo("items").template;
+				oBindingInfo = oTable.getBindingInfo("items"),
+				oTemplate = oBindingInfo.template;
 
 			oTemplate.removeCell(this.oView.byId(sControlId));
 			// ensure template control is not destroyed on re-creation of the "items" aggregation
-			delete oTable.getBindingInfo("items").template;
-			oTable.bindItems(Object.assign({}, oTable.getBindingInfo("items"),
-				{suspended : !bRelative, template : oTemplate}));
+			delete oBindingInfo.template;
+			oTable.bindItems({
+				path : oBindingInfo.path,
+				parameters : oBindingInfo.parameters,
+				suspended : !bRelative,
+				template : oTemplate
+			});
 		},
 
 		/**
@@ -63804,15 +63815,18 @@ make root = ${bMakeRoot}`;
 
 	//*********************************************************************************************
 	// Scenario: Removing a message from the model causes it to disappear from DataStateIndicator's
-	// message strip after a table rebind
-	//
+	// message strip after a table rebind. The table has an absolute binding.
 	// SNOW: DINC0147646
-	QUnit.test("DINC0147646: DataStateIndicator, rebind and messages", async function (assert) {
+[false, true].forEach(function (bSuspended) {
+	const sTitle = "DINC0147646: DataStateIndicator, rebind and messages, absolute binding"
+		+ ", suspended: " + bSuspended;
+
+	QUnit.test(sTitle, async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sView = `
 <Table id="table" items="{/TEAMS}">
+	<dependents><plugins:DataStateIndicator/></dependents>
 	<Input id="id" value="{Team_Id}"/>
-	<dependents><plugins:DataStateIndicator/></dependents>\
 </Table>`;
 
 		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
@@ -63839,12 +63853,19 @@ make root = ${bMakeRoot}`;
 		});
 		Messaging.addMessages(oMessage);
 
-		await resolveLater(undefined, 0); // table update takes a moment
+		await Promise.all([
+			this.waitForChanges(assert, "add message"),
+			resolveLater(undefined, 0) // table update takes a moment
+		]);
 
-		assert.deepEqual(oTable.getAggregation("_messageStrip").getText(), "Some message");
+		const oMessageStrip = oTable.getAggregation("_messageStrip");
+		assert.strictEqual(oMessageStrip.getText(), "Some message");
+		assert.strictEqual(oMessageStrip.getVisible(), true);
 
-		this.expectCanceledError("Cache discarded as a new cache has been created");
-		const sId0 = this.addToTable(oTable, "Name", assert); // Note: causes a "rebind"
+		if (bSuspended) {
+			this.expectCanceledError("Cache discarded as a new cache has been created");
+		}
+		const sId0 = this.addToTable(oTable, "Name", assert, bSuspended); // Note: causes a "rebind"
 
 		this.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", {
 				value : [
@@ -63854,22 +63875,106 @@ make root = ${bMakeRoot}`;
 			.expectChange("id", ["1"])
 			.expectChange(sId0, ["Team #01"]);
 
-		oTable.getBinding("items").resume();
+		if (bSuspended) {
+			oTable.getBinding("items").resume();
+		}
 
 		await this.waitForChanges(assert, "table rebind");
 
-		assert.deepEqual(oTable.getAggregation("_messageStrip").getText(), "Some message");
+		assert.strictEqual(oMessageStrip.getText(), "Some message");
+		assert.strictEqual(oMessageStrip.getVisible(), true);
 
 		this.expectMessages([]);
 
 		// code under test
 		Messaging.removeMessages(oMessage);
 
-		await resolveLater(undefined, 0); // table update takes a moment
+		await Promise.all([
+			this.waitForChanges(assert, "message is removed and no longer visible"),
+			resolveLater(undefined, 0) // table update takes a moment
+		]);
 
-		assert.deepEqual(oTable.getAggregation("_messageStrip").getText(), "");
+		assert.strictEqual(oMessageStrip.getText(), "");
+		assert.strictEqual(oMessageStrip.getVisible(), false);
+	});
+});
 
-		await this.waitForChanges(assert, "message is removed and no longer visible");
+	//*********************************************************************************************
+	// Scenario: Removing a message from the model causes it to disappear from DataStateIndicator's
+	// message strip after a table rebind. The table has a relative binding.
+	// SNOW: DINC0147646
+	QUnit.test("DINC0147646: DataStateIndicator, rebind and messages, relative binding",
+			async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<FlexBox id="root" binding="{/TEAMS('0')}">
+	<Table id="table" items="{path : 'TEAM_2_EMPLOYEES', parameters : {$$ownRequest : true}}">
+		<dependents><plugins:DataStateIndicator/></dependents>
+		<Text id="id" text="{ID}"/>
+	</Table>
+</FlexBox>`;
+
+		this.expectRequest("TEAMS('0')/TEAM_2_EMPLOYEES?$select=ID&$skip=0&$top=100", {
+				value : [
+					{ID : "10"}
+				]
+			})
+			.expectChange("id", ["10"])
+			.expectChange("idName", []);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+
+		this.expectMessages([{
+			message : "Some message",
+			type : "Error",
+			targets : ["/TEAMS('0')/TEAM_2_EMPLOYEES"]
+		}]);
+		const oMessage = new Message({
+			message : "Some message",
+			processor : oModel,
+			target : "/TEAMS('0')/TEAM_2_EMPLOYEES",
+			type : "Error"
+		});
+		Messaging.addMessages(oMessage);
+
+		await Promise.all([
+			this.waitForChanges(assert, "add message"),
+			resolveLater(undefined, 0) // table update takes a moment
+		]);
+
+		const oMessageStrip = oTable.getAggregation("_messageStrip");
+		assert.strictEqual(oMessageStrip.getText(), "Some message");
+		assert.strictEqual(oMessageStrip.getVisible(), true);
+
+		this.expectRequest("TEAMS('0')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=100", {
+				value : [
+					{ID : "10", Name : "John Doe"}
+				]
+			})
+			.expectChange("id", ["10"])
+			.expectChange("idName", ["John Doe"]);
+
+		this.addToTable(oTable, "Name", assert); // Note: causes a "rebind"
+
+		await this.waitForChanges(assert, "table rebind");
+
+		assert.strictEqual(oMessageStrip.getText(), "Some message");
+		assert.strictEqual(oMessageStrip.getVisible(), true);
+
+		this.expectMessages([]);
+
+		// code under test
+		Messaging.removeMessages(oMessage);
+
+		await Promise.all([
+			this.waitForChanges(assert, "message is removed and no longer visible"),
+			resolveLater(undefined, 0) // table update takes a moment
+		]);
+
+		assert.strictEqual(oMessageStrip.getText(), "");
+		assert.strictEqual(oMessageStrip.getVisible(), false);
 	});
 
 	//*********************************************************************************************

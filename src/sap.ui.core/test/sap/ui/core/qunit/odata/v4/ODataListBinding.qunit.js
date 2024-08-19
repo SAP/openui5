@@ -229,6 +229,7 @@ sap.ui.define([
 		oBinding.sChangeReason = sChangeReason;
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(true);
+		this.mock(oBinding).expects("checkDataState").never();
 		this.mock(oBinding).expects("_fireChange").never();
 		this.mock(oBinding).expects("_fireRefresh").never();
 
@@ -248,6 +249,7 @@ sap.ui.define([
 		oBinding.sChangeReason = undefined;
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
+		this.mock(oBinding).expects("checkDataState").never();
 		this.mock(oBinding).expects("_fireRefresh")
 			.withExactArgs({reason : ChangeReason.Refresh});
 
@@ -264,7 +266,9 @@ sap.ui.define([
 		oBinding.sChangeReason = "AddVirtualContext";
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
-		this.mock(oBinding).expects("_fireChange").withExactArgs({
+		const oCheckDataStateExpectation = this.mock(oBinding).expects("checkDataState")
+			.withExactArgs();
+		const oFireChangeExpectation = this.mock(oBinding).expects("_fireChange").withExactArgs({
 			detailedReason : "AddVirtualContext",
 			reason : ChangeReason.Change
 		});
@@ -273,6 +277,7 @@ sap.ui.define([
 		oBinding.initialize();
 
 		assert.strictEqual(oBinding.sChangeReason, "AddVirtualContext");
+		assert.ok(oFireChangeExpectation.calledAfter(oCheckDataStateExpectation));
 	});
 
 	//*********************************************************************************************
@@ -282,6 +287,7 @@ sap.ui.define([
 
 		oBinding.sChangeReason = sChangeReason;
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(false);
+		this.mock(oBinding).expects("checkDataState").never();
 		this.mock(oBinding).expects("_fireRefresh").never();
 
 		// code under test
