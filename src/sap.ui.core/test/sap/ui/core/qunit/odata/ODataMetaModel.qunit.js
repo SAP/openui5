@@ -3374,32 +3374,6 @@ sap.ui.define([
 		});
 	});
 
-	/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
-	//*********************************************************************************************
-	QUnit.test("load: Performance measurement points", function (assert) {
-		var oAverageSpy, oDataModel, oEndSpy, oMetaModel;
-
-		this.oLogMock.expects("warning").withExactArgs(sIgnoreThisWarning);
-
-		oAverageSpy = this.spy(Measurement, "average")
-			.withArgs("sap.ui.model.odata.ODataMetaModel/load", "", [sComponent]);
-		oEndSpy = this.spy(Measurement, "end")
-			.withArgs("sap.ui.model.odata.ODataMetaModel/load");
-		oDataModel = new ODataModel1("/GWSAMPLE_BASIC", {
-			annotationURI : "/GWSAMPLE_BASIC/annotations",
-			json : true,
-			loadMetadataAsync : true
-		});
-		oMetaModel = oDataModel.getMetaModel();
-
-		assert.strictEqual(oAverageSpy.callCount, 0, "load start measurement before");
-		assert.strictEqual(oEndSpy.callCount, 0, "load end measurement before");
-		return oMetaModel.loaded().then(function () {
-			assert.strictEqual(oAverageSpy.callCount, 1, "load start measurement after");
-			assert.strictEqual(oEndSpy.callCount, 1, "load end measurement after");
-			});
-	});
-
 	//*********************************************************************************************
 	QUnit.test("destroy immediately", function (assert) {
 		var oDataModel = new ODataModel("/GWSAMPLE_BASIC", {

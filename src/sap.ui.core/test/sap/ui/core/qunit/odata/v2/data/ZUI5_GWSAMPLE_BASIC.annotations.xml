@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:DataServices>
+		<Schema Namespace="GWSAMPLE_BASIC">
+			<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/PhoneNumber">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Phone No. from annotation file"/>
+			</Annotations>
+			<Annotations Target="GWSAMPLE_BASIC.SalesOrder/BillingStatus">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="BillingStatusDescription">
+					<Annotation Term="com.sap.vocabularies.UI.v1.TextArrangement"
+						EnumMember="com.sap.vocabularies.UI.v1.TextArrangementType/TextFirst"/>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="GWSAMPLE_BASIC.SalesOrder">
+				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
+					<Collection>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="BillingStatus"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Delivery Status (LineItem)"/>
+							<PropertyValue Property="Value" Path="DeliveryStatus"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
