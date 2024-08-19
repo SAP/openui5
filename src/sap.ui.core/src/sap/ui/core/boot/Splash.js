@@ -33,7 +33,7 @@ sap.ui.define([
 		const aParts = sSplashLocation.split(".");
 		const oLink = document.createElement("link");
 		oLink.rel = "stylesheet";
-		oLink.href = `resources/${aParts[0]}.css`;
+		oLink.href = sap.ui.require.toUrl(`${aParts[0]}.css`);
 		document.head.appendChild(oLink);
 		if (sSplashLocation) {
 			LoaderExtensions.loadResource(sSplashLocation, {
