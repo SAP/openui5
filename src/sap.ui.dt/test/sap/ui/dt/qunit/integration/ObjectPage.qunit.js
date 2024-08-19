@@ -27,6 +27,14 @@ function(
 	"use strict";
 
 	QUnit.module("Basic functionality", {
+		before() {
+			// Place qunit-fixture on top of the page and make it large to avoid unexpected scrollbars
+			document.getElementById("qunit-fixture").style.top = "0";
+			document.getElementById("qunit-fixture").style.left = "0";
+			document.getElementById("qunit-fixture").style.width = "1200px";
+			document.getElementById("qunit-fixture").style.height = "800px";
+		},
+
 		async beforeEach(assert) {
 			const fnDone = assert.async();
 
@@ -52,6 +60,7 @@ function(
 				})
 			});
 			this.oVBox = new VBox({
+				height: "800px",
 				items: [this.oLayout]
 			}).placeAt("qunit-fixture");
 			await nextUIUpdate();
@@ -108,8 +117,17 @@ function(
 				fnDone();
 			};
 
+			const runAssertions = () => {
+				if (this.oLayout._hasOngoingScrollToSection()) {
+					// The timeout is to ensure that all scrolling is done before checking the positions
+					setTimeout(runAssertions, 500);
+				} else {
+					checkPositions();
+				}
+			};
+
 			this.oDesignTime.attachEventOnce("synced", () => {
-				oSectionOverlay.attachEventOnce("geometryChanged", checkPositions);
+				oSectionOverlay.attachEventOnce("geometryChanged", runAssertions);
 			});
 
 			this.oSection.setVisible(true);
