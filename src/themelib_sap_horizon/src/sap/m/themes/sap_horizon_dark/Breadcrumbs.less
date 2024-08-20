@@ -4,10 +4,12 @@
 /* ================================= */
 
 .sapMBreadcrumbs {
+
 	.sapMBreadcrumbsCurrentLocation {
+
 		&:focus {
 			outline: none;
-			box-shadow: 0 0 0 0.125rem @sapUiContentFocusColor;
+			box-shadow: 0 0 0 0.125rem var(--sapContent_FocusColor);
 			border-radius: 0.25rem;
 		}
 	}
@@ -18,10 +20,11 @@
 	}
 
 	.sapMBreadcrumbsItem.sapMBreadcrumbsSelectItem {
-		&>.sapMSlt.sapMSltWithIcon.sapMSltIconOnly.sapMSltWithArrow.sapMSltHoverable {
+
+		& > .sapMSlt.sapMSltWithIcon.sapMSltIconOnly.sapMSltWithArrow.sapMSltHoverable {
 			box-shadow: none;
 
-			// Default styles
+			/* Default styles */
 			.sapMSltIcon {
 				display: flex;
 				align-items: center;
@@ -33,21 +36,21 @@
 				}
 
 				&::before {
-					content: "••• ";
-					font-family: @sapUiFontLightFamily;
+					content: '••• ';
+					font-family: var(--sapFontLightFamily);
 				}
 
 				&::after {
-					content: "\e1ef";
-					font-family: @sapUiContentIconFontFamily;
+					content: '\e1ef';
+					font-family: var(--sapContent_IconFontFamily);
 					font-size: @sapMFontMediumSize;
-					color: @sapUiLink;
+					color: var(--sapLinkColor);
 					speak: none;
 				}
 			}
 
-			// Custom underline element
-			// In order to prevent issues with centering the content
+			/* Custom underline element
+			   In order to prevent issues with centering the content */
 			&::after {
 				content: '';
 				display: block;
@@ -58,18 +61,18 @@
 				background-color: transparent;
 			}
 
-			// States
+			/* States */
 			&:hover,
 			&.sapMSltFocused {
-				background-color: @sapUiContentFocusColor;
+				background-color: var(--sapContent_FocusColor);
 
 				&::after {
-					background-color: @sapUiContentContrastFocusColor;
+					background-color: var(--sapContent_ContrastFocusColor);
 				}
 
 				.sapMSltIcon::before,
 				.sapMSltIcon::after {
-					color: @sapUiContentContrastFocusColor;
+					color: var(--sapContent_ContrastFocusColor);
 					border-bottom: none;
 				}
 
@@ -82,14 +85,15 @@
 
 					.sapMSltIcon::before,
 					.sapMSltIcon::after {
-						color: @sapUiLink;
+						color: var(--sapLinkColor);
 					}
 				}
 			}
 
 			&:hover.sapMSltFocused:not(:active) {
+
 				&::after {
-					background-color: @sapUiContentFocusColor;
+					background-color: var(--sapContent_FocusColor);
 				}
 			}
 		}
