@@ -24,7 +24,7 @@
 
 	function bootMinimalCore(callback, mTagAttributes) {
 		globalThis["sap-ui-config"] = Object.assign({}, globalThis["sap-ui-config"]);
-		globalThis["sap-ui-config"].bootManifest = "boot/minimalboot.json@/test-resources/sap/ui/core/qunit/loader/fixture/boot";
+		globalThis["sap-ui-config"].bootManifest = "boot/minimalboot.json@../../../../../../test-resources/sap/ui/core/qunit/loader/fixture/boot";
 		appendScript("../../../../../../resources/sap-ui-core.js", function() {
 			sap.ui.require("sap/ui/core/Core").ready(() => {
 				sap.ui.loader.config({
