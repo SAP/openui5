@@ -72,13 +72,18 @@ function(Element, Control, hyphenate) {
 	 */
 	WebComponentRenderer.renderAttributeProperties = function(oRm, oWebComponent) {
 		var oAttrProperties = oWebComponent.getMetadata().getPropertiesByMapping("property");
-		var aPropsToAlwaysSet = ["enabled"]; // some properties can be initial and still have a non-default value due to side effects (e.g. EnabledPropagator)
+
+		var aPropsToAlwaysSet = ["enabled"].concat(Object.entries(oWebComponent.getMetadata().getPropertyDefaults()).map(([key, value]) => {
+			return value !== undefined && value !== false ? key : null;
+		})); // some properties can be initial and still have a non-default value due to side effects (e.g. EnabledPropagator)
+
 		for (var sPropName in oAttrProperties) {
+			var oPropData = oAttrProperties[sPropName];
+
 			if (oWebComponent.isPropertyInitial(sPropName) && !aPropsToAlwaysSet.includes(sPropName)) {
 				continue; // do not set attributes for properties that were not explicitly set or bound
 			}
 
-			var oPropData = oAttrProperties[sPropName];
 			var vPropValue = oPropData.get(oWebComponent);
 			if (oPropData.type === "object" || typeof vPropValue === "object") {
 				continue; // Properties of type "object" and custom-type properties with object values are set during onAfterRendering

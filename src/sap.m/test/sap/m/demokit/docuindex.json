@@ -1111,6 +1111,7 @@
 					"sap.m.sample.PlanningCalendarDnD",
 					"sap.m.sample.PlanningCalendarWithStickyHeader",
 					"sap.m.sample.PlanningCalendarRelativeViews",
+					"sap.m.sample.PlanningCalendarRecurringItem",
 					"sap.m.sample.PlanningCalendarWeekNumbering"
 				]
 			},
@@ -1122,6 +1123,7 @@
 				"formFactors": "L",
 				"samples": [
 					"sap.m.sample.SinglePlanningCalendar",
+					"sap.m.sample.SinglePlanningCalendarRecurringItem",
 					"sap.m.sample.SinglePlanningCalendarWithCustomViews",
 					"sap.m.sample.SinglePlanningCalendarWithLegend",
 					"sap.m.sample.SinglePlanningCalendarDND",
@@ -3879,6 +3881,11 @@
 				"description": "PlanningCalendar with relative views. The relative periods are not directly related to dates, but periods with pre-defined duration."
 			},
 			{
+				"id": "sap.m.sample.PlanningCalendarRecurringItem",
+				"name": "Planning Calendar - with Recurring Calendar Items",
+				"description": "PlanningCalendar with recurring calendar items."
+			},
+			{
 				"id": "sap.m.sample.PlanningCalendarWeekNumbering",
 				"name": "Planning Calendar - week numbering",
 				"description": "Demonstrates PlanningCalendar with different week numbering (only Date Picker, 1 Week and 1 Month views are affected)."
@@ -3887,6 +3894,11 @@
 				"id": "sap.m.sample.SinglePlanningCalendar",
 				"name": "Single Planning Calendar",
 				"description": "This sample demonstrates most of the features available for the SinglePlanningCalendar control."
+			},
+			{
+				"id": "sap.m.sample.SinglePlanningCalendarRecurringItem",
+				"name": "Single Planning Calendar with Recurring Calendar Items",
+				"description": "SinglePlanningCalendar with recurring calendar items"
 			},
 			{
 				"id": "sap.m.sample.SinglePlanningCalendarWithCustomViews",

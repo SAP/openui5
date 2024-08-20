@@ -82,6 +82,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oAllLengths, null);
 		assert.strictEqual(oBinding.oAllFinalLengths, null);
 		assert.strictEqual(oBinding.bRefresh, false);
+		assert.strictEqual(oBinding.iMaximumTopValue, 5000);
 
 		// parameters
 		assert.strictEqual(oBinding.iNumberOfExpandedLevels, 42);
@@ -1153,6 +1154,213 @@ sap.ui.define([
 			// code under test
 			ODataTreeBinding.prototype._loadCompleteTreeWithAnnotations.call(oBinding, aUrlParams);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_loadCompleteTreeWithAnnotations: no data", function (assert) {
+		const oRequestHandle = {abort() {}};
+		const oBinding = {
+			oFinalLengths: {},
+			sGroupId: "~groupId",
+			oKeys: {},
+			oLengths: {},
+			_mLoadedSections: {},
+			oModel: {callAfterUpdate() {}, read() {}},
+			mRequestHandles: {"_OPERATIONMODE_CLIENT_TREE_LOADING": oRequestHandle},
+			bSkipDataEvents: true,
+			_getHeaders() {},
+			fireDataReceived() {},
+			getResolvedPath() {}
+		};
+
+		const oBindingMock = this.mock(oBinding);
+		this.mock(oRequestHandle).expects("abort").withExactArgs();
+		oBindingMock.expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		oBindingMock.expects("_getHeaders").withExactArgs().returns("~headers");
+		const oModelMock = this.mock(oBinding.oModel);
+		const oReadCall1 = oModelMock.expects("read")
+			.withExactArgs("~resolvedPath", {
+				headers: "~headers",
+				urlParameters: [],
+				success: sinon.match.func,
+				error: sinon.match.func,
+				sorters: undefined,
+				groupId: "~groupId"
+			})
+			.returns("~RequestHandle1");
+
+		// code under test
+		ODataTreeBinding.prototype._loadCompleteTreeWithAnnotations.call(oBinding, [/*aURLParams*/]);
+
+		assert.strictEqual(oBinding.mRequestHandles["_OPERATIONMODE_CLIENT_TREE_LOADING"], "~RequestHandle1");
+
+		oModelMock.expects("callAfterUpdate").withExactArgs(sinon.match.func)
+			.callsFake((fnAfterUpdate) => {
+				oBindingMock.expects("fireDataReceived").withExactArgs(sinon.match({data: {results: []}}));
+
+				// code under test
+				fnAfterUpdate();
+			});
+
+		// code under test
+		oReadCall1.args[0][1].success({results: []});
+
+		assert.deepEqual(oBinding._mLoadedSections, {});
+		assert.strictEqual(oBinding.mRequestHandles["_OPERATIONMODE_CLIENT_TREE_LOADING"], undefined);
+		assert.deepEqual(oBinding.oAllKeys, {"null": []});
+		assert.deepEqual(oBinding.oKeys, {"null": []});
+		assert.notStrictEqual(oBinding.oAllKeys, oBinding.oKeys);
+		assert.deepEqual(oBinding.oAllLengths, {"null": 0});
+		assert.deepEqual(oBinding.oLengths, {"null": 0});
+		assert.notStrictEqual(oBinding.oAllLengths, oBinding.oLengths);
+		assert.deepEqual(oBinding.oAllFinalLengths, {"null": true});
+		assert.deepEqual(oBinding.oFinalLengths, {"null": true});
+		assert.notStrictEqual(oBinding.oAllFinalLengths, oBinding.oFinalLengths);
+		assert.strictEqual(oBinding.bNeedsUpdate, true);
+	});
+
+	//*********************************************************************************************
+	[["~custom1", "~custom2"] ,[]].forEach((aUrlParams, i) => {
+		QUnit.test("_loadCompleteTreeWithAnnotations: load all tree data in client mode, " + i, function (assert) {
+			const oBinding = {
+				aApplicationFilters: "~AppFilters",
+				aFilters: "~filters",
+				oFinalLengths: {},
+				sGroupId: "~groupId",
+				oKeys: {},
+				oLengths: {},
+				_mLoadedSections: {},
+				iMaximumTopValue: 2,
+				oModel: {callAfterUpdate() {}, _getKey() {}, read() {}},
+				mRequestHandles: {},
+				iRootLevel: 0,
+				bSkipDataEvents: false,
+				aSorters : "~sorters",
+				iTotalCollectionCount: null,
+				oTreeProperties: {
+					"hierarchy-level-for": "Level",
+					"hierarchy-node-for": "ID",
+					"hierarchy-parent-node-for": "ParentID"
+				},
+				_applyFilter() {},
+				_applySort() {},
+				_getHeaders() {},
+				_loadCompleteTreeWithAnnotations() {},
+				fireDataReceived() {},
+				fireDataRequested() {},
+				getResolvedPath() {}
+			};
+			const oEntity1 = {ID: "1", Level: 0, ParentID: null};
+			const oEntity2 = {ID: "2", Level: 0, ParentID: null};
+			const oEntity3 = {ID: "3", Level: 0, ParentID: null};
+			const oEntity4 = {ID: "4", Level: 0, ParentID: null};
+			const aOriginalUrlParams = [...aUrlParams];
+			const oBindingMock = this.mock(oBinding);
+			oBindingMock.expects("fireDataRequested").withExactArgs();
+			oBindingMock.expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+			oBindingMock.expects("_getHeaders").withExactArgs().returns("~headers");
+			const oModelMock = this.mock(oBinding.oModel);
+			const oReadCall1 = oModelMock.expects("read")
+				.withExactArgs("~resolvedPath", {
+					headers: "~headers",
+					urlParameters: sinon.match.same(aUrlParams)
+						.and(sinon.match(aUrlParams.length ? ["~custom1", "~custom2"] : [])),
+					success: sinon.match.func,
+					error: sinon.match.func,
+					sorters: "~sorters",
+					groupId: "~groupId"
+				})
+				.callsFake(() => {
+					aUrlParams.push("~modifiedByRead");
+					return "~RequestHandle1";
+				});
+
+			// code under test
+			ODataTreeBinding.prototype._loadCompleteTreeWithAnnotations.call(oBinding, aUrlParams);
+
+			assert.strictEqual(oBinding.mRequestHandles["_OPERATIONMODE_CLIENT_TREE_LOADING"], "~RequestHandle1");
+
+			oBindingMock.expects("_loadCompleteTreeWithAnnotations")
+				.withExactArgs(sinon.match(aOriginalUrlParams), [[oEntity1]], 1);
+
+			// code under test - next link in response, keep reading
+			oReadCall1.args[0][1].success({results: [oEntity1], __next: "~nextLink"});
+
+			assert.strictEqual(oBinding.mRequestHandles["_OPERATIONMODE_CLIENT_TREE_LOADING"], undefined);
+
+			oBinding.mRequestHandles["_OPERATIONMODE_CLIENT_TREE_LOADING"] = "dummy value";
+			oBindingMock.expects("_loadCompleteTreeWithAnnotations")
+				.withExactArgs(sinon.match(aOriginalUrlParams), [[oEntity1], [oEntity2, oEntity3]], 3);
+
+			// code under test - exact amount of entries return as requested, keep reading
+			oReadCall1.args[0][1].success({results: [oEntity2, oEntity3]});
+
+			assert.strictEqual(oBinding.mRequestHandles["_OPERATIONMODE_CLIENT_TREE_LOADING"], undefined);
+
+			oModelMock.expects("_getKey").withExactArgs(oEntity1).returns("1").twice();
+			oModelMock.expects("_getKey").withExactArgs(oEntity2).returns("2").twice();
+			oModelMock.expects("_getKey").withExactArgs(oEntity3).returns("3").twice();
+			oModelMock.expects("_getKey").withExactArgs(oEntity4).returns("4").twice();
+			oModelMock.expects("callAfterUpdate").withExactArgs(sinon.match.func)
+				.callsFake((fnAfterUpdate) => {
+					oBindingMock.expects("fireDataReceived").withExactArgs(sinon.match({
+						data: {results: [oEntity1, oEntity2, oEntity3, oEntity4]}
+					}));
+
+					// code under test
+					fnAfterUpdate();
+				});
+
+			oBindingMock.expects("_applyFilter").withExactArgs();
+			oBindingMock.expects("_applySort").withExactArgs();
+
+			oBinding.mRequestHandles["_OPERATIONMODE_CLIENT_TREE_LOADING"] = "dummy value";
+
+			// code under test - short read, stop reading
+			oReadCall1.args[0][1].success({results: [oEntity4]});
+
+			assert.deepEqual(oBinding.oAllKeys, {"null": ["1", "2", "3", "4"]});
+			assert.deepEqual(oBinding.oKeys, {"null": ["1", "2", "3", "4"]});
+			assert.notStrictEqual(oBinding.oAllKeys, oBinding.oKeys);
+			assert.deepEqual(oBinding.oAllLengths, {"null": 4});
+			assert.deepEqual(oBinding.oLengths, {"null": 4});
+			assert.notStrictEqual(oBinding.oAllLengths, oBinding.oLengths);
+			assert.deepEqual(oBinding.oAllFinalLengths, {"null": true});
+			assert.deepEqual(oBinding.oFinalLengths, {"null": true});
+			assert.notStrictEqual(oBinding.oAllFinalLengths, oBinding.oFinalLengths);
+			assert.strictEqual(oBinding.mRequestHandles["_OPERATIONMODE_CLIENT_TREE_LOADING"], undefined);
+			assert.strictEqual(oBinding.bNeedsUpdate, true);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_loadCompleteTreeWithAnnotations: add $skip and $top in client mode", function (assert) {
+		const oBinding = {
+			sGroupId: "~groupId",
+			iMaximumTopValue: 5000,
+			oModel: {read() {}},
+			mRequestHandles: {},
+			bSkipDataEvents: false,
+			_getHeaders() {},
+			getResolvedPath() {}
+		};
+
+		const oBindingMock = this.mock(oBinding);
+		oBindingMock.expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		oBindingMock.expects("_getHeaders").withExactArgs().returns("~headers");
+		this.mock(oBinding.oModel).expects("read")
+			.withExactArgs("~resolvedPath", {
+				headers: "~headers",
+				urlParameters: ["$skip=1&$top=5000", "~custom1", "~custom2"],
+				success: sinon.match.func,
+				error: sinon.match.func,
+				sorters: undefined,
+				groupId: "~groupId"
+			});
+
+		// code under test
+		ODataTreeBinding.prototype._loadCompleteTreeWithAnnotations.call(oBinding, ["~custom1", "~custom2"],
+			[["~entity1"]], 1);
 	});
 
 	//*********************************************************************************************

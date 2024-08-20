@@ -5,11 +5,12 @@
 sap.ui.define([
 	'sap/ui/core/Element',
 	'sap/ui/core/date/UI5Date',
-	'./TimeRange'
+	'sap/base/Log'
 ],
 	function(
 		Element,
-		UI5Date
+		UI5Date,
+		Log
 		) {
 	"use strict";
 	/**
@@ -35,7 +36,7 @@ sap.ui.define([
 			/**
 			 * Determines the day to which the timeRange refers. This object must be a UI5Date or JavaScript Date object.
 			 */
-			date : {type : "object", defaultValue : null}
+			date : {type : "object", group : "Data"}
 		},
 		defaultAggregation: "timeRange",
 		aggregations: {
@@ -51,11 +52,15 @@ sap.ui.define([
 
 	/**
 	 * Returns a composed start date.
-	 * @public
+	 * @private
 	 * @returns {Date|module:sap/ui/core/date/UI5Date} Returns a date that is composed of the start date to which the non-working period refers,
 	 * replacing the hours, minutes, and seconds, respectively with the current hours, minutes, and seconds.
 	 */
 	NonWorkingPeriod.prototype.getStartDate = function(){
+		if (!this.getDate()) {
+			return Log.error("Enter a valid date.");
+		}
+
 		const oStartDate = UI5Date.getInstance(this.getDate());
 		const oTimeRangeStartDate = this.getTimeRange().getStartDate();
 
@@ -65,11 +70,15 @@ sap.ui.define([
 
 	/**
 	 * Returns a composed end date.
-	 * @public
+	 * @private
 	 * @returns {Date|module:sap/ui/core/date/UI5Date} Returns a date that is composed of the end date to which the non-working period refers,
 	 * replacing the hours, minutes, and seconds, respectively with the current hours, minutes, and seconds.
 	 */
 	NonWorkingPeriod.prototype.getEndDate = function(){
+		if (!this.getDate()) {
+			return Log.error("Enter a valid date.");
+		}
+
 		const oEndDate = UI5Date.getInstance(this.getDate());
 		const oEndDateTimeRange = this.getTimeRange().getEndDate();
 
@@ -84,6 +93,15 @@ sap.ui.define([
 	 */
 	NonWorkingPeriod.prototype.getDurationInMinutes = function () {
 		return Math.abs(this.getStartDate().getTime() - this.getEndDate().getTime()) / 1000 / 60;
+	};
+
+	/**
+	 * Determines whether the current instance has recurrence or not.
+	 * @return {boolean} The result is <code>false</code> when the instance has no recurrence.
+	 * @private
+	 */
+	NonWorkingPeriod.prototype.isRecurring = function () {
+		return false;
 	};
 
 	return NonWorkingPeriod;

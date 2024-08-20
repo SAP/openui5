@@ -196,6 +196,8 @@ sap.ui.define([
 
 			// Whether a refresh has been performed
 			this.bRefresh = false;
+			// the maximum value for the $top URL parameter in client mode
+			this.iMaximumTopValue = 5000;
 		}
 
 	});
@@ -1214,24 +1216,38 @@ sap.ui.define([
 	 * Adds additional URL parameters.
 	 *
 	 * @param {string[]} aURLParams Additional URL parameters
+	 * @param {array} aResultPages=[] An array containing the result arrays with previously read data
+	 * @param {int} iNodesReceived=0 The number of previously read data
 	 *
 	 * @private
 	 */
-	ODataTreeBinding.prototype._loadCompleteTreeWithAnnotations = function (aURLParams) {
+	ODataTreeBinding.prototype._loadCompleteTreeWithAnnotations = function (aURLParams, aResultPages = [],
+			iNodesReceived = 0) {
 		var that = this;
 
 		var sRequestKey = ODataTreeBinding.REQUEST_KEY_CLIENT;
 
+		const aOriginalURLParameters = aURLParams.slice();
 		var fnSuccess = function (oData) {
-
 			// all nodes on root level -> save in this.oKeys[null] = [] (?)
 			if (oData.results && oData.results.length > 0) {
+				iNodesReceived += oData.results.length;
+				aResultPages.push(oData.results);
+				if (oData.__next || oData.results.length === that.iMaximumTopValue) {
+					delete that.mRequestHandles[sRequestKey];
+					that._loadCompleteTreeWithAnnotations(aOriginalURLParameters, aResultPages, iNodesReceived);
 
+					return;
+				}
+			}
+			let aCompleteResults;
+			if (iNodesReceived > 0) {
+				aCompleteResults = Array.prototype.concat.apply([], aResultPages);
 				//collect mapping table between parent node id and actual OData-Key
 				var mParentIds = {};
 				var oDataObj;
-				for (var k = 0; k < oData.results.length; k++) {
-					oDataObj = oData.results[k];
+				for (var k = 0; k < aCompleteResults.length; k++) {
+					oDataObj = aCompleteResults[k];
 					var sDataKey = oDataObj[that.oTreeProperties["hierarchy-node-for"]];
 					// sanity check: if we have duplicate keys, the data is messed up. Has already happened...
 					if (mParentIds[sDataKey]) {
@@ -1241,8 +1257,8 @@ sap.ui.define([
 				}
 
 				// process data and built tree
-				for (var i = 0; i < oData.results.length; i++) {
-					oDataObj = oData.results[i];
+				for (var i = 0; i < aCompleteResults.length; i++) {
+					oDataObj = aCompleteResults[i];
 					var sParentNodeId = oDataObj[that.oTreeProperties["hierarchy-parent-node-for"]];
 					var sParentKey = mParentIds[sParentNodeId]; //oDataObj[that.oTreeProperties["hierarchy-parent-node-for"]];
 
@@ -1271,6 +1287,7 @@ sap.ui.define([
 
 			} else {
 				// no data received -> empty tree
+				aCompleteResults = [];
 				that.oKeys["null"] = [];
 				that.oLengths["null"] = 0;
 				that.oFinalLengths["null"] = true;
@@ -1295,7 +1312,7 @@ sap.ui.define([
 			}
 
 			that.oModel.callAfterUpdate(function() {
-				that.fireDataReceived({data: oData});
+				that.fireDataReceived({data: {results: aCompleteResults}});
 			});
 		};
 
@@ -1317,7 +1334,7 @@ sap.ui.define([
 		};
 
 		// request the tree collection
-		if (!this.bSkipDataEvents) {
+		if (!this.bSkipDataEvents && iNodesReceived === 0) {
 			this.fireDataRequested();
 		}
 		this.bSkipDataEvents = false;
@@ -1332,7 +1349,9 @@ sap.ui.define([
 			}
 			this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
 				headers: this._getHeaders(),
-				urlParameters: aURLParams,
+				urlParameters: iNodesReceived
+					? ["$skip=" + iNodesReceived + "&$top=" + that.iMaximumTopValue, ...aOriginalURLParameters]
+					: aURLParams,
 				success: fnSuccess,
 				error: fnError,
 				sorters: this.aSorters,

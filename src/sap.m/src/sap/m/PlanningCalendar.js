@@ -3938,6 +3938,9 @@ sap.ui.define([
 				},
 				appointments: function (oChanges) {
 					oRowTimeline.invalidate();
+				},
+				nonWorkingPeriods: function (oChanges) {
+					oRowTimeline.invalidate();
 				}
 			}
 		};
@@ -3950,7 +3953,7 @@ sap.ui.define([
 			}
 		}).observe(oRow, {
 			properties: ["icon", "text", "title", "nonWorkingDays", "nonWorkingHours", "selected", "enableAppointmentsDragAndDrop", "enableAppointmentsResize", "enableAppointmentsCreate"],
-			aggregations: ["tooltip", "appointments", "intervalHeaders", "headerContent"],
+			aggregations: ["tooltip", "appointments", "nonWorkingPeriods", "intervalHeaders", "headerContent"],
 			destroy: true
 		});
 
@@ -4019,6 +4022,10 @@ sap.ui.define([
 
 		oRowTimeline.getAppointments = function() {
 			return oRow.getAppointments();
+		};
+
+		oRowTimeline.getNonWorkingPeriods = function () {
+			return oRow.getNonWorkingPeriods();
 		};
 
 		oRowTimeline.getIntervalHeaders = function() {

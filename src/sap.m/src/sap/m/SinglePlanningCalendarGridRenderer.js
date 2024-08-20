@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/base/i18n/Localization",
+	'sap/base/i18n/Localization',
 	"sap/ui/core/Element",
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/CalendarUtils',
@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText',
 	'./PlanningCalendarLegend',
 	'sap/ui/unified/library',
-	"sap/ui/core/date/UI5Date"
+	'sap/ui/unified/calendar/RecurrenceUtils',
+	'sap/ui/core/date/UI5Date'
 ], function(
 	Localization,
 	Element,
@@ -23,6 +24,7 @@ sap.ui.define([
 	InvisibleText,
 	PlanningCalendarLegend,
 	unifiedLibrary,
+	RecurrenceUtils,
 	UI5Date
 ) {
 	"use strict";
@@ -419,7 +421,7 @@ sap.ui.define([
 
 			this.renderDndPlaceholders(oRm, oControl, oControl._dndPlaceholdersMap[oColumnCalDate]);
 
-			this.renderRows(oRm, oControl, sDate);
+			this.renderRows(oRm, oControl, sDate, oColumnCalDate);
 			this.renderAppointments(oRm, oControl, oAppointmentsToRender[sDate], oColumnCalDate, i);
 			oRm.close("div"); // END .sapMSinglePCColumn
 		}
@@ -435,16 +437,29 @@ sap.ui.define([
 		oRm.close("div");
 	};
 
-	SinglePlanningCalendarGridRenderer.renderRows = function (oRm, oControl, sDate) {
-		var iStartHour = oControl._getVisibleStartHour(),
-			iEndHour = oControl._getVisibleEndHour(),
-			oFormat = oControl._getDateFormatter(),
-			oCellStartDate,
-			oCellEndDate;
+	SinglePlanningCalendarGridRenderer.renderRows = function (oRm, oControl, sDate, oColumnCalDate) {
+		const iStartHour = oControl._getVisibleStartHour();
+		const iEndHour = oControl._getVisibleEndHour();
+		const oFormat = oControl._getDateFormatter();
+		const oDate = oControl._parseDateStringAndHours(sDate, 0);
+		const aRecurrenceNonWorkingForDay = oControl._isNonWorkingDay(oColumnCalDate) ? [] : oControl.getNonWorkingPeriods().filter((oPeriod) => {
+			if (!oPeriod.isRecurring()) {
+				return oPeriod.getStartDate() >= oDate && oPeriod.getEndDate() <= oDate;
+			}
+			const hasOccurrenceOnDate = RecurrenceUtils.hasOccurrenceOnDate.bind(oPeriod);
+			return hasOccurrenceOnDate(oDate);
+		}).sort((oCalendarItemA, oCalendarItemB) => {
+			return  oCalendarItemA.getStartDate().getMinutes() - oCalendarItemB.getStartDate().getMinutes() ||
+			oCalendarItemA.getEndDate().getMinutes() - oCalendarItemB.getEndDate().getMinutes();
+		});
 
-		for (var i = iStartHour; i <= iEndHour; i++) {
-			oCellStartDate = oControl._parseDateStringAndHours(sDate, i);
-			oCellEndDate = UI5Date.getInstance(oCellStartDate.getFullYear(), oCellStartDate.getMonth(), oCellStartDate.getDate(), oCellStartDate.getHours() + 1);
+		for (let i = iStartHour; i <= iEndHour; i++) {
+			const oCellStartDate = oControl._parseDateStringAndHours(sDate, i);
+			const oCellEndDate = UI5Date.getInstance(oCellStartDate.getFullYear(), oCellStartDate.getMonth(), oCellStartDate.getDate(), oCellStartDate.getHours() + 1);
+
+			const aNonWorkingPartsForHour = aRecurrenceNonWorkingForDay.filter((oCalendarItem) => {
+				return oCalendarItem.hasNonWorkingAtHour(oCellStartDate);
+			});
 
 			oRm.openStart("div");
 			oRm.attr("role", "gridcell");
@@ -469,6 +484,19 @@ sap.ui.define([
 				oRm.text(oControl._getCellDescription());
 			}
 			oRm.close("span");
+
+			if (!aNonWorkingPartsForHour?.length) {
+				oRm.close("div"); // END .sapMSinglePCRow
+				continue;
+			}
+
+			RecurrenceUtils.getWorkingAndNonWorkingSegments(oCellStartDate, aNonWorkingPartsForHour).forEach((oHourParts) => {
+				if (oHourParts.type === "working") {
+					this.renderWorkingParts(oRm, oHourParts.duration);
+				} else {
+					this.renderNonWorkingParts(oRm, oHourParts.duration);
+				}
+			});
 
 			oRm.close("div"); // END .sapMSinglePCRow
 		}
@@ -770,6 +798,25 @@ sap.ui.define([
 		} else {
 			return "1"; // maximum 1 lines of text will fit
 		}
+	};
+
+	SinglePlanningCalendarGridRenderer.renderWorkingParts = function (oRm, iDuration){
+		const iHeight = iDuration / 60 * 100;
+
+		oRm.openStart("div");
+		oRm.style("height",`${iHeight}%`);
+		oRm.openEnd();
+		oRm.close("div");
+	};
+
+	SinglePlanningCalendarGridRenderer.renderNonWorkingParts = function (oRm, iDuration){
+		const iHeight = iDuration / 60 * 100;
+
+		oRm.openStart("div");
+		oRm.class("sapMSinglePCNonWorkingPeriod");
+		oRm.style("height",`${iHeight}%`);
+		oRm.openEnd();
+		oRm.close("div");
 	};
 
 	return SinglePlanningCalendarGridRenderer;

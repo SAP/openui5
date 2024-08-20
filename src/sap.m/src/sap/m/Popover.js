@@ -647,7 +647,8 @@ sap.ui.define([
 				if (!this._oScroller) {
 					this._oScroller = new ScrollEnablement(this, this.getId() + "-scroll", {
 						horizontal: bHorScrolling,
-						vertical: bVerScrolling
+						vertical: bVerScrolling,
+						callBefore: true
 					});
 				} else {
 					this._oScroller.setHorizontal(bHorScrolling);

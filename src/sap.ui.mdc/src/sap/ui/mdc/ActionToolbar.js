@@ -428,7 +428,7 @@ sap.ui.define([
 	};
 
 	ActionToolbar.prototype.initPropertyHelper = async function() {
-		const aProperties = await Promise.all(this.getActions().map(async(oAction) => {
+		const aProperties = await Promise.all(this.getActions().map(async (oAction) => {
 			const oDesignTime = await oAction.getAction().getMetadata().loadDesignTime(oAction);
 			const bEnabled = this._getEnabledFromDesignTime(oDesignTime);
 

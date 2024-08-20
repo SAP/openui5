@@ -251,6 +251,12 @@ sap.ui.define([
 					specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"},
 
 					/**
+					 * Sets the provided period to be displayed as a non-working.
+					 * @since 1.128
+					 */
+					nonWorkingPeriods: {type: "sap.ui.unified.NonWorkingPeriod", multiple: true},
+
+					/**
 					 * Hidden, for internal use only.
 					 * The date row which shows the header of the columns in the <code>SinglePlanningCalendarGrid</code>.
 					 *

@@ -292,7 +292,20 @@ function(
 						aggregation: "appointments"
 					}
 				},
-
+				/**
+				 * Sets the provided period to be displayed as a non-working.
+				 *
+				 * <b>Note:</b> The visualization of non-working periods is present in all views that include hours representation.
+				 * @since 1.128
+				 */
+				nonWorkingPeriods: {
+					type: "sap.ui.unified.NonWorkingPeriod",
+					multiple: true,
+					forwarding: {
+						getter: "_getCurrentGrid",
+						aggregation: "nonWorkingPeriods"
+					}
+				},
 				/**
 				 * Views of the <code>SinglePlanningCalendar</code>.
 				 *

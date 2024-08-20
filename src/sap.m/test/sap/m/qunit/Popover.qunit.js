@@ -709,7 +709,31 @@ sap.ui.define([
 		testCase(100, 150, 50, 50, 200, 200, PlacementType.Top);
 	});
 
-	QUnit.module("Property Setter");
+	QUnit.module("Property Setter", {
+		beforeEach: async function () {
+			this.oPopover = new Popover({
+				placement: PlacementType.Bottom,
+				showHeader: true,
+				content: [
+					new HTML({
+						content: "<div>test content</div>"
+					})
+				]
+			});
+			this.oButton = new Button({
+				text: "Open Popover",
+				press: () => {
+					this.oPopover.openBy(this.oButton);
+				}
+			});
+			this.oButton.placeAt("content");
+			await nextUIUpdate();
+		},
+		afterEach: function () {
+			this.oPopover.destroy();
+			this.oButton.destroy();
+		}
+	});
 
 	QUnit.test("Set modal to true or false", async function (assert){
 		oButton.firePress();
@@ -874,26 +898,38 @@ sap.ui.define([
 		assert.equal(oPopover.getVerticalScrolling(), true, "horizontalScrolling should be enabled");
 	});
 
-	QUnit.test("Set showHeader", async function (assert){
-		assert.ok(oPopover.getDomRef("intHeader"), "Internal header is rendered");
-		oPopover.setModal(true);
-		oPopover.setShowHeader(false);
-		await nextUIUpdate();
-		assert.ok(!oPopover.getDomRef("intHeader"), "Internal header is removed");
-		oPopover.setShowHeader(true);
-		await nextUIUpdate();
-		assert.ok(oPopover.$("intHeader").css("display") !== "none", "Internal header is re-rendered");
+	QUnit.test("Set showHeader", async function (assert) {
+		const clock = sinon.useFakeTimers();
+		this.oButton.firePress();
+		clock.tick(1000);
+
+		assert.ok(this.oPopover.getDomRef("intHeader"), "Internal header is rendered");
+
+		this.oPopover.setModal(true);
+		this.oPopover.setShowHeader(false);
+		await nextUIUpdate(clock);
+		assert.ok(!this.oPopover.getDomRef("intHeader"), "Internal header is removed");
+
+		this.oPopover.setShowHeader(true);
+		await nextUIUpdate(clock);
+		assert.ok(this.oPopover.$("intHeader").css("display") !== "none", "Internal header is re-rendered");
+
+		runAllFakeTimersAndRestore(clock);
 	});
 
-	QUnit.test("Set custom header", async function (assert){
-		oPopover.setCustomHeader(oCustomHeader);
-		await nextUIUpdate();
+	QUnit.test("Set custom header", async function (assert) {
+		const clock = sinon.useFakeTimers();
+		this.oPopover.setCustomHeader(oCustomHeader);
+		await nextUIUpdate(clock);
+		this.oButton.firePress();
+		clock.tick(1000);
 		assert.ok(document.getElementById("customHeader"), "Custom Header is rendered");
-		assert.ok(!oPopover.getDomRef("intHeader"), "Internal header is destroyed");
-		oPopover.destroy();
+		assert.ok(!this.oPopover.getDomRef("intHeader"), "Internal header is destroyed");
+
+		runAllFakeTimersAndRestore(clock);
 	});
 
-	QUnit.test("Popover opened by a button, set focus to button shouldn't close the popover", async function(assert){
+	QUnit.test("Popover opened by a button, set focus to button shouldn't close the popover", async function(assert) {
 		this.clock = sinon.useFakeTimers();
 
 		var oButtonInPopover = new Button();
@@ -2810,6 +2846,34 @@ sap.ui.define([
 		this.oPopover._includeScrollWidth();
 		// assert
 		assert.ok(true, "Should not throw an error when there is no dom ref");
+	});
+
+	QUnit.test("Height that includes scrollbars height is preserved after invalidation", async function(assert) {
+		const oPopover = new Popover({
+			contentHeight: "auto",
+			content: [
+				new HTML({
+					content: "<div style='width: 10000px;'>hello world</div>"
+				})
+			]
+		});
+
+		oPopover.openBy(this.oButton);
+		this.clock.tick(500);
+
+		const iHeightAfterOpen = oPopover.getDomRef("cont").getBoundingClientRect().height;
+
+		assert.ok(iHeightAfterOpen > 0, "Height is greater than 0");
+
+		// act
+		oPopover.invalidate();
+		await nextUIUpdate(this.clock);
+
+		assert.ok(oPopover.getDomRef("cont").getBoundingClientRect().height >= iHeightAfterOpen, "Height is preserved after invalidation");
+
+		// clean up
+		runAllFakeTimersAndRestore(this.clock);
+		oPopover.destroy();
 	});
 
 	QUnit.module("Responsive paddings");

@@ -23662,4 +23662,207 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			});
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: If the server uses server side paging and the ODataTreeBinding is in "Client" mode all data is
+	// requested.
+	// BCP: 2270014869
+	QUnit.test("ODataTreeBinding: _loadCompleteTreeWithAnnotations loads complete tree", function (assert) {
+		const oModel = createSpecialCasesModel();
+		const sView = '\
+<t:TreeTable id="table" visibleRowCount="4">\
+	<Text text="{MaintenanceOrder}" />\
+</t:TreeTable>';
+		let iDataRequested = 0;
+		let iDataReceived = 0;
+		let oTable;
+
+		return this.createView(assert, sView, oModel).then(() => {
+			this.expectHeadRequest()
+				.expectRequest("C_RSHMaintSchedSmltdOrdAndOp?"
+						+ "$select=MaintenanceOrder,OrderOperationRowLevel,OrderOperationParentRowID,"
+							+ "OrderOperationRowID,OrderOperationIsExpanded&"
+						+ "$orderby=OrderOperationRowID asc", {
+					results : [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id1')"},
+						MaintenanceOrder: "1",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationParentRowID: "",
+						OrderOperationRowID: "id1",
+						OrderOperationRowLevel: 0
+					}],
+					__next : "next link"
+				}).expectRequest("C_RSHMaintSchedSmltdOrdAndOp?$skip=1&$top=2&"
+						+ "$select=MaintenanceOrder,OrderOperationRowLevel,OrderOperationParentRowID,"
+							+ "OrderOperationRowID,OrderOperationIsExpanded&"
+						+ "$orderby=OrderOperationRowID asc", {
+					results : [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id2')"},
+						MaintenanceOrder: "2",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationParentRowID: "",
+						OrderOperationRowID: "id2",
+						OrderOperationRowLevel: 0
+					}, {
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id3')"},
+						MaintenanceOrder: "3",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationParentRowID: "",
+						OrderOperationRowID: "id3",
+						OrderOperationRowLevel: 0
+					}]
+				}).expectRequest("C_RSHMaintSchedSmltdOrdAndOp?$skip=3&$top=2&"
+						+ "$select=MaintenanceOrder,OrderOperationRowLevel,OrderOperationParentRowID,"
+							+ "OrderOperationRowID,OrderOperationIsExpanded&"
+						+ "$orderby=OrderOperationRowID asc", {
+					results : [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id4')"},
+						MaintenanceOrder: "4",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationParentRowID: "",
+						OrderOperationRowID: "id4",
+						OrderOperationRowLevel: 0
+					}]
+				});
+			oTable = this.oView.byId("table");
+			oTable.bindRows({
+				events: {
+					dataReceived: (oEvent) => {
+						const oEventData = oEvent.getParameter("data");
+
+						iDataReceived += 1;
+						// responses are merged
+						assert.strictEqual(oEventData.results.length, 4);
+						oEventData.results.forEach((oData, i) => {
+							assert.strictEqual(oData.OrderOperationRowID, "id" + (i + 1));
+						});
+					},
+					dataRequested: () => {iDataRequested += 1;}
+				},
+				filter: [new Filter("OrderOperationRowLevel", FilterOperator.EQ, 1)],
+				parameters: {
+					countMode: CountMode.Inline,
+					operationMode: "Client",
+					select: "MaintenanceOrder",
+					treeAnnotationProperties: {
+						hierarchyDrillStateFor: "OrderOperationIsExpanded",
+						hierarchyLevelFor: "OrderOperationRowLevel",
+						hierarchyNodeFor: "OrderOperationRowID",
+						hierarchyParentNodeFor : "OrderOperationParentRowID"
+					}
+				},
+				path: "C_RSHMaintSchedSmltdOrdAndOp",
+				sorter: [new Sorter("OrderOperationRowID", false)]
+			});
+
+			// reduce the maximum $top value for test purpuses only
+			oTable.getBinding("rows").iMaximumTopValue = 2;
+
+			// code under test - request the complete tree
+			oTable.setBindingContext(new Context(oModel, "/"));
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["3"], ["4"]]);
+			assert.strictEqual(iDataRequested, 1, "dataRequested fired once");
+			assert.strictEqual(iDataReceived, 1, "dataReceived fired once");
+
+			return this.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: If the server uses server side paging and the ODataTreeBinding is in "Client" mode all data is
+	// requested. The last request returns no data.
+	// BCP: 2270014869
+	QUnit.test("ODataTreeBinding: _loadCompleteTreeWithAnnotations loads complete tree, no data in last request",
+			function (assert) {
+		const oModel = createSpecialCasesModel();
+		const sView = '\
+<t:TreeTable id="table" visibleRowCount="2">\
+	<Text text="{MaintenanceOrder}" />\
+</t:TreeTable>';
+		let iDataRequested = 0;
+		let iDataReceived = 0;
+		let oTable;
+
+		return this.createView(assert, sView, oModel).then(() => {
+			this.expectHeadRequest()
+				.expectRequest("C_RSHMaintSchedSmltdOrdAndOp?"
+						+ "$select=MaintenanceOrder,OrderOperationRowLevel,OrderOperationParentRowID,"
+							+ "OrderOperationRowID,OrderOperationIsExpanded&"
+						+ "$orderby=OrderOperationRowID asc", {
+					results : [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id1')"},
+						MaintenanceOrder: "1",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationParentRowID: "",
+						OrderOperationRowID: "id1",
+						OrderOperationRowLevel: 0
+					}],
+					__next : "next link"
+				}).expectRequest("C_RSHMaintSchedSmltdOrdAndOp?$skip=1&$top=1&"
+						+ "$select=MaintenanceOrder,OrderOperationRowLevel,OrderOperationParentRowID,"
+							+ "OrderOperationRowID,OrderOperationIsExpanded&"
+						+ "$orderby=OrderOperationRowID asc", {
+					results : [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id2')"},
+						MaintenanceOrder: "2",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationParentRowID: "",
+						OrderOperationRowID: "id2",
+						OrderOperationRowLevel: 0
+					}]
+				}).expectRequest("C_RSHMaintSchedSmltdOrdAndOp?$skip=2&$top=1&"
+						+ "$select=MaintenanceOrder,OrderOperationRowLevel,OrderOperationParentRowID,"
+							+ "OrderOperationRowID,OrderOperationIsExpanded&"
+						+ "$orderby=OrderOperationRowID asc", {
+					results : []
+				});
+			oTable = this.oView.byId("table");
+			oTable.bindRows({
+				events: {
+					dataReceived: (oEvent) => {
+						const oEventData = oEvent.getParameter("data");
+
+						iDataReceived += 1;
+						// responses are merged
+						assert.strictEqual(oEventData.results.length, 2);
+						oEventData.results.forEach((oData, i) => {
+							assert.strictEqual(oData.OrderOperationRowID, "id" + (i + 1));
+						});
+					},
+					dataRequested: () => {iDataRequested += 1;}
+				},
+				filter: [new Filter("OrderOperationRowLevel", FilterOperator.EQ, 0)], // must not be in URL params
+				parameters: {
+					countMode: CountMode.Inline,
+					operationMode: "Client",
+					select: "MaintenanceOrder",
+					treeAnnotationProperties: {
+						hierarchyDrillStateFor: "OrderOperationIsExpanded",
+						hierarchyLevelFor: "OrderOperationRowLevel",
+						hierarchyNodeFor: "OrderOperationRowID",
+						hierarchyParentNodeFor : "OrderOperationParentRowID"
+					}
+				},
+				path: "C_RSHMaintSchedSmltdOrdAndOp",
+				sorter: [new Sorter("OrderOperationRowID", false)]
+			});
+
+			// reduce the maximum $top value for test purpuses only
+			oTable.getBinding("rows").iMaximumTopValue = 1;
+
+			// code under test - request the complete tree
+			oTable.setBindingContext(new Context(oModel, "/"));
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"]]);
+			assert.strictEqual(iDataRequested, 1, "dataRequested fired once");
+			assert.strictEqual(iDataReceived, 1, "dataReceived fired once");
+
+			return this.waitForChanges(assert);
+		});
+	});
 });
