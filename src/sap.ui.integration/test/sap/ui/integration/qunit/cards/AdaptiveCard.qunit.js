@@ -7,7 +7,6 @@ sap.ui.define([
 		"sap/ui/integration/util/DataProvider",
 		"sap/ui/integration/cards/actions/CardActions",
 		"sap/ui/integration/thirdparty/adaptivecards",
-		"sap/ui/core/message/MessageType",
 		"sap/ui/qunit/utils/nextUIUpdate",
 		"qunit/testResources/nextCardReadyEvent"
 ],
@@ -19,13 +18,14 @@ sap.ui.define([
 		DataProvider,
 		CardActions,
 		AdaptiveCards,
-		MessageType,
 		nextUIUpdate,
 		nextCardReadyEvent
 	) {
 		"use strict";
 
-		var DOM_RENDER_LOCATION = "qunit-fixture";
+		const DOM_RENDER_LOCATION = "qunit-fixture";
+
+		const CardMessageType = library.CardMessageType;
 
 		var oManifest = {
 			"sap.card": {
@@ -909,7 +909,7 @@ sap.ui.define([
 			setTimeout(async function () { // .getData() returns a Promise and MessageStrip's manipulations are executed in then()'s callbacks
 				await nextUIUpdate();
 				assert.ok(oStubRequest.called, "DataProvider's _fetch should have been called");
-				assert.strictEqual(oAdaptiveContent.getAggregation("_messageContainer").getItems()[0].getType(), MessageType.Success,
+				assert.strictEqual(oAdaptiveContent.getAggregation("_messageContainer").getItems()[0].getType(), CardMessageType.Success,
 					"The success execution should put the state of the MessageStrip to Success");
 
 				assert.ok(oAdaptiveContent.getAggregation("_messageContainer").getItems()[0].$().is(":visible"),

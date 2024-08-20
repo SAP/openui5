@@ -1,0 +1,143 @@
+
+{
+	"sap.app": {
+		"id": "card.explorer.object.messages",
+		"type": "card",
+		"title": "Sample of an Object Card",
+		"subTitle": "Sample of an Object Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://flag-2"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"extension": "./SampleExtension",
+		"header": {
+			"icon": {
+				"src": "sap-icon://flag-2"
+			},
+			"title": "Messages using showMessage API",
+			"subTitle": "Triggered from the Extension"
+		},
+		"content": {
+			"groups": [
+				{
+					"items": [
+						{
+							"label": "Content of this card",
+							"value": "Is not really relevant for the example itself, but it is a good way to show how the Object Card looks like with some content in it."
+						},
+						{
+							"label": "To show messages",
+							"value": "Use the buttons in the footer of the card."
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Loading",
+					"buttonType": "Transparent",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"message": "Loading...",
+								"type": "Loading",
+								"autoClose": false
+							}
+						}
+					]
+				},
+				{
+					"text": "Toast",
+					"buttonType": "Transparent",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"message": "Message toasted successfully.",
+								"type": "Toast",
+								"autoClose": true
+							}
+						}
+					]
+				},{
+					"text": "Success",
+					"buttonType": "Transparent",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"message": "This is a custom success action.",
+								"type": "Success",
+								"autoClose": true
+							}
+						}
+					]
+				},
+				{
+					"text": "Info",
+					"buttonType": "Transparent",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"message": "This is a custom info action.",
+								"type": "Information",
+								"autoClose": true
+							}
+						}
+					]
+				},
+				{
+					"text": "Warning",
+					"buttonType": "Transparent",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"message": "This is a custom warning action.",
+								"type": "Warning",
+								"autoClose": true
+							}
+						}
+					]
+				},
+				{
+					"text": "Error",
+					"buttonType": "Transparent",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"message": "This is a custom error action that needs to be closed manually.",
+								"type": "Error",
+								"autoClose": false
+							}
+						}
+					]
+				}
+
+			]
+		}
+	}
+}
