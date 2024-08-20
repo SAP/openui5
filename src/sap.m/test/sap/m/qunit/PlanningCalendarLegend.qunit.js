@@ -220,9 +220,9 @@ sap.ui.define([
 
 			//Assert --section header
 			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").length, 2, "Two header sections should be rendered");
-			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(0).getAttribute("role"), "heading", "The headers have a heading role");
+			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(0).getAttribute("role"), "listitem", "The headers have a listitem role");
 			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(0).getAttribute("aria-level"), "3", "The headers have aria-level - 3");
-			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(1).getAttribute("role"), "heading", "The headers have a heading role");
+			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(1).getAttribute("role"), "listitem", "The headers have a listitem role");
 			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(1).getAttribute("aria-level"), "3", "The headers have aria-level - 3");
 
 			//Cleanup
