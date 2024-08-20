@@ -756,6 +756,66 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
+	QUnit.test("tests left/right arrow key navigation", function(assert) {
+		var oLabel = new Label({text : "text"}),
+			oButton = new Button({text : "text"}),
+			oLink = new Link({text : "text"}),
+			oTB = createToolbar({
+				Toolbar : {
+					content : [oLink, oLabel, oButton]
+				}
+			}),
+			oArrowRightEvent = new KeyboardEvent("keydown", { code: KeyCodes.ARROW_RIGHT }),
+			oArrowLeftEvent = new KeyboardEvent("keydown", { code: KeyCodes.ARROW_LEFT });
+
+		// Focus the first element manually
+		oLink.focus();
+
+		oTB._moveFocus("forward", oArrowRightEvent);
+
+		assert.strictEqual(document.activeElement, oButton.getDomRef(), "The next interactive element inside the toolbar is focused on arrow right");
+
+		oTB._moveFocus("backward", oArrowLeftEvent);
+
+		assert.strictEqual(document.activeElement, oLink.getDomRef(), "The previous interactive element inside the toolbar is focused on arrow left");
+
+		// Cleanup
+		oLabel.destroy();
+		oButton.destroy();
+		oLink.destroy();
+		oTB.destroy();
+	});
+
+	QUnit.test("tests up/down arrow key navigation", function(assert) {
+		var oLabel = new Label({text : "text"}),
+			oButton = new Button({text : "text"}),
+			oLink = new Link({text : "text"}),
+			oTB = createToolbar({
+				Toolbar : {
+					content : [oLink, oLabel, oButton]
+				}
+			}),
+			oArrowUpEvent = new KeyboardEvent("keydown", { code: KeyCodes.ARROW_UP }),
+			oArrowDownEvent = new KeyboardEvent("keydown", { code: KeyCodes.ARROW_DOWN });
+
+		// Focus the first element manually
+		oLink.focus();
+
+		oTB._moveFocus("forward", oArrowUpEvent);
+
+		assert.strictEqual(document.activeElement, oButton.getDomRef(), "The next interactive element inside the toolbar is focused on arrow up");
+
+		oTB._moveFocus("backward", oArrowDownEvent);
+
+		assert.strictEqual(document.activeElement, oLink.getDomRef(), "The previous interactive element inside the toolbar is focused on arrow down");
+
+		// Cleanup
+		oLabel.destroy();
+		oButton.destroy();
+		oLink.destroy();
+		oTB.destroy();
+	});
+
 	QUnit.test("inactive toolbar should not fire press on SPACE key", function(assert) {
 		var oLabel = new Label({text : "text"});
 		var fnPressSpy = this.spy();
