@@ -139,8 +139,9 @@ sap.ui.define([
 	 * @param {boolean} [bAsync=false] whether the view source is loaded asynchronously
 	 * @public
 	 * @static
-	 * @deprecated Since 1.56. Use {@link sap.ui.core.mvc.View.extend View.extend} to define the view class
-	 * and {@link sap.ui.core.mvc.View.create View.create} to create view instances
+	 * @deprecated Since 1.56. Instead use {@link topic:e6bb33d076dc4f23be50c082c271b9f0 Typed Views}
+	 * by defining the view class with {@link sap.ui.core.mvc.View.extend View.extend} and
+	 * creating the view instances with {@link sap.ui.core.mvc.View.create View.create}.
 	 * @ui5-global-only
 	 * @returns {sap.ui.core.mvc.JSView | undefined} the created JSView instance in the creation case, otherwise undefined
 	 */
