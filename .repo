@@ -9,7 +9,7 @@
 				<copyright>2011-present Michael Mathews micmath@gmail.com and the contributors to JSDoc</copyright>
 				<pattern partial="true" otherContent="SAP" explanation="plugin.js is overall written by SAP, but contains code taken from JSDoc 3.6.7 (see the respective comments)">lib/jsdoc/ui5/plugin.js</pattern>
 			</lib>
-			<lib name="@sap-theming/theming-base-content" displayName="SAP Theming Base Content" npmName="@sap-theming/theming-base-content" version="11.16.1" homepage="https://github.com/SAP/theming-base-content">
+			<lib name="@sap-theming/theming-base-content" displayName="SAP Theming Base Content" npmName="@sap-theming/theming-base-content" version="11.18.0" homepage="https://github.com/SAP/theming-base-content">
 				<license url="https://github.com/SAP/theming-base-content/blob/master/LICENSE.txt" type="Apache-2.0" />
 				<copyright>SAP SE or an SAP affiliate company and Theming Base Content contributors</copyright>
 				<pattern>src/sap.ui.core/src/sap/ui/core/themes/base/base.less</pattern>
