@@ -159,19 +159,26 @@ sap.ui.define([
 	/**
 	 * Collapses the group node that this context points to.
 	 *
+	 * @param {boolean} [bAll]
+	 *   Whether to collapse the node and all its descendants (@experimental as of version 1.128.0)
 	 * @throws {Error}
-	 *   If the context points to a node that is not expandable, already collapsed, or
-	 *   is a grand total.
+	 *   If the context points to a node that
+	 *   <ul>
+	 *     <li> is not expandable,
+	 *     <li> is already collapsed,
+	 *     <li> is a grand total,
+	 *   </ul>
+	 *   or if <code>bAll</code> is <code>true</code> but no recursive hierarchy is present.
 	 *
 	 * @public
 	 * @see #expand
 	 * @see #isExpanded
 	 * @since 1.83.0
 	 */
-	Context.prototype.collapse = function () {
+	Context.prototype.collapse = function (bAll) {
 		switch (this.getProperty("@$ui5.node.level") === 0 ? undefined : this.isExpanded()) {
 			case true:
-				this.oBinding.collapse(this);
+				this.oBinding.collapse(this, bAll);
 				break;
 			case false:
 				throw new Error("Already collapsed: " + this);

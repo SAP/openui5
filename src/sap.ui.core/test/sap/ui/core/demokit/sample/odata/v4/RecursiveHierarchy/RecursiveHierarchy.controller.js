@@ -24,6 +24,10 @@ sap.ui.define([
 			}
 		},
 
+		onCollapseAll : function (oEvent) {
+			oEvent.getSource().getBindingContext().collapse(true);
+		},
+
 		onCreate : function (oEvent, bFilteredOut) {
 			const sId = oEvent.getSource().getParent().getParent().getParent().getId();
 			this.create(sId, oEvent.getSource().getBindingContext(), bFilteredOut);

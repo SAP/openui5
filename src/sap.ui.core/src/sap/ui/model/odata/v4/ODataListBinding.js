@@ -678,25 +678,32 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   The context corresponding to the group node
+	 * @param {boolean} [bAll]
+	 *   Whether to collapse the node and all its descendants
 	 * @param {boolean} [bSilent]
 	 *   Whether no ("change") events should be fired
 	 * @param {number} [iCount]
 	 *   The count of nodes affected by the collapse, in case the cache already performed it
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended or if the given context is not part of a
-	 *   hierarchy
+	 *   If the binding's root binding is suspended, if the given context is not part of a
+	 *   hierarchy, or <code>bAll</code> is <code>true</code> without a recursive hierarchy
 	 *
 	 * @private
 	 * @see #expand
 	 */
-	ODataListBinding.prototype.collapse = function (oContext, bSilent, iCount) {
+	ODataListBinding.prototype.collapse = function (oContext, bAll, bSilent, iCount) {
 		this.checkSuspended();
 		if (this.aContexts[oContext.iIndex] !== oContext) {
 			throw new Error("Not currently part of the hierarchy: " + oContext);
 		}
 
+		if (bAll && !this.mParameters.$$aggregation?.hierarchyQualifier) {
+			throw new Error("Missing recursive hierarchy");
+		}
+
 		iCount ??= this.oCache.collapse(
-			_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath()));
+			_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath()),
+			bAll);
 
 		if (iCount > 0) {
 			const aContexts = this.aContexts;
@@ -1178,7 +1185,7 @@ sap.ui.define([
 
 		const bExpanded = oContext.isExpanded();
 		if (bExpanded) {
-			this.collapse(oContext, /*bSilent*/true);
+			this.collapse(oContext, /*bAll*/false, /*bSilent*/true);
 		}
 
 		// When deleting a context with negative index, iCreatedContexts et al. must be adjusted.
@@ -3531,7 +3538,7 @@ sap.ui.define([
 				this.insertGap(oParentContext.getModelIndex(), iCount - 1);
 			}
 			if (iCollapseCount) { // Note: _AC#collapse already done!
-				this.collapse(oChildContext, /*bSilent*/true, iCollapseCount);
+				this.collapse(oChildContext, /*bAll*/false, /*bSilent*/true, iCollapseCount);
 			}
 			const iOldIndex = oChildContext.getModelIndex();
 			this.aContexts.splice(iOldIndex, 1);

@@ -4651,7 +4651,7 @@ sap.ui.define([
 			oContext1Mock.expects("isDeleted").atLeast(1).withExactArgs().returns(false);
 			oContext1Mock.expects("isExpanded").withExactArgs().returns(bExpanded);
 			oBindingMock.expects("collapse").exactly(bExpanded ? 1 : 0)
-				.withExactArgs(sinon.match.same(oContext1), true);
+				.withExactArgs(sinon.match.same(oContext1), /*bAll*/false, /*bSilent*/true);
 			oBindingMock.expects("destroyPreviousContexts").never();
 			oContext1Mock.expects("resetKeepAlive").never();
 			oDeleteCall = oContext1Mock.expects("doDelete")
@@ -9917,8 +9917,9 @@ sap.ui.define([
 [0, 3].forEach((iCount) => {
 	[false, true].forEach((bSilent) => {
 		[false, true].forEach((bCountGiven) => {
-			const sTitle = `collapse: iCount = ${iCount}, bSilent = ${bSilent}`
-				+ `, bCountGiven = ${bCountGiven}`;
+			[false, true].forEach((bAll) => {
+				const sTitle = `collapse: iCount = ${iCount}, bSilent = ${bSilent}`
+					+ `, bCountGiven = ${bCountGiven}, bAll=${bAll}`;
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
@@ -9944,6 +9945,11 @@ sap.ui.define([
 			};
 		}
 
+		if (bAll) { // bAll needs a recursive hierarchy
+			// Note: autoExpandSelect at model would be required for hierarchyQualifier, but
+			// that leads too far :-(
+			oBinding.mParameters = {$$aggregation : {hierarchyQualifier : "X"}};
+		}
 		oBinding.oCache = { // simulate an aggregation cache
 			collapse : function () {}
 		};
@@ -9965,13 +9971,14 @@ sap.ui.define([
 		this.mock(_Helper).expects("getRelativePath").exactly(bCountGiven ? 0 : 1)
 			.withExactArgs("~contextpath~", "~bindingpath~").returns("~cachepath~");
 		oCollapseExpectation = this.mock(oBinding.oCache).expects("collapse")
-			.exactly(bCountGiven ? 0 : 1).withExactArgs("~cachepath~").returns(iCount);
+			.exactly(bCountGiven ? 0 : 1).withExactArgs("~cachepath~", bAll)
+			.returns(iCount);
 		oFireChangeExpectation = this.mock(oBinding).expects("_fireChange")
 			.exactly(iCount && !bSilent ? 1 : 0)
 			.withExactArgs({reason : ChangeReason.Change});
 
 		// code under test
-		oBinding.collapse(oContext, bSilent, bCountGiven ? iCount : undefined);
+		oBinding.collapse(oContext, bAll, bSilent, bCountGiven ? iCount : undefined);
 
 		if (iCount) {
 			if (!bSilent && !bCountGiven) {
@@ -10005,6 +10012,7 @@ sap.ui.define([
 			assert.deepEqual(oBinding.mPreviousContextsByPath, {});
 		}
 	});
+			});
 		});
 	});
 });
@@ -10026,6 +10034,31 @@ sap.ui.define([
 			oBinding.collapse(oContext);
 		}, new Error("Not currently part of the hierarchy: ~oContext~"));
 	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bAggregation) {
+	const sTitle = "collapse: Missing recursive hierarchy, bAggregation=" + bAggregation;
+
+	QUnit.test(sTitle, function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		const oContext = {
+			iIndex : 0
+		};
+
+		if (bAggregation) {
+			oBinding.mParameters = {$$aggregation : {}};
+		}
+
+		oBinding.aContexts = [oContext];
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.collapse(oContext, true);
+		}, new Error("Missing recursive hierarchy"));
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("resetKeepAlive", function () {
@@ -11368,7 +11401,8 @@ sap.ui.define([
 					this.mock(oBinding).expects("insertGap").exactly(iCount > 1 ? 1 : 0)
 						.withExactArgs("~iParentIndex~", iCount - 1);
 					this.mock(oBinding).expects("collapse").exactly(bIsExpanded ? 1 : 0)
-						.withExactArgs(sinon.match.same(oChildContext), true, "~iCollapseCount~");
+						.withExactArgs(sinon.match.same(oChildContext), /*bAll*/false,
+						/*bSilent*/true, "~iCollapseCount~");
 					for (let i = 0; i < 100; i += 1) {
 						if (i % 5) {
 							oBinding.aContexts[i] = {iIndex : i};
@@ -11560,7 +11594,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("requestSideEffects").never();
 		this.mock(oBinding).expects("insertGap").never();
 		this.mock(oBinding).expects("collapse")
-			.withExactArgs(sinon.match.same(oChildContext), true, "~iCollapseCount~");
+			.withExactArgs(sinon.match.same(oChildContext), /*bAll*/false, /*bSilent*/true,
+				"~iCollapseCount~");
 		this.mock(oChildContext).expects("getModelIndex").withExactArgs().returns(43);
 		this.mock(_Helper).expects("insert")
 			.withExactArgs(sinon.match.same(oBinding.aContexts), 43,

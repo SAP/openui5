@@ -93,6 +93,9 @@
 					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined }"
 						icon="sap-icon://expand-group" press=".onExpandLevels"
 						tooltip="Expand By Number Of Levels..."/>
+					<m:Button enabled="{= %{@$ui5.node.isExpanded} === true }"
+						icon="sap-icon://collapse-group" press=".onCollapseAll"
+						tooltip="Collapse all"/>
 					<m:CheckBox selected="{= %{@$ui5.context.isSelected} }" tooltip="Selected"/>
 				</m:FlexBox>
 			</template>
