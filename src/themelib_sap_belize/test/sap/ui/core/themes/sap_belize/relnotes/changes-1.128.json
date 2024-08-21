@@ -3,6 +3,16 @@
     "date": "August 2024",
     "notes": [
       {
+        "id": "18b209edbdc8303ddcaae413358fa1cd49883f3e",
+        "type": "FIX",
+        "text": " sap.m.Popover: Improve overflow handling when there is scrollable content"
+      },
+      {
+        "id": "4dc6c778b81f8350b05adc1950e9b0ff85b91e3c",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar and SinglePlanningCalendar: Adding the ability to repeat non-working periods"
+      },
+      {
         "id": "0983b36e51ec640ab7f359851a1b8f7b2af563c0",
         "type": "FEATURE",
         "text": " sap.f.CardBase: Introduced CardBadgeCustomData"

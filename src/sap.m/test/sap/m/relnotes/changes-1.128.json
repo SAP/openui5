@@ -3,14 +3,54 @@
     "date": "August 2024",
     "notes": [
       {
+        "id": "18b209edbdc8303ddcaae413358fa1cd49883f3e",
+        "type": "FIX",
+        "text": " sap.m.Popover: Improve overflow handling when there is scrollable content"
+      },
+      {
+        "id": "4990b211162222ebb16269e02755dc7e3e3c48e3",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: adjust testing page"
+      },
+      {
+        "id": "4dc6c778b81f8350b05adc1950e9b0ff85b91e3c",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar and SinglePlanningCalendar: Adding the ability to repeat non-working periods"
+      },
+      {
+        "id": "1dd0a1b834becdd51af3129f68f74a9ac55e94e3",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendarLegend: adjust accessibility semantics"
+      },
+      {
+        "id": "aff2b206719b523cd966025f531e7c7f9a297181",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: adjust accessibility semantics"
+      },
+      {
         "id": "385edb7fc6689d65bf322dd001406b126ac91231",
         "type": "FIX",
         "text": " We've now removed the no data description for cases where uploadEnabled is set to false"
       },
       {
+        "id": "d7d235009d586647eb48280e183c32694244d4cb",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Correct group headers aria attributes and count"
+      },
+      {
         "id": "bfbd5332caf8063543f3379b5768bce0f30f6a23",
         "type": "FIX",
         "text": " sap.m.ObjectIdentifier: adjust internal title press handling"
+      },
+      {
+        "id": "5772485fc376eab306bdae1a0484c0c4be05ccf9",
+        "type": "FIX",
+        "text": " sap.m.Popover: Height calculations for scrollable contents are preserved after invalidation"
+      },
+      {
+        "id": "76f08310340f454e1236b94ddf808658032a45cd",
+        "type": "FEATURE",
+        "text": " sap.m.Toolbar: Keyboard arrow navigation added"
       },
       {
         "id": "3fa077fa9397ecdf1e42f133d21979bd38bd2cd1",

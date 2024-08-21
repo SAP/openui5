@@ -3,6 +3,11 @@
     "date": "August 2024",
     "notes": [
       {
+        "id": "4dc6c778b81f8350b05adc1950e9b0ff85b91e3c",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar and SinglePlanningCalendar: Adding the ability to repeat non-working periods"
+      },
+      {
         "id": "45059d574a42ece60673cb9596baf65381d2d671",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: remove appointments not selected announcement",

@@ -3,6 +3,16 @@
     "date": "August 2024",
     "notes": [
       {
+        "id": "55ab19bc3aa6e1e3fcba6a8607314756a71075cd",
+        "type": "FIX",
+        "text": " Adjust link in sap.ui.core.MessageType documentation"
+      },
+      {
+        "id": "4592f5a638afc4e3701deaae9293b7143d9b24ea",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataTreeBinding#_loadCompleteTreeWithAnnotations: read all data in \"Client\" mode"
+      },
+      {
         "id": "8669c4d06e24cda88534fe1bf28e5bac427f6540",
         "type": "FIX",
         "text": " sap.ui.model.odata.v4.AnnotationHelper: DoNotCheckScaleOfMeasuredQuantity"
