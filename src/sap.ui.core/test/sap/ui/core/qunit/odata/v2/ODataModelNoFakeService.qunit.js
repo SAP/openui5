@@ -7230,7 +7230,8 @@ sap.ui.define([
 				message : "Request aborted",
 				responseText : "",
 				statusCode : 0,
-				statusText : "abort"
+				statusText : "abort",
+				$rejected : true
 			};
 
 		// code under test
@@ -9423,12 +9424,12 @@ sap.ui.define([
 		oErrorResponse.response.statusCode = 502;
 		test();
 
-		// no retry-after value
+		// no "Retry-after" value
 		oErrorResponse.response.statusCode = 503;
 		oErrorResponse.response.headers = {};
 		test(null);
 
-		// retry-after header value, but no handler registered
+		// "Retry-after" header value, but no handler registered
 		test("~retryAfterHeaderValue");
 
 		// code under test (model parameter sequentializeRequests set)
@@ -9510,10 +9511,11 @@ sap.ui.define([
 			fnReject = reject;
 		});
 		oModelMock.expects("fnRetryAfter").withExactArgs("~oRetryAfterError").returns(pRetryAfter);
+		const oRequestHandle0 = {};
 
 		// code under test (creates and remembers pRetryAfter)
 		assert.strictEqual(ODataModel.prototype.checkAndProcessRetryAfterError.call(oModel, oRequest0, oErrorResponse0,
-			"~fnSuccess0", "~fnError0", "~oHandler0", "~oHttpClient0", "~oMetadata0"), true);
+			"~fnSuccess0", "~fnError0", "~oHandler0", "~oHttpClient0", "~oMetadata0", oRequestHandle0), true);
 
 		assert.strictEqual(oModel.pRetryAfter, pRetryAfter);
 		assert.strictEqual(oModel.oRetryAfterError, "~oRetryAfterError");
@@ -9523,10 +9525,11 @@ sap.ui.define([
 		oModelMock.expects("_getHeader")
 			.withExactArgs("retry-after", sinon.match.same(oErrorResponse1.response.headers))
 			.returns("~retryAfterHeader");
+		const oRequestHandle1 = {};
 
 		// code under test (reuse existing pRetryAfter)
 		assert.strictEqual(ODataModel.prototype.checkAndProcessRetryAfterError.call(oModel, oRequest1, oErrorResponse1,
-			"~fnSuccess1", "~fnError1", "~oHandler1", "~oHttpClient1", "~oMetadata1"), true);
+			"~fnSuccess1", "~fnError1", "~oHandler1", "~oHttpClient1", "~oMetadata1", oRequestHandle1), true);
 
 		assert.strictEqual(oModel.pRetryAfter, pRetryAfter);
 		assert.strictEqual(oModel.oRetryAfterError, "~oRetryAfterError");
@@ -9538,14 +9541,16 @@ sap.ui.define([
 				.callsFake(() => {
 					assert.strictEqual(oModel.pRetryAfter, null, "promise reset before repeated");
 					assert.strictEqual(oModel.oRetryAfterError, null);
-				});
+				})
+				.returns({abort: "~fnAbort0"});
 			oModelMock.expects("_request")
 				.withExactArgs(sinon.match.same(oRequest1),"~fnSuccess1", "~fnError1", "~oHandler1", "~oHttpClient1",
 					"~oMetadata1")
 				.callsFake(() => {
 					assert.strictEqual(oModel.pRetryAfter, null);
 					assert.strictEqual(oModel.oRetryAfterError, null);
-				});
+				})
+				.returns({abort: "~fnAbort1"});
 
 			// code under test (pRetryAfter resolves, both registrations executed)
 			fnResolve();
@@ -9570,6 +9575,8 @@ sap.ui.define([
 		return oModel.pRetryAfter.then(() => {
 			assert.ok(bResolve);
 			assert.strictEqual(oModel.oRetryAfterError, null);
+			assert.strictEqual("~fnAbort0", oRequestHandle0.abort);
+			assert.strictEqual("~fnAbort1", oRequestHandle1.abort);
 		}, () => {
 			assert.notOk(bResolve);
 			assert.strictEqual(oModel.oRetryAfterError, "~oRetryAfterError");
@@ -9602,11 +9609,14 @@ sap.ui.define([
 			"~oHandler", "~oHttpClient", "~oMetadata");
 
 		assert.strictEqual(oResult.abort(), undefined, "returned abort() does nothing");
+		const fnOriginalAbort = oResult.abort;
 
 		if (bResolve) {
 			oModel._request = () => {};
-			this.mock(oModel).expects("_request").withExactArgs(sinon.match.same(oRequest), "~fnSuccess",
-				"~fnError", "~oHandler", "~oHttpClient", "~oMetadata");
+			this.mock(oModel).expects("_request")
+				.withExactArgs(sinon.match.same(oRequest), "~fnSuccess", "~fnError", "~oHandler",
+					"~oHttpClient", "~oMetadata")
+				.returns({abort: "~fnAbort"});
 
 			// code under test (resolve -> repeat)
 			fnResolve();
@@ -9621,8 +9631,10 @@ sap.ui.define([
 
 		return oModel.pRetryAfter.then(() => {
 			assert.ok(bResolve);
+			assert.strictEqual(oResult.abort, "~fnAbort");
 		}, () => {
 			assert.notOk(bResolve);
+			assert.strictEqual(oResult.abort, fnOriginalAbort);
 		}).finally(() => {
 			// simulate reset of pRetryAfter in #checkAndProcessRetryAfterError
 			oModel.pRetryAfter = null;
@@ -9661,7 +9673,7 @@ sap.ui.define([
 			const oModelMock = this.mock(oModel);
 			oModelMock.expects("checkAndProcessRetryAfterError")
 				.withExactArgs(sinon.match.same(oRequest), "~oErrorResponse2", "~fnSuccess2", "~fnError2",
-					"~oHandler2", "~oHttpClient2", "~oMetadata2")
+					"~oHandler2", "~oHttpClient2", "~oMetadata2", "~oRequestHandle2")
 				.returns(true);
 
 			oResult = ODataModel.prototype._request.call(oModel, oRequest, "~fnSuccess2", "~fnError2",
@@ -9680,7 +9692,7 @@ sap.ui.define([
 				.returns("~oRequestHandle3");
 			oModelMock.expects("checkAndProcessRetryAfterError")
 				.withExactArgs(sinon.match.same(oRequest), "~oErrorResponse3", "~fnSuccess3", sinon.match.func,
-					"~oHandler3", "~oHttpClient3", "~oMetadata3")
+					"~oHandler3", "~oHttpClient3", "~oMetadata3", "~oRequestHandle3")
 				.returns(false);
 			const oHelper3 = {error() {}};
 			this.mock(oHelper3).expects("error").withExactArgs("~oErrorResponse3");
