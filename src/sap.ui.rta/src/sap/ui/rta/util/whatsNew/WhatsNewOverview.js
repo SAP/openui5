@@ -3,23 +3,32 @@
  */
 
 sap.ui.define([
+	"sap/m/library",
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/rta/util/whatsNew/whatsNewContent/whatsNewFeatures"
+	"sap/ui/rta/util/whatsNew/whatsNewContent/WhatsNewFeatures",
+	"sap/ui/rta/util/whatsNew/WhatsNewUtils"
 ], function(
+	mLibrary,
 	Fragment,
 	JSONModel,
 	ResourceModel,
-	WhatsNewFeatures
+	WhatsNewFeatures,
+	WhatsNewUtils
 ) {
 	"use strict";
 	const WhatsNewOverview = {};
+	const oURLHelper = mLibrary.URLHelper;
 	let oWhatsNewOverviewDialog;
+
+	function getWhatsNewOverviewContent() {
+		return [...WhatsNewFeatures.getAllFeatures()].reverse();
+	}
 
 	WhatsNewOverview.openWhatsNewOverviewDialog = async function() {
 		const oWhatsNewDialogModel = new JSONModel();
-		oWhatsNewDialogModel.setData({featureCollection: WhatsNewFeatures.getAllFeatures().reverse()});
+		oWhatsNewDialogModel.setData({ featureCollection: getWhatsNewOverviewContent() });
 		oWhatsNewDialogModel.setProperty("overviewActive", true);
 		if (!oWhatsNewOverviewDialog) {
 			await WhatsNewOverview.createWhatsNewOverviewDialog(oWhatsNewDialogModel);
@@ -30,7 +39,7 @@ sap.ui.define([
 	};
 
 	WhatsNewOverview.createWhatsNewOverviewDialog = async function(oWhatsNewDialogModel) {
-		const oRTAResourceModel = new ResourceModel({bundleName: "sap.ui.rta.messagebundle"});
+		const oRTAResourceModel = new ResourceModel({ bundleName: "sap.ui.rta.messagebundle" });
 		oWhatsNewOverviewDialog = await Fragment.load(
 			{
 				name: "sap.ui.rta.util.whatsNew.WhatsNewOverviewDialog",
@@ -58,6 +67,12 @@ sap.ui.define([
 		const sPath = oContext.getPath();
 		oContext.setProperty("overviewActive", false);
 		oWhatsNewOverviewDialog.bindElement({ path: sPath, model: "whatsNewModel" });
+	};
+
+	WhatsNewOverview.onLearnMorePress = function(oEvent) {
+		const sPath = oEvent.getSource().getBindingContext("whatsNewModel").getPath();
+		const sLearnMoreUrl = WhatsNewUtils.getLearnMoreURL(sPath, getWhatsNewOverviewContent());
+		oURLHelper.redirect(sLearnMoreUrl, true);
 	};
 
 	return WhatsNewOverview;

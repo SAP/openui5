@@ -42,6 +42,7 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/FioriLike",
 	"sap/ui/rta/toolbar/Standalone",
 	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
+	"sap/ui/rta/util/whatsNew/WhatsNew",
 	"sap/ui/rta/util/PluginManager",
 	"sap/ui/rta/util/PopupManager",
 	"sap/ui/rta/util/ReloadManager",
@@ -88,6 +89,7 @@ sap.ui.define([
 	FioriLikeToolbar,
 	StandaloneToolbar,
 	ChangeVisualization,
+	WhatsNew,
 	PluginManager,
 	PopupManager,
 	ReloadManager,
@@ -250,6 +252,13 @@ sap.ui.define([
 			.then(function(mUShellServices) {
 				this._mUShellServices = mUShellServices;
 				ReloadManager.setUShellServices(mUShellServices);
+				return FeaturesAPI.isSeenFeaturesAvailable();
+			}.bind(this))
+			.then(function(isAvailable) {
+				if (isAvailable) {
+					this.addDependent(new WhatsNew({ layer: this.getLayer() }), "whatsNew");
+				}
+				return Promise.resolve();
 			}.bind(this));
 		}
 	});
@@ -457,6 +466,10 @@ sap.ui.define([
 			}
 			setBlockedOnRootElements.call(this, true);
 
+			if (this.getWhatsNew) {
+				this.getWhatsNew().initializeWhatsNewDialog();
+			}
+
 			// PopupManager sets the toolbar to already open popups' autoCloseAreas
 			// Since at this point the toolbar is not available, it waits for RTA to start,
 			// before adding it to the autoCloseAreas of the open popups
@@ -466,6 +479,7 @@ sap.ui.define([
 				// the show() method of the toolbar relies on this RTA instance being set on the PopupManager
 				await this.getToolbar().show();
 			}
+
 			if (Device.browser.name === "ff") {
 				// in FF shift+f10 also opens a browser context menu.
 				// It seems that the only way to get rid of it is to completely turn off context menu in ff..
@@ -1456,7 +1470,7 @@ sap.ui.define([
 
 		await oToolbar.onFragmentLoaded();
 		const bTranslationAvailable = await FeaturesAPI.isKeyUserTranslationEnabled(this.getLayer());
-
+		const bWhatsNewFeaturesAvailable = await FeaturesAPI.isSeenFeaturesAvailable();
 		const bAppVariantsAvailable = mButtonsAvailability.saveAsAvailable;
 		const bExtendedOverview = bAppVariantsAvailable && RtaAppVariantFeature.isOverviewExtended();
 		const oUriParameters = new URLSearchParams(window.location.search);
@@ -1482,6 +1496,10 @@ sap.ui.define([
 			translation: {
 				visible: bTranslationAvailable,
 				enabled: this.bPersistedDataTranslatable
+			},
+			newFeaturesOverview: {
+				visible: bWhatsNewFeaturesAvailable,
+				enabled: bWhatsNewFeaturesAvailable
 			},
 			appVariantMenu: {
 				visible: bAppVariantsAvailable,

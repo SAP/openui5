@@ -73,10 +73,10 @@
 				press=".restore"
 				text="{i18n>BTN_RESTORE}" />
 		<MenuItem
-				id="sapUiRta_openWhatsNewDialogOverview"
+				id="sapUiRta_newFeaturesOverview"
 				icon="sap-icon://newspaper"
-				enabled="false"
-				visible="false"
+				enabled="{controls>/newFeaturesOverview/enabled}"
+				visible="{controls>/newFeaturesOverview/visible}"
 				type="Transparent"
 				text="{i18n>BTN_WHATS_NEW_DIALOG_OVERVIEW}"
 				press=".openWhatsNewOverviewDialog"

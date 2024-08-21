@@ -3,84 +3,105 @@
  */
 
 sap.ui.define([
+	"sap/m/library",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/Lib",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/rta/util/whatsNew/whatsNewContent/whatsNewFeatures"
+	"sap/ui/rta/util/whatsNew/whatsNewContent/WhatsNewFeatures",
+	"sap/ui/rta/util/whatsNew/WhatsNewUtils"
 ], function(
+	mLibrary,
+	ManagedObject,
 	Element,
 	Fragment,
-	Lib,
+	FeaturesAPI,
 	JSONModel,
 	ResourceModel,
-	WhatsNewFeatures
+	WhatsNewFeatures,
+	WhatsNewUtils
 ) {
 	"use strict";
 
-	const WhatsNew = {};
-	const oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
-	let oWhatsNewDialog;
+	const oURLHelper = mLibrary.URLHelper;
 
-	WhatsNew.openWhatsNewDialog = async function(aDontShowAgainFeatureIds) {
-		const aFeatures = WhatsNewFeatures.filterDontShowAgainFeatures(aDontShowAgainFeatureIds);
-		const oWhatsNewDialogModel = new JSONModel(WhatsNew.buildWhatsNewContent(aFeatures));
-		if (!oWhatsNewDialog)	{
-			await WhatsNew.createWhatsNewDialog(oWhatsNewDialogModel);
+	/**
+	 * @class Constructor for a new sap.ui.rta.util.whatsNew.WhatsNew
+	 * @extends sap.ui.base.ManagedObject
+	 * @author SAP SE
+	 * @version ${version}
+	 * @constructor
+	 * @since 1.129
+	 * @private
+	 * @ui5-restricted sap.ui.rta
+	 */
+	const WhatsNew = ManagedObject.extend("sap.ui.rta.util.whatsNew.WhatsNew", {
+		metadata: {
+			properties: {
+				dontShowAgainFeatureIds: { type: "array", defaultValue: [] },
+				layer: { type: "string", defaultValue: "" }
+			},
+			aggregations: {
+				whatsNewDialog: { type: "sap.m.Dialog", multiple: false }
+			}
 		}
-		oWhatsNewDialog.open();
+	});
 
-		return oWhatsNewDialog;
+	WhatsNew.prototype.setDontShowAgainFeatureIds = function(aDontShowAgainFeatureIds) {
+		this.setProperty("dontShowAgainFeatureIds", aDontShowAgainFeatureIds);
+		this.aUnseenFeatures = WhatsNewFeatures.filterDontShowAgainFeatures(aDontShowAgainFeatureIds);
 	};
 
-	WhatsNew.createWhatsNewDialog = async function(oWhatsNewDialogModel) {
-		const oRTAResourceModel = new ResourceModel({bundleName: "sap.ui.rta.messagebundle"});
-		oWhatsNewDialog = await Fragment.load({
+	WhatsNew.prototype.initializeWhatsNewDialog = async function() {
+		const aDontShowAgainFeatureIds = await FeaturesAPI.getSeenFeatureIds({ layer: this.getLayer() });
+		this.setDontShowAgainFeatureIds(aDontShowAgainFeatureIds);
+		if (this.aUnseenFeatures.length === 0 || this.getLayer() !== "CUSTOMER") {
+			return;
+		}
+		const oWhatsNewDialogModel = new JSONModel();
+		oWhatsNewDialogModel.setData({ featureCollection: this.aUnseenFeatures });
+		if (!this.oWhatsNewDialog)	{
+			await this.createWhatsNewDialog(oWhatsNewDialogModel);
+		}
+		this.oWhatsNewDialog.open();
+	};
+
+	WhatsNew.prototype.createWhatsNewDialog = async function(oWhatsNewDialogModel) {
+		const oRTAResourceModel = new ResourceModel({ bundleName: "sap.ui.rta.messagebundle" });
+		this.oWhatsNewDialog = await Fragment.load({
 			name: "sap.ui.rta.util.whatsNew.WhatsNewDialog",
-			controller: WhatsNew
+			controller: this
 		});
-		oWhatsNewDialog.setModel(oRTAResourceModel, "i18n");
-		oWhatsNewDialog.setModel(oWhatsNewDialogModel, "whatsNewModel");
+		this.oWhatsNewDialog.setModel(oRTAResourceModel, "i18n");
+		this.oWhatsNewDialog.setModel(oWhatsNewDialogModel, "whatsNewModel");
 	};
 
-	WhatsNew.buildWhatsNewContent = function(aFeatures) {
-		/**
-		 * The `oWhatsNewContent` object defines the content that will be displayed inside the "What's New" dialog.
-		 * The first object with index [0] in the `featureCollection` array is the overview page.
-		 * The following objects are the features that are added dynamically
-		 */
-		const oWhatsNewContent = {
-			featureCollection: [
-				{
-					featureId: "whatsNewOverview",
-					overviewTitle: oTextResources.getText("TIT_WHATS_NEW_DIALOG_OVERVIEW"),
-					overview: []
-				}
-			]
-		};
-
-		aFeatures.forEach(function(oFeature, iIndex) {
-			const sFeatureTitle = oFeature.title;
-			oWhatsNewContent.featureCollection[0].overview.push({
-				newFeatureTitle: sFeatureTitle,
-				// index [0] is the overview page, to correctly set the page index for the added features we need to shift it by 1
-				index: iIndex + 1
-			});
-			oWhatsNewContent.featureCollection.push(oFeature);
-		});
-		return oWhatsNewContent;
-	};
-
-	WhatsNew.closeWhatsNewDialog = function() {
-		if (oWhatsNewDialog) {
-			oWhatsNewDialog.close();
+	WhatsNew.prototype.closeWhatsNewDialog = function() {
+		if (this.oWhatsNewDialog) {
+			const oDontShowAgainCheckbox = Element.getElementById("whatsNewDialog_DontShowAgain");
+			if (oDontShowAgainCheckbox.getSelected()) {
+				const aUnseenFeatureIds = this.aUnseenFeatures.map((oUnseenFeature) => oUnseenFeature.featureId);
+				const aSeenFeatureIds = [...this.getDontShowAgainFeatureIds(), ...aUnseenFeatureIds];
+				const mPropertyBag = { layer: this.getLayer(), seenFeatureIds: aSeenFeatureIds };
+				FeaturesAPI.setSeenFeatureIds(mPropertyBag);
+			}
+			this.oWhatsNewDialog.close();
 		}
 	};
 
-	WhatsNew.scrollCarousel = function(sPageId, sIndex) {
-		const oCarousel = Element.getElementById("sapWhatsNewDialogCarousel");
-		oCarousel.setActivePage(sPageId + sIndex);
+	WhatsNew.prototype.onLearnMorePress = function() {
+		const sActivePageId = Element.getElementById("sapWhatsNewDialogCarousel").getActivePage();
+		const sLearnMoreUrl = WhatsNewUtils.getLearnMoreURL(sActivePageId, this.aUnseenFeatures);
+		oURLHelper.redirect(sLearnMoreUrl, true);
+	};
+
+	WhatsNew.prototype.destroy = function(...aArgs) {
+		ManagedObject.prototype.destroy.apply(this, aArgs);
+		if (this.oWhatsNewDialog) {
+			this.oWhatsNewDialog.destroy();
+		}
 	};
 
 	return WhatsNew;

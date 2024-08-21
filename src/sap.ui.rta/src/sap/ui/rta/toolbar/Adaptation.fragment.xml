@@ -109,7 +109,14 @@
 				<Button
 						id="sapUiRta_actionsMenu"
 						icon="sap-icon://menu2"
-						visible="{= ${controls>/modeSwitcher} === 'adaptation' &amp;&amp; (${controls>/translation/visible} || ${controls>/appVariantMenu/visible} || ${controls>/restore/visible})}"
+						visible="{=
+								${controls>/modeSwitcher} === 'adaptation'
+								&amp;&amp; (
+									${controls>/translation/visible}
+									|| ${controls>/appVariantMenu/visible}
+									|| ${controls>/restore/visible}
+									|| ${controls>/newFeaturesOverview/visible}
+								)}"
 						enabled="{controls>/actionsMenuButton/enabled}"
 						type="Transparent"
 						tooltip="{i18n>BTN_MENU}"

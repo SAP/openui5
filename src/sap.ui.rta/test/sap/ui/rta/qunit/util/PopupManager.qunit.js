@@ -136,6 +136,9 @@ sap.ui.define([
 				},
 				isPublishAvailable() {
 					return false;
+				},
+				isSeenFeaturesAvailable() {
+					return false;
 				}
 			};
 			sandbox.stub(FlSettings, "getInstance").resolves(oSettings);

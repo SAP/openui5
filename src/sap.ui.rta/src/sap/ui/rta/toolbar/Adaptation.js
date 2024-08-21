@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
 	"sap/ui/rta/toolbar/translation/Translation",
 	"sap/ui/rta/toolbar/versioning/Versioning",
-	"sap/ui/rta/util/whatsNew/WhatsNew",
 	"sap/ui/rta/util/whatsNew/WhatsNewOverview",
 	"sap/ui/rta/Utils"
 ], function(
@@ -43,7 +42,6 @@ sap.ui.define([
 	SaveAsAdaptation,
 	Translation,
 	Versioning,
-	WhatsNew,
 	WhatsNewOverview,
 	Utils
 ) {
