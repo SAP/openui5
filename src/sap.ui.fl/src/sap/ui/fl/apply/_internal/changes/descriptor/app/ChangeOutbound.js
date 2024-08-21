@@ -12,8 +12,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	const SUPPORTED_OPERATIONS = ["UPDATE", "UPSERT"];
+	const SUPPORTED_OPERATIONS = ["UPDATE", "UPSERT", "DELETE", "INSERT"];
 	const SUPPORTED_PROPERTIES = ["semanticObject", "action", "additionalParameters", "parameters/*"];
+
+	const NOT_ALLOWED_TO_DELETE_PROPERTIES = ["semanticObject", "action"];
 
 	// Only list properties with limitation
 	const PROPERTIES_PATTERNS = {
@@ -55,7 +57,7 @@ sap.ui.define([
 		applyChange(oManifest, oChange) {
 			const oCrossNavigation = oManifest["sap.app"].crossNavigation;
 			const oChangeContent = oChange.getContent();
-			DescriptorChangeCheck.checkEntityPropertyChange(oChangeContent, SUPPORTED_PROPERTIES, SUPPORTED_OPERATIONS, PROPERTIES_PATTERNS);
+			DescriptorChangeCheck.checkEntityPropertyChange(oChangeContent, SUPPORTED_PROPERTIES, SUPPORTED_OPERATIONS, PROPERTIES_PATTERNS, NOT_ALLOWED_TO_DELETE_PROPERTIES);
 			if (oCrossNavigation && oCrossNavigation.outbounds) {
 				const oOutbound = oCrossNavigation.outbounds[oChangeContent.outboundId];
 				if (oOutbound) {
