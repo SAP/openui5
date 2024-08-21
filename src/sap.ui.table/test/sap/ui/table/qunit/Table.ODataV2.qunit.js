@@ -1,11 +1,13 @@
-/*global QUnit */
+/*global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
+	"sap/ui/table/Table",
 	"sap/ui/model/Filter",
 	"sap/ui/core/Element"
 ], function(
 	TableQUnitUtils,
+	Table,
 	Filter,
 	Element
 ) {
@@ -74,6 +76,80 @@ sap.ui.define([
 			oTable.setModel(oModel);
 			assert.strictEqual(oTable._getTotalRowCount(), 0, "Without a binding or binding info the total row count is 0");
 		});
+	});
+
+	QUnit.module("ScrollThreshold", {
+		before: function() {
+			this.oMockServer = TableQUnitUtils.startMockServer();
+			this.oDataModel = TableQUnitUtils.createODataModel();
+			this.oGetContextsSpy = sinon.spy(Table.prototype, "_getContexts");
+
+			TableQUnitUtils.setDefaultSettings({
+				rows: {path: "/Products"},
+				columns: [
+					TableQUnitUtils.createTextColumn()
+				],
+				models: this.oDataModel,
+				threshold: 20,
+				scrollThreshold: 50
+			});
+
+			return this.oDataModel.metadataLoaded();
+		},
+		beforeEach: async function() {
+			this.oGetContextsSpy.resetHistory();
+			this.oTable = await TableQUnitUtils.createTable();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		after: function() {
+			this.oMockServer.destroy();
+			this.oDataModel.destroy();
+			this.oGetContextsSpy.restore();
+			TableQUnitUtils.setDefaultSettings();
+		}
+	});
+
+	QUnit.test("Initialization", async function(assert) {
+		const oTable = this.oTable;
+		const oGetContextsSpy = this.oGetContextsSpy;
+
+		await oTable.qunit.whenRenderingFinished();
+
+		// refreshRows, render, updateRows
+		assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+		assert.notEqual(oTable.getThreshold(), oTable.getScrollThreshold(), "The threshold and scrollThreshold properties are different");
+		sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 0, 10, oTable.getThreshold());
+	});
+
+	QUnit.test("Scrolling & Binding refresh", async function(assert) {
+		const oTable = this.oTable;
+		const oGetContextsSpy = this.oGetContextsSpy;
+
+		await oTable.qunit.whenRenderingFinished();
+		oGetContextsSpy.resetHistory();
+
+		oTable._setFirstVisibleRowIndex(50, {
+			onScroll: true,
+			suppressEvent: false,
+			suppressRendering: false
+		});
+
+		await TableQUnitUtils.nextEvent("rowsUpdated", oTable);
+
+		assert.equal(oGetContextsSpy.callCount, 1, "Method getContexts was called once");
+		assert.notEqual(oTable.getThreshold(), oTable.getScrollThreshold(), "The threshold and scrollThreshold properties are different");
+		// Mock data contains only 16 rows, so the first visible row index is changed to 6
+		sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 6, 10, oTable.getScrollThreshold());
+
+		oGetContextsSpy.resetHistory();
+		oTable.getBinding().refresh(true);
+
+		await TableQUnitUtils.nextEvent("rowsUpdated", oTable);
+
+		// Scroll position stays the same but getContexts is called with threshold property value
+		sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 6, 10, oTable.getThreshold());
 	});
 
 	QUnit.module("BusyIndicator", {

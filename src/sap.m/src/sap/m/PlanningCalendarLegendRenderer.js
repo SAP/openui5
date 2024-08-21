@@ -40,6 +40,7 @@ sap.ui.define(['sap/ui/unified/CalendarLegendRenderer', 'sap/ui/core/Renderer'],
 			//the upper list has items, and the lower list too, but the second header is an empty string
 			//and we still need a delimiter
 			oRm.voidStart("hr");
+			oRm.attr("role", "listitem");
 			oRm.voidEnd();
 		}
 	};
@@ -53,12 +54,14 @@ sap.ui.define(['sap/ui/unified/CalendarLegendRenderer', 'sap/ui/core/Renderer'],
 	PlanningCalendarLegendRenderer._renderItemsHeader = function(oRm, sHeaderText) {
 		oRm.openStart("div");
 		oRm.class("sapMPlanCalLegendHeader");
-		oRm.attr("role", "heading");
+		oRm.attr("role", "listitem");
 		oRm.attr("aria-level", "3");
 		oRm.openEnd();
 		oRm.text(sHeaderText);
 		oRm.close("div");
+
 		oRm.voidStart("hr");
+		oRm.attr("role", "listitem");
 		oRm.voidEnd();
 	};
 

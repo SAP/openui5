@@ -4137,10 +4137,10 @@ sap.ui.define([
 		this.mock(oContext).expects("getProperty").withExactArgs("@$ui5.node.level")
 			.returns({/*anything*/});
 		this.mock(oContext).expects("isExpanded").withExactArgs().returns(true);
-		this.mock(oBinding).expects("collapse").withExactArgs(sinon.match.same(oContext));
+		this.mock(oBinding).expects("collapse").withExactArgs(sinon.match.same(oContext), "~bAll~");
 
 		// code under test
-		oContext.collapse();
+		oContext.collapse("~bAll~");
 	});
 
 	//*********************************************************************************************

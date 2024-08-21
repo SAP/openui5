@@ -373,17 +373,21 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupNodePath
 	 *   The group node path relative to the cache
+	 * @param {boolean|number} [bAll]
+	 *   Whether collapsing the node and all its descendants; <code>undefined</code> means a simple
+	 *   collapse, <code>true</code> collapsing all at this node, <code>1</code> a nested node below
+	 *   a collapse all
 	 * @returns {number}
 	 *   The number of descendant nodes that were affected
 	 *
 	 * @public
 	 * @see #expand
 	 */
-	_AggregationCache.prototype.collapse = function (sGroupNodePath) {
+	_AggregationCache.prototype.collapse = function (sGroupNodePath, bAll) {
 		const oGroupNode = this.getValue(sGroupNodePath);
 		const oCollapsed = _AggregationHelper.getCollapsedObject(oGroupNode);
 		_Helper.updateAll(this.mChangeListeners, sGroupNodePath, oGroupNode, oCollapsed);
-		this.oTreeState.collapse(oGroupNode);
+		this.oTreeState.collapse(oGroupNode, bAll);
 
 		const aElements = this.aElements;
 		const iIndex = aElements.indexOf(oGroupNode);
@@ -396,20 +400,29 @@ sap.ui.define([
 			iCount += 1; // collapse subtotals at bottom
 		}
 
-		for (let i = iIndex + 1; i < iIndex + 1 + iCount; i += 1) {
+		let iRemaining = iCount; // with bAll this is the count of the direct children in the end
+		for (let i = iIndex + 1; i < iIndex + 1 + iRemaining; i += 1) {
+			const oElement = aElements[i];
+			if (bAll && oElement["@$ui5.node.isExpanded"]) {
+				iRemaining
+					-= this.collapse(_Helper.getPrivateAnnotation(oElement, "predicate"), 1);
+			}
 			// exceptions of selection are effectively kept alive (with recursive hierarchy)
-			if (!this.isSelectionDifferent(aElements[i])) {
+			if (!this.isSelectionDifferent(oElement)) {
+				delete aElements.$byPredicate[_Helper.getPrivateAnnotation(oElement, "predicate")];
 				delete aElements.$byPredicate[
-					_Helper.getPrivateAnnotation(aElements[i], "predicate")];
-				delete aElements.$byPredicate[
-					_Helper.getPrivateAnnotation(aElements[i], "transientPredicate")];
+					_Helper.getPrivateAnnotation(oElement, "transientPredicate")];
 			}
 		}
-		const aSpliced = aElements.splice(iIndex + 1, iCount);
-		aSpliced.$level = oGroupNode["@$ui5.node.level"];
-		aSpliced.$rank = _Helper.getPrivateAnnotation(oGroupNode, "rank");
-		_Helper.setPrivateAnnotation(oGroupNode, "spliced", aSpliced);
-		aElements.$count -= iCount;
+		const aSpliced = aElements.splice(iIndex + 1, iRemaining);
+		// with collapse all do not remember the collapsed nodes in a multi-level first level cache
+		const iLevel = oGroupNode["@$ui5.node.level"];
+		if (!bAll || !this.bUnifiedCache && iLevel >= this.oAggregation.expandTo) {
+			aSpliced.$level = iLevel;
+			aSpliced.$rank = _Helper.getPrivateAnnotation(oGroupNode, "rank");
+			_Helper.setPrivateAnnotation(oGroupNode, "spliced", aSpliced);
+		}
+		aElements.$count -= iRemaining;
 
 		return iCount;
 	};
@@ -763,7 +776,8 @@ sap.ui.define([
 			});
 			return SyncPromise.resolve(iCount);
 		}
-		if (this.bUnifiedCache || iLevels > 1) {
+		if (this.bUnifiedCache || iLevels > 1
+				|| oGroupNode["@$ui5.node.level"] < this.oAggregation.expandTo) {
 			return SyncPromise.resolve(-1); // refresh needed
 		}
 

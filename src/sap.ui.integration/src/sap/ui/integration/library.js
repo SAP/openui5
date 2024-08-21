@@ -253,6 +253,60 @@ sap.ui.define([
 	};
 
 	/**
+	 * Card message strip types.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @experimental since 1.128
+	 */
+	thisLib.CardMessageType = {
+		/**
+		 * Message should be just an information
+		 * @public
+		 */
+		Information : "Information",
+
+		/**
+		 * Message is a warning
+		 * @public
+		 */
+		Warning : "Warning",
+
+		/**
+		 * Message is an error
+		 * @public
+		 */
+		Error : "Error",
+
+		/**
+		 * Message has no specific level
+		 * @public
+		 */
+		None : "None",
+
+		/**
+		 * Message is a success message
+		 * @public
+		 */
+		Success : "Success",
+
+		/**
+		 * Message is an informative brief toast message.
+		 * For this type the default behavior is to auto close.
+		 * @public
+		 */
+		Toast : "Toast",
+
+		/**
+		 * Informs the user that the content is busy at that moment with a loading operation.
+		 * Blocks the content from interaction.
+		 * @public
+		 */
+		Loading : "Loading"
+
+	};
+
+	/**
 	 * Card blocking message types.
 	 *
 	 * @enum {string}
@@ -261,7 +315,7 @@ sap.ui.define([
 	 */
 	thisLib.CardBlockingMessageType = {
 		/**
-		 * An error ocurred in the card.
+		 * An error occurred in the card.
 		 * @public
 		 */
 		Error: "Error",
@@ -386,6 +440,7 @@ sap.ui.define([
 	DataType.registerEnum("sap.ui.integration.CardDataMode", thisLib.CardDataMode);
 	DataType.registerEnum("sap.ui.integration.CardDesign", thisLib.CardDesign);
 	DataType.registerEnum("sap.ui.integration.CardDisplayVariant", thisLib.CardDisplayVariant);
+	DataType.registerEnum("sap.ui.integration.CardMessageType", thisLib.CardMessageType);
 	DataType.registerEnum("sap.ui.integration.CardBlockingMessageType", thisLib.CardBlockingMessageType);
 	DataType.registerEnum("sap.ui.integration.CardPreviewMode", thisLib.CardPreviewMode);
 	DataType.registerEnum("sap.ui.integration.AttributesLayoutType", thisLib.AttributesLayoutType);

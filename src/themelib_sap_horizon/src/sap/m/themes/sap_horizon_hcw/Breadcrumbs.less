@@ -24,12 +24,11 @@
 		background: transparent;
 		border: none;
 
-		// Default styles
+		/* Default styles */
 		.sapMSltIcon {
 			display: flex;
 			align-items: center;
 			gap: 0.2rem;
-
 			margin-top: 0.1rem;
 
 			&::before,
@@ -38,15 +37,15 @@
 			}
 
 			&::before {
-				content: "••• ";
-				font-family: @sapUiFontLightFamily;
+				content: '••• ';
+				font-family: var(--sapFontLightFamily);
 			}
 
 			&::after {
-				content: "\e1ef";
-				font-family: @sapUiContentIconFontFamily;
+				content: '\e1ef';
+				font-family: var(--sapContent_IconFontFamily);
 				font-size: @sapMFontMediumSize;
-				color: @sapUiLink;
+				color: var(--sapLinkColor);
 				speak: none;
 			}
 		}
@@ -56,7 +55,7 @@
 			outline: 0.125rem dotted @sapUiHcStandardForeground;
 			outline-offset: -0.125rem;
 
-			.sapMSltIcon:before {
+			.sapMSltIcon::before {
 				border-bottom: none;
 			}
 		}

@@ -2166,7 +2166,7 @@ sap.ui.define([
 								]
 							},
 							{
-								title: 'Show Message',
+								title: 'Messages',
 								key: 'showMessage',
 								experimental: true,
 								mockServer: true,
@@ -2181,6 +2181,26 @@ sap.ui.define([
 										url: '/samples/extension/showMessage/ShowMessageExtension.js',
 										name: 'ShowMessageExtension.js',
 										key: 'ShowMessageExtension.js'
+									}
+								]
+							},
+							{
+								title: 'Message Types',
+								key: 'messageTypes',
+								experimental: true,
+								settings: {
+									columns: 5
+								},
+								files: [
+									{
+										url: '/samples/extension/messages/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/extension/messages/SampleExtension.js',
+										name: 'SampleExtension.js',
+										key: 'SampleExtension.js'
 									}
 								]
 							},

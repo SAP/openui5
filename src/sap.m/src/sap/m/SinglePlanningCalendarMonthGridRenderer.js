@@ -120,6 +120,10 @@ sap.ui.define([
 			oRm.openEnd();
 
 			oRm.openStart("div");
+			oRm.attr("role", "gridcell" );
+			oRm.openEnd();
+
+			oRm.openStart("div");
 			oRm.class("sapMSinglePCBlockers");
 			oRm.class("sapUiCalendarRowVisFilled");
 			oRm.attr("role", "list" );
@@ -138,6 +142,7 @@ sap.ui.define([
 			}
 
 			oRm.close("div"); // end appointments
+			oRm.close("div");
 
 			for (j = 0; j < iColumns; j++) {
 				iCellIndex = i * iColumns + j;
@@ -517,7 +522,6 @@ sap.ui.define([
 			oFirstRenderedDate.setDate(oFirstRenderedDate.getDate() + 1);
 
 			oRm.accessibilityState(null, {
-				role: "columnheader",
 				label: aWeekDaysWide[iDayIndex]
 			});
 			oRm.openEnd();

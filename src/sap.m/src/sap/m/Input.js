@@ -170,8 +170,7 @@ function(
 	var Input = InputBase.extend("sap.m.Input", /** @lends sap.m.Input.prototype */ {
 		metadata : {
 			interfaces : [
-				"sap.ui.core.IAccessKeySupport",
-				"sap.m.IToolbarInteractiveControl"
+				"sap.ui.core.IAccessKeySupport"
 			],
 			library : "sap.m",
 			properties : {
@@ -3509,19 +3508,6 @@ function(
 		return this._sProposedItemText;
 	};
 
-	/**
-	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
-	 * Determines if the Control is interactive.
-	 *
-	 * @returns {boolean} If it is an interactive Control
-	 *
-	 * @private
-	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
-	 */
-	Input.prototype._getToolbarInteractive = function () {
-		return true;
-	};
-
 	// support for SemanticFormElement
 	Input.prototype.getFormFormattedValue = function() {
 		var sValue = this.getValue();
@@ -3537,7 +3523,6 @@ function(
 	Input.prototype.getFormObservingProperties = function() {
 		return ["value", "description"];
 	};
-
 
 	/**
 	 * Check if the current value is matching with a suggestion item.

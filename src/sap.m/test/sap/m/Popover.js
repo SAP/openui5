@@ -418,6 +418,36 @@ sap.ui.define([
 				  oPopover.openBy(this);
 			  }
 		  }),
+		  new Button({
+			  text: "WithH WithS",
+			  press() {
+				  new Popover({
+					  title: "Popover with Header and Subheader",
+					  subHeader: new Bar({
+						  contentMiddle: [
+							  new SearchField({
+								  placeholder: "Search ...",
+								  width: "100%"
+							  })
+						  ]
+					  }),
+					  content: [
+						  new List({
+							  inset: true,
+							  items: [
+								  new StandardListItem({
+									  title: "Title",
+									  description: "Description"
+								  })
+							  ]
+						  })
+					  ],
+					  afterClose() {
+						  this.destroy();
+					  }
+				  }).openBy(this);
+			  }
+		  }),
 		  oButton10
 	  ]
   });
@@ -453,7 +483,11 @@ sap.ui.define([
 		  oCustomCssButton,
 	  ],
 	  content: [
-		  oOverflowingPopover, oVBox, oButton14, oButton15, oButton16
+		  oOverflowingPopover,
+		  oVBox,
+		  oButton14,
+		  oButton15,
+		  oButton16
 	  ]
   }).addStyleClass("sapUiContentPadding");
 

@@ -111,18 +111,59 @@ sap.ui.define([
 		oTreeState.collapse("~oNode~");
 
 		assert.deepEqual(oTreeState.mPredicate2ExpandLevels,
-			{"~predicate~" : {NodeID : "~sNodeId~", Levels : 0}});
+			{"~predicate~" : {collapseAll : undefined, NodeID : "~sNodeId~", Levels : 0}});
 
 		// code under test
 		oTreeState.collapse("~oNode~");
 
 		assert.deepEqual(oTreeState.mPredicate2ExpandLevels,
-			{"~predicate~" : {NodeID : "~sNodeId~", Levels : 0}});
+			{"~predicate~" : {collapseAll : undefined, NodeID : "~sNodeId~", Levels : 0}});
 
 		// code under test
 		oTreeState.expand("~oNode~");
 
 		assert.deepEqual(oTreeState.mPredicate2ExpandLevels, {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("collapse all/expand", function (assert) {
+		const oTreeState = new _TreeState("~sNodeProperty~");
+
+		this.mock(_Helper).expects("getPrivateAnnotation").twice()
+			.withExactArgs("~oNode~", "predicate").returns("~predicate~");
+		this.mock(_Helper).expects("drillDown").twice()
+			.withExactArgs("~oNode~", "~sNodeProperty~")
+			.returns("~sNodeId~");
+
+		// code under test
+		oTreeState.collapse("~oNode~", true);
+
+		assert.deepEqual(oTreeState.mPredicate2ExpandLevels,
+			{"~predicate~" : {collapseAll : true, NodeID : "~sNodeId~", Levels : 0}});
+
+		// code under test
+		oTreeState.expand("~oNode~", 42);
+
+		assert.deepEqual(oTreeState.mPredicate2ExpandLevels,
+			{"~predicate~" : {NodeID : "~sNodeId~", Levels : 42}});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("collapse: bAll=1", function (assert) {
+		const oTreeState = new _TreeState("~sNodeProperty~");
+		oTreeState.mPredicate2ExpandLevels = {
+			"~predicate~" : {collapseAll : false, NodeID : "~sNodeId~", Levels : 0},
+			foo : "bar"
+		};
+
+		this.mock(_Helper).expects("getPrivateAnnotation")
+			.withExactArgs("~oNode~", "predicate")
+			.returns("~predicate~");
+
+		// code under test
+		oTreeState.collapse("~oNode~", 1);
+
+		assert.deepEqual(oTreeState.mPredicate2ExpandLevels, {foo : "bar"});
 	});
 
 	//*********************************************************************************************
@@ -195,11 +236,18 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oTreeState.getExpandLevels(), undefined);
 
-		oTreeState.mPredicate2ExpandLevels["foo"] = {bar : 42};
-		oTreeState.mPredicate2ExpandLevels["baz"] = {qux : 23};
+		oTreeState.mPredicate2ExpandLevels = {
+			foo : {collapseAll : true, NodeID : "baz", Levels : 42},
+			bar : {collapseAll : false, NodeID : "qux", Levels : 23}
+		};
+		const sPredicate2ExpandLevels = JSON.stringify(oTreeState.mPredicate2ExpandLevels);
 
 		// code under test
-		assert.strictEqual(oTreeState.getExpandLevels(), '[{"bar":42},{"qux":23}]');
+		assert.strictEqual(oTreeState.getExpandLevels(),
+			'[{"NodeID":"baz","Levels":42},{"NodeID":"qux","Levels":23}]');
+
+		assert.strictEqual(JSON.stringify(oTreeState.mPredicate2ExpandLevels),
+			sPredicate2ExpandLevels);
 
 		this.mock(oTreeState).expects("resetOutOfPlace").withExactArgs();
 

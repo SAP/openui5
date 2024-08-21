@@ -20,6 +20,7 @@
 					parameters: {operationMode: 'Server'}
 				}"
 				threshold="15"
+				scrollThreshold="50"
 				enableBusyIndicator="true"
 				ariaLabelledBy="title">
 				<noData>

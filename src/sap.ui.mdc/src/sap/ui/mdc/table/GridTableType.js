@@ -3,7 +3,10 @@
  */
 
 sap.ui.define([
-	"./TableTypeBase", "sap/m/table/Util", "sap/ui/mdc/enums/TableRowCountMode", "sap/ui/core/Lib"
+	"./TableTypeBase",
+	"sap/m/table/Util",
+	"sap/ui/mdc/enums/TableRowCountMode",
+	"sap/ui/core/Lib"
 ], (
 	TableTypeBase,
 	MTableUtil,
@@ -83,6 +86,25 @@ sap.ui.define([
 					type: "int",
 					group: "Appearance",
 					defaultValue: 0
+				},
+
+				/**
+				 * Number of records to be requested from the model when the user scrolls through the table.
+				 *
+				 * The property defines how many additional (not yet visible) data records from the back-end system
+				 * are pre-fetched during scrolling. If the <code>scrollThreshold</code> is lower than the number of
+				 * visible rows, the number of visible rows is used as the <code>scrollThreshold</code>. If the value
+				 * is 0, thresholding is disabled.
+				 *
+				 * <b>Note:</b> This property only takes effect if it is set to a positive integer value. Otherwise
+				 * the <code>threshold</code> property is used.
+				 *
+				 * @since 1.128
+				 */
+				scrollThreshold: {
+					type: "int",
+					group: "Behavior",
+					defaultValue: -1
 				}
 			}
 		}
@@ -199,6 +221,7 @@ sap.ui.define([
 					return iThreshold > -1 ? iThreshold : undefined;
 				}
 			},
+			scrollThreshold: "{$sap.ui.mdc.Table#type>/scrollThreshold}",
 			noData: oTable._getNoDataText(),
 			extension: [oTable._oToolbar],
 			ariaLabelledBy: [oTable._oTitle],
@@ -471,6 +494,11 @@ sap.ui.define([
 		}
 
 		return aStyleClasses;
+	};
+
+	GridTableType.prototype.setScrollThreshold = function(iThreshold) {
+		this.setProperty("scrollThreshold", iThreshold, true);
+		return this;
 	};
 
 	return GridTableType;

@@ -38,7 +38,7 @@
 		},
 		{
 			"control": "sap.ui.layout.DynamicSideContent",
-			"url": "../DynamicSideContent.html",
+			"url": "./DynamicSideContent.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{

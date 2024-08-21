@@ -57,7 +57,6 @@ sap.ui.define([
 		oRm.renderControl(oControl.getAggregation("_columnHeaders"));
 		this.renderBlockersContainer(oRm, oControl);
 		oRm.openStart("div");
-		oRm.attr("role", "grid");
 		oRm.class("sapMSinglePCGridContent");
 		oRm.openEnd();
 		this.renderRowHeaders(oRm, oControl);
@@ -179,6 +178,10 @@ sap.ui.define([
 			oBlockersList = oControl._getBlockersToRender().oBlockersList;
 
 		oRm.openStart("div");
+		oRm.attr("role", "gridcell");
+		oRm.openEnd();
+
+		oRm.openStart("div");
 		oRm.attr("role", "list");
 		oRm.attr("aria-labelledby", InvisibleText.getStaticId("sap.m", "SPC_BLOCKERS"));
 		oRm.class("sapMSinglePCBlockers");
@@ -189,6 +192,8 @@ sap.ui.define([
 			that.renderBlockerAppointment(oRm, oControl, oBlocker);
 		});
 		oRm.close("div"); // END .sapMSinglePCBlockers
+
+		oRm.close("div");
 	};
 
 	SinglePlanningCalendarGridRenderer.renderBlockerAppointment = function(oRm, oControl, oBlockerNode) {
@@ -508,11 +513,16 @@ sap.ui.define([
 
 		if (oAppointmentsByDate) {
 			oRm.openStart("div");
+			oRm.attr("role", "gridcell");
+			oRm.openEnd();
+
+			oRm.openStart("div");
 			oRm.attr("role", "list");
 			oRm.class("sapMSinglePCAppointments");
 			oRm.class("sapUiCalendarRowVisFilled"); // TODO: when refactor the CSS of appointments maybe we won't need this class
 
 			oRm.openEnd();
+
 			oAppointmentsByDate.oAppointmentsList.getIterator().forEach(function (oAppointmentNode) {
 				var iMaxLevel = oAppointmentsByDate.iMaxLevel,
 					iLevel = oAppointmentNode.level,
@@ -522,6 +532,7 @@ sap.ui.define([
 				that.renderAppointment(oRm, oControl, iMaxLevel, iLevel, iWidth, oAppointment, oColumnDate, iColumn, iIndex);
 				iIndex++;
 			});
+			oRm.close("div");
 			oRm.close("div");
 		}
 	};

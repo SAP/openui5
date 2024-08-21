@@ -58,9 +58,8 @@
 	border-bottom-right-radius: 0;
 }
 
-.sapFCard.sapUiIntCardStandard .sapFCardHeaderBanner {
-	/* the banner feature is not yet available for standard card variant */
-	display: none!important;
+.sapUiIntCard .sapFCardContentMessageContainer {
+	padding-top: 0;
 }
 
 .sapUiIntCardCustomImage {
@@ -74,4 +73,150 @@
 	visibility: hidden;
 }
 
+.sapUiIntCard .sapFCardBaseContent.sapFCardBaseContentHasMessageLoading>.sapUiLocalBusyIndicator {
+	background-color: @sapUiTileBackground;
+	opacity: 0.4;
+	transition: unset;
 
+	.sapUiLocalBusyIndicatorAnimation {
+		visibility: hidden;
+	}
+}
+
+.sapUiIntCard .sapFCardContentMessageContainer .sapFCardContentMessage {
+	pointer-events: all;
+	box-shadow: 0 0 12px 0 @sapUiListBorderColor;
+	width: 100%;
+	position: absolute;
+	border-right: 0;
+	border-left: 0;
+	border-radius: 0;
+
+	&.sapFCardContentMessageToast {
+		background-color: @sapUiTileBackground;
+		border-color: @sapUiGroupContentBorderColor;
+
+		.sapMBtn .sapMBtnInner:not(:hover):not(:active) {
+			background-color: transparent;
+			border-color: transparent;
+		}
+	}
+
+	&.sapFCardContentMessageLoading {
+		background-color: @sapUiTileBackground;
+		z-index: 1;
+		clip-path: polygon(0 0, 100% 0, 100% 0, 75% 0, 50% 0, 25% 1px, 0 3px);
+		border-top-width: 2px;
+		border-top-color: @sapUiContentBusyColor;
+		opacity: 0.6;
+		animation: sapUiIntCardLoadingMessage 2s linear infinite;
+	}
+}
+
+@keyframes sapUiIntCardLoadingMessage {
+	0% {
+		clip-path: polygon(0 0, 100% 0, 100% 0, 75% 0, 50% 0, 25% 1px, 0 3px);
+	}
+
+	17% {
+		clip-path: polygon(0 0, 100% 0, 100% 0, 75% 0, 50% 1px, 25% 3px, 0 1px);
+	}
+
+	34% {
+		clip-path: polygon(0 0, 100% 0, 100% 0, 75% 1px, 50% 3px, 25% 1px, 0 0);
+	}
+
+	51% {
+		clip-path: polygon(0 0, 100% 0, 100% 1px, 75% 3px, 50% 1px, 25% 0, 0 0);
+	}
+
+	66% {
+		clip-path: polygon(0 0, 100% 0, 100% 3px, 75% 1px, 50% 0, 25% 0, 0 0);
+	}
+
+	84% {
+		clip-path: polygon(0 0, 100% 0, 100% 1px, 75% 0, 50% 0, 25% 0, 0 1px);
+	}
+
+	100% {
+		clip-path: polygon(0 0, 100% 0, 100% 0, 75% 0, 50% 0, 25% 1px, 0 3px);
+	}
+}
+
+html[data-sap-ui-animation='on'] .sapUiIntCard .sapFCardContentMessageContainer .sapFCardContentMessage:not(.sapFCardContentMessageLoading):not(.sapUiIntCardShowMessageFinished) {
+	animation: sapUiIntCardShowMessage 0.4s ease-in-out;
+}
+
+@keyframes sapUiIntCardShowMessage {
+	0% {
+		opacity: 0.7;
+		clip-path: polygon(0 0, 30% 1px, 30% 1px, 0 1px);
+	}
+
+	40% {
+		opacity: 1;
+		clip-path: polygon(0 0, 100% 0, 100% 1px, 0 1px);
+	}
+
+	100% {
+		clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+		opacity: 1;
+	}
+}
+
+html[data-sap-ui-animation='on'] .sapUiIntCard .sapFCardContentMessageContainer .sapFCardContentMessage:not(.sapUiIntCardMessageIconAppearFinished) {
+	.sapMMsgStripIcon {
+		animation: sapUiIntCardMessageIconAppear 0.5s 0.4s ease-in-out;
+		transform: scale(0);
+		opacity: 0;
+		animation-fill-mode: forwards;
+	}
+}
+
+@keyframes sapUiIntCardMessageIconAppear {
+	0% {
+		transform: scale(0);
+	}
+
+	50% {
+		transform: scale(1.18);
+		opacity: 1;
+	}
+
+	80% {
+		transform: scale(0.9);
+		opacity: 0.7;
+	}
+
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+html[data-sap-ui-animation='on'] .sapUiIntCard .sapFCardContentMessageContainer .sapFCardContentMessageClosing:not(.sapFCardContentMessageLoading) {
+	animation: sapUiIntCardHideMessage 0.4s ease-in-out;
+
+}
+
+.sapFCardContentMessage.sapUiIntCardHideMessageFinished {
+	/* prevents a re-appearing effect on close */
+	visibility: hidden;
+}
+
+@keyframes sapUiIntCardHideMessage {
+	0% {
+		opacity: 1;
+		clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+	}
+
+	40% {
+		opacity: 1;
+		clip-path: polygon(0 0, 100% 0, 100% 1px, 0 1px);
+	}
+
+	100% {
+		clip-path: polygon(0 0, 100% 0, 100% 1px, 0 1px);
+		opacity: 0;
+	}
+}

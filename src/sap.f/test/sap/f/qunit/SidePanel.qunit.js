@@ -495,6 +495,26 @@ sap.ui.define([
 		assert.ok(document.querySelector(".sapMMenu"), "Context menu is opened after pressing Shift + F10");
 	});
 
+
+	QUnit.test("Icon with empty src is not rendered when side panel is expanded", async function (assert) {
+		addItems(this.oSP);
+
+		// Act - select item 0 with empty icon src
+		this.oSP.getItems()[0].setIcon('');
+		this.oSP.setSelectedItem(this.oSP.getItems()[0]);
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(this.oSP.getDomRef().querySelector(".sapFSPSideContentHeader > .sapUiIcon"), "There is no icon rendered when the icon src is empty");
+
+		// Act - select item 1 with non-empty icon src
+		this.oSP.setSelectedItem(this.oSP.getItems()[1]);
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(this.oSP.getDomRef().querySelector(".sapFSPSideContentHeader > .sapUiIcon"), "There is icon rendered when the icon src is not empty");
+	});
+
 	QUnit.module("Resizing", {
 		beforeEach : async function() {
 			this.oSP = new SidePanel();

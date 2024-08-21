@@ -208,7 +208,6 @@ sap.ui.define([
 
 	oStateSelect = new Select("select", {
 		name: "select-object-state",
-		tooltip: "Object Number state",
 		items: [oItemNone, oItemWarning, oItemError, oItemSuccess],
 		change: function(oControlEvent) {
 			on3.setState(oControlEvent.getParameter("selectedItem").getKey());

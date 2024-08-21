@@ -1520,16 +1520,20 @@ sap.ui.define([
 	 * @public
 	 * @experimental As of version 1.81
 	 * @param {string} sMessage The message.
-	 * @param {sap.ui.core.MessageType} sType Type of the message.
+	 * @param {sap.ui.integration.CardMessageType} sType Type of the message.
+	 * @param {boolean} bAutoClose Close the message automatically. Default is <code>false</code> for most message types.
+	 * 	It is <code>true</code> for message type <code>Toast</code>.
+	 * 	<b>Note</b> This property has no effect for message type <code>Loading</code>.
 	 */
-	Card.prototype.showMessage = function (sMessage, sType) {
+	Card.prototype.showMessage = function (sMessage, sType, bAutoClose) {
 		var oContent = this.getCardContent();
 
 		if (oContent && oContent.isA("sap.ui.integration.cards.BaseContent")) {
-			oContent.showMessage(sMessage, sType);
+			oContent.showMessage(sMessage, sType, bAutoClose);
 			this._oMessage = {
 				text: sMessage,
-				type: sType
+				type: sType,
+				autoClose: bAutoClose
 			};
 			this.scheduleFireStateChanged();
 		} else {

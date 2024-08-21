@@ -23,8 +23,6 @@
 	}
 }
 
-
-
 .sapMBsyIndAnimation(@name) {
 	animation: @name 1s linear 0s infinite normal none;
 }
@@ -49,17 +47,30 @@ html[data-sap-ui-animation-mode="none"] .sapMBsyIndIcon {
 
 html[data-sap-ui-animation-mode="basic"],
 html[data-sap-ui-animation-mode="minimal"] {
+
 	.sapMBsyIndIcon {
 		animation-duration: 12s;
 	}
 }
 
 @keyframes sapMBsyIndRotate {
-	from { transform:rotate(0deg) translateZ(0); }
-	to { transform:rotate(360deg) translateZ(0); }
+
+	from {
+		transform:rotate(0deg) translateZ(0);
+	}
+
+	to {
+		transform:rotate(360deg) translateZ(0);
+	}
 }
 
 @keyframes sapMBsyIndRotateRTL {
-	from { transform:rotate(0deg) translateZ(0); }
-	to { transform:rotate(-360deg) translateZ(0); }
+
+	from {
+		transform:rotate(0deg) translateZ(0);
+	}
+
+	to {
+		transform:rotate(-360deg) translateZ(0);
+	}
 }

@@ -3033,6 +3033,35 @@ sap.ui.define([
 		oPopover.destroy();
 	});
 
+	QUnit.module("Initial rendering with hidden Popover");
+
+	QUnit.test("Positioning before popover becomes visible (visibility: hidden), should not create temporary scrollbar in the whole page", async function (assert){
+		const done = assert.async();
+		const oPopover = new Popover({
+			content: [
+				new HTML({content: "<div style='height: 100000px; width: 100px; border: 1px solid red'></div>"})
+			],
+			afterOpen: function () {
+				oPopover.destroy();
+			}
+		});
+		const fnRealApplyPosition = oPopover.oPopup._applyPosition;
+		const oButton = new Button();
+		oButton.placeAt("content");
+		const fInitialDocScrollHeight = document.documentElement.scrollHeight;
+		await nextUIUpdate(this.clock);
+
+		oPopover.oPopup._applyPosition = function() {
+			assert.ok(document.documentElement.scrollHeight === fInitialDocScrollHeight, "Document scroll height should not change");
+
+			fnRealApplyPosition.apply(oPopover.oPopup, arguments);
+			done();
+		};
+
+		// Act
+		oPopover.openBy(oButton);
+	});
+
 	// include stylesheet and let test starter wait for it
 	return includeStylesheet({
 		url: sap.ui.require.toUrl("test-resources/sap/m/qunit/Popover.css")

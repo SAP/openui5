@@ -45,22 +45,30 @@ sap.ui.define([
 		 * Collapse a node.
 		 *
 		 * @param {object} oNode - The node
+		 * @param {boolean|number} bAll
+		 *   Whether collapsing completely; <code>undefined</code> means a simple collapse,
+		 *   <code>true</code> collapsing all at this node, <code>1</code> a nested node below
+		 *   a collapse all
 		 *
 		 * @public
 		 */
-		collapse(oNode) {
+		collapse(oNode, bAll) {
 			if (!this.sNodeProperty) {
 				return;
 			}
 
 			const sPredicate = _Helper.getPrivateAnnotation(oNode, "predicate");
 			const oExpandLevel = this.mPredicate2ExpandLevels[sPredicate];
-			if (oExpandLevel && oExpandLevel.Levels !== 0) {
+			if (bAll === 1 || oExpandLevel && oExpandLevel.Levels !== 0) {
 				delete this.mPredicate2ExpandLevels[sPredicate];
 			} else {
 				// must have NodeId as the node may be missing when calling #getExpandLevels
 				const sNodeId = _Helper.drillDown(oNode, this.sNodeProperty);
-				this.mPredicate2ExpandLevels[sPredicate] = {NodeID : sNodeId, Levels : 0};
+				this.mPredicate2ExpandLevels[sPredicate] = {
+					collapseAll : bAll,
+					NodeID : sNodeId,
+					Levels : 0
+				};
 			}
 		}
 
@@ -150,12 +158,15 @@ sap.ui.define([
 			}
 			const sPredicate = _Helper.getPrivateAnnotation(oNode, "predicate");
 			const oExpandLevel = this.mPredicate2ExpandLevels[sPredicate];
-			if (oExpandLevel && !oExpandLevel.Levels) {
+			if (oExpandLevel && !oExpandLevel.Levels && !oExpandLevel.collapseAll) {
 				delete this.mPredicate2ExpandLevels[sPredicate];
 			} else {
 				// must have NodeId as the node may be missing when calling #getExpandLevels
 				const sNodeId = _Helper.drillDown(oNode, this.sNodeProperty);
-				this.mPredicate2ExpandLevels[sPredicate] = {NodeID : sNodeId, Levels : iLevels};
+				this.mPredicate2ExpandLevels[sPredicate] = {
+					NodeID : sNodeId,
+					Levels : iLevels
+				};
 			}
 		}
 
@@ -169,7 +180,12 @@ sap.ui.define([
 		 */
 		getExpandLevels() {
 			const aExpandLevels = Object.values(this.mPredicate2ExpandLevels);
-			return aExpandLevels.length ? JSON.stringify(aExpandLevels) : undefined;
+			return aExpandLevels.length
+				? JSON.stringify(aExpandLevels.map((oExpandLevel) => {
+						// filter out collapseAll
+						return {NodeID : oExpandLevel.NodeID, Levels : oExpandLevel.Levels};
+					}))
+				: undefined;
 		}
 
 		/**

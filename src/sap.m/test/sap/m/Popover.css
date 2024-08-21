@@ -4,22 +4,22 @@ body {
 
 .positioned11 {
 	position: absolute !important;
-	top: 250px;
+	top: 300px;
 }
 
 .positioned14 {
 	position: absolute !important;
-	top: 300px;
+	top: 350px;
 }
 
 .positioned15 {
 	position: absolute !important;
-	top: 350px;
+	top: 400px;
 }
 
 .positioned16 {
 	position: absolute !important;
-	top: 400px;
+	top: 450px;
 }
 
 .customClassForVisualTests {

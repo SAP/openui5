@@ -3033,6 +3033,28 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("#_getScrollThreshold", function(assert) {
+		const oTable = this.oTable;
+
+		assert.equal(oTable.getThreshold(), 100, "Default threshold");
+		assert.equal(oTable.getScrollThreshold(), -1, "Default scrollThreshold");
+		assert.equal(oTable._getScrollThreshold(), 100, "Default scrollThreshold is threshold");
+
+		oTable.setThreshold(50);
+		assert.equal(oTable._getScrollThreshold(), 50, "Default scrollThreshold is threshold");
+
+		oTable.setScrollThreshold(200);
+		assert.equal(oTable._getScrollThreshold(), 200, "Default threshold");
+	});
+
+	QUnit.test("#setScrollThreshold", function(assert) {
+		const oTable = this.oTable;
+		const fnInvalidateSpy = sinon.spy(oTable, "invalidate");
+
+		oTable.setScrollThreshold(200);
+		assert.ok(fnInvalidateSpy.notCalled, "invalidate() not called");
+	});
+
 	QUnit.test("#onThemeChanged", function(assert) {
 		const fnInvalidate = sinon.spy(this.oTable, "invalidate");
 		this.oTable.onThemeChanged();
@@ -4093,6 +4115,7 @@ sap.ui.define([
 
 		this.oTable.setFirstVisibleRow(1);
 		assert.equal(oUpdateRowsSpy.callCount, 1, "Change 'firstVisibleRow': 'UpdateRows' hook was called once");
+		assert.notOk(this.oTable._bScrolled, "Scroll flag was not set");
 		assert.ok(oUpdateRowsSpy.calledWithExactly(TableUtils.RowsUpdateReason.FirstVisibleRowChange),
 			"Change 'firstVisibleRow': 'UpdateRows' hook was correctly called");
 		oUpdateRowsSpy.resetHistory();
@@ -4101,6 +4124,7 @@ sap.ui.define([
 			onScroll: true
 		});
 		assert.equal(oUpdateRowsSpy.callCount, 1, "Change 'firstVisibleRow': 'UpdateRows' hook was called once");
+		assert.ok(this.oTable._bScrolled, "Scroll flag was set");
 		assert.ok(oUpdateRowsSpy.calledWithExactly(TableUtils.RowsUpdateReason.VerticalScroll),
 			"Change 'firstVisibleRow': 'UpdateRows' hook was correctly called");
 	});

@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/base/util/merge",
-	"sap/ui/integration/library"
+	"sap/ui/integration/library",
+	"sap/ui/core/message/MessageType"
 ], function (
 	BaseContentRenderer,
 	GenericPlaceholder,
@@ -41,19 +42,23 @@ sap.ui.define([
 	BindingHelper,
 	BindingResolver,
 	merge,
-	library
+	library,
+	MessageType
 ) {
 	"use strict";
 
 	// shortcut for sap.ui.core.InvisibleMessageMode
-	var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
+	const InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
 
 	// shortcut for sap.ui.integration.CardDesign
-	var CardDesign = library.CardDesign;
-	// shortcut for sap.ui.integration.CardBlockingMessageType
-	var CardBlockingMessageType = library.CardBlockingMessageType;
+	const CardDesign = library.CardDesign;
 
-	var CardPreviewMode = library.CardPreviewMode;
+	// shortcut for sap.ui.integration.CardBlockingMessageType
+	const CardBlockingMessageType = library.CardBlockingMessageType;
+
+	const CardMessageType = library.CardMessageType;
+
+	const CardPreviewMode = library.CardPreviewMode;
 
 	/**
 	 * Constructor for a new <code>BaseContent</code>.
@@ -359,26 +364,74 @@ sap.ui.define([
 	 * Displays a message strip above the content.
 	 *
 	 * @param {string} sMessage The message.
-	 * @param {sap.ui.core.MessageType} sType Type of the message.
+	 * @param {sap.ui.integration.CardMessageType} sType Type of the message.
+	 * @param {boolean} bAutoClose Close the message automatically. Default is <code>false</code> for most message types.
+	 * 	It is <code>true</code> for message type <code>Toast</code>.
+	 * 	<b>Note</b> This property has no effect for message type <code>Loading</code>.
 	 * @private
 	 * @ui5-restricted sap.ui.integration
 	 */
-	BaseContent.prototype.showMessage = function (sMessage, sType) {
-		var oMessagePopup = this._getMessageContainer();
-		var oMessage = new MessageStrip({
-			text: BindingHelper.createBindingInfos(sMessage, this.getCardInstance().getBindingNamespaces()),
-			type: sType,
-			showCloseButton: true,
-			showIcon: true,
-			close: function () {
-				this._getMessageContainer().destroy();
-			}.bind(this)
-		}).addStyleClass("sapFCardContentMessage");
-		var oDomRef = this.getDomRef();
+	BaseContent.prototype.showMessage = function (sMessage, sType, bAutoClose) {
+		const oMessagePopup = this._getMessageContainer();
 
-		oMessagePopup.destroyItems();
+		this.hideMessage();
+
+		if (sType === CardMessageType.Loading) {
+			bAutoClose = false;
+			this.addStyleClass("sapFCardBaseContentHasMessageLoading");
+			this.setBusyIndicatorDelay(0);
+			this.setBusy(true);
+		}
+
+		if (sType === CardMessageType.Toast) {
+			bAutoClose = bAutoClose ?? true;
+		}
+
+		const bIsSpecialType = sType === CardMessageType.Loading || sType === CardMessageType.Toast;
+		const oMessage = new MessageStrip({
+			text: BindingHelper.createBindingInfos(sMessage, this.getCardInstance().getBindingNamespaces()),
+			type: bIsSpecialType ? MessageType.Information : sType,
+			showCloseButton: true,
+			showIcon: sType === CardMessageType.Loading ? false : true,
+			close: function () {
+				this.hideMessage();
+			}.bind(this)
+		});
+
+		oMessage.addStyleClass("sapFCardContentMessage");
+		oMessage.addStyleClass("sapFCardContentMessage" + sType);
+
+		const fnAnimationEnd = (oEvent) => {
+			// prevents animations from re-appearing after re-render
+			oMessage.addStyleClass(oEvent.animationName + "Finished");
+		};
+
+		oMessage.addEventDelegate({
+			onBeforeRendering: () => {
+				const oRef = oMessage.getDomRef();
+				oRef?.removeEventListener("animationend", fnAnimationEnd);
+				oRef?.removeEventListener("animationcancel", fnAnimationEnd);
+			},
+			onAfterRendering: () => {
+				const oRef = oMessage.getDomRef();
+				oRef.addEventListener("animationend", fnAnimationEnd);
+				oRef.addEventListener("animationcancel", fnAnimationEnd);
+			}
+		});
+
 		oMessagePopup.addItem(oMessage);
 
+		if (bAutoClose) {
+			const iDuration = sMessage ? Math.max(sMessage.split(" ").length * 250, 3000) : 3000; // sMessage.split(" ").length * 250 is a rough estimation of the time needed to read the message 4 words per second
+			setTimeout(() => {
+				oMessage.close();
+			}, iDuration + 400 ); // 0.4s the duration of the closing animation
+			setTimeout(() => {
+				oMessage.addStyleClass("sapFCardContentMessageClosing");
+			}, iDuration);
+		}
+
+		const oDomRef = this.getDomRef();
 		if (oDomRef && oDomRef.contains(document.activeElement)) {
 			InvisibleMessage.getInstance().announce(sMessage, InvisibleMessageMode.Assertive);
 		} else {
@@ -395,6 +448,11 @@ sap.ui.define([
 	BaseContent.prototype.hideMessage = function () {
 		var oMessagePopup = this._getMessageContainer();
 		oMessagePopup.destroyItems();
+
+		if (this.hasStyleClass("sapFCardBaseContentHasMessageLoading")) {
+			this.removeStyleClass("sapFCardBaseContentHasMessageLoading");
+			this.setBusy(false);
+		}
 	};
 
 	BaseContent.prototype.showBlockingMessage = function (mSettings) {
@@ -830,6 +888,7 @@ sap.ui.define([
 				renderType: mLibrary.FlexRendertype.Bare,
 				alignItems: mLibrary.FlexAlignItems.Center
 			}).addStyleClass("sapFCardContentMessageContainer");
+
 			this.setAggregation("_messageContainer", oMessageContainer);
 		}
 

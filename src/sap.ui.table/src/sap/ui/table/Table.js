@@ -159,14 +159,34 @@ sap.ui.define([
 			selectionBehavior: {type: "sap.ui.table.SelectionBehavior", group: "Behavior", defaultValue: SelectionBehavior.RowSelector},
 
 			/**
-			 * Defines how many additional (not yet visible) data records from the back-end system are pre-fetched to enable smooth scrolling.
-			 * The threshold is always added to the <code>visibleRowCount</code>. If the <code>visibleRowCount</code> is 10 and the
-			 * <code>threshold</code> is 100, there will be 110 records fetched with the initial load.
-			 * If the <code>threshold</code> is lower than the number of rows in the scrollable area (<code>visibleRowCount</code> minus number of
-			 * fixed rows), this number is used as the <code>threshold</code>.
-			 * If the value is 0, thresholding is disabled.
+			 * Defines how many additional (not yet visible) data records from the back-end system are pre-fetched to enable
+			 * smooth scrolling. The threshold is always added to the number of rows. If the number of rows is 10 and the
+			 * <code>threshold</code> is 100, 110 records will be fetched with the initial load. This property affects
+			 * requests triggered by changes in the binding, for example, initial loading, sorting, filtering, etc. The
+			 * threshold that is applied during scrolling can be configured with the <code>scrollThreshold</code> property.
+			 * If the <code>threshold</code> is lower than the number of rows in the scrollable area (<code>visibleRowCount</code>
+			 * minus number of fixed rows), this number is used as the <code>threshold</code>. If the value is 0, thresholding
+			 * is disabled.
 			 */
-			threshold: {type: "int", group: "Appearance", defaultValue: 100},
+			threshold: {type: "int", group: "Behavior", defaultValue: 100},
+
+			/**
+			 * Defines how many additional data records are requested from the back-end system when the user scrolls vertically
+			 * in the table. The <code>scrollThreshold</code> is always added to the number of rows. If the number of rows is 10
+			 * and the <code>scrollThreshold</code> is 100, 110 records will be fetched during scrolling. The threshold that is
+			 * applied to requests that are not initiated by scrolling can be configured with the <code>threshold</code> property.
+			 * If the <code>scrollThreshold</code> is lower than the number of rows in the scrollable area (number of rows minus
+			 * number of fixed rows), this number is used as the <code>scrollThreshold</code>. If the value is 0, no threshold is
+			 * applied during scrolling. The value -1 applies the same value as the <code>threshold</code> property.
+			 *
+			 * <b>Note:</b> This property only takes effect if it is set to a positive integer value.
+			 *
+			 * For <code>AnalyticalTable</code> and <code>TreeTable</code>, the <code>scrollThreshold</code> property must be
+			 * higher than the <code>threshold</code> property to take effect.
+			 *
+			 * @since 1.128
+			 */
+			scrollThreshold: {type: "int", group: "Behavior", defaultValue: -1},
 
 			/**
 			 * Flag to enable or disable column reordering
@@ -762,6 +782,15 @@ sap.ui.define([
 		 * @type {boolean}
 		 */
 		this._bContextsAvailable = false;
+
+		/*
+		 * Flag that indicates whether the user scrolled through the table.
+		 * It is <code>false</code> if the current scroll position was set via API or the binding has been initialized or refreshed.
+		 * It is set in {@link sap.ui.table.Table#_setFirstVisibleRowIndex} and {@link sap.ui.table.Table#updateRows}.
+		 *
+		 * @type {boolean}
+		 */
+		this._bScrolled = false;
 
 		this._aRowClones = [];
 		this._bRowAggregationInvalid = true;
@@ -1581,6 +1610,7 @@ sap.ui.define([
 
 		if (bRowsUpdateRequired) {
 			if (!mOptions.suppressRendering) {
+				this._bScrolled = mOptions.onScroll;
 				triggerRowsUpdate(this, mOptions.onScroll
 										? TableUtils.RowsUpdateReason.VerticalScroll
 										: TableUtils.RowsUpdateReason.FirstVisibleRowChange);
@@ -1972,7 +2002,7 @@ sap.ui.define([
 	Table.prototype._getRowContexts = function(iRequestLength) {
 		const oBinding = this.getBinding();
 		const mRowCounts = this._getRowCounts();
-		let iThreshold = this.getThreshold();
+		let iThreshold = this._bScrolled ? this._getScrollThreshold() : this.getThreshold();
 
 		iRequestLength = iRequestLength == null ? mRowCounts.count : iRequestLength;
 
@@ -2097,6 +2127,7 @@ sap.ui.define([
 	 */
 	Table.prototype.refreshRows = function(sReason) {
 		this._bContextsAvailable = false;
+		this._bScrolled = false;
 
 		if (sReason === ChangeReason.Sort || sReason === ChangeReason.Filter) {
 			this.setFirstVisibleRow(0);
@@ -2120,6 +2151,8 @@ sap.ui.define([
 		if (this.bIsDestroyed || this._bIsBeingDestroyed) {
 			return;
 		}
+
+		this._bScrolled = false;
 
 		if (oEventInfo.detailedReason === "AddVirtualContext") {
 			createVirtualRow(this);
@@ -3101,6 +3134,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the threshold value, which will be added to all data requests
+	 * initiated by scrolling if the <code>Table</code> is bound against
+	 * an OData service.
+	 *
+	 * @param {int} iThreshold The threshold for scrolling
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
+	 * @public
+	 */
+	Table.prototype.setScrollThreshold = function(iThreshold) {
+		this.setProperty("scrollThreshold", iThreshold, true);
+		return this;
+	};
+
+	/**
 	 * Checks whether the event is a touch event.
 	 *
 	 * @param {jQuery.Event} oEvent The event to check
@@ -3674,6 +3721,23 @@ sap.ui.define([
 	 */
 	Table.prototype.findElements = function() {
 		return excludeHiddenDepdendents(this, Control.prototype.findElements.apply(this, arguments));
+	};
+
+	/**
+	 * Returns the threshold that is applied during scrolling. The returned
+	 * integer is based on the <code>scrollThreshold</code> property in combination
+	 * with the <code>threshold</code> property.
+	 *
+	 * @returns {number} The threshold that is applied during scrolling
+	 */
+	Table.prototype._getScrollThreshold = function() {
+		const iScrollThreshold = this.getScrollThreshold();
+
+		if (iScrollThreshold === -1) {
+			return this.getThreshold();
+
+		}
+		return iScrollThreshold;
 	};
 
 	return Table;

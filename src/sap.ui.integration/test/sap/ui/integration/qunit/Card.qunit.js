@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/integration/util/DataProvider",
 	"sap/ui/integration/util/Manifest",
 	"sap/ui/integration/library",
-	"sap/ui/core/message/MessageType",
 	"sap/ui/core/Manifest",
 	"sap/base/Log",
 	"sap/ui/core/ComponentContainer",
@@ -42,7 +41,6 @@ sap.ui.define([
 		DataProvider,
 		CardManifest,
 		library,
-		MessageType,
 		CoreManifest,
 		Log,
 		ComponentContainer,
@@ -66,10 +64,11 @@ sap.ui.define([
 	) {
 		"use strict";
 
-		var DOM_RENDER_LOCATION = "qunit-fixture";
+		const DOM_RENDER_LOCATION = "qunit-fixture";
 
-		var CardDataMode = library.CardDataMode;
-		var CardBlockingMessageType = library.CardBlockingMessageType;
+		const CardDataMode = library.CardDataMode;
+		const CardBlockingMessageType = library.CardBlockingMessageType;
+		const CardMessageType = library.CardMessageType;
 
 		var oManifest_ListCard = {
 			"sap.app": {
@@ -1200,7 +1199,7 @@ sap.ui.define([
 			this.oCard.showMessage();
 		});
 
-		QUnit.test("Message container is destroyed when the message is closed", async function (assert) {
+		QUnit.test("Message is destroyed when the message is closed", async function (assert) {
 			var done = assert.async();
 
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
@@ -1211,13 +1210,14 @@ sap.ui.define([
 			var oDelegate = {
 				onAfterRendering: function () {
 					var oMessageContainer = oContent.getAggregation("_messageContainer");
-					var oMessageContainerDestroySpy = this.spy(oMessageContainer, "destroy");
+					var oMessage = oMessageContainer.getItems()[0];
+					var oMessageDestroySpy = this.spy(oMessage, "destroy");
 
 					// Act
-					oMessageContainer.getItems()[0].fireClose();
+					oMessage.fireClose();
 
 					// Assert
-					assert.ok(oMessageContainerDestroySpy.called, "Message container should be destroyed");
+					assert.ok(oMessageDestroySpy.called, "Message container should be destroyed");
 
 					oContent.removeEventDelegate(oDelegate);
 					done();
@@ -1260,7 +1260,7 @@ sap.ui.define([
 			// Act
 			this.oCard.showMessage();
 			this.oCard.showMessage();
-			this.oCard.showMessage("Last message", MessageType.Success);
+			this.oCard.showMessage("Last message", CardMessageType.Success);
 		});
 
 		QUnit.test("showMessage text containing expression binding with card formatters", async function (assert) {
@@ -1287,7 +1287,7 @@ sap.ui.define([
 			oContent.addEventDelegate(oDelegate);
 
 			// Act
-			this.oCard.showMessage("{= format.text('My {0} text', ['inserted'])}", MessageType.Error);
+			this.oCard.showMessage("{= format.text('My {0} text', ['inserted'])}", CardMessageType.Error);
 		});
 
 		QUnit.test("Any messages are removed after calling hideMessage", async function (assert) {
