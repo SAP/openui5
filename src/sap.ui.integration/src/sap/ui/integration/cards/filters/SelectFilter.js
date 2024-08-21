@@ -82,6 +82,10 @@ sap.ui.define([
 	SelectFilter.prototype.getValueForModel = function () {
 		var oSelectedItem = this._getSelect().getSelectedItem();
 
+		if (!oSelectedItem) {
+			oSelectedItem = this._getSelect().getItems()[0];
+		}
+
 		if (oSelectedItem) {
 			return {
 				value: oSelectedItem.getKey(),
