@@ -55,6 +55,17 @@ sap.ui.define([
 		});
 	}
 
+	function waitForDialog(fnSuccess) {
+		return this.waitFor({
+			controlType: "sap.m.Dialog",
+			matchers: function(oDialog) {
+				return oDialog.getVisible();
+			},
+			success: fnSuccess,
+			errorMessage: "No Dialog was found"
+		});
+	}
+
 	return Opa5.createPageObjects({
 		onTheApp: {
 			actions: {
@@ -581,6 +592,91 @@ sap.ui.define([
 						},
 						errorMessage: `No ValueHelp with ID "${sValueHelpId}" was found`
 					});
+				},
+
+				/**
+				 * Open the table type configuration dialog
+				 * @returns {Promise} OPA waitFor
+				 */
+				iOpenTableTypeConfiguration: function(sButtonId) {
+					return this.waitFor({
+						id: sButtonId,
+						controlType: "sap.m.Button",
+						actions: new Press(),
+						errorMessage: "No table type config button was found."
+					});
+				},
+				/**
+				 * Enter a number into a <code>sap.m.StepInput</code>
+				 * @param {string} sInputId ID of <code>sap.m.StepInput</code>
+				 * @param {number} iValue number to enter
+				 * @returns {Promise} OPA waitFor
+				 */
+				iEnterNumberInStepInput: function(sInputId, iValue) {
+					return waitForDialog.call(this, function(oDialog) {
+						this.waitFor({
+							id: sInputId,
+							searchOpenDialogs: true,
+							controlType: "sap.m.StepInput",
+							actions: new EnterText({
+								text: `${iValue}`,
+								pressEnterKey: true
+							}),
+							errorMessage: `No StepInput with ID ${sInputId} was found`
+						});
+					});
+				},
+				/**
+				 * Enter the given text into the <code>sap.m.Input</code>
+				 * @param {string} sInputId ID of <code>sap.m.Input</code>
+				 * @param {*} sValue text to enter
+				 * @returns {Promise} OPA waitFor
+				 */
+				iEnterTextInInput: function(sInputId, sValue) {
+					return waitForDialog.call(this, function(oDialog) {
+						this.waitFor({
+							id: sInputId,
+							searchOpenDialogs: true,
+							controlType: "sap.m.Input",
+							actions: new EnterText({
+								text: sValue,
+								pressEnterKey: true
+							}),
+							errorMessage: `No Input with ID ${sInputId} was found`
+						});
+					});
+				},
+				/**
+				 * Closes the dialog
+				 * @param {string} sDialogId ID of <code>sap.m.Dialog</code>
+				 * @returns {Promise} OPA waitFor
+				 */
+				iCloseConfigurationDialog: function(sDialogId) {
+					return this.waitFor({
+						id: sDialogId,
+						controlType: "sap.m.Dialog",
+						success: function(oDialog) {
+							oDialog.close();
+						},
+						errorMessage: "Dialog was not found"
+					});
+				},
+				/**
+				 * Switches the table type via the <code>sap.m.Select</code> control
+				 * @param {string} sSelectId ID of <code>sap.m.Select</code>
+				 * @param {string} sType table type
+				 * @returns {Promise} OPA waitFor
+				 */
+				iSwitchTableType: function(sSelectId, sType) {
+					return this.waitFor({
+						id: sSelectId,
+						controlType: "sap.m.Select",
+						actions: new EnterText({
+							text: sType,
+							pressEnterKey: true
+						}),
+						errorMessage: `No Select with ID ${sSelectId} was found`
+					});
 				}
 			},
 			assertions: {
@@ -761,6 +857,61 @@ sap.ui.define([
 							Opa5.assert.ok(oButton, "Download button is visible");
 						},
 						errorMessage: "No Download button found"
+					});
+				},
+				/**
+				 * Checks whether the inner table has the expected type.
+				 * @param {string} vTable ID of table control
+				 * @param {string} sTableType table type (e.g. sap.ui.table.Table)
+				 * @returns {Promise} OPA waitFor
+				 */
+				iShouldSeeTableType: function(vTable, sTableType) {
+					return waitForTable.call(this, vTable, {
+						success(oTable) {
+							this.waitFor({
+								controlType: sTableType,
+								matchers: new Ancestor(oTable),
+								success: function(aInnerTable) {
+									Opa5.assert.ok(true, `Inner table is ${sTableType}`);
+								}
+							});
+						}
+					});
+				},
+				/**
+				 * Checks whether the inner table has the expected configuration.
+				 * @param {string} vTable ID of table control
+				 * @param {object} mConfig map of table configuration
+				 * @returns {Promise} OPA waitFor
+				 */
+				iShouldSeeTableWithConfig: function(vTable, sTableType, mConfig) {
+					return waitForTable.call(this, vTable, {
+						success(oTable) {
+							this.waitFor({
+								controlType: sTableType,
+								matchers: new Ancestor(oTable),
+								success: function(aInnerTable) {
+									const oInnerTable = aInnerTable[0];
+									Object.entries(mConfig).forEach(([sProp, oValue]) => {
+										const sValue = oValue.value;
+										switch (oValue.type) {
+											case "rowMode":
+												if (sProp == "rowCountMode") {
+													Opa5.assert.ok(oInnerTable.getRowMode().isA(sValue), `${sProp} is a ${sValue}`);
+												} else {
+													Opa5.assert.equal(oInnerTable.getRowMode().getProperty(sProp), sValue, `${sProp} has value ${sValue}`);
+												}
+												break;
+											case "selection":
+												Opa5.assert.equal(oInnerTable.getDependents()[0].getProperty(sProp), sValue, `${sProp} has value ${sValue}`);
+												break;
+											default:
+												Opa5.assert.equal(oInnerTable.getProperty(sProp), sValue, `${sProp} has value ${sValue}`);
+										}
+									});
+								}
+							});
+						}
 					});
 				}
 			}
