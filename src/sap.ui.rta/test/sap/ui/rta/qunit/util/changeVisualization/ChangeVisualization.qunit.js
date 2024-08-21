@@ -204,7 +204,12 @@ sap.ui.define([
 	async function startVisualization(oRta) {
 		oRta.setMode("visualization");
 		await waitForMethodCall(oRta.getToolbar(), "setModel");
-		await nextUIUpdate;
+		await nextUIUpdate();
+	}
+
+	async function stopVisualization(oRta) {
+		oRta.setMode("adaptation");
+		await nextUIUpdate();
 	}
 
 	function getIndicatorForElement(aIndicators, sId) {
@@ -965,7 +970,8 @@ sap.ui.define([
 					2,
 					"then only changes with the fileType \"change\" are applied and visible"
 				);
-				assert.strictEqual(this.oRta.getToolbar().getModel("visualizationModel").getData().sortedChanges.relevantHiddenChanges.length,
+				assert.strictEqual(
+					this.oRta.getToolbar().getModel("visualizationModel").getData().sortedChanges.relevantHiddenChanges.length,
 					4,
 					"the variants and related changes are part of the hidden changes"
 				);
@@ -986,7 +992,8 @@ sap.ui.define([
 					2,
 					"then only the other changes are applied and visible"
 				);
-				assert.strictEqual(this.oRta.getToolbar().getModel("visualizationModel").getData().sortedChanges.relevantHiddenChanges.length,
+				assert.strictEqual(
+					this.oRta.getToolbar().getModel("visualizationModel").getData().sortedChanges.relevantHiddenChanges.length,
 					1,
 					"the app descriptor change is part of the hidden changes"
 				);
@@ -1048,7 +1055,10 @@ sap.ui.define([
 			return startVisualization(this.oRta).then(function() {
 				var fnClickSpy = sandbox.spy(this.oChangeVisualization, "_fnOnClickHandler");
 				this.oChangeVisualization.exit();
-				assert.ok(this.oChangeVisualization._oChangeIndicatorRegistry._bIsBeingDestroyed, "then the ChangeIndicatorRegistry is destroyed");
+				assert.ok(
+					this.oChangeVisualization._oChangeIndicatorRegistry._bIsBeingDestroyed,
+					"then the ChangeIndicatorRegistry is destroyed"
+				);
 				var oRootOverlay = OverlayRegistry.getOverlay("Comp1");
 				var oMouseEvent = new Event("click");
 				oRootOverlay.getDomRef().dispatchEvent(oMouseEvent);
@@ -1132,9 +1142,15 @@ sap.ui.define([
 				this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
 				await nextUIUpdate();
 				var aIndicators = collectIndicatorReferences();
-				var iYPosIndicator1 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].y + getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].height / 2);
+				var iYPosIndicator1 = _round(
+					getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].y +
+					getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].height / 2
+				);
 				var iXPosIndicator1 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].x);
-				var iYPosIndicator2 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].y + getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].height / 2);
+				var iYPosIndicator2 = _round(
+					getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].y +
+					getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].height / 2
+				);
 				var iXPosIndicator2 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].x);
 				assert.ok(
 					(iYPosIndicator1 === iYPosIndicator2) && (iXPosIndicator1 < iXPosIndicator2),
@@ -1143,11 +1159,13 @@ sap.ui.define([
 				);
 
 				assert.ok(
-					getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").tabIndex < getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").tabIndex,
+					getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").tabIndex <
+					getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").tabIndex,
 					"the first indicator has lower tabIndex than the second one"
 				);
 				assert.ok(
-					getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").tabIndex < getIndicatorForElement(aIndicators, "Comp1---idMain1--Label1").tabIndex,
+					getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").tabIndex <
+					getIndicatorForElement(aIndicators, "Comp1---idMain1--Label1").tabIndex,
 					"the second indicator has lower tabIndex than the third one"
 				);
 				// Overlay 1 has lowest x/y-position, thus should be focused first
@@ -1340,6 +1358,35 @@ sap.ui.define([
 
 			await nextUIUpdate();
 			checkOnClasses(oHoveredOverlay, oRelatedIndicatorOverlay);
+		});
+
+		QUnit.test("overlay focusability", async function(assert) {
+			prepareChanges([
+				createMockChange("testRename", "rename", "Comp1---idMain1--Label1")
+			]);
+			await startRta.call(this);
+			await startVisualization.call(this, this.oRta);
+			this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
+			await nextUIUpdate();
+			const oOverlayWithChange = OverlayRegistry.getOverlay("Comp1---idMain1--Label1");
+			assert.strictEqual(oOverlayWithChange.getFocusable(), true, "then in CViz the overlay with a change is focusable");
+			const oOverlayWithoutChange = OverlayRegistry.getOverlay("Comp1---idMain1--rb2");
+			assert.strictEqual(
+				oOverlayWithoutChange.getFocusable(),
+				false,
+				"then in CViz the overlay without a change is not focusable"
+			);
+			await stopVisualization.call(this, this.oRta);
+			assert.strictEqual(
+				oOverlayWithChange.getFocusable(),
+				true,
+				"then back in adaptation mode the overlay with change is still focusable"
+			);
+			assert.strictEqual(
+				oOverlayWithoutChange.getFocusable(),
+				true,
+				"then back in adaptation mode the overlay without change is focusable again"
+			);
 		});
 	});
 
