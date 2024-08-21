@@ -424,9 +424,6 @@ function(
 				});
 			}
 
-			/**
-			 * @deprecated As of version 1.20
-			 */
 			this._navBtn.setType(this.getNavButtonType());
 			this._navBtn.setTooltip(sBackText);
 		};
