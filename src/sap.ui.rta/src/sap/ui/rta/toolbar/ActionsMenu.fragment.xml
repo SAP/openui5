@@ -72,5 +72,14 @@
 				visible="{= (${controls>/restore/visible} &amp;&amp; ((${controls>/modeSwitcher} === 'visualization') || (${controls>/modeSwitcher} === 'adaptation')))}"
 				press=".restore"
 				text="{i18n>BTN_RESTORE}" />
+		<MenuItem
+				id="sapUiRta_openWhatsNewDialogOverview"
+				icon="sap-icon://newspaper"
+				enabled="false"
+				visible="false"
+				type="Transparent"
+				text="{i18n>BTN_WHATS_NEW_DIALOG_OVERVIEW}"
+				press=".openWhatsNewOverviewDialog"
+				ariaHasPopup="Dialog"/>
 	</Menu>
 </core:FragmentDefinition>

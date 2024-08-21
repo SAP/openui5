@@ -1,0 +1,75 @@
+<core:FragmentDefinition
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:f="sap.f"
+	xmlns:util="sap.ui.fl.util">
+	<Dialog
+		id="sapUiRtaWhatsNewOverviewDialog"
+		title="What's New in Key User Adaptation"
+		contentWidth="50rem"
+		contentHeight="33rem"
+		horizontalScrolling="false">
+		<List id="whatsNewOverview" items="{path: 'whatsNewModel>/featureCollection'}" visible="{whatsNewModel>overviewActive}">
+			<StandardListItem description="{whatsNewModel>description}" title="{whatsNewModel>title}" press=".onSelectListItem" type="Active"/>
+		</List>
+		<VBox  id="whatsNewItemPage" visible="{= ${whatsNewModel>overviewActive} === false}">
+			<VBox height="100%" width="100%" >
+				<Title text="{whatsNewModel>title} :" class="sapUiMediumMarginTop sapUiLargeMarginBegin sapUiTinyMarginBottom" level="H3"/>
+				<VBox class="sapUiSmallMargin sapUiLargeMarginBegin sapUiLargeMarginEnd" >
+					<VBox height="100%" width="100%" items="{whatsNewModel>information}">
+						<HBox alignItems="Center" class=" sapUiSmallMarginBottom ">
+								<Text
+									visible="{= (${whatsNewModel>image} === null ? true : false) &amp;&amp; (${whatsNewModel>text} !== null ? true : false)}"
+									text="{whatsNewModel>text}"
+									class="sapUiMediumMarginEnd"/>
+								<Image
+									src= "{whatsNewModel>image}"
+									visible="{= (${whatsNewModel>image} !== null ? true : false) &amp;&amp; (${whatsNewModel>text} === null ? true : false)}"
+									class=" sapUiMediumMarginEnd"
+									width="100%"
+									/>
+								<grid:CSSGrid
+									visible="{= (${whatsNewModel>image} !== null ? true : false) &amp;&amp; (${whatsNewModel>text} !== null ? true : false)}"
+									gridTemplateColumns="2fr 3fr"
+									gridGap="1rem">
+									<Image
+										src= "{whatsNewModel>image}"
+										decorative="true"
+										densityAware="false"
+										class=" sapUiMediumMarginEnd"
+										width="100%"
+										/>
+									<HBox alignItems="Center">
+										<Text text="{whatsNewModel>text}"/>
+									</HBox>
+							</grid:CSSGrid>
+						</HBox>
+					</VBox>
+				</VBox>
+			</VBox>
+		</VBox>
+		<footer>
+			<Toolbar>
+				<content>
+					<ToolbarSpacer />
+					<Button
+						id="sapUiRtaWhatsNewOverviewDialog_LearnMore"
+						visible="{= ${whatsNewModel>overviewActive} === false}"
+						text="{i18n>BTN_LEARN_MORE_WHATS_NEW_DIALOG}"
+						press="tbd"/>
+					<Button
+						id="sapUiRtaWhatsNewOverviewDialog_ButtonClose"
+						visible="{whatsNewModel>overviewActive}"
+						text="{i18n>BTN_CLOSE_FEEDBACK_DIALOG}"
+						press=".closeWhatsNewOverviewDialog"/>
+					<Button
+						id="sapUiRtaWhatsNewOverviewDialog_ButtonBack"
+						visible="{= ${whatsNewModel>overviewActive} === false}"
+						text="{i18n>BTN_BACK_WHATS_NEW_OVERVIEW_DIALOG}"
+						press=".backToOverview"/>
+				</content>
+			</Toolbar>
+		</footer>
+	</Dialog>
+</core:FragmentDefinition>

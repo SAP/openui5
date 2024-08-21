@@ -817,6 +817,38 @@ sap.ui.define([
 					]
 				}
 			},
+			"util/whatsNew/WhatsNew": {
+				group: "Whats New",
+				qunit: {
+					reorder: false
+				},
+				ui5: {
+					resourceroots: {
+						"sap.ui.rta.test": "test-resources/sap/ui/rta/testdata"
+					}
+				},
+				coverage: {
+					only: [
+						"sap/ui/rta/util/whatsNew/WhatsNew"
+					]
+				}
+			},
+			"util/whatsNew/WhatsNewOverview": {
+				group: "Whats New Overview",
+				qunit: {
+					reorder: false
+				},
+				ui5: {
+					resourceroots: {
+						"sap.ui.rta.test": "test-resources/sap/ui/rta/testdata"
+					}
+				},
+				coverage: {
+					only: [
+						"sap/ui/rta/util/whatsNew/WhatsNewOverview"
+					]
+				}
+			},
 			"Generic Testsuite": {
 				page: "test-resources/sap/ui/rta/qunit/testsuite.generic.qunit.html"
 			}

@@ -1,0 +1,106 @@
+<core:FragmentDefinition
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:f="sap.f"
+	xmlns:util="sap.ui.fl.util">
+	<Dialog
+		id="sapUiRtaWhatsNewDialog"
+		title="{i18n>TIT_WHATS_NEW_DIALOG}"
+		contentWidth="50rem"
+		contentHeight="33rem"
+		horizontalScrolling="false">
+		<content>
+			<Carousel
+				id="sapWhatsNewDialogCarousel"
+				loop="true"
+				pageIndicatorBackgroundDesign="Translucent"
+				pageIndicatorBorderDesign="None" pages="{path: 'whatsNewModel>/featureCollection'}"
+				height="33rem"
+				width="100%">
+				<pages>
+					<Page enableScrolling="true" showHeader="false" id="whatsNewPage">
+						<VBox id="whatsNewDialogOverview" alignItems="Start" visible="{= ${whatsNewModel>overview} !== undefined ? true : false}">
+							<Title text="{whatsNewModel>overviewTitle}" class="sapUiMediumMarginTop sapUiLargeMarginBegin sapUiTinyMarginBottom" level="H3"/>
+							<f:Card width="44rem" height="24rem" class="sapUiLargeMarginBeginEnd sapUiSmallMarginBottom">
+								<f:content>
+									<VBox items="{whatsNewModel>overview}" class="sapUiSmallMargin">
+										<Link
+											text="{whatsNewModel>newFeatureTitle}"
+											class="sapUiTinyMarginBottom"
+											press=".scrollCarousel('whatsNewPage-sapWhatsNewDialogCarousel-', ${path: 'whatsNewModel>index'})"/>
+									</VBox>
+								</f:content>
+							</f:Card>
+						</VBox>
+						<VBox
+							id="whatsNewDialogContent"
+							height="100%" width="100%"
+							visible="{= ${whatsNewModel>overview} === undefined ? true : false}">
+							<Title text="{whatsNewModel>title}" class="sapUiMediumMarginTop sapUiLargeMarginBegin sapUiTinyMarginBottom" level="H3"/>
+							<f:Card width="44rem" height="24rem" class="sapUiLargeMarginBeginEnd sapUiSmallMarginBottom">
+								<f:content>
+									<Page enableScrolling="true" showHeader="false">
+										<VBox class="sapUiSmallMargin" >
+											<VBox height="100%" width="100%" items="{whatsNewModel>information}">
+												<HBox alignItems="Center" class=" sapUiSmallMarginBottom ">
+													<Text
+														id="whatsNewDialogText"
+														visible="{= (${whatsNewModel>image} === null ? true : false) &amp;&amp; (${whatsNewModel>text} !== null ? true : false)}"
+														text="{whatsNewModel>text}"
+														class="sapUiMediumMarginEnd"/>
+													<Image
+														id="whatsNewDialogImage"
+														src= "{whatsNewModel>image}"
+														visible="{= (${whatsNewModel>image} !== null ? true : false) &amp;&amp; (${whatsNewModel>text} === null ? true : false)}"
+														class=" sapUiMediumMarginEnd"
+														width="100%"
+														/>
+													<grid:CSSGrid
+														id="whatsNewDialogGrid"
+														visible="{= (${whatsNewModel>image} !== null ? true : false) &amp;&amp; (${whatsNewModel>text} !== null ? true : false)}"
+														gridTemplateColumns="2fr 3fr"
+														gridGap="1rem">
+														<Image
+															src= "{whatsNewModel>image}"
+															decorative="true"
+															densityAware="false"
+															class=" sapUiMediumMarginEnd"
+															width="100%"
+															/>
+														<HBox alignItems="Center">
+															<Text text="{whatsNewModel>text}"/>
+														</HBox>
+													</grid:CSSGrid>
+												</HBox>
+											</VBox>
+										</VBox>
+									</Page>
+								</f:content>
+							</f:Card>
+						</VBox>
+					</Page>
+				</pages>
+			</Carousel>
+		</content>
+		<footer>
+			<Toolbar>
+				<content>
+					<CheckBox
+						id="whatsNewDialog_DontShowAgain"
+						text="{i18n>TXT_DONT_SHOW_AGAIN_WHATS_NEW_DIALOG}">
+					</CheckBox>
+					<ToolbarSpacer />
+					<Button
+						id="sapUiRtaWhatsNewDialog_LearnMore"
+						text="{i18n>BTN_LEARN_MORE_WHATS_NEW_DIALOG}"
+						press="tbd"/>
+					<Button
+						id="sapUiRtaWhatsNewDialog_ButtonClose"
+						text="{i18n>BTN_CLOSE_FEEDBACK_DIALOG}"
+						press=".closeWhatsNewDialog"/>
+				</content>
+			</Toolbar>
+		</footer>
+	</Dialog>
+</core:FragmentDefinition>

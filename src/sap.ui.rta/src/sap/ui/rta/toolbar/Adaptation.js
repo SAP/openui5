@@ -21,6 +21,8 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
 	"sap/ui/rta/toolbar/translation/Translation",
 	"sap/ui/rta/toolbar/versioning/Versioning",
+	"sap/ui/rta/util/whatsNew/WhatsNew",
+	"sap/ui/rta/util/whatsNew/WhatsNewOverview",
 	"sap/ui/rta/Utils"
 ], function(
 	AdaptationRenderer,
@@ -41,6 +43,8 @@ sap.ui.define([
 	SaveAsAdaptation,
 	Translation,
 	Versioning,
+	WhatsNew,
+	WhatsNewOverview,
 	Utils
 ) {
 	"use strict";
@@ -252,7 +256,8 @@ sap.ui.define([
 					overviewForDeveloper: onOverviewForDeveloperPressed.bind(this),
 					restore: this.eventHandler.bind(this, "Restore"),
 					formatSaveAsEnabled,
-					saveAs: onSaveAsPressed.bind(this)
+					saveAs: onSaveAsPressed.bind(this),
+					openWhatsNewOverviewDialog
 				}
 			}).then(function(oMenu) {
 				oMenu.addStyleClass(Utils.getRtaStyleClassName());
@@ -468,6 +473,10 @@ sap.ui.define([
 
 	function onManageAppsPressed() {
 		AppVariantFeature.onGetOverview(true, this.getRtaInformation().flexSettings.layer);
+	}
+
+	function openWhatsNewOverviewDialog() {
+		WhatsNewOverview.openWhatsNewOverviewDialog();
 	}
 
 	Adaptation.prototype.getControl = function(sName) {
