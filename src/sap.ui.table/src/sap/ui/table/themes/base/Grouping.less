@@ -81,10 +81,14 @@
 	vertical-align: middle;
 	margin-left: -2px;
 	margin-right: 2px;
-}
 
-.sapUiSizeCozy .sapUiTableGroupIcon::before {
-	width: @_sap_ui_table_RowSelectorWidthCozy;
+	.sapUiSizeCozy & {
+		width: @_sap_ui_table_RowSelectorWidthCozy;
+	}
+
+	.sapUiTableRowHighlights.sapUiTableRowSelectors & {
+		margin-left: calc(-2px ~'+' @_sap_ui_table_RowHighlightWidth);
+	}
 }
 
 .sapUiTableGroupIcon.sapUiTableGroupIconOpen::before,
@@ -124,15 +128,21 @@ html[dir=rtl] {
 	.sapUiTableGroupHeaderFading(@_sap_ui_table_Grouping_GroupHeaderBackground);
 }
 
-.sapUiTableGroupHeaderRow > .sapUiTableRowSelectionCell:focus .sapUiTableGroupIcon {
-	outline-width: @_sap_ui_table_Grouping_GroupOutlineWidth;
-	outline-style: @sapUiContentFocusStyle;
-	outline-offset: 0;
-	outline-color: @sapUiContentFocusColor;
-}
+.sapUiTableGroupHeaderRow > .sapUiTableRowSelectionCell:focus {
+	& .sapUiTableGroupIcon {
+		outline-width: @_sap_ui_table_Grouping_GroupOutlineWidth;
+		outline-style: @sapUiContentFocusStyle;
+		outline-offset: 0;
+		outline-color: @sapUiContentFocusColor;
 
-.sapUiTableGroupHeaderRow > .sapUiTableRowSelectionCell:focus::before {
-	outline: none;
+		.sapUiSizeCondensed & {
+			outline-width: 0.0625rem;
+		}
+	}
+
+	&::before {
+		outline: none !important;
+	}
 }
 
 .sapUiTableGroupHeaderRow > .sapUiTableCell.sapUiTableCellFirst:focus::before,
