@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/RequestDataProvider",
+	"sap/ui/integration/Host",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
@@ -10,6 +11,7 @@ sap.ui.define([
 ], function (
 	library,
 	RequestDataProvider,
+	Host,
 	Card,
 	qutils,
 	nextUIUpdate,
@@ -180,7 +182,8 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oCard = new Card({
 				width: "400px",
-				height: "600px"
+				height: "600px",
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
 			});
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		},
@@ -469,6 +472,123 @@ sap.ui.define([
 			"The winner is second player",
 			"Binding should be resolved"
 		);
+	});
+
+	QUnit.test("Parameters in submit action event", async function (assert) {
+		const done = assert.async();
+		const oCard = this.oCard;
+		const oHost = new Host();
+
+		assert.expect(6);
+
+		oCard.setHost(oHost);
+		oCard.setManifest({
+			"sap.app": {
+				"id": "test.adaptive.submit.action.event.parameters",
+				"type": "card"
+			},
+			"sap.card": {
+				"extension": "./extensions/ExtensionSample",
+				"type": "Object",
+				"data": {
+					"json": {
+						"initialSelection": "reason1",
+						"reasons": [
+							{
+								"id": "reason1",
+								"title": "Reason 1"
+							},
+							{
+								"id": "reason2",
+								"title": "Reason 2"
+							}
+						]
+					}
+				},
+				"header": {
+					"title": "PR255 - MacBook Purchase"
+				},
+				"content": {
+					"groups": [
+						{
+							"alignment": "Stretch",
+							"items": [
+								{
+									"id": "myReason",
+									"label": "Reason",
+									"type": "ComboBox",
+									"selectedKey": "{/initialSelection}",
+									"item": {
+										"path": "/reasons",
+										"template": {
+											"key": "{id}",
+											"title": "{title}"
+										}
+									}
+								}
+							]
+						}
+					]
+				},
+				"footer": {
+					"actionsStrip": [
+						{
+							"text": "Submit",
+							"actions": [
+								{
+									"type": "Submit",
+									"parameters": {
+										"param1": "static",
+										"param2": "{form>/myReason/key}",
+										"param3": "{= ${form>/myReason/key} === 'reason1'}"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		});
+
+		const fnValidate = (oEvent) => {
+			const mFormData = oEvent.getParameter("formData");
+			const mParameters = oEvent.getParameter("parameters");
+
+			const mExpectedData = {
+					"myReason": {
+						"key": "reason1",
+						"value": "Reason 1"
+					}
+				};
+			const mExpectedParameters = {
+					"param1": "static",
+					"param2": "reason1",
+					"param3": true,
+					"data": mExpectedData // deprecated since 1.129
+				};
+
+			assert.deepEqual(mFormData, mExpectedData, "Data is properly passed to action handler.");
+			assert.deepEqual(mParameters, mExpectedParameters, "Processed parameter from form data is correct.");
+		};
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert
+		oCard.attachAction(fnValidate);
+
+		const oExtension = oCard.getAggregation("_extension");
+		oExtension.attachAction(fnValidate);
+
+		oHost.attachAction((oEvent) => {
+			fnValidate(oEvent);
+
+			oHost.destroy();
+			done();
+		});
+
+		// Act
+		const oButton = oCard.getCardFooter().getActionsStrip().getAggregation("_toolbar").getContent()[1];
+		oButton.firePress();
 	});
 
 });

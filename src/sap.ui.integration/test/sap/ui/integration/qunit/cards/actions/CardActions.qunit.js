@@ -1812,10 +1812,7 @@ sap.ui.define([
 					type: CardActionType.Submit
 				},
 				parameters: {
-					configuration: {},
-					data: {
-						foo: "bar"
-					}
+					param1: "test"
 				},
 				source: this.oCard.getCardContent()
 			};
@@ -1858,10 +1855,7 @@ sap.ui.define([
 					type: CardActionType.Submit
 				},
 				parameters: {
-					configuration: {},
-					data: {
-						foo: "bar"
-					}
+					param1: "test"
 				},
 				source: this.oCard.getCardContent()
 			};
