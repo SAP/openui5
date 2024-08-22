@@ -116,6 +116,13 @@ sap.ui.define([
 				return aSection.length && aSection[0];
 			},
 
+			isDocumentationItem: function(oItem) {
+				var contextPath = oItem.getBindingContextPath(),
+					oDataItem = this.getModel("searchData").getProperty(contextPath);
+
+				return oDataItem.category === "Documentation";
+			},
+
 			/**
 			 * Modify all search result links
 			 * The default modification is formatting of titles (hide/show trailing colons)
@@ -155,8 +162,8 @@ sap.ui.define([
 								sHref = new URL(sHref, document.baseURI).href;
 								sTarget = "_blank";
 							}
-							if (sQuery) {
-								sHref = `${sHref}?q=${sQuery}`;
+							if (sQuery && this.isDocumentationItem(oItem)) {
+								sHref = `${sHref}?q=${encodeURIComponent(sQuery)}`;
 							}
 							oLink.setHref(sHref);
 							oLink.setTarget(sTarget);
