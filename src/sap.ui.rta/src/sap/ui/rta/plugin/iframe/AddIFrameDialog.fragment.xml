@@ -420,7 +420,7 @@
 				type="Emphasized"
 				text="{dialogInfo>/text/saveText}"
 				press="onSavePress"
-				enabled="{=!!${dialogInfo>/frameUrl/value} &amp;&amp; !${dialogInfo>/frameUrlError/value}}"
+				enabled="{=!!${dialogInfo>/frameUrl/value} &amp;&amp; !${dialogInfo>/frameUrlError/value} &amp;&amp; ${dialogInfo>/areAllFieldsValid}}"
 			/>
 		</beginButton>
 		<endButton>
