@@ -174,6 +174,8 @@ sap.ui.define([
 				assert.ok(oContainer.getResizable(), "resizable");
 				assert.ok(oContainer.getDraggable(), "draggable");
 				assert.notOk(oContainer.isPopupAdaptationAllowed(), "isPopupAdaptationAllowed");
+				assert.ok(oContainer.hasStyleClass("sapUiSizeCozy"), "content density is set explicitly");
+
 
 				const aButtons = oContainer.getButtons();
 				assert.equal(aButtons.length, 2, "Buttons added");
