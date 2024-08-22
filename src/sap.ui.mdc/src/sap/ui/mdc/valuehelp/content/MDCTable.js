@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/m/library',
 	"sap/ui/table/library",
 	"sap/ui/mdc/p13n/Engine",
-	"sap/ui/mdc/enum/PersistenceMode"
+	"sap/ui/mdc/enum/PersistenceMode",
+	"sap/ui/mdc/util/DensityHelper"
 
 ], function(
 	FilterableListContent,
@@ -22,7 +23,8 @@ sap.ui.define([
 	mLibrary,
 	uiTableLibrary,
 	Engine,
-	PersistenceMode
+	PersistenceMode,
+	DensityHelper
 ) {
 	"use strict";
 
@@ -431,6 +433,7 @@ sap.ui.define([
 				this._addPromise("listBinding");
 			} else {
 				this._oTable = oTable;
+				DensityHelper.syncDensity(this._oTable);
 				Engine.getInstance().defaultProviderRegistry.attach(oTable, PersistenceMode.Transient);
 				this._oObserver.observe(oTable, {aggregations: ["_content"]});
 				this._sTableType = _getMDCTableType(oTable);
