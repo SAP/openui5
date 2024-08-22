@@ -784,6 +784,37 @@ sap.ui.define([
 		assert.ok(!Element.getElementById(oItemId), 'The item that does not fit in the filter is destroyed');
 	});
 
+	QUnit.test("use escapeSettingsValue() when creating internal controls", async function(assert) {
+		var oData = {
+				item0: "[test{test1]",
+				item1: "[test{test2]",
+				item2: "[test{test3]",
+				item3: "[test{test4]"
+			},
+			oModel = new JSONModel(oData),
+			oInternalMenuItems;
+
+		// Act
+		this.sut.setModel(oModel);
+		this.sut.addItem(new MenuItem({ text: "{/item0}" }));
+		this.sut.addItem(new MenuItem({ text: "{/item1}" }));
+		this.sut.addItem(new MenuItem({ text: "{/item2}" }));
+		this.sut.addItem(new MenuItem({ text: "{/item3}" }));
+		this.sut.openBy(this.oButton);
+		await nextUIUpdate(this.clock);
+		oInternalMenuItems = this.sut._getMenu().getItems();
+
+		// Assert
+		assert.strictEqual(oInternalMenuItems[0].getText(), oData.item0, 'The first item has proper text');
+		assert.strictEqual(oInternalMenuItems[1].getText(), oData.item1, 'The first item has proper text');
+		assert.strictEqual(oInternalMenuItems[2].getText(), oData.item2, 'The first item has proper text');
+		assert.strictEqual(oInternalMenuItems[3].getText(), oData.item3, 'The first item has proper text');
+
+		// Cleanup
+		oModel.destroy();
+		oModel = null;
+	});
+
 	QUnit.module('MenuItem(inside Menu)', {
 		beforeEach: async function () {
 			this.sut = new MenuItem({
