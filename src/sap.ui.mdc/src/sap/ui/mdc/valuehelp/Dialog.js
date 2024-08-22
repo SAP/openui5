@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/base/strings/formatMessage',
 	'sap/base/i18n/Localization',
 	'sap/ui/core/library',
-	'sap/ui/core/InvisibleMessage'
+	'sap/ui/core/InvisibleMessage',
+	'sap/ui/mdc/util/DensityHelper'
 ], (
 	Library,
 	Container,
@@ -31,7 +32,8 @@ sap.ui.define([
 	formatMessage,
 	Localization,
 	coreLibrary,
-	InvisibleMessage
+	InvisibleMessage,
+	DensityHelper
 ) => {
 	"use strict";
 
@@ -284,6 +286,8 @@ sap.ui.define([
 						afterClose: this.handleClosed.bind(this),
 						buttons: [this.oButtonOK, this.oButtonCancel]
 					});
+
+					DensityHelper.syncDensity(oDialog);
 
 					oDialog.setModel(this._oManagedObjectModel, "$help");
 					this.setAggregation("_container", oDialog, true);
