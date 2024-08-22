@@ -653,6 +653,7 @@ sap.ui.define([
 	 *        <li><code>object</code> - JSON object that will be serialized using <code>JSON.stringify</code></li>
 	 *        <li><code>function</code> - since version 1.103, a callback function that fetches the details asynchronously. It should return a promise that resolves with a <code>string</code> value or an <code>object</code>, or rejects - in this case a default error message will be displayed</li>
 	 *      <ul>
+	 * @param {sap.ui.core.CSSSize} [mOptions.contentWidth] The width of the MessageBox
 	 * @param {boolean} [mOptions.closeOnNavigation=true] Added since version 1.72.0. Whether the MessageBox will be closed automatically when a routing navigation occurs.
 	 * @param {sap.ui.core.Element} [mOptions.dependentOn] Added since version 1.124.0. Specifies an element to which the dialog will be added as a dependent.
 	 * @public
@@ -749,6 +750,7 @@ sap.ui.define([
 	 *        <li><code>object</code> - JSON object that will be serialized using <code>JSON.stringify</code></li>
 	 *        <li><code>function</code> - since version 1.103, a callback function that fetches the details asynchronously. It should return a promise that resolves with a <code>string</code> value or an <code>object</code>, or rejects - in this case a default error message will be displayed</li>
 	 *      <ul>
+	 * @param {sap.ui.core.CSSSize} [mOptions.contentWidth] The width of the MessageBox
 	 * @param {boolean} [mOptions.closeOnNavigation=true] Added since version 1.72.0. Whether the MessageBox will be closed automatically when a routing navigation occurs.
 	 * @param {sap.ui.core.Element} [mOptions.dependentOn] Added since version 1.124.0. Specifies an element to which the dialog will be added as a dependent.
 	 * @public
@@ -839,6 +841,7 @@ sap.ui.define([
 	 *        <li><code>object</code> - JSON object that will be serialized using <code>JSON.stringify</code></li>
 	 *        <li><code>function</code> - since version 1.103, a callback function that fetches the details asynchronously. It should return a promise that resolves with a <code>string</code> value or an <code>object</code>, or rejects - in this case a default error message will be displayed</li>
 	 *      <ul>
+	 * @param {sap.ui.core.CSSSize} [mOptions.contentWidth] The width of the MessageBox
 	 * @param {boolean} [mOptions.closeOnNavigation=true] Added since version 1.72.0. Whether the MessageBox will be closed automatically when a routing navigation occurs.
 	 * @param {sap.ui.core.Element} [mOptions.dependentOn] Added since version 1.124.0. Specifies an element to which the dialog will be added as a dependent.
 	 * @public
@@ -914,6 +917,7 @@ sap.ui.define([
 	 *        <li><code>object</code> - JSON object that will be serialized using <code>JSON.stringify</code></li>
 	 *        <li><code>function</code> - since version 1.103, a callback function that fetches the details asynchronously. It should return a promise that resolves with a <code>string</code> value or an <code>object</code>, or rejects - in this case a default error message will be displayed</li>
 	 *      <ul>
+	 * @param {sap.ui.core.CSSSize} [mOptions.contentWidth] The width of the MessageBox
 	 * @param {boolean} [mOptions.closeOnNavigation=true] Added since version 1.72.0. Whether the MessageBox will be closed automatically when a routing navigation occurs.
 	 * @param {sap.ui.core.Element} [mOptions.dependentOn] Added since version 1.124.0. Specifies an element to which the dialog will be added as a dependent.
 	 * @public
@@ -989,6 +993,7 @@ sap.ui.define([
 	 *        <li><code>object</code> - JSON object that will be serialized using <code>JSON.stringify</code></li>
 	 *        <li><code>function</code> - since version 1.103, a callback function that fetches the details asynchronously. It should return a promise that resolves with a <code>string</code> value or an <code>object</code>, or rejects - in this case a default error message will be displayed</li>
 	 *      <ul>
+	 * @param {sap.ui.core.CSSSize} [mOptions.contentWidth] The width of the MessageBox
 	 * @param {boolean} [mOptions.closeOnNavigation=true] Added since version 1.72.0. Whether the MessageBox will be closed automatically when a routing navigation occurs.
 	 * @param {sap.ui.core.Element} [mOptions.dependentOn] Added since version 1.124.0. Specifies an element to which the dialog will be added as a dependent.
 	 * @public
@@ -1064,6 +1069,7 @@ sap.ui.define([
 	 *        <li><code>object</code> - JSON object that will be serialized using <code>JSON.stringify</code></li>
 	 *        <li><code>function</code> - since version 1.103, a callback function that fetches the details asynchronously. It should return a promise that resolves with a <code>string</code> value or an <code>object</code>, or rejects - in this case a default error message will be displayed</li>
 	 *      <ul>
+	 * @param {sap.ui.core.CSSSize} [mOptions.contentWidth] The width of the MessageBox
 	 * @param {boolean} [mOptions.closeOnNavigation=true] Added since version 1.72.0. Whether the MessageBox will be closed automatically when a routing navigation occurs.
 	 * @param {sap.ui.core.Element} [mOptions.dependentOn] Added since version 1.124.0. Specifies an element to which the dialog will be added as a dependent.
 	 * @public
