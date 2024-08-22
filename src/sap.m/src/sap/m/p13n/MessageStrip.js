@@ -32,7 +32,7 @@ sap.ui.define([
 	 * @since 1.129
 	 * @alias sap.m.p13n.MessageStrip
 	 */
-	const AccesibleMessageStrip = MessageStrip.extend("sap.m.p13n.MessageStrip", {
+	const AccessibleMessageStrip = MessageStrip.extend("sap.m.p13n.MessageStrip", {
 		metadata: {
 			properties: {
 				/**
@@ -47,7 +47,7 @@ sap.ui.define([
 		renderer: MessageStripRenderer
 	});
 
-	AccesibleMessageStrip.prototype.applySettings = function () {
+	AccessibleMessageStrip.prototype.applySettings = function () {
 		MessageStrip.prototype.applySettings.apply(this, arguments);
 		if (this.getAnnounceOnInit()) {
 			const sType = this.getType();
@@ -58,5 +58,5 @@ sap.ui.define([
 		return this;
 	};
 
-	return AccesibleMessageStrip;
+	return AccessibleMessageStrip;
 });
