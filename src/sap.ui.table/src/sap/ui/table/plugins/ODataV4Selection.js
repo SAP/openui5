@@ -353,7 +353,7 @@ sap.ui.define([
 		if (this.getSelectionMode() === SelectionMode.Single) {
 			const oHeaderContext = oBinding.getHeaderContext();
 
-			if (oHeaderContext.isSelected()) {
+			if (oHeaderContext?.isSelected()) {
 				oHeaderContext.setSelected(false);
 				Log.error("The header context must not be selected in selection mode 'Single'.", this);
 			}

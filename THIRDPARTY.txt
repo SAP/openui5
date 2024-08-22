@@ -409,7 +409,7 @@ License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: lib/jsdoc/ui5/plugin.js
 
-Component: SAP Theming Base Content, version: 11.16.1
+Component: SAP Theming Base Content, version: 11.18.0
 Copyright: SAP SE or an SAP affiliate company and Theming Base Content contributors
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt

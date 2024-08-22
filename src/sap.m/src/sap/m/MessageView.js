@@ -469,12 +469,11 @@ sap.ui.define([
 		var oHeader = new GroupHeaderListItem({
 			title: sGroupName
 		});
-
-		this._oLists["all"].addAggregation("items", oHeader, true);
+		this._oLists["all"].addItemGroup(null, oHeader, true);
 
 		["error", "warning", "success", "information"].forEach(function (sListType) {
 			if (this._hasGroupItemsOfType(aItems, sListType)) {
-				this._oLists[sListType].addAggregation("items", oHeader.clone(), true);
+				this._oLists[sListType].addItemGroup(null, oHeader.clone(), true);
 			}
 		}, this);
 

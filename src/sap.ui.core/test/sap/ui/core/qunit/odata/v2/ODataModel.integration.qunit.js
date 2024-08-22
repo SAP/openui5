@@ -69,6 +69,18 @@ sap.ui.define([
 		},
 		rTemporaryKey = /id(?:-[0-9]+){2}/;
 
+	// A helper object used to observe <code>abort</code> calls of datajs request handles
+	const oAbortHelper = {
+		/**
+		 * This function is called whenever the <code>abort</code> function of a datajs request handle is called;
+		 * see <code>checkRequest</code>, {@link #expectRequest} and {@link #expectAbort}
+		 *
+		 * @param {string} sAbortId The abortId of the expected request
+		 *
+		 */
+		abortCalled(sAbortId) {}
+	};
+
 	/**
 	 * Resets ODataModel's shared data caches. Some tests may create cached data e.g. an "x-csrf-token"
 	 * that is unexpected/unknown within other tests. In case the tests are reordered, this cached data may
@@ -155,7 +167,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Creates an error response object for a 503 "Retry-after" HTTP error.
+	 * Creates an error response object for a 503 "Retry-After" HTTP error.
 	 *
 	 * @param {string} [sMessageCode="HTTP 503"] The message code
 	 * @param {boolean} [bCrashBatch=true] Whether the complete batch request shall fail
@@ -166,7 +178,7 @@ sap.ui.define([
 			crashBatch: bCrashBatch,
 			message: "Service Unavailable",
 			statusCode: 503,
-			headers: {"retry-after" : 5},
+			headers: {"Retry-After": 5},
 			messageCode: sMessageCode
 		});
 	}
@@ -825,14 +837,20 @@ sap.ui.define([
 			 *   An object with a property <code>abort</code>, containing a function to abort the request
 			 */
 			function checkRequest(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata) {
-				if (oRequest.requestUri.includes("$batch")) {
-					checkBatchRequest(oRequest, fnSuccess, fnError);
-				} else {
-					checkSingleRequest(oRequest, fnSuccess, fnError);
-				}
-				return { // request handle
-					abort : fnError.bind(that.oModel, ODataModel._createAbortedError())
+				const oRequestHandle = {
+					abort : () => {
+						assert.notOk(that.oModel.bDestroyed, "Unexpected #abort after model destruction!");
+						oAbortHelper.abortCalled(oRequestHandle.sExpectedAbortId);
+						fnError.call(that.oModel, ODataModel._createAbortedError());
+					}
 				};
+
+				if (oRequest.requestUri.includes("$batch")) {
+					checkBatchRequest(oRequest, fnSuccess, fnError, oRequestHandle);
+				} else {
+					checkSingleRequest(oRequest, fnSuccess, fnError, undefined, oRequestHandle);
+				}
+				return oRequestHandle;
 			}
 
 			/**
@@ -841,8 +859,11 @@ sap.ui.define([
 			 * @param {object} oRequest The request object
 			 * @param {function} fnSuccess Success callback function
 			 * @param {function} fnError Error callback function
+			 * @param {object} [oRequestHandle]
+			 *   The request handle is returned by checkRequest which may be enhanced with an expected
+			 *   <code>abortId</code>
 			 */
-			function checkBatchRequest(oRequest, fnSuccess, fnError) {
+			function checkBatchRequest(oRequest, fnSuccess, fnError, oRequestHandle) {
 				var oCrashedResponse;
 
 				/**
@@ -871,7 +892,8 @@ sap.ui.define([
 						function /*fnError*/(oError) {
 							return {message : "HTTP request failed", response : oError.response};
 						},
-						that.iBatchNo
+						that.iBatchNo,
+						oRequestHandle
 					).then(function (oResponse) {
 						if (oResponse.response && oResponse.response.crashBatch) {
 							delete oResponse.response.crashBatch;
@@ -928,10 +950,13 @@ sap.ui.define([
 			 *   Error callback function
 			 * @param {number} [iBatchNo]
 			 *   The number of the batch to which the request belongs to
+			 * @param {object} [oRequestHandle]
+			 *   The request handle is returned by checkRequest which may be enhanced with an expected
+			 *    <code>abortId</code>
 			 * @returns {Promise}
 			 *   Returns a Promise resolving with the result of the given success or error callback
 			 */
-			function checkSingleRequest(oActualRequest, fnSuccess, fnError, iBatchNo) {
+			function checkSingleRequest(oActualRequest, fnSuccess, fnError, iBatchNo, oRequestHandle) {
 				var sContentID,
 					oExpectedRequest,
 					oExpectedResponse,
@@ -992,6 +1017,15 @@ sap.ui.define([
 				delete oActualRequest["contentID"];
 				delete oActualRequest["sideEffects"];
 				that.iRequestNo += 1;
+				if (oExpectedRequest.abortId) {
+					oRequestHandle.sExpectedAbortId = oExpectedRequest.abortId;
+					that.oAbortHelperMock ??= that.mock(oAbortHelper);
+					that.oAbortHelperMock.expects("abortCalled")
+						.withExactArgs(oRequestHandle.sExpectedAbortId)
+						.never();
+					 // abortId must not influence deepEqual(oActualRequest, oExpectedRequest...) below
+					delete oExpectedRequest.abortId;
+				}
 				if (oExpectedRequest) {
 					oExpectedResponse = oExpectedRequest.response;
 
@@ -1159,6 +1193,24 @@ sap.ui.define([
 
 				return that.waitForChanges(assert, "create view");
 			});
+		},
+
+		/**
+		 * Expects that <code>abort()</code> is called on a request handle returned by <code>#checkRequest</code>.
+		 * To identify the right abort call, an <code>abortId</code> has to passed with the expected
+		 * request via {@link #expectRequest} and this request has to be matched before <code>abort()</code> is called.
+		 *
+		 * @param {string} sExpectedAbortId The expected abort ID
+		 * @returns {object} The test instance for chaining
+		 * @throws {Error} If {@link expectAbort} was called before a request with an <code>abortId</code>
+		 *   could be matched
+		 */
+		expectAbort : function (sExpectedAbortId) {
+			if (!this.oAbortHelperMock) {
+				throw Error("expectAbort called before a request with an abortId was matched!");
+			}
+			this.oAbortHelperMock.expects("abortCalled").withExactArgs(sExpectedAbortId);
+			return this;
 		},
 
 		/**
@@ -1342,17 +1394,21 @@ sap.ui.define([
 		 *   The returned error response
 		 * @param {string} [sResponseToken=""]
 		 *   The token to be returned
+		 * @param {string} [sAbortId=""]
+		 *   The ID that is assigned to the returned <code>oRequestHandle</code> of the actual request during runtime
 		 * @returns {object}
 		 *   The test instance for chaining
 		 */
-		expectHeadRequest : function (mAdditionalHeaders, bUseGet = false, oErrorResponse = {}, sResponseToken = "") {
+		expectHeadRequest : function (mAdditionalHeaders, bUseGet = false, oErrorResponse = {},
+				sResponseToken = "", sAbortId = null) {
 			this.aRequests.push({
 				deepPath : "",
 				headers : Object.assign({"x-csrf-token" : "Fetch"}, mAdditionalHeaders),
 				method : bUseGet ? "GET" : "HEAD",
 				requestUri : "",
 				response : oErrorResponse,
-				responseHeaders : sResponseToken ? {"x-csrf-token" : sResponseToken} : {}
+				responseHeaders : sResponseToken ? {"x-csrf-token" : sResponseToken} : {},
+				...(sAbortId && {abortId : sAbortId})
 			});
 
 			return this;
@@ -1488,6 +1544,8 @@ sap.ui.define([
 		 *   The request with the mandatory properties "requestUri".
 		 *   Optional properties are:
 		 *   <ul>
+		 *     <li>"abortId": The ID that is assigned to the returned <code>oRequestHandle</code> of the actual
+		 *       request during runtime</li>
 		 *     <li>"batchNo": The batch number in which the request is contained</li>
 		 *     <li>"deepPath": The entities deep path. Defaults to requestUri prefixed with "/";
 		 *       in case of a "created" request, "('~key~') is appended as placeholder for the
@@ -23037,7 +23095,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
-	// Scenario: "Retry-after" handler in place, server responds with 503 HTTP status code and "Retry-after"
+	// Scenario: "Retry-After" handler in place, server responds with 503 HTTP status code and "Retry-After"
 	// response header.
 	// 1) GET request answered with 503, no error no change, callback waiting
 	// 1a) Deferred binding requests data, no request happen because pending promise, callback not called again,
@@ -23047,8 +23105,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	//   existing promise of 2nd GET which was responded faster with 503.
 	// 3a) Callback rejects promise with supplied error -> requests rejected, error reported only once
 	// 4) 3 GET, 2nd and 3rd answered with 503, 1st answer pending
-	// 4a) 1st GET was answered with 503, reuses already existing retry-after promise
-	// 4b) Resolve retry-after promise and see all 3 GET request are repeated
+	// 4a) 1st GET was answered with 503, reuses already existing "Retry-After" promise
+	// 4b) Resolve "Retry-After" promise and see all 3 GET request are repeated
 	// 5) Callback rejects promise with own Error reason
 	// 5a) Preparation: GET answered with 503 and 2 successor MERGE requests queued afterwards
 	// 5b) Reject with own reason, error is not reported, only logged
@@ -23057,7 +23115,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// JIRA: CPOUI5MODELS-1750, CPOUI5MODELS-1776
 	[true, false].forEach((bDisableHeadRequestForToken) => {
 		[true, false].forEach((bUseBatch) => {
-		const sTitle = `503 retry-after handling, bUseBatch:${bUseBatch}, `
+		const sTitle = `503 "Retry-After" handling, bUseBatch:${bUseBatch}, `
 			+ `disableHeadRequest:${bDisableHeadRequestForToken}`;
 		QUnit.test(sTitle, function (assert) {
 			let iCallbackCounter = 0;
@@ -23256,7 +23314,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 				return Promise.all([
 					pRetryAfterFinished,
-					this.waitForChanges(assert, "4b) see $batches once retry-after resolved")
+					this.waitForChanges(assert, '4b) see $batches once "Retry-After" resolved')
 				]);
 			}).then(() => {
 				assert.notOk(bCallbackWaiting);
@@ -23360,11 +23418,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
-	// Scenario: HTTP status 503 retry-after handling in combination with sequentializeRequests
-	// 503 and retry-after handling in combination with sequentializeRequests model parameter not
+	// Scenario: HTTP status 503 "Retry-After" handling in combination with sequentializeRequests
+	// 503 and "Retry-After" handling in combination with sequentializeRequests model parameter not
 	// supported -> is treated as normal error
 	// JIRA: CPOUI5MODELS-1750
-	QUnit.test("503 retry-after handling (sequentializeRequests)", function (assert) {
+	QUnit.test('503 "Retry-After" handling (sequentializeRequests)', function (assert) {
 		const oModel = createSalesOrdersModel({refreshAfterChange : false, sequentializeRequests : true});
 		const sView = `
 <FlexBox id="objectPage1" binding="{/SalesOrderSet('1')}">
@@ -23395,25 +23453,25 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
-	// Scenario: HTTP status 503 retry-after handling, !useBatch and #refreshSecurityToken
+	// Scenario: HTTP status 503 "Retry-After" handling, !useBatch and #refreshSecurityToken
 	// Changing data triggers HEAD or GET (depending on disableHeadRequestForToken) request for fetching
-	// an "x-csrf-token" before the POST happens. The HEAD/GET request returns a 503 "Retry-after" error and
+	// an "x-csrf-token" before the POST happens. The HEAD/GET request returns a 503 "Retry-After" error and
 	// the POST request is queued.
-	// 1) If the "Retry-after" promise is resovled, the HEAD/GET request is repeated and the POST is send out.
+	// 1) If the "Retry-After" promise is resovled, the HEAD/GET request is repeated and the POST is send out.
 	// 2a) If the promise is rejected with an own error, the HEAD/GET request was rejected, no fallback to
 	//   GET request for "x-csrf-token" happens, the own error is logged, but not reported
-	// 2b) If the promise is rejected with the retry-after error, same happen as in 2a) no error is reported
+	// 2b) If the promise is rejected with the "Retry-After" error, same happen as in 2a) no error is reported
 	//   Note: Why no messages for rejection with oRetryAfterError? This is ok because the rejection case
 	//   is unlikely at all and b) the head request could anyhow not be related to a target
 	// 3) retry save after rejection (securityToken has to refetched again)
 	// 3a) HEAD and POST are send out but now HEAD succeeds and following POST runs into 503
-	// 3b) resolving retry-after promise repeats only POST
-	// 3c) rejecting retry-after promise with original error own reason -> 503 error is logged and reported
-	// 3d) rejecting retry-after promise with own error -> 503 error is only logged
+	// 3b) resolving "Retry-After" promise repeats only POST
+	// 3c) rejecting "Retry-After" promise with original error own reason -> 503 error is logged and reported
+	// 3d) rejecting "Retry-After" promise with own error -> 503 error is only logged
 	// JIRA: CPOUI5MODELS-1769
 	[true, false].forEach((bDisableHeadRequestForToken) => {
 		[true, false, null].forEach((bResolve) => {
-		const sTitle = `503 retry-after handling (fetch securityToken): resolve:${bResolve}, `
+		const sTitle = `503 "Retry-After" handling (fetch securityToken): resolve:${bResolve}, `
 			+ `disableHeadRequest:${bDisableHeadRequestForToken}`;
 		QUnit.test(sTitle, function (assert) {
 			const sView = `
@@ -23573,25 +23631,25 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
-	// Scenario: HTTP status 503 retry-after handling in combination with abort() (erroneous usecases)
-	// 1) Calling abort() during a pending retry-after promise handler causes an error.
+	// Scenario: HTTP status 503 "Retry-After" handling in combination with abort() (erroneous use cases)
+	// 1) Calling abort() during a pending "Retry-After" promise handler causes an error.
 	// 1a) via ODataModel#refreshSecurityToken
 	// 1b) via ODataModel#read
 	// 1b) via ODataModel#submitChanges
 	// 2) ODataModel#destroy must NOT fail with the same reason when calling itself abort() for existing request handles
-	// 3) Resolving or rejecting a retry-after promise after its ODataModel was destroyed results on:
+	// 3) Resolving or rejecting a "Retry-After" promise after its ODataModel was destroyed results on:
 	// 3a) resolving -> no request
 	// 3b) rejecting -> no error log, no error reporting
 	//
 	// JIRA: CPOUI5MODELS-1766
 	[false, true].forEach((bResolve) => {
-		const sTitle = "503 retry-after handling and erroneous abort(): " + (bResolve ? "resolve" : "reject");
+		const sTitle = `503 "Retry-After" handling and erroneous abort(): ${bResolve ? "resolve" : "reject"}`;
 		QUnit.test(sTitle, function (assert) {
-			let oAbortChange;
-			let oAbortRead;
-			let oAbortSecurityToken;
-			let oRetryAfterError;
+			let oChangeRequestHandle;
 			const oModel = createSalesOrdersModel({refreshAfterChange : false});
+			let oReadRequestHandle;
+			let oRetryAfterError;
+			let oSecurityTokenRequestHandle;
 			const sView = `
 	<FlexBox id="objectPage1" binding="{/SalesOrderSet('1')}">
 		<Text id="note1" text="{Note}"/>
@@ -23618,34 +23676,34 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			// code under test
 			return this.createView(assert, sView, oModel).then(() => {
 				// preparation (1a)
-				oAbortSecurityToken = oModel.refreshSecurityToken();
+				oSecurityTokenRequestHandle = oModel.refreshSecurityToken();
 
 				return resolveLater();
 			}).then(() => {
 				assert.throws(() => {
 					// code under test (1a)
-					oAbortSecurityToken.abort();
+					oSecurityTokenRequestHandle.abort();
 				}, new Error("abort() during HTTP 503 'Retry-after' processing not supported"));
 			}).then(() => {
 				// preparation (1b)
-				oAbortRead = oModel.read("/SalesOrderSet('1')");
+				oReadRequestHandle = oModel.read("/SalesOrderSet('1')");
 
 				return resolveLater();
 			}).then(() => {
 				assert.throws(() => {
 					// code under test (1b)
-					oAbortRead.abort();
+					oReadRequestHandle.abort();
 				}, new Error("abort() during HTTP 503 'Retry-after' processing not supported"));
 			}).then(() => {
 				// preparation (1c)
 				oModel.setProperty("/SalesOrderSet('3')/Note", "Note3");
-				oAbortChange = oModel.submitChanges();
+				oChangeRequestHandle = oModel.submitChanges();
 
 				return resolveLater();
 			}).then(() => {
 				assert.throws(() => {
 					// code under test (1c)
-					oAbortChange.abort();
+					oChangeRequestHandle.abort();
 				}, new Error("abort() during HTTP 503 'Retry-after' processing not supported"));
 			}).then(() => {
 				// code under test (2)
@@ -23659,6 +23717,403 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					fnRejectRetryAfter(oRetryAfterError);
 				}
 				return resolveLater();
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: HTTP status 503 "Retry-After" handling in combination with abort(), valid use cases:
+	// ODataModel#read and ODataModlel#submitChanges APIs
+	// First we test aborting on a request handle that is preliminary created due to a already existing
+	// "Retry-After" promise. The preliminary handle's abort function has to be replaced with the abort
+	// function of the repeated request handle once the "Retry-After" promise for the follow-up request
+	// is resolved. Steps 1) to 3) is only preparation.
+	// 1) 503 "Retry-After" error happen for a first GET request for SalesOrder #1
+	// 2) 2nd request triggered via API, supposed to be aborted, - hence rember request handle
+	//    3rd request triggered via API, not supposed to be aborted
+	// 3) Resolving "Retry-After" promise repeats all 3 requests, answers of 2nd and 3rd pending
+	// 4) code under test: Call abort() on the remembered request handle and see that the abort function on the
+	//    2nd request repetition is called.
+	// 5) Check that no pending requests remain after response of 3rd request is resolved
+	// Finally we test the case where abort() is called on the request handle of the 1st request
+	// which created the "Retry-After" promise initially. Here also the preliminary handle's abort
+	// function has to be replaced with the abort function of the repeated request handle once the
+	// "Retry-After" promise is resolved. Steps 6) and 7) is only preparation.
+	// 6) 1st request triggered via API and fails on 503, remember request handle
+	// 7) Resolve "Retry-After" promise, response pending
+	// 8) code under test: Call abort on the remembered request handle and check that no pending requests remain
+	//
+	// JIRA: CPOUI5MODELS-1778
+	[{
+		sAPI: "ODataModel#read",
+		fn2() {
+			const oRequestHandle = this.oModel.read("/SalesOrderSet('2')", {groupId: "read2"});
+			this.oModel.read("/SalesOrderSet('3')", {groupId: "read3"});
+			return oRequestHandle;
+		},
+		fn3(_bUseBatch, p3rdResponse) {
+			this.expectRequest("SalesOrderSet('1')", {SalesOrderID: "1", Note: "Bar1"})
+				.expectRequest({
+					abortId: "~abortId0",
+					requestUri: "SalesOrderSet('2')"
+				}, new Promise(() => {/*resolves never -> will be aborted*/}))
+				.expectRequest("SalesOrderSet('3')", p3rdResponse);
+		},
+		fn6(_bUseBatch) {
+			this.expectRequest("SalesOrderSet('2')", create503ErrorResponse());
+
+			return this.oModel.read("/SalesOrderSet('2')", {groupId: "read2"});
+		},
+		fn7(bUseBatch) {
+			this.expectRequest({
+					abortId: "~abortId1",
+					requestUri: "SalesOrderSet('2')"
+				}, new Promise(() => {/*resolves never -> will be aborted*/}));
+		}
+	}, {
+		sAPI: "ODataModel#submitChanges",
+		fn2() {
+			this.oModel.setProperty("/SalesOrderSet('2')/Note", "Note2*");
+			const oRequestHandle = this.oModel.submitChanges();
+			this.oView.byId("objectPage3").getElementBinding().refresh(true, "refresh1");
+			return oRequestHandle;
+		},
+		fn3(bUseBatch, p3rdResponse) {
+			this.expectRequest("SalesOrderSet('1')", {SalesOrderID: "1", Note: "Note1"});
+			if (!bUseBatch) {
+				this.expectHeadRequest();
+			}
+			this.expectRequest({
+					abortId: "~abortId0",
+					data: {
+						__metadata: {uri: "SalesOrderSet('2')"},
+						Note: "Note2*"
+					},
+					key: "SalesOrderSet('2')",
+					method: bUseBatch ? "MERGE" : "POST",
+					headers: bUseBatch ? {} : {"x-http-method": "MERGE"},
+					requestUri: "SalesOrderSet('2')"
+				}, new Promise(() => {/*resolves never -> will be aborted*/}))
+				.expectRequest("SalesOrderSet('3')", p3rdResponse);
+		},
+		fn6(bUseBatch) {
+			this.oModel.resetChanges(); // clean up to changes from aborted request
+			this.expectRequest({
+					data: {
+						__metadata: {uri: "SalesOrderSet('2')"},
+						Note: "Note2**"
+					},
+					key: "SalesOrderSet('2')",
+					method: bUseBatch ? "MERGE" : "POST",
+					headers: bUseBatch ? {} : {"x-http-method": "MERGE"},
+					requestUri: "SalesOrderSet('2')"
+				}, create503ErrorResponse());
+			this.oModel.setProperty("/SalesOrderSet('2')/Note", "Note2**");
+			return this.oModel.submitChanges();
+		},
+		fn7(bUseBatch) {
+			this.expectRequest({
+				abortId: "~abortId1",
+				data: {
+					__metadata: {uri: "SalesOrderSet('2')"},
+					Note: "Note2**"
+				},
+				key: "SalesOrderSet('2')",
+				method: bUseBatch ? "MERGE" : "POST",
+				headers: bUseBatch ? {} : {"x-http-method": "MERGE"},
+				requestUri: "SalesOrderSet('2')"
+			}, new Promise(() => {/*resolves never -> will be aborted*/}));
+		}
+	}].forEach((oFixture) => {
+		[false, true].forEach((bUseBatch) => {
+		const sTitle = `503 "Retry-After" handling and abort(): succesful, ${oFixture.sAPI}, useBatch:${bUseBatch}`;
+		QUnit.test(sTitle, function (assert) {
+			let oRequestHandle;
+			let fnResolve;
+			const oModel = createSalesOrdersModel({refreshAfterChange: false, useBatch: bUseBatch});
+			const sView = `
+	<FlexBox id="objectPage1" binding="{/SalesOrderSet('1')}">
+		<Text text="{Note}"/>
+	</FlexBox>
+	<FlexBox binding="{/SalesOrderSet('2')}">
+		<Text text="{Note}"/>
+	</FlexBox>
+	<FlexBox id="objectPage3" binding="{/SalesOrderSet('3')}">
+		<Text text="{Note}"/>
+	</FlexBox>`;
+			let fnResolveRetryAfter;
+			let pRetryAfterFinished;
+			let bCallbackWaiting = false;
+			oModel.setRetryAfterHandler(() => {
+				bCallbackWaiting = true;
+				const pRetryAfter = new Promise((resolve, reject) => {
+					fnResolveRetryAfter = resolve;
+				});
+				pRetryAfterFinished = pRetryAfter.finally(() => {bCallbackWaiting = false;});
+				return pRetryAfter;
+			});
+
+			if (bUseBatch) {
+				this.expectHeadRequest();
+			}
+			this.expectRequest("SalesOrderSet('1')", {SalesOrderID: "1", Note: "Note1"})
+				.expectRequest("SalesOrderSet('2')", {SalesOrderID: "2", Note: "Note2"})
+				.expectRequest("SalesOrderSet('3')", {SalesOrderID: "3", Note: "Note3"});
+
+			return this.createView(assert, sView, oModel).then(() => {
+				this.expectRequest("SalesOrderSet('1')", create503ErrorResponse());
+
+				//1) 503 "Retry-After" error happen for a first GET request for SalesOrder #1
+				this.oView.byId("objectPage1").getElementBinding().refresh(true, "refresh");
+
+				return Promise.all([
+					resolveLater(),
+					this.waitForChanges(assert,"1")
+				]);
+			}).then(() => {
+				assert.ok(bCallbackWaiting);
+				// the registered 1st request on pending "Retry-After" promise must NOT count as pending request
+				assert.notOk(oModel.hasPendingRequests());
+
+				// 2) 2nd request triggered via API, supposed to be aborted, - hence rember request handle
+				//    3rd request triggered via API, not supposed to be aborted
+				oRequestHandle = oFixture.fn2.bind(this)();
+
+				 // still no request pending, only registered on "Retry-After" promise
+				assert.notOk(oModel.hasPendingRequests());
+
+				return Promise.all([
+					resolveLater(),
+					this.waitForChanges(assert, "2")
+				]);
+			}).then(() => {
+				assert.notOk(oModel.hasPendingRequests());
+
+				oFixture.fn3.bind(this)(bUseBatch, new Promise((resolve) => {fnResolve = resolve;}));
+
+				// 3) Resolving "Retry-After" promise repeats all 3 requests, answers of 2nd and 3rd pending
+				fnResolveRetryAfter();
+
+				return Promise.all([
+					pRetryAfterFinished,
+					this.waitForChanges(assert, "3")
+				]);
+			}).then(() => {
+				assert.strictEqual(this.oModel.aPendingRequestHandles.length, 2, "2 pending requests");
+
+				this.expectAbort("~abortId0");
+
+				// 4) code under test: Call abort() on the remembered request handle and see that the abort function on the
+				//    2nd request repetition is called.
+				oRequestHandle.abort();
+
+				return Promise.all([
+					resolveLater(),
+					this.waitForChanges(assert, "4")
+				]);
+			}).then(() => {
+				assert.strictEqual(this.oModel.aPendingRequestHandles.length, 1, "1 pending GET request");
+
+				// 5) Check that no pending requests remain after response of 3rd request is resolved
+				fnResolve({statusCode: 200, data: {results: {/*n/a*/}}});
+
+				return Promise.all([
+					resolveLater(),
+					this.waitForChanges(assert, "5")
+				]);
+			}).then(() => {
+				assert.notOk(oModel.hasPendingRequests(), "still 5");
+
+				// 6) 1st request triggered via API and fails on 503, remember request handle
+				oRequestHandle = oFixture.fn6.bind(this)(bUseBatch);
+
+				return this.waitForChanges(assert, "6");
+			}).then(() => {
+				oFixture.fn7.bind(this)(bUseBatch);
+
+				// 7) Resolve "Retry-After" promise, response pending
+				fnResolveRetryAfter();
+
+				return Promise.all([
+					pRetryAfterFinished,
+					this.waitForChanges(assert, "7")
+				]);
+			}).then(() => {
+				assert.ok(oModel.hasPendingRequests());
+
+				this.expectAbort("~abortId1");
+
+				// 8) code under test: Call abort on the remembered request handle and check that no pending requests remain
+				oRequestHandle.abort();
+
+				return Promise.all([
+					resolveLater(),
+					this.waitForChanges(assert, "8")
+				]);
+			}).then(() => {
+				assert.notOk(oModel.hasPendingRequests(), "still 8");
+			});
+		}, sTitle);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: HTTP status 503 "Retry-After" handling in combination with abort(), allowed usecase:
+	// ODataModel#refreshSecurityToken API
+	// First we test aborting on a request handle that is preliminary created due to a already existing
+	// "Retry-After" promise. The preliminary handle's abort function has to be replaced with the abort
+	// function of the repeated request handle once the "Retry-After" promise for the follow-up request
+	// is resolved. Steps 1) to 3) is only preparation.
+	// 1) 503 "Retry-After" error happens for the first GET request for SalesOrder #1
+	// 2) 2nd request triggered via #refreshSecurityToken, supposed to be aborted, - hence rember request handle
+	//    3rd request triggered via #read, not supposed to be aborted
+	// 3) Resolving "Retry-After" promise repeats all 3 requests, answers of 2nd and 3rd pending
+	// 4) code under test: Call abort() on the remembered request handle and see that the abort function on the
+	//    2nd request repetition is called.
+	// 5) Check that no pending requests remain after response of 3rd request is resolved
+	// Finally we test the case where abort() is called on the request handle of the 1st request
+	// which created the "Retry-After" promise initially. Here also the preliminary handle's abort
+	// function has to be replaced with the abort function of the repeated request handle once the
+	// "Retry-After" promise is resolved. Steps 6) and 7) is only preparation.
+	// 6) 1st request triggered via API and fails on 503, remember request handle
+	// 7) Resolve "Retry-After" promise, response pending
+	// 8) code under test: Call abort on the remembered request handle and check that no pending requests remain
+	// JIRA: CPOUI5MODELS-1778
+	[true, false].forEach((bDisableHeadRequestForToken) => {
+		const sTitle = '503 "Retry-After" handling and abort(), allowed, #refreshSecurityToken, '
+			+ `disableHeadRequest:${bDisableHeadRequestForToken}`;
+		QUnit.test(sTitle, function (assert) {
+			const oAbortedError = {
+				aborted: true,
+				message: "Request aborted",
+				statusCode: 0,
+				statusText: "abort"
+			};
+			let oRequestHandle;
+			let fnResolve;
+			const oModel = createSalesOrdersModel({
+				refreshAfterChange: false,
+				useBatch: false,
+				disableHeadRequestForToken: bDisableHeadRequestForToken
+			});
+			const sView = `
+	<FlexBox binding="{/SalesOrderSet('1')}">
+		<Text text="{Note}"/>
+	</FlexBox>`;
+			let fnResolveRetryAfter;
+			let pRetryAfterFinished;
+			let bCallbackWaiting = false;
+			oModel.setRetryAfterHandler(() => {
+				bCallbackWaiting = true;
+				const pRetryAfter = new Promise((resolve, reject) => {
+					fnResolveRetryAfter = resolve;
+				});
+				pRetryAfterFinished = pRetryAfter.finally(() => {bCallbackWaiting = false;});
+				return pRetryAfter;
+			});
+			const oHelper = {error() {}, success: "~neverCalled"};
+			const oHelperMock = this.mock(oHelper);
+
+			this.expectRequest("SalesOrderSet('1')", create503ErrorResponse())
+				.expectMessages([]);
+
+			// 1) 503 "Retry-After" error happens for the first GET request for SalesOrder #1
+			return this.createView(assert, sView, oModel).then(() => {
+				assert.ok(bCallbackWaiting);
+				// the registered 1st request on pending "Retry-After" promise must NOT count as pending request
+				assert.notOk(oModel.hasPendingRequests());
+
+				oHelperMock.expects("error").never();
+
+				// 2) 2nd request triggered via #refreshSecurityToken, supposed to be aborted, - hence rember request handle
+				oRequestHandle = oModel.refreshSecurityToken("~fnSuccess", oHelper.error, true);
+				//    3rd request triggered via #read, not supposed to be aborted
+				oModel.read("/SalesOrderSet('2')", {groupId: "read2"});
+
+				 // still no request pending, only registered on "Retry-After" promise
+				assert.notOk(oModel.hasPendingRequests());
+
+				return Promise.all([
+					resolveLater(),
+					this.waitForChanges(assert, "2")
+				]);
+			}).then(() => {
+				assert.notOk(oModel.hasPendingRequests());
+
+				this.expectRequest("SalesOrderSet('1')", {SalesOrderID: "1", Note: "Bar1"})
+					.expectHeadRequest(undefined, bDisableHeadRequestForToken,
+						new Promise(() => {/*resolves never -> will be aborted*/}), "", "~abortId0")
+					.expectRequest("SalesOrderSet('2')", new Promise((resolve) => {fnResolve = resolve;}));
+
+				// 3) Resolving "Retry-After" promise repeats all 3 requests, answers of 2nd and 3rd pending
+				fnResolveRetryAfter();
+
+				return Promise.all([
+					pRetryAfterFinished,
+					this.waitForChanges(assert, "3")
+				]);
+			}).then(() => {
+				assert.notOk(bCallbackWaiting);
+				assert.ok(oModel.hasPendingRequests());
+
+				this.expectAbort("~abortId0");
+				oHelperMock.expects("error").withExactArgs(sinon.match(oAbortedError));
+
+				// 4) code under test: Call abort() on the remembered request handle and see that the abort function on the
+				//    2nd request repetition is called.
+				oRequestHandle.abort();
+
+				return Promise.all([
+					resolveLater(),
+					this.waitForChanges(assert, "4")
+				]);
+			}).then(() => {
+				assert.ok(oModel.hasPendingRequests()); // still pending because wait for fnResolve3
+
+				// 5) Check that no pending requests remain after response of 3rd request is resolved
+				fnResolve({statusCode: 200, data: {results: {/*n/a*/}}});
+
+				return Promise.all([
+					resolveLater(),
+					this.waitForChanges(assert, "5")
+				]);
+			}).then(() => {
+				assert.notOk(oModel.hasPendingRequests(), "still 5");
+
+				this.expectHeadRequest(undefined, bDisableHeadRequestForToken, create503ErrorResponse());
+
+				// 6) 1st request triggered via API and fails on 503, remember request handle
+				oRequestHandle = oModel.refreshSecurityToken("~fnSuccess", oHelper.error, true);
+
+				return this.waitForChanges(assert, "6");
+			}).then(() => {
+				assert.ok(bCallbackWaiting);
+
+				this.expectHeadRequest(undefined, bDisableHeadRequestForToken,
+						new Promise(() => {/*resolves never -> will be aborted*/}), "", "~abortId1");
+
+				// 7) Resolve "Retry-After" promise, response pending
+				fnResolveRetryAfter();
+
+				return Promise.all([
+					pRetryAfterFinished,
+					this.waitForChanges(assert, "7")
+				]);
+			}).then(() => {
+				assert.ok(oModel.hasPendingRequests());
+
+				this.expectAbort("~abortId1");
+				oHelperMock.expects("error").withExactArgs(sinon.match(oAbortedError));
+
+				// 8) code under test: Call abort on the remembered request handle and check that no pending requests remain
+				oRequestHandle.abort();
+
+				return Promise.all([
+					resolveLater(),
+					this.waitForChanges(assert, "8")
+				]);
+			}).then(() => {
+				assert.notOk(oModel.hasPendingRequests(), "still 8");
 			});
 		});
 	});

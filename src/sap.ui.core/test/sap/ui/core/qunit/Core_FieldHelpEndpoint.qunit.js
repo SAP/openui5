@@ -2,12 +2,27 @@
 sap.ui.define([], function() {
 	"use strict";
 
-	function createPromiseFromTimeout(fnCallback, iTime) {
-		return new Promise((resolve, reject) => {
-			setTimeout(() => {
-				fnCallback();
-				resolve();
-			}, iTime);
+	/**
+	 * Checks if the FieldHelp was loaded after a SAP Companion start signal.
+	 * We use a polling here to circumvent test instabilities because of timeouts.
+	 *
+	 * @param {int} maxTime by default we only try this for a max. of 2000ms (2s)
+	 * @param {int} pollSpeed default speed is a quick 10ms polling
+	 */
+	function pollForCompletion(fnCallback, maxTime = 2000, pollSpeed = 10) {
+		return new Promise((res, rej) => {
+			const intervalId = setInterval(() => {
+				if (fnCallback()) {
+					clearInterval(intervalId);
+					return res();
+				} else {
+					maxTime -= pollSpeed;
+				}
+				if (maxTime <= 0) {
+					clearInterval(intervalId);
+					return rej(`Callback not completed in ${maxTime}ms!`);
+				}
+			}, pollSpeed);
 		});
 	}
 
@@ -30,23 +45,38 @@ sap.ui.define([], function() {
 
 		window.postMessage(JSON.stringify(oStartMessage), document.location.origin);
 
-		let FieldHelp;
-		await createPromiseFromTimeout(() => {
-			FieldHelp = sap.ui.require("sap/ui/core/fieldhelp/FieldHelp");
-			assert.ok(FieldHelp, "FieldHelp class is loaded");
-		}, 100);
 
+		// loading of FieldHelp after start signal
+		let FieldHelp;
+
+		await pollForCompletion(() => {
+			FieldHelp = sap.ui.require("sap/ui/core/fieldhelp/FieldHelp");
+			return !!FieldHelp; // return true if FieldHelp is loaded
+		});
+
+		assert.ok(FieldHelp, "FieldHelp class is loaded");
+
+
+		// Activation of FieldHelp
 		const oStartSpy = sinon.spy(FieldHelp.getInstance(), "activate");
 		window.postMessage(JSON.stringify(oStartMessage), document.location.origin);
-		await createPromiseFromTimeout(() => {
-			assert.equal(oStartSpy.callCount, 1, "FieldHelp is activated");
-		}, 100);
 
+		await pollForCompletion(() => {
+			return oStartSpy.callCount >= 1;
+		});
+
+		assert.equal(oStartSpy.callCount, 1, "FieldHelp is activated exactly once");
+
+
+		// Deactivation of FieldHelp
 		const oStopSpy = sinon.spy(FieldHelp.getInstance(), "deactivate");
 		window.postMessage(JSON.stringify(oStopMessage), document.location.origin);
-		await createPromiseFromTimeout(() => {
-			assert.equal(oStopSpy.callCount, 1, "FieldHelp is deactivated");
-		}, 100);
+
+		await pollForCompletion(() => {
+			return oStopSpy.callCount >= 1;
+		});
+
+		assert.equal(oStopSpy.callCount, 1, "FieldHelp is deactivated");
 	});
 
 	QUnit.test("Sending message 'sap.companion.services.UpdateHotspots'", async function(assert) {
@@ -57,12 +87,19 @@ sap.ui.define([], function() {
 		};
 		window.postMessage(JSON.stringify(oStartMessage), document.location.origin);
 
-		let FieldHelp;
-		await createPromiseFromTimeout(() => {
-			FieldHelp = sap.ui.require("sap/ui/core/fieldhelp/FieldHelp");
-			assert.ok(FieldHelp, "FieldHelp class is loaded");
-		}, 100);
 
+		// loading of FieldHelp after start signal
+		let FieldHelp;
+
+		await pollForCompletion(() => {
+			FieldHelp = sap.ui.require("sap/ui/core/fieldhelp/FieldHelp");
+			return !!FieldHelp; // return true if FieldHelp is loaded
+		});
+
+		assert.ok(FieldHelp, "FieldHelp class is loaded");
+
+
+		// Update hotspots message tests
 		const oFieldHelpInstance = FieldHelp.getInstance();
 
 		const aFieldHelpInfo = [];
