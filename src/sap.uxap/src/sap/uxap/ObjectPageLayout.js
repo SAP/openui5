@@ -1664,6 +1664,7 @@ sap.ui.define([
 
 	/**
 	 * Moves the header to the content area
+	 * @returns {boolean} whether the header is moved to the content area or not
 	 * @private
 	 */
 	ObjectPageLayout.prototype._moveHeaderToContentArea = function () {
@@ -1672,7 +1673,10 @@ sap.ui.define([
 			this._$stickyHeaderContent.children().remove();
 			this._bHeaderInTitleArea = false;
 			this.fireEvent("_moveHeader", {fixed: false});
+			return true;
 		}
+
+		return false;
 	};
 
 	ObjectPageLayout.prototype._updateNavigation = function () {
@@ -2240,10 +2244,12 @@ sap.ui.define([
 		var iScrollTo = this._computeScrollPosition(oSection);
 
 		if (iScrollTo > this._getSnapPosition() && this._bHeaderInTitleArea && !this._shouldPreserveHeaderInTitleArea() && !this._bAllContentFitsContainer) {
-			this._moveHeaderToContentArea();
+			var bHeaderMoved = this._moveHeaderToContentArea();
 			this._toggleHeaderTitle(false /* snap */);
 			this._bHeaderExpanded = false;
 			this._updateToggleHeaderVisualIndicators();
+
+			bHeaderMoved && (iScrollTo += this._$headerContent.height());
 		}
 
 		if (this._sCurrentScrollId != sId || bRedirectScroll) {
