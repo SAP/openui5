@@ -4,12 +4,14 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/Utils"
 ], function(
 	UIChangesState,
+	VariantManagementState,
 	FlexObjectState,
 	FlexState,
 	ManifestUtils,
@@ -18,9 +20,9 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Returns an array with all UI Changes for the application.
+	 * Returns an array with several FlexObject infos for the application.
 	 *
-	 * @namespace sap.ui.fl.support._internal.getAllUIChanges
+	 * @namespace sap.ui.fl.support._internal.getFlexObjectInfos
 	 * @since 1.128
 	 * @version ${version}
 	 * @private
@@ -35,7 +37,8 @@ sap.ui.define([
 			allFlexObjects: FlexState.getFlexObjectsDataSelector().get({ reference: sReference }),
 			dirtyFlexObjects: FlexObjectState.getDirtyFlexObjects(sReference),
 			completeDependencyMap: FlexObjectState.getCompleteDependencyMap(sReference),
-			liveDependencyMap: FlexObjectState.getLiveDependencyMap(sReference)
+			liveDependencyMap: FlexObjectState.getLiveDependencyMap(sReference),
+			variantManagementMap: VariantManagementState.getVariantManagementMap().get({ reference: sReference })
 		};
 	}
 
