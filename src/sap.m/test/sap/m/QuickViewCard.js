@@ -473,7 +473,7 @@ sap.ui.define([
 	var oPanel5 = new Panel('quickViewCardPanel5', {
 		width : '320px',
 		height : '292px',
-		headerText : 'Store 5 - Test link as title on TWO lines',
+		headerText : 'Store 5 - Test link as title on TWO lines (Belize) / THREE lines (Fiori3/Horizon)',
 		content : [
 			oQuickViewCard5
 		]

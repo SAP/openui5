@@ -114,6 +114,15 @@ html.sap-tablet .sapMQuickViewPage > section {
 	}
 }
 
+.sapMQuickViewPage .sapUiVltCell>.sapMTitle,
+.sapMQuickViewPage .sapUiVltCell .sapMLnk:not(.sapMLnkWrapping) .sapMLnkText {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	white-space: normal;
+	word-wrap: break-word;
+}
+
 .sapMQuickViewPage .sapUiFormResGridCont > div {
 	padding: 0;
 }
@@ -176,16 +185,11 @@ html.sap-phone .sapMQuickViewPage .sapUiHLayout {
 }
 
 .sapMQuickViewPage .sapUiVltCell:first-child {
-	max-height: @_sap_m_QuickView_TitleMaxHeight;
 	margin-bottom: @_sap_m_QuickView_TitleMarginBottom;
-	overflow: hidden;
 }
 
 .sapMQuickViewPage .sapUiVltCell + .sapUiVltCell span {
 	width: 100%;
-	line-height: 1.4rem;
-	max-height: 2.8rem;
-	overflow: hidden;
 }
 
 .sapMQuickViewPage .sapUiSimpleForm .sapUiIcon {
