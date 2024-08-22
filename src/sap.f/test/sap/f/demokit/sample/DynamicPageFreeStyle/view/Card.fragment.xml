@@ -4,7 +4,7 @@
 	xmlns:f="sap.f"
 	xmlns:card="sap.f.cards">
 	<Popover placement="Bottom" showHeader="false" contentWidth="300px">
-			<f:Card width="300px">
+			<f:Card width="100%">
 				<f:header>
 					<card:NumericHeader
 						title="Sales Revenue"
