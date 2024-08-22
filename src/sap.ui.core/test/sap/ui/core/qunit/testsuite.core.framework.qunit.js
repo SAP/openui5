@@ -69,7 +69,10 @@ sap.ui.define(function() {
 					}
 				},
 				ui5: {
-					preload: "async"
+					preload: "async",
+					libs: [
+						"sap.ui.core"
+					]
 				}
 			},
 
