@@ -244,6 +244,8 @@ sap.ui.define([
 						assert.equal(oTableBox.getItems()[0], oTable, "Table found");
 						assert.equal(oTable.getSelectionMode(), "Multi", "Table mode");
 						assert.ok(oTable.scrollToIndex.calledWith(0), "Table scrolled to top");
+						assert.ok(oTable.hasStyleClass("sapUiSizeCozy"), "A density style is applied.");
+
 
 						oTable.isTableBound.restore();
 						oTable.scrollToIndex.restore();
