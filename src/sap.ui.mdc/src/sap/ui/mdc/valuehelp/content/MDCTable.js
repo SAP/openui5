@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/ui/mdc/condition/FilterConverter',
 	'sap/base/util/restricted/_throttle',
 	'sap/ui/mdc/util/Common',
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/mdc/util/DensityHelper"
 ], function(
 	FilterableListContent,
 	loadModules,
@@ -31,7 +32,8 @@ sap.ui.define([
 	FilterConverter,
 	throttle,
 	Common,
-	Log
+	Log,
+	DensityHelper
 ) {
 	"use strict";
 
@@ -427,7 +429,7 @@ sap.ui.define([
 				this._addPromise("listBinding");
 			} else {
 				this._oTable = oTable;
-
+				DensityHelper.syncDensity(this._oTable);
 				if (this._oTable.getAutoBindOnInit()) {
 					Log.warning("Usage of autobound tables may lead to unnecessary requests.");
 				} else if (this.getForceBind()) {

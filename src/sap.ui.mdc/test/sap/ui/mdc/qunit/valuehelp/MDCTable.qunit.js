@@ -231,6 +231,7 @@ sap.ui.define([
 				assert.equal(oScrollContainer.getContent()[0], oTable, "Table inside ScrollContainer"); */
 				assert.equal(oTableBox.getItems()[0], oTable, "Table found");
 				assert.equal(oTable.getSelectionMode(), "Multi", "Table mode");
+				assert.ok(oTable.hasStyleClass("sapUiSizeCozy"), "A density style is applied.");
 				fnDone();
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called: " + oError.message || oError);

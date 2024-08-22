@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/mdc/enum/PersistenceMode",
 	"sap/ui/mdc/p13n/Engine",
 	'sap/ui/mdc/condition/FilterConverter',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	'sap/ui/mdc/util/DensityHelper'
 	], function(
 		FieldValueHelpTableWrapperBase,
 		loadModules,
@@ -19,7 +20,8 @@ sap.ui.define([
 		PersistenceMode,
 		Engine,
 		FilterConverter,
-		jQuery
+		jQuery,
+		DensityHelper
 	) {
 	"use strict";
 
@@ -268,6 +270,7 @@ sap.ui.define([
 		if (sMutation === "insert") {
 			this._updateInnerWrapperClass();
 			this._handleToolbarExtensions(oInnerTable);
+			DensityHelper.syncDensity(oInnerTable, this.getTable()); // We forward these styles as outer table is never rendered.
 			this._oObserver.observe(oInnerTable, {bindings: ["rows"]});
 		}
 
