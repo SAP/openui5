@@ -327,6 +327,80 @@ sap.ui.define([
 
 			this.oVisibleMiddleButton1.setVisible(false);
 		});
+
+		QUnit.test("when opening the context menu for the aggregations on the Bar", async function(assert) {
+			const oDTMetadata = this.oBarOverlay.getDesignTimeMetadata();
+			const oDTMetadataData = oDTMetadata.getData();
+			oDTMetadataData.aggregations.contentLeft.displayName = {
+				singular: "DUMMY_SINGULAR_KEY",
+				plural: "DUMMY_PLURAL_KEY"
+			};
+			oDTMetadataData.aggregations.contentMiddle.displayName = {
+				singular: () => {return "Middle";},
+				plural: () => {return "Middle Elements";}
+			};
+			oDTMetadataData.aggregations.contentRight.displayName = {
+				singular: "Right",
+				plural: "Right Elements"
+			};
+			const oGetLibraryTextStub = sandbox.stub(oDTMetadata, "getLibraryText").callsFake((...aArgs) => {
+				if (aArgs[1] === "DUMMY_PLURAL_KEY") {
+					oGetLibraryTextStub.restore();
+					return "Left Elements";
+				}
+				return undefined;
+			});
+			sandbox.stub(this.oBarOverlay, "getDesignTimeMetadata").returns(oDTMetadata);
+
+			const aMenuItems = await this.oPlugin.getMenuItems([this.oBarOverlay]);
+			const aSubMenuItems = aMenuItems[0].submenu;
+
+			assert.strictEqual(aSubMenuItems[0].text, "Left Elements", "then the correct text is displayed for the left aggregation");
+			assert.strictEqual(aSubMenuItems[1].text, "Middle Elements", "then the correct text is displayed for the middle aggregation");
+			assert.strictEqual(aSubMenuItems[2].text, "Right Elements", "then the correct text is displayed for the right aggregation");
+		});
+
+		QUnit.test("when opening the context menu for the aggregations on the Bar and there is a responsible element", async function(assert) {
+			const oVerticalLayoutOverlay = OverlayRegistry.getOverlay(this.oPseudoPublicParent);
+			const oDTMetadata = oVerticalLayoutOverlay.getDesignTimeMetadata();
+			const oDTMetadataData = oDTMetadata.getData();
+			oDTMetadataData.aggregations = {
+				contentLeft: {
+					displayName: {
+						singular: "DUMMY_SINGULAR_KEY",
+						plural: "DUMMY_PLURAL_KEY"
+					}
+				},
+				contentMiddle: {
+					displayName: {
+						singular: () => {return "Middle";},
+						plural: () => {return "Middle Elements";}
+					}
+				},
+				contentRight: {
+					displayName: {
+						singular: "Right",
+						plural: "Right Elements"
+					}
+				}
+			};
+			const oGetLibraryTextStub = sandbox.stub(oDTMetadata, "getLibraryText").callsFake((...aArgs) => {
+				if (aArgs[1] === "DUMMY_PLURAL_KEY") {
+					oGetLibraryTextStub.restore();
+					return "Left Elements";
+				}
+				return undefined;
+			});
+			sandbox.stub(oVerticalLayoutOverlay, "getDesignTimeMetadata").returns(oDTMetadata);
+			sandbox.stub(this.oPlugin, "getResponsibleElementOverlay").returns(oVerticalLayoutOverlay);
+
+			const aMenuItems = await this.oPlugin.getMenuItems([this.oBarOverlay]);
+			const aSubMenuItems = aMenuItems[0].submenu;
+
+			assert.strictEqual(aSubMenuItems[0].text, "Left Elements", "then the correct text is displayed for the left aggregation");
+			assert.strictEqual(aSubMenuItems[1].text, "Middle Elements", "then the correct text is displayed for the middle aggregation");
+			assert.strictEqual(aSubMenuItems[2].text, "Right Elements", "then the correct text is displayed for the right aggregation");
+		});
 	});
 
 	// 	Page
