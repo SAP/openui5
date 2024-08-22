@@ -5,15 +5,11 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/ComponentRegistry",
-	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/support/_internal/extractChangeDependencies",
 	"sap/ui/fl/Utils"
 ], function(
 	Log,
 	ComponentRegistry,
-	ChangePersistenceFactory,
-	FlexCustomData,
 	extractChangeDependencies,
 	Utils
 ) {
@@ -30,12 +26,12 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.support.api.SupportAPI
 	 */
 
-	function getChangePersistence(oCurrentAppContainerObject) {
+	function getChangeDependencies(oCurrentAppContainerObject) {
 		if (oCurrentAppContainerObject) {
 			var oAppComponent = oCurrentAppContainerObject.oContainer.getComponentInstance();
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
-			return extractChangeDependencies(oChangePersistence);
+			return extractChangeDependencies(oAppComponent);
 		}
+		return undefined;
 	}
 
 	return function() {
@@ -43,16 +39,17 @@ sap.ui.define([
 			if (oAppLifeCycleService) {
 				var oCurrentApp = oAppLifeCycleService.getCurrentApplication();
 				if (oCurrentApp.componentInstance) {
-					return getChangePersistence(oCurrentApp.componentInstance);
+					return getChangeDependencies(oCurrentApp.componentInstance);
 				}
 
 				// potential cFLP scenario with the instance running in an iFrame where the top has no access to the componentInstance
 				return oCurrentApp.getIntent().then(function(oIntent) {
-					// The iFrame ID is not public API and may change in the future. Until there is an API, this is the way how to get any hold on the app at all
+					// The iFrame ID is not public API and may change in the future.
+					// Until there is an API, this is the way how to get any hold on the app at all
 					var iFrame = document.getElementById(`application-${oIntent.semanticObject}-${oIntent.action}`);
 					if (!iFrame) {
 						Log.error("the iFrame in the cFLP scenario could not be determined");
-						return;
+						return undefined;
 					}
 
 					// to use the iFrame scope, the code has to be called via eval
@@ -72,7 +69,7 @@ sap.ui.define([
 "									}).then(function (oCurrentAppContainerObject) {" +
 "										if (oCurrentAppContainerObject) {" +
 "											var oAppComponent = oCurrentAppContainerObject.oContainer.getComponentInstance();" +
-"											resolve(extractChangeDependencies(ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent)));" +
+"											resolve(extractChangeDependencies(oAppComponent));" +
 "										};" +
 "								});" +
 "							});" +
@@ -86,8 +83,10 @@ sap.ui.define([
 			});
 
 			if (aApplications.length === 1) {
-				return getChangePersistence(aApplications[0]);
+				return getChangeDependencies(aApplications[0]);
 			}
+
+			return undefined;
 		});
 	};
 });

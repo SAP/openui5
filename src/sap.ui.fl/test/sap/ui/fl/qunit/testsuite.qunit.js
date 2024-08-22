@@ -1271,6 +1271,12 @@ sap.ui.define([
 				}
 			},
 			// Support
+			"support/_internal/extractChangeDependencies": {
+				group: "Support",
+				coverage: {
+					only: ["sap/ui/fl/support"]
+				}
+			},
 			"support/_internal/getFlexSettings": {
 				group: "Support",
 				coverage: {
