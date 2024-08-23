@@ -125,7 +125,7 @@ sap.ui.define([
 
   var oQuickViewPage2 = new QuickViewPage({
 	  pageId : "{/pageId}",
-	  title: "Link as title - TWO lines - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
+	  title: "Link as title - TWO lines (Belize) / THREE lines (Fiori3/Horizon) - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
 	  titleUrl: "https://www.sap.com",
 	  groups : {
 		  path : '/groups',

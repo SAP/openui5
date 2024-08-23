@@ -99,9 +99,15 @@ sap.ui.define([
 				assert.strictEqual(oMenuItem.rank, iExpectedRank, "then the rank is correct");
 				assert.strictEqual(oMenuItem.icon, sExpectedIcon, "then the icon is correct");
 				oMenuItem.enabled(aSelectedOverlays);
-				assert.ok(oIsEnabledStub.calledWith(aSelectedOverlays, true, sAggregationName), "isEnabled is called with the right parameters");
+				assert.ok(
+					oIsEnabledStub.calledWith(aSelectedOverlays, true, sAggregationName),
+					"isEnabled is called with the right parameters"
+				);
 				oMenuItem.handler(aSelectedOverlays);
-				assert.ok(oShowAvailableElementsStub.calledWith(true, sAggregationName, aSelectedOverlays), "showAvailableElements is called with the right parameters");
+				assert.ok(
+					oShowAvailableElementsStub.calledWith(true, sAggregationName, aSelectedOverlays),
+					"showAvailableElements is called with the right parameters"
+				);
 				assert.notOk(oMenuItem.submenu, "then the entry has no submenu");
 			});
 		});
@@ -119,6 +125,9 @@ sap.ui.define([
 							return {
 								singular: sExpectedContextMenuText
 							};
+						},
+						getResponsibleElement() {
+							return;
 						}
 					};
 				},
@@ -166,9 +175,15 @@ sap.ui.define([
 				assert.strictEqual(oMenuItem.rank, iExpectedRank, "then the rank is correct");
 				assert.strictEqual(oMenuItem.icon, sExpectedIcon, "then the icon is correct");
 				oMenuItem.enabled(aSelectedOverlays);
-				assert.ok(oIsEnabledStub.calledWith(aSelectedOverlays, false, sAggregationName), "isEnabled is called with the correct parameters");
+				assert.ok(
+					oIsEnabledStub.calledWith(aSelectedOverlays, false, sAggregationName),
+					"isEnabled is called with the correct parameters"
+				);
 				oMenuItem.handler(aSelectedOverlays);
-				assert.ok(oShowAvailableElementsStub.calledWith(false, sAggregationName, aSelectedOverlays), "showAvailableElements is called with the correct parameters");
+				assert.ok(
+					oShowAvailableElementsStub.calledWith(false, sAggregationName, aSelectedOverlays),
+					"showAvailableElements is called with the correct parameters"
+				);
 				assert.notOk(oMenuItem.submenu, "then the entry has no submenu");
 			});
 		});
@@ -189,8 +204,11 @@ sap.ui.define([
 							return {
 								getAggregationDisplayName() {
 									return {
-										singular: sExpectedContextMenuTextSibling
+										plural: sExpectedContextMenuTextSibling
 									};
+								},
+								getResponsibleElement() {
+									return;
 								}
 							};
 						},
@@ -203,8 +221,11 @@ sap.ui.define([
 					return {
 						getAggregationDisplayName() {
 							return {
-								singular: sExpectedContextMenuTextChild
+								plural: sExpectedContextMenuTextChild
 							};
+						},
+						getResponsibleElement() {
+							return;
 						}
 					};
 				},
@@ -260,16 +281,36 @@ sap.ui.define([
 				assert.strictEqual(oSubMenuItemChild.id, "CTX_ADD_ELEMENTS_AS_CHILD_0", "then the first submenu entry id is for the child");
 				assert.strictEqual(oSubMenuItemChild.text, sExpectedContextMenuTextChild, "then the aggregation name is the entry text");
 				oSubMenuItemChild.enabled(aSelectedOverlays);
-				assert.ok(oIsEnabledStub.calledWith(aSelectedOverlays, false, sChildAggregationName), "then isEnabled is called for children with the right parameters");
+				assert.ok(
+					oIsEnabledStub.calledWith(aSelectedOverlays, false, sChildAggregationName),
+					"then isEnabled is called for children with the right parameters"
+				);
 				oSubMenuItemChild.handler(aSelectedOverlays);
-				assert.ok(oShowAvailableElementsStub.calledWith(false, sChildAggregationName, aSelectedOverlays), "then showAvailableElements is called as handler for children");
+				assert.ok(
+					oShowAvailableElementsStub.calledWith(false, sChildAggregationName, aSelectedOverlays),
+					"then showAvailableElements is called as handler for children"
+				);
 				var oSubMenuItemSibling = aSubMenuItems[1];
-				assert.strictEqual(oSubMenuItemSibling.id, "CTX_ADD_ELEMENTS_AS_SIBLING_0", "then the second submenu entry id is for the child");
-				assert.strictEqual(oSubMenuItemSibling.text, sExpectedContextMenuTextSibling, "then the aggregation name is the entry text");
+				assert.strictEqual(
+					oSubMenuItemSibling.id,
+					"CTX_ADD_ELEMENTS_AS_SIBLING_0",
+					"then the second submenu entry id is for the child"
+				);
+				assert.strictEqual(
+					oSubMenuItemSibling.text,
+					sExpectedContextMenuTextSibling,
+					"then the aggregation name is the entry text"
+				);
 				oSubMenuItemSibling.enabled(aSelectedOverlays);
-				assert.ok(oIsEnabledStub.calledWith(aSelectedOverlays, true, sSiblingAggregationName), "then isEnabled is called for sibling with the right parameters");
+				assert.ok(
+					oIsEnabledStub.calledWith(aSelectedOverlays, true, sSiblingAggregationName),
+					"then isEnabled is called for sibling with the right parameters"
+				);
 				oSubMenuItemSibling.handler(aSelectedOverlays);
-				assert.ok(oShowAvailableElementsStub.calledWith(true, sSiblingAggregationName, aSelectedOverlays), "then showAvailableElements is called for sibling with the right parameters");
+				assert.ok(
+					oShowAvailableElementsStub.calledWith(true, sSiblingAggregationName, aSelectedOverlays),
+					"then showAvailableElements is called for sibling with the right parameters"
+				);
 			});
 		});
 
@@ -286,8 +327,11 @@ sap.ui.define([
 					return {
 						getAggregationDisplayName() {
 							return {
-								singular: sExpectedContextMenuTextChild
+								plural: sExpectedContextMenuTextChild
 							};
+						},
+						getResponsibleElement() {
+							return;
 						}
 					};
 				},
@@ -343,16 +387,35 @@ sap.ui.define([
 				assert.strictEqual(oSubMenuItemChild.id, "CTX_ADD_ELEMENTS_AS_CHILD_0", "then the first submenu entry id is for the child");
 				assert.strictEqual(oSubMenuItemChild.text, sExpectedContextMenuTextChild, "then the aggregation name is the entry text");
 				oSubMenuItemChild.enabled(aSelectedOverlays);
-				assert.ok(oIsEnabledStub.calledWith(aSelectedOverlays, false, sFirstChildAggregationName), "then isEnabled is called with the right parameters");
+				assert.ok(
+					oIsEnabledStub.calledWith(aSelectedOverlays, false, sFirstChildAggregationName),
+					"then isEnabled is called with the right parameters"
+				);
 				oSubMenuItemChild.handler(aSelectedOverlays);
-				assert.ok(oShowAvailableElementsStub.calledWith(false, sFirstChildAggregationName, aSelectedOverlays), "then showAvailableElements is called with the right parameters");
+				assert.ok(
+					oShowAvailableElementsStub.calledWith(false, sFirstChildAggregationName, aSelectedOverlays),
+					"then showAvailableElements is called with the right parameters"
+				);
 				var oSubMenuItemChildSecondAggregation = aSubMenuItems[1];
-				assert.strictEqual(oSubMenuItemChildSecondAggregation.id, "CTX_ADD_ELEMENTS_AS_CHILD_1", "then the second submenu entry id is for the child");
-				assert.strictEqual(oSubMenuItemChildSecondAggregation.text, sExpectedContextMenuTextChild, "then the aggregation name is the entry text");
+				assert.strictEqual(
+					oSubMenuItemChildSecondAggregation.id,
+					"CTX_ADD_ELEMENTS_AS_CHILD_1", "then the second submenu entry id is for the child"
+				);
+				assert.strictEqual(
+					oSubMenuItemChildSecondAggregation.text,
+					sExpectedContextMenuTextChild,
+					"then the aggregation name is the entry text"
+				);
 				oSubMenuItemChildSecondAggregation.enabled(aSelectedOverlays);
-				assert.ok(oIsEnabledStub.calledWith(aSelectedOverlays, false, sSecondChildAggregationName), "then isEnabled is called with the right parameters");
+				assert.ok(
+					oIsEnabledStub.calledWith(aSelectedOverlays, false, sSecondChildAggregationName),
+					"then isEnabled is called with the right parameters"
+				);
 				oSubMenuItemChildSecondAggregation.handler(aSelectedOverlays);
-				assert.ok(oShowAvailableElementsStub.calledWith(false, sSecondChildAggregationName, aSelectedOverlays), "then showAvailableElements is called with the right parameters");
+				assert.ok(
+					oShowAvailableElementsStub.calledWith(false, sSecondChildAggregationName, aSelectedOverlays),
+					"then showAvailableElements is called with the right parameters"
+				);
 			});
 		});
 
@@ -373,7 +436,7 @@ sap.ui.define([
 							return {
 								getAggregationDisplayName() {
 									return {
-										singular: sExpectedContextMenuTextSibling
+										plural: sExpectedContextMenuTextSibling
 									};
 								}
 							};
@@ -387,8 +450,11 @@ sap.ui.define([
 					return {
 						getAggregationDisplayName() {
 							return {
-								singular: sExpectedContextMenuTextChild
+								plural: sExpectedContextMenuTextChild
 							};
+						},
+						getResponsibleElement() {
+							return;
 						}
 					};
 				},
@@ -445,24 +511,55 @@ sap.ui.define([
 				assert.ok(oMenuItem.submenu, "then there is a submenu");
 				var aSubMenuItems = oMenuItem.submenu;
 				var oSubMenuItemChild = aSubMenuItems[0];
-				assert.strictEqual(oSubMenuItemChild.id, "CTX_ADD_ELEMENTS_AS_CHILD_0", "then the first submenu entry id is for the child of the first aggregation");
+				assert.strictEqual(
+					oSubMenuItemChild.id,
+					"CTX_ADD_ELEMENTS_AS_CHILD_0",
+					"then the first submenu entry id is for the child of the first aggregation"
+				);
 				assert.strictEqual(oSubMenuItemChild.text, sExpectedContextMenuTextChild, "then the aggregation name is the entry text");
 				oSubMenuItemChild.enabled(aSelectedOverlays);
-				assert.ok(oIsEnabledStub.calledWith(aSelectedOverlays, false, sFirstChildAggregationName), "then isEnabled is called for the child aggregation");
+				assert.ok(
+					oIsEnabledStub.calledWith(aSelectedOverlays, false, sFirstChildAggregationName),
+					"then isEnabled is called for the child aggregation"
+				);
 				oSubMenuItemChild.handler(aSelectedOverlays);
-				assert.ok(oShowAvailableElementsStub.calledWith(false, sFirstChildAggregationName, aSelectedOverlays), "then showAvailableElements is called for the first child aggregation");
+				assert.ok(
+					oShowAvailableElementsStub.calledWith(false, sFirstChildAggregationName, aSelectedOverlays),
+					"then showAvailableElements is called for the first child aggregation"
+				);
 				var oSubMenuItemChild2 = aSubMenuItems[1];
-				assert.strictEqual(oSubMenuItemChild2.id, "CTX_ADD_ELEMENTS_AS_CHILD_1", "then the second submenu entry id is for the child of the second aggregation");
+				assert.strictEqual(
+					oSubMenuItemChild2.id,
+					"CTX_ADD_ELEMENTS_AS_CHILD_1",
+					"then the second submenu entry id is for the child of the second aggregation"
+				);
 				assert.strictEqual(oSubMenuItemChild2.text, sExpectedContextMenuTextChild, "then the aggregation name is the entry text");
 				oSubMenuItemChild2.handler(aSelectedOverlays);
-				assert.ok(oShowAvailableElementsStub.calledWith(false, sSecondChildAggregationName, aSelectedOverlays), "then showAvailableElements is called for the second child aggregation");
+				assert.ok(
+					oShowAvailableElementsStub.calledWith(false, sSecondChildAggregationName, aSelectedOverlays),
+					"then showAvailableElements is called for the second child aggregation"
+				);
 				var oSubMenuItemSibling = aSubMenuItems[2];
-				assert.strictEqual(oSubMenuItemSibling.id, "CTX_ADD_ELEMENTS_AS_SIBLING_0", "then the third submenu entry id is for the sibling");
-				assert.strictEqual(oSubMenuItemSibling.text, sExpectedContextMenuTextSibling, "then the aggregation name is the entry text");
+				assert.strictEqual(
+					oSubMenuItemSibling.id,
+					"CTX_ADD_ELEMENTS_AS_SIBLING_0",
+					"then the third submenu entry id is for the sibling"
+				);
+				assert.strictEqual(
+					oSubMenuItemSibling.text,
+					sExpectedContextMenuTextSibling,
+					"then the aggregation name is the entry text"
+				);
 				oSubMenuItemSibling.enabled(aSelectedOverlays);
-				assert.ok(oIsEnabledStub.calledWith(aSelectedOverlays, true, sSiblingAggregationName), "then isEnabled is called for the child aggregation");
+				assert.ok(
+					oIsEnabledStub.calledWith(aSelectedOverlays, true, sSiblingAggregationName),
+					"then isEnabled is called for the child aggregation"
+				);
 				oSubMenuItemSibling.handler(aSelectedOverlays);
-				assert.ok(oShowAvailableElementsStub.calledWith(true, sSiblingAggregationName, aSelectedOverlays), "then showAvailableElements is called for the sibling aggregation");
+				assert.ok(
+					oShowAvailableElementsStub.calledWith(true, sSiblingAggregationName, aSelectedOverlays),
+					"then showAvailableElements is called for the sibling aggregation"
+				);
 			});
 		});
 
@@ -521,7 +618,10 @@ sap.ui.define([
 				assert.strictEqual(oMenuItem.id, "CTX_ADD_ELEMENTS_AS_SIBLING", "then the entry is for sibling");
 				assert.strictEqual(oMenuItem.text(), sExpectedContextMenuText, "then the expected text is returned");
 				oMenuItem.handler(aSelectedOverlays);
-				assert.ok(oShowAvailableElementsStub.calledWith(true, "dummyAggregation", aSelectedOverlays), "showAvailableElements is called with the right parameters");
+				assert.ok(
+					oShowAvailableElementsStub.calledWith(true, "dummyAggregation", aSelectedOverlays),
+					"showAvailableElements is called with the right parameters"
+				);
 				assert.notOk(oMenuItem.submenu, "then the entry has no submenu");
 			});
 		});
@@ -553,7 +653,10 @@ sap.ui.define([
 				assert.strictEqual(oMenuItem.id, "CTX_ADD_ELEMENTS_AS_CHILD", "then the entry is for child");
 				assert.strictEqual(oMenuItem.text(), sExpectedContextMenuText, "then the expected text is returned");
 				oMenuItem.handler(aSelectedOverlays);
-				assert.ok(oShowAvailableElementsStub.calledWith(false, "$$OnlyChildCustomField$$", aSelectedOverlays), "showAvailableElements is called with the right parameters");
+				assert.ok(
+					oShowAvailableElementsStub.calledWith(false, "$$OnlyChildCustomField$$", aSelectedOverlays),
+					"showAvailableElements is called with the right parameters"
+				);
 				assert.notOk(oMenuItem.submenu, "then the entry has no submenu");
 			});
 		});

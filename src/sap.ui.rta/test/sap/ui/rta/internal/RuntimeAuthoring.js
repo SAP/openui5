@@ -2,7 +2,6 @@ document.write('\
 <script \
 	id="sap-ui-bootstrap" \
 	data-sap-ui-async="true" \
-	\
 	data-sap-ui-language="en" \
 	data-sap-ui-resourceroots=\'{"sap.ui.rta.test": "testdata/rta/"}\'\
 	data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.comp, sap.ui.rta" \

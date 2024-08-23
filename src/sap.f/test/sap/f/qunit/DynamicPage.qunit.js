@@ -774,6 +774,37 @@ function(
 		assert.ok($pinButton.hasClass("sapUiHidden"), "The DynamicPage Header Pin Button is hidden");
 	});
 
+	QUnit.test("DynamicPage Pin button remains hidden upon rerendering of DynamicPageHader", async function (assert) {
+		var $pinButton = this.oDynamicPageWithPreserveHeaderStateOnScroll.getHeader().getAggregation("_pinButton").$(),
+			oHeader =  this.oDynamicPageWithPreserveHeaderStateOnScroll.getHeader();
+
+		// assert
+		assert.strictEqual($pinButton.hasClass("sapUiHidden"), true, "The DynamicPage Header Pin Button is hidden");
+
+		// act
+		oHeader.setBackgroundDesign("Transparent");
+		await nextUIUpdate();
+
+		// assert
+		$pinButton = this.oDynamicPageWithPreserveHeaderStateOnScroll.getHeader().getAggregation("_pinButton").$();
+		assert.strictEqual($pinButton.hasClass("sapUiHidden"), true, "The DynamicPage Header Pin Button is still hidden after rerendering of DynamicPageHeader");
+	});
+
+	QUnit.test("DynamicPage Pin button is shown when preserveHeaderStateOnScroll is switched from 'true' to 'false'", async function (assert) {
+		var $pinButton = this.oDynamicPageWithPreserveHeaderStateOnScroll.getHeader().getAggregation("_pinButton").$();
+
+		// assert
+		assert.strictEqual($pinButton.hasClass("sapUiHidden"), true, "The DynamicPage Header Pin Button is hidden");
+
+		// act
+		this.oDynamicPageWithPreserveHeaderStateOnScroll.setPreserveHeaderStateOnScroll(false);
+		await nextUIUpdate();
+
+		// assert
+		$pinButton = this.oDynamicPageWithPreserveHeaderStateOnScroll.getHeader().getAggregation("_pinButton").$();
+		assert.strictEqual($pinButton.hasClass("sapUiHidden"), false, "The DynamicPage Header Pin Button is shown");
+	});
+
 	QUnit.module("DynamicPage - Rendering lifecycle", {
 		beforeEach: function () {
 			this.oDynamicPage = oFactory.getDynamicPageWithPreserveHeaderOnScroll();

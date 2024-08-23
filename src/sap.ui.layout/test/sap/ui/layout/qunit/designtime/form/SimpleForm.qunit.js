@@ -233,7 +233,14 @@ sap.ui.define([
 				afterRedo: fnConfirmElement00IsOn2ndPosition,
 				changeVisualization: function(oView) {
 					return {
-						displayElementId: oView.byId("label00").getParent().getId()
+						displayElementId: oView.byId("label00").getParent().getId(),
+						info: {
+							dependentControls: [oView.byId("label00").getParent().getParent().getId()],
+							descriptionPayload: {
+								sourceContainer: oView.byId("label00").getParent().getParent().getId(),
+								targetContainer: oView.byId("label00").getParent().getParent().getId()
+							}
+						}
 					};
 				}
 			});
@@ -307,7 +314,7 @@ sap.ui.define([
 					"then the input has been moved as well");
 			}
 
-			elementActionTest("Checking the move action for SimpleForm with Layout=" + sSimpleFormLayout + "when moving label00 into empty group", {
+			elementActionTest("Checking the move action for SimpleForm with Layout=" + sSimpleFormLayout + "when moving label00 from headerlss into empty group", {
 				xmlView: buildXMLForSimpleForm(),
 				action: {
 					name: "move",
@@ -335,7 +342,14 @@ sap.ui.define([
 				afterRedo: fnConfirmLabel00IsOn1stPositionInDifferentGroup,
 				changeVisualization: function(oView) {
 					return {
-						displayElementId: oView.byId("label00").getParent().getId()
+						displayElementId: oView.byId("label00").getParent().getId(),
+						info: {
+							dependentControls: [oView.byId("label01").getParent().getParent().getId()],
+							descriptionPayload: {
+								sourceContainer: oView.byId("label01").getParent().getParent().getId(),
+								targetContainer: oView.byId("label00").getParent().getParent().getId()
+							}
+						}
 					};
 				}
 			});

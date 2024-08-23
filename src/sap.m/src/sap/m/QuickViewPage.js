@@ -407,7 +407,8 @@ sap.ui.define([
 
 		if (sDescription) {
 			oDescription = new Text({
-				text: sDescription
+				text: sDescription,
+				maxLines: 2
 			});
 		}
 
