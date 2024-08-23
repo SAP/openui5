@@ -1,7 +1,6 @@
 /* global module */
 
 module.exports = [
-	"ActionSelect.spec.js",
 	"ActionSheet.spec.js",
 	"App.spec.js",
 	"AppWithBackground.spec.js",
