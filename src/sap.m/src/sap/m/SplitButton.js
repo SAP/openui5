@@ -153,8 +153,9 @@ function(
 
 			$textButtonRef.attr("tabindex", "-1");
 			$arrowButtonRef.attr("tabindex", "-1");
-			$textButtonRef.removeAttr("title");
-			$arrowButtonRef.removeAttr("title");
+			if (this.getTooltip()) {
+				$textButtonRef.removeAttr("title");
+			}
 			$textButtonRef.removeAttr("aria-describedby");
 			$arrowButtonRef.removeAttr("aria-describedby");
 		};
