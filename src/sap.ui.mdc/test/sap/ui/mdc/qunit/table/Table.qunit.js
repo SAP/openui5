@@ -355,6 +355,86 @@ sap.ui.define([
 		assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"), "Inner table is a sap.ui.table.Table");
 	});
 
+	QUnit.test("Change type during initialization to instance with bindings", async function(assert) {
+		const oModel = new JSONModel({growingMode: "Scroll", popinLayout: "GridLarge"});
+		this.oTable.setModel(oModel, "settings");
+		this.oTable.setType(new ResponsiveTableType({growingMode: "{settings>/growingMode}", popinLayout: "{settings>/popinLayout}"}));
+
+		await this.oTable.initialized();
+		assert.ok(this.oTable._oTable.isA("sap.m.Table"), "New inner table is a sap.m.Table");
+		assert.equal(this.oTable._oTable.getGrowingScrollToLoad(), true, "Inner table has growing scroll to load set to true");
+		assert.equal(this.oTable._oTable.getPopinLayout(), "GridLarge", "Inner table has popin layout 'GridLarge'");
+	});
+
+	QUnit.test("Change type from shorthand to instance with bindings", async function(assert) {
+		const test = async (sFromType, oToType) => {
+			this.oTable.destroyType();
+			this.oTable.setType(sFromType);
+			await this.oTable.initialized();
+			const oFromType = this.oTable._getType();
+			const oOldInnerTable = this.oTable._oTable;
+			const oToolbar = this.oTable._oToolbar;
+			this.spy(oOldInnerTable, "destroy");
+			this.oTable.setType(oToType);
+
+			assert.ok(oOldInnerTable.destroy.called, "Inner table is destroyed");
+			assert.notOk(this.oTable._oTable, "Reference to destroyed inner table is removed");
+			assert.ok(oFromType.isDestroyed(), "Old default type is destroyed");
+			assert.ok(!oToolbar.isDestroyed(), "Toolbar is not destroyed");
+		};
+		const oModel = new JSONModel({
+			resp: {growingMode: "Scroll", popinLayout: "GridLarge"},
+			grid: {scrollThreshold: 5, selectionLimit: 100}
+		});
+		this.oTable.setModel(oModel, "settings");
+
+		await test(TableType.Table, new ResponsiveTableType({growingMode: "{settings>/resp/growingMode}", popinLayout: "{settings>/resp/popinLayout}"}));
+		await this.oTable.initialized();
+		assert.ok(this.oTable._oTable.isA("sap.m.Table"), "New inner table is a sap.m.Table");
+		assert.equal(this.oTable._oTable.getGrowingScrollToLoad(), true, "Inner table has growing scroll to load set to true");
+		assert.equal(this.oTable._oTable.getPopinLayout(), "GridLarge", "Inner table has popin layout 'GridLarge'");
+
+		await test(TableType.ResponsiveTable, new GridTableType({scrollThreshold: "{settings>/grid/scrollThreshold}", selectionLimit: "{settings>/grid/selectionLimit}"}));
+		await this.oTable.initialized();
+		assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"), "New inner table is a sap.ui.table.Table");
+		assert.equal(this.oTable._oTable.getScrollThreshold(), 5, "Inner table has scrollThreshold of 5");
+		assert.equal(this.oTable._oTable.getDependents().find((oDependent) => oDependent.isA("sap.ui.table.plugins.SelectionPlugin")).getLimit(), 100, "Inner table has selection limit 100");
+	});
+
+	QUnit.test("Change type from instance to instance with bindings", async function(assert) {
+		const test = async(oFromType, oToType) => {
+			this.oTable.destroyType();
+			this.oTable.setType(oFromType);
+			await this.oTable.initialized();
+			const oOldInnerTable = this.oTable._oTable;
+			const oToolbar = this.oTable._oToolbar;
+			this.spy(oOldInnerTable, "destroy");
+			this.oTable.setType(oToType);
+
+			assert.ok(oOldInnerTable.destroy.called, "Inner table is destroyed");
+			assert.notOk(this.oTable._oTable, "Reference to destroyed inner table is removed");
+			assert.ok(!oFromType.isDestroyed(), "Old type is not destroyed");
+			assert.ok(!oToolbar.isDestroyed(), "Toolbar is not destroyed");
+		};
+		const oModel = new JSONModel({
+			resp: {growingMode: "Scroll", popinLayout: "GridLarge"},
+			grid: {scrollThreshold: 5, selectionLimit: 100}
+		});
+		this.oTable.setModel(oModel, "settings");
+
+		await test(new GridTableType(), new ResponsiveTableType({growingMode: "{settings>/resp/growingMode}", popinLayout: "{settings>/resp/popinLayout}"}));
+		await this.oTable.initialized();
+		assert.ok(this.oTable._oTable.isA("sap.m.Table"), "New inner table is a sap.m.Table");
+		assert.equal(this.oTable._oTable.getGrowingScrollToLoad(), true, "Inner table has growing scroll to load set to true");
+		assert.equal(this.oTable._oTable.getPopinLayout(), "GridLarge", "Inner table has popin layout 'GridLarge'");
+
+		await test(new ResponsiveTableType(), new GridTableType({scrollThreshold: "{settings>/grid/scrollThreshold}", selectionLimit: "{settings>/grid/selectionLimit}"}));
+		await this.oTable.initialized();
+		assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"), "New inner table is a sap.ui.table.Table");
+		assert.equal(this.oTable._oTable.getScrollThreshold(), 5, "Inner table has scrollThreshold of 5");
+		assert.equal(this.oTable._oTable.getDependents().find((oDependent) => oDependent.isA("sap.ui.table.plugins.SelectionPlugin")).getLimit(), 100, "Inner table has selection limit 100");
+	});
+
 	QUnit.test("Destroy type", async function(assert) {
 		let oInnerTable;
 
@@ -565,12 +645,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Destroy directly after creation", async function(assert) {
-		this.spy(this.oTable, "_applyCurrentType");
+		this.spy(this.oTable, "_resetContent");
 		this.spy(this.oTable, "_createContent");
 		this.oTable.destroy();
 
 		await wait(100);
-		assert.equal(this.oTable._applyCurrentType.callCount, 0, "_applyCurrentType call");
+		assert.equal(this.oTable._resetContent.callCount, 0, "_resetContent call");
 		assert.equal(this.oTable._createContent.callCount, 0, "_createContent call");
 	});
 
