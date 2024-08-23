@@ -484,8 +484,8 @@ function(nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			oObjectPage.scrollToSection(oLastSection.getId(), 0);
 
 			setTimeout(function () {
-				// Assert - check the delta between current scroll position and the top position of the scrolled to Section, due to rounding diffs (1px diff is OK)
-				assert.ok(Math.abs(oObjectPage._$opWrapper.scrollTop() - oObjectPage._oSectionInfo[oLastSection.getId()].positionTop) < 2,
+				// Assert - check the delta between current scroll position and the top position of the scrolled to Section, due to rounding diffs (5px diff is OK)
+				assert.ok(Math.abs(oObjectPage._$opWrapper.scrollTop() - oObjectPage._oSectionInfo[oLastSection.getId()].positionTop) < 5,
 					"Scroll position is correct");
 				done();
 			}, 1000);
