@@ -1394,7 +1394,7 @@ sap.ui.define([
 						// methods it must be possible to insert the ETag from the header
 						oResponse = vRequest.method === "GET" ? null : {};
 					}
-					that.reportHeaderMessages(vRequest.url,
+					that.reportHeaderMessages(vRequest.$resourcePath,
 						getResponseHeader.call(vResponse, "sap-messages"));
 					sETag = getResponseHeader.call(vResponse, "ETag");
 					if (sETag) {
@@ -1911,7 +1911,7 @@ sap.ui.define([
 				sMethod === "GET" ? {"sap-cancel-on-close" : "true"} : undefined),
 			JSON.stringify(oPayload), sOriginalResourcePath
 		).then(function (oResponse) {
-			that.reportHeaderMessages(oResponse.resourcePath, oResponse.messages);
+			that.reportHeaderMessages(sOriginalResourcePath, oResponse.messages);
 			return that.doConvertResponse(
 				// Note: "text/plain" used for $count
 				typeof oResponse.body === "string" ? JSON.parse(oResponse.body) : oResponse.body,
