@@ -9030,6 +9030,110 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: "Retry-After" handling: resolving restarts parallel and follow-up requests.
+	// 1) Preparation, request data for 3 sales orders
+	// 2) 2 parallel requests answered with 503 "Retry-After", no error, callback waiting
+	// 3) Trigger 3rd request, no request sent because pending promise, callback not asked again
+	// 4) Resolving "Retry-After" promise repeats all 3 requests
+	// JIRA: CPOUI5MODELS-1743
+	QUnit.test('503, "Retry-After" handling: resolving', async function (assert) {
+		let bAnswerWith503 = false;
+		const oModel = this.createSalesOrdersModel({}, {
+			"DELETE SalesOrderList('1')" : {message : {code : 204}},
+			"DELETE SalesOrderList('2')" : {message : {code : 204}},
+			"DELETE SalesOrderList('3')" : {message : {code : 204}},
+			"POST $batch" : {
+				code : 503,
+				headers : {"Retry-After" : "42"},
+				ifMatch : () => bAnswerWith503,
+				message : {error : {code : "DB_MIGRATION", message : "DB migration in progress"}}
+			},
+			"SalesOrderList?$skip=0&$top=100" : [{
+				message : {
+					value : [
+						{Note : "Note1", SalesOrderID : "1"},
+						{Note : "Note2", SalesOrderID : "2"},
+						{Note : "Note3", SalesOrderID : "3"}
+					]
+				}
+			}]
+		});
+		oModel.$keepSend = true; // do not stub sendBatch/-Request
+		let fnResolveRetryAfter;
+		let iCallbackCount = 0;
+		oModel.setRetryAfterHandler((oError) => {
+			iCallbackCount += 1;
+			assert.ok(oError instanceof Error);
+			assert.strictEqual(oError.message, "DB migration in progress");
+			const iSeconds = (oError.retryAfter.getTime() - Date.now()) / 1000;
+			assert.ok(iSeconds > 41 && iSeconds < 43, `${iSeconds} roughly 42 seconds`);
+			return new Promise((resolve) => {
+				fnResolveRetryAfter = resolve;
+			});
+		});
+		const sView = `
+<Table id="table" items="{/SalesOrderList}">
+	<Text id="note" text="{Note}"/>
+</Table>`;
+
+		this.expectChange("note", ["Note1", "Note2", "Note3"]);
+
+		// 1
+		await this.createView(assert, sView, oModel);
+
+		this.expectChange("note", ["Note3"]);
+		const aContexts = this.oView.byId("table").getBinding("items").getCurrentContexts();
+		const aDeletePromises = [];
+		bAnswerWith503 = true;
+		const aBatchPayloads = [];
+		TestUtils.onRequest((sPayload) => aBatchPayloads.push(sPayload));
+
+		// code under test
+		aDeletePromises.push(aContexts[0].delete("$single"));
+		aDeletePromises.push(aContexts[1].delete("$single"));
+
+		assert.ok(oModel.hasPendingChanges());
+
+		await this.waitForChanges(assert, "2");
+
+		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('1')"));
+		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('2')"));
+		assert.strictEqual(aBatchPayloads.length, 0);
+		assert.strictEqual(iCallbackCount, 1);
+
+		this.expectChange("note", []);
+
+		// code under test
+		aDeletePromises.push(aContexts[2].delete("$single"));
+
+		await this.waitForChanges(assert, "3");
+
+		assert.ok(aContexts[0].isDeleted());
+		assert.ok(aContexts[1].isDeleted());
+		assert.ok(aContexts[2].isDeleted());
+		assert.strictEqual(aBatchPayloads.length, 0);
+		assert.strictEqual(iCallbackCount, 1);
+
+		bAnswerWith503 = false;
+
+		// code under test
+		fnResolveRetryAfter();
+
+		await Promise.all([
+			...aDeletePromises,
+			this.waitForChanges(assert, "4")
+		]);
+
+		assert.notOk(oModel.hasPendingChanges());
+		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('1')"));
+		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('2')"));
+		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('3')"));
+		assert.strictEqual(aBatchPayloads.length, 0);
+		assert.strictEqual(iCallbackCount, 1);
+		TestUtils.onRequest(null);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Table gets a binding context for which data was already loaded and then a refresh
 	// is performed synchronously.
 	// SNOW: CS20240007657519

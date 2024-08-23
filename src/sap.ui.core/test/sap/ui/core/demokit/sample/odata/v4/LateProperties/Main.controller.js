@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/MessageToast",
 	"sap/m/Text",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/core/Title",
 	"sap/ui/core/date/UI5Date",
@@ -18,7 +19,7 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (Button, mobileLibrary, Dialog, Input, Label, MessageToast, Text,
+], function (Button, mobileLibrary, Dialog, Input, Label, MessageToast, Text, Messaging,
 		Controller, Title, UI5Date, _ColumnLayout, SimpleForm, Sorter, ODataModel, TestUtils) {
 	"use strict";
 
@@ -67,6 +68,9 @@ sap.ui.define([
 				setTimeout(function () {
 					that.oView.byId("SalesOrderList").getBinding("items").resume();
 				}, 20);
+				this.initMessagePopover("messagesButton");
+				this.oView.setModel(Messaging.getMessageModel(), "messageModel");
+				this.registerRetryAfterHandler();
 			}, this);
 		},
 		onOpenEditDeliveryDate : function (oEvent) {
