@@ -684,24 +684,22 @@ sap.ui.define([
 
 		onSearchPickerItemPress: function (oEvent) {
 			var contextPath = oEvent.oSource.getBindingContextPath(),
-			oDataItem = this.getModel("searchData").getProperty(contextPath),
-			externalURL = new URL(oDataItem.path, document.baseURI).href,
-			internalURL,
-			oSearchDataModel = this.getOwnerComponent().getModel("searchData"),
-			sQuery = oSearchDataModel.getProperty("/query");
+				oDataItem = this.getModel("searchData").getProperty(contextPath),
+				oSearchDataModel = this.getOwnerComponent().getModel("searchData"),
+				sQuery = oSearchDataModel.getProperty("/query"),
+				isDocumentationItem = oDataItem.category === "Documentation",
+				baseURL = oDataItem.external ? new URL(oDataItem.path, document.baseURI).href : oDataItem.path;
+
+			if (sQuery && isDocumentationItem) {
+				baseURL += `?q=${encodeURIComponent(sQuery)}`;
+			}
 
 			if (oDataItem.external) {
-				if (sQuery) {
-					externalURL += `?q=${encodeURIComponent(sQuery)}`;
-				}
-				openWindow(externalURL);
+				openWindow(baseURL);
 			} else {
-				 internalURL = oDataItem.path;
-				if (sQuery) {
-					internalURL += `?q=${encodeURIComponent(sQuery)}`;
-				}
-				this.getRouter().parsePath(internalURL);
+				this.getRouter().parsePath(baseURL);
 			}
+
 			this.oPicker.close();
 		},
 

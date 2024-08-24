@@ -43,12 +43,13 @@
 								href="https://www.sap.com/corporate/en/legal/copyright.html"
 								target="_blank"/>
 						<Link
-								class="sapUiTinyMarginBottom sapUiLargeMarginEnd sapUiTinyMarginBegin"
+								class="sapUiTinyMarginEnd sapUiTinyMarginBottom sapUiTinyMarginBegin"
 								text="{i18n>FOOTER_LICENSE}"
 								href="LICENSE.txt"
 								visible="{versionData>/isOpenUI5}"
 								target="_blank"/>
 						<Link
+								class="sapUiTinyMarginBegin"
 								text="{i18n>FOOTER_TERMS}"
 								href="TermsOfUse.txt"
 								visible="{versionData>/isOpenUI5}"

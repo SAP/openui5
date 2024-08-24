@@ -32,7 +32,6 @@ builder:
               - sap/ui/integration/
               - sap/f/cards/
               - sap/ui/core/date/Gregorian.js
-              - "!sap/ui/integration/library-bootstrap.js"
               - "!sap/ui/integration/sap-ui-integration-config.js"
               - "!sap/ui/integration/customElements/CustomElementCardEditor.js"
               - "!sap/ui/integration/customElements/CustomElementEditor.js"
@@ -59,10 +58,9 @@ builder:
               - sap/ui/table/manifest.json
             resolve: true
             renderer: true
-          - mode: raw
+          - mode: require
             filters:
               - sap/ui/integration/library-bootstrap.js
-            declareRawModules: false
           - mode: bundleInfo
             name: sap-ui-integration-ext.js
             filters:
@@ -175,7 +173,6 @@ builder:
               - sap/ui/core/date/Gregorian.js
               - "!sap/ui/thirdparty/jquery.js"
               - "!sap/ui/thirdparty/jquery-mobile-custom.js"
-              - "!sap/ui/integration/library-bootstrap.js"
               - "!sap/ui/integration/sap-ui-integration-config.js"
               - "!sap/ui/integration/customElements/CustomElementCardEditor.js"
               - "!sap/ui/integration/customElements/CustomElementEditor.js"
@@ -193,10 +190,9 @@ builder:
               - "!sap/ui/integration/designtime/thirdparty/"
             resolve: true
             renderer: true
-          - mode: raw
+          - mode: require
             filters:
               - sap/ui/integration/library-bootstrap.js
-            declareRawModules: false
       bundleOptions:
         optimize: true
         decorateBootstrapModule: true
@@ -240,10 +236,9 @@ builder:
               - sap/ui/integration/designtime/editor/
             resolve: true
             renderer: true
-          - mode: raw
+          - mode: require
             filters:
               - sap/ui/integration/customElements/CustomElementCardEditor.js
-            declareRawModules: false
       bundleOptions:
         optimize: true
     - bundleDefinition:
@@ -325,10 +320,9 @@ builder:
               - sap/ui/integration/editor/
             resolve: true
             renderer: true
-          - mode: raw
+          - mode: require
             filters:
               - sap/ui/integration/customElements/CustomElementEditor.js
-            declareRawModules: false
       bundleOptions:
         optimize: true
     - bundleDefinition:
@@ -372,10 +366,9 @@ builder:
               - "!sap/ui/integration/designtime/thirdparty/"
             resolve: true
             renderer: true
-          - mode: raw
+          - mode: require
             filters:
               - sap/ui/integration/library-bootstrap.js
-            declareRawModules: false
       bundleOptions:
         optimize: true
         decorateBootstrapModule: true

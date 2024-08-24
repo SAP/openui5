@@ -34,7 +34,7 @@ sap.ui.define([
 	};
 
 	var AVATAR_MARGIN_GROUP = {
-		XS: 0.75,
+		XS: 0.5,
 		S: 1.25,
 		M: 1.625,
 		L: 2,

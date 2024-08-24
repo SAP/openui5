@@ -358,7 +358,7 @@ function (
 
 	QUnit.test("_getAvatarMargin", function (assert) {
 		var oAvatarGroupMargins = {
-				XS: 0.75,
+				XS: 0.5,
 				S: 1.25,
 				M: 1.625,
 				L: 2,

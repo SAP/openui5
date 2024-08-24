@@ -145,10 +145,9 @@ builder:
             filters:
               - sap/ui/core/Core.js
             resolve: true
-          - mode: raw
+          - mode: require
             filters:
-              - sap/ui/core/_bootCore.js
-            declareRawModules: false
+              - sap/ui/core/Core.js
       bundleOptions:
         optimize: true
         decorateBootstrapModule: true
@@ -162,10 +161,9 @@ builder:
             declareRawModules: false
             resolve: true
             sort: true
-          - mode: raw
+          - mode: require
             filters:
-              - sap/ui/core/_bootCore.js
-            declareRawModules: false
+              - sap/ui/core/Core.js
       bundleOptions:
         optimize: false
     - bundleDefinition:
@@ -190,10 +188,9 @@ builder:
             filters:
               - sap/ui/core/Core.js
             resolve: true
-          - mode: raw
+          - mode: require
             filters:
-              - sap/ui/core/_bootCore.js
-            declareRawModules: false
+              - sap/ui/core/Core.js
       bundleOptions:
         optimize: true
         decorateBootstrapModule: true
@@ -215,10 +212,9 @@ builder:
             declareRawModules: false
             resolve: true
             sort: true
-          - mode: raw
+          - mode: require
             filters:
-              - sap/ui/core/_bootCore.js
-            declareRawModules: false
+              - sap/ui/core/Core.js
       bundleOptions:
         optimize: false
     - bundleDefinition:
@@ -230,10 +226,9 @@ builder:
             declareRawModules: false
             resolve: true
             sort: true
-          - mode: raw
+          - mode: require
             filters:
-              - sap/ui/core/_bootCore.js
-            declareRawModules: false
+              - sap/ui/core/Core.js
       bundleOptions:
         optimize: true
     - bundleDefinition:
@@ -292,10 +287,9 @@ builder:
               - sap/ui/thirdparty/sinon*
               - sap/ui/core/Core.js
             resolve: true
-          - mode: raw
+          - mode: require
             filters:
-              - sap/ui/test/starter/_requireSetupAndStart.js
-            declareRawModules: false
+              - sap/ui/test/starter/_setupAndStart.js
       bundleOptions:
         optimize: true
         decorateBootstrapModule: true
@@ -315,10 +309,9 @@ builder:
             declareRawModules: false
             resolve: true
             sort: true
-          - mode: raw
+          - mode: require
             filters:
-              - sap/ui/test/starter/_requireSetupAndStart.js
-            declareRawModules: false
+              - sap/ui/test/starter/_setupAndStart.js
       bundleOptions:
         optimize: false
     - bundleDefinition:

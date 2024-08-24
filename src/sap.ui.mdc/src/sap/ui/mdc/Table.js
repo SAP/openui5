@@ -1216,14 +1216,9 @@ sap.ui.define([
 			return this.setAggregation("type", vType, true);
 		}
 
-		// Remove the toolbar from the table to avoid its destruction when the table is destroyed. Do this only when a toolbar exists to not
-		// create an unnecessary default type instance. Because the removal operation is specific to a table type, the old type has to remove the
-		// toolbar before the new type is set.
-		if (this._oToolbar) {
-			this._getType().removeToolbar();
-		}
+		this._resetContent();
 		this.setAggregation("type", vType);
-		this._applyCurrentType();
+		this._initializeContent();
 
 		return this;
 	};
@@ -1233,22 +1228,21 @@ sap.ui.define([
 			return this.destroyAggregation("type", true);
 		}
 
-		// Remove the toolbar from the table to avoid its destruction when the table is destroyed. Do this only when a toolbar exists to not
-		// create an unnecessary default type instance. Because the removal operation is specific to a table type, the old type has to remove the
-		// toolbar before the new type is set.
-		if (this._oToolbar) {
-			this._getType().removeToolbar();
-		}
+		this._resetContent();
 		this.destroyAggregation("type");
-		this._applyCurrentType();
+		this._initializeContent();
 
 		return this;
 	};
 
-	Table.prototype._applyCurrentType = function() {
-		this._destroyDefaultType();
-
+	Table.prototype._resetContent = function() {
 		if (this._oTable) {
+			// Remove the toolbar from the table to avoid its destruction when the table is destroyed. Do this only when a toolbar exists to not
+			// create an unnecessary default type instance.
+			if (this._oToolbar) {
+				this._getType().removeToolbar();
+			}
+
 			// store and remove the noData otherwise it gets destroyed
 			const vNoData = this.getNoData();
 			this.setNoData();
@@ -1271,8 +1265,8 @@ sap.ui.define([
 			this._oRowTemplate = null;
 		}
 
+		this._destroyDefaultType();
 		this._createInitPromises();
-		this._initializeContent();
 	};
 
 	/**
