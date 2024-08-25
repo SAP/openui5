@@ -104,5 +104,35 @@ sap.ui.define([
 		return false;
 	};
 
+	/**
+	 * Evaluates whether there is an non working period for a given date.
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate A date instance
+	 * @return {boolean} True if there is an occurrence for this day
+	 */
+	NonWorkingPeriod.prototype.hasNonWorkingAtDate = function (oDate) {
+		const oStartDate = UI5Date.getInstance(this.getStartDate());
+		const oCurrentDate = UI5Date.getInstance(oDate);
+		oStartDate.setHours(0,0,0);
+		oCurrentDate.setHours(0,0,0);
+
+		const isDateInRange = oCurrentDate >= oStartDate && oCurrentDate <= this.getEndDate();
+
+		return  isDateInRange;
+	};
+
+	/**
+	 * Evaluates whether there is an occurrence for the given date and hours.
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate A date instance
+	 * @return {boolean} True if there is an occurrence for these hours
+	 * @private
+	 */
+	NonWorkingPeriod.prototype.hasNonWorkingAtHour = function (oDate) {
+		const iStartHours = this.getStartDate().getHours();
+		const iTimeCalendarItem = iStartHours + (this.getStartDate().getMinutes() + this.getDurationInMinutes()) / 60;
+		const iTimeData = oDate.getHours() + oDate.getMinutes() / 60;
+
+		return oDate.getHours() === iStartHours || (iTimeCalendarItem >= iTimeData && iStartHours <= oDate.getHours());
+	};
+
 	return NonWorkingPeriod;
 });
