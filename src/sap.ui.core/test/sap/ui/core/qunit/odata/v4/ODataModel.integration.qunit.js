@@ -43021,6 +43021,7 @@ make root = ${bMakeRoot}`;
 		assert.strictEqual(oGamma.getProperty("@$ui5.context.isTransient"), undefined, "not now");
 		assert.strictEqual(oGamma.created(), oGammaCreated);
 
+		// Note: due to threshold="4", Beta and Gamma are read now
 		this.expectRequest("EMPLOYEES('0.0')?$select=DrillState,ID,Name",
 				{DrillState : "leaf", ID : "0.0", Name : "Beta*"})
 			.expectRequest("EMPLOYEES('0.1')?$select=DrillState,ID,Name",
@@ -43032,6 +43033,9 @@ make root = ${bMakeRoot}`;
 		oTable.setFirstVisibleRow(3);
 
 		await this.waitForChanges(assert, "(7) quickly scroll to 4 and 3");
+
+		checkCreatedPersisted(assert, oBeta, oBetaCreated);
+		checkCreatedPersisted(assert, oGamma, oGammaCreated);
 
 		this.expectChange("name", [, "Beta*", "Gamma*"]);
 

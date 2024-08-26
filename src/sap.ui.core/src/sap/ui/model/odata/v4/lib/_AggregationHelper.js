@@ -173,7 +173,6 @@ sap.ui.define([
 			_Helper.copyPrivateAnnotation(oPlaceholder, "cache", oElement);
 			_Helper.copyPrivateAnnotation(oPlaceholder, "context", oElement);
 			_Helper.copyPrivateAnnotation(oPlaceholder, "spliced", oElement);
-			_Helper.copySelected(oPlaceholder, oElement);
 			if ("@$ui5.context.isTransient" in oPlaceholder) {
 				oElement["@$ui5.context.isTransient"] = false;
 			}

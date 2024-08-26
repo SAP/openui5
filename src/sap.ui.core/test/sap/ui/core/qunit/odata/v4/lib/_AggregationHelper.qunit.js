@@ -52,8 +52,6 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oPlaceholder), "context", sinon.match.same(oElement));
 		oHelperMock.expects("copyPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oPlaceholder), "spliced", sinon.match.same(oElement));
-		oHelperMock.expects("copySelected")
-			.withExactArgs(sinon.match.same(oPlaceholder), sinon.match.same(oElement));
 
 		// code under test
 		_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42);
@@ -85,8 +83,6 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oPlaceholder), "context", sinon.match.same(oElement));
 		oHelperMock.expects("copyPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oPlaceholder), "spliced", sinon.match.same(oElement));
-		oHelperMock.expects("copySelected")
-			.withExactArgs(sinon.match.same(oPlaceholder), sinon.match.same(oElement));
 
 		// code under test
 		_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42);
@@ -119,8 +115,6 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oPlaceholder), "context", sinon.match.same(oElement));
 		oHelperMock.expects("copyPrivateAnnotation").thrice()
 			.withExactArgs(sinon.match.same(oPlaceholder), "spliced", sinon.match.same(oElement));
-		oHelperMock.expects("copySelected").thrice()
-			.withExactArgs(sinon.match.same(oPlaceholder), sinon.match.same(oElement));
 
 		// code under test
 		_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42);

@@ -4043,8 +4043,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oElement), sinon.match.same(oKeptElement));
 		this.mock(oCache).expects("hasPendingChangesForPath").exactly(bIgnore ? 1 : 0)
 			.withExactArgs("(1)").returns(false);
-		this.mock(_Helper).expects("copySelected").withExactArgs(sinon.match.same(oKeptElement),
-			sinon.match.same(oElement));
+		this.mock(_Helper).expects("copySelected").exactly(bIgnore ? 1 : 0)
+			.withExactArgs(sinon.match.same(oKeptElement), sinon.match.same(oElement));
 
 		// code under test
 		oCache.addElements(oElement, 1, "~parent~", 42);
