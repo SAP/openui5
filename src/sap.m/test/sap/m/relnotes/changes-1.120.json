@@ -864,5 +864,15 @@
         "text": " sap.m.Column: add missing check for parent Table in _onLabelPropertyChange"
       }
     ]
+  },
+  "1.120.20": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "ec52309a7f9e029fb6b9718e1aad1f17b6e091f6",
+        "type": "FIX",
+        "text": " We've now introduced the fileSize parameter in fileSizeExceeded event of UploadSet"
+      }
+    ]
   }
 }

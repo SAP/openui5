@@ -8,5 +8,15 @@
         "text": " sap.ui.layout.DynamicSideContent: fixed firing of the breakpointChanged event"
       }
     ]
+  },
+  "1.120.20": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "1e6ed1f4a8809417be2e56f25fe674a4f222bc7b",
+        "type": "FIX",
+        "text": " ColumnLayout: keep breakpoint classes stable on invalidation"
+      }
+    ]
   }
 }

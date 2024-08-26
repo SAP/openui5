@@ -180,5 +180,15 @@
         ]
       }
     ]
+  },
+  "1.120.20": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "dc1f71ffbf32b68e8356cf973b63ed448d151495",
+        "type": "FIX",
+        "text": " Table: Size of filter field in column menu"
+      }
+    ]
   }
 }
