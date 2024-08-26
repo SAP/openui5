@@ -21,7 +21,7 @@ sap.ui.define([
 		additionalDesigntimeAttributes: {
 			getItems() {}
 		}
-	}, Object.assign({}, mProperties), Object.assign({}, mProperties));
+	}, { ...mProperties }, { ...mProperties });
 
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";

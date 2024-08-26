@@ -295,6 +295,7 @@ sap.ui.define([
 		// set the rank property and update the model to refresh the bindings
 		this.oAdaptationsModel.setProperty("rank", iNewRank, oDraggedItemContext);
 		sortByRank(this.oAdaptationsModel);
+		// Here this.oAdaptationsModel.getProperty("/allAdaptations") is mutated on purpose
 		var oAllUpdatedAdaptations = Object.assign(
 			this.oAdaptationsModel.getProperty("/allAdaptations"),
 			this.oAdaptationsModel.getProperty("/adaptations")
@@ -370,6 +371,7 @@ sap.ui.define([
 				parameters: {priorities: aAdaptationPriorities}
 			});
 		}.bind(this)).then(function() {
+			// Here this.oAdaptationsModel.getProperty("/allAdaptations") is mutated on purpose
 			var oAllUpdatedAdaptations = Object.assign(
 				this.oAdaptationsModel.getProperty("/allAdaptations"),
 				this.oAdaptationsModel.getProperty("/adaptations")

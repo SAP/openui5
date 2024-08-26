@@ -18,11 +18,13 @@ sap.ui.define([
 		commandName: "createContainer",
 		designtimeActionStructure: "createContainer",
 		aggregation: true
-	}, Object.assign({}, mProperties, {
+	}, {
+		...mProperties,
 		label: "myFancyLabel"
-	}), Object.assign({}, mProperties, {
+	}, {
+		...mProperties,
 		newLabel: "myFancyLabel"
-	}));
+	});
 
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";

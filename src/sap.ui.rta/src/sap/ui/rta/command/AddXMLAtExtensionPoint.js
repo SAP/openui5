@@ -94,7 +94,7 @@ sap.ui.define([
 			appComponent: oAppComponent,
 			view: oView
 		};
-		return ChangesWriteAPI.apply(Object.assign({change: oChange, element: oSelectorElement}, mPropertyBag))
+		return ChangesWriteAPI.apply({ change: oChange, element: oSelectorElement, ...mPropertyBag })
 		.then(function(oResult) {
 			if (!oResult.success) {
 				return Promise.reject(oResult.error);

@@ -64,10 +64,12 @@ sap.ui.define([
 	};
 
 	function callFlAPIFunction(sFunctionName, sKey, oValue) {
-		var mPropertyBag = Object.assign({}, oValue, this.mInformation, {
+		var mPropertyBag = {
+			...oValue,
+			...this.mInformation,
 			id: sKey,
 			control: this.getElement()
-		});
+		};
 		return SmartVariantManagementWriteAPI[sFunctionName](mPropertyBag);
 	}
 

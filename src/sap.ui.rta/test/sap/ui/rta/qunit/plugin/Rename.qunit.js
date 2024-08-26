@@ -540,18 +540,15 @@ sap.ui.define([
 			.callThrough()
 			.withArgs("rename")
 			.callsFake(function(...aArgs) {
-				return Object.assign(
-					{},
-					oDesignTimeMetadata.getAction.wrappedMethod.apply(this, aArgs),
-					{
-						getTextMutators() {
-							return {
-								getText: oGetTextStub,
-								setText: oSetTextStub
-							};
-						}
+				return {
+					...oDesignTimeMetadata.getAction.wrappedMethod.apply(this, aArgs),
+					getTextMutators() {
+						return {
+							getText: oGetTextStub,
+							setText: oSetTextStub
+						};
 					}
-				);
+				};
 			});
 			return triggerAndWaitForStartEdit(this.oRenamePlugin, this.oLayoutOverlay)
 			.then(function() {

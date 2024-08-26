@@ -45,10 +45,12 @@ sap.ui.define([
 	});
 
 	function callFlAPIFunction(sFunctionName, sKey, oValue) {
-		var mPropertyBag = Object.assign({}, oValue, this.mInformation, {
+		var mPropertyBag = {
+			...oValue,
+			...this.mInformation,
 			id: sKey,
 			control: this.getElement()
-		});
+		};
 		return SmartVariantManagementWriteAPI[sFunctionName](mPropertyBag);
 	}
 
@@ -56,7 +58,7 @@ sap.ui.define([
 	function setVariantContent(oContent) {
 		var oVariantManagementControl = this.getElement();
 		var oCurrentVariantContent = oVariantManagementControl._getVariantContent(this.getVariantId());
-		var oNewVariantContent = Object.assign({}, oCurrentVariantContent);
+		var oNewVariantContent = { ...oCurrentVariantContent };
 		if (oVariantManagementControl.isPageVariant()) {
 			var oContentToBeSet = {};
 			oContentToBeSet[this.getPersistencyKey()] = oContent;

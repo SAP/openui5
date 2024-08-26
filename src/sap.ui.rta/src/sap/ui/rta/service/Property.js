@@ -115,14 +115,13 @@ sap.ui.define([
 				]
 			)
 			.then(function(aPromiseResults) {
-				return Object.assign(
-					{},
-					aPromiseResults[0] && !isEmptyObject(aPromiseResults[0]) && {annotations: aPromiseResults[0]},
-					aPromiseResults[1] && {properties: aPromiseResults[1]},
-					aPromiseResults[2] && {label: validate(aPromiseResults[2])},
-					oDesignTimeMetadataData.name && {name: oDesignTimeMetadata.getName(oElement)},
-					!isEmptyObject(aPromiseResults[3]) && {links: aPromiseResults[3]}
-				);
+				return {
+					...(aPromiseResults[0] && !isEmptyObject(aPromiseResults[0]) && {annotations: aPromiseResults[0]}),
+					...(aPromiseResults[1] && {properties: aPromiseResults[1]}),
+					...(aPromiseResults[2] && {label: validate(aPromiseResults[2])}),
+					...(oDesignTimeMetadataData.name && {name: oDesignTimeMetadata.getName(oElement)}),
+					...(!isEmptyObject(aPromiseResults[3]) && {links: aPromiseResults[3]})
+				};
 			});
 		};
 
@@ -272,7 +271,7 @@ sap.ui.define([
 						// to ensure ignore function is replaced by a boolean value
 						mDtObj[sKey].ignore = bIgnore;
 						if (!bIgnore) {
-							mFiltered[sKey] = Object.assign({}, mDtObj[sKey]);
+							mFiltered[sKey] = { ...mDtObj[sKey] };
 							return oProperty._getResolvedLinks(mFiltered[sKey].links, oElement)
 							.then(function(mLinks) {
 								if (!isEmptyObject(mLinks)) {
@@ -314,7 +313,7 @@ sap.ui.define([
 		 */
 		oProperty._getResolvedLinks = function(mLinks, oElement) {
 			var aTextPromises = [];
-			var mResolvedLinks = Object.assign({}, mLinks);
+			var mResolvedLinks = { ...mLinks };
 
 			Object.keys(mResolvedLinks).forEach(function(sLinkName) {
 				if (Array.isArray(mResolvedLinks[sLinkName])) {

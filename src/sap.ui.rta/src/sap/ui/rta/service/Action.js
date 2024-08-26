@@ -76,10 +76,11 @@ sap.ui.define([
 						: aResult;
 				}, [])
 				.map(function(mMenuItem) {
-					return Object.assign({}, mMenuItem, {
+					return {
+						...mMenuItem,
 						enabled: invoke(mMenuItem.enabled, aElementOverlays),
 						text: invoke(mMenuItem.text, aElementOverlays[0])
-					});
+					};
 				});
 			});
 		}

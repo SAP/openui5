@@ -25,13 +25,14 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	function actualTest(assert, bJsOnly, bVariantIndependent, bVariantPresent) {
-		var oInnerActionsObject = Object.assign({}, this.mCurrentInfo.additionalDesigntimeAttributes, {
+		const oInnerActionsObject = {
+			...this.mCurrentInfo.additionalDesigntimeAttributes,
 			changeType: this.mCurrentCommandProperties.changeType,
 			jsOnly: bJsOnly,
 			CAUTION_variantIndependent: bVariantIndependent
-		});
+		};
 
-		var oActionsObject = {};
+		const oActionsObject = {};
 		if (Array.isArray(this.mCurrentInfo.designtimeActionStructure)) {
 			oActionsObject[this.mCurrentInfo.designtimeActionStructure[0]] = {};
 			oActionsObject[this.mCurrentInfo.designtimeActionStructure[0]][this.mCurrentInfo.designtimeActionStructure[1]] = oInnerActionsObject;
@@ -39,7 +40,7 @@ sap.ui.define([
 			oActionsObject[this.mCurrentInfo.designtimeActionStructure] = oInnerActionsObject;
 		}
 
-		var oData = {
+		const oData = {
 			actions: {},
 			aggregations: {}
 		};
@@ -50,12 +51,12 @@ sap.ui.define([
 		} else {
 			oData.actions = oActionsObject;
 		}
-		var oDesignTimeMetadata = new ElementDesignTimeMetadata({
+		const oDesignTimeMetadata = new ElementDesignTimeMetadata({
 			data: oData
 		});
 
-		var sVariantManagementReference = bVariantPresent ? "variantReference" : "";
-		var oCommandFactory = new CommandFactory();
+		const sVariantManagementReference = bVariantPresent ? "variantReference" : "";
+		const oCommandFactory = new CommandFactory();
 		return oCommandFactory.getCommandFor(this.oControl, this.mCurrentInfo.commandName, this.mCurrentCommandProperties, oDesignTimeMetadata, sVariantManagementReference)
 
 		.then(function(oCommand) {
@@ -91,14 +92,14 @@ sap.ui.define([
 	 * @param {object} mExpectedSpecificData - Command specific data that will be passed to the creation of the <code>sap.ui.fl.apply._internal.flexObjects.UIChange</code>
 	 */
 	function basicCommandTest(mInfo, mCommandProperties, mExpectedSpecificData) {
-		var sMsg = mInfo.moduleName || `Test for '${mInfo.commandName}' command`;
+		const sMsg = mInfo.moduleName || `Test for '${mInfo.commandName}' command`;
 		QUnit.module(sMsg, {
 			beforeEach() {
-				this.mCurrentInfo = Object.assign({}, mInfo);
-				this.mCurrentCommandProperties = Object.assign({}, mCommandProperties);
-				this.mCurrentExpectedSpecificData = Object.assign({}, mExpectedSpecificData);
+				this.mCurrentInfo = { ...mInfo };
+				this.mCurrentCommandProperties = { ...mCommandProperties };
+				this.mCurrentExpectedSpecificData = { ...mExpectedSpecificData };
 				this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
-				var oVariantModel = new JSONModel();
+				const oVariantModel = new JSONModel();
 				oVariantModel.getCurrentVariantReference = function(sVariantManagementReference) {
 					return sVariantManagementReference;
 				};

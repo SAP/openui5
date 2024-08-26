@@ -91,10 +91,11 @@ sap.ui.define([
 		this._oVariant = SmartVariantManagementWriteAPI.addVariant(mPropertyBag);
 
 		if (oNewVariantProperties.default) {
-			SmartVariantManagementWriteAPI.setDefaultVariantId(Object.assign({}, this.mInformation, {
+			SmartVariantManagementWriteAPI.setDefaultVariantId({
+				...this.mInformation,
 				control: this.getElement(),
 				defaultVariantId: this._oVariant.getVariantId()
-			}));
+			});
 		}
 
 		this.getElement().addVariant(this._oVariant, oNewVariantProperties.default);
@@ -115,10 +116,11 @@ sap.ui.define([
 		});
 
 		if (this.getNewVariantProperties().default) {
-			SmartVariantManagementWriteAPI.setDefaultVariantId(Object.assign({}, this.mInformation, {
+			SmartVariantManagementWriteAPI.setDefaultVariantId({
+				...this.mInformation,
 				control: this.getElement(),
 				defaultVariantId: this.getPreviousDefault()
-			}));
+			});
 		}
 
 		this.getElement().removeWeakVariant({
