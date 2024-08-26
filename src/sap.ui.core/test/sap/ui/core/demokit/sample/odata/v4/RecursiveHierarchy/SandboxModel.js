@@ -714,23 +714,10 @@ sap.ui.define([
 	 * @returns {object[]} - List of node objects in preorder
 	 */
 	function topLevels(iMaxDistanceFromRoot, oExpandLevels = new Map()) {
-		function isAncestorCollapsed(oNode) {
-			const oParent = mNodeById[oNode.MANAGER_ID];
-			if (!oParent) {
-				return false;
-			}
-			return !isExpanded(oParent) || isAncestorCollapsed(oParent);
-		}
-
-		function isExpanded(oNode) {
-			if (oExpandLevels.has(oNode.ID)) {
-				return oExpandLevels.get(oNode.ID) > 0;
-			}
-			return oNode.DistanceFromRoot < iMaxDistanceFromRoot;
-		}
+		const oNodeID2EffectiveExpandLevels = new Map();
 
 		function limitedDescendantCount(oNode) {
-			const aChildren = isExpanded(oNode)
+			const aChildren = oNodeID2EffectiveExpandLevels.get(oNode.ID) > 0
 				? mChildrenByParentId[oNode.ID] || [] // "expanded"
 				: [];
 
@@ -741,22 +728,20 @@ sap.ui.define([
 
 		return aAllNodes
 			.filter((oNode) => {
-				if (isAncestorCollapsed(oNode)) {
-					return false; // node is not part of hierarchy if an ancestor is collapsed
+				const oParent = mNodeById[oNode.MANAGER_ID];
+				// Note: the parent has been visited before
+				let iExpandLevels = oParent
+					? oNodeID2EffectiveExpandLevels.get(oParent.ID) - 1
+					: iMaxDistanceFromRoot;
+				if (iExpandLevels >= 0 && oExpandLevels.has(oNode.ID)) {
+					iExpandLevels = oExpandLevels.get(oNode.ID);
 				}
-				const iExpandLevels = oExpandLevels.get(oNode.MANAGER_ID);
-				if (iExpandLevels > 0) {
-					if (!oExpandLevels.has(oNode.ID)) {
-						oExpandLevels.set(oNode.ID, iExpandLevels - 1);
-					}
-
-					return true; // node is part of hierarchy if parent is expanded
-				}
-				return oNode.DistanceFromRoot <= iMaxDistanceFromRoot && !(iExpandLevels === 0);
+				oNodeID2EffectiveExpandLevels.set(oNode.ID, iExpandLevels);
+				return iExpandLevels >= 0;
 			})
 			.map((oNode) => {
 				oNode = {...oNode, DescendantCount : limitedDescendantCount(oNode)};
-				const bIsExpanded = isExpanded(oNode);
+				const bIsExpanded = oNodeID2EffectiveExpandLevels.get(oNode.ID) > 0;
 				if (oNode.DrillState === "collapsed" && bIsExpanded) {
 					oNode.DrillState = "expanded";
 				} else if (oNode.DrillState === "expanded" && !bIsExpanded) {

@@ -3399,7 +3399,7 @@ sap.ui.define([
 				sinon.match.same(aElements[1]), sinon.match.same(oCollapsed))
 			.callThrough();
 		this.mock(oCache.oTreeState).expects("collapse")
-			.withExactArgs(sinon.match.same(aElements[1]), undefined);
+			.withExactArgs(sinon.match.same(aElements[1]), undefined, undefined);
 		oCacheMock.expects("countDescendants")
 			.withExactArgs(sinon.match.same(aElements[1]), 1).returns(bUntilEnd ? 4 : 3);
 
@@ -3519,14 +3519,14 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
 				sinon.match.same(aElements[1]), "~collapsedObject~");
 		this.mock(oCache.oTreeState).expects("collapse")
-			.withExactArgs(sinon.match.same(aElements[1]), true);
+			.withExactArgs(sinon.match.same(aElements[1]), true, undefined);
 		oCacheMock.expects("countDescendants")
 			.withExactArgs(sinon.match.same(aElements[1]), 1).returns(5);
 		oCacheMock.expects("isSelectionDifferent")
 			.withExactArgs(sinon.match.same(aElements[2])).returns(false);
 		oCacheMock.expects("isSelectionDifferent")
 			.withExactArgs(sinon.match.same(aElements[3])).returns(true);
-		oCacheMock.expects("collapse").withExactArgs("('4')", 1)
+		oCacheMock.expects("collapse").withExactArgs("('4')", true, true)
 			.callsFake(function () {
 				oCache.aElements.splice(5, 2);
 				oCache.aElements.$count -= 2;

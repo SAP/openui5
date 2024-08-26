@@ -45,29 +45,28 @@ sap.ui.define([
 		 * Collapse a node.
 		 *
 		 * @param {object} oNode - The node
-		 * @param {boolean|number} bAll
-		 *   Whether collapsing completely; <code>undefined</code> means a simple collapse,
-		 *   <code>true</code> collapsing all at this node, <code>1</code> a nested node below
-		 *   a collapse all
-		 *
+		 * @param {boolean} bAll
+		 *   Whether collapsing completely
+		 * @param {boolean} [bNested]
+		 *   Whether the "collapse all" was performed at an ancestor
 		 * @public
 		 */
-		collapse(oNode, bAll) {
+		collapse(oNode, bAll, bNested) {
 			if (!this.sNodeProperty) {
 				return;
 			}
 
 			const sPredicate = _Helper.getPrivateAnnotation(oNode, "predicate");
 			const oExpandLevel = this.mPredicate2ExpandLevels[sPredicate];
-			if (bAll === 1 || oExpandLevel && oExpandLevel.Levels !== 0) {
+			if (bNested || oExpandLevel && oExpandLevel.levels !== 0) {
 				delete this.mPredicate2ExpandLevels[sPredicate];
 			} else {
-				// must have NodeId as the node may be missing when calling #getExpandLevels
+				// must determine node ID now; the node may be missing when calling #getExpandLevels
 				const sNodeId = _Helper.drillDown(oNode, this.sNodeProperty);
 				this.mPredicate2ExpandLevels[sPredicate] = {
 					collapseAll : bAll,
-					NodeID : sNodeId,
-					Levels : 0
+					levels : 0,
+					nodeId : sNodeId
 				};
 			}
 		}
@@ -158,15 +157,12 @@ sap.ui.define([
 			}
 			const sPredicate = _Helper.getPrivateAnnotation(oNode, "predicate");
 			const oExpandLevel = this.mPredicate2ExpandLevels[sPredicate];
-			if (oExpandLevel && !oExpandLevel.Levels && !oExpandLevel.collapseAll) {
+			if (oExpandLevel && !oExpandLevel.levels && !oExpandLevel.collapseAll) {
 				delete this.mPredicate2ExpandLevels[sPredicate];
 			} else {
-				// must have NodeId as the node may be missing when calling #getExpandLevels
+				// must determine node ID now; the node may be missing when calling #getExpandLevels
 				const sNodeId = _Helper.drillDown(oNode, this.sNodeProperty);
-				this.mPredicate2ExpandLevels[sPredicate] = {
-					NodeID : sNodeId,
-					Levels : iLevels
-				};
+				this.mPredicate2ExpandLevels[sPredicate] = {levels : iLevels, nodeId : sNodeId};
 			}
 		}
 
@@ -182,8 +178,8 @@ sap.ui.define([
 			const aExpandLevels = Object.values(this.mPredicate2ExpandLevels);
 			return aExpandLevels.length
 				? JSON.stringify(aExpandLevels.map((oExpandLevel) => {
-						// filter out collapseAll
-						return {NodeID : oExpandLevel.NodeID, Levels : oExpandLevel.Levels};
+						// build the server representation
+						return {NodeID : oExpandLevel.nodeId, Levels : oExpandLevel.levels};
 					}))
 				: undefined;
 		}
