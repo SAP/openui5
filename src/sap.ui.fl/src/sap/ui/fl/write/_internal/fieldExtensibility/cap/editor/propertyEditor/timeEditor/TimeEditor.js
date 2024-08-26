@@ -25,7 +25,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
-	var TimeEditor = DateEditor.extend("sap.ui.fl.write._internal.fieldExtensibility.cap.editor.propertyEditor.timeEditor.TimeEditor", {
+	const TimeEditor = DateEditor.extend("sap.ui.fl.write._internal.fieldExtensibility.cap.editor.propertyEditor.timeEditor.TimeEditor", {
 		xmlFragment: "sap.ui.fl.write._internal.fieldExtensibility.cap.editor.propertyEditor.timeEditor.TimeEditor",
 		metadata: {
 			library: "sap.ui.fl"
@@ -33,7 +33,8 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	TimeEditor.configMetadata = Object.assign({}, DateEditor.configMetadata, {
+	TimeEditor.configMetadata = {
+		...DateEditor.configMetadata,
 		pattern: {
 			defaultValue: "HH:mm:ss"
 		},
@@ -41,13 +42,10 @@ sap.ui.define([
 		utc: {
 			defaultValue: false
 		}
-	});
+	};
 
 	TimeEditor.prototype.getDefaultValidators = function() {
-		return Object.assign(
-			{},
-			DateEditor.prototype.getDefaultValidators.call(this)
-		);
+		return { ...DateEditor.prototype.getDefaultValidators.call(this) };
 	};
 
 	TimeEditor.prototype.getFormatterInstance = function(mOptions) {

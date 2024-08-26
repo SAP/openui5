@@ -533,10 +533,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("when initialize is called without a reference and with a componentID", function(assert) {
-			var oMockResponse = {changes: merge(StorageUtils.getEmptyFlexDataResponse(), {foo: "FlexResponse"}), authors: {}};
+			const oMockResponse = { changes: merge(StorageUtils.getEmptyFlexDataResponse(), { foo: "FlexResponse" }), authors: {} };
 			this.oLoadFlexDataStub.resolves(oMockResponse);
 
-			var oExpectedResponse = Object.assign({}, oMockResponse);
+			const oExpectedResponse = { ...oMockResponse };
 
 			return FlexState.initialize({
 				componentId: sComponentId

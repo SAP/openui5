@@ -56,13 +56,13 @@ sap.ui.define([
 
 	function getCompleteDependency(oChange, sReference) {
 		const mInitialDependencies = FlexObjectState.getCompleteDependencyMap(sReference).mDependencies;
-		return mInitialDependencies[oChange.getId()] && Object.assign({}, mInitialDependencies[oChange.getId()]);
+		return mInitialDependencies[oChange.getId()] && { ...mInitialDependencies[oChange.getId()] };
 	}
 
 	function copyDependencies(oInitialDependency, aNewValidDependencies, oAppComponent, oChange, sReference) {
 		const aNewValidControlDependencies = [];
 		const oDependencyMap = FlexObjectState.getLiveDependencyMap(sReference);
-		const oModifiedDependency = Object.assign({}, oInitialDependency);
+		const oModifiedDependency = { ...oInitialDependency };
 		oInitialDependency.controlsDependencies.forEach((oDependentControlSelector) => {
 			// if the control is already available we don't need to add a dependency to it
 			if (!JsControlTreeModifier.bySelector(oDependentControlSelector, oAppComponent)) {
@@ -229,7 +229,7 @@ sap.ui.define([
 			oSelector.changeTypes ||= [];
 			const mChangesMap = FlexObjectState.getLiveDependencyMap(sFlexReference);
 			let aPromises = [];
-			const mDependencies = Object.assign({}, mChangesMap.mDependencies);
+			const mDependencies = { ...mChangesMap.mDependencies };
 			const {mChanges} = mChangesMap;
 			const aChangesForControl = mChanges[oControl.getId()] || [];
 

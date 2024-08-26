@@ -66,7 +66,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("given a mock server, when loadFeatures is triggered without a public layer available", function(assert) {
-			var oServerResponse = {
+			const oServerResponse = {
 				isKeyUser: true,
 				isVersioningEnabled: false,
 				isContextSharingEnabled: true,
@@ -74,11 +74,11 @@ sap.ui.define([
 				isLocalResetEnabled: true
 			};
 
-			var oExpectedResponse = Object.assign({isVariantAdaptationEnabled: false}, oServerResponse);
+			const oExpectedResponse = { isVariantAdaptationEnabled: false, ...oServerResponse };
 
 			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oServerResponse));
-			var mPropertyBag = {url: "/sap/bc/lrep"};
-			var sUrl = "/sap/bc/lrep/flex/settings";
+			const mPropertyBag = {url: "/sap/bc/lrep"};
+			const sUrl = "/sap/bc/lrep/flex/settings";
 
 			return LrepConnector.loadFeatures(mPropertyBag).then(function(oResponse) {
 				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
@@ -88,7 +88,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("given a mock server, when loadFeatures is triggered with a public layer available", function(assert) {
-			var oServerResponse = {
+			const oServerResponse = {
 				isKeyUser: true,
 				isVersioningEnabled: false,
 				isContextSharingEnabled: true,
@@ -96,11 +96,11 @@ sap.ui.define([
 				isLocalResetEnabled: true
 			};
 
-			var oExpectedResponse = Object.assign({isVariantAdaptationEnabled: true}, oServerResponse);
+			const oExpectedResponse = { isVariantAdaptationEnabled: true, ...oServerResponse };
 
 			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oServerResponse));
-			var mPropertyBag = {url: "/sap/bc/lrep"};
-			var sUrl = "/sap/bc/lrep/flex/settings";
+			const mPropertyBag = {url: "/sap/bc/lrep"};
+			const sUrl = "/sap/bc/lrep/flex/settings";
 
 			return LrepConnector.loadFeatures(mPropertyBag).then(function(oResponse) {
 				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");

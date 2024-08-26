@@ -120,7 +120,7 @@ fs.readFile(path.resolve(__dirname, sInitialChangeFileName), 'utf8', function (e
 			});
 		}
 	} else {
-		oOutput = Object.assign({}, oInput);
+		oOutput = { ...oInput };
 		const iLastChangeIndexIdentifier = 0;
 		aChangeAmounts.forEach(function (iChangeAmount, iIndex) {
 			iChangeAmount = parseInt(iChangeAmount);

@@ -143,11 +143,7 @@ sap.ui.define([
 					);
 					// If the parent variant no longer exists, change the reference to the standard variant
 					if (!bParentVariantExists) {
-						return Object.assign(
-							{},
-							oVariant,
-							{ variantReference: oVariant.variantManagementReference }
-						);
+						return { ...oVariant, variantReference: oVariant.variantManagementReference };
 					}
 					return oVariant;
 				});
@@ -304,7 +300,8 @@ sap.ui.define([
 			});
 		});
 
-		_mInstances[sReference].runtimePersistence = Object.assign(oRuntimePersistence, {
+		_mInstances[sReference].runtimePersistence = {
+			...oRuntimePersistence,
 			flexObjects: aChangeDefinitions.map(function(oChangeDef) {
 				var iObjectIndex;
 				// Only keep FlexObjects found in the storage change definitions
@@ -326,7 +323,7 @@ sap.ui.define([
 				Log.error(sErrorText);
 				throw new Error(sErrorText);
 			})
-		});
+		};
 
 		// If the final length is different, an object is no longer there (e.g. new version requested)
 		if (iInitialFlexObjectsLength !== _mInstances[sReference].runtimePersistence.flexObjects.length) {
@@ -414,7 +411,7 @@ sap.ui.define([
 		var oResponse = mResponse && mResponse.changes || {};
 		var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 		if (oResponse.info !== undefined) {
-			oFlexInfoSession = Object.assign(oFlexInfoSession, oResponse.info);
+			oFlexInfoSession = { ...oFlexInfoSession, ...oResponse.info };
 		}
 		FlexInfoSession.setByReference(oFlexInfoSession, sReference);
 	}

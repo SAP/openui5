@@ -33,14 +33,14 @@ sap.ui.define([
 		},
 
 		loadFlexData(mPropertyBag) {
-			var sPath = sJsonPath || mPropertyBag.path;
+			const sPath = sJsonPath || mPropertyBag.path;
 			if (sPath) {
 				return LoaderExtensions.loadResource({
 					dataType: "json",
 					url: sPath,
 					async: true
 				}).then(function(oResponse) {
-					return Object.assign(StorageUtils.getEmptyFlexDataResponse(), oResponse);
+					return { ...StorageUtils.getEmptyFlexDataResponse(), ...oResponse };
 				});
 			}
 			return Promise.resolve();

@@ -203,7 +203,7 @@ sap.ui.define([
 		);
 		return DelegateMediatorAPI.getWriteDelegateForControl(createPropertyBag(vDomNode, XmlTreeModifier))
 		.then(function(mDelegateInfo) {
-			const mTestDelegate = Object.assign({}, TestDelegate);
+			const mTestDelegate = { ...TestDelegate };
 			delete mTestDelegate.getPropertyInfo;
 			assert.deepEqual(
 				mDelegateInfo.instance,

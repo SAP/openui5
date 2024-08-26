@@ -170,7 +170,7 @@ sap.ui.define([
 		const oParsedHash = oURLParsingService?.parseShellHash(hasher.getHash());
 
 		if (oParsedHash?.params) {
-			const mOldHashParams = Object.assign({}, oParsedHash.params);
+			const mOldHashParams = { ...oParsedHash.params };
 			const mTechnicalParameters = oModel.oAppComponent?.getComponentData?.()?.technicalParameters;
 			// if mTechnicalParameters are not available we write a warning and continue updating the hash
 			if (!mTechnicalParameters) {

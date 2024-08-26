@@ -77,10 +77,11 @@ sap.ui.define([
 	 * @static
 	 */
 	FlVariant.getMappingInfo = function() {
-		return Object.assign(Variant.getMappingInfo(), {
+		return {
+			...Variant.getMappingInfo(),
 			variantReference: "variantReference",
 			variantManagementReference: "variantManagementReference"
-		});
+		};
 	};
 
 	/**

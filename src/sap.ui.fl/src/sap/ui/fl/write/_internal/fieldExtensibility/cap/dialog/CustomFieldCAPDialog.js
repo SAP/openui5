@@ -26,10 +26,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oTextBundle = Lib.getResourceBundleFor("sap.ui.fl");
+	const oTextBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
 	function setupEditor(oDialog, oInitialJson, oCustomConfig) {
-		var oEditor = oDialog.getContent()[0];
+		const oEditor = oDialog.getContent()[0];
 		oEditor.setJson(deepClone(oInitialJson));
 		oEditor.setConfig(getEditorConfig(oCustomConfig));
 		return oEditor;
@@ -39,16 +39,16 @@ sap.ui.define([
 		if (!oOriginalJson || !oOriginalJson.element) {
 			return {};
 		}
-		var oJson = deepClone(oOriginalJson);
+		const oJson = deepClone(oOriginalJson);
 
 		// Set label
 		if (!ObjectPath.get(["element", "@Common.Label"], oJson)) {
-			var sName = ObjectPath.get(["element", "name"], oJson);
+			const sName = ObjectPath.get(["element", "name"], oJson);
 			ObjectPath.set(["element", "@Common.Label"], sName, oJson);
 		}
 
 		// Format enum input validation
-		var vRange = ObjectPath.get(["element", "@assert.range"], oJson);
+		const vRange = ObjectPath.get(["element", "@assert.range"], oJson);
 		if (
 			ObjectPath.get(["element", "type"], oJson) === "cds.String"
 			&& Array.isArray(vRange)
@@ -62,12 +62,12 @@ sap.ui.define([
 
 		// Flatten additional annotations
 		if (oJson.element.annotations) {
-			oJson.element = Object.assign({}, oJson.element, oJson.element.annotations);
+			oJson.element = { ...oJson.element, ...oJson.element.annotations };
 			delete oJson.element.annotations;
 		}
 
 		// Format CSN extension
-		var oCsnOutput = {
+		const oCsnOutput = {
 			extend: oJson.extend,
 			elements: {}
 		};
@@ -85,7 +85,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 */
-	var CustomFieldCAPDialog = ManagedObject.extend("sap.ui.fl.write._internal.fieldExtensibility.cap.dialog.CustomFieldCAPDialog", {
+	const CustomFieldCAPDialog = ManagedObject.extend("sap.ui.fl.write._internal.fieldExtensibility.cap.dialog.CustomFieldCAPDialog", {
 		metadata: {
 			library: "sap.ui.fl",
 			properties: {
@@ -98,7 +98,7 @@ sap.ui.define([
 	});
 
 	CustomFieldCAPDialog.prototype.open = function(mEntitySetInformation, sRtaStyleClassName) {
-		var oInitialJson = {
+		const oInitialJson = {
 			element: {
 				name: "NewField",
 				type: "cds.String"
@@ -106,7 +106,7 @@ sap.ui.define([
 			extend: mEntitySetInformation.boundEntitySet.$Type
 		};
 
-		var oDialog = this.getProperty("_dialog");
+		const oDialog = this.getProperty("_dialog");
 		if (oDialog) {
 			this._oEditor.setJson(deepClone(oInitialJson));
 			oDialog.open();
@@ -133,7 +133,7 @@ sap.ui.define([
 					this._oJson = oEvent.getParameter("json");
 				}.bind(this));
 				this._oEditor.attachValidationErrorChange(function(oEvent) {
-					var bHasError = oEvent.getParameter("hasError");
+					const bHasError = oEvent.getParameter("hasError");
 					this._oDialogModel.setData({
 						isValid: !bHasError
 					});
@@ -144,7 +144,7 @@ sap.ui.define([
 	};
 
 	CustomFieldCAPDialog.prototype.exit = function() {
-		var oDialog = this.getProperty("_dialog");
+		const oDialog = this.getProperty("_dialog");
 		if (oDialog) {
 			oDialog.destroy();
 		}
@@ -154,13 +154,13 @@ sap.ui.define([
 	};
 
 	CustomFieldCAPDialog.prototype.onSave = function() {
-		var oCsnOutput = prepareJsonOutput(this._oJson);
-		var oPayload = {
+		const oCsnOutput = prepareJsonOutput(this._oJson);
+		const oPayload = {
 			extensions: [JSON.stringify(oCsnOutput)]
 		};
 
-		var oAddFieldPromise = new Promise(function(resolve, reject) {
-			var oXhr = new XMLHttpRequest();
+		const oAddFieldPromise = new Promise(function(resolve, reject) {
+			const oXhr = new XMLHttpRequest();
 			oXhr.open("POST", "/-/cds/extensibility/addExtension");
 			oXhr.setRequestHeader("Content-Type", "application/json");
 			oXhr.onload = function() {

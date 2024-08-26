@@ -20,8 +20,8 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when json path is set", function(assert) {
-			var sPath = "/somePath";
-			var oReturnObj = {returnObjProp: "return"};
+			const sPath = "/somePath";
+			const oReturnObj = {returnObjProp: "return"};
 			ObjectPathConnector.setJsonPath(sPath);
 			sandbox.stub(LoaderExtensions, "loadResource")
 			.callThrough()
@@ -34,13 +34,17 @@ sap.ui.define([
 
 			return ObjectPathConnector.loadFlexData()
 			.then(function(oResponse) {
-				assert.deepEqual(oResponse, Object.assign(StorageUtils.getEmptyFlexDataResponse(), oReturnObj), "then the correct response is received");
+				assert.deepEqual(
+					oResponse,
+					{ ...StorageUtils.getEmptyFlexDataResponse(), ...oReturnObj },
+					"then the correct response is received"
+				);
 			});
 		});
 
 		QUnit.test("when json path is passed", function(assert) {
-			var sPath = "/somePath";
-			var oReturnObj = {returnObjProp: "return"};
+			const sPath = "/somePath";
+			const oReturnObj = {returnObjProp: "return"};
 			sandbox.stub(LoaderExtensions, "loadResource")
 			.callThrough()
 			.withArgs({
@@ -52,7 +56,11 @@ sap.ui.define([
 
 			return ObjectPathConnector.loadFlexData({path: sPath})
 			.then(function(oResponse) {
-				assert.deepEqual(oResponse, Object.assign(StorageUtils.getEmptyFlexDataResponse(), oReturnObj), "then the correct response is received");
+				assert.deepEqual(
+					oResponse,
+					{ ...StorageUtils.getEmptyFlexDataResponse(), ...oReturnObj },
+					"then the correct response is received"
+				);
 			});
 		});
 

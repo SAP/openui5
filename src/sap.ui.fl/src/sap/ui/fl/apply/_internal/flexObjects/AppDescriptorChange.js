@@ -37,9 +37,7 @@ sap.ui.define([
 	 * @static
 	 */
 	AppDescriptorChange.getMappingInfo = function() {
-		return Object.assign(FlexObject.getMappingInfo(), {
-			appDescriptorChange: "appDescriptorChange"
-		});
+		return { ...FlexObject.getMappingInfo(), appDescriptorChange: "appDescriptorChange" };
 	};
 
 	/**

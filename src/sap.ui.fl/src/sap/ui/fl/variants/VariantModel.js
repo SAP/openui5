@@ -364,22 +364,18 @@ sap.ui.define([
 	});
 
 	VariantModel.prototype.updateData = function() {
-		var oNewVariantsMap = this.oDataSelector.get({ reference: this.sFlexReference });
-		var oCurrentData = Object.assign({}, this.getData());
+		const oNewVariantsMap = this.oDataSelector.get({ reference: this.sFlexReference });
+		const oCurrentData = { ...this.getData() };
 		Object.entries(oNewVariantsMap).forEach(function(aVariants) {
-			var sVariantManagementKey = aVariants[0];
-			var oVariantMapEntry = Object.assign({}, aVariants[1]);
+			const sVariantManagementKey = aVariants[0];
+			const oVariantMapEntry = { ...aVariants[1] };
 			oCurrentData[sVariantManagementKey] ||= {};
 			oCurrentData[sVariantManagementKey].variants = oVariantMapEntry.variants.map(function(oVariant) {
-				var oCurrentVariantData = (oCurrentData[sVariantManagementKey].variants || [])
+				const oCurrentVariantData = (oCurrentData[sVariantManagementKey].variants || [])
 				.find(function(oVariantToCheck) {
 					return oVariantToCheck.key === oVariant.key;
 				});
-				return Object.assign(
-					{},
-					oCurrentVariantData || {},
-					oVariant
-				);
+				return { ...(oCurrentVariantData || {}), ...oVariant };
 			});
 			oCurrentData[sVariantManagementKey].currentVariant = oVariantMapEntry.currentVariant;
 			oCurrentData[sVariantManagementKey].defaultVariant = oVariantMapEntry.defaultVariant;

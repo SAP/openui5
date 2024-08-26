@@ -48,7 +48,7 @@ sap.ui.define([
 	 * @static
 	 */
 	AnnotationChange.getMappingInfo = function() {
-		return Object.assign(FlexObject.getMappingInfo(), {});
+		return { ...FlexObject.getMappingInfo() };
 	};
 
 	/**

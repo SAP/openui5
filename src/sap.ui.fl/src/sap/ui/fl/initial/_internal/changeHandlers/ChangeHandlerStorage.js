@@ -83,7 +83,7 @@ sap.ui.define([
 
 	function createChangeRegistryItem(sControlType, sChangeType, oChangeHandler) {
 		oChangeHandler = replaceDefault(sChangeType, oChangeHandler);
-		var mLayerPermissions = Object.assign({}, Settings.getDefaultLayerPermissions());
+		const mLayerPermissions = { ...Settings.getDefaultLayerPermissions() };
 
 		if (oChangeHandler.layers) {
 			each(oChangeHandler.layers, function(sLayer, bLayerPermission) {
@@ -94,7 +94,7 @@ sap.ui.define([
 			});
 		}
 
-		var oChangeHandlerEntry = {
+		const oChangeHandlerEntry = {
 			controlType: sControlType,
 			changeHandler: oChangeHandler.changeHandler,
 			layers: mLayerPermissions,

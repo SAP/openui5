@@ -288,7 +288,7 @@ sap.ui.define([
 		 * 	sap.ui.fl.apply_internal
 		 */
 		getEmptyFlexDataResponse() {
-			return Object.assign({}, {
+			return {
 				appDescriptorChanges: [],
 				annotationChanges: [],
 				changes: [],
@@ -303,7 +303,7 @@ sap.ui.define([
 				variantDependentControlChanges: [],
 				variantManagementChanges: [],
 				ui2personalization: {}
-			});
+			};
 		},
 
 		/**

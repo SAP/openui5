@@ -264,13 +264,13 @@ sap.ui.define([
 			});
 			revertVariantUpdate(
 				oVariant,
-				Object.assign({
+				{
 					name: oRevertDataContent.previousName,
 					content: oRevertDataContent.previousContent,
 					favorite: oRevertDataContent.previousFavorite,
 					executeOnSelection: oRevertDataContent.previousExecuteOnSelection,
 					contexts: oRevertDataContent.previousContexts
-				})
+				}
 			);
 			oVariant.setState(oRevertDataContent.previousState);
 		}
@@ -430,17 +430,17 @@ sap.ui.define([
 			return undefined;
 		}
 
-		var oChangeSpecificData = mPropertyBag.changeSpecificData;
+		const oChangeSpecificData = mPropertyBag.changeSpecificData;
 
 		oChangeSpecificData.layer = determineLayer(oChangeSpecificData);
 		oChangeSpecificData.changeType = oChangeSpecificData.type;
 		oChangeSpecificData.texts = getTexts(oChangeSpecificData);
 		setAuthor(oChangeSpecificData);
-		var oFileContent = Object.assign({}, oChangeSpecificData, _omit(mPropertyBag, "changeSpecificData"));
-		var oFlexObject = FlexObjectFactory.createCompVariant(oFileContent);
+		const oFileContent = { ...oChangeSpecificData, ...(_omit(mPropertyBag, "changeSpecificData")) };
+		const oFlexObject = FlexObjectFactory.createCompVariant(oFileContent);
 
-		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
-		var oMapOfPersistencyKey = mCompVariantsMap._getOrCreate(mPropertyBag.persistencyKey);
+		const mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
+		const oMapOfPersistencyKey = mCompVariantsMap._getOrCreate(mPropertyBag.persistencyKey);
 		oMapOfPersistencyKey.variants.push(oFlexObject);
 		oMapOfPersistencyKey.byId[oFlexObject.getId()] = oFlexObject;
 		FlexState.addDirtyFlexObject(mPropertyBag.reference, oFlexObject);
@@ -538,12 +538,12 @@ sap.ui.define([
 		}
 
 		function updateChange(mPropertyBag, oVariant, oChange) {
-			var aRevertData = oChange.getRevertData() || [];
-			var oChangeContent = Object.assign({}, oChange.getContent());
-			var oRevertData = {
-				previousContent: Object.assign({}, oChangeContent),
+			const aRevertData = oChange.getRevertData() || [];
+			const oChangeContent = { ...oChange.getContent() };
+			const oRevertData = {
+				previousContent: { ...oChangeContent },
 				previousState: oChange.getState(),
-				change: _pick(Object.assign({}, mPropertyBag), ["favorite", "visible", "executeOnSelection", "contexts", "content", "name"])
+				change: _pick(mPropertyBag, ["favorite", "visible", "executeOnSelection", "contexts", "content", "name"])
 			};
 			aRevertData.push(oRevertData);
 			oChange.setRevertData(aRevertData);
@@ -777,15 +777,15 @@ sap.ui.define([
 			case CompVariantState.operationType.ContentUpdate:
 				revertVariantUpdate(
 					oVariant,
-					Object.assign({
+					{
 						name: oRevertDataContent.previousName,
 						content: oRevertDataContent.previousContent,
 						favorite: oRevertDataContent.previousFavorite,
 						executeOnSelection: oRevertDataContent.previousExecuteOnSelection,
-						contexts: oRevertDataContent.previousContexts
-					},
-					_pick(mPropertyBag, ["reference", "persistencyKey", "id"])
-					));
+						contexts: oRevertDataContent.previousContexts,
+						..._pick(mPropertyBag, ["reference", "persistencyKey", "id"])
+					}
+				);
 				break;
 			case CompVariantState.operationType.NewChange:
 				oChange = oVariantRevertData.getChange();
@@ -793,31 +793,31 @@ sap.ui.define([
 				removeChange(oChange);
 				revertVariantChange(
 					oVariant,
-					Object.assign(
-						{
-							name: oRevertDataContent.previousName,
-							content: oRevertDataContent.previousContent,
-							favorite: oRevertDataContent.previousFavorite,
-							executeOnSelection: oRevertDataContent.previousExecuteOnSelection,
-							contexts: oRevertDataContent.previousContexts
-						},
-						_pick(mPropertyBag, ["reference", "persistencyKey", "id"])
-					));
+					{
+						name: oRevertDataContent.previousName,
+						content: oRevertDataContent.previousContent,
+						favorite: oRevertDataContent.previousFavorite,
+						executeOnSelection: oRevertDataContent.previousExecuteOnSelection,
+						contexts: oRevertDataContent.previousContexts,
+						..._pick(mPropertyBag, ["reference", "persistencyKey", "id"])
+					}
+				);
 				break;
 			case CompVariantState.operationType.UpdateVariantViaChangeUpdate:
 				oChange = oVariantRevertData.getChange();
 				revertVariantChange(
 					oVariant,
-					Object.assign(
-						{
+					{
+						...{
 							name: oRevertDataContent.previousName,
 							content: oRevertDataContent.previousContent,
 							favorite: oRevertDataContent.previousFavorite,
 							executeOnSelection: oRevertDataContent.previousExecuteOnSelection,
 							contexts: oRevertDataContent.previousContexts
 						},
-						_pick(mPropertyBag, ["reference", "persistencyKey", "id"])
-					));
+						..._pick(mPropertyBag, ["reference", "persistencyKey", "id"])
+					}
+				);
 				var oChangeRevertData = oChange.getRevertData().pop();
 				oChange.setContent(oChangeRevertData.previousContent);
 				oChange.setState(oChangeRevertData.previousState);

@@ -92,11 +92,12 @@ sap.ui.define([
 	 * @static
 	 */
 	Variant.getMappingInfo = function() {
-		return Object.assign(FlexObject.getMappingInfo(), {
+		return {
+			...FlexObject.getMappingInfo(),
 			favorite: "favorite",
 			executeOnSelection: "executeOnSelection",
 			contexts: "contexts"
-		});
+		};
 	};
 
 	/**

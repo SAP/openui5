@@ -22,7 +22,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal
 	 */
-	var RegistrationBuild = {
+	const RegistrationBuild = {
 		appdescr_app_changeDataSource: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeDataSource"),
 		appdescr_ui5_addNewModelEnhanceWith: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModelEnhanceWith"),
 		appdescr_ui5_addComponentUsages: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddComponentUsages"),
@@ -41,6 +41,5 @@ sap.ui.define([
 		appdescr_fiori_setCloudDevAdaptationStatus: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/fiori/SetCloudDevAdaptationStatus")
 	};
 
-	var RegistrationCopy = Object.assign({}, Registration);
-	return Object.assign(RegistrationCopy, RegistrationBuild);
+	return { ...Registration, ...RegistrationBuild };
 });

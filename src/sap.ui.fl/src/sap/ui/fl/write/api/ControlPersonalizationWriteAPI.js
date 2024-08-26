@@ -116,20 +116,20 @@ sap.ui.define([
 			if (!mPropertyBag.changes.length) {
 				return Promise.resolve([]);
 			}
-			var oReferenceControl = (
+			const oReferenceControl = (
 				mPropertyBag.changes[0].selectorElement
 				|| mPropertyBag.changes[0].selectorControl
 			);
-			var oAppComponent = Utils.getAppComponentForControl(oReferenceControl);
-			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oReferenceControl});
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
-			var oVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
-			var sLayer = Layer.USER;
-			var aSuccessfulChanges = [];
+			const oAppComponent = Utils.getAppComponentForControl(oReferenceControl);
+			const sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oReferenceControl});
+			const oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
+			const oVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
+			const sLayer = Layer.USER;
+			const aSuccessfulChanges = [];
 
 			function createChanges() {
-				var aChanges = [];
-				var aChangesToBeAdded = [];
+				const aChanges = [];
+				const aChangesToBeAdded = [];
 				return mPropertyBag.changes.reduce(function(pPromise, oPersonalizationChange) {
 					return pPromise
 					.then(function() {
@@ -141,13 +141,13 @@ sap.ui.define([
 						if (!oPersonalizationChange.transient && !mPropertyBag.ignoreVariantManagement) {
 							// check for preset variantReference
 							if (!oPersonalizationChange.changeSpecificData.variantReference) {
-								var sVariantManagementReference = getRelevantVariantManagementReference(
+								const sVariantManagementReference = getRelevantVariantManagementReference(
 									oAppComponent,
 									oPersonalizationChange.selectorControl,
 									mPropertyBag.useStaticArea
 								);
 								if (sVariantManagementReference) {
-									var sCurrentVariantReference = oVariantModel.oData[sVariantManagementReference].currentVariant;
+									const sCurrentVariantReference = oVariantModel.oData[sVariantManagementReference].currentVariant;
 									oPersonalizationChange.changeSpecificData.variantReference = sCurrentVariantReference;
 								}
 							}
@@ -156,10 +156,11 @@ sap.ui.define([
 							delete oPersonalizationChange.changeSpecificData.variantReference;
 						}
 
-						oPersonalizationChange.changeSpecificData = Object.assign(
-							oPersonalizationChange.changeSpecificData,
-							{developerMode: false, layer: sLayer}
-						);
+						oPersonalizationChange.changeSpecificData = {
+							...oPersonalizationChange.changeSpecificData,
+							developerMode: false,
+							layer: sLayer
+						};
 						return ChangesWriteAPI.create({
 							changeSpecificData: oPersonalizationChange.changeSpecificData,
 							selector: oPersonalizationChange.selectorControl

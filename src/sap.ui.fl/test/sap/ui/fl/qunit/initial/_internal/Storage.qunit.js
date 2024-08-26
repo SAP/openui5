@@ -39,7 +39,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
 	const sFlexReference = "app.id";
 
 	function cleanUp() {
@@ -80,9 +80,9 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("with a failing connector", function(assert) {
-			var oLrepConnectorLoadFeaturesStub = sandbox.stub(LrepConnector, "loadFeatures").resolves({isKeyUser: true});
+			const oLrepConnectorLoadFeaturesStub = sandbox.stub(LrepConnector, "loadFeatures").resolves({isKeyUser: true});
 			delete PersonalizationConnector.loadFeatures;
-			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadFeatures").rejects({});
+			const oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadFeatures").rejects({});
 
 			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{
@@ -99,7 +99,7 @@ sap.ui.define([
 				}
 			]);
 
-			var oExpectedResponse = {
+			const oExpectedResponse = {
 				isKeyUser: true,
 				isKeyUserTranslationEnabled: false,
 				isVariantSharingEnabled: false,
@@ -119,7 +119,7 @@ sap.ui.define([
 				system: "",
 				client: ""
 			};
-			var oLogResolveSpy = sandbox.spy(StorageUtils, "logAndResolveDefault");
+			const oLogResolveSpy = sandbox.spy(StorageUtils, "logAndResolveDefault");
 
 			return Storage.loadFeatures().then(function(oResponse) {
 				assert.strictEqual(oLrepConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
@@ -130,9 +130,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("then it calls loadFeatures of the configured connectors", function(assert) {
-			var oLrepConnectorLoadFeaturesStub = sandbox.stub(LrepConnector, "loadFeatures").resolves({});
-			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadFeatures").resolves({});
-			var sUrl = "/some/url";
+			const oLrepConnectorLoadFeaturesStub = sandbox.stub(LrepConnector, "loadFeatures").resolves({});
+			const oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadFeatures").resolves({});
+			const sUrl = "/some/url";
 
 			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", url: sUrl},
@@ -141,10 +141,10 @@ sap.ui.define([
 
 			return Storage.loadFeatures().then(function() {
 				assert.strictEqual(oLrepConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
-				var oLrepConnectorCallArgs = oLrepConnectorLoadFeaturesStub.getCall(0).args[0];
+				const oLrepConnectorCallArgs = oLrepConnectorLoadFeaturesStub.getCall(0).args[0];
 				assert.deepEqual(oLrepConnectorCallArgs, {url: sUrl}, "the url was passed");
 				assert.strictEqual(oJsObjectConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
-				var oJsObjectConnectorCallArgs = oJsObjectConnectorLoadFeaturesStub.getCall(0).args[0];
+				const oJsObjectConnectorCallArgs = oJsObjectConnectorLoadFeaturesStub.getCall(0).args[0];
 				assert.deepEqual(oJsObjectConnectorCallArgs, {url: undefined}, "no url was passed");
 			});
 		});
@@ -181,7 +181,7 @@ sap.ui.define([
 				isProductiveSystem: true
 			});
 
-			var DEFAULT_FEATURES = {
+			const DEFAULT_FEATURES = {
 				isKeyUser: false,
 				isKeyUserTranslationEnabled: false,
 				isVariantSharingEnabled: false,
@@ -227,8 +227,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("with a failing connector", function(assert) {
-			var oLrepConnectorLoadFeaturesStub = sandbox.stub(LrepConnector, "loadVariantsAuthors").resolves({id1: "name1"});
-			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadVariantsAuthors").rejects({});
+			const oLrepConnectorLoadFeaturesStub = sandbox.stub(LrepConnector, "loadVariantsAuthors").resolves({id1: "name1"});
+			const oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadVariantsAuthors").rejects({});
 			delete PersonalizationConnector.loadVariantsAuthors;
 
 			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
@@ -246,10 +246,10 @@ sap.ui.define([
 				}
 			]);
 
-			var oExpectedResponse = {
+			const oExpectedResponse = {
 				id1: "name1"
 			};
-			var oLogResolveSpy = sandbox.spy(StorageUtils, "logAndResolveDefault");
+			const oLogResolveSpy = sandbox.spy(StorageUtils, "logAndResolveDefault");
 
 			return Storage.loadVariantsAuthors("reference").then(function(oResponse) {
 				assert.strictEqual(oLrepConnectorLoadFeaturesStub.callCount, 1, "the loadVariantsAuthors was triggered once");
@@ -283,7 +283,7 @@ sap.ui.define([
 				const oLrepConnectorCallArgs = oLrepConnectorLoadFeaturesStub.getCall(0).args[0];
 				assert.deepEqual(oLrepConnectorCallArgs, {url: this.url, reference: "reference"}, "the url was passed");
 				assert.strictEqual(oJsObjectConnectorLoadFeaturesStub.callCount, 1, "the loadVariantsAuthors was triggered once");
-				var oJsObjectConnectorCallArgs = oJsObjectConnectorLoadFeaturesStub.getCall(0).args[0];
+				const oJsObjectConnectorCallArgs = oJsObjectConnectorLoadFeaturesStub.getCall(0).args[0];
 				assert.deepEqual(oJsObjectConnectorCallArgs.url, undefined, "no url was passed");
 				assert.deepEqual(oResponse, oExpectedResponse, "response was merged correctly");
 			}.bind(this));
@@ -325,8 +325,8 @@ sap.ui.define([
 				{connector: "ObjectPathConnector", path: "path/to/data"},
 				{connector: "PersonalizationConnector", url: "url/to/something"}
 			]);
-			var oObjectStorageStub = sandbox.stub(ObjectPathConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
-			var oPersoStub = sandbox.stub(PersonalizationConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+			const oObjectStorageStub = sandbox.stub(ObjectPathConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+			const oPersoStub = sandbox.stub(PersonalizationConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
 
 			return Storage.loadFlexData({reference: sFlexReference, cacheKey: "cache"}).then(function() {
 				assert.equal(oObjectStorageStub.lastCall.args[0].path, "path/to/data", "the path parameter was passed");
@@ -346,8 +346,8 @@ sap.ui.define([
 
 		QUnit.test("Given some connector provides multiple layers", function(assert) {
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
-			var sVariant1 = "variant1";
-			var mVariant1 = {
+			const sVariant1 = "variant1";
+			const mVariant1 = {
 				fileName: sVariant1,
 				fileType: "ctrl_variant",
 				layer: Layer.VENDOR,
@@ -358,8 +358,8 @@ sap.ui.define([
 			};
 			JsObjectConnector.storage.setItem(ObjectStorageUtils.createFlexObjectKey(mVariant1), mVariant1);
 
-			var sChangeId1 = "change1";
-			var oChange1 = FlexObjectFactory.createFromFileContent({
+			const sChangeId1 = "change1";
+			const oChange1 = FlexObjectFactory.createFromFileContent({
 				fileName: sChangeId1,
 				fileType: "change",
 				layer: Layer.VENDOR,
@@ -371,11 +371,11 @@ sap.ui.define([
 				},
 				variantReference: sVariant1
 			});
-			var mChange1 = oChange1.convertToFileContent();
+			const mChange1 = oChange1.convertToFileContent();
 			JsObjectConnector.storage.setItem(ObjectStorageUtils.createFlexObjectKey(mChange1), mChange1);
 
-			var sChangeId2 = "change2";
-			var oChange2 = FlexObjectFactory.createFromFileContent({
+			const sChangeId2 = "change2";
+			const oChange2 = FlexObjectFactory.createFromFileContent({
 				fileName: sChangeId2,
 				fileType: "change",
 				layer: Layer.CUSTOMER,
@@ -386,7 +386,7 @@ sap.ui.define([
 					id: "control.id"
 				}
 			});
-			var mChange2 = oChange2.convertToFileContent();
+			const mChange2 = oChange2.convertToFileContent();
 			JsObjectConnector.storage.setItem(ObjectStorageUtils.createFlexObjectKey(mChange2), mChange2);
 
 			return Storage.loadFlexData({reference: sFlexReference}).then(function(oResult) {
@@ -445,10 +445,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given only one connector provides variant data in a variantSection", function(assert) {
-			var oStaticFileConnectorResponse = Object.assign(StorageUtils.getEmptyFlexDataResponse(), {variantSection: {}});
-			var sVariantManagementKey = "management1";
+			const oStaticFileConnectorResponse = { ...StorageUtils.getEmptyFlexDataResponse(), variantSection: {} };
+			const sVariantManagementKey = "management1";
 
-			var oVariant = {
+			const oVariant = {
 				content: {
 					fileName: "variant1",
 					fileType: "ctrl_variant",
@@ -467,9 +467,10 @@ sap.ui.define([
 				variantManagementChanges: {}
 			};
 
-			var oExpectedStorageResponse = Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+			const oExpectedStorageResponse = {
+				...StorageUtils.getEmptyFlexDataResponse(),
 				variants: [oVariant.content]
-			});
+			};
 
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oStaticFileConnectorResponse);
 			sandbox.stub(LrepConnector, "loadFlexData").resolves({changes: []});
@@ -481,7 +482,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given only one connector provides UI2 personalization change and a variant change", function(assert) {
-			var oContent = {
+			const oContent = {
 				_persoSchemaVersion: "1.0",
 				aColumns: [{
 					text: "First Name",
@@ -497,7 +498,7 @@ sap.ui.define([
 				}
 			};
 
-			var oUI2PersonalizationResponse = {
+			const oUI2PersonalizationResponse = {
 				"nw.core.iam.busr.userlist": {
 					reference: "customer.reference.app.id_123456",
 					content: oContent,
@@ -508,7 +509,7 @@ sap.ui.define([
 				}
 			};
 
-			var oVariantContent = {
+			const oVariantContent = {
 				fileName: "fileName1",
 				fileType: "ctrl_variant",
 				layer: Layer.CUSTOMER,
@@ -516,10 +517,11 @@ sap.ui.define([
 				creation: "2020-04-17T13:10:20.1234567Z"
 			};
 
-			var oExpectedStorageResponse = Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+			const oExpectedStorageResponse = {
+				...StorageUtils.getEmptyFlexDataResponse(),
 				ui2personalization: oUI2PersonalizationResponse,
 				variants: [oVariantContent]
-			});
+			};
 
 			sandbox.stub(LrepConnector, "loadFlexData").resolves({
 				ui2personalization: oUI2PersonalizationResponse,
@@ -544,7 +546,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given only one connector provides only UI2 personalization change", function(assert) {
-			var oContent = {
+			const oContent = {
 				_persoSchemaVersion: "1.0",
 				aColumns: [{
 					text: "First Name",
@@ -560,7 +562,7 @@ sap.ui.define([
 				}
 			};
 
-			var oUI2PersonalizationResponse = {
+			const oUI2PersonalizationResponse = {
 				"nw.core.iam.busr.userlist": {
 					reference: "customer.reference.app.id_123456",
 					content: oContent,
@@ -571,9 +573,10 @@ sap.ui.define([
 				}
 			};
 
-			var oExpectedStorageResponse = Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+			const oExpectedStorageResponse = {
+				...StorageUtils.getEmptyFlexDataResponse(),
 				ui2personalization: oUI2PersonalizationResponse
-			});
+			};
 
 			sandbox.stub(LrepConnector, "loadFlexData").resolves({
 				ui2personalization: oUI2PersonalizationResponse
@@ -587,7 +590,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given only one connector provides only UI2 personalization change and variant section is empty object", function(assert) {
-			var oContent = {
+			const oContent = {
 				_persoSchemaVersion: "1.0",
 				aColumns: [{
 					text: "First Name",
@@ -603,7 +606,7 @@ sap.ui.define([
 				}
 			};
 
-			var oUI2PersonalizationResponse = {
+			const oUI2PersonalizationResponse = {
 				"nw.core.iam.busr.userlist": {
 					reference: "customer.reference.app.id_123456",
 					content: oContent,
@@ -614,9 +617,10 @@ sap.ui.define([
 				}
 			};
 
-			var oExpectedStorageResponse = Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+			const oExpectedStorageResponse = {
+				...StorageUtils.getEmptyFlexDataResponse(),
 				ui2personalization: oUI2PersonalizationResponse
-			});
+			};
 
 			sandbox.stub(LrepConnector, "loadFlexData").resolves({
 				ui2personalization: oUI2PersonalizationResponse,
@@ -631,7 +635,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given only one connector provides all types of changes", function(assert) {
-			var oContent = {
+			const oContent = {
 				_persoSchemaVersion: "1.0",
 				aColumns: [{
 					text: "First Name",
@@ -647,7 +651,7 @@ sap.ui.define([
 				}
 			};
 
-			var oUI2PersonalizationResponse = {
+			const oUI2PersonalizationResponse = {
 				"nw.core.iam.busr.userlist": {
 					reference: "customer.reference.app.id_123456",
 					content: oContent,
@@ -658,9 +662,10 @@ sap.ui.define([
 				}
 			};
 
-			var oExpectedStorageResponse = Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+			const oExpectedStorageResponse = {
+				...StorageUtils.getEmptyFlexDataResponse(),
 				ui2personalization: oUI2PersonalizationResponse
-			});
+			};
 
 			sandbox.stub(LrepConnector, "loadFlexData").resolves({
 				ui2personalization: oUI2PersonalizationResponse,
@@ -675,11 +680,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given 2 connectors provide variant data in variants properties", function(assert) {
-			var oStaticFileConnectorResponse = StorageUtils.getEmptyFlexDataResponse();
-			var oLrepConnectorResponse = StorageUtils.getEmptyFlexDataResponse();
-			var sVariantManagementKey = "management1";
+			const oStaticFileConnectorResponse = StorageUtils.getEmptyFlexDataResponse();
+			const oLrepConnectorResponse = StorageUtils.getEmptyFlexDataResponse();
+			const sVariantManagementKey = "management1";
 
-			var oVariant1 = {
+			const oVariant1 = {
 				content: {
 					fileName: "variant1",
 					fileType: "ctrl_variant",
@@ -692,7 +697,7 @@ sap.ui.define([
 			};
 			oStaticFileConnectorResponse.variants = [oVariant1.content];
 
-			var oVariant2 = {
+			const oVariant2 = {
 				content: {
 					fileName: "variant2",
 					fileType: "ctrl_variant",
@@ -708,9 +713,10 @@ sap.ui.define([
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oStaticFileConnectorResponse);
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(oLrepConnectorResponse);
 
-			var oExpectedStorageResponse = Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+			const oExpectedStorageResponse = {
+				...StorageUtils.getEmptyFlexDataResponse(),
 				variants: [oVariant1.content, oVariant2.content]
-			});
+			};
 
 			return Storage.loadFlexData({reference: sFlexReference}).then(function(oResult) {
 				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
@@ -719,10 +725,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given 2 connectors provide a change with the same id - i.e. not deleted file from changes-bundle.json", function(assert) {
-			var oStaticFileConnectorResponse = StorageUtils.getEmptyFlexDataResponse();
-			var oLrepConnectorResponse = StorageUtils.getEmptyFlexDataResponse();
+			const oStaticFileConnectorResponse = StorageUtils.getEmptyFlexDataResponse();
+			const oLrepConnectorResponse = StorageUtils.getEmptyFlexDataResponse();
 
-			var oChange1 = FlexObjectFactory.createFromFileContent({
+			const oChange1 = FlexObjectFactory.createFromFileContent({
 				fileName: "rename_id_123",
 				fileType: "ctrl_variant",
 				layer: Layer.VENDOR,
@@ -731,7 +737,7 @@ sap.ui.define([
 			});
 			oStaticFileConnectorResponse.changes = [oChange1.convertToFileContent()];
 
-			var oChange2 = FlexObjectFactory.createFromFileContent({
+			const oChange2 = FlexObjectFactory.createFromFileContent({
 				fileName: "rename_id_123",
 				fileType: "ctrl_variant",
 				layer: Layer.VENDOR,
@@ -781,7 +787,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("Given the first connector provide a variant in a variants property and the second provides a variant section with a variant", function(assert) {
-			var oResponse1 = StorageUtils.getEmptyFlexDataResponse();
+			const oResponse1 = StorageUtils.getEmptyFlexDataResponse();
 			oResponse1.variants.push({
 				fileName: "variant1",
 				fileType: "ctrl_variant",
@@ -790,7 +796,7 @@ sap.ui.define([
 				creation: "2019-07-22T10:33:19.7491090Z"
 			});
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oResponse1);
-			var oResponse2 = StorageUtils.getEmptyFlexDataResponse();
+			const oResponse2 = StorageUtils.getEmptyFlexDataResponse();
 			oResponse2.variantSection = {
 				variantManagement1: {
 					variantManagementChanges: {},
@@ -810,7 +816,7 @@ sap.ui.define([
 
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(oResponse2);
 
-			var oExpectedResponse = merge({}, StorageUtils.getEmptyFlexDataResponse(), {
+			const oExpectedResponse = merge({}, StorageUtils.getEmptyFlexDataResponse(), {
 				variants: [oResponse1.variants[0], oResponse2.variantSection.variantManagement1.variants[0].content]
 			});
 			return Storage.loadFlexData({reference: sFlexReference}).then(function(oResult) {
@@ -819,7 +825,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given two connectors provide variants in the variant section", function(assert) {
-			var oResponse1 = [{
+			const oResponse1 = [{
 				changes: [],
 				variantSection: {},
 				ui2personalization: {
@@ -849,7 +855,7 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oResponse1);
-			var oResponse2 = {
+			const oResponse2 = {
 				changes: [],
 				variantSection: {},
 				ui2personalization: {
@@ -875,9 +881,13 @@ sap.ui.define([
 			};
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(oResponse2);
 
-			var oExpectedResponse = Object.assign({}, StorageUtils.getEmptyFlexDataResponse(), {
-				variants: [oResponse1[0].variantSection.variantManagement1.variants[0].content, oResponse2.variantSection.variantManagement1.variants[0].content]
-			});
+			const oExpectedResponse = {
+				...StorageUtils.getEmptyFlexDataResponse(),
+				variants: [
+					oResponse1[0].variantSection.variantManagement1.variants[0].content,
+					oResponse2.variantSection.variantManagement1.variants[0].content
+				]
+			};
 			oExpectedResponse.ui2personalization = {
 				key1: "value1",
 				key2: "value2"
@@ -895,9 +905,9 @@ sap.ui.define([
 			]);
 			FlexInfoSession.setByReference({version: Version.Number.Draft, initialAllContexts: true, maxLayer: Layer.CUSTOMER, saveChangeKeepSession: false}, sFlexReference);
 
-			var oStaticFileConnectorStub = sandbox.stub(StaticFileConnector, "loadFlexData").resolves();
-			var oLrepConnectorStub = sandbox.stub(LrepConnector, "loadFlexData").resolves();
-			var oJsObjectConnectorStub = sandbox.stub(JsObjectConnector, "loadFlexData").resolves();
+			const oStaticFileConnectorStub = sandbox.stub(StaticFileConnector, "loadFlexData").resolves();
+			const oLrepConnectorStub = sandbox.stub(LrepConnector, "loadFlexData").resolves();
+			const oJsObjectConnectorStub = sandbox.stub(JsObjectConnector, "loadFlexData").resolves();
 
 			return Storage.loadFlexData({
 				reference: sFlexReference,
@@ -930,9 +940,9 @@ sap.ui.define([
 				{connector: "JsObjectConnector", layers: [Layer.USER]}
 			]);
 
-			var oStaticFileConnectorStub = sandbox.stub(StaticFileConnector, "loadFlexData").resolves();
-			var oKeyUserConnectorStub = sandbox.stub(KeyUserConnector, "loadFlexData").resolves();
-			var oJsObjectConnectorStub = sandbox.stub(JsObjectConnector, "loadFlexData").resolves();
+			const oStaticFileConnectorStub = sandbox.stub(StaticFileConnector, "loadFlexData").resolves();
+			const oKeyUserConnectorStub = sandbox.stub(KeyUserConnector, "loadFlexData").resolves();
+			const oJsObjectConnectorStub = sandbox.stub(JsObjectConnector, "loadFlexData").resolves();
 
 			FlexInfoSession.setByReference({version: Version.Number.Draft}, sFlexReference);
 			window.sessionStorage.setItem("sap.ui.rta.restart.CUSTOMER", true);
@@ -952,9 +962,9 @@ sap.ui.define([
 				{connector: "LrepConnector", layers: ["ALL"]}
 			]);
 
-			var oStaticFileConnectorStub = sandbox.stub(StaticFileConnector, "loadFlexData").resolves();
-			var oLrepConnectorStub = sandbox.stub(LrepConnector, "loadFlexData").resolves();
-			var oJsObjectConnectorStub = sandbox.stub(JsObjectConnector, "loadFlexData").resolves();
+			const oStaticFileConnectorStub = sandbox.stub(StaticFileConnector, "loadFlexData").resolves();
+			const oLrepConnectorStub = sandbox.stub(LrepConnector, "loadFlexData").resolves();
+			const oJsObjectConnectorStub = sandbox.stub(JsObjectConnector, "loadFlexData").resolves();
 
 			FlexInfoSession.setByReference({version: Version.Number.Draft}, sFlexReference);
 			window.sessionStorage.setItem("sap.ui.rta.restart.CUSTOMER", true);
@@ -973,8 +983,8 @@ sap.ui.define([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER]}
 			]);
 
-			var oStaticFileConnectorStub = sandbox.stub(StaticFileConnector, "loadFlexData").resolves();
-			var oKeyUserConnectorStub = sandbox.stub(KeyUserConnector, "loadFlexData").resolves();
+			const oStaticFileConnectorStub = sandbox.stub(StaticFileConnector, "loadFlexData").resolves();
+			const oKeyUserConnectorStub = sandbox.stub(KeyUserConnector, "loadFlexData").resolves();
 
 			FlexInfoSession.setByReference({maxLayer: Layer.CUSTOMER, saveChangeKeepSession: true}, sFlexReference);
 
@@ -995,9 +1005,9 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("Given the first connector provide a comp variant in the changes and the second provides a comp section with a variant", function(assert) {
-			var oResponse1 = StorageUtils.getEmptyFlexDataResponse();
+			const oResponse1 = StorageUtils.getEmptyFlexDataResponse();
 			delete oResponse1.comp; // simulate legacy response
-			var oVariant1 = {
+			const oVariant1 = {
 				fileName: "variant1",
 				fileType: "variant",
 				layer: Layer.CUSTOMER,
@@ -1005,8 +1015,8 @@ sap.ui.define([
 			};
 			oResponse1.changes.push(oVariant1);
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oResponse1);
-			var oResponse2 = StorageUtils.getEmptyFlexDataResponse();
-			var oVariant2 = {
+			const oResponse2 = StorageUtils.getEmptyFlexDataResponse();
+			const oVariant2 = {
 				fileName: "variant2",
 				fileType: "variant",
 				layer: Layer.CUSTOMER,
@@ -1018,7 +1028,7 @@ sap.ui.define([
 
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(oResponse2);
 
-			var oExpectedResponse = merge({}, StorageUtils.getEmptyFlexDataResponse(), {
+			const oExpectedResponse = merge({}, StorageUtils.getEmptyFlexDataResponse(), {
 				comp: {
 					variants: [oVariant1, oVariant2]
 				}

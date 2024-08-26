@@ -295,7 +295,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'add' with two changes, one with an unstable control id and the other with a with a stable control id", function(assert) {
-			var oUnstableIdChangeData = Object.assign({}, this.mMoveChangeData2);
+			const oUnstableIdChangeData = { ...this.mMoveChangeData2 };
 			// mocking unstable id
 			oUnstableIdChangeData.changeSpecificData.movedElements[0].id =
 				`__${oUnstableIdChangeData.changeSpecificData.movedElements[0].id}`;
