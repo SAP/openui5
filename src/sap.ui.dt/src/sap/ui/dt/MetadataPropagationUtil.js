@@ -32,7 +32,7 @@ sap.ui.define([
 			!mAggregationMetadata.propagationInfos) {
 			return false;
 		}
-		return Object.assign([], mAggregationMetadata.propagationInfos);
+		return [...mAggregationMetadata.propagationInfos];
 	};
 
 	MetadataPropagationUtil._getCurrentRelevantContainerPropagation = function(mElementDtMetadataForAggregation, oElement) {
@@ -104,7 +104,7 @@ sap.ui.define([
 		var mNewPropagationInfo;
 		var mMetadataFunctionPropagation;
 		var mRelevantContainerPropagation;
-		var mMetadata = Object.assign({}, mOriginalMetadata);
+		var mMetadata = { ...mOriginalMetadata };
 
 		var aPropagatedRelevantContainersFromParent = MetadataPropagationUtil._getParentPropagationInfo(mParentAggregationMetadata);
 
@@ -114,7 +114,7 @@ sap.ui.define([
 		}
 
 		if (aPropagatedRelevantContainersFromParent || !isEmptyObject(mRelevantContainerPropagation) || !isEmptyObject(mMetadataFunctionPropagation)) {
-			mNewPropagationInfo = Object.assign({}, mRelevantContainerPropagation, mMetadataFunctionPropagation);
+			mNewPropagationInfo = { ...mRelevantContainerPropagation, ...mMetadataFunctionPropagation };
 			return MetadataPropagationUtil._setPropagationInfo(mMetadata, mNewPropagationInfo, aPropagatedRelevantContainersFromParent);
 		}
 		return mMetadata;

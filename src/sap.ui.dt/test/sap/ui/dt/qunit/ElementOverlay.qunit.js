@@ -1279,13 +1279,10 @@ sap.ui.define([
 		QUnit.test("when one aggregation loses its scrolling, the scrollbar classes must not persist on the parent overlay (as the aggregation with scrollbar doesn't take the whole space inside the control)", async function(assert) {
 			var ScrollControl = SimpleScrollControl.extend("sap.ui.dt.test.controls.ScrollControl", {
 				metadata: {
-					designtime: Object.assign(
-						{},
-						SimpleScrollControl.getMetadata()._oDesignTime,
-						{
-							scrollContainers: null
-						}
-					)
+					designtime: {
+						...SimpleScrollControl.getMetadata()._oDesignTime,
+						scrollContainers: null
+					}
 				},
 				renderer: SimpleScrollControl.getMetadata().getRenderer().render
 			});
@@ -1349,13 +1346,10 @@ sap.ui.define([
 		QUnit.test("when the aggregation has a scrolling which takes the whole space of the control", async function(assert) {
 			var ScrollControl = SimpleScrollControl.extend("sap.ui.dt.test.controls.ScrollControl", {
 				metadata: {
-					designtime: Object.assign(
-						{},
-						SimpleScrollControl.getMetadata()._oDesignTime,
-						{
-							scrollContainers: null
-						}
-					)
+					designtime: {
+						...SimpleScrollControl.getMetadata()._oDesignTime,
+						scrollContainers: null
+					}
 				},
 				renderer: SimpleScrollControl.getMetadata().getRenderer().render
 			});

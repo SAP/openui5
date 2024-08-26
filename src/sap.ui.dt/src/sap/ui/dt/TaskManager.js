@@ -119,9 +119,7 @@ function(
 	TaskManager.prototype._addTask = function(mTask) {
 		var iTaskId = this._iNextId++;
 		this._mQueuedTasks[mTask.type] ||= [];
-		this._mQueuedTasks[mTask.type].push(Object.assign({}, mTask, {
-			id: iTaskId
-		}));
+		this._mQueuedTasks[mTask.type].push({ ...mTask, id: iTaskId });
 		this._iTaskCounter++;
 		if (!this.getSuppressEvents()) {
 			this.fireAdd({

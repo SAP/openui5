@@ -72,7 +72,7 @@ sap.ui.define([
 
 					var oElementTestDataWithoutCreate = null;
 					if (oElementTestData.create) {
-						oElementTestDataWithoutCreate = Object.assign({}, oElementTestData);
+						oElementTestDataWithoutCreate = { ...oElementTestData };
 						delete oElementTestDataWithoutCreate.create;
 						oElementTestData.groupPostfix = "with create method";
 					}
