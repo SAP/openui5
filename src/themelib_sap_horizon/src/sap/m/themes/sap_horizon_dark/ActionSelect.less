@@ -8,8 +8,9 @@
 /* ----------------------------- */
 
 html.sap-desktop .sapMActionSelectPicker .sapMBtn {
+
 	.sapMBtnInner {
-		border-top: 1px solid @sapUiListBorderColor;
+		border-top: 1px solid var(--sapList_BorderColor);
 		border-bottom: 0;
 		border-left: 0;
 		border-right: 0;
@@ -30,19 +31,19 @@ html.sap-phone .sapMActionSelectPicker .sapMBtn .sapMBtnInner {
 }
 
 html.sap-phone .sapMActionSelectPicker .sapUiSimpleFixFlexFlexContent > .sapMBtn {
-	border: 1px solid @sapUiListBorderColor;
+	border: 1px solid var(--sapList_BorderColor);
 	border-bottom: none;
 }
 
 html.sap-phone .sapMActionSelectPicker .sapUiSimpleFixFlexFlexContent > .sapMBtn ~ .sapMBtn {
-	border: 1px solid @sapUiListBorderColor;
+	border: 1px solid var(--sapList_BorderColor);
 }
 
 /* override standard buttons inside the action select */
 
 .sapMActionSelectPicker .sapMBtnDefault {
-	background: @sapUiListBackground;
-	border-color: @sapUiListBorderColor;
+	background: var(--sapList_Background);
+	border-color: var(--sapList_BorderColor);
 
 	/* override the default text-shadow */
 	text-shadow: none;
@@ -50,11 +51,11 @@ html.sap-phone .sapMActionSelectPicker .sapUiSimpleFixFlexFlexContent > .sapMBtn
 
 .sapMActionSelectPicker .sapMBtn,
 .sapMActionSelectPicker .sapMBtn:hover > .sapMBtnHoverable:not(.sapMBtnActive) {
-	border-color: @sapUiListBorderColor;
+	border-color: var(--sapList_BorderColor);
 }
 
 html.sap-desktop .sapMActionSelectPicker .sapMBtn:not(.sapMBtnDisabled) .sapMBtnDefault:not(.sapMBtnActive):hover {
-	background: @sapUiListHoverBackground;
+	background: var(--sapList_Hover_Background);
 }
 
 /* ================================================================================ */
@@ -75,18 +76,18 @@ html.sap-desktop .sapUiSizeCompact.sapMActionSelectPicker .sapMBtnInner {
 	height: 2rem;
 	border-radius: 0;
 	border: 0;
-	border-top: 1px solid @sapUiListBorderColor;
+	border-top: 1px solid var(--sapList_BorderColor);
 
 	.sapMBtnContent {
 		line-height: 2rem;
 	}
 }
 
-.sapMActionSelectPicker.sapMSltPicker-CTX .sapMSelectListItemBaseSelected.sapMActionSelectItemWithoutFocus:after {
+.sapMActionSelectPicker.sapMSltPicker-CTX .sapMSelectListItemBaseSelected.sapMActionSelectItemWithoutFocus::after {
 	border: none;
 }
 
-html.sap-desktop .sapMActionSelectPicker .sapMBtn:not(.sapMBtnDisabled):focus > .sapMBtnInner:before {
+html.sap-desktop .sapMActionSelectPicker .sapMBtn:not(.sapMBtnDisabled):focus > .sapMBtnInner::before {
 	border-radius: 0;
 	left: 0.125rem;
 	top: 0.125rem;
