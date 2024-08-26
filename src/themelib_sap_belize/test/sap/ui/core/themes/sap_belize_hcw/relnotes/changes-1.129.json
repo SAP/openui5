@@ -1,0 +1,12 @@
+{
+  "1.129.0": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "eb2656698618fed63d59891e9a308013b6db8a5a",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Title and description wrap correctly"
+      }
+    ]
+  }
+}

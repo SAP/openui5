@@ -1,0 +1,12 @@
+{
+  "1.129.0": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "127d55df977d0c48eda764ee89e0494c88b74827",
+        "type": "FIX",
+        "text": " core.Icon sample - ensure style.css is loaded"
+      }
+    ]
+  }
+}

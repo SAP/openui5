@@ -1,0 +1,17 @@
+{
+  "1.129.0": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "f2cce1462031723bbc3abc8bdac3f4cb119fa957",
+        "type": "FIX",
+        "text": " Demo Kit: Fix query parameter only for documentation"
+      },
+      {
+        "id": "417c4769358636f946def183df010d431a8bac49",
+        "type": "FIX",
+        "text": " Demo Kit: Change info fixed"
+      }
+    ]
+  }
+}

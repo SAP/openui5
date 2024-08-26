@@ -1,0 +1,12 @@
+{
+  "1.129.0": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "6e772f5c413622c4274ed1f1fefb29d96ffdea26",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fix pin button visibility"
+      }
+    ]
+  }
+}

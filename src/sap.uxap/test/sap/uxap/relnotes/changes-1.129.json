@@ -1,0 +1,17 @@
+{
+  "1.129.0": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "8d69228008aac05f95377d15461784b44ecb5951",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix failing test for 2.0"
+      },
+      {
+        "id": "3d72508645d89d0ba42bfd22a3f64907cd19f830",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix wrong scrolling to Section"
+      }
+    ]
+  }
+}

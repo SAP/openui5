@@ -1,0 +1,32 @@
+{
+  "1.129.0": {
+    "date": "August 2024",
+    "notes": [
+      {
+        "id": "d3fd8e5fe92fe23fc223ffbfa8047adeabf8ccda",
+        "type": "FIX",
+        "text": " Demo Kit: Fixed the spacing between links"
+      },
+      {
+        "id": "f97646f63e7ea7cac31dda6423fe183648d72671",
+        "type": "FIX",
+        "text": " sap.m.Menu: properties string values are escaped when creating internal controls"
+      },
+      {
+        "id": "a83aa4bf9a93d92c8ba8da44ac98f8233c42c3fe",
+        "type": "FIX",
+        "text": " sap.m.MessageBox: Added missing documentation"
+      },
+      {
+        "id": "eb2656698618fed63d59891e9a308013b6db8a5a",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Title and description wrap correctly"
+      },
+      {
+        "id": "02e5cb409bc807e7f4ddf5346ac599ad5e15b4b0",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: set default width"
+      }
+    ]
+  }
+}
