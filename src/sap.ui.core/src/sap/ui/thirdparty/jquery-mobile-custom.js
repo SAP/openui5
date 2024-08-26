@@ -23,7 +23,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/Device'], (jQuery) => {
 			// Browser globals
 			factory( jQuery, root, doc );
 		}
-	}( this, jQuery, document, function ( jQuery, window, document, undefined ) {
+	}( /*BEGIN: MODIFIED BY SAP*/ globalThis /*END: MODIFIED BY SAP*/, jQuery, document, function ( jQuery, window, document, undefined ) {
 	// Script: jQuery hashchange event
 	//
 	// *Version: 1.3, Last updated: 7/21/2010*

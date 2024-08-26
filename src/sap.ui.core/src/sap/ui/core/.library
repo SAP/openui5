@@ -145,7 +145,7 @@
     </jscoverage>
     <!-- Thirdparty references -->
     <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-        <lib name="jquery-3" displayName="jQuery 3" npmName="jquery" version="3.6.0" hash="03f8df79ef3b456f5dd812034310de46" homepage="https://jquery.com" id="73554900106100068050">
+        <lib name="jquery-3" displayName="jQuery 3" npmName="jquery" version="3.6.0" hash="5dbf00a3b3d4085dbd52af03905bc336" homepage="https://jquery.com" id="73554900106100068050">
             <license url="http://jQuery.org/license" type="MIT"/>
             <copyright>OpenJS Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/jquery.js</pattern>
@@ -197,7 +197,7 @@
             <copyright>OpenJS Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/jquery-compat.js</pattern>
         </lib>
-        <lib name="jquery_mobile" displayName="jQuery Mobile" npmName="n/a" version="1.3.1" hash="e65666f12fbebc2b84ec2c56bde90ce5" homepage="http://jquerymobile.com" id="73554900106100002438">
+        <lib name="jquery_mobile" displayName="jQuery Mobile" npmName="n/a" version="1.3.1" hash="8e7cefaf54a3db3dfa54320727060f3e" homepage="http://jquerymobile.com" id="73554900106100002438">
             <license url="http://jQuery.org/license" type="MIT" />
             <copyright>2010, 2013 jQuery Foundation, Inc. and other contributors</copyright>
             <pattern>sap/ui/thirdparty/jquery-mobile-custom.js</pattern>
