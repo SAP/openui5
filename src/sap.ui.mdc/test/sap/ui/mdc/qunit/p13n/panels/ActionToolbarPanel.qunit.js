@@ -117,10 +117,10 @@ sap.ui.define([
 		oModelItems[0].enabled = true;
 
 		// act
-		this.oActionToolbarPanel._updateClearAllButton();
+		this.oActionToolbarPanel._updateClearAllIcon();
 
 		// assert
-		const bEnabled = this.oActionToolbarPanel._oListControl._getClearAllButton().getVisible();
+		const bEnabled = this.oActionToolbarPanel._oListControl._getClearAllIcon().getVisible();
 		assert.ok(bEnabled, "'Clear-All' Button is enabled");
 	});
 
@@ -131,10 +131,10 @@ sap.ui.define([
 		oModelItems[0].enabled = false;
 
 		// act
-		this.oActionToolbarPanel._updateClearAllButton();
+		this.oActionToolbarPanel._updateClearAllIcon();
 
 		// assert
-		const bEnabled = this.oActionToolbarPanel._oListControl._getClearAllButton().getVisible();
+		const bEnabled = this.oActionToolbarPanel._oListControl._getClearAllIcon().getVisible();
 		assert.notOk(bEnabled, "'Clear-All' Button is disabled");
 	});
 

@@ -5,12 +5,13 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/sinon",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/Input",
 	"sap/base/util/merge",
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel"
-], function(SelectionPanel, VBox, Element, Library, sinon, nextUIUpdate, Input, merge, mLibrary, JSONModel) {
+], function(SelectionPanel, VBox, Element, Library, sinon, qutils, nextUIUpdate, Input, merge, mLibrary, JSONModel) {
 	"use strict";
 
 	// shortcut for sap.m.ListType
@@ -243,14 +244,13 @@ sap.ui.define([
 		this.oSelectionPanel.setP13nData(this.getTestData());
 		var oUpdateEnableOfMoveButtonsSpy = sinon.spy(this.oSelectionPanel, "_updateEnableOfMoveButtons");
 
-		var oClearAllButton = this.oSelectionPanel.getAggregation("_content").getItems()[0]._clearAllButton;
+		var oClearAllCell = this.oSelectionPanel.getAggregation("_content").getItems()[0].getDomRef("tblHeadModeCol");
 
 		//Act
-		oClearAllButton.focus();
+		oClearAllCell.focus();
 		var oFocusedControl = Element.getActiveElement().getId();
-		oClearAllButton.firePress();
+		qutils.triggerMouseEvent(oClearAllCell, "click");
 		var oNewFocusedControl = Element.getActiveElement().getId();
-
 
 		//Assert
 		//Focus was set to "false"
