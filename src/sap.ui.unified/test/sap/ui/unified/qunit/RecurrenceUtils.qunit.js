@@ -173,4 +173,35 @@ sap.ui.define([
 		assert.strictEqual(aResult[0].type, "non-working", "The type must be defined as non-working");
 		assert.strictEqual(aResult[0].duration, iExpectDuration, "The duration of the period is correct");
 	});
+
+	QUnit.test("A non-work period lasting one hour within two consecutive hours.", function (assert) {
+		// Prepare
+		const aNonWorkingPeriods = [];
+		const oCellStartDate = UI5Date.getInstance(2024, 0, 1, 0, 0, 0);
+		const iExpectDuration = 30;
+
+		aNonWorkingPeriods.push(createNonWorkingPeriod(oCellStartDate, "00:30", "01:30"));
+
+		// Act
+		let aResult = RecurrenceUtils.getWorkingAndNonWorkingSegments(oCellStartDate, aNonWorkingPeriods);
+
+		// Assert
+		assert.strictEqual(aResult.length, 2, "Two items need to be filtered for this hour");
+		assert.strictEqual(aResult[0].type, "working", "The type must be defined as working");
+		assert.strictEqual(aResult[0].duration, iExpectDuration, "The duration of the period is correct");
+		assert.strictEqual(aResult[1].type, "non-working", "The type must be defined as non-working");
+		assert.strictEqual(aResult[1].duration, iExpectDuration, "The duration of the period is correct");
+
+		// Act
+		// next hour ("01:00")
+		oCellStartDate.setHours(oCellStartDate.getHours() + 1);
+		aResult = RecurrenceUtils.getWorkingAndNonWorkingSegments(oCellStartDate, aNonWorkingPeriods);
+
+		// Assert
+		assert.strictEqual(aResult.length, 2, "Two items need to be filtered for this hour");
+		assert.strictEqual(aResult[0].type, "non-working", "The type must be defined as non-working");
+		assert.strictEqual(aResult[0].duration, iExpectDuration, "The duration of the period is correct");
+		assert.strictEqual(aResult[1].type, "working", "The type must be defined as working");
+		assert.strictEqual(aResult[1].duration, iExpectDuration, "The duration of the period is correct");
+	});
 });
