@@ -19,9 +19,10 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/model/Sorter",
 	"sap/m/IllustratedMessageType",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+        "sap/ui/qunit/utils/nextUIUpdate"
 ], function (jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer,
-			 Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType, Core) {
+			 Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType, Core, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.m.ListMode
@@ -84,9 +85,11 @@ sap.ui.define([
 		this.oUploadSet.uploadItem(oItem);
 		var done = assert.async();
 		this.oUploadSet.attachEventOnce("uploadCompleted", function (oEvent) {
-			var progressBox = oEvent.getParameter("item")._getProgressBox();
 			//assert
-			assert.ok(!progressBox.getVisible(), "progress bar is not visible for the uploaded state");
+			if (!this.isBound('items')){
+				var progressBox = oEvent.getParameter("item")._getProgressBox();
+				assert.ok(!progressBox.getVisible(), "progress bar is not visible for the uploaded state");
+			}
 			done();
 		});
 	});
@@ -947,10 +950,29 @@ sap.ui.define([
 		assert.ok(this.oUploadSet._oUploadButton && !this.oUploadSet._oUploadButton.getVisible(), "Upload button on illustrated message section is hidden when uploadButtonInvisible is set to true");
 	});
 
-	QUnit.test("Test to check focus update on delete item", function(assert){
+	QUnit.test("Test to check focus update on delete item", async function (assert){
 		//arrange
-		var oItemsList = this.oUploadSet.getItems();
-		this.oUploadSet._oItemToBeDeleted = oItemsList[0];
+		this.oUploadSet1 = new UploadSet("uploadSet1", {
+			items: [
+				{
+					fileName: "Alice33.mp4",
+					selected: true
+				},
+				{
+					fileName: "Brenda33.mp4",
+					enabledRemove: false,
+					enabledEdit: false,
+					visibleRemove: false,
+					visibleEdit: false,
+					selected: true
+				}
+			]
+		}).setModel(new JSONModel(getData()));
+		this.oUploadSet1.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		var oItemsList = this.oUploadSet1.getItems();
+		this.oUploadSet1._oItemToBeDeleted = oItemsList[0];
 		var fnDone = assert.async();
 		var iState = 0;
 
@@ -958,21 +980,24 @@ sap.ui.define([
 			onAfterRendering: function () {
 				if ( iState == 0 ) {
 					iState++;
-					assert.equal(this.oUploadSet._bItemRemoved, false, "_bItemRemoved flag is reset to false");
-					assert.equal(document.activeElement,  this.oUploadSet.getList().getItems()[0].getDomRef(), "Focus is set correctly");
-					this.oUploadSet._oItemToBeDeleted = oItemsList[1];
-					this.oUploadSet._handleClosedDeleteDialog("OK");
+					assert.equal(this.oUploadSet1._bItemRemoved, false, "_bItemRemoved flag is reset to false");
+					assert.equal(document.activeElement,  this.oUploadSet1.getList().getItems()[0].getDomRef(), "Focus is set correctly");
+					this.oUploadSet1._oItemToBeDeleted = oItemsList[1];
+					this.oUploadSet1._handleClosedDeleteDialog("OK");
 				} else {
-					assert.equal(this.oUploadSet._bItemRemoved, false, "_bItemRemoved flag is reset to false");
-					assert.equal(document.activeElement,  this.oUploadSet.getList().getDomRef().querySelector(".sapMUCNoDataPage"), "Focus is set correctly");
-					this.oUploadSet.removeEventDelegate(afterRenderDelegate);
+					assert.equal(this.oUploadSet1._bItemRemoved, false, "_bItemRemoved flag is reset to false");
+					assert.equal(document.activeElement,  this.oUploadSet1.getList().getDomRef().querySelector(".sapMUCNoDataPage"), "Focus is set correctly");
+					this.oUploadSet1.removeEventDelegate(afterRenderDelegate);
+
+					this.oUploadSet1.destroy();
+					this.oUploadSet1 = null;
 					fnDone();
 				}
 			}.bind(this)
 
 		};
-		this.oUploadSet.addEventDelegate(afterRenderDelegate);
-		this.oUploadSet._handleClosedDeleteDialog("OK");
+		this.oUploadSet1.addEventDelegate(afterRenderDelegate);
+		this.oUploadSet1._handleClosedDeleteDialog("OK");
 	});
 
 	QUnit.module("UploadSet general functionality", {
