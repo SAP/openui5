@@ -4854,6 +4854,8 @@ sap.ui.define([
 	// Scenario: requestSideEffects refreshes one complete row and fails. See that the cache data
 	// remains, even in a nested list. (In the incident an action in the same batch failed.)
 	// BCP: 2380011682
+	//
+	// See that no dataRequested/dataReceived events are fired (SNOW: DINC0250379)
 	QUnit.test("BCP: 2380011682", function (assert) {
 		var oEmployeeContext,
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
@@ -4882,6 +4884,13 @@ sap.ui.define([
 			return that.waitForChanges(assert, "inner");
 		}).then(function () {
 			oEmployeeContext = that.oView.byId("inner").getBinding("items").getCurrentContexts()[0];
+
+			oTeamContext.getBinding().attachDataRequested(() => {
+				assert.ok(false, "no dataRequested event");
+			});
+			oTeamContext.getBinding().attachDataReceived(() => {
+				assert.ok(false, "no dataReceived event");
+			});
 
 			that.expectRequest("TEAMS('T1')?$select=Team_Id,__CT__FAKE__Message/__FAKE__Messages",
 					createErrorInsideBatch())

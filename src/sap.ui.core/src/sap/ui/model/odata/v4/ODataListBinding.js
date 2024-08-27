@@ -3833,7 +3833,8 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.Context#isKeepAlive kept alive} and still exists on the
 	 *   server.
 	 * @param {boolean} [bKeepCacheOnError]
-	 *   If <code>true</code>, the binding data remains unchanged if the refresh fails
+	 *   If <code>true</code>, the binding data remains unchanged if the refresh fails and
+	 *   (since 1.129.0) no dataRequested/dataReceived events are fired in the first place
 	 * @param {boolean} [bWithMessages]
 	 *   Whether the "@com.sap.vocabularies.Common.v1.Messages" path is treated specially
 	 * @returns {sap.ui.base.SyncPromise}
@@ -3872,8 +3873,10 @@ sap.ui.define([
 			}
 
 			function fireDataRequested() {
-				bDataRequested = true;
-				that.fireDataRequested();
+				if (!bKeepCacheOnError) {
+					bDataRequested = true;
+					that.fireDataRequested();
+				}
 			}
 
 			/*
