@@ -12,11 +12,13 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var SUPPORTED_OPERATIONS = ["UPDATE", "UPSERT"];
-	var SUPPORTED_PROPERTIES = ["semanticObject", "action", "title", "subTitle", "icon", "signature/parameters/*"];
+	const SUPPORTED_OPERATIONS = ["UPDATE", "UPSERT", "DELETE", "INSERT"];
+	const SUPPORTED_PROPERTIES = ["semanticObject", "action", "hideLauncher", "icon", "title", "shortTitle", "subTitle", "info", "indicatorDataSource", "deviceTypes", "displayMode", "signature/parameters/*"];
+
+	const NOT_ALLOWED_TO_DELETE_PROPERTIES = ["semanticObject", "action"];
 
 	// Only list properties with limitation
-	var PROPERTIES_PATTERNS = {
+	const PROPERTIES_PATTERNS = {
 		semanticObject: "^[\\w\\*]{0,30}$",
 		action: "^[\\w\\*]{0,60}$"
 	};
@@ -33,7 +35,7 @@ sap.ui.define([
 	* @private
 	* @ui5-restricted sap.ui.fl.apply._internal
 	*/
-	var ChangeInbound = /** @lends sap.ui.fl.apply._internal.changes.descriptor.app.ChangeInbound */ {
+	const ChangeInbound = /** @lends sap.ui.fl.apply._internal.changes.descriptor.app.ChangeInbound */ {
 
 		/**
 		 * Method to apply the  <code>appdescr_app_changeInbound</code> change to the manifest.
@@ -52,11 +54,11 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
 		applyChange(oManifest, oChange) {
-			var oCrossNavigation = oManifest["sap.app"].crossNavigation;
-			var oChangeContent = oChange.getContent();
-			DescriptorChangeCheck.checkEntityPropertyChange(oChangeContent, SUPPORTED_PROPERTIES, SUPPORTED_OPERATIONS, PROPERTIES_PATTERNS);
+			const oCrossNavigation = oManifest["sap.app"].crossNavigation;
+			const oChangeContent = oChange.getContent();
+			DescriptorChangeCheck.checkEntityPropertyChange(oChangeContent, SUPPORTED_PROPERTIES, SUPPORTED_OPERATIONS, PROPERTIES_PATTERNS, NOT_ALLOWED_TO_DELETE_PROPERTIES);
 			if (oCrossNavigation && oCrossNavigation.inbounds) {
-				var oInbound = oCrossNavigation.inbounds[oChangeContent.inboundId];
+				const oInbound = oCrossNavigation.inbounds[oChangeContent.inboundId];
 				if (oInbound) {
 					changePropertyValueByPath(oChangeContent.entityPropertyChange, oInbound);
 				} else {

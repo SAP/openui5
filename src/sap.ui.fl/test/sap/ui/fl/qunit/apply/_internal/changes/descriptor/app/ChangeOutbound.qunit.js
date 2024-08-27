@@ -132,7 +132,7 @@ sap.ui.define([
 					entityPropertyChange:
 						{
 							propertyPath: "action",
-							operation: "INSERT",
+							operation: "UNSUPPORTED",
 							propertyValue: "newAction"
 						}
 				}
@@ -255,6 +255,25 @@ sap.ui.define([
 				}
 			});
 
+			this.oChangeArrayDeleteComplexPathProperties = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeOutbound"
+				},
+				content: {
+					outboundId: "Risk-configure",
+					entityPropertyChange: [
+						{
+							propertyPath: "parameters/Company\\/Name\\/End/To\\/Value\\/End/value",
+							operation: "DELETE"
+						},
+						{
+							propertyPath: "parameters/Company\\/Name\\/End/To\\/Value\\/End",
+							operation: "DELETE"
+						}
+					]
+				}
+			});
+
 			this.oChangeUnsupportedSemanticObject = new AppDescriptorChange({
 				flexObjectMetadata: {
 					changeType: "appdescr_app_changeOutbound"
@@ -296,6 +315,265 @@ sap.ui.define([
 							propertyPath: "additionalParameters",
 							operation: "UPSERT",
 							propertyValue: "IgNoReD"
+						}
+				}
+			});
+
+			this.oChangeDeletePropertyRequired = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeOutbound"
+				},
+				content: {
+					outboundId: "Risk-configure",
+					entityPropertyChange:
+						{
+							propertyPath: "parameters/id/required",
+							operation: "DELETE"
+						}
+				}
+			});
+
+			this.oChangeDeletePropertyId = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeOutbound"
+				},
+				content: {
+					outboundId: "Risk-configure",
+					entityPropertyChange:
+						{
+							propertyPath: "parameters/id",
+							operation: "DELETE"
+						}
+				}
+			});
+
+			this.oChangeDeletePropertyParameters = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeOutbound"
+				},
+				content: {
+					outboundId: "Risk-configure",
+					entityPropertyChange:
+						{
+							propertyPath: "parameters",
+							operation: "DELETE"
+						}
+				}
+			});
+
+			this.oChangeDeleteArrayProperties = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeOutbound"
+				},
+				content: {
+					outboundId: "Risk-configure",
+					entityPropertyChange: [
+						{
+							propertyPath: "parameters/id/required",
+							operation: "DELETE"
+						},
+						{
+							propertyPath: "parameters/id",
+							operation: "DELETE"
+						},
+						{
+							propertyPath: "parameters",
+							operation: "DELETE"
+						}
+					]
+				}
+			});
+
+			this.oChangeDeletePropertyInvalidFormat = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeOutbound"
+				},
+				content: {
+					outboundId: "Risk-configure",
+					entityPropertyChange:
+						{
+							propertyPath: "parameters/id/required",
+							operation: "DELETE",
+							propertyValue: ""
+						}
+				}
+			});
+
+			this.oChangeDeleteMandatoryProperty = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeOutbound"
+				},
+				content: {
+					outboundId: "Risk-configure",
+					entityPropertyChange:
+						{
+							propertyPath: "semanticObject",
+							operation: "DELETE"
+						}
+				}
+			});
+
+			this.oChangeDeleteNotExistingProperty = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeOutbound"
+				},
+				content: {
+					outboundId: "Risk-configure",
+					entityPropertyChange:
+						{
+							propertyPath: "parameters/id/notExistingProperty",
+							operation: "DELETE"
+						}
+				}
+			});
+
+			this.oChangeInsertBoolean = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeOutbound"
+				},
+				content: {
+					outboundId: "Risk-configure",
+					entityPropertyChange:
+						{
+							propertyPath: "parameters/id/required",
+							operation: "INSERT",
+							propertyValue: true
+						}
+				}
+			});
+
+			this.oChangeInsertString = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeOutbound"
+				},
+				content: {
+					outboundId: "Risk-configure",
+					entityPropertyChange:
+						{
+							propertyPath: "parameters/testString",
+							operation: "INSERT",
+							propertyValue: "testString"
+						}
+				}
+			});
+
+			this.oChangeInsertInt = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeOutbound"
+				},
+				content: {
+					outboundId: "Risk-configure",
+					entityPropertyChange:
+						{
+							propertyPath: "parameters/testInt",
+							operation: "INSERT",
+							propertyValue: 123
+						}
+				}
+			});
+
+			this.oChangeInsertObject = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeOutbound"
+				},
+				content: {
+					outboundId: "Risk-configure",
+					entityPropertyChange:
+						{
+							propertyPath: "parameters/testObject",
+							operation: "INSERT",
+							propertyValue: { a: "a", b: false, c: 123 }
+						}
+				}
+			});
+
+			this.oChangeInsertArray = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeOutbound"
+				},
+				content: {
+					outboundId: "Risk-configure",
+					entityPropertyChange: [
+						{
+							propertyPath: "parameters/id/required",
+							operation: "INSERT",
+							propertyValue: true
+						},
+						{
+							propertyPath: "parameters/testString",
+							operation: "INSERT",
+							propertyValue: "testString"
+						},
+						{
+							propertyPath: "parameters/testInt",
+							operation: "INSERT",
+							propertyValue: 123
+						},
+						{
+							propertyPath: "parameters/testObject",
+							operation: "INSERT",
+							propertyValue: { a: "a", b: false, c: 123 }
+						}
+					]
+				}
+			});
+
+			this.oChangeInsertNotAllowedPath = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeOutbound"
+				},
+				content: {
+					outboundId: "Risk-configure",
+					entityPropertyChange:
+						{
+							propertyPath: "test",
+							operation: "INSERT",
+							propertyValue: "notAllowedPath"
+						}
+				}
+			});
+
+			this.oChangeInsertParameters = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeOutbound"
+				},
+				content: {
+					outboundId: "Risk-configure",
+					entityPropertyChange:
+						{
+							propertyPath: "parameters",
+							operation: "INSERT",
+							propertyValue: {}
+						}
+				}
+			});
+
+			this.oChangeInsertAlreadyExistingProperty = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeOutbound"
+				},
+				content: {
+					outboundId: "Risk-configure",
+					entityPropertyChange:
+						{
+							propertyPath: "action",
+							operation: "INSERT",
+							propertyValue: "test"
+						}
+				}
+			});
+
+			this.oChangeInsertComplexPath = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeOutbound"
+				},
+				content: {
+					outboundId: "Risk-configure",
+					entityPropertyChange:
+						{
+							propertyPath: "parameters/Company\\/Name\\/End/To\\/Value\\/End/value",
+							operation: "INSERT",
+							propertyValue: "complexPathValue"
 						}
 				}
 			});
@@ -389,6 +667,268 @@ sap.ui.define([
 			assert.equal(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"].parameters.pathToProertyInsert.propertyInsert, "insertedValue", "outbound is inserted correctly");
 		});
 
+		QUnit.test("when calling '_applyChange' with deletion for parameters/", function(assert) {
+			const oManifest = {
+				"sap.app": {
+					crossNavigation: {
+						outbounds: {
+							"Risk-configure": {
+								semanticObject: "Risk",
+								action: "configure",
+								additionalParameters: "allowed",
+								parameters: {
+									id: {
+										required: true
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+			let oNewManifest = ChangeOutbound.applyChange(oManifest, this.oChangeDeletePropertyRequired);
+			assert.equal(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"].parameters.id.required, undefined, "property is deleted correctly");
+			assert.deepEqual(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"].parameters.id, {}, "property is deleted correctly");
+
+			oNewManifest = ChangeOutbound.applyChange(oManifest, this.oChangeDeletePropertyId);
+			assert.equal(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"].parameters.id, undefined, "property is deleted correctly");
+			assert.deepEqual(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"].parameters, {}, "property is deleted correctly");
+
+			oNewManifest = ChangeOutbound.applyChange(oManifest, this.oChangeDeletePropertyParameters);
+			assert.equal(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"].parameters, undefined, "property is deleted correctly");
+			assert.deepEqual(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"], { action: "configure", additionalParameters: "allowed", semanticObject: "Risk" }, "property is deleted correctly");
+		});
+
+		QUnit.test("when calling '_applyChange' with insert properties in parameters/", function(assert) {
+			const oManifest = {
+				"sap.app": {
+					crossNavigation: {
+						outbounds: {
+							"Risk-configure": {
+								semanticObject: "Risk",
+								action: "configure",
+								additionalParameters: "allowed",
+								parameters: {
+								}
+							}
+						}
+					}
+				}
+			};
+			let oNewManifest = ChangeOutbound.applyChange(oManifest, this.oChangeInsertBoolean);
+			assert.equal(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"].parameters.id.required, true, "property is inserted correctly");
+
+			oNewManifest = ChangeOutbound.applyChange(oManifest, this.oChangeInsertString);
+			assert.equal(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"].parameters.testString, "testString", "property is inserted correctly");
+
+			oNewManifest = ChangeOutbound.applyChange(oManifest, this.oChangeInsertInt);
+			assert.equal(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"].parameters.testInt, 123, "property is inserted correctly");
+
+			oNewManifest = ChangeOutbound.applyChange(oManifest, this.oChangeInsertObject);
+			assert.deepEqual(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"].parameters.testObject, { a: "a", b: false, c: 123 }, "property is inserted correctly");
+
+			assert.deepEqual(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"],
+				{
+					semanticObject: "Risk",
+					action: "configure",
+					additionalParameters: "allowed",
+					parameters: {
+						id: { required: true },
+						testInt: 123,
+						testObject: { a: "a", b: false, c: 123 },
+						testString: "testString"
+					}
+				}, "properties inserted correctly");
+		});
+
+		QUnit.test("when calling '_applyChange' with insert properties as array in parameters/", function(assert) {
+			const oManifest = {
+				"sap.app": {
+					crossNavigation: {
+						outbounds: {
+							"Risk-configure": {
+								semanticObject: "Risk",
+								action: "configure",
+								additionalParameters: "allowed",
+								parameters: {
+								}
+							}
+						}
+					}
+				}
+			};
+			const oNewManifest = ChangeOutbound.applyChange(oManifest, this.oChangeInsertArray);
+			assert.equal(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"].parameters.id.required, true, "property is inserted correctly");
+			assert.equal(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"].parameters.testString, "testString", "property is inserted correctly");
+			assert.equal(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"].parameters.testInt, 123, "property is inserted correctly");
+			assert.deepEqual(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"].parameters.testObject, { a: "a", b: false, c: 123 }, "property is inserted correctly");
+			assert.deepEqual(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"],
+				{
+					semanticObject: "Risk",
+					action: "configure",
+					additionalParameters: "allowed",
+					parameters: {
+						id: { required: true },
+						testInt: 123,
+						testObject: { a: "a", b: false, c: 123 },
+						testString: "testString"
+					}
+				}, "properties inserted correctly");
+		});
+
+		QUnit.test("when calling '_applyChange' insert property parameters", function(assert) {
+			const oManifest = {
+				"sap.app": {
+					crossNavigation: {
+						outbounds: {
+							"Risk-configure": {
+								semanticObject: "Risk",
+								action: "configure",
+								additionalParameters: "allowed"
+							}
+						}
+					}
+				}
+			};
+
+			const oNewManifest = ChangeOutbound.applyChange(oManifest, this.oChangeInsertParameters);
+			assert.deepEqual(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"].parameters, { }, "property is inserted correctly");
+		});
+
+		QUnit.test("when calling '_applyChange' insert property in not supported path", function(assert) {
+			const oManifest = {
+				"sap.app": {
+					crossNavigation: {
+						outbounds: {
+							"Risk-configure": {
+								semanticObject: "Risk",
+								action: "configure",
+								additionalParameters: "allowed"
+							}
+						}
+					}
+				}
+			};
+
+			assert.throws(function() {
+				ChangeOutbound.applyChange(oManifest, this.oChangeInsertNotAllowedPath);
+			}, Error("Changing test is not supported. The supported 'propertyPath' is: semanticObject|action|additionalParameters|parameters/*"), "throws an error");
+		});
+
+		QUnit.test("when calling '_applyChange' insert property which already exist", function(assert) {
+			const oManifest = {
+				"sap.app": {
+					crossNavigation: {
+						outbounds: {
+							"Risk-configure": {
+								semanticObject: "Risk",
+								action: "configure",
+								additionalParameters: "allowed"
+							}
+						}
+					}
+				}
+			};
+
+			assert.throws(function() {
+				ChangeOutbound.applyChange(oManifest, this.oChangeInsertAlreadyExistingProperty);
+			}, Error("Path has already a value. 'INSERT' operation is not appropriate."), "throws an error");
+		});
+
+		QUnit.test("when calling '_applyChange' with deletion array for parameters/", function(assert) {
+			const oManifest = {
+				"sap.app": {
+					crossNavigation: {
+						outbounds: {
+							"Risk-configure": {
+								semanticObject: "Risk",
+								action: "configure",
+								additionalParameters: "allowed",
+								parameters: {
+									id: {
+										required: true
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+			const oNewManifest = ChangeOutbound.applyChange(oManifest, this.oChangeDeleteArrayProperties);
+			assert.deepEqual(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"], { action: "configure", additionalParameters: "allowed", semanticObject: "Risk" }, "property is deleted correctly");
+		});
+
+		QUnit.test("when calling '_applyChange' with not existing parameter to delete", function(assert) {
+			const oManifest = {
+				"sap.app": {
+					crossNavigation: {
+						outbounds: {
+							"Risk-configure": {
+								semanticObject: "Risk",
+								action: "configure",
+								additionalParameters: "allowed",
+								parameters: {
+									id: {
+										required: true
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+			const oNewManifest = ChangeOutbound.applyChange(oManifest, this.oChangeDeleteNotExistingProperty);
+			assert.deepEqual(oNewManifest, oManifest, "property is not deleted");
+		});
+
+		QUnit.test("when calling '_applyChange' with deletion of mandatory property'", function(assert) {
+			const oManifest = {
+				"sap.app": {
+					crossNavigation: {
+						outbounds: {
+							"Risk-configure": {
+								semanticObject: "Risk",
+								action: "configure",
+								additionalParameters: "allowed",
+								parameters: {
+									id: {
+										required: true
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+			assert.throws(function() {
+				ChangeOutbound.applyChange(oManifest, this.oChangeDeleteMandatoryProperty);
+			}, Error("The property 'semanticObject' was attempted to be deleted. The mandatory properties semanticObject|action cannot be deleted."), "throws an error");
+		});
+
+		QUnit.test("when calling '_applyChange' with invalid DELETE property 'propertyValue'", function(assert) {
+			const oManifest = {
+				"sap.app": {
+					crossNavigation: {
+						outbounds: {
+							"Risk-configure": {
+								semanticObject: "Risk",
+								action: "configure",
+								additionalParameters: "allowed",
+								parameters: {
+									id: {
+										required: true
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+			assert.throws(function() {
+				ChangeOutbound.applyChange(oManifest, this.oChangeDeletePropertyInvalidFormat);
+			}, Error("The property 'propertyValue' must not be provided in a 'DELETE' operation. Please remove 'propertyValue'."), "throws an error");
+		});
+
 		QUnit.test("when calling '_applyChange' with no outbound exists", function(assert) {
 			const oManifest = {
 				"sap.app": {
@@ -463,7 +1003,7 @@ sap.ui.define([
 			};
 			assert.throws(function() {
 				ChangeOutbound.applyChange(oManifest, this.oChangeUnsupportedOperation);
-			}, Error("Operation INSERT is not supported. The supported 'operation' is UPDATE|UPSERT"), "throws an error");
+			}, Error("Operation UNSUPPORTED is not supported. The supported 'operation' is UPDATE|UPSERT|DELETE|INSERT"), "throws an error");
 		});
 
 		QUnit.test("when calling '_applyChange' with wrong manifest", function(assert) {
@@ -650,6 +1190,44 @@ sap.ui.define([
 			assert.equal(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"].parameters["Company/Name/End"]["To/Value/End"].value, "newValue", "outbound is updated correctly");
 		});
 
+		QUnit.test("when calling '_applyChange' DELETE with three complex propertyPaths", function(assert) {
+			const oManifest = {
+				"sap.app": {
+					crossNavigation: {
+						outbounds: {
+							"Risk-configure": {
+								semanticObject: "Address",
+								action: "display",
+								additionalParameters: "ignored",
+								parameters: {
+									"Company/Name/End": {
+										"To/Value/End": {
+											value: "oldValue",
+											format: "plain"
+										},
+										required: true
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+			const oNewManifest = ChangeOutbound.applyChange(oManifest, this.oChangeArrayDeleteComplexPathProperties);
+			assert.deepEqual(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"],
+				{
+					action: "display",
+					additionalParameters: "ignored",
+					parameters: {
+						"Company/Name/End": {
+							required: true
+					  }
+					},
+					semanticObject: "Address"
+				},
+				"outbound is deleted correctly");
+		});
+
 		QUnit.test("when calling '_applyChange' with unsupported vaules of parameter semanticObject", function(assert) {
 			const oManifest = {
 				"sap.app": {
@@ -705,6 +1283,37 @@ sap.ui.define([
 			assert.throws(function() {
 				ChangeOutbound.applyChange(oManifest, this.oChangeUnsupportedAdditionalParameters);
 			}, Error("Not supported format for propertyPath additionalParameters. The supported pattern is ^(ignored|allowed|notallowed)$"), "throws an error");
+		});
+
+		QUnit.test("when calling '_applyChange' INSERT with complex propertyPath", function(assert) {
+			const oManifest = {
+				"sap.app": {
+					crossNavigation: {
+						outbounds: {
+							"Risk-configure": {
+								semanticObject: "Address",
+								action: "display",
+								additionalParameters: "ignored"
+							}
+						}
+					}
+				}
+			};
+			const oNewManifest = ChangeOutbound.applyChange(oManifest, this.oChangeInsertComplexPath);
+			assert.deepEqual(oNewManifest["sap.app"].crossNavigation.outbounds["Risk-configure"],
+				{
+					action: "display",
+					additionalParameters: "ignored",
+					parameters: {
+						"Company/Name/End": {
+							"To/Value/End": {
+								value: "complexPathValue"
+							}
+						}
+					},
+					semanticObject: "Address"
+				},
+				"property is instered correctly");
 		});
 	});
 
