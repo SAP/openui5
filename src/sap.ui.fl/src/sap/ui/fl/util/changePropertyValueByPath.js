@@ -15,7 +15,14 @@ sap.ui.define([
 		return aPath.map((element) => element.replaceAll("*", "/"));
 	}
 
-	function setPropValueByPath(oEntityProp, oRoot) {
+	function deleteProperty(aPath, oRoot) {
+		for (let i = 0; i < aPath.length - 1; i++) {
+			oRoot = oRoot[aPath[i]];
+		}
+		delete oRoot[aPath[aPath.length - 1]];
+	}
+
+	function setOrDeletePropValueByPath(oEntityProp, oRoot) {
 		let aPath;
 		if (oEntityProp.propertyPath.includes("\\")) {
 			aPath = splitEscapePath(oEntityProp.propertyPath);
@@ -31,7 +38,11 @@ sap.ui.define([
 			throw new Error("Path does not contain a value. 'UPDATE' operation is not appropriate.");
 		}
 
-		ObjectPath.set(aPath, oEntityProp.propertyValue, oRoot);
+		if (oEntityProp.operation === "DELETE") {
+			deleteProperty(aPath, oRoot);
+		} else {
+			ObjectPath.set(aPath, oEntityProp.propertyValue, oRoot);
+		}
 	}
 
 	/**
@@ -45,10 +56,10 @@ sap.ui.define([
 	return function(vChanges, oRootPath) {
 		if (Array.isArray(vChanges)) {
 			vChanges.forEach(function(oEntityProp) {
-				setPropValueByPath(oEntityProp, oRootPath);
+				setOrDeletePropValueByPath(oEntityProp, oRootPath);
 			});
 		} else {
-			setPropValueByPath(vChanges, oRootPath);
+			setOrDeletePropValueByPath(vChanges, oRootPath);
 		}
 	};
 });

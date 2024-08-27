@@ -1176,5 +1176,83 @@
 				}
 			}
 		}
+	},
+	"emptyIndicators": {
+	  "sap.app": {
+		"type": "card",
+		"id": "list.attributes.actions"
+	  },
+	  "sap.card": {
+		"type": "List",
+		"header": {
+		  "title": "Empty Indicators"
+		},
+		"content": {
+		  "data": {
+			"json": [
+			  {
+				"name": "Teico Inc.",
+				"description": "There is no info set, only a state icon.",
+				"info": "",
+				"infoState": "Error",
+				"showInfoStateIcon": true,
+				"attributes": [
+				  {
+					"name": "",
+					"state": "Error",
+					"showStateIcon": true
+				  },
+				  {
+					"name": "",
+					"state": "Error"
+				  }
+				]
+			  },
+			  {
+				"name": "Teico Inc.",
+				"description": "There is no info or state icon set.",
+				"attributes": [
+				  {
+					"name": "",
+					"customStateIcon": "sap-icon://activity-2",
+					"showStateIcon": true
+				  }
+				]
+			  }
+			]
+		  },
+		  "maxItems": 2,
+		  "item": {
+			"title": {
+			  "value": "{name}"
+			},
+			"description": {
+			  "value": "{description}"
+			},
+			"info": {
+			  "value": "{info}",
+			  "state": "{infoState}",
+			  "showStateIcon": "{showInfoStateIcon}",
+			  "customStateIcon": "{customStateIcon}"
+			},
+			"highlight": "{infoState}",
+			"attributesLayoutType": "{attributesLayoutType}",
+			"attributes": [
+			  {
+				"value": "{attributes/0/name}",
+				"state": "{attributes/0/state}",
+				"showStateIcon": "{attributes/0/showStateIcon}",
+				"customStateIcon": "{attributes/0/customStateIcon}"
+			  },
+			  {
+				"value": "{attributes/1/name}",
+				"state": "{attributes/1/state}",
+				"showStateIcon": "{attributes/1/showStateIcon}",
+				"customStateIcon": "{attributes/1/customStateIcon}"
+			  }
+			]
+		  }
+		}
+	  }
 	}
 }

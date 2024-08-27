@@ -311,6 +311,7 @@ sap.ui.define([
 				descriptionVisible: mItem.description ? mItem.description.visible : undefined,
 				highlight: mItem.highlight,
 				highlightText: mItem.highlightText,
+				hasInfo: !!mItem.info,
 				info: mItem.info && mItem.info.value,
 				infoState: mItem.info && mItem.info.state,
 				infoVisible: mItem.info && mItem.info.visible,

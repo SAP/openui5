@@ -9,10 +9,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function checkChange(oEntityPropertyChange, aSupportedProperties, aSupportedOperations, oSupportedPropertyPattern) {
+	function checkChange(oEntityPropertyChange, aSupportedProperties, aSupportedOperations, oSupportedPropertyPattern, aNotAllowedToBeDeleteProperties) {
 		const aEntityPropertyChanges = Array.isArray(oEntityPropertyChange) ? oEntityPropertyChange : [oEntityPropertyChange];
 		aEntityPropertyChanges.forEach(function(oChange) {
-			formatEntityCheck(oChange, aSupportedProperties, aSupportedOperations);
+			formatEntityCheck(oChange, aSupportedProperties, aSupportedOperations, aNotAllowedToBeDeleteProperties);
 			checkPropertyValuePattern(oChange, oSupportedPropertyPattern);
 		});
 	}
@@ -54,23 +54,33 @@ sap.ui.define([
 		});
 	}
 
-	function formatEntityCheck(oChangeEntity, aSupportedProperties, aSupportedOperations) {
+	function formatEntityCheck(oChangeEntity, aSupportedProperties, aSupportedOperations, aNotAllowedToBeDeleteProperties) {
 		if (!oChangeEntity.propertyPath) {
 			throw new Error("Invalid change format: The mandatory 'propertyPath' is not defined. Please define the mandatory property 'propertyPath'");
 		}
 		if (!oChangeEntity.operation) {
 			throw new Error("Invalid change format: The mandatory 'operation' is not defined. Please define the mandatory property 'operation'");
 		}
-		if (oChangeEntity.operation.toUpperCase() !== "DELETE") {
+		const sOpertationUpperCase = oChangeEntity.operation.toUpperCase();
+		if (sOpertationUpperCase === "DELETE") {
+			if (aNotAllowedToBeDeleteProperties.includes(oChangeEntity.propertyPath)) {
+				throw new Error(`The property '${oChangeEntity.propertyPath}' was attempted to be deleted. The mandatory properties ${aNotAllowedToBeDeleteProperties.join("|")} cannot be deleted.`);
+			}
+			if (oChangeEntity.hasOwnProperty("propertyValue")) {
+				throw new Error(`The property 'propertyValue' must not be provided in a 'DELETE' operation. Please remove 'propertyValue'.`);
+			}
+		}
+		if (sOpertationUpperCase !== "DELETE") {
 			if (!oChangeEntity.hasOwnProperty("propertyValue")) {
 				throw new Error("Invalid change format: The mandatory 'propertyValue' is not defined. Please define the mandatory property 'propertyValue'");
 			}
+
+			if (!aSupportedProperties.includes(oChangeEntity.propertyPath) && !isGenericPropertyPathSupported(aSupportedProperties, oChangeEntity.propertyPath)) {
+				throw new Error(`Changing ${oChangeEntity.propertyPath} is not supported. The supported 'propertyPath' is: ${aSupportedProperties.join("|")}`);
+			}
 		}
-		if (!aSupportedProperties.includes(oChangeEntity.propertyPath) && !isGenericPropertyPathSupported(aSupportedProperties, oChangeEntity.propertyPath)) {
-			throw new Error(`Changing ${oChangeEntity.propertyPath} is not supported. The supported 'propertyPath' is: ${aSupportedProperties.join("|")}`);
-		}
-		if (!aSupportedOperations.includes(oChangeEntity.operation)) {
-			throw new Error(`Operation ${oChangeEntity.operation} is not supported. The supported 'operation' is ${aSupportedOperations.join("|")}`);
+		if (!aSupportedOperations.includes(sOpertationUpperCase)) {
+			throw new Error(`Operation ${sOpertationUpperCase} is not supported. The supported 'operation' is ${aSupportedOperations.join("|")}`);
 		}
 	}
 
@@ -82,10 +92,11 @@ sap.ui.define([
 	 * @param {Array} aSupportedProperties - Array of supported properties by change merger
 	 * @param {Array} aSupportedOperations - Array of supported operations by change merger
 	 * @param {Object} oSupportedPropertyPattern - Object with supported pattern as regex
+	 * @param {Array} aNotAllowedToBeDeleteProperties - Array of properties which must not be deleted by change merger
 	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.suite.ui.generic.template
 	 */
-	function checkEntityPropertyChange(oChange, aSupportedProperties, aSupportedOperations, oSupportedPropertyPattern) {
+	function checkEntityPropertyChange(oChange, aSupportedProperties, aSupportedOperations, oSupportedPropertyPattern, aNotAllowedToBeDeleteProperties) {
 		var sId = Object.keys(oChange).filter(function(sKey) {
 			return sKey.endsWith("Id");
 		}).shift();
@@ -96,7 +107,7 @@ sap.ui.define([
 			throw new Error(`Changes for "${oChange[sId]}" are not provided.`);
 		}
 
-		checkChange(oChange.entityPropertyChange, aSupportedProperties, aSupportedOperations, oSupportedPropertyPattern);
+		checkChange(oChange.entityPropertyChange, aSupportedProperties, aSupportedOperations, oSupportedPropertyPattern, aNotAllowedToBeDeleteProperties);
 	}
 
 	var layer_prefixes = {};

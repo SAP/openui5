@@ -144,7 +144,7 @@ ObjectStatusRenderer.render = function(oRm, oObjStatus){
 			oRm.openEnd();
 			oRm.text(oObjStatus.getText());
 			oRm.close("span");
-		} else if (oObjStatus.getEmptyIndicatorMode() !== EmptyIndicatorMode.Off && !oObjStatus.getText() && !oObjStatus.getIcon()) {
+		} else if (oObjStatus._shouldRenderEmptyIndicator()) {
 			this.renderEmptyIndicator(oRm, oObjStatus);
 		}
 

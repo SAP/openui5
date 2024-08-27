@@ -100,7 +100,7 @@ sap.ui.define([
 
 	ListContentItemRenderer.renderTitle = function(rm, oLI) {
 		var sTitle = oLI.getTitle(),
-			sInfo = oLI.getInfo();
+			bHasInfo = oLI.getHasInfo();
 
 		rm.openStart("div")
 			.class("sapUiIntLCITitleWrapper")
@@ -112,7 +112,7 @@ sap.ui.define([
 			.text(sTitle)
 			.close("div");
 
-		if (sInfo && !oLI.getDescription() && oLI.getInfoVisible()) {
+		if (bHasInfo && !oLI.getDescription() && oLI.getInfoVisible()) {
 			this.renderInfo(rm, oLI);
 		}
 
@@ -121,7 +121,7 @@ sap.ui.define([
 
 	ListContentItemRenderer.renderDescription = function(rm, oLI) {
 		var sDescription = oLI.getDescription(),
-			sInfo = oLI.getInfo();
+			bHasInfo = oLI.getHasInfo();
 
 		rm.openStart("div")
 			.class("sapUiIntLCIDescriptionWrapper")
@@ -133,7 +133,7 @@ sap.ui.define([
 			.text(sDescription)
 			.close("div");
 
-		if (sInfo && oLI.getInfoVisible()) {
+		if (bHasInfo && oLI.getInfoVisible()) {
 			this.renderInfo(rm, oLI);
 		}
 

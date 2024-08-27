@@ -7,7 +7,7 @@ describe("sap.ui.integration.ListCardVisualTests", function () {
 	"use strict";
 	browser.testrunner.currentSuite.meta.controlName = "sap.ui.integration.widgets.Card";
 
-	var aCardIds = ["card1", "card2", "card3", "card4", "card45", "card5", "card6", "card7", "card8", "card9", "CardActionsLabel"];
+	var aCardIds = ["card1", "card2", "card3", "card4", "card45", "card5", "card6", "card7", "card8", "card9", "CardActionsLabel", "CardEmptyIndicators"];
 
 	it("List Card", function () {
 		utils.navigateTo("List Card");
