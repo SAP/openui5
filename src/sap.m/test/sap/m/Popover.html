@@ -32,6 +32,10 @@
 		.customClassForVisualTests {
 			caret-color: transparent;
 		}
+
+		#innerPopover .sapMPopoverCont {
+			height: 100% !important;
+		}
 	</style>
 
 	<script src="shared-config.js"></script>
@@ -457,6 +461,32 @@
 					width: "600px"
 				}),
 				oCustomCssButton,
+				new sap.m.Button ({
+					text: "Open Popover",
+					press: function() {
+						var aListItems = [];
+						for (var i = 0; i < 100; i++) {
+							aListItems.push(new sap.m.StandardListItem({
+								title: "Title " + i,
+								description: "Description " + i
+							}));
+						}
+
+						var oInnerPopover = new sap.m.Popover("innerPopover", {
+							title: "Popover",
+							placement: sap.m.PlacementType.Bottom,
+							content: [
+								new sap.m.List({
+									items: aListItems
+								})
+							],
+							afterClose: function () {
+								this.destroy();
+							}
+						});
+						oInnerPopover.openBy(this);
+					}
+				})
 			],
 			content: [
 				oOverflowingPopover,
