@@ -1448,7 +1448,9 @@ sap.ui.define([
 		if (this._oItemToUpdate && this.getInstantUpload()) {
 			this.removeAggregation('items', this._oItemToUpdate, false);
 		}
-		this.insertItem(oItem, 0);
+		if (!this.isBound('items')){
+			this.insertItem(oItem, 0);
+		}
 		oItem.setUploadState(UploadState.Complete);
 		this._oItemToUpdate = null;
 		this.fireUploadCompleted(oXhrParams);
@@ -1602,8 +1604,10 @@ sap.ui.define([
 		if (sAction !== MessageBox.Action.DELETE) {
 			return;
 		}
-		this.removeItem(this._oItemToBeDeleted);
-		this.removeIncompleteItem(this._oItemToBeDeleted);
+		if (!this.isBound("items")){
+			this.removeItem(this._oItemToBeDeleted);
+			this.removeIncompleteItem(this._oItemToBeDeleted);
+		}
 		this.fireAfterItemRemoved({item: this._oItemToBeDeleted});
 		this._oItemToBeDeleted = null;
 		this._bItemRemoved = true;
