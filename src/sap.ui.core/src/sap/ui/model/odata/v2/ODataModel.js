@@ -6192,9 +6192,9 @@ sap.ui.define([
 	 * loaded annotations.
 	 *
 	 * <b>Important</b>: This covers the annotations that were given to the model constructor, not
-	 * the ones that might have been added later on using the protected API method
-	 * {@link #addAnnotationUrl}. In order to get information about those, the event
-	 * <code>annotationsLoaded</code> can be used.
+	 * the ones that might have been added later on using the API method
+	 * {@link sap.ui.model.odata.ODataMetaModel#getODataValueLists}.
+	 * In order to get information about those, the event <code>annotationsLoaded</code> can be used.
 	 *
 	 * @returns {Promise}
 	 *   A promise that resolves with an array containing information about the initially loaded
@@ -6253,7 +6253,7 @@ sap.ui.define([
 	 * 								 The structure is the same as in the metadata object reached by the <code>getServiceMetadata()</code> method.
 	 * 								 For non-<code>$metadata</code> requests the array will be empty.
 	 *
-	 * @protected
+	 * @private
 	 */
 	ODataModel.prototype.addAnnotationUrl = function(vUrl) {
 		var aUrls = [].concat(vUrl),
@@ -6297,7 +6297,7 @@ sap.ui.define([
 	 * @param {string} sXMLContent - The string that should be parsed as annotation XML
 	 * @param {boolean} [bSuppressEvents=false] - Whether not to fire annotationsLoaded event on the annotationParser
 	 * @return {Promise} The Promise to parse the given XML-String, resolved if parsed without errors, rejected if errors occur
-	 * @protected
+	 * @private
 	 */
 	ODataModel.prototype.addAnnotationXML = function(sXMLContent, bSuppressEvents) {
 		return this.oAnnotations.addSource({
