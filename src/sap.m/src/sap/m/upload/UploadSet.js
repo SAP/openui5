@@ -183,11 +183,11 @@ sap.ui.define([
 				/**
 				 * Items representing files that have already been uploaded.
 				 */
-				items: {type: "sap.m.upload.UploadSetItem", multiple: true, singularName: "item"},
+				items: {type: "sap.m.upload.UploadSetItem", defaultClass: UploadSetItem, multiple: true, singularName: "item"},
 				/**
 				 * Items representing files yet to be uploaded.
 				 */
-				incompleteItems: {type: "sap.m.upload.UploadSetItem", multiple: true, singularName: "incompleteItem"},
+				incompleteItems: {type: "sap.m.upload.UploadSetItem", defaultClass: UploadSetItem, multiple: true, singularName: "incompleteItem"},
 				/**
 				 * Header fields to be included in the header section of an XHR request.
 				 */
@@ -1442,7 +1442,12 @@ sap.ui.define([
 		if (this._oItemToUpdate && this.getInstantUpload()) {
 			this.removeAggregation('items', this._oItemToUpdate, false);
 		}
-		this.insertItem(oItem, 0);
+		if (!this.isBound('items')){
+			this.insertItem(oItem, 0);
+		}
+                if (this.isBound('items')) {
+			this.removeIncompleteItem(oItem);
+		}
 		oItem.setUploadState(UploadState.Complete);
 		this._oItemToUpdate = null;
 		this.fireUploadCompleted(oXhrParams);
@@ -1595,8 +1600,10 @@ sap.ui.define([
 		if (sAction !== MessageBox.Action.OK) {
 			return;
 		}
-		this.removeItem(this._oItemToBeDeleted);
-		this.removeIncompleteItem(this._oItemToBeDeleted);
+		if (!this.isBound("items")){
+			this.removeItem(this._oItemToBeDeleted);
+			this.removeIncompleteItem(this._oItemToBeDeleted);
+		}
 		this.fireAfterItemRemoved({item: this._oItemToBeDeleted});
 		this._oItemToBeDeleted = null;
 		this._bItemRemoved = true;
