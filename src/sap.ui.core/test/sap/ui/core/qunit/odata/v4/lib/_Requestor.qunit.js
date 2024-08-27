@@ -938,7 +938,7 @@ sap.ui.define([
 					}, JSON.stringify(oPayload), "~Employees~?custom=value")
 				.resolves(oResponse);
 			this.mock(oRequestor).expects("reportHeaderMessages")
-				.withExactArgs(oResponse.resourcePath, sinon.match.same(oResponse.messages));
+				.withExactArgs("~Employees~?custom=value", sinon.match.same(oResponse.messages));
 			this.mock(oRequestor).expects("doConvertResponse")
 				.withExactArgs(sinon.match.same(oResponse.body), "meta/path")
 				.returns(oConvertedResponse);
@@ -1214,7 +1214,7 @@ sap.ui.define([
 				}, undefined, "~sResourcePath~")
 			.resolves(oResponse);
 		this.mock(oRequestor).expects("reportHeaderMessages")
-			.withExactArgs("~resourcePath~", "~messages~");
+			.withExactArgs("~sResourcePath~", "~messages~");
 		this.mock(oRequestor).expects("doConvertResponse").exactly(sCount === "42" ? 1 : 0)
 			.withExactArgs(42, undefined).returns("~result~");
 
@@ -2264,14 +2264,15 @@ sap.ui.define([
 	QUnit.test("processBatch: report unbound messages", function () {
 		var mHeaders = {"SAP-Messages" : {}},
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
-			oRequestPromise = oRequestor.request("GET", "Products(42)", this.createGroupLock());
+			oRequestPromise = oRequestor.request("GET", "Products(42)", this.createGroupLock(), {},
+				undefined, undefined, undefined, undefined, "original/resource/path");
 
 		this.mock(oRequestor).expects("sendBatch") // arguments don't matter
 			.resolves([createResponse({id : 42}, mHeaders)]);
 		this.mock(oModelInterface).expects("onHttpResponse")
 			.withExactArgs(sinon.match.same(mHeaders));
 		this.mock(oRequestor).expects("reportHeaderMessages")
-			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
+			.withExactArgs("original/resource/path", sinon.match.same(mHeaders["SAP-Messages"]));
 
 		return Promise.all([
 			oRequestPromise,

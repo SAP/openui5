@@ -268,8 +268,8 @@ sap.ui.define([
 			if (sValue.trim() === "") {
 				sValueState = "Error";
 				oInput.setValueState(sValueState);
-				bValidationError = true;
-				return bValidationError;
+				this._oJSONModel.setProperty("/areAllFieldsValid", false);
+				return true;
 			}
 
 			try {
@@ -279,8 +279,9 @@ sap.ui.define([
 				bValidationError = true;
 			}
 
+			const bAllFieldsValid = this._areAllTextFieldsValid() && this._areAllValueStateNones() && !bValidationError;
+			this._oJSONModel.setProperty("/areAllFieldsValid", bAllFieldsValid);
 			oInput.setValueState(sValueState);
-
 			return bValidationError;
 		},
 

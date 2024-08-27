@@ -742,7 +742,11 @@ sap.ui.define([
 						"then the allow downloads without user activation switch is disabled by default"
 					);
 					const oAdditionalParametersInput = Element.getElementById("sapUiRtaAddIFrameDialog_AddAdditionalParametersInput");
-					assert.strictEqual(oAdditionalParametersInput.getValue(), "", "then the additional parameters input is empty by default");
+					assert.strictEqual(
+						oAdditionalParametersInput.getValue(),
+						"",
+						"then the additional parameters input is empty by default"
+					);
 					assert.strictEqual(
 						oAdditionalParametersInput.getTokens().length,
 						0,
@@ -839,6 +843,59 @@ sap.ui.define([
 				"%",
 				"then the frame height unit isn't touched if it wasn't modified"
 			);
+		});
+
+		QUnit.test("When invalid values are entered in the title/width/height fields", async function(assert) {
+			this.oAddIFrameDialog.attachOpened(async function() {
+				const oTitleValueArea = Element.getElementById("sapUiRtaAddIFrameDialog_ContainerTitle_TitleInput");
+				const oWidthValueArea = Element.getElementById("sapUiRtaAddIFrameDialog_WidthInput");
+				const oHeightValueArea = Element.getElementById("sapUiRtaAddIFrameDialog_HeightInput");
+				const oSaveButton = Element.getElementById("sapUiRtaAddIFrameDialogSaveButton");
+
+				oTitleValueArea.setValue("");
+				QUnitUtils.triggerEvent("input", oTitleValueArea.getFocusDomRef());
+				await nextUIUpdate();
+				assert.strictEqual(oSaveButton.getEnabled(), false, "then the save button is disabled for invalid title");
+				oTitleValueArea.setValue("Title");
+				QUnitUtils.triggerEvent("input", oTitleValueArea.getFocusDomRef());
+				await nextUIUpdate();
+
+				oWidthValueArea.setValue("");
+				QUnitUtils.triggerEvent("input", oWidthValueArea.getFocusDomRef());
+				await nextUIUpdate();
+				assert.strictEqual(oSaveButton.getEnabled(), false,	"then the save button is disabled for invalid width");
+				oWidthValueArea.setValue("10");
+				QUnitUtils.triggerEvent("input", oWidthValueArea.getFocusDomRef());
+
+				oHeightValueArea.setValue("");
+				QUnitUtils.triggerEvent("input", oHeightValueArea.getFocusDomRef());
+				await nextUIUpdate();
+				assert.strictEqual(oSaveButton.getEnabled(), false, "then the save button is disabled for invalid height");
+				oHeightValueArea.setValue("10");
+				QUnitUtils.triggerEvent("input", oHeightValueArea.getFocusDomRef());
+
+				oHeightValueArea.setValue("");
+				QUnitUtils.triggerEvent("input", oHeightValueArea.getFocusDomRef());
+				await nextUIUpdate();
+				oTitleValueArea.setValue("");
+				QUnitUtils.triggerEvent("input", oTitleValueArea.getFocusDomRef());
+				await nextUIUpdate();
+				assert.strictEqual(oSaveButton.getEnabled(), false, "then the save button is disabled with invalid title and height");
+				oTitleValueArea.setValue("Title");
+				QUnitUtils.triggerEvent("input", oTitleValueArea.getFocusDomRef());
+				await nextUIUpdate();
+				assert.strictEqual(oSaveButton.getEnabled(), false,	"then the save button is still disabled after a title was entered");
+				oHeightValueArea.setValue("10");
+				QUnitUtils.triggerEvent("input", oHeightValueArea.getFocusDomRef());
+				await nextUIUpdate();
+				clickOnSave();
+			}, this);
+			await this.oAddIFrameDialog.open({
+				asContainer: true,
+				frameWidth: "16px",
+				frameHeight: "100%",
+				frameUrl: "some_url"
+			}, oReferenceControl);
 		});
 	});
 

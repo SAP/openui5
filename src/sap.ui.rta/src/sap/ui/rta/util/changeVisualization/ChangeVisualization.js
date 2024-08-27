@@ -614,30 +614,38 @@ sap.ui.define([
 		this._oChangeIndicatorRegistry.registerChangeIndicator(sSelectorId, oChangeIndicator);
 	};
 
-	ChangeVisualization.prototype._setFocusedIndicator = function() {
+	ChangeVisualization.prototype._setFocusedIndicator = async function() {
 		// Sort the Indicators according XY-Position
 		// Set the tabindex according the sorting
 		// Focus the first visible indicator
-		this._oChangeIndicatorRegistry.waitForIndicatorRendering()
-		.then(() => {
-			const aVisibleIndicators = this._oChangeIndicatorRegistry.getChangeIndicators().filter((oIndicator) => {
-				// As setting the focus happens asynchronously after rendering,
-				// the overlay can be gone by the time this code is executed
-				return oIndicator.getVisible() && OverlayRegistry.getOverlay(oIndicator.getOverlayId());
-			})
-			.sort(function(oIndicator1, oIndicator2) {
+		await this._oChangeIndicatorRegistry.waitForIndicatorRendering();
+		const aVisibleIndicators = [];
+		this._oChangeIndicatorRegistry.getChangeIndicators().forEach((oIndicator) => {
+			const oOverlay = OverlayRegistry.getOverlay(oIndicator.getOverlayId());
+			// As setting the focus happens asynchronously after rendering,
+			// the overlay can be gone by the time this code is executed
+			if (!oOverlay) {
+				return;
+			}
+			if (oIndicator.getVisible()) {
+				oOverlay.setFocusable(true);
+				aVisibleIndicators.push(oIndicator);
+			} else {
+				oOverlay.setFocusable(false);
+			}
+		});
+
+		if (aVisibleIndicators.length > 0) {
+			aVisibleIndicators.sort(function(oIndicator1, oIndicator2) {
 				const iDeltaY = oIndicator1.getPosY() - oIndicator2.getPosY();
 				const iDeltaX = oIndicator1.getPosX() - oIndicator2.getPosX();
 				// Only consider x value if y is the same
 				return iDeltaY || iDeltaX;
 			});
-
-			if (aVisibleIndicators.length === 0) {
-				return;
-			}
-
 			const aVisibleIndicatorsOnScrollPosition = [];
 			aVisibleIndicators.forEach(function(oIndicator, iIndex) {
+				const oOverlay = OverlayRegistry.getOverlay(oIndicator.getOverlayId());
+				oOverlay.setFocusable(true);
 				oIndicator.getDomRef().tabIndex = iIndex + 2;
 				// Indicators with posY < 0 are outside of the current scroll position
 				if (oIndicator.getPosY() > 0) {
@@ -651,7 +659,7 @@ sap.ui.define([
 			} else {
 				aVisibleIndicators[0].focus();
 			}
-		});
+		}
 	};
 
 	ChangeVisualization.prototype._toggleRootOverlayClickHandler = function(bEnable) {
@@ -683,6 +691,17 @@ sap.ui.define([
 		this.oMenuButton = oToolbar.getControl("toggleChangeVisualizationMenuButton");
 		this.oRootOverlay = OverlayRegistry.getOverlay(oRootControl);
 		this.setVersionsModel(oToolbar);
+		// When the visualization is started, the focusable overlays are stored to be reset when the visualization is stopped
+		this.aFocusableOverlays ||= OverlayRegistry.getOverlays().filter(function(oOverlay) {
+			return oOverlay.getFocusable();
+		});
+
+		const fnSetOverlayFocusability = (bFocusable) => {
+			this.aFocusableOverlays.forEach(function(oOverlay) {
+				oOverlay.setFocusable(bFocusable);
+			});
+		};
+
 		if (this.oVersionsModel && this.oVersionsModel.getData().versioningEnabled) {
 			this._updateVisualizationModel({
 				versioningAvailable: this.oVersionsModel.getData().versioningEnabled,
@@ -696,15 +715,20 @@ sap.ui.define([
 			});
 		}
 
+		// Clean up when the visualization is no longer active
 		if (this.getIsActive()) {
 			this.setIsActive(false);
 			this._toggleRootOverlayClickHandler(false);
+			fnSetOverlayFocusability(true);
+			delete this.aFocusableOverlays;
 			return;
 		}
+		fnSetOverlayFocusability(false);
 		this._toggleRootOverlayClickHandler(true);
 		if (!this.getRootControlId()) {
 			this.setRootControlId(oRootControl);
 		}
+
 		this.setIsActive(true);
 		// show all change visualizations at startup
 		this._updateChangeRegistry()

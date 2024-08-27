@@ -8,6 +8,7 @@
 /* ----------------------------- */
 
 html.sap-desktop .sapMActionSelectPicker .sapMBtn {
+
 	.sapMBtnInner {
 		border-top: 1px solid @sapUiButtonActionSelectBorderColor;
 		border-bottom: 0;
@@ -34,7 +35,7 @@ html.sap-phone .sapMActionSelectPicker .sapUiSimpleFixFlexFlexContent .sapMBtn .
 
 .sapMActionSelectPicker .sapMBtnDefault {
 	background: @sapUiButtonActionSelectBackground;
-	border-color: @sapUiListBorderColor;
+	border-color: var(--sapList_BorderColor);
 
 	/* override the default text-shadow */
 	text-shadow: none;
@@ -42,7 +43,7 @@ html.sap-phone .sapMActionSelectPicker .sapUiSimpleFixFlexFlexContent .sapMBtn .
 
 .sapMActionSelectPicker .sapMBtn,
 .sapMActionSelectPicker .sapMBtn:hover > .sapMBtnHoverable:not(.sapMBtnActive) {
-	border-color: @sapUiListBorderColor;
+	border-color: var(--sapList_BorderColor);
 }
 
 html.sap-desktop .sapMActionSelectPicker .sapMBtn:not(.sapMBtnDisabled) .sapMBtnDefault:not(.sapMBtnActive):hover {
@@ -67,7 +68,7 @@ html.sap-desktop .sapUiSizeCompact.sapMActionSelectPicker .sapMBtnInner {
 	height: 2rem;
 	border-radius: 0;
 	border: 0;
-	border-top: 1px solid @sapUiListBorderColor;
+	border-top: 1px solid var(--sapList_BorderColor);
 
 	.sapMBtnContent {
 		line-height: 2rem;

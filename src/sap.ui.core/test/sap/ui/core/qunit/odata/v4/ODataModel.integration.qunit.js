@@ -8883,6 +8883,59 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Update a property with a path containing a navigation property, so that the
+	// canonical path differs. See that a targeted message in the header "sap-messages" is resolved
+	// correctly and added to the input field's value state.
+	// SNOW: DINC0238556
+	["$auto", "$direct"].forEach(function (sGroupId) {
+		QUnit.test(`DINC0238556: groupId=${sGroupId}`, async function (assert) {
+			const oModel = this.createTeaBusiModel({autoExpandSelect : true, groupId : sGroupId});
+			const sView = `
+	<FlexBox binding="{/EMPLOYEES('1')}">
+		<Input id="name" value="{EMPLOYEE_2_TEAM/Name}"/>
+	</FlexBox>`;
+
+			this.expectRequest("EMPLOYEES('1')?$select=ID"
+					+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)", {
+					ID : "1",
+					EMPLOYEE_2_TEAM : {
+						Name : "Team",
+						Team_Id : "TEAM"
+					}
+				})
+				.expectChange("name", "Team");
+
+			await this.createView(assert, sView, oModel);
+
+			this.expectChange("name", "Team*")
+				.expectRequest({
+					method : "PATCH",
+					url : "TEAMS('TEAM')",
+					payload : {Name : "Team*"}
+				}, undefined, {
+					"sap-messages" : JSON.stringify([{
+						code : "CODE",
+						message : "Just a message",
+						target : "Name",
+						numericSeverity : 2
+					}])
+				})
+				.expectMessages([{
+					code : "CODE",
+					message : "Just a message",
+					persistent : true,
+					target : "/EMPLOYEES('1')/EMPLOYEE_2_TEAM/Name",
+					type : "Information"
+				}]);
+
+			this.oView.byId("name").getBinding("value").setValue("Team*");
+
+			await this.waitForChanges(assert, "change");
+			await this.checkValueState(assert, "name", "Information", "Just a message");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Table gets a binding context for which data was already loaded and then a refresh
 	// is performed synchronously.
 	// SNOW: CS20240007657519
