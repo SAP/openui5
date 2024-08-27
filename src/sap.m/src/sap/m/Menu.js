@@ -18,6 +18,7 @@ sap.ui.define([
 	'sap/ui/core/EnabledPropagator',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Popup",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element"
 ],
 	function(
@@ -35,6 +36,7 @@ sap.ui.define([
 		EnabledPropagator,
 		jQuery,
 		Popup,
+		ManagedObject,
 		Element
 	) {
 		"use strict";
@@ -481,10 +483,10 @@ sap.ui.define([
 				id  : sMenuListItemId,
 				type: oItem.getEnabled() ? ListType.Active : ListType.Inactive,
 				icon: oItem.getIcon(),
-				title: oItem.getText(),
+				title: ManagedObject.escapeSettingsValue(oItem.getText()),
 				startsSection: oItem.getStartsSection(),
 				menuItem: oItem,
-				tooltip: oItem.getTooltip(),
+				tooltip: ManagedObject.escapeSettingsValue(oItem.getTooltip()),
 				visible: oItem.getVisible(),
 				enabled: oItem.getEnabled()
 			});
@@ -508,9 +510,9 @@ sap.ui.define([
 			oUfMenuItem = new UfdMenuItem({
 				id: sUfMenuItemId,
 				icon: oItem.getIcon(),
-				text: oItem.getText(),
+				text: ManagedObject.escapeSettingsValue(oItem.getText()),
 				startsSection: oItem.getStartsSection(),
-				tooltip: oItem.getTooltip(),
+				tooltip: ManagedObject.escapeSettingsValue(oItem.getTooltip()),
 				visible: oItem.getVisible(),
 				enabled: oItem.getEnabled()
 			});
