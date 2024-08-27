@@ -411,6 +411,9 @@ sap.ui.define([
 			var sMessage = oResourceBundle.getText("TABLE_SELECT_LIMIT", [iLimit]);
 			oPopover.getContent()[0].setText(sMessage); //Content contains a single text element
 			if (oSelectAllDomRef) {
+				oPopover.attachEventOnce("afterOpen", function() {
+					InvisibleMessage.getInstance().announce(sMessage);
+				});
 				oPopover.openBy(oSelectAllDomRef);
 			}
 		});
