@@ -9,6 +9,38 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	const SUPPORTED_KEYS_FOR_CHANGE = {
+		inbound: "appdescr_app_addNewInbound",
+		outbound: "appdescr_app_addNewOutbound"
+	};
+
+	function getAndCheckInOrOutboundId(oChangeContent, sKey) {
+		const aObjectKeyNames = Object.keys(oChangeContent);
+		if (aObjectKeyNames.length > 1) {
+			throw new Error("It is not allowed to add more than one object under change object 'content'.");
+		}
+		if (aObjectKeyNames.length < 1) {
+			throw new Error(`The change object 'content' cannot be empty. Please provide the necessary property, as outlined in the change schema for '${SUPPORTED_KEYS_FOR_CHANGE[sKey]}'.`);
+		}
+		const sKeyNameOfChangeContent = aObjectKeyNames[0];
+		if (aObjectKeyNames.length === 1) {
+			if (!SUPPORTED_KEYS_FOR_CHANGE[sKeyNameOfChangeContent]) {
+				throw new Error(`The provided property '${sKeyNameOfChangeContent}' is not supported. Supported property for change '${SUPPORTED_KEYS_FOR_CHANGE[sKey]}' is '${sKey}'.`);
+			}
+		}
+		const aInOrOutbounds = Object.keys(oChangeContent[sKeyNameOfChangeContent]);
+		if (aInOrOutbounds.length > 1) {
+			throw new Error(`It is not allowed to add more than one ${sKeyNameOfChangeContent}: ${aInOrOutbounds.join(", ")}.`);
+		}
+		if (aInOrOutbounds.length < 1) {
+			throw new Error(`There is no ${sKeyNameOfChangeContent} provided. Please provide an ${sKeyNameOfChangeContent}.`);
+		}
+		if (aInOrOutbounds[0] === "") {
+			throw new Error(`The ID of your ${sKeyNameOfChangeContent} is empty.`);
+		}
+		return aInOrOutbounds[aInOrOutbounds.length - 1];
+	}
+
 	function checkChange(oEntityPropertyChange, aSupportedProperties, aSupportedOperations, oSupportedPropertyPattern, aNotAllowedToBeDeleteProperties) {
 		const aEntityPropertyChanges = Array.isArray(oEntityPropertyChange) ? oEntityPropertyChange : [oEntityPropertyChange];
 		aEntityPropertyChanges.forEach(function(oChange) {
@@ -179,6 +211,7 @@ sap.ui.define([
 		checkIdNamespaceCompliance,
 		getNamespacePrefixForLayer,
 		getClearedGenericPath,
-		isGenericPropertyPathSupported
+		isGenericPropertyPathSupported,
+		getAndCheckInOrOutboundId
 	};
 });
