@@ -71,7 +71,12 @@ sap.ui.define([
 				title: "test",
 				variantReference: "variant0"
 			};
-			const oTitleUndoChange = Object.assign({}, oTitleChange, {generator: rtaLibrary.GENERATOR_NAME, originalTitle: "test", title: "variant A"});
+			const oTitleUndoChange = {
+				...oTitleChange,
+				generator: rtaLibrary.GENERATOR_NAME,
+				originalTitle: "test",
+				title: "variant A"
+			};
 			const oFavoriteChange = {
 				changeType: "setFavorite",
 				favorite: false,
@@ -79,22 +84,32 @@ sap.ui.define([
 				originalFavorite: true,
 				variantReference: "variant0"
 			};
-			const oFavoriteUndoChange = Object.assign({}, oFavoriteChange, {generator: rtaLibrary.GENERATOR_NAME, originalFavorite: false, favorite: true});
+			const oFavoriteUndoChange = {
+				...oFavoriteChange,
+				generator: rtaLibrary.GENERATOR_NAME,
+				originalFavorite: false,
+				favorite: true
+			};
 			const oVisibleChange = {
 				changeType: "setVisible",
 				layer: Layer.CUSTOMER,
 				variantReference: "variant0",
 				visible: false
 			};
-			const oVisibleUndoChange = Object.assign({}, oVisibleChange, {generator: rtaLibrary.GENERATOR_NAME, visible: true});
+			const oVisibleUndoChange = { ...oVisibleChange, generator: rtaLibrary.GENERATOR_NAME, visible: true };
 			const oContextsChange = {
 				changeType: "setContexts",
 				layer: Layer.CUSTOMER,
 				variantReference: "variant0",
-				contexts: {role: ["ROLE1", "ROLE2"], country: ["DE", "IT"]},
-				originalContexts: {role: ["OGROLE1", "OGROLE2"], country: ["OR"]}
+				contexts: { role: ["ROLE1", "ROLE2"], country: ["DE", "IT"] },
+				originalContexts: { role: ["OGROLE1", "OGROLE2"], country: ["OR"] }
 			};
-			const oContextsUndoChange = Object.assign({}, oContextsChange, {generator: rtaLibrary.GENERATOR_NAME, originalContexts: {role: ["ROLE1", "ROLE2"], country: ["DE", "IT"]}, contexts: {role: ["OGROLE1", "OGROLE2"], country: ["OR"]}});
+			const oContextsUndoChange = {
+				...oContextsChange,
+				generator: rtaLibrary.GENERATOR_NAME,
+				originalContexts: { role: ["ROLE1", "ROLE2"], country: ["DE", "IT"] },
+				contexts: { role: ["OGROLE1", "OGROLE2"], country: ["OR"] }
+			};
 			const oDefaultChange = {
 				changeType: "setDefault",
 				defaultVariant: "variantMgmtId1",
@@ -102,7 +117,12 @@ sap.ui.define([
 				originalDefaultVariant: "variant0",
 				variantManagementReference: "variantMgmtId1"
 			};
-			const oDefaultUndoChange = Object.assign({}, oDefaultChange, {generator: rtaLibrary.GENERATOR_NAME, originalDefaultVariant: "variantMgmtId1", defaultVariant: "variant0"});
+			const oDefaultUndoChange = {
+				...oDefaultChange,
+				generator: rtaLibrary.GENERATOR_NAME,
+				originalDefaultVariant: "variantMgmtId1",
+				defaultVariant: "variant0"
+			};
 			const aChanges = [oTitleChange, oFavoriteChange, oVisibleChange, oContextsChange, oDefaultChange];
 
 			const oConfigureCommand = await CommandFactory.getCommandFor(this.oVariantManagement, "configure", {

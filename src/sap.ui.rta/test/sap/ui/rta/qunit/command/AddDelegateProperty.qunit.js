@@ -22,19 +22,22 @@ sap.ui.define([
 			commandName: "addDelegateProperty",
 			designtimeActionStructure: ["add", "delegate"]
 		},
-		Object.assign({}, mSameProperties, {
+		{
+			...mSameProperties,
 			bindingString: "myFancyBindingPath",
 			propertyName: "propertyName",
 			oDataServiceUri: "serviceUri",
 			entityType: "myFancyEntityType"
-		}), Object.assign({}, mSameProperties, {
+		},
+		{
+			...mSameProperties,
 			bindingPath: "myFancyBindingPath",
 			oDataInformation: {
 				oDataServiceUri: "serviceUri",
 				propertyName: "propertyName",
 				entityType: "myFancyEntityType"
 			}
-		})
+		}
 	);
 
 	QUnit.done(function() {

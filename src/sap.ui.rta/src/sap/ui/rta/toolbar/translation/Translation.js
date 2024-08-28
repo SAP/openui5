@@ -174,12 +174,12 @@ sap.ui.define([
 	}
 
 	function getInitialTranslationModelData() {
-		return Object.assign({}, {
+		return {
 			sourceLanguage: "",
 			sourceLanguages: [],
 			downloadChangedTexts: false,
 			file: undefined
-		});
+		};
 	}
 
 	Translation.prototype.openDownloadTranslationDialog = function(mPropertyBag) {

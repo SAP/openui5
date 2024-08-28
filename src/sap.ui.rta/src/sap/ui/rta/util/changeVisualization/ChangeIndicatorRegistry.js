@@ -79,7 +79,7 @@ sap.ui.define([
 	 */
 	ChangeIndicatorRegistry.prototype.getAllRegisteredChanges = function() {
 		return values(this._oRegisteredChanges || {}).map(function(oChange) {
-			return Object.assign({}, oChange);
+			return { ...oChange };
 		});
 	};
 
@@ -99,7 +99,7 @@ sap.ui.define([
 	 * @returns {object} Registered change
 	 */
 	ChangeIndicatorRegistry.prototype.getRegisteredChange = function(sChangeId) {
-		return this._oRegisteredChanges[sChangeId] && Object.assign({}, this._oRegisteredChanges[sChangeId]);
+		return this._oRegisteredChanges[sChangeId] && { ...this._oRegisteredChanges[sChangeId] };
 	};
 
 	/**
@@ -116,16 +116,14 @@ sap.ui.define([
 			if (oChangeIndicators[sSelectorId] === undefined) {
 				oChangeIndicators[sSelectorId] = [];
 			}
-			oChangeIndicators[sSelectorId].push(Object.assign(
-				{
-					id: oChangeIndicatorData.change.getId(),
-					dependent: bDependent,
-					affectedElementId: sAffectedElementId || sPreviousAffectedElementId,
-					displayElementsKey: oChangeIndicatorData.visualizationInfo.displayElementIds.toString(),
-					descriptionPayload: oChangeIndicatorData.visualizationInfo.descriptionPayload || {}
-				},
-				_omit(oChangeIndicatorData, ["visualizationInfo"])
-			));
+			oChangeIndicators[sSelectorId].push({
+				id: oChangeIndicatorData.change.getId(),
+				dependent: bDependent,
+				affectedElementId: sAffectedElementId || sPreviousAffectedElementId,
+				displayElementsKey: oChangeIndicatorData.visualizationInfo.displayElementIds.toString(),
+				descriptionPayload: oChangeIndicatorData.visualizationInfo.descriptionPayload || {},
+				..._omit(oChangeIndicatorData, ["visualizationInfo"])
+			});
 			sPreviousAffectedElementId = sAffectedElementId || sPreviousAffectedElementId;
 		}
 

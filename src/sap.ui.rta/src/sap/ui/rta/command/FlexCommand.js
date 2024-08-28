@@ -206,7 +206,7 @@ sap.ui.define([
 				variantReference: sVariantReference,
 				isChangeOnStandardVariant: sVariantManagementReference === sVariantReference
 			};
-			mChangeSpecificData = Object.assign({}, mChangeSpecificData, mVariantObj);
+			mChangeSpecificData = { ...mChangeSpecificData, ...mVariantObj };
 		}
 		mChangeSpecificData.command = sCommand;
 		mChangeSpecificData.generator = mFlexSettings.generator || rtaLibrary.GENERATOR_NAME;
@@ -218,8 +218,11 @@ sap.ui.define([
 			// ATTENTION! the change gets applied as soon as the parent is available, so there might be possible side effects with lazy loading
 			if (mFlexSettings && mFlexSettings.originalSelector) {
 				oChange.addDependentControl(mFlexSettings.originalSelector, "originalSelector", {modifier: JsControlTreeModifier, appComponent: this.getAppComponent()});
-				oChange.setSelector(Object.assign(oChange.getSelector(), JsControlTreeModifier.getSelector(this.getSelector().id, this.getAppComponent())));
-				oChange.setContent(Object.assign({}, oChange.getContent(), mFlexSettings.content));
+				oChange.setSelector({
+					...oChange.getSelector(),
+					...JsControlTreeModifier.getSelector(this.getSelector().id, this.getAppComponent())
+				});
+				oChange.setContent({ ...oChange.getContent(), ...mFlexSettings.content });
 			}
 			return oChange;
 		}.bind(this));
@@ -250,7 +253,7 @@ sap.ui.define([
 			appComponent: oAppComponent,
 			view: FlUtils.getViewForControl(oSelectorElement)
 		};
-		return ChangesWriteAPI.apply(Object.assign({change: oChange, element: oSelectorElement}, mPropertyBag))
+		return ChangesWriteAPI.apply({ change: oChange, element: oSelectorElement, ...mPropertyBag })
 
 		.then(function(oResult) {
 			if (!oResult.success) {

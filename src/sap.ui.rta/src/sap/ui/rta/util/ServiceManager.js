@@ -71,7 +71,7 @@ sap.ui.define([
 
 	ServiceManager.prototype.getServices = function() {
 		// without this changing the property would also change the default Value
-		return Object.assign({}, this.getProperty("services"));
+		return { ...this.getProperty("services") };
 	};
 
 	/**

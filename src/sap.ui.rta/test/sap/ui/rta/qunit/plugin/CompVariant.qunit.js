@@ -452,7 +452,7 @@ sap.ui.define([
 				assert.strictEqual(mPropertyBag.layer, Layer.CUSTOMER, "the layer is passed");
 				var oArgs = oCreateComponentSpy.getCall(0).args[0];
 				assert.ok(oArgs.variantManagementControl, "then the correct control is used");
-				fnCallback(Object.assign({}, oNewVariantProperties, {"default": sNewDefaultVarId}));
+				fnCallback({ ...oNewVariantProperties, "default": sNewDefaultVarId });
 			});
 
 			var pReturn = waitForCommandToBeCreated(this.oPlugin).then(function(oParameters) {

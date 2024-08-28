@@ -409,9 +409,9 @@ sap.ui.define([
 
 		QUnit.test("when property service get() is called with designtimeMetadata.getLabel() returning a non-serializable value", function(assert) {
 			// modify property service return object
-			var oExpectedPropertyDataWithMockedLabel = Object.assign({}, this.oExpectedPropertyData, {label: "[NOT SERIALIZABLE]"});
+			var oExpectedPropertyDataWithMockedLabel = { ...this.oExpectedPropertyData, label: "[NOT SERIALIZABLE]" };
 			// mock getLabel() in designtime metadata
-			var oDtObjProperties = Object.assign({}, this.oMockDesignTime);
+			var oDtObjProperties = { ...this.oMockDesignTime };
 			oDtObjProperties.getLabel = function() {
 				return ["property1", {}, function() {}];
 			};
@@ -426,7 +426,7 @@ sap.ui.define([
 
 		QUnit.test("when property service get() is called for a control with designTime properties wrapped in a function", function(assert) {
 			// wrap properties in a function
-			var oDtObjProperties = Object.assign({}, this.oMockDesignTime);
+			var oDtObjProperties = { ...this.oMockDesignTime };
 			oDtObjProperties.properties = sandbox.stub().returns(this.oMockDesignTime.properties);
 
 			var fnElementDesignTimeMetadataStub = sandbox.stub(ElementDesignTimeMetadata.prototype, "getData").returns(oDtObjProperties);
@@ -440,15 +440,25 @@ sap.ui.define([
 
 		QUnit.test("when property service get() is called for a control with designTime properties wrapped in a function returning an undefined value", function(assert) {
 			// wrap properties in a function
-			var oDtObjProperties = Object.assign({}, this.oMockDesignTime);
+			var oDtObjProperties = { ...this.oMockDesignTime };
 			oDtObjProperties.properties = sandbox.stub();
 
 			var fnElementDesignTimeMetadataStub = sandbox.stub(ElementDesignTimeMetadata.prototype, "getData").returns(oDtObjProperties);
 			// removing DT Properties from response, which are not calculated because of the undefined return value
-			var oExpectedResultWithoutDtProperties = Object.assign(
-				{},
-				_omit(this.oExpectedPropertyData.properties, ["dtMetadataProperty1", "dtMetadataProperty2", "dtMetadataProperty3", "virtualProperty1", "virtualProperty2", "virtualProperty3", "virtualProperty4"])
-			);
+			var oExpectedResultWithoutDtProperties = {
+				..._omit(
+					this.oExpectedPropertyData.properties,
+					[
+						"dtMetadataProperty1",
+						"dtMetadataProperty2",
+						"dtMetadataProperty3",
+						"virtualProperty1",
+						"virtualProperty2",
+						"virtualProperty3",
+						"virtualProperty4"
+					]
+				)
+			};
 			// this property was changed within DT properties; restoring to default
 			oExpectedResultWithoutDtProperties.metadataProperty2.ignore = false;
 

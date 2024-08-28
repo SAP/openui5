@@ -43,7 +43,7 @@ sap.ui.define([
 			"sap.app": {
 				id: "fixture.application"
 			},
-			"sap.ui5": Object.assign({}, bFlexEnabled && {flexEnabled: true})
+			"sap.ui5": { ...bFlexEnabled && {flexEnabled: true} }
 		};
 		var oContent = new VerticalLayout({
 			id: "layoutId",

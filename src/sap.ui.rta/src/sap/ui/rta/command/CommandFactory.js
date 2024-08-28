@@ -257,10 +257,11 @@ sap.ui.define([
 	function configureCustomAddCommand(oElement, mSettings, oDesignTimeMetadata) {
 		var oAddAction = oDesignTimeMetadata.getAction("add", mSettings.element);
 		if (oAddAction && oAddAction.custom && typeof oAddAction.custom.getItems === "function") {
-			var oAction = Object.assign(oAddAction.custom, {
+			var oAction = {
+				...oAddAction.custom,
 				changeOnRelevantContainer: mSettings.changeOnRelevantContainer,
 				changeType: mSettings.changeType
-			});
+			};
 			delete mSettings.changeOnRelevantContainer; // this property is not required for a sap.ui.rta.command.CustomAdd
 			return oAction;
 		}
@@ -423,14 +424,15 @@ sap.ui.define([
 			var bIsUiElement = vElement instanceof ManagedObject;
 
 			// only sap.ui.rta.command.FlexCommand requires a selector property
-			if (!mCommand.noSelector) {
-				mSettings = Object.assign({}, mSettings, !bIsUiElement && {selector: vElement});
+			if (!mCommand.noSelector && !bIsUiElement) {
+				mSettings = { ...mSettings, selector: vElement };
 			}
 
-			mSettings = Object.assign({}, mSettings, {
+			mSettings = {
+				...mSettings,
 				element: bIsUiElement ? vElement : undefined,
 				name: sCommand
-			});
+			};
 
 			var oAction;
 			if (mCommand.configure) {
@@ -520,7 +522,7 @@ sap.ui.define([
 	 * @param {Object} [mFlexSettings] - Property bag. See {@link sap.ui.rta.RuntimeAuthoring#setFlexSettings} method for more information
 	 */
 	CommandFactory.prototype.setFlexSettings = function(mFlexSettings) {
-		this.setProperty("flexSettings", Object.assign(this.getFlexSettings(), mFlexSettings));
+		this.setProperty("flexSettings", { ...this.getFlexSettings(), ...mFlexSettings });
 	};
 
 	/**
