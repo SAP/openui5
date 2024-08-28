@@ -50,7 +50,8 @@ sap.ui.define([
 			var mChangeHandlers = {};
 			mChangeHandlers[sChangeType] = this.oValidChangeHandler1;
 			ChangeHandlerStorage.registerPredefinedChangeHandlers(undefined, mChangeHandlers);
-			return ChangeHandlerStorage.getChangeHandler(sChangeType, "", undefined, JsControlTreeModifier, Layer.VENDOR).then(function(oChangeHandler) {
+			return ChangeHandlerStorage.getChangeHandler(sChangeType, "", undefined, JsControlTreeModifier, Layer.VENDOR)
+			.then(function(oChangeHandler) {
 				assert.strictEqual(oChangeHandler, this.oValidChangeHandler1, "the change handler is returned");
 			}.bind(this));
 		});
@@ -80,32 +81,65 @@ sap.ui.define([
 			};
 			ChangeHandlerStorage.registerPredefinedChangeHandlers(mDefaultChangeHandler, {});
 			return ChangeHandlerStorage.registerChangeHandlersForLibrary(mChangeHandlers).then(function() {
-				return ChangeHandlerStorage.getChangeHandler("hideControl", "myFancyControl", undefined, JsControlTreeModifier, Layer.VENDOR);
+				return ChangeHandlerStorage.getChangeHandler(
+					"hideControl",
+					"myFancyControl",
+					undefined,
+					JsControlTreeModifier,
+					Layer.VENDOR
+				);
 			})
 
 			.then(function(oChangeHandler) {
 				assert.deepEqual(oChangeHandler, this.oValidChangeHandler1, "the default Change Handler was registered");
-
-				return ChangeHandlerStorage.getChangeHandler("doSomethingElse", "myNotSoFancyControl", undefined, JsControlTreeModifier, Layer.VENDOR);
+				return ChangeHandlerStorage.getChangeHandler(
+					"doSomethingElse",
+					"myNotSoFancyControl",
+					undefined,
+					JsControlTreeModifier,
+					Layer.VENDOR
+				);
 			}.bind(this))
 			.then(function(oChangeHandler) {
 				assert.ok(oChangeHandler, "the change handlers in the flexibility file were registered");
-
-				return ChangeHandlerStorage.getChangeHandler("doSomething", "myNotSoFancyControl", undefined, JsControlTreeModifier, Layer.VENDOR);
+				return ChangeHandlerStorage.getChangeHandler(
+					"doSomething",
+					"myNotSoFancyControl",
+					undefined,
+					JsControlTreeModifier,
+					Layer.VENDOR
+				);
 			})
 			.then(function(oChangeHandler) {
 				assert.ok(oChangeHandler, "the change handlers in the flexibility file were registered");
-
-				return ChangeHandlerStorage.getChangeHandler("unhideControl", "myFancyFancyControl", undefined, JsControlTreeModifier, Layer.VENDOR);
+				return ChangeHandlerStorage.getChangeHandler(
+					"unhideControl",
+					"myFancyFancyControl",
+					undefined,
+					JsControlTreeModifier,
+					Layer.VENDOR
+				);
 			})
 			.then(function(oChangeHandler) {
 				assert.deepEqual(oChangeHandler, this.oValidChangeHandler1, "the default Change Handler was registered");
-
-				return ChangeHandlerStorage.getChangeHandler("hideControl", "myUnavailableFancyControl", undefined, JsControlTreeModifier, Layer.VENDOR);
+				return ChangeHandlerStorage.getChangeHandler(
+					"hideControl",
+					"myUnavailableFancyControl",
+					undefined,
+					JsControlTreeModifier,
+					Layer.VENDOR
+				);
 			}.bind(this))
 			.catch(function(oError) {
 				assert.strictEqual(oError.message, "No Change handler registered for the Control and Change type", "the function rejects");
-				assert.ok(oErrorLogStub.lastCall.args[0].indexOf("Flexibility change handler registration failed.\nControlType: myUnavailableFancyControl\n") > -1, "and the correct error is thrown");
+				const oErrorLogStubCalls = oErrorLogStub.getCalls();
+				const sExpectedErrorMessage = "Flexibility change handler registration failed.\nControlType: myUnavailableFancyControl\n";
+				// In very rare occasions, the CH registration of the libraries might still be ongoing, which can log parallel errors
+				// during the test execution. This is why we need to check for the error message in all calls.
+				assert.ok(
+					oErrorLogStubCalls.some((oCall) => oCall.args[0].indexOf(sExpectedErrorMessage) > -1),
+					"and the correct error is thrown"
+				);
 			});
 		});
 
