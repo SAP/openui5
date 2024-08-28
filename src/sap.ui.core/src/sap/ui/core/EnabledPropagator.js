@@ -8,8 +8,6 @@ sap.ui.define([
 ], function() {
 	"use strict";
 
-	let Element;
-
 	/**
 	 * Mixin for enhancement of a control prototype with propagation of the <code>enabled</code> property.
 	 *
@@ -152,9 +150,6 @@ sap.ui.define([
 				oFocusableAncestor.focus({
 					preventScroll: true
 				});
-			} else {
-				Element ??= sap.ui.require("sap/ui/core/Element");
-				Element?.fireFocusFail.call(oControl);
 			}
 		}
 	}
