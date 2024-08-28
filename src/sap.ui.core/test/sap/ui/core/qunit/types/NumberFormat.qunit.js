@@ -2231,7 +2231,6 @@ sap.ui.define([
 		assert.deepEqual(oFormat.parse("c"), null, "century or cup");
 
 		// invalid values result in null
-		assert.deepEqual(oFormat.parse(""), null, "empty string results in null");
 		assert.deepEqual(oFormat.parse("x"), null, "'x' results in null");
 		assert.deepEqual(oFormat.parse("XXX"), null, "'XXX' results in null");
 		assert.deepEqual(oFormat.parse("1"), null, "'1' results in null");
@@ -4940,4 +4939,59 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oFloatFormat.format(42), "77");
 	});
+
+	//*********************************************************************************************
+["getIntegerInstance", "getFloatInstance", "getPercentInstance"].forEach((sInstanceGetter) => {
+	["", 0, NaN, null].forEach((vEmptyString) => {
+		[true, false].forEach((bParseAsString) => {
+	const sTitle = `Parse empty string: ${sInstanceGetter} with showNumber=false, emptyString=${vEmptyString}`
+		+ ` and parseAsString=${bParseAsString}`;
+	// eslint-disable-next-line max-nested-callbacks
+	QUnit.test(sTitle, function (assert) {
+		const oFormat = NumberFormat[sInstanceGetter]({
+			emptyString: vEmptyString,
+			parseAsString: bParseAsString,
+			showNumber: false
+		});
+
+		// code under test - combination showNumber=false and empty user input does not make sense -> return null
+		assert.strictEqual(oFormat.parse(""), null);
+	});
+		});
+	});
+});
+
+	//*********************************************************************************************
+["getCurrencyInstance", "getUnitInstance"].forEach((sInstanceGetter) => {
+	[
+		{resultCurrencyOrUnit: NaN},
+		{parseAsString: true, resultCurrencyOrUnit: "NaN"},
+		{parseAsString: false, resultCurrencyOrUnit: NaN},
+		{emptyString: "", resultCurrencyOrUnit: ""},
+		{emptyString: "", parseAsString: true, resultCurrencyOrUnit: ""},
+		{emptyString: "", parseAsString: false, resultCurrencyOrUnit: ""},
+		{emptyString: NaN, resultCurrencyOrUnit: NaN},
+		{emptyString: NaN, parseAsString: true, resultCurrencyOrUnit: "NaN"},
+		{emptyString: NaN, parseAsString: false, resultCurrencyOrUnit: NaN},
+		{emptyString: null, resultCurrencyOrUnit: null},
+		{emptyString: null, parseAsString: true, resultCurrencyOrUnit: null},
+		{emptyString: null, parseAsString: false, resultCurrencyOrUnit: null},
+		{emptyString: 0, resultCurrencyOrUnit: 0},
+		{emptyString: 0, parseAsString: true, resultCurrencyOrUnit: "0"},
+		{emptyString: 0, parseAsString: false, resultCurrencyOrUnit: 0}
+	].forEach((oFixture) => {
+	const sTitle = `Parse empty string: ${sInstanceGetter} with showNumber=false, `
+			+ ` emptyString=${oFixture.emptyString} and parseAsString=${oFixture.parseAsString}`;
+	QUnit.test(sTitle, function (assert) {
+		const oFormat = NumberFormat[sInstanceGetter]({
+			...(oFixture.hasOwnProperty("parseAsString") && {parseAsString: oFixture.parseAsString}),
+			...(oFixture.hasOwnProperty("emptyString") && {emptyString: oFixture.emptyString}),
+			showNumber: false
+		});
+
+		// code under test
+		assert.deepEqual(oFormat.parse(""), [undefined, oFixture.resultCurrencyOrUnit]);
+	});
+	});
+});
 });

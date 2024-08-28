@@ -288,10 +288,16 @@ sap.ui.define([
 		 *   Whether the amount or measure is parsed if no currency or unit is entered; defaults to
 		 *   <code>true</code> if neither <code>showMeasure</code> nor <code>showNumber</code> is
 		 *   set to a falsy value, otherwise defaults to <code>false</code>
-		 * @param {any} [oFormatOptions.emptyString=0]
-		 *   Defines how an empty string is parsed into the amount/measure. With the default value
-		 *   <code>0</code> the amount/measure becomes <code>0</code> when an empty string is
-		 *   parsed.
+		 * @param {any} [oFormatOptions.emptyString=0|""]
+		 *   Defines which value to use if an empty string is parsed.
+		 *   <ul>
+		 *     <li> If the formatted value contains the amount/measure, <code>0</code> is used as
+		 *       the default amount/measure when an empty string is parsed.</li>
+		 *     <li> If the formatted value contains only the currency/unit because the
+		 *       <code>showNumber</code> format option is set to <code>false</code>, <code>""</code>
+		 *       (empty string) is used as the default currency/unit when an empty string is parsed.
+		 *     </li>
+		 *   </ul>
 		 * @param {object} [oConstraints]
 		 *   Only the 'skipDecimalsValidation' constraint is supported. Constraints are immutable,
 		 *   that is, they can only be set once on construction.
@@ -321,14 +327,13 @@ sap.ui.define([
 				throw new Error("Only parameters oFormatOptions and oConstraints are supported");
 			}
 
+			const bShowNumber = !oFormatOptions || !("showNumber" in oFormatOptions) || oFormatOptions["showNumber"];
+			const bShowMeasure = !oFormatOptions || !("showMeasure" in oFormatOptions) || oFormatOptions["showMeasure"];
 			// format option preserveDecimals is set in the base type
 			oFormatOptions = Object.assign({
-					emptyString: 0,
+					emptyString: bShowNumber ? 0 : "",
 					parseAsString : true,
-					unitOptional : !oFormatOptions
-						|| ["showMeasure", "showNumber"].every(function (sOption) {
-							return !(sOption in oFormatOptions) || oFormatOptions[sOption];
-						})
+					unitOptional : bShowNumber && bShowMeasure
 				}, oFormatOptions);
 
 			oConstraints = Object.assign({}, oConstraints);
