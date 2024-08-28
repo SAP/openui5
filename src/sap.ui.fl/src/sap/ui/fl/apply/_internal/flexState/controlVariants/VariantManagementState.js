@@ -58,6 +58,11 @@ sap.ui.define([
 		});
 
 		// Check if variant is set via url parameter
+		// Legacy URLs can have multiple variant technical parameter instances (length > 1)
+		if (aVariantReferencesFromUrl.length === 1) {
+			aVariantReferencesFromUrl = aVariantReferencesFromUrl[0].split(",");
+		}
+
 		var sDesiredSelectedVariantId = aVariantKeys.find((sVariantKey) => {
 			return aVariantReferencesFromUrl.includes(sVariantKey);
 		});

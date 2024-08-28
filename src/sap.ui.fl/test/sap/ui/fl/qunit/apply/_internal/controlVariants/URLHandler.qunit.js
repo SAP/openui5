@@ -168,7 +168,7 @@ sap.ui.define([
 			URLHandler.initialize({model: this.oModel});
 			assert.expect(2);
 			var mPropertyBag = {
-				parameters: ["testParam1", "testParam2"],
+				parameters: ["testParam1,testParam2"],
 				updateHashEntry: true,
 				updateURL: true,
 				model: this.oModel
@@ -182,7 +182,7 @@ sap.ui.define([
 
 			this.oGetUShellServiceStub.withArgs("Navigation").returns({
 				navigate(mParameters) {
-					assert.strictEqual(
+					assert.deepEqual(
 						mParameters.params[URLHandler.variantTechnicalParameterName],
 						mPropertyBag.parameters,
 						"then correct parameters were passed to be set for the URL hash"
@@ -198,7 +198,7 @@ sap.ui.define([
 			URLHandler.initialize({model: this.oModel});
 			assert.expect(2);
 			var mPropertyBag = {
-				parameters: ["testParam1", "testParam2"],
+				parameters: ["testParam1,testParam2"],
 				updateHashEntry: false,
 				updateURL: true,
 				model: this.oModel
@@ -212,7 +212,7 @@ sap.ui.define([
 
 			this.oGetUShellServiceStub.withArgs("Navigation").returns({
 				navigate(mParameters) {
-					assert.strictEqual(
+					assert.deepEqual(
 						mParameters.params[URLHandler.variantTechnicalParameterName],
 						mPropertyBag.parameters,
 						"then correct parameters were passed to be set for the URL hash"
@@ -228,7 +228,7 @@ sap.ui.define([
 			assert.expect(1);
 			this.oAppComponent.destroy();
 			var mPropertyBag = {
-				parameters: ["testParam1", "testParam2"],
+				parameters: ["testParam1,testParam2"],
 				updateURL: true,
 				model: this.oModel
 			};
@@ -242,7 +242,7 @@ sap.ui.define([
 
 			this.oGetUShellServiceStub.withArgs("Navigation").returns({
 				navigate(mParameters) {
-					assert.strictEqual(
+					assert.deepEqual(
 						mParameters.params[URLHandler.variantTechnicalParameterName],
 						mPropertyBag.parameters,
 						"then correct parameters were passed to be set for the URL hash"
@@ -256,7 +256,7 @@ sap.ui.define([
 		QUnit.test("when update() is called to update hash register without a URL update", function(assert) {
 			URLHandler.initialize({model: this.oModel});
 			var mPropertyBag = {
-				parameters: ["testParam1", "testParam2"],
+				parameters: ["testParam1,testParam2"],
 				updateHashEntry: true,
 				model: this.oModel
 			};
@@ -272,14 +272,14 @@ sap.ui.define([
 		QUnit.test("when update() is called to update hash register with a URL update, but the parameters didn't change", function(assert) {
 			URLHandler.initialize({model: this.oModel});
 			var mPropertyBag = {
-				parameters: ["testParam1", "testParam2"],
+				parameters: ["testParam1,testParam2"],
 				updateHashEntry: true,
 				updateURL: true,
 				model: this.oModel
 			};
 
 			var oReturnObject = {params: {}};
-			oReturnObject.params[URLHandler.variantTechnicalParameterName] = ["testParam1", "testParam2"];
+			oReturnObject.params[URLHandler.variantTechnicalParameterName] = ["testParam1,testParam2"];
 			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
 				parseShellHash() {
 					return oReturnObject;
@@ -389,7 +389,7 @@ sap.ui.define([
 
 				// mock property bag for URLHandler.update
 				this.mPropertyBag = {
-					parameters: ["testParam1", "testParam2"],
+					parameters: ["testParam1,testParam2"],
 					updateHashEntry: true,
 					updateURL: true
 				};
@@ -1107,7 +1107,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when called to process silently, with an invalid component and some parameter values", function(assert) {
-			var aNewParamValues = ["testValue1", "testValue2"];
+			var aNewParamValues = ["testValue1, testValue2"];
 			var oParameters = {};
 			var sParamValue = "testValue";
 			var sConstructedHashValue = "hashValue";
@@ -1145,7 +1145,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when called to process silently, with a valid component and some parameter values", function(assert) {
-			var aNewParamValues = ["testValue1", "testValue2"];
+			var aNewParamValues = ["testValue1, testValue2"];
 			var oParameters = {};
 			var sParamValue = "testValue";
 			var sConstructedHashValue = "hashValue";
@@ -1197,7 +1197,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when called without the silent parameter set, with a valid component and some parameter values", function(assert) {
-			var aNewParamValues = ["testValue1", "testValue2"];
+			var aNewParamValues = ["testValue1, testValue2"];
 			var oParameters = {};
 			var sParamValue = "testValue";
 			oParameters[URLHandler.variantTechnicalParameterName] = [sParamValue];

@@ -1005,7 +1005,44 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when the technical parameters contain entries for multiple references", function(assert) {
+		QUnit.test("when the technical parameter contains entries for multiple references", function(assert) {
+			const oComponentData = {technicalParameters: {}};
+			oComponentData.technicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["customVariant,customVariantForSecondVM"];
+			sandbox.stub(FlexState, "getComponentData").returns(oComponentData);
+			stubFlexObjectsSelector([
+				createVariant({
+					variantReference: sVariantManagementReference,
+					fileName: "customVariant"
+				}),
+				createVariant({
+					variantReference: "secondVM",
+					variantManagementReference: "secondVM",
+					fileName: "customVariantForSecondVM"
+				})
+			]);
+			VariantManagementState.addRuntimeSteadyObject(
+				sReference,
+				sComponentId,
+				createVariant({
+					fileName: "secondVM",
+					variantManagementReference: "secondVM"
+				})
+			);
+
+			const oVMMap = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
+			assert.strictEqual(
+				oVMMap[sVariantManagementReference].currentVariant,
+				"customVariant",
+				"then the current variant is set"
+			);
+			assert.strictEqual(
+				oVMMap.secondVM.currentVariant,
+				"customVariantForSecondVM",
+				"then the current variant is set for the second vm"
+			);
+		});
+
+		QUnit.test("when the technical parameters contain entries for multiple references - legacy: multiple parameters on URL", function(assert) {
 			const oComponentData = {technicalParameters: {}};
 			oComponentData.technicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["customVariant", "customVariantForSecondVM"];
 			sandbox.stub(FlexState, "getComponentData").returns(oComponentData);
