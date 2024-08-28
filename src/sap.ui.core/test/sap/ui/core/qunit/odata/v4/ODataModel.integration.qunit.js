@@ -8021,6 +8021,91 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Delete a kept-alive row context which is not in the list binding's collection. It
+	// must be excluded from a side-effects request. It must still be alive if the deletion fails.
+	// No update for dependent bindings must occur when refreshing the list while the deletion is
+	// pending.
+	// SNOW: DINC0246453
+	QUnit.test("DINC0246453", async function (assert) {
+		const sView = `
+<Table id="teams" items="{/TEAMS}">
+	<Text id="id" text="{Team_Id}"/>
+	<Text text="{Name}"/>
+</Table>
+<Table id="employees" items="{TEAM_2_EMPLOYEES}">
+	<Text text="{ID}"/>
+</Table>`;
+
+		this.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", {
+				value : [
+					{Name : "Team 1", Team_Id : "1"},
+					{Name : "Team 2", Team_Id : "2"}
+				]
+			})
+			.expectChange("id", ["1", "2"]);
+
+		await this.createView(assert, sView, this.createTeaBusiModel({autoExpandSelect : true}));
+
+		this.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=ID&$skip=0&$top=100",
+			{value : []}); // no data needed
+
+		const oContext = this.oView.byId("teams").getItems()[0].getBindingContext();
+		oContext.setKeepAlive(true);
+		this.oView.byId("employees").setBindingContext(oContext);
+
+		await this.waitForChanges(assert, "bind employees table");
+
+		this.expectRequest("TEAMS?$select=Name,Team_Id&$filter=Team_Id ne '1'&$skip=0&$top=100",
+				{value : [{Name : "Team 2", Team_Id : "2"}]})
+			.expectChange("id", ["2"]);
+
+		const oBinding = oContext.getBinding();
+		oBinding.filter(new Filter("Team_Id", FilterOperator.NE, "1"));
+
+		await this.waitForChanges(assert, "filter the kept-alive context out");
+
+		this.oLogMock.expects("error").withArgs("Failed to delete /TEAMS('1')");
+		this.oLogMock.expects("error").withArgs("Failed to request side effects");
+		this.expectRequest("DELETE TEAMS('1')", createErrorInsideBatch())
+			// side effects: not requesting team '1' (although kept alive) -  no response required
+			.expectRequest("TEAMS?$select=Name,Team_Id&$filter=Team_Id eq '2'")
+			.expectMessages([{
+				code : "CODE",
+				message : "Request intentionally failed",
+				persistent : true,
+				technical : true,
+				type : "Error"
+			}])
+			// refresh after failed DELETE
+			.expectRequest("TEAMS?$select=Name,Team_Id&$filter=Team_Id ne '1'&$skip=0&$top=100",
+				{value : [{Name : "Team 2", Team_Id : "2"}]});
+
+		// code under test - parallel delete and side-effects request, failing
+		await Promise.all([
+			oContext.delete().then(mustFail(assert), function () {}),
+			oBinding.getHeaderContext().requestSideEffects(["Name"])
+				.then(mustFail(assert), function () {}),
+			this.waitForChanges(assert, "parallel delete and side-effects request")
+		]);
+
+		assert.strictEqual(oContext.getBinding(), oBinding, "still alive");
+		assert.ok(oContext.isKeepAlive(), "still kept-alive");
+
+		this.expectChange("id", ["2"])
+			.expectRequest("DELETE TEAMS('1')")
+			.expectRequest("TEAMS?$select=Name,Team_Id"
+				+ "&$filter=(Team_Id ne '1') and not (Team_Id eq '1')&$skip=0&$top=100",
+				{value : [{Name : "Team 2", Team_Id : "2"}]});
+
+		// code under test - parallel delete and refresh
+		await Promise.all([
+			oContext.delete(),
+			oBinding.requestRefresh(),
+			this.waitForChanges(assert, "parallel delete and refresh")
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: A relative list binding's context is changed. Additionally a refresh (via
 	// requestSideEffects) is invoked after the binding has recreated its cache, but before the
 	// dependent property bindings have been destroyed. In the incident, the list table contains

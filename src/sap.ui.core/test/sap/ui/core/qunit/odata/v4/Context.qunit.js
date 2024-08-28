@@ -4813,11 +4813,18 @@ sap.ui.define([
 			oContext = Context.create({/*oModel*/}, oBinding, "/TEAMS('1')");
 
 		oContext.setKeepAlive(true);
+		const oContextMock = this.mock(oContext);
+		oContextMock.expects("isDeleted").withExactArgs().returns(false);
 		this.mock(_Helper).expects("isSelected").never();
 		this.mock(_Helper).expects("isDataAggregation").never();
 
 		// code under test
 		assert.strictEqual(oContext.isEffectivelyKeptAlive(), true);
+
+		oContextMock.expects("isDeleted").withExactArgs().returns(true);
+
+		// code under test
+		assert.notOk(oContext.isEffectivelyKeptAlive());
 	});
 
 	//*********************************************************************************************
