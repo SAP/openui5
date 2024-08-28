@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/core/Theming",
 	"sap/ui/core/Icon",
 	"sap/ui/core/Lib",
+	"sap/ui/core/InvisibleMessage",
 	"sap/ui/core/message/MessageType",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/thirdparty/jquery",
@@ -35,6 +36,7 @@ sap.ui.define([
 	Theming,
 	Icon,
 	Lib,
+	InvisibleMessage,
 	MessageType,
 	ChangeReason,
 	jQuery,
@@ -672,7 +674,10 @@ sap.ui.define([
 					const oRowSelector = oRow.getDomRefs().rowSelector;
 
 					if (oRowSelector) {
-						oPopover.attachEventOnce("afterOpen", resolve);
+						oPopover.attachEventOnce("afterOpen", function() {
+							InvisibleMessage.getInstance().announce(sMessage);
+							resolve();
+						});
 						oPopover.openBy(oRowSelector);
 					} else {
 						resolve();

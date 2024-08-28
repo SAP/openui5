@@ -54,20 +54,6 @@ sap.ui.define([
 	}});
 
 	/**
-	 * Evaluates whether there is an occurrence for the given date and hours.
-	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate A date instance
-	 * @return {boolean} True if there is an occurrence for these hours
-	 * @private
-	 */
-	RecurringNonWorkingPeriod.prototype.hasNonWorkingAtHour = function (oDate) {
-		const iStartHours = this.getStartDate().getHours();
-		const iTimeCalendarItem = iStartHours + (this.getStartDate().getMinutes() + this.getDurationInMinutes()) / 60;
-		const iTimeData = oDate.getHours() + oDate.getMinutes() / 60;
-
-		return oDate.getHours() === iStartHours || (iTimeCalendarItem >= iTimeData && iStartHours <= oDate.getHours());
-	};
-
-	/**
 	 * Determines whether the current instance has recurrence or not.
 	 * @return {boolean} The result is <code>true</code> when the instance has recurrence.
 	 * @private

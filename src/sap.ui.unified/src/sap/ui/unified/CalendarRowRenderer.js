@@ -258,10 +258,8 @@ CalendarRowRenderer.writeCustomAttributes = function (oRm, oRow) {
 
 CalendarRowRenderer.renderInterval = function(oRm, oRow, iInterval, iWidth,  aIntervalHeaders, aNonWorkingItems, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax, bFirstOfType, bLastOfType){
 	const oStartDateInterval = oRow.getStartDate();
-	const oEndDate = UI5Date.getInstance(oRow.getStartDate());
-	oEndDate.setDate(oEndDate.getDate() + 1);
 	const oCellStartDate = UI5Date.getInstance(oStartDateInterval);
-	oCellStartDate.setHours(iInterval + iStartOffset);
+	oCellStartDate.setHours(iInterval + iStartOffset, 0, 0, 0);
 
 	var sId = oRow.getId() + "-AppsInt" + iInterval;
 	var i;
@@ -272,6 +270,9 @@ CalendarRowRenderer.renderInterval = function(oRm, oRow, iInterval, iWidth,  aIn
 	const aFilteredNonWorkingRange = oRow.getIntervalType() !== CalendarIntervalType.Hour ?
 		[] :
 		oRow.getNonWorkingPeriods().filter((oPeriod) => {
+			if (!oPeriod.isRecurring()) {
+				return oPeriod.hasNonWorkingAtDate(oStartDateInterval);
+			}
 			const hasOccurrenceOnDate = RecurrenceUtils.hasOccurrenceOnDate.bind(oPeriod);
 			return hasOccurrenceOnDate(oStartDateInterval);
 		});

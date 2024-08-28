@@ -449,7 +449,7 @@ sap.ui.define([
 		const oDate = oControl._parseDateStringAndHours(sDate, 0);
 		const aRecurrenceNonWorkingForDay = oControl._isNonWorkingDay(oColumnCalDate) ? [] : oControl.getNonWorkingPeriods().filter((oPeriod) => {
 			if (!oPeriod.isRecurring()) {
-				return oPeriod.getStartDate() >= oDate && oPeriod.getEndDate() <= oDate;
+				return oPeriod.hasNonWorkingAtDate(oDate);
 			}
 			const hasOccurrenceOnDate = RecurrenceUtils.hasOccurrenceOnDate.bind(oPeriod);
 			return hasOccurrenceOnDate(oDate);

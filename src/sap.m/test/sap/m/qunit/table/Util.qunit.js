@@ -247,6 +247,7 @@ sap.ui.define([
 	QUnit.test("showSelectionLimitPopover & hideSelectionLimitPopover", async function(assert) {
 		const done = assert.async();
 		const fnGetSelectAllPopoverSpy = sinon.spy(Util, "getSelectAllPopover");
+		const fnInvisibleMessageAnnounce = sinon.spy(InvisibleMessage.prototype, "announce");
 		const oElement = new List();
 		oElement.placeAt("qunit-fixture");
 		await nextUIUpdate();
@@ -262,7 +263,9 @@ sap.ui.define([
 			assert.strictEqual(fnGetSelectAllPopoverSpy.callCount, 2, "Util#getSelectAllPopover is called when showSelectionLimitPopovers is called");
 			assert.strictEqual(oPopover.getContent()[0].getText(), sMessage, "Correct warning message displayed on the popover");
 			assert.ok(oPopover.isOpen(), "Popover should be open");
+			assert.ok(fnInvisibleMessageAnnounce.calledOnceWith(sMessage), "The message text is announced");
 			Util.hideSelectionLimitPopover();
+			fnInvisibleMessageAnnounce.restore();
 		});
 		oPopover.attachEventOnce("afterClose", function() {
 			assert.notOk(oPopover.isOpen(), "Popover should be closed");

@@ -43,14 +43,14 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.unified.RecurringNonWorkingPeriod
 	 */
 	RecurrenceUtils.hasOccurrenceOnDate = function (oDate) {
-		if (this?.getRecurrenceType() !== "Daily") {
+		if (this.getRecurrenceType() !== "Daily") {
 			return false;
 		}
 
 		const oStartDate = UI5Date.getInstance(this.getStartDate());
 		const oCurrentDate = UI5Date.getInstance(oDate);
-		oStartDate.setHours(0,0,0);
-		oCurrentDate.setHours(0,0,0);
+		oStartDate.setHours(0,0,0,0);
+		oCurrentDate.setHours(0,0,0,0);
 
 		const iDayInMilliseconds = 24 * 60 * 60 * 1000;
 		const isDateInRange = oCurrentDate >= oStartDate && oCurrentDate <= this.getRecurrenceEndDate();
@@ -69,7 +69,7 @@ sap.ui.define([
 			const iTimePart = oNonWorkingPartDate.getHours() * iMinutesInOneHours + oNonWorkingPartDate.getMinutes();
 			iDuration -= (iTimeCell - iTimePart);
 		} else if (oNonWorkingPartDate.getHours() === oCellStartDate.getHours() && oNonWorkingPartDate.getMinutes() > 0) {
-			iDuration = oNonWorkingPart.getDurationInMinutes() > 60 ? iMinutesInOneHours - iCurrentPointInMinutes : oNonWorkingPart.getDurationInMinutes();
+			iDuration = oNonWorkingPart.getDurationInMinutes() + iCurrentPointInMinutes > 60 ? iMinutesInOneHours - iCurrentPointInMinutes : oNonWorkingPart.getDurationInMinutes();
 		} else {
 			iDuration = iMinutesInOneHours - iCurrentPointInMinutes;
 		}
