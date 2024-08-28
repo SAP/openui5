@@ -2081,7 +2081,24 @@ sap.ui.define([
 				return null;
 			}
 			const oParent = oNode.getParent(); // Note: always sync for out-of-place nodes
-			iSibling = this.oCache.get1stInPlaceChildIndex(oParent ? oParent.iIndex : -1);
+			if (oParent?.created()) { // out-of-place nodes have no in-place children
+				return null;
+			}
+
+			let bPlaceholder;
+			let iExpectedLevel;
+			[iSibling, bPlaceholder, iExpectedLevel]
+				= this.oCache.get1stInPlaceChildIndex(oParent ? oParent.iIndex : -1);
+			if (bPlaceholder) { // => iSibling >= 0
+				return bAllowRequest
+					? this.requestContexts(iSibling, 1).then((aResult) => aResult[0])
+						.then((oContext) => {
+							return oContext.getProperty("@$ui5.node.level") === iExpectedLevel
+								? oContext
+								: null;
+						})
+					: undefined;
+			}
 		} else {
 			iSibling = this.oCache.getSiblingIndex(oNode.iIndex, iOffset);
 		}
