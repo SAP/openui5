@@ -1304,6 +1304,7 @@
 
 		// init filters
 		vsd7.addFilterItem(new sap.m.ViewSettingsFilterItem({
+			id: "test_filter",
 			key: "myNameFilter",
 			text: "Name",
 			items: [
@@ -1520,6 +1521,7 @@
 					}
 				}),
 				new sap.m.Button({
+					id: "open_d",
 					icon: "sap-icon://add-filter",
 					press : function () {
 						sap.m.MessageToast.show("Example 7: standard & custom filters with custom data meta");
@@ -1540,6 +1542,7 @@
 		}).addStyleClass("debugPanel");
 
 		var page = new sap.m.Page({
+			id: "testPage",
 			title: "Table",
 			enableScrolling: true,
 			content: [table, panel]
