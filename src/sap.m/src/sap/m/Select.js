@@ -1734,8 +1734,9 @@ function(
 				oEvent.setMarked();
 
 				this.close();
-				this._revertSelection();
 			}
+
+			this._revertSelection();
 		};
 
 		/**
