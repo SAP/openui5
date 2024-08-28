@@ -2767,16 +2767,6 @@
 			"description": "Personalization for Reponsive Table using multiple SelectionControllers"
 		},
 		{
-		  "id": "sap.m.sample.P13nDialog",
-		  "name": "P13nDialog stand-alone",
-		  "description": "Dialog for personalization of column order and their visibility."
-		},
-		{
-		  "id": "sap.m.sample.P13nDialogWithDimMeasurePanel",
-		  "name": "P13nDialog stand-alone",
-		  "description": "Dialog for personalization of dimension/measure order and their visibility."
-		},
-		{
 		  "id": "sap.m.sample.MultiInput",
 		  "name": "MultiInput",
 		  "description": "MultiInput provides functionality to add / remove / enter tokens."
