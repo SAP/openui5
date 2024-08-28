@@ -3,21 +3,21 @@
 /* Quartz Dark theme             */
 /* ============================= */
 
-// ==========================================================================
-// Variables
-// ==========================================================================
+/* ========================================================================== */
+/* Variables */
+/* ========================================================================== */
 
 @_sap_m_Dialog_VerticalMargin: 3%;
 @_sap_m_Dialog_BarHeight: 2.75rem;
 @_sap_m_Dialog_SubHeaderCompactHeight: 2.25rem;
 
 @_sap_m_Dialog_NoStateHeaderShadow: @sapUiShadowHeader;
-@_sap_m_Dialog_SuccessHeaderShadow: inset 0 -0.0625rem @sapUiSuccessBorder, @sapUiShadowHeader;
-@_sap_m_Dialog_ErrorHeaderShadow: inset 0 -0.0625rem @sapUiErrorBorder, @sapUiShadowHeader;
-@_sap_m_Dialog_WarningHeaderShadow: inset 0 -0.0625rem @sapUiWarningBorder, @sapUiShadowHeader;
-@_sap_m_Dialog_InformationHeaderShadow: inset 0 -0.0625rem @sapUiInformationBorder, @sapUiShadowHeader;
+@_sap_m_Dialog_SuccessHeaderShadow: inset 0 -0.0625rem var(--sapSuccessBorderColor), @sapUiShadowHeader;
+@_sap_m_Dialog_ErrorHeaderShadow: inset 0 -0.0625rem var(--sapErrorBorderColor), @sapUiShadowHeader;
+@_sap_m_Dialog_WarningHeaderShadow: inset 0 -0.0625rem var(--sapWarningBorderColor), @sapUiShadowHeader;
+@_sap_m_Dialog_InformationHeaderShadow: inset 0 -0.0625rem var(--sapInformationBorderColor), @sapUiShadowHeader;
 
-// This parameter is used in sap.m.Select. TODO: remove it when it is removed from there.
+/* This parameter is used in sap.m.Select. TODO: remove it when it is removed from there. */
 @_sap_m_Dialog_HeaderShadowColor: darken(@sapUiGroupContentBackground, 8);
 
 .sapMDialogSubHeader .sapMIBar {
@@ -35,21 +35,23 @@
 }
 
 .sapMDialogTitleGroup {
-	z-index: 3; // to hide the shadow from the header when there is sub-header
+	z-index: 3; /* to hide the shadow from the header when there is sub-header */
 }
 
-// buttons on phone must be to the right side (in LTR mode)
+/* buttons on phone must be to the right side (in LTR mode) */
 html.sap-phone .sapMDialog {
+
 	& > footer .sapMFooter-CTX {
 		justify-content: flex-end;
 	}
 }
 
-// ==========================================================================
-// header, sub-header, footer
-// ==========================================================================
+/* ========================================================================== */
+/* header, sub-header, footer */
+/* ========================================================================== */
 
 .sapMDialog {
+
 	header .sapMBarLeft,
 	header .sapMBarPH {
 		padding-left: 1rem;
@@ -65,10 +67,16 @@ html.sap-phone .sapMDialog {
 	}
 }
 
-.sapMDialogTitleGroup, .sapMDialogSubHeader {
-	.sapUi-Std-PaddingS, .sapUi-Std-PaddingM,
-	.sapUi-Std-PaddingL, .sapUi-Std-PaddingXL {
+.sapMDialogTitleGroup,
+.sapMDialogSubHeader {
+
+	.sapUi-Std-PaddingS,
+	.sapUi-Std-PaddingM,
+	.sapUi-Std-PaddingL,
+	.sapUi-Std-PaddingXL {
+
 		&.sapMIBar {
+
 			.sapMBarMiddle .sapMBarPH {
 				padding-left: 0;
 				padding-right: 0;
