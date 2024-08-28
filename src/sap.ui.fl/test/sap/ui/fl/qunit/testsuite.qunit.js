@@ -739,6 +739,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/_internal/Versions"]
 				}
 			},
+			"write/_internal/flexState/changes/UIChangeManager": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/flexState/changes/UIChangeManager"]
+				}
+			},
 			"write/_internal/flexState/FlexObjectManager": {
 				group: "Write Internal",
 				coverage: {

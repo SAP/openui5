@@ -4,10 +4,6 @@
 
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/core/Component",
-	"sap/ui/fl/apply/_internal/changes/Applier",
-	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
@@ -18,16 +14,12 @@ sap.ui.define([
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/LayerUtils"
 ], function(
 	Log,
-	JsControlTreeModifier,
-	Component,
-	Applier,
-	FlexObjectFactory,
 	States,
 	DependencyHandler,
 	UIChangesState,
@@ -38,10 +30,10 @@ sap.ui.define([
 	Version,
 	Settings,
 	Condenser,
+	FlexObjectManager,
 	Storage,
 	Layer,
-	LayerUtils,
-	Utils
+	LayerUtils
 ) {
 	"use strict";
 
@@ -156,10 +148,6 @@ sap.ui.define([
 		DependencyHandler.addChangeAndUpdateDependencies(oChange, oAppComponent, this.getDependencyMapForComponent());
 	};
 
-	ChangePersistence.prototype._addRunTimeCreatedChangeToDependencyMap = function(oAppComponent, oChange) {
-		DependencyHandler.addRuntimeChangeToMap(oChange, oAppComponent, this.getDependencyMapForComponent());
-	};
-
 	/**
 	 * Getter for the private aggregation containing sap.ui.fl.apply._internal.flexObjects.FlexObject objects mapped by their selector ids.
 	 * @return {Object<string,object>} mChanges mapping with changes sorted by their selector ids
@@ -167,100 +155,6 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.getDependencyMapForComponent = function() {
 		return FlexObjectState.getLiveDependencyMap(this._mComponent.name);
-	};
-
-	function finalizeChangeCreation(oChange, oAppComponent) {
-		this._addRunTimeCreatedChangeToDependencyMap(oAppComponent, oChange);
-		this._addPropagationListener(oAppComponent);
-	}
-
-	/**
-	 * Adds a new change and returns the id of the new change.
-	 *
-	 * @param {object} vChange - The complete and finalized JSON object representation the file content of the change or a Change instance
-	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
-	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} the newly created change
-	 * @public
-	 */
-	ChangePersistence.prototype.addChange = function(vChange, oAppComponent) {
-		var oChange = this.addDirtyChange(vChange);
-		finalizeChangeCreation.call(this, oChange, oAppComponent);
-		return oChange;
-	};
-
-	/**
-	 * Adds new changes and returns the ids of the new changes.
-	 *
-	 * @param {object[]} aChanges - Array with complete and finalized JSON object representation the file content of the changes or Change instances
-	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
-	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} the newly created changes
-	 * @public
-	 */
-	ChangePersistence.prototype.addChanges = function(aChanges, oAppComponent) {
-		var aNewChanges = this.addDirtyChanges(aChanges);
-		aNewChanges.forEach(function(oChange) {
-			finalizeChangeCreation.call(this, oChange, oAppComponent);
-		}.bind(this));
-		return aNewChanges;
-	};
-
-	function createChange(vChange) {
-		return (
-			typeof vChange.isA === "function"
-			&& vChange.isA("sap.ui.fl.apply._internal.flexObjects.FlexObject")
-		)
-			? vChange
-			: FlexObjectFactory.createFromFileContent(vChange);
-	}
-
-	/**
-	 * Adds a new dirty change.
-	 *
-	 * @param {object} vChange - JSON object of change or change object
-	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} The prepared change object
-	 * @public
-	 */
-	ChangePersistence.prototype.addDirtyChange = function(vChange) {
-		const oNewChange = createChange(vChange);
-		FlexState.addDirtyFlexObject(this._mComponent.name, oNewChange);
-		return oNewChange;
-	};
-
-	/**
-	 * Adds new dirty changes.
-	 *
-	 * @param {object[]} aChanges - JSON objects of changes or change objects
-	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} The prepared change objects
-	 * @public
-	 */
-	ChangePersistence.prototype.addDirtyChanges = function(aChanges) {
-		const aNewChanges = aChanges.map(createChange);
-		FlexState.addDirtyFlexObjects(this._mComponent.name, aNewChanges);
-		return aNewChanges;
-	};
-
-	/**
-	 * If the first changes were created, the <code>propagationListener</code> of <code>sap.ui.fl</code> might not yet
-	 * be attached to the application component and must be added then.
-	 *
-	 * @param {sap.ui.core.UIComponent} oComponent Component having an app component that might not have a propagation listener yet
-	 * @private
-	 */
-	ChangePersistence.prototype._addPropagationListener = function(oComponent) {
-		var oAppComponent = Utils.getAppComponentForControl(oComponent);
-		if (oAppComponent instanceof Component) {
-			var fnCheckIsNotFlPropagationListener = function(fnPropagationListener) {
-				return !fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl;
-			};
-
-			var bNoFlPropagationListenerAttached = oAppComponent.getPropagationListeners().every(fnCheckIsNotFlPropagationListener);
-
-			if (bNoFlPropagationListenerAttached) {
-				var fnPropagationListener = Applier.applyAllChangesForControl.bind(Applier, oAppComponent, this._mComponent.name);
-				fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
-				oAppComponent.addPropagationListener(fnPropagationListener);
-			}
-		}
 	};
 
 	ChangePersistence.prototype._deleteNotSavedChanges = function(aChanges, aCondensedChanges, bAlreadyDeletedViaCondense) {
@@ -645,7 +539,7 @@ sap.ui.define([
 		}
 
 		oChange.markForDeletion();
-		this.addDirtyChange(oChange);
+		FlexObjectManager.addDirtyFlexObjects(this._mComponent.name, [oChange]);
 		this._deleteChangeInMap(oChange, bRunTimeCreatedChange);
 	};
 
@@ -729,53 +623,6 @@ sap.ui.define([
 				appVariantDescriptors: aAppVariantDescriptors
 			});
 		}.bind(this));
-	};
-
-	/**
-	 * Removes unsaved changes.
-	 *
-	 * @param {string|string[]} [vLayer] - Layer or multiple layers for which changes shall be deleted. If omitted, changes on all layers are considered.
-	 * @param {sap.ui.core.Component} [oComponent] - Component instance, required if oControl is specified
-	 * @param {string} [oControl] - Control for which the changes should be deleted. If omitted, all changes for the app component are considered.
-	 * @param {string} [sGenerator] - Generator of changes (optional)
-	 * @param {string[]} [aChangeTypes] - Types of changes (optional)
-	 *
-	 * @returns {Promise} Promise that resolves after the deletion took place
-	 */
-	ChangePersistence.prototype.removeDirtyChanges = function(vLayer, oComponent, oControl, sGenerator, aChangeTypes) {
-		var aLayers = [].concat(vLayer || []);
-		var aDirtyChanges = FlexObjectState.getDirtyFlexObjects(this._mComponent.name);
-
-		var aChangesToBeRemoved = aDirtyChanges.filter(function(oChange) {
-			var bChangeValid = true;
-
-			if (aLayers.length && !aLayers.includes(oChange.getLayer())) {
-				return false;
-			}
-
-			if (sGenerator && oChange.getSupportInformation().generator !== sGenerator) {
-				return false;
-			}
-
-			if (oControl) {
-				var vSelector = oChange.getSelector();
-				bChangeValid = oControl.getId() === JsControlTreeModifier.getControlIdBySelector(vSelector, oComponent);
-			}
-
-			if (aChangeTypes) {
-				bChangeValid &&= aChangeTypes.indexOf(oChange.getChangeType()) !== -1;
-			}
-
-			return bChangeValid;
-		});
-
-		FlexState.removeDirtyFlexObjects(this._mComponent.name, aChangesToBeRemoved);
-		aChangesToBeRemoved.forEach(function(oChange) {
-			var nIndex = aDirtyChanges.indexOf(oChange);
-			aDirtyChanges.splice(nIndex, 1);
-		});
-
-		return Promise.resolve(aChangesToBeRemoved);
 	};
 
 	/**

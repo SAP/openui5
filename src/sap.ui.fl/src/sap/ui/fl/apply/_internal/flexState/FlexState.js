@@ -758,7 +758,8 @@ sap.ui.define([
 	 * Adds a dirty flex object to the flex state.
 	 *
 	 * @param {string} sReference - Flexibility reference of the app
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oFlexObject - Flexibility object
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oFlexObject - Flex object
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} The flex object if it was added
 	 */
 	FlexState.addDirtyFlexObject = function(sReference, oFlexObject) {
 		if (!_mInstances[sReference]) {
@@ -772,43 +773,48 @@ sap.ui.define([
 		// independent of FlexState in some test cases
 		// Once the ChangePersistence is no longer used
 		// make sure to remove the safeguard
-		if (!bFlexObjectsOverAdaptationLayer && _mInstances[sReference] && !bAlreadyInRuntimePersistence) {
+		if (!bFlexObjectsOverAdaptationLayer && !bAlreadyInRuntimePersistence) {
 			_mInstances[sReference].runtimePersistence.flexObjects.push(oFlexObject);
 			oFlexObjectsDataSelector.checkUpdate(
 				{ reference: sReference },
 				[{ type: "addFlexObject", updatedObject: oFlexObject }]
 			);
+			return oFlexObject;
 		}
+		return undefined;
 	};
 
 	/**
 	 * Adds a list of dirty flex objects to the flex state.
 	 *
 	 * @param {string} sReference - Flexibility reference of the app
-	 * @param {array.<sap.ui.fl.apply._internal.flexObjects.FlexObject>} aFlexObjects - Flexibility objects
+	 * @param {array.<sap.ui.fl.apply._internal.flexObjects.FlexObject>} aFlexObjects - Flex objects
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} The flex objects that were added
 	 */
 	FlexState.addDirtyFlexObjects = function(sReference, aFlexObjects) {
 		if (!_mInstances[sReference]) {
 			initializeEmptyState(sReference);
 		}
 		const sAdaptationLayer = FlexInfoSession.getByReference(sReference).adaptationLayer;
-		aFlexObjects = aFlexObjects
+		const aFilteredFlexObjects = aFlexObjects
 		.filter((oFlexObject) => !sAdaptationLayer || !LayerUtils.isOverLayer(oFlexObject.getLayer(), sAdaptationLayer))
 		.filter((oFlexObject) => (
 			!_mInstances[sReference].runtimePersistence.flexObjects
 			.some((oExistingFlexObject) => (oExistingFlexObject.getId() === oFlexObject.getId()))
 		));
 
-		if (aFlexObjects.length > 0 && _mInstances[sReference]) {
+		if (aFilteredFlexObjects.length > 0) {
 			_mInstances[sReference].runtimePersistence.flexObjects =
-				_mInstances[sReference].runtimePersistence.flexObjects.concat(aFlexObjects);
+				_mInstances[sReference].runtimePersistence.flexObjects.concat(aFilteredFlexObjects);
 			oFlexObjectsDataSelector.checkUpdate(
 				{ reference: sReference },
-				aFlexObjects.map(function(oFlexObject) {
+				aFilteredFlexObjects.map(function(oFlexObject) {
 					return { type: "addFlexObject", updatedObject: oFlexObject };
 				})
 			);
 		}
+
+		return aFilteredFlexObjects;
 	};
 
 	FlexState.removeDirtyFlexObject = function(sReference, oFlexObject) {
@@ -825,26 +831,28 @@ sap.ui.define([
 					{ reference: sReference },
 					[{ type: "removeFlexObject", updatedObject: oFlexObject }]
 				);
+				return oFlexObject;
 			}
 		}
+		return undefined;
 	};
 
 	FlexState.removeDirtyFlexObjects = function(sReference, aFlexObjects) {
+		const aRemovedFlexObjects = [];
 		// FIXME: Currently called from the ChangePersistence which might be
 		// independent of FlexState in some test cases
 		// Once the ChangePersistence is no longer used
 		// make sure to remove the safeguard
 		if (_mInstances[sReference] && aFlexObjects.length > 0) {
-			let bFlexObjectRemoved = false;
 			const aCurrentFlexObjects = _mInstances[sReference].runtimePersistence.flexObjects;
 			aFlexObjects.forEach(function(oFlexObject) {
 				const iIndex = aCurrentFlexObjects.indexOf(oFlexObject);
 				if (iIndex >= 0) {
-					bFlexObjectRemoved = true;
+					aRemovedFlexObjects.push(oFlexObject);
 					aCurrentFlexObjects.splice(iIndex, 1);
 				}
 			});
-			if (bFlexObjectRemoved) {
+			if (aRemovedFlexObjects.length > 0) {
 				oFlexObjectsDataSelector.checkUpdate(
 					{ reference: sReference },
 					aFlexObjects.map(function(oFlexObject) {
@@ -853,6 +861,7 @@ sap.ui.define([
 				);
 			}
 		}
+		return aRemovedFlexObjects;
 	};
 
 	FlexState.getComponentIdForReference = function(sReference) {
