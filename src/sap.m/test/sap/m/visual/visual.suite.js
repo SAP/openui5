@@ -119,5 +119,6 @@ module.exports = [
 	"ToggleButtonStandaloneVisual.spec.js",
 	"Token.spec.js",
 	"Tokenizer.spec.js",
+	"ViewSettingsDialog.spec.js",
 	"Wizard.spec.js"
 ];
