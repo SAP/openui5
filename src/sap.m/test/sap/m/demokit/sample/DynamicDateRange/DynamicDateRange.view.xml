@@ -19,6 +19,7 @@
 
 					<Label visible="false" text="Transaction date" labelFor="dynamic-range"/>
 					<DynamicDateRange
+						placeholder="Choose date range"
 						id="dynamic-range"
 						change="onChange"
 						width="{env>/filterInputWidth}"/>
