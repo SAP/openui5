@@ -84,7 +84,6 @@ sap.ui.define([
 
 				this.bus = EventBus.getInstance();
 				this.setDefaultSampleTheme();
-				this.bus.subscribe("themeChanged", "onDemoKitThemeChanged", this.onDemoKitThemeChanged, this);
 
 				this.getOwnerComponent()._sSampleIframeOrigin = ResourcesUtil.getConfig() !== "." ? ResourcesUtil.getResourceOrigin() : window.origin;
 			},
@@ -412,16 +411,27 @@ sap.ui.define([
 			_applyAppConfiguration: function(sThemeActive, sDensityMode, bRTL){
 				var oIframe = this._oHtmlControl.getDomRef();
 
-				sDensityMode = this._presetDensity(sDensityMode);
-				oIframe.contentWindow.postMessage({
-					type: "SETTINGS",
-					reason: "set",
-					data: {
-						"density": sDensityMode,
-						"RTL": bRTL,
-						"theme": sThemeActive
-					}
-				}, this.getOwnerComponent()._sSampleIframeOrigin);
+				if (this.getModel().getProperty('/iframe')) {
+					this._setStandAloneIndexIframeSetting(sThemeActive, sDensityMode, bRTL);
+				} else {
+					sDensityMode = this._presetDensity(sDensityMode);
+					oIframe.contentWindow.postMessage({
+						type: "SETTINGS",
+						reason: "set",
+						data: {
+							"density": sDensityMode,
+							"RTL": bRTL,
+							"theme": sThemeActive
+						}
+					}, this.getOwnerComponent()._sSampleIframeOrigin);
+				}
+			},
+
+			_setStandAloneIndexIframeSetting(sThemeActive, sDensityMode, bRTL) {
+				this._applySearchParamValueToIframeURL('sap-ui-theme', sThemeActive);
+				this._applySearchParamValueToIframeURL('sap-ui-density', sDensityMode);
+				this._applySearchParamValueToIframeURL('sap-ui-rtl', bRTL);
+				this._oHtmlControl.getDomRef().src = this.sIFrameUrl;
 			},
 
 			/**
@@ -625,9 +635,8 @@ sap.ui.define([
 					var sIframeWithoutUI5Ending = sFileName.replace(rStripUI5Ending, "");
 
 					// combine namespace with the file name again
-					this.sIFrameUrl = (sap.ui.require.toUrl((sIframePath + "/" + sIframeWithoutUI5Ending).replace(/\./g, "/")) + sFileEnding || ".html")
-					+ "?sap-ui-theme=" + Theming.getTheme();
-					this._oHtmlControl.getDomRef().src = this.sIFrameUrl;
+					this.sIFrameUrl = (sap.ui.require.toUrl((sIframePath + "/" + sIframeWithoutUI5Ending).replace(/\./g, "/")) + sFileEnding || ".html");
+					this._setStandAloneIndexIframeSetting(oSettingsData.theme, oSettingsData.density, oSettingsData.rtl);
 				}
 				this._oHtmlControl.getDomRef().contentWindow.postMessage({
 					type: "SETTINGS",
@@ -675,13 +684,6 @@ sap.ui.define([
 				var sSampleVersion = ResourcesUtil.getResourcesVersion();
 				this._sDefaultSampleTheme = sSampleVersion && parseInt(sSampleVersion.slice(3,5)) < 68 ?
 					"sap_belize" : Theming.getTheme();
-			},
-
-			onDemoKitThemeChanged: function(sChannelId, sEventId, oData) {
-				if (this._oHtmlControl && this.getModel().getProperty("/iframe")) {
-					this._applySearchParamValueToIframeURL("sap-ui-theme", oData.sThemeActive);
-					this._oHtmlControl.getDomRef().src = this.sIFrameUrl;
-				}
 			},
 
 			onNavBack : function (oEvt) {

@@ -80,7 +80,6 @@
 							icon="sap-icon://inspect"
 							press="onNewTab" />
 					<Button id="sampleSettings"
-							visible="{= ${/showSettings} &amp;&amp; !${/iframe} }"
 							icon="sap-icon://action-settings"
 							press="handleSettings" />
 					<Button
