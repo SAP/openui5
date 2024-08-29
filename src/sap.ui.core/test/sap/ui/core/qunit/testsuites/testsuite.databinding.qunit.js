@@ -329,6 +329,15 @@ sap.ui.define(function() {
 					"test-resources/sap/ui/core/qunit/odata/_ODataMetaModelUtils.qunit"
 				],
 				title: "sap.ui.model.odata.ODataMetaModel - QUnit Tests"
+			},
+			"odata/ODataMetaModelNoFakeService": {
+				coverage : {
+					only : "[sap/ui/model/odata/ODataMetaModel]"
+				},
+				module: [
+					"test-resources/sap/ui/core/qunit/odata/ODataMetaModelNoFakeService.qunit"
+				],
+				title: "sap.ui.model.odata.ODataMetaModel (ODataMetaModelNoFakeService.qunit) - QUnit Tests"
 			}
 		}
 	};

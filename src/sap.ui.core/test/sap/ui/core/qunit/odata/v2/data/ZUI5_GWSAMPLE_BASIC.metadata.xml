@@ -1696,6 +1696,10 @@
 				<Annotation Term="SAP__common.DocumentationRef"
 					String="urn:sap-com:documentation:key?=type=DTEL&amp;id=ITEMNOTE"/>
 			</Annotations>
+			<!-- annotations for testing annotation changes, see CPOUI5MODELS-1783 -->
+			<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/FaxNumber" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Fax Number from metadata annotation"/>
+			</Annotations>
 			<atom:link rel="self"
 				href="/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/$metadata"
 				xmlns:atom="http://www.w3.org/2005/Atom" />
