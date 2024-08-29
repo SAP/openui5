@@ -252,11 +252,12 @@ sap.ui.define([
 				var sLocalId = oAppComponent.getLocalId(sControlId);
 				return sLocalId || sControlId;
 			});
-			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-			if (FlexState.isInitialized({control: oAppComponent})) {
-				return oFlexController.resetChanges(Layer.USER, undefined, oAppComponent, aSelectorIds, mPropertyBag.changeTypes);
-			}
-			return Promise.resolve();
+			return FlexObjectManager.resetFlexObjects({
+				layer: Layer.USER,
+				appComponent: oAppComponent,
+				selectorIds: aSelectorIds,
+				changeTypes: mPropertyBag.changeTypes
+			});
 		},
 
 		/**

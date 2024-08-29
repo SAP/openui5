@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
+	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
@@ -23,6 +25,7 @@ sap.ui.define([
 ], function(
 	Control,
 	UIComponent,
+	Reverter,
 	FlexObjectFactory,
 	FlexObjectState,
 	FlexState,
@@ -32,6 +35,7 @@ sap.ui.define([
 	SessionStorageConnector,
 	CompVariantState,
 	FlexObjectManager,
+	Storage,
 	Versions,
 	FlexControllerFactory,
 	Layer,
@@ -45,6 +49,15 @@ sap.ui.define([
 	const sandbox = sinon.createSandbox();
 	const sReference = "test.selector.id";
 	const sComponentId = "componentId";
+	const Component = UIComponent.extend(sComponentId, {
+		metadata: {
+			manifest: {
+				"sap.app": {
+					id: sReference
+				}
+			}
+		}
+	});
 
 	function createTwoChangeDefs() {
 		const oChange1 = {
@@ -90,15 +103,6 @@ sap.ui.define([
 		},
 		beforeEach() {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForSelector").returns(sReference);
-			const Component = UIComponent.extend(sComponentId, {
-				metadata: {
-					manifest: {
-						"sap.app": {
-							id: sReference
-						}
-					}
-				}
-			});
 			this.oAppComponent = new Component(sComponentId);
 		},
 		afterEach() {
@@ -776,6 +780,170 @@ sap.ui.define([
 				FlexObjectState.getDirtyFlexObjects(sReference)[1],
 				oVENDORChange2
 			);
+		});
+	});
+
+	QUnit.module("resetFlexObjects", {
+		before() {
+			this.oAppComponent = new Component(sComponentId);
+		},
+		async beforeEach() {
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
+			this.oStorageStub = sandbox.stub(Storage, "reset");
+			this.oReverterStub = sandbox.stub(Reverter, "revertMultipleChanges");
+			this.oUpdateStorageResponse = sandbox.stub(FlexState, "updateStorageResponse");
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {
+				changes: [
+					{
+						fileName: "change1",
+						selector: { id: "control1" },
+						support: { generator: "myGenerator" },
+						changeType: "renameField",
+						layer: Layer.USER
+					},
+					{
+						fileName: "change2",
+						selector: { id: "control1" },
+						support: { generator: "myOtherGenerator" },
+						changeType: "renameField",
+						layer: Layer.USER
+					},
+					{
+						fileName: "change3",
+						selector: { id: "control2" },
+						support: { generator: "myGenerator" },
+						changeType: "renameField",
+						layer: Layer.CUSTOMER
+					},
+					{
+						fileName: "change4",
+						selector: {},
+						support: { generator: "" },
+						changeType: "moveFields",
+						layer: Layer.VENDOR
+					}
+				],
+				variants: [{
+					fileName: "variant1",
+					fileType: "ctrl_variant",
+					selector: {},
+					changeType: "FlVariant",
+					layer: Layer.USER,
+					variantManagementReference: "foobar",
+					variantReference: "otherVariantReference"
+				}]
+			});
+		},
+		afterEach() {
+			sandbox.restore();
+			FlexState.clearState();
+		},
+		after() {
+			this.oAppComponent.destroy();
+		}
+	}, function() {
+		function assertPropertyBag(assert, oArgs, sReference, sLayer, sGenerator, aSelectorIds, aChangeTypes) {
+			assert.strictEqual(oArgs.reference, sReference, "then the reference is passed");
+			assert.strictEqual(oArgs.layer, sLayer, "then the layer is passed");
+			if (sGenerator) {
+				assert.strictEqual(oArgs.generator, sGenerator, "then the generator is passed");
+			} else {
+				assert.notOk(oArgs.generator, "then the generator is not passed");
+			}
+			if (aSelectorIds) {
+				assert.deepEqual(oArgs.selectorIds, aSelectorIds, "then the selectorIds are passed");
+			} else {
+				assert.notOk(oArgs.selectorIds, "then the selectorIds are not passed");
+			}
+			if (aChangeTypes) {
+				assert.deepEqual(oArgs.changeTypes, aChangeTypes, "then the changeTypes are passed");
+			} else {
+				assert.notOk(oArgs.changeTypes, "then the changeTypes are not passed");
+			}
+		}
+
+		QUnit.test("when called without filter options", async function(assert) {
+			this.oStorageStub.resolves([]);
+			await FlexObjectManager.resetFlexObjects({
+				reference: sReference,
+				selector: this.oAppComponent,
+				layer: Layer.USER
+			});
+			assert.strictEqual(this.oStorageStub.callCount, 1, "then the Storage.reset function is called once");
+			assert.strictEqual(this.oReverterStub.callCount, 0, "then the Reverter.revertMultipleChanges function is not called");
+			const oArgs = this.oStorageStub.firstCall.args[0];
+			assertPropertyBag(assert, oArgs, sReference, Layer.USER);
+		});
+
+		QUnit.test("when called with a generator", async function(assert) {
+			this.oStorageStub.resolves({
+				response: [{ fileName: "change1" }]
+			});
+			await FlexObjectManager.resetFlexObjects({
+				reference: sReference,
+				selector: this.oAppComponent,
+				layer: Layer.USER,
+				generator: "myGenerator"
+			});
+			assert.strictEqual(this.oStorageStub.callCount, 1, "then the Storage.reset function is called once");
+			const oArgs = this.oStorageStub.firstCall.args[0];
+			assertPropertyBag(assert, oArgs, sReference, Layer.USER, "myGenerator");
+			assert.strictEqual(this.oUpdateStorageResponse.callCount, 1, "then the updateStorageResponse function is called once");
+			assert.strictEqual(
+				this.oUpdateStorageResponse.lastCall.args[1][0].flexObject.fileName, "change1",
+				"then the response is updated"
+			);
+			assert.strictEqual(this.oReverterStub.callCount, 1, "then the revertMultipleChanges function is called once");
+			assert.strictEqual(this.oReverterStub.firstCall.args[0][0].getId(), "change1", "then the order is correct");
+		});
+
+		QUnit.test("when called with a selector", async function(assert) {
+			this.oStorageStub.resolves({
+				response: [{ fileName: "change1" }, { fileName: "change2" }]
+			});
+			await FlexObjectManager.resetFlexObjects({
+				reference: sReference,
+				selector: this.oAppComponent,
+				layer: Layer.USER,
+				selectorIds: ["control1"]
+			});
+			assert.strictEqual(this.oStorageStub.callCount, 1, "then the Storage.reset function is called once");
+			const oArgs = this.oStorageStub.firstCall.args[0];
+			assertPropertyBag(assert, oArgs, sReference, Layer.USER, undefined, ["control1"]);
+			assert.strictEqual(this.oUpdateStorageResponse.callCount, 1, "then the updateStorageResponse function is called once");
+			assert.strictEqual(
+				this.oUpdateStorageResponse.lastCall.args[1][0].flexObject.fileName, "change1",
+				"then the response is updated"
+			);
+			assert.strictEqual(
+				this.oUpdateStorageResponse.lastCall.args[1][1].flexObject.fileName, "change2",
+				"then the response is updated"
+			);
+			assert.strictEqual(this.oReverterStub.callCount, 1, "then the revertMultipleChanges function is called once");
+			assert.strictEqual(this.oReverterStub.firstCall.args[0][0].getId(), "change2", "then the order is correct");
+			assert.strictEqual(this.oReverterStub.firstCall.args[0][1].getId(), "change1", "then the order is correct");
+		});
+
+		QUnit.test("when called with a changeType", async function(assert) {
+			this.oStorageStub.resolves({
+				response: [{ fileName: "change3" }]
+			});
+			await FlexObjectManager.resetFlexObjects({
+				reference: sReference,
+				selector: this.oAppComponent,
+				layer: Layer.CUSTOMER,
+				changeTypes: ["renameField"]
+			});
+			assert.strictEqual(this.oStorageStub.callCount, 1, "then the Storage.reset function is called once");
+			const oArgs = this.oStorageStub.firstCall.args[0];
+			assertPropertyBag(assert, oArgs, sReference, Layer.CUSTOMER, undefined, undefined, ["renameField"]);
+			assert.strictEqual(this.oUpdateStorageResponse.callCount, 1, "then the updateStorageResponse function is called once");
+			assert.strictEqual(
+				this.oUpdateStorageResponse.lastCall.args[1][0].flexObject.fileName, "change3",
+				"then the response is updated"
+			);
+			assert.strictEqual(this.oReverterStub.callCount, 1, "then the revertMultipleChanges function is called once");
+			assert.strictEqual(this.oReverterStub.firstCall.args[0][0].getId(), "change3", "then the order is correct");
 		});
 	});
 

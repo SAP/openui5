@@ -142,25 +142,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Reset changes on the server
-	 * If the reset is performed for an entire component, a browser reload is required.
-	 * If the reset is performed for a control, this function also triggers a reversion of deleted UI changes.
-	 *
-	 * @param {string} sLayer - Layer for which changes shall be deleted
-	 * @param {string} [sGenerator] - Generator of changes (optional)
-	 * @param {sap.ui.core.Component} [oComponent] - Component instance (optional)
-	 * @param {string[]} [aSelectorIds] - Selector IDs in local format (optional)
-	 * @param {string[]} [aChangeTypes] - Types of changes (optional)
-	 *
-	 * @returns {Promise} Promise that resolves after the deletion took place
-	 */
-	FlexController.prototype.resetChanges = async function(sLayer, sGenerator, oComponent, aSelectorIds, aChangeTypes) {
-		const aResetChanges = await this._oChangePersistence.resetChanges(sLayer, sGenerator, aSelectorIds, aChangeTypes);
-		await revertChangesAndUpdateVariantModel(oComponent, this._sComponentName, aResetChanges);
-		return aResetChanges;
-	};
-
-	/**
 	 * Saves changes sequentially on the associated change persistence instance;
 	 * This API must be only used in scenarios without draft (like personalization).
 	 *

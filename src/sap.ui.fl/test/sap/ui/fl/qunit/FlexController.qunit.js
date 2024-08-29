@@ -296,64 +296,6 @@ sap.ui.define([
 			assert.deepEqual(oResponse, oExpectedResponse, "the response is correctly returned");
 			assert.strictEqual(oCheckUpdateStub.callCount, 0, "the checkUpdate was not called");
 		});
-
-		QUnit.test("resetChanges for control shall call ChangePersistence.resetChanges(), reset control variant URL parameters, and revert changes", function(assert) {
-			var oVariantModel = {
-				id: "variantModel"
-			};
-			var oComp = {
-				name: "testComp",
-				getModel() {
-					return oVariantModel;
-				}
-			};
-			var sLayer = "testLayer";
-			var sGenerator = "test.Generator";
-			var sSelectorString = "abc123";
-			var sChangeTypeString = "labelChange";
-			var aDeletedChanges = [
-				FlexObjectFactory.createFromFileContent({fileName: "change1"}),
-				FlexObjectFactory.createFromFileContent({fileName: "change2"})
-			];
-			sandbox.stub(this.oFlexController._oChangePersistence, "resetChanges").callsFake(function(...aArgs) {
-				assert.strictEqual(aArgs[0], sLayer, "then correct layer passed");
-				assert.strictEqual(aArgs[1], sGenerator, "then correct generator passed");
-				assert.strictEqual(aArgs[2], sSelectorString, "then correct selector string passed");
-				assert.strictEqual(aArgs[3], sChangeTypeString, "then correct change type string passed");
-				return Promise.resolve(aDeletedChanges);
-			});
-			var oRevertMultipleChangesStub = sandbox.stub(Reverter, "revertMultipleChanges").resolves();
-			return this.oFlexController.resetChanges(sLayer, sGenerator, oComp, sSelectorString, sChangeTypeString)
-			.then(function() {
-				assert.ok(oRevertMultipleChangesStub.calledOnce, "the revertMultipleChanges is called once");
-				assert.deepEqual(oRevertMultipleChangesStub.args[0][0], [...aDeletedChanges].reverse(), "with the correct changes");
-				assert.deepEqual(oRevertMultipleChangesStub.args[0][0][0].getId(), "change2", "with the correct reverse order");
-			});
-		});
-
-		QUnit.test("resetChanges for whole component shall call ChangePersistance.resetChanges(), reset control variant URL parameters but do not revert changes", function(assert) {
-			var oVariantModel = {
-				id: "variantModel"
-			};
-			var oComp = {
-				name: "testComp",
-				getModel() {
-					return oVariantModel;
-				}
-			};
-			var sLayer = "testLayer";
-			var sGenerator = "test.Generator";
-			sandbox.stub(this.oFlexController._oChangePersistence, "resetChanges").callsFake(function(...aArgs) {
-				assert.strictEqual(aArgs[0], sLayer, "then correct layer passed");
-				assert.strictEqual(aArgs[1], sGenerator, "then correct generator passed");
-				return Promise.resolve([]);
-			});
-			var oRevertMultipleChangesStub = sandbox.stub(Reverter, "revertMultipleChanges").resolves();
-			return this.oFlexController.resetChanges(sLayer, sGenerator, oComp)
-			.then(function() {
-				assert.equal(oRevertMultipleChangesStub.callCount, 0, "the revertMultipleChanges is not called");
-			});
-		});
 	});
 
 	QUnit.done(function() {
