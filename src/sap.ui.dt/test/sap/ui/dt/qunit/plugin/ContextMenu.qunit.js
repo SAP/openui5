@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/base/DesignTime",
 	"sap/ui/dt/plugin/ContextMenu",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
@@ -15,6 +16,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	BaseDesignTime,
 	ContextMenuPlugin,
 	OverlayRegistry,
 	DesignTime,
@@ -32,29 +34,11 @@ sap.ui.define([
 	"use strict";
 	var sandbox = sinon.createSandbox();
 
-	function openContextMenu(oOverlay, bMiniMenu, bTouch, bRestoreClock) {
-		if (bRestoreClock) {
-			this.clock.restore();
-		}
+	function openContextMenu(oOverlay) {
 		return new Promise(function(resolve) {
 			this.oContextMenuPlugin.attachEventOnce("openedContextMenu", resolve);
-
-			var sEvent;
-			if (bMiniMenu) {
-				if (bTouch) {
-					sEvent = "touchstart";
-				} else {
-					sEvent = "click";
-				}
-			} else {
-				sEvent = "contextmenu";
-			}
 			oOverlay.setSelected(true);
-			QUnitUtils.triggerMouseEvent(oOverlay.getDomRef(), sEvent);
-			if (!bRestoreClock) {
-				// context menu has a debouncing of 50 ms
-				this.clock.tick(52);
-			}
+			QUnitUtils.triggerMouseEvent(oOverlay.getDomRef(), "contextmenu");
 		}.bind(this));
 	}
 
@@ -238,7 +222,7 @@ sap.ui.define([
 			};
 			this.oContextMenuPlugin.addMenuItem(oTestItem1, true);
 			assert.strictEqual(this.oContextMenuPlugin._aMenuItems.length, 9, "there are 9 items in the array for the menu items");
-			this.oContextMenuPlugin.open(this.oButton1Overlay, false, false, {});
+			this.oContextMenuPlugin.open(this.oButton1Overlay, false, {});
 			assert.strictEqual(this.oContextMenuPlugin._aMenuItems.length, 8, "there is 1 item less in the array for the menu items");
 		});
 
@@ -406,11 +390,18 @@ sap.ui.define([
 			assert.strictEqual(this.oContextMenuPlugin._aMenuItems[this.oContextMenuPlugin._aMenuItems.length - 1].menuItem.submenu.length, 2, "The second group has a submenu with two items");
 		});
 
-		QUnit.test("Testing onClick function when overlay is not selected", function(assert) {
+		QUnit.test("Testing click event when overlay is not selected", function(assert) {
 			// regarding the rta directives the second click on an overlay deselects it,
 			// if it is not "rename"-able. In this case ContextMenu shouldn't be opened
 			var oOpenStub = sandbox.stub(this.oContextMenuPlugin, "open");
 			this.oButton2Overlay.setSelected(false);
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
+			assert.equal(oOpenStub.callCount, 0, "the open function was not triggered");
+		});
+
+		QUnit.test("Testing click event when in design mode", function(assert) {
+			sandbox.stub(BaseDesignTime, "isDesignModeEnabled").returns(true);
+			var oOpenStub = sandbox.stub(this.oContextMenuPlugin, "open");
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
 			assert.equal(oOpenStub.callCount, 0, "the open function was not triggered");
 		});
@@ -489,23 +480,6 @@ sap.ui.define([
 			assert.equal(oAddMenuItemStub.callCount, 1, "then addMenuItems is called");
 			assert.equal(oAddMenuItemStub.args[0][0], oPlainMenuItem, "then addMenuItems is called with the plain menu item");
 			sandbox.restore();
-		});
-
-		QUnit.test("calling open with only group menu item for overlay", function(assert) {
-			var oGroupMenuItem = { id: "groupItem", group: "group1", submenu: undefined, enabled: true };
-			var aPlugins = [
-				{
-					getMenuItems() {return [oGroupMenuItem];},
-					isBusy() {return false;}
-				}
-			];
-			var oAddMenuItemToGroupStub = sandbox.stub(this.oContextMenuPlugin, "_addMenuItemToGroup");
-			sandbox.stub(this.oDesignTime, "getPlugins").returns(aPlugins);
-			return openContextMenu.call(this, this.oButton1Overlay, true).then(function() {
-				assert.equal(oAddMenuItemToGroupStub.callCount, 1, "then _addMenuItemToGroup is called");
-				assert.equal(oAddMenuItemToGroupStub.args[0][0], oGroupMenuItem, "then _addMenuItemToGroup is called with the group menu item");
-				sandbox.restore();
-			});
 		});
 
 		QUnit.test("calling open with only submenu items for overlay", function(assert) {

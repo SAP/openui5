@@ -50,6 +50,17 @@ sap.ui.define([
 					image: "/resources/sap/ui/rta/util/whatsNew/whatsNewContent/whatsNewImages/WhatsNewFeatureImg.png"
 				}
 			]
+		},
+		{
+			featureId: "MinimenuRemoval",
+			title: oTextResources.getText("TIT_WHATS_NEW_DIALOG_MINIMENU_REMOVAL_TITLE"),
+			description: oTextResources.getText("TXT_WHATS_NEW_DIALOG_MINIMENU_REMOVAL_DESCRIPTION"),
+			information: [
+				{
+					text: oTextResources.getText("TXT_WHATS_NEW_DIALOG_MINIMENU_REMOVAL_TEXT"),
+					image: null
+				}
+			]
 		}
 	];
 

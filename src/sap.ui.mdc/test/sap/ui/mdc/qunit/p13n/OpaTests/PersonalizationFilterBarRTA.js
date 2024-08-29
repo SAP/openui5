@@ -52,7 +52,7 @@ sap.ui.define([
 	opaTest("When I press on the FilterBar, the settings context menu opens", function (Given, When, Then) {
 		When.iClickOnOverlayForControl("sap.ui.mdc.FilterBar");
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
-		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2);
+		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
 	});
 
 	// ----------------------------------------------------------------
