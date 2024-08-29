@@ -69,12 +69,12 @@ sap.ui.define([
 				/**
 				 * Defines the ObjectStatus title.
 				 */
-				title : {type : "string", group : "Misc", defaultValue : null},
+				title : {type : "string", group : "Data", defaultValue : null},
 
 				/**
 				 * Defines the ObjectStatus text.
 				 */
-				text : {type : "string", group : "Misc", defaultValue : null},
+				text : {type : "string", group : "Data", defaultValue : null},
 
 				/**
 				 * Indicates if the <code>ObjectStatus</code> text and icon can be clicked/tapped by the user.
