@@ -1339,6 +1339,7 @@ sap.ui.define([
 
   // init filters
   vsd7.addFilterItem(new ViewSettingsFilterItem({
+	  id: "test_filter",
 	  key: "myNameFilter",
 	  text: "Name",
 	  items: [
@@ -1555,6 +1556,7 @@ sap.ui.define([
 			 }
 		 }),
 		 new Button({
+			 id: "open_d",
 			 icon: "sap-icon://add-filter",
 			 press : function () {
 				 MessageToast.show("Example 7: standard & custom filters with custom data meta");
@@ -1574,6 +1576,7 @@ sap.ui.define([
   }).addStyleClass("debugPanel");
 
   var page = new Page({
+	  id: "testPage",
 	  title: "Table",
 	  enableScrolling: true,
 	  content: [table, panel]

@@ -303,7 +303,7 @@ sap.ui.define([
 							return fnTriggerCatalogAssignment(oAppVariantSaveClosure.id, oAppVariantSaveClosure.reference);
 						})
 						.then(function(oResult) {
-							oIAMResponse = Object.assign({}, oResult);
+							oIAMResponse = { ...oResult };
 							BusyIndicator.hide();
 							return fnTriggerActionFlow.call(this, bSaveAsFromRta, null, sCurrentLayer);
 						}.bind(this))
@@ -392,7 +392,7 @@ sap.ui.define([
 								return fnTriggerCatalogUnAssignment(sAppVariantId);
 							})
 							.then(function(oResult) {
-								oIAMResponse = Object.assign({}, oResult);
+								oIAMResponse = { ...oResult };
 								return fnReloadOverviewDialog.call(this, !bCurrentlyAdapting, sCurrentLayer);
 							}.bind(this))
 							.then(function() {

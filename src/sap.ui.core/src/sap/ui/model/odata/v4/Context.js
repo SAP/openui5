@@ -1205,7 +1205,7 @@ sap.ui.define([
 	Context.prototype.isEffectivelyKeptAlive = function () {
 		var mParameters = this.oBinding.mParameters;
 
-		return this.bKeepAlive
+		return this.bKeepAlive && !this.isDeleted()
 			|| !mParameters.$$sharedRequest
 			&& this.oBinding.getHeaderContext?.()
 			&& this.oBinding.getHeaderContext().isSelected() !== this.isSelected()

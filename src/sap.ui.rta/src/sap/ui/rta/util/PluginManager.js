@@ -209,7 +209,7 @@ sap.ui.define([
 			}
 		}
 
-		return Object.assign({}, this._mDefaultPlugins);
+		return { ...this._mDefaultPlugins };
 	};
 
 	/**

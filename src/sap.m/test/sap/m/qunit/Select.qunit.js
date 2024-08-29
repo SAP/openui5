@@ -8131,7 +8131,7 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
-		QUnit.test("onsapescape when escape key is pressed and the selection has changed", function (assert) {
+		QUnit.test("onsapescape when escape key is pressed and the selection has changed with select list opened", function (assert) {
 
 			// system under test
 			var oSelect = new Select({
@@ -8153,6 +8153,41 @@ sap.ui.define([
 			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			oSelect.focus();
 			oSelect.open();
+			this.clock.tick(1000);	// wait 1s after the open animation is completed
+			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
+			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);	// change the selection
+
+			// act
+			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ESCAPE);
+
+			// assert
+			assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event is not fired as escape reverts any changes");
+			assert.strictEqual(oSelect.getSelectedKey(), "GER", "The selection is reverted on escape");
+			// cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("onsapescape when escape key is pressed and the selection has changed with select list closed", function (assert) {
+
+			// system under test
+			var oSelect = new Select({
+				items: [
+					new Item({
+						key: "GER",
+						text: "Germany"
+					}),
+
+					new Item({
+						key: "CU",
+						text: "Cuba"
+					})
+				]
+			});
+
+			// arrange
+			oSelect.placeAt("content");
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			oSelect.focus();
 			this.clock.tick(1000);	// wait 1s after the open animation is completed
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);	// change the selection

@@ -111,7 +111,7 @@ sap.ui.define([
 
 	AppVariantUtils.createAppVariant = function(vSelector, mPropertyBag) {
 		mPropertyBag.version = "1.0.0"; // Application variant version should be 1.0.0 which is expected by backend
-		return AppVariantWriteAPI.saveAs(Object.assign({selector: vSelector}, mPropertyBag));
+		return AppVariantWriteAPI.saveAs({ selector: vSelector, ...mPropertyBag });
 	};
 
 	AppVariantUtils.getInlineChangeInput = function(sValue, sComment) {

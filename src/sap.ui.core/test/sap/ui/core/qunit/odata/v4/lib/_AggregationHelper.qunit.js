@@ -25,7 +25,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bAsLeaf) {
-	QUnit.test("beforeOverwritePlaceholder: success; marked as leaf: " + bAsLeaf, function () {
+	const sTitle = "beforeOverwritePlaceholder: success; marked as leaf: " + bAsLeaf;
+
+	QUnit.test(sTitle, function (assert) {
 		var oCache = {},
 			oElement = {
 				"@$ui5._" : { // not present at oPlaceholder => must be ignored
@@ -38,6 +40,7 @@ sap.ui.define([
 			oPlaceholder = _AggregationHelper.createPlaceholder(9, 42, oCache);
 
 		this.mock(_AggregationHelper).expects("checkNodeProperty").never();
+		oPlaceholder["@$ui5.context.isTransient"] = "n/a";
 		if (bAsLeaf) { // must not make a difference
 			oElement["@$ui5.node.isExpanded"] = undefined;
 			oPlaceholder["@$ui5.node.isExpanded"] = undefined;
@@ -46,15 +49,19 @@ sap.ui.define([
 		oHelperMock.expects("copyPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oPlaceholder), "cache", sinon.match.same(oElement));
 		oHelperMock.expects("copyPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oPlaceholder), "context", sinon.match.same(oElement));
+		oHelperMock.expects("copyPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oPlaceholder), "spliced", sinon.match.same(oElement));
 
 		// code under test
 		_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42);
+
+		assert.strictEqual(oElement["@$ui5.context.isTransient"], false);
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("beforeOverwritePlaceholder: success; top pyramid", function () {
+	QUnit.test("beforeOverwritePlaceholder: success; top pyramid", function (assert) {
 		var oCache = {},
 			oElement = {
 				"@$ui5._" : { // not present at oPlaceholder => must be ignored
@@ -73,10 +80,21 @@ sap.ui.define([
 		oHelperMock.expects("copyPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oPlaceholder), "cache", sinon.match.same(oElement));
 		oHelperMock.expects("copyPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oPlaceholder), "context", sinon.match.same(oElement));
+		oHelperMock.expects("copyPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oPlaceholder), "spliced", sinon.match.same(oElement));
 
 		// code under test
 		_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42);
+
+		assert.deepEqual(oElement, {
+			"@$ui5._" : {
+				descendants : 42,
+				filter : "~filter~",
+				predicate : "('0')"
+			},
+			"@$ui5.node.level" : 9
+		}, "unchanged");
 	});
 
 	//*********************************************************************************************
@@ -94,15 +112,14 @@ sap.ui.define([
 		oHelperMock.expects("copyPrivateAnnotation").thrice()
 			.withExactArgs(sinon.match.same(oPlaceholder), "cache", sinon.match.same(oElement));
 		oHelperMock.expects("copyPrivateAnnotation").thrice()
+			.withExactArgs(sinon.match.same(oPlaceholder), "context", sinon.match.same(oElement));
+		oHelperMock.expects("copyPrivateAnnotation").thrice()
 			.withExactArgs(sinon.match.same(oPlaceholder), "spliced", sinon.match.same(oElement));
 
 		// code under test
 		_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42);
 
 		assert.strictEqual(oElement["@$ui5.node.isExpanded"], "~new~", "unchanged");
-
-		oHelperMock.expects("copySelected")
-			.withExactArgs(sinon.match.same(oPlaceholder), sinon.match.same(oElement));
 
 		// Note: an initial placeholder cannot know "@$ui5.node.isExpanded"!
 		_Helper.setPrivateAnnotation(oPlaceholder, "placeholder", 1);
@@ -112,9 +129,6 @@ sap.ui.define([
 		_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42);
 
 		assert.strictEqual(oElement["@$ui5.node.isExpanded"], "~old~");
-
-		oHelperMock.expects("copySelected")
-			.withExactArgs(sinon.match.same(oPlaceholder), sinon.match.same(oElement));
 
 		delete oElement["@$ui5.node.isExpanded"];
 		delete oPlaceholder["@$ui5.node.isExpanded"];

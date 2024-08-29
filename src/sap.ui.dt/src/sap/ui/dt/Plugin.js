@@ -460,7 +460,7 @@ sap.ui.define([
 				return true;
 			}
 		}.bind(this));
-		return Object.assign(oMenuItem, bEnhanceMenuItem && {responsible: aResponsibleElementOverlays});
+		return { ...oMenuItem, ...(bEnhanceMenuItem && {responsible: aResponsibleElementOverlays}) };
 	};
 
 	return Plugin;

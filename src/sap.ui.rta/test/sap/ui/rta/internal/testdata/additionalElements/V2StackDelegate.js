@@ -268,8 +268,8 @@ sap.ui.define([
 				/* async */true
 			).then(function(oCreatedVBox) {
 				oVBox = oCreatedVBox;
-				var mFieldPropertyBag = Object.assign({}, mPropertyBag);
-				var mSmartFieldSelector = Object.assign({}, mPropertyBag.fieldSelector);
+				var mFieldPropertyBag = { ...mPropertyBag };
+				var mSmartFieldSelector = { ...mPropertyBag.fieldSelector };
 				mSmartFieldSelector.id = `${mSmartFieldSelector.id}-field`;
 				mFieldPropertyBag.fieldSelector = mSmartFieldSelector;
 				return Delegate.createControlForProperty(mFieldPropertyBag).then(function(mField) {

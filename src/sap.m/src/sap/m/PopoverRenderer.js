@@ -129,10 +129,6 @@ sap.ui.define([
 			oRm.close("header");
 		}
 
-		oRm.openStart("div")
-			.class("sapMPopoverContWrapper")
-			.openEnd();
-
 		// content container
 		oRm.openStart("div", sId + "-cont");
 		if (sContentWidth) {
@@ -170,7 +166,6 @@ sap.ui.define([
 
 		oRm.close("div");	// scroll area
 		oRm.close("div");	// content container
-		oRm.close("div");	// content wrapper
 
 		// Footer
 		if (oFooter) {

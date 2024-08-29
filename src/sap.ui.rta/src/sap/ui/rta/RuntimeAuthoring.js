@@ -337,7 +337,7 @@ sap.ui.define([
 		const oUriParams = new URLSearchParams(window.location.search);
 		const sUriLayer = oUriParams.get("sap-ui-layer");
 
-		mFlexSettings = Object.assign({}, this.getFlexSettings(), mFlexSettings);
+		mFlexSettings = { ...this.getFlexSettings(), ...mFlexSettings };
 		if (sUriLayer) {
 			mFlexSettings.layer = sUriLayer.toUpperCase();
 		}

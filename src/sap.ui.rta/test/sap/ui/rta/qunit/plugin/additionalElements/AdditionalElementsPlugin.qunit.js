@@ -2379,16 +2379,15 @@ sap.ui.define([
 			var oSourceElementOverlay = OverlayRegistry.getOverlay(mActions.responsibleElement.source);
 			var oSourceDTMetadata = oSourceElementOverlay.getDesignTimeMetadata().getData();
 
-			var oActions = Object.assign({
+			var oActions = {
 				getResponsibleElement() {
 					return mActions.responsibleElement.target;
 				},
-				actionsFromResponsibleElement: mActions.responsibleElement.actionsFromResponsibleElement || []
-			}, oSourceDTMetadata.actions);
+				actionsFromResponsibleElement: mActions.responsibleElement.actionsFromResponsibleElement || [],
+				...oSourceDTMetadata.actions
+			};
 
-			oSourceElementOverlay.setDesignTimeMetadata(Object.assign(
-				oSourceDTMetadata, {actions: oActions}
-			));
+			oSourceElementOverlay.setDesignTimeMetadata({ ...oSourceDTMetadata, actions: oActions });
 		}
 	}
 

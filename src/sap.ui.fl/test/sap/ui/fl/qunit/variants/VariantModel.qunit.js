@@ -6,74 +6,78 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/Button",
 	"sap/ui/base/Event",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
-	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
+	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/core/Element"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	_omit,
 	Log,
 	App,
 	Button,
 	Event,
-	JsControlTreeModifier,
 	XMLView,
+	JsControlTreeModifier,
 	BusyIndicator,
 	ComponentContainer,
+	Element,
 	Lib,
 	Manifest,
 	UIComponent,
-	ResourceModel,
 	Applier,
 	Reverter,
 	URLHandler,
 	VariantUtil,
 	FlexObjectFactory,
 	States,
-	FlexObjectState,
 	Switcher,
 	VariantManagementState,
+	FlexObjectState,
 	FlexState,
 	ManifestUtils,
 	ControlVariantApplyAPI,
 	Settings,
 	VariantManagement,
 	VariantModel,
+	UIChangeManager,
+	FlexObjectManager,
 	ContextBasedAdaptationsAPI,
 	FlexControllerFactory,
-	LayerUtils,
 	Layer,
+	LayerUtils,
 	Utils,
-	sinon,
+	ResourceModel,
 	nextUIUpdate,
-	Element
+	sinon
 ) {
 	"use strict";
 
@@ -253,7 +257,7 @@ sap.ui.define([
 			FlexState.clearRuntimeSteadyObjects(sReference, "RTADemoAppMD");
 			VariantManagementState.resetCurrentVariantReference(sReference);
 			sandbox.restore();
-			this.oModel.oChangePersistence.removeDirtyChanges();
+			FlexObjectManager.removeDirtyFlexObjects({ reference: sReference });
 			this.oModel.destroy();
 			delete this.oFlexController;
 		}
@@ -294,101 +298,122 @@ sap.ui.define([
 		});
 
 		QUnit.test("when there is an update from the DataSelector", function(assert) {
-			this.oModel.oChangePersistence.addDirtyChange(
-				FlexObjectFactory.createUIChange({
-					id: "setDefaultVariantChange",
-					layer: Layer.CUSTOMER,
-					changeType: "setDefault",
-					fileType: "ctrl_variant_management_change",
-					selector: {
-						id: sVMReference
-					},
-					content: {
-						defaultVariant: "variant2"
-					}
-				})
+			FlexObjectManager.addDirtyFlexObjects(
+				this.oModel.sFlexReference,
+				[
+					FlexObjectFactory.createUIChange({
+						id: "setDefaultVariantChange",
+						layer: Layer.CUSTOMER,
+						changeType: "setDefault",
+						fileType: "ctrl_variant_management_change",
+						selector: {
+							id: sVMReference
+						},
+						content: {
+							defaultVariant: "variant2"
+						}
+					})
+				]
 			);
 			VariantManagementState.setCurrentVariant({
 				reference: sReference,
 				vmReference: sVMReference,
 				newVReference: "variant0"
 			});
-			this.oModel.oChangePersistence.addDirtyChange(
-				FlexObjectFactory.createUIChange({
-					id: "setFavoriteChange",
-					layer: Layer.CUSTOMER,
-					changeType: "setFavorite",
-					fileType: "ctrl_variant_change",
-					selector: {
-						id: "variant1"
-					},
-					content: {
-						favorite: true
-					}
-				})
+			FlexObjectManager.addDirtyFlexObjects(
+				this.oModel.sFlexReference,
+				[
+					FlexObjectFactory.createUIChange({
+						id: "setFavoriteChange",
+						layer: Layer.CUSTOMER,
+						changeType: "setFavorite",
+						fileType: "ctrl_variant_change",
+						selector: {
+							id: "variant1"
+						},
+						content: {
+							favorite: true
+						}
+					})
+				]
 			);
-			this.oModel.oChangePersistence.addDirtyChange(
-				FlexObjectFactory.createUIChange({
-					id: "someUIChange",
-					layer: Layer.CUSTOMER,
-					variantReference: "variant0"
-				})
+			FlexObjectManager.addDirtyFlexObjects(
+				this.oModel.sFlexReference,
+				[
+					FlexObjectFactory.createUIChange({
+						id: "someUIChange",
+						layer: Layer.CUSTOMER,
+						variantReference: "variant0"
+					})
+				]
 			);
-			this.oModel.oChangePersistence.addDirtyChange(
-				FlexObjectFactory.createUIChange({
-					id: "setExecuteOnSelectChange",
-					layer: Layer.CUSTOMER,
-					changeType: "setExecuteOnSelect",
-					fileType: "ctrl_variant_change",
-					selector: {
-						id: "variant1"
-					},
-					content: {
-						executeOnSelect: false
-					}
-				})
+			FlexObjectManager.addDirtyFlexObjects(
+				this.oModel.sFlexReference,
+				[
+					FlexObjectFactory.createUIChange({
+						id: "setExecuteOnSelectChange",
+						layer: Layer.CUSTOMER,
+						changeType: "setExecuteOnSelect",
+						fileType: "ctrl_variant_change",
+						selector: {
+							id: "variant1"
+						},
+						content: {
+							executeOnSelect: false
+						}
+					})
+				]
 			);
-			this.oModel.oChangePersistence.addDirtyChange(
-				FlexObjectFactory.createUIChange({
-					id: "setTitleChange",
-					layer: Layer.CUSTOMER,
-					changeType: "setTitle",
-					fileType: "ctrl_variant_change",
-					selector: {
-						id: "variant1"
-					},
-					texts: {
-						title: { value: "variant B1" }
-					}
-				})
+			FlexObjectManager.addDirtyFlexObjects(
+				this.oModel.sFlexReference,
+				[
+					FlexObjectFactory.createUIChange({
+						id: "setTitleChange",
+						layer: Layer.CUSTOMER,
+						changeType: "setTitle",
+						fileType: "ctrl_variant_change",
+						selector: {
+							id: "variant1"
+						},
+						texts: {
+							title: { value: "variant B1" }
+						}
+					})
+				]
 			);
-			this.oModel.oChangePersistence.addDirtyChange(
-				FlexObjectFactory.createUIChange({
-					id: "setVisibleChange",
-					layer: Layer.CUSTOMER,
-					changeType: "setVisible",
-					fileType: "ctrl_variant_change",
-					selector: {
-						id: "variant1"
-					},
-					content: {
-						visible: false
-					}
-				})
+			FlexObjectManager.addDirtyFlexObjects(
+				this.oModel.sFlexReference,
+				[
+					FlexObjectFactory.createUIChange({
+						id: "setVisibleChange",
+						layer: Layer.CUSTOMER,
+						changeType: "setVisible",
+						fileType: "ctrl_variant_change",
+						selector: {
+							id: "variant1"
+						},
+						content: {
+							visible: false
+						}
+					})
+				]
 			);
-			this.oModel.oChangePersistence.addDirtyChange(
-				FlexObjectFactory.createUIChange({
-					id: "setContextsChange",
-					layer: Layer.CUSTOMER,
-					changeType: "setContexts",
-					fileType: "ctrl_variant_change",
-					selector: {
-						id: "variant1"
-					},
-					content: {
-						contexts: { role: ["ADMINISTRATOR1"], country: ["DE1"] }
-					}
-				})
+			FlexObjectManager.addDirtyFlexObjects(
+				this.oModel.sFlexReference,
+				[
+					FlexObjectFactory.createUIChange({
+						id: "setContextsChange",
+						layer: Layer.CUSTOMER,
+						changeType: "setContexts",
+						fileType: "ctrl_variant_change",
+						selector: {
+							id: "variant1"
+						},
+						content: {
+							contexts: { role: ["ADMINISTRATOR1"], country: ["DE1"] }
+						}
+					})
+				]
 			);
 
 			var oVMData = this.oModel.getData()[sVMReference];
@@ -771,7 +796,7 @@ sap.ui.define([
 		].forEach(function(oTestParams) {
 			QUnit.test(`when calling 'addVariantChange' for ${oTestParams.inputParams.changeType} to add a change`, function(assert) {
 				oTestParams.inputParams.appComponent = this.oComponent;
-				var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
+				const oAddDirtyFlexObjectsStub = sandbox.stub(FlexObjectManager, "addDirtyFlexObjects");
 				if (!oTestParams.inputParams.adaptationId) {
 					sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(true);
 					sandbox.stub(ContextBasedAdaptationsAPI, "getDisplayedAdaptationId").returns("id_12345");
@@ -811,8 +836,9 @@ sap.ui.define([
 					oTestParams.fileType,
 					"then the new change created with 'ctrl_variant_change' as fileType"
 				);
-				assert.ok(
-					fnAddDirtyChangeStub.calledWith(oChange),
+				assert.deepEqual(
+					oAddDirtyFlexObjectsStub.firstCall.args[1],
+					[oChange],
 					"then 'FlexController.addDirtyChange called with the newly created change"
 				);
 			});
@@ -845,7 +871,7 @@ sap.ui.define([
 					}
 				};
 				sandbox.stub(URLHandler, "getStoredHashParams").returns([]);
-				sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
+				sandbox.stub(FlexObjectManager, "addDirtyFlexObjects");
 				sandbox.stub(URLHandler, "update");
 
 				// set adaptation mode true
@@ -883,7 +909,7 @@ sap.ui.define([
 				};
 				// current variant already exists in hash parameters
 				sandbox.stub(URLHandler, "getStoredHashParams").returns([this.oModel.oData[sVMReference].currentVariant]);
-				sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
+				sandbox.stub(FlexObjectManager, "addDirtyFlexObjects");
 				sandbox.stub(URLHandler, "update");
 
 				// set adaptation mode false
@@ -917,7 +943,7 @@ sap.ui.define([
 					}
 				};
 				sandbox.stub(URLHandler, "getStoredHashParams").returns([]);
-				sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
+				sandbox.stub(FlexObjectManager, "addDirtyFlexObjects");
 				sandbox.stub(URLHandler, "update");
 
 				// set adaptation mode false
@@ -1109,7 +1135,7 @@ sap.ui.define([
 					getUserId() {return "test user";}
 				});
 				sandbox.stub(JsControlTreeModifier, "getSelector").returns({id: sVMReference});
-				var oAddDirtyChangesSpy = sandbox.spy(this.oModel.oChangePersistence, "addDirtyChanges");
+				var oAddDirtyChangesSpy = sandbox.spy(FlexObjectManager, "addDirtyFlexObjects");
 
 				var mPropertyBag = {
 					sourceVariantReference: sVMReference,
@@ -1152,7 +1178,7 @@ sap.ui.define([
 				controlChanges: [],
 				variantChanges: {}
 			};
-			var oAddDirtyChangesStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChanges").returnsArg(0);
+			const oAddDirtyFlexObjectsStub = sandbox.stub(FlexObjectManager, "addDirtyFlexObjects").returnsArg(1);
 
 			sandbox.stub(this.oModel, "_duplicateVariant").returns(oVariantData);
 			sandbox.stub(JsControlTreeModifier, "getSelector").returns({id: sVMReference});
@@ -1179,7 +1205,7 @@ sap.ui.define([
 					"then the returned variant is the duplicate variant"
 				);
 				assert.equal(
-					oAddDirtyChangesStub.firstCall.args[0].length,
+					oAddDirtyFlexObjectsStub.firstCall.args[1].length,
 					2,
 					"then both changes are added as dirty changes"
 				);
@@ -1492,7 +1518,7 @@ sap.ui.define([
 			assert.strictEqual(aDirtyChanges[1].getId(), "change3", "change3 is dirty");
 		});
 
-		function createChanges(oChangePersistence, sLayer, sVariantReference) {
+		function createChanges(sReference, sLayer, sVariantReference) {
 			var oChange1 = FlexObjectFactory.createFromFileContent({
 				fileName: "change1",
 				layer: sLayer || Layer.USER, // Changes are on user layer until they are saved to a variant
@@ -1501,7 +1527,6 @@ sap.ui.define([
 				},
 				variantReference: sVariantReference || "variant1"
 			});
-			oChangePersistence.addDirtyChange(oChange1);
 			var oChange2 = FlexObjectFactory.createFromFileContent({
 				fileName: "change2",
 				layer: sLayer || Layer.USER,
@@ -1510,7 +1535,6 @@ sap.ui.define([
 				},
 				variantReference: sVariantReference || "variant1"
 			});
-			oChangePersistence.addDirtyChange(oChange2);
 			var oChange3 = FlexObjectFactory.createFromFileContent({
 				fileName: "change3",
 				layer: sLayer || Layer.USER,
@@ -1519,13 +1543,12 @@ sap.ui.define([
 				},
 				variantReference: sVariantReference || "variant1"
 			});
-			oChangePersistence.addDirtyChange(oChange3);
-			return [oChange1, oChange2, oChange3];
+			return FlexObjectManager.addDirtyFlexObjects(sReference, [oChange1, oChange2, oChange3]);
 		}
 
 		QUnit.test("when calling '_handleSaveEvent' with parameter from SaveAs button and default/execute box checked", function(assert) {
 			assert.expect(9);
-			var aChanges = createChanges(this.oModel.oChangePersistence);
+			const aChanges = createChanges(this.oModel.sFlexReference);
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var sCopyVariantName = "variant1";
 			var oEvent = {
@@ -1610,7 +1633,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_handleSaveEvent' with parameter from SaveAs button and default/execute and public box checked", function(assert) {
 			assert.expect(11);
-			var aChanges = createChanges(this.oModel.oChangePersistence);
+			const aChanges = createChanges(this.oModel.sFlexReference);
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var sCopyVariantName = "variant1";
 			var oEvent = {
@@ -1704,7 +1727,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling '_handleSaveEvent' with parameter from Save button", function(assert) {
-			createChanges(this.oModel.oChangePersistence);
+			createChanges(this.oModel.sFlexReference);
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var oEvent = {
 				getParameters() {
@@ -1739,7 +1762,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling '_handleSaveEvent' on a USER variant with setDefault, executeOnSelect and public boxes checked", function(assert) {
-			createChanges(this.oModel.oChangePersistence);
+			createChanges(this.oModel.sFlexReference);
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var sCopyVariantName = "variant1";
 			var oEvent = {
@@ -1779,7 +1802,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_handleSaveEvent' with parameter from SaveAs button and default box unchecked", function(assert) {
 			assert.expect(9);
-			var aChanges = createChanges(this.oModel.oChangePersistence);
+			const aChanges = createChanges(this.oModel.sFlexReference);
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var sCopyVariantName = "variant1";
 			var oEvent = {
@@ -1891,7 +1914,7 @@ sap.ui.define([
 		QUnit.test("when calling '_handleSave' with bDesignTimeMode set to true and parameters from SaveAs button and default/execute box checked", function(assert) {
 			assert.expect(9);
 			var sNewVariantReference = "variant2";
-			var aChanges = createChanges(this.oModel.oChangePersistence, Layer.CUSTOMER, "variant0");
+			const aChanges = createChanges(this.oModel.sFlexReference, Layer.CUSTOMER, "variant0");
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var sCopyVariantName = "variant0";
 			var mParameters = {
@@ -2053,13 +2076,13 @@ sap.ui.define([
 					getSelector() {}
 				}
 			];
-			var oAddChangesStub = sandbox.stub(this.oModel.oChangePersistence, "addChanges");
+			const oAddChangesStub = sandbox.stub(UIChangeManager, "addDirtyChanges").returnsArg(1);
 			var oApplyChangeStub = sandbox.stub(Applier, "applyChangeOnControl").resolves({success: true});
 			sandbox.stub(JsControlTreeModifier, "getControlIdBySelector");
 
 			return this.oModel.addAndApplyChangesOnVariant(aDummyChanges)
 			.then(function() {
-				assert.strictEqual(oAddChangesStub.lastCall.args[0].length, 2, "then every change in the array was added");
+				assert.strictEqual(oAddChangesStub.lastCall.args[1].length, 2, "then every change in the array was added");
 				assert.ok(oApplyChangeStub.calledTwice, "then every change in the array was applied");
 			});
 		});
@@ -2340,7 +2363,7 @@ sap.ui.define([
 			sandbox.restore();
 			this.oModel.destroy();
 			this.oVariantManagement.destroy();
-			this.oModel.oChangePersistence.removeDirtyChanges();
+			FlexObjectManager.removeDirtyFlexObjects({ reference: sReference });
 			FlexControllerFactory._instanceCache = {};
 			FlexState.clearState();
 		}
@@ -2387,7 +2410,7 @@ sap.ui.define([
 				variantReference: this.sVMReference,
 				variantManagementReference: this.sVMReference
 			});
-			this.oModel.oChangePersistence.addDirtyChange(oVariant);
+			FlexObjectManager.addDirtyFlexObjects(this.oModel.sFlexReference, [oVariant]);
 			this.oModel.destroy();
 			assert.strictEqual(oAddRuntimeOnlySpy.callCount, 1, "then the fake Standard variant is added to the runtimeOnlyData");
 
@@ -2408,7 +2431,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				variantReference: this.sVMReference
 			});
-			this.oModel.oChangePersistence.addDirtyChange(oUIChange);
+			FlexObjectManager.addDirtyFlexObjects(this.oModel.sFlexReference, [oUIChange]);
 			this.oModel.destroy();
 			assert.strictEqual(oAddRuntimeOnlySpy.callCount, 1, "then the fake Standard variant is added to the runtimeOnlyData");
 
@@ -2611,8 +2634,8 @@ sap.ui.define([
 
 			var oDirtyChange1 = FlexObjectFactory.createFromFileContent({fileName: "newChange1"});
 			var oDirtyChange2 = FlexObjectFactory.createFromFileContent({fileName: "newChange2"});
-			this.oFlexController._oChangePersistence.addDirtyChange(oDirtyChange1);
-			this.oFlexController._oChangePersistence.addDirtyChange(oDirtyChange2);
+			FlexObjectManager.addDirtyFlexObjects(this.oModel.sFlexReference, [oDirtyChange1]);
+			FlexObjectManager.addDirtyFlexObjects(this.oModel.sFlexReference, [oDirtyChange2]);
 
 			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns([oDirtyChange1, oDirtyChange2]);
 

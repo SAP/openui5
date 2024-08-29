@@ -321,7 +321,7 @@ sap.ui.define([
 		//assert
 		assert.strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
 		assert.ok(!oTextButton.getDomRef().hasAttribute("title"), "The inner '_textButton' button does not have and need DOM title property");
-		assert.ok(!oArrowButton.getDomRef().hasAttribute("title"), "The inner '_arrowButton' button does not have DOM title property set to its Icon name");
+		assert.ok(oArrowButton.getDomRef().hasAttribute("title"), "The inner '_arrowButton' button have DOM title property set to its Icon name");
 		assert.ok(sInnerButtonLabelledBy.indexOf(sInternalTooltipId) !== -1, "The ID of the hidden SPAN with tooltip is added in aria-labelledby attribute");
 		assert.ok(oInnerButton.$("tooltip").length, "The hidden SPAN with tooltip as content exists");
 	});
@@ -342,8 +342,32 @@ sap.ui.define([
 
 		//assert
 		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue, '"aria-labelledby" is present and has correct value');
-		assert.ok(!oTextButton.getDomRef().hasAttribute("title"), "The inner '_textButton' button do not have and need DOM title property");
-		assert.ok(!oArrowButton.getDomRef().hasAttribute("title"), "The inner '_arrowButton' button do not have DOM title property set to its Icon name");
+		assert.ok(oTextButton.getDomRef().hasAttribute("title"), "The inner '_textButton' button have DOM title property");
+		assert.ok(oArrowButton.getDomRef().hasAttribute("title"), "The inner '_arrowButton' button have DOM title property set to its Icon name");
+		assert.ok(aAriaLabelledByIds.indexOf(sInternalTooltipId) !== -1, "The ID of the hidden SPAN with tooltip is added in aria-labelledby attribute");
+		assert.ok(oInnerButton.$("tooltip").length, "The hidden SPAN with tooltip as content exists");
+	});
+
+	QUnit.test("MenuButton IconOnly in Split mode with tooltip", function (assert) {
+		var sIconName = "add";
+		this.sut.setIcon("sap-icon://" + sIconName);
+		this.sut.setTooltip("test tooltip");
+		this.sut.setButtonMode(MenuButtonMode.Split);
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		var oInnerButton = this.sut._getButtonControl(),
+			oTextButton = oInnerButton._getTextButton(),
+			oArrowButton = oInnerButton._getArrowButton(),
+			sInternalTooltipId = oInnerButton.getId() + "-tooltip",
+			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
+			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
+			bAriaLabeledByHasCorrectValue = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, Library.getResourceBundleFor("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT"));
+
+		//assert
+		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue, '"aria-labelledby" is present and has correct value');
+		assert.ok(oInnerButton.getDomRef().hasAttribute("title"), "The inner 'main' button have DOM title property when there is set tootltip");
+		assert.ok(!oTextButton.getDomRef().hasAttribute("title"), "The inner '_textButton' button doesn't have DOM title property when there is set tootltip");
+		assert.ok(oArrowButton.getDomRef().hasAttribute("title"), "The inner '_arrowButton' button have DOM title property set to its Icon name");
 		assert.ok(aAriaLabelledByIds.indexOf(sInternalTooltipId) !== -1, "The ID of the hidden SPAN with tooltip is added in aria-labelledby attribute");
 		assert.ok(oInnerButton.$("tooltip").length, "The hidden SPAN with tooltip as content exists");
 	});

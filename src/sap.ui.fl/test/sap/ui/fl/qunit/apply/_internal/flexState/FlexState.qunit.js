@@ -172,7 +172,12 @@ sap.ui.define([
 				"then the selector is not updated again"
 			);
 
-			FlexState.removeDirtyFlexObject(sReference, oDummyFlexObject);
+			const oRemovedFlexObject = FlexState.removeDirtyFlexObject(sReference, oDummyFlexObject);
+			assert.strictEqual(
+				oRemovedFlexObject,
+				oDummyFlexObject,
+				"then the removed flex object is returned"
+			);
 			assert.strictEqual(
 				FlexState.getFlexObjectsDataSelector().get({reference: sReference}).length,
 				0,
@@ -260,7 +265,12 @@ sap.ui.define([
 				1,
 				"then the selector is updated only once after initialize"
 			);
-			FlexState.removeDirtyFlexObjects(sReference, aDummyFlexObjects);
+			const aRemovedFlexObjects = FlexState.removeDirtyFlexObjects(sReference, aDummyFlexObjects);
+			assert.deepEqual(
+				aRemovedFlexObjects,
+				aDummyFlexObjects,
+				"then the removed flex objects are returned"
+			);
 			assert.strictEqual(
 				FlexState.getFlexObjectsDataSelector().get({reference: sReference}).length,
 				0,

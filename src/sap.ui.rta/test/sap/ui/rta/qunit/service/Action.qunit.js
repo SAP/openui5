@@ -68,13 +68,14 @@ function(
 				return this.oRta.getService("action").then(function(oActionService) {
 					this.oActionService = oActionService;
 					this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
-					this.oButtonOverlay.setDesignTimeMetadata(Object.assign({}, this.oButtonOverlay.getDesignTimeMetadata().getData(), {
+					this.oButtonOverlay.setDesignTimeMetadata({
+						...this.oButtonOverlay.getDesignTimeMetadata().getData(),
 						actions: {
 							remove: {
 								changeType: "hideControl"
 							}
 						}
-					}));
+					});
 					var oRemovePlugin = this.oRta.getDefaultPlugins().remove;
 					oRemovePlugin.evaluateEditable([this.oButtonOverlay], { onRegistration: false });
 				}.bind(this));

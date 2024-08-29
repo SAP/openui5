@@ -147,6 +147,48 @@ sap.ui.define([
 					}
 				}
 			});
+
+			// More than one objects under change object content
+			this.oChangeMoreThenOneObjectUnderContent = new AppDescriptorChange({
+				changeType: "appdescr_app_addNewInbound",
+				layer: Layer.CUSTOMER,
+				content: {
+					inbound: {
+						"customer.contactCreate": {
+							semanticObject: "Contact",
+							action: "create",
+							icon: "sap-icon://add-contact",
+							title: "Title",
+							subTitle: "SubTitle"
+						}
+					},
+					anotherChangeObject: {	}
+				}
+			});
+
+			// No object under change object content
+			this.oChangeNoObjectUnderContent = new AppDescriptorChange({
+				changeType: "appdescr_app_addNewInbound",
+				layer: Layer.CUSTOMER,
+				content: {	}
+			});
+
+			// Not supported object under change object content
+			this.oChangeNotSupportedObjectUnderContent = new AppDescriptorChange({
+				changeType: "appdescr_app_addNewInbound",
+				layer: Layer.CUSTOMER,
+				content: {
+					notSupportedObject: {
+						"customer.contactCreate": {
+							semanticObject: "Contact",
+							action: "create",
+							icon: "sap-icon://add-contact",
+							title: "Title",
+							subTitle: "SubTitle"
+						}
+					}
+				}
+			});
 		}
 	}, function() {
 		QUnit.test("when calling '_applyChange' adding a new inbound in a manifest from customer", function(assert) {
@@ -177,14 +219,14 @@ sap.ui.define([
 		QUnit.test("when calling '_applyChange' adding a new inbound in a manifest with empty inboud id", function(assert) {
 			assert.throws(function() {
 				AddNewInbound.applyChange(this.oManifest, this.oChangeEmptyInboundId);
-			}, Error("The ID of your inbound is empty"),
+			}, Error("The ID of your inbound is empty."),
 			"throws error that the id of the inbound must not be empty");
 		});
 
 		QUnit.test("when calling '_applyChange' without an inbound", function(assert) {
 			assert.throws(function() {
 				AddNewInbound.applyChange(this.oManifest, this.oChangeNoInbound);
-			}, Error("Inbound does not exist"),
+			}, Error("There is no inbound provided. Please provide an inbound."),
 			 "throws an error that the change does not have an inbound");
 		});
 
@@ -205,8 +247,29 @@ sap.ui.define([
 		QUnit.test("when calling '_applyChange' adding more than one inbound in a manifest", function(assert) {
 			assert.throws(function() {
 				AddNewInbound.applyChange(this.oManifest, this.oChangeMoreThenOneInbound);
-			}, Error("It is not allowed to add more than one inbound"),
+			}, Error("It is not allowed to add more than one inbound: contactCreate, someInbound."),
 			"throws error that you are not allowed to add more than one inbound");
+		});
+
+		QUnit.test("when calling '_applyChange' adding a change which has more then one object under content", function(assert) {
+			assert.throws(function() {
+				AddNewInbound.applyChange(this.oManifest, this.oChangeMoreThenOneObjectUnderContent);
+			}, Error("It is not allowed to add more than one object under change object 'content'."),
+			"throws error that the change object is not compliant");
+		});
+
+		QUnit.test("when calling '_applyChange' adding a change which has no object under content", function(assert) {
+			assert.throws(function() {
+				AddNewInbound.applyChange(this.oManifest, this.oChangeNoObjectUnderContent);
+			}, Error("The change object 'content' cannot be empty. Please provide the necessary property, as outlined in the change schema for 'appdescr_app_addNewInbound'."),
+			"throws error that the change object is not compliant");
+		});
+
+		QUnit.test("when calling '_applyChange' adding a change which has no supported object under change object content", function(assert) {
+			assert.throws(function() {
+				AddNewInbound.applyChange(this.oManifest, this.oChangeNotSupportedObjectUnderContent);
+			}, Error("The provided property 'notSupportedObject' is not supported. Supported property for change 'appdescr_app_addNewInbound' is 'inbound'."),
+			"throws error that the change object is not compliant");
 		});
 	});
 });

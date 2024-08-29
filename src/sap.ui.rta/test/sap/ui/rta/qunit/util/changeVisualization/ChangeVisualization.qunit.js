@@ -138,26 +138,22 @@ sap.ui.define([
 		// Stub changes, root component and change handler
 		sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aMockChanges || []);
 		var oLoadComponentStub = sandbox.stub(ChangeVisualization.prototype, "_getComponent");
-		oLoadComponentStub.returns(Object.assign(
-			{
-				createId(sId) {
-					return sId;
-				}
+		oLoadComponentStub.returns({
+			createId(sId) {
+				return sId;
 			},
-			oRootComponent
-		));
+			...oRootComponent
+		});
 		sandbox.stub(ChangesUtils, "getControlIfTemplateAffected")
 		.callsFake(function(oChange, oControl) {
 			return {
 				control: oControl
 			};
 		});
-		var oMergedChangeHandler = Object.assign(
-			{
-				getChangeVisualizationInfo() { }
-			},
-			oChangeHandler
-		);
+		var oMergedChangeHandler = {
+			getChangeVisualizationInfo() { },
+			...oChangeHandler
+		};
 		sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves(oMergedChangeHandler);
 	}
 

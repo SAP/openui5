@@ -1038,6 +1038,7 @@ sap.ui.define([
 			oStyle.bottom = "";
 			oStyle.width = "";
 			oStyle.height = "";
+			oStyle.overflow = "";
 
 			oScrollAreaStyle.width = "";
 			oScrollAreaStyle.display = "";
@@ -1874,7 +1875,7 @@ sap.ui.define([
 				iMaxContentWidth = this._getMaxContentWidth(oPosParams),
 				iMaxContentHeight = this._getMaxContentHeight(oPosParams);
 
-				//make sure iMaxContentHeight is NEVER less than 0
+			//make sure iMaxContentHeight is NEVER less than 0
 			iMaxContentHeight = Math.max(iMaxContentHeight, 0);
 
 			oCSS["max-width"] = iMaxContentWidth + "px";
@@ -2113,6 +2114,9 @@ sap.ui.define([
 				if (bUseContrastContainer) {
 					$arrow.addClass("sapContrast sapContrastPlus");
 				}
+
+				// Prevent the popover from hiding the arrow
+				$popover.css("overflow", "visible");
 			}
 
 			this._afterAdjustPositionAndArrowHook();

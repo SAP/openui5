@@ -723,8 +723,8 @@ sap.ui.define([
 	 */
 	DesignTime.prototype.createOverlay = function(vArg) {
 		// Function can receive an element as the only argument or object with parameters
-		var mParams = Object.assign({}, isPlainObject(vArg) ? vArg : { element: vArg });
-		var iTaskId = this._oTaskManager.add({
+		const mParams = { ...(isPlainObject(vArg) ? vArg : { element: vArg }) };
+		const iTaskId = this._oTaskManager.add({
 			type: "createOverlay"
 		});
 
@@ -734,8 +734,8 @@ sap.ui.define([
 			return this._rejectCreateOverlay(mParams.element);
 		}
 
-		var sElementId = mParams.element.getId();
-		var oElementOverlay = OverlayRegistry.getOverlay(sElementId);
+		const sElementId = mParams.element.getId();
+		const oElementOverlay = OverlayRegistry.getOverlay(sElementId);
 
 		// 2. ElementOverlay is already created
 		if (oElementOverlay) {
@@ -789,7 +789,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this))
 		.catch(function(vError) {
-			var oError = Util.propagateError(
+			const oError = Util.propagateError(
 				vError,
 				"DesignTime#createOverlay",
 				`Failed attempt to create overlay for element '${sElementId}'`

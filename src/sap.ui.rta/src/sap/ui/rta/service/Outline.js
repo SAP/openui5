@@ -209,9 +209,7 @@ sap.ui.define([
 				var sAggregationOverlayId = oChildOverlay.getParent().getId();
 				// Aggregation with root template
 				if (mInnerTemplateData[sAggregationName]) {
-					return Object.assign({
-						templateFor: sAggregationOverlayId
-					}, mInnerTemplateData[sAggregationName]);
+					return { templateFor: sAggregationOverlayId, ...mInnerTemplateData[sAggregationName] };
 				}
 				return ((mTemplateData && mTemplateData.elements) || [])
 				.map(function(oElement) {
@@ -220,9 +218,7 @@ sap.ui.define([
 						oElement.type === "aggregationBindingTemplate"
 							|| oElement.parentAggregationName === sAggregationName
 					) {
-						return Object.assign({
-							templateFor: sAggregationOverlayId
-						}, oElement);
+						return { templateFor: sAggregationOverlayId, ...oElement };
 					}
 					// Regular aggregation
 					return oElement.technicalName === sAggregationName && oElement;
@@ -423,9 +419,9 @@ sap.ui.define([
 			var oData = getDefaultData(oElement, oDtMetadata, mTemplateData);
 
 			if (oOverlay instanceof ElementOverlay) {
-				return Object.assign(oData, getElementOverlayData(oOverlay, oElement, oDtMetadata));
+				return { ...oData, ...getElementOverlayData(oOverlay, oElement, oDtMetadata) };
 			}
-			return Object.assign(oData, getAggregationOverlayData(oOverlay, oParentOverlay, oElement));
+			return { ...oData, ...getAggregationOverlayData(oOverlay, oParentOverlay, oElement) };
 		};
 
 		/**

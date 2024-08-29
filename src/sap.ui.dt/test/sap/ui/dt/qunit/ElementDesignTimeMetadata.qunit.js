@@ -301,16 +301,13 @@ sap.ui.define([
 			var oStartSpy = sandbox.spy();
 			var oStopSpy = sandbox.spy();
 
-			this.oElementDesignTimeMetadata.setData(Object.assign(
-				{},
-				this.oElementDesignTimeMetadata.getData(),
-				{
-					tool: {
-						start: oStartSpy,
-						stop: oStopSpy
-					}
+			this.oElementDesignTimeMetadata.setData({
+				...this.oElementDesignTimeMetadata.getData(),
+				tool: {
+					start: oStartSpy,
+					stop: oStopSpy
 				}
-			));
+			});
 			assert.ok(typeof this.oElementDesignTimeMetadata.getToolHooks().start === "function", "the function inside the object is part of the return");
 			assert.ok(typeof this.oElementDesignTimeMetadata.getToolHooks().stop === "function", "the function inside the object is part of the return");
 			this.oElementDesignTimeMetadata.getToolHooks().start("arg1");

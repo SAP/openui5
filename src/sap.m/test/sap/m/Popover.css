@@ -25,3 +25,7 @@ body {
 .customClassForVisualTests {
 	caret-color: transparent;
 }
+
+#innerPopover .sapMPopoverCont {
+	height: 100% !important;
+}

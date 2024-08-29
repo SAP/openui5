@@ -166,6 +166,11 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				sinon: false
 			},
 
+			"DensityHelper": {
+				group: "Util",
+				module: "./util/{name}.qunit"
+			},
+
 			"PropertyHelper": {
 				group: "Util",
 				module: "./util/{name}.qunit"

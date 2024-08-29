@@ -190,9 +190,10 @@ function(
 				.then(function() {
 					// some layout controls do not require a label control
 					if (mLayoutSettings.payload.labelAggregation) {
-						var mCreateLabelInfo = Object.assign({
-							labelFor: oModifier.getId(mSpecificControlInfo.control)
-						}, mLayoutSettings);
+						var mCreateLabelInfo = {
+							labelFor: oModifier.getId(mSpecificControlInfo.control),
+							...mLayoutSettings
+						};
 						return TestDelegate.createLabel(mCreateLabelInfo);
 					}
 					return undefined;

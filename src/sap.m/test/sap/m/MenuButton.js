@@ -146,6 +146,7 @@ sap.ui.define([
 	  text: "Split button with icon"
   });
   var oMenuButtonSplit = new MenuButton({
+	  tooltip: "Press for more information",
 	  buttonMode: MenuButtonMode.Split,
 	  icon: "sap-icon://information"
   });
@@ -354,6 +355,7 @@ sap.ui.define([
 	  text: "This one has a type Accept and no default action"
   });
   var oMenuButton3 = new MenuButton('mb3', {
+	  tooltip: "press to accept",
 	  text: "Accept",
 	  buttonMode: MenuButtonMode.Split,
 	  type: ButtonType.Accept,

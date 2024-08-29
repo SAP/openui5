@@ -253,14 +253,12 @@ sap.ui.define([
 
 		QUnit.test("when a change was created within the session", async function(assert) {
 			this.oChangeIndicator.getModel().setData({
-				changes: [Object.assign(
-					createMockChange("someChangeId", this.oButton.getId(), "remove", "remove"),
-					{
-						change: {
-							getCreation() { }
-						}
+				changes: [{
+					...createMockChange("someChangeId", this.oButton.getId(), "remove", "remove"),
+					change: {
+						getCreation() { }
 					}
-				)]
+				}]
 			});
 			await nextUIUpdate();
 			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");

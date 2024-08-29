@@ -73,12 +73,12 @@ function(
 				/**
 				 * Defines the object title.
 				 */
-				title : {type : "string", group : "Misc", defaultValue : null},
+				title : {type : "string", group : "Data", defaultValue : null},
 
 				/**
 				 * Defines the object text.
 				 */
-				text : {type : "string", group : "Misc", defaultValue : null},
+				text : {type : "string", group : "Data", defaultValue : null},
 
 				/**
 				 * Indicates if the ObjectIdentifier is visible. An invisible ObjectIdentifier is not being rendered.

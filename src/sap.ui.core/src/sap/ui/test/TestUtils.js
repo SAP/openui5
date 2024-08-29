@@ -311,12 +311,12 @@ sap.ui.define([
 		 * The function uses <a href="http://sinonjs.org/docs/">Sinon.js</a> and expects that it
 		 * has been loaded.
 		 *
-		 * POST requests ending on "/$batch" are handled automatically. They are expected to be
-		 * multipart-mime requests where each part is a DELETE, GET, PATCH, MERGE, or POST request.
-		 * The response has a multipart-mime message containing responses to these inner requests.
-		 * If an inner request is not a DELETE, a MERGE, a PATCH, or a POST, and it is not found in
-		 * the fixture, or its message is not JSON, it is responded with an error code.
-		 * The batch itself is always responded with code 200.
+		 * POST requests ending on "/$batch" are handled automatically, unless a matching fixture is
+		 * given. They are expected to be multipart-mime requests where each part is a DELETE, GET,
+		 * PATCH, MERGE, or POST request. The response has a multipart-mime message containing
+		 * responses to these inner requests. If an inner request is not a DELETE, a MERGE, a PATCH,
+		 * or a POST, and it is not found in the fixture, or its message is not JSON, it is
+		 * responded with an error code. The batch itself is always responded with code 200.
 		 *
 		 * "$batch" requests with an OData change set are supported, too. For each request in the
 		 * change set a response is searched in the fixture. As long as all responses are success
@@ -376,6 +376,7 @@ sap.ui.define([
 		 *   PATCH, or POST. A missing URL is ignored.
 		 * @param {boolean} [bStrict]
 		 *   Whether responses are created from the given fixture only, without defaults per method.
+		 *   It does not prevent the automatic handling of <code>$batch</code>.
 		 * @returns {object}
 		 *   The SinonJS fake server instance
 		 *
@@ -600,12 +601,16 @@ sap.ui.define([
 
 			/*
 			 * Determines the matching response for the request. Returns an error response if no
-			 * match was found.
+			 * match was found, unless <code>bTry</code> was given.
 			 *
 			 * @param {object} oRequest The Sinon request object
 			 * @param {string} [sContentId] The content ID
+			 * @param {boolean} [bTry]
+			 *   Whether to do nothing and return <code>undefined</code> if no fixture matches; also
+			 *   prevents defaulting for non-GET requests
+			 * @returns {object|undefined} The response object or <code>undefined</code>
 			 */
-			function getResponseFromFixture(oRequest, sContentId) {
+			function getResponseFromFixture(oRequest, sContentId, bTry) {
 				var iAlternative,
 					oMatch = getMatchingResponse(oRequest.method, oRequest.url),
 					oResponse,
@@ -630,7 +635,7 @@ sap.ui.define([
 					if (oMatch.responses.length > 1) {
 						iAlternative = oMatch.responses.indexOf(oResponse);
 					}
-				} else if (!bStrict) {
+				} else if (!bStrict && !bTry) {
 					switch (oRequest.method) {
 						case "HEAD":
 							oResponse = {code : 200};
@@ -660,6 +665,8 @@ sap.ui.define([
 						// Note: JSON.stringify(oRequest.requestHeaders) outputs too much for now
 						'{"If-Match":' + JSON.stringify(oRequest.requestHeaders["If-Match"]) + "}",
 						"sap.ui.test.TestUtils");
+				} else if (bTry) {
+					return undefined;
 				} else {
 					oResponse = error(404, oRequest, "No mock data found");
 				}
@@ -736,7 +743,9 @@ sap.ui.define([
 				var sUrl = oRequest.url;
 
 				if (rBatch.test(sUrl)) {
-					batch(sUrl.slice(0, sUrl.indexOf("/$batch") + 1), oRequest);
+					if (!respondFromFixture(oRequest, true)) {
+						batch(sUrl.slice(0, sUrl.indexOf("/$batch") + 1), oRequest);
+					}
 				} else {
 					respondFromFixture(oRequest);
 				}
@@ -769,14 +778,21 @@ sap.ui.define([
 			 * Searches the response in the fixture and responds.
 			 *
 			 * @param {object} oRequest The Sinon request object
+			 * @param {boolean} [bTry]
+			 *   Whether to do nothing and return <code>false</code> if no fixture matches
+			 * @returns {boolean} Whether the request was processed
 			 */
-			function respondFromFixture(oRequest) {
-				var oResponse = getResponseFromFixture(oRequest);
+			function respondFromFixture(oRequest, bTry) {
+				var oResponse = getResponseFromFixture(oRequest, undefined, bTry);
 
+				if (!oResponse) {
+					return false;
+				}
 				if (fnOnRequest) {
 					fnOnRequest(oRequest.requestBody);
 				}
 				oRequest.respond(oResponse.code, oResponse.headers, oResponse.message);
+				return true;
 			}
 
 			function setupServer() {

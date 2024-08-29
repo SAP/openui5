@@ -17,6 +17,7 @@
 
 				<Label visible="false" text="Order date" labelFor="dynamic-range"/>
 				<DynamicDateRange
+					placeholder="Choose date range"
 					id="dynamic-range"
 					change=".onChange"
 					width="{env>/filterInputWidth}"/>

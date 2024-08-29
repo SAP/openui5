@@ -171,7 +171,11 @@ sap.ui.define([
 			}
 
 			_Helper.copyPrivateAnnotation(oPlaceholder, "cache", oElement);
+			_Helper.copyPrivateAnnotation(oPlaceholder, "context", oElement);
 			_Helper.copyPrivateAnnotation(oPlaceholder, "spliced", oElement);
+			if ("@$ui5.context.isTransient" in oPlaceholder) {
+				oElement["@$ui5.context.isTransient"] = false;
+			}
 			if (_Helper.getPrivateAnnotation(oPlaceholder, "placeholder") === 1) {
 				if ((oPlaceholder["@$ui5.node.isExpanded"] === undefined)
 						!== (oElement["@$ui5.node.isExpanded"] === undefined)) {
@@ -181,7 +185,6 @@ sap.ui.define([
 					// restore previous expansion state
 					oElement["@$ui5.node.isExpanded"] = oPlaceholder["@$ui5.node.isExpanded"];
 				}
-				_Helper.copySelected(oPlaceholder, oElement);
 			}
 		},
 

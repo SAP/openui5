@@ -23,11 +23,12 @@ sap.ui.define([
 	basicCommandTest({
 		commandName: "addIFrame",
 		designtimeActionStructure: "addIFrame"
-	}, Object.assign({}, mProperties, {
+	}, {
+		...mProperties,
 		changeType: "addIFrame"
-	}), {
+	}, {
 		changeType: "addIFrame",
-		content: Object.assign({}, mProperties)
+		content: { ...mProperties }
 	});
 
 	QUnit.done(function() {

@@ -182,11 +182,12 @@ sap.ui.define([
 		if (this.isAvailable(aElementOverlays, bIsSibling)) {
 			var oAction = this.getCreateAction(bIsSibling, aElementOverlays[0]);
 			if (oAction) {
-				var oSiblingMenuItem = Object.assign({
+				var oSiblingMenuItem = {
 					id: "CTX_CREATE_SIBLING_IFRAME",
 					rank: iBaseRank,
-					action: oAction
-				}, getCommonProperties.call(this));
+					action: oAction,
+					...getCommonProperties.call(this)
+				};
 
 				aMenuItems.push(this.enhanceItemWithResponsibleElement(oSiblingMenuItem, aElementOverlays));
 			}
@@ -196,11 +197,12 @@ sap.ui.define([
 		if (this.isAvailable(aElementOverlays, bIsSibling)) {
 			aMenuItems = aMenuItems.concat(this.getCreateActions(bIsSibling, aElementOverlays[0])
 			.map(function(oAction) {
-				var oParentMenuItem = Object.assign({
+				var oParentMenuItem = {
 					action: oAction,
 					id: `CTX_CREATE_CHILD_IFRAME_${oAction.aggregation.toUpperCase()}`,
-					rank: ++iBaseRank
-				}, getCommonProperties.call(this, oAction.aggregation));
+					rank: ++iBaseRank,
+					...getCommonProperties.call(this, oAction.aggregation)
+				};
 
 				return this.enhanceItemWithResponsibleElement(oParentMenuItem, aElementOverlays);
 			}, this)

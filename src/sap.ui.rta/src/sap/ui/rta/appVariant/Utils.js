@@ -151,7 +151,7 @@ sap.ui.define([
 				oNavigationObject.params = oParams;
 			}
 
-			oNavigationObject = Object.assign({}, oNavigationObject, oDeleteButtonProperties);
+			oNavigationObject = { ...oNavigationObject, ...oDeleteButtonProperties };
 			return oNavigationObject;
 		}.bind(this));
 	};
@@ -207,14 +207,14 @@ sap.ui.define([
 			if (oAppVariantInfo.hasStartableIntent) {
 				oPreparedObject.startWith = oAppVariantInfo.startWith;
 				return this._getNavigationInfo(oPreparedObject).then(function(oNavigationObject) {
-					oAppVariantAttributes = Object.assign({}, oAppVariantAttributes, oNavigationObject);
+					oAppVariantAttributes = { ...oAppVariantAttributes, ...oNavigationObject };
 					return oAppVariantAttributes;
 				});
 			}
 
 			oAppVariantAttributes.adaptUIButtonEnabled = false;
 			var oDeleteButtonProperties = this._checkMenuItemOptions(oPreparedObject, false);
-			oAppVariantAttributes = Object.assign({}, oAppVariantAttributes, oDeleteButtonProperties);
+			oAppVariantAttributes = { ...oAppVariantAttributes, ...oDeleteButtonProperties };
 			return Promise.resolve(oAppVariantAttributes);
 		}.bind(this));
 	};

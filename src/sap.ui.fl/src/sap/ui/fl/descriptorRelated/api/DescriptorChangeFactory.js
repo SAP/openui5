@@ -2,13 +2,17 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/util/merge",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/base/util/merge"
+	"sap/ui/fl/Utils"
 ], function(
+	fnBaseMerge,
 	FlexObjectFactory,
+	UIChangeManager,
 	ChangePersistenceFactory,
-	fnBaseMerge
+	Utils
 ) {
 	"use strict";
 
@@ -76,13 +80,10 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorChange.prototype.store = function() {
-		// create persistence
-		var sComponentName = this._mChangeFile.reference;
-		var oChangePersistence = this._getChangePersistence(sComponentName);
-
-		// add change to persistence
-		var oChange = this._getChangeToSubmit();
-		oChangePersistence.addChange(oChange);
+		const sReference = this._mChangeFile.reference;
+		const oComponent = Utils.getComponentForControl(this._mChangeFile.selector);
+		const oChange = this._getChangeToSubmit();
+		UIChangeManager.addDirtyChanges(sReference, [oChange], oComponent);
 
 		return oChange;
 	};

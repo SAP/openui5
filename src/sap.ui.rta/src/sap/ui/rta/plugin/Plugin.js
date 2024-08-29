@@ -73,7 +73,7 @@ sap.ui.define([
 			!oResponsibleElementOverlay.getDesignTimeMetadata().markedAsNotAdaptable() &&
 			this._isEditable(
 				oResponsibleElementOverlay,
-				Object.assign({sourceElementOverlay: oSourceElementOverlay}, mPropertyBag)
+				{ sourceElementOverlay: oSourceElementOverlay, ...mPropertyBag }
 			);
 
 		// handle promise return value by _isEditable function

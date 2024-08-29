@@ -7605,7 +7605,11 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bSameCache) {
-	QUnit.test("refreshSingle: bSameCache=" + bSameCache, function (assert) {
+	[false, true].forEach(function (bKeepCacheOnError) {
+		const sTitle = "refreshSingle: bSameCache=" + bSameCache + ", bKeepCacheOnError="
+			+ bKeepCacheOnError;
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oCache = {
 				refreshSingle : function () {}
@@ -7654,13 +7658,14 @@ sap.ui.define([
 			.returns(oRefreshSinglePromise);
 		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 		this.mock(oContext).expects("refreshDependentBindings")
-			.withExactArgs("EMPLOYEES('2')", "groupId", false, "~bKeepCacheOnError~")
+			.withExactArgs("EMPLOYEES('2')", "groupId", false, bKeepCacheOnError)
 			.returns(oRefreshDependentsPromise);
 		oRefreshSinglePromise.then(function () {
 			var oCanceledError = new Error();
 
 			// these must only be called when the cache's refreshSingle is finished
-			that.mock(oBinding).expects("fireDataReceived").withExactArgs({data : {}});
+			that.mock(oBinding).expects("fireDataReceived").exactly(bKeepCacheOnError ? 0 : 1)
+				.withExactArgs({data : {}});
 			that.mock(oRootBinding).expects("checkSameCache")
 				.withExactArgs(sinon.match.same(oCache))
 				.callsFake(function () {
@@ -7684,12 +7689,13 @@ sap.ui.define([
 		});
 
 		// code under test
-		oPromise = oBinding.refreshSingle(oContext, oGroupLock, undefined, "~bKeepCacheOnError~",
+		oPromise = oBinding.refreshSingle(oContext, oGroupLock, undefined, bKeepCacheOnError,
 			"~bWithMessages~");
 
 		assert.strictEqual(oPromise.isFulfilled(), false);
 
-		this.mock(oBinding).expects("fireDataRequested").withExactArgs();
+		this.mock(oBinding).expects("fireDataRequested").exactly(bKeepCacheOnError ? 0 : 1)
+			.withExactArgs();
 
 		// code under test - callback fires data requested event
 		oRefreshSingleExpectation.firstCall.args[6]();
@@ -7698,6 +7704,7 @@ sap.ui.define([
 			assert.strictEqual(bContextUpdated, bSameCache);
 			assert.strictEqual(bDependentsRefreshed, true);
 		});
+	});
 	});
 });
 	//TODO: within #refreshSingle
@@ -8012,7 +8019,7 @@ sap.ui.define([
 			}
 			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 			this.mock(oContext).expects("refreshDependentBindings")
-				.withExactArgs("EMPLOYEES('1')", "groupId", false, "~bKeepCacheOnError~")
+				.withExactArgs("EMPLOYEES('1')", "groupId", false, /*bKeepCacheOnError*/undefined)
 				.resolves();
 			this.mock(oBinding).expects("fireDataRequested")
 				.exactly(bDataRequested ? 1 : 0)
@@ -8026,7 +8033,7 @@ sap.ui.define([
 					sinon.match.same(oError));
 
 			// code under test
-			return oBinding.refreshSingle(oContext, oGroupLock, false, "~bKeepCacheOnError~")
+			return oBinding.refreshSingle(oContext, oGroupLock)
 				.then(function () {
 					assert.ok(false);
 				}, function (oError0) {

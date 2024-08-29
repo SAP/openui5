@@ -481,6 +481,32 @@ sap.ui.define([
 			  width: "600px"
 		  }),
 		  oCustomCssButton,
+		  new Button ({
+			  text: "Open Popover",
+			  press: function() {
+				  var aListItems = [];
+				  for (var i = 0; i < 100; i++) {
+					  aListItems.push(new StandardListItem({
+						  title: "Title " + i,
+						  description: "Description " + i
+					  }));
+				  }
+
+				  var oInnerPopover = new Popover("innerPopover", {
+					  title: "Popover",
+					  placement: PlacementType.Bottom,
+					  content: [
+						  new List({
+							  items: aListItems
+						  })
+					  ],
+					  afterClose: function () {
+						  this.destroy();
+					  }
+				  });
+				  oInnerPopover.openBy(this);
+			  }
+		  })
 	  ],
 	  content: [
 		  oOverflowingPopover,

@@ -513,11 +513,10 @@ sap.ui.define([
 	};
 
 	ChangeVisualization.prototype._updateVisualizationModel = function(oData) {
-		this._oChangeVisualizationModel.setData(Object.assign(
-			{},
-			this._oChangeVisualizationModel.getData(),
-			oData
-		));
+		this._oChangeVisualizationModel.setData({
+			...this._oChangeVisualizationModel.getData(),
+			...oData
+		});
 	};
 
 	ChangeVisualization.prototype._updateChangeIndicators = function() {

@@ -141,7 +141,7 @@ sap.ui.define([
 				}
 			},
 			createContent() {
-				const mViewSettings = Object.assign({}, mOptions.xmlView);
+				const mViewSettings = { ...mOptions.xmlView };
 				mViewSettings.id = this.createId("view");
 
 				if (mViewSettings.async === undefined) {

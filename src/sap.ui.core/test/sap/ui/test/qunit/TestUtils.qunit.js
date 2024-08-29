@@ -42,6 +42,16 @@ sap.ui.define([
 			response : {
 				message : "RegExp4"
 			}
+		}, {
+			regExp : /POST .*\$batch/,
+			response : [{
+				ifMatch : /DoNotMatch/
+			}, {
+				code : 503,
+				headers : {"Retry-After" : 5},
+				ifMatch : /RetryAfter/,
+				message : {error : {code : "DB_MIGRATION", message : "Service Unavailable"}}
+			}]
 		}],
 		mServerFixture = {
 			"/Foo/bar" : {source : "bar.json"},
@@ -79,6 +89,14 @@ sap.ui.define([
 			}, {
 				code : 200,
 				source : "bar.json"
+			}],
+			"POST /Foo/$batch" : [{
+				ifMatch : /DoNotMatch/
+			}, {
+				code : 503,
+				headers : {"Retry-After" : 5},
+				ifMatch : /RetryAfter/,
+				message : {error : {code : "DB_MIGRATION", message : "Service Unavailable"}}
 			}]
 		};
 
@@ -119,7 +137,7 @@ sap.ui.define([
 	 * @param {string} sUrl The request URL
 	 * @param {map} [mRequestHeaders] The request headers
 	 * @param {string} [sRequestBody=""] The request body
-	 * @returns {Promise} A promise that is resolved with the XMLHttprequest object when the
+	 * @returns {Promise} A promise that is resolved with the XMLHttpRequest object when the
 	 *   response has arrived
 	 */
 	function request(sMethod, sUrl, mRequestHeaders, sRequestBody) {
@@ -146,6 +164,9 @@ sap.ui.define([
 			this.oLogMock.expects("info").never();
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+		},
+		afterEach : function () {
+			TestUtils.onRequest(null);
 		}
 	});
 
@@ -390,8 +411,6 @@ sap.ui.define([
 				assert.strictEqual(oXHR.responseText, oFixture.responseBody || "", "body");
 				assert.strictEqual(oXHR.getAllResponseHeaders(),
 					headerString(oFixture.responseHeaders), "headers");
-			}).finally(function () {
-				TestUtils.onRequest(null);
 			});
 		});
 
@@ -451,11 +470,34 @@ sap.ui.define([
 				);
 				assert.strictEqual(oXHR.getAllResponseHeaders(), headerString(mBatchHeaders),
 					"batch headers");
-			}).finally(function () {
-				TestUtils.onRequest(null);
 			});
 		});
 	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bRegExp) {
+	QUnit.test(`useFakeServer: fixture for $batch, regExp=${bRegExp}`, function (assert) {
+		TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data",
+			bRegExp ? {} : mServerFixture, bRegExp ? aRegExpFixture : undefined);
+		this.oLogMock.expects("info").withExactArgs("POST /Foo/$batch, alternative (ifMatch) #1",
+			'{"If-Match":undefined}', "sap.ui.test.TestUtils");
+
+		let bOnRequestCalled = false;
+		TestUtils.onRequest(function (sRequestBody) {
+			assert.ok(sRequestBody.includes("GET RetryAfter HTTP/1.1"));
+			bOnRequestCalled = true;
+		});
+		return request("POST", "/Foo/$batch", {"OData-Version" : "4.0"},
+			"GET RetryAfter HTTP/1.1"
+		).then(function (oXHR) {
+			assert.strictEqual(oXHR.status, 503, "status");
+			assert.strictEqual(oXHR.responseText,
+				'{"error":{"code":"DB_MIGRATION","message":"Service Unavailable"}}');
+			assert.strictEqual(oXHR.getResponseHeader("Retry-After"), 5);
+			assert.ok(bOnRequestCalled);
+		});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("useFakeServer: multiple RegExp matches", function (assert) {

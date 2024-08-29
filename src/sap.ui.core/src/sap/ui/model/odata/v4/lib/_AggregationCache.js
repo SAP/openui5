@@ -256,8 +256,9 @@ sap.ui.define([
 				} else if (that.hasPendingChangesForPath(sPredicate)) {
 					throw new Error("Modified on client and on server: "
 						+ that.sResourcePath + sPredicate);
-				} // else: ETag changed, ignore kept element!
-				_Helper.copySelected(oKeptElement, oElement);
+				} else { // ETag changed, mostly ignore kept element!
+					_Helper.copySelected(oKeptElement, oElement);
+				}
 			}
 
 			if (sPredicate) {

@@ -4,6 +4,8 @@
 
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
@@ -12,11 +14,13 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/_internal/Versions",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/requireAsync",
 	"sap/ui/fl/Utils"
 ], function(
 	_omit,
+	JsControlTreeModifier,
+	FlexObjectFactory,
 	UIChangesState,
 	CompVariantMerger,
 	VariantManagementState,
@@ -25,13 +29,15 @@ sap.ui.define([
 	ManifestUtils,
 	CompVariantState,
 	Versions,
-	FlexControllerFactory,
 	LayerUtils,
+	requireAsync,
 	Utils
 ) {
 	"use strict";
 
 	/**
+	 * Central class for operations on the flex states and flex objects.
+	 *
 	 * @namespace
 	 * @alias sap.ui.fl.write._internal.flexState.FlexObjectManager
 	 * @since 1.83
@@ -39,7 +45,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
-	var FlexObjectManager = {};
+	const FlexObjectManager = {};
 
 	function getCompVariantEntities(mPropertyBag) {
 		const aEntities = [];
@@ -78,7 +84,8 @@ sap.ui.define([
 		return CompVariantState.persistAll(sReference);
 	}
 
-	function saveChangePersistenceEntities(mPropertyBag, oAppComponent) {
+	async function saveChangePersistenceEntities(mPropertyBag, oAppComponent) {
+		const FlexControllerFactory = await requireAsync("sap/ui/fl/FlexControllerFactory");
 		var oFlexController = FlexControllerFactory.createForSelector(mPropertyBag.selector);
 
 		return oFlexController.saveAll(
@@ -90,6 +97,16 @@ sap.ui.define([
 			mPropertyBag.condenseAnyLayer
 		);
 	}
+
+	function getOrCreateFlexObject(vFlexObject) {
+		return (
+			typeof vFlexObject.isA === "function"
+			&& vFlexObject.isA("sap.ui.fl.apply._internal.flexObjects.FlexObject")
+		)
+			? vFlexObject
+			: FlexObjectFactory.createFromFileContent(vFlexObject);
+	}
+
 	/**
 	 * Takes an array of FlexObjects and filters out any hidden variant and changes on those hidden variants
 	 *
@@ -162,6 +179,57 @@ sap.ui.define([
 	FlexObjectManager.hasDirtyFlexObjects = function(mPropertyBag) {
 		var sReference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 		return FlexObjectState.getDirtyFlexObjects(sReference).length > 0 || CompVariantState.hasDirtyChanges(sReference);
+	};
+
+	/**
+	 * Adds new dirty flex objects.
+	 *
+	 * @param {string} sReference - Flex reference of the application
+	 * @param {object[]} aFlexObjects - JSON object representation of flex objects or flex object instances
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} The prepared flex objects
+	 * @public
+	 */
+	FlexObjectManager.addDirtyFlexObjects = function(sReference, aFlexObjects) {
+		return FlexState.addDirtyFlexObjects(sReference, aFlexObjects.map(getOrCreateFlexObject));
+	};
+
+	/**
+	 * Removes unsaved flex objects.
+	 *
+	 * @param {object} mPropertyBag - Properties to determine the flex objects to be removed
+	 * @param {string} mPropertyBag.reference - Flex reference of the application
+	 * @param {string|string[]} [mPropertyBag.layers] - Layer or multiple layers for which flex objects shall be deleted. If omitted, flex objects on all layers are considered.
+	 * @param {sap.ui.core.Component} [mPropertyBag.component] - Component instance, required if oControl is specified
+	 * @param {string} [mPropertyBag.control] - Control for which the flex objects should be deleted. If omitted, all flex objects for the reference are considered.
+	 * @param {string} [mPropertyBag.generator] - Generator of flex objects
+	 * @param {string[]} [mPropertyBag.changeTypes] - Types of flex objects
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} The flex objects that were removed
+	 */
+	FlexObjectManager.removeDirtyFlexObjects = function(mPropertyBag) {
+		const aLayers = [].concat(mPropertyBag.layers || []);
+		const aDirtyFlexObjects = FlexObjectState.getDirtyFlexObjects(mPropertyBag.reference);
+
+		const aFlexObjectsToBeRemoved = aDirtyFlexObjects.filter((oFlexObject) => {
+			let bChangeValid = true;
+
+			if (aLayers.length && !aLayers.includes(oFlexObject.getLayer())) {
+				return false;
+			}
+			if (mPropertyBag.generator && oFlexObject.getSupportInformation().generator !== mPropertyBag.generator) {
+				return false;
+			}
+			if (mPropertyBag.control) {
+				const sSelectorId = JsControlTreeModifier.getControlIdBySelector(oFlexObject.getSelector(), mPropertyBag.component);
+				bChangeValid = mPropertyBag.control.getId() === sSelectorId;
+			}
+			if (mPropertyBag.changeTypes) {
+				bChangeValid &&= mPropertyBag.changeTypes.includes(oFlexObject.getChangeType());
+			}
+
+			return bChangeValid;
+		});
+
+		return FlexState.removeDirtyFlexObjects(mPropertyBag.reference, aFlexObjectsToBeRemoved);
 	};
 
 	/**

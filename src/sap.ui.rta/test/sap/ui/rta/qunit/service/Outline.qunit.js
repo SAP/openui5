@@ -673,11 +673,7 @@ sap.ui.define([
 	function _createAsyncView(sViewName, sXmlView, oComponent, oController) {
 		var mController = oController ? { controller: oController } : {};
 		return oComponent.runAsOwner(function() {
-			return XMLView.create(Object.assign({
-				id: sViewName,
-				definition: sXmlView,
-				async: true
-			}, mController));
+			return XMLView.create({ id: sViewName, definition: sXmlView, async: true, ...mController });
 		});
 	}
 
