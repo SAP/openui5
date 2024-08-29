@@ -286,7 +286,7 @@
 				<Property Name="Initials" Type="Edm.String" MaxLength="10"
 					sap:unicode="false" sap:label="Initials" />
 				<Property Name="Sex" Type="Edm.String" Nullable="false" MaxLength="1"
-					sap:unicode="false" sap:label="Sex" />
+					sap:unicode="false" sap:label="Sex" sap:value-list="standard"/>
 				<Property Name="PhoneNumber" Type="Edm.String" MaxLength="30"
 					sap:unicode="false" sap:label="Phone No." sap:semantics="tel" />
 				<Property Name="FaxNumber" Type="Edm.String" MaxLength="30"
@@ -303,6 +303,7 @@
 					FromRole="ToRole_Assoc_BusinessPartner_Contacts"
 					ToRole="FromRole_Assoc_BusinessPartner_Contacts" />
 			</EntityType>
+<!-- CPOUI5MODELS-1789: Removed to test lazy loading of value helps in combination with annotation changes
 			<EntityType Name="VH_Sex" sap:content-version="1">
 				<Key>
 					<PropertyRef Name="Sex" />
@@ -315,6 +316,7 @@
 					sap:creatable="false" sap:updatable="false" sap:sortable="false"
 					sap:filterable="false" />
 			</EntityType>
+-->
 			<EntityType Name="VH_Country" sap:content-version="1">
 				<Key>
 					<PropertyRef Name="Land1" />
@@ -1013,6 +1015,7 @@
 					</Dependent>
 				</ReferentialConstraint>
 			</Association>
+<!-- CPOUI5MODELS-1789: Removed to test lazy loading of value helps in combination with annotation changes
 			<Association Name="Assoc_VH_Sex_Contacts" sap:content-version="1">
 				<End Type="GWSAMPLE_BASIC.VH_Sex" Multiplicity="1"
 					Role="FromRole_Assoc_VH_Sex_Contacts" />
@@ -1027,6 +1030,7 @@
 					</Dependent>
 				</ReferentialConstraint>
 			</Association>
+-->
 			<Association Name="Assoc_VH_ProductTypeCode_Products"
 				sap:content-version="1">
 				<End Type="GWSAMPLE_BASIC.VH_ProductTypeCode" Multiplicity="1"
@@ -1085,9 +1089,11 @@
 					EntityType="GWSAMPLE_BASIC.SalesOrderLineItem" sap:content-version="1" />
 				<EntitySet Name="ContactSet" EntityType="GWSAMPLE_BASIC.Contact"
 					sap:content-version="1" />
+<!-- CPOUI5MODELS-1789: Removed to test lazy loading of value helps in combination with annotation changes
 				<EntitySet Name="VH_SexSet" EntityType="GWSAMPLE_BASIC.VH_Sex"
 					sap:creatable="false" sap:updatable="false" sap:deletable="false"
 					sap:pageable="false" sap:content-version="1" />
+-->
 				<EntitySet Name="VH_CountrySet" EntityType="GWSAMPLE_BASIC.VH_Country"
 					sap:creatable="false" sap:updatable="false" sap:deletable="false"
 					sap:pageable="false" sap:content-version="1" />
@@ -1234,12 +1240,14 @@
 					<End EntitySet="BusinessPartnerSet"
 						Role="ToRole_Assoc_VH_BPRole_BusinessPartners" />
 				</AssociationSet>
+<!-- CPOUI5MODELS-1789: Removed to test lazy loading of value helps in combination with annotation changes
 				<AssociationSet Name="Assoc_VH_Sex_Contacts_AssocSet"
 					Association="GWSAMPLE_BASIC.Assoc_VH_Sex_Contacts" sap:creatable="false"
 					sap:updatable="false" sap:deletable="false" sap:content-version="1">
 					<End EntitySet="VH_SexSet" Role="FromRole_Assoc_VH_Sex_Contacts" />
 					<End EntitySet="ContactSet" Role="ToRole_Assoc_VH_Sex_Contacts" />
 				</AssociationSet>
+-->
 				<AssociationSet Name="Assoc_Product_SalesOrderLineItems_AssocS"
 					Association="GWSAMPLE_BASIC.Assoc_Product_SalesOrderLineItems"
 					sap:creatable="false" sap:updatable="false" sap:deletable="false"
