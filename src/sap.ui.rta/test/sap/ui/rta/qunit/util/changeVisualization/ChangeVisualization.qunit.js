@@ -276,16 +276,17 @@ sap.ui.define([
 			}.bind(this))
 			.then(function() {
 				var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
-				assert.notOk(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is invisible");
+				const aPopoverContent = this.oChangeVisualization.getAggregation("popover").getContent();
+				assert.notOk(aPopoverContent[(aPopoverContent.length - 1)].getVisible(), "Hidden Info Message is invisible");
 				assert.notOk(
-					this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[1].getVisible(),
+					aPopoverContent[0].getAggregation("buttons")[1].getVisible(),
 					"Draft Button is invisible, no versioning is available"
 				);
 				assert.notOk(
-					this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[2].getEnabled(),
+					aPopoverContent[0].getAggregation("buttons")[2].getEnabled(),
 					"Unsaved Button is disabled, no changes available for this category"
 				);
-				var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
+				var aMenuItems = aPopoverContent[1].getItems();
 				checkModel(assert, aVizModel[0], this.oCheckModelAll);
 				checkModel(assert, aVizModel[2], this.oCheckModelMove);
 				checkBinding(assert, aVizModel[0], aMenuItems[0]);
@@ -304,13 +305,14 @@ sap.ui.define([
 				return oOpenPopoverPromise;
 			}.bind(this))
 			.then(function() {
-				assert.notOk(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is invisible");
+				const aPopoverContent = this.oChangeVisualization.getAggregation("popover").getContent();
+				assert.notOk(aPopoverContent[(aPopoverContent.length - 1)].getVisible(), "Hidden Info Message is invisible");
 				assert.ok(
-					this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[1].getVisible(),
+					aPopoverContent[0].getAggregation("buttons")[1].getVisible(),
 					"Draft Button is visible, versioning is available"
 				);
 				assert.notOk(
-					this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[1].getEnabled(),
+					aPopoverContent[0].getAggregation("buttons")[1].getEnabled(),
 					"Draft Button is not enabled, no changes are available for this state"
 				);
 			}.bind(this));
@@ -348,16 +350,17 @@ sap.ui.define([
 			}.bind(this))
 			.then(function() {
 				var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
-				assert.notOk(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is invisible");
+				const aPopoverContent = this.oChangeVisualization.getAggregation("popover").getContent();
+				assert.notOk(aPopoverContent[(aPopoverContent.length - 1)].getVisible(), "Hidden Info Message is invisible");
 				assert.notOk(
-					this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[1].getVisible(),
+					aPopoverContent[0].getAggregation("buttons")[1].getVisible(),
 					"Draft Button is invisible, no versioning is available"
 				);
 				assert.ok(
-					this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[2].getEnabled(),
+					aPopoverContent[0].getAggregation("buttons")[2].getEnabled(),
 					"Unsaved Button is enabled, changes available for this state"
 				);
-				var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
+				var aMenuItems = aPopoverContent[1].getItems();
 				checkModel(assert, aVizModel[0], this.oCheckModelAll);
 				checkModel(assert, aVizModel[2], this.oCheckModelMove);
 				checkModel(assert, aVizModel[1], this.oCheckModelAdd);
@@ -369,7 +372,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("With changes - Check if Filter Menu for Draft when Versioning is available", function(assert) {
+		QUnit.test("With changes - Check Filter Menu for Draft when Versioning is available", function(assert) {
 			prepareChanges(this.aMockChanges);
 			this.oCheckModelAll.title = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_ALL", [3]);
 			this.oCheckModelAll.count = 3;
@@ -383,18 +386,33 @@ sap.ui.define([
 				return oOpenPopoverPromise;
 			}.bind(this))
 			.then(function() {
-				assert.notOk(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is invisible");
+				const aPopoverContent = this.oChangeVisualization.getAggregation("popover").getContent();
+				assert.notOk(aPopoverContent[(aPopoverContent.length - 1)].getVisible(), "Hidden Info Message is invisible");
 				assert.ok(
-					this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[1].getVisible(),
+					aPopoverContent[0].getAggregation("buttons")[1].getVisible(),
 					"Draft Button is visible, versioning is available"
 				);
 				assert.ok(
-					this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[1].getEnabled(),
+					aPopoverContent[0].getAggregation("buttons")[1].getEnabled(),
 					"Draft Button is enabled, changes are available for this state"
 				);
 				assert.ok(
-					this.oChangeVisualization.getAggregation("popover").getContent()[0].getAggregation("buttons")[2].getEnabled(),
+					aPopoverContent[0].getAggregation("buttons")[2].getEnabled(),
 					"Unsaved Button is enabled, changes are available for this state"
+				);
+				aPopoverContent[0].getAggregation("buttons")[1].firePress();
+				let sUpdatedButtonText = this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").getText();
+				assert.strictEqual(
+					sUpdatedButtonText,
+					`${oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_OVERVIEW_ALL")} (${oRtaResourceBundle.getText("BUT_CHANGEVISUALIZATION_VERSIONING_DRAFT")})`,
+					"then if Draft is selected the button text is updated to 'All Changes (Draft)'"
+				);
+				aPopoverContent[0].getAggregation("buttons")[2].firePress();
+				sUpdatedButtonText = this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").getText();
+				assert.strictEqual(
+					sUpdatedButtonText,
+					`${oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_OVERVIEW_ALL")} (${oRtaResourceBundle.getText("BUT_CHANGEVISUALIZATION_VERSIONING_DIRTY")})`,
+					"then if Unsaved is selected the button text is updated to 'All Changes (Unsaved)'"
 				);
 			}.bind(this));
 		});
@@ -415,7 +433,7 @@ sap.ui.define([
 			.then(function() {
 				var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
 				assert.ok(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is visible");
-				var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
+				var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[1].getItems();
 				checkModel(assert, aVizModel[0], this.oCheckModelAll);
 				checkModel(assert, aVizModel[2], this.oCheckModelMove);
 				checkBinding(assert, aVizModel[0], aMenuItems[0]);
@@ -478,7 +496,7 @@ sap.ui.define([
 			}.bind(this))
 			.then(function() {
 				var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
-				var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
+				var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[1].getItems();
 				checkModel(assert, aVizModel[0], this.oCheckModelAll);
 				checkModel(assert, aVizModel[2], this.oCheckModelMove);
 				checkModel(assert, aVizModel[6], this.oCheckModelOther);
@@ -499,8 +517,9 @@ sap.ui.define([
 			}.bind(this))
 			.then(async function() {
 				var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
-				assert.notOk(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is invisible");
-				var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
+				const aPopoverContent = this.oChangeVisualization.getAggregation("popover").getContent();
+				assert.notOk(aPopoverContent[(aPopoverContent.length - 1)].getVisible(), "Hidden Info Message is invisible");
+				var aMenuItems = aPopoverContent[1].getItems();
 				checkModel(assert, aVizModel[0], this.oCheckModelAll);
 				checkModel(assert, aVizModel[2], this.oCheckModelMove);
 				checkBinding(assert, aVizModel[0], aMenuItems[0]);
@@ -518,7 +537,7 @@ sap.ui.define([
 				await nextUIUpdate();
 				var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
 				assert.ok(this.oChangeVisualization.getAggregation("popover").getContent()[1].getVisible(), "Hidden Info Message is visible");
-				var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
+				var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[1].getItems();
 				checkModel(assert, aVizModel[0], this.oCheckModelAll);
 				checkModel(assert, aVizModel[2], this.oCheckModelMove);
 				checkBinding(assert, aVizModel[0], aMenuItems[0]);
@@ -543,7 +562,11 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Menu Button Text will change on category selection", function(assert) {
+		QUnit.test("Menu Button Text will change and popover closes on category selection", function(assert) {
+			const oClosePopoverStub = sandbox.stub();
+			sandbox.stub(this.oChangeVisualization, "getPopover").returns({
+				close: oClosePopoverStub
+			});
 			return startVisualization(this.oRta).then(function() {
 				var sMenuButtonText = this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").getText();
 				assert.strictEqual(sMenuButtonText, oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_OVERVIEW_ALL"));
@@ -552,7 +575,8 @@ sap.ui.define([
 			.then(async function() {
 				await nextUIUpdate();
 				var sMenuButtonText = this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").getText();
-				assert.equal(sMenuButtonText, oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_OVERVIEW_MOVE"));
+				assert.strictEqual(sMenuButtonText, oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_OVERVIEW_MOVE"));
+				assert.strictEqual(oClosePopoverStub.called, true, "then the popover is closed");
 			}.bind(this));
 		});
 	});

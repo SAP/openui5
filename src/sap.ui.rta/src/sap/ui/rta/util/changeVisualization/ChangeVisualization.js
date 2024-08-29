@@ -321,9 +321,15 @@ sap.ui.define([
 		return this._oTextBundle.getText(sLabelKey, [iChangesCount]);
 	};
 
-	ChangeVisualization.prototype._getChangeCategoryButton = function(sChangeCategoryName) {
+	ChangeVisualization.prototype._getChangeCategoryButtonText = function(sChangeCategoryName) {
 		const sButtonKey = `BTN_CHANGEVISUALIZATION_OVERVIEW_${sChangeCategoryName.toUpperCase()}`;
-		return this._oTextBundle.getText(sButtonKey);
+		const sBaseText = this._oTextBundle.getText(sButtonKey);
+		const sVisualizedChangeState = this._oChangeVisualizationModel.getData().changeState;
+		if (sVisualizedChangeState === ChangeStates.ALL) {
+			return sBaseText;
+		}
+		const sStateText = this._oTextBundle.getText(`BUT_CHANGEVISUALIZATION_VERSIONING_${sVisualizedChangeState.toUpperCase()}`);
+		return `${sBaseText} (${sStateText})`;
 	};
 
 	ChangeVisualization.prototype.openChangeCategorySelectionPopover = function(oEvent) {
@@ -367,6 +373,7 @@ sap.ui.define([
 	ChangeVisualization.prototype.onChangeCategorySelection = function(oEvent) {
 		const sSelectedChangeCategory = oEvent.getSource().getBindingContext("visualizationModel").getObject().key;
 		this._selectChangeCategory(sSelectedChangeCategory);
+		this.getPopover()?.close();
 	};
 
 	ChangeVisualization.prototype.onVersioningCategoryChange = function(oEvent) {
@@ -377,7 +384,7 @@ sap.ui.define([
 	ChangeVisualization.prototype._selectChangeCategory = function(sSelectedChangeCategory) {
 		this._sSelectedChangeCategory = sSelectedChangeCategory;
 
-		const sChangeCategoryText = this._getChangeCategoryButton(sSelectedChangeCategory);
+		const sChangeCategoryText = this._getChangeCategoryButtonText(sSelectedChangeCategory);
 
 		this._updateVisualizationModel({
 			changeCategory: sSelectedChangeCategory,
@@ -391,8 +398,12 @@ sap.ui.define([
 	ChangeVisualization.prototype._selectChangeState = function(sSelectedChangeState) {
 		this._sSelectedChangeState = sSelectedChangeState;
 
+		const sSelectedChangeCategory = this._oChangeVisualizationModel.getData().changeCategory;
+		const sChangeCategoryText = this._getChangeCategoryButtonText(sSelectedChangeCategory);
+
 		this._updateVisualizationModel({
-			changeState: sSelectedChangeState
+			changeState: sSelectedChangeState,
+			changeCategoryText: sChangeCategoryText
 		});
 
 		this._updateChangeIndicators();
