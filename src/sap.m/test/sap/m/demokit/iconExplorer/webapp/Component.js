@@ -90,15 +90,9 @@ sap.ui.define([
 				// load SAPUI5 fonts on demand
 				if (!oVersionModel.getProperty("/isOpenUI5")) {
 					var oBusinessSuiteConfig = {
-						fontFamily: "BusinessSuiteInAppSymbols"
+						fontFamily: "BusinessSuiteInAppSymbols",
+						fontURI: sap.ui.require.toUrl("sap/ushell/themes/base/fonts/")
 					};
-
-					if (Theming.getTheme().includes("sap_horizon")) {
-						oBusinessSuiteConfig.fontURI = sap.ui.require.toUrl("sap/ushell/themes/base/fonts/horizon/");
-						oBusinessSuiteConfig.metadataURI = sap.ui.require.toUrl("sap/ushell/themes/base/fonts/") + oBusinessSuiteConfig.fontFamily + ".json";
-					} else {
-						oBusinessSuiteConfig.fontURI = sap.ui.require.toUrl("sap/ushell/themes/base/fonts/");
-					}
 
 					// register BusinessSuiteInAppSymbols icon font
 					IconPool.registerFont(oBusinessSuiteConfig);
