@@ -14,7 +14,8 @@ sap.ui.define([
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/base/strings/formatMessage',
 	'sap/ui/core/library',
-	'sap/ui/core/InvisibleMessage'
+	'sap/ui/core/InvisibleMessage',
+	'sap/ui/mdc/util/DensityHelper'
 ], function(
 	Container,
 	DialogTab,
@@ -27,7 +28,8 @@ sap.ui.define([
 	ValueHelpSelectionType,
 	formatMessage,
 	coreLibrary,
-	InvisibleMessage
+	InvisibleMessage,
+	DensityHelper
 ) {
 	"use strict";
 
@@ -278,6 +280,8 @@ sap.ui.define([
 						afterClose: this.handleClosed.bind(this),
 						buttons: [this.oButtonOK, this.oButtonCancel]
 					});
+
+					DensityHelper.syncDensity(oDialog);
 
 					oDialog.setModel(this._oManagedObjectModel, "$help");
 					this.setAggregation("_container", oDialog, true);

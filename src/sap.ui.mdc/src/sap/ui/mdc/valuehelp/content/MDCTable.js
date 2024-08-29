@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/ui/mdc/enums/TableType',
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/ui/mdc/enums/TableRowCountMode',
-	'sap/base/util/restricted/_throttle'
+	'sap/base/util/restricted/_throttle',
+	'sap/ui/mdc/util/DensityHelper'
 ], function(
 	FilterableListContent,
 	loadModules,
@@ -23,7 +24,8 @@ sap.ui.define([
 	TableType,
 	ValueHelpSelectionType,
 	TableRowCountMode,
-	_throttle
+	_throttle,
+	DensityHelper
 ) {
 	"use strict";
 
@@ -135,6 +137,7 @@ sap.ui.define([
 				this._oTable = null;
 			} else {
 				this._oTable = oTable;
+				DensityHelper.syncDensity(this._oTable);
 				this._addPromise("listBinding");
 				this._handleRowBinding();
 				if (this._oTable.getAutoBindOnInit()) {
