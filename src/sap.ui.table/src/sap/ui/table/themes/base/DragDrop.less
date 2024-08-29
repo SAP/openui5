@@ -162,35 +162,96 @@ html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
 /* Table Height Resizing */
 
 .sapUiTableHeightResizer {
-	box-sizing: border-box;
-	height: 5px;
-	width: 100%;
 	position: relative;
-	text-align: center;
+	cursor: row-resize;
+	height: 1rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: @sapContent_ForegroundColor;
+	border-top: solid 0.0625rem @sapGroup_ContentBorderColor;
+	border-bottom: solid 0.0625rem @sapGroup_ContentBorderColor;
+
+	.sapUiTableHeightResizerDecorationBefore {
+		width: 4rem;
+		height: 1rem;
+		background-image: linear-gradient(to left, @sapGroup_ContentBorderColor, transparent);
+		background-size: 100% 0.0625rem;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+
+	.sapUiTableHeightResizerDecorationAfter {
+		width: 4rem;
+		height: 1rem;
+		background-image: linear-gradient(to right, @sapGroup_ContentBorderColor, transparent);
+		background-size: 100% 0.0625rem;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+
+	.sapUiTableHeightResizerGrip {
+		color: @sapButton_Lite_TextColor;
+		height: 1.5rem;
+		line-height: 1.5rem;
+		width: 2rem;
+		position: relative;
+		z-index: 1;
+
+		.sapUiTableHeightResizerGripIcon {
+			cursor: row-resize;
+			box-sizing: border-box;
+			width: 1.625rem;
+			height: 1.5rem;
+			line-height: 1.5rem - @sapUiButtonBorderWidth - @sapUiButtonBorderWidth;
+			margin-left: 3px;
+			border: @sapUiButtonBorderWidth solid @sapUiButtonLiteBorderColor;
+			border-radius: @sapUiButtonBorderCornerRadius;
+			background: @sapUiButtonLiteBackground;
+		}
+	}
+
+	&:hover {
+		.sapUiTableHeightResizerDecorationBefore,
+		.sapUiTableHeightResizerDecorationAfter {
+			flex-grow: 1;
+			transition: all 0.1s ease-in;
+		}
+
+		.sapUiTableHeightResizerGripIcon {
+			background: @sapUiButtonLiteBackground;
+			border-color: @sapUiButtonLiteBorderColor;
+		}
+	}
+
+	&:focus {
+		outline: none;
+	}
+
+	&:focus::after {
+		content: "";
+		display: block;
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	}
+
+	&.sapUiTableHeightResizerActive {
+		.sapUiTableHeightResizerDecorationBefore {
+			flex-grow: 1;
+			background-image: linear-gradient(to left, @sapContent_Selected_ForegroundColor, @sapContent_Selected_ForegroundColor);
+		}
+		.sapUiTableHeightResizerDecorationAfter {
+			flex-grow: 1;
+			background-image: linear-gradient(to right, @sapContent_Selected_ForegroundColor, @sapContent_Selected_ForegroundColor);
+		}
+	}
 }
 
-.sapUiTableHeightResizer::before {
-	font-family: SAP-icons;
-	content: "\e1fb";
-	position: absolute;
-	top: 0px;
-	line-height: 5px;
-}
-
-.sapUiTableHeightResizer:focus {
-	outline: 0;
-}
-
-.sapUiTableHeightResizer:hover {
-	cursor: n-resize;
-	background-color: darken(@sapUiContentForegroundBorderColor, 28.2);
-	color: @sapUiContentContrastTextColor;
-}
-
-.sapUiTableInteractiveResizerGhost {
-	position: absolute;
-	background-color: @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
-	color: @sapUiContentContrastTextColor;
+.sapUiTable:has(.sapUiTableHeightResizerActive) {
 	z-index: 10000;
 }
 
