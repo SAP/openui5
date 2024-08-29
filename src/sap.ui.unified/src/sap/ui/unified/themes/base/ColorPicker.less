@@ -632,15 +632,14 @@ html[data-sap-ui-browser^="ie"] .sapMPopover .sapUiColorPicker-ColorPickerMatrix
 	}
 	.sapUiCPHSLV {
 		display: flex;
-		& > div:last-child {
-			visibility: hidden; //hide the not needed input (val or lit) for display flex reasons
+		& > div:last-child:not(.ColorPickerInputFieldsLeft) {
+			bottom: 2rem;
 		}
 	}
 	.sapUiCPRGBA {
 		display: flex;
-		& > div:last-child:not(.ColorPickerInputFieldsLeft) {
-			//move A field down
-			top: 2rem;
+		& > div:last-child {
+			visibility: hidden;
 		}
 	}
 	.sapUiCPHSLVText {
