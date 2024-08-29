@@ -91,6 +91,21 @@ sap.ui.define([
 					}]
 				}
 			}));
+			this.oServer.respondWith("GET", /.*getSONTsFromBusinessContexts.*/, JSON.stringify({
+				d: {
+					results: [{
+						SAPObjectNodeType: "CFD_TSM_BUPA_ADR_OBJ",
+						SAPObjectNodeTypeDescription: "Description for CFD_TSM_BUPA_ADR_OBJ",
+						SupportsLogicEnhancements: true,
+						SupportsStructuralEnhancements: false
+					}, {
+						SAPObjectNodeType: "CFD_TSM_BUPA_OBJ",
+						SAPObjectNodeTypeDescription: "Description for CFD_TSM_BUPA_OBJ",
+						SupportsLogicEnhancements: true,
+						SupportsStructuralEnhancements: false
+					}]
+				}
+			}));
 		},
 		afterEach() {
 			oSandbox.restore();
@@ -187,6 +202,7 @@ sap.ui.define([
 				},
 				params: {
 					businessContexts: ["CFD_TSM_BUPA_ADR", "CFD_TSM_BUPA"],
+					businessObjects: ["CFD_TSM_BUPA_ADR_OBJ", "CFD_TSM_BUPA_OBJ"],
 					serviceName: "someService",
 					serviceVersion: "0001",
 					entityType: "someEntityType"
@@ -324,6 +340,63 @@ sap.ui.define([
 					results: [{
 						BusinessContext: "CFD_TSM_BUPA_ADR",
 						BusinessContextDescription: "Description for CFD_TSM_BUPA_ADR"
+					}]
+				}
+			}));
+			var mExpectedResult = {
+				extensionData: [{
+					businessContext: "CFD_TSM_BUPA_ADR",
+					description: "Description for CFD_TSM_BUPA_ADR"
+				}]
+			};
+
+			ABAPAccess.onControlSelected(oControl);
+
+			aPromises.push(ABAPAccess.getExtensionData().then(function(mExtensionData) {
+				assert.deepEqual(mExtensionData, mExpectedResult, "the function returns the Extension data");
+			}));
+
+			aPromises.push(ABAPAccess.onTriggerCreateExtensionData().then(function() {
+				var oActualEntityType = JSON.parse(oOpenNewWindowStub.lastCall.args[0]).params.entityType;
+				assert.equal("EntityType01", oActualEntityType, "correct entity type returned");
+			}));
+
+			Promise.allSettled(aPromises).then(function(aResults) {
+				for (var oResult of aResults) {
+					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
+				}
+			}).finally(function() {
+				done();
+			});
+		});
+
+		QUnit.test("getExtensionData with BusinessObjects", function(assert) {
+			var aPromises = [];
+			var done = assert.async();
+
+			var oControl = this.oView.byId("EntityType01.Prop2");
+			var oOpenNewWindowStub = oSandbox.stub(window, "open")
+			.onFirstCall()
+			.returns()
+			.callThrough();
+
+			this.oServer = sinon.fakeServer.create();
+			this.oServer.autoRespond = true;
+			this.oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
+				d: {
+					results: [{
+						BusinessContext: "CFD_TSM_BUPA_ADR",
+						BusinessContextDescription: "Description for CFD_TSM_BUPA_ADR"
+					}]
+				}
+			}));
+			this.oServer.respondWith("GET", /.*getSONTsFromBusinessContexts.*/, JSON.stringify({
+				d: {
+					results: [{
+						SAPObjectNodeType: "CFD_TSM_BUPA_ADR_OBJ",
+						SAPObjectNodeTypeDescription: "Description for CFD_TSM_BUPA_ADR_OBJ",
+						SupportsLogicEnhancements: true,
+						SupportsStructuralEnhancements: false
 					}]
 				}
 			}));

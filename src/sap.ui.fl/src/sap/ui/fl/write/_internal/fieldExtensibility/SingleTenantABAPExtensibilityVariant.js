@@ -13,7 +13,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	const sExtensionDataServiceUri = "/sap/opu/odata/SAP/APS_CUSTOM_FIELD_MAINTENANCE_SRV/";
+	const sBusinessContextServiceUri = "/sap/opu/odata/SAP/APS_CUSTOM_FIELD_MAINTENANCE_SRV/";
+	const sBusinessObjectServiceUri = "/sap/opu/odata/sap/ui_sclg_implementation/";
 	const sNamespace = "sap.ui.fl.write._internal.fieldExtensibility.SingleTenantABAPExtensibilityVariant";
 
 	const oKeyOfAction = {
@@ -60,13 +61,24 @@ sap.ui.define([
 				return null;
 			}
 
-			const aBusinessContexts = oExtensionData.businessContexts;
-
-			if (!this._containsData(aBusinessContexts)) {
+			if (!this._containsExtensionData(oExtensionData)) {
 				return null;
 			}
 
-			return this._convertBusinessContextsToExtensionData(aBusinessContexts);
+			const aExtensionData = [];
+
+			for (const oBusinessContext of oExtensionData.businessContexts) {
+				const oExtensionData = {
+					description: oBusinessContext.BusinessContextDescription,
+					businessContext: oBusinessContext.BusinessContext
+				};
+
+				aExtensionData.push(oExtensionData);
+			}
+
+			return {
+				extensionData: aExtensionData
+			};
 		},
 
 		/**
@@ -87,24 +99,29 @@ sap.ui.define([
 				return null;
 			}
 
-			const aBusinessContexts = oExtensionData.businessContexts;
-			const oNavigationSupported = oExtensionData.navigationSupported;
-
-			if (!this._containsData(aBusinessContexts)) {
+			if (!this._containsExtensionData(oExtensionData)) {
 				return null;
 			}
+
+			const oNavigationSupported = oExtensionData.navigationSupported;
 
 			if (!oNavigationSupported[sResolvedActionKey]) {
 				return null;
 			}
 
+			const aBusinessContexts = oExtensionData.businessContexts;
 			const aMappedBusinessContexts = aBusinessContexts.map(function(oBusinessContext) {
 				return oBusinessContext.BusinessContext;
+			});
+			const aBusinessObjects = oExtensionData.businessObjects;
+			const aMappedBusinessObjects = aBusinessObjects.map(function(oBusinessObject) {
+				return oBusinessObject.SAPObjectNodeType;
 			});
 			return Utils.getNavigationUriForIntent({
 				target: oNavigationIntents[sResolvedActionKey],
 				params: {
 					businessContexts: aMappedBusinessContexts,
+					businessObjects: aMappedBusinessObjects,
 					serviceVersion: this._mServiceInfo.serviceVersion,
 					serviceName: this._mServiceInfo.serviceName,
 					entityType: this._mBindingInfo.entityTypeName
@@ -121,9 +138,7 @@ sap.ui.define([
 				return null;
 			}
 
-			const aBusinessContexts = oExtensionData.businessContexts;
-
-			if (!this._containsData(aBusinessContexts)) {
+			if (!this._containsExtensionData(oExtensionData)) {
 				return null;
 			}
 
@@ -153,26 +168,17 @@ sap.ui.define([
 				return false;
 			}
 
-			const aBusinessContexts = oExtensionData.businessContexts;
-
-			return this._containsData(aBusinessContexts);
+			return this._containsExtensionData(oExtensionData);
 		},
 
-		_containsData(aBusinessContexts) {
-			return Array.isArray(aBusinessContexts) && aBusinessContexts.length > 0;
-		},
+		_containsExtensionData({
+			businessContexts: aBusinessContexts,
+			businessObjects: aBusinessObjects
+		}) {
+			const bContainsBusinessContexts = Array.isArray(aBusinessContexts) && aBusinessContexts.length > 0;
+			const bContainsBusinessObjects = Array.isArray(aBusinessObjects) && aBusinessObjects.length > 0;
 
-		_convertBusinessContextsToExtensionData(aBusinessContexts) {
-			const aExtensionData = aBusinessContexts.map((oBusinessContext) => {
-				return {
-					description: oBusinessContext.BusinessContextDescription,
-					businessContext: oBusinessContext.BusinessContext
-				};
-			});
-
-			return {
-				extensionData: aExtensionData
-			};
+			return bContainsBusinessContexts || bContainsBusinessObjects;
 		},
 
 		async _determineExtensionData() {
@@ -188,55 +194,87 @@ sap.ui.define([
 				return null;
 			}
 
-			const sServiceUri = this._getExtensionDataServiceUri();
-			const oServiceParameters = this._getExtensionDataServiceParameters();
-			const oResponse = await Utils.executeRequest(sServiceUri, oServiceParameters);
-
-			if (oResponse.errorOccurred === false) {
-				const aBusinessContexts = this._extractBusinessContextsFromResponse(oResponse.result);
-
-				const {
-					supportsStructuralEnhancements: bSupportsStructuralEnhancements,
-					supportsLogicEnhancements: bSupportsLogicEnhancements
-				} = this._determineSupportedExtensibilityTypes(aBusinessContexts);
-
-				bNavigationSupportedForCustomField &&= bSupportsStructuralEnhancements;
-				bNavigationSupportedForCustomLogic &&= bSupportsLogicEnhancements;
-
-				if (!(bNavigationSupportedForCustomField || bNavigationSupportedForCustomLogic)) {
-					return null;
-				}
-
-				return {
-					businessContexts: aBusinessContexts,
-					navigationSupported: {
-						[oKeyOfAction.CustomField]: bNavigationSupportedForCustomField,
-						[oKeyOfAction.CustomLogic]: bNavigationSupportedForCustomLogic
-					}
-				};
-			} else if (oResponse.statusCode === 404 && this._mServiceInfo.serviceType === UriParser.mServiceType.v4) {
-				// in this case we assume that the backend system is just too old to support v4 based services
+			const aBusinessContexts = await this._getBusinessContexts();
+			if (aBusinessContexts === null) {
 				return null;
 			}
 
-			throw oResponse;
+			const aBusinessObjects = await this._getBusinessObjects(aBusinessContexts);
+			if (aBusinessObjects === null) {
+				return null;
+			}
+
+			const {
+				supportsStructuralEnhancements: bSupportsStructuralEnhancements,
+				supportsLogicEnhancements: bSupportsLogicEnhancements
+			} = this._determineSupportedExtensibilityTypes(aBusinessContexts, aBusinessObjects);
+
+			bNavigationSupportedForCustomField &&= bSupportsStructuralEnhancements;
+			bNavigationSupportedForCustomLogic &&= bSupportsLogicEnhancements;
+
+			if (!(bNavigationSupportedForCustomField || bNavigationSupportedForCustomLogic)) {
+				return null;
+			}
+
+			return {
+				businessContexts: aBusinessContexts,
+				businessObjects: aBusinessObjects,
+				navigationSupported: {
+					[oKeyOfAction.CustomField]: bNavigationSupportedForCustomField,
+					[oKeyOfAction.CustomLogic]: bNavigationSupportedForCustomLogic
+				}
+			};
 		},
 
-		_determineSupportedExtensibilityTypes(aBusinessContexts) {
-			let bSupportsLogicEnhancements = false;
-			let bSupportsStructuralEnhancements = false;
+		async _getBusinessContexts() {
+			const sServiceUri = this._getBusinessContextDataServiceUrl();
+			const oServiceParameters = this._getBusinessContextDataServiceParameters();
+			const oResponse = await Utils.executeRequest(sServiceUri, oServiceParameters);
+
+			if (oResponse.statusCode === 404 && this._mServiceInfo.serviceType === UriParser.mServiceType.v4) {
+				// Guess: the backend system is too old to support v4 based services.
+				return null;
+			}
+
+			if (oResponse.errorOccurred !== false) {
+				throw oResponse;
+			}
+
+			const aBusinessContexts = oResponse.result.results || [];
 
 			for (const oBusinessContext of aBusinessContexts) {
-				const bHasSupportsLogicEnhancements = oBusinessContext.hasOwnProperty("SupportsLogicEnhancements");
-				if (!bHasSupportsLogicEnhancements || oBusinessContext.SupportsLogicEnhancements === true) {
-					bSupportsLogicEnhancements = true;
-				}
-
-				const bHasSupportsStructuralEnhancements = oBusinessContext.hasOwnProperty("SupportsStructuralEnhancements");
-				if (!bHasSupportsStructuralEnhancements || oBusinessContext.SupportsStructuralEnhancements === true) {
-					bSupportsStructuralEnhancements = true;
-				}
+				oBusinessContext.SupportsLogicEnhancements ??= true;
+				oBusinessContext.SupportsStructuralEnhancements ??= true;
 			}
+
+			return aBusinessContexts;
+		},
+
+		async _getBusinessObjects(aBusinessContexts) {
+			const sServiceUri = this._getBusinessObjectDataServiceUrl();
+			const oServiceParameters = this._getBusinessObjectDataServiceParameters(aBusinessContexts);
+			const oResponse = await Utils.executeRequest(sServiceUri, oServiceParameters);
+
+			if (oResponse.errorOccurred !== false) {
+				// Guess: the backend system is too old to support this extension data type.
+				return [];
+			}
+
+			return oResponse.result.results || [];
+		},
+
+		_determineSupportedExtensibilityTypes(aBusinessContexts, aBusinessObjects) {
+			const bSupportsLogicEnhancements = aBusinessContexts.some(
+				(oBusinessContext) => oBusinessContext.SupportsLogicEnhancements
+			) || aBusinessObjects.some(
+				(oBusinessObject) => oBusinessObject.SupportsLogicEnhancements
+			);
+
+			const bSupportsStructuralEnhancements = aBusinessContexts.some(
+				(oBusinessContext) => oBusinessContext.SupportsStructuralEnhancements
+			) || aBusinessObjects.some(
+				(oBusinessObject) => oBusinessObject.SupportsStructuralEnhancements
+			);
 
 			return {
 				supportsLogicEnhancements: bSupportsLogicEnhancements,
@@ -244,11 +282,7 @@ sap.ui.define([
 			};
 		},
 
-		_extractBusinessContextsFromResponse(oResponse) {
-			return oResponse.results || [];
-		},
-
-		_getExtensionDataServiceParameters() {
+		_getBusinessContextDataServiceParameters() {
 			const oParameters = {
 				EntitySetName: "", // required by backend
 				EntityTypeName: this._mBindingInfo.entityTypeName
@@ -271,14 +305,26 @@ sap.ui.define([
 			return oParameters;
 		},
 
-		_getExtensionDataServiceUri() {
+		_getBusinessContextDataServiceUrl() {
 			if (this._mServiceInfo.serviceType === UriParser.mServiceType.v4) {
-				// sap/opu/odata/SAP/APS_CUSTOM_FIELD_MAINTENANCE_SRV/GetBusinessContextsByResourcePath
-				return `${sExtensionDataServiceUri}GetBusinessContextsByResourcePath`;
+				return `${sBusinessContextServiceUri}GetBusinessContextsByResourcePath`;
 			}
 
-			// sap/opu/odata/SAP/APS_CUSTOM_FIELD_MAINTENANCE_SRV/GetBusinessContextsByEntityType
-			return `${sExtensionDataServiceUri}GetBusinessContextsByEntityType`;
+			return `${sBusinessContextServiceUri}GetBusinessContextsByEntityType`;
+		},
+
+		_getBusinessObjectDataServiceParameters(aBusinessContexts) {
+			const aBusinessContextNames = aBusinessContexts.map((oBusinessContext) => {
+				return oBusinessContext.BusinessContext;
+			});
+
+			return {
+				BusinessContexts: JSON.stringify(aBusinessContextNames)
+			};
+		},
+
+		_getBusinessObjectDataServiceUrl() {
+			return `${sBusinessObjectServiceUri}getSONTsFromBusinessContexts`;
 		},
 
 		async _getMenuButtonText(sTextKeyForExplicitNavigation) {
@@ -379,10 +425,9 @@ sap.ui.define([
 				return null;
 			}
 
-			const aBusinessContexts = oExtensionData.businessContexts;
 			const oNavigationSupported = oExtensionData.navigationSupported;
 
-			if (!this._containsData(aBusinessContexts)) {
+			if (!this._containsExtensionData(oExtensionData)) {
 				return null;
 			}
 
