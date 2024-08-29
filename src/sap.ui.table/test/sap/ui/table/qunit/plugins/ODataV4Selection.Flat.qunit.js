@@ -198,6 +198,13 @@ sap.ui.define([
 		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Selected contexts");
 	});
 
+	QUnit.test("Bind in selectionMode='Single' with relative binding", function(assert) {
+		this.oSelectionPlugin.setSelectionMode("Single");
+		this.oTable.bindRows("MyRelativePath");
+		assert.ok(this.oSelectionPlugin.isActive(), "Active state");
+		assert.notOk(this.oTable.getBinding().getHeaderContext(), "Header context");
+	});
+
 	QUnit.module("Selection API", {
 		before: function() {
 			this.oShowNotification = sinon.spy(TableUtils, "showNotificationPopoverAtIndex");
