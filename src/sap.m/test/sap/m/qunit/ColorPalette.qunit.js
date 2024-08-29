@@ -1898,6 +1898,21 @@ sap.ui.define([
 				oCPP.destroy();
 			});
 
+			QUnit.test("selecting color from inner palette updates SelectedColor property of ColorPalettePopover ", function (assert) {
+				// Prepare
+				const oCPP = new ColorPalettePopover();
+
+				// Act
+				oCPP._getPalette().fireEvent("colorSelect", {value: 'orange', defaultAction: false});
+
+				// Assert
+				assert.deepEqual(oCPP._getPalette().getSelectedColor(), "orange", "the inner color palette has changed it's selected color");
+				assert.deepEqual(oCPP.getSelectedColor(), "orange", "... and has the selected color is also updated in the color palette popover");
+
+				// Cleanup
+				oCPP.destroy();
+			});
+
 			QUnit.test("liveChange event", function (assert) {
 				// Prepare
 				var oColorPalettePopover = new ColorPalettePopover({
