@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/ui/model/resource/ResourceModel',
 	'sap/ui/mdc/util/Common',
 	'sap/ui/mdc/enum/SelectType',
-	'sap/base/strings/formatMessage'
+	'sap/base/strings/formatMessage',
+	'sap/ui/mdc/util/DensityHelper'
 ], function(
 	Container,
 	DialogTab,
@@ -23,7 +24,8 @@ sap.ui.define([
 	ResourceModel,
 	Common,
 	SelectType,
-	formatMessage
+	formatMessage,
+	DensityHelper
 ) {
 	"use strict";
 
@@ -248,6 +250,8 @@ sap.ui.define([
 						afterClose: this._handleClosed.bind(this),
 						buttons: [this.oButtonOK, this.oButtonCancel]
 					});
+
+					DensityHelper.syncDensity(oDialog);
 
 					oDialog.setModel(this._oManagedObjectModel, "$help");
 					this.setAggregation("_container", oDialog, true);

@@ -142,7 +142,7 @@ sap.ui.define([
 
 	var oClock;
 
-	var _initTable = function (bFVH, oTableType) {
+	var _initTable = function (bFVH, oTableType, sDensity) {
 		oTable = new Table("T1", {
 			header: "",
 			showRowCount: true,
@@ -160,6 +160,10 @@ sap.ui.define([
 				new Column({dataProperty:"additionalText", template: new Text({text: "{additionalText}"})})
 			]
 		});
+
+		if (sDensity) {
+			oTable.addStyleClass(sDensity);
+		}
 
 		if (!bFVH) {
 			oTable.setModel(oModel); // as ValueHelp is faked
@@ -257,6 +261,34 @@ sap.ui.define([
 
 		oWrapper._oInnerWrapperClassPromise.then(function () {
 			assert.ok(oWrapper.OInnerWrapperClass.getMetadata().getName() === "sap.ui.mdc.field.FieldValueHelpMTableWrapper", "oWrapper inner class");
+			fnDone();
+		});
+	});
+
+	QUnit.test("table density via body", function(assert) {
+		var fnDone = assert.async();
+
+		_initTable(false, new sap.ui.mdc.table.ResponsiveTableType());
+
+		oWrapper.initialize();
+		var oTable = oWrapper.getTable();
+		oWrapper.getTable()._fullyInitialized().then(function () {
+			var oInnerTable = oTable._oTable;
+			assert.ok(oInnerTable.hasStyleClass("sapUiSizeCozy"), "ContentDensity was forwarded.");
+			fnDone();
+		});
+	});
+
+	QUnit.test("table density via outer table", function(assert) {
+		var fnDone = assert.async();
+
+		_initTable(false, new sap.ui.mdc.table.ResponsiveTableType(), "sapUiSizeCondensed");
+
+		oWrapper.initialize();
+		var oTable = oWrapper.getTable();
+		oWrapper.getTable()._fullyInitialized().then(function () {
+			var oInnerTable = oTable._oTable;
+			assert.ok(oInnerTable.hasStyleClass("sapUiSizeCondensed"), "ContentDensity was forwarded.");
 			fnDone();
 		});
 	});
