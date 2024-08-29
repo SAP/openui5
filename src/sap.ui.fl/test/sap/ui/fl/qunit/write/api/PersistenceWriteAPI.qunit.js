@@ -384,7 +384,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when reset is called", function(assert) {
+		QUnit.test("when reset is called", async function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				generator: "generator",
@@ -398,22 +398,13 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForSelector")
 			.withArgs(mPropertyBag.selector)
 			.returns(oAppComponent);
+			const oResetStub = sandbox.stub(FlexObjectManager, "resetFlexObjects").resolves();
 
-			var aArguments = [
-				mPropertyBag.layer,
-				mPropertyBag.generator,
-				oAppComponent,
-				mPropertyBag.selectorIds,
-				mPropertyBag.changeTypes
-			];
-			var fnPersistenceStub = getMethodStub(aArguments, Promise.resolve(sReturnValue));
-
-			mockFlexController(oAppComponent, { resetChanges: fnPersistenceStub });
-
-			return PersistenceWriteAPI.reset(mPropertyBag)
-			.then(function(sValue) {
-				assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
-			});
+			await PersistenceWriteAPI.reset(mPropertyBag);
+			assert.deepEqual(oResetStub.lastCall.args[0], {
+				..._omit(mPropertyBag, "selector"),
+				appComponent: oAppComponent
+			}, "then the resetFlexObjects was called with the correct parameters");
 		});
 
 		QUnit.test("when publish is called", function(assert) {

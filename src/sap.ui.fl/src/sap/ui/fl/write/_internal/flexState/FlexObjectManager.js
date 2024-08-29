@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/requireAsync",
@@ -20,6 +22,7 @@ sap.ui.define([
 ], function(
 	_omit,
 	JsControlTreeModifier,
+	Reverter,
 	FlexObjectFactory,
 	UIChangesState,
 	CompVariantMerger,
@@ -28,6 +31,7 @@ sap.ui.define([
 	FlexState,
 	ManifestUtils,
 	CompVariantState,
+	Storage,
 	Versions,
 	LayerUtils,
 	requireAsync,
@@ -266,6 +270,72 @@ sap.ui.define([
 		mPropertyBag.componentId = oAppComponent.getId();
 		mPropertyBag.invalidateCache = true;
 		return FlexObjectManager.getFlexObjects(_omit(mPropertyBag, "skipUpdateCache"));
+	};
+
+	/**
+	 * Reset flex objects on the server.
+	 * If the reset is performed for an entire component, a browser reload is required.
+	 * If the reset is performed for a control or change type, this function also triggers a reversion of deleted UI changes.
+	 * The to be deleted flexObjects can be filtered by selectorIds, changeTypes or generator.
+	 *
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {string} mPropertyBag.layer - Layer for which changes shall be deleted
+	 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent - Component instance
+	 * @param {string} [mPropertyBag.generator] - Generator of changes
+	 * @param {string[]} [mPropertyBag.selectorIds] - Selector IDs in local format
+	 * @param {string[]} [mPropertyBag.changeTypes] - Types of changes
+	 *
+	 * @returns {Promise<undefined>} Resolves after the deletion took place
+	 */
+	FlexObjectManager.resetFlexObjects = async function(mPropertyBag) {
+		const sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.appComponent);
+		const aFlexObjects = await FlexObjectManager.getFlexObjects({
+			selector: mPropertyBag.appComponent,
+			currentLayer: mPropertyBag.layer,
+			includeCtrlVariants: true
+		});
+		const mParams = {
+			reference: sReference,
+			layer: mPropertyBag.layer,
+			changes: aFlexObjects
+		};
+		if (mPropertyBag.generator) {
+			mParams.generator = mPropertyBag.generator;
+		}
+		if (mPropertyBag.selectorIds) {
+			mParams.selectorIds = mPropertyBag.selectorIds;
+		}
+		if (mPropertyBag.changeTypes) {
+			mParams.changeTypes = mPropertyBag.changeTypes;
+		}
+		const oResponse = await Storage.reset(mParams);
+
+		if (mPropertyBag.selectorIds || mPropertyBag.changeTypes || mPropertyBag.generator) {
+			const aFileNames = [];
+			if (oResponse?.response?.length > 0) {
+				oResponse.response.forEach(function(oChangeContent) {
+					aFileNames.push(oChangeContent.fileName);
+				});
+			}
+			const aChangesToRevert = aFlexObjects.filter(function(oChange) {
+				return aFileNames.indexOf(oChange.getId()) !== -1;
+			});
+			FlexState.updateStorageResponse(sReference, aChangesToRevert.map((oFlexObject) => {
+				return { flexObject: oFlexObject.convertToFileContent(), type: "delete" };
+			}));
+
+			if (aChangesToRevert.length) {
+				await Reverter.revertMultipleChanges(
+					// Always revert changes in reverse order
+					[...aChangesToRevert].reverse(),
+					{
+						appComponent: mPropertyBag.appComponent,
+						modifier: JsControlTreeModifier,
+						reference: sReference
+					}
+				);
+			}
+		}
 	};
 
 	return FlexObjectManager;
