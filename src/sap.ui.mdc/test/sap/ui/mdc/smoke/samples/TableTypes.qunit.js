@@ -19,7 +19,7 @@ sap.ui.define([
 		asyncPolling: true
 	});
 
-	const sSampleResource = "test-resources/sap/ui/mdc/demokit/sample/TableTypes/index.html";
+	const sSampleResource = "test-resources/sap/ui/mdc/demokit/sample/table/TableTypes/index.html";
 	const sPrefixDialog = "configurationDialog--";
 	const sTableId = "container-mdc.sample---sample--table";
 	const sConfigButtonId = "container-mdc.sample---sample--btnConfig";

@@ -9,7 +9,7 @@
 		"description": "MDC Sample Application",
 		"dataSources": {
 			"mountains" : {
-				"uri": "model/mountains.json",
+				"uri": "../mockdata/mountains.json",
 				"type": "JSON"
 			}
 		}
@@ -26,18 +26,22 @@
 		"config": {
 			"sample": {
 				"files": [
-					"delegate/JSONTableDelegate.js",
-					"delegate/JSONTableFilterDelegate.js",
-					"model/metadata/JSONPropertyInfo.js",
-					"model/mountains.json",
-					"view/TableJson.view.xml",
+					"../delegates/JSONTableDelegate.js",
+					"../delegates/JSONTableFilterDelegate.js",
+					"../mockdata/metadata/JSONPropertyInfo.js",
+					"../mockdata/mountains.json",
+					"view/TableTypes.view.xml",
+					"view/fragment/GridTableType.fragment.xml",
+					"view/fragment/ResponsiveTableType.fragment.xml",
 					"manifest.json"
 				]
 			}
 		},
 		"flexEnabled": false,
 		"resourceRoots": {
-            "mdc.sample": "./"
+            "mdc.sample": "./",
+			"mdc.sample.model": "../mockdata/",
+			"mdc.sample.delegate": "../delegates/"
         },
 		"dependencies": {
 			"minUI5Version": "1.120.0",
@@ -62,7 +66,7 @@
 			}
 		},
 		"rootView": {
-			"viewName": "mdc.sample.view.TableJson",
+			"viewName": "mdc.sample.view.TableTypes",
 			"type": "XML",
 			"async": true,
 			"id": "sample"
