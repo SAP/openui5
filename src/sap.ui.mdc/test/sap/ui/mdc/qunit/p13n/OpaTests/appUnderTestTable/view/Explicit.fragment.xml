@@ -19,7 +19,7 @@
 			propertyInfo = '[\{"name": "foundingYear", "dataType":"Edm.String", "maxConditions":-1, "label": "Founding Year", "constraints": \{"maxLength":4\}, "groupLabel": "Artists", "group": "MusicService.Artists"},
 			 \{"name": "name", "dataType":"Edm.String", "maxConditions":-1, "label": "Name", "constraints": \{"maxLength":255\}, "groupLabel": "Artists", "group": "MusicService.Artists"},
 			 \{"name": "breakupYear", "dataType":"Edm.String", "maxConditions":-1, "label": "Breakout Year", "constraints": \{"maxLength":4\}, "groupLabel": "Artists", "group": "MusicService.Artists"},
-			 \{"name": "artistUUID", "dataType":"Edm.Guid", "maxConditions":-1, "label": "artistUUID", "groupLabel": "Artists", "group": "MusicService.Artists", "visible": false}]'
+			 \{"name": "artistUUID", "dataType":"Edm.Guid", "maxConditions":-1, "label": "artistUUID", "groupLabel": "Artists", "group": "MusicService.Artists"}]'
 			p13nMode="Item,Value">
 			<mdc:filterItems>
 				<mdc:FilterField
