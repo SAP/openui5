@@ -2,20 +2,20 @@
 
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
-	"sap/base/Log",
 	"sap/base/util/Deferred",
+	"sap/base/Log",
 	"sap/m/App",
 	"sap/m/Button",
 	"sap/ui/base/Event",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
-	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
@@ -30,30 +30,31 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/core/Element"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	_omit,
-	Log,
 	Deferred,
+	Log,
 	App,
 	Button,
 	Event,
-	JsControlTreeModifier,
 	XMLView,
+	JsControlTreeModifier,
 	BusyIndicator,
 	ComponentContainer,
 	Control,
+	Element,
 	Lib,
 	Manifest,
 	UIComponent,
-	ResourceModel,
 	Applier,
 	Reverter,
 	URLHandler,
@@ -68,14 +69,15 @@ sap.ui.define([
 	Settings,
 	VariantManagement,
 	VariantModel,
+	Storage,
 	ContextBasedAdaptationsAPI,
 	FlexControllerFactory,
-	LayerUtils,
 	Layer,
+	LayerUtils,
 	Utils,
-	sinon,
+	ResourceModel,
 	nextUIUpdate,
-	Element
+	sinon
 ) {
 	"use strict";
 
@@ -1598,6 +1600,55 @@ sap.ui.define([
 
 				oVariantManagement.destroy();
 			}.bind(this));
+		});
+
+		QUnit.test("when triggering a soft reload after _handleSaveEvent", async function(assert) {
+			const oVariantManagement = new VariantManagement(sVMReference);
+			const oEvent = {
+				getParameters() {
+					return {
+						overwrite: false,
+						name: "Test"
+					};
+				},
+				getSource() {
+					return oVariantManagement;
+				}
+			};
+			const sUserName = "testUser";
+
+			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
+			sandbox.stub(Storage, "write").callsFake((oNewChange) => {
+				return Promise.resolve({
+					response: oNewChange.flexObjects.map((oFlexObject) => ({
+						...oFlexObject,
+						support: {
+							...oFlexObject.support,
+							user: sUserName
+						}
+					}))
+				});
+			});
+			const [oNewVariant] = await this.oModel._handleSaveEvent(oEvent);
+			const fnGetAffectedVariantData = () => {
+				return this.oModel.getData()[sVMReference].variants.find((oVariant) => {
+					return oVariant.key === oNewVariant.getId();
+				});
+			};
+			assert.strictEqual(
+				fnGetAffectedVariantData().author,
+				sUserName,
+				"then 'testUser' is set as author"
+			);
+			// Triggered by ComponentLifecycleHooks
+			await FlexState.rebuildFilteredResponse("MyComponent");
+			assert.strictEqual(
+				fnGetAffectedVariantData().author,
+				sUserName,
+				"then the updated author doesn't get lost after updating the model data"
+			);
+
+			oVariantManagement.destroy();
 		});
 
 		QUnit.test("when calling '_handleSaveEvent' with parameter from SaveAs button and default/execute and public box checked", function(assert) {
