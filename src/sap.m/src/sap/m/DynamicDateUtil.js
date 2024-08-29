@@ -239,7 +239,7 @@ sap.ui.define([
 	 */
 	DynamicDateUtil.toDates = function(oValue) {
 		var sKey = oValue.operator;
-		return DynamicDateUtil._options[sKey].toDates(oValue);
+		return DynamicDateUtil._options[sKey].toDates(oValue, "Default");
 	};
 
 

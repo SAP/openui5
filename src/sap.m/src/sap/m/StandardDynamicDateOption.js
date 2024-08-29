@@ -676,7 +676,7 @@ sap.ui.define([
 			return oFormatter.parse(sValue, this.getKey());
 		};
 
-		StandardDynamicDateOption.prototype.toDates = function(oValue) {
+		StandardDynamicDateOption.prototype.toDates = function(oValue, sCalendarWeekNumbering) {
 			if (!oValue) {
 				return null;
 			}
@@ -721,9 +721,9 @@ sap.ui.define([
 				case "TOMORROW":
 					return UniversalDateUtils.ranges.tomorrow();
 				case "FIRSTDAYWEEK":
-					return UniversalDateUtils.ranges.firstDayOfWeek();
+					return UniversalDateUtils.ranges.firstDayOfWeek(sCalendarWeekNumbering);
 				case "LASTDAYWEEK":
-					return UniversalDateUtils.ranges.lastDayOfWeek();
+					return UniversalDateUtils.ranges.lastDayOfWeek(sCalendarWeekNumbering);
 				case "FIRSTDAYMONTH":
 					return UniversalDateUtils.ranges.firstDayOfMonth();
 				case "LASTDAYMONTH":
@@ -737,7 +737,7 @@ sap.ui.define([
 				case "LASTDAYYEAR":
 					return UniversalDateUtils.ranges.lastDayOfYear();
 				case "THISWEEK":
-					return UniversalDateUtils.ranges.currentWeek();
+					return UniversalDateUtils.ranges.currentWeek(sCalendarWeekNumbering);
 				case "THISMONTH":
 					return UniversalDateUtils.ranges.currentMonth();
 				case "THISQUARTER":
@@ -745,7 +745,7 @@ sap.ui.define([
 				case "THISYEAR":
 					return UniversalDateUtils.ranges.currentYear();
 				case "LASTWEEK":
-					return UniversalDateUtils.ranges.lastWeek();
+					return UniversalDateUtils.ranges.lastWeek(sCalendarWeekNumbering);
 				case "LASTMONTH":
 					return UniversalDateUtils.ranges.lastMonth();
 				case "LASTQUARTER":
@@ -753,7 +753,7 @@ sap.ui.define([
 				case "LASTYEAR":
 					return UniversalDateUtils.ranges.lastYear();
 				case "NEXTWEEK":
-					return UniversalDateUtils.ranges.nextWeek();
+					return UniversalDateUtils.ranges.nextWeek(sCalendarWeekNumbering);
 				case "NEXTMONTH":
 					return UniversalDateUtils.ranges.nextMonth();
 				case "NEXTQUARTER":
@@ -763,7 +763,7 @@ sap.ui.define([
 				case "LASTDAYS":
 					return UniversalDateUtils.ranges.lastDays(iParamLastNext);
 				case "LASTWEEKS":
-					return UniversalDateUtils.ranges.lastWeeks(iParamLastNext);
+					return UniversalDateUtils.ranges.lastWeeks(iParamLastNext, sCalendarWeekNumbering);
 				case "LASTMONTHS":
 					return UniversalDateUtils.ranges.lastMonths(iParamLastNext);
 				case "LASTQUARTERS":
@@ -773,7 +773,7 @@ sap.ui.define([
 				case "NEXTDAYS":
 					return UniversalDateUtils.ranges.nextDays(iParamLastNext);
 				case "NEXTWEEKS":
-					return UniversalDateUtils.ranges.nextWeeks(iParamLastNext);
+					return UniversalDateUtils.ranges.nextWeeks(iParamLastNext, sCalendarWeekNumbering);
 				case "NEXTMONTHS":
 					return UniversalDateUtils.ranges.nextMonths(iParamLastNext);
 				case "NEXTQUARTERS":
