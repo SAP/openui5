@@ -13,8 +13,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	SampleExtension.prototype._handleAction = function (oEvent) {
 		var oCard = this.getCard(),
 			sActionType = oEvent.getParameter("type"),
-			mParams = oEvent.getParameter("parameters"),
-			mSubmitData = mParams.data;
+			mFormData = oEvent.getParameter("formData");
 
 		if (sActionType !== "Submit") {
 			return;
@@ -33,8 +32,8 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 			"url": "./MOCK.json",
 			"method": "GET",
 			"parameters": {
-				reason: mSubmitData.reason.key,
-				comment: mSubmitData.comment
+				reason: mFormData.reason.key,
+				comment: mFormData.comment
 			}
 		}).then(function () {
 			oCard.showMessage("{i18n>SUCCESSFUL_SUBMIT}", "Success");

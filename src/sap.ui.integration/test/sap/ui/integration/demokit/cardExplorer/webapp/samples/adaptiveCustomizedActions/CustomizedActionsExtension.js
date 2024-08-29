@@ -14,8 +14,7 @@ sap.ui.define(["sap/ui/integration/Extension", 'sap/m/MessageToast'
 	CustomizedActionsExtension.prototype._handleAction = function (oEvent) {
 		var oCard = this.getCard(),
 			sActionType = oEvent.getParameter("type"),
-			mParams = oEvent.getParameter("parameters"),
-			mSubmitData = mParams.data;
+			mFormData = oEvent.getParameter("formData");
 
 		if (sActionType !== "Submit") {
 			return;
@@ -24,16 +23,16 @@ sap.ui.define(["sap/ui/integration/Extension", 'sap/m/MessageToast'
 		oEvent.preventDefault();
 
 		// Validates and modifies data before submitting it
-		if (mSubmitData.Name === "Enter your name") {
+		if (mFormData.Name === "Enter your name") {
 			oCard.showMessage("Please enter your name", "Error");
-		} else if (mSubmitData.Name === "") {
+		} else if (mFormData.Name === "") {
 			oCard.showMessage("You can't submit an empty name", "Error");
 		} else {
 			// Submits to a mock server
 			oCard.request({
 				"url": "../adaptive/extensionSample/MOCK.json",
 				"method": "GET",
-				"parameters": mSubmitData
+				"parameters": mFormData
 			}).then(function () {
 				oCard.showMessage("Your name has been submitted successfully", "Success");
 			}).catch(function(sErrorMessage) {

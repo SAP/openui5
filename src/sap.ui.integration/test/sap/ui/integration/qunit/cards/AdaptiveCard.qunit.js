@@ -901,7 +901,7 @@ sap.ui.define([
 				card: oCard,
 				host: null,
 				action: {type: library.CardActionType.Submit},
-				parameters: {configuration: {}, data: {foo: "bar"}},
+				parameters: {configuration: {}},
 				source: oCard.getCardContent()
 			});
 
