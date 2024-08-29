@@ -32,7 +32,7 @@ sap.ui.define([
 
 	var aAllowedBindingParameters = ["$$aggregation", "$$canonicalPath", "$$clearSelectionOnFilter",
 			"$$getKeepAliveContext", "$$groupId", "$$operationMode", "$$ownRequest",
-			"$$patchWithoutSideEffects", "$$sharedRequest", "$$updateGroupId"],
+			"$$patchWithoutSideEffects", "$$separate", "$$sharedRequest", "$$updateGroupId"],
 		sClassName = "sap.ui.model.odata.v4.ODataListBinding",
 		oContextPrototype = Object.getPrototypeOf(Context.create(null, null, "/foo")),
 		oParentBinding = {
@@ -1271,7 +1271,7 @@ sap.ui.define([
 			.returns(mQueryOptions.$orderby);
 		oCacheMock.expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-				{$orderby : "bar", "sap-client" : "111"}, false, undefined, false)
+				{$orderby : "bar", "sap-client" : "111"}, false, undefined, false, undefined)
 			.returns({});
 		this.mock(ODataListBinding.prototype).expects("restoreCreated").withExactArgs();
 		this.spy(ODataListBinding.prototype, "reset");
@@ -1294,7 +1294,7 @@ sap.ui.define([
 
 		oCacheMock.expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-				{$orderby : "bar", "sap-client" : "111"}, false, "EMPLOYEES", false)
+				{$orderby : "bar", "sap-client" : "111"}, false, "EMPLOYEES", false, undefined)
 			.returns({});
 
 		// code under test
@@ -7143,7 +7143,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "resource/path",
 				"deep/resource/path", "~mInheritedQueryOptions~",
 				sinon.match.same(oBinding.mParameters.$$aggregation),
-				this.oModel.bAutoExpandSelect, false, "~isGrouped~")
+				this.oModel.bAutoExpandSelect, false, "~isGrouped~", undefined)
 			.returns("~oNewCache~");
 
 		assert.strictEqual(
@@ -7197,6 +7197,8 @@ sap.ui.define([
 		oBinding.bSharedRequest = bShared;
 		if (bAggregation) {
 			oBinding.mParameters.$$aggregation = {/*hierarchyQualifier : "X"*/};
+		} else {
+			oBinding.mParameters.$$separate = "~$$separate~";
 		}
 		if (bWithOld) {
 			this.mock(oOldCache).expects("getResourcePath").withExactArgs()
@@ -7223,7 +7225,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "resource/path",
 				"deep/resource/path", "~mergedQueryOptions~",
 				sinon.match.same(oBinding.mParameters.$$aggregation), "~autoExpandSelect~", bShared,
-				"~isGrouped~")
+				"~isGrouped~", bAggregation ? undefined : "~$$separate~")
 			.returns(bAggregation ? oAggregationCache : oCache);
 		oCacheMock.expects("registerChangeListener").exactly(bShared ? 1 : 0)
 			.withExactArgs("", sinon.match.same(oBinding));
@@ -7259,6 +7261,7 @@ sap.ui.define([
 
 		this.oModel.bAutoExpandSelect = "~autoExpandSelect~";
 		oBinding.bSharedRequest = "~sharedRequest~";
+		oBinding.mParameters.$$separate = "~$$separate~";
 		this.mock(oOldCache).expects("getResourcePath").atMost(1).withExactArgs()
 			.returns(bDeep ? "resource/path" : "W.R.O.N.G.");
 		this.mock(oBinding).expects("getKeepAlivePredicates").never();
@@ -7267,9 +7270,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("isGrouped").withExactArgs().returns("~isGrouped~");
 		this.mock(_AggregationCache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "resource/path",
-				"deep/resource/path", "~mergedQueryOptions~",
-				sinon.match.same(oBinding.mParameters.$$aggregation), "~autoExpandSelect~",
-				"~sharedRequest~", "~isGrouped~")
+				"deep/resource/path", "~mergedQueryOptions~", /*$$aggregation*/undefined,
+				"~autoExpandSelect~", "~sharedRequest~", "~isGrouped~", "~$$separate~")
 			.returns(oCache);
 
 		assert.strictEqual(

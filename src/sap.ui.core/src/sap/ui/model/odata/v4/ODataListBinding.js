@@ -115,7 +115,8 @@ sap.ui.define([
 		mParameters = _Helper.clone(mParameters) || {};
 		this.checkBindingParameters(mParameters, ["$$aggregation", "$$canonicalPath",
 			"$$clearSelectionOnFilter", "$$getKeepAliveContext", "$$groupId", "$$operationMode",
-			"$$ownRequest", "$$patchWithoutSideEffects", "$$sharedRequest", "$$updateGroupId"]);
+			"$$ownRequest", "$$patchWithoutSideEffects", "$$separate", "$$sharedRequest",
+			"$$updateGroupId"]);
 		const aFilters = _Helper.toArray(vFilters);
 		if (mParameters.$$aggregation && aFilters[0] === Filter.NONE) {
 			throw new Error("Cannot combine Filter.NONE with $$aggregation");
@@ -1478,7 +1479,8 @@ sap.ui.define([
 		}
 		oCache ??= _AggregationCache.create(this.oModel.oRequestor, sResourcePath,
 			sDeepResourcePath, mQueryOptions, this.mParameters.$$aggregation,
-			this.oModel.bAutoExpandSelect, this.bSharedRequest, this.isGrouped());
+			this.oModel.bAutoExpandSelect, this.bSharedRequest, this.isGrouped(),
+			this.mParameters.$$separate);
 		if (mKeptElementsByPredicate) {
 			aKeepAlivePredicates.forEach(function (sPredicate) {
 				oCache.addKeptElement(mKeptElementsByPredicate[sPredicate]);
