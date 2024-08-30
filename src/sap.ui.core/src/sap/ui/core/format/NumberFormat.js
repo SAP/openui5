@@ -1954,7 +1954,8 @@ sap.ui.define([
 		sValue = FormatUtils.normalize(sValue).trim();
 
 		if (sValue === "") {
-			if (!oOptions.showNumber) {
+			const bUnitOrCurrency = oOptions.type === mNumberType.CURRENCY || oOptions.type === mNumberType.UNIT;
+			if (!oOptions.showNumber && !bUnitOrCurrency) {
 				return null;
 			}
 			vEmptyParseValue = oOptions.emptyString;
@@ -1963,7 +1964,10 @@ sap.ui.define([
 			if (oOptions.parseAsString && (oOptions.emptyString === 0 || isNaN(oOptions.emptyString))) {
 				vEmptyParseValue = oOptions.emptyString + "";
 			}
-			if (oOptions.type === mNumberType.CURRENCY || oOptions.type === mNumberType.UNIT) {
+			if (bUnitOrCurrency) {
+				if (!oOptions.showNumber) {
+					return [undefined, vEmptyParseValue];
+				}
 				return [vEmptyParseValue, undefined];
 			} else {
 				return vEmptyParseValue;

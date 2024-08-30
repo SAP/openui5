@@ -113,6 +113,23 @@ sap.ui.define([
 		assert.deepEqual(oType.oFormatOptions, {emptyString : 0, parseAsString : "~parseAsString",
 			unitOptional : "~unitOptional"});
 
+		// code under test - showNumber=false leads to different default value for emptyString: "" instead of 0
+		oType = new UnitMixin({showNumber : false});
+
+		assert.deepEqual(oType.oFormatOptions,
+			{emptyString : "", parseAsString : true, showNumber : false, unitOptional : false});
+
+		// code under test - default values can be overwritten
+		oType = new UnitMixin({
+			emptyString : null,
+			parseAsString : "~parseAsString",
+			showNumber : false,
+			unitOptional : "~unitOptional"
+		});
+
+		assert.deepEqual(oType.oFormatOptions,
+			{emptyString : null, parseAsString : "~parseAsString", showNumber : false, unitOptional : "~unitOptional"});
+
 		assert.throws(function () {
 			oType = new UnitMixin({}, {minimum : 42});
 		}, new Error("Only 'skipDecimalsValidation' constraint is supported"));
