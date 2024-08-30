@@ -119,7 +119,8 @@ function(
 					"sap.m.IOverflowToolbarContent",
 					"sap.m.IToolbarInteractiveControl",
 					"sap.f.IShellBar",
-					"sap.ui.core.ISemanticFormContent"
+					"sap.ui.core.ISemanticFormContent",
+					"sap.ui.core.ILabelable"
 				],
 				library: "sap.m",
 				properties: {
@@ -3256,14 +3257,12 @@ function(
 		};
 
 		/**
-		 * Returns the DOMNode Id to be used for the "labelFor" attribute of the label.
+		 * Returns the DOMNode Id of the labelable HTML element for the <code>sap.m.Select</code>.
 		 *
-		 * By default, this is the Id of the control itself.
-		 *
-		 * @return {string} Id to be used for the <code>labelFor</code>
+		 * @return {string} Id of the labelable HTML element
 		 * @public
 		 */
-		Select.prototype.getIdForLabel = function () {
+		Select.prototype.hasLabelableHTMLElement = function () {
 			return this.getId() + "-hiddenSelect";
 		};
 
