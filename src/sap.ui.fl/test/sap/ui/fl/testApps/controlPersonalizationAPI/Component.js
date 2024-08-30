@@ -1,15 +1,17 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
+	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
-	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI"
+	"sap/ui/fl/FlexControllerFactory"
 ], function(
 	UIComponent,
-	FlexControllerFactory,
+	FlexObjectManager,
+	ControlPersonalizationWriteAPI,
 	ChangePersistenceFactory,
 	FakeLrepConnectorLocalStorage,
-	ControlPersonalizationWriteAPI
+	FlexControllerFactory
 ) {
 	"use strict";
 
@@ -36,11 +38,12 @@ sap.ui.define([
 			this.updateChangesModel();
 		},
 
-		updateChangesModel() {
-			this.oChangePersistence.getChangesForComponent()// {includeCtrlVariants: true})
-			.then(function(oChanges) {
-				this.getModel().setProperty("/changes", oChanges);
-			}.bind(this));
+		async updateChangesModel() {
+			const aFlexObjects = await FlexObjectManager.getFlexObjects({
+				selector: this,
+				includeCtrlVariants: true
+			});
+			this.getModel().setProperty("/changes", aFlexObjects);
 		},
 
 		createChangesAndSave(mChangeData, oControl) {
