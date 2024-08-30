@@ -4,13 +4,19 @@
 sap.ui.define([
 	"./RowMode",
 	"../utils/TableUtils",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/Device",
+	"sap/m/Menu",
+	"sap/m/MenuItem"
 ], function(
 	RowMode,
 	TableUtils,
-	jQuery
+	Device,
+	Menu,
+	MenuItem
 ) {
 	"use strict";
+
+	const _private = TableUtils.createWeakMapFacade();
 
 	/**
 	 * Constructor for a new <code>Interactive</code> row mode.
@@ -53,6 +59,10 @@ sap.ui.define([
 				 */
 				minRowCount: {type: "int", defaultValue: 5, group: "Appearance"},
 				/**
+				 * The maximum number of displayed rows. If not set, the maximum number of rows is determined by the viewport height of the device.
+				 */
+				maxRowCount: {type: "int", defaultValue: -1, group: "Appearance"},
+				/**
 				 * The number of rows in the fixed area at the top. If the number of fixed rows exceeds the number of displayed rows, the number of
 				 * fixed rows is reduced.
 				 * The table may limit the possible number of fixed rows.
@@ -82,6 +92,11 @@ sap.ui.define([
 	 * Provides drag&drop resize capabilities.
 	 */
 	const ResizeHelper = {};
+
+	InteractiveRowMode.prototype.init = function() {
+		RowMode.prototype.init.apply(this, arguments);
+		_private(this).rowCount = this.getRowCount();
+	};
 
 	/**
 	 * @inheritDoc
@@ -139,14 +154,14 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	InteractiveRowMode.prototype.getMinRequestLength = function() {
-		return this.getConfiguredRowCount();
+		return this.getActualRowCount();
 	};
 
 	/**
 	 * @inheritDoc
 	 */
 	InteractiveRowMode.prototype.getComputedRowCounts = function() {
-		const iRowCount = this.getConfiguredRowCount();
+		const iRowCount = this.getActualRowCount();
 		const iFixedTopRowCount = this.getFixedTopRowCount();
 		const iFixedBottomRowCount = this.getFixedBottomRowCount();
 
@@ -201,11 +216,39 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	InteractiveRowMode.prototype.renderInTableBottomArea = function(oRm) {
-		oRm.openStart("div", this.getTable().getId() + "-sb");
-		oRm.attr("tabindex", "-1");
-		oRm.class("sapUiTableHeightResizer");
-		oRm.style("height", "5px");
-		oRm.openEnd();
+		const oTable = this.getTable();
+		oRm.openStart("div", oTable.getId() + "-heightResizer")
+			.attr("role", "separator")
+			.attr("aria-orientation", "horizontal")
+			.attr("title", TableUtils.getResourceText("TBL_RSZ_BTN_TOOLTIP"))
+			.attr("tabindex", "0")
+			.attr("aria-valuemin", this.getMinRowCount())
+			.attr("aria-valuenow", this.getActualRowCount())
+			.class("sapUiTableHeightResizer");
+
+			const aLabels = oTable.getAriaLabelledBy();
+			if (aLabels.length) {
+				oRm.attr("aria-labelledby", aLabels.join(" "));
+			}
+
+			oRm.openEnd();
+			oRm.openStart("div")
+				.class("sapUiTableHeightResizerDecorationBefore")
+				.openEnd()
+				.close("div");
+
+			oRm.openStart("div")
+				.attr("role", "presentation")
+				.class("sapUiTableHeightResizerGrip")
+				.openEnd()
+					.icon("sap-icon://horizontal-grip", ["sapUiTableHeightResizerGripIcon"])
+				.close("div");
+
+			oRm.openStart("div")
+				.class("sapUiTableHeightResizerDecorationAfter")
+				.openEnd()
+				.close("div");
+
 		oRm.close("div");
 	};
 
@@ -222,7 +265,7 @@ sap.ui.define([
 	 * @private
 	 */
 	InteractiveRowMode.prototype._onTableRefreshRows = function() {
-		const iRowCount = this.getConfiguredRowCount();
+		const iRowCount = this.getActualRowCount();
 
 		if (iRowCount > 0) {
 			this.initTableRowsAfterDataRequested(iRowCount);
@@ -231,13 +274,56 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the row count as configured with the <code>rowCount</code> and <code>minRowCount</code> properties.
+	 * Gets the actual number of rows that are rendered in the table. This can differ from the <code>rowCount</code> property because resizing the
+	 * table does not affect the value of the <code>rowCount</code> property.
 	 *
-	 * @returns {int} The configured row count.
+	 * @returns {int} The row count.
 	 * @private
 	 */
-	InteractiveRowMode.prototype.getConfiguredRowCount = function() {
-		return Math.max(0, this.getMinRowCount(), this.getRowCount());
+	InteractiveRowMode.prototype.getActualRowCount = function() {
+		return Math.max(0, this.getMinRowCount(), _private(this).rowCount);
+	};
+
+	/**
+	 * If the maxRowCount is set, it returns the property value. Otherwise, it calculates the maximum row count based on the viewport height of the
+	 * device.
+	 * @returns {int} The maximum row count.
+	 * @private
+	 */
+	InteractiveRowMode.prototype._getMaxRowCount = function() {
+		const iMaxRowCount = this.getMaxRowCount();
+		const iMinRowCount = this.getMinRowCount();
+		if (iMaxRowCount >= 0) {
+			return Math.max(iMaxRowCount, iMinRowCount);
+		}
+
+		const iNewHeight = this._determineAvailableSpace();
+		return Math.max(Math.floor(iNewHeight / this.getBaseRowHeightOfTable()), iMinRowCount);
+	};
+
+	InteractiveRowMode.prototype._determineAvailableSpace = function() {
+		const oTable = this.getTable();
+		const oTableDomRef = oTable.getDomRef();
+		const oRowContainer = oTable.getDomRef("tableCCnt");
+		const iViewportHeight = Device.resize.height;
+
+		if (!oTableDomRef || !oRowContainer) {
+			return 0;
+		}
+
+		return Math.max(0, Math.floor(iViewportHeight - oTableDomRef.getBoundingClientRect().height + oRowContainer.getBoundingClientRect().height));
+	};
+
+	InteractiveRowMode.prototype.setRowCount = function(iRowCount) {
+		this.setProperty("rowCount", iRowCount);
+		_private(this).rowCount = iRowCount;
+		return this;
+	};
+
+	InteractiveRowMode.prototype.updateTable = function(sReason) {
+		this.getTable().getDomRef("heightResizer")?.setAttribute("aria-valuenow", this.getActualRowCount());
+
+		RowMode.prototype.updateTable.apply(this, arguments);
 	};
 
 	/**
@@ -250,6 +336,9 @@ sap.ui.define([
 		if (!bRenderedRows && oTable.getRows().length > 0) {
 			this.fireRowsUpdated(TableUtils.RowsUpdateReason.Render);
 		}
+
+		const oResizerDomRef = oTable.getDomRef("heightResizer");
+		oResizerDomRef.setAttribute("aria-valuemax", this._getMaxRowCount());
 	};
 
 	/**
@@ -258,129 +347,178 @@ sap.ui.define([
 	TableDelegate.onmousedown = function(oEvent) {
 		const oTable = this.getTable();
 
-		if (oEvent.button === 0 && oEvent.target === oTable.getDomRef("sb")) {
-			ResizeHelper.initInteractiveResizing(oTable, this, oEvent);
+		if (oEvent.button === 0 && oTable.getDomRef("heightResizer").contains(oEvent.target)) {
+			ResizeHelper.initResizing(oTable, this, oEvent);
 		}
+	};
+
+	TableDelegate.oncontextmenu = function(oEvent) {
+		const oTable = this.getTable();
+		const oDomRef = oTable.getDomRef("heightResizer");
+
+		if (oDomRef.contains(oEvent.target)) {
+			oEvent.preventDefault();
+			oDomRef.classList.add("sapUiTableHeightResizerActive");
+			ResizeHelper.openContextMenu(oTable, this, oEvent);
+		}
+	};
+
+	TableDelegate.onkeydown = function(oEvent) {
+		const oTable = this.getTable();
+		if (oEvent.target === oTable.getDomRef("heightResizer")) {
+			switch (oEvent.key) {
+				case "ArrowUp":
+					oEvent.preventDefault();
+					_private(this).rowCount = Math.max(this.getActualRowCount() - 1, this.getMinRowCount());
+					this.updateTable(TableUtils.RowsUpdateReason.Render);
+					break;
+				case "ArrowDown":
+					oEvent.preventDefault();
+					_private(this).rowCount = Math.min(this.getActualRowCount() + 1, this._getMaxRowCount());
+					this.updateTable(TableUtils.RowsUpdateReason.Render);
+					break;
+				case "Home":
+					oEvent.preventDefault();
+					_private(this).rowCount = this.getMinRowCount();
+					this.updateTable(TableUtils.RowsUpdateReason.Render);
+					break;
+				case "End":
+					oEvent.preventDefault();
+					_private(this).rowCount = this._getMaxRowCount();
+					this.updateTable(TableUtils.RowsUpdateReason.Render);
+					break;
+				default:
+			}
+		}
+	};
+
+	TableDelegate.ondblclick = function(oEvent) {
+		if (!this.getTable().getDomRef("heightResizer").contains(oEvent.target)) {
+			return;
+		}
+
+		const iActualRowCount = this.getActualRowCount();
+		if (iActualRowCount === this._getMaxRowCount()) {
+			_private(this).rowCount = this.getMinRowCount();
+		} else if (iActualRowCount === this.getMinRowCount()) {
+			_private(this).rowCount = this.getRowCount();
+		} else {
+			_private(this).rowCount = this._getMaxRowCount();
+		}
+		this.updateTable(TableUtils.RowsUpdateReason.Render);
 	};
 
 	/**
 	 * Initializes the drag&drop for resizing.
 	 *
-	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @param {sap.ui.table.rowmodes.Interactive} oMode The interactive row mode.
-	 * @param {jQuery.Event} oEvent The event object.
+	 * @param {sap.ui.table.Table} oTable Instance of the table
+	 * @param {sap.ui.table.rowmodes.Interactive} oMode The interactive row mode
+	 * @param {jQuery.Event} oEvent The event object
+	 * @private
 	 */
-	ResizeHelper.initInteractiveResizing = function(oTable, oMode, oEvent) {
-		const $Body = jQuery(document.body);
-		const $Splitter = oTable.$("sb");
-		const $Document = jQuery(document);
-		const offset = $Splitter.offset();
-		const height = $Splitter.height();
-		const width = $Splitter.width();
-		const bTouch = oTable._isTouchEvent(oEvent);
-
-		const oGhostDiv = document.createElement("div");
-		oGhostDiv.style.width = width + "px";
-		oGhostDiv.style.height = height + "px";
-		oGhostDiv.style.left = offset.left + "px";
-		oGhostDiv.style.top = offset.top + "px";
-		oGhostDiv.className = "sapUiTableInteractiveResizerGhost";
-		oGhostDiv.id = oTable.getId() + "-ghost";
-		$Body.append(oGhostDiv);
-
-		const oOverlayDiv = document.createElement("div");
-		oOverlayDiv.style.top = "0px";
-		oOverlayDiv.style.bottom = "0px";
-		oOverlayDiv.style.left = "0px";
-		oOverlayDiv.style.right = "0px";
-		oOverlayDiv.style.position = "absolute";
-		oOverlayDiv.id = oTable.getId() + "-rzoverlay";
-		$Splitter.append(oOverlayDiv);
-
-		$Document.on((bTouch ? "touchend" : "mouseup") + ".sapUiTableInteractiveResize",
-			ResizeHelper.exitInteractiveResizing.bind(oTable, oMode));
-		$Document.on((bTouch ? "touchmove" : "mousemove") + ".sapUiTableInteractiveResize",
-			ResizeHelper.onMouseMoveWhileInteractiveResizing.bind(oTable)
-		);
-
+	ResizeHelper.initResizing = function(oTable, oMode, oEvent) {
 		oTable._disableTextSelection();
-	};
+		ResizeHelper._oTable = oTable;
+		ResizeHelper._iResizerStartPos = oEvent.pageY;
 
-	/**
-	 * Drops the previous dragged horizontal splitter bar and recalculates the amount of rows to be displayed.
-	 *
-	 * @param {sap.ui.table.rowmodes.Interactive} oMode The interactive row mode.
-	 * @param {jQuery.Event} oEvent The event object.
-	 */
-	ResizeHelper.exitInteractiveResizing = function(oMode, oEvent) {
-		const $Document = jQuery(document);
-		const $Table = this.$();
-		const $Ghost = this.$("ghost");
-		const iLocationY = ResizeHelper.getEventPosition(this, oEvent).y;
-		const iNewHeight = iLocationY - $Table.find(".sapUiTableCCnt").offset().top - $Ghost.height() - $Table.find(".sapUiTableFtr").height();
-		const iUserDefinedRowCount = Math.floor(iNewHeight / oMode.getBaseRowHeightOfTable());
-		const iNewRowCount = Math.max(1, iUserDefinedRowCount, oMode.getMinRowCount());
+		document.addEventListener("touchend", ResizeHelper.onResizingEnd.bind(oTable, oMode), {once: true});
+		document.addEventListener("touchmove", ResizeHelper.onResizerMove);
+		document.addEventListener("mouseup", ResizeHelper.onResizingEnd.bind(oTable, oMode), {once: true});
+		document.addEventListener("mousemove", ResizeHelper.onResizerMove);
 
-		oMode.setRowCount(iNewRowCount);
-
-		$Ghost.remove();
-		this.$("rzoverlay").remove();
-
-		$Document.off("touchend.sapUiTableInteractiveResize");
-		$Document.off("touchmove.sapUiTableInteractiveResize");
-		$Document.off("mouseup.sapUiTableInteractiveResize");
-		$Document.off("mousemove.sapUiTableInteractiveResize");
-
-		this._enableTextSelection();
+		const oDomRef = oTable.getDomRef("heightResizer");
+		oDomRef.classList.add("sapUiTableHeightResizerActive");
+		oDomRef.style.top = "0";
 	};
 
 	/**
 	 * Handler for the move events while dragging the horizontal resize bar.
 	 *
-	 * @param {jQuery.Event} oEvent The event object.
+	 * @param {jQuery.Event} oEvent The event object
 	 */
-	ResizeHelper.onMouseMoveWhileInteractiveResizing = function(oEvent) {
-		const iLocationY = ResizeHelper.getEventPosition(this, oEvent).y;
-		const iMin = this.$().offset().top;
-
-		if (iLocationY > iMin) {
-			this.$("ghost").css("top", iLocationY + "px");
-		}
+	ResizeHelper.onResizerMove = function(oEvent) {
+		const iDelta = (oEvent.pageY - ResizeHelper._iResizerStartPos);
+		ResizeHelper._oTable.getDomRef("heightResizer").style.top = iDelta + "px";
 	};
 
-	// TODO: Copied from pointer extension. Maybe move this to utils.
 	/**
-	 * Gets the position of an event.
+	 * Drops the horizontal splitter bar and recalculates the number of rows to be displayed.
 	 *
-	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @param {jQuery.Event} oEvent The event object.
-	 * @returns {{x: int, y: int}} The event position.
+	 * @param {sap.ui.table.rowmodes.Interactive} oMode The interactive row mode
+	 * @param {jQuery.Event} oEvent The event object
 	 */
-	ResizeHelper.getEventPosition = function(oTable, oEvent) {
-		const oPosition = getTouchObject(oEvent) || oEvent;
-
-		function getTouchObject(oTouchEvent) {
-			if (!oTable._isTouchEvent(oTouchEvent)) {
-				return null;
-			}
-
-			const aTouchEventObjectNames = ["touches", "targetTouches", "changedTouches"];
-
-			for (let i = 0; i < aTouchEventObjectNames.length; i++) {
-				const sTouchEventObjectName = aTouchEventObjectNames[i];
-
-				if (oEvent[sTouchEventObjectName] && oEvent[sTouchEventObjectName][0]) {
-					return oEvent[sTouchEventObjectName][0];
-				}
-				if (oEvent.originalEvent[sTouchEventObjectName] && oEvent.originalEvent[sTouchEventObjectName][0]) {
-					return oEvent.originalEvent[sTouchEventObjectName][0];
-				}
-			}
-
-			return null;
+	ResizeHelper.onResizingEnd = function(oMode, oEvent) {
+		const iLocationY = TableUtils.getEventPosition(oEvent, this).y;
+		const iTablePosTop = this.getDomRef("tableCCnt").getBoundingClientRect().top;
+		const oFooterDomRef = this.getDomRef().querySelector(".sapUiTableFtr");
+		const iTableFooterHeight = oFooterDomRef ? oFooterDomRef.getBoundingClientRect().height : 0;
+		const iNewHeight = iLocationY - iTablePosTop - iTableFooterHeight;
+		const iUserDefinedRowCount = Math.floor(iNewHeight / oMode.getBaseRowHeightOfTable());
+		let iNewRowCount = Math.max(0, iUserDefinedRowCount, oMode.getMinRowCount());
+		const iMaxRowCount = oMode._getMaxRowCount();
+		if (iMaxRowCount > 0) {
+			iNewRowCount = Math.min(iNewRowCount, iMaxRowCount);
 		}
 
-		return {x: oPosition.pageX, y: oPosition.pageY};
+		_private(oMode).rowCount = iNewRowCount;
+		oMode.updateTable(TableUtils.RowsUpdateReason.Render);
+
+		document.removeEventListener("touchmove", ResizeHelper.onResizerMove);
+		document.removeEventListener("mousemove", ResizeHelper.onResizerMove);
+
+		const oDomRef = this.getDomRef("heightResizer");
+		oDomRef.classList.remove("sapUiTableHeightResizerActive");
+		oDomRef.style.top = "";
+		this._enableTextSelection();
+	};
+
+	ResizeHelper.openContextMenu = function(oTable, oMode, oEvent) {
+		if (!ResizeHelper._oContextMenu) {
+			ResizeHelper._oContextMenu = new Menu({
+				items: [
+					new MenuItem({
+						text: TableUtils.getResourceText("TBL_RSZ_ROW_UP"),
+						shortcutText: TableUtils.getResourceText("TBL_RSZ_ROW_UP_SHORTCUT"),
+						press: function() {
+							const iRowCount = oMode.getActualRowCount();
+							_private(oMode).rowCount = Math.max(iRowCount - 1, oMode.getMinRowCount());
+							oMode.updateTable(TableUtils.RowsUpdateReason.Render);
+						}
+					}),
+					new MenuItem({
+						text: TableUtils.getResourceText("TBL_RSZ_ROW_DOWN"),
+						shortcutText: TableUtils.getResourceText("TBL_RSZ_ROW_DOWN_SHORTCUT"),
+						press: function() {
+							const iRowCount = oMode.getActualRowCount();
+							_private(oMode).rowCount = Math.min(iRowCount + 1, oMode._getMaxRowCount());
+							oMode.updateTable(TableUtils.RowsUpdateReason.Render);
+						}
+					}),
+					new MenuItem({
+						text: TableUtils.getResourceText("TBL_RSZ_MINIMIZE"),
+						shortcutText: TableUtils.getResourceText("TBL_RSZ_MINIMIZE_SHORTCUT"),
+						press: function() {
+							_private(oMode).rowCount = oMode.getMinRowCount();
+							oMode.updateTable(TableUtils.RowsUpdateReason.Render);
+						}
+					}),
+					new MenuItem({
+						text: TableUtils.getResourceText("TBL_RSZ_MAXIMIZE"),
+						shortcutText: TableUtils.getResourceText("TBL_RSZ_MAXIMIZE_SHORTCUT"),
+						press: function() {
+							_private(oMode).rowCount = oMode._getMaxRowCount();
+							oMode.updateTable(TableUtils.RowsUpdateReason.Render);
+						}
+					})
+				],
+				closed: function() {
+					oTable.getDomRef("heightResizer").classList.remove("sapUiTableHeightResizerActive");
+				}
+			});
+			ResizeHelper._oContextMenu.openAsContextMenu(oEvent, oTable.getDomRef("heightResizer"));
+		} else {
+			ResizeHelper._oContextMenu.openAsContextMenu(oEvent, oTable.getDomRef("heightResizer"));
+		}
 	};
 
 	return InteractiveRowMode;

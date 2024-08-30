@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/integration/library",
 	"sap/ui/integration/cards/ObjectContent",
+	"sap/ui/integration/Host",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/util/RequestDataProvider",
@@ -25,6 +26,7 @@ sap.ui.define([
 	coreLibrary,
 	library,
 	ObjectContent,
+	Host,
 	Card,
 	CardActions,
 	RequestDataProvider,
@@ -514,6 +516,7 @@ sap.ui.define([
 			"type": "card"
 		},
 		"sap.card": {
+			"extension": "./extensions/ExtensionSample",
 			"type": "Object",
 			"data": {
 				"json": {
@@ -2290,11 +2293,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Form control values are properly passed on submit action", async function (assert) {
-		var done = assert.async();
+		const done = assert.async();
+		const oCard = this.oCard;
+		const oHost = new Host();
 
-		this.oCard.attachAction((oEvent) => {
-			var mParameters = oEvent.getParameter("parameters"),
-				mExpectedData = {
+		assert.expect(9);
+
+		const fnValidate = (oEvent) => {
+			const mParameters = oEvent.getParameter("parameters");
+			const mFormData = oEvent.getParameter("formData");
+			const mExpectedData = {
 					"reason": {
 						"key": "reason1",
 						"value": "Reason 1"
@@ -2305,17 +2313,29 @@ sap.ui.define([
 					"dateRangeValue": DateRangeHelper.getValueForModel(this.oCard.getCardContent().getAggregation("_content").getItems()[0].getItems()[9])
 				};
 
-			assert.deepEqual(mParameters.data, mExpectedData, "Data is properly passed to action handler.");
+			assert.deepEqual(mFormData, mExpectedData, "Data is properly passed to action handler.");
+			assert.deepEqual(mParameters.data, mExpectedData, "Data is properly passed to action handler."); // deprecated since 1.129
 			assert.deepEqual(this.oCard.getModel("form").getData(), mExpectedData, "Data is properly populated in the form model.");
+		};
 
-			done();
-		});
-
-		this.oCard.setManifest(oManifest_ObjectCardFormControls);
+		oCard.setHost(oHost);
+		oCard.setManifest(oManifest_ObjectCardFormControls);
 
 		await nextCardReadyEvent(this.oCard);
 
-		this.oCard.triggerAction({
+		oCard.attachAction(fnValidate);
+
+		const oExtension = oCard.getAggregation("_extension");
+		oExtension.attachAction(fnValidate);
+
+		oHost.attachAction((oEvent) => {
+			fnValidate(oEvent);
+
+			oHost.destroy();
+			done();
+		});
+
+		oCard.triggerAction({
 			type: CardActionType.Submit
 		});
 	});

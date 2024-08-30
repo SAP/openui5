@@ -405,8 +405,12 @@ sap.ui.define([
 			mEventParamsLegacy,
 			bActionResult = true;
 
+		if (sType === CardActionType.Submit || sType === CardActionType.Custom) {
+			mEventParams.formData = oCard.getModel("form").getData();
+		}
+
 		if (sType === CardActionType.Submit) {
-			mParameters.data = oCard.getModel("form").getData();
+			mParameters.data = mParameters.data ?? oCard.getModel("form").getData(); // deprecated since 1.129
 		}
 
 		mEventParams.parameters = mParameters;

@@ -111,8 +111,20 @@ sap.ui.define([
 
 						/**
 						 * The parameters related to the triggered action.
+						 *
+						 * <b>Disclaimer:</b> Since 1.129 the special parameter <code>data</code> for action <code>Submit</code> is deprecated and must not be used. Use event parameter <code>formData</code> instead.
 						 */
 						parameters: {
+							type: "object"
+						},
+
+						/**
+						 * All form data that is filled inside the card. This parameter is available only with action types <code>Submit</code> and <code>Custom</code>.
+						 *
+						 * The format will be the same as in the <code>form</code> model available in the card manifest. For more information look at the documentation for each individual form type.
+						 * @since 1.129
+						 */
+						formData: {
 							type: "object"
 						},
 

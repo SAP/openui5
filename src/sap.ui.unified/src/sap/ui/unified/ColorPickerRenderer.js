@@ -172,7 +172,23 @@ ColorPickerRenderer.renderLargeColorPicker = function(oRm, oControl) {
 	oRm.openEnd();
 	oRm.text("%");
 	oRm.close("div");
-	oControl.getMode() === "HSL" ?  this.renderLFirst(oRm, oControl) : this.renderVFirst(oRm, oControl);
+
+	const bHSL = oControl.getMode() === "HSL";
+	if (bHSL) {
+		oRm.renderControl(oControl.getAggregation("_oLitField"));
+	} else {
+		oRm.renderControl(oControl.getAggregation("_oValField"));
+	}
+	oRm.openStart("div");
+	oRm.class("sapUiCPPercentSymbol");
+	if (!bHSL) {
+		oRm.style("visibility", "hidden");
+	}
+	oRm.openEnd();
+	oRm.text("%");
+	oRm.close("div");
+
+	oRm.renderControl(oControl.getAggregation("_oAlphaField2"));
 	oRm.close("div");
 	this.renderHSLVLabel(oRm, oControl);
 };
@@ -258,24 +274,6 @@ ColorPickerRenderer.renderMobileSwatches = function(oRm, oControl) {
 	oRm.openEnd();
 	oRm.close("div");
 	oRm.close("div");
-};
-
-//Renders Lit first and sets visibility hidden to Val because of flex rendering reasons.
-ColorPickerRenderer.renderLFirst = function(oRm, oControl) {
-	oRm.renderControl(oControl.getAggregation("_oLitField"));
-	oRm.openStart("div");
-	oRm.class("sapUiCPPercentSymbol");
-	oRm.openEnd();
-	oRm.text("%");
-	oRm.close("div");
-	oRm.renderControl(oControl.getAggregation("_oValField"));
-};
-
-//Renders Val first and sets visibility hidden to Lit because of flex rendering reasons.
-ColorPickerRenderer.renderVFirst = function(oRm, oControl) {
-	oRm.renderControl(oControl.getAggregation("_oValField"));
-	this.renderEmptyDiv(oRm);
-	oRm.renderControl(oControl.getAggregation("_oLitField"));
 };
 
 //Renders empty div because of display flex rendering reasons.

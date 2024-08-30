@@ -338,6 +338,9 @@ sap.ui.define([
 			this.sMaxDataServiceVersion = sMaxDataServiceVersion;
 			this.bLoadAnnotationsJoined = bLoadAnnotationsJoined !== false;
 			this.sAnnotationURI = sAnnotationURI;
+			// A promise that may resolves with an array of annotation changes, see ODataModel#_requestAnnotationChanges
+			// and ODataModel#setAnnotationChangePromise
+			this.pAnnotationChanges = null;
 			this.sDefaultCountMode = sDefaultCountMode || CountMode.Request;
 			this.sDefaultOperationMode = sDefaultOperationMode || OperationMode.Default;
 			this.sMetadataLoadEvent = null;
@@ -8830,6 +8833,73 @@ sap.ui.define([
 		var sOperation = bTransitionMessagesOnly ? "add" : "delete";
 
 		this.oTransitionMessagesOnlyGroups[sOperation](sGroupId);
+	};
+
+	/**
+	 * @typedef {object} sap.ui.model.odata.v2.ODataModel.AnnotationChange
+	 *
+	 * A change to an annotation which is to be applied to this model's metamodel.
+	 *
+	 * @property {string} path
+	 *   The meta path pointing to the annotation to be changed
+	 * @property {any} value
+	 *   The new annotation value; the object structure depends on the annotation being changed
+	 *
+	 * @example <caption>Change the label of a the business partner ID property</caption>
+	 * {
+	 *    path : "/dataServices/schema/0/entityType/[${name}==='BusinessPartner']/property/"
+	 *        + "[${name}==='BusinessPartnerID']/Label",
+	 *    value : {String : "*My* Business Partner ID"}
+	 * }
+	 * @example <caption>Change the label of a the business partner ID in a <code>LineItem</code> annotation</caption>
+	 * {
+	 *    path : "/dataServices/schema/0/entityType/[${name}==='BusinessPartner']/com.sap.vocabularies.UI.v1.LineItem/"
+	 *        + "[${Value/Path}==='BusinessPartnerID']/Label",
+	 *    value : {String : "*My* Business Partner ID"}
+	 * }
+	 * @private
+	 * @see sap.ui.model.odata.v2.ODataModel#setAnnotationChangePromise
+	 * @since 1.129.0
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 * Sets a promise resolving with changes which are applied to all annotations loaded by this model, either as part
+	 * of service metadata or from annotation files given via parameter "annotationURI" (see {@link #constructor}).
+	 *
+	 * @param {Promise<sap.ui.model.odata.v2.ODataModel.AnnotationChange[]>} pAnnotationChanges
+	 *   A promise resolving with an array of annotation changes
+	 * @throws {Error}
+	 *   In case the promise has already been set, or it is set after {@link #getMetaModel} has been called and the meta
+	 *   model data and the annotations have been loaded
+	 *
+	 * @private
+	 * @see sap.ui.model.odata.v2.ODataModel.AnnotationChange
+	 * @since 1.129.0
+	 * @ui5-restricted sap.ui.fl
+	 */
+	ODataModel.prototype.setAnnotationChangePromise = function (pAnnotationChanges) {
+		if (this.pAnnotationChanges) {
+			throw Error("Promise is set too late; an annotation change promise has already been set or the meta model"
+				+ " is already used");
+		}
+		this.pAnnotationChanges = pAnnotationChanges;
+	};
+
+	/**
+	 * Requests changes to annotations.
+	 *
+	 * @returns {Promise<sap.ui.model.odata.v2.ODataModel.AnnotationChange[]>|sap.ui.base.SyncPromise<undefined>}
+	 *   A promise resolving with an optional array of annotation changes
+	 *
+	 * @private
+	 * @see #setAnnotationChangePromise
+	 * @see sap.ui.model.odata.v2.ODataModel.AnnotationChange
+	 */
+	ODataModel.prototype._requestAnnotationChanges = function () {
+		this.pAnnotationChanges ??= SyncPromise.resolve(); // now it's too late for the setter
+
+		return this.pAnnotationChanges;
 	};
 
 	return ODataModel;

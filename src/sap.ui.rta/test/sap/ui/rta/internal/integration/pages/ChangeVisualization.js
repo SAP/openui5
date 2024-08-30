@@ -130,7 +130,7 @@ sap.ui.define([
 						controlType: "sap.m.Popover",
 						success(oPopover) {
 							Opa5.assert.ok(
-								oPopover.getContent()[2].getItems().every((oItem, iIndex) => {
+								oPopover.getContent()[1].getItems().every((oItem, iIndex) => {
 									return oItem.getCounter() === aChangesCount[iIndex];
 								}),
 								"then the correct categories count is visible"

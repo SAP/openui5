@@ -476,8 +476,11 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		//Assert
+		var oTile = this.oGenericTile.getDomRef().clientHeight;
+		var oContent = this.oGenericTile.getDomRef("content").clientHeight;
 		assert.equal(this.oGenericTile.getFrameType(), FrameType.TwoByHalf, "FrameType Auto set to TwoByOne");
 		assert.ok(this.oGenericTile.getDomRef().getAttribute("aria-label").includes(sSizeDescription),"Size description rendered successfully");
+		assert.ok(oTile > oContent,"Inner content height cant exceed the tiles height");
 	});
 
 	QUnit.module("Scope rendering tests", {

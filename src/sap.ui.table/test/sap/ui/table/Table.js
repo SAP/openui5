@@ -1,5 +1,6 @@
 sap.ui.define([
   "sap/ui/table/Table",
+  "sap/m/Title",
   "sap/m/IllustratedMessage",
   "sap/m/IllustratedMessageType",
   "sap/m/Button",
@@ -33,6 +34,7 @@ sap.ui.define([
   "sap/base/Log"
 ], function(
   Table,
+  Title,
   IllustratedMessage,
   IllustratedMessageType,
   Button,
@@ -81,7 +83,7 @@ sap.ui.define([
   }
 
   var oTable = new Table({
-	  title: "Title of the Table",
+	  extension: new Title({text: "Title of the Table", titleStyle: "H3"}),
 	  footer: "Footer of the Table",
 	  rowMode: "Auto",
 	  firstVisibleRow: 1,

@@ -22,6 +22,16 @@
 					enabled="{visualizationModel>/hasDirtyChanges}"/>
 			</items>
 		</SegmentedButton>
+		<List
+			class="sapUiRtaChangesList"
+			items="{visualizationModel>/changeCategories/}">
+			<StandardListItem
+				title="{visualizationModel>title}"
+				counter="{visualizationModel>count}"
+				type="{= ${visualizationModel>count} > 0 ? 'Active' : 'Inactive'}"
+				icon="{visualizationModel>icon}"
+				press=".onChangeCategorySelection"/>
+		</List>
 		<MessageStrip
 			text="{visualizationModel>/popupInfoMessage}"
 			type="Information"
@@ -33,15 +43,5 @@
 					href="https://ui5.sap.com/#/topic/35274280504f42cd87cc4fd3d403ca91.html#loio35274280504f42cd87cc4fd3d403ca91/visualization"/>
 			</link>
 		</MessageStrip>
-		<List
-			class="sapUiRtaChangesList"
-			items="{visualizationModel>/changeCategories/}">
-			<StandardListItem
-				title="{visualizationModel>title}"
-				counter="{visualizationModel>count}"
-				type="{= ${visualizationModel>count} > 0 ? 'Active' : 'Inactive'}"
-				icon="{visualizationModel>icon}"
-				press=".onChangeCategorySelection"/>
-		</List>
 	</Popover>
 </core:FragmentDefinition>

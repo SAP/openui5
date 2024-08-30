@@ -30,36 +30,6 @@ sap.ui.define([
 	const ExtensionHelper = {
 
 		/*
-		 * Returns the pageX and pageY position of the given mouse/touch event.
-		 */
-		_getEventPosition: function(oEvent, oTable) {
-			const oPosition = getTouchObject(oEvent) || oEvent;
-
-			function getTouchObject(oTouchEvent) {
-				if (!oTable._isTouchEvent(oTouchEvent)) {
-					return null;
-				}
-
-				const aTouchEventObjectNames = ["touches", "targetTouches", "changedTouches"];
-
-				for (let i = 0; i < aTouchEventObjectNames.length; i++) {
-					const sTouchEventObjectName = aTouchEventObjectNames[i];
-
-					if (oEvent[sTouchEventObjectName] && oEvent[sTouchEventObjectName][0]) {
-						return oEvent[sTouchEventObjectName][0];
-					}
-					if (oEvent.originalEvent[sTouchEventObjectName] && oEvent.originalEvent[sTouchEventObjectName][0]) {
-						return oEvent.originalEvent[sTouchEventObjectName][0];
-					}
-				}
-
-				return null;
-			}
-
-			return {x: oPosition.pageX, y: oPosition.pageY};
-		},
-
-		/*
 		 * Returns true, when the given click event should be skipped because it happened on a
 		 * interactive control inside a table cell.
 		 */
@@ -122,7 +92,7 @@ sap.ui.define([
 
 			oTable._bIsColumnResizerMoving = true;
 			oTable._bColumnResizerMoved = false;
-			oTable._iColumnResizeStart = ExtensionHelper._getEventPosition(oEvent, oTable).x;
+			oTable._iColumnResizeStart = TableUtils.getEventPosition(oEvent, oTable).x;
 			oTable.$().toggleClass("sapUiTableResizing", true);
 
 			const $Document = jQuery(document);
@@ -142,7 +112,7 @@ sap.ui.define([
 		 * Drops the previous dragged column resize bar and recalculates the new column width.
 		 */
 		exitColumnResizing: function(oEvent) {
-			const iLocationX = ExtensionHelper._getEventPosition(oEvent, this).x;
+			const iLocationX = TableUtils.getEventPosition(oEvent, this).x;
 			const oColumn = this._getVisibleColumns()[this._iLastHoveredVisibleColumnIndex];
 			const $RelevantColumnElement = this.$().find("th[data-sap-ui-colid=\"" + oColumn.getId() + "\"]"); // Consider span and multi-header
 			const iColumnWidth = $RelevantColumnElement[0].offsetWidth; // the width of the column with padding and border
@@ -160,7 +130,7 @@ sap.ui.define([
 		 * Handler for the move events while dragging the column resize bar.
 		 */
 		onMouseMoveWhileColumnResizing: function(oEvent) {
-			const iLocationX = ExtensionHelper._getEventPosition(oEvent, this).x;
+			const iLocationX = TableUtils.getEventPosition(oEvent, this).x;
 			const iRszOffsetLeft = this.$().find(".sapUiTableCnt").offset().left;
 			const iRszLeft = Math.floor(iLocationX - iRszOffsetLeft);
 
@@ -299,7 +269,7 @@ sap.ui.define([
 		 * Reposition the ghost.
 		 */
 		onMouseMoveWhileReordering: function(oEvent) {
-			const oEventPosition = ExtensionHelper._getEventPosition(oEvent, this);
+			const oEventPosition = TableUtils.getEventPosition(oEvent, this);
 			const iLocationX = oEventPosition.x;
 			const iLocationY = oEventPosition.y;
 			const iOldColPos = this._iNewColPos;

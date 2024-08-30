@@ -21,8 +21,9 @@ sap.ui.define([
 	"sap/ui/model/odata/ODataMetaModel",
 	"sap/ui/model/odata/_ODataMetaModelUtils",
 	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/performance/Measurement",
 	"sap/ui/test/TestUtils"
-], function(Log, BindingParser, SyncPromise, InvisibleText, _Helper, BindingMode, ClientContextBinding, Context, FilterProcessor, MetaModel, Model, JSONListBinding, JSONModel, JSONPropertyBinding, JSONTreeBinding, CountMode, ODataMetaModel, Utils, ODataModel, TestUtils) {
+], function(Log, BindingParser, SyncPromise, InvisibleText, _Helper, BindingMode, ClientContextBinding, Context, FilterProcessor, MetaModel, Model, JSONListBinding, JSONModel, JSONPropertyBinding, JSONTreeBinding, CountMode, ODataMetaModel, Utils, ODataModel, Measurement, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0,
 		consistent-this: 0*/

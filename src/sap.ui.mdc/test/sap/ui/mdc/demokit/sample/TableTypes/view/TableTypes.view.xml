@@ -1,0 +1,64 @@
+<mvc:View
+	controllerName="mdc.sample.controller.Controller"
+	height="100%"
+	displayBlock="true"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:core="sap.ui.core"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:mdct="sap.ui.mdc.table">
+
+	<f:DynamicPage id="page">
+		<f:content>
+			<mdc:Table
+				id="table"
+				header="Mountains"
+				p13nMode="Column,Sort,Group,Filter"
+				threshold="25"
+				showRowCount="false"
+				useColumnLabelsAsTooltips="true"
+				delegate="{
+					name: 'mdc/sample/delegate/JSONTableDelegate',
+					payload: {
+						bindingPath: 'mountains>/mountains'
+					}
+				}"
+				selectionMode="Multi">
+				<mdc:actions>
+					<Select id="btnType" change=".onTableTypeChange" selectedKey="GridTableType">
+						<core:Item key="GridTableType" text="GridTableType"></core:Item>
+						<core:Item key="ResponsiveTableType" text="ResponsiveTableType"></core:Item>
+					</Select>
+					<Button id="btnConfig" text="Show TableType Configuration" press="openConfigurationDialog"></Button>
+				</mdc:actions>
+				<mdct:Column
+					propertyKey="name"
+					header="Name">
+					<Text text="{mountains>name}"/>
+				</mdct:Column>
+				<mdct:Column
+					propertyKey="range"
+					header="Range">
+					<Text text="{mountains>range}"/>
+				</mdct:Column>
+				<mdct:Column
+					propertyKey="first_ascent"
+					header="First Ascent">
+					<Text text="{mountains>first_ascent}"/>
+				</mdct:Column>
+				<mdct:Column
+					propertyKey="countries"
+					header="Countries">
+					<Text text="{mountains>countries}"/>
+				</mdct:Column>
+				<mdct:Column
+					propertyKey="parent_mountain"
+					header="Parent Mountain">
+					<Text text="{mountains>parent_mountain}"/>
+				</mdct:Column>
+			</mdc:Table>
+		</f:content>
+	</f:DynamicPage>
+
+</mvc:View>

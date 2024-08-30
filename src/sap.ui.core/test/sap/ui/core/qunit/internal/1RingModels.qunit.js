@@ -189,6 +189,7 @@ sap.ui.require([
 		// "sap/ui/core/qunit/odata/ODataMetadata.qunit",
 		"sap/ui/core/qunit/odata/ODataMetadataNoFakeService.qunit",
 		"sap/ui/core/qunit/odata/ODataMetaModel.qunit",
+		"sap/ui/core/qunit/odata/ODataMetaModelNoFakeService.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataMessagesFakeService
 		// "sap/ui/core/qunit/odata/ODataModel.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataMessagesFakeService

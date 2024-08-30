@@ -556,7 +556,9 @@ sap.ui.define([
 				"/hierarchy/maintenance/$metadata"
 					: {source : "qunit/odata/v2/data/metadata_hierarchy_maintenance.xml"},
 				"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/$metadata"
-					: {source : "qunit/model/FAR_CUSTOMER_LINE_ITEMS.metadata.xml"}
+					: {source : "qunit/model/FAR_CUSTOMER_LINE_ITEMS.metadata.xml"},
+				"/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ZUI5_GWSAMPLE_BASIC.annotations.xml"
+					: {source : "qunit/odata/v2/data/ZUI5_GWSAMPLE_BASIC.annotations.xml"}
 			}, [{
 				regExp : /GET \/sap\/opu\/odata\/sap\/ZUI5_GWSAMPLE_BASIC\/\$metadata.*/,
 				response : [{source : "qunit/odata/v2/data/ZUI5_GWSAMPLE_BASIC.metadata.xml"}]
@@ -24319,5 +24321,104 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return this.waitForChanges(assert);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Annotation changes are applied to root service's metadata and annotation files
+	// JIRA: CPOUI5MODELS-1783
+	QUnit.test("CPOUI5MODELS-1783: setAnnotationChangePromise", async function (assert) {
+		const oModel = createSalesOrdersModel({
+			annotationURI : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/" + "ZUI5_GWSAMPLE_BASIC.annotations.xml"
+		});
+
+		await this.createView(assert, "", oModel);
+
+		const aAnnotationChanges = [{ // override lifted V2 annotation from metadata.xml
+			path : "/dataServices/schema/0/entityType/[${name}==='BusinessPartner']/property"
+				+ "/[${name}==='LegalForm']/com.sap.vocabularies.Common.v1.Label",
+			value : {String: "*My* Legal Form"} // original: "Legal Form"
+		}, { // add a new annotation
+			path : "/dataServices/schema/0/entityType/[${name}==='BusinessPartner']/property"
+				+ "/[${name}==='LegalForm']/com.sap.vocabularies.Common.v1.QuickInfo",
+			value : {String: "Quick Info for Legal Form"} // original: not available
+		}, { // override annotation contained in metadata.xml
+			path : "/dataServices/schema/0/entityType/[${name}==='BusinessPartner']/property"
+				+ "/[${name}==='FaxNumber']/com.sap.vocabularies.Common.v1.Label",
+			value : {String: "*My* Fax Number"} // original: "Fax Number from metadata annotation"
+		}, { // override annotation contained in ZUI5_GWSAMPLE_BASIC.annotations.xml
+			path : "/dataServices/schema/0/entityType/[${name}==='BusinessPartner']/property"
+				+ "/[${name}==='PhoneNumber']/com.sap.vocabularies.Common.v1.Label",
+			value : {String: "*My* Phone Number"} // original: "Phone No. from annotation file"
+		}, { // override text arrangement annotation
+			path : "/dataServices/schema/0/entityType/[${name}==='SalesOrder']/property"
+				+ "/[${name}==='BillingStatus']/com.sap.vocabularies.Common.v1.Text"
+				+ "/com.sap.vocabularies.UI.v1.TextArrangement",
+			value : {EnumMember: "com.sap.vocabularies.UI.v1.TextArrangementType/TextLast"} // original: TextFirst
+		}, { // add new text annotation
+			path : "/dataServices/schema/0/entityType/[${name}==='SalesOrder']/property"
+				+ "/[${name}==='DeliveryStatus']/com.sap.vocabularies.Common.v1.Text",
+			value : {Path: "DeliveryStatusDescription"} // new Text annotation for DeliveryStatus
+		}, { // add new text arrangement annotation
+			path : "/dataServices/schema/0/entityType/[${name}==='SalesOrder']/property"
+				+ "/[${name}==='DeliveryStatus']/com.sap.vocabularies.Common.v1.Text"
+				+ "/com.sap.vocabularies.UI.v1.TextArrangement",
+			value : {EnumMember: "com.sap.vocabularies.UI.v1.TextArrangementType/TextFirst"} // new text arrangement
+		}, { // change the Label of a record within a LineItem annotation
+			path : "/dataServices/schema/0/entityType/[${name}==='SalesOrder']/com.sap.vocabularies.UI.v1.LineItem"
+				+ "/[${Value/Path}==='DeliveryStatus']/Label",
+			value : {String: "Delivery Status (LineItem overwritten)"} // original: "Delivery Status (LineItem)"
+		}, { // add a Label for a record within a LineItem annotation
+			path : "/dataServices/schema/0/entityType/[${name}==='SalesOrder']/com.sap.vocabularies.UI.v1.LineItem"
+				+ "/[${Value/Path}==='BillingStatus']/Label",
+			value : {String: "Billing Status (added to LineItem record)"} // new Label
+		}, { // no error log for invalid paths
+			path : "/dataServices/schema/0/entityType/[${name}==='Foo']/com.sap.vocabularies.UI.v1.LineItem"
+				+ "/[${Value/Path}==='Bar']/Label",
+			value : {String: "Cannot be set"}
+		}];
+		const aOriginalAnnotationChanges = JSON.parse(JSON.stringify(aAnnotationChanges));
+
+		// code under test
+		oModel.setAnnotationChangePromise(Promise.resolve(aAnnotationChanges));
+
+		const oMetaModel = oModel.getMetaModel();
+		await oMetaModel.loaded();
+		assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/entityType/[${name}==='BusinessPartner']"
+				+ "/property/[${name}==='LegalForm']/com.sap.vocabularies.Common.v1.Label/String"),
+			"*My* Legal Form");
+		assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/entityType/[${name}==='BusinessPartner']"
+				+ "/property/[${name}==='LegalForm']/com.sap.vocabularies.Common.v1.QuickInfo/String"),
+			"Quick Info for Legal Form");
+		assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/entityType/[${name}==='BusinessPartner']"
+				+ "/property/[${name}==='FaxNumber']/com.sap.vocabularies.Common.v1.Label/String"),
+			"*My* Fax Number");
+		assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/entityType/[${name}==='BusinessPartner']"
+				+ "/property/[${name}==='PhoneNumber']/com.sap.vocabularies.Common.v1.Label/String"),
+			"*My* Phone Number");
+		assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/entityType/[${name}==='SalesOrder']"
+				+ "/property/[${name}==='BillingStatus']/com.sap.vocabularies.Common.v1.Text"
+				+ "/com.sap.vocabularies.UI.v1.TextArrangement/EnumMember"),
+			"com.sap.vocabularies.UI.v1.TextArrangementType/TextLast");
+		assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/entityType/[${name}==='SalesOrder']"
+				+ "/property/[${name}==='DeliveryStatus']/com.sap.vocabularies.Common.v1.Text/Path"),
+			"DeliveryStatusDescription");
+		assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/entityType/[${name}==='SalesOrder']"
+				+ "/property/[${name}==='DeliveryStatus']/com.sap.vocabularies.Common.v1.Text"
+				+ "/com.sap.vocabularies.UI.v1.TextArrangement/EnumMember"),
+			"com.sap.vocabularies.UI.v1.TextArrangementType/TextFirst");
+		assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/entityType/[${name}==='SalesOrder']"
+				+ "/com.sap.vocabularies.UI.v1.LineItem/[${Value/Path}==='DeliveryStatus']/Label/String"),
+			"Delivery Status (LineItem overwritten)");
+		assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/entityType/[${name}==='SalesOrder']"
+				+ "/com.sap.vocabularies.UI.v1.LineItem/[${Value/Path}==='BillingStatus']/Label/String"),
+			"Billing Status (added to LineItem record)");
+		assert.strictEqual(
+			oMetaModel.getProperty("/dataServices/schema/0/entityType/[${name}==='SalesOrder']"
+				+ "/property/[${name}==='BillingStatus']/com.sap.vocabularies.Common.v1.Text/Path"),
+			"BillingStatusDescription"); // still untouched
+		assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/entityType/[${name}==='Foo']"), undefined);
+		assert.deepEqual(aAnnotationChanges, aOriginalAnnotationChanges, "no changes in input array");
+
+		return this.waitForChanges(assert);
 	});
 });

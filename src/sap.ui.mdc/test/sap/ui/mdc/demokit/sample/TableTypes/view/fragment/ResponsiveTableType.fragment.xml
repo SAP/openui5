@@ -1,0 +1,40 @@
+<core:FragmentDefinition 
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form">
+	<Dialog id="respTableTypeDialog" title="ResponsiveTableType Configuration" class="sapUiSmallMargin">
+		<content>
+		  <form:SimpleForm editable="true" id="configForm">
+				<Label text="detailsButtonSetting" />
+				<MultiComboBox
+					id="detailsButtonSetting"
+					selectedKeys="{view>/respType/detailsButtonSetting}"
+					items="{view>/enums/priority}"
+					selectionFinish="onDetailsButtonChange">
+					<core:Item key="{view>value}" text="{view>value}" />
+				</MultiComboBox>
+
+				<Label text="growingMode (Basic | Scroll | None)" />
+				<Input
+					id="growingMode"
+					showSuggestion="true"
+					value="{view>/respType/growingMode}"
+					suggestionItems="{view>/enums/growingMode}">
+					<core:Item key="{view>value}" text="{view>value}"></core:Item>
+				</Input>
+
+				<Label text="popinLayout (Block | GridSmall | GridLarge)" />
+				<Input
+					id="popinLayout"
+					showSuggestion="true"
+					suggestionItems="{view>/enums/popinLayout}"
+					value="{view>/respType/popinLayout}">
+					<core:Item key="{view>value}" text="{view>value}"></core:Item>
+				</Input>
+		  </form:SimpleForm>
+		</content>
+		<endButton>
+		  <Button id="btnClose" text="Close" press=".closeDialog" />
+		</endButton>
+	  </Dialog>
+</core:FragmentDefinition>

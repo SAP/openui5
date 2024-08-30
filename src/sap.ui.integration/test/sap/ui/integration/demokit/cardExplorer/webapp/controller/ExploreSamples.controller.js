@@ -849,6 +849,7 @@ sap.ui.define([
 		_onCardAction: function (oEvent) {
 			var sType = oEvent.getParameter("type"),
 				mParameters = oEvent.getParameter("parameters"),
+				mFormData = oEvent.getParameter("formData"),
 				sMessage;
 
 			if (this._oCurrSample.interceptActions === false) {
@@ -857,7 +858,9 @@ sap.ui.define([
 
 			sMessage = "Action '" + sType + "'";
 
-			if (mParameters) {
+			if (mFormData) {
+				sMessage += " with form data: \n'" + JSON.stringify(mFormData) + "'";
+			} else if (mParameters) {
 				sMessage += " with parameters: \n'" + JSON.stringify(mParameters) + "'";
 			}
 

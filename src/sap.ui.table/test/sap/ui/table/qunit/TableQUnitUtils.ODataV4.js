@@ -34,17 +34,17 @@ sap.ui.define([
 		return aData;
 	}
 
-	function createResponse(iStartIndex, iLength, iPageSize) {
+	function createResponseMessage(iStartIndex, iLength, iPageSize) {
 		const mResponse = {};
 		const bPageLimitReached = iPageSize != null && iPageSize > 0 && iLength > iPageSize;
 
 		if (bPageLimitReached) {
 			const sSkipTop = "$skip=" + iStartIndex + "&$top=" + iLength;
 			const sSkipToken = "&$skiptoken=" + iPageSize;
-			mResponse.message = {value: createData(iStartIndex, iPageSize)};
-			mResponse.message["@odata.nextLink"] = "http://localhost:8088/MyServiceWithPaging/Products?" + sSkipTop + sSkipToken;
+			mResponse.value = createData(iStartIndex, iPageSize);
+			mResponse["@odata.nextLink"] = "http://localhost:8088/MyServiceWithPaging/Products?" + sSkipTop + sSkipToken;
 		} else {
-			mResponse.message = {value: createData(iStartIndex, iLength)};
+			mResponse.value = createData(iStartIndex, iLength);
 		}
 
 		return mResponse;
@@ -66,27 +66,27 @@ sap.ui.define([
 					const bWithCount = !!aMatches[2];
 					const iSkip = parseInt(aMatches[3]);
 					const iTop = parseInt(aMatches[4]);
-					const mResponse = createResponse(iSkip, iTop, iPageSize);
+					const mResponseMessage = createResponseMessage(iSkip, iTop, iPageSize);
 
 					if (bWithCount) {
-						mResponse.message["@odata.count"] = iCount;
+						mResponseMessage["@odata.count"] = iCount;
 					}
 
-					oResponse.message = JSON.stringify(mResponse.message);
+					oResponse.message = JSON.stringify(mResponseMessage);
 				}
 			}
 		}, {
-			regExp: /^GET \/MyService?\/Products\?(\$count=true&)?\$filter=Name%20eq%20'DoesNotExist'/,
+			regExp: /^GET \/MyService\/Products\?(\$count=true&)?\$filter=Name%20eq%20'DoesNotExist'/,
 			response: {
 				buildResponse: function(aMatches, oResponse) {
 					const bWithCount = !!aMatches[1];
-					const mResponse = createResponse(0, 0);
+					const mResponseMessage = createResponseMessage(0, 0);
 
 					if (bWithCount) {
-						mResponse.message["@odata.count"] = 0;
+						mResponseMessage["@odata.count"] = 0;
 					}
 
-					oResponse.message = JSON.stringify(mResponse.message);
+					oResponse.message = JSON.stringify(mResponseMessage);
 				}
 			}
 		}]);

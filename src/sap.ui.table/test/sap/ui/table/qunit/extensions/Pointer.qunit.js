@@ -1120,43 +1120,4 @@ sap.ui.define([
 		assert.ok(!!oExtension._RowHoverHandler, "_RowHoverHandler: Debug mode");
 		assert.ok(!!oExtension._KNOWNCLICKABLECONTROLS, "_KNOWNCLICKABLECONTROLS: Debug mode");
 	});
-
-	QUnit.test("_getEventPosition()", function(assert) {
-		oTable._getPointerExtension()._debug();
-		const oExtensionHelper = oTable._getPointerExtension()._ExtensionHelper;
-		let oEvent;
-		let oPos;
-		const x = 15;
-		const y = 20;
-		const oCoord = {pageX: x, pageY: y};
-
-		oEvent = jQuery.extend({originalEvent: {}}, oCoord);
-
-		oPos = oExtensionHelper._getEventPosition(oEvent, oTable);
-		assert.equal(oPos.x, x, "MouseEvent - X");
-		assert.equal(oPos.y, y, "MouseEvent - Y");
-
-		oEvent = {
-			targetTouches: [oCoord],
-			originalEvent: {
-				touches: []
-			}
-		};
-
-		oPos = oExtensionHelper._getEventPosition(oEvent, oTable);
-		assert.equal(oPos.x, x, "TouchEvent - X");
-		assert.equal(oPos.y, y, "TouchEvent - Y");
-
-		oEvent = {
-			touches: [oCoord],
-			originalEvent: {
-				touches: [],
-				targetTouches: [oCoord]
-			}
-		};
-
-		oPos = oExtensionHelper._getEventPosition(oEvent, oTable);
-		assert.equal(oPos.x, x, "TouchEvent (wrapped) - X");
-		assert.equal(oPos.y, y, "TouchEvent (wrapped) - Y");
-	});
 });

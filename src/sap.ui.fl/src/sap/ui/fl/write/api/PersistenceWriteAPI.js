@@ -248,14 +248,10 @@ sap.ui.define([
 	 */
 	PersistenceWriteAPI.reset = function(mPropertyBag) {
 		var oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
-		var oFlexController = FlexControllerFactory.createForSelector(oAppComponent);
-		return oFlexController.resetChanges(
-			mPropertyBag.layer,
-			mPropertyBag.generator,
-			oAppComponent,
-			mPropertyBag.selectorIds,
-			mPropertyBag.changeTypes
-		);
+		return FlexObjectManager.resetFlexObjects({
+			..._omit(mPropertyBag, "selector"),
+			appComponent: oAppComponent
+		});
 	};
 
 	/**

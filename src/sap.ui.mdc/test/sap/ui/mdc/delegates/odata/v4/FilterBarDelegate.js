@@ -302,7 +302,9 @@ sap.ui.define([
 					required: aFetchedProperties[nIdx].required,
 					caseSensitive: aFetchedProperties[nIdx].caseSensitive,
 					label: aFetchedProperties[nIdx].label,
-					hiddenFilter: aFetchedProperties[nIdx].hiddenFilter
+					hiddenFilter: aFetchedProperties[nIdx].hiddenFilter,
+					group: aFetchedProperties[nIdx].group,
+					groupLabel: aFetchedProperties[nIdx].groupLabel
 				});
 				oModifier.setProperty(oControl, "propertyInfo", aPropertyInfo);
 			} else {
@@ -524,7 +526,7 @@ sap.ui.define([
 			aPropertyListPromises = [],
 			aNonFilterableProps = [],
 			aRequiredProps = [],
-			aSelectionFields = [],
+			//aSelectionFields = [],
 			mAllowedExpressions = {},
 			mNavigationProperties = {},
 			bIsParameterType = false;
@@ -558,12 +560,12 @@ sap.ui.define([
 			}
 
 			// find selection fields
-			oAnnotation = oMetaModel.getObject(sEntitySetPath + "/" + "@com.sap.vocabularies.UI.v1.SelectionFields");
-			if (oAnnotation) {
-				aSelectionFields = oAnnotation.map(function(oProperty) {
-					return oProperty.$PropertyPath;
-				});
-			}
+//			oAnnotation = oMetaModel.getObject(sEntitySetPath + "/" + "@com.sap.vocabularies.UI.v1.SelectionFields");
+//			if (oAnnotation) {
+//				aSelectionFields = oAnnotation.map(function(oProperty) {
+//					return oProperty.$PropertyPath;
+//				});
+//			}
 
 			var sEntityName = oMetaModel.getObject(sEntitySetPath + "/@sapui.name");
 			var sGroup = sEntityName.replace("Test", "");
@@ -615,7 +617,7 @@ sap.ui.define([
 							oPropertyInfo.groupLabel = sGroupLabel;
 
 							oPropertyInfo.required = aRequiredProps.indexOf(sKey) >= 0;
-							oPropertyInfo.visible = aSelectionFields.indexOf(sKey) >= 0;
+							//oPropertyInfo.visible = aSelectionFields.indexOf(sKey) >= 0;
 							if (mAllowedExpressions[sKey]) {
 								var aOperators =  ODataFilterBarDelegate._getFilterOperators(mAllowedExpressions[sKey]);
 								if (aOperators) {

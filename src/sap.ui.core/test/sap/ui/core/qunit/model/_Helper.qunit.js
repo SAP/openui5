@@ -4,12 +4,13 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/security/encodeURL",
+	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual",
 	"sap/base/util/extend",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/merge",
 	"sap/ui/model/_Helper"
-], function (Log, encodeURL, deepEqual, extend, isPlainObject, merge, _Helper) {
+], function (Log, encodeURL, deepClone, deepEqual, extend, isPlainObject, merge, _Helper) {
 	/*global QUnit */
 	"use strict";
 
@@ -24,6 +25,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("trampoline properties", function (assert) {
+		assert.strictEqual(_Helper.deepClone, deepClone);
 		assert.strictEqual(_Helper.deepEqual, deepEqual);
 		assert.strictEqual(_Helper.encodeURL, encodeURL);
 		assert.strictEqual(_Helper.extend, extend);

@@ -330,12 +330,14 @@ sap.ui.define([
 				oPopover.close();
 			}.bind(this));
 
-			// when color is selected in the ColorPalette, we close the popover and notify the app. developer
+			// when color is selected in the ColorPalette, we close the popover, update the selected color, and notify the app developer
 			oColorPalette.attachEvent("colorSelect", function (oEvent) {
 				this._handleNextOrPreviousUponPaletteClose(oEvent);
 				oPopover.close();
+				const sColor = oEvent.getParameter("value");
+				this.setSelectedColor(sColor);
 				this.fireColorSelect({
-					"value": oEvent.getParameter("value"),
+					"value": sColor,
 					"defaultAction": oEvent.getParameter("defaultAction")
 				});
 			}.bind(this));
