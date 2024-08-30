@@ -75,7 +75,7 @@ sap.ui.define([
 	QUnit.test("Property getters", async function(assert) {
 		const oTable = await TableQUnitUtils.createTable({
 			visibleRowCountMode: "Interactive",
-			visibleRowCount: 5,
+			visibleRowCount: 7,
 			fixedRowCount: 1,
 			fixedBottomRowCount: 2,
 			minAutoRowCount: 3,
@@ -83,7 +83,7 @@ sap.ui.define([
 		});
 		const oMode = this.getDefaultRowMode(oTable);
 
-		assert.strictEqual(oMode.getRowCount(), 5, "The row count is taken from the table");
+		assert.strictEqual(oMode.getRowCount(), 7, "The row count is taken from the table");
 		assert.strictEqual(oMode.getFixedTopRowCount(), 1, "The fixed row count is taken from the table");
 		assert.strictEqual(oMode.getFixedBottomRowCount(), 2, "The fixed bottom row count is taken from the table");
 		assert.strictEqual(oMode.getMinRowCount(), 3, "The minimum row count is taken from the table");
@@ -95,7 +95,7 @@ sap.ui.define([
 		oMode.setMinRowCount(10);
 		oMode.setRowContentHeight(10);
 
-		assert.strictEqual(oMode.getRowCount(), 5,
+		assert.strictEqual(oMode.getRowCount(), 7,
 			"After setting the property on the mode, the row count is still taken from the table");
 		assert.strictEqual(oMode.getFixedTopRowCount(), 1,
 			"After setting the property on the mode, the fixed row count is still taken from the table");
@@ -122,6 +122,19 @@ sap.ui.define([
 			"After setting the property on the table, the new minimum row count is taken from the table");
 		assert.strictEqual(oMode.getRowContentHeight(), 14,
 			"After setting the property on the table, the new row content height is taken from the table");
+
+		oTable.destroy();
+	});
+
+	QUnit.test("Rendering", async function(assert) {
+		const oTable = await TableQUnitUtils.createTable({
+			visibleRowCountMode: "Interactive",
+			visibleRowCount: 7
+		});
+		await oTable.qunit.whenRenderingFinished();
+
+		assert.ok(oTable.getDomRef(), "Table is rendered");
+		assert.equal(oTable.getVisibleRowCount(), 7, "Visible row count is correct");
 
 		oTable.destroy();
 	});

@@ -100,11 +100,6 @@ sap.ui.define([
 	 */
 	const ResizeHelper = {};
 
-	InteractiveRowMode.prototype.init = function() {
-		RowMode.prototype.init.apply(this, arguments);
-		_private(this).rowCount = this.getRowCount();
-	};
-
 	/**
 	 * @inheritDoc
 	 */
@@ -342,7 +337,7 @@ sap.ui.define([
 	 * @private
 	 */
 	InteractiveRowMode.prototype.getActualRowCount = function() {
-		return Math.max(0, this.getMinRowCount(), _private(this).rowCount);
+		return Math.max(0, this.getMinRowCount(), _private(this).rowCount || this.getRowCount());
 	};
 
 	/**
