@@ -472,6 +472,16 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 	flex-grow: 1;
 }
 
+.sapFCard.sapFCardInteractive:hover {
+	box-shadow: @sapUiContentShadow2;
+	cursor: pointer;
+}
+//Todo HC should use the active background:  --sapTile_Hover_Background
+.sapFCard.sapFCardInteractive:active {
+	box-shadow: none;
+	border: 0.0625rem solid; @sapTile_Interactive_BorderColor;
+}
+
 .sapFCard.sapFCardSectionInteractive {
 	&[data-sap-ui-draggable=true] {
 		.sapMText {
@@ -499,6 +509,7 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 	}
 }
 
+.sapFCard.sapFCardFocus:focus::before,
 .sapFCardHeader:not(.sapFCardHeaderToolbarFocused):focus-within::before,
 .sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus > .sapFCard > .sapFCardHeader:not(.sapFCardHeaderToolbarFocused)::before, // focus inside Grid Container
 .sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus > .sapFCard.sapFCardNoHeader::before { // ... focus on a card without header
@@ -512,7 +523,9 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 	border-radius: @_sap_f_Card_HeaderFocusBorderRadius;
 	pointer-events: none;
+	z-index: 1;
 }
+
 
 /* ui5-restricted work zone */
 .sapFCard.sapFCardFocusFullCard,

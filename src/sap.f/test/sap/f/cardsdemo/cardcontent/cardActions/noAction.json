@@ -1,0 +1,43 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "list.card",
+		"type": "card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"data": {
+				"json": {
+					"items": [
+						{"title": "Item 1"},
+						{"title": "Item 2"},
+						{"title": "Item 3"},
+						{"title": "Item 4"}
+					]
+				}
+			},
+			"header": {
+				"title": "No actions on card",
+				"subTitle": "sematicRole - listitem",
+				"titleMaxLines": 1
+			},
+		"content": {
+			"data": {
+				"path": "/items"
+			},
+			"item": {
+				"title": "{title}"
+			},
+			"maxItems": 4
+		}				
+	}
+}
