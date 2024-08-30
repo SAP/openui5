@@ -469,21 +469,35 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * @override
+	 */
 	IconTabBar.prototype.addStyleClass = function (sClass, bSuppressRerendering) {
 		var oIconTabHeader = this._getIconTabHeader();
 
-		if (oIconTabHeader && IconTabBar._CLASSES_TO_COPY.indexOf(sClass) !== -1) {
-			oIconTabHeader.addStyleClass(sClass, true);
+		if (oIconTabHeader) {
+			sClass.split(/\s+/).forEach(function (sSingleClass) {
+				if (IconTabBar._CLASSES_TO_COPY.includes(sSingleClass)) {
+					oIconTabHeader.addStyleClass(sSingleClass, true);
+				}
+			});
 		}
 
 		return Control.prototype.addStyleClass.apply(this, arguments);
 	};
 
+	/**
+	 * @override
+	 */
 	IconTabBar.prototype.removeStyleClass = function (sClass, bSuppressRerendering) {
 		var oIconTabHeader = this._getIconTabHeader();
 
-		if (oIconTabHeader && IconTabBar._CLASSES_TO_COPY.indexOf(sClass) !== -1) {
-			oIconTabHeader.removeStyleClass(sClass, true);
+		if (oIconTabHeader) {
+			sClass.split(/\s+/).forEach(function (sSingleClass) {
+				if (IconTabBar._CLASSES_TO_COPY.includes(sSingleClass)) {
+					oIconTabHeader.removeStyleClass(sSingleClass, true);
+				}
+			});
 		}
 
 		return Control.prototype.removeStyleClass.apply(this, arguments);
