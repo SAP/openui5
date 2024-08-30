@@ -614,4 +614,24 @@ sap.ui.define([
 		assert.notOk(oColumnPressSpy.calledWithExactly("columnPress"), "The columnPress event is not fired");
 		assert.ok(oFakeEvent.isDefaultPrevented(), "Default action is prevented for event");
 	});
+
+	QUnit.module("FieldHelp support", {
+		beforeEach: function() {
+			this.oColumn = new Column();
+		},
+		afterEach: function() {
+			this.oColumn.destroy();
+		}
+	});
+
+	QUnit.test("#getFieldHelpInfo", function(assert) {
+		assert.deepEqual(this.oColumn.getFieldHelpInfo(), {label: ""}, "Column without label");
+
+		this.oColumn.setHeader(new Page()); // has no text property
+		assert.deepEqual(this.oColumn.getFieldHelpInfo(), {label: ""}, "Column with label that has no #getText method");
+		this.oColumn.destroyHeader();
+
+		this.oColumn.setHeader(new Label({text: "Test"}));
+		assert.deepEqual(this.oColumn.getFieldHelpInfo(), {label: "Test"}, "Column with label");
+	});
 });
