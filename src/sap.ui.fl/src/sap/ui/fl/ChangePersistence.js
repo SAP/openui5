@@ -132,23 +132,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds a new change into dependency map positioned right after the referenced change and updates the change dependencies
-	 *
-	 * @param {sap.ui.core.Component} oAppComponent - Application component for the view
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} [oReferenceChange] - Reference change. New change is positioned right after this one in the dependency map
-	 */
-	ChangePersistence.prototype.addChangeAndUpdateDependencies = function(oAppComponent, oChange, oReferenceChange) {
-		// the change status should always be initial when it gets added to the map / dependencies
-		// if the component gets recreated the status of the change might not be initial
-		oChange.setInitialApplyState();
-		if (oReferenceChange) {
-			DependencyHandler.insertChange(oChange, this.getDependencyMapForComponent(), oReferenceChange);
-		}
-		DependencyHandler.addChangeAndUpdateDependencies(oChange, oAppComponent, this.getDependencyMapForComponent());
-	};
-
-	/**
 	 * Getter for the private aggregation containing sap.ui.fl.apply._internal.flexObjects.FlexObject objects mapped by their selector ids.
 	 * @return {Object<string,object>} mChanges mapping with changes sorted by their selector ids
 	 * @public

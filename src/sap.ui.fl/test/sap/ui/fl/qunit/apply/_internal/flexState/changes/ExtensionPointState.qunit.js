@@ -5,24 +5,25 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
+	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/changes/ExtensionPointState",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
-	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Log,
 	Panel,
 	ChangesUtils,
 	UIChange,
+	DependencyHandler,
 	ExtensionPointState,
-	FlexState,
 	FlexObjectState,
-	ChangePersistenceFactory,
+	FlexState,
 	sinon
 ) {
 	"use strict";
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
+	const sReference = "myReference";
 
 	function createExtensionPoint(oView, sExtensionPointName, oParent, sAggregationName, iIndex) {
 		return {
@@ -35,13 +36,11 @@ sap.ui.define([
 	}
 
 	function setupTest(aChanges, bChangeMapCreated, fnAddChangeAndUpdateDependencies) {
-		var oChangePersistence = {
-			addChangeAndUpdateDependencies: fnAddChangeAndUpdateDependencies || function() {}
-		};
-		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").returns(oChangePersistence);
+		sandbox.stub(DependencyHandler, "addChangeAndUpdateDependencies").callsFake(fnAddChangeAndUpdateDependencies || function() {});
+		sandbox.stub(DependencyHandler, "insertChange");
+		sandbox.stub(FlexObjectState, "getLiveDependencyMap");
 		sandbox.stub(FlexObjectState, "getAllApplicableUIChanges").returns(aChanges);
 		sandbox.stub(FlexState, "isInitialized").returns(bChangeMapCreated);
-		return oChangePersistence;
 	}
 
 	function createChangeList(iChangesCount, bInInitialState, sExtensionPointName) {
@@ -61,7 +60,8 @@ sap.ui.define([
 			this.oPanel = new Panel("PanelId");
 			this.mExtensionPointInfo = createExtensionPoint({id: "ViewId"}, "ExtensionPointName", this.oPanel, "content", 0);
 			this.mPropertyBag = {
-				targetControl: this.oPanel
+				targetControl: this.oPanel,
+				reference: sReference
 			};
 			sandbox.stub(ChangesUtils, "isChangeInView").returns(true);
 		},
@@ -148,8 +148,8 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("without valid extension point name", function(assert) {
 			var oErrorLogSpy = sandbox.spy(Log, "error");
-			var oChangePersistence = setupTest([]); // no changes exists
-			const aChanges = ExtensionPointState.getChangesForExtensionPoint(oChangePersistence, {});
+			setupTest([]); // no changes exists
+			const aChanges = ExtensionPointState.getChangesForExtensionPoint(sReference, {});
 			assert.strictEqual(oErrorLogSpy.firstCall.args[0], "Missing name from extension point info!",
 				"then an error message is thrown");
 			assert.strictEqual(aChanges.length, 0, "then no changes are returned");
@@ -157,24 +157,24 @@ sap.ui.define([
 
 		QUnit.test("without ui changes exists", function(assert) {
 			var oErrorLogSpy = sandbox.spy(Log, "error");
-			var oChangePersistence = setupTest([]); // no changes exists
-			const aChanges = ExtensionPointState.getChangesForExtensionPoint(oChangePersistence, this.mPropertyBag);
+			setupTest([]); // no changes exists
+			const aChanges = ExtensionPointState.getChangesForExtensionPoint(sReference, this.mPropertyBag);
 			assert.strictEqual(oErrorLogSpy.callCount, 0, "then an error message is thrown");
 			assert.strictEqual(aChanges.length, 0, "then no changes are returned");
 		});
 
 		QUnit.test("with ui changes but without extension point reference exists", function(assert) {
 			var aInitialChanges = createChangeList(3); // without extension point name set
-			var oChangePersistence = setupTest(aInitialChanges);
-			const aChanges = ExtensionPointState.getChangesForExtensionPoint(oChangePersistence, this.mPropertyBag);
+			setupTest(aInitialChanges);
+			const aChanges = ExtensionPointState.getChangesForExtensionPoint(sReference, this.mPropertyBag);
 			assert.strictEqual(aChanges.length, 0, "then no changes are returned");
 		});
 
 		QUnit.test("with extension point changes exists", function(assert) {
 			var oViewFilterStub = sandbox.stub(ChangesUtils, "isChangeInView").returns(true);
 			var aInitialChanges = createChangeList(3, true/* is in initial state */, this.mExtensionPointInfo.name);
-			var oChangePersistence = setupTest(aInitialChanges);
-			const aChanges = ExtensionPointState.getChangesForExtensionPoint(oChangePersistence, this.mPropertyBag);
+			setupTest(aInitialChanges);
+			const aChanges = ExtensionPointState.getChangesForExtensionPoint(sReference, this.mPropertyBag);
 			assert.strictEqual(aChanges.length, 3, "then no changes are returned");
 			assert.ok(aChanges.every(function(oChange) {
 				return oChange.getSelector().name === this.mExtensionPointInfo.name;
