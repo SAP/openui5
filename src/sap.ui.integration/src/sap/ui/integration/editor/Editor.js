@@ -1600,49 +1600,64 @@ sap.ui.define([
 			delete mResult.texts;
 		} else if (oSettings.texts) {
 			mResult.texts = deepClone(oSettings.texts, 500) || {};
-			// Clean the translations of object or object list field :
-			// - remove the translations if the object is not exist in value
-			for (var language in mResult.texts){
-				for (var key in mResult.texts[language]) {
-					if (typeof mResult.texts[language][key] === "object") {
-						var vValue = mResult[key];
-						if (!vValue || typeof vValue !== "object" || deepEqual(vValue, {}) || deepEqual(vValue, [])) {
-							delete mResult.texts[language][key];
-						} else if (Array.isArray(vValue)) {
-							// get all the uuids in value list of object list field
-							var aUUIDs = vValue.map(function (oObject) {
-								return oObject._dt ? oObject._dt._uuid || "" : "";
-							});
-							// delete translation texts if uuid not included in value list
-							for (var uuid in mResult.texts[language][key]) {
-								if (!aUUIDs.includes(uuid)) {
-									delete mResult.texts[language][key][uuid];
-								}
-							}
-						} else {
-							// get the uuid in the object value of object field
-							var sUUID = vValue._dt ? vValue._dt._uuid || "" : "";
-							if (sUUID !== "") {
-								// only save the translation texts of current uuid
-								var oTranslation = mResult.texts[language][key][sUUID];
-								if (!oTranslation) {
-									delete mResult.texts[language][key];
-								} else {
-									mResult.texts[language][key] = {};
-									mResult.texts[language][key][sUUID] = oTranslation;
-								}
-							} else {
+			// get the before layer translation texts
+			var beforeLayerTexts = merge({}, this._beforeLayerManifestChanges.texts);
+			if (deepEqual(beforeLayerTexts, mResult.texts)) {
+				// if no change, DO NOT return the transtalion texts
+				delete mResult.texts;
+			} else {
+				// Clean the translations of object or object list field :
+				// - remove the translations if the object is not exist in value
+				for (var language in mResult.texts){
+					if (deepEqual(beforeLayerTexts[language], mResult.texts[language])) {
+						// if no change, DO NOT return the transtalion texts of current language
+						delete mResult.texts[language];
+					} else {
+						for (var key in mResult.texts[language]) {
+							if (beforeLayerTexts[language] && deepEqual(beforeLayerTexts[language][key], mResult.texts[language][key])) {
+								// if no change, DO NOT return the transtalion texts of the manifest path of current language
 								delete mResult.texts[language][key];
+							} else if (typeof mResult.texts[language][key] === "object") {
+								var vValue = mResult[key];
+								if (!vValue || typeof vValue !== "object" || deepEqual(vValue, {}) || deepEqual(vValue, [])) {
+									delete mResult.texts[language][key];
+								} else if (Array.isArray(vValue)) {
+									// get all the uuids in value list of object list field
+									var aUUIDs = vValue.map(function (oObject) {
+										return oObject._dt ? oObject._dt._uuid || "" : "";
+									});
+									// delete translation texts if uuid not included in value list
+									for (var uuid in mResult.texts[language][key]) {
+										if (!aUUIDs.includes(uuid)) {
+											delete mResult.texts[language][key][uuid];
+										}
+									}
+								} else {
+									// get the uuid in the object value of object field
+									var sUUID = vValue._dt ? vValue._dt._uuid || "" : "";
+									if (sUUID !== "") {
+										// only save the translation texts of current uuid
+										var oTranslation = mResult.texts[language][key][sUUID];
+										if (!oTranslation) {
+											delete mResult.texts[language][key];
+										} else {
+											mResult.texts[language][key] = {};
+											mResult.texts[language][key][sUUID] = oTranslation;
+										}
+									} else {
+										delete mResult.texts[language][key];
+									}
+								}
 							}
+						}
+						if (deepEqual(mResult.texts[language], {})) {
+							delete mResult.texts[language];
 						}
 					}
 				}
-				if (deepEqual(mResult.texts[language], {})) {
-					delete mResult.texts[language];
+				if (deepEqual(mResult.texts, {})) {
+					delete mResult.texts;
 				}
-			}
-			if (deepEqual(mResult.texts, {})) {
-				delete mResult.texts;
 			}
 		}
 		mResult[":layer"] = Merger.layers[this.getMode()];
