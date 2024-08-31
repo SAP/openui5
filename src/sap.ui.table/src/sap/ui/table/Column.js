@@ -959,6 +959,11 @@ sap.ui.define([
 
 			if (oTemplate) {
 				oClone = oTemplate.clone();
+
+				if (!oClone.getFieldHelpDisplay()) {
+					oClone.setFieldHelpDisplay(this);
+				}
+
 				this._mTemplateClones[sTemplateType].push(oClone);
 			}
 		}
@@ -1149,6 +1154,12 @@ sap.ui.define([
 		}
 
 		TableUtils.Column.autoResizeColumn(this);
+	};
+
+	Column.prototype.getFieldHelpInfo = function() {
+		return {
+			label: TableUtils.Column.getHeaderText(this)
+		};
 	};
 
 	return Column;

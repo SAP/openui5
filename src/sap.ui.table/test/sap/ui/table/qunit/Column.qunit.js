@@ -1356,4 +1356,47 @@ sap.ui.define([
 		oColumn1.setFilterValue("1");
 		assert.equal(oColumn1._getFilterState(), "None", "FilterState None");
 	});
+
+	QUnit.module("FieldHelp support", {
+		beforeEach: function() {
+			this.oColumn = new Column();
+		},
+		afterEach: function() {
+			this.oColumn.destroy();
+		}
+	});
+
+	QUnit.test("#getFieldHelpInfo", function(assert) {
+		assert.deepEqual(this.oColumn.getFieldHelpInfo(), {label: ""}, "Column without label");
+
+		this.oColumn.setLabel(new TableQUnitUtils.HeightTestControl()); // has no text property
+		assert.deepEqual(this.oColumn.getFieldHelpInfo(), {label: ""}, "Column with label that has no #getText method");
+		this.oColumn.destroyLabel();
+
+		this.oColumn.setLabel(new TableQUnitUtils.TestControl({text: "Test"}));
+		assert.deepEqual(this.oColumn.getFieldHelpInfo(), {label: "Test"}, "Column with label");
+
+		this.oColumn.addMultiLabel(new TableQUnitUtils.TestControl({text: "Test1"}));
+		this.oColumn.addMultiLabel(new TableQUnitUtils.TestControl({text: "Test2"}));
+		this.oColumn.setHeaderSpan([1, 1]);
+		assert.deepEqual(this.oColumn.getFieldHelpInfo(), {label: "Test2"}, "Column with multi labels");
+
+		this.oColumn.setName("Name");
+		assert.deepEqual(this.oColumn.getFieldHelpInfo(), {label: "Name"}, "Column with name");
+	});
+
+	QUnit.test("fieldHelpDisplay association of template clone", function(assert) {
+		let oClone;
+
+		this.oColumn.setTemplate(new TableQUnitUtils.TestControl());
+
+		oClone = this.oColumn.getTemplateClone(0);
+		assert.equal(oClone.getFieldHelpDisplay(), this.oColumn.getId(), "Set to the column if not defined");
+		oClone.destroy();
+
+		this.oColumn.getTemplate().setFieldHelpDisplay("X");
+		oClone = this.oColumn.getTemplateClone(0);
+		assert.equal(oClone.getFieldHelpDisplay(), "X", "Not changed if defined");
+		oClone.destroy();
+	});
 });

@@ -603,6 +603,12 @@ sap.ui.define([
 		}
 	};
 
+	Column.prototype.getFieldHelpInfo = function() {
+		return {
+			label: this.getHeader()?.getText?.() || ""
+		};
+	};
+
 	return Column;
 
 });

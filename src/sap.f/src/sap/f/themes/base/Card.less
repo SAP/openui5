@@ -201,6 +201,8 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 	}
 
 	&.sapFCardHeaderHasToolbar {
+		min-height: 2rem;
+
 		.sapFCardHeaderText {
 			margin-inline-end: 2rem;
 			width: unset;
@@ -539,7 +541,6 @@ ui-integration-card.sapFCardFocusFullCard > [data-sap-ui-area] > .sapFCard {
 
 .sapUiSizeCompact {
 	.sapFCard .sapFCardContent {
-
 		.sapMLIB.sapMSLINoDescIcon {
 			padding: 0 1rem 0 0;
 
@@ -552,6 +553,10 @@ ui-integration-card.sapFCardFocusFullCard > [data-sap-ui-area] > .sapFCard {
 		.sapMListTbl {
 			padding-bottom: 0.5rem;
 		}
+	}
+
+	.sapFCard .sapFCardHeaderHasToolbar {
+		min-height: 1rem;
 	}
 }
 

@@ -318,7 +318,7 @@ sap.ui.define([
 				oRm.close("div");
 			}
 		},
-		getText: function() { // Used by tests in MDC and FE.
+		getText: function() { // Used by inner table for the fieldHelpInfo, and by tests in MDC and FE.
 			return this.getLabel().getText();
 		},
 		clone: function() { // For ResponsiveTable popin.

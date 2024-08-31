@@ -145,7 +145,7 @@ sap.ui.define([
 		assert.deepEqual(oFormat.parse("XXX"), [undefined, "XXX"], "XXX");
 
 		// null values
-		assert.strictEqual(oFormat.parse(""), null, "");
+		assert.deepEqual(oFormat.parse(""), [undefined, NaN], "");
 		assert.strictEqual(oFormat.parse("x"), null, "x");
 		assert.strictEqual(oFormat.parse("kg"), null, "kg");
 		assert.strictEqual(oFormat.parse("1"), null, "1");

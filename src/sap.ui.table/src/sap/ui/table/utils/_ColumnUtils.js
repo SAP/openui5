@@ -861,32 +861,7 @@ sap.ui.define([
 		 * @returns {string} Returns the column header text
 		 */
 		getHeaderText: function(oColumn) {
-			if (!oColumn) {
-				return null;
-			}
-
-			function getLabelText(oLabel) {
-				return oLabel && oLabel.getText && oLabel.getText() || "";
-			}
-
-			let sText = oColumn.getName();
-
-			if (!sText) {
-				const aMultiLabels = oColumn.getMultiLabels();
-				for (let i = aMultiLabels.length - 1; i >= 0; i--) {
-					const sLabelText = getLabelText(aMultiLabels[i]);
-					if (ColumnUtils.getHeaderSpan(oColumn, i) === 1 && sLabelText) {
-						sText = sLabelText;
-						break;
-					}
-				}
-			}
-
-			if (!sText) {
-				sText = getLabelText(oColumn.getLabel());
-			}
-
-			return sText;
+			return oColumn.getName() || ColumnUtils.getHeaderLabel(oColumn)?.getText?.() || "";
 		},
 
 		/**
@@ -897,13 +872,9 @@ sap.ui.define([
 		 * </ul>
 		 *
 		 * @param {sap.ui.table.Column} oColumn Instance of the column
-		 * @returns {sap.ui.core.Control} Returns the column header label
+		 * @returns {sap.ui.core.Control | null} Returns the column header label, or <code>null</code> if no label is found
 		 */
 		getHeaderLabel: function(oColumn) {
-			if (!oColumn) {
-				return null;
-			}
-
 			let oLabel;
 			const aMultiLabels = oColumn.getMultiLabels();
 

@@ -481,4 +481,59 @@ sap.ui.define([
 
 		table.destroy();
 	});
+
+	QUnit.module("FieldHelp support", {
+		beforeEach: async function() {
+			this.oTable = new Table({
+				columns: [
+					new Column({
+						header: new Text({text: "Col1"}),
+						demandPopin: true
+					}),
+					new Column({
+						header: new Text({text: "Col2"}),
+						demandPopin: true
+					}),
+					new Column({
+						header: new Text({text: "Col3"})
+					})
+				],
+				items: new ColumnListItem({
+					cells: [
+						new Text({text: "Cell1"}),
+						new Text({text: "Cell2", fieldHelpDisplay: "X"}),
+						new Text({text: "Cell3"})
+					]
+				})
+			});
+
+			this.oTable.placeAt("qunit-fixture");
+			await nextUIUpdate();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("fieldHelpDisplay association of cell", async function(assert) {
+		const [oFirstColumn, oSecondColumn] = this.oTable.getColumns();
+		const aCells = this.oTable.getItems()[0].getCells();
+
+		assert.equal(aCells[0].getFieldHelpDisplay(), oFirstColumn.getId(), "Cell in first column");
+		assert.equal(aCells[1].getFieldHelpDisplay(), "X", "Cell in second column");
+
+		oFirstColumn.setMinScreenWidth("48000px");
+		oSecondColumn.setMinScreenWidth("48000px");
+		await nextUIUpdate();
+
+		assert.equal(aCells[0].getFieldHelpDisplay(), null, "Cell in first column (in popin)");
+		assert.equal(aCells[1].getFieldHelpDisplay(), "X", "Cell in second column (in popin)");
+
+		oFirstColumn.setMinScreenWidth();
+		oSecondColumn.setMinScreenWidth();
+		await nextUIUpdate();
+
+		assert.equal(aCells[0].getFieldHelpDisplay(), oFirstColumn.getId(), "Cell in first column");
+		assert.equal(aCells[1].getFieldHelpDisplay(), "X", "Cell in second column");
+	});
 });

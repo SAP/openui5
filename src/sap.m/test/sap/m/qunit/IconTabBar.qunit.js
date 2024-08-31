@@ -4242,16 +4242,17 @@ sap.ui.define([
 		var oIconTabBar = createIconTabBar();
 
 		// Act
-		oIconTabBar.addStyleClass("sapUiResponsiveContentPadding");
-		oIconTabBar.addStyleClass("sapUiNoContentPadding");
-		oIconTabBar.addStyleClass("sapUiContentPadding");
+		oIconTabBar.addStyleClass("sapUiResponsiveContentPadding someOtherClass");
+		oIconTabBar.addStyleClass("sapUiNoContentPadding sapUiContentPaddingCustom sapUiContentPadding");
 		oIconTabBar.addStyleClass("someClass");
 
 		var oIconTabHeader = oIconTabBar._getStickyContent();
 
 		// Assert
 		assert.ok(oIconTabHeader.hasStyleClass("sapUiResponsiveContentPadding"), "Should have copied .sapUiResponsiveContentPadding to the header.");
+		assert.notOk(oIconTabHeader.hasStyleClass("someOtherClass"), "Should have NOT copied .someOtherClass to the header.");
 		assert.ok(oIconTabHeader.hasStyleClass("sapUiNoContentPadding"), "Should have copied .sapUiNoContentPadding to the header.");
+		assert.notOk(oIconTabHeader.hasStyleClass("sapUiContentPaddingCustom"), "Should have NOT copied .sapUiContentPaddingCustom to the header.");
 		assert.ok(oIconTabHeader.hasStyleClass("sapUiContentPadding"), "Should have copied .sapUiContentPadding to the header.");
 		assert.notOk(oIconTabHeader.hasStyleClass("someClass"), "Should have NOT copied .someClass to the header.");
 
