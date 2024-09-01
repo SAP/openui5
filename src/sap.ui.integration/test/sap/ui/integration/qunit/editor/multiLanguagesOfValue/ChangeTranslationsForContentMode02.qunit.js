@@ -757,7 +757,7 @@ sap.ui.define([
 									oSaveButton1.firePress();
 									EditorQunitUtils.wait().then(function () {
 										var oCurrentSettings = that.oEditor.getCurrentSettings();
-										var oTextsValue = Object.assign({}, _oAdminChanges.texts, _oContentChanges.texts);
+										var oTextsValue = Object.assign({}, _oContentChanges.texts);
 										oTextsValue[sLanguageKey6] = {
 											"/sap.card/configuration/parameters/stringParameter/value": sNewValue
 										};
@@ -897,7 +897,7 @@ sap.ui.define([
 									oSaveButton1.firePress();
 									EditorQunitUtils.wait().then(function () {
 										var oCurrentSettings = that.oEditor.getCurrentSettings();
-										var oTextsValue = Object.assign({}, _oAdminChanges.texts, _oContentChanges.texts);
+										var oTextsValue = Object.assign({}, _oContentChanges.texts);
 										oTextsValue[sLanguageKey6] = {
 											"/sap.card/configuration/parameters/stringParameter/value": sNewValue
 										};
