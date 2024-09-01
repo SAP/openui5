@@ -46,7 +46,7 @@
 					"value": false
 				},
 				"cardTitle": {
-					"value": "Card Title Default"
+					"value": "{{TRANSLATED_CARD_TITLE}}"
 				},
 				"string": {
 					"value": "StringValue"
