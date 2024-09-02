@@ -556,6 +556,13 @@ sap.ui.define([
 					isLegacyVariant: false,
 					parentVersion: sParentVersion
 				}).then(function(oResponse) {
+					// Write route returns new information, e.g. user name
+					// -> update storage response with backend changes
+					oResponse?.response?.forEach(function(oChangeDefinition) {
+						aNewChanges.find(function(oChange) {
+							return oChange.getId() === oChangeDefinition.fileName;
+						}).update(oChangeDefinition);
+					});
 					updateCacheAndDeleteUnsavedChanges.call(this, aAllChanges, aNewChanges, bSkipUpdateCache);
 					return oResponse;
 				}.bind(this));
