@@ -3473,8 +3473,11 @@ sap.ui.define([
 
 		const $noData = sut.$("nodata");
 		const $noDataText = sut.$("nodata-text");
+		const $noDataCell = sut.$().find(".sapMListTblCellNoData");
+
 		assert.ok(sut.getNoData().isA("sap.m.IllustratedMessage"), "noData aggregation is of type sap.m.IllustratedMessage");
 		assert.strictEqual($noDataText.children().get(0), Element.getElementById("noDataIllustratedMessage").getDomRef(), "Table's nodata-text contains figure's DOM element");
+		assert.notOk($noDataCell.hasClass("sapMListTblCellNoIllustratedMessage"), "sapMListTblCellNoData doesn't contain sapMListTblCellNoIllustratedMessage");
 
 		$noData.trigger("focus");
 		const sLabelledBy = $noData.attr("aria-labelledby");
@@ -3491,9 +3494,11 @@ sap.ui.define([
 
 		const sTitle = oBundle.getText("TABLE_NO_COLUMNS_TITLE");
 		const sDescription = oBundle.getText("TABLE_NO_COLUMNS_DESCRIPTION");
+		const $noDataCell = sut.$().find(".sapMListTblCellNoData");
 
 		const oNoColumnsMessage = sut.getAggregation("_noColumnsMessage");
 		assert.ok(oNoColumnsMessage, "_noColumnsMessage aggregation filled");
+		assert.notOk($noDataCell.hasClass("sapMListTblCellNoIllustratedMessage"), "sapMListTblCellNoData doesn't contain sapMListTblCellNoIllustratedMessage");
 		assert.equal(oNoColumnsMessage.getTitle(), sTitle, "Correct title for illustrated message");
 		assert.equal(oNoColumnsMessage.getDescription(), sDescription, "Correct description for illustrated message");
 
@@ -3501,6 +3506,7 @@ sap.ui.define([
 		const $noDataText = sut.$("nodata-text");
 		assert.ok(sut.getNoData().isA("sap.m.IllustratedMessage"), "noData aggregation is of type sap.m.IllustratedMessage");
 		assert.strictEqual($noDataText.children().get(0), oNoColumnsMessage.getDomRef(), "Table's nodata-text contains figure's DOM element");
+		assert.notOk($noDataCell.hasClass("sapMListTblCellNoIllustratedMessage"), "sapMListTblCellNoData doesn't contain sapMListTblCellNoIllustratedMessage");
 
 		$noData.trigger("focus");
 		const sLabelledBy = $noData.attr("aria-labelledby");
@@ -3509,6 +3515,7 @@ sap.ui.define([
 		sut.setNoData(new Button({text: "Test Button"}));
 		await nextUIUpdate();
 		assert.ok(sut.getNoData().isA("sap.m.Button"), "noData aggregation is of type sap.m.Button");
+		assert.ok($noDataCell.hasClass("sapMListTblCellNoIllustratedMessage"), "sapMListTblCellNoData contains sapMListTblCellNoIllustratedMessage");
 		assert.strictEqual($noDataText.text(), oBundle.getText("TABLE_NO_COLUMNS"), "Table's nodata-text contains the text for no columns");
 
 		sut.destroy();
@@ -3527,7 +3534,9 @@ sap.ui.define([
 
 		const $noData = sut.$().find("#" + sut.getId() + "-nodata");
 		const $noDataText = sut.$().find("#" + sut.getId() + "-nodata-text");
+		const $noDataCell = sut.$().find(".sapMListTblCellNoData");
 		assert.strictEqual($noDataText.text(), "No data", "Table's standard nodata-text contains correct string");
+		assert.ok($noDataCell.hasClass("sapMListTblCellNoIllustratedMessage"), "sapMListTblCellNoData contains sapMListTblCellNoIllustratedMessage");
 
 		assert.ok($noData.find(".sapMListTblHighlightCell")[0], "Highlight cell is rendered for no-data row");
 		assert.ok($noData.find(".sapMListTblNavigatedCell")[0], "Navigated cell is rendered for no-data row");
@@ -3541,6 +3550,7 @@ sap.ui.define([
 
 		assert.strictEqual(typeof sut.getNoData(), "string", "noData aggregation is of type string");
 		assert.strictEqual($noDataText.text(), sNoData, "Table's nodata-text contains correct string");
+		assert.ok($noDataCell.hasClass("sapMListTblCellNoIllustratedMessage"), "sapMListTblCellNoData contains sapMListTblCellNoIllustratedMessage");
 
 		$noData.trigger("focus");
 		sLabelledBy = $noData.attr("aria-labelledby");
@@ -3557,10 +3567,12 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		const $noData = sut.$().find("#" + sut.getId() + "-nodata");
+		const $noDataCell = sut.$().find(".sapMListTblCellNoData");
 		$noData.trigger("focus");
 
 		assert.notOk($noData.find(".sapMListTblHighlightCell")[0], "Highlight cell is NOT rendered for no-data row since there is no column");
 		assert.notOk($noData.find(".sapMListTblNavigatedCell")[0], "Navigated cell is NOT rendered for no-data row since there is no column");
+		assert.ok($noDataCell.hasClass("sapMListTblCellNoIllustratedMessage"), "sapMListTblCellNoData contains sapMListTblCellNoIllustratedMessage");
 
 		let $noDataText = sut.$().find("#" + sut.getId() + "-nodata-text");
 		assert.strictEqual($noDataText.attr("colspan"), "2", "nodata cell covers 2 header cells(Higlight and Navigated) rendered");
@@ -3574,6 +3586,7 @@ sap.ui.define([
 		$noDataText = sut.$().find("#" + sut.getId() + "-nodata-text");
 		assert.strictEqual($noDataText.text(), oBundle.getText("TABLE_NO_COLUMNS"), "Table's no columns nodata-text contains correct string");
 		assert.strictEqual(oInvisibleMessage.getText(), oBundle.getText("TABLE_NO_COLUMNS"), "Invisible Message is set correct.");
+		assert.ok($noDataCell.hasClass("sapMListTblCellNoIllustratedMessage"), "sapMListTblCellNoData contains sapMListTblCellNoIllustratedMessage");
 
 		sut.setNoData(new IllustratedMessage());
 		await timeout();
@@ -3585,6 +3598,7 @@ sap.ui.define([
 		const oNoColumnsMessage = sut.getAggregation("_noColumnsMessage");
 		assert.strictEqual($noDataText.children().get(0), oNoColumnsMessage.getDomRef(), "Table's nodata-text contains figure's DOM element");
 		assert.strictEqual(oInvisibleMessage.getText(), oBundle.getText("TABLE_NO_COLUMNS"), "Invisible Message is set correct.");
+		assert.ok($noDataCell.hasClass("sapMListTblCellNoIllustratedMessage"), "sapMListTblCellNoData contains sapMListTblCellNoIllustratedMessage");
 
 		sut.destroy();
 	});
@@ -3604,9 +3618,11 @@ sap.ui.define([
 
 		const $noData = sut.$().find("#" + sut.getId() + "-nodata");
 		const $noDataText = sut.$().find("#" + sut.getId() + "-nodata-text");
+		const $noDataCell = sut.$().find(".sapMListTblCellNoData");
 		assert.ok(sut.getNoData().isA("sap.m.Button"), "Table's no data aggregation is a button");
 		assert.equal(sut.getNoData().getText(), oControl.getText(), "Table's no data aggregation has correct button text");
 		assert.strictEqual($noDataText.children().get(0), oControl.getDomRef(), "Table's nodata-text contains button's DOM element");
+		assert.ok($noDataCell.hasClass("sapMListTblCellNoIllustratedMessage"), "sapMListTblCellNoData contains sapMListTblCellNoIllustratedMessage");
 
 		$noData.trigger("focus");
 		let sLabelledBy = $noData.attr("aria-labelledby");
