@@ -406,6 +406,12 @@
 	margin-left: 0.03rem;
 }
 
+html[data-sap-ui-browser*='ff'] {
+	.sapUiTableCell .sapMObjStatus:not(.sapMObjStatusInverted) .sapMObjStatusIcon > .sapUiIcon {
+		padding-bottom: 0.025rem
+	}
+}
+
 .sapUiTableCell .sapMObjStatusInverted {
 	display: inline-flex;
 }
