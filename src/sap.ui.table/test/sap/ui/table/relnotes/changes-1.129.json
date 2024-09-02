@@ -1,0 +1,12 @@
+{
+  "1.129.0": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "e733eb25646b38c7c1e2c871e12c0b2e6da93882",
+        "type": "FEATURE",
+        "text": " Table: Cleanup Interactive Row Count Mode"
+      }
+    ]
+  }
+}

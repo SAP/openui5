@@ -1,0 +1,17 @@
+{
+  "1.129.0": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "73f5aad572036a9de3c92170a7eea06ac6c4f958",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: adjust tab order in large HSL mode"
+      },
+      {
+        "id": "2dbaff4402bef02229616c9277b489e434b20abe",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Proper positioning of a non-work period."
+      }
+    ]
+  }
+}

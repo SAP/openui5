@@ -1,0 +1,12 @@
+{
+  "1.129.0": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "5af1e134635f3007578756b1efe14fb769dc9928",
+        "type": "FEATURE",
+        "text": " sap.ui.fl.write.api.FieldExtensibility: Adds information about relevant business objects to the extension data."
+      }
+    ]
+  }
+}

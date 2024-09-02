@@ -1,7 +1,22 @@
 {
   "1.129.0": {
-    "date": "August 2024",
+    "date": "September 2024",
     "notes": [
+      {
+        "id": "86b0f76e2866a9f67a02a5e6894a08df9699636a",
+        "type": "FIX",
+        "text": " sap.f.Card: Header now has correct height when only toolbar is set"
+      },
+      {
+        "id": "598c7e64e56439e680f15fab0233757b26f0016e",
+        "type": "FIX",
+        "text": " Integration cards: List 'info' is now correctly displayed"
+      },
+      {
+        "id": "64ef0873050738299f4ad8f785c3d7cfc674e1c2",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fix Popover scroll in sample"
+      },
       {
         "id": "6e772f5c413622c4274ed1f1fefb29d96ffdea26",
         "type": "FIX",

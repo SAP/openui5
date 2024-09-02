@@ -1,7 +1,12 @@
 {
   "1.129.0": {
-    "date": "August 2024",
+    "date": "September 2024",
     "notes": [
+      {
+        "id": "51178e8d431a5556442c485c728aff66c1a62efe",
+        "type": "FIX",
+        "text": " sap/ui/core/format/NumberFormat: allow parsing empty string for Currencies and Units if showNumber is false"
+      },
       {
         "id": "127d55df977d0c48eda764ee89e0494c88b74827",
         "type": "FIX",

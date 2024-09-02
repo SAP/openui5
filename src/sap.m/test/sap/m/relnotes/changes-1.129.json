@@ -1,7 +1,92 @@
 {
   "1.129.0": {
-    "date": "August 2024",
+    "date": "September 2024",
     "notes": [
+      {
+        "id": "bd17578848a83706928906cec4b73e7ebb300622",
+        "type": "FIX",
+        "text": " sap.m.Button: prevent press on right click"
+      },
+      {
+        "id": "68eeaf19830c25f088e661fc89b2aa04fe2713bb",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Content padding classes are applied to the header if additional class is present"
+      },
+      {
+        "id": "34073521229d444f8a4b3a19493fceff5221db3d",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Icon on Firefox is not cut now"
+      },
+      {
+        "id": "e90809cedd5824f557e098034521c994846c834a",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: Accessible Improvement for ObjectIdentifier test page"
+      },
+      {
+        "id": "4f9701603a269f3abcebd31f4a2c5cdce21b5fce",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: add group type \"Data\" to value property"
+      },
+      {
+        "id": "f44e71d88fca4d613a77f8edd2842dbb6605df16",
+        "type": "FIX",
+        "text": " We now ensure that UploadSet does not insert or removes any item if they are bound to a model"
+      },
+      {
+        "id": "7b72eb0e88f1afdf9fab24325091dc60502d896e",
+        "type": "FIX",
+        "text": " SinglePlanningCalendar: Change in the z-index of the header"
+      },
+      {
+        "id": "95f05dc126d17c7e7153c9193c9b1fa40cdcffa2",
+        "type": "FIX",
+        "text": " sap.m.StepInput: The valueStateText is given priority."
+      },
+      {
+        "id": "5452d81dc14d087059aafd19ee4524731c54cdca",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectIdentifier & ObjectNumber: add group type \"Data\" to value property"
+      },
+      {
+        "id": "5dd5ea076ee5ddad775cbe365a628366ad126ac1",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: fixed \"select all\" checkbox positioning"
+      },
+      {
+        "id": "33a7b282961095185ea62003482bf1f747380fc0",
+        "type": "FIX",
+        "text": " sap.m.Popover: Revert some of resize handle size changes"
+      },
+      {
+        "id": "beccf604ac852998a8a65e855a256ee5ba0a75c0",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: buttons in split mode have separate tooltips"
+      },
+      {
+        "id": "4add94fde2c0c10d04bd20dce5f971ab95892978",
+        "type": "FIX",
+        "text": " sap.m.ColorPalettePopover: synch selected color with inner palette"
+      },
+      {
+        "id": "598c7e64e56439e680f15fab0233757b26f0016e",
+        "type": "FIX",
+        "text": " Integration cards: List 'info' is now correctly displayed"
+      },
+      {
+        "id": "e8b39654b75a7784a604edd1d79cefa203cd9fea",
+        "type": "FIX",
+        "text": " We ensure that the UploadSetwithTable plugin now uses currentContexts for file preview"
+      },
+      {
+        "id": "2dbaff4402bef02229616c9277b489e434b20abe",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Proper positioning of a non-work period."
+      },
+      {
+        "id": "a0913631b85ba27779403687b14a50bc34c4d791",
+        "type": "FIX",
+        "text": " We now ensure that the content maintained within the GenericTile does not extended beyond the control"
+      },
       {
         "id": "d3fd8e5fe92fe23fc223ffbfa8047adeabf8ccda",
         "type": "FIX",

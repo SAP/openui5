@@ -1,7 +1,17 @@
 {
   "1.129.0": {
-    "date": "August 2024",
+    "date": "September 2024",
     "notes": [
+      {
+        "id": "33a7b282961095185ea62003482bf1f747380fc0",
+        "type": "FIX",
+        "text": " sap.m.Popover: Revert some of resize handle size changes"
+      },
+      {
+        "id": "a0913631b85ba27779403687b14a50bc34c4d791",
+        "type": "FIX",
+        "text": " We now ensure that the content maintained within the GenericTile does not extended beyond the control"
+      },
       {
         "id": "eb2656698618fed63d59891e9a308013b6db8a5a",
         "type": "FIX",

@@ -1,0 +1,12 @@
+{
+  "1.129.0": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "598c7e64e56439e680f15fab0233757b26f0016e",
+        "type": "FIX",
+        "text": " Integration cards: List 'info' is now correctly displayed"
+      }
+    ]
+  }
+}
