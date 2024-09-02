@@ -1,7 +1,12 @@
 {
   "1.128.0": {
-    "date": "August 2024",
+    "date": "September 2024",
     "notes": [
+      {
+        "id": "5c0f2802b28193c31ab9e8332776972ce258816e",
+        "type": "FIX",
+        "text": " sap.m.Popover: Revert some of resize handle size changes"
+      },
       {
         "id": "18b209edbdc8303ddcaae413358fa1cd49883f3e",
         "type": "FIX",

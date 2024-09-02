@@ -1,7 +1,12 @@
 {
   "1.128.0": {
-    "date": "August 2024",
+    "date": "September 2024",
     "notes": [
+      {
+        "id": "de54d43a052b18afcc96606d2aef217447e58700",
+        "type": "FIX",
+        "text": " Demo Kit: Fix query parameter only for documentation"
+      },
       {
         "id": "d85e5a90d10e36fc671a594b6a3b831f3e7b6f83",
         "type": "FIX",
