@@ -1,39 +1,39 @@
 sap.ui.define([
+	"sap/base/Log",
+	"sap/m/Button",
+	"sap/m/DatePicker",
+	"sap/m/Label",
+	"sap/m/RatingIndicator",
+	"sap/m/Slider",
+	"sap/m/VBox",
+	"sap/ui/core/Element",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/preprocessors/XmlPreprocessor",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/m/Button",
-	"sap/m/Label",
-	"sap/m/DatePicker",
-	"sap/m/Slider",
-	"sap/m/RatingIndicator",
 	"sap/ui/layout/VerticalLayout",
-	"sap/m/VBox",
-	"sap/base/Log",
-	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/core/Element"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
+	Log,
+	Button,
+	DatePicker,
+	Label,
+	RatingIndicator,
+	Slider,
+	VBox,
+	Element,
+	FlexObjectState,
 	XmlPreprocessor,
 	ControlVariantApplyAPI,
 	FlexRuntimeInfoAPI,
 	PersistenceWriteAPI,
 	Layer,
 	FlUtils,
-	ChangePersistenceFactory,
-	Button,
-	Label,
-	DatePicker,
-	Slider,
-	RatingIndicator,
 	VerticalLayout,
-	VBox,
-	Log,
-	nextUIUpdate,
-	Element
+	nextUIUpdate
 ) {
 	"use strict";
 	var sMassiveLabel = "applyChangesMassive";
@@ -42,10 +42,7 @@ sap.ui.define([
 	var FlexPerformanceTestUtil = {};
 
 	function areAllChangesApplied() {
-		// TODO: to be changed, flexReference should be known and not fetched from the ChangePersistenceFactory
-		var oInstanceCache = ChangePersistenceFactory._instanceCache;
-		var sComponent = Object.keys(oInstanceCache)[0];
-		var {aChanges} = oInstanceCache[sComponent].getDependencyMapForComponent();
+		const {aChanges} = FlexObjectState.getLiveDependencyMap("fl.performance.flexApplyChanges");
 		return !aChanges.some(function(oChange) {
 			return !oChange.isSuccessfullyApplied();
 		});

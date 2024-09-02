@@ -131,15 +131,6 @@ sap.ui.define([
 		return aRelevantUIChanges;
 	};
 
-	/**
-	 * Getter for the private aggregation containing sap.ui.fl.apply._internal.flexObjects.FlexObject objects mapped by their selector ids.
-	 * @return {Object<string,object>} mChanges mapping with changes sorted by their selector ids
-	 * @public
-	 */
-	ChangePersistence.prototype.getDependencyMapForComponent = function() {
-		return FlexObjectState.getLiveDependencyMap(this._mComponent.name);
-	};
-
 	ChangePersistence.prototype._deleteNotSavedChanges = function(aChanges, aCondensedChanges, bAlreadyDeletedViaCondense) {
 		aChanges.filter(function(oChange) {
 			return !aCondensedChanges.some(function(oCondensedChange) {
@@ -556,9 +547,9 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype._deleteChangeInMap = function(oChange, bRunTimeCreatedChange) {
 		var sChangeKey = oChange.getId();
-		DependencyHandler.removeChangeFromMap(this.getDependencyMapForComponent(), sChangeKey);
+		DependencyHandler.removeChangeFromMap(FlexObjectState.getLiveDependencyMap(this._mComponent.name), sChangeKey);
 		if (!bRunTimeCreatedChange) {
-			DependencyHandler.removeChangeFromDependencies(this.getDependencyMapForComponent(), sChangeKey);
+			DependencyHandler.removeChangeFromDependencies(FlexObjectState.getLiveDependencyMap(this._mComponent.name), sChangeKey);
 		}
 	};
 
