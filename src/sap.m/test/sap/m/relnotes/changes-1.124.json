@@ -264,5 +264,25 @@
         ]
       }
     ]
+  },
+  "1.124.5": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "dec7df9b6589b6b4962314e04de5829bc159fbe2",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: fixed \"select all\" checkbox positioning"
+      },
+      {
+        "id": "a7c283f7b12fd32775697bc9f5ddbf62ba63da91",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Implement onfocusfail logic\""
+      },
+      {
+        "id": "03b244518f03cbf42770c4db525db1f094055c70",
+        "type": "FIX",
+        "text": " We've now introduced the fileSize parameter in fileSizeExceeded event of UploadSet"
+      }
+    ]
   }
 }

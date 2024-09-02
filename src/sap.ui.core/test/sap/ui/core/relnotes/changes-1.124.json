@@ -114,5 +114,20 @@
         ]
       }
     ]
+  },
+  "1.124.5": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "34f90d9aa18b4d44f8a6c24711191ace603da9f3",
+        "type": "FIX",
+        "text": " Adjust link in sap.ui.core.MessageType documentation"
+      },
+      {
+        "id": "0b566e713277a5402712fc5f8d59852415e6f19a",
+        "type": "FIX",
+        "text": " sap/ui/core: handle focus properly when disabling"
+      }
+    ]
   }
 }
