@@ -53,7 +53,7 @@ sap.ui.define([
 			return oComponent.getManifestObject().getRawJson()["sap.app"].type === "application";
 		});
 		if (aApplications.length === 1) {
-			return getAllUIChanges(aApplications[0]);
+			return fnFunction(aApplications[0]);
 		}
 
 		throw Error("No application component found");
@@ -75,8 +75,12 @@ sap.ui.define([
 		getFlexObjectInfos() {
 			return findComponentAndCallFunction(getFlexObjectInfos, "sap/ui/fl/support/_internal/getFlexObjectInfos");
 		},
-		getChangeDependencies,
-		getFlexSettings
+		getChangeDependencies() {
+			return findComponentAndCallFunction(getChangeDependencies, "sap/ui/fl/support/_internal/getChangeDependencies");
+		},
+		getFlexSettings() {
+			return findComponentAndCallFunction(getFlexSettings, "sap/ui/fl/support/_internal/getFlexSettings");
+		}
 	};
 
 	return SupportAPI;
