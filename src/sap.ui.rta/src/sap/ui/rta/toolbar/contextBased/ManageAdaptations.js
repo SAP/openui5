@@ -6,6 +6,7 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/base/util/restricted/_isEqual",
+	"sap/base/util/restricted/_union",
 	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Fragment",
@@ -20,6 +21,7 @@ sap.ui.define([
 ], function(
 	Localization,
 	_isEqual,
+	_union,
 	Log,
 	ManagedObject,
 	Fragment,
@@ -261,44 +263,43 @@ sap.ui.define([
 	}
 
 	function onDropSelectedAdaptation(oEvent) {
-		var oDraggedItem = oEvent.getParameter("draggedControl");
-		var oDraggedItemContext = oDraggedItem.getBindingContext("contextBased");
+		const oDraggedItem = oEvent.getParameter("draggedControl");
+		const oDraggedItemContext = oDraggedItem.getBindingContext("contextBased");
 		if (!oDraggedItemContext) {
 			return;
 		}
 
-		var iNewRank = oRanking.Default;
-		var oDroppedItem = oEvent.getParameter("droppedControl");
+		let iNewRank = oRanking.Default;
+		const oDroppedItem = oEvent.getParameter("droppedControl");
 
 		if (oDroppedItem instanceof ColumnListItem) {
 			// get the dropped row data
-			var sDropPosition = oEvent.getParameter("dropPosition");
-			var oDroppedItemContext = oDroppedItem.getBindingContext("contextBased");
-			var iDroppedItemRank = oDroppedItemContext.getProperty("rank");
-			var oDroppedTable = oDroppedItem.getParent();
-			var iDroppedItemIndex = oDroppedTable.indexOfItem(oDroppedItem);
+			const sDropPosition = oEvent.getParameter("dropPosition");
+			const oDroppedItemContext = oDroppedItem.getBindingContext("contextBased");
+			const iDroppedItemRank = oDroppedItemContext.getProperty("rank");
+			const oDroppedTable = oDroppedItem.getParent();
+			const iDroppedItemIndex = oDroppedTable.indexOfItem(oDroppedItem);
 			if (oDroppedItemContext === oDraggedItemContext) {
 				return;
 			}
 			// find the new index of the dragged row depending on the drop position
-			var iNewItemIndex = iDroppedItemIndex + (sDropPosition === "After" ? 1 : -1);
-			var oNewItem = oDroppedTable.getItems()[iNewItemIndex];
+			const iNewItemIndex = iDroppedItemIndex + (sDropPosition === "After" ? 1 : -1);
+			const oNewItem = oDroppedTable.getItems()[iNewItemIndex];
 			if (!oNewItem || iNewItemIndex === -1) {
 				// dropped before the first row or after the last row
 				iNewRank = iNewItemIndex === -1 ? 0.5 : oRanking[sDropPosition](iDroppedItemRank);
 			} else {
 				// dropped between first and the last row
-				var oNewItemContext = oNewItem.getBindingContext("contextBased");
+				const oNewItemContext = oNewItem.getBindingContext("contextBased");
 				iNewRank = oRanking.Between(iDroppedItemRank, oNewItemContext.getProperty("rank"));
 			}
 		}
 		// set the rank property and update the model to refresh the bindings
 		this.oAdaptationsModel.setProperty("rank", iNewRank, oDraggedItemContext);
 		sortByRank(this.oAdaptationsModel);
-		// Here this.oAdaptationsModel.getProperty("/allAdaptations") is mutated on purpose
-		var oAllUpdatedAdaptations = Object.assign(
-			this.oAdaptationsModel.getProperty("/allAdaptations"),
-			this.oAdaptationsModel.getProperty("/adaptations")
+		const oAllUpdatedAdaptations = _union(
+			this.oAdaptationsModel.getProperty("/adaptations"),
+			this.oAdaptationsModel.getProperty("/allAdaptations")
 		);
 		this.oAdaptationsModel.updateAdaptations(oAllUpdatedAdaptations);
 		enableSaveButton.call(this, didAdaptationsPriorityChange.call(this));
@@ -371,10 +372,9 @@ sap.ui.define([
 				parameters: {priorities: aAdaptationPriorities}
 			});
 		}.bind(this)).then(function() {
-			// Here this.oAdaptationsModel.getProperty("/allAdaptations") is mutated on purpose
-			var oAllUpdatedAdaptations = Object.assign(
-				this.oAdaptationsModel.getProperty("/allAdaptations"),
-				this.oAdaptationsModel.getProperty("/adaptations")
+			const oAllUpdatedAdaptations = _union(
+				this.oAdaptationsModel.getProperty("/adaptations"),
+				this.oAdaptationsModel.getProperty("/allAdaptations")
 			);
 			this.oAdaptationsModel.updateAdaptations(oAllUpdatedAdaptations);
 			onCloseDialog.call(this);
