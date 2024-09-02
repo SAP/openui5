@@ -255,29 +255,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Transports all the UI changes and the app variant descriptor (if exists) to the target system.
-	 *
-	 * @param {object} mPropertyBag - Object with parameters as properties
-	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
-	 * @param {string} [mPropertyBag.styleClass] - Style class name that will be added to the transport dialog
-	 * @param {string} mPropertyBag.layer - Working layer
-	 * @param {array} [mPropertyBag.appVariantDescriptors] - Array of app variant descriptors that need to be transported
-	 *
-	 * @returns {Promise<string>} Promise that can resolve to the following strings:
-	 * - "Cancel" if publish process was canceled
-	 * - <sMessage> when all the artifacts are successfully transported fl will return the message to show
-	 * - "Error" in case of a problem
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.fl, sap.ui.rta
-	 */
-	PersistenceWriteAPI.publish = function(mPropertyBag) {
-		mPropertyBag.styleClass ||= "";
-		return ChangePersistenceFactory.getChangePersistenceForControl(Utils.getAppComponentForSelector(mPropertyBag.selector))
-		.transportAllUIChanges({}, mPropertyBag.styleClass, mPropertyBag.layer, mPropertyBag.appVariantDescriptors);
-	};
-
-	/**
 	 * Adds flexObjects to the flex persistence.
 	 * If there is a descriptor change, a transport request is set.
 	 *
