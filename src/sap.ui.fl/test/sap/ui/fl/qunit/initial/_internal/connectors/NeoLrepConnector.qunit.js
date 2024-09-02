@@ -9,11 +9,11 @@ sap.ui.define([
 	Utils
 ) {
 	"use strict";
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a initial NeoLrepConnector", {}, function() {
 		QUnit.test("given a mock server, when loadFeatures is triggered", function(assert) {
-			var oServerResponse = {
+			const oServerResponse = {
 				isKeyUser: true,
 				isVersioningEnabled: false,
 				isContextSharingEnabled: true,
@@ -21,11 +21,11 @@ sap.ui.define([
 				isLocalResetEnabled: true
 			};
 
-			var oExpectedResponse = Object.assign({}, oServerResponse);
+			const oExpectedResponse = { ...oServerResponse };
 			oExpectedResponse.isContextSharingEnabled = false;
-			var oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({response: oServerResponse});
-			var mPropertyBag = {url: "/sap/bc/lrep"};
-			var sUrl = "/sap/bc/lrep/flex/settings";
+			const oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({ response: oServerResponse });
+			const mPropertyBag = { url: "/sap/bc/lrep" };
+			const sUrl = "/sap/bc/lrep/flex/settings";
 
 			return NeoLrepConnector.loadFeatures(mPropertyBag).then(function(oResponse) {
 				assert.ok(oStubSendRequest.calledOnce, "a request is sent");

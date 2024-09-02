@@ -111,13 +111,14 @@ sap.ui.define([
 	 * @static
 	 */
 	UIChange.getMappingInfo = function() {
-		return Object.assign(FlexObject.getMappingInfo(), {
+		return {
+			...FlexObject.getMappingInfo(),
 			selector: "selector",
 			dependentSelectors: "dependentSelector",
 			jsOnly: "jsOnly",
 			variantReference: "variantReference",
 			isChangeOnStandardVariant: "isChangeOnStandardVariant"
-		});
+		};
 	};
 
 	/**
@@ -333,7 +334,7 @@ sap.ui.define([
 			throw new Error("Parameter mPropertyBag is mandatory");
 		}
 
-		var oCurrentDependentSelectors = Object.assign({}, this.getDependentSelectors());
+		var oCurrentDependentSelectors = { ...this.getDependentSelectors() };
 
 		if (oCurrentDependentSelectors[sAlias]) {
 			throw new Error(`Alias '${sAlias}' already exists in the change.`);
@@ -467,7 +468,7 @@ sap.ui.define([
 	 */
 	UIChange.prototype.getExtensionPointInfo = function() {
 		if (isPlainObject(this._oExtensionPointInfo)) {
-			return Object.assign({}, this._oExtensionPointInfo);
+			return { ...this._oExtensionPointInfo };
 		}
 		return this._oExtensionPointInfo;
 	};

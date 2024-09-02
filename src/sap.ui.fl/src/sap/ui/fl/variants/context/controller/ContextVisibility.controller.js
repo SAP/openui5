@@ -17,8 +17,8 @@ sap.ui.define([
 	"use strict";
 
 	function buildQueryParameterMap(mConfig) {
-		var mDefaultValues = {layer: Layer.CUSTOMER, type: "role"};
-		return Object.assign({}, mDefaultValues, mConfig);
+		const mDefaultValues = { layer: Layer.CUSTOMER, type: "role" };
+		return { ...mDefaultValues, ...mConfig };
 	}
 
 	function assignDescriptionsToSelectedRoles(oSelectedRoles) {

@@ -236,22 +236,22 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving as soon as the writing was completed or was not needed; or rejects in case of an error
 	 */
 	Storage.condense = async function(mPropertyBag) {
-		const mProperties = Object.assign({}, mPropertyBag);
+		const mProperties = { ...mPropertyBag };
 		const mCondense = await prepareCondensingForConnector(mProperties);
 		if (!mCondense) {
 			return Promise.reject("No changes were provided");
 		}
 		if (mCondense.create || mCondense.reorder || mCondense.update || mCondense.delete) {
-			var oCreatedChanges = [];
+			let aCreatedChanges = [];
 			if (mCondense.create) {
-				oCreatedChanges = (mCondense.create.change ? mCondense.create.change : [])
+				aCreatedChanges = (mCondense.create.change ? mCondense.create.change : [])
 				.concat(mCondense.create.ctrl_variant ? mCondense.create.ctrl_variant : []);
 			}
 			mProperties.flexObjects = mCondense;
 
 			const oResult = await _executeActionByName("condense", mProperties);
-			if (oResult && oResult.status && oResult.status === 205 && oCreatedChanges.length) {
-				var aResponse = oCreatedChanges.map(function(oChange) {
+			if (oResult && oResult.status && oResult.status === 205 && aCreatedChanges.length) {
+				const aResponse = aCreatedChanges.map(function(oChange) {
 					return Object.values(oChange).pop();
 				});
 				oResult.response = aResponse;

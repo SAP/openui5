@@ -93,15 +93,15 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl
 	 */
 	AddIFrame.completeChangeContent = function(oChange, oSpecificChangeInfo, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier;
-		var oAppComponent = mPropertyBag.appComponent;
+		const oModifier = mPropertyBag.modifier;
+		const oAppComponent = mPropertyBag.appComponent;
 		// Required settings
 		["targetAggregation", "baseId", "url"].forEach(function(sRequiredProperty) {
 			if (!Object.hasOwn(oSpecificChangeInfo.content, sRequiredProperty)) {
 				throw new Error(`Attribute missing from the change specific content '${sRequiredProperty}'`);
 			}
 		});
-		var oContent = Object.assign({}, oSpecificChangeInfo.content);
+		const oContent = { ...oSpecificChangeInfo.content };
 		oContent.selector = oModifier.getSelector(oContent.baseId, oAppComponent);
 		oChange.setContent(oContent);
 	};

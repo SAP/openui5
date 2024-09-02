@@ -156,7 +156,7 @@ sap.ui.define([
 					// other attributes like adaptationId, isEndUserAdaptation, init needs to be taken from flex info session if available
 					oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 					delete oFlexInfoSession.saveChangeKeepSession;
-					FlexInfoSession.setByReference(Object.assign(oFlexInfoSession, oResult), sReference);
+					FlexInfoSession.setByReference({ ...oFlexInfoSession, ...oResult }, sReference);
 					return aFlexObjects;
 				});
 			}

@@ -31,64 +31,62 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
 
-	var sAddedSimpleFormGroupId = "rootView--id-1504610195259-77";
+	const sAddedSimpleFormGroupId = "rootView--id-1504610195259-77";
 
 	QUnit.module("Creation of the first change without a registered propagationListener", {
 		beforeEach() {
-			sandbox.stub(Storage, "loadFlexData").resolves(Object.assign(
-				StorageUtils.getEmptyFlexDataResponse(),
-				{
-					changes: [{
-						fileName: "id_1504610195273_78_addSimpleFormGroup",
-						fileType: "change",
-						changeType: "addSimpleFormGroup",
-						reference: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-						packageName: "$TMP",
-						content: {
-							group: {
-								selector: {
-									id: sAddedSimpleFormGroupId,
-									idIsLocal: true
-								},
-								relativeIndex: 1
-							}
-						},
-						selector: {
-							id: "rootView--myForm",
-							idIsLocal: true
-						},
-						layer: "CUSTOMER",
-						texts: {
-							groupLabel: {
-								value: "New Group",
-								type: "XFLD"
-							}
-						},
-						namespace: "apps/sap.ui.demoapps.rta.freestyle/changes/",
-						creation: "2017-09-05T11:16:46.701Z",
-						originalLanguage: "EN",
-						conditions: {},
-						context: "",
-						support: {
-							generator: "Change.createInitialFileContent",
-							service: "",
-							user: "",
-							sapui5Version: "version"
-						},
-						dependentSelector: {}
-					}],
-					contexts: [],
-					settings: {
-						isKeyUser: true,
-						isAtoAvailable: false,
-						isAtoEnabled: false,
-						isProductiveSystem: false
+			sandbox.stub(Storage, "loadFlexData").resolves({
+				...StorageUtils.getEmptyFlexDataResponse(),
+				changes: [{
+					fileName: "id_1504610195273_78_addSimpleFormGroup",
+					fileType: "change",
+					changeType: "addSimpleFormGroup",
+					reference: "sap.ui.fl.qunit.integration.async.testComponentWithView",
+					packageName: "$TMP",
+					content: {
+						group: {
+							selector: {
+								id: sAddedSimpleFormGroupId,
+								idIsLocal: true
+							},
+							relativeIndex: 1
+						}
 					},
-					cacheKey: "MYETAG"
-				})
-			);
+					selector: {
+						id: "rootView--myForm",
+						idIsLocal: true
+					},
+					layer: "CUSTOMER",
+					texts: {
+						groupLabel: {
+							value: "New Group",
+							type: "XFLD"
+						}
+					},
+					namespace: "apps/sap.ui.demoapps.rta.freestyle/changes/",
+					creation: "2017-09-05T11:16:46.701Z",
+					originalLanguage: "EN",
+					conditions: {},
+					context: "",
+					support: {
+						generator: "Change.createInitialFileContent",
+						service: "",
+						user: "",
+						sapui5Version: "version"
+					},
+					dependentSelector: {}
+				}],
+				contexts: [],
+				settings: {
+					isKeyUser: true,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isProductiveSystem: false
+				},
+				cacheKey: "MYETAG"
+			});
 		},
 		afterEach() {
 			sandbox.restore();
@@ -98,8 +96,8 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("applies the change after the recreation of the changed control", function(assert) {
-			var oXmlPreprocessSpy = sandbox.spy(XmlPreprocessor, "process");
-			var oAddGroupChangeHandlerSpy = sandbox.spy(AddSimpleFormGroup, "applyChange");
+			const oXmlPreprocessSpy = sandbox.spy(XmlPreprocessor, "process");
+			const oAddGroupChangeHandlerSpy = sandbox.spy(AddSimpleFormGroup, "applyChange");
 			sandbox.stub(Utils, "isApplication").returns(true);
 
 			return Component.create({
@@ -118,7 +116,7 @@ sap.ui.define([
 				assert.equal(oXmlPreprocessSpy.callCount, 1, "the xml processing was called once for the view");
 
 				assert.equal(oAddGroupChangeHandlerSpy.callCount, 1, "the change handler was called only once");
-				var oPassedModifier = oAddGroupChangeHandlerSpy.getCall(0).args[2].modifier;
+				const oPassedModifier = oAddGroupChangeHandlerSpy.getCall(0).args[2].modifier;
 				assert.equal(XmlTreeModifier, oPassedModifier, "the call was done with the xml tree modifier");
 				oXmlPreprocessSpy.restore();
 				oAddGroupChangeHandlerSpy.restore();
@@ -133,11 +131,11 @@ sap.ui.define([
 			});
 		} else {
 			QUnit.test("working cache", function(assert) {
-				var that = this;
+				const that = this;
 
 				CacheManager.reset();
 
-				var oXmlPreprocessSpy = sandbox.spy(XmlPreprocessor, "process");
+				const oXmlPreprocessSpy = sandbox.spy(XmlPreprocessor, "process");
 
 				// first create the application
 				return Component.create({
@@ -177,11 +175,11 @@ sap.ui.define([
 			});
 
 			QUnit.test("cache invalidation", function(assert) {
-				var that = this;
+				const that = this;
 
 				CacheManager.reset();
 
-				var oXmlPreprocessSpy = sandbox.spy(XmlPreprocessor, "process");
+				const oXmlPreprocessSpy = sandbox.spy(XmlPreprocessor, "process");
 
 				// first create the application
 				return Component.create({
@@ -221,19 +219,19 @@ sap.ui.define([
 			});
 
 			QUnit.test("a group is added and passed to the core/CacheManager", function(assert) {
-				var oCacheManagerSpy;
+				let oCacheManagerSpy;
 
 				CacheManager.reset();
 
-				var oSetCachePromise = new Promise(function(resolve) {
-					var fCacheManagerSet = CacheManager.set;
+				const oSetCachePromise = new Promise(function(resolve) {
+					const fCacheManagerSet = CacheManager.set;
 					oCacheManagerSpy = sandbox.stub(CacheManager, "set").callsFake(function(...aArgs) {
 						fCacheManagerSet.call(CacheManager, aArgs[0], aArgs[1]).then(function() {
 							resolve();
 						});
 					});
 				});
-				var oAddGroupChangeHandlerSpy = sandbox.spy(AddSimpleFormGroup, "applyChange");
+				const oAddGroupChangeHandlerSpy = sandbox.spy(AddSimpleFormGroup, "applyChange");
 
 				return Component.create({
 					name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
@@ -247,10 +245,10 @@ sap.ui.define([
 					this.oComponent = oComponent;
 					return Promise.all([oComponent.oViewPromise, oSetCachePromise]);
 				}.bind(this)).then(function(oView) {
-					var oCacheManagerCall = oCacheManagerSpy.getCall(0);
-					var sCachedXml = oCacheManagerCall.args[1].xml;
+					const oCacheManagerCall = oCacheManagerSpy.getCall(0);
+					const sCachedXml = oCacheManagerCall.args[1].xml;
 					// as cached xml string will vary in different browsers (especially namespace handling), we will parse the xml again (without tabs and newlines to reduce unwanted text nodes)
-					var oCachedXmlDocument = XMLHelper.parse(sCachedXml.replace(/[\n\t]/g, "")).documentElement;
+					const oCachedXmlDocument = XMLHelper.parse(sCachedXml.replace(/[\n\t]/g, "")).documentElement;
 					assert.equal(oCachedXmlDocument.localName, "View", "the view is included in the cache");
 					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].localName, "SimpleForm", "the simple form is included in the cache");
 					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes.length, 4, "the simple form content includes the new nodes from the change");
@@ -262,7 +260,7 @@ sap.ui.define([
 					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].getAttribute("custom.data.via.modifier:sap.ui.fl.appliedChanges.id_1504610195273_78_addSimpleFormGroup"), "\\{\"groupId\":\"sap.ui.fl.qunit.integration.async.testComponentWithView---rootView--id-1504610195259-77\"\\}",
 						"the custom data marker that the change is applied is cached");
 					assert.ok(oAddGroupChangeHandlerSpy.calledOnce, "the change handler was called only once");
-					var oPassedModifier = oAddGroupChangeHandlerSpy.getCall(0).args[2].modifier;
+					const oPassedModifier = oAddGroupChangeHandlerSpy.getCall(0).args[2].modifier;
 					assert.equal(XmlTreeModifier, oPassedModifier, "the call was done with the xml tree modifier");
 					oAddGroupChangeHandlerSpy.restore();
 					oView[0].destroy();
@@ -271,9 +269,9 @@ sap.ui.define([
 
 			QUnit.test("the cache is still valid in case the default control variant is overruled by a url parameter and stays the same in a further request", function(assert) {
 				CacheManager.reset();
-				var oXmlPreprocessSpy = sandbox.spy(XmlPreprocessor, "process");
+				const oXmlPreprocessSpy = sandbox.spy(XmlPreprocessor, "process");
 
-				var mSettings = {
+				const mSettings = {
 					name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 					id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 					async: true,

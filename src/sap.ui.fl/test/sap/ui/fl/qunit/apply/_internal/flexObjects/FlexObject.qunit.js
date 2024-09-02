@@ -18,9 +18,9 @@ sap.ui.define([
 	sinon
 ) {
 	"use strict";
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
 
-	var oFileContent = {
+	const oFileContent = {
 		fileName: "foo",
 		fileType: "change",
 		reference: "sap.ui.demoapps.rta.fiorielements",
@@ -60,7 +60,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("constructor - when originalLanguage is missing", function(assert) {
 			sandbox.stub(Utils, "getCurrentLanguage").returns("EN");
-			var oFlexObject = FlexObjectFactory.createFromFileContent({
+			const oFlexObject = FlexObjectFactory.createFromFileContent({
 				fileType: "change"
 			});
 			assert.strictEqual(
@@ -71,7 +71,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("constructor - when reference is set and namespace is missing and the reference has the legacy .Component", function(assert) {
-			var oFlexObject = FlexObjectFactory.createFromFileContent({
+			const oFlexObject = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				reference: "sap.ui.demoapps.rta.fiorielements.Component"
 			});
@@ -88,7 +88,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("constructor - when both reference and namespace are set and the reference has the legacy .Component", function(assert) {
-			var oFlexObject = FlexObjectFactory.createFromFileContent({
+			const oFlexObject = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				reference: "sap.ui.demoapps.rta.fiorielements.Component",
 				namespace: "apps/sap.ui.demoapps.rta.fiorielements/changes/"
@@ -106,7 +106,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("constructor - when reference is set and projectId is missing", function(assert) {
-			var oFlexObject = FlexObjectFactory.createFromFileContent({
+			const oFlexObject = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				reference: "sap.ui.demoapps.rta.fiorielements"
 			});
@@ -118,7 +118,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("constructor - when both reference and projectId are set", function(assert) {
-			var oFlexObject = FlexObjectFactory.createFromFileContent({
+			const oFlexObject = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				reference: "sap.ui.demoapps.rta.fiorielements",
 				projectId: "sap.ui.demoapps.rta.fiorielements"
@@ -193,7 +193,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling setResponse without file content", function(assert) {
-			var oOriginalFile = this.oFlexObject.convertToFileContent();
+			const oOriginalFile = this.oFlexObject.convertToFileContent();
 			this.oFlexObject.setResponse({});
 			assert.strictEqual(
 				this.oFlexObject.getState(),
@@ -213,7 +213,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("isChangeFromOtherSystem - when in settings no system and client info is maintained", function(assert) {
-			var oSettingsStub = sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({}));
+			const oSettingsStub = sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({}));
 			assert.notOk(this.oFlexObject.isChangeFromOtherSystem(), "then isChangeFromOtherSystem returns false");
 			oSettingsStub.returns(new Settings({client: "someClient"}));
 			assert.notOk(this.oFlexObject.isChangeFromOtherSystem(), "then isChangeFromOtherSystem returns false");
@@ -379,8 +379,8 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when a FlexObject is updated", function(assert) {
-			var oInitialSupportInfo = this.oFlexObject.getSupportInformation();
-			var oUpdate = {
+			const oInitialSupportInfo = this.oFlexObject.getSupportInformation();
+			const oUpdate = {
 				layer: Layer.VENDOR,
 				content: {
 					test: "someUpdate",
@@ -396,7 +396,7 @@ sap.ui.define([
 			this.oFlexObject.update(oUpdate);
 			assert.deepEqual(
 				this.oFlexObject.getSupportInformation(),
-				Object.assign({}, oInitialSupportInfo, oUpdate.support),
+				{ ...oInitialSupportInfo, ...oUpdate.support },
 				"then the updated properties are modified"
 			);
 
@@ -437,7 +437,7 @@ sap.ui.define([
 
 		QUnit.test("when exporting file content of a FlexObject", function(assert) {
 			// fileName is assigned to the id upon creation
-			var oExpectedFileContent = Object.assign({}, oFileContent);
+			const oExpectedFileContent = { ...oFileContent };
 			oExpectedFileContent.selector = {};
 			oExpectedFileContent.dependentSelector = {};
 			assert.deepEqual(
@@ -448,10 +448,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("when cloning file content", function(assert) {
-			var oExpectedFileContent = Object.assign({}, oFileContent);
+			const oExpectedFileContent = { ...oFileContent };
 			oExpectedFileContent.selector = {};
 			oExpectedFileContent.dependentSelector = {};
-			var oCopiedFlexObject = this.oFlexObject.cloneFileContentWithNewId();
+			const oCopiedFlexObject = this.oFlexObject.cloneFileContentWithNewId();
 			assert.notStrictEqual(
 				oCopiedFlexObject,
 				oExpectedFileContent,

@@ -164,7 +164,7 @@ sap.ui.define([
 	 * @static
 	 */
 	FlexObject.getMappingInfo = function() {
-		return Object.assign({}, {
+		return {
 			"flexObjectMetadata.changeType": "changeType",
 			"flexObjectMetadata.reference": "reference",
 			"flexObjectMetadata.namespace": "namespace",
@@ -190,7 +190,7 @@ sap.ui.define([
 			id: "fileName",
 			content: "content",
 			texts: "texts"
-		});
+		};
 	};
 
 	/**
@@ -221,7 +221,7 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject.FlexObjectMetadata} Additional metadata
 	 */
 	FlexObject.prototype.getFlexObjectMetadata = function() {
-		return Object.assign({}, this.getProperty("flexObjectMetadata"));
+		return { ...this.getProperty("flexObjectMetadata") };
 	};
 
 	/**
@@ -229,7 +229,7 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject.SupportInformation} Support information
 	 */
 	FlexObject.prototype.getSupportInformation = function() {
-		return Object.assign({}, this.getProperty("supportInformation"));
+		return { ...this.getProperty("supportInformation") };
 	};
 
 	function isValidStateChange(sNewState, sCurrentState) {
@@ -347,14 +347,14 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} <code>this</code> context for chaining
 	 */
 	FlexObject.prototype.setText = function(sTextId, sNewText, sType, bSkipStateChange) {
-		var oTexts = Object.assign({}, this.getTexts());
-		var oNewText = {
+		const oTexts = { ...this.getTexts() };
+		const oNewText = {
 			value: sNewText
 		};
 		if (sType) {
 			oNewText.type = sType;
 		}
-		oTexts[sTextId] = Object.assign({}, oTexts[sTextId], oNewText);
+		oTexts[sTextId] = { ...oTexts[sTextId], ...oNewText };
 		this.setTexts(oTexts);
 		if (!bSkipStateChange) {
 			this.setState(States.LifecycleState.DIRTY);

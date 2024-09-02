@@ -38,9 +38,10 @@ sap.ui.define([
 	 * @static
 	 */
 	ControllerExtensionChange.getMappingInfo = function() {
-		return Object.assign(FlexObject.getMappingInfo(), {
+		return {
+			...FlexObject.getMappingInfo(),
 			controllerName: "selector.controllerName"
-		});
+		};
 	};
 
 	/**

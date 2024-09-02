@@ -36,7 +36,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var FLEX_OBJECT_TYPES = {
+	const FLEX_OBJECT_TYPES = {
 		BASE_FLEX_OBJECT: FlexObject,
 		COMP_VARIANT_OBJECT: CompVariant,
 		FL_VARIANT_OBJECT: FlVariant,
@@ -104,7 +104,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
-	var FlexObjectFactory = {};
+	const FlexObjectFactory = {};
 
 	/**
 	 * Creates a new flex object.
@@ -115,24 +115,19 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} Created flex object
 	 */
 	FlexObjectFactory.createFromFileContent = function(oFileContent, ObjectClass, bPersisted) {
-		var oNewFileContent = Object.assign({}, oFileContent);
+		const oNewFileContent = { ...oFileContent };
 		var FlexObjectClass = ObjectClass || getFlexObjectClass(oNewFileContent);
 		if (!FlexObjectClass) {
 			throw new Error("Unknown file type");
 		}
-		oNewFileContent.support = Object.assign(
-			{
-				generator: "FlexObjectFactory.createFromFileContent"
-			},
-			oNewFileContent.support || {}
-		);
-		var oMappingInfo = FlexObjectClass.getMappingInfo();
-		var mCreationInfo = FlexObject.mapFileContent(oNewFileContent, oMappingInfo);
-		var mProperties = Object.entries(mCreationInfo).reduce(function(mPropertyMap, aProperty) {
+		oNewFileContent.support = { generator: "FlexObjectFactory.createFromFileContent", ...(oNewFileContent.support || {}) };
+		const oMappingInfo = FlexObjectClass.getMappingInfo();
+		const mCreationInfo = FlexObject.mapFileContent(oNewFileContent, oMappingInfo);
+		const mProperties = Object.entries(mCreationInfo).reduce(function(mPropertyMap, aProperty) {
 			ObjectPath.set(aProperty[0].split("."), aProperty[1], mPropertyMap);
 			return mPropertyMap;
 		}, {});
-		var oFlexObject = new FlexObjectClass(mProperties);
+		const oFlexObject = new FlexObjectClass(mProperties);
 		if (bPersisted) {
 			// Set the property directly for the initial state to avoid state change validation
 			oFlexObject.setProperty("state", States.LifecycleState.PERSISTED);
@@ -142,7 +137,7 @@ sap.ui.define([
 
 	FlexObjectFactory.createUIChange = function(mPropertyBag) {
 		mPropertyBag.packageName ||= "$TMP";
-		var mProperties = createBasePropertyBag(mPropertyBag);
+		const mProperties = createBasePropertyBag(mPropertyBag);
 		mProperties.layer ||= mPropertyBag.isUserDependent ? Layer.USER : LayerUtils.getCurrentLayer();
 		mProperties.selector = mPropertyBag.selector;
 		mProperties.jsOnly = mPropertyBag.jsOnly;
@@ -154,13 +149,13 @@ sap.ui.define([
 
 	FlexObjectFactory.createAppDescriptorChange = function(mPropertyBag) {
 		mPropertyBag.compositeCommand ||= mPropertyBag.support && mPropertyBag.support.compositeCommand;
-		var mProperties = createBasePropertyBag(mPropertyBag);
+		const mProperties = createBasePropertyBag(mPropertyBag);
 		return new AppDescriptorChange(mProperties);
 	};
 
 	FlexObjectFactory.createAnnotationChange = function(mPropertyBag) {
 		mPropertyBag.compositeCommand ||= mPropertyBag.support && mPropertyBag.support.compositeCommand;
-		var mProperties = createBasePropertyBag(mPropertyBag);
+		const mProperties = createBasePropertyBag(mPropertyBag);
 		return new AnnotationChange(mProperties);
 	};
 
@@ -183,7 +178,7 @@ sap.ui.define([
 			codeRef: mPropertyBag.codeRef
 		};
 
-		var mProperties = createBasePropertyBag(mPropertyBag);
+		const mProperties = createBasePropertyBag(mPropertyBag);
 		mProperties.flexObjectMetadata.moduleName = mPropertyBag.moduleName;
 		mProperties.controllerName = mPropertyBag.controllerName;
 		return new ControllerExtensionChange(mProperties);
@@ -207,7 +202,7 @@ sap.ui.define([
 	 */
 	FlexObjectFactory.createFlVariant = function(mPropertyBag) {
 		mPropertyBag.generator ||= "FlexObjectFactory.createFlVariant";
-		var mProperties = createBasePropertyBag(mPropertyBag);
+		const mProperties = createBasePropertyBag(mPropertyBag);
 		mProperties.variantManagementReference = mPropertyBag.variantManagementReference;
 		mProperties.variantReference = mPropertyBag.variantReference;
 		mProperties.contexts = mPropertyBag.contexts;
@@ -255,7 +250,7 @@ sap.ui.define([
 	FlexObjectFactory.createCompVariant = function(oFileContent, mAuthors) {
 		oFileContent.generator ||= "FlexObjectFactory.createCompVariant";
 		oFileContent.user = ObjectPath.get("support.user", oFileContent);
-		var mCompVariantContent = createBasePropertyBag(oFileContent);
+		const mCompVariantContent = createBasePropertyBag(oFileContent);
 
 		mCompVariantContent.variantId = oFileContent.variantId || mCompVariantContent.id;
 		mCompVariantContent.contexts = oFileContent.contexts;

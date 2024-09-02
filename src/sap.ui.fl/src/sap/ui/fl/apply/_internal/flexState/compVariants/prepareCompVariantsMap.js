@@ -31,7 +31,7 @@ sap.ui.define([
 
 	function initialize(mMap, mAuthors, sPersistencyKey, aVariants, sSVMControlId) {
 		aVariants ||= [];
-		var mMapOfKey = getOrCreate(mMap, sPersistencyKey);
+		const mMapOfKey = getOrCreate(mMap, sPersistencyKey);
 		mMapOfKey.controlId = sSVMControlId;
 
 		// clear all non-persisted variants in case of a reinitialization
@@ -40,11 +40,15 @@ sap.ui.define([
 		});
 
 		mMapOfKey.nonPersistedVariants = aVariants.map(function(oVariant) {
-			var oVariantInstance = Object.assign({
-				id: oVariant.id,
-				persisted: false
-			}, oVariant);
-			oVariantInstance = CompVariantMerger.createVariant(sPersistencyKey, oVariantInstance, mAuthors);
+			const oVariantInstance = CompVariantMerger.createVariant(
+				sPersistencyKey,
+				{
+					id: oVariant.id,
+					persisted: false,
+					...oVariant
+				},
+				mAuthors
+			);
 			mMapOfKey.byId[oVariant.id] = oVariantInstance;
 			return oVariantInstance;
 		});
@@ -53,19 +57,16 @@ sap.ui.define([
 	}
 
 	function buildSectionMap(mCompSection, sSubSection, mCompVariants, mAuthors) {
-		var aFlexObjects = mCompSection[sSubSection].map(function(oCompVariantChangeDefinition) {
-			var oFlexObject;
-			if (sSubSection === "variants") {
-				oFlexObject = FlexObjectFactory.createCompVariant(oCompVariantChangeDefinition, mAuthors);
-			} else {
-				oFlexObject = FlexObjectFactory.createFromFileContent(oCompVariantChangeDefinition, UpdatableChange);
-			}
+		const aFlexObjects = mCompSection[sSubSection].map(function(oCompVariantChangeDefinition) {
+			const oFlexObject = sSubSection === "variants"
+				? FlexObjectFactory.createCompVariant(oCompVariantChangeDefinition, mAuthors)
+				: FlexObjectFactory.createFromFileContent(oCompVariantChangeDefinition, UpdatableChange);
 			oFlexObject.setState(States.LifecycleState.PERSISTED); // prevent persisting these anew
 			return oFlexObject;
 		});
 
 		aFlexObjects.forEach(function(oFlexObject) {
-			var sPersistencyKey = oFlexObject.getPersistencyKey
+			const sPersistencyKey = oFlexObject.getPersistencyKey
 				? oFlexObject.getPersistencyKey()
 				: oFlexObject.getSelector().persistencyKey;
 			getOrCreate(
@@ -97,7 +98,7 @@ sap.ui.define([
 	 * @returns {object} The prepared map for compVariants
 	 */
 	return function(mPropertyBag) {
-		var mCompVariants = {};
+		const mCompVariants = {};
 
 		// provide the function for fl-internal consumers reuse
 		mCompVariants._getOrCreate = getOrCreate.bind(undefined, mCompVariants);

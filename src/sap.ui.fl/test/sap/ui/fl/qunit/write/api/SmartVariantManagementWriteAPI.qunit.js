@@ -83,13 +83,13 @@ sap.ui.define([
 		}].forEach(function(testData) {
 			QUnit.test(`When ${testData.details} is called`, function(assert) {
 				// mock control
-				var sPersistencyKey = "thePersistencyKey";
-				var oSVMControl = {
+				const sPersistencyKey = "thePersistencyKey";
+				const oSVMControl = {
 					getPersonalizableControlPersistencyKey() {
 						return sPersistencyKey;
 					}
 				};
-				var oControl = oSVMControl;
+				let oControl = oSVMControl;
 				if (testData.bIsNoSVM) {
 					oControl = {
 						getVariantManagement() {
@@ -97,13 +97,13 @@ sap.ui.define([
 						}
 					};
 				}
-				var mPropertyBag = {
+				let mPropertyBag = {
 					control: oControl,
 					changeSpecificData: {},
 					command: "myCommand"
 				};
 
-				mPropertyBag = Object.assign(mPropertyBag, testData.additionPropertyBag);
+				mPropertyBag = { ...mPropertyBag, ...testData.additionPropertyBag };
 
 				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(true);
 				sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(new JSONModel(
@@ -114,15 +114,15 @@ sap.ui.define([
 					}
 				));
 
-				var oMockResponse = testData.mockedResponse || {};
-				var oCompVariantStateStub = sandbox.stub(CompVariantState, testData.compVariantStateFunctionName).returns(oMockResponse);
-				var oGetFlexReferenceForControlStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
+				const oMockResponse = testData.mockedResponse || {};
+				const oCompVariantStateStub = sandbox.stub(CompVariantState, testData.compVariantStateFunctionName).returns(oMockResponse);
+				const oGetFlexReferenceForControlStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 
-				var oResponse = SmartVariantManagementWriteAPI[testData.apiFunctionName](mPropertyBag);
+				const oResponse = SmartVariantManagementWriteAPI[testData.apiFunctionName](mPropertyBag);
 				assert.equal(oGetFlexReferenceForControlStub.getCall(0).args[0], mPropertyBag.control, "then the reference was requested for the passed control,");
 				assert.equal(oResponse, testData.expectedResponse || oMockResponse, "the response was passed to the caller,");
 				assert.equal(oCompVariantStateStub.callCount, 1, "the CompVariantState function was called once,");
-				var oCompVariantStateFunctionArguments = oCompVariantStateStub.getCall(0).args[0];
+				const oCompVariantStateFunctionArguments = oCompVariantStateStub.getCall(0).args[0];
 				assert.equal(oCompVariantStateFunctionArguments, mPropertyBag, "the propertyBag was passed,");
 				assert.equal(oCompVariantStateFunctionArguments.reference, sReference, "the reference was added,");
 				assert.equal(oCompVariantStateFunctionArguments.persistencyKey, sPersistencyKey, "and the reference was added");
@@ -357,13 +357,13 @@ sap.ui.define([
 		}].forEach(function(testData) {
 			QUnit.test(`When updateVariant is called, ${testData.details}`, function(assert) {
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
-				var oAppComponent = new UIComponent();
+				const oAppComponent = new UIComponent();
 				oControl = new Control("controlId1");
 				oControl.getPersistencyKey = function() {
 					return sPersistencyKey;
 				};
 
-				var aVariants = [{
+				const aVariants = [{
 					id: "oData_variant_1",
 					executeOnSelection: true,
 					name: "A variant",
@@ -374,7 +374,8 @@ sap.ui.define([
 					content: {}
 				}];
 				sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
-				sandbox.stub(InitialStorage, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+				sandbox.stub(InitialStorage, "loadFlexData").resolves({
+					...StorageUtils.getEmptyFlexDataResponse(),
 					changes: [],
 					comp: {
 						compVariants: [],
@@ -397,7 +398,7 @@ sap.ui.define([
 						standardVariants: [],
 						defaultVariants: []
 					}
-				}));
+				});
 
 				return SmartVariantManagementApplyAPI.loadVariants({
 					control: oControl,
@@ -410,7 +411,7 @@ sap.ui.define([
 					return SmartVariantManagementWriteAPI.updateVariant(testData.updateVariantPropertyBag);
 				}).then(function(oVariant) {
 					assert.equal(oVariant.getChanges().length, 1, "one change was added");
-					var oChange = oVariant.getChanges()[0];
+					const oChange = oVariant.getChanges()[0];
 					assert.equal(oChange.getLayer(), testData.expected.layer, "the layer is set correct");
 					assert.equal(oChange.getChangeType(), "updateVariant", "changeType ist updateVariant");
 					assert.deepEqual(oChange.getContent(), testData.expected.changeContent, "change content ist updateVariant");
@@ -657,13 +658,13 @@ sap.ui.define([
 		}].forEach(function(testData) {
 			QUnit.test(`When updateVariant is called with adaptationId, ${testData.details}`, function(assert) {
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
-				var oAppComponent = new UIComponent();
+				const oAppComponent = new UIComponent();
 				oControl = new Control("controlId1");
 				oControl.getPersistencyKey = function() {
 					return sPersistencyKey;
 				};
 
-				var aVariants = [{
+				const aVariants = [{
 					adaptationId: "id12345_123",
 					id: "oData_variant_1",
 					executeOnSelection: true,
@@ -676,7 +677,8 @@ sap.ui.define([
 					content: {}
 				}];
 				sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
-				sandbox.stub(InitialStorage, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+				sandbox.stub(InitialStorage, "loadFlexData").resolves({
+					...StorageUtils.getEmptyFlexDataResponse(),
 					changes: [],
 					comp: {
 						compVariants: [],
@@ -699,7 +701,7 @@ sap.ui.define([
 						standardVariants: [],
 						defaultVariants: []
 					}
-				}));
+				});
 
 				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(true);
 				sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(new JSONModel(
@@ -723,7 +725,7 @@ sap.ui.define([
 				})
 				.then(function(oVariant) {
 					assert.equal(oVariant.getChanges().length, 1, "one change was added");
-					var oChange = oVariant.getChanges()[0];
+					const oChange = oVariant.getChanges()[0];
 					assert.equal(oChange.getLayer(), testData.expected.layer, "the layer is set correct");
 					assert.equal(oChange.getChangeType(), "updateVariant", "changeType ist updateVariant");
 					assert.deepEqual(oChange.getContent(), testData.expected.changeContent, "change content ist updateVariant");
@@ -756,14 +758,15 @@ sap.ui.define([
 		}].forEach(function(oTestData) {
 			QUnit.test(`When updateVariant is called ${oTestData.testDetails}`, function(assert) {
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
-				var oAppComponent = new UIComponent();
+				const oAppComponent = new UIComponent();
 				oControl = new Control("controlId1");
 				oControl.getPersistencyKey = function() {
 					return sPersistencyKey;
 				};
 
 				sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
-				sandbox.stub(InitialStorage, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+				sandbox.stub(InitialStorage, "loadFlexData").resolves({
+					...StorageUtils.getEmptyFlexDataResponse(),
 					changes: [],
 					comp: {
 						compVariants: [],
@@ -787,7 +790,7 @@ sap.ui.define([
 						standardVariants: [],
 						defaultVariants: []
 					}
-				}));
+				});
 				sandbox.stub(Settings, "getInstanceOrUndef").returns({
 					isVersioningEnabled() {
 						return false;
@@ -1069,7 +1072,8 @@ sap.ui.define([
 					return sPersistencyKey;
 				};
 				testData.propertyBag.control = oControl;
-				sandbox.stub(InitialStorage, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+				sandbox.stub(InitialStorage, "loadFlexData").resolves({
+					...StorageUtils.getEmptyFlexDataResponse(),
 					changes: [],
 					comp: {
 						variants: [testData.mockedVariant],
@@ -1078,7 +1082,7 @@ sap.ui.define([
 						defaultVariants: []
 					},
 					settings: {}
-				}));
+				});
 
 				return FlexState.initialize({
 					reference: sReference,
@@ -1107,7 +1111,7 @@ sap.ui.define([
 						default:
 					}
 
-					var oVariant = FlexState.getCompVariantsMap(sReference)[testData.propertyBag.persistencyKey].byId[testData.propertyBag.id];
+					const oVariant = FlexState.getCompVariantsMap(sReference)[testData.propertyBag.persistencyKey].byId[testData.propertyBag.id];
 
 					assert.equal(oVariant.getText("variantName"), testData.expected.name, "the name is correct");
 					assert.deepEqual(oVariant.getContent(), testData.expected.content, "the content is correct");
@@ -1197,12 +1201,15 @@ sap.ui.define([
 				return sPersistencyKey;
 			};
 
-			var mFlexData = Object.assign(StorageUtils.getEmptyFlexDataResponse(), LoaderExtensions.loadResource({
-				dataType: "json",
-				url: sap.ui.require.toUrl(
-					"test-resources/sap/ui/fl/qunit/apply/api/SmartVariantManagementAPI.loadVariantsTestSetup-flexData.json"
-				)
-			}));
+			var mFlexData = {
+				...StorageUtils.getEmptyFlexDataResponse(),
+				...(LoaderExtensions.loadResource({
+					dataType: "json",
+					url: sap.ui.require.toUrl(
+						"test-resources/sap/ui/fl/qunit/apply/api/SmartVariantManagementAPI.loadVariantsTestSetup-flexData.json"
+					)
+				}))
+			};
 
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(mFlexData);
 			var oVariant;
@@ -1241,12 +1248,13 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("Given a variant was removed", function(assert) {
-			var sPersistencyKey = "persistency.key";
+			const sPersistencyKey = "persistency.key";
 			oControl = new Control("controlId1");
 			oControl.getPersistencyKey = function() {
 				return sPersistencyKey;
 			};
-			sandbox.stub(InitialStorage, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+			sandbox.stub(InitialStorage, "loadFlexData").resolves({
+				...StorageUtils.getEmptyFlexDataResponse(),
 				changes: [],
 				comp: {
 					variants: [{
@@ -1268,7 +1276,7 @@ sap.ui.define([
 					standardVariants: [],
 					defaultVariants: []
 				}
-			}));
+			});
 
 			return FlexState.initialize({
 				reference: sReference,
@@ -1286,9 +1294,9 @@ sap.ui.define([
 			})
 			.then(function(oRemovedVariant) {
 				assert.equal(oRemovedVariant.getState(), States.LifecycleState.DELETED, "the variant is flagged for deletion");
-				var aRevertData = oRemovedVariant.getRevertData();
+				let aRevertData = oRemovedVariant.getRevertData();
 				assert.equal(aRevertData.length, 1, "revertData was stored");
-				var oLastRevertData = aRevertData[0];
+				const oLastRevertData = aRevertData[0];
 				assert.equal(oLastRevertData.getType(), CompVariantState.operationType.StateUpdate, "it is stored that the state was updated ...");
 				assert.deepEqual(oLastRevertData.getContent(), {previousState: States.LifecycleState.PERSISTED}, "... to PERSISTED");
 
@@ -1306,12 +1314,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given a variant with adaptation id was removed", function(assert) {
-			var sPersistencyKey = "persistency.key";
+			const sPersistencyKey = "persistency.key";
 			oControl = new Control("controlId2");
 			oControl.getPersistencyKey = function() {
 				return sPersistencyKey;
 			};
-			sandbox.stub(InitialStorage, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+			sandbox.stub(InitialStorage, "loadFlexData").resolves({
+				...StorageUtils.getEmptyFlexDataResponse(),
 				changes: [],
 				comp: {
 					variants: [{
@@ -1334,7 +1343,7 @@ sap.ui.define([
 					standardVariants: [],
 					defaultVariants: []
 				}
-			}));
+			});
 
 			sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(true);
 			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(new JSONModel(
@@ -1360,9 +1369,9 @@ sap.ui.define([
 				});
 			}).then(function(oRemovedVariant) {
 				assert.equal(oRemovedVariant.getState(), States.LifecycleState.DELETED, "the variant is flagged for deletion");
-				var aRevertData = oRemovedVariant.getRevertData();
+				let aRevertData = oRemovedVariant.getRevertData();
 				assert.equal(aRevertData.length, 1, "revertData was stored");
-				var oLastRevertData = aRevertData[0];
+				const oLastRevertData = aRevertData[0];
 				assert.equal(oLastRevertData.getType(), CompVariantState.operationType.StateUpdate, "it is stored that the state was updated ...");
 				assert.deepEqual(oLastRevertData.getContent(), {previousState: States.LifecycleState.PERSISTED}, "... to PERSISTED");
 

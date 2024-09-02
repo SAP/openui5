@@ -32,19 +32,17 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	function getControlChangesForVariantSwitch(mPropertyBag) {
-		var aCurrentVariantChanges = VariantManagementState.getControlChangesForVariant(
-			Object.assign(
-				_pick(mPropertyBag, ["vmReference", "variantsMap", "reference"]), {
-					vReference: mPropertyBag.currentVReference
-				}
-			)
+		const aCurrentVariantChanges = VariantManagementState.getControlChangesForVariant(
+			{
+				...(_pick(mPropertyBag, ["vmReference", "variantsMap", "reference"])),
+				vReference: mPropertyBag.currentVReference
+			}
 		);
 		var aNewChanges = VariantManagementState.getControlChangesForVariant(
-			Object.assign(
-				_pick(mPropertyBag, ["vmReference", "variantsMap", "reference"]), {
-					vReference: mPropertyBag.newVReference
-				}
-			)
+			{
+				...(_pick(mPropertyBag, ["vmReference", "variantsMap", "reference"])),
+				vReference: mPropertyBag.newVReference
+			}
 		);
 
 		var aRevertChanges = [];

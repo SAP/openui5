@@ -23,7 +23,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
-	var RangeEditor = BasePropertyEditor.extend("sap.ui.fl.write._internal.fieldExtensibility.cap.editor.propertyEditor.rangeEditor.RangeEditor", {
+	const RangeEditor = BasePropertyEditor.extend("sap.ui.fl.write._internal.fieldExtensibility.cap.editor.propertyEditor.rangeEditor.RangeEditor", {
 		xmlFragment: "sap.ui.fl.write._internal.fieldExtensibility.cap.editor.propertyEditor.rangeEditor.RangeEditor",
 		metadata: {
 			library: "sap.ui.fl"
@@ -31,11 +31,12 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	RangeEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata, {
+	RangeEditor.configMetadata = {
+		...BasePropertyEditor.configMetadata,
 		rangeType: {
 			defaultValue: "string"
 		}
-	});
+	};
 
 	RangeEditor.prototype.init = function(...aArgs) {
 		BasePropertyEditor.prototype.init.apply(this, aArgs);
@@ -57,23 +58,23 @@ sap.ui.define([
 	RangeEditor.prototype.setValue = function(...aArgs) {
 		const [aValues] = aArgs;
 		BasePropertyEditor.prototype.setValue.apply(this, aArgs);
-		var oConfig = {
+		const oConfig = {
 			type: this.getConfig().rangeType
 		};
-		var aRangeValues = Array.isArray(aValues) ? aValues : [];
+		const aRangeValues = Array.isArray(aValues) ? aValues : [];
 		this._oContentModel.setData([{
 			value: aRangeValues[0],
-			config: Object.assign({ index: 0 }, oConfig)
+			config: { index: 0, ...oConfig }
 		}, {
 			value: aRangeValues[1],
-			config: Object.assign({ index: 1 }, oConfig)
+			config: { index: 1, ...oConfig }
 		}]);
 	};
 
 	RangeEditor.prototype._onChange = function(oEvent) {
-		var vValue = oEvent.getParameter("value");
-		var iIndex = oEvent.getSource().getConfig().index;
-		var aNewValue = (this.getValue() || []).slice();
+		const vValue = oEvent.getParameter("value");
+		const iIndex = oEvent.getSource().getConfig().index;
+		const aNewValue = (this.getValue() || []).slice();
 		aNewValue[iIndex] = vValue;
 		this.setValue(aNewValue);
 	};
