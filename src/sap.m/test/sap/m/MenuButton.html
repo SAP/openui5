@@ -98,6 +98,14 @@
             }
         });
 
+		var oLabelSplit = new sap.m.Label({
+			text: "Split button with icon"
+		});
+		var oMenuButtonSplit = new sap.m.MenuButton({
+			tooltip: "Press for more information",
+			buttonMode: sap.m.MenuButtonMode.Split,
+			icon: "sap-icon://information"
+		});
 
 
         //second menu button
@@ -303,6 +311,7 @@ var oMenu22 = new sap.m.Menu({
             text: "This one has a type Accept and no default action"
         });
         var oMenuButton3 = new sap.m.MenuButton('mb3', {
+			tooltip: "press to accept",
             text: "Accept",
             buttonMode: sap.m.MenuButtonMode.Split,
             type: sap.m.ButtonType.Accept,
@@ -631,6 +640,9 @@ var oMenu22 = new sap.m.Menu({
 //            items: getControls()
 
             items: [
+				oLabelSplit,
+				oMenuButtonSplit,
+
                 oLabel3,
                 oMenuButton3,
 				oMenuButton4,
