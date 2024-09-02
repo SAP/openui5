@@ -1510,54 +1510,56 @@ sap.ui.define([
 							//but we need to save the setting changes for the next layer, so remove the continue sentence.
 							//continue;
 						} else {
-							if (oItem.valueItems) {
+							if (oItem.valueItems && !deepEqual(this._beforeLayerManifestChanges[oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueItems"], oItem.valueItems)) {
 								mResult[oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueItems"] = oItem.valueItems;
 							}
-							if (oItem.valueTokens) {
+							if (oItem.valueTokens && !deepEqual(this._beforeLayerManifestChanges[oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueTokens"], oItem.valueTokens)) {
 								mResult[oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueTokens"] = oItem.valueTokens;
 							}
-							switch (oItem.type) {
-								case "string":
-									if (!oItem.translatable) {
-										mResult[oItem.manifestpath] = oItem.value;
-									} else if (oItem._hasDynamicValue) {
-										// if value is dynamic value of a translatable parameter, save it and delete all the current translations
-										mResult[oItem.manifestpath] = oItem.value;
-										this.deleteAllTranslationValuesInTexts(oItem.manifestpath);
-									} else if (oItem._beforeValue && (oItem._beforeValue.indexOf("{context>") === 0 || oItem._beforeValue.indexOf("{{parameters") === 0)) {
-										// if before value is dynamic value of a translatable parameter, save it
-										mResult[oItem.manifestpath] = oItem.value;
-									}
-									break;
-								case "group":
-									break;
-								case "object":
-									if (oItem.value && oItem.value !== "" && typeof oItem.value === "object") {
-										mResult[oItem.manifestpath] = oItem.value;
-									}
-									break;
-								case "object[]":
-									if (Array.isArray(oItem.value)) {
-										var aValue = deepClone(oItem.value, 500);
-										// sort the value list according by the position value
-										aValue = aValue.sort(function (a, b) {
-											// if _position property not exists, do nothing
-											if (!a._dt || !a._dt._position || !b._dt || !b._dt._position) {
-												return 0;
-											}
-											return a._dt._position - b._dt._position;
-										});
-										// recount the position value
-										for (var i = 0; i < aValue.length; i++) {
-											var oValue = aValue[i];
-											oValue._dt = oValue._dt || {};
-											oValue._dt._position = i + 1;
+							if (typeof oItem.value !== "undefined" && !deepEqual(this._beforeLayerManifestChanges[oItem.manifestpath], oItem.value)) {
+								switch (oItem.type) {
+									case "string":
+										if (!oItem.translatable) {
+											mResult[oItem.manifestpath] = oItem.value;
+										} else if (oItem._hasDynamicValue) {
+											// if value is dynamic value of a translatable parameter, save it and delete all the current translations
+											mResult[oItem.manifestpath] = oItem.value;
+											this.deleteAllTranslationValuesInTexts(oItem.manifestpath);
+										} else if (oItem._beforeValue && (oItem._beforeValue.indexOf("{context>") === 0 || oItem._beforeValue.indexOf("{{parameters") === 0)) {
+											// if before value is dynamic value of a translatable parameter, save it
+											mResult[oItem.manifestpath] = oItem.value;
 										}
-										mResult[oItem.manifestpath] = aValue;
-									}
-									break;
-								default:
-									mResult[oItem.manifestpath] = oItem.value;
+										break;
+									case "group":
+										break;
+									case "object":
+										if (oItem.value && oItem.value !== "" && typeof oItem.value === "object") {
+											mResult[oItem.manifestpath] = oItem.value;
+										}
+										break;
+									case "object[]":
+										if (Array.isArray(oItem.value)) {
+											var aValue = deepClone(oItem.value, 500);
+											// sort the value list according by the position value
+											aValue = aValue.sort(function (a, b) {
+												// if _position property not exists, do nothing
+												if (!a._dt || !a._dt._position || !b._dt || !b._dt._position) {
+													return 0;
+												}
+												return a._dt._position - b._dt._position;
+											});
+											// recount the position value
+											for (var i = 0; i < aValue.length; i++) {
+												var oValue = aValue[i];
+												oValue._dt = oValue._dt || {};
+												oValue._dt._position = i + 1;
+											}
+											mResult[oItem.manifestpath] = aValue;
+										}
+										break;
+									default:
+										mResult[oItem.manifestpath] = oItem.value;
+								}
 							}
 						}
 					} else if (oItem.translatable && oItem.value) {
@@ -1600,49 +1602,64 @@ sap.ui.define([
 			delete mResult.texts;
 		} else if (oSettings.texts) {
 			mResult.texts = deepClone(oSettings.texts, 500) || {};
-			// Clean the translations of object or object list field :
-			// - remove the translations if the object is not exist in value
-			for (var language in mResult.texts){
-				for (var key in mResult.texts[language]) {
-					if (typeof mResult.texts[language][key] === "object") {
-						var vValue = mResult[key];
-						if (!vValue || typeof vValue !== "object" || deepEqual(vValue, {}) || deepEqual(vValue, [])) {
-							delete mResult.texts[language][key];
-						} else if (Array.isArray(vValue)) {
-							// get all the uuids in value list of object list field
-							var aUUIDs = vValue.map(function (oObject) {
-								return oObject._dt ? oObject._dt._uuid || "" : "";
-							});
-							// delete translation texts if uuid not included in value list
-							for (var uuid in mResult.texts[language][key]) {
-								if (!aUUIDs.includes(uuid)) {
-									delete mResult.texts[language][key][uuid];
-								}
-							}
-						} else {
-							// get the uuid in the object value of object field
-							var sUUID = vValue._dt ? vValue._dt._uuid || "" : "";
-							if (sUUID !== "") {
-								// only save the translation texts of current uuid
-								var oTranslation = mResult.texts[language][key][sUUID];
-								if (!oTranslation) {
-									delete mResult.texts[language][key];
-								} else {
-									mResult.texts[language][key] = {};
-									mResult.texts[language][key][sUUID] = oTranslation;
-								}
-							} else {
+			// get the before layer translation texts
+			var beforeLayerTexts = merge({}, this._beforeLayerManifestChanges.texts);
+			if (deepEqual(beforeLayerTexts, mResult.texts)) {
+				// if no change, DO NOT return the transtalion texts
+				delete mResult.texts;
+			} else {
+				// Clean the translations of object or object list field :
+				// - remove the translations if the object is not exist in value
+				for (var language in mResult.texts){
+					if (deepEqual(beforeLayerTexts[language], mResult.texts[language])) {
+						// if no change, DO NOT return the transtalion texts of current language
+						delete mResult.texts[language];
+					} else {
+						for (var key in mResult.texts[language]) {
+							if (beforeLayerTexts[language] && deepEqual(beforeLayerTexts[language][key], mResult.texts[language][key])) {
+								// if no change, DO NOT return the transtalion texts of the manifest path of current language
 								delete mResult.texts[language][key];
+							} else if (typeof mResult.texts[language][key] === "object") {
+								var vValue = mResult[key];
+								if (!vValue || typeof vValue !== "object" || deepEqual(vValue, {}) || deepEqual(vValue, [])) {
+									delete mResult.texts[language][key];
+								} else if (Array.isArray(vValue)) {
+									// get all the uuids in value list of object list field
+									var aUUIDs = vValue.map(function (oObject) {
+										return oObject._dt ? oObject._dt._uuid || "" : "";
+									});
+									// delete translation texts if uuid not included in value list
+									for (var uuid in mResult.texts[language][key]) {
+										if (!aUUIDs.includes(uuid)) {
+											delete mResult.texts[language][key][uuid];
+										}
+									}
+								} else {
+									// get the uuid in the object value of object field
+									var sUUID = vValue._dt ? vValue._dt._uuid || "" : "";
+									if (sUUID !== "") {
+										// only save the translation texts of current uuid
+										var oTranslation = mResult.texts[language][key][sUUID];
+										if (!oTranslation) {
+											delete mResult.texts[language][key];
+										} else {
+											mResult.texts[language][key] = {};
+											mResult.texts[language][key][sUUID] = oTranslation;
+										}
+									} else {
+										delete mResult.texts[language][key];
+									}
+								}
 							}
+						}
+						if (deepEqual(mResult.texts[language], {})) {
+							delete mResult.texts[language];
 						}
 					}
 				}
-				if (deepEqual(mResult.texts[language], {})) {
-					delete mResult.texts[language];
+				if (deepEqual(mResult.texts, {})) {
+					delete mResult.texts;
 				}
-			}
-			if (deepEqual(mResult.texts, {})) {
-				delete mResult.texts;
 			}
 		}
 		mResult[":layer"] = Merger.layers[this.getMode()];
@@ -2212,7 +2229,7 @@ sap.ui.define([
 			if (this.getMode() === "content" && oConfig.pageAdminValues && oConfig.pageAdminValues.length > 0) {
 				var paValues = oConfig.pageAdminValues,
 				    selValues = oConfig.value,
-					selValueItems = oConfig.valueItems,
+					selValueItems = oConfig.valueItems || [],
 				    results = [],
 					selResults = [],
 					selItemsResults = [];

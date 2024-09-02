@@ -56,7 +56,7 @@
 					"value": false
 				},
 				"cardTitle": {
-					"value": "Card Title Default"
+					"value": "{{TRANSLATED_CARD_TITLE}}"
 				},
 				"stringWithVisualizationFragment": {
 					"value": "StringValue in visualization"

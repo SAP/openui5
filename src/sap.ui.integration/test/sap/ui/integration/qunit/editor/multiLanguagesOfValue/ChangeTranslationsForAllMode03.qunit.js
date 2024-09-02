@@ -330,7 +330,7 @@ sap.ui.define([
 									oSaveButton1.firePress();
 									EditorQunitUtils.wait().then(function () {
 										var oCurrentSettings = that.oEditor.getCurrentSettings();
-										var oTextsValue = Object.assign({}, _oAdminChanges.texts, _oContentChanges.texts);
+										var oTextsValue = {};
 										oTextsValue[sLanguageKey6] = {
 											"/sap.card/configuration/parameters/stringParameter/value": sNewValue
 										};
@@ -470,7 +470,7 @@ sap.ui.define([
 									oSaveButton1.firePress();
 									EditorQunitUtils.wait().then(function () {
 										var oCurrentSettings = that.oEditor.getCurrentSettings();
-										var oTextsValue = Object.assign({}, _oAdminChanges.texts, _oContentChanges.texts);
+										var oTextsValue = {};
 										oTextsValue[sLanguageKey6] = {
 											"/sap.card/configuration/parameters/stringParameter/value": sNewValue
 										};
@@ -529,8 +529,7 @@ sap.ui.define([
 													oSaveButton1.firePress();
 													EditorQunitUtils.wait().then(function () {
 														var oCurrentSettings = that.oEditor.getCurrentSettings();
-														delete oTextsValue[sLanguageKey6];
-														assert.ok(deepEqual(oCurrentSettings.texts, oTextsValue), "Field: translation Value in texts");
+														assert.ok(typeof oCurrentSettings.texts === "undefined", "Field: translation Value in texts");
 														oValueHelpIcon1.firePress();
 														oValueHelpIcon1.focus();
 														EditorQunitUtils.wait().then(function () {
@@ -774,15 +773,7 @@ sap.ui.define([
 									oSaveButton1.firePress();
 									EditorQunitUtils.wait().then(function () {
 										var oCurrentSettings = that.oEditor.getCurrentSettings();
-										var oTextsValue = Object.assign(
-											{},
-											_oAdminChanges.texts,
-											{
-												"en": {
-													"/sap.card/configuration/parameters/stringParameter/value": _oTranslationChanges["/sap.card/configuration/parameters/stringParameter/value"]
-												}
-											}
-										);
+										var oTextsValue = {};
 										oTextsValue[sLanguageKey6] = {
 											"/sap.card/configuration/parameters/stringParameter/value": sNewValue
 										};
@@ -916,15 +907,7 @@ sap.ui.define([
 									oSaveButton1.firePress();
 									EditorQunitUtils.wait().then(function () {
 										var oCurrentSettings = that.oEditor.getCurrentSettings();
-										var oTextsValue = Object.assign(
-											{},
-											_oAdminChanges.texts,
-											{
-												"en": {
-													"/sap.card/configuration/parameters/stringParameter/value": _oTranslationChanges["/sap.card/configuration/parameters/stringParameter/value"]
-												}
-											}
-										);
+										var oTextsValue = {};
 										oTextsValue[sLanguageKey6] = {
 											"/sap.card/configuration/parameters/stringParameter/value": sNewValue
 										};
@@ -980,8 +963,7 @@ sap.ui.define([
 													oSaveButton1.firePress();
 													EditorQunitUtils.wait().then(function () {
 														var oCurrentSettings = that.oEditor.getCurrentSettings();
-														delete oTextsValue[sLanguageKey6];
-														assert.ok(deepEqual(oCurrentSettings.texts, oTextsValue), "Field: translation Value in texts");
+														assert.ok(typeof oCurrentSettings.texts === "undefined", "Field: translation Value in texts");
 														oValueHelpIcon1.firePress();
 														oValueHelpIcon1.focus();
 														EditorQunitUtils.wait().then(function () {
