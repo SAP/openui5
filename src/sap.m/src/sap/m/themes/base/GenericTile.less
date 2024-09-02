@@ -807,7 +807,7 @@ border-radius: 0.25rem;
 	color: @sapUiTileTextColor;
 }
 
-html.sap-desktop .sapMGT:focus:not([tabindex]) {
+.sapMGT:focus:not([tabindex]) {
 	border-color: transparent;
 }
 
@@ -2474,7 +2474,7 @@ html[data-sap-ui-browser*='ff'] {
 	border: none;
 }
 
-html.sap-desktop .sapMGT.sapMGTTwoByHalf.sapMGTIconMode.HighContrastTile:not(.sapMGTStateDisabled):hover {
+.sapMGT.sapMGTTwoByHalf.sapMGTIconMode.HighContrastTile:not(.sapMGTStateDisabled):hover {
 	box-shadow: 0 0 0 0.188rem @sapUiContentShadowColor inset;
 	border: none;
 }
@@ -2503,10 +2503,10 @@ html.sap-desktop .sapMGT.sapMGTTwoByHalf.sapMGTIconMode.HighContrastTile:not(.sa
 	border: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
 }
 
-html.sap-desktop .sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapMGTFocusDiv, // focus inside GridContainer
-html.sap-desktop .sapMGT:focus .sapMGTFocusDiv,
-html.sap-desktop .sapMGT:active .sapMGTFocusDiv,
-html.sap-desktop .sapMGTLineModePress .sapMGTFocusDiv {
+.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapMGTFocusDiv, // focus inside GridContainer
+.sapMGT:focus .sapMGTFocusDiv,
+.sapMGT:active .sapMGTFocusDiv,
+.sapMGTLineModePress .sapMGTFocusDiv {
 	border:@sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
 }
 
