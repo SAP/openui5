@@ -87,7 +87,7 @@ sap.ui.define([
 				id: "mockAppComponent"
 			};
 
-			const oDependencyMap = this.oChangePersistence.getDependencyMapForComponent();
+			const oDependencyMap = FlexObjectState.getLiveDependencyMap(sReference);
 			DependencyHandler.addChangeAndUpdateDependencies(
 				createChange("change1", null, null, null, {id: "controlId"}),
 				oAppComponent,
@@ -107,7 +107,7 @@ sap.ui.define([
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl")
 			.callThrough()
 			.withArgs(oAppComponent)
-			.returns("appComponentReference");
+			.returns(sReference);
 			sandbox.spy(this.oChangePersistence, "_deleteChangeInMap");
 
 			const oChangeForDeletion = oDependencyMap.mChanges.controlId[1]; // second change for 'controlId' shall be removed
@@ -611,8 +611,8 @@ sap.ui.define([
 			});
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence.getDependencyMapForComponent().aChanges[0].setState(States.LifecycleState.PERSISTED);
-				this.oChangePersistence.getDependencyMapForComponent().aChanges[1].setState(States.LifecycleState.PERSISTED);
+				FlexObjectState.getLiveDependencyMap(sReference).aChanges[0].setState(States.LifecycleState.PERSISTED);
+				FlexObjectState.getLiveDependencyMap(sReference).aChanges[1].setState(States.LifecycleState.PERSISTED);
 				this.oCondenserStub.resetHistory();
 
 				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, false, false, false, false, true, Layer.VENDOR);
@@ -645,8 +645,8 @@ sap.ui.define([
 				}
 			);
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence.getDependencyMapForComponent().aChanges[0].setState(States.LifecycleState.PERSISTED);
-				this.oChangePersistence.getDependencyMapForComponent().aChanges[1].setState(States.LifecycleState.PERSISTED);
+				FlexObjectState.getLiveDependencyMap(sReference).aChanges[0].setState(States.LifecycleState.PERSISTED);
+				FlexObjectState.getLiveDependencyMap(sReference).aChanges[1].setState(States.LifecycleState.PERSISTED);
 
 				addTwoChanges(
 					sReference,
@@ -766,8 +766,8 @@ sap.ui.define([
 			addTwoChanges(sReference, this.oComponentInstance, Layer.VENDOR, Layer.CUSTOMER);
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence.getDependencyMapForComponent().aChanges[0].setState(States.LifecycleState.PERSISTED);
-				this.oChangePersistence.getDependencyMapForComponent().aChanges[1].setState(States.LifecycleState.PERSISTED);
+				FlexObjectState.getLiveDependencyMap(sReference).aChanges[0].setState(States.LifecycleState.PERSISTED);
+				FlexObjectState.getLiveDependencyMap(sReference).aChanges[1].setState(States.LifecycleState.PERSISTED);
 				assert.equal(this.oWriteStub.callCount, 1);
 				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
 
@@ -807,8 +807,8 @@ sap.ui.define([
 			addTwoChanges(sReference, this.oComponentInstance, Layer.VENDOR, Layer.CUSTOMER);
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence.getDependencyMapForComponent().aChanges[0].setState(States.LifecycleState.PERSISTED);
-				this.oChangePersistence.getDependencyMapForComponent().aChanges[1].setState(States.LifecycleState.PERSISTED);
+				FlexObjectState.getLiveDependencyMap(sReference).aChanges[0].setState(States.LifecycleState.PERSISTED);
+				FlexObjectState.getLiveDependencyMap(sReference).aChanges[1].setState(States.LifecycleState.PERSISTED);
 				assert.equal(this.oWriteStub.callCount, 1);
 				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
 
@@ -831,8 +831,8 @@ sap.ui.define([
 			addTwoChanges(sReference, this.oComponentInstance, Layer.VENDOR, Layer.CUSTOMER);
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence.getDependencyMapForComponent().aChanges[0].setState(States.LifecycleState.PERSISTED);
-				this.oChangePersistence.getDependencyMapForComponent().aChanges[1].setState(States.LifecycleState.PERSISTED);
+				FlexObjectState.getLiveDependencyMap(sReference).aChanges[0].setState(States.LifecycleState.PERSISTED);
+				FlexObjectState.getLiveDependencyMap(sReference).aChanges[1].setState(States.LifecycleState.PERSISTED);
 				assert.equal(this.oWriteStub.callCount, 1);
 				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
 
@@ -851,7 +851,7 @@ sap.ui.define([
 				return this.oChangePersistence.saveDirtyChanges(
 					this._oComponentInstance,
 					false,
-					[this.oChangePersistence.getDependencyMapForComponent().aChanges[2]]
+					[FlexObjectState.getLiveDependencyMap(sReference).aChanges[2]]
 				);
 			}.bind(this))
 			.then(function() {
@@ -886,8 +886,8 @@ sap.ui.define([
 			addTwoChanges(sReference, this.oComponentInstance, Layer.CUSTOMER);
 			await this.oChangePersistence.saveDirtyChanges(this._oComponentInstance);
 
-			this.oChangePersistence.getDependencyMapForComponent().aChanges[0].setState(States.LifecycleState.PERSISTED);
-			this.oChangePersistence.getDependencyMapForComponent().aChanges[1].setState(States.LifecycleState.PERSISTED);
+			FlexObjectState.getLiveDependencyMap(sReference).aChanges[0].setState(States.LifecycleState.PERSISTED);
+			FlexObjectState.getLiveDependencyMap(sReference).aChanges[1].setState(States.LifecycleState.PERSISTED);
 			assert.equal(this.oWriteStub.callCount, 0);
 			assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 			assert.equal(oUpdateStorageResponseStub.callCount, 2, "both changes got added");
