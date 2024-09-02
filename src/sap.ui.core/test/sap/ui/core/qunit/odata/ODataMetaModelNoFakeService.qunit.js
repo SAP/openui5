@@ -149,4 +149,54 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(ODataMetaModel.prototype._getObject.call(oMetaModel, "~path", undefined, true), "/foo/bar/");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("_sendBundledRequest", function (assert) {
+		const mInitialQName2PendingRequest = {
+			foo : {resolve() {}, reject() {}},
+			bar : {resolve() {}, reject() {}}
+		};
+		const oMetaModel = {
+			mQName2PendingRequest : mInitialQName2PendingRequest,
+			_applyAnnotationChanges() {},
+			_mergeMetadata() {},
+			oDataModel: {
+				addAnnotationUrl() {}
+			}
+		};
+		const oMetaModelMock = this.mock(oMetaModel);
+		let fnResolve;
+		const oPromise = new Promise((resolve) => {
+			fnResolve = resolve;
+		});
+
+		this.mock(oMetaModel.oDataModel).expects("addAnnotationUrl")
+			.withExactArgs("$metadata?sap-value-list=bar,foo")
+			.returns(oPromise);
+
+		// code under test
+		ODataMetaModel.prototype._sendBundledRequest.call(oMetaModel);
+
+		assert.deepEqual(oMetaModel.mQName2PendingRequest, {});
+
+		const oMergeMetadataExpectation = oMetaModelMock.expects("_mergeMetadata").withExactArgs("~oResponse");
+		const oFooResolveExpectation = this.mock(mInitialQName2PendingRequest.foo).expects("resolve")
+			.withExactArgs("~oResponse");
+		const oBarMock = this.mock(mInitialQName2PendingRequest.bar);
+		const oError = new Error("Failed to process response for 'bar'");
+		const oBarResolveExpectation = oBarMock.expects("resolve").withExactArgs("~oResponse").throws(oError);
+		const oBarRejectExpectation = oBarMock.expects("reject").withExactArgs(sinon.match.same(oError));
+		const oApplyAnnotationChangesExpectation = oMetaModelMock.expects("_applyAnnotationChanges").withExactArgs();
+
+		// code under test
+		fnResolve("~oResponse");
+
+		return oPromise.then(() => {
+			assert.ok(oMergeMetadataExpectation.calledBefore(oFooResolveExpectation));
+			assert.ok(oMergeMetadataExpectation.calledBefore(oBarResolveExpectation));
+			assert.ok(oFooResolveExpectation.calledBefore(oApplyAnnotationChangesExpectation));
+			assert.ok(oBarResolveExpectation.calledBefore(oBarRejectExpectation));
+			assert.ok(oBarRejectExpectation.calledBefore(oApplyAnnotationChangesExpectation));
+		});
+	});
 });

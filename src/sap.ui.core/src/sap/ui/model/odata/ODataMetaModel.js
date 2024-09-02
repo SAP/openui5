@@ -1187,6 +1187,7 @@ sap.ui.define([
 							mQName2PendingRequest[sQualifiedPropertyName].reject(oError);
 						}
 					}
+					that._applyAnnotationChanges(); // new metadata is merged, apply annotation changes again
 				},
 				function (oError) {
 					var sQualifiedPropertyName;

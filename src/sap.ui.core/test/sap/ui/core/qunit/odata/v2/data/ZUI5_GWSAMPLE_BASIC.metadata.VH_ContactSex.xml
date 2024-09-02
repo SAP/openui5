@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0"
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+	xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="GWSAMPLE_BASIC" xml:lang="en" sap:schema-version="1"
+			xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<!-- Entity types which already exist are ignored when merging value list meta data -->
+			<EntityType Name="BusinessPartner" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="BusinessPartnerID" />
+				</Key>
+				<Property Name="Address" Type="GWSAMPLE_BASIC.CT_Address"
+					Nullable="false" />
+				<Property Name="BusinessPartnerID" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:unicode="false" sap:label="Bus. Part. ID"
+					sap:creatable="false" sap:updatable="false" />
+				<Property Name="CompanyName" Type="Edm.String" Nullable="false"
+					MaxLength="80" sap:unicode="false" sap:label="Company Name" />
+				<Property Name="WebAddress" Type="Edm.String" sap:unicode="false"
+					sap:label="Web Address" sap:sortable="false" sap:filterable="false"
+					sap:semantics="url" />
+				<Property Name="EmailAddress" Type="Edm.String" Nullable="false"
+					MaxLength="255" sap:unicode="false" sap:label="E-Mail Address"
+					sap:semantics="email" />
+				<Property Name="PhoneNumber" Type="Edm.String" MaxLength="30"
+					sap:unicode="false" sap:label="Phone No." sap:semantics="tel" />
+				<Property Name="FaxNumber" Type="Edm.String" MaxLength="30"
+					sap:unicode="false" sap:label="Fax Number" />
+				<Property Name="LegalForm" Type="Edm.String" MaxLength="10"
+					sap:unicode="false" sap:label="Legal Form" />
+				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false"
+					MaxLength="5" sap:unicode="false" sap:label="Currency"
+					sap:semantics="currency-code" />
+				<Property Name="BusinessPartnerRole" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:unicode="false" sap:label="Bus. Part. Role" />
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Precision="7"
+					sap:unicode="false" sap:label="Time Stamp" sap:creatable="false"
+					sap:updatable="false" />
+				<Property Name="ChangedAt" Type="Edm.DateTimeOffset" Precision="7"
+					ConcurrencyMode="Fixed" sap:unicode="false" sap:label="Time Stamp"
+					sap:creatable="false" sap:updatable="false" />
+				<NavigationProperty Name="ToSalesOrders"
+					Relationship="GWSAMPLE_BASIC.Assoc_BusinessPartner_SalesOrders"
+					FromRole="FromRole_Assoc_BusinessPartner_SalesOrders"
+					ToRole="ToRole_Assoc_BusinessPartner_SalesOrders" />
+				<NavigationProperty Name="ToContacts"
+					Relationship="GWSAMPLE_BASIC.Assoc_BusinessPartner_Contacts"
+					FromRole="FromRole_Assoc_BusinessPartner_Contacts"
+					ToRole="ToRole_Assoc_BusinessPartner_Contacts" />
+				<NavigationProperty Name="ToProducts"
+					Relationship="GWSAMPLE_BASIC.Assoc_BusinessPartner_Products"
+					FromRole="FromRole_Assoc_BusinessPartner_Products"
+					ToRole="ToRole_Assoc_BusinessPartner_Products" />
+			</EntityType>
+			<!-- New entity type for value list -->
+			<EntityType Name="VH_Sex" sap:value-list="true" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Sex" />
+				</Key>
+				<Property Name="Sex" Type="Edm.String" Nullable="false" MaxLength="1"
+					sap:unicode="false" sap:label="Sex" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="Shorttext" Type="Edm.String" Nullable="false"
+					MaxLength="60" sap:unicode="false" sap:label="Short Descript."
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+			</EntityType>
+			<EntityContainer Name="GWSAMPLE_BASIC_Entities"
+				m:IsDefaultEntityContainer="true" sap:message-scope-supported="true"
+				sap:supported-formats="atom json xlsx pdf">
+				<!-- Entity sets which already exist are ignored when merging value list meta data -->
+				<EntitySet Name="BusinessPartnerSet"
+					EntityType="GWSAMPLE_BASIC.BusinessPartner" sap:content-version="1" />
+				<!-- new entity set for value list type -->
+				<EntitySet Name="VH_SexSet" EntityType="GWSAMPLE_BASIC.VH_Sex"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:pageable="false" sap:content-version="1" />
+			</EntityContainer>
+			<!-- Annotations for already existing enity types are ignored when merging value list meta data -->
+			<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/FaxNumber" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Fax Number (value list)"/>
+			</Annotations>
+			<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/PhoneNumber">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Phone No. (value list)"/>
+			</Annotations>
+			<!-- New annotation for the property for which the value list has been requesed -->
+			<Annotations Target="GWSAMPLE_BASIC.Contact/Sex" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Sex" />
+						<PropertyValue Property="CollectionPath" String="VH_SexSet" />
+						<PropertyValue Property="SearchSupported" Bool="true" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="Sex" />
+									<PropertyValue Property="ValueListProperty" String="Sex" />
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Shorttext" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<!-- non-ValueList annotations for the property for which the value list has been requested may be
+					contained which must not overwrite annotation changes -->
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Sex (value list)"/>
+			</Annotations>
+			<!-- New annotations for new value list type -->
+			<Annotations Target="GWSAMPLE_BASIC.VH_Sex/Sex" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Sex (value list)"/>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
