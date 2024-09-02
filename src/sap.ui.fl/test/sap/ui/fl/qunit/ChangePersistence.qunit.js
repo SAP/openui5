@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Layer",
@@ -39,6 +40,7 @@ sap.ui.define([
 	Settings,
 	Condenser,
 	UIChangeManager,
+	FlexObjectManager,
 	WriteStorage,
 	ChangePersistence,
 	Layer,
@@ -137,14 +139,15 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling transportAllUIChanges successfully", function(assert) {
-			var oMockNewChange = {
+			const oMockNewChange = {
 				fileType: "change",
-				id: "changeId2"
+				id: "changeId2",
+				getRequest() { return ""; }
 			};
 
-			var sLayer = Layer.CUSTOMER;
+			const sLayer = Layer.CUSTOMER;
 
-			var oMockCompVariant1 = {
+			const oMockCompVariant1 = {
 				getRequest() {
 					return "$TMP";
 				},
@@ -153,7 +156,7 @@ sap.ui.define([
 				}
 			};
 
-			var oMockCompVariant2 = {
+			const oMockCompVariant2 = {
 				getRequest() {
 					return "some_transport_id";
 				},
@@ -162,7 +165,7 @@ sap.ui.define([
 				}
 			};
 
-			var oMockCompVariant3 = {
+			const oMockCompVariant3 = {
 				getRequest() {
 					return "";
 				},
@@ -171,45 +174,27 @@ sap.ui.define([
 				}
 			};
 
-			var oMockCompVariant4 = {
-				getRequest() {
-					return "";
-				},
-				getLayer() {
-					return Layer.USER;
-				}
-			};
-
-			var oAppVariantDescriptor = {
+			const oAppVariantDescriptor = {
 				packageName: "$TMP",
 				fileType: "appdescr_variant",
 				fileName: "manifest",
 				id: "customer.app.var.id",
 				namespace: "namespace"
 			};
-			var oRootControl = {
+			const oRootControl = {
 				id: "sampleControl"
 			};
-			var sStyleClass = "sampleStyle";
-			var aAppVariantDescriptors = [oAppVariantDescriptor];
+			const sStyleClass = "sampleStyle";
+			const aAppVariantDescriptors = [oAppVariantDescriptor];
 
-			var fnPublishStub = sandbox.stub(WriteStorage, "publish").resolves();
-			var fnGetChangesForComponentStub = sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([oMockNewChange]);
-			var fnGetCompEntitiesByIdMapStub = sandbox.stub(FlexState, "getCompVariantsMap").returns({
-				somePersistencyKey: {
-					byId: {
-						id1: oMockCompVariant1,
-						id2: oMockCompVariant2,
-						id3: oMockCompVariant3,
-						id4: oMockCompVariant4
-					}
-				}
-			});
+			const fnPublishStub = sandbox.stub(WriteStorage, "publish").resolves();
+			const oGetFlexObjectsStub = sandbox.stub(FlexObjectManager, "getFlexObjects").resolves(
+				[oMockNewChange, oMockCompVariant1, oMockCompVariant2, oMockCompVariant3]
+			);
 
 			return this.oChangePersistence.transportAllUIChanges(oRootControl, sStyleClass, sLayer, aAppVariantDescriptors)
 			.then(function() {
-				assert.equal(fnGetChangesForComponentStub.callCount, 1, "then getChangesForComponent called once");
-				assert.equal(fnGetCompEntitiesByIdMapStub.callCount, 1, "then getCompEntitiesByIdMap called once");
+				assert.equal(oGetFlexObjectsStub.callCount, 1, "then the flex objects are fetched");
 				assert.equal(fnPublishStub.callCount, 1, "then publish called once");
 				assert.ok(fnPublishStub.calledWith({
 					transportDialogSettings: {
@@ -221,70 +206,6 @@ sap.ui.define([
 					appVariantDescriptors: aAppVariantDescriptors
 				}), "then publish called with the transport info and changes array");
 			}.bind(this));
-		});
-	});
-
-	QUnit.module("When getChangesForComponent is called", {
-		beforeEach() {
-			this.oFlexObjectDataSelectorStub = sandbox.stub(FlexState.getFlexObjectsDataSelector(), "get").returns([
-				createChange("customerUI", Layer.CUSTOMER),
-				createChange("customerUI2", Layer.CUSTOMER),
-				createChange("userUI", Layer.USER),
-				createChange("customerVariant", Layer.CUSTOMER, "ctrl_variant"),
-				createChange("userVariant", Layer.USER, "ctrl_variant"),
-				createChange("customerVariantUI", Layer.CUSTOMER, "change", "customerVariant"),
-				createChange("customerFav", Layer.CUSTOMER, "ctrl_variant_change"),
-				createChange("userFav", Layer.USER, "ctrl_variant_change"),
-				createChange("customerComp", Layer.CUSTOMER, "change", "", {persistencyKey: "foo"})
-			]);
-			this.oFlexStateUpdateStub = sandbox.stub(FlexState, "update");
-			this.oFlexStateGetResponseStub = sandbox.stub(FlexState, "getStorageResponse");
-			this.oGetOnlyInitialVMChangesStub = sandbox.stub(VariantManagementState, "getInitialUIChanges").returns([
-				createChange("customerVariant", Layer.CUSTOMER, "ctrl_variant"),
-				createChange("userVariant", Layer.USER, "ctrl_variant")
-			]);
-			this.oGetAllVMChangesStub = sandbox.stub(VariantManagementState, "getVariantDependentFlexObjects").returns([
-				createChange("customerVariant", Layer.CUSTOMER, "ctrl_variant"),
-				createChange("userFav", Layer.USER, "ctrl_variant_change"),
-				createChange("userVariant", Layer.USER, "ctrl_variant")
-			]);
-			this.oChangePersistence = new ChangePersistence({name: "foo"});
-		},
-		afterEach() {
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("without parameters", async function(assert) {
-			const aFlexObjects = await this.oChangePersistence.getChangesForComponent();
-			assert.strictEqual(aFlexObjects.length, 5, "five changes are returned");
-			assert.strictEqual(this.oFlexStateUpdateStub.callCount, 0, "the FlexState is not updated");
-			assert.strictEqual(this.oFlexStateGetResponseStub.callCount, 1, "the FlexState is called to load the data");
-		});
-
-		QUnit.test("with invalidateCache", async function(assert) {
-			const aFlexObjects = await this.oChangePersistence.getChangesForComponent({}, true);
-			assert.strictEqual(aFlexObjects.length, 5, "five changes are returned");
-			assert.strictEqual(this.oFlexStateUpdateStub.callCount, 1, "the FlexState is updated");
-			assert.strictEqual(this.oFlexStateGetResponseStub.callCount, 1, "the FlexState is called to load the data");
-		});
-
-		QUnit.test("with includeCtrlVariants", async function(assert) {
-			const aFlexObjects = await this.oChangePersistence.getChangesForComponent({includeCtrlVariants: true});
-			assert.strictEqual(aFlexObjects.length, 6, "six changes are returned");
-		});
-
-		QUnit.test("with includeCtrlVariants and currentLayer set to USER", async function(assert) {
-			const aUserFlexObjects = await this.oChangePersistence.getChangesForComponent({
-				includeCtrlVariants: true, currentLayer: Layer.USER
-			});
-			assert.strictEqual(aUserFlexObjects.length, 3, "three changes are returned");
-		});
-
-		QUnit.test("with includeCtrlVariants and currentLayer set to CUSTOMER", async function(assert) {
-			const aCustomerFlexObjects = await this.oChangePersistence.getChangesForComponent({
-				includeCtrlVariants: true, currentLayer: Layer.CUSTOMER
-			});
-			assert.strictEqual(aCustomerFlexObjects.length, 3, "three changes are returned");
 		});
 	});
 
@@ -1367,40 +1288,6 @@ sap.ui.define([
 				0,
 				"then no dirty changes remain in the state"
 			);
-		});
-
-		QUnit.skip("shall not change the state of a dirty change in case of a connector error", function(assert) {
-			var oChangeContent = {
-				fileName: "ChangeFileName",
-				layer: Layer.VENDOR,
-				fileType: "change",
-				changeType: "addField",
-				selector: {id: "control1"},
-				content: {},
-				originalLanguage: "DE"
-			};
-
-			var oRaisedError = {messages: [{severity: "Error", text: "Error"}]};
-
-			// this test requires a slightly different setup
-			sandbox.stub(Storage, "loadFlexData").resolves({changes: {changes: [oChangeContent]}});
-			this.oWriteStub.restore();
-			sandbox.stub(WriteStorage, "write").rejects(oRaisedError);
-
-			this._updateCacheAndDirtyStateSpy = sandbox.spy(this.oChangePersistence, "_updateCacheAndDirtyState");
-
-			UIChangeManager.addDirtyChanges(sReference, [oChangeContent], this._oComponentInstance);
-			return this.oChangePersistence.saveDirtyChanges()
-			.catch(function(oError) {
-				assert.equal(oError, oRaisedError, "the error object is correct");
-				return this.oChangePersistence.getChangesForComponent();
-			}.bind(this))
-			.then(function(aChanges) {
-				assert.equal(aChanges.length, 1, "Change is not deleted from the cache");
-				const aDirtyChanges = FlexObjectState.getDirtyFlexObjects(sReference);
-				assert.equal(aDirtyChanges.length, 1, "Change is still a dirty change");
-				assert.equal(this._updateCacheAndDirtyStateSpy.callCount, 0, "no update of cache and dirty state took place");
-			}.bind(this));
 		});
 
 		QUnit.test("shall keep a change in the dirty changes, if it has a DELETE state", function(assert) {

@@ -7,8 +7,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
-	"sap/ui/fl/apply/_internal/flexState/DataSelector",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/api/Version",
@@ -23,8 +21,6 @@ sap.ui.define([
 	States,
 	DependencyHandler,
 	UIChangesState,
-	VariantManagementState,
-	DataSelector,
 	FlexObjectState,
 	FlexState,
 	Version,
@@ -36,22 +32,6 @@ sap.ui.define([
 	LayerUtils
 ) {
 	"use strict";
-
-	const oVariantIndependentUIChangesDataSelector = new DataSelector({
-		id: "variantIndependentUIChanges",
-		parentDataSelector: FlexState.getFlexObjectsDataSelector(),
-		executeFunction(aFlexObjects) {
-			return aFlexObjects.filter(function(oFlexObject) {
-				const bIsUIChange = oFlexObject.isA("sap.ui.fl.apply._internal.flexObjects.UIChange");
-				const bIsControllerExtension = oFlexObject.isA("sap.ui.fl.apply._internal.flexObjects.ControllerExtensionChange");
-				const bCorrectFileType = oFlexObject.getFileType() === "change" || oFlexObject.getFileType() === "codeExt";
-				return (bIsUIChange || bIsControllerExtension)
-					&& bCorrectFileType
-					&& !oFlexObject.getVariantReference()
-					&& !oFlexObject.getSelector().persistencyKey;
-			});
-		}
-	});
 
 	/**
 	 * Helper object to access a change from the back end. Access helper object for each change (and variant) which was fetched from the back end
@@ -73,62 +53,6 @@ sap.ui.define([
 		}
 
 		this._oMessagebundle = undefined;
-		oVariantIndependentUIChangesDataSelector.clearCachedResult({reference: this._mComponent.name});
-	};
-
-	async function getChangesFromFlexState(sReference, mPropertyBag, bInvalidateCache) {
-		try {
-			if (bInvalidateCache) {
-				await FlexState.update(mPropertyBag);
-			}
-
-			await FlexState.getStorageResponse(sReference);
-		} catch (oError) {
-			Log.warning("Problem during ChangePersistence.prototype.getChangesForComponent");
-		}
-	}
-
-	/**
-	 * Calls the back end asynchronously and fetches all changes for the component
-	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
-	 * @param {object} [mPropertyBag] Contains additional data needed for reading changes
-	 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to the current running component
-	 * @param {string} [mPropertyBag.siteId] ID of the site belonging to the current running component
-	 * @param {string} [mPropertyBag.currentLayer] Specifies a single layer for loading changes. If this parameter is set, the max layer filtering is not applied
-	 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] Indicates that changes shall be loaded without layer filtering
-	 * @param {boolean} [mPropertyBag.includeCtrlVariants] - Indicates that control variant changes shall be included
-	 * @param {string} [mPropertyBag.cacheKey] Key to validate the cache entry stored on client side
-	 * @param {string} [mPropertyBag.version] Number of the version to retrieve changes for
-	 * @param {boolean} bInvalidateCache - should the cache be invalidated
-	 * @returns {Promise} Promise resolving with an array of changes
-	 * @public
-	 */
-	ChangePersistence.prototype.getChangesForComponent = async function(mPropertyBag, bInvalidateCache) {
-		mPropertyBag ||= {};
-		await getChangesFromFlexState(this._mComponent.name, mPropertyBag, bInvalidateCache);
-
-		const aAllChanges = FlexState.getFlexObjectsDataSelector().get({reference: this._mComponent.name});
-		if (!aAllChanges.length) {
-			return [];
-		}
-
-		// TODO: remove and use UIChangesState
-		let aRelevantUIChanges = oVariantIndependentUIChangesDataSelector.get({reference: this._mComponent.name});
-
-		if (!mPropertyBag.includeCtrlVariants) {
-			aRelevantUIChanges = aRelevantUIChanges.concat(
-				VariantManagementState.getInitialUIChanges({reference: this._mComponent.name})
-			);
-		} else {
-			aRelevantUIChanges = aRelevantUIChanges.concat(
-				VariantManagementState.getVariantDependentFlexObjects(this._mComponent.name)
-			);
-		}
-
-		if (mPropertyBag.currentLayer) {
-			aRelevantUIChanges = LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aRelevantUIChanges, mPropertyBag.currentLayer);
-		}
-		return aRelevantUIChanges;
 	};
 
 	/**
@@ -579,20 +503,6 @@ sap.ui.define([
 		}
 	};
 
-	function isLocalAndInLayer(sLayer, oObject) {
-		return (oObject.getRequest() === "$TMP" || oObject.getRequest() === "") && oObject.getLayer() === sLayer;
-	}
-
-	function getAllCompVariantsEntities() {
-		var aCompVariantEntities = [];
-		var mCompVariantsMap = FlexState.getCompVariantsMap(this._mComponent.name);
-		for (var sPersistencyKey in mCompVariantsMap) {
-			for (var sId in mCompVariantsMap[sPersistencyKey].byId) {
-				aCompVariantEntities.push(mCompVariantsMap[sPersistencyKey].byId[sId]);
-			}
-		}
-		return aCompVariantEntities;
-	}
 	/**
 	 * Transports all the UI changes and app variant descriptor (if exists) to the target system
 	 *
@@ -602,23 +512,25 @@ sap.ui.define([
 	 * @param {array} [aAppVariantDescriptors] - an array of app variant descriptors which needs to be transported
 	 * @returns {Promise} promise that resolves when all the artifacts are successfully transported
 	 */
-	ChangePersistence.prototype.transportAllUIChanges = function(oRootControl, sStyleClass, sLayer, aAppVariantDescriptors) {
-		return this.getChangesForComponent({currentLayer: sLayer, includeCtrlVariants: true}).then(function(aLocalChanges) {
-			var aCompVariantEntities = getAllCompVariantsEntities.call(this);
+	ChangePersistence.prototype.transportAllUIChanges = async function(oRootControl, sStyleClass, sLayer, aAppVariantDescriptors) {
+		const aFlexObjects = await FlexObjectManager.getFlexObjects({
+			selector: oRootControl,
+			currentLayer: sLayer,
+			includeCtrlVariants: true
+		});
+		const aLocalFlexObjects = aFlexObjects.filter((oFlexObject) => {
+			return oFlexObject.getRequest() === "$TMP" || oFlexObject.getRequest() === "";
+		});
 
-			aLocalChanges = aLocalChanges.concat(
-				aCompVariantEntities.filter(isLocalAndInLayer.bind(this, sLayer)));
-
-			return Storage.publish({
-				transportDialogSettings: {
-					styleClass: sStyleClass
-				},
-				layer: sLayer,
-				reference: this._mComponent.name,
-				localChanges: aLocalChanges,
-				appVariantDescriptors: aAppVariantDescriptors
-			});
-		}.bind(this));
+		return Storage.publish({
+			transportDialogSettings: {
+				styleClass: sStyleClass
+			},
+			layer: sLayer,
+			reference: this._mComponent.name,
+			localChanges: aLocalFlexObjects,
+			appVariantDescriptors: aAppVariantDescriptors
+		});
 	};
 
 	return ChangePersistence;
