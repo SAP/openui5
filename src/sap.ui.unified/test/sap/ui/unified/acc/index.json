@@ -38,7 +38,7 @@
 		},
 		{
 			"control" : "sap.ui.unified.Currency",
-			"url" : "../Currency.html",
+			"url" : "./Currency.html",
 			"appComponent" : "CA-UI5-CTR-BAL"
 		},
 		{
