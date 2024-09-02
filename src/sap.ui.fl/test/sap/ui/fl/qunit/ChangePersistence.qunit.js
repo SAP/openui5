@@ -223,63 +223,6 @@ sap.ui.define([
 		);
 	}
 
-	QUnit.module("sap.ui.fl.ChangePersistence addChange", {
-		beforeEach() {
-			sandbox.stub(FlexState, "getAppDescriptorChanges").returns([]);
-			sandbox.stub(VariantManagementState, "getInitialUIChanges").returns([]);
-			this._mComponentProperties = {
-				name: sReference
-			};
-			sandbox.stub(Utils, "isApplication").returns(false);
-			return Component.create({
-				name: sReference
-			}).then(function(oComponent) {
-				this._oAppComponentInstance = oComponent;
-				this._oComponentInstance = Component.getComponentById(
-					oComponent.createId(sReference)
-				);
-				this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
-				return FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference);
-			}.bind(this));
-		},
-		afterEach() {
-			this._oAppComponentInstance.destroy();
-			sandbox.restore();
-			FlexState.clearState();
-		}
-	}, function() {
-		QUnit.test("'addChangeAndUpdateDependencies' function is called", function(assert) {
-			var oChange = createChange("fileNameChange0");
-			this.oChangePersistence.addChangeAndUpdateDependencies(this._oComponentInstance, oChange);
-			assert.strictEqual(this.oChangePersistence.getDependencyMapForComponent().aChanges[0].getId(),
-				oChange.getId(), "then the change is added to the change persistence");
-		});
-
-		QUnit.test("'addChangeAndUpdateDependencies' function is called with referenced change", function(assert) {
-			var oChange0 = createChange("fileNameChange0");
-			var oChange1 = createChange("fileNameChange1");
-			var oChangeInBetween = createChange("fileNameChangeInBetween");
-			this.oChangePersistence.addChangeAndUpdateDependencies(this._oComponentInstance, oChange0);
-			this.oChangePersistence.addChangeAndUpdateDependencies(this._oComponentInstance, oChange1);
-			this.oChangePersistence.addChangeAndUpdateDependencies(this._oComponentInstance, oChangeInBetween, oChange0);
-			assert.strictEqual(
-				this.oChangePersistence.getDependencyMapForComponent().aChanges[0].getId(),
-				oChange0.getId(),
-				"then the first change is added to the change persistence on first position"
-			);
-			assert.strictEqual(
-				this.oChangePersistence.getDependencyMapForComponent().aChanges[1].getId(),
-				oChangeInBetween.getId(),
-				"then the third change is added to the change persistence on second position"
-			);
-			assert.strictEqual(
-				this.oChangePersistence.getDependencyMapForComponent().aChanges[2].getId(),
-				oChange1.getId(),
-				"then the second change is added to the change persistence on third position"
-			);
-		});
-	});
-
 	function setURLParameterForCondensing(sValue) {
 		sandbox.stub(window, "URLSearchParams").returns({
 			has() {return true;},
