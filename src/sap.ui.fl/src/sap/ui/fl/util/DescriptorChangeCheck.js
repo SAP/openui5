@@ -14,7 +14,35 @@ sap.ui.define([
 		outbound: "appdescr_app_addNewOutbound"
 	};
 
-	function getAndCheckInOrOutboundId(oChangeContent, sKey) {
+	function checkObjectProperties(oChangeInOrOutbound, sInOrOutboundName, aMandatoryProperties, aSupportedProperties, oSupportedPropertyPattern) {
+		const oSetOfProperties = new Set(Object.keys(oChangeInOrOutbound[sInOrOutboundName]));
+		aMandatoryProperties.forEach(function(sMandatoryProperty) {
+			if (!oSetOfProperties.has(sMandatoryProperty)) {
+				throw new Error(`Mandatory property '${sMandatoryProperty}' is missing. Mandatory properties are ${aMandatoryProperties.join("|")}.`);
+			}
+		});
+
+		const notSupportedProperties = [];
+		oSetOfProperties.forEach(function(sProperty) {
+			if (!aSupportedProperties.includes(sProperty)) {
+				notSupportedProperties.push(sProperty);
+			}
+		});
+		if (notSupportedProperties.length > 0) {
+			throw new Error(`Properties ${notSupportedProperties.join("|")} are not supported. Supported properties are ${aSupportedProperties.join("|")}.`);
+		}
+
+		oSetOfProperties.forEach(function(sProperty) {
+			if (oSupportedPropertyPattern[sProperty]) {
+				const regex = new RegExp(oSupportedPropertyPattern[sProperty]);
+				if (!regex.test(oChangeInOrOutbound[sInOrOutboundName][sProperty])) {
+					throw new Error(`The property has disallowed values. Supported values for '${sProperty}' should adhere to regular expression ${regex}.`);
+				}
+			}
+		});
+	}
+
+	function getAndCheckInOrOutbound(oChangeContent, sKey, aMandatoryProperties, aSupportedProperties, oSupportedPropertyPattern) {
 		const aObjectKeyNames = Object.keys(oChangeContent);
 		if (aObjectKeyNames.length > 1) {
 			throw new Error("It is not allowed to add more than one object under change object 'content'.");
@@ -35,9 +63,11 @@ sap.ui.define([
 		if (aInOrOutbounds.length < 1) {
 			throw new Error(`There is no ${sKeyNameOfChangeContent} provided. Please provide an ${sKeyNameOfChangeContent}.`);
 		}
-		if (aInOrOutbounds[0] === "") {
+		const sInOrOutbound = aInOrOutbounds[0];
+		if (sInOrOutbound === "") {
 			throw new Error(`The ID of your ${sKeyNameOfChangeContent} is empty.`);
 		}
+		checkObjectProperties(oChangeContent[sKey], sInOrOutbound, aMandatoryProperties, aSupportedProperties, oSupportedPropertyPattern);
 		return aInOrOutbounds[aInOrOutbounds.length - 1];
 	}
 
@@ -212,6 +242,6 @@ sap.ui.define([
 		getNamespacePrefixForLayer,
 		getClearedGenericPath,
 		isGenericPropertyPathSupported,
-		getAndCheckInOrOutboundId
+		getAndCheckInOrOutbound
 	};
 });

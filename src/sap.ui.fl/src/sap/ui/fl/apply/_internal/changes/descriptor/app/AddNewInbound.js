@@ -10,6 +10,14 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	const MANDATORY_PROPERTIES = ["semanticObject", "action"];
+	const SUPPORTED_PROPERTIES = ["semanticObject", "action", "hideLauncher", "icon", "title", "shortTitle", "subTitle", "info", "indicatorDataSource", "deviceTypes", "displayMode", "signature"];
+
+	const PROPERTIES_PATTERNS = {
+		semanticObject: "^[\\w\\*]{0,30}$",
+		action: "^[\\w\\*]{0,60}$"
+	};
+
 	/**
 	* Descriptor change merger for change type <code>appdescr_app_addNewInbound</code>.
 	* Adds a new inbound <code>sap.app/crossNavigation/inbounds</code> to the app.
@@ -41,7 +49,7 @@ sap.ui.define([
 			oManifest["sap.app"].crossNavigation.inbounds ||= {};
 
 			const oChangeContent = oChange.getContent();
-			const sInboundId = DescriptorChangeCheck.getAndCheckInOrOutboundId(oChangeContent, "inbound");
+			const sInboundId = DescriptorChangeCheck.getAndCheckInOrOutbound(oChangeContent, "inbound", MANDATORY_PROPERTIES, SUPPORTED_PROPERTIES, PROPERTIES_PATTERNS);
 			const oInboundInManifest = oManifest["sap.app"].crossNavigation.inbounds[sInboundId];
 			if (!oInboundInManifest) {
 				DescriptorChangeCheck.checkIdNamespaceCompliance(sInboundId, oChange);
