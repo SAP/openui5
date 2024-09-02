@@ -374,21 +374,21 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupNodePath
 	 *   The group node path relative to the cache
-	 * @param {boolean|number} [bAll]
-	 *   Whether collapsing the node and all its descendants; <code>undefined</code> means a simple
-	 *   collapse, <code>true</code> collapsing all at this node, <code>1</code> a nested node below
-	 *   a collapse all
+	 * @param {boolean} [bAll]
+	 *   Whether collapsing the node and all its descendants
+	 * @param {boolean} [bNested]
+	 *   Whether the "collapse all" was performed at an ancestor
 	 * @returns {number}
 	 *   The number of descendant nodes that were affected
 	 *
 	 * @public
 	 * @see #expand
 	 */
-	_AggregationCache.prototype.collapse = function (sGroupNodePath, bAll) {
+	_AggregationCache.prototype.collapse = function (sGroupNodePath, bAll, bNested) {
 		const oGroupNode = this.getValue(sGroupNodePath);
 		const oCollapsed = _AggregationHelper.getCollapsedObject(oGroupNode);
 		_Helper.updateAll(this.mChangeListeners, sGroupNodePath, oGroupNode, oCollapsed);
-		this.oTreeState.collapse(oGroupNode, bAll);
+		this.oTreeState.collapse(oGroupNode, bAll, bNested);
 
 		const aElements = this.aElements;
 		const iIndex = aElements.indexOf(oGroupNode);
@@ -405,8 +405,8 @@ sap.ui.define([
 		for (let i = iIndex + 1; i < iIndex + 1 + iRemaining; i += 1) {
 			const oElement = aElements[i];
 			if (bAll && oElement["@$ui5.node.isExpanded"]) {
-				iRemaining
-					-= this.collapse(_Helper.getPrivateAnnotation(oElement, "predicate"), 1);
+				iRemaining -= this.collapse(
+					_Helper.getPrivateAnnotation(oElement, "predicate"), bAll, true);
 			}
 			// exceptions of selection are effectively kept alive (with recursive hierarchy)
 			if (!this.isSelectionDifferent(oElement)) {
@@ -416,7 +416,7 @@ sap.ui.define([
 			}
 		}
 		const aSpliced = aElements.splice(iIndex + 1, iRemaining);
-		// with collapse all do not remember the collapsed nodes in a multi-level first level cache
+		// with collapse all do not remember the children if they live inside the top pyramid
 		const iLevel = oGroupNode["@$ui5.node.level"];
 		if (!bAll || !this.bUnifiedCache && iLevel >= this.oAggregation.expandTo) {
 			aSpliced.$level = iLevel;
