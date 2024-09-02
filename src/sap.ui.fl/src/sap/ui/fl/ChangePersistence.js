@@ -477,35 +477,5 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Transports all the UI changes and app variant descriptor (if exists) to the target system
-	 *
-	 * @param {object} oRootControl - the root control of the running application
-	 * @param {string} sStyleClass - RTA style class name
-	 * @param {string} sLayer - Working layer
-	 * @param {array} [aAppVariantDescriptors] - an array of app variant descriptors which needs to be transported
-	 * @returns {Promise} promise that resolves when all the artifacts are successfully transported
-	 */
-	ChangePersistence.prototype.transportAllUIChanges = async function(oRootControl, sStyleClass, sLayer, aAppVariantDescriptors) {
-		const aFlexObjects = await FlexObjectManager.getFlexObjects({
-			selector: oRootControl,
-			currentLayer: sLayer,
-			includeCtrlVariants: true
-		});
-		const aLocalFlexObjects = aFlexObjects.filter((oFlexObject) => {
-			return oFlexObject.getRequest() === "$TMP" || oFlexObject.getRequest() === "";
-		});
-
-		return Storage.publish({
-			transportDialogSettings: {
-				styleClass: sStyleClass
-			},
-			layer: sLayer,
-			reference: this._mComponent.name,
-			localChanges: aLocalFlexObjects,
-			appVariantDescriptors: aAppVariantDescriptors
-		});
-	};
-
 	return ChangePersistence;
 });

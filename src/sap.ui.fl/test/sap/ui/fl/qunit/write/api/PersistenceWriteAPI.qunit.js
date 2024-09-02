@@ -23,7 +23,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
@@ -51,7 +50,6 @@ sap.ui.define([
 	PersistenceWriteAPI,
 	ChangePersistence,
 	ChangePersistenceFactory,
-	FlexControllerFactory,
 	Layer,
 	Utils,
 	sinon,
@@ -60,24 +58,7 @@ sap.ui.define([
 	"use strict";
 
 	document.getElementById("qunit-fixture").style.display = "none";
-	var sandbox = sinon.createSandbox();
-	var sReturnValue = "returnValue";
-
-	function mockFlexController(oControl, oReturn) {
-		sandbox.stub(FlexControllerFactory, "createForSelector")
-		.throws("invalid parameters for flex persistence function")
-		.withArgs(oControl)
-		.returns(oReturn);
-	}
-
-	function getMethodStub(aArguments, vReturnValue) {
-		var fnPersistenceStub = sandbox.stub();
-		fnPersistenceStub
-		.throws("invalid parameters for flex persistence function")
-		.withArgs.apply(fnPersistenceStub, aArguments)
-		.returns(vReturnValue);
-		return fnPersistenceStub;
-	}
+	const sandbox = sinon.createSandbox();
 
 	QUnit.module("Given PersistenceWriteAPI", {
 		beforeEach() {
@@ -407,53 +388,6 @@ sap.ui.define([
 			}, "then the resetFlexObjects was called with the correct parameters");
 		});
 
-		QUnit.test("when publish is called", function(assert) {
-			var mPropertyBag = {
-				styleClass: "styleClass",
-				layer: Layer.CUSTOMER,
-				appVariantDescriptors: [],
-				selector: this.vSelector
-			};
-
-			var fnPersistenceStub = getMethodStub([
-				{},
-				mPropertyBag.styleClass,
-				mPropertyBag.layer,
-				mPropertyBag.appVariantDescriptors
-			], Promise.resolve(sReturnValue));
-
-			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl")
-			.withArgs(this.oAppComponent)
-			.returns({transportAllUIChanges: fnPersistenceStub});
-
-			return PersistenceWriteAPI.publish(mPropertyBag).then((sValue) => {
-				assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
-			});
-		});
-
-		QUnit.test("when publish is called without style class", function(assert) {
-			var mPropertyBag = {
-				layer: Layer.CUSTOMER,
-				appVariantDescriptors: [],
-				selector: this.vSelector
-			};
-
-			var fnPersistenceStub = getMethodStub([
-				{},
-				"",
-				mPropertyBag.layer,
-				mPropertyBag.appVariantDescriptors
-			], Promise.resolve(sReturnValue));
-
-			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl")
-			.withArgs(this.oAppComponent)
-			.returns({transportAllUIChanges: fnPersistenceStub});
-
-			return PersistenceWriteAPI.publish(mPropertyBag).then((sValue) => {
-				assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
-			});
-		});
-
 		QUnit.test("when _getUIChanges is called", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector,
@@ -677,45 +611,55 @@ sap.ui.define([
 		});
 
 		QUnit.test("when remove is called for a flex object with an invalid selector", function(assert) {
-			var mPropertyBag = {
+			const mPropertyBag = {
 				change: {
-					getSelector: function() {
-						return this.selector;
-					}.bind(this)
-				},
-				selector: this.vSelector
+					getId() {
+						return "changeId";
+					}
+				}
 			};
 
-			var fnRemoveChangeStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
-			var fnDeleteChangeStub = sandbox.stub();
+			const fnRemoveChangeStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
+			const oGetCPStub = sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl");
 
-			mockFlexController(undefined, { deleteChange: fnDeleteChangeStub });
 			return PersistenceWriteAPI.remove(mPropertyBag)
 			.catch(function(oError) {
 				assert.ok(oError instanceof Error, "then an error was thrown");
+				assert.ok(
+					oError.message.includes("An invalid selector was passed so change could not be removed with id"),
+					"then the error text contains the correct message"
+				);
 				assert.ok(fnRemoveChangeStub.notCalled, "then the flex persistence was not called to delete change from control");
-				assert.ok(fnDeleteChangeStub.notCalled, "then the flex persistence was not called to remove change from persistence");
+				assert.ok(oGetCPStub.notCalled, "then the flex persistence was not called to remove change from persistence");
 			});
 		});
 
 		QUnit.test("when remove is called for a flex object with an invalid app component", function(assert) {
-			var mPropertyBag = {
+			const mPropertyBag = {
 				change: {
 					getSelector: function() {
-						return this.selector;
-					}.bind(this)
-				}
+						return this.vSelector;
+					}.bind(this),
+					getId() {
+						return "changeId";
+					}
+				},
+				selector: this.vSelector
 			};
 
-			var fnRemoveChangeStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
-			var fnDeleteChangeStub = sandbox.stub();
+			sandbox.stub(Utils, "getAppComponentForSelector");
+			const fnRemoveChangeStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
+			const oGetCPStub = sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl");
 
-			mockFlexController(undefined, { deleteChange: fnDeleteChangeStub });
 			return PersistenceWriteAPI.remove(mPropertyBag)
 			.catch(function(oError) {
 				assert.ok(oError instanceof Error, "then an error was thrown");
+				assert.ok(
+					oError.message.includes("Invalid application component for selector, change could not be removed with id"),
+					"then the error text contains the correct message"
+				);
 				assert.ok(fnRemoveChangeStub.notCalled, "then the flex persistence was not called to remove change from control");
-				assert.ok(fnDeleteChangeStub.notCalled, "then the flex persistence was not called to delete change from persistence");
+				assert.ok(oGetCPStub.notCalled, "then the flex persistence was not called to delete change from persistence");
 			});
 		});
 
