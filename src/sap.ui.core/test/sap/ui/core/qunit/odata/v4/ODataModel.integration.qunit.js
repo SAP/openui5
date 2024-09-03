@@ -72976,4 +72976,139 @@ make root = ${bMakeRoot}`;
 			"/SalesOrderList('1')"
 		], [["6"], ["4"], ["3"], ["2"], ["1"]]);
 	});
+
+	//*********************************************************************************************
+	// Scenario: With binding parameter $$separate the main list request omits the specified
+	// navigation properties. Instead, they are loaded as late property requests in separate $batch
+	// requests. Same applies for scrolling (load more items).
+	// Parameter $$separate works independently of autoExpandSelect.
+	// JIRA: CPOUI5ODATAV4-2691
+[false, true].forEach(function (bAutoExpandSelect) {
+	QUnit.test("$$separate: autoExpandSelect=" + bAutoExpandSelect, async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : bAutoExpandSelect});
+		const sListUrl = "Artists?custom=foo&$apply=A.P.P.L.E.&$count=true"
+			+ "&$expand=BestPublication($select=CurrencyCode,PublicationID)"
+			+ "&$filter=IsActiveEntity eq true&$orderby=ArtistID&$search=covfefe"
+			+ "&$select=ArtistID,IsActiveEntity,Name";
+		const sLateQueryOptions = "?custom=foo&$select=BestFriend"
+			+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+			+ ",SiblingEntity($select=ArtistID,IsActiveEntity,Name)";
+		const sExpandSelect = `
+			$expand : {
+				BestFriend : {$select : 'ArtistID,IsActiveEntity,Name'},
+				BestPublication : {$select : 'CurrencyCode,PublicationID'},
+				SiblingEntity : {$select : 'ArtistID,IsActiveEntity,Name'}
+			},
+			$select : 'ArtistID,IsActiveEntity,Name',
+		`;
+		const sView = `
+<Table growing="true" growingThreshold="2" id="table"
+		items="{
+			path : '/Artists',
+			parameters : {
+				$$separate : ['BestFriend', 'SiblingEntity'],
+				${bAutoExpandSelect ? "" : sExpandSelect}
+				$apply : 'A.P.P.L.E.',
+				$count : true,
+				$filter : 'IsActiveEntity eq true',
+				$orderby : 'ArtistID',
+				$search : 'covfefe',
+				custom : 'foo'
+			}
+		}">
+	<Text id="name" text="{Name}"/>
+	<Text id="publicationCurrency" text="{BestPublication/CurrencyCode}"/>
+	<Text id="friend" text="{BestFriend/Name}"/>
+	<Text id="sibling" text="{SiblingEntity/Name}"/>
+</Table>`;
+
+		let fnResolve10;
+		let fnResolve20;
+		this.expectRequest({
+				batchNo : 1,
+				url : sListUrl + "&$skip=0&$top=2"
+			}, {
+				"@odata.count" : "3",
+				value : [{
+					ArtistID : "10",
+					BestPublication : {CurrencyCode : "EUR", PublicationID : "Pub1"},
+					IsActiveEntity : true,
+					Name : "Artist A"
+				}, {
+					ArtistID : "20",
+					BestPublication : {CurrencyCode : "USD", PublicationID : "Pub2"},
+					IsActiveEntity : true,
+					Name : "Artist B"
+				}]
+			})
+			.expectChange("name", ["Artist A", "Artist B"])
+			.expectChange("publicationCurrency", ["EUR", "USD"])
+			.expectChange("friend", [])
+			.expectChange("sibling", [])
+			.expectRequest({
+				batchNo : 2,
+				url : "Artists(ArtistID='10',IsActiveEntity=true)" + sLateQueryOptions
+			}, new Promise(function (resolve) {
+				fnResolve10 = resolve.bind(null, {
+					BestFriend : {ArtistID : "F1", IsActiveEntity : true, Name : "Friend A"},
+					SiblingEntity : {ArtistID : "S1", IsActiveEntity : true, Name : "Sibling A"}
+				});
+			}))
+			.expectRequest({
+				batchNo : 2,
+				url : "Artists(ArtistID='20',IsActiveEntity=true)" + sLateQueryOptions
+			}, new Promise(function (resolve) {
+				fnResolve20 = resolve.bind(null, {
+					BestFriend : {ArtistID : "F2", IsActiveEntity : true, Name : "Friend B"},
+					SiblingEntity : {ArtistID : "S2", IsActiveEntity : true, Name : "Sibling B"}
+				});
+			}));
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectChange("friend", ["Friend A", "Friend B"])
+			.expectChange("sibling", ["Sibling A", "Sibling B"]);
+
+		fnResolve10();
+		fnResolve20();
+
+		await this.waitForChanges(assert, "$$separate responses");
+
+		let fnResolve30;
+		this.expectRequest({
+				batchNo : 3,
+				url : sListUrl + "&$skip=2&$top=1"
+			}, {
+				"@odata.count" : "3",
+				value : [{
+					ArtistID : "30",
+					BestPublication : {CurrencyCode : "JPY", PublicationID : "Pub3"},
+					IsActiveEntity : true,
+					Name : "Artist C"
+				}]
+			})
+			.expectChange("name", [,, "Artist C"])
+			.expectChange("publicationCurrency", [,, "JPY"])
+			.expectRequest({
+				batchNo : 4,
+				url : "Artists(ArtistID='30',IsActiveEntity=true)" + sLateQueryOptions
+			}, new Promise(function (resolve) {
+				fnResolve30 = resolve.bind(null, {
+					BestFriend : {ArtistID : "F3", IsActiveEntity : true, Name : "Friend C"},
+					SiblingEntity : {ArtistID : "S3", IsActiveEntity : true, Name : "Sibling C"}
+				});
+			}));
+
+		this.oView.byId("table").requestItems();
+
+		await this.waitForChanges(assert, "load more items");
+
+		this.expectChange("friend", [,, "Friend C"])
+			.expectChange("sibling", [,, "Sibling C"]);
+
+		fnResolve30();
+
+		await this.waitForChanges(assert, "$$separate responses, again");
+	});
+});
 });
