@@ -3,10 +3,12 @@
 sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/support/_internal/getFlexSettings",
+	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Settings,
 	getFlexSettings,
+	Utils,
 	sinon
 ) {
 	"use strict";
@@ -32,7 +34,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("with no versioning in CUSTOMER or ALL", async function(assert) {
-			const aSettings = await getFlexSettings();
+			const aSettings = await getFlexSettings("dummyComponent");
 			assert.deepEqual(aSettings, [
 				{ key: "versioning", value: false },
 				{ key: "isKeyUser", value: true },
@@ -43,7 +45,7 @@ sap.ui.define([
 
 		QUnit.test("with versioning in CUSTOMER", async function(assert) {
 			this.oSettings.versioning.CUSTOMER = true;
-			const aSettings = await getFlexSettings();
+			const aSettings = await getFlexSettings("dummyComponent");
 			assert.deepEqual(aSettings, [
 				{ key: "versioning", value: true },
 				{ key: "isKeyUser", value: true },
@@ -54,9 +56,26 @@ sap.ui.define([
 
 		QUnit.test("with versioning in ALL", async function(assert) {
 			this.oSettings.versioning.ALL = true;
-			const aSettings = await getFlexSettings();
+			const aSettings = await getFlexSettings("dummyComponent");
 			assert.deepEqual(aSettings, [
 				{ key: "versioning", value: true },
+				{ key: "isKeyUser", value: true },
+				{ key: "isAtoAvailable", value: false },
+				{ key: "isLocalResetEnabled", value: false }
+			], "the settings are returned");
+		});
+
+		QUnit.test("without passing a component", async function(assert) {
+			sandbox.stub(Utils, "getUShellService").resolves({
+				getCurrentApplication() {
+					return {
+						componentInstance: "dummyComponent"
+					};
+				}
+			});
+			const aSettings = await getFlexSettings();
+			assert.deepEqual(aSettings, [
+				{ key: "versioning", value: false },
 				{ key: "isKeyUser", value: true },
 				{ key: "isAtoAvailable", value: false },
 				{ key: "isLocalResetEnabled", value: false }

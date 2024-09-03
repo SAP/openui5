@@ -42,9 +42,9 @@ sap.ui.define([
 	var oStartDate = UI5Date.getInstance();
 	oStartDate.setDate(oStartDate.getDate() - 1);
 	var oCal2 = new CalendarDateInterval("Cal2", {
-		width: Device.system.phone ? "340px" : "464px",
+		width: "320px",
 		startDate: oStartDate,
-		days: 14,
+		days: 7,
 		intervalSelection: true
 	});
 
@@ -54,9 +54,12 @@ sap.ui.define([
 		]
 	});
 
+	var oStartDateEndMonth = UI5Date.getInstance();
+	oStartDateEndMonth.setDate(28);
 	var oCal3 = new CalendarDateInterval("Cal3",{
-		width: Device.system.phone ? "340px" : "1000px",
-		days: 40,
+		width: "320px",
+		startDate: oStartDateEndMonth,
+		days: 7,
 		intervalSelection: false,
 		singleSelection: false
 	});

@@ -538,7 +538,7 @@ sap.ui.define([
 	QUnit.test("Press event fires once", async function(assert) {
 		// arrange
 		var pressSpy = this.spy(),
-			oTouchEndEvent = { setMarked: function() { }, originalEvent: { buttons: 0, type: "mouseup" }, target: { id: "btn1-BDI-content" } },
+			oTouchEndEvent = { setMarked: function() { }, which: 1, originalEvent: { buttons: 0, type: "mouseup"}, target: { id: "btn1-BDI-content" } },
 			oTapEvent = { setMarked: function() { } },
 			oButton = new Button("btn1", {
 				press: pressSpy
@@ -553,6 +553,28 @@ sap.ui.define([
 
 		// assert
 		assert.equal(pressSpy.callCount, 1, "Press event should be fired once");
+
+		// clean
+		oButton.destroy();
+	});
+
+	QUnit.test("Right click should not trigger press event", async function(assert) {
+		// Arrange
+		var pressSpy = this.spy(),
+			oTouchEndEvent = { setMarked: function() { }, which: 3, originalEvent: { type: "mouseup" }, target: { id: "btn1-BDI-content" } },
+			oButton = new Button("btn1", {
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		await nextUIUpdate(this.clock);
+
+		oButton._bRenderActive = true; //simulate pressed state
+
+		// act
+		oButton.ontouchend(oTouchEndEvent);
+
+		// assert
+		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
 
 		// clean
 		oButton.destroy();

@@ -58,6 +58,11 @@ sap.ui.define([
 		});
 
 		// Check if variant is set via url parameter
+		// Legacy URLs can have multiple variant technical parameter instances (length > 1)
+		if (aVariantReferencesFromUrl.length === 1) {
+			aVariantReferencesFromUrl = aVariantReferencesFromUrl[0].split(",");
+		}
+
 		var sDesiredSelectedVariantId = aVariantKeys.find((sVariantKey) => {
 			return aVariantReferencesFromUrl.includes(sVariantKey);
 		});
@@ -601,7 +606,7 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	VariantManagementState.getInitialUIChanges = function(mPropertyBag) {
-		var oVariantsMap = oVariantManagementMapDataSelector.get({
+		const oVariantsMap = oVariantManagementMapDataSelector.get({
 			reference: mPropertyBag.reference
 		});
 		mPropertyBag.includeDirtyChanges = !!mPropertyBag.includeDirtyChanges;
@@ -610,10 +615,11 @@ sap.ui.define([
 				(mPropertyBag.vmReference && mPropertyBag.vmReference === sVMReference)
 				|| !mPropertyBag.vmReference
 			) {
-				var mArguments = Object.assign({}, mPropertyBag, {
+				const mArguments = {
+					...mPropertyBag,
 					vmReference: sVMReference,
 					vReference: oVariantsMap[sVMReference].currentVariant
-				});
+				};
 
 				// Concatenate with the previous flex changes
 				return aInitialChanges.concat(VariantManagementState.getControlChangesForVariant(mArguments));
@@ -641,10 +647,11 @@ sap.ui.define([
 				(mPropertyBag.vmReference && mPropertyBag.vmReference === sVMReference)
 				|| !mPropertyBag.vmReference
 			) {
-				const mArguments = Object.assign({}, mPropertyBag, {
+				const mArguments = {
+					...mPropertyBag,
 					vmReference: sVMReference,
 					vReference: oVariantsMap[sVMReference].currentVariant
-				});
+				};
 				const oVariant = VariantManagementState.getVariant(mArguments);
 				return aInitialChanges
 				.concat(oVariant.variantChanges)

@@ -533,7 +533,11 @@ sap.ui.define([
 
 		if (this._bRenderActive) {
 			delete this._bRenderActive;
-			this.ontap(oEvent, true);
+
+			const bIsRightClick = oEvent.which === 3 || (oEvent.ctrlKey && oEvent.which === 1);
+			if (!bIsRightClick) {
+				this.ontap(oEvent, true);
+			}
 		}
 
 		// get the tag ID where the touch event ended

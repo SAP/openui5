@@ -20,9 +20,9 @@ sap.ui.define([
 	sinon
 ) {
 	"use strict";
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
 
-	var oFileContent = {
+	const oFileContent = {
 		fileName: "foo",
 		fileType: "change",
 		reference: "sap.ui.demoapps.rta.fiorielements",
@@ -69,8 +69,8 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("FlexObjectFactory.createUIChange and set/reset revert data", function(assert) {
-			var oUIChange = FlexObjectFactory.createUIChange(Object.assign({generator: "sap.ui.rta.command"}, oFileContent));
-			var oExpectedFileContent = Object.assign({}, oFileContent, { dependentSelector: {} });
+			const oUIChange = FlexObjectFactory.createUIChange({ generator: "sap.ui.rta.command", ...oFileContent });
+			const oExpectedFileContent = { ...oFileContent, dependentSelector: {} };
 			oExpectedFileContent.support.user = "userId";
 			assert.strictEqual(oUIChange.getApplyState(), States.ApplyState.INITIAL, "the apply state is set to initial");
 			assert.deepEqual(oUIChange.getSelector(), {id: "bar", idIsLocal: true}, "the selector is part of the instance");
@@ -89,17 +89,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("FlexObjectFactory.createUIChange in developer layer", function(assert) {
-			var oUIChange = FlexObjectFactory.createUIChange(Object.assign({}, oFileContent, {layer: Layer.CUSTOMER_BASE}));
+			const oUIChange = FlexObjectFactory.createUIChange({ ...oFileContent, layer: Layer.CUSTOMER_BASE });
 			assert.notOk(oUIChange.getSupportInformation().user, "no user is set");
 		});
 
 		QUnit.test("FlexObjectFactory.createUIChange in customer layer and user already set", function(assert) {
-			var oUIChange = FlexObjectFactory.createUIChange(Object.assign({}, oFileContent, {user: "myFancyUser"}));
+			const oUIChange = FlexObjectFactory.createUIChange({ ...oFileContent, user: "myFancyUser"});
 			assert.strictEqual(oUIChange.getSupportInformation().user, "myFancyUser", "the user is set correctly");
 		});
 
 		QUnit.test("FlexObjectFactory.createFromFileContent", function(assert) {
-			var oUIChange = FlexObjectFactory.createFromFileContent(Object.assign({}, oFileContent));
+			const oUIChange = FlexObjectFactory.createFromFileContent({ ...oFileContent });
 			assert.strictEqual(oUIChange.getApplyState(), States.ApplyState.INITIAL, "the apply state is set to initial");
 			assert.deepEqual(oUIChange.getSelector(), {id: "bar", idIsLocal: true}, "the selector is part of the instance");
 			assert.deepEqual(oUIChange.getDependentSelectors(), { origin: { id: "foobar", idIsLocal: true } }, "the dependent selector is part of the instance");
@@ -116,7 +116,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("Change.applyState", function(assert) {
-			var oUIChange = FlexObjectFactory.createFromFileContent(Object.assign({}, oFileContent));
+			const oUIChange = FlexObjectFactory.createFromFileContent({ ...oFileContent });
 			assert.strictEqual(oUIChange.getProperty("applyState"), States.ApplyState.INITIAL, "initially the state is INITIAL");
 
 			oUIChange.setQueuedForApply();
@@ -171,10 +171,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("ChangeProcessingPromise: resolve", function(assert) {
-			var done = assert.async();
-			var oUIChange = FlexObjectFactory.createFromFileContent(Object.assign({}, oFileContent));
-			var oPromise = oUIChange.addPromiseForApplyProcessing();
-			var oPromise2 = oUIChange.addChangeProcessingPromise(States.Operations.REVERT);
+			const done = assert.async();
+			const oUIChange = FlexObjectFactory.createFromFileContent({ ...oFileContent });
+			const oPromise = oUIChange.addPromiseForApplyProcessing();
+			const oPromise2 = oUIChange.addChangeProcessingPromise(States.Operations.REVERT);
 
 			Promise.all([oPromise, oPromise2])
 			.then(function() {
@@ -187,10 +187,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("ChangeProcessingPromise: reject", function(assert) {
-			var done = assert.async();
-			var oUIChange = FlexObjectFactory.createFromFileContent(Object.assign({}, oFileContent));
-			var oPromise = oUIChange.addPromiseForApplyProcessing();
-			var oPromise2 = oUIChange.addChangeProcessingPromise(States.Operations.REVERT);
+			const done = assert.async();
+			const oUIChange = FlexObjectFactory.createFromFileContent({ ...oFileContent });
+			const oPromise = oUIChange.addPromiseForApplyProcessing();
+			const oPromise2 = oUIChange.addChangeProcessingPromise(States.Operations.REVERT);
 
 			Promise.all([oPromise, oPromise2])
 			.then(function() {
@@ -203,10 +203,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("ChangeProcessingPromise: addChangeProcessingPromises when no apply/revert operation started", function(assert) {
-			var done = assert.async();
-			var oUIChange = FlexObjectFactory.createFromFileContent(Object.assign({}, oFileContent));
+			const done = assert.async();
+			const oUIChange = FlexObjectFactory.createFromFileContent({ ...oFileContent });
 
-			var aPromises = oUIChange.addChangeProcessingPromises();
+			let aPromises = oUIChange.addChangeProcessingPromises();
 			assert.equal(aPromises.length, 1, "1 promise got added");
 
 			oUIChange.setQueuedForApply();
@@ -225,13 +225,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("ChangeProcessingPromise: addChangeProcessingPromises when apply operation started", function(assert) {
-			var done = assert.async();
-			var oUIChange = FlexObjectFactory.createFromFileContent(Object.assign({}, oFileContent));
+			const done = assert.async();
+			const oUIChange = FlexObjectFactory.createFromFileContent({ ...oFileContent });
 			oUIChange.setQueuedForApply();
 			oUIChange.startApplying();
 			oUIChange.setQueuedForRevert();
 
-			var aPromises = oUIChange.addChangeProcessingPromises();
+			const aPromises = oUIChange.addChangeProcessingPromises();
 			assert.equal(aPromises.length, 2, "2 promises got added");
 
 			Promise.all(aPromises)
@@ -249,7 +249,7 @@ sap.ui.define([
 		beforeEach() {
 			this.oControl = new Control("myId");
 			this.oControl2 = new Control("myId2");
-			this.oUIChange = FlexObjectFactory.createUIChange(Object.assign({}, oFileContent));
+			this.oUIChange = FlexObjectFactory.createUIChange({ ...oFileContent });
 			this.mPropertyBag = {
 				modifier: JsControlTreeModifier
 			};
@@ -300,7 +300,7 @@ sap.ui.define([
 		QUnit.test("add passing controls directly", function(assert) {
 			this.oUIChange.addDependentControl(this.oControl, "origin", this.mPropertyBag);
 			this.oUIChange.addDependentControl(this.oControl2, "originalSelector2", this.mPropertyBag);
-			var oDependentSelectors = {
+			const oDependentSelectors = {
 				origin: { id: "myId", idIsLocal: false },
 				originalSelector2: { id: "myId2", idIsLocal: false }
 			};
@@ -314,7 +314,7 @@ sap.ui.define([
 
 		QUnit.test("add passing an array", function(assert) {
 			this.oUIChange.addDependentControl([this.oControl, this.oControl2], "origin", this.mPropertyBag);
-			var oDependentSelectors = {
+			const oDependentSelectors = {
 				origin: [
 					{ id: "myId", idIsLocal: false },
 					{ id: "myId2", idIsLocal: false }
@@ -330,7 +330,7 @@ sap.ui.define([
 		QUnit.test("add with 'originalSelector'", function(assert) {
 			this.oUIChange.addDependentControl(this.oControl, "origin", this.mPropertyBag);
 			this.oUIChange.addDependentControl(this.oControl2, "originalSelector", this.mPropertyBag);
-			var oDependentSelectors = {
+			const oDependentSelectors = {
 				origin: { id: "myId", idIsLocal: false },
 				originalSelector: { id: "myId2", idIsLocal: false }
 			};

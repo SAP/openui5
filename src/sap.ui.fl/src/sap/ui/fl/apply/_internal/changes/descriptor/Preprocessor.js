@@ -48,8 +48,8 @@ sap.ui.define([
 
 			Measurement.start("flexStateInitialize", "Initialization of flex state", ["sap.ui.fl"]);
 
-			var oComponentData = oConfig.componentData || {};
-			var sReference = ManifestUtils.getFlexReference({
+			const oComponentData = oConfig.componentData || {};
+			const sReference = ManifestUtils.getFlexReference({
 				manifest: oManifest,
 				componentData: oComponentData
 			});
@@ -78,8 +78,8 @@ sap.ui.define([
 			}).then(function() {
 				Measurement.end("flexStateInitialize");
 				Measurement.start("flexAppDescriptorMerger", "Client side app descriptor merger", ["sap.ui.fl"]);
-				var oUpdatedManifest = Object.assign({}, oManifest);
-				var aAppDescriptorChanges = FlexState.getAppDescriptorChanges(sReference);
+				const oUpdatedManifest = { ...oManifest };
+				const aAppDescriptorChanges = FlexState.getAppDescriptorChanges(sReference);
 				return Applier.applyChanges(oUpdatedManifest, aAppDescriptorChanges, ApplyStrategyFactory.getRuntimeStrategy());
 			}).then(function(oManifest) {
 				Measurement.end("flexAppDescriptorMerger");

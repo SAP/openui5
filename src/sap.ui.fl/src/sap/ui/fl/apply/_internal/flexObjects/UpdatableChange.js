@@ -38,7 +38,7 @@ sap.ui.define([
 	 * @static
 	 */
 	UpdatableChange.getMappingInfo = function() {
-		return Object.assign(UIChange.getMappingInfo(), {});
+		return { ...UIChange.getMappingInfo() };
 	};
 
 	UpdatableChange.prototype.popLatestRevertInfo = function() {

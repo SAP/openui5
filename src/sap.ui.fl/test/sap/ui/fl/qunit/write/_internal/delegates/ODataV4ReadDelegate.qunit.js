@@ -334,7 +334,7 @@ sap.ui.define(["sap/ui/fl/write/_internal/delegates/ODataV4ReadDelegate"], funct
 			var sResult;
 
 			for (i = 0; i < aPropertyInfo.length; i++) {
-				oInfo = Object.assign({}, oExpectedForAll, aExpectedResults[i]);
+				oInfo = { ...oExpectedForAll, ...aExpectedResults[i] };
 				oInfo.bindingPath = oInfo.name;
 				sExpected = stringifySortedObjectProperties(oInfo);
 

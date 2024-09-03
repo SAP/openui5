@@ -80,7 +80,8 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("because the variant does not exists", function(assert) {
-			sandbox.stub(InitialStorage, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+			sandbox.stub(InitialStorage, "loadFlexData").resolves({
+				...StorageUtils.getEmptyFlexDataResponse(),
 				changes: [],
 				comp: {
 					variants: [{
@@ -103,7 +104,7 @@ sap.ui.define([
 					standardVariants: [],
 					defaultVariants: []
 				}
-			}));
+			});
 
 			const mPropertyBag = {
 				control: oControl,
@@ -119,7 +120,8 @@ sap.ui.define([
 			});
 		});
 		QUnit.test("because the object is not a variant", function(assert) {
-			sandbox.stub(InitialStorage, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+			sandbox.stub(InitialStorage, "loadFlexData").resolves({
+				...StorageUtils.getEmptyFlexDataResponse(),
 				changes: [{
 					fileName: sVariantId,
 					name: "F Variant",
@@ -142,7 +144,7 @@ sap.ui.define([
 					standardVariants: [],
 					defaultVariants: []
 				}
-			}));
+			});
 
 			const mPropertyBag = {
 				control: oControl,
@@ -160,7 +162,8 @@ sap.ui.define([
 
 		[Layer.CUSTOMER, Layer.CUSTOMER_BASE, Layer.VENDOR].forEach((sLayer) => {
 			QUnit.test(`because the variant is in the ${sLayer} layer`, function(assert) {
-				sandbox.stub(InitialStorage, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+				sandbox.stub(InitialStorage, "loadFlexData").resolves({
+					...StorageUtils.getEmptyFlexDataResponse(),
 					changes: [],
 					comp: {
 						variants: [{
@@ -183,7 +186,7 @@ sap.ui.define([
 						standardVariants: [],
 						defaultVariants: []
 					}
-				}));
+				});
 
 				const mPropertyBag = {
 					control: oControl,
@@ -201,7 +204,8 @@ sap.ui.define([
 		});
 
 		QUnit.test(`because the variant is in the PUBLIC layer, but the user is not authorized to edit it (no key user nor author)`, function(assert) {
-			sandbox.stub(InitialStorage, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+			sandbox.stub(InitialStorage, "loadFlexData").resolves({
+				...StorageUtils.getEmptyFlexDataResponse(),
 				changes: [],
 				comp: {
 					variants: [{
@@ -227,7 +231,7 @@ sap.ui.define([
 					standardVariants: [],
 					defaultVariants: []
 				}
-			}));
+			});
 
 			const mPropertyBag = {
 				control: oControl,
@@ -261,7 +265,8 @@ sap.ui.define([
 			const oWriteStorageUpdateStub = sandbox.stub(WriteStorage, "update").resolves({
 				response: {}
 			});
-			sandbox.stub(InitialStorage, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+			sandbox.stub(InitialStorage, "loadFlexData").resolves({
+				...StorageUtils.getEmptyFlexDataResponse(),
 				changes: [],
 				comp: {
 					variants: [{
@@ -299,7 +304,7 @@ sap.ui.define([
 					standardVariants: [],
 					defaultVariants: []
 				}
-			}));
+			});
 
 			const oContent = {someKey: "someValue"};
 			const mPropertyBag = {

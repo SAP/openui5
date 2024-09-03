@@ -10,11 +10,11 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Utils"
 ], (
 	_omit,
@@ -24,11 +24,11 @@ sap.ui.define([
 	ChangesUtils,
 	FlexObjectFactory,
 	FlexObjectStates,
+	DependencyHandler,
 	FlexObjectState,
 	FlexState,
 	ManifestUtils,
 	ChangeHandlerStorage,
-	ChangePersistenceFactory,
 	Utils
 ) => {
 	"use strict";
@@ -165,7 +165,6 @@ sap.ui.define([
 	 */
 	ExtensionPointState.enhanceExtensionPointChanges = function(mPropertyBag, mExtensionPointInfo) {
 		mPropertyBag.extensionPointName = mExtensionPointInfo.name;
-		const oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mExtensionPointInfo.targetControl);
 		const sReference = ManifestUtils.getFlexReferenceForControl(mExtensionPointInfo.targetControl);
 
 		const aChanges = ExtensionPointState.getChangesForExtensionPoint(sReference, mPropertyBag);
@@ -181,7 +180,9 @@ sap.ui.define([
 				// If the component creation is async, the changesMap already created without changes on EP --> it need to be updated
 				// Otherwise, update the selector of changes is enough, change map will be created later correctly
 				if (FlexState.isInitialized(mPropertyBag)) {
-					oChangePersistence.addChangeAndUpdateDependencies(mPropertyBag.appComponent, oChange);
+					DependencyHandler.addChangeAndUpdateDependencies(
+						oChange, mPropertyBag.appComponent, FlexObjectState.getLiveDependencyMap(sReference)
+					);
 				}
 			} else if (isValidForRuntimeOnlyChanges(oChange, mExtensionPointInfo)) {
 				// Change is applied but we need to create additional runtime only changes
@@ -215,7 +216,10 @@ sap.ui.define([
 						oFlexObjectMetadata.moduleName = oChange.getFlexObjectMetadata().moduleName;
 						oRuntimeOnlyChange.setFlexObjectMetadata(oFlexObjectMetadata);
 						oRuntimeOnlyChange.setCreation(oChange.getCreation());
-						oChangePersistence.addChangeAndUpdateDependencies(mPropertyBag.appComponent, oRuntimeOnlyChange, oChange);
+						DependencyHandler.insertChange(oRuntimeOnlyChange, FlexObjectState.getLiveDependencyMap(sReference), oChange);
+						DependencyHandler.addChangeAndUpdateDependencies(
+							oRuntimeOnlyChange, mPropertyBag.appComponent, FlexObjectState.getLiveDependencyMap(sReference)
+						);
 						aPromises.push(oRuntimeOnlyChange);
 					})
 				);

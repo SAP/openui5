@@ -319,9 +319,9 @@ sap.ui.define([
 	var oStartDate = UI5Date.getInstance();
 	oStartDate.setDate(oStartDate.getDate() - 1);
 	var oCal2 = new CalendarDateInterval("Cal2", {
-		width: Device.system.phone ? "340px" : "464px",
+		width: "320px",
 		startDate: oStartDate,
-		days: 14,
+		days: 7,
 		intervalSelection: true,
 		select: function(oEvent){
 			var oTF1 = Element.getElementById("TF2-start");
@@ -373,8 +373,8 @@ sap.ui.define([
 	});
 
 	var oCal3 = new CalendarDateInterval("Cal3",{
-		width: Device.system.phone ? "340px" : "1000px",
-		days: 40,
+		width: "320px",
+		days: 7,
 		intervalSelection: false,
 		singleSelection: false,
 		select: function(oEvent){
@@ -426,8 +426,8 @@ sap.ui.define([
 	});
 
 	var oCal4 = new CalendarDateInterval("Cal4",{
-		width: Device.system.phone ? "340px" : "1000px",
-		days: 14,
+		width: "320px",
+		days: 7,
 		showDayNamesLine: false,
 		pickerPopup: true
 	});

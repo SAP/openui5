@@ -167,7 +167,7 @@ sap.ui.define([
 		}
 
 		// TODO Extract class
-		var oModel = new JSONModel({
+		const oModel = new JSONModel({
 			allAdaptations: [],
 			adaptations: [],
 			count: 0,
@@ -175,7 +175,7 @@ sap.ui.define([
 			contextBasedAdaptationsEnabled: bContextBasedAdaptationsEnabled
 		});
 		oModel.updateAdaptations = function(aAdaptations) {
-			var aContextBasedAdaptations = aAdaptations.filter(function(oAdaptation, iIndex) {
+			const aContextBasedAdaptations = aAdaptations.filter(function(oAdaptation, iIndex) {
 				oAdaptation.rank = iIndex + 1; // initialize ranks
 				return oAdaptation.type !== Adaptations.Type.Default;
 			});
@@ -184,59 +184,62 @@ sap.ui.define([
 			oModel.setProperty("/count", aContextBasedAdaptations.length);
 
 			// update displayed adaptation
-			var oDisplayedAdaptation = oModel.getProperty("/displayedAdaptation");
-			var oCorrespondingAdaptation = aAdaptations.find(function(oAdaptation) {
+			let oDisplayedAdaptation = oModel.getProperty("/displayedAdaptation");
+			const oCorrespondingAdaptation = aAdaptations.find(function(oAdaptation) {
 				return !!oDisplayedAdaptation && oAdaptation.id === oDisplayedAdaptation.id;
 			});
 			if (oCorrespondingAdaptation) {
-				oDisplayedAdaptation = Object.assign({}, oCorrespondingAdaptation);
+				oDisplayedAdaptation = { ...oCorrespondingAdaptation };
 				oModel.setProperty("/displayedAdaptation", oDisplayedAdaptation);
 			}
 			oModel.updateBindings(true);
 		};
 		oModel.insertAdaptation = function(oNewAdaptation) {
-			var aAdaptations = oModel.getProperty("/allAdaptations");
+			const aAdaptations = oModel.getProperty("/allAdaptations");
 			aAdaptations.splice(oNewAdaptation.priority, 0, oNewAdaptation);
 			delete oNewAdaptation.priority;
 			oModel.updateAdaptations(aAdaptations);
 		};
 		oModel.deleteAdaptation = function() {
-			var iIndex = oModel.getProperty("/displayedAdaptation").rank - 1;
-			var aAdaptations = oModel.getProperty("/adaptations");
-			var iModelCount = oModel.getProperty("/count");
-			var sToBeDisplayedAdaptationId;
+			const iIndex = oModel.getProperty("/displayedAdaptation").rank - 1;
+			const aAdaptations = oModel.getProperty("/adaptations");
+			const iModelCount = oModel.getProperty("/count");
+			let sToBeDisplayedAdaptationId;
 			if (iModelCount > 1) {
 				sToBeDisplayedAdaptationId = aAdaptations[iIndex + ((iIndex === iModelCount - 1) ? -1 : 1)].id;
 			}
 			aAdaptations.splice(iIndex, 1);
-			var oDefaultAdaptation = oModel.getProperty("/allAdaptations").pop();
+			const oDefaultAdaptation = oModel.getProperty("/allAdaptations").pop();
 			aAdaptations.push(oDefaultAdaptation);
 			oModel.updateAdaptations(aAdaptations);
 			return sToBeDisplayedAdaptationId;
 		};
 		oModel.switchDisplayedAdaptation = function(sAdaptationId) {
-			var iIndex = oModel.getIndexByAdaptationId(sAdaptationId);
-			var oNewDisplayedAdaptation = iIndex ? oModel.getProperty("/allAdaptations")[iIndex] : oModel.getProperty("/allAdaptations")[0];
+			const iIndex = oModel.getIndexByAdaptationId(sAdaptationId);
+			const oNewDisplayedAdaptation =
+				iIndex ?
+					oModel.getProperty("/allAdaptations")[iIndex] :
+					oModel.getProperty("/allAdaptations")[0];
 			oModel.setProperty("/displayedAdaptation", oNewDisplayedAdaptation);
 			oModel.updateBindings(true);
 		};
 		oModel.updateAdaptationContent = function(oContextBasedAdaptation) {
-			var aAdaptations = oModel.getProperty("/allAdaptations");
-			var oAdaptationForUpdate = aAdaptations.find(function(oAdaptation) {
+			const aAdaptations = oModel.getProperty("/allAdaptations");
+			const oAdaptationForUpdate = aAdaptations.find(function(oAdaptation) {
 				return oContextBasedAdaptation.adaptationId === oAdaptation.id;
 			});
 			oAdaptationForUpdate.title = oContextBasedAdaptation.title;
 			oAdaptationForUpdate.contexts = oContextBasedAdaptation.contexts;
-			var iIndex = oAdaptationForUpdate.rank - 1;
+			const iIndex = oAdaptationForUpdate.rank - 1;
 			if (iIndex !== oContextBasedAdaptation.priority) {
-				var aDisplayedAdaptation = aAdaptations.splice(iIndex, 1);
+				const aDisplayedAdaptation = aAdaptations.splice(iIndex, 1);
 				aAdaptations.splice(oContextBasedAdaptation.priority, 0, aDisplayedAdaptation[0]);
 			}
 			oModel.updateAdaptations(aAdaptations);
 		};
 		oModel.getIndexByAdaptationId = function(sAdaptationId) {
-			var aAdaptations = oModel.getProperty("/allAdaptations");
-			var iAdaptationIndex = aAdaptations.findIndex(function(oAdaptation) {
+			const aAdaptations = oModel.getProperty("/allAdaptations");
+			const iAdaptationIndex = aAdaptations.findIndex(function(oAdaptation) {
 				return oAdaptation.id === sAdaptationId;
 			});
 			return (iAdaptationIndex > -1) ? iAdaptationIndex : undefined;

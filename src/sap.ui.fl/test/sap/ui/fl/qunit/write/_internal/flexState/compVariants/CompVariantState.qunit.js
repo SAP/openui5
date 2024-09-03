@@ -166,16 +166,17 @@ sap.ui.define([
 			expectedLayer: Layer.USER
 		}].forEach(function(oTestData) {
 			QUnit.test(oTestData.testName, function(assert) {
-				var sPersistencyKey = "persistency.key";
-				var mPropertyBag = Object.assign({
-					persistencyKey: sPersistencyKey
-				}, oTestData.propertyBag);
+				const sPersistencyKey = "persistency.key";
+				const mPropertyBag = {
+					persistencyKey: sPersistencyKey,
+					...oTestData.propertyBag
+				};
 
 				sandbox.stub(Settings.getInstanceOrUndef(), "isPublicLayerAvailable").returns(oTestData.publicLayerAvailable);
 
-				var oAddedObject = CompVariantState.addVariant(mPropertyBag);
-				var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
-				var mCompVariantsMapForPersistencyKey = mCompVariantsMap[mPropertyBag.persistencyKey];
+				const oAddedObject = CompVariantState.addVariant(mPropertyBag);
+				const mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
+				const mCompVariantsMapForPersistencyKey = mCompVariantsMap[mPropertyBag.persistencyKey];
 
 				assert.strictEqual(
 					mCompVariantsMapForPersistencyKey[oTestData.targetCategory].length,

@@ -156,7 +156,7 @@ sap.ui.define([
 					// other attributes like adaptationId, isEndUserAdaptation, init needs to be taken from flex info session if available
 					oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 					delete oFlexInfoSession.saveChangeKeepSession;
-					FlexInfoSession.setByReference(Object.assign(oFlexInfoSession, oResult), sReference);
+					FlexInfoSession.setByReference({ ...oFlexInfoSession, ...oResult }, sReference);
 					return aFlexObjects;
 				});
 			}
@@ -252,29 +252,6 @@ sap.ui.define([
 			..._omit(mPropertyBag, "selector"),
 			appComponent: oAppComponent
 		});
-	};
-
-	/**
-	 * Transports all the UI changes and the app variant descriptor (if exists) to the target system.
-	 *
-	 * @param {object} mPropertyBag - Object with parameters as properties
-	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
-	 * @param {string} [mPropertyBag.styleClass] - Style class name that will be added to the transport dialog
-	 * @param {string} mPropertyBag.layer - Working layer
-	 * @param {array} [mPropertyBag.appVariantDescriptors] - Array of app variant descriptors that need to be transported
-	 *
-	 * @returns {Promise<string>} Promise that can resolve to the following strings:
-	 * - "Cancel" if publish process was canceled
-	 * - <sMessage> when all the artifacts are successfully transported fl will return the message to show
-	 * - "Error" in case of a problem
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.fl, sap.ui.rta
-	 */
-	PersistenceWriteAPI.publish = function(mPropertyBag) {
-		mPropertyBag.styleClass ||= "";
-		return ChangePersistenceFactory.getChangePersistenceForControl(Utils.getAppComponentForSelector(mPropertyBag.selector))
-		.transportAllUIChanges({}, mPropertyBag.styleClass, mPropertyBag.layer, mPropertyBag.appVariantDescriptors);
 	};
 
 	/**

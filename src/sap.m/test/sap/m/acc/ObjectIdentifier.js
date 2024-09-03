@@ -1,5 +1,7 @@
 sap.ui.define([
+	"sap/m/App",
 	"sap/m/MessageToast",
+	"sap/m/Page",
 	"sap/m/Title",
 	"sap/ui/core/library",
 	"sap/m/Text",
@@ -8,7 +10,7 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/ui/layout/VerticalLayout"
-], function(MessageToast, Title, coreLibrary, MText, ObjectIdentifier, Table, Column, ColumnListItem, VerticalLayout) {
+], function(App, MessageToast, Page, Title, coreLibrary, MText, ObjectIdentifier, Table, Column, ColumnListItem, VerticalLayout) {
 	"use strict";
 
 
@@ -27,7 +29,7 @@ sap.ui.define([
 	function getTitle(sText) {
 		return new Title({
 			text: sText,
-			titleStyle: TitleLevel.H3
+			titleStyle: TitleLevel.H2
 		}).addStyleClass("sapUiMediumMarginTop");
 	}
 
@@ -182,5 +184,11 @@ sap.ui.define([
 		]
 	}).addStyleClass("sapUiSmallMarginBegin");
 
-	oLayout.placeAt("content");
+	new App({
+		pages: new Page({
+			title: "ObjectIdentifiers Accessibility Test Page",
+			titleLevel: "H1",
+			content: oLayout
+		})
+	}).placeAt("content");
 });

@@ -25,7 +25,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
 
 	QUnit.module("Preprocessor", {
 		beforeEach(assert) {
@@ -35,7 +35,7 @@ sap.ui.define([
 				id: "componentId"
 			};
 
-			var done = assert.async();
+			const done = assert.async();
 			fetch("test-resources/sap/ui/fl/qunit/testResources/descriptorChanges/TestApplierManifest.json")
 			.then(function(oTestApplierManifestResponse) {
 				return oTestApplierManifestResponse.json();
@@ -58,7 +58,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when calling 'preprocessManifest' with three 'appdescr_ui5_addLibraries' changes ", function(assert) {
-			var aChanges = [
+			const aChanges = [
 				{
 					changeType: "appdescr_ui5_addLibraries",
 					content: {
@@ -92,7 +92,10 @@ sap.ui.define([
 				}
 			];
 
-			this.fnStorageStub.resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), { appDescriptorChanges: aChanges }));
+			this.fnStorageStub.resolves({
+				...StorageUtils.getEmptyFlexDataResponse(),
+				appDescriptorChanges: aChanges
+			});
 
 			return Preprocessor.preprocessManifest(this.oManifest, this.oConfig).then(function() {
 				assert.equal(this.fnFlexStateSpy.callCount, 1, "FlexState was initialized once");
@@ -103,7 +106,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'preprocessManifest' with several different change types ", function(assert) {
-			var aChanges = [
+			const aChanges = [
 				{
 					changeType: "appdescr_ui5_addLibraries",
 					content: {
@@ -125,7 +128,10 @@ sap.ui.define([
 				}
 			];
 
-			this.fnStorageStub.resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), { appDescriptorChanges: aChanges }));
+			this.fnStorageStub.resolves({
+				...StorageUtils.getEmptyFlexDataResponse(),
+				appDescriptorChanges: aChanges
+			});
 
 			return Preprocessor.preprocessManifest(this.oManifest, this.oConfig).then(function() {
 				assert.equal(this.fnFlexStateSpy.callCount, 1, "FlexState was initialized once");
@@ -145,7 +151,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'preprocessManifest' with manifest of type 'component'", function(assert) {
-			var oManifest = {"sap.app": { type: "component" }};
+			const oManifest = { "sap.app": { type: "component" } };
 			return Preprocessor.preprocessManifest(oManifest, this.oConfig).then(function(oNewManifest) {
 				assert.equal(this.fnFlexStateSpy.callCount, 0, "FlexState was initialized once");
 				assert.equal(this.fnGetAppDescriptorChangesSpy.callCount, 0, "FlexState.getAppDescriptorChanges is not called");
@@ -175,13 +181,14 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when calling 'preprocessManifest' with one change and load changes-bundle only after second FlexState.initialize call", function(assert) {
-			var sReference = "applier.test.reference";
-			var oManifest = {"sap.app": {id: sReference, type: "application" }, "sap.ui5": {appVariantId: sReference}};
+			const sReference = "applier.test.reference";
+			const oManifest = {"sap.app": {id: sReference, type: "application" }, "sap.ui5": {appVariantId: sReference}};
 
-			var oStorageLoadFlexData = sandbox.spy(Storage, "loadFlexData");
-			var oStorageCompleteFlexData = sandbox.spy(Storage, "completeFlexData");
-			var oStaticFileConnectorSpy = sandbox.spy(StaticFileConnector, "loadFlexData");
-			var oLrepConnectorStub = sandbox.stub(LrepConnector, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+			const oStorageLoadFlexData = sandbox.spy(Storage, "loadFlexData");
+			const oStorageCompleteFlexData = sandbox.spy(Storage, "completeFlexData");
+			const oStaticFileConnectorSpy = sandbox.spy(StaticFileConnector, "loadFlexData");
+			const oLrepConnectorStub = sandbox.stub(LrepConnector, "loadFlexData").resolves({
+				...StorageUtils.getEmptyFlexDataResponse(),
 				changes: [
 					{
 						fileName: "id_1581069458324_200_propertyChange",
@@ -203,7 +210,7 @@ sap.ui.define([
 						appDescriptorChange: false
 					}
 				]
-			}));
+			});
 
 			return Preprocessor.preprocessManifest(oManifest, this.oConfig)
 			.then(function() {
@@ -238,7 +245,7 @@ sap.ui.define([
 
 	QUnit.module("Preprocessor", {
 		beforeEach(assert) {
-			var done = assert.async();
+			const done = assert.async();
 			fetch("test-resources/sap/ui/fl/qunit/testResources/descriptorChanges/TestApplierManifest.json")
 			.then(function(oTestApplierManifestResponse) {
 				return oTestApplierManifestResponse.json();
@@ -257,7 +264,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when calling 'preprocessManifest' with a fl-asyncHint", function(assert) {
-			var oConfig = {
+			const oConfig = {
 				componentData: {},
 				asyncHints: {
 					requests: [{

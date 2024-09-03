@@ -1502,12 +1502,10 @@ sap.ui.define([
 			// Same control, same handler
 			this.oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("c2", "label1"));
 			// Same control, different handler
-			this.oChange3 = FlexObjectFactory.createFromFileContent(Object.assign(
-				getLabelChangeContent("c2", "label1"),
-				{
-					changeType: "someOtherChangeType"
-				}
-			));
+			this.oChange3 = FlexObjectFactory.createFromFileContent({
+				...getLabelChangeContent("c2", "label1"),
+				changeType: "someOtherChangeType"
+			});
 			// Different control, same handler
 			this.oChange4 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("c4", "label2"));
 

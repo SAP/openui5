@@ -1402,11 +1402,14 @@ sap.ui.define([
 		});
 
 		SinglePlanningCalendarMonthGrid.prototype._getCellStartInfo = function(oStartDate) {
-			var sStartTime = Library
-				.getResourceBundleFor("sap.ui.unified")
-				.getText("CALENDAR_START_TIME");
+			var sStartDateLabel = Library.getResourceBundleFor("sap.ui.unified").getText("CALENDAR_START_TIME"),
+				sStartDate = this._oFormatAriaFullDayCell.format(oStartDate.toLocalJSDate()),
+				sToday = Library.getResourceBundleFor("sap.ui.unified").getText("LEGEND_TODAY"),
+				sDesciption = oStartDate.isSame(CalendarDate.fromLocalJSDate(UI5Date.getInstance()))
+					? `${sToday}, ${sStartDate}`
+					: sStartDate;
 
-				return sStartTime + ": " + this._oFormatAriaFullDayCell.format(oStartDate);
+			return `${sStartDateLabel}: ${sDesciption}`;
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._getAppointmentAnnouncementInfo = function(oAppointment) {

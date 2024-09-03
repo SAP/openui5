@@ -43720,9 +43720,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 1.
-	// Expand Alpha, Beta and Gamma. Collapse Alpha completely and see that all nodes under Alpha
-	// are collapsed. Expand Alpha, Beta and Gamma again. See that no request is sent. Collapse
-	// Alpha completely again. Expand all below Alpha.
+	// Expand Alpha, Beta, and Gamma. Collapse Alpha completely. Expand Alpha, Beta, and Gamma
+	// again. See that their children are collapsed and that no request is sent. Collapse Alpha
+	// completely again. Expand all below Alpha and see that the request is sent with "Levels=null".
 	// JIRA: CPOUI5ODATAV4-2668
 	QUnit.test("Recursive Hierarchy: collapse all, expandTo=1", async function (assert) {
 		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
@@ -43734,10 +43734,9 @@ sap.ui.define([
 <t:Table id="table" rows="{path : '/EMPLOYEES',
 		parameters : {
 			$$aggregation : {
-				expandTo : 1,
 				hierarchyQualifier : 'OrgChart'
 			}
-		}}" threshold="0" visibleRowCount="3">
+		}}" threshold="0" visibleRowCount="4">
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>
 	<Text text="{= %{@$ui5.node.level} }"/>
 	<Text text="{ID}"/>
@@ -43748,10 +43747,8 @@ sap.ui.define([
 		//   1 Beta
 		//     1.1 Gamma
 		//       1.1.1 Delta
-		//   2 Epsilon
-		//     2.1 Zeta
 
-		this.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=3", {
+		this.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=4", {
 				"@odata.count" : "1",
 				value : [{
 					DrillState : "collapsed",
@@ -43763,16 +43760,12 @@ sap.ui.define([
 		await this.createView(assert, sView, oModel);
 
 		this.expectRequest("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
-				+ ",filter(ID eq '0'),1" + sSelect + "&$count=true&$skip=0&$top=3", {
-				"@odata.count" : "2",
+				+ ",filter(ID eq '0'),1" + sSelect + "&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "1",
 				value : [{
 					DrillState : "collapsed",
 					ID : "1",
 					Name : "Beta"
-				}, {
-					DrillState : "collapsed",
-					ID : "2",
-					Name : "Epsilon"
 				}]
 			});
 
@@ -43783,7 +43776,7 @@ sap.ui.define([
 		await this.waitForChanges(assert, "expand Alpha");
 
 		this.expectRequest("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
-				+ ",filter(ID eq '1'),1" + sSelect + "&$count=true&$skip=0&$top=3", {
+				+ ",filter(ID eq '1'),1" + sSelect + "&$count=true&$skip=0&$top=4", {
 				"@odata.count" : "1",
 				value : [{
 					DrillState : "collapsed",
@@ -43798,7 +43791,7 @@ sap.ui.define([
 		await this.waitForChanges(assert, "expand Beta");
 
 		this.expectRequest("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
-				+ ",filter(ID eq '1.1'),1" + sSelect + "&$count=true&$skip=0&$top=3", {
+				+ ",filter(ID eq '1.1'),1" + sSelect + "&$count=true&$skip=0&$top=4", {
 				"@odata.count" : "1",
 				value : [{
 					DrillState : "leaf",
@@ -43816,15 +43809,17 @@ sap.ui.define([
 			"/EMPLOYEES('0')",
 			"/EMPLOYEES('1')",
 			"/EMPLOYEES('1.1')",
-			"/EMPLOYEES('2')"
+			"/EMPLOYEES('1.1.1')"
 		], [
 			[true, 1, "0", "Alpha"],
 			[true, 2, "1", "Beta"],
-			[true, 3, "1.1", "Gamma"]
-		], 5);
+			[true, 3, "1.1", "Gamma"],
+			[undefined, 4, "1.1.1", "Delta"]
+		]);
 
 		// code under test
-		oAlpha.collapse(true);
+		oAlpha.collapse(/*bAll*/true);
+		oBeta = null; // collapse all destroys this context
 
 		// table update takes a moment
 		await this.waitForChanges(assert, "collapse all below Alpha");
@@ -43841,12 +43836,30 @@ sap.ui.define([
 		// table update takes a moment
 		await this.waitForChanges(assert, "expand Alpha again");
 
+		checkTable("after expand Alpha again", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')"
+		], [
+			[true, 1, "0", "Alpha"],
+			[false, 2, "1", "Beta"]
+		]);
+
 		oBeta = oTable.getRows()[1].getBindingContext();
 		// code under test
 		oBeta.expand();
 
 		// table update takes a moment
 		await this.waitForChanges(assert, "expand Beta again");
+
+		checkTable("after expand Beta again", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')"
+		], [
+			[true, 1, "0", "Alpha"],
+			[true, 2, "1", "Beta"],
+			[false, 3, "1.1", "Gamma"]
+		]);
 
 		oGamma = oTable.getRows()[2].getBindingContext();
 		// code under test
@@ -43855,19 +43868,20 @@ sap.ui.define([
 		// table update takes a moment
 		await this.waitForChanges(assert, "expand Gamma again");
 
-		checkTable("after expand Alpha, Beta, Gamma again", assert, oTable, [
+		checkTable("after expand Gamma again", assert, oTable, [
 			"/EMPLOYEES('0')",
 			"/EMPLOYEES('1')",
 			"/EMPLOYEES('1.1')",
-			"/EMPLOYEES('2')"
+			"/EMPLOYEES('1.1.1')"
 		], [
 			[true, 1, "0", "Alpha"],
 			[true, 2, "1", "Beta"],
-			[true, 3, "1.1", "Gamma"]
-		], 5);
+			[true, 3, "1.1", "Gamma"],
+			[undefined, 4, "1.1.1", "Delta"]
+		]);
 
 		// code under test
-		oAlpha.collapse(true);
+		oAlpha.collapse(/*bAll*/true);
 
 		// table update takes a moment
 		await this.waitForChanges(assert, "collapse all below Alpha again");
@@ -43880,10 +43894,10 @@ sap.ui.define([
 
 		this.expectRequest(sUrl + ",ExpandLevels=" + JSON.stringify([{NodeID : "0", Levels : null}])
 				+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
-				+ "&$count=true&$skip=0&$top=3", {
-				"@odata.count" : "6",
+				+ "&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "4",
 				value : [{
-					DescendantCount : "5",
+					DescendantCount : "3",
 					DistanceFromRoot : "0",
 					DrillState : "expanded",
 					ID : "0",
@@ -43900,6 +43914,12 @@ sap.ui.define([
 					DrillState : "expanded",
 					ID : "1.1",
 					Name : "Gamma"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "3",
+					DrillState : "leaf",
+					ID : "1.1.1",
+					Name : "Delta"
 				}]
 			});
 
@@ -43910,20 +43930,22 @@ sap.ui.define([
 		checkTable("after expand all below Alpha", assert, oTable, [
 			"/EMPLOYEES('0')",
 			"/EMPLOYEES('1')",
-			"/EMPLOYEES('1.1')"
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('1.1.1')"
 		], [
 			[true, 1, "0", "Alpha"],
 			[true, 2, "1", "Beta"],
-			[true, 3, "1.1", "Gamma"]
-		], 6);
+			[true, 3, "1.1", "Gamma"],
+			[undefined, 4, "1.1.1", "Delta"]
+		]);
 	});
 
 	//*********************************************************************************************
 	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 1.
 	// Expand Alpha completely. Collapse Alpha completely and see that all nodes under Alpha
-	// are collapsed. Expand Alpha and Beta and see that Gamma is correctly reloaded.
+	// are collapsed. Expand Alpha and Beta again and see that their children are collapsed.
 	// JIRA: CPOUI5ODATAV4-2668
-	QUnit.test("Recursive Hierarchy: collapse all, expandTo=1, w/ reload", async function (assert) {
+	QUnit.test("Recursive Hierarchy: expand all, collapse all, expand", async function (assert) {
 		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
 				+ ",NodeProperty='ID',Levels=1";
@@ -43932,10 +43954,9 @@ sap.ui.define([
 <t:Table id="table" rows="{path : '/EMPLOYEES',
 		parameters : {
 			$$aggregation : {
-				expandTo : 1,
 				hierarchyQualifier : 'OrgChart'
 			}
-		}}" threshold="0" visibleRowCount="3">
+		}}" threshold="0" visibleRowCount="4">
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>
 	<Text text="{= %{@$ui5.node.level} }"/>
 	<Text text="{ID}"/>
@@ -43946,9 +43967,8 @@ sap.ui.define([
 		//   1 Beta
 		//     1.1 Gamma
 		//       1.1.1 Delta
-		//   2 Epsilon
 
-		this.expectRequest(sUrl + ")&$select=DrillState,ID,Name&$count=true&$skip=0&$top=3", {
+		this.expectRequest(sUrl + ")&$select=DrillState,ID,Name&$count=true&$skip=0&$top=4", {
 				"@odata.count" : "1",
 				value : [{
 					DrillState : "collapsed",
@@ -43961,10 +43981,10 @@ sap.ui.define([
 
 		this.expectRequest(sUrl + ",ExpandLevels=" + JSON.stringify([{NodeID : "0", Levels : null}])
 				+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
-				+ "&$count=true&$skip=0&$top=3", {
-				"@odata.count" : "5",
+				+ "&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "4",
 				value : [{
-					DescendantCount : "4",
+					DescendantCount : "3",
 					DistanceFromRoot : "0",
 					DrillState : "expanded",
 					ID : "0",
@@ -43981,6 +44001,12 @@ sap.ui.define([
 					DrillState : "expanded",
 					ID : "1.1",
 					Name : "Gamma"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "3",
+					DrillState : "leaf",
+					ID : "1.1.1",
+					Name : "Delta"
 				}]
 			});
 
@@ -43994,15 +44020,17 @@ sap.ui.define([
 		checkTable("after expand Alpha completely", assert, oTable, [
 			"/EMPLOYEES('0')",
 			"/EMPLOYEES('1')",
-			"/EMPLOYEES('1.1')"
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('1.1.1')"
 		], [
 			[true, 1, "0", "Alpha"],
 			[true, 2, "1", "Beta"],
-			[true, 3, "1.1", "Gamma"]
-		], 5);
+			[true, 3, "1.1", "Gamma"],
+			[undefined, 4, "1.1.1", "Delta"]
+		]);
 
 		// code under test
-		oAlpha.collapse(true);
+		oAlpha.collapse(/*bAll*/true);
 
 		await this.waitForChanges(assert, "collapse Alpha completely");
 
@@ -44012,12 +44040,14 @@ sap.ui.define([
 			[false, 1, "0", "Alpha"]
 		]);
 
+		// Note: We switch into unified mode here in order to correctly handle placeholders. But in
+		// this scenario there are none. We could optimize this later and avoid the requests.
 		this.expectRequest(sUrl + ",ExpandLevels=" + JSON.stringify([{NodeID : "0", Levels : 1}])
 				+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
-				+ "&$count=true&$skip=0&$top=3", {
-				"@odata.count" : "3",
+				+ "&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "2",
 				value : [{
-					DescendantCount : "2",
+					DescendantCount : "1",
 					DistanceFromRoot : "0",
 					DrillState : "expanded",
 					ID : "0",
@@ -44028,12 +44058,6 @@ sap.ui.define([
 					DrillState : "collapsed",
 					ID : "1",
 					Name : "Beta"
-				}, {
-					DescendantCount : "0",
-					DistanceFromRoot : "1",
-					DrillState : "collapsed",
-					ID : "2",
-					Name : "Epsilon"
 				}]
 			});
 
@@ -44045,21 +44069,19 @@ sap.ui.define([
 
 		checkTable("after expand Alpha", assert, oTable, [
 			"/EMPLOYEES('0')",
-			"/EMPLOYEES('1')",
-			"/EMPLOYEES('2')"
+			"/EMPLOYEES('1')"
 		], [
 			[true, 1, "0", "Alpha"],
-			[false, 2, "1", "Beta"],
-			[false, 2, "2", "Epsilon"]
+			[false, 2, "1", "Beta"]
 		]);
 
 		this.expectRequest(sUrl + ",ExpandLevels="
 				+ JSON.stringify([{NodeID : "0", Levels : 1}, {NodeID : "1", Levels : 1}])
 				+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
-				+ "&$count=true&$skip=0&$top=3", {
-				"@odata.count" : "4",
+				+ "&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "3",
 				value : [{
-					DescendantCount : "3",
+					DescendantCount : "2",
 					DistanceFromRoot : "0",
 					DrillState : "expanded",
 					ID : "0",
@@ -44094,13 +44116,14 @@ sap.ui.define([
 			[true, 1, "0", "Alpha"],
 			[true, 2, "1", "Beta"],
 			[false, 3, "1.1", "Gamma"]
-		], 4);
+		]);
 	});
 
 	//*********************************************************************************************
 	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 3.
-	// Expand Gamma. Collapse Alpha completely and see that all nodes under Alpha are collapsed.
-	// Expand Alpha, Beta and Gamma again. Collapse Alpha completely again. Expand all below Alpha.
+	// Expand Gamma. Collapse Alpha completely. Expand Alpha again and see that Beta and Epsilon
+	// (although placeholder when collapsing all) are collapsed. Expand Beta and Gamma again.
+	// Collapse Alpha completely again. Expand all below Alpha and check the complete tree.
 	// JIRA: CPOUI5ODATAV4-2668
 	QUnit.test("Recursive Hierarchy: collapse all, expandTo=3", async function (assert) {
 		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
@@ -44127,9 +44150,10 @@ sap.ui.define([
 		//     1.1 Gamma
 		//       1.1.1 Delta
 		//   2 Epsilon
+		//     2.1 Zeta
 
 		this.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=3", {
-				"@odata.count" : "4",
+				"@odata.count" : "5",
 					value : [{
 						DescendantCount : "4",
 						DistanceFromRoot : "0",
@@ -44177,11 +44201,11 @@ sap.ui.define([
 			[true, 1, "0", "Alpha"],
 			[true, 2, "1", "Beta"],
 			[true, 3, "1.1", "Gamma"]
-		], 5);
+		], 6);
 
 		const oAlpha = oTable.getRows()[0].getBindingContext();
 		// code under test
-		oAlpha.collapse(true);
+		oAlpha.collapse(/*bAll*/true);
 
 		// table update takes a moment
 		await this.waitForChanges(assert, "collapse all below Alpha");
@@ -44210,7 +44234,7 @@ sap.ui.define([
 				}, {
 					DescendantCount : "0",
 					DistanceFromRoot : "1",
-					DrillState : "leaf",
+					DrillState : "collapsed",
 					ID : "2",
 					Name : "Epsilon"
 				}]
@@ -44228,7 +44252,7 @@ sap.ui.define([
 		], [
 			[true, 1, "0", "Alpha"],
 			[false, 2, "1", "Beta"],
-			[undefined, 2, "2", "Epsilon"]
+			[false, 2, "2", "Epsilon"]
 		]);
 
 		this.expectRequest(sUrl + ",ExpandLevels="
@@ -44260,9 +44284,9 @@ sap.ui.define([
 		// code under test
 		oBeta.expand();
 
-		await this.waitForChanges(assert, "expand Beta again");
+		await this.waitForChanges(assert, "expand Beta");
 
-		checkTable("after expand Alpha again", assert, oTable, [
+		checkTable("after expand Beta", assert, oTable, [
 			"/EMPLOYEES('0')",
 			"/EMPLOYEES('1')",
 			"/EMPLOYEES('1.1')"
@@ -44317,7 +44341,7 @@ sap.ui.define([
 		], 5);
 
 		// code under test
-		oAlpha.collapse(true);
+		oAlpha.collapse(/*bAll*/true);
 
 		// table update takes a moment
 		await this.waitForChanges(assert, "collapse all below Alpha again");
@@ -44330,9 +44354,9 @@ sap.ui.define([
 
 		this.expectRequest(sUrl + ",ExpandLevels=" + JSON.stringify([{NodeID : "0", Levels : null}])
 				+ sSelect + "&$count=true&$skip=0&$top=3", {
-				"@odata.count" : "5",
+				"@odata.count" : "6",
 				value : [{
-					DescendantCount : "4",
+					DescendantCount : "5",
 					DistanceFromRoot : "0",
 					DrillState : "expanded",
 					ID : "0",
@@ -44357,15 +44381,38 @@ sap.ui.define([
 
 		await this.waitForChanges(assert, "expand Alpha completely");
 
-		checkTable("after expand Alpha completely", assert, oTable, [
-			"/EMPLOYEES('0')",
-			"/EMPLOYEES('1')",
-			"/EMPLOYEES('1.1')"
-		], [
-			[true, 1, "0", "Alpha"],
-			[true, 2, "1", "Beta"],
-			[true, 3, "1.1", "Gamma"]
-		], 5);
+		this.expectRequest(sUrl + ",ExpandLevels=" + JSON.stringify([{NodeID : "0", Levels : null}])
+				+ sSelect + "&$skip=3&$top=3", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "3",
+					DrillState : "leaf",
+					ID : "1.1.1",
+					Name : "Delta"
+				}, {
+					DescendantCount : "1",
+					DistanceFromRoot : "1",
+					DrillState : "expanded",
+					ID : "2",
+					Name : "Epsilon"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "2",
+					DrillState : "leaf",
+					ID : "2.1",
+					Name : "Zeta"
+				}]
+			});
+
+		await this.checkAllContexts("after expand Alpha completely", assert, oAlpha.getBinding(),
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "ID", "Name"], [
+				[true, 1, "0", "Alpha"],
+				[true, 2, "1", "Beta"],
+				[true, 3, "1.1", "Gamma"],
+				[undefined, 4, "1.1.1", "Delta"],
+				[true, 2, "2", "Epsilon"],
+				[undefined, 3, "2.1", "Zeta"]
+			]);
 	});
 
 	//*********************************************************************************************

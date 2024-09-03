@@ -47,13 +47,13 @@ sap.ui.define([
 		oTreeState.expand("~oNode~");
 
 		assert.deepEqual(oTreeState.mPredicate2ExpandLevels,
-			{"~predicate~" : {NodeID : "~sNodeId~", Levels : 1}});
+			{"~predicate~" : {nodeId : "~sNodeId~", levels : 1}});
 
 		// code under test
 		oTreeState.expand("~oNode~");
 
 		assert.deepEqual(oTreeState.mPredicate2ExpandLevels,
-			{"~predicate~" : {NodeID : "~sNodeId~", Levels : 1}});
+			{"~predicate~" : {nodeId : "~sNodeId~", levels : 1}});
 
 		// code under test
 		oTreeState.collapse("~oNode~");
@@ -88,7 +88,7 @@ sap.ui.define([
 		oTreeState.expand("~oNode~", oFixture.iLevels);
 
 		assert.deepEqual(oTreeState.mPredicate2ExpandLevels,
-			{"~predicate~" : {NodeID : "~sNodeId~", Levels : oFixture.vResult}});
+			{"~predicate~" : {nodeId : "~sNodeId~", levels : oFixture.vResult}});
 
 		// code under test
 		oTreeState.collapse("~oNode~");
@@ -111,13 +111,13 @@ sap.ui.define([
 		oTreeState.collapse("~oNode~");
 
 		assert.deepEqual(oTreeState.mPredicate2ExpandLevels,
-			{"~predicate~" : {collapseAll : undefined, NodeID : "~sNodeId~", Levels : 0}});
+			{"~predicate~" : {collapseAll : undefined, nodeId : "~sNodeId~", levels : 0}});
 
 		// code under test
 		oTreeState.collapse("~oNode~");
 
 		assert.deepEqual(oTreeState.mPredicate2ExpandLevels,
-			{"~predicate~" : {collapseAll : undefined, NodeID : "~sNodeId~", Levels : 0}});
+			{"~predicate~" : {collapseAll : undefined, nodeId : "~sNodeId~", levels : 0}});
 
 		// code under test
 		oTreeState.expand("~oNode~");
@@ -139,20 +139,20 @@ sap.ui.define([
 		oTreeState.collapse("~oNode~", true);
 
 		assert.deepEqual(oTreeState.mPredicate2ExpandLevels,
-			{"~predicate~" : {collapseAll : true, NodeID : "~sNodeId~", Levels : 0}});
+			{"~predicate~" : {collapseAll : true, nodeId : "~sNodeId~", levels : 0}});
 
 		// code under test
 		oTreeState.expand("~oNode~", 42);
 
 		assert.deepEqual(oTreeState.mPredicate2ExpandLevels,
-			{"~predicate~" : {NodeID : "~sNodeId~", Levels : 42}});
+			{"~predicate~" : {nodeId : "~sNodeId~", levels : 42}});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("collapse: bAll=1", function (assert) {
+	QUnit.test("collapse: bNested", function (assert) {
 		const oTreeState = new _TreeState("~sNodeProperty~");
 		oTreeState.mPredicate2ExpandLevels = {
-			"~predicate~" : {collapseAll : false, NodeID : "~sNodeId~", Levels : 0},
+			"~predicate~" : {collapseAll : false, nodeId : "~sNodeId~", levels : 0},
 			foo : "bar"
 		};
 
@@ -161,7 +161,7 @@ sap.ui.define([
 			.returns("~predicate~");
 
 		// code under test
-		oTreeState.collapse("~oNode~", 1);
+		oTreeState.collapse("~oNode~", /*bAll*/true, /*bNested*/true);
 
 		assert.deepEqual(oTreeState.mPredicate2ExpandLevels, {foo : "bar"});
 	});
@@ -237,8 +237,8 @@ sap.ui.define([
 		assert.strictEqual(oTreeState.getExpandLevels(), undefined);
 
 		oTreeState.mPredicate2ExpandLevels = {
-			foo : {collapseAll : true, NodeID : "baz", Levels : 42},
-			bar : {collapseAll : false, NodeID : "qux", Levels : 23}
+			foo : {collapseAll : true, nodeId : "baz", levels : 42},
+			bar : {collapseAll : false, nodeId : "qux", levels : 23}
 		};
 		const sPredicate2ExpandLevels = JSON.stringify(oTreeState.mPredicate2ExpandLevels);
 

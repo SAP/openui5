@@ -32,13 +32,14 @@ sap.ui.define([
 	 */
 
 	function _loadFlexDataFromConnectors(mPropertyBag, aConnectors) {
-		var aConnectorPromises = aConnectors.map(function(oConnectorConfig) {
-			var oConnectorSpecificPropertyBag = Object.assign({}, mPropertyBag, {
+		const aConnectorPromises = aConnectors.map(function(oConnectorConfig) {
+			const oConnectorSpecificPropertyBag = {
+				...mPropertyBag,
 				url: oConnectorConfig.url,
 				path: oConnectorConfig.path
-			});
+			};
 
-			var oFlexInfoSession = FlexInfoSession.getByReference(mPropertyBag.reference);
+			const oFlexInfoSession = FlexInfoSession.getByReference(mPropertyBag.reference);
 			if (
 				!oConnectorConfig.layers
 				|| (
@@ -56,7 +57,7 @@ sap.ui.define([
 					oConnectorSpecificPropertyBag.version = oFlexInfoSession.version;
 				}
 			}
-			var bIsRtaStarting = !!Object.keys(window.sessionStorage).filter((sKey) => sKey.startsWith("sap.ui.rta.restart.")).length;
+			const bIsRtaStarting = !!Object.keys(window.sessionStorage).filter((sKey) => sKey.startsWith("sap.ui.rta.restart.")).length;
 			// save change and activate version do not trigger a reload, need saveChangeKeepSession to keep values in the session
 			if (!bIsRtaStarting && !oFlexInfoSession.saveChangeKeepSession) {
 				delete oFlexInfoSession.version;
@@ -147,9 +148,10 @@ sap.ui.define([
 			if (!oConnectorConfig?.loadConnectorModule?.loadVariantsAuthors) {
 				return Promise.resolve(StorageUtils.logAndResolveDefault({}, oConnectorConfig, "loadVariantsAuthors"));
 			}
-			const oConnectorSpecificPropertyBag = Object.assign({reference: sReference}, {
+			const oConnectorSpecificPropertyBag = {
+				reference: sReference,
 				url: oConnectorConfig.url
-			});
+			};
 			return oConnectorConfig.loadConnectorModule.loadVariantsAuthors(oConnectorSpecificPropertyBag)
 			.then((oResponse) => oResponse || {})
 			.catch(StorageUtils.logAndResolveDefault.bind(

@@ -56,17 +56,15 @@ sap.ui.define([
 			sandbox.stub(VariantManagementState, "setCurrentVariant");
 			sandbox.stub(VariantManagementState, "getControlChangesForVariant")
 			.callThrough()
-			.withArgs(Object.assign(
-				_pick(this.mPropertyBag, ["vmReference"]), {
-					vReference: this.mPropertyBag.currentVReference
-				}
-			))
+			.withArgs({
+				...(_pick(this.mPropertyBag, ["vmReference"])),
+				vReference: this.mPropertyBag.currentVReference
+			})
 			.returns(this.aSourceVariantChanges)
-			.withArgs(Object.assign(
-				_pick(this.mPropertyBag, ["vmReference"]), {
-					vReference: this.mPropertyBag.newVReference
-				}
-			))
+			.withArgs({
+				...(_pick(this.mPropertyBag, ["vmReference"])),
+				vReference: this.mPropertyBag.newVReference
+			})
 			.returns(this.aTargetControlChangesForVariant);
 		},
 		afterEach() {

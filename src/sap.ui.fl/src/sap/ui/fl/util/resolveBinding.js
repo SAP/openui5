@@ -43,21 +43,21 @@ sap.ui.define([
 			return undefined;
 		}
 
-		var oView = FlUtils.getViewForControl(oReferenceControl);
-		var oController = oView && oView.getController();
-		var oBindingInfo = typeof vValue === "string"
+		const oView = FlUtils.getViewForControl(oReferenceControl);
+		const oController = oView && oView.getController();
+		const oBindingInfo = typeof vValue === "string"
 			? ManagedObject.bindingParser(vValue, oController)
-			: Object.assign({}, vValue);
+			: { ...vValue };
 
 		if (!oBindingInfo) {
 			return undefined;
 		}
 
-		var oHelperControl = new HelperControl();
+		const oHelperControl = new HelperControl();
 
-		var aParts = oBindingInfo.parts || [oBindingInfo];
+		const aParts = oBindingInfo.parts || [oBindingInfo];
 		aParts.forEach(function(oBindingPart) {
-			var sModelName = oBindingPart.model;
+			const sModelName = oBindingPart.model;
 			if (sModelName) {
 				oHelperControl.setModel(oReferenceControl.getModel(sModelName), sModelName);
 				oHelperControl.setBindingContext(oReferenceControl.getBindingContext(sModelName), sModelName);
@@ -68,7 +68,7 @@ sap.ui.define([
 		});
 
 		oHelperControl.bindProperty("resolved", oBindingInfo);
-		var vResolvedValue = oHelperControl.getResolved();
+		const vResolvedValue = oHelperControl.getResolved();
 		oHelperControl.destroy();
 
 		return vResolvedValue;

@@ -235,7 +235,7 @@ sap.ui.define([
 		oRm.openStart("span", oFormat.format(oDay.toLocalJSDate()) + "-Descr");
 		oRm.class("sapUiInvisibleText");
 		oRm.openEnd();
-		oRm.text(oControl._getCellStartInfo(oDay.toLocalJSDate()));
+		oRm.text(oControl._getCellStartInfo(oDay));
 		//acc for day view + special dates + legend
 		if (oControl._sLegendId && sLegendItemType) {
 			oRm.text(sLegendItemType);

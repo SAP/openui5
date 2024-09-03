@@ -81,6 +81,10 @@ sap.ui.define([
 	function checkAndUpdateURLParameters(oModel, sHash) {
 		const oParsedHash = oModel.getUShellService("URLParsing")?.parseShellHash(sHash || hasher.getHash());
 		var vRelevantParameters = ObjectPath.get(["params", VariantUtil.VARIANT_TECHNICAL_PARAMETER], oParsedHash);
+		// In legacy urls the parameter was present multiple times
+		if (Array.isArray(vRelevantParameters) && vRelevantParameters.length === 1) {
+			vRelevantParameters = vRelevantParameters[0].split(",");
+		}
 		if (vRelevantParameters) {
 			var oUpdatedParameters = getUpdatedURLParameters(vRelevantParameters, oModel);
 			if (oUpdatedParameters.updateRequired) {
@@ -170,7 +174,7 @@ sap.ui.define([
 		const oParsedHash = oURLParsingService?.parseShellHash(hasher.getHash());
 
 		if (oParsedHash?.params) {
-			const mOldHashParams = Object.assign({}, oParsedHash.params);
+			const mOldHashParams = { ...oParsedHash.params };
 			const mTechnicalParameters = oModel.oAppComponent?.getComponentData?.()?.technicalParameters;
 			// if mTechnicalParameters are not available we write a warning and continue updating the hash
 			if (!mTechnicalParameters) {
@@ -185,10 +189,10 @@ sap.ui.define([
 					delete mTechnicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER];
 				}
 			} else {
-				oParsedHash.params[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = mPropertyBag.parameters;
+				oParsedHash.params[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = [mPropertyBag.parameters.toString()];
 				// Technical parameters need to be in sync with the URL hash
 				if (mTechnicalParameters) {
-					mTechnicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = mPropertyBag.parameters;
+					mTechnicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = [mPropertyBag.parameters.toString()];
 				}
 			}
 
@@ -241,8 +245,17 @@ sap.ui.define([
 			}
 
 			if (Array.isArray(mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER])) {
-				mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] =
-					mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER].map(decodeURIComponent);
+				// Support legacy Urls where the parameter was present multiple times
+				if (mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER].length > 1) {
+					mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] =
+						mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER].map(decodeURIComponent);
+				} else if (mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER].length === 1) {
+					// New mode where the parameter is a comma separated list
+					const sParam = mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER][0];
+					const sParamDecoded = sParam && decodeURIComponent(sParam);
+					mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = sParamDecoded ? sParamDecoded.split(",") : [];
+				}
+
 				mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER].some(function(sParamDecoded, iIndex) {
 					if (!isEmptyObject(oModel.getVariant(sParamDecoded, mPropertyBag.vmReference))) {
 						mReturnObject.index = iIndex;

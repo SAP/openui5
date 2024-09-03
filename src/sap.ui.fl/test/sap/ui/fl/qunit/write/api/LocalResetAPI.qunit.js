@@ -38,17 +38,15 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	function createChange(sChangeId, sSelectorId, oCustomDef) {
-		return FlexObjectFactory.createFromFileContent(Object.assign(
-			{
-				fileName: sChangeId,
-				fileType: "change",
-				layer: Layer.CUSTOMER,
-				selector: {
-					id: sSelectorId
-				}
+		return FlexObjectFactory.createFromFileContent({
+			fileName: sChangeId,
+			fileType: "change",
+			layer: Layer.CUSTOMER,
+			selector: {
+				id: sSelectorId
 			},
-			oCustomDef
-		));
+			...oCustomDef
+		});
 	}
 
 	QUnit.module("Reset/Restore", {

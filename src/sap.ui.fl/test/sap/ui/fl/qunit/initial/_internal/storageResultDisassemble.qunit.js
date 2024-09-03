@@ -312,7 +312,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given storageResultDisassemble is called with a response containing NO / only initial comp section", function(assert) {
-			var aChanges = [{
+			const aChanges = [{
 				fileName: "change1",
 				fileType: "change",
 				changeType: "addField",
@@ -371,15 +371,15 @@ sap.ui.define([
 				creation: "2019-07-22T10:32:19.7491096Z"
 			}];
 
-			var oOnlyChangesResponse = {
+			const oOnlyChangesResponse = {
 				changes: aChanges.slice()
 			};
-			var oFullResponse = Object.assign(StorageUtils.getEmptyFlexDataResponse(), {changes: aChanges.slice()});
+			const oFullResponse = { ...StorageUtils.getEmptyFlexDataResponse(), changes: aChanges.slice() };
 
 			[oOnlyChangesResponse, oFullResponse].forEach(function(oStorageResponse) {
-				var aResponses = storageResultDisassemble(oStorageResponse);
+				const aResponses = storageResultDisassemble(oStorageResponse);
 				assert.equal(1, aResponses.length);
-				var oFlexDataResponse = aResponses[0];
+				const oFlexDataResponse = aResponses[0];
 				assert.equal(oFlexDataResponse.changes.length, 1, "then the response object contains one object in its changes array");
 				assert.equal("change1", oFlexDataResponse.changes[0].fileName, "which is the UI change");
 				assert.equal(oFlexDataResponse.comp.defaultVariants.length, 2, "and the response object contains two objects in its comp.defaultVariant array");
