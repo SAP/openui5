@@ -4,20 +4,25 @@
 /* ============================================= */
 
 .sapMDynamicDateRangePopover {
+
 	section {
+
 		& > * {
 			box-sizing: border-box;
 			padding: 0 1rem;
 		}
+
 		& > .sapMLabel {
 			display: block;
 			margin: 0.75rem 0 0.25rem 0;
+
 			&.sapMDDRAdditionalLabel {
 				display: inline-block;
 				padding-left: 1.25rem;
 				padding-bottom: 0.25rem
 			}
 		}
+
 		& > .sapMLabel:first-child {
 			margin-top: 1rem;
 		}
@@ -35,16 +40,17 @@
 	}
 
 	&.sapMPage {
-		background-color: @sapGroup_ContentBackground;
+		background-color: var(--sapGroup_ContentBackground);
 	}
 
 	.sapMTB-Info-CTX.sapMIBar-CTX .sapMLabel {
-		color: @sapUiPageFooterTextColor;
+		color: var(--sapPageFooter_TextColor);
 		white-space: break-spaces;
 	}
 }
 
 .sapUiSizeCompact .sapMDynamicDateRangePopover {
+
 	.sapUiCalMonthPicker,
 	.sapUiCalYearPicker {
 		width: 100%;
@@ -54,6 +60,7 @@
 	.sapMPageFooter .sapMIBar {
 		height: 2rem;
 	}
+
 	section > .sapMLabel.sapMDDRAdditionalLabel {
 		padding-left: 0;
 	}
@@ -61,8 +68,7 @@
 
 .sapUiIcon.sapMDDRDateOption {
 	font-size: 1rem;
-
-	color: @sapUiContentIconColor;
+	color: var(--sapContent_IconColor);
 }
 
 .sapMDDRHiddenInput > .sapMInputBase {
