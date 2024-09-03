@@ -233,7 +233,7 @@ sap.ui.define([
 	 */
 	CompVariant.prototype.storeFavorite = function(bFavorite) {
 		if (bFavorite !== this.getFavorite()) {
-			this.setState(States.LifecycleState.DIRTY);
+			this.setState(States.LifecycleState.UPDATED);
 			this.setFavorite(bFavorite);
 		}
 	};
@@ -247,7 +247,7 @@ sap.ui.define([
 	 */
 	CompVariant.prototype.storeVisible = function(bVisible) {
 		if (bVisible !== this.getVisible()) {
-			this.setState(States.LifecycleState.DIRTY);
+			this.setState(States.LifecycleState.UPDATED);
 			this.setVisible(bVisible);
 		}
 	};
@@ -281,7 +281,7 @@ sap.ui.define([
 	 */
 	CompVariant.prototype.storeExecuteOnSelection = function(bExecuteOnSelection) {
 		if (bExecuteOnSelection !== this.getExecuteOnSelection()) {
-			this.setState(States.LifecycleState.DIRTY);
+			this.setState(States.LifecycleState.UPDATED);
 			this.setExecuteOnSelection(bExecuteOnSelection);
 		}
 	};
@@ -306,7 +306,7 @@ sap.ui.define([
 	 */
 	CompVariant.prototype.storeContexts = function(mContexts) {
 		this.setContexts(mContexts);
-		this.setState(States.LifecycleState.DIRTY);
+		this.setState(States.LifecycleState.UPDATED);
 	};
 
 	CompVariant.prototype.cloneFileContentWithNewId = function(...aArgs) {

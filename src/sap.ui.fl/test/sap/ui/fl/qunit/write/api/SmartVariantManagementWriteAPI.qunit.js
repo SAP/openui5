@@ -814,10 +814,10 @@ sap.ui.define([
 					if (oTestData.expectedChange) {
 						assert.equal(oVariant.getChanges().length, 1, "one change was added");
 						assert.equal(oVariant.getChanges()[0].getFlexObjectMetadata().packageName, "PACKAGE_A", "the packageName was set correct");
-						assert.equal(oVariant.getState(), States.LifecycleState.PERSISTED, "the change is not flagged as dirty");
+						assert.equal(oVariant.getState(), States.LifecycleState.PERSISTED, "the change is not flagged as updated");
 					} else {
 						assert.equal(oVariant.getChanges().length, 0, "no change was added");
-						assert.equal(oVariant.getState(), States.LifecycleState.DIRTY, "the change is not flagged as dirty");
+						assert.equal(oVariant.getState(), States.LifecycleState.UPDATED, "the change is not flagged as updated");
 					}
 				});
 			});
