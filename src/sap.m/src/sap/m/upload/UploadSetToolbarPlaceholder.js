@@ -25,6 +25,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @since 1.103.0
+	 * @deprecated As of version 1.129, replaced by {@link sap.m.upload.ActionsPlaceholder}
 	 * @alias sap.m.upload.UploadSetToolbarPlaceholder
 	 */
 

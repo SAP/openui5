@@ -27,6 +27,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @since 1.63
+	 * @deprecated As of version 1.129, replaced by {@link sap.m.upload.UploaderTableItem}
 	 * @alias sap.m.upload.Uploader
 	 */
 	var Uploader = Element.extend("sap.m.upload.Uploader", {
