@@ -43,7 +43,7 @@
 		<headerContent>
 			<m:FlexBox wrap="Wrap" fitContainer="true">
 				<m:Avatar src="./test-resources/sap/uxap/images/robot.png"
-					class="sapUiMediumMarginEnd sapUiSmallMarginBottom"
+					class="sapUiMediumMarginEnd"
 					displayShape="Square"
 					displaySize="L" />
 
