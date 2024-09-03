@@ -156,10 +156,26 @@ sap.ui.define([
 	};
 
 	UnhideForm.getChangeVisualizationInfo = function(oChange, oAppComponent) {
-		return {
-			affectedControls: [JsControlTreeModifier.bySelector(oChange.getContent().elementSelector, oAppComponent).getParent().getId()],
+		// Groups cannot be revealed, so we just need to handle the FormElement case
+		const oElementSelector = oChange.getContent().elementSelector;
+		const oFormSelector = oChange.getSelector();
+		const oLabel = JsControlTreeModifier.bySelector(oElementSelector, oAppComponent);
+		const oFormElement = oLabel.getParent();
+		const oForm = JsControlTreeModifier.bySelector(oFormSelector, oAppComponent);
+
+		const oReturn = {
+			affectedControls: [oFormElement.getId()],
 			updateRequired: true
 		};
+
+		// If the form element is currently invisible (defined by the Label), the indicator is on the form
+		// We don't show it on the group because the group could have been removed before, leading to the
+		// element to be implicitly moved to another group, leading to inconsistent results in visualization
+		if (!oLabel.getVisible()) {
+			oReturn.displayControls = [oForm.getId()];
+		}
+
+		return oReturn;
 	};
 
 	return UnhideForm;

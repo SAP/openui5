@@ -153,17 +153,30 @@ sap.ui.define([
 	});
 
 	AddSimpleFormField.getChangeVisualizationInfo = function(oChange, oAppComponent) {
-		var oRevertData = oChange.getRevertData();
+		const oFormSelector = oChange.getSelector();
+		const oForm = JsControlTreeModifier.bySelector(oFormSelector, oAppComponent);
+		const oRevertData = oChange.getRevertData();
+		const oReturn = {
+			updateRequired: true
+		};
 
 		if (oRevertData && oRevertData.labelSelector) {
-			return {
-				affectedControls: [JsControlTreeModifier.bySelector(oRevertData.labelSelector, oAppComponent).getParent().getId()],
-				updateRequired: true
-			};
+			const oLabel = JsControlTreeModifier.bySelector(oRevertData.labelSelector, oAppComponent);
+			oReturn.affectedControls = [oLabel.getParent().getId()];
+			// If the label is currently invisible, the indicator should be on the form (it can't be the group because it could have been headerless)
+			if (!oLabel.getVisible()) {
+				oReturn.displayControls = [oForm];
+			}
+		} else {
+			const oElement = JsControlTreeModifier.bySelector(oChange.getContent().elementSelector, oAppComponent);
+			oReturn.affectedControls = [oChange.getContent().newFieldSelector];
+			// If the element is currently invisible, the indicator should be on on the form (it can't be the group because it could have been headerless)
+			if (!oElement.getVisible()) {
+				oReturn.displayControls = [oForm];
+			}
 		}
-		return {
-			affectedControls: [oChange.getContent().newFieldSelector]
-		};
+
+		return oReturn;
 	};
 
 	AddSimpleFormField.getCondenserInfo = function() {

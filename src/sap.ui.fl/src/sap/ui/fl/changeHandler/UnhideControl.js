@@ -4,9 +4,11 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/condenser/Classification"
 ], function(
 	Log,
+	JsControlTreeModifier,
 	CondenserClassification
 ) {
 	"use strict";
@@ -87,6 +89,36 @@ sap.ui.define([
 			classification: CondenserClassification.Reverse,
 			uniqueKey: PROPERTY_NAME
 		};
+	};
+
+	UnhideControl.getChangeVisualizationInfo = function(oChange, oAppComponent) {
+		const oSelector = oChange.getSelector();
+		const oElement = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
+		const oReturn = {
+			updateRequired: true
+		};
+
+		function findFirstVisibleParent(oControl) {
+			if (!oControl) {
+				return null;
+			}
+
+			if (oControl.getVisible?.()) {
+				return oControl;
+			}
+
+			return findFirstVisibleParent(oControl.getParent());
+		}
+
+		// If the element is currently invisible (e.g. after being added and removed again),
+		// the indicator should be on its first visible parent
+		if (!oElement.getVisible()) {
+			const oFirstVisibleParent = findFirstVisibleParent(oElement.getParent());
+			if (oFirstVisibleParent) {
+				oReturn.displayControls = [oFirstVisibleParent.getId()];
+			}
+		}
+		return oReturn;
 	};
 
 	return UnhideControl;
