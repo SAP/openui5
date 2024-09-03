@@ -695,7 +695,8 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataListBinding#setAggregation
 	 */
 	function isAnalyticsEnabled(oTable) {
-		return (oTable.isGroupingEnabled() || oTable.isAggregationEnabled()) && oTable._isOfType(TableType.Table);
+		return oTable._isOfType(TableType.Table) && (oTable.getGroupConditions() || oTable.isGroupingEnabled() ||
+				oTable.getAggregateConditions() || oTable.isAggregationEnabled());
 	}
 
 	/**
@@ -762,7 +763,7 @@ sap.ui.define([
 			});
 
 			mTableMap.observer.observe(oTable, {
-				properties: ["p13nMode"]
+				properties: ["p13nMode", "groupConditions", "aggregateConditions"]
 			});
 		}
 	}

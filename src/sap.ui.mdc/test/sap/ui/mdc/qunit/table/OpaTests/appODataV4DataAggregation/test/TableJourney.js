@@ -323,7 +323,38 @@ sap.ui.define([
 
 	QUnit.module("Column menu");
 
-	opaTest("Open column menu with groupable property", function(Given, When, Then) {
+	opaTest('Open column menu of grouped column (p13nMode = ["Column","Sort","Filter"])', function(Given, When, Then) {
+		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Region");
+		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
+		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(1);
+		Then.onTheAppMDCTable.iShouldSeeColumnMenuQuickSort({key: "Region", label: "Region", sortOrder: coreLibrary.SortOrder.None});
+		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuItems(3);
+		Then.onTheAppMDCTable.iShouldSeeColumnMenuItems([
+			Util.P13nDialogInfo.Titles.sort,
+			Util.P13nDialogInfo.Titles.filter,
+			Util.P13nDialogInfo.Titles.columns
+		]);
+	});
+
+	opaTest('Open column menu of aggregated column (p13nMode = ["Column","Sort","Filter"])', function(Given, When, Then) {
+		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Sales Amount (local currency)");
+		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
+		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(1);
+		Then.onTheAppMDCTable.iShouldSeeColumnMenuQuickSort({
+			key: "SalesAmountLocalCurrency",
+			label: "Sales Amount (local currency)",
+			sortOrder: coreLibrary.SortOrder.None
+		});
+		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuItems(3);
+		Then.onTheAppMDCTable.iShouldSeeColumnMenuItems([
+			Util.P13nDialogInfo.Titles.sort,
+			Util.P13nDialogInfo.Titles.filter,
+			Util.P13nDialogInfo.Titles.columns
+		]);
+	});
+
+	opaTest('Open column menu with groupable property (p13nMode = ["Column","Sort","Filter","Group","Aggregate"])', function(Given, When, Then) {
+		When.onTheAppMDCTable.iSetP13nMode(sTableId, ["Column","Sort","Filter","Group","Aggregate"]);
 		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Region");
 		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
 		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(2);
@@ -338,7 +369,7 @@ sap.ui.define([
 		]);
 	});
 
-	opaTest("Open column menu with aggregatable property", function(Given, When, Then) {
+	opaTest('Open column menu with aggregatable property (p13nMode = ["Column","Sort","Filter","Group","Aggregate"])', function(Given, When, Then) {
 		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Sales Amount (local currency)");
 		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
 		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(2);
