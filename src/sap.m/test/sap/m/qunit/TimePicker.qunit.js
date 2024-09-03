@@ -1673,11 +1673,8 @@ sap.ui.define([
 						fnTestCustomRole();
 						await fnTestExternalLabelReference(bExpectation);
 						break;
-					case 1:
-					case 2:
-						fnTestCustomRole();
-						break;
 					default:
+						fnTestCustomRole();
 						break;
 				}
 			});
