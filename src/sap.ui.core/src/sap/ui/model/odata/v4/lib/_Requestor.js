@@ -89,6 +89,7 @@ sap.ui.define([
 		this.oModelInterface = oModelInterface;
 		this.oOptimisticBatch = null; // optimistic batch processing off
 		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
+		this.oRetryAfterPromise = null;
 		this.mRunningChangeRequests = {}; // map from group ID to a SyncPromise[]
 		this.iSessionTimer = 0;
 		this.iSerialNumber = 0;
@@ -2070,6 +2071,12 @@ sap.ui.define([
 						that.refreshSecurityToken(sOldCsrfToken).then(function () {
 							send(true);
 						}, fnReject);
+					} else if (jqXHR.status === 503 && jqXHR.getResponseHeader("Retry-After")
+							&& (that.oRetryAfterPromise
+								|| that.oModelInterface.getRetryAfterHandler())) {
+						that.oRetryAfterPromise ??= that.oModelInterface.getRetryAfterHandler()(
+							_Helper.createError(jqXHR, ""));
+						that.oRetryAfterPromise.then(send);
 					} else {
 						sMessage = "Communication error";
 						if (sContextId) {
@@ -2089,7 +2096,9 @@ sap.ui.define([
 				});
 			}
 
-			if (that.oSecurityTokenPromise && sMethod !== "GET") {
+			if (that.oRetryAfterPromise) {
+				that.oRetryAfterPromise.then(send);
+			} else if (that.oSecurityTokenPromise && sMethod !== "GET") {
 				that.oSecurityTokenPromise.then(send);
 			} else {
 				send();
@@ -2307,6 +2316,9 @@ sap.ui.define([
 	 *   A catch handler function expecting an <code>Error</code> instance. This function will call
 	 *   {@link sap.ui.model.odata.v4.ODataModel#reportError} if the error has not been reported
 	 *   yet
+	 * @param {function} oModelInterface.getRetryAfterHandler
+	 *   A function that returns the "Retry-After" handler,
+	 *   see also {@link sap.ui.model.odata.v4.ODataModel#setRetryAfterHandler}
 	 * @param {function():boolean} oModelInterface.isIgnoreETag
 	 *   Tells whether an entity's ETag should be actively ignored (If-Match:*) for PATCH requests.
 	 * @param {function} oModelInterface.onCreateGroup

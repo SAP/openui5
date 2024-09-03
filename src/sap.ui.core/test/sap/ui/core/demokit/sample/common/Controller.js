@@ -5,20 +5,27 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Link",
 	"sap/m/library",
+	"sap/m/Dialog",
+	"sap/m/MessageBox",
 	"sap/m/MessageItem",
 	"sap/m/MessagePopover",
 	"sap/m/ResponsivePopover",
+	"sap/m/ProgressIndicator",
 	"sap/m/TextArea",
+	"sap/ui/core/library",
 	"sap/ui/core/Element",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/util/XMLHelper"
-], function (Button, Link, library, MessageItem, MessagePopover, ResponsivePopover, TextArea,
-		Element, Messaging, Controller, XMLHelper) {
+], function (Button, Link, library, Dialog, MessageBox, MessageItem, MessagePopover,
+		ResponsivePopover, ProgressIndicator, TextArea, coreLibrary, Element, Messaging, Controller,
+		XMLHelper) {
 	"use strict";
 
-	// shortcut for sap.m.PlacementType
-	var PlacementType = library.PlacementType;
+	var ButtonType = library.ButtonType,
+		DialogType = library.DialogType,
+		PlacementType = library.PlacementType,
+		ValueState = coreLibrary.ValueState;
 
 	return Controller.extend("sap.ui.core.sample.common.Controller", {
 	/**
@@ -217,6 +224,101 @@ sap.ui.define([
 		 */
 		onToggleMessagePopover : function () {
 			this.messagePopover.toggle(this.byId(this.messagePopoverButtonId));
+		},
+
+		/**
+		 * For "Retry-After" timestamp minus now < 5 seconds a busy indicator is shown before the
+		 * Promise is resolved. For >5 and <= 600 seconds a progress indicator is shown and
+		 * finally the Promise is resolved. For seconds > 600 a error MessageBox is shown and the
+		 * Promise is rejected.
+		 */
+		registerRetryAfterHandler : function (sModelName) {
+			this.getView().getModel(sModelName).setRetryAfterHandler((oError) => {
+				const iNow = new Date().getTime();
+				const iEnd = oError.retryAfter.getTime();
+				const iRetryAfterSeconds = Math.ceil((iEnd - iNow) / 1000);
+
+				function updateIndicator(iLapsedSeconds) {
+					this.oProgressIndicator.setPercentValue(
+						iLapsedSeconds / iRetryAfterSeconds * 100);
+					this.oProgressIndicator.setDisplayValue(
+						`retrying in ${iRetryAfterSeconds - iLapsedSeconds} seconds`);
+
+					if (iEnd > new Date().getTime()) {
+						setTimeout(() => {
+							updateIndicator.call(this, iLapsedSeconds + 1);
+						}, 1000);
+					}
+				}
+
+				return new Promise((fnResolve, fnReject) => {
+					if (iRetryAfterSeconds <= 5) { // resolve w/o dialog, show busy indicator
+						this.oView.setBusy(true);
+						setTimeout(() => {
+							this.oView.setBusy(false);
+							fnResolve();
+						}, iRetryAfterSeconds * 1000);
+						return;
+					}
+					const sTitle = "Service Unavailable";
+					if (iRetryAfterSeconds > 600) { // show Error and reject with back-end error
+						MessageBox.error(oError.message, {title : sTitle});
+						fnReject(oError);
+						return;
+					}
+					// between 5 secs and 10min show ProgressIndicator counting down and
+					// finally resolve
+					this.oProgressIndicator ||= new ProgressIndicator({
+						id : "progressIndicator",
+						displayValue : `retrying after ${iRetryAfterSeconds} seconds`,
+						percentValue : 0,
+						state : "Warning"
+					});
+
+					const oProgressDialog = new Dialog({
+						type : DialogType.Message,
+						state : ValueState.Warning,
+						title : sTitle,
+						content : [
+							new TextArea({
+								growing : true,
+								growingMaxLines : 5,
+								value : oError.message,
+								width : "100%"
+							}),
+							this.oProgressIndicator
+						],
+						buttons : [new Button({
+							type : ButtonType.Reject,
+							text : "Reject",
+							press : () => {
+								fnReject(oError);
+								oProgressDialog.close();
+							}
+						}), new Button({
+							type : ButtonType.Reject,
+							text : "Reject (own error)",
+							press : () => {
+								fnReject(new Error("Request(s) canceled by user"));
+								oProgressDialog.close();
+							}
+						}), new Button({
+							type : ButtonType.Neutral,
+							text : "Refresh",
+							press : () => {
+								this.oView.getModel().refresh();
+							}
+						})]
+					});
+					this.oView.addDependent(oProgressDialog);
+					updateIndicator.call(this, 0);
+					oProgressDialog.open();
+					setTimeout(() => {
+						fnResolve();
+						oProgressDialog.close();
+					}, iRetryAfterSeconds * 1000);
+				});
+			});
 		}
 	});
 });

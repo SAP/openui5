@@ -366,6 +366,9 @@ sap.ui.define([
 			getMessagesByPath : this.getMessagesByPath.bind(this),
 			getOptimisticBatchEnabler : this.getOptimisticBatchEnabler.bind(this),
 			getReporter : this.getReporter.bind(this),
+			getRetryAfterHandler : function () {
+				return that.fnRetryAfter;
+			},
 			isIgnoreETag : function () {
 				return that.bIgnoreETag;
 			},
@@ -416,6 +419,7 @@ sap.ui.define([
 		// maps a path to the difference between fireDataRequested and fireDataReceived calls, to
 		// ensure the events are respectively fired once for a GET request
 		this.mPath2DataRequestedCount = {};
+		this.fnRetryAfter = null;
 	}
 
 	/**
@@ -2894,6 +2898,29 @@ sap.ui.define([
 		}
 
 		this.fnOptimisticBatchEnabler = fnOptimisticBatchEnabler;
+	};
+
+	/**
+	 * Sets a "Retry-After" handler, which is called when an OData request fails with HTTP status
+	 * 503 (Service Unavailable) and the response has a "Retry-After" header.
+	 *
+	 * The handler is called with an <code>Error</code> having a property <code>retryAfter</code> of
+	 * type <code>Date</code>, which is the earliest point in time when the request should be
+	 * repeated. The handler has to return a promise. With this promise, you can control the
+	 * repetition of all pending requests including the failed HTTP request. If the promise is
+	 * resolved, the requests are repeated; if it is rejected, the requests are not repeated. If it
+	 * is rejected with the same <code>Error</code> reason as previously passed to the handler, then
+	 * this reason is reported to the message model.
+	 *
+	 * @param {function(Error):Promise<undefined>} fnRetryAfter
+	 *   A "Retry-After" handler
+	 *
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @since 1.129.0
+	 */
+	ODataModel.prototype.setRetryAfterHandler = function (fnRetryAfter) {
+		this.fnRetryAfter = fnRetryAfter;
 	};
 
 	/**
