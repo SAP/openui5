@@ -466,7 +466,7 @@ sap.ui.define([
 				this.getItems().length && this._fixSidePanelWidth();
 			}
 		} else {
-			if (this.getDomRef().querySelector(".sapFSPMain").scrollTop === 0) {
+			if (this.getDomRef().querySelector(".sapFSPMain").scrollTop === 0 && !this._isSingleItem()) {
 				this.setActionBarExpanded(true);
 			}
 		}
@@ -1192,7 +1192,7 @@ sap.ui.define([
 			setTimeout(function() {
 				bForward = iTop > this._iLastScrollPosition;
 				bBackward = iTop < this._iLastScrollPosition;
-				this.setActionBarExpanded(!bForward || bBackward);
+				!this._isSingleItem() && this.setActionBarExpanded(!bForward || bBackward);
 				this._iLastScrollPosition = iTop;
 				this.bScrolling = false;
 			}.bind(this), 100);
