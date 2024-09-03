@@ -30,6 +30,9 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], 
 			this.mChangedProperties = Object.assign({},this.mProperties);
 
 			this.aDataStates = aDataStates;
+			aDataStates.forEach((oDataState) => {
+				oDataState.setParent(this);
+			});
 		}
 	});
 
@@ -195,20 +198,16 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], 
 	};
 
 	/**
-	 * Returns whether the data state is dirty in the UI control.
-	 * A data state is dirty in the UI control if the entered value did not yet pass the type validation.
+	 * Returns whether the data state is dirty in the UI control. A data state is dirty in the UI control if an entered
+	 * value did not pass the type validation.
 	 *
-	 * @returns {boolean} Whether the control data state is dirty
+	 * @returns {boolean}
+	 *   Whether this data state or at least one of the aggregated data states is dirty in the UI control
 	 * @public
 	 */
-	CompositeDataState.prototype.isControlDirty = function() {
-		return this.aDataStates.reduce(function(bIsInvalid, oDataState) {
-			if (oDataState.isControlDirty()) {
-				return true;
-			} else {
-				return bIsInvalid;
-			}
-		}, DataState.prototype.isControlDirty.apply(this, arguments));
+	CompositeDataState.prototype.isControlDirty = function () {
+		return DataState.prototype.isControlDirty.call(this)
+			|| this.aDataStates.some((oDataState) => oDataState.isControlDirtyInternal());
 	};
 
 	/**
