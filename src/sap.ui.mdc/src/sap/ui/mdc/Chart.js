@@ -477,7 +477,7 @@ sap.ui.define([
 		 * 	Defines whether the property is groupable and is selectable as a dimension in the chart
 		 * @property {boolean} aggregatable
 		 *  Defines whether the property is aggregatable and is selectable as a measure in the chart
-		 * @property {string} aggregationMethod
+		 * @property {string} [aggregationMethod]
 		 * 	The aggregation method used if the property is aggregatable
 		 * @property {string} role
 		 * 	Defines the role that the property visualizes inside the chart
@@ -717,16 +717,15 @@ sap.ui.define([
 				};
 
 				const pSortedDimensionsPromise = this.getControlDelegate().getSortedDimensions(this);
-				return pSortedDimensionsPromise.then((aSortedDimensions) => {
+				return pSortedDimensionsPromise.then((aSortedDimensionsProperties) => {
 					// Ignore currently applied dimensions from drill-stack for selection
 					const aIgnoreDimensions = fnGetDrillStackDimensions(this);
-					aSortedDimensions = aSortedDimensions.filter((oDimension) => { return aIgnoreDimensions.indexOf(oDimension.name) < 0; });
+					aSortedDimensionsProperties = aSortedDimensionsProperties.filter((oDimensionProperty) => { return aIgnoreDimensions.indexOf(oDimensionProperty.key) < 0; });
 
-					aSortedDimensions.forEach((oDimension) => {
-						// oData.items.push({ text: oDimension.label, id: oDimension.name });
-						oViewByBtn.addItem(new SelectionButtonItem({ key: oDimension.name, text: oDimension.label }));
+					aSortedDimensionsProperties.forEach((oDimensionProperty) => {
+						oViewByBtn.addItem(new SelectionButtonItem({ key: oDimensionProperty.key, text: oDimensionProperty.label }));
 					});
-					oViewByBtn.setSearchEnabled(aSortedDimensions.length >= 7);
+					oViewByBtn.setSearchEnabled(aSortedDimensionsProperties.length >= 7);
 					oViewByBtn._openPopover(); // in this case the beforeOpen is not able to provide all item syncron
 				});
 			}.bind(this);
@@ -1611,7 +1610,8 @@ sap.ui.define([
 		 * @private
 		 */
 		Chart.prototype._getSortedProperties = function() {
-			return this.getSortConditions() ? this.getSortConditions().sorters : [];
+			const oSortConditions = this.getSortConditions();
+			return oSortConditions ? oSortConditions.sorters : [];
 		};
 
 		Chart.prototype._getTypeBtnActive = function() {

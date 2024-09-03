@@ -413,13 +413,13 @@ sap.ui.define([
 			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				const oMDCItem = new Item("testItem1", { propertyKey: "testName", role: "testRole" });
+				const oMDCItem = new Item("testItem1", { propertyKey: "testName", role: "series" });
 				this.oMDCChart.insertItem(oMDCItem, 0);
 
 				const aVisibleItems = this.oMDCChart._getVisibleProperties();
 				assert.ok(aVisibleItems.length === 1, "Visible Properties contain 1 item");
 				assert.ok(aVisibleItems[0].name === "testName", "Item has correct name");
-				assert.ok(aVisibleItems[0].role === "testRole", "Item has correct role");
+				assert.ok(aVisibleItems[0].role === "series", "Item has correct role");
 
 				done();
 			}.bind(this));
