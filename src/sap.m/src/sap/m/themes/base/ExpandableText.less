@@ -9,9 +9,9 @@
 	word-wrap: break-word; /* works only if browser knows the width */
 	cursor: text;
 	font-size: @sapMFontMediumSize;
-	font-family: @sapUiFontFamily;
+	font-family: var(--sapFontFamily);
 	line-height: normal;
-	color: @sapUiBaseText;
+	color: var(--sapTextColor);
 	max-width: 100%;
 
 	.sapMLnk {
@@ -55,7 +55,8 @@
 		margin: 0;
 	}
 }
-html[data-sap-ui-browser^="cr"] .sapUiFormEdit .sapMExText {
+
+html[data-sap-ui-browser^='cr'] .sapUiFormEdit .sapMExText {
 	line-height: 1.4375rem;
 }
 
@@ -74,7 +75,8 @@ html[data-sap-ui-browser^="cr"] .sapUiFormEdit .sapMExText {
 	padding-top: 0.3125rem;
 	padding-bottom: 0.3125rem;
 }
-html[data-sap-ui-browser^="cr"] .sapUiSizeCompact .sapUiFormEdit .sapMExText {
+
+html[data-sap-ui-browser^='cr'] .sapUiSizeCompact .sapUiFormEdit .sapMExText {
 	line-height: 1.375rem;
 }
 
