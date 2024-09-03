@@ -2433,9 +2433,10 @@ sap.ui.define([
 			});
 			FlexObjectManager.addDirtyFlexObjects(this.oModel.sFlexReference, [oUIChange]);
 			this.oModel.destroy();
+			const oFlexObjects = FlexState.getFlexObjectsDataSelector().get({ reference: sReference });
+			assert.strictEqual(oFlexObjects[0].getId(), "newUIChange", "then the change was not removed from the flex state");
 			assert.strictEqual(oAddRuntimeOnlySpy.callCount, 1, "then the fake Standard variant is added to the runtimeOnlyData");
 
-			stubFlexObjectsSelector([oUIChange]);
 			this.oModel = new VariantModel({}, {
 				flexController: this.oFlexController,
 				appComponent: this.oComponent

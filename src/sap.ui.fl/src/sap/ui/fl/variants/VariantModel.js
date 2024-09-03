@@ -1556,8 +1556,10 @@ sap.ui.define([
 			return mCurrentVariant.controlChanges;
 		})
 		.flat();
+		const oLiveDependencyMap = FlexObjectState.getLiveDependencyMap(this.sFlexReference);
 		aVariantDependentControlChanges.forEach((oChange) => {
-			this.oChangePersistence.removeChange(oChange);
+			DependencyHandler.removeChangeFromMap(oLiveDependencyMap, oChange.getId());
+			DependencyHandler.removeChangeFromDependencies(oLiveDependencyMap, oChange.getId());
 		});
 
 		this.oDataSelector.removeUpdateListener(this.fnUpdateListener);
