@@ -28254,6 +28254,208 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 2. Only a single
+	// row is visible, thus a node's children are not loaded. Create an out-of-place (or in-place)
+	// node and move it down so it becomes the 1st in-place child. Create an out-of-place node as
+	// the very last node and check that is has no next sibling.
+	// Alternatively, the root has no in-place children, but this only becomes apparent after a GET.
+	// JIRA: CPOUI5ODATAV4-2715
+[false, true].forEach((bAlphaHasInPlaceChild) => {
+	[/*in place*/1, /*out of place*/2].forEach((iRank) => {
+	const sTitle = "Recursive Hierarchy: get1stInPlaceChildIndex"
+		+ ", requestSibling's GET result is accepted: " + bAlphaHasInPlaceChild
+		+ ", Gamma's rank is " + iRank;
+
+	QUnit.test(sTitle, async function (assert) {
+		const sBaseUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+			+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
+			+ ",Levels=2)";
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sSelect = "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name";
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				expandTo : 2,
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="1">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 0 Alpha
+		//   2 Gamma (created, OOP or even in place)
+		//   1 Beta (loaded later; maybe not the 1st in-place child, but the next sibling to Alpha!)
+		//     1.1 Delta (created later, OOP)
+		this.expectRequest(sBaseUrl + sSelect + "&$count=true&$skip=0&$top=1", {
+				"@odata.count" : "2",
+				value : [{
+					DescendantCount : "1",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "0",
+					Name : "Alpha"
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial page", assert, oTable, [
+			"/EMPLOYEES('0')"
+		], [
+			[true, 1, "0", "Alpha"]
+		], 2);
+		const oListBinding = oTable.getBinding("rows");
+		const oAlpha = oListBinding.getCurrentContexts()[0];
+
+		let oGamma = await this.createEmployee(assert, oListBinding, oAlpha, "2", "Gamma",
+			sBaseUrl, iRank);
+
+		checkCreatedPersisted(assert, oGamma);
+		assert.strictEqual(oGamma.getIndex(), 1, "out of place");
+		assert.deepEqual(oGamma.getObject(), {
+			"@$ui5.context.isTransient" : false,
+			"@$ui5.node.level" : 2,
+			ID : "2",
+			Name : "Gamma"
+		}, "no LimitedRank");
+		assert.strictEqual(oGamma.getSibling(-1), null, "cannot move up");
+
+		// code under test (Beta is a level 0 placeholder!)
+		assert.strictEqual(oGamma.getSibling(+1), undefined, "not available synchronously");
+
+		this.expectRequest(sBaseUrl + sSelect + "&$skip=" + (3 - iRank) + "&$top=1", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : bAlphaHasInPlaceChild ? "1" : "0",
+					DrillState : "leaf",
+					ID : "1",
+					Name : "Beta"
+				}]
+			});
+
+		let [oBeta] = await Promise.all([
+			// code under test
+			oGamma.requestSibling(+1),
+			this.waitForChanges(assert, "request Beta as 1st in-place child of Alpha")
+		]);
+
+		if (!bAlphaHasInPlaceChild) {
+			assert.strictEqual(oBeta, null, "no 1st in-place child");
+			return; // skip remaining tests - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		}
+
+		checkPersisted(assert, oBeta);
+		assert.strictEqual(oBeta.getPath(), "/EMPLOYEES('1')");
+		assert.strictEqual(oBeta.getIndex(), 2, "1st in-place child");
+		assert.deepEqual(oBeta.getObject(), {
+			"@$ui5.node.level" : 2,
+			ID : "1",
+			Name : "Beta"
+		});
+		assert.strictEqual(oBeta.getSibling(-1), null, "cannot move up");
+		assert.strictEqual(oBeta.getSibling(+1), null, "cannot move down");
+
+		this.expectRequest({
+				batchNo : 5,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				url : "EMPLOYEES('2')",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('0')"
+				}
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 5,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "POST",
+				url : "EMPLOYEES('2')" + sNextSiblingAction,
+				payload : {
+					NextSibling : {ID : "1"}
+				}
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 5,
+				url : sBaseUrl + "&$filter=ID eq '2'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "1" // now in place
+				}]
+			})
+			.expectRequest({ // side-effects refresh
+				batchNo : 5,
+				url : sBaseUrl + sSelect + "&$count=true&$skip=0&$top=1"
+			}, {
+				"@odata.count" : "3",
+				value : [{
+					DescendantCount : "2",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "0",
+					Name : "Alpha: Αα"
+				}]
+			});
+
+		await Promise.all([
+			oGamma.move({nextSibling : oBeta, parent : oAlpha}),
+			this.waitForChanges(assert, "turn out-of-place node into 1st in-place child")
+		]);
+
+		assert.strictEqual(oBeta.getBinding(), undefined, "destroyed");
+		oBeta = null;
+		assert.strictEqual(oGamma.getBinding(), undefined, "destroyed");
+		assert.strictEqual(oGamma.getIndex(), 1, "now in place");
+		oGamma = null;
+
+		this.expectRequest(sBaseUrl + sSelect + "&$skip=1&$top=2", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Gamma: Γγ"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "1",
+					Name : "Beta: Ββ"
+				}]
+			});
+
+		oTable.getRowMode().setRowCount(3);
+
+		await this.waitForChanges(assert, "show all rows");
+
+		checkTable("after show all rows", assert, oTable, [
+			oAlpha, // "/EMPLOYEES('0')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('1')"
+		], [
+			[true, 1, "0", "Alpha: Αα"],
+			[undefined, 2, "2", "Gamma: Γγ"],
+			[undefined, 2, "1", "Beta: Ββ"]
+		]);
+		oBeta = oListBinding.getCurrentContexts()[2];
+
+		//TODO w/ JIRA: CPOUI5ODATAV4-2644, we expect a #requestRank here
+		const oDelta = await this.createEmployee(assert, oListBinding, oBeta, "1.1", "Delta");
+
+		assert.strictEqual(oDelta.getSibling(-1), null, "cannot move up");
+		assert.strictEqual(oDelta.getSibling(+1), null, "no 1st in-place child");
+	});
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: A list with $$getKeepAliveContext would show the top pyramid of a recursive
 	// hierarchy, expanded to level 2, but is initially suspended or unresolved.
 	// ODataModel#getKeepAliveContext is used to show more properties in a form. The list merges

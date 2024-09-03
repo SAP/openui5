@@ -7011,7 +7011,7 @@ sap.ui.define([
 		}];
 
 		// code under test
-		assert.strictEqual(oCache.get1stInPlaceChildIndex(-1), -1);
+		assert.deepEqual(oCache.get1stInPlaceChildIndex(-1), [-1]);
 	});
 
 	//*********************************************************************************************
@@ -7020,20 +7020,49 @@ sap.ui.define([
 			hierarchyQualifier : "X"
 		});
 		oCache.aElements = [{
-			"@$ui5.context.isTransient" : false, // OOP
+			"@$ui5.context.isTransient" : false, // OOP root
 			"@$ui5.node.level" : 1
 		}, {
+			"@$ui5.context.isTransient" : false, // OOP child
 			"@$ui5.node.level" : 2
 		}, { // first in-place root
 			"@$ui5.node.level" : 1
 		}];
 
 		// code under test
-		assert.strictEqual(oCache.get1stInPlaceChildIndex(-1), 2);
+		assert.deepEqual(oCache.get1stInPlaceChildIndex(-1), [2, false, 1]);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("get1stInPlaceChildIndex: first in-place child", function (assert) {
+[false, true].forEach((bPlaceholder) => {
+	const sTitle = "get1stInPlaceChildIndex: first in-place child, placeholder: " + bPlaceholder;
+
+	QUnit.test(sTitle, function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		oCache.aElements = [{ // avoid this trap!
+			"@$ui5.node.level" : 2
+		}, { // parent
+			"@$ui5.node.level" : 1
+		}, {
+			"@$ui5.context.isTransient" : false, // OOP child
+			"@$ui5.node.level" : 2
+		}, {
+			"@$ui5.context.isTransient" : false, // OOP grandchild
+			"@$ui5.node.level" : 3
+		}, { // first in-place child (might even be a level 0 placeholder)
+			"@$ui5._" : bPlaceholder ? {placeholder : true} : undefined,
+			"@$ui5.node.level" : bPlaceholder ? 0 : 2
+		}];
+
+		// code under test
+		assert.deepEqual(oCache.get1stInPlaceChildIndex(1), [4, bPlaceholder, 2]);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("get1stInPlaceChildIndex: no first in-place child, but sibling", function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 			hierarchyQualifier : "X"
 		});
@@ -7044,14 +7073,13 @@ sap.ui.define([
 		}, {
 			"@$ui5.context.isTransient" : false, // OOP
 			"@$ui5.node.level" : 2
-		}, {
-			"@$ui5.node.level" : 3
-		}, { // first in-place child
-			"@$ui5.node.level" : 2
+		}, { // sibling (may even be a placeholder w/ known level)
+			"@$ui5._" : {placeholder : true},
+			"@$ui5.node.level" : 1
 		}];
 
 		// code under test
-		assert.strictEqual(oCache.get1stInPlaceChildIndex(1), 4);
+		assert.deepEqual(oCache.get1stInPlaceChildIndex(1), [-1]);
 	});
 
 	//*********************************************************************************************
@@ -7069,7 +7097,7 @@ sap.ui.define([
 		}];
 
 		// code under test
-		assert.strictEqual(oCache.get1stInPlaceChildIndex(1), -1);
+		assert.deepEqual(oCache.get1stInPlaceChildIndex(1), [-1]);
 	});
 
 	//*********************************************************************************************

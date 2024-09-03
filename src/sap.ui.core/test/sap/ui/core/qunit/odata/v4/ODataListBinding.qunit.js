@@ -12326,8 +12326,15 @@ sap.ui.define([
 		const oCheckSuspendedExpectation
 			= this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oNode).expects("created").withExactArgs().returns(bCreated ? {} : undefined);
+		const oParent = {
+			iIndex : "~oParent.iIndex~",
+			created : mustBeMocked
+		};
 		this.mock(oNode).expects("getParent").exactly(bCreated && oOffset.in !== -1 ? 1 : 0)
-			.withExactArgs().returns(bRoot ? null : {iIndex : "~oParent.iIndex~"});
+			.withExactArgs().returns(bRoot ? null : oParent);
+		this.mock(oParent).expects("created")
+			.exactly(bCreated && oOffset.in !== -1 && !bRoot ? 1 : 0)
+			.withExactArgs().returns(undefined);
 		const oCache = {
 			get1stInPlaceChildIndex : mustBeMocked,
 			getSiblingIndex : mustBeMocked
@@ -12336,7 +12343,7 @@ sap.ui.define([
 		oBinding.oCache = oCache;
 		const oGet1stInPlaceChildIndexExpectation = this.mock(oCache)
 			.expects("get1stInPlaceChildIndex").exactly(bCreated && oOffset.in !== -1 ? 1 : 0)
-			.withExactArgs(bRoot ? -1 : "~oParent.iIndex~").returns(oResult.in);
+			.withExactArgs(bRoot ? -1 : "~oParent.iIndex~").returns([oResult.in]);
 		const oGetSiblingIndexExpectation = this.mock(oCache).expects("getSiblingIndex")
 			.exactly(bCreated ? 0 : 1)
 			.withExactArgs("~iIndex~", oOffset.out).returns(oResult.in);
@@ -12388,8 +12395,14 @@ sap.ui.define([
 		const oCheckSuspendedExpectation
 			= this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oNode).expects("created").withExactArgs().returns(bCreated ? {} : undefined);
+		const oParent = {
+			iIndex : "~oParent.iIndex~",
+			created : mustBeMocked
+		};
 		this.mock(oNode).expects("getParent").exactly(bCreated ? 1 : 0)
-			.withExactArgs().returns(bRoot ? null : {iIndex : "~oParent.iIndex~"});
+			.withExactArgs().returns(bRoot ? null : oParent);
+		this.mock(oParent).expects("created").exactly(bCreated && !bRoot ? 1 : 0)
+			.withExactArgs().returns(undefined);
 		const oCache = {
 			get1stInPlaceChildIndex : mustBeMocked,
 			getSiblingIndex : mustBeMocked
@@ -12398,7 +12411,7 @@ sap.ui.define([
 		oBinding.oCache = oCache;
 		const oGet1stInPlaceChildIndexExpectation = this.mock(oCache)
 			.expects("get1stInPlaceChildIndex").exactly(bCreated ? 1 : 0)
-			.withExactArgs(bRoot ? -1 : "~oParent.iIndex~").returns(iIndex);
+			.withExactArgs(bRoot ? -1 : "~oParent.iIndex~").returns([iIndex]);
 		const oGetSiblingIndexExpectation = this.mock(oCache).expects("getSiblingIndex")
 			.exactly(bCreated ? 0 : 1)
 			.withExactArgs("~iIndex~", +1).returns(iIndex);
@@ -12421,6 +12434,92 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+[false, true].forEach((bAllowRequest) => {
+	[false, true].forEach((bExpectedLevel) => {
+		const sTitle = "fetchOrGetSibling: 1st in-place child is placeholder"
+			+ ", allow request: " + bAllowRequest + ", has expected level: " + bExpectedLevel;
+
+	QUnit.test(sTitle, async function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
+		const oNode = {
+			iIndex : "~iIndex~",
+			created : mustBeMocked,
+			getParent : mustBeMocked,
+			isDeleted : mustBeMocked,
+			isTransient : mustBeMocked
+		};
+		this.mock(oNode).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oNode).expects("isTransient").withExactArgs().returns(false);
+		oBinding.aContexts["~iIndex~"] = oNode;
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oNode).expects("created").withExactArgs().returns({});
+		const oParent = {
+			iIndex : "~oParent.iIndex~",
+			created : mustBeMocked
+		};
+		this.mock(oNode).expects("getParent").withExactArgs().returns(oParent);
+		this.mock(oParent).expects("created").withExactArgs().returns(undefined);
+		const oCache = {
+			get1stInPlaceChildIndex : mustBeMocked
+			// NO: getSiblingIndex
+			// NO: requestSiblingIndex
+		};
+		oBinding.oCache = oCache;
+		this.mock(oCache).expects("get1stInPlaceChildIndex").withExactArgs("~oParent.iIndex~")
+			.returns(["~iSibling~", /*bPlaceholder*/true, "~iExpectedLevel~"]);
+		const oContext = {getProperty : mustBeMocked};
+		this.mock(oBinding).expects("requestContexts").exactly(bAllowRequest ? 1 : 0)
+			.withExactArgs("~iSibling~", 1).resolves([oContext]);
+		this.mock(oContext).expects("getProperty").exactly(bAllowRequest ? 1 : 0)
+			.withExactArgs("@$ui5.node.level").returns(bExpectedLevel ? "~iExpectedLevel~" : "n/a");
+
+		if (bAllowRequest) {
+			assert.strictEqual(
+				// code under test
+				await oBinding.fetchOrGetSibling(oNode, +1, true),
+				bExpectedLevel ? oContext : null);
+		} else {
+			// code under test
+			assert.strictEqual(oBinding.fetchOrGetSibling(oNode), undefined);
+		}
+	});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("fetchOrGetSibling: no request, parent OOP", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
+		const oNode = {
+			iIndex : "~iIndex~",
+			created : mustBeMocked,
+			getParent : mustBeMocked,
+			isDeleted : mustBeMocked,
+			isTransient : mustBeMocked
+		};
+		this.mock(oNode).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oNode).expects("isTransient").withExactArgs().returns(false);
+		oBinding.aContexts["~iIndex~"] = oNode;
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oNode).expects("created").withExactArgs().returns({});
+		const oParent = {
+			iIndex : "~oParent.iIndex~",
+			created : mustBeMocked
+		};
+		this.mock(oNode).expects("getParent").withExactArgs().returns(oParent);
+		this.mock(oParent).expects("created").withExactArgs().returns({});
+		oBinding.oCache = {}; // call NO methods here!
+
+		// code under test
+		assert.strictEqual(oBinding.fetchOrGetSibling(oNode), null);
+	});
 
 	//*********************************************************************************************
 [false, true].forEach((bNull) => {
