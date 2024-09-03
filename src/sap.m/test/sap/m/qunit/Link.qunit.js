@@ -565,25 +565,31 @@ sap.ui.define([
 		oLink.destroy();
 	});
 
-	QUnit.test("Prevent navigation", function(assert) {
+	QUnit.test("Prevent navigation on mobile devices", function(assert) {
 		// Prepare
-		var oLink = new Link({text: "text"}),
-			oClickEvent = new Event("click", {bubbles: true, cancelable: true}),
+		var oLink = new Link({ text: "text", href: "#" }),
+			oTouchStartEvent = new Event("touchstart", { bubbles: true, cancelable: true }),
+			oClickEvent = new Event("click", { bubbles: true, cancelable: true }),
+			oPreventDefaultSpy = this.spy(oTouchStartEvent, "preventDefault"),
+			oPreventDefaultOnClickSpy = this.spy(oClickEvent, "preventDefault"),
 			oPressSpy = this.spy(oLink, "firePress"),
-			oPreventDefaultSpy = this.spy(oClickEvent, "preventDefault");
-
-		var oDeviceStub = this.stub(Device, "system", { phone: true });
+			oDeviceStub = this.stub(Device, "system", {
+				desktop: false,
+				tablet: false,
+				phone: true
+			});
 
 		oLink.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		// Act
+		oLink.getDomRef().dispatchEvent(oTouchStartEvent);
 		oLink.getDomRef().dispatchEvent(oClickEvent);
 
 		// Assert
 		assert.ok(oPressSpy.calledOnce, "Press event still fired");
-		// The event is prevented twice due to the native event handling and simulated event handling
-		assert.ok(oPreventDefaultSpy.calledTwice, "Default action is prevented");
+		assert.ok(oPreventDefaultSpy.calledOnce, "Default action is prevented after touch start event");
+		assert.ok(oPreventDefaultOnClickSpy.calledOnce, "Default action is prevented again after press is fired");
 
 		// Clean
 		oPreventDefaultSpy.reset();
@@ -593,6 +599,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Act
+		oLink.getDomRef().dispatchEvent(oTouchStartEvent);
 		oLink.getDomRef().dispatchEvent(oClickEvent);
 
 		// Assert
