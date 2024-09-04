@@ -552,10 +552,10 @@ sap.ui.define([
 		if (this._previousView == DEFAULT_KEY) {
 			this._oItemsContainer._getNavBackBtn().focus();
 		} else {
-			var oItem = this._oItemsContainer._getNavigationList().getItems().find(function (oItem) {
+			var oItem = this._oItemsContainer?._getNavigationList().getItems().find(function (oItem) {
 				return oItem.getVisible() && oItem._key === this._previousView;
 			}.bind(this));
-			oItem && oItem.focus();
+			oItem?.focus();
 		}
 	};
 
