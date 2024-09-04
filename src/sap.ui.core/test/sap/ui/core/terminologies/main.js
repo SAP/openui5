@@ -17,7 +17,7 @@ sap.ui.define([
 
 	// set the manifest used
 	var sManifestParam = oUriParameters.get("manifest");
-	var sManifest = sManifestParam ? sManifestParam + "/manifest.appdescr" : true;
+	var sManifest = /^appvar[12]$/.test(sManifestParam) ? "./" + sManifestParam + "/manifest.appdescr" : true;
 	Component.create({
 		name: "sap.ui.demo.terminologies",
 		manifest: sManifest
