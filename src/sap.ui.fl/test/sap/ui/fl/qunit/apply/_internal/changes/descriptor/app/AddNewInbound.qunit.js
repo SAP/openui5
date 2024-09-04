@@ -30,7 +30,9 @@ sap.ui.define([
 			};
 
 			this.oChangeLayerCustomer = new AppDescriptorChange({
-				changeType: "appdescr_app_addNewInbound",
+				flexObjectMetadata: {
+					changeType: "appdescr_app_addNewInbound"
+				},
 				layer: Layer.CUSTOMER,
 				content: {
 					inbound: {
@@ -91,7 +93,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// Empty inbound id
 				this.oChangeEmptyInboundId = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewInbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewInbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						inbound: {
@@ -114,7 +118,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// Empty inbound
 				this.oChangeNoInbound = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewInbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewInbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						inbound: {}
@@ -129,7 +135,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// Already existing inbound
 				this.oChangeAlreadyExistingInbound = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewInbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewInbound"
+					},
 					layer: Layer.VENDOR,
 					content: {
 						inbound: {
@@ -152,7 +160,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// Layer check
 				this.oChangeLayerCustomerVendorNoPrefix = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewInbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewInbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						inbound: {
@@ -175,7 +185,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// More than one inbound
 				this.oChangeMoreThenOneInbound = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewInbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewInbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						inbound: {
@@ -205,7 +217,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// More than one objects under change object content
 				this.oChangeMoreThenOneObjectUnderContent = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewInbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewInbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						inbound: {
@@ -229,7 +243,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// No object under change object content
 				this.oChangeNoObjectUnderContent = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewInbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewInbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {	}
 				});
@@ -242,7 +258,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// Not supported object under change object content
 				this.oChangeNotSupportedObjectUnderContent = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewInbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewInbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						notSupportedObject: {
@@ -265,7 +283,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// Mandatory property missing
 				this.oChangeMandatoryParameterMissing = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewInbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewInbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						inbound: {
@@ -288,7 +308,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// Having not supported properties
 				this.oChangeNotHavingSupportedProperties = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewInbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewInbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						inbound: {
@@ -305,7 +327,7 @@ sap.ui.define([
 					}
 				});
 				AddNewInbound.applyChange(this.oManifest, this.oChangeNotHavingSupportedProperties);
-			}, Error("Properties additionalParameters are not supported. Supported properties are semanticObject|action|hideLauncher|icon|title|shortTitle|subTitle|info|indicatorDataSource|deviceTypes|displayMode|signature."),
+			}, Error("Property additionalParameters is not supported. Supported properties are semanticObject|action|hideLauncher|icon|title|shortTitle|subTitle|info|indicatorDataSource|deviceTypes|displayMode|signature."),
 			"throws error that the change object has not supported properties");
 		});
 
@@ -313,7 +335,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// Property Value does not match to regular expression
 				this.oChangeRegExNotMatchForSemanticObject = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewInbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewInbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						inbound: {
@@ -337,7 +361,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// Property Value does not match to regular expression
 				this.oChangeRegExNotMatchForAction = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewInbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewInbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						inbound: {

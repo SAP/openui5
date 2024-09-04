@@ -9,66 +9,86 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	const SUPPORTED_KEYS_FOR_CHANGE = {
-		inbound: "appdescr_app_addNewInbound",
-		outbound: "appdescr_app_addNewOutbound"
-	};
-
-	function checkObjectProperties(oChangeInOrOutbound, sInOrOutboundName, aMandatoryProperties, aSupportedProperties, oSupportedPropertyPattern) {
-		const oSetOfProperties = new Set(Object.keys(oChangeInOrOutbound[sInOrOutboundName]));
-		aMandatoryProperties.forEach(function(sMandatoryProperty) {
-			if (!oSetOfProperties.has(sMandatoryProperty)) {
-				throw new Error(`Mandatory property '${sMandatoryProperty}' is missing. Mandatory properties are ${aMandatoryProperties.join("|")}.`);
+	function checkObjectProperties(oChangeObject, aObjects, aMandatoryProperties, aSupportedProperties, oSupportedPropertyPattern, oSupportedPropertyTypes) {
+		aObjects.forEach(function(sObject) {
+			const oSetOfProperties = new Set(Object.keys(oChangeObject[sObject]));
+			if (aMandatoryProperties) {
+				aMandatoryProperties.forEach(function(sMandatoryProperty) {
+					if (!oSetOfProperties.has(sMandatoryProperty)) {
+						const sText = aMandatoryProperties.length > 1 ? "properties are" : "property is";
+						throw new Error(`Mandatory property '${sMandatoryProperty}' is missing. Mandatory ${sText} ${aMandatoryProperties.join("|")}.`);
+					}
+				});
 			}
-		});
 
-		const notSupportedProperties = [];
-		oSetOfProperties.forEach(function(sProperty) {
-			if (!aSupportedProperties.includes(sProperty)) {
-				notSupportedProperties.push(sProperty);
-			}
-		});
-		if (notSupportedProperties.length > 0) {
-			throw new Error(`Properties ${notSupportedProperties.join("|")} are not supported. Supported properties are ${aSupportedProperties.join("|")}.`);
-		}
-
-		oSetOfProperties.forEach(function(sProperty) {
-			if (oSupportedPropertyPattern[sProperty]) {
-				const regex = new RegExp(oSupportedPropertyPattern[sProperty]);
-				if (!regex.test(oChangeInOrOutbound[sInOrOutboundName][sProperty])) {
-					throw new Error(`The property has disallowed values. Supported values for '${sProperty}' should adhere to regular expression ${regex}.`);
+			if (aSupportedProperties) {
+				const notSupportedProperties = [];
+				oSetOfProperties.forEach(function(sProperty) {
+					if (!aSupportedProperties.includes(sProperty)) {
+						notSupportedProperties.push(sProperty);
+					}
+				});
+				if (notSupportedProperties.length > 0) {
+					const sText1 = notSupportedProperties.length > 1 ? `Properties ${notSupportedProperties.join("|")} are not supported. ` : `Property ${notSupportedProperties.join("|")} is not supported. `;
+					const sText2 = aSupportedProperties.length > 1 ? `Supported properties are ${aSupportedProperties.join("|")}.` : `Supported property is $${aSupportedProperties.join("|")}.`;
+					throw new Error(sText1 + sText2);
 				}
+			}
+
+			if (oSupportedPropertyTypes) {
+				oSetOfProperties.forEach(function(sProperty) {
+					if (oSupportedPropertyTypes[sProperty]) {
+						if (String(typeof oChangeObject[sObject][sProperty]) !== oSupportedPropertyTypes[sProperty]) {
+							throw new Error(`The property '${sProperty}' is type of '${typeof oChangeObject[sObject][sProperty]}'. Supported type for property '${sProperty}' is '${oSupportedPropertyTypes[sProperty]}'`);
+						}
+					}
+				});
+			}
+
+			if (oSupportedPropertyPattern) {
+				oSetOfProperties.forEach(function(sProperty) {
+					if (oSupportedPropertyPattern[sProperty]) {
+						const regex = new RegExp(oSupportedPropertyPattern[sProperty]);
+						if (!regex.test(oChangeObject[sObject][sProperty])) {
+							throw new Error(`The property has disallowed values. Supported values for '${sProperty}' should adhere to regular expression ${regex}.`);
+						}
+					}
+				});
 			}
 		});
 	}
 
-	function getAndCheckInOrOutbound(oChangeContent, sKey, aMandatoryProperties, aSupportedProperties, oSupportedPropertyPattern) {
+	function getAndCheckContentObject(oChangeContent, sKey, sChangeType, aMandatoryProperties, aSupportedProperties, oSupportedPropertyPattern, oSupportedPropertyTypes) {
 		const aObjectKeyNames = Object.keys(oChangeContent);
 		if (aObjectKeyNames.length > 1) {
 			throw new Error("It is not allowed to add more than one object under change object 'content'.");
 		}
 		if (aObjectKeyNames.length < 1) {
-			throw new Error(`The change object 'content' cannot be empty. Please provide the necessary property, as outlined in the change schema for '${SUPPORTED_KEYS_FOR_CHANGE[sKey]}'.`);
+			throw new Error(`The change object 'content' cannot be empty. Please provide the necessary property, as outlined in the change schema for '${sChangeType}'.`);
 		}
-		const sKeyNameOfChangeContent = aObjectKeyNames[0];
-		if (aObjectKeyNames.length === 1) {
-			if (!SUPPORTED_KEYS_FOR_CHANGE[sKeyNameOfChangeContent]) {
-				throw new Error(`The provided property '${sKeyNameOfChangeContent}' is not supported. Supported property for change '${SUPPORTED_KEYS_FOR_CHANGE[sKey]}' is '${sKey}'.`);
+		if (aObjectKeyNames[0] !== sKey) {
+			throw new Error(`The provided property '${aObjectKeyNames[0]}' is not supported. Supported property for change '${sChangeType}' is '${sKey}'.`);
+		}
+
+		const aObjectKeys = Object.keys(oChangeContent[sKey]);
+		if (aObjectKeys.length > 1) {
+			if (sKey === "dataSource") {
+				if (aObjectKeys.length !== 2) {
+					throw new Error(`It is not allowed to add more than two data sources to manifest.`);
+				}
+			} else {
+				throw new Error(`It is not allowed to add more than one ${sKey}: ${aObjectKeys.join(", ")}.`);
 			}
 		}
-		const aInOrOutbounds = Object.keys(oChangeContent[sKeyNameOfChangeContent]);
-		if (aInOrOutbounds.length > 1) {
-			throw new Error(`It is not allowed to add more than one ${sKeyNameOfChangeContent}: ${aInOrOutbounds.join(", ")}.`);
+		if (aObjectKeys.length < 1) {
+			throw new Error(`There is no ${sKey} provided. Please provide an ${sKey}.`);
 		}
-		if (aInOrOutbounds.length < 1) {
-			throw new Error(`There is no ${sKeyNameOfChangeContent} provided. Please provide an ${sKeyNameOfChangeContent}.`);
+
+		if (aObjectKeys.includes("")) {
+			throw new Error(`The ID of your ${sKey} is empty.`);
 		}
-		const sInOrOutbound = aInOrOutbounds[0];
-		if (sInOrOutbound === "") {
-			throw new Error(`The ID of your ${sKeyNameOfChangeContent} is empty.`);
-		}
-		checkObjectProperties(oChangeContent[sKey], sInOrOutbound, aMandatoryProperties, aSupportedProperties, oSupportedPropertyPattern);
-		return aInOrOutbounds[aInOrOutbounds.length - 1];
+		checkObjectProperties(oChangeContent[sKey], aObjectKeys, aMandatoryProperties, aSupportedProperties, oSupportedPropertyPattern, oSupportedPropertyTypes);
+		return (sKey !== "dataSource") ? aObjectKeys[aObjectKeys.length - 1] : aObjectKeys;
 	}
 
 	function checkChange(oEntityPropertyChange, aSupportedProperties, aSupportedOperations, oSupportedPropertyPattern, aNotAllowedToBeDeleteProperties) {
@@ -242,6 +262,6 @@ sap.ui.define([
 		getNamespacePrefixForLayer,
 		getClearedGenericPath,
 		isGenericPropertyPathSupported,
-		getAndCheckInOrOutbound
+		getAndCheckContentObject
 	};
 });

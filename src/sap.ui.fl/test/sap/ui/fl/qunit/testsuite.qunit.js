@@ -267,6 +267,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/AddNewOutbound", "sap/ui/fl/util/DescriptorChangeCheck"]
 				}
 			},
+			"apply/_internal/changes/descriptor/app/AddNewDataSource": {
+				group: "Apply Internal - Descriptor Change Merger",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/AddNewDataSource", "sap/ui/fl/util/DescriptorChangeCheck"]
+				}
+			},
 			"apply/_internal/changes/descriptor/app/AddTechnicalAttributes": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
