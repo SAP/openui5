@@ -993,7 +993,11 @@ sap.ui.define([
 
 				oJQueryMock.expects("ajax")
 					.withArgs("/Service/First")
-					.returns(createMock(assert, {/*oPayload*/}, "OK"));
+					.callsFake(() => {
+						assert.strictEqual(oRequestor.oRetryAfterPromise, null);
+						oRequestor.oRetryAfterPromise = "~otherPromise~"; // reset promise only once
+						return createMock(assert, {/*oPayload*/}, "OK");
+					});
 				oJQueryMock.expects("ajax")
 					.withArgs("/Service/Second")
 					.returns(createMock(assert, {/*oPayload*/}, "OK"));
@@ -1018,7 +1022,7 @@ sap.ui.define([
 			oRequestor.sendRequest("GET", "First"),
 			oRequestor.sendRequest("GET", "Second")
 		]).then(function () {
-			assert.strictEqual(oRequestor.oRetryAfterPromise, oRetryAfterPromise);
+			assert.strictEqual(oRequestor.oRetryAfterPromise, "~otherPromise~");
 		});
 	});
 
