@@ -1,5 +1,6 @@
 /*global QUnit, sinon*/
 sap.ui.define([
+	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/nextUIUpdate",
@@ -16,6 +17,7 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/library",
+	"sap/ui/core/CalendarType",
 	"sap/ui/core/InvisibleText",
 	'sap/ui/events/KeyCodes',
 	"sap/ui/model/json/JSONModel",
@@ -25,6 +27,7 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/core/Icon"
 ], function(
+	Formatting,
 	Localization,
 	Element,
 	nextUIUpdate,
@@ -41,6 +44,7 @@ sap.ui.define([
 	CalendarLegendItem,
 	DateTypeRange,
 	unifiedLibrary,
+	CalendarType,
 	InvisibleText,
 	KeyCodes,
 	JSONModel,
@@ -2306,6 +2310,43 @@ sap.ui.define([
 
 		// Clean up
 		oSPC.destroy();
+	});
+
+	QUnit.test("Backward/Forward navigation in month view (Islamic Calendar)", async function (assert) {
+		// Prepare
+		Formatting.setCalendarType(CalendarType.Islamic);
+
+		var oStartDate = UI5Date.getInstance(2024,7,7),
+			oSPC = new SinglePlanningCalendar({
+				startDate: oStartDate,
+				views: [
+					new SinglePlanningCalendarMonthView()
+				]
+			}).placeAt("qunit-fixture");
+
+		await nextUIUpdate();
+
+		// Act - simulate forward navigation
+		oSPC._applyArrowsLogic();
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oSPC.getStartDate().toDateString(), UI5Date.getInstance(2024,8,5).toDateString(), "The calendar start date is correct after forward navigation in Islamic calendar");
+
+		// Prepare - reset start date
+		oSPC.setStartDate(oStartDate);
+		await nextUIUpdate();
+
+		// Act - simulate backward navigation
+		oSPC._applyArrowsLogic(true);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oSPC.getStartDate().toDateString(), UI5Date.getInstance(2024,6,8).toDateString(), "The calendar start date is correct after backward navigation in Islamic calendar");
+
+		// Clean up
+		oSPC.destroy();
+		Formatting.setCalendarType(CalendarType.Gregorian);
 	});
 
 	QUnit.module("Visibility of actions toolbar", {
