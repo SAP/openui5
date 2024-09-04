@@ -2,25 +2,27 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/dt/Plugin",
+	"sap/base/assert",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"sap/ui/dt/Util",
-	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/base/DesignTime",
 	"sap/ui/dt/util/_createPromise",
-	"sap/ui/Device",
-	"sap/base/assert",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/dt/Plugin",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/Util",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/Device"
 ], function(
-	Plugin,
+	assert,
 	Menu,
 	MenuItem,
-	DtUtil,
-	OverlayRegistry,
+	BaseDesignTime,
 	_createPromise,
-	Device,
-	assert,
-	KeyCodes
+	Plugin,
+	OverlayRegistry,
+	DtUtil,
+	KeyCodes,
+	Device
 ) {
 	"use strict";
 
@@ -38,7 +40,7 @@ sap.ui.define([
 	 * @since 1.53
 	 * @alias sap.ui.dt.plugin.ContextMenu
 	 */
-	var ContextMenu = Plugin.extend("sap.ui.dt.plugin.ContextMenu", /** @lends sap.ui.rta.plugin.ContextMenu.prototype */ {
+	const ContextMenu = Plugin.extend("sap.ui.dt.plugin.ContextMenu", /** @lends sap.ui.rta.plugin.ContextMenu.prototype */ {
 		metadata: {
 			library: "sap.ui.dt",
 			properties: {
@@ -58,14 +60,13 @@ sap.ui.define([
 
 	});
 
-	var mainStyleClass = "sapUiDtContextMenu";
-	var miniMenuStyleClass = "sapUiDtContextMiniMenu";
+	const sMainStyleClass = "sapUiDtContextMenu";
 
 	ContextMenu.prototype.init = function() {
 		this.oContextMenuControl = new Menu();
 		this.oContextMenuControl.attachItemSelected(this._onItemSelected, this);
 		this.oContextMenuControl.attachClosed(this._contextMenuClosed, this);
-		this.oContextMenuControl.addStyleClass(mainStyleClass);
+		this.oContextMenuControl.addStyleClass(sMainStyleClass);
 		this._aMenuItems = [];
 		this._aGroupedItems = [];
 		this._aSubMenus = [];
@@ -94,7 +95,7 @@ sap.ui.define([
 	 * @param {boolean} bPersistOneTime flag to mark that the Button persist the next Menu clearing
 	 */
 	ContextMenu.prototype.addMenuItem = function(mMenuItem, bRetrievedFromPlugin, bPersistOneTime) {
-		var mMenuItemEntry = {
+		const mMenuItemEntry = {
 			menuItem: mMenuItem,
 			fromPlugin: !!bRetrievedFromPlugin,
 			bPersistOneTime
@@ -133,27 +134,22 @@ sap.ui.define([
 	/**
 	 * Opens the Context Menu
 	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay object
-	 * @param {boolean} bContextMenu - Whether the control should be opened as a context menu
 	 * @param {boolean} bIsSubMenu - Whether the new ContextMenu is a SubMenu opened by a menu item inside another ContextMenu
 	 * @param {object} oEvent - Click event of the menu
 	 */
-	ContextMenu.prototype.open = function(oOverlay, bContextMenu, bIsSubMenu, oEvent) {
-		var aSelectedOverlays;
+	ContextMenu.prototype.open = function(oOverlay, bIsSubMenu, oEvent) {
+		let aSelectedOverlays;
 		function addMenuItems(oMenu, aMenuItems) {
 			aMenuItems.forEach(function(oMenuItem, index) {
-				var sText = typeof oMenuItem.text === "function" ? oMenuItem.text(oOverlay) : oMenuItem.text;
-				var bEnabled = typeof oMenuItem.enabled === "function" ? oMenuItem.enabled(aSelectedOverlays) : oMenuItem.enabled;
-				var sTooltip;
-				if (!bContextMenu) {
-					sTooltip = sText;
-				}
+				const sText = typeof oMenuItem.text === "function" ? oMenuItem.text(oOverlay) : oMenuItem.text;
+				const bEnabled = typeof oMenuItem.enabled === "function" ? oMenuItem.enabled(aSelectedOverlays) : oMenuItem.enabled;
 				oMenu.addItem(
 					new MenuItem({
 						key: oMenuItem.id,
 						icon: oMenuItem.icon,
 						text: sText,
 						enabled: bEnabled
-					}).setTooltip(sTooltip)
+					})
 				);
 				if (oMenuItem.submenu) {
 					addMenuItems(oMenu.getItems()[index], oMenuItem.submenu);
@@ -161,13 +157,7 @@ sap.ui.define([
 			});
 		}
 
-		this._bContextMenu = !!bContextMenu;
-		if (this._bContextMenu) {
-			this.oContextMenuControl.removeStyleClass(miniMenuStyleClass);
-		} else {
-			this.oContextMenuControl.addStyleClass(miniMenuStyleClass);
-		}
-		var oNewContextElement = oOverlay.getElement();
+		const oNewContextElement = oOverlay.getElement();
 		if (this._fnCancelMenuPromise) {
 			// Menu is still opening
 			if (this.getContextElement() === oNewContextElement) {
@@ -198,9 +188,9 @@ sap.ui.define([
 		// Remove all previous entries retrieved by plugins (the list should always be rebuilt)
 		this.oContextMenuControl.destroyItems();
 
-		var oPromise = Promise.resolve();
+		let oPromise = Promise.resolve();
 		if (!bIsSubMenu) {
-			var oDtSyncPromise = _createPromise(function(resolve, reject) {
+			const oDtSyncPromise = _createPromise(function(resolve, reject) {
 				DtUtil.waitForSynced(this.getDesignTime())().then(resolve).catch(reject);
 			}.bind(this));
 			this._fnCancelMenuPromise = oDtSyncPromise.cancel;
@@ -208,17 +198,17 @@ sap.ui.define([
 			.then(function() {
 				this._aGroupedItems = [];
 				this._aSubMenus = [];
-				var aPluginItemPromises = [];
-				var oPlugins = this.getDesignTime().getPlugins();
+				const aPluginItemPromises = [];
+				const oPlugins = this.getDesignTime().getPlugins();
 				oPlugins.forEach(function(oPlugin) {
-					var vMenuItems = oPlugin.getMenuItems(aSelectedOverlays);
+					let vMenuItems = oPlugin.getMenuItems(aSelectedOverlays);
 					if (!(vMenuItems instanceof Promise)) {
 						vMenuItems = Promise.resolve(vMenuItems);
 					}
 					aPluginItemPromises.push(vMenuItems);
 				});
 
-				var oPluginItemsPromise = _createPromise(function(resolve, reject) {
+				const oPluginItemsPromise = _createPromise(function(resolve, reject) {
 					Promise.all(aPluginItemPromises).then(resolve).catch(reject);
 				});
 				this._fnCancelMenuPromise = oPluginItemsPromise.cancel;
@@ -231,14 +221,7 @@ sap.ui.define([
 			})
 			.then(function(aPluginMenuItems) {
 				aPluginMenuItems.forEach(function(mMenuItem) {
-					// Show only enabled items in Minimenu
-					var bEnabled = typeof mMenuItem.enabled === "function" ? mMenuItem.enabled(aSelectedOverlays) : mMenuItem.enabled;
-					if (!bEnabled && !bContextMenu) {
-						return;
-					}
-					if (mMenuItem.group !== undefined && !bContextMenu) {
-						this._addMenuItemToGroup(mMenuItem);
-					} else if (mMenuItem.submenu !== undefined) {
+					if (mMenuItem.submenu !== undefined) {
 						this._addSubMenu(mMenuItem);
 					} else {
 						this.addMenuItem(mMenuItem, true);
@@ -251,7 +234,7 @@ sap.ui.define([
 		}
 
 		oPromise.then(function() {
-			var aMenuItems = this._aMenuItems.map(function(mMenuItemEntry) {
+			let aMenuItems = this._aMenuItems.map(function(mMenuItemEntry) {
 				return mMenuItemEntry.menuItem;
 			});
 
@@ -303,18 +286,18 @@ sap.ui.define([
 		this._ensureSelection(this._oCurrentOverlay);
 
 		function callHandler(oMenuItem, oEventItem) {
-			var aSelection = oMenuItem.responsible || this.getSelectedOverlays() || [];
+			const aSelection = oMenuItem.responsible || this.getSelectedOverlays() || [];
 			assert(aSelection.length > 0, "sap.ui.rta - Opening context menu, with empty selection - check event order");
-			var mPropertiesBag = {};
+			const mPropertiesBag = {};
 			mPropertiesBag.eventItem = oEventItem;
 			mPropertiesBag.contextElement = this.getContextElement();
 			oMenuItem.handler(aSelection, mPropertiesBag);
 		}
 
-		var sSelectedItemId = oEventItem.getParameter("item").getKey();
+		const sSelectedItemId = oEventItem.getParameter("item").getKey();
 
 		this._aMenuItems.some(function(mMenuItemEntry) {
-			var oItem = mMenuItemEntry.menuItem;
+			const oItem = mMenuItemEntry.menuItem;
 			if (sSelectedItemId === mMenuItemEntry.menuItem.id) {
 				callHandler.apply(this, [oItem, oEventItem]);
 				return true;
@@ -336,7 +319,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent the event which was fired
 	 */
 	ContextMenu.prototype._onKeyUp = function(oEvent) {
-		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
+		const oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		// Prevents that the context menu opens after finishing a rename with ENTER
 		if (oEvent.keyCode === KeyCodes.ENTER && oOverlay.getIgnoreEnterKeyUpOnce()) {
 			oOverlay.setIgnoreEnterKeyUpOnce(false);
@@ -372,7 +355,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent the event which was fired
 	 */
 	ContextMenu.prototype._onKeyDown = function(oEvent) {
-		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
+		const oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		if ((oEvent.keyCode === KeyCodes.SPACE) &&
 			(oEvent.shiftKey === false) &&
 			(oEvent.altKey === false) &&
@@ -391,11 +374,14 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent the event which was fired
 	 */
 	ContextMenu.prototype._openContextMenu = function(oEvent) {
-		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
+		// Left mouse click in design mode should not open the context menu
+		if (oEvent.type === "click" && BaseDesignTime.isDesignModeEnabled()) {
+			return;
+		}
+		const oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		if (oOverlay && oOverlay.isSelectable() && oOverlay.getSelected()) {
 			this._oCurrentOverlay = oOverlay;
-			var bContextMenu = oEvent.type === "contextmenu" || oEvent.keyCode === KeyCodes.F10;
-			this.open(oOverlay, bContextMenu, undefined, oEvent);
+			this.open(oOverlay, undefined, oEvent);
 		}
 	};
 
@@ -403,7 +389,6 @@ sap.ui.define([
 	 * Called when ContextMenu gets closed
 	 */
 	ContextMenu.prototype._contextMenuClosed = function() {
-		this.oContextMenuControl.removeStyleClass(miniMenuStyleClass);
 		this.fireClosedContextMenu();
 	};
 
@@ -446,7 +431,7 @@ sap.ui.define([
 	 * @param {object} mMenuItem The menu item to add to a group
 	 */
 	ContextMenu.prototype._addMenuItemToGroup = function(mMenuItem) {
-		var bGroupExists = this._aGroupedItems.some(function(_oGroupedItem) {
+		const bGroupExists = this._aGroupedItems.some(function(_oGroupedItem) {
 			if (_oGroupedItem.sGroupName === mMenuItem.group) {
 				_oGroupedItem.aGroupedItems.push(mMenuItem);
 				return true;
