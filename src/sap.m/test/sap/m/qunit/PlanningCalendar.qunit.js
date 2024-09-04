@@ -4635,6 +4635,28 @@ sap.ui.define([
 			"Proper value returned from _getCSSColorForBackground when the hex value is shortened");
 	});
 
+	QUnit.test("Internal Table's busy indicator is displayed while loading of data", async function(assert) {
+		var oTable = this.oPC.getAggregation("table");
+
+		// Prepare
+		this.oPC.placeAt("bigUiArea");
+		await nextUIUpdate();
+
+		// Act
+		this.oPC._onBindingDataRequestedListener();
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(oTable.getBusy(), "Busy Indicator of internal Table is set on data loading");
+
+		// Act
+		this.oPC._onBindingDataReceivedListener();
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(oTable.getBusy(), "Busy Indicator of internal Table is unset on data loading");
+	});
+
 	function _getAppointmentsCount(oPC) {
 		var aRows = oPC.getRows(),
 			iAppointments = 0;

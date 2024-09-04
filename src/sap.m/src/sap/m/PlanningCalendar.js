@@ -938,6 +938,22 @@ sap.ui.define([
 		updateSelectedRows.call(this);
 	};
 
+	PlanningCalendar.prototype._bindAggregation = function(sName, oBindingInfo) {
+		if (sName === "rows") {
+			addBindingListener(oBindingInfo, "dataRequested", this._onBindingDataRequestedListener.bind(this));
+			addBindingListener(oBindingInfo, "dataReceived", this._onBindingDataReceivedListener.bind(this));
+		}
+		Control.prototype._bindAggregation.call(this, sName, oBindingInfo);
+	};
+
+	PlanningCalendar.prototype._onBindingDataRequestedListener = function(oEvent) {
+		this.getAggregation("table").setBusy(true, "listUl");
+	};
+
+	PlanningCalendar.prototype._onBindingDataReceivedListener = function(oEvent) {
+		this.getAggregation("table").setBusy(false, "listUl");
+	};
+
 	PlanningCalendar.prototype._updateHeader = function () {
 		this._getHeader().setProperty("_primaryCalendarType", this._getPrimaryCalendarType());
 		if (this._getSecondaryCalendarType()) {
@@ -5303,6 +5319,21 @@ sap.ui.define([
 		}
 
 		return iPCHeaderContainerRectHeight;
+	}
+
+	function addBindingListener(oBindingInfo, sEventName, fHandler) {
+		oBindingInfo.events = oBindingInfo.events || {};
+
+		if (!oBindingInfo.events[sEventName]) {
+			oBindingInfo.events[sEventName] = fHandler;
+		} else {
+			// Wrap the event handler of the other party to add our handler.
+			var fOriginalHandler = oBindingInfo.events[sEventName];
+			oBindingInfo.events[sEventName] = function() {
+				fHandler.apply(this, arguments);
+				fOriginalHandler.apply(this, arguments);
+			};
+		}
 	}
 
 	return PlanningCalendar;

@@ -218,8 +218,7 @@ sap.ui.define([
 						// }
 
 						aProperties.push({
-							name: sKey,
-							path: sKey,
+							key: sKey,
 							label: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Label"] || sKey,
 							sortable: oSortRestrictionsInfo[sKey] ? oSortRestrictionsInfo[sKey].sortable : true,
 							// sortKey: sSortKey,

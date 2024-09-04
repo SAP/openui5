@@ -773,7 +773,7 @@
 								</mdc:typeahead>
 							</mdc:ValueHelp>
 						</mdc:dependents>
-						
+
 						<mdc:basicSearchField>
 							<mdc:FilterField
 								delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -879,43 +879,6 @@
 					headerStyle="H4"
 					height="400px"
 					width="100%"
-					propertyInfo='[
-						\{
-                    		"name": "language_code",
-                    		"path": "language_code",
-                    		"label": "Language",
-                    		"sortable": true,
-                    		"filterable": true,
-                    		"groupable": true,
-                    		"aggregatable": false,
-                    		"maxConditions": -1,
-                    		"role": "category",
-                    		"criticality": null,
-                    		"textProperty": null,
-                    		"visible": true,
-							"dataType": "Edm.String",
-                    		"group": "",
-                    		"groupLabel": "",
-                    		"caseSensitive": true
-            			\},
-            			\{
-                			"name": "averagemetricsWords",
-                			"path": "metricsWords",
-                			"label": "Words (average)",
-                			"sortable": true,
-							"filterable": true,
-							"groupable": false,
-							"aggregatable": true,
-							"aggregationMethod": "average",
-							"maxConditions": -1,
-							"role": "",
-							"datapoint": null,
-							"visible": true,
-							"dataType": "Edm.Int32",
-							"group": "",
-							"groupLabel": "",
-							"caseSensitive": true
-						\}]'
 				>
 					<mdc:selectionDetailsActions>
 						<mdcc:SelectionDetailsActions>
@@ -957,10 +920,9 @@
 					</mdc:variant>
 
 					<mdc:items>
-						<mdcc:Item id="dim1" type="groupable" propertyKey="language_code" role="category"
-							label="Languages" />
-						<mdcc:Item id="meas1" type="aggregatable" propertyKey="averagemetricsWords" role="axis1"
-							label="Words (avg)" />
+						<mdcc:Item id="dim1" type="groupable" propertyKey="language_code"  />
+						<mdcc:Item id="meas1" type="aggregatable" propertyKey="averagemetricsWords"/>
+						<!-- <mdcc:Item id="meas2" type="aggregatable" propertyKey="averageprice"/> -->
 					</mdc:items>
 				</mdc:Chart>
 

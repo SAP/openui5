@@ -81,7 +81,7 @@ sap.ui.define([
 	opaTest("When I press on the Table, the settings context menu opens", function (Given, When, Then) {
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
-		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2);
+		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
 		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
 
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
@@ -115,7 +115,7 @@ sap.ui.define([
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
-		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2);
+		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
 		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
 
 		//Add two filters --> PRESS CANCEL
@@ -147,7 +147,7 @@ sap.ui.define([
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
-		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2);
+		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
 		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
 
 		//Add two filters & confirm
@@ -181,7 +181,7 @@ sap.ui.define([
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
-		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2);
+		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
 		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
 
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
@@ -220,7 +220,7 @@ sap.ui.define([
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
-		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2);
+		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
 		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
 
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
@@ -258,7 +258,7 @@ sap.ui.define([
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
-		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2);
+		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
 		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
 
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
@@ -321,7 +321,7 @@ sap.ui.define([
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
-		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2);
+		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
 		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 

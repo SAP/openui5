@@ -348,7 +348,7 @@ sap.ui.define([
 						flexObject: oDirtyChange.convertToFileContent()
 					}]);
 					break;
-				case States.LifecycleState.DIRTY:
+				case States.LifecycleState.UPDATED:
 					FlexState.updateStorageResponse(this._mComponent.name, [{
 						type: "update",
 						flexObject: oDirtyChange.convertToFileContent()

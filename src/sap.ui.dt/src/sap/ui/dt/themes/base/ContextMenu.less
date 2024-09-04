@@ -21,66 +21,17 @@
 	}
 }
 
-.sapUiDtContextMiniMenu {
-	&:not(.sapUiSubmenu) {
-		.sapUiMnuItm {
-			display: inline-flex;
-
-			.sapUiMnuItmIco {
-				position: relative;
-			}
-			.sapUiMnuItmTxt {
-				display: none !important;
-			}
-			.sapUiMnuItmSbMnu {
-				padding-top: 0.25rem;
-				right: -0.2rem;
-				position: absolute;
-			}
-		}
-	}
-}
-
 .sapUiSizeCozy{
 	.sapUiDtContextMenu{
-		&:not(.sapUiDtContextMiniMenu) {
-			.sapUiMnuLst {
-				.sapUiMnuItm {
-					.sapUiMnuItmIco {
-						min-width: 1.125rem;
-						padding: 0;
-						> .sapUiIcon {
-							line-height: 1;
-						}
+		.sapUiMnuLst {
+			.sapUiMnuItm {
+				.sapUiMnuItmIco {
+					min-width: 1.125rem;
+					padding: 0;
+					> .sapUiIcon {
+						line-height: 1;
 					}
 				}
-			}
-		}
-		&.sapUiDtContextMiniMenu {
-			.sapUiMnuLst {
-				.sapUiMnuItm {
-					.sapUiMnuItmIco {
-						> .sapUiIcon {
-							min-width: 0;
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-.sapUiSizeCozy.sapUiMnu.sapUiMnuCozySupport {
-	&.sapUiDtContextMiniMenu {
-		.sapUiMnuItmIco {
-			width: 3rem;
-			+ .sapUiMnuItmTxt {
-				margin-left: 2.5rem;
-			}
-			.sapUiIcon {
-				height: 2.625rem;
-				line-height: 2.625rem !important;
-				min-width: 3rem;
 			}
 		}
 	}

@@ -481,7 +481,7 @@ sap.ui.define([
 
 	/**
 	 * Creates a Sorter for a given property.
-	 * @param {sap.ui.mdc.chart.Item} oMDCItem MDC item to create a sorter for
+	 * @param {sap.ui.mdc.chart.Item} oItem MDC item to create a sorter for
 	 * @param {object} oSortProperty Sorting information
 	 * @returns {sap.ui.model.Sorter} Sorter for given item
 	 *
@@ -489,15 +489,15 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.fe, sap.ui.mdc
 	 */
-	ChartDelegate._getSorterForItem = function(oMDCItem, oSortProperty) {
+	ChartDelegate._getSorterForItem = function(oItem, oSortProperty) {
 		//TODO: Check wether we really need this method.
 		//TODO: Right now it is needed since the name of a property does not include the aggregation method -> leads to an error when calling back-end
-		//TODO: In old chart, aggragation method was included in name since every method had their own Item
+		//TODO: In old chart, aggregation method was included in name since every method had their own Item
 
-		if (oMDCItem.getType() === "aggregatable") {
-			return new Sorter(this._getAggregatedMeasureNameForMDCItem(oMDCItem), oSortProperty.descending);
-		} else if (oMDCItem.getType() === "groupable") {
-			return new Sorter(this.getInternalChartNameFromPropertyNameAndKind(oSortProperty.name, "groupable", oMDCItem.getParent()), oSortProperty.descending);
+		if (oItem.getType() === "aggregatable") {
+			return new Sorter(this._getAggregatedMeasureNameForMDCItem(oItem), oSortProperty.descending);
+		} else if (oItem.getType() === "groupable") {
+			return new Sorter(this.getInternalChartNameFromPropertyNameAndKind(oSortProperty.key, "groupable", oItem.getParent()), oSortProperty.descending);
 		}
 
 	};
@@ -645,19 +645,19 @@ sap.ui.define([
 		return new Promise((resolve, reject) => {
 			const aPropPromises = [];
 
-			oChart.getItems().forEach((oMDCItem) => {
-				const bIsComplete = oMDCItem.getPropertyKey() && oMDCItem.getLabel() && oMDCItem.getType() && oMDCItem.getRole();
+			oChart.getItems().forEach((oItem) => {
+				const bIsComplete = oItem.getPropertyKey() && oItem.getLabel() && oItem.getType() && oItem.getRole();
 
 				if (!bIsComplete) {
-					aPropPromises.push(this._getPropertyInfosByName(oMDCItem.getPropertyKey(), oChart).then((oPropertyInfo) => {
-						oMDCItem.setLabel(oPropertyInfo.label);
+					aPropPromises.push(this._getPropertyInfosByName(oItem.getPropertyKey(), oChart).then((oPropertyInfo) => {
+						oItem.setLabel(oPropertyInfo.label);
 
 						if (oPropertyInfo.groupable) {
-							oMDCItem.setType("groupable");
-							oMDCItem.setRole(oMDCItem.getRole() ? oMDCItem.getRole() : "category");
+							oItem.setType("groupable");
+							oItem.setRole(oItem.getRole() || oPropertyInfo.role || "category");
 						} else if (oPropertyInfo.aggregatable) {
-							oMDCItem.setType("aggregatable");
-							oMDCItem.setRole(oMDCItem.getRole() ? oMDCItem.getRole() : "axis1");
+							oItem.setType("aggregatable");
+							oItem.setRole(oItem.getRole() || oPropertyInfo.role || "axis1");
 						}
 					}));
 				}
@@ -708,8 +708,8 @@ sap.ui.define([
 	ChartDelegate._createMDCItemFromProperty = function(oPropertyInfo, idPrefix, sRole) {
 
 		if (oPropertyInfo.groupable) {
-			return new MDCChartItem(idPrefix + "--GroupableItem--" + oPropertyInfo.name, {
-				propertyKey: oPropertyInfo.name,
+			return new MDCChartItem(idPrefix + "--GroupableItem--" + oPropertyInfo.key, {
+				propertyKey: oPropertyInfo.key,
 				label: oPropertyInfo.label,
 				type: "groupable",
 				role: sRole ? sRole : "category"
@@ -718,8 +718,8 @@ sap.ui.define([
 
 		if (oPropertyInfo.aggregatable) {
 
-			return new MDCChartItem(idPrefix + "--AggregatableItem--" + oPropertyInfo.name, {
-				propertyKey: oPropertyInfo.name,
+			return new MDCChartItem(idPrefix + "--AggregatableItem--" + oPropertyInfo.key, {
+				propertyKey: oPropertyInfo.key,
 				label: oPropertyInfo.label,
 				type: "aggregatable",
 				role: sRole ? sRole : "axis1"
@@ -833,19 +833,18 @@ sap.ui.define([
 
 						aColorPromises.push(new Promise((resolve, reject) => {
 							oChart._getPropertyByNameAsync(sKey).then(function(oPropertyInfo) {
-								const { aggregationMethod } = oPropertyInfo;
-								const propertyPath = oPropertyInfo.path;
+								const { aggregationMethod, path } = oPropertyInfo;
 								const sName = this.getInternalChartNameFromPropertyNameAndKind(sKey, "aggregatable", oChart);
 
 								const oMeasureSettings = {
 									name: sName,
 									label: oPropertyInfo.label,
-									role: "axis1"
+									role: oPropertyInfo.role || "axis1"
 								};
 
-								if (aggregationMethod && propertyPath) {
+								if (aggregationMethod && path) {
 									oMeasureSettings.analyticalInfo = {
-										propertyPath,
+										"propertyPath": path,
 										"with": aggregationMethod
 									};
 								}
@@ -881,7 +880,7 @@ sap.ui.define([
 								const oDimension = ChartDelegate.innerDimensionFactory(oChart, undefined, oPropertyInfo);
 								this._getChart(oChart).addDimension(oDimension);
 
-								const sName = this.getInternalChartNameFromPropertyNameAndKind(oPropertyInfo.name, "groupable", oChart);
+								const sName = this.getInternalChartNameFromPropertyNameAndKind(oPropertyInfo.key, "groupable", oChart);
 								this._getState(oChart).inResultDimensions.push(sName);
 
 							}));
@@ -1252,9 +1251,9 @@ sap.ui.define([
 		aDrillStack.forEach((oStackEntry) => {
 			// loop over nested dimension arrays -> give them the correct name for filtering
 			oStackEntry.dimension = oStackEntry.dimension.map((sDimension) => {
-				const oProp = this.getPropertyFromNameAndKind(sDimension, "groupable", oChart);
-				if (oProp) {
-					return oProp.name;
+				const oProperty = this.getPropertyFromNameAndKind(sDimension, "groupable", oChart);
+				if (oProperty) {
+					return oProperty.key;
 				} else {
 					Log.error("MDC Chart Delegate: Couldn't map chart dimension to groupable property: " + sDimension);
 					return sDimension;
@@ -1289,8 +1288,8 @@ sap.ui.define([
 	};
 
 	ChartDelegate._sortPropertyDimensions = function(aProperties) {
-		const aDimensions = aProperties.filter((oItem) => {
-			return oItem.groupable; //Groupable means "Dimension" for sap.chart.Chart
+		const aDimensions = aProperties.filter((oProperty) => {
+			return oProperty.groupable; //Groupable means "Dimension" for sap.chart.Chart
 		});
 
 		if (aDimensions) {
@@ -1512,7 +1511,7 @@ sap.ui.define([
      */
     ChartDelegate.innerDimensionFactory = function (oChart, oItem, oPropertyInfo) {
 		let oDimension;
-		const sName = this.getInternalChartNameFromPropertyNameAndKind(oItem?.getPropertyKey() || oPropertyInfo.name, "groupable", oChart);
+		const sName = this.getInternalChartNameFromPropertyNameAndKind(oItem?.getPropertyKey() || oPropertyInfo.key, "groupable", oChart);
 
 		let mSettings = {
 			name: sName,
@@ -1539,36 +1538,35 @@ sap.ui.define([
 	/**
 	 * @private
 	 */
-	ChartDelegate._addInnerMeasure = function(oChart, oChartItem, oPropertyInfo) {
-		const oMeasure = this.innerMeasureFactory(oChart, oChartItem, oPropertyInfo);
+	ChartDelegate._addInnerMeasure = function(oChart, oItem, oPropertyInfo) {
+		const oMeasure = this.innerMeasureFactory(oChart, oItem, oPropertyInfo);
 		this._getChart(oChart).addMeasure(oMeasure);
 	};
 
 	/**
 	 * @private
 	 */
-	ChartDelegate.innerMeasureFactory = function(oChart, oChartItem, oPropertyInfo) {
-		const { aggregationMethod } = oPropertyInfo;
-		const propertyPath = oPropertyInfo.path;
+	ChartDelegate.innerMeasureFactory = function(oChart, oItem, oPropertyInfo) {
+		const { aggregationMethod, path } = oPropertyInfo;
 
-		const oMeasureSettings = {
-			name: this._getAggregatedMeasureNameForMDCItem(oChartItem), //aggregationMethod + oItem.getPropertyKey() under normal circumstances
-			label: oChartItem.getLabel(),
-			role: oChartItem.getRole() ? oChartItem.getRole() : "axis1"
+		const oSettings = {
+			name: this._getAggregatedMeasureNameForMDCItem(oItem), //aggregationMethod + oItem.getPropertyKey() under normal circumstances
+			label: oItem?.getLabel() || oPropertyInfo.label,
+			role: oItem?.getRole() || oPropertyInfo.role || "axis1"
 		};
 
-		if (aggregationMethod && propertyPath) {
-			oMeasureSettings.analyticalInfo = {
-				propertyPath,
+		if (aggregationMethod && path) {
+			oSettings.analyticalInfo = {
+				"propertyPath": path,
 				"with": aggregationMethod
 			};
 		}
 
 		if (oPropertyInfo.unitPath) {
-			oMeasureSettings.unitBinding = oPropertyInfo.unitPath;
+			oSettings.unitBinding = oPropertyInfo.unitPath;
 		}
 
-		return new Measure(oMeasureSettings);
+		return new Measure(oSettings);
 	};
 
 	/**
@@ -1581,7 +1579,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe, sap.ui.mdc
 	 */
 	ChartDelegate._getAggregatedMeasureNameForProperty = function(oProperty) {
-		return oProperty.aggregationMethod + oProperty.name;
+		return oProperty.aggregationMethod + oProperty.key;
 	};
 
 	/**
@@ -1625,11 +1623,11 @@ sap.ui.define([
 			return;
 		}
 
-		const oMDCMeasures = oChart.getItems().filter((oItem) => {
+		const aMeasures = oChart.getItems().filter((oItem) => {
 			return oItem.getType() === "aggregatable";
 		});
 
-		if (oMDCMeasures.length === 0) {
+		if (aMeasures.length === 0) {
 			this._getInnerStructure(oChart).setShowNoDataStruct(true);
 			oChart.setBusy(false);
 		} else {
@@ -1734,19 +1732,19 @@ sap.ui.define([
 		let aSorters;
 		const aSorterProperties = oChart.getSortConditions() ? oChart.getSortConditions().sorters : [];
 
-		aSorterProperties.forEach((oSortProp) => {
+		aSorterProperties.forEach((oSortProperty) => {
 
-			const oMDCItem = oChart.getItems().find((oItem) => {
-				return oItem.getPropertyKey() === oSortProp.name;
+			const oItem = oChart.getItems().find((oItem) => {
+				return oItem.getPropertyKey() === oSortProperty.key;
 			});
 
 			//Ignore not visible Items
-			if (!oMDCItem) {
+			if (!oItem) {
 				return;
 			}
 
 			//TODO: Check for inResultDimensions
-			const oSorter = this._getSorterForItem(oMDCItem, oSortProp);
+			const oSorter = this._getSorterForItem(oItem, oSortProperty);
 
 			if (aSorters) {
 				aSorters.push(oSorter);

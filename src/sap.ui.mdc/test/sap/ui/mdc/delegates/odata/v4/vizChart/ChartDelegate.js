@@ -114,8 +114,7 @@ sap.ui.define([
 					if (oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"]) {
 
 						aProperties.push({
-							name: sKey,
-							path: sKey,
+							key: sKey,
 							label: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Label"] || sKey,
 							sortable: oSortRestrictionsInfo[sKey] ? oSortRestrictionsInfo[sKey].sortable : true,
 							filterable: oFilterRestrictionsInfo[sKey] ? oFilterRestrictionsInfo[sKey].filterable : true,
@@ -148,18 +147,19 @@ sap.ui.define([
 				}
 
 				aProperties.push({
-					name: sAggregationMethod + sKey,
-					path: sKey,
+					key: sAggregationMethod + sKey,
 					label: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Label"] + " (" + sAggregationMethod + ")" || sKey + " (" + sAggregationMethod + ")" ,
 					sortable: oSortRestrictionsInfo[sKey] ? oSortRestrictionsInfo[sKey].sortable : true,
 					filterable: oFilterRestrictionsInfo[sKey] ? oFilterRestrictionsInfo[sKey].filterable : true,
 					groupable: false,
 					aggregatable: oPropertyAnnotations["@Org.OData.Aggregation.V1.Aggregatable"],
 					aggregationMethod: sAggregationMethod,
+					path: sKey,
 					maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo[sKey]?.allowedExpressions) ? -1 : 1,
 					dataType: oObj.$Type,
 					datapoint: null, //To be implemented by FE
-					unitPath: (sAggregationMethod + sKey) === "minprice" ? "currency_code" : ""
+					unitPath: (sAggregationMethod + sKey) === "minprice" ? "currency_code" : "",
+					role: (sAggregationMethod + sKey) === "averageprice" ? "axis2" : "axis1"
 				});
 			});
 		}

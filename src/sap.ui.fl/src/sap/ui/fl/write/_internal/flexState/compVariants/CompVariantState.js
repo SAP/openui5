@@ -190,7 +190,7 @@ sap.ui.define([
 
 	function needsPersistencyCall(oFlexObject) {
 		return oFlexObject &&
-			[States.LifecycleState.NEW, States.LifecycleState.DIRTY, States.LifecycleState.DELETED].includes(oFlexObject.getState());
+			[States.LifecycleState.NEW, States.LifecycleState.UPDATED, States.LifecycleState.DELETED].includes(oFlexObject.getState());
 	}
 
 	function getAllCompVariantObjects(mCompVariantsMapByPersistencyKey) {
@@ -902,7 +902,7 @@ sap.ui.define([
 				case States.LifecycleState.NEW:
 					ifVariantClearRevertData(oFlexObject);
 					return writeObjectAndAddToState(oFlexObject, oStoredResponse, sParentVersion);
-				case States.LifecycleState.DIRTY:
+				case States.LifecycleState.UPDATED:
 					ifVariantClearRevertData(oFlexObject);
 					return updateObjectAndStorage(oFlexObject, oStoredResponse, sParentVersion, mPropertyBag.reference);
 				case States.LifecycleState.DELETED:
