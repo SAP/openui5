@@ -3,11 +3,10 @@
  */
 
 sap.ui.define([
-	"../util/PropertyHelper", "sap/ui/core/Lib", "sap/ui/mdc/enums/ChartItemRoleType"
+	"../util/PropertyHelper", "sap/ui/core/Lib"
 ], (
 	PropertyHelperBase,
-	Library,
-	ChartItemRoleType
+	Library
 ) => {
 	"use strict";
 

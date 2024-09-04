@@ -544,12 +544,12 @@ function(
         const done = assert.async();
         const oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
         oStub.withArgs("Item1").returns(Promise.resolve({
-            name: "Item1",
+            key: "Item1",
             groupable: true,
             label: "Label 1"
         }));
         oStub.withArgs("Item2").returns(Promise.resolve({
-            name: "Item2",
+            key: "Item2",
             aggregatable: true,
             label: "Label 2"
         }));
@@ -784,7 +784,7 @@ function(
         const done = assert.async();
         const oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
         oStub.withArgs("Dimension1").returns(Promise.resolve({
-            name: "Dimension1",
+            key: "Dimension1",
             groupable: true,
             label: "Label 1"
         }));
@@ -1146,10 +1146,10 @@ function(
 
         const oStub = sandbox.stub(ChartDelegate, "getPropertyFromNameAndKind");
         oStub.withArgs("A").returns({
-            name: "A"
+            key: "A"
         });
         oStub.withArgs("B").returns({
-            name: "B"
+            key: "B"
         });
 
         const oChartSpy = sinon.spy(oMockChart, "getDrillStack");
@@ -1312,7 +1312,7 @@ function(
     });
 
     QUnit.test("getSorters", function(assert) {
-        this.oMDCChart.setSortConditions({sorters: [{name: "Test1", descending: true}, {name: "Test2", descending: false}, {name: "Test3", descending: true}]});
+        this.oMDCChart.setSortConditions({sorters: [{key: "Test1", descending: true}, {key: "Test2", descending: false}, {key: "Test3", descending: true}]});
         const oDim = new Item({propertyKey: "Test1", type: "groupable"});
         const oMeas = new Item({propertyKey: "Test2", type: "aggregatable"});
         this.oMDCChart.addItem(oDim);
