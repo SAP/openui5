@@ -3,17 +3,18 @@
 /* Evening Horizon theme        */
 /* ============================ */
 
-@_sap_m_Token_TokenPadding: 0.5rem;
-@_sap_m_Token_TokenCompactPadding: 0.25rem;
 @_sap_m_Token_LeftPadding: 0.3125rem;
-@_sap_m_Token_TokenSize: @sapMFontSmallSize + (2 * @_sap_m_Token_TokenPadding) - @_sap_m_Token_LeftPadding;
-@_sap_m_Token_TokenCompactSize: @sapMFontSmallSize  + @_sap_m_Token_TokenCompactPadding;
+@_sap_m_Token_IconWidth: 1.75rem;
+@_sap_m_Token_CompactIconWidth: 1.5rem;
+@_sap_m_Token_DeleteIconHeight: 2.25rem;
+@_sap_m_Token_DeleteIconCompactHeight: 1.625rem;
 
 .sapMToken {
 	padding-left: @_sap_m_Token_LeftPadding;
 	border-radius: 0.375rem;
 	color: @sapTextColor;
 	font-size: @sapFontSize;
+	overflow: visible;
 }
 
 .sapMTokenSelected,
@@ -22,6 +23,13 @@
 	border: @sapUiButtonBorderWidth solid @sapUiButtonSelectedBorderColor;
 	border-radius: 0.375rem;
 	font-family: @sapFontSemiboldDuplexFamily;
+}
+
+.sapMTokenIcon::before {
+	display: inline-block;
+	width: 0.75rem;
+	height: 0.75rem;
+	line-height: 1;
 }
 
 .sapMToken.sapMTokenSelected::before {
@@ -57,7 +65,7 @@ html.sap-desktop .sapMToken.sapMTokenSelected:not(.sapMTokenReadOnly):hover {
 }
 
 html.sap-desktop .sapMToken:focus {
-	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiFieldActiveBorderColor;
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 	border-radius: 0.5rem;
 	outline-offset: 0.0625rem;
 }
@@ -83,7 +91,19 @@ html.sap-desktop .sapUiSizeCondensed .sapMToken:focus {
 	}
 }
 
-.sapUiSizeCompact .sapMToken .sapMTokenIcon {
-	line-height: 1.25rem;
-	padding: 0 0.375rem;
+.sapMTokenIcon {
+	box-sizing: border-box;
+	top: ~"calc((@{_sap_m_Token_TokenHeight} / 2) - (@{_sap_m_Token_DeleteIconHeight} / 2) - @{sapUiButtonBorderWidth})";
+	width: @_sap_m_Token_IconWidth;
+	height: @_sap_m_Token_DeleteIconHeight;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	right: -@sapUiButtonBorderWidth;
+}
+
+.sapUiSizeCompact .sapMTokenIcon {
+	top: ~"calc((@{_sap_m_Token_TokenCompactHeight} / 2) - (@{_sap_m_Token_DeleteIconCompactHeight} / 2) - @{sapUiButtonBorderWidth})";
+	width: @_sap_m_Token_CompactIconWidth;
+	height: @_sap_m_Token_DeleteIconCompactHeight;
 }

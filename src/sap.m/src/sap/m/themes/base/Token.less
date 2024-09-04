@@ -6,8 +6,10 @@
 @_sap_m_Token_TokenPadding: 0.5rem;
 @_sap_m_Token_TokenCompactPadding: 0.25rem;
 @_sap_m_Token_LeftPadding: 0.375rem;
-@_sap_m_Token_TokenSize: @sapMFontMediumSize + (2 * @_sap_m_Token_TokenPadding) - @_sap_m_Token_LeftPadding;
-@_sap_m_Token_TokenCompactSize: @sapMFontSmallSize + @_sap_m_Token_TokenCompactPadding;
+@_sap_m_Token_IconWidth: @sapMFontMediumSize + (2 * @_sap_m_Token_TokenPadding) - @_sap_m_Token_LeftPadding;
+@_sap_m_Token_CompactIconWidth: @sapMFontSmallSize + @_sap_m_Token_TokenCompactPadding;
+@_sap_m_Token_TokenHeight: 1.625rem;
+@_sap_m_Token_TokenCompactHeight: 1.25rem;
 
 .sapMToken {
 	display: inline-block;
@@ -16,7 +18,7 @@
 	box-sizing: border-box;
 	font-size: @sapMFontMediumSize;
 	padding-left: @_sap_m_Token_LeftPadding;
-	height: 1.625rem;
+	height: @_sap_m_Token_TokenHeight;
 	background: @sapUiButtonTokenBackground;
 	border: @sapUiButtonBorderWidth solid @sapUiButtonTokenBorderColor;
 	border-radius: @sapUiButtonBorderCornerRadius;
@@ -51,7 +53,7 @@ html.sap-desktop .sapMToken:not(.sapMTokenReadOnly):hover {
 	pointer-events: none;
 
 	line-height: 1.5rem;
-	max-width: calc(~"100% - " @_sap_m_Token_TokenSize);
+	max-width: calc(~"100% - " @_sap_m_Token_IconWidth);
 	box-sizing: border-box;
 }
 
@@ -60,7 +62,7 @@ html.sap-desktop .sapMToken:not(.sapMTokenReadOnly):hover {
 }
 
 .sapUiSizeCompact .sapMTokenText {
-	max-width: calc(~"100%  - " @_sap_m_Token_TokenCompactSize);
+	max-width: calc(~"100%  - " @_sap_m_Token_CompactIconWidth);
 	font-size: @sapMFontMediumSize;
 }
 
@@ -78,12 +80,13 @@ html.sap-desktop .sapMToken:not(.sapMTokenReadOnly):hover {
 	font-size: 0.75rem;
 	box-sizing: border-box;
 	touch-action: none;
+	right: -@sapUiButtonBorderWidth;
 }
 
 .sapUiSizeCompact .sapMToken {
 	font-size: @sapMFontSmallSize;
 	padding-left: @_sap_m_Token_TokenCompactPadding;
-	height: 1.25rem;
+	height: @_sap_m_Token_TokenCompactHeight;
 }
 
 .sapUiSizeCompact .sapMToken.sapMTokenReadOnly {
