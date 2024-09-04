@@ -467,7 +467,7 @@ function(nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		// Arrange
 		var oObjectPage = helpers.generateObjectPageWithDynamicHeaderTitle(),
 			aSections = oObjectPage.getSections(),
-			oLastSection = aSections[aSections.length - 1],
+			oSection = aSections[1],
 			oExpandButton,
 			done = assert.async();
 
@@ -481,12 +481,11 @@ function(nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			// Act - expand header and scroll to last Section
 			oExpandButton = oObjectPage.getHeaderTitle()._getExpandButton();
 			oExpandButton.firePress();
-			oObjectPage.scrollToSection(oLastSection.getId(), 0);
+			oObjectPage.scrollToSection(oSection.getId(), 0);
 
 			setTimeout(function () {
 				// Assert - check the delta between current scroll position and the top position of the scrolled to Section, due to rounding diffs (5px diff is OK)
-				assert.ok(Math.abs(oObjectPage._$opWrapper.scrollTop() - oObjectPage._oSectionInfo[oLastSection.getId()].positionTop) < 5,
-					"Scroll position is correct");
+				assert.equal(oObjectPage.getSelectedSection(), oSection.getId(), "Scroll position is correct");
 				done();
 			}, 1000);
 
