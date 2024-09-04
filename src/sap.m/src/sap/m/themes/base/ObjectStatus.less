@@ -380,6 +380,18 @@
 	display: block;
 }
 
+html[data-sap-ui-browser*='ff'] {
+	.sapUiTableCell {
+		.sapMObjStatus:not(.sapMObjStatusInverted) {
+			line-height: 1.125rem;
+
+			.sapMObjStatusIcon > .sapUiIcon {
+				padding-bottom: 0.125rem;
+			}
+		}
+	}
+}
+
 .sapUiTableCell .sapMObjStatusInverted {
 	display: inline-flex;
 }
