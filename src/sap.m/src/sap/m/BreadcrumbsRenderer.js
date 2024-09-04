@@ -65,7 +65,7 @@ sap.ui.define(["sap/m/Text"], function (Text) {
 		oRm.class("sapMBreadcrumbsItem");
 		oRm.class(sAdditionalItemClass);
 		oRm.openEnd();
-		oRm.renderControl(oControl);
+		oRm.renderControl(oControl.addStyleClass("sapMBreadcrumbsLink"));
 		if (!bSkipSeparator) {
 			oRm.openStart("span").class("sapMBreadcrumbsSeparator").attr("aria-hidden", true).openEnd().text(sSeparator).close("span");
 		}
