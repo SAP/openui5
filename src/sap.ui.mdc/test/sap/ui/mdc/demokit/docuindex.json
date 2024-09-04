@@ -123,9 +123,9 @@
 				"category": "Metadata-Driven Controls (sap.ui.mdc)",
 				"since": "1.116",
 				"samples": [
-					"sap.ui.mdc.demokit.sample.TableJson",
-					"sap.ui.mdc.demokit.sample.TableTypes",
-					"sap.ui.mdc.demokit.sample.UploadSetwithTablePlugin"
+					"sap.ui.mdc.demokit.sample.table.TableJson",
+					"sap.ui.mdc.demokit.sample.table.TableTypes",
+					"sap.ui.mdc.demokit.sample.table.UploadSetwithTablePlugin"
 				]
 			}
 		],
@@ -262,7 +262,7 @@
 				"description": "A filter bar with custom operators of type integer and date"
 			},
 			{
-				"id": "sap.ui.mdc.demokit.sample.TableJson",
+				"id": "sap.ui.mdc.demokit.sample.table.TableJson",
 				"name": "Table - with personalization",
 				"description": "A table with basic configuration and enabled personalization"
 			},
@@ -272,13 +272,13 @@
 				"description": "A table with a filter bar including variant management"
 			},
 			{
-				"id": "sap.ui.mdc.demokit.sample.UploadSetwithTablePlugin",
+				"id": "sap.ui.mdc.demokit.sample.table.UploadSetwithTablePlugin",
 				"name": "Table - with UploadSetwithTable Plugin",
 				"description": "A table using sap.m.plugins.UploadSetwithTable plugin to demonstrate the features of upload, download, drag & drop, remove and rename of files."
 			},
 			{
 
-				"id": "sap.ui.mdc.demokit.sample.TableTypes",
+				"id": "sap.ui.mdc.demokit.sample.table.TableTypes",
 				"name": "Table - with different table types",
 				"description": "A table using different table types."
 			}

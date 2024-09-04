@@ -17,7 +17,7 @@ sap.ui.define([
 		}
 	});
 
-	const sSampleResource = "test-resources/sap/ui/mdc/demokit/sample/TableJson/index.html";
+	const sSampleResource = "test-resources/sap/ui/mdc/demokit/sample/table/TableJson/index.html";
 	const sTableId = "container-mdc.sample---sample--table";
 
 	opaTest("A table is properly visible", function (Given, When, Then) {
