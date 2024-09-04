@@ -5768,12 +5768,14 @@ sap.ui.define([
 
 		// code under test
 		oCache = _Cache.create(this.oRequestor, "resource/path", mQueryOptions,
-			"bSortExpandSelect", "deep/resource/path", bSharedRequest);
+			"bSortExpandSelect", "deep/resource/path", bSharedRequest,
+			bSharedRequest ? undefined : "~aSeparateProperties~");
 
 		assert.strictEqual(oCache.oRequestor, this.oRequestor);
 		assert.strictEqual(oCache.bSortExpandSelect, "bSortExpandSelect");
 		assert.strictEqual(oCache.sOriginalResourcePath, "deep/resource/path");
-		assert.strictEqual(oCache.bSharedRequest, bSharedRequest ? true : undefined);
+		assert.strictEqual(oCache.bSharedRequest, bSharedRequest);
+		assert.deepEqual(oCache.aSeparateProperties, bSharedRequest ? [] : "~aSeparateProperties~");
 		assert.strictEqual(oCache.iActiveElements, 0);
 	});
 });
@@ -6921,8 +6923,53 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oCache.getQueryString(), oCache.sQueryString);
 
-		assert.strictEqual(oCache.sQueryString, "?foo=bar");
+		assert.strictEqual(oCache.sQueryString, "?foo=bar", "unchanged");
 	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bAllSeparate) {
+	const sTitle = "CollectionCache#getQueryString: $$separate, all: " + bAllSeparate;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCache = this.createCache("Employees", {
+			foo : "bar",
+			$expand : {
+				BestFriend : "~BestFriend~",
+				BestPublication : "~BestPublication~",
+				SiblingEntity : "~SiblingEntity~"
+			}
+		});
+
+		oCache.sQueryString = "?foo=bar";
+		oCache.aSeparateProperties = bAllSeparate
+			? ["BestFriend", "BestPublication", "SiblingEntity"]
+			: ["BestFriend", "n/a", "SiblingEntity"];
+		oCache.bSortExpandSelect = "bSortExpandSelect";
+		this.mock(oCache).expects("getExclusiveFilter").withExactArgs().returns(undefined);
+		const mExpectedQueryOptions = bAllSeparate
+			? {foo : "bar"}
+			: {
+				foo : "bar",
+				$expand : {
+					BestPublication : "~BestPublication~"
+				}
+			};
+		this.mock(this.oRequestor).expects("buildQueryString")
+			.withExactArgs(oCache.sMetaPath, mExpectedQueryOptions, false, "bSortExpandSelect",
+				true)
+			.returns("?~");
+
+		// code under test
+		assert.strictEqual(oCache.getQueryString(), "?~");
+
+		assert.strictEqual(oCache.sQueryString, "?foo=bar", "unchanged");
+		assert.deepEqual(oCache.mQueryOptions.$expand, {
+			BestFriend : "~BestFriend~",
+			BestPublication : "~BestPublication~",
+			SiblingEntity : "~SiblingEntity~"
+		}, "unchanged");
+	});
+});
 
 	//*********************************************************************************************
 ["?foo=bar", ""].forEach(function (sQuery) {
@@ -6939,7 +6986,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.getQueryString(),
 			sQuery ? sQuery + "&$filter=~encoded~" : "?$filter=~encoded~");
 
-		assert.strictEqual(oCache.sQueryString, sQuery);
+		assert.strictEqual(oCache.sQueryString, sQuery, "unchanged");
 	});
 });
 
@@ -6950,6 +6997,7 @@ sap.ui.define([
 				$filter : "~own~"
 			});
 
+		oCache.sQueryString = "?foo=bar";
 		oCache.bSortExpandSelect = "bSortExpandSelect";
 		this.mock(oCache).expects("getExclusiveFilter").withExactArgs()
 			.returns("~exclusive~");
@@ -6964,6 +7012,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.getQueryString(), "?~");
 
 		assert.strictEqual(oCache.mQueryOptions.$filter, "~own~");
+		assert.strictEqual(oCache.sQueryString, "?foo=bar", "unchanged");
 	});
 
 	//*********************************************************************************************

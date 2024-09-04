@@ -338,7 +338,7 @@
 		},
 		{
 			"control": "sap.m.ObjectListItem",
-			"url": "../ObjectListItem.html",
+			"url": "./ObjectListItem.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{

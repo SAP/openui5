@@ -32,6 +32,18 @@ sap.ui.define([
 
 		assert.strictEqual(oDataState.mProperties, "~initial0");
 		assert.strictEqual(oDataState.mChangedProperties, "~initial1");
+		assert.notOk(oDataState.hasOwnProperty("oParentDataState")); // only available after setParent is called
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setParent",function(assert) {
+		const oDataState = new DataState();
+		assert.strictEqual(oDataState.oParentDataState, undefined, "initially no parent");
+
+		// code under test
+		oDataState.setParent("~parent");
+
+		assert.strictEqual(oDataState.oParentDataState, "~parent", "parent set");
 	});
 
 	//*********************************************************************************************
@@ -225,4 +237,49 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(oDataState.getAllMessages(), ["~msg0", "~msg2", "~msg1"]);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("isControlDirtyInternal", function(assert) {
+		const oDataState = {
+			mChangedProperties: {},
+			oParentDataState: "~oParentDataState"
+		};
+
+		// code under test
+		assert.strictEqual(DataState.prototype.isControlDirtyInternal.call(oDataState), false);
+
+		oDataState.mChangedProperties.invalidValue = "~invalidValue";
+
+		// code under test
+		assert.strictEqual(DataState.prototype.isControlDirtyInternal.call(oDataState), true);
+
+		oDataState.mChangedProperties.invalidValue = null;
+
+		// code under test
+		assert.strictEqual(DataState.prototype.isControlDirtyInternal.call(oDataState), true);
+
+		oDataState.mChangedProperties.invalidValue = undefined;
+
+		// code under test
+		assert.strictEqual(DataState.prototype.isControlDirtyInternal.call(oDataState), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isControlDirty", function(assert) {
+		const oDataState = {
+			isControlDirtyInternal() {}
+		};
+		this.mock(oDataState).expects("isControlDirtyInternal").withExactArgs().returns("~isControlDirtyInternal");
+
+		// code under test
+		assert.strictEqual(DataState.prototype.isControlDirty.call(oDataState), "~isControlDirtyInternal");
+
+		oDataState.oParentDataState = {isControlDirty() {}};
+		this.mock(oDataState.oParentDataState).expects("isControlDirty").withExactArgs()
+			.returns("~parentIsControlDirty");
+
+		// code under test
+		assert.strictEqual(DataState.prototype.isControlDirty.call(oDataState), "~parentIsControlDirty");
+	});
+
 });

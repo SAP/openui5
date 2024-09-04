@@ -584,6 +584,7 @@ sap.ui.define([
 			// OK button
 			oDialog.setBeginButton(new Button({
 				text: oLibraryResourceBundle.getText("COLOR_PALETTE_MORE_COLORS_CONFIRM"),
+				type: ButtonType.Emphasized,
 				press: function (oEvent) {
 					oDialog.close();
 					if (oDialog._oColorPicker.getColorString()) {

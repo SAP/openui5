@@ -409,13 +409,8 @@ sap.ui.define([
 			// ID%20eq%20'0'%20or%20ID%20eq%20'1'%20or%20ID%20eq%20'1.1'
 			const aIDs = mQueryOptions.$filter.split("%20or%20")
 				.map((sID_Predicate) => sID_Predicate.split("%20eq%20")[1].slice(1, -1));
-			if (mQueryOptions.$select.includes("MANAGER_ID")) { // side effect for all rows
+			if (aIDs.length > 1) { // side effect for all rows
 				iRevision += 1;
-			} else { // side effect for single row (after PATCH of Name)
-				if (aIDs.length !== 1) {
-					throw new Error("Unexpected ID filter length");
-				}
-				mRevisionOfAgeById[aIDs[0]] += 1;
 			}
 			const aRows = aIDs.map((sId) => mNodeById[sId]);
 			selectCountSkipTop(aRows, mQueryOptions, oResponse);
@@ -545,6 +540,8 @@ sap.ui.define([
 			case "Name":
 				// ignore suffixes added by SandboxModel.update
 				mNodeById[aMatches[1]].Name = oBody.Name.split(" #")[0];
+				// side effect for single row
+				mRevisionOfAgeById[aMatches[1]] += 1;
 				break;
 
 			default:

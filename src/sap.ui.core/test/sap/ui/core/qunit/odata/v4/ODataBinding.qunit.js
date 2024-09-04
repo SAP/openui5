@@ -2651,6 +2651,19 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("checkBindingParameters, $$separate", function (assert) {
+		var oBinding = new ODataBinding();
+
+		// code under test
+		oBinding.checkBindingParameters({$$separate : "~"}, ["$$separate"]);
+
+		assert.throws(function () {
+			oBinding.checkBindingParameters({$$aggregation : "n/a", $$separate : "~"},
+				["$$aggregation", "$$separate"]);
+		}, new Error("Cannot combine $$aggregation and $$separate"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("checkBindingParameters, unknown $$-parameter", function (assert) {
 		var oBinding = new ODataBinding();
 

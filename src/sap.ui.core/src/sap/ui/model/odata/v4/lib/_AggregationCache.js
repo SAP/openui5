@@ -1016,24 +1016,39 @@ sap.ui.define([
 
 	/**
 	 * Returns the index in <code>this.aElements</code> of the first in-place child of the given
-	 * parent node, or the first in-place root if no parent is given.
+	 * parent node (which must not be out of place!), or the first in-place root if no parent is
+	 * given.
 	 *
 	 * @param {number} iParentIndex
 	 *   The parent node's index, or -1 if looking for a root node
-	 * @returns {number}
-	 *   The array index, or -1 if there is no such first in-place node
+	 * @returns {Array<boolean|number>}
+	 *   The array index (or -1 if there is no such first in-place child), whether that first
+	 *   in-place child is currently a placeholder, and the expected level of such a first in-place
+	 *   child (useful in case of level 0 placeholders)
 	 *
 	 * @public
 	 */
 	_AggregationCache.prototype.get1stInPlaceChildIndex = function (iParentIndex) {
-		const iLevel = iParentIndex >= 0
+		let iFirst = iParentIndex + 1;
+		while (this.aElements[iFirst]?.["@$ui5.context.isTransient"] !== undefined) {
+			iFirst += 1; // skip all OOP nodes
+		}
+
+		const oElement = this.aElements[iFirst];
+		if (!oElement) { // beyond array length
+			return [-1];
+		}
+
+		const iLevel = oElement["@$ui5.node.level"];
+		const iChildLevel = iParentIndex >= 0
 			? this.aElements[iParentIndex]["@$ui5.node.level"] + 1
 			: 1;
+		const bPlaceholder = _Helper.hasPrivateAnnotation(oElement, "placeholder");
 
-		return this.aElements.findIndex(
-			(oElement, iIndex) => iIndex > iParentIndex
-				&& oElement["@$ui5.node.level"] === iLevel
-				&& oElement["@$ui5.context.isTransient"] === undefined);
+		// a level 0 (placeholders only!) needs a GET, but else we can rely on the level
+		return iLevel === iChildLevel || iLevel === 0
+			? [iFirst, bPlaceholder, iChildLevel]
+			: [-1];
 	};
 
 	/**
@@ -2596,6 +2611,8 @@ sap.ui.define([
 	 *   error.
 	 * @param {boolean} [bIsGrouped]
 	 *   Whether the list binding is grouped via its first sorter
+	 * @param {string[]} [aSeparateProperties]
+	 *   An array of properties which are requested separately
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 * @throws {Error}
@@ -2610,7 +2627,8 @@ sap.ui.define([
 	 * @public
 	 */
 	_AggregationCache.create = function (oRequestor, sResourcePath, sDeepResourcePath,
-			mQueryOptions, oAggregation, bSortExpandSelect, bSharedRequest, bIsGrouped) {
+			mQueryOptions, oAggregation, bSortExpandSelect, bSharedRequest, bIsGrouped,
+			aSeparateProperties) {
 		var bHasGrandTotal, bHasGroupLevels;
 
 		function checkExpandSelect() {
@@ -2677,7 +2695,7 @@ sap.ui.define([
 		}
 
 		return _Cache.create(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			sDeepResourcePath, bSharedRequest);
+			sDeepResourcePath, bSharedRequest, aSeparateProperties);
 	};
 
 	return _AggregationCache;

@@ -715,7 +715,7 @@ sap.ui.define([
 			this._sLocale = sLocale;
 			this._oLocaleData = undefined;
 			this.invalidate();
-			this._toggleTwoMonthsInTwoColumnsCSS();
+			this._toggleTwoMonthsInColumnsCSS();
 		}
 
 		return this;
@@ -856,7 +856,7 @@ sap.ui.define([
 				oMonth.setSecondaryCalendarType(this._getSecondaryCalendarType());
 				this.addAggregation("month", oMonth);
 			}
-			this._toggleTwoMonthsInTwoColumnsCSS();
+			this._toggleTwoMonthsInColumnsCSS();
 		} else if (aMonths.length > iMonths){
 			for (i = aMonths.length; i > iMonths; i--) {
 				oMonth = this.removeAggregation("month", i - 1);
@@ -866,7 +866,7 @@ sap.ui.define([
 				// back to standard case -> initialize month width
 				this._bInitMonth = true;
 			}
-			this._toggleTwoMonthsInTwoColumnsCSS();
+			this._toggleTwoMonthsInColumnsCSS();
 		}
 
 		if (iMonths > 1 && aMonths[0].getDate()) {
@@ -1327,7 +1327,7 @@ sap.ui.define([
 		}
 		this._setHeaderText(oCalDate);
 		this._setPrimaryHeaderMonthButtonText();
-		this._toggleTwoMonthsInTwoColumnsCSS();
+		this._toggleTwoMonthsInColumnsCSS();
 	};
 
 	Calendar.prototype._updateLegendParent = function(){
@@ -1832,7 +1832,7 @@ sap.ui.define([
 		// change month and year
 		this._updateHeader(oFirstDate);
 		this._setPrimaryHeaderMonthButtonText();
-		this._toggleTwoMonthsInTwoColumnsCSS();
+		this._toggleTwoMonthsInColumnsCSS();
 
 		if (bFireStartDateChange) {
 			this.fireStartDateChange();
@@ -2428,7 +2428,7 @@ sap.ui.define([
 	 * Toggle On or Off CSS class for indicating if calendar is in two columns with two calendars mode
 	 * @private
 	 */
-	Calendar.prototype._toggleTwoMonthsInTwoColumnsCSS = function () {
+	Calendar.prototype._toggleTwoMonthsInColumnsCSS = function () {
 		if (this._isTwoMonthsInTwoColumns()) {
 			if (new Locale(Localization.getLanguageTag()).getLanguage().toLowerCase() === "ja" ||
 				new Locale(Localization.getLanguageTag()).getLanguage().toLowerCase() === "zh") {
@@ -2441,6 +2441,12 @@ sap.ui.define([
 		} else {
 			this.removeStyleClass("sapUiCalTwoMonthsTwoColumnsJaZh");
 			this.removeStyleClass("sapUiCalTwoMonthsTwoColumns");
+		}
+
+		if (this._isTwoMonthsInOneColumn()) {
+			this.addStyleClass("sapUiCalTwoMonthsInOneColumn");
+		} else {
+			this.removeStyleClass("sapUiCalTwoMonthsInOneColumn");
 		}
 	};
 
@@ -2690,7 +2696,7 @@ sap.ui.define([
 		}
 
 		this._setPrimaryHeaderMonthButtonText();
-		this._toggleTwoMonthsInTwoColumnsCSS();
+		this._toggleTwoMonthsInColumnsCSS();
 	}
 
 	/**
@@ -2744,7 +2750,7 @@ sap.ui.define([
 
 				this._setHeaderText(oDate);
 				this._setPrimaryHeaderMonthButtonText();
-				this._toggleTwoMonthsInTwoColumnsCSS();
+				this._toggleTwoMonthsInColumnsCSS();
 			}
 		}
 

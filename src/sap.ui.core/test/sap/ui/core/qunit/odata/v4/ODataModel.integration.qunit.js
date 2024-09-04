@@ -9030,6 +9030,110 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: "Retry-After" handling: resolving restarts parallel and follow-up requests.
+	// 1) Preparation, request data for 3 sales orders
+	// 2) 2 parallel requests answered with 503 "Retry-After", no error, callback waiting
+	// 3) Trigger 3rd request, no request sent because pending promise, callback not asked again
+	// 4) Resolving "Retry-After" promise repeats all 3 requests
+	// JIRA: CPOUI5MODELS-1743
+	QUnit.test('503, "Retry-After" handling: resolving', async function (assert) {
+		let bAnswerWith503 = false;
+		const oModel = this.createSalesOrdersModel({}, {
+			"DELETE SalesOrderList('1')" : {message : {code : 204}},
+			"DELETE SalesOrderList('2')" : {message : {code : 204}},
+			"DELETE SalesOrderList('3')" : {message : {code : 204}},
+			"POST $batch" : {
+				code : 503,
+				headers : {"Retry-After" : "42"},
+				ifMatch : () => bAnswerWith503,
+				message : {error : {code : "DB_MIGRATION", message : "DB migration in progress"}}
+			},
+			"SalesOrderList?$skip=0&$top=100" : [{
+				message : {
+					value : [
+						{Note : "Note1", SalesOrderID : "1"},
+						{Note : "Note2", SalesOrderID : "2"},
+						{Note : "Note3", SalesOrderID : "3"}
+					]
+				}
+			}]
+		});
+		oModel.$keepSend = true; // do not stub sendBatch/-Request
+		let fnResolveRetryAfter;
+		let iCallbackCount = 0;
+		oModel.setRetryAfterHandler((oError) => {
+			iCallbackCount += 1;
+			assert.ok(oError instanceof Error);
+			assert.strictEqual(oError.message, "DB migration in progress");
+			const iSeconds = (oError.retryAfter.getTime() - Date.now()) / 1000;
+			assert.ok(iSeconds > 41 && iSeconds < 43, `${iSeconds} roughly 42 seconds`);
+			return new Promise((resolve) => {
+				fnResolveRetryAfter = resolve;
+			});
+		});
+		const sView = `
+<Table id="table" items="{/SalesOrderList}">
+	<Text id="note" text="{Note}"/>
+</Table>`;
+
+		this.expectChange("note", ["Note1", "Note2", "Note3"]);
+
+		// 1
+		await this.createView(assert, sView, oModel);
+
+		this.expectChange("note", ["Note3"]);
+		const aContexts = this.oView.byId("table").getBinding("items").getCurrentContexts();
+		const aDeletePromises = [];
+		bAnswerWith503 = true;
+		const aBatchPayloads = [];
+		TestUtils.onRequest((sPayload) => aBatchPayloads.push(sPayload));
+
+		// code under test
+		aDeletePromises.push(aContexts[0].delete("$single"));
+		aDeletePromises.push(aContexts[1].delete("$single"));
+
+		assert.ok(oModel.hasPendingChanges());
+
+		await this.waitForChanges(assert, "2");
+
+		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('1')"));
+		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('2')"));
+		assert.strictEqual(aBatchPayloads.length, 0);
+		assert.strictEqual(iCallbackCount, 1);
+
+		this.expectChange("note", []);
+
+		// code under test
+		aDeletePromises.push(aContexts[2].delete("$single"));
+
+		await this.waitForChanges(assert, "3");
+
+		assert.ok(aContexts[0].isDeleted());
+		assert.ok(aContexts[1].isDeleted());
+		assert.ok(aContexts[2].isDeleted());
+		assert.strictEqual(aBatchPayloads.length, 0);
+		assert.strictEqual(iCallbackCount, 1);
+
+		bAnswerWith503 = false;
+
+		// code under test
+		fnResolveRetryAfter();
+
+		await Promise.all([
+			...aDeletePromises,
+			this.waitForChanges(assert, "4")
+		]);
+
+		assert.notOk(oModel.hasPendingChanges());
+		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('1')"));
+		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('2')"));
+		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('3')"));
+		assert.strictEqual(aBatchPayloads.length, 0);
+		assert.strictEqual(iCallbackCount, 1);
+		TestUtils.onRequest(null);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Table gets a binding context for which data was already loaded and then a refresh
 	// is performed synchronously.
 	// SNOW: CS20240007657519
@@ -28131,6 +28235,208 @@ sap.ui.define([
 
 			// code under test (JIRA: CPOUI5ODATAV4-2652)
 			checkSiblingOrder(assert, /*in*/[oNewRoot, oRoot], /*out*/[oOutOfPlaceRoot]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 2. Only a single
+	// row is visible, thus a node's children are not loaded. Create an out-of-place (or in-place)
+	// node and move it down so it becomes the 1st in-place child. Create an out-of-place node as
+	// the very last node and check that is has no next sibling.
+	// Alternatively, the root has no in-place children, but this only becomes apparent after a GET.
+	// JIRA: CPOUI5ODATAV4-2715
+	[false, true].forEach((bAlphaHasInPlaceChild) => {
+		[/*in place*/1, /*out of place*/2].forEach((iRank) => {
+		const sTitle = "Recursive Hierarchy: get1stInPlaceChildIndex"
+			+ ", requestSibling's GET result is accepted: " + bAlphaHasInPlaceChild
+			+ ", Gamma's rank is " + iRank;
+
+		QUnit.test(sTitle, async function (assert) {
+			const sBaseUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
+				+ ",Levels=2)";
+			const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+			const sSelect = "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name";
+			const sView = `
+	<t:Table id="table" rows="{path : '/EMPLOYEES',
+			parameters : {
+				$$aggregation : {
+					expandTo : 2,
+					hierarchyQualifier : 'OrgChart'
+				}
+			}}" threshold="0" visibleRowCount="1">
+		<Text text="{= %{@$ui5.node.isExpanded} }"/>
+		<Text text="{= %{@$ui5.node.level} }"/>
+		<Text text="{ID}"/>
+		<Text text="{Name}"/>
+	</t:Table>`;
+
+			// 0 Alpha
+			//   2 Gamma (created, OOP or even in place)
+			//   1 Beta (loaded later; maybe not the 1st in-place child, but the next sibling to Alpha!)
+			//     1.1 Delta (created later, OOP)
+			this.expectRequest(sBaseUrl + sSelect + "&$count=true&$skip=0&$top=1", {
+					"@odata.count" : "2",
+					value : [{
+						DescendantCount : "1",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						ID : "0",
+						Name : "Alpha"
+					}]
+				});
+
+			await this.createView(assert, sView, oModel);
+
+			const oTable = this.oView.byId("table");
+			checkTable("initial page", assert, oTable, [
+				"/EMPLOYEES('0')"
+			], [
+				[true, 1, "0", "Alpha"]
+			], 2);
+			const oListBinding = oTable.getBinding("rows");
+			const oAlpha = oListBinding.getCurrentContexts()[0];
+
+			let oGamma = await this.createEmployee(assert, oListBinding, oAlpha, "2", "Gamma",
+				sBaseUrl, iRank);
+
+			checkCreatedPersisted(assert, oGamma);
+			assert.strictEqual(oGamma.getIndex(), 1, "out of place");
+			assert.deepEqual(oGamma.getObject(), {
+				"@$ui5.context.isTransient" : false,
+				"@$ui5.node.level" : 2,
+				ID : "2",
+				Name : "Gamma"
+			}, "no LimitedRank");
+			assert.strictEqual(oGamma.getSibling(-1), null, "cannot move up");
+
+			// code under test (Beta is a level 0 placeholder!)
+			assert.strictEqual(oGamma.getSibling(+1), undefined, "not available synchronously");
+
+			this.expectRequest(sBaseUrl + sSelect + "&$skip=" + (3 - iRank) + "&$top=1", {
+					value : [{
+						DescendantCount : "0",
+						DistanceFromRoot : bAlphaHasInPlaceChild ? "1" : "0",
+						DrillState : "leaf",
+						ID : "1",
+						Name : "Beta"
+					}]
+				});
+
+			let [oBeta] = await Promise.all([
+				// code under test
+				oGamma.requestSibling(+1),
+				this.waitForChanges(assert, "request Beta as 1st in-place child of Alpha")
+			]);
+
+			if (!bAlphaHasInPlaceChild) {
+				assert.strictEqual(oBeta, null, "no 1st in-place child");
+				return; // skip remaining tests - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+			}
+
+			checkPersisted(assert, oBeta);
+			assert.strictEqual(oBeta.getPath(), "/EMPLOYEES('1')");
+			assert.strictEqual(oBeta.getIndex(), 2, "1st in-place child");
+			assert.deepEqual(oBeta.getObject(), {
+				"@$ui5.node.level" : 2,
+				ID : "1",
+				Name : "Beta"
+			});
+			assert.strictEqual(oBeta.getSibling(-1), null, "cannot move up");
+			assert.strictEqual(oBeta.getSibling(+1), null, "cannot move down");
+
+			this.expectRequest({
+					batchNo : 5,
+					headers : {
+						Prefer : "return=minimal"
+					},
+					method : "PATCH",
+					url : "EMPLOYEES('2')",
+					payload : {
+						"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('0')"
+					}
+				}) // 204 No Content
+				.expectRequest({
+					batchNo : 5,
+					headers : {
+						Prefer : "return=minimal"
+					},
+					method : "POST",
+					url : "EMPLOYEES('2')" + sNextSiblingAction,
+					payload : {
+						NextSibling : {ID : "1"}
+					}
+				}) // 204 No Content
+				.expectRequest({
+					batchNo : 5,
+					url : sBaseUrl + "&$filter=ID eq '2'&$select=LimitedRank"
+				}, {
+					value : [{
+						LimitedRank : "1" // now in place
+					}]
+				})
+				.expectRequest({ // side-effects refresh
+					batchNo : 5,
+					url : sBaseUrl + sSelect + "&$count=true&$skip=0&$top=1"
+				}, {
+					"@odata.count" : "3",
+					value : [{
+						DescendantCount : "2",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						ID : "0",
+						Name : "Alpha: Αα"
+					}]
+				});
+
+			await Promise.all([
+				oGamma.move({nextSibling : oBeta, parent : oAlpha}),
+				this.waitForChanges(assert, "turn out-of-place node into 1st in-place child")
+			]);
+
+			assert.strictEqual(oBeta.getBinding(), undefined, "destroyed");
+			oBeta = null;
+			assert.strictEqual(oGamma.getBinding(), undefined, "destroyed");
+			assert.strictEqual(oGamma.getIndex(), 1, "now in place");
+			oGamma = null;
+
+			this.expectRequest(sBaseUrl + sSelect + "&$skip=1&$top=2", {
+					value : [{
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						ID : "2",
+						Name : "Gamma: Γγ"
+					}, {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						ID : "1",
+						Name : "Beta: Ββ"
+					}]
+				});
+
+			oTable.getRowMode().setRowCount(3);
+
+			await this.waitForChanges(assert, "show all rows");
+
+			checkTable("after show all rows", assert, oTable, [
+				oAlpha, // "/EMPLOYEES('0')",
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('1')"
+			], [
+				[true, 1, "0", "Alpha: Αα"],
+				[undefined, 2, "2", "Gamma: Γγ"],
+				[undefined, 2, "1", "Beta: Ββ"]
+			]);
+			oBeta = oListBinding.getCurrentContexts()[2];
+
+			//TODO w/ JIRA: CPOUI5ODATAV4-2644, we expect a #requestRank here
+			const oDelta = await this.createEmployee(assert, oListBinding, oBeta, "1.1", "Delta");
+
+			assert.strictEqual(oDelta.getSibling(-1), null, "cannot move up");
+			assert.strictEqual(oDelta.getSibling(+1), null, "no 1st in-place child");
+		});
 		});
 	});
 
@@ -72654,5 +72960,140 @@ sap.ui.define([
 			"/SalesOrderList('2')",
 			"/SalesOrderList('1')"
 		], [["6"], ["4"], ["3"], ["2"], ["1"]]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: With binding parameter $$separate the main list request omits the specified
+	// navigation properties. Instead, they are loaded as late property requests in separate $batch
+	// requests. Same applies for scrolling (load more items).
+	// Parameter $$separate works independently of autoExpandSelect.
+	// JIRA: CPOUI5ODATAV4-2691
+	[false, true].forEach(function (bAutoExpandSelect) {
+		QUnit.test("$$separate: autoExpandSelect=" + bAutoExpandSelect, async function (assert) {
+			const oModel = this.createSpecialCasesModel({autoExpandSelect : bAutoExpandSelect});
+			const sListUrl = "Artists?custom=foo&$apply=A.P.P.L.E.&$count=true"
+				+ "&$expand=BestPublication($select=CurrencyCode,PublicationID)"
+				+ "&$filter=IsActiveEntity eq true&$orderby=ArtistID&$search=covfefe"
+				+ "&$select=ArtistID,IsActiveEntity,Name";
+			const sLateQueryOptions = "?custom=foo&$select=BestFriend"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+				+ ",SiblingEntity($select=ArtistID,IsActiveEntity,Name)";
+			const sExpandSelect = `
+				$expand : {
+					BestFriend : {$select : 'ArtistID,IsActiveEntity,Name'},
+					BestPublication : {$select : 'CurrencyCode,PublicationID'},
+					SiblingEntity : {$select : 'ArtistID,IsActiveEntity,Name'}
+				},
+				$select : 'ArtistID,IsActiveEntity,Name',
+			`;
+			const sView = `
+	<Table growing="true" growingThreshold="2" id="table"
+			items="{
+				path : '/Artists',
+				parameters : {
+					$$separate : ['BestFriend', 'SiblingEntity'],
+					${bAutoExpandSelect ? "" : sExpandSelect}
+					$apply : 'A.P.P.L.E.',
+					$count : true,
+					$filter : 'IsActiveEntity eq true',
+					$orderby : 'ArtistID',
+					$search : 'covfefe',
+					custom : 'foo'
+				}
+			}">
+		<Text id="name" text="{Name}"/>
+		<Text id="publicationCurrency" text="{BestPublication/CurrencyCode}"/>
+		<Text id="friend" text="{BestFriend/Name}"/>
+		<Text id="sibling" text="{SiblingEntity/Name}"/>
+	</Table>`;
+
+			let fnResolve10;
+			let fnResolve20;
+			this.expectRequest({
+					batchNo : 1,
+					url : sListUrl + "&$skip=0&$top=2"
+				}, {
+					"@odata.count" : "3",
+					value : [{
+						ArtistID : "10",
+						BestPublication : {CurrencyCode : "EUR", PublicationID : "Pub1"},
+						IsActiveEntity : true,
+						Name : "Artist A"
+					}, {
+						ArtistID : "20",
+						BestPublication : {CurrencyCode : "USD", PublicationID : "Pub2"},
+						IsActiveEntity : true,
+						Name : "Artist B"
+					}]
+				})
+				.expectChange("name", ["Artist A", "Artist B"])
+				.expectChange("publicationCurrency", ["EUR", "USD"])
+				.expectChange("friend", [])
+				.expectChange("sibling", [])
+				.expectRequest({
+					batchNo : 2,
+					url : "Artists(ArtistID='10',IsActiveEntity=true)" + sLateQueryOptions
+				}, new Promise(function (resolve) {
+					fnResolve10 = resolve.bind(null, {
+						BestFriend : {ArtistID : "F1", IsActiveEntity : true, Name : "Friend A"},
+						SiblingEntity : {ArtistID : "S1", IsActiveEntity : true, Name : "Sibling A"}
+					});
+				}))
+				.expectRequest({
+					batchNo : 2,
+					url : "Artists(ArtistID='20',IsActiveEntity=true)" + sLateQueryOptions
+				}, new Promise(function (resolve) {
+					fnResolve20 = resolve.bind(null, {
+						BestFriend : {ArtistID : "F2", IsActiveEntity : true, Name : "Friend B"},
+						SiblingEntity : {ArtistID : "S2", IsActiveEntity : true, Name : "Sibling B"}
+					});
+				}));
+
+			await this.createView(assert, sView, oModel);
+
+			this.expectChange("friend", ["Friend A", "Friend B"])
+				.expectChange("sibling", ["Sibling A", "Sibling B"]);
+
+			fnResolve10();
+			fnResolve20();
+
+			await this.waitForChanges(assert, "$$separate responses");
+
+			let fnResolve30;
+			this.expectRequest({
+					batchNo : 3,
+					url : sListUrl + "&$skip=2&$top=1"
+				}, {
+					"@odata.count" : "3",
+					value : [{
+						ArtistID : "30",
+						BestPublication : {CurrencyCode : "JPY", PublicationID : "Pub3"},
+						IsActiveEntity : true,
+						Name : "Artist C"
+					}]
+				})
+				.expectChange("name", [,, "Artist C"])
+				.expectChange("publicationCurrency", [,, "JPY"])
+				.expectRequest({
+					batchNo : 4,
+					url : "Artists(ArtistID='30',IsActiveEntity=true)" + sLateQueryOptions
+				}, new Promise(function (resolve) {
+					fnResolve30 = resolve.bind(null, {
+						BestFriend : {ArtistID : "F3", IsActiveEntity : true, Name : "Friend C"},
+						SiblingEntity : {ArtistID : "S3", IsActiveEntity : true, Name : "Sibling C"}
+					});
+				}));
+
+			this.oView.byId("table").requestItems();
+
+			await this.waitForChanges(assert, "load more items");
+
+			this.expectChange("friend", [,, "Friend C"])
+				.expectChange("sibling", [,, "Sibling C"]);
+
+			fnResolve30();
+
+			await this.waitForChanges(assert, "$$separate responses, again");
+		});
 	});
 });

@@ -230,22 +230,22 @@ sap.ui.define([
 				this.getView().setBusy(true);
 				oNode = oEvent.getSource().getBindingContext();
 				const oTable = oEvent.getSource().getParent().getParent().getParent();
-				oNode.setSelected(true); // opt-in to update nextSibling's index
 
 				const [oParent, oSibling] = await Promise.all([
 					oNode.requestParent(),
 					oNode.requestSibling(+1)
 				]);
 
-				if (!oSibling) {
-					MessageBox.alert("Cannot move down",
-						{icon : MessageBox.Icon.INFORMATION, title : "Already last sibling"});
-					return;
-				}
-
 				if (oNode.created()) { // out-of-place, move it to become the 1st child/root
 					await oNode.move({nextSibling : oSibling, parent : oParent});
 				} else {
+					if (!oSibling) {
+						MessageBox.alert("Cannot move down",
+							{icon : MessageBox.Icon.INFORMATION, title : "Already last sibling"});
+						return;
+					}
+
+					oNode.setSelected(true); // opt-in to update nextSibling's index
 					await oSibling.move({nextSibling : oNode, parent : oParent});
 				}
 

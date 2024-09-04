@@ -178,8 +178,10 @@ sap.ui.define([
 			 * If the <code>scrollThreshold</code> is lower than the number of rows in the scrollable area (number of rows minus
 			 * number of fixed rows), this number is used as the <code>scrollThreshold</code>. If the value is 0, no threshold is
 			 * applied during scrolling. The value -1 applies the same value as the <code>threshold</code> property.
-			 *
+			 * <br/>
 			 * <b>Note:</b> This property only takes effect if it is set to a positive integer value.
+			 *
+			 * The value of the <code>scrollThreshold</code> should be higher than the <code>threshold</code> value to avoid unnecessary requests.
 			 *
 			 * For <code>AnalyticalTable</code> and <code>TreeTable</code>, the <code>scrollThreshold</code> property must be
 			 * higher than the <code>threshold</code> property to take effect.
@@ -2004,6 +2006,8 @@ sap.ui.define([
 		const mRowCounts = this._getRowCounts();
 		let iThreshold = this._bScrolled ? this._getScrollThreshold() : this.getThreshold();
 
+		this._bScrolled = false;
+
 		iRequestLength = iRequestLength == null ? mRowCounts.count : iRequestLength;
 
 		// If the threshold is not explicitly disabled by setting it to 0, the threshold should be at least the number of scrollable rows.
@@ -2127,7 +2131,6 @@ sap.ui.define([
 	 */
 	Table.prototype.refreshRows = function(sReason) {
 		this._bContextsAvailable = false;
-		this._bScrolled = false;
 
 		if (sReason === ChangeReason.Sort || sReason === ChangeReason.Filter) {
 			this.setFirstVisibleRow(0);
@@ -2151,8 +2154,6 @@ sap.ui.define([
 		if (this.bIsDestroyed || this._bIsBeingDestroyed) {
 			return;
 		}
-
-		this._bScrolled = false;
 
 		if (oEventInfo.detailedReason === "AddVirtualContext") {
 			createVirtualRow(this);

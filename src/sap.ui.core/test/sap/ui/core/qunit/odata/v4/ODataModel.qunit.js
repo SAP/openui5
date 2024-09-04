@@ -142,6 +142,7 @@ sap.ui.define([
 			assert.deepEqual(oMetaModel.aAnnotationUris, ["my/annotations.xml"]);
 			assert.deepEqual(oModel.mPath2DataRequestedCount, {});
 			assert.deepEqual(oModel.mPath2DataReceivedError, {});
+			assert.strictEqual(oModel.fnRetryAfter, null);
 		});
 	});
 
@@ -445,6 +446,7 @@ sap.ui.define([
 						getMessagesByPath : sinon.match.func,
 						getOptimisticBatchEnabler : sinon.match.func,
 						getReporter : sinon.match.func,
+						getRetryAfterHandler : sinon.match.func,
 						isIgnoreETag : sinon.match.func,
 						onCreateGroup : sinon.match.func,
 						onHttpResponse : sinon.match.func,
@@ -500,6 +502,7 @@ sap.ui.define([
 						getMessagesByPath : "~fnGetMessagesByPath~",
 						getOptimisticBatchEnabler : "~fnGetOptimisticBatchEnabler~",
 						getReporter : "~fnGetReporter~",
+						getRetryAfterHandler : sinon.match.func,
 						isIgnoreETag : sinon.match.func,
 						onCreateGroup : sinon.match.func,
 						onHttpResponse : sinon.match.func,
@@ -608,6 +611,14 @@ sap.ui.define([
 			oModel.setHttpListener(null);
 
 			assert.strictEqual(oModel.fnHttpListener, null);
+
+			// code under test
+			oModel.setRetryAfterHandler("~fnRetryAfter~");
+
+			assert.strictEqual(oModel.fnRetryAfter, "~fnRetryAfter~");
+
+			// code under test
+			assert.strictEqual(oModelInterface.getRetryAfterHandler(), "~fnRetryAfter~");
 		});
 	});
 

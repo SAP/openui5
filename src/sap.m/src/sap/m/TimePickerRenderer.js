@@ -49,19 +49,6 @@ sap.ui.define(['sap/ui/core/Renderer', './DateTimeFieldRenderer', 'sap/ui/core/l
 	};
 
 	/**
-	 * Returns the inner aria labelledby announcement texts for the accessibility.
-	 *
-	 * @overrides sap.m.DateTimeFieldRenderer.getLabelledByAnnouncement
-	 * @param {sap.m.TimePicker} oControl an object representation of the control.
-	 * @returns {string}
-	 */
-	TimePickerRenderer.getLabelledByAnnouncement = function(oControl) {
-		// In the TimePicker we need to render the placeholder should be placed as
-		// hidden aria labelledby node for the accessibility
-		return oControl._getPlaceholder() || "";
-	};
-
-	/**
 	 * Collects the accessibility properties for the control.
 	 *
 	 * See {@link sap.m.InputBase#getAccessibilityState}.

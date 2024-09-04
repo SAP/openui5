@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/ui/unified/Calendar",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/layout/VerticalLayout"
 ], function(
 	Localization,
 	coreLibrary,
@@ -15,7 +16,8 @@ sap.ui.define([
 	App,
 	Page,
 	Calendar,
-	Button
+	Button,
+	VerticalLayout
 ) {
 	"use strict";
 	var CalendarType = coreLibrary.CalendarType,
@@ -194,7 +196,25 @@ sap.ui.define([
 		}
 	});
 
+	var oButton10 = new Button("B10", {
+		text : "2 Months 1 column calendar",
+		press : function() {
+			Localization.setLanguage("en-US");
+			oCalendar1 && oCalendar1.destroy();
+			oCalendar1 = fnCalendarFactory();
+			oCalendar1.destroySelectedDates();
+			oCalendar1.setMonths(2);
+			oCalendar1.setMaxDate(new Date(2015, 7, 24));
+			oCalendar1.setWidth("90%");
+			oVL.addContent(oCalendar1);
+			oVL.setWidth("270px");
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
+			oCalendar1.focusDate(new Date(2015, 0, 2));
+		}
+	});
+
 	var oApp = new App("myApp").placeAt("body");
+	var oVL = new VerticalLayout("vLayout");
 
 	var oPage = new Page({
 		title: "Calendar",
@@ -209,7 +229,9 @@ sap.ui.define([
 			oButton7,
 			oButton8,
 			oButton9,
-			oButtonRTL
+			oButtonRTL,
+			oButton10,
+			oVL
 		]
 	});
 

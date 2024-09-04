@@ -130,18 +130,32 @@ sap.ui.define([
 		await oTable.qunit.whenRenderingFinished();
 		oGetContextsSpy.resetHistory();
 
-		oTable._setFirstVisibleRowIndex(50, {
-			onScroll: true,
-			suppressEvent: false,
-			suppressRendering: false
-		});
+		oTable._getScrollExtension().scrollVertically(true, false);
 
 		await TableQUnitUtils.nextEvent("rowsUpdated", oTable);
 
 		assert.equal(oGetContextsSpy.callCount, 1, "Method getContexts was called once");
 		assert.notEqual(oTable.getThreshold(), oTable.getScrollThreshold(), "The threshold and scrollThreshold properties are different");
 		// Mock data contains only 16 rows, so the first visible row index is changed to 6
-		sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 6, 10, oTable.getScrollThreshold());
+		sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 1, 10, oTable.getScrollThreshold());
+		assert.equal(oTable._bScrolled, false, "Scroll flag was reset");
+
+		oGetContextsSpy.resetHistory();
+		oTable.invalidate();
+
+		await TableQUnitUtils.nextEvent("rowsUpdated", oTable);
+
+		sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 1, 10, oTable.getThreshold());
+
+		oGetContextsSpy.resetHistory();
+		oTable._getScrollExtension().scrollVertically(true, false);
+		await TableQUnitUtils.nextEvent("rowsUpdated", oTable);
+
+		assert.equal(oGetContextsSpy.callCount, 1, "Method getContexts was called once");
+		assert.notEqual(oTable.getThreshold(), oTable.getScrollThreshold(), "The threshold and scrollThreshold properties are different");
+		// Mock data contains only 16 rows, so the first visible row index is changed to 6
+		sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 2, 10, oTable.getScrollThreshold());
+		assert.equal(oTable._bScrolled, false, "Scroll flag was reset");
 
 		oGetContextsSpy.resetHistory();
 		oTable.getBinding().refresh(true);
@@ -149,7 +163,50 @@ sap.ui.define([
 		await TableQUnitUtils.nextEvent("rowsUpdated", oTable);
 
 		// Scroll position stays the same but getContexts is called with threshold property value
-		sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 6, 10, oTable.getThreshold());
+		sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 2, 10, oTable.getThreshold());
+		assert.equal(oTable._bScrolled, false, "Scroll flag was reset");
+	});
+
+	QUnit.test("Scroll & Add row", async function(assert) {
+		const oTable = this.oTable;
+		const oGetContextsSpy = this.oGetContextsSpy;
+
+		await oTable.qunit.whenRenderingFinished();
+		oGetContextsSpy.resetHistory();
+
+		oTable._getScrollExtension().scrollVertically(true, false);
+
+		await TableQUnitUtils.nextEvent("rowsUpdated", oTable);
+
+		sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 1, 10, oTable.getScrollThreshold());
+		assert.equal(oTable._bScrolled, false, "Scroll flag was reset");
+
+		oGetContextsSpy.resetHistory();
+
+		oTable.setFirstVisibleRow(5);
+		await TableQUnitUtils.nextEvent("rowsUpdated", oTable);
+
+		sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 5, 10, oTable.getThreshold());
+		assert.equal(oTable._bScrolled, false, "Scroll flag was reset");
+
+		// eslint-disable-next-line max-len
+		oTable.getBinding().create({
+			"ProductId": "id_17",
+			"Name": "Turbo Scan",
+			"Category": "AC",
+			"SupplierName": "Fasttech",
+			"ShortDescription": "High precision flat bed scanner",
+			"Weight": "1278",
+			"status": "A",
+			"Price": 79,
+			"PictureUrl": "img/product/HT-1080.jpg"
+		}, false);
+
+		await TableQUnitUtils.nextEvent("rowsUpdated", oTable);
+
+		sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 5, 10, oTable.getThreshold());
+		assert.equal(oTable._bScrolled, false, "Scroll flag was reset");
+
 	});
 
 	QUnit.module("BusyIndicator", {

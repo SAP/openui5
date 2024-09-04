@@ -2547,12 +2547,14 @@ sap.ui.define([
 	 *   The deep resource path to be used to build the target path for bound messages
 	 * @param {boolean} [bSharedRequest]
 	 *   If this parameter is set, the cache is read-only and modifying calls lead to an error.
+	 * @param {string[]} [aSeparateProperties]
+	 *   An array of properties which are requested separately
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._CollectionCache
 	 * @constructor
 	 */
 	function _CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			sDeepResourcePath, bSharedRequest) {
+			sDeepResourcePath, bSharedRequest, aSeparateProperties) {
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 			sDeepResourcePath, bSharedRequest);
 
@@ -2576,6 +2578,7 @@ sap.ui.define([
 		// - iStart: the start (inclusive)
 		// - iEnd: the end (exclusive)
 		this.aReadRequests = [];
+		this.aSeparateProperties = aSeparateProperties ?? []; // properties to be loaded separately
 		this.bServerDrivenPaging = false;
 		this.oSyncPromiseAll = undefined;
 	}
@@ -2831,6 +2834,18 @@ sap.ui.define([
 			mQueryOptions = Object.assign({}, this.mQueryOptions),
 			sFilterOptions = mQueryOptions.$filter,
 			sQueryString = this.sQueryString;
+
+		if (this.aSeparateProperties.length) {
+			mQueryOptions.$expand = {...mQueryOptions.$expand};
+			this.aSeparateProperties.forEach((sProperty) => {
+				delete mQueryOptions.$expand[sProperty];
+			});
+			if (_Helper.isEmptyObject(mQueryOptions.$expand)) {
+				delete mQueryOptions.$expand;
+			}
+			sQueryString = this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false,
+				this.bSortExpandSelect, true);
+		}
 
 		if (sExclusiveFilter) {
 			if (sFilterOptions) {
@@ -4424,13 +4439,15 @@ sap.ui.define([
 	 *   If this parameter is set, multiple requests for a cache using the same resource path will
 	 *   always return the same, shared cache. This cache is read-only, modifying calls lead to an
 	 *   error.
+	 * @param {string[]} [aSeparateProperties]
+	 *   An array of properties which are requested separately
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 *
 	 * @public
 	 */
 	_Cache.create = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			sDeepResourcePath, bSharedRequest) {
+			sDeepResourcePath, bSharedRequest, aSeparateProperties) {
 		var iCount, aKeys, sPath, oSharedCollectionCache, mSharedCollectionCacheByPath;
 
 		if (bSharedRequest) {
@@ -4467,7 +4484,7 @@ sap.ui.define([
 		}
 
 		return new _CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-				sDeepResourcePath);
+				sDeepResourcePath, bSharedRequest, aSeparateProperties);
 	};
 
 	/**

@@ -8,6 +8,7 @@ sap.ui.define([
 	"./ControlBehavior",
 	"./ElementRegistry",
 	"./Lib",
+	"./LocaleData",
 	"./Rendering",
 	"./RenderManager",
 	"./UIArea",
@@ -18,6 +19,7 @@ sap.ui.define([
 	"sap/base/Event",
 	"sap/base/Log",
 	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
 	"sap/base/util/Deferred",
 	"sap/base/util/Version",
 	"sap/ui/Device",
@@ -49,6 +51,7 @@ sap.ui.define([
 		ControlBehavior,
 		ElementRegistry,
 		Library,
+		LocaleData,
 		Rendering,
 		RenderManager,
 		UIArea,
@@ -59,6 +62,7 @@ sap.ui.define([
 		BaseEvent,
 		Log,
 		Formatting,
+		Localization,
 		Deferred,
 		Version,
 		Device,
@@ -825,7 +829,8 @@ sap.ui.define([
 					sap.ui.require(aModules, function() {
 						resolve(Array.prototype.slice.call(arguments));
 					});
-				})
+				}),
+				LocaleData.requestInstance(Localization.getLanguageTag())
 			]);
 		};
 

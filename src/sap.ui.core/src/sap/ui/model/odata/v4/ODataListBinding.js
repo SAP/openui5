@@ -115,7 +115,8 @@ sap.ui.define([
 		mParameters = _Helper.clone(mParameters) || {};
 		this.checkBindingParameters(mParameters, ["$$aggregation", "$$canonicalPath",
 			"$$clearSelectionOnFilter", "$$getKeepAliveContext", "$$groupId", "$$operationMode",
-			"$$ownRequest", "$$patchWithoutSideEffects", "$$sharedRequest", "$$updateGroupId"]);
+			"$$ownRequest", "$$patchWithoutSideEffects", "$$separate", "$$sharedRequest",
+			"$$updateGroupId"]);
 		const aFilters = _Helper.toArray(vFilters);
 		if (mParameters.$$aggregation && aFilters[0] === Filter.NONE) {
 			throw new Error("Cannot combine Filter.NONE with $$aggregation");
@@ -1478,7 +1479,8 @@ sap.ui.define([
 		}
 		oCache ??= _AggregationCache.create(this.oModel.oRequestor, sResourcePath,
 			sDeepResourcePath, mQueryOptions, this.mParameters.$$aggregation,
-			this.oModel.bAutoExpandSelect, this.bSharedRequest, this.isGrouped());
+			this.oModel.bAutoExpandSelect, this.bSharedRequest, this.isGrouped(),
+			this.mParameters.$$separate);
 		if (mKeptElementsByPredicate) {
 			aKeepAlivePredicates.forEach(function (sPredicate) {
 				oCache.addKeptElement(mKeptElementsByPredicate[sPredicate]);
@@ -2081,7 +2083,24 @@ sap.ui.define([
 				return null;
 			}
 			const oParent = oNode.getParent(); // Note: always sync for out-of-place nodes
-			iSibling = this.oCache.get1stInPlaceChildIndex(oParent ? oParent.iIndex : -1);
+			if (oParent?.created()) { // out-of-place nodes have no in-place children
+				return null;
+			}
+
+			let bPlaceholder;
+			let iExpectedLevel;
+			[iSibling, bPlaceholder, iExpectedLevel]
+				= this.oCache.get1stInPlaceChildIndex(oParent ? oParent.iIndex : -1);
+			if (bPlaceholder) { // => iSibling >= 0
+				return bAllowRequest
+					? this.requestContexts(iSibling, 1).then((aResult) => aResult[0])
+						.then((oContext) => {
+							return oContext.getProperty("@$ui5.node.level") === iExpectedLevel
+								? oContext
+								: null;
+						})
+					: undefined;
+			}
 		} else {
 			iSibling = this.oCache.getSiblingIndex(oNode.iIndex, iOffset);
 		}

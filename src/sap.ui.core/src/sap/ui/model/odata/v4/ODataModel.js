@@ -350,6 +350,9 @@ sap.ui.define([
 			getMessagesByPath : this.getMessagesByPath.bind(this),
 			getOptimisticBatchEnabler : this.getOptimisticBatchEnabler.bind(this),
 			getReporter : this.getReporter.bind(this),
+			getRetryAfterHandler : function () {
+				return that.fnRetryAfter;
+			},
 			isIgnoreETag : function () {
 				return that.bIgnoreETag;
 			},
@@ -400,6 +403,7 @@ sap.ui.define([
 		// maps a path to the difference between fireDataRequested and fireDataReceived calls, to
 		// ensure the events are respectively fired once for a GET request
 		this.mPath2DataRequestedCount = {};
+		this.fnRetryAfter = null;
 	}
 
 	/**
@@ -928,6 +932,14 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.$$ownRequest]
 	 *   Whether the binding always uses an own service request to read its data; only the value
 	 *   <code>true</code> is allowed.
+	 * @param {string[]} [mParameters.$$separate]
+	 *   An array of navigation property names which are omitted from the main list request and
+	 *   loaded in a separate request instead (@experimental as of version 1.129.0). This results in
+	 *   the main list becoming available faster, while the separate properties are merged as soon
+	 *   as the data is received. Note that the separate properties must be part of the '$expand'
+	 *   system query option, either automatically via the "autoExpandSelect" model parameter (see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}) or manually. The
+	 *   <code>$$separate</code> parameter must not be combined with <code>$$aggregation</code>.
 	 * @param {boolean} [mParameters.$$sharedRequest]
 	 *   Whether multiple bindings for the same resource path share the data, so that it is
 	 *   requested only once.
@@ -2852,6 +2864,29 @@ sap.ui.define([
 		}
 
 		this.fnOptimisticBatchEnabler = fnOptimisticBatchEnabler;
+	};
+
+	/**
+	 * Sets a "Retry-After" handler, which is called when an OData request fails with HTTP status
+	 * 503 (Service Unavailable) and the response has a "Retry-After" header.
+	 *
+	 * The handler is called with an <code>Error</code> having a property <code>retryAfter</code> of
+	 * type <code>Date</code>, which is the earliest point in time when the request should be
+	 * repeated. The handler has to return a promise. With this promise, you can control the
+	 * repetition of all pending requests including the failed HTTP request. If the promise is
+	 * resolved, the requests are repeated; if it is rejected, the requests are not repeated. If it
+	 * is rejected with the same <code>Error</code> reason as previously passed to the handler, then
+	 * this reason is reported to the message model.
+	 *
+	 * @param {function(Error):Promise<undefined>} fnRetryAfter
+	 *   A "Retry-After" handler
+	 *
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @since 1.129.0
+	 */
+	ODataModel.prototype.setRetryAfterHandler = function (fnRetryAfter) {
+		this.fnRetryAfter = fnRetryAfter;
 	};
 
 	/**

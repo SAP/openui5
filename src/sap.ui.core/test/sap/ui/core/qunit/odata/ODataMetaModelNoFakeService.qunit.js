@@ -104,18 +104,31 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_applyAnnotationChanges: annotation changes exist", function (assert) {
+		const aAnnotationChanges = [{path: "/~Path0", value: "foo"}, {path: "/~Path1", value: "bar"}];
 		const oMetaModel = {
-			aAnnotationChanges: [{path: "/~Path0", value: "foo"}, {path: "/~Path1", value: "bar"}],
+			aAnnotationChanges: aAnnotationChanges,
 			oModel: {setProperty() {}},
 			_getObject() {}
 		};
 		const oMetaModelMock = this.mock(oMetaModel);
 		oMetaModelMock.expects("_getObject").withExactArgs("/~Path0", undefined, true).returns(null);
 		oMetaModelMock.expects("_getObject").withExactArgs("/~Path1", undefined, true).returns("/~resolvedPath1");
-		this.mock(oMetaModel.oModel).expects("setProperty").withExactArgs("/~resolvedPath1", "bar");
+		const oModelMock = this.mock(oMetaModel.oModel);
+		oModelMock.expects("setProperty").withExactArgs("/~resolvedPath1", "bar");
 
 		// code under test
 		ODataMetaModel.prototype._applyAnnotationChanges.call(oMetaModel);
+
+		assert.notStrictEqual(oMetaModel.aAnnotationChanges, aAnnotationChanges);
+		assert.deepEqual(oMetaModel.aAnnotationChanges, [{path: "/~Path0", value: "foo"}]);
+
+		oMetaModelMock.expects("_getObject").withExactArgs("/~Path0", undefined, true).returns("/~resolvedPath0");
+		oModelMock.expects("setProperty").withExactArgs("/~resolvedPath0", "foo");
+
+		// code under test - last annotation change applied -> aAnnotationChanges is reset
+		ODataMetaModel.prototype._applyAnnotationChanges.call(oMetaModel);
+
+		assert.strictEqual(oMetaModel.aAnnotationChanges, undefined);
 	});
 
 	//*********************************************************************************************
@@ -199,4 +212,89 @@ sap.ui.define([
 			assert.ok(oBarRejectExpectation.calledBefore(oApplyAnnotationChangesExpectation));
 		});
 	});
+
+	//*********************************************************************************************
+[{
+	oPropertyAnnotations: {
+		"~namespace.~entityTypeName": {
+			"~propertyName": {
+				"com.sap.vocabularies.Common.v1.Label": "~LabelViaValueList",
+				"com.sap.vocabularies.Common.v1.ValueList": "~oValueList"
+			}
+		}
+	},
+	mValueLists: {"~bar": "~baz"},
+	bWithValueList: true
+}, {
+	oPropertyAnnotations: {},
+	mValueLists: {},
+	bWithValueList: false
+}].forEach((oFixture) => {
+	const sTitle = "getODataValueLists: " + (oFixture.bWithValueList ? "success case" : "no value list from server");
+	QUnit.test(sTitle, function (assert) {
+		const oModel = {getObject() {}};
+		const oMetaModel = {
+			mContext2Promise: {},
+			oModel: oModel,
+			mQName2PendingRequest: {},
+			_sendBundledRequest() {}
+		};
+		const oMetaModelMock = this.mock(oMetaModel);
+		const oPropertyContext = {getObject() {}, getPath() {}};
+		const sPropertyMetaPath = "/dataServices/schema/0/entityType/13/property/42";
+		this.mock(oPropertyContext).expects("getPath").withExactArgs().returns(sPropertyMetaPath);
+		const oProperty = {
+			"com.sap.vocabularies.Common.v1.Label": "~Label",
+			name: "~propertyName",
+			"sap:value-list": "foo"
+		};
+		this.mock(oPropertyContext).expects("getObject").withExactArgs().returns(oProperty);
+		const oODataMetaModelUtilsMock = this.mock(ODataMetaModelUtils);
+		oODataMetaModelUtilsMock.expects("getValueLists").withExactArgs(sinon.match.same(oProperty)).returns({});
+		const oModelMock = this.mock(oModel);
+		oModelMock.expects("getObject").withExactArgs("/dataServices/schema/0")
+			.returns({namespace: "~namespace"});
+		oModelMock.expects("getObject").withExactArgs("/dataServices/schema/0/entityType/13")
+			.returns({name: "~entityTypeName"});
+		const oSendBundleRequestExpectation = oMetaModelMock.expects("_sendBundledRequest").withExactArgs();
+
+		// code under test
+		const oValueListLoadPromise = ODataMetaModel.prototype.getODataValueLists.call(oMetaModel, oPropertyContext);
+
+		assert.ok(oValueListLoadPromise instanceof Promise);
+		assert.strictEqual(oMetaModel.mContext2Promise[sPropertyMetaPath], oValueListLoadPromise);
+		const oPendingRequest = oMetaModel.mQName2PendingRequest["~namespace.~entityTypeName/~propertyName"];
+		assert.ok(typeof oPendingRequest.resolve === "function");
+
+		setTimeout(() => {
+			assert.ok(oSendBundleRequestExpectation.calledOnce);
+			const oResponse = {
+				"annotations": {
+					"propertyAnnotations": oFixture.oPropertyAnnotations
+				}
+			};
+			oODataMetaModelUtilsMock.expects("getValueLists").withExactArgs(sinon.match.same(oProperty))
+				.returns(oFixture.mValueLists);
+
+			// code under test
+			oPendingRequest.resolve(oResponse);
+
+			assert.strictEqual(oProperty["com.sap.vocabularies.Common.v1.Label"], "~Label"); // not overwitten!
+			if (oFixture.bWithValueList) {
+				assert.strictEqual(oProperty["com.sap.vocabularies.Common.v1.ValueList"], "~oValueList");
+				assert.notOk(oMetaModel.mContext2Promise[sPropertyMetaPath]);
+			} else {
+				assert.strictEqual(oMetaModel.mContext2Promise[sPropertyMetaPath], oValueListLoadPromise);
+			}
+		}, 0);
+
+		return oValueListLoadPromise.then((mValueLists0) => {
+			assert.ok(oFixture.bWithValueList);
+			assert.strictEqual(mValueLists0, oFixture.mValueLists);
+		}, (oError) => {
+			assert.notOk(oFixture.bWithValueList);
+			assert.strictEqual(oError.message, "No value lists returned for " + sPropertyMetaPath);
+		});
+	});
+});
 });

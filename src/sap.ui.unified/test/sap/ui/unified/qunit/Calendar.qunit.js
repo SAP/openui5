@@ -1837,7 +1837,7 @@ sap.ui.define([
 			months: 1
 		}).placeAt("qunit-fixture");
 
-		var oSpyHandleColumnsCss = this.spy(oCalendar, "_toggleTwoMonthsInTwoColumnsCSS");
+		var oSpyHandleColumnsCss = this.spy(oCalendar, "_toggleTwoMonthsInColumnsCSS");
 
 		//act.
 		oCalendar.setMonths(3);
@@ -2214,12 +2214,12 @@ sap.ui.define([
 		oCalendar.destroy();
 	});
 
-	QUnit.test("onThemeChanged calls _updateHeadersButtons, _setPrimaryHeaderMonthButtonText and _toggleTwoMonthsInTwoColumnsCSS methods", function (assert) {
+	QUnit.test("onThemeChanged calls _updateHeadersButtons, _setPrimaryHeaderMonthButtonText and _toggleTwoMonthsInColumnsCSS methods", function (assert) {
 		// arrange
 		var oCalendar = new Calendar(),
 			oUpdateHeadersButtonsSpy = this.spy(oCalendar, "_updateHeadersButtons"),
 			oSetPrimaryHeaderMonthButtonTextSpy = this.spy(oCalendar, "_setPrimaryHeaderMonthButtonText"),
-			oToggleTwoMonthsInTwoColumnsCSSSpy = this.spy(oCalendar, "_toggleTwoMonthsInTwoColumnsCSS");
+			oToggleTwoMonthsInTwoColumnsCSSSpy = this.spy(oCalendar, "_toggleTwoMonthsInColumnsCSS");
 		oCalendar.placeAt("qunit-fixture");
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
@@ -2229,7 +2229,7 @@ sap.ui.define([
 		// assert
 		assert.equal(oUpdateHeadersButtonsSpy.callCount, 2, "_updateHeadersButtons should be called once onThemeChanged");
 		assert.equal(oSetPrimaryHeaderMonthButtonTextSpy.callCount, 1, "_setPrimaryHeaderMonthButtonText should be called once onThemeChanged");
-		assert.equal(oToggleTwoMonthsInTwoColumnsCSSSpy.callCount, 1, "_toggleTwoMonthsInTwoColumnsCSS should be called once onThemeChanged");
+		assert.equal(oToggleTwoMonthsInTwoColumnsCSSSpy.callCount, 1, "_toggleTwoMonthsInColumnsCSS should be called once onThemeChanged");
 
 		// cleanup
 		oCalendar.destroy();
@@ -2376,7 +2376,30 @@ sap.ui.define([
 		oGetColumnsStub.restore();
 	});
 
-	QUnit.test("_toggleTwoMonthsInTwoColumnsCSS should call addStyleClass if calendar is with two months in two columns", function (assert) {
+	QUnit.test("_toggleTwoMonthsInColumnsCSS should call addStyleClass if calendar is with two months in one column", function (assert) {
+		// arrange
+		var oCalendar = new Calendar(),
+			oAddStyleClassSpy = this.spy(oCalendar, "addStyleClass"),
+			oRemoveStyleClassSpy = this.spy(oCalendar, "removeStyleClass"),
+			oIsTwoMonthsInTwoColumnsStub = this.stub(oCalendar, "_isTwoMonthsInTwoColumns").returns(false),
+			oIsTwoMonthsInOneColumnStub = this.stub(oCalendar, "_isTwoMonthsInOneColumn").returns(true);
+
+		// act
+		oCalendar._toggleTwoMonthsInColumnsCSS();
+
+		// assert
+		assert.equal(oAddStyleClassSpy.getCall(0).args[0], "sapUiCalTwoMonthsInOneColumn", "addStyleClass is called with sapUiCalTwoMonthsInOneColumn param");
+		assert.equal(oRemoveStyleClassSpy.callCount, 2, "removeStyleClass is called twice");
+
+		// cleanup
+		oCalendar.destroy();
+		oAddStyleClassSpy.restore();
+		oRemoveStyleClassSpy.restore();
+		oIsTwoMonthsInTwoColumnsStub.restore();
+		oIsTwoMonthsInOneColumnStub.restore();
+	});
+
+	QUnit.test("_toggleTwoMonthsInColumnsCSS should call addStyleClass if calendar is with two months in two columns", function (assert) {
 		// arrange
 		var oCalendar = new Calendar(),
 			oAddStyleClassSpy = this.spy(oCalendar, "addStyleClass"),
@@ -2384,12 +2407,12 @@ sap.ui.define([
 			oIsTwoMonthsInTwoColumnsStub = this.stub(oCalendar, "_isTwoMonthsInTwoColumns").returns(true);
 
 		// act
-		oCalendar._toggleTwoMonthsInTwoColumnsCSS();
+		oCalendar._toggleTwoMonthsInColumnsCSS();
 
 		// assert
 		assert.equal(oAddStyleClassSpy.callCount, 1, "addStyleClass is called once");
 		assert.equal(oAddStyleClassSpy.getCall(0).args[0], "sapUiCalTwoMonthsTwoColumns", "addStyleClass is called with sapUiCalTwoMonthsTwoColumns param");
-		assert.equal(oRemoveStyleClassSpy.callCount, 1, "removeStyleClass is called once");
+		assert.equal(oRemoveStyleClassSpy.callCount, 2, "removeStyleClass is called twice");
 
 		// cleanup
 		oCalendar.destroy();
@@ -2398,27 +2421,30 @@ sap.ui.define([
 		oIsTwoMonthsInTwoColumnsStub.restore();
 	});
 
-	QUnit.test("_toggleTwoMonthsInTwoColumnsCSS should call removeStyleClass if calendar is with tnot wo months in two columns", function (assert) {
+	QUnit.test("_toggleTwoMonthsInColumnsCSS should call removeStyleClass if calendar is not with two months in one or two columns", function (assert) {
 		// arrange
 		var oCalendar = new Calendar(),
 			oAddStyleClassSpy = this.spy(oCalendar, "addStyleClass"),
 			oRemoveStyleClassSpy = this.spy(oCalendar, "removeStyleClass"),
-			oIsTwoMonthsInTwoColumnsStub = this.stub(oCalendar, "_isTwoMonthsInTwoColumns").returns(false);
+			oIsTwoMonthsInTwoColumnsStub = this.stub(oCalendar, "_isTwoMonthsInTwoColumns").returns(false),
+			oIsTwoMonthsInOneColumnStub = this.stub(oCalendar, "_isTwoMonthsInOneColumn").returns(false);
 
 		// act
-		oCalendar._toggleTwoMonthsInTwoColumnsCSS();
+		oCalendar._toggleTwoMonthsInColumnsCSS();
 
 		// assert
 		assert.equal(oAddStyleClassSpy.callCount, 0, "addStyleClass is not called");
 		assert.equal(oRemoveStyleClassSpy.getCall(0).args[0], "sapUiCalTwoMonthsTwoColumnsJaZh", "removeStyleClass is called with sapUiCalTwoMonthsTwoColumnsJaZh param");
 		assert.equal(oRemoveStyleClassSpy.getCall(1).args[0], "sapUiCalTwoMonthsTwoColumns", "removeStyleClass is called with sapUiCalTwoMonthsTwoColumns param");
-		assert.equal(oRemoveStyleClassSpy.callCount, 2, "removeStyleClass is called twice");
+		assert.equal(oRemoveStyleClassSpy.getCall(2).args[0], "sapUiCalTwoMonthsInOneColumn", "removeStyleClass is called with sapUiCalTwoMonthsInOneColumn param");
+		assert.equal(oRemoveStyleClassSpy.callCount, 3, "removeStyleClass is called three times");
 
 		// cleanup
 		oCalendar.destroy();
 		oAddStyleClassSpy.restore();
 		oRemoveStyleClassSpy.restore();
 		oIsTwoMonthsInTwoColumnsStub.restore();
+		oIsTwoMonthsInOneColumnStub.restore();
 	});
 
 	QUnit.test("_setPrimaryHeaderMonthButtonText should sets the button1 text of the header to _sFirstName value if calendar is in two columns with two months", function (assert) {

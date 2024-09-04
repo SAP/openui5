@@ -5,7 +5,6 @@
 sap.ui.define([
 	"./_ODataMetaModelUtils",
 	"sap/base/Log",
-	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ManagedObject",
@@ -20,7 +19,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/json/JSONPropertyBinding",
 	"sap/ui/model/json/JSONTreeBinding"
-], function (Utils, Log, extend, isEmptyObject, BindingParser, ManagedObject, SyncPromise, _Helper, BindingMode,
+], function (Utils, Log, isEmptyObject, BindingParser, ManagedObject, SyncPromise, _Helper, BindingMode,
 		ClientContextBinding, Context, FilterProcessor, MetaModel, JSONListBinding, JSONModel, JSONPropertyBinding,
 		JSONTreeBinding) {
 	"use strict";
@@ -933,15 +932,21 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v2.ODataModel#setAnnotationChangePromise
 	 */
 	ODataMetaModel.prototype._applyAnnotationChanges = function () {
-		this.aAnnotationChanges?.forEach((oAnnotationChange) => {
+		if (!this.aAnnotationChanges) {
+			return;
+		}
+		const aNotAppliedChanges = [];
+		this.aAnnotationChanges.forEach((oAnnotationChange) => {
 			const sResolvedPath = this._getObject(oAnnotationChange.path, undefined, /*bAsPath*/true);
-
 			// value help metadata maybe loaded and merged later; if the path cannot be resolved yet ignore the
 			// annotation change and process it later
 			if (sResolvedPath) {
 				this.oModel.setProperty(sResolvedPath, oAnnotationChange.value);
+			} else {
+				aNotAppliedChanges.push(oAnnotationChange);
 			}
 		});
+		this.aAnnotationChanges = aNotAppliedChanges.length ? aNotAppliedChanges : undefined;
 	};
 
 	/**
@@ -1776,11 +1781,15 @@ sap.ui.define([
 					+ "." + that.oModel.getObject(aMatches[1]).name;
 				that.mQName2PendingRequest[sQualifiedTypeName + "/" + oProperty.name] = {
 					resolve : function (oResponse) {
+						const oPropertyAnnotations = oResponse.annotations.propertyAnnotations?.[sQualifiedTypeName]
+							?.[oProperty.name] || {};
 						// enhance property by annotations from response to get value lists
-						extend(oProperty,
-							(oResponse.annotations.propertyAnnotations[sQualifiedTypeName] || {})
-								[oProperty.name]
-						);
+						Object.keys(oPropertyAnnotations).forEach((sAnnotation) => {
+							if (!oProperty.hasOwnProperty(sAnnotation)) {
+								// apply only new annotations to avoid overwriting annotation changes
+								oProperty[sAnnotation] = oPropertyAnnotations[sAnnotation];
+							}
+						});
 						mValueLists = Utils.getValueLists(oProperty);
 						if (isEmptyObject(mValueLists)) {
 							fnReject(new Error("No value lists returned for " + sPropertyPath));

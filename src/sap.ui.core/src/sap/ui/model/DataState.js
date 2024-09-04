@@ -73,8 +73,22 @@ sap.ui.define([
 		constructor : function () {
 			this.mProperties = DataState.getInitialProperties();
 			this.mChangedProperties = DataState.getInitialProperties();
+			// parent data state is set by the CompositeDataState if this data state is part of a composite data state
+			// this.oParentDataState = undefined;
 		}
 	});
+
+	/**
+	 * Sets the parent data state. If a parent data state is set, it is used to check whether the associated control is
+	 * dirty.
+	 * @param {sap.ui.model.DataState} oParentDataState The parent data state
+	 *
+	 * @private
+	 * @see sap.ui.model.DataState#isControlDirty
+	 */
+	DataState.prototype.setParent = function(oParentDataState) {
+		this.oParentDataState = oParentDataState;
+	};
 
 	/**
 	 * Updates the given property with the given value.
@@ -226,13 +240,27 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns whether the data state is dirty in the UI control.
-	 * A data state is dirty in the UI control if the entered value did not yet pass the type validation.
+	 * Returns whether the data state is dirty in the UI control. A data state is dirty in the UI control if an entered
+	 * value did not pass the type validation. If the data state is used by a composite data state, it is also checked
+	 * whether the composite data state is dirty in the UI control.
 	 *
-	 * @returns {boolean} Whether the data state is dirty
+	 * @returns {boolean} Whether the data state is dirty in the UI control
 	 * @public
 	 */
-	DataState.prototype.isControlDirty = function() {
+	DataState.prototype.isControlDirty = function () {
+		return this.oParentDataState
+			? this.oParentDataState.isControlDirty()
+			: this.isControlDirtyInternal();
+	};
+
+	/**
+	 * Returns whether the data state is dirty in the UI control. If the data state is used by a composite data state,
+	 * the composite data state is not considered.
+	 *
+	 * @returns {boolean} Whether this data state is dirty in the UI control
+	 * @private
+	 */
+	DataState.prototype.isControlDirtyInternal = function () {
 		return this.mChangedProperties["invalidValue"] !== undefined;
 	};
 

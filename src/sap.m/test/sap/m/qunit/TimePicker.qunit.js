@@ -1637,8 +1637,7 @@ sap.ui.define([
 		},
 		fnTestReferencing: function (oSut, fnAssert, oResourceManager, aScenarios) {
 			//prepare
-			var sPlaceholderHiddenLblIdSuffix = "labelledby",
-				sInnerInputSuffix = oSut.getRenderer().getInnerSuffix(),
+			var sInnerInputSuffix = oSut.getRenderer().getInnerSuffix(),
 				fnTestCustomRole = function () {
 					fnAssert.strictEqual(oSut.$(sInnerInputSuffix).attr("aria-roledescription"), oSut._oResourceBundle.getText("ACC_CTR_TYPE_TIMEINPUT"),
 						"Control description is added in aria-roledescription");
@@ -1659,24 +1658,6 @@ sap.ui.define([
 						//assert
 						fnAssert.strictEqual(oSut.$(sInnerInputSuffix).attr("aria-labelledby").indexOf(sLabelId) > -1, false, "External label reference is not applied");
 					}
-				},
-				fnTestPlaceholderReference = async function (bReferencedWithPlaceholder) {
-					var sDefaultPlaceholder = oSut._getPlaceholder();
-					if (bReferencedWithPlaceholder) {
-						//prepare
-						oSut.setPlaceholder("Placeholder");
-						await nextUIUpdate();
-						//assert
-						fnAssert.strictEqual(oSut.$(sPlaceholderHiddenLblIdSuffix).length, 1, "placeholder invisible label is rendered");
-						fnAssert.strictEqual(oSut.$(sPlaceholderHiddenLblIdSuffix).text(), "Placeholder", "placeholder invisible label text is as expected");
-						//clear
-						oSut.setPlaceholder(null);
-						await nextUIUpdate();
-					} else {
-						//assert
-						fnAssert.strictEqual(oSut.$(sPlaceholderHiddenLblIdSuffix).length, 1, "placeholder invisible label is rendered");
-						fnAssert.strictEqual(oSut.$(sPlaceholderHiddenLblIdSuffix).text(), sDefaultPlaceholder, "placeholder invisible label text is as expected");
-					}
 				};
 
 			//Test execution check
@@ -1692,14 +1673,8 @@ sap.ui.define([
 						fnTestCustomRole();
 						await fnTestExternalLabelReference(bExpectation);
 						break;
-					case 1:
-						fnTestCustomRole();
-						await fnTestPlaceholderReference(bExpectation);
-						break;
-					case 2:
-						fnTestCustomRole();
-						break;
 					default:
+						fnTestCustomRole();
 						break;
 				}
 			});
