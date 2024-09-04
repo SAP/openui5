@@ -15,7 +15,7 @@ sap.ui.define([
 	Settings,
 	WhatsNewOverview,
 	WhatsNewFeatures,
-	whatsNewUtils,
+	WhatsNewUtils,
 	nextUIUpdate,
 	sinon
 ) {
@@ -104,7 +104,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Open S4Hana Learn more Link", async function(assert) {
-			const oGetLearnMoreURLSpy = sandbox.spy(whatsNewUtils, "getLearnMoreURL");
+			const oGetLearnMoreURLSpy = sandbox.spy(WhatsNewUtils, "getLearnMoreURL");
 			const oS4HanaSettings = {
 				isAtoEnabled: () => true,
 				getSystem: () => "test"
@@ -127,7 +127,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Open BTP Learn more Link", async function(assert) {
-			const oGetLearnMoreURLSpy = sandbox.spy(whatsNewUtils, "getLearnMoreURL");
+			const oGetLearnMoreURLSpy = sandbox.spy(WhatsNewUtils, "getLearnMoreURL");
 			const oBTPSettings = {
 				isAtoEnabled: () => undefined,
 				getSystem: () => undefined
@@ -148,7 +148,7 @@ sap.ui.define([
 
 		QUnit.test("Open ABAP on-Premise  Learn more Link", async function(assert) {
 			const sLearnMoreUrl = aFeatureCollection[0].documentationUrls.s4HanaOnPremUrl;
-			const oGetLearnMoreURLSpy = sandbox.spy(whatsNewUtils, "getLearnMoreURL");
+			const oGetLearnMoreURLSpy = sandbox.spy(WhatsNewUtils, "getLearnMoreURL");
 			const oOnPremSettings = {
 				isAtoEnabled: () => false,
 				getSystem: () => "test"

@@ -51,7 +51,7 @@ sap.ui.define([
 
 	WhatsNew.prototype.setDontShowAgainFeatureIds = function(aDontShowAgainFeatureIds) {
 		this.setProperty("dontShowAgainFeatureIds", aDontShowAgainFeatureIds);
-		this.aUnseenFeatures = WhatsNewFeatures.filterDontShowAgainFeatures(aDontShowAgainFeatureIds);
+		this.aUnseenFeatures = WhatsNewUtils.getFilteredFeatures(aDontShowAgainFeatureIds);
 	};
 
 	WhatsNew.prototype.initializeWhatsNewDialog = async function() {
