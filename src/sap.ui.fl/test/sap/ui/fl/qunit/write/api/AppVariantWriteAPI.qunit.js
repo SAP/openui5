@@ -19,8 +19,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
@@ -44,8 +42,6 @@ sap.ui.define([
 	PersistenceWriteAPI,
 	FeaturesAPI,
 	Settings,
-	ChangePersistenceFactory,
-	FlexControllerFactory,
 	Layer,
 	FlexUtils,
 	JSONModel,
@@ -429,7 +425,6 @@ sap.ui.define([
 				return PersistenceWriteAPI.add({change: oUIChange, selector: oAppComponent});
 			})
 			.then(function() {
-				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
 				assert.strictEqual(
 					FlexObjectState.getDirtyFlexObjects(sReference).length,
 					5,
@@ -447,13 +442,6 @@ sap.ui.define([
 					var oFlexObjectMetadata = oUIChange.getFlexObjectMetadata();
 					assert.equal(oFlexObjectMetadata.reference, "customer.reference.app.id", "the reference of the UI Change has been changed with the app variant id");
 					assert.equal(oFlexObjectMetadata.namespace, "apps/customer.reference.app.id/changes/", "the namespace of the UI Change has been changed");
-					// Delete the UI change from persistence
-					oChangePersistence.deleteChange(oUIChange);
-					assert.strictEqual(
-						FlexObjectState.getDirtyFlexObjects(sReference).length,
-						0,
-						"then all dirty changes have been removed from the state"
-					);
 				});
 			});
 		});
@@ -525,7 +513,6 @@ sap.ui.define([
 				return PersistenceWriteAPI.add({change: oUIChange, selector: oAppComponent});
 			})
 			.then(function() {
-				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
 				assert.strictEqual(
 					FlexObjectState.getDirtyFlexObjects(sReference).length,
 					5,
@@ -545,19 +532,6 @@ sap.ui.define([
 					assert.equal(oFlexObjectMetadata.namespace, "apps/customer.reference.app.id/changes/", "the namespace of the UI Change has been changed");
 					assert.ok(oConnectorCall.calledWith("/sap/bc/lrep/changes/", "POST"), "then backend call is triggered with correct parameters");
 					assert.ok(fnDeleteAppVarSpy.calledWithExactly({referenceAppId: "customer.reference.app.id"}), "then deleteAppVar call is called with correct parameters");
-					// Delete the UI change from persistence
-					oChangePersistence.deleteChange(oUIChange);
-					// Delete dirty inline changes from persistence
-					var aDescrChanges = FlexObjectState.getDirtyFlexObjects(sReference);
-					aDescrChanges = aDescrChanges.slice();
-					aDescrChanges.forEach(function(oChange) {
-						oChangePersistence.deleteChange(oChange);
-					});
-					assert.strictEqual(
-						FlexObjectState.getDirtyFlexObjects(sReference).length,
-						0,
-						"then all dirty changes have been removed from the state"
-					);
 				});
 			});
 		});

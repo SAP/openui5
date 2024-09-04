@@ -66,7 +66,10 @@ sap.ui.define([
 				// Remove also from Cache if the persisted change is still there (e.g. navigate away and back to the app)
 				FlexState.updateStorageResponse(this._mComponent.name, [{flexObject: oChange.convertToFileContent(), type: "delete"}]);
 			} else {
-				this.deleteChange(oChange);
+				FlexObjectManager.deleteFlexObjects({
+					reference: this._mComponent.name,
+					flexObjects: [oChange]
+				});
 			}
 		}.bind(this));
 	};
@@ -407,55 +410,6 @@ sap.ui.define([
 
 		return aChanges;
 	}
-
-	/**
-	 * Prepares a change to be deleted with the next call to
-	 * @see {ChangePersistence#saveDirtyChanges};
-	 *
-	 * If the given change is already in the dirty changes and
-	 * has the 'NEW' state it will be removed, assuming,
-	 * it has just been created in the current session;
-	 *
-	 * Otherwise it will be marked for deletion.
-	 *
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange the change to be deleted
-	 * @param {boolean} [bRunTimeCreatedChange] set if the change was created at runtime
-	 * @param {boolean} [bSkipRemoveFromFlexState] set if the change should not be removed from the FlexState
-	 */
-	ChangePersistence.prototype.deleteChange = function(oChange, bRunTimeCreatedChange, bSkipRemoveFromFlexState) {
-		const nIndexInDirtyChanges = FlexObjectState.getDirtyFlexObjects(this._mComponent.name).indexOf(oChange);
-
-		if (nIndexInDirtyChanges > -1) {
-			if (oChange.getState() === States.LifecycleState.DELETED) {
-				return;
-			}
-			if (!bSkipRemoveFromFlexState) {
-				FlexState.removeDirtyFlexObject(this._mComponent.name, oChange);
-			}
-			this._deleteChangeInMap(oChange, bRunTimeCreatedChange);
-			return;
-		}
-
-		oChange.markForDeletion();
-		FlexObjectManager.addDirtyFlexObjects(this._mComponent.name, [oChange]);
-		this._deleteChangeInMap(oChange, bRunTimeCreatedChange);
-	};
-
-	/**
-	 * Prepares multiple changes to be deleted with the next call to
-	 * @see {ChangePersistence#saveDirtyChanges};
-	 *
-	 * Removal from the FlexState happens in one go to trigger only one invalidation.
-	 *
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aChanges the changes to be deleted
-	 * @param {boolean} [bRunTimeCreatedChanges] set if the change was created at runtime
-	 */
-	ChangePersistence.prototype.deleteChanges = function(aChanges, bRunTimeCreatedChanges) {
-		aChanges.forEach(function(oChange) {
-			this.deleteChange(oChange, bRunTimeCreatedChanges, true);
-		}.bind(this));
-		FlexState.removeDirtyFlexObjects(this._mComponent.name, aChanges);
-	};
 
 	ChangePersistence.prototype.removeChange = function(oChange) {
 		FlexState.removeDirtyFlexObject(this._mComponent.name, oChange);

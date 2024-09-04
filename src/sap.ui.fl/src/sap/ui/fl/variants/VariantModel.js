@@ -158,7 +158,10 @@ sap.ui.define([
 			return undefined;
 		})
 		.then(function() {
-			mPropertyBag.model.oChangePersistence.deleteChanges(aVariantDirtyChanges);
+			FlexObjectManager.deleteFlexObjects({
+				reference: mPropertyBag.model.sFlexReference,
+				flexObjects: aVariantDirtyChanges
+			});
 		});
 	}
 
@@ -628,7 +631,10 @@ sap.ui.define([
 				.then((oReturn) => {
 					if (!oReturn.success) {
 						var oException = oReturn.error || new Error("The change could not be applied.");
-						this.oChangePersistence.deleteChange(oChange, true);
+						FlexObjectManager.deleteFlexObjects({
+							reference: this.sFlexReference,
+							flexObjects: [oChange]
+						});
 						throw oException;
 					}
 				});
@@ -801,7 +807,10 @@ sap.ui.define([
 			newVariantReference: mPropertyBag.sourceVariantReference,
 			appComponent: mPropertyBag.component
 		}).then(function() {
-			this.oChangePersistence.deleteChanges(aChangesToBeDeleted);
+			FlexObjectManager.deleteFlexObjects({
+				reference: this.sFlexReference,
+				flexObjects: aChangesToBeDeleted
+			});
 		}.bind(this));
 	};
 
@@ -1001,7 +1010,10 @@ sap.ui.define([
 	 */
 	VariantModel.prototype.deleteVariantChange = function(sVariantManagementReference, mPropertyBag, oChange) {
 		this.setVariantProperties(sVariantManagementReference, mPropertyBag);
-		this.oChangePersistence.deleteChange(oChange);
+		FlexObjectManager.deleteFlexObjects({
+			reference: this.sFlexReference,
+			flexObjects: [oChange]
+		});
 	};
 
 	/**

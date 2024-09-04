@@ -1,37 +1,39 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/thirdparty/sinon-4",
+	"sap/m/VBox",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
-	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/LocalResetAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/Layer",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/m/VBox",
-	"sap/ui/core/util/reflection/JsControlTreeModifier"
+	"sap/ui/fl/Layer",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	sinon,
+	VBox,
+	JsControlTreeModifier,
+	FlexObjectFactory,
+	States,
 	UIChangesState,
 	FlexObjectState,
 	FlexState,
 	ManifestUtils,
-	FlexObjectFactory,
-	States,
+	FlexObjectManager,
+	ChangesWriteAPI,
 	LocalResetAPI,
 	PersistenceWriteAPI,
-	ChangesWriteAPI,
-	Layer,
 	ChangePersistence,
 	ChangePersistenceFactory,
-	VBox,
-	JsControlTreeModifier
+	Layer,
+	sinon
 ) {
 	"use strict";
 
@@ -120,9 +122,12 @@ sap.ui.define([
 			});
 			sandbox.stub(PersistenceWriteAPI, "remove").callsFake(function(aArguments) {
 				// Simulate deletion to validate that the state is restored
-				this.oChangePersistence.deleteChanges(aArguments.flexObjects);
+				FlexObjectManager.deleteFlexObjects({
+					reference: "MyComponent",
+					flexObjects: aArguments.flexObjects
+				});
 				return Promise.resolve();
-			}.bind(this));
+			});
 			sandbox.stub(ChangesWriteAPI, "revert").resolves();
 
 			return LocalResetAPI.resetChanges(aNestedChanges, this.oComponent).then(function() {

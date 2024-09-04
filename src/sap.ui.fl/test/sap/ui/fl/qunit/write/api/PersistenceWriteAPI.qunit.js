@@ -22,7 +22,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/ChangePersistence",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
@@ -49,7 +48,6 @@ sap.ui.define([
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	ChangePersistence,
-	ChangePersistenceFactory,
 	Layer,
 	Utils,
 	sinon,
@@ -59,11 +57,12 @@ sap.ui.define([
 
 	document.getElementById("qunit-fixture").style.display = "none";
 	const sandbox = sinon.createSandbox();
+	const sReference = "appComponent";
 
 	QUnit.module("Given PersistenceWriteAPI", {
 		beforeEach() {
 			this.oAppComponent = {
-				getId() {return "appComponent";}
+				getId() {return sReference;}
 			};
 			this.vSelector = {
 				elementId: "selector",
@@ -231,7 +230,7 @@ sap.ui.define([
 
 				sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 
-				await FlQUnitUtils.initializeFlexStateWithData(sandbox, "appComponent", {changes: testSetup.persistencyChanges});
+				await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {changes: testSetup.persistencyChanges});
 				sandbox.stub(FlexState, "getCompVariantsMap").returns(testSetup.compEntities);
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(this.oAppComponent.getId());
 				const oVMSFilterStub = sandbox.stub(FlexObjectManager, "filterHiddenFlexObjects").callsFake((aFlexObjects) => {
@@ -250,7 +249,7 @@ sap.ui.define([
 
 		QUnit.test("when save is called", function(assert) {
 			var oFlexObjectManagerSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves();
-			var mPropertyBag = { foo: "bar" };
+			var mPropertyBag = { foo: "bar", removeOtherLayerChanges: true };
 			PersistenceWriteAPI.save(mPropertyBag);
 
 			assert.equal(oFlexObjectManagerSaveStub.callCount, 1, "the FlexObjectManager save method was called");
@@ -325,46 +324,6 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when save is called with removeOtherLayerChanges", function(assert) {
-			var oComp = new UIComponent("testComponent");
-			oComp.name = "testComponent";
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
-			var oChangePersistence = new ChangePersistence(oComp);
-			FlexObjectManager.addDirtyFlexObjects(
-				"sap.ui.core",
-				[
-					FlexObjectFactory.createFromFileContent({
-						selector: {id: "someControl"},
-						layer: Layer.CUSTOMER
-					}),
-					FlexObjectFactory.createFromFileContent({
-						selector: {id: "someControl"},
-						layer: Layer.USER
-					})
-				]
-			);
-
-			sandbox.stub(FlexObjectManager, "getFlexObjects");
-			sandbox.stub(FlexState, "getCompVariantsMap");
-			sandbox.stub(oChangePersistence, "saveDirtyChanges").resolves();
-			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
-
-			var mPropertyBag = {
-				selector: {
-					appComponent: oComp
-				},
-				layer: Layer.CUSTOMER,
-				removeOtherLayerChanges: true
-			};
-			return PersistenceWriteAPI.save(mPropertyBag).then(function() {
-				assert.strictEqual(
-					FlexObjectState.getDirtyFlexObjects("sap.ui.core").length,
-					1,
-					"then dirty changes on other layers are removed"
-				);
-			});
-		});
-
 		QUnit.test("when reset is called", async function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
@@ -374,7 +333,7 @@ sap.ui.define([
 				selector: this.vSelector
 			};
 
-			var oAppComponent = {id: "appComponent"};
+			var oAppComponent = {id: sReference};
 
 			sandbox.stub(Utils, "getAppComponentForSelector")
 			.withArgs(mPropertyBag.selector)
@@ -410,7 +369,7 @@ sap.ui.define([
 				},
 				selector: this.vSelector
 			};
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(UIChangeManager, "addDirtyChanges").returnsArg(1);
 
 			assert.strictEqual(
@@ -428,7 +387,7 @@ sap.ui.define([
 				],
 				selector: this.vSelector
 			};
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(UIChangeManager, "addDirtyChanges").returnsArg(1);
 
 			assert.deepEqual(
@@ -441,7 +400,7 @@ sap.ui.define([
 		QUnit.test("when add is called with a descriptor change", function(assert) {
 			var done = assert.async();
 			var sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 
 			var oChange = {
 				_getMap() {
@@ -460,7 +419,7 @@ sap.ui.define([
 		QUnit.test("when add is called with multiple descriptor changes", function(assert) {
 			var i = 0;
 			var sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 
 			var oChange = {
 				_getMap() {
@@ -496,7 +455,7 @@ sap.ui.define([
 				],
 				selector: this.vSelector
 			};
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(UIChangeManager, "addDirtyChanges").returnsArg(1);
 
 			var aAddResult = PersistenceWriteAPI.add(mPropertyBag);
@@ -505,7 +464,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when add is called with change and flexObjects parameters", function(assert) {
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			var mPropertyBag = {
 				change: {},
 				flexObjects: [],
@@ -520,7 +479,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when remove is called for a flex object", function(assert) {
-			var mPropertyBag = {
+			const mPropertyBag = {
 				change: {
 					getSelector: function() {
 						return this.vSelector;
@@ -531,10 +490,10 @@ sap.ui.define([
 				},
 				selector: this.vSelector
 			};
-			var oElement = { type: "element" };
-			var oAppComponent = {id: "appComponent"};
+			const oElement = { type: "element" };
+			const oAppComponent = {id: sReference};
 
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(Utils, "getAppComponentForSelector")
 			.withArgs(mPropertyBag.selector)
 			.returns(oAppComponent);
@@ -543,8 +502,8 @@ sap.ui.define([
 			.withArgs(mPropertyBag.change.getSelector(), oAppComponent)
 			.returns(oElement);
 
-			var oDestroyAppliedCustomDataStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
-			var oDeleteChangeStub = sandbox.stub(ChangePersistence.prototype, "deleteChange");
+			const oDestroyAppliedCustomDataStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
+			const oDeleteFlexObjectsStub = sandbox.stub(FlexObjectManager, "deleteFlexObjects");
 
 			return PersistenceWriteAPI.remove(mPropertyBag)
 			.then(function() {
@@ -553,14 +512,15 @@ sap.ui.define([
 					"then DestroyAppliedCustomData was called with correct parameters"
 				);
 				assert.ok(
-					oDeleteChangeStub.calledWith(mPropertyBag.change),
-					"then the flex persistence was called with correct parameters"
+					oDeleteFlexObjectsStub.calledWith({
+						reference: sReference, flexObjects: [mPropertyBag.change]
+					}), "then the flex persistence was called with correct parameters"
 				);
 			});
 		});
 
 		QUnit.test("when remove is called for multiple flex objects", function(assert) {
-			var mPropertyBag = {
+			const mPropertyBag = {
 				flexObjects: [{
 					getSelector() {
 						return "selector1";
@@ -578,10 +538,10 @@ sap.ui.define([
 				}],
 				selector: this.vSelector
 			};
-			var oElement = { type: "element" };
-			var oAppComponent = {id: "appComponent"};
+			const oElement = { type: "element" };
+			const oAppComponent = {id: sReference};
 
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(Utils, "getAppComponentForSelector")
 			.withArgs(mPropertyBag.selector)
 			.returns(oAppComponent);
@@ -590,8 +550,8 @@ sap.ui.define([
 			.withArgs(mPropertyBag.flexObjects[0].getSelector(), oAppComponent).returns(oElement)
 			.withArgs(mPropertyBag.flexObjects[1].getSelector(), oAppComponent).returns(oElement);
 
-			var oDestroyAppliedCustomDataStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
-			var oDeleteChangesStub = sandbox.stub(ChangePersistence.prototype, "deleteChanges");
+			const oDestroyAppliedCustomDataStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
+			const oDeleteFlexObjectsStub = sandbox.stub(FlexObjectManager, "deleteFlexObjects");
 
 			return PersistenceWriteAPI.remove(mPropertyBag)
 			.then(function() {
@@ -604,8 +564,9 @@ sap.ui.define([
 					"then DestroyAppliedCustomData was called with correct parameters for second flex object"
 				);
 				assert.ok(
-					oDeleteChangesStub.calledWith(mPropertyBag.flexObjects),
-					"then the flex persistence was called with correct parameters"
+					oDeleteFlexObjectsStub.calledWith({
+						reference: sReference, flexObjects: mPropertyBag.flexObjects
+					}), "then the flex persistence was called with correct parameters"
 				);
 			});
 		});
@@ -620,7 +581,7 @@ sap.ui.define([
 			};
 
 			const fnRemoveChangeStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
-			const oGetCPStub = sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl");
+			const oDeleteFlexObjectsStub = sandbox.stub(FlexObjectManager, "deleteFlexObjects");
 
 			return PersistenceWriteAPI.remove(mPropertyBag)
 			.catch(function(oError) {
@@ -630,7 +591,7 @@ sap.ui.define([
 					"then the error text contains the correct message"
 				);
 				assert.ok(fnRemoveChangeStub.notCalled, "then the flex persistence was not called to delete change from control");
-				assert.ok(oGetCPStub.notCalled, "then the flex persistence was not called to remove change from persistence");
+				assert.ok(oDeleteFlexObjectsStub.notCalled, "then the changes are not deleted");
 			});
 		});
 
@@ -649,7 +610,7 @@ sap.ui.define([
 
 			sandbox.stub(Utils, "getAppComponentForSelector");
 			const fnRemoveChangeStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
-			const oGetCPStub = sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl");
+			const oDeleteFlexObjectsStub = sandbox.stub(FlexObjectManager, "deleteFlexObjects");
 
 			return PersistenceWriteAPI.remove(mPropertyBag)
 			.catch(function(oError) {
@@ -659,13 +620,13 @@ sap.ui.define([
 					"then the error text contains the correct message"
 				);
 				assert.ok(fnRemoveChangeStub.notCalled, "then the flex persistence was not called to remove change from control");
-				assert.ok(oGetCPStub.notCalled, "then the flex persistence was not called to delete change from persistence");
+				assert.ok(oDeleteFlexObjectsStub.notCalled, "then the changes are not deleted");
 			});
 		});
 
 		QUnit.test("when remove is called for a descriptor change", function(assert) {
-			var sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
-			var mPropertyBag = {
+			const sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
+			const mPropertyBag = {
 				change: {
 					_getMap() {
 						return {
@@ -676,21 +637,22 @@ sap.ui.define([
 				selector: this.vSelector
 			};
 
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
-			var oDeleteChangeStub = sandbox.stub(ChangePersistence.prototype, "deleteChange");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
+			const oDeleteFlexObjectsStub = sandbox.stub(FlexObjectManager, "deleteFlexObjects");
 
 			return PersistenceWriteAPI.remove(mPropertyBag)
 			.then(function() {
 				assert.ok(
-					oDeleteChangeStub.calledWith(mPropertyBag.change),
-					"then the flex persistence was called with correct parameters"
+					oDeleteFlexObjectsStub.calledWith({
+						reference: sReference, flexObjects: [mPropertyBag.change]
+					}), "then the flex persistence was called with correct parameters"
 				);
 			});
 		});
 
 		QUnit.test("when remove is called for multiple descriptor changes", function(assert) {
-			var sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
-			var mPropertyBag = {
+			const sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
+			const mPropertyBag = {
 				flexObjects: [{
 					_getMap() {
 						return {
@@ -707,15 +669,16 @@ sap.ui.define([
 				selector: this.vSelector
 			};
 
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
-			var oDeleteChangesStub = sandbox.stub(ChangePersistence.prototype, "deleteChanges");
-			var oDestroyAppliedCustomDataSpy = sandbox.spy(FlexCustomData, "destroyAppliedCustomData");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
+			const oDeleteFlexObjectsStub = sandbox.stub(FlexObjectManager, "deleteFlexObjects");
+			const oDestroyAppliedCustomDataSpy = sandbox.spy(FlexCustomData, "destroyAppliedCustomData");
 
 			return PersistenceWriteAPI.remove(mPropertyBag)
 			.then(function() {
 				assert.ok(
-					oDeleteChangesStub.calledWith(mPropertyBag.flexObjects),
-					"then the flex persistence was called with correct parameters"
+					oDeleteFlexObjectsStub.calledWith({
+						reference: sReference, flexObjects: mPropertyBag.flexObjects
+					}), "then the flex persistence was called with correct parameters"
 				);
 				assert.ok(
 					oDestroyAppliedCustomDataSpy.notCalled,
@@ -725,8 +688,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when remove is called for flex objects and descriptor changes together", function(assert) {
-			var sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
-			var mPropertyBag = {
+			const sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
+			const mPropertyBag = {
 				flexObjects: [{
 					getSelector() {
 						return "selector1";
@@ -743,10 +706,10 @@ sap.ui.define([
 				}],
 				selector: this.vSelector
 			};
-			var oElement = { type: "element" };
-			var oAppComponent = {id: "appComponent"};
+			const oElement = { type: "element" };
+			const oAppComponent = {id: sReference};
 
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(Utils, "getAppComponentForSelector")
 			.withArgs(mPropertyBag.selector)
 			.returns(oAppComponent);
@@ -754,8 +717,8 @@ sap.ui.define([
 			sandbox.stub(JsControlTreeModifier, "bySelector")
 			.withArgs(mPropertyBag.flexObjects[0].getSelector(), oAppComponent).returns(oElement);
 
-			var oDestroyAppliedCustomDataStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
-			var oDeleteChangesStub = sandbox.stub(ChangePersistence.prototype, "deleteChanges");
+			const oDestroyAppliedCustomDataStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
+			const oDeleteFlexObjectsStub = sandbox.stub(FlexObjectManager, "deleteFlexObjects");
 
 			return PersistenceWriteAPI.remove(mPropertyBag)
 			.then(function() {
@@ -768,14 +731,15 @@ sap.ui.define([
 					"then DestroyAppliedCustomData was only called for the first flex object"
 				);
 				assert.ok(
-					oDeleteChangesStub.calledWith(mPropertyBag.flexObjects),
-					"then the flex persistence was called with correct parameters"
+					oDeleteFlexObjectsStub.calledWith({
+						reference: sReference, flexObjects: mPropertyBag.flexObjects
+					}), "then the flex persistence was called with correct parameters"
 				);
 			});
 		});
 
 		QUnit.test("when remove is called with change and flexObjects parameters", function(assert) {
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			var mPropertyBag = {
 				change: {},
 				flexObjects: [],
@@ -1086,12 +1050,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("When setAdaptationLayer is called", function(assert) {
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			var oSpySetInfoSession = sandbox.spy(FlexInfoSession, "setByReference");
 			PersistenceWriteAPI.setAdaptationLayer("CUSTOMER", {id: "someControl"});
 			assert.deepEqual(
 				oSpySetInfoSession.args[0],
-				[{adaptationLayer: "CUSTOMER"}, "appComponentId"],
+				[{adaptationLayer: "CUSTOMER"}, sReference],
 				"then the flex info session set function is called correctly"
 			);
 		});
