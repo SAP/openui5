@@ -17,6 +17,8 @@
 			//create the list
 			var oList = new sap.m.List({
 			});
+			var oList2 = new sap.m.List({
+			});
 
 			var data = {
 				navigation : [ {
@@ -113,6 +115,7 @@
 			}
 
 			bindListData(data, oItemTemplate1, oList)
+			bindListData(data, oItemTemplate1, oList2)
 			//end of the list creation
 
 			var oBeginButton = new sap.m.Button("actionButton1",{
@@ -131,7 +134,27 @@
 				}
 			});
 
+			var oBeginButtonFooter = new sap.m.Button("longFooterButton1", {
+				text: "Create Temporary Work Schedule",
+				type: sap.m.ButtonType.Reject,
+				press: function () {
+					oResponsivePopoverFooter.setShowCloseButton(true);
+				}
+			});
+
+			var oEndButtonFooter = new sap.m.Button({
+				text: "Edit Temporary Work Schedule",
+				type: sap.m.ButtonType.Accept,
+				press: function () {
+					oResponsivePopoverFooter.setShowCloseButton(false);
+				}
+			});
+
 			var oInvisibleText = new sap.ui.core.InvisibleText({text: "I have a hidden label"});
+			var spacer = new sap.m.ToolbarSpacer({})
+			var footer = new sap.m.OverflowToolbar({
+				content: [spacer, oBeginButtonFooter, oEndButtonFooter]
+			});
 
 			var oResponsivePopover = new sap.m.ResponsivePopover("popoverBottom", {
 				placement: sap.m.PlacementType.Bottom,
@@ -158,10 +181,41 @@
 				ariaLabelledBy: oInvisibleText.getId()
 			});
 
+			var oResponsivePopoverFooter = new sap.m.ResponsivePopover("popoverFooterBottom", {
+				placement: sap.m.PlacementType.Bottom,
+				title: "I have a footer now ",
+				showHeader: true,
+				horizontalScrolling: false,
+				beforeOpen: function (oEvent) {
+					jQuery.sap.log.info("before popover opens!!!");
+				},
+				afterOpen: function (oEvent) {
+					jQuery.sap.log.info("popover is opened finally!!!");
+				},
+				beforeClose: function (oEvent) {
+					jQuery.sap.log.info("before popover closes!!!");
+				},
+				afterClose: function (oEvent) {
+					jQuery.sap.log.info("popover is closed properly!!!");
+				},
+				content: [
+					oList2
+				],
+				ariaLabelledBy: oInvisibleText.getId(),
+				footer: footer
+			});
+
 			var oButton = new sap.m.Button("btnPopoverBottom", {
 				text : "Popover Bottom",
 				press : function() {
 					oResponsivePopover.openBy(this);
+				}
+			});
+
+			var oButtonFooter = new sap.m.Button("btnPopoverBottomFooter", {
+				text: "Popover Footer",
+				press: function () {
+					oResponsivePopoverFooter.openBy(this);
 				}
 			});
 
@@ -335,7 +389,7 @@
 			var page = new sap.m.Page("page1", {
 				title:"Page 1",
 				content: [
-					oButton, oButton1, oButton2, oInvisibleText
+					oButton, oButton1, oButton2, oButtonFooter, oInvisibleText
 				]
 			});
 
