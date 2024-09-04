@@ -211,7 +211,7 @@ sap.ui.define([
 	FlexObject.prototype.setContent = function(oContent, bSkipStateChange) {
 		this.setProperty("content", oContent);
 		if (!bSkipStateChange) {
-			this.setState(States.LifecycleState.DIRTY);
+			this.setState(States.LifecycleState.UPDATED);
 		}
 		return this;
 	};
@@ -239,7 +239,7 @@ sap.ui.define([
 		// flex object state cannot move from NEW to DIRTY directly
 		if (
 			sCurrentState === States.LifecycleState.NEW
-			&& sNewState === States.LifecycleState.DIRTY
+			&& sNewState === States.LifecycleState.UPDATED
 		) {
 			return false;
 		}
@@ -357,7 +357,7 @@ sap.ui.define([
 		oTexts[sTextId] = { ...oTexts[sTextId], ...oNewText };
 		this.setTexts(oTexts);
 		if (!bSkipStateChange) {
-			this.setState(States.LifecycleState.DIRTY);
+			this.setState(States.LifecycleState.UPDATED);
 		}
 		return this;
 	};

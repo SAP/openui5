@@ -7,9 +7,10 @@ sap.ui.define([], function() {
 	return {
 		LifecycleState: {
 			NEW: "NEW",
-			PERSISTED: "NONE",
-			DELETED: "DELETE",
-			DIRTY: "UPDATE"
+			PERSISTED: "PERSISTED",
+			DELETED: "DELETED",
+			DIRTY: "UPDATED", // deprecated, use UPDATED
+			UPDATED: "UPDATED"
 		},
 		ApplyState: {
 			INITIAL: "initial",

@@ -392,7 +392,7 @@ sap.ui.define([
 				oChange.condenserState = "update";
 			}
 			oCondenserInfo.update(oChange, oUpdateCondenserInfo.updateContent);
-			oChange.setState(States.LifecycleState.DIRTY);
+			oChange.setState(States.LifecycleState.UPDATED);
 			delete mTypes[CondenserUtils.NOT_INDEX_RELEVANT][CondenserClassification.Update][oCondenserInfo.uniqueKey];
 		}
 	}
@@ -529,7 +529,7 @@ sap.ui.define([
 						});
 					});
 				} else {
-					oUpdateChange.setState(States.LifecycleState.DIRTY);
+					oUpdateChange.setState(States.LifecycleState.UPDATED);
 				}
 				oUpdateChange.condenserState = "update";
 			}

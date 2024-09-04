@@ -370,7 +370,7 @@ sap.ui.define([
 			if (sState === "update") {
 				// Changes can't be directly set to "dirty" from "new"
 				aChanges[i].setState(States.LifecycleState.PERSISTED);
-				aChanges[i].setState(States.LifecycleState.DIRTY);
+				aChanges[i].setState(States.LifecycleState.UPDATED);
 			}
 			aChanges[i].condenserState = sState;
 		});

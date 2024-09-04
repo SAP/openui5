@@ -586,7 +586,7 @@ sap.ui.define([
 					});
 					assert.propEqual(
 						aChangeStates,
-						[States.LifecycleState.DIRTY, States.LifecycleState.DIRTY, States.LifecycleState.NEW],
+						[States.LifecycleState.UPDATED, States.LifecycleState.UPDATED, States.LifecycleState.NEW],
 						"all remaining changes have the correct change state"
 					);
 					assert.propEqual(aCondenserStates, ["update", "update", "select"], "all remaining changes have the correct condenser state");
@@ -1016,7 +1016,7 @@ sap.ui.define([
 				);
 				assert.strictEqual(
 					aRemainingChanges[0].getState(),
-					bPersistedChanges ? States.LifecycleState.DIRTY : States.LifecycleState.NEW,
+					bPersistedChanges ? States.LifecycleState.UPDATED : States.LifecycleState.NEW,
 					"the lifecycle state is set correctly"
 				);
 				assert.strictEqual(aRemainingChanges[0].getContent().url, "https://www.example.com", "the url got updated");
@@ -1030,7 +1030,7 @@ sap.ui.define([
 				);
 				assert.strictEqual(
 					aRemainingChanges[1].getState(),
-					bPersistedChanges ? States.LifecycleState.DIRTY : States.LifecycleState.NEW,
+					bPersistedChanges ? States.LifecycleState.UPDATED : States.LifecycleState.NEW,
 					"the lifecycle state is set correctly"
 				);
 				assert.strictEqual(aRemainingChanges[1].getContent().url, "https://www.example.com", "the url got updated");

@@ -281,7 +281,7 @@ sap.ui.define([
 			assert.strictEqual(FlexObjectState.getDirtyFlexObjects(sReference).length, 0, "initially there are no dirty changes");
 			aFlexObjects[0].setState(States.LifecycleState.DELETED);
 			aFlexObjects[2].setState(States.LifecycleState.NEW);
-			aFlexObjects[4].setState(States.LifecycleState.DIRTY);
+			aFlexObjects[4].setState(States.LifecycleState.UPDATED);
 			oDataSelector.checkUpdate();
 			assert.strictEqual(FlexObjectState.getDirtyFlexObjects(sReference).length, 3, "then there are three dirty changes");
 		});
