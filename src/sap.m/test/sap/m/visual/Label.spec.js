@@ -259,4 +259,20 @@ describe("sap.m.Label", function() {
 			expect(takeScreenshot(lbl)).toLookAs("32_label_required_colon");
 		});
 	});
+
+	it("should visualize label with asterisk  with truncated text", function () {
+		var lbl = element(by.id('reqLabelParentWidth'));
+
+		browser.executeScript("document.getElementById('reqLabelParentWidth').scrollIntoView()").then(function () {
+			expect(takeScreenshot(lbl)).toLookAs("33_label_required_parent_width");
+		});
+	});
+
+	it("should visualize label with asterisk and colon with truncated text", function () {
+		var lbl = element(by.id('reqColonLabelParentWidth'));
+
+		browser.executeScript("document.getElementById('reqColonLabelParentWidth').scrollIntoView()").then(function () {
+			expect(takeScreenshot(lbl)).toLookAs("34_label_required_colon_parent_width");
+		});
+	});
 });
