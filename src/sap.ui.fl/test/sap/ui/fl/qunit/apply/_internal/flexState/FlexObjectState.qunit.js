@@ -245,17 +245,19 @@ sap.ui.define([
 		});
 
 		QUnit.test("getAllApplicableUIChanges", function(assert) {
-			FlexState.addDirtyFlexObject(sReference, FlexObjectFactory.createUIChange({
-				fileName: "setDefaultChange",
-				fileType: "ctrl_variant_management_change",
-				selector: { id: "foo"},
-				changeType: "setDefault"
-			}));
-			FlexState.addDirtyFlexObject(sReference, FlexObjectFactory.createUIChange({
-				fileName: "setFavoriteChange",
-				fileType: "ctrl_variant_change",
-				changeType: "setFavorite"
-			}));
+			FlexState.addDirtyFlexObjects(sReference, [
+				FlexObjectFactory.createUIChange({
+					fileName: "setDefaultChange",
+					fileType: "ctrl_variant_management_change",
+					selector: { id: "foo"},
+					changeType: "setDefault"
+				}),
+				FlexObjectFactory.createUIChange({
+					fileName: "setFavoriteChange",
+					fileType: "ctrl_variant_change",
+					changeType: "setFavorite"
+				})
+			]);
 			const aAllApplicableUIChanges = FlexObjectState.getAllApplicableUIChanges(sReference);
 			assert.strictEqual(aAllApplicableUIChanges.length, 5, "all UIChanges are returned");
 		});

@@ -296,15 +296,17 @@ sap.ui.define([
 		const aDirtyFlexObjects = FlexObjectState.getDirtyFlexObjects(mPropertyBag.reference);
 
 		const aToBeDeletedFlexObjects = [];
+		const aToBeRemovedDirtyFlexObjects = [];
 		mPropertyBag.flexObjects.forEach(function(oFlexObject) {
 			if (aDirtyFlexObjects.indexOf(oFlexObject) > -1 && oFlexObject.getState() === States.LifecycleState.NEW) {
-				FlexState.removeDirtyFlexObject(mPropertyBag.reference, oFlexObject);
+				aToBeRemovedDirtyFlexObjects.push(oFlexObject);
 			} else {
 				oFlexObject.markForDeletion();
 				aToBeDeletedFlexObjects.push(oFlexObject);
 			}
 			removeFlexObjectFromDependencyHandler(mPropertyBag.reference, oFlexObject);
 		});
+		FlexState.removeDirtyFlexObjects(mPropertyBag.reference, aToBeRemovedDirtyFlexObjects);
 		FlexObjectManager.addDirtyFlexObjects(mPropertyBag.reference, aToBeDeletedFlexObjects);
 	};
 

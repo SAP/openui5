@@ -412,7 +412,7 @@ sap.ui.define([
 	}
 
 	ChangePersistence.prototype.removeChange = function(oChange) {
-		FlexState.removeDirtyFlexObject(this._mComponent.name, oChange);
+		FlexState.removeDirtyFlexObjects(this._mComponent.name, [oChange]);
 		this._deleteChangeInMap(oChange);
 	};
 
