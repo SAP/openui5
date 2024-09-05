@@ -22,7 +22,6 @@ sap.ui.define([
 	"sap/ui/core/delegate/ScrollEnablement",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/util/ResponsivePaddingsEnablement",
 	"sap/ui/Device",
@@ -56,7 +55,6 @@ function(
 	ScrollEnablement,
 	RenderManager,
 	InvisibleText,
-	ResizeHandler,
 	Parameters,
 	ResponsivePaddingsEnablement,
 	Device,
@@ -590,11 +588,11 @@ function(
 				}
 
 				//deregister the content resize handler before repositioning
-				that._deregisterContentResizeHandler();
+				that._deregisterResizeObserver();
 				Popup.prototype._applyPosition.call(this, oPosition);
 
 				//register the content resize handler
-				that._registerContentResizeHandler();
+				that._registerResizeObserver();
 			};
 
 			if (Dialog._bPaddingByDefault) {
@@ -675,8 +673,8 @@ function(
 
 		Dialog.prototype.exit = function () {
 			InstanceManager.removeDialogInstance(this);
-			this._deregisterContentResizeHandler();
-			this._deregisterResizeHandler();
+			this._deregisterResizeObserver();
+			this._deregisterWithinAreaResizeObserver();
 
 			if (this.oPopup) {
 				this.oPopup.detachOpened(this._handleOpened, this);
@@ -762,7 +760,7 @@ function(
 
 			oPopup.open();
 
-			this._registerResizeHandler();
+			this._registerWithinAreaResizeObserver();
 
 			InstanceManager.addDialogInstance(this);
 
@@ -778,10 +776,7 @@ function(
 		 */
 		Dialog.prototype.close = function () {
 			this._bOpenAfterClose = false;
-
-			this.$().removeClass('sapDialogDisableTransition');
-
-			this._deregisterResizeHandler();
+			this._deregisterWithinAreaResizeObserver();
 
 			var oPopup = this.oPopup;
 
@@ -795,7 +790,7 @@ function(
 				this._oManuallySetPosition = null;
 				this._oManuallySetSize = null;
 				oPopup.close();
-				this._deregisterContentResizeHandler();
+				this._deregisterResizeObserver();
 			}
 			return this;
 		};
@@ -1091,7 +1086,6 @@ function(
 				iMaxHeight;
 
 			this._bDisableRepositioning = true;
-			$this.addClass('sapDialogDisableTransition');
 
 			if (bResize) {
 				this._oManuallySetSize = true;
@@ -1689,27 +1683,32 @@ function(
 		 *
 		 * @private
 		 */
-		Dialog.prototype._deregisterResizeHandler = function () {
+		Dialog.prototype._deregisterWithinAreaResizeObserver = function () {
 			var oWithin = Popup.getWithinAreaDomRef();
 
 			if (oWithin === window) {
 				Device.resize.detachHandler(this._onResize, this);
 			} else {
-				ResizeHandler.deregister(this._withinResizeListenerId);
-				this._withinResizeListenerId = null;
+				this._oWithinAreaResizeObserver.disconnect();
+				this._oWithinAreaResizeObserver = null;
 			}
 		};
 
 		/**
 		 * @private
 		 */
-		Dialog.prototype._registerResizeHandler = function () {
+		Dialog.prototype._registerWithinAreaResizeObserver = function () {
 			var oWithin = Popup.getWithinAreaDomRef();
 
 			if (oWithin === window) {
 				Device.resize.attachHandler(this._onResize, this);
 			} else {
-				this._withinResizeListenerId = ResizeHandler.register(oWithin, this._onResize.bind(this));
+				this._oWithinAreaResizeObserver = new ResizeObserver(() => {
+					window.requestAnimationFrame(() => {
+						this._onResize();
+					});
+				});
+				this._oWithinAreaResizeObserver.observe(oWithin);
 			}
 
 			//set the initial size of the content container so when a dialog with large content is open there will be a scroller
@@ -1719,10 +1718,10 @@ function(
 		/**
 		 * @private
 		 */
-		Dialog.prototype._deregisterContentResizeHandler = function () {
-			if (this._sContentResizeListenerId) {
-				ResizeHandler.deregister(this._sContentResizeListenerId);
-				this._sContentResizeListenerId = null;
+		Dialog.prototype._deregisterResizeObserver = function () {
+			if (this._oResizeObserver) {
+				this._oResizeObserver.disconnect();
+				this._oResizeObserver = null;
 			}
 		};
 
@@ -1730,9 +1729,15 @@ function(
 		 *
 		 * @private
 		 */
-		Dialog.prototype._registerContentResizeHandler = function() {
-			if (!this._sContentResizeListenerId) {
-				this._sContentResizeListenerId = ResizeHandler.register(this.getDomRef("scrollCont"), jQuery.proxy(this._onResize, this));
+		Dialog.prototype._registerResizeObserver = function() {
+			if (!this._oResizeObserver) {
+				this._oResizeObserver = new ResizeObserver(() => {
+					window.requestAnimationFrame(() => {
+						this._onResize();
+					});
+				});
+
+				this._oResizeObserver.observe(this.getDomRef("scrollCont"));
 			}
 
 			//set the initial size of the content container so when a dialog with large content is open there will be a scroller
@@ -2169,7 +2174,6 @@ function(
 
 				if (isHeaderClicked(e.target) && this.getDraggable() || bResize) {
 					that._bDisableRepositioning = true;
-					that._$dialog.addClass('sapDialogDisableTransition');
 				}
 
 				if (isHeaderClicked(e.target) && this.getDraggable()) {
