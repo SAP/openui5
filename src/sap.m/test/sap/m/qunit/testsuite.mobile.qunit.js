@@ -2422,6 +2422,18 @@ sap.ui.define([
 					language: "en-US"
 				}
 			},
+			"plugins/UploadSetwithTable": {
+				title: "Test Page for sap.m.plugins.UploadSetwithTable",
+				ui5: {
+					libs: ["sap.m", "sap.ui.table", "sap.ui.mdc"]
+				},
+				coverage: {
+					only: ["sap/m/plugins/UploadSetwithTable"]
+				},
+				module: [
+					"./plugins/UploadSetwithTable/UploadSetwithTable.qunit"
+				]
+			},
 			/**
 			 * @deprecated Since 1.28
 			 */
