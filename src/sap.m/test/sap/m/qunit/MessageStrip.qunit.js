@@ -193,7 +193,6 @@ sap.ui.define([
 		oSetterSpy.restore();
 	});
 
-
 	QUnit.test("setText and enableFormattedText", async function (oAssert) {
 		// Arrange
 		var sTestString = "<strong>Warning:</strong> something went wrong",
@@ -253,6 +252,19 @@ sap.ui.define([
 
 		// Cleanup
 		oSpy.restore();
+	});
+
+	QUnit.test("controls aggregation should be forwarded to the sap.m.FormattedText control", async function (assert) {
+		// arrange
+		this.oMessageStrip.setEnableFormattedText(true);
+		this.oMessageStrip.addControl(new Link({text: "Link 1"}));
+		this.oMessageStrip.addControl(new Link({text: "Link 2"}));
+		this.oMessageStrip.setText("Message Strip with multiple links: %%0 %%1");
+		await nextUIUpdate();
+
+		// assert
+		assert.strictEqual(this.oMessageStrip.getAggregation("_formattedText").getControls().length, 2, "links should be forwarded to the internal aggregation");
+		assert.strictEqual(this.oMessageStrip.getDomRef().querySelectorAll(".sapMLnk").length, 2, "links should be rendered in the DOM");
 	});
 
 	QUnit.module("Data binding", {
