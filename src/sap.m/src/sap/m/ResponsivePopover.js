@@ -185,6 +185,12 @@ sap.ui.define([
 				endButton : {type : "sap.m.Button", multiple : false},
 
 				/**
+				 * The footer of this popover.
+				 * @since 1.129
+				 */
+				footer: {type: "sap.m.Toolbar", multiple: false},
+
+				/**
 				 * The internal popup instance which is either a dialog on phone or a popover on the rest of platforms
 				 */
 				_popup : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}

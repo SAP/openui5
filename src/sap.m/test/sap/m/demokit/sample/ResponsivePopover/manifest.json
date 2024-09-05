@@ -24,6 +24,7 @@
 					"view/ResponsivePopover.view.xml",
 					"controller/ResponsivePopover.controller.js",
 					"view/Popover.fragment.xml",
+					"view/PopoverFooter.fragment.xml",
 					"manifest.json"
 				]
 			}
