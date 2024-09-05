@@ -1417,16 +1417,18 @@ sap.ui.define([
 		 *   default
 		 * @param {map} mFixture
 		 *   The fixture. See {@link sap.ui.test.TestUtils.useFakeServer}
+		 * @param {object[]} [aRegExps]
+		 *   The reg exp fixture. See {@link sap.ui.test.TestUtils.useFakeServer}
 		 * @returns {sap.ui.model.odata.v4.ODataModel} The model
 		 */
-		createModel : function (sServiceUrl, mModelParameters, mFixture) {
+		createModel : function (sServiceUrl, mModelParameters, mFixture, aRegExps) {
 			var mDefaultParameters = {
 					operationMode : OperationMode.Server,
 					serviceUrl : sServiceUrl
 				};
 
 			mFixture = TestUtils.normalizeFixture(mFixture, sServiceUrl);
-			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit", mFixture, [/*aRegExps*/],
+			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit", mFixture, aRegExps,
 				sServiceUrl, /*bStrict*/true);
 
 			return new ODataModel(Object.assign(mDefaultParameters, mModelParameters));
@@ -1495,14 +1497,16 @@ sap.ui.define([
 		 * @param {object} [mModelParameters] Map of parameters for model construction...
 		 * @param {map} [mAdditionalFixture]
 		 *   The additional fixture. See {@link sap.ui.test.TestUtils.useFakeServer}
+		 * @param {object[]} [aRegExps]
+		 *   The reg exp fixture. See {@link sap.ui.test.TestUtils.useFakeServer}
 		 * @returns {ODataModel} The model
 		 */
-		createSalesOrdersModel : function (mModelParameters, mAdditionalFixture) {
+		createSalesOrdersModel : function (mModelParameters, mAdditionalFixture, aRegExps) {
 			return this.createModel(sSalesOrderService, mModelParameters,
 				Object.assign({
 					"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata"
 						: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"}
-				}, mAdditionalFixture));
+				}, mAdditionalFixture), aRegExps);
 		},
 
 		/**
@@ -13124,6 +13128,79 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Error response for a change set using responses from TestUtils. Make the
+	// buildResponse callback fail with an error. See that the error response created by TestUtils
+	// can be processed by _Helper.decomposeError.
+	// CI: 114
+	QUnit.test("Internal error in TestUtils for a change set", async function (assert) {
+		const oModel = this.createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}, {
+				"SalesOrderList?$select=GrossAmount,SalesOrderID&$skip=0&$top=100" : {
+					code : 200,
+					message : {
+						value : [
+							{GrossAmount : "4.1", SalesOrderID : "41"},
+							{GrossAmount : "4.2", SalesOrderID : "42"}
+						]
+					}
+				}
+			}, [{
+				regExp : /^PATCH .*SalesOrderList\('(\d+)'\)/,
+				response : {
+					buildResponse : function (aMatches) {
+						if (aMatches[1] === "42") {
+							throw new Error("failed intentionally");
+						}
+						return {code : 204};
+					}
+				}
+			}]);
+		oModel.$keepSend = true; // do not stub sendBatch/-Request
+		const sView = `
+<Table id="table" items="{/SalesOrderList}">
+	<Input id="amount" value="{GrossAmount}"/>
+</Table>`;
+
+		this.expectChange("amount", ["4.10", "4.20"]);
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectChange("amount", ["4.11", "4.22"])
+			.expectMessages([{
+				code : "TestUtils",
+				message : "failed intentionally",
+				persistent : true,
+				technical : true,
+				type : "Error"
+			}]);
+
+		this.oLogMock.expects("error") // from TestUtils
+			.withExactArgs("PATCH /sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002"
+				+ "/SalesOrderList('42')",
+				sinon.match(function (vDetails) {
+					return vDetails instanceof Error && vDetails.message === "failed intentionally";
+				}),
+				"sap.ui.test.TestUtils");
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to update path /SalesOrderList('41')/GrossAmount",
+				sinon.match("failed intentionally"), sContext);
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to update path /SalesOrderList('42')/GrossAmount",
+				sinon.match("failed intentionally"), sContext);
+
+		const aTableItems = this.oView.byId("table").getItems();
+		aTableItems[0].getCells()[0].getBinding("value").setValue("4.11");
+		aTableItems[1].getCells()[0].getBinding("value").setValue("4.22");
+
+		await Promise.all([
+			oModel.submitBatch("update"),
+			this.waitForChanges(assert)
+		]);
 	});
 
 	//*********************************************************************************************
