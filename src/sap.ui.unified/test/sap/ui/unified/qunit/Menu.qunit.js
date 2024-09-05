@@ -1670,4 +1670,67 @@ sap.ui.define([
 		oIsOpenStub.restore();
 		oInvalidateSpy.restore();
 	});
+
+	QUnit.test("'closed' event", async function(assert) {
+		// arrange
+		var oMenu = new Menu("mainMenu", {
+				items: [
+					new MenuItem("mainItem", {
+						text: "Item 1"
+					}),
+					new MenuItem("mainSubmenu", {
+						text: "Item 2",
+						submenu: new Menu("subMenu", {
+							items: [
+								new MenuItem("subItem", {
+									text: "Item 2.1"
+								}),
+								new MenuItem({
+									text: "Item 2.2"
+								})
+							]
+						})
+					}),
+					new MenuItem({
+						text: "Item 3"
+					})
+				]
+			}),
+			oClosedSpy = this.spy(oMenu, "fireClosed");
+
+		oMenu.placeAt("qunit-fixture");
+		oMenu.open();
+		await nextUIUpdate();
+
+		// act
+		qutils.triggerKeydown("mainMenu", "ESCAPE");
+
+		// assert
+		assert.ok(oClosedSpy.calledOnce, "'closed' event is fired on pressign ESCAPE");
+
+		// arrange
+		oMenu.open();
+		await nextUIUpdate();
+
+		// act
+		qutils.triggerEvent("click", "mainItem", {});
+
+		// assert
+		assert.equal(oClosedSpy.callCount, 2, "'closed' event is fired on item selection");
+
+		// arrange
+		oMenu.open();
+		await nextUIUpdate();
+
+		// act
+		qutils.triggerEvent("click", "mainSubmenu", {});
+		await nextUIUpdate();
+		qutils.triggerEvent("click", "subItem", {});
+
+		// assert
+		assert.equal(oClosedSpy.callCount, 3, "'closed' event is fired on submenu item selection");
+
+		// clean
+		oMenu.destroy();
+	});
 });
