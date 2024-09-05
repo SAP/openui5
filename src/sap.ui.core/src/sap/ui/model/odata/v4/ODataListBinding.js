@@ -3236,12 +3236,12 @@ sap.ui.define([
 	// @override sap.ui.model.Binding#initialize
 	ODataListBinding.prototype.initialize = function () {
 		if (this.isResolved()) {
+			this.checkDataState();
 			if (this.isRootBindingSuspended()) {
 				this.sResumeChangeReason = this.sChangeReason === "AddVirtualContext"
 					? ChangeReason.Change
 					: ChangeReason.Refresh;
 			} else if (this.sChangeReason === "AddVirtualContext") {
-				this.checkDataState();
 				this._fireChange({
 					detailedReason : "AddVirtualContext",
 					reason : ChangeReason.Change
@@ -4398,7 +4398,6 @@ sap.ui.define([
 		this.sResumeAction = undefined;
 		this.sResumeChangeReason = undefined;
 
-		this.checkDataState();
 		if (bRefresh) {
 			if (this.mParameters.$$clearSelectionOnFilter
 				&& sResumeChangeReason === ChangeReason.Filter) {

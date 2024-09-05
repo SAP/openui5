@@ -65165,19 +65165,23 @@ make root = ${bMakeRoot}`;
 	// Scenario: Removing a message from the model causes it to disappear from DataStateIndicator's
 	// message strip after a table rebind. The table has an absolute binding.
 	// SNOW: DINC0147646
+	//
+	// Do it also w/o autoExpandSelect (SNOW: DINC0232565)
 [false, true].forEach(function (bSuspended) {
-	const sTitle = "DINC0147646: DataStateIndicator, rebind and messages, absolute binding"
-		+ ", suspended: " + bSuspended;
+	[false, true].forEach(function (bAutoExpandSelect) {
+		const sTitle = "DINC0147646: DataStateIndicator, rebind and messages, absolute binding"
+			+ ", suspended: " + bSuspended + ", autoExpandSelect=" + bAutoExpandSelect;
 
 	QUnit.test(sTitle, async function (assert) {
-		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const oModel = this.createTeaBusiModel(bAutoExpandSelect ? {autoExpandSelect : true} : {});
 		const sView = `
 <Table id="table" items="{/TEAMS}">
 	<dependents><plugins:DataStateIndicator/></dependents>
 	<Input id="id" value="{Team_Id}"/>
 </Table>`;
 
-		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
+		let sSelect = bAutoExpandSelect ? "$select=Team_Id&" : "";
+		this.expectRequest(`TEAMS?${sSelect}$skip=0&$top=100`, {
 				value : [
 					{Team_Id : "1"}
 				]
@@ -65210,12 +65214,13 @@ make root = ${bMakeRoot}`;
 		assert.strictEqual(oMessageStrip.getText(), "Some message");
 		assert.strictEqual(oMessageStrip.getVisible(), true);
 
-		if (bSuspended) {
+		if (bSuspended && bAutoExpandSelect) {
 			this.expectCanceledError("Cache discarded as a new cache has been created");
 		}
 		const sId0 = this.addToTable(oTable, "Name", assert, bSuspended); // Note: causes a "rebind"
 
-		this.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", {
+		sSelect = bAutoExpandSelect ? "$select=Name,Team_Id&" : "";
+		this.expectRequest(`TEAMS?${sSelect}$skip=0&$top=100`, {
 				value : [
 					{Name : "Team #01", Team_Id : "1"}
 				]
@@ -65244,6 +65249,7 @@ make root = ${bMakeRoot}`;
 
 		assert.strictEqual(oMessageStrip.getText(), "");
 		assert.strictEqual(oMessageStrip.getVisible(), false);
+	});
 	});
 });
 
