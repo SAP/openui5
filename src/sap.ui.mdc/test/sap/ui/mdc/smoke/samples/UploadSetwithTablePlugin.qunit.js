@@ -15,7 +15,7 @@ sap.ui.define([
 		}
 	});
 
-	const sSampleResource = "test-resources/sap/ui/mdc/demokit/sample/UploadSetwithTablePlugin/index.html";
+	const sSampleResource = "test-resources/sap/ui/mdc/demokit/sample/table/UploadSetwithTablePlugin/index.html";
 	const sTableId = "container-mdc.sample---sample--table-uploadSet";
 	const sDownloadButtonId = "container-mdc.sample---sample--downloadSelectedButton-action";
 
