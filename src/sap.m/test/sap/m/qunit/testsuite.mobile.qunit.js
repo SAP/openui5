@@ -816,7 +816,10 @@ sap.ui.define([
 				}
 			},
 			NavContainer: {
-				title: "QUnit Page for sap.m.NavContainer"
+				title: "QUnit Page for sap.m.NavContainer",
+				ui5: {
+					theme: "sap_horizon"
+				}
 			},
 			NewsContent: {
 				title: "sap.m.NewsContent",
