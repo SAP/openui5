@@ -54845,6 +54845,31 @@ make root = ${bMakeRoot}`;
 				oModel.delete("/SalesOrderList('1')"),
 				that.waitForChanges(assert, "delete")
 			]);
+		}).then(function () {
+			that.expectRequest({
+					method : "DELETE",
+					headers : {"If-Match" : "*"},
+					url : "SalesOrderList('42')?sap-client=123"
+				}, createError())
+				.expectMessages([{
+					message : "HTTP request was not processed because $batch failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+			that.oLogMock.expects("error").withArgs("Failed to delete /SalesOrderList(\'42\')");
+
+			// code under test, test error handling for a failed $batch with $single groupId
+			const oPromise = oModel.delete("/SalesOrderList('42')", "$single").catch((oError) => {
+				assert.strictEqual(oError.message,
+					"HTTP request was not processed because $batch failed");
+				assert.strictEqual(oError.cause.message, "Communication error: 500 ");
+			});
+
+			return Promise.all([
+				oPromise,
+				that.waitForChanges(assert, "delete via '$single'")
+			]);
 		});
 	});
 
