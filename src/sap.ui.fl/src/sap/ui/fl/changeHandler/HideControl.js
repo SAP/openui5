@@ -96,12 +96,33 @@ sap.ui.define([
 	};
 
 	HideControl.getChangeVisualizationInfo = function(oChange, oAppComponent) {
-		var oSelector = oChange.getSelector();
-		var oElement = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
-		return {
+		const oSelector = oChange.getSelector();
+		const oElement = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
+		const oReturn = {
 			affectedControls: [oSelector],
-			displayControls: [oElement.getParent().getId()]
+			updateRequired: true
 		};
+
+		function findFirstVisibleElement(oControl) {
+			if (!oControl) {
+				return null;
+			}
+
+			if (oControl.getVisible?.()) {
+				return oControl;
+			}
+
+			return findFirstVisibleElement(oControl.getParent());
+		}
+
+		// If the element is currently visible, the indicator should be on it (e.g. after the element is added again)
+		// Otherwise, the indicator should be on the first visible parent
+		const oFirstVisibleElement = findFirstVisibleElement(oElement);
+		if (oFirstVisibleElement) {
+			oReturn.displayControls = [oFirstVisibleElement.getId()];
+		}
+
+		return oReturn;
 	};
 
 	return HideControl;

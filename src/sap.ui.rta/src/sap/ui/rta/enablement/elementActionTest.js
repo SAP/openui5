@@ -266,13 +266,13 @@ sap.ui.define([
 				);
 			} else if (oAction.name === "createContainer" || oAction.name === "addIFrame") {
 				assert.ok(oAggregationDesignTimeMetadata.getAction(oAction.name, oControl),
-					`the ${oAction.name}action is available in the calculated designtime metadata during execution`);
+					`the ${oAction.name} action is available in the calculated designtime metadata during execution`);
 			} else if (oAction.name === "move") {
 				assert.ok(oElementDesignTimeMetadata.getAction(oAction.name, oMovedElement),
-					`the ${oAction.name}action is available in the calculated designtime metadata during execution`);
+					`the ${oAction.name} action is available in the calculated designtime metadata during execution`);
 			} else {
 				assert.ok(oElementDesignTimeMetadata.getAction(oAction.name, oControl),
-					`the ${oAction.name}action is available in the calculated designtime metadata during execution`);
+					`the ${oAction.name} action is available in the calculated designtime metadata during execution`);
 			}
 		}
 
@@ -466,7 +466,10 @@ sap.ui.define([
 			const sDisplayElementId = oChangeVisualizationInput.displayElementId;
 			const sSelector = sDisplayElementId ? oView.createId(sDisplayElementId) : oView.getId();
 			assert.ok(oData[sSelector] && oData[sSelector].length, "there is a change indicator at the correct element");
-			const oRegisteredChange = oChangeIndicatorRegistry.getAllRegisteredChanges()[0];
+			const aRegisteredChanges = oChangeIndicatorRegistry.getAllRegisteredChanges();
+			// Compare the visualization info for the last change
+			const aRelevantChange = aChanges[aChanges.length - 1];
+			const oRegisteredChange = aRegisteredChanges.find((oChange) => oChange.change.getId() === aRelevantChange.getId());
 			const mVisualizationInfo = oChangeVisualizationInput.info;
 
 			function mapIds(aIds) {

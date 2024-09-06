@@ -219,7 +219,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when getChangeVisualization is called", async (assert) => {
+		QUnit.test("when getChangeVisualizationInfo is called", async (assert) => {
 			await this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag);
 			this.oChange.setRevertData("Button Old Text");
 			await this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag);
