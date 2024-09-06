@@ -427,13 +427,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("createOrUpdateMultiUnitPopover - use table with id", async function(assert) {
-		var oTable = new Table("TestTable");
+		const oTable = new Table("TestTable");
 		oTable.addStyleClass("sapUiSizeCompact");
 		oTable.placeAt("qunit-fixture");
 
 		await nextUIUpdate();
 
-		var oItemsBindingInfo = {
+		const oItemsBindingInfo = {
 			path: "/names",
 			filters: [
 				new Filter("SomeFilterPath", "EQ", "SomeValue"),
@@ -470,22 +470,22 @@ sap.ui.define([
 			]
 		});
 
-		var mSettings = {
+		const mSettings = {
 			control: oTable,
 			itemsBindingInfo: oItemsBindingInfo,
 			listItemContentTemplate: oTemplate
 		};
 
-		var oPopover = await Util.createOrUpdateMultiUnitPopover(oTable.getId() + "-multiUnitPopover", mSettings);
-		var oDetailsList = oPopover.getContent()[0];
-		var oDetailsListBindingInfo = oDetailsList.getBindingInfo("items");
+		const oPopover = await Util.createOrUpdateMultiUnitPopover(oTable.getId() + "-multiUnitPopover", mSettings);
+		const oDetailsList = oPopover.getContent()[0];
+		const oDetailsListBindingInfo = oDetailsList.getBindingInfo("items");
 
 		assert.ok(oPopover, "Popover was created");
 		assert.ok(oDetailsList, "List was created");
 
 		const oResourceBundle = Library.getResourceBundleFor("sap.m");
-		var sTitle = oResourceBundle.getText("TABLE_MULTI_GROUP_TITLE");
-		var sPlacement = "VerticalPreferredBottom";
+		const sTitle = oResourceBundle.getText("TABLE_MULTI_GROUP_TITLE");
+		const sPlacement = "VerticalPreferredBottom";
 
 		assert.equal(oPopover.getTitle(), sTitle, "Popover title is correct");
 		assert.equal(oPopover.getPlacement(), sPlacement, "Popover placement is correct");
@@ -494,10 +494,22 @@ sap.ui.define([
 		assert.deepEqual(oDetailsListBindingInfo.filters, oItemsBindingInfo.filters, "Filter values as expected");
 		assert.equal(oDetailsListBindingInfo.path, oItemsBindingInfo.path, "Binding path as expected");
 		assert.deepEqual(oDetailsListBindingInfo.parameters, oItemsBindingInfo.parameters, "Parameters as expected");
+		assert.equal(oDetailsListBindingInfo.template.getContent()[0].getId(), oTemplate.getId(), "Item template as expected");
 
 		assert.ok(oPopover.hasStyleClass("sapMResponsivePopover"), "Correct styleClass popover (sapMResponsivePopover)");
 		assert.ok(oPopover.hasStyleClass("sapMMultiUnitPopover"), "Correct styleClass popover (sapMMultiUnitPopover)");
 		assert.ok(oPopover.hasStyleClass("sapUiSizeCompact"), "Correct styleClass popover (sapUiSizeCompact)");
 		assert.ok(oDetailsList.hasStyleClass("sapUiContentPadding"), "Correct styleClass detailsList (sapUiContentPadding)");
+
+		const oTemplate2 = new Text();
+		mSettings.listItemContentTemplate = oTemplate2;
+		const oPopover2 = await Util.createOrUpdateMultiUnitPopover(oPopover, mSettings);
+		const oDetailsList2 = oPopover2.getContent()[0];
+		const oDetailsListBindingInfo2 = oDetailsList2.getBindingInfo("items");
+
+		assert.deepEqual(oPopover2, oPopover, "Popover instance is reused");
+		assert.deepEqual(oDetailsList2, oDetailsList, "List instance is reused");
+		// Item template should not be reused in case multiple columns are reusing the multi-unit popover
+		assert.equal(oDetailsListBindingInfo2.template.getContent()[0].getId(), oTemplate2.getId(), "Item template is not reused");
 	});
 });
