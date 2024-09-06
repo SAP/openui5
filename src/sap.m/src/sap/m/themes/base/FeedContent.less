@@ -31,8 +31,8 @@
 	white-space: nowrap;
 	max-width: 20.5rem;
 	line-height: 1.063rem;
-	font-size: @sapMFontSmallSize;
-	color: @sapUiTileTextColor;
+	font-size: var(--sapFontSmallSize);
+	color: var(--sapTile_TextColor);
 }
 
 .sapMFCValue {
@@ -46,12 +46,12 @@
 	max-width: 10.25rem;
 	min-width: 3rem;
 	float: right;
-	font-family: @sapUiFontHeaderFamily;
+	font-family: var(--sapFontHeaderFamily);
 	font-weight: @sapUiFontHeaderWeight;
 }
 
 .sapMFCCTxt > .sapMText {
-	cursor:inherit;
+	cursor: inherit;
 }
 
 .sapMFC:focus:not([tabindex]) {
@@ -60,33 +60,34 @@
 
 .sapMFCCTxt .sapMText {
 	font-size: @sapFontSize;
-	color: @sapUiTileTitleTextColor;
+	color: var(--sapTile_TitleTextColor);
 }
 
-.sapMGT.TwoByOne.sapMTileSmallPhone{
+.sapMGT.TwoByOne.sapMTileSmallPhone {
+
 	.sapMFCCTxt .sapMText {
-		font-size: @sapFontSmallSize;
+		font-size: var(--sapFontSmallSize);
 	}
 }
 
 .sapMFCValue.Neutral {
-	color: @sapUiNeutralText;
+	color: var(--sapNeutralTextColor);
 }
 
 .sapMFCValue.Good {
-	color: @sapUiPositiveText;
+	color: var(--sapPositiveTextColor);
 }
 
 .sapMFCValue.Critical {
-	color: @sapUiCriticalText;
+	color: var(--sapCriticalTextColor);
 }
 
 .sapMFCValue.Error {
-	color: @sapUiNegativeText;
+	color: var(--sapNegativeTextColor);
 }
 
 html.sap-desktop .sapMFC:focus {
-	outline: @sapUiContentFocusColor @sapUiContentFocusStyle @sapUiContentFocusWidth;
+	outline: var(--sapContent_FocusColor) var(--sapContent_FocusStyle) var(--sapContent_FocusWidth);
 }
 
 html.sap-desktop .sapMFC:focus:not([tabindex]) {
@@ -94,6 +95,7 @@ html.sap-desktop .sapMFC:focus:not([tabindex]) {
 }
 
 .sapMTileSmallPhone {
+
 	.sapMFC {
 		width: 17.75rem;
 		height: 3.438rem;
