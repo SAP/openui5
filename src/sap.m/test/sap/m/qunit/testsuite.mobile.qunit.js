@@ -2534,6 +2534,19 @@ sap.ui.define([
 				}
 			},
 
+			"plugins/UploadSetwithTable": {
+				title: "Test Page for sap.m.plugins.UploadSetwithTable",
+				ui5: {
+					libs: ["sap.m", "sap.ui.table", "sap.ui.mdc"]
+				},
+				coverage: {
+					only: ["sap/m/plugins/UploadSetwithTable"]
+				},
+				module: [
+					"./plugins/UploadSetwithTable/UploadSetwithTable.qunit"
+				]
+			},
+
 			"routing/async/Router": {
 				title: "QUnit Page for sap.m.routing.Router",
 				ui5: {

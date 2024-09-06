@@ -14,7 +14,9 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/m/ToolbarSpacer",
+	"sap/m/OverflowToolbar"
 ], function(
 	JSONModel,
 	StandardListItem,
@@ -30,7 +32,9 @@ sap.ui.define([
 	Page,
 	InvisibleText,
 	nextUIUpdate,
-	jQuery
+	jQuery,
+	ToolbarSpacer,
+	OverflowToolbar
 ) {
 	"use strict";
 
@@ -529,5 +533,44 @@ sap.ui.define([
 
 		// cleanup
 		oPopover.destroy();
+	});
+
+	QUnit.module("Footer", {
+		beforeEach: function () {
+			var oBeginButton = new Button({
+				text: "Action1",
+				type: ButtonType.Reject
+			});
+
+			var oEndButton = new Button({
+				text: "Action2",
+				type: ButtonType.Accept
+			});
+
+			var oSpacer = new ToolbarSpacer({});
+			this.oFooter = new OverflowToolbar({
+				content: [oSpacer, oBeginButton, oEndButton]
+			});
+
+			this.oControlProps = {
+				footer: this.oFooter
+			};
+		},
+		afterEach: function () {
+			if (this.oResponsivePopover && this.oResponsivePopover.isOpen()) {
+				this.oResponsivePopover.close();
+			}
+
+			// Cleanup
+			this.oResponsivePopover && this.oResponsivePopover.destroy();
+		}
+	});
+
+	QUnit.test("Forwarding", function(assert) {
+		// Act and Arrange
+		this.stub(Device, "system").value({ phone: true });
+		this.oResponsivePopover = new ResponsivePopover(this.oControlProps);
+
+		assert.strictEqual(this.oResponsivePopover._oControl.getFooter(), this.oFooter, "Footer is forwarded to the inner control");
 	});
 });

@@ -11,6 +11,11 @@
 				text="Show Dialog (phone) or Popover (Other)"
 				press="handleResponsivePopoverPress"
 				ariaHasPopup="Dialog" />
+
+			<Button
+				text="Popover with Custom Footer"
+				press="handleResponsivePopoverFooterPress"
+				ariaHasPopup="Dialog" />
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>
