@@ -22,7 +22,7 @@
 	background: transparent;
 }
 
-.sap-desktop .sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
+.sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
 	&:not(.sapMGTLineModePress):hover {
 		background: fade(@sapUiShellHoverBackground, 10);
 	}
@@ -73,7 +73,7 @@
 
 /************************ LINE MODE FLOATING VIEW *****************/
 
-.sapUiMedia-GenericTileDeviceSet-large.sap-desktop {
+.sapUiMedia-GenericTileDeviceSet-large {
 	.sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
 		&:focus, &.sapMGTLineModePress {
 			.sapMGTLineStyleHelperInner:before {
@@ -90,7 +90,7 @@
 	}
 }
 .sapUiMedia-GenericTileDeviceSet-large {
-	&.sap-desktop .sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
+	.sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
 		&:hover .sapMGTLineStyleHelperInner {
 			background: @sapUiTileHoverBackground;
 		}
@@ -159,8 +159,8 @@
 	text-shadow: @sapUiShadowText;
 }
 
-html.sap-desktop .sapMGTWithoutImageHoverOverlay,
-html.sap-desktop .sapMGTWithImageHoverOverlay {
+.sapMGTWithoutImageHoverOverlay,
+.sapMGTWithImageHoverOverlay {
 	z-index: 1;
 	position: absolute;
 	pointer-events: none;
@@ -200,7 +200,7 @@ html.sap-tablet .sapMGTWithImageHoverOverlay {
 	background: fade(@sapUiTileActiveBackground, 20%);
 }
 
-html.sap-desktop .sapMGT:hover:not(.sapMGTPressActive) {
+.sapMGT:hover:not(.sapMGTPressActive) {
 	box-shadow: 0 0 0 1px fade(@sapUiContentContrastShadowColor, 30);
 	transition: background 0.2s;
 
@@ -220,22 +220,22 @@ html.sap-desktop .sapMGT:hover:not(.sapMGTPressActive) {
 }
 
 
-html.sap-desktop .sapMGTActionButtonPress.sapMGT:active
+.sapMGTActionButtonPress.sapMGT:active
 {
 	.sapMGTFocusDiv{
 		border: none;
 	}
 }
 
-html.sap-desktop .sapMGTActionButtonPress.sapMGT:focus-visible
+.sapMGTActionButtonPress.sapMGT:focus-visible
 {
 	.sapMGTFocusDiv{
 	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 	}
 }
 
-html.sap-desktop .sapMGT.sapMGTBackgroundImage:focus .sapMGTFocusDiv,
-html.sap-desktop .sapMGT.sapMGTBackgroundImage:active .sapMGTFocusDiv {
+.sapMGT.sapMGTBackgroundImage:focus .sapMGTFocusDiv,
+.sapMGT.sapMGTBackgroundImage:active .sapMGTFocusDiv {
 	&:after {
 		content: "";
 		.sapMGTOverlayMixin();

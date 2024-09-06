@@ -3,7 +3,7 @@
 /* Evening Horizon theme            */
 /* ================================ */
 
-html.sap-desktop .sapMST:active{
+.sapMST:active{
 	background-color: @sapTile_Active_Background;
 	.sapMSTFocusDiv{
 		border: 1px solid @sapTile_Interactive_BorderColor;
@@ -17,8 +17,8 @@ html.sap-desktop .sapMST:active{
 }
 
 /* This part is used to achieve dotted white black interlace border*/
-html.sap-desktop .sapMST:focus .sapMSTFocusDiv:after,
-html.sap-desktop .sapMST:active .sapMSTFocusDiv:after {
+.sapMST:focus .sapMSTFocusDiv:after,
+.sapMST:active .sapMSTFocusDiv:after {
 	content: "";
 	position: absolute;
 	top: 0;
@@ -74,19 +74,19 @@ html.sap-desktop .sapMST:active .sapMSTFocusDiv:after {
 	text-shadow: 0px 1px @sapUiButtonEmphasizedTextShadow;
 }
 
-html.sap-desktop .sapMST:focus .sapMSTFocusDiv {
+.sapMST:focus .sapMSTFocusDiv {
 	border-radius: @sapTile_BorderCornerRadius;
 	box-shadow: none;
 	inset: 0;
 }
 
-html.sap-desktop .sapMST:focus .sapMSTFocusDiv:after,
-html.sap-desktop .sapMST:active .sapMSTFocusDiv:after {
+.sapMST:focus .sapMSTFocusDiv:after,
+.sapMST:active .sapMSTFocusDiv:after {
 	border: none;
 	border-radius: @sapElement_BorderCornerRadius;
 }
 
-html.sap-desktop .sapMST:hover {
+.sapMST:hover {
 	box-shadow: @sapContent_Shadow2 !important;
 
 	.sapMGT:hover {
@@ -96,7 +96,7 @@ html.sap-desktop .sapMST:hover {
 
 }
 
-html.sap-desktop .sapMST:active{
+.sapMST:active{
 	.sapMGT{
 		opacity: 0.8;
 	}
