@@ -330,7 +330,7 @@ sap.ui.define([
 
 		QUnit.test("when calling 'add' with two valid variant changes, but one of them couldn't be applied", function(assert) {
 			var sErrorText = "My test error";
-			var fnDeleteChangeStub = sandbox.stub(this.oChangePersistence, "deleteChange");
+			var fnDeleteFlexObjectsStub = sandbox.stub(FlexObjectManager, "deleteFlexObjects");
 			this.fnApplyChangeSpy.restore();
 			var oApplyStub = sandbox.stub(ChangesWriteAPI, "apply").callsFake(function(mPropertyBag) {
 				if (mPropertyBag.change.getChangeType() === "rename") {
@@ -348,7 +348,7 @@ sap.ui.define([
 			.then(function() {
 				assert.equal(oApplyStub.callCount, 2, "ChangesWriteAPI.apply has been called twice");
 				assert.equal(this.fnLogErrorStub.args[0][1], sErrorText, "the right error was propagated");
-				assert.ok(fnDeleteChangeStub.calledOnce, "then the failing change was deleted");
+				assert.ok(fnDeleteFlexObjectsStub.calledOnce, "then the failing change was deleted");
 			}.bind(this));
 		});
 

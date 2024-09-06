@@ -7,6 +7,8 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
@@ -24,6 +26,8 @@ sap.ui.define([
 	JsControlTreeModifier,
 	Reverter,
 	FlexObjectFactory,
+	States,
+	DependencyHandler,
 	UIChangesState,
 	CompVariantMerger,
 	VariantManagementState,
@@ -86,6 +90,13 @@ sap.ui.define([
 	function saveCompEntities(mPropertyBag) {
 		var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
 		return CompVariantState.persistAll(sReference);
+	}
+
+	function removeFlexObjectFromDependencyHandler(sReference, oFlexObject) {
+		if (oFlexObject.isValidForDependencyMap()) {
+			DependencyHandler.removeChangeFromMap(FlexObjectState.getLiveDependencyMap(sReference), oFlexObject.getId());
+			DependencyHandler.removeChangeFromDependencies(FlexObjectState.getLiveDependencyMap(sReference), oFlexObject.getId());
+		}
 	}
 
 	async function saveChangePersistenceEntities(mPropertyBag, oAppComponent) {
@@ -270,6 +281,33 @@ sap.ui.define([
 		mPropertyBag.componentId = oAppComponent.getId();
 		mPropertyBag.invalidateCache = true;
 		return FlexObjectManager.getFlexObjects(_omit(mPropertyBag, "skipUpdateCache"));
+	};
+
+	/**
+	 * Removes the provided flex objects from the FlexState and dependency handler and sets them to be deleted.
+	 * If a flex object is dirty it will only be removed from the FlexState.
+	 * Otherwise the next call to save dirty flex objects will remove them from the persistence.
+	 *
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {string} mPropertyBag.reference - Flex reference of the application
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} mPropertyBag.flexObjects - Flex objects to be deleted
+	 */
+	FlexObjectManager.deleteFlexObjects = function(mPropertyBag) {
+		const aDirtyFlexObjects = FlexObjectState.getDirtyFlexObjects(mPropertyBag.reference);
+
+		const aToBeDeletedFlexObjects = [];
+		const aToBeRemovedDirtyFlexObjects = [];
+		mPropertyBag.flexObjects.forEach(function(oFlexObject) {
+			if (aDirtyFlexObjects.indexOf(oFlexObject) > -1 && oFlexObject.getState() === States.LifecycleState.NEW) {
+				aToBeRemovedDirtyFlexObjects.push(oFlexObject);
+			} else {
+				oFlexObject.markForDeletion();
+				aToBeDeletedFlexObjects.push(oFlexObject);
+			}
+			removeFlexObjectFromDependencyHandler(mPropertyBag.reference, oFlexObject);
+		});
+		FlexState.removeDirtyFlexObjects(mPropertyBag.reference, aToBeRemovedDirtyFlexObjects);
+		FlexObjectManager.addDirtyFlexObjects(mPropertyBag.reference, aToBeDeletedFlexObjects);
 	};
 
 	/**

@@ -16,8 +16,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils"
@@ -35,8 +33,6 @@ sap.ui.define([
 	FlexObjectManager,
 	Storage,
 	FeaturesAPI,
-	ChangePersistenceFactory,
-	FlexControllerFactory,
 	Layer,
 	LayerUtils,
 	Utils
@@ -329,8 +325,6 @@ sap.ui.define([
 					));
 			}
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
-
 			function destroyAppliedCustomData(oFlexObject) {
 				var oElement = JsControlTreeModifier.bySelector(oFlexObject.getSelector(), oAppComponent);
 				if (oElement) {
@@ -338,11 +332,16 @@ sap.ui.define([
 				}
 			}
 
+			const sFlexReference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 			if (mPropertyBag.change) {
 				if (!isDescriptorChange(mPropertyBag.change)) {
 					destroyAppliedCustomData(mPropertyBag.change);
 				}
-				return oChangePersistence.deleteChange(mPropertyBag.change);
+				FlexObjectManager.deleteFlexObjects({
+					reference: sFlexReference,
+					flexObjects: [mPropertyBag.change]
+				});
+				return undefined;
 			}
 
 			mPropertyBag.flexObjects.forEach(function(oFlexObject) {
@@ -351,7 +350,11 @@ sap.ui.define([
 				}
 			});
 
-			return oChangePersistence.deleteChanges(mPropertyBag.flexObjects);
+			FlexObjectManager.deleteFlexObjects({
+				reference: sFlexReference,
+				flexObjects: mPropertyBag.flexObjects
+			});
+			return undefined;
 		});
 	};
 

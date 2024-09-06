@@ -304,6 +304,10 @@ sap.ui.define([
 		return (sSourceSystem !== sSystem || sSourceClient !== sClient);
 	};
 
+	FlexObject.prototype.isValidForDependencyMap = function() {
+		return false;
+	};
+
 	/**
 	 * Getter for the namespace from the FlexObjectMetadata.
 	 * @returns {string} Namespace

@@ -8,10 +8,10 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Utils"
 ], function(
 	FlexObjectState,
@@ -19,10 +19,10 @@ sap.ui.define([
 	ManifestUtils,
 	FlexInfoSession,
 	Version,
+	FlexObjectManager,
 	Versions,
 	ContextBasedAdaptationsAPI,
 	FeaturesAPI,
-	ChangePersistenceFactory,
 	Utils
 ) {
 	"use strict";
@@ -292,9 +292,11 @@ sap.ui.define([
 		const oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
 		const sReference = getFlexReferenceForControl(oAppComponent);
 		function removeDirtyChanges() {
-			const oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
 			const aDirtyChanges = FlexObjectState.getDirtyFlexObjects(sReference);
-			oChangePersistence.deleteChanges(aDirtyChanges, true);
+			FlexObjectManager.deleteFlexObjects({
+				reference: sReference,
+				flexObjects: aDirtyChanges
+			});
 			return aDirtyChanges.length > 0;
 		}
 
