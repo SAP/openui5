@@ -6229,6 +6229,7 @@ sap.ui.define([
 				},
 				oMetaModel : undefined,
 				bMetaModelLoaded : "~bMetaModelLoaded",
+				_requestAnnotationChanges() {},
 				annotationsLoaded : function () {},
 				checkUpdate : function () {}
 			};
@@ -6237,6 +6238,7 @@ sap.ui.define([
 		this.mock(oModel).expects("annotationsLoaded").withExactArgs().returns(Promise.resolve());
 		// called in ODataMetaModel constructor; result is used to create a JSONModel
 		this.mock(oModel.oMetadata).expects("getServiceMetadata").withExactArgs().returns(oData);
+		this.mock(oModel).expects("_requestAnnotationChanges").withExactArgs().returns(SyncPromise.resolve());
 
 		// code under test
 		oMetaModel = ODataModel.prototype.getMetaModel.call(oModel);
