@@ -677,6 +677,40 @@ sap.ui.define([
 						}),
 						errorMessage: `No Select with ID ${sSelectId} was found`
 					});
+				},
+				/**
+				 * Emulates a click action on the check box of one row to select them.
+				 *
+				 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
+				 * @param {Number} iRowIndex Row index which to select
+				 * @param {boolean} bResponsiveTable Whether the table is a responsive table or a grid table
+				 * @returns {Promise} OPA waitFor
+				 */
+				iClickOnRowSelectionCheckbox: function(vTable, iRowIndex, bResponsiveTable = false) {
+					return waitForTable.call(this, vTable, {
+						success: function(oTable) {
+							this.waitFor({
+								controlType: bResponsiveTable ? "sap.m.Table" : "sap.ui.table.Table",
+								matchers: new Ancestor(oTable),
+								success: function(aInnerTable) {
+									Opa5.assert.ok(aInnerTable.length, `Found Control sap.m.Table in sap.ui.mdc.Table`);
+									this.waitFor({
+										controlType: bResponsiveTable ? "sap.m.ColumnListItem" : "sap.ui.table.Row",
+										matchers: new Ancestor(aInnerTable[0]),
+										success: function(aRows) {
+											const oRow = aRows[iRowIndex];
+											Opa5.assert.ok(true, `Clicked on row ${iRowIndex}`);
+											if (bResponsiveTable) {
+												new Press({idSuffix: "selectMulti"}).executeOn(oRow);
+											} else {
+												new Press({idSuffix: "innerTable-rowsel" + iRowIndex}).executeOn(oTable);
+											}
+										}
+									});
+								}
+							});
+						}
+					});
 				}
 			},
 			assertions: {
@@ -926,6 +960,52 @@ sap.ui.define([
 							Opa5.assert.ok(oMenuButton, "Export button is visible");
 						},
 						errorMessage: "No Export button found"
+					});
+				},
+				/**
+				 * Checks whether the table has a copy button that is enabled or disabled
+				 * @param {string} vTable ID of table control
+				 * @param {boolean} bEnabled Whether the button is enabled
+				 * @returns {Promise} OPA waitFor
+				 */
+				iShouldSeeCopyButton: function(vTable, bEnabled) {
+					return waitForTable.call(this, vTable, {
+						success(oTable) {
+							return this.waitFor({
+								propertyStrictEquals: {
+									name: "text",
+									value: "Copy to Clipboard"
+								},
+								enabled: bEnabled,
+								controlType: "sap.m.OverflowToolbarButton",
+								success: function (oButton) {
+									Opa5.assert.ok(oButton, "Copy button is visible");
+								},
+								errorMessage: "No Copy button found"
+							});
+						}
+					});
+				},
+				/**
+				 * Checks whether the table has a paste button
+				 * @param {string} vTable ID of table control
+				 * @returns {Promise} OPA waitFor
+				 */
+				iShouldSeePasteButton: function(vTable) {
+					return waitForTable.call(this, vTable, {
+						success(oTable) {
+							return this.waitFor({
+								propertyStrictEquals: {
+									name: "text",
+									value: "Paste"
+								},
+								controlType: "sap.m.OverflowToolbarButton",
+								success: function (oButton) {
+									Opa5.assert.ok(oButton, "Paste button is visible");
+								},
+								errorMessage: "No Paste button found"
+							});
+						}
 					});
 				}
 			}
