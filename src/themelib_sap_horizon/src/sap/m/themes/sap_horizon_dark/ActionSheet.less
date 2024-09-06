@@ -4,26 +4,26 @@
 /* ================================== */
 
 .sapMActionSheetPopover.sapMPopover {
-	box-shadow: @sapUiContentShadow2;
+	box-shadow: var(--sapContent_Shadow2);
 }
 
 .sapMActionSheetDialog .sapMBar.sapMHeader-CTX > .sapMBarMiddle > .sapMBarPH > .sapMDialogTitle {
-	color: @sapUiPageHeaderTextColor;
-	font-size: @sapMFontHeader5Size;
+	color: var(--sapPageHeader_TextColor);
+	font-size: var(--sapFontHeader5Size);
 	font-weight: bold;
 }
 
 .sapMDialog.sapMActionSheetDialog {
-	background-color: @sapUiPageHeaderBackground;
-	border-top-left-radius: @sapUiElementBorderCornerRadius;
-	border-top-right-radius: @sapUiElementBorderCornerRadius;
-	box-shadow: @sapUiContentShadow3;
+	background-color: var(--sapPageHeader_Background);
+	border-top-left-radius: var(--sapElement_BorderCornerRadius);
+	border-top-right-radius: var(--sapElement_BorderCornerRadius);
+	box-shadow: var(--sapContent_Shadow3);
 
 	&.sapMDialogPhone .sapMIBar.sapMHeader-CTX {
-		box-shadow: @sapUiContentHeaderShadow;
-		background-color: @sapUiPageHeaderBackground;
-		border-top-left-radius: @sapUiElementBorderCornerRadius;
-		border-top-right-radius: @sapUiElementBorderCornerRadius;
+		box-shadow: var(--sapContent_HeaderShadow);
+		background-color: var(--sapPageHeader_Background);
+		border-top-left-radius: var(--sapElement_BorderCornerRadius);
+		border-top-right-radius: var(--sapElement_BorderCornerRadius);
 	}
 
 	&.sapUiPopupWithPadding:not(.sapUiNoContentPadding) .sapMDialogScrollCont {
