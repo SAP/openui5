@@ -25,7 +25,7 @@
                     payload: {collectionName: 'BusinessPartners'}
                 }"
                 filter="mdcFilterBar"
-                p13nMode="Column,Sort,Filter,Group,Aggregate"
+                p13nMode="Column,Sort,Filter"
                 selectionMode="Multi"
                 threshold="0"
                 showRowCount="false"

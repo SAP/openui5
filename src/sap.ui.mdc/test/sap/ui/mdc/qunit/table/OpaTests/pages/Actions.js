@@ -898,6 +898,22 @@ sap.ui.define([
 					});
 				}
 			});
+		},
+
+		/**
+		 * Sets the p13nMode of the table.
+		 *
+		 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
+		 * @param {array} aModes The p13nModes
+		 * @returns {Promise} OPA waitFor
+		 */
+		iSetP13nMode: function(vTable, aModes) {
+			return waitForTable.call(this, vTable, {
+				success: function(oTable) {
+					oTable.setP13nMode(aModes);
+				},
+				errorMessage: "No table found"
+			});
 		}
 	};
 });
