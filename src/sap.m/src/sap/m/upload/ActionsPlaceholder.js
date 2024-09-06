@@ -12,9 +12,9 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * The control acts as placeholder to position specific action controls (Upload, PersonalizationSettings, VariantManagement) on headertoolbar of {@link sap.m.upload.UploadSetwithTable UploadSetwithTable} control.<br>
+	 * The control acts as placeholder to position specific action controls (Upload, Upload from cloud) on headertoolbar of table with connected plugin {@link sap.m.plugins.UploadSetwithTable UploadSetwithTable} Plugin.<br>
 	 * The type of action control placed on the headertoolbar is determined by the {@link sap.m.UploadSetwithTableActionPlaceHolder UploadSetwithTableActionPlaceHolder} enum set.<br>
-	 * This control is supposed to be used only within the headertoolbar aggregation of the {@link sap.m.upload.UploadSetwithTable UploadSetwithTable} control.
+	 * This control is supposed to be used only within the association of the {@link sap.m.plugins.UploadSetwithTable UploadSetwithTable} Plugin.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -22,7 +22,6 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
 	 *
 	 * @constructor
 	 * @public
-	 * @experimental since 1.120
 	 * @since 1.120
 	 * @alias sap.m.upload.ActionsPlaceholder
 	 */

@@ -24,7 +24,6 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @experimental since 1.120
 	 * @since 1.120
 	 * @version ${version}
 	 * @alias sap.m.upload.UploaderTableItem
