@@ -1052,33 +1052,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns an array containing all current elements of this aggregation cache's flat list; the
-	 * array is annotated with the collection's $count. If there are placeholders, the corresponding
-	 * objects will be ignored and set to <code>undefined</code>.
-	 *
-	 * @param {string} [sPath] - Relative path to drill-down into, MUST be empty
-	 * @returns {object[]} The cache elements
-	 * @throws {Error} If a non-empty path is given
-	 *
-	 * @public
-	 */
-	// @override sap.ui.model.odata.v4.lib._Cache#getAllElements
-	_AggregationCache.prototype.getAllElements = function (sPath) {
-		var aAllElements;
-
-		if (sPath) {
-			throw new Error("Unsupported path: " + sPath);
-		}
-
-		aAllElements = this.aElements.map(function (oElement) {
-			return _Helper.hasPrivateAnnotation(oElement, "placeholder") ? undefined : oElement;
-		});
-		aAllElements.$count = this.aElements.$count;
-
-		return aAllElements;
-	};
-
-	/**
 	 * Nothing to do here, we have no created elements.
 	 *
 	 * @param {string} [_sPath]
@@ -1116,6 +1089,34 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.getDownloadUrl = function (_sPath, _mCustomQueryOptions) {
 		return this.sDownloadUrl;
+	};
+
+	/**
+	 * Returns an array containing elements of this aggregation cache's flat list; the array is
+	 * annotated with the collection's $count. If no range is given, all elements are returned. If
+	 * there are placeholders, the corresponding objects will be ignored and set to
+	 * <code>undefined</code>.
+	 *
+	 * @param {string} [sPath] - Relative path to drill-down into, MUST be empty
+	 * @param {number} [iStart] - The start index of the range (inclusive)
+	 * @param {number} [iEnd] - The end index of the range (exclusive)
+	 * @returns {object[]} The cache elements
+	 * @throws {Error} If a non-empty path is given
+	 *
+	 * @public
+	 */
+	// @override sap.ui.model.odata.v4.lib._Cache#getElements
+	_AggregationCache.prototype.getElements = function (sPath, iStart, iEnd) {
+		if (sPath) {
+			throw new Error("Unsupported path: " + sPath);
+		}
+
+		const aElements = this.aElements.slice(iStart, iEnd).map((oElement) => {
+			return _Helper.hasPrivateAnnotation(oElement, "placeholder") ? undefined : oElement;
+		});
+		aElements.$count = this.aElements.$count;
+
+		return aElements;
 	};
 
 	/**

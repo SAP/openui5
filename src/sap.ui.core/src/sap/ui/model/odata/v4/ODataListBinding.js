@@ -1070,13 +1070,15 @@ sap.ui.define([
 	 *   The start index of the range
 	 * @param {object[]} aResults
 	 *   The OData entities read from the cache for the given range
+	 * @param {boolean} bCreateOnly
+	 *   If <code>true</code>, only contexts are created (no destruction or length calculation)
 	 * @returns {boolean}
 	 *   <code>true</code>, if contexts have been created or dropped or <code>isLengthFinal</code>
 	 *   has changed
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.createContexts = function (iStart, aResults) {
+	ODataListBinding.prototype.createContexts = function (iStart, aResults, bCreateOnly) {
 		var bChanged = false,
 			oContext,
 			sContextPath,
@@ -1143,6 +1145,10 @@ sap.ui.define([
 				this.aContexts[iStart + i] = oContext;
 			}
 		}
+		if (bCreateOnly) {
+			return bChanged;
+		}
+
 		// destroy previous contexts which are not reused or kept alive
 		this.destroyPreviousContextsLater(Object.keys(this.mPreviousContextsByPath));
 		if (iCount !== undefined) { // server count is available or "non-empty short read"
@@ -1169,6 +1175,30 @@ sap.ui.define([
 			bChanged = true;
 		}
 		return bChanged;
+	};
+
+	/**
+	 * Asks the cache for data in the given range and creates matching contexts. Does not fire
+	 * change events.
+	 *
+	 * @param {number} iStart - The start index
+	 * @param {number} iLength - The length
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.createContextsForCachedData = function (iStart, iLength) {
+		if (this.bFirstCreateAtEnd) {
+			// turn view into model index
+			// Note: no need to adjust iLength, reading past $count does not hurt
+			iStart += this.iCreatedContexts;
+		}
+
+		this.withCache((oCache, sPath) => {
+			const aElements = oCache.getElements(sPath, iStart, iStart + iLength);
+			if (aElements) {
+				this.createContexts(iStart, aElements, true);
+			}
+		}, "", true);
 	};
 
 	/**
@@ -2400,7 +2430,7 @@ sap.ui.define([
 		var aElements;
 
 		this.withCache(function (oCache, sPath) {
-				aElements = oCache.getAllElements(sPath);
+				aElements = oCache.getElements(sPath);
 			}, "", /*bSync*/true);
 
 		if (aElements && this.createContexts(0, aElements)) {
@@ -2604,6 +2634,9 @@ sap.ui.define([
 					bDataRequested = true;
 					that.fireDataRequested(bPreventBubbling);
 				});
+			if (!bRefreshEvent && oPromise.isPending()) {
+				this.createContextsForCachedData(iStart, iLength);
+			}
 			this.resolveRefreshPromise(oPromise).then(function (bChanged) {
 				if (that.bUseExtendedChangeDetection) {
 					that.oDiff = {
