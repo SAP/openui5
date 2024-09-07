@@ -798,107 +798,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("constructor: oLoadedPromiseSync is resolved", function (assert) {
-		var oDataMetaModel, fnResolve,
-			oDataModel = {
-				annotationsLoaded : function () {}
-			},
-			oMetadata = {
-				getServiceMetadata : function () {}
-			};
-
-		this.mock(oDataModel).expects("annotationsLoaded")
-			.returns(new Promise(function (resolve, reject) {
-				fnResolve = resolve;
-			}));
-
-		// code under test
-		oDataMetaModel = new ODataMetaModel(oMetadata, /*oAnnotations*/undefined, oDataModel);
-
-		assert.ok(oDataMetaModel.oLoadedPromiseSync instanceof SyncPromise);
-		assert.notOk(oDataMetaModel.oLoadedPromiseSync.isFulfilled());
-
-		this.mock(oMetadata).expects("getServiceMetadata").withExactArgs()
-			.returns({foo : "bar"});
-		this.mock(Utils).expects("merge")
-			.withExactArgs({/*no oAnnotations*/}, /*copy of service metadata*/{foo : "bar"},
-				sinon.match.same(oDataMetaModel), /*bIgnoreAnnotationsFromMetadata*/undefined);
-
-		// code under test
-		fnResolve("~annotationLoaded");
-
-		return oDataMetaModel.oLoadedPromiseSync.then(function (vResult) {
-			assert.strictEqual(vResult, undefined);
-			assert.ok(oDataMetaModel.oLoadedPromiseSync.isFulfilled());
-			assert.strictEqual(oDataMetaModel.oLoadedPromiseSync.getResult(), undefined);
-		}, function () {
-			assert.ok(false);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("constructor: oLoadedPromiseSync is rejected", function (assert) {
-		var oDataMetaModel, fnReject,
-			oDataModel = {
-				annotationsLoaded : function () {}
-			};
-
-		this.mock(oDataModel).expects("annotationsLoaded")
-			.returns(new Promise(function (resolve, reject) {
-				fnReject = reject;
-			}));
-		this.mock(Utils).expects("merge").never();
-
-		// code under test
-		oDataMetaModel = new ODataMetaModel(/*oMetadata*/{}, /*oAnnotations*/undefined, oDataModel);
-
-		assert.ok(oDataMetaModel.oLoadedPromiseSync instanceof SyncPromise);
-		assert.notOk(oDataMetaModel.oLoadedPromiseSync.isFulfilled());
-
-		// code under test
-		fnReject("~error");
-
-		return oDataMetaModel.oLoadedPromiseSync.then(function () {
-			assert.ok(false);
-		}, function (oError0) {
-			assert.ok(oDataMetaModel.oLoadedPromiseSync.isRejected());
-			assert.strictEqual(oError0, "~error");
-			assert.strictEqual(oDataMetaModel.oLoadedPromiseSync.getResult(), "~error");
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("constructor: uses ODataAnnotations#getData", function (assert) {
-		var oDataMetaModel, fnResolve,
-			oAnnotations = {getData : function () {}},
-			oDataModel = {annotationsLoaded : function () {}},
-			oMetadata = {getServiceMetadata : function () {}};
-
-		this.mock(oDataModel).expects("annotationsLoaded").withExactArgs()
-			.returns(new Promise(function (resolve, reject) {
-				fnResolve = resolve;
-			}));
-
-		// code under test
-		oDataMetaModel = new ODataMetaModel(oMetadata, oAnnotations, oDataModel);
-
-		assert.ok(oDataMetaModel.oLoadedPromiseSync instanceof SyncPromise);
-		assert.notOk(oDataMetaModel.oLoadedPromiseSync.isFulfilled());
-
-		this.mock(oMetadata).expects("getServiceMetadata").withExactArgs()
-			.returns({foo : "bar"});
-		this.mock(oAnnotations).expects("getData").withExactArgs().returns("~annotationData");
-		this.mock(Utils).expects("merge")
-			.withExactArgs("~annotationData", /*copy of service metadata*/{foo : "bar"},
-				sinon.match.same(oDataMetaModel), /*bIgnoreAnnotationsFromMetadata*/undefined);
-
-		// code under test
-		fnResolve("~annotationLoaded");
-
-		return oDataMetaModel.oLoadedPromiseSync;
-	});
-
-	//*********************************************************************************************
 	QUnit.test("TestUtils.deepContains", function (assert) {
 		TestUtils.notDeepContains(null, {}, "null");
 		TestUtils.notDeepContains(undefined, {}, "undefined");
@@ -958,63 +857,6 @@ sap.ui.define([
 		}, "isList");
 
 		return oMetaModel.loaded();
-	});
-
-	//*********************************************************************************************
-	QUnit.test("basics", function (assert) {
-		var oDataModel = {annotationsLoaded : function () {}},
-			oMetaModel,
-			that = this;
-
-		this.mock(oDataModel).expects("annotationsLoaded").withExactArgs().returns(undefined);
-
-		oMetaModel = new ODataMetaModel({
-			getServiceMetadata : function () { return {dataServices : {}}; }
-		}, undefined, oDataModel);
-
-		assert.strictEqual(oMetaModel.oDataModel, oDataModel);
-
-		return oMetaModel.loaded().then(function () {
-			var oMetaModelMock = that.mock(oMetaModel),
-				oModelMock = that.mock(oMetaModel.oModel),
-				oResult = {};
-
-			assert.strictEqual(arguments.length, 1, "almost no args");
-			assert.strictEqual(arguments[0], undefined, "almost no args");
-
-			that.mock(Model.prototype).expects("destroy");
-
-			// generic dispatching
-			["destroy", "isList"].forEach(function (sName) {
-				oModelMock.expects(sName).withExactArgs("foo", 0, false).returns(oResult);
-
-				assert.strictEqual(oMetaModel[sName]("foo", 0, false), oResult, sName);
-			});
-
-			// getProperty dispatches to _getObject
-			oMetaModelMock.expects("_getObject").withExactArgs("foo", 0, false)
-				.returns(oResult);
-			assert.strictEqual(oMetaModel.getProperty("foo", 0, false), oResult, "getProperty");
-
-			assert.throws(function () {
-				oMetaModel.refresh();
-			}, /Unsupported operation: ODataMetaModel#refresh/);
-
-			oMetaModel.setLegacySyntax(); // allowed
-			oMetaModel.setLegacySyntax(false); // allowed
-			assert.throws(function () {
-				oMetaModel.setLegacySyntax(true);
-			}, /Legacy syntax not supported by ODataMetaModel/);
-
-			assert.strictEqual(oMetaModel.getDefaultBindingMode(), BindingMode.OneTime);
-			assert.strictEqual(oMetaModel.oModel.getDefaultBindingMode(), BindingMode.OneTime);
-			assert.throws(function () {
-				oMetaModel.setDefaultBindingMode(BindingMode.OneWay);
-			});
-			assert.throws(function () {
-				oMetaModel.setDefaultBindingMode(BindingMode.TwoWay);
-			});
-		});
 	});
 
 	//*********************************************************************************************
@@ -3213,44 +3055,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[true, false].forEach(function (bWithSharedModel) {
-		[true, false].forEach(function (bWithInternalModel) {
-		var sTitle = "destroy: " + (bWithSharedModel ? "with" : "without") + " shared model; "
-				+ (bWithInternalModel ? "with" : "without") + " internal model";
-
-		QUnit.test(sTitle, function (assert) {
-			var oODataMetaModel = {};
-
-			this.mock(MetaModel.prototype).expects("destroy")
-				.withExactArgs("parameters", "passed", "through");
-			if (bWithSharedModel) {
-				oODataMetaModel.oSharedModelCache = {
-					bFirstCodeListRequested : false,
-					oModel : {
-						destroy : function () {}
-					}
-				};
-				this.mock(oODataMetaModel.oSharedModelCache.oModel).expects("destroy");
-			}
-			if (bWithInternalModel) {
-				oODataMetaModel.oModel = {
-					destroy : function () {}
-				};
-				this.mock(oODataMetaModel.oModel).expects("destroy").returns("~destroyed");
-			}
-
-			// code under test
-			assert.strictEqual(
-				ODataMetaModel.prototype.destroy.call(oODataMetaModel, "parameters", "passed",
-					"through"),
-				bWithInternalModel ? "~destroyed" : undefined);
-
-			assert.notOk("oSharedModelCache" in oODataMetaModel);
-		});
-		});
-	});
-
-	//*********************************************************************************************
 	[false, true].forEach(function (bWarn) {
 		QUnit.test("Get sap:semantics for sap:unit via a path, warn=" + bWarn, function (assert) {
 			var oDataModel, oMetaModel;
@@ -4113,44 +3917,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getCodeListTerm", function (assert) {
-		assert.strictEqual(ODataMetaModel.getCodeListTerm(), undefined);
-		assert.strictEqual(ODataMetaModel.getCodeListTerm("foo"), undefined);
-		assert.strictEqual(ODataMetaModel.getCodeListTerm("/##@@requestCurrencyCodes"),
-			"CurrencyCodes");
-		assert.strictEqual(ODataMetaModel.getCodeListTerm("/##@@requestUnitsOfMeasure"),
-			"UnitsOfMeasure");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_getKeyPath: success case", function (assert) {
-		var oType = {
-				key : {
-					propertyRef : [{name : "~key"}]
-				}
-			};
-
-		// code under test
-		assert.deepEqual(ODataMetaModel._getKeyPath(oType, "~sTypePath"), "~key");
-	});
-
-	//*********************************************************************************************
-	[{
-		key : {propertyRef : undefined}
-	}, {
-		key : {propertyRef : []}
-	}, {
-		key : {propertyRef : ["~key1", "~key2"]}
-	}].forEach(function (oType, i) {
-		QUnit.test("_getKeyPath: error case: " + i, function (assert) {
-			// code under test
-			assert.throws(function () {
-				ODataMetaModel._getKeyPath(oType, "~sTypePath");
-			}, new Error("Single key expected: ~sTypePath"));
-		});
-	});
-
-	//*********************************************************************************************
 	QUnit.test("_getOrCreateSharedModelCache: shared model exists", function(assert) {
 		var oDataModel = new ODataModel("/fake/emptySchema", {}),
 			oMetaModel = oDataModel.getMetaModel();
@@ -4184,95 +3950,6 @@ sap.ui.define([
 		assert.ok(
 			oDataModel.constructor.calledOnceWithExactly(sinon.match.same(oDataModelParameters)));
 		assert.strictEqual(oDataModel.constructor.returnValues[0], oResult.oModel);
-	});
-
-	//*********************************************************************************************
-	[{
-		standardCode : undefined,
-		typeMetadata : {}
-	}, {
-		standardCode : {Path : "~StandardCode"},
-		typeMetadata : {
-			"Org.OData.Core.V1.AlternateKeys" : [{
-				Key : [{
-					Name : {Path : "~ExternalCode"}
-				}]
-			}]
-		}
-	}].forEach(function (oFixture, i) {
-		QUnit.test("_getPropertyNamesForCodeListCustomizing: success case: " + i, function (assert) {
-			var aAlternateKeys = oFixture.typeMetadata["Org.OData.Core.V1.AlternateKeys"],
-				oDataModel = {
-					getObject : function () {}
-				},
-				oDataModelMock = this.mock(oDataModel),
-				oKeyMetadata = {
-					"com.sap.vocabularies.CodeList.v1.StandardCode" : oFixture.standardCode,
-					"com.sap.vocabularies.Common.v1.Text" : {Path : "~Text"},
-					"com.sap.vocabularies.Common.v1.UnitSpecificScale" : {Path : "~UnitSpecificScale"}},
-				oMetaModel = {oDataModel : oDataModel},
-				oResult;
-
-			oDataModelMock.expects("getObject").withExactArgs("/~collectionPath/##")
-				.returns(oFixture.typeMetadata);
-			this.mock(ODataMetaModel).expects("_getKeyPath")
-				.withExactArgs(oFixture.typeMetadata, "/~collectionPath/##")
-				.returns("~keyPath");
-			oDataModelMock.expects("getObject").withExactArgs("/~collectionPath/~keyPath/##")
-				.returns(oKeyMetadata);
-
-			// code under test
-			oResult = ODataMetaModel.prototype._getPropertyNamesForCodeListCustomizing.call(oMetaModel,
-				"~collectionPath");
-
-			assert.deepEqual(oResult, {
-				code : aAlternateKeys ? "~ExternalCode" : "~keyPath",
-				standardCode : oFixture.standardCode ? "~StandardCode" : undefined,
-				text : "~Text",
-				unitSpecificScale : "~UnitSpecificScale"
-			});
-		});
-	});
-
-	//*********************************************************************************************
-	[{
-		error : "Single alternative expected: /~collectionPath/##Org.OData.Core.V1.AlternateKeys",
-		typeMetadata : {
-			"Org.OData.Core.V1.AlternateKeys" : [{
-				Key : [{/* not relevant */}]
-			}, {
-				Key : [{/* not relevant */}]
-			}]
-		}
-	}, {
-		error : "Single key expected: /~collectionPath/##Org.OData.Core.V1.AlternateKeys/0/Key",
-		typeMetadata : {
-			"Org.OData.Core.V1.AlternateKeys" : [{
-				Key : [{/* not relevant */}, {/* not relevant */}]
-			}]
-		}
-	}].forEach(function (oFixture, i) {
-		QUnit.test("_getPropertyNamesForCodeListCustomizing: error case: " + i, function (assert) {
-			var oDataModel = {
-					getObject : function () {}
-				},
-				oDataModelMock = this.mock(oDataModel),
-				oMetaModel = {oDataModel : oDataModel};
-
-			oDataModelMock.expects("getObject").withExactArgs("/~collectionPath/##")
-				.returns(oFixture.typeMetadata);
-			this.mock(ODataMetaModel).expects("_getKeyPath")
-				.withExactArgs(sinon.match.same(oFixture.typeMetadata), "/~collectionPath/##")
-				.returns("~keyPath");
-			oDataModelMock.expects("getObject").withExactArgs("/~collectionPath/~keyPath/##")
-				.returns("~oKeyMetadata");
-
-			// code under test
-			assert.throws(function() {
-				ODataMetaModel.prototype._getPropertyNamesForCodeListCustomizing.call(oMetaModel,
-					"~collectionPath");
-			}, oFixture.error);
-		});
 	});
 
 	//****************************************************************************************************************
@@ -4362,8 +4039,6 @@ sap.ui.define([
 	});
 
 	//TODO support getODataValueLists with reference to complex type property via entity type
-	//TODO protect against addAnnotationUrl calls from outside ODataMetaModel?
-
 	//TODO our errors do not include sufficient detail for error analysis, e.g. a full path
 	//TODO errors and warnings intentionally created should not be logged to console
 });

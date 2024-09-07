@@ -5,6 +5,8 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
@@ -27,6 +29,8 @@ sap.ui.define([
 	UIComponent,
 	Reverter,
 	FlexObjectFactory,
+	States,
+	DependencyHandler,
 	FlexObjectState,
 	FlexState,
 	ManifestUtils,
@@ -944,6 +948,56 @@ sap.ui.define([
 			);
 			assert.strictEqual(this.oReverterStub.callCount, 1, "then the revertMultipleChanges function is called once");
 			assert.strictEqual(this.oReverterStub.firstCall.args[0][0].getId(), "change3", "then the order is correct");
+		});
+	});
+
+	QUnit.module("deleteFlexObjects", {
+		async beforeEach() {
+			sandbox.stub(ManifestUtils, "getFlexReferenceForSelector").returns(sReference);
+			this.oRemoveChangeFromMapStub = sandbox.stub(DependencyHandler, "removeChangeFromMap");
+			this.oRemoveChangeFromDepStub = sandbox.stub(DependencyHandler, "removeChangeFromDependencies");
+			this.oFlexObject1 = createChange("flexObject1", Layer.USER);
+			this.oFlexObject2 = createChange("flexObject2", Layer.USER);
+
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {
+				changes: [{
+					fileName: "flexObject3",
+					changeType: "renameField",
+					layer: Layer.USER
+				}, {
+					fileName: "flexObject4",
+					changeType: "renameField",
+					layer: Layer.USER
+				}]
+			});
+			FlexObjectManager.addDirtyFlexObjects(sReference, [this.oFlexObject1, this.oFlexObject2]);
+		},
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("with flex objects in various states", function(assert) {
+			let aFlexObjects = FlexObjectState.getAllApplicableUIChanges(sReference);
+			assert.strictEqual(aFlexObjects.length, 4, "initially 4 flex objects are present");
+
+			aFlexObjects[0].setState(States.LifecycleState.UPDATED);
+			sandbox.stub(aFlexObjects[0], "isValidForDependencyMap").returns(true);
+			sandbox.stub(aFlexObjects[2], "isValidForDependencyMap").returns(true);
+
+			FlexObjectManager.deleteFlexObjects({
+				reference: sReference,
+				flexObjects: aFlexObjects
+			});
+			aFlexObjects = FlexObjectState.getAllApplicableUIChanges(sReference);
+			const aFlexObjectIds = aFlexObjects.map((oFlexObject) => oFlexObject.getId());
+
+			assert.strictEqual(aFlexObjects.length, 2, "then only 2 flex objects remain");
+			assert.ok(aFlexObjectIds.includes("flexObject3"), "then the remaining flex objects are correct");
+			assert.ok(aFlexObjectIds.includes("flexObject4"), "then the remaining flex objects are correct");
+			assert.strictEqual(aFlexObjects[0].getState(), States.LifecycleState.DELETED, "then the state is correct");
+			assert.strictEqual(aFlexObjects[1].getState(), States.LifecycleState.DELETED, "then the state is correct");
+			assert.strictEqual(this.oRemoveChangeFromMapStub.callCount, 2, "then two flex objects are removed from the map");
+			assert.strictEqual(this.oRemoveChangeFromDepStub.callCount, 2, "then two flex objects are removed from the map");
 		});
 	});
 

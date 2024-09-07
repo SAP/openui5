@@ -182,11 +182,11 @@ sap.ui.define([
 				/**
 				 * Items representing files that have already been uploaded.
 				 */
-				items: {type: "sap.m.upload.UploadSetItem", multiple: true, singularName: "item"},
+				items: {type: "sap.m.upload.UploadSetItem", defaultClass: UploadSetItem, multiple: true, singularName: "item"},
 				/**
 				 * Items representing files yet to be uploaded.
 				 */
-				incompleteItems: {type: "sap.m.upload.UploadSetItem", multiple: true, singularName: "incompleteItem"},
+				incompleteItems: {type: "sap.m.upload.UploadSetItem", defaultClass: UploadSetItem, multiple: true, singularName: "incompleteItem"},
 				/**
 				 * Header fields to be included in the header section of an XHR request.
 				 */

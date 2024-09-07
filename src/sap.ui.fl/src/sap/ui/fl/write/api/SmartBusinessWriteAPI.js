@@ -26,7 +26,8 @@ sap.ui.define([
 	function _checkSettingsAndExecuteActionByName(sActionName, mPropertyBag) {
 		return Settings.getInstance().then(function(oSettings) {
 			if (oSettings.isAtoEnabled()) {
-				// For smart business, we already set the transport and skipIam flag, so that there should be no transport handling done on connector level.
+				// For smart business, we already set the transport and skipIam flag,
+				// so that there should be no transport handling done on connector level.
 				mPropertyBag.skipIam = true;
 				mPropertyBag.transport = "ATO_NOTIFICATION";
 			}
@@ -46,6 +47,7 @@ sap.ui.define([
 		mPropertyBag.id = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 		// Pass a flag to know which consumer is calling SaveAs handler
 		mPropertyBag.isForSmartBusiness = true;
+		return Promise.resolve(mPropertyBag);
 	}
 
 	/**
@@ -117,8 +119,8 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		update(mPropertyBag) {
-			_validateAndAdjustPropertyBag(mPropertyBag);
-			return _checkSettingsAndExecuteActionByName("updateAppVariant", mPropertyBag);
+			return _validateAndAdjustPropertyBag(mPropertyBag)
+			.then(_checkSettingsAndExecuteActionByName.bind(this, "updateAppVariant"));
 		},
 
 		/**
@@ -135,8 +137,8 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		remove(mPropertyBag) {
-			_validateAndAdjustPropertyBag(mPropertyBag);
-			return _checkSettingsAndExecuteActionByName("deleteAppVariant", mPropertyBag);
+			return _validateAndAdjustPropertyBag(mPropertyBag)
+			.then(_checkSettingsAndExecuteActionByName.bind(this, "deleteAppVariant"));
 		},
 
 		/**
@@ -184,7 +186,8 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {string} mPropertyBag.appId - Reference app ID or an app variant ID
 		 * @param {object} mPropertyBag.changeSpecificData - Property bag holding the change information
-		 * The property <code>mPropertyBag.changeSpecificData.packageName</code> is set to <code>$TMP</code> and internally since flex changes are always local when they are created.
+		 * The property <code>mPropertyBag.changeSpecificData.packageName</code> is set to <code>$TMP</code>
+		 * and internally since flex changes are always local when they are created.
 		 *
 		 * @returns {Promise|sap.ui.fl.apply._internal.flexObjects.FlexObject} Promise resolves with the created change.
 		 * @private
@@ -234,7 +237,8 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {string} mPropertyBag.appId - Reference app ID or an app variant ID
 		 * @param {object} mPropertyBag.changeSpecificData - Property bag holding the change information
-		 * The property <code>mPropertyBag.changeSpecificData.packageName</code> is set to <code>$TMP</code> and internally since flex changes are always local when they are created.
+		 * The property <code>mPropertyBag.changeSpecificData.packageName</code> is set to <code>$TMP</code>
+		 * and internally since flex changes are always local when they are created.
 		 *
 		 * @returns {Promise<string>} Promise resolves with a string of simplified DescriptorInlineChange
 		 * @private

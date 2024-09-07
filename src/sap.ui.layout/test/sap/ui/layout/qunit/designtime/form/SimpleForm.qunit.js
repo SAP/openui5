@@ -426,6 +426,179 @@ sap.ui.define([
 				}
 			});
 
+			function checkIfElementRemoved(oUiComponent, oViewAfterAction, assert) {
+				var oLabel = getSimpleForm(oViewAfterAction).getAggregation("form").getFormContainers()[0].getFormElements()[0].getLabel();
+				assert.strictEqual(oLabel.getVisible(), false, "then the group element was hidden");
+			}
+
+			function checkIfElementAdded(oUiComponent, oViewAfterAction, assert) {
+				var oLabel = getSimpleForm(oViewAfterAction).getAggregation("form").getFormContainers()[0].getFormElements()[0].getLabel();
+				assert.strictEqual(oLabel.getVisible(), true, "then the group element was added");
+			}
+
+			elementActionTest("Checking the remove action for SimpleForm with Layout=" + sSimpleFormLayout + "when removing a group element from headerless group", {
+				xmlView: buildXMLForSimpleForm(),
+				jsOnly: true,
+				action: {
+					name: "remove",
+					control: function(oView) {
+						return oView.byId("label00").getParent();
+					},
+					parameter: function(oView) {
+						return {
+							removedElement: oView.byId("label00").getParent()
+						};
+					}
+				},
+				afterAction: checkIfElementRemoved,
+				afterUndo: checkIfElementAdded,
+				afterRedo: checkIfElementRemoved,
+				changeVisualization: function(oView) {
+					return {
+						displayElementId: getSimpleForm(oView).getId(),
+						info: {
+							affectedControls: [oView.byId("label00").getId()],
+							displayControls: [getSimpleForm(oView).getId()],
+							updateRequired: true
+						}
+					};
+				}
+			});
+
+			elementActionTest("Checking the remove, reveal action combination for SimpleForm with Layout=" + sSimpleFormLayout + "when removing a group element from headerless group", {
+				xmlView: buildXMLForSimpleForm(),
+				jsOnly: true,
+				action: {
+					name: "reveal",
+					control: function(oView) {
+						return oView.byId("label00").getParent();
+					},
+					parameter: function(oView) {
+						return {
+							revealedElementId: oView.byId("label00").getParent().getId()
+						};
+					}
+				},
+				previousActions: [
+					{
+						name: "remove",
+						control: function(oView) {
+							return oView.byId("label00").getParent();
+						},
+						parameter: function(oView) {
+							return {
+								removedElement: oView.byId("label00").getParent()
+							};
+						}
+					}
+				],
+				afterAction: checkIfElementAdded,
+				afterUndo: checkIfElementAdded,
+				afterRedo: checkIfElementAdded,
+				changeVisualization: function(oView) {
+					return {
+						displayElementId: oView.byId("label00").getParent().getId(),
+						info: {
+							affectedControls: [oView.byId("label00").getParent().getId()],
+							displayControls: [oView.byId("label00").getParent().getId()],
+							updateRequired: true
+						}
+					};
+				}
+			});
+
+			elementActionTest("Checking the remove, reveal, remove combination for SimpleForm with Layout=" + sSimpleFormLayout + "when removing a group element from headerless group", {
+				xmlView: buildXMLForSimpleForm(),
+				jsOnly: true,
+				action: {
+					name: "remove",
+					control: function(oView) {
+						return oView.byId("label00").getParent();
+					},
+					parameter: function(oView) {
+						return {
+							removedElement: oView.byId("label00").getParent()
+						};
+					}
+				},
+				previousActions: [
+					{
+						name: "remove",
+						control: function(oView) {
+							return oView.byId("label00").getParent();
+						},
+						parameter: function(oView) {
+							return {
+								removedElement: oView.byId("label00").getParent()
+							};
+						}
+					},
+					{
+						name: "reveal",
+						control: function(oView) {
+							return oView.byId("label00").getParent();
+						},
+						parameter: function(oView) {
+							return {
+								revealedElementId: oView.byId("label00").getParent().getId()
+							};
+						}
+					}
+				],
+				afterAction: checkIfElementRemoved,
+				afterUndo: checkIfElementAdded,
+				afterRedo: checkIfElementRemoved,
+				changeVisualization: function(oView) {
+					return {
+						displayElementId: getSimpleForm(oView).getId(),
+						info: {
+							affectedControls: [oView.byId("label00").getId()],
+							displayControls: [getSimpleForm(oView).getId()],
+							updateRequired: true
+						}
+					};
+				}
+			});
+
+			function checkIfElementRemovedFromGroup(oUiComponent, oViewAfterAction, assert) {
+				var oLabel = getSimpleForm(oViewAfterAction).getAggregation("form").getFormContainers()[1].getFormElements()[0].getLabel();
+				assert.strictEqual(oLabel.getVisible(), false, "then the group element was hidden");
+			}
+
+			function checkIfElementAddedToGroup(oUiComponent, oViewAfterAction, assert) {
+				var oLabel = getSimpleForm(oViewAfterAction).getAggregation("form").getFormContainers()[1].getFormElements()[0].getLabel();
+				assert.strictEqual(oLabel.getVisible(), true, "then the group element was added");
+			}
+
+			elementActionTest("Checking the remove action for SimpleForm with Layout=" + sSimpleFormLayout + "when removing a group element from group with header", {
+				xmlView: buildXMLForSimpleForm(),
+				jsOnly: true,
+				action: {
+					name: "remove",
+					control: function(oView) {
+						return oView.byId("label1").getParent();
+					},
+					parameter: function(oView) {
+						return {
+							removedElement: oView.byId("label1").getParent()
+						};
+					}
+				},
+				afterAction: checkIfElementRemovedFromGroup,
+				afterUndo: checkIfElementAddedToGroup,
+				afterRedo: checkIfElementRemovedFromGroup,
+				changeVisualization: function(oView) {
+					return {
+						displayElementId: getSimpleForm(oView).getId(),
+						info: {
+							affectedControls: [oView.byId("label1").getId()],
+							displayControls: [getSimpleForm(oView).getId()],
+							updateRequired: true
+						}
+					};
+				}
+			});
+
 			/****** Add via delegate tests ***********/
 			var NEW_CONTROL_ID = "my_new_control";
 			function confirmFieldIsAdded(sValueHelpId, oAppComponent, oView, assert) {
@@ -479,7 +652,7 @@ sap.ui.define([
 				}
 			}
 
-			elementActionTest("Checking the add action via delegate action with default delegate for SimpleForm with Layout=" + sSimpleFormLayout, {
+			elementActionTest("Checking the add via delegate action with default delegate for SimpleForm with Layout=" + sSimpleFormLayout, {
 				xmlView: buildXMLForSimpleForm(),
 				model : new SomeModel(),
 				action: {
@@ -499,7 +672,62 @@ sap.ui.define([
 				},
 				afterAction: confirmFieldIsAdded.bind(null, false),
 				afterUndo: confirmFieldIsRemoved.bind(null, false),
-				afterRedo : confirmFieldIsAdded.bind(null, false)
+				afterRedo : confirmFieldIsAdded.bind(null, false),
+				changeVisualization: function(oView) {
+					return {
+						displayElementId: oView.byId("my_new_control-label").getParent().getId(),
+						info: {
+							affectedControls: [oView.byId("my_new_control-label").getParent().getId()],
+							displayControls: [oView.byId("my_new_control-label").getParent().getId()],
+							updateRequired: true
+						}
+					};
+				}
+			});
+
+			elementActionTest("Checking the add via delegate action followed by remove with default delegate for SimpleForm with Layout=" + sSimpleFormLayout, {
+				xmlView: buildXMLForSimpleForm(),
+				model : new SomeModel(),
+				jsOnly: true,
+				action: {
+					name: "remove",
+					control: function(oView) {
+						return oView.byId("my_new_control-label").getParent();
+					},
+					parameter: function(oView) {
+						return {
+							removedElement: oView.byId("my_new_control-label").getParent()
+						};
+					}
+				},
+				previousActions: [{
+					name: ["add", "delegate"],
+					control: function(oView) {
+						return getGroup(getSimpleForm(oView));
+					},
+					parameter: function (oView) {
+						return {
+							index: 0,
+							newControlId: oView.createId(NEW_CONTROL_ID),
+							bindingString: "binding/path",
+							parentId: getGroup(getSimpleForm(oView)).getId(),
+							modelType: SomeModel.getMetadata().getName()
+						};
+					}
+				}],
+				afterAction: confirmFieldIsAdded.bind(null, false),
+				afterUndo: confirmFieldIsRemoved.bind(null, false),
+				afterRedo : confirmFieldIsAdded.bind(null, false),
+				changeVisualization: function(oView) {
+					return {
+						displayElementId: getSimpleForm(oView).getId(),
+						info: {
+							affectedControls: [oView.byId("my_new_control-label").getId()],
+							displayControls: [getSimpleForm(oView).getId()],
+							updateRequired: true
+						}
+					};
+				}
 			});
 
 			elementActionTest("Checking the add action via delegate action with delegate, should ignore createLayout and include value helps for SimpleForm with Layout=" + sSimpleFormLayout, {

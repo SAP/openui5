@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
@@ -24,6 +25,7 @@ sap.ui.define([
 	FlexInfoSession,
 	Version,
 	Settings,
+	FlexObjectManager,
 	Storage,
 	Versions,
 	ContextBasedAdaptationsAPI,
@@ -673,10 +675,7 @@ sap.ui.define([
 			};
 
 			const oClearStub = sandbox.stub(FlexState, "clearState");
-			const oDeleteStub = sandbox.stub();
-			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns({
-				deleteChanges: oDeleteStub
-			});
+			const oDeleteStub = sandbox.stub(FlexObjectManager, "deleteFlexObjects");
 			const oGetDirtyFlexObjectsStub = sandbox.stub(FlexObjectState, "getDirtyFlexObjects").returns(["foo"]);
 			const oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves({
 				backendChangesDiscarded: true
@@ -711,10 +710,7 @@ sap.ui.define([
 			};
 
 			const oClearStub = sandbox.stub(FlexState, "clearState");
-			const oDeleteStub = sandbox.stub();
-			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns({
-				deleteChanges: oDeleteStub
-			});
+			const oDeleteStub = sandbox.stub(FlexObjectManager, "deleteFlexObjects");
 			sandbox.stub(FlexObjectState, "getDirtyFlexObjects").returns(["foo"]);
 			const oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves({
 				backendChangesDiscarded: true
@@ -746,10 +742,7 @@ sap.ui.define([
 			};
 
 			const oClearStub = sandbox.stub(FlexState, "clearState");
-			const oDeleteStub = sandbox.stub();
-			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns({
-				deleteChanges: oDeleteStub
-			});
+			const oDeleteStub = sandbox.stub(FlexObjectManager, "deleteFlexObjects");
 			sandbox.stub(FlexObjectState, "getDirtyFlexObjects").returns(["foo"]);
 			const oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves({
 				backendChangesDiscarded: false

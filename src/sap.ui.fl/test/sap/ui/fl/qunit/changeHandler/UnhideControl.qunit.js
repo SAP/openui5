@@ -6,17 +6,20 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/changeHandler/UnhideControl",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/core/util/reflection/XmlTreeModifier"
+	"sap/ui/core/util/reflection/XmlTreeModifier",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Control,
 	Element,
 	UIChange,
 	UnhideControlChangeHandler,
 	JsControlTreeModifier,
-	XmlTreeModifier
+	XmlTreeModifier,
+	sinon
 ) {
 	"use strict";
 
+	const sandbox = sinon.createSandbox();
 	QUnit.module("sap.ui.fl.changeHandler.UnhideControl", {
 		beforeEach() {
 			this.oChangeHandler = UnhideControlChangeHandler;
@@ -30,6 +33,7 @@ sap.ui.define([
 		},
 		afterEach() {
 			this.oChange = null;
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("applyChange on a js control tree", function(assert) {
@@ -79,6 +83,44 @@ sap.ui.define([
 					"Provided control instance has no setVisible method",
 					"change handler throws an error that the control has no setter for visible");
 			});
+		});
+
+		QUnit.test("getChangeVisualizationInfo when control is currently visible", function(assert) {
+			const oControl = new Control();
+			sandbox.stub(JsControlTreeModifier, "bySelector").returns(oControl);
+			const oCVizInfo = this.oChangeHandler.getChangeVisualizationInfo(this.oChange, "DummyComponent");
+			assert.deepEqual(oCVizInfo, { updateRequired: true }, "updateRequired is true");
+		});
+
+		QUnit.test("getChangeVisualizationInfo when control is currently invisible", function(assert) {
+			const oControl = new Control();
+			const oParentControl = new Control();
+			oControl.setParent(oParentControl);
+			oControl.setVisible(false);
+			sandbox.stub(JsControlTreeModifier, "bySelector").returns(oControl);
+			const oCVizInfo = this.oChangeHandler.getChangeVisualizationInfo(this.oChange, "DummyComponent");
+			assert.deepEqual(
+				oCVizInfo,
+				{ displayControls: [oParentControl.getId()], updateRequired: true },
+				"displayControl is the parent control and updateRequired is true"
+			);
+		});
+
+		QUnit.test("getChangeVisualizationInfo when control and its parent are currently invisible", function(assert) {
+			const oControl = new Control();
+			const oParentControl = new Control();
+			const oGrandParentControl = new Control();
+			oControl.setParent(oParentControl);
+			oParentControl.setParent(oGrandParentControl);
+			oControl.setVisible(false);
+			oParentControl.setVisible(false);
+			sandbox.stub(JsControlTreeModifier, "bySelector").returns(oControl);
+			const oCVizInfo = this.oChangeHandler.getChangeVisualizationInfo(this.oChange, "DummyComponent");
+			assert.deepEqual(
+				oCVizInfo,
+				{ displayControls: [oGrandParentControl.getId()], updateRequired: true },
+				"displayControl is the parent control and updateRequired is true"
+			);
 		});
 	});
 

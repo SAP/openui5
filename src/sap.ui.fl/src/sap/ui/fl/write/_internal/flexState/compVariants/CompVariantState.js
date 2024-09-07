@@ -366,7 +366,7 @@ sap.ui.define([
 			oChange.addRevertInfo(new RevertData({
 				type: CompVariantState.operationType.NewChange
 			}));
-			FlexState.addDirtyFlexObject(mPropertyBag.reference, oChange);
+			FlexState.addDirtyFlexObjects(mPropertyBag.reference, [oChange]);
 		} else {
 			oChange.addRevertInfo(new RevertData({
 				type: CompVariantState.operationType.ContentUpdate,
@@ -443,7 +443,7 @@ sap.ui.define([
 		const oMapOfPersistencyKey = mCompVariantsMap._getOrCreate(mPropertyBag.persistencyKey);
 		oMapOfPersistencyKey.variants.push(oFlexObject);
 		oMapOfPersistencyKey.byId[oFlexObject.getId()] = oFlexObject;
-		FlexState.addDirtyFlexObject(mPropertyBag.reference, oFlexObject);
+		FlexState.addDirtyFlexObjects(mPropertyBag.reference, [oFlexObject]);
 		if (oChangeSpecificData.layer !== Layer.USER && oChangeSpecificData.layer !== Layer.PUBLIC) {
 			mPropertyBag.id = mPropertyBag.control.getCurrentVariantId();
 			revertAllVariantUpdate(getVariantById(mPropertyBag));
@@ -582,7 +582,7 @@ sap.ui.define([
 				var sPersistencyKey = oChange.getSelector().persistencyKey;
 				mCompVariantsMap[sPersistencyKey].changes.push(oChange);
 				mCompVariantsMap[sPersistencyKey].byId[oChange.getId()] = oChange;
-				FlexState.addDirtyFlexObject(mPropertyBag.reference, oChange);
+				FlexState.addDirtyFlexObjects(mPropertyBag.reference, [oChange]);
 			}
 
 			var oContent = {};
@@ -763,7 +763,7 @@ sap.ui.define([
 			mCompVariantsMap[sPersistencyKey].changes = mCompVariantsMap[sPersistencyKey].changes.filter(function(oChangeInMap) {
 				return oChangeInMap !== oChange;
 			});
-			FlexState.removeDirtyFlexObject(mPropertyBag.reference, oChange);
+			FlexState.removeDirtyFlexObjects(mPropertyBag.reference, [oChange]);
 		}
 
 		var oVariant = getVariantById(mPropertyBag);

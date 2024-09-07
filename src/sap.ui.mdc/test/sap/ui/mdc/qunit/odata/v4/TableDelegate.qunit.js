@@ -219,18 +219,26 @@ sap.ui.define([
 
 	QUnit.test("GridTable; Grouping and aggregation enabled", function(assert) {
 		return this.initTable({
-			p13nMode: ["Group", "Aggregate"],
-			groupConditions: {
-				groupLevels: [{
-					name: "Name"
-				}]
-			},
-			aggregateConditions: {
-				SalesAmount: {}
-			}
+			p13nMode: ["Group", "Aggregate"]
 		}).then(function(oTable) {
 			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
 			assert.ok(oPlugin, "V4Aggregation plugin is added to the inner table");
+			assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
+
+			oTable.setP13nMode();
+			assert.notOk(oPlugin.isActive(), "V4Aggregation plugin is not active");
+
+			oTable.setGroupConditions({
+				groupLevels: [{
+					name: "Name"
+				}]
+			});
+			assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
+
+			oTable.setGroupConditions();
+			oTable.setAggregateConditions({
+				SalesAmount: {}
+			});
 			assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
 
 			const oGroupHeaderFormatter = sinon.stub(oTable.getControlDelegate(), "formatGroupHeader");
@@ -784,7 +792,15 @@ sap.ui.define([
 			]),
 			search: undefined
 		}), "Plugin#setAggregationInfo called with the right getInResultPropertyKeys");
+	});
 
+	QUnit.test("updateBindingInfo", async function(assert) {
+		const oTable = this.oTable;
+		await oTable.initialized();
+
+		oTable.getControlDelegate().getInResultPropertyKeys = function() {
+			return ["Value"];
+		};
 		oTable.setP13nMode(["Column"]);
 
 		const oBindingInfo = {};

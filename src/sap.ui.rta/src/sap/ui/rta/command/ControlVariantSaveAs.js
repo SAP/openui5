@@ -3,15 +3,17 @@
  */
 sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/ContextSharingAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/Utils",
 	"sap/ui/rta/command/BaseCommand",
 	"sap/ui/rta/library",
 	"sap/ui/rta/Utils"
 ], function(
 	JsControlTreeModifier,
-	flUtils,
 	ContextSharingAPI,
+	PersistenceWriteAPI,
+	flUtils,
 	BaseCommand,
 	rtaLibrary,
 	rtaUtils
@@ -130,7 +132,7 @@ sap.ui.define([
 	 * @public
 	 * @returns {Promise} Resolves after undo
 	 */
-	ControlVariantSaveAs.prototype.undo = function() {
+	ControlVariantSaveAs.prototype.undo = async function() {
 		if (this._oVariantChange) {
 			var aChangesToBeDeleted = [];
 			this._aPreparedChanges.forEach(function(oChange) {
@@ -138,7 +140,10 @@ sap.ui.define([
 					aChangesToBeDeleted.push(oChange);
 				}
 			});
-			this.oModel.oChangePersistence.deleteChanges(aChangesToBeDeleted);
+			await PersistenceWriteAPI.remove({
+				flexObjects: aChangesToBeDeleted,
+				selector: this.oAppComponent
+			});
 
 			var mPropertyBag = {
 				variant: this._oVariantChange,
@@ -147,17 +152,11 @@ sap.ui.define([
 				component: this.oAppComponent
 			};
 
-			return this.oModel.removeVariant(mPropertyBag, true)
-			.then(function() {
-				const aRelevantChanges = this._aControlChangesWithoutVariant;
-				return this.oModel.addAndApplyChangesOnVariant(aRelevantChanges);
-			}.bind(this))
-			.then(function() {
-				this._aPreparedChanges = null;
-				this._oVariantChange = null;
-			}.bind(this));
+			await this.oModel.removeVariant(mPropertyBag, true);
+			await this.oModel.addAndApplyChangesOnVariant(this._aControlChangesWithoutVariant);
+			this._aPreparedChanges = null;
+			this._oVariantChange = null;
 		}
-		return Promise.resolve();
 	};
 
 	return ControlVariantSaveAs;

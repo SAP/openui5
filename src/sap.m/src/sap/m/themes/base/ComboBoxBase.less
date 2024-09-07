@@ -21,25 +21,25 @@
 }
 
 .sapMInputBaseIconPressed .sapMComboBoxBaseClearIcon {
-	color: @sapUiContentIconColor;
+	color: var(--sapContent_IconColor);
 	background: transparent;
 
 	&:hover {
-		background: @sapUiButtonLiteHoverBackground;
+		background: var(--sapButton_Lite_Hover_Background);
 	}
 
 	&:active {
-		background-color: @sapUiButtonLiteActiveBackground;
-		color: @sapUiButtonActiveTextColor;
+		background-color: var(--sapButton_Lite_Active_Background);
+		color: var(--sapButton_Active_TextColor);
 
 		&::before {
-			color: @sapUiButtonActiveTextColor;
+			color: var(--sapButton_Active_TextColor);
 		}
 	}
 }
 
 .sapMInputBaseIconPressed .sapMComboBoxBaseClearIcon::before {
-	color: @sapUiContentIconColor;
+	color: var(--sapContent_IconColor);
 }
 
 /* ------------------------------ */

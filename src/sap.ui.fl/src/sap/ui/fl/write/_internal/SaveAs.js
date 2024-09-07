@@ -153,15 +153,19 @@ sap.ui.define([
 	}
 
 	function _deleteDescrChangesFromPersistence(vSelector) {
+		const sReference = ManifestUtils.getFlexReferenceForSelector(vSelector);
 		var aChangesToBeDeleted = [];
-		// In case of app variant, both persistences hold descriptor changes and have to be removed from one of the persistences
+		// In case of app variant, both persistencies hold descriptor changes and have to be removed from one of the persistencies
 		_getDirtyDescrChanges(vSelector).forEach(function(oChange) {
 			if (DescriptorChangeTypes.getChangeTypes().includes(oChange.getChangeType())) {
 				// If there are UI changes, they are sent to the backend in the last resolved promise and removed from the persistence
 				aChangesToBeDeleted.push(oChange);
 			}
 		});
-		FlexControllerFactory.createForSelector(vSelector)._oChangePersistence.deleteChanges(aChangesToBeDeleted);
+		FlexObjectManager.deleteFlexObjects({
+			reference: sReference,
+			flexObjects: aChangesToBeDeleted
+		});
 	}
 
 	function _addPackageAndTransport(oAppVariant, mPropertyBag) {

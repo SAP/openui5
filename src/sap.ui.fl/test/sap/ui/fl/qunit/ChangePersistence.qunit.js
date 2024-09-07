@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
@@ -22,7 +21,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
@@ -35,7 +33,6 @@ sap.ui.define([
 	VariantManagementState,
 	FlexObjectState,
 	FlexState,
-	ManifestUtils,
 	Version,
 	Settings,
 	Condenser,
@@ -44,7 +41,6 @@ sap.ui.define([
 	WriteStorage,
 	ChangePersistence,
 	Layer,
-	Utils,
 	sinon,
 	FlQUnitUtils
 ) {
@@ -82,40 +78,6 @@ sap.ui.define([
 			});
 		}
 	}, function() {
-		QUnit.test("deleteChanges with bRunTimeCreatedChange parameter set, shall remove the given change from the map", function(assert) {
-			const oAppComponent = {
-				id: "mockAppComponent"
-			};
-
-			const oDependencyMap = FlexObjectState.getLiveDependencyMap(sReference);
-			DependencyHandler.addChangeAndUpdateDependencies(
-				createChange("change1", null, null, null, {id: "controlId"}),
-				oAppComponent,
-				oDependencyMap
-			);
-			DependencyHandler.addChangeAndUpdateDependencies(
-				createChange("change2", null, null, null, {id: "controlId"}),
-				oAppComponent,
-				oDependencyMap
-			);
-			DependencyHandler.addChangeAndUpdateDependencies(
-				createChange("change3", null, null, null, {id: "controlId"}),
-				oAppComponent,
-				oDependencyMap
-			);
-
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl")
-			.callThrough()
-			.withArgs(oAppComponent)
-			.returns(sReference);
-			sandbox.spy(this.oChangePersistence, "_deleteChangeInMap");
-
-			const oChangeForDeletion = oDependencyMap.mChanges.controlId[1]; // second change for 'controlId' shall be removed
-			this.oChangePersistence.deleteChange(oChangeForDeletion, true);
-			assert.ok(this.oChangePersistence._deleteChangeInMap.calledWith(oChangeForDeletion, true),
-				"then _deleteChangeInMap() was called with the correct parameters");
-		});
-
 		QUnit.test("removeChange with dirty and not dirty changes", function(assert) {
 			const oDeleteChangeInMapStub = sandbox.stub(this.oChangePersistence, "_deleteChangeInMap");
 			sandbox.stub(WriteStorage, "write").resolves();
@@ -138,20 +100,6 @@ sap.ui.define([
 			}.bind(this));
 		});
 	});
-
-	function createChange(sId, sLayer, sFileType, sVariantReference, oSelector) {
-		return FlexObjectFactory.createFromFileContent(
-			{
-				fileType: sFileType || "change",
-				fileName: sId || "fileNameChange0",
-				layer: sLayer || Layer.USER,
-				reference: "appComponentReference",
-				namespace: "namespace",
-				selector: oSelector || {id: "control1"},
-				variantReference: sVariantReference || ""
-			}
-		);
-	}
 
 	function setURLParameterForCondensing(sValue) {
 		sandbox.stub(window, "URLSearchParams").returns({
@@ -903,8 +851,7 @@ sap.ui.define([
 				selector: {id: "control1"}
 			};
 			var oChange = FlexObjectFactory.createFromFileContent(oChangeContent);
-
-			this.oChangePersistence.deleteChange(oChange);
+			FlexObjectManager.deleteFlexObjects({ reference: sReference, flexObjects: [oChange] });
 
 			assert.strictEqual(
 				FlexObjectState.getDirtyFlexObjects(sReference).length,
@@ -936,9 +883,7 @@ sap.ui.define([
 				changeType: "addField",
 				selector: {id: "control2"}
 			});
-
-			this.oChangePersistence.deleteChange(oChangeNotToBeSaved);
-			this.oChangePersistence.deleteChange(oChangeToBeSaved);
+			FlexObjectManager.deleteFlexObjects({ reference: sReference, flexObjects: [oChangeNotToBeSaved, oChangeToBeSaved] });
 
 			assert.strictEqual(
 				FlexObjectState.getDirtyFlexObjects(sReference).length,
@@ -1131,56 +1076,13 @@ sap.ui.define([
 			assert.equal(oUpdateStub.callCount, 5, "then addChange was called for all changes");
 			assert.strictEqual(oUpdateStub.lastCall.args[1][0].flexObject.fileName,
 				oChangeContent5.fileName, "the correct change was passed");
-			aSavedChanges.forEach(function(oSavedChange) {
-				this.oChangePersistence.deleteChange(oSavedChange);
-			}.bind(this));
+			FlexObjectManager.deleteFlexObjects({ reference: sReference, flexObjects: aSavedChanges });
 			await this.oChangePersistence.saveDirtyChanges();
 
 			assert.ok(oUpdateStub.calledWith(
 				this._mComponentProperties.name,
 				[{type: "delete", flexObject: aSavedChanges[4].convertToFileContent()}])
 			);
-		});
-
-		QUnit.test("shall delete a change from the dirty changes, if it has just been added to the dirty changes, having a NEW state", function(assert) {
-			var oChangeContent = {
-				fileName: "ChangeFileName",
-				layer: Layer.VENDOR,
-				fileType: "change",
-				changeType: "addField",
-				selector: {id: "control1"},
-				content: {},
-				originalLanguage: "DE"
-			};
-
-			const [oChange] = UIChangeManager.addDirtyChanges(sReference, [oChangeContent], this._oComponentInstance);
-			this.oChangePersistence.deleteChange(oChange);
-
-			assert.strictEqual(
-				FlexObjectState.getDirtyFlexObjects(sReference).length,
-				0,
-				"then no dirty changes remain in the state"
-			);
-		});
-
-		QUnit.test("shall keep a change in the dirty changes, if it has a DELETE state", function(assert) {
-			var oChangeContent = {
-				fileName: "ChangeFileName",
-				layer: Layer.VENDOR,
-				fileType: "change",
-				changeType: "addField",
-				selector: {id: "control1"},
-				content: {},
-				originalLanguage: "DE"
-			};
-
-			const [oChange] = UIChangeManager.addDirtyChanges(sReference, [oChangeContent], this._oComponentInstance);
-			oChange.markForDeletion();
-
-			this.oChangePersistence.deleteChange(oChange);
-
-			const aDirtyChanges = FlexObjectState.getDirtyFlexObjects(sReference);
-			assert.strictEqual(aDirtyChanges.length, 1);
 		});
 
 		QUnit.test("saveSequenceOfDirtyChanges shall save a sequence of the dirty changes in a bulk", function(assert) {

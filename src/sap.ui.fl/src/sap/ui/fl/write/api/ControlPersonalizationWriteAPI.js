@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils"
@@ -36,7 +35,6 @@ sap.ui.define([
 	UIChangeManager,
 	FlexObjectManager,
 	ChangesWriteAPI,
-	ChangePersistenceFactory,
 	FlexControllerFactory,
 	Layer,
 	Utils
@@ -122,7 +120,6 @@ sap.ui.define([
 			);
 			const oAppComponent = Utils.getAppComponentForControl(oReferenceControl);
 			const sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oReferenceControl});
-			const oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
 			const oVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 			const sLayer = Layer.USER;
 			const aSuccessfulChanges = [];
@@ -207,7 +204,10 @@ sap.ui.define([
 						}
 					})
 					.catch(function(oError) {
-						oChangePersistence.deleteChange(oChange.changeInstance);
+						FlexObjectManager.deleteFlexObjects({
+							reference: sFlexReference,
+							flexObjects: [oChange.changeInstance]
+						});
 						Log.error("A Change was not applied successfully. Reason: ", oError.message);
 					});
 				}, Promise.resolve());
