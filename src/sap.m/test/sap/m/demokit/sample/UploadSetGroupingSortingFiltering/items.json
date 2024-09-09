@@ -1,6 +1,7 @@
 {
 	"items": [
 		{
+			"id": "201878",
 			"fileName": "Business Plan Agenda.doc",
 			"mediaType": "application/msword",
 			"mimeType" : "application/msword",
@@ -50,6 +51,7 @@
 			"selected": false
 		},
 		{
+			"id": "201879",
 			"fileName": "Picture of a woman.png",
 			"mediaType": "image/png",
 			"mimeType": "image/png",
