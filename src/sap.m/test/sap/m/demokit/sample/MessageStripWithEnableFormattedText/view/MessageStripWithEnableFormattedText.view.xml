@@ -43,6 +43,19 @@
 				class="sapUiMediumMarginBottom">
 			</MessageStrip>
 
+			<MessageStrip
+				text="Information with multiple links %%0 %%1 %%2"
+				enableFormattedText="true"
+				showIcon="true"
+				showCloseButton="true"
+				class="sapUiMediumMarginBottom"
+			>
+				<controls>
+					<Link href="http://www.sap.com" text="Link 1" />
+					<Link href="http://www.sap.com" text="Link 2" />
+					<Link href="http://www.sap.com" text="Link 3" />
+				</controls>
+			</MessageStrip>
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

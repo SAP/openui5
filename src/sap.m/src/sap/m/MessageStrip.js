@@ -129,7 +129,7 @@ sap.ui.define([
 
 				/**
 				 * Determines the limited collection of HTML elements passed to the <code>text</code> property should be
-				 * evaluated.
+				 * evaluated. The <code>text</code> property value is set as <code>htmlText</code> to an internal instance of {@link sap.m.FormattedText}
 				 *
 				 * <b>Note:</b> If this property is set to true the string passed to <code>text</code> property
 				 * can evaluate the following list of limited HTML elements. All other HTML elements and their nested
@@ -153,6 +153,14 @@ sap.ui.define([
 				 * Adds an sap.m.Link control which will be displayed at the end of the message.
 				 */
 				link: { type: "sap.m.Link", multiple: false, singularName: "link" },
+
+				/**
+				 * List of <code>sap.m.Link</code> controls that replace the placeholders in the text.
+				 * Placeholders are replaced according to their indexes. The first link in the aggregation replaces the placeholder with index %%0, and so on.
+				 * <b>Note:</b> Placeholders are replaced if the <code>enableFormattedText</code> property is set to true.
+				 * @since 1.129
+				 */
+				controls: { type: "sap.m.Link", multiple: true, singularName: "control", forwarding: { idSuffix: "-formattedText", aggregation: "controls" } },
 
 				/**
 				 * Hidden aggregation which is used to transform the string message into sap.m.Text control.
@@ -242,7 +250,7 @@ sap.ui.define([
 
 		if (bEnable) {
 			if (!oFormattedText) {
-				oFormattedText = new FormattedText();
+				oFormattedText = new FormattedText(this.getId() + "-formattedText");
 				oFormattedText._setUseLimitedRenderingRules(true);
 				this.setAggregation("_formattedText", oFormattedText);
 			}
