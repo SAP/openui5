@@ -19,14 +19,14 @@
 				<VBox class="sapUiSmallMargin sapUiLargeMarginBegin sapUiLargeMarginEnd" >
 					<VBox height="100%" width="100%" items="{whatsNewModel>information}">
 						<HBox alignItems="Center" class=" sapUiSmallMarginBottom ">
-								<Text
+								<FormattedText
 									visible="{= (${whatsNewModel>image} === null ? true : false) &amp;&amp; (${whatsNewModel>text} !== null ? true : false)}"
-									text="{whatsNewModel>text}"
+									htmlText="{whatsNewModel>text}"
 									class="sapUiMediumMarginEnd"/>
 								<Image
 									src= "{whatsNewModel>image}"
 									visible="{= (${whatsNewModel>image} !== null ? true : false) &amp;&amp; (${whatsNewModel>text} === null ? true : false)}"
-									class=" sapUiMediumMarginEnd"
+									class=" sapUiMediumMarginEnd whatsNewImage"
 									width="100%"
 									/>
 								<grid:CSSGrid
@@ -37,11 +37,11 @@
 										src= "{whatsNewModel>image}"
 										decorative="true"
 										densityAware="false"
-										class=" sapUiMediumMarginEnd"
+										class=" sapUiMediumMarginEnd whatsNewImage"
 										width="100%"
 										/>
 									<HBox alignItems="Center">
-										<Text text="{whatsNewModel>text}"/>
+										<FormattedText htmlText="{whatsNewModel>text}"/>
 									</HBox>
 							</grid:CSSGrid>
 						</HBox>
@@ -57,7 +57,7 @@
 						id="sapUiRtaWhatsNewOverviewDialog_LearnMore"
 						visible="{= ${whatsNewModel>overviewActive} === false}"
 						text="{i18n>BTN_LEARN_MORE_WHATS_NEW_DIALOG}"
-						press="tbd"/>
+						press=".onLearnMorePress"/>
 					<Button
 						id="sapUiRtaWhatsNewOverviewDialog_ButtonClose"
 						visible="{whatsNewModel>overviewActive}"
