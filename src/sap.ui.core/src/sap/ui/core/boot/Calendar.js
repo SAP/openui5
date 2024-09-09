@@ -44,18 +44,9 @@ sap.ui.define([
 		run: () => {
 			// load cldr
 			const pLocaleData = new Promise((resolve, reject) => {
-				const sLanguage = Localization.getLanguageTag().language;
-				LoaderExtensions.loadResource("sap/ui/core/cldr/" + sLanguage + ".json", {
-					async: true,
-					dataType: "text"
-				}).then((sCldr) => {
-					const mPreload = {};
-					mPreload["sap/ui/core/cldr/" + sLanguage + ".json"] = sCldr;
-					sap.ui.require.preload(mPreload);
-					resolve();
-				}).catch((err) => {
-					reject(err);
-				});
+				sap.ui.require(["sap/ui/core/LocaleData"], (LocaleData) => {
+					LocaleData.requestInstance(Localization.getLanguageTag()).then(resolve);
+				}, reject);
 			});
 			return Promise.all([pCalendarpBoot, pLocaleData]);
 		}
