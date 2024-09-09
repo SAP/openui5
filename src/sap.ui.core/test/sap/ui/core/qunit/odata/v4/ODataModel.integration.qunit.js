@@ -8457,13 +8457,17 @@ sap.ui.define([
 						{reason : "refresh"}],
 					["ListBinding: /SalesOrderList('0500000001')|SO_2_SOITEM", "dataRequested"],
 					["ContextBinding: /SalesOrderList('0500000001')", "dataRequested"],
+					// the change event for $count is fired with the correct value before
+					// dataReceived due to early registration
+					["PropertyBinding: /SalesOrderList('0500000001')/SO_2_SOITEM|$count", "change",
+						{reason : "change"}],
 					["ContextBinding: /SalesOrderList('0500000001')", "dataReceived", {data : {}}],
 					["ListBinding: /SalesOrderList('0500000001')|SO_2_SOITEM", "change",
 						{reason : "change"}],
 					["ListBinding: /SalesOrderList('0500000001')|SO_2_SOITEM", "dataReceived",
 						{data : {}}],
-					["PropertyBinding: /SalesOrderList('0500000001')/SO_2_SOITEM|$count", "change",
-						{reason : "change"}],
+					// the change events for row properties are fired after dataReceived because the
+					// corresponding bindings are only created when the data has been received
 					["PropertyBinding: /SalesOrderList('0500000001')|Note", "change",
 						{reason : "refresh"}],
 					["PropertyBinding: /SalesOrderList('0500000001')/SO_2_SOITEM/2[2]|ItemPosition",

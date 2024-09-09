@@ -7933,7 +7933,6 @@ sap.ui.define([
 
 		that.mock(oGroupLock0).expects("unlock").withExactArgs();
 
-		// This may only happen when the read is finished
 		oCacheMock.expects("registerChangeListener").withExactArgs("('c')/key", "~oListener~");
 		oCacheMock.expects("drillDown")
 			.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key",
@@ -7982,6 +7981,8 @@ sap.ui.define([
 		oCache.aElements.push("2");
 		oCache.aElements.$tail = "$";
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
+		const oRegisterExpectation = this.mock(oCache).expects("registerChangeListener")
+			.withExactArgs("('c')/key", "~oListener~");
 		this.mock(SyncPromise).expects("all")
 			.withExactArgs(["0", "1", "2", "$"])
 			.returns(oSyncPromiseAll);
@@ -7993,13 +7994,14 @@ sap.ui.define([
 		});
 
 		// code under test
-		oResult = oCache.fetchValue(oGroupLock, "('c')/key", null, null, bCreateOnDemand)
+		oResult = oCache.fetchValue(oGroupLock, "('c')/key", null, "~oListener~", bCreateOnDemand)
 			.then(function (sResult) {
 				assert.strictEqual(sResult, "c");
 			});
 
 		assert.strictEqual(oCache.oSyncPromiseAll, oSyncPromiseAll);
 		assert.strictEqual(oResult.isPending(), true);
+		assert.strictEqual(oRegisterExpectation.callCount, 1, "registered synchronously");
 
 		// code under test (simulate an error)
 		oCache.fill(undefined, 0, 3);
@@ -8572,8 +8574,9 @@ sap.ui.define([
 			oCache = this.createCache(sResourcePath),
 			oGroupLock0 = {unlock : function () {}},
 			oListener = {
-				onChange : function () {
-					assert.ok(false);
+				onChange : function (iCount) {
+					// the onChange is called before the response, but with the correct value!
+					assert.strictEqual(iCount, 26);
 				},
 				setDeregisterChangeListener : function () {}
 			},
@@ -8584,7 +8587,7 @@ sap.ui.define([
 		return Promise.all([
 			this.mockRequestAndRead(oCache, 0, sResourcePath, 0, 10, 10, undefined, "26"),
 
-			// code under test: wait until request is finished, do not fire to listener
+			// code under test: wait until request is finished
 			oCache.fetchValue(oGroupLock0, "$count", undefined, oListener).then(function (iCount) {
 				var oGroupLock1 = {unlock : function () {}};
 
@@ -12481,13 +12484,13 @@ sap.ui.define([
 		oCacheMock = this.mock(oCache);
 
 		this.mock(oGroupLock1).expects("unlock").never();
-		oCacheMock.expects("registerChangeListener").never();
+		const oRegisterExpectation = oCacheMock.expects("registerChangeListener")
+			.withExactArgs("", "~oListener1~");
 
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", sResourcePath + "?~", sinon.match.same(oGroupLock1), undefined,
 				undefined, sinon.match.same(fnDataRequested1), undefined, "/Employees")
 			.returns(Promise.resolve().then(function () {
-					oCacheMock.expects("registerChangeListener").withExactArgs("", "~oListener1~");
 					oCacheMock.expects("registerChangeListener").withExactArgs("", undefined);
 					return oFixture.in;
 				}));
@@ -12508,6 +12511,7 @@ sap.ui.define([
 		];
 
 		assert.ok(oCache.bSentRequest);
+		assert.strictEqual(oRegisterExpectation.callCount, 1, "registered synchronously");
 
 		oCacheMock.expects("registerChangeListener").withExactArgs("", "~oListener2~");
 		this.mock(oGroupLock2).expects("unlock").withExactArgs();

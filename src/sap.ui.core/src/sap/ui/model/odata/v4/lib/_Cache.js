@@ -2719,6 +2719,8 @@ sap.ui.define([
 			that = this;
 
 		oGroupLock.unlock();
+		that.registerChangeListener(sPath, oListener);
+
 		if (this.aElements.$byPredicate[sFirstSegment]) {
 			oSyncPromise = SyncPromise.resolve(); // sync access possible
 		} else if ((oGroupLock === _GroupLock.$cached || sFirstSegment !== "$count")
@@ -2738,9 +2740,6 @@ sap.ui.define([
 		}
 
 		return oSyncPromise.then(function () {
-			// register afterwards to avoid that updateExisting fires updates before the first
-			// response
-			that.registerChangeListener(sPath, oListener);
 			return that.drillDown(that.aElements, sPath, oGroupLock, bCreateOnDemand);
 		});
 	};
@@ -3894,8 +3893,9 @@ sap.ui.define([
 				this.sResourcePath + this.sQueryString, oGroupLock, undefined, undefined,
 				fnDataRequested, undefined, this.sMetaPath));
 		}
+		that.registerChangeListener("", oListener);
+
 		return this.oPromise.then(function (oResult) {
-			that.registerChangeListener("", oListener);
 			// Note: For a null value, null is returned due to "204 No Content". For $count,
 			// "a simple primitive integer value with media type text/plain" is returned.
 			return oResult && typeof oResult === "object" ? oResult.value : oResult;
