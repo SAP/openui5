@@ -2228,9 +2228,11 @@ sap.ui.define([
 		 * @param {string} [sOrderby]
 		 *   The new value for the query option "$orderby"
 		 * @param {string[]} [aFilters]
-		 *   An array that consists of two filters, the first one ("$filter") has to be be applied
-		 *   after and the second one ("$$filterBeforeAggregate") has to be applied before
-		 *   aggregating the data. Both can be <code>undefined</code>.
+		 *   An array that consists of three filters where each can be <code>undefined</code>. The
+		 *   first one ("$filter") has to be applied after data aggregation. The second one
+		 *   ("$$filterBeforeAggregate") can be applied before data aggregation. The third one
+		 *   ("$$filterOnAggregate") has to be applied before data aggregation and already contains
+		 *   the special syntax "$these/aggregate(...)" because it relates to aggregates.
 		 * @returns {object}
 		 *   The merged map of query options
 		 *
@@ -2240,8 +2242,8 @@ sap.ui.define([
 			var mResult;
 
 			function set(sProperty, sValue) {
-				if (sValue && (!mQueryOptions || mQueryOptions[sProperty] !== sValue)) {
-					mResult ??= mQueryOptions ? _Helper.clone(mQueryOptions) : {};
+				if (sValue && mQueryOptions?.[sProperty] !== sValue) {
+					mResult ??= {...mQueryOptions};
 					mResult[sProperty] = sValue;
 				}
 			}
@@ -2250,6 +2252,7 @@ sap.ui.define([
 			if (aFilters) {
 				set("$filter", aFilters[0]);
 				set("$$filterBeforeAggregate", aFilters[1]);
+				set("$$filterOnAggregate", aFilters[2]);
 			}
 			return mResult || mQueryOptions;
 		},
