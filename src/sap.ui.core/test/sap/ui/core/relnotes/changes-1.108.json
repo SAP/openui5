@@ -632,5 +632,15 @@
         "text": " sap.ui.model.json.JSONModel#loadData: Don't use JSONP"
       }
     ]
+  },
+  "1.108.34": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "c8db6548a5c8b0c00f2224fc6316500633b29a8c",
+        "type": "FIX",
+        "text": " ResourceModel: Fix bundle reload after localizationChange"
+      }
+    ]
   }
 }

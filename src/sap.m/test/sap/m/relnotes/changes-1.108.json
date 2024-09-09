@@ -1698,5 +1698,57 @@
         "text": " sap.m.Input: Stop initial re-rendering of the input field when type password and clear icon are set"
       }
     ]
+  },
+  "1.108.34": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "0c41bdcf093008aba481125d968610231e00c057",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Content padding classes are applied to the header if additional class is present"
+      },
+      {
+        "id": "b1a112e14d14aed5b0ee490c11c2a191ec7275df",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: buttons in split mode have separate tooltips"
+      },
+      {
+        "id": "51f9815bd986969564bb858a434772e701b61d9c",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: remove roledescription announcement"
+      },
+      {
+        "id": "0c195d04a8f0083d452fd417fc3a7fb0b27751ce",
+        "type": "FIX",
+        "text": " sap.m.Carousel: fix page disappearing when scrolling"
+      },
+      {
+        "id": "35713f0bc272067bf5ad96f7390aea8a5473f959",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Visual misalignment of percent value fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270167989"
+          }
+        ]
+      },
+      {
+        "id": "6f025d597039c2d910f8caab810e8640d8980b92",
+        "type": "FIX",
+        "text": " sap.m.Fiori20Adapter: Performance issue fixed"
+      },
+      {
+        "id": "071e345a003d47eb5824ee0a9365aaecd76549ce",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: adjust value help icon settings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370075198"
+          }
+        ]
+      }
+    ]
   }
 }
