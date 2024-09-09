@@ -50,7 +50,10 @@ sap.ui.define([
 	 * @class This control allows you to upload one or more files from your devices (desktop, tablet, or phone)
 	 * and attach them to your application.<br>
 	 * This control builds on the {@link sap.m.UploadCollection} control, providing better handling of headers
-	 * and requests, unified behavior of instant and deferred uploads, as well as improved progress indication.
+	 * and requests, unified behavior of instant and deferred uploads, as well as improved progress indication.<br>
+     * We now ensure that the control handles item insertion and deletion if the items aggregation is not bound to a model.
+	 * It allows the connected model to not only manage the insertion and deletion updates
+	 * but it also helps to avoid template-related issues and ensures better data handling.
 	 * @extends sap.ui.core.Control
 	 * @author SAP SE
 	 * @version ${version}

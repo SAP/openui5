@@ -26,7 +26,10 @@
 				},
 				groupHeaderFactory: '.getGroupHeader'
 				}"
-				mode="None">
+				mode="None"
+				mediaTypeMismatch="onMediaTypeMismatch"
+				fileTypeMismatch="onFileTypeMismatch"
+				afterItemRemoved="onAfterItemRemoved" >
 			<upload:toolbar>
 				<OverflowToolbar>
 				<ToolbarSpacer/>

@@ -19,7 +19,8 @@
 				uploadButtonInvisible="false"
 				fileRenamed="onFileRenamed"
 				sameFilenameAllowed="false"
-				items="{path: '/items', templateShareable: false}">
+				items="{path: '/items', templateShareable: false}"
+				afterItemRemoved="onAfterItemRemoved">
 			<upload:items>
 				<upload:UploadSetItem
 						fileName="{fileName}"

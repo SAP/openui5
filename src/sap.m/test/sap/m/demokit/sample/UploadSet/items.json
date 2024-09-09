@@ -1,6 +1,7 @@
 {
 	"items": [
 		{
+			"id": "201878",
 			"fileName": "Business Plan Agenda.doc",
 			"mediaType": "application/msword",
 			"url": "demokit/sample/UploadCollection/LinkedDocuments/Business Plan Agenda.doc",
@@ -47,6 +48,7 @@
 			"selected": false
 		},
 		{
+			"id": "201879",
 			"fileName": "Picture of a woman.png",
 			"mimeType": "image/png",
 			"thumbnailUrl": "test-resources/sap/m/images/Woman_04.png",
