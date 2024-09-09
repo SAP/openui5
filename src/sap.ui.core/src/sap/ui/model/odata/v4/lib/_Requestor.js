@@ -1890,7 +1890,9 @@ sap.ui.define([
 					aRequests[iChangeSetNo].push(oRequest);
 				}
 				if (sGroupId === "$single") {
-					that.submitBatch("$single");
+					that.submitBatch("$single").catch(() => {
+						// nothing to do, see "HTTP request was not processed because $batch failed"
+					});
 				}
 			});
 			oRequest.$promise = oPromise;
