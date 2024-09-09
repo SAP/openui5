@@ -455,7 +455,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		//assert
-		assert.equal(aFirstToken.$('icon').css('display'), 'inline-block', 'First token icon is visible');
+		assert.equal(aFirstToken.$('icon').css('display'), 'inline-flex', 'First token icon is visible');
 		assert.ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
 
 		//act
