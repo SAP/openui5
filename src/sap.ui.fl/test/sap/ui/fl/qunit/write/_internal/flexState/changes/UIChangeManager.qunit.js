@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/fl/qunit/FlQUnitUtils",
@@ -17,6 +18,7 @@ sap.ui.define([
 	FlexObjectState,
 	FlexState,
 	UIChangeManager,
+	FlexObjectManager,
 	Layer,
 	sinon,
 	FlQUnitUtils,
@@ -41,7 +43,7 @@ sap.ui.define([
 		);
 	}
 
-	QUnit.module("addChanges", {
+	QUnit.module("addDirtyChanges", {
 		beforeEach() {
 			this.oAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox, sReference);
 			return FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference);
@@ -52,7 +54,7 @@ sap.ui.define([
 			FlexState.clearState();
 		}
 	}, function() {
-		QUnit.test("When call addChanges 3 times, 3 new changes are returned and the dependencies map also got updated", function(assert) {
+		QUnit.test("When call addDirtyChanges with 3 changes, 3 new changes are returned and the dependencies map also got updated", function(assert) {
 			const oAddPropagationListenerSpy = sandbox.spy(this.oAppComponent, "addPropagationListener");
 			const oAddChangeToMapStub = sandbox.stub(DependencyHandler, "addRuntimeChangeToMap");
 			UIChangeManager.addDirtyChanges(
@@ -80,6 +82,36 @@ sap.ui.define([
 			assert.strictEqual(aAddedFlexObjectsOnFirstCall.length, 1, "only one change is returned");
 			assert.strictEqual(aAddedFlexObjectsOnSecondCall.length, 0, "no change is returned on redundant call");
 			assert.strictEqual(oAddChangeToMapStub.callCount, 1, "addRuntimeChangeToMap is only called once");
+		});
+	});
+
+	QUnit.module("restoreDeletedChanges", {
+		beforeEach() {
+			this.oAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox, sReference);
+			return FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference);
+		},
+		afterEach() {
+			this.oAppComponent.destroy();
+			sandbox.restore();
+			FlexState.clearState();
+		}
+	}, function() {
+		QUnit.test("When restoreDeletedChanges is called", function(assert) {
+			const oRestoreDeletedFlexObjectsStub = sandbox.stub(FlexObjectManager, "restoreDeletedFlexObjects");
+			const oAddPropagationListenerSpy = sandbox.spy(this.oAppComponent, "addPropagationListener");
+			const oAddChangeToMapStub = sandbox.stub(DependencyHandler, "addRuntimeChangeToMap");
+			const aChanges = [createChange("id1"), createChange("id2"), createChange("id3")];
+			UIChangeManager.restoreDeletedChanges(
+				sReference,
+				aChanges,
+				 this.oAppComponent
+			);
+			assert.ok(oRestoreDeletedFlexObjectsStub.calledWith({
+				reference: sReference,
+				flexObjects: aChanges
+			}), "restoreDeletedFlexObjects is called with the proper parameters");
+			assert.strictEqual(oAddChangeToMapStub.callCount, 3, "addRuntimeChangeToMap is called three times");
+			assert.strictEqual(oAddPropagationListenerSpy.callCount, 1, "the propagation listener was added once");
 		});
 	});
 });

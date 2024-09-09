@@ -115,7 +115,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the number of changes stored on a storage
+	 * Returns the number of changes stored on a storage.
+	 * Only version-independent, non-draft changes are returned.
 	 *
 	 * @param {string} sStorageType Type of storage being used ("LocalStorage" or "SessionStorage")
 	 * @param {string} sReference Flex Reference
@@ -124,7 +125,7 @@ sap.ui.define([
 	FlexTestAPI.getNumberOfStoredChanges = function(sStorageType, sReference) {
 		var oConnector = sStorageType === "LocalStorage" ? LocalStorageConnector : SessionStorageConnector;
 
-		return oConnector.loadFlexData({reference: sReference})
+		return oConnector.loadFlexData({ reference: sReference })
 		.then(function(aResponses) {
 			return aResponses.reduce(function(iNumberOfChanges, oResponse) {
 				return iNumberOfChanges + oResponse.changes.length;
@@ -150,7 +151,7 @@ sap.ui.define([
 				return;
 			}
 			var oFlexObject = JSON.parse(oStorage.getItem(sKey));
-			if (oFlexObject.reference === sReference || `${oFlexObject.reference}.Component` === sReference && oFlexObject.fileType !== "version") {
+			if ((oFlexObject.reference === sReference || `${oFlexObject.reference}.Component` === sReference) && oFlexObject.fileType !== "version") {
 				iCount++;
 			}
 		});

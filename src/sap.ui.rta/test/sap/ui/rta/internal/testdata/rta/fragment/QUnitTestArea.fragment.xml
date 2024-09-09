@@ -7,8 +7,10 @@
 		   xmlns:sap.ui.rta="sap.ui.rta"
 		   xmlns:sap.ui.dt="sap.ui.dt"
 		   xmlns:sap.ui.fl="sap.ui.fl"
+		   xmlns:vm="sap.ui.fl.variants"
 		   xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 	<Text text="START OF TEST FRAGMENT!" />
+	<vm:VariantManagement id="variantManagementBar" for="bar" updateVariantInURL="true" />
 	<Bar id="bar">
 		<contentLeft>
 			<Button text="Left button1" id="lb1" />
