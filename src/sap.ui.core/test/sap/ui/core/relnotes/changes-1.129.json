@@ -3,6 +3,16 @@
     "date": "September 2024",
     "notes": [
       {
+        "id": "14aaf8d79d4b8ea1266dbce0a78f60d795158637",
+        "type": "FIX",
+        "text": " Samples failing tests fixed"
+      },
+      {
+        "id": "3b089b4c3162f6767bcd6304072eed7d85a44cf2",
+        "type": "FIX",
+        "text": " sap/ui/model/DataState.js: consider also the control dirty state of the parent data state"
+      },
+      {
         "id": "51178e8d431a5556442c485c728aff66c1a62efe",
         "type": "FIX",
         "text": " sap/ui/core/format/NumberFormat: allow parsing empty string for Currencies and Units if showNumber is false"

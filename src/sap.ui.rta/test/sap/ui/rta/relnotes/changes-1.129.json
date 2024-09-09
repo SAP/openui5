@@ -1,0 +1,12 @@
+{
+  "1.129.0": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "ef429dc5307a92ec52e654d830e8a5a166246978",
+        "type": "FIX",
+        "text": " sap.ui.rta: Remove \"Hidden\" object mutation in context based toolbar model"
+      }
+    ]
+  }
+}

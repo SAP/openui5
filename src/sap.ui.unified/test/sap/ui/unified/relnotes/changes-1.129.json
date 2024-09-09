@@ -3,6 +3,16 @@
     "date": "September 2024",
     "notes": [
       {
+        "id": "423f82f907005027be448f9fd1453e78c4ee3c93",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Calendar with two months in one column is displayed correctly now"
+      },
+      {
+        "id": "67734c253c8ff8a302a01b4db0e65a99747bf381",
+        "type": "FIX",
+        "text": " sap.ui.unified.Currency: adding an accessibility test page"
+      },
+      {
         "id": "73f5aad572036a9de3c92170a7eea06ac6c4f958",
         "type": "FIX",
         "text": " sap.ui.unified.ColorPicker: adjust tab order in large HSL mode"

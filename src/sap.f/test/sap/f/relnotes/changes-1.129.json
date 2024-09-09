@@ -3,6 +3,17 @@
     "date": "September 2024",
     "notes": [
       {
+        "id": "c0e28d366478645bb889f7302a234ac5613190d2",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: fixed side content closing on mobile device",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
         "id": "86b0f76e2866a9f67a02a5e6894a08df9699636a",
         "type": "FIX",
         "text": " sap.f.Card: Header now has correct height when only toolbar is set"

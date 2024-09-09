@@ -3,6 +3,31 @@
     "date": "September 2024",
     "notes": [
       {
+        "id": "fd1788cb3364767e4afb837be6ed348d88677bbe",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: navigate to correct month in islamic calendar"
+      },
+      {
+        "id": "291e6ca357a363878f0b28a0837b3860028fd924",
+        "type": "FIX",
+        "text": " sap.m.Label: Asteriks is visible when parent container has a set width"
+      },
+      {
+        "id": "947893c905d3a606e4052efa0543c57c22104f5c",
+        "type": "FIX",
+        "text": " We've now removed sap-desktop attribute to provide consistent focus across all devices"
+      },
+      {
+        "id": "5789d69fdbc9ca706be7806cf8103e0f55881aa4",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: add today announcement for the grid cell"
+      },
+      {
+        "id": "8270cf253e3818162214a1623725020e5f745c26",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: adding an accessibility test page"
+      },
+      {
         "id": "bd17578848a83706928906cec4b73e7ebb300622",
         "type": "FIX",
         "text": " sap.m.Button: prevent press on right click"
@@ -16,6 +41,11 @@
         "id": "34073521229d444f8a4b3a19493fceff5221db3d",
         "type": "FIX",
         "text": " sap.m.ObjectStatus: Icon on Firefox is not cut now"
+      },
+      {
+        "id": "4d1f9c90a4d07bd97dee8d8bf0a9712020f31e31",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: align the placeholder reference with other inputs"
       },
       {
         "id": "e90809cedd5824f557e098034521c994846c834a",
@@ -86,6 +116,11 @@
         "id": "a0913631b85ba27779403687b14a50bc34c4d791",
         "type": "FIX",
         "text": " We now ensure that the content maintained within the GenericTile does not extended beyond the control"
+      },
+      {
+        "id": "109ab4177ac8c8cc4a8090419f779d31a24245cb",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: show busy indicator while rows loading"
       },
       {
         "id": "d3fd8e5fe92fe23fc223ffbfa8047adeabf8ccda",
