@@ -9031,10 +9031,12 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: "Retry-After" handling: resolving restarts parallel and follow-up requests.
-	// 1) Preparation, request data for 3 sales orders
+	// 1) Preparation, request data for 4 sales orders
 	// 2) 2 parallel requests answered with 503 "Retry-After", no error, callback waiting
 	// 3) Trigger 3rd request, no request sent because pending promise, callback not asked again
 	// 4) Resolving "Retry-After" promise repeats all 3 requests
+	// 5) Another 4th request leads again to a 503 error and invokes the callback a 2nd time
+	// 6) Resolving the new "Retry-After" promise repeats the 4th request
 	// JIRA: CPOUI5MODELS-1743
 	QUnit.test('503, "Retry-After" handling: resolving', async function (assert) {
 		let bAnswerWith503 = false;
@@ -9042,6 +9044,7 @@ sap.ui.define([
 			"DELETE SalesOrderList('1')" : {message : {code : 204}},
 			"DELETE SalesOrderList('2')" : {message : {code : 204}},
 			"DELETE SalesOrderList('3')" : {message : {code : 204}},
+			"DELETE SalesOrderList('4')" : {message : {code : 204}},
 			"POST $batch" : {
 				code : 503,
 				headers : {"Retry-After" : "42"},
@@ -9053,7 +9056,8 @@ sap.ui.define([
 					value : [
 						{Note : "Note1", SalesOrderID : "1"},
 						{Note : "Note2", SalesOrderID : "2"},
-						{Note : "Note3", SalesOrderID : "3"}
+						{Note : "Note3", SalesOrderID : "3"},
+						{Note : "Note4", SalesOrderID : "4"}
 					]
 				}
 			}]
@@ -9076,12 +9080,12 @@ sap.ui.define([
 	<Text id="note" text="{Note}"/>
 </Table>`;
 
-		this.expectChange("note", ["Note1", "Note2", "Note3"]);
+		this.expectChange("note", ["Note1", "Note2", "Note3", "Note4"]);
 
 		// 1
 		await this.createView(assert, sView, oModel);
 
-		this.expectChange("note", ["Note3"]);
+		this.expectChange("note", ["Note3", "Note4"]);
 		const aContexts = this.oView.byId("table").getBinding("items").getCurrentContexts();
 		const aDeletePromises = [];
 		bAnswerWith503 = true;
@@ -9101,7 +9105,7 @@ sap.ui.define([
 		assert.strictEqual(aBatchPayloads.length, 0);
 		assert.strictEqual(iCallbackCount, 1);
 
-		this.expectChange("note", []);
+		this.expectChange("note", ["Note4"]);
 
 		// code under test
 		aDeletePromises.push(aContexts[2].delete("$single"));
@@ -9130,6 +9134,36 @@ sap.ui.define([
 		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('3')"));
 		assert.strictEqual(aBatchPayloads.length, 0);
 		assert.strictEqual(iCallbackCount, 1);
+
+		this.expectChange("note", []);
+		bAnswerWith503 = true;
+
+		// code under test
+		const oDeletePromise = aContexts[3].delete("$single");
+
+		assert.ok(oModel.hasPendingChanges());
+
+		await this.waitForChanges(assert, "5");
+
+		assert.ok(aContexts[3].isDeleted());
+		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('4')"));
+		assert.strictEqual(aBatchPayloads.length, 0);
+		assert.strictEqual(iCallbackCount, 2);
+
+		bAnswerWith503 = false;
+
+		// code under test
+		fnResolveRetryAfter();
+
+		await Promise.all([
+			oDeletePromise,
+			this.waitForChanges(assert, "6")
+		]);
+
+		assert.notOk(oModel.hasPendingChanges());
+		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('4')"));
+		assert.strictEqual(aBatchPayloads.length, 0);
+		assert.strictEqual(iCallbackCount, 2);
 		TestUtils.onRequest(null);
 	});
 

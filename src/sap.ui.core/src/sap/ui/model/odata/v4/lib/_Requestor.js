@@ -2076,8 +2076,13 @@ sap.ui.define([
 					} else if (jqXHR.status === 503 && jqXHR.getResponseHeader("Retry-After")
 							&& (that.oRetryAfterPromise
 								|| that.oModelInterface.getRetryAfterHandler())) {
-						that.oRetryAfterPromise ??= that.oModelInterface.getRetryAfterHandler()(
-							_Helper.createError(jqXHR, ""));
+						if (!that.oRetryAfterPromise) {
+							that.oRetryAfterPromise = that.oModelInterface.getRetryAfterHandler()(
+								_Helper.createError(jqXHR, ""));
+							that.oRetryAfterPromise.finally(() => {
+								that.oRetryAfterPromise = null;
+							});
+						}
 						that.oRetryAfterPromise.then(send);
 					} else {
 						sMessage = "Communication error";
