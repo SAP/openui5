@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/base/Log",
 	"sap/ui/util/Mobile",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Element,
 	createAndAppendDiv,
@@ -34,7 +35,8 @@ sap.ui.define([
 	Dialog,
 	Log,
 	Mobile,
-	Core
+	Core,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -2439,7 +2441,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Focus is changed only after transition", function(oAssert) {
+	QUnit.test("Focus is changed only after transition", async function(oAssert) {
 		var fnDone = oAssert.async(),
 			oNavContainer = this.oNavC,
 			oPopover = this.oPopover,
@@ -2479,7 +2481,7 @@ sap.ui.define([
 
 		// Act
 		this.oOpeningBtn.placeAt("qunit-fixture");
-
+		await nextUIUpdate();
 	});
 
 	QUnit.module("Internal methods", {
