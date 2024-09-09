@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/HBox",
 	"sap/m/VBox",
 	"sap/m/Image",
-	"sap/m//Link",
+	"sap/m/Link",
 	"sap/ui/core/Icon",
 	"sap/ui/core/mvc/View",
 	"sap/m/Button",
