@@ -382,6 +382,15 @@ sap.ui.define([
 		]
 	});
 
+	var oVL5 = new VerticalLayout({
+		id: "oVL5",
+		width: "130px",
+		content: [
+			new Label("reqLabelParentWidth", {text:"Lorem ipsum dolor sit amet, Lorem ipsum dolor sit amet", required:true}),
+			new Label("reqColonLabelParentWidth", {text: "Lorem ipsum dolor sit amet, Lorem ipsum dolor sit amet", required:true, showColon: true})
+		]
+	});
+
 	var oPage = new Page("myPage", {
 		title: "sap.m.Label Test Page",
 		subHeader: new Toolbar({
@@ -462,6 +471,7 @@ sap.ui.define([
 					oVL2,
 					oVL3,
 					oVL4,
+					oVL5,
 					sf, sf2
 				]
 			})
