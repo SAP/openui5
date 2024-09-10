@@ -20,4 +20,9 @@ describe("sap.m.CarouselNoPages", function() {
 		browser.executeScript('document.getElementById("car2").scrollIntoView()');
 		expect(takeScreenshot(carousel40)).toLookAs('1_carousel_40');
 	});
+
+	it("should take picture of carousel with smaller height with error message and no pages ", function () {
+		var carouselSmall = element(by.id('car3'));
+		expect(takeScreenshot(carouselSmall)).toLookAs('2_carousel_smaller_height');
+	});
 });
