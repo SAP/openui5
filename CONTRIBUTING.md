@@ -197,3 +197,8 @@ If this list sounds lengthy and hard to achieve - well, that's what WE have to c
 11. Once the change has been approved we will inform you in a comment
 12. Your pull request cannot be merged directly into the branch (internal SAP processes), but will be merged internally and immediately appear in the public repository as well. Pull requests for non-code branches (like "gh-pages" for the website) can be directly merged.
 13. We will close the pull request, feel free to delete the now obsolete branch
+
+### Contributing with AI-generated code
+As artificial intelligence evolves, AI-generated code is becoming valuable for many software projects, including open-source initiatives. While we recognize the potential benefits of incorporating AI-generated content into our open-source projects there are certain requirements that need to be reflected and adhered to when making contributions.
+
+Please see our [guideline for AI-generated code contributions to SAP Open Source Software Projects](https://github.com/SAP/.github/blob/main/CONTRIBUTING_USING_GENAI.md) for these requirements.
