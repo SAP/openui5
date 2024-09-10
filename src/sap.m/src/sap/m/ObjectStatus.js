@@ -263,9 +263,44 @@ sap.ui.define([
 	 * @private
 	 * @param {object} oEvent The fired event
 	 */
-	ObjectStatus.prototype.onkeyup = function(oEvent) {
+	ObjectStatus.prototype.onkeyup = function (oEvent) {
 		if (oEvent.which === KeyCodes.SPACE) {
-			this.onsapenter(oEvent);
+			if (!this._bPressedEscapeOrShift) {
+				this.firePress();
+				// mark the event that it is handled by the control
+				oEvent.setMarked();
+			} else {
+				this._bPressedEscapeOrShift = false;
+			}
+			this._bPressedSpace = false;
+		}
+	};
+
+	/**
+	 * Handle the key down event for SPACE
+	 * SHIFT or ESCAPE on pressed SPACE cancels the action
+	 *
+	 * @param {jQuery.Event} oEvent The SPACE keyboard key event object
+	 */
+	ObjectStatus.prototype.onkeydown = function(oEvent) {
+		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.SHIFT || oEvent.which === KeyCodes.ESCAPE) {
+			// set inactive state of the button and marked ESCAPE or SHIFT as pressed only if SPACE was pressed before it
+			if (oEvent.which === KeyCodes.SPACE) {
+				if (this._isActive()) {
+					// mark the event for components that needs to know if the event was handled by the active status
+					oEvent.setMarked();
+					oEvent.preventDefault();
+					this._bPressedSpace = true;
+				}
+			}
+
+			if (this._bPressedSpace && (oEvent.which === KeyCodes.ESCAPE || oEvent.which === KeyCodes.SHIFT)) {
+				this._bPressedEscapeOrShift = true;
+			}
+		} else {
+			if (this._bPressedSpace) {
+				oEvent.preventDefault();
+			}
 		}
 	};
 
