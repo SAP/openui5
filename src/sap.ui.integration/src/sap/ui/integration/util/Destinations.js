@@ -92,7 +92,8 @@ sap.ui.define([
 						oObj[vKey] = sProcessedString;
 					}
 				})
-				.catch(function () {
+				.catch(function (sMessage) {
+					Log.error(sMessage, "sap.ui.integration.util.Destinations");
 					if (vKey !== undefined) {
 						oObj[vKey] = "";
 					}
