@@ -528,7 +528,7 @@ sap.ui.define([
 			var aLabels = [oTable.getId() + "-colnumberofcols"].concat(mAttributes["aria-labelledby"]);
 			var iSpan = oCellInfo.columnSpan;
 
-			if (TableUtils.isA(oColumnLabel, "sap.m.Label") && oColumnLabel.getRequired()) {
+			if (oColumnLabel?.getRequired?.()) {
 				aLabels.push(oTable.getId() + "-ariarequired");
 			}
 
