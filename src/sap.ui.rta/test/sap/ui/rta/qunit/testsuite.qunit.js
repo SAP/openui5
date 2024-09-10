@@ -829,7 +829,9 @@ sap.ui.define([
 				},
 				coverage: {
 					only: [
-						"sap/ui/rta/util/whatsNew/WhatsNew"
+						"sap/ui/rta/util/whatsNew/WhatsNew",
+						"sap/ui/rta/util/whatsNew/whatsNewContent/WhatsNewFeatures",
+						"sap/ui/rta/util/whatsNew/WhatsNewUtils"
 					]
 				}
 			},

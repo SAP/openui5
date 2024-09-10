@@ -14,50 +14,29 @@
 			<Carousel
 				id="sapWhatsNewDialogCarousel"
 				loop="true"
-				pageIndicatorBackgroundDesign="Translucent"
-				pageIndicatorBorderDesign="None" pages="{path: 'whatsNewModel>/featureCollection'}"
+				pages="{path: 'whatsNewModel>/featureCollection',  templateShareable: false}"
 				height="33rem"
 				width="100%">
 				<pages>
-					<Page enableScrolling="true" showHeader="false" id="whatsNewPage">
-						<VBox id="whatsNewDialogOverview" alignItems="Start" visible="{= ${whatsNewModel>overview} !== undefined ? true : false}">
-							<Title text="{whatsNewModel>overviewTitle}" class="sapUiMediumMarginTop sapUiLargeMarginBegin sapUiTinyMarginBottom" level="H3"/>
-							<f:Card width="44rem" height="24rem" class="sapUiLargeMarginBeginEnd sapUiSmallMarginBottom">
-								<f:content>
-									<VBox items="{whatsNewModel>overview}" class="sapUiSmallMargin">
-										<Link
-											text="{whatsNewModel>newFeatureTitle}"
-											class="sapUiTinyMarginBottom"
-											press=".scrollCarousel('whatsNewPage-sapWhatsNewDialogCarousel-', ${path: 'whatsNewModel>index'})"/>
-									</VBox>
-								</f:content>
-							</f:Card>
-						</VBox>
-						<VBox
-							id="whatsNewDialogContent"
-							height="100%" width="100%"
-							visible="{= ${whatsNewModel>overview} === undefined ? true : false}">
+					<Page enableScrolling="true" showHeader="false">
+						<VBox height="100%" width="100%">
 							<Title text="{whatsNewModel>title}" class="sapUiMediumMarginTop sapUiLargeMarginBegin sapUiTinyMarginBottom" level="H3"/>
 							<f:Card width="44rem" height="24rem" class="sapUiLargeMarginBeginEnd sapUiSmallMarginBottom">
 								<f:content>
-									<Page enableScrolling="true" showHeader="false">
-										<VBox class="sapUiSmallMargin" >
-											<VBox height="100%" width="100%" items="{whatsNewModel>information}">
+									<Page enableScrolling="true" showHeader="false" backgroundDesign="Transparent">
+											<VBox height="100%" width="100%" items="{path: 'whatsNewModel>information', templateShareable: false}" class="sapUiSmallMargin">
 												<HBox alignItems="Center" class=" sapUiSmallMarginBottom ">
-													<Text
-														id="whatsNewDialogText"
+													<FormattedText
 														visible="{= (${whatsNewModel>image} === null ? true : false) &amp;&amp; (${whatsNewModel>text} !== null ? true : false)}"
-														text="{whatsNewModel>text}"
-														class="sapUiMediumMarginEnd"/>
+														htmlText="{whatsNewModel>text}"
+														/>
 													<Image
-														id="whatsNewDialogImage"
 														src= "{whatsNewModel>image}"
 														visible="{= (${whatsNewModel>image} !== null ? true : false) &amp;&amp; (${whatsNewModel>text} === null ? true : false)}"
-														class=" sapUiMediumMarginEnd"
+														class="whatsNewImage"
 														width="100%"
 														/>
 													<grid:CSSGrid
-														id="whatsNewDialogGrid"
 														visible="{= (${whatsNewModel>image} !== null ? true : false) &amp;&amp; (${whatsNewModel>text} !== null ? true : false)}"
 														gridTemplateColumns="2fr 3fr"
 														gridGap="1rem">
@@ -65,16 +44,14 @@
 															src= "{whatsNewModel>image}"
 															decorative="true"
 															densityAware="false"
-															class=" sapUiMediumMarginEnd"
-															width="100%"
-															/>
+															class="whatsNewImage"
+															width="100%"/>
 														<HBox alignItems="Center">
-															<Text text="{whatsNewModel>text}"/>
+															<FormattedText htmlText="{whatsNewModel>text}"/>
 														</HBox>
 													</grid:CSSGrid>
 												</HBox>
 											</VBox>
-										</VBox>
 									</Page>
 								</f:content>
 							</f:Card>
@@ -94,7 +71,7 @@
 					<Button
 						id="sapUiRtaWhatsNewDialog_LearnMore"
 						text="{i18n>BTN_LEARN_MORE_WHATS_NEW_DIALOG}"
-						press="tbd"/>
+						press=".onLearnMorePress"/>
 					<Button
 						id="sapUiRtaWhatsNewDialog_ButtonClose"
 						text="{i18n>BTN_CLOSE_FEEDBACK_DIALOG}"

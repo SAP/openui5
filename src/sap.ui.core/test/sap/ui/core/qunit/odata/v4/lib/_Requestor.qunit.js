@@ -986,7 +986,11 @@ sap.ui.define([
 
 				oJQueryMock.expects("ajax")
 					.withArgs("/Service/First")
-					.returns(createMock(assert, {/*oPayload*/}, "OK"));
+					.callsFake(() => {
+						assert.strictEqual(oRequestor.oRetryAfterPromise, null);
+						oRequestor.oRetryAfterPromise = "~otherPromise~"; // reset promise only once
+						return createMock(assert, {/*oPayload*/}, "OK");
+					});
 				oJQueryMock.expects("ajax")
 					.withArgs("/Service/Second")
 					.returns(createMock(assert, {/*oPayload*/}, "OK"));
@@ -1011,7 +1015,7 @@ sap.ui.define([
 			oRequestor.sendRequest("GET", "First"),
 			oRequestor.sendRequest("GET", "Second")
 		]).then(function () {
-			assert.strictEqual(oRequestor.oRetryAfterPromise, oRetryAfterPromise);
+			assert.strictEqual(oRequestor.oRetryAfterPromise, "~otherPromise~");
 		});
 	});
 
@@ -1556,7 +1560,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("request(...): $single", function () {
+[false, true].forEach(function (bBatchFails) {
+	QUnit.test("request(...): $single, batch fails: " + bBatchFails, function (assert) {
 		var mQueryOptions = {$select : ["foo"]},
 			oRequestor = _Requestor.create("/", oModelInterface);
 
@@ -1571,12 +1576,27 @@ sap.ui.define([
 					}
 				]
 			});
+			if (bBatchFails) {
+				const oBatchError = new Error("Service Unavailable");
+				const oRequestError
+					= new Error("HTTP request was not processed because $batch failed");
+				oRequestError.cause = oBatchError;
+				oRequestor.mBatchQueue.$single[1].$reject(oRequestError);
+				return Promise.reject(oBatchError);
+			}
+			oRequestor.mBatchQueue.$single[1].$resolve("");
+			return Promise.resolve();
 		});
 
-		oRequestor.request("GET", "EntitySet", this.createGroupLock("$single"),
-			undefined, undefined, undefined, undefined, undefined, undefined, false, mQueryOptions);
+		return oRequestor.request("GET", "EntitySet", this.createGroupLock("$single"), undefined,
+				undefined, undefined, undefined, undefined, undefined, false, mQueryOptions)
+			.catch((oError) => {
+				assert.strictEqual(oError.message,
+					"HTTP request was not processed because $batch failed");
+				assert.strictEqual(oError.cause.message, "Service Unavailable");
+		});
 	});
-
+});
 	//*********************************************************************************************
 	QUnit.test("request(...): throw error if $single queue not empty", function (assert) {
 		var mQueryOptions = {$select : ["foo"]},
