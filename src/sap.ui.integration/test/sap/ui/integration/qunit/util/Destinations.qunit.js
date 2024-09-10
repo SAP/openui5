@@ -49,10 +49,16 @@ sap.ui.define([
 						"innerDestination": {
 							"name": "innerDestination"
 						}
+					},
+					"parameters": {
+						"subtitle": {
+							"value": "Subtitle 1"
+						}
 					}
 				},
 				"header": {
 					"title": "{{destinations.innerDestination}} {title}",
+					"subTitle": "{parameters>/subtitle/value}",
 					"data": {
 						"request": {
 							"url": "{{destinations.headerDestination}}/header.json"
@@ -227,6 +233,23 @@ sap.ui.define([
 			}
 		}
 
+		async function checkValidDestinationsAndParameters(assert) {
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(this.oCard);
+
+			// Act - setting a parameter after the card is already processed
+			this.oCard.setParameter("subtitle", "Subtitle 2");
+			await nextCardReadyEvent(this.oCard);
+
+			const aItems = this.oCard.getCardContent().getInnerList().getItems();
+			const oHeader = this.oCard.getCardHeader();
+
+			// Assert
+			assert.ok(aItems.length, "The data request is successful.");
+			assert.strictEqual(oHeader.getTitle(), sInnerText + " Card Title", "header destination is resolved successfully");
+			assert.strictEqual(oHeader.getSubtitle(), "Subtitle 2", "subtitle parameter is resolved successfully");
+		}
+
 		QUnit.module("Destinations", {
 			beforeEach: function () {
 				this.oHost = new Host({
@@ -271,6 +294,10 @@ sap.ui.define([
 
 		QUnit.test("Card.resolveDestination method", async function (assert) {
 			await checkValidResolveDestinationMethod.call(this, assert);
+		});
+
+		QUnit.test("Resolve destinations after late paramater change", async function (assert) {
+			await checkValidDestinationsAndParameters.call(this, assert);
 		});
 
 		QUnit.module("Async Destinations", {
@@ -333,6 +360,10 @@ sap.ui.define([
 
 		QUnit.test("Card.resolveDestination method", async function (assert) {
 			await checkValidResolveDestinationMethod.call(this, assert);
+		});
+
+		QUnit.test("Resolve destinations after late paramater change", async function (assert) {
+			await checkValidDestinationsAndParameters.call(this, assert);
 		});
 
 		QUnit.module("Invalid Destinations", {
