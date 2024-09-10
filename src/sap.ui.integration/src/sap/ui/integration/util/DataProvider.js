@@ -210,6 +210,7 @@ sap.ui.define([
 
 		this._bActive = true;
 		this._iCurrentRequestNumber++;
+		const iCurrentRequestNumber = this._iCurrentRequestNumber;
 
 		if (oCard) {
 			sMeasureId = "UI5 Integration Cards " + oCard + " " + this.getId() + " getData#" + this._iCurrentRequestNumber;
@@ -222,8 +223,10 @@ sap.ui.define([
 					Measurement.end(sMeasureId);
 				}
 
-				this.fireDataChanged({data: oData});
-				this.onDataRequestComplete();
+				if (iCurrentRequestNumber === this._iCurrentRequestNumber) {
+					this.fireDataChanged({data: oData});
+					this.onDataRequestComplete();
+				}
 			}.bind(this))
 			.catch(function (oResult) {
 				if (oCard) {
