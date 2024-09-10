@@ -613,11 +613,6 @@
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
-			"control": "sap.m.TimePickerSliders",
-			"url": "TimePickerSliders.html",
-			"appComponent": "CA-UI5-CTR-BAL"
-		},
-		{
 			"control": "sap.m.Text",
 			"url": "../Text.html",
 			"appComponent": "CA-UI5-CTR-ROD"
