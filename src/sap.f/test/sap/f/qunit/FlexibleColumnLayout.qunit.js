@@ -8,11 +8,13 @@ sap.ui.define([
 	"sap/f/FlexibleColumnLayoutSemanticHelper",
 	"sap/f/FlexibleColumnLayoutData",
 	"sap/f/FlexibleColumnLayoutDataForTablet",
+	"sap/f/FlexibleColumnLayoutDataForDesktop",
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/ui/core/Core",
 	"sap/ui/core/ResizeHandler",
 	'sap/ui/events/KeyCodes',
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/f/library"
 ],
 function(
@@ -24,11 +26,13 @@ function(
 	FlexibleColumnLayoutSemanticHelper,
 	FlexibleColumnLayoutData,
 	FlexibleColumnLayoutDataForTablet,
+	FlexibleColumnLayoutDataForDesktop,
 	Page,
 	Button,
 	Core,
 	ResizeHandler,
 	KeyCodes,
+	nextUIUpdate,
 	library
 ) {
 	"use strict";
@@ -2691,4 +2695,140 @@ function(
 		iSeparatorValuenow = parseFloat(this.oFCL._oColumnSeparators.end.get(0).getAttribute("aria-valuenow"));
 		assert.strictEqual(iSeparatorValuenow, 0.00, "valuenow attribute shows mid column is shrinked to the min");
 	});
+
+	QUnit.module("FlexibleColumnLayoutData", {
+		beforeEach: async function () {
+				this.oFCL = new FlexibleColumnLayout({
+				beginColumnPages: [new Page()],
+				midColumnPages: [new Page()],
+				endColumnPages: [new Page()],
+				layout: LT.TwoColumnsMidExpanded,
+				layoutData: new FlexibleColumnLayoutData({
+					tabletLayoutData: new FlexibleColumnLayoutDataForTablet()
+				})
+			});
+
+			this.oFCL.placeAt(sQUnitFixture);
+			await nextUIUpdate();
+		},
+		afterEach: function () {
+			this.oFCL.destroy();
+		}
+	});
+
+	QUnit.test("Columns' are resized when property of FlexibleColumnLayoutDataForTablet is updated", function(assert) {
+		// Arrange
+		var oTabletLayoutData = this.oFCL.getLayoutData().getTabletLayoutData(),
+			fnSpy = this.spy(this.oFCL, "_resizeColumns");
+
+		// Act
+		oTabletLayoutData.setTwoColumnsMidExpanded("25/75/0");
+
+		// Assert
+		assert.ok(fnSpy.calledOnce, "_resizeColumns is called when a property of the layoutData is changed");
+		assert.ok(fnSpy.calledWith({ hasAnimations: false }), "_resizeColumns is called parameter for turning off the animations");
+	});
+
+	QUnit.test("FCL's columns are not resized when a property of the layoutData is changed, which does not correspond to the current layout", function(assert) {
+		// Arrange
+		var oTabletLayoutData = this.oFCL.getLayoutData().getTabletLayoutData(),
+			fnSpy = this.spy(this.oFCL, "_resizeColumns");
+
+		// Act
+		oTabletLayoutData.setTwoColumnsBeginExpanded("60/40/0");
+		oTabletLayoutData.setThreeColumnsEndExpanded("0/40/60");
+
+		// Assert
+		assert.ok(fnSpy.notCalled, "_resizeColumns is not called when a property of the layoutData is changed, which does not correspond to the current layout");
+	});
+
+	QUnit.test("FCL's columns are not resized when a property of the layoutData for different media is changed", async function(assert) {
+		// Arrange
+		var oDesktopLayoutData = new FlexibleColumnLayoutDataForDesktop(),
+			fnSpy;
+
+		this.oFCL.getLayoutData().setDesktopLayoutData(oDesktopLayoutData);
+		await nextUIUpdate();
+
+		// Act
+		fnSpy = this.spy(this.oFCL, "_resizeColumns");
+		oDesktopLayoutData.setTwoColumnsMidExpanded("40/60/0");
+
+		// Assert
+		assert.ok(fnSpy.notCalled, "_resizeColumns is not called when a property of the layoutData for different media is changed");
+	});
+
+	QUnit.test("FCL's columns are not resized when new value of a property of the layoutData is empty string", function(assert) {
+		// Arrange
+		var oTabletLayoutData = this.oFCL.getLayoutData().getTabletLayoutData(),
+			fnSpy = this.spy(this.oFCL, "_resizeColumns");
+
+		// Act
+		oTabletLayoutData.setTwoColumnsMidExpanded("");
+
+		// Assert
+		assert.ok(fnSpy.notCalled, "_resizeColumns is not called when a property of the layoutData is changed, which does not correspond to the current layout");
+	});
+
+	QUnit.test("FCL unsubscribes for changes in old/destroyed layoutData", function(assert) {
+		// Arrange
+		var oLayoutData = this.oFCL.getLayoutData(),
+			oTabletLayoutData = oLayoutData.getTabletLayoutData(),
+			fnSpy;
+
+		// Act
+		oLayoutData.setTabletLayoutData(new FlexibleColumnLayoutDataForTablet());
+		fnSpy = this.spy(this.oFCL, "_resizeColumns");
+		// Update property of the old layoutData
+		oTabletLayoutData.setTwoColumnsMidExpanded("25/75/0");
+
+		// Assert
+		assert.ok(fnSpy.notCalled, "FCL does not listen for changes in an old/destroyed layoutData");
+	});
+
+	QUnit.test("FCL is rerendered and columns are resized when tabletLayoutData aggregation of FlexibleColumnLayout is changed", async function(assert) {
+		// Arrange
+		var oLayoutData = this.oFCL.getLayoutData(),
+			fnSpy = this.spy(this.oFCL, "_resizeColumns");
+
+		// ct
+		oLayoutData.setTabletLayoutData(new FlexibleColumnLayoutDataForTablet());
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(fnSpy.calledOnce, "Columns are resized when tabletLayoutData aggregation of FlexibleColumnLayout is changed");
+	});
+
+	QUnit.test("FCL is rerendered and columns are resized when new layoutData aggregation of FlexibleColumnLayout is set", async function(assert) {
+		// Arrange
+		var fnSpy = this.spy(this.oFCL, "_resizeColumns");
+
+		// Act
+		this.oFCL.setLayoutData(new FlexibleColumnLayoutData());
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(fnSpy.calledOnce, "Columns are resized when tabletLayoutData aggregation of FlexibleColumnLayout is changed");
+	});
+
+	QUnit.test("After columnsDistributionChange event is fired and layoutData property is updated, there is no second resize", function (assert) {
+		// Arrange
+		var oTabletLayoutData = this.oFCL.getLayoutData().getTabletLayoutData(),
+			fnDone = assert.async(),
+			fnSpy = this.spy(this.oFCL, "_resizeColumns");
+
+		this.oFCL.attachColumnsDistributionChange(function (oEvent) {
+			oTabletLayoutData.setTwoColumnsMidExpanded(oEvent.getParameter("columnsSizes"));
+		});
+
+		//Act - simulate dragging the separator by user interaction
+		dragSeparator("begin", -150, this.oFCL);
+
+		this.oFCL._attachAfterAllColumnsResizedOnce(function() {
+			// Assert
+			assert.ok(fnSpy.calledOnce, "_resizeColumns is called only once");
+			fnDone();
+		});
+	});
+
 });
