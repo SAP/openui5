@@ -9,7 +9,6 @@
 	display: inline-block;
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
-	vertical-align: top;
 	cursor: pointer;
 
 	&:visited {
@@ -110,6 +109,7 @@ html.sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnk
 
 .sapUiForm .sapMLnk {
 	min-height: 1rem; /* do give empty links a size too. Keep the Form stable */
+	vertical-align: top;
 }
 
 .sapUiFormEdit .sapMLnk {
