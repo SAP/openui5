@@ -18,7 +18,8 @@ sap.ui.define([
 	"./templateHelper",
 	"sap/m/upload/ActionsPlaceholder",
 	"sap/m/OverflowToolbar",
-	"sap/m/upload/UploaderTableItem"
+	"sap/m/upload/UploaderTableItem",
+	"sap/ui/model/type/Boolean"
 ], function (Text, MTable, MColumn, ColumnListItem, UploadSetwithTable, MDCTable, MDCColumn, JSONModel, qutils, nextUIUpdate, GridColumn, GridTable, TemplateHelper, ActionsPlaceholder, OverflowToolbar, Uploader) {
 	"use strict";
 
