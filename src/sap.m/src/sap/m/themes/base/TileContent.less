@@ -146,6 +146,8 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 	}
 }
 
+// Styles when the slide tile has only one tile inside it
+
 .Stretch {
 	.sapMTileCnt.News.sapMTileFooterPresent{
 		.sapMTileCntContent {
@@ -173,18 +175,43 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 	}
 }
 
-.Stretch.sapMSTIndicatorVisible {
-	.sapMTileCnt.News{
-		.sapMTileCntContent {
-			height: -webkit-calc(~'100% - 32px');
-		}
-	}
-	&.sapMTileSmallPhone {
-		.sapMTileCnt.News{
-			.sapMTileCntContent {
-				height: -webkit-calc(~'100% - 23px');
+// Styles when the slide tile has only one tile inside it
+
+.sapMST.sapMSTIndicatorVisible.Stretch {
+	.sapMTileCnt.News {
+		.sapMNwCCTxt,.sapMNwCSbh {
+			.sapMFT {
+				text-overflow: initial;
+				 white-space: initial;
 			}
 		}
+		&.sapMTileFooterPresent {
+			.sapMTileCntContent {
+				height: -webkit-calc(~'100% - 65px') !important;
+			}
+		}
+		.sapMTileCntContent {
+			height: -webkit-calc(~'100% - 51px') !important;
+		}
+	}
+	.sapMTileCntFtrTxt {
+		bottom: 1.875rem;
+	}
+}
+
+.sapMST.sapMSTIndicatorVisible.Stretch.sapMTileSmallPhone {
+	.sapMTileCnt.News {
+		&.sapMTileFooterPresent {
+			.sapMTileCntContent {
+				height: -webkit-calc(~'100% - 54px') !important;
+			}
+		}
+		.sapMTileCntContent {
+			height: -webkit-calc(~'100% - 40px') !important;
+		}
+	}
+	.sapMTileCntFtrTxt {
+		bottom: 1.875rem;
 	}
 }
 
