@@ -14,9 +14,9 @@ sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 	};
 
 	ObjectPageSectionRenderer.render = function (oRm, oControl) {
-		var sTitle, bTitleVisible, bTitleAriaHidden,
+		var bTitleVisible, bTitleAriaHidden, bShouldDisplayButtonsInHeader, bHasMoreThanOneVisibleSubSection,
 			bAccessibilityOn = ControlBehavior.isAccessibilityEnabled(),
-			oLabelledBy = oControl.getAggregation("ariaLabelledBy"),
+			oLabelledByTitleID = oControl._getAriaLabelledById(),
 			oHeading = oControl.getHeading(),
 			bWrapTitle = oControl.getWrapTitle();
 
@@ -24,14 +24,15 @@ sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 			return;
 		}
 
-		sTitle = oControl._getTitle();
 		bTitleVisible = oControl.getTitleVisible();
 		bTitleAriaHidden = !oControl._isTitleAriaVisible();
+		bShouldDisplayButtonsInHeader = oControl._shouldDisplayButtonsInHeader();
+		bHasMoreThanOneVisibleSubSection = oControl._getVisibleSubSections().length > 1;
 
 		oRm.openStart("section", oControl)
 			.class("sapUxAPObjectPageSection");
 
-		if (!bTitleVisible) {
+		if (bTitleAriaHidden) {
 			oRm.class("sapUxAPObjectPageSectionNoTitle");
 		}
 
@@ -41,8 +42,8 @@ sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 
 		oRm.attr("role", "region");
 
-		if (bAccessibilityOn && oLabelledBy) {
-			oRm.attr("aria-labelledby", oLabelledBy.getId());
+		if (bAccessibilityOn && oLabelledByTitleID) {
+			oRm.attr("aria-labelledby", oLabelledByTitleID);
 		}
 
 		oRm.attr("data-sap-ui-customfastnavgroup", true);
@@ -59,9 +60,9 @@ sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 
 		oRm.openStart("div", oControl.getId() + "-header")
 			.attr("role", "heading")
-			.attr("aria-level", oControl._getARIALevel())
 			.class("sapUxAPObjectPageSectionHeader")
-			.class(bTitleVisible ? "" : "sapUxAPObjectPageSectionHeaderHidden");
+			.class(bTitleAriaHidden ? "sapUxAPObjectPageSectionHeaderHidden" : "")
+			.class(bHasMoreThanOneVisibleSubSection && !bShouldDisplayButtonsInHeader ? "sapUxAPObjectPageSectionHeaderCompact" : "");
 
 		if (bTitleAriaHidden) {
 			oRm.attr("aria-hidden", "true");
@@ -69,18 +70,8 @@ sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 
 		oRm.openEnd();
 
-		oRm.openStart("div", oControl.getId() + "-title")
-			.class("sapUxAPObjectPageSectionTitle");
-
-		if (oControl.getTitleUppercase()) {
-			oRm.class("sapUxAPObjectPageSectionTitleUppercase");
-		}
-
-		oRm.openEnd();
-		oRm.text(sTitle);
-		oRm.close("div");
-
 		if (bTitleVisible) {
+			oRm.renderControl(oControl._getTitleControl());
 			oRm.renderControl(oControl._getShowHideAllButton());
 			oRm.renderControl(oControl._getShowHideButton());
 		}

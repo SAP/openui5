@@ -1719,8 +1719,7 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._applyUxRules = function (bInvalidate) {
 		var aSections, aSubSections, iVisibleSubSections, iVisibleSection, iVisibleBlocks,
-			bVisibleAnchorBar, bUseIconTabBar, oFirstVisibleSection, oFirstVisibleSubSection,
-			bFirstSectionTitleHidden, aContent, iFirstVisibleSectionVisibleSubSections, oTitleVisibilityInfo = {};
+			bVisibleAnchorBar, bUseIconTabBar, oFirstVisibleSection, oFirstVisibleSubSection, oTitleVisibilityInfo = {};
 
 		aSections = this.getSections() || [];
 		iVisibleSection = 0;
@@ -1738,10 +1737,15 @@ sap.ui.define([
 				return true;
 			}
 
+			oSection.removeStyleClass("sapUxAPObjectPageSectionFirstVisible");
 			this._registerSectionBaseInfo(oSection);
 			aSubSections = oSection.getSubSections() || [];
 			iVisibleSubSections = 0;
 			oFirstVisibleSubSection = null;
+
+			if (this._shouldApplySectionTitleLevel(oSection)) {
+				oSection._setInternalTitleLevel(this._determineSectionBaseInternalTitleLevel(oSection), bInvalidate);
+			}
 
 			aSubSections.forEach(function (oSubSection) {
 
@@ -1759,23 +1763,22 @@ sap.ui.define([
 					Log.info("ObjectPageLayout :: noVisibleBlock UX rule matched", "subSection " + oSubSection.getTitle() + " forced to hidden");
 				} else {
 					oSubSection._setInternalVisible(true, bInvalidate);
-					//if TitleOnTop.sectionGetSingleSubSectionTitle is matched, this will be hidden back
-					oTitleVisibilityInfo[oSubSection.getId()] = true;
 					iVisibleSubSections++;
 					if (!oFirstVisibleSubSection) {
 						oFirstVisibleSubSection = oSubSection;
 					}
 
 					if (this._shouldApplySectionTitleLevel(oSubSection)) {
-						oSubSection._setInternalTitleLevel(this._determineSectionBaseInternalTitleLevel(oSubSection, !oFirstVisibleSection), bInvalidate);
+						oSubSection._setInternalTitleLevel(this._determineSectionBaseInternalTitleLevel(oSubSection), bInvalidate);
 					}
 				}
 
 			}, this);
 
 			if (iVisibleSubSections > 1) {
+				oSection._setHasPromotedSubSection(false, bInvalidate);
 				aSubSections.forEach(function(oSubSection) {
-					oSubSection._setBorrowedTitleDomId("");
+					oSubSection._setIsPromoted(false, bInvalidate);
 				});
 			}
 
@@ -1788,28 +1791,20 @@ sap.ui.define([
 				oTitleVisibilityInfo[oSection.getId()] = true;
 				if (!oFirstVisibleSection) {
 					oFirstVisibleSection = oSection;
-					iFirstVisibleSectionVisibleSubSections = iVisibleSubSections;
+					oFirstVisibleSection.addStyleClass("sapUxAPObjectPageSectionFirstVisible");
 				}
 
-				//rule TitleOnTop.sectionGetSingleSubSectionTitle: If a section as only 1 subsection and the subsection title is not empty, the section takes the subsection title on titleOnTop layout only
-				if (this.getSubSectionLayout() === ObjectPageSubSectionLayout.TitleOnTop &&
-					iVisibleSubSections === 1 && oFirstVisibleSubSection.getTitle().trim() !== "") {
-					Log.info("ObjectPageLayout :: TitleOnTop.sectionGetSingleSubSectionTitle UX rule matched", "section " + oSection.getTitle() + " is taking its single subsection title " + oFirstVisibleSubSection.getTitle());
-					oSection._setInternalTitle(oFirstVisibleSubSection.getTitle(), bInvalidate);
-					oTitleVisibilityInfo[oFirstVisibleSubSection.getId()] = false;
+				var bHasPromotedSubSection = this.getSubSectionLayout() === ObjectPageSubSectionLayout.TitleOnTop &&
+					iVisibleSubSections === 1 && oFirstVisibleSubSection.getTitle().trim() !== "";
 
-					// Title propagation support - set the borrowed Dom ID to the section title
-					oFirstVisibleSubSection._setBorrowedTitleDomId(oSection.getId() + "-title");
-				} else {
-					oSection._setInternalTitle("", bInvalidate);
+				//rule TitleOnTop.sectionGetSingleSubSectionTitle: If a section as only 1 subsection and the subsection title is not empty, the SubSection takes the Section's title level with titleOnTop layout only
+				if (bHasPromotedSubSection) {
+					oFirstVisibleSubSection._setIsPromoted(true, bInvalidate);
+					oSection._setHasPromotedSubSection(true, bInvalidate);
 				}
 
 				if (iVisibleSubSections === 1 && !oFirstVisibleSubSection.getTitle().trim()) {
 					oFirstVisibleSubSection._setBorrowedTitleDomId(oSection.getId() + "-title");
-				}
-
-				if (this._shouldApplySectionTitleLevel(oSection)) {
-					oSection._setInternalTitleLevel(this._determineSectionBaseInternalTitleLevel(oSection), bInvalidate);
 				}
 
 				iVisibleSection++;
@@ -1817,6 +1812,7 @@ sap.ui.define([
 
 			if (bUseIconTabBar) {
 				oTitleVisibilityInfo[oSection.getId()] = false;
+				oSection.addStyleClass("sapUxAPObjectPageSectionFirstVisible");
 			}
 		}, this);
 
@@ -1828,10 +1824,6 @@ sap.ui.define([
 			if (bUseIconTabBar && oFirstVisibleSection) {
 				oTitleVisibilityInfo[oFirstVisibleSection.getId()] = true;
 			}
-		} else if (oFirstVisibleSection && bVisibleAnchorBar) {
-			bFirstSectionTitleHidden = true;
-			oTitleVisibilityInfo[oFirstVisibleSection.getId()] = false;
-			Log.info("ObjectPageLayout :: firstSectionTitleHidden UX rule matched", "section " + oFirstVisibleSection.getTitle() + " title forced to hidden");
 		}
 
 		this.toggleStyleClass(ObjectPageLayout.NO_NAVIGATION_CLASS_NAME, iVisibleSection <= 1);
@@ -1851,14 +1843,6 @@ sap.ui.define([
 		this._bAllContentFitsContainer = (iVisibleSection === 1)
 			&& (iVisibleSubSections === 1)
 			&& this._oFirstVisibleSubSection.hasStyleClass(ObjectPageSubSection.FIT_CONTAINER_CLASS);
-
-		if (bFirstSectionTitleHidden && (iFirstVisibleSectionVisibleSubSections === 1)) {
-			// Title propagation support - set the borrowed title Dom ID to the first AnchorBar button
-			aContent = this.getAggregation("_anchorBar").getItems();
-			if (aContent.length) {
-				this._oFirstVisibleSubSection._setBorrowedTitleDomId(aContent[0].getId() + "-content");
-			}
-		}
 
 		this._checkSubSectionVisibilityChange();
 	};
@@ -2678,7 +2662,7 @@ sap.ui.define([
 
 			if (!oInfo.isSection && (oSection = oSectionBase.getParent())) {
 				// a promoted subSection borrows the title of its parent section
-				bPromoted = oSectionBase._getTitleDomId() === oSection.getId() + "-title";
+				bPromoted = oSectionBase._isPromoted();
 				if (bPromoted) {
 					// the scrollTop required to scroll to a promoted subsection
 					// is the top of the parent section (UX rule)
@@ -2690,8 +2674,6 @@ sap.ui.define([
 			if (!this._bStickyAnchorBar && !this._bHeaderInTitleArea) { // in sticky mode the anchor bar is not part of the content
 				oInfo.positionTop -= this.iAnchorBarHeight;
 			}
-
-			oInfo.sectionReference.toggleStyleClass("sapUxAPObjectPageSubSectionPromoted", bPromoted);
 
 			//for calculating the currently scrolled section of subsection (and for lazy loading) we also need to know the bottom of the section and subsections
 			//we can't use oInfo.$dom.height() since the margin are not taken into account.
@@ -2926,22 +2908,20 @@ sap.ui.define([
 	 * <code>sap.ui.core.TitleLevel.H3</code> is returned for <code>ObjectPageSection</code> and
 	 * <code>sap.ui.core.TitleLevel.H4</code> for <code>ObjectPageSubSection</code>.
 	 * @param {sap.uxap.ObjectPageSectionBase} oSectionBase <code>ObjectPageSectionBase</code> instance
-	 * @param {boolean} bFirstVisibleSection if the section is the first visible section (only used when determining subsection title level)
 	 * @returns {string} <code>sap.ui.core.TitleLevel</code>
 	 * @since 1.44
 	 * @private
 	 */
-	ObjectPageLayout.prototype._determineSectionBaseInternalTitleLevel = function(oSectionBase, bFirstVisibleSection) {
+	ObjectPageLayout.prototype._determineSectionBaseInternalTitleLevel = function(oSectionBase) {
 		var sSectionBaseTitleLevel = this.getSectionTitleLevel(),
 			bIsSection = oSectionBase instanceof ObjectPageSection;
 
 		if (sSectionBaseTitleLevel === TitleLevel.Auto) {
-			// if this is a subsection contained inside the first visible section - meaning that the section's title is hidden
-			// then we need to return H3 to prevent heading levels increasing by more than one
-			if (bIsSection || (bFirstVisibleSection && !bIsSection)) {
-				// section or subsections inside the first visible section
+			if (bIsSection) {
+				// Section
 				return TitleLevel.H3;
 			}
+			// SubSection
 			return TitleLevel.H4;
 		}
 
@@ -3100,7 +3080,7 @@ sap.ui.define([
 		oSectionBase = Element.getElementById(sSectionId);
 
 		bShouldDisplayParentTitle = oSectionBase && oSectionBase instanceof ObjectPageSubSection &&
-			(oSectionBase.getTitle().trim() === "" || !oSectionBase._getInternalTitleVisible() || oSectionBase.getParent()._getIsHidden());
+			(oSectionBase.getTitle().trim() === "" || oSectionBase.getParent()._getIsHidden());
 
 		//the sectionBase title needs to be visible (or the user won't "feel" scrolling that sectionBase but its parent)
 		//see Incident 1570016975 for more details

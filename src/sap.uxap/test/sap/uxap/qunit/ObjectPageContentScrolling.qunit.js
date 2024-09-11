@@ -242,12 +242,14 @@ function(nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			item1 = new Button({text: "content", visible: false}),
 			item2 = new Button({text: "content", visible: false}),
 			item3 = new Button({text: "content", visible: false}),
+			item4 = new Button({text: "content", visible: false}),
+			item5 = new Button({text: "content", visible: false}),
 			iScrollTopBeforeChange,
 			iExpectedScrollTopAfterChange,
 			done = assert.async();
 
 			oFirstSubSection.addBlock(new VBox({
-				items: [item1, item2, item3]
+				items: [item1, item2, item3 , item4, item5]
 			}));
 
 		// Setup: select a section lower than the first
@@ -266,7 +268,7 @@ function(nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			// Simulate the expected scroll event from the browser, due to overflow anchoring
 			// (expected from all supported browsers except Safari which does not support overflow anchoring => does not fire scroll event)
 			if (!Device.browser.safari) {
-				iExpectedScrollTopAfterChange = iScrollTopBeforeChange + (3 * item1.getDomRef().offsetHeight);
+				iExpectedScrollTopAfterChange = iScrollTopBeforeChange + (5 * item1.getDomRef().offsetHeight);
 				// synchronously call the result of the expected scroll event
 				// the browser fires that scroll event because the position of the selected section changed
 				oObjectPage._updateSelectionOnScroll(iExpectedScrollTopAfterChange);

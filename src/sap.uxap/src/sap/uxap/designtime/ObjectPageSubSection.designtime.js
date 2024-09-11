@@ -39,7 +39,7 @@ sap.ui.define([],
 				rename: function () {
 					return {
 						changeType: "rename",
-						domRef: ".sapUxAPObjectPageSubSectionHeaderTitle",
+						domRef: ".sapUxAPObjectPageSubSectionTitle",
 						isEnabled : function (oElement) {
 							return oElement.$("headerTitle").get(0) != undefined;
 						}
@@ -48,7 +48,9 @@ sap.ui.define([],
 			},
 			aggregations: {
 				actions: {
-					domRef : ":sap-domref .sapUxAPObjectPageSubSectionHeaderActions",
+					domRef : function (oElement) {
+						return oElement.$().find(".sapUxAPObjectPageSubSectionHeaderToolbar")[0];
+					},
 					actions : {
 						move: {
 							changeType: "moveControls"

@@ -69,10 +69,17 @@ function(nextUIUpdate, $, XMLView, App) {
 		assert.strictEqual(objectPageSectionNoSubSection331, false, "Section 'id=ObjectPageSectionNoSubSection331' is not  visible");
 	});
 	QUnit.test("ObjectPageId 1: Subsection Promoted", function (assert) {
-		var objectPageSectionPromoted = this.objectPageSampleView1.byId("ObjectPageSectionPromoted331");
-		assert.strictEqual(objectPageSectionPromoted.$().find(".sapUxAPObjectPageSectionTitle").text(), 'Promoted', "Section 'id=ObjectPageSectionPromoted331' Title is 'Promoted'");
-		var objectPageSubSectionPromoted = this.objectPageSampleView1.byId("ObjectPageSubSectionPromoted331");
-		assert.strictEqual(objectPageSubSectionPromoted.$().find(".sapUxAPObjectPageSectionTitle").text(), '', "Subsection 'id=ObjectPageSubSectionPromoted331' Title is empty");
+		var fnDone = assert.async();
+
+		setTimeout(function () {
+			var objectPageSectionPromoted = this.objectPageSampleView1.byId("ObjectPageSectionPromoted331");
+			assert.strictEqual(objectPageSectionPromoted.$().find(".sapUxAPObjectPageSectionTitle").text(), '',
+				"Section 'id=ObjectPageSectionPromoted331' Title is empty (propagated and rendered in the SubSection header)");
+			var objectPageSubSectionPromoted = this.objectPageSampleView1.byId("ObjectPageSubSectionPromoted331");
+			assert.strictEqual(objectPageSubSectionPromoted.$().find(".sapUxAPObjectPageSubSectionTitle ").text(),
+			'Promoted', "Subsection 'id=ObjectPageSubSectionPromoted331' Title is 'Promoted' (propagated from the parent section)");
+			fnDone();
+		}.bind(this), 1000);
 	});
 	QUnit.test("ObjectPageId 1: Section with 1 Subsection without block", function (assert) {
 		var objectPageSectionEmpty331 = $("#" + this.objectPageSampleView1.byId("ObjectPageSectionEmpty331").getId()).is(":visible");
@@ -248,9 +255,9 @@ function(nextUIUpdate, $, XMLView, App) {
 	});
 
 	QUnit.test("SubSection configured properly", function (assert) {
-		var oAnchorId = this.oObjectPage.getAggregation("_anchorBar").getItems()[0].getId() + "-content";
-		assert.strictEqual(this.oSubSection11._getTitleDomId(), oAnchorId,
-			"Title DOM ID of the Anchor Bar first button text containing element");
+		assert.strictEqual(this.oSubSection11._getTitleDomId(),
+			this.oSubSection11.getId() + "-headerTitle",
+			"Own Title DOM ID is returned even for first SubSection in first Section");
 
 		assert.strictEqual(this.oSubSection21._getTitleDomId(),
 			"UxAP-ObjectPageTitlePropagationSupport--sub_section_2_1-headerTitle",
@@ -261,12 +268,12 @@ function(nextUIUpdate, $, XMLView, App) {
 			"Own Title DOM ID is returned");
 
 		assert.strictEqual(this.oSubSection31._getTitleDomId(),
-			this.oSection3.getId() + "-title",
-			"Title DOM ID of parent Section is returned");
+			this.oSubSection31.getId() + "-headerTitle",
+			"Own Title DOM ID is returned for single SubSection in a Section");
 
 		assert.strictEqual(this.oSubSection41._getTitleDomId(),
-			this.oSection4.getId() + "-title",
-			"Title DOM ID of parent Section is returned");
+			this.oSubSection41.getId() + "-headerTitle",
+			"Own Title DOM ID is returned for single SubSection in a Section");
 	});
 
 	QUnit.test("First Section with two SubSections - configured properly", function (assert) {

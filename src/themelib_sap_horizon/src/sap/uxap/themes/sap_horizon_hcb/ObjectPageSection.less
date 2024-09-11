@@ -2,15 +2,29 @@
 /* CSS for control sap.uxap/ObjectPageSection  */
 /* Horizon High Contrast Black theme           */
 /* =========================================== */
+.sapUxAPObjectPageSection:not(.sapUxAPObjectPageSectionFirstVisible) {
+	padding-top: 1.5rem;
+}
+
+.sapUxAPObjectPageSection.sapUxAPObjectPageSectionFirstVisible {
+	padding-top: 1rem;
+
+	.sapUxAPObjectPageSectionContainer > .sapUiRespGrid > div[class^="sapUiRespGrid"]:first-child > .sapUxAPObjectPageSubSection {
+		padding-top: 0;
+	}
+}
 
 .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageSubSectionHeader {
 	padding-left: 2rem;
 	padding-right: 2rem;
 }
 
+.sapUxAPObjectPageSection {
+	border-top: 0.0625rem solid @sapUiGroupTitleBorderColor;
+}
+
 .sapUiSizeCompact .sapUxAPObjectPageSectionHeader,
 .sapUxAPObjectPageSectionHeader {
-	border-top: 0.0625rem solid @sapUiGroupTitleBorderColor;
 	height: 2.75rem;
 	line-height: 2.25rem;
 }
@@ -23,8 +37,6 @@
 .sapUxAPObjectPageSectionTitle {
 	height: 2.75rem;
 	line-height: 2.25rem;
-	color: @sapUiGroupTitleTextColor;
-	font-size: @sapMFontHeader4Size;
 }
 
 .sapUxAPObjectPageSection:focus {
@@ -34,7 +46,7 @@
 
 .sapUxAPObjectPageSectionHeader,
 .sapUxAPObjectPageSubSectionWithSeeMore .sapUxAPSubSectionSeeMoreContainer {
-	padding-right: 3rem;
+	padding-right: 2.25rem;
 }
 
 .sapUxAPObjectPageLayout-Std-Desktop,
@@ -42,7 +54,7 @@
 	.sapUxAPObjectPageSectionHeader,
 	html .sapUiContainer-Medium .sapUxAPObjectPageSectionHeader,
 	.sapUxAPObjectPageSubSectionWithSeeMore .sapUxAPSubSectionSeeMoreContainer {
-		padding-right: 2rem;
+		padding-right: 1.25rem;
 		padding-left: 2rem;
 	}
 }
