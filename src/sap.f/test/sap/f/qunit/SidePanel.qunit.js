@@ -528,7 +528,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Keyboard interactions", async function (assert) {
+	QUnit.test("Keyboard interactions (right position)", async function (assert) {
 		var oResizeBar,
 			oSidePanel = this.oSPDomRef.querySelector(".sapFSPSide"),
 			iMinWidth = 200,
@@ -540,6 +540,7 @@ sap.ui.define([
 		this.oSP.setSidePanelMinWidth(iMinWidth + "px");
 		this.oSP.setSidePanelMaxWidth(iMaxWidth + "px");
 		this.oSP.setSidePanelWidth(iWidth + "px");
+		this.oSP.setSidePanelPosition("Right");
 		this.oSP.setSidePanelResizable(true);
 		this.oSP.setSelectedItem(this.oSP.getItems()[0]);
 		await nextUIUpdate();
@@ -615,6 +616,94 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Keyboard interactions (left position)", async function (assert) {
+		var oResizeBar,
+			oSidePanel = this.oSPDomRef.querySelector(".sapFSPSide"),
+			iMinWidth = 200,
+			iMaxWidth = 600,
+			iWidth = 400,
+			iStep = this.oSP.getSidePanelResizeStep(),
+			iLargerStep = this.oSP.getSidePanelResizeLargerStep();
+
+		this.oSP.setSidePanelMinWidth(iMinWidth + "px");
+		this.oSP.setSidePanelMaxWidth(iMaxWidth + "px");
+		this.oSP.setSidePanelWidth(iWidth + "px");
+		this.oSP.setSidePanelPosition("Left");
+		this.oSP.setSidePanelResizable(true);
+		this.oSP.setSelectedItem(this.oSP.getItems()[0]);
+		await nextUIUpdate();
+
+		oResizeBar = this.oSPDomRef.querySelector(".sapFSPSplitterBar");
+		oResizeBar.focus();
+
+		// Act (Arrow Left)
+		qutils.triggerKeydown(oResizeBar, KeyCodes.ARROW_RIGHT);
+
+		// Assert
+		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth + iStep, "Side panel width is increased with regular step when Arrow Left is pressed");
+
+		// Act (Arrow Right)
+		qutils.triggerKeydown(oResizeBar, KeyCodes.ARROW_LEFT);
+
+		// Assert
+		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth, "Side panel width is decreased with regular step when Arrow Right is pressed");
+
+		// Act (Arrow Up)
+		qutils.triggerKeydown(oResizeBar, KeyCodes.ARROW_UP);
+
+		// Assert
+		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth + iStep, "Side panel width is increased with regular step when Arrow Up is pressed");
+
+		// Act (Arrow Right)
+		qutils.triggerKeydown(oResizeBar, KeyCodes.ARROW_DOWN);
+
+		// Assert
+		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth, "Side panel width is decreased with regular step when Arrow Down is pressed");
+
+		// Act (Shift + Arrow Left)
+		qutils.triggerKeydown(oResizeBar, KeyCodes.ARROW_RIGHT, true);
+
+		// Assert
+		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth + iLargerStep, "Side panel width is increased with larger step when Shift + Arrow Left is pressed");
+
+		// Act (Shift + Arrow Right)
+		qutils.triggerKeydown(oResizeBar, KeyCodes.ARROW_LEFT, true);
+
+		// Assert
+		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth, "Side panel width is decreased with larger step when Shift + Arrow Right is pressed");
+
+		// Act (Shift + Arrow Up)
+		qutils.triggerKeydown(oResizeBar, KeyCodes.ARROW_UP, true);
+
+		// Assert
+		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth + iLargerStep, "Side panel width is increased with larger step when Shift + Arrow Up is pressed");
+
+		// Act (Shift + Arrow Down)
+		qutils.triggerKeydown(oResizeBar, KeyCodes.ARROW_DOWN, true);
+
+		// Assert
+		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth, "Side panel width is decreased with larger step when Shift + Arrow Down is pressed");
+
+		// Act (Home)
+		qutils.triggerKeydown(oResizeBar, KeyCodes.HOME);
+
+		// Assert
+		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iMinWidth, "Side panel width is set to minimum width when Home is pressed");
+
+		// Act (End)
+		qutils.triggerKeydown(oResizeBar, KeyCodes.END);
+
+		// Assert
+		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iMaxWidth, "Side panel width is set to maximum width when End is pressed");
+
+		// Act (Home)
+		qutils.triggerKeydown(oResizeBar, KeyCodes.ENTER);
+
+		// Assert
+		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth, "Side panel width is set to default width when Enter is pressed");
+
+	});
+
 	QUnit.test("Resize handler rendering", async function(assert) {
 		// Prepare
 		var oResizableSpy = this.spy(this.oSP, "_isResizable");
@@ -623,7 +712,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		// Assert
-		assert.ok(oResizableSpy.calledOnce, "Resize handler is redered");
+		assert.ok(oResizableSpy.calledOnce, "Resize handler is rendered");
 	});
 
 	QUnit.module("Accessibility", {
