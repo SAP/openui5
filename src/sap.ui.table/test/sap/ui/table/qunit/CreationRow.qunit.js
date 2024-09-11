@@ -350,7 +350,8 @@ sap.ui.define([
 				qutils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, false);
 			}, function() {
 				assert.ok(oFireApplySpy.calledOnce, "CreationRow#_fireApply was called once");
-				assert.deepEqual(aEvents, ["sapfocusleave", "validateFieldGroup", "apply", "focusin"], "The events on the form element were correctly fired");
+				assert.deepEqual(aEvents, ["sapfocusleave", "validateFieldGroup", "apply", "focusin"],
+					"The events on the form element were correctly fired");
 			}
 
 		).then(function() {
@@ -359,7 +360,8 @@ sap.ui.define([
 				qutils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, true);
 			}, function() {
 				assert.ok(oFireApplySpy.calledOnce, "CreationRow#_fireApply was called once");
-				assert.deepEqual(aEvents, ["sapfocusleave", "validateFieldGroup", "apply", "focusin"], "The events on the form element were correctly fired");
+				assert.deepEqual(aEvents, ["sapfocusleave", "validateFieldGroup", "apply", "focusin"],
+					"The events on the form element were correctly fired");
 
 			});
 
@@ -386,7 +388,8 @@ sap.ui.define([
 				qutils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, true);
 			}, function() {
 				assert.ok(oFireApplySpy.calledOnce, "CreationRow#_fireApply was called once");
-				assert.deepEqual(aEvents, ["sapfocusleave", "validateFieldGroup", "apply", "focusin"], "The events on the form element were correctly fired");
+				assert.deepEqual(aEvents, ["sapfocusleave", "validateFieldGroup", "apply", "focusin"],
+					"The events on the form element were correctly fired");
 
 			});
 

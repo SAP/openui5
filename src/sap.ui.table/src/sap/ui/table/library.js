@@ -110,8 +110,8 @@ sap.ui.define([
 		/**
 		 * Uses the paginator control.
 		 * This option must no longer be used. Using a scrollbar is the only navigation mode which is supported by
-		 * the <code>sap.ui.table</code> library. The <code>navigationMode</code> property has always been a visual representation. No matter which navigation mode
-		 * is used, data fetched from an OData service is loaded page-wise.
+		 * the <code>sap.ui.table</code> library. The <code>navigationMode</code> property has always been a visual
+		 * representation. No matter which navigation mode is used, data fetched from an OData service is loaded page-wise.
 		 * @public
 		 * @deprecated As of version 1.38, replaced by {@link sap.ui.table.NavigationMode.Scrollbar}
 		 */

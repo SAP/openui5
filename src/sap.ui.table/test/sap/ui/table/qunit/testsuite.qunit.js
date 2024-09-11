@@ -97,6 +97,10 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
+			"GroupHeaderContextMenuAdapter": {
+				group: "Menus",
+				module: "./menus/{name}.qunit"
+			},
 			/**
 			 * @deprecated As of Version 1.117
 			 */

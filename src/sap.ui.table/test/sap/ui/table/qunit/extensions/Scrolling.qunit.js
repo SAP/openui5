@@ -2546,7 +2546,7 @@ sap.ui.define([
 			}).then(function() {
 				return oTable.qunit.scrollVSbTo(Math.round(iMaxScrollTop / 2));
 			}).then(function() {
-				//  Scrolltop of iMaxScrollTop / 2 does not exactly match row 500000000 (ScrollExtensions internal float vs browsers scrolltop integer)
+				// Scrolltop of iMaxScrollTop / 2 does not exactly match row 500000000 (ScrollExtensions internal float vs browsers scrolltop integer)
 				that.assertPosition(assert, iMiddleFirstVisibleRow, Math.round(iMaxScrollTop / 2), 0,
 					mConfig.rowMode + ", Scrolled to FirstVisibleRow = " + iMiddleFirstVisibleRow + " by setting ScrollTop");
 				oTable.setFirstVisibleRow(iMiddleFirstVisibleRow);
@@ -2611,7 +2611,7 @@ sap.ui.define([
 			}).then(function() {
 				return oTable.qunit.scrollVSbTo(Math.round(iMaxScrollTop / 2));
 			}).then(function() {
-				//  Scrolltop of iMaxScrollTop / 2 does not exactly match row 500000000 (ScrollExtensions internal float vs browsers scrolltop integer)
+				// Scrolltop of iMaxScrollTop / 2 does not exactly match row 500000000 (ScrollExtensions internal float vs browsers scrolltop integer)
 				that.assertPosition(assert, 500049023, Math.round(iMaxScrollTop / 2), 124,
 					mConfig.rowMode + ", Scrolled to FirstVisibleRow = 500049023 by setting ScrollTop");
 				oTable.setFirstVisibleRow(500049023);

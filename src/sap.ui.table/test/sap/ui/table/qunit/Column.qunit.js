@@ -870,7 +870,8 @@ sap.ui.define([
 				oTable.attachEventOnce("rowsUpdated", function() {
 					setTimeout(function() {
 						oColumn._openHeaderMenu(oCellDomRef);
-						assert.strictEqual(oGroupMenuItem.getText(), TableUtils.getResourceBundle().getText("TBL_GROUP"), "The group menu item exists");
+						assert.strictEqual(oGroupMenuItem.getText(), TableUtils.getResourceBundle().getText("TBL_GROUP"),
+							"The group menu item exists");
 						oGroupMenuItem.fireSelect();
 						assert.ok(oSetGroupSpy.calledTwice, "setGroupBy is called");
 						assert.ok(oSetGroupSpy.calledWithExactly(oColumn), "setGroupBy is called with the correct parameter");

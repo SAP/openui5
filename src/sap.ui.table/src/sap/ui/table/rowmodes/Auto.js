@@ -624,6 +624,7 @@ sap.ui.define([
 	};
 
 	/**
+	 * @param {sap.ui.base.Event} oEvent The event object of the <code>beforeRendering</code> event
 	 * @this sap.ui.table.rowmodes.Auto
 	 */
 	TableDelegate.onBeforeRendering = function(oEvent) {
@@ -635,6 +636,7 @@ sap.ui.define([
 	};
 
 	/**
+	 * @param {sap.ui.base.Event} oEvent The event object of the <code>afterRendering</code> event
 	 * @this sap.ui.table.rowmodes.Auto
 	 */
 	TableDelegate.onAfterRendering = function(oEvent) {

@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/plugins/ODataV4Selection",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Text"
 ], function(
 	TableQUnitUtils,
@@ -14,7 +13,6 @@ sap.ui.define([
 	Column,
 	Fixed,
 	ODataV4Selection,
-	QUnitUtils,
 	Text
 ) {
 	"use strict";
