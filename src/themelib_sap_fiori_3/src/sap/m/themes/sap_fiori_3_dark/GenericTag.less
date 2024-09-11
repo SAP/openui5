@@ -3,15 +3,16 @@
 /* Quartz Dark theme                 */
 /* ================================= */
 
-@sapMGenericTagBorderWidth: 0.375rem;
-@sapMGenericTagIconPaddingRight: 0.375rem;
-@sapMGenericTagPaddingLeft: 0.375rem;
+@_sap_m_GenericTag_BorderWidth: 0.375rem;
+@_sap_m_GenericTag_IconPaddingRight: 0.375rem;
+@_sap_m_GenericTag_PaddingLeft: 0.375rem;
 
 .sapMGenericTag {
+
 	.sapMGenericTagWrap {
-		padding: 0 0 0 @sapMGenericTagPaddingLeft;
-		border-radius: @sapUiButtonBorderCornerRadius;
-		border-left-width: @sapMGenericTagBorderWidth;
+		padding: 0 0 0 @_sap_m_GenericTag_PaddingLeft;
+		border-radius: var(--sapButton_BorderCornerRadius);
+		border-left-width: @_sap_m_GenericTag_BorderWidth;
 
 		.sapMGenericTagText {
 			margin-right: 0.375rem;
@@ -30,79 +31,83 @@
 }
 
 .sapMGenericTagWrap {
+
 	.sapMGenericTagError & {
-		border-color: @sapUiNegativeElement;
+		border-color: var(--sapNegativeElementColor);
 
 		.sapMGenericTagIcon {
-			color: @sapUiNegativeElement;
+			color: var(--sapNegativeElementColor);
 		}
 	}
 
 	.sapMGenericTagWarning & {
-		border-color: @sapUiCriticalElement;
+		border-color: var(--sapCriticalElementColor);
 
 		.sapMGenericTagIcon {
-			color: @sapUiCriticalElement;
+			color: var(--sapCriticalElementColor);
 		}
 	}
 
 	.sapMGenericTagSuccess & {
-		border-color: @sapUiPositiveElement;
+		border-color: var(--sapPositiveElementColor);
 
 		.sapMGenericTagIcon {
-			color: @sapUiPositiveElement;
+			color: var(--sapPositiveElementColor);
 		}
 	}
 
 	.sapMGenericTagInformation & {
-		border-color: @sapUiInformativeElement;
+		border-color: var(--sapInformativeElementColor);
 
 		.sapMGenericTagIcon {
-			color: @sapUiInformativeElement;
+			color: var(--sapInformativeElementColor);
 		}
 	}
 
 	.sapMGenericTagNone & {
-		border-color: @sapUiNeutralElement;
+		border-color: var(--sapNeutralElementColor);
 
 		.sapMGenericTagIcon {
-			color: @sapUiNeutralElement;
+			color: var(--sapNeutralElementColor);
 		}
 	}
 
 	&:hover {
-		background:@sapUiListHoverBackground;
+		background: var(--sapList_Hover_Background);
 	}
 
 	.sapMGenericTagActive & {
-		background: @sapUiListActiveBackground;
+		background: var(--sapList_Active_Background);
 
 		.sapMGenericTagIcon {
-			color: @sapUiListActiveTextColor;
+			color: var(--sapList_Active_TextColor);
 		}
 	}
 }
 
 html.sap-desktop .sapMGenericTag {
-	&:before {
-		border: 1px solid @sapUiContentFocusColor;
+
+	&::before {
+		border: 1px solid var(--sapContent_FocusColor);
 	}
-	&:after {
-		border: 1px dotted @sapUiContentContrastFocusColor;
+
+	&::after {
+		border: 1px dotted var(--sapContent_ContrastFocusColor);
 	}
 }
 
 .sapUiSizeCozy {
+
 	.sapMGenericTag {
 		margin: 0.5625rem 0;
 
 		.sapMGenericTagWrap {
-			height:  1.625rem;
+			height: 1.625rem;
 		}
 	}
 }
 
 html.sap-phone .sapMGenericTag {
-	margin-top: 0.5625rem ;
-	margin-bottom: 0.5625rem ;
+	margin-top: 0.5625rem;
+	margin-bottom: 0.5625rem;
 }

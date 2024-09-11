@@ -4,26 +4,29 @@
 /* ================================= */
 
 html.sap-desktop .sapMGenericTag {
-	&:before {
-		border: 1px solid @sapUiBaseBG;
+
+	&::before {
+		border: 1px solid var(--sapBackgroundColor);
 	}
-	&:after {
-		border: 1px dotted @sapUiContentContrastFocusColor;
+
+	&::after {
+		border: 1px dotted var(--sapContent_ContrastFocusColor);
 	}
 }
 
 .sapMGenericTagWrap {
-	&:hover{
-		background-color: @sapUiListHoverBackground;
+
+	&:hover {
+		background-color: var(--sapList_Hover_Background);
 		box-shadow: @sapUiShadowLevel0;
 
 		& .sapMGenericTagIcon,
 		& .sapMGenericTagValue {
-			color: @sapUiListActiveTextColor;
+			color: var(--sapList_Active_TextColor);
 		}
 	}
 
 	.sapMGenericTagActive & {
-		background: @sapUiListActiveBackground;
+		background: var(--sapList_Active_Background);
 	}
 }
