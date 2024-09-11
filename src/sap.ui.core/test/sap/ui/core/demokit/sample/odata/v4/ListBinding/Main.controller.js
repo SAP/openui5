@@ -29,8 +29,7 @@ sap.ui.define([
 
 					oBinding.setContext(null);
 					oBinding.setContext(oDialog.getBindingContext());
-					MessageBox.alert("Budget changed", {icon : MessageBox.Icon.SUCCESS,
-						title : "Success"});
+					MessageBox.success("Budget changed");
 				});
 			oView.byId("ChangeTeamBudgetDialog").close();
 		},
@@ -46,8 +45,7 @@ sap.ui.define([
 					oControl.bindProperty("text", "MANAGER_ID");
 					oControl.getBinding("text").setContext(null);
 					oControl.getBinding("text").setContext(that.oChangeManager.getBoundContext());
-					MessageBox.alert("Manager changed", {icon : MessageBox.Icon.SUCCESS,
-						title : "Success"});
+					MessageBox.success("Manager changed");
 				});
 			oView.byId("ChangeManagerOfTeamDialog").close();
 		},
@@ -59,8 +57,7 @@ sap.ui.define([
 					this.getView().getModel("ui").getProperty("/EmployeeID"))
 				.invoke()
 				.catch(function (oError) {
-					MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR,
-						title : "Error"});
+					MessageBox.success(oError.message);
 				});
 		},
 
@@ -76,10 +73,7 @@ sap.ui.define([
 			var oEmployeeContext = oEvent.getSource().getBindingContext();
 
 			oEmployeeContext.delete(oEmployeeContext.getModel().getGroupId()).then(function () {
-				MessageBox.alert(oEmployeeContext.getPath(), {
-					icon : MessageBox.Icon.SUCCESS,
-					title : "Success"
-				});
+				MessageBox.success(oEmployeeContext.getPath());
 			});
 		},
 
@@ -127,10 +121,7 @@ sap.ui.define([
 			var oModel = this.getView().getModel();
 
 			if (oModel.hasPendingChanges()) {
-				MessageBox.alert("Cannot refresh due to pending changes", {
-					icon : MessageBox.Icon.ERROR,
-					title : "Error"
-				});
+				MessageBox.error("Cannot refresh due to pending changes");
 			} else {
 				oModel.refresh();
 			}
@@ -142,15 +133,9 @@ sap.ui.define([
 			// TODO this should be the default for submitBatch
 			oModel.submitBatch(oModel.getUpdateGroupId()).then(function () {
 				// TODO the success handler could get all errors of failed parts
-				MessageBox.alert("Changes have been saved", {
-					icon : MessageBox.Icon.SUCCESS,
-					title : "Success"
-				});
+				MessageBox.success("Changes have been saved");
 			}, function (oError) {
-				MessageBox.alert(oError.message, {
-					icon : MessageBox.Icon.ERROR,
-					title : "Unexpected Error"
-				});
+				MessageBox.error(oError.message);
 			});
 		},
 
