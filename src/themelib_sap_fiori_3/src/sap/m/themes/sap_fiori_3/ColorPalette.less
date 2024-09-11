@@ -18,26 +18,30 @@ html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare div,
 }
 
 .sap-desktop .sapMColorPalette .sapMBtn:focus {
-	&:after {
-		border-color: @sapUiContentFocusColor;
+
+	&::after {
+		border-color: var(--sapContent_FocusColor);
 	}
-	&:active:after {
-		border-color: @sapUiContentContrastFocusColor;
+
+	&:active::after {
+		border-color: var(--sapContent_ContrastFocusColor);
 	}
 }
 
 .sap-desktop .sapContrast,
 .sap-desktop.sapContrast {
+
 	.sapMColorPalette .sapMBtn {
-		&:focus:after {
-			border-color: @sapUiContentFocusColor;
+
+		&:focus::after {
+			border-color: var(--sapContent_FocusColor);
 		}
+
 		&:active,
 		> .sapMBtnActive,
 		&:hover > .sapMBtnActive,
 		&:active > .sapMBtnActive {
-			color: @sapUiListTextColor;
+			color: var(--sapList_TextColor);
 		}
 	}
 }
-
