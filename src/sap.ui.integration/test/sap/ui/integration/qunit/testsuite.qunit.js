@@ -345,6 +345,7 @@ sap.ui.define([
 			"util/ManifestResolver": {},
 			"util/SkeletonCard": {},
 			"util/loadCardEditor": {},
+			"util/openCardDialog": {},
 			"model/ContextModel": {
 				coverage: {
 					only: [

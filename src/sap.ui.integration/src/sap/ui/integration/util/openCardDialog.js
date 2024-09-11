@@ -4,14 +4,48 @@
 
 sap.ui.define([
 	"sap/m/Dialog",
+	"sap/ui/Device",
 	"sap/ui/core/Element",
 	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
 	"sap/ui/dom/jquery/Focusable"
 ], (
 	Dialog,
+	Device,
 	Element
 ) => {
 	"use strict";
+
+	function _addDimensionsDelegate(oDialog, oParentCard) {
+		const oChildCard = oDialog.getContent()[0];
+		let bSetMaxDimensions = true;
+
+		oChildCard.addEventDelegate({
+			onAfterRendering: () => {
+				const oChildCardDomRef = oChildCard.getDomRef();
+				oChildCardDomRef.style.minHeight = oParentCard.getDomRef().offsetHeight + "px";
+				oChildCardDomRef.style.minWidth = oParentCard.getDomRef().offsetWidth + "px";
+
+				if (bSetMaxDimensions) {
+					oChildCardDomRef.style.maxHeight = oDialog._getAreaDimensions().height * 70 / 100 + "px";
+					oChildCardDomRef.style.maxWidth = oDialog._getAreaDimensions().width * 70 / 100 + "px";
+				} else {
+					oChildCardDomRef.style.maxHeight = "";
+					oChildCardDomRef.style.maxWidth = "";
+				}
+			}
+		});
+
+		oDialog.addEventDelegate({
+			onmousedown: (e) => {
+				if (e.target.closest(".sapMDialogResizeHandle")) {
+					bSetMaxDimensions = false;
+				}
+			},
+			onAfterRendering: () => {
+				oDialog.getDomRef().style.minHeight = "8.25rem";
+			}
+		});
+	}
 
 	function _openDialog(oChildCard, oParentCard, oParameters) {
 		oChildCard.setDisplayVariant("Large"); // always use large variant for dialog, scrolling content is possible
@@ -59,6 +93,10 @@ sap.ui.define([
 				_setFocus(oChildCard, oDialog);
 			}, 0); // wait for loading animation to stop
 		});
+
+		if (!Device.system.phone) {
+			_addDimensionsDelegate(oDialog, oParentCard);
+		}
 
 		return oDialog;
 	}
