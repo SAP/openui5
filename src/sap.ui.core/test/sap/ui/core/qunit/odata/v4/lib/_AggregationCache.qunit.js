@@ -4541,15 +4541,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getAllElements: non-empty path is forbidden", function (assert) {
+	QUnit.test("getElements: non-empty path is forbidden", function (assert) {
 		assert.throws(function () {
 			// code under test
-			_AggregationCache.prototype.getAllElements("some/relative/path");
+			_AggregationCache.prototype.getElements("some/relative/path");
 		}, new Error("Unsupported path: some/relative/path"));
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getAllElements", function (assert) {
+	QUnit.test("getElements", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group : {},
@@ -4560,14 +4560,15 @@ sap.ui.define([
 			oPlaceholder0 = {"@$ui5._" : {placeholder : true}}, // this is what counts ;-)
 			oPlaceholder2 = _AggregationHelper.createPlaceholder(1, 2, {/*oParentCache*/});
 
-		oCache.aElements = [oPlaceholder0, "~oElement1~", oPlaceholder2, "~oElement3~"];
-		oCache.aElements.$count = 4;
+		oCache.aElements.$count = 42;
+		this.mock(oCache.aElements).expects("slice").withExactArgs("~iStart~", "~iEnd~")
+			.returns([oPlaceholder0, "~oElement1~", oPlaceholder2, "~oElement3~"]);
 
 		// code under test
-		aAllElements = oCache.getAllElements();
+		aAllElements = oCache.getElements("", "~iStart~", "~iEnd~");
 
 		assert.deepEqual(aAllElements, [undefined, "~oElement1~", undefined, "~oElement3~"]);
-		assert.strictEqual(aAllElements.$count, 4);
+		assert.strictEqual(aAllElements.$count, 42);
 	});
 
 	//*********************************************************************************************
