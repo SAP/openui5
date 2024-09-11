@@ -2656,14 +2656,19 @@ function(
 		return this;
 	};
 
-	// Returns the sticky value to be added to the sticky table container.
-	// sapMSticky7 is the result of sticky headerToolbar, infoToolbar and column headers.
-	// sapMSticky6 is the result of sticky infoToolbar and column headers.
-	// sapMSticky5 is the result of sticky headerToolbar and column headers.
-	// sapMSticky4 is the result of sticky column headers only.
-	// sapMSticky3 is the result of sticky headerToolbar and infoToolbar.
-	// sapMSticky2 is the result of sticky infoToolbar.
-	// sapMSticky1 is the result of sticky headerToolbar.
+	/**
+	 * Returns the sticky value that is added to the sticky table container.
+	 *
+	 * Numeric values for each possible sticky element:
+	 * 1 - <code>headerToolbar</code>
+	 * 2 - <code>infoToolbar</code>
+	 * 4 - <code>columnHeaders</code>
+	 * 8 - <code>groupHeaders</code>
+	 *
+	 * The sticky value is created by adding up the values of the individual elements.
+	 * For example, sapMSticky15 (1 + 2 + 4 + 8) corresponds to sticky <code>headerToolbar</code>, <code>infoToolbar</code>, <code>columnHeaders</code>, and <code>groupHeaders</code>.
+	 * @returns {number} The sticky value
+	 */
 	ListBase.prototype.getStickyStyleValue = function() {
 		var aSticky = this.getSticky();
 		if (!aSticky || !aSticky.length) {
@@ -2677,13 +2682,18 @@ function(
 			bHeaderToolbarVisible = sHeaderText || (oHeaderToolbar && oHeaderToolbar.getVisible()),
 			oInfoToolbar = this.getInfoToolbar(),
 			bInfoToolbar = oInfoToolbar && oInfoToolbar.getVisible(),
-			bColumnHeadersVisible = false;
+			bColumnHeadersVisible = false,
+			bGroupHeaders = false;
 
 		if (this.isA("sap.m.Table")) {
 			bColumnHeadersVisible = this.getColumns().some(function(oColumn) {
 				return oColumn.getVisible() && oColumn.getHeader();
 			});
 		}
+
+		bGroupHeaders = this.getItems(true).some((oItem) => {
+			return oItem.isGroupHeader();
+		});
 
 		aSticky.forEach(function(sSticky) {
 			if (sSticky === Sticky.HeaderToolbar && bHeaderToolbarVisible) {
@@ -2692,6 +2702,8 @@ function(
 				iStickyValue += 2;
 			} else if (sSticky === Sticky.ColumnHeaders && bColumnHeadersVisible) {
 				iStickyValue += 4;
+			} else if (sSticky === Sticky.GroupHeaders && bGroupHeaders) {
+				iStickyValue += 8;
 			}
 		});
 
@@ -2710,14 +2722,25 @@ function(
 			return;
 		}
 
-		// check the all the sticky element and get their height
-		var iTHRectHeight = 0,
+		// check the all the sticky elements and get their height
+		var iGHRectHeight = 0,
+			iGHRectBottom = 0,
+			iTHRectHeight = 0,
 			iTHRectBottom = 0,
 			iInfoTBarContainerRectHeight = 0,
 			iInfoTBarContainerRectBottom = 0,
 			iHeaderToolbarRectHeight = 0,
 			iHeaderToolbarRectBottom = 0,
 			iStickyFocusOffset = this.getStickyFocusOffset();
+
+		if (this._iStickyValue & 8 /* GroupHeaders */) {
+			var oGroupHeaderDomRef = this.getItems(true).find((oItem) => {
+				return oItem.isGroupHeader();
+			}).getDomRef();
+			var oGroupHeaderRect = oGroupHeaderDomRef.getBoundingClientRect();
+			iGHRectBottom = parseInt(oGroupHeaderRect.bottom);
+			iGHRectHeight = parseInt(oGroupHeaderRect.height);
+		}
 
 		if (this._iStickyValue & 4 /* ColumnHeaders */) {
 			var oTblHeaderDomRef = this.getDomRef("tblHeader").firstChild;
@@ -2746,9 +2769,9 @@ function(
 		}
 
 		var iItemTop = Math.round(oTargetItemDomRef.getBoundingClientRect().top);
-		if (iTHRectBottom > iItemTop || iInfoTBarContainerRectBottom > iItemTop || iHeaderToolbarRectBottom > iItemTop) {
+		if (iGHRectBottom > iItemTop || iTHRectBottom > iItemTop || iInfoTBarContainerRectBottom > iItemTop || iHeaderToolbarRectBottom > iItemTop) {
 			window.requestAnimationFrame(function () {
-				oScrollDelegate.scrollToElement(oTargetItemDomRef, 0, [0, -iTHRectHeight - iInfoTBarContainerRectHeight - iHeaderToolbarRectHeight - iStickyFocusOffset], true);
+				oScrollDelegate.scrollToElement(oTargetItemDomRef, 0, [0, -iGHRectHeight - iTHRectHeight - iInfoTBarContainerRectHeight - iHeaderToolbarRectHeight - iStickyFocusOffset], true);
 			});
 		}
 	};
@@ -2906,6 +2929,12 @@ function(
 					break;
 				case Sticky.ColumnHeaders:
 					oDomRef = this.getDomRef("tblHeader");
+					break;
+				case Sticky.GroupHeaders:
+					//get domRef which is in view currently (Multiple groupHeaders)
+					oDomRef = this.getItems(true).find((oItem) => {
+						return oItem.isGroupHeader();
+					}).getDomRef();
 					break;
 				default:
 			}

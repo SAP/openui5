@@ -476,16 +476,26 @@ sap.ui.define([
 				return "application/x-octet-stream";
 			}
 
-			// Logs and returns a response for the given error
-			function error(iCode, oRequest, sMessage) {
-				Log.error(oRequest.requestLine
-					|| oRequest.method + " " + TestUtils.makeUrlReadable(oRequest.url), sMessage,
+			/*
+			 * Logs and returns a response for the given error.
+			 * @param {number} iCode - The response code
+			 * @param {object} oRequest - The request object
+			 * @param {string|Error} vMessage - The error
+			 * @returns {object} The reponse object
+			 */
+			function error(iCode, oRequest, vMessage) {
+				Log.error(oRequest.method + " " + TestUtils.makeUrlReadable(oRequest.url), vMessage,
 					"sap.ui.test.TestUtils");
 
 				return {
 					code : iCode,
-					headers : {"Content-Type" : "text/plain"},
-					message : sMessage
+					headers : {"Content-Type" : sJson},
+					message : JSON.stringify({
+						error : {
+							code : "TestUtils",
+							message : vMessage instanceof Error ? vMessage.message : vMessage
+						}
+					})
 				};
 			}
 
@@ -629,7 +639,7 @@ sap.ui.define([
 						try {
 							oResponse.buildResponse(oMatch.match, oResponse, oRequest);
 						} catch (oError) {
-							oResponse = error(500, oRequest, oError.stack);
+							oResponse = error(500, oRequest, oError);
 						}
 					}
 					if (oMatch.responses.length > 1) {

@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/m/upload/UploaderTableItem",
 	"sap/m/Dialog",
 	"sap/m/upload/FilePreviewDialog",
-	"sap/m/upload/UploadItemConfiguration"
+	"sap/m/upload/UploadItemConfiguration",
+	"sap/ui/model/type/Boolean"
 ], function(Text, MTable, MColumn, ColumnListItem, UploadSetwithTable, MDCTable, MDCColumn, JSONModel, qutils, nextUIUpdate, GridColumn, GridTable, TemplateHelper, ActionsPlaceholder, OverflowToolbar, Uploader, Dialog, FilePreviewDialog, UploadItemConfiguration) {
 	"use strict";
 

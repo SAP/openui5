@@ -7,14 +7,12 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/rta/util/whatsNew/whatsNewContent/WhatsNewFeatures",
 	"sap/ui/rta/util/whatsNew/WhatsNewUtils"
 ], function(
 	mLibrary,
 	Fragment,
 	JSONModel,
 	ResourceModel,
-	WhatsNewFeatures,
 	WhatsNewUtils
 ) {
 	"use strict";
@@ -23,7 +21,7 @@ sap.ui.define([
 	let oWhatsNewOverviewDialog;
 
 	function getWhatsNewOverviewContent() {
-		return [...WhatsNewFeatures.getAllFeatures()].reverse();
+		return [...WhatsNewUtils.getFilteredFeatures([])].reverse();
 	}
 
 	WhatsNewOverview.openWhatsNewOverviewDialog = async function() {

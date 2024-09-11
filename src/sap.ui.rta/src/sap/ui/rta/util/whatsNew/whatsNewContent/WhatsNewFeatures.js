@@ -14,21 +14,19 @@ sap.ui.define([
 	const oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 
 	/**
-	 * @returns {object[]} All whats new features
+	 * @returns {object[]} All What's New features
 	 */
 	WhatsNewFeatures.getAllFeatures = function() {
+		// eslint-disable-next-line no-use-before-define
 		return aWhatsNewFeaturesContent;
 	};
 
 	/**
-	 * @param {object[]} aDontShowAgainFeatureIds Array of feature ids that should be excluded from the whats new dialog
-	 * @returns {object[]} Filtered whats new features
+	 * Callback filter function to determine if the feature should be displayed in the dialog
+	 * @typedef {function} sap.ui.rta.util.whatsNew.whatsNewContent.WhatsNewFeatures.isFeatureApplicable
+	 * @param {sap.ui.fl.registry.Settings} oFlexSettings - Flex settings
+	 * @returns {boolean} <code>false</code> if the feature shouldn't be displayed in the dialog
 	 */
-	WhatsNewFeatures.filterDontShowAgainFeatures = function(aDontShowAgainFeatureIds) {
-		return aWhatsNewFeaturesContent.filter(function(oFeature) {
-			return !aDontShowAgainFeatureIds?.includes(oFeature.featureId);
-		});
-	};
 
 	/**
 	 * The `aWhatsNewFeaturesContent` array defines the features that will be displayed inside the "What's New" dialog.
@@ -60,7 +58,11 @@ sap.ui.define([
 	 *			text: null (the null is mandatory for spacing to work properly),
 	 *			image: <URL or path to an image representing the feature>
 	 *		}]
-	 *	}
+	 *		isFeatureApplicable: <Filter function that returns a boolean value to determine
+	 * 			if the feature should be displayed in the dialog> (optional)
+	 *  		<code>{@link sap.ui.rta.util.whatsNew.whatsNewContent.WhatsNewFeatures.isFeatureApplicable isFeatureApplicable}</code>
+	 * 	}
+	 *
 	 */
 	const aWhatsNewFeaturesContent =
 	[
@@ -109,21 +111,16 @@ sap.ui.define([
 			]
 		 },
 		 {
-			 featureId: "MinimenuRemoval",
-			 title: oTextResources.getText("TIT_WHATS_NEW_DIALOG_MINIMENU_REMOVAL_TITLE"),
-			 description: oTextResources.getText("TXT_WHATS_NEW_DIALOG_MINIMENU_REMOVAL_DESCRIPTION"),
-			 documentationUrls: {
-				btpUrl: "https://help.sap.com/docs/ui5-flexibility-for-key-users/ui5-flexibility-for-key-users/adapting-ui",
-				s4HanaCloudUrl: "https://help.sap.com/docs/SAP_S4HANA_CLOUD/4fc8d03390c342da8a60f8ee387bca1a/d868950a1e8c4b0f9b9453176939a19b.html",
-				s4HanaOnPremUrl: "https://help.sap.com/docs/ABAP_PLATFORM_NEW/a7b390faab1140c087b8926571e942b7/d868950a1e8c4b0f9b9453176939a19b.html"
-			},
-			 information: [
-				 {
-					 text: oTextResources.getText("TXT_WHATS_NEW_DIALOG_MINIMENU_REMOVAL_TEXT"),
-					 image: null
-				 }
-			 ]
-		 }
+			featureId: "MinimenuRemoval",
+			title: oTextResources.getText("TIT_WHATS_NEW_DIALOG_MINIMENU_REMOVAL_TITLE"),
+			description: oTextResources.getText("TXT_WHATS_NEW_DIALOG_MINIMENU_REMOVAL_DESCRIPTION"),
+			information: [
+				{
+					text: oTextResources.getText("TXT_WHATS_NEW_DIALOG_MINIMENU_REMOVAL_TEXT"),
+					image: null
+				}
+			]
+		}
 	];
 
 	return WhatsNewFeatures;

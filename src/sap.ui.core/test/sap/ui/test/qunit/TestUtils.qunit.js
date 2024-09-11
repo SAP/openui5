@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/jquery"
 ], function (Log, TestUtils, jQuery) {
-	/*global QUnit */
+	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
@@ -41,6 +41,13 @@ sap.ui.define([
 			regExp : /GET .*regexp\/bor/,
 			response : {
 				message : "RegExp4"
+			}
+		}, {
+			regExp : /GET \/Foo\/fail/,
+			response : {
+				buildResponse : function () {
+					throw new Error("failed intentionally");
+				}
 			}
 		}, {
 			regExp : /POST .*\$batch/,
@@ -386,6 +393,32 @@ sap.ui.define([
 			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 		},
 		responseBody : '{"foo":"bar","@odata.etag":"abc123"}'
+	}, {
+		expectedError : ["GET /Foo/missing?$filter=a eq 1", "No mock data found",
+			"sap.ui.test.TestUtils"],
+		expectNoInfo : true,
+		method : "GET",
+		url : "/Foo/missing?$filter=a%20eq%201",
+		status : 404,
+		responseHeaders : {
+			"OData-Version" : "4.0",
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+		},
+		responseBody : '{"error":{"code":"TestUtils","message":"No mock data found"}}'
+	}, {
+		expectedError : [
+			"GET /Foo/fail",
+			sinon.match((p) => p instanceof Error && p.message === "failed intentionally"),
+			"sap.ui.test.TestUtils"
+		],
+		method : "GET",
+		url : "/Foo/fail",
+		status : 500,
+		responseHeaders : {
+			"OData-Version" : "4.0",
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+		},
+		responseBody : '{"error":{"code":"TestUtils","message":"failed intentionally"}}'
 	}].forEach(function (oFixture) {
 		var sTitle = oFixture.method + " " + oFixture.url + ", status : " + oFixture.status;
 
@@ -397,10 +430,13 @@ sap.ui.define([
 				mHeaders[sKey] = oFixture.requestHeaders[sKey];
 			});
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture,
-				aRegExpFixture);
-			this.oLogMock.expects("info").withExactArgs(
-				oFixture.expectedLogMessage || oFixture.method + " " + oFixture.url,
-				'{"If-Match":undefined}', "sap.ui.test.TestUtils");
+				aRegExpFixture, "/Foo");
+			this.oLogMock.expects("info").exactly(oFixture.expectNoInfo ? 0 : 1)
+				.withExactArgs(oFixture.expectedLogMessage || oFixture.method + " " + oFixture.url,
+					'{"If-Match":undefined}', "sap.ui.test.TestUtils");
+			if (oFixture.expectedError) {
+				this.oLogMock.expects("error").withArgs(...oFixture.expectedError);
+			}
 
 			TestUtils.onRequest(function (sMessage) {
 				assert.strictEqual(sMessage, oFixture.requestBody);
@@ -431,9 +467,12 @@ sap.ui.define([
 
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture,
 				aRegExpFixture);
-			this.oLogMock.expects("info").withExactArgs(
-				oFixture.expectedLogMessage || oFixture.method + " " + oFixture.url,
-				'{"If-Match":undefined}', "sap.ui.test.TestUtils");
+			this.oLogMock.expects("info").exactly(oFixture.expectNoInfo ? 0 : 1)
+				.withExactArgs(oFixture.expectedLogMessage || oFixture.method + " " + oFixture.url,
+					'{"If-Match":undefined}', "sap.ui.test.TestUtils");
+			if (oFixture.expectedError) {
+				this.oLogMock.expects("error").withExactArgs(...oFixture.expectedError);
+			}
 
 			TestUtils.onRequest(function (sMessage) {
 				assert.ok(sMessage.includes(oFixture.method + " " + sUrl));

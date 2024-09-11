@@ -141,7 +141,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * A variant can only be modified if the current language equals the original language.
+	 * If the name of a variant is translatable it can only be modified if the current language equals the original language.
 	 * Returns <code>false</code> if the current language does not equal the original language of the variant file.
 	 * Returns <code>false</code> if the original language is initial.
 	 * @param {string} sOriginalLanguage - Language code of the language used on the variant creation
@@ -191,7 +191,7 @@ sap.ui.define([
 	CompVariant.prototype.isRenameEnabled = function(sLayer) {
 		return !this.getStandardVariant()
 			&& this.isEditEnabled(sLayer)
-			&& isRenameEnableDueToOriginalLanguage(this.getSupportInformation().originalLanguage);
+			&& (!this.isTranslationEnabled() || isRenameEnableDueToOriginalLanguage(this.getSupportInformation().originalLanguage));
 	};
 
 	/**
@@ -222,6 +222,14 @@ sap.ui.define([
 		return bOriginSystem
 			&& checkLayerAndUserAuthorization(this.getLayer(), sLayer, this.getOwnerId())
 			&& !this.getStandardVariant();
+	};
+
+	/**
+	 * Checks whenever the name of a variant can be translated.
+	 * @returns {boolean} <code>true</code> if the name of a variant can be translated
+	 */
+	CompVariant.prototype.isTranslationEnabled = function() {
+		return !LayerUtils.isOverLayer(this.getLayer(), Layer.CUSTOMER);
 	};
 
 	/**

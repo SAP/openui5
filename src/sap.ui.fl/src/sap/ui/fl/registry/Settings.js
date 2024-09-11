@@ -394,7 +394,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the information if a backend supports to save viewed features for Whats New.
+	 * Returns the information if a backend supports to save viewed features for What's New.
 	 *
 	 * @returns {boolean} <code>true</code> if viewed features is supported
 	 */

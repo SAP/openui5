@@ -29,7 +29,7 @@ sap.ui.define([
 	};
 	var oCarousel = new Carousel("car1", {
 		width : "100%",
-		height : "45%",
+		height : "50%",
 		pages : {path:"/wrongPath", template:
 			new Text({
 				text: "{text}"
@@ -39,7 +39,17 @@ sap.ui.define([
 
 	var oCarousel2 = new Carousel("car2", {
 		width : "40%",
-		height : "45%",
+		height : "50%",
+		pages : {path:"/wrongPath", template:
+			new Text({
+				text: "{text}"
+			})
+		}
+	});
+
+	var oCarousel3 = new Carousel("car3", {
+		width : "400px",
+		height : "210px",
 		pages : {path:"/wrongPath", template:
 			new Text({
 				text: "{text}"
@@ -57,7 +67,8 @@ sap.ui.define([
 			new Title({
 				text: "Carousel with 40% width and no pages"
 			}),
-			oCarousel2
+			oCarousel2,
+			oCarousel3
 		]
 	});
 

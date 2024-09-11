@@ -1060,6 +1060,64 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
+	QUnit.test("Space event should not fire press if escape is pressed and released after the Space is released", async function(assert) {
+		// Arrange
+		var oObjectStatus = new ObjectStatus({
+			title: "Title",
+			text: "Contract #D1234567890",
+			active: true
+		});
+
+		// Act
+		oObjectStatus.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		var oPressSpy = sinon.spy(ObjectStatus.prototype, "firePress");
+
+		// Action
+		// first keydown on SPACE, keydown on ESCAPE, release SPACE then release ESCAPE
+		qutils.triggerKeydown(oObjectStatus.getFocusDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeydown(oObjectStatus.getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oObjectStatus.getFocusDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeyup(oObjectStatus.getFocusDomRef(), KeyCodes.ESCAPE);
+
+		// Assert
+		assert.equal(oPressSpy.callCount, 0, "Press event should not be fired");
+
+		// Clean up
+		ObjectStatus.prototype.firePress.restore();
+		oObjectStatus.destroy();
+	});
+
+	QUnit.test("Space event should not fire press if escape is pressed then Space is released and then Escape is released", async function(assert) {
+		// Arrange
+		var oObjectStatus = new ObjectStatus({
+			title: "Title",
+			text: "Contract #D1234567890",
+			active: true
+		});
+
+		// Act
+		oObjectStatus.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		var oPressSpy = sinon.spy(ObjectStatus.prototype, "firePress");
+
+		// Action
+		// first keydown on SPACE, keydown on ESCAPE, release ESCAPE then release SPACE
+		qutils.triggerKeydown(oObjectStatus.getFocusDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeydown(oObjectStatus.getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oObjectStatus.getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oObjectStatus.getFocusDomRef(), KeyCodes.SPACE);
+
+		// Assert
+		assert.equal(oPressSpy.callCount, 0, "Press event should not be fired");
+
+		// Clean up
+		ObjectStatus.prototype.firePress.restore();
+		oObjectStatus.destroy();
+	});
+
 	QUnit.module("EmptyIndicator", {
 		beforeEach : async function() {
 			this.oText = new ObjectStatus({

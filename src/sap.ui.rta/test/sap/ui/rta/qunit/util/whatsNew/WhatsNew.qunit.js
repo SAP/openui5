@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/rta/util/whatsNew/whatsNewContent/WhatsNewFeatures",
 	"sap/ui/rta/util/whatsNew/WhatsNewUtils",
 	"sap/ui/rta/util/whatsNew/WhatsNew",
 	"sap/ui/qunit/utils/nextUIUpdate",
@@ -15,7 +14,6 @@ sap.ui.define([
 	Element,
 	Settings,
 	FeaturesAPI,
-	WhatsNewFeatures,
 	WhatsNewUtils,
 	WhatsNew,
 	nextUIUpdate,
@@ -24,7 +22,6 @@ sap.ui.define([
 	"use strict";
 
 	const sandbox = sinon.createSandbox();
-	const aFeatureIdList = WhatsNewFeatures.getAllFeatures().map((oFeature) => oFeature.featureId);
 	const aFeatureCollection = [
 		{
 			featureId: "onlyText",
@@ -91,7 +88,7 @@ sap.ui.define([
 			this.oWhatsNew = new WhatsNew({ layer: "CUSTOMER" });
 		},
 		async beforeEach() {
-			this.oFeaturesStub = sandbox.stub(WhatsNewFeatures, "filterDontShowAgainFeatures").returns(aFeatureCollection);
+			this.oFeaturesStub = sandbox.stub(WhatsNewUtils, "getFilteredFeatures").returns(aFeatureCollection);
 			await this.oWhatsNew.initializeWhatsNewDialog();
 			this.oWhatsNewDialog = Element.getElementById("sapUiRtaWhatsNewDialog");
 			await nextUIUpdate();
@@ -245,6 +242,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When all features have been seen", async function(assert) {
+			const aFeatureIdList = WhatsNewUtils.getFilteredFeatures([]).map((oFeature) => oFeature.featureId);
 			sandbox.stub(FeaturesAPI, "getSeenFeatureIds").resolves(aFeatureIdList);
 			this.oWhatsNew = new WhatsNew({ layer: "CUSTOMER" });
 			await this.oWhatsNew.initializeWhatsNewDialog();
@@ -258,6 +256,7 @@ sap.ui.define([
 			const oSetSeenFeatureIdsSpy = sandbox.spy(FeaturesAPI, "setSeenFeatureIds");
 			this.oWhatsNew = new WhatsNew({ layer: sLayer });
 			await this.oWhatsNew.initializeWhatsNewDialog();
+			const aFeatureIdList = WhatsNewUtils.getFilteredFeatures([]).map((oFeature) => oFeature.featureId);
 			this.oWhatsNewDialog = Element.getElementById("sapUiRtaWhatsNewDialog");
 			await nextUIUpdate();
 			assert.ok(this.oWhatsNewDialog.isOpen(), "then the dialog is opened");

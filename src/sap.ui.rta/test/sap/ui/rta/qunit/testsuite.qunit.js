@@ -829,14 +829,12 @@ sap.ui.define([
 				},
 				coverage: {
 					only: [
-						"sap/ui/rta/util/whatsNew/WhatsNew",
-						"sap/ui/rta/util/whatsNew/whatsNewContent/WhatsNewFeatures",
-						"sap/ui/rta/util/whatsNew/WhatsNewUtils"
+						"sap/ui/rta/util/whatsNew/WhatsNew"
 					]
 				}
 			},
 			"util/whatsNew/WhatsNewOverview": {
-				group: "Whats New Overview",
+				group: "Whats New",
 				qunit: {
 					reorder: false
 				},
@@ -848,6 +846,22 @@ sap.ui.define([
 				coverage: {
 					only: [
 						"sap/ui/rta/util/whatsNew/WhatsNewOverview"
+					]
+				}
+			},
+			"util/whatsNew/whatsNewContent/WhatsNewFeatures": {
+				group: "Whats New",
+				coverage: {
+					only: [
+						"sap/ui/rta/util/whatsNew/whatsNewContent/WhatsNewFeatures"
+					]
+				}
+			},
+			"util/whatsNew/WhatsNewUtils": {
+				group: "Whats New",
+				coverage: {
+					only: [
+						"sap/ui/rta/util/whatsNew/WhatsNewUtils"
 					]
 				}
 			},

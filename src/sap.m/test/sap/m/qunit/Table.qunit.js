@@ -26,6 +26,7 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/ScrollContainer",
 	"sap/m/library",
+	"sap/m/GroupHeaderListItem",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/core/message/Message",
 	"sap/ui/thirdparty/jquery",
@@ -36,7 +37,7 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/m/TextArea",
 	"sap/ui/core/Control"
-], function(Localization, Element, Library, qutils, nextUIUpdate, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, DragDropInfo, ListBase, Table, Column, Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message, jQuery, IllustratedMessage, ComboBox, CheckBox, RatingIndicator, Item, TextArea, Control) {
+], function(Localization, Element, Library, qutils, nextUIUpdate, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, DragDropInfo, ListBase, Table, Column, Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, GroupHeaderListItem, VerticalLayout, Message, jQuery, IllustratedMessage, ComboBox, CheckBox, RatingIndicator, Item, TextArea, Control) {
 	"use strict";
 
 	const TestControl = Control.extend("sap.m.test.TestControl", {
@@ -1684,6 +1685,152 @@ sap.ui.define([
 		sut.destroy();
 	});
 
+	QUnit.test("getStickyStyleValue", async function(assert){
+		var aRows = [];
+		for (var j = 1; j <= 200; j++) {
+			aRows.push({col1: "Group" + (j % 10), col2: "Content 1 - " + j});
+		}
+		var oModel = new JSONModel({data: aRows});
+
+		var oTable = new Table({
+			infoToolbar: new Toolbar({
+				content: [
+					new Label({
+						text: "This is an InfoToolbar"
+					})
+				]
+			}),
+			columns: [
+				new Column({
+					header: new Text({text: "Group"})
+				}),
+				new Column({
+					header: new Text({text: "Column 2"})
+				})
+			],
+			items: {
+				path: "/data",
+				sorter: new Sorter("col1", false, true),
+				template: new ColumnListItem({
+					cells: [
+						new Text({text: "{col1}"}),
+						new Input({text: "{col2}"})
+					]
+				})
+			}
+		});
+
+		const oHeaderToolbar = new Toolbar({
+			content: [
+				new Title({
+					text : "Keyboard Handling Test Page"
+				})
+			]
+		});
+
+		const oInfoToolbar = new Toolbar({
+			active: true,
+			content: [
+				new Text({
+					text : "The quick brown fox jumps over the lazy dog.",
+					wrapping : false
+				})
+			]
+		});
+
+		oTable.setHeaderToolbar(oHeaderToolbar);
+		oTable.setInfoToolbar(oInfoToolbar);
+		oTable.setModel(oModel);
+
+		await nextUIUpdate();
+
+		assert.strictEqual(oTable.getStickyStyleValue(), 0, "Nothing is Sticky");
+
+		oTable.setSticky(["HeaderToolbar"]);
+		oHeaderToolbar.setVisible(false);
+		await nextUIUpdate();
+		assert.strictEqual(oTable.getStickyStyleValue(), 0, "HeaderToolbar is Sticky but not visible");
+
+		oHeaderToolbar.setVisible(true);
+		await nextUIUpdate();
+		assert.strictEqual(oTable.getStickyStyleValue(), 1, "HeaderToolbar is Sticky and visible");
+
+		oTable.setSticky(["InfoToolbar"]);
+		oInfoToolbar.setVisible(false);
+		await nextUIUpdate();
+		assert.strictEqual(oTable.getStickyStyleValue(), 0, "InfoToolbar is Sticky but not visible");
+
+		oInfoToolbar.setVisible(true);
+		await nextUIUpdate();
+		assert.strictEqual(oTable.getStickyStyleValue(), 2, "InfoToolbar is Sticky and visible");
+
+		oTable.setSticky(["HeaderToolbar", "InfoToolbar"]);
+		await nextUIUpdate();
+		assert.strictEqual(oTable.getStickyStyleValue(), 3, "HeaderToolbar and InfoToolbar are Sticky");
+
+		oTable.setSticky(["ColumnHeaders"]);
+		oTable.getColumns().forEach((oColumn) => {
+			oColumn.setVisible(false);
+		});
+		await nextUIUpdate();
+		assert.strictEqual(oTable.getStickyStyleValue(), 0, "ColumnHeaders are Sticky but are not visible");
+
+		oTable.getColumns().forEach((oColumn) => {
+			oColumn.setVisible(true);
+		});
+		await nextUIUpdate();
+		assert.strictEqual(oTable.getStickyStyleValue(), 4, "ColumnHeaders are Sticky and visible");
+
+		oTable.setSticky(["HeaderToolbar", "ColumnHeaders"]);
+		await nextUIUpdate();
+		assert.strictEqual(oTable.getStickyStyleValue(), 5, "HeaderToolbar and ColumnHeaders are Sticky");
+
+		oTable.setSticky(["InfoToolbar", "ColumnHeaders"]);
+		await nextUIUpdate();
+		assert.strictEqual(oTable.getStickyStyleValue(), 6, "InfoToolbar and ColumnHeaders are Sticky");
+
+		oTable.setSticky(["HeaderToolbar", "InfoToolbar", "ColumnHeaders"]);
+		await nextUIUpdate();
+		assert.strictEqual(oTable.getStickyStyleValue(), 7, "HeaderToolbar, InfoToolbar and ColumnHeaders are Sticky");
+
+		oTable.setSticky(["GroupHeaders"]);
+		await nextUIUpdate();
+		assert.strictEqual(oTable.getStickyStyleValue(), 8, "GroupHeaders are Sticky and exist");
+
+		oTable.setSticky(["GroupHeaders", "HeaderToolbar"]);
+		await nextUIUpdate();
+		assert.strictEqual(oTable.getStickyStyleValue(), 9, "GroupHeaders and HeaderToolbar are Sticky");
+
+		oTable.setSticky(["GroupHeaders", "InfoToolbar"]);
+		await nextUIUpdate();
+		assert.strictEqual(oTable.getStickyStyleValue(), 10, "GroupHeaders and InfoToolbar are Sticky");
+
+		oTable.setSticky(["GroupHeaders", "HeaderToolbar", "InfoToolbar"]);
+		await nextUIUpdate();
+		assert.strictEqual(oTable.getStickyStyleValue(), 11, "GroupHeaders, HeaderToolbar and InfoToolbar are Sticky");
+
+		oTable.setSticky(["GroupHeaders", "ColumnHeaders"]);
+		await nextUIUpdate();
+		assert.strictEqual(oTable.getStickyStyleValue(), 12, "GroupHeaders and ColumnHeaders are Sticky");
+
+		oTable.setSticky(["GroupHeaders", "HeaderToolbar", "ColumnHeaders"]);
+		await nextUIUpdate();
+		assert.strictEqual(oTable.getStickyStyleValue(), 13, "GroupHeaders, HeaderToolbar and ColumnHeaders are Sticky");
+
+		oTable.setSticky(["GroupHeaders", "InfoToolbar", "ColumnHeaders"]);
+		await nextUIUpdate();
+		assert.strictEqual(oTable.getStickyStyleValue(), 14, "GroupHeaders, InfoToolbar and ColumnHeaders are Sticky");
+
+		oTable.setSticky(["GroupHeaders", "HeaderToolbar", "InfoToolbar", "ColumnHeaders"]);
+		await nextUIUpdate();
+		assert.strictEqual(oTable.getStickyStyleValue(), 15, "GroupHeaders, HeaderToolbar, InfoToolbar and ColumnHeaders are Sticky");
+
+		oTable.setSticky(["GroupHeaders"]);
+		oTable.removeGroupHeaders();
+		await nextUIUpdate();
+		assert.strictEqual(oTable.getStickyStyleValue(), 0, "GroupHeaders are Sticky but do not exist");
+	});
+
 	QUnit.test("Initial focus position calculation", async function(assert) {
 		const oButtonBefore = new Button({text: "Before"});
 		const sut = createSUT(true);
@@ -2015,6 +2162,130 @@ sap.ui.define([
 
 		// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
 		sut.getDomRef = fnGetDomRef;
+
+		oScrollContainer.destroy();
+	});
+
+	QUnit.test("Check sticky HeaderToolbar, InfoToolbar, ColumnHeaders, GroupHeaders", async function(assert) {
+		this.stub(Device.system, "desktop", false);
+
+		const sut = createSUT(true);
+
+		var oModel = new JSONModel({
+			tableData: [
+				{ groupHeader: "Group Header 1" },
+				{ text: "Item 1.1", additionalText: "Additional Text 1.1" },
+				{ text: "Item 1.2", additionalText: "Additional Text 1.2" },
+				{ groupHeader: "Group Header 2" },
+				{ text: "Item 2.1", additionalText: "Additional Text 2.1" },
+				{ text: "Item 2.2", additionalText: "Additional Text 2.2" }
+			]
+		});
+
+		sut.setModel(oModel);
+
+		sut.bindItems({
+			path: "/tableData",
+			factory: function(sId, oContext) {
+				var groupHeader = oContext.getProperty("groupHeader");
+				if (groupHeader) {
+					return new GroupHeaderListItem({
+						title: groupHeader,
+						upperCase: false
+					});
+				} else {
+					return new ColumnListItem({
+						cells: [
+							new Text({ text: "{text}" }),
+							new Text({ text: "{additionalText}" })
+						]
+					});
+				}
+			}
+		});
+
+		var oGrouping = new Sorter("groupHeader", false, function(oContext) {
+			return {
+				key: oContext.getProperty("groupHeader"),
+				text: oContext.getProperty("groupHeader")
+			};
+		});
+		sut.getBinding("items").sort(oGrouping);
+
+		const oHeaderToolbar = new Toolbar({
+			content: [
+				new Title({
+					text : "Keyboard Handling Test Page"
+				}),
+				new ToolbarSpacer(),
+				new Button({
+					tooltip: "View Settings",
+					icon: "sap-icon://drop-down-list"
+				})
+			]
+		});
+
+		sut.setHeaderToolbar(oHeaderToolbar);
+
+		const oInfoToolbar = new Toolbar({
+			active: true,
+			content: [
+				new Text({
+					text : "The quick brown fox jumps over the lazy dog.",
+					wrapping : false
+				})
+			]
+		});
+
+		sut.setInfoToolbar(oInfoToolbar);
+
+		const oScrollContainer = new ScrollContainer({
+			vertical: true,
+			content: sut
+		});
+
+		sut.setSticky(["HeaderToolbar", "InfoToolbar", "ColumnHeaders", "GroupHeaders"]);
+		oScrollContainer.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		let aClassList = sut.$()[0].classList;
+		assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky15"), "sapMSticky15 class added for sticky groupHeaders, headerToolbar, infoToolbar and column headers");
+
+		sut.getHeaderToolbar().setVisible(false);
+		aClassList = sut.$()[0].classList;
+		assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky14"), "sapMSticky14 class added for sticky groupHeaders, infoToolbar and column headers");
+
+		sut.getHeaderToolbar().setVisible(true);
+		sut.getInfoToolbar().setVisible(false);
+		aClassList = sut.$()[0].classList;
+		assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky13"), "sapMSticky13 class added for sticky groupHeaders, headerToolbar and column headers");
+
+		sut.getHeaderToolbar().setVisible(false);
+		sut.getInfoToolbar().setVisible(false);
+		aClassList = sut.$()[0].classList;
+		assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky12"), "sapMSticky12 class added for sticky groupHeaders and column headers");
+
+		sut.getHeaderToolbar().setVisible(true);
+		sut.getInfoToolbar().setVisible(true);
+		sut.setSticky(["HeaderToolbar", "InfoToolbar", "GroupHeaders"]);
+		await nextUIUpdate();
+		aClassList = sut.$()[0].classList;
+		assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky11"), "sapMSticky11 class added for sticky groupHeaders and headerToolbar and infoToolbar");
+
+		sut.setSticky(["InfoToolbar", "GroupHeaders"]);
+		await nextUIUpdate();
+		aClassList = sut.$()[0].classList;
+		assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky10"), "sapMSticky10 class added for sticky groupHeaders and InfoToolbar");
+
+		sut.setSticky(["HeaderToolbar", "GroupHeaders"]);
+		await nextUIUpdate();
+		aClassList = sut.$()[0].classList;
+		assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky9"), "sapMSticky9 class added for sticky groupHeaders and InfoToolbar");
+
+		sut.setSticky(["GroupHeaders"]);
+		await nextUIUpdate();
+		aClassList = sut.$()[0].classList;
+		assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky8"), "sapMSticky8 class added for sticky groupHeaders and InfoToolbar");
 
 		oScrollContainer.destroy();
 	});

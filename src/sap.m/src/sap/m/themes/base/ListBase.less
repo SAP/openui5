@@ -275,7 +275,8 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 
 /* sticky headers */
 .sapMSticky > .sapMListHdr,
-.sapMSticky > .sapMListInfoTBarContainer {
+.sapMSticky > .sapMListInfoTBarContainer,
+.sapMSticky .sapMGHLI  {
 	position: sticky;
 }
 
@@ -291,10 +292,6 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 	z-index: 3;
 }
 
-.sapMSticky > .sapMListInfoTBarContainer {
-	z-index: 2;
-}
-
 /* .sapMSticky3 denotes that the headerToolbar/headerText and the infoToolbar are sticky */
 /* .sapMSticky2 denotes that only the infoToolbar is sticky */
 /* .sapMSticky1 denotes that only the headerToolbar/headerText is sticky */
@@ -302,17 +299,19 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 .sapMSticky1 > .sapMListHdr,
 .sapMSticky2 > .sapMListInfoTBarContainer,
 .sapMSticky3 > .sapMListHdr {
+	z-index: 2;
 	top: 0;
 }
 
 /* top: 3rem sticky conditions : 2nd sticky elements*/
 .sapMSticky3 > .sapMListInfoTBarContainer {
+	z-index: 2;
 	top: @sapUiElementLineHeight;
 }
 
 /* handle transparent background on rounded corners to not show underlaying elements on scrolling */
 ._sap_m_ListBase_Rounded_HeaderToolbarMixin() {
-	.sapMSticky:has(> .sapMListHdr)::before {
+	.sapMSticky:has(> .sapMListHdr):not(.sapMMsgStrip)::before {
 		position: sticky;
 		content: "";
 		display: block;
@@ -320,7 +319,7 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 		height: @sapUiElementBorderCornerRadius;
 		margin-bottom: -@sapUiElementBorderCornerRadius; /* prevent new empty space above sticky element */
 		top: 0;
-		z-index: 3;
+		z-index: 2;
 	}
 }
 

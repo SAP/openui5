@@ -770,7 +770,8 @@ sap.ui.define([
 	Carousel.prototype._getEmptyPage = function () {
 		if (!this.getAggregation("_emptyPage")) {
 			var emptyPage = new IllustratedMessage({
-				illustrationType: IllustratedMessageType.NoData
+				illustrationType: IllustratedMessageType.NoData,
+				enableVerticalResponsiveness: true
 			});
 
 			this.setAggregation("_emptyPage", emptyPage);

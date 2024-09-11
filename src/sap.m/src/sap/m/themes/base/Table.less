@@ -5,6 +5,8 @@
 
 @_sap_m_Table_SelNavColWidth: 3rem;
 @_sap_m_Table_CustomFocusMargin: 1px;
+@sapUiElementLineHeightSticky13: @sapUiElementLineHeight * 2;
+@sapUiElementLineHeightSticky15: (@sapUiElementLineHeight * 2) + 2rem;
 
 .sapMListTbl {
 	width: 100%;
@@ -206,9 +208,16 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 /* sticky headerToolbar, infoToolbar and column headers */
 .sapMSticky .sapMListTblHeader {
 	position: sticky;
-	z-index: 2; /* allow controls to have own z-index: 1 */
 }
 
+
+/* sapMSticky15 is the result of sticky groupHeaders, headerToolbar, infoToolbar and column headers */
+/* sapMSticky14 is the result of sticky groupHeaders, infoToolbar and column headers */
+/* sapMSticky13 is the result of sticky groupHeaders, headerToolbar and column headers */
+/* sapMSticky12 is the result of sticky groupHeaders and column headers */
+/* sapMSticky11 is the result of sticky groupHeaders and headerToolbar and infoToolbar */
+/* sapMSticky10 is the result of sticky groupHeaders and InfoToolbar */
+/* sapMSticky9 is the result of sticky groupHeaders and headerToolbar */
 /* .sapMSticky7 denotes that the headerToolbar, infoToolbar and column headers are sticky */
 /* .sapMSticky6 denotes that the infoToolbar and column headers are sticky */
 /* .sapMSticky5 denotes that the headerToolbar and column headers are sticky */
@@ -217,29 +226,61 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 .sapMSticky4 .sapMListTblHeader,
 .sapMSticky5 > .sapMListHdr,
 .sapMSticky6 > .sapMListInfoTBarContainer,
-.sapMSticky7 > .sapMListHdr {
+.sapMSticky7 > .sapMListHdr,
+.sapMSticky8 .sapMGHLI,
+.sapMSticky9 > .sapMListHdr,
+.sapMSticky10 > .sapMListInfoTBarContainer,
+.sapMSticky11 > .sapMListHdr,
+.sapMSticky12 .sapMListTblHeader,
+.sapMSticky13 > .sapMListHdr,
+.sapMSticky14 > .sapMListInfoTBarContainer,
+.sapMSticky15 > .sapMListHdr {
+	z-index: 2; /* allow controls to have own z-index: 1 */
 	top: 0;
 }
 
 /* top: 2rem sticky conditions : 2nd sticky elements */
-.sapMSticky6 .sapMListTblHeader {
+.sapMSticky6 .sapMListTblHeader,
+.sapMSticky14 .sapMListTblHeader,
+.sapMSticky10 .sapMGHLI {
+	z-index: 2;
 	top: 2rem;
 }
 
 /* top: 3rem sticky conditions : 2nd sticky elements */
 .sapMSticky5 .sapMListTblHeader,
-.sapMSticky7 > .sapMListInfoTBarContainer {
+.sapMSticky7 > .sapMListInfoTBarContainer,
+.sapMSticky9 .sapMGHLI,
+.sapMSticky11 > .sapMListInfoTBarContainer,
+.sapMSticky12 .sapMGHLI,
+.sapMSticky13 .sapMListTblHeader,
+.sapMSticky15 > .sapMListInfoTBarContainer {
+	z-index: 2;
 	top: @sapUiElementLineHeight;
 }
 
 /* top: 5rem conditions : 3rd sticky elements */
-.sapMSticky7 .sapMListTblHeader {
+.sapMSticky7 .sapMListTblHeader,
+.sapMSticky11 .sapMGHLI,
+.sapMSticky14 .sapMGHLI,
+.sapMSticky15 .sapMListTblHeader {
+	z-index: 2;
 	top: @sapUiElementLineHeight + 2rem;
+}
+
+.sapMSticky13 .sapMGHLI {
+	z-index: 2;
+	top: @sapUiElementLineHeightSticky13;
 }
 
 /* busyIndicator should not block the toolbars if <table> is set busy */
 .sapMSticky > .sapMListTbl > .sapUiLocalBusyIndicator {
 	z-index: 3;
+}
+
+.sapMSticky15 .sapMGHLI {
+	z-index: 2;
+	top: @sapUiElementLineHeightSticky15;
 }
 
 /* define outline for the block layer */

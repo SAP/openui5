@@ -2,12 +2,15 @@
 sap.ui.define([
 	"sap/m/App",
 	"sap/m/Button",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
 	"sap/m/CustomListItem",
 	"sap/m/GroupHeaderListItem",
 	"sap/m/GrowingEnablement",
 	"sap/m/IllustratedMessage",
 	"sap/m/Input",
 	"sap/m/InputListItem",
+	"sap/m/Label",
 	"sap/m/library",
 	"sap/m/List",
 	"sap/m/ListBase",
@@ -17,6 +20,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/ScrollContainer",
 	"sap/m/StandardListItem",
+	"sap/m/Table",
 	"sap/m/Text",
 	"sap/m/Title",
 	"sap/m/Toolbar",
@@ -39,7 +43,14 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(App, Button, CustomListItem, GroupHeaderListItem, GrowingEnablement, IllustratedMessage, Input, InputListItem, library, List, ListBase, Menu, MenuItem, MessageToast, Page, ScrollContainer, StandardListItem, Text, Title, Toolbar, ToolbarSpacer, VBox, DataStateIndicator, Device, Element, InvisibleMessage, Library, coreLibrary, Theming, KeyCodes, VerticalLayout, Filter, FilterOperator, Sorter, JSONModel, qutils, createAndAppendDiv, nextUIUpdate, jQuery) {
+], function(
+			App, Button, Column, ColumnListItem, CustomListItem, GroupHeaderListItem, GrowingEnablement,
+			IllustratedMessage, Input, InputListItem, Label, library, List, ListBase, Menu, MenuItem,
+			MessageToast, Page, ScrollContainer, StandardListItem, Table, Text, Title,
+			Toolbar, ToolbarSpacer, VBox, DataStateIndicator, Device, Element, InvisibleMessage,
+			Library, coreLibrary, Theming, KeyCodes, VerticalLayout, Filter, FilterOperator,
+			Sorter, JSONModel, qutils, createAndAppendDiv, nextUIUpdate, jQuery
+		) {
 	"use strict";
 	jQuery("#qunit-fixture").attr("data-sap-ui-fastnavgroup", "true");
 
@@ -3659,6 +3670,91 @@ sap.ui.define([
 		await timeout(100);
 
 		assert.ok(isElementVisible(oList.getItems()[6].getDomRef(), oViewData), "Item 6 is fully visible after focus");
+	});
+
+	QUnit.test("Focus and scroll handling with sticky groupHeaders and focus on input control", async function(assert) {
+		function isElementVisible(oListItem, oViewData) {
+			const oListItemRect = oListItem.getBoundingClientRect();
+			if (oListItemRect.top >= oViewData.iStartView && (oListItemRect.top + oListItemRect.height) <= oViewData.iEndView) {
+				return true;
+			}
+
+			return false;
+		}
+
+		const aStdLI = [];
+		for (let i = 0; i < 100; i++) {
+			const k = i % 10;
+			aStdLI.push({
+				title: `Address${i}`, key: k
+			});
+		}
+
+		var oList = new List({
+			sticky: ["GroupHeaders"],
+			items: {
+				path: "/items",
+				sorter: new Sorter('key', false, true),
+				template: new InputListItem({
+					label: "Input",
+					content: new Input(),
+					type: "Navigation"
+				}),
+				factory: function (sId, oContext) {
+					var oUIControl;
+
+					if (oContext.getProperty("groupHeader")) {
+						oUIControl = new GroupHeaderListItem({
+							title: oContext.getProperty("groupHeader"),
+							upperCase: true
+						});
+					} else {
+						oUIControl = new InputListItem(sId);
+					}
+
+					return oUIControl;
+				}
+			}
+		}).setModel(new JSONModel({
+			items: aStdLI
+		}));
+		const oPage2 = new Page({
+				content: [oList]
+			});
+
+		const oApp2 = new App({
+			pages: [oPage2],
+			height: "400px"
+		});
+
+		oApp2.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		const oAppRect = oApp2.getDomRef().getBoundingClientRect();
+		const oViewData = {
+			iStartView: oList.getVisibleItems()[0].getDomRef().getBoundingClientRect().top,
+			iEndView: (oAppRect.top + oAppRect.height)
+		};
+
+		assert.notOk(isElementVisible(oList.getItems()[9].getDomRef(), oViewData), "Item is not visible");
+		assert.ok(isElementVisible(oList.getItems()[0].getDomRef(), oViewData), "Item is visible");
+
+		//focus element 8, which puts element 0 out of view
+		oList.getItems()[8].focus();
+		await timeout(100);
+
+		assert.notOk(isElementVisible(oList.getItems()[0].getDomRef(), oViewData), "Item 0 is not visible anymore");
+		assert.ok(isElementVisible(oList.getItems()[8].getDomRef(), oViewData), "Item 8 is visible");
+
+		oList.getItems()[0].focus();
+		await timeout(100);
+		assert.ok(isElementVisible(oList.getItems()[0].getDomRef(), oViewData), "Item 0 is visible after focus");
+		assert.notOk(isElementVisible(oList.getItems()[13].getDomRef(), oViewData), "Item 6 is not fully visible");
+
+		oList.getItems()[13].focus();
+		await timeout(100);
+
+		assert.ok(isElementVisible(oList.getItems()[13].getDomRef(), oViewData), "Item 6 is fully visible after focus");
 	});
 
 	QUnit.test("Function _getStickyAreaHeight", async function(assert) {

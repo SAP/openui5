@@ -4,6 +4,7 @@
 /* ============================== */
 
 @_sap_m_Toolbar_ShrinkItem_MinWidth: 2.5rem;
+@_sap_m_Toolbar_Height: 2rem;
 
 //we want the first visible element on the row to have specific padding-left value
 .sapMIBar.sapMTB .sapMBarChild {
@@ -118,7 +119,7 @@
 .sapMTB-Info-CTX.sapMTB {
 	background: @sapUiInfobarBackground;
 	color: contrast(@sapUiInfobarBackground, @sapUiListActiveTextColor, @sapUiListTextColor, @sapUiContentContrastTextThreshold);
-	height: 2rem;
+	height: @_sap_m_Toolbar_Height;
 
 	.sapMText {
 		white-space: nowrap;
@@ -146,7 +147,7 @@
 
 /* toolbar has 2rem height in compact mode */
 .sapUiSizeCompact .sapMTB {
-	height: 2rem;
+	height: @_sap_m_Toolbar_Height;
 }
 
 /* class used to get a height of 3rem in compact mode */

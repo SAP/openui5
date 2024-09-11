@@ -4197,7 +4197,14 @@ sap.ui.define([
 		  * @public
 		  * @since 1.56
 		  */
-		 InfoToolbar: "InfoToolbar"
+		 InfoToolbar: "InfoToolbar",
+
+		 /**
+		  * The group headers remain in a fixed position at the top of the page during vertical scrolling.
+		  * @public
+		  * @since 1.128
+		  */
+		 GroupHeaders: "GroupHeaders"
 	 };
 
 	 /**

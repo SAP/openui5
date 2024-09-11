@@ -275,11 +275,11 @@ sap.ui.define([
 	});
 
 	var aScenarios = [{
-		testName: "and a variant in the USER layer",
+		testName: "and a variant in the USER layer and in different language",
 		// testing more is not mandatory since the USER is never transported
 		variant: {
 			layer: Layer.USER,
-			originalLanguage: "EN",
+			originalLanguage: "DE",
 			support: { user: undefined },
 			sourceSystem: undefined,
 			sourceClient: undefined
@@ -289,7 +289,8 @@ sap.ui.define([
 		},
 		expectedEditEnabled: true,
 		expectedDeleteEnabled: true,
-		expectedRenameEnabled: true
+		expectedRenameEnabled: true,
+		expectedTranslationEnabled: false
 	}, {
 		testName: ", a variant in the PUBLIC layer and the user is its author",
 		variant: {
@@ -305,7 +306,8 @@ sap.ui.define([
 		currentUser: "FRANK",
 		expectedEditEnabled: true,
 		expectedDeleteEnabled: true,
-		expectedRenameEnabled: true
+		expectedRenameEnabled: true,
+		expectedTranslationEnabled: false
 	}, {
 		testName: ", a variant in the PUBLIC layer and the user is NOT its author",
 		variant: {
@@ -321,7 +323,8 @@ sap.ui.define([
 		currentUser: "PAUL",
 		expectedEditEnabled: false,
 		expectedDeleteEnabled: false,
-		expectedRenameEnabled: false
+		expectedRenameEnabled: false,
+		expectedTranslationEnabled: false
 	}, {
 		testName: ", a variant in the PUBLIC layer and the current user could not be determined",
 		variant: {
@@ -336,7 +339,8 @@ sap.ui.define([
 		},
 		expectedEditEnabled: true,
 		expectedDeleteEnabled: true,
-		expectedRenameEnabled: true
+		expectedRenameEnabled: true,
+		expectedTranslationEnabled: false
 	}, {
 		testName: ", a variant in the PUBLIC layer and its owner could not be determined",
 		variant: {
@@ -352,7 +356,8 @@ sap.ui.define([
 		currentUser: "FRANK",
 		expectedEditEnabled: true,
 		expectedDeleteEnabled: true,
-		expectedRenameEnabled: true
+		expectedRenameEnabled: true,
+		expectedTranslationEnabled: false
 	}, {
 		testName: ", a variant in the PUBLIC layer and the user is NOT its author but a key user",
 		variant: {
@@ -369,7 +374,8 @@ sap.ui.define([
 		currentUser: "PAUL",
 		expectedEditEnabled: true,
 		expectedDeleteEnabled: true,
-		expectedRenameEnabled: true
+		expectedRenameEnabled: true,
+		expectedTranslationEnabled: false
 	}, {
 		testName: "and a variant in the CUSTOMER layer and an available PUBLIC layer",
 		variant: {
@@ -387,7 +393,8 @@ sap.ui.define([
 		},
 		expectedEditEnabled: false,
 		expectedDeleteEnabled: false,
-		expectedRenameEnabled: false
+		expectedRenameEnabled: false,
+		expectedTranslationEnabled: true
 	}, {
 		testName: "and a variant in the CUSTOMER layer and an unavailable PUBLIC layer",
 		variant: {
@@ -406,7 +413,8 @@ sap.ui.define([
 		currentUser: "FRANK",
 		expectedEditEnabled: true,
 		expectedDeleteEnabled: true,
-		expectedRenameEnabled: true
+		expectedRenameEnabled: true,
+		expectedTranslationEnabled: true
 	}, {
 		testName: "and a variant from another system",
 		variant: {
@@ -425,7 +433,8 @@ sap.ui.define([
 		currentUser: "FRANK",
 		expectedEditEnabled: false,
 		expectedDeleteEnabled: false,
-		expectedRenameEnabled: false
+		expectedRenameEnabled: false,
+		expectedTranslationEnabled: true
 	}, {
 		testName: "and a variant from another client",
 		variant: {
@@ -444,7 +453,8 @@ sap.ui.define([
 		currentUser: "FRANK",
 		expectedEditEnabled: false,
 		expectedDeleteEnabled: false,
-		expectedRenameEnabled: false
+		expectedRenameEnabled: false,
+		expectedTranslationEnabled: true
 	}, {
 		testName: "and a variant in the CUSTOMER layer and an unavailable PUBLIC layer where the user is the author",
 		variant: {
@@ -460,7 +470,8 @@ sap.ui.define([
 		currentUser: "FRANK",
 		expectedEditEnabled: true,
 		expectedDeleteEnabled: true,
-		expectedRenameEnabled: true
+		expectedRenameEnabled: true,
+		expectedTranslationEnabled: true
 	}, {
 		testName: "and a variant in the CUSTOMER layer and an unavailable PUBLIC layer where the user is NOT the author",
 		variant: {
@@ -476,13 +487,14 @@ sap.ui.define([
 		currentUser: "PAUL",
 		expectedEditEnabled: false,
 		expectedDeleteEnabled: false,
-		expectedRenameEnabled: false
+		expectedRenameEnabled: false,
+		expectedTranslationEnabled: true
 	}, {
 		testName: "and a variant in the CUSTOMER layer and an unavailable PUBLIC layer where the user is a key user",
 		variant: {
 			layer: Layer.CUSTOMER,
 			support: { user: "FRANK" },
-			originalLanguage: "EN",
+			originalLanguage: "DE",
 			sourceSystem: undefined,
 			sourceClient: undefined
 		},
@@ -493,7 +505,8 @@ sap.ui.define([
 		currentUser: "PAUL",
 		expectedEditEnabled: true,
 		expectedDeleteEnabled: true,
-		expectedRenameEnabled: true
+		expectedRenameEnabled: false,
+		expectedTranslationEnabled: true
 	}, {
 		testName: "Given a VENDOR variant with a set sap-ui-layer=VENDOR parameter when isReadOnly is called",
 		variant: {
@@ -511,6 +524,7 @@ sap.ui.define([
 		expectedEditEnabled: true,
 		expectedDeleteEnabled: true,
 		expectedRenameEnabled: true,
+		expectedTranslationEnabled: true,
 		sapUiLayerUrlParameter: Layer.VENDOR
 	}];
 
@@ -623,6 +637,7 @@ sap.ui.define([
 				assert.equal(oVariant.isRenameEnabled(), mTestSetup.expectedRenameEnabled, "then the boolean for renameEnabled was determined correct");
 				assert.equal(oVariant.isEditEnabled(), mTestSetup.expectedEditEnabled, "then the boolean for editEnabled was determined correct");
 				assert.equal(oVariant.isDeleteEnabled(), mTestSetup.expectedDeleteEnabled, "then the boolean for deleteEnabled was determined correct");
+				assert.equal(oVariant.isTranslationEnabled(), mTestSetup.expectedTranslationEnabled, "then the boolean for translationEnabled was determined correct");
 			});
 		});
 	});

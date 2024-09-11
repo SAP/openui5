@@ -354,14 +354,18 @@ function(
 
 	Link.prototype.onAfterRendering = function() {
 		if (Device.system.phone || Device.system.tablet) {
-			var oAnchorElement = this.getDomRef();
+			var oAnchorElement = this.getDomRef(),
+				sEventID = Device.browser.safari ? "touchstart" : "click";
+
 			// TODO: Adjust sap.m.internal.ObjectMarkerCustomLink rendering part of the sap.m.ObjectMarker implementation
 			if (!oAnchorElement) {
 				return;
 			}
-			oAnchorElement.removeEventListener("click", this._onClick);
-			if (oAnchorElement.getAttribute("href") == "#") {
-				oAnchorElement.addEventListener("click", this._onClick);
+
+			oAnchorElement.removeEventListener(sEventID, this._onClick);
+
+			if (oAnchorElement.getAttribute("href") === "#") {
+				oAnchorElement.addEventListener(sEventID, this._onClick);
 			}
 		}
 	};
@@ -371,11 +375,14 @@ function(
 			oEndIcon = this.getAggregation("_endIcon");
 
 		if (Device.system.phone || Device.system.tablet) {
-			var oAnchorElement = this.getDomRef();
+			var oAnchorElement = this.getDomRef(),
+				sEventID = Device.browser.safari ? "touchstart" : "click";
+
 			if (!oAnchorElement) {
 				return;
 			}
-			oAnchorElement.removeEventListener("click", this._onClick);
+
+			oAnchorElement.removeEventListener(sEventID, this._onClick);
 		}
 
 		if (oIcon) {

@@ -656,6 +656,35 @@ sap.ui.define([
 		oLink.destroy();
 	});
 
+	QUnit.test("Prevent default on touchstart event when using iOS Safari", async function(assert) {
+		// Prepare
+		var oLink = new Link({ text: "text", href: "#" }),
+			oTouchStartEvent = new Event("touchstart", { bubbles: true, cancelable: true }),
+			oPreventDefaultSpy = this.spy(oTouchStartEvent, "preventDefault"),
+			oDeviceStub = this.stub(Device, "system").value({
+				desktop: false,
+				tablet: false,
+				phone: true
+			}),
+			oBrowserStub = this.stub(Device, "browser").value({ safari: true });
+
+		oLink.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Act
+		oLink.getDomRef().dispatchEvent(oTouchStartEvent);
+
+		// Assert
+		assert.ok(oPreventDefaultSpy.calledOnce, "Default action is prevented");
+
+
+		// Clean
+		oPreventDefaultSpy.resetHistory();
+		oLink.destroy();
+		oDeviceStub.restore();
+		oBrowserStub.restore();
+	});
+
 	QUnit.test("Prevent navigation", async function(assert) {
 		// Prepare
 		var oLink = new Link({text: "text"}),
