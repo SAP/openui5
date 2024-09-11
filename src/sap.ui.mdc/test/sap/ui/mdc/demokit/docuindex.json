@@ -125,6 +125,7 @@
 				"samples": [
 					"sap.ui.mdc.demokit.sample.table.TableJson",
 					"sap.ui.mdc.demokit.sample.table.TableTypes",
+					"sap.ui.mdc.demokit.sample.table.TableExport",
 					"sap.ui.mdc.demokit.sample.table.UploadSetwithTablePlugin"
 				]
 			}
@@ -281,6 +282,11 @@
 				"id": "sap.ui.mdc.demokit.sample.table.TableTypes",
 				"name": "Table - with different table types",
 				"description": "A table using different table types."
+			},
+			{
+				"id": "sap.ui.mdc.demokit.sample.table.TableExport",
+				"name": "Table - with export",
+				"description": "A table with export capabilities."
 			}
 		]
 	}
