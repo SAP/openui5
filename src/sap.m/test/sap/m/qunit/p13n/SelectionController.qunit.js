@@ -920,11 +920,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check 'getKeyForItem' execution", function(assert){
+
+		const oControl1 =  new Control("TestControl_1");
+		const oControl2 =  new Control("TestControl_2");
+
 		const oSelectionController = new SelectionController({
 			control: new Control({
 				dependents: [
-					new Control("TestControl_1"),
-					new Control("TestControl_2")
+					oControl1,
+					oControl2
 				]
 			}),
 			targetAggregation: "dependents",
@@ -938,6 +942,44 @@ sap.ui.define([
 		assert.equal(aCurrentState.length, 2, "Two items are returned");
 		assert.equal(aCurrentState[0].key, "TestControl_1_test", "Correct key is returned");
 		assert.equal(aCurrentState[1].key, "TestControl_2_test", "Correct key is returned");
+		oControl1.destroy();
+		oControl2.destroy();
+	});
+
+	QUnit.test("Check 'getKeyForItem' execution", function(assert){
+
+		const oControl1 =  new Control("TestControl_1");
+		const oControl2 =  new Control("TestControl_2");
+
+		const oSelectionController = new SelectionController({
+			control: new Control({
+				dependents: [
+					oControl1,
+					oControl2
+				]
+			}),
+			targetAggregation: "dependents",
+			getKeyForItem: function(oItem) {
+				return oItem.getId() + "_test";
+			}
+		});
+
+		const aPresentState = oSelectionController._calcPresentState();
+		assert.equal(aPresentState.length, 2, "Two items are returned");
+		assert.equal(aPresentState[0].key, "TestControl_1_test", "Correct key is returned");
+		assert.equal(aPresentState[1].key, "TestControl_2_test", "Correct key is returned");
+
+		oSelectionController.getAdaptationControl().removeAllDependents();
+
+		assert.equal(oSelectionController._calcPresentState().length, 0, "No items are returned");
+
+		oSelectionController.getAdaptationControl().addDependent(oControl1);
+
+		assert.equal(oSelectionController._calcPresentState().length, 1, "One item is returned");
+		assert.equal(oSelectionController._calcPresentState()[0].key, "TestControl_1_test", "Correct key is returned");
+
+		oControl1.destroy();
+		oControl2.destroy();
 	});
 
 });
