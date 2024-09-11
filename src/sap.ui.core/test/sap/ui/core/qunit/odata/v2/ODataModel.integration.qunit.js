@@ -19594,4 +19594,65 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: If there is a pending request and the application switches the binding context, the pending
+	// request must be aborted and the dataReceived event has to be fired, e.g. to hide a busy indicator.
+	// SNOW: DINC0246364
+	QUnit.test("DINC0246364: dataReveived for aborted requests after context change", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="salesOrderId" text="{SalesOrderID}" />\
+	<Table id="table" items="{ToLineItems}">\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
+				SalesOrderID : "1"
+			})
+			.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=100", {
+				results : [{
+					__metadata : {
+						uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+					},
+					SalesOrderID : "1",
+					ItemPosition : "10"
+				}, {
+					__metadata : {
+						uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
+					},
+					SalesOrderID : "1",
+					ItemPosition : "20"
+				}]
+			});
+
+		return this.createView(assert, sView).then(function () {
+			var oTableBinding = that.oView.byId("table").getBinding("items"),
+				oEventHandlers = {onDataRequested: function () {}, onDataReceived: function () {}},
+				oEventHandlersMock = that.mock(oEventHandlers);
+
+			oEventHandlersMock.expects("onDataRequested").once();
+			// the data received event has to be fired to disable the busy indicator
+			oEventHandlersMock.expects("onDataReceived").once();
+			oTableBinding.attachDataRequested(oEventHandlers.onDataRequested);
+			oTableBinding.attachDataReceived(oEventHandlers.onDataReceived);
+			// no expectRequest as the request is cancelled before it is created
+
+			// code under test - first refresh the list binding to create a pending request
+			oTableBinding.refresh(true);
+
+			// code under test - then unbind the form which cancels the pending request
+			that.oView.byId("form").unbindElement();
+
+			return Promise.all([
+				// request creation is done async, wait long enough until the request is aborted
+				oModel.getMetaModel().loaded(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 });

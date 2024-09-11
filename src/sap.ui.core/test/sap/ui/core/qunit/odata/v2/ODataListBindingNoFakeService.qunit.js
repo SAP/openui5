@@ -1199,7 +1199,7 @@ sap.ui.define([
 		oBindingMock.expects("_hasTransientParentWithoutSubContexts")
 			.withExactArgs()
 			.returns(true);
-		oBindingMock.expects("abortPendingRequest").withExactArgs();
+		oBindingMock.expects("abortPendingRequest").withExactArgs(true, true);
 		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Context});
 
 		// code under test
@@ -1256,7 +1256,7 @@ sap.ui.define([
 		oBindingMock.expects("_checkPathType").withExactArgs().returns(true);
 		oBindingMock.expects("checkDataState").withExactArgs();
 		oBindingMock.expects("_hasTransientParentWithoutSubContexts").withExactArgs().returns(true);
-		oBindingMock.expects("abortPendingRequest").withExactArgs();
+		oBindingMock.expects("abortPendingRequest").withExactArgs(true, true);
 
 		// code under test
 		ODataListBinding.prototype.setContext.call(oBinding, oNewContext);
@@ -3937,4 +3937,40 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(ODataListBinding.prototype.getContextByIndex.call(oBinding, 77), "~oContext");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("abortPendingRequest: no pending requests", function (assert) {
+		var oBinding = {mRequestHandles: {}};
+
+		// code under test
+		ODataListBinding.prototype.abortPendingRequest.call(oBinding);
+	});
+
+	//*********************************************************************************************
+[undefined, true, false].forEach(function (bAbortCountRequest) {
+	[undefined, true, false].forEach(function (bFireDataEvents) {
+	var sTitle = "abortPendingRequest: bAbortCountRequest=" + bAbortCountRequest + ", bFireDataEvents="
+		+ bFireDataEvents;
+	QUnit.test(sTitle, function (assert) {
+		var oCountHandle = {abort: function () {}},
+			oHandle0 = {abort: function () {}},
+			oHandle1 = {abort: function () {}},
+			oBinding = {
+				oCountHandle: oCountHandle,
+				mRequestHandles: {foo: oHandle0, bar: oHandle1}
+			};
+
+		this.mock(oHandle0).expects("abort").withExactArgs();
+		this.mock(oHandle1).expects("abort").withExactArgs();
+		this.mock(oCountHandle).expects("abort").withExactArgs().exactly(bAbortCountRequest ? 1 : 0);
+
+		// code under test
+		ODataListBinding.prototype.abortPendingRequest.call(oBinding, bAbortCountRequest, bFireDataEvents);
+
+		assert.strictEqual(oBinding.bSkipDataEvents, bFireDataEvents !== true);
+		assert.deepEqual(oBinding.mRequestHandles, {});
+		assert.strictEqual(oBinding.bPendingRequest, false);
+	});
+	});
+});
 });
