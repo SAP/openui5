@@ -1921,6 +1921,18 @@
         "key": {
           "description": "The unique key of the option. Mapped to the input's value",
           "type": "string"
+        },
+        "selectedIndex": {
+          "description": "Specifies the index of the selected item. Index value for no selection is -1.",
+          "oneOf": [
+            {
+              "type": "number",
+              "default": -1
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         }
       }
     },

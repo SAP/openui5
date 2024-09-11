@@ -237,7 +237,6 @@ sap.ui.define([
 	};
 
 	BaseFilter.prototype._onDataRequestComplete = function () {
-		this.fireEvent("_dataReady");
 		this.hideLoadingPlaceholders();
 	};
 
@@ -274,9 +273,13 @@ sap.ui.define([
 			return;
 		}
 
-		oModel.attachEvent("change", function () {
+		oModel.attachEvent("change", () => {
 			this.onDataChanged();
-		}.bind(this));
+			// wait for the binding update to finish
+			setTimeout(() => {
+				this.fireEvent("_dataReady");
+			}, 0);
+		});
 
 		if (this._oDataProvider) {
 			this._oDataProvider.attachDataRequested(function () {
@@ -291,6 +294,7 @@ sap.ui.define([
 			this._oDataProvider.attachError(function (oEvent) {
 				this._handleError(oEvent.getParameter("message"));
 				this._onDataRequestComplete();
+				this.fireEvent("_dataReady");
 			}.bind(this));
 
 			this._oDataProvider.triggerDataUpdate();

@@ -1,0 +1,75 @@
+{
+	"sap.app": {
+		"id": "card.explorer.filters.combobox.dynamic",
+		"type": "card",
+		"title": "Sample of a Card with Filters"
+	},
+	"sap.card": {
+		"configuration": {
+			"filters": {
+				"country": {
+					"selectedIndex": 0,
+					"type": "ComboBox",
+					"label": "Country",
+					"placeholder": "Country",
+					"data": {
+						"request": {
+							"url": "./countries.json"
+						}
+					},
+					"item": {
+						"path": "/",
+						"template": {
+							"key": "{key}",
+							"title": "{text}",
+							"additionalText": "{key}"
+						}
+					}
+				}
+			},
+			"destinations": {
+				"Northwind_V4": {
+					"name": "Northwind_V4",
+					"label": "Northwind V4 Service URL",
+					"defaultUrl": "https://services.odata.org/V4/Northwind/Northwind.svc"
+				}
+			},
+			"parameters": {
+				"maxOrdersShown": {
+					"value": 6,
+					"type": "integer",
+					"label": "Number of orders",
+					"description": "How many orders to show in the list."
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{destinations.Northwind_V4}}/Orders",
+				"parameters": {
+					"$top": "{parameters>/maxOrdersShown/value}",
+					"$filter": "ShipCountry eq '{filters>/country/value}'"
+				}
+			},
+			"path": "/value"
+		},
+		"type": "List",
+		"header": {
+			"title": "Orders from {filters>/country/value}",
+			"subTitle" : "{filters>/country/selectedItem/title}, key: {filters>/country/selectedItem/key}, additional text: {filters>/country/selectedItem/additionalText}",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{ShipName}",
+				"description": "{ShipAddress}",
+				"info": {
+					"value": "{ShipCountry}"
+				}
+			},
+			"maxItems": "{parameters>/maxOrdersShown/value}"
+		}
+	}
+}

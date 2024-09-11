@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"./BaseFilter",
-	"sap/m/ComboBox",
+	"sap/ui/integration/controls/ComboBox",
 	"sap/ui/core/ListItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/integration/util/BindingResolver",
@@ -91,7 +91,16 @@ sap.ui.define([
 	 * @override
 	 */
 	ComboBoxFilter.prototype.getValueForModel = function () {
-		const oSelectedItem = this._getComboBox().getSelectedItem();
+		const oComboBox = this._getComboBox();
+		let oSelectedItem = oComboBox.getSelectedItem();
+		const iSelectedIndex = oComboBox.getCustomSelectedIndex();
+
+		if (!oSelectedItem && (iSelectedIndex > -1)) {
+			oSelectedItem = this._getComboBox().getItems()[iSelectedIndex];
+			if (oSelectedItem && !this._getComboBox().getValue()) {
+				oComboBox.setSelectedItem(oSelectedItem);
+			}
+		}
 
 		if (oSelectedItem) {
 			return {
@@ -189,7 +198,8 @@ sap.ui.define([
 		const oComboBox = new ComboBox({
 			placeholder: oConfig.placeholder,
 			showSecondaryValues: true,
-			filterSecondaryValues: true
+			filterSecondaryValues: true,
+			customSelectedIndex: oConfig.selectedIndex
 		});
 
 		let sItemTemplateKey,

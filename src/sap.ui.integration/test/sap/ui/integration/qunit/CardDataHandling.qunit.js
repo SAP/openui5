@@ -1049,7 +1049,14 @@ function(
 				"configuration": {
 					"filters": {
 						"f": {
-							"value": "1",
+							"value": "value1",
+							"item": {
+								"path": "/value",
+								"template": {
+									"key": "{key1}",
+									"title": "{key2}"
+								}
+							},
 							"data": {
 								"request": {
 									"url": "someurl/?f={filters>/f/value}"
@@ -1068,7 +1075,7 @@ function(
 			oRequestedURL = oFilter._oDataProvider.getSettings().request.url;
 
 		// Assert
-		assert.strictEqual(oRequestedURL, "someurl/?f=1", "Filter value in the 'url' should be resolved.");
+		assert.strictEqual(oRequestedURL, "someurl/?f=value1", "Filter value in the 'url' should be resolved.");
 	});
 
 	QUnit.test("Data request on content level", async function (assert) {// Act

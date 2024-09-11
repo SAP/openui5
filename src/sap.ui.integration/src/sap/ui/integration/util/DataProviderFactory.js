@@ -72,6 +72,9 @@ sap.ui.define([
 
 			this._aDataProviders = [];
 			this._aFiltersProviders = [];
+			this._pFilterBarReady = new Promise((resolve) => {
+				this._oCard.attachEventOnce("_filterBarReady", resolve);
+			});
 		}
 	});
 
@@ -189,11 +192,8 @@ sap.ui.define([
 
 		if (bIsFilter) {
 			this._aFiltersProviders.push(oDataProvider);
-		} else if (!bApiCardRequest) {
-			// TODO: check if the data provider uses filters before adding them to the dependency list
-			this._aFiltersProviders.forEach((oFilterDataProvider) => {
-				oDataProvider.addDependency(oFilterDataProvider);
-			});
+		} else if (!bApiCardRequest && this._oCard && this._oCard.getAggregation("_filterBar")) {
+			oDataProvider.addDependency(this._pFilterBarReady);
 		}
 
 		return oDataProvider;

@@ -64,7 +64,6 @@ sap.ui.define([
 
 	QUnit.test("Initial value for filters model when filter is with dynamic data", function (assert) {
 		// Arrange
-		assert.expect(3);
 		var done = assert.async();
 		var oFakeData = [{
 			ShipperID: 1,
@@ -81,12 +80,8 @@ sap.ui.define([
 
 		this.oCard.attachEventOnce("_ready", function () {
 			// Assert
-			assert.notOk(this.oCard.getModel("filters").getProperty("/shipper").hasOwnProperty("selectedItem"), "Initial filter model data doesn't contain 'selectedItem'");
-		}.bind(this));
+			assert.ok(this.oCard.getModel("filters").getProperty("/shipper").hasOwnProperty("selectedItem"), "Initial filter model data contains 'selectedItem'");
 
-		this.oCard.attachEventOnce("configurationChange", function () {
-			// Assert
-			assert.ok(this.oCard.getModel("filters").getProperty("/shipper").hasOwnProperty("selectedItem"), "Filter model data should contain 'selectedItem' after data update");
 			assert.strictEqual(
 				this.oCard.getModel("filters").getProperty("/shipper/selectedItem/title"),
 				oFakeData[0].CompanyName,
@@ -130,6 +125,79 @@ sap.ui.define([
 				},
 				"content": {
 					"groups": []
+				}
+			}
+		});
+	});
+
+	QUnit.test("Not specified initial value for filter", function (assert) {
+		// Arrange
+		var done = assert.async();
+		var oFakeData = [{
+			ShipperID: 14,
+			CompanyName: "Speedy Express"
+		}];
+		var oServer = sinon.createFakeServer({
+			autoRespond: true,
+			respondImmediately: true
+		});
+
+		oServer.respondWith("GET", /test-resources\/sap\/ui\/integration\/qunit\/fake-api$/, function (oXhr) {
+			oXhr.respond(200, { "Content-Type": "application/json" }, JSON.stringify(oFakeData));
+		});
+
+		oServer.respondWith("GET", /test-resources\/sap\/ui\/integration\/qunit\/fake-api-content$/, function (oXhr) {
+			assert.strictEqual(oXhr.requestHeaders.shipperid, "14", "The request header is correct");
+
+			oXhr.respond(200, { "Content-Type": "application/json" }, JSON.stringify([]));
+		});
+
+		this.oCard.attachEventOnce("_ready", function () {
+			// Assert
+			assert.ok(this.oCard.getModel("filters").getProperty("/shipper").hasOwnProperty("selectedItem"), "Initial filter model data contains 'selectedItem'");
+			// Clean up
+			oServer.restore();
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "tests.card.filters.dynamicFilter"
+			},
+			"sap.card": {
+				"configuration": {
+					"filters": {
+						"shipper": {
+							"type": "Select",
+							"item": {
+								"path": "/",
+								"template": {
+									"key": "{ShipperID}",
+									"title": "{CompanyName}"
+								}
+							},
+							"data": {
+								"request": {
+									"url": "test-resources/sap/ui/integration/qunit/fake-api"
+								}
+							}
+						}
+					}
+				},
+				"type": "Object",
+				"header": {
+					"title": "Orders by Shipper {filters>/shipper/selectedItem/title}"
+				},
+				"data": {
+					"request": {
+						"method": "GET",
+						"url": "test-resources/sap/ui/integration/qunit/fake-api-content",
+						"headers": {
+							"ShipperId": "{filters>/shipper/value}"
+						}
+					},
+					"path": "/value"
 				}
 			}
 		});
