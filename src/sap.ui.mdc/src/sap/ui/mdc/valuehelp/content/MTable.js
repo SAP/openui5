@@ -59,7 +59,7 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.mdc",
 			interfaces: [
-				"sap.ui.mdc.valuehelp.ITypeaheadContent", "sap.ui.mdc.valuehelp.IDialogContent"
+				"sap.ui.mdc.valuehelp.base.ITypeaheadContent", "sap.ui.mdc.valuehelp.base.IDialogContent"
 			],
 			properties: {
 
