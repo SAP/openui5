@@ -131,7 +131,7 @@ sap.ui.define([
 		},
 
 		_getKey: function(oControl) {
-			return this.getView().getLocalId(oControl.getId());
+			return oControl.data("p13nKey");
 		},
 
 		handleStateChange: function(oEvt) {
@@ -198,12 +198,12 @@ sap.ui.define([
 				}
 			}.bind(this));
 
-			oState.Sorter.forEach(function(oSorter) {
-				const oCol = this.byId(oSorter.key);
+			oState.Sorter.forEach((oSorter) => {
+				const oCol = this.byId("persoTable").getColumns().find((oColumn) => oColumn.data("p13nKey") === oSorter.key);
 				if (oSorter.sorted !== false) {
 					oCol.setSortIndicator(oSorter.descending ? coreLibrary.SortOrder.Descending : coreLibrary.SortOrder.Ascending);
 				}
-			}.bind(this));
+			});
 
 			return aSorter;
 		},
@@ -214,10 +214,10 @@ sap.ui.define([
 				aGroupings.push(new Sorter(this.oMetadataHelper.getProperty(oGroup.key).path, false, true));
 			}.bind(this));
 
-			oState.Groups.forEach(function(oSorter) {
-				const oCol = this.byId(oSorter.key);
+			oState.Groups.forEach((oSorter) => {
+				const oCol = this.byId("persoTable").getColumns().find((oColumn) => oColumn.data("p13nKey") === oSorter.key);
 				oCol.data("grouped", true);
-			}.bind(this));
+			});
 
 			return aGroupings;
 		},
@@ -225,20 +225,20 @@ sap.ui.define([
 		updateColumns: function(oState) {
 			const oTable = this.byId("persoTable");
 
-			oTable.getColumns().forEach(function(oColumn, iIndex) {
+			oTable.getColumns().forEach((oColumn, iIndex) => {
 				oColumn.setVisible(false);
 				oColumn.setWidth(oState.ColumnWidth[this._getKey(oColumn)]);
 				oColumn.setSortIndicator(coreLibrary.SortOrder.None);
 				oColumn.data("grouped", false);
-			}.bind(this));
+			});
 
-			oState.Columns.forEach(function(oProp, iIndex) {
-				const oCol = this.byId(oProp.key);
+			oState.Columns.forEach((oProp, iIndex) => {
+				const oCol = oTable.getColumns().find((oColumn) => oColumn.data("p13nKey") === oProp.key);
 				oCol.setVisible(true);
 
 				oTable.removeColumn(oCol);
 				oTable.insertColumn(oCol, iIndex);
-			}.bind(this));
+			});
 		},
 
 		beforeOpenColumnMenu: function(oEvt) {

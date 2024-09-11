@@ -135,10 +135,12 @@ sap.ui.define([
 
 			oState.Columns.forEach(function(oProp, iIndex) {
 				const oCol = this.byId(oProp.key);
-				oCol.setVisible(true);
+				if (oCol) {
+					oCol.setVisible(true);
 
-				oTable.removeColumn(oCol);
-				oTable.insertColumn(oCol, iIndex);
+					oTable.removeColumn(oCol);
+					oTable.insertColumn(oCol, iIndex);
+				}
 			}.bind(this));
 
 			oTable.getItems().forEach(function(oItem, iIndex) {
