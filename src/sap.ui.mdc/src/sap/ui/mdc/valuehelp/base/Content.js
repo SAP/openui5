@@ -36,7 +36,6 @@ sap.ui.define([
 	 * @constructor
 	 * @abstract
 	 *
-	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.getTitle as #getTitle
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.isMultiSelect as #isMultiSelect
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.getContent as #getContent
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.getItemForValue as #getItemForValue
