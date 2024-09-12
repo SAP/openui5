@@ -19,6 +19,9 @@ sap.ui.define(['./FilterItemFlex', './ConditionFlex', './PropertyInfoFlex'], (Fi
 		"moveFilter": FilterItemFlex.createMoveChangeHandler(),
 		"addCondition": ConditionFlex.addCondition,
 		"removeCondition": ConditionFlex.removeCondition,
+                /**
+                 * @deprecated since 1.100
+                 */
 		"addPropertyInfo": PropertyInfoFlex.addPropertyInfo
 	};
 }, /* bExport= */ true);
