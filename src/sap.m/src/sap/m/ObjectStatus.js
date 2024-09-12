@@ -350,8 +350,11 @@ sap.ui.define([
 	 */
 	ObjectStatus.prototype.getAccessibilityInfo = function() {
 		var sState = this.isPropertyInitial("stateAnnouncementText")
-						? ValueStateSupport.getAdditionalText(this.getState())
-						: this.getStateAnnouncementText(),
+				? ValueStateSupport.getAdditionalText(this.getState())
+				: this.getStateAnnouncementText(),
+			sText = this._shouldRenderEmptyIndicator()
+				? Library.getResourceBundleFor("sap.m").getText("EMPTY_INDICATOR_TEXT")
+				: this.getText(),
 			sDescription;
 
 		if (this.getState() != ValueState.None) {
@@ -360,7 +363,7 @@ sap.ui.define([
 
 		sDescription = (
 			(this.getTitle() || "") + " " +
-			(this.getText() || "") + " " +
+			(sText || "") + " " +
 			(sState !== null ? sState : "") + " " +
 			(this.getTooltip() || "")
 		).trim();
