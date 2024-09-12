@@ -20,56 +20,66 @@
 .sapMGTOverlay {
 	background-color: fade(@sapUiBlockLayerBackground, 70);
 }
-/************************ LINE MODE LIST VIEW ********************/
+
+/* LINE MODE LIST VIEW */
 
 .sapMGT.sapMGTLineMode {
-	border: 0.0625rem solid @sapUiTileBorderColor;
+	border: 0.0625rem solid var(--sapTile_BorderColor);
+
 	.sapMGTHdrTxt {
 		font-weight: bold;
 	}
 }
 
-.sapMGTLineMode.sapMGTFailed, .sapMGTLineMode.sapMGTDisabled {
+.sapMGTLineMode.sapMGTFailed,
+.sapMGTLineMode.sapMGTDisabled {
 	border-color: @sapUiHcReducedForeground;
-	.sapMGTHdrTxt, .sapMGTSubHdrTxt {
-		color: @sapUiContentDisabledTextColor;
+
+	.sapMGTHdrTxt,
+	.sapMGTSubHdrTxt {
+		color: var(--sapContent_DisabledTextColor);
 	}
 }
 
 .sapMGT .sapMGTRemoveButton .sapMBtnInner {
-	box-shadow: 0px 0px 1px 0px white inset;
+	box-shadow: 0 0 1px 0 white inset;
 }
 
-.sapMGT.sapMGTScopeActions .sapMGTRemoveButton, .sapMGT.sapMGTScopeSingleAction .sapMGTRemoveButton{
-	.sapMBtnInner{
-		border-color: @sapButton_BorderColor;
+.sapMGT.sapMGTScopeActions .sapMGTRemoveButton,
+.sapMGT.sapMGTScopeSingleAction .sapMGTRemoveButton {
+
+	.sapMBtnInner {
+		border-color: var(--sapButton_BorderColor);
 	}
+
 	.sapMBtnIcon {
-		color: @sapButton_TextColor;
+		color: var(--sapButton_TextColor);
 	}
 }
 
-/************************ LINE MODE FLOATING VIEW *****************/
+/* LINE MODE FLOATING VIEW */
 
 .sapUiMedia-GenericTileDeviceSet-large {
+
 	.sapMGT.sapMGTLineMode {
 		font-size: @sapMFontMediumSize;
 		border: none;
 
 		.sapMGTHdrTxt {
-			color: @sapUiTileTitleTextColor;
+			color: var(--sapTile_TitleTextColor);
 			font-weight: bold;
 			font-size: @sapMFontMediumSize;
-			font-family: @sapUiFontFamily;
+			font-family: var(--sapFontFamily);
 		}
 
 		.sapMGTLineModeFailedIcon {
 			cursor: pointer;
-			color: @sapUiTileTextColor;
+			color: var(--sapTile_TextColor);
 			border-right: 0.25rem solid transparent;
 		}
 
 		.sapMGTLineStyleHelper {
+
 			.sapMGTLineStyleHelperInner {
 				box-shadow: @sapUiShadowLevel0;
 				bottom: 1px;
@@ -82,6 +92,7 @@
 			&:not(:first-child) .sapMGTLineStyleHelperInner {
 				margin: 0 0.125rem;
 			}
+
 			&:last-child .sapMGTLineStyleHelperInner {
 				margin-right: 0;
 			}
@@ -97,12 +108,16 @@
 			}
 		}
 
-		&.sapMGTFailed, &.sapMGTDisabled {
+		&.sapMGTFailed,
+		&.sapMGTDisabled {
+
 			.sapMGTLineStyleHelperInner {
 				box-shadow: 0 0 0 1px @sapUiHcReducedForeground;
 			}
-			.sapMGTHdrTxt, .sapMGTSubHdrTxt {
-				color: @sapUiContentDisabledTextColor;
+
+			.sapMGTHdrTxt,
+			.sapMGTSubHdrTxt {
+				color: var(--sapContent_DisabledTextColor);
 			}
 		}
 	}
@@ -111,37 +126,40 @@
 .sapUiMedia-GenericTileDeviceSet-large .sapMGT.sapMGTLineMode {
 
 	&:not(.sapMGTDisabled):not(.sapMGTFailed):hover .sapMGTLineStyleHelperInner {
-		box-shadow: 0 0 0 0.1875rem @sapUiContentShadowColor;
+		box-shadow: 0 0 0 0.1875rem var(--sapContent_ShadowColor);
 		margin-top: 1px;
 		margin-bottom: 1px;
 	}
 
 	&:not(.sapMGTDisabled) {
-		&:focus, &:active {
-			.sapMGTLineStyleHelperInner:before {
-				content: "";
+
+		&:focus,
+		&:active {
+
+			.sapMGTLineStyleHelperInner::before {
+				content: '';
 				position: absolute;
 				top: 1px;
 				left: 1px;
 				bottom: 1px;
 				right: 1px;
 				box-sizing: border-box;
-				border: 0.125rem dotted @sapUiContentFocusColor;
+				border: 0.125rem dotted var(--sapContent_FocusColor);
 			}
 		}
 	}
 }
 
 .sapMGTHdrContent {
-	color: @sapUiTileTextColor;
+	color: var(--sapTile_TextColor);
 }
-
 
 .sapMGTOverlay {
 	opacity: 1;
 }
 
 .sapMGT.sapMGTBackgroundImage {
+
 	.sapMGTOverlay {
 		border-radius: 0.08rem;
 	}
@@ -157,21 +175,23 @@ html.sap-phone .sapMGTHvrOutln:not(.sapMGTStateDisabled):active,
 html.sap-tablet .sapMGTHvrOutln:not(.sapMGTStateDisabled):active,
 html.sap-phone .sapMGTBackgroundHvrOutln:not(.sapMGTStateDisabled):active,
 html.sap-tablet .sapMGTBackgroundHvrOutln:not(.sapMGTStateDisabled):active {
-	box-shadow: 0 0 0 0.125rem @sapUiContentShadowColor;
+	box-shadow: 0 0 0 0.125rem var(--sapContent_ShadowColor);
 }
 
 .sapMGT:not(.sapMGTStateDisabled,.sapMGTLineMode,.TwoByHalf.sapMGTIconMode):hover,
 .sapMGT:not(.sapMGTStateDisabled,.sapMGTLineMode,.TwoByHalf.sapMGTIconMode):active {
 	box-shadow: none;
 	border-color: transparent !important;
-	.sapMGTFocusDiv{
-		outline:solid 0.1875rem @sapTile_Interactive_BorderColor;
+
+	.sapMGTFocusDiv {
+		outline:solid 0.1875rem var(--sapTile_Interactive_BorderColor);
 		border-radius: inherit;
 	}
 }
 
 .TwoByOne.sapMGTActionMode {
 	border-radius: 1.25rem;
+
 	.sapMGTFocusDiv {
 		border-radius: 1.25rem !important;
 	}
@@ -180,38 +200,42 @@ html.sap-tablet .sapMGTBackgroundHvrOutln:not(.sapMGTStateDisabled):active {
 .sapMGT.sapMGTLineMode:hover{
 	box-shadow: none !important;
 	border: none !important;
+
 	.sapMGTFocusDiv {
-		border: 0.1875rem solid @sapTile_Interactive_BorderColor;
+		border: 0.1875rem solid var(--sapTile_Interactive_BorderColor);
 		inset: -2px;
 	}
 }
 
-.sapMGT.sapMGTLineMode:active{
-	background-color: @sapTile_Active_Background;
-	outline: 2px solid @sapContent_FocusColor !important;
+.sapMGT.sapMGTLineMode:active {
+	background-color: var(--sapTile_Active_Background);
+	outline: 2px solid var(--sapContent_FocusColor) !important;
 	outline-offset: -0.125rem;
 	border: none !important;
-	.sapMGTFocusDiv{
+
+	.sapMGTFocusDiv {
 		border: none !important;
 		box-shadow: none !important;
 	}
 }
 
-
-
 .sapMGT.sapMGTScopeActions.sapMGTIconMode .sapMBtnBase.sapMGTMoreIcon .sapMBtnIcon {
 	line-height: 2.125rem !important;
 	border: none;
 }
-.sapUiSizeCompact{
+.sapUiSizeCompact {
+
 	.sapMGT.sapMGTScopeActions.sapMGTIconMode .sapMBtnBase.sapMGTMoreIcon .sapMBtnIcon {
 		line-height: 1.5rem !important;
 	}
 }
 
-.sapMGT.sapMGTScopeActions, .sapMGT.sapMGTScopeSingleAction{
-	.sapMBtnBase.sapMGTMoreIcon{
-		.sapMBtnIcon{
+.sapMGT.sapMGTScopeActions,
+.sapMGT.sapMGTScopeSingleAction {
+
+	.sapMBtnBase.sapMGTMoreIcon {
+
+		.sapMBtnIcon {
 			border: 0.01rem solid;
 			border-radius: 0.5rem;
 			line-height: 1.7;
@@ -219,10 +243,14 @@ html.sap-tablet .sapMGTBackgroundHvrOutln:not(.sapMGTStateDisabled):active {
 	}
 }
 
-.sapUiSizeCompact{
-	.sapMGT.sapMGTScopeActions:not(.sapMGTIconMode.TwoByHalf), .sapMGT.sapMGTScopeSingleAction:not(.sapMGTIconMode.TwoByHalf){
-		.sapMBtnBase.sapMGTMoreIcon{
-			.sapMBtnIcon{
+.sapUiSizeCompact {
+
+	.sapMGT.sapMGTScopeActions:not(.sapMGTIconMode.TwoByHalf),
+	.sapMGT.sapMGTScopeSingleAction:not(.sapMGTIconMode.TwoByHalf) {
+
+		.sapMBtnBase.sapMGTMoreIcon {
+
+			.sapMBtnIcon {
 				padding-left: 0.5rem;
 				padding-right: 0.5rem;
 				line-height: 1.5rem;
@@ -231,19 +259,25 @@ html.sap-tablet .sapMGTBackgroundHvrOutln:not(.sapMGTStateDisabled):active {
 		}
 	}
 }
-.sapMGTLineMode .sapMGTActionsContainer, .sapMGTLineMode .sapMGTScopeSingleActionContainer{
-	.sapMGTMoreIcon.sapMBtnBase{
-		.sapMBtnIcon{
+.sapMGTLineMode .sapMGTActionsContainer,
+.sapMGTLineMode .sapMGTScopeSingleActionContainer {
+
+	.sapMGTMoreIcon.sapMBtnBase {
+
+		.sapMBtnIcon {
 			bottom: 0.5rem;
 			left: -1.5rem;
 		}
 	}
 }
 
-.sapUiSizeCompact{
-	.sapMGT.sapMGTLineMode.sapMGTScopeSingleAction:not(.sapMGTIconMode.TwoByHalf), .sapMGT.sapMGTLineMode.sapMGTScopeActions:not(.sapMGTIconMode.TwoByHalf){
-		.sapMGTMoreIcon.sapMBtnBase{
-			.sapMBtnIcon{
+.sapUiSizeCompact {
+	.sapMGT.sapMGTLineMode.sapMGTScopeSingleAction:not(.sapMGTIconMode.TwoByHalf),
+	.sapMGT.sapMGTLineMode.sapMGTScopeActions:not(.sapMGTIconMode.TwoByHalf) {
+
+		.sapMGTMoreIcon.sapMBtnBase {
+
+			.sapMBtnIcon {
 				bottom: 0.4rem;
 				left: -1.7rem
 			}
@@ -251,25 +285,34 @@ html.sap-tablet .sapMGTBackgroundHvrOutln:not(.sapMGTStateDisabled):active {
 	}
 }
 
-.sapUiMedia-GenericTileDeviceSet-large{
+.sapUiMedia-GenericTileDeviceSet-large {
+
 	.sapMGTLineMode.sapMGTScopeSingleAction {
-		.sapMGTHdrTxt:last-of-type, .sapMGTSubHdrTxt {
+
+		.sapMGTHdrTxt:last-of-type,
+		.sapMGTSubHdrTxt {
 			padding-right: 3rem;
 		}
 	}
 }
 
-.sapUiMedia-GenericTileDeviceSet-large{
+.sapUiMedia-GenericTileDeviceSet-large {
+
 	.sapMGTLineMode.sapMGTScopeSingleAction.sapMGTAcionRemove {
-		.sapMGTHdrTxt:last-of-type, .sapMGTSubHdrTxt {
+
+		.sapMGTHdrTxt:last-of-type,
+		.sapMGTSubHdrTxt {
 			padding-right: 1rem;
 		}
 	}
 }
 
-.sapUiMedia-GenericTileDeviceSet-large{
+.sapUiMedia-GenericTileDeviceSet-large {
+
 	.sapMGTLineMode.sapMGTScopeActions {
-		.sapMGTHdrTxt:last-of-type, .sapMGTSubHdrTxt {
+
+		.sapMGTHdrTxt:last-of-type,
+		.sapMGTSubHdrTxt {
 			padding-right: 4.5rem;
 		}
 	}

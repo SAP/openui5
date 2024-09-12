@@ -13,7 +13,7 @@
 	border-bottom-right-radius: 0.125rem;
 }
 
-.sapMGT.sapMGTScopeActions.sapMGTBackgroundImage .sapMGTContent:before {
+.sapMGT.sapMGTScopeActions.sapMGTBackgroundImage .sapMGTContent::before {
 	border-radius: 0.125rem;
 }
 
@@ -22,47 +22,55 @@
 }
 
 .sapMGT.sapMGTBackgroundImage {
+
 	.sapMGTOverlay {
 		border-radius: 0.08rem;
 	}
 }
-/************************ LINE MODE LIST VIEW ********************/
+
+/* LINE MODE LIST VIEW */
 
 .sapMGT.sapMGTLineMode {
-	border: 0.0625rem solid @sapUiTileBorderColor;
+	border: 0.0625rem solid var(--sapTile_BorderColor);
+
 	.sapMGTHdrTxt {
 		font-weight: bold;
 	}
 }
 
-.sapMGTLineMode.sapMGTFailed, .sapMGTLineMode.sapMGTDisabled {
+.sapMGTLineMode.sapMGTFailed,
+.sapMGTLineMode.sapMGTDisabled {
 	border-color: @sapUiHcReducedForeground;
-	.sapMGTHdrTxt, .sapMGTSubHdrTxt {
-		color: @sapUiContentDisabledTextColor;
+
+	.sapMGTHdrTxt,
+	.sapMGTSubHdrTxt {
+		color: var(--sapContent_DisabledTextColor);
 	}
 }
 
-/************************ LINE MODE FLOATING VIEW *****************/
+/* LINE MODE FLOATING VIEW */
 
 .sapUiMedia-GenericTileDeviceSet-large {
+
 	.sapMGT.sapMGTLineMode {
 		font-size: @sapMFontMediumSize;
 		border: none;
 
 		.sapMGTHdrTxt {
-			color: @sapUiTileTitleTextColor;
+			color: var(--sapTile_TitleTextColor);
 			font-weight: bold;
 			font-size: @sapMFontMediumSize;
-			font-family: @sapUiFontFamily;
+			font-family: var(--sapFontFamily);
 		}
 
 		.sapMGTLineModeFailedIcon {
 			cursor: pointer;
-			color: @sapUiTileTextColor;
+			color: var(--sapTile_TextColor);
 			border-right: 0.25rem solid transparent;
 		}
 
 		.sapMGTLineStyleHelper {
+
 			.sapMGTLineStyleHelperInner {
 				box-shadow: @sapUiShadowLevel0;
 				bottom: 1px;
@@ -75,6 +83,7 @@
 			&:not(:first-child) .sapMGTLineStyleHelperInner {
 				margin: 0 0.125rem;
 			}
+
 			&:last-child .sapMGTLineStyleHelperInner {
 				margin-right: 0;
 			}
@@ -90,12 +99,16 @@
 			}
 		}
 
-		&.sapMGTFailed, &.sapMGTDisabled {
+		&.sapMGTFailed,
+		&.sapMGTDisabled {
+
 			.sapMGTLineStyleHelperInner {
 				box-shadow: 0 0 0 1px @sapUiHcReducedForeground;
 			}
-			.sapMGTHdrTxt, .sapMGTSubHdrTxt {
-				color: @sapUiContentDisabledTextColor;
+
+			.sapMGTHdrTxt,
+			.sapMGTSubHdrTxt {
+				color: var(--sapContent_DisabledTextColor);
 			}
 		}
 	}
@@ -104,56 +117,57 @@
 .sapUiMedia-GenericTileDeviceSet-large .sapMGT.sapMGTLineMode {
 
 	&:not(.sapMGTDisabled):not(.sapMGTFailed):hover .sapMGTLineStyleHelperInner {
-		box-shadow: 0 0 0 0.1875rem @sapUiContentShadowColor;
+		box-shadow: 0 0 0 0.1875rem var(--sapContent_ShadowColor);
 		margin-top: 1px;
 		margin-bottom: 1px;
 	}
 
-	// &:focus {
-	// 	border: 0.125rem dotted @sapUiContentFocusColor;
-	// }
+	/* &:focus { */
+	/* 	border: 0.125rem dotted @sapUiContentFocusColor; */
+	/* } */
 
-	&:focus .sapMGTLineStyleHelperInner:before {
-		content: "";
+	&:focus .sapMGTLineStyleHelperInner::before {
+		content: '';
 		position: absolute;
 		top: 1px;
 		left: 1px;
 		bottom: 1px;
 		right: 1px;
 		box-sizing: border-box;
-		border: 0.125rem dotted @sapUiContentFocusColor;
+		border: 0.125rem dotted var(--sapContent_FocusColor);
 	}
 }
 
 .sapMGTHdrContent {
-	color: @sapUiTileTextColor;
+	color: var(--sapTile_TextColor);
 }
 
+.sapMGTActionButtonPress.sapMGT:active {
 
-
-.sapMGTActionButtonPress.sapMGT:active
-{
-	.sapMGTFocusDiv{
+	.sapMGTFocusDiv {
 		border: none;
 	}
 }
 
-.sapMGTActionButtonPress.sapMGT:focus-visible
-{
-	.sapMGTFocusDiv{
-	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+.sapMGTActionButtonPress.sapMGT:focus-visible {
+
+	.sapMGTFocusDiv {
+		border: var(--sapContent_FocusColor) var(--sapContent_FocusStyle) var(--sapContent_FocusWidth);
 	}
 }
 
-.sapMGT.sapMGTStateLoaded.sapMGTScopeActions.sapMGTIconMode{
-	.sapMBtnBase.sapMBtn.sapMGTMoreIcon{
-		.sapMBtnInner{
+.sapMGT.sapMGTStateLoaded.sapMGTScopeActions.sapMGTIconMode {
+
+	.sapMBtnBase.sapMBtn.sapMGTMoreIcon {
+
+		.sapMBtnInner {
 			background-color: transparent;
 			border: 0;
 		}
 	}
+
 	.sapMBtn:hover:not(.sapMBtnDisabled) > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized) {
-		background-color: @sapUiButtonLiteHoverBackground !important;
+		background-color: var(--sapButton_Lite_Hover_Background) !important;
 	}
 }
 
@@ -171,10 +185,11 @@ html.sap-phone .sapMGTHvrOutln:not(.sapMGTStateDisabled):active,
 html.sap-tablet .sapMGTHvrOutln:not(.sapMGTStateDisabled):active,
 html.sap-phone .sapMGTBackgroundHvrOutln:not(.sapMGTStateDisabled):active,
 html.sap-tablet .sapMGTBackgroundHvrOutln:not(.sapMGTStateDisabled):active {
-	box-shadow: 0 0 0 0.125rem @sapUiContentShadowColor;
+	box-shadow: 0 0 0 0.125rem var(--sapContent_ShadowColor);
 }
 
 .sapMGT.sapMGTLineMode:hover {
+
 	&.sapMGTLineModePress {
 		box-shadow: none;
 	}
@@ -183,15 +198,19 @@ html.sap-tablet .sapMGTBackgroundHvrOutln:not(.sapMGTStateDisabled):active {
 .sapMGT.sapMGTScopeActions.sapMGTIconMode .sapMBtnBase.sapMGTMoreIcon .sapMBtnIcon {
 	line-height: 2.125rem !important;
 }
-.sapUiSizeCompact{
+.sapUiSizeCompact {
+
 	.sapMGT.sapMGTScopeActions.sapMGTIconMode .sapMBtnBase.sapMGTMoreIcon .sapMBtnIcon {
 		line-height: 1.5rem !important;
 	}
 }
 
-.sapMGT.sapMGTScopeActions.sapMGTIconMode:not(.sapMGTOneByOne), .sapMGT.sapMGTScopeSingleAction.sapMGTIconMode:not(.sapMGTOneByOne){
-	.sapMBtnBase.sapMGTMoreIcon{
-		.sapMBtnIcon{
+.sapMGT.sapMGTScopeActions.sapMGTIconMode:not(.sapMGTOneByOne),
+.sapMGT.sapMGTScopeSingleAction.sapMGTIconMode:not(.sapMGTOneByOne) {
+
+	.sapMBtnBase.sapMGTMoreIcon {
+
+		.sapMBtnIcon {
 			border: 0.01rem solid;
 			border-radius: 0.5rem;
 			line-height: 1.7;

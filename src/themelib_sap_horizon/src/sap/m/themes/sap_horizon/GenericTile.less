@@ -4,20 +4,24 @@
 /* ================================== */
 
 .sapMGT.sapMGTBackgroundImage {
+
 	.sapMGTContent {
-		border-bottom-left-radius: @sapTile_BorderCornerRadius;
-		border-bottom-right-radius: @sapTile_BorderCornerRadius;
+		border-bottom-left-radius: var(--sapTile_BorderCornerRadius);
+		border-bottom-right-radius: var(--sapTile_BorderCornerRadius);
 	}
 }
 
 .sapMGT.sapMGTScopeActions.sapMGTBackgroundImage .sapMGTMoreIcon {
-	color: @sapUiContentContrastTextColor;
+	color: var(--sapContent_ContrastTextColor);
 }
 
-.sapMGT.sapMGTScopeActions.sapMGTBackgroundImage, .sapMGT.sapMGTScopeSingleActions.sapMGTBackgroundImage {
+.sapMGT.sapMGTScopeActions.sapMGTBackgroundImage,
+.sapMGT.sapMGTScopeSingleActions.sapMGTBackgroundImage {
+
 	.sapMGTContent {
-		&:before {
-			border-radius: @sapTile_BorderCornerRadius;
+
+		&::before {
+			border-radius: var(--sapTile_BorderCornerRadius);
 		}
 	}
 }
@@ -25,59 +29,70 @@
 .sapMGTTInfoContainer {
 	height: 2.5rem;
 }
-.tileWithAppInfo{
-	.sapMGTTInfo{
+
+.tileWithAppInfo {
+
+	.sapMGTTInfo {
 		padding: 0.125rem 1rem 0.125rem 0.25rem;
 		text-transform: uppercase;
 		margin-bottom: 0.7rem;
 		border-radius: 0.125rem 0 0 0.125rem;
-		background-color: @sapInfobar_NonInteractive_Background;
+		background-color: var(--sapInfobar_NonInteractive_Background);
 		width: fit-content;
-		.sapMText{
-			font-size: @sapMFontSmallSize ;
+
+		.sapMText {
+			font-size: var(--sapMFontSmallSize);
 			text-align: right !important;
 		}
-		.sapMGTSystemInfoText{
+
+		.sapMGTSystemInfoText {
 			display: flex;
 			justify-content: flex-end;
+
 			.sapMText {
-				color: @sapUiTileTitleTextColor;
+				color: var(--sapTile_TitleTextColor);
 				padding-left: 0.15rem;
 			}
 		}
-		.sapMGTAppAndSystemInfoDivider{
+
+		.sapMGTAppAndSystemInfoDivider {
 			height: 0.25rem;
 		}
+
 		.sapMGTAppShortcutText {
 			display: flex;
 			justify-content: flex-end;
+
 			.sapMText {
-				color: @sapUiTileTextColor;
+				color: var(--sapTile_TextColor);
 			}
 		}
-	
 	}
 }
 
 .sapMGT.sapMGTScopeActions:not(.sapMGTStateLoading){
-	.sapMTileCntContent{
-		&:after{
-			opacity: 0.4;
-			background-color: @sapTile_Background;
 
+	.sapMTileCntContent {
+
+		&::after {
+			opacity: 0.4;
+			background-color: var(--sapTile_Background);
 		}
 	}
 }
 
-.sapMGT.sapMGTScopeActions.OneByHalf:not(.sapMGTStateLoading),.sapMGT.sapMGTScopeActions.TwoByHalf:not(.sapMGTStateLoading){
-		.sapMTileCntContent{
-			&:after{
-				top: -0.3125rem;
-			}
+.sapMGT.sapMGTScopeActions.OneByHalf:not(.sapMGTStateLoading),
+.sapMGT.sapMGTScopeActions.TwoByHalf:not(.sapMGTStateLoading) {
+
+	.sapMTileCntContent {
+
+		&::after {
+			top: -0.3125rem;
 		}
+	}
 }
 
-/************************ LINE MODE LIST VIEW ********************/
+/* LINE MODE LIST VIEW */
 
 .sapMGT.sapMGTLineMode {
 	transition: background 0.2s;
@@ -85,15 +100,16 @@
 }
 
 .sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
+
 	&:not(.sapMGTLineModePress):hover {
-		background: @sapTile_Hover_Background;
-		box-shadow: @sapContent_Shadow2;
+		background: var(--sapTile_Hover_Background);
+		box-shadow: var(--sapContent_Shadow2);
 	}
 }
 
-.sapMGT.sapMGTLineMode:active{
-	background-color: @sapTile_Active_Background;
-	outline: 0.125rem solid @sapContent_FocusColor !important;
+.sapMGT.sapMGTLineMode:active {
+	background-color: var(--sapTile_Active_Background);
+	outline: 0.125rem solid var(--sapContent_FocusColor) !important;
 	outline-offset: -0.125rem;
 	border: none;
 }
@@ -108,7 +124,7 @@
 
 .sapMGTLineMode .sapMGTLineModeFailedIcon {
 	cursor: pointer;
-	color: @sapUiContentNonInteractiveIconColor;
+	color: var(--sapContent_NonInteractiveIconColor);
 	text-shadow: @sapUiShadowText;
 }
 
@@ -121,21 +137,24 @@
 }
 
 .sapMGTLineMode .sapMGTActionsContainer .sapMGTRemoveButton {
-	background-color: @sapUiButtonBackground;
-	color: @sapUiButtonTextColor;
+	background-color: var(--sapButton_Background);
+	color: var(--sapButton_TextColor);
 
-	&:before {
-		color: @sapUiButtonIconColor;
+	&::before {
+		color: var(--sapButton_IconColor);
 	}
 }
 
-.sapMGT.sapMGTScopeActions .sapMGTRemoveButton, .sapMGT.sapMGTScopeSingleAction .sapMGTRemoveButton{
-	.sapMBtnInner{
-		border-color: @sapButton_BorderColor;
-		background: @sapButton_Background;
+.sapMGT.sapMGTScopeActions .sapMGTRemoveButton,
+.sapMGT.sapMGTScopeSingleAction .sapMGTRemoveButton {
+
+	.sapMBtnInner {
+		border-color: var(--sapButton_BorderColor);
+		background: var(--sapButton_Background);
 	}
+
 	.sapMBtnIcon {
-		color: @sapButton_TextColor;
+		color: var(--sapButton_TextColor);
 	}
 }
 
@@ -146,35 +165,44 @@
 		-webkit-mask-image: linear-gradient(to left, #FFF ~"calc(100% - 1.5rem)", transparent);
 	}
 
-	.sapMGTHdrTxt, .sapMGTSubHdrTxt {
+	.sapMGTHdrTxt,
+	.sapMGTSubHdrTxt {
 		text-overflow: clip;
 	}
 }
 
-/************************ LINE MODE FLOATING VIEW *****************/
+/* LINE MODE FLOATING VIEW */
 
 .sapUiMedia-GenericTileDeviceSet-large {
+
 	.sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
-		&:focus, &.sapMGTLineModePress {
-			.sapMGTLineStyleHelperInner:before {
-				content: "";
+
+		&:focus,
+		&.sapMGTLineModePress {
+
+			.sapMGTLineStyleHelperInner::before {
+				content: '';
 				position: absolute;
 				top: 1px;
 				left: 1px;
 				bottom: 1px;
 				right: 1px;
 				box-sizing: border-box;
-				border: 1px dotted @sapUiContentFocusColor;
+				border: 1px dotted var(--sapContent_FocusColor);
 			}
 		}
 	}
 }
+
 .sapUiMedia-GenericTileDeviceSet-large {
+
 	.sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
+
 		&:hover .sapMGTLineStyleHelperInner {
-			background: @sapUiTileHoverBackground;
+			background: var(--sapTile_Hover_Background);
 		}
 	}
+
 	.sapMGT.sapMGTLineMode {
 		font-size: @sapMFontMediumSize;
 
@@ -183,13 +211,16 @@
 		}
 
 		&.sapMGTDisabled {
-			.sapMGTHdrTxt, .sapMGTSubHdrTxt {
+
+			.sapMGTHdrTxt,
+			.sapMGTSubHdrTxt {
 				opacity: 0.5;
 			}
 		}
-	
+
 
 		.sapMGTLineStyleHelper {
+
 			&:first-child:not(:only-child) .sapMGTLineStyleHelperInner {
 				margin-right: 0.125rem;
 			}
@@ -197,6 +228,7 @@
 			&:not(:first-child) .sapMGTLineStyleHelperInner {
 				margin: 0 0.125rem;
 			}
+
 			&:last-child .sapMGTLineStyleHelperInner {
 				margin-right: 0;
 			}
@@ -217,25 +249,26 @@
 		}
 
 		&.sapMGTLineModePress:not(.sapMGTDisabled) {
-			&, &:hover {
+
+			&,
+			&:hover {
+
 				.sapMGTLineStyleHelperInner {
-					background: @sapUiTileActiveBackground;
+					background: var(--sapTile_Active_Background);
 				}
 			}
 		}
 	}
 }
 
-/************************************************************/
-
 .sapMGTLineMode .sapMGTHdrTxt {
-	color: @sapTile_TitleTextColor;
+	color: var(--sapTile_TitleTextColor);
 	font-size: @sapMFontMediumSize;
 	text-shadow: @sapUiShadowText;
 }
 
 .sapMGTLineMode .sapMGTSubHdrTxt {
-	color: @sapUiTileTextColor;
+	color: var(--sapTile_TextColor);
 	font-size: @sapMFontMediumSize;
 	text-shadow: @sapUiShadowText;
 }
@@ -269,10 +302,10 @@ html.sap-tablet .sapMGTWithImageHoverOverlay {
 	box-shadow: 0 0 0 1px fade(@sapUiContentShadowColor, 30);
 
 	&:not(.sapMGTBackgroundImage) {
-		background: @sapUiTileActiveBackground;
+		background: var(--sapTile_Active_Background);
 	}
 
-	&.sapMGTScopeActions .sapMTileCntContent:after {
+	&.sapMGTScopeActions .sapMTileCntContent::after {
 		background-color: fade(@sapUiTileActiveBackground, 70);
 	}
 }
@@ -286,7 +319,7 @@ html.sap-tablet .sapMGTWithImageHoverOverlay {
 	transition: background 0.2s;
 
 	&:not(.sapMGTBackgroundImage) {
-		background: @sapUiTileHoverBackground;
+		background: var(--sapTile_Hover_Background);
 	}
 
 	.sapMGTWithImageHoverOverlay {
@@ -294,76 +327,84 @@ html.sap-tablet .sapMGTWithImageHoverOverlay {
 		transition: background 0.2s;
 	}
 
-	&.sapMGTScopeActions .sapMTileCntContent:after {
+	&.sapMGTScopeActions .sapMTileCntContent::after {
 		background-color: fade(@sapUiTileHoverBackground, 70);
 		transition: background 0.2s;
 	}
 }
 
-.sapMGTActionButtonPress.sapMGT:focus
-{
-		.sapMGTFocusDiv{
-			box-shadow: none;
-		}
+.sapMGTActionButtonPress.sapMGT:focus {
+
+	.sapMGTFocusDiv {
+		box-shadow: none;
+	}
 }
 
-.sapMGTActionButtonPress.sapMGT:active
-{
-	.sapMGTFocusDiv{
+.sapMGTActionButtonPress.sapMGT:active {
+
+	.sapMGTFocusDiv {
 		border: none;
 		box-shadow: none;
 	}
 }
 
-.sapMGTActionButtonPress.sapMGT:focus-visible
-{
-	.sapMGTFocusDiv{
-		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
-		border-radius: @sapTile_BorderCornerRadius;
+.sapMGTActionButtonPress.sapMGT:focus-visible {
+
+	.sapMGTFocusDiv {
+		border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
+		border-radius: var(--sapTile_BorderCornerRadius);
 	}
 }
 
 .sapMGT.sapMGTBackgroundImage:focus .sapMGTFocusDiv,
 .sapMGT.sapMGTBackgroundImage:active .sapMGTFocusDiv {
-	&:after {
-		content: "";
+
+	&::after {
+		content: '';
 		.sapMGTOverlayMixin();
 		border-radius: 0.25rem;
-		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentContrastFocusColor;
+		border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_ContrastFocusColor);
 		z-index: 0;
 	}
 }
 
-large.sapUiSizeCompact .sapMGT.sapMGTLineMode, .sapUiMedia-GenericTileDeviceSet-large .sapUiSizeCompact .sapMGT.sapMGTLineMode {
+large.sapUiSizeCompact .sapMGT.sapMGTLineMode,
+.sapUiMedia-GenericTileDeviceSet-large .sapUiSizeCompact .sapMGT.sapMGTLineMode {
 	margin-right: 1rem;
-	border: 1px solid @sapTile_BorderColor
+	border: 1px solid var(--sapTile_BorderColor);
 }
 
 .sapMGT {
-	border-radius: @sapTile_BorderCornerRadius;
-	border-color: @sapTile_BorderColor;
-	box-shadow: @sapContent_Shadow0;
-	.sapMGTContent{
-		border-radius: 0 0 @sapTile_BorderCornerRadius @sapTile_BorderCornerRadius;
+	border-radius: var(--sapTile_BorderCornerRadius);
+	border-color: var(--sapTile_BorderColor);
+	box-shadow: var(--sapContent_Shadow0);
+
+	.sapMGTContent {
+		border-radius: 0 0 var(--sapTile_BorderCornerRadius) var(--sapTile_BorderCornerRadius);
 	}
 }
 
 .sapMGT.tileWithAppInfo {
+
 	.sapMGTContent{
 		border-radius: 0;
 	}
 }
 
 .sapUshellSection {
+
 	.sapMGT.TwoByOne {
 		width: 23rem;
 	}
+
 	.sapMGT.TwoByHalf {
 		width: 23rem;
 	}
+
 	.sapMGT.TwoByHalf.sapMTileSmallPhone {
 		width: 19rem;
 	}
+
 	.sapMGT.TwoByOne.sapMTileSmallPhone {
 		width: 19rem;
 	}
@@ -381,16 +422,17 @@ large.sapUiSizeCompact .sapMGT.sapMGTLineMode, .sapUiMedia-GenericTileDeviceSet-
 	width: 19rem;
 }
 
-.sapMTileSmallPhone .sapMTileCntContent{
+.sapMTileSmallPhone .sapMTileCntContent {
 	height: 3.438rem;
 }
+
 .sapMGT.TwoByHalf {
 	width: 22.5rem;
 }
 
-.sapMGTHdrTxt>.sapMText {
+.sapMGTHdrTxt > .sapMText {
 	font-weight: bold;
-	font-size: @sapFontHeader6Size;
+	font-size: var(--sapFontHeader6Size);
 }
 
 .sapMGTLineMode .sapMGTHdrTxt {
@@ -398,20 +440,22 @@ large.sapUiSizeCompact .sapMGT.sapMGTLineMode, .sapUiMedia-GenericTileDeviceSet-
 }
 
 .sapMGT.sapMGTLineMode {
-	border: 1px solid @sapTile_BorderColor !important;
-	border-radius: @sapTile_BorderCornerRadius !important;
-	box-shadow: @sapContent_Shadow0 !important;
+	border: 1px solid var(--sapTile_BorderColor) !important;
+	border-radius: var(--sapTile_BorderCornerRadius) !important;
+	box-shadow: var(--sapContent_Shadow0) !important;
 }
 
 .sapMGT.sapMGTLineMode.sapMGTInfoRendered {
 	border: transparent !important;
-	.sapMGTTInfoWrapper{
-		border-radius: 0 @sapTile_BorderCornerRadius @sapTile_BorderCornerRadius 0 !important;
+
+	.sapMGTTInfoWrapper {
+		border-radius: 0 var(--sapTile_BorderCornerRadius) var(--sapTile_BorderCornerRadius) 0 !important;
 	}
 }
 
 .sapMGT.sapMGTLineMode.sapMGTInfoRendered:focus {
-	.sapMGTFocusDiv{
+
+	.sapMGTFocusDiv {
 		inset: 0;
 	}
 }
@@ -421,13 +465,13 @@ large.sapUiSizeCompact .sapMGT.sapMGTLineMode, .sapUiMedia-GenericTileDeviceSet-
 }
 
 .sapMGT.sapMGTLineMode:not(.sapMGTDisabled):not(.sapMGTLineModePress):hover {
-	background: @sapTile_Hover_Background;
-	border: 1px solid @sapTile_BorderColor !important;
-	box-shadow: @sapContent_Shadow2 !important;
+	background: var(--sapTile_Hover_Background);
+	border: 1px solid var(--sapTile_BorderColor) !important;
+	box-shadow: var(--sapContent_Shadow2) !important;
 }
 
 .sapMGT:hover:not(.sapMGTPressActive) {
-	box-shadow: @sapContent_Shadow2 !important;
+	box-shadow: var(--sapContent_Shadow2) !important;
 }
 
 .sapMGTIconMode.sapMGT:hover:not(.sapMGTPressActive) {
@@ -440,40 +484,47 @@ large.sapUiSizeCompact .sapMGT.sapMGTLineMode, .sapUiMedia-GenericTileDeviceSet-
 	margin-right: 1px;
 }
 
-.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapMGTFocusDiv, .sapMGT:focus .sapMGTFocusDiv, .sapMGT:active .sapMGTFocusDiv, .sapMGTLineModePress .sapMGTFocusDiv {
-	border-radius:  @sapTile_BorderCornerRadius;
+.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapMGTFocusDiv,
+.sapMGT:focus .sapMGTFocusDiv,
+.sapMGT:active .sapMGTFocusDiv,
+.sapMGTLineModePress .sapMGTFocusDiv {
+	border-radius: var(--sapTile_BorderCornerRadius);
 	inset: -1px;
 }
 
-.sapMGT:active{
-	background-color: @sapTile_Active_Background;
-	border: 0.0625rem solid @sapTile_Interactive_BorderColor;
-	&.sapMGTIconMode{
-		outline: 0.0625rem solid @sapTile_Interactive_BorderColor;
+.sapMGT:active {
+	background-color: var(--sapTile_Active_Background);
+	border: 0.0625rem solid var(--sapTile_Interactive_BorderColor);
+
+	&.sapMGTIconMode {
+		outline: 0.0625rem solid var(--sapTile_Interactive_BorderColor);
 		border: none;
 	}
-	&.sapMGTNewsContent{
+
+	&.sapMGTNewsContent {
 		overflow: hidden;
 	}
-	.sapMGTFocusDiv{
+
+	.sapMGTFocusDiv {
 		box-shadow: none;
 		border: none !important;
 	}
 }
 
-.sapMGT:focus .sapMGTFocusDiv{
-	border-radius:  @sapTile_BorderCornerRadius;
+.sapMGT:focus .sapMGTFocusDiv {
+	border-radius: var(--sapTile_BorderCornerRadius);
 	box-shadow: none;
 	inset: -1px;
 }
 
-.sapMGT.sapMGTOneByOne:focus .sapMGTFocusDiv{
+.sapMGT.sapMGTOneByOne:focus .sapMGTFocusDiv {
 	inset: 0;
 }
 
-.sapMGT.sapMGTBackgroundImage:focus .sapMGTFocusDiv:after, .sapMGT.sapMGTBackgroundImage:active .sapMGTFocusDiv:after {
+.sapMGT.sapMGTBackgroundImage:focus .sapMGTFocusDiv::after,
+.sapMGT.sapMGTBackgroundImage:active .sapMGTFocusDiv::after {
 	border: none;
-	border-radius: @sapElement_BorderCornerRadius;
+	border-radius: var(--sapElement_BorderCornerRadius);
 }
 
 .sapMGTLineMode .sapMGTFocusDiv {
@@ -485,25 +536,30 @@ large.sapUiSizeCompact .sapMGT.sapMGTLineMode, .sapUiMedia-GenericTileDeviceSet-
 }
 
 .sapFGridContainer .sapFGridContainerItemWrapper:not(.sapFGridContainerItemWrapperNoVisualFocus):focus::before {
-	border: 2px solid @sapContent_FocusColor;
-	border-radius: @sapElement_BorderCornerRadius;
+	border: 2px solid var(--sapContent_FocusColor);
+	border-radius: var(--sapElement_BorderCornerRadius);
 }
 
 .miniTileBackground {
-	background: @sapTile_Background;
-	box-shadow: @sapContent_Shadow0 !important;
+	background: var(--sapTile_Background);
+	box-shadow: var(--sapContent_Shadow0) !important;
 }
 
 .miniTileContainer .sapMGT {
-	background: @sapTile_Background;
-	box-shadow: @sapContent_Shadow0 !important;
+	background: var(--sapTile_Background);
+	box-shadow: var(--sapContent_Shadow0) !important;
 }
 
-.sapUshellTile, .sapUshellTileWrapper, .sapUshellTileInner, .sapUshellTileBase, .sapUshellInner .sapUshellTile-placeholder, .sapUshellInner .sapUshellLinkTile-placeholder {
-	border-radius: @sapElement_BorderCornerRadius;
+.sapUshellTile,
+.sapUshellTileWrapper,
+.sapUshellTileInner,
+.sapUshellTileBase,
+.sapUshellInner .sapUshellTile-placeholder,
+.sapUshellInner .sapUshellLinkTile-placeholder {
+	border-radius: var(--sapElement_BorderCornerRadius);
 }
 
-.sapUshellTile{
+.sapUshellTile {
 	margin: 0 1rem 1rem 0;
 }
 
@@ -512,59 +568,74 @@ large.sapUiSizeCompact .sapMGT.sapMGTLineMode, .sapUiMedia-GenericTileDeviceSet-
 }
 
 .OneByOne.tileWithAppInfo {
+
 	.sapMGTTInfoContainer {
+
 		.sapMGTTInfo {
-			background-color: @sapTile_Active_Background;
+			background-color: var(--sapTile_Active_Background);
 		}
 	}
 }
 
 .TwoByOne.sapMGTActionMode {
 	border-radius: 1.25rem;
+
 	.sapMGTFocusDiv {
 		border-radius: 1.25rem !important;
 	}
 }
 
 .sapMGT.sapMGTScopeActions.sapMGTIconMode.TwoByHalf {
-	.sapMBtn.sapMGTMoreIcon{
-		.sapMBtnInner{
-			left: 0rem;
+
+	.sapMBtn.sapMGTMoreIcon {
+
+		.sapMBtnInner {
+			left: 0;
 		}
 	}
 }
 
-.sapMGT.sapMGTScopeActions, .sapMGT.sapMGTScopeSingleAction{
-	.sapMGTMoreIcon{
-		.sapMBtnIcon{
-			color: @sapButton_Lite_TextColor;
+.sapMGT.sapMGTScopeActions,
+.sapMGT.sapMGTScopeSingleAction {
+
+	.sapMGTMoreIcon {
+
+		.sapMBtnIcon {
+			color: var(--sapButton_Lite_TextColor);
 		}
 	}
 }
 
-.sapMGT.OneByOne,.sapMGT.TwoByOne{
+.sapMGT.OneByOne,
+.sapMGT.TwoByOne {
+
 	.sapMTileCnt.News {
 		border-bottom-left-radius: 0.87rem;
 		border-bottom-right-radius: 0.87rem;
 	}
 }
 
-/******************* OVERLAYS AND HELPERS *******************/
+/* OVERLAYS AND HELPERS */
 
 .sapMGTOverlay {
 	border-radius: inherit;
 }
 
 .sapMGT.sapMGTBackgroundImage {
+
 	.sapMGTOverlay {
 		border-radius: 0.9rem;
 	}
+
 	&.sapMGTStateFailed {
+
 		.sapMGTWithImageHoverOverlay {
-			border-radius: @sapTile_BorderCornerRadius;
+			border-radius: var(--sapTile_BorderCornerRadius);
 		}
 	}
+
 	&:active {
+
 		.sapMGTOverlay {
 			border-radius: 0.95rem;
 		}
