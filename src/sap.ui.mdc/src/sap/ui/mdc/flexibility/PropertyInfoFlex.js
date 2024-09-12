@@ -4,7 +4,8 @@
 sap.ui.define([], () => {
 	"use strict";
 
-	//obsolete
+	// obsolete
+	// @deprecated since 1.100
 	const oPropertyInfoFlex = {};
 
 	oPropertyInfoFlex.addPropertyInfo = {
