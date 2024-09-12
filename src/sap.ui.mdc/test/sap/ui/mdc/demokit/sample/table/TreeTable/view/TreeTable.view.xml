@@ -1,0 +1,47 @@
+<mvc:View
+	height="100%"
+	displayBlock="true"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:core="sap.ui.core"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:mdct="sap.ui.mdc.table">
+
+	<f:DynamicPage id="page">
+		<f:content>
+			<mdc:Table
+				id="table"
+				header="Clothing"
+				p13nMode="Column,Sort,Filter"
+				type="TreeTable"
+				useColumnLabelsAsTooltips="true"
+				delegate="{
+					name: 'mdc/sample/delegates/JSONTreeTableDelegate',
+					payload: {
+						bindingPath: 'clothing>/catalog/clothing'
+					}
+				}">
+				<mdct:Column
+					propertyKey="name"
+					header="Name">
+					<Text text="{clothing>name}"/>
+				</mdct:Column>
+				<mdct:Column
+					propertyKey="price"
+					header="Price">
+					<Text text="{
+						parts: ['clothing>amount', 'clothing>currency'],
+						type: 'sap.ui.model.type.Currency'
+					}"/>
+				</mdct:Column>
+				<mdct:Column
+					propertyKey="size"
+					header="Size">
+					<Text text="{clothing>size}"/>
+				</mdct:Column>
+			</mdc:Table>
+		</f:content>
+	</f:DynamicPage>
+
+</mvc:View>

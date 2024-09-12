@@ -129,6 +129,7 @@
 					"sap.ui.mdc.demokit.sample.table.TablePropertyInfos",
 					"sap.ui.mdc.demokit.sample.table.TableExport",
 					"sap.ui.mdc.demokit.sample.table.TableCopyPaste",
+					"sap.ui.mdc.demokit.sample.table.TreeTable",
 					"sap.ui.mdc.demokit.sample.table.UploadSetwithTablePlugin"
 				]
 			}
@@ -297,6 +298,10 @@
 				"id": "sap.ui.mdc.demokit.sample.table.TablePropertyInfos",
 				"name": "Table - with column width calculation and additional property infos",
 				"description": "A table showcasing column width calculation and other different configuration options for property infos."
+			},{
+				"id": "sap.ui.mdc.demokit.sample.table.TreeTable",
+				"name": "Table - with hierarchy",
+				"description": "A table displaying a hierarchy."
 			}
 		]
 	}

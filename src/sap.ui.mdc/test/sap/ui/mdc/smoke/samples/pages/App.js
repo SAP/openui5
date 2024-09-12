@@ -15,8 +15,9 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/testutils/opa/p13n/waitForP13nDialog",
 	"sap/ui/events/KeyCodes",
 	"test-resources/sap/ui/mdc/testutils/opa/field/waitForField",
-	"test-resources/sap/ui/mdc/testutils/opa/Utils"
-], function(Opa5, PropertyStrictEquals, Ancestor, Descendant, Sibling, Press, EnterText, TriggerEvent, Library, waitForTable, waitForP13nDialog, KeyCodes, waitForField, Utils) {
+	"test-resources/sap/ui/mdc/testutils/opa/Utils",
+	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Util"
+], function(Opa5, PropertyStrictEquals, Ancestor, Descendant, Sibling, Press, EnterText, TriggerEvent, Library, waitForTable, waitForP13nDialog, KeyCodes, waitForField, Utils, TableUtils) {
 	"use strict";
 
 
@@ -711,6 +712,62 @@ sap.ui.define([
 							});
 						}
 					});
+				},
+				/**
+				 * Emulates a press action on the element in a row that expands the row.
+				 *
+				 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
+				 * @param {object} mConfig Used to find the row to expand
+				 * @param {int} mConfig.index Index of the row in the aggregation of the inner table
+				 * @param {object} mConfig.data Information about the data, where the key is the path in the rows binding context
+				 * @returns {Promise} OPA waitFor
+				 * @private
+				 */
+				iPressExpandRowButton: function(vTable, mConfig) {
+					return TableUtils.waitForRow.call(this, vTable, {
+						index: mConfig.index,
+						data: mConfig.data,
+						success: function(oTable, oRow) {
+							if (oTable._isOfType("Table", true)) {
+								if (oRow.isExpanded()) {
+									throw new Error("The row is already expanded");
+								}
+								const sIdSuffix = oTable._isOfType("Table") ? "groupHeader" : "treeicon";
+								new Press({idSuffix: sIdSuffix}).executeOn(oRow);
+								Opa5.assert.ok(true, "Pressed Expand Row button for " + JSON.stringify(mConfig));
+							} else {
+								throw new Error("The current table type does not support expanding rows");
+							}
+						}
+					});
+				},
+				/**
+				 * Emulates a press action on the element in a row that collapses the row.
+				 *
+				 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
+				 * @param {object} mConfig Used to find the row to expand
+				 * @param {int} mConfig.index Index of the row in the aggregation of the inner table
+				 * @param {object} mConfig.data Information about the data, where the key is the path in the rows binding context
+				 * @returns {Promise} OPA waitFor
+				 * @private
+				 */
+				iPressCollapseRowButton: function(vTable, mConfig) {
+					return TableUtils.waitForRow.call(this, vTable, {
+						index: mConfig.index,
+						data: mConfig.data,
+						success: function(oTable, oRow) {
+							if (oTable._isOfType("Table", true)) {
+								if (!oRow.isExpanded()) {
+									throw new Error("The row is already collapsed");
+								}
+								const sIdSuffix = oTable._isOfType("Table") ? "groupHeader" : "treeicon";
+								new Press({idSuffix: sIdSuffix}).executeOn(oRow);
+								Opa5.assert.ok(true, "Pressed Collapse Row button for " + JSON.stringify(mConfig));
+							} else {
+								throw new Error("The current table type does not support collapsing rows");
+							}
+						}
+					});
 				}
 			},
 			assertions: {
@@ -1004,6 +1061,30 @@ sap.ui.define([
 									Opa5.assert.ok(oButton, "Paste button is visible");
 								},
 								errorMessage: "No Paste button found"
+							});
+						}
+					});
+				},
+				/** Checks if row count is correct.
+				 *
+				 * @function
+				 * @name iCheckBindingLength
+				 * @param {String|sap.ui.mdc.Table} vControl Id or control instance of the MDCTable
+				 * @param {Number} iLength Number of expected visible rows
+				 * @returns {Promise} OPA waitFor
+				 * @private
+				 */
+				iCheckBindingLength: function(vControl, iLength) {
+					return waitForTable.call(this, vControl, {
+						success: function(oTable) {
+							return this.waitFor({
+								check: function() {
+									return oTable.getRowBinding().getLength() === iLength;
+								},
+								success: function() {
+									Opa5.assert.ok(true, `Binding length is ${iLength}`);
+								},
+								errorMessage: `Binding length (expected: ${iLength}, actual: ${oTable.getRowBinding().getLength()})`
 							});
 						}
 					});
