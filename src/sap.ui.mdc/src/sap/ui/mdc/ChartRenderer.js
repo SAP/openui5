@@ -38,11 +38,8 @@ sap.ui.define(['./library'],
 			oRm.style("min-height", oChart.getMinHeight());
 			oRm.style("min-width", oChart.getMinWidth());
 			oRm.openEnd();
-			oRm.openStart("div");
-			oRm.openEnd();
 			this.renderToolbar(oRm, oChart.getAggregation("_toolbar"));
 			this.renderInfoToolbar(oRm, oChart.getAggregation("_infoToolbar"));
-			oRm.close("div");
 			this.renderBreadcrumbs(oRm, oChart.getAggregation("_breadcrumbs"));
 			this.renderInnerStructure(oRm, oChart.getAggregation("_innerChart"));
 			oRm.close("div");
@@ -59,13 +56,8 @@ sap.ui.define(['./library'],
 		};
 
 		ChartRenderer.renderToolbar = function(oRm, oToolbar) {
-
 			if (oToolbar) {
-				oRm.openStart("div");
-				//oRm.class("sapUiFixFlexFixed");
-				oRm.openEnd();
 				oRm.renderControl(oToolbar);
-				oRm.close("div");
 			}
 		};
 
