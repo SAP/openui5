@@ -1,5 +1,4 @@
 <mvc:View
-		id="ContextBasedAdaptationDialogView"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:unified="sap.ui.unified"
 		controllerName="sap.ui.rta.contextBased.Page"

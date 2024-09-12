@@ -14,7 +14,7 @@
 			icon="sap-icon://menu2"
 			press=".onHideShowWalkedPress" />
 
-		<tnt:SideNavigation id="sideNavigation" selectedKey="walked" collapsed="true">
+		<tnt:SideNavigation id="sideNavigation" selectedKey="walked" expanded="false">
 			<tnt:NavigationList>
 				<tnt:NavigationListItem text="Home" icon="sap-icon://home" />
 				<tnt:NavigationListGroup text="New">

@@ -57,7 +57,7 @@
 							parts: [
 								{path: 'Status'}
 							],
-							formatter: 'sap.tnt.sample.InfoLabelInTable.Formatter.availableState'
+							formatter: '.formatter.availableState'
 						}" />
 					<ObjectNumber
 						number="{

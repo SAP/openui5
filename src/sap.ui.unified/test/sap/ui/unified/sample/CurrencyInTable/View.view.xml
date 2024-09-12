@@ -8,7 +8,7 @@
 			path: '/modelData'
 		}">
 		<columns>
-			<Column id="exapnseColumn" hAlign="Start">
+			<Column id="exapnseColumn" hAlign="Begin">
 				<Text text="Expense"/>
 			</Column>
 			<Column id="transactionAmountColumn" hAlign="End">
