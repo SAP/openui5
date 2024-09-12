@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0"
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+	xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="gwsample_basic" xml:lang="en"
+			sap:schema-version="0000" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="Parameter_With_On_Demand_ValueListVHType" sap:label="Function Import Parameter Value Help"
+				sap:value-list="true" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ID"/>
+				</Key>
+				<Property Name="ID" Type="Edm.String" Nullable="false" sap:label="ID"/>
+			</EntityType>
+			<EntityContainer Name="gwsample_basic_Entities"
+				m:IsDefaultEntityContainer="true" sap:message-scope-supported="true">
+				<EntitySet Name="Parameter_With_On_Demand_ValueListVH"
+					EntityType="gwsample_basic.Parameter_With_On_Demand_ValueListVHType" sap:searchable="true"
+					sap:content-version="1"/>
+			</EntityContainer>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm"
+				Target="gwsample_basic.gwsample_basic_Entities/Function_With_ValueList_For_Parameter/Parameter_With_On_Demand_ValueList">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Value list for function import parameter"/>
+						<PropertyValue Property="CollectionPath" String="Parameter_With_On_Demand_ValueListVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Parameter_With_On_Demand_ValueList"/>
+									<PropertyValue Property="ValueListProperty" String="ID"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Foo"/> <!-- ignored as already available -->
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
