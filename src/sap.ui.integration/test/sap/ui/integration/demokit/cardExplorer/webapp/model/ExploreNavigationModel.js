@@ -1554,22 +1554,40 @@ sap.ui.define([
 						target: 'exploreSamples',
 						key: 'comboBoxFilter',
 						experimental: true,
-						subSamples: [{
-							title: 'Dynamically Defined Filter',
-							key: 'dynamicFilter',
-							files: [
-								{
-									url: '/samples/filters/comboBox/dynamicComboBoxFilter.json',
-									name: 'manifest.json',
-									key: 'manifest.json'
-								},
-								{
-									url: '/samples/filters/comboBox/countries.json',
-									name: 'countries.json',
-									key: 'countries.json'
-								}
-							]
-						}]
+						subSamples: [
+							{
+								title: 'Dynamically Defined Filter',
+								key: 'dynamicFilter',
+								files: [
+									{
+										url: '/samples/filters/comboBox/dynamicComboBoxFilter.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/filters/comboBox/countries.json',
+										name: 'countries.json',
+										key: 'countries.json'
+									}
+								]
+							},
+							{
+								title: 'Selected Index',
+								key: 'dynamicFilterSelectedIndex',
+								files: [
+									{
+										url: '/samples/filters/comboBox/dynamicComboBoxFilterSelectedIndex.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/filters/comboBox/countries.json',
+										name: 'countries.json',
+										key: 'countries.json'
+									}
+								]
+							}
+						]
 					},
 					{
 						title: 'DateRange',

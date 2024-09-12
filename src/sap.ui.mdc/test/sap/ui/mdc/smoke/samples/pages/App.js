@@ -593,9 +593,9 @@ sap.ui.define([
 						errorMessage: `No ValueHelp with ID "${sValueHelpId}" was found`
 					});
 				},
-
 				/**
 				 * Open the table type configuration dialog
+				 * @param {string} sButtonId ID of <code>sap.m.Button</code> control
 				 * @returns {Promise} OPA waitFor
 				 */
 				iOpenTableTypeConfiguration: function(sButtonId) {
@@ -912,6 +912,20 @@ sap.ui.define([
 								}
 							});
 						}
+					});
+				},
+				/* Checks whether the export button is visible
+				 * @param {string} sTableId ID of <code>sap.ui.mdc.Table</code> control
+				 * @returns {Promise} OPA waitFor
+				 */
+				iShouldSeeTheExportMenuButton: function(sTableId) {
+					return this.waitFor({
+						id: sTableId + "-export",
+						controlType: "sap.m.MenuButton",
+						success: function(oMenuButton) {
+							Opa5.assert.ok(oMenuButton, "Export button is visible");
+						},
+						errorMessage: "No Export button found"
 					});
 				}
 			}

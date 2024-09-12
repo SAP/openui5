@@ -49,6 +49,10 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				group: "Demokit samples",
 				sinon: false
 			},
+			"TableExport": {
+				group: "Demokit samples",
+				sinon: false
+			},
 			"FieldTypes": {
 				group: "Demokit samples",
 				sinon: false

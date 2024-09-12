@@ -17,61 +17,71 @@ html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare {
 }
 
 html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare {
-	&:focus:before {
-		content: "";
+
+	&:focus::before {
+		content: '';
 		box-sizing: border-box;
 		position: absolute;
 		left: 0.125rem;
 		top: 0.125rem;
 		right: 0.125rem;
 		bottom: 0.125rem;
-		border: 0.125rem solid @sapUiButtonLiteBackground;
+		border: 0.125rem solid var(--sapButton_Lite_Background);
 		pointer-events: none;
 	}
+
 	&:hover,
 	&.sapMColorPaletteSquareSelected {
 		border: 0;
+
 		> div {
-			border: 0.125rem solid @sapUiContentForegroundBorderColor;
+			border: 0.125rem solid var(--sapContent_ForegroundBorderColor);
 		}
 	}
-	&:focus:after {
-		content: "";
+
+	&:focus::after {
+		content: '';
 		position: absolute;
 		box-sizing: border-box;
 		left: 0.125rem;
 		top: 0.125rem;
 		right: 0.125rem;
 		bottom: 0.125rem;
-		border: 0.125rem dotted @sapUiContentContrastFocusColor;
+		border: 0.125rem dotted var(--sapContent_ContrastFocusColor);
 		pointer-events: none;
 	}
 }
+
 .sap-desktop .sapMColorPalette .sapMBtn:focus {
-	&:after {
+
+	&::after {
 		border-width: 0.125rem;
-		border-color: @sapUiContentFocusColor;
+		border-color: var(--sapContent_FocusColor);
 	}
 }
-html:not(.sap-phone) .sapMColorPalette
-.sap-desktop .sapContrast,
+
+html:not(.sap-phone) .sapMColorPalette .sap-desktop .sapContrast,
 .sap-desktop.sapContrast {
+
 	.sapMColorPalette .sapMBtn {
-		&:focus:after {
-			border-color: @sapUiContentFocusColor;
+
+		&:focus::after {
+			border-color: var(--sapContent_FocusColor);
 
 		}
+
 		&:active,
 		> .sapMBtnActive,
 		&:hover > .sapMBtnActive,
 		&:active > .sapMBtnActive {
-			color: @sapUiListTextColor;
+			color: var(--sapList_TextColor);
 		}
 	}
 }
 
 .sap-phone .sapMColorPaletteSquare {
+
 	&:active > div {
-		box-shadow: inset 0 0 0 0.125rem @sapUiContentForegroundBorderColor;
+		box-shadow: inset 0 0 0 0.125rem var(--sapContent_ForegroundBorderColor);
 	}
 }

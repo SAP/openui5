@@ -629,25 +629,36 @@ sap.ui.define([
 
 	QUnit.test("Tests if the active dot displayed correctly", function(assert) {
 		//Act
-		var $indicator = this.oSlideTile.$("tilesIndicator");
+		var oIndicator = this.oSlideTile.$("tilesWrapper")[0].children[0];
 		//Assert
-		assert.ok(jQuery($indicator[0].children[0]).hasClass("sapMSTActive"), "The first dot is displayed as active");
+		assert.ok(jQuery(oIndicator.children[0]).hasClass("sapMSTActive"), "The first dot is displayed as active");
 	});
 
 	QUnit.test("Tests if the active dot displayed properly after click forward button", function(assert) {
 		//Act
-		var $indicator = this.oSlideTile.$("tilesIndicator");
+		var oIndicator = this.oSlideTile.$("tilesWrapper")[0].children[1];
 		this.oSlideTile._scrollToNextTile(true, false);
 		//Assert
-		assert.ok(jQuery($indicator[0].children[1]).hasClass("sapMSTActive"), "The second dot displayed as active");
+		assert.ok(jQuery(oIndicator.children[0]).hasClass("sapMSTActive"), "The second dot displayed as active");
 	});
 
 	QUnit.test("Tests if the active dot displayed properly after click backward button", function(assert) {
 		//Act
-		var $indicator = this.oSlideTile.$("tilesIndicator");
+		var oIndicator = this.oSlideTile.$("tilesWrapper")[0].children[2];
 		this.oSlideTile._scrollToNextTile(true, true);
 		//Assert
-		assert.ok(jQuery($indicator[0].children[2]).hasClass("sapMSTActive"),"The third dot displayed as active");
+		assert.ok(jQuery(oIndicator.children[0]).hasClass("sapMSTActive"),"The third dot displayed as active");
+	});
+
+	QUnit.test("Tests if tile is getting scrolled by the buttons", function(assert) {
+		var oIndicator1 = this.oSlideTile.$("tilesWrapper")[0].children[0];
+		assert.ok(jQuery(oIndicator1.children[0]).hasClass("sapMSTActive"),"The first dot displayed as active");
+		this.oSlideTile._oRightScroll.firePress();
+		var oIndicator2 = this.oSlideTile.$("tilesWrapper")[0].children[1];
+		assert.ok(jQuery(oIndicator2.children[0]).hasClass("sapMSTActive"),"The second dot displayed as active");
+		this.oSlideTile._oLeftScroll.firePress();
+		assert.ok(jQuery(oIndicator1.children[0]).hasClass("sapMSTActive"),"The first dot displayed as active");
+
 	});
 
 	QUnit.test("Slide Navigation through bullet click", function(assert) {
@@ -1175,6 +1186,20 @@ var FrameType = library.FrameType;
 		if ($Tabbables.length) {
 			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
 		}
+
+		qutils.triggerKeydown(this.oSlideTile.getDomRef(), KeyCodes.TAB);
+
+		$Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], bForward);
+		if ($Tabbables.length) {
+			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
+		}
+
+		qutils.triggerKeydown(this.oSlideTile.getDomRef(), KeyCodes.TAB);
+
+		$Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], bForward);
+		if ($Tabbables.length) {
+			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
+		}
 		assert.equal(document.activeElement.id, this.oSlideTile.getTiles()[this.oSlideTile._iCurrentTile]._oNavigateAction.getId(), "Focus on Slide Tile Button");
 		qutils.triggerKeydown(this.oSlideTile.getTiles()[this.oSlideTile._iCurrentTile]._oNavigateAction.getDomRef(), KeyCodes.TAB);
 
@@ -1290,6 +1315,20 @@ var FrameType = library.FrameType;
 			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
 		}
 		assert.equal(document.activeElement.id, this.oSlideTile.getId(), "Focus on Slide Tile");
+		qutils.triggerKeydown(this.oSlideTile.getDomRef(), KeyCodes.TAB);
+
+		var $Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], bForward);
+		if ($Tabbables.length) {
+			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
+		}
+
+		qutils.triggerKeydown(this.oSlideTile.getDomRef(), KeyCodes.TAB);
+
+		var $Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], bForward);
+		if ($Tabbables.length) {
+			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
+		}
+
 		var spy = sinon.spy(this.oSlideTile, "_setAriaDescriptor");
 		qutils.triggerKeydown(this.oSlideTile.getDomRef(), KeyCodes.TAB);
 

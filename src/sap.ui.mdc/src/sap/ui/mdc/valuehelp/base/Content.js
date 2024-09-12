@@ -30,13 +30,24 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new element
-	 * @class Content for the {@link sap.ui.mdc.valuehelp.base.Container Container} element.
+	 * @class Content for the {@link sap.ui.mdc.valuehelp.base.Container Container} element.getUseAsValueHelp
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 * @constructor
 	 * @abstract
 	 *
-	 * @borrows sap.ui.mdc.valuehelp.ITypeaheadContent.isMultiSelect as #isMultiSelect
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.getTitle as #getTitle
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.isMultiSelect as #isMultiSelect
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.getContent as #getContent
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.getItemForValue as #getItemForValue
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.navigate as #navigate
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.getUseAsValueHelp as #getUseAsValueHelp
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.isValidationSupported as #isValidationSupported
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.shouldOpenOnNavigate as #shouldOpenOnNavigate
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.shouldOpenOnClick as #shouldOpenOnClick
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.removeVisualFocus as #removeVisualFocus
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.setVisualFocus as #setVisualFocus
+	 * @borrows sap.ui.mdc.valuehelp.base.IDialogContent.getCount as #getCount
 	 *
 	 * @public
 	 * @since 1.95.0
@@ -292,7 +303,7 @@ sap.ui.define([
 	};
 
 
-	/**
+	/*
 	 * Gets the content controls.
 	 *
 	 * @returns {Promise<sap.ui.core.Control>} This promise resolves after the content is created
@@ -371,7 +382,7 @@ sap.ui.define([
 		this._bVisible = false;
 	};
 
-	/**
+	/*
 	 * Determines the item (key and description) for a given value.
 	 *
 	 * The content checks if there is an item with a key or description that fits this value.
@@ -389,7 +400,7 @@ sap.ui.define([
 		return undefined;
 	};
 
-	/**
+	/*
 	 * Defines if the content can be used for input validation.
 	 *
 	 * @returns {boolean} True if content can be used for input validation
@@ -481,7 +492,7 @@ sap.ui.define([
 		return Condition.createCondition(oOperator.name, aValues, undefined, undefined, ConditionValidated.Validated, oPayload); // Conditions from help are always validated
 	};
 
-	/**
+	/*
 	 * The focus visualization of the field help needs to be removed as the user starts typing into the field.
 	 *
 	 * Only needed for typeahead.
@@ -493,7 +504,7 @@ sap.ui.define([
 
 	};
 
-	/**
+	/*
 	 * The focus visualization of the field help needs to be set as the user starts naigation into the value help items.
 	 *
 	 * @private
@@ -504,7 +515,7 @@ sap.ui.define([
 
 	};
 
-	/**
+	/*
 	 * Triggers navigation in the content.
 	 *
 	 * As this could be asyncron as data might be loaded a promise is returned.
@@ -643,7 +654,7 @@ sap.ui.define([
 		return oContainer && oContainer.getControl();
 	};
 
-	/**
+	/*
 	 * Gets the number of conditions relevant for the current content.
 	 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions Array of conditions
 	 * @returns {int} count
@@ -699,7 +710,7 @@ sap.ui.define([
 		return this.getMaxConditions() === 1;
 	};
 
-	/**
+	/*
 	 * Determines if the value help should be opened when the user clicks into the connected control.
 	 *
 	 * @returns {boolean} If <code>true</code>, the value help should open when user clicks into the connected field control
@@ -710,7 +721,7 @@ sap.ui.define([
 		return false;
 	};
 
-	/**
+	/*
 	 * Determines if the value help should be opened when the user used the arrow keys.
 	 * By default closed navigation is only enabled for single select scenarios
 	 *

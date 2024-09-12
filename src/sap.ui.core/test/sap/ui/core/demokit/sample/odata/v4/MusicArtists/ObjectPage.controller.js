@@ -164,9 +164,7 @@ sap.ui.define([
 			if (oEvent.getParameter("success")) {
 				this.byId("draftIndicator").showDraftSaved();
 			} else {
-				MessageBox.show("Error while saving changes", {
-					icon : MessageBox.Icon.ERROR
-				});
+				MessageBox.error("Error while saving changes");
 			}
 		},
 

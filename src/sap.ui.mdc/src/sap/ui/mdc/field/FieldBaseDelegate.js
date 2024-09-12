@@ -41,6 +41,7 @@ sap.ui.define([
 
 	/**
 	 * Provides the possibility to customize / replace the internal content of a field
+	 * <br/>By default, this method returns suitable controls for the given {@link sap.ui.mdc.enums.BaseType BaseType}, {@link  sap.ui.mdc.field.FieldBase#setMaxConditions maxConditions} and {@link sap.ui.mdc.enums.ContentMode ContentMode}.
 	 *
  	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
 	 * @param {sap.ui.mdc.enums.ContentMode} sContentMode A given content mode
@@ -279,7 +280,7 @@ sap.ui.define([
 	 *
 	 * The returned text will be shown as selected after the user input ends.
 	 *
-	 * By Default this method uses the {@link sap.ui.mdc.field.FieldBase#getDisplay display} property of the
+	 * By default this method uses the {@link sap.ui.mdc.field.FieldBase#getDisplay display} property of the
 	 * {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField}, or {@link sap.ui.mdc.MultiValueField MultiValueField} control
 	 * to determine what text (key or description) is used as autocomplete-text. A text is only used if it matches the user input.
 	 * If set to <code>Value</code>, the key is used.

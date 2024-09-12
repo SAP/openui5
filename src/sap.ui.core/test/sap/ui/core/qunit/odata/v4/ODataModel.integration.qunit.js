@@ -23355,10 +23355,11 @@ sap.ui.define([
 						{AccountResponsible : "d", SalesAmount : "40", SalesNumber : 4}
 					]
 				})
-				.expectChange("isExpanded", [,,,,, false])
+				.expectChange("groupLevelCount", [,,, undefined])
+				.expectChange("isExpanded", [,,, undefined,, false])
 				.expectChange("isTotal", [,,, false, false, true])
 				.expectChange("level", [,,, 2, 2, 1])
-				.expectChange("region", [,,, "Z", "Z", "Y"])
+				.expectChange("region", [,,,, "Z", "Y"])
 				.expectChange("accountResponsible", [,,, "c", "d", ""])
 				.expectChange("salesAmount", [,,, "30", "40", "280"])
 				.expectChange("salesNumber", [,,, "3", "4", null]);
@@ -23832,14 +23833,14 @@ sap.ui.define([
 						SalesAmountLocalCurrency : "400"
 					}]
 				})
-				.expectChange("isExpanded", [,,,,,,,,, false])
+				.expectChange("isExpanded", [,,,,,, undefined, undefined, , false])
 				.expectChange("isTotal", [,,,,,, false, false, false, true])
 				.expectChange("level", [,,,,,, 2, 2, 2, 1])
 				.expectChange("country", [,,,,,, "X", "X", "X", "W"])
 				.expectChange("region", [,,,,,, "c", "d", "e", ""])
-				.expectChange("amountPerSale", [,,,,,, "10", "10", "10", null])
+				.expectChange("amountPerSale", [,,,,,,, "10", "10", null])
 				.expectChange("salesAmount", [,,,,,, "30.30", "40.40", "50.50", null])
-				.expectChange("currency", [,,,,,, "DEM", "DEM", "DEM", ""])
+				.expectChange("currency", [,,,,,,, "DEM", "DEM", ""])
 				.expectChange("salesAmountLocalCurrency", [,,,,,, "30", "40", "50", "400"])
 				.expectChange("localCurrency", [,,,,,, "USD", "USD", "USD", "JPY"])
 				.expectChange("salesNumber", [,,,,,, "3", "4", "5", null]);
@@ -25201,13 +25202,12 @@ sap.ui.define([
 					})
 				.expectCanceledError("Failed to get contexts for /aggregation/BusinessPartners"
 					+ " with start index 4 and length 4", "Collapse before read has finished")
-				.expectChange("groupLevelCount", [26])
-				.expectChange("isExpanded", [false])
-				.expectChange("isTotal", [true])
-				.expectChange("level", [1])
-				.expectChange("country", ["US"])
-				.expectChange("region", [""])
-				.expectChange("salesAmount", ["100"]);
+				.expectChange("groupLevelCount", [26,,,, undefined])
+				.expectChange("isExpanded", [false,,,, undefined])
+				.expectChange("isTotal", [true,,,, false])
+				.expectChange("level", [1,,,, 2])
+				.expectChange("region", ["",,,, "W"])
+				.expectChange("salesAmount", ["100",,,, "40"]);
 
 			// code under test
 			oTable.setFirstVisibleRow(4);
@@ -72877,6 +72877,107 @@ sap.ui.define([
 		await this.waitForChanges(assert);
 
 		await this.oView.byId("root").getBindingContext().requestRefresh();
+	});
+
+	//*********************************************************************************************
+	// Scenario: Contexts are visible within the table's viewport, even if a request for data after
+	// the visible area is still pending. First, scroll down so that all newly visible rows (4-7)
+	// are already available and are shown immediately. Second, scroll down so that the data for
+	// two rows (12-13) has to be requested, but the other rows (10-11) are shown immediately.
+	// Do it with and without a created context at the end, so that we see that a different view
+	// order is handled correctly.
+	// JIRA: CPOUI5ODATAV4-2689
+	[false, true].forEach(function (bCreateAtEnd) {
+		QUnit.test("CPOUI5ODATAV4-2689, create at end=" + bCreateAtEnd, async function (assert) {
+			const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
+			const sView = `
+	<t:Table id="table" rows="{path : '/SalesOrderList', parameters : {$count : true}}" threshold="4"
+			visibleRowCount="4">
+		<Text id="id" text="{SalesOrderID}"/>
+	</t:Table>`;
+
+			function createSalesOrders(iStartId, iLength) {
+				const aOrders = [];
+				for (let i = 0; i < iLength; i += 1) {
+					aOrders.push({SalesOrderID : `${iStartId + i}`});
+				}
+				return {
+					"@odata.count" : "20",
+					value : aOrders
+				};
+			}
+
+			this.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=0&$top=8",
+					createSalesOrders(0, 8))
+				.expectChange("id", ["0", "1", "2", "3"]);
+
+			await this.createView(assert, sView, oModel);
+
+			const oTable = this.oView.byId("table");
+			const oListBinding = oTable.getBinding("rows");
+
+			if (bCreateAtEnd) {
+				this.expectRequest({
+						method : "POST",
+						url : "SalesOrderList",
+						payload : {ID : "N"}
+					}); // no response required
+
+				const oCreatedContext = oTable.getBinding("rows").create({ID : "N"},
+					/*bSkipRefresh*/true, /*bAtEnd*/true);
+
+				await Promise.all([
+					oCreatedContext.created(),
+					this.waitForChanges(assert, "create at end")
+				]);
+			}
+
+			let fnResolve;
+			this.expectChange("id", [,,,, "4", "5", "6", "7"])
+				.expectEvents(assert, oListBinding, [
+					[, "dataRequested"]
+				])
+				.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=8&$top=4",
+					new Promise(function (resolve) {
+						fnResolve = resolve.bind(null, createSalesOrders(8, 4));
+					}));
+
+			oTable.setFirstVisibleRow(4);
+
+			await this.waitForChanges(assert, "scroll down, all rows available");
+
+			this.expectEvents(assert, oListBinding, [
+					// no change
+					[, "dataReceived", {data : {}}]
+				]);
+
+			fnResolve();
+
+			await resolveLater(); // allow time for the response processing
+
+			this.expectChange("id", [,,,,,,,,,, "10", "11"])
+				.expectEvents(assert, oListBinding, [
+					[, "dataRequested"]
+				])
+				.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=12&$top=6",
+					new Promise(function (resolve) {
+						fnResolve = resolve.bind(null, createSalesOrders(12, 6));
+					}));
+
+			oTable.setFirstVisibleRow(10);
+
+			await this.waitForChanges(assert, "scroll down, two rows missing");
+
+			this.expectEvents(assert, oListBinding, [
+					[, "change", {reason : "change"}],
+					[, "dataReceived", {data : {}}]
+				])
+				.expectChange("id", [,,,,,,,,,,,, "12", "13"]);
+
+			fnResolve();
+
+			await this.waitForChanges(assert);
+		});
 	});
 
 	//*********************************************************************************************

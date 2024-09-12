@@ -27,6 +27,19 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @abstract
+	 *
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.open as #open
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.close as #close
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.getItemForValue as #getItemForValue
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.navigate as #navigate
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.getUseAsValueHelp as #getUseAsValueHelp
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.isValidationSupported as #isValidationSupported
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.shouldOpenOnNavigate as #shouldOpenOnNavigate
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.shouldOpenOnFocus as #shouldOpenOnFocus
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.shouldOpenOnClick as #shouldOpenOnClick
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.removeVisualFocus as #removeVisualFocus
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.setVisualFocus as #setVisualFocus
+	 *
 	 * @public
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.base.Container
@@ -418,7 +431,7 @@ sap.ui.define([
 		return this.getUIArea();
 	};
 
-	/**
+	/*
 	 * Opens the container.
 	 *
 	 * @param {Promise} oValueHelpContentPromise Promise for content request
@@ -444,7 +457,7 @@ sap.ui.define([
 		return this._retrievePromise("open");
 	};
 
-	/**
+	/*
 	 * Closes the container.
 	 *
 	 * @private
@@ -583,7 +596,7 @@ sap.ui.define([
 		return oPromise && !oPromise.isCanceled() && !oPromise.isSettled();
 	};
 
-	/**
+	/*
 	 * Determines the item (key and description) for a given value.
 	 *
 	 * The container checks if there is an item with a key or description that fits this value.
@@ -601,7 +614,7 @@ sap.ui.define([
 		return undefined;
 	};
 
-	/**
+	/*
 	 * Defines if the content of the container can be used for input validation.
 	 *
 	 * @returns {boolean} True if content can be used for input validation
@@ -614,7 +627,7 @@ sap.ui.define([
 	};
 
 
-	/**
+	/*
 	 * Triggers navigation in the content of the container.
 	 *
 	 * As this could be asynchronous in case additional data needs to be loaded a promise is returned.
@@ -643,7 +656,7 @@ sap.ui.define([
 	Container.prototype.navigateInContent = function(iStep) { // implemented by Popover
 	};
 
-	/**
+	/*
 	 * The focus visualization of the field help needs to be removed as the user starts typing into the field.
 	 *
 	 * @private
@@ -651,7 +664,7 @@ sap.ui.define([
 	 */
 	Container.prototype.removeVisualFocus = function() {};
 
-	/**
+	/*
 	 * The focus visualization of the field help needs to be set as the user starts naigation into the value help items.
 	 *
 	 * @private
@@ -814,7 +827,7 @@ sap.ui.define([
 		return !!oValueHelp && oValueHelp.bDelegateInitialized;
 	};
 
-	/**
+	/*
 	 * If the container is used for type-ahead it might be wanted that the same content should
 	 * also be shown as valuehelp. If not, the field should not show a valuehelp icon.
 	 *
@@ -874,7 +887,7 @@ sap.ui.define([
 		return oContainer && oContainer.getScrollDelegate && oContainer.getScrollDelegate();
 	};
 
-	/**
+	/*
 	 * Determines if the value help should be opened when the user focuses the connected control.
 	 *
 	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user focuses the connected field control
@@ -887,7 +900,7 @@ sap.ui.define([
 		return oDelegate ? oDelegate.shouldOpenOnFocus(oValueHelp, this) : Promise.resolve(false);
 	};
 
-	/**
+	/*
 	 * Determines if the value help should be opened when the user clicks into the connected control.
 	 *
 	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user clicks into the connected field control
@@ -900,7 +913,7 @@ sap.ui.define([
 		return oDelegate ? oDelegate.shouldOpenOnClick(oValueHelp, this) : Promise.resolve(false);
 	};
 
-	/**
+	/*
 	 * Determines if the value help should be opened when the user used the arrow keys.
 	 *
 	 * @returns {boolean} If <code>true</code>, the value help should open when user used the arrow keys in the connected field control

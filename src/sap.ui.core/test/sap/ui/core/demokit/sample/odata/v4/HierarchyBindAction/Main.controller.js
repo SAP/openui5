@@ -20,7 +20,7 @@ sap.ui.define([
 				await oContext.created();
 				this.scrollTo(oContext);
 			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+				MessageBox.error(oError.message);
 			}
 		},
 
@@ -56,7 +56,7 @@ sap.ui.define([
 			try {
 				await oEvent.getSource().getBindingContext().delete();
 			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+				MessageBox.error(oError.message);
 			}
 		},
 
@@ -85,7 +85,7 @@ sap.ui.define([
 						? Number.MAX_SAFE_INTEGER
 						: parseFloat(sValue)); // Note: parseInt("1E16") === 1
 			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+				MessageBox.error(oError.message);
 			} finally {
 				this.byId("expandLevelsDialog").close();
 			}
@@ -133,7 +133,7 @@ sap.ui.define([
 					parent : null
 				});
 			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+				MessageBox.error(oError.message);
 			} finally {
 				this.getView().setBusy(false);
 			}
@@ -184,7 +184,7 @@ sap.ui.define([
 					oTable.setFirstVisibleRow(iParentIndex);
 				}
 			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+				MessageBox.error(oError.message);
 			} finally {
 				this.getView().setBusy(false);
 			}
@@ -206,8 +206,8 @@ sap.ui.define([
 					await oNode.move({nextSibling : oSibling, parent : oParent});
 				} else {
 					if (!oSibling) {
-						MessageBox.alert("Cannot move down",
-							{icon : MessageBox.Icon.INFORMATION, title : "Already last sibling"});
+						MessageBox.information("Cannot move down",
+							{title : "Already last sibling"});
 						return;
 					}
 
@@ -217,7 +217,7 @@ sap.ui.define([
 
 				this.scrollTo(oNode);
 			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+				MessageBox.error(oError.message);
 			} finally {
 				oNode.setKeepAlive(false);
 				this.getView().setBusy(false);
@@ -241,8 +241,7 @@ sap.ui.define([
 					if (oParent) {
 						this.scrollTo(oParent);
 					}
-					MessageBox.alert("Cannot move up",
-						{icon : MessageBox.Icon.INFORMATION, title : "Already first sibling"});
+					MessageBox.information("Cannot move up", {title : "Already first sibling"});
 					return;
 				}
 
@@ -251,7 +250,7 @@ sap.ui.define([
 				// make sure moved node is visible
 				this.scrollTo(oNode);
 			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+				MessageBox.error(oError.message);
 			} finally {
 				oNode.setSelected(false);
 				this.getView().setBusy(false);

@@ -318,7 +318,11 @@ sap.ui.define([
 		const aPromises = [];
 
 		this._oDependencies.forEach((oDependency) => {
-			aPromises.push(oDependency.load());
+			if (oDependency instanceof Promise) {
+				aPromises.push(oDependency);
+			} else {
+				aPromises.push(oDependency.load());
+			}
 		});
 
 		return Promise.all(aPromises);

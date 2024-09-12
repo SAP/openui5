@@ -103,7 +103,7 @@ sap.ui.define([
 
 	/**
 	 * Gets current keyPath of the content.
- 	 * <b>Note:</b> Every listcontent must implement this method.
+ 	 * <br><b>Note:</b> Every listcontent must implement this method.
 	 * @name sap.ui.mdc.valuehelp.base.ListContent#getKeyPath
 	 * @method
 	 * @abstract
@@ -113,7 +113,7 @@ sap.ui.define([
 
 	/**
 	 * Gets current descriptionPath of the content.
- 	 * <b>Note:</b> Every listcontent must implement this method.
+ 	 * <br><b>Note:</b> Every listcontent must implement this method.
 	 * @name sap.ui.mdc.valuehelp.base.ListContent#getDescriptionPath
 	 * @method
 	 * @abstract
@@ -123,7 +123,7 @@ sap.ui.define([
 
 	/**
 	 * Gets the <code>ListBinding</code> of the content.
-  	 * <b>Note:</b> Every listcontent must implement this method.
+  	 * <br><b>Note:</b> Every listcontent must implement this method.
 	 * @name sap.ui.mdc.valuehelp.base.ListContent#getListBinding
 	 * @method
 	 * @abstract

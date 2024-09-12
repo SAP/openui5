@@ -35,6 +35,7 @@ sap.ui.define([
 	 * @extends sap.ui.mdc.valuehelp.base.Container
 	 * @version ${version}
 	 * @constructor
+	 *
 	 * @public
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.Popover
@@ -43,7 +44,7 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.mdc",
 			interfaces: [
-				"sap.ui.mdc.valuehelp.ITypeaheadContainer", "sap.ui.mdc.valuehelp.IDialogContainer", "sap.ui.core.PopupInterface"
+				"sap.ui.mdc.valuehelp.base.ITypeaheadContainer", "sap.ui.mdc.valuehelp.base.IDialogContainer", "sap.ui.core.PopupInterface"
 			],
 			properties: {
 				/**

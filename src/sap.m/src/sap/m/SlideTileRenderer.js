@@ -98,12 +98,24 @@ SlideTileRenderer._renderTilesIndicator = function(oRm, oControl) {
 
 	oRm.openStart("div",  oControl.getId() + "-tilesIndicator");
 	oRm.class("sapMSTBulleted");
+	oRm.class("sapUiSizeCompact");
+	oRm.openEnd();
+	oRm.renderControl(oControl._oLeftScroll);
+	oRm.openStart("div",  oControl.getId() + "-tilesWrapper");
+	oRm.class("sapMSTIndicatorWrapper");
 	oRm.openEnd();
 	for ( var i = 0; i < iPageCount; i++) {
+		oRm.openStart("div",oControl.getId() + "-indicatorTap-" + i);
+		oRm.class("sapMSTIndicatorTapArea");
+		oRm.openEnd();
 		oRm.openStart("span", oControl.getId() + "-tileIndicator-" + i );
+		oRm.class("sapMSTIndicator");
 		oRm.openEnd();
 		oRm.close("span");
+		oRm.close("div");
 	}
+	oRm.close("div");
+	oRm.renderControl(oControl._oRightScroll);
 	oRm.close("div");
 };
 

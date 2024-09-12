@@ -1127,32 +1127,6 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Returns an array containing all current elements of a collection or single cache for the
-	 * given relative path; the array is annotated with the collection's $count. If there are
-	 * pending requests, the corresponding promises will be ignored and set to
-	 * <code>undefined</code>.
-	 *
-	 * @param {string} [sPath]
-	 *   Relative path to drill-down into, may be empty (only for collection cache)
-	 * @returns {object[]} The cache elements
-	 *
-	 * @public
-	 */
-	_Cache.prototype.getAllElements = function (sPath) {
-		var aAllElements;
-
-		if (sPath) {
-			return this.getValue(sPath);
-		}
-		aAllElements = this.aElements.map(function (oElement) {
-			return oElement instanceof SyncPromise ? undefined : oElement;
-		});
-		aAllElements.$count = this.aElements.$count;
-
-		return aAllElements;
-	};
-
-	/**
 	 * Returns the collection at the given path and removes it from the cache if it is marked as
 	 * transferable.
 	 *
@@ -1238,6 +1212,34 @@ sap.ui.define([
 			+ this.oRequestor.buildQueryString(
 				_Helper.buildPath(this.sMetaPath, _Helper.getMetaPath(sPath)),
 				this.getDownloadQueryOptions(mQueryOptions), false, true);
+	};
+
+	/**
+	 * Returns an array containing elements of a collection or single cache for the given relative
+	 * path; the array is annotated with the collection's $count. If no range is given, all elements
+	 * are returned. If there are pending requests, the corresponding promises will be ignored and
+	 * set to <code>undefined</code>.
+	 *
+	 * @param {string} [sPath]
+	 *   Relative path to drill-down into, may be empty (only for collection cache)
+	 * @param {number} [iStart]
+	 *   The start index of the range (inclusive)
+	 * @param {number} [iEnd]
+	 *   The end index of the range (exclusive)
+	 * @returns {object[]|undefined} The cache elements
+	 *
+	 * @public
+	 */
+	_Cache.prototype.getElements = function (sPath, iStart, iEnd) {
+		const aElements = this.getValue(sPath);
+		if (!aElements) {
+			return undefined;
+		}
+		const aFilteredElements = aElements.slice(iStart, iEnd)
+			.map((oElement) => (oElement instanceof SyncPromise ? undefined : oElement));
+		aFilteredElements.$count = aElements.$count;
+
+		return aFilteredElements;
 	};
 
 	/**

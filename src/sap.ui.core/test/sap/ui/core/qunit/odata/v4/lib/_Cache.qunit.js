@@ -5377,31 +5377,34 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("#getAllElements without path", function (assert) {
-		var aAllElements,
-			oCache = this.createCache("Employees"),
+	QUnit.test("#getElements", function (assert) {
+		var oCache = this.createCache("Employees"),
 			oPromise = new SyncPromise(function () {});
 
-		oCache.aElements = ["~oElement0~", oPromise, "~oElement2~"];
-		oCache.aElements.$count = 3;
+		const aCacheElements = [];
+		aCacheElements.$count = 42;
+		this.mock(oCache).expects("getValue").withExactArgs("~path~").returns(aCacheElements);
+		this.mock(aCacheElements).expects("slice").withExactArgs("~iStart~", "~iEnd~")
+			.returns(["~oElement0~", oPromise, "~oElement2~"]);
 
 		// code under test
-		aAllElements = oCache.getAllElements();
-		assert.deepEqual(aAllElements, ["~oElement0~", undefined, "~oElement2~"]);
+		const aElements = oCache.getElements("~path~", "~iStart~", "~iEnd~");
 
-		assert.strictEqual(aAllElements.$count, 3);
+		assert.deepEqual(aElements, ["~oElement0~", undefined, "~oElement2~"]);
+		assert.strictEqual(aElements.$count, 42);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("#getAllElements with relative path for drill down", function (assert) {
-		var oCache = this.createCache("Employees");
+[undefined, null].forEach(function (aElements) {
+	QUnit.test(`#getElements: ${aElements}`, function (assert) {
+		const oCache = this.createCache("Employees");
 
-		this.mock(oCache).expects("getValue").withExactArgs("~relativePath~")
-			.returns("~elements~");
+		this.mock(oCache).expects("getValue").withExactArgs("~path~").returns(aElements);
 
 		// code under test
-		assert.strictEqual(oCache.getAllElements("~relativePath~"), "~elements~");
+		assert.strictEqual(oCache.getElements("~path~", "~iStart~", "~iEnd~"), undefined);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("Cache#getDownloadQueryOptions", function (assert) {

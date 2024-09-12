@@ -1859,7 +1859,10 @@ sap.ui.define([
 		this.mock(oBinding).expects("resolveRefreshPromise")
 			.withExactArgs(sinon.match.same(oFetchContextsPromise))
 			.returns(oFetchContextsPromise);
-		this.mock(oBinding).expects("getContextsInViewOrder")
+		const oCreateExpectation = this.mock(oBinding).expects("createContextsForCachedData")
+			.exactly(bAsync ? 1 : 0)
+			.withExactArgs(5, 10);
+		const oGetContextsExpectation = this.mock(oBinding).expects("getContextsInViewOrder")
 			.withExactArgs(5, 10)
 			.returns(aContexts);
 		this.mock(oBinding).expects("_fireChange")
@@ -1873,6 +1876,9 @@ sap.ui.define([
 		assert.strictEqual(aResults, aContexts);
 		assert.strictEqual(oBinding.iCurrentBegin, bKeepCurrent ? 2 : 5);
 		assert.strictEqual(oBinding.iCurrentEnd, bKeepCurrent ? 7 : 15);
+		if (bAsync) {
+			assert.ok(oCreateExpectation.calledBefore(oGetContextsExpectation));
+		}
 
 		return oFetchContextsPromise;
 	});
@@ -1964,6 +1970,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("fetchContexts")
 			.withExactArgs(0, 10, 100, undefined, /*bAsync=*/true, sinon.match.func)
 			.returns(oFetchContextsPromise);
+		this.mock(oBinding).expects("createContextsForCachedData").never();
 		this.mock(oBinding).expects("_fireChange")
 			.withExactArgs({reason : sChangeReason});
 
@@ -2129,6 +2136,7 @@ sap.ui.define([
 		oFetchContextsCall = this.mock(oBinding).expects("fetchContexts")
 			.withExactArgs(0, 10, 100, undefined, false, sinon.match.func)
 			.returns(oFetchContextsPromise);
+		this.mock(oBinding).expects("createContextsForCachedData").withExactArgs(0, 10);
 		this.mock(oBinding.oModel).expects("reportError")
 			.withExactArgs("Failed to get contexts for /service/~ with start index 0 and length 10",
 				sClassName, sinon.match.same(oError));
@@ -2168,6 +2176,7 @@ sap.ui.define([
 		oFetchContextsCall = oBindingMock.expects("fetchContexts")
 			.withExactArgs(0, 10, 100, undefined, false, sinon.match.func)
 			.returns(oFetchContextsPromise);
+		this.mock(oBinding).expects("createContextsForCachedData").withExactArgs(0, 10);
 		this.mock(oBinding.oModel).expects("resolve")
 			.withExactArgs(oBinding.sPath, sinon.match.same(oContext)).returns("/~");
 		oBindingMock.expects("fireDataRequested").withExactArgs(null).throws(oError);
@@ -2195,6 +2204,7 @@ sap.ui.define([
 		oFetchContextsCall = oBindingMock.expects("fetchContexts")
 			.withExactArgs(0, 10, 100, undefined, false, sinon.match.func)
 			.returns(oFetchContextsPromise);
+		this.mock(oBinding).expects("createContextsForCachedData").withExactArgs(0, 10);
 		this.mock(oBinding.oModel).expects("resolve")
 			.withExactArgs(oBinding.sPath, sinon.match.same(oContext)).returns("/~");
 		oBindingMock.expects("fireDataReceived").withExactArgs({data : {}}, null)
@@ -2239,6 +2249,7 @@ sap.ui.define([
 		oBindingMock.expects("fetchContexts")
 			.withExactArgs(0, 10, 0, undefined, true, sinon.match.func)
 			.returns(oFetchContextsPromise);
+		this.mock(oBinding).expects("createContextsForCachedData").never();
 		this.mock(oBinding).expects("_fireChange")
 			.exactly(oFixture.bChanged || oFixture.aDiff?.length ? 1 : 0)
 			.withExactArgs({reason : sChangeReason});
@@ -4232,8 +4243,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[false, true].forEach(function (bCreateOnly) {
+	//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	[false, true].forEach(function (bCreated) {
-		var sTitle = "createContexts, paging: less data than requested; w/ created: " + bCreated;
+		var sTitle = "createContexts, paging: less data than requested; create only : "
+			+ bCreateOnly + ", w/ created: " + bCreated;
 
 		QUnit.test(sTitle, function (assert) {
 			var oBinding = this.bindList("/EMPLOYEES", {/*oContext*/}),
@@ -4262,44 +4276,50 @@ sap.ui.define([
 			// code under test: set length and length final flag
 			// Note: short reads are handled by _Cache and set $count!
 			assert.strictEqual(
-				oBinding.createContexts(20 + iCreatedContexts, result(29, 20 + 29)),
+				oBinding.createContexts(20 + iCreatedContexts, result(29, 20 + 29), bCreateOnly),
 				true);
 
-			assert.strictEqual(oBinding.bLengthFinal, true,
+			assert.strictEqual(oBinding.bLengthFinal, !bCreateOnly,
 				"some controls use bLengthFinal instead of isLengthFinal()");
-			assert.strictEqual(oBinding.getLength(), 49 + iCreatedContexts);
+			assert.strictEqual(oBinding.getLength(),
+				49 + iCreatedContexts + (bCreateOnly ? 10 : 0));
 			assert.strictEqual(oBinding.aContexts.length, 49 + iCreatedContexts);
-			assert.strictEqual(oBinding.iMaxLength, 49);
+			assert.strictEqual(oBinding.iMaxLength, bCreateOnly ? Infinity : 49);
 
 			for (i = 37; i < 49; i += 1) {
 				this.mock(oBinding.aContexts[i + iCreatedContexts]).expects("destroy")
+					.exactly(bCreateOnly ? 0 : 1)
 					.withExactArgs();
 			}
 			// code under test: delete obsolete contexts
 			assert.strictEqual(
-				oBinding.createContexts(20 + iCreatedContexts, result(17, 20 + 17)),
-				true);
+				oBinding.createContexts(20 + iCreatedContexts, result(17, 20 + 17), bCreateOnly),
+				!bCreateOnly);
 
-			assert.strictEqual(oBinding.isLengthFinal(), true);
-			assert.strictEqual(oBinding.getLength(), 37 + iCreatedContexts);
-			assert.strictEqual(oBinding.aContexts.length, 37 + iCreatedContexts);
-			assert.strictEqual(oBinding.iMaxLength, 37);
+			assert.strictEqual(oBinding.isLengthFinal(), !bCreateOnly);
+			assert.strictEqual(oBinding.getLength(),
+				bCreateOnly ? 49 + 10 + iCreatedContexts : 37 + iCreatedContexts);
+			assert.strictEqual(oBinding.aContexts.length,
+				bCreateOnly ? 49 + iCreatedContexts : 37 + iCreatedContexts);
+			assert.strictEqual(oBinding.iMaxLength, bCreateOnly ? Infinity : 37);
 
 			// code under test
 			assert.strictEqual(
-				oBinding.createContexts(20 + iCreatedContexts, result(17)),
+				oBinding.createContexts(20 + iCreatedContexts, result(17), bCreateOnly),
 				false,
 				"do not modify upper boundary if same data is read (no short read)");
 
-			assert.strictEqual(oBinding.isLengthFinal(), true);
-			assert.strictEqual(oBinding.getLength(), 37 + iCreatedContexts);
-			assert.strictEqual(oBinding.aContexts.length, 37 + iCreatedContexts);
-			assert.strictEqual(oBinding.iMaxLength, 37);
+			assert.strictEqual(oBinding.isLengthFinal(), !bCreateOnly);
+			assert.strictEqual(oBinding.getLength(),
+				bCreateOnly ? 49 + 10 + iCreatedContexts : 37 + iCreatedContexts);
+			assert.strictEqual(oBinding.aContexts.length,
+				bCreateOnly ? 49 + iCreatedContexts : 37 + iCreatedContexts);
+			assert.strictEqual(oBinding.iMaxLength, bCreateOnly ? Infinity : 37);
 
 			// code under test: reset upper boundary
 //TODO cannot happen with our _Cache; _Cache doesn't read more than final length elements
 			assert.strictEqual(
-				oBinding.createContexts(20 + iCreatedContexts, result(30)),
+				oBinding.createContexts(20 + iCreatedContexts, result(30), bCreateOnly),
 				true);
 
 			assert.strictEqual(oBinding.isLengthFinal(), false);
@@ -4309,40 +4329,43 @@ sap.ui.define([
 
 			// code under test: no data for some other page is not a change
 			assert.strictEqual(
-				oBinding.createContexts(10000 + iCreatedContexts, result(0)),
+				oBinding.createContexts(10000 + iCreatedContexts, result(0), bCreateOnly),
 				false);
 
 			assert.strictEqual(oBinding.isLengthFinal(), false);
 			assert.strictEqual(oBinding.getLength(), 60 + iCreatedContexts);
 			assert.strictEqual(oBinding.aContexts.length, 50 + iCreatedContexts);
-			assert.strictEqual(oBinding.iMaxLength, 10000);
+			assert.strictEqual(oBinding.iMaxLength, bCreateOnly ? Infinity : 10000);
 //TODO iMaxLength must be set if iResultLength > 0 || iResultLength === 0 && oRange.start === 0;
 // or oRange.start is just after the last known good;
 //TODO it can only shrink if iResultLength === 0
 
 			// code under test: no data for *next* page is a change (bLengthFinal changes)
 			assert.strictEqual(
-				oBinding.createContexts(50 + iCreatedContexts, result(0)),
-				true);
+				oBinding.createContexts(50 + iCreatedContexts, result(0), bCreateOnly),
+				!bCreateOnly);
 
-			assert.strictEqual(oBinding.isLengthFinal(), true);
-			assert.strictEqual(oBinding.getLength(), 50 + iCreatedContexts);
+			assert.strictEqual(oBinding.isLengthFinal(), !bCreateOnly);
+			assert.strictEqual(oBinding.getLength(),
+				50 + iCreatedContexts + (bCreateOnly ? 10 : 0));
 			assert.strictEqual(oBinding.aContexts.length, 50 + iCreatedContexts);
-			assert.strictEqual(oBinding.iMaxLength, 50);
+			assert.strictEqual(oBinding.iMaxLength, bCreateOnly ? Infinity : 50);
 
 			// code under test
 			assert.strictEqual(
-				oBinding.createContexts(30 + iCreatedContexts, result(0)),
-				true);
+				oBinding.createContexts(30 + iCreatedContexts, result(0), bCreateOnly),
+				!bCreateOnly);
 
-			assert.strictEqual(oBinding.isLengthFinal(), true);
-			assert.strictEqual(oBinding.getLength(), 30 + iCreatedContexts);
-			assert.strictEqual(oBinding.aContexts.length, 30 + iCreatedContexts);
-			assert.strictEqual(oBinding.iMaxLength, 30);
+			assert.strictEqual(oBinding.isLengthFinal(), !bCreateOnly);
+			assert.strictEqual(oBinding.getLength(),
+				bCreateOnly ? 50 + 10 + iCreatedContexts : 30 + iCreatedContexts);
+			assert.strictEqual(oBinding.aContexts.length,
+				bCreateOnly ? 50 + iCreatedContexts : 30 + iCreatedContexts);
+			assert.strictEqual(oBinding.iMaxLength, bCreateOnly ? Infinity : 30);
 
 			// code under test: preparation for following test for server-side paging: create a gap
 			assert.strictEqual(
-				oBinding.createContexts(100 + iCreatedContexts, result(20)),
+				oBinding.createContexts(100 + iCreatedContexts, result(20), bCreateOnly),
 				true);
 
 			assert.strictEqual(oBinding.isLengthFinal(), false);
@@ -4357,7 +4380,7 @@ sap.ui.define([
 
 			// code under test: gap is not read completely
 			assert.strictEqual(
-				oBinding.createContexts(0 + iCreatedContexts, aResults),
+				oBinding.createContexts(0 + iCreatedContexts, aResults, bCreateOnly),
 				true);
 
 			assert.strictEqual(oBinding.isLengthFinal(), false);
@@ -4367,8 +4390,9 @@ sap.ui.define([
 		});
 	});
 
-	//*********************************************************************************************
-	QUnit.test("createContexts, reuse previous contexts", function (assert) {
+	//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	let sTitle = `createContexts: reuse previous contexts, create only=${bCreateOnly}`;
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES", {/*oContext*/}),
 			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES/1", 1),
 			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES/2", 2),
@@ -4389,20 +4413,20 @@ sap.ui.define([
 		this.mock(oBinding.oHeaderContext).expects("isSelected")
 			.withExactArgs().returns("~selected~");
 		this.mock(oContext3).expects("doSetSelected").withExactArgs("~selected~");
-		this.mock(this.oModel).expects("addPrerenderingTask")
-			.withExactArgs(sinon.match.func).callsArg(0);
-		this.mock(oBinding).expects("destroyPreviousContexts").withExactArgs(["/EMPLOYEES/0"]);
+		this.mock(oBinding).expects("destroyPreviousContextsLater").exactly(bCreateOnly ? 0 : 1)
+			.withExactArgs(["/EMPLOYEES/0"]);
 
 		// code under test
-		oBinding.createContexts(1, [{}, {}, {}]);
+		oBinding.createContexts(1, [{}, {}, {}], bCreateOnly);
 
 		assert.strictEqual(oBinding.aContexts[1], oContext1);
 		assert.strictEqual(oBinding.aContexts[2], oContext2);
 		assert.strictEqual(oBinding.aContexts[3], oContext3);
 	});
 
-	//*********************************************************************************************
-	QUnit.test("createContexts w/ keyPredicates, reuse previous contexts", function (assert) {
+	//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	sTitle = `createContexts w/ keyPredicates, reuse previous contexts, create only=${bCreateOnly}`;
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES", {/*oContext*/}),
 			oBindingMock = this.mock(oBinding),
 			oContext0 = {},
@@ -4428,7 +4452,7 @@ sap.ui.define([
 				"/EMPLOYEES('C')", 1)
 			.returns(oContext2);
 		this.mock(oContext4).expects("getPath").withExactArgs().returns("/EMPLOYEES('E')");
-		oBindingMock.expects("destroyPreviousContextsLater")
+		oBindingMock.expects("destroyPreviousContextsLater").exactly(bCreateOnly ? 0 : 1)
 			.withExactArgs(["/EMPLOYEES('A')", "/EMPLOYEES('D')"]);
 
 		// code under test
@@ -4438,7 +4462,7 @@ sap.ui.define([
 			"@$ui5._" : {predicate : "('C')"}
 		}, {
 			"@$ui5._" : {context : oContext4, predicate : "('E')"}
-		}]);
+		}], bCreateOnly);
 
 		assert.strictEqual(oBinding.aContexts[2], oContext1);
 		assert.strictEqual(oBinding.aContexts[3], oContext2);
@@ -4453,8 +4477,8 @@ sap.ui.define([
 		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES('D')"], oContext3);
 	});
 
-	//*********************************************************************************************
-	QUnit.test("createContexts: shrink contexts", function (assert) {
+	//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	QUnit.test(`createContexts: shrink contexts, create only=${bCreateOnly}`, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES", {}),
 			oContext = {
 				destroy : function () {}
@@ -4464,18 +4488,19 @@ sap.ui.define([
 		aResults.$count = 1;
 		oBinding.aContexts = [, , oContext];
 
-		this.mock(oContext).expects("destroy").withExactArgs();
+		this.mock(oContext).expects("destroy").exactly(bCreateOnly ? 0 : 1).withExactArgs();
 
 		// code under test
-		oBinding.createContexts(1, aResults);
+		oBinding.createContexts(1, aResults, bCreateOnly);
 
-		assert.deepEqual(oBinding.aContexts, []);
-		assert.strictEqual(oBinding.bLengthFinal, true);
-		assert.strictEqual(oBinding.iMaxLength, 1);
+		assert.deepEqual(oBinding.aContexts, bCreateOnly ? [, , oContext] : []);
+		assert.strictEqual(oBinding.bLengthFinal, !bCreateOnly);
+		assert.strictEqual(oBinding.iMaxLength, bCreateOnly ? Infinity : 1);
 	});
 
-	//*********************************************************************************************
-	QUnit.test("createContexts: do not reuse a created context", function (assert) {
+	//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	sTitle = `createContexts: do not reuse a created context, create only=${bCreateOnly}`;
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oCreatedContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('1')", -1,
 				SyncPromise.resolve()),
@@ -4491,23 +4516,23 @@ sap.ui.define([
 			.returns(oNewContext);
 		this.mock(oBinding.oHeaderContext).expects("isSelected")
 			.withExactArgs().returns("~selected~");
-		this.mock(oCreatedContext).expects("isEffectivelyKeptAlive").twice()
+		this.mock(oCreatedContext).expects("isEffectivelyKeptAlive")
 			.withExactArgs().returns(false);
 		this.mock(oNewContext).expects("doSetSelected").withExactArgs("~selected~");
-		this.mock(this.oModel).expects("addPrerenderingTask")
-			.withExactArgs(sinon.match.func).callsArg(0);
-		this.mock(oCreatedContext).expects("destroy").withExactArgs();
+		this.mock(oBinding).expects("destroyPreviousContextsLater").exactly(bCreateOnly ? 0 : 1)
+			.withExactArgs(["/EMPLOYEES('1')"]);
 
 		// code under test
 		oBinding.createContexts(0, [{
 			"@$ui5._" : {predicate : "('1')"}
-		}]);
+		}], bCreateOnly);
 
 		assert.strictEqual(oBinding.aContexts[0], oNewContext);
 	});
 
-	//*********************************************************************************************
-	QUnit.test("createContexts: reuse a created context if kept alive", function (assert) {
+	//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	sTitle = `createContexts: reuse a created context if kept alive, create only=${bCreateOnly}`;
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oCreatedContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('1')", -1,
 				SyncPromise.resolve());
@@ -4517,21 +4542,23 @@ sap.ui.define([
 			"/EMPLOYEES('1')" : oCreatedContext
 		};
 		this.mock(Context).expects("create").never();
-		this.mock(oBinding).expects("destroyPreviousContextsLater").withExactArgs([]);
+		this.mock(oBinding).expects("destroyPreviousContextsLater").exactly(bCreateOnly ? 0 : 1)
+			.withExactArgs([]);
 		this.mock(oCreatedContext).expects("destroy").never();
 		this.mock(oCreatedContext).expects("checkUpdate").withExactArgs();
 
 		// code under test
 		oBinding.createContexts(0, [{
 			"@$ui5._" : {context : "n/a", predicate : "('1')"}
-		}]);
+		}], bCreateOnly);
 
 		assert.strictEqual(oBinding.aContexts[0], oCreatedContext);
 		assert.strictEqual(oCreatedContext.getModelIndex(), 0);
 	});
 
-	//*********************************************************************************************
-	QUnit.test("createContexts: reuse a created context in a RH", function (assert) {
+	//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	sTitle = `createContexts: reuse a created context in a RH, create only=${bCreateOnly}`;
+	QUnit.test(sTitle, function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
 		const oCreatedContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES('1')", 42,
@@ -4544,7 +4571,8 @@ sap.ui.define([
 			"/EMPLOYEES('2')" : oCreatedContext2
 		};
 		this.mock(Context).expects("create").never();
-		this.mock(oBinding).expects("destroyPreviousContextsLater").withExactArgs([]);
+		this.mock(oBinding).expects("destroyPreviousContextsLater").exactly(bCreateOnly ? 0 : 1)
+			.withExactArgs([]);
 		this.mock(oCreatedContext1).expects("destroy").never();
 		this.mock(oCreatedContext1).expects("setPersisted").never();
 		this.mock(oCreatedContext1).expects("checkUpdate").withExactArgs();
@@ -4557,7 +4585,7 @@ sap.ui.define([
 			"@$ui5._" : {context : "n/a", predicate : "('1')"}
 		}, {
 			"@$ui5._" : {context : "n/a", predicate : "('2')"}
-		}]);
+		}], bCreateOnly);
 
 		assert.strictEqual(oBinding.aContexts[0], oCreatedContext1);
 		assert.strictEqual(oBinding.aContexts[1], oCreatedContext2);
@@ -4565,10 +4593,10 @@ sap.ui.define([
 		assert.strictEqual(oCreatedContext2.getModelIndex(), 1);
 	});
 
-	//*********************************************************************************************
+	//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 [false, true].forEach(function (bSame) {
-	const sTitle = `createContexts: reuse created from 'context' annotation, same : ${bSame}`;
-
+	sTitle = `createContexts: reuse created from 'context' annotation, create only ${bCreateOnly},
+		same : ${bSame}`;
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oCreatedContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('1')", -1,
@@ -4585,19 +4613,48 @@ sap.ui.define([
 		this.mock(oCreatedContext).expects("checkUpdate").never();
 		this.mock(oCreatedContext).expects("destroy").never();
 		this.mock(oNewContext).expects("getPath").withExactArgs().returns("/EMPLOYEES('1')");
-		this.mock(oBinding).expects("destroyPreviousContextsLater")
+		this.mock(oBinding).expects("destroyPreviousContextsLater").exactly(bCreateOnly ? 0 : 1)
 			.withExactArgs(bSame ? [] : ["/EMPLOYEES('1')"]);
 
 		// code under test
 		oBinding.createContexts(42, [{
 			"@$ui5._" : {context : oNewContext, predicate : "('1')"}
-		}]);
+		}], bCreateOnly);
 
 		assert.strictEqual(oBinding.aContexts[42], oNewContext);
 		assert.strictEqual(oNewContext.iIndex, 42);
 		assert.deepEqual(oBinding.mPreviousContextsByPath, bSame
 			? {} // removed
 			: {"/EMPLOYEES('1')" : oCreatedContext}); // unchanged
+	});
+});
+}); // for each bCreateOnly
+
+	//*********************************************************************************************
+[undefined, "~aElements~"].forEach(function (aElements) {
+	[false, true].forEach(function (bCreatedAtEnd) {
+		const sTitle = `createContextsForCachedData: ${aElements}, created at end=${bCreatedAtEnd}`;
+
+	QUnit.test(sTitle, function () {
+		const oBinding = this.bindList("/EMPLOYEES");
+		const oCache = {
+			getElements : mustBeMocked
+		};
+		oBinding.bFirstCreateAtEnd = bCreatedAtEnd;
+		oBinding.iCreatedContexts = 7;
+		const iOffset = bCreatedAtEnd ? 7 : 0;
+		this.mock(oBinding).expects("withCache")
+			.withExactArgs(sinon.match.func, "", true)
+			.callsArgWith(0, oCache, "~path~");
+		this.mock(oCache).expects("getElements")
+			.withExactArgs("~path~", 23 + iOffset, 23 + 42 + iOffset)
+			.returns(aElements);
+		this.mock(oBinding).expects("createContexts").exactly(aElements ? 1 : 0)
+			.withExactArgs(23 + iOffset, aElements, true);
+
+		// code under test
+		oBinding.createContextsForCachedData(23, 42);
+	});
 	});
 });
 
@@ -10704,12 +10761,12 @@ sap.ui.define([
 	QUnit.test("getAllCurrentContexts: bFireChange = " + bFireChange, function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 		const oCache = {
-			getAllElements : function () {}
+			getElements : function () {}
 		};
 
 		this.mock(oBinding).expects("withCache").withExactArgs(sinon.match.func, "", true)
 			.callsArgWith(0, oCache, "path/to/cache");
-		this.mock(oCache).expects("getAllElements").withExactArgs("path/to/cache")
+		this.mock(oCache).expects("getElements").withExactArgs("path/to/cache")
 			.returns("~aElements~");
 		this.mock(oBinding).expects("createContexts").withExactArgs(0, "~aElements~")
 			.returns(bFireChange);

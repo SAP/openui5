@@ -8,7 +8,7 @@
 
 .sapMFlexBoxBGSolid,
 .sapMFlexBoxBGTranslucent {
-	background-color: @sapUiGroupContentBackground;
+	background-color: var(--sapGroup_ContentBackground);
 }
 
 .sapMFlexBoxBGTransparent {
@@ -38,111 +38,136 @@
 	position: relative;
 }
 
-/*** flex-direction ***/
+/* flex-direction */
 .sapMHBox {
 	flex-direction: row;
 }
+
 .sapMVBox {
 	flex-direction: column;
 }
+
 .sapMHBox.sapMFlexBoxReverse {
 	flex-direction: row-reverse;
 }
+
 .sapMVBox.sapMFlexBoxReverse {
 	flex-direction: column-reverse;
 }
 
-
-/*** justify-content ***/
+/* justify-content */
 .sapMFlexBoxJustifyStart {
 	justify-content: flex-start;
 }
+
 .sapMFlexBoxJustifyEnd {
 	justify-content: flex-end;
 }
+
 .sapMFlexBoxJustifyCenter {
 	justify-content: center;
 }
+
 .sapMFlexBoxJustifySpaceBetween {
 	justify-content: space-between;
 }
+
 .sapMFlexBoxJustifySpaceAround {
 	justify-content: space-around;
 }
+
 .sapMFlexBoxJustifyInherit {
 	justify-content: inherit;
 }
 
-/*** align-items ***/
+/* align-items */
 .sapMFlexBoxAlignItemsStart {
 	align-items: flex-start;
 }
+
 .sapMFlexBoxAlignItemsEnd {
 	align-items: flex-end;
 }
+
 .sapMFlexBoxAlignItemsCenter {
 	align-items: center;
 }
+
 .sapMFlexBoxAlignItemsBaseline {
 	align-items: baseline;
 }
+
 .sapMFlexBoxAlignItemsStretch {
 	align-items: stretch;
 }
+
 .sapMFlexBoxAlignItemsInherit {
 	align-items: inherit;
 }
 
-/*** wrap ***/
+/* wrap */
 .sapMFlexBoxWrapNoWrap {
 	flex-wrap: nowrap;
 }
+
 .sapMFlexBoxWrapWrap {
 	flex-wrap: wrap;
 }
+
 .sapMFlexBoxWrapWrapReverse {
 	flex-wrap: wrap-reverse;
 }
 
-/*** align-content ***/
+/* align-content */
 .sapMFlexBoxAlignContentStart {
 	align-content: flex-start;
 }
+
 .sapMFlexBoxAlignContentEnd {
 	align-content: flex-end;
 }
+
 .sapMFlexBoxAlignContentCenter {
 	align-content: center;
 }
+
 .sapMFlexBoxAlignContentSpaceBetween {
 	align-content: space-between;
 }
+
 .sapMFlexBoxAlignContentSpaceAround {
 	align-content: space-around;
 }
+
 .sapMFlexBoxAlignContentStretch {
 	align-content: stretch;
 }
 
-/*** align-self ***/
+/* align-self */
 .sapMFlexItemAlignAuto {
 	align-self: auto;
 }
+
 .sapMFlexItemAlignStart {
 	align-self: flex-start;
 }
+
 .sapMFlexItemAlignEnd {
 	align-self: flex-end;
 }
+
 .sapMFlexItemAlignCenter {
 	align-self: center;
 }
+
 .sapMFlexItemAlignBaseline {
 	align-self: baseline;
 }
+
 .sapMFlexItemAlignStretch {
 	align-self: stretch;
 }
+
 .sapMFlexItemAlignInherit {
 	align-self: inherit;
 }

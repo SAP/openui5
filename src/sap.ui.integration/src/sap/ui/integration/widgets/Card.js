@@ -781,7 +781,12 @@ sap.ui.define([
 
 		if (!this._bApplyManifest && this._bApplyParameters) {
 			this._oCardManifest.processParameters(this._getContextAndRuntimeParams());
-			this._applyManifestSettings();
+
+			this.processDestinations(this._oCardManifest.getJson()).then((oResult) => {
+				this._oCardManifest.setJson(oResult);
+
+				this._applyManifestSettings();
+			});
 		}
 
 		this._bApplyManifest = false;
