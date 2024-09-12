@@ -2078,7 +2078,6 @@ sap.ui.define([
 		for ( var i = 0; i < listArray.length; i++) {
 			listArray[i].setInset(inset);
 		}
-		if (app.getCurrentPage()._refreshIScroll) {app.getCurrentPage()._refreshIScroll();}
 	}
 
 	function deleteItem(oEvent) {
