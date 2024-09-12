@@ -2,12 +2,13 @@ sap.ui.define([
 	'sap/ui/qunit/utils/createAndAppendDiv',
 	"sap/ui/test/utils/nextUIUpdate",
 	'sap/ui/core/Component',
+	'sap/ui/core/ComponentHooks',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/UIComponent',
 	'sap/ui/core/UIComponentMetadata',
 	'testdata/routing/RouterExtension',
 	'sap/base/util/deepExtend'
-], function (createAndAppendDiv, nextUIUpdate, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesRouterExtension, deepExtend) {
+], function (createAndAppendDiv, nextUIUpdate, Component, ComponentHooks, ComponentContainer, UIComponent, UIComponentMetadata, SamplesRouterExtension, deepExtend) {
 
 	"use strict";
 	/*global sinon, QUnit, foo*/
@@ -409,7 +410,7 @@ sap.ui.define([
 
 		},
 		afterEach : function() {
-			Component._fnOnInstanceCreated = null;
+			ComponentHooks.onInstanceCreated.deregister();
 		}
 	});
 
@@ -494,12 +495,12 @@ sap.ui.define([
 		var oCallbackComponent;
 
 		// set the instance created callback hook
-		Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
+		ComponentHooks.onInstanceCreated.register(function(oComponent, vCallbackConfig) {
 			oCallbackComponent = oComponent;
 
-			assert.ok(true, "sap.ui.core.Component._fnOnInstanceCreated called!");
+			assert.ok(true, "sap.ui.core.Component: 'onInstanceCreated' hook called!");
 			assert.ok(oComponent.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
-			assert.deepEqual(vCallbackConfig, oConfig, "sap.ui.core.Component._fnOnInstanceCreated oConfig passed!");
+			assert.deepEqual(vCallbackConfig, oConfig, "sap.ui.core.Component: oConfig passed to 'onInstanceCreated' hook!");
 
 			// Promise should be ignored in sync case
 			return new Promise(function(resolve, reject) {
@@ -507,7 +508,7 @@ sap.ui.define([
 					resolve(true);
 				}, 0);
 			});
-		};
+		});
 
 		var oConfig = {
 			manifestUrl: "anylocation/manifest.json"
@@ -522,9 +523,9 @@ sap.ui.define([
 	QUnit.test("On instance created callback / hook (sync, error)", function(assert) {
 
 		// set the instance created callback hook
-		Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
-			throw new Error("Error from _fnOnInstanceCreated");
-		};
+		ComponentHooks.onInstanceCreated.register(function(oComponent, vCallbackConfig) {
+			throw new Error("Error from 'onInstanceCreated' hook");
+		});
 
 		assert.throws(
 			function() {
@@ -532,7 +533,7 @@ sap.ui.define([
 					manifestUrl: "anylocation/manifest.json"
 				});
 			},
-			/Error from _fnOnInstanceCreated/,
+			/Error from 'onInstanceCreated' hook/,
 			"Error from hook should not be caught internally"
 		);
 

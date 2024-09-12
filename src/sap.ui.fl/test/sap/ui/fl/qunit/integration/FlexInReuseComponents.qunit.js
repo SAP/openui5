@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/m/Input",
 	"sap/ui/core/Component",
+	"sap/ui/core/ComponentHooks",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
@@ -11,6 +12,7 @@ sap.ui.define([
 ], function(
 	Input,
 	Component,
+	ComponentHooks,
 	ManifestUtils,
 	States,
 	ChangesWriteAPI,
@@ -61,7 +63,7 @@ sap.ui.define([
 			};
 
 			// simulate no component loaded callback (no loaded fl library)
-			Component._fnLoadComponentCallback = undefined;
+			ComponentHooks.onComponentLoaded.deregister();
 
 			var oChange;
 			return ChangesWriteAPI.create({

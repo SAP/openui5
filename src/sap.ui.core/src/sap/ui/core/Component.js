@@ -5,6 +5,7 @@
 // Provides base class sap.ui.core.Component for all components
 sap.ui.define([
 	'./Manifest',
+	'./ComponentHooks',
 	'./ComponentMetadata',
 	'./ElementRegistry',
 	'sap/base/config',
@@ -33,6 +34,7 @@ sap.ui.define([
 	'sap/ui/core/util/_LocalizationHelper'
 ], function(
 	Manifest,
+	ComponentHooks,
 	ComponentMetadata,
 	ElementRegistry,
 	BaseConfig,
@@ -2186,10 +2188,8 @@ sap.ui.define([
 			var oModel = new fnFactory();
 
 			// Call hook and provide model instance, manifest model ID to UI5 flex lib
-			if (typeof Component._fnCreateModel === "function") {
-				if (oModel.isA("sap.ui.model.odata.v2.ODataModel") || oModel.isA("sap.ui.model.odata.v4.ODataModel")) {
-					Component._fnCreateModel(oModel, sModelName, oConfig);
-				}
+			if (oModel.isA("sap.ui.model.odata.v2.ODataModel") || oModel.isA("sap.ui.model.odata.v4.ODataModel")) {
+				ComponentHooks.onModelCreated.execute(oModel, sModelName, oConfig);
 			}
 
 			// add model instance to the result map
@@ -2353,98 +2353,6 @@ sap.ui.define([
 
 		return Promise.all(aManifestsToLoad);
 	}
-
-	/**
-	 * Callback handler which will be executed once the component is loaded. A copy of the
-	 * configuration object together with a copy of the manifest object will be passed into
-	 * the registered function.
-	 * Also a return value is not expected from the callback handler.
-	 * It will only be called for asynchronous manifest first scenarios.
-	 * <p>
-	 * Example usage:
-	 * <pre>
-	 * sap.ui.require(['sap/ui/core/Component'], function(Component) {
-	 *   Component._fnLoadComponentCallback = function(oConfig, oManifest) {
-	 *     // do some logic with the config
-	 *   };
-	 * });
-	 * </pre>
-	 * <p>
-	 * <b>ATTENTION:</b> This hook must only be used by UI flexibility (library:
-	 * sap.ui.fl) and will be replaced with a more generic solution!
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.fl
-	 * @since 1.37.0
-	 */
-	Component._fnLoadComponentCallback = null;
-
-	/**
-	 * Callback handler which will be executed once a component instance has
-	 * been created by {#link sap.ui.component}. The component instance and the
-	 * configuration object will be passed into the registered function.
-	 * For async scenarios (<code>vConfig.async = true</code>) a Promise can be provided as
-	 * return value from the callback handler to delay resolving the Promise
-	 * returned by {@link sap.ui.component}.
-	 * In synchronous scenarios the return value will be ignored.
-	 *
-	 * Example usage:
-	 * <pre>
-	 * sap.ui.require(['sap/ui/core/Component'], function(Component) {
-	 *   Component._fnOnInstanceCreated = function(oComponent, oConfig) {
-	 *     // do some logic with the config
-	 *
-	 *     // optionally return a Promise
-	 *     return doAsyncStuff();
-	 *   };
-	 * });
-	 * </pre>
-	 * <b>ATTENTION:</b> This hook must only be used by UI flexibility (sap.ui.fl)
-	 * or the sap.ui.integration library.
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.fl,sap.ui.integration
-	 * @since 1.43.0
-	 */
-	var _aInstanceCreatedListeners = [];
-
-	// [Compatibility]: We need to accept multiple onInstanceCreated listeners,
-	//                  but still want to support the definition via assignment
-	Object.defineProperty(Component, "_fnOnInstanceCreated", {
-		get : function () { return _aInstanceCreatedListeners[0]; },
-		set : function (fn) {
-			if (typeof fn === "function") {
-				_aInstanceCreatedListeners.push(fn);
-			} else {
-				// falsy values clear the list of listeners (a null assignment is used in different unit-tests)
-				_aInstanceCreatedListeners = [];
-			}
-		}
-	});
-
-	/**
-	 * Callback handler which will be executed once the manifest.json was
-	 * loaded for a component, but before the manifest is interpreted.
-	 * The loaded manifest will be passed into the registered function.
-	 *
-	 * The callback may modify the parsed manifest object and must return a Promise which
-	 * resolves with the manifest object. If the Promise is rejected, the component creation
-	 * fails with the rejection reason.
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.fl
-	 * @since 1.70.0
-	 */
-	Component._fnPreprocessManifest = null;
-
-
-	/**
-	 * Callback handler that executes when a manifest model is created.
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.fl
-	 */
-	Component._fnCreateModel = null;
 
 	/**
 	 * Asynchronously creates a new component instance from the given configuration.
@@ -2698,26 +2606,19 @@ sap.ui.define([
 			}
 		}
 
-		// collect instance-created listeners
-		function callInstanceCreatedListeners(oInstance, vConfig) {
-			return _aInstanceCreatedListeners.map(function(fn) {
-				return fn(oInstance, vConfig);
-			});
-		}
-
 		function notifyOnInstanceCreated(oInstance, vConfig) {
 			if (vConfig.async) {
 				var pRootControlReady = oInstance.rootControlLoaded ? oInstance.rootControlLoaded() : Promise.resolve();
 
 				// collect instance-created listeners
-				var aOnInstanceCreatedPromises = callInstanceCreatedListeners(oInstance, vConfig);
+				var aOnInstanceCreatedPromises = ComponentHooks.onInstanceCreated.execute(oInstance, vConfig) ||  [];
 
 				// root control loaded promise
 				aOnInstanceCreatedPromises.push(pRootControlReady);
 
 				return Promise.all(aOnInstanceCreatedPromises);
 			} else {
-				callInstanceCreatedListeners(oInstance, vConfig);
+				ComponentHooks.onInstanceCreated.execute(oInstance, vConfig);
 			}
 			return oInstance;
 		}
@@ -3082,11 +2983,11 @@ sap.ui.define([
 
 		function preprocessManifestJSON(oRawJson) {
 			// the preprocessing flex-hook is only called if a manifest.json was loaded or an object was given via config
-			if (typeof Component._fnPreprocessManifest === "function" && oRawJson != null) {
+			if (ComponentHooks.onPreprocessManifest.isRegistered() && oRawJson != null) {
 				try {
 					// secure configuration from manipulation
 					var oConfigCopy = deepExtend({}, oConfig);
-					return Component._fnPreprocessManifest(oRawJson, oConfigCopy);
+					return ComponentHooks.onPreprocessManifest.execute(oRawJson, oConfigCopy);
 				} catch (oError) {
 					// in case the hook itself crashes without 'safely' rejecting, we log the error and reject directly
 					Log.error("Failed to execute flexibility hook for manifest preprocessing.", oError);
@@ -3647,13 +3548,13 @@ sap.ui.define([
 
 				fnCallLoadComponentCallback = function(oLoadedManifest) {
 					// if a callback is registered to the component load, call it with the configuration
-					if (typeof Component._fnLoadComponentCallback === "function") {
+					if (ComponentHooks.onComponentLoaded.isRegistered()) {
 						// secure configuration from manipulation, manifest can be adjusted by late changes
 						var oConfigCopy = deepExtend({}, oConfig);
 						// trigger the callback with a copy of its required data
 						// do not await any result from the callback nor stop component loading on an occurring error
 						try {
-							return Component._fnLoadComponentCallback(oConfigCopy, oLoadedManifest);
+							return ComponentHooks.onComponentLoaded.execute(oConfigCopy, oLoadedManifest);
 						} catch (oError) {
 							future.errorThrows("Callback for loading the component \"" + oLoadedManifest.getComponentName() +
 								"\" run into an error.", { cause: oError , suffix: "The callback was skipped and the component loading resumed." }, oError, "sap.ui.core.Component");

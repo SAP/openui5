@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/Component",
+	"sap/ui/core/ComponentHooks",
 	"sap/ui/core/ExtensionPoint",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/preprocessors/RegistrationDelegator",
@@ -15,7 +15,7 @@ sap.ui.define([
 ], function(
 	MvcController,
 	XMLView,
-	Component,
+	ComponentHooks,
 	ExtensionPoint,
 	ManifestUtils,
 	RegistrationDelegator,
@@ -31,6 +31,10 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.fl.apply._internal.preprocessors.RegistrationDelegator", {
 		afterEach() {
+			ComponentHooks.onInstanceCreated.deregister();
+			ComponentHooks.onComponentLoaded.deregister();
+			ComponentHooks.onPreprocessManifest.deregister();
+
 			sandbox.restore();
 			DelegateMediator.clear();
 		}
@@ -52,15 +56,15 @@ sap.ui.define([
 			sap.ui.require(["sap/ui/fl/library"], function() {
 				assert.equal(oRegisterAllSpy.callCount, 1, "register all was called once");
 
-				assert.ok(Component._fnOnInstanceCreated, "register changes in component is registered.");
+				assert.ok(ComponentHooks.onInstanceCreated.isRegistered(), "register changes in component is registered.");
 				assert.equal(oRegisterChangeHandlersForLibraryStub.callCount, 1, "Register Change Handlers called.");
 				assert.equal(oRegisterPredefinedChangeHandlersStub.callCount, 1, "Extension provider called.");
-				assert.ok(Component._fnLoadComponentCallback, "load component event handler is registered.");
+				assert.ok(ComponentHooks.onComponentLoaded.isRegistered(), "load component event handler is registered.");
 				assert.equal(oRegisterExtensionProviderStub.callCount, 1, "Extension provider called.");
 				assert.equal(oRegisterXMLPreprocessorStub.callCount, 1, "XML preprocessor called.");
 				assert.equal(oRegisterExtensionPointProviderStub.callCount, 1, "ExtensionPoint called.");
 				assert.equal(oRegisterReadDelegateStub.callCount, 3, "delegate registration is called.");
-				assert.ok(Component._fnPreprocessManifest);
+				assert.ok(ComponentHooks.onPreprocessManifest.isRegistered());
 				fnDone();
 			});
 		});
@@ -76,6 +80,10 @@ sap.ui.define([
 			[this.fnExtensionProvider] = oRegisterExtensionProviderStub.firstCall.args;
 		},
 		afterEach() {
+			ComponentHooks.onInstanceCreated.deregister();
+			ComponentHooks.onComponentLoaded.deregister();
+			ComponentHooks.onPreprocessManifest.deregister();
+
 			sandbox.restore();
 			DelegateMediator.clear();
 		}

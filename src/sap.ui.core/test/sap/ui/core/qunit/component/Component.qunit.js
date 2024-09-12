@@ -2,6 +2,7 @@ sap.ui.define([
 	'sap/ui/qunit/utils/createAndAppendDiv',
 	"sap/ui/test/utils/nextUIUpdate",
 	'sap/ui/core/Component',
+	'sap/ui/core/ComponentHooks',
 	'sap/ui/core/Supportability',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/ComponentRegistry',
@@ -15,7 +16,7 @@ sap.ui.define([
 	'sap/ui/core/Manifest',
 	'sap/base/i18n/ResourceBundle',
 	'sap/ui/VersionInfo'
-], function (createAndAppendDiv, nextUIUpdate, Component, Supportability, ComponentContainer, ComponentRegistry, Messaging, UIComponentMetadata, SamplesRoutingComponent, SamplesRouterExtension, Log, deepExtend, LoaderExtensions, Manifest, ResourceBundle, VersionInfo) {
+], function (createAndAppendDiv, nextUIUpdate, Component, ComponentHooks, Supportability, ComponentContainer, ComponentRegistry, Messaging, UIComponentMetadata, SamplesRoutingComponent, SamplesRouterExtension, Log, deepExtend, LoaderExtensions, Manifest, ResourceBundle, VersionInfo) {
 
 	"use strict";
 	/*global sinon, QUnit, foo*/
@@ -690,7 +691,7 @@ sap.ui.define([
 
 		},
 		afterEach : function() {
-			Component._fnOnInstanceCreated = null;
+			ComponentHooks.onInstanceCreated.deregister();
 		}
 	});
 
@@ -900,16 +901,16 @@ sap.ui.define([
 		};
 
 		// set the instance created callback hook
-		Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
+		ComponentHooks.onInstanceCreated.register(function(oComponent, vCallbackConfig) {
 			oCallbackComponent = oComponent;
 
-			assert.ok(true, "sap.ui.core.Component._fnOnInstanceCreated called!");
+			assert.ok(true, "sap.ui.core.Component: 'onInstanceCreated' handler called!");
 			assert.ok(oComponent.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
-			assert.deepEqual(vCallbackConfig, oConfig, "sap.ui.core.Component._fnOnInstanceCreated oConfig passed!");
+			assert.deepEqual(vCallbackConfig, oConfig, "sap.ui.core.Component: oConfig passed to the 'onInstanceCreated' handler!");
 
 			// All return values other than promises should be ignored
 			return 123;
-		};
+		});
 
 		return Component.create({
 			manifest: "anylocation/manifest.json"
@@ -921,16 +922,16 @@ sap.ui.define([
 	QUnit.test("On instance created callback / hook (async, no promise, error)", function(assert) {
 
 		// set the instance created callback hook
-		Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
-			throw new Error("Error from _fnOnInstanceCreated");
-		};
+		ComponentHooks.onInstanceCreated.register(function(oComponent, vCallbackConfig) {
+			throw new Error("Error from 'onInstanceCreated' handler");
+		});
 
 		return Component.create({
 			manifest: "anylocation/manifest.json"
 		}).then(function(oComponent) {
 			assert.ok(false, "Promise should not resolve");
 		}, function(oError) {
-			assert.equal(oError.message, "Error from _fnOnInstanceCreated", "Promise should reject with error from hook");
+			assert.equal(oError.message, "Error from 'onInstanceCreated' handler", "Promise should reject with error from hook");
 		});
 	});
 
@@ -943,11 +944,11 @@ sap.ui.define([
 		};
 
 		// set the instance created callback hook
-		Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
+		ComponentHooks.onInstanceCreated.register(function(oComponent, vCallbackConfig) {
 
-			assert.ok(true, "sap.ui.core.Component._fnOnInstanceCreated called!");
+			assert.ok(true, "sap.ui.core.Component: 'onInstanceCreated' handler called!");
 			assert.ok(oComponent.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
-			assert.deepEqual(vCallbackConfig, oConfig, "sap.ui.core.Component._fnOnInstanceCreated oConfig passed!");
+			assert.deepEqual(vCallbackConfig, oConfig, "sap.ui.core.Component: oConfig passed to the 'onInstanceCreated' handler!");
 
 			return new Promise(function(resolve, reject) {
 				setTimeout(function() {
@@ -956,7 +957,7 @@ sap.ui.define([
 					resolve();
 				}, 0);
 			});
-		};
+		});
 
 		return Component.create({
 			manifest: "anylocation/manifest.json"
@@ -968,22 +969,20 @@ sap.ui.define([
 	QUnit.test("On instance created callback / hook (async, with promise, error)", function(assert) {
 
 		// set the instance created callback hook
-		Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
+		ComponentHooks.onInstanceCreated.register(function(oComponent, vCallbackConfig) {
 			return new Promise(function(resolve, reject) {
 				setTimeout(function() {
-					reject(new Error("Error from _fnOnInstanceCreated"));
+					reject(new Error("Error from 'onInstanceCreated' handler"));
 				}, 0);
 			});
-		};
+		});
 
 		return Component.create({
 			manifest: "anylocation/manifest.json"
 		}).then(function(oComponent) {
 			assert.ok(false, "Promise should not resolve");
-			Component._fnOnInstanceCreated = null;
 		}, function(oError) {
-			assert.equal(oError.message, "Error from _fnOnInstanceCreated", "Promise should reject with error from hook");
-			Component._fnOnInstanceCreated = null;
+			assert.equal(oError.message, "Error from 'onInstanceCreated' handler", "Promise should reject with error from hook");
 		});
 	});
 
@@ -1027,10 +1026,10 @@ sap.ui.define([
 		});
 
 		// set the instance created callback hook
-		Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
-			assert.equal(bAfterInitCalled, false, "_fnOnInstanceCreated should be called before view init");
+		ComponentHooks.onInstanceCreated.register(function(oComponent, vCallbackConfig) {
+			assert.equal(bAfterInitCalled, false, "'onInstanceCreated' handler should be called before view init");
 			return Promise.resolve();
-		};
+		});
 
 		return Component.create({
 			name: "sap.test.myComponent"
@@ -1747,7 +1746,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Hook _fnCreateModel() ", function(assert) {
+	QUnit.test("Hook 'onModelCreated'", function(assert) {
 		const oManifest = {
 			"sap.app": {
 				"id": "testdata.other",
@@ -1782,6 +1781,7 @@ sap.ui.define([
 		};
 
 		const oConfig = {
+			async: true,
 			manifest: oManifest,
 			asyncHints: {
 				components: [
@@ -1792,20 +1792,15 @@ sap.ui.define([
 			}
 		};
 
-		Component._fnCreateModel = function(oModel, sModelName, oConfig) {
-			assert.ok(oModel, "_fnCreateModel hook is called");
-			assert.equal(oConfig, oConfig, "_fnCreateMOdel hook is called with correct factory config object.");
-		};
-
-		const oSpy = sinon.spy(Component, "_fnCreateModel");
+		const oSpy = sinon.spy();
+		ComponentHooks.onModelCreated.register(oSpy);
 
 		return Component.create(oConfig).then(function(oComponent) {
-			assert.equal(oSpy.callCount, 2, "_fnCreateModel hook should be called two times (for v2 and v4 model).");
-			assert.ok(oSpy.calledWith(sinon.match.any, "myV2Model"), "_fnCreateModel called with correct model name");
-			assert.ok(oSpy.calledWith(sinon.match.any, "myV4Model"), "_fnCreateModel called with correct model name");
+			assert.equal(oSpy.callCount, 2, "'onModelCreated' hook should be called two times");
+			assert.ok(oSpy.calledWith(sinon.match.any, "myV2Model", oConfig), "hook called with correct model name 'myV2Model' and config object");
+			assert.ok(oSpy.calledWith(sinon.match.any, "myV4Model", oConfig), "hook called with correct model name 'myV4Model' and config object");
 
-			oSpy.restore();
-			Component._fnCreateModel = null;
+			ComponentHooks.onModelCreated.deregister();
 			oComponent.destroy();
 		});
 	});
@@ -2126,9 +2121,9 @@ sap.ui.define([
 		oFooC.destroy();
 	});
 
-	QUnit.module("Hook _fnPreprocessManifest", {
+	QUnit.module("Hook 'onPreprocessManifest'", {
 		afterEach: function() {
-			Component._fnPreprocessManifest = null;
+			ComponentHooks.onPreprocessManifest.deregister();
 		}
 	});
 
@@ -2158,13 +2153,13 @@ sap.ui.define([
 			}
 		};
 
-		Component._fnPreprocessManifest = function(oManifestJSON) {
+		ComponentHooks.onPreprocessManifest.register(function(oManifestJSON) {
 			// To test if the modification is correctly passed back to the
 			// Component's manifest processing, we just change the class of a given model v2 -> v4
 			oManifestJSON["sap.ui5"]["models"]["myModel"].type = "sap.ui.model.odata.v4.ODataModel";
 
 			return Promise.resolve(oManifestJSON);
-		};
+		});
 
 		return Component.create({
 			name: "testdata.other",
@@ -2197,14 +2192,8 @@ sap.ui.define([
 			}
 		};
 
-		var oConfig = {
-			manifest: oManifestJSON,
-			async: true,
-			name: "testdata.other"
-		};
-
 		var oManifestJSONCopy;
-		Component._fnPreprocessManifest = function(oManifestJSON, oConfig) {
+		ComponentHooks.onPreprocessManifest.register(function(oManifestJSON) {
 			// Copy is required to check if this method is called with the correct raw manifest but not the modified one
 			oManifestJSONCopy = deepExtend({}, oManifestJSON);
 
@@ -2215,10 +2204,9 @@ sap.ui.define([
 				lazy: true
 			};
 
+			assert.ok(true, "then the hook is called");
 			return Promise.resolve(oManifestJSONCopy);
-		};
-
-		var oPreprocessManifestSpy = this.spy(Component, "_fnPreprocessManifest");
+		});
 
 		return Component.create({
 			name: "testdata.other",
@@ -2230,20 +2218,19 @@ sap.ui.define([
 			var oExpectedSapUxapLib = {minVersion: "1.72", lazy: true};
 			assert.equal(oSapUxapLib.minVersion, oExpectedSapUxapLib.minVersion, "minVersion is correct");
 			assert.equal(oSapUxapLib.lazy, oExpectedSapUxapLib.lazy, "lazy is correct");
-			assert.ok(oPreprocessManifestSpy.calledOnceWithExactly(oManifestJSON, oConfig), "then the hook is called once with correct parameters");
 			assert.notDeepEqual(oManifestJSON, oManifestJSONCopy, "then the objects containing manifest info are not equal");
 		});
 	});
 
 	QUnit.test("Hook is called when manifest is loaded from the default location (Hook modifies the manifest)", function(assert) {
 		// register hook and modify the manifest
-		Component._fnPreprocessManifest = function(oManifestJSON) {
+		ComponentHooks.onPreprocessManifest.register(function(oManifestJSON) {
 			// To test if the modification is correctly passed back to the
 			// Component's manifest processing, we just change the class of a given model v2 -> v4
 			oManifestJSON["sap.ui5"]["models"]["sfapi"].type = "sap.ui.model.odata.v4.ODataModel";
 
 			return Promise.resolve(oManifestJSON);
-		};
+		});
 
 		// loading manifest from default location
 		return Component.create({
@@ -2259,7 +2246,7 @@ sap.ui.define([
 		var oManifestJSONCopy;
 		var oManifestJSONClosure;
 		// register hook and modify the manifest
-		Component._fnPreprocessManifest = function(oManifestJSON) {
+		ComponentHooks.onPreprocessManifest.register(function(oManifestJSON) {
 			// Copy is required to check if it is called with the correct manifest but not the modified one
 			oManifestJSONCopy = deepExtend({}, oManifestJSON);
 
@@ -2272,10 +2259,9 @@ sap.ui.define([
 				lazy: true
 			};
 
+			assert.ok(true, "then the hook is called");
 			return Promise.resolve(oManifestJSONCopy);
-		};
-
-		var oPreprocessManifestSpy = this.spy(Component, "_fnPreprocessManifest");
+		});
 
 		// loading manifest from default location
 		return Component.create({
@@ -2287,7 +2273,6 @@ sap.ui.define([
 			var oExpectedSapUxapLib = {minVersion: "1.72", lazy: true};
 			assert.equal(oSapUxapLib.minVersion, oExpectedSapUxapLib.minVersion, "minVersion is correct");
 			assert.equal(oSapUxapLib.lazy, oExpectedSapUxapLib.lazy, "lazy is correct");
-			assert.ok(oPreprocessManifestSpy.calledOnce, "then the hook is called once");
 			assert.notDeepEqual(oManifestJSONClosure, oManifestJSONCopy, "then the objects containing manifest info are not equal");
 		});
 	});
@@ -2296,13 +2281,13 @@ sap.ui.define([
 		var sManifestUrl = sap.ui.require.toUrl("testdata/v2/manifest.json");
 
 		// register hook and modify the manifest
-		Component._fnPreprocessManifest = function(oManifestJSON) {
+		ComponentHooks.onPreprocessManifest.register(function(oManifestJSON) {
 			// To test if the modification is correctly passed back to the
 			// Component's manifest processing, we just change the class of a given model v2 -> v4
 			oManifestJSON["sap.ui5"]["models"]["sfapi"].type = "sap.ui.model.odata.v4.ODataModel";
 
 			return Promise.resolve(oManifestJSON);
-		};
+		});
 
 		return Component.create({
 			name: "testdata.v2asyncRootView",
@@ -2320,7 +2305,7 @@ sap.ui.define([
 		var oManifestJSONClosure;
 
 		// register hook and modify the manifest
-		Component._fnPreprocessManifest = function(oManifestJSON) {
+		ComponentHooks.onPreprocessManifest.register(function(oManifestJSON) {
 			// Copy is required to check if it is called with the correct manifest but not the modified one
 			var oManifestJSONCopy = deepExtend({}, oManifestJSON);
 
@@ -2333,10 +2318,9 @@ sap.ui.define([
 				lazy: true
 			};
 
+			assert.ok(true, "then the hook is called once");
 			return Promise.resolve(oManifestJSONCopy);
-		};
-
-		var oPreprocessManifestSpy = this.spy(Component, "_fnPreprocessManifest");
+		});
 
 		return Component.create({
 			name: "testdata.v2asyncRootView",
@@ -2348,7 +2332,6 @@ sap.ui.define([
 			var oExpectedSapUxapLib = {minVersion: "1.72", lazy: true};
 			assert.equal(oSapUxapLib.minVersion, oExpectedSapUxapLib.minVersion, "minVersion is correct");
 			assert.equal(oSapUxapLib.lazy, oExpectedSapUxapLib.lazy, "lazy is correct");
-			assert.ok(oPreprocessManifestSpy.calledOnce, "then the hook is called once");
 			assert.notDeepEqual(oManifestJSONClosure, oManifestJSONCopy, "then the objects containing manifest info are not equal");
 		});
 	});
@@ -2356,10 +2339,10 @@ sap.ui.define([
 	QUnit.test("When hook returns a rejected promise, it should also reject the Component.create with same reason", function(assert) {
 		var sRejectReason = "Rejected from preprocess manifest";
 
-		Component._fnPreprocessManifest = function() {
+		ComponentHooks.onPreprocessManifest.register(function() {
+			assert.ok(true, "then the hook is called once");
 			return Promise.reject(sRejectReason);
-		};
-		this.oPreprocessManifestSpy = this.spy(Component, "_fnPreprocessManifest");
+		});
 
 		return Component.create({
 			name: "testdata.v2empty"
@@ -2367,17 +2350,16 @@ sap.ui.define([
 			assert.ok(false, "shouldn't reach here");
 		}, function(sReason) {
 			assert.equal(sReason, sRejectReason, "Promise is rejected with the correct reason");
-			this.oPreprocessManifestSpy.restore();
-		}.bind(this));
+		});
 	});
 
 	QUnit.test("When hook causes unhandled errors, it should also reject the Component.create", function(assert) {
 		var sErrorText = "Uncaught TypeError: o.x is not a function";
 
-		Component._fnPreprocessManifest = function() {
+		ComponentHooks.onPreprocessManifest.register(function() {
 			// provoke unhandled error
 			throw new Error(sErrorText);
-		};
+		});
 
 		// spy to check if we logged the error for debugging
 		var oLogStub = this.stub(Log, "error");
@@ -2393,9 +2375,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("When Manifest-Loading fails (404), the hook should not be called", function(assert) {
-		Component._fnPreprocessManifest = function() {
+		ComponentHooks.onPreprocessManifest.register(function() {
 			assert.ok(false, "Should not be called when Manifest Request failed.");
-		};
+		});
 
 		// create a legacy Component without a manifest.json
 		// Manifest-first loading fails with 404, but is ignored, since the component controller contains metadata.
