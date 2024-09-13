@@ -178,12 +178,6 @@ License: Unicode-DFS-2015
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Unicode-DFS-2015.txt
 Contained in: src/sap.ui.core/src/sap/ui/core/cldr/*
 
-Component: MobiScroll, version: 2.9.0
-Copyright: 2010-2013, Acid Media
-License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.core/src/sap/ui/thirdparty/mobiscroll/*
-
 Component: SinonJS, version: 1.14.1
 Copyright: 2010-2014, Christian Johansen, christian@cjohansen.no
 License: BSD-3-Clause

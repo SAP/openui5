@@ -75,9 +75,6 @@
         <raw-module name="sap/ui/thirdparty/jszip.js" />
         <raw-module name="sap/ui/thirdparty/klay.js" />
         <raw-module name="sap/ui/thirdparty/less.js" />
-        <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" depends="sap/ui/thirdparty/jquery.js" />
-        <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-datetime.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" />
-        <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" />
         <raw-module name="sap/ui/thirdparty/punycode.js" />
         <raw-module name="sap/ui/thirdparty/qunit-2.js" />
         <raw-module name="sap/ui/thirdparty/qunit-composite.js" depends="sap/ui/thirdparty/qunit.js" />
@@ -276,11 +273,6 @@
             <license url="http://www.unicode.org/copyright.html" type="Unicode-DFS-2015" />
             <copyright>1991-2023 Unicode, Inc.</copyright>
             <pattern>sap/ui/core/cldr/*</pattern>
-        </lib>
-        <lib name="mobiscroll" displayName="MobiScroll" npmName="n/a" version="2.9.0" hash="2a76d1439bbc5afaf10324b2108e4d9c" homepage="http://mobiscroll.com" id="73554900106100005562">
-            <license url="http://opensource.org/licenses/mit-license.php" type="MIT" />
-            <copyright>2010-2013, Acid Media</copyright>
-            <pattern>sap/ui/thirdparty/mobiscroll/*</pattern>
         </lib>
         <lib name="sinonjs" displayName="SinonJS" npmName="sinon" version="1.14.1" hash="5bbc65549709e5c7adc2df0c38ba966a" homepage="http://sinonjs.org" id="73554900106100005532">
             <license url="https://raw.github.com/cjohansen/Sinon.JS/master/LICENSE" type="BSD-3-Clause" />
