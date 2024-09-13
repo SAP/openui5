@@ -80,6 +80,13 @@ sap.ui.define([
 		return oStaticConfiguration;
 	};
 
+	/**
+	 * @override
+	 */
+	SearchFilter.prototype.writeValueToConfiguration = function (oConfiguration) {
+		oConfiguration.value = this.getValueForModel().value;
+	};
+
 	SearchFilter.prototype._getSearchField = function () {
 		var oControl = this.getAggregation("_searchField");
 		if (!oControl) {
