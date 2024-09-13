@@ -275,4 +275,12 @@ describe("sap.m.Label", function() {
 			expect(takeScreenshot(lbl)).toLookAs("34_label_required_colon_parent_width");
 		});
 	});
+
+	it("should visualize colon and without truncation", function () {
+		var lbl = element(by.id('labelToResize'));
+
+		browser.executeScript("document.getElementById('labelToResize').scrollIntoView()").then(function () {
+			expect(takeScreenshot(lbl)).toLookAs("35_label_colon_not truncated");
+		});
+	});
 });
