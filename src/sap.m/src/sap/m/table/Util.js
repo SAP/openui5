@@ -556,12 +556,11 @@ sap.ui.define([
 		}
 
 		const oDetailsList = oPopover.getContent()[0];
-
-		const oItemsTemplate = oDetailsList.getBindingInfo("items")?.template || new CustomListItem({content: [mSettings.listItemContentTemplate]});
+		const oItemsTemplate = new CustomListItem({content: [mSettings.listItemContentTemplate]});
 
 		oDetailsList.bindItems({
 			...mSettings.itemsBindingInfo,
-			templateShareable: true,
+			templateShareable: false,
 			template: oItemsTemplate
 		});
 

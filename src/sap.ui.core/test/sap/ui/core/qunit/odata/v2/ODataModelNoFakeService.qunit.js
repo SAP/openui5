@@ -9327,6 +9327,17 @@ sap.ui.define([
 
 		let oErrorResponse = {};
 		oModel.oRetryAfterError = {message: "Service Unavailable"};
+		this.oLogMock.expects("error")
+			.withExactArgs("Retry-After handler rejected w/o reason", undefined, "sap.ui.model.odata.v2.ODataModel");
+		oHelperMock.expects("processError")
+			.withExactArgs(sinon.match.same(oErrorResponse)
+				.and(sinon.match.has("$ownReason", true))
+				.and(sinon.match.has("$rejected", true))
+				.and(sinon.match.has("$reported", true)));
+
+		// code under test (oErrorResponse, no reason)
+		ODataModel.prototype.onRetryAfterRejected.call(oModel, oHelper.processError, oErrorResponse);
+
 		const oOwnError = new Error("own reason");
 		this.oLogMock.expects("error")
 			.withExactArgs("Retry-After handler rejected with: own reason", oOwnError.stack,

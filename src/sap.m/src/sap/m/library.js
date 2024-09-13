@@ -5927,6 +5927,7 @@ sap.ui.define([
 	 DataType.registerEnum("sap.m.ButtonAccessibleRole", thisLib.ButtonAccessibleRole);
 	 DataType.registerEnum("sap.m.ButtonType", thisLib.ButtonType);
 	 DataType.registerEnum("sap.m.CarouselArrowsPlacement", thisLib.CarouselArrowsPlacement);
+	 DataType.registerEnum("sap.m.CarouselPageIndicatorPlacementType", thisLib.CarouselPageIndicatorPlacementType);
 	 DataType.registerEnum("sap.m.DeviationIndicator", thisLib.DeviationIndicator);
 	 DataType.registerEnum("sap.m.DialogRoleType", thisLib.DialogRoleType);
 	 DataType.registerEnum("sap.m.DialogType", thisLib.DialogType);

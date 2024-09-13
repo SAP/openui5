@@ -36,7 +36,6 @@ sap.ui.define([
 	 * @constructor
 	 * @abstract
 	 *
-	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.getTitle as #getTitle
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.isMultiSelect as #isMultiSelect
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.getContent as #getContent
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.getItemForValue as #getItemForValue
@@ -723,14 +722,15 @@ sap.ui.define([
 
 	/*
 	 * Determines if the value help should be opened when the user used the arrow keys.
-	 * By default closed navigation is only enabled for single select scenarios
+	 * By default navigation on closed popover is enabled.
 	 *
 	 * @returns {boolean} If <code>true</code>, the value help should open when user used the arrow keys in the connected field control
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
 	Content.prototype.shouldOpenOnNavigate = function() {
-		return !this.isSingleSelect();
+		// return !this.isSingleSelect();
+		return false;
 	};
 
 	/**

@@ -299,9 +299,9 @@ sap.ui.define([
 	QUnit.test("shouldOpenOnNavigate", function(assert) {
 
 		oContent.setConfig({maxConditions: -1});
-		assert.ok(oContent.shouldOpenOnNavigate(), "correctly determined from maxConditions");
+		assert.notOk(oContent.shouldOpenOnNavigate(), "multi-value");
 		oContent.setConfig({maxConditions: 1});
-		assert.notOk(oContent.shouldOpenOnNavigate(), "correctly determined from maxConditions");
+		assert.notOk(oContent.shouldOpenOnNavigate(), "single-value");
 	});
 
 	QUnit.test("isNavigationEnabled", function(assert) {

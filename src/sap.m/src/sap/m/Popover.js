@@ -2617,7 +2617,12 @@ sap.ui.define([
 			} else {
 				Control.prototype.destroyAggregation.apply(this, arguments);
 			}
-			oActiveControl && oActiveControl.getDomRef() ? oActiveControl.focus() : this.focus();
+
+			// set focus to the popover itself when the focused control is destroyed to keep the popover open
+			if (oActiveControl && !oActiveControl.getDomRef()) {
+				this.focus();
+			}
+
 			return this;
 		};
 

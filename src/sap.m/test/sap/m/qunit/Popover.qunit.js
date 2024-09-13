@@ -80,22 +80,6 @@ sap.ui.define([
 	// var iBarHeight = 48;
 	var iArrowOffset = 9;
 
-	var oButton = new Button({
-		text: "Popover",
-		press: function () {
-			oPopover.openBy(this);
-		}
-	});
-	oButton.addStyleClass("positioned");
-
-	var oButton2 = new Button({
-		text: "Popover2",
-		press: function () {
-			oPopover2.openBy(this);
-		}
-	});
-	oButton2.addStyleClass("positioned");
-
 	var app = new App("myApp", {
 		initialPage: "myFirstPage"
 	});
@@ -104,66 +88,10 @@ sap.ui.define([
 		title: "Test",
 		showNavButton: true,
 		verticalScrolling: true,
-		horizontalScrolling: true,
-		content: [
-			oButton,
-			oButton2
-		]
+		horizontalScrolling: true
 	});
 
 	app.addPage(page).placeAt("content");
-
-	//create the list
-	var oList2 = new List({
-		inset: true
-	});
-
-	var data = {
-		navigation: [{
-			title: "Travel Expend",
-			description: "Access the travel expend workflow",
-			icon: IMAGE_PATH + "travel_expend.png",
-			iconInset: false,
-			type: "Navigation",
-			press: 'detailPage'
-		}, {
-			title: "Travel and expense report",
-			description: "Access travel and expense reports",
-			icon: IMAGE_PATH + "travel_expense_report.png",
-			iconInset: false,
-			type: "Navigation",
-			press: 'detailPage'
-		}, {
-			title: "Travel Request",
-			description: "Access the travel request workflow",
-			icon: IMAGE_PATH + "travel_request.png",
-			iconInset: false,
-			type: "Navigation",
-			press: 'detailPage'
-		}, {
-			title: "Work Accidents",
-			description: "Report your work accidents",
-			icon: IMAGE_PATH + "wounds_doc.png",
-			iconInset: false,
-			type: "Navigation",
-			press: 'detailPage'
-		}, {
-			title: "Travel Settings",
-			description: "Change your travel worflow settings",
-			icon: IMAGE_PATH + "settings.png",
-			iconInset: false,
-			type: "Navigation",
-			press: 'detailPage'
-		}]
-	};
-
-	var oItemTemplate1 = new StandardListItem({
-		title: "{title}",
-		description: "{description}",
-		icon: "{icon}",
-		iconInset: "{iconInset}",
-		type: "{type}"
-	});
 
 	function bindListData (data, itemTemplate, list) {
 		var oModel = new JSONModel();
@@ -176,60 +104,66 @@ sap.ui.define([
 		list.bindAggregation("items", "/navigation", itemTemplate);
 	}
 
-	bindListData(data, oItemTemplate1, oList2);
-	//end of the list creation
+	function createPopoverContent() {
+		var oList2 = new List({
+			inset: true
+		});
 
-	//create the scrollContainer
-	var oScrollContainer = new ScrollContainer({
-		horizontal: false,
-		vertical: true,
-		content: oList2
-	});
-	var sOldTitleValue = "Popover", sNewTitleValue = "Title Changed";
+		var data = {
+			navigation: [{
+				title: "Travel Expend",
+				description: "Access the travel expend workflow",
+				icon: IMAGE_PATH + "travel_expend.png",
+				iconInset: false,
+				type: "Navigation",
+				press: 'detailPage'
+			}, {
+				title: "Travel and expense report",
+				description: "Access travel and expense reports",
+				icon: IMAGE_PATH + "travel_expense_report.png",
+				iconInset: false,
+				type: "Navigation",
+				press: 'detailPage'
+			}, {
+				title: "Travel Request",
+				description: "Access the travel request workflow",
+				icon: IMAGE_PATH + "travel_request.png",
+				iconInset: false,
+				type: "Navigation",
+				press: 'detailPage'
+			}, {
+				title: "Work Accidents",
+				description: "Report your work accidents",
+				icon: IMAGE_PATH + "wounds_doc.png",
+				iconInset: false,
+				type: "Navigation",
+				press: 'detailPage'
+			}, {
+				title: "Travel Settings",
+				description: "Change your travel worflow settings",
+				icon: IMAGE_PATH + "settings.png",
+				iconInset: false,
+				type: "Navigation",
+				press: 'detailPage'
+			}]
+		};
 
-	var oPopover = new Popover("popover", {
-		placement: PlacementType.Bottom,
-		title: sOldTitleValue,
-		showHeader: true,
-		content: [
-			oScrollContainer
-		]
-	});
+		var oItemTemplate1 = new StandardListItem({
+			title: "{title}",
+			description: "{description}",
+			icon: "{icon}",
+			iconInset: "{iconInset}",
+			type: "{type}"
+		});
 
-	var oPopover2 = new Popover("popover2", {
-		placement: PlacementType.Bottom,
-		title: "non-focusable content",
-		showHeader: true,
-		content: [
-			new HTML({content: "<div>test content</div>"})
-		]
-	});
+		bindListData(data, oItemTemplate1, oList2);
 
-	var oCustomHeader = new Bar("customHeader", {
-		contentLeft: [new Image('myAppIcon', {src: IMAGE_PATH + "SAPUI5.png"}),
-			new Label("IconHeader", {text: "Icon Header"})],
-		contentMiddle: [],
-		contentRight: []
-	});
-
-	var oSubHeader = new Bar({
-		contentMiddle: [
-			new SearchField({
-				placeholder: "Search ...",
-				width: "100%"
-			})
-		]
-	});
-
-	var oBeginButton = new Button("beginButton", {
-		text: "Left",
-		type: ButtonType.Reject
-	});
-
-	var oEndButton = new Button("endButton", {
-		text: "Right",
-		type: ButtonType.Accept
-	});
+		return new ScrollContainer({
+			horizontal: false,
+			vertical: true,
+			content: oList2
+		});
+	}
 
 	function runAllFakeTimersAndRestore(clock){
 		clock.runToLast();
@@ -239,18 +173,31 @@ sap.ui.define([
 	QUnit.module("Initial Check");
 
 	QUnit.test("Initialization", function (assert){
+		var oPopover = new Popover("popover");
+
 		assert.ok(!document.getElementById("popover"), "Popover is not rendered in the beginning.");
+
+		oPopover.destroy();
 	});
 
 	QUnit.module("Open and Close", {
 		beforeEach: async function () {
 			this.clock = sinon.useFakeTimers();
 
-			this.oButton = new Button().addStyleClass("positioned");
+			this.oButton = new Button({
+				text: "Open Popover",
+				press: () => {
+					this.oPopover.openBy(this.oButton);
+				}
+			}).addStyleClass("positioned");
+
 			this.oPopover = new Popover({
+				placement: PlacementType.Bottom,
 				contentWidth: "400px",
-				contentHeight: "300px"
+				contentHeight: "300px",
+				content: createPopoverContent()
 			});
+
 			page.addContent(this.oButton);
 			await nextUIUpdate(this.clock);
 
@@ -258,7 +205,7 @@ sap.ui.define([
 		afterEach: function () {
 			this.oPopover.destroy();
 			this.oButton.destroy();
-
+			page.destroyContent();
 			runAllFakeTimersAndRestore(this.clock);
 		}
 	});
@@ -273,13 +220,12 @@ sap.ui.define([
 		this.oPopover.attachBeforeOpen(fnBeforeOpen);
 		this.oPopover.attachAfterOpen(fnAfterOpen);
 
-		this.oPopover.openBy(this.oButton);
-
+		this.oButton.firePress();
+		this.clock.tick(500);
 		assert.ok(this.oPopover.isOpen(), "Popover is already open");
 
-		this.clock.tick(500);
-
 		var $popover = this.oPopover.$();
+
 		assert.ok($popover.length, "Popover is rendered after it's opened.");
 		assert.ok($popover.closest("#sap-ui-static")[0], "Popover should be rendered inside the static uiArea.");
 		assert.ok(Math.ceil($popover.offset().top - iArrowOffset) >= Math.floor($Button.offset().top + $Button.outerHeight()), "Popover should be opened at the bottom of the button");
@@ -298,92 +244,97 @@ sap.ui.define([
 		this.oPopover.attachAfterClose(fnAfterClose);
 		this.oPopover.close();
 		this.clock.tick(500);
+
 		assert.equal(this.oPopover.$().css("visibility"), "hidden", "popover should be hidden after it's closed");
 		assert.ok(!this.oPopover.isOpen(), "Popover is already closed");
 		assert.ok(fnBeforeClose.calledOnce, "beforeClose event is fired");
 		assert.ok(fnAfterClose.calledOnce, "afterClose event is fired");
 	});
 
-	QUnit.test("Open with placement: Right", function (assert){
-		oButton.removeStyleClass("positioned").addStyleClass("positioned1");
-		oPopover.setPlacement(PlacementType.Right);
-		oButton.firePress();
-		assert.ok(oPopover.isOpen(), "Popover is already open");
+	QUnit.test("Open with placement: Right, and then close", function (assert){
+		this.oButton.removeStyleClass("positioned").addStyleClass("positioned1");
+		this.oPopover.setPlacement(PlacementType.Right);
+		this.oButton.firePress();
 		this.clock.tick(500);
-		var $popover = jQuery("#popover");
-		assert.ok(document.getElementById("popover"), "Popover is rendered after it's opened.");
+
+		assert.ok(this.oPopover.isOpen(), "Popover is already open");
+		var $popover = this.oPopover.$();
+		var $Button = this.oButton.$();
+
+		assert.ok($popover.length, "Popover is rendered after it's opened.");
 		assert.ok($popover.closest("#sap-ui-static")[0], "Popover should be rendered inside the static uiArea.");
-		assert.ok(Math.ceil($popover.offset().left - iArrowOffset) >= Math.floor(oButton.$().offset().left + oButton.$().outerWidth()), "Popover should be opened at the right side of the button");
+		assert.ok(Math.ceil($popover.offset().left - iArrowOffset) >= Math.floor($Button.offset().left + $Button.outerWidth()), "Popover should be opened at the right side of the button");
 		//the window size of the test machine is too small, this test can't be executed successfully
-// 				assert.ok($popover.position().top >= iBarHeight + 2, "popover is not overlapping the Page Header");
-// 				assert.ok(($popover.position().left + $popover.outerWidth()) <= (jQuery(window).width() - 10), "popover is not overlapping the right border");
-// 				assert.ok(($popover.position().top + $popover.outerHeight()) <= (jQuery(window).height() - 20), "popover is not overlapping bottom border");
+		//		assert.ok($popover.position().top >= iBarHeight + 2, "popover is not overlapping the Page Header");
+		//		assert.ok(($popover.position().left + $popover.outerWidth()) <= (jQuery(window).width() - 10), "popover is not overlapping the right border");
+		//		assert.ok(($popover.position().top + $popover.outerHeight()) <= (jQuery(window).height() - 20), "popover is not overlapping bottom border");
+		this.oPopover.close();
+		this.clock.tick(500);
+
+		assert.equal($popover.css("visibility"), "hidden", "popover should be hidden after it's closed");
+		assert.ok(!this.oPopover.isOpen(), "Popover is already closed");
 	});
 
-	QUnit.test("Close", function (assert){
-		oPopover.close();
+	QUnit.test("Open with placement: Left, and then close", function (assert){
+		this.oButton.removeStyleClass("positioned").addStyleClass("positioned2");
+		this.oPopover.setPlacement(PlacementType.Left);
+		this.oButton.firePress();
 		this.clock.tick(500);
-		assert.equal(jQuery("#popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
-		assert.ok(!oPopover.isOpen(), "Popover is already closed");
-	});
 
-	QUnit.test("Open with placement: Left", function (assert){
-		oButton.removeStyleClass("positioned1").addStyleClass("positioned2");
-		oPopover.setPlacement(PlacementType.Left);
-		oButton.firePress();
-		assert.ok(oPopover.isOpen(), "Popover is already open");
-		this.clock.tick(500);
-		var $popover = jQuery("#popover"),
-				$Button = jQuery(oButton.getFocusDomRef());
-		assert.ok(document.getElementById("popover"), "Popover is rendered after it's opened.");
+		assert.ok(this.oPopover.isOpen(), "Popover is already open");
+		var $popover = this.oPopover.$();
+		var $Button = this.oButton.$();
+
+		assert.ok($popover.length, "Popover is rendered after it's opened.");
 		assert.ok($popover.closest("#sap-ui-static")[0], "Popover should be rendered inside the static uiArea.");
 		assert.ok(Math.floor($popover.offset().left + $popover.outerWidth() + iArrowOffset) <= Math.ceil($Button.offset().left), "Popover should be opened at the left side of the button");
 		//the window size of the test machine is too small, this test can't be executed successfully
-// 				assert.ok($popover.position().top >= iBarHeight + 2, "popover is not overlapping the Page Header");
-// 				assert.ok(($popover.position().top + $popover.outerHeight()) <= (jQuery(window).height() - 20), "popover is not overlapping bottom border");
+		//		assert.ok($popover.position().top >= iBarHeight + 2, "popover is not overlapping the Page Header");
+		//		assert.ok(($popover.position().top + $popover.outerHeight()) <= (jQuery(window).height() - 20), "popover is not overlapping bottom border");
+
+		this.oPopover.close();
+		this.clock.tick(500);
+
+		assert.equal($popover.css("visibility"), "hidden", "popover should be hidden after it's closed");
+		assert.ok(!this.oPopover.isOpen(), "Popover is already closed");
 	});
 
-	QUnit.test("Close", function (assert){
-		oPopover.close();
+	QUnit.test("Open with placement: Top, and close", function (assert){
+		this.oButton.removeStyleClass("positioned").addStyleClass("positioned3");
+		this.oPopover.setPlacement(PlacementType.Top);
+		this.oButton.firePress();
 		this.clock.tick(500);
-		assert.equal(jQuery("#popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
-		assert.ok(!oPopover.isOpen(), "Popover is already closed");
-	});
 
-	QUnit.test("Open with placement: Top", function (assert){
-		oButton.removeStyleClass("positioned2").addStyleClass("positioned3");
-		oPopover.setPlacement(PlacementType.Top);
-		oButton.firePress();
-		assert.ok(oPopover.isOpen(), "Popover is already open");
-		this.clock.tick(500);
-		var $popover = jQuery("#popover"),
-				$Button = jQuery(oButton.getDomRef("inner"));
-		assert.ok(document.getElementById("popover"), "Popover is rendered after it's opened.");
+		assert.ok(this.oPopover.isOpen(), "Popover is already open");
+		var $popover = this.oPopover.$(),
+			$Button = jQuery(this.oButton.getDomRef("inner"));
+
+		assert.ok($popover.length, "Popover is rendered after it's opened.");
 		assert.ok($popover.closest("#sap-ui-static")[0], "Popover should be rendered inside the static uiArea.");
 		if (jQuery(window).height() > 150) {
 			// when the browser window is really short, this has to be disabled.
 			assert.ok(Math.floor($popover.offset().top + $popover.outerHeight() + iArrowOffset) <= Math.ceil($Button.offset().top), "Popover should be opened at the top of the button");
 		}
 		//the window size of the test machine is too small, this test can't be executed successfully
-// 				assert.ok($popover.position().top >= iBarHeight + 2, "popover is not overlapping the Page Header");
-// 				assert.ok(($popover.position().left + $popover.outerWidth()) <= (jQuery(window).width() - 10), "popover is not overlapping the right border");
+		//		assert.ok($popover.position().top >= iBarHeight + 2, "popover is not overlapping the Page Header");
+		//		assert.ok(($popover.position().left + $popover.outerWidth()) <= (jQuery(window).width() - 10), "popover is not overlapping the right border");
 		//the window size of the test machine is too small, this test can't be executed successfully
-// 				assert.ok($popover.position().left >= 10, "popover is not overlapping the left border");
-	});
+		//		assert.ok($popover.position().left >= 10, "popover is not overlapping the left border");
 
-	QUnit.test("Close", function (assert){
-		oPopover.close();
+		this.oPopover.close();
 		this.clock.tick(500);
-		assert.equal(jQuery("#popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
-		assert.ok(!oPopover.isOpen(), "Popover is already closed");
+
+		assert.equal($popover.css("visibility"), "hidden", "popover should be hidden after it's closed");
+		assert.ok(!this.oPopover.isOpen(), "Popover is already closed");
 	});
 
 	QUnit.test("Popover should stay open after destroyContent", function(assert) {
+		this.oPopover.destroyContent();
 		this.oPopover.addContent(new List({
 			items: [new StandardListItem({ title: 'Test'})]
 		}));
 
-		this.oPopover.openBy(this.oButton);
+		this.oButton.firePress();
 		this.clock.tick(1000);  // wait 1s after the open animation is completed
 
 		this.oPopover.destroyContent();
@@ -392,12 +343,11 @@ sap.ui.define([
 	});
 
 	QUnit.test('it should set the width of the content to "450px"', function(assert) {
-
 		// act
 		this.oPopover.setContentMinWidth("450px");  // note: contentWidth is set to "400px"
 
 		// arrange
-		this.oPopover.openBy(this.oButton);
+		this.oButton.firePress();
 		this.clock.tick(1000);  // wait 1s after the open animation is completed
 
 		// assert
@@ -405,12 +355,11 @@ sap.ui.define([
 	});
 
 	QUnit.test('it should set the width of the content to "50px"', function(assert) {
-
 		// act
 		this.oPopover.setContentWidth("50px");
 
 		// arrange
-		this.oPopover.openBy(this.oButton);
+		this.oButton.firePress();
 		this.clock.tick(1000);  // wait 1s after the open animation is completed
 
 		// assert
@@ -429,7 +378,7 @@ sap.ui.define([
 				this.clock.tick(1000);  // wait eventual animation
 			}.bind(this);
 		// arrange
-		this.oPopover.openBy(this.oButton);
+		this.oButton.firePress();
 		this.clock.tick(1000);  // wait 1s after the open animation is completed
 
 		// Act
@@ -451,54 +400,50 @@ sap.ui.define([
 	});
 
 	QUnit.test("Focus is correctly restored to the last control that opened the Popover", async function (assert){
-		var oPopover = new Popover({
-			content: [new Label({text: "Hello World!"})]
-		});
-		var oButton = new Button({
+		const oButton = new Button({
 			text: "Click me!",
-			press: function () {
-				oPopover.openBy(this);
-			}
-		}).placeAt("content");
-		var oButton2 = new Button({
-			text: "Click me!",
-			press: function () {
-				oPopover.openBy(this);
+			press: () => {
+				this.oPopover.openBy(oButton);
 			}
 		}).placeAt("content");
 
 		await nextUIUpdate(this.clock);
 
 		//Act
-		oButton.focus();
-		oButton.firePress();
-		this.clock.tick(500);
-
-		oButton2.focus();
-		oButton2.firePress();
+		this.oButton.focus();
+		this.oButton.firePress();
 		this.clock.tick(500);
 
 		oButton.focus();
 		oButton.firePress();
 		this.clock.tick(500);
 
-		oButton2.focus();
-		oButton2.firePress();
+		this.oButton.focus();
+		this.oButton.firePress();
 		this.clock.tick(500);
 
-		qutils.triggerKeydown(oPopover.getDomRef(), KeyCodes.ESCAPE);
+		oButton.focus();
+		oButton.firePress();
+		this.clock.tick(500);
+
+		qutils.triggerKeydown(this.oPopover.getDomRef(), KeyCodes.ESCAPE);
 		this.clock.tick(500);
 
 		// Assert
-		assert.strictEqual(document.activeElement, oButton2.getDomRef(), "Focus is correctly restored to the new opener");
+		assert.strictEqual(document.activeElement, oButton.getDomRef(), "Focus is correctly restored to the new opener");
 
 		// Cleanup
 		oButton.destroy();
-		oButton2.destroy();
-		oPopover.destroy();
 	});
 
-	QUnit.module("Position calculation");
+	QUnit.module("Position calculation", {
+		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach: function () {
+			runAllFakeTimersAndRestore(this.clock);
+		}
+	});
 
 	QUnit.test("vertical calculation of Popover positioning should be correct", function (assert){
 		var testCase = function (offset, outerHeight, height, placement, expectedPlace) {
@@ -506,22 +451,23 @@ sap.ui.define([
 			var stubOffsetTop = sinon.stub(jQuery.fn, "offset").returns({top: offset});
 			var stubOuterHeight = sinon.stub(jQuery.fn, "outerHeight").returns(outerHeight);
 
-			var oPopover3 = new Popover({
+			const oPopover = new Popover({
 				placement: placement
 			});
 
-			var stubWindowHeight = sinon.stub(oPopover3, "_getDocHeight").returns(height);
-			var stubOpenByRef = sinon.stub(oPopover3, "_getOpenByDomRef").returns(document.createElement("div"));
+			var stubWindowHeight = sinon.stub(oPopover, "_getDocHeight").returns(height);
+			var stubOpenByRef = sinon.stub(oPopover, "_getOpenByDomRef").returns(document.createElement("div"));
 
-			oPopover3._calcPlacement();
+			oPopover._calcPlacement();
 
-			assert.strictEqual(oPopover3._oCalcedPos, expectedPlace);
+			assert.strictEqual(oPopover._oCalcedPos, expectedPlace);
 
 			stubOpenByRef.restore();
 			stubOffset.restore();
 			stubOffsetTop.restore();
 			stubOuterHeight.restore();
 			stubWindowHeight.restore();
+			oPopover.destroy();
 		};
 
 		testCase(50, 50, 500, PlacementType.Vertical, PlacementType.Bottom);
@@ -538,10 +484,10 @@ sap.ui.define([
 		testCase(450, 50, 500, PlacementType.VerticalPreferredBottom, PlacementType.Top); // You do not have enough space at the preferred position, so the position with more space is used
 	});
 
-	QUnit.test("Vertical calculation of Popover position when Popover's content is bigger than the screen height and preferredVertical is set", function(assert){
+	QUnit.test("Vertical calculation of Popover position when Popover's content is bigger than the screen height and preferredVertical is set", async function(assert){
 
-		var oList = new List();
-		var oPopover = new Popover({ placement: "VerticalPreferredBottom"});
+		const oList = new List();
+		const oPopover = new Popover({ placement: "VerticalPreferredBottom"});
 
 		for (var i = 0; i < 1000; i++) {
 			oList.addItem(new StandardListItem());
@@ -549,12 +495,23 @@ sap.ui.define([
 
 		oPopover.addContent(oList);
 
-		oPopover.openBy(oButton2);
+		const oButton = new Button({
+			text: "Click me!",
+			press: function () {
+				oPopover.openBy(this);
+			}
+		}).placeAt("content");
+		oButton.addStyleClass("positioned");
+		await nextUIUpdate(this.clock);
+
+		oButton.firePress();
+		this.clock.tick(500);
 
 		assert.strictEqual(oPopover._oCalcedPos, PlacementType.Bottom);
 
 		oList.destroy();
 		oPopover.destroy();
+		oButton.destroy();
 	});
 
 	QUnit.test("Vertical (top/bottom) calculation and flip functionality", function (assert){
@@ -564,22 +521,23 @@ sap.ui.define([
 			var stubOuterHeight = sinon.stub(jQuery.fn, "outerHeight").returns(outerHeight);
 
 
-			var oPopover3 = new Popover({
+			const oPopover = new Popover({
 				placement: placement
 			});
 
-			var stubWindowHeight = sinon.stub(oPopover3, "_getDocHeight").returns(height);
-			var stubOpenByRef = sinon.stub(oPopover3, "_getOpenByDomRef").returns(document.createElement("div"));
+			var stubWindowHeight = sinon.stub(oPopover, "_getDocHeight").returns(height);
+			var stubOpenByRef = sinon.stub(oPopover, "_getOpenByDomRef").returns(document.createElement("div"));
 
-			oPopover3._calcPlacement();
+			oPopover._calcPlacement();
 
-			assert.strictEqual(oPopover3._oCalcedPos, expectedPlace);
+			assert.strictEqual(oPopover._oCalcedPos, expectedPlace);
 
 			stubOpenByRef.restore();
 			stubOffset.restore();
 			stubOffsetTop.restore();
 			stubOuterHeight.restore();
 			stubWindowHeight.restore();
+			oPopover.destroy();
 		};
 
 		testCase(150, 50, 500, PlacementType.PreferredTopOrFlip, PlacementType.Top); // You have enough space to the Top but Top space is smaller than the Bottom space
@@ -595,19 +553,20 @@ sap.ui.define([
 			var stubOuterWidth = sinon.stub(jQuery.fn, "outerWidth").returns(outerWidth);
 			var stubWindowWidth = sinon.stub(jQuery.fn, "width").returns(width);
 
-			var oPopover3 = new Popover({
+			const oPopover = new Popover({
 				placement: placement
 			});
 
-			var stubOpenByRef = sinon.stub(oPopover3, "_getOpenByDomRef").returns(document.createElement("div"));
-			oPopover3._calcPlacement();
+			var stubOpenByRef = sinon.stub(oPopover, "_getOpenByDomRef").returns(document.createElement("div"));
+			oPopover._calcPlacement();
 
-			assert.strictEqual(oPopover3._oCalcedPos, expectedPlace);
+			assert.strictEqual(oPopover._oCalcedPos, expectedPlace);
 
 			stubOpenByRef.restore();
 			stubOffset.restore();
 			stubOuterWidth.restore();
 			stubWindowWidth.restore();
+			oPopover.destroy();
 		};
 
 		testCase(40, 50, 500, PlacementType.PreferredLeftOrFlip, PlacementType.Right);
@@ -624,19 +583,20 @@ sap.ui.define([
 			var stubOuterWidth = sinon.stub(jQuery.fn, "outerWidth").returns(outerWidth);
 			var stubWindowWidth = sinon.stub(jQuery.fn, "width").returns(width);
 
-			var oPopover3 = new Popover({
+			var oPopover = new Popover({
 				placement: placement
 			});
 
-			var stubOpenByRef = sinon.stub(oPopover3, "_getOpenByDomRef").returns(document.createElement("div"));
-			oPopover3._calcPlacement();
+			var stubOpenByRef = sinon.stub(oPopover, "_getOpenByDomRef").returns(document.createElement("div"));
+			oPopover._calcPlacement();
 
-			assert.strictEqual(oPopover3._oCalcedPos, expectedPlace);
+			assert.strictEqual(oPopover._oCalcedPos, expectedPlace);
 
 			stubOpenByRef.restore();
 			stubOffset.restore();
 			stubOuterWidth.restore();
 			stubWindowWidth.restore();
+			oPopover.destroy();
 		};
 
 		// Preferred Left
@@ -671,16 +631,16 @@ sap.ui.define([
 						outerWidth: sinon.stub().returns(200),
 						outerHeight: sinon.stub().returns(200)
 					});
-			var oPopover3 = new Popover({
+			var oPopover = new Popover({
 				placement: PlacementType.Auto
 			});
 
-			var stubWindowHeight = sinon.stub(oPopover3, "_getDocHeight").returns(height);
+			var stubWindowHeight = sinon.stub(oPopover, "_getDocHeight").returns(height);
 
-			var stubOpenByRef = sinon.stub(oPopover3, "_getOpenByDomRef").returns(document.createElement("div"));
-			oPopover3._calcPlacement();
+			var stubOpenByRef = sinon.stub(oPopover, "_getOpenByDomRef").returns(document.createElement("div"));
+			oPopover._calcPlacement();
 
-			assert.strictEqual(oPopover3._oCalcedPos, expectedPlace);
+			assert.strictEqual(oPopover._oCalcedPos, expectedPlace);
 
 			stubOffsetTop.restore();
 			stubOpenByRef.restore();
@@ -691,6 +651,7 @@ sap.ui.define([
 			stubOuterHeight.restore();
 			stubWindowHeight.restore();
 			stubPopover.restore();
+			oPopover.destroy();
 		};
 
 		//tests for preferred positioning if the popover fits in both placementTypes (vertical and horizontal)
@@ -711,8 +672,27 @@ sap.ui.define([
 
 	QUnit.module("Property Setter", {
 		beforeEach: async function () {
+			this.clock = sinon.useFakeTimers();
+			this.oBeginButton = new Button("beginButton", {
+				text: "Left",
+				type: ButtonType.Reject
+			});
+
+			this.oEndButton = new Button("endButton", {
+				text: "Right",
+				type: ButtonType.Accept
+			});
+
+			this.oButton = new Button({
+				text: "Open Popover",
+				press: () => {
+					this.oPopover.openBy(this.oButton);
+				}
+			});
+
+			this.sTitle = "Popover";
 			this.oPopover = new Popover({
-				placement: PlacementType.Bottom,
+				title: this.sTitle,
 				showHeader: true,
 				content: [
 					new HTML({
@@ -720,248 +700,240 @@ sap.ui.define([
 					})
 				]
 			});
-			this.oButton = new Button({
-				text: "Open Popover",
-				press: () => {
-					this.oPopover.openBy(this.oButton);
-				}
-			});
-			this.oButton.placeAt("content");
-			await nextUIUpdate();
+
+			page.addContent(this.oButton);
+			await nextUIUpdate(this.clock);
 		},
 		afterEach: function () {
+			this.oBeginButton.destroy();
+			this.oEndButton.destroy();
 			this.oPopover.destroy();
 			this.oButton.destroy();
+			runAllFakeTimersAndRestore(this.clock);
 		}
 	});
 
 	QUnit.test("Set modal to true or false", async function (assert){
-		oButton.firePress();
-		oPopover.setModal(true);
+		this.oButton.firePress();
+		this.oPopover.setModal(true);
 		await nextUIUpdate();
 		assert.ok(document.getElementById("sap-ui-blocklayer-popup"), "Block layer is rendered");
 		assert.equal(jQuery("#sap-ui-blocklayer-popup").css("visibility"), "visible", "block layer is visible");
-		oPopover.setModal(false);
+		this.oPopover.setModal(false);
 		await nextUIUpdate();
 		assert.equal(jQuery("#sap-ui-blocklayer-popup").css("visibility"), "hidden", "block layer is invisible");
 	});
 
 	QUnit.test("Set title", async function (assert){
-		this.clock = sinon.useFakeTimers();
-		assert.ok(oPopover.getDomRef("title"), "Title is rendered");
-		assert.equal(oPopover.$("title").text(), sOldTitleValue, "Title should be with the right value");
-		assert.ok(oPopover.$("title").closest("#" + oPopover.getId() + "-intHeader-BarMiddle")[0], "Title should be rendered in the middle part of the bar");
-		oPopover.setTitle(sNewTitleValue);
+		const sNewTitle = "Title Changed";
+		this.oButton.firePress();
+		this.clock.tick(1000);
+
+		assert.ok(this.oPopover.getDomRef("title"), "Title is rendered");
+		assert.equal(this.oPopover.$("title").text(), this.sTitle, "Title should be with the right value");
+		assert.ok(this.oPopover.$("title").closest("#" + this.oPopover.getId() + "-intHeader-BarMiddle")[0], "Title should be rendered in the middle part of the bar");
+		this.oPopover.setTitle(sNewTitle);
 		await nextUIUpdate(this.clock);
 		this.clock.tick();
-		assert.equal(oPopover.$("title").text(), sNewTitleValue, "Title should be changed to the new value");
-
-		// Restore
-		runAllFakeTimersAndRestore(this.clock);
+		assert.equal(this.oPopover.$("title").text(), sNewTitle, "Title should be changed to the new value");
 	});
 
 	QUnit.test("Set title to empty string", async function (assert){
-		this.clock = sinon.useFakeTimers();
-		oPopover.setTitle("");
+		this.oPopover.setTitle("");
 		await nextUIUpdate(this.clock);
-		assert.equal(oPopover.$("title").text(), "", "Title should be able to be set to empty string");
-
-		// Restore
-		runAllFakeTimersAndRestore(this.clock);
+		assert.equal(this.oPopover.$("title").text(), "", "Title should be able to be set to empty string");
 	});
 
 	QUnit.test("Add left button", async function (assert){
-		oPopover.setBeginButton(oBeginButton);
-		await nextUIUpdate();
-		var oBeginButtonFocusDom = oBeginButton.getFocusDomRef();
+		this.oButton.firePress();
+		await nextUIUpdate(this.clock);
+		this.oPopover.setBeginButton(this.oBeginButton);
+		await nextUIUpdate(this.clock);
+
+		var oBeginButtonFocusDom = this.oBeginButton.getFocusDomRef();
 		assert.ok(oBeginButtonFocusDom, "BeginButton should be rendered");
 		if (!Device.support.touch) {
 			assert.equal(oBeginButtonFocusDom, document.activeElement, "beginButton should have the focus");
 		}
-		assert.ok(oBeginButton.$().closest("#" + oPopover.getId() + "-intHeader-BarLeft")[0], "Left button is set in the left side of the bar in iOS");
+		assert.ok(this.oBeginButton.$().closest("#" + this.oPopover.getId() + "-intHeader-BarLeft")[0], "Left button is set in the left side of the bar in iOS");
 
-		oBeginButton.setEnabled(false);
-		await nextUIUpdate();
+		this.oBeginButton.setEnabled(false);
+		await nextUIUpdate(this.clock);
 
 		if (!Device.support.touch) {
-			assert.ok(oPopover.getDomRef().contains(document.activeElement), "beginButton should not trap the focus");
+			assert.ok(this.oPopover.getDomRef().contains(document.activeElement), "beginButton should not trap the focus");
 		}
 	});
 
 	QUnit.test("Add right button", async function (assert){
-		var oInserAggregationSpy = this.spy(oPopover._internalHeader.insertAggregation);
-		oPopover.setEndButton(oEndButton);
-		await nextUIUpdate();
+		this.oButton.firePress();
+		await nextUIUpdate(this.clock);
+
+		var oInserAggregationSpy = this.spy(this.oPopover._internalHeader.insertAggregation);
+		this.oPopover.setEndButton(this.oEndButton);
+		await nextUIUpdate(this.clock);
+
 		assert.ok(document.getElementById("endButton"), "EndButton should be rendered");
-		assert.ok(oEndButton.$().closest("#" + oPopover.getId() + "-intHeader-BarRight")[0], "EndButton is set in the right side of the bar");
+		assert.ok(this.oEndButton.$().closest("#" + this.oPopover.getId() + "-intHeader-BarRight")[0], "EndButton is set in the right side of the bar");
 
 		assert.notOk(oInserAggregationSpy.called, "insert aggregation should not be called");
 		if (!Device.support.touch) {
-			assert.equal(oEndButton.getFocusDomRef(), document.activeElement, "endButton should be focused, when beginButton is disabled");
+			assert.equal(this.oEndButton.getFocusDomRef(), document.activeElement, "endButton should be focused, when beginButton is disabled");
 		}
 
-		oEndButton.setEnabled(false);
-		await nextUIUpdate();
+		this.oEndButton.setEnabled(false);
+		await nextUIUpdate(this.clock);
 
 		if (!Device.support.touch) {
-			assert.ok(oPopover.getDomRef().contains(document.activeElement), "endButton should not trap the focus");
+			assert.ok(this.oPopover.getDomRef().contains(document.activeElement), "endButton should not trap the focus");
 		}
 
-		oEndButton.setEnabled(true);
+		this.oEndButton.setEnabled(true);
 	});
 
-	QUnit.test("Remove beginButton", async function (assert){
-		oPopover.setBeginButton(null);
-		await nextUIUpdate();
-		var oEndButtonFocusDom = oEndButton.getFocusDomRef();
+	QUnit.test("Remove beginButton", function (assert){
+		this.oPopover.setBeginButton(null);
+		this.oPopover.setEndButton(this.oEndButton);
+		this.oButton.firePress();
+		this.clock.tick(1000);
+
+		var oEndButtonFocusDom = this.oEndButton.getFocusDomRef();
 		if (!Device.support.touch) {
 			assert.equal(oEndButtonFocusDom, document.activeElement, "EndButton should have the focus");
 		}
 		if (Device.os.ios) {
-			assert.ok(!jQuery("#" + oPopover.getId() + "-intHeader-BarLeft").children("#beginButton")[0], "BeginButton is removed from the bar");
+			assert.ok(!jQuery("#" + this.oPopover.getId() + "-intHeader-BarLeft").children("#beginButton")[0], "BeginButton is removed from the bar");
 		} else {
-			assert.ok(!jQuery("#" + oPopover.getId() + "-intHeader-BarRight").children("#beginButton")[0], "BeginButton is removed from the bar");
+			assert.ok(!jQuery("#" + this.oPopover.getId() + "-intHeader-BarRight").children("#beginButton")[0], "BeginButton is removed from the bar");
 		}
 	});
 
-	QUnit.test("Remove right button", async function (assert){
-		oPopover.setEndButton(null);
-		await nextUIUpdate();
-		assert.ok(!jQuery("#" + oPopover.getId() + "-intHeader-BarRight").children("#endButton")[0], "EndButton is removed from the bar");
+	QUnit.test("Remove endButton", function (assert){
+		this.oPopover.setEndButton(null);
+		this.oButton.firePress();
+		this.clock.tick(1000);
+		assert.ok(!jQuery("#" + this.oPopover.getId() + "-intHeader-BarRight").children("#endButton")[0], "EndButton is removed from the bar");
 	});
 
 	QUnit.test("Set sub header", async function (assert){
-		oPopover.setSubHeader(oSubHeader);
+		var oSubHeader = new Bar({
+			contentMiddle: [
+				new SearchField({
+					placeholder: "Search ...",
+					width: "100%"
+				})
+			]
+		});
+
+		this.oPopover.setSubHeader(oSubHeader);
+		this.oButton.firePress();
 		await nextUIUpdate();
-		assert.ok(oPopover.$().children(".sapMPopoverSubHeader")[0], "Sub header is rendered");
+		assert.ok(this.oPopover.$().children(".sapMPopoverSubHeader")[0], "Sub header is rendered");
+		oSubHeader.destroy();
 	});
 
 	QUnit.test("set contentWidth/Height", function (assert){
-		this.clock = sinon.useFakeTimers();
-
-		oPopover.setContentWidth("300px");
-		oPopover.setContentHeight("400px");
-		this.clock.tick(50);
-		var $content = oPopover.$("cont");
+		this.oPopover.setContentWidth("300px");
+		this.oPopover.setContentHeight("400px");
+		this.oButton.firePress();
+		this.clock.tick(500);
+		var $content = this.oPopover.$("cont");
 		assert.ok($content.width() <= 300, "contentWidth " + $content.width() + " should be less or equal than the set width 300");
 		assert.ok($content.height() <= 400, "contentHeight " + $content.height() + " should be less or equal than the set height 400");
-
-		// Restore
-		runAllFakeTimersAndRestore(this.clock);
 	});
 
 	QUnit.test("set contentWidth/Height to percentage", function (assert){
-		this.clock = sinon.useFakeTimers();
-
-		oPopover.setContentWidth("50%");
-		oPopover.setContentHeight("50%");
-		this.clock.tick(50);
-		var $content = oPopover.$("cont");
+		this.oPopover.setContentWidth("50%");
+		this.oPopover.setContentHeight("50%");
+		this.oButton.firePress();
+		this.clock.tick(500);
+		var $content = this.oPopover.$("cont");
 		assert.ok($content.width() <= (jQuery(window).width() * 0.5), "Calculated width " + $content.width() + " should be less or equal than the part of window width " + jQuery(window).width() * 0.5);
 		assert.ok($content.height() <= (jQuery(window).height() * 0.5), "Calculated height " + $content.height() + " should be less or equal than the part of window height " + jQuery(window).height() * 0.5);
-
-		// Restore
-		runAllFakeTimersAndRestore(this.clock);
 	});
 
 	QUnit.test("Set enable scrolling (mapped to vertical/horizontal scrolling)", function (assert){
-		var oPopover4 = new Popover({
-			verticalScrolling: true,
-			horizontalScrolling: true
-		});
-
-		assert.strictEqual(oPopover4.getVerticalScrolling(), true);
-		assert.strictEqual(oPopover4.getHorizontalScrolling(), true);
-		oPopover4.setVerticalScrolling(false);
-		oPopover4.setHorizontalScrolling(false);
-		assert.strictEqual(oPopover4.getVerticalScrolling(), false);
-		assert.strictEqual(oPopover4.getHorizontalScrolling(), false);
+		assert.strictEqual(this.oPopover.getVerticalScrolling(), true);
+		assert.strictEqual(this.oPopover.getHorizontalScrolling(), true);
+		this.oPopover.setVerticalScrolling(false);
+		this.oPopover.setHorizontalScrolling(false);
+		assert.strictEqual(this.oPopover.getVerticalScrolling(), false);
+		assert.strictEqual(this.oPopover.getHorizontalScrolling(), false);
 	});
 
 	QUnit.test("Set vertical/horizontal scrolling", async function (assert){
-		oPopover.setVerticalScrolling(false);
-		oPopover.setHorizontalScrolling(false);
-		await nextUIUpdate();
+		this.oPopover.setVerticalScrolling(false);
+		this.oPopover.setHorizontalScrolling(false);
+		this.oButton.firePress();
+		await nextUIUpdate(this.clock);
 
-		assert.equal(oPopover.getDomRef().className.indexOf("sapMPopoverVerScrollDisabled") != -1, true, "verticalScrolling should be disabled");
-		assert.equal(oPopover.getDomRef().className.indexOf("sapMPopoverHorScrollDisabled") != -1, true, "horizontalScrolling should be disabled");
-		assert.equal(oPopover.getVerticalScrolling(), false, "verticalScrolling should be disabled");
-		assert.equal(oPopover.getVerticalScrolling(), false, "horizontalScrolling should be disabled");
+		assert.equal(this.oPopover.getDomRef().className.indexOf("sapMPopoverVerScrollDisabled") != -1, true, "verticalScrolling should be disabled");
+		assert.equal(this.oPopover.getDomRef().className.indexOf("sapMPopoverHorScrollDisabled") != -1, true, "horizontalScrolling should be disabled");
+		assert.equal(this.oPopover.getVerticalScrolling(), false, "verticalScrolling should be disabled");
+		assert.equal(this.oPopover.getVerticalScrolling(), false, "horizontalScrolling should be disabled");
 
-		oPopover.setVerticalScrolling(true);
-		oPopover.setHorizontalScrolling(true);
-		await nextUIUpdate();
+		this.oPopover.setVerticalScrolling(true);
+		this.oPopover.setHorizontalScrolling(true);
+		await nextUIUpdate(this.clock);
 
-		assert.equal(oPopover.getDomRef().className.indexOf("sapMPopoverVerScrollDisabled") == -1, true, "verticalScrolling should be enabled");
-		assert.equal(oPopover.getDomRef().className.indexOf("sapMPopoverHorScrollDisabled") == -1, true, "horizontalScrolling should be enabled");
-		assert.equal(oPopover.getVerticalScrolling(), true, "verticalScrolling should be enabled");
-		assert.equal(oPopover.getVerticalScrolling(), true, "horizontalScrolling should be enabled");
+		assert.equal(this.oPopover.getDomRef().className.indexOf("sapMPopoverHorScrollDisabled") == -1, true, "horizontalScrolling should be enabled");
+		assert.equal(this.oPopover.getVerticalScrolling(), true, "verticalScrolling should be enabled");
+		assert.equal(this.oPopover.getVerticalScrolling(), true, "horizontalScrolling should be enabled");
+		assert.equal(this.oPopover.getDomRef().className.indexOf("sapMPopoverVerScrollDisabled") == -1, true, "verticalScrolling should be enabled");
 	});
 
 	QUnit.test("Set showHeader", async function (assert) {
-		const clock = sinon.useFakeTimers();
 		this.oButton.firePress();
-		clock.tick(1000);
+		this.clock.tick(1000);
 
 		assert.ok(this.oPopover.getDomRef("intHeader"), "Internal header is rendered");
 
 		this.oPopover.setModal(true);
 		this.oPopover.setShowHeader(false);
-		await nextUIUpdate(clock);
+		await nextUIUpdate(this.clock);
 		assert.ok(!this.oPopover.getDomRef("intHeader"), "Internal header is removed");
 
 		this.oPopover.setShowHeader(true);
-		await nextUIUpdate(clock);
+		await nextUIUpdate(this.clock);
 		assert.ok(this.oPopover.$("intHeader").css("display") !== "none", "Internal header is re-rendered");
-
-		runAllFakeTimersAndRestore(clock);
 	});
 
 	QUnit.test("Set custom header", async function (assert) {
-		const clock = sinon.useFakeTimers();
+		var oCustomHeader = new Bar("customHeader", {
+			contentLeft: [new Image('myAppIcon', {src: IMAGE_PATH + "SAPUI5.png"}),
+				new Label("IconHeader", {text: "Icon Header"})],
+			contentMiddle: [],
+			contentRight: []
+		});
+
 		this.oPopover.setCustomHeader(oCustomHeader);
-		await nextUIUpdate(clock);
+		await nextUIUpdate(this.clock);
 		this.oButton.firePress();
-		clock.tick(1000);
+		this.clock.tick(1000);
 		assert.ok(document.getElementById("customHeader"), "Custom Header is rendered");
 		assert.ok(!this.oPopover.getDomRef("intHeader"), "Internal header is destroyed");
-
-		runAllFakeTimersAndRestore(clock);
 	});
 
 	QUnit.test("Popover opened by a button, set focus to button shouldn't close the popover", async function(assert) {
-		this.clock = sinon.useFakeTimers();
-
 		var oButtonInPopover = new Button();
-		var oButton = new Button();
-		var oPopover = new Popover({
-			content: oButtonInPopover
-		});
-
-		oButton.placeAt("content");
+		this.oPopover.addContent(oButtonInPopover);
 		await nextUIUpdate(this.clock);
 
-		oPopover.openBy(oButton);
+		this.oButton.firePress();
 		this.clock.tick(500);
 
-		assert.ok(oPopover.isOpen(), "Popover is open");
+		assert.ok(this.oPopover.isOpen(), "Popover is open");
 		assert.ok(containsOrEquals(oButtonInPopover.getDomRef(), document.activeElement), "focus is set to the button in popover");
 
-		oButton.focus();
+		this.oButton.focus();
 		this.clock.tick(500);
 
-		assert.ok(oPopover.isOpen(), "Popover is still open");
+		assert.ok(this.oPopover.isOpen(), "Popover is still open");
 
-		// Restore
-		runAllFakeTimersAndRestore(this.clock);
-
-		oPopover.destroy();
-		oButton.destroy();
+		oButtonInPopover.destroy();
 	});
 
 	QUnit.test("Autoclose after invalidate", async function (assert){
-		this.clock = sinon.useFakeTimers();
-
 		var oSystem = {
 			desktop: true,
 			phone: false,
@@ -972,55 +944,40 @@ sap.ui.define([
 
 		this.stub(Popup.prototype, "touchEnabled").value(false);
 
-		var oPopover = new Popover({
-			contentWidth: "300px",
-			contentHeight: "300px",
-			placement: PlacementType.Top
-		});
-
-		var oButton = new Button(),
-				oButton2 = new Button();
-
+		const oButton = new Button();
 		oButton.placeAt("content");
-		oButton2.placeAt("content");
 		await nextUIUpdate(this.clock);
 
-		oButton.$().removeClass("positioned positioned1 positioned2");
-		oButton.$().addClass("positioned3");
-		oButton2.$().css({
+		this.oButton.$().removeClass("positioned positioned1 positioned2");
+		this.oButton.$().addClass("positioned3");
+		oButton.$().css({
 			position: "absolute",
 			top: "100px",
 			left: "100px"
 		});
 
-		oPopover.openBy(oButton);
-		assert.ok(oPopover.isOpen(), "Popover should be opened");
+		this.oButton.firePress();
+		assert.ok(this.oPopover.isOpen(), "Popover should be opened");
 		this.clock.tick(500);
 
-		oPopover.invalidate();
+		this.oPopover.invalidate();
 		await nextUIUpdate(this.clock);
 
 		var oSpy = this.spy(console, "assert");
 		var oBeforeCloseSpy = this.spy();
 
-		oPopover.attachBeforeClose(oBeforeCloseSpy);
+		this.oPopover.attachBeforeClose(oBeforeCloseSpy);
 
-		oButton2.focus();
+		oButton.focus();
 		this.clock.tick(500);
-		assert.ok(!oPopover.isOpen(), "Popover should be closed by autoclose");
+		assert.ok(!this.oPopover.isOpen(), "Popover should be closed by autoclose");
 		assert.ok(oSpy.neverCalledWith(sinon.match.falsy), "All asserts should be passed");
 		assert.equal(oBeforeCloseSpy.callCount, 1, "beforeClose event is fired");
 
-		// Restore
-		runAllFakeTimersAndRestore(this.clock);
-		oPopover.destroy();
 		oButton.destroy();
-		oButton2.destroy();
 	});
 
-	QUnit.test("Restore scroll position after content resize", function (assert){
-		this.clock = sinon.useFakeTimers();
-
+	QUnit.test("Restore scroll position after content resize", async function (assert){
 		var oSystem = {
 			desktop: true,
 			phone: false,
@@ -1041,10 +998,10 @@ sap.ui.define([
 					placement: PlacementType.Top
 				});
 
-		oButton.$().removeClass("positioned positioned1 positioned2");
-		oButton.$().addClass("positioned3");
+		this.oButton.$().addClass("positioned3");
+		await nextUIUpdate(this.clock);
 
-		oPopover.openBy(oButton);
+		oPopover.openBy(this.oButton);
 		this.clock.tick(500);
 
 		oPopover._oScroller.scrollTo(iScrollLeft, iScrollTop, 1);
@@ -1055,14 +1012,9 @@ sap.ui.define([
 		assert.equal(oPopover._oScroller.getScrollTop(), iScrollTop, "Popover should keep vertical scroll position");
 		assert.equal(oPopover._oScroller.getScrollLeft(), iScrollLeft, "Popover should keep horizontal scroll position");
 		oPopover.destroy();
-
-		// Restore
-		runAllFakeTimersAndRestore(this.clock);
 	});
 
 	QUnit.test("Keyboard Navigation", async function (assert){
-		this.clock = sinon.useFakeTimers();
-
 		var oSystem = {
 			desktop: true,
 			phone: false,
@@ -1071,74 +1023,55 @@ sap.ui.define([
 
 		this.stub(Device, "system").value(oSystem);
 
-		var oButton = new Button();
-		oButton.placeAt("content");
+		this.oPopover.setContentHeight("300px");
+		this.oPopover.setContentWidth("300px");
+		this.oPopover.setPlacement(PlacementType.Top);
+		this.oPopover.destroyContent();
+		this.oPopover.addContent(new HTML({
+			content: "<div class='width500height600'></div>"
+		}));
+
 		await nextUIUpdate(this.clock);
-		oButton.focus();
+		this.oButton.focus();
+		this.oButton.$().addClass("positioned3");
 
-		var oPopover = new Popover({
-			contentWidth: "300px",
-			contentHeight: "300px",
-			content: new HTML({
-				content: "<div class='width500height600'></div>"
-			}),
-			placement: PlacementType.Top
-		});
-
-		oButton.$().removeClass("positioned positioned1 positioned2");
-		oButton.$().addClass("positioned3");
-
-		oPopover.openBy(oButton);
+		this.oButton.firePress();
 		this.clock.tick(500);
-		assert.ok(oPopover.isOpen(), "Popover should be opened");
-		qutils.triggerKeydown(oPopover.getDomRef(), KeyCodes.ESCAPE);
+		assert.ok(this.oPopover.isOpen(), "Popover should be opened");
+		qutils.triggerKeydown(this.oPopover.getDomRef(), KeyCodes.ESCAPE);
 		this.clock.tick(500);
-		assert.ok(!oPopover.isOpen(), "Popover should be closed by ESCAPE key");
-		assert.equal(document.activeElement, oButton.getFocusDomRef(), "Focus should be set back to the button");
+		assert.ok(!this.oPopover.isOpen(), "Popover should be closed by ESCAPE key");
+		assert.equal(document.activeElement, this.oButton.getFocusDomRef(), "Focus should be set back to the button");
 
-		oPopover.openBy(oButton);
+		this.oButton.firePress();
 		this.clock.tick(500);
-		assert.ok(oPopover.isOpen(), "Popover should be opened");
-		qutils.triggerKeydown(oPopover.getDomRef(), KeyCodes.F4, false, true);
+		assert.ok(this.oPopover.isOpen(), "Popover should be opened");
+		qutils.triggerKeydown(this.oPopover.getDomRef(), KeyCodes.F4, false, true);
 		this.clock.tick(500);
-		assert.ok(!oPopover.isOpen(), "Popover should be closed by Alt+F4 key");
-		assert.equal(document.activeElement, oButton.getFocusDomRef(), "Focus should be set back to the button");
-
-		oPopover.destroy();
-		oButton.destroy();
-
-		// Restore
-		runAllFakeTimersAndRestore(this.clock);
+		assert.ok(!this.oPopover.isOpen(), "Popover should be closed by Alt+F4 key");
+		assert.equal(document.activeElement, this.oButton.getFocusDomRef(), "Focus should be set back to the button");
 	});
 
 	QUnit.test("content resize handler for placement: auto after orientation change", function (assert){
-		this.clock = sinon.useFakeTimers();
+		this.oPopover.setContentHeight("300px");
+		this.oPopover.setContentWidth("300px");
+		this.oPopover.setPlacement(PlacementType.Auto);
+		this.oPopover.destroyContent();
+		this.oPopover.addContent(new HTML({
+			content: "<div class='width500height600'></div>"
+		}));
 
-		var oPopover = new Popover({
-			contentWidth: "300px",
-			contentHeight: "300px",
-			content: new HTML({
-				content: "<div class='width500height600'></div>"
-			}),
-			placement: PlacementType.Auto
-		});
+		this.oButton.$().removeClass("positioned positioned1 positioned2");
+		this.oButton.$().addClass("positioned3");
 
-		oButton.$().removeClass("positioned positioned1 positioned2");
-		oButton.$().addClass("positioned3");
-
-		oPopover.openBy(oButton);
+		this.oButton.firePress();
 		this.clock.tick(500);
-		var fnContentResize = this.spy(oPopover, "_registerContentResizeHandler");
-		oPopover._onOrientationChange();
+		var fnContentResize = this.spy(this.oPopover, "_registerContentResizeHandler");
+		this.oPopover._onOrientationChange();
 		assert.equal(fnContentResize.callCount, 1, "registerContentResizeHandler should called once");
-		oPopover.destroy();
-
-		// Restore
-		runAllFakeTimersAndRestore(this.clock);
 	});
 
 	QUnit.test("content resize handler for placement: auto after orientation change", function (assert){
-		this.clock = sinon.useFakeTimers();
 		var oSystem = {
 			desktop: true,
 			phone: false,
@@ -1147,61 +1080,52 @@ sap.ui.define([
 
 		this.stub(Device, "system").value(oSystem);
 
-		var oPopover = new Popover({
-			contentWidth: "300px",
-			contentHeight: "300px",
-			content: new HTML({
-				content: "<div class='width500height600'></div>"
-			}),
-			placement: PlacementType.Auto
-		});
+		this.oPopover.setContentHeight("300px");
+		this.oPopover.setContentWidth("300px");
+		this.oPopover.setPlacement(PlacementType.Auto);
+		this.oPopover.destroyContent();
+		this.oPopover.addContent(new HTML({
+			content: "<div class='width500height600'></div>"
+		}));
 
-		oPopover.openBy(oButton);
+		this.oButton.firePress();
 		this.clock.tick(500);
 
-		assert.ok(oPopover.isOpen(), "Popover is opened");
+		assert.ok(this.oPopover.isOpen(), "Popover is opened");
 
 		// change the position of button, popover should be closed
-		oButton.$().css("bottom", parseInt(oButton.$().css("bottom")) + 33);
+		this.oButton.$().css("bottom", parseInt(this.oButton.$().css("bottom")) + 33);
 		this.clock.tick(600);
 
-		assert.ok(!oPopover.isOpen(), "Popover is closed because open by control is moved");
+		assert.ok(!this.oPopover.isOpen(), "Popover is closed because open by control is moved");
 
-		oPopover.openBy(oButton);
+		this.oButton.firePress();
 		this.clock.tick(500);
 
-		assert.ok(oPopover.isOpen(), "Popover is opened again");
+		assert.ok(this.oPopover.isOpen(), "Popover is opened again");
 		// turn of the followOf
-		oPopover.setFollowOf(false);
+		this.oPopover.setFollowOf(false);
 
 		// change the position of button, popover should not be closed this time
-		oButton.$().css("bottom", parseInt(oButton.$().css("bottom")) - 33);
+		this.oButton.$().css("bottom", parseInt(this.oButton.$().css("bottom")) - 33);
 
 		this.clock.tick(300);
-		assert.ok(oPopover.isOpen(), "Popover is still open");
-
-		oPopover.destroy();
-
-		// Restore
-		runAllFakeTimersAndRestore(this.clock);
+		assert.ok(this.oPopover.isOpen(), "Popover is still open");
 	});
 
 	QUnit.test("Content scrolling is disabled when NavContainer is set as single content in Popover", function (assert){
-		var oPopover = new Popover({
-			horizontalScrolling: false,
-			content: new NavContainer({
-				pages: new Page()
-			})
-		});
+		this.oPopover.setHorizontalScrolling(false);
+		this.oPopover.destroyContent();
+		this.oPopover.addContent(new NavContainer({
+			pages: new Page()
+		}));
 
-		oPopover.openBy(oButton);
-		assert.ok(!oPopover.getScrollDelegate(), "Scrolling is disabled by default when there's NavContainer as single content in Popover");
-
-		oPopover.destroy();
+		this.oButton.firePress();
+		this.clock.tick(500);
+		assert.ok(!this.oPopover.getScrollDelegate(), "Scrolling is disabled by default when there's NavContainer as single content in Popover");
 	});
 
 	QUnit.test("Popover should set the focus to itself only when needed", function (assert){
-		this.clock = sinon.useFakeTimers();
 		//Arrange
 		var oNavContainer = new NavContainer({
 				initialPage: "firstPage"
@@ -1222,12 +1146,11 @@ sap.ui.define([
 
 		oNavContainer.addPage(oPage1).addPage(oPage2);
 
-		var oPopover = new Popover({
-			content: oNavContainer
-		});
+		this.oPopover.destroyContent();
+		this.oPopover.addContent(oNavContainer);
 
 		//Act
-		oPopover.openBy(oButton);
+		this.oButton.firePress();
 		oNavButton.firePress();
 		this.clock.tick(500);
 
@@ -1235,13 +1158,13 @@ sap.ui.define([
 		assert.equal(document.activeElement, oPage2._navBtn.getDomRef(), "The focus should be on the back button");
 
 		//Act
-		oPopover.close();
+		this.oPopover.close();
 		this.clock.tick(300);
-		oPopover.openBy(oButton);
+		this.oPopover.openBy(this.oButton);
 		this.clock.tick(300);
 
 		//Arrange
-		var oCloseSpy = this.spy(oPopover, "close");
+		var oCloseSpy = this.spy(this.oPopover, "close");
 
 		//Act
 		oPage2.fireNavButtonPress();
@@ -1250,87 +1173,68 @@ sap.ui.define([
 		//Assert
 		assert.equal(document.activeElement, oNavButton.getDomRef(), "The focus should be on the navigation button");
 		assert.equal(oCloseSpy.callCount, 0, "The popover should not close after a navigation");
-		assert.ok(oPopover.isOpen(), "Popover should stay open");
+		assert.ok(this.oPopover.isOpen(), "Popover should stay open");
 
 		//Cleanup
-		oPopover.destroy();
+		oNavContainer.destroy();
+		oNavButton.destroy();
+		oPage1.destroy();
+		oPage2.destroy();
 		oCloseSpy.restore();
-
-		// Restore
-		runAllFakeTimersAndRestore(this.clock);
 	});
 
 	QUnit.test("Scrolling is properly disabled", function (assert){
-		var oPopover = new Popover({
-			content: [
-				new Button({text: 'text1'}),
-				new Button({text: 'text2'}),
-				new Button({text: 'text2'})
-			],
-			verticalScrolling: false,
-			horizontalScrolling: false
-		});
+		this.oPopover.destroyContent();
+		this.oPopover.addContent(new Button({text: 'text1'}));
+		this.oPopover.addContent(new Button({text: 'text2'}));
+		this.oPopover.addContent(new Button({text: 'text3'}));
 
-		oPopover.openBy(oButton);
-		assert.ok(!oPopover.getScrollDelegate(), "Scrolling is properly disabled");
+		this.oPopover.setHorizontalScrolling(false);
+		this.oPopover.setVerticalScrolling(false);
 
-		oPopover.destroy();
+		this.oButton.firePress();
+		this.clock.tick(500);
+
+		assert.ok(!this.oPopover.getScrollDelegate(), "Scrolling is properly disabled");
 	});
 
 	QUnit.test("Enable content scrolling even with NavContainer as content in Popover", function (assert){
-		var oPopover = new Popover({
-			content: new NavContainer({
-				pages: new Page()
-			}),
-			verticalScrolling: true
-		});
+		this.oPopover.setVerticalScrolling(true);
+		this.oPopover.destroyContent();
+		this.oPopover.addContent(new NavContainer({
+			pages: new Page()
+		}));
 
-		oPopover.openBy(oButton);
-		assert.ok(oPopover.getScrollDelegate(), "Scrolling is enabled when vertical scrolling is manually set to true");
-		oPopover.destroy();
+		this.oButton.firePress();
+		this.clock.tick(500);
 
-		oPopover = new Popover({
-			content: new NavContainer({
-				pages: new Page()
-			}),
-			horizontalScrolling: true
-		});
+		assert.ok(this.oPopover.getScrollDelegate(), "Scrolling is enabled when vertical scrolling is manually set to true");
 
-		oPopover.openBy(oButton);
-		assert.ok(oPopover.getScrollDelegate(), "Scrolling is enabled when vertical scrolling is manually set to true");
-		oPopover.destroy();
+		this.oPopover.setHorizontalScrolling(true);
+		this.oPopover.destroyContent();
+		this.oPopover.addContent(new NavContainer({
+			pages: new Page()
+		}));
+
+		this.oButton.firePress();
+		this.clock.tick(500);
+
+		assert.ok(this.oPopover.getScrollDelegate(), "Scrolling is enabled when horizontal scrolling is manually set to true");
 	});
 
 	QUnit.test("Popover should keep open when openBy control rerenders", async function (assert){
-		this.clock = sinon.useFakeTimers();
-		var oButton = new Button({
-			text: "abced"
-		});
-
-		page.addContent(oButton);
 		await nextUIUpdate(this.clock);
 
-		var oPopover = new Popover({
-			contentWidth: "400px",
-			contentHeight: "400px"
-		});
-
-		oPopover.openBy(oButton);
+		this.oButton.firePress();
 		this.clock.tick(500);
-		assert.ok(oPopover.isOpen(), "Popover should be opened now");
+		assert.ok(this.oPopover.isOpen(), "Popover should be opened now");
 
-		oButton.invalidate();
+		this.oButton.invalidate();
 		this.clock.tick(300);
-		assert.ok(oPopover.isOpen(), "Popover should keep the open state");
-		oPopover.destroy();
-		oButton.destroy();
-
-		// Restore
-		runAllFakeTimersAndRestore(this.clock);
+		assert.ok(this.oPopover.isOpen(), "Popover should keep the open state");
 	});
 
 	QUnit.test("Popover follow of with tolerance", async function (assert){
-		this.clock = sinon.useFakeTimers();
 		var oSystem = {
 			desktop: true,
 			phone: false,
@@ -1340,69 +1244,61 @@ sap.ui.define([
 
 		this.stub(Device, "system").value(oSystem);
 
-		var oButton = new Button({
-			text: "Follow Me"
-		});
-
-		page.addContent(oButton);
-		await nextUIUpdate(this.clock);
-
-		oButton.$().css({
+		this.oButton.$().css({
 			position: "absolute",
 			top: 0,
 			left: 0
 		});
 
-		var oPopover = new Popover({
+		this.oPopover.destroy();
+		this.oPopover = new Popover({
 			contentWidth: "400px",
 			contentHeight: "400px"
 		});
 
-		oPopover.openBy(oButton);
+		this.oButton.firePress();
 		this.clock.tick(500);
-		assert.ok(oPopover.isOpen(), "Popover should be opened now");
+		assert.ok(this.oPopover.isOpen(), "Popover should be opened now");
 
-		oButton.$().css({
+		this.oButton.$().css({
 			top: "31px"
 		});
 		this.clock.tick(500);
-		assert.ok(oPopover.isOpen(), "Popover should keep the open state");
+		assert.ok(this.oPopover.isOpen(), "Popover should keep the open state");
 
-		oButton.$().css({
+		this.oButton.$().css({
 			top: "64px"
 		});
 		this.clock.tick(500);
-		assert.ok(!oPopover.isOpen(), "Popover should be closed");
+		assert.ok(!this.oPopover.isOpen(), "Popover should be closed");
 		this.clock.tick(500);
 
 		// Turn off followOf, Popover should also be closed when openBy control isn't in viewport anymore
-		oPopover.setFollowOf(false);
-		oPopover.openBy(oButton);
+		this.oPopover.setFollowOf(false);
+		this.oButton.firePress();
 		this.clock.tick(500);
-		assert.ok(oPopover.isOpen(), "Popover should be opened again");
+		assert.ok(this.oPopover.isOpen(), "Popover should be opened again");
 
-		oButton.$().css({
+		this.oButton.$().css({
 			top: "-200px"
 		});
-		oPopover._fnOrientationChange();
+		this.oPopover._fnOrientationChange();
 		this.clock.tick(500);
-		assert.ok(!oPopover.isOpen(), "Popover should be closed");
-
-		oPopover.destroy();
-		oButton.destroy();
+		assert.ok(!this.oPopover.isOpen(), "Popover should be closed");
 
 		//Restore
 		await nextUIUpdate(this.clock);
-		this.clock.restore();
 		oStub.restore();
 	});
 
 	QUnit.test("Button in SegmentedButton opens Popover", async function (assert){
-		var oPopover = new Popover({
+		this.oPopover.destroy();
+		this.oPopover = new Popover({
 			contentWidth: "200px",
 			contentHeight: "300px"
 		});
 
+		var that = this;
 		var oSegBtn = new SegmentedButton({
 			items: [
 				new SegmentedButtonItem({
@@ -1411,61 +1307,47 @@ sap.ui.define([
 				new SegmentedButtonItem({
 					text: "Open Popover",
 					press: function () {
-						oPopover.openBy(this);
+						that.oPopover.openBy(this);
 					}
 				})
 			]
 		});
 
 		oSegBtn.placeAt("content");
-		await nextUIUpdate();
+		await nextUIUpdate(this.clock);
 
 		oSegBtn.getItems()[1].oButton.firePress(); // TODO avoid private property 'oButton'
 
-		assert.ok(oPopover.isOpen(), "Popover should be opened");
+		assert.ok(this.oPopover.isOpen(), "Popover should be opened");
 
-		oPopover.destroy();
 		oSegBtn.destroy();
 	});
 
 	QUnit.test("Call Popover's open method several times while it's being closed", async function (assert){
-		this.clock = sinon.useFakeTimers();
-
-		var oPopover = new Popover({
+		this.oPopover.destroy();
+		this.oPopover = new Popover({
 			contentWidth: "300px",
 			contentHeight: "300px"
 		});
 
-		var oButton = new Button({
-			text: "Open"
-		});
-
-		oButton.placeAt("content");
-		await nextUIUpdate(this.clock);
-
-		oPopover.openBy(oButton);
+		this.oPopover.openBy(this.oButton);
 		this.clock.tick(500);
-		oPopover.close();
+		this.oPopover.close();
 
-		var oSpy = this.spy(oPopover.oPopup, "open");
+		var oSpy = this.spy(this.oPopover.oPopup, "open");
 
 		//call openby twice in a row
-		oPopover.openBy(oButton);
-		oPopover.openBy(oButton);
+		this.oPopover.openBy(this.oButton);
+		this.oPopover.openBy(this.oButton);
 
 		this.clock.tick(500);
 		assert.equal(oSpy.callCount, 1, "popup's open method should only be called once");
 
-		oPopover.destroy();
-		oButton.destroy();
-
 		//Restore
 		await nextUIUpdate(this.clock);
-		this.clock.restore();
 	});
 
 	QUnit.test("Restore scroll position on mobile device", async function (assert){
-		this.clock = sinon.useFakeTimers();
 		var oSystem = {
 			desktop: false,
 			tablet: true,
@@ -1474,11 +1356,8 @@ sap.ui.define([
 
 		this.stub(Device, "system").value(oSystem);
 
-		var oButton = new Button({
-			text: "Open"
-		});
-
-		var oPopover = new Popover({
+		this.oPopover.destroy();
+		this.oPopover = new Popover({
 			contentWidth: "200px",
 			contentHeight: "200px",
 			content: new HTML({
@@ -1486,29 +1365,23 @@ sap.ui.define([
 			})
 		});
 
-		oButton.placeAt("content");
-		await nextUIUpdate(this.clock);
-		oPopover.openBy(oButton);
-
+		this.oButton.firePress();
 		this.clock.tick(500);
-		assert.ok(oPopover.isOpen(), "Popover is open");
-		oPopover._oScroller.scrollTo(30, 20, 1);
 
-		oPopover._onOrientationChange();
-		assert.equal(oPopover._oScroller.getScrollTop(), 20, "scrollTop is restored");
-		assert.equal(oPopover._oScroller.getScrollLeft(), 30, "scrollLeft is restored");
+		assert.ok(this.oPopover.isOpen(), "Popover is open");
+		this.oPopover._oScroller.scrollTo(30, 20, 1);
 
-		oPopover.destroy();
-		oButton.destroy();
+		this.oPopover._onOrientationChange();
+		assert.equal(this.oPopover._oScroller.getScrollLeft(), 30, "scrollLeft is restored");
+		assert.equal(this.oPopover._oScroller.getScrollTop(), 20, "scrollTop is restored");
 
 		//Restore
 		await nextUIUpdate(this.clock);
-		this.clock.restore();
 	});
 
 	QUnit.test("Popover with NavContainer as Content", async function (assert){
-		this.clock = sinon.useFakeTimers();
-		var oPopover = new Popover({
+		this.oPopover.destroy();
+		this.oPopover = new Popover({
 			content: new NavContainer({
 				pages: new Page({
 					content: new List({
@@ -1522,21 +1395,13 @@ sap.ui.define([
 			contentHeight: "300px"
 		});
 
-		var oButton = new Button({
-			text: "Focus Problem with Popover"
-		});
-		page.addContent(oButton);
-		await nextUIUpdate(this.clock);
-
-		oPopover.openBy(oButton);
+		this.oButton.firePress();
 		this.clock.tick(1000);
-		assert.ok(oPopover.isOpen(), "Popover is still open");
-		oPopover.destroy();
-		oButton.destroy();
+
+		assert.ok(this.oPopover.isOpen(), "Popover is still open");
 
 		//Restore
 		await nextUIUpdate(this.clock);
-		this.clock.restore();
 	});
 
 	QUnit.test("Container Padding Classes", async function (assert){
@@ -1549,7 +1414,7 @@ sap.ui.define([
 
 		// Act
 		oContainer.placeAt("content");
-		await nextUIUpdate();
+		await nextUIUpdate(this.clock);
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$().find(sContentSelector);
 
@@ -1584,86 +1449,70 @@ sap.ui.define([
 	});
 
 	QUnit.test("Popover should stay when right border of openby control stays while size changes", async function (assert){
-		this.clock = sinon.useFakeTimers();
-		var oButton = new Button({
-			text: "Right Border Stays"
-		}).addStyleClass("positioned2");
-		oButton.placeAt("content");
+		this.oButton.addStyleClass("positioned2");
+		this.oButton.setText("Right Border Stays");
 		await nextUIUpdate(this.clock);
 
-		var oPopover = new Popover({
+		this.oPopover.destroy();
+		this.oPopover = new Popover({
 			contentWidth: "200px",
 			contentHeight: "200px"
 		});
-		oPopover.openBy(oButton);
+		this.oButton.firePress();
 		this.clock.tick(400);
-		assert.ok(oPopover.isOpen(), "Popover should be opened");
-		oButton.setText("Short");
+		assert.ok(this.oPopover.isOpen(), "Popover should be opened");
+		this.oButton.setText("Short");
 		await nextUIUpdate(this.clock);
 		this.clock.tick(400);
-		assert.ok(oPopover.isOpen(), "Popover should still be open");
-
-		oPopover.destroy();
-		oButton.destroy();
+		assert.ok(this.oPopover.isOpen(), "Popover should still be open");
 
 		//Restore
 		await nextUIUpdate(this.clock);
-		this.clock.restore();
 	});
 
 	QUnit.test("openBy is set to dom reference and popover should be positioned correctly after the dom is created in dom tree again", async function (assert){
-		this.clock = sinon.useFakeTimers();
-		var oButton = new Button({
-			text: "Open Popover"
-		}).addStyleClass("positioned2");
-		oButton.placeAt("content");
+		this.oButton.addStyleClass("positioned2");
 		await nextUIUpdate(this.clock);
 
-		var oPopover = new Popover({
+		this.oPopover.destroy();
+		this.oPopover = new Popover({
 			contentWidth: "200px",
 			contentHeight: "200px",
 			placement: PlacementType.Vertical
 		});
-		oPopover.openBy(oButton.getDomRef());
+		this.oPopover.openBy(this.oButton.getDomRef());
 		this.clock.tick(400);
-		assert.ok(oPopover.isOpen(), "Popover should be opened");
-		assert.ok(oPopover.$().offset().top > oButton.$().offset().top, "Popover should be placed below the button");
+		assert.ok(this.oPopover.isOpen(), "Popover should be opened");
+		assert.ok(this.oPopover.$().offset().top > this.oButton.$().offset().top, "Popover should be placed below the button");
 
-		oButton.invalidate();
+		this.oButton.invalidate();
 		// simulate a content resize
-		oPopover._onOrientationChange();
-		oPopover.close();
+		this.oPopover._onOrientationChange();
+		this.oPopover.close();
 		this.clock.tick(400);
-		assert.ok(!oPopover.isOpen(), "Popover is closed");
+		assert.ok(!this.oPopover.isOpen(), "Popover is closed");
 
-		oPopover.openBy(oButton.getDomRef());
+		this.oPopover.openBy(this.oButton.getDomRef());
 		this.clock.tick(400);
-		assert.ok(oPopover.isOpen(), "Popover should be opened again");
-		assert.ok(oPopover.$().offset().top > oButton.$().offset().top, "Popover should be placed below the button again");
-
-		oPopover.destroy();
-		oButton.destroy();
+		assert.ok(this.oPopover.isOpen(), "Popover should be opened again");
+		assert.ok(this.oPopover.$().offset().top > this.oButton.$().offset().top, "Popover should be placed below the button again");
 
 		//Restore
 		await nextUIUpdate(this.clock);
-		this.clock.restore();
 	});
 
 	QUnit.test("showArrow with value false should not render the arrow", async function (assert){
-		var oButton = new Button({
-			text: "Open Popover"
-		});
-		oButton.placeAt("content");
-		await nextUIUpdate();
+		this.oPopover.setShowArrow(false);
+		await nextUIUpdate(this.clock);
 
-		var oPopover = new Popover({showArrow: false}),
-				oSpyGetArrowOffsetCss = sinon.spy(oPopover, "_getArrowOffsetCss"),
-				oSpyGetArrowPositionCssClass = sinon.spy(oPopover, "_getArrowPositionCssClass"),
-				oSpyGetArrowStyleCssClass = sinon.spy(oPopover, "_getArrowStyleCssClass");
+		var	oSpyGetArrowOffsetCss = sinon.spy(this.oPopover, "_getArrowOffsetCss"),
+			oSpyGetArrowPositionCssClass = sinon.spy(this.oPopover, "_getArrowPositionCssClass"),
+			oSpyGetArrowStyleCssClass = sinon.spy(this.oPopover, "_getArrowStyleCssClass");
 
-		oPopover.openBy(oButton);
+		this.oButton.firePress();
+		this.clock.tick(500);
 
-		assert.equal(oPopover.$("arrow").length, 0, "Popover should not have arrow");
+		assert.equal(this.oPopover.$("arrow").length, 0, "Popover should not have arrow");
 		assert.equal(oSpyGetArrowOffsetCss.callCount, 0, "_getArrowOffsetCss should not be called");
 		assert.equal(oSpyGetArrowPositionCssClass.callCount, 0, "_getArrowPositionCssClass should not be called");
 		assert.equal(oSpyGetArrowStyleCssClass.callCount, 0, "_getArrowStyleCssClass should not be called");
@@ -1671,24 +1520,20 @@ sap.ui.define([
 		oSpyGetArrowOffsetCss.restore();
 		oSpyGetArrowPositionCssClass.restore();
 		oSpyGetArrowStyleCssClass.restore();
-		oPopover.destroy();
 	});
 
 	QUnit.test("showArrow with value true should render the arrow", async function (assert){
-		var oButton = new Button({
-			text: "Open Popover"
-		});
-		oButton.placeAt("content");
-		await nextUIUpdate();
+		this.oPopover.setShowArrow(true);
+		await nextUIUpdate(this.clock);
 
-		var oPopover = new Popover({showArrow: true}),
-				oSpyGetArrowOffsetCss = sinon.spy(oPopover, "_getArrowOffsetCss"),
-				oSpyGetArrowPositionCssClass = sinon.spy(oPopover, "_getArrowPositionCssClass"),
-				oSpyGetArrowStyleCssClass = sinon.spy(oPopover, "_getArrowStyleCssClass");
+		var	oSpyGetArrowOffsetCss = sinon.spy(this.oPopover, "_getArrowOffsetCss"),
+			oSpyGetArrowPositionCssClass = sinon.spy(this.oPopover, "_getArrowPositionCssClass"),
+			oSpyGetArrowStyleCssClass = sinon.spy(this.oPopover, "_getArrowStyleCssClass");
 
-		oPopover.openBy(oButton);
+		this.oButton.firePress();
+		this.clock.tick(500);
 
-		assert.equal(oPopover.$("arrow").length, 1, "Popover should have arrow");
+		assert.equal(this.oPopover.$("arrow").length, 1, "Popover should have arrow");
 		assert.equal(oSpyGetArrowOffsetCss.callCount, 1, "_getArrowOffsetCss should be called");
 		assert.equal(oSpyGetArrowPositionCssClass.callCount, 1, "_getArrowPositionCssClass should be called");
 		assert.equal(oSpyGetArrowStyleCssClass.callCount, 1, "_getArrowStyleCssClass should be called");
@@ -1696,23 +1541,14 @@ sap.ui.define([
 		oSpyGetArrowOffsetCss.restore();
 		oSpyGetArrowPositionCssClass.restore();
 		oSpyGetArrowStyleCssClass.restore();
-		oPopover.destroy();
 	});
 
 	QUnit.test("Popover should act according to value of resizing property", async function(assert){
-		this.clock = sinon.useFakeTimers();
-		var oButton = new Button({
-			text: "Open Popover"
-		});
-		oButton.placeAt("content");
-		await nextUIUpdate(this.clock);
-
 		// Arrange
-		this.oPopover = new Popover();
 		this.oPopover.setResizable(true);
 
 		// Act
-		this.oPopover.openBy(oButton);
+		this.oButton.firePress();
 
 		if (!Device.system.desktop) {
 			// Assert when resizable
@@ -1735,13 +1571,10 @@ sap.ui.define([
 
 		//Restore
 		await nextUIUpdate(this.clock);
-		this.clock.restore();
 	});
 
 	QUnit.test("setModal arguments forwarding", function(assert){
 		// setup
-		this.oPopover = new Popover();
-
 		var oSpy = sinon.spy(this.oPopover.oPopup, "setModal");
 		this.oPopover.setModal(true, undefined);
 
@@ -1749,23 +1582,35 @@ sap.ui.define([
 		assert.strictEqual(oSpy.getCall(0).args[1], "sapMPopoverBLayer", "The css styles are forwarded properly to the popup.");
 
 		// restore
-		this.oPopover.destroy();
 		oSpy.restore();
 	});
 
+	QUnit.module("Internal methods", {
+		beforeEach: async function () {
+			this.oButton = new Button({
+				text: "Open Popover"
+			});
+			this.oButton.addStyleClass("positioned");
+			this.oPopover = new Popover();
 
-	QUnit.module("Internal methods");
+			page.addContent(this.oButton);
+			await nextUIUpdate();
+		},
+		afterEach: function () {
+			this.oPopover.destroy();
+			this.oButton.destroy();
+		}
+	});
 
 	QUnit.test("_getAnimationDuration", function (assert) {
 		assert.strictEqual(Popover.prototype._getAnimationDuration(), 300, "Default Duration should be 300");
 	});
 
 	QUnit.test("_applyPosition should be called with two parameters from check docking", function (assert){
-		var oPopover = new Popover(),
-				oSpy = sinon.spy(oPopover.oPopup, "_applyPosition");
+		var oSpy = sinon.spy(this.oPopover.oPopup, "_applyPosition");
 
 		// Act
-		oPopover._fnFollowOf({
+		this.oPopover._fnFollowOf({
 			lastOfRect: {
 				top: 10,
 				left: 10
@@ -1779,68 +1624,58 @@ sap.ui.define([
 		// Assert
 		assert.equal(oSpy.callCount, 1, "_applyPosition is called once");
 		assert.strictEqual(oSpy.getCall(0).args[1], true, "_applyPosition is called with the second parameter set to true");
-
-		oPopover.destroy();
 	});
 
 	QUnit.test("_getPopoverPositionCss should return an object with correct top, bottom, right and left position when Popover do not exceed vertically or horizontally of the window", function (assert){
-		var oPopover = new Popover(),
-				oPosParams = {
-					_fPopoverWidth: 416,
-					_fPopoverHeight: 802,
-					_fWithinAreaWidth: 1920,
-					_fWithinAreaHeight: 1139,
-					_fPopoverMarginTop: 50,
-					_fPopoverMarginRight: 10,
-					_fPopoverMarginBottom: 10,
-					_fPopoverMarginLeft: 265,
-					_fPopoverOffset: {
-						top: 21,
-						left: 265
-					}
-				};
+		var	oPosParams = {
+				_fPopoverWidth: 416,
+				_fPopoverHeight: 802,
+				_fWithinAreaWidth: 1920,
+				_fWithinAreaHeight: 1139,
+				_fPopoverMarginTop: 50,
+				_fPopoverMarginRight: 10,
+				_fPopoverMarginBottom: 10,
+				_fPopoverMarginLeft: 265,
+				_fPopoverOffset: {
+					top: 21,
+					left: 265
+				}
+			};
 
-		var oCalculatedParams = oPopover._getPopoverPositionCss(oPosParams);
+		var oCalculatedParams = this.oPopover._getPopoverPositionCss(oPosParams);
 
 		assert.equal(oCalculatedParams.top, 50, "top position should be equal to the _marginTop after calculations");
 		assert.equal(oCalculatedParams.right, undefined, "right position should be equal to 'undefined' after calculations");
 		assert.ok(isNaN(oCalculatedParams.bottom), "bottom position should be equal to 'NaN' after calculations");
 		assert.equal(oCalculatedParams.left, undefined, "left position should be equal to 'undefined' after calculations");
-
-		oPopover.destroy();
 	});
 
 	QUnit.test("_getPopoverPositionCss should return an object with correct top, bottom, right and left position when Popover do not exceed vertically or horizontally of the window but exceeds the defined 10px border of the screen", function (assert){
-		var oPopover = new Popover(),
-				oPosParams = {
-					_fPopoverWidth: 416,
-					_fPopoverHeight: 754,
-					_fWithinAreaWidth: 1920,
-					_fWithinAreaHeight: 1139,
-					_fPopoverMarginTop: 50,
-					_fPopoverMarginRight: 10,
-					_fPopoverMarginBottom: 162,
-					_fPopoverMarginLeft: 10,
-					_fPopoverOffset: {
-						top: 223,
-						left: 0
-					}
-				};
+		var oPosParams = {
+			_fPopoverWidth: 416,
+			_fPopoverHeight: 754,
+			_fWithinAreaWidth: 1920,
+			_fWithinAreaHeight: 1139,
+			_fPopoverMarginTop: 50,
+			_fPopoverMarginRight: 10,
+			_fPopoverMarginBottom: 162,
+			_fPopoverMarginLeft: 10,
+			_fPopoverOffset: {
+				top: 223,
+				left: 0
+			}
+		};
 
-		var oCalculatedParams = oPopover._getPopoverPositionCss(oPosParams);
+		var oCalculatedParams = this.oPopover._getPopoverPositionCss(oPosParams);
 
 		assert.equal(oCalculatedParams.top, undefined, "top position should be equal to the 'undefined after calculations");
 		assert.equal(oCalculatedParams.right, undefined, "right position should be equal to the 'undefined after calculations");
 		assert.ok(isNaN(oCalculatedParams.bottom), "bottom position should be equal to 'NaN' after calculations");
 		assert.equal(oCalculatedParams.left, 10, "left position should be equal to _fPopoverMarginLeft after calculations");
-
-		oPopover.destroy();
 	});
 
 	QUnit.test("_getMaxContentWidth should return calculated max content width", function (assert){
-		var oPopover = new Popover();
-
-		var iMaxContentWidth = oPopover._getMaxContentWidth({
+		var iMaxContentWidth = this.oPopover._getMaxContentWidth({
 			_fDocumentWidth: 500,
 			_fPopoverMarginLeft: 10,
 			_fPopoverMarginRight: 10,
@@ -1849,14 +1684,10 @@ sap.ui.define([
 		});
 
 		assert.equal(iMaxContentWidth, 460, "Popover maxContentWidth should be equal to the documentWidth minus left and right margins and borders");
-
-		oPopover.destroy();
 	});
 
 	QUnit.test("_getMaxContentHeight should return calculated max content width", function (assert){
-		var oPopover = new Popover();
-
-		var iMaxContentHeight = oPopover._getMaxContentHeight({
+		var iMaxContentHeight = this.oPopover._getMaxContentHeight({
 			_fDocumentHeight: 500,
 			_fPopoverMarginTop: 10,
 			_fPopoverMarginBottom: 10,
@@ -1870,23 +1701,20 @@ sap.ui.define([
 		});
 
 		assert.equal(iMaxContentHeight, 410, "Popover maxContentHeight should be equal to the documentHeight minus header, subheader, footer height; top and bottom margins, borders and content margins");
-
-		oPopover.destroy();
 	});
 
 	QUnit.test("_getContentDimensionsCss should return max-width, max-height computed right and empty height if the Popover can fit on the screen", function (assert){
-		var oPopover = new Popover(),
-				stubPopoverMaxContentWidth = sinon.stub(oPopover, "_getMaxContentWidth").returns(500),
-				stubPopoverMaxContentHeight = sinon.stub(oPopover, "_getMaxContentHeight").returns(400),
-				oElement = document.createElement("div"),
-				stubjQueryHeight = sinon.stub(oElement, "getBoundingClientRect").returns({ height: 300 }),
-				oExpectedDimensions = {
-					"max-width": "500px",
-					"max-height": "400px",
-					"height": ""
-				};
+		var stubPopoverMaxContentWidth = sinon.stub(this.oPopover, "_getMaxContentWidth").returns(500),
+			stubPopoverMaxContentHeight = sinon.stub(this.oPopover, "_getMaxContentHeight").returns(400),
+			oElement = document.createElement("div"),
+			stubjQueryHeight = sinon.stub(oElement, "getBoundingClientRect").returns({ height: 300 }),
+			oExpectedDimensions = {
+				"max-width": "500px",
+				"max-height": "400px",
+				"height": ""
+			};
 
-		var oContentDimensions = oPopover._getContentDimensionsCss({
+		var oContentDimensions = this.oPopover._getContentDimensionsCss({
 			_$content: jQuery(oElement)
 		});
 
@@ -1895,23 +1723,20 @@ sap.ui.define([
 		stubPopoverMaxContentWidth.restore();
 		stubPopoverMaxContentHeight.restore();
 		stubjQueryHeight.restore();
-		oPopover.destroy();
 	});
 
 	QUnit.test("_getContentDimensionsCss should return max-width and height if the Popover can fit on the screen and have contentHeight property set", function (assert){
-		var oPopover = new Popover({
-					contentHeight: "500px"
-				}),
-				stubPopoverMaxContentWidth = sinon.stub(oPopover, "_getMaxContentWidth").returns(400),
-				stubPopoverMaxContentHeight = sinon.stub(oPopover, "_getMaxContentHeight").returns(400),
-				oElement = document.createElement("div"),
-				stubjQueryHeight = sinon.stub(oElement, "getBoundingClientRect").returns({ height: 300 }),
-				oExpectedDimensions = {
-					"max-width": "400px",
-					"height": "300px"
-				};
+		this.oPopover.setContentHeight("500px");
+		var stubPopoverMaxContentWidth = sinon.stub(this.oPopover, "_getMaxContentWidth").returns(400),
+			stubPopoverMaxContentHeight = sinon.stub(this.oPopover, "_getMaxContentHeight").returns(400),
+			oElement = document.createElement("div"),
+			stubjQueryHeight = sinon.stub(oElement, "getBoundingClientRect").returns({ height: 300 }),
+			oExpectedDimensions = {
+				"max-width": "400px",
+				"height": "300px"
+			};
 
-		var oContentDimensions = oPopover._getContentDimensionsCss({
+		var oContentDimensions = this.oPopover._getContentDimensionsCss({
 			_$content: jQuery(oElement)
 		});
 
@@ -1920,16 +1745,14 @@ sap.ui.define([
 		stubPopoverMaxContentWidth.restore();
 		stubPopoverMaxContentHeight.restore();
 		stubjQueryHeight.restore();
-		oPopover.destroy();
 	});
 
 	QUnit.test("_isHorizontalScrollbarNeeded returns false if scrollbar is not needed", function (assert){
 		var bNeededScrollbar,
-				oPopover = new Popover(),
 				stubOuterWidth = sinon.stub(jQuery.fn, "outerWidth").returns(500),
 				stubWidth = sinon.stub(jQuery.fn, "width").returns(400);
 
-		bNeededScrollbar = oPopover._isHorizontalScrollbarNeeded({
+		bNeededScrollbar = this.oPopover._isHorizontalScrollbarNeeded({
 			_$scrollArea: jQuery(),
 			_$content: jQuery()
 		});
@@ -1938,16 +1761,14 @@ sap.ui.define([
 
 		stubOuterWidth.restore();
 		stubWidth.restore();
-		oPopover.destroy();
 	});
 
 	QUnit.test("_isHorizontalScrollbarNeeded returns true if scrollbar is needed", function (assert){
 		var bNeededScrollbar,
-				oPopover = new Popover(),
 				stubOuterWidth = sinon.stub(jQuery.fn, "outerWidth").returns(400),
 				stubWidth = sinon.stub(jQuery.fn, "width").returns(500);
 
-		bNeededScrollbar = oPopover._isHorizontalScrollbarNeeded({
+		bNeededScrollbar = this.oPopover._isHorizontalScrollbarNeeded({
 			_$scrollArea: jQuery(),
 			_$content: jQuery()
 		});
@@ -1956,32 +1777,30 @@ sap.ui.define([
 
 		stubOuterWidth.restore();
 		stubWidth.restore();
-		oPopover.destroy();
 	});
 
 	QUnit.test("_getArrowOffsetCss should return top position of the arrow when placement type is left or right", function (assert){
-		var oPopover = new Popover(),
-				oPosParams = {
-					_$popover: jQuery(),
-					_$parent: jQuery(),
-					_$arrow: jQuery(),
-					_fPopoverBorderTop: 1,
-					_fPopoverOffsetY: 0
-				},
-				oExpectedPos = {
-					top: 355
-				},
-				stubPopoverOuterWidth = sinon.stub(oPosParams._$popover, "outerWidth").returns(416),
-				stubPopoverOuterHeight = sinon.stub(oPosParams._$popover, "outerHeight").returns(802),
-				stubPopoverOffset = sinon.stub(oPosParams._$popover, "offset").returns({top: 50, left: 265}),
-				stubParentOuterHeight = sinon.stub(Popover, "outerHeight").returns(40),
-				stubParentOffset = sinon.stub(oPosParams._$parent, "offset").returns({top: 402, left: 100}),
-				stubArrowOuterHeight = sinon.stub(oPosParams._$arrow, "outerHeight").returns(32);
+		var oPosParams = {
+				_$popover: jQuery(),
+				_$parent: jQuery(),
+				_$arrow: jQuery(),
+				_fPopoverBorderTop: 1,
+				_fPopoverOffsetY: 0
+			},
+			oExpectedPos = {
+				top: 355
+			},
+			stubPopoverOuterWidth = sinon.stub(oPosParams._$popover, "outerWidth").returns(416),
+			stubPopoverOuterHeight = sinon.stub(oPosParams._$popover, "outerHeight").returns(802),
+			stubPopoverOffset = sinon.stub(oPosParams._$popover, "offset").returns({top: 50, left: 265}),
+			stubParentOuterHeight = sinon.stub(Popover, "outerHeight").returns(40),
+			stubParentOffset = sinon.stub(oPosParams._$parent, "offset").returns({top: 402, left: 100}),
+			stubArrowOuterHeight = sinon.stub(oPosParams._$arrow, "outerHeight").returns(32);
 
-		var oCalculatedPos = oPopover._getArrowOffsetCss(PlacementType.Left, oPosParams);
+		var oCalculatedPos = this.oPopover._getArrowOffsetCss(PlacementType.Left, oPosParams);
 		assert.deepEqual(oCalculatedPos, oExpectedPos, "top position should be 355px");
 
-		var oCalculatedPos = oPopover._getArrowOffsetCss(PlacementType.Right, oPosParams);
+		var oCalculatedPos = this.oPopover._getArrowOffsetCss(PlacementType.Right, oPosParams);
 		assert.deepEqual(oCalculatedPos, oExpectedPos, "top position should be 355px");
 
 		stubPopoverOuterWidth.restore();
@@ -1990,377 +1809,293 @@ sap.ui.define([
 		stubParentOuterHeight.restore();
 		stubParentOffset.restore();
 		stubArrowOuterHeight.restore();
-		oPopover.destroy();
 	});
 
 	QUnit.test("_getArrowPositionCssClass returns the right CSS class for different position options", function (assert){
-		var sPlacementClass,
-				oPopover = new Popover();
+		var sPlacementClass;
 
-		sPlacementClass = oPopover._getArrowPositionCssClass(PlacementType.Top);
+		sPlacementClass = this.oPopover._getArrowPositionCssClass(PlacementType.Top);
 		assert.equal(sPlacementClass, "sapMPopoverArrDown", "The class should be sapMPopoverArrDown");
 
-		sPlacementClass = oPopover._getArrowPositionCssClass(PlacementType.Bottom);
+		sPlacementClass = this.oPopover._getArrowPositionCssClass(PlacementType.Bottom);
 		assert.equal(sPlacementClass, "sapMPopoverArrUp", "The class should be sapMPopoverArrUp");
 
-		sPlacementClass = oPopover._getArrowPositionCssClass(PlacementType.Left);
+		sPlacementClass = this.oPopover._getArrowPositionCssClass(PlacementType.Left);
 		assert.equal(sPlacementClass, "sapMPopoverArrRight", "The class should be sapMPopoverArrRight");
 
-		sPlacementClass = oPopover._getArrowPositionCssClass(PlacementType.Right);
+		sPlacementClass = this.oPopover._getArrowPositionCssClass(PlacementType.Right);
 		assert.equal(sPlacementClass, "sapMPopoverArrLeft", "The class should be sapMPopoverArrLeft");
-
-		oPopover.destroy();
 	});
 
 	QUnit.test("_getArrowStyleCssClass should return sapMPopoverHeaderAlignArr class if Popover Arrow is aligned with the header", function (assert){
-		var oPopover = new Popover(),
-				oPosParams = {
-					_$arrow: jQuery(),
-					_$footer: jQuery(),
-					_fArrowHeight: 32,
-					_fHeaderHeight: 48,
-					_fSubHeaderHeight: 0
-				},
-				stubArrowPosition = sinon.stub(oPosParams._$arrow, "position").returns({top: 7, left: -33}),
-				stubFooterPosition = sinon.stub(oPosParams._$footer, "position").returns({top: 187, left: 0});
+		var oPosParams = {
+				_$arrow: jQuery(),
+				_$footer: jQuery(),
+				_fArrowHeight: 32,
+				_fHeaderHeight: 48,
+				_fSubHeaderHeight: 0
+			},
+		stubArrowPosition = sinon.stub(oPosParams._$arrow, "position").returns({top: 7, left: -33}),
+		stubFooterPosition = sinon.stub(oPosParams._$footer, "position").returns({top: 187, left: 0});
 
-		var sClassName = oPopover._getArrowStyleCssClass(oPosParams);
+		var sClassName = this.oPopover._getArrowStyleCssClass(oPosParams);
 
 		assert.equal(sClassName, "sapMPopoverHeaderAlignArr", "Should return sapMPopoverHeaderAlignArr class");
 
 		stubArrowPosition.restore();
 		stubFooterPosition.restore();
-		oPopover.destroy();
 	});
 
 	QUnit.test("_getArrowStyleCssClass should return sapMPopoverCrossArr class if Popover Arrow crosses the header and content", function (assert){
-		var oPopover = new Popover(),
-				oPosParams = {
-					_$arrow: jQuery(),
-					_$footer: jQuery(),
-					_fArrowHeight: 32,
-					_fHeaderHeight: 48,
-					_fSubHeaderHeight: 0
-				},
-				stubArrowPosition = sinon.stub(oPosParams._$arrow, "position").returns({top: 30, left: -33}),
-				stubFooterPosition = sinon.stub(oPosParams._$footer, "position").returns({top: 800, left: 0});
+		var oPosParams = {
+			_$arrow: jQuery(),
+			_$footer: jQuery(),
+			_fArrowHeight: 32,
+			_fHeaderHeight: 48,
+			_fSubHeaderHeight: 0
+		},
+		stubArrowPosition = sinon.stub(oPosParams._$arrow, "position").returns({top: 30, left: -33}),
+		stubFooterPosition = sinon.stub(oPosParams._$footer, "position").returns({top: 800, left: 0});
 
 		oPosParams._$footer.length = 1;
 
-		var sClassName = oPopover._getArrowStyleCssClass(oPosParams);
+		var sClassName = this.oPopover._getArrowStyleCssClass(oPosParams);
 
 		assert.equal(sClassName, "sapMPopoverCrossArr", "Should return sapMPopoverCrossArr class");
 
 		stubArrowPosition.restore();
 		stubFooterPosition.restore();
-		oPopover.destroy();
 	});
 
 	QUnit.test("_getArrowStyleCssClass should return sapMPopoverFooterAlignArr class if Popover Arrow is aligned with the footer", function (assert){
-		var oPopover = new Popover(),
-				oPosParams = {
-					_$arrow: jQuery(),
-					_$footer: jQuery("<div></div>"),
-					_arrowHeight: 32,
-					_headerHeight: 48,
-					_subHeaderHeight: 0
-				},
-				stubArrowPosition = sinon.stub(oPosParams._$arrow, "position").returns({top: 153, left: -33}),
-				stubFooterPosition = sinon.stub(oPosParams._$footer, "position").returns({top: 149, left: 0});
+		var oPosParams = {
+			_$arrow: jQuery(),
+			_$footer: jQuery("<div></div>"),
+			_arrowHeight: 32,
+			_headerHeight: 48,
+			_subHeaderHeight: 0
+		},
+		stubArrowPosition = sinon.stub(oPosParams._$arrow, "position").returns({top: 153, left: -33}),
+		stubFooterPosition = sinon.stub(oPosParams._$footer, "position").returns({top: 149, left: 0});
 
-		var sClassName = oPopover._getArrowStyleCssClass(oPosParams);
+		var sClassName = this.oPopover._getArrowStyleCssClass(oPosParams);
 
 		assert.equal(sClassName, "sapMPopoverFooterAlignArr", "Should return sapMPopoverFooterAlignArr class");
 
 		stubArrowPosition.restore();
 		stubFooterPosition.restore();
-		oPopover.destroy();
 	});
 
 	QUnit.test("_adaptPositionParams with showArrow true should have offsets set", function (assert){
-		var oPopover = new Popover();
+		this.oPopover._adaptPositionParams();
 
-		oPopover._adaptPositionParams();
-
-		assert.equal(oPopover._marginTop, 48, "_marginTop should be 48");
-		assert.equal(oPopover._marginRight, 10, "_marginTop should be 10");
-		assert.equal(oPopover._marginBottom, 10, "_marginTop should be 10");
-		assert.equal(oPopover._marginLeft, 10, "_marginTop should be 10");
-		assert.equal(oPopover._arrowOffset, 18, "_arrowoffset should be 18");
-		assert.deepEqual(oPopover._offsets, ["0 -18", "18 0", "0 18", "-18 0"], "offsets should be correct according the arrowOffset");
-		assert.deepEqual(oPopover._myPositions, ["center bottom", "begin center", "center top", "end center"], "myPositions should be correct");
-		assert.deepEqual(oPopover._atPositions, ["center top", "end center", "center bottom", "begin center"], "atPositions should be correct");
-
-		oPopover.destroy();
+		assert.equal(this.oPopover._marginTop, 48, "_marginTop should be 48");
+		assert.equal(this.oPopover._marginRight, 10, "_marginTop should be 10");
+		assert.equal(this.oPopover._marginBottom, 10, "_marginTop should be 10");
+		assert.equal(this.oPopover._marginLeft, 10, "_marginTop should be 10");
+		assert.equal(this.oPopover._arrowOffset, 18, "_arrowoffset should be 18");
+		assert.deepEqual(this.oPopover._offsets, ["0 -18", "18 0", "0 18", "-18 0"], "offsets should be correct according the arrowOffset");
+		assert.deepEqual(this.oPopover._myPositions, ["center bottom", "begin center", "center top", "end center"], "myPositions should be correct");
+		assert.deepEqual(this.oPopover._atPositions, ["center top", "end center", "center bottom", "begin center"], "atPositions should be correct");
 	});
 
 	QUnit.test("_adaptPositionParams with showArrow false should not have offsets set", function (assert){
-		var oPopover = new Popover({showArrow: false});
+		this.oPopover.setShowArrow(false);
+		this.oPopover._adaptPositionParams();
 
-		oPopover._adaptPositionParams();
-
-		assert.equal(oPopover._marginTop, 0, "_marginTop should be 0");
-		assert.equal(oPopover._marginRight, 0, "_marginRight should be 0");
-		assert.equal(oPopover._marginBottom, 0, "_marginBttom should be 0");
-		assert.equal(oPopover._marginLeft, 0, "_marginLeft should be 0");
-		assert.equal(oPopover._arrowOffset, 0, "_arrowoffset should be 0");
-		assert.deepEqual(oPopover._offsets, ["0 0", "0 0", "0 0", "0 0"], "offsets should be correct according the arrowOffset");
-		assert.deepEqual(oPopover._myPositions, ["begin bottom", "begin center", "begin top", "end center"], "myPositions should be correct");
-		assert.deepEqual(oPopover._atPositions, ["begin top", "end center", "begin bottom", "begin center"], "atPositions should be correct");
-
-		oPopover.destroy();
+		assert.equal(this.oPopover._marginTop, 0, "_marginTop should be 0");
+		assert.equal(this.oPopover._marginRight, 0, "_marginRight should be 0");
+		assert.equal(this.oPopover._marginBottom, 0, "_marginBttom should be 0");
+		assert.equal(this.oPopover._marginLeft, 0, "_marginLeft should be 0");
+		assert.equal(this.oPopover._arrowOffset, 0, "_arrowoffset should be 0");
+		assert.deepEqual(this.oPopover._offsets, ["0 0", "0 0", "0 0", "0 0"], "offsets should be correct according the arrowOffset");
+		assert.deepEqual(this.oPopover._myPositions, ["begin bottom", "begin center", "begin top", "end center"], "myPositions should be correct");
+		assert.deepEqual(this.oPopover._atPositions, ["begin top", "end center", "begin bottom", "begin center"], "atPositions should be correct");
 	});
 
-	QUnit.test("Popover should use compact arrow offset if a theme sets less variable _sap_m_Popover_ForceCompactArrowOffset to true", function (assert){
+	QUnit.test("Popover should use compact arrow offset if a theme sets less variable _sap_m_Popover_ForceCompactArrowOffset to true", async function (assert){
 		var stubGetParameters = sinon.stub(Parameters, "get");
-			oPopover = new Popover();
 
 		stubGetParameters.withArgs({name: "_sap_m_Popover_ForceCompactArrowOffset"}).returns("true");
-		oPopover.openBy(oButton2);
+		this.oPopover.openBy(this.oButton);
+		await nextUIUpdate();
 
-		assert.equal(oPopover._arrowOffset, 9, "_arrowoffset should be 9");
-		assert.deepEqual(oPopover._offsets, ["0 -9", "9 0", "0 9", "-9 0"], "offsets should be correct according the arrowOffset");
+		assert.equal(this.oPopover._arrowOffset, 9, "_arrowoffset should be 9");
+		assert.deepEqual(this.oPopover._offsets, ["0 -9", "9 0", "0 9", "-9 0"], "offsets should be correct according the arrowOffset");
 
 		stubGetParameters.restore();
-		oPopover.destroy();
 	});
 
-	QUnit.test("Popover should use normal arrow offset if a theme sets less variable _sap_m_Popover_ForceCompactArrowOffset to be false", function (assert){
-		var stubGetParameters = sinon.stub(Parameters, "get").callsFake(function () { return "false";}),
-			oPopover = new Popover();
+	QUnit.test("Popover should use normal arrow offset if a theme sets less variable _sap_m_Popover_ForceCompactArrowOffset to be false", async function (assert){
+		var stubGetParameters = sinon.stub(Parameters, "get").callsFake(function () { return "false";});
 
-		oPopover.openBy(oButton2);
+		this.oPopover.openBy(this.oButton);
+		await nextUIUpdate();
 
-		assert.equal(oPopover._arrowOffset, 18, "_arrowoffset should be 18");
-		assert.deepEqual(oPopover._offsets, ["0 -18", "18 0", "0 18", "-18 0"], "offsets should be correct according the arrowOffset");
+		assert.equal(this.oPopover._arrowOffset, 18, "_arrowoffset should be 18");
+		assert.deepEqual(this.oPopover._offsets, ["0 -18", "18 0", "0 18", "-18 0"], "offsets should be correct according the arrowOffset");
 
 		stubGetParameters.restore();
-		oPopover.destroy();
 	});
 
 	QUnit.test("Popover should be in compact mode if one of it's parents is compact", async function (assert){
 		var oScrollContainer = new ScrollContainer().addStyleClass("sapUiSizeCompact"),
-			oButton = new Button(),
-			oPopover = new Popover();
+			oButton2 = new Button();
 
-		oScrollContainer.addContent(oButton);
+		oScrollContainer.addContent(oButton2);
 
 		oScrollContainer.placeAt("content");
 		await nextUIUpdate();
-		oPopover.openBy(oButton);
+		this.oPopover.openBy(oButton2);
 
-		assert.equal(oPopover._arrowOffset, 9, "_arrowoffset should be 9");
-		assert.deepEqual(oPopover._offsets, ["0 -9", "9 0", "0 9", "-9 0"], "offsets should be correct according the arrowOffset");
+		assert.equal(this.oPopover._arrowOffset, 9, "_arrowoffset should be 9");
+		assert.deepEqual(this.oPopover._offsets, ["0 -9", "9 0", "0 9", "-9 0"], "offsets should be correct according the arrowOffset");
 
 		oScrollContainer.destroy();
-		oPopover.destroy();
+		oButton2.destroy();
 	});
 
 	QUnit.test("_afterAdjustPositionAndArrow is called once", async function (assert){
-		var oButton = new Button({
-			text: "Open Popover"
-		});
-		oButton.placeAt("content");
+		this.oButton.removeStyleClass("positioned");
+
+		var oSpy = this.spy(this.oPopover, "_afterAdjustPositionAndArrowHook");
+
+		this.oPopover.openBy(this.oButton);
 		await nextUIUpdate();
-
-		var oPopover = new Popover();
-		var oSpy = this.spy(oPopover, "_afterAdjustPositionAndArrowHook");
-
-		oPopover.openBy(oButton);
 
 		assert.equal(oSpy.callCount, 1, "_afterAdjustPositionAndArrowHook is called once");
 
-		oPopover.destroy();
 	});
 
 	QUnit.module("Screen Reader", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.clock = sinon.useFakeTimers();
+
+			this.oButton = new Button({
+				text: "Open Popover"
+			});
+			this.oPopover = new Popover();
+
+			page.addContent(this.oButton);
+			await nextUIUpdate(this.clock);
 		},
 		afterEach: function () {
+			this.oPopover.destroy();
+			this.oButton.destroy();
 			runAllFakeTimersAndRestore(this.clock);
 		}
 	});
 
 	QUnit.test("ARIA role", async function (assert){
-		var oButton = new Button({
-			text: "Open Popover"
-		});
-		oButton.placeAt("content");
+		this.oPopover.openBy(this.oButton);
 		await nextUIUpdate(this.clock);
 
-		var oPopover = new Popover();
-		oPopover.openBy(oButton);
-		this.clock.tick(400);
-
-		assert.equal(oPopover.$().attr('role'), 'dialog', 'Popover has role dialog');
-		assert.equal(oPopover.$("firstfe").attr('role'), 'presentation', "Popover' hidden focusable span has role presentation");
-		assert.equal(oPopover.$("lastfe").attr('role'), 'presentation', "Popovers' hidden focusable span has role presentation");
-
-		oPopover.destroy();
-		oButton.destroy();
+		assert.equal(this.oPopover.$().attr('role'), 'dialog', 'Popover has role dialog');
+		assert.equal(this.oPopover.$("firstfe").attr('role'), 'presentation', "Popover' hidden focusable span has role presentation");
+		assert.equal(this.oPopover.$("lastfe").attr('role'), 'presentation', "Popovers' hidden focusable span has role presentation");
 	});
 
 	QUnit.test("ARIA labeledby attribute", async function (assert){
-		var oButton = new Button({
-			text: "Open Popover"
-		});
-		oButton.placeAt("content");
+		this.oPopover.openBy(this.oButton);
 		await nextUIUpdate(this.clock);
 
-		var oPopover = new Popover();
-		oPopover.openBy(oButton);
-		this.clock.tick(400);
-
-		assert.equal(oPopover.$().attr('aria-labelledby'), oPopover.getHeaderTitle().getId(), 'Popover aria labeledby attribute is equal to the header id');
-
-		oPopover.destroy();
-		oButton.destroy();
+		assert.equal(this.oPopover.$().attr('aria-labelledby'), this.oPopover.getHeaderTitle().getId(), 'Popover aria labeledby attribute is equal to the header id');
 	});
 
 	QUnit.test("ARIA Semantic heading of the popover", async function (assert){
-		var oButton = new Button({
-			text: "Open Popover"
-		});
-
-		oButton.placeAt("content");
+		this.oPopover.setTitle("Title text");
+		this.oPopover.openBy(this.oButton);
 		await nextUIUpdate(this.clock);
 
-		var oPopover = new Popover({
-			title: "Title text"
-		});
-		oPopover.openBy(oButton);
-		this.clock.tick(400);
-
-		assert.equal(oPopover._headerTitle.getDomRef().nodeName, "H1", "Popover heading should be set to H1 tag");
-		assert.ok(oPopover._headerTitle instanceof Title, "Heading of the popover should be of type sap.m.Title");
-
-		oPopover.destroy();
-		oButton.destroy();
+		assert.equal(this.oPopover._headerTitle.getDomRef().nodeName, "H1", "Popover heading should be set to H1 tag");
+		assert.ok(this.oPopover._headerTitle instanceof Title, "Heading of the popover should be of type sap.m.Title");
 	});
 
 	QUnit.test("ARIA role of the content", async function (assert){
-		var oButton = new Button({
-			text: "Open Popover"
-		});
-
-		oButton.placeAt("content");
+		this.oPopover.setTitle("Title text");
+		this.oPopover._setAriaRoleApplication(true);
+		this.oPopover.openBy(this.oButton);
 		await nextUIUpdate(this.clock);
+		assert.equal(this.oPopover.$("cont").attr("role"), "application", "Popover's content should have role application");
 
-		var oPopover = new Popover({
-			title: "Title text"
-		});
-		oPopover._setAriaRoleApplication(true);
-		oPopover.openBy(oButton);
-		this.clock.tick(400);
-		assert.equal(oPopover.$("cont").attr("role"), "application", "Popover's content should have role application");
-
-		oPopover._setAriaRoleApplication(false);
+		this.oPopover._setAriaRoleApplication(false);
 		this.clock.tick(0);
-		assert.notOk(oPopover.getDomRef("cont").attributes["role"], "Popover's content should not have role application");
-
-		oPopover.destroy();
-		oButton.destroy();
+		assert.notOk(this.oPopover.getDomRef("cont").attributes["role"], "Popover's content should not have role application");
 	});
 
 	QUnit.test("Popover without header and title", async function(assert) {
 		var sInvTextId = "invisibleText",
-				oInvisibleText = new InvisibleText(sInvTextId, {text: "invisible text"}),
-				oButton = new Button({
-					text: "Open Popover"
-				});
+			oInvisibleText = new InvisibleText(sInvTextId, {text: "invisible text"});
 
 		oInvisibleText.placeAt("content");
-		oButton.placeAt("content");
 		await nextUIUpdate(this.clock);
 
-		var oPopover = new Popover({
-			showHeader: false,
-			ariaLabelledBy: sInvTextId
-		});
-		oPopover.openBy(oButton);
+		this.oPopover.setShowHeader(false);
+		this.oPopover.addAriaLabelledBy(sInvTextId);
+
+		this.oPopover.openBy(this.oButton);
 		this.clock.tick(400);
 
-		assert.equal(oPopover.getAriaLabelledBy(), sInvTextId, "should have an ariaLabelledBy association that contains a reference to the invisible text");
-		assert.equal(oPopover.getDomRef().getAttribute('aria-labelledby'), sInvTextId, "should have an aria-labelledby attribute pointing to the additional invisible label");
+		assert.equal(this.oPopover.getAriaLabelledBy(), sInvTextId, "should have an ariaLabelledBy association that contains a reference to the invisible text");
+		assert.equal(this.oPopover.getDomRef().getAttribute('aria-labelledby'), sInvTextId, "should have an aria-labelledby attribute pointing to the additional invisible label");
 
 		oInvisibleText.destroy();
-		oPopover.destroy();
-		oButton.destroy();
 	});
 
 	QUnit.test("Popover with internal header and title", async function(assert) {
 		var sInvTextId = "invisibleText",
-				oInvisibleText = new InvisibleText(sInvTextId, {text: "invisible text"}),
-				oButton = new Button({
-					text: "Open Popover"
-				});
+			oInvisibleText = new InvisibleText(sInvTextId, {text: "invisible text"});
 
 		oInvisibleText.placeAt("content");
-		oButton.placeAt("content");
 		await nextUIUpdate(this.clock);
 
-		var oPopover = new Popover({
-			title: "Title text",
-			ariaLabelledBy: sInvTextId
-		});
-		oPopover.openBy(oButton);
+		this.oPopover.setTitle("Title text");
+		this.oPopover.addAriaLabelledBy(sInvTextId);
+
+		this.oPopover.openBy(this.oButton);
 		this.clock.tick(400);
 
-		assert.equal(oPopover.getAriaLabelledBy(), sInvTextId, "should have an ariaLabelledBy association that contains only a reference to the invisible text");
-		assert.equal(oPopover.getDomRef().getAttribute('aria-labelledby'), (oPopover.getHeaderTitle().getId() + ' ' + sInvTextId), "should have an aria-labelledby attribute pointing to the internal header and the additional invisible label");
+		assert.equal(this.oPopover.getAriaLabelledBy(), sInvTextId, "should have an ariaLabelledBy association that contains only a reference to the invisible text");
+		assert.equal(this.oPopover.getDomRef().getAttribute('aria-labelledby'), (this.oPopover.getHeaderTitle().getId() + ' ' + sInvTextId), "should have an aria-labelledby attribute pointing to the internal header and the additional invisible label");
 
 		oInvisibleText.destroy();
-		oPopover.destroy();
-		oButton.destroy();
 	});
 
 	QUnit.test("Popover with custom header", async function(assert) {
 		//Arrange
 		var sInvTextId = "invisibleText",
-				sCustomHeaderId = "customHeaderId",
-				oInvisibleText = new InvisibleText(sInvTextId, {text: "invisible text"}),
-			oButton = new Button({
-				text: "Open Popover"
-			});
+			sCustomHeaderId = "customHeaderId",
+			oInvisibleText = new InvisibleText(sInvTextId, {text: "invisible text"});
 
 		var oCustomHeader = new Bar(sCustomHeaderId, {
 			contentLeft: [new Title({text: "Just Title"})]
 		});
 
 		oInvisibleText.placeAt("content");
-		oButton.placeAt("content");
 		await nextUIUpdate(this.clock);
 
-		var oPopover = new Popover({
-			title: "Title text",
-			showHeader: false,
-			ariaLabelledBy: sInvTextId
-		});
+		this.oPopover.addAriaLabelledBy(sInvTextId);
+		this.oPopover.setTitle("Title text");
 
-		oPopover.setShowHeader(true);
-		oPopover.setCustomHeader(oCustomHeader);
-		oPopover.openBy(oButton);
+		this.oPopover.setShowHeader(true);
+		this.oPopover.setCustomHeader(oCustomHeader);
+		this.oPopover.openBy(this.oButton);
 		this.clock.tick(400);
 
 		//Assert
-		assert.equal(oPopover.getAriaLabelledBy(), sInvTextId, "should have an ariaLabelledBy association that contains only a reference to the invisible text");
-		assert.equal(oPopover.getDomRef().getAttribute('aria-labelledby'), (sCustomHeaderId + ' ' + sInvTextId), "should have an aria-labelledby attribute pointing to the header and the additional invisible label");
+		assert.equal(this.oPopover.getAriaLabelledBy(), sInvTextId, "should have an ariaLabelledBy association that contains only a reference to the invisible text");
+		assert.equal(this.oPopover.getDomRef().getAttribute('aria-labelledby'), (sCustomHeaderId + ' ' + sInvTextId), "should have an aria-labelledby attribute pointing to the header and the additional invisible label");
 
 		//Cleanup
-		oPopover.destroy();
 		oInvisibleText.destroy();
-		oButton.destroy();
+		oCustomHeader.destroy();
 	});
 
 	QUnit.test("Popover with non-visible custom header", async function(assert) {
 		//Arrange
 		var sInvTextId = "invisibleText",
 			sCustomHeaderId = "customHeaderId",
-			oInvisibleText = new InvisibleText(sInvTextId, {text: "invisible text"}),
-			oButton = new Button({
-				text: "Open Popover"
-			});
+			oInvisibleText = new InvisibleText(sInvTextId, {text: "invisible text"});
 
 		var oCustomHeader = new Bar(sCustomHeaderId, {
 			contentLeft: [new Title({text: "Just Title"})],
@@ -2368,43 +2103,29 @@ sap.ui.define([
 		});
 
 		oInvisibleText.placeAt("content");
-		oButton.placeAt("content");
 		await nextUIUpdate(this.clock);
 
-		var oPopover = new Popover({
-			ariaLabelledBy: sInvTextId
-		});
+		this.oPopover.addAriaLabelledBy(sInvTextId);
 
-		oPopover.setCustomHeader(oCustomHeader);
-		oPopover.getCustomHeader().setVisible(false);
-		oPopover.openBy(oButton);
+		this.oPopover.setCustomHeader(oCustomHeader);
+		this.oPopover.getCustomHeader().setVisible(false);
+		this.oPopover.openBy(this.oButton);
 		this.clock.tick(400);
 
 		//Assert
-		assert.equal(oPopover.getAriaLabelledBy(), sInvTextId, "should have an ariaLabelledBy association that contains only a reference to the invisible text");
-		assert.equal(oPopover.getDomRef().getAttribute('aria-labelledby'), sInvTextId, "aria-labelledby should still be with one reference, since the custom header is not in the dom");
+		assert.equal(this.oPopover.getAriaLabelledBy(), sInvTextId, "should have an ariaLabelledBy association that contains only a reference to the invisible text");
+		assert.equal(this.oPopover.getDomRef().getAttribute('aria-labelledby'), sInvTextId, "aria-labelledby should still be with one reference, since the custom header is not in the dom");
 
 		//Cleanup
-		oPopover.destroy();
 		oInvisibleText.destroy();
-		oButton.destroy();
+		oCustomHeader.destroy();
 	});
 
 	QUnit.test("ARIA aria-modal attribute should be true", async function (assert){
-		var oButton = new Button({
-			text: "Open Popover"
-		});
-		oButton.placeAt("content");
+		this.oPopover.openBy(this.oButton);
 		await nextUIUpdate(this.clock);
 
-		var oPopover = new Popover();
-		oPopover.openBy(oButton);
-		this.clock.tick(400);
-
-		assert.strictEqual(oPopover.$().attr('aria-modal'), "true", 'Popover aria-modal attribute is set to true');
-
-		oPopover.destroy();
-		oButton.destroy();
+		assert.strictEqual(this.oPopover.$().attr('aria-modal'), "true", 'Popover aria-modal attribute is set to true');
 	});
 
 	QUnit.module("Integration");
@@ -2542,6 +2263,7 @@ sap.ui.define([
 
 		oPopover.destroy();
 		oOpenButton.destroy();
+		oCloseButton.destroy();
 	});
 
 	QUnit.test("Do not fire close events when already closed.", async function (assert) {
@@ -2577,6 +2299,7 @@ sap.ui.define([
 		// Cleanup
 		runAllFakeTimersAndRestore(this.clock);
 		oButton.destroy();
+		oPopover.destroy();
 		oButton = null;
 		oPopover = null;
 	});
@@ -2623,6 +2346,7 @@ sap.ui.define([
 		// clean up
 		runAllFakeTimersAndRestore(this.clock);
 		oButton.destroy();
+		oPopover.destroy();
 	});
 
 	QUnit.test("Popover open after being destroyed", async function (assert){
@@ -2670,6 +2394,7 @@ sap.ui.define([
 		// Cleanup
 		runAllFakeTimersAndRestore(this.clock);
 		oButton.destroy();
+		oPopover.destroy();
 	});
 
 	function isTextTruncated($element) {
@@ -2709,12 +2434,11 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		oOpenButton.getDomRef().style.position = "absolute";
-		oOpenButton.getDomRef().style.width = "100px";
+		oOpenButton.getDomRef().style.width = "80px";
 
 		Popup.checkDocking.call(oPopover.oPopup);
 
 		this.clock.tick(500);
-
 		// Assert
 		assert.notOk(oPopover.isOpen(), "Popover is auto closed");
 
@@ -2758,7 +2482,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		oOpenButton.getDomRef().style.position = "absolute";
-		oOpenButton.getDomRef().style.width = "100px";
+		oOpenButton.getDomRef().style.width = "80px";
 
 		Popup.checkDocking.call(oPopover.oPopup);
 

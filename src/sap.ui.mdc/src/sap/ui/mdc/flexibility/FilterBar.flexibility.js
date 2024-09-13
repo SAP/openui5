@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['./FilterItemFlex', './ConditionFlex', './PropertyInfoFlex'], (FilterItemFlex, ConditionFlex, PropertyInfoFlex) => {
+sap.ui.define(['./FilterItemFlex', './ConditionFlex'], (FilterItemFlex, ConditionFlex) => {
 	"use strict";
 
 	/**
@@ -14,11 +14,10 @@ sap.ui.define(['./FilterItemFlex', './ConditionFlex', './PropertyInfoFlex'], (Fi
 	 */
 
 	return {
-		"addFilter": FilterItemFlex.createAddChangeHandler(),
-		"removeFilter": FilterItemFlex.createRemoveChangeHandler(),
-		"moveFilter": FilterItemFlex.createMoveChangeHandler(),
-		"addCondition": ConditionFlex.addCondition,
-		"removeCondition": ConditionFlex.removeCondition,
-		"addPropertyInfo": PropertyInfoFlex.addPropertyInfo
+	 "addFilter": FilterItemFlex.createAddChangeHandler(),
+	 "removeFilter": FilterItemFlex.createRemoveChangeHandler(),
+	 "moveFilter": FilterItemFlex.createMoveChangeHandler(),
+	 "addCondition": ConditionFlex.addCondition,
+	 "removeCondition": ConditionFlex.removeCondition
 	};
 });

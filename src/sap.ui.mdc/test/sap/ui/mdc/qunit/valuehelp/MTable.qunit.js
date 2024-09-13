@@ -1193,17 +1193,19 @@ sap.ui.define([
 		assert.equal(oTable.hasStyleClass("sapMListFocus"), bOpen && iNavigatedIndex >= 0, "Table has style class sapMListFocus");
 		assert.equal(iVisualFocusSet, bOpen && iNavigatedIndex >= 0 && !bNavigateLeaveFocus ? 1 : 0, "visualFocusSet event fired");
 
-		for (let i = 0; i < aItems.length; i++) {
-			const oItem = aItems[i];
-			if (i === iSelectedIndex) {
-				assert.ok(oItem.hasStyleClass("sapMLIBFocused"), "Item" + i + " is focused");
-				if (!oItem.isA("sap.m.GroupHeaderListItem")) {
-					assert.ok(oItem.getSelected(), "Item" + i + " is selected");
-				}
-			} else {
-				assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "Item" + i + " not focused");
-				if (!oItem.isA("sap.m.GroupHeaderListItem")) {
-					assert.notOk(oItem.getSelected(), "Item" + i + " not selected");
+		if (bOpen) { // on closed table it doesn't matter
+			for (let i = 0; i < aItems.length; i++) {
+				const oItem = aItems[i];
+				if (i === iSelectedIndex) {
+					assert.ok(oItem.hasStyleClass("sapMLIBFocused"), "Item" + i + " is focused");
+					if (!oItem.isA("sap.m.GroupHeaderListItem")) {
+						assert.ok(oItem.getSelected(), "Item" + i + " is selected");
+					}
+				} else {
+					assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "Item" + i + " not focused");
+					if (!oItem.isA("sap.m.GroupHeaderListItem")) {
+						assert.notOk(oItem.getSelected(), "Item" + i + " not selected");
+					}
 				}
 			}
 		}
@@ -1220,7 +1222,9 @@ sap.ui.define([
 			assert.equal(sNavigateItemId, undefined, "Navigated itemId");
 		}
 		assert.equal(bNavigateLeaveFocus, bLeaveFocus, "Navigated leaveFocus");
-		assert.deepEqual(oMTable.getConditions(), oCondition ? [oCondition] : [], "MTable conditions");
+		if (!oTable.getMode() === ListMode.MultiSelect) {
+			assert.deepEqual(oMTable.getConditions(), oCondition ? [oCondition] : [], "MTable conditions");
+		}
 		assert.equal(oMTable._iNavigateIndex, iNavigatedIndex, "navigated index stored");
 		iNavigate = 0;
 		oNavigateCondition = undefined;
@@ -1369,6 +1373,37 @@ sap.ui.define([
 			assert.equal(sType, ValueHelpSelectionType.Remove, "select event type");
 			assert.equal(iConfirm, 1, "confirm event fired");
 		});
+
+	});
+
+	QUnit.test("navigate for multi-value (closed)", function(assert) {
+
+		bIsOpen = false;
+
+		oTable.setMode(ListMode.MultiSelect);
+		oMTable.setConfig({
+			maxConditions: -1,
+			operators: [OperatorName.EQ, OperatorName.BT]
+		});
+
+		_attachNavigated();
+
+		oMTable.setConditions([Condition.createItemCondition("I2", "Item 2")]);
+		oMTable.navigate(1);
+		_checkNavigatedItem(assert, oTable, false, 0, 1, Condition.createItemCondition("I1", "Item 1"), false);
+
+		// no previous item
+		oMTable.navigate(-1);
+		_checkNavigatedItem(assert, oTable, false, 0, 1, Condition.createItemCondition("I1", "Item 1"), true);
+
+		// next item , selected one needs to be skipped
+		oMTable.navigate(1);
+		_checkNavigatedItem(assert, oTable, false, 2, 1, Condition.createItemCondition("I3", "X-Item 3"), false);
+		oMTable.onConnectionChange(); // simulate new assignment
+
+		// navigate to last
+		oMTable.navigate(-1);
+		_checkNavigatedItem(assert, oTable, false, 2, 1, Condition.createItemCondition("I3", "X-Item 3"), false);
 
 	});
 
@@ -1568,6 +1603,20 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("isNavigationEnabled", function(assert) {
+
+		assert.ok(oMTable.isNavigationEnabled(1), "Navigation is enabled for 1");
+		assert.ok(oMTable.isNavigationEnabled(-1), "Navigation is enabled for -1");
+		assert.notOk(oMTable.isNavigationEnabled(9999), "Navigation is disabled for 9999");
+		assert.notOk(oMTable.isNavigationEnabled(-9999), "Navigation is disabled for -9999");
+		assert.notOk(oMTable.isNavigationEnabled(10), "Navigation is disabled for 10");
+		assert.notOk(oMTable.isNavigationEnabled(-10), "Navigation is disabled for -10");
+
+		oTable.setMode(ListMode.MultiSelect);
+		assert.notOk(oMTable.isNavigationEnabled(-1), "Navigation is disabled for -1 on multi-select");
+
+	});
+
 	QUnit.test("getValueHelpIcon", function(assert) {
 
 		assert.equal(oMTable.getValueHelpIcon(), "sap-icon://slim-arrow-down", "icon");
@@ -1622,7 +1671,7 @@ sap.ui.define([
 		assert.notOk(oMTable.shouldOpenOnNavigate(), "should not open on navigate for single Select");
 
 		oTable.setMode(ListMode.MultiSelect);
-		assert.ok(oMTable.shouldOpenOnNavigate(), "should open on navigate for multi Select");
+		assert.notOk(oMTable.shouldOpenOnNavigate(), "should open on navigate for multi Select");
 
 	});
 
@@ -1929,16 +1978,6 @@ sap.ui.define([
 
 		assert.notOk(oMTable.isSingleSelect(), "multi-selection taken from Table");
 
-	});
-
-	QUnit.test("isNavigationEnabled", function(assert) {
-
-		assert.ok(oMTable.isNavigationEnabled(1), "Navigation is enabled for 1");
-		assert.ok(oMTable.isNavigationEnabled(-1), "Navigation is enabled for -1");
-		assert.notOk(oMTable.isNavigationEnabled(9999), "Navigation is disabled for 9999");
-		assert.notOk(oMTable.isNavigationEnabled(-9999), "Navigation is disabled for -9999");
-		assert.notOk(oMTable.isNavigationEnabled(10), "Navigation is disabled for 10");
-		assert.notOk(oMTable.isNavigationEnabled(-10), "Navigation is disabled for -10");
 	});
 
 	QUnit.test("setHighlightId", function(assert) {

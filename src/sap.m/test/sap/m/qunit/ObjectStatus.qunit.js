@@ -1236,4 +1236,16 @@ sap.ui.define([
 		//Assert
 		assert.strictEqual(this.oText.getDomRef().childNodes[0].textContent, "test", "Empty indicator is not rendered");
 	});
+
+	QUnit.test("getAccessibilityInfo when emptyIdicatorMode is set", function(assert) {
+		// Prepare
+		var oStatus1 = new ObjectStatus({title: "One", emptyIndicatorMode: "On", text: "test"}),
+			oStatus2 = new ObjectStatus({title: "Two", emptyIndicatorMode: "On"}),
+			oStatus3 = new ObjectStatus({title: "Three", emptyIndicatorMode: "Off"});
+
+		// Assert
+		assert.strictEqual(oStatus1.getAccessibilityInfo().description, "One test", "Empty value text not added to description");
+		assert.strictEqual(oStatus2.getAccessibilityInfo().description, "Two Empty Value", "Empty value text added to description");
+		assert.strictEqual(oStatus3.getAccessibilityInfo().description, "Three", "Empty value text not added to description");
+	});
 });

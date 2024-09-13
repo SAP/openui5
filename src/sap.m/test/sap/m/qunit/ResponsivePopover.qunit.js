@@ -117,6 +117,7 @@ sap.ui.define([
 
 	QUnit.module("API", {
 		beforeEach: async function() {
+			this.clock = sinon.useFakeTimers();
 
 			// Arrange
 			this.oList = new List();
@@ -155,7 +156,8 @@ sap.ui.define([
 
 			bindListData(data, oItemTemplate1, this.oList);
 			this.oButton.placeAt('qunit-fixture');
-			await nextUIUpdate();
+			this.clock.tick(500);
+			await nextUIUpdate(this.clock);
 		},
 		afterEach: function() {
 
@@ -229,20 +231,20 @@ sap.ui.define([
 
 		// Open the ResponsivePopover
 		this.oResponsivePopover.openBy(this.oButton);
-		await nextUIUpdate();
+		this.clock.tick(500);
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.ok(jQuery("#" + this.oResponsivePopover.getId() + "-closeButton").length === 0, "CloseButton should not be rendered");
 
 		this.oResponsivePopover.setShowCloseButton(true);
-		await nextUIUpdate();
+		await nextUIUpdate(this.clock);
 
 		assert.ok(jQuery("#" + this.oResponsivePopover.getId() + "-closeButton").length === 1, "CloseButton should be rendered");
 	});
 
 	QUnit.test("Close button should not be forwarded to an internal aggregation Toolbar", async function (assert) {
 		this.stub(Device, "system").value({ phone: true, desktop: false });
-		this.clock = sinon.useFakeTimers();
 
 		var oToolbar = new Toolbar(),
 			oResponsivePopover = new ResponsivePopover({
@@ -286,7 +288,7 @@ sap.ui.define([
 
 		// act
 		oPopover.setEndButton(new Button());
-		await nextUIUpdate();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.strictEqual(oInserAggregationSpy.getCall(0).args[1], 1, "insert content should be called with position 1 for end button");
@@ -307,8 +309,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Phone mode with NavContainer content", async function(assert) {
-		this.clock = sinon.useFakeTimers();
-
 		// Arrange and Act
 		this.stub(Device, "system").value({phone: true});
 		this.oResponsivePopover = new ResponsivePopover(this.oControlProps);
@@ -342,6 +342,7 @@ sap.ui.define([
 
 		// Act
 		this.oResponsivePopover.openBy(this.oButton);
+		this.clock.tick(500);
 
 		// Assert
 		assert.ok(this.oResponsivePopover.isOpen(), "responsive popover is opened");
@@ -349,7 +350,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("ResponsivepPopover should act according to value of resizing property", function(assert) {
-		this.clock = sinon.useFakeTimers();
 		// Arrange
 		this.oResponsivePopover = new ResponsivePopover();
 		this.oResponsivePopover.setResizable(true);
@@ -395,8 +395,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("ResponsivePopover should pass the data from the binded model to the inner control", function (assert) {
-		this.clock = sinon.useFakeTimers();
-
 		// Arrange
 		this.oResponsivePopover = new ResponsivePopover();
 		this.oResponsivePopover.setModel(oSimpleJSONModel);
@@ -413,7 +411,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("ResponsivePopover with ariaLabelledBy", function (assert) {
-		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var sInvTextId = "invisibleText";
 
@@ -438,14 +435,13 @@ sap.ui.define([
 		});
 
 		// Act
-		await nextUIUpdate();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oResponsivePopover.getDependents().length, 1, "Dependents aggregation is forwarded correctly");
 	});
 
 	QUnit.test("ResponsivePopover should not fall in infinite loop when invalidation comes from child control", async function (assert) {
-		this.clock = sinon.useFakeTimers();
 		var oResponsivePopover = new ResponsivePopover("rpo");
 		var oButton = new Button();
 
@@ -473,8 +469,6 @@ sap.ui.define([
 	//================================================================================
 
 	QUnit.test("ResponsivePopover with aria-modal attribute set to true", function (assert) {
-		this.clock = sinon.useFakeTimers();
-
 		// Arrange
 		var oResponsivePopover = new ResponsivePopover();
 

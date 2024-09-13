@@ -3469,7 +3469,7 @@ sap.ui.define([
 			if (this.oRetryAfterError !== oReason) {
 				oErrorResponse.$ownReason = true;
 				oErrorResponse.$reported = true;
-				Log.error(sReason, oReason.stack, sClassName);
+				Log.error(sReason, oReason?.stack, sClassName);
 			}
 		}
 		fnError(oErrorResponse || {$ownReason: true, $rejected: true, $reported: true, message: sReason});

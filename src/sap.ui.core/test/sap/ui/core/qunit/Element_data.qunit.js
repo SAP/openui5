@@ -172,6 +172,8 @@ sap.ui.define([
 
 		var object_data_ori = clone.data("object_data");
 		assert.equal(object_data_ori.two, 3, "The object data of the original object should be changed as well, as only the reference to it is cloned");
+
+		clone.destroy();
 	});
 
 	QUnit.test("Calling data() after destroy (future=true)", function(assert) {
@@ -278,6 +280,8 @@ sap.ui.define([
 			var data = btn.data("coords");
 			assert.ok(data && typeof data === "object", "Data object should be attached to the Button");
 			assert.equal(data.x, 100, "Data object should contain the original data");
+
+			myView.destroy();
 		});
 
 	});
@@ -296,5 +300,6 @@ sap.ui.define([
 		await assert.rejects(nextUIUpdate(), "nextUIUpdate rejected because no string value was provided to CustomData");
 
 		future.active = undefined;
+		btn.destroy();
 	});
 });

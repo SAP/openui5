@@ -173,7 +173,9 @@ sap.ui.define([
 		if (this._iNavigateIndex >= 0) { // initialize navigation
 			this._iNavigateIndex = -1;
 			this.removeVisualFocus(); // on new items it needs to be determined if there is a focusable item
-			this.setProperty("conditions", [], true);
+			if (this.isSingleSelect()) {
+				this.setProperty("conditions", [], true);
+			}
 		}
 
 		this._sHighlightId = undefined;
@@ -361,6 +363,7 @@ sap.ui.define([
 
 		this._iNavigateIndex = -1; // initialize after closing
 		this._bScrollToSelectedItem = false;
+		this._sHighlightId = undefined;
 	};
 
 	MTable.prototype.handleConditionsUpdate = function(oChanges) {
@@ -712,14 +715,30 @@ sap.ui.define([
 					}
 				}
 			};
+			const fSkipSelected = () => {
+				const aConditions = this.getConditions();
+				while (aItems[iSelectedIndex] && this._isContextSelected(this._getListItemBindingContext(aItems[iSelectedIndex]), aConditions)) { // ignore selected items
+					if (bSearchForNext) {
+						iSelectedIndex++;
+					} else {
+						iSelectedIndex--;
+					}
+				}
+			};
 
 			fSkipGroupHeader();
+			if (!bSingleSelect) { // on multi-selection skip already selected items
+				fSkipSelected();
+			}
 			if (iSelectedIndex < 0 || iSelectedIndex > iItems - 1) {
 				// find last not groupable item
 				bSearchForNext = !bSearchForNext;
 				bLeaveFocus = iSelectedIndex < 0;
 				iSelectedIndex = iSelectedIndex < 0 ? 0 : iItems - 1;
 				fSkipGroupHeader();
+				if (!bSingleSelect) { // on multi-selection skip already selected items
+					fSkipSelected();
+				}
 			}
 		} else if (!bSingleSelect) {
 			// in case of multiToken field the focus can be set to the table and the navigation will be handled by the focused table control.
@@ -746,7 +765,9 @@ sap.ui.define([
 			let oCondition;
 			if (oItem !== oSelectedItem || iStep === 0) { // new item or already shown item is navigated again (focus set on dropdown)
 				this._iNavigateIndex = iSelectedIndex;
-				oItem.setSelected(true);
+				if (bSingleSelect) {
+					oItem.setSelected(true);
+				}
 
 				// in case of a single value field fake the focus on the new selected item to update the screenreader invisible text
 				if (bIsOpen) {
@@ -755,7 +776,9 @@ sap.ui.define([
 				}
 
 				if (oItem.isA("sap.m.GroupHeaderListItem")) {
-					this.setProperty("conditions", [], true); // no condition navigated
+					if (bSingleSelect) {
+						this.setProperty("conditions", [], true); // no condition navigated
+					}
 					this.fireNavigated({ condition: undefined, itemId: oItem.getId(), leaveFocus: false });
 				} else {
 					const oItemContext = this._getListItemBindingContext(oItem);
@@ -763,7 +786,9 @@ sap.ui.define([
 					const oValueHelpDelegate = this.getValueHelpDelegate();
 					const bCaseSensitive = oValueHelpDelegate.isFilteringCaseSensitive(this.getValueHelpInstance(), this);
 					oCondition = oValues && this.createCondition(oValues.key, oValues.description, oValues.payload);
-					this.setProperty("conditions", [oCondition], true);
+					if (bSingleSelect) {
+						this.setProperty("conditions", [oCondition], true);
+					}
 					this.fireNavigated({ condition: oCondition, itemId: oItem.getId(), leaveFocus: false, caseSensitive: bCaseSensitive });
 				}
 				if (bIsOpen) {
@@ -779,7 +804,7 @@ sap.ui.define([
 
 	MTable.prototype.isNavigationEnabled = function(iStep) {
 
-		if (iStep === 1 || iStep === -1) {
+		if (iStep === 1 || (iStep === -1 && (this.isSingleSelect() || !this.getParent().isOpen()))) { // prevent arrow-up navigation to end on multi-selection or
 			return true;
 		} else {
 			return false; // TODO: check if everything already loaded?
