@@ -71,6 +71,9 @@
 					<m:Slider value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}"/>
 				</mdc:Field>
 
+				<m:Label text="Slider via Delegate"/>
+				<mdc:Field id="F3a" value="{Quantity}" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" dataType="Edm.Float" delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseCustomContent.delegate"\}'/>
+
 				<m:Label text="display only with additionalValue and ValueState"></m:Label>
 				<mdc:Field id="F7" value="{Name}" additionalValue="{ProductId}" valueState="Error" display="ValueDescription" editMode="Display" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit">
 					<mdc:contentDisplay>

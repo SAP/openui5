@@ -1419,6 +1419,9 @@ sap.ui.define([
 			_refreshLabel.call(this); // as required-idicator might set or removed on Label
 			if (this._bSettingsApplied && (oChanges.old === FieldEditMode.Display || oChanges.old === FieldEditMode.EditableDisplay || oChanges.current === FieldEditMode.Display || oChanges.current === FieldEditMode.EditableDisplay)) {
 				// edit mode changed after settings applied (happens if edit mode is bound and binding updates after control initialization)
+				if (this._aCustomControlNames) {
+					this.destroyInternalContent(); // as control might change in Delegate
+				}
 				this.triggerCheckCreateInternalContent();
 			}
 		}
@@ -1432,6 +1435,9 @@ sap.ui.define([
 	 */
 	FieldBase.prototype.updateInternalContent = function() {
 		if (this.getAggregation("_content", []).length > 0) {
+			if (this._aCustomControlNames) {
+				this.destroyInternalContent(); // as control might change in Delegate
+			}
 			_createInternalContentWrapper.call(this);
 			this.getContentFactory().updateConditionType(); // if control is not excanged at least ConditionType needs to be updated
 		}
@@ -1823,13 +1829,6 @@ sap.ui.define([
 				this.destroyInternalContent();
 			}
 
-			// as for edit and display different Types are possible switch them with edit mode
-			if (!this.getContentFactory().getContentConditionTypes()) {
-				this.getContentFactory().setContentConditionTypes({});
-			}
-			if (!this.getContentFactory().getContentConditionTypes()[sName]) {
-				this.getContentFactory().getContentConditionTypes()[sName] = {};
-			}
 			this.getContentFactory().setNoFormatting(false); // initialize
 			this.awaitControlDelegate().then(() => {
 				if (!this.isFieldDestroyed()) {
@@ -1841,78 +1840,92 @@ sap.ui.define([
 				}
 			});
 
-			// find out what is bound to conditions
-			let oBindingInfo;
-			let sProperty;
-			let bPropertyBound = false;
-			for (sProperty in oContent.getMetadata().getAllProperties()) {
-				if (oContent.getBindingPath(sProperty) === "/conditions") {
-					oBindingInfo = oContent.getBindingInfo(sProperty);
-					if (oBindingInfo && oBindingInfo.type && oBindingInfo.type instanceof ConditionsType) {
-						this.getContentFactory().getContentConditionTypes()[sName].oConditionsType = oBindingInfo.type;
-					}
-					bPropertyBound = true;
-				}
-				if (sProperty === "editable" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
-					oContent.bindProperty(sProperty, { path: "$field>/editMode", formatter: ContentFactory._getEditable });
-				}
-				if (sProperty === "enabled" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
-					oContent.bindProperty(sProperty, { path: "$field>/editMode", formatter: ContentFactory._getEnabled });
-				}
-				if (sProperty === "displayOnly" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
-					oContent.bindProperty(sProperty, { path: "$field>/editMode", formatter: ContentFactory._getDisplayOnly });
-				}
-				if (sProperty === "required" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
-					oContent.bindProperty(sProperty, { path: "$field>/required" });
-				}
-				if (sProperty === "textAlign" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
-					oContent.bindProperty(sProperty, { path: "$field>/textAlign" });
-				}
-				if (sProperty === "textDirection" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
-					oContent.bindProperty(sProperty, { path: "$field>/textDirection" });
-				}
-				if (sProperty === "valueState" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
-					oContent.bindProperty(sProperty, { path: "$field>/valueState" });
-				}
-				if (sProperty === "valueStateText" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
-					oContent.bindProperty(sProperty, { path: "$field>/valueStateText" });
-				}
-				if (sProperty === "placeholder" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
-					oContent.bindProperty(sProperty, { path: "$field>/placeholder" });
-				}
-				if (sProperty === "showValueHelp" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
-					oContent.bindProperty(sProperty, { path: "$field>/_valueHelpEnabled" });
-				}
-				if (sProperty === "valueHelpIconSrc" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
-					oContent.setValueHelpIconSrc(this._getValueHelpIcon());
-				}
-			}
+			_updateContentBinding.call(this, oContent, sName);
 
-			for (const sAggregation in oContent.getMetadata().getAllAggregations()) {
-				if (oContent.getBindingPath(sAggregation) === "/conditions") {
-					oBindingInfo = oContent.getBindingInfo(sAggregation);
-					if (oBindingInfo && oBindingInfo.template) {
-						for (sProperty in oBindingInfo.template.getMetadata().getAllProperties()) {
-							const oTemplateBindingInfo = oBindingInfo.template.getBindingInfo(sProperty);
-							if (oTemplateBindingInfo && oTemplateBindingInfo.type && oTemplateBindingInfo.type instanceof ConditionType) {
-								this.getContentFactory().getContentConditionTypes()[sName].oConditionType = oTemplateBindingInfo.type;
-								if (bPropertyBound) { // both value and tokens are bound -> don't format Value, only parse it
-									this.getContentFactory().setNoFormatting(true);
-								}
-								break;
+		}
+	}
+
+	function _updateContentBinding(oContent, sName) {
+
+		// as for edit and display different Types are possible switch them with edit mode
+		if (!this.getContentFactory().getContentConditionTypes()) {
+			this.getContentFactory().setContentConditionTypes({});
+		}
+		if (!this.getContentFactory().getContentConditionTypes()[sName]) {
+			this.getContentFactory().getContentConditionTypes()[sName] = {};
+		}
+
+		// find out what is bound to conditions
+		let oBindingInfo;
+		let sProperty;
+		let bPropertyBound = false;
+		for (sProperty in oContent.getMetadata().getAllProperties()) {
+			if (oContent.getBindingPath(sProperty) === "/conditions") {
+				oBindingInfo = oContent.getBindingInfo(sProperty);
+				if (oBindingInfo && oBindingInfo.type && oBindingInfo.type instanceof ConditionsType) {
+					this.getContentFactory().getContentConditionTypes()[sName].oConditionsType = oBindingInfo.type;
+				}
+				bPropertyBound = true;
+			}
+			if (sProperty === "editable" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
+				oContent.bindProperty(sProperty, { path: "$field>/editMode", formatter: ContentFactory._getEditable });
+			}
+			if (sProperty === "enabled" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
+				oContent.bindProperty(sProperty, { path: "$field>/editMode", formatter: ContentFactory._getEnabled });
+			}
+			if (sProperty === "displayOnly" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
+				oContent.bindProperty(sProperty, { path: "$field>/editMode", formatter: ContentFactory._getDisplayOnly });
+			}
+			if (sProperty === "required" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
+				oContent.bindProperty(sProperty, { path: "$field>/required" });
+			}
+			if (sProperty === "textAlign" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
+				oContent.bindProperty(sProperty, { path: "$field>/textAlign" });
+			}
+			if (sProperty === "textDirection" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
+				oContent.bindProperty(sProperty, { path: "$field>/textDirection" });
+			}
+			if (sProperty === "valueState" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
+				oContent.bindProperty(sProperty, { path: "$field>/valueState" });
+			}
+			if (sProperty === "valueStateText" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
+				oContent.bindProperty(sProperty, { path: "$field>/valueStateText" });
+			}
+			if (sProperty === "placeholder" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
+				oContent.bindProperty(sProperty, { path: "$field>/placeholder" });
+			}
+			if (sProperty === "showValueHelp" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
+				oContent.bindProperty(sProperty, { path: "$field>/_valueHelpEnabled" });
+			}
+			if (sProperty === "valueHelpIconSrc" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
+				oContent.setValueHelpIconSrc(this._getValueHelpIcon());
+			}
+		}
+
+		for (const sAggregation in oContent.getMetadata().getAllAggregations()) {
+			if (oContent.getBindingPath(sAggregation) === "/conditions") {
+				oBindingInfo = oContent.getBindingInfo(sAggregation);
+				if (oBindingInfo && oBindingInfo.template) {
+					for (sProperty in oBindingInfo.template.getMetadata().getAllProperties()) {
+						const oTemplateBindingInfo = oBindingInfo.template.getBindingInfo(sProperty);
+						if (oTemplateBindingInfo && oTemplateBindingInfo.type && oTemplateBindingInfo.type instanceof ConditionType) {
+							this.getContentFactory().getContentConditionTypes()[sName].oConditionType = oTemplateBindingInfo.type;
+							if (bPropertyBound) { // both value and tokens are bound -> don't format Value, only parse it
+								this.getContentFactory().setNoFormatting(true);
 							}
+							break;
 						}
 					}
 				}
-				if (sAggregation === "tooltip" && !oContent.getBindingPath(sAggregation) && !oContent.getAggregation(sAggregation)) {
-					// at least support string-tooltip
-					oContent.bindProperty(sAggregation, { path: "$field>/tooltip" });
-				}
 			}
+			if (sAggregation === "tooltip" && !oContent.getBindingPath(sAggregation) && !oContent.getAggregation(sAggregation)) {
+				// at least support string-tooltip
+				oContent.bindProperty(sAggregation, { path: "$field>/tooltip" });
+			}
+		}
 
-			if (oContent.getMetadata().getAllAssociations().ariaLabelledBy) {
-				this.getContentFactory().setAriaLabelledBy(oContent);
-			}
+		if (oContent.getMetadata().getAllAssociations().ariaLabelledBy) {
+			this.getContentFactory().setAriaLabelledBy(oContent);
 		}
 
 	}
@@ -2064,7 +2077,7 @@ sap.ui.define([
 		const [oContentOld] = aContentOld;
 		const sControlNameOld = oContentOld?.getMetadata().getName().replace(/\./g, "/");
 		const sContentMode = this.getContentFactory().getContentMode(oContentType, sEditMode, iMaxConditions, bMultipleLines, aOperators);
-		const aControlNames = oContentType.getControlNames(sContentMode, aOperators[0]);
+		const aControlNames = this._aCustomControlNames || oContentType.getControlNames(sContentMode, aOperators[0]);
 		const [sControlName] = aControlNames;
 		if (sControlName !== sControlNameOld) {
 			this.getContentFactory().setHideOperator(_isOnlyOneSingleValue.call(this, aOperators)); // in single value eq Field hide operator
@@ -2103,6 +2116,20 @@ sap.ui.define([
 						_setAriaAttributes.call(this, false);
 						continue;
 					}
+
+					if (!oControl._bByContentFactory) { // custom control
+						if (!oControl.isA("sap.ui.core.IFormContent")) {
+							// TODO: allow different content than allowed in Form? Prevent Layouts and unsupported controls because of accessibiliy issues (label asignment, focus...)
+							throw new Error(oContent + " is not a valid content! Only use valid content in " + this);
+						}
+						if (!this._aCustomControlNames) {
+							this._aCustomControlNames = [];
+						}
+						this._aCustomControlNames.push(oControl.getMetadata().getName().replace(/\./g, "/"));
+						_updateContentBinding.call(this, oControl, "_content");
+						this.getContentFactory()._setUsedConditionType(this.getContent(), this.getContentEdit(), this.getContentDisplay(), this.getEditMode()); // if external content use it's conditionType
+					}
+
 					oControl.attachEvent("parseError", _handleParseError, this);
 					oControl.attachEvent("validationError", _handleValidationError, this);
 					oControl.attachEvent("validationSuccess", _handleValidationSuccess, this);
@@ -2151,6 +2178,11 @@ sap.ui.define([
 
 		if (this.getContentFactory().isMeasure()) {
 			this.getContentFactory().setIsMeasure(false);
+		}
+
+		delete this._aCustomControlNames;
+		if (this.getContentFactory().getContentConditionTypes()?.["_content"]) {
+			delete this.getContentFactory().getContentConditionTypes()["_content"];
 		}
 
 	};
