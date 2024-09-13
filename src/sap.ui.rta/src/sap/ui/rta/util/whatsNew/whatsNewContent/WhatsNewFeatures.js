@@ -13,6 +13,11 @@ sap.ui.define([
 
 	const oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 
+	function getImagePath(sFileName) {
+		const _sAppModulePath = "sap/ui/rta/util/";
+		return `${sap.ui.require.toUrl(_sAppModulePath)}whatsNew/whatsNewContent/whatsNewImages/${sFileName}`;
+	}
+
 	/**
 	 * @returns {object[]} All What's New features
 	 */
@@ -82,7 +87,7 @@ sap.ui.define([
 				},
 				{
 					text: oTextResources.getText("TXT_WHATS_NEW_DIALOG_WHATS_NEW_OVERVIEW_TEXT"),
-					image: "/resources/sap/ui/rta/util/whatsNew/whatsNewContent/whatsNewImages/WhatsNewOverview.png"
+					image: getImagePath("WhatsNewOverview.png")
 				}
 			]
 		},
@@ -102,11 +107,11 @@ sap.ui.define([
 				},
 				{
 					text: oTextResources.getText("TXT_WHATS_NEW_DIALOG_IFRAME_SANDBOX_TEXT_2"),
-					image: "/resources/sap/ui/rta/util/whatsNew/whatsNewContent/whatsNewImages/FullIframe.png"
+					image: getImagePath("FullIframe.png")
 				},
 				{
 					text: oTextResources.getText("TXT_WHATS_NEW_DIALOG_IFRAME_SANDBOX_TEXT_3"),
-					image: "/resources/sap/ui/rta/util/whatsNew/whatsNewContent/whatsNewImages/AdvancedSettingsImage.png"
+					image: getImagePath("AdvancedSettingsImage.png")
 				}
 			]
 		 },
