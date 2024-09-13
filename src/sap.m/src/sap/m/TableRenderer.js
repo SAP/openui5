@@ -146,9 +146,17 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "sap/ui/cor
 		createBlankCell("Highlight", "HighlightCol");
 
 		if (iModeOrder == -1) {
-			openStartCell("ModeCol", "SelCol", "TABLE_SELECTION_COLUMNHEADER").openEnd();
+			openStartCell("ModeCol", "SelCol", "TABLE_SELECTION_COLUMNHEADER");
 			if (sMode == "MultiSelect") {
-				rm.renderControl(oTable.getMultiSelectMode() == MultiSelectMode.ClearAll ? oTable._getClearAllButton() : oTable._getSelectAllCheckbox());
+				if (oTable.getMultiSelectMode() == MultiSelectMode.ClearAll) {
+					rm.attr("title", Library.getResourceBundleFor("sap.m").getText("TABLE_CLEARBUTTON_TOOLTIP"))
+						.class("sapMTableClearAll")
+						.openEnd();
+					rm.renderControl(oTable._getClearAllIcon());
+				} else {
+					rm.openEnd();
+					rm.renderControl(oTable._getSelectAllCheckbox());
+				}
 			}
 			rm.close(sCellTag);
 			iIndex++;
