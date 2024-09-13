@@ -22554,14 +22554,17 @@ sap.ui.define([
 	// Request leaf count(JIRA: CPOUI5ODATAV4-164).
 	// Test ODLB#getCount (JIRA: CPOUI5ODATAV4-958).
 	// Ensure that unchanged $$aggregation is ignored (BCP: 2370045709).
-	//TODO support $filter : \'GrossAmount gt 0\',\
+	// Support grand total w/ filter on aggregate (JIRA: CPOUI5ODATAV4-713)
 	QUnit.test("Data Aggregation: $$aggregation w/ groupLevels, paging", function (assert) {
-		var oListBinding,
+		var sFilterOnAggregate // JIRA: CPOUI5ODATAV4-713
+			= "groupby((CurrencyCode,LifecycleStatus),filter($these/aggregate(GrossAmount) gt 0))",
+			oListBinding,
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <Text id="count" text="{$count}"/>\
 <t:Table id="table" rows="{path : \'/SalesOrderList\',\
+		filters : {path : \'GrossAmount\', operator : \'GT\', value1 : \'0\'},\
 		parameters : {\
 			$$aggregation : {\
 				aggregate : {\
@@ -22576,7 +22579,8 @@ sap.ui.define([
 			},\
 			$count : true,\
 			$orderby : \'LifecycleStatus desc,ItemPosition asc\'\
-		}}" threshold="0" visibleRowCount="3">\
+		}\
+	}" threshold="0" visibleRowCount="3">\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -22585,7 +22589,7 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("SalesOrderList?$apply=concat("
+		this.expectRequest("SalesOrderList?$apply=" + sFilterOnAggregate + "/concat("
 				+ "groupby((CurrencyCode,LifecycleStatus))/aggregate($count as UI5__leaves)"
 				+ ",groupby((LifecycleStatus),aggregate(GrossAmount))/orderby(LifecycleStatus desc)"
 				+ "/concat(aggregate($count as UI5__count),top(3)))", {
@@ -22609,7 +22613,8 @@ sap.ui.define([
 			oListBinding = oTable.getBinding("rows");
 
 			assert.strictEqual(oListBinding.getDownloadUrl(), sSalesOrderService + "SalesOrderList"
-				+ "?$apply=groupby((LifecycleStatus,CurrencyCode),aggregate(GrossAmount,NetAmount))"
+				+ "?$apply=" + sFilterOnAggregate.replaceAll(" ", "%20")
+				+ "/groupby((LifecycleStatus,CurrencyCode),aggregate(GrossAmount,NetAmount))"
 				// Note: ordering by 'ItemPosition asc' does not apply, even on leaf level
 				+ "/orderby(LifecycleStatus%20desc)",
 				"CPOUI5ODATAV4-609");
@@ -22629,8 +22634,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("SalesOrderList"
-					+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
+			that.expectRequest("SalesOrderList?$apply=" + sFilterOnAggregate
+					+ "/groupby((LifecycleStatus),aggregate(GrossAmount))"
 					+ "/orderby(LifecycleStatus desc)/skip(7)/top(3)", {
 					value : [
 						{GrossAmount : "7", LifecycleStatus : "T"},
@@ -22648,7 +22653,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("SalesOrderList?$apply=concat("
+			that.expectRequest("SalesOrderList?$apply=filter(GrossAmount gt 0)/concat("
 					+ "groupby((CurrencyCode,LifecycleStatus))/aggregate($count as UI5__leaves)"
 					+ ",groupby((LifecycleStatus))/orderby(LifecycleStatus desc)"
 					+ "/concat(aggregate($count as UI5__count),top(3)))", {
@@ -25676,20 +25681,40 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Filtering on a list binding with data aggregation splits the filters in two parts:
 	// - those filters that can be applied before aggregating
-	// - those filters that must be applied after aggregating (Note: this is currently unsupported
-	//   with grand total)
+	// - those filters that must be applied after aggregating
 	// JIRA: CPOUI5ODATAV4-119
 	//
-	// Add searching before aggregating and sorting.
-	// JIRA: CPOUI5ODATAV4-1030
-	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _AggregationCache", function (assert) {
+	// Add searching before aggregating and sorting (JIRA: CPOUI5ODATAV4-1030)
+	// Support grand total w/ filter on aggregate (JIRA: CPOUI5ODATAV4-713)
+[{
+	oFilter : new Filter("SalesNumber", FilterOperator.BT, 1, 10),
+	sFilter : "/groupby((Region),filter($these/aggregate(SalesNumber) ge 1"
+		+ " and $these/aggregate(SalesNumber) le 10))"
+}, { // not realistic, but interesting w.r.t. syntax ;-)
+	oFilter : new Filter("SalesNumber", FilterOperator.NotContains, 0), // Edm.Int32
+	sFilter : "/groupby((Region),filter(not contains($these/aggregate(SalesNumber),0)))"
+}, { // multi filter
+	oFilter : new Filter({
+		filters : [
+			new Filter("SalesNumber", FilterOperator.NB, 1, 10), // NB => OR within AND
+			new Filter("SalesNumber", FilterOperator.NotContains, 0)
+		],
+		and : true
+	}),
+	sFilter : "/groupby((Region),filter("
+		+ "($these/aggregate(SalesNumber) lt 1 or $these/aggregate(SalesNumber) gt 10)"
+		+ " and not contains($these/aggregate(SalesNumber),0)))"
+}].forEach((oFixture) => {
+	const sTitle = "JIRA: CPOUI5ODATAV4-119 with _AggregationCache, filter = " + oFixture.sFilter;
+
+	QUnit.test(sTitle, function (assert) {
 		var oModel = this.createAggregationModel({autoExpandSelect : true}),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
 			var oListBinding = that.oModel.bindList("/BusinessPartners", null, null, [
-					new Filter("Name", FilterOperator.EQ, "Foo")
-					//TODO new Filter("SalesNumber", FilterOperator.GT, 0)
+					new Filter("Name", FilterOperator.EQ, "Foo"),
+					oFixture.oFilter
 				], {
 					$$aggregation : {
 						aggregate : {
@@ -25704,6 +25729,7 @@ sap.ui.define([
 				});
 
 			that.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')/search(covfefe)"
+					+ oFixture.sFilter
 					+ "/concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber))"
 					+ "/orderby(Region asc,SalesNumber desc)"
 					// Note: $count is requested automatically
@@ -25721,6 +25747,7 @@ sap.ui.define([
 			]);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Filtering on a list binding with data aggregation splits the filters in two parts:
@@ -26053,12 +26080,18 @@ sap.ui.define([
 	// sorting; filtering and searching before aggregation; expand and paging.
 	//
 	// JIRA: CPOUI5ODATAV4-1030
+	//
+	// Support grand total w/ filter on aggregate (JIRA: CPOUI5ODATAV4-713)
 	QUnit.test("Data Aggregation: search before aggregation", function (assert) {
-		var oListBinding,
+		var sFilterOnAggregate // JIRA: CPOUI5ODATAV4-713
+				= "/groupby((Country,Region),filter($these/aggregate(SalesNumber) gt 0))",
+			oListBinding,
 			oModel = this.createAggregationModel(),
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{path : \'/BusinessPartners\',\
+		filters : [{path : \'Name\', operator : \'EQ\', value1 : \'Foo\'},\
+			{path : \'SalesNumber\', operator : \'GT\', value1 : 0}],\
 		parameters : {\
 			$$aggregation : {\
 				aggregate : {\
@@ -26072,8 +26105,7 @@ sap.ui.define([
 			},\
 			$count : true,\
 			$orderby : \'Country asc,Region,SalesNumber desc\'\
-		},\
-		filters : {path : \'Name\', operator : \'EQ\', value1 : \'Foo\'}\
+		}\
 	}" threshold="0" visibleRowCount="3">\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
@@ -26086,6 +26118,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')/search(covfefe)"
+				+ sFilterOnAggregate
 				+ "/concat(groupby((Country,Region))/aggregate($count as UI5__leaves)"
 				+ ",aggregate(SalesNumber),groupby((Country),aggregate(SalesNumber))"
 				+ "/orderby(Country asc,SalesNumber desc)"
@@ -26116,7 +26149,8 @@ sap.ui.define([
 
 			that.expectChange("isExpanded", [, true])
 				.expectRequest("BusinessPartners?$apply=filter(Country eq 'A' and (Name eq 'Foo'))"
-					+ "/search(covfefe)/groupby((Region),aggregate(SalesNumber))"
+					+ "/search(covfefe)" + sFilterOnAggregate
+					+ "/groupby((Region),aggregate(SalesNumber))"
 					+ "/orderby(Region,SalesNumber desc)&$count=true&$skip=0&$top=3", {
 					"@odata.count" : "12",
 					value : [
@@ -26144,7 +26178,8 @@ sap.ui.define([
 			assert.strictEqual(oListBinding.getCount(), 42, "count of leaves");
 
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'A' and (Name eq 'Foo'))"
-				+ "/search(covfefe)/groupby((Region),aggregate(SalesNumber))"
+				+ "/search(covfefe)" + sFilterOnAggregate
+				+ "/groupby((Region),aggregate(SalesNumber))"
 				+ "/orderby(Region,SalesNumber desc)&$skip=5&$top=3", {
 					value : [
 						{Region : "f", SalesNumber : 6},

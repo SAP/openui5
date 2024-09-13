@@ -6426,7 +6426,8 @@ sap.ui.define([
 			})];
 
 			// code under test
-			assert.deepEqual(oBinding.fetchFilter().getResult(), [oFixture.result, undefined]);
+			assert.deepEqual(oBinding.fetchFilter().getResult(),
+				[oFixture.result, undefined, undefined]);
 		});
 	});
 
@@ -6478,7 +6479,7 @@ sap.ui.define([
 					[(bAnd
 						? "SO_2_BP/CompanyName eq 'SAP' and GrossAmount le 12345"
 						: "(SO_2_BP/CompanyName eq 'SAP' or GrossAmount le 12345)"
-					) + " and (GrossAmount ge 1000)", undefined]
+					) + " and (GrossAmount ge 1000)", undefined, undefined]
 				);
 			});
 		});
@@ -6665,13 +6666,13 @@ sap.ui.define([
 		oFilterPromise = oBinding.fetchFilter();
 
 		assert.strictEqual(oFilterPromise.isFulfilled(), false);
-		return oFilterPromise.then(function (sFilterValue) {
-			assert.deepEqual(sFilterValue,
+		return oFilterPromise.then(function (aFilterValues) {
+			assert.deepEqual(aFilterValues,
 				["p0.0 eq 'v0.0'"
 				+ " and (p1.0 eq 'v1.0' or p1.1 eq 'v1.1')"
 				+ " and p2.0 eq 'v2.0' and p2.1 eq 'v2.1' and p2.2 eq 'v2.2'"
 				+ " and p3.0 eq 'v3.0'"
-				+ " and (p3.1 lt 'v3.1' or p3.1 gt 'v3.1')", undefined]
+				+ " and (p3.1 lt 'v3.1' or p3.1 gt 'v3.1')", undefined, undefined]
 			);
 		});
 	});
@@ -6835,7 +6836,8 @@ sap.ui.define([
 
 				// code under test
 				return oBinding.fetchFilter().then(function (aFilterValues) {
-					assert.deepEqual(aFilterValues, [oFixture.expectedResult, undefined]);
+					assert.deepEqual(aFilterValues,
+						[oFixture.expectedResult, undefined, undefined]);
 				});
 			});
 		});
@@ -6860,7 +6862,7 @@ sap.ui.define([
 
 		// code under test
 		return oBinding.fetchFilter().then(function (aFilterValues) {
-			assert.deepEqual(aFilterValues, ["p0/any()", undefined]);
+			assert.deepEqual(aFilterValues, ["p0/any()", undefined, undefined]);
 		});
 	});
 
@@ -6881,9 +6883,9 @@ sap.ui.define([
 		oBinding.aFilters = [new Filter("p0.0", FilterOperator.EQ, "v0.0")];
 		oBinding.aApplicationFilters = [new Filter("p1.0", FilterOperator.EQ, "v1.0")];
 
-		return oBinding.fetchFilter(undefined, "p2.0 eq 'v2.0'").then(function (sFilterValue) {
-			assert.deepEqual(sFilterValue,
-				["p0.0 eq 'v0.0' and p1.0 eq 'v1.0' and (p2.0 eq 'v2.0')", undefined]);
+		return oBinding.fetchFilter(undefined, "p2.0 eq 'v2.0'").then(function (aFilterValues) {
+			assert.deepEqual(aFilterValues,
+				["p0.0 eq 'v0.0' and p1.0 eq 'v1.0' and (p2.0 eq 'v2.0')", undefined, undefined]);
 		});
 	});
 
@@ -6901,7 +6903,7 @@ sap.ui.define([
 		oBinding.aApplicationFilters = [new Filter("AmountIn%E2%82%AC", FilterOperator.GT, "1000")];
 
 		return oBinding.fetchFilter().then(function (aFilterValues) {
-			assert.deepEqual(aFilterValues, ["AmountIn€ gt 1000", undefined]);
+			assert.deepEqual(aFilterValues, ["AmountIn€ gt 1000", undefined, undefined]);
 		});
 	});
 
@@ -6972,7 +6974,7 @@ sap.ui.define([
 
 			// code under test
 			return oBinding.fetchFilter().then(function (aFilterValues) {
-				assert.deepEqual(aFilterValues, [oFixture.result, undefined]);
+				assert.deepEqual(aFilterValues, [oFixture.result, undefined, undefined]);
 			});
 		});
 	});
@@ -6980,26 +6982,52 @@ sap.ui.define([
 	//*********************************************************************************************
 [{
 	split : [new Filter("a", FilterOperator.GT, 42), undefined],
-	result : ["a gt 42", undefined]
+	result : ["a gt 42", undefined, undefined]
 }, {
 	split : [undefined, new Filter("b", FilterOperator.EQ, "before")],
-	result : [undefined, "b eq 'before'"]
+	result : [undefined, "b eq 'before'", undefined]
 }, {
 	split : [undefined, new Filter("b", FilterOperator.EQ, "before")],
 	staticFilter : "c eq 47",
-	result : ["c eq 47", "b eq 'before'"]
+	result : ["c eq 47", "b eq 'before'", undefined]
 }, {
 	split : [
 		new Filter(
 			[new Filter("a", FilterOperator.EQ, 1), new Filter("a", FilterOperator.EQ, 2)], false
 		),
-		new Filter("b", FilterOperator.EQ, "before")
+		new Filter("b", FilterOperator.EQ, "before"),
+		new Filter("a", FilterOperator.GT, 42)
 	],
 	staticFilter : "c eq 47",
-	result : ["(a eq 1 or a eq 2) and (c eq 47)", "b eq 'before'"]
+	result : ["(a eq 1 or a eq 2) and (c eq 47)", "b eq 'before'", "$these/aggregate(a) gt 42"]
+}, {
+	split : [
+		new Filter(
+			[new Filter("a", FilterOperator.EQ, 1), new Filter("a", FilterOperator.EQ, 2)], false
+		),
+		new Filter("b", FilterOperator.EQ, "before"),
+		new Filter({
+			and : true,
+			filters : [
+				new Filter("a", FilterOperator.GE, 1),
+				new Filter({
+					caseSensitive : false,
+					operator : FilterOperator.NE,
+					path : "b",
+					value1 : "SAP"
+				})
+			]
+		})
+	],
+	staticFilter : "c eq 47",
+	result : [
+		"(a eq 1 or a eq 2) and (c eq 47)",
+		"b eq 'before'",
+		"$these/aggregate(a) ge 1 and tolower($these/aggregate(b)) ne tolower('SAP')"
+	]
 }, {
 	split : [new Filter("a", FilterOperator.GT, 42), new Filter("b", FilterOperator.EQ, "before")],
-	result : ["a gt 42", "b eq 'before'"]
+	result : ["a gt 42", "b eq 'before'", undefined]
 }].forEach(function (oFixture, i) {
 	QUnit.test("fetchFilter: list binding aggregates data " + i, function (assert) {
 		var oAggregation = {},

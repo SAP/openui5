@@ -91,6 +91,7 @@ sap.ui.define([
 			this.mock(_AggregationHelper).expects("buildApply4Hierarchy").atLeast(0).returns({});
 		}
 	});
+
 	//*********************************************************************************************
 [
 	{},
@@ -129,6 +130,24 @@ sap.ui.define([
 			"~cache~");
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("create: no aggregation? no $$filterOnAggregate!", function (assert) {
+		this.mock(_AggregationHelper).expects("hasGrandTotal").never();
+		this.mock(_AggregationHelper).expects("hasMinOrMax").never();
+		this.mock(_MinMaxHelper).expects("createCache").never();
+		this.mock(_Cache).expects("create").never();
+		const mQueryOptions = {
+			$$filterOnAggregate : "" // even falsy values not allowed...
+		};
+
+		assert.throws(function () {
+			// code under test
+			_AggregationCache.create("~requestor~", "resource/path", "deep/resource/path",
+				mQueryOptions, /*oAggregation*/null, "~sortExpandSelect~", "~sharedRequest~",
+				/*bIsGrouped*/"n/a", "~aSeparateProperties~");
+		}, new Error("Unsupported $$filterOnAggregate"));
+	});
 
 	//*********************************************************************************************
 	QUnit.test("create: min/max", function (assert) {

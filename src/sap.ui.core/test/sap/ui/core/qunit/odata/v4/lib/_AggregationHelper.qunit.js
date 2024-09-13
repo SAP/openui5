@@ -948,6 +948,25 @@ sap.ui.define([
 			+ ",groupby((LifecycleStatus),aggregate(GrossAmount))"
 				+ "/concat(aggregate($count as UI5__count),top(3)))",
 		sFollowUpApply : "groupby((LifecycleStatus),aggregate(GrossAmount))/top(3)"
+	}, {
+		oAggregation : {
+			aggregate : {
+				Amount : {grandTotal : true}
+			},
+			group : {
+				C : {}, // intentionally out of order to test sorting
+				A : {},
+				B : {}
+			},
+			search : "covfefe"
+		},
+		mQueryOptions : {
+			$$filterOnAggregate : "~filterOnAggregate~"
+		},
+		sApply : "search(covfefe)/groupby((A,B,C),filter(~filterOnAggregate~))"
+			+ "/concat(aggregate(Amount),groupby((A,B,C),aggregate(Amount)))",
+		sFollowUpApply : "search(covfefe)/groupby((A,B,C),filter(~filterOnAggregate~))"
+			+ "/groupby((A,B,C),aggregate(Amount))"
 	}].forEach(function (oFixture) {
 		QUnit.test("buildApply with " + oFixture.sApply, function (assert) {
 			var mAlias2MeasureAndMethod = {},
@@ -1855,11 +1874,39 @@ sap.ui.define([
 	filter : and(f("a1"), and(f("a2"), f("b"))),
 	result : [and(f("a1"), f("a2")), f("b")]
 }].forEach(function (oFixture, i) {
-	QUnit.test("splitFilter: " + i, function (assert) {
+	[false, true].forEach((bHasSubtotals) => {
+		[false, true].forEach((bHasGrandTotal) => {
+			[false, true].forEach((bOldSchool) => {
+				const sTitle = `splitFilter: #${i}, bHasGrandTotal=${bHasGrandTotal}
+					, bHasSubtotals=${bHasSubtotals}, "grandTotal like 1.84"=${bOldSchool}`;
+
+				if (bHasSubtotals && bHasGrandTotal) {
+					return;
+				}
+
+	QUnit.test(sTitle, function (assert) {
+		const oAggregation = {
+			aggregate : {
+				a1 : {},
+				a2 : {subtotals : bHasSubtotals}
+			},
+			"grandTotal like 1.84" : bOldSchool
+		};
+		this.mock(_AggregationHelper).expects("hasGrandTotal")
+			.exactly(bHasSubtotals || bOldSchool ? 0 : 1)
+			.withExactArgs(sinon.match.same(oAggregation.aggregate))
+			.returns(bHasGrandTotal);
+
 		assert.deepEqual(
-			_AggregationHelper.splitFilter(oFixture.filter, {aggregate : {a1 : {}, a2 : {}}}),
-			oFixture.result
+			// code under test
+			_AggregationHelper.splitFilter(oFixture.filter, oAggregation),
+			(bHasGrandTotal || bHasSubtotals) && !bOldSchool
+				? [undefined, oFixture.result[1], oFixture.result[0]]
+				: oFixture.result
 		);
+	});
+			});
+		});
 	});
 });
 

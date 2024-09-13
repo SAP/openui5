@@ -1851,11 +1851,14 @@ sap.ui.define([
 	 *   that the cache promise is already created when the events are fired.
 	 * @param {string} sStaticFilter
 	 *   The static filter value
-	 * @returns {sap.ui.base.SyncPromise} A promise which resolves with an array that consists of
-	 *   two filters, the first one ("$filter") has to be applied after and the second one
-	 *   ("$$filterBeforeAggregate") has to be applied before aggregating the data.
-	 *   Both can be <code>undefined</code>. It rejects with an error if a filter has an unknown
-	 *   operator or an invalid path.
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise which resolves with an array that consists of three filters where each can be
+	 *   <code>undefined</code>. The first one has to be applied after data aggregation. The second
+	 *   one can simply be applied before data aggregation (which improves performance) because it
+	 *   is unrelated to aggregates. The third one is special in that it has to be applied before
+	 *   data aggregation and contains the special syntax "$these/aggregate(...)" because it relates
+	 *   to aggregates. The promise rejects with an error if a filter has an unknown operator or an
+	 *   invalid path.
 	 *
 	 * @private
 	 */
@@ -1866,12 +1869,13 @@ sap.ui.define([
 		 * Returns the $filter value for the given single filter using the given Edm type to
 		 * format the filter's operand(s).
 		 *
-		 * @param {sap.ui.model.Filter} oFilter The filter
-		 * @param {string} sEdmType The Edm type
-		 * @param {boolean} bWithinAnd Whether the embedding filter is an 'and'
+		 * @param {sap.ui.model.Filter} oFilter - The filter
+		 * @param {string} sEdmType - The Edm type
+		 * @param {boolean} bWithinAnd - Whether the embedding filter is an 'and'
+		 * @param {boolean} bThese - Whether the special syntax "$these/aggregate(...)" is needed
 		 * @returns {string} The $filter value
 		 */
-		function getSingleFilterValue(oFilter, sEdmType, bWithinAnd) {
+		function getSingleFilterValue(oFilter, sEdmType, bWithinAnd, bThese) {
 			var sFilter, sFilterPath, bToLower, sValue;
 
 			function setCase(sText) {
@@ -1879,7 +1883,9 @@ sap.ui.define([
 			}
 
 			bToLower = sEdmType === "Edm.String" && oFilter.bCaseSensitive === false;
-			sFilterPath = setCase(decodeURIComponent(oFilter.sPath));
+			sFilterPath = bThese
+				? setCase(`$these/aggregate(${oFilter.sPath})`)
+				: setCase(decodeURIComponent(oFilter.sPath));
 			sValue = setCase(_Helper.formatLiteral(oFilter.oValue1, sEdmType));
 
 			switch (oFilter.sOperator) {
@@ -1919,10 +1925,11 @@ sap.ui.define([
 		 * @param {sap.ui.model.Filter} oFilter The filter
 		 * @param {object} mLambdaVariableToPath The map from lambda variable to full path
 		 * @param {boolean} [bWithinAnd] Whether the embedding filter is an 'and'
+		 * @param {boolean} bThese - Whether the special syntax "$these/aggregate(...)" is needed
 		 * @returns {sap.ui.base.SyncPromise} A promise which resolves with the $filter value or
 		 *   rejects with an error if the filter value uses an unknown operator
 		 */
-		function fetchFilter(oFilter, mLambdaVariableToPath, bWithinAnd) {
+		function fetchFilter(oFilter, mLambdaVariableToPath, bWithinAnd, bThese) {
 			var sResolvedPath;
 
 			if (!oFilter) {
@@ -1931,7 +1938,7 @@ sap.ui.define([
 
 			if (oFilter.aFilters) {
 				return SyncPromise.all(oFilter.aFilters.map(function (oSubFilter) {
-					return fetchFilter(oSubFilter, mLambdaVariableToPath, oFilter.bAnd);
+					return fetchFilter(oSubFilter, mLambdaVariableToPath, oFilter.bAnd, bThese);
 				})).then(function (aFilterStrings) {
 					// wrap it if it's an 'or' filter embedded in an 'and'
 					return wrap(aFilterStrings.join(oFilter.bAnd ? " and " : " or "),
@@ -1970,7 +1977,7 @@ sap.ui.define([
 							+ "(" + sLambdaVariable + ":" + sFilterValue + ")";
 					});
 				}
-				return getSingleFilterValue(oFilter, oPropertyMetadata.$Type, bWithinAnd);
+				return getSingleFilterValue(oFilter, oPropertyMetadata.$Type, bWithinAnd, bThese);
 			});
 		}
 
@@ -2012,12 +2019,13 @@ sap.ui.define([
 		oMetaContext = oMetaModel.getMetaContext(this.oModel.resolve(this.sPath, oContext));
 
 		return SyncPromise.all([
-			fetchFilter(aFilters[0], {}, /*bWithAnd*/sStaticFilter).then(function (sFilter) {
+			fetchFilter(aFilters[0], {}, /*bWithinAnd*/sStaticFilter).then(function (sFilter) {
 				return sFilter && sStaticFilter
 					? sFilter + " and (" + sStaticFilter + ")"
 					: sFilter || sStaticFilter;
 			}),
-			fetchFilter(aFilters[1], {})
+			fetchFilter(aFilters[1], {}), // $$filterBeforeAggregate
+			fetchFilter(aFilters[2], {}, undefined, /*bThese*/true) // $$filterOnAggregate
 		]);
 	};
 
@@ -4493,7 +4501,9 @@ sap.ui.define([
 	 *   be used to turn on the handling of grand totals like in 1.84.0, using aggregates of
 	 *   aggregates and thus allowing to filter by aggregated properties while grand totals are
 	 *   needed. Beware that methods like "average" or "countdistinct" are not compatible with this
-	 *   approach, and it cannot be combined with group levels.
+	 *   approach, and it cannot be combined with group levels. Since 1.129.0, this property is not
+	 *   needed anymore and filtering by aggregated properties is supported even while grand totals
+	 *   or subtotals are needed.
 	 *   <br>
 	 *   Since 1.117.0, either a read-only recursive hierarchy or pure data aggregation is
 	 *   supported, but no mix; <code>hierarchyQualifier</code> is the leading property that decides
@@ -4506,7 +4516,6 @@ sap.ui.define([
 	 *     <li> <code>grandTotal</code>: An optional boolean that tells whether a grand total for
 	 *       this aggregatable property is needed (since 1.59.0); not supported in this case are:
 	 *       <ul>
-	 *         <li> filtering by any aggregatable property (since 1.89.0),
 	 *         <li> "$search" (since 1.93.0),
 	 *         <li> the <code>vGroup</code> parameter of {@link sap.ui.model.Sorter}
 	 *           (since 1.107.0),

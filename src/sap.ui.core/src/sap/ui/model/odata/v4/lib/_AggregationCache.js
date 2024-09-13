@@ -2689,6 +2689,9 @@ sap.ui.define([
 			}
 		}
 
+		if ("$$filterOnAggregate" in mQueryOptions) {
+			throw new Error("Unsupported $$filterOnAggregate");
+		}
 		if (mQueryOptions.$$filterBeforeAggregate) {
 			mQueryOptions.$apply = "filter(" + mQueryOptions.$$filterBeforeAggregate + ")/"
 				+ mQueryOptions.$apply;
