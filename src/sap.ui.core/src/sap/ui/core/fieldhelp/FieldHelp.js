@@ -137,14 +137,14 @@ sap.ui.define([
 				oFieldHelpAnnotationPromise = oMetaModel.loaded().then(() => {
 					// first get the object for the meta context then get the annotation to avoid warnings that an
 					// invalid path is used; getMetaContext has to be called after the meta model is loaded.
-					return oMetaModel.getObject("", oMetaModel.getMetaContext(sResolvedPath))?.[sDocumentationRef];
+					return oMetaModel.getObject("", oMetaModel.getMetaContext(sResolvedPath))?.[sDocumentationRef]
+						?.String;
 				});
 			} else { // V4 meta model
 				oFieldHelpAnnotationPromise = oMetaModel.requestObject("@" + sDocumentationRef,
 					oMetaModel.getMetaContext(sResolvedPath));
 			}
-			return oFieldHelpAnnotationPromise.then((oFieldHelpAnnotation) => oFieldHelpAnnotation?.String)
-				.catch((oReason) => {
+			return oFieldHelpAnnotationPromise.catch((oReason) => {
 					Log.error(`Failed to request '${sDocumentationRef}' annotation for path '${sResolvedPath}'`,
 						oReason, sClassName);
 					return undefined;
