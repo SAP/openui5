@@ -2,13 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/Log",
 	"sap/base/config",
 	"sap/base/util/Deferred",
 	"sap/ui/Global",
 	"sap/ui/core/boot/loadBootManifest"
 ], (
-	Log,
 	config,
 	Deferred,
 	Global,

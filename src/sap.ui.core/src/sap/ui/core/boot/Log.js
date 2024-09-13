@@ -23,11 +23,22 @@ sap.ui.define([
 		defaultValue: undefined,
 		external: true
 	});
+
 	if (sLogLevel) {
 		Log.setLevel(Log.Level[sLogLevel.toUpperCase()] || parseInt(sLogLevel));
 	} else if (!globalThis["sap-ui-optimized"]) {
 		Log.setLevel(Log.Level.DEBUG);
 	}
+
+	sap.ui.loader._.logger = Log.getLogger("sap.ui.ModuleSystem",
+		config.get({
+			name: "sapUiXxDebugModuleLoading",
+			type: config.Type.Boolean,
+			external: true,
+			freeze: true
+		}) ? Log.Level.DEBUG : Math.min(Log.getLevel(), Log.Level.INFO)
+	);
+
 	return {
 		run: () => {
 			Promise.resolve();
