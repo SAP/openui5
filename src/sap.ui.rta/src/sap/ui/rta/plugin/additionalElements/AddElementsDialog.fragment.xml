@@ -38,7 +38,6 @@
 					tooltip="{/extensibilityMenuButtonTooltip}"
 					visible="{/extensibilityMenuButtonActive}">
 					<Menu
-						itemSelected="onMenuItemPress"
 						items="{/extensibilityOptions}">
 						<items>
 							<MenuItem

@@ -55,7 +55,7 @@
 				</Button>
 				<tnt:ToolHeaderUtilitySeparator/>
 				<ToolbarSpacer width="1.125rem"/>
-				<Avatar src="test-resources/sap/tnt/images/Woman_avatar_01.png" displaySize="XS" press=".onAvatarPressed" tooltip="Profile">
+				<Avatar src="test-resources/sap/tnt/images/Woman_avatar_01.png" displaySize="XS" tooltip="Profile">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow"/>
 					</layoutData>

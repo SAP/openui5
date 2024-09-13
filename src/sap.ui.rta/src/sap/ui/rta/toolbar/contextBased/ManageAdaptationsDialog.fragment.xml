@@ -7,7 +7,7 @@
 		draggable="true"
 		contentWidth="830px"
 		contentHeight="450px"
-		setHorizontalScrolling="false"
+		horizontalScrolling="false"
 		title="{i18n>MANAGE_ADAPTATIONS_DIALOG_HEADER}">
 		<Table id="manageAdaptationsTable"
 			showNoData="false"
