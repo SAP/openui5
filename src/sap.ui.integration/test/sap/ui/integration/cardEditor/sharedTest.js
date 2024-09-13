@@ -132,6 +132,9 @@ function saveCurrentValues(id) {
 	if (id === "cardEditorAdminContent") {
 		id = "cardEditorContent";
 	}
+	if (id === "cardEditorAdminContentTranslation") {
+		id = "cardEditorTranslation";
+	}
 	localStorage.setItem(localStorageKey + id, JSON.stringify(o, null, "\t"));
 	updateAllLayerCard();
 }

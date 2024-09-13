@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/integration/formatters/IconFormatter",
-	"qunit/designtime/EditorQunitUtils"
+	"qunit/designtime/EditorQunitUtils",
+	"sap/base/util/deepEqual"
 ], function(
 	Localization,
 	merge,
@@ -34,7 +35,8 @@ sap.ui.define([
 	ResourceBundle,
 	UI5Date,
 	IconFormatter,
-	EditorQunitUtils
+	EditorQunitUtils,
+	deepEqual
 ) {
 	"use strict";
 
@@ -1588,6 +1590,8 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.ok(deepEqual(oCurrentSettings, { ":layer": 10, ":errors": false }), "Editor: currentSettings correct");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -2051,6 +2055,9 @@ sap.ui.define([
 
                     oField = this.oEditor.getAggregation("_formContent")[4];
                     assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.ok(deepEqual(oCurrentSettings, { ":layer": 10, ":errors": false }), "Editor: currentSettings correct");
                     resolve();
                 }.bind(this));
             }.bind(this));
@@ -2115,6 +2122,9 @@ sap.ui.define([
 
                     oField = this.oEditor.getAggregation("_formContent")[4];
                     assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.ok(deepEqual(oCurrentSettings, { ":layer": 10, ":errors": false }), "Editor: currentSettings correct");
                     resolve();
                 }.bind(this));
             }.bind(this));
@@ -2183,6 +2193,9 @@ sap.ui.define([
                     oField = this.oEditor.getAggregation("_formContent")[4];
                     assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
                     assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Translate", "Field: Value from Translate change");
+
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.ok(deepEqual(oCurrentSettings, translationchanges), "Editor: currentSettings correct");
                     resolve();
                 }.bind(this));
             }.bind(this));
@@ -2507,6 +2520,9 @@ sap.ui.define([
                     var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
                     assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 					assert.equal(this.oEditor.getAggregation("_formContent").length, 1, "Field: No field since change from Admin");
+
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.ok(deepEqual(oCurrentSettings, { ":layer": 10, ":errors": false }), "Editor: currentSettings correct");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -2696,6 +2712,9 @@ sap.ui.define([
 
 					oField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Input not changed by the Admin change for editable");
+
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.ok(deepEqual(oCurrentSettings, { ":layer": 10, ":errors": false }), "Editor: currentSettings correct");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -2992,6 +3011,9 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Admin", "Field: Value in Translate input");
+
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.ok(deepEqual(oCurrentSettings, { ":layer": 10, ":errors": false }), "Editor: currentSettings correct");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -3055,6 +3077,9 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: Value in Translate input");
+
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.ok(deepEqual(oCurrentSettings, { ":layer": 10, ":errors": false }), "Editor: currentSettings correct");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -3121,6 +3146,9 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: Value in Translate input");
+
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.ok(deepEqual(oCurrentSettings, { ":layer": 10, ":errors": false }), "Editor: currentSettings correct");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -3183,6 +3211,9 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Translate", "Field: Value in Translate input");
+
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.ok(deepEqual(oCurrentSettings, translationchanges), "Editor: currentSettings correct");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -3249,6 +3280,9 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Translate", "Field: Value in Translate input");
+
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.ok(deepEqual(oCurrentSettings, translationchanges), "Editor: currentSettings correct");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -3318,6 +3352,9 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Translate", "Field: Value in Translate input");
+
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.ok(deepEqual(oCurrentSettings, translationchanges), "Editor: currentSettings correct");
 					resolve();
 				}.bind(this));
 			}.bind(this));
