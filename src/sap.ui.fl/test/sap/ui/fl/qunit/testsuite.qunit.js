@@ -129,10 +129,10 @@ sap.ui.define([
 					only: ["sap/ui/fl/initial/_internal/storageResultDisassemble"]
 				}
 			},
-			"apply/api/FlexRuntimeInfoAPI": {
+			"apply/api/AnnotationChangeHandlerAPI": {
 				group: "Apply API",
 				coverage: {
-					only: ["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"]
+					only: ["sap/ui/fl/apply/api/AnnotationChangeHandlerAPI"]
 				}
 			},
 			"apply/api/ControlVariantApplyAPI": {
@@ -148,6 +148,12 @@ sap.ui.define([
 						"sap/ui/fl/apply/api/DelegateMediatorAPI",
 						"sap/ui/fl/apply/_internal/DelegateMediator"
 					]
+				}
+			},
+			"apply/api/FlexRuntimeInfoAPI": {
+				group: "Apply API",
+				coverage: {
+					only: ["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"]
 				}
 			},
 			"apply/api/SmartVariantManagementApplyAPI": {

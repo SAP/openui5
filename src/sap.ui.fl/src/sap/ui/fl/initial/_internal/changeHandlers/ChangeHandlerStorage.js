@@ -4,12 +4,14 @@
 
 sap.ui.define([
 	"sap/base/util/each",
+	"sap/base/util/ObjectPath",
 	"sap/base/Log",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/requireAsync"
 ], function(
 	each,
+	ObjectPath,
 	Log,
 	Layer,
 	Settings,
@@ -28,11 +30,12 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl
 	 *
 	 */
-	var ChangeHandlerStorage = {};
+	const ChangeHandlerStorage = {};
 
-	var mRegisteredItems = {};
-	var mActiveForAllItems = {};
-	var mPredefinedChangeHandlers = {};
+	let mRegisteredItems = {};
+	let mActiveForAllItems = {};
+	let mPredefinedChangeHandlers = {};
+	let mAnnotationChangeHandlers = {};
 
 	function checkPreconditions(oChangeHandlerEntry) {
 		if (!oChangeHandlerEntry.changeHandler) {
@@ -42,18 +45,17 @@ sap.ui.define([
 		return true;
 	}
 
-	function resolveChangeHandlerIfNecessary(oChangeHandlerEntry) {
+	// Used for "normal" change handlers and annotation change handlers
+	async function resolveChangeHandlerIfNecessary(oChangeHandlerEntry) {
 		if (typeof oChangeHandlerEntry.changeHandler === "string") {
-			return requireAsync(oChangeHandlerEntry.changeHandler.replace(/\./g, "/")).then(function(oChangeHandlerImpl) {
-				oChangeHandlerEntry.changeHandler = oChangeHandlerImpl;
-				return oChangeHandlerEntry.changeHandler;
-			});
+			const oChangeHandlerImpl = await requireAsync(oChangeHandlerEntry.changeHandler.replace(/\./g, "/"));
+			oChangeHandlerEntry.changeHandler = oChangeHandlerImpl;
 		}
 		return oChangeHandlerEntry.changeHandler;
 	}
 
 	function replaceDefault(sChangeType, vChangeHandler) {
-		var oResult = {};
+		let oResult = {};
 		if (!vChangeHandler || !vChangeHandler.changeHandler) {
 			oResult.changeHandler = vChangeHandler;
 		} else {
@@ -71,7 +73,7 @@ sap.ui.define([
 	function createDeveloperChangeRegistryItems(mDeveloperModeHandlers) {
 		mActiveForAllItems = {};
 		each(mDeveloperModeHandlers, function(sChangeType, oChangeHandler) {
-			var oChangeRegistryItem = {
+			const oChangeRegistryItem = {
 				controlType: "defaultActiveForAll",
 				changeHandler: oChangeHandler,
 				layers: Settings.getDeveloperModeLayerPermissions(),
@@ -105,7 +107,7 @@ sap.ui.define([
 	}
 
 	function createAndAddChangeRegistryItem(sControlType, sChangeType, oChangeHandler) {
-		var oRegistryItem = createChangeRegistryItem(sControlType, sChangeType, oChangeHandler);
+		const oRegistryItem = createChangeRegistryItem(sControlType, sChangeType, oChangeHandler);
 
 		if (oRegistryItem) {
 			mRegisteredItems[sControlType] ||= {};
@@ -114,8 +116,8 @@ sap.ui.define([
 	}
 
 	function registerChangeHandlersForControl(sControlType, mChangeHandlers) {
-		var oPromise = Promise.resolve(mChangeHandlers);
-		var sSkipNext = "ChangeHandlerStorage.registerChangeHandlersForControl.skip_next_then";
+		let oPromise = Promise.resolve(mChangeHandlers);
+		const sSkipNext = "ChangeHandlerStorage.registerChangeHandlersForControl.skip_next_then";
 
 		if (typeof mChangeHandlers === "string") {
 			oPromise = requireAsync(`${mChangeHandlers}.flexibility`)
@@ -137,7 +139,7 @@ sap.ui.define([
 	}
 
 	function getRegistryItemOrThrowError(sControlType, sChangeType, sLayer) {
-		var oRegistryItem = mRegisteredItems[sControlType] && mRegisteredItems[sControlType][sChangeType] || mActiveForAllItems[sChangeType];
+		const oRegistryItem = mRegisteredItems[sControlType] && mRegisteredItems[sControlType][sChangeType] || mActiveForAllItems[sChangeType];
 
 		if (!oRegistryItem) {
 			throw Error("No Change handler registered for the Control and Change type");
@@ -154,13 +156,13 @@ sap.ui.define([
 	}
 
 	function getInstanceSpecificChangeRegistryItem(sChangeType, sControlType, oControl, oModifier) {
-		var sChangeHandlerModulePath = oModifier.getChangeHandlerModulePath(oControl);
+		const sChangeHandlerModulePath = oModifier.getChangeHandlerModulePath(oControl);
 		if (typeof sChangeHandlerModulePath !== "string") {
 			return Promise.resolve(undefined);
 		}
 
 		return requireAsync(sChangeHandlerModulePath).then(function(vChangeHandlerRegistration) {
-			var vChangeHandler = vChangeHandlerRegistration[sChangeType];
+			const vChangeHandler = vChangeHandlerRegistration[sChangeType];
 			if (vChangeHandler) {
 				return createChangeRegistryItem(sControlType, sChangeType, vChangeHandler);
 			}
@@ -183,7 +185,7 @@ sap.ui.define([
 	ChangeHandlerStorage.getChangeHandler = function(sChangeType, sControlType, oControl, oModifier, sLayer) {
 		return getInstanceSpecificChangeRegistryItem(sChangeType, sControlType, oControl, oModifier)
 		.then(function(vInstanceSpecificRegistryItem) {
-			var oChangeRegistryItem = vInstanceSpecificRegistryItem || getRegistryItemOrThrowError(sControlType, sChangeType, sLayer);
+			const oChangeRegistryItem = vInstanceSpecificRegistryItem || getRegistryItemOrThrowError(sControlType, sChangeType, sLayer);
 			return resolveChangeHandlerIfNecessary(oChangeRegistryItem);
 		}).then(function(oChangeHandler) {
 			if (
@@ -209,7 +211,7 @@ sap.ui.define([
 	};
 
 	ChangeHandlerStorage.registerChangeHandlersForLibrary = function(mChangeHandlersForLibrary) {
-		var aPromises = [];
+		const aPromises = [];
 		each(mChangeHandlersForLibrary, function(sControlType, vChangeHandlers) {
 			aPromises.push(registerChangeHandlersForControl(sControlType, vChangeHandlers));
 		});
@@ -221,11 +223,41 @@ sap.ui.define([
 		mRegisteredItems = {};
 		mActiveForAllItems = {};
 		mPredefinedChangeHandlers = {};
+		mAnnotationChangeHandlers = {};
 	};
 
 	// TODO: remove, used in test coding
 	ChangeHandlerStorage.registerChangeHandlersForControl = function(sControlType, mChangeHandlers) {
 		return registerChangeHandlersForControl(sControlType, mChangeHandlers);
+	};
+
+	/**
+	 * Registers an annotation change handler for a specific change type and a model type.
+	 * @param {object} mPropertyBag - Property bag
+	 * @param {string} mPropertyBag.modelType - Model type
+	 * @param {string} mPropertyBag.changeType - Change type for which the change handler should be registered
+	 * @param {string|object} mPropertyBag.changeHandler - Path to change handler or change handler object
+	 */
+	ChangeHandlerStorage.registerAnnotationChangeHandler = function(mPropertyBag) {
+		mAnnotationChangeHandlers[mPropertyBag.modelType] ||= {};
+		mAnnotationChangeHandlers[mPropertyBag.modelType][mPropertyBag.changeType] = {
+			changeHandler: mPropertyBag.changeHandler
+		};
+	};
+
+	/**
+	 * Returns the registered change handler for the specified change type and model type.
+	 * @param {object} mPropertyBag - Property bag
+	 * @param {string} mPropertyBag.modelType - Model type
+	 * @param {string} mPropertyBag.changeType - Change type for which the change handler should be returned
+	 * @returns {Promise<object>} Resolves with the change handler
+	 */
+	ChangeHandlerStorage.getAnnotationChangeHandler = function(mPropertyBag) {
+		const oChangeHandler = ObjectPath.get([mPropertyBag.modelType, mPropertyBag.changeType], mAnnotationChangeHandlers);
+		if (!oChangeHandler) {
+			throw Error("No Annotation Change handler registered for the Change type and Model type");
+		}
+		return resolveChangeHandlerIfNecessary(oChangeHandler);
 	};
 
 	return ChangeHandlerStorage;
