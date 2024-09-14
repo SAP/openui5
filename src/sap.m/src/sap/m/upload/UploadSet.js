@@ -1450,6 +1450,9 @@ sap.ui.define([
 		if (!this.isBound('items')){
 			this.insertItem(oItem, 0);
 		}
+		if (this.isBound('items')) {
+			this.removeIncompleteItem(oItem);
+		}
 		oItem.setUploadState(UploadState.Complete);
 		this._oItemToUpdate = null;
 		this.fireUploadCompleted(oXhrParams);

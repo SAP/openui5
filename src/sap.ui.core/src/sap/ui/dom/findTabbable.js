@@ -47,6 +47,9 @@ sap.ui.define([
 				} else if (oElement.firstElementChild) {
 					return oElement.firstElementChild;
 				}
+			} else if (oElement === oScope) {
+				// return the scope when the scope is reached during backwards traversing
+				return oScope;
 			}
 
 			// If there are no child elements or in case we children were skipped, check for the next sibling
@@ -62,11 +65,6 @@ sap.ui.define([
 				}
 			} else if (oElement.nextElementSibling) {
 				return oElement.nextElementSibling;
-			}
-
-			// Return the scope in case our parent is the scope
-			if (oElement.parentNode === oScope) {
-				return oScope;
 			}
 
 			stack.push({

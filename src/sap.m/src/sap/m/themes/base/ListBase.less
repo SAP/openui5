@@ -311,7 +311,7 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 
 /* handle transparent background on rounded corners to not show underlaying elements on scrolling */
 ._sap_m_ListBase_Rounded_HeaderToolbarMixin() {
-	.sapMSticky:has(> .sapMListHdr):not(.sapMMsgStrip)::before {
+	.sapMSticky:has(> .sapMListHdr):not(:has(> .sapMMsgStrip))::before {
 		position: sticky;
 		content: "";
 		display: block;
@@ -320,6 +320,11 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 		margin-bottom: -@sapUiElementBorderCornerRadius; /* prevent new empty space above sticky element */
 		top: 0;
 		z-index: 2;
+
+		/* handle transparent background on ObjectPageSection */
+		.sapUiTableOnObjectPageAdjustmentsForSection.sapUxAPObjectPageSection .sapUxAPObjectPageSectionContainer .sapUxAPObjectPageSubSection .sapUxAPBlockContainer & {
+			background: transparent;
+		}
 	}
 }
 

@@ -3725,9 +3725,10 @@ sap.ui.define([
 	}, {
 		mQueryOptions : {$filter : "foo", $orderby : "bar", $select : "Name"},
 		sOrderBy : "foo,bar",
-		aFilters : [undefined, "bar"],
+		aFilters : [undefined, "bar", "qux"],
 		oResult : {
 			$$filterBeforeAggregate : "bar",
+			$$filterOnAggregate : "qux",
 			$filter : "foo",
 			$orderby : "foo,bar",
 			$select : "Name"
@@ -3767,6 +3768,17 @@ sap.ui.define([
 			$orderby : "foo,bar",
 			$select : "Name"
 		}
+	}, {
+		mQueryOptions : undefined,
+		aFilters : [undefined, undefined, "qux"],
+		oResult : {
+			$$filterOnAggregate : "qux"
+		}
+	}, {
+		mQueryOptions : {
+			$$filterOnAggregate : "qux"
+		},
+		aFilters : [undefined, undefined, "qux"]
 	}].forEach(function (oFixture, i) {
 		QUnit.test("mergeQueryOptions, " + i, function (assert) {
 			var oResult,
@@ -3787,6 +3799,8 @@ sap.ui.define([
 				assert.ok(oResult.$filter || !("$filter" in oResult), "$filter");
 				assert.ok(oResult.$$filterBeforeAggregate
 					|| !("$$filterBeforeAggregate" in oResult), "$$filterBeforeAggregate");
+				assert.ok(oResult.$$filterOnAggregate
+					|| !("$$filterOnAggregate" in oResult), "$$filterOnAggregate");
 			}
 		});
 	});

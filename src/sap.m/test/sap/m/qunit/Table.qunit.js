@@ -939,12 +939,18 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		assert.ok(sut._selectAllCheckBox, "Table contains select all checkBox");
-		assert.notOk(sut._clearAllButton, "Table does not contain clear all icon");
+		assert.notOk(sut._clearAllIcon, "Table does not contain clear all icon");
 		sut.setMultiSelectMode("ClearAll");
 		await nextUIUpdate();
 
-		assert.ok(sut._clearAllButton, "Table contains select all clear all icon button");
-		assert.ok(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "Clear selection icon is inactive by adding style class since no items selected");
+		const oClearAllCellDomRef = sut.getDomRef("tblHeadModeCol");
+		assert.equal(oClearAllCellDomRef.getAttribute("title"), oResourceBundle.getText("TABLE_CLEARBUTTON_TOOLTIP"), "Clear selection cell has correct tooltip");
+		assert.ok(oClearAllCellDomRef.classList.contains("sapMTableClearAll"), "Clear selection cell has the correct style class");
+		assert.ok(sut._clearAllIcon, "Table contains select all clear all icon button");
+		assert.ok(sut._clearAllIcon.hasStyleClass("sapMTableDisableClearAll"), "Clear selection icon is inactive by adding style class since no items selected");
+		assert.ok(sut._clearAllIcon.getDecorative(), "Clear selection icon is decorative");
+		assert.ok(sut._clearAllIcon.getNoTabStop(), "Clear selection icon has no tab stop");
+		assert.notOk(sut._clearAllIcon.getDomRef().getAttribute("tabindex"), "Clear selection icon is not focusable");
 
 		const $tblHeader = sut.$("tblHeader").trigger("focus");
 		qutils.triggerKeydown($tblHeader, KeyCodes.SPACE);
@@ -953,18 +959,14 @@ sap.ui.define([
 		// Check if clear all icon has aria-label attribute
 		const $clearSelection = sut.$("clearSelection");
 		const sText = $clearSelection.attr("aria-label");
-		const sToolTip = sut._getClearAllButton().getTooltip();
-
 		assert.strictEqual(sText, oResourceBundle.getText("TABLE_ICON_DESELECT_ALL"), "The clear all icon has an aria-label assigned");
-		assert.strictEqual(sToolTip, oResourceBundle.getText("TABLE_CLEARBUTTON_TOOLTIP"), "The deselect all tooltip is set on the button");
 
 		const oItem = sut.getItems()[0];
-
 		oItem.setSelected(true);
 
 		await timeout();
 
-		assert.notOk(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "Clear selection icon is active by adding style class since items selected");
+		assert.notOk(sut._clearAllIcon.hasStyleClass("sapMTableDisableClearAll"), "Clear selection icon is active by adding style class since items selected");
 		sut.destroy();
 	});
 
@@ -1017,18 +1019,18 @@ sap.ui.define([
 		sut.placeAt("qunit-fixture");
 		await nextUIUpdate();
 
-		assert.ok(sut._clearAllButton, "Table contains clear all icon button");
-		assert.ok(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "Clear selection icon is inactive by removing style class since no items selected");
+		assert.ok(sut._clearAllIcon, "Table contains clear all icon button");
+		assert.ok(sut._clearAllIcon.hasStyleClass("sapMTableDisableClearAll"), "Clear selection icon is inactive by removing style class since no items selected");
 
 		const $trigger = sut.$("trigger").trigger("focus");
 		qutils.triggerKeydown($trigger, KeyCodes.ENTER);
 		await timeout();
 
-		assert.notOk(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "Clear selection icon is active by adding style class after growing");
+		assert.notOk(sut._clearAllIcon.hasStyleClass("sapMTableDisableClearAll"), "Clear selection icon is active by adding style class after growing");
 		sut.destroy();
 	});
 
-	QUnit.test("Test for multiSelectMode - space key should trigger deselectAll when trigger on the table header", async function(assert) {
+	QUnit.test("Test for multiSelectMode - trigger deselectAll", async function(assert) {
 		const sut = createSUT(true, true, "MultiSelect");
 		sut.setMultiSelectMode("ClearAll");
 		sut.getItems()[1].setSelected(true);
@@ -1036,11 +1038,38 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		const $tblHeader = sut.$("tblHeader").trigger("focus");
-		assert.notOk(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "ClearAll button is enabled since an item is selected in the table");
+		assert.notOk(sut._clearAllIcon.hasStyleClass("sapMTableDisableClearAll"), "ClearAll button is enabled since an item is selected in the table");
 
+		// pressing space key on the table header
 		qutils.triggerKeydown($tblHeader, KeyCodes.SPACE);
 		await nextUIUpdate();
-		assert.ok(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "ClearAll button is disabled, since items are desected in the table via space key");
+		assert.ok(sut._clearAllIcon.hasStyleClass("sapMTableDisableClearAll"), "ClearAll button is disabled, since items are deselected in the table via space key");
+		assert.notOk(sut.getSelectedItems().length, "All items are deselected");
+		assert.equal(document.activeElement, $tblHeader[0], "Table header is focused");
+
+		sut.getItems()[1].setSelected(true);
+		await nextUIUpdate();
+		const $tblClearAllCell = sut.$("tblHeadModeCol").trigger("focus");
+		assert.notOk(sut._clearAllIcon.hasStyleClass("sapMTableDisableClearAll"), "ClearAll button is enabled since an item is selected in the table");
+
+		// pressing space key on the clearAll cell
+		qutils.triggerKeydown($tblClearAllCell, KeyCodes.SPACE);
+		await nextUIUpdate();
+		assert.ok(sut._clearAllIcon.hasStyleClass("sapMTableDisableClearAll"), "ClearAll button is disabled, since items are deselected in the table via space key");
+		assert.notOk(sut.getSelectedItems().length, "All items are deselected");
+		assert.equal(document.activeElement, $tblClearAllCell[0], "ClearAll Cell is focused");
+
+		sut.getItems()[1].setSelected(true);
+		await nextUIUpdate();
+		assert.notOk(sut._clearAllIcon.hasStyleClass("sapMTableDisableClearAll"), "ClearAll button is enabled since an item is selected in the table");
+
+		// mouse click on clearAll cell
+		qutils.triggerMouseEvent($tblClearAllCell, "click");
+		await nextUIUpdate();
+		assert.ok(sut._clearAllIcon.hasStyleClass("sapMTableDisableClearAll"), "ClearAll button is disabled, since items are deselected in the table via space key");
+		assert.notOk(sut.getSelectedItems().length, "All items are deselected");
+		assert.equal(document.activeElement, $tblClearAllCell[0], "ClearAll Cell is focused");
+
 		sut.destroy();
 	});
 

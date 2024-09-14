@@ -142,10 +142,10 @@ sap.ui.define([
 				}
 			},
 
-			"apply/api/FlexRuntimeInfoAPI": {
+			"apply/api/AnnotationChangeHandlerAPI": {
 				group: "Apply API",
 				coverage: {
-					only: ["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"]
+					only: ["sap/ui/fl/apply/api/AnnotationChangeHandlerAPI"]
 				}
 			},
 
@@ -163,6 +163,13 @@ sap.ui.define([
 						"sap/ui/fl/apply/api/DelegateMediatorAPI",
 						"sap/ui/fl/apply/_internal/DelegateMediator"
 					]
+				}
+			},
+
+			"apply/api/FlexRuntimeInfoAPI": {
+				group: "Apply API",
+				coverage: {
+					only: ["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"]
 				}
 			},
 

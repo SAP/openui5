@@ -526,7 +526,9 @@ sap.ui.define([
 				this.aKeys = [];
 				this.iLength = 0;
 				this.bLengthFinal = true;
-				this.abortPendingRequest();
+				// pending requests (data request and potential count request) are obsolete; cancel them and ensure that
+				// the "dataReceived" event is fired, e.g. to disable the busy indicator
+				this.abortPendingRequest(true, true);
 				if (bHadNonTransientContext) {
 					this._fireChange({reason : ChangeReason.Context});
 				}
@@ -1370,14 +1372,27 @@ sap.ui.define([
 	 * Aborts the current pending request (if any).
 	 *
 	 * This can be called if we are sure that the data from the current request is no longer relevant,
-	 * e.g. when filtering/sorting is triggered or the context is changed.
+	 * e.g. when filtering or sorting is triggered, or the context is changed.
+	 * If there is a sequence of <code>refresh</code>, <code>sort</code> and <code>filter</code>,
+	 * then the requests created by refresh and sort are aborted before the request is really created.
+	 * The <code>dataRequested</code> and the <code>dataReceived</code> events shall be sent only once,
+	 * for this sequences, that means <code>refresh</code> triggers the <code>dataRequested</code> event
+	 * and <code>filter/<code> shall trigger the <code>dataReceived</code> event. The cancelled requests
+	 * must not sent the <code>dataReceived</code> event.
+	 * If there is a context switch the requested data is obsolete and the requests have to be aborted.
+	 * In that case the <code>dataReceived</code> event has be fired so that a potential busy inticator
+	 * can be removed.
 	 *
-	 * @param {boolean} [bAbortCountRequest] Also abort the count request
+	 * @param {boolean} [bAbortCountRequest=false]
+	 *   Also abort the count request
+	 * @param {boolean} [bFireDataEvents=false]
+	 *   Whether the <code>dataRequested</code> and the <code>dataReceived</code> events shall be fired
+	 *   although the request is aborted
 	 * @private
 	 */
-	ODataListBinding.prototype.abortPendingRequest = function(bAbortCountRequest) {
+	ODataListBinding.prototype.abortPendingRequest = function (bAbortCountRequest, bFireDataEvents) {
 		if (!isEmptyObject(this.mRequestHandles)) {
-			this.bSkipDataEvents = true;
+			this.bSkipDataEvents = !bFireDataEvents;
 			each(this.mRequestHandles, function(sPath, oRequestHandle){
 				oRequestHandle.abort();
 			});

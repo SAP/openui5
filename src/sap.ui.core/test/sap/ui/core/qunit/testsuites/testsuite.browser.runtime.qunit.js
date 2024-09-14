@@ -18,6 +18,10 @@ sap.ui.define(function() {
 			module: "test-resources/sap/ui/core/qunit/{name}.qunit"
 		},
 		tests: {
+			"dom/findTabbable": {
+				title: "sap.ui.dom.findTabbable"
+			},
+
 			"dom/getComputedStyleFix": {
 				title: "sap.ui.dom.getComputedStyleFix"
 			},

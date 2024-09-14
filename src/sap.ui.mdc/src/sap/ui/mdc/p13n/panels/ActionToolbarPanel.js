@@ -215,7 +215,7 @@ sap.ui.define([
 		});
 
 		this._updateMessageStripForItemEnablement();
-		this._updateClearAllButton();
+		this._updateClearAllIcon();
     };
 
 	ActionToolbarPanel.prototype._updateCheckboxEnablement = function(oColumnListItem) {
@@ -246,13 +246,13 @@ sap.ui.define([
 		this._updateItemEnableState();
 	};
 
-	ActionToolbarPanel.prototype._updateClearAllButton = function() {
+	ActionToolbarPanel.prototype._updateClearAllIcon = function() {
 		const oP13nItems = this._getP13nModel().getProperty("/items");
 		const aDisabledItems = oP13nItems?.filter((oItem) => {
 			return oItem.enabled === false;
 		});
 
-		this._oListControl._getClearAllButton()?.setVisible(aDisabledItems.length === 0);
+		this._oListControl._getClearAllIcon()?.setVisible(aDisabledItems.length === 0);
 	};
 
 

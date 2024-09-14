@@ -77,7 +77,6 @@
 				icon="sap-icon://newspaper"
 				enabled="{controls>/newFeaturesOverview/enabled}"
 				visible="{controls>/newFeaturesOverview/visible}"
-				type="Transparent"
 				text="{i18n>BTN_WHATS_NEW_DIALOG_OVERVIEW}"
 				press=".openWhatsNewOverviewDialog"
 				ariaHasPopup="Dialog"/>

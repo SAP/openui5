@@ -88,9 +88,11 @@ sap.ui.define([
 		this.oUploadSet.uploadItem(oItem);
 		var done = assert.async();
 		this.oUploadSet.attachEventOnce("uploadCompleted", function (oEvent) {
-			var progressBox = oEvent.getParameter("item")._getProgressBox();
 			//assert
-			assert.ok(!progressBox.getVisible(), "progress bar is not visible for the uploaded state");
+			if (!this.isBound('items')){
+				var progressBox = oEvent.getParameter("item")._getProgressBox();
+				assert.ok(!progressBox.getVisible(), "progress bar is not visible for the uploaded state");
+			}
 			done();
 		});
 	});

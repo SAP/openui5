@@ -525,9 +525,9 @@ sap.ui.define([
 			this._selectAllCheckBox.destroy();
 			this._selectAllCheckBox = null;
 		}
-		if (this._clearAllButton) {
-			this._clearAllButton.destroy();
-			this._clearAllButton = null;
+		if (this._clearAllIcon) {
+			this._clearAllIcon.destroy();
+			this._clearAllIcon = null;
 		}
 		if (this._aPopinHeaders) {
 			this._aPopinHeaders.forEach(function(oPopinHeader) {
@@ -672,6 +672,7 @@ sap.ui.define([
 			sOldTabIndex = oFocusableCell.getAttribute("tabindex");
 			oFocusableCell.removeAttribute("tabindex");
 		}
+
 		setTimeout(function() {
 			this._bMouseDown = false;
 			sOldTabIndex && oFocusableCell.setAttribute("tabindex", sOldTabIndex);
@@ -679,17 +680,32 @@ sap.ui.define([
 		ListBase.prototype.onmousedown.apply(this, arguments);
 	};
 
+	Table.prototype.onclick = function(oEvent) {
+		if (this.getMultiSelectMode() == "ClearAll" && this.getDomRef("tblHeadModeCol")?.contains(oEvent.target) && !this._clearAllIcon?.hasStyleClass("sapMTableDisableClearAll")) {
+			this.removeSelections(false, true, false);
+		}
+	};
+
 	Table.prototype._onItemNavigationBeforeFocus = function(oUI5Event) {
 		var oEvent = oUI5Event.getParameter("event");
+		var oItemNavigation = oUI5Event.getSource();
+		var iIndex = oUI5Event.getParameter("index");
+
+		if (oEvent.type == "mousedown" && this.getDomRef("tblHeadModeCol")?.contains(oEvent.target)) {
+			oUI5Event.preventDefault();
+
+			oItemNavigation.setFocusedIndex(iIndex + 1);
+			oItemNavigation.getItemDomRefs()[iIndex + 1].focus();
+			return;
+		}
+
 		if (this._bMouseDown && !oEvent.target.hasAttribute("tabindex")) {
 			return;
 		}
 
 		var iFocusedIndex;
 		var iForwardIndex = -1;
-		var iIndex = oUI5Event.getParameter("index");
 		var iColumnCount = this._colHeaderAriaOwns.length + 1;
-		var oItemNavigation = oUI5Event.getSource();
 
 		if (this._bMouseDown) {
 			var iRowIndex = iIndex - iIndex % iColumnCount;
@@ -829,23 +845,18 @@ sap.ui.define([
 	 * @private
 	 * @return {sap.ui.core.Icon} reference to the internal select all checkbox
 	 */
-	Table.prototype._getClearAllButton = function() {
-		if (!this._clearAllButton) {
-			this._clearAllButton = new Icon({
+	Table.prototype._getClearAllIcon = function() {
+		if (!this._clearAllIcon) {
+			this._clearAllIcon = new Icon({
 				id: this.getId() + "-clearSelection",
 				src: "sap-icon://clear-all",
-				tooltip: Library.getResourceBundleFor("sap.m").getText("TABLE_CLEARBUTTON_TOOLTIP"),
-				decorative: false,
-				press: this.removeSelections.bind(this, false, true, false)
-			}).setParent(this, null, true).addEventDelegate({
-				onAfterRendering: function() {
-					this._clearAllButton.getDomRef().setAttribute("tabindex", -1);
-				}
-			}, this);
+				decorative: true,
+				noTabStop: true
+			}).setParent(this, null, true);
 			this.updateSelectAllCheckbox();
 		}
 
-		return this._clearAllButton;
+		return this._clearAllIcon;
 	};
 
 	/**
@@ -904,8 +915,8 @@ sap.ui.define([
 			var bSelected = aItems.length > 0 && iSelectedItemCount == iSelectableItemCount;
 			this.$("tblHeader").find(".sapMTblCellFocusable").addBack().attr("aria-selected", bSelected);
 			this._selectAllCheckBox.setSelected(bSelected);
-		} else if (this._clearAllButton) {
-			this._clearAllButton.toggleStyleClass("sapMTableDisableClearAll", !this.getSelectedItems().length);
+		} else if (this._clearAllIcon) {
+			this._clearAllIcon.toggleStyleClass("sapMTableDisableClearAll", !this.getSelectedItems().length);
 		}
 	};
 
@@ -920,7 +931,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Table.prototype.enhanceAccessibilityState = function(oElement, mAriaProps) {
-		if (oElement == this._clearAllButton) {
+		if (oElement == this._clearAllIcon) {
 			mAriaProps.label = Library.getResourceBundleFor("sap.m").getText("TABLE_ICON_DESELECT_ALL");
 		} else if (oElement == this._selectAllCheckBox) {
 			mAriaProps.label = Library.getResourceBundleFor("sap.m").getText("TABLE_CHECKBOX_SELECT_ALL");
@@ -1062,7 +1073,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (oEvent.target.id == this.getId("tblHeader") || oEvent.target.id == this.getId("tblHeadModeCol")) {
+		if (oEvent.target.id == this.getId("tblHeader") || this.getDomRef("tblHeadModeCol")?.contains(oEvent.target)) {
 			// prevent from scrolling
 			oEvent.preventDefault();
 			oEvent.setMarked();
@@ -1071,9 +1082,14 @@ sap.ui.define([
 			var sMultiSelectMode = this.getMultiSelectMode();
 			if (this._selectAllCheckBox && sMultiSelectMode != "ClearAll") {
 				this._selectAllCheckBox.setSelected(!this._selectAllCheckBox.getSelected()).fireSelect();
-			} else if (this._clearAllButton && sMultiSelectMode == "ClearAll" && !this._clearAllButton.hasStyleClass("sapMTableDisableClearAll")) {
-				this._clearAllButton.firePress();
+			} else if (this._clearAllIcon && sMultiSelectMode == "ClearAll" && !this._clearAllIcon.hasStyleClass("sapMTableDisableClearAll")) {
+				this.removeSelections(false, true, false);
 			}
+
+		} else if (oEvent.target.classList.contains("sapMTblCellFocusable")) {
+			// prevent from scrolling
+			oEvent.preventDefault();
+			oEvent.setMarked();
 		}
 	};
 

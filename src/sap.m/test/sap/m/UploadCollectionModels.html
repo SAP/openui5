@@ -9,14 +9,12 @@
         data-sap-ui-async="true"
         data-sap-ui-compat-version="edge"
         data-sap-ui-libs="sap.m"
-        data-sap-ui-on-init="module:local/UploadCollectionModels"
-        data-sap-ui-resource-roots='{
-        	"local": "./"
-        }'
->
-</script>
+        data-sap-ui-on-init="module:local/UploadCollectionModels.controller"
+        data-sap-ui-resource-roots='{"local": "./"}'
+></script>
+
 <script id="myXml" type="text/xml">
-   <mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="myController" displayBlock="true">
+   <mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" displayBlock="true">
 	  <App>
 		 <Page title="The purpose of this page is to check the inheritance of models to sub controls.">
 			<UploadCollection fileType="undefined" maximumFilenameLength="0" maximumFileSize="0" id="__collection0" sameFilenameAllowed="true" showSeparators="All" items="{/itemCol}">
@@ -28,9 +26,6 @@
 	  </App>
    </mvc:View>
   </script>
-
-
-
 </head>
 <body class="sapUiBody">
 	<div id="content"></div>

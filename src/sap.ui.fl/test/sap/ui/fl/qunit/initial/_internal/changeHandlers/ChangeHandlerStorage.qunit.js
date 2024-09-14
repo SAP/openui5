@@ -432,6 +432,51 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Annotation Change Handlers", {
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("register and retrieve with change handler object", function(assert) {
+			const oDummyChangeHandler = { dummy: "dummy" };
+
+			ChangeHandlerStorage.registerAnnotationChangeHandler({
+				modelType: "someModelType",
+				changeType: "someChangeType",
+				changeHandler: oDummyChangeHandler
+			});
+			return ChangeHandlerStorage.getAnnotationChangeHandler({
+				modelType: "someModelType",
+				changeType: "someChangeType"
+			}).then(function(oChangeHandler) {
+				assert.strictEqual(oChangeHandler, oDummyChangeHandler, "the change handler is returned");
+			});
+		});
+
+		QUnit.test("register and retrieve with change handler path", function(assert) {
+			const sDummyChangeHandlerPath = "myChangeHandlerPath";
+			const oDummyChangeHandler = { dummy: "dummy" };
+			FlQUnitUtils.stubSapUiRequire(sandbox, [
+				{
+					name: [sDummyChangeHandlerPath],
+					stub: oDummyChangeHandler
+				}
+			]);
+
+			ChangeHandlerStorage.registerAnnotationChangeHandler({
+				modelType: "someModelType",
+				changeType: "someChangeType",
+				changeHandler: sDummyChangeHandlerPath
+			});
+			return ChangeHandlerStorage.getAnnotationChangeHandler({
+				modelType: "someModelType",
+				changeType: "someChangeType"
+			}).then(function(oChangeHandler) {
+				assert.strictEqual(oChangeHandler, oDummyChangeHandler, "the change handler is returned");
+			});
+		});
+	});
+
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});

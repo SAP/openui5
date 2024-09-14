@@ -911,7 +911,7 @@ sap.ui.define([
 		this.mock(oMetaModel).expects("getMetaContext").withExactArgs("/resolved/data/path").returns("~metaContext");
 		this.mock(oMetaModel).expects("requestObject")
 			.withExactArgs("@com.sap.vocabularies.Common.v1.DocumentationRef", "~metaContext")
-			.resolves(bHasAnnotation ? {String: "~DocumentationRefValue"} : undefined);
+			.resolves(bHasAnnotation ? "~DocumentationRefValue" : undefined);
 
 		// code under test
 		const oPromise = FieldHelp._requestDocumentationRef(oBinding);
