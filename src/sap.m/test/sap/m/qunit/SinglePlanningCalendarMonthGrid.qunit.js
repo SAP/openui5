@@ -1096,4 +1096,24 @@ sap.ui.define([
 			//asert
 			assert.strictEqual(oAppointmentHTMElement.getAttribute("draggable"), this.oSPC.getEnableAppointmentsDragAndDrop().toString(), "The appointment must receive the correct 'draggable' attribute from the SPC settings");
 		});
+
+		QUnit.test("Grid cells week announcement", async function(assert) {
+			// prepare
+			var oGrid = new SinglePlanningCalendarMonthGrid("test", {
+				startDate: UI5Date.getInstance(2024,9,1)
+			});
+			oGrid.placeAt("qunit-fixture");
+			await nextUIUpdate(this.clock);
+
+			var oGridElement = oGrid.getDomRef();
+			var oGridCell = oGridElement.querySelector(".sapMSPCMonthDay");
+			var oWeekElement = oGridElement.querySelector(".sapMSPCMonthWeekNumber");
+
+			// assert
+			assert.strictEqual(oWeekElement.getAttribute("aria-label"), "Calendar Week 40", "Week description is added");
+			assert.ok(oGridCell.getAttribute("aria-labelledby").includes("test-week-40"), "Week description is added");
+
+			// clean
+			oGrid.destroy();
+		});
 	});
