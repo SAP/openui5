@@ -1563,8 +1563,13 @@ sap.ui.define([
 							}
 						}
 					} else if (oItem.translatable && oItem.value) {
-						//in translation mode create an entry if there is a value
-						mResult[oItem.manifestpath] = oItem.value;
+						if (oItem._changed) {
+							//in translation mode create an entry if value changes
+							mResult[oItem.manifestpath] = oItem.value;
+						} else if (this._currentLayerManifestChanges && this._currentLayerManifestChanges.texts && this._currentLayerManifestChanges.texts[this._language] && this._currentLayerManifestChanges.texts[this._language][oItem.manifestpath]) {
+							//if translation layer has changed value before, save it again
+							mResult[oItem.manifestpath] = this._currentLayerManifestChanges.texts[this._language][oItem.manifestpath];
+						}
 					}
 					if (oItem._next && (this.getAllowSettings())) {
 						if (oItem.type === "destination") {
