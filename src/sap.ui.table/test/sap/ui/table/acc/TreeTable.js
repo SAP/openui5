@@ -166,8 +166,17 @@ sap.ui.define([
 	const oTable = new TreeTable({
 		expandFirstLevel: true,
 		columns: [
-			new Column({label: new Label({text: "Alfa"}), template: new Text({text: "{name}", wrapping: false}), filterProperty: "name", sortProperty: "name"}),
-			new Column({label: new Label({text: "Bravo"}), template: new Text({text: "{description}", wrapping: false}), sortProperty: "description"})
+			new Column({
+				label: new Label({text: "Alfa"}),
+				template: new Text({text: "{name}",	wrapping: false}),
+				filterProperty: "name",
+				sortProperty: "name"
+			}),
+			new Column({
+				label: new Label({text: "Bravo"}),
+				template: new Text({text: "{description}", wrapping: false}),
+				sortProperty: "description"
+			})
 		]
 	});
 

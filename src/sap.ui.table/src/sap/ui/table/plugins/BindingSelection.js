@@ -418,7 +418,7 @@ sap.ui.define([
 
 	/**
 	 *
-	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.Event} oEvent Binding change event
 	 * @private
 	 */
 	BindingSelection.prototype._onBindingChange = function(oEvent) {

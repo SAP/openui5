@@ -261,7 +261,8 @@ sap.ui.define([
 	 *     The state is an object with the following keys:
 	 *     - subtotals: boolean - Whether the cell content should be visible in subtotal rows
 	 *     - grandTotal: boolean - Whether the cell content should be visible in grand total rows
-	 * @param {string} [oAggregateInfo.search] A search string used to search transformation (see {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}) for details..
+	 * @param {string} [oAggregateInfo.search]
+	 * A search string used to search transformation (see {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation} for details)
 	 */
 	V4Aggregation.prototype.setAggregationInfo = function(oAggregateInfo) {
 		oAggregateInfo = Object.assign({
