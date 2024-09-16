@@ -3,6 +3,11 @@
     "date": "September 2024",
     "notes": [
       {
+        "id": "7c9dcd0cf9e60e2c6288ec3397dfbecc6771627c",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/v2/ODataListBinding: fire dataReceived event for aborted requests"
+      },
+      {
         "id": "14aaf8d79d4b8ea1266dbce0a78f60d795158637",
         "type": "FIX",
         "text": " Samples failing tests fixed"

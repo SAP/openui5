@@ -1,0 +1,12 @@
+{
+  "1.129.0": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "40ce25b55da4e85fa542d6af44ae3c04d8702306",
+        "type": "FIX",
+        "text": " sap.m.Token: extend touch area for horizon themes"
+      }
+    ]
+  }
+}

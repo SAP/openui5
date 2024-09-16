@@ -3,6 +3,16 @@
     "date": "September 2024",
     "notes": [
       {
+        "id": "be2933895566f26d73d37c7443f8f3c989094cb1",
+        "type": "FEATURE",
+        "text": " We've now added the carousel behaviour, and increased the tap area for the indicators on the SlideTile control"
+      },
+      {
+        "id": "40ce25b55da4e85fa542d6af44ae3c04d8702306",
+        "type": "FIX",
+        "text": " sap.m.Token: extend touch area for horizon themes"
+      },
+      {
         "id": "947893c905d3a606e4052efa0543c57c22104f5c",
         "type": "FIX",
         "text": " We've now removed sap-desktop attribute to provide consistent focus across all devices"

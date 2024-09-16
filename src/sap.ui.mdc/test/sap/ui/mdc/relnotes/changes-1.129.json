@@ -1,0 +1,12 @@
+{
+  "1.129.0": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "50cb0b6b67579f5236d71ea394853a434dcd56ba",
+        "type": "FIX",
+        "text": " ValueHelp: arrow navigation for multi-value"
+      }
+    ]
+  }
+}

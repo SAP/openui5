@@ -3,9 +3,54 @@
     "date": "September 2024",
     "notes": [
       {
+        "id": "04354678222f3043cb77918140a9b1f6dae20539",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: add empty value description in the acc info"
+      },
+      {
+        "id": "f220ff142d510ad7fba99ccbee74baeec2f9821c",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Title link is now truncated"
+      },
+      {
+        "id": "be2933895566f26d73d37c7443f8f3c989094cb1",
+        "type": "FEATURE",
+        "text": " We've now added the carousel behaviour, and increased the tap area for the indicators on the SlideTile control"
+      },
+      {
+        "id": "0269c4b186dd12c1b062446bf16284740f5dcf0f",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Empty page message resizes correctly in vertical direction"
+      },
+      {
+        "id": "a36f8f8a98bacdc4751e190f91a8c558e9f7f460",
+        "type": "FEATURE",
+        "text": " sap.m.MessageStrip: Displaying multiple links is now enabled"
+      },
+      {
+        "id": "2d73ee119ae43961dc19fec620e03fe38fc009eb",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Event is fired correctly on pressing SPACE without scrolling the page"
+      },
+      {
+        "id": "16260670379b46637c849680ff59feacf2fdad09",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: Unstable test"
+      },
+      {
+        "id": "40ce25b55da4e85fa542d6af44ae3c04d8702306",
+        "type": "FIX",
+        "text": " sap.m.Token: extend touch area for horizon themes"
+      },
+      {
         "id": "fd1788cb3364767e4afb837be6ed348d88677bbe",
         "type": "FIX",
         "text": " sap.m.SinglePlanningCalendar: navigate to correct month in islamic calendar"
+      },
+      {
+        "id": "dcdc806ed957379006d6772adcab3b3e60e6741b",
+        "type": "FIX",
+        "text": " sap.m.Link: prevent default before press for mobile safari"
       },
       {
         "id": "291e6ca357a363878f0b28a0837b3860028fd924",

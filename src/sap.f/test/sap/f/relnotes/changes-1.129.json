@@ -3,6 +3,11 @@
     "date": "September 2024",
     "notes": [
       {
+        "id": "f248fe376dcccc9951d325ee6a8cd41b3c1c57c8",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: fixed resizing when Side Panel is left-positioned"
+      },
+      {
         "id": "c0e28d366478645bb889f7302a234ac5613190d2",
         "type": "FIX",
         "text": " sap.f.SidePanel: fixed side content closing on mobile device",
