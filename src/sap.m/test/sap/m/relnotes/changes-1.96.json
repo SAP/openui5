@@ -1984,5 +1984,25 @@
         "text": " sap.m.Button: Back type button has correct hover colour"
       }
     ]
+  },
+  "1.96.33": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "a9cdd303d9513861cf987cc288f28a5ad2eb776f",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: buttons in split mode have separate tooltips"
+      },
+      {
+        "id": "fba081e2aa7cfcc7037b400d715eaef12023bd3c",
+        "type": "FIX",
+        "text": " sap.m.Fiori20Adapter: Performance issue fixed"
+      },
+      {
+        "id": "71be7a50aa6fe3e3dff7114602d840b4741150b1",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: fix cursor position when there is mask and no entry"
+      }
+    ]
   }
 }

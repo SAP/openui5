@@ -251,5 +251,15 @@
         ]
       }
     ]
+  },
+  "1.96.33": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "ec6e0c605347d2bd144821f1186e36537afb5266",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Syncronization issue corrected"
+      }
+    ]
   }
 }

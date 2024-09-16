@@ -1,0 +1,12 @@
+{
+  "1.96.33": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "71be7a50aa6fe3e3dff7114602d840b4741150b1",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: fix cursor position when there is mask and no entry"
+      }
+    ]
+  }
+}

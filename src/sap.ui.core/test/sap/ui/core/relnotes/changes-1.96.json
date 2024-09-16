@@ -809,5 +809,15 @@
         "text": " sap.ui.core.format.DateFormat.qunit: Fix flaky tests"
       }
     ]
+  },
+  "1.96.33": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "6c30a33a41dc45f18041fa7ad2b2441c41e41b68",
+        "type": "FIX",
+        "text": " ResourceModel: Fix bundle reload after localizationChange"
+      }
+    ]
   }
 }
