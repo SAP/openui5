@@ -157,6 +157,8 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "sap/ui/cor
 					rm.openEnd();
 					rm.renderControl(oTable._getSelectAllCheckbox());
 				}
+			} else {
+				rm.openEnd();
 			}
 			rm.close(sCellTag);
 			iIndex++;
