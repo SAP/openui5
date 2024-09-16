@@ -88,6 +88,10 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			"UploadSetwithTablePlugin": {
 				group: "Demokit samples",
 				sinon: false
+			},
+			"TablePropertyInfos": {
+				group: "Demokit samples",
+				sinon: false
 			}
 		}
 	};
