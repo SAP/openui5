@@ -44,7 +44,7 @@
 								title="{Name}"
 								text="{ProductID}"/>
 							<Input
-								text="{Category}" />
+								value="{Category}" />
 							<Text
 								text="{SupplierName}" />
 							<u:Currency value="{
