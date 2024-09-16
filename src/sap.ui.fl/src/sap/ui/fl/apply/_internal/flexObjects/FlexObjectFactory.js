@@ -113,6 +113,8 @@ sap.ui.define([
 	 * @param {class} [ObjectClass] - Object class to be instantiated
 	 * @param {boolean} [bPersisted] - Whether to set the state to PERSISTED after creation
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} Created flex object
+	 * @private
+	 * @ui5-restricted sap.ui.fl, ux tools
 	 */
 	FlexObjectFactory.createFromFileContent = function(oFileContent, ObjectClass, bPersisted) {
 		const oNewFileContent = { ...oFileContent };
