@@ -24,5 +24,15 @@
         "text": " SimpleFormDesigntime: hide propery change on inner Form"
       }
     ]
+  },
+  "1.127.1": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "2c69dcb44708d3fb394ae116b0f13a4bc6867368",
+        "type": "FIX",
+        "text": " ColumnLayout: keep breakpoint classes stable on invalidation"
+      }
+    ]
   }
 }

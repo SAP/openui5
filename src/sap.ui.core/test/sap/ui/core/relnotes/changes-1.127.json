@@ -48,5 +48,15 @@
         "text": " sap.m.Popover: close the popover if the opener is not visible"
       }
     ]
+  },
+  "1.127.1": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "9764bcdd756f069918f98ebc6e94b5089218495a",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/v2/ODataListBinding: fire dataReceived event for aborted requests"
+      }
+    ]
   }
 }

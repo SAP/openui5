@@ -199,5 +199,25 @@
         "text": " sap.m.SinglePlanningCalendar: improve screen reader announcements"
       }
     ]
+  },
+  "1.127.1": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "b9b5646d46f614f816226cb257f954f321ad6c99",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Content padding classes are applied to the header if additional class is present"
+      },
+      {
+        "id": "3a014b649f4acf987595a5d256f8c3446fc58e55",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: fixed \"select all\" checkbox positioning"
+      },
+      {
+        "id": "ffc25cb582946263e0e2a3106d2d8c8cecfde30a",
+        "type": "FIX",
+        "text": " sap.m.Page: Fix failing tests"
+      }
+    ]
   }
 }

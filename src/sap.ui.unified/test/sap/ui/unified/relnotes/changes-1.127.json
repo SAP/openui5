@@ -33,5 +33,15 @@
         "text": " sap.ui.unified.Menu: Image icon has correct size now"
       }
     ]
+  },
+  "1.127.1": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "b4ce5b56af53c7ed390b88e79d5d6703e72ebee6",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Calendar with two months in one column is displayed correctly now"
+      }
+    ]
   }
 }
