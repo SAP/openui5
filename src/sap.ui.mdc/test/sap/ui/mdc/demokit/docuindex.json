@@ -126,6 +126,7 @@
 					"sap.ui.mdc.demokit.sample.table.TableJson",
 					"sap.ui.mdc.demokit.sample.table.TableTypes",
 					"sap.ui.mdc.demokit.sample.table.TableExport",
+					"sap.ui.mdc.demokit.sample.table.TableCopyPaste",
 					"sap.ui.mdc.demokit.sample.table.UploadSetwithTablePlugin"
 				]
 			}
@@ -287,6 +288,10 @@
 				"id": "sap.ui.mdc.demokit.sample.table.TableExport",
 				"name": "Table - with export",
 				"description": "A table with export capabilities."
+			},{
+				"id": "sap.ui.mdc.demokit.sample.table.TableCopyPaste",
+				"name": "Table - with copy and paste",
+				"description": "A table using the CopyProvider, paste event and CellSelector for copy and paste capabilities."
 			}
 		]
 	}
