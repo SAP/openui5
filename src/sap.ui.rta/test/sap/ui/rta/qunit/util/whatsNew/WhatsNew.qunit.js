@@ -242,7 +242,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("When all features have been seen", async function(assert) {
-			const aFeatureIdList = WhatsNewUtils.getFilteredFeatures([]).map((oFeature) => oFeature.featureId);
+			const aFilteredFeatures = await WhatsNewUtils.getFilteredFeatures([]);
+			const aFeatureIdList = aFilteredFeatures.map((oFeature) => oFeature.featureId);
+
 			sandbox.stub(FeaturesAPI, "getSeenFeatureIds").resolves(aFeatureIdList);
 			this.oWhatsNew = new WhatsNew({ layer: "CUSTOMER" });
 			await this.oWhatsNew.initializeWhatsNewDialog();
@@ -256,7 +258,8 @@ sap.ui.define([
 			const oSetSeenFeatureIdsSpy = sandbox.spy(FeaturesAPI, "setSeenFeatureIds");
 			this.oWhatsNew = new WhatsNew({ layer: sLayer });
 			await this.oWhatsNew.initializeWhatsNewDialog();
-			const aFeatureIdList = WhatsNewUtils.getFilteredFeatures([]).map((oFeature) => oFeature.featureId);
+			const aFilteredFeatures = await WhatsNewUtils.getFilteredFeatures([]);
+			const aFeatureIdList = aFilteredFeatures.map((oFeature) => oFeature.featureId);
 			this.oWhatsNewDialog = Element.getElementById("sapUiRtaWhatsNewDialog");
 			await nextUIUpdate();
 			assert.ok(this.oWhatsNewDialog.isOpen(), "then the dialog is opened");
