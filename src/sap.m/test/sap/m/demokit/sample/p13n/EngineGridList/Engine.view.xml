@@ -9,6 +9,7 @@
 	xmlns:core="sap.ui.core"
     xmlns:vm="sap.ui.fl.variants"
     class="sapUiContentPadding"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
     controllerName="sap.m.sample.p13n.EngineGridList.Engine">
 
     <VBox class="sapUiSmallMargin" width="95%">
