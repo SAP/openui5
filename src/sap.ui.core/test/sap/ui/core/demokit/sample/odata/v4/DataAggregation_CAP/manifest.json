@@ -1,0 +1,62 @@
+{
+	"_version" : "1.65.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"dataSources" : {
+			"default" : {
+				"uri" : "/analytics/",
+				"type" : "OData",
+				"settings" : {
+					"odataVersion" : "4.0"
+				}
+			}
+		},
+		"description" : "Example for OData V4 Data Aggregation w/ CAP",
+		"id" : "sap.ui.core.sample.odata.v4.DataAggregation_CAP",
+		"title" : "OData V4 Data Aggregation",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"config" : {
+			"sample" : {
+				"files" : [
+					"Component.js",
+					"CAP.controller.js",
+					"CAP.view.xml",
+					"SandboxModel.js",
+					"manifest.json"
+				]
+			}
+		},
+		"dependencies" : {
+			"libs" : {
+				"sap.m" : {},
+				"sap.ui.core" : {},
+				"sap.ui.table" : {}
+			},
+			"minUI5Version" : "1.129.0"
+		},
+		"handleValidation" : true,
+		"models" : {
+			"" : {
+				"dataSource" : "default",
+				"preload" : true,
+				"settings" : {
+					"autoExpandSelect" : true,
+					"earlyRequests" : true,
+					"operationMode" : "Server"
+				}
+			}
+		},
+		"rootView" : {
+			"type" : "XML",
+			"viewName" : "sap.ui.core.sample.odata.v4.DataAggregation_CAP.CAP"
+		}
+	}
+}

@@ -8,7 +8,7 @@ sap.ui.define([
 ], function (Controller, Filter, JSONModel) {
 	"use strict";
 
-	return Controller.extend("sap.ui.core.sample.odata.v4.DataAggregation_RAP.RAP", {
+	return Controller.extend("sap.ui.core.sample.odata.v4.DataAggregation_CAP.CAP", {
 		onDownload : function () {
 			this.byId("table").getBinding("rows").requestDownloadUrl().then(function (sUrl) {
 				window.open(sUrl, sUrl);
@@ -53,8 +53,9 @@ sap.ui.define([
 						airline : {additionally : ["airlineName"]},
 						ConnectionID : {
 							additionally : ["DepAirport", "DepCity", "DestAirport", "DestCity",
-								"Distance", "DistanceUnit"]
-						}
+								"Distance", "DistanceUnit", "PlaneType"]
+						},
+						status : {additionally : ["statusName"]}
 					},
 					groupLevels : ["airline", "ConnectionID", "status", "FlightDate", "TravelID"]
 				};
@@ -62,8 +63,8 @@ sap.ui.define([
 					this._oAggregation.group.BookingID = {};
 					this._oAggregation.groupLevels.push("BookingDate");
 				} else { // leaf level shows aggregates
-					if (oTable.getColumns()[9].getLabel().getText() === "Booking ID") {
-						oTable.getColumns()[9].destroy(); // destroy BookingID column
+					if (oTable.getColumns()[10].getLabel().getText() === "Booking ID") {
+						oTable.getColumns()[10].destroy(); // destroy BookingID column
 					}
 					this._oAggregation.group.BookingDate = {};
 				}
