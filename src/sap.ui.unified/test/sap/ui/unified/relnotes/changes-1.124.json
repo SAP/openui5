@@ -43,5 +43,15 @@
         "text": " sap.m.SinglePlanningCalendar: fix SR announcements when appointments are selected with keyboard."
       }
     ]
+  },
+  "1.124.6": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "186d951f92b4555771817730d9dfb535b140a596",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Calendar with two months in one column is displayed correctly now"
+      }
+    ]
   }
 }

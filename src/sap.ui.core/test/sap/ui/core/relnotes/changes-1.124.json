@@ -129,5 +129,15 @@
         "text": " sap/ui/core: handle focus properly when disabling"
       }
     ]
+  },
+  "1.124.6": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "f267892e0e32c733308b79195105bbf96fe81029",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/v2/ODataListBinding: fire dataReceived event for aborted requests"
+      }
+    ]
   }
 }

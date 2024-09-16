@@ -284,5 +284,25 @@
         "text": " We've now introduced the fileSize parameter in fileSizeExceeded event of UploadSet"
       }
     ]
+  },
+  "1.124.6": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "b54c2b128f1f20fe97e6256117f5a0eb254776cf",
+        "type": "FIX",
+        "text": " We now ensure that UploadSet does not insert or removes any item if they are bound to a model"
+      },
+      {
+        "id": "ab5b94d01db15a03a8f88d8b723e657c1fa3ce33",
+        "type": "FIX",
+        "text": " sap.m.Carousel: fix page disappearing when scrolling"
+      },
+      {
+        "id": "2fd8d220a7b5f6f17964b304650b8fce1b244e24",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Content padding classes are applied to the header if additional class is present"
+      }
+    ]
   }
 }
