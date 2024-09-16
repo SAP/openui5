@@ -185,7 +185,7 @@
 										</vhfb:FilterBar>
 									</mdcvc:filterBar>
 
-									<Table items="{path: '/Regions', parameters: {$select: 'country_code'}}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="MultiSelect">
+									<Table items="{path: '/Regions', parameters: {$select: 'country_code', $count: true}}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="MultiSelect">
 										<columns>
 											<Column>
 												<Label text="Region"></Label>
@@ -301,7 +301,7 @@
 									</vhfb:FilterBar>
 								</mdcvc:filterBar>
 
-								<Table items="{path: '/Cities', parameters: {$select: ['country_code', 'region_code']}}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="MultiSelect">
+								<Table items="{path: '/Cities', parameters: {$select: ['country_code', 'region_code'], $count: true}}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="MultiSelect">
 									<columns>
 										<Column>
 											<Label text="City"></Label>
