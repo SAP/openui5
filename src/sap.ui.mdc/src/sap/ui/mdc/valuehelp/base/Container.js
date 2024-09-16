@@ -437,9 +437,6 @@ sap.ui.define([
 	 * @param {Promise} oValueHelpContentPromise Promise for content request
 	 * @param {boolean} bTypeahead Flag indicating whether the container is opened as type-ahead or dialog-like help
 	 * @returns {Promise} This promise resolves after the container completely opened.
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
 	Container.prototype.open = function(oValueHelpContentPromise, bTypeahead) {
 		if (!this.isOpening()) {
@@ -459,9 +456,6 @@ sap.ui.define([
 
 	/*
 	 * Closes the container.
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
 	Container.prototype.close = function() {
 		const oPromise = this._retrievePromise("open");
@@ -606,9 +600,6 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration} oConfig Configuration
 	 * @returns {Promise<sap.ui.mdc.valuehelp.base.ValueHelpItem>} Promise returning object containing description, key and payload.
 	 * @throws {sap.ui.model.FormatException|sap.ui.model.ParseException} if entry is not found or not unique
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
 	Container.prototype.getItemForValue = function(oConfig) { // TODO only for TypeAhead container
 		return undefined;
@@ -618,9 +609,6 @@ sap.ui.define([
 	 * Defines if the content of the container can be used for input validation.
 	 *
 	 * @returns {boolean} True if content can be used for input validation
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
 	Container.prototype.isValidationSupported = function() { // TODO only for TypeAhead container
 		return false;
@@ -636,9 +624,6 @@ sap.ui.define([
 	 *
 	 * @param {int} iStep Number of steps for navigation (e.g. 1 means next item, -1 means previous item)
 	 * @returns {Promise<object>} Promise returning object of navigated item (condition and itemId)
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
 	Container.prototype.navigate = function(iStep) { // pass through to content
 		return Promise.all([this.getContainerControl()]).then((aResults) => { // TODO: Container control needed if navigated without opening?
@@ -658,18 +643,11 @@ sap.ui.define([
 
 	/*
 	 * The focus visualization of the field help needs to be removed as the user starts typing into the field.
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
 	Container.prototype.removeVisualFocus = function() {};
 
 	/*
 	 * The focus visualization of the field help needs to be set as the user starts naigation into the value help items.
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @since 1.127.0
 	 */
 	Container.prototype.setVisualFocus = function() {
 	};
@@ -835,8 +813,6 @@ sap.ui.define([
 	 * implementing the <code>sap.ui.mdc.valuehelp.container.ITypeahead</code> interface.
 	 *
 	 * @returns {boolean} True if value help shall open as valuehelp
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
 	Container.prototype.getUseAsValueHelp = function() {
 		return false;
@@ -891,8 +867,6 @@ sap.ui.define([
 	 * Determines if the value help should be opened when the user focuses the connected control.
 	 *
 	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user focuses the connected field control
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
 	Container.prototype.shouldOpenOnFocus = function() {
 		const oDelegate = this.getValueHelpDelegate();
@@ -904,8 +878,6 @@ sap.ui.define([
 	 * Determines if the value help should be opened when the user clicks into the connected control.
 	 *
 	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user clicks into the connected field control
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
 	Container.prototype.shouldOpenOnClick = function() {
 		const oDelegate = this.getValueHelpDelegate();
@@ -917,8 +889,6 @@ sap.ui.define([
 	 * Determines if the value help should be opened when the user used the arrow keys.
 	 *
 	 * @returns {boolean} If <code>true</code>, the value help should open when user used the arrow keys in the connected field control
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
 	Container.prototype.shouldOpenOnNavigate = function() {
 		return false;
