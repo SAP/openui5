@@ -9,7 +9,7 @@
 .sapMGHLI .sapMLIBSelectD,
 .sapMGHLI .sapMTblItemNav,
 .sapMGHLI .sapMListTblSelCol,
-.sapMGHLI .sapMListTblUnreadCol  {
+.sapMGHLI .sapMListTblUnreadCol {
 	display: none;
 }
 
@@ -19,9 +19,7 @@
 
 .sapMGHLI > .sapMLIBContent,
 .sapMGHLICell > .sapMLIBContent {
-	display: -webkit-box;
 	display: flex;
-	-webkit-box-align: center;
 	align-items: center;
 }
 
@@ -35,37 +33,35 @@
 
 .sapMGHLICounter {
 	padding-left: 0.25rem;
-	webkit-box-flex: 0;
 	flex: none;
 }
 
 .sapMGHLI {
-	-webkit-align-items: flex-end;
 	align-items: flex-end;
 }
 
 .sapMListUl .sapMLIB.sapMGHLI {
 	height: 2rem;
 	line-height: 2rem;
-	font-family: @sapUiFontHeaderFamily;
-	font-size: @sapMFontHeader6Size;
+	font-family: var(--sapFontHeaderFamily);
+	font-size: var(--sapFontHeader6Size);
 	font-weight: @sapUiFontHeaderWeight;
-	color: @sapUiListTableGroupHeaderTextColor;
-	background: @sapUiListGroupHeaderBackground;
-	border-bottom: @sapUiElementBorderWidth solid @sapUiListTableGroupHeaderBorderColor;
+	color: var(--sapList_TableGroupHeaderTextColor);
+	background: var(--sapList_GroupHeaderBackground);
+	border-bottom: var(--sapElement_BorderWidth) solid var(--sapList_TableGroupHeaderBorderColor);
 }
 
 .sapMListUl > .sapMLIB.sapMGHLI {
-	background: @sapUiListGroupHeaderBackground;
-	height: @sapUiElementLineHeight;
+	background: var(--sapList_GroupHeaderBackground);
+	height: var(--sapElement_LineHeight);
 	line-height: 2rem;
 	padding-top: 1rem;
 }
 
 .sapMGHLI.sapMLIBActive.sapMLIB,
 .sapMGHLI.sapMLIBActive.sapMLIB > td {
-	color: @sapUiListActiveTextColor;
-	background: @sapUiListActiveBackground;
+	color: var(--sapList_Active_TextColor);
+	background: var(--sapList_Active_Background);
 }
 
 .sapMGHLICell {
@@ -79,5 +75,5 @@
 /* group headers should have background color grey so that they are distinguishable from ListItems */
 .sapMListTbl .sapMGHLI.sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover),
 .sapMListTbl .sapMGHLI.sapMLIB.sapMLIBTypeInactive {
-	background: @sapUiListTableGroupHeaderBackground;
+	background: var(--sapList_TableGroupHeaderBackground);
 }
