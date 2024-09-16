@@ -90,7 +90,7 @@ sap.ui.define([
 			library: "sap.ui.fl",
 			properties: {
 				_dialog: {
-					type: "sap.m.Dialog",
+					type: "any",
 					visibility: "hidden"
 				}
 			}
