@@ -1575,8 +1575,8 @@ sap.ui.define([
 					iToIndex = Math.min(iToIndex, iFromIndex + iLimit - 1, iMaxIndex);
 				}
 
-				return oItems.filter((oItem) => !oItem.isGroupHeader?.()) // ignore group headers
-					.slice(iFromIndex, iToIndex + 1)
+				return oItems.slice(iFromIndex, iToIndex + 1)
+					.filter((oItem) => !oItem.isGroupHeader?.()) // ignore group headers
 					.map((oItem) => oItem?.getBindingContext(oTable.getBindingInfo("items")?.model));
 			},
 			/**
