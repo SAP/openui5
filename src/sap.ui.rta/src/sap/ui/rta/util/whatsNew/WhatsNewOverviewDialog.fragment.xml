@@ -15,7 +15,7 @@
 		</List>
 		<VBox  id="whatsNewItemPage" visible="{= ${whatsNewModel>overviewActive} === false}">
 			<VBox height="100%" width="100%" >
-				<Title text="{whatsNewModel>title} :" class="sapUiMediumMarginTop sapUiLargeMarginBegin sapUiTinyMarginBottom" level="H3"/>
+				<Title text="{whatsNewModel>title}" class="sapUiMediumMarginTop sapUiLargeMarginBegin sapUiTinyMarginBottom" level="H3"/>
 				<VBox class="sapUiSmallMargin sapUiLargeMarginBegin sapUiLargeMarginEnd" >
 					<VBox height="100%" width="100%" items="{whatsNewModel>information}">
 						<HBox alignItems="Center" class=" sapUiSmallMarginBottom ">
