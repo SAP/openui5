@@ -2,6 +2,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/Device",
 	"sap/ui/core/Core",
+	"sap/base/Log",
 	"sap/m/MessageToast",
 	"sap/m/library",
 	"sap/m/Page",
@@ -35,6 +36,7 @@ sap.ui.define([
 	coreLibrary,
 	Device,
 	Core,
+	Log,
 	MessageToast,
 	mLibrary,
 	Page,
@@ -856,7 +858,7 @@ sap.ui.define([
 				Element.getElementById("searchField").setVisible(true);
 				Element.getElementById("spacer").setVisible(true);
 				Element.getElementById("searchButton").setVisible(false);
-				MessageToast.show("Screen width is corresponding to Large Desktop");
+				Log.info("Screen width is corresponding to Large Desktop");
 				break;
 
 			// Tablet - Landscape
@@ -866,7 +868,7 @@ sap.ui.define([
 				Element.getElementById("searchField").setVisible(true);
 				Element.getElementById("spacer").setVisible(true);
 				Element.getElementById("searchButton").setVisible(false);
-				MessageToast.show("Screen width is corresponding to Desktop");
+				Log.info("Screen width is corresponding to Desktop");
 				break;
 
 			// Tablet - Portrait
@@ -876,7 +878,7 @@ sap.ui.define([
 				Element.getElementById("searchButton").setVisible(true);
 				Element.getElementById("searchField").setVisible(false);
 				Element.getElementById("spacer").setVisible(false);
-				MessageToast.show("Screen width is corresponding to Tablet");
+				Log.info("Screen width is corresponding to Tablet");
 				break;
 
 			case "Phone":
@@ -885,7 +887,7 @@ sap.ui.define([
 				Element.getElementById("spacer").setVisible(false);
 				Element.getElementById("productName").setVisible(false);
 				Element.getElementById("secondTitle").setVisible(false);
-				MessageToast.show("Screen width is corresponding to Phone");
+				Log.info("Screen width is corresponding to Phone");
 				break;
 
 			default:
