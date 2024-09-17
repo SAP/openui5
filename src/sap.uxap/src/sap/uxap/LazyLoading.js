@@ -130,7 +130,7 @@ sap.ui.define([
 
 			//If there's no delayed lazy loading call, create a new one.
 			if (!this._sLazyLoadingTimer) {
-				this._sLazyLoadingTimer = setTimeout(this.doLazyLoading.bind(this), iDelay);
+				this._sLazyLoadingTimer = setTimeout(this.doLazyLoading.bind(this, iScrollTop), iDelay);
 			}
 		};
 
