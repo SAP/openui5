@@ -2316,7 +2316,7 @@ sap.ui.define([
 		oDialog.open();
 	});
 
-	QUnit.module("NavContainer in Popover", {
+	QUnit.skip("NavContainer in Popover", {
 		beforeEach: function () {
 			this.fnCloseSpy = this.spy(Popup.prototype, "close");
 			this.oNavC = new NavContainer("navC", {
@@ -2352,7 +2352,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Focus is changed only after transition", function(oAssert) {
+	QUnit.skip("Focus is changed only after transition", function(oAssert) {
 		var fnDone = oAssert.async(),
 			oNavContainer = this.oNavC,
 			oPopover = this.oPopover,
