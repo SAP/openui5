@@ -913,18 +913,17 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Integrative test simulating 503 "Retry-After" handling: resolve or reject
+	// Integrative test simulating 503 "Retry-After" handling: resolve or reject with original or
+	// own error
 	// 1) Send 2 parallel requests (both supposed to be answered with 503)
 	// 1a) 1st 503 error response creates "Retry-After" promise
 	// 1b) 2nd response reuses the promise
 	// 2) 3rd follow up request reuses also the promise, no request sent
 	// 3a) Resolving promise repeats all 3 requests
-	// 3b) Rejecting promise rejects all 3 requests with the error originally passed to the handler
-[false, true].forEach((bResolve) => {
-	const sTitle = 'sendRequest(): 503 "Retry-After" handling, '
-		+ (bResolve ? "resolve" : "reject");
-
-	QUnit.test(sTitle, function (assert) {
+	// 3b) Rejecting promise rejects all 3 requests with the original error or an own error
+[false, /*reject with own error*/null, true].forEach((bResolve) => {
+	QUnit.test(`sendRequest: 503, "Retry-After" handling, bResolve=${bResolve}`, function (assert) {
+		const bOwnError = bResolve === null;
 		const oRequestor = _Requestor.create("/Service/", oModelInterface);
 		let fnReject;
 		let fnResolve;
@@ -932,14 +931,17 @@ sap.ui.define([
 			fnResolve = resolve;
 			fnReject = reject;
 		});
+		const oRetryAfterError = {};
 		function fnRetryAfter(oError) {
-			assert.strictEqual(oError, "~oError~");
+			assert.strictEqual(oError, oRetryAfterError);
 			return oRetryAfterPromise;
 		}
 
+		const oOwnError = {};
 		function checkError(oError) {
 			assert.notOk(bResolve);
-			assert.strictEqual(oError, "~oError~");
+			assert.strictEqual(oError, bOwnError ? oOwnError : oRetryAfterError);
+			assert.strictEqual(oError.$reported, bOwnError);
 		}
 
 		function checkSuccess() {
@@ -975,7 +977,7 @@ sap.ui.define([
 					.returns(fnRetryAfter);
 				oHelperMock.expects("createError")
 					.withExactArgs(sinon.match.same(o503jqXHR), "")
-					.returns("~oError~");
+					.returns(oRetryAfterError);
 
 				// (1a)
 				jqXHR.reject(o503jqXHR);
@@ -1036,7 +1038,7 @@ sap.ui.define([
 					fnResolve();
 				} else {
 					// code under test (3b)
-					fnReject("~oError~");
+					fnReject(bOwnError ? oOwnError : oRetryAfterError);
 				}
 			}, 0);
 
@@ -1055,11 +1057,16 @@ sap.ui.define([
 				checkError(oError);
 			}),
 			oSendPromise2.then(checkSuccess, checkError),
-			oRetryAfterPromise.then(checkSuccess, checkError)
+			oRetryAfterPromise.then(checkSuccess, function (oError) {
+				assert.notOk(bResolve);
+				assert.strictEqual(oError, bOwnError ? oOwnError : oRetryAfterError);
+				// must not check $reported before caught and set in productive code
+			})
 		]).then(function () {
 			return oSendPromise3.then(checkSuccess, checkError);
 		}).then(function () {
 			assert.strictEqual(oRequestor.oRetryAfterPromise, "~otherPromise~");
+			return oRetryAfterPromise.then(checkSuccess, checkError);
 		});
 	});
 });
@@ -2561,6 +2568,7 @@ sap.ui.define([
 			assert.strictEqual(oError.message,
 				"HTTP request was not processed because $batch failed");
 			assert.strictEqual(oError.cause, oBatchError);
+			assert.strictEqual(oError.$reported, "~reported~");
 			assert.notOk(bWaitingIsOver);
 		}
 
@@ -2568,6 +2576,7 @@ sap.ui.define([
 			return aRequests0 === aRequests;
 		}
 
+		oBatchError.$reported = "~reported~";
 		aPromises.push(oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
 				{"If-Match" : {/* product 0*/}}, {Name : "foo"})
 			.then(unexpected, assertError));

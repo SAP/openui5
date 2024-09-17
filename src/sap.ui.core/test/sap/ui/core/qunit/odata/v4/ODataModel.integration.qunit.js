@@ -9038,7 +9038,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	// Scenario: "Retry-After" handling: resolve or reject with original error
+	// Scenario: "Retry-After" handling: resolve or reject with original/own error
 	// 1) Preparation, request data for 5 sales orders
 	// 2) 2 parallel deletions answered with 503 "Retry-After", no error, callback waiting
 	// 3) Trigger 3rd deletion, no request sent because pending promise, callback not asked again
@@ -9049,10 +9049,8 @@ sap.ui.define([
 	// 6) Resolving the new "Retry-After" promise repeats the 4th request
 	// 7) Delete again one entity and see that the deletion succeeds
 	// JIRA: CPOUI5MODELS-1743
-[false, true].forEach((bResolve) => {
-	const sTitle = '503, "Retry-After" handling: '
-		+ (bResolve ? "resolve" : "reject with original error");
-	QUnit.test(sTitle, async function (assert) {
+[false, /*reject with own error*/null, true].forEach((bResolve) => {
+	QUnit.test('503, "Retry-After" handling, bResolve=' + bResolve, async function (assert) {
 		let bAnswerWith503 = false;
 		const oModel = this.createSalesOrdersModel({}, {
 			"DELETE SalesOrderList('1')" : {code : 204},
@@ -9159,23 +9157,26 @@ sap.ui.define([
 			this.expectChange("note", ["Note5"]);
 		} else {
 			this.expectChange("note", ["Note1", "Note2", "Note3", "Note4", "Note5"]);
-			this.expectMessages(Array(3).fill({
-				message : "HTTP request was not processed because $batch failed",
-				persistent : true,
-				technical : true,
-				type : "Error"
-			}));
+			if (bResolve === false) {
+				this.expectMessages(Array(3).fill({
+					message : "HTTP request was not processed because $batch failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}));
+			}
 			this.oLogMock.expects("error").withArgs("Failed to delete /SalesOrderList('1')");
 			this.oLogMock.expects("error").withArgs("Failed to delete /SalesOrderList('2')");
 			this.oLogMock.expects("error").withArgs("Failed to delete /SalesOrderList('3')");
 
 			// code under test
-			fnRejectRetryAfter(oRetryAfterError);
+			const oOwnError = new Error("Own Error");
+			fnRejectRetryAfter(bResolve === null ? oOwnError : oRetryAfterError);
 
 			const checkError = (oError) => {
 				assert.strictEqual(oError.message,
 					"HTTP request was not processed because $batch failed");
-				assert.strictEqual(oError.cause, oRetryAfterError);
+				assert.strictEqual(oError.cause, bResolve === null ? oOwnError : oRetryAfterError);
 			};
 
 			await Promise.all([
@@ -9230,9 +9231,9 @@ sap.ui.define([
 
 		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('5')"));
 		assert.strictEqual(aBatchPayloads.length, 0);
-		assert.strictEqual(aContexts[0].isDeleted(), bResolve);
-		assert.strictEqual(aContexts[1].isDeleted(), bResolve);
-		assert.strictEqual(aContexts[2].isDeleted(), bResolve);
+		assert.strictEqual(aContexts[0].isDeleted(), !!bResolve);
+		assert.strictEqual(aContexts[1].isDeleted(), !!bResolve);
+		assert.strictEqual(aContexts[2].isDeleted(), !!bResolve);
 		assert.strictEqual(aContexts[3].isDeleted(), true);
 		assert.strictEqual(aContexts[4].isDeleted(), true);
 		assert.notOk(oModel.hasPendingChanges());
