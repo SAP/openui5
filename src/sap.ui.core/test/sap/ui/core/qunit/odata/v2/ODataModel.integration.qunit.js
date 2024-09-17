@@ -545,6 +545,9 @@ sap.ui.define([
 				// GWSAMPLE_BASIC service with special function imports
 				"/SalesOrderSrv/$metadata"
 					: {source : "qunit/testdata/SalesOrder/metadata.xml"},
+				["/SalesOrderSrv/$metadata?sap-value-list=gwsample_basic.gwsample_basic_Entities%2F"
+					+ "Function_With_ValueList_For_Parameter%2FParameter_With_On_Demand_ValueList"]
+					: {source : "qunit/testdata/SalesOrder/metadata_valuelist_functionimport_parameter.xml"},
 				"/sap/opu/odata/sap/PP_WORKCENTER_GROUP_SRV/$metadata"
 					: {source : "qunit/model/PP_WORKCENTER_GROUP_SRV.metadata.xml"},
 				"/sap/opu/odata/IWBEP/RMTSAMPLEFLIGHT/$metadata"
@@ -25153,6 +25156,36 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				oModel.getMetaModel().loaded(),
 				this.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Allow loading of value lists for function import parameters on demand.
+	// JIRA: CPOUI5MODELS-1746
+	QUnit.test("CPOUI5MODELS-1746: load value list for function import parameter on demand", async function (assert) {
+		const oModel = createSalesOrdersModelSpecialFunctionImports();
+		await this.createView(assert, "", oModel);
+		const oMetaModel = oModel.getMetaModel();
+		await oMetaModel.loaded();
+
+		// code under test - load value list for function import parameter
+		const oFunctionImportParameterMetaContext = oMetaModel.getFunctionImportParameterContext(
+			"Function_With_ValueList_For_Parameter", "Parameter_With_On_Demand_ValueList");
+		const oParameter = oMetaModel.getObject(oFunctionImportParameterMetaContext.getPath());
+
+		assert.strictEqual(oParameter["com.sap.vocabularies.Common.v1.Label"].String,
+			"Parameter with on demand ValueList");
+		assert.strictEqual(oParameter["com.sap.vocabularies.Common.v1.ValueList"], undefined);
+
+		// code under test
+		const oValueHelpPromise = oMetaModel.getODataValueLists(oFunctionImportParameterMetaContext);
+
+		return oValueHelpPromise.then((mValueLists) => {
+			const oParameter = oMetaModel.getObject(oFunctionImportParameterMetaContext.getPath());
+
+			assert.strictEqual(oParameter["com.sap.vocabularies.Common.v1.Label"].String,
+				"Parameter with on demand ValueList");
+			assert.deepEqual(oParameter["com.sap.vocabularies.Common.v1.ValueList"], mValueLists[""]);
 		});
 	});
 });

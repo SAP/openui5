@@ -2975,7 +2975,8 @@ sap.ui.define([
 
 			assert.throws(function () {
 				oMetaModel.getODataValueLists(oContext);
-			}, /Unsupported property context with path \/dataServices\/schema\/0\/entityType\/0/);
+			}, new Error("\"/dataServices/schema/0/entityType/0\" neither references a property nor a function import"
+				+ " parameter"));
 		});
 	});
 

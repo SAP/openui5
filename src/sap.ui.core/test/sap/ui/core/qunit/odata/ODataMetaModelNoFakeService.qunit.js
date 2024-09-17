@@ -438,6 +438,170 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[{
+	oEntityContainerAnnotations: {
+		"~namespace.~entityContainerName": {
+			"~functionName/~propertyName": {
+				"com.sap.vocabularies.Common.v1.Label": "~LabelViaValueList",
+				"com.sap.vocabularies.Common.v1.ValueList": "~oValueList"
+			}
+		}
+	},
+	mValueLists: {"~bar": "~baz"},
+	bWithValueList: true
+}, {
+	oEntityContainerAnnotations: {"~namespace.~entityContainerName": {}},
+	mValueLists: {},
+	bWithValueList: false
+}, {
+	oEntityContainerAnnotations: {},
+	mValueLists: {},
+	bWithValueList: false
+}].forEach((oFixture, i) => {
+	QUnit.test("getODataValueLists: for function import parameter, #" + i, function (assert) {
+		const oParameterContext = {getObject() {}, getPath() {}};
+		const sParameterMetaPath = "/dataServices/schema/1/entityContainer/2/functionImport/3/parameter/4";
+		this.mock(oParameterContext).expects("getPath").withExactArgs().returns(sParameterMetaPath);
+		const oParameter = {
+			"com.sap.vocabularies.Common.v1.Label": "~Label",
+			name: "~propertyName",
+			"sap:value-list": "foo"
+		};
+		this.mock(oParameterContext).expects("getObject").withExactArgs().returns(oParameter);
+		const oODataMetaModelUtilsMock = this.mock(ODataMetaModelUtils);
+		oODataMetaModelUtilsMock.expects("getValueLists").withExactArgs(sinon.match.same(oParameter)).returns({});
+		const oModel = {getObject() {}};
+		const oModelMock = this.mock(oModel);
+		oModelMock.expects("getObject").withExactArgs("/dataServices/schema/1").returns({namespace: "~namespace"});
+		oModelMock.expects("getObject").withExactArgs("/dataServices/schema/1/entityContainer/2")
+			.returns({name: "~entityContainerName"});
+		oModelMock.expects("getObject").withExactArgs("/dataServices/schema/1/entityContainer/2/functionImport/3")
+			.returns({name: "~functionName"});
+		const oMetaModel = {
+			mContext2Promise: {},
+			oModel: oModel,
+			mQName2PendingRequest: {},
+			_sendBundledRequest() {}
+		};
+		const oSendBundleRequestExpectation = this.mock(oMetaModel).expects("_sendBundledRequest").withExactArgs();
+
+		// code under test
+		const oValueListLoadPromise = ODataMetaModel.prototype.getODataValueLists.call(oMetaModel, oParameterContext);
+
+		assert.ok(oValueListLoadPromise instanceof Promise);
+		assert.strictEqual(oMetaModel.mContext2Promise[sParameterMetaPath], oValueListLoadPromise);
+		const oPendingRequest = oMetaModel.mQName2PendingRequest
+			["~namespace.~entityContainerName/~functionName/~propertyName"];
+		assert.ok(typeof oPendingRequest.resolve === "function");
+
+		setTimeout(() => {
+			assert.ok(oSendBundleRequestExpectation.calledOnce);
+			oODataMetaModelUtilsMock.expects("getValueLists").withExactArgs(sinon.match.same(oParameter))
+				.returns(oFixture.mValueLists);
+			const oResponse = {
+				"annotations": {"EntityContainer": oFixture.oEntityContainerAnnotations}
+			};
+
+			// code under test
+			oPendingRequest.resolve(oResponse);
+
+			assert.strictEqual(oParameter["com.sap.vocabularies.Common.v1.Label"], "~Label"); // not overwitten!
+			if (oFixture.bWithValueList) {
+				assert.strictEqual(oParameter["com.sap.vocabularies.Common.v1.ValueList"], "~oValueList");
+				assert.notOk(oMetaModel.mContext2Promise[sParameterMetaPath]);
+			} else {
+				assert.strictEqual(oMetaModel.mContext2Promise[sParameterMetaPath], oValueListLoadPromise);
+			}
+		}, 0);
+
+		return oValueListLoadPromise.then((mValueLists0) => {
+			assert.ok(oFixture.bWithValueList);
+			assert.strictEqual(mValueLists0, oFixture.mValueLists);
+		}, (oError) => {
+			assert.notOk(oFixture.bWithValueList);
+			assert.strictEqual(oError.message, "No value lists returned for " + sParameterMetaPath);
+		});
+	});
+});
+
+	//*********************************************************************************************
+[
+	"foo", // invalid path
+	"/dataServices/schema/0", // path to schema
+	"/dataServices/schema/0/entityType/13", // path to entity type
+	"/dataServices/schema/0/entityType/13/navigationProperty/0", // path to navigation property
+	"/dataServices/schema/0/complexType/13", // path to complex type
+	"/dataServices/schema/0/entityContainer/2", // path to entity container
+	"/dataServices/schema/0/entityContainer/2/functionImport/3" // path to function import
+].forEach((sPath) => {
+	QUnit.test(`getODataValueLists: unsupported context with path "${sPath}"`, function (assert) {
+		const oMetaModel = {mContext2Promise: {}};
+		const oContext = {getPath() {}};
+		this.mock(oContext).expects("getPath").withExactArgs().returns(sPath);
+
+		// code under test
+		assert.throws(() => {
+			ODataMetaModel.prototype.getODataValueLists.call(oMetaModel, oContext);
+		}, new Error("\"" + sPath + "\" neither references a property nor a function import parameter"));
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getFunctionImportParameterContext: success case", function (assert) {
+		const oMetaModel = {
+			createBindingContext() {},
+			getObject() {},
+			getODataFunctionImport() {}
+		};
+		this.mock(oMetaModel).expects("getODataFunctionImport").withExactArgs("~sFunctionName", true)
+			.returns("~sFunctionImportPath");
+		const oFunctionImport = {parameter: "~aFunctionImportParameters"};
+		this.mock(oMetaModel).expects("getObject").withExactArgs("~sFunctionImportPath").returns(oFunctionImport);
+		this.mock(ODataMetaModelUtils).expects("findIndex")
+			.withExactArgs("~aFunctionImportParameters", "~sParameterName")
+			.returns(42);
+		this.mock(oMetaModel).expects("createBindingContext").withExactArgs("~sFunctionImportPath/parameter/42")
+			.returns("~oMetaContext");
+
+		// code under test
+		assert.strictEqual(
+			ODataMetaModel.prototype.getFunctionImportParameterContext.call(oMetaModel, "~sFunctionName",
+				"~sParameterName"),
+			"~oMetaContext");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFunctionImportParameterContext: function not found", function (assert) {
+		const oMetaModel = {getODataFunctionImport() {}};
+		this.mock(oMetaModel).expects("getODataFunctionImport").withExactArgs("~sFunctionName", true)
+			.returns(undefined);
+
+		// code under test
+		assert.throws(() => {
+			ODataMetaModel.prototype.getFunctionImportParameterContext.call(oMetaModel, "~sFunctionName",
+				"~sParameterName");
+		}, new Error('Function import "~sFunctionName" not found'));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFunctionImportParameterContext: function import parameter not found", function (assert) {
+		const oMetaModel = {getObject() {}, getODataFunctionImport() {}};
+		this.mock(oMetaModel).expects("getODataFunctionImport").withExactArgs("~sFunctionName", true)
+			.returns("~sFunctionImportPath");
+		const oFunctionImport = {parameter: "~aFunctionImportParameters"};
+		this.mock(oMetaModel).expects("getObject").withExactArgs("~sFunctionImportPath").returns(oFunctionImport);
+		this.mock(ODataMetaModelUtils).expects("findIndex")
+			.withExactArgs("~aFunctionImportParameters", "~sParameterName")
+			.returns(-1);
+
+		// code under test
+		assert.throws(() => {
+			ODataMetaModel.prototype.getFunctionImportParameterContext.call(oMetaModel, "~sFunctionName",
+				"~sParameterName");
+		}, new Error('Parameter "~sParameterName" not found for function import "~sFunctionName"'));
+	});
+
+	//*********************************************************************************************
 [true, false].forEach((bWithSharedModel) => {
 	[true, false].forEach((bWithInternalModel) => {
 	const sTitle = "destroy: " + (bWithSharedModel ? "with" : "without") + " shared model; "
