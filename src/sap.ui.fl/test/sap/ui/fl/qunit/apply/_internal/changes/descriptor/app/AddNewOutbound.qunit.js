@@ -29,7 +29,9 @@ sap.ui.define([
 			};
 
 			this.oChangeLayerCustomer = new AppDescriptorChange({
-				changeType: "appdescr_app_addNewOutbound",
+				flexObjectMetadata: {
+					changeType: "appdescr_app_addNewOutbound"
+				},
 				layer: Layer.CUSTOMER,
 				content: {
 					outbound: {
@@ -85,11 +87,13 @@ sap.ui.define([
 			assert.ok(oNewManifest["sap.app"].crossNavigation.outbounds["customer.contactCreate"], "new outbound is added correctly");
 		});
 
-		QUnit.test("when calling '_applyChange' adding a new outbound in a manifest with empty inboud id", function(assert) {
+		QUnit.test("when calling '_applyChange' adding a new outbound in a manifest with empty outbound id", function(assert) {
 			assert.throws(function() {
 				// Empty outbound id
 				this.oChangeEmptyOutboundId = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewOutbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewOutbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						outbound: {
@@ -111,7 +115,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// Empty outbound
 				this.oChangeNoOutbound = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewOutbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewOutbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						outbound: {}
@@ -126,7 +132,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// Already existing outbound
 				this.oChangeAlreadyExistingOutbound = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewOutbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewOutbound"
+					},
 					layer: Layer.VENDOR,
 					content: {
 						outbound: {
@@ -148,7 +156,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// Layer check
 				this.oChangeLayerCustomerVendorNoPrefix = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewOutbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewOutbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						outbound: {
@@ -170,7 +180,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// More than one outbound
 				this.oChangeMoreThenOneOutbound = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewOutbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewOutbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						outbound: {
@@ -198,7 +210,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// More than one objects under change object content
 				this.oChangeMoreThenOneObjectUnderContent = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewOutbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewOutbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						outbound: {
@@ -221,7 +235,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// No object under change object content
 				this.oChangeNoObjectUnderContent = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewOutbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewOutbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {	}
 				});
@@ -234,7 +250,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// Not supported object under change object content
 				this.oChangeNotSupportedObjectUnderContent = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewOutbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewOutbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						notSupportedObject: {
@@ -256,7 +274,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// Mandatory property missing
 				this.oChangeMandatoryParameterMissing = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewOutbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewOutbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						outbound: {
@@ -277,7 +297,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// Having not supported properties
 				this.oChangeNotHavingSupportedProperties = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewOutbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewOutbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						outbound: {
@@ -301,7 +323,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// Property Value does not match to regular expression
 				this.oChangeRegExNotMatchForSemanticObject = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewOutbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewOutbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						outbound: {
@@ -322,7 +346,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// Property Value does not match to regular expression
 				this.oChangeRegExNotMatchForAction = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewOutbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewOutbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						outbound: {
@@ -343,7 +369,9 @@ sap.ui.define([
 			assert.throws(function() {
 				// Property Value does not match to regular expression
 				this.oChangeRegExNotMatchForAdditionalParameters = new AppDescriptorChange({
-					changeType: "appdescr_app_addNewOutbound",
+					flexObjectMetadata: {
+						changeType: "appdescr_app_addNewOutbound"
+					},
 					layer: Layer.CUSTOMER,
 					content: {
 						outbound: {
