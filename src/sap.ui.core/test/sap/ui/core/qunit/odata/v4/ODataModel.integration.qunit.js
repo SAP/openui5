@@ -9077,11 +9077,19 @@ sap.ui.define([
 			}]
 		});
 		oModel.$keepSend = true; // do not stub sendBatch/-Request
+		let fnAjaxSpy;
 		let fnRejectRetryAfter;
 		let fnResolveRetryAfter;
 		let oRetryAfterError;
 		let iCallbackCount = 0;
 		oModel.setRetryAfterHandler((oError) => {
+			if (fnAjaxSpy) {
+				assert.strictEqual(fnAjaxSpy.callCount, 2, "both requests have been sent");
+				assert.ok(fnAjaxSpy.args[0][1].data.includes("DELETE SalesOrderList('1')"));
+				assert.ok(fnAjaxSpy.args[1][1].data.includes("DELETE SalesOrderList('2')"));
+				fnAjaxSpy.restore();
+				fnAjaxSpy = undefined;
+			}
 			iCallbackCount += 1;
 			assert.ok(oError instanceof Error);
 			assert.strictEqual(oError.message, "DB migration in progress");
@@ -9108,6 +9116,7 @@ sap.ui.define([
 		bAnswerWith503 = true;
 		const aBatchPayloads = [];
 		TestUtils.onRequest((sPayload) => aBatchPayloads.push(sPayload));
+		fnAjaxSpy = this.spy(jQuery, "ajax");
 		this.expectChange("note", ["Note3", "Note4", "Note5"]);
 
 		// code under test
