@@ -37,9 +37,18 @@ sap.ui.define([
 		 */
 		processDemoAppsData: function() {
 			libraryData.getDemoAppsData().then(function (aDemoApps) {
-				aDemoApps = this.flattenDemoAppsCategories(aDemoApps);
+				var aFlattenedData = this.flattenDemoAppsCategories(aDemoApps),
+					aFlatDemoApps = [];
 
-				var oModel = new JSONModel(aDemoApps);
+				aFlattenedData.demoAppsByCategory.forEach(function(category) {
+					category.rows.forEach(function(item) {
+						aFlatDemoApps.push(item);
+					});
+				});
+
+				aFlattenedData.demoApps = aFlatDemoApps;
+
+				var oModel = new JSONModel(aFlattenedData);
 				this.setModel(oModel);
 
 				this.addCategoryClassToGridItems("sapUiDemoKitDemoAppsMain");
@@ -104,13 +113,13 @@ sap.ui.define([
 		 * @param {object} oEvent - The event object.
 		 */
 		onDownloadPress: function (oEvent) {
-			var oListItem = oEvent.getSource().getParent();
+			var oItem = oEvent.getSource().getParent();
 
-			fetch(oListItem.data("config"))
+			fetch(oItem.data("config"))
 				.then(function (response) {
 					return response.json();
 				})
-				.then(this.processFiles.bind(this, oListItem))
+				.then(this.processFiles.bind(this, oItem))
 				.catch(function (error) {
 					Log.error('Error: ', error);
 					this.handleError('An error occurred: ' + error.message);
@@ -118,12 +127,12 @@ sap.ui.define([
 		},
 
 		/**
-		 * Processes the files for the list item.
+		 * Processes the files for the item.
 		 *
-		 * @param {object} oListItem - The list item.
+		 * @param {object} oItem - The item.
 		 * @param {object} oConfig - The app configuration.
 		 */
-		processFiles: function (oListItem, oConfig) {
+		processFiles: function (oItem, oConfig) {
 			var aFails = [],
 				aPromises = [],
 				oZipFile = new JSZip(),
@@ -135,7 +144,7 @@ sap.ui.define([
 			}.bind(this));
 
 			this.addLicenseFileToZip(aPromises, oZipFile);
-			this.handlePromisesCompletion(aPromises, aFails, oZipFile, oListItem);
+			this.handlePromisesCompletion(aPromises, aFails, oZipFile, oItem);
 		},
 
 		/**
@@ -189,10 +198,12 @@ sap.ui.define([
 		 * @param {Array} aPromises - The array of promises.
 		 * @param {Array} aFails - The array of failed promises.
 		 * @param {object} oZipFile - The zip file.
-		 * @param {object} oListItem - The list item.
+		 * @param {object} oItem - The item.
 		 */
-		handlePromisesCompletion: function (aPromises, aFails, oZipFile, oListItem) {
+		handlePromisesCompletion: function (aPromises, aFails, oZipFile, oItem) {
 			Promise.all(aPromises).then(function () {
+				var sLabel;
+
 				if (aFails.length) {
 					var sCompleteErrorMessage = aFails.reduce(function (sErrorMessage, sError) {
 						return sErrorMessage + sError + "\n";
@@ -200,10 +211,12 @@ sap.ui.define([
 					this.handleError(sCompleteErrorMessage);
 				}
 
-				MessageToast.show("Downloading for app \"" + oListItem.getLabel() + "\" has been started");
+				sLabel = (typeof oItem.getLabel === 'function') ? oItem.getLabel() : oItem.data("label");
+
+				MessageToast.show("Downloading for app \"" + sLabel + "\" has been started");
 
 				var oContent = oZipFile.generate({ type: "blob" });
-				this.createArchive(oContent, oListItem.getLabel());
+				this.createArchive(oContent, sLabel);
 			}.bind(this));
 		},
 
