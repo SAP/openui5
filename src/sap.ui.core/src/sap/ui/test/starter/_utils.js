@@ -305,6 +305,10 @@ sap.ui.define([
 				throw new TypeError("Invalid test suite name");
 			}
 
+			// Register resource roots to enable resource root mapping
+			// of the test folder to test-resources for applications
+			// in order to use the testStarter
+			registerResourceRoots();
 			sap.ui.require([sTestSuite], function(oSuiteConfig) {
 				mConfigLoaded[sTestSuite] = pLoaded;
 				resolve( mergeWithDefaults(oSuiteConfig, sTestSuite) );
@@ -315,7 +319,7 @@ sap.ui.define([
 		return pLoaded;
 	}
 
-	function registerResourceRoots(oScriptTag) {
+	function registerResourceRoots() {
 		const sResourceRoots = getAttribute("data-sap-ui-resource-roots");
 		if (!sResourceRoots) {
 			return;
@@ -341,8 +345,7 @@ sap.ui.define([
 		getAttribute: getAttribute,
 		getDefaultSuiteName: getDefaultSuiteName,
 		getSuiteConfig: getSuiteConfig,
-		whenDOMReady: whenDOMReady,
-		registerResourceRoots: registerResourceRoots
+		whenDOMReady: whenDOMReady
 	};
 
 });
