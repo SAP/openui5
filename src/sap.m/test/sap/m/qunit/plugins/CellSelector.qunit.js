@@ -23,8 +23,9 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/table/Table",
 	"sap/ui/table/rowmodes/Fixed",
-	"sap/ui/table/plugins/MultiSelectionPlugin"
-], function (Dialog, Text, MTable, MColumn, ColumnListItem, CellSelector, CustomData, MockServer, DragDropInfo, DropInfo, KeyCodes, MDCTable, MDCColumn, JSONModel, ODataModel, qutils, nextUIUpdate, GridColumn, GridTable, GridFixedRowMode, MultiSelectionPlugin) {
+	"sap/ui/table/plugins/MultiSelectionPlugin",
+	"sap/ui/model/Sorter"
+], function (Dialog, Text, MTable, MColumn, ColumnListItem, CellSelector, CustomData, MockServer, DragDropInfo, DropInfo, KeyCodes, MDCTable, MDCColumn, JSONModel, ODataModel, qutils, nextUIUpdate, GridColumn, GridTable, GridFixedRowMode, MultiSelectionPlugin, Sorter) {
 	"use strict";
 
 	const sServiceURI = "/service/";
@@ -637,6 +638,45 @@ sap.ui.define([
 		this.oCellSelector.removeSelection();
 		assert.equal(fnSelectionChangeSpy.callCount, 0);
 		fnSelectionChangeSpy.reset();
+	});
+
+	QUnit.test("getSelectedRowContexts with grouping", async function (assert) {
+		const oTable = this.oTable;
+		const oCellSelector = this.oCellSelector;
+		const oBinding = oTable.getBinding("items");
+		const oEvent = {target: null, preventDefault: () => {}, stopImmediatePropagation: () => {}};
+
+		// Prepare Grouping
+		const aGroups = [];
+		aGroups.push(new Sorter("Category", true, function(oContext) {
+			const sName = oContext.getProperty("Category");
+			return {
+				key: sName,
+				text: sName
+			};
+		}));
+		oBinding.sort(aGroups);
+
+		// Testing
+		const nextUpdateFinishedEvent = new Promise((fnResolve) => {
+			this.oTable.attachEventOnce("updateFinished", fnResolve);
+		});
+		await nextUIUpdate();
+		await nextUpdateFinishedEvent;
+
+		let oCell = getCell(oTable, 1, 0);
+		qutils.triggerEvent("mousedown", oCell, { button: 0, ctrlKey: true }); // select first cell of first row with left-click/primary button
+
+		assert.deepEqual(oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}}, "Cell has been selected");
+		assert.deepEqual(oCellSelector.getSelectedRowContexts(), [oBinding.getContextByIndex(0)], "Selected row context is correct");
+
+		oCell = getCell(oTable, 4, 1);
+		oEvent.target = oCell;
+		oCellSelector._onmousemove(oEvent);
+		assert.deepEqual(oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 4, colIndex: 1}}, "Cells has been selected");
+		assert.deepEqual(oCellSelector.getSelectedRowContexts(), [oBinding.getContextByIndex(0), oBinding.getContextByIndex(1), oBinding.getContextByIndex(2)], "Selected row context is correct");
+
+		qutils.triggerEvent("mouseup", oCell);
 	});
 
 	QUnit.test("keyboard remove selection", function (assert) {

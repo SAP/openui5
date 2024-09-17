@@ -420,7 +420,8 @@ sap.ui.define([
 				return;
 			}
 
-			oTable._iSourceRowIndex = oRow.getIndex(); // To indicate that the selection was changed by user interaction. TODO: Move to plugin and legacy multi selection
+			// To indicate that the selection was changed by user interaction. TODO: Move to plugin and legacy multi selection
+			oTable._iSourceRowIndex = oRow.getIndex();
 
 			if (fnDoSelect) {
 				fnDoSelect(oRow);
@@ -1381,7 +1382,7 @@ sap.ui.define([
 		/**
 		 * Gets the first interactive element in the data cells of a row.
 		 *
-		 * @param {sap.ui.table.Row|sap.ui.table.CreationRow} oRow
+		 * @param {sap.ui.table.Row|sap.ui.table.CreationRow} oRow Row instance that might contain interactive elements
 		 * @param {boolean} [bRowActionCell=false] Whether the row action cell is taken into consideration
 		 * @return {HTMLElement|null} The first interactive DOM element
 		 */

@@ -50,7 +50,7 @@ sap.ui.define([
 			sandbox.stub(Processor, "applyExtensionPoint");
 
 			var sXmlString =
-				`<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">` +
+				`<mvc:View xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">` +
 					`<HBox id="hbox">` +
 						`<items>` +
 							`<Label id="label1" />` +

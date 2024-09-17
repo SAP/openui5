@@ -4,41 +4,36 @@
 
 // Provides control sap.ui.table.AnalyticalTable.
 sap.ui.define([
-	'./AnalyticalColumn',
-	'./Column',
-	'./Table',
-	'./TreeTable',
+	"./AnalyticalColumn",
+	"./Column",
+	"./Table",
+	"./TreeTable",
 	"./TableRenderer",
-	'./library',
+	"./menus/GroupHeaderContextMenuAdapter",
 	"sap/ui/core/Element",
-	'sap/ui/model/analytics/ODataModelAdapter',
-	'sap/ui/unified/MenuItem',
-	'./utils/TableUtils',
+	"sap/ui/model/analytics/ODataModelAdapter",
+	"./utils/TableUtils",
 	"./plugins/BindingSelection",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/model/controlhelper/TreeBindingProxy",
-	"sap/ui/core/library"
+	"sap/ui/model/controlhelper/TreeBindingProxy"
 ], function(
 	AnalyticalColumn,
 	Column,
 	Table,
 	TreeTable,
 	TableRenderer,
-	library,
+	GroupHeaderContextMenuAdapter,
 	Element,
 	ODataModelAdapter,
-	MenuItem,
 	TableUtils,
 	BindingSelectionPlugin,
 	Log,
 	jQuery,
-	TreeBindingProxy,
-	CoreLibrary
+	TreeBindingProxy
 ) {
 	"use strict";
 
-	const GroupEventType = library.GroupEventType;
 	const _private = TableUtils.createWeakMapFacade();
 
 	/**
@@ -64,7 +59,13 @@ sap.ui.define([
 	const AnalyticalTable = Table.extend("sap.ui.table.AnalyticalTable", /** @lends sap.ui.table.AnalyticalTable.prototype */ {metadata: {
 
 		library: "sap.ui.table",
-		properties: {},
+		properties: {
+			/**
+			 * If set to <code>true</code>, the full set of <code>MenuItem</code> instances shown in to the group header menu. The value
+			 * <code>false</code> means that only a reduced set of group header menu items is shown.
+			 */
+			extendedGroupHeaderMenu: {type: "boolean", group: "Behavior", defaultValue: true, visibility: "hidden"}
+		},
 		events: {
 			/**
 			 * Fired when the table is grouped.
@@ -122,7 +123,7 @@ sap.ui.define([
 		});
 		this._aGroupedColumns = [];
 		this._bSuspendUpdateAnalyticalInfo = false;
-		this._mGroupHeaderMenuItems = null;
+		this._oGroupHeaderMenuAdapter = new GroupHeaderContextMenuAdapter(this);
 
 		TableUtils.Grouping.setToDefaultGroupMode(this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.UpdateState, updateRowState, this);
@@ -135,13 +136,14 @@ sap.ui.define([
 
 	AnalyticalTable.prototype.exit = function() {
 		Table.prototype.exit.apply(this, arguments);
-		this._cleanupGroupHeaderMenuItems();
+		this._oGroupHeaderMenuAdapter.destroy();
 	};
 
 	AnalyticalTable.prototype._adaptLocalization = function(bRtlChanged, bLangChanged) {
 		return Table.prototype._adaptLocalization.apply(this, arguments).then(function() {
 			if (bLangChanged) {
-				this._cleanupGroupHeaderMenuItems();
+				this._oGroupHeaderMenuAdapter.destroy();
+				this._oGroupHeaderMenuAdapter = new GroupHeaderContextMenuAdapter(this);
 			}
 		}.bind(this));
 	};
@@ -323,237 +325,13 @@ sap.ui.define([
 		const oRow = oCellInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL) ? this.getRows()[oCellInfo.rowIndex] : null;
 
 		if (!oRow || !oRow.isGroupHeader()) {
-			this._removeGroupHeaderMenuItems(oMenu);
+			this._oGroupHeaderMenuAdapter.removeItemsFrom(oMenu);
 			return;
 		}
 
 		this._iGroupedLevel = oRow.getLevel();
-		this._addGroupHeaderMenuItems(oMenu);
+		this._oGroupHeaderMenuAdapter.addItemsTo(oMenu, this.getProperty("extendedGroupHeaderMenu"));
 	}
-
-	AnalyticalTable.prototype._addGroupHeaderMenuItems = function(oMenu) {
-		const that = this;
-
-		function getGroupColumnInfo() {
-			const iIndex = that._iGroupedLevel - 1;
-
-			if (that._aGroupedColumns[iIndex]) {
-				const oGroupedColumn = that.getColumns().filter(function(oColumn) {
-					return that._aGroupedColumns[iIndex] === oColumn.getId();
-				})[0];
-
-				return {
-					column: oGroupedColumn,
-					index: iIndex
-				};
-			} else {
-				return undefined;
-			}
-		}
-
-		if (!this._mGroupHeaderMenuItems) {
-			this._mGroupHeaderMenuItems = {};
-		}
-
-		if (!this._mGroupHeaderMenuItems["visibility"]) {
-			this._mGroupHeaderMenuItems["visibility"] = new MenuItem({
-				text: TableUtils.getResourceText("TBL_SHOW_COLUMN"),
-				select: function() {
-					const oGroupColumnInfo = getGroupColumnInfo();
-
-					if (oGroupColumnInfo) {
-						const oColumn = oGroupColumnInfo.column;
-						const bShowIfGrouped = oColumn.getShowIfGrouped();
-						oColumn.setShowIfGrouped(!bShowIfGrouped);
-
-						that.fireGroup({column: oColumn, groupedColumns: oColumn.getParent()._aGroupedColumns, type: (!bShowIfGrouped ? GroupEventType.showGroupedColumn : GroupEventType.hideGroupedColumn)});
-					}
-				}
-			});
-		}
-		oMenu.addItem(this._mGroupHeaderMenuItems["visibility"]);
-
-		if (!this._mGroupHeaderMenuItems["ungroup"]) {
-			this._mGroupHeaderMenuItems["ungroup"] = new MenuItem({
-				text: TableUtils.getResourceText("TBL_UNGROUP"),
-				select: function() {
-					const oGroupColumnInfo = getGroupColumnInfo();
-
-					if (oGroupColumnInfo && oGroupColumnInfo.column) {
-						const oUngroupedColumn = oGroupColumnInfo.column;
-
-						oUngroupedColumn.setGrouped(false);
-						that.fireGroup({column: oUngroupedColumn, groupedColumns: that._aGroupedColumns, type: GroupEventType.ungroup});
-					}
-				}
-			});
-		}
-		oMenu.addItem(this._mGroupHeaderMenuItems["ungroup"]);
-
-		if (!this._mGroupHeaderMenuItems["ungroupall"]) {
-			this._mGroupHeaderMenuItems["ungroupall"] = new MenuItem({
-				text: TableUtils.getResourceText("TBL_UNGROUP_ALL"),
-				select: function() {
-					const aColumns = that.getColumns();
-
-					that.suspendUpdateAnalyticalInfo();
-
-					for (let i = 0; i < aColumns.length; i++) {
-						aColumns[i].setGrouped(false);
-					}
-
-					that.resumeUpdateAnalyticalInfo();
-					that.fireGroup({column: undefined, groupedColumns: [], type: GroupEventType.ungroupAll});
-				}
-			});
-		}
-		oMenu.addItem(this._mGroupHeaderMenuItems["ungroupall"]);
-
-		if (!this._mGroupHeaderMenuItems["moveup"]) {
-			this._mGroupHeaderMenuItems["moveup"] = new MenuItem({
-				text: TableUtils.getResourceText("TBL_MOVE_UP"),
-				select: function() {
-					const oGroupColumnInfo = getGroupColumnInfo();
-
-					if (oGroupColumnInfo) {
-						const oColumn = oGroupColumnInfo.column;
-						const iIndex = that._aGroupedColumns.indexOf(oColumn.getId());
-						if (iIndex > 0) {
-							that._aGroupedColumns[iIndex] = that._aGroupedColumns.splice(iIndex - 1, 1, that._aGroupedColumns[iIndex])[0];
-							that.updateAnalyticalInfo();
-							that.fireGroup({column: oColumn, groupedColumns: oColumn.getParent()._aGroupedColumns, type: GroupEventType.moveUp});
-						}
-					}
-				},
-				icon: "sap-icon://arrow-top"
-			});
-		}
-		oMenu.addItem(this._mGroupHeaderMenuItems["moveup"]);
-
-		if (!this._mGroupHeaderMenuItems["movedown"]) {
-			this._mGroupHeaderMenuItems["movedown"] = new MenuItem({
-				text: TableUtils.getResourceText("TBL_MOVE_DOWN"),
-				select: function() {
-					const oGroupColumnInfo = getGroupColumnInfo();
-
-					if (oGroupColumnInfo) {
-						const oColumn = oGroupColumnInfo.column;
-						const iIndex = that._aGroupedColumns.indexOf(oColumn.getId());
-						if (iIndex < that._aGroupedColumns.length) {
-							that._aGroupedColumns[iIndex] = that._aGroupedColumns.splice(iIndex + 1, 1, that._aGroupedColumns[iIndex])[0];
-							that.updateAnalyticalInfo();
-							that.fireGroup({column: oColumn, groupedColumns: oColumn.getParent()._aGroupedColumns, type: GroupEventType.moveDown});
-						}
-					}
-				},
-				icon: "sap-icon://arrow-bottom"
-			});
-		}
-		oMenu.addItem(this._mGroupHeaderMenuItems["movedown"]);
-
-		if (!this._mGroupHeaderMenuItems["sortasc"]) {
-			this._mGroupHeaderMenuItems["sortasc"] = new MenuItem({
-				text: TableUtils.getResourceText("TBL_SORT_ASC"),
-				select: function() {
-					getGroupColumnInfo()?.column._sort(CoreLibrary.SortOrder.Ascending);
-				},
-				icon: "sap-icon://up"
-			});
-		}
-		oMenu.addItem(this._mGroupHeaderMenuItems["sortasc"]);
-
-		if (!this._mGroupHeaderMenuItems["sortdesc"]) {
-			this._mGroupHeaderMenuItems["sortdesc"] = new MenuItem({
-				text: TableUtils.getResourceText("TBL_SORT_DESC"),
-				select: function() {
-					getGroupColumnInfo()?.column._sort(CoreLibrary.SortOrder.Descending);
-				},
-				icon: "sap-icon://down"
-			});
-		}
-		oMenu.addItem(this._mGroupHeaderMenuItems["sortdesc"]);
-
-		if (!this._mGroupHeaderMenuItems["collapse"]) {
-			this._mGroupHeaderMenuItems["collapse"] = new MenuItem({
-				text: TableUtils.getResourceText("TBL_COLLAPSE_LEVEL"),
-				select: function() {
-					// Why -1? Because the "Collapse Level" Menu Entry should collapse TO the given level - 1
-					// So collapsing level 1 means actually all nodes up TO level 0 will be collapsed.
-					// Potential negative values are handled by the binding.
-					that.getBinding().collapseToLevel(that._iGroupedLevel - 1);
-					that.setFirstVisibleRow(0); //scroll to top after collapsing (so no rows vanish)
-					that._getSelectionPlugin().clearSelection();
-				}
-			});
-		}
-		oMenu.addItem(this._mGroupHeaderMenuItems["collapse"]);
-
-		if (!this._mGroupHeaderMenuItems["collapseall"]) {
-			this._mGroupHeaderMenuItems["collapseall"] = new MenuItem({
-				text: TableUtils.getResourceText("TBL_COLLAPSE_ALL"),
-				select: function() {
-					that.getBinding().collapseToLevel(0);
-					that.setFirstVisibleRow(0); //scroll to top after collapsing (so no rows vanish)
-					that._getSelectionPlugin().clearSelection();
-				}
-			});
-		}
-		oMenu.addItem(this._mGroupHeaderMenuItems["collapseall"]);
-
-		if (!this._mGroupHeaderMenuItems["expand"]) {
-			this._mGroupHeaderMenuItems["expand"] = new MenuItem({
-				text: TableUtils.getResourceText("TBL_EXPAND_LEVEL"),
-				select: function() {
-					that.getBinding().expandToLevel(that._iGroupedLevel);
-					that.setFirstVisibleRow(0);
-					that._getSelectionPlugin().clearSelection();
-				}
-			});
-		}
-		oMenu.addItem(this._mGroupHeaderMenuItems["expand"]);
-
-		if (!this._mGroupHeaderMenuItems["expandall"]) {
-			this._mGroupHeaderMenuItems["expandall"] = new MenuItem({
-				text: TableUtils.getResourceText("TBL_EXPAND_ALL"),
-				select: function() {
-					that.expandAll();
-				}
-			});
-		}
-		oMenu.addItem(this._mGroupHeaderMenuItems["expandall"]);
-
-		const oGroupColumnInfo = getGroupColumnInfo();
-		if (oGroupColumnInfo) {
-			const oColumn = oGroupColumnInfo.column;
-			if (oColumn.getShowIfGrouped()) {
-				this._mGroupHeaderMenuItems["visibility"].setText(TableUtils.getResourceText("TBL_HIDE_COLUMN"));
-			} else {
-				this._mGroupHeaderMenuItems["visibility"].setText(TableUtils.getResourceText("TBL_SHOW_COLUMN"));
-			}
-			this._mGroupHeaderMenuItems["moveup"].setEnabled(oGroupColumnInfo.index > 0);
-			this._mGroupHeaderMenuItems["movedown"].setEnabled(oGroupColumnInfo.index < this._aGroupedColumns.length - 1);
-		} else {
-			this._mGroupHeaderMenuItems["moveup"].setEnabled(true);
-			this._mGroupHeaderMenuItems["movedown"].setEnabled(true);
-		}
-	};
-
-	AnalyticalTable.prototype._removeGroupHeaderMenuItems = function(oMenu) {
-		if (!this._mGroupHeaderMenuItems) {
-			return;
-		}
-
-		for (const sItemKey in this._mGroupHeaderMenuItems) {
-			oMenu.removeItem(this._mGroupHeaderMenuItems[sItemKey]);
-		}
-	};
-
-	AnalyticalTable.prototype._cleanupGroupHeaderMenuItems = function() {
-		for (const sItemKey in this._mGroupHeaderMenuItems) {
-			this._mGroupHeaderMenuItems[sItemKey].destroy();
-		}
-		this._mGroupHeaderMenuItems = null;
-	};
 
 	/**
 	 * @inheritDoc

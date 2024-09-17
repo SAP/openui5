@@ -21,7 +21,30 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/unified/Currency",
 	"sap/ui/core/date/UI5Date"
-], function(deepExtend, Button, CheckBox, ComboBox, DatePicker, Input, Label, Link, MultiComboBox, ObjectStatus, Select, Text, Toolbar, Icon, Item, coreLibrary, JSONModel, Column, tableLibrary, Table, Currency, UI5Date) {
+], function(
+	deepExtend,
+	Button,
+	CheckBox,
+	ComboBox,
+	DatePicker,
+	Input,
+	Label,
+	Link,
+	MultiComboBox,
+	ObjectStatus,
+	Select,
+	Text,
+	Toolbar,
+	Icon,
+	Item,
+	coreLibrary,
+	JSONModel,
+	Column,
+	tableLibrary,
+	Table,
+	Currency,
+	UI5Date
+) {
 	"use strict";
 
 	const HorizontalAlign = coreLibrary.HorizontalAlign;
@@ -29,6 +52,7 @@ sap.ui.define([
 
 	// TABLE TEST DATA
 	let aData = [
+		/* eslint-disable max-len */
 		{lastName: "Dente", name: "Alfred", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-05-06", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
 		{lastName: "Friese", name: "Andrew", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 2, money: 10.45, birthday: "1975-01-01", currency: "EUR", objStatusText: "Name partly OK Text", objStatusTitle: "Name partly OK Title", objStatusState: "Warning"},
 		{lastName: "Mann", name: "Sarah", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", src: "images/Person.png", gender: "female", rating: 3, money: 1345.212, birthday: "1987-04-01", currency: "EUR", objStatusText: "Name not OK Text", objStatusTitle: "Name not OK Title", objStatusState: "Error"},
@@ -49,6 +73,7 @@ sap.ui.define([
 		{lastName: "O'Lantern", name: "Jacob", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 5.67, birthday: "1968-06-09", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
 		{lastName: "Tress", name: "Matthew", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-01-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
 		{lastName: "Summer", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 5.67, birthday: "1968-01-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"}
+		/* eslint-enable max-len */
 	];
 
 	// enhance test data
@@ -81,7 +106,13 @@ sap.ui.define([
 	let oControl;let oColumn;
 	// sap.m.Text
 	oControl = new Text({text: "{lastName}"});
-	oColumn = new Column({label: new Label({text: "Alfa"}), template: oControl, sortProperty: "lastName", filterProperty: "lastName", width: "120px"});
+	oColumn = new Column({
+		label: new Label({text: "Alfa"}),
+		template: oControl,
+		sortProperty: "lastName",
+		filterProperty: "lastName",
+		width: "120px"
+	});
 	oTable.addColumn(oColumn);
 
 	// sap.m.Label
@@ -91,7 +122,13 @@ sap.ui.define([
 
 	// sap.m.ObjectStatus
 	oControl = new ObjectStatus({text: "{objStatusText}", state: "{objStatusState}"});
-	oColumn = new Column({label: new Label({text: "Charlie"}), template: oControl, sortProperty: "objStatusState", filterProperty: "objStatusState", width: "200px"});
+	oColumn = new Column({
+		label: new Label({text: "Charlie"}),
+		template: oControl,
+		sortProperty: "objStatusState",
+		filterProperty: "objStatusState",
+		width: "200px"
+	});
 	oTable.addColumn(oColumn);
 
 	// sap.ui.core.Icon

@@ -156,6 +156,8 @@ TableRenderer.renderColumns = function(rm, oTable, sType) {
 				rm.openEnd();
 				rm.renderControl(oTable._getSelectAllCheckbox());
 			}
+		} else {
+			rm.openEnd();
 		}
 		rm.close(sCellTag);
 		iIndex++;

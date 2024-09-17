@@ -57,7 +57,9 @@ sap.ui.define([
 		properties: {
 
 			/**
-			 * Defines the primary model property which is used inside the Column. In case of the analytical extension this means the property which is grouped by for dimensions or the property which is summed for measures.
+			 * Defines the primary model property which is used inside the Column. In case of the
+			 * analytical extension this means the property which is grouped by for dimensions or
+			 * the property which is summed for measures.
 			 */
 			leadingProperty: {type: "string", group: "Misc", defaultValue: null},
 
@@ -67,12 +69,15 @@ sap.ui.define([
 			summed: {type: "boolean", group: "Misc", defaultValue: false},
 
 			/**
-			 * Specifies that the dimension referred to by the column shall be included in the granularity of the data result. It allows a finer distinction between a visible/grouped/(included)inResult column.
+			 * Specifies that the dimension referred to by the column shall be included in the
+			 * granularity of the data result. It allows a finer distinction between a
+			 * visible/grouped/(included)inResult column.
 			 */
 			inResult: {type: "boolean", group: "Misc", defaultValue: false},
 
 			/**
-			 * Specifies whether the column is displayed within the table even if it is grouped or not. A grouped column has the same value for every rows within the group.
+			 * Specifies whether the column is displayed within the table even if it is grouped or
+			 * not. A grouped column has the same value for every rows within the group.
 			 */
 			showIfGrouped: {type: "boolean", group: "Appearance", defaultValue: false},
 
@@ -280,7 +285,7 @@ sap.ui.define([
 	 * - The filter property must be a property of the bound collection however it may differ from the leading property
 	 * - The analytical column must be a child of an AnalyticalTable
 	 *
-	 * @returns {boolean}
+	 * @returns {boolean} Whether the column can be filtered by the menu
 	 */
 	AnalyticalColumn.prototype.isFilterableByMenu = function() {
 		const sFilterProperty = this.getFilterProperty();
@@ -296,11 +301,14 @@ sap.ui.define([
 			// metadata must be evaluated which can only be done when the collection is known and the metadata is loaded
 			// this is usually the case when a binding exists.
 			if (oBinding) {
-				// The OData4SAP specification defines in section 3.3.3.2.2.3 how a filter condition on a measure property has to be used for data selection at runtime:
-				// “Conditions on measure properties refer to the aggregated measure value based on the selected dimensions”
-				// Although the generic OData providers (BW, SADL) do not support filtering measures, there may be specialized implementations that do support it.
-				// Conclusion for a fix therefore is to make sure that the AnalyticalTable solely checks sap:filterable=”false” for providing the filter function.
-				// Check for measure is hence removed. For more details, see BCP: 1770355530
+				/*
+				 * The OData4SAP specification defines in section 3.3.3.2.2.3 how a filter condition on a measure property has to be used
+				 * for data selection at runtime: “Conditions on measure properties refer to the aggregated measure value based on the
+				 * selected dimensions” Although the generic OData providers (BW, SADL) do not support filtering measures, there may be
+				 * specialized implementations that do support it. Conclusion for a fix therefore is to make sure that the AnalyticalTable
+				 * solely checks sap:filterable=”false” for providing the filter function. Check for measure is hence removed. For more
+				 * details, see BCP: 1770355530
+				 */
 				if (oBinding.getFilterablePropertyNames().indexOf(sFilterProperty) > -1 &&
 					oBinding.getProperty(sFilterProperty)) {
 					return true;

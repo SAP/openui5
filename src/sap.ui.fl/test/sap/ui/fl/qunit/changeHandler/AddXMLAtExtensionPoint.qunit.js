@@ -53,7 +53,7 @@ sap.ui.define([
 	sap.ui.require.preload(mPreloadedModules);
 
 	var sXmlString =
-		'<mvc:View id="testComponentAsync---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
+		'<mvc:View xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
 			'<HBox id="hbox">' +
 				"<items>" +
 					'<core:ExtensionPoint name="ExtensionPoint1" />' +
@@ -200,7 +200,8 @@ sap.ui.define([
 				this.oPropertyBag = {
 					modifier: XmlTreeModifier,
 					view: this.oXmlView,
-					appComponent: this.oComponent
+					appComponent: this.oComponent,
+					viewId: "testComponentAsync---myView"
 				};
 			}.bind(this));
 		},
@@ -236,25 +237,25 @@ sap.ui.define([
 				assert.equal(oHBoxItems.childNodes.length, 5, "then there are five children of the HBox");
 				assert.equal(
 					oHBoxItems.childNodes[1].getAttribute("id"),
-					"projectId.third_button",
+					"testComponentAsync---myView--projectId.third_button",
 					"then the control added last to the first extension point is on the first position behind the extension point."
 				);
 				assert.equal(
 					oHBoxItems.childNodes[2].getAttribute("id"),
-					"projectId.button",
+					"testComponentAsync---myView--projectId.button",
 					"then the control added first to the first extension point is on the last position behind the extension point."
 				);
 				assert.equal(oPanelContent.childNodes.length, 4, "then there are four children of the Panel");
 				assert.equal(
 					oPanelContent.childNodes[1].getAttribute("id"),
-					"projectId.second_button",
+					"testComponentAsync---myView--projectId.second_button",
 					"then the control added to the second extension point is placed behind the second extension point."
 				);
 				assert.ok(
 					oAddCreatedControlsToExtensionPointInfoSpy.calledWith({
 						name: "ExtensionPoint1",
 						viewId: "testComponentAsync---myView",
-						createdControlsIds: ["projectId.button", "projectId.button2"]
+						createdControlsIds: ["testComponentAsync---myView--projectId.button", "testComponentAsync---myView--projectId.button2"]
 					}),
 					"then the created controls from the first change are added to the Extension Point Info on the registry"
 				);
@@ -262,7 +263,7 @@ sap.ui.define([
 					oAddCreatedControlsToExtensionPointInfoSpy.calledWith({
 						name: "ExtensionPoint2",
 						viewId: "testComponentAsync---myView",
-						createdControlsIds: ["projectId.second_button"]
+						createdControlsIds: ["testComponentAsync---myView--projectId.second_button"]
 					}),
 					"then the created controls from the second change are added to the Extension Point Info on the registry"
 				);
@@ -270,7 +271,7 @@ sap.ui.define([
 					oAddCreatedControlsToExtensionPointInfoSpy.calledWith({
 						name: "ExtensionPoint1",
 						viewId: "testComponentAsync---myView",
-						createdControlsIds: ["projectId.third_button"]
+						createdControlsIds: ["testComponentAsync---myView--projectId.third_button"]
 					}),
 					"then the created controls from the third change are added to the Extension Point Info on the registry"
 				);
@@ -294,7 +295,7 @@ sap.ui.define([
 				);
 				assert.equal(
 					oPanelContent.childNodes[3].getAttribute("id"),
-					"projectId.third_button",
+					"testComponentAsync---myView--projectId.third_button",
 					"then the control added to the fourth extension point is placed behind the fourth extension point."
 				);
 			});
@@ -305,10 +306,10 @@ sap.ui.define([
 			var oChange = this.oChange1;
 			var oParentChildItems = oParent.childNodes[0];
 			var mExpectedRevertData = [{
-				id: "projectId.button",
+				id: "testComponentAsync---myView--projectId.button",
 				aggregationName: "items"
 			}, {
-				id: "projectId.button2",
+				id: "testComponentAsync---myView--projectId.button2",
 				aggregationName: "items"
 			}];
 
@@ -317,7 +318,7 @@ sap.ui.define([
 				assert.equal(oParentChildItems.childNodes.length, 4, "after apply there are four children in the parent control");
 				assert.equal(
 					oParentChildItems.childNodes[1].getAttribute("id"),
-					"projectId.button",
+					"testComponentAsync---myView--projectId.button",
 					"with the newly applied control on third position"
 				);
 				assert.deepEqual(oChange.getRevertData(), mExpectedRevertData, "and the revert data is set");
@@ -339,7 +340,7 @@ sap.ui.define([
 			var oChange = this.oChange3;
 			var oParentChildItems = oParent.childNodes[0];
 			var mExpectedRevertData = [{
-				id: "projectId.third_button",
+				id: "testComponentAsync---myView--projectId.third_button",
 				aggregationName: "content"
 			}];
 
@@ -348,7 +349,7 @@ sap.ui.define([
 				assert.equal(oParentChildItems.childNodes.length, 3, "after apply there are three children in the parent control");
 				assert.equal(
 					oParentChildItems.childNodes[1].getAttribute("id"),
-					"projectId.third_button",
+					"testComponentAsync---myView--projectId.third_button",
 					"with the newly applied control on third position"
 				);
 				assert.deepEqual(oChange.getRevertData(), mExpectedRevertData, "and the revert data is set");

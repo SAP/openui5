@@ -903,13 +903,6 @@ sap.ui.define([
 			rm.class("sapUiTableGroupIcon");
 			rm.openEnd();
 			rm.close("div");
-
-			if (TableUtils.Grouping.showGroupMenuButton(oTable)) {
-				const oIconInfo = IconPool.getIconInfo("sap-icon://drop-down-list");
-				rm.openStart("div").class("sapUiTableGroupMenuButton").openEnd();
-				rm.text(oIconInfo.content);
-				rm.close("div");
-			}
 		}
 	};
 

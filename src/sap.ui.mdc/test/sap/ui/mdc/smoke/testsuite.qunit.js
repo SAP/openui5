@@ -81,7 +81,15 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				group: "Demokit samples",
 				sinon: false
 			},
+			"TableCopyPaste": {
+				group: "Demokit samples",
+				sinon: false
+			},
 			"UploadSetwithTablePlugin": {
+				group: "Demokit samples",
+				sinon: false
+			},
+			"TablePropertyInfos": {
 				group: "Demokit samples",
 				sinon: false
 			}

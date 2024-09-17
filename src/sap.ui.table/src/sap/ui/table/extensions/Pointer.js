@@ -617,9 +617,6 @@ sap.ui.define([
 			} else if (oRow && oRow.isSummary()) {
 				// Sum row cannot be selected
 				oEvent.preventDefault();
-			} else if ($Target.hasClass("sapUiTableGroupMenuButton")) {
-				// Analytical Table: Mobile group menu button in group header rows.
-				TableUtils.Menu.openContextMenu(this, oEvent);
 			} else if ($Target.hasClass("sapUiTableGroupIcon") || $Target.hasClass("sapUiTableTreeIcon")) {
 				// Expand/Collapse icon
 				oRow.toggleExpandedState();

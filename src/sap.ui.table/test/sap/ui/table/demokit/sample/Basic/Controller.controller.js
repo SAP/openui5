@@ -84,7 +84,8 @@ sap.ui.define([
 		},
 
 		handleDetailsPress: function(oEvent) {
-			MessageToast.show("Details for product with id " + this.getView().getModel().getProperty("ProductId", oEvent.getSource().getBindingContext()));
+			const sProductId = this.getView().getModel().getProperty("ProductId", oEvent.getSource().getBindingContext());
+			MessageToast.show("Details for product with id " + sProductId);
 		},
 
 		onPaste: function(oEvent) {

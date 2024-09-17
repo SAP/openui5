@@ -5,8 +5,7 @@
 	xmlns:uxap="sap.uxap"
 	xmlns:vm="sap.ui.fl.variants"
 	xmlns:l="sap.ui.layout"
-	xmlns:form="sap.ui.layout.form"
-	xmlns:html="http://www.w3.org/1999/xhtml">
+	xmlns:form="sap.ui.layout.form">
 	<Page title="Variant Management Testapp" id="page" enableScrolling="false">
 		<content>
 			<Button id="Button" text="Test" />

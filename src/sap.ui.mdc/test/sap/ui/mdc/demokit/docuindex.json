@@ -125,7 +125,9 @@
 				"samples": [
 					"sap.ui.mdc.demokit.sample.table.TableJson",
 					"sap.ui.mdc.demokit.sample.table.TableTypes",
+					"sap.ui.mdc.demokit.sample.table.TablePropertyInfos",
 					"sap.ui.mdc.demokit.sample.table.TableExport",
+					"sap.ui.mdc.demokit.sample.table.TableCopyPaste",
 					"sap.ui.mdc.demokit.sample.table.UploadSetwithTablePlugin"
 				]
 			}
@@ -278,7 +280,6 @@
 				"description": "A table using sap.m.plugins.UploadSetwithTable plugin to demonstrate the features of upload, download, drag & drop, remove and rename of files."
 			},
 			{
-
 				"id": "sap.ui.mdc.demokit.sample.table.TableTypes",
 				"name": "Table - with different table types",
 				"description": "A table using different table types."
@@ -287,6 +288,14 @@
 				"id": "sap.ui.mdc.demokit.sample.table.TableExport",
 				"name": "Table - with export",
 				"description": "A table with export capabilities."
+			},{
+				"id": "sap.ui.mdc.demokit.sample.table.TableCopyPaste",
+				"name": "Table - with copy and paste",
+				"description": "A table using the CopyProvider, paste event and CellSelector for copy and paste capabilities."
+			},{
+				"id": "sap.ui.mdc.demokit.sample.table.TablePropertyInfos",
+				"name": "Table - with column width calculation and additional property infos",
+				"description": "A table showcasing column width calculation and other different configuration options for property infos."
 			}
 		]
 	}

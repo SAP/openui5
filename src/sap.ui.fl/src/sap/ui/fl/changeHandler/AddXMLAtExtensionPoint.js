@@ -47,6 +47,7 @@ sap.ui.define([
 	AddXMLAtExtensionPoint.applyChange = function(oChange, oControl, mPropertyBag) {
 		var oView = mPropertyBag.view;
 		var oModifier = mPropertyBag.modifier;
+		// during JS processing the viewId is not in the propertyBag (and should not be, as this would lead to wrong ID calculation)
 		var sViewId = mPropertyBag.viewId || oModifier.getId(oView);
 		var oSelector = oChange.getSelector();
 		var mExtensionPointInfo;

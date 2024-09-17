@@ -7,6 +7,7 @@
     xmlns:sap.ui.fl="sap.ui.fl"
     xmlns:sap.ui.dt="sap.ui.dt"
     xmlns:vm="sap.ui.fl.variants"
+    xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
     controllerName="sap.m.sample.p13n.EngineGridTable.Engine">
 
     <m:Page showHeader="false">
@@ -32,25 +33,25 @@
                 <m:IllustratedMessage enableVerticalResponsiveness="true"/>
             </noData>
             <columns>
-                <Column id="firstName_col" sortProperty="firstName" headerMenu="menu" resizable="true" width="11rem" autoResizable="true">
+                <Column app:p13nKey="firstName_col" sortProperty="firstName" headerMenu="menu" resizable="true" width="11rem" autoResizable="true">
                     <m:Label text="First Name" />
                     <template>
                         <m:Text text="{firstName}"/>
                     </template>
                 </Column>
-                <Column id="lastName_col" sortProperty="lastName" headerMenu="menu" resizable="true" width="11rem" autoResizable="true">
+                <Column app:p13nKey="lastName_col" sortProperty="lastName" headerMenu="menu" resizable="true" width="11rem" autoResizable="true">
                     <m:Label text="Last Name" />
                     <template>
                         <m:Text text="{lastName}"/>
                     </template>
                 </Column>
-                <Column id="city_col" sortProperty="city" headerMenu="menu" resizable="true" width="11rem" autoResizable="true">
+                <Column app:p13nKey="city_col" sortProperty="city" headerMenu="menu" resizable="true" width="11rem" autoResizable="true">
                     <m:Label text="City" />
                     <template>
                         <m:Text text="{city}"/>
                     </template>
                 </Column>
-                <Column id="size_col" sortProperty="size" visible="false" headerMenu="menu" resizable="true" width="11rem" autoResizable="true">
+                <Column app:p13nKey="size_col" sortProperty="size" visible="false" headerMenu="menu" resizable="true" width="11rem" autoResizable="true">
                     <m:Label text="Size" />
                     <template>
                         <m:Text text="{size}"/>

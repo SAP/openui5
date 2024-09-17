@@ -168,7 +168,7 @@ sap.ui.define([
 
 				// Menu items from the table should be on top.
 				oTable._oCellContextMenu.insertItem(oCellFilterMenuItem, 0);
-			} else {
+			} else if (oCellFilterMenuItem) {
 				oTable._oCellContextMenu.removeItem(oCellFilterMenuItem);
 			}
 

@@ -2173,7 +2173,8 @@ sap.ui.define([
 		this.triggerKey(Key.END, this.oTable.qunit.getColumnHeaderCell(-1), this.oTable.qunit.getColumnHeaderCell(-1));
 
 		// *HOME* -> Non-Fixed area - First cell
-		this.triggerKey(Key.HOME, this.oTable.qunit.getColumnHeaderCell(-1), this.oTable.qunit.getColumnHeaderCell(this.oTable.getFixedColumnCount()));
+		this.triggerKey(Key.HOME, this.oTable.qunit.getColumnHeaderCell(-1),
+			this.oTable.qunit.getColumnHeaderCell(this.oTable.getFixedColumnCount()));
 
 		// *HOME* -> Fixed area - Single cell
 		this.triggerKey(Key.HOME, this.oTable.qunit.getColumnHeaderCell(this.oTable.getFixedColumnCount()), this.oTable.qunit.getColumnHeaderCell(0));
@@ -2610,7 +2611,8 @@ sap.ui.define([
 		assert.equal(this.oTable.getRows()[iTotalRowCount - 1].getIndex(), iTotalRowCount - 1, "Row index");
 
 		// *END* -> Last row
-		this.triggerKey(Key.END, this.oTable.qunit.getRowHeaderCell(iNonEmptyRowCount - 1), this.oTable.qunit.getRowHeaderCell(iNonEmptyRowCount - 1));
+		this.triggerKey(Key.END, this.oTable.qunit.getRowHeaderCell(iNonEmptyRowCount - 1),
+			this.oTable.qunit.getRowHeaderCell(iNonEmptyRowCount - 1));
 		assert.equal(this.oTable.getRows()[iNonEmptyRowCount - 1].getIndex(), iTotalRowCount - 1, "Row index");
 
 		// *HOME* -> SelectAll
@@ -2825,7 +2827,8 @@ sap.ui.define([
 		this.triggerKey(Key.END, this.oTable.qunit.getColumnHeaderCell(0), this.oTable.qunit.getDataCell(mRowCounts.fixedTop - 1, 0));
 
 		// *END* -> Scrollable area - Last row
-		this.triggerKey(Key.END, this.oTable.qunit.getDataCell(mRowCounts.fixedTop - 1, 0), this.oTable.qunit.getDataCell(iLastScrollableRowIndex, 0));
+		this.triggerKey(Key.END, this.oTable.qunit.getDataCell(mRowCounts.fixedTop - 1, 0),
+			this.oTable.qunit.getDataCell(iLastScrollableRowIndex, 0));
 		assert.equal(this.oTable.getRows()[iLastScrollableRowIndex].getIndex(), iTotalRowCount - mRowCounts.fixedBottom - 1, "Row index");
 
 		// *END* -> Bottom fixed area - Last row
@@ -3013,7 +3016,8 @@ sap.ui.define([
 		assert.equal(this.oTable.getRows()[iTotalRowCount - 1].getIndex(), iTotalRowCount - 1, "Row index");
 
 		// *END* -> Last row
-		this.triggerKey(Key.END, this.oTable.qunit.getRowActionCell(iNonEmptyRowCount - 1), this.oTable.qunit.getRowActionCell(iNonEmptyRowCount - 1));
+		this.triggerKey(Key.END, this.oTable.qunit.getRowActionCell(iNonEmptyRowCount - 1),
+			this.oTable.qunit.getRowActionCell(iNonEmptyRowCount - 1));
 		assert.equal(this.oTable.getRows()[iNonEmptyRowCount - 1].getIndex(), iTotalRowCount - 1, "Row index");
 
 		// *HOME* -> First Row Action
@@ -3045,10 +3049,18 @@ sap.ui.define([
 		assert.equal(this.oTable.getRows()[iLastScrollableRowIndex].getIndex(), iTotalRowCount - mRowCounts.fixedBottom - 1, "Row index");
 
 		// *END* -> Bottom fixed area - Last row
-		this.triggerKey(Key.END, this.oTable.qunit.getRowActionCell(iLastScrollableRowIndex), this.oTable.qunit.getRowActionCell(iNonEmptyRowCount - 1));
+		this.triggerKey(
+			Key.END,
+			this.oTable.qunit.getRowActionCell(iLastScrollableRowIndex),
+			this.oTable.qunit.getRowActionCell(iNonEmptyRowCount - 1)
+		);
 
 		// *END* -> Bottom fixed area - Last row
-		this.triggerKey(Key.END, this.oTable.qunit.getRowActionCell(iNonEmptyRowCount - 1), this.oTable.qunit.getRowActionCell(iNonEmptyRowCount - 1));
+		this.triggerKey(
+			Key.END,
+			this.oTable.qunit.getRowActionCell(iNonEmptyRowCount - 1),
+			this.oTable.qunit.getRowActionCell(iNonEmptyRowCount - 1)
+		);
 
 		// *HOME* -> Scrollable area - First row
 		this.triggerKey(Key.HOME, this.oTable.qunit.getRowActionCell(iNonEmptyRowCount - 1), this.oTable.qunit.getRowActionCell(mRowCounts.fixedTop));
@@ -7480,7 +7492,7 @@ sap.ui.define([
 		return this.testActionModeTabNavigation(assert);
 	});
 
-	QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns, Empty Row Actions, Fixed Top Rows, Fixed Bottom Rows, Grouping", async function(assert) {
+	QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns, Empty Row Actions, Fixed Top & Bottom Rows, Grouping", async function(assert) {
 		this.oTable.setFixedColumnCount(2);
 		this.oTable.setRowMode(new FixedRowMode({
 			rowCount: 6,

@@ -104,6 +104,11 @@ sap.ui.define([
 				}
 			},
 
+			"GroupHeaderContextMenuAdapter": {
+				group: "Menus",
+				module: "./menus/{name}.qunit"
+			},
+
 			"Row": {},
 			"RowAction": {},
 			"RowSettings": {},

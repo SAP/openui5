@@ -264,8 +264,8 @@ sap.ui.define([
 			 * Choose?}" in the documentation for more details. While it is technically possible to also use other controls, doing so might lead to
 			 * issues with regards to scrolling, alignment, condensed mode, screen reader support, and keyboard support.
 			 *
-			 * If a string is defined, this string is interpreted as the binding path. Internally, a default text control will be created with its <code>text</code> property
-			 * bound to the value of the string. The default template depends on the libraries loaded.
+			 * If a string is defined, this string is interpreted as the binding path. Internally, a default text control will be created with its
+			 * <code>text</code> property bound to the value of the string. The default template depends on the libraries loaded.
 			 * <b>Note:</b> The <code>altType</code> string is deprecated as of version 1.118. Use a <code>Control</code> instead.
 			 */
 			template: {type: "sap.ui.core.Control", altTypes: ["string"], multiple: false},
@@ -515,7 +515,7 @@ sap.ui.define([
 	 * - filterProperty must be defined
 	 * - showFilterMenuEntry must be true (which is the default)
 	 *
-	 * @returns {boolean}
+	 * @returns {boolean} Whether the <code>Column</code> can be filterd via menu
 	 */
 	Column.prototype.isFilterableByMenu = function() {
 		return !!(this.getFilterProperty() && this.getShowFilterMenuEntry());
@@ -529,7 +529,7 @@ sap.ui.define([
 	 * - sortProperty must be defined
 	 * - showSortMenuEntry must be true (which is the default)
 	 *
-	 * @returns {boolean}
+	 * @returns {boolean} Whether the <code>Column</code> can be sorted via menu
 	 */
 	Column.prototype.isSortableByMenu = function() {
 		return !!(this.getSortProperty() && this.getShowSortMenuEntry());
@@ -564,9 +564,7 @@ sap.ui.define([
 
 	Column.prototype._isHeaderMenuOpen = function() {
 		const oHeaderMenu = this.getHeaderMenuInstance();
-		if (oHeaderMenu) {
-			return oHeaderMenu.isOpen();
-		}
+		return oHeaderMenu?.isOpen() || false;
 	};
 
 	Column.prototype._isAggregatableByMenu = function() {
@@ -841,8 +839,8 @@ sap.ui.define([
 	 * @public
 	 *
 	 * @example <caption>Class name of a type.</caption>
-	 * // The usage of string-based type definitions without explicitly loading these types (<code>sap.ui.require</code>) in the controller has been deprecated and might no longer work in future releases.
-	 * // Please ensure that the types are requested correctly before setting this property.
+	 * // The usage of string-based type definitions without explicitly loading these types (<code>sap.ui.require</code>) in the controller has been
+	 * // deprecated and might no longer work in future releases. Please ensure that the types are requested correctly before setting this property.
 	 * oColumn.setFilterType("sap.ui.model.type.Date");
 	 *
 	 * @example <caption>Module path of a type.</caption>
@@ -902,6 +900,7 @@ sap.ui.define([
 	/**
 	 * A hook getting called by the DragInfo to determine whether the column allows dragging.
 	 * @param {sap.ui.core.dnd.IDragInfo} oDragInfo drag information
+	 * @returns {boolean} Whether dragging is allowed
 	 * @private
 	 */
 	Column.prototype.isDragAllowed = function(oDragInfo) {

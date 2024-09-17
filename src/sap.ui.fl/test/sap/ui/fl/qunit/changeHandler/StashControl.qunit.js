@@ -65,7 +65,7 @@ sap.ui.define([
 
 			// XML representation of the above runtime state (before modification)
 			this.xmlString =
-				'<mvc:View  xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout"><layout:VerticalLayout id="verticalLayout" flexEnabled="true">' +
+				'<mvc:View  xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout"><layout:VerticalLayout id="verticalLayout">' +
 					"<layout:content>" +
 						'<core:Control id="control0"></core:Control>' +
 						'<core:Control id="control1"></core:Control>' +

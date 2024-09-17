@@ -146,9 +146,11 @@ sap.ui.define([
 				var childNode = node.firstElementChild;
 				var results = resultArray;
 				var subResult = results;
-				var control = Element.getElementById(node.id);
+				var related = node.getAttribute('data-sap-ui-related');
+				var id = related ? related : node.id;
+				var control = Element.getElementById(id);
 
-				if (node.getAttribute('data-sap-ui') && control) {
+				if ((node.getAttribute('data-sap-ui') || node.getAttribute('data-sap-ui-related')) && control) {
 					results.push({
 						id: control.getId(),
 						name: control.getMetadata().getName(),

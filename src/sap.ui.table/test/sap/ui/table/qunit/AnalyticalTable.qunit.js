@@ -306,6 +306,18 @@ sap.ui.define([
 		assert.equal(this.oTable.getSelectionBehavior(), library.SelectionBehavior.RowOnly, "SelectionBehavior.RowOnly");
 	});
 
+	QUnit.test("extendedGroupHeaderMenu", function(assert) {
+		const oTable = this.oTable;
+
+		assert.strictEqual(oTable.getProperty("extendedGroupHeaderMenu"), true, "Default extendedGroupHeaderMenu");
+
+		oTable.setProperty("extendedGroupHeaderMenu", false);
+		assert.strictEqual(oTable.getProperty("extendedGroupHeaderMenu"), false, "Updated value for extendedGroupHeaderMenu");
+
+		oTable.setProperty("extendedGroupHeaderMenu", undefined);
+		assert.strictEqual(oTable.getProperty("extendedGroupHeaderMenu"), true, "Default extendedGroupHeaderMenu");
+	});
+
 	QUnit.test("EnableGrouping", function(assert) {
 		assert.equal(false, false, "Default enableGrouping");
 		assert.equal(false, false, "EnableGrouping cannot be changed");
@@ -523,44 +535,31 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Mobile", async function(assert) {
-		const done = assert.async();
-
-		const oShowGroupMenuButton = sinon.stub(TableUtils.Grouping, "showGroupMenuButton");
-		oShowGroupMenuButton.returns(true);
-		this.oTable.invalidate();
-		await nextUIUpdate();
-
-		function doTest(oTable) {
-			oTable.$().find(".sapUiTableGroupMenuButton").trigger("tap");
-			assert.ok(oTable._oCellContextMenu.bOpen, "Menu is open");
-			oShowGroupMenuButton.restore();
-			done();
-		}
-
-		performTestAfterTableIsUpdated.call(this, doTest);
-	});
-
 	QUnit.test("Localization", function(assert) {
 		const done = assert.async();
 
-		function doTest(oTable) {
-			assert.strictEqual(oTable._mGroupHeaderMenuItems, null, "Group header menu items do not exist");
+		async function doTest(oTable) {
+			const oAdapter = oTable._oGroupHeaderMenuAdapter;
+			const oDestroySpy = sinon.spy(oAdapter, "destroy");
+
+			assert.ok(oAdapter.isA?.("sap.ui.table.menus.GroupHeaderContextMenuAdapter"),
+				"Group header menu adapter is initialized");
 
 			TableUtils.Menu.openContextMenu(oTable, {
 				target: oTable.getRows()[0].getCells()[4].getDomRef(),
 				preventDefault: () => {}
 			});
-			assert.notEqual(oTable._mGroupHeaderMenuItems, null, "Group header menu items exist");
+			assert.ok(oDestroySpy.notCalled, "GroupHeaderContextMenuAdapter not destroyed");
 
-			oTable._adaptLocalization(true, false).then(function() {
-				assert.notEqual(oTable._mGroupHeaderMenuItems, null, "Group header menu items exist");
-			}).then(function() {
-				return oTable._adaptLocalization(false, true);
-			}).then(function() {
-				assert.strictEqual(oTable._mGroupHeaderMenuItems, null, "Group header menu items do not exist");
-				done();
-			});
+			await oTable._adaptLocalization(true, false);
+			assert.ok(oDestroySpy.notCalled, "GroupHeaderContextMenuAdapter still not destroyed");
+
+			await oTable._adaptLocalization(false, true);
+			assert.ok(oDestroySpy.called, "GroupHeaderContextMenuAdapter destroyed");
+			assert.notEqual(oTable._oGroupHeaderMenuAdapter, oAdapter, "New GroupHeaderContextMenuAdapter created");
+			assert.ok(oTable._oGroupHeaderMenuAdapter.isA?.("sap.ui.table.menus.GroupHeaderContextMenuAdapter"),
+				"Group header menu adapter is present");
+			done();
 		}
 
 		performTestAfterTableIsUpdated.call(this, doTest);

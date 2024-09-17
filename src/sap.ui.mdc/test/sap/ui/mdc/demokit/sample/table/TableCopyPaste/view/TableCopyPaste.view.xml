@@ -1,0 +1,62 @@
+<mvc:View
+	controllerName="mdc.sample.controller.Controller"
+	height="100%"
+	displayBlock="true"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:core="sap.ui.core"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:mdct="sap.ui.mdc.table">
+
+	<f:DynamicPage id="page">
+		<f:content>
+			<mdc:Table
+				id="table"
+				header="Mountains"
+				selectionMode="Multi"
+				enablePaste="true"
+				showPasteButton="true"
+				delegate="{
+					name: 'mdc/sample/delegate/JSONTableDelegate',
+					payload: {
+						bindingPath: 'mountains>/mountains'
+					}
+				}"
+				paste="onPaste">
+				<mdct:Column
+					propertyKey="name_range"
+					header="Name (Range)">
+					<Text text="{mountains>name} ({mountains>range})"/>
+				</mdct:Column>
+				<mdct:Column
+					propertyKey="first_ascent"
+					header="First Ascent">
+					<Text text="{mountains>first_ascent}"/>
+				</mdct:Column>
+				<mdct:Column
+					propertyKey="countries"
+					header="Countries">
+					<Text text="{mountains>countries}"/>
+				</mdct:Column>
+				<mdct:Column
+					propertyKey="parent_mountain"
+					header="Parent Mountain">
+					<Text text="{mountains>parent_mountain}"/>
+				</mdct:Column>
+				<mdct:Column
+					propertyKey="height"
+					header="Height">
+					<Text text="{mountains>height}"/>
+				</mdct:Column>
+				<mdc:copyProvider>
+					<plugins.CopyProvider />
+				</mdc:copyProvider>
+				<mdc:cellSelector>
+					<plugins.CellSelector />
+				</mdc:cellSelector>
+			</mdc:Table>
+		</f:content>
+	</f:DynamicPage>
+
+</mvc:View>

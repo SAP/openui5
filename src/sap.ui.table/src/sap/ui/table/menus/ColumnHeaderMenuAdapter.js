@@ -145,14 +145,14 @@ sap.ui.define([
 	/**
 	 * This hook is called when menu items should be removed from the column menu.
 	 *
-	 * @param {sap.ui.core.IColumnHeaderMenu} oColumnHeaderMenu
+	 * @param {sap.ui.core.IColumnHeaderMenu} oColumnHeaderMenu Instance of the column menu
 	 */
 	ColumnHeaderMenuAdapter.prototype.removeMenuItems = function(oColumnHeaderMenu) {};
 
 	/**
 	 * This hook is called after the column menu and injected menu items are destroyed.
 	 *
-	 * @param {sap.ui.core.IColumnHeaderMenu} oColumnHeaderMenu
+	 * @param {sap.ui.core.IColumnHeaderMenu} oColumnHeaderMenu Instance of the column menu
 	 */
 	ColumnHeaderMenuAdapter.prototype.onAfterMenuDestroyed = function(oColumnHeaderMenu) {};
 

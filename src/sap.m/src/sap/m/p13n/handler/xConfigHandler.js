@@ -74,13 +74,6 @@ sap.ui.define([
 		return mOppositeType[sType];
 	}
 
-	async function findAsync(arr, asyncCallback) {
-		const promises = arr.map(asyncCallback);
-		const results = await Promise.all(promises);
-		const index = results.findIndex((result) => result);
-		return arr[index];
-	  }
-
 	/**
 	 * Creates a changehandler specific to the provided aggregation and property name,
 	 * to enhance the xConfig object for a given mdc control instance.
@@ -136,29 +129,12 @@ sap.ui.define([
 								}
 
 								if (!oPriorAggregationConfig) {
-									const aAggregationItems = await mPropertyBag.modifier.getAggregation(oControl, sAffectedAggregation) || [];
-									const oAffectedItem = await findAsync(aAggregationItems, async (oItem) => {
-										const aItemCustomData = await mPropertyBag.modifier.getAggregation(oItem, "customData");
-										const oAffectedCustomData = await findAsync(aItemCustomData, async (oItemCustomData) => {
-											return await mPropertyBag.modifier.getProperty(oItemCustomData, "key") === "p13nKey";
+									const aCurrentState = await xConfigAPI.getCurrentItemState(oControl, {propertyBag: mPropertyBag, changeType: oChange.getChangeType()}, oPriorAggregationConfig, sAffectedAggregation);
+									if (aCurrentState) {
+										const oStateItem = aCurrentState?.find((oItem, iIndex) => {
+											return oItem.key === oChange.getContent().key;
 										});
-										if (oAffectedCustomData) {
-											const sKey = await mPropertyBag.modifier.getProperty(oAffectedCustomData, "value");
-											return sKey == oChange.getContent().key;
-										}
-									});
-
-									if (oAffectedItem) {
-										const aAggregationItems = await mPropertyBag.modifier.getAggregation(oControl, sAffectedAggregation);
-										oRevertData.index = aAggregationItems.indexOf(oAffectedItem);
-									} else {
-										const aCurrentState = await xConfigAPI.getCurrentItemState(oControl, {propertyBag: mPropertyBag, changeType: oChange.getChangeType()}, oPriorAggregationConfig, sAffectedAggregation);
-										if (aCurrentState) {
-											const oStateItem = aCurrentState?.find((oItem, iIndex) => {
-												return oItem.key === oChange.getContent().key;
-											});
-											oRevertData.index = aCurrentState.indexOf(oStateItem);
-										}
+										oRevertData.index = aCurrentState.indexOf(oStateItem);
 									}
 								}
 

@@ -305,7 +305,7 @@ sap.ui.define([
 			sandbox.stub(Utils, "getUshellContainer").returns(true);
 			stubGetUShellService(sUserEmail, sUserFullName, sUserFirstName, sUserLastName);
 			this.myView = await XMLView.create({
-				definition: `<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.fl.util">` +
+				definition: `<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.fl.util">` +
 					`<IFrame id="iframe1" url="${sOpenUI5Url}" />` +
 					`<IFrame id="iframe2" url="${sOpenUI5Url}?fullName={$user>/fullName}" />` +
 					`<IFrame id="iframe3" url="${sOpenUI5Url}?domain={$user>/domain}&amp;{anyModel>/anyProperty}" />` +

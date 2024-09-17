@@ -171,17 +171,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks whether group menu button should be shown for the given table.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {boolean} Whether the group menu button should be shown.
-		 */
-		showGroupMenuButton: function(oTable) {
-			// TODO: This should depend on the hierarchy mode. Consider this when reworking the group menu buttons for mobile.
-			return !Device.system.desktop && GroupingUtils.TableUtils.isA(oTable, "sap.ui.table.AnalyticalTable");
-		},
-
-		/**
 		 * Whether the cell is in a group header row. Returns <code>false</code> if it is not a cell.
 		 *
 		 * @param {jQuery | HTMLElement} oCellRef DOM reference of the table cell.
@@ -322,15 +311,6 @@ sap.ui.define([
 				GroupingUtils.setGroupIndent(oRow, iIndent);
 				$Row.toggleClass("sapUiTableRowIndented", iIndent > 0)
 					.toggleClass("sapUiTableGroupHeaderRow", oRow.isGroupHeader());
-
-				if (GroupingUtils.showGroupMenuButton(oTable)) {
-					const $Table = oTable.$();
-					const iScrollbarWidth = $Table.hasClass("sapUiTableVScr") ? $Table.find(".sapUiTableVSb").width() : 0;
-					const $GroupHeaderMenuButton = oDomRefs.rowHeaderPart.find(".sapUiTableGroupMenuButton");
-					const iMenuButtonOffset = $Table.width() - $GroupHeaderMenuButton.width() - iScrollbarWidth - 5 - iIndent;
-
-					$GroupHeaderMenuButton.css(oTable._bRtlMode ? "right" : "left", iMenuButtonOffset + "px");
-				}
 			}
 
 			if (GroupingUtils.isInTreeMode(oTable)) {

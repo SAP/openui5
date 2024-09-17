@@ -553,7 +553,8 @@ sap.ui.define([
 
 			assert.equal(oState.title, oData.expectedTitle, "check row title: '" + oData.expectedTitle + "'");
 			if (oData.expectedTitle !== undefined) {
-				assert.ok(this.oGroupHeaderFormatter.calledOnceWithExactly(oContext, oData.expectedTitleProperty), "Calling the groupHeaderFormatter");
+				assert.ok(this.oGroupHeaderFormatter.calledOnceWithExactly(oContext, oData.expectedTitleProperty),
+					"Calling the groupHeaderFormatter");
 			} else {
 				assert.equal(this.oGroupHeaderFormatter.callCount, 0, "Calling the groupHeaderFormatter");
 			}

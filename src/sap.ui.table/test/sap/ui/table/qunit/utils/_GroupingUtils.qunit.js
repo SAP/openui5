@@ -233,22 +233,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("showGroupMenuButton", function(assert) {
-		const bOrigDesktop = Device.system.desktop;
-
-		Device.system.desktop = false;
-		assert.ok(!Grouping.showGroupMenuButton(new Table()), "sap.ui.table.Table / no desktop");
-		assert.ok(!Grouping.showGroupMenuButton(new TreeTable()), "sap.ui.table.TreeTable / no desktop");
-		assert.ok(Grouping.showGroupMenuButton(new AnalyticalTable()), "sap.ui.table.AnalyticalTable / no desktop");
-
-		Device.system.desktop = true;
-		assert.ok(!Grouping.showGroupMenuButton(new Table()), "sap.ui.table.Table / desktop");
-		assert.ok(!Grouping.showGroupMenuButton(new TreeTable()), "sap.ui.table.TreeTable / desktop");
-		assert.ok(!Grouping.showGroupMenuButton(new AnalyticalTable()), "sap.ui.table.AnalyticalTable / desktop");
-
-		Device.system.desktop = bOrigDesktop;
-	});
-
 	QUnit.test("calcGroupIndent", function(assert) {
 		const oRow = new Row();
 		const oRowGetLevel = sinon.stub(oRow, "getLevel");
@@ -418,28 +402,5 @@ sap.ui.define([
 
 		assert.notOk(this.oTreeTable.getRows().some((oRow) => oRow.getDomRef().classList.contains("sapUiTableGroupHeaderRow")),
 			"Group headers after unbind");
-	});
-
-	QUnit.test("GroupMenuButton", async function(assert) {
-		let oGroupMenuButton;
-
-		this.oTreeTable.setUseGroupMode(true);
-		await this.oTreeTable.qunit.whenRenderingFinished();
-
-		for (const oRow of this.oTreeTable.getRows()) {
-			oGroupMenuButton = this.oTreeTable.qunit.getRowHeaderCell(oRow.getIndex()).querySelector(".sapUiTableGroupMenuButton");
-			assert.ok(oGroupMenuButton == null, "Row Header " + oRow + " has no GroupMenuButton");
-		}
-
-		sinon.stub(TableUtils.Grouping, "showGroupMenuButton").returns(true);
-		this.oTreeTable.invalidate();
-		await this.oTreeTable.qunit.whenRenderingFinished();
-
-		for (const oRow of this.oTreeTable.getRows()) {
-			oGroupMenuButton = this.oTreeTable.qunit.getRowHeaderCell(oRow.getIndex()).querySelector(".sapUiTableGroupMenuButton");
-			assert.ok(oGroupMenuButton != null, "Row Header " + oRow + " has GroupMenuButton");
-		}
-
-		Grouping.showGroupMenuButton.restore();
 	});
 });

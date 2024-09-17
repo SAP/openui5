@@ -529,7 +529,8 @@ sap.ui.define([
 		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[0], true), "ColumnReordering Disabled, but ignored: Fixed Column");
 		assert.ok(ColumnUtils.isColumnMovable(oTable.getColumns()[1], true), "ColumnReordering Disabled, but ignored: Non-Fixed Column");
 		assert.ok(ColumnUtils.isColumnMovable(oTable.getColumns()[2], true), "ColumnReordering Disabled, but ignored: Non-Fixed Column");
-		assert.ok(!ColumnUtils.isColumnMovable(oTreeTable.getColumns()[0], true), "ColumnReordering Disabled, but ignored: First column in TreeTable");
+		assert.ok(!ColumnUtils.isColumnMovable(oTreeTable.getColumns()[0], true),
+			"ColumnReordering Disabled, but ignored: First column in TreeTable");
 		assert.ok(ColumnUtils.isColumnMovable(oTreeTable.getColumns()[2], true), "ColumnReordering Disabled, but ignored: Other column in TreeTable");
 
 		oTable.setEnableColumnReordering(true);
@@ -777,7 +778,8 @@ sap.ui.define([
 		assertColumnWidth(1, iNewWidth);
 		assertColumnWidth(2, iNewWidth);
 		assertUnchanged([0, 1, 2]);
-		ColumnUtils.resizeColumn(oTable, aVisibleColumns[0], aOriginalColumnWidths[0] + aOriginalColumnWidths[1] + aOriginalColumnWidths[2], false, 3);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[0],
+			aOriginalColumnWidths[0] + aOriginalColumnWidths[1] + aOriginalColumnWidths[2], false, 3);
 		assertUnchanged();
 
 		// Column 1 to 3 - Column 2 not resizable
@@ -816,7 +818,8 @@ sap.ui.define([
 		assertColumnWidth(1, TableUtils.Column.getMinColumnWidth());
 		assertColumnWidth(2, TableUtils.Column.getMinColumnWidth());
 		assertUnchanged([0, 1, 2]);
-		ColumnUtils.resizeColumn(oTable, aVisibleColumns[0], aOriginalColumnWidths[0] + aOriginalColumnWidths[1] + aOriginalColumnWidths[2], false, 3);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[0],
+			aOriginalColumnWidths[0] + aOriginalColumnWidths[1] + aOriginalColumnWidths[2], false, 3);
 		assertUnchanged();
 
 		// Fire the ColumnResize event.
@@ -1097,7 +1100,8 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		assert.ok(true, "Column has been resized via autoResizeColumn");
-		assert.ok(oColumn1.getDomRef().offsetWidth > iDivWidth, "Column1 width is " + oColumn1.getDomRef().offsetWidth + "px => text fits and it is not truncated");
+		assert.ok(oColumn1.getDomRef().offsetWidth > iDivWidth,
+			`Column1 width is ${oColumn1.getDomRef().offsetWidth}px => text fits and it is not truncated`);
 		assert.ok(oColumnResizeHandler.calledOnce, "columnResize event handler was called once");
 		assert.deepEqual(oColumnResizeHandler.lastCall.thisValue, {
 			column: oColumn1,
@@ -1110,7 +1114,8 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		assert.ok(true, "Column has been resized via autoResizeColumn");
-		assert.ok(oColumn2.getDomRef().offsetWidth > iDivWidth, "Column2 width is " + oColumn2.getDomRef().offsetWidth + "px => text fits and it is not truncated");
+		assert.ok(oColumn2.getDomRef().offsetWidth > iDivWidth,
+			`Column2 width is ${oColumn2.getDomRef().offsetWidth}px => text fits and it is not truncated`);
 		assert.ok(oColumnResizeHandler.calledOnce, "columnResize event handler was called once");
 		assert.deepEqual(oColumnResizeHandler.lastCall.thisValue, {
 			column: oColumn2,
@@ -1123,7 +1128,8 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		assert.ok(true, "Column has been resized via autoResizeColumn");
-		assert.ok(oColumn3.getDomRef().offsetWidth > iDivWidth, "Column3 width is " + oColumn3.getDomRef().offsetWidth + "px => text fits and it is not truncated");
+		assert.ok(oColumn3.getDomRef().offsetWidth > iDivWidth,
+			`Column3 width is ${oColumn3.getDomRef().offsetWidth}px => text fits and it is not truncated`);
 		assert.ok(oColumnResizeHandler.calledOnce, "columnResize event handler was called once");
 		assert.deepEqual(oColumnResizeHandler.lastCall.thisValue, {
 			column: oColumn3,
@@ -1136,7 +1142,8 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		assert.ok(true, "Column has been resized via autoResize");
-		assert.ok(oColumn4.getDomRef().offsetWidth > iDivWidth, "Column4 width is " + oColumn4.getDomRef().offsetWidth + "px => text fits and it is not truncated");
+		assert.ok(oColumn4.getDomRef().offsetWidth > iDivWidth,
+			`Column4 width is ${oColumn4.getDomRef().offsetWidth}px => text fits and it is not truncated`);
 		assert.ok(oColumnResizeHandler.calledOnce, "columnResize event handler was called once");
 		assert.deepEqual(oColumnResizeHandler.lastCall.thisValue, {
 			column: oColumn4,

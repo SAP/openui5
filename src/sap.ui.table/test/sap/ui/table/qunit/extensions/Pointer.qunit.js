@@ -418,30 +418,6 @@ sap.ui.define([
 		oExtension._ExtensionHelper.__handleClickSelection = null;
 	});
 
-	QUnit.test("Mobile Group Menu Button", function(assert) {
-		const oExtension = oTreeTable._getPointerExtension();
-		oExtension._debug();
-
-		let bSelected = false;
-		oExtension._ExtensionHelper.__handleClickSelection = oExtension._ExtensionHelper._handleClickSelection;
-		oExtension._ExtensionHelper._handleClickSelection = function() {
-			bSelected = true;
-		};
-
-		const oOpenContextMenu = this.spy(TableUtils.Menu, "openContextMenu");
-		const $FakeButton = TableUtils.getRowColCell(oTreeTable, 0, 0).cell.$();
-
-		$FakeButton.addClass("sapUiTableGroupMenuButton");
-		qutils.triggerMouseEvent($FakeButton, "tap");
-		assert.ok(!bSelected, "Selection was not performed");
-		assert.ok(oOpenContextMenu.calledOnce, "Context Menu was opened");
-
-		oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
-		oExtension._ExtensionHelper.__handleClickSelection = null;
-
-		oOpenContextMenu.restore();
-	});
-
 	QUnit.test("Cell + Cell Click Event", function(assert) {
 		let oExtension = oTreeTable._getPointerExtension();
 		oExtension._debug();

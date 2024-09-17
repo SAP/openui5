@@ -177,7 +177,7 @@ sap.ui.define([
 		},
 
 		_getKey: function(oControl) {
-			return this.getView().getLocalId(oControl.getId());
+			return oControl.data("p13nKey");
 		},
 
 		handleStateChange: function(oEvt) {
@@ -200,7 +200,7 @@ sap.ui.define([
 			}.bind(this));
 
 			oState.Columns.forEach(function(oProp, iIndex) {
-				const oCol = this.byId(oProp.key);
+				const oCol = this.byId("persoTable").getColumns().find((oColumn) => oColumn.data("p13nKey") === oProp.key);
 				oCol.setVisible(true);
 
 				oTable.removeColumn(oCol);
@@ -209,7 +209,7 @@ sap.ui.define([
 
 			const aSorter = [];
 			oState.Sorter.forEach(function(oSorter) {
-				const oColumn = this.byId(oSorter.key);
+				const oColumn = this.byId("persoTable").getColumns().find((oColumn) => oColumn.data("p13nKey") === oSorter.key);
 				oColumn.setSortOrder(oSorter.descending ? CoreLibrary.SortOrder.Descending : CoreLibrary.SortOrder.Ascending);
 				aSorter.push(new Sorter(this.oMetadataHelper.getProperty(oSorter.key).path, oSorter.descending));
 			}.bind(this));
