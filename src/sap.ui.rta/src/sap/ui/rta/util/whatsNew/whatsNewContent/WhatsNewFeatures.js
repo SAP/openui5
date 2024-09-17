@@ -19,14 +19,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * @returns {object[]} All What's New features
-	 */
-	WhatsNewFeatures.getAllFeatures = function() {
-		// eslint-disable-next-line no-use-before-define
-		return aWhatsNewFeaturesContent;
-	};
-
-	/**
 	 * Callback filter function to determine if the feature should be displayed in the dialog
 	 * @typedef {function} sap.ui.rta.util.whatsNew.whatsNewContent.WhatsNewFeatures.isFeatureApplicable
 	 * @param {sap.ui.fl.registry.Settings} oFlexSettings - Flex settings
@@ -119,14 +111,26 @@ sap.ui.define([
 			featureId: "MinimenuRemoval",
 			title: oTextResources.getText("TIT_WHATS_NEW_DIALOG_MINIMENU_REMOVAL_TITLE"),
 			description: oTextResources.getText("TXT_WHATS_NEW_DIALOG_MINIMENU_REMOVAL_DESCRIPTION"),
+			documentationUrls: {
+				btpUrl: "https://help.sap.com/docs/ui5-flexibility-for-key-users/ui5-flexibility-for-key-users/adapting-ui",
+				s4HanaCloudUrl: "https://help.sap.com/docs/SAP_S4HANA_CLOUD/4fc8d03390c342da8a60f8ee387bca1a/d868950a1e8c4b0f9b9453176939a19b.html",
+				s4HanaOnPremUrl: "https://help.sap.com/docs/ABAP_PLATFORM_NEW/a7b390faab1140c087b8926571e942b7/d868950a1e8c4b0f9b9453176939a19b.html"
+			},
 			information: [
 				{
 					text: oTextResources.getText("TXT_WHATS_NEW_DIALOG_MINIMENU_REMOVAL_TEXT"),
-					image: null
+					image: getImagePath("MiniMenu.png")
 				}
 			]
 		}
 	];
+
+	/**
+	 * @returns {object[]} All What's New features
+	 */
+	WhatsNewFeatures.getAllFeatures = function() {
+		return aWhatsNewFeaturesContent;
+	};
 
 	return WhatsNewFeatures;
 });

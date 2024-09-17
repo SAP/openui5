@@ -17,12 +17,21 @@ sap.ui.define([
 		});
 	}
 
-	function filterApplicableFeatures(aFeatures, oFlexSettings) {
-		return aFeatures.filter((oNewFeature) => {
-			return typeof oNewFeature.isFeatureApplicable === "function" && oFlexSettings
-				? !!oNewFeature.isFeatureApplicable(oFlexSettings)
-				: true;
+	async function filterApplicableFeatures(aFeatures, sLayer) {
+		const aAreFeaturesApplicable = await Promise.all(
+			aFeatures.map((oFeature) => {
+				if (typeof oFeature.isFeatureApplicable === "function") {
+					return oFeature.isFeatureApplicable(sLayer);
+				}
+				return true;
+			})
+		);
+
+		const aFilteredFeatures = aFeatures.filter((oFeature, iIndex) => {
+			return aAreFeaturesApplicable[iIndex];
 		});
+
+		return aFilteredFeatures;
 	}
 
 	const WhatsNewUtils = {
@@ -48,13 +57,13 @@ sap.ui.define([
 		 * Filters the new features based on the dontShowAgain feature IDs and the Flex settings
 		 * @param {string[]} aDontShowAgainFeatureIds - Array of feature IDs that should be excluded
 		 * from the What's New dialog
+		 * @param {string} sLayer - Layer for which the features should be filtered
 		 * @returns {object[]} Filtered What's New features
 		 */
-		getFilteredFeatures(aDontShowAgainFeatureIds) {
-			const oFlexSettings = Settings.getInstanceOrUndef();
+		getFilteredFeatures(aDontShowAgainFeatureIds, sLayer) {
 			const aAllFeatures = WhatsNewFeatures.getAllFeatures();
 			const aNewFeatures = filterDontShowAgainFeatures(aAllFeatures, aDontShowAgainFeatureIds);
-			return filterApplicableFeatures(aNewFeatures, oFlexSettings);
+			return filterApplicableFeatures(aNewFeatures, sLayer);
 		}
 	};
 

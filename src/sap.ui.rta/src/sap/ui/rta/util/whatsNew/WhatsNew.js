@@ -49,14 +49,14 @@ sap.ui.define([
 		}
 	});
 
-	WhatsNew.prototype.setDontShowAgainFeatureIds = function(aDontShowAgainFeatureIds) {
+	WhatsNew.prototype.setDontShowAgainFeatureIds = async function(aDontShowAgainFeatureIds) {
 		this.setProperty("dontShowAgainFeatureIds", aDontShowAgainFeatureIds);
-		this.aUnseenFeatures = WhatsNewUtils.getFilteredFeatures(aDontShowAgainFeatureIds);
+		this.aUnseenFeatures = await WhatsNewUtils.getFilteredFeatures(aDontShowAgainFeatureIds, this.getLayer());
 	};
 
 	WhatsNew.prototype.initializeWhatsNewDialog = async function() {
 		const aDontShowAgainFeatureIds = await FeaturesAPI.getSeenFeatureIds({ layer: this.getLayer() });
-		this.setDontShowAgainFeatureIds(aDontShowAgainFeatureIds);
+		await this.setDontShowAgainFeatureIds(aDontShowAgainFeatureIds);
 		if (this.aUnseenFeatures.length === 0 || this.getLayer() !== "CUSTOMER") {
 			return;
 		}
