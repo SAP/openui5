@@ -145,7 +145,13 @@ sap.ui.define([
 						 */
 						item : {type : "sap.ui.unified.MenuItemBase"}
 					}
-				}
+				},
+
+				/**
+				 * Fired when the menu is closed.
+				 * @since 1.129
+				 */
+				closed: {}
 
 			}
 		},
@@ -616,6 +622,9 @@ sap.ui.define([
 	 * @private
 	 */
 	Menu.prototype._menuClosed = function() {
+
+		this.fireClosed();
+
 		//TBD: standard popup autoclose: this.close(); //Ensure proper cleanup
 		if (this.oOpenerRef) {
 			if (!this.bIgnoreOpenerDOMRef) {
