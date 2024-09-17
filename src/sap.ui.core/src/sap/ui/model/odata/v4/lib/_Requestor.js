@@ -2081,9 +2081,9 @@ sap.ui.define([
 								_Helper.createError(jqXHR, ""));
 							that.oRetryAfterPromise.finally(() => {
 								that.oRetryAfterPromise = null;
-							});
+							}).catch(() => { /* catch is only needed due to finally */ });
 						}
-						that.oRetryAfterPromise.then(send);
+						that.oRetryAfterPromise.then(send, fnReject);
 					} else {
 						sMessage = "Communication error";
 						if (sContextId) {
@@ -2104,7 +2104,7 @@ sap.ui.define([
 			}
 
 			if (that.oRetryAfterPromise) {
-				that.oRetryAfterPromise.then(send);
+				that.oRetryAfterPromise.then(send, fnReject);
 			} else if (that.oSecurityTokenPromise && sMethod !== "GET") {
 				that.oSecurityTokenPromise.then(send);
 			} else {
