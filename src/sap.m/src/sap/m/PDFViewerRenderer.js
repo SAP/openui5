@@ -4,7 +4,7 @@
 
  /* global ActiveXObject:false */
 
-sap.ui.define(['sap/ui/Device', "sap/base/Log"],
+ sap.ui.define(['sap/ui/Device', "sap/base/Log"],
 	function (Device, Log) {
 		"use strict";
 
