@@ -435,7 +435,6 @@ sap.ui.define([
 				};
 
 			this.initMessagePopover("showMessages");
-			this.registerRetryAfterHandler();
 
 			this.byId("highlight").bindProperty("highlight", oHighlightBindingInfo);
 			this.byId("itemHighlight").bindProperty("highlight", oHighlightBindingInfo);
