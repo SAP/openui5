@@ -108,7 +108,6 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/base/security/URLListValida
 		};
 
 		PDFViewerRenderer.renderPdfContent = function (oRm, oControl) {
-
 			if (oControl._shouldRenderPdfContent() && !(/HeadlessChrome/.test(window.navigator.userAgent))) {
 				oRm.openStart("iframe", oControl.getId() + "-iframe");
 
@@ -125,6 +124,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/base/security/URLListValida
 				}
 
 				if (URLListValidator.validate(sParametrizedSource)) {
+					oControl._sParametrizedSource = sParametrizedSource;
 					oRm.attr("src", sParametrizedSource);
 				} else {
 					oControl._fireErrorEvent();
