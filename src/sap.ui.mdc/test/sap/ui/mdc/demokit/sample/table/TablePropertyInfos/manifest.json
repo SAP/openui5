@@ -26,12 +26,12 @@
 		"config": {
 			"sample": {
 				"files": [
+					"view/TablePropertyInfos.view.xml",
+					"model/metadata/JSONPropertyInfo.js",
 					"delegates/DemoTableDelegate.js",
 					"../delegates/JSONTableFilterDelegate.js",
 					"../delegates/JSONTableDelegate.js",
-					"model/metadata/JSONPropertyInfo.js",
 					"../mockdata/mountains.json",
-					"view/TablePropertyInfos.view.xml",
 					"manifest.json"
 				]
 			}
