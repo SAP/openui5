@@ -104,9 +104,13 @@
 
 <body id="body" class="sapUiBody">
 <script>
-	(function (jQuery) {
-		sap.ui.xmlview({viewContent:jQuery('#view1').html()}).placeAt("content");
-	}(jQuery))
+	sap.ui.require([
+		"sap/ui/core/mvc/XMLView"
+	], function(XMLView) {
+		sap.ui.xmlview({
+			viewContent: document.getElementById('#view1').textContent
+		}).placeAt("content");
+	});
 </script>
 <div class="container" id="content"></div>
 </body>

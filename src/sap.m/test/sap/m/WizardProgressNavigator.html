@@ -16,7 +16,7 @@
 				return Array(Math.floor(Math.random() * 10 + 4)).join("a");
 
 			}).join(" ");
-		}
+		};
 
 		var app = new sap.m.App({initialPage: "landing"});
 		var pageOne = new sap.m.Page("landing", {showHeader: false});
@@ -25,51 +25,49 @@
 		var maximumSteps = 8;
 
 		while (steps <= maximumSteps) {
-			var navId = "prog-nav-" + steps;
+			const navigatorId = "prog-nav-" + steps;
 
-			(function (navigatorId) {
-				var inputId = navigatorId + "-input";
+			const inputId = navigatorId + "-input";
 
-				pageOne.addContent(new sap.ui.layout.VerticalLayout({
-					width: "100%",
-					content: [
-						new sap.m.WizardProgressNavigator(navigatorId, {
-							stepCount: steps,
-							varyingStepCount: steps % 2 === 1,
-							stepTitles: Array(steps + 1).join("-").split("").map(function (s, i) {
-								return randomTitle();
-							})
-						}),
-						new sap.m.Button({
-							text: "Previous",
-							press: function () {
-								sap.ui.core.Element.getElementById(navigatorId).previousStep();
-							}
-						}),
-						new sap.m.Button({
-							text: "Next",
-							press: function () {
-								sap.ui.core.Element.getElementById(navigatorId).nextStep();
-							}
-						}),
-						new sap.m.Button({
-							text: "Discard After Step",
-							press: function () {
-								var inputVal = parseInt(sap.ui.core.Element.getElementById(inputId).getValue(), 10);
-
-								if (isNaN(inputVal)) {
-									return;
-								}
-
-								sap.ui.core.Element.getElementById(navigatorId).discardProgress(inputVal);
-							}
-						}),
-						new sap.m.Input(inputId, {
-							type: sap.m.InputType.Number
+			pageOne.addContent(new sap.ui.layout.VerticalLayout({
+				width: "100%",
+				content: [
+					new sap.m.WizardProgressNavigator(navigatorId, {
+						stepCount: steps,
+						varyingStepCount: steps % 2 === 1,
+						stepTitles: Array(steps + 1).join("-").split("").map(function (s, i) {
+							return randomTitle();
 						})
-					]
-				}));
-			}(navId));
+					}),
+					new sap.m.Button({
+						text: "Previous",
+						press: function () {
+							sap.ui.core.Element.getElementById(navigatorId).previousStep();
+						}
+					}),
+					new sap.m.Button({
+						text: "Next",
+						press: function () {
+							sap.ui.core.Element.getElementById(navigatorId).nextStep();
+						}
+					}),
+					new sap.m.Button({
+						text: "Discard After Step",
+						press: function () {
+							var inputVal = parseInt(sap.ui.core.Element.getElementById(inputId).getValue());
+
+							if (isNaN(inputVal)) {
+								return;
+							}
+
+							sap.ui.core.Element.getElementById(navigatorId).discardProgress(inputVal);
+						}
+					}),
+					new sap.m.Input(inputId, {
+						type: sap.m.InputType.Number
+					})
+				]
+			}));
 
 			steps += 1;
 		}

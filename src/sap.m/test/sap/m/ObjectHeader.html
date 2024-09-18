@@ -13,7 +13,7 @@
 	jQuery.sap.require("sap.ui.core.IconPool");
 
 	function addToPage(oOH){
-		oOH.addStyleClass("sapUiResponsivePadding--header")
+		oOH.addStyleClass("sapUiResponsivePadding--header");
 		detail.addContent(oOH);
 		detail.addContent(new sap.ui.core.HTML({
 			content : "<div style='width:100%;height:2px;background-color:blue'/>"
@@ -100,7 +100,7 @@
 				statuses : [ new sap.m.ObjectStatus({
 					text : ""
 				}), new sap.m.ObjectStatus({}) ],
-				attributes : [ new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), ]
+				attributes : [ new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}) ]
 			});
 
 	var oh3 = new sap.m.ObjectHeader(
@@ -162,7 +162,7 @@
 		} else {
 			oh4.setIcon(sap.ui.core.IconPool.getIconURI("attachment"));
 		}
-	}
+	};
 
 	var oh4 = new sap.m.ObjectHeader("oh4", {
 		intro : "On behalf of John Smith Ñagçyfox",
@@ -234,7 +234,7 @@
 		} else {
 			oh7.setIcon(sap.ui.core.IconPool.getIconURI("attachment"));
 		}
-	}
+	};
 
 	var oh7 = new sap.m.ObjectHeader("oh7", {
 		title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
@@ -270,11 +270,11 @@
 		numberUnit : "EUR",
 		numberState : sap.ui.core.ValueState.Success,
 		statuses : [ new sap.m.ObjectStatus({
-			text : "First Status",
+			text : "First Status"
 		}) ],
 		attributes : [ new sap.m.ObjectAttribute({
 			text : "First Attribute"
-		}), new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), ],
+		}), new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}) ],
 		markers: [
 			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite})
 		]
@@ -386,9 +386,9 @@
 	});
 
 	//test popover title
-	var domRef = null;
 	var oh16EventHandler = function(oEvent) {
-		domRef = oEvent.getParameters().domRef;
+		const header = oEvent.getSource();
+		const domRef = oEvent.getParameters().domRef;
 		var popover = new sap.m.Popover({
 				placement: sap.m.PlacementType.Bottom,
 				showHeader: true,
@@ -405,25 +405,25 @@
 								selected : true
 							}),
 							new sap.m.StandardListItem({
-								title : "Lorem ipsum",
+								title : "Lorem ipsum"
 							}),
 							new sap.m.StandardListItem({
-								title : "Lorem ipsum dolor sit amet et sineat",
+								title : "Lorem ipsum dolor sit amet et sineat"
 							}),
 							new sap.m.StandardListItem({
-								title : "Lorem ipsum",
+								title : "Lorem ipsum"
 							}),
 							new sap.m.ActionListItem({
-								text : "Lorem ipsum",
+								text : "Lorem ipsum"
 							}),
 							new sap.m.ActionListItem({
-								text : "Lorem ipsum",
+								text : "Lorem ipsum"
 							})
 					 ] //end of item
 				}) // end of content
 		}); //end of popover
 		popover.openBy(domRef);
-	}
+	};
 
 	var oh16 = new sap.m.ObjectHeader({
 		title : "Object Header for testing title arrow icon",
@@ -520,7 +520,7 @@
 			displayValue : '56%',
 			percentValue : 56,
 			showValue : true,
-			height : '22px', //1.375rem
+			height : '22px' //1.375rem
 		}), new sap.m.ObjectStatus({
 			text : "Productivity High"
 		}), new sap.m.ProgressIndicator("oh18-pi2", {
@@ -530,7 +530,7 @@
 			displayValue : '90%',
 			percentValue : 90,
 			showValue : true,
-			height : '22px', //1.375rem
+			height : '22px' //1.375rem
 		}), new sap.m.ObjectStatus({
 			text : "Quality Good"
 		}) ],
@@ -544,7 +544,7 @@
 			text : "Productivity"
 		}), new sap.m.ObjectAttribute({
 			text : "Productivity Progress Indicator"
-		}), ],
+		}) ],
 		markers: [
 			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
 		]
@@ -561,7 +561,7 @@
 			text : "Ñagçyfox This is the only attribute in the object header Ñagçyfox"
 		}), new sap.m.ObjectAttribute({
 			text : "This attribute should be invisible"
-		}) ],
+		}) ]
 	});
 
 	var ohCondensedId2 = "ohc2";
@@ -577,7 +577,7 @@
 			text : "Ñagçyfox This is the only attribute in the object header Ñagçyfox"
 		}), new sap.m.ObjectAttribute({
 			text : "This attribute should be invisible"
-		}) ],
+		}) ]
 	});
 
 	var ohCondensedId3 = "ohc3";
@@ -596,7 +596,7 @@
 		condensed : true,
 		attributes : [ new sap.m.ObjectAttribute({
 			text : "Ñagçyfox This is the only attribute in the object header Ñagçyfox"
-		})],
+		})]
 	});
 
 	var ohCondensedId5 = "ohc5";
@@ -616,7 +616,7 @@
 		condensed : true,
 		attributes : [ new sap.m.ObjectAttribute({
 			text : "Ñagçyfox overflow testing."
-		})],
+		})]
 	});
 
 	var ohCondensedId7 = "ohc7";
@@ -627,7 +627,7 @@
 		condensed : true,
 		attributes : [ new sap.m.ObjectAttribute({
 			text : "Ñagçyfox long attribute description for property display testing."
-		})],
+		})]
 	});
 
 	var ohCondensedId8 = "ohc8";
@@ -640,7 +640,7 @@
 		backgroundDesign: sap.m.BackgroundDesign.Solid,
 		attributes : [ new sap.m.ObjectAttribute({
 			text : "Ñagçyfox This is the only attribute in the object header Ñagçyfox"
-		})],
+		})]
 	});
 
 	var ohCondensedId9 = "ohc9";

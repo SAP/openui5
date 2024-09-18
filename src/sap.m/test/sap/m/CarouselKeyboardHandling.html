@@ -62,7 +62,7 @@
 					iconInset : false,
 					type : "Navigation",
 					press : function() {
-						sap.m.MessageToast.show(title + " pressed");
+						sap.m.MessageToast.show(this.getTitle() + " pressed");
 					}
 				}, {
 					title : "Travel and expense report",
@@ -172,10 +172,10 @@
 					placement : sap.m.PlacementType.Bottom,
 					title : "Popover",
 					showHeader : true,
-					leftButton : new sap.m.Button({
+					beginButton : new sap.m.Button({
 						text : "Left"
 					}),
-					rightButton : new sap.m.Button({
+					endButton : new sap.m.Button({
 						text : "Right"
 					}),
 					footer : footer,
@@ -297,6 +297,7 @@
 
 		jQuery.sap.require("sap.m.ImageRenderer");
 		/* poll control start */
+		var oDialog;
 		sap.m.Image.extend("Lightbox", {
 			metadata: {
 				properties: {
@@ -306,7 +307,7 @@
 			// set up the inner controls
 			init: function () {
 				var that = this;
-				this.attachTap(function () {
+				this.attachPress(function () {
 					that._open();
 				});
 			},

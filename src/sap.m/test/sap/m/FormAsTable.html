@@ -116,7 +116,7 @@
 	var page = new sap.m.Page({
 		title : "Form Table",
 		enableScrolling : true,
-		content : [form = new sap.m.Table({
+		content : [new sap.m.Table({
 			inset : false,
 			showUnread : true,
 			scrollToLoad : true,
@@ -238,7 +238,7 @@
 								new sap.m.Slider({
 									min : 150,
 									max : 250,
-									value : 170,
+									value : 170
 								}).attachLiveChange(function(e) {
 									sap.ui.getCore().byId("length").setValue(e.getParameter("value") + " cm");
 								}),

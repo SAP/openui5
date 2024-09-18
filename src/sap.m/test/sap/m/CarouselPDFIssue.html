@@ -51,7 +51,7 @@
 					{id: 14, objectType: "1", src: myPDF},
 					{objectType: "1", src: myPDF}
 				]
-			}
+			};
 			sap.ui.controller("myController", {
 				onInit: function () {
 					this.x = 1;
@@ -72,7 +72,7 @@
 						this.dialog = undefined;
 					}
 					var that = this;
-					carousel = new sap.m.Carousel({
+					var carousel = new sap.m.Carousel({
 						showPageIndicator: true,
 						busyIndicatoryDelay: 0,
 						pageChanged: this.onCarouselPageChanged,
@@ -94,7 +94,7 @@
 							filters: [new sap.ui.model.Filter("objectType", sap.ui.model.FilterOperator.NE, "X")],
 							sorter: aSorters
 						}
-					})
+					});
 					that.dialog = new sap.m.Dialog({
 						horizontalScrolling: false, verticalScrolling: false,
 						contentHeight: '100%', contentWidth: '100%', stretch: true,
@@ -102,8 +102,9 @@
 						content: [carousel],
 						buttons: new sap.m.Button({
 							text: "Close", press: function () {
-								if (that.dialog)
+								if (that.dialog) {
 									that.dialog.close();
+								}
 							}
 						})//getOperationButtons()
 					});

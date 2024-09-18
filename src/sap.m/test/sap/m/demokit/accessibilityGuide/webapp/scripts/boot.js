@@ -44,12 +44,12 @@ window.addEventListener("load", function () {
 						oScript.setAttribute("id", "sap-ui-bootstrap");
 						oScript.setAttribute("src", sRes + "/sap-ui-integration.js");
 						oScript.setAttribute("data-sap-ui-theme", "sap_horizon");
-						oScript.setAttribute("data-sap-ui-compatVersion", "edge");
+						oScript.setAttribute("data-sap-ui-compat-version", "edge");
 						oScript.setAttribute("data-sap-ui-async", "true");
 						if (document.querySelector("script[data-require-ui5-init]")) {
-							oScript.setAttribute("data-sap-ui-oninit", "init");
+							oScript.setAttribute("data-sap-ui-on-init", "init");
 						}
-						oScript.setAttribute("data-sap-ui-resourceroots", '{"custom": "./"}');
+						oScript.setAttribute("data-sap-ui-resource-roots", '{"custom": "./"}');
 						document.head.appendChild(oScript);
 					}
 				}

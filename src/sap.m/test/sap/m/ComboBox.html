@@ -848,7 +848,7 @@
 				var oComboBoxLongSuggestions = new ComboBox("combo-long-sugg", {
 					width: "30rem",
 					items: [
-						new Item({text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry. ", key:"key11"}),
+						new Item({text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry. ", key:"key11"})
 					]
 				});
 
@@ -875,7 +875,7 @@
 				});
 
 				// Add a css class to the body HTML element, in order to be used for caret stylization in visual tests run.
-				var oCustomCssButton = new sap.m.Button ("customCssButton",{
+				var oCustomCssButton = new sap.m.Button("customCssButton",{
 					text: "Toggle custom CSS for visual test",
 					press: function() {
 						var $body = jQuery("body");
@@ -892,7 +892,7 @@
 						new sap.m.ToolbarSpacer({
 							width: "600px"
 						}),
-						oCustomCssButton,
+						oCustomCssButton
 					],
 					content: [
 						new HTML("title_default",{ content: "<h3>Default</h3>" }),
@@ -922,7 +922,7 @@
 										{path: "/selectedKey1"}
 									],
 									formatter: fnFormatter
-								}}),
+								}})
 							]
 						}),
 						new HTML({ content: "<br>" }),
@@ -931,7 +931,7 @@
 								content: [
 									oComboBoxTwoColumnSearchBoth2,
 									new Label({text: "Selected key:"}),
-									new Text({text: "{/selectedKey2}"}),
+									new Text({text: "{/selectedKey2}"})
 								]
 						}),
 						new HTML({ content: "<br>" }),

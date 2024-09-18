@@ -16,7 +16,8 @@
 
 <script>
 
-	var oModel = new sap.ui.model.json.JSONModel();
+	/*global TABLESETTINGS */
+	const oModel = new sap.ui.model.json.JSONModel();
 	oModel.setData({modelData: TABLESETTINGS.listTestData});
 
 	function createColumns(oTable) {
@@ -107,7 +108,7 @@
 		}));
 	}
 
-	var oTable1 = new sap.ui.table.Table({
+	const oTable1 = new sap.ui.table.Table({
 		rowMode: new sap.ui.table.rowmodes.Fixed({
 			fixedTopRowCount: 1,
 			fixedBottomRowCount: 1
@@ -125,7 +126,7 @@
 	oTable1.setModel(oModel);
 	oTable1.bindRows("/modelData");
 
-	var oTable2 = new sap.ui.table.Table();
+	const oTable2 = new sap.ui.table.Table();
 	oTable2.setTitle("Table 2");
 	oTable2.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
 	oTable2.setFixedColumnCount(0);
@@ -138,9 +139,9 @@
 	oTable2.setModel(oModel);
 	oTable2.bindRows("/modelData");
 
-	var app = new sap.m.App("tableApp", {initialPage: "page1"});
+	const app = new sap.m.App("tableApp", {initialPage: "page1"});
 
-	var page1 = new sap.m.Page("page1", {
+	const page1 = new sap.m.Page("page1", {
 		enableScrolling: false,
 		title: "Page 1",
 		headerContent: [
@@ -152,7 +153,7 @@
 		content: [oTable1]
 	});
 
-	var page2 = new sap.m.Page("page2", {
+	const page2 = new sap.m.Page("page2", {
 		title: "Page 2",
 		enableScrolling: true,
 		headerContent: [

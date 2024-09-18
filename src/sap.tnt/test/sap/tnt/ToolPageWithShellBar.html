@@ -49,7 +49,7 @@
 		var oSideNavigation = new sap.tnt.SideNavigation("SNav", {
 			expanded: false,
 			itemSelect: function (event) {
-				oNavContainer.to(event.getParameter('item').getKey())
+				oNavContainer.to(event.getParameter('item').getKey());
 			},
 			item: new sap.tnt.NavigationList("NList", {
 				items: {

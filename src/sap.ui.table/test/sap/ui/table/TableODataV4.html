@@ -38,7 +38,8 @@
 		"sap/ui/model/odata/v4/ODataModel",
 		"sap/ui/model/json/JSONModel"
 	], function(V4Aggregation, ODataV4Selection, ODataModel, JSONModel) {
-		var oTable = new sap.ui.table.Table({
+		/*global TABLESETTINGS */
+		const oTable = new sap.ui.table.Table({
 			extension: [
 				new sap.m.OverflowToolbar({
 					content: [
@@ -47,7 +48,7 @@
 							text: "V4 plugin active",
 							pressed: true,
 							press: function(oEvent) {
-								var bPressed = oEvent.getParameter("pressed");
+								const bPressed = oEvent.getParameter("pressed");
 								if (window.V4Plugin) {
 									if (bPressed) {
 										window.V4Plugin.activate();
@@ -250,7 +251,7 @@
 				aggregationDetails: {
 					custom: {
 						SalesAmountMin: {
-							with: "min",
+							"with": "min",
 							key: "SalesAmount",
 							subtotals: true
 						}
@@ -414,7 +415,7 @@
 			}
 		]);
 
-		var oAggregationInfo = {
+		const oAggregationInfo = {
 			visible: ["Name", "Country", "CountryText", "Region", "Currency", "LocalCurrency", "SalesAmount", "SalesAmountLocalCurrency", "Industry"],
 			subtotals: [],
 			grandTotal: [],
@@ -446,7 +447,7 @@
 		});
 
 		TABLESETTINGS.init(oTable, function(oButton) {
-			var oToolbar = oTable.getExtension()[0];
+			let oToolbar = oTable.getExtension()[0];
 
 			if (!oToolbar) {
 				oToolbar = new sap.m.Toolbar();
@@ -456,7 +457,7 @@
 			oToolbar.addContent(oButton);
 		});
 
-		var oBindingInfo = oTable.getBindingInfo("rows");
+		const oBindingInfo = oTable.getBindingInfo("rows");
 
 		function rebind() {
 			oTable.bindRows(oBindingInfo);

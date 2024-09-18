@@ -17,17 +17,16 @@
 	jQuery.sap.require("sap.m.Label");
 	jQuery.sap.require("sap.ui.table.Column");
 
-	var nCols = 300;
-	var nRows = 7;
+	const nCols = 300;
+	const nRows = 7;
 
-	var oModel = new sap.ui.model.json.JSONModel();
+	const oModel = new sap.ui.model.json.JSONModel();
 
 	function createData(nRows, nCols) {
-		var aData = [];
-		var r, c;
-		for (r = 0; r < nRows + 2; r++) { // add extra two rows for vertical scrolling
-			var row = {};
-			for (c = 0; c < nCols; c++) {
+		const aData = [];
+		for (let r = 0; r < nRows + 2; r++) { // add extra two rows for vertical scrolling
+			const row = {};
+			for (let c = 0; c < nCols; c++) {
 				row["c" + c] = "row " + r + "col " + c; // "row " + r + ",
 			}
 			aData.push(row);
@@ -38,9 +37,9 @@
 	oModel.setData(createData(nRows, nCols));
 
 	function createColumns(nCols, ColumnObject) {
-		var aCols = [];
-		for (var i = 0; i < nCols; i++) {
-			var oCol = new ColumnObject({
+		const aCols = [];
+		for (let i = 0; i < nCols; i++) {
+			const oCol = new ColumnObject({
 				width: "10em", // Variant: i % 2 ? "10em" : "20em",
 				label: "Col " + i,
 				template: true ? new sap.m.Label({text: "{c" + i + "}"}) : new sap.m.Input({value: "{c" + i + "}"})
@@ -50,7 +49,7 @@
 		return aCols;
 	}
 
-	var oTable = new sap.ui.table.Table({
+	const oTable = new sap.ui.table.Table({
 		rowMode: new sap.ui.table.rowmodes.Fixed({
 			rowCount: nRows
 		}),
@@ -58,12 +57,12 @@
 		columns: createColumns(nCols, sap.ui.table.Column)
 	});
 
-	var TextLog = new sap.m.Text();
+	const TextLog = new sap.m.Text();
 
-	var counter = 10;
-	var results = [];
-	var initial = true;
-	var startTime = 0;
+	let counter = 10;
+	let results = [];
+	let initial = true;
+	let startTime = 0;
 
 	function startTimer() {
 		startTime = performance.now();
@@ -88,14 +87,14 @@
 			}, 1500);
 			counter++;
 		} else {
-			var min = Math.min.apply(null, results);
-			var max = Math.max.apply(null, results);
-			var mean = results.reduce(function(a, b) {return a + b;}, 0) / results.length;
+			const min = Math.min.apply(null, results);
+			const max = Math.max.apply(null, results);
+			const mean = results.reduce(function(a, b) { return a + b; }, 0) / results.length;
 			TextLog.setText("min:\t" + min + "\n" + "max:\t" + max + "\n" + "mean:\t" + mean);
 		}
 	}
 
-	var oButton = new sap.m.Button({
+	const oButton = new sap.m.Button({
 		text: "Start Measurement",
 		press: startMeasurement
 	});
@@ -106,11 +105,11 @@
 		onAfterRendering: stopTimer
 	});
 
-	var vBox = new sap.m.VBox({items: [oTable, oButton, TextLog]});
+	const vBox = new sap.m.VBox({items: [oTable, oButton, TextLog]});
 
-	var app = new sap.m.App("tableApp", {initialPage: "page1"});
+	const app = new sap.m.App("tableApp", {initialPage: "page1"});
 
-	var page1 = new sap.m.Page("page1", {
+	const page1 = new sap.m.Page("page1", {
 		enableScrolling: true,
 		title: "Table with many columns",
 		content: [vBox]

@@ -22,7 +22,6 @@
 	</script>
 
 	<script>
-		var oSPC;
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
 				'sap/ui/model/json/JSONModel',
@@ -41,7 +40,7 @@
 				'sap/m/Select',
 				'sap/m/OverflowToolbarLayoutData',
 				'sap/ui/unified/CalendarAppointment',
-				'sap/ui/core/date/UI5Date',
+				'sap/ui/core/date/UI5Date'
 			], function (
 					JSONModel,
 					ListItem,
@@ -345,7 +344,7 @@
 
 				SinglePlanningCalendar.prototype._updateRowHeaderAndNowMarker = function () {};
 				SinglePlanningCalendarGridRenderer.renderNowMarker = function () {};
-				oSPC = new SinglePlanningCalendar("SinglePlanningCalendar", {
+				var oSPC = new SinglePlanningCalendar("SinglePlanningCalendar", {
 					title: "SinglePlanningCalendar with sticky header",
 					startDate: UI5Date.getInstance(2018, 6, 9),
 					views: [oDayView, oWorkWeekView, oWeekView],
@@ -424,7 +423,7 @@
 						if (sAppointmentKey === "scroll-to-bottom") {
 							oPage.scrollTo(10000, 0);
 						} else if (sAppointmentKey === "scroll-to-top") {
-							oPage.scrollTo(0, 0)
+							oPage.scrollTo(0, 0);
 						}
 					}
 				});

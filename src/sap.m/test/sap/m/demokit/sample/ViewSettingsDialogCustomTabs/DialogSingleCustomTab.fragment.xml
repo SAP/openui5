@@ -10,7 +10,7 @@
 						<Label text="Theme" design="Bold" id="VSDThemeLabel"/>
 						<SegmentedButton
 								class="vsdSetting"
-								selectedButton="VSDsap_quartzlight"
+								selectedItem="VSDsap_quartzlight"
 								id="VSDThemeButtons"
 								width="100%" >
 							<items>
@@ -21,7 +21,7 @@
 						<Label text="Compact Content Density" design="Bold" />
 						<SegmentedButton
 								class="vsdSetting"
-								selectedButton="VSDcompactOn"
+								selectedItem="VSDcompactOn"
 								id="VSDCompactModeButtons"
 								width="100%" >
 							<items>
@@ -31,7 +31,7 @@
 						</SegmentedButton>
 						<Label text="Right To Left Mode" design="Bold" />
 						<SegmentedButton
-								selectedButton="VSDRTLOff"
+								selectedItem="VSDRTLOff"
 								id="VSDRTLButtons"
 								width="100%" >
 							<items>

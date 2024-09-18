@@ -22,7 +22,7 @@
 		};
 
 		// Add a css class to the body HTML element, in order to be used for caret stylization in visual tests run.
-		var oCustomCssButton = new sap.m.Button ("customCssButton",{
+		var oCustomCssButton = new sap.m.Button("customCssButton",{
 			text: "Toggle custom CSS for visual test",
 			press: function() {
 				var $body = jQuery("body");
@@ -46,7 +46,7 @@
 							value: "",
 							showClearIcon: true,
 							change: fnChange,
-							width: "100%",
+							width: "100%"
 						}),
 
 						new sap.m.ComboBox({
@@ -54,14 +54,14 @@
 							value: "",
 							showClearIcon: true,
 							change: fnChange,
-							width: "300px",
+							width: "300px"
 						}),
 
 						new sap.m.ComboBox({
 							placeholder: "No specified width",
 							value: "",
 							showClearIcon: true,
-							change: fnChange,
+							change: fnChange
 						}),
 
 						new sap.m.ComboBox({
@@ -158,12 +158,12 @@
 
 						new sap.m.MultiComboBox({
 							placeholder: "No items no clear Icon",
-							showClearIcon: false,
+							showClearIcon: false
 						}),
 
 						new sap.m.MultiComboBox({
 							placeholder: "No items with clear Icon",
-							showClearIcon: true,
+							showClearIcon: true
 						}),
 
 						new sap.m.MultiComboBox({
@@ -285,10 +285,10 @@
 								})
 							],
 							change: fnChange
-						}),
+						})
 					]
 				}).addStyleClass("sapUiContentPadding")
-			],
+			]
 		});
 
 		app.addPage(page1);

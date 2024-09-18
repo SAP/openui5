@@ -15,18 +15,20 @@
 <script src="Settings.js"></script>
 
 <script>
+	/*global TABLESETTINGS */
+
 	// create table with supported sap.m controls
-	var oTable = new sap.ui.table.Table({
+	const oTable = new sap.ui.table.Table({
 		firstVisibleRow: 770000
 	});
 	oTable.setTitle("Title of the Table");
 	oTable.setFooter("Footer of the Table");
 	oTable.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
 
-	var iScrollAutomationIntervalId = null;
-	var iReverseScrollAutomationIntervalId = null;
-	var iScrollDelta = 1;
-	var iScrollInterval = 50;
+	let iScrollAutomationIntervalId = null;
+	let iReverseScrollAutomationIntervalId = null;
+	const iScrollDelta = 1;
+	const iScrollInterval = 50;
 
 	oTable.setToolbar(new sap.m.OverflowToolbar({
 		content: [
@@ -34,7 +36,7 @@
 				id: "scrollDown",
 				text: "Scroll down",
 				press: function(oEvent) {
-					var bPressed = oEvent.getParameter("pressed");
+					const bPressed = oEvent.getParameter("pressed");
 
 					sap.ui.getCore().byId("scrollUp").setPressed(false);
 					window.clearInterval(iReverseScrollAutomationIntervalId);
@@ -42,7 +44,7 @@
 
 					if (bPressed) {
 						iScrollAutomationIntervalId = window.setInterval(function() {
-							var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
+							const oVsb = oTable._getScrollExtension().getVerticalScrollbar();
 							oVsb.scrollTop += iScrollDelta;
 						}, iScrollInterval);
 					} else {
@@ -55,7 +57,7 @@
 				id: "scrollUp",
 				text: "Scroll up",
 				press: function(oEvent) {
-					var bPressed = oEvent.getParameter("pressed");
+					const bPressed = oEvent.getParameter("pressed");
 
 					sap.ui.getCore().byId("scrollDown").setPressed(false);
 					window.clearInterval(iScrollAutomationIntervalId);
@@ -63,7 +65,7 @@
 
 					if (bPressed) {
 						iReverseScrollAutomationIntervalId = window.setInterval(function() {
-							var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
+							const oVsb = oTable._getScrollExtension().getVerticalScrollbar();
 							oVsb.scrollTop = oVsb.scrollTop - iScrollDelta;
 						}, iScrollInterval);
 					} else {
@@ -122,11 +124,11 @@
 	}));
 
 	function configureRowHeights(iHeight) {
-		var aData = oRowModel.getProperty("/custom");
-		var bAlternatingRowHeights = oConfigModel.getProperty("/alternatingRowHeights");
+		const aData = oRowModel.getProperty("/custom");
+		const bAlternatingRowHeights = oConfigModel.getProperty("/alternatingRowHeights");
 
 		if (iHeight == null) {
-			var sHeight = oConfigModel.getProperty("/rowHeight");
+			const sHeight = oConfigModel.getProperty("/rowHeight");
 			iHeight = sHeight === "auto" ? 0 : parseInt(sHeight);
 		}
 
@@ -140,7 +142,7 @@
 	}
 
 	// Variable row heights test control
-	var VariableRowHeightControl = sap.ui.core.Control.extend("sap.ui.table.test.VariableRowHeightControl", {
+	const VariableRowHeightControl = sap.ui.core.Control.extend("sap.ui.table.test.VariableRowHeightControl", {
 		metadata: {
 			properties: {
 				height: {type: "string", defaultValue: "auto"},
@@ -150,7 +152,7 @@
 		renderer: {
 			apiVersion: 2,
 			render: function(oRm, oControl) {
-				var sText = oControl.getText();
+				const sText = oControl.getText();
 
 				oRm.openStart("div", oControl);
 				oRm.style("height", oControl.getHeight());
@@ -195,15 +197,15 @@
 			text: {
 				path: "config>/firstRowIndex",
 				formatter: function(iFirstRowIndex) {
-					var oRow = this.getParent();
+					const oRow = this.getParent();
 
 					if (oRow == null) {
 						return "";
 					}
 
-					var oTable = oRow.getParent();
-					var iRowAggregationIndex = oTable.indexOfRow(oRow);
-					var iRowIndex = iFirstRowIndex + iRowAggregationIndex;
+					const oTable = oRow.getParent();
+					const iRowAggregationIndex = oTable.indexOfRow(oRow);
+					const iRowIndex = iFirstRowIndex + iRowAggregationIndex;
 					return "Row #" + (iRowIndex + 1);
 				}
 			}
@@ -219,21 +221,21 @@
 	}));
 
 	// sap.m.Label
-	oTable.addColumn(oColumn = new sap.ui.table.Column({
+	oTable.addColumn(new sap.ui.table.Column({
 		label: new sap.m.Label({text: "m.Label"}),
 		template: new sap.m.Label({text: "Albert"}),
 		width: "6em"
 	}));
 
 	// sap.m.ObjectStatus
-	oTable.addColumn(oColumn = new sap.ui.table.Column({
+	oTable.addColumn(new sap.ui.table.Column({
 		label: new sap.m.Label({text: "m.ObjectStatus"}),
 		template: new sap.m.ObjectStatus({text: "Success", state: "Success"}),
 		width: "200px"
 	}));
 
 	// sap.ui.core.Icon
-	oTable.addColumn(oColumn = new sap.ui.table.Column({
+	oTable.addColumn(new sap.ui.table.Column({
 		resizable: false,
 		label: new sap.m.Label({text: "core.Icon"}),
 		template: new sap.ui.core.Icon({src: "sap-icon://account", decorative: false}),
@@ -326,8 +328,8 @@
 	}));
 
 	// set Model and bind Table
-	var oRowModel = new sap.ui.model.json.JSONModel({
-		default: {
+	const oRowModel = new sap.ui.model.json.JSONModel({
+		"default": {
 			height: undefined
 		},
 		custom: [
@@ -343,7 +345,7 @@
 			{height: "auto"}
 		]
 	});
-	var oConfigModel = new sap.ui.model.json.JSONModel({
+	const oConfigModel = new sap.ui.model.json.JSONModel({
 		rowWiseScrolling: false,
 		alternatingRowHeights: false,
 		rowCount: 1000000000,
@@ -357,14 +359,14 @@
 		return oConfigModel.getProperty("/rowCount");
 	};
 	oTable.getBinding().getContexts = function(iStartIndex, iLength) {
-		var aContexts = [];
-		var iBindingLength = this.getLength();
-		var iCount = iStartIndex + iLength > iBindingLength ? iBindingLength - iStartIndex : iLength;
-		var bAlternatingRowHeights = oConfigModel.getProperty("/alternatingRowHeights");
+		const aContexts = [];
+		const iBindingLength = this.getLength();
+		const iCount = iStartIndex + iLength > iBindingLength ? iBindingLength - iStartIndex : iLength;
+		const bAlternatingRowHeights = oConfigModel.getProperty("/alternatingRowHeights");
 
-		for (var i = 0; i < iCount; i++) {
-			var iIndex = iStartIndex + i;
-			var sPath = "/default";
+		for (let i = 0; i < iCount; i++) {
+			const iIndex = iStartIndex + i;
+			let sPath = "/default";
 
 			if (bAlternatingRowHeights) {
 				if (iIndex % 2 > 0) {
@@ -379,8 +381,8 @@
 			aContexts.push(new sap.ui.model.Context(oRowModel, sPath));
 		}
 
-		var iOldFirstRowIndex = oConfigModel.getProperty("/firstRowIndex");
-		var iNewFirstRowIndex = iStartIndex;
+		const iOldFirstRowIndex = oConfigModel.getProperty("/firstRowIndex");
+		const iNewFirstRowIndex = iStartIndex;
 
 		if (iOldFirstRowIndex !== iNewFirstRowIndex) {
 			oConfigModel.setProperty("/firstRowIndex", iNewFirstRowIndex, null, true);

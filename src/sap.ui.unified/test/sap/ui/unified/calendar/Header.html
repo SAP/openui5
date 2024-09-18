@@ -36,8 +36,8 @@
 				}
 			}).placeAt("sample1");
 
-			var oLabel = new sap.ui.commons.Label({text: "Text 1", labelFor: "TF1"}).placeAt("event1");
-			var oInput = new sap.ui.commons.TextField("TF1",{
+			new sap.ui.commons.Label({text: "Text 1", labelFor: "TF1"}).placeAt("event1");
+			new sap.ui.commons.TextField("TF1",{
 				editable: true,
 				change: function(oEvent){
 					var oTF = oEvent.oSource;
@@ -47,8 +47,8 @@
 				}
 			}).placeAt("event1");
 
-			var oLabel = new sap.ui.commons.Label({text: "additional text 1", labelFor: "TF2"}).placeAt("event1");
-			var oInput = new sap.ui.commons.TextField("TF2",{
+			new sap.ui.commons.Label({text: "additional text 1", labelFor: "TF2"}).placeAt("event1");
+			new sap.ui.commons.TextField("TF2",{
 				editable: true,
 				change: function(oEvent){
 					var oTF = oEvent.oSource;
@@ -58,8 +58,8 @@
 				}
 			}).placeAt("event1");
 
-			var oLabel = new sap.ui.commons.Label({text: "Text 2", labelFor: "TF3"}).placeAt("event1");
-			var oInput = new sap.ui.commons.TextField("TF3",{
+			new sap.ui.commons.Label({text: "Text 2", labelFor: "TF3"}).placeAt("event1");
+			new sap.ui.commons.TextField("TF3",{
 				editable: true,
 				change: function(oEvent){
 					var oTF = oEvent.oSource;
@@ -69,8 +69,8 @@
 				}
 			}).placeAt("event1");
 
-			var oLabel = new sap.ui.commons.Label({text: "additional text 2", labelFor: "TF4"}).placeAt("event1");
-			var oInput = new sap.ui.commons.TextField("TF4",{
+			new sap.ui.commons.Label({text: "additional text 2", labelFor: "TF4"}).placeAt("event1");
+			new sap.ui.commons.TextField("TF4",{
 				editable: true,
 				change: function(oEvent){
 					var oTF = oEvent.oSource;
@@ -80,7 +80,7 @@
 				}
 			}).placeAt("event1");
 
-			var oButton = new sap.ui.commons.ToggleButton({
+			new sap.ui.commons.ToggleButton({
 				text: "Pevious",
 				pressed: true,
 				press: function(oEvent){
@@ -90,7 +90,7 @@
 				}
 			}).placeAt("event1");
 
-			oButton = new sap.ui.commons.ToggleButton({
+			new sap.ui.commons.ToggleButton({
 				text: "Next",
 				pressed: true,
 				press: function(oEvent){
@@ -100,7 +100,7 @@
 				}
 			}).placeAt("event1");
 
-			oButton = new sap.ui.commons.ToggleButton({
+			new sap.ui.commons.ToggleButton({
 				text: "Button 0",
 				pressed: false,
 				press: function(oEvent){
@@ -110,7 +110,7 @@
 				}
 			}).placeAt("event1");
 
-			oButton = new sap.ui.commons.ToggleButton({
+			new sap.ui.commons.ToggleButton({
 				text: "Button 1",
 				pressed: true,
 				press: function(oEvent){
@@ -120,7 +120,7 @@
 				}
 			}).placeAt("event1");
 
-			oButton = new sap.ui.commons.ToggleButton({
+			new sap.ui.commons.ToggleButton({
 				text: "Button 2",
 				pressed: true,
 				press: function(oEvent){

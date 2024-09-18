@@ -44,7 +44,7 @@
 					bGenerateMissingMockData : true
 				});
 				this.oMockServer.start();
-				var oModel = new sap.ui.model.odata.v2.ODataModel (this.sServiceUri, {defaultBindingMode:"TwoWay"});
+				var oModel = new sap.ui.model.odata.v2.ODataModel(this.sServiceUri, {defaultBindingMode:"TwoWay"});
 				this.getView().setModel(oModel);
 				this.getView().bindElement("/ProductSet('HT-1000')");
 			},
@@ -215,7 +215,7 @@
 										});
 										oRta.attachStop(function() {
 											oRta.destroy();
-										})
+										});
 										oRta.start();
 									}
 								})

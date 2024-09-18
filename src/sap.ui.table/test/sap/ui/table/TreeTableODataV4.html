@@ -37,7 +37,8 @@
 		"sap/ui/model/odata/v4/ODataModel",
 		"sap/ui/core/Core"
 	], function(ODataV4Selection, ODataModel, Core) {
-		var oTable = new sap.ui.table.TreeTable({
+		/*global TABLESETTINGS */
+		const oTable = new sap.ui.table.TreeTable({
 			columns: [
 				new sap.ui.table.Column({
 					label: "Name",
@@ -135,7 +136,7 @@
 		});
 
 		TABLESETTINGS.init(oTable, function(oButton) {
-			var oToolbar = oTable.getExtension()[0];
+			let oToolbar = oTable.getExtension()[0];
 
 			if (!oToolbar) {
 				oToolbar = new sap.m.Toolbar();
@@ -145,7 +146,7 @@
 			oToolbar.addContent(oButton);
 		});
 
-		var oBindingInfo = oTable.getBindingInfo("rows");
+		const oBindingInfo = oTable.getBindingInfo("rows");
 
 		new sap.m.VBox({
 			width: "100%",

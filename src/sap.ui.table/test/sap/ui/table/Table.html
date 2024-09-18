@@ -39,16 +39,17 @@
 </style>
 
 <script>
+	/*global TABLESETTINGS */
 
 	function pressHandler(oEvent) {
-		var bCellClick = oEvent.getId() === "cellClick";
+		const bCellClick = oEvent.getId() === "cellClick";
 		jQuery.sap.log.warning((bCellClick ? "Cell" : oEvent.getSource().getMetadata().getName()) + " pressed");
 		if (!bCellClick) {
 			oEvent.preventDefault();
 		}
 	}
 
-	var oTable = new sap.ui.table.Table({
+	const oTable = new sap.ui.table.Table({
 		extension: new sap.m.Title({text: "Title of the Table", titleStyle: "H3"}),
 		footer: "Footer of the Table",
 		rowMode: "Auto",
@@ -58,7 +59,7 @@
 			title: "No Items found",
 			description: "Adjust your filter settings.",
 			additionalContent: [
-				new sap.m.Button({text: "Trigger Something", press: function() {alert("Something");} })
+				new sap.m.Button({text: "Trigger Something", press: function() { alert("Something"); }})
 			]
 		})
 	});
@@ -81,11 +82,12 @@
 	}));
 
 	// create columns
-	var oControl, oColumn, oMenu;
+	let oControl;
+	let oColumn;
 
 	// sap.m.Text
 	oControl = new sap.m.Text({text: "{lastName}", wrapping: false});
-	oMenu = new sap.m.table.columnmenu.Menu({
+	const oMenu = new sap.m.table.columnmenu.Menu({
 		quickActions: [
 			new sap.m.table.columnmenu.QuickAction({
 				label: "Quick Action A",
@@ -114,7 +116,7 @@
 
 	// sap.m.Label
 	oControl = new sap.m.Label({text: "{name}"});
-	var oMenu2 = new sap.m.table.columnmenu.Menu({
+	const oMenu2 = new sap.m.table.columnmenu.Menu({
 		quickActions: [
 			new sap.m.table.columnmenu.QuickAction({
 				label: "custom quick sort",
@@ -169,7 +171,7 @@
 
 	// sap.m.DatePicker
 	oControl = new sap.m.DatePicker({dateValue: "{birthdayDate}"});
-	oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.DatePicker"}), template: oControl, width: "200px", filterProperty: "birthdayDate", filterType: new sap.ui.model.type.Date() }).data("clipboard", "birthdayDate");
+	oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.DatePicker"}), template: oControl, width: "200px", filterProperty: "birthdayDate", filterType: new sap.ui.model.type.Date()}).data("clipboard", "birthdayDate");
 	oColumn.setCreationTemplate(new sap.m.DatePicker({dateValue: "{birthdayDate}"}));
 	oColumn.setHeaderMenu(new sap.m.table.columnmenu.Menu());
 	oTable.addColumn(oColumn);
@@ -184,7 +186,7 @@
 		]
 	});
 	oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Select"}), template: oControl, width: "150px"});
-	oColumn.setCreationTemplate((new sap.m.Select({items: oControl.getItems().map(function(oItem) {return oItem.clone();})})));
+	oColumn.setCreationTemplate((new sap.m.Select({items: oControl.getItems().map(function(oItem) { return oItem.clone(); })})));
 	oTable.addColumn(oColumn);
 
 	// sap.m.ComboBox
@@ -268,7 +270,7 @@
 	oControl = new sap.m.HBox({
 		width: "100%", items: [
 			new sap.m.Link({visible: "{checked}", href: "{href}", text: "{linkText}"}),
-			new sap.m.Text({text: "{linkText}", wrapping: false, visible: {path: "checked", formatter: function(bChecked) {return !bChecked;}}})
+			new sap.m.Text({text: "{linkText}", wrapping: false, visible: {path: "checked", formatter: function(bChecked) { return !bChecked; }}})
 		]
 	});
 	oColumn = new sap.ui.table.Column({
@@ -313,11 +315,11 @@
 	oTable.addColumn(oColumn);
 
 	// set Model and bind Table
-	var oModel = new sap.ui.model.json.JSONModel();
+	const oModel = new sap.ui.model.json.JSONModel();
 	oModel.setData({modelData: TABLESETTINGS.listTestData});
 	oTable.setModel(oModel);
 
-	var oFlexModel = new sap.ui.model.json.JSONModel();
+	const oFlexModel = new sap.ui.model.json.JSONModel();
 	oFlexModel.setData({flex: false});
 	oTable.setModel(oFlexModel, "flex");
 
@@ -329,7 +331,7 @@
 		oTable.getToolbar().addContent(oButton);
 	});
 
-	var oBindingInfo = oTable.getBindingInfo("rows");
+	const oBindingInfo = oTable.getBindingInfo("rows");
 
 	function rebind() {
 		oTable.bindRows(oBindingInfo || {path: "/modelData"});
@@ -339,12 +341,12 @@
 		oTable.unbindRows();
 	}
 
-	var bBindTable = (new URLSearchParams(window.location.search)).get("sap-ui-xx-table-bind") !== "false";
+	const bBindTable = (new URLSearchParams(window.location.search)).get("sap-ui-xx-table-bind") !== "false";
 	if (bBindTable) {
 		rebind();
 	}
 
-	var oTestLayoutToolbar = new sap.m.Toolbar({
+	const oTestLayoutToolbar = new sap.m.Toolbar({
 		content: [
 			new sap.m.Label({text: "VBox RenderType"}),
 			new sap.m.Select({
@@ -355,14 +357,14 @@
 				],
 				selectedKey: "Div",
 				change: function(oEvent) {
-					var oItem = oEvent.getParameters().selectedItem;
+					const oItem = oEvent.getParameters().selectedItem;
 					oVBox.setRenderType(oItem.getKey());
 				}
 			}),
 			new sap.m.CheckBox({
 				text: "Show Borders",
 				select: function(oEvent) {
-					var bSelected = oEvent.getParameters().selected;
+					const bSelected = oEvent.getParameters().selected;
 					if (bSelected) {
 						oVBox.addStyleClass("vboxborder");
 					} else {
@@ -373,7 +375,7 @@
 		]
 	});
 
-	var oVBox = new sap.m.VBox({
+	const oVBox = new sap.m.VBox({
 		width: "100%",
 		items: [
 			oTestLayoutToolbar,

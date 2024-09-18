@@ -25,10 +25,6 @@
 	</script>
 
 	<script>
-		var oSPC,
-			oDialog,
-			oLegend;
-
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
 					'sap/ui/model/json/JSONModel',
@@ -528,7 +524,7 @@
 							})
 						});
 
-					oSPC = new SinglePlanningCalendar("SinglePlanningCalendar", {
+					var oSPC = new SinglePlanningCalendar("SinglePlanningCalendar", {
 						title: "SinglePlanningCalendar",
 						startDate: UI5Date.getInstance(2018, 6, 9),
 						startHour: 8,

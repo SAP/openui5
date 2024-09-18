@@ -17,12 +17,8 @@
 	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 	<script>
-		jQuery.sap.require("sap.ui.qunit.qunit-css");
-		jQuery.sap.require("sap.ui.thirdparty.qunit");
-		jQuery.sap.require("sap.ui.qunit.qunit-junit");
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-
 		jQuery(function() {
+			/* global QUnit */
 			sap.ui.require(
 				[
 					"jquery.sap.global",
@@ -230,7 +226,7 @@
 						oControl2.destroy();
 
 
-						oControl3 = new oControlClass();
+						var oControl3 = new oControlClass();
 						if (sControlName !== "sap.m.PlanningCalendar") {
 							fillControlProperties(oControl3);
 						}

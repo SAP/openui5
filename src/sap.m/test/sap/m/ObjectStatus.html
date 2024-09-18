@@ -28,7 +28,7 @@
 		state: "Success",
 		active : true,
 		press : function() {
-			oAttrs[0].setText("Ñagçyfox #D1234567890 Contract");
+			oStatuses[0].setText("Ñagçyfox #D1234567890 Contract");
 		}
 	}), new sap.m.ObjectStatus({
 		title: "Some title",
@@ -36,7 +36,7 @@
 		state: "Error",
 		active : true,
 		press : function() {
-			oAttrs[0].setText("Ñagçyfox Contract #D1234567890");
+			oStatuses[0].setText("Ñagçyfox Contract #D1234567890");
 		}
 	}), new sap.m.ObjectStatus({
 		text : "John Doe Ñagçyfox"
@@ -435,7 +435,7 @@
 					press : function() {
 						new sap.m.MessageToast.show("you click me");
 					}
-				}).addStyleClass("sapMObjectStatusLongText"),
+				}).addStyleClass("sapMObjectStatusLongText")
 			]
 		});
 
@@ -543,7 +543,7 @@
 			]
 		});
 
-	var jsonData= {
+	var jsonData = {
 		"Incidents": [
 			{ "state" : "Warning", "inverted": false,
 			"childIncidents": [

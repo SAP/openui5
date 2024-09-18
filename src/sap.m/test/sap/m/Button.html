@@ -152,10 +152,10 @@
 	var oPage1 = new sap.m.Page("myPage1", {
 		title: "Mobile Button Control",
 		customHeader : new sap.m.Bar({
-			contentLeft: [ oButtonBarButtonSample = new sap.m.Button('myBarButtonSample', {text:"Test Button To Show Changes", tooltip:"Tooltip Test", type:sap.m.ButtonType.Default, press: function() {oHelper.alert("event: 'press' on " + oButtonBarButtonSample)} }) ],
+			contentLeft: [ oButtonBarButtonSample = new sap.m.Button('myBarButtonSample', {text:"Test Button To Show Changes", tooltip:"Tooltip Test", type:sap.m.ButtonType.Default, press: function() {oHelper.alert("event: 'press' on " + oButtonBarButtonSample);} }) ],
 			contentMiddle: [ new sap.m.Label("myBarLabel", {text: "Button Testpage"}) ],
-			contentRight: [ oButtonBarButtonIcon1 = new sap.m.Button('myBarButtonIcon1', {icon: sStoreIconURI}),
-							oButtonBarButtonIcon2 = new sap.m.Button('myBarButtonIcon2', {icon: sNotesIconURI, enabled: false}) ]
+			contentRight: [ new sap.m.Button('myBarButtonIcon1', {icon: sStoreIconURI}),
+							new sap.m.Button('myBarButtonIcon2', {icon: sNotesIconURI, enabled: false}) ]
 		}),
 		subHeader: new sap.m.Bar({
 			contentLeft: [ new sap.m.Button({text:"Default", type:sap.m.ButtonType.Default}) ],
@@ -197,7 +197,7 @@
 		text: "Button Type Default",
 		enabled: true,
 		press : function() {
-			oHelper.typeDefault(oButtonBarButtonSample)
+			oHelper.typeDefault(oButtonBarButtonSample);
 		}
 	});
 
@@ -206,7 +206,7 @@
 		text: "Button Type Unstyled",
 		enabled: true,
 		press : function() {
-			oHelper.typeUnstyled(oButtonBarButtonSample)
+			oHelper.typeUnstyled(oButtonBarButtonSample);
 		}
 	});
 
@@ -215,7 +215,7 @@
 		text: "Button Type Accept",
 		enabled: true,
 		press : function() {
-			oHelper.typeAccept(oButtonBarButtonSample)
+			oHelper.typeAccept(oButtonBarButtonSample);
 		}
 	});
 
@@ -224,7 +224,7 @@
 		text: "Button Type Reject",
 		enabled: true,
 		press : function() {
-			oHelper.typeReject(oButtonBarButtonSample)
+			oHelper.typeReject(oButtonBarButtonSample);
 		}
 	});
 
@@ -233,7 +233,7 @@
 		text: "Button Type Transparent",
 		enabled: true,
 		press : function() {
-			oHelper.typeTransparent(oButtonBarButtonSample)
+			oHelper.typeTransparent(oButtonBarButtonSample);
 		}
 	});
 
@@ -242,7 +242,7 @@
 		text: "Button Type Ghost",
 		enabled: true,
 		press : function() {
-			oHelper.typeGhost(oButtonBarButtonSample)
+			oHelper.typeGhost(oButtonBarButtonSample);
 		}
 	});
 
@@ -251,7 +251,7 @@
 		text: "Button Type Back",
 		enabled: true,
 		press : function() {
-			oHelper.typeBack(oButtonBarButtonSample)
+			oHelper.typeBack(oButtonBarButtonSample);
 		}
 	});
 
@@ -260,7 +260,7 @@
 		text: "Button Type Up",
 		enabled: true,
 		press : function() {
-			oHelper.typeUp(oButtonBarButtonSample)
+			oHelper.typeUp(oButtonBarButtonSample);
 		}
 	});
 
@@ -269,7 +269,7 @@
 		text: "Button Type Emphasized",
 		enabled: true,
 		press : function() {
-			oHelper.typeEmphasized(oButtonBarButtonSample)
+			oHelper.typeEmphasized(oButtonBarButtonSample);
 		}
 	});
 
@@ -278,7 +278,7 @@
 		text: "Disable/Enable Button",
 		enabled: true,
 		press : function() {
-			oHelper.setEnabled(oButtonBarButtonSample)
+			oHelper.setEnabled(oButtonBarButtonSample);
 		}
 	});
 
@@ -287,7 +287,7 @@
 		text: "Set width 120px",
 		enabled: true,
 		press : function() {
-			oHelper.width100Pixel(oButtonBarButtonSample)
+			oHelper.width100Pixel(oButtonBarButtonSample);
 		}
 	});
 
@@ -296,7 +296,7 @@
 		text: "Set width 100%",
 		enabled: true,
 		press : function() {
-			oHelper.width100Percent(oButtonBarButtonSample)
+			oHelper.width100Percent(oButtonBarButtonSample);
 		}
 	});
 
@@ -305,7 +305,7 @@
 		text: "Set width 300px",
 		enabled: true,
 		press : function() {
-			oHelper.width300Pixel(oButtonBarButtonSample)
+			oHelper.width300Pixel(oButtonBarButtonSample);
 		}
 	});
 
@@ -314,7 +314,7 @@
 		text: "Reset width",
 		enabled: true,
 		press : function() {
-			oHelper.widthReset(oButtonBarButtonSample)
+			oHelper.widthReset(oButtonBarButtonSample);
 		}
 	});
 
@@ -324,7 +324,7 @@
 		icon: "./images/action_pressed.png",
 		enabled: true,
 		press : function() {
-			oHelper.addImage(oButtonBarButtonSample)
+			oHelper.addImage(oButtonBarButtonSample);
 		}
 	});
 
@@ -334,7 +334,7 @@
 		icon: "./images/action.png",
 		enabled: true,
 		press : function() {
-			oHelper.removeImage(oButtonBarButtonSample)
+			oHelper.removeImage(oButtonBarButtonSample);
 		}
 	});
 
@@ -343,7 +343,7 @@
 		text: "Button Image (left/right)",
 		enabled: true,
 		press : function() {
-			oHelper.alignImage(oButtonBarButtonSample)
+			oHelper.alignImage(oButtonBarButtonSample);
 		}
 	});
 
@@ -354,7 +354,7 @@
 		activeIcon: sChangeIconURI,
 		enabled: true,
 		press : function() {
-			oHelper.addIcon(oButtonBarButtonSample)
+			oHelper.addIcon(oButtonBarButtonSample);
 		}
 	});
 
@@ -364,7 +364,7 @@
 		icon: sChangeIconURI,
 		enabled: true,
 		press : function() {
-			oHelper.changeIcon(oButtonBarButtonSample)
+			oHelper.changeIcon(oButtonBarButtonSample);
 		}
 	});
 
@@ -374,7 +374,7 @@
 		icon: sDeleteIconURI,
 		enabled: true,
 		press : function() {
-			oHelper.removeIcon(oButtonBarButtonSample)
+			oHelper.removeIcon(oButtonBarButtonSample);
 		}
 	});
 
@@ -383,7 +383,7 @@
 		text: "Button Icon (left/right)",
 		enabled: true,
 		press : function() {
-			oHelper.alignIcon(oButtonBarButtonSample)
+			oHelper.alignIcon(oButtonBarButtonSample);
 		}
 	});
 
@@ -392,7 +392,7 @@
 		text: "Hide Button",
 		enabled: true,
 		press : function() {
-			oHelper.hide(oButtonBarButtonSample)
+			oHelper.hide(oButtonBarButtonSample);
 		}
 	});
 
@@ -401,7 +401,7 @@
 		text: "Show Button",
 		enabled: true,
 		press : function() {
-			oHelper.show(oButtonBarButtonSample)
+			oHelper.show(oButtonBarButtonSample);
 		}
 	});
 
@@ -410,7 +410,7 @@
 		text: "Remove Text",
 		enabled: true,
 		press : function() {
-			oHelper.removeText(oButtonBarButtonSample)
+			oHelper.removeText(oButtonBarButtonSample);
 		}
 	});
 
@@ -419,7 +419,7 @@
 		text: "Change Text",
 		enabled: true,
 		press : function() {
-			oHelper.changeText(oButtonBarButtonSample)
+			oHelper.changeText(oButtonBarButtonSample);
 		}
 	});
 
@@ -428,7 +428,7 @@
 		text: "Reset Text",
 		enabled: true,
 		press : function() {
-			oHelper.resetText(oButtonBarButtonSample)
+			oHelper.resetText(oButtonBarButtonSample);
 		}
 	});
 
@@ -456,7 +456,7 @@
 		enabled: true,
 		tooltip: "tooltip",
 		press : function() {
-			oHelper.alert("event: 'press' on " + oButtonSample)
+			oHelper.alert("event: 'press' on " + oButtonSample);
 		}
 	});
 
@@ -465,7 +465,7 @@
 		text: "Button Type Default",
 		enabled: true,
 		press : function() {
-			oHelper.typeDefault(oButtonSample)
+			oHelper.typeDefault(oButtonSample);
 		}
 	});
 
@@ -474,7 +474,7 @@
 		text: "Button Type Unstyled",
 		enabled: true,
 		press : function() {
-			oHelper.typeUnstyled(oButtonSample)
+			oHelper.typeUnstyled(oButtonSample);
 		}
 	});
 
@@ -483,7 +483,7 @@
 		text: "Button Type Accept",
 		enabled: true,
 		press : function() {
-			oHelper.typeAccept(oButtonSample)
+			oHelper.typeAccept(oButtonSample);
 		}
 	});
 
@@ -492,7 +492,7 @@
 		text: "Button Type Reject",
 		enabled: true,
 		press : function() {
-			oHelper.typeReject(oButtonSample)
+			oHelper.typeReject(oButtonSample);
 		}
 	});
 
@@ -501,7 +501,7 @@
 		text: "Button Type Transparent",
 		enabled: true,
 		press : function() {
-			oHelper.typeTransparent(oButtonSample)
+			oHelper.typeTransparent(oButtonSample);
 		}
 	});
 
@@ -510,7 +510,7 @@
 		text: "Button Type Back",
 		enabled: true,
 		press : function() {
-			oHelper.typeBack(oButtonSample)
+			oHelper.typeBack(oButtonSample);
 		}
 	});
 
@@ -519,7 +519,7 @@
 		text: "Button Type Up",
 		enabled: true,
 		press : function() {
-			oHelper.typeUp(oButtonSample)
+			oHelper.typeUp(oButtonSample);
 		}
 	});
 
@@ -528,7 +528,7 @@
 		text: "Button Type Emphasized",
 		enabled: true,
 		press : function() {
-			oHelper.typeEmphasized(oButtonSample)
+			oHelper.typeEmphasized(oButtonSample);
 		}
 	});
 
@@ -537,7 +537,7 @@
 		text: "Disable/Enable Button",
 		enabled: true,
 		press : function() {
-			oHelper.setEnabled(oButtonSample)
+			oHelper.setEnabled(oButtonSample);
 		}
 	});
 
@@ -546,7 +546,7 @@
 		text: "Set width 120px",
 		enabled: true,
 		press : function() {
-			oHelper.width100Pixel(oButtonSample)
+			oHelper.width100Pixel(oButtonSample);
 		}
 	});
 
@@ -555,7 +555,7 @@
 		text: "Set width 100%",
 		enabled: true,
 		press : function() {
-			oHelper.width100Percent(oButtonSample)
+			oHelper.width100Percent(oButtonSample);
 		}
 	});
 
@@ -564,7 +564,7 @@
 		text: "Set width 50%",
 		enabled: true,
 		press : function() {
-			oHelper.width50Percent(oButtonSample)
+			oHelper.width50Percent(oButtonSample);
 		}
 	});
 
@@ -573,7 +573,7 @@
 		text: "Reset width",
 		enabled: true,
 		press : function() {
-			oHelper.widthReset(oButtonSample)
+			oHelper.widthReset(oButtonSample);
 		}
 	});
 
@@ -583,7 +583,7 @@
 		icon: "./images/action_pressed.png",
 		enabled: true,
 		press : function() {
-			oHelper.addImage(oButtonSample)
+			oHelper.addImage(oButtonSample);
 		}
 	});
 
@@ -593,7 +593,7 @@
 		icon: "./images/action.png",
 		enabled: true,
 		press : function() {
-			oHelper.removeImage(oButtonSample)
+			oHelper.removeImage(oButtonSample);
 		}
 	});
 
@@ -602,7 +602,7 @@
 		text: "Button Image (left/right)",
 		enabled: true,
 		press : function() {
-			oHelper.alignImage(oButtonSample)
+			oHelper.alignImage(oButtonSample);
 		}
 	});
 
@@ -612,7 +612,7 @@
 		icon: sAddIconURI,
 		enabled: true,
 		press : function() {
-			oHelper.addIcon(oButtonSample)
+			oHelper.addIcon(oButtonSample);
 		}
 	});
 
@@ -622,7 +622,7 @@
 		icon: sDeleteIconURI,
 		enabled: true,
 		press : function() {
-			oHelper.removeIcon(oButtonSample)
+			oHelper.removeIcon(oButtonSample);
 		}
 	});
 
@@ -631,7 +631,7 @@
 		text: "Button Icon (left/right)",
 		enabled: true,
 		press : function() {
-			oHelper.alignIcon(oButtonSample)
+			oHelper.alignIcon(oButtonSample);
 		}
 	});
 
@@ -640,7 +640,7 @@
 		text: "Hide Button",
 		enabled: true,
 		press : function() {
-			oHelper.hide(oButtonSample)
+			oHelper.hide(oButtonSample);
 		}
 	});
 
@@ -649,7 +649,7 @@
 		text: "Show Button",
 		enabled: true,
 		press : function() {
-			oHelper.show(oButtonSample)
+			oHelper.show(oButtonSample);
 		}
 	});
 
@@ -658,7 +658,7 @@
 		text: "Remove Text",
 		enabled: true,
 		press : function() {
-			oHelper.removeText(oButtonSample)
+			oHelper.removeText(oButtonSample);
 		}
 	});
 
@@ -667,7 +667,7 @@
 		text: "Change Text",
 		enabled: true,
 		press : function() {
-			oHelper.changeText(oButtonSample)
+			oHelper.changeText(oButtonSample);
 		}
 	});
 
@@ -676,7 +676,7 @@
 		text: "Reset Text",
 		enabled: true,
 		press : function() {
-			oHelper.resetText(oButtonSample)
+			oHelper.resetText(oButtonSample);
 		}
 	});
 

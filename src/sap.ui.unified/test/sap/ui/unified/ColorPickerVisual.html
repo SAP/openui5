@@ -35,7 +35,7 @@
 				}
 			});
 
-			app: new sap.m.App({
+			new sap.m.App({
 				pages: [
 					new sap.m.Page("ColorPickerArea", {
 						showHeader:false,
@@ -63,7 +63,7 @@
 									new sap.m.ToggleButton("hsv_hsl_btn", {
 										text: "Toggle HSV/HSL",
 										press: function () {
-											oCP.setMode(sap.ui.unified.ColorPickerMode[this.getPressed() ? 'HSV':'HSL']);
+											oCP.setMode(sap.ui.unified.ColorPickerMode[this.getPressed() ? 'HSV' : 'HSL']);
 										}
 									})
 								]

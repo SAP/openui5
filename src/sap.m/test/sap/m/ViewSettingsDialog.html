@@ -42,6 +42,9 @@
 		 * Table setup and formatting *
 		 ******************************/
 
+		// make the util namespace known globally
+		var util = globalThis.util = {};
+
 		/* custom formatters (taken from cart app to test custom formatters) */
 
 		jQuery.sap.declare("util.Formatter");
@@ -62,7 +65,7 @@
 				"D": "Denied"
 			},
 			statusText: function (status) {
-				return (util.Formatter._statusTextMap[status]) ? util.Formatter._statusTextMap[status]: status;
+				return (util.Formatter._statusTextMap[status]) ? util.Formatter._statusTextMap[status] : status;
 			},
 			_statusStateMap: {
 				"A": "Success",
@@ -70,7 +73,7 @@
 				"D": "Error"
 			},
 			statusState: function (status) {
-				return (util.Formatter._statusStateMap[status]) ? util.Formatter._statusStateMap[status]: "None";
+				return (util.Formatter._statusStateMap[status]) ? util.Formatter._statusStateMap[status] : "None";
 			}
 		};
 
@@ -234,7 +237,7 @@
 				return oContext.getProperty("limit").toString();
 			},
 			price: function (oContext) { // use price to sort in categories (cheap / medium / expensive)
-				var price = parseInt(oContext.getProperty("price"), 10),
+				var price = parseInt(oContext.getProperty("price")),
 					key,
 					text;
 
@@ -287,15 +290,15 @@
 						// update filter
 						// this functionality only needed because custom control is cloned for this test page
 						// if you don't have cloned controls you can directly access them by id and set/reset the values
-						for(; i < filters.length; i++) {
-							if(filters[i] instanceof sap.m.ViewSettingsCustomItem && filters[i].getKey() === "myPriceFilter") {
+						for (; i < filters.length; i++) {
+							if (filters[i] instanceof sap.m.ViewSettingsCustomItem && filters[i].getKey() === "myPriceFilter") {
 								customFilter = filters[i];
 								break;
 							}
 						}
 
-						if(customFilter) {
-							if(oEvent.getParameter("value") !== 0 || source.getParent().getItems()[3].getValue() !== 100) {
+						if (customFilter) {
+							if (oEvent.getParameter("value") !== 0 || source.getParent().getItems()[3].getValue() !== 100) {
 								customFilter.setSelected(true);
 								customFilter.setFilterCount(1);
 							} else {
@@ -332,15 +335,15 @@
 						// update filter
 						// this functionality only needed because custom control is cloned for this test page
 						// if you don't have cloned controls you can directly access them by id and set/reset the values
-						for(; i < filters.length; i++) {
-							if(filters[i] instanceof sap.m.ViewSettingsCustomItem && filters[i].getKey() === "myPriceFilter") {
+						for (; i < filters.length; i++) {
+							if (filters[i] instanceof sap.m.ViewSettingsCustomItem && filters[i].getKey() === "myPriceFilter") {
 								customFilter = filters[i];
 								break;
 							}
 						}
 
-						if(customFilter) {
-							if(oEvent.getParameter("value") !== 100 || source.getParent().getItems()[1].getValue() !== 0) {
+						if (customFilter) {
+							if (oEvent.getParameter("value") !== 100 || source.getParent().getItems()[1].getValue() !== 0) {
 								customFilter.setSelected(true);
 								customFilter.setFilterCount(1);
  							} else {
@@ -368,18 +371,18 @@
 
 			// this functionality only needed because custom control is cloned for this test page
 			// if you don't have cloned controls you can directly access them by id and set/reset the values
-			for(; i < filters.length; i++) {
-				if(filters[i] instanceof sap.m.ViewSettingsCustomItem && filters[i].getKey() === "myPriceFilter") {
+			for (; i < filters.length; i++) {
+				if (filters[i] instanceof sap.m.ViewSettingsCustomItem && filters[i].getKey() === "myPriceFilter") {
 					customFilter = filters[i];
 					customControl = customFilter.getCustomControl();
 					break;
 				}
 			}
-			if(customFilter) {
+			if (customFilter) {
 				customFilter.setSelected(false);
 				customFilter.setFilterCount(0);
 			}
-			if(customControl) {
+			if (customControl) {
 				customControl.getItems()[0].setText("Minimum price:");
 				customControl.getItems()[1].setValue(0);
 				customControl.getItems()[2].setText("Maximum price:");

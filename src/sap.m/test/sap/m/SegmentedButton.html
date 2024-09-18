@@ -40,7 +40,7 @@
 
 	// Transform page to size compact
 	const sCompact = new URLSearchParams(window.location.search).get("compact");
-	if(sCompact) {
+	if (sCompact) {
 		$(document).ready(function() {
 			$("#content").addClass("sapUiSizeCompact");
 		});
@@ -284,7 +284,7 @@
 				for (; i < oButtons.length; i++) {
 					if (oButtons[i] === oSelectedButton) {
 						// calc next i
-						i +=1;
+						i += 1;
 						break;
 					}
 				}
@@ -673,7 +673,7 @@
 						new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("cart-5"), text: "Button3"})
 					]
 				}),
-				new sap.m.Button({text: "After SB", type: sap.m.ButtonType.Emphasized}),
+				new sap.m.Button({text: "After SB", type: sap.m.ButtonType.Emphasized})
 			]
 		});
 
@@ -1121,7 +1121,7 @@
 		page2.addContent(vBox);
 		app.addPage(page, true).addPage(page2, false);
 
-	}) ();
+	})();
 })();
 </script>
 </head>

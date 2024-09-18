@@ -19,17 +19,17 @@
 	</script>
 
 	<script>
-		var oPCHeader;
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
+				'sap/base/Log',
 				'sap/m/PlanningCalendarHeader',
 				'sap/m/Button',
 				'sap/m/SegmentedButton',
 				'sap/m/App',
-				 'sap/m/Page'
+				'sap/m/Page'
 			],
-			function (PlanningCalendarHeader, Button, SegmentedButton, App, Page) {
-				oPCHeader = new sap.m.PlanningCalendarHeader("PlanningCalendarHeader",{
+			function (Log, PlanningCalendarHeader, Button, SegmentedButton, App, Page) {
+				var oPCHeader = new sap.m.PlanningCalendarHeader("PlanningCalendarHeader",{
 					pickerText: "Picker text",
 					actions: [
 						new SegmentedButton('ViewSwitch1', {
@@ -56,16 +56,16 @@
 						})
 					],
 					pressPrevious: function () {
-						console.log("Previous pressed!");
+						Log.info("Previous pressed!");
 					},
 					pressToday: function () {
-						console.log("Today pressed!");
+						Log.info("Today pressed!");
 					},
 					pressNext: function () {
-						console.log("Next pressed!");
+						Log.info("Next pressed!");
 					},
 					dateSelect: function () {
-						console.log("Date selected!");
+						Log.info("Date selected!");
 					}
 				});
 				new App({
