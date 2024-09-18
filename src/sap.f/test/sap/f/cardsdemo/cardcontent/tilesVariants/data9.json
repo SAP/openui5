@@ -1,9 +1,9 @@
 {
-	"title": "Large Image in Numeric Header",
+	"title": "Numeric Header with icon fitType 'Cover'",
 	"icon": {
-		"src": "./images/sap-logo.svg",
+		"src": "./images/example.jpg",
 		"shape": "Square",
-		"fitType": "Contain"
+		"fitType": "Cover"
 	},
 	"unitOfMeasurement": "EUR",
 	"mainIndicator": {

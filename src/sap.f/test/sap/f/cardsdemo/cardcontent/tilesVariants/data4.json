@@ -3,6 +3,7 @@
 	"subTitle": "Image fits with imageFitType 'Contain'",
 	"icon": {
 		"src": "./images/sap-logo.svg",
-		"shape": "Square"
+		"shape": "Square",
+		"fitType": "Contain"
 	}
 }

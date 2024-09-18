@@ -40,6 +40,7 @@ sap.ui.define([
 	// shortcut for sap.m.AvatarSize
 	var AvatarSize = mLibrary.AvatarSize;
 	var AvatarColor = mLibrary.AvatarColor;
+	var AvatarImageFitType = mLibrary.AvatarImageFitType;
 	var CardActionType = library.CardActionType;
 	var ValueState = coreLibrary.ValueState;
 	var AnimationMode = Configuration.AnimationMode;
@@ -1470,6 +1471,37 @@ sap.ui.define([
 			oAvatar = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
 
 		assert.strictEqual(oAvatar.getDisplaySize(), AvatarSize.M, "'size' from the manifest is applied");
+	});
+
+	QUnit.test("'fitType' of icon with src", async function (assert) {
+		this.oCard.setManifest({
+			"sap.app": {
+				"type": "card",
+				"id": "test.object.card.iconFitType"
+			},
+			"sap.card": {
+				"type": "Object",
+				"content": {
+					"groups": [{
+						"title": "Company Details",
+						"items": [{
+							"icon": {
+								"src": "/images/grass.jpg",
+								"fitType": "Contain"
+							}
+						}]
+					}]
+				}
+			}
+		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oContent = this.oCard.getAggregation("_content"),
+			oAvatar = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
+
+		// Assert
+		assert.strictEqual(oAvatar.getImageFitType(), AvatarImageFitType.Contain, "ImageFitType should be 'Contain' when set by manifest.");
 	});
 
 	QUnit.test("'backgroundColor' of icon with src", async function (assert) {

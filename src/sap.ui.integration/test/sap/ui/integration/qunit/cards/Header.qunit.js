@@ -16,6 +16,7 @@ sap.ui.define([
 	const DOM_RENDER_LOCATION = "qunit-fixture";
 	const WrappingType = mLibrary.WrappingType;
 	const AvatarColor = mLibrary.AvatarColor;
+	const AvatarImageFitType = mLibrary.AvatarImageFitType;
 
 	QUnit.module("Default Header", {
 		beforeEach: async function () {
@@ -91,7 +92,8 @@ sap.ui.define([
 					"title": "Title",
 					"icon": {
 						"initials": "AJ",
-						"shape": "Circle"
+						"shape": "Circle",
+						"fitType": "Contain"
 					}
 				}
 			}
@@ -106,6 +108,7 @@ sap.ui.define([
 		assert.notOk(oHeader.getAggregation("_avatar").getSrc(), "Card header icon src should be empty.");
 		assert.equal(oHeader.getAggregation("_avatar").getDisplayShape(), "Circle", "Card header icon shape should be 'Circle'.");
 		assert.equal(oHeader.getAggregation("_avatar").getInitials(), "AJ", "Card header initials should be 'AJ'.");
+		assert.equal(oHeader.getAggregation("_avatar").getImageFitType(), AvatarImageFitType.Contain, "ImageFitType should be 'Contain'.");
 	});
 
 	QUnit.test("Default Header Avatar initials with deprecated 'text' property", async function (assert) {
