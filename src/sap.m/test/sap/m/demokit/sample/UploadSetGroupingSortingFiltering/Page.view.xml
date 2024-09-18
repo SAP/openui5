@@ -28,7 +28,8 @@
 				}"
 				mode="None"
 				mediaTypeMismatch="onMediaTypeMismatch"
-				fileTypeMismatch="onFileTypeMismatch" >
+				fileTypeMismatch="onFileTypeMismatch"
+				afterItemRemoved="onAfterItemRemoved" >
 			<upload:toolbar>
 				<OverflowToolbar>
 				<ToolbarSpacer/>
