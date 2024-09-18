@@ -108,6 +108,10 @@ sap.ui.define([
 					.close("span");
 			}
 
+			oRm.openStart("div")
+				.class("sapMPopoverWrapper")
+				.openEnd();
+
 			// Header
 			if (oHeader) {
 				oRm.openStart("header")
@@ -195,6 +199,7 @@ sap.ui.define([
 
 				oRm.close("footer");
 			}
+			oRm.close("div");	// wrapper
 
 			// Arrow
 			if (oControl.getShowArrow()) {
