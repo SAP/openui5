@@ -21,62 +21,83 @@ sap.ui.define([
 		QUnit.config.current.assert.ok(true, "open new event handler has been executed."); // this test tests by just being counted in the respective test
 	}
 
-
-	var oOverlayDialog = new OverlayDialog("myOverlayDialog", {
-		close: closeEventHandler,
-		open: openEventHandler,
-		openNew: openNewEventHandler
+	QUnit.module("Appearance", {
+		beforeEach: function () {
+			this.oOverlayDialog = new OverlayDialog({
+				close: closeEventHandler,
+				open: openEventHandler,
+				openNew: openNewEventHandler
+			});
+			this.oOverlayDialog.addContent(new Button(this.oOverlayDialog.getId() + "Button", { text: "Button for Content" }));
+			this.oOverlayDialog.placeAt("uiArea1");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oOverlayDialog.destroy();
+		}
 	});
-	oOverlayDialog.addContent(new Button(oOverlayDialog.getId() + "Button", {text: "Button for Content"}));
-	oOverlayDialog.placeAt("uiArea1");
-	sap.ui.getCore().applyChanges();
-
-
-
-	QUnit.module("Appearance");
 
 	QUnit.test("OverlayDialog exists", function (assert) {
-		var oDomRef = oOverlayDialog.getDomRef();
+		var oDomRef = this.oOverlayDialog.getDomRef();
 		assert.ok(oDomRef, "Rendered OverlayDialog should exist in the page");
 		assert.ok(oDomRef.classList.contains("sapUiUx3OD"), "Rendered OverlayDialog should have the class 'sapUiUx3OD'");
 		assert.ok(oDomRef.classList.contains("sapUiUx3Overlay"), "Rendered OverlayDialog should have the class 'sapUiUx3Overlay'");
-		oDomRef = oOverlayDialog.getDomRef("close");
+		oDomRef = this.oOverlayDialog.getDomRef("close");
 		assert.ok(oDomRef, "close button should be rendered");
-		oDomRef = oOverlayDialog.getDomRef("openNew");
-		assert.ok(!oDomRef, "close button should not be rendered");
+		oDomRef = this.oOverlayDialog.getDomRef("openNew");
+		assert.ok(!oDomRef, "open new button should not be rendered");
 	});
 
-	QUnit.module("Behaviour");
+	QUnit.module("Behaviour", {
+		beforeEach: function () {
+			this.oOverlayDialog = new OverlayDialog({
+				close: closeEventHandler,
+				open: openEventHandler,
+				openNew: openNewEventHandler
+			});
+			this.oOverlayDialog.addContent(new Button(this.oOverlayDialog.getId() + "Button", { text: "Button for Content" }));
+			this.oOverlayDialog.placeAt("uiArea1");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oOverlayDialog.destroy();
+		}
+	});
 
 	QUnit.test("Open Method", function (assert) {
 		var done = assert.async();
 		assert.expect(4);
-		assert.ok(!oOverlayDialog.isOpen(), "Rendered OverlayDialog is not open");
-		oOverlayDialog.open();
-		assert.ok(oOverlayDialog.isOpen(), "Rendered OverlayDialog is open");
-		setTimeout(
-				function () {
-					assert.ok(oOverlayDialog.getId() + "Button" ? window.document.getElementById(oOverlayDialog.getId() + "Button") : null, "Rendered Content should exist in the page");
-					done();
-				}, 500);
-	});
-
-	// at the end close
-	QUnit.test("Close Event", function (assert) {
-		var done = assert.async();
-		assert.expect(3);
-		assert.ok(oOverlayDialog.isOpen(), "Rendered OverlayDialog is open");
-		qutils.triggerMouseEvent(oOverlayDialog.$("close"), "click", 1, 1, 1, 1);
-		setTimeout(function () {
-			assert.ok(!oOverlayDialog.isOpen(), "Rendered OverlayDialog is not open");
+		assert.ok(!this.oOverlayDialog.isOpen(), "Rendered OverlayDialog is not open");
+		this.oOverlayDialog.open();
+		assert.ok(this.oOverlayDialog.isOpen(), "Rendered OverlayDialog is open");
+		setTimeout(() => {
+			assert.ok(this.oOverlayDialog.getId() + "Button" ? window.document.getElementById(this.oOverlayDialog.getId() + "Button") : null, "Rendered Content should exist in the page");
 			done();
 		}, 500);
 	});
 
+	// at the end close
+	QUnit.test("Close Events", function (assert) {
+		var done = assert.async();
+
+		this.oOverlayDialog.attachClose((oEvent) => {
+			assert.equal(this.oOverlayDialog.getId(), oEvent.getParameter("id"), "Close event fired");
+		});
+		this.oOverlayDialog.attachClosed((oEvent) => {
+			assert.equal(this.oOverlayDialog.getId(), oEvent.getParameter("id"), "Closed event fired");
+			assert.ok(!this.oOverlayDialog.isOpen(), "Rendered OverlayDialog is not open");
+			done();
+		});
+		this.oOverlayDialog.open();
+		assert.expect(6);
+		assert.ok(this.oOverlayDialog.isOpen(), "Rendered OverlayDialog is open");
+		qutils.triggerMouseEvent(this.oOverlayDialog.$("close"), "click", 1, 1, 1, 1);
+	});
+
 	QUnit.test("Destroy and remove control", function (assert) {
-		oOverlayDialog.destroy();
+		this.oOverlayDialog.destroy();
 		sap.ui.getCore().applyChanges();
-		var oDomRef = oOverlayDialog.getDomRef();
+		var oDomRef = this.oOverlayDialog.getDomRef();
 		assert.ok(!oDomRef, "Rendered OverlayDialog should not exist in the page after destruction");
 	});
 });
