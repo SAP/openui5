@@ -1,6 +1,6 @@
 <mvc:View
 	class="sapUiSizeCompact"
-	controllerName="sap.ui.core.sample.odata.v4.DataAggregation_RAP.RAP"
+	controllerName="sap.ui.core.sample.odata.v4.DataAggregation_CAP.CAP"
 	xmlns="sap.ui.table"
 	xmlns:m="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
@@ -68,10 +68,16 @@
 				}" wrapping="false"/>
 			</template>
 		</Column>
-		<Column width="4em">
+		<Column width="6em">
+			<m:Label text="Plane Type"/>
+			<template>
+				<m:Text text="{PlaneType}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column width="7em">
 			<m:Label text="Status"/>
 			<template>
-				<m:Text text="{status}" wrapping="false"/>
+				<m:Text text="{status} - {statusName}" wrapping="false"/>
 			</template>
 		</Column>
 		<Column width="7em">
