@@ -254,10 +254,9 @@ sap.ui.define(["sap/ui/model/ListBinding"], function(ListBinding) {
 		return aProperties;
 	}
 	/**
-	 * Default read delegate for ODataV2 protocoll.
+	 * Default read delegate for ODataV2 protocol.
 	 * @namespace sap.ui.fl.write._internal.delegate.ODataV2ReadDelegate
 	 * @implements {sap.ui.fl.interfaces.Delegate}
-	 * @experimental Since 1.123
 	 * @since 1.123
 	 * @private
 	 */
