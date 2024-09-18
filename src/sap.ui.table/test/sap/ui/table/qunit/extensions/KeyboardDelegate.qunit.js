@@ -1254,6 +1254,14 @@ sap.ui.define([
 		oElem = checkFocus(oTable.getDomRef("noDataCnt"), assert);
 		simulateTabEvent(oElem, true);
 		checkFocus(document.getElementById("Focus1"), assert);
+
+		oTable.setSelectionMode(library.SelectionMode.MultiToggle);
+		oTable.setSelectionBehavior(library.SelectionBehavior.RowOnly);
+		await nextUIUpdate();
+		simulateTabEvent(oElem);
+		oElem = checkFocus(oTable.getDomRef("noDataCnt"), assert);
+		simulateTabEvent(oElem);
+		oElem = checkFocus(document.getElementById("Focus2"), assert);
 	});
 
 	QUnit.test("CreationRow when hideEmptyRows is set to true", async function(assert) {
