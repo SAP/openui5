@@ -113,7 +113,7 @@ sap.ui.define([
 			 * For example, if the first name and last name are displayed in the same column, only one of the two can be defined as
 			 * <code>sortProperty</code>.
 			 *
-			 * A column menu entry for sorting can only be generated if the <code>sortProperty</code> is set.
+			 * A column menu entry for sorting can only be generated if the <code>headerMenu</code> association and <code>sortProperty</code> are set.
 			 */
 			sortProperty: {type: "string", group: "Behavior", defaultValue: null},
 
@@ -130,8 +130,8 @@ sap.ui.define([
 			 * For example, if the first name and last name are displayed in the same column, only one of the two can be defined as
 			 * <code>filterProperty</code>.
 			 *
-			 * A column menu entry for filtering can only be generated if the <code>filterProperty</code> is set. The
-			 * default menu entry is a text input field.
+			 * A column menu entry for filtering can only be generated if the <code>headerMenu</code> association and <code>filterProperty</code> are
+			 * set. The default menu entry is a text input field.
 			 */
 			filterProperty: {type: "string", group: "Behavior", defaultValue: null},
 
@@ -200,13 +200,15 @@ sap.ui.define([
 			name: {type: "string", group: "Appearance", defaultValue: null},
 
 			/**
-			 * Defines if the filter menu entry is displayed
+			 * Defines if the filter menu entry is displayed.
+			 * <b>Note</b>: It only takes effect if the <code>headerMenu</code> association is set.
 			 * @since 1.13.0
 			 */
 			showFilterMenuEntry: {type: "boolean", group: "Appearance", defaultValue: true},
 
 			/**
-			 * Defines if the sort menu entries are displayed
+			 * Defines if the sort menu entries are displayed.
+			 * <b>Note</b>: It only takes effect if the <code>headerMenu</code> association is set.
 			 * @since 1.13.0
 			 */
 			showSortMenuEntry: {type: "boolean", group: "Appearance", defaultValue: true},

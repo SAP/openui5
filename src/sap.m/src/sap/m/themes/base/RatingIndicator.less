@@ -12,10 +12,6 @@
 	margin: 0.8125rem 0;
 }
 
-.sapUiSizeCompact .sapMRI {
-	margin: 0.5rem 0;
-}
-
 html.sap-phone .sapMRI:focus,
 html.sap-tablet .sapMRI:focus {
 	outline: none;
@@ -75,29 +71,6 @@ html.sap-tablet .sapMRI:focus {
 	margin: 0 0.5rem;
 }
 
-.sapUiRatingIndicatorXS .sapMRI .sapUiIcon,
-.sapUiRatingIndicatorXS .sapMRI .sapMImg {
-	padding-right: @sapUiRIIconPaddingXS;
-	vertical-align:top;
-}
-	.sapUiRatingIndicatorS .sapMRI .sapUiIcon,
-	.sapUiRatingIndicatorS .sapMRI .sapMImg {
-		padding-right: @sapUiRIIconPaddingS;
-		vertical-align:top;
-	}
-
-	.sapUiRatingIndicatorM .sapMRI .sapUiIcon,
-	.sapUiRatingIndicatorM .sapMRI .sapMImg {
-		padding-right: @sapUiRIIconPaddingM;
-		vertical-align:top;
-	}
-
-	.sapUiRatingIndicatorL .sapMRI .sapUiIcon,
-	.sapUiRatingIndicatorL .sapMRI .sapMImg {
-		padding-right: @sapUiRIIconPaddingL;
-		vertical-align:top;
-	}
-
 .sapMRI.sapUiRatingIndicatorXS .sapUiIcon:last-child,
 .sapMRI.sapUiRatingIndicatorXS .sapMImg:last-child,
 .sapMRI.sapUiRatingIndicatorS  .sapUiIcon:last-child,
@@ -107,11 +80,6 @@ html.sap-tablet .sapMRI:focus {
 .sapMRI.sapUiRatingIndicatorL .sapUiIcon:last-child,
 .sapMRI.sapUiRatingIndicatorL .sapMImg:last-child {
 	padding-right: 0;
-}
-
-.sapMRIIcon { /* required for size calculation */
-	height: 1.375rem; /* default size */
-	overflow: hidden;
 }
 
 .sapMRIDisabled {
@@ -125,9 +93,18 @@ html.sap-tablet .sapMRI:focus {
 	margin: 0;
 }
 
+.sapMRI.sapMRIDisplayOnly .sapUiIcon,
+.sapMRI.sapMRIDisplayOnly .sapMImg {
+	padding-right: @sapUiRIIconPaddingDisplayOnly;
+	height: @sapUiRIIconSizeDisplayOnly;
+}
+
 .sapMRI .sapUiIcon,
 .sapMRI .sapMImg {
-	padding-right: 0.25rem;
+	padding-right: @sapUiRIIconPaddingCozy;
+	height: @sapUiRIIconSizeCozy;
+	overflow: hidden;
+	vertical-align:top;
 }
 
 .sapMRI .sapUiIcon:last-child,
@@ -139,15 +116,30 @@ html.sap-tablet .sapMRI:focus {
 .sapUiSizeCompact {
 	.sapMRI {
 		margin: 0.5rem 0;
-
-		&.sapMRIDisplayOnly {
-			margin: 0;
-		}
 	}
-	.sapMRIIcon {
-		height: 1rem; /* default size for the compact mode */
+
+	.sapMRI.sapMRIDisplayOnly {
+		margin: 0;
+	}
+
+	.sapMRI .sapUiIcon,
+	.sapMRI .sapMImg {
+		padding-right: @sapUiRIIconPaddingCompact;
+		height: @sapUiRIIconSizeCompact;
+	}
+
+	.sapMRI.sapMRIDisplayOnly .sapUiIcon,
+	.sapMRI.sapMRIDisplayOnly .sapMImg {
+		padding-right: @sapUiRIIconPaddingDisplayOnly;
+		height: @sapUiRIIconSizeDisplayOnly;
+	}
+
+	.sapMRI .sapUiIcon:last-child,
+	.sapMRI .sapMImg:last-child {
+		padding-right: 0;
 	}
 }
+
 /* Condensed mode */
 .sapUiSizeCondensed .sapUiTableDataCell .sapMRI .sapUiIcon,
 .sapUiSizeCondensed .sapUiTableDataCell .sapMRI .sapMImg{

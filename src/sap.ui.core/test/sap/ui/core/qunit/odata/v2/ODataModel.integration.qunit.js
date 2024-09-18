@@ -545,6 +545,9 @@ sap.ui.define([
 				// GWSAMPLE_BASIC service with special function imports
 				"/SalesOrderSrv/$metadata"
 					: {source : "qunit/testdata/SalesOrder/metadata.xml"},
+				["/SalesOrderSrv/$metadata?sap-value-list=gwsample_basic.gwsample_basic_Entities%2F"
+					+ "Function_With_ValueList_For_Parameter%2FParameter_With_On_Demand_ValueList"]
+					: {source : "qunit/testdata/SalesOrder/metadata_valuelist_functionimport_parameter.xml"},
 				"/sap/opu/odata/sap/PP_WORKCENTER_GROUP_SRV/$metadata"
 					: {source : "qunit/model/PP_WORKCENTER_GROUP_SRV.metadata.xml"},
 				"/sap/opu/odata/IWBEP/RMTSAMPLEFLIGHT/$metadata"
@@ -23102,7 +23105,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Scenario: "Retry-After" handler in place, server responds with 503 HTTP status code and "Retry-After"
 	// response header.
 	// 1) GET request answered with 503, no error no change, callback waiting
-	// 1a) Deferred binding requests data, no request happen because pending promise, callback not called again,
+	// 1a) Deferred binding requests data, no request happens because pending promise, callback not called again,
 	//   callback promise reused.
 	// 2) Callback resolves promise -> first GET repeated, second GET for deferred binding also sent
 	// 3) ODataBinding#refresh results in 3 GET requests, response processing of first GET processing reuses already
@@ -23116,7 +23119,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// 5b) Reject with own reason, error is not reported, only logged
 	// 5c) After rejection the change is still present and can be repeated via #submitChanges wereas GET is not
 	//   repeated
-	// JIRA: CPOUI5MODELS-1750, CPOUI5MODELS-1776
+	// JIRA: CPOUI5MODELS-1750, CPOUI5MODELS-1776, CPOUI5MODELS-1787 check proper eventing
 	[true, false].forEach((bDisableHeadRequestForToken) => {
 		[true, false].forEach((bUseBatch) => {
 		const sTitle = `503 "Retry-After" handling, bUseBatch:${bUseBatch}, `
@@ -23170,9 +23173,44 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				return pRetryAfter;
 			});
 
+			const oEventHandlers = {
+				onBatchRequestCompleted() {},
+				onBatchRequestFailed() {},
+				onBatchRequestSent() {},
+				onRequestCompleted() {},
+				onRequestFailed() {},
+				onRequestSent() {}
+			};
+			const oEventHandlersMock = this.mock(oEventHandlers);
+			oEventHandlersMock.expects("onRequestCompleted").never();
+			oEventHandlersMock.expects("onRequestFailed").never();
+			oEventHandlersMock.expects("onRequestSent").never();
+			oEventHandlersMock.expects("onBatchRequestCompleted").never();
+			oEventHandlersMock.expects("onBatchRequestFailed").never();
+			oEventHandlersMock.expects("onBatchRequestSent").never();
+			oModel.attachRequestCompleted(null, oEventHandlers.onRequestCompleted);
+			oModel.attachRequestFailed(null, oEventHandlers.onRequestFailed);
+			oModel.attachRequestSent(null, oEventHandlers.onRequestSent);
+			oModel.attachBatchRequestCompleted(null, oEventHandlers.onBatchRequestCompleted);
+			oModel.attachBatchRequestFailed(null, oEventHandlers.onBatchRequestFailed);
+			oModel.attachBatchRequestSent(null, oEventHandlers.onBatchRequestSent);
+
+			function getUrl(iSalesOrderId) {
+				const sUrl = !bUseBatch ? "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/" : "";
+				return sUrl + "SalesOrderSet('" + iSalesOrderId + "')";
+			}
+
+			function expectEvent(sEventHandlerName, iSalesOrderId, bBatch = true) {
+				const sNestedPath = bBatch ? "mParameters.requests[0].url" : "mParameters.url";
+				oEventHandlersMock.expects(sEventHandlerName)
+					.withArgs(sinon.match.hasNested(sNestedPath, getUrl(iSalesOrderId)));
+				}
+
 			if (bUseBatch) {
 				this.expectHeadRequest(undefined, bDisableHeadRequestForToken);
+				expectEvent("onBatchRequestSent", 1);
 			}
+			expectEvent("onRequestSent", 1, false);
 			this.expectRequest("SalesOrderSet('1')", create503ErrorResponse("1)", bUseBatch));
 
 			// code under test (1)
@@ -23188,6 +23226,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}).then(() => {
 				assert.ok(bCallbackWaiting);
 				assert.strictEqual(iCallbackCounter, 1);
+				if (bUseBatch) {
+					expectEvent("onBatchRequestSent", 2);
+					expectEvent("onBatchRequestCompleted", 1);
+					expectEvent("onBatchRequestCompleted", 2);
+				}
+				expectEvent("onRequestSent", 2, false);
+				expectEvent("onRequestCompleted", 1, false);
+				expectEvent("onRequestCompleted", 2, false);
 
 				this.expectRequest("SalesOrderSet('1')", {SalesOrderID: "1", Note: "Foo1"})
 					.expectRequest("SalesOrderSet('2')", {SalesOrderID: "2", Note: "Foo2"})
@@ -23204,6 +23250,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}).then(() => {
 				assert.notOk(bCallbackWaiting);
 				assert.strictEqual(iCallbackCounter, 1);
+				if (bUseBatch) {
+					expectEvent("onBatchRequestSent", 1);
+					expectEvent("onBatchRequestSent", 2);
+				}
+				expectEvent("onRequestSent", 1, false);
+				expectEvent("onRequestSent", 2, false);
 
 				this.expectRequest("SalesOrderSet('1')", resolveLater(() => {
 					// process 503 a little later than 2nd request's response, callback promise reused
@@ -23224,6 +23276,16 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}).then(() => {
 				assert.ok(bCallbackWaiting);
 				assert.strictEqual(iCallbackCounter, 2);
+				if (bUseBatch) {
+					expectEvent("onBatchRequestFailed", 1);
+					expectEvent("onBatchRequestFailed", 2);
+					expectEvent("onBatchRequestCompleted", 1);
+					expectEvent("onBatchRequestCompleted", 2);
+				}
+				expectEvent("onRequestFailed", 1, false);
+				expectEvent("onRequestFailed", 2, false);
+				expectEvent("onRequestCompleted", 1, false);
+				expectEvent("onRequestCompleted", 2, false);
 
 				this.expectValue("note1", "")
 					.expectValue("note2", "")
@@ -23277,6 +23339,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				assert.notOk(bCallbackWaiting);
 				assert.strictEqual(iCallbackCounter, 2);
 				this.removePersistentAndTechnicalMessages(); // reset messages
+				if (bUseBatch) {
+					expectEvent("onBatchRequestSent", 1);
+					expectEvent("onBatchRequestSent", 2);
+					expectEvent("onBatchRequestSent", 3);
+				}
+				expectEvent("onRequestSent", 1, false);
+				expectEvent("onRequestSent", 2, false);
+				expectEvent("onRequestSent", 3, false);
 
 				this.expectRequest("SalesOrderSet('1')", new Promise((resolve) => {fnRolveLate503Response = resolve;}))
 					.expectRequest("SalesOrderSet('2')", create503ErrorResponse("3) for SalesOrder 2", bUseBatch))
@@ -23288,7 +23358,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				this.oView.byId("objectPage2").getElementBinding().refresh(true, "refresh2");
 				this.oView.byId("objectPage3").bindObject("/SalesOrderSet('3')");
 
-				return this.waitForChanges(assert, "4) tree $batch, 2nd+3rd answered with 503, 1st answer pending");
+				return this.waitForChanges(assert, "4) three $batchs, 2nd+3rd answered with 503, 1st answer pending");
 			}).then(() => {
 				assert.ok(bCallbackWaiting);
 				assert.strictEqual(iCallbackCounter, 3);
@@ -23304,6 +23374,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}).then(() => {
 				assert.ok(bCallbackWaiting);
 				assert.strictEqual(iCallbackCounter, 3);
+				if (bUseBatch) {
+					expectEvent("onBatchRequestCompleted", 1);
+					expectEvent("onBatchRequestCompleted", 2);
+					expectEvent("onBatchRequestCompleted", 3);
+				}
+				expectEvent("onRequestCompleted", 1, false);
+				expectEvent("onRequestCompleted", 2, false);
+				expectEvent("onRequestCompleted", 3, false);
 
 				this.expectRequest("SalesOrderSet('1')", {SalesOrderID: "1", Note: "Bar1"})
 					.expectRequest("SalesOrderSet('2')", {SalesOrderID: "2", Note: "Bar2"})
@@ -23324,6 +23402,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				assert.notOk(bCallbackWaiting);
 				assert.strictEqual(iCallbackCounter, 3);
 				assert.notOk(oModel.hasPendingRequests());
+				if (bUseBatch) {
+					expectEvent("onBatchRequestSent", 2);
+				}
+				expectEvent("onRequestSent", 2, false);
 
 				this.removePersistentAndTechnicalMessages(); // reset messages
 				this.expectRequest("SalesOrderSet('2')", create503ErrorResponse("5)", bUseBatch))
@@ -23338,7 +23420,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}).then(() => {
 				assert.ok(bCallbackWaiting);
 				assert.strictEqual(iCallbackCounter, 4);
-
+				if (bUseBatch) {
+					expectEvent("onBatchRequestSent", 1);
+					// the request cannot be send in non-batch mode as it is waiting for the security token request
+					expectEvent("onRequestSent", 1, false);
+				 }
 				this.expectValue("note1", "Note1 5)");
 
 				// code under test
@@ -23351,6 +23437,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				assert.strictEqual(iCallbackCounter, 4);
 				assert.strictEqual(oModel.hasPendingChanges(true), true);
 				assert.notOk(oModel.hasPendingRequests());
+				if (bUseBatch) {
+					oEventHandlersMock.expects("onBatchRequestSent")
+						.withArgs(sinon.match.hasNested("mParameters.requests[0].url", getUrl(3))
+							.and(sinon.match.hasNested("mParameters.requests[1].url", getUrl(1))));
+					// the requests cannot be send in non-batch mode as it is waiting for the security token request
+					expectEvent("onRequestSent", 1, false);
+					expectEvent("onRequestSent", 3, false);
+				}
 
 				this.expectValue("note3", "Note3 5)");
 
@@ -23364,6 +23458,26 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				assert.strictEqual(iCallbackCounter, 4);
 				assert.ok(oModel.hasPendingChanges(true));
 				assert.notOk(oModel.hasPendingRequests());
+				if (bUseBatch) {
+					expectEvent("onBatchRequestFailed", 1);
+					expectEvent("onBatchRequestFailed", 2);
+					oEventHandlersMock.expects("onBatchRequestFailed")
+						.withArgs(sinon.match.hasNested("mParameters.requests[0].url", getUrl(3))
+							.and(sinon.match.hasNested("mParameters.requests[1].url", getUrl(1))));
+					expectEvent("onBatchRequestCompleted", 1);
+					expectEvent("onBatchRequestCompleted", 2);
+					oEventHandlersMock.expects("onBatchRequestCompleted")
+						.withArgs(sinon.match.hasNested("mParameters.requests[0].url", getUrl(3))
+							.and(sinon.match.hasNested("mParameters.requests[1].url", getUrl(1))));
+				}
+				expectEvent("onRequestFailed", 1, false);
+				expectEvent("onRequestFailed", 1, false);
+				expectEvent("onRequestFailed", 2, false);
+				expectEvent("onRequestFailed", 3, false);
+				expectEvent("onRequestCompleted", 1, false);
+				expectEvent("onRequestCompleted", 1, false);
+				expectEvent("onRequestCompleted", 2, false);
+				expectEvent("onRequestCompleted", 3, false);
 
 				this.expectValue("note2", "")
 					.expectMessages([]);
@@ -23383,6 +23497,18 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				// ODataModel#_processRequestQueue fnError is NOT passed to #_submitSingleRequest.
 				assert.strictEqual(iErrorHandlerCalled, bUseBatch ? 2 : 0);
 				assert.strictEqual(oModel.hasPendingChanges(true), true);
+				if (bUseBatch) {
+					oEventHandlersMock.expects("onBatchRequestSent")
+						.withArgs(sinon.match.hasNested("mParameters.requests[0].url", getUrl(1))
+							.and(sinon.match.hasNested("mParameters.requests[1].url", getUrl(3))));
+					oEventHandlersMock.expects("onBatchRequestCompleted")
+						.withArgs(sinon.match.hasNested("mParameters.requests[0].url", getUrl(1))
+							.and(sinon.match.hasNested("mParameters.requests[1].url", getUrl(3))));
+				}
+				expectEvent("onRequestSent", 1, false);
+				expectEvent("onRequestSent", 3, false);
+				expectEvent("onRequestCompleted", 1, false);
+				expectEvent("onRequestCompleted", 3, false);
 
 				if (!bUseBatch) {
 					this.expectHeadRequest(undefined, bDisableHeadRequestForToken);
@@ -24564,6 +24690,36 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				oModel.getMetaModel().loaded(),
 				this.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Allow loading of value lists for function import parameters on demand.
+	// JIRA: CPOUI5MODELS-1746
+	QUnit.test("CPOUI5MODELS-1746: load value list for function import parameter on demand", async function (assert) {
+		const oModel = createSalesOrdersModelSpecialFunctionImports();
+		await this.createView(assert, "", oModel);
+		const oMetaModel = oModel.getMetaModel();
+		await oMetaModel.loaded();
+
+		// code under test - load value list for function import parameter
+		const oFunctionImportParameterMetaContext = oMetaModel.getFunctionImportParameterContext(
+			"Function_With_ValueList_For_Parameter", "Parameter_With_On_Demand_ValueList");
+		const oParameter = oMetaModel.getObject(oFunctionImportParameterMetaContext.getPath());
+
+		assert.strictEqual(oParameter["com.sap.vocabularies.Common.v1.Label"].String,
+			"Parameter with on demand ValueList");
+		assert.strictEqual(oParameter["com.sap.vocabularies.Common.v1.ValueList"], undefined);
+
+		// code under test
+		const oValueHelpPromise = oMetaModel.getODataValueLists(oFunctionImportParameterMetaContext);
+
+		return oValueHelpPromise.then((mValueLists) => {
+			const oParameter = oMetaModel.getObject(oFunctionImportParameterMetaContext.getPath());
+
+			assert.strictEqual(oParameter["com.sap.vocabularies.Common.v1.Label"].String,
+				"Parameter with on demand ValueList");
+			assert.deepEqual(oParameter["com.sap.vocabularies.Common.v1.ValueList"], mValueLists[""]);
 		});
 	});
 });

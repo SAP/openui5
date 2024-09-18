@@ -1666,6 +1666,69 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Hook _fnCreateModel() ", function(assert) {
+		const oManifest = {
+			"sap.app": {
+				"id": "testdata.other",
+				"type": "application",
+				"applicationVersion": {
+					"version": "1.0.0"
+				}
+			},
+			"sap.ui5": {
+				"resources": {
+					"css": [
+						{
+							"uri": "style3.css"
+						}
+					]
+				},
+				"models": {
+					"": {
+						"type": "sap.ui.model.json.JSONModel"
+					},
+					"myV2Model": {
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "./some/odata/service/"
+					},
+					"myV4Model": {
+						"type": "sap.ui.model.odata.v4.ODataModel",
+						"uri": "./some/odata/service/"
+					}
+
+				}
+			}
+		};
+
+		const oConfig = {
+			manifest: oManifest,
+			asyncHints: {
+				components: [
+					{
+						"name": "my.async.hints"
+					}
+				]
+			}
+		};
+
+		Component._fnCreateModel = function(oModel, sModelName, oConfig) {
+			assert.ok(oModel, "_fnCreateModel hook is called");
+			assert.equal(oConfig, oConfig, "_fnCreateMOdel hook is called with correct factory config object.");
+		};
+
+		const oSpy = sinon.spy(Component, "_fnCreateModel");
+
+		return Component.create(oConfig).then(function(oComponent) {
+			assert.equal(oSpy.callCount, 2, "_fnCreateModel hook should be called two times (for v2 and v4 model).");
+			assert.ok(oSpy.calledWith(sinon.match.any, "myV2Model"), "_fnCreateModel called with correct model name");
+			assert.ok(oSpy.calledWith(sinon.match.any, "myV4Model"), "_fnCreateModel called with correct model name");
+
+			oSpy.restore();
+			Component._fnCreateModel = null;
+			oComponent.destroy();
+		});
+	});
+
 
 	QUnit.test("Relative URLs for ResourceModel (enhanceWith)", function(assert) {
 

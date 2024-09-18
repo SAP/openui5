@@ -26,11 +26,12 @@
 		"config": {
 			"sample": {
 				"files": [
+					"view/TableCopyPaste.view.xml",
+					"model/metadata/JSONPropertyInfo.js",
+					"controller/Controller.controller.js",
 					"../delegates/JSONTableDelegate.js",
 					"../delegates/JSONTableFilterDelegate.js",
-					"../mockdata/metadata/JSONPropertyInfo.js",
 					"../mockdata/mountains.json",
-					"view/TableCopyPaste.view.xml",
 					"manifest.json"
 				]
 			}

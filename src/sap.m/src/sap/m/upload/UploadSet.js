@@ -54,6 +54,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @since 1.63
+	 * @deprecated As of version 1.129, replaced by {@link sap.m.plugins.UploadSetwithTable}
 	 * @alias sap.m.upload.UploadSet
 	 */
 	var UploadSet = Control.extend("sap.m.upload.UploadSet", {

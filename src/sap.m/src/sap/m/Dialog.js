@@ -1214,6 +1214,10 @@ function(
 	 * @private
 	 */
 	Dialog.prototype._onResize = function () {
+		if (!this.getDomRef()) {
+			return;
+		}
+
 		var $dialog = this.$(),
 			$dialogContent = this.$('cont'),
 			sContentWidth = this.getContentWidth(),

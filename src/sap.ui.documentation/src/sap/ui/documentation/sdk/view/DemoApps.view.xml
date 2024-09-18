@@ -132,6 +132,16 @@
 												text="{i18n>DEMO_APPS_CARD_LINK}"
 												wrapping="true" />
 										</HBox>
+											<customData>
+												<core:CustomData key="config" value="{config}" />
+												<core:CustomData key="label" value="{name}" />
+											</customData>
+
+											<Link
+											class="sapUiDemoKitDemoAppsCardDownloadLink"
+											text="{i18n>DEMO_APPS_CARD_DOWNLOAD_LINK}"
+											press=".onDownloadPress"
+											wrapping="true"  />
 									</VBox>
 								</f:content>
 							</f:Card>

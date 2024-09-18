@@ -11,7 +11,7 @@ sap.ui.define([
 	"use strict";
 
 	const MANDATORY_PROPERTIES = ["semanticObject", "action"];
-	const SUPPORTED_PROPERTIES = ["semanticObject", "action", "hideLauncher", "icon", "title", "shortTitle", "subTitle", "info", "indicatorDataSource", "deviceTypes", "displayMode", "signature"];
+	const SUPPORTED_PROPERTIES = [...MANDATORY_PROPERTIES, "hideLauncher", "icon", "title", "shortTitle", "subTitle", "info", "indicatorDataSource", "deviceTypes", "displayMode", "signature"];
 
 	const PROPERTIES_PATTERNS = {
 		semanticObject: "^[\\w\\*]{0,30}$",
@@ -49,7 +49,7 @@ sap.ui.define([
 			oManifest["sap.app"].crossNavigation.inbounds ||= {};
 
 			const oChangeContent = oChange.getContent();
-			const sInboundId = DescriptorChangeCheck.getAndCheckInOrOutbound(oChangeContent, "inbound", MANDATORY_PROPERTIES, SUPPORTED_PROPERTIES, PROPERTIES_PATTERNS);
+			const sInboundId = DescriptorChangeCheck.getAndCheckContentObject(oChangeContent, "inbound", oChange.getChangeType(), MANDATORY_PROPERTIES, SUPPORTED_PROPERTIES, PROPERTIES_PATTERNS);
 			const oInboundInManifest = oManifest["sap.app"].crossNavigation.inbounds[sInboundId];
 			if (!oInboundInManifest) {
 				DescriptorChangeCheck.checkIdNamespaceCompliance(sInboundId, oChange);

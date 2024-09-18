@@ -39,6 +39,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @since 1.63
+	 * @deprecated As of version 1.129, replaced by {@link sap.m.upload.UploadItem}
 	 * @alias sap.m.upload.UploadSetItem
 	 */
 	var UploadSetItem = Element.extend("sap.m.upload.UploadSetItem", {

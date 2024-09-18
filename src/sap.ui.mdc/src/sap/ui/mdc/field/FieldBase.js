@@ -631,7 +631,8 @@ sap.ui.define([
 
 	/**
 	 * Returns the <code>ContentFactory</code> used to manage the internal content control.
-	 * @protected
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 * @returns {sap.ui.mdc.field.content.ContentFactory} oContentFactory the ContentFactory of the Field
 	 */
 	FieldBase.prototype.getContentFactory = function() {

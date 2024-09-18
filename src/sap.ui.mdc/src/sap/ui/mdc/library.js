@@ -614,32 +614,6 @@ sap.ui.define([
   * @public
   */
 
- /*
-  * Returns a title for the given Content
-  *
-  * @name sap.ui.mdc.valuehelp.base.IDialogContent.getTitle
-  * @function
-  * @returns {string} Content title as string
-  * @public
-  */
-
- /*
-  * Returns info if the given content is in multi select mode
-  *
-  * @name sap.ui.mdc.valuehelp.base.IDialogContent.isMultiSelect
-  * @function
-  * @returns {boolean} <code>true</code> if multi-selection is active.
-  * @public
-  */
-
- /*
-  * Loads additional dependencies, creates and returns displayed content.
-  * @name sap.ui.mdc.valuehelp.base.IDialogContent.getContent
-  * @function
-  * @returns {Promise<sap.ui.core.Control>} Promise resolving in displayed content
-  * @public
-  */
-
 
  /**
   *
@@ -719,25 +693,6 @@ sap.ui.define([
   * @event
   * @param {sap.ui.base.Event} oControlEvent
   * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-  * @public
-  */
-
- /*
-  * Opens the container
-  *
-  * @name sap.ui.mdc.valuehelp.base.IDialogContainer.open
-  * @function
-  * @param {Promise} oValueHelpContentPromise Promise for content request
-  * @param {boolean} bTypeahead Flag indicating whether the container is opened as type-ahead or dialog-like help
-  * @returns {Promise} This promise resolves after the container completely opened.
-  * @public
-  */
-
- /*
-  * Closes the container
-  *
-  * @name sap.ui.mdc.valuehelp.base.IDialogContainer.close
-  * @function
   * @public
   */
 

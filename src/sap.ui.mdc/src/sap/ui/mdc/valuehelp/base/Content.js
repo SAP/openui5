@@ -30,7 +30,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new element
-	 * @class Content for the {@link sap.ui.mdc.valuehelp.base.Container Container} element.getUseAsValueHelp
+	 * @class Content for the {@link sap.ui.mdc.valuehelp.base.Container Container} element.
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 * @constructor
@@ -306,9 +306,6 @@ sap.ui.define([
 	 * Gets the content controls.
 	 *
 	 * @returns {Promise<sap.ui.core.Control>} This promise resolves after the content is created
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
 	Content.prototype.getContent = function() {
 
@@ -391,9 +388,6 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration} oConfig Configuration
 	 * @returns {Promise<sap.ui.mdc.valuehelp.base.ValueHelpItem>} Promise returning object containing description, key and payload.
 	 * @throws {sap.ui.model.FormatException|sap.ui.model.ParseException} if entry is not found or not unique
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
 	Content.prototype.getItemForValue = function(oConfig) {
 		return undefined;
@@ -403,9 +397,6 @@ sap.ui.define([
 	 * Defines if the content can be used for input validation.
 	 *
 	 * @returns {boolean} True if content can be used for input validation
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
 	Content.prototype.isValidationSupported = function() { // TODO only for TypeAhead content
 		return false;
@@ -495,9 +486,6 @@ sap.ui.define([
 	 * The focus visualization of the field help needs to be removed as the user starts typing into the field.
 	 *
 	 * Only needed for typeahead.
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Container
 	 */
 	Content.prototype.removeVisualFocus = function() {
 
@@ -507,8 +495,6 @@ sap.ui.define([
 	 * The focus visualization of the field help needs to be set as the user starts naigation into the value help items.
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @since 1.127.0
 	 */
 	Content.prototype.setVisualFocus = function() {
 
@@ -522,9 +508,6 @@ sap.ui.define([
 	 * <b>Note:</b> This function must only be called by the <code>Container</code> element.
 	 *
 	 * @param {int} iStep Number of steps for navigation (e.g. 1 means next item, -1 means previous item)
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Container
 	 */
 	Content.prototype.navigate = function(iStep) {
 
@@ -713,8 +696,6 @@ sap.ui.define([
 	 * Determines if the value help should be opened when the user clicks into the connected control.
 	 *
 	 * @returns {boolean} If <code>true</code>, the value help should open when user clicks into the connected field control
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
 	Content.prototype.shouldOpenOnClick = function() {
 		return false;
@@ -725,8 +706,6 @@ sap.ui.define([
 	 * By default navigation on closed popover is enabled.
 	 *
 	 * @returns {boolean} If <code>true</code>, the value help should open when user used the arrow keys in the connected field control
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
 	Content.prototype.shouldOpenOnNavigate = function() {
 		// return !this.isSingleSelect();

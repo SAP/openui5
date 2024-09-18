@@ -704,6 +704,10 @@ sap.ui.define([
 		// path to a type's property e.g. ("/dataServices/schema/<i>/entityType/<j>/property/<k>")
 		rPropertyPath =
 			/^((\/dataServices\/schema\/\d+)\/(?:complexType|entityType)\/\d+)\/property\/\d+$/;
+	// path to a function import's parameter e.g.:
+	// '/dataServices/schema/0/entityContainer/0/functionImport/12/parameter/0'
+	const rFunctionImportParameterPath =
+			/^(((\/dataServices\/schema\/\d+)\/entityContainer\/\d+)\/functionImport\/\d+)\/parameter\/\d+$/;
 
 	/**
 	 * @class List binding implementation for the OData meta model which supports filtering on
@@ -1649,6 +1653,36 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the metadata context for the given function import and parameter name. The result can be
+	 * used with {@link sap.ui.model.ODataMetaModel#getODataValueLists} to request the metadata for
+	 * the value lists for that function import parameter.
+	 *
+	 * @param {string} sFunctionName
+	 *   The function import name, either unqualified or qualified, e.g. "Save" or "MyService.Entities/Save";
+	 *   if an unqualified name is used, the function import is searched for in the default entity container
+	 * @param {string} sParameter
+	 *   The name of the function import parameter
+	 * @returns {sap.ui.model.Context}
+	 *   The metadata context referencing the given function import parameter
+	 * @throws {Error}
+	 *   If the function import or the parameter of that function import is not found
+	 * @public
+	 * @since 1.129.0
+	 */
+	ODataMetaModel.prototype.getFunctionImportParameterContext = function (sFunctionName, sParameter) {
+		const sFunctionImportPath = this.getODataFunctionImport(sFunctionName, true);
+		if (!sFunctionImportPath) {
+			throw new Error(`Function import "${sFunctionName}" not found`);
+		}
+		const oFunctionImport = this.getObject(sFunctionImportPath);
+		const iParameterIndex = Utils.findIndex(oFunctionImport.parameter, sParameter);
+		if (iParameterIndex < 0) {
+			throw new Error(`Parameter "${sParameter}" not found for function import "${sFunctionName}"`);
+		}
+		return this.createBindingContext(sFunctionImportPath + "/parameter/" + iParameterIndex);
+	};
+
+	/**
 	 * Returns the given OData type's property (not navigation property!) of given name.
 	 *
 	 * If an array is given instead of a single name, it is consumed (via
@@ -1734,42 +1768,49 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a <code>Promise</code> which is resolved with a map representing the
-	 * <code>com.sap.vocabularies.Common.v1.ValueList</code> annotations of the given property or
-	 * rejected with an error.
+	 * Returns a <code>Promise</code> which either resolves with a map representing the
+	 * <code>com.sap.vocabularies.Common.v1.ValueList</code> annotations of the property or function
+	 * import parameter referenced by the given metamodel context or rejects with an error.
 	 * The key in the map provided on successful resolution is the qualifier of the annotation or
 	 * the empty string if no qualifier is defined. The value in the map is the JSON object for
 	 * the annotation. The map is empty if the property has no
 	 * <code>com.sap.vocabularies.Common.v1.ValueList</code> annotations.
 	 *
-	 * @param {sap.ui.model.Context} oPropertyContext
+	 * @param {sap.ui.model.Context} oPropertyOrParameterContext
 	 *   A model context for a structural property of an entity type or a complex type, as
-	 *   returned by {@link #getMetaContext getMetaContext}
+	 *   returned by {@link #getMetaContext getMetaContext}, or (since 1.129.0) a model context for
+	 *   a parameter of a function import, as returned by {@link #getFunctionImportParameterContext}
 	 * @returns {Promise<Object<string,sap.ui.model.odata.ODataMetaModel.ValueListType>>}
-	 *   A Promise that gets resolved into the value lists for the given context, as soon as the value lists as well as
-	 *   the required model elements have been loaded
+	 *   A Promise that gets resolved into the value lists for the given context, as soon as the
+	 *   value lists as well as the required model elements have been loaded
+	 * @throws {Error}
+	 *   If the given context neither references a structural property of an entity type or a
+	 *   complex type nor a parameter of a function import
 	 * @since 1.29.1
 	 * @public
 	 */
-	ODataMetaModel.prototype.getODataValueLists = function (oPropertyContext) {
+	ODataMetaModel.prototype.getODataValueLists = function (oPropertyOrParameterContext) {
 		var bCachePromise = false, // cache only promises which trigger a request
 			aMatches,
-			sPropertyPath = oPropertyContext.getPath(),
+			sPropertyPath = oPropertyOrParameterContext.getPath(),
 			oPromise = this.mContext2Promise[sPropertyPath],
 			that = this;
 
 		if (oPromise) {
 			return oPromise;
 		}
-
+		let bFunctionImport = false;
 		aMatches = rPropertyPath.exec(sPropertyPath);
 		if (!aMatches) {
-			throw new Error("Unsupported property context with path " + sPropertyPath);
+			aMatches = rFunctionImportParameterPath.exec(sPropertyPath);
+			bFunctionImport = true;
+		}
+		if (!aMatches) {
+			throw new Error(`"${sPropertyPath}" neither references a property nor a function import parameter`);
 		}
 
 		oPromise = new Promise(function (fnResolve, fnReject) {
-			var oProperty = oPropertyContext.getObject(),
-				sQualifiedTypeName,
+			var oProperty = oPropertyOrParameterContext.getObject(),
 				mValueLists = Utils.getValueLists(oProperty);
 
 			const bValueListLoaded = "" in mValueLists
@@ -1777,17 +1818,19 @@ sap.ui.define([
 			if (!bValueListLoaded && oProperty["sap:value-list"]) {
 				// property with value list which is not yet (fully) loaded
 				bCachePromise = true;
-				sQualifiedTypeName = that.oModel.getObject(aMatches[2]).namespace
-					+ "." + that.oModel.getObject(aMatches[1]).name;
-				that.mQName2PendingRequest[sQualifiedTypeName + "/" + oProperty.name] = {
+				const sQualifiedName = that.oModel.getObject(aMatches[aMatches.length - 1]).namespace
+					+ "." + that.oModel.getObject(aMatches[aMatches.length - 2]).name;
+				const sTarget = (bFunctionImport ? that.oModel.getObject(aMatches[1]).name + "/" : "") + oProperty.name;
+				that.mQName2PendingRequest[sQualifiedName + "/" + sTarget] = {
 					resolve : function (oResponse) {
-						const oPropertyAnnotations = oResponse.annotations.propertyAnnotations?.[sQualifiedTypeName]
-							?.[oProperty.name] || {};
-						// enhance property by annotations from response to get value lists
-						Object.keys(oPropertyAnnotations).forEach((sAnnotation) => {
+						const oAnnotations = oResponse.annotations
+							[bFunctionImport ? "EntityContainer" : "propertyAnnotations"]
+							?.[sQualifiedName]?.[sTarget] || {};
+						// enhance property/parameter by annotations from response to get value lists
+						Object.keys(oAnnotations).forEach((sAnnotation) => {
 							if (!oProperty.hasOwnProperty(sAnnotation)) {
 								// apply only new annotations to avoid overwriting annotation changes
-								oProperty[sAnnotation] = oPropertyAnnotations[sAnnotation];
+								oProperty[sAnnotation] = oAnnotations[sAnnotation];
 							}
 						});
 						mValueLists = Utils.getValueLists(oProperty);

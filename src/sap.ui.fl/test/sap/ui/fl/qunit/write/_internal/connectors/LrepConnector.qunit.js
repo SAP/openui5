@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/Layer"
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils"
 ], function(
 	MessageBox,
 	BusyIndicator,
@@ -27,7 +28,8 @@ sap.ui.define([
 	WriteUtils,
 	TransportSelection,
 	Settings,
-	Layer
+	Layer,
+	FlexUtils
 ) {
 	"use strict";
 
@@ -1681,6 +1683,48 @@ sap.ui.define([
 			}).then(function(sResponse) {
 				assert.equal(sResponse, "Cancel", "then Promise.resolve() with cancel message is returned");
 			});
+		});
+	});
+
+	QUnit.module("LrepConnector.seen_features", {
+		beforeEach() {
+		},
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("getSeenFeatureIds", async function(assert) {
+			sandbox.stub(FlexUtils, "getUrlParameter").returns("120");
+			const oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves(
+				{ response: { seenFeatureIds: ["feature1", "feature2"] } }
+			);
+			const oResult = await WriteLrepConnector.getSeenFeatureIds({
+				layer: Layer.CUSTOMER, url: "/sap/bc/lrep"
+			});
+			const sUrl = "/sap/bc/lrep/seen_features/?sap-client=120";
+			assert.ok(oStubSendRequest.calledWith(sUrl, "GET", {
+				initialConnector: InitialLrepConnector
+			}), "a GET request with correct parameters is sent");
+			assert.deepEqual(oResult, ["feature1", "feature2"], "the seen feature ids are returned");
+		});
+
+		QUnit.test("setSeenFeatureIds", async function(assert) {
+			sandbox.stub(FlexUtils, "getUrlParameter").returns("120");
+			const oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves(
+				{ response: { seenFeatureIds: ["feature1", "feature2", "feature3"] } }
+			);
+			const oResult = await WriteLrepConnector.setSeenFeatureIds({
+				layer: Layer.CUSTOMER, seenFeatureIds: ["feature1", "feature2", "feature3"], url: "/sap/bc/lrep"
+			});
+			const sUrl = "/sap/bc/lrep/seen_features/?sap-client=120";
+			assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
+				initialConnector: InitialLrepConnector,
+				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+				payload: JSON.stringify({ seenFeatureIds: ["feature1", "feature2", "feature3"] }),
+				dataType: "json",
+				contentType: "application/json; charset=utf-8"
+			}), "a PUT request with correct parameters is sent");
+			assert.deepEqual(oResult, ["feature1", "feature2", "feature3"], "the seen feature ids are returned");
 		});
 	});
 

@@ -23,9 +23,9 @@
 							<Title text="{whatsNewModel>title}" class="sapUiMediumMarginTop sapUiLargeMarginBegin sapUiTinyMarginBottom" level="H3"/>
 							<f:Card width="44rem" height="24rem" class="sapUiLargeMarginBeginEnd sapUiSmallMarginBottom">
 								<f:content>
-									<Page enableScrolling="true" showHeader="false" backgroundDesign="Transparent">
-											<VBox height="100%" width="100%" items="{path: 'whatsNewModel>information', templateShareable: false}" class="sapUiSmallMargin">
-												<HBox alignItems="Center" class=" sapUiSmallMarginBottom ">
+									<Page showHeader="false" backgroundDesign="Transparent">
+											<VBox items="{path: 'whatsNewModel>information', templateShareable: false}" class="sapUiSmallMargin">
+												<HBox alignItems="Center" class="sapUiTinyMargin">
 													<FormattedText
 														visible="{= (${whatsNewModel>image} === null ? true : false) &amp;&amp; (${whatsNewModel>text} !== null ? true : false)}"
 														htmlText="{whatsNewModel>text}"
@@ -42,8 +42,6 @@
 														gridGap="1rem">
 														<Image
 															src= "{whatsNewModel>image}"
-															decorative="true"
-															densityAware="false"
 															class="whatsNewImage"
 															width="100%"/>
 														<HBox alignItems="Center">

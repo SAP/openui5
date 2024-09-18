@@ -71,7 +71,10 @@ sap.ui.define(
 			}
 
 			oRm.class("sapMRI");
-			oRm.class("sapUiRatingIndicator" + oControl._getIconSizeLabel(this._fIconSize));
+
+			if (oControl.getIconSize()) {
+				oRm.class("sapUiRatingIndicator" + oControl._getIconSizeLabel(this._fIconSize));
+			}
 
 			if (oControl._isRequired()) {
 				oRm.attr("aria-description", oResourceBundle.getText("ELEMENT_REQUIRED"));

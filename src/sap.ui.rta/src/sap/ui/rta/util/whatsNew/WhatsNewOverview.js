@@ -19,14 +19,17 @@ sap.ui.define([
 	const WhatsNewOverview = {};
 	const oURLHelper = mLibrary.URLHelper;
 	let oWhatsNewOverviewDialog;
+	let aWhatsNewOverviewContent;
 
-	function getWhatsNewOverviewContent() {
-		return [...WhatsNewUtils.getFilteredFeatures([])].reverse();
+	async function getWhatsNewOverviewContent() {
+		const aFeatures = await WhatsNewUtils.getFilteredFeatures([]);
+		return [...aFeatures].reverse();
 	}
 
 	WhatsNewOverview.openWhatsNewOverviewDialog = async function() {
 		const oWhatsNewDialogModel = new JSONModel();
-		oWhatsNewDialogModel.setData({ featureCollection: getWhatsNewOverviewContent() });
+		aWhatsNewOverviewContent = await getWhatsNewOverviewContent();
+		oWhatsNewDialogModel.setData({ featureCollection: aWhatsNewOverviewContent });
 		oWhatsNewDialogModel.setProperty("overviewActive", true);
 		if (!oWhatsNewOverviewDialog) {
 			await WhatsNewOverview.createWhatsNewOverviewDialog(oWhatsNewDialogModel);
@@ -69,7 +72,7 @@ sap.ui.define([
 
 	WhatsNewOverview.onLearnMorePress = function(oEvent) {
 		const sPath = oEvent.getSource().getBindingContext("whatsNewModel").getPath();
-		const sLearnMoreUrl = WhatsNewUtils.getLearnMoreURL(sPath, getWhatsNewOverviewContent());
+		const sLearnMoreUrl = WhatsNewUtils.getLearnMoreURL(sPath, aWhatsNewOverviewContent);
 		oURLHelper.redirect(sLearnMoreUrl, true);
 	};
 

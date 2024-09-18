@@ -37,13 +37,10 @@ sap.ui.define([
 	"sap/ui/security/Security",
 	"sap/ui/test/TestUtils",
 	"sap/ui/util/XMLHelper",
+	"sap/ui/thirdparty/jquery",
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function (Log, Localization, uid, ColumnListItem, CustomListItem, FlexBox, _MessageStrip,
-		Text, Device, EventProvider, SyncPromise, Messaging, Rendering, Supportability, Message,
-		Controller, View, ChangeReason, Filter, FilterOperator, FilterType, Sorter, OperationMode,
-		Decimal, AnnotationHelper, ODataListBinding, ODataMetaModel, ODataModel,
-		ODataPropertyBinding, ValueListType, _Helper, Security, TestUtils, XMLHelper) {
+], function(Log, Localization, uid, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text, Device, EventProvider, SyncPromise, Messaging, Rendering, Supportability, Message, Controller, View, ChangeReason, Filter, FilterOperator, FilterType, Sorter, OperationMode, Decimal, AnnotationHelper, ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding, ValueListType, _Helper, Security, TestUtils, XMLHelper, jQuery) {
 	/*eslint no-sparse-arrays: 0, "max-len": ["error", {"code": 100,
 		"ignorePattern": "/sap/opu/odata4/|\" :$|\" : \\{$|\\{meta>"}], */
 	"use strict";
@@ -9038,141 +9035,217 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: "Retry-After" handling: resolving restarts parallel and follow-up requests.
-	// 1) Preparation, request data for 4 sales orders
-	// 2) 2 parallel requests answered with 503 "Retry-After", no error, callback waiting
-	// 3) Trigger 3rd request, no request sent because pending promise, callback not asked again
-	// 4) Resolving "Retry-After" promise repeats all 3 requests
+	// Scenario: "Retry-After" handling: resolve or reject with original/own error
+	// 1) Preparation, request data for 5 sales orders
+	// 2) 2 parallel deletions answered with 503 "Retry-After", no error, callback waiting
+	// 3) Trigger 3rd deletion, no request sent because pending promise, callback not asked again
+	// 4a) Resolving "Retry-After" promise repeats all 3 requests
+	// 4b) Reject "Retry-After" promise with original error as reason rejects all 3 requests,
+	//     the deleted entities are restored, check that the error is reported
 	// 5) Another 4th request leads again to a 503 error and invokes the callback a 2nd time
 	// 6) Resolving the new "Retry-After" promise repeats the 4th request
+	// 7) Delete again one entity and see that the deletion succeeds
 	// JIRA: CPOUI5MODELS-1743
-	QUnit.test('503, "Retry-After" handling: resolving', async function (assert) {
-		let bAnswerWith503 = false;
-		const oModel = this.createSalesOrdersModel({}, {
-			"DELETE SalesOrderList('1')" : {message : {code : 204}},
-			"DELETE SalesOrderList('2')" : {message : {code : 204}},
-			"DELETE SalesOrderList('3')" : {message : {code : 204}},
-			"DELETE SalesOrderList('4')" : {message : {code : 204}},
-			"POST $batch" : {
-				code : 503,
-				headers : {"Retry-After" : "42"},
-				ifMatch : () => bAnswerWith503,
-				message : {error : {code : "DB_MIGRATION", message : "DB migration in progress"}}
-			},
-			"SalesOrderList?$skip=0&$top=100" : [{
-				message : {
-					value : [
-						{Note : "Note1", SalesOrderID : "1"},
-						{Note : "Note2", SalesOrderID : "2"},
-						{Note : "Note3", SalesOrderID : "3"},
-						{Note : "Note4", SalesOrderID : "4"}
-					]
-				}
-			}]
-		});
-		oModel.$keepSend = true; // do not stub sendBatch/-Request
-		let fnResolveRetryAfter;
-		let iCallbackCount = 0;
-		oModel.setRetryAfterHandler((oError) => {
-			iCallbackCount += 1;
-			assert.ok(oError instanceof Error);
-			assert.strictEqual(oError.message, "DB migration in progress");
-			const iSeconds = (oError.retryAfter.getTime() - Date.now()) / 1000;
-			assert.ok(iSeconds > 41 && iSeconds < 43, `${iSeconds} roughly 42 seconds`);
-			return new Promise((resolve) => {
-				fnResolveRetryAfter = resolve;
+	[false, /*reject with own error*/null, true].forEach((bResolve) => {
+		QUnit.test('503, "Retry-After" handling, bResolve=' + bResolve, async function (assert) {
+			let bAnswerWith503 = false;
+			const oModel = this.createSalesOrdersModel({}, {
+				"DELETE SalesOrderList('1')" : {code : 204},
+				"DELETE SalesOrderList('2')" : {code : 204},
+				"DELETE SalesOrderList('3')" : {code : 204},
+				"DELETE SalesOrderList('4')" : {code : 204},
+				"DELETE SalesOrderList('5')" : {code : 204},
+				"POST $batch" : {
+					code : 503,
+					headers : {"Retry-After" : "42"},
+					ifMatch : () => bAnswerWith503,
+					message : {error : {code : "DB_MIGRATION", message : "DB migration in progress"}}
+				},
+				"SalesOrderList?$skip=0&$top=100" : [{
+					message : {
+						value : [
+							{Note : "Note1", SalesOrderID : "1"},
+							{Note : "Note2", SalesOrderID : "2"},
+							{Note : "Note3", SalesOrderID : "3"},
+							{Note : "Note4", SalesOrderID : "4"},
+							{Note : "Note5", SalesOrderID : "5"}
+						]
+					}
+				}]
 			});
+			oModel.$keepSend = true; // do not stub sendBatch/-Request
+			let fnAjaxSpy;
+			let fnRejectRetryAfter;
+			let fnResolveRetryAfter;
+			let oRetryAfterError;
+			let iCallbackCount = 0;
+			oModel.setRetryAfterHandler((oError) => {
+				if (fnAjaxSpy) {
+					assert.strictEqual(fnAjaxSpy.callCount, 2, "both requests have been sent");
+					assert.ok(fnAjaxSpy.args[0][1].data.includes("DELETE SalesOrderList('1')"));
+					assert.ok(fnAjaxSpy.args[1][1].data.includes("DELETE SalesOrderList('2')"));
+					fnAjaxSpy.restore();
+					fnAjaxSpy = undefined;
+				}
+				iCallbackCount += 1;
+				assert.ok(oError instanceof Error);
+				assert.strictEqual(oError.message, "DB migration in progress");
+				const iSeconds = (oError.retryAfter.getTime() - Date.now()) / 1000;
+				assert.ok(iSeconds > 41 && iSeconds < 43, `${iSeconds} roughly 42 seconds`);
+				oRetryAfterError = oError;
+				return new Promise((resolve, reject) => {
+					fnResolveRetryAfter = resolve;
+					fnRejectRetryAfter = reject;
+				});
+			});
+			const sView = `
+	<Table id="table" items="{/SalesOrderList}">
+		<Text id="note" text="{Note}"/>
+	</Table>`;
+
+			this.expectChange("note", ["Note1", "Note2", "Note3", "Note4", "Note5"]);
+
+			// 1
+			await this.createView(assert, sView, oModel);
+
+			const oBinding = this.oView.byId("table").getBinding("items");
+			const aContexts = oBinding.getCurrentContexts();
+			bAnswerWith503 = true;
+			const aBatchPayloads = [];
+			TestUtils.onRequest((sPayload) => aBatchPayloads.push(sPayload));
+			fnAjaxSpy = this.spy(jQuery, "ajax");
+			this.expectChange("note", ["Note3", "Note4", "Note5"]);
+
+			// code under test
+			const oDeletePromise0 = aContexts[0].delete("$single");
+			const oDeletePromise1 = aContexts[1].delete("$single");
+
+			await this.waitForChanges(assert, "2");
+
+			assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('1')"));
+			assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('2')"));
+			assert.strictEqual(aBatchPayloads.length, 0);
+			assert.strictEqual(iCallbackCount, 1);
+
+			this.expectChange("note", ["Note4", "Note5"]);
+
+			// code under test
+			const oDeletePromise2 = aContexts[2].delete("$single");
+
+			await this.waitForChanges(assert, "3");
+
+			assert.ok(aContexts[0].isDeleted());
+			assert.ok(aContexts[1].isDeleted());
+			assert.ok(aContexts[2].isDeleted());
+			assert.ok(oModel.hasPendingChanges());
+			assert.strictEqual(aBatchPayloads.length, 0);
+			assert.strictEqual(iCallbackCount, 1, "not called again");
+
+			bAnswerWith503 = false;
+			if (bResolve) {
+				// code under test
+				fnResolveRetryAfter();
+
+				await Promise.all([
+					oDeletePromise0,
+					oDeletePromise1,
+					oDeletePromise2,
+					this.waitForChanges(assert, "4a")
+				]);
+
+				assert.notOk(oModel.hasPendingChanges());
+				assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('1')"));
+				assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('2')"));
+				assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('3')"));
+				assert.strictEqual(aBatchPayloads.length, 0);
+				assert.strictEqual(iCallbackCount, 1);
+
+				this.expectChange("note", ["Note5"]);
+			} else {
+				this.expectChange("note", ["Note1", "Note2", "Note3", "Note4", "Note5"]);
+				if (bResolve === false) {
+					this.expectMessages(Array(3).fill({
+						message : "HTTP request was not processed because $batch failed",
+						persistent : true,
+						technical : true,
+						type : "Error"
+					}));
+				}
+				this.oLogMock.expects("error").withArgs("Failed to delete /SalesOrderList('1')");
+				this.oLogMock.expects("error").withArgs("Failed to delete /SalesOrderList('2')");
+				this.oLogMock.expects("error").withArgs("Failed to delete /SalesOrderList('3')");
+
+				// code under test
+				const oOwnError = new Error("Own Error");
+				fnRejectRetryAfter(bResolve === null ? oOwnError : oRetryAfterError);
+
+				const checkError = (oError) => {
+					assert.strictEqual(oError.message,
+						"HTTP request was not processed because $batch failed");
+					assert.strictEqual(oError.cause, bResolve === null ? oOwnError : oRetryAfterError);
+				};
+
+				await Promise.all([
+					oDeletePromise0.then(mustFail(assert), checkError),
+					oDeletePromise1.then(mustFail(assert), checkError),
+					oDeletePromise2.then(mustFail(assert), checkError),
+					this.waitForChanges(assert, "4b")
+				]);
+
+				assert.notOk(aContexts[0].isDeleted());
+				assert.notOk(aContexts[1].isDeleted());
+				assert.notOk(aContexts[2].isDeleted());
+				assert.notOk(oModel.hasPendingChanges());
+				assert.strictEqual(aBatchPayloads.length, 0);
+				assert.strictEqual(iCallbackCount, 1);
+
+				this.expectChange("note", [,,, "Note5"]);
+			}
+
+			bAnswerWith503 = true;
+
+			// code under test
+			const oDeletePromise4 = aContexts[3].delete("$single");
+
+			await this.waitForChanges(assert, "5");
+
+			assert.ok(oModel.hasPendingChanges());
+			assert.ok(aContexts[3].isDeleted());
+			assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('4')"));
+			assert.strictEqual(aBatchPayloads.length, 0);
+			assert.strictEqual(iCallbackCount, 2);
+
+			bAnswerWith503 = false;
+
+			// code under test
+			fnResolveRetryAfter();
+
+			await Promise.all([
+				oDeletePromise4,
+				this.waitForChanges(assert, "6")
+			]);
+
+			assert.notOk(oModel.hasPendingChanges());
+			assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('4')"));
+			assert.strictEqual(aBatchPayloads.length, 0);
+
+			await Promise.all([
+				// code under test
+				aContexts[4].delete("$single"),
+				this.waitForChanges(assert, "7")
+			]);
+
+			assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('5')"));
+			assert.strictEqual(aBatchPayloads.length, 0);
+			assert.strictEqual(aContexts[0].isDeleted(), !!bResolve);
+			assert.strictEqual(aContexts[1].isDeleted(), !!bResolve);
+			assert.strictEqual(aContexts[2].isDeleted(), !!bResolve);
+			assert.strictEqual(aContexts[3].isDeleted(), true);
+			assert.strictEqual(aContexts[4].isDeleted(), true);
+			assert.notOk(oModel.hasPendingChanges());
+			assert.strictEqual(oBinding.getCurrentContexts().length, bResolve ? 0 : 3);
+			TestUtils.onRequest(null);
 		});
-		const sView = `
-<Table id="table" items="{/SalesOrderList}">
-	<Text id="note" text="{Note}"/>
-</Table>`;
-
-		this.expectChange("note", ["Note1", "Note2", "Note3", "Note4"]);
-
-		// 1
-		await this.createView(assert, sView, oModel);
-
-		this.expectChange("note", ["Note3", "Note4"]);
-		const aContexts = this.oView.byId("table").getBinding("items").getCurrentContexts();
-		const aDeletePromises = [];
-		bAnswerWith503 = true;
-		const aBatchPayloads = [];
-		TestUtils.onRequest((sPayload) => aBatchPayloads.push(sPayload));
-
-		// code under test
-		aDeletePromises.push(aContexts[0].delete("$single"));
-		aDeletePromises.push(aContexts[1].delete("$single"));
-
-		assert.ok(oModel.hasPendingChanges());
-
-		await this.waitForChanges(assert, "2");
-
-		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('1')"));
-		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('2')"));
-		assert.strictEqual(aBatchPayloads.length, 0);
-		assert.strictEqual(iCallbackCount, 1);
-
-		this.expectChange("note", ["Note4"]);
-
-		// code under test
-		aDeletePromises.push(aContexts[2].delete("$single"));
-
-		await this.waitForChanges(assert, "3");
-
-		assert.ok(aContexts[0].isDeleted());
-		assert.ok(aContexts[1].isDeleted());
-		assert.ok(aContexts[2].isDeleted());
-		assert.strictEqual(aBatchPayloads.length, 0);
-		assert.strictEqual(iCallbackCount, 1);
-
-		bAnswerWith503 = false;
-
-		// code under test
-		fnResolveRetryAfter();
-
-		await Promise.all([
-			...aDeletePromises,
-			this.waitForChanges(assert, "4")
-		]);
-
-		assert.notOk(oModel.hasPendingChanges());
-		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('1')"));
-		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('2')"));
-		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('3')"));
-		assert.strictEqual(aBatchPayloads.length, 0);
-		assert.strictEqual(iCallbackCount, 1);
-
-		this.expectChange("note", []);
-		bAnswerWith503 = true;
-
-		// code under test
-		const oDeletePromise = aContexts[3].delete("$single");
-
-		assert.ok(oModel.hasPendingChanges());
-
-		await this.waitForChanges(assert, "5");
-
-		assert.ok(aContexts[3].isDeleted());
-		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('4')"));
-		assert.strictEqual(aBatchPayloads.length, 0);
-		assert.strictEqual(iCallbackCount, 2);
-
-		bAnswerWith503 = false;
-
-		// code under test
-		fnResolveRetryAfter();
-
-		await Promise.all([
-			oDeletePromise,
-			this.waitForChanges(assert, "6")
-		]);
-
-		assert.notOk(oModel.hasPendingChanges());
-		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('4')"));
-		assert.strictEqual(aBatchPayloads.length, 0);
-		assert.strictEqual(iCallbackCount, 2);
-		TestUtils.onRequest(null);
 	});
 
 	//*********************************************************************************************

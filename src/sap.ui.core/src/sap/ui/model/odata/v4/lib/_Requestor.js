@@ -1424,6 +1424,7 @@ sap.ui.define([
 					"HTTP request was not processed because $batch failed");
 
 				oRequestError.cause = oError;
+				oRequestError.$reported = oError.$reported;
 				reject(oRequestError, aRequests);
 				throw oError;
 			}).finally(function () {
@@ -2077,13 +2078,18 @@ sap.ui.define([
 							&& (that.oRetryAfterPromise
 								|| that.oModelInterface.getRetryAfterHandler())) {
 						if (!that.oRetryAfterPromise) {
+							const oRetryAfterError = _Helper.createError(jqXHR, "");
 							that.oRetryAfterPromise = that.oModelInterface.getRetryAfterHandler()(
-								_Helper.createError(jqXHR, ""));
+								oRetryAfterError);
 							that.oRetryAfterPromise.finally(() => {
 								that.oRetryAfterPromise = null;
+							}).catch(() => { /* catch is only needed due to finally */ });
+							that.oRetryAfterPromise.catch((oError) => {
+								// own error reason is not reported to the message model
+								oError.$reported = oError !== oRetryAfterError;
 							});
 						}
-						that.oRetryAfterPromise.then(send);
+						that.oRetryAfterPromise.then(send, fnReject);
 					} else {
 						sMessage = "Communication error";
 						if (sContextId) {
@@ -2104,7 +2110,7 @@ sap.ui.define([
 			}
 
 			if (that.oRetryAfterPromise) {
-				that.oRetryAfterPromise.then(send);
+				that.oRetryAfterPromise.then(send, fnReject);
 			} else if (that.oSecurityTokenPromise && sMethod !== "GET") {
 				that.oSecurityTokenPromise.then(send);
 			} else {

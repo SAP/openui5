@@ -55,7 +55,8 @@ sap.ui.define([
 			PUBLISH: "/flex/versions/publish/"
 		},
 		CONTEXT_BASED_ADAPTATION: "/flex/apps/",
-		MANI_FIRST_SUPPORTED: "/sap/bc/ui2/app_index/ui5_app_mani_first_supported"
+		MANI_FIRST_SUPPORTED: "/sap/bc/ui2/app_index/ui5_app_mani_first_supported",
+		SEEN_FEATURES: "/seen_features/"
 	};
 
 	var ADAPTATIONS_SEGMENTATION = "/adaptations/";
@@ -363,6 +364,46 @@ sap.ui.define([
 			return _doWrite(mPropertyBag).then(function(oResult) {
 				return oResult.response;
 			});
+		},
+
+		/**
+		 * Gets the seen feature ids from the LRep backend.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @returns {Promise<string[]>} Promise resolves with an array of the seen feature ids
+		 */
+		async getSeenFeatureIds(mPropertyBag) {
+			const mParameters = {};
+			InitialConnector._addClientInfo(mParameters);
+			const sUrl = InitialUtils.getUrl(ROUTES.SEEN_FEATURES, mPropertyBag, mParameters);
+			const oResult = await InitialUtils.sendRequest(sUrl, "GET", {initialConnector: InitialConnector});
+			return oResult.response?.seenFeatureIds;
+		},
+
+		/**
+		 * Writes the seen feature ids into the LRep backend.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {string} mPropertyBag.seenFeatureIds List of feature ids that have been seen
+		 * @returns {Promise<string[]>} Promise resolves with an array of the seen feature ids
+		 */
+		async setSeenFeatureIds(mPropertyBag) {
+			const mPayload = {
+				seenFeatureIds: mPropertyBag.seenFeatureIds
+			};
+			const mParameters = {};
+			InitialConnector._addClientInfo(mParameters);
+			const sUrl = InitialUtils.getUrl(ROUTES.SEEN_FEATURES, mPropertyBag, mParameters);
+			const sTokenUrl = InitialUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
+			const oRequestOptions = WriteUtils.getRequestOptions(
+				InitialConnector,
+				sTokenUrl,
+				mPayload,
+				"application/json; charset=utf-8",
+				"json"
+			);
+			const oResult = await WriteUtils.sendRequest(sUrl, "PUT", oRequestOptions);
+			return oResult.response?.seenFeatureIds;
 		},
 
 		/**

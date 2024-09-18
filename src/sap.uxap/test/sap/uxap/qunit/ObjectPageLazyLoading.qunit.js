@@ -314,4 +314,30 @@ function(nextUIUpdate, JSONModel, Title, ObjectPageDynamicHeaderTitle, ObjectPag
 		assert.ok(oSpy.callCount, 1, "lazy loading is called after content update");
 		fnDone();
 	});
+
+	QUnit.test("doLazyLoading called with scroll top parameter from lazyLoadingDuringScroll", async function (assert) {
+		// Setup
+		var oObjectPageLayout = new ObjectPageLayout({enableLazyLoading: true}),
+			fnDone = assert.async(),
+			oSpy;
+
+		oObjectPageLayout.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function () {
+			oSpy = this.spy(oObjectPageLayout._oLazyLoading, "doLazyLoading");
+
+			// Act: simulate calling lazyLoadDuringScroll upon native scroll event
+			oObjectPageLayout._oLazyLoading.lazyLoadDuringScroll(false, 1000);
+
+			// Check
+			setTimeout(function () {
+				// Assert
+				assert.ok(oSpy.calledWith(1000),  "scroll top parameter is passed to doLazyLoading");
+
+				// Clean up
+				fnDone();
+			}, 400);
+		}.bind(this));
+	});
 });

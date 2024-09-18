@@ -26,11 +26,12 @@
 		"config": {
 			"sample": {
 				"files": [
+					"view/TableTypes.view.xml",
 					"../delegates/JSONTableDelegate.js",
 					"../delegates/JSONTableFilterDelegate.js",
+					"controller/Controller.controller.js",
 					"../mockdata/metadata/JSONPropertyInfo.js",
 					"../mockdata/mountains.json",
-					"view/TableTypes.view.xml",
 					"view/fragment/GridTableType.fragment.xml",
 					"view/fragment/ResponsiveTableType.fragment.xml",
 					"manifest.json"

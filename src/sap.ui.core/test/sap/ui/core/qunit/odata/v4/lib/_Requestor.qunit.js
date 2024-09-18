@@ -906,22 +906,41 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Integrative test simulating 503 "Retry-After" handling: resolving parallel request
+	// Integrative test simulating 503 "Retry-After" handling: resolve or reject with original or
+	// own error
 	// 1) Send 2 parallel requests (both supposed to be answered with 503)
-	// 1a) 1st 503 error response creates "Retry-after" promise
+	// 1a) 1st 503 error response creates "Retry-After" promise
 	// 1b) 2nd response reuses the promise
 	// 2) 3rd follow up request reuses also the promise, no request sent
-	// 3) Resolving promise repeats all 3 requests
-	QUnit.test('sendRequest(): 503 "Retry-After" handling', function (assert) {
+	// 3a) Resolving promise repeats all 3 requests
+	// 3b) Rejecting promise rejects all 3 requests with the original error or an own error
+[false, /*reject with own error*/null, true].forEach((bResolve) => {
+	QUnit.test(`sendRequest: 503, "Retry-After" handling, bResolve=${bResolve}`, function (assert) {
+		const bOwnError = bResolve === null;
 		const oRequestor = _Requestor.create("/Service/", oModelInterface);
+		let fnReject;
 		let fnResolve;
-		const oRetryAfterPromise = new Promise((resolve) => {
+		const oRetryAfterPromise = new Promise((resolve, reject) => {
 			fnResolve = resolve;
+			fnReject = reject;
 		});
+		const oRetryAfterError = {};
 		function fnRetryAfter(oError) {
-			assert.strictEqual(oError, "~oError");
+			assert.strictEqual(oError, oRetryAfterError);
 			return oRetryAfterPromise;
 		}
+
+		const oOwnError = {};
+		function checkError(oError) {
+			assert.notOk(bResolve);
+			assert.strictEqual(oError, bOwnError ? oOwnError : oRetryAfterError);
+			assert.strictEqual(oError.$reported, bOwnError);
+		}
+
+		function checkSuccess() {
+			assert.ok(bResolve);
+		}
+
 		const oHelperMock = this.mock(_Helper);
 		const o503jqXHR = {
 			getResponseHeader() {},
@@ -930,6 +949,7 @@ sap.ui.define([
 		const oJQueryMock = this.mock(jQuery);
 		const o503jqXHRMock = this.mock(o503jqXHR);
 		const oModelInterfaceMock = this.mock(oModelInterface);
+		let oSendPromise3;
 		oJQueryMock.expects("ajax").withArgs("/Service/First").callsFake(() => {
 			const jqXHR = new jQuery.Deferred();
 			setTimeout(() => {
@@ -950,16 +970,16 @@ sap.ui.define([
 					.returns(fnRetryAfter);
 				oHelperMock.expects("createError")
 					.withExactArgs(sinon.match.same(o503jqXHR), "")
-					.returns("~oError");
+					.returns(oRetryAfterError);
 
-				// code under test (1a)
+				// (1a)
 				jqXHR.reject(o503jqXHR);
 
 				// register follow up request for oRetryAfterPromise and NOT oSecurityTokenPromise
 				oRequestor.oSecurityTokenPromise = {};
 
 				// code under test (2)
-				oRequestor.sendRequest("POST", "Third");
+				oSendPromise3 = oRequestor.sendRequest("POST", "Third");
 
 				assert.strictEqual(oRequestor.oRetryAfterPromise, oRetryAfterPromise);
 			}, 0);
@@ -981,43 +1001,68 @@ sap.ui.define([
 					.withExactArgs("Retry-After")
 					.returns("42");
 
-				// code under test (1b)
+				// (1b)
 				jqXHR.reject(o503jqXHR);
 
-				oJQueryMock.expects("ajax")
-					.withArgs("/Service/First")
-					.callsFake(() => {
-						assert.strictEqual(oRequestor.oRetryAfterPromise, null);
-						oRequestor.oRetryAfterPromise = "~otherPromise~"; // reset promise only once
-						return createMock(assert, {/*oPayload*/}, "OK");
-					});
-				oJQueryMock.expects("ajax")
-					.withArgs("/Service/Second")
-					.returns(createMock(assert, {/*oPayload*/}, "OK"));
-				oJQueryMock.expects("ajax")
-					.withArgs("/Service/Third")
-					.returns(createMock(assert, {/*oPayload*/}, "OK"));
-				oHelperMock.expects("parseRawHeaders")
-					.withExactArgs("~getAllResponseHeaders~")
-					.thrice()
-					.returns("~mHeaders~");
-				oModelInterfaceMock.expects("onHttpResponse").withExactArgs("~mHeaders~").thrice();
+				if (bResolve) {
+					oJQueryMock.expects("ajax")
+						.withArgs("/Service/First")
+						.callsFake(() => {
+							assert.strictEqual(oRequestor.oRetryAfterPromise, null);
+							// check that promise is reset only once in case of resolving
+							oRequestor.oRetryAfterPromise = "~otherPromise~";
+							return createMock(assert, {/*oPayload*/}, "OK");
+						});
+					oJQueryMock.expects("ajax")
+						.withArgs("/Service/Second")
+						.returns(createMock(assert, {/*oPayload*/}, "OK"));
+					oJQueryMock.expects("ajax")
+						.withArgs("/Service/Third")
+						.returns(createMock(assert, {/*oPayload*/}, "OK"));
+					oHelperMock.expects("parseRawHeaders")
+						.withExactArgs("~getAllResponseHeaders~")
+						.thrice()
+						.returns("~mHeaders~");
+					oModelInterfaceMock.expects("onHttpResponse")
+						.withExactArgs("~mHeaders~")
+						.thrice();
 
-				// code under test (3)
-				fnResolve();
+					// code under test (3a)
+					fnResolve();
+				} else {
+					// code under test (3b)
+					fnReject(bOwnError ? oOwnError : oRetryAfterError);
+				}
 			}, 0);
 
 			return jqXHR;
 		});
 
+		// code under test (1)
+		const oSendPromise1 = oRequestor.sendRequest("GET", "First");
+		const oSendPromise2 = oRequestor.sendRequest("GET", "Second");
+
 		return Promise.all([
-			// code under test (1)
-			oRequestor.sendRequest("GET", "First"),
-			oRequestor.sendRequest("GET", "Second")
+			oSendPromise1.then(checkSuccess, (oError) => {
+				assert.strictEqual(oRequestor.oRetryAfterPromise, null);
+				// check that promise is reset only once in case of rejecting
+				oRequestor.oRetryAfterPromise = "~otherPromise~";
+				checkError(oError);
+			}),
+			oSendPromise2.then(checkSuccess, checkError),
+			oRetryAfterPromise.then(checkSuccess, function (oError) {
+				assert.notOk(bResolve);
+				assert.strictEqual(oError, bOwnError ? oOwnError : oRetryAfterError);
+				// must not check $reported before caught and set in productive code
+			})
 		]).then(function () {
+			return oSendPromise3.then(checkSuccess, checkError);
+		}).then(function () {
 			assert.strictEqual(oRequestor.oRetryAfterPromise, "~otherPromise~");
+			return oRetryAfterPromise.then(checkSuccess, checkError);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Integrative test simulating 503 "Retry-After": 503 treated as communication error, either
@@ -1045,9 +1090,8 @@ sap.ui.define([
 			this.mock(_Helper).expects("createError")
 				.withExactArgs(sinon.match.same(o503jqXHR), "Communication error",
 					"/Service/Foo", undefined)
-				.returns("~oError");
+				.returns("~oError~");
 
-			// code under test
 			jqXHR.reject(o503jqXHR);
 
 			return jqXHR;
@@ -1057,7 +1101,7 @@ sap.ui.define([
 		oRequestor.sendRequest("GET", "Foo").then(function () {
 			assert.ok(false);
 		}, (oError) => {
-			assert.strictEqual(oError, "~oError");
+			assert.strictEqual(oError, "~oError~");
 		});
 	});
 });
@@ -2517,6 +2561,7 @@ sap.ui.define([
 			assert.strictEqual(oError.message,
 				"HTTP request was not processed because $batch failed");
 			assert.strictEqual(oError.cause, oBatchError);
+			assert.strictEqual(oError.$reported, "~reported~");
 			assert.notOk(bWaitingIsOver);
 		}
 
@@ -2524,6 +2569,7 @@ sap.ui.define([
 			return aRequests0 === aRequests;
 		}
 
+		oBatchError.$reported = "~reported~";
 		aPromises.push(oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
 				{"If-Match" : {/* product 0*/}}, {Name : "foo"})
 			.then(unexpected, assertError));

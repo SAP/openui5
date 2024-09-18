@@ -61,7 +61,7 @@ sap.ui.define([
 
 	var oLabel0 = new Label({text:'Small inactive rating'}),
 		oRating0 = new RatingIndicator("smallInactiveRI", {
-			iconSize: "1rem",
+			iconSize: "1.375rem",
 			enabled: false,
 			value: 2.5,
 			tooltip: "This is a tooltip"
@@ -69,7 +69,7 @@ sap.ui.define([
 
 	var oLabel1 = new Label({text:'Small active rating'}),
 		oRating1 = new RatingIndicator("smallActiveRI", {
-			iconSize: "1rem",
+			iconSize: "1.375rem",
 			value: 2.5,
 			tooltip: "This is a tooltip"
 		});
@@ -77,13 +77,13 @@ sap.ui.define([
 	var oLabel2 = new Label({text:'Medium inactive rating'}),
 		oRating2 = new RatingIndicator("mediumInactiveRI", {
 			enabled: false,
-			iconSize: "1.375rem",
+			iconSize: "1.5rem",
 			value: 2.5
 		});
 
 	var oLabel3 = new Label({text:'Medium active rating', required: true, labelFor: "mediumActiveRI"}),
 		oRating3 = new RatingIndicator("mediumActiveRI", {
-			iconSize: "1.375rem",
+			iconSize: "1.5rem",
 			value: 2.5
 		});
 
@@ -103,33 +103,34 @@ sap.ui.define([
 
 	var oLabel6 = new Label({text:'Default active rating'}),
 		oRating6 = new RatingIndicator("defaultActiveRI", {
-			value: 2.5
+			value: 4,
+			maxValue: 8
 		});
 
 	var oVBox = new VBox({
-		items: [
-			oLabel01,
-			oRating01,
-			oLabel01a,
-			oRating01a,
-			oLabel01b,
-			oRating01b,
-			oLabel0,
-			oRating0,
-			oLabel1,
-			oRating1,
-			oLabel2,
-			oRating2,
-			oLabel3,
-			oRating3,
-			oLabel4,
-			oRating4,
-			oLabel5,
-			oRating5,
-			oLabel6,
-			oRating6
-		]
-	});
+	items: [
+		oLabel01,
+		oRating01,
+		oLabel01a,
+		oRating01a,
+		oLabel01b,
+		oRating01b,
+		oLabel0,
+		oRating0,
+		oLabel1,
+		oRating1,
+		oLabel2,
+		oRating2,
+		oLabel3,
+		oRating3,
+		oLabel4,
+		oRating4,
+		oLabel5,
+		oRating5,
+		oLabel6,
+		oRating6
+	]
+});
 
 	// rating table
 	var oProducts = {

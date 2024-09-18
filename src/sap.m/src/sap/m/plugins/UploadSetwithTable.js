@@ -75,7 +75,6 @@ sap.ui.define([
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 * @author SAP SE
-	 * @experimental Since 1.124
 	 * @public
 	 * @since 1.124
 	 * @alias sap.m.plugins.UploadSetwithTable

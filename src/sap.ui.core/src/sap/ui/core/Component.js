@@ -286,6 +286,12 @@ sap.ui.define([
 				delete mSettings._activeTerminologies;
 			}
 
+			// component factory config
+			if (mSettings && typeof mSettings._componentConfig === "object") {
+				this._componentConfig = mSettings._componentConfig;
+				delete mSettings._componentConfig;
+			}
+
 			// registry of preloaded models from manifest ('afterManifest' models)
 			if (mSettings && typeof mSettings._manifestModels === "object") {
 				// use already created models from sap.ui.component.load if available
@@ -985,7 +991,7 @@ sap.ui.define([
 		}
 
 		// create all models which are not created, yet.
-		var mCreatedModels = Component._createManifestModels(mModelConfigurations, sComponentName);
+		var mCreatedModels = Component._createManifestModels(mModelConfigurations, this._componentConfig);
 		for (sModelName in mCreatedModels) {
 			// keep the model instance to be able to destroy the created models on component destroy
 			this._mManifestModels[sModelName] = mCreatedModels[sModelName];
@@ -1933,11 +1939,11 @@ sap.ui.define([
 	 * Creates model instances using a configuration provided by {@link sap.ui.core.Component._createManifestModelConfigurations}.
 	 *
 	 * @param {object} mModelConfigurations key-value configuration object created via {@link sap.ui.core.Component._createManifestModelConfigurations}
-	 * @param {string} sLogComponentName component name / identifier to create log entries
+	 * @param {object} oConfig see <code>sap.ui.component</code> / <code>sap.ui.component.load</code>
 	 * @returns {object} key-value map with model name as key and model instance as value
 	 * @private
 	 */
-	Component._createManifestModels = function(mModelConfigurations, sLogComponentName) {
+	Component._createManifestModels = function(mModelConfigurations, oConfig) {
 		var mModels = {};
 		for (var sModelName in mModelConfigurations) {
 			var oModelConfig = mModelConfigurations[sModelName];
@@ -1960,6 +1966,13 @@ sap.ui.define([
 
 			// the factory will create the model with the arguments above
 			var oModel = new fnFactory();
+
+			// Call hook and provide model instance, manifest model ID to UI5 flex lib
+			if (typeof Component._fnCreateModel === "function") {
+				if (oModel.isA("sap.ui.model.odata.v2.ODataModel") || oModel.isA("sap.ui.model.odata.v4.ODataModel")) {
+					Component._fnCreateModel(oModel, sModelName, oConfig);
+				}
+			}
 
 			// add model instance to the result map
 			mModels[sModelName] = oModel;
@@ -2206,6 +2219,15 @@ sap.ui.define([
 	 */
 	Component._fnPreprocessManifest = null;
 
+
+	/**
+	 * Callback handler that executes when a manifest model is created.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+	Component._fnCreateModel = null;
+
 	/**
 	 * Asynchronously creates a new component instance from the given configuration.
 	 *
@@ -2403,7 +2425,8 @@ sap.ui.define([
 				id: sId,
 				componentData: oComponentData,
 				_cacheTokens: vConfig.asyncHints && vConfig.asyncHints.cacheTokens,
-				_activeTerminologies: aActiveTerminologies
+				_activeTerminologies: aActiveTerminologies,
+				_componentConfig: vConfig
 			}));
 			assert(oInstance instanceof Component, "The specified component \"" + sController + "\" must be an instance of sap.ui.core.Component!");
 			Log.info("Component instance Id = " + oInstance.getId());
@@ -3079,7 +3102,7 @@ sap.ui.define([
 								activeTerminologies: aActiveTerminologies
 							});
 
-							mModels = Component._createManifestModels(mAllModelConfigurations, sComponentName);
+							mModels = Component._createManifestModels(mAllModelConfigurations, oConfig);
 						}
 
 						return oManifest;
@@ -3189,7 +3212,7 @@ sap.ui.define([
 							// Load all ResourceBundles for all models in parallel
 							return Promise.all(aResourceModelNames.map(loadResourceBundle)).then(function() {
 								if (Object.keys(mAfterPreloadModelConfigurations).length > 0) {
-									var mResourceModels = Component._createManifestModels(mAfterPreloadModelConfigurations, oManifest.getComponentName());
+									var mResourceModels = Component._createManifestModels(mAfterPreloadModelConfigurations);
 									if (!mModels) {
 										mModels = {};
 									}
