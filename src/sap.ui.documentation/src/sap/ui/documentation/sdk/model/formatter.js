@@ -353,7 +353,14 @@ sap.ui.define([
 			/*
 			 * make ManagedObject.escapeSettingsValue available via this formatter
 			 */
-			escapeSettingsValue: ManagedObject.escapeSettingsValue
+			escapeSettingsValue: ManagedObject.escapeSettingsValue,
+
+			getUrlForType: function(sType) {
+				if (!sType) {
+					return sType;
+				}
+				return "api/" + sType.replace("[]", "");
+			}
 		};
 
 	return merge(oFormatter, oStaticAPI);

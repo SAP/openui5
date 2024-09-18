@@ -169,9 +169,9 @@
 											 class="sapUiSmallMarginTop">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold sapUiDocumentationParamWrap" text="{name}" depth="{depth}" optional="{optional}" deprecated="{= ${deprecated} !== undefined }"/>
-												<layout:VerticalLayout content="{path: 'types', templateShareable: false}" width="100%">
+												<layout:VerticalLayout class="sapUiDocumentationOrList" content="{path: 'types', templateShareable: false}" width="100%">
 													<m:Link text="{path: 'value', formatter: '.formatter.escapeSettingsValue'}"
-															href="{href}"
+															href="{path: 'value', formatter: '.formatter.getUrlForType'}"
 															enabled="{= !!${linkEnabled} }"/>
 												</layout:VerticalLayout>
 												<layout:VerticalLayout>
@@ -236,9 +236,9 @@
 														class="sapUiDocumentationParamsTable">
 													<custom:Row>
 														<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
-														<layout:VerticalLayout content="{path: 'types', templateShareable: false}" width="100%">
-															<m:Link text="{name}"
-																	href="api/{name}"
+														<layout:VerticalLayout class="sapUiDocumentationOrList" content="{path: 'types', templateShareable: false}" width="100%">
+															<m:Link text="{value}"
+																	href="{path: 'value', formatter: '.formatter.getUrlForType'}"
 																	enabled="{= !!${linkEnabled} }"/>
 														</layout:VerticalLayout>
 														<m:Text text="{defaultValue}" wrapping="false"/>
@@ -281,9 +281,11 @@
 											class="sapUiSmallMarginTop">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
-												<m:Link text="{type}"
-														href="api/{= ${type}.replace('[]', '') }"
-														enabled="{= !!${linkEnabled} }"/>
+												<layout:VerticalLayout class="sapUiDocumentationOrList" content="{path : 'types'}">
+													<m:Link text="{value}"
+															href="{path: 'value', formatter: '.formatter.getUrlForType'}"
+															enabled="{= !!${linkEnabled} }"/>
+												</layout:VerticalLayout>
 												<m:Text text="{defaultValue}"/>
 												<layout:VerticalLayout width="100%">
 													<custom:JSDocText sanitizeContent="false" text="{description}"/>
@@ -654,7 +656,7 @@
 																			<template:if test="{= !!${type>linkEnabled} }">
 																				<template:then>
 																					<m:Link text="{path: 'type>value', formatter: '.formatter.escapeSettingsValue'}"
-																							href="{type>href}"
+																							href="{path: 'type>value', formatter: '.formatter.getUrlForType'}"
 																							enabled="true"/>
 																				</template:then>
 																				<template:else>
@@ -678,7 +680,7 @@
 																<layout:VerticalLayout class="sapUiDocumentationOrList" width="100%">
 																	<template:repeat list="{method>returnValue/types}" var="rtype">
 																		<m:Link text="{path: 'rtype>value', formatter: '.formatter.escapeSettingsValue'}"
-																				href="{rtype>href}"
+																				href="{path: 'rtype>value', formatter: '.formatter.getUrlForType'}"
 																				enabled="{= !!${rtype>linkEnabled} }"/>
 																	</template:repeat>
 																</layout:VerticalLayout>
