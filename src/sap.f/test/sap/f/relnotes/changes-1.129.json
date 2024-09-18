@@ -3,6 +3,11 @@
     "date": "September 2024",
     "notes": [
       {
+        "id": "b6a1971aa42d6cddd15a6cc617903cb8497164f2",
+        "type": "FIX",
+        "text": " sap.m.Label: Revert"
+      },
+      {
         "id": "f248fe376dcccc9951d325ee6a8cd41b3c1c57c8",
         "type": "FIX",
         "text": " sap.f.SidePanel: fixed resizing when Side Panel is left-positioned"

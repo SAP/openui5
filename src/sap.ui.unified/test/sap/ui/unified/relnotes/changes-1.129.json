@@ -3,6 +3,11 @@
     "date": "September 2024",
     "notes": [
       {
+        "id": "9323e0a0d6009005e044c8a6768621e4496e1bc0",
+        "type": "FEATURE",
+        "text": " sa.ui.unified.Menu: 'closed' event added"
+      },
+      {
         "id": "423f82f907005027be448f9fd1453e78c4ee3c93",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: Calendar with two months in one column is displayed correctly now"

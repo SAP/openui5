@@ -3,6 +3,11 @@
     "date": "September 2024",
     "notes": [
       {
+        "id": "3faf4f40606579a1ccaa249bed7d7e44b1e2e687",
+        "type": "FIX",
+        "text": " sap.uxap.LazyLoading: prevent loading of unneeded Sections"
+      },
+      {
         "id": "8d69228008aac05f95377d15461784b44ecb5951",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Fix failing test for 2.0"

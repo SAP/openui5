@@ -3,6 +3,21 @@
     "date": "September 2024",
     "notes": [
       {
+        "id": "b6a1971aa42d6cddd15a6cc617903cb8497164f2",
+        "type": "FIX",
+        "text": " sap.m.Label: Revert"
+      },
+      {
+        "id": "44979a869f8acc61287308b2673b3157ef8a41fe",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Fix error caused by inaccessible DOM ref"
+      },
+      {
+        "id": "26ac7a104161670ad1ce2fd9f629e58f69792038",
+        "type": "FIX",
+        "text": " CellSelector: Return correct row contexts when grouping"
+      },
+      {
         "id": "04354678222f3043cb77918140a9b1f6dae20539",
         "type": "FIX",
         "text": " sap.m.ObjectStatus: add empty value description in the acc info"
