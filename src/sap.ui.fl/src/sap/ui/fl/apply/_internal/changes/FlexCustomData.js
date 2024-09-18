@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Utils",
 	"sap/base/Log",
 	"sap/ui/core/CustomData" // needs to be preloaded
 ], function(
-	FlUtils,
 	Log
 ) {
 	"use strict";
@@ -31,7 +29,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 */
-	var FlexCustomData = {};
+	const FlexCustomData = {};
 
 	FlexCustomData.appliedChangesCustomDataKey = "sap.ui.fl.appliedChanges";
 	FlexCustomData.failedChangesCustomDataKeyJs = "sap.ui.fl.failedChanges.js";
@@ -39,7 +37,7 @@ sap.ui.define([
 	FlexCustomData.notApplicableChangesCustomDataKey = "sap.ui.fl.notApplicableChanges";
 
 	function writeCustomData(oControl, sKey, sValue, mPropertyBag) {
-		var mCustomData = mPropertyBag.modifier.getCustomDataInfo(oControl, sKey);
+		const mCustomData = mPropertyBag.modifier.getCustomDataInfo(oControl, sKey);
 		if (!mCustomData.customData) {
 			return mPropertyBag.modifier.createAndAddCustomData(oControl, sKey, sValue, mPropertyBag.appComponent);
 		}
@@ -47,7 +45,7 @@ sap.ui.define([
 	}
 
 	function getCustomValueData(bSaveRevertData, oChange) {
-		var vRevertData = oChange.getRevertData();
+		const vRevertData = oChange.getRevertData();
 		if (bSaveRevertData && vRevertData !== undefined) {
 			return JSON.stringify(vRevertData);
 		}
@@ -64,7 +62,9 @@ sap.ui.define([
 	 * @returns {string|undefined} Custom data or 'undefined'
 	 */
 	FlexCustomData.getAppliedCustomDataValue = function(oControl, oChange, oModifier) {
-		var mCustomData = oModifier.getCustomDataInfo(oControl, FlexCustomData._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey));
+		const mCustomData = oModifier.getCustomDataInfo(
+			oControl, FlexCustomData._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey)
+		);
 		return mCustomData.customDataValue;
 	};
 
@@ -78,7 +78,7 @@ sap.ui.define([
 	 * @returns {object|undefined} Returns the revert data from the custom data as object or 'undefined'
 	 */
 	FlexCustomData.getParsedRevertDataFromCustomData = function(oControl, oChange, oModifier) {
-		var sCustomDataValue = FlexCustomData.getAppliedCustomDataValue(oControl, oChange, oModifier);
+		const sCustomDataValue = FlexCustomData.getAppliedCustomDataValue(oControl, oChange, oModifier);
 		try {
 			return sCustomDataValue && JSON.parse(sCustomDataValue);
 		} catch (oError) {
@@ -97,17 +97,23 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the custom data is there.
 	 */
 	FlexCustomData.hasChangeApplyFinishedCustomData = function(oControl, oChange, oModifier) {
-		var oAppliedCD = oModifier.getCustomDataInfo(oControl, FlexCustomData._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey));
+		const oAppliedCD = oModifier.getCustomDataInfo(
+			oControl, FlexCustomData._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey)
+		);
 		if (oAppliedCD.customData) {
 			return true;
 		}
 
-		var oFailedCD = oModifier.getCustomDataInfo(oControl, FlexCustomData._getCustomDataKey(oChange, FlexCustomData.failedChangesCustomDataKeyJs));
+		const oFailedCD = oModifier.getCustomDataInfo(
+			oControl, FlexCustomData._getCustomDataKey(oChange, FlexCustomData.failedChangesCustomDataKeyJs)
+		);
 		if (oFailedCD.customData) {
 			return true;
 		}
 
-		var oNotApplicableCD = oModifier.getCustomDataInfo(oControl, FlexCustomData._getCustomDataKey(oChange, FlexCustomData.notApplicableChangesCustomDataKey));
+		const oNotApplicableCD = oModifier.getCustomDataInfo(
+			oControl, FlexCustomData._getCustomDataKey(oChange, FlexCustomData.notApplicableChangesCustomDataKey)
+		);
 		if (oNotApplicableCD.customData) {
 			return true;
 		}
@@ -129,8 +135,8 @@ sap.ui.define([
 	 * @returns {Promise} resolves when custom data is written
 	 */
 	FlexCustomData.addAppliedCustomData = function(oControl, oChange, mPropertyBag, bSaveRevertData) {
-		var sCustomDataValue = getCustomValueData(bSaveRevertData, oChange);
-		var sCustomDataKey = FlexCustomData._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey);
+		const sCustomDataValue = getCustomValueData(bSaveRevertData, oChange);
+		const sCustomDataKey = FlexCustomData._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey);
 		return writeCustomData(oControl, sCustomDataKey, sCustomDataValue, mPropertyBag);
 	};
 
@@ -148,7 +154,7 @@ sap.ui.define([
 	 * @returns {Promise} resolves when custom data is written
 	 */
 	FlexCustomData.addFailedCustomData = function(oControl, oChange, mPropertyBag, sIdentifier) {
-		var sCustomDataKey = FlexCustomData._getCustomDataKey(oChange, sIdentifier);
+		const sCustomDataKey = FlexCustomData._getCustomDataKey(oChange, sIdentifier);
 		return writeCustomData(oControl, sCustomDataKey, "true", mPropertyBag);
 	};
 
@@ -160,8 +166,8 @@ sap.ui.define([
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier The control tree modifier
 	 */
 	FlexCustomData.destroyAppliedCustomData = function(oControl, oChange, oModifier) {
-		var sKey = FlexCustomData._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey);
-		var mCustomData = oModifier.getCustomDataInfo(oControl, sKey);
+		const sKey = FlexCustomData._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey);
+		const mCustomData = oModifier.getCustomDataInfo(oControl, sKey);
 		if (mCustomData.customData) {
 			oModifier.destroy(mCustomData.customData);
 		}
@@ -207,4 +213,4 @@ sap.ui.define([
 	};
 
 	return FlexCustomData;
-}, /* bExport= */true);
+});

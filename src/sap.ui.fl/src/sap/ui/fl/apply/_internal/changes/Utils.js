@@ -34,7 +34,7 @@ sap.ui.define([
 		return true;
 	}
 
-	var Utils = {
+	const Utils = {
 		/**
 		 * Returns the control map containing control, controlType, bTemplateAffected and originalControl
 		 *
@@ -43,16 +43,16 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Contains additional data that are needed for reading of changes
 		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Control tree modifier
 		 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Component instance that is currently loading
-		 * @param {object} mPropertyBag.view - The currenty loaded view
+		 * @param {object} mPropertyBag.view - The currently loaded view
 		 * @returns {object} Contains the information about the control
 		 * @private
 		 */
 		getControlIfTemplateAffected(oChange, oControl, mPropertyBag) {
-			var oModifier = mPropertyBag.modifier;
-			var mControl = {
+			const oModifier = mPropertyBag.modifier;
+			const mControl = {
 				originalControl: oControl
 			};
-			var oOriginalDependentSelector = oChange.getOriginalSelector();
+			const oOriginalDependentSelector = oChange.getOriginalSelector();
 			if (oChange.getContent().boundAggregation && oOriginalDependentSelector) {
 				mControl.control = oModifier.bySelector(oOriginalDependentSelector, mPropertyBag.appComponent, mPropertyBag.view);
 				mControl.controlType = oModifier.getControlType(mControl.control);
@@ -77,38 +77,33 @@ sap.ui.define([
 		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Control tree modifier
 		 * @returns {Promise} Promise resolving with the change handler or an empty object
 		 */
-		getChangeHandler(oChange, mControl, mPropertyBag) {
-			var oLibraryNamePromise = mPropertyBag.modifier.getLibraryName(mControl.control);
+		async getChangeHandler(oChange, mControl, mPropertyBag) {
+			const sLibraryName = await mPropertyBag.modifier.getLibraryName(mControl.control);
 			// the ChangeHandlerRegistration includes all the predefined ChangeHandlers.
 			// With this as a standard import the ChangeHandlers would not be able to access API classes due to circular dependencies.
 			// TODO should be removed as soon as the ChangePersistence / FlexController are gone
-			return Promise.all([
-				requireAsync("sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration"),
-				oLibraryNamePromise
-			])
-			.then(function(aPromiseValues) {
-				return aPromiseValues[0].waitForChangeHandlerRegistration(aPromiseValues[1]);
-			})
-			.then(function() {
-				var sChangeType = oChange.getChangeType();
-				var sLayer = oChange.getLayer();
-				return ChangeHandlerStorage.getChangeHandler(sChangeType, mControl.controlType, mControl.control, mPropertyBag.modifier, sLayer);
-			});
+			const ChangeHandlerRegistration = await requireAsync("sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration");
+			await ChangeHandlerRegistration.waitForChangeHandlerRegistration(sLibraryName);
+			const sChangeType = oChange.getChangeType();
+			const sLayer = oChange.getLayer();
+			return ChangeHandlerStorage.getChangeHandler(
+				sChangeType, mControl.controlType, mControl.control, mPropertyBag.modifier, sLayer
+			);
 		},
 
 		checkIfDependencyIsStillValid(oAppComponent, oModifier, mChangesMap, sChangeId) {
-			var oChange = FlUtils.getChangeFromChangesMap(mChangesMap.mChanges, sChangeId);
+			const oChange = FlUtils.getChangeFromChangesMap(mChangesMap.mChanges, sChangeId);
 			// Change could be deleted after a save (condensing) so it is no longer a relevant dependency
 			if (!oChange) {
 				return false;
 			}
-			var oControl = oModifier.bySelector(oChange.getSelector(), oAppComponent);
+			const oControl = oModifier.bySelector(oChange.getSelector(), oAppComponent);
 			// if the control is currently not available,
 			// the change is also not applied anymore and the dependency is still valid
 			if (!oControl) {
 				return true;
 			}
-			var bHasChangeApplyFinishedCustomData = FlexCustomData.hasChangeApplyFinishedCustomData(oControl, oChange, oModifier);
+			const bHasChangeApplyFinishedCustomData = FlexCustomData.hasChangeApplyFinishedCustomData(oControl, oChange, oModifier);
 			return isDependencyStillValid(oChange, bHasChangeApplyFinishedCustomData);
 		},
 
@@ -123,19 +118,19 @@ sap.ui.define([
 		 * @returns {boolean} <code>true</code> if the change belongs to the given view
 		 */
 		isChangeInView(mPropertyBag, oChange) {
-			var oModifier = mPropertyBag.modifier;
-			var oAppComponent = mPropertyBag.appComponent;
-			var oSelector = oChange.getSelector();
+			const oModifier = mPropertyBag.modifier;
+			const oAppComponent = mPropertyBag.appComponent;
+			const oSelector = oChange.getSelector();
 			if (!oSelector) {
 				return false;
 			}
 			if (oSelector.viewSelector) {
-				var sSelectorViewId = oModifier.getControlIdBySelector(oSelector.viewSelector, oAppComponent);
+				const sSelectorViewId = oModifier.getControlIdBySelector(oSelector.viewSelector, oAppComponent);
 				return sSelectorViewId === mPropertyBag.viewId;
 			}
-			var sSelectorId = oSelector.id;
+			const sSelectorId = oSelector.id;
 			if (sSelectorId) {
-				var sViewId;
+				let sViewId;
 				if (oChange.getSelector().idIsLocal) {
 					if (oAppComponent) {
 						sViewId = oAppComponent.getLocalId(mPropertyBag.viewId);
@@ -143,8 +138,8 @@ sap.ui.define([
 				} else {
 					sViewId = mPropertyBag.viewId;
 				}
-				var iIndex = 0;
-				var sSelectorIdViewPrefix;
+				let iIndex = 0;
+				let sSelectorIdViewPrefix;
 				do {
 					iIndex = sSelectorId.indexOf("--", iIndex);
 					sSelectorIdViewPrefix = sSelectorId.slice(0, iIndex);

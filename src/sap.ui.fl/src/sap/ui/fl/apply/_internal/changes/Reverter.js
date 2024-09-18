@@ -21,19 +21,17 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var Reverter = {};
+	const Reverter = {};
 
-	function _waitForApplyIfNecessary(oChange) {
+	async function waitForApplyIfNecessary(oChange) {
 		if (!oChange.isApplyProcessFinished() && oChange.hasApplyProcessStarted()) {
 			// wait for the change to be applied
-			return oChange.addPromiseForApplyProcessing().then(function(oResult) {
-				if (oResult && oResult.error) {
-					oChange.markRevertFinished(oResult.error);
-					throw Error(oResult.error);
-				}
-			});
+			const oResult = await oChange.addPromiseForApplyProcessing();
+			if (oResult && oResult.error) {
+				oChange.markRevertFinished(oResult.error);
+				throw Error(oResult.error);
+			}
 		}
-		return Promise.resolve();
 	}
 
 	function removeChangeFromMaps(oChange, sReference) {
@@ -61,41 +59,33 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.appDescriptor - App descriptor containing the metadata of the current application
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Polymorph reuse operations handling the changes on the given view type
 	 * @param {sap.ui.core.mvc.View} mPropertyBag.view - View to process
-	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Resolving Promise/FakePromise with either the control (success) or <code>false</code> (failure) as value
+	 * @returns {Promise} Resolving Promise with either the control (success) or <code>false</code> (failure) as value
 	 */
-	Reverter.revertChangeOnControl = function(oChange, oControl, mPropertyBag) {
-		var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
-		var oChangeHandler;
-
-		return Utils.getChangeHandler(oChange, mControl, mPropertyBag).then(function(oReturnedChangeHandler) {
-			oChangeHandler = oReturnedChangeHandler;
-		})
-		.then(_waitForApplyIfNecessary.bind(null, oChange))
-		.then(function() {
+	Reverter.revertChangeOnControl = async function(oChange, oControl, mPropertyBag) {
+		const mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
+		try {
+			const oChangeHandler = await Utils.getChangeHandler(oChange, mControl, mPropertyBag);
+			await waitForApplyIfNecessary(oChange);
 			if (oChange.isSuccessfullyApplied()) {
 				oChange.startReverting();
-				return oChangeHandler.revertChange(oChange, mControl.control, mPropertyBag);
+			} else {
+				throw Error("Change was never applied");
 			}
-			throw Error("Change was never applied");
-		})
-		.then(function() {
+
+			await oChangeHandler.revertChange(oChange, mControl.control, mPropertyBag);
 			// After revert the relevant control for the change might have changed, therefore it must be retrieved again (e.g. stashing)
 			mControl.control = mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent, mPropertyBag.view);
 			if (mControl.bTemplateAffected) {
-				return mPropertyBag.modifier.updateAggregation(mControl.control, oChange.getContent().boundAggregation);
+				await mPropertyBag.modifier.updateAggregation(mControl.control, oChange.getContent().boundAggregation);
 			}
-			return undefined;
-		})
-		.then(function() {
 			oChange.markRevertFinished();
 			return mControl.control;
-		})
-		.catch(function(oError) {
-			var sErrorMessage = `Change could not be reverted: ${oError.message}`;
+		} catch (oError) {
+			const sErrorMessage = `Change could not be reverted: ${oError.message}`;
 			Log.error(sErrorMessage);
 			oChange.markRevertFinished(sErrorMessage);
 			return false;
-		});
+		}
 	};
 
 	/**
@@ -109,18 +99,18 @@ sap.ui.define([
 	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise/FakePromise that resolves as soon as all changes are reverted
 	 */
 	Reverter.revertMultipleChanges = function(aChanges, mPropertyBag) {
-		var aPromiseStack = [];
-		aChanges.forEach(function(oChange) {
+		const aPromiseStack = [];
+		aChanges.forEach((oChange) => {
 			// Queued 'state' will be removed once the revert process is done
 			oChange.setQueuedForRevert();
-			aPromiseStack.push(function() {
-				var oSelector = oChange.getSelector && oChange.getSelector();
-				var oControl = mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.appComponent);
+			aPromiseStack.push(() => {
+				const oSelector = oChange.getSelector && oChange.getSelector();
+				const oControl = mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.appComponent);
 				if (!oControl) {
 					removeChangeFromMaps(oChange, mPropertyBag.reference);
 					return (FlUtils.FakePromise ? new FlUtils.FakePromise() : Promise.resolve());
 				}
-				var mRevertProperties = {
+				const mRevertProperties = {
 					modifier: mPropertyBag.modifier,
 					appComponent: mPropertyBag.appComponent,
 					view: FlUtils.getViewForControl(oControl)
