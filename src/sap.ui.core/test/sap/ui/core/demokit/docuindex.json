@@ -262,6 +262,7 @@
 					"sap.ui.core.sample.odata.v4.ConsumeV2Service",
 					"sap.ui.core.sample.odata.v4.DeepCreate",
 					"sap.ui.core.sample.odata.v4.Draft",
+					"sap.ui.core.sample.odata.v4.FlatDataAggregation",
 					"sap.ui.core.sample.odata.v4.ListBinding",
 					"sap.ui.core.sample.odata.v4.SalesOrders",
 					"sap.ui.core.sample.odata.v4.SalesOrdersTemplate",
@@ -642,6 +643,11 @@
 				"id": "sap.ui.core.sample.odata.v4.Draft",
 				"name": "Draft Handling and Data Synchronisation",
 				"description": "Example of an OData V4 model consuming a draft service that shows how to synchronise data between a list report and an object page"
+			},
+			{
+				"id": "sap.ui.core.sample.odata.v4.FlatDataAggregation",
+				"name": "OData V4 Flat Data Aggregation",
+				"description": "Example for OData V4 Data Aggregation w/o visual grouping; based on https://github.com/SAP-samples/cap-sflight"
 			},
 			{
 				"id": "sap.ui.core.sample.odata.v4.ListBinding",

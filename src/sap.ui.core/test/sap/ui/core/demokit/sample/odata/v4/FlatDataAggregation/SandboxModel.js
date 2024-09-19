@@ -13,7 +13,7 @@ sap.ui.define([
 	var oMockData = {
 		mFixture : {
 		},
-		sFilterBase : "/serviceroot.svc/",
+		sFilterBase : "/analytics/",
 		sSourceBase : "sap/ui/core/sample/odata/v4/FlatDataAggregation/data"
 	};
 
