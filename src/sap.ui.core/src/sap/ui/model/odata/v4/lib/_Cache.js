@@ -3942,7 +3942,7 @@ sap.ui.define([
 	 * @param {boolean} [bPost]
 	 *   Whether the cache uses POST requests. If <code>true</code>, the initial request must be
 	 *   done via {@link #post}. {@link #fetchValue} expects to have cache data, but may initiate
-	 *   requests for late properties. If <code>false<code>, {@link #post} throws an error.
+	 *   requests for late properties. If <code>false</code>, {@link #post} throws an error.
 	 * @param {string} [sMetaPath]
 	 *   Optional meta path in case it cannot be derived from the given resource path
 	 * @param {boolean} [bEmpty]

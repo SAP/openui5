@@ -4557,7 +4557,7 @@ sap.ui.define([
 	 *   <ul>
 	 *     <li> <code>additionally</code>: An optional list of strings that provides the paths to
 	 *       properties (like texts or attributes) related to this groupable property in a 1:1
-	 *       relation (since 1.87.0). They are requested additionally via <code>groupby<code> and
+	 *       relation (since 1.87.0). They are requested additionally via <code>groupby</code> and
 	 *       must not change the actual grouping; a <code>unit</code> for an aggregatable property
 	 *       must not be repeated here.
 	 *   </ul>
