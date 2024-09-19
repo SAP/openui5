@@ -819,5 +819,15 @@
         "text": " ResourceModel: Fix bundle reload after localizationChange"
       }
     ]
+  },
+  "1.96.34": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "987de61ab9e80219ba1a1a2bb10348f073dac078",
+        "type": "FIX",
+        "text": " sap/ui/model/resource/ResourceModel#_handleLocalizationChange: wait for resource bundle to be loaded"
+      }
+    ]
   }
 }
