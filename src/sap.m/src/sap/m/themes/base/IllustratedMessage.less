@@ -1,7 +1,7 @@
-/* ================================== */
+/* ======================================== */
 /* CSS for control sap.f/IllustratedMessage */
-/* Base theme                         */
-/* ================================== */
+/* Base theme                               */
+/* ======================================== */
 
 .sapMIllustratedMessage {
 	width: 100%;
@@ -23,15 +23,15 @@
 	}
 
 	.sapMTitle {
-		font-family: @sapFontHeaderFamily;
-		color: @sapGroup_TitleTextColor;
+		font-family: var(--sapFontHeaderFamily);
+		color: var(--sapGroup_TitleTextColor);
 		display: block;
 	}
 
 	.sapMIllustratedMessageDescription {
 		font-size: @sapFontSize;
-		font-family: @sapFontFamily;
-		color: @sapTextColor;
+		font-family: var(--sapFontFamily);
+		color: var(--sapTextColor);
 	}
 
 	&.sapMIllustratedMessageScalable {
@@ -42,6 +42,7 @@
 	}
 
 	&.sapMIllustratedMessage-Base {
+
 		figcaption {
 			max-width: 10rem;
 		}
@@ -75,7 +76,7 @@
 		}
 
 		.sapMTitle {
-			font-size: @sapFontHeader5Size;
+			font-size: var(--sapFontHeader5Size);
 			margin-bottom: 0.25rem;
 		}
 
@@ -85,10 +86,9 @@
 
 		.sapMIllustratedMessageAdditionalContent {
 			margin: 0.25rem 0;
-			padding-left: 3.063rem; // width of dot svg + its margin right
+			padding-left: 3.063rem; /* width of dot svg + its margin right */
 		}
 	}
-
 
 	&.sapMIllustratedMessage-Spot {
 		padding: 0.5rem;
@@ -104,7 +104,7 @@
 		}
 
 		.sapMTitle {
-			font-size: @sapFontHeader4Size;
+			font-size: var(--sapFontHeader4Size);
 			margin-bottom: 0.5rem;
 		}
 
@@ -118,6 +118,7 @@
 	}
 
 	&.sapMIllustratedMessage-Dialog {
+
 		figcaption {
 			max-width: 20rem;
 		}
@@ -130,7 +131,7 @@
 
 		.sapMTitle {
 			margin-bottom: 0.5rem;
-			font-size: @sapFontHeader3Size;
+			font-size: var(--sapFontHeader3Size);
 		}
 
 		.sapMIllustratedMessageDescription {
@@ -144,6 +145,7 @@
 	}
 
 	&.sapMIllustratedMessage-Scene {
+
 		figcaption {
 			max-width: 30rem;
 		}
@@ -156,12 +158,12 @@
 
 		.sapMTitle {
 			margin-bottom: 1rem;
-			font-size: @sapMFontHeader2Size;
+			font-size: var(--sapMFontHeader2Size);
 		}
 
 		.sapMIllustratedMessageDescription {
 			margin-bottom: 0.5rem;
-			font-size: @sapMFontLargeSize;
+			font-size: var(--sapMFontLargeSize);
 		}
 
 		.sapMIllustratedMessageAdditionalContent {
