@@ -77,7 +77,10 @@ sap.ui.define([
 				};
 			} else {
 				func = function(Given, When, Then) {
-					Log.info("[GHERKIN] Generated Step (eval): " + sToEval);
+					Log.warn("[GHERKIN] Generated Step (eval): " + sToEval);
+					/**
+					 * @deprecated As of version 1.130
+					 */
 					eval(sToEval);
 				};
 			}
