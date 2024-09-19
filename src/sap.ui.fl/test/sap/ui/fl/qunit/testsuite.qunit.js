@@ -297,6 +297,16 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddComponentUsages"]
 				}
 			},
+			"apply/_internal/changes/descriptor/ui5/ChangeModel": {
+				group: "Apply Internal - Descriptor Change Merger",
+				coverage: {
+					only: [
+						"sap/ui/fl/apply/_internal/changes/descriptor/ui5/ChangeModel",
+						"sap/ui/fl/util/DescriptorChangeCheck",
+						"sap/ui/fl/util/changePropertyValueByPath"
+					]
+				}
+			},
 			"apply/_internal/changes/descriptor/app/ChangeDataSource": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
