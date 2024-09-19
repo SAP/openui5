@@ -120,7 +120,8 @@ sap.ui.define(function () {
 			"OPA.OptimisticBatch" : {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/LateProperties/Opa.OptimisticBatch.qunit"],
-				realOData : false // works also with realOData, but this is not needed
+				realOData : false, // works also with realOData, but this is not needed
+				$app : "" // no corresponding app, already covered by OPA.LateProperties
 			},
 			"OPA.Products" : {
 				autostart : false,
