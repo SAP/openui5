@@ -1249,16 +1249,14 @@ sap.ui.define([
 	 * @since 1.121.0
 	 * @name sap.ui.core.ILabelable
 	 * @interface
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @public
 	 */
 
 	/**
 	 * Returns if the control can be bound to a label
 	 *
 	 * @returns {boolean} <code>true</code> if the control can be bound to a label
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @public
 	 * @function
 	 * @since 1.121.0
 	 * @name sap.ui.core.ILabelable.hasLabelableHTMLElement

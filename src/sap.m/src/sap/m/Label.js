@@ -73,7 +73,7 @@ function(
 	 * <li> It is not recommended to use labels in Bold.</li>
 	 * </ul>
 	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.core.Label, sap.ui.core.IShrinkable, sap.ui.core.IAccessKeySupport
+	 * @implements sap.ui.core.Label, sap.ui.core.IShrinkable, sap.ui.core.IAccessKeySupport, sap.ui.core.ILabelable
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -92,7 +92,8 @@ function(
 				"sap.m.IOverflowToolbarContent",
 				"sap.m.IToolbarInteractiveControl",
 				"sap.m.IHyphenation",
-				"sap.ui.core.IAccessKeySupport"
+				"sap.ui.core.IAccessKeySupport",
+				"sap.ui.core.ILabelable"
 			],
 			library : "sap.m",
 			properties : {
@@ -330,6 +331,16 @@ function(
 	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
 	 */
 	Label.prototype._getToolbarInteractive = function () {
+		return false;
+	};
+
+	/**
+	 * Returns if the control can be bound to a label
+	 *
+	 * @returns {boolean} <code>true</code> if the control can be bound to a label
+	 * @public
+	 */
+	Label.prototype.hasLabelableHTMLElement = function () {
 		return false;
 	};
 

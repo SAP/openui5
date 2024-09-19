@@ -63,12 +63,13 @@ function(
 	 * The <code>sap.m.InputBase</code> control provides a basic functionality for input controls.
 	 *
 	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent
+	 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent, sap.ui.core.ILabelable
 	 *
 	 * @borrows sap.ui.core.ISemanticFormContent.getFormFormattedValue as #getFormFormattedValue
 	 * @borrows sap.ui.core.ISemanticFormContent.getFormValueProperty as #getFormValueProperty
 	 * @borrows sap.ui.core.ISemanticFormContent.getFormObservingProperties as #getFormObservingProperties
 	 * @borrows sap.ui.core.ISemanticFormContent.getFormRenderAsControl as #getFormRenderAsControl
+	 * @borrows sap.ui.core.ILabelable.hasLabelableHTMLElement as #hasLabelableHTMLElement
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -84,7 +85,8 @@ function(
 			interfaces : [
 				"sap.ui.core.IFormContent",
 				"sap.ui.core.ISemanticFormContent",
-				"sap.m.IToolbarInteractiveControl"
+				"sap.m.IToolbarInteractiveControl",
+				"sap.ui.core.ILabelable"
 			],
 			library: "sap.m",
 			properties: {
@@ -1215,6 +1217,16 @@ function(
 
 	InputBase.prototype.getIdForLabel = function() {
 		return this.getId() + "-inner";
+	};
+
+	/**
+	 * Returns if the control can be bound to a label
+	 *
+	 * @returns {boolean} <code>true</code> if the control can be bound to a label
+	 * @public
+	 */
+	InputBase.prototype.hasLabelableHTMLElement = function () {
+		return true;
 	};
 
 	/**

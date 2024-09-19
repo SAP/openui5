@@ -10718,7 +10718,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Hidden select referencing", function (assert) {
-			assert.strictEqual(this.oSelect.hasLabelableHTMLElement(), this.$oHiddenSelectRef.attr("id"), "hasLabelableHTMLElement() returns the hidden select ID");
+			assert.strictEqual(this.oSelect.getIdForLabel(), this.oSelect._getHiddenInput().attr("id"), "getIdForLabel() returns the hidden input ID");
 		});
 
 		QUnit.test("Hidden select value is changed", function (assert) {
