@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/m/FlexItemData"
 ], function(Element, ODataV4Selection, ODataModel, TreeTable, Column, HBox, Icon, Text, OverflowToolbar, Title, Input, Toolbar, VBox, FlexItemData) {
 	"use strict";
-	var oTable = new TreeTable({
+	/*global TABLESETTINGS */
+	const oTable = new TreeTable({
 		columns: [
 			new Column({
 				label: "Name",
@@ -115,7 +116,7 @@ sap.ui.define([
 	});
 
 	TABLESETTINGS.init(oTable, function(oButton) {
-		var oToolbar = oTable.getExtension()[0];
+		let oToolbar = oTable.getExtension()[0];
 
 		if (!oToolbar) {
 			oToolbar = new Toolbar();

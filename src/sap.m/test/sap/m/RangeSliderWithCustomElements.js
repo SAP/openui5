@@ -10,12 +10,12 @@ sap.ui.define([
   "use strict";
   // Note: the HTML page 'RangeSliderWithCustomElements.html' loads this module via data-sap-ui-on-init
 
-  var CustomScale = Element.extend("sap.xx.custom.CustomScale",{
+  var CustomScale = Element.extend("sap.xx.custom.CustomScale", {
 	  metadata: {
 		  interfaces: [
 			  "sap.m.IScale"
 		  ],
-		  library: "sap.xx.custom",
+		  library: "sap.xx.custom"
 	  }
   });
   CustomScale.prototype.getTickmarksBetweenLabels = function () {
@@ -60,39 +60,48 @@ sap.ui.define([
 		  // its a recommendation to you the base renderer as it has some special responsive behavior
 		  SliderTooltipBaseRenderer.render.apply({
 			  renderTooltipContent: function (oRm, oControl) {
+
 				  // you can write any DOM here - render controls or anything you want
 				  // (inline elements are not recommended as you need to style them on your own)
-				  oRm.write("<div");
-				  oRm.addClass("sapCustomSliderTooltip");
+				  oRm.openStart("div", oControl.getId() + "-inner");
+				  oRm.class("sapCustomSliderTooltip");
 
 				  if (!oControl.getShowButtons()) {
-					  oRm.addClass("sapCustomTooltipWitouthButtons");
+					  oRm.class("sapCustomTooltipWitouthButtons");
 				  }
-				  oRm.write(">");
+				  oRm.openEnd();
 
-				  // keep the value of each tooltip as a property
-				  var fValue = oControl.getValue();
+					  // keep the value of each tooltip as a property
+					  var fValue = oControl.getValue();
 
-				  // you can write some value from a property here
-				  oRm.write("<div");
-				  oRm.addClass("sapCustomTooltipValue");
-				  oRm.write(">");
+					  // you can write some value from a property here
+					  oRm.openStart("div", oControl.getId() + "-value");
+					  oRm.class("sapCustomTooltipValue");
+					  oRm.openEnd();
 
-				  // display the value
-				  oRm.write(oControl.aDays[fValue % 7] + " " + fValue + " May");
-				  oRm.write("</div>")
+					  // display the value
+					  oRm.text(oControl.aDays[fValue % 7] + " " + fValue + " May");
+					  oRm.close("div");
 
 				  if (oControl.getShowButtons()) {
-					  oRm.write("<div");
-					  oRm.addClass("sapCustomTooltipButtons");
-					  oRm.write(">");
+					  oRm.openStart("div");
+					  oRm.class("sapCustomTooltipButtons");
+					  oRm.openEnd();
 
-					  oRm.write("<span class='sapCustomTooltipButton sapCustomTooltipButtonUp'></span>");
-					  oRm.write("<span class='sapCustomTooltipButton sapCustomTooltipButtonDown'></span>");
+						  oRm.openStart("span")
+							  .class("sapCustomTooltipButton")
+							  .class("sapCustomTooltipButtonUp")
+							  .openEnd()
+							  .close("span");
+						  oRm.openStart("span")
+							  .class("sapCustomTooltipButton")
+							  .class("sapCustomTooltipButtonDown")
+							  .openEnd()
+							  .close("span");
 
-					  oRm.write("</div>");
+					  oRm.close("div");
 				  }
-				  oRm.write("</div>");
+				  oRm.close("div");
 			  }
 		  }, arguments);
 	  }
@@ -112,14 +121,11 @@ sap.ui.define([
 			  bUp = jQuery(oEvent.target).hasClass("sapCustomTooltipButtonUp"),
 			  bDown = jQuery(oEvent.target).hasClass("sapCustomTooltipButtonDown");
 	  if (bButtonPressed) {
-		  var iValue = parseInt(this.getDomRef("value").innerHTML.split(" ")[1]),
-				  iFinalValue;
+		  var iValue = parseInt(this.getDomRef("value").innerHTML.split(" ")[1]);
 		  if (bUp) {
 			  this.getParent().updateTooltipsPositionAndState(this, iValue + 1);
-			  iFinalValue = iValue + 1;
 		  } else if (bDown) {
 			  this.getParent().updateTooltipsPositionAndState(this, iValue - 1);
-			  iFinalValue = iValue - 1;
 		  }
 	  }
   };

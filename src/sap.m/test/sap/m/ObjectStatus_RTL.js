@@ -21,8 +21,9 @@ sap.ui.define([
 	  function clone(obj) {
 		  var temp;
 
-		  if (obj == null || typeof(obj) != 'object')
+		  if (obj == null || typeof obj != 'object') {
 			  return obj;
+		  }
 
 		  temp = obj.constructor();
 
@@ -39,20 +40,20 @@ sap.ui.define([
 		  var mergeResult = [];
 		  var newObj;
 
-		  for  (j = 0; j < aResult.length; j++) {
-			  for (k = 0; k < aValues.length; k++) {
+		  for  (let j = 0; j < aResult.length; j++) {
+			  for (let k = 0; k < aValues.length; k++) {
 				  newObj = clone(aResult[j]);
 				  newObj[key] = aValues[k];
 				  mergeResult.push(newObj);
 			  }
 		  }
 
-		  for (l = 0; l < mergeResult.length; l++) {
+		  for (let l = 0; l < mergeResult.length; l++) {
 			  aResult.push(mergeResult[l]);
 		  }
 	  };
 
-	  for (i = 0; i < arguments.length; i++) {
+	  for (let i = 0; i < arguments.length; i++) {
 		  mergeWithValues(arguments[i].key, arguments[i].values);
 	  }
 
@@ -68,7 +69,7 @@ sap.ui.define([
 			  ]});
 
 	  var result = [];
-	  for (i = 0; i < aJSONStatuses.length; i++) {
+	  for (let i = 0; i < aJSONStatuses.length; i++) {
 		  if (aJSONStatuses[i].text && aJSONStatuses[i].textDirection) {
 			  aJSONStatuses[i].icon = IconPool.getIconURI("inbox");
 			  result.push(new ObjectStatus(aJSONStatuses[i]));
@@ -87,7 +88,7 @@ sap.ui.define([
   var importantCases = [6, 24];
   var txt1;
   var aStatuses = getStatuses();
-  for (p = 0; p < aStatuses.length; p++) {
+  for (let p = 0; p < aStatuses.length; p++) {
 	  if (importantCases.indexOf(p) === -1) {
 		  txt1 = new Label({text: p + " - textDirection: " + aStatuses[p].getTextDirection()});
 	  } else {

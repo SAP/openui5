@@ -58,7 +58,7 @@ sap.ui.define([
 				  new MenuItem({
 					  text: "Submenu Item 2",
 					  icon: "sap-icon://save"
-				  }),
+				  })
 			  ]
 		  }),
 		  new MenuItem({
@@ -71,7 +71,7 @@ sap.ui.define([
 				  new MenuItem({
 					  text: "Submenu Item 4",
 					  icon: "sap-icon://save"
-				  }),
+				  })
 			  ]
 		  }),
 		  new MenuItem({
@@ -121,7 +121,7 @@ sap.ui.define([
 				  new MenuItem({
 					  text: "Submenu Item 2",
 					  icon: "sap-icon://save"
-				  }),
+				  })
 			  ]
 		  }),
 		  new MenuItem({

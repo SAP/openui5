@@ -154,7 +154,7 @@ sap.ui.define([
 	  } else {
 		  oh4.setIcon(IconPool.getIconURI("attachment"));
 	  }
-  }
+  };
 
   var oh4 = new ObjectHeader("oh4", {
 	  intro : "On behalf of John Smith Ñagçyfox",

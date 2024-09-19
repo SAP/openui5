@@ -111,7 +111,7 @@ sap.ui.define([
 				  Element.getElementById("DTP3").invalidate();
 			  }
 		  })
-	  ],
+	  ]
   });
 
   app.addPage(page1);

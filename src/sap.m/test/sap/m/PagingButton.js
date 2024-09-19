@@ -43,7 +43,7 @@ sap.ui.define([
 		  },
 		  oChangePositionInput = new Input("changePosition", {
 			  liveChange: function (oEvent) {
-				  oPagingButton.setPosition(+oEvent.getParameter("value"))
+				  oPagingButton.setPosition(+oEvent.getParameter("value"));
 			  }
 		  }),
 		  oChangePositionLabel = new Label({
@@ -52,7 +52,7 @@ sap.ui.define([
 		  }),
 		  oChangeCountInput = new Input("changeCount", {
 			  liveChange: function (oEvent) {
-				  oPagingButton.setCount(+oEvent.getParameter("value"))
+				  oPagingButton.setCount(+oEvent.getParameter("value"));
 			  }
 		  }),
 		  oChangeCountLabel = new Label({

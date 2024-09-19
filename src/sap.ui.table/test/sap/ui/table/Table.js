@@ -74,15 +74,17 @@ sap.ui.define([
 
   // Note: the HTML page 'Table.html' loads this module via data-sap-ui-on-init
 
+  /*global TABLESETTINGS */
+
   function pressHandler(oEvent) {
-	  var bCellClick = oEvent.getId() === "cellClick";
+	  const bCellClick = oEvent.getId() === "cellClick";
 	  Log.warning((bCellClick ? "Cell" : oEvent.getSource().getMetadata().getName()) + " pressed");
 	  if (!bCellClick) {
 		  oEvent.preventDefault();
 	  }
   }
 
-  var oTable = new Table({
+  const oTable = new Table({
 	  extension: new Title({text: "Title of the Table", titleStyle: "H3"}),
 	  footer: "Footer of the Table",
 	  rowMode: "Auto",
@@ -92,17 +94,18 @@ sap.ui.define([
 		  title: "No Items found",
 		  description: "Adjust your filter settings.",
 		  additionalContent: [
-			  new Button({text: "Trigger Something", press: function() {alert("Something");} })
+			  new Button({text: "Trigger Something", press: function() { alert("Something"); }})
 		  ]
 	  })
   });
 
   // create columns
-  var oControl, oColumn, oMenu;
+  let oControl;
+  let oColumn;
 
   // sap.m.Text
   oControl = new Text({text: "{lastName}", wrapping: false});
-  oMenu = new Menu({
+  const oMenu = new Menu({
 	  quickActions: [
 		  new QuickAction({
 			  label: "Quick Action A",
@@ -131,7 +134,7 @@ sap.ui.define([
 
   // sap.m.Label
   oControl = new Label({text: "{name}"});
-  var oMenu2 = new Menu({
+  const oMenu2 = new Menu({
 	  quickActions: [
 		  new QuickAction({
 			  label: "custom quick sort",
@@ -186,7 +189,7 @@ sap.ui.define([
 
   // sap.m.DatePicker
   oControl = new DatePicker({dateValue: "{birthdayDate}"});
-  oColumn = new Column({label: new Label({text: "m.DatePicker"}), template: oControl, width: "200px", filterProperty: "birthdayDate", filterType: new TypeDate() }).data("clipboard", "birthdayDate");
+  oColumn = new Column({label: new Label({text: "m.DatePicker"}), template: oControl, width: "200px", filterProperty: "birthdayDate", filterType: new TypeDate()}).data("clipboard", "birthdayDate");
   oColumn.setCreationTemplate(new DatePicker({dateValue: "{birthdayDate}"}));
   oColumn.setHeaderMenu(new Menu());
   oTable.addColumn(oColumn);
@@ -201,7 +204,7 @@ sap.ui.define([
 	  ]
   });
   oColumn = new Column({label: new Label({text: "m.Select"}), template: oControl, width: "150px"});
-  oColumn.setCreationTemplate((new Select({items: oControl.getItems().map(function(oItem) {return oItem.clone();})})));
+  oColumn.setCreationTemplate((new Select({items: oControl.getItems().map(function(oItem) { return oItem.clone(); })})));
   oTable.addColumn(oColumn);
 
   // sap.m.ComboBox
@@ -285,7 +288,7 @@ sap.ui.define([
   oControl = new HBox({
 	  width: "100%", items: [
 		  new Link({visible: "{checked}", href: "{href}", text: "{linkText}"}),
-		  new Text({text: "{linkText}", wrapping: false, visible: {path: "checked", formatter: function(bChecked) {return !bChecked;}}})
+		  new Text({text: "{linkText}", wrapping: false, visible: {path: "checked", formatter: function(bChecked) { return !bChecked; }}})
 	  ]
   });
   oColumn = new Column({
@@ -330,11 +333,11 @@ sap.ui.define([
   oTable.addColumn(oColumn);
 
   // set Model and bind Table
-  var oModel = new JSONModel();
+  const oModel = new JSONModel();
   oModel.setData({modelData: TABLESETTINGS.listTestData});
   oTable.setModel(oModel);
 
-  var oFlexModel = new JSONModel();
+  const oFlexModel = new JSONModel();
   oFlexModel.setData({flex: false});
   oTable.setModel(oFlexModel, "flex");
 
@@ -342,18 +345,18 @@ sap.ui.define([
 	  null.addContent(oButton);
   });
 
-  var oBindingInfo = oTable.getBindingInfo("rows");
+  const oBindingInfo = oTable.getBindingInfo("rows");
 
   function rebind() {
 	  oTable.bindRows(oBindingInfo || {path: "/modelData"});
   }
 
-  var bBindTable = (new URLSearchParams(window.location.search)).get("sap-ui-xx-table-bind") !== "false";
+  const bBindTable = (new URLSearchParams(window.location.search)).get("sap-ui-xx-table-bind") !== "false";
   if (bBindTable) {
 	  rebind();
   }
 
-  var oTestLayoutToolbar = new Toolbar({
+  const oTestLayoutToolbar = new Toolbar({
 	  content: [
 		  new Label({text: "VBox RenderType"}),
 		  new Select({
@@ -364,14 +367,14 @@ sap.ui.define([
 			  ],
 			  selectedKey: "Div",
 			  change: function(oEvent) {
-				  var oItem = oEvent.getParameters().selectedItem;
+				  const oItem = oEvent.getParameters().selectedItem;
 				  oVBox.setRenderType(oItem.getKey());
 			  }
 		  }),
 		  new CheckBox({
 			  text: "Show Borders",
 			  select: function(oEvent) {
-				  var bSelected = oEvent.getParameters().selected;
+				  const bSelected = oEvent.getParameters().selected;
 				  if (bSelected) {
 					  oVBox.addStyleClass("vboxborder");
 				  } else {
@@ -382,7 +385,7 @@ sap.ui.define([
 	  ]
   });
 
-  var oVBox = new VBox({
+  const oVBox = new VBox({
 	  width: "100%",
 	  items: [
 		  oTestLayoutToolbar,

@@ -87,7 +87,7 @@ sap.ui.define([
 			  oEvent.getParameter('oldValue');
 
 			  var oInput = Element.getElementById("I2");
-			  oInput.setValue( "ParseError: Entered value: "+oValue);
+			  oInput.setValue( "ParseError: Entered value: " + oValue);
 
 			  if (oElement.setValueState) {
 				  oElement.setValueState(ValueState.Error);
@@ -103,7 +103,7 @@ sap.ui.define([
 			  oEvent.getParameter('oldValue');
 
 			  var oInput = Element.getElementById("I2");
-			  oInput.setValue( "ValidationSuccess: Entered value: "+oValue);
+			  oInput.setValue( "ValidationSuccess: Entered value: " + oValue);
 
 			  if (oElement.setValueState) {
 				  oElement.setValueState(ValueState.None);
@@ -133,7 +133,7 @@ sap.ui.define([
 					  new CalendarLegendItem("T7", {type: CalendarDayType.Type07, text: "Typ 7"}),
 					  new CalendarLegendItem("T8", {type: CalendarDayType.Type08, text: "Typ 8"}),
 					  new CalendarLegendItem("T9", {type: CalendarDayType.Type09, text: "Typ 9"}),
-					  new CalendarLegendItem("T10", {type: CalendarDayType.Type10, text: "Typ 10"}),
+					  new CalendarLegendItem("T10", {type: CalendarDayType.Type10, text: "Typ 10"})
 					  ]
 		  });
 		  oDP.setLegend(oLegend);
@@ -146,7 +146,7 @@ sap.ui.define([
 			  var oSpecialDate = new DateTypeRange({startDate: oDate, type: sType});
 			  oDP.addSpecialDate(oSpecialDate);
 		  }
-	  }else {
+	  } else {
 		  oDP.destroySpecialDates();
 	  }
   }

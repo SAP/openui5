@@ -81,7 +81,7 @@ sap.ui.define([
 	  list.bindAggregation("items", "/navigation", itemTemplate);
   }
 
-  bindListData(data, oItemTemplate1, oList2)
+  bindListData(data, oItemTemplate1, oList2);
 
   var oActionSheet = new ActionSheet("actionSheet1", {
 	  showCancelButton: false,

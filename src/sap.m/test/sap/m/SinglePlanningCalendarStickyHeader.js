@@ -1,6 +1,3 @@
-// Note: the HTML page 'SinglePlanningCalendarStickyHeader.html' loads this module via data-sap-ui-on-init
-
-var oSPC;
 sap.ui.define([
 	"sap/ui/core/Element",
 	'sap/ui/model/json/JSONModel',
@@ -327,7 +324,7 @@ sap.ui.define([
 
 	SinglePlanningCalendar.prototype._updateRowHeaderAndNowMarker = function () {};
 	SinglePlanningCalendarGridRenderer.renderNowMarker = function () {};
-	oSPC = new SinglePlanningCalendar("SinglePlanningCalendar", {
+	var oSPC = new SinglePlanningCalendar("SinglePlanningCalendar", {
 		title: "SinglePlanningCalendar with sticky header",
 		startDate: UI5Date.getInstance(2018, 6, 9),
 		views: [oDayView, oWorkWeekView, oWeekView],
@@ -406,7 +403,7 @@ sap.ui.define([
 			if (sAppointmentKey === "scroll-to-bottom") {
 				oPage.scrollTo(10000, 0);
 			} else if (sAppointmentKey === "scroll-to-top") {
-				oPage.scrollTo(0, 0)
+				oPage.scrollTo(0, 0);
 			}
 		}
 	});

@@ -1,9 +1,3 @@
-// Note: the HTML page 'SinglePlanningCalendarCellAndAppNav.html' loads this module via data-sap-ui-on-init
-
-var oSPC,
-	oDialog,
-	oLegend;
-
 sap.ui.define([
 	"sap/ui/core/Element",
 	'sap/ui/model/json/JSONModel',
@@ -510,7 +504,7 @@ sap.ui.define([
 				})
 			});
 
-		oSPC = new SinglePlanningCalendar("SinglePlanningCalendar", {
+		var oSPC = new SinglePlanningCalendar("SinglePlanningCalendar", {
 			title: "SinglePlanningCalendar",
 			startDate: UI5Date.getInstance(2018, 6, 9),
 			startHour: 8,

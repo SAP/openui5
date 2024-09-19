@@ -98,11 +98,11 @@ sap.ui.define([
 		],
 		endContent: [
 			new Button({
-				text: "Dostosowanie filtrów (1)",
+				text: "Dostosowanie filtrów (1)"
 			}),
 
 			new Button({
-				text: "Rozpoczęcie",
+				text: "Rozpoczęcie"
 			})
 		]
 	});

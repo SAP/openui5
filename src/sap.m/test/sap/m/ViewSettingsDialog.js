@@ -1,7 +1,3 @@
-/******************************
- * Table setup and formatting *
- ******************************/
-
 /* custom formatters (taken from cart app to test custom formatters) */
 
 sap.ui.define([
@@ -9,7 +5,6 @@ sap.ui.define([
   "sap/m/MessageToast",
   "sap/ui/core/Element",
   "sap/ui/core/format/NumberFormat",
-  "sap/base/util/ObjectPath",
   "sap/m/App",
   "sap/m/TextArea",
   "sap/ui/model/json/JSONModel",
@@ -39,7 +34,6 @@ sap.ui.define([
   MessageToast,
   Element,
   NumberFormat,
-  ObjectPath,
   App,
   TextArea,
   JSONModel,
@@ -73,12 +67,6 @@ sap.ui.define([
   // shortcut for sap.m.LabelDesign
   const LabelDesign = mobileLibrary.LabelDesign;
 
-  // create namespace
-  ObjectPath.create("util");
-
-  // create namespace
-  ObjectPath.create("util");
-
   // initialize application first
   var app = new App();
   var debug = new TextArea({
@@ -100,7 +88,14 @@ sap.ui.define([
 	  return sFilterString.substring(0, sFilterString.length - 2);
   };
 
-  const Formatter = {
+  /******************************
+   * Table setup and formatting *
+   ******************************/
+
+  // make the util namespace known globally
+  var util = globalThis.util = {};
+
+  util.Formatter = {
 	  price:  function (value) {
 		  var numberFormat = NumberFormat.getFloatInstance({
 			  maxFractionDigits: 2,
@@ -116,7 +111,7 @@ sap.ui.define([
 		  "D": "Denied"
 	  },
 	  statusText: function (status) {
-		  return (Formatter._statusTextMap[status]) ? Formatter._statusTextMap[status]: status;
+		  return (util.Formatter._statusTextMap[status]) ? util.Formatter._statusTextMap[status] : status;
 	  },
 	  _statusStateMap: {
 		  "A": "Success",
@@ -124,7 +119,7 @@ sap.ui.define([
 		  "D": "Error"
 	  },
 	  statusState: function (status) {
-		  return (Formatter._statusStateMap[status]) ? Formatter._statusStateMap[status]: "None";
+		  return (util.Formatter._statusStateMap[status]) ? util.Formatter._statusStateMap[status] : "None";
 	  }
   };
 
@@ -281,7 +276,7 @@ sap.ui.define([
 		  return oContext.getProperty("limit").toString();
 	  },
 	  price: function (oContext) { // use price to sort in categories (cheap / medium / expensive)
-		  var price = parseInt(oContext.getProperty("price"), 10),
+		  var price = parseInt(oContext.getProperty("price")),
 			  key,
 			  text;
 
@@ -334,15 +329,15 @@ sap.ui.define([
 				  // update filter
 				  // this functionality only needed because custom control is cloned for this test page
 				  // if you don't have cloned controls you can directly access them by id and set/reset the values
-				  for(; i < filters.length; i++) {
-					  if(filters[i] instanceof ViewSettingsCustomItem && filters[i].getKey() === "myPriceFilter") {
+				  for (; i < filters.length; i++) {
+					  if (filters[i] instanceof ViewSettingsCustomItem && filters[i].getKey() === "myPriceFilter") {
 						  customFilter = filters[i];
 						  break;
 					  }
 				  }
 
-				  if(customFilter) {
-					  if(oEvent.getParameter("value") !== 0 || source.getParent().getItems()[3].getValue() !== 100) {
+				  if (customFilter) {
+					  if (oEvent.getParameter("value") !== 0 || source.getParent().getItems()[3].getValue() !== 100) {
 						  customFilter.setSelected(true);
 						  customFilter.setFilterCount(1);
 					  } else {
@@ -379,15 +374,15 @@ sap.ui.define([
 				  // update filter
 				  // this functionality only needed because custom control is cloned for this test page
 				  // if you don't have cloned controls you can directly access them by id and set/reset the values
-				  for(; i < filters.length; i++) {
-					  if(filters[i] instanceof ViewSettingsCustomItem && filters[i].getKey() === "myPriceFilter") {
+				  for (; i < filters.length; i++) {
+					  if (filters[i] instanceof ViewSettingsCustomItem && filters[i].getKey() === "myPriceFilter") {
 						  customFilter = filters[i];
 						  break;
 					  }
 				  }
 
-				  if(customFilter) {
-					  if(oEvent.getParameter("value") !== 100 || source.getParent().getItems()[1].getValue() !== 0) {
+				  if (customFilter) {
+					  if (oEvent.getParameter("value") !== 100 || source.getParent().getItems()[1].getValue() !== 0) {
 						  customFilter.setSelected(true);
 						  customFilter.setFilterCount(1);
 						  } else {
@@ -415,18 +410,18 @@ sap.ui.define([
 
 	  // this functionality only needed because custom control is cloned for this test page
 	  // if you don't have cloned controls you can directly access them by id and set/reset the values
-	  for(; i < filters.length; i++) {
-		  if(filters[i] instanceof ViewSettingsCustomItem && filters[i].getKey() === "myPriceFilter") {
+	  for (; i < filters.length; i++) {
+		  if (filters[i] instanceof ViewSettingsCustomItem && filters[i].getKey() === "myPriceFilter") {
 			  customFilter = filters[i];
 			  customControl = customFilter.getCustomControl();
 			  break;
 		  }
 	  }
-	  if(customFilter) {
+	  if (customFilter) {
 		  customFilter.setSelected(false);
 		  customFilter.setFilterCount(0);
 	  }
-	  if(customControl) {
+	  if (customControl) {
 		  customControl.getItems()[0].setText("Minimum price:");
 		  customControl.getItems()[1].setValue(0);
 		  customControl.getItems()[2].setText("Maximum price:");
@@ -1583,5 +1578,4 @@ sap.ui.define([
   });
 
   app.addPage(page).placeAt("body");
-  return Formatter;
 });

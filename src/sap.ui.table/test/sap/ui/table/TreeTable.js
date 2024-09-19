@@ -18,11 +18,13 @@ sap.ui.define([
 
   // Note: the HTML page 'TreeTable.html' loads this module via data-sap-ui-on-init
 
+  /*global TABLESETTINGS */
+
   (new Button({
 	  text: "Just a Button before"
   })).placeAt("content");
 
-  var oTable = new TreeTable({
+  const oTable = new TreeTable({
 	  expandFirstLevel: true,
 	  title: "Title of the TreeTable",
 	  footer: "Footer of the Table",
@@ -54,7 +56,7 @@ sap.ui.define([
   });
 
   // set Model and bind Table
-  var oModel = new JSONModel();
+  const oModel = new JSONModel();
   oModel.setData(TABLESETTINGS.treeTestData);
   oTable.setModel(oModel);
   oTable.bindRows("/root");

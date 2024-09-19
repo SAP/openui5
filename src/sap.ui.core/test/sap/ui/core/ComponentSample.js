@@ -7,7 +7,7 @@ sap.ui.define([
 
   sap.ui.loader.config({
 	  paths: {
-		  ["samples"]: "./samples"
+		  samples: "./samples"
 	  }
   });
 

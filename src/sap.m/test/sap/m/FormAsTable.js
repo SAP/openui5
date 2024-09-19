@@ -41,7 +41,7 @@ sap.ui.define([
   var page = new Page({
 	  title : "Form Table",
 	  enableScrolling : true,
-	  content : [form = new Table({
+	  content : [new Table({
 		  inset : false,
 		  showUnread : true,
 		  scrollToLoad : true,
@@ -163,7 +163,7 @@ sap.ui.define([
 							  new Slider({
 								  min : 150,
 								  max : 250,
-								  value : 170,
+								  value : 170
 							  }).attachLiveChange(function(e) {
 								  Element.getElementById("length").setValue(e.getParameter("value") + " cm");
 							  }),

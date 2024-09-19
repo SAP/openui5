@@ -47,7 +47,7 @@ sap.ui.define([
 	  items: [
 		  (function () { //creates items for all 20 values in CalendarDayType
 			  var aAllItems = [], iMax = 20, sType = "";
-			  for (var i = 1; i<=iMax; i++) {
+			  for (var i = 1; i <= iMax; i++) {
 				  sType = "Type" + (i < 10 ? "0" + i : i);
 				  aAllItems.push(new CalendarLegendItem({
 					  type: CalendarDayType[sType],
@@ -216,7 +216,7 @@ sap.ui.define([
 				  new Panel({
 					  headerText: "PlanningCalendarLegend with custom standard items only",
 					  content: [createChangeWidthInput(oPCLegendCustomStandardItemsOnly), oPCLegendCustomStandardItemsOnly]
-				  }),
+				  })
 			  ]
 		  }),
 		  new HBox({
@@ -251,11 +251,11 @@ sap.ui.define([
 								  });
 							  }
 							  this._oPopover.openBy(this);
-						  }}),
+						  }})
 					  ]
-				  }),
+				  })
 			  ]
-		  }),
+		  })
 	  ],
 	  footer: new Bar({contentMiddle: [oEventLabel]})
   });

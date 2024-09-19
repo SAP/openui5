@@ -166,7 +166,7 @@ sap.ui.define([
 			  },
 			  liveChange : function(oEvt) {
 				  if (oEvt.getParameter("newValue") === "") {
-					  oData[scrollStep] = undefined;
+					  oData.scrollStep = undefined;
 					  oModel.checkUpdate();
 				  }
 			  }
@@ -189,7 +189,7 @@ sap.ui.define([
 			  },
 			  liveChange : function(oEvt) {
 				  if (oEvt.getParameter("newValue") === "") {
-					  oData[scrollTime] = undefined;
+					  oData.scrollTime = undefined;
 					  oModel.checkUpdate();
 				  }
 			  }

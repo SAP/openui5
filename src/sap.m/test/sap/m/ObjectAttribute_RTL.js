@@ -21,13 +21,14 @@ sap.ui.define([
   //array - [{key: k, values: [v1,v2,v3]}, {key: k2, values: [v4,v5,v6]}]
   var genCombinator = function() {
 	  function clone(obj) {
-		  if(obj == null || typeof(obj) != 'object')
+		  if (obj == null || typeof obj != 'object') {
 			  return obj;
+		  }
 
 		  var temp = obj.constructor(); // changed
 
-		  for(var key in obj) {
-			  if(obj.hasOwnProperty(key)) {
+		  for (var key in obj) {
+			  if (obj.hasOwnProperty(key)) {
 				  temp[key] = clone(obj[key]);
 			  }
 		  }
@@ -38,22 +39,22 @@ sap.ui.define([
 	  var mergeWithValues = function(key, aValues) {
 		  var mergeResult = [];
 
-		  for( j = 0; j < aResult.length; j++) {
-			  for( k = 0; k < aValues.length; k++) {
+		  for (let j = 0; j < aResult.length; j++) {
+			  for (let k = 0; k < aValues.length; k++) {
 				  var newObj = clone(aResult[j]);
 				  newObj[key] = aValues[k];
 				  mergeResult.push(newObj);
 			  }
-		  };
+		  }
 
-		  for(l = 0; l < mergeResult.length; l++) {
+		  for (let l = 0; l < mergeResult.length; l++) {
 			  aResult.push(mergeResult[l]);
 		  }
 	  };
 
-	  for( i = 0; i < arguments.length; i++) {
+	  for (let i = 0; i < arguments.length; i++) {
 		  mergeWithValues(arguments[i].key, arguments[i].values);
-	  };
+	  }
 
 	  return aResult;
   };
@@ -66,8 +67,8 @@ sap.ui.define([
 			  ]});
 
 	  var result = [];
-	  for(i = 0; i < aAttributes.length; i++) {
-		  if(aAttributes[i].text) {
+	  for (let i = 0; i < aAttributes.length; i++) {
+		  if (aAttributes[i].text) {
 			  result.push(new ObjectAttribute(aAttributes[i]));
 		  }
 	  }
@@ -83,7 +84,7 @@ sap.ui.define([
 
   //attributes in a page
   var aAttrs = getAttributes();
-  for(i = 0; i < aAttrs.length; i++) {
+  for (let i = 0; i < aAttrs.length; i++) {
 	  page.addContent(aAttrs[i]);
   }
 

@@ -88,7 +88,7 @@ sap.ui.define([
 			  my: sKey = oSelect0.getSelectedItem().getKey(),
 			  at: sKey,
 			  offset: oInput2.getValue(),
-			  autoClose: oCheckBox0.getSelected(),
+			  autoClose: oCheckBox0.getSelected()
 
 		  });
 	  }
@@ -114,7 +114,7 @@ sap.ui.define([
 
 		  new Item("center-bottom" ,{
 			  key: "center bottom",
-			  text: "center bottom",
+			  text: "center bottom"
 		  }),
 
 		  new Item("center-center" ,{
@@ -139,7 +139,7 @@ sap.ui.define([
 
 		  new Item("end-top" ,{
 			  key: "end top",
-			  text: "end top",
+			  text: "end top"
 		  }),
 
 		  new Item("left-bottom" ,{
@@ -204,7 +204,7 @@ sap.ui.define([
 				  new InputListItem({
 					  label : "Auto close",
 					  content : oCheckBox0
-				  }),
+				  })
 	  ]
   }),
 

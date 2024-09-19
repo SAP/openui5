@@ -65,15 +65,17 @@ sap.ui.define([
 
   // Note: the HTML page 'Scrolling.html' loads this module via data-sap-ui-on-init
 
+  /*global TABLESETTINGS */
+
   // create table with supported sap.m controls
-  var oTable = new Table({
+  const oTable = new Table({
 	  firstVisibleRow: 770000
   });
   oTable.setFooter("Footer of the Table");
   oTable.setSelectionMode(SelectionMode.MultiToggle);
 
   // Variable row heights test control
-  var VariableRowHeightControl = Control.extend("sap.ui.table.test.VariableRowHeightControl", {
+  const VariableRowHeightControl = Control.extend("sap.ui.table.test.VariableRowHeightControl", {
 	  metadata: {
 		  properties: {
 			  height: {type: "string", defaultValue: "auto"},
@@ -83,7 +85,7 @@ sap.ui.define([
 	  renderer: {
 		  apiVersion: 2,
 		  render: function(oRm, oControl) {
-			  var sText = oControl.getText();
+			  const sText = oControl.getText();
 
 			  oRm.openStart("div", oControl);
 			  oRm.style("height", oControl.getHeight());
@@ -128,15 +130,15 @@ sap.ui.define([
 		  text: {
 			  path: "config>/firstRowIndex",
 			  formatter: function(iFirstRowIndex) {
-				  var oRow = this.getParent();
+				  const oRow = this.getParent();
 
 				  if (oRow == null) {
 					  return "";
 				  }
 
-				  var oTable = oRow.getParent();
-				  var iRowAggregationIndex = oTable.indexOfRow(oRow);
-				  var iRowIndex = iFirstRowIndex + iRowAggregationIndex;
+				  const oTable = oRow.getParent();
+				  const iRowAggregationIndex = oTable.indexOfRow(oRow);
+				  const iRowIndex = iFirstRowIndex + iRowAggregationIndex;
 				  return "Row #" + (iRowIndex + 1);
 			  }
 		  }
@@ -152,21 +154,21 @@ sap.ui.define([
   }));
 
   // sap.m.Label
-  oTable.addColumn(oColumn = new Column({
+  oTable.addColumn(new Column({
 	  label: new Label({text: "m.Label"}),
 	  template: new Label({text: "Albert"}),
 	  width: "6em"
   }));
 
   // sap.m.ObjectStatus
-  oTable.addColumn(oColumn = new Column({
+  oTable.addColumn(new Column({
 	  label: new Label({text: "m.ObjectStatus"}),
 	  template: new ObjectStatus({text: "Success", state: "Success"}),
 	  width: "200px"
   }));
 
   // sap.ui.core.Icon
-  oTable.addColumn(oColumn = new Column({
+  oTable.addColumn(new Column({
 	  resizable: false,
 	  label: new Label({text: "core.Icon"}),
 	  template: new Icon({src: "sap-icon://account", decorative: false}),
@@ -259,8 +261,8 @@ sap.ui.define([
   }));
 
   // set Model and bind Table
-  var oRowModel = new JSONModel({
-	  default: {
+  const oRowModel = new JSONModel({
+	  "default": {
 		  height: undefined
 	  },
 	  custom: [
@@ -276,7 +278,7 @@ sap.ui.define([
 		  {height: "auto"}
 	  ]
   });
-  var oConfigModel = new JSONModel({
+  const oConfigModel = new JSONModel({
 	  rowWiseScrolling: false,
 	  alternatingRowHeights: false,
 	  rowCount: 1000000000,
@@ -290,14 +292,14 @@ sap.ui.define([
 	  return oConfigModel.getProperty("/rowCount");
   };
   oTable.getBinding().getContexts = function(iStartIndex, iLength) {
-	  var aContexts = [];
-	  var iBindingLength = this.getLength();
-	  var iCount = iStartIndex + iLength > iBindingLength ? iBindingLength - iStartIndex : iLength;
-	  var bAlternatingRowHeights = oConfigModel.getProperty("/alternatingRowHeights");
+	  const aContexts = [];
+	  const iBindingLength = this.getLength();
+	  const iCount = iStartIndex + iLength > iBindingLength ? iBindingLength - iStartIndex : iLength;
+	  const bAlternatingRowHeights = oConfigModel.getProperty("/alternatingRowHeights");
 
-	  for (var i = 0; i < iCount; i++) {
-		  var iIndex = iStartIndex + i;
-		  var sPath = "/default";
+	  for (let i = 0; i < iCount; i++) {
+		  const iIndex = iStartIndex + i;
+		  let sPath = "/default";
 
 		  if (bAlternatingRowHeights) {
 			  if (iIndex % 2 > 0) {
@@ -312,8 +314,8 @@ sap.ui.define([
 		  aContexts.push(new Context(oRowModel, sPath));
 	  }
 
-	  var iOldFirstRowIndex = oConfigModel.getProperty("/firstRowIndex");
-	  var iNewFirstRowIndex = iStartIndex;
+	  const iOldFirstRowIndex = oConfigModel.getProperty("/firstRowIndex");
+	  const iNewFirstRowIndex = iStartIndex;
 
 	  if (iOldFirstRowIndex !== iNewFirstRowIndex) {
 		  oConfigModel.setProperty("/firstRowIndex", iNewFirstRowIndex, null, true);

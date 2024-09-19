@@ -92,7 +92,7 @@ sap.ui.define([
 				}
 
 				return sAcc;
-			}.bind(this));
+			});
 		},
 		_getTargetControl: function (sBtnId) {
 			var sInputId = this._btnToControlMap[sBtnId];

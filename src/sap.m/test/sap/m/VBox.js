@@ -55,7 +55,7 @@ sap.ui.define([
 	  layoutData: new FlexItemData({growFactor: 1})
   });
 
-  var oItem5 =new Image({
+  var oItem5 = new Image({
 	  src: "images/mark2.png",
 	  alt: "test image",
 	  decorative: false,

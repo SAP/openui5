@@ -9,24 +9,8 @@ sap.ui.define([
   "sap/ui/layout/form/FormContainer",
   "sap/ui/layout/form/FormElement",
   "sap/m/CheckBox",
-  "sap/m/Input",
-  "sap/ui/core/VariantLayoutData",
-  "sap/ui/layout/form/GridContainerData"
-], function(
-  Label,
-  VerticalLayout,
-  Button,
-  Dialog,
-  Link,
-  Form,
-  FormLayout,
-  FormContainer,
-  FormElement,
-  CheckBox,
-  Input,
-  VariantLayoutData,
-  GridContainerData
-) {
+  "sap/m/Input"
+], function(Label, VerticalLayout, Button, Dialog, Link, Form, FormLayout, FormContainer, FormElement, CheckBox, Input) {
   "use strict";
   // Note: the HTML page 'AccessKeys.html' loads this module via data-sap-ui-on-init
 
@@ -46,7 +30,7 @@ sap.ui.define([
 									  content: [
 										  new Button({
 											  text: "Inner button"
-										  }),
+										  })
 									  ]
 								  }).open();
 							  }
@@ -59,7 +43,7 @@ sap.ui.define([
 						  }),
 						  new Button({
 							  text: "Replace Order"
-						  }),
+						  })
 					  ]
 				  }).open();
 			  }
@@ -108,11 +92,8 @@ sap.ui.define([
 						  new FormElement({
 							  fields: [new Label({ text: "Order: ", labelFor: "input1" }), new Input("input1")]
 						  })
-					  ],
-					  layoutData: new VariantLayoutData({
-						  multipleLayoutData: [new GridContainerData({ halfGrid: true })]
-					  })
-				  }),
+					  ]
+				  })
 			  ]
 		  })
 	  ]

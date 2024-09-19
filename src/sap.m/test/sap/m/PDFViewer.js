@@ -118,6 +118,7 @@ sap.ui.define([
 	  }
   }
 
+  var oMainContainer;
   var oApp = new App("myApp", {
 		  initialPage: "page1"
 	  }),
@@ -297,9 +298,9 @@ sap.ui.define([
 
 
   // page
-  oPage1 = new Page("page1", {
-	  customHeader: oBar0 = new Bar({
-		  contentMiddle: oLabel0 = new Label({
+  var oPage1 = new Page("page1", {
+	  customHeader: new Bar({
+		  contentMiddle: new Label({
 			  text: "PDFViewer demo page"
 		  })
 	  }),
@@ -311,7 +312,7 @@ sap.ui.define([
 		  items: [oSettingsList]
 	  })
   });
-  oPage1.setModel(oModel, "settingsData")
+  oPage1.setModel(oModel, "settingsData");
   oSettingsList.setLayoutData(new FlexItemData({
 	  baseSize: "40%"
   }));

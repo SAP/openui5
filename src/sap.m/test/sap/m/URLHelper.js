@@ -19,7 +19,7 @@ sap.ui.define([
 	  email : "john.smith@sap.com",
 	  website : "http://www.sap.com",
 	  address : "Walldorf, Germany"
-  }
+  };
 
   var page = new Page({
 	  title : person.name,

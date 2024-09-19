@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/m/Button"
 ], function(V4Aggregation, ODataModel, JSONModel, Table, OverflowToolbar, Title, ToggleButton, Select, Item, ToolbarSpacer, Text, Column, HBox, Toolbar, VBox, FlexItemData, Button) {
 	"use strict";
-	var oTable = new Table({
+	/*global TABLESETTINGS */
+	const oTable = new Table({
 		extension: [
 			new OverflowToolbar({
 				content: [
@@ -29,7 +30,7 @@ sap.ui.define([
 						text: "V4 plugin active",
 						pressed: true,
 						press: function(oEvent) {
-							var bPressed = oEvent.getParameter("pressed");
+							const bPressed = oEvent.getParameter("pressed");
 							if (window.V4Plugin) {
 								if (bPressed) {
 									window.V4Plugin.activate();
@@ -232,7 +233,7 @@ sap.ui.define([
 			aggregationDetails: {
 				custom: {
 					SalesAmountMin: {
-						with: "min",
+						"with": "min",
 						key: "SalesAmount",
 						subtotals: true
 					}
@@ -396,7 +397,7 @@ sap.ui.define([
 		}
 	]);
 
-	var oAggregationInfo = {
+	const oAggregationInfo = {
 		visible: ["Name", "Country", "CountryText", "Region", "Currency", "LocalCurrency", "SalesAmount", "SalesAmountLocalCurrency", "Industry"],
 		subtotals: [],
 		grandTotal: [],
@@ -427,7 +428,7 @@ sap.ui.define([
 	});
 
 	TABLESETTINGS.init(oTable, function(oButton) {
-		var oToolbar = oTable.getExtension()[0];
+		let oToolbar = oTable.getExtension()[0];
 
 		if (!oToolbar) {
 			oToolbar = new Toolbar();

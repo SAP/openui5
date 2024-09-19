@@ -248,7 +248,7 @@ sap.ui.define([
 	  var oPanel,
 		  oColorPaletteItemsSelection,
 		  oColorPalettePopover = Element.getElementById(sColorPaletteId);
-	  aDefaultColors = oColorPalettePopover.getColors();
+	  var aDefaultColors = oColorPalettePopover.getColors();
 
 	  oPanel = new Panel({
 		  expandable: true,
@@ -300,7 +300,7 @@ sap.ui.define([
 						  }
 					  })
 				  ]
-			  }))
+			  }));
 		  }
 	  }));
 
@@ -457,21 +457,21 @@ sap.ui.define([
 					  text: "Default Color ",
 					  selected: true,
 					  select: function (oEvent) {
-						  oCPPop.setShowDefaultColorButton(oEvent.getParameter("selected"))
+						  oCPPop.setShowDefaultColorButton(oEvent.getParameter("selected"));
 					  }
 				  }),
 				  new CheckBox({
 					  text: "More Colors ",
 					  selected: true,
 					  select: function (oEvent) {
-						  oCPPop.setShowMoreColorsButton(oEvent.getParameter("selected"))
+						  oCPPop.setShowMoreColorsButton(oEvent.getParameter("selected"));
 					  }
 				  }),
 				  new CheckBox({
 					  text: "Recent Colors",
 					  selected: true,
 					  select: function (oEvent) {
-						  oCPPop.setShowRecentColorsSection(oEvent.getParameter("selected"))
+						  oCPPop.setShowRecentColorsSection(oEvent.getParameter("selected"));
 					  }
 				  }),
 				  new Select("settingsDisplayModeoCPPop", {
@@ -500,21 +500,21 @@ sap.ui.define([
 					  text: "Default Color ",
 					  selected: true,
 					  select: function (oEvent) {
-						  oCPPop2Colors.setShowDefaultColorButton(oEvent.getParameter("selected"))
+						  oCPPop2Colors.setShowDefaultColorButton(oEvent.getParameter("selected"));
 					  }
 				  }),
 				  new CheckBox({
 					  text: "More Colors ",
 					  selected: true,
 					  select: function (oEvent) {
-						  oCPPop2Colors.setShowMoreColorsButton(oEvent.getParameter("selected"))
+						  oCPPop2Colors.setShowMoreColorsButton(oEvent.getParameter("selected"));
 					  }
 				  }),
 				  new CheckBox({
 					  text: "Recent Colors",
 					  selected: true,
 					  select: function (oEvent) {
-						  oCPPop2Colors.setShowRecentColorsSection(oEvent.getParameter("selected"))
+						  oCPPop2Colors.setShowRecentColorsSection(oEvent.getParameter("selected"));
 					  }
 				  }),
 				  new Select("settingsDisplayModeoCPPop2Colors", {
@@ -540,7 +540,7 @@ sap.ui.define([
 						  oCPPop2Colors.setColorPickerSelectedColor(Element.getElementById("colorSelectInput").getValue());
 					  }
 				  }),
-				  new Input({id:"colorSelectInput", placeholder: "Write a color.."}),
+				  new Input({id:"colorSelectInput", placeholder: "Write a color.."})
 			  ]
 		  }),
 
@@ -550,21 +550,21 @@ sap.ui.define([
 					  text: "Default Color ",
 					  selected: false,
 					  select: function (oEvent) {
-						  oCPPop7Colors.setShowDefaultColorButton(oEvent.getParameter("selected"))
+						  oCPPop7Colors.setShowDefaultColorButton(oEvent.getParameter("selected"));
 					  }
 				  }),
 				  new CheckBox({
 					  text: "More Colors ",
 					  selected: false,
 					  select: function (oEvent) {
-						  oCPPop7Colors.setShowMoreColorsButton(oEvent.getParameter("selected"))
+						  oCPPop7Colors.setShowMoreColorsButton(oEvent.getParameter("selected"));
 					  }
 				  }),
 				  new CheckBox({
 					  text: "Recent Colors",
 					  selected: false,
 					  select: function (oEvent) {
-						  oCPPop7Colors.setShowRecentColorsSection(oEvent.getParameter("selected"))
+						  oCPPop7Colors.setShowRecentColorsSection(oEvent.getParameter("selected"));
 					  }
 				  }),
 				  new Select("settingsDisplayModeoCPPop7Colors", {

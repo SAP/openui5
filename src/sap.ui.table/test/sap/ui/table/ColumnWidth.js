@@ -23,15 +23,15 @@ sap.ui.define([
 
   // Note: the HTML page 'ColumnWidth.html' loads this module via data-sap-ui-on-init
 
-  var aData = createData();
-  var widths = ["10rem", "10rem", "auto", "10rem", "10%", "auto", "auto", "auto", "auto"];
+  const aData = createData();
+  const widths = ["10rem", "10rem", "auto", "10rem", "10%", "auto", "auto", "auto", "auto"];
 
-  var aInputs = [];
+  const aInputs = [];
   widths.forEach(function(w, i) {
 	  aInputs.push(new Input("WidthInput" + i, {value: widths[i], width: "4rem", change: setWidths}));
   });
 
-  var aFooterControls = aInputs.slice();
+  const aFooterControls = aInputs.slice();
   aFooterControls.reverse();
   aFooterControls.push(new Label({text: "Column widths:"}));
   aFooterControls.reverse();
@@ -42,8 +42,8 @@ sap.ui.define([
 	  press: setWidths
   }));
 
-  // create the DataTable control
-  var oTable = new Table({
+  // create the Table control
+  const oTable = new Table({
 	  editable: false,
 	  selectionMode: SelectionMode.MultiToggle,
 	  selectionBehavior: SelectionBehavior.RowSelector,
@@ -57,19 +57,19 @@ sap.ui.define([
   });
 
   function setWidths() {
-	  var cols = oTable.getColumns();
+	  const cols = oTable.getColumns();
 	  aInputs.forEach(function(input, i) {
 		  cols[i].setWidth(input.getValue());
-		  cols[i].setMinWidth(parseInt(Element.getElementById("MinWidthInput").getValue(), 10));
+		  cols[i].setMinWidth(parseInt(Element.getElementById("MinWidthInput").getValue()));
 	  });
   }
 
   // create columns
-  var oControl, oColumn, i = 0;
+  let i = 0;
 
-  for (var key in aData[0]) {
-	  oControl = new Text({text: "{" + key + "}", wrapping: false});
-	  oColumn = new Column({
+  for (const key in aData[0]) {
+	  const oControl = new Text({text: "{" + key + "}", wrapping: false});
+	  const oColumn = new Column({
 		  label: new Label({text: key}),
 		  template: oControl,
 		  width: widths[i],
@@ -80,17 +80,17 @@ sap.ui.define([
 	  i++;
   }
 
-  var oModel = new JSONModel();
+  const oModel = new JSONModel();
   oModel.setData({modelData: aData});
   oTable.setModel(oModel);
   oTable.bindRows("/modelData");
 
-  var page = new Page({
+  const page = new Page({
 	  title: "Table Column Widths",
 	  content: oTable
   });
 
-  var app = new App({
+  const app = new App({
 	  pages: [page]
   });
   app.addStyleClass("sapUiSizeCompact");

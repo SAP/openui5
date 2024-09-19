@@ -29,24 +29,22 @@ sap.ui.define([
 	  { Name: "Desktop Computers" },
 	  { Name: "Tablets" },
 	  { Name: "Smartphones and Tablets" },
-	  { Name: "Flat Screens" }]
+	  { Name: "Flat Screens" }];
 
 	  const SelectList = [];
-	  for (let i of Categories) {
-		i.Category = i.Name
+	  for (const i of Categories) {
+		i.Category = i.Name;
 		if (i.Name.startsWith("S")) {
-		  SelectList.push(i)
+		  SelectList.push(i);
 		}
 	  }
 
 	  // @ts-ignore
 	  const oData = {
-		Categories: undefined,
-		SelectList: undefined
+		Categories,
+		SelectList
 	  };
 
-	  oData.Categories = Categories;
-	  oData.SelectList = SelectList;
 	  var oModel = new JSONModel();
 	  oModel.setData(oData);
 	  this.getView().setModel(oModel);

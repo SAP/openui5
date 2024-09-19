@@ -1,7 +1,6 @@
-window['sap-ui-config'].libs = "sap.ui.dt";
-document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+// Note: the HTML page 'LayoutEditor.html' loads this module via data-sap-ui-on-init
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/plugin/ControlDragDrop",
 	"sap/ui/dt/plugin/MouseSelection",
@@ -17,9 +16,11 @@ function(
 	Button,
 	jQuery
 ) {
-	XMLView.create({definition: jQuery('#view1').html()})
-		.then(function (oView) {
-			oView.placeAt('content');
+	"use strict";
+
+	XMLView.create({definition: jQuery("#view1").html()})
+		.then(function(oView) {
+			oView.placeAt("content");
 
 			var aMOVABLE_TYPES = ["sap.m.Button"];
 			var oSelectionPlugin = new MouseSelection();
@@ -37,21 +38,20 @@ function(
 
 			var oDraggedOverlay;
 			jQuery("#pallete_button")
-				.on("dragstart", function () {
+				.on("dragstart", function() {
 					var oButton = new Button({text: "New button"});
 
 					oDesignTime.createOverlay({
 						element: oButton,
 						root: true,
-					}).then(function (oOverlay) {
+					}).then(function(oOverlay) {
 						oDraggedOverlay = oOverlay;
 						oDraggedOverlay.placeInOverlayContainer();
 						oDraggedOverlay.$().trigger("dragstart");
 					});
-
 				})
-				.on("dragend", function () {
+				.on("dragend", function() {
 					oDraggedOverlay.$().trigger("dragend");
 				});
-		}.bind(this));
+		});
 });

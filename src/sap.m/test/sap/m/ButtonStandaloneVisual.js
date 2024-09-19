@@ -156,21 +156,21 @@ sap.ui.define([
   new HTML({content: "</br></br>Accept type Buttons</br>"}).placeAt("standAloneBtn");
 
   ////////////////////////// Accept //////////////////////////////////
-  var oButton19 = new Button({
+  new Button({
 	  type: ButtonType.Accept,
 	  icon: "sap-icon://home"
   }).placeAt("standAloneBtn");
 
   new HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
 
-  var oButton20 = new Button({
+  new Button({
 	  type: ButtonType.Accept,
 	  text: "Button Type Accept"
   }).placeAt("standAloneBtn");
 
   new HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
 
-  var oButton21 = new Button({
+  new Button({
 	  type: ButtonType.Accept,
 	  icon: "sap-icon://home",
 	  text: "Button Type Accept"
@@ -178,7 +178,7 @@ sap.ui.define([
 
   new HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
 
-  var oButton22 = new Button({
+  new Button({
 	  type: ButtonType.Accept,
 	  icon: "sap-icon://home",
 	  enabled: false
@@ -186,7 +186,7 @@ sap.ui.define([
 
   new HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
 
-  var oButton23 = new Button({
+  new Button({
 	  type: ButtonType.Accept,
 	  text: "Button Type Accept",
 	  enabled: false
@@ -194,7 +194,7 @@ sap.ui.define([
 
   new HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
 
-  var oButton24 = new Button({
+  new Button({
 	  type: ButtonType.Accept,
 	  icon: "sap-icon://home",
 	  text: "Button Type Accept",
@@ -204,21 +204,21 @@ sap.ui.define([
   new HTML({content: "</br></br>Attention type Buttons</br>"}).placeAt("standAloneBtn");
 
   ////////////////////////// Attention //////////////////////////////////
-  var oButton19 = new Button({
+  new Button({
 	  type: ButtonType.Attention,
 	  icon: "sap-icon://home"
   }).placeAt("standAloneBtn");
 
   new HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
 
-  var oButton20 = new Button({
+  new Button({
 	  type: ButtonType.Attention,
 	  text: "Button Type Attention"
   }).placeAt("standAloneBtn");
 
   new HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
 
-  var oButton21 = new Button({
+  new Button({
 	  type: ButtonType.Attention,
 	  icon: "sap-icon://home",
 	  text: "Button Type Attention"
@@ -226,7 +226,7 @@ sap.ui.define([
 
   new HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
 
-  var oButton22 = new Button({
+  new Button({
 	  type: ButtonType.Attention,
 	  icon: "sap-icon://home",
 	  enabled: false
@@ -234,7 +234,7 @@ sap.ui.define([
 
   new HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
 
-  var oButton23 = new Button({
+  new Button({
 	  type: ButtonType.Attention,
 	  text: "Button Type Attention",
 	  enabled: false
@@ -242,7 +242,7 @@ sap.ui.define([
 
   new HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
 
-  var oButton24 = new Button({
+  new Button({
 	  type: ButtonType.Attention,
 	  icon: "sap-icon://home",
 	  text: "Button Type Attention",
@@ -354,13 +354,13 @@ sap.ui.define([
   new HTML({content: "</br></br>UP type Buttons</br>"}).placeAt("standAloneBtn");
 
   ////////////////////////// Up //////////////////////////////////
-  var oButton37 = new Button({
+  new Button({
 	  type: ButtonType.Up
   }).placeAt("standAloneBtn");
 
   new HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
 
-  var oButton37 = new Button({
+  new Button({
 	  type: ButtonType.Up,
 	  icon: "sap-icon://home"
   }).placeAt("standAloneBtn");
@@ -524,7 +524,7 @@ sap.ui.define([
   new Button({
 	  type: ButtonType.Critical,
 	  text: "Button Type Critical",
-	  icon: "",
+	  icon: ""
   }).placeAt("specialBtn");
 
   new Button({
@@ -542,7 +542,7 @@ sap.ui.define([
   new Button({
 	  type: ButtonType.Neutral,
 	  text: "Button Type Neutral",
-	  icon: "",
+	  icon: ""
   }).placeAt("specialBtn");
 
   new Button({

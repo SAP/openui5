@@ -156,7 +156,7 @@ sap.ui.define([
 	  title : "{/TextTrue}",
 	  text : "{/description1}",
 	  titlePress: function() {
-		  alert('ok')
+		  alert('ok');
 	  },
 	  titleActive : "{/true}"
   });
@@ -171,7 +171,7 @@ sap.ui.define([
 	  title: "{/TextTrue}",
 	  text: "{/description3}",
 	  titlePress: function() {
-		  alert('ok')
+		  alert('ok');
 	  },
 	  titleActive: {
 		  path: "/formatterTest",

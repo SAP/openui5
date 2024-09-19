@@ -17,7 +17,7 @@ sap.ui.define([
 
   var oConditionPanel;
 
-  show= function(oPanel, sTitle) {
+  function show(oPanel, sTitle) {
 	  if (theDialogMode.getSelected()) {
 		  oPanel.setContainerQuery(true);
 		  var oDialog = new Dialog({title: sTitle, draggable: true, resizable: true, content: [oPanel]});
@@ -35,15 +35,15 @@ sap.ui.define([
 	  } else {
 		  oPanel.placeAt("contentPanel", "only");
 	  }
-  };
+  }
 
   var btnShow = new Button({
 	  text: "Sorting",
 	  press: function() {
-		  var oCondition0= { "key": "i0", "text": "", "operation": P13nConditionOperation.Ascending, "keyField": "Date", "value1": "", "value2": ""};
-		  var oCondition1= { "key": "i1", "text": "", "operation": P13nConditionOperation.Ascending, "keyField": "CompanyCode", "value1": "", "value2": ""};
-		  var oCondition2= { "key": "i2", "text": "", "operation": P13nConditionOperation.Descending, "keyField": "CompanyName", "value1": "", "value2": ""};
-		  aConditions= [oCondition0, oCondition1, oCondition2];
+		  var oCondition0 = { "key": "i0", "text": "", "operation": P13nConditionOperation.Ascending, "keyField": "Date", "value1": "", "value2": ""};
+		  var oCondition1 = { "key": "i1", "text": "", "operation": P13nConditionOperation.Ascending, "keyField": "CompanyCode", "value1": "", "value2": ""};
+		  var oCondition2 = { "key": "i2", "text": "", "operation": P13nConditionOperation.Descending, "keyField": "CompanyName", "value1": "", "value2": ""};
+		  aConditions = [oCondition0, oCondition1, oCondition2];
 
 		  oConditionPanel = new P13nConditionPanel({
 			  maxConditions: -1,
@@ -62,19 +62,19 @@ sap.ui.define([
   var btnShow2 = new Button({
 	  text: "Filtering",
 	  press: function() {
-		  var oCondition1= { key: "i1", text: "Numeric: -100.5..1000", exclude: false, operation: P13nConditionOperation.BT, keyField: "numeric", value1: -100.5, value2: 1000};
-		  var oCondition2= { key: "i2", text: "String: =foo", exclude: false, operation: P13nConditionOperation.EQ, keyField: "string", value1: "foo", value2: ""};
-		  var oCondition3= { key: "i3", text: "Date: =1/1/00", exclude: false, operation: P13nConditionOperation.EQ, keyField: "date", value1: new Date(), value2: ""};
-		  var oCondition4= { key: "i4", text: "Boolean: =True", exclude: false, operation: P13nConditionOperation.EQ, keyField: "boolean", value1: true, value2: ""};
-		  var oCondition5= { key: "i5", text: "Boolean1: =True", exclude: false, operation: P13nConditionOperation.EQ, keyField: "boolean1", value1: true, value2: ""};
-		  var oCondition6= { key: "i6", text: "Boolean2: =True", exclude: false, operation: P13nConditionOperation.EQ, keyField: "boolean2", value1: false, value2: ""};
-		  var oCondition7= { key: "i7", text: "Boolean: ''", exclude: false, operation: P13nConditionOperation.Empty, keyField: "boolean", value1: "", value2: ""};
-		  var oCondition8= { key: "i8", text: "Enum: =enumVal2", exclude: false, operation: P13nConditionOperation.EQ, keyField: "enum", value1: "enumVal2", value2: ""};
-		  var oCondition9= { key: "i9", text: "Enum: =enum2 Val2", exclude: false, operation: P13nConditionOperation.EQ, keyField: "enum2", value1: "enum2 Val2", value2: ""};
-		  var oCondition10= { key: "i10", text: "text: =foo", exclude: false, operation: P13nConditionOperation.EQ, keyField: "text", value1: "foo", value2: ""};
-		  var oCondition11= { key: "i11", text: "default: =foo", exclude: false, operation: P13nConditionOperation.EQ, keyField: "default", value1: "foo", value2: ""};
-		  var oCondition12= { key: "i12", text: "time: =", exclude: false, operation: P13nConditionOperation.BT, keyField: "time", value1: new Date("October 13, 2014 1:13:00"), value2: new Date()};
-		  aConditions= [oCondition1, oCondition2, oCondition3, oCondition4, oCondition5, oCondition6, oCondition7, oCondition8, oCondition9, oCondition10, oCondition11, oCondition12];
+		  var oCondition1 = { key: "i1", text: "Numeric: -100.5..1000", exclude: false, operation: P13nConditionOperation.BT, keyField: "numeric", value1: -100.5, value2: 1000};
+		  var oCondition2 = { key: "i2", text: "String: =foo", exclude: false, operation: P13nConditionOperation.EQ, keyField: "string", value1: "foo", value2: ""};
+		  var oCondition3 = { key: "i3", text: "Date: =1/1/00", exclude: false, operation: P13nConditionOperation.EQ, keyField: "date", value1: new Date(), value2: ""};
+		  var oCondition4 = { key: "i4", text: "Boolean: =True", exclude: false, operation: P13nConditionOperation.EQ, keyField: "boolean", value1: true, value2: ""};
+		  var oCondition5 = { key: "i5", text: "Boolean1: =True", exclude: false, operation: P13nConditionOperation.EQ, keyField: "boolean1", value1: true, value2: ""};
+		  var oCondition6 = { key: "i6", text: "Boolean2: =True", exclude: false, operation: P13nConditionOperation.EQ, keyField: "boolean2", value1: false, value2: ""};
+		  var oCondition7 = { key: "i7", text: "Boolean: ''", exclude: false, operation: P13nConditionOperation.Empty, keyField: "boolean", value1: "", value2: ""};
+		  var oCondition8 = { key: "i8", text: "Enum: =enumVal2", exclude: false, operation: P13nConditionOperation.EQ, keyField: "enum", value1: "enumVal2", value2: ""};
+		  var oCondition9 = { key: "i9", text: "Enum: =enum2 Val2", exclude: false, operation: P13nConditionOperation.EQ, keyField: "enum2", value1: "enum2 Val2", value2: ""};
+		  var oCondition10 = { key: "i10", text: "text: =foo", exclude: false, operation: P13nConditionOperation.EQ, keyField: "text", value1: "foo", value2: ""};
+		  var oCondition11 = { key: "i11", text: "default: =foo", exclude: false, operation: P13nConditionOperation.EQ, keyField: "default", value1: "foo", value2: ""};
+		  var oCondition12 = { key: "i12", text: "time: =", exclude: false, operation: P13nConditionOperation.BT, keyField: "time", value1: new Date("October 13, 2014 1:13:00"), value2: new Date()};
+		  aConditions = [oCondition1, oCondition2, oCondition3, oCondition4, oCondition5, oCondition6, oCondition7, oCondition8, oCondition9, oCondition10, oCondition11, oCondition12];
 
 		  oConditionPanel = new P13nConditionPanel({
 			  maxConditions: -1,
@@ -127,7 +127,7 @@ sap.ui.define([
 
 			  aConditions.forEach(function(oCondition){
 			  oConditionPanel.addCondition(oCondition);
-		  }, this)
+		  }, this);
 
 		  show(oConditionPanel, "Filter");
 	  }
@@ -136,9 +136,9 @@ sap.ui.define([
   var btnShow3 = new Button({
 	  text: "Grouping",
 	  press: function() {
-		  var oCondition1= { "key": "i1", "text": "", "operation": P13nConditionOperation.GroupAscending, "keyField": "CompanyCode", "value1": "", "value2": "", showIfGrouped: true};
-		  var oCondition2= { "key": "i2", "text": "", "operation": P13nConditionOperation.GroupDescending, "keyField": "CompanyName", "value1": "", "value2": "", showIfGrouped: false};
-		  aConditions= [oCondition1, oCondition2];
+		  var oCondition1 = { "key": "i1", "text": "", "operation": P13nConditionOperation.GroupAscending, "keyField": "CompanyCode", "value1": "", "value2": "", showIfGrouped: true};
+		  var oCondition2 = { "key": "i2", "text": "", "operation": P13nConditionOperation.GroupDescending, "keyField": "CompanyName", "value1": "", "value2": "", showIfGrouped: false};
+		  aConditions = [oCondition1, oCondition2];
 
 		  oConditionPanel = new P13nConditionPanel({
 			  maxConditions: -1
@@ -154,9 +154,9 @@ sap.ui.define([
   var btnShow4 = new Button({
 	  text: "Calculation",
 	  press: function() {
-		  var oCondition1= { "key": "i1", "text": "", "operation": P13nConditionOperation.Total, "keyField": "number", "value1": "", "value2": ""};
-		  var oCondition2= { "key": "i2", "text": "", "operation": P13nConditionOperation.Average, "keyField": "price", "value1": "", "value2": ""};
-		  aConditions= [oCondition1, oCondition2];
+		  var oCondition1 = { "key": "i1", "text": "", "operation": P13nConditionOperation.Total, "keyField": "number", "value1": "", "value2": ""};
+		  var oCondition2 = { "key": "i2", "text": "", "operation": P13nConditionOperation.Average, "keyField": "price", "value1": "", "value2": ""};
+		  aConditions = [oCondition1, oCondition2];
 
 		  oConditionPanel = new P13nConditionPanel({
 			  maxConditions: -1
@@ -174,8 +174,8 @@ sap.ui.define([
   var btnValidate = new Button({
 	  text: "validate",
 	  press: function() {
-		  MessageToast.show("validate= "+oConditionPanel.validateConditions());
-		  }
+		  MessageToast.show("validate= " + oConditionPanel.validateConditions());
+	  }
   });
 
   var btnClearErrors = new Button({
@@ -197,17 +197,17 @@ sap.ui.define([
 	  press: function() {
 		  aConditions = oConditionPanel.getConditions();
 
-		  var sConditions= "";
-		  for (i = 0; i < aConditions.length; i++) {
+		  var sConditions = "";
+		  for (let i = 0; i < aConditions.length; i++) {
 			  var oCondition = aConditions[i];
-			  sConditions+= "'"+oCondition.text + "' ";
+			  sConditions += "'" + oCondition.text + "' ";
 		  }
 
-		  MessageToast.show("Conditions= "+sConditions);
+		  MessageToast.show("Conditions= " + sConditions);
 	  }
   });
 
-  var theCompactMode= new CheckBox({
+  var theCompactMode = new CheckBox({
 	  selected: true,
 	  text: "compactMode",
 	  select : function() {
@@ -215,7 +215,7 @@ sap.ui.define([
 	  }
   });
 
-  var theDialogMode= new CheckBox({
+  var theDialogMode = new CheckBox({
 	  selected: false,
 	  text: "show on dialog",
 	  select : function() {

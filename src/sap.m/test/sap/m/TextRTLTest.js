@@ -30,7 +30,7 @@ sap.ui.define([
 			  text: '(012) 345 678'
 		  }),
 		  new Label({
-			  text: 'textDirection -> ltr, textAlign -> right',
+			  text: 'textDirection -> ltr, textAlign -> right'
 		  }),
 		  new Text({
 			  textDirection: 'LTR',

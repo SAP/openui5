@@ -167,30 +167,29 @@ sap.ui.define([
 	  },
 	  {
 		  id: "TP21",
-		  displayFormat: "HHmmss",
+		  displayFormat: "HHmmss"
 	  },
 	  {
 		  id: "TP22",
-		  displayFormat: "h 'hr' mm 'min' ss 'sec'",
+		  displayFormat: "h 'hr' mm 'min' ss 'sec'"
 	  },
 	  {
 		  id: "TP23",
-		  displayFormat: "'time' h 'hr' mm 'min' ss 'sec'",
+		  displayFormat: "'time' h 'hr' mm 'min' ss 'sec'"
 	  },
 	  {
 		  id: "TP24",
-		  displayFormat: "'time' hmmss 'now'",
+		  displayFormat: "'time' hmmss 'now'"
 	  }
   ];
 
   var generateTimePickers = function() {
-	  var i,
-		  aControls = [],
+	  var aControls = [],
 		  sInfo,
 		  oBar,
 		  oTp;
 
-	  for (i = 0; i < options.length; i++) {
+	  for (let i = 0; i < options.length; i++) {
 		  options[i].change = handleChange;
 		  if (options[i].value && options[i].value.path) { //data binding
 			  oBar = new Toolbar(options[i].id + "-toolbar", {
@@ -240,7 +239,7 @@ sap.ui.define([
 					  change: function (oEvent) {
 						  var sMaskMode = oEvent.getParameter("state") ? TimePickerMaskMode.On : TimePickerMaskMode.Off;
 
-						  for (i = 0; i < options.length; i++) {
+						  for (let i = 0; i < options.length; i++) {
 							  var sId = options[i].id;
 
 							  Element.getElementById(sId).setMaskMode(sMaskMode);

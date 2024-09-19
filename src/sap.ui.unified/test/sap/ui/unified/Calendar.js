@@ -178,10 +178,10 @@ sap.ui.define([
 					  for (var i = 0; i < aSpecialDays.length; i++) {
 						  var aSpecialDay = aSpecialDays[i];
 						  var sType = "";
-						  if(aSpecialDay[3] < 10) {
-							  sType = "Type0"+aSpecialDay[3];
-						  }else {
-							  sType = "Type"+aSpecialDay[3];
+						  if (aSpecialDay[3] < 10) {
+							  sType = "Type0" + aSpecialDay[3];
+						  } else {
+							  sType = "Type" + aSpecialDay[3];
 						  }
 						  Element.getElementById("Cal1").addSpecialDate(new DateTypeRange({
 							  startDate: oFormatYyyymmdd.parse(aSpecialDay[0]),
@@ -211,9 +211,9 @@ sap.ui.define([
 					  oCal.addDisabledDate(new DateRange({
 						  startDate: oDate
 					  }));
-					  oStartDate = UI5Date.getInstance(oDate);
+					  const oStartDate = UI5Date.getInstance(oDate);
 					  oStartDate.setDate(10);
-					  oEndDate = UI5Date.getInstance(oDate);
+					  const oEndDate = UI5Date.getInstance(oDate);
 					  oEndDate.setDate(20);
 					  oCal.addDisabledDate(new DateRange({
 						  startDate: oStartDate,
@@ -237,7 +237,7 @@ sap.ui.define([
 		  change: function(oEvent){
 			  var sValue = oEvent.getParameter('newValue');
 			  var oCalendar = Element.getElementById("Cal1");
-			  if(sValue.length == 8 && !isNaN(sValue)){
+			  if (sValue.length == 8 && !isNaN(sValue)) {
 				  var oDate = oFormatYyyymmdd.parse(sValue);
 				  var aSelectedDates = oCalendar.getSelectedDates();
 				  var oDateRange;
@@ -248,7 +248,7 @@ sap.ui.define([
 					  oDateRange = aSelectedDates[0];
 					  oDateRange.setStartDate(oDate);
 				  }
-			  }else if(!sValue){
+			  } else if (!sValue) {
 				  oCalendar.destroySelectedDates();
 			  }
 		  }
@@ -342,7 +342,7 @@ sap.ui.define([
 			  var sValue = oEvent.getParameter('newValue');
 			  var oCalendar = Element.getElementById("Cal1");
 			  var oDate;
-			  if(sValue.length == 8 && !isNaN(sValue)){
+			  if (sValue.length == 8 && !isNaN(sValue)) {
 				  oDate = oFormatYyyymmdd.parse(sValue);
 			  }
 			  oCalendar.setMinDate(oDate);
@@ -362,7 +362,7 @@ sap.ui.define([
 			  var sValue = oEvent.getParameter('newValue');
 			  var oCalendar = Element.getElementById("Cal1");
 			  var oDate;
-			  if(sValue.length == 8 && !isNaN(sValue)){
+			  if (sValue.length == 8 && !isNaN(sValue)) {
 				  oDate = oFormatYyyymmdd.parse(sValue);
 			  }
 			  oCalendar.setMaxDate(oDate);
@@ -402,12 +402,12 @@ sap.ui.define([
 	  }
   }).placeAt("sample2");
 
-  oLabel = new Label({text: "selected date from", labelFor: "TF2-start"}).placeAt("event2");
-  oInput = new TextField("TF2-start",{
+  new Label({text: "selected date from", labelFor: "TF2-start"}).placeAt("event2");
+  new TextField("TF2-start",{
 	  editable: false
   }).placeAt("event2");
-  oLabel = new Label({text: "to", labelFor: "TF2-end"}).placeAt("event2");
-  oInput = new TextField("TF2-end",{
+  new Label({text: "to", labelFor: "TF2-end"}).placeAt("event2");
+  new TextField("TF2-end",{
 	  editable: false
   }).placeAt("event2");
 
@@ -421,14 +421,14 @@ sap.ui.define([
 		  var oCalendar = oEvent.oSource;
 		  var aSelectedDates = oCalendar.getSelectedDates();
 		  var oDate;
-		  if (aSelectedDates.length > 0 ) {
+		  if (aSelectedDates.length > 0) {
 			  var aItems = oLB.getItems();
 			  var oItem;
-			  for(var i=0; i<aSelectedDates.length; i++){
+			  for (var i = 0; i < aSelectedDates.length; i++){
 				  oDate = aSelectedDates[i].getStartDate();
-				  if(aItems[i]) {
+				  if (aItems[i]) {
 					  oItem = aItems[i];
-				  }else {
+				  } else {
 					  oItem = new Item();
 					  oLB.addItem(oItem);
 				  }
@@ -438,8 +438,8 @@ sap.ui.define([
 					  oItem.setText("");
 				  }
 			  }
-			  if(aItems.length > aSelectedDates.length) {
-				  for(var i=aSelectedDates.length; i<aItems.length; i++){
+			  if (aItems.length > aSelectedDates.length) {
+				  for (var i = aSelectedDates.length; i < aItems.length; i++){
 					  oLB.removeItem(i);
 					  aItems[i].destroy();
 				  }
@@ -450,7 +450,7 @@ sap.ui.define([
 	  }
   }).placeAt("sample3");
 
-  oLabel = new Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
+  new Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
 
   new ListBox("LB",{
 	  editable: false,
@@ -506,7 +506,7 @@ sap.ui.define([
 		  change: function(oEvent){
 			  var sValue = oEvent.getParameter('newValue');
 			  var oCalendar = Element.getElementById("Cal4");
-			  if(sValue.length == 8 && !isNaN(sValue)){
+			  if (sValue.length == 8 && !isNaN(sValue)) {
 				  var oDate = oFormatYyyymmdd.parse(sValue);
 				  var aSelectedDates = oCalendar.getSelectedDates();
 				  var oDateRange;
@@ -517,7 +517,7 @@ sap.ui.define([
 					  oDateRange = aSelectedDates[0];
 					  oDateRange.setStartDate(oDate);
 				  }
-			  }else if(!sValue){
+			  } else if (!sValue) {
 				  oCalendar.destroySelectedDates();
 			  }
 		  }
@@ -544,10 +544,10 @@ sap.ui.define([
 			  var sValue = oEvent.getParameter('newValue');
 			  var oCalendar = Element.getElementById("Cal4");
 			  var iMonths = parseInt(sValue);
-			  if(iMonths > 0){
+			  if (iMonths > 0) {
 				  oCalendar.setMonths(iMonths);
 				  oTF.setValueState(ValueState.None);
-			  }else {
+			  } else {
 				  oTF.setValueState(ValueState.Error);
 			  }
 		  }
@@ -574,7 +574,7 @@ sap.ui.define([
   oFormElement = new FormElement("F4E4", {
 	  label: new Label({text: "Single/multiple selection"}),
 	  fields: [
-		  oRBG = new RadioButtonGroup({
+		  new RadioButtonGroup({
 			  items : [ new Item({
 				  text : "Single Selection"
 			  }), new Item({
@@ -601,7 +601,7 @@ sap.ui.define([
 		  new CalendarLegendItem("T7", {type: CalendarDayType.Type07, text: "Typ 7"}),
 		  new CalendarLegendItem("T8", {type: CalendarDayType.Type08, text: "Typ 8"}),
 		  new CalendarLegendItem("T9", {type: CalendarDayType.Type09, text: "Typ 9"}),
-		  new CalendarLegendItem("T10", {type: CalendarDayType.Type10, text: "Typ 10"}),
+		  new CalendarLegendItem("T10", {type: CalendarDayType.Type10, text: "Typ 10"})
 	  ]
   });
 

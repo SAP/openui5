@@ -86,7 +86,7 @@ sap.ui.define([
 	  {lastName: "Turner", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "employee", gender: "female", rating: 3, money: 5.67, birthday: "1968-03-01", currency: "EUR", type: "Inactive"}
   ];
 
-  var oApp = new App;
+  var oApp = new App();
 
   function openViewSettingsDialog() {
 	  MessageToast.show("View Settings Dialog");
@@ -168,7 +168,7 @@ sap.ui.define([
 					  return {
 						  key : sStatus,
 						  text : sStatus
-					  }
+					  };
 				  })
 			  ]);
 		  } else {
@@ -262,7 +262,7 @@ sap.ui.define([
 		  header : new Label({
 			  text : "Image"
 		  }),
-		  minScreenWidth : "Phone",
+		  minScreenWidth : "Phone"
 	  }),
 	  new Column({
 		  header : new Label({
@@ -287,7 +287,7 @@ sap.ui.define([
 		  minScreenWidth : "Desktop",
 		  popinDisplay : "Inline",
 		  demandPopin : true
-	  }),
+	  })
   ];
 
   var oTemplate = new ColumnListItem({
@@ -325,8 +325,8 @@ sap.ui.define([
 			  displayFormat : "dd.MM.yyyy"
 		  }),
 		  new Text({
-			  text : "{money} EUR",
-		  }),
+			  text : "{money} EUR"
+		  })
 	  ]
   });
 

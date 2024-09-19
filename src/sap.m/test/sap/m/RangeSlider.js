@@ -140,7 +140,7 @@ sap.ui.define([
 			oTickmarksTitle,
 			oRangeSlider7,
 			oTickmarksAndLabelsTitle,
-			oRangeSlider8,
+			oRangeSlider8
 		]
 	}).addStyleClass("sapUiContentPadding");
 

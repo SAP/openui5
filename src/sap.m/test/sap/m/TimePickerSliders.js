@@ -98,16 +98,15 @@ sap.ui.define([
   }
 
   function generateTimePickers() {
-	  var i,
-			  aCells = [],
+	  var aCells = [],
 			  sInfo,
 			  oCell,
 			  oTp;
 
-	  for (i = 0; i < options.length; i++) {
+	  for (let i = 0; i < options.length; i++) {
 		  options[i].change = handleChange;
 		  options[i].height = "300px";
-		  sInfo =  returnIfDefined(options[i], "value") + returnIfDefined(options[i], "valueFormat") + returnIfDefined(options[i], "displayFormat")
+		  sInfo =  returnIfDefined(options[i], "value") + returnIfDefined(options[i], "valueFormat") + returnIfDefined(options[i], "displayFormat");
 		  if (options[i].value && options[i].value.path) { //data binding
 			  oCell = fnCreateCell(1, sInfo, [
 					  new TimePickerSliders(options[i]),
@@ -136,7 +135,7 @@ sap.ui.define([
   function generateRows(aCells) {
 	  var aRows = [];
 
-	  for (var i = 0; i <= aCells.length - 1; i +=2) {
+	  for (var i = 0; i <= aCells.length - 1; i += 2) {
 		  var oRow = new BlockLayoutRow();
 
 		  aCells[i] && oRow.addContent(aCells[i]);

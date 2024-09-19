@@ -170,7 +170,7 @@ sap.ui.define([
 				}), new Column({
 					header : new Label({
 						text: "Price"
-					}),
+					})
 				}), new Column({
 					header: new Label({
 						text: "Rating"
@@ -189,7 +189,7 @@ sap.ui.define([
 					text : "{name}"
 				}),
 				new Label({
-					text: "{price}",
+					text: "{price}"
 				}), new RatingIndicator({
 					enabled: false,
 					value: "{rating}",
@@ -283,7 +283,7 @@ sap.ui.define([
 			visualMode: RatingIndicatorVisualMode.Half,
 			change : function(oControlEvent) {
 				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-			},
+			}
 		});
 
 	var oValueLabel = new Label({text: 'Value'}),
@@ -310,14 +310,14 @@ sap.ui.define([
 	var aNames = IconPool.getIconNames(),
 		aIconsSelected = [], aIconsUnselected = [], aIconsHovered = [];
 
-	for(index = 0; index < aNames.length ; index++){
-		aIconsSelected.push(new Item(aNames[index]+"_selected", {text: aNames[index]}));
+	for (let index = 0; index < aNames.length ; index++){
+		aIconsSelected.push(new Item(aNames[index] + "_selected", {text: aNames[index]}));
 	}
-	for(index = 0; index < aNames.length ; index++){
-		aIconsUnselected.push(new Item(aNames[index]+"_unselected", {text: aNames[index]}));
+	for (let index = 0; index < aNames.length ; index++){
+		aIconsUnselected.push(new Item(aNames[index] + "_unselected", {text: aNames[index]}));
 	}
-	for(index = 0; index < aNames.length ; index++){
-		aIconsHovered.push(new Item(aNames[index]+"_hovered", {text: aNames[index]}));
+	for (let index = 0; index < aNames.length ; index++){
+		aIconsHovered.push(new Item(aNames[index] + "_hovered", {text: aNames[index]}));
 	}
 
 	var oIconSelectedLabel = new Label({text: 'IconSelected'}),
@@ -343,7 +343,7 @@ sap.ui.define([
 			selectedItemId: "Half",
 			items: [
 				new Item("Full", {text: "Full"}),
-				new Item("Half", {text: "Half"}),
+				new Item("Half", {text: "Half"})
 			]
 		});
 
@@ -446,7 +446,7 @@ sap.ui.define([
 			},
 			iconSelected: IconPool.getIconURI("favorite"),
 			iconUnselected: IconPool.getIconURI("unfavorite"),
-			iconUnselected: IconPool.getIconURI("accept")
+			iconHovered: IconPool.getIconURI("accept")
 		});
 
 	// standard with incorrect initial value (has to be rounded to 3 for display)
@@ -593,7 +593,7 @@ sap.ui.define([
 			visualMode: RatingIndicatorVisualMode.Half,
 			change : function(oControlEvent) {
 				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-			},
+			}
 		});
 
 	// large rating with custom icons
@@ -608,7 +608,7 @@ sap.ui.define([
 			visualMode: RatingIndicatorVisualMode.Half,
 			change : function(oControlEvent) {
 				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-			},
+			}
 		});
 
 	// large rating with custom icons
@@ -623,7 +623,7 @@ sap.ui.define([
 			visualMode: RatingIndicatorVisualMode.Half,
 			change : function(oControlEvent) {
 				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-			},
+			}
 		});
 
 	var oVBoxSpecial = new VBox({

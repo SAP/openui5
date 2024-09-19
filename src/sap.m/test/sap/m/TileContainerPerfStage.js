@@ -28,9 +28,9 @@ sap.ui.define([
 		  oTC = oView.byId("usersTileContainer");
 		  oRenderTime = oView.byId("renderTime");
 		  oTilesCount = oView.byId("tilesCount");
-		  oUpdatePager = oView.byId("updatePager"),
-		  oModelSizeLimit = oView.byId("modelSizeLimit"),
-		  oInsertTileTime = oView.byId("insertTileTime"),
+		  oUpdatePager = oView.byId("updatePager");
+		  oModelSizeLimit = oView.byId("modelSizeLimit");
+		  oInsertTileTime = oView.byId("insertTileTime");
 		  oStatusLabel = oView.byId("status");
 
 		  iCount = 0;
@@ -73,7 +73,7 @@ sap.ui.define([
 			  }
 			  window.updatePager.count++;
 			  window.updatePager.time += (iEnd - iStart);
-		  }
+		  };
 	  },
 
 	  onModelSizeLimitChange: function (oEvent) {
@@ -121,7 +121,7 @@ sap.ui.define([
 	  },
 
 	  onInsert: function () {
-		  var iPosition = parseInt(this.getView().byId("insertPosition").getValue(), 10),
+		  var iPosition = parseInt(this.getView().byId("insertPosition").getValue()),
 				  oTile = this._createTile(iPosition),
 				  oTilesCount = oView.byId("tilesCount");
 		  window.updatePager = undefined;
@@ -131,7 +131,7 @@ sap.ui.define([
 	  },
 
 	  onInsertInvisible: function () {
-		  var iPosition = parseInt(this.getView().byId("insertPosition").getValue(), 10),
+		  var iPosition = parseInt(this.getView().byId("insertPosition").getValue()),
 				  oTile = this._createTile(iPosition),
 				  oTilesCount = oView.byId("tilesCount");
 		  oTile.setVisible(false);
@@ -142,7 +142,7 @@ sap.ui.define([
 	  },
 
 	  onRemove: function () {
-		  var iPosition = parseInt(this.getView().byId("removePosition").getValue(), 10),
+		  var iPosition = parseInt(this.getView().byId("removePosition").getValue()),
 				  oTile = oTC.getTiles()[iPosition],
 				  oTilesCount = oView.byId("tilesCount");
 		  this.getView().byId("usersTileContainer").removeTile(oTile);
@@ -151,7 +151,7 @@ sap.ui.define([
 	  },
 
 	  onShowHide: function () {
-		  var iPosition = parseInt(this.getView().byId("showHidePosition").getValue(), 10),
+		  var iPosition = parseInt(this.getView().byId("showHidePosition").getValue()),
 				  oTC = this.getView().byId("usersTileContainer"),
 				  oTile = oTC.getTiles()[iPosition];
 		  oTile.setVisible(!oTile.getVisible());

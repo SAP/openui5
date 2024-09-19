@@ -159,7 +159,7 @@ sap.ui.define([
 				  new Button({
 					  text: "Repeat Header",
 					  press: function() {
-						  var iRepeat = parseInt(window.prompt("Times", 1), 10) || 1;
+						  var iRepeat = parseInt(window.prompt("Times", 1)) || 1;
 						  oModel.setProperty(context.getPath("header"), (new Array(iRepeat + 1).join(context.getObject().header)));
 						  oModel.refresh(true);
 					  }
@@ -168,7 +168,7 @@ sap.ui.define([
 					  icon: "sap-icon://delete",
 					  press: function() {
 						  var aItems = oModel.getProperty("/items");
-						  var index = parseInt(context.getPath().match(/\/([^\/]*)$/i), 10);
+						  var index = parseInt(context.getPath().match(/\/([^\/]*)$/i));
 						  aItems.splice(index, 1);
 						  oModel.setProperty("/items", aItems);
 					  }

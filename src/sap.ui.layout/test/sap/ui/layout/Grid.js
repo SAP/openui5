@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/core/HTML",
 	"sap/ui/layout/Grid",
-	"sap/ui/layout/GridData",
+	"sap/ui/layout/GridData"
 ], function(Label, HTML, Grid, GridData) {
 	"use strict";
 
@@ -23,7 +23,7 @@ sap.ui.define([
 				text: 'Area spanning over the full width of the grid on all resolutions (L12 M12 S12)',
 				width: "100%",
 				layoutData: new GridData({
-					span: "L12 M12 S12",
+					span: "L12 M12 S12"
 				})
 			}),
 

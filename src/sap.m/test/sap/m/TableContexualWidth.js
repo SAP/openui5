@@ -131,8 +131,7 @@ sap.ui.define([
 			  popinDisplay : "Inline",
 			  header : new Label({
 				  text : "Birth Date"
-			  }),
-			   demandPopin: true
+			  })
 		  }),
 		  new Column({
 			  hAlign : "Right",
@@ -142,8 +141,7 @@ sap.ui.define([
 			  popinDisplay : "Inline",
 			  header : new Label({
 				  text : "Gender"
-			  }),
-			   demandPopin: true
+			  })
 		  })
 	  ],
 	  updateStarted : function(e) {
@@ -188,8 +186,7 @@ sap.ui.define([
 			  popinDisplay : "Inline",
 			  header : new Label({
 				  text : "Birth Date"
-			  }),
-			   demandPopin: true
+			  })
 		  }),
 		  new Column({
 			  hAlign : "Right",
@@ -199,8 +196,7 @@ sap.ui.define([
 			  popinDisplay : "Inline",
 			  header : new Label({
 				  text : "Gender"
-			  }),
-			   demandPopin: true
+			  })
 		  })
 	  ],
 	  updateStarted : function(e) {
@@ -279,8 +275,7 @@ sap.ui.define([
 			  popinDisplay : "Inline",
 			  header : new Label({
 				  text : "Birth Date"
-			  }),
-			   demandPopin: true
+			  })
 		  }),
 		  new Column({
 			  hAlign : "Right",
@@ -290,8 +285,7 @@ sap.ui.define([
 			  popinDisplay : "Inline",
 			  header : new Label({
 				  text : "Gender"
-			  }),
-			   demandPopin: true
+			  })
 		  })
 	  ],
 	  updateStarted : function(e) {
@@ -338,8 +332,7 @@ sap.ui.define([
 			  popinDisplay : "Inline",
 			  header : new Label({
 				  text : "Birth Date"
-			  }),
-			  demandPopin: true
+			  })
 		  }),
 		  new Column({
 			  hAlign : "Right",
@@ -349,8 +342,7 @@ sap.ui.define([
 			  popinDisplay : "Inline",
 			  header : new Label({
 				  text : "Gender"
-			  }),
-			  demandPopin: true
+			  })
 		  })
 	  ],
 	  updateStarted : function(e) {
@@ -430,8 +422,7 @@ sap.ui.define([
 			  popinDisplay : "Inline",
 			  header : new Label({
 				  text : "Birth Date"
-			  }),
-			  demandPopin: true
+			  })
 		  }),
 		  new Column({
 			  hAlign : "Right",
@@ -441,8 +432,7 @@ sap.ui.define([
 			  popinDisplay : "Inline",
 			  header : new Label({
 				  text : "Gender"
-			  }),
-			  demandPopin: true
+			  })
 		  })
 	  ],
 	  updateStarted : function(e) {

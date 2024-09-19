@@ -28,8 +28,8 @@ sap.ui.define([
 	  }
   }).placeAt("sample1");
 
-  var oLabel = new Label({text: "Text 1", labelFor: "TF1"}).placeAt("event1");
-  var oInput = new TextField("TF1",{
+  new Label({text: "Text 1", labelFor: "TF1"}).placeAt("event1");
+  new TextField("TF1",{
 	  editable: true,
 	  change: function(oEvent){
 		  var sValue = oEvent.getParameter('newValue');
@@ -38,8 +38,8 @@ sap.ui.define([
 	  }
   }).placeAt("event1");
 
-  var oLabel = new Label({text: "additional text 1", labelFor: "TF2"}).placeAt("event1");
-  var oInput = new TextField("TF2",{
+  new Label({text: "additional text 1", labelFor: "TF2"}).placeAt("event1");
+  new TextField("TF2",{
 	  editable: true,
 	  change: function(oEvent){
 		  var sValue = oEvent.getParameter('newValue');
@@ -48,8 +48,8 @@ sap.ui.define([
 	  }
   }).placeAt("event1");
 
-  var oLabel = new Label({text: "Text 2", labelFor: "TF3"}).placeAt("event1");
-  var oInput = new TextField("TF3",{
+  new Label({text: "Text 2", labelFor: "TF3"}).placeAt("event1");
+  new TextField("TF3",{
 	  editable: true,
 	  change: function(oEvent){
 		  var sValue = oEvent.getParameter('newValue');
@@ -58,8 +58,8 @@ sap.ui.define([
 	  }
   }).placeAt("event1");
 
-  var oLabel = new Label({text: "additional text 2", labelFor: "TF4"}).placeAt("event1");
-  var oInput = new TextField("TF4",{
+  new Label({text: "additional text 2", labelFor: "TF4"}).placeAt("event1");
+  new TextField("TF4",{
 	  editable: true,
 	  change: function(oEvent){
 		  var sValue = oEvent.getParameter('newValue');
@@ -68,7 +68,7 @@ sap.ui.define([
 	  }
   }).placeAt("event1");
 
-  var oButton = new ToggleButton({
+  new ToggleButton({
 	  text: "Pevious",
 	  pressed: true,
 	  press: function(oEvent){
@@ -78,7 +78,7 @@ sap.ui.define([
 	  }
   }).placeAt("event1");
 
-  oButton = new ToggleButton({
+  new ToggleButton({
 	  text: "Next",
 	  pressed: true,
 	  press: function(oEvent){
@@ -88,7 +88,7 @@ sap.ui.define([
 	  }
   }).placeAt("event1");
 
-  oButton = new ToggleButton({
+  new ToggleButton({
 	  text: "Button 0",
 	  pressed: false,
 	  press: function(oEvent){
@@ -98,7 +98,7 @@ sap.ui.define([
 	  }
   }).placeAt("event1");
 
-  oButton = new ToggleButton({
+  new ToggleButton({
 	  text: "Button 1",
 	  pressed: true,
 	  press: function(oEvent){
@@ -108,7 +108,7 @@ sap.ui.define([
 	  }
   }).placeAt("event1");
 
-  oButton = new ToggleButton({
+  new ToggleButton({
 	  text: "Button 2",
 	  pressed: true,
 	  press: function(oEvent){

@@ -74,13 +74,12 @@ sap.ui.define([
   ];
 
   var generateTimePickers = function() {
-	  var i,
-		  aControls = [],
+	  var aControls = [],
 		  sInfo,
 		  oBar,
 		  oTp;
 
-	  for (i = 0; i < options.length; i++) {
+	  for (let i = 0; i < options.length; i++) {
 		  options[i].change = handleChange;
 		  if (options[i].value && options[i].value.path) { //data binding
 			  oBar = new Toolbar(options[i].id + "-toolbar", {
@@ -130,7 +129,7 @@ sap.ui.define([
 					  change: function (oEvent) {
 						  var sMaskMode = oEvent.getParameter("state") ? TimePickerMaskMode.On : TimePickerMaskMode.Off;
 
-						  for (i = 0; i < options.length; i++) {
+						  for (let i = 0; i < options.length; i++) {
 							  var sId = options[i].id;
 
 							  Element.getElementById(sId).setMaskMode(sMaskMode);

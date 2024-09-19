@@ -32,21 +32,21 @@ sap.ui.define([
 					  placeholder: "Prompt Text",
 					  showClearIcon: true,
 					  change: fnChange,
-					  liveChange: fnLiveChange,
+					  liveChange: fnLiveChange
 				  }).addStyleClass('myInput'),
 				  new Input({
 					  placeholder: "Prompt Text",
 					  showClearIcon: true,
 					  showValueHelp: true,
 					  change: fnChange,
-					  liveChange: fnLiveChange,
+					  liveChange: fnLiveChange
 				  }).addStyleClass('myInput'),
 				  new Input({
 					  placeholder: "Type Password",
 					  type:"Password",
 					  showClearIcon: true,
 					  change: fnChange,
-					  liveChange: fnLiveChange,
+					  liveChange: fnLiveChange
 				  }).addStyleClass('myInput'),
 				  new Input({
 					  placeholder: "Type Password",
@@ -54,21 +54,21 @@ sap.ui.define([
 					  value:"Initial password value",
 					  showClearIcon: true,
 					  change: fnChange,
-					  liveChange: fnLiveChange,
+					  liveChange: fnLiveChange
 				  }).addStyleClass('myInput'),
 				  new Input({
 					  placeholder: "Prompt Text",
 					  showClearIcon: true,
 					  showValueHelp: true,
 					  change: fnChange,
-					  liveChange: fnLiveChange,
+					  liveChange: fnLiveChange
 				  }).addStyleClass('myInput'),
 
 				  new Input({
 					  value: "Initial value is set",
 					  showClearIcon: true,
 					  change: fnChange,
-					  liveChange: fnLiveChange,
+					  liveChange: fnLiveChange
 				  }).addStyleClass('myInput'),
 
 				  new Input({
@@ -76,7 +76,7 @@ sap.ui.define([
 					  showClearIcon: true,
 					  showValueHelp: true,
 					  change: fnChange,
-					  liveChange: fnLiveChange,
+					  liveChange: fnLiveChange
 				  }).addStyleClass('myInput'),
 
 				  new Input({
@@ -86,23 +86,23 @@ sap.ui.define([
 					  showSuggestion: true,
 					  suggestionItems: [
 						  new Item({
-							  text: "Albania",
+							  text: "Albania"
 						  }),
 						  new Item({
-							  text: "Bulgaria",
+							  text: "Bulgaria"
 						  }),
 						  new Item({
-							  text: "Germany",
+							  text: "Germany"
 						  }),
 						  new Item({
-							  text: "Dryanovo",
+							  text: "Dryanovo"
 						  }),
 						  new Item({
-							  text: "Gabrovo",
+							  text: "Gabrovo"
 						  })
 					  ],
 					  change: fnChange,
-					  liveChange: fnLiveChange,
+					  liveChange: fnLiveChange
 				  }).addStyleClass('myInput'),
 
 				  new Text({ text: "---------- Multi Inputs down there --------------" }).addStyleClass("myInput"),
@@ -111,28 +111,28 @@ sap.ui.define([
 					  placeholder: "Prompt Text",
 					  showClearIcon: true,
 					  change: fnChange,
-					  liveChange: fnLiveChange,
+					  liveChange: fnLiveChange
 				  }).addStyleClass('myInput'),
 				  new MultiInput({
 					  placeholder: "Prompt Text",
 					  showClearIcon: true,
 					  showValueHelp: true,
 					  change: fnChange,
-					  liveChange: fnLiveChange,
+					  liveChange: fnLiveChange
 				  }).addStyleClass('myInput'),
 				  new MultiInput({
 					  placeholder: "Prompt Text",
 					  showClearIcon: true,
 					  showValueHelp: true,
 					  change: fnChange,
-					  liveChange: fnLiveChange,
+					  liveChange: fnLiveChange
 				  }).addStyleClass('myInput'),
 
 				  new MultiInput({
 					  value: "Initial value is set",
 					  showClearIcon: true,
 					  change: fnChange,
-					  liveChange: fnLiveChange,
+					  liveChange: fnLiveChange
 				  }).addStyleClass('myInput'),
 
 				  new MultiInput({
@@ -140,7 +140,7 @@ sap.ui.define([
 					  showClearIcon: true,
 					  showValueHelp: true,
 					  change: fnChange,
-					  liveChange: fnLiveChange,
+					  liveChange: fnLiveChange
 				  }).addStyleClass('myInput'),
 
 				  new MultiInput({
@@ -150,10 +150,10 @@ sap.ui.define([
 					  tokens: [
 						  new Token({ text: "Token 1" }),
 						  new Token({ text: "Token 2" }),
-						  new Token({ text: "Token 3" }),
+						  new Token({ text: "Token 3" })
 					  ],
 					  change: fnChange,
-					  liveChange: fnLiveChange,
+					  liveChange: fnLiveChange
 				  }).addStyleClass('myInput'),
 
 				  new Text({ text: "---------- Inputs with description --------------" }).addStyleClass("myInput"),
@@ -161,14 +161,14 @@ sap.ui.define([
 				  new Input({
 					  showClearIcon: true,
 					  description: "Tempor proident commodo commodo duis irure ipsum amet.",
-					  value: "Dryanovo na tri moreta",
+					  value: "Dryanovo na tri moreta"
 				  }).addStyleClass('myInput'),
 
 				  new Input({
 					  showClearIcon: true,
 					  showValueHelp: true,
 					  description: "Tempor proident commodo commodo duis irure ipsum amet.",
-					  value: "Dryanovo na tri moreta",
+					  value: "Dryanovo na tri moreta"
 				  }).addStyleClass('myInput'),
 
 				  new MultiInput({
@@ -178,13 +178,13 @@ sap.ui.define([
 					  tokens: [
 						  new Token({ text: "Token 1" }),
 						  new Token({ text: "Token 2" }),
-						  new Token({ text: "Token 3" }),
-					  ],
-				  }).addStyleClass('myInput'),
+						  new Token({ text: "Token 3" })
+					  ]
+				  }).addStyleClass('myInput')
 			  ]
 
 		  }).addStyleClass("sapUiContentPadding")
-	  ],
+	  ]
   });
 
   app.addPage(page1);

@@ -1,26 +1,26 @@
 <!DOCTYPE HTML>
 <html>
 <head><meta charset="utf-8">
-    <title>sap.uxap.ObjectPage</title>
-    <script src="shared-config.js"></script>
-    <script id="sap-ui-bootstrap"
-            src="../../../resources/sap-ui-core.js"
-            data-sap-ui-async="true"
-            data-sap-ui-compat-version="edge"
-            data-sap-ui-libs="sap.m,sap.uxap,sap.ui.layout,sap.ui.table"
-            data-sap-ui-on-init="module:local/FullscreenObjectPageWithTable"
-            data-sap-ui-resource-roots='{
-            	"local": "./"
-            }'
-    >
-    </script>
+	<title>sap.uxap.ObjectPage</title>
+	<script src="shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			src="../../../resources/sap-ui-core.js"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-libs="sap.m,sap.uxap,sap.ui.layout,sap.ui.table"
+			data-sap-ui-on-init="module:local/FullscreenObjectPageWithTable"
+			data-sap-ui-resource-roots='{
+				"local": "./"
+			}'
+	>
+	</script>
 
 
-    <link rel="stylesheet" href="./FullscreenObjectPageWithTable.css">
+	<link rel="stylesheet" href="./FullscreenObjectPageWithTable.css">
 
 
-    <!-- simple empty div -->
-    <script id="view1" type="text/xml">
+	<!-- simple empty div -->
+	<script id="view1" type="text/xml">
 		<core:View
 				xmlns="sap.uxap"
 				xmlns:core="sap.ui.core"
@@ -43,19 +43,19 @@
 									  objectImageShape="Circle"
 									  objectImageURI="./images/imageID_275314.png">
 						<actions>
-						    <ObjectPageHeaderActionButton text="Toggle Footer" hideIcon="true" hideText="false" type="Emphasized" id="btnToggleFooter"/>
-						    <ObjectPageHeaderActionButton text="Toggle UseIconTabBar" hideIcon="true" hideText="false" type="Emphasized" id="btnToggleUseIconTabBar"/>
+							<ObjectPageHeaderActionButton text="Toggle Footer" hideIcon="true" hideText="false" type="Emphasized" id="btnToggleFooter"/>
+							<ObjectPageHeaderActionButton text="Toggle UseIconTabBar" hideIcon="true" hideText="false" type="Emphasized" id="btnToggleUseIconTabBar"/>
 							<ObjectPageHeaderActionButton icon="sap-icon://action" text="action" importance="Low"/>
 							<ObjectPageHeaderActionButton icon="sap-icon://action-settings" text="settings" importance="Low"/>
 							<ObjectPageHeaderActionButton icon="sap-icon://edit" text="edit" importance="Medium"/>
 							<ObjectPageHeaderActionButton icon="sap-icon://save" text="save" visible="false"/>
 						</actions>
-                        <breadcrumbs>
- 					        <m:Breadcrumbs>
-                                <m:Link text="Page 1 a very long link" press="handleLink1Press"/>
-							    <m:Link text="Page 2 long link" press="handleLink2Press"/>
- 					        </m:Breadcrumbs>
-                        </breadcrumbs>
+						<breadcrumbs>
+							<m:Breadcrumbs>
+								<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
+								<m:Link text="Page 2 long link" press="handleLink2Press"/>
+							</m:Breadcrumbs>
+						</breadcrumbs>
 					</ObjectPageHeader>
 				</headerTitle>
 				<headerContent>

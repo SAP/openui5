@@ -36,7 +36,6 @@ sap.ui.define([
 		},
 		{
 			"highlight": "Success",
-			"type": "Navigation",
 			"type": "Detail"
 		},
 		{

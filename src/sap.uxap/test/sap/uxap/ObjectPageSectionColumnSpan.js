@@ -23,7 +23,7 @@ async function(App, Page, CheckBox, ToggleButton, Element, XMLView, ObjectPageSu
 			oSubSection._setColumnSpan(sColumnSpan);
 			oSubSection.getBlocks().forEach(function(oBlock) {
 				oBlock.getDomRef().innerHTML = 'I am a block with columnSpan = <span style="background: white">"' + sColumnSpan + '"</span>';
-			})
+			});
 	}
 	oSection.getSubSections().forEach(function(oSubSection) {
 		var oCheckBox = new CheckBox(oSubSection.getId() + "cb", {
@@ -39,14 +39,15 @@ async function(App, Page, CheckBox, ToggleButton, Element, XMLView, ObjectPageSu
 	oSelectionForm.addContent(new ToggleButton({
 		text: "Toggle all",
 		press: function(oEvent) {
-		var bPressed = oEvent.getParameter("pressed");
-		oSelectionForm.getContent().forEach(function(oItem, index) {
-			if (oItem.isA("sap.m.CheckBox")) {
-				oItem.setSelected(bPressed);
-			}
-			updateSubSection(index, bPressed);
-		});
-	}}));
+			var bPressed = oEvent.getParameter("pressed");
+			oSelectionForm.getContent().forEach(function(oItem, index) {
+				if (oItem.isA("sap.m.CheckBox")) {
+					oItem.setSelected(bPressed);
+				}
+				updateSubSection(index, bPressed);
+			});
+		}
+	}));
 
 	oApp.addPage(new Page({
 		showHeader: false,

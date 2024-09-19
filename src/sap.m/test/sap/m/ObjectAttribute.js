@@ -72,9 +72,9 @@ sap.ui.define([
 	  }
   }), new ObjectAttribute({
 	  title: "Custom content",
-	  customContent: new Link ({
+	  customContent: new Link({
 		  text:"test",
-		  press: function() {alert("you press me")}
+		  press: function() {alert("you press me");}
 	  })
   }), new ObjectAttribute({
 	  text : "John Doe Ñagçyfox"
@@ -98,9 +98,9 @@ sap.ui.define([
 	  }
   }), new ObjectAttribute({
 	  title: "Custom content",
-	  customContent: new Link ({
+	  customContent: new Link({
 		  text:"test",
-		  press: function() {alert("you press me")}
+		  press: function() {alert("you press me");}
 	  })
   }), new ObjectAttribute({
 	  text : "John Doe Ñagçyfox"
@@ -140,9 +140,9 @@ sap.ui.define([
 	  }
   }), new ObjectAttribute({
 	  title: "Custom content",
-	  customContent: new Link ({
+	  customContent: new Link({
 		  text:"test",
-		  press: function() {alert("you press me")}
+		  press: function() {alert("you press me");}
 	  })
   }), new ObjectAttribute({
 	  text : "John Doe Ñagçyfox"
@@ -194,9 +194,9 @@ sap.ui.define([
 			  }
 		  }), new ObjectAttribute({
 			  title: "Custom content",
-			  customContent: new Link ({
+			  customContent: new Link({
 				  text:"test",
-				  press: function() {alert("you press me")}
+				  press: function() {alert("you press me");}
 			  })
 		  }), new ObjectAttribute({
 			  text : "John Doe Ñagçyfox"
@@ -219,9 +219,9 @@ sap.ui.define([
 							  }
 						  }), new ObjectAttribute({
 							  title: "Custom content",
-							  customContent: new Link ({
+							  customContent: new Link({
 								  text:"test",
-								  press: function() {alert("you press me")}
+								  press: function() {alert("you press me");}
 							  })
 						  }), new ObjectAttribute({
 							  text : "John Doe Ñagçyfox",
@@ -246,7 +246,7 @@ sap.ui.define([
   var data = [{
 	  NotificationTypeId: "type1"
 	  }, {
-	  NotificationTypeId: "type2",
+	  NotificationTypeId: "type2"
   }];
   var oModel = new JSONModel();
   oModel.setProperty("/rows", data);
@@ -295,9 +295,9 @@ sap.ui.define([
 				  }
 			  }), new ObjectAttribute({
 				  title: "Custom content",
-				  customContent: new Link ({
+				  customContent: new Link({
 					  text:"test link",
-					  press: function() {alert("you press me")}
+					  press: function() {alert("you press me");}
 				  })
 			  }), new ObjectAttribute({
 				  text : "JohnDoeÑagçyfox@JohnDoeÑagçyfox.com",
@@ -339,9 +339,9 @@ sap.ui.define([
 
   addToPage(new ObjectAttribute({
 	  title: "Custom content",
-	  customContent: new Link ({
+	  customContent: new Link({
 		  text:"test",
-		  press: function() {alert("you press me")}
+		  press: function() {alert("you press me");}
 	  })
   }), oPage);
 

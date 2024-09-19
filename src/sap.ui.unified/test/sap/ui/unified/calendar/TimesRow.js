@@ -71,7 +71,7 @@ sap.ui.define([
 					  ["20160106",undefined,"Heilige Drei Könige",1],
 					  ["20150804","20140810","Urlaub",3]];
 
-  var oTimesRow = new TimesRow("TR1",{
+  new TimesRow("TR1",{
 	  focus: function(oEvent){
 		  var oTF = Element.getElementById("TF2");
 		  var oDate = oEvent.getParameter("date");
@@ -100,8 +100,8 @@ sap.ui.define([
 	  }
   }).placeAt("sample1");
 
-  var oLabel = new Label({text: "start date", labelFor: "TF1"}).placeAt("event1");
-  var oInput = new TextField("TF1",{
+  new Label({text: "start date", labelFor: "TF1"}).placeAt("event1");
+  new TextField("TF1",{
 	  editable: true,
 	  placeholder: "yyyymmddHHmmss",
 	  change: function(oEvent){
@@ -118,8 +118,8 @@ sap.ui.define([
 	  }
   }).placeAt("event1");
 
-  var oLabel = new Label({text: "focused date", labelFor: "TF2"}).placeAt("event1");
-  var oInput = new TextField("TF2",{
+  new Label({text: "focused date", labelFor: "TF2"}).placeAt("event1");
+  new TextField("TF2",{
 	  editable: true,
 	  placeholder: "yyyymmddHHmmss",
 	  change: function(oEvent){
@@ -136,15 +136,15 @@ sap.ui.define([
 	  }
   }).placeAt("event1");
 
-  oLabel = new Label({text: "selected date", labelFor: "TF3"}).placeAt("event1");
-  oInput = new TextField("TF3",{
+  new Label({text: "selected date", labelFor: "TF3"}).placeAt("event1");
+  new TextField("TF3",{
 	  editable: true,
 	  placeholder: "yyyymmddHHmmss",
 	  change: function(oEvent){
 		  var sValue = oEvent.getParameter('newValue');
 		  var oTimesRow = Element.getElementById("TR1");
 		  var oDate = oFormatYyyyMMddHHmmss.parse(sValue);
-		  if(oDate){
+		  if (oDate) {
 			  var aSelectedDates = oTimesRow.getSelectedDates();
 			  var oDateRange;
 			  if (aSelectedDates.length == 0 ) {
@@ -154,7 +154,7 @@ sap.ui.define([
 				  oDateRange = aSelectedDates[0];
 				  oDateRange.setStartDate(oDate);
 			  }
-		  }else if(!sValue){
+		  } else if (!sValue) {
 			  oTimesRow.destroySelectedDates();
 		  }
 	  }
@@ -167,13 +167,13 @@ sap.ui.define([
 		  var oTimesRow = Element.getElementById("TR1");
 		  if (bPressed) {
 			  var sType = "";
-			  for (var i = 0; i < aSpecialDays.length; i++) {
+			  for (let i = 0; i < aSpecialDays.length; i++) {
 				  var aSpecialDay = aSpecialDays[i];
 				  sType = "";
-				  if(aSpecialDay[3] < 10) {
-					  sType = "Type0"+aSpecialDay[3];
-				  }else {
-					  sType = "Type"+aSpecialDay[3];
+				  if (aSpecialDay[3] < 10) {
+					  sType = "Type0" + aSpecialDay[3];
+				  } else {
+					  sType = "Type" + aSpecialDay[3];
 				  }
 				  oTimesRow.addSpecialDate(new DateTypeRange({
 					  startDate: oFormatYyyyMMddHHmmss.parse(aSpecialDay[0]),
@@ -184,13 +184,13 @@ sap.ui.define([
 			  }
 
 			  var oDate;
-			  for( i = 1; i <= 10; i++) {
+			  for (let i = 1; i <= 10; i++) {
 				  oDate = UI5Date.getInstance();
 				  oDate.setHours(oDate.getHours() + i);
 				  sType = "";
-				  if(i < 10) {
+				  if (i < 10) {
 					  sType = "Type0" + i;
-				  }else {
+				  } else {
 					  sType = "Type" + i;
 				  }
 				  oTimesRow.addSpecialDate(new DateTypeRange({
@@ -221,7 +221,7 @@ sap.ui.define([
   // single interval selection
   var oStartDate = UI5Date.getInstance();
   oStartDate.setHours(oStartDate.getHours() - 1);
-  oTimesRow = new TimesRow("TR2",{
+  new TimesRow("TR2",{
 	  intervalSelection: true,
 	  items: 6,
 	  intervalMinutes: 30,
@@ -252,16 +252,16 @@ sap.ui.define([
 	  }
   }).placeAt("sample2");
 
-  oLabel = new Label({text: "selected date from", labelFor: "TF2-start"}).placeAt("event2");
-  oInput = new TextField("TF2-start",{
+  new Label({text: "selected date from", labelFor: "TF2-start"}).placeAt("event2");
+  new TextField("TF2-start",{
 	  editable: false
   }).placeAt("event2");
-  oLabel = new Label({text: "to", labelFor: "TF2-end"}).placeAt("event2");
-  oInput = new TextField("TF2-end",{
+  new Label({text: "to", labelFor: "TF2-end"}).placeAt("event2");
+  new TextField("TF2-end",{
 	  editable: false
   }).placeAt("event2");
 
-  oTimesRow = new TimesRow("TR3",{
+  new TimesRow("TR3",{
 	  intervalSelection: false,
 	  singleSelection: false,
 	  showHeader: true,
@@ -272,14 +272,14 @@ sap.ui.define([
 		  var oTimesRow = oEvent.oSource;
 		  var aSelectedDates = oTimesRow.getSelectedDates();
 		  var oDate;
-		  if (aSelectedDates.length > 0 ) {
+		  if (aSelectedDates.length > 0) {
 			  var aItems = oLB.getItems();
 			  var oItem;
-			  for(var i=0; i<aSelectedDates.length; i++){
+			  for (var i = 0; i < aSelectedDates.length; i++){
 				  oDate = aSelectedDates[i].getStartDate();
-				  if(aItems[i]) {
+				  if (aItems[i]) {
 					  oItem = aItems[i];
-				  }else {
+				  } else {
 					  oItem = new Item();
 					  oLB.addItem(oItem);
 				  }
@@ -289,8 +289,8 @@ sap.ui.define([
 					  oItem.setText("");
 				  }
 			  }
-			  if(aItems.length > aSelectedDates.length) {
-				  for(var i=aSelectedDates.length; i<aItems.length; i++){
+			  if (aItems.length > aSelectedDates.length) {
+				  for (var i = aSelectedDates.length; i < aItems.length; i++){
 					  oLB.removeItem(i);
 					  aItems[i].destroy();
 				  }
@@ -301,8 +301,7 @@ sap.ui.define([
 	  }
   }).placeAt("sample3");
 
-  oLabel = new Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
-
+  new Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
   new ListBox("LB",{
 	  editable: false,
 	  visibleItems: 10,

@@ -46,7 +46,7 @@ sap.ui.define([
 		  new Button({ text: "Action 2" }),                new Button({ text: "Action 1" }),
 		  new Button({ text: "Action 2" }),                new Button({ text: "Action 1" }),
 		  new Button({ text: "Action 2" }),                new Button({ text: "Action 1" }),
-		  new Button({ text: "Action 2" }),
+		  new Button({ text: "Action 2" })
 
 	  ]
   });

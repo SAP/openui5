@@ -10,7 +10,7 @@ sap.ui.define([
   var oModel = new JSONModel({
 	  srcWithModificationsRelative: "images/Woman_avatar_01.png",
 	  srcWithModificationsAbsolute: toAbsolute("images/Woman_avatar_02.png"),
-	  srcWithoutModifications: toAbsolute("images/Woman_04.png"),
+	  srcWithoutModifications: toAbsolute("images/Woman_04.png")
   });
 
   (await XMLView.create({ definition: jQuery('#myView').html() })).setModel(oModel).placeAt("content");

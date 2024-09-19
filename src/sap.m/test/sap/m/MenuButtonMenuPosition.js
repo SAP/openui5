@@ -110,8 +110,8 @@ sap.ui.define([
 				  oMenuButton.setMenuPosition(Popup.Dock.EndBottom);
 				  oSelect.setSelectedKey(Popup.Dock.EndBottom);
 				  break;
-			  default:
 			  case 0:
+			  default:
 				  oMenuButton.setMenuPosition(Popup.Dock.BeginBottom);
 				  oSelect.setSelectedKey(Popup.Dock.BeginBottom);
 				  break;

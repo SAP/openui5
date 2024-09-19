@@ -41,7 +41,7 @@ sap.ui.define([
 		  template: new Item({key: "{key}", text: "{value}"})
 	  },
 	  suggest: function (oEvent) {
-		  var aItems = oData.items.filter(oItem => oItem.value.includes(oEvent.getParameter("suggestValue"))).slice(0, 5);
+		  var aItems = oData.items.filter((oItem) => oItem.value.includes(oEvent.getParameter("suggestValue"))).slice(0, 5);
 
 		  // simulate network request
 		  setTimeout(function () {
@@ -70,7 +70,7 @@ sap.ui.define([
 		  })
 	  ],
 	  suggest: function (oEvent) {
-		  var aItems = oData.items.filter(oItem => oItem.value.includes(oEvent.getParameter("suggestValue"))).slice(0, 5);
+		  var aItems = oData.items.filter((oItem) => oItem.value.includes(oEvent.getParameter("suggestValue"))).slice(0, 5);
 
 		  // simulate network request
 		  setTimeout(function () {
@@ -91,7 +91,7 @@ sap.ui.define([
 		  new Button({
 			  text: "Get selectedItem",
 			  press: function () {
-				  console.error(oInputWithSuggestions.getSelectedItem())
+				  console.error(oInputWithSuggestions.getSelectedItem());
 			  }
 		  })
 	  ]
@@ -106,7 +106,7 @@ sap.ui.define([
 		  new Button({
 			  text: "Get selectedRow",
 			  press: function () {
-				  console.error(oInputWithTabularSuggestions.getSelectedRow())
+				  console.error(oInputWithTabularSuggestions.getSelectedRow());
 			  }
 		  })
 	  ]
@@ -118,7 +118,7 @@ sap.ui.define([
 	  items: [
 		  oVBoxList, oVBoxTabular
 	  ]
-  })
+  });
   oLayout.addStyleClass("sapUiMediumMargin");
   oLayout.placeAt('content');
 });

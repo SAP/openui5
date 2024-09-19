@@ -95,11 +95,11 @@ sap.ui.define([
 			  text: "Do the thing",
 			  press: function() {
 				  //filter and apply a custom class on your custom control
-				  PC.getRows()[0].getAppointments().forEach(app => {
+				  PC.getRows()[0].getAppointments().forEach((app) => {
 					  if (app.getType() === "Type05") {
 						  app.getCustomControl().toggleStyleClass("sapUiCalendarAppDimmed", this.getPressed());
 					  }
-				  })
+				  });
 			  }})
 		  ]
   });

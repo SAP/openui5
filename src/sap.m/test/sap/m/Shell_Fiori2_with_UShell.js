@@ -10,7 +10,7 @@ sap.ui.define([
   "use strict";
   // Note: the HTML page 'Shell_Fiori2_with_UShell.html' loads this module via data-sap-ui-on-init
 
-  var oShell= new Shell("myShell", {
+  var oShell = new Shell("myShell", {
 	  title: "My Application",
 	  logo: "images/SAPUI5.png",
 	  showLogout: false

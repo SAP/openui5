@@ -27,12 +27,12 @@ sap.ui.define([
 ) {
   "use strict";
 
-  var aConditions= [];
+  var aConditions = [];
   var oSortPanel;
   var oModel;
-  var iCount= 100;
+  var iCount = 100;
 
-  show= function(oPanel, sTitle) {
+  function show(oPanel, sTitle) {
 	  if (theDialogMode.getSelected()) {
 		  oPanel.setContainerQuery(true);
 		  //oPanel.setLayoutMode("Desktop");
@@ -52,7 +52,7 @@ sap.ui.define([
 	  } else {
 		  oPanel.placeAt("contentPanel", "only");
 	  }
-  };
+  }
 
 
   var btnShow = new Button({
@@ -144,7 +144,7 @@ sap.ui.define([
   var btnValidate = new Button({
 	  text: "validate",
 	  press: function() {
-		  MessageToast.show("validate= "+oSortPanel.validateConditions());
+		  MessageToast.show("validate= " + oSortPanel.validateConditions());
 	  }
   });
 
@@ -169,20 +169,20 @@ sap.ui.define([
 	  press: function() {
 		  aConditions = oSortPanel._getConditions();
 
-		  var sConditions= "";
-		  for (i = 0; i < aConditions.length; i++) {
+		  var sConditions = "";
+		  for (let i = 0; i < aConditions.length; i++) {
 			  var oCondition = aConditions[i];
-			  sConditions+= "'"+oCondition.text + "' ";
+			  sConditions += "'" + oCondition.text + "' ";
 		  }
 
-		  MessageToast.show("Conditions= "+sConditions);
+		  MessageToast.show("Conditions= " + sConditions);
 	  }
   });
 
   var btnAddCondition = new Button({
 	  text: "add",
 	  press: function() {
-		  var oData= oModel.getData();
+		  var oData = oModel.getData();
 		  oData.sortItems.push({
 				  "key" : "s" + iCount++,
 				  "columnKey" : "c0",
@@ -197,7 +197,7 @@ sap.ui.define([
   var btnInsertCondition = new Button({
 	  text: "insert",
 	  press: function() {
-		  var oData= oModel.getData();
+		  var oData = oModel.getData();
 		  oData.sortItems.splice(0,0,{
 				  "key" : "s" + iCount++,
 				  "columnKey" : "c0",
@@ -212,11 +212,11 @@ sap.ui.define([
   var btnRemoveCondition = new Button({
 	  text: "remove",
 	  press: function() {
-		  var oData= oModel.getData();
+		  var oData = oModel.getData();
 		  oData.sortItems.splice(0, 1);
 		  oModel.setData(oData, true);
 
-		  MessageToast.show("remove SortItem from Model"+ " #" + oModel.getData().sortItems.length);
+		  MessageToast.show("remove SortItem from Model" + " #" + oModel.getData().sortItems.length);
 	  }
   });
 
@@ -230,7 +230,7 @@ sap.ui.define([
 	  width: "100px"
   });
 
-  var theCompactMode= new CheckBox({
+  var theCompactMode = new CheckBox({
 	  selected: true,
 	  text: "compactMode",
 	  select : function() {
@@ -238,7 +238,7 @@ sap.ui.define([
 	  }
   });
 
-  var theDialogMode= new CheckBox({
+  var theDialogMode = new CheckBox({
 	  selected: false,
 	  text: "show on dialog",
 	  select : function() {

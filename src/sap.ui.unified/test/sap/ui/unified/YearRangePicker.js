@@ -35,8 +35,8 @@ sap.ui.define([
 								iYear,
 								oDate;
 
-							if (sValue && !isNaN(sValue)){
-								iYear = parseInt(sValue),
+							if (sValue && !isNaN(sValue)) {
+								iYear = parseInt(sValue);
 								oDate = new UniversalDate();
 
 								oDate.setFullYear(iYear);

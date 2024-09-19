@@ -30,7 +30,7 @@ sap.ui.define([
 	  title: "Large class",
 	  text : " Success state",
 	  state: "Success",
-	  inverted: true,
+	  inverted: true
   }).addStyleClass("sapMObjectStatusLarge"), oPage);
 
   addToPage(new ObjectStatus({

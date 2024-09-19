@@ -18,11 +18,12 @@ sap.ui.define([
 	// shortcut for sap.ui.table.SelectionMode
 	const SelectionMode = tableLibrary.SelectionMode;
 
+	/*global TABLESETTINGS */
 	(new Button({
 		text: "Just a Button before"
 	})).placeAt("content");
 
-	var oTable = new AnalyticalTable({
+	const oTable = new AnalyticalTable({
 		title: "Title of the Table",
 		footer: "Footer of the Table",
 		selectionMode: SelectionMode.MultiToggle
@@ -30,12 +31,12 @@ sap.ui.define([
 	oTable.placeAt("content");
 	(new Button({text: "Just a Button after"})).placeAt("content");
 
-	TABLESETTINGS.addServiceSettings(oTable, "AnalyticalTableServiceSettings", updateModel)
+	TABLESETTINGS.addServiceSettings(oTable, "AnalyticalTableServiceSettings", updateModel);
 
 	// create columns
-	var aColumns = ["CostCenter", "CostCenterText", "CostElement", "CostElementText", "ActualCosts", "Currency", "PlannedCosts", "ValueType", "CurrencyType"];
+	const aColumns = ["CostCenter", "CostCenterText", "CostElement", "CostElementText", "ActualCosts", "Currency", "PlannedCosts", "ValueType", "CurrencyType"];
 
-	for (var i = 0; i < aColumns.length; i++) {
+	for (let i = 0; i < aColumns.length; i++) {
 		oTable.addColumn(new AnalyticalColumn({
 			label: aColumns[i],
 			template: getTemplate(aColumns[i]),
@@ -62,9 +63,9 @@ sap.ui.define([
 
 	// set Model and bind Table
 
-	var oModel;
-	var bProvideGrandTotals = true;
-	var bSumOnTop = false;
+	let oModel;
+	let bProvideGrandTotals = true;
+	let bSumOnTop = false;
 
 	function updateModel(mServiceSettings) {
 		oModel = new ODataModel(mServiceSettings.defaultProxyUrl, true);

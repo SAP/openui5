@@ -1,1 +1,1 @@
-alert('this JS will be sanitized')
+alert('this JS will be sanitized');

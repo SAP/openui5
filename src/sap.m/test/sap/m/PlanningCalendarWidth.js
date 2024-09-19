@@ -250,27 +250,27 @@ sap.ui.define([
 				  width: "230px",
 				  placeholder: "Choose built-in views",
 				  items: [
-					  oItem20 = new Item({
+					  new Item({
 						  key: "Hour",
 						  text: "Hour"
 					  }),
 
-					  oItem21 = new Item({
+					  new Item({
 						  key: "Day",
 						  text: "Day"
 					  }),
 
-					  oItem22 = new Item({
+					  new Item({
 						  key: "Month",
 						  text: "Month"
 					  }),
 
-					  oItem23 = new Item({
+					   new Item({
 						  key: "Week",
 						  text: "1 week"
 					  }),
 
-					  oItem24 = new Item({
+					  new Item({
 						  key: "One Month",
 						  text: "1 month"
 					  })
@@ -584,7 +584,7 @@ sap.ui.define([
 				  if (oSpecialDate.getType() === CalendarDayType.NonWorking) {
 					  oPC1.removeSpecialDate(oSpecialDate);
 				  }
-			  })
+			  });
 		  }
 	  }
   });
@@ -1317,7 +1317,7 @@ sap.ui.define([
 			  type: CalendarDayType.Type03,
 			  color:"#4b0082",
 			  tooltip: "Test"
-		  }),
+		  })
 	  ],
 	  toolbarContent: [
 		  oTitle,

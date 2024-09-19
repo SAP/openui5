@@ -253,7 +253,7 @@ sap.ui.define([
 							new DateTypeRange("SDR13",{startDate: new Date(2015, 1, 14), endDate: new Date(2015, 1, 16), type: CalendarDayType.Type10})
 						]
 		});
-	};
+	}
 
 	oApp.addPage(oPage);
 

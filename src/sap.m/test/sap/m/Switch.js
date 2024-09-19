@@ -36,7 +36,7 @@ sap.ui.define([
   var oSwitchNoText = new Switch({
 	  id: "switch_notext",
 	  customTextOn: " ",
-	  customTextOff: " ",
+	  customTextOff: " "
   });
 
   var oSwitchAcceptReject = new Switch({

@@ -1,16 +1,14 @@
-// Note: the HTML page 'PlanningCalendarHeader.html' loads this module via data-sap-ui-on-init
-
-var oPCHeader;
 sap.ui.define([
+	'sap/base/Log',
 	'sap/m/PlanningCalendarHeader',
 	'sap/m/Button',
 	'sap/m/SegmentedButton',
 	'sap/m/App',
-	 'sap/m/Page'
+	'sap/m/Page'
 ],
-function (PlanningCalendarHeader, Button, SegmentedButton, App, Page) {
+function (Log, PlanningCalendarHeader, Button, SegmentedButton, App, Page) {
 	"use strict";
-	oPCHeader = new PlanningCalendarHeader("PlanningCalendarHeader",{
+	var oPCHeader = new PlanningCalendarHeader("PlanningCalendarHeader",{
 		pickerText: "Picker text",
 		actions: [
 			new SegmentedButton('ViewSwitch1', {
@@ -37,16 +35,16 @@ function (PlanningCalendarHeader, Button, SegmentedButton, App, Page) {
 			})
 		],
 		pressPrevious: function () {
-			console.log("Previous pressed!");
+			Log.info("Previous pressed!");
 		},
 		pressToday: function () {
-			console.log("Today pressed!");
+			Log.info("Today pressed!");
 		},
 		pressNext: function () {
-			console.log("Next pressed!");
+			Log.info("Next pressed!");
 		},
 		dateSelect: function () {
-			console.log("Date selected!");
+			Log.info("Date selected!");
 		}
 	});
 	new App({

@@ -82,7 +82,7 @@ sap.ui.define([
 							  new Input({value:"10"}),
 							  new Label({text:"PostCode / City"}),
 							  new Input({value:"12345"}),
-							  new Input({value:"Musterstadt"}),
+							  new Input({value:"Musterstadt"})
 							  ];
 
 	var aContentDisplay = [

@@ -83,7 +83,7 @@ sap.ui.define([
 							  new Input({value:"10", layoutData: new GridData({span: "L2 M2 S2"})}),
 							  new Label({text:"PostCode / City"}),
 							  new Input({value:"12345", layoutData: new GridData({span: "L3 M3 S3"})}),
-							  new Input({value:"Musterstadt"}),
+							  new Input({value:"Musterstadt"})
 							  ];
 
 	var aContentDisplay = [

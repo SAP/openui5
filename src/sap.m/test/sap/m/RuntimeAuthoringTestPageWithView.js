@@ -81,7 +81,7 @@ sap.ui.define([
 			  bGenerateMissingMockData : true
 		  });
 		  this.oMockServer.start();
-		  var oModel = new ODataModel (this.sServiceUri, {defaultBindingMode:"TwoWay"});
+		  var oModel = new ODataModel(this.sServiceUri, {defaultBindingMode:"TwoWay"});
 		  this.getView().setModel(oModel);
 		  this.getView().bindElement("/ProductSet('HT-1000')");
 	  },
@@ -252,7 +252,7 @@ sap.ui.define([
 								  });
 								  oRta.attachStop(function() {
 									  oRta.destroy();
-								  })
+								  });
 								  oRta.start();
 							  }
 						  })

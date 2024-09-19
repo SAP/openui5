@@ -15,13 +15,14 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ], function(RenderManager, JSONModel, TreeTable, Column, Text, Link, Icon, Toolbar, Label, Splitter, Control, jQuery) {
 	"use strict";
-	var iGeneratedSizeFactors = 0;
+	/*global TABLESETTINGS */
+	let iGeneratedSizeFactors = 0;
 
 	function getSizeFactor() {
 		iGeneratedSizeFactors++;
-		if (iGeneratedSizeFactors % 3 == 0 && iGeneratedSizeFactors % 5 == 0) {
+		if (iGeneratedSizeFactors % 3 === 0 && iGeneratedSizeFactors % 5 === 0) {
 			return 2;
-		} else if (iGeneratedSizeFactors % 6 == 0) {
+		} else if (iGeneratedSizeFactors % 6 === 0) {
 			return 3;
 		} else {
 			return 1;
@@ -30,7 +31,7 @@ sap.ui.define([
 
 	function enrichTreeData(oNode) {
 		oNode.sizeFactor = getSizeFactor();
-		for (var sPropertyName in oNode) {
+		for (const sPropertyName in oNode) {
 			if (!isNaN(sPropertyName)) {
 				enrichTreeData(oNode[sPropertyName]);
 			} else if (Array.isArray(oNode[sPropertyName])) {
@@ -45,10 +46,10 @@ sap.ui.define([
 
 	enrichTreeData(TABLESETTINGS.treeTestData.root);
 
-	var oModel = new JSONModel();
+	const oModel = new JSONModel();
 	oModel.setData(TABLESETTINGS.treeTestData.root);
 
-	var SyncedControl = Control.extend("sap.ui.table.test.SyncedControl", /** @lends sap.ui.table.test.SyncedControl.prototype */ {
+	const SyncedControl = Control.extend("sap.ui.table.test.SyncedControl", /** @lends sap.ui.table.test.SyncedControl.prototype */ {
 		renderer: function(oRm, oControl) {
 			oRm.openStart("div", oControl);
 			oRm.style("height", "0"); // height=0 allows shrinking in row mode Auto
@@ -94,7 +95,7 @@ sap.ui.define([
 			};
 		},
 		onAfterRendering: function() {
-			var oDomRef = this.getDomRef();
+			const oDomRef = this.getDomRef();
 
 			this.oTable = oDomRef.querySelector("#table");
 			this.oHeader = oDomRef.querySelector("#table-header");
@@ -110,7 +111,7 @@ sap.ui.define([
 
 				this.oSyncInterface.placeVerticalScrollbarAt(this.oVSbContainer);
 
-				var oRenderManager = new RenderManager().getInterface();
+				const oRenderManager = new RenderManager().getInterface();
 				this.oSyncInterface.renderHorizontalScrollbar(oRenderManager, this.getId() + "-hsb", 1000);
 				oRenderManager.flush(this.oHSbContainer);
 			}
@@ -147,10 +148,10 @@ sap.ui.define([
 				return;
 			}
 
-			var that = this;
-			var aRows = this.oContent.querySelectorAll("div");
-			var aRowStates = this.state.rows;
-			var iLength = Math.max(aRows.length, aRowStates.length);
+			const that = this;
+			const aRows = this.oContent.querySelectorAll("div");
+			const aRowStates = this.state.rows;
+			const iLength = Math.max(aRows.length, aRowStates.length);
 
 			function updateRow(oRow, oState, iIndex) {
 				oRow.style.width = "100%";
@@ -173,22 +174,22 @@ sap.ui.define([
 
 			function attachEventListener(oRow) {
 				jQuery(oRow).on("mouseenter", function(oEvent) {
-					var iIndex = parseInt(oEvent.target.getAttribute("data-sap-ui-index"), 10);
+					const iIndex = parseInt(oEvent.target.getAttribute("data-sap-ui-index"));
 					that.oSyncInterface.syncRowHover(iIndex, true);
 				}).on("mouseleave", function(oEvent) {
-					var iIndex = parseInt(oEvent.target.getAttribute("data-sap-ui-index"), 10);
+					const iIndex = parseInt(oEvent.target.getAttribute("data-sap-ui-index"));
 					that.oSyncInterface.syncRowHover(iIndex, false);
 				});
 				jQuery(oRow).on("click", function(oEvent) {
-					var iIndex = parseInt(oEvent.target.getAttribute("data-sap-ui-index"), 10);
-					var bSelected = oEvent.target.getAttribute("data-selected") === "true";
+					const iIndex = parseInt(oEvent.target.getAttribute("data-sap-ui-index"));
+					const bSelected = oEvent.target.getAttribute("data-selected") === "true";
 					that.oSyncInterface.syncRowSelection(iIndex, !bSelected);
 				});
 			}
 
-			for (var i = 0; i < iLength; i++) {
-				var oRow = aRows[i];
-				var oRowState = aRowStates[i];
+			for (let i = 0; i < iLength; i++) {
+				const oRow = aRows[i];
+				const oRowState = aRowStates[i];
 
 				if (!oRowState) { // Remove row
 					jQuery(oRow).remove();
@@ -203,16 +204,15 @@ sap.ui.define([
 			}
 		},
 		syncWith: function(oTable) {
-			var that = this;
+			const that = this;
 			oTable._enableSynchronization().then(function(oSyncInterface) {
 				that.oSyncInterface = oSyncInterface;
 
 				oSyncInterface.rowCount = function(iCount) {
-					var iOldCount = that.state.rows.length;
-					var i;
+					const iOldCount = that.state.rows.length;
 
 					if (iOldCount < iCount) {
-						for (i = 0; i < iCount - iOldCount; i++) {
+						for (let i = 0; i < iCount - iOldCount; i++) {
 							that.state.rows.push({
 								height: 0,
 								selected: false,
@@ -220,7 +220,7 @@ sap.ui.define([
 							});
 						}
 					} else if (iOldCount > iCount) {
-						for (i = iOldCount - 1; i >= iCount; i--) {
+						for (let i = iOldCount - 1; i >= iCount; i--) {
 							that.state.rows.pop();
 						}
 					}
@@ -263,7 +263,7 @@ sap.ui.define([
 		}
 	});
 
-	var oTable = new TreeTable({
+	const oTable = new TreeTable({
 		rows: {
 			path: "/",
 			parameters: {
@@ -298,7 +298,7 @@ sap.ui.define([
 				label: new Label({text: "Icon"}),
 				template: new Icon({
 					src: "sap-icon://account",
-					size: {path: "sizeFactor", formatter: function(iFactor) {return (iFactor * 48) + "px";}}
+					size: {path: "sizeFactor", formatter: function(iFactor) { return (iFactor * 48) + "px"; }}
 				}),
 				width: "100px"
 			})
@@ -308,7 +308,7 @@ sap.ui.define([
 	});
 	oTable._bVariableRowHeightEnabled = true;
 
-	var oTable2 = new TreeTable({
+	const oTable2 = new TreeTable({
 		rows: {
 			path: "/",
 			parameters: {
@@ -331,10 +331,10 @@ sap.ui.define([
 	});
 	oTable2._bVariableRowHeightEnabled = true;
 
-	var oSyncedControl = new SyncedControl();
+	const oSyncedControl = new SyncedControl();
 	oSyncedControl.syncWith(oTable);
 
-	var oSyncedControl2 = new SyncedControl();
+	const oSyncedControl2 = new SyncedControl();
 	oSyncedControl2.syncWith(oTable2);
 
 	new Splitter({

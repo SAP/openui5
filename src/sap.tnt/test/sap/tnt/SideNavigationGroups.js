@@ -30,7 +30,7 @@ sap.ui.define([
 					text: "New",
 					items: [
 						new NavigationListItem({ text: "Cards", icon: "sap-icon://card" }),
-						new NavigationListItem({ text: "Building", icon: "sap-icon://building" }),
+						new NavigationListItem({ text: "Building", icon: "sap-icon://building" })
 					]
 				}),
 				new NavigationListGroup({
@@ -44,9 +44,9 @@ sap.ui.define([
 							items: [
 								new NavigationListItem({ text: "Supply Chain" }),
 								new NavigationListItem({ selectable: false, href: "https://sap.com", target: "_blank", text: "External Link", icon: "sap-icon://attachment" }),
-								new NavigationListItem({ text: "Schematics" }),
+								new NavigationListItem({ text: "Schematics" })
 							]
-						}),
+						})
 					]
 				}),
 				new NavigationListItem({ text: "People", icon: "sap-icon://people-connected" }),
@@ -62,14 +62,14 @@ sap.ui.define([
 				new NavigationListItem({ selectable: false, href: "https://sap.com", target: "_blank", text: "External Link", icon: "sap-icon://attachment" }),
 
 				new NavigationListItem({ text: "Nutrition Activity", icon: "sap-icon://nutrition-activity" }),
-				new NavigationListItem({ text: "Box", icon: "sap-icon://sap-box", }),
+				new NavigationListItem({ text: "Box", icon: "sap-icon://sap-box" }),
 				new NavigationListItem({ text: "Pool", icon: "sap-icon://pool" }),
 				new NavigationListGroup({
 					text: "Restricted",
 					enabled: false,
 					items: [
 						new NavigationListItem({ text: "Scissors", icon: "sap-icon://scissors" }),
-						new NavigationListItem({ text: "Running", icon: "sap-icon://physical-activity" }),
+						new NavigationListItem({ text: "Running", icon: "sap-icon://physical-activity" })
 					]
 				}),
 				new NavigationListItem({ selectable: false, href: "https://sap.com", target: "_blank", text: "External Link", icon: "sap-icon://attachment" }),
@@ -81,17 +81,17 @@ sap.ui.define([
 						new NavigationListItem({ selectable: false, href: "https://sap.com", target: "_blank", text: "External Link", icon: "sap-icon://attachment" }),
 						new NavigationListItem({ text: "Driven" }),
 						new NavigationListItem({ text: "Walked" }),
-						new NavigationListItem({ selectable: false, href: "https://sap.com", text: "No Target Link", icon: "sap-icon://attachment" }),
+						new NavigationListItem({ selectable: false, href: "https://sap.com", text: "No Target Link", icon: "sap-icon://attachment" })
 
 					]
-				}),
+				})
 			]
 		}),
 		fixedItem: new NavigationList({
 			items: [
 				new NavigationListItem({ selectable: false, href: "https://sap.com", target: "_blank", text: "External Link", icon: "sap-icon://attachment" }),
 				new NavigationListItem({ selectable: true, text: "Bar Chart", icon: "sap-icon://bar-chart" }),
-				new NavigationListItem({ selectable: false, text: "Compare", icon: "sap-icon://compare" }),
+				new NavigationListItem({ selectable: false, text: "Compare", icon: "sap-icon://compare" })
 			]
 		})
 	});
@@ -130,18 +130,18 @@ sap.ui.define([
 				id: "headerTitle",
 				text: "ToolPage with SideNavigation with Groups",
 				wrapping: false
-			}),
+			})
 		]
 	});
 
 	const sRange = Device.media.getCurrentRange("StdExt").name;
-	if (["Phone", "Tablet"].some(el => el === sRange)) {
+	if (["Phone", "Tablet"].some((el) => el === sRange)) {
 		oToggleExpandedButton.setTooltip("Large Size Navigation");
 	}
 
 	const oTP = new ToolPage({
 		header: oTH,
 		sideContent: oSN,
-		mainContents: oDensityCheckBox,
+		mainContents: oDensityCheckBox
 	}).placeAt("body");
 });

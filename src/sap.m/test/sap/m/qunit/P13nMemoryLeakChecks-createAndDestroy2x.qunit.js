@@ -1,14 +1,13 @@
 sap.ui.define([
-  "sap/ui/qunit/qunit-css",
-  "sap/ui/thirdparty/qunit",
-  "sap/ui/qunit/qunit-junit",
   "sap/base/Log",
   "sap/base/util/ObjectPath",
   "sap/ui/thirdparty/jquery"
-], function(qunitCss, qunit, qunitJunit, Log, ObjectPath, jQuery0) {
+], function(Log, ObjectPath, jQuery0) {
   "use strict";
+  // Note: the HTML page 'P13nMemoryLeakChecks-createAndDestroy2x.qunit.html' loads this module via data-sap-ui-on-init
 
   jQuery0(function() {
+	  /* global QUnit */
 	  sap.ui.require(
 		  [
 			  "jquery.sap.global",
@@ -219,7 +218,7 @@ sap.ui.define([
 				  oControl2.destroy();
 
 
-				  oControl3 = new oControlClass();
+				  var oControl3 = new oControlClass();
 				  if (sControlName !== "sap.m.PlanningCalendar") {
 					  fillControlProperties(oControl3);
 				  }

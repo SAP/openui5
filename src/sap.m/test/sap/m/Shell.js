@@ -31,11 +31,11 @@ sap.ui.define([
 							  '<Button id="btnChangeTheme" press="changeTheme" text="Change Theme"></Button>' +
 						  '</App>' +
 					  '</Shell>' +
-				  '</mvc:View>',
+				  '</mvc:View>'
 			  }).then(function(oView) {
 				  oView.placeAt("content");
 			  });
-		  })
+		  });
 	  });
   })();
 });

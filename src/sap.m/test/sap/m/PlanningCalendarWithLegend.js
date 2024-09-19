@@ -75,7 +75,7 @@ sap.ui.define([
 				  new CalendarLegendItem("T10", {
 					  type: CalendarDayType.Type10,
 					  text: "Type 10 in Legend Calendar area"
-				  }),
+				  })
 			  ],
 			  appointmentItems: [
 				  new CalendarLegendItem("T31", {
@@ -536,8 +536,8 @@ sap.ui.define([
 					  })
 		  ],
 	  specialDates: [ new DateTypeRange({
-						  startDate: UI5Date.getInstance(2015, 0, 1, 12, 00),
-						  endDate: UI5Date.getInstance(2015, 0, 1, 14, 00),
+						  startDate: UI5Date.getInstance(2015, 0, 1, 12, 0),
+						  endDate: UI5Date.getInstance(2015, 0, 1, 14, 0),
 						  type: CalendarDayType.Type01,
 						  tooltip: "Lunch"
 					  }),

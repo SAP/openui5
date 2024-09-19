@@ -53,7 +53,7 @@ sap.ui.define([
 	  }
   });
 
-  app: new App({
+  new App({
 	  pages: [
 		  new Page("ColorPickerArea", {
 			  showHeader:false,
@@ -81,7 +81,7 @@ sap.ui.define([
 						  new ToggleButton("hsv_hsl_btn", {
 							  text: "Toggle HSV/HSL",
 							  press: function () {
-								  oCP.setMode(ColorPickerMode[this.getPressed() ? 'HSV':'HSL']);
+								  oCP.setMode(ColorPickerMode[this.getPressed() ? 'HSV' : 'HSL']);
 							  }
 						  })
 					  ]

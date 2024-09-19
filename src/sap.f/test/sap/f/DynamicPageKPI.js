@@ -1,11 +1,10 @@
-sap.ui.define([
-  "sap/ui/thirdparty/jquery",
-  "sap/ui/core/mvc/XMLView"
-], function(jQuery0) {
-  "use strict";
-  // Note: the HTML page 'DynamicPageKPI.html' loads this module via data-sap-ui-on-init
+// Note: the HTML page 'DynamicPageKPI.html' loads this module via data-sap-ui-on-init
 
-  (function (jQuery) {
-	  sap.ui.xmlview({viewContent:jQuery0('#view1').html()}).placeAt("content");
-  }(jQuery0))
+sap.ui.define([
+	"sap/ui/core/mvc/XMLView"
+], async function(XMLView) {
+	"use strict";
+	(await XMLView.create({
+		definition: document.getElementById('#view1').textContent
+	})).placeAt("content");
 });

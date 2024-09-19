@@ -225,8 +225,8 @@ sap.ui.define([
   });
 
   var oList3 = new List({
-	  inset: true,
-  })
+	  inset: true
+  });
 
   bindListData(data, oItemTemplate1, oList3);
 
@@ -319,7 +319,7 @@ sap.ui.define([
 				  new Item({
 					  key: "3",
 					  text: "item 3"
-				  }),
+				  })
 			  ]
 		  }),
 		  new Input({
@@ -464,7 +464,7 @@ sap.ui.define([
   oOverflowingPopover.addStyleClass("positioned11");
 
   // Add a css class to the body HTML element, in order to be used for caret stylization in visual tests run.
-  var oCustomCssButton = new Button ("customCssButton",{
+  var oCustomCssButton = new Button("customCssButton",{
 	  text: "Toggle custom CSS for visual test",
 	  press: function() {
 		  var $body = jQuery("body");
@@ -481,7 +481,7 @@ sap.ui.define([
 			  width: "600px"
 		  }),
 		  oCustomCssButton,
-		  new Button ({
+		  new Button({
 			  text: "Open Popover",
 			  press: function() {
 				  var aListItems = [];

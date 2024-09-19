@@ -496,9 +496,9 @@ sap.ui.define([
   oh2.setHeaderContainer(itb2);
   oh2.addStyleClass("sapUiResponsivePadding--header");
   //test popover title
-  var domRef = null;
   var titleSelectorEventHandler = function(oEvent) {
-	  domRef = oEvent.getParameters().domRef;
+	  const header = oEvent.getSource();
+	  const domRef = oEvent.getParameters().domRef;
 	  var popover = new Popover({
 			  placement: PlacementType.Bottom,
 			  showHeader: true,
@@ -533,7 +533,7 @@ sap.ui.define([
 		  }) // end of content
 	  }); //end of popover
 	  popover.openBy(domRef);
-  }
+  };
 
 
   var oh3 = new ObjectHeader("oh3", {
@@ -1078,7 +1078,7 @@ sap.ui.define([
 		  '				</HeaderCellItem>' +
 		  '			</south>' +
 		  '		</HeaderCell>' +
-		  '	</items>'+
+		  '	</items>' +
 		  '</HeaderContainer>';
 
 		  Fragment.load({

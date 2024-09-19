@@ -71,7 +71,7 @@ sap.ui.define([
 	  return {
 		  key: sKey, // group by first letter of last name
 		  text: "First letter: " + sKey
-	  }
+	  };
   });
 
   // another Sorter with grouping function
@@ -79,12 +79,12 @@ sap.ui.define([
 	  return {
 		  key: oContext.getProperty("firstName").charAt(0), // group by first letter of first name
 		  sorter_sorted_by: "FirstName"  // this information is only meant for the factory function!
-	  }
+	  };
   });
 
   // another Sorter with grouping function
   var oDateSorter = new Sorter("birthDate", false, function(oContext){
-	  var year = parseInt(oContext.getProperty("birthDate").split("-")[0], 10);
+	  var year = parseInt(oContext.getProperty("birthDate").split("-")[0]);
 	  var key, text;
 
 	  if (year < 1980) {
@@ -101,7 +101,7 @@ sap.ui.define([
 	  return {
 		  key: key,
 		  text: text
-	  }
+	  };
   });
 
   // define the row template

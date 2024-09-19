@@ -115,7 +115,7 @@ sap.ui.define([
 			  value : "{money}",
 			  currency : "{currency}",
 			  useSymbol : "{useSymbol}"
-		  }),
+		  })
 	  ]
   });
   oTable.setModel(oModel);

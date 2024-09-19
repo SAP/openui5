@@ -1863,9 +1863,7 @@ sap.ui.define([
 		}
 
 		if (typeof (vObject) == "number") { // "object" is the index now
-			if (vObject < 0 || vObject >= aIds.length) {
-				future.warningThrows("ManagedObject.removeAssociation called with invalid index: " + sAssociationName + ", " + vObject);
-			} else {
+			if (vObject >= 0 && vObject < aIds.length) {
 				sId = aIds[vObject];
 				aIds.splice(vObject, 1);
 				if (this._observer) {
@@ -2356,10 +2354,7 @@ sap.ui.define([
 		}
 
 		if (typeof (vObject) == "number") { // "vObject" is the index now
-			if (vObject < 0 || vObject >= aChildren.length) {
-				future.warningThrows("ManagedObject.removeAggregation called with invalid index: " + sAggregationName + ", " + vObject);
-
-			} else {
+			if (vObject >= 0 && vObject < aChildren.length) {
 				oChild = aChildren[vObject];
 				aChildren.splice(vObject, 1); // first remove it from array, then call setParent (avoids endless recursion)
 				oChild.setParent(null);

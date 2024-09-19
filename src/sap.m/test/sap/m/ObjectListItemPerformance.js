@@ -33,7 +33,7 @@ sap.ui.define([
 	  var title = (this.getId().indexOf("-S") !== -1) ? "Short Title" : "This is my title which is kind of very long and needs a second line in the very worst case and it could be even long if you do not take care.";
 	  var oData = { items : [] };
 	  var iLength = parseInt(Element.getElementById("input").getValue());
-	  for (var i=0 ; i < iLength ; i++) {
+	  for (var i = 0 ; i < iLength ; i++) {
 		  oData.items.push({
 			  title: title,
 			  number: "00000000" + (i + 1)
@@ -49,7 +49,7 @@ sap.ui.define([
 		  oItemTemplate = new StandardListItem({
 			  type: "Active",
 			  title: "{title}"
-		  })
+		  });
 	  } else {
 		  oItemTemplate = new ObjectListItem({
 			  type: "Active",
@@ -62,7 +62,7 @@ sap.ui.define([
 			  ],
 			  firstStatus: new ObjectStatus({text: "Status 1", state: "Success"}),
 			  secondStatus: new ObjectStatus({text: "Status 2", state: "Error"})
-		  })
+		  });
 	  }
 
 	  // add list

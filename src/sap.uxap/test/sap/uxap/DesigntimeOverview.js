@@ -1,1 +1,1 @@
-document.location.href = "../../../test-resources/sap/ui/dt/ControlLibrary.html?library=sap.uxap"
+document.location.href = "../../../test-resources/sap/ui/dt/ControlLibrary.html?library=sap.uxap";

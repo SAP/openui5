@@ -29,7 +29,7 @@ sap.ui.define([
 		valueState: GenericTagValueState.None,
 		value: new ObjectNumber({
 			number: "956",
-			unit: "EUR",
+			unit: "EUR"
 		}),
 		press: onPress
 	});
@@ -263,7 +263,7 @@ sap.ui.define([
 		items: [
 			oNeutralGenericTag,
 			oErrorGenericTag,
-			oWarningGenericTag,
+			oWarningGenericTag
 		]
 	});
 
@@ -331,4 +331,4 @@ sap.ui.define([
 		initialPage: "myPage",
 		pages: [oPage]
 	}).placeAt("body");
-})
+});

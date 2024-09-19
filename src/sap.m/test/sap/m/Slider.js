@@ -191,7 +191,7 @@ sap.ui.define([
 			scale: new ResponsiveScale({
 				tickmarksBetweenLabels: 2
 			})
-		}).addStyleClass("sapMSliderOffset")
+		}).addStyleClass("sapMSliderOffset");
 
 	var oPage = new Page("page", {
 		title: "Mobile Slider Control",

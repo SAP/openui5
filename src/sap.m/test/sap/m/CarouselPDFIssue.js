@@ -44,7 +44,7 @@ sap.ui.define([
 		  {id: 14, objectType: "1", src: myPDF},
 		  {objectType: "1", src: myPDF}
 	  ]
-  }
+  };
   sap.ui.controller("myController", {
 	  onInit: function () {
 		  this.x = 1;
@@ -65,7 +65,7 @@ sap.ui.define([
 			  this.dialog = undefined;
 		  }
 		  var that = this;
-		  carousel = new Carousel({
+		  var carousel = new Carousel({
 			  showPageIndicator: true,
 			  busyIndicatoryDelay: 0,
 			  pageChanged: this.onCarouselPageChanged,
@@ -87,7 +87,7 @@ sap.ui.define([
 				  filters: [new Filter("objectType", FilterOperator.NE, "X")],
 				  sorter: aSorters
 			  }
-		  })
+		  });
 		  that.dialog = new Dialog({
 			  horizontalScrolling: false, verticalScrolling: false,
 			  contentHeight: '100%', contentWidth: '100%', stretch: true,
@@ -95,8 +95,9 @@ sap.ui.define([
 			  content: [carousel],
 			  buttons: new Button({
 				  text: "Close", press: function () {
-					  if (that.dialog)
+					  if (that.dialog) {
 						  that.dialog.close();
+					  }
 				  }
 			  })//getOperationButtons()
 		  });

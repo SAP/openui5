@@ -85,7 +85,7 @@ sap.ui.define([
 	  maxContainerCols : 2,
 	  editable : true,
 	  content : [
-		  new Title ({
+		  new Title({
 			  text : "Modify Image Content"
 		  }),
 		  oPictureLbl,

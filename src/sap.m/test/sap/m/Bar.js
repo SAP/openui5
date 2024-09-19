@@ -125,17 +125,17 @@ sap.ui.define([
   var button4 = new Button('button4', {
 	  type: ButtonType.Default,
 	  text: "Label",
-	  enabled: true,
+	  enabled: true
   });
   var button5 = new Button('button5', {
 	  type: ButtonType.Default,
 	  text: "Label",
-	  enabled: true,
+	  enabled: true
   });
   var button6 = new Button('button6', {
 	  type: ButtonType.Default,
 	  text: "Label",
-	  enabled: true,
+	  enabled: true
   });
 
   var Bar7 = new Bar({
@@ -215,10 +215,10 @@ sap.ui.define([
 		  new Select({ items : [
 			  new Item({
 				  key: "0",
-				  text: "item 0",
+				  text: "item 0"
 			  }),new Item({
 				  key: "0",
-				  text: "loooooooooooooong item",
+				  text: "loooooooooooooong item"
 			  })]}),
 		  new Button({ text : "Test" }),
 		  new SearchField({placeholder: "search...", width : "200px"}),
@@ -232,10 +232,10 @@ sap.ui.define([
 			  items : [
 					  new Item({
 						  key: "0",
-						  text: "item 0",
+						  text: "item 0"
 					  }),new Item({
 						  key: "0",
-						  text: "loooooooooooooong item",
+						  text: "loooooooooooooong item"
 			  })]}),
 		  new Button({
 			  icon: "sap-icon://person-placeholder"
@@ -267,7 +267,7 @@ sap.ui.define([
 	  contentMiddle:[
 					  new Button({
 						  text : "Test for a regression in IE9 and FF",
-						  width : "50%",
+						  width : "50%"
 					  }),
 					  new Button({
 						  text: "this button got hidden when it overflows due to the margins",

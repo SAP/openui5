@@ -21,13 +21,13 @@ sap.ui.define([
 			title: "Page with responsive paddings",
 			showNavButton: true,
 			contentOnlyBusy: true,
-			subHeader: [new Bar ({
+			subHeader: [new Bar({
 				contentRight: [new Button('hide-show-header', {
 					text: "Hide/show header",
 					press: function () {
 						oPage.setShowHeader(!oPage.getShowHeader());
 					}
-				})],
+				})]
 			})],
 			content: [
 				new Text({

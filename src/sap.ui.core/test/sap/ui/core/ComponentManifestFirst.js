@@ -13,7 +13,7 @@ sap.ui.define([
   /*global sinon */
   sap.ui.loader.config({
 	  paths: {
-		  ["samples"]: "./samples"
+		  samples: "./samples"
 	  }
   });
 

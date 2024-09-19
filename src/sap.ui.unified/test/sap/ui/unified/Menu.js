@@ -7,9 +7,8 @@ sap.ui.define([
   "sap/ui/commons/RichTooltip",
   "sap/m/Dialog",
   "sap/m/Button",
-  "sap/ui/commons/Button",
   "sap/ui/thirdparty/jquery"
-], function(Theming, Menu, MenuItem, MenuTextFieldItem, MenuButton, RichTooltip, Dialog, Button, CommonsButton, jQuery) {
+], function(Theming, Menu, MenuItem, MenuTextFieldItem, MenuButton, RichTooltip, Dialog, Button, jQuery) {
   "use strict";
   // Note: the HTML page 'Menu.html' loads this module via data-sap-ui-on-init
 
@@ -17,44 +16,44 @@ sap.ui.define([
   var aMenus = [];
   var bMenuEventingEnabled = false;
 
-  function createSetting(sLabel, oDefaultValue, aValues, fHandler){
-	  var sDom, fHandle;
-	  var sId = "setting"+(idCounter++);
-	  if(!aValues || aValues.length == 0){
-		  if(typeof oDefaultValue == "string"){
-			  sDom = "<input id='"+sId+"' value='"+oDefaultValue+"'>";
-			  fHandle = function(oEvent){
-				  fHandler(oEvent, jQuery(oEvent.target).val());
+  function createSetting(sLabel, oDefaultValue, aValues, fnHandler){
+	  var sDom, fnHandle;
+	  var sId = "setting" + (idCounter++);
+	  if (!aValues || aValues.length == 0) {
+		  if (typeof oDefaultValue == "string") {
+			  sDom = "<input id='" + sId + "' value='" + oDefaultValue + "'>";
+			  fnHandle = function(oEvent) {
+				  fnHandler(oEvent, jQuery(oEvent.target).val());
 			  };
-		  }else if(typeof oDefaultValue == "number"){
-			  sDom = "<input id='"+sId+"' value='"+oDefaultValue+"'>";
-			  fHandle = function(oEvent){
-				  fHandler(oEvent, parseInt(jQuery(oEvent.target).val()));
+		  } else if (typeof oDefaultValue == "number") {
+			  sDom = "<input id='" + sId + "' value='" + oDefaultValue + "'>";
+			  fnHandle = function(oEvent) {
+				  fnHandler(oEvent, parseInt(jQuery(oEvent.target).val()));
 			  };
-		  }else if(typeof oDefaultValue == "boolean"){
-			  sDom = "<input type='checkbox' id='"+sId+"'"+(oDefaultValue ? " checked='"+oDefaultValue+"'" : "")+">";
-			  fHandle = function(oEvent){
-				  fHandler(oEvent, jQuery(oEvent.target).is(":checked"));
-			  }
+		  } else if (typeof oDefaultValue == "boolean") {
+			  sDom = "<input type='checkbox' id='" + sId + "'" + (oDefaultValue ? " checked='" + oDefaultValue + "'" : "") + ">";
+			  fnHandle = function(oEvent) {
+				  fnHandler(oEvent, jQuery(oEvent.target).is(":checked"));
+			  };
 		  }
-	  }else{
-		  sDom = "<select id='"+sId+"'>";
-		  for(var i=0; i<aValues.length; i++){
-			  sDom += "<option value='"+aValues[i]+"'" + (aValues[i] == oDefaultValue ? " selected='selected'" : "") + ">" + aValues[i] + "</option>";
+	  } else {
+		  sDom = "<select id='" + sId + "'>";
+		  for (var i = 0; i < aValues.length; i++){
+			  sDom += "<option value='" + aValues[i] + "'" + (aValues[i] == oDefaultValue ? " selected='selected'" : "") + ">" + aValues[i] + "</option>";
 		  }
 		  sDom += "</select>";
-		  fHandle = function(oEvent){
-			  fHandler(oEvent, jQuery(oEvent.target).find(":selected").attr("value"));
-		  }
+		  fnHandle = function(oEvent) {
+			  fnHandler(oEvent, jQuery(oEvent.target).find(":selected").attr("value"));
+		  };
 	  }
 
-	  if(!sDom){
+	  if (!sDom) {
 		  return null;
 	  }
 
-	  jQuery(document.getElementById("settings")).append("<div id='"+sId+"-frame' style='margin-top:5px;'><div style='display:inline-block;width:200px;'>" + sLabel + ":</div>" + sDom + "</div>");
+	  jQuery(document.getElementById("settings")).append("<div id='" + sId + "-frame' style='margin-top:5px;'><div style='display:inline-block;width:200px;'>" + sLabel + ":</div>" + sDom + "</div>");
 
-	  jQuery(document.getElementById(sId)).on("change", fHandle);
+	  jQuery(document.getElementById(sId)).on("change", fnHandle);
 
 	  return sId;
   }
@@ -62,7 +61,7 @@ sap.ui.define([
   jQuery(function() {
 	  //Cozy Mode
 	  createSetting("Cozy Mode", false, null, function(oEvent, val){
-		  for (var i=0; i<aMenus.length; i++) {
+		  for (var i = 0; i < aMenus.length; i++) {
 			  if (aMenus[i].getRootMenu() === aMenus[i]) {
 				  aMenus[i].toggleStyleClass("sapUiSizeCozy", val);
 			  }
@@ -71,7 +70,7 @@ sap.ui.define([
 
 	  //Dark Design
 	  function setDarkDesign(bEnable) {
-		  for (var i=0; i<aMenus.length; i++) {
+		  for (var i = 0; i < aMenus.length; i++) {
 			  if (aMenus[i].getRootMenu() === aMenus[i]) {
 				  aMenus[i].setRootMenuTopStyle(bEnable);
 			  }
@@ -84,9 +83,9 @@ sap.ui.define([
 
 	  //No Icons
 	  createSetting("No Icons", false, null, function(oEvent, val){
-		  for (var i=0; i<aMenus.length; i++) {
+		  for (var i = 0; i < aMenus.length; i++) {
 			  var aItems = aMenus[i].getItems();
-			  for (var j=0; j<aItems.length; j++) {
+			  for (var j = 0; j < aItems.length; j++) {
 				  aItems[j].setIcon("");
 				  if (!val && aItems[j].__appicon) {
 					  aItems[j].setIcon(aItems[j].__appicon);
@@ -117,7 +116,7 @@ sap.ui.define([
 
 			  iLevel = iLevel ? iLevel : 1;
 			  var aItems = oMenu.getItems();
-			  for (var i=0; i<aItems.length; i++) {
+			  for (var i = 0; i < aItems.length; i++) {
 				  customize(aItems[i].getSubmenu(), bCreate, iLevel + 1);
 				  if (!bCreate) {
 					  if (aItems[i].__appcustom) {
@@ -128,7 +127,7 @@ sap.ui.define([
 
 			  if (bCreate) {
 				  setTimeout(function(){
-					  for(var i = 0; i < 5; i++){
+					  for (var i = 0; i < 5; i++){
 						  var oItem = new MenuItem({text: "New Item " + i});
 						  oItem.__appcustom = true;
 						  oMenu.addItem(oItem);
@@ -149,13 +148,12 @@ sap.ui.define([
 	  });
   });
 
-  try{
+  try {
 	  sap.ui.getCore().loadLibrary("sap.ui.commons");
-  }catch(e){
+  } catch (e) {
 	  alert("This test page requires the library 'sap.ui.commons' which is not available.");
-	  throw(e);
+	  throw e;
   }
-
 
   function createTest(sText, oMenuConfig) {
 	  var iMessageClearTime = 3000;
@@ -171,7 +169,7 @@ sap.ui.define([
 				  sText = "You selected menu item '" + oItem.getText() + "'";
 			  }
 
-			  jQuery("#output").html(sText +" (" + (bOnItem ? "Item" : "Menu") + " Eventing).");
+			  jQuery("#output").html(sText + " (" + (bOnItem ? "Item" : "Menu") + " Eventing).");
 
 			  if (iMessageClearTime > 0) {
 				  setTimeout(function(){
@@ -188,7 +186,7 @@ sap.ui.define([
 		  });
 		  aMenus.push(oMenu);
 		  var aItems = oConfig.items;
-		  for(var i=0; i<aItems.length; i++){
+		  for (var i = 0; i < aItems.length; i++){
 			  var oMenuItem,
 				  oItemConfig = aItems[i].config || {};
 
@@ -360,17 +358,17 @@ sap.ui.define([
 
   function createManyItems(bWithSubMenu, sPrefix) {
 	  var aItems = [];
-	  for(var i=0; i<100; i++){
+	  for (var i = 0; i < 100; i++){
 		  var oItem = {
 			  config: {text: "Item " + (sPrefix ? sPrefix : "") + i, icon: "sap-icon://search"}
-		  }
+		  };
 		  aItems.push(oItem);
 
-		  if(bWithSubMenu){
+		  if (bWithSubMenu) {
 			  oItem.submenu = {
 				  config: {maxVisibleItems: 10},
-				  items: createManyItems(false, i+"-")
-			  }
+				  items: createManyItems(false, i + "-")
+			  };
 		  }
 	  }
 	  return aItems;
@@ -442,7 +440,7 @@ sap.ui.define([
 		  }
 	  })
   });
-  new CommonsButton({
+  new Button({
 	  text: "Open Dialog",
 	  press: function () {
 		  oDialog.open();

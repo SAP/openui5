@@ -149,7 +149,7 @@ sap.ui.define([
 	  width: "200px",
 	  tokens: [
 		  new Token("longToken", {text:"Very long long long long long long long text"})
-	  ],
+	  ]
   });
   oTokenizer7.setRenderMode(TokenizerRenderMode.Narrow);
 
@@ -158,7 +158,7 @@ sap.ui.define([
 	  editable: false,
 	  tokens: [
 		  new Token("longTokenNotEditable", {text:"Very long long long long long long long text"})
-	  ],
+	  ]
   });
   oTokenizer8.setRenderMode(TokenizerRenderMode.Narrow);
 

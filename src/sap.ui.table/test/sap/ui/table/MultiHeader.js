@@ -41,7 +41,8 @@ sap.ui.define([
 
   // Note: the HTML page 'MultiHeader.html' loads this module via data-sap-ui-on-init
 
-  var oModel = new JSONModel();
+  /*global TABLESETTINGS */
+  const oModel = new JSONModel();
   oModel.setData({modelData: TABLESETTINGS.listTestData});
 
   function createColumns(oTable) {
@@ -132,7 +133,7 @@ sap.ui.define([
 	  }));
   }
 
-  var oTable1 = new Table({
+  const oTable1 = new Table({
 	  rowMode: new Fixed({
 		  fixedTopRowCount: 1,
 		  fixedBottomRowCount: 1
@@ -145,7 +146,7 @@ sap.ui.define([
   oTable1.setModel(oModel);
   oTable1.bindRows("/modelData");
 
-  var oTable2 = new Table();
+  const oTable2 = new Table();
   oTable2.setSelectionMode(SelectionMode.MultiToggle);
   oTable2.setFixedColumnCount(0);
   oTable2.setEnableColumnFreeze(true);
@@ -153,9 +154,9 @@ sap.ui.define([
   oTable2.setModel(oModel);
   oTable2.bindRows("/modelData");
 
-  var app = new App("tableApp", {initialPage: "page1"});
+  const app = new App("tableApp", {initialPage: "page1"});
 
-  var page1 = new Page("page1", {
+  const page1 = new Page("page1", {
 	  enableScrolling: false,
 	  title: "Page 1",
 	  headerContent: [
@@ -167,7 +168,7 @@ sap.ui.define([
 	  content: [oTable1]
   });
 
-  var page2 = new Page("page2", {
+  const page2 = new Page("page2", {
 	  title: "Page 2",
 	  enableScrolling: true,
 	  headerContent: [

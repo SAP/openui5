@@ -84,7 +84,7 @@ sap.ui.define([
 		  new StepInput({description: "description (Condesed)"})
 	  ]
   }).addStyleClass("border");
-  btn33.placeAt('contentCondesed')
+  btn33.placeAt('contentCondesed');
 
   // Same samples without HBox containers
   new Input({width: "150px"}).placeAt('contentCozy');
@@ -103,7 +103,7 @@ sap.ui.define([
   new MultiInput({width: "150px", description: "description (Compact)"}).placeAt('contentCompact');
 
   new StepInput({width: "150px"}).placeAt('contentCompact');
-  new StepInput({width: "150px", description: "description (Compact)"}).placeAt('contentCompact')
+  new StepInput({width: "150px", description: "description (Compact)"}).placeAt('contentCompact');
 
   new Input({width: "150px"}).placeAt('contentCondesed');
   new Input({width: "150px", description: "description (Condesed)"}).placeAt('contentCondesed');

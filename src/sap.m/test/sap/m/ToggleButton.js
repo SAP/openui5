@@ -53,14 +53,14 @@ sap.ui.define([
   //Toggle Button 21
   var oToggleBtn21 = new ToggleButton("b21");
   oToggleBtn21.setIcon("sap-icon://action");
-  oToggleBtn21.setText("Pressed & Disabled"),
+  oToggleBtn21.setText("Pressed & Disabled");
   oToggleBtn21.setPressed(true);
   oToggleBtn21.setEnabled(false);
 
   //Toggle Button 21a
   var oToggleBtn21a = new ToggleButton("b21a");
   oToggleBtn21a.setIcon("sap-icon://action");
-  oToggleBtn21a.setText("ToggleButton"),
+  oToggleBtn21a.setText("ToggleButton");
   oToggleBtn21a.setPressed(true);
   oToggleBtn21a.setEnabled(true);
 
@@ -227,18 +227,18 @@ sap.ui.define([
 	  customHeader: new Bar({
 		  contentLeft: [oToggleBtn5, oToggleBtn7],
 		  contentMiddle: [new Label("myBarLabel", {text: "ToggleButton Testpage"})],
-		  contentRight: [oToggleBtn6, oToggleBtn8],
+		  contentRight: [oToggleBtn6, oToggleBtn8]
 	  }),
 	  subHeader: new Bar({
 		  contentMiddle: [oToggleBtn9, oToggleBtn10, oToggleBtn11, oToggleBtn12],
 		  contentLeft: [oToggleBtn9, oToggleBtn11, oToggleBtn11a, oToggleBtn11b],
-		  contentRight: [oToggleBtn22, oToggleBtn10, oToggleBtn12],
+		  contentRight: [oToggleBtn22, oToggleBtn10, oToggleBtn12]
 	  }),
 	  footer: new Bar({
 		  contentLeft: [oToggleBtn18, oToggleBtn23, oToggleBtn11c],
 		  contentMiddle: [oToggleBtn13, oToggleBtn14, oToggleBtn17, oToggleBtn15, oToggleBtn16],
-		  contentRight: [oToggleBtn19, oToggleBtn20],
-	  }),
+		  contentRight: [oToggleBtn19, oToggleBtn20]
+	  })
   });
 
   Element.getElementById("b1").attachPress(function(evt) {

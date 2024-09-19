@@ -40,7 +40,7 @@ sap.ui.define([
   });
 
 
-  var nav = new Array();
+  var nav = [];
   for ( var i = 0; i < 1000; i++) {
 	  nav[i] = {};
 	  nav[i].title = "Data 1 No: " + i;
@@ -51,9 +51,9 @@ sap.ui.define([
 
   var dataOverview1 = {
 	  navigation : nav
-  }
+  };
 
-  var nav2 = new Array();
+  var nav2 = [];
   for ( var i = 0; i < 18; i++) {
 	  nav2[i] = {};
 	  nav2[i].title = "Data 2 No: " + i;
@@ -64,7 +64,7 @@ sap.ui.define([
 
   var dataOverview2 = {
 	  navigation : nav2
-  }
+  };
 
   var oItemTemplate = new StandardListItem({
 	  title : "{test>title}",
@@ -178,7 +178,7 @@ sap.ui.define([
   */
 
   listOverview.addContent(oList);
-  app.addPage(listOverview)
+  app.addPage(listOverview);
 
   app.placeAt("body");
 });

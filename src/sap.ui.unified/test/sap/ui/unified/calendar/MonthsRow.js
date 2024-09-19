@@ -79,7 +79,7 @@ sap.ui.define([
 					  ["20150709",undefined,"Type09",9],
 					  ["20150710",undefined,"Type10",10]];
 
-  var oMonthsRow = new MonthsRow("MR1",{
+  new MonthsRow("MR1",{
 	  focus: function(oEvent){
 		  var oTF = Element.getElementById("TF2");
 		  var oDate = oEvent.getParameter("date");
@@ -108,8 +108,8 @@ sap.ui.define([
 	  }
   }).placeAt("sample1");
 
-  var oLabel = new Label({text: "start date", labelFor: "TF1"}).placeAt("event1");
-  var oInput = new TextField("TF1",{
+  new Label({text: "start date", labelFor: "TF1"}).placeAt("event1");
+  new TextField("TF1",{
 	  editable: true,
 	  placeholder: "yyyyMMdd",
 	  change: function(oEvent){
@@ -126,8 +126,8 @@ sap.ui.define([
 	  }
   }).placeAt("event1");
 
-  var oLabel = new Label({text: "focused date", labelFor: "TF2"}).placeAt("event1");
-  var oInput = new TextField("TF2",{
+  new Label({text: "focused date", labelFor: "TF2"}).placeAt("event1");
+  new TextField("TF2",{
 	  editable: true,
 	  placeholder: "yyyyMMdd",
 	  change: function(oEvent){
@@ -144,14 +144,14 @@ sap.ui.define([
 	  }
   }).placeAt("event1");
 
-  oLabel = new Label({text: "selected date", labelFor: "TF3"}).placeAt("event1");
-  oInput = new TextField("TF3",{
+  new Label({text: "selected date", labelFor: "TF3"}).placeAt("event1");
+  new TextField("TF3",{
 	  editable: true,
 	  placeholder: "yyyyMMdd",
 	  change: function(oEvent){
 		  var sValue = oEvent.getParameter('newValue');
 		  var oMonthsRow = Element.getElementById("MR1");
-		  if(sValue.length == 8 && !isNaN(sValue)){
+		  if (sValue.length == 8 && !isNaN(sValue)) {
 			  var oDate = oFormatYyyymmdd.parse(sValue);
 			  var aSelectedDates = oMonthsRow.getSelectedDates();
 			  var oDateRange;
@@ -162,7 +162,7 @@ sap.ui.define([
 				  oDateRange = aSelectedDates[0];
 				  oDateRange.setStartDate(oDate);
 			  }
-		  }else if(!sValue){
+		  } else if (!sValue) {
 			  oMonthsRow.destroySelectedDates();
 		  }
 	  }
@@ -176,10 +176,10 @@ sap.ui.define([
 			  for (var i = 0; i < aSpecialDays.length; i++) {
 				  var aSpecialDay = aSpecialDays[i];
 				  var sType = "";
-				  if(aSpecialDay[3] < 10) {
-					  sType = "Type0"+aSpecialDay[3];
-				  }else {
-					  sType = "Type"+aSpecialDay[3];
+				  if (aSpecialDay[3] < 10) {
+					  sType = "Type0" + aSpecialDay[3];
+				  } else {
+					  sType = "Type" + aSpecialDay[3];
 				  }
 				  Element.getElementById("MR1").addSpecialDate(new DateTypeRange({
 					  startDate: oFormatYyyymmdd.parse(aSpecialDay[0]),
@@ -195,7 +195,7 @@ sap.ui.define([
   }).placeAt("event1");
 
   // single interval selection
-  oMonthsRow = new MonthsRow("MR2",{
+  new MonthsRow("MR2",{
 	  intervalSelection: true,
 	  months: 6,
 	  select: function(oEvent){
@@ -224,16 +224,16 @@ sap.ui.define([
 	  }
   }).placeAt("sample2");
 
-  oLabel = new Label({text: "selected date from", labelFor: "TF2-start"}).placeAt("event2");
-  oInput = new TextField("TF2-start",{
+  new Label({text: "selected date from", labelFor: "TF2-start"}).placeAt("event2");
+  new TextField("TF2-start",{
 	  editable: false
   }).placeAt("event2");
-  oLabel = new Label({text: "to", labelFor: "TF2-end"}).placeAt("event2");
-  oInput = new TextField("TF2-end",{
+  new Label({text: "to", labelFor: "TF2-end"}).placeAt("event2");
+  new TextField("TF2-end",{
 	  editable: false
   }).placeAt("event2");
 
-  oMonthsRow = new MonthsRow("MR3",{
+  new MonthsRow("MR3",{
 	  intervalSelection: false,
 	  singleSelection: false,
 	  showHeader: true,
@@ -246,11 +246,11 @@ sap.ui.define([
 		  if (aSelectedDates.length > 0 ) {
 			  var aItems = oLB.getItems();
 			  var oItem;
-			  for(var i=0; i<aSelectedDates.length; i++){
+			  for (var i = 0; i < aSelectedDates.length; i++){
 				  oDate = aSelectedDates[i].getStartDate();
-				  if(aItems[i]) {
+				  if (aItems[i]) {
 					  oItem = aItems[i];
-				  }else {
+				  } else {
 					  oItem = new Item();
 					  oLB.addItem(oItem);
 				  }
@@ -260,8 +260,8 @@ sap.ui.define([
 					  oItem.setText("");
 				  }
 			  }
-			  if(aItems.length > aSelectedDates.length) {
-				  for(var i=aSelectedDates.length; i<aItems.length; i++){
+			  if (aItems.length > aSelectedDates.length) {
+				  for (var i = aSelectedDates.length; i < aItems.length; i++){
 					  oLB.removeItem(i);
 					  aItems[i].destroy();
 				  }
@@ -272,8 +272,7 @@ sap.ui.define([
 	  }
   }).placeAt("sample3");
 
-  oLabel = new Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
-
+  new Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
   new ListBox("LB",{
 	  editable: false,
 	  visibleItems: 10,

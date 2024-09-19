@@ -22,7 +22,7 @@ sap.ui.define([
 	  unit: "Euro"
   }).addStyleClass("sapMObjectNumberLarge").addStyleClass("sapUiSmallMargin");
 
-  var oButtonEmphasized =new Button("emphasized", {
+  var oButtonEmphasized = new Button("emphasized", {
 	  text:"Toggle emphasized",
 	  press: function(){
 		  on1.setEmphasized(!on1.getEmphasized());
@@ -30,7 +30,7 @@ sap.ui.define([
 	  }
   });
 
-  var oButtonNum =new Button("num", {
+  var oButtonNum = new Button("num", {
 	  text:"Set number",
 	  press: function(){
 		  on1.setNumber("100");
@@ -38,7 +38,7 @@ sap.ui.define([
 	  }
   });
 
-  var oButtonUnit =new Button("unit", {
+  var oButtonUnit = new Button("unit", {
 	  text:"Set unit",
 	  press: function(){
 		  on1.setUnit("Dollars");
@@ -46,7 +46,7 @@ sap.ui.define([
 	  }
   });
 
-  var oButtonStateS =new Button("change_stateS", {
+  var oButtonStateS = new Button("change_stateS", {
 	  text:"Success state",
 	  press: function(){
 		  on1.setState(ValueState.Success);
@@ -54,7 +54,7 @@ sap.ui.define([
 	  }
   });
 
-  var oButtonStateE =new Button("change_stateE", {
+  var oButtonStateE = new Button("change_stateE", {
 	  text:"Error state",
 	  press: function(){
 		  on1.setState(ValueState.Error);
@@ -62,7 +62,7 @@ sap.ui.define([
 	  }
   });
 
-  var oButtonStateW =new Button("change_stateW", {
+  var oButtonStateW = new Button("change_stateW", {
 	  text:"Warning state",
 	  press: function(){
 		  on1.setState(ValueState.Warning);
@@ -70,7 +70,7 @@ sap.ui.define([
 	  }
   });
 
-  var oButtonStateI =new Button("change_stateI", {
+  var oButtonStateI = new Button("change_stateI", {
 	  text:"Information state",
 	  press: function(){
 		  on1.setState(ValueState.Information);

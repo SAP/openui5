@@ -570,7 +570,7 @@ sap.ui.define(["sap/ui/core/Core", "sap/ui/model/odata/ODataMetadata", "sap/ui/m
 		}
 
 		return Promise.all(aLoadedPromises);
-	}
+	};
 
 
 	// general helpers

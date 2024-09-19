@@ -118,7 +118,7 @@ sap.ui.define([
 	  showSuggestion: true,
 	  width: "25%",
 	  valueStateText: "The state of this Input is not correct. Please check the entered value. You cannot submit the current form.",
-	  valueState: "Error",
+	  valueState: "Error"
   });
 
   oLongValueStateInput.setModel(oModel);
@@ -151,8 +151,8 @@ sap.ui.define([
 	  showSuggestion: true,
 	  suggest: function(oEvent){
 		  var sValue = oEvent.getParameter("suggestValue");
-		  for(var i=0; i<aData.length; i++){
-			  if(undefined/*jQuery*/.inArray(aData[i].userid, aAlreadyAddedUsers) < 0 && undefined/*jQuery*/.sap.startsWithIgnoreCase(aData[i].name, sValue)){
+		  for (var i = 0; i < aData.length; i++){
+			  if (undefined/*jQuery*/.inArray(aData[i].userid, aAlreadyAddedUsers) < 0 && undefined/*jQuery*/.sap.startsWithIgnoreCase(aData[i].name, sValue)) {
 				  oSuggestInput3.addSuggestionItem(new Item({text: aData[i].name}));
 				  aAlreadyAddedUsers.push(aData[i].userid);
 			  }
@@ -438,8 +438,8 @@ sap.ui.define([
 		  var sValue = oEvent.getParameter("suggestValue"),
 			  oSuggestionRow;
 
-		  for(var i=0; i<oSuggestionData.tabularSuggestionItems.length; i++){
-			  if(undefined/*jQuery*/.inArray(oSuggestionData.tabularSuggestionItems[i].name, aAlreadyAddedProducts) < 0 && undefined/*jQuery*/.sap.startsWithIgnoreCase(oSuggestionData.tabularSuggestionItems[i].name, sValue)){
+		  for (var i = 0; i < oSuggestionData.tabularSuggestionItems.length; i++) {
+			  if (undefined/*jQuery*/.inArray(oSuggestionData.tabularSuggestionItems[i].name, aAlreadyAddedProducts) < 0 && undefined/*jQuery*/.sap.startsWithIgnoreCase(oSuggestionData.tabularSuggestionItems[i].name, sValue)){
 				  oSuggestionRow = oTableItemTemplate.clone();
 				  oSuggestionRow.getCells()[0].setText(oSuggestionData.tabularSuggestionItems[i].name);
 				  oSuggestionRow.getCells()[1].setText(oSuggestionData.tabularSuggestionItems[i].qty);
@@ -758,8 +758,8 @@ sap.ui.define([
 				  demandPopin : true
 			  }));
 
-			  for(var i=0; i<oSuggestionData.tabularSuggestionItems.length; i++){
-				  if(undefined/*jQuery*/.inArray(oSuggestionData.tabularSuggestionItems[i].name, aAlreadyAddedProducts7) < 0 && undefined/*jQuery*/.sap.startsWithIgnoreCase(oSuggestionData.tabularSuggestionItems[i].name, sValue)){
+			  for (var i = 0; i < oSuggestionData.tabularSuggestionItems.length; i++) {
+				  if (undefined/*jQuery*/.inArray(oSuggestionData.tabularSuggestionItems[i].name, aAlreadyAddedProducts7) < 0 && undefined/*jQuery*/.sap.startsWithIgnoreCase(oSuggestionData.tabularSuggestionItems[i].name, sValue)) {
 					  oSuggestionRow = oTableItemTemplate.clone();
 					  oSuggestionRow.getCells()[0].setText(oSuggestionData.tabularSuggestionItems[i].name);
 					  oSuggestionRow.getCells()[1].setText(oSuggestionData.tabularSuggestionItems[i].qty);
@@ -932,7 +932,7 @@ sap.ui.define([
 	  placeholder: "value state changes while you are typing",
 	  liveChange: function (oEvent) {
 		  var i = oValueStateInput4.getValue().length;
-		  switch( i % 5 ){
+		  switch ( i % 5 ) {
 			  case 0:
 				  oValueStateInput4.setValueState("Success");
 				  break;
@@ -1125,7 +1125,7 @@ sap.ui.define([
 							  new Item({text: "text 4"}),
 							  new Item({text: "text 155"}),
 							  new Item({text: "text 11"}),
-							  new Item({text: "text 212"}),
+							  new Item({text: "text 212"})
 						  ],
 						  valueHelpRequest: function(oEvent){
 							  console.log("Zzz: " + oEvent.getParameter("userInputValue"));
@@ -1146,7 +1146,7 @@ sap.ui.define([
 						  ],
 						  liveChange: function (oEvent) {
 							  var i = this.getValue().length;
-							  switch(i % 5){
+							  switch (i % 5) {
 								  case 0:
 									  this.setValueState("Warning");
 									  break;
@@ -1181,7 +1181,7 @@ sap.ui.define([
 		  new Input({type: "Url", placeholder : "Url"}).addStyleClass('myInput'),
 		  new Input({type: "Password", placeholder : "Password"}).addStyleClass('myInput'),
 		  new Input({type: "Text", placeholder : "ValueHelp", showValueHelp: true, valueHelpRequest: function(evt) { MessageBox.alert("Value help requested"); }}).addStyleClass('myInput'),
-		  new Input({type: "Text", placeholder : "ValueHelpOnly", showValueHelp: true, valueHelpOnly: true, valueHelpRequest: function(evt) { MessageBox.alert("Value help requested"); }}),
+		  new Input({type: "Text", placeholder : "ValueHelpOnly", showValueHelp: true, valueHelpOnly: true, valueHelpRequest: function(evt) { MessageBox.alert("Value help requested"); }})
 	  ],
 	  footer: createFooter()
   });
@@ -1193,39 +1193,39 @@ sap.ui.define([
 
   var list = new List({inset: true});
   list.addItem(new InputListItem({label: 'Text', content: [
-	  new Input({placeholder : "Prompt Text"}),
+	  new Input({placeholder : "Prompt Text"})
   ]}));
   list.addItem(new InputListItem({label: 'This is a very long title', content: [
-	  new Input({value: "Dummy Text"}),
+	  new Input({value: "Dummy Text"})
   ]}));
   list.addItem(new InputListItem({label: 'Disabled', content: [
-	  new Input({value: "Disabled", enabled: false}),
+	  new Input({value: "Disabled", enabled: false})
   ]}));
   list.addItem(new InputListItem({label: 'Read-Only', content: [
-	  new Input({value: "Read-Only", editable: false}),
+	  new Input({value: "Read-Only", editable: false})
   ]}));
 
   list.addItem(new InputListItem({label: 'Warning', content: [
-	  new Input({value: "Warning", valueState : "Warning"}),
+	  new Input({value: "Warning", valueState : "Warning"})
   ]}));
 
   list.addItem(new InputListItem({label: 'Error', content: [
-	  new Input({value: "Error", valueState : "Error", valueStateText: "My Custom error message"}),
+	  new Input({value: "Error", valueState : "Error", valueStateText: "My Custom error message"})
   ]}));
 
   list.addItem(new InputListItem({label: 'Success', content: [
-	  new Input({value: "Success", valueState : "Success"}),
+	  new Input({value: "Success", valueState : "Success"})
   ]}));
 
   list.addItem(new InputListItem({label: 'ValueHelp', content: [
-	  new Input({value: "ValueHelp", showValueHelp: true, valueHelpRequest: function(evt) { MessageBox.alert("Value help requested"); }}),
+	  new Input({value: "ValueHelp", showValueHelp: true, valueHelpRequest: function(evt) { MessageBox.alert("Value help requested"); }})
   ]}));
 
   list.addItem(new InputListItem({label: 'ValueHelp+Status', content: [
-	  new Input({value: "ValueHelp + Status", showValueHelp: true, valueState : "Warning", valueHelpRequest: function(evt) { MessageBox.alert("Value help requested"); }}),
+	  new Input({value: "ValueHelp + Status", showValueHelp: true, valueState : "Warning", valueHelpRequest: function(evt) { MessageBox.alert("Value help requested"); }})
   ]}));
   list.addItem(new InputListItem({label: 'ValueHelpOnly', content: [
-	  new Input({value: "ValueHelpOnly", showValueHelp: true, valueHelpOnly: true, valueHelpRequest: function(evt) { MessageBox.alert("Value help requested"); }}),
+	  new Input({value: "ValueHelpOnly", showValueHelp: true, valueHelpOnly: true, valueHelpRequest: function(evt) { MessageBox.alert("Value help requested"); }})
   ]}));
   page3.addContent(list);
 
@@ -1236,9 +1236,9 @@ sap.ui.define([
 
   var b4i = new Button({text: "Submit", press: function() {
 	  MessageToast.show("" + oModel2.getProperty('/0/name'));
-  }})
+  }});
   var p4i1 = new Input({
-	  change: function(){ b4i.invalidate(); }
+	  change: function() { b4i.invalidate(); }
   });
   p4i1.setModel(oModel2);
   p4i1.bindValue("/0/name");

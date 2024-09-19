@@ -10,13 +10,14 @@ sap.ui.define([
 	"sap/m/MultiComboBox",
 	"sap/ui/comp/filterbar/FilterBar",
 	"sap/ui/comp/filterbar/FilterItem",
+	"sap/m/MessageBox",
 	"sap/m/Toolbar",
 	"sap/m/Button",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/m/Text",
 	"sap/ui/layout/VerticalLayout"
-], function(LibraryScanner, Core, Element, VersionInfo, JSONModel, Item, MultiComboBox, FilterBar, FilterItem, Toolbar, Button, Table, Column, Text, VerticalLayout) {
+], function(LibraryScanner, Core, Element, VersionInfo, JSONModel, Item, MultiComboBox, FilterBar, FilterItem, MessageBox, Toolbar, Button, Table, Column, Text, VerticalLayout) {
 	"use strict";
 	Core.ready().then(async () => {
 		const oVersionInfo = await VersionInfo.load();
@@ -36,31 +37,31 @@ sap.ui.define([
 		});
 
 		var oTemplateItem = new Item({
-			key : "{name}",
-			text : "{name}"
+			key: "{name}",
+			text: "{name}"
 		});
 
 		var oMultiComboBox = new MultiComboBox("combobox", {
 			items : {
-				path : "/libs",
-				sorter : { path : "Name" },
-				template : oTemplateItem
+				path: "/libs",
+				sorter: { path : "Name" },
+				template: oTemplateItem
 			}
 		}).setModel(oJSONModel);
 
 		var oFilterBar = new FilterBar("filterbar", {
-			showFilterConfiguration : false,
-			showClearButton : true,
-			showClearOnFB : true,
-			filterBarExpanded : false,
-			filterItems : [
+			showFilterConfiguration: false,
+			showClearButton: true,
+			showClearOnFB: true,
+			filterBarExpanded: false,
+			filterItems: [
 				new FilterItem("fbItem", {
-					name : "Search",
-					label : "Libraries",
-					control : oMultiComboBox
+					name: "Search",
+					label: "Libraries",
+					control: oMultiComboBox
 				})
 			],
-			search : function(oEvent) {
+			search(oEvent) {
 				var oStaticReport;
 				var oReport;
 				var aLibraries = oMultiComboBox.getSelectedKeys();
@@ -86,38 +87,38 @@ sap.ui.define([
 
 					var fnExportToExcel = function(oEvent) {
 						var oExport = new undefined/*Export*/({
-							exportType : new undefined/*ExportTypeCSV*/({
+							exportType: new undefined/*ExportTypeCSV*/({
 								separatorChar : ";"
 							}),
-							models : oModel,
-							rows : {
+							models: oModel,
+							rows: {
 								path : "/results"
 							},
-							columns : [
+							columns: [
 								{
-									name : "Name",
-									template : {
-										content : "{name}"
+									name: "Name",
+									template: {
+										content: "{name}"
 									}
 								},
 								{
-									name : "Actions",
-									template : {
-										content : "{actions}"
+									name: "Actions",
+									template: {
+										content: "{actions}"
 									}
 								}
 							]
 						});
 
 						oExport.saveFile().catch(function(oError) {
-							MessageBox.error("Error when downloading data. Browser might not be supported!\n\n" + oError);
+							MessageBox.error(`Error when downloading data. Browser might not be supported!\n\n${oError}`);
 						}).then(function() {
 							oExport.destroy();
 						});
 					};
 
 					var oHeaderToolbar = new Toolbar("toolbar", {
-						content : [
+						content: [
 							// new sap.m.ToolbarSpacer("toolbar-spacer"),
 							new Button("toolbar-export-button", {
 								text : "Export to Excel",
@@ -126,36 +127,36 @@ sap.ui.define([
 						]
 					});
 					var oReport = new Table("table", {
-						extension : [oHeaderToolbar],
-						columns : [
+						extension: [oHeaderToolbar],
+						columns: [
 							new Column("table-column-name", {
-								label : "Name",
-								width : "30em",
-								sorted : true,
-								template : new Text({
-									text : "{name}"
+								label: "Name",
+								width: "30em",
+								sorted: true,
+								template: new Text({
+									text: "{name}"
 								})
 							}),
 							new Column("table-column-actions", {
-								label : "Actions",
-								template : new Text({
-									text : "{actions}"
+								label: "Actions",
+								template: new Text({
+									text: "{actions}"
 								})
 							})
 						],
-						rows : "{path:'/results'}"
+						rows: "{path:'/results'}"
 					}).setModel(oModel);
 					oReport.placeAt("content");
 				});
 			},
-			clear : function(oEvent) {
+			clear(oEvent) {
 				oMultiComboBox.clearSelection();
 			}
 		});
 
 		var oVLayout = new VerticalLayout("layout", {
 			width: "100%",
-			content : [oFilterBar]
+			content: [oFilterBar]
 		});
 
 		oVLayout.placeAt("selection");

@@ -131,8 +131,7 @@ sap.ui.define([
 	  type : "{type}"
   });
 
-  function bindListData(data, itemTemplate, list)
-  {
+  function bindListData(data, itemTemplate, list) {
 	  var oModel = new JSONModel();
 	  // set the data for the model
 	  oModel.setData(data);
@@ -143,8 +142,8 @@ sap.ui.define([
 	  list.bindAggregation("items", "/navigation", itemTemplate);
   }
 
-  bindListData(data, oItemTemplate1, oList)
-  bindListData(data, oItemTemplate1, oList2)
+  bindListData(data, oItemTemplate1, oList);
+  bindListData(data, oItemTemplate1, oList2);
   //end of the list creation
 
   var oBeginButton = new Button("actionButton1",{
@@ -180,7 +179,7 @@ sap.ui.define([
   });
 
   var oInvisibleText = new InvisibleText({text: "I have a hidden label"});
-  var spacer = new ToolbarSpacer({})
+  var spacer = new ToolbarSpacer({});
   var footer = new OverflowToolbar({
 	  content: [spacer, oBeginButtonFooter, oEndButtonFooter]
   });

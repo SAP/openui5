@@ -412,7 +412,7 @@ sap.ui.define([
 	var page = new Page("rbg", {
 		title:"Test Page for sap.m.RadioButtonGroup",
 		content : [
-			flexBoxRBG1,flexBoxRBG1a,flexBoxRBG2,flexBoxRBG3,flexBoxRBG3a,flexBoxRBG4
+			flexBoxRBG1,flexBoxRBG1a,flexBoxRBG2,flexBoxRBG3,flexBoxRBG3a,flexBoxRBG4, oLyt
 		]
 	});
 

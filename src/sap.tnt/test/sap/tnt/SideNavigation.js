@@ -396,7 +396,7 @@ sap.ui.define([
 		  jQuery("body").toggleClass("sapUiSizeCompact", this.getPressed());
 		  jQuery("body").toggleClass("sapUiSizeCozy", !this.getPressed());
 	  }
-  }).placeAt('col-0-header')
+  }).placeAt('col-0-header');
 
   new Button({
 	  text: 'toggle expanded property',

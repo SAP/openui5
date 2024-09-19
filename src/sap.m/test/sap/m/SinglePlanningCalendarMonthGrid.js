@@ -7,7 +7,7 @@ sap.ui.define([
 	'sap/ui/unified/CalendarAppointment',
 	'sap/m/App',
 	'sap/m/Page',
-	'sap/ui/core/date/UI5Date',
+	'sap/ui/core/date/UI5Date'
 ],
 function (JSONModel, SinglePlanningCalendarMonthGrid, CalendarAppointment, App, Page, UI5Date) {
 	"use strict";

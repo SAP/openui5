@@ -12,9 +12,9 @@ sap.ui.define([
   "use strict";
   // Note: the HTML page 'CellContentAlignment.html' loads this module via data-sap-ui-on-init
 
-  var sLongTextSuffix = "\nLorem ipsum dolor sit amet";
-  var sLongTextWithoutSpaces = "Loremipsumdolorsitamet";
-  var sColumnWidth = "150px";
+  const sLongTextSuffix = "\nLorem ipsum dolor sit amet";
+  const sLongTextWithoutSpaces = "Loremipsumdolorsitamet";
+  const sColumnWidth = "150px";
 
   new Table({
 	  rowMode: new Fixed({

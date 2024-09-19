@@ -143,10 +143,10 @@ sap.ui.define([
   var oPage1 = new Page("myPage1", {
 	  title: "Mobile Button Control",
 	  customHeader : new Bar({
-		  contentLeft: [ oButtonBarButtonSample = new Button('myBarButtonSample', {text:"Test Button To Show Changes", tooltip:"Tooltip Test", type:ButtonType.Default, press: function() {oHelper.alert("event: 'press' on " + oButtonBarButtonSample)} }) ],
+		  contentLeft: [ oButtonBarButtonSample = new Button('myBarButtonSample', {text:"Test Button To Show Changes", tooltip:"Tooltip Test", type:ButtonType.Default, press: function() {oHelper.alert("event: 'press' on " + oButtonBarButtonSample);} }) ],
 		  contentMiddle: [ new Label("myBarLabel", {text: "Button Testpage"}) ],
-		  contentRight: [ oButtonBarButtonIcon1 = new Button('myBarButtonIcon1', {icon: sStoreIconURI}),
-						  oButtonBarButtonIcon2 = new Button('myBarButtonIcon2', {icon: sNotesIconURI, enabled: false}) ]
+		  contentRight: [ new Button('myBarButtonIcon1', {icon: sStoreIconURI}),
+						  new Button('myBarButtonIcon2', {icon: sNotesIconURI, enabled: false}) ]
 	  }),
 	  subHeader: new Bar({
 		  contentLeft: [ new Button({text:"Default", type:ButtonType.Default}) ],
@@ -188,7 +188,7 @@ sap.ui.define([
 	  text: "Button Type Default",
 	  enabled: true,
 	  press : function() {
-		  oHelper.typeDefault(oButtonBarButtonSample)
+		  oHelper.typeDefault(oButtonBarButtonSample);
 	  }
   });
 
@@ -197,7 +197,7 @@ sap.ui.define([
 	  text: "Button Type Unstyled",
 	  enabled: true,
 	  press : function() {
-		  oHelper.typeUnstyled(oButtonBarButtonSample)
+		  oHelper.typeUnstyled(oButtonBarButtonSample);
 	  }
   });
 
@@ -206,7 +206,7 @@ sap.ui.define([
 	  text: "Button Type Accept",
 	  enabled: true,
 	  press : function() {
-		  oHelper.typeAccept(oButtonBarButtonSample)
+		  oHelper.typeAccept(oButtonBarButtonSample);
 	  }
   });
 
@@ -215,7 +215,7 @@ sap.ui.define([
 	  text: "Button Type Reject",
 	  enabled: true,
 	  press : function() {
-		  oHelper.typeReject(oButtonBarButtonSample)
+		  oHelper.typeReject(oButtonBarButtonSample);
 	  }
   });
 
@@ -224,7 +224,7 @@ sap.ui.define([
 	  text: "Button Type Transparent",
 	  enabled: true,
 	  press : function() {
-		  oHelper.typeTransparent(oButtonBarButtonSample)
+		  oHelper.typeTransparent(oButtonBarButtonSample);
 	  }
   });
 
@@ -233,7 +233,7 @@ sap.ui.define([
 	  text: "Button Type Ghost",
 	  enabled: true,
 	  press : function() {
-		  oHelper.typeGhost(oButtonBarButtonSample)
+		  oHelper.typeGhost(oButtonBarButtonSample);
 	  }
   });
 
@@ -242,7 +242,7 @@ sap.ui.define([
 	  text: "Button Type Back",
 	  enabled: true,
 	  press : function() {
-		  oHelper.typeBack(oButtonBarButtonSample)
+		  oHelper.typeBack(oButtonBarButtonSample);
 	  }
   });
 
@@ -251,7 +251,7 @@ sap.ui.define([
 	  text: "Button Type Up",
 	  enabled: true,
 	  press : function() {
-		  oHelper.typeUp(oButtonBarButtonSample)
+		  oHelper.typeUp(oButtonBarButtonSample);
 	  }
   });
 
@@ -260,7 +260,7 @@ sap.ui.define([
 	  text: "Button Type Emphasized",
 	  enabled: true,
 	  press : function() {
-		  oHelper.typeEmphasized(oButtonBarButtonSample)
+		  oHelper.typeEmphasized(oButtonBarButtonSample);
 	  }
   });
 
@@ -269,7 +269,7 @@ sap.ui.define([
 	  text: "Disable/Enable Button",
 	  enabled: true,
 	  press : function() {
-		  oHelper.setEnabled(oButtonBarButtonSample)
+		  oHelper.setEnabled(oButtonBarButtonSample);
 	  }
   });
 
@@ -278,7 +278,7 @@ sap.ui.define([
 	  text: "Set width 120px",
 	  enabled: true,
 	  press : function() {
-		  oHelper.width100Pixel(oButtonBarButtonSample)
+		  oHelper.width100Pixel(oButtonBarButtonSample);
 	  }
   });
 
@@ -287,7 +287,7 @@ sap.ui.define([
 	  text: "Set width 100%",
 	  enabled: true,
 	  press : function() {
-		  oHelper.width100Percent(oButtonBarButtonSample)
+		  oHelper.width100Percent(oButtonBarButtonSample);
 	  }
   });
 
@@ -296,7 +296,7 @@ sap.ui.define([
 	  text: "Set width 300px",
 	  enabled: true,
 	  press : function() {
-		  oHelper.width300Pixel(oButtonBarButtonSample)
+		  oHelper.width300Pixel(oButtonBarButtonSample);
 	  }
   });
 
@@ -305,7 +305,7 @@ sap.ui.define([
 	  text: "Reset width",
 	  enabled: true,
 	  press : function() {
-		  oHelper.widthReset(oButtonBarButtonSample)
+		  oHelper.widthReset(oButtonBarButtonSample);
 	  }
   });
 
@@ -315,7 +315,7 @@ sap.ui.define([
 	  icon: "./images/action_pressed.png",
 	  enabled: true,
 	  press : function() {
-		  oHelper.addImage(oButtonBarButtonSample)
+		  oHelper.addImage(oButtonBarButtonSample);
 	  }
   });
 
@@ -325,7 +325,7 @@ sap.ui.define([
 	  icon: "./images/action.png",
 	  enabled: true,
 	  press : function() {
-		  oHelper.removeImage(oButtonBarButtonSample)
+		  oHelper.removeImage(oButtonBarButtonSample);
 	  }
   });
 
@@ -334,7 +334,7 @@ sap.ui.define([
 	  text: "Button Image (left/right)",
 	  enabled: true,
 	  press : function() {
-		  oHelper.alignImage(oButtonBarButtonSample)
+		  oHelper.alignImage(oButtonBarButtonSample);
 	  }
   });
 
@@ -345,7 +345,7 @@ sap.ui.define([
 	  activeIcon: sChangeIconURI,
 	  enabled: true,
 	  press : function() {
-		  oHelper.addIcon(oButtonBarButtonSample)
+		  oHelper.addIcon(oButtonBarButtonSample);
 	  }
   });
 
@@ -355,7 +355,7 @@ sap.ui.define([
 	  icon: sChangeIconURI,
 	  enabled: true,
 	  press : function() {
-		  oHelper.changeIcon(oButtonBarButtonSample)
+		  oHelper.changeIcon(oButtonBarButtonSample);
 	  }
   });
 
@@ -365,7 +365,7 @@ sap.ui.define([
 	  icon: sDeleteIconURI,
 	  enabled: true,
 	  press : function() {
-		  oHelper.removeIcon(oButtonBarButtonSample)
+		  oHelper.removeIcon(oButtonBarButtonSample);
 	  }
   });
 
@@ -374,7 +374,7 @@ sap.ui.define([
 	  text: "Button Icon (left/right)",
 	  enabled: true,
 	  press : function() {
-		  oHelper.alignIcon(oButtonBarButtonSample)
+		  oHelper.alignIcon(oButtonBarButtonSample);
 	  }
   });
 
@@ -383,7 +383,7 @@ sap.ui.define([
 	  text: "Hide Button",
 	  enabled: true,
 	  press : function() {
-		  oHelper.hide(oButtonBarButtonSample)
+		  oHelper.hide(oButtonBarButtonSample);
 	  }
   });
 
@@ -392,7 +392,7 @@ sap.ui.define([
 	  text: "Show Button",
 	  enabled: true,
 	  press : function() {
-		  oHelper.show(oButtonBarButtonSample)
+		  oHelper.show(oButtonBarButtonSample);
 	  }
   });
 
@@ -401,7 +401,7 @@ sap.ui.define([
 	  text: "Remove Text",
 	  enabled: true,
 	  press : function() {
-		  oHelper.removeText(oButtonBarButtonSample)
+		  oHelper.removeText(oButtonBarButtonSample);
 	  }
   });
 
@@ -410,7 +410,7 @@ sap.ui.define([
 	  text: "Change Text",
 	  enabled: true,
 	  press : function() {
-		  oHelper.changeText(oButtonBarButtonSample)
+		  oHelper.changeText(oButtonBarButtonSample);
 	  }
   });
 
@@ -419,7 +419,7 @@ sap.ui.define([
 	  text: "Reset Text",
 	  enabled: true,
 	  press : function() {
-		  oHelper.resetText(oButtonBarButtonSample)
+		  oHelper.resetText(oButtonBarButtonSample);
 	  }
   });
 
@@ -447,7 +447,7 @@ sap.ui.define([
 	  enabled: true,
 	  tooltip: "tooltip",
 	  press : function() {
-		  oHelper.alert("event: 'press' on " + oButtonSample)
+		  oHelper.alert("event: 'press' on " + oButtonSample);
 	  }
   });
 
@@ -456,7 +456,7 @@ sap.ui.define([
 	  text: "Button Type Default",
 	  enabled: true,
 	  press : function() {
-		  oHelper.typeDefault(oButtonSample)
+		  oHelper.typeDefault(oButtonSample);
 	  }
   });
 
@@ -465,7 +465,7 @@ sap.ui.define([
 	  text: "Button Type Unstyled",
 	  enabled: true,
 	  press : function() {
-		  oHelper.typeUnstyled(oButtonSample)
+		  oHelper.typeUnstyled(oButtonSample);
 	  }
   });
 
@@ -474,7 +474,7 @@ sap.ui.define([
 	  text: "Button Type Accept",
 	  enabled: true,
 	  press : function() {
-		  oHelper.typeAccept(oButtonSample)
+		  oHelper.typeAccept(oButtonSample);
 	  }
   });
 
@@ -483,7 +483,7 @@ sap.ui.define([
 	  text: "Button Type Reject",
 	  enabled: true,
 	  press : function() {
-		  oHelper.typeReject(oButtonSample)
+		  oHelper.typeReject(oButtonSample);
 	  }
   });
 
@@ -492,7 +492,7 @@ sap.ui.define([
 	  text: "Button Type Transparent",
 	  enabled: true,
 	  press : function() {
-		  oHelper.typeTransparent(oButtonSample)
+		  oHelper.typeTransparent(oButtonSample);
 	  }
   });
 
@@ -501,7 +501,7 @@ sap.ui.define([
 	  text: "Button Type Back",
 	  enabled: true,
 	  press : function() {
-		  oHelper.typeBack(oButtonSample)
+		  oHelper.typeBack(oButtonSample);
 	  }
   });
 
@@ -510,7 +510,7 @@ sap.ui.define([
 	  text: "Button Type Up",
 	  enabled: true,
 	  press : function() {
-		  oHelper.typeUp(oButtonSample)
+		  oHelper.typeUp(oButtonSample);
 	  }
   });
 
@@ -519,7 +519,7 @@ sap.ui.define([
 	  text: "Button Type Emphasized",
 	  enabled: true,
 	  press : function() {
-		  oHelper.typeEmphasized(oButtonSample)
+		  oHelper.typeEmphasized(oButtonSample);
 	  }
   });
 
@@ -528,7 +528,7 @@ sap.ui.define([
 	  text: "Disable/Enable Button",
 	  enabled: true,
 	  press : function() {
-		  oHelper.setEnabled(oButtonSample)
+		  oHelper.setEnabled(oButtonSample);
 	  }
   });
 
@@ -537,7 +537,7 @@ sap.ui.define([
 	  text: "Set width 120px",
 	  enabled: true,
 	  press : function() {
-		  oHelper.width100Pixel(oButtonSample)
+		  oHelper.width100Pixel(oButtonSample);
 	  }
   });
 
@@ -546,7 +546,7 @@ sap.ui.define([
 	  text: "Set width 100%",
 	  enabled: true,
 	  press : function() {
-		  oHelper.width100Percent(oButtonSample)
+		  oHelper.width100Percent(oButtonSample);
 	  }
   });
 
@@ -555,7 +555,7 @@ sap.ui.define([
 	  text: "Set width 50%",
 	  enabled: true,
 	  press : function() {
-		  oHelper.width50Percent(oButtonSample)
+		  oHelper.width50Percent(oButtonSample);
 	  }
   });
 
@@ -564,7 +564,7 @@ sap.ui.define([
 	  text: "Reset width",
 	  enabled: true,
 	  press : function() {
-		  oHelper.widthReset(oButtonSample)
+		  oHelper.widthReset(oButtonSample);
 	  }
   });
 
@@ -574,7 +574,7 @@ sap.ui.define([
 	  icon: "./images/action_pressed.png",
 	  enabled: true,
 	  press : function() {
-		  oHelper.addImage(oButtonSample)
+		  oHelper.addImage(oButtonSample);
 	  }
   });
 
@@ -584,7 +584,7 @@ sap.ui.define([
 	  icon: "./images/action.png",
 	  enabled: true,
 	  press : function() {
-		  oHelper.removeImage(oButtonSample)
+		  oHelper.removeImage(oButtonSample);
 	  }
   });
 
@@ -593,7 +593,7 @@ sap.ui.define([
 	  text: "Button Image (left/right)",
 	  enabled: true,
 	  press : function() {
-		  oHelper.alignImage(oButtonSample)
+		  oHelper.alignImage(oButtonSample);
 	  }
   });
 
@@ -603,7 +603,7 @@ sap.ui.define([
 	  icon: sAddIconURI,
 	  enabled: true,
 	  press : function() {
-		  oHelper.addIcon(oButtonSample)
+		  oHelper.addIcon(oButtonSample);
 	  }
   });
 
@@ -613,7 +613,7 @@ sap.ui.define([
 	  icon: sDeleteIconURI,
 	  enabled: true,
 	  press : function() {
-		  oHelper.removeIcon(oButtonSample)
+		  oHelper.removeIcon(oButtonSample);
 	  }
   });
 
@@ -622,7 +622,7 @@ sap.ui.define([
 	  text: "Button Icon (left/right)",
 	  enabled: true,
 	  press : function() {
-		  oHelper.alignIcon(oButtonSample)
+		  oHelper.alignIcon(oButtonSample);
 	  }
   });
 
@@ -631,7 +631,7 @@ sap.ui.define([
 	  text: "Hide Button",
 	  enabled: true,
 	  press : function() {
-		  oHelper.hide(oButtonSample)
+		  oHelper.hide(oButtonSample);
 	  }
   });
 
@@ -640,7 +640,7 @@ sap.ui.define([
 	  text: "Show Button",
 	  enabled: true,
 	  press : function() {
-		  oHelper.show(oButtonSample)
+		  oHelper.show(oButtonSample);
 	  }
   });
 
@@ -649,7 +649,7 @@ sap.ui.define([
 	  text: "Remove Text",
 	  enabled: true,
 	  press : function() {
-		  oHelper.removeText(oButtonSample)
+		  oHelper.removeText(oButtonSample);
 	  }
   });
 
@@ -658,7 +658,7 @@ sap.ui.define([
 	  text: "Change Text",
 	  enabled: true,
 	  press : function() {
-		  oHelper.changeText(oButtonSample)
+		  oHelper.changeText(oButtonSample);
 	  }
   });
 
@@ -667,7 +667,7 @@ sap.ui.define([
 	  text: "Reset Text",
 	  enabled: true,
 	  press : function() {
-		  oHelper.resetText(oButtonSample)
+		  oHelper.resetText(oButtonSample);
 	  }
   });
 

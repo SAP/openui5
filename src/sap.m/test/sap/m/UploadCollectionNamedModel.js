@@ -498,7 +498,7 @@ sap.ui.define([
 			  "mimeType" : "text/plain",
 			  "thumbnailUrl" : "",
 			  "uploadedDate" : "Date: 2014-09-01",
-			  "url" : "demokit/sample/UploadCollection/LinkedDocuments/Document.txt",
+			  "url" : "demokit/sample/UploadCollection/LinkedDocuments/Document.txt"
 		  }, {
 			  "contributor" : "Dr. Sean O'Connel",
 			  "documentId" : "1700ead2-3dfb-5a94-6f5c-cf1da409e02a",
@@ -509,7 +509,7 @@ sap.ui.define([
 			  "mimeType" : "application/vnd.ms-powerpoint",
 			  "thumbnailUrl" : "",
 			  "uploadedDate" : "Date: 2014-07-29",
-			  "url" : "demokit/sample/UploadCollection/LinkedDocuments/Third Quarter Results.ppt",
+			  "url" : "demokit/sample/UploadCollection/LinkedDocuments/Third Quarter Results.ppt"
 		  }, {
 			  "contributor" : "Dr. Jane Burns",
 			  "documentId" : "34e484e4-a523-6c50-685b-e5ae6606925a",
@@ -520,7 +520,7 @@ sap.ui.define([
 			  "mimeType" : "application/msword",
 			  "thumbnailUrl" : "",
 			  "uploadedDate" : "Date: 2014-07-28",
-			  "url" : "demokit/sample/UploadCollection/LinkedDocuments/Business Plan Agenda.doc",
+			  "url" : "demokit/sample/UploadCollection/LinkedDocuments/Business Plan Agenda.doc"
 		  }, {
 			  "contributor" : "Dr. John Black",
 			  "documentId" : "bcc27c4d-a8ce-3ab6-e807-ec05119685aa",
@@ -531,7 +531,7 @@ sap.ui.define([
 			  "mimeType" : "application/msexcel",
 			  "thumbnailUrl" : "",
 			  "uploadedDate" : "Date: 2014-07-27",
-			  "url" : "demokit/sample/UploadCollection/LinkedDocuments/Business Plan Topics.xls",
+			  "url" : "demokit/sample/UploadCollection/LinkedDocuments/Business Plan Topics.xls"
 		  }, {
 			  "contributor" : "Dr. David Keane",
 			  "documentId" : "6b6ccd2f-e5c2-15b7-3b67-19156485006a",
@@ -570,7 +570,7 @@ sap.ui.define([
   var fnChange = function(oEvent) {
 	  MessageToast.show("Change event triggered.");
 	  // simulate status uploading for screen reader support
-	  if(bSimulateUploadingStatusSR === "true") {
+	  if (bSimulateUploadingStatusSR === "true") {
 		  if (oUploadCompleteStub === undefined) {
 			  oUploadCompleteStub = oUploadCollection._onUploadComplete;
 			  oUploadCollection._onUploadComplete = function () {

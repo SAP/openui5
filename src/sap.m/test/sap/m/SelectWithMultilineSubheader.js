@@ -376,7 +376,7 @@ sap.ui.define([
 
 	var oSelect0 = new Select({
 		id: "select_regular",
-			valueStateText: "This is a Level 1 explanation. This will contain links and emphasized text in the future",
+		valueStateText: "This is a Level 1 explanation. This will contain links and emphasized text in the future",
 		valueState: "Warning",
 		items: {
 			path: "/items",
@@ -408,4 +408,4 @@ sap.ui.define([
 		pages: [oPage],
 		models: oModel
 	}).placeAt("body");
-})
+});

@@ -88,7 +88,7 @@ sap.ui.define([
 	  var aSelectedItems = oTree.getSelectedItems();
 	  var aDraggedItemContexts = [];
 
-	  if (aSelectedItems.length >0) {
+	  if (aSelectedItems.length > 0) {
 		  if (aSelectedIndices.indexOf(iDraggedItemIndex) === -1) {
 				  oEvent.preventDefault();
 			  } else {

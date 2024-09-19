@@ -107,7 +107,7 @@ sap.ui.define([
 		  }),
 		  new ObjectMarker({
 			  type: "{type}",
-			  additionalInfo: "{addInfo}",
+			  additionalInfo: "{addInfo}"
 		  }),
 		  new ObjectMarker({
 			  type: "{type}",

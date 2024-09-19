@@ -90,7 +90,7 @@ sap.ui.define([
 			  iconInset : false,
 			  type : "Navigation",
 			  press : function() {
-				  MessageToast.show(title + " pressed");
+				  MessageToast.show(this.getTitle() + " pressed");
 			  }
 		  }, {
 			  title : "Travel and expense report",
@@ -200,10 +200,10 @@ sap.ui.define([
 			  placement : PlacementType.Bottom,
 			  title : "Popover",
 			  showHeader : true,
-			  leftButton : new Button({
+			  beginButton : new Button({
 				  text : "Left"
 			  }),
-			  rightButton : new Button({
+			  endButton : new Button({
 				  text : "Right"
 			  }),
 			  footer : footer,
@@ -324,6 +324,7 @@ sap.ui.define([
 
 
   /* poll control start */
+  var oDialog;
   Image.extend("Lightbox", {
 	  metadata: {
 		  properties: {
@@ -333,7 +334,7 @@ sap.ui.define([
 	  // set up the inner controls
 	  init: function () {
 		  var that = this;
-		  this.attachTap(function () {
+		  this.attachPress(function () {
 			  that._open();
 		  });
 	  },

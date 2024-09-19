@@ -80,7 +80,7 @@ sap.ui.define([
 					  items: [
 						  new MenuItem({
 							  icon: "sap-icon://factory",
-							  text: "factory",
+							  text: "factory"
 						  }),
 						  new MenuItem({
 							  icon: "sap-icon://flag",
@@ -539,7 +539,7 @@ sap.ui.define([
 				  otherMode = oItem.getButtonMode() === MenuButtonMode.Regular ? MenuButtonMode.Split : MenuButtonMode.Regular;
 				  oItem.setButtonMode(otherMode);
 			  }
-		  })
+		  });
 	  }
   });
 
@@ -864,7 +864,7 @@ sap.ui.define([
 			  text: "Test",
 			  type: "Transparent",
 			  buttonMode: "Regular"
-		  }),
+		  })
 	  ],
 	  footer: new Bar({
 		  contentMiddle: [

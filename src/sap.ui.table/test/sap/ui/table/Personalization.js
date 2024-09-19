@@ -15,7 +15,7 @@ sap.ui.define([
   // Note: the HTML page 'Personalization.html' loads this module via data-sap-ui-on-init
 
   jQuery(function() {
-	  var oData = {
+	  const oData = {
 		  items: [
 			  {name: "Michelle", color: "orange", number: 3.14},
 			  {name: "Joseph", color: "blue", number: 1.618},
@@ -25,7 +25,7 @@ sap.ui.define([
 	  };
 
 	  //make sure table id suffix is set (this is necessary for personalization)
-	  var oTable = new Table({
+	  const oTable = new Table({
 		  toolbar: new Toolbar({
 			  items: [
 				  new Button({
@@ -91,7 +91,7 @@ sap.ui.define([
 	  oTable.setModel(new JSONModel(oData));
 	  oTable.bindRows("/items");
 
-	  var printPersoData = function(sJSON) {
+	  const printPersoData = function(sJSON) {
 		  jQuery("#perso-data").html(sJSON
 				  .replace(/\n/g, "<br>")
 				  .replace(/\s/g, "&nbsp;")
@@ -99,20 +99,20 @@ sap.ui.define([
 				  .replace(/(false)/g, "<span style=\"color:red\">$1</span>"));
 	  };
 
-	  var oPersoService = {
+	  const oPersoService = {
 
 		  getPersData: function() {
-			  var oDeferred = jQuery.Deferred();
-			  var sJSON = window.localStorage.getItem("myTablePersonalization") || "{}";
+			  const oDeferred = jQuery.Deferred();
+			  const sJSON = window.localStorage.getItem("myTablePersonalization") || "{}";
 			  printPersoData(sJSON);
-			  var oBundle = JSON.parse(sJSON);
+			  const oBundle = JSON.parse(sJSON);
 			  oDeferred.resolve(oBundle);
 			  return oDeferred.promise();
 		  },
 
 		  setPersData: function(oBundle) {
-			  var oDeferred = jQuery.Deferred();
-			  var sJSON = JSON.stringify(oBundle, null, 4);
+			  const oDeferred = jQuery.Deferred();
+			  const sJSON = JSON.stringify(oBundle, null, 4);
 			  window.localStorage.setItem("myTablePersonalization", sJSON);
 			  printPersoData(sJSON);
 			  oDeferred.resolve();
@@ -120,7 +120,7 @@ sap.ui.define([
 		  },
 
 		  delPersData: function() {
-			  var oDeferred = jQuery.Deferred();
+			  const oDeferred = jQuery.Deferred();
 			  window.localStorage.removeItem("myTablePersonalization");
 			  printPersoData("");
 			  oDeferred.resolve();
@@ -129,7 +129,7 @@ sap.ui.define([
 
 	  };
 
-	  var oTPC = new TablePersoController({
+	  const oTPC = new TablePersoController({
 		  table: oTable,
 		  persoService: oPersoService
 	  });

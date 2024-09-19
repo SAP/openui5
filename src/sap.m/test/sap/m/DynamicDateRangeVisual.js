@@ -1,11 +1,6 @@
-// Note: the HTML page 'DynamicDateRangeVisual.html' loads this module via data-sap-ui-on-init
-
-// We have to mock the current date in order to have stable visual tests as the dates used in the
-// DynamicDateRange control are relative to the current date. The case where there are no arguments passed to
-// the Date object returns a solid date in the past.
-
 var oMockedDate = new Date(2015,0,1,6);
-Date = class extends Date{
+/*global Date:true */
+Date = class extends Date {
 	constructor(options) {
 		if (options) {
 			super(options);
@@ -76,7 +71,7 @@ sap.ui.define([
 							"SPECIFICMONTHINYEAR",
 							"FROM",
 							"TO"
-						],
+						]
 					}),
 					new Label("DDR3-label", {text: "Relative date and date range options with 'StepInput' based UI", labelFor: "DDR3"}),
 					new DynamicDateRange("DDR3", {
@@ -89,7 +84,7 @@ sap.ui.define([
 							"LASTYEARS",
 							"NEXTDAYS",
 							"TODAYFROMTO"
-						],
+						]
 					}),
 					new Label("DDR4-label", {text: "DateTime options", labelFor: "DDR4"}),
 					new DynamicDateRange("DDR4", {
@@ -104,7 +99,7 @@ sap.ui.define([
 							"DATETIME",
 							"FROMDATETIME",
 							"TODATETIME"
-						],
+						]
 					}),
 					new Label("DDR5-label", {text: "Special selection for visual tests", labelFor: "DDR5"}),
 					new DynamicDateRange("DDR5", {

@@ -13,17 +13,16 @@ sap.ui.define([
 ], function(JSONModel, Table, Label, Column, Input, Fixed, Text, Button, VBox, App, Page) {
   "use strict";
 
-  var nCols = 300;
-  var nRows = 7;
+  const nCols = 300;
+  const nRows = 7;
 
-  var oModel = new JSONModel();
+  const oModel = new JSONModel();
 
   function createData(nRows, nCols) {
-	  var aData = [];
-	  var r, c;
-	  for (r = 0; r < nRows + 2; r++) { // add extra two rows for vertical scrolling
-		  var row = {};
-		  for (c = 0; c < nCols; c++) {
+	  const aData = [];
+	  for (let r = 0; r < nRows + 2; r++) { // add extra two rows for vertical scrolling
+		  const row = {};
+		  for (let c = 0; c < nCols; c++) {
 			  row["c" + c] = "row " + r + "col " + c; // "row " + r + ",
 		  }
 		  aData.push(row);
@@ -34,9 +33,9 @@ sap.ui.define([
   oModel.setData(createData(nRows, nCols));
 
   function createColumns(nCols, ColumnObject) {
-	  var aCols = [];
-	  for (var i = 0; i < nCols; i++) {
-		  var oCol = new ColumnObject({
+	  const aCols = [];
+	  for (let i = 0; i < nCols; i++) {
+		  const oCol = new ColumnObject({
 			  width: "10em", // Variant: i % 2 ? "10em" : "20em",
 			  label: "Col " + i,
 			  template: new Label({text: "{c" + i + "}"})
@@ -46,7 +45,7 @@ sap.ui.define([
 	  return aCols;
   }
 
-  var oTable = new Table({
+  const oTable = new Table({
 	  rowMode: new Fixed({
 		  rowCount: nRows
 	  }),
@@ -54,11 +53,11 @@ sap.ui.define([
 	  columns: createColumns(nCols, Column)
   });
 
-  var TextLog = new Text();
+  const TextLog = new Text();
 
-  var counter = 10;
-  var results = [];
-  var startTime = 0;
+  let counter = 10;
+  let results = [];
+  let startTime = 0;
 
   function startTimer() {
 	  startTime = performance.now();
@@ -83,14 +82,14 @@ sap.ui.define([
 		  }, 1500);
 		  counter++;
 	  } else {
-		  var min = Math.min.apply(null, results);
-		  var max = Math.max.apply(null, results);
-		  var mean = results.reduce(function(a, b) {return a + b;}, 0) / results.length;
+		  const min = Math.min.apply(null, results);
+		  const max = Math.max.apply(null, results);
+		  const mean = results.reduce(function(a, b) { return a + b; }, 0) / results.length;
 		  TextLog.setText("min:\t" + min + "\n" + "max:\t" + max + "\n" + "mean:\t" + mean);
 	  }
   }
 
-  var oButton = new Button({
+  const oButton = new Button({
 	  text: "Start Measurement",
 	  press: startMeasurement
   });
@@ -101,11 +100,11 @@ sap.ui.define([
 	  onAfterRendering: stopTimer
   });
 
-  var vBox = new VBox({items: [oTable, oButton, TextLog]});
+  const vBox = new VBox({items: [oTable, oButton, TextLog]});
 
-  var app = new App("tableApp", {initialPage: "page1"});
+  const app = new App("tableApp", {initialPage: "page1"});
 
-  var page1 = new Page("page1", {
+  const page1 = new Page("page1", {
 	  enableScrolling: true,
 	  title: "Table with many columns",
 	  content: [vBox]

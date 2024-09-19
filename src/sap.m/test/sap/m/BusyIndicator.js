@@ -18,7 +18,7 @@ sap.ui.define([
   });
 
   var busyCSSText = new BusyIndicator({
-	  text:'default sized busy indicator ...',
+	  text:'default sized busy indicator ...'
   });
 
   var busyCSSSize1 = new BusyIndicator({
@@ -54,28 +54,28 @@ sap.ui.define([
   var busyDialog3 = busyDialog3 ? busyDialog3 : new BusyDialog('busy3',{text:'i am a busy screen with a loooooooong long long long text and a cancel button',
 	  title: 'LOADING',
 	  showCancelButton: true, // IMPORTANT: the "Cancel" button text of this dialog may not be set, it should be the default text (tested in translation tests)
-	  close: function(oEvent){console.log(oEvent, 'closed')}
+	  close: function(oEvent){console.log(oEvent, 'closed');}
   });
 
   var busyDialog4 = (busyDialog4) ? busyDialog4 : new BusyDialog('busy4',{text:'Fetching JSON Data', title: 'Loading'});
 
   var syncLoad = function() {
-	  busyDialog4.open()
+	  busyDialog4.open();
 	  jQuery.ajax({
 		  url: "http://itunes.apple.com/search?term=yelp&country=us&entity=software",
 		  dataType: 'jsonp',
 		  async:false,
 		  type: 'GET',
 		  success:function(jsonData) {
-			  console.log(jsonData)
-			  busyDialog4.close()
-			  },
+			  console.log(jsonData);
+			  busyDialog4.close();
+		  },
 		  error:function(jqXHR, exception) {
-			  console.log(textStatus)
-			  busyDialog4.close()
+			  console.log(jqXHR.status);
+			  busyDialog4.close();
 		  }
-	  })
-  }
+	  });
+  };
 
   var openBusyScreenBtn1 = new Button({
 	  text: 'open BusyDialog',
@@ -83,7 +83,7 @@ sap.ui.define([
 		  busyDialog1.open();
 		  setTimeout(function() {
 			  busyDialog1.close();
-		  },2000)
+		  },2000);
 	  }
   }).addStyleClass('BusyButton');
   var openBusyScreenBtn2 = new Button({
@@ -92,7 +92,7 @@ sap.ui.define([
 		  busyDialog2.open();
 		  setTimeout(function() {
 			  busyDialog2.close();
-		  },2000)
+		  },2000);
 	  }
   }).addStyleClass('BusyButton');
   var openBusyScreenBtn3 = new Button({

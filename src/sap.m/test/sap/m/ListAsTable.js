@@ -22,23 +22,23 @@ sap.ui.define([
 
 
   new Input({
-	  value: "{Id}",
+	  value: "{Id}"
   });
 
   var oList = new List({
 	  growing: true,
 	  mode: "SingleSelect",
-	  headerText: "The List",
-  })
+	  headerText: "The List"
+  });
 
   var oListItem1 = new StandardListItem({
 		  title: "Title1",
-		  selected: true,
+		  selected: true
 	  }),
 	  oListItem2 = new StandardListItem({
 		  title: "Title2",
 		  selected: true
-	  })
+	  });
 
   oList.addItem(oListItem1).addItem(oListItem2);
 

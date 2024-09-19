@@ -70,7 +70,7 @@ sap.ui.define([
   const TextDirection = coreLibrary.TextDirection;
 
   function addToPage(oOH){
-	  oOH.addStyleClass("sapUiResponsivePadding--header")
+	  oOH.addStyleClass("sapUiResponsivePadding--header");
 	  detail.addContent(oOH);
 	  detail.addContent(new HTML({
 		  content : "<div style='width:100%;height:2px;background-color:blue'/>"
@@ -157,7 +157,7 @@ sap.ui.define([
 			  statuses : [ new ObjectStatus({
 				  text : ""
 			  }), new ObjectStatus({}) ],
-			  attributes : [ new ObjectAttribute({}), new ObjectAttribute({}), new ObjectAttribute({}), new ObjectAttribute({}), ]
+			  attributes : [ new ObjectAttribute({}), new ObjectAttribute({}), new ObjectAttribute({}), new ObjectAttribute({}) ]
 		  });
 
   var oh3 = new ObjectHeader(
@@ -219,7 +219,7 @@ sap.ui.define([
 	  } else {
 		  oh4.setIcon(IconPool.getIconURI("attachment"));
 	  }
-  }
+  };
 
   var oh4 = new ObjectHeader("oh4", {
 	  intro : "On behalf of John Smith Ñagçyfox",
@@ -291,7 +291,7 @@ sap.ui.define([
 	  } else {
 		  oh7.setIcon(IconPool.getIconURI("attachment"));
 	  }
-  }
+  };
 
   var oh7 = new ObjectHeader("oh7", {
 	  title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
@@ -327,11 +327,11 @@ sap.ui.define([
 	  numberUnit : "EUR",
 	  numberState : ValueState.Success,
 	  statuses : [ new ObjectStatus({
-		  text : "First Status",
+		  text : "First Status"
 	  }) ],
 	  attributes : [ new ObjectAttribute({
 		  text : "First Attribute"
-	  }), new ObjectAttribute({}), new ObjectAttribute({}), ],
+	  }), new ObjectAttribute({}), new ObjectAttribute({}) ],
 	  markers: [
 		  new ObjectMarker({type: ObjectMarkerType.Favorite})
 	  ]
@@ -443,9 +443,9 @@ sap.ui.define([
   });
 
   //test popover title
-  var domRef = null;
   var oh16EventHandler = function(oEvent) {
-	  domRef = oEvent.getParameters().domRef;
+	  const header = oEvent.getSource();
+	  const domRef = oEvent.getParameters().domRef;
 	  var popover = new Popover({
 			  placement: PlacementType.Bottom,
 			  showHeader: true,
@@ -462,25 +462,25 @@ sap.ui.define([
 							  selected : true
 						  }),
 						  new StandardListItem({
-							  title : "Lorem ipsum",
+							  title : "Lorem ipsum"
 						  }),
 						  new StandardListItem({
-							  title : "Lorem ipsum dolor sit amet et sineat",
+							  title : "Lorem ipsum dolor sit amet et sineat"
 						  }),
 						  new StandardListItem({
-							  title : "Lorem ipsum",
+							  title : "Lorem ipsum"
 						  }),
 						  new ActionListItem({
-							  text : "Lorem ipsum",
+							  text : "Lorem ipsum"
 						  }),
 						  new ActionListItem({
-							  text : "Lorem ipsum",
+							  text : "Lorem ipsum"
 						  })
 				   ] //end of item
 			  }) // end of content
 	  }); //end of popover
 	  popover.openBy(domRef);
-  }
+  };
 
   var oh16 = new ObjectHeader({
 	  title : "Object Header for testing title arrow icon",
@@ -577,7 +577,7 @@ sap.ui.define([
 		  displayValue : '56%',
 		  percentValue : 56,
 		  showValue : true,
-		  height : '22px', //1.375rem
+		  height : '22px' //1.375rem
 	  }), new ObjectStatus({
 		  text : "Productivity High"
 	  }), new ProgressIndicator("oh18-pi2", {
@@ -587,7 +587,7 @@ sap.ui.define([
 		  displayValue : '90%',
 		  percentValue : 90,
 		  showValue : true,
-		  height : '22px', //1.375rem
+		  height : '22px' //1.375rem
 	  }), new ObjectStatus({
 		  text : "Quality Good"
 	  }) ],
@@ -601,7 +601,7 @@ sap.ui.define([
 		  text : "Productivity"
 	  }), new ObjectAttribute({
 		  text : "Productivity Progress Indicator"
-	  }), ],
+	  }) ],
 	  markers: [
 		  new ObjectMarker({type: ObjectMarkerType.Flagged})
 	  ]
@@ -618,7 +618,7 @@ sap.ui.define([
 		  text : "Ñagçyfox This is the only attribute in the object header Ñagçyfox"
 	  }), new ObjectAttribute({
 		  text : "This attribute should be invisible"
-	  }) ],
+	  }) ]
   });
 
   var ohCondensedId2 = "ohc2";
@@ -634,7 +634,7 @@ sap.ui.define([
 		  text : "Ñagçyfox This is the only attribute in the object header Ñagçyfox"
 	  }), new ObjectAttribute({
 		  text : "This attribute should be invisible"
-	  }) ],
+	  }) ]
   });
 
   var ohCondensedId3 = "ohc3";
@@ -653,7 +653,7 @@ sap.ui.define([
 	  condensed : true,
 	  attributes : [ new ObjectAttribute({
 		  text : "Ñagçyfox This is the only attribute in the object header Ñagçyfox"
-	  })],
+	  })]
   });
 
   var ohCondensedId5 = "ohc5";
@@ -673,7 +673,7 @@ sap.ui.define([
 	  condensed : true,
 	  attributes : [ new ObjectAttribute({
 		  text : "Ñagçyfox overflow testing."
-	  })],
+	  })]
   });
 
   var ohCondensedId7 = "ohc7";
@@ -684,7 +684,7 @@ sap.ui.define([
 	  condensed : true,
 	  attributes : [ new ObjectAttribute({
 		  text : "Ñagçyfox long attribute description for property display testing."
-	  })],
+	  })]
   });
 
   var ohCondensedId8 = "ohc8";
@@ -697,7 +697,7 @@ sap.ui.define([
 	  backgroundDesign: BackgroundDesign.Solid,
 	  attributes : [ new ObjectAttribute({
 		  text : "Ñagçyfox This is the only attribute in the object header Ñagçyfox"
-	  })],
+	  })]
   });
 
   var ohCondensedId9 = "ohc9";

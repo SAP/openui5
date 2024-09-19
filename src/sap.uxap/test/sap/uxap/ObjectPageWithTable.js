@@ -35,8 +35,7 @@ sap.ui.define([
 		var oTable1 = new Table("testUITable",{
 			rows:"{model>/rows}",
 			visibleRowCountMode: "Auto",
-			minAutoRowCount: 2,
-
+			minAutoRowCount: 2
 		});
 		oTable1.setModel(oModel,"model");
 

@@ -851,14 +851,14 @@ sap.ui.define([
 
   new ToggleButton({
 	  type: ButtonType.Back,
-	  icon: "sap-icon://home",
+	  icon: "sap-icon://home"
   }).placeAt("standAloneBtn");
 
   new HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
 
   new ToggleButton({
 	  type: ButtonType.Back,
-	  text: "ToggleButton Type Back",
+	  text: "ToggleButton Type Back"
   }).placeAt("standAloneBtn");
 
   new HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
@@ -866,7 +866,7 @@ sap.ui.define([
   new ToggleButton({
 	  type: ButtonType.Back,
 	  icon: "sap-icon://home",
-	  text: "ToggleButton Type Back",
+	  text: "ToggleButton Type Back"
   }).placeAt("standAloneBtn");
 
   new HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
@@ -1970,7 +1970,7 @@ sap.ui.define([
   }).placeAt("specialBtn");
 
   // Buttons inside Table
-  var data = aButtonSettings = [{
+  var data = [{
 		  text: "Button"
   }];
   var oModel = new JSONModel();
@@ -2039,7 +2039,7 @@ sap.ui.define([
   // Arrange the table columns according to the cells content width
   oButtonsTable.setFixedLayout(false);
 
-  oTableRowTemplate = new ColumnListItem({
+  var oTableRowTemplate = new ColumnListItem({
 	  type: "Active",
 	  cells : [
 		  new Button({

@@ -79,7 +79,7 @@ sap.ui.define([
 		  {
 			  hAlign: "Center",
 			  text: "Image",
-			  minScreenWidth: "Phone",
+			  minScreenWidth: "Phone"
 		  },
 		  {
 			  text: "Raiting",
@@ -229,7 +229,7 @@ sap.ui.define([
 			  displayFormat: "dd.MM.yyyy"
 		  }),
 		  new Text({
-			  text: "{money} EUR",
+			  text: "{money} EUR"
 		  })
 	  ]
   });
@@ -410,7 +410,7 @@ sap.ui.define([
 
   //*****************PAGE*********************************************
 
-  var oApp = new App;
+  var oApp = new App();
 
   var oPage = new Page({
 	  title: "ColumnPopover Test Page",

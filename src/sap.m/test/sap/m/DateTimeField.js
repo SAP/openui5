@@ -26,7 +26,7 @@ sap.ui.define([
 
   // Note: the HTML page 'DateTimeField.html' loads this module via data-sap-ui-on-init
 
-  var oApp = new App;
+  var oApp = new App();
 
   var aTextAligns = Object.keys(TextAlign).map(function(sTextAlign) {
 	  return new Item({

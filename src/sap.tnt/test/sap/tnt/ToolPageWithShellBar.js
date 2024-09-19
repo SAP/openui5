@@ -64,7 +64,7 @@ sap.ui.define([
   var oSideNavigation = new SideNavigation("SNav", {
 	  expanded: false,
 	  itemSelect: function (event) {
-		  oNavContainer.to(event.getParameter('item').getKey())
+		  oNavContainer.to(event.getParameter('item').getKey());
 	  },
 	  item: new NavigationList("NList", {
 		  items: {

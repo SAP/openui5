@@ -8,7 +8,7 @@ sap.ui.define([
   "use strict";
   var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
 
-  var oYearPicker = new YearPicker("YP1",{
+  new YearPicker("YP1",{
 	  select: function(oEvent){
 		  var oTF = Element.getElementById("TF1");
 		  var oYP = oEvent.oSource;
@@ -17,13 +17,13 @@ sap.ui.define([
 	  }
   }).placeAt("sample1");
 
-  var oLabel = new Label({text: "selected Year", labelFor: "TF1"}).placeAt("event1");
-  var oInput = new TextField("TF1",{
+  new Label({text: "selected Year", labelFor: "TF1"}).placeAt("event1");
+  new TextField("TF1",{
 	  editable: true,
 	  change: function(oEvent){
 		  var sValue = oEvent.getParameter('newValue');
 		  var oYP = Element.getElementById("YP1");
-		  if(sValue && !isNaN(sValue)){
+		  if (sValue && !isNaN(sValue)) {
 			  var iYear = parseInt(sValue);
 //						var oDate = new UniversalDate(iYear, 0, 1);
 //						if(iYear < 100) {
@@ -39,7 +39,7 @@ sap.ui.define([
   }).placeAt("event1");
 
   var oDate = UI5Date.getInstance(2015,0,1);
-  oYearPicker = new YearPicker("YP2",{
+  new YearPicker("YP2",{
 	  years: 5,
 	  columns: 0,
 	  date: oDate,
@@ -51,13 +51,13 @@ sap.ui.define([
 	  }
   }).placeAt("sample2");
 
-  oLabel = new Label({text: "selected Year", labelFor: "TF2"}).placeAt("event2");
-  oInput = new TextField("TF2",{
+  new Label({text: "selected Year", labelFor: "TF2"}).placeAt("event2");
+  new TextField("TF2",{
 	  editable: true,
 	  change: function(oEvent){
 		  var sValue = oEvent.getParameter('newValue');
 		  var oYP = Element.getElementById("YP2");
-		  if(sValue && !isNaN(sValue)){
+		  if (sValue && !isNaN(sValue)) {
 			  var iYear = parseInt(sValue);
 //					var oDate = new UniversalDate(iYear, 0, 1);
 //					if(iYear < 100) {
