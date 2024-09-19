@@ -1750,5 +1750,15 @@
         ]
       }
     ]
+  },
+  "1.108.35": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "b321bac54e4e575370389d1777e2634d6efc0e66",
+        "type": "FIX",
+        "text": " sap.m.Popover: Height calculations for scrollable contents are preserved after invalidation"
+      }
+    ]
   }
 }

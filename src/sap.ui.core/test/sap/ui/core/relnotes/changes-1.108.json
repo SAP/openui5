@@ -642,5 +642,20 @@
         "text": " ResourceModel: Fix bundle reload after localizationChange"
       }
     ]
+  },
+  "1.108.35": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "d09bc390c1b58d0360bf06589cc2eea63114be0a",
+        "type": "FIX",
+        "text": " sap/ui/model/resource/ResourceModel#_handleLocalizationChange: wait for resource bundle to be loaded"
+      },
+      {
+        "id": "c1d7f3fe7befeaf0c5c14a14c359ed46918d38f4",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/v2/ODataListBinding: fire dataReceived event for aborted requests"
+      }
+    ]
   }
 }
