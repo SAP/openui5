@@ -7,7 +7,7 @@ sap.ui.define([
 		'sap/ui/mdc/enums/OperatorValueType',
 		'sap/ui/model/Filter',
 		'sap/ui/model/FilterOperator',
-		'sap/base/Log'
+		'sap/base/strings/escapeRegExp'
 	],
 
 	(
@@ -16,7 +16,7 @@ sap.ui.define([
 		OperatorValueType,
 		Filter,
 		FilterOperator,
-		Log
+		escapeRegExp
 	) => {
 		"use strict";
 
@@ -48,10 +48,11 @@ sap.ui.define([
 				oConfiguration.filterOperator = oConfiguration.filterOperator || FilterOperator.BT;
 				if (oConfiguration.valueTypes && oConfiguration.valueTypes.length > 0) {
 					if (oConfiguration.valueTypes[0] === OperatorValueType.Static) { // as static operators cannot hold any value only the text is interesting
+						const sLongText = oConfiguration.longText && escapeRegExp(oConfiguration.longText);
 						if (oConfiguration.longText && oConfiguration.longText !== oConfiguration.tokenText && oConfiguration.tokenText) {
-							oConfiguration.tokenTest = oConfiguration.tokenTest || "^" + oConfiguration.longText + "$|^#tokenText#$"; // as static text don't need to be entered allow longText too
+							oConfiguration.tokenTest = oConfiguration.tokenTest || "^" + sLongText + "$|^#tokenText#$"; // as static text don't need to be entered allow longText too
 						} else if (oConfiguration.longText && !oConfiguration.tokenText) {
-							oConfiguration.tokenTest = oConfiguration.tokenTest || "^" + oConfiguration.longText + "$"; // as static text don't need to be entered allow longText too
+							oConfiguration.tokenTest = oConfiguration.tokenTest || "^" + sLongText + "$"; // as static text don't need to be entered allow longText too
 						} else {
 							oConfiguration.tokenTest = oConfiguration.tokenTest || "^#tokenText#$";
 						}
