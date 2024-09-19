@@ -27,6 +27,7 @@ sap.ui.define([
 			isIgnoreETag : function () {},
 			onCreateGroup : function () {},
 			onHttpResponse : mustBeMocked,
+			reportError : mustBeMocked,
 			reportStateMessages : mustBeMocked,
 			reportTransitionMessages : mustBeMocked
 		},
@@ -931,7 +932,7 @@ sap.ui.define([
 			fnResolve = resolve;
 			fnReject = reject;
 		});
-		const oRetryAfterError = {};
+		const oRetryAfterError = {message : "DB migration in progress"};
 		function fnRetryAfter(oError) {
 			assert.strictEqual(oError, oRetryAfterError);
 			return oRetryAfterPromise;
@@ -941,7 +942,11 @@ sap.ui.define([
 		function checkError(oError) {
 			assert.notOk(bResolve);
 			assert.strictEqual(oError, bOwnError ? oOwnError : oRetryAfterError);
-			assert.strictEqual(oError.$reported, bOwnError);
+			if (bOwnError) {
+				assert.strictEqual(oError.$reported, true);
+			} else {
+				assert.notOk("$reported" in oError);
+			}
 		}
 
 		function checkSuccess() {
@@ -957,6 +962,10 @@ sap.ui.define([
 		const o503jqXHRMock = this.mock(o503jqXHR);
 		const oModelInterfaceMock = this.mock(oModelInterface);
 		let oSendPromise3;
+		this.mock(oRequestor.oModelInterface).expects("reportError")
+			.exactly(bResolve === false ? 1 : 0)
+			.withExactArgs(oRetryAfterError.message, sClassName,
+				sinon.match.same(oRetryAfterError));
 		oJQueryMock.expects("ajax").withArgs("/Service/First").callsFake(() => {
 			const jqXHR = new jQuery.Deferred();
 			setTimeout(() => {
@@ -1613,9 +1622,13 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bBatchFails) {
 	QUnit.test("request(...): $single, batch fails: " + bBatchFails, function (assert) {
-		var mQueryOptions = {$select : ["foo"]},
+		var oBatchError = new Error("Service Unavailable"),
+			mQueryOptions = {$select : ["foo"]},
+			fnReporter = sinon.spy(),
 			oRequestor = _Requestor.create("/", oModelInterface);
 
+		this.mock(oRequestor.oModelInterface).expects("getReporter").withExactArgs()
+			.returns(fnReporter);
 		this.mock(oRequestor).expects("submitBatch").withExactArgs("$single").callsFake(() => {
 			TestUtils.deepContains(oRequestor.mBatchQueue, {
 				$single : [
@@ -1628,7 +1641,6 @@ sap.ui.define([
 				]
 			});
 			if (bBatchFails) {
-				const oBatchError = new Error("Service Unavailable");
 				const oRequestError
 					= new Error("HTTP request was not processed because $batch failed");
 				oRequestError.cause = oBatchError;
@@ -1641,10 +1653,16 @@ sap.ui.define([
 
 		return oRequestor.request("GET", "EntitySet", this.createGroupLock("$single"), undefined,
 				undefined, undefined, undefined, undefined, undefined, false, mQueryOptions)
-			.catch((oError) => {
+			.then(() => {
+				assert.notOk(bBatchFails);
+				assert.strictEqual(fnReporter.callCount, 0);
+			}, (oError) => {
+				assert.ok(bBatchFails);
 				assert.strictEqual(oError.message,
 					"HTTP request was not processed because $batch failed");
 				assert.strictEqual(oError.cause.message, "Service Unavailable");
+				assert.strictEqual(fnReporter.callCount, 1);
+				sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oBatchError));
 		});
 	});
 });
@@ -2568,7 +2586,7 @@ sap.ui.define([
 			assert.strictEqual(oError.message,
 				"HTTP request was not processed because $batch failed");
 			assert.strictEqual(oError.cause, oBatchError);
-			assert.strictEqual(oError.$reported, "~reported~");
+			assert.strictEqual(oError.$reported, true);
 			assert.notOk(bWaitingIsOver);
 		}
 
@@ -2576,7 +2594,6 @@ sap.ui.define([
 			return aRequests0 === aRequests;
 		}
 
-		oBatchError.$reported = "~reported~";
 		aPromises.push(oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
 				{"If-Match" : {/* product 0*/}}, {Name : "foo"})
 			.then(unexpected, assertError));

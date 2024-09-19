@@ -381,6 +381,7 @@ sap.ui.define([
 				const fnHttpListener = that.fnHttpListener; // avoid "this" when calling
 				fnHttpListener?.({responseHeaders : mHeaders});
 			},
+			reportError : this.reportError.bind(this),
 			reportStateMessages : this.reportStateMessages.bind(this),
 			reportTransitionMessages : this.reportTransitionMessages.bind(this),
 			updateMessages : function (aOldMessages, aNewMessages) {
