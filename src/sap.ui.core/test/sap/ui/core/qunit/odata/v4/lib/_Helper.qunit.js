@@ -4112,12 +4112,12 @@ sap.ui.define([
 		// code under test
 		_Helper.createMissing(oObject, ["foo"]);
 
-		assert.deepEqual(oObject, {bar : undefined, foo : null});
+		assert.deepEqual(oObject, {bar : undefined, foo : undefined, "foo@$ui5.noData" : true});
 
 		// code under test (idempotency)
 		_Helper.createMissing(oObject, ["foo"]);
 
-		assert.deepEqual(oObject, {bar : undefined, foo : null});
+		assert.deepEqual(oObject, {bar : undefined, foo : undefined, "foo@$ui5.noData" : true});
 
 		assert.throws(function () {
 			// code under test
@@ -4139,7 +4139,7 @@ sap.ui.define([
 		// code under test
 		_Helper.createMissing(oObject, ["foo", "bar"]);
 
-		assert.deepEqual(oObject, {foo : {bar : null}});
+		assert.deepEqual(oObject, {foo : {bar : undefined, "bar@$ui5.noData" : true}});
 		assert.strictEqual(oObject.foo, oEmpty, "originally empty object has been modified");
 
 		assert.throws(function () {
@@ -4153,18 +4153,20 @@ sap.ui.define([
 		assert.deepEqual(oObject, {
 			a : {
 				b : {
-					c : null
+					c : undefined,
+					"c@$ui5.noData" : true
 				}
 			},
 			foo : {
-				bar : null
+				bar : undefined,
+				"bar@$ui5.noData" : true
 			}
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("inheritPathValue: simple properties", function (assert) {
-		var oSource = {bar : "<bar>", foo : "<foo>"},
+		var oSource = {bar : "<bar>", foo : "<foo>", qux : "<qux>", "qux@$ui5.noData" : "true"},
 			sSource = JSON.stringify(oSource),
 			oTarget = {bar : undefined};
 
@@ -4177,6 +4179,12 @@ sap.ui.define([
 		_Helper.inheritPathValue(["bar"], oSource, oTarget);
 
 		assert.deepEqual(oTarget, {bar : undefined, foo : "<foo>"});
+
+		// code under test
+		_Helper.inheritPathValue(["qux"], oSource, oTarget);
+
+		assert.deepEqual(oTarget,
+			{bar : undefined, foo : "<foo>", qux : "<qux>", "qux@$ui5.noData" : true});
 		assert.strictEqual(JSON.stringify(oSource), sSource, "unchanged");
 	});
 
@@ -4185,7 +4193,8 @@ sap.ui.define([
 		var oEmpty = {},
 			oSource = {
 				foo : {
-					bar : "<bar>"
+					bar : "<bar>",
+					qux : "<qux>", "qux@$ui5.noData" : "true"
 				}
 			},
 			sSource = JSON.stringify(oSource),
@@ -4234,6 +4243,16 @@ sap.ui.define([
 		assert.deepEqual(oTarget2, {
 			foo : {
 				bar : undefined
+			}
+		});
+
+		// code under test
+		_Helper.inheritPathValue(["foo", "qux"], oSource, oTarget2);
+
+		assert.deepEqual(oTarget2, {
+			foo : {
+				bar : undefined,
+				qux : "<qux>", "qux@$ui5.noData" : true
 			}
 		});
 

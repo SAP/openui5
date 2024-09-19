@@ -1700,6 +1700,8 @@ sap.ui.define([
 			.callsFake(function () {
 				if (bGotIt) {
 					oData[0].entity.foo.bar = {baz : "qux"};
+				} else {
+					oData[0].entity.foo["bar@$ui5.noData"] = true; // MUST be ignored
 				}
 				return SyncPromise.resolve(Promise.resolve());
 			});
@@ -2090,10 +2092,41 @@ sap.ui.define([
 		// code under test
 		return oCache.drillDown(oData, "($uid=id-1-23)/SO_2_BP").then(function (oValue) {
 			assert.strictEqual(oValue, null);
-		}).then(function () {
 			assert.deepEqual(oData[0], {"@$ui5.context.isTransient" : true}, "cache unchanged");
 		});
 	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bTransient) {
+	QUnit.test("_Cache#drillDown: ...@$ui5.noData, transient=" + bTransient, function (assert) {
+		var oCache = new _Cache(this.oRequestor, "SalesOrders"),
+			oData = [{
+				"@$ui5.context.isTransient" : bTransient, // MUST not matter
+				SalesNumber : undefined,
+				"SalesNumber@$ui5.noData" : true
+			}],
+			sData = JSON.stringify(oData);
+
+		oData.$byPredicate = {"($uid=id-1-23)" : oData[0]};
+
+		this.mock(_Helper).expects("getMetaPath")
+			.withExactArgs("($uid=id-1-23)/SalesNumber")
+			.returns("SalesNumber");
+		this.oModelInterfaceMock.expects("fetchMetadata")
+			.withExactArgs("/SalesOrders/SalesNumber")
+			.returns(SyncPromise.resolve({
+				$kind : "Property",
+				$Type : "n/a"
+			})); // BEWARE: do not get async here, would be confused w/ fetchLateProperty()
+		this.mock(oCache).expects("fetchLateProperty").never();
+
+		// code under test
+		return oCache.drillDown(oData, "($uid=id-1-23)/SalesNumber").then(function (oValue) {
+			assert.strictEqual(oValue, undefined);
+			assert.strictEqual(JSON.stringify(oData), sData, "cache unchanged");
+		});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#drillDown: missing property annotation", function (assert) {

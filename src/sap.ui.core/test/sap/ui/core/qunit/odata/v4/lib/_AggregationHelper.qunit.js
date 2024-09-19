@@ -2286,8 +2286,8 @@ sap.ui.define([
 
 		assert.deepEqual(oElement, {
 			"@$ui5.node.level" : "~iLevel~",
-			bar : null,
-			foo : null,
+			bar : undefined, "bar@$ui5.noData" : true,
+			foo : undefined, "foo@$ui5.noData" : true,
 			group : "~group~",
 			measure : "~measure~"
 		});

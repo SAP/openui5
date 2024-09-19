@@ -848,13 +848,16 @@ sap.ui.define([
 			oElementMatcher = sinon.match(function (o) {
 				return o === oElement && (bParent
 					? o.p1 === "v1" && o.p2 === "v2" && o.p3 === "v3" && o.p4 === "v4"
-					: !("p1" in o) && o.p2 === "v2" && !("p3" in o) && o.p4 === "v4");
+						&& o["p3@$ui5.noData"] === true
+					: !("p1" in o) && o.p2 === "v2" && !("p3" in o) && o.p4 === "v4"
+						&& !("p3@$ui5.noData" in o));
 			}),
 			aGroupBy = [/*does not matter*/],
 			oGroupNode = {
 				p1 : "v1",
 				p2 : "n/a",
 				p3 : "v3",
+				"p3@$ui5.noData" : "true", // truthy, but not true
 				"@$ui5.node.level" : 2
 			},
 			oHelperMock = this.mock(_Helper),
@@ -892,6 +895,7 @@ sap.ui.define([
 			p1 : "v1",
 			p2 : "v2",
 			p3 : "v3",
+			"p3@$ui5.noData" : true,
 			p4 : "v4"
 		} : {
 			p2 : "v2",

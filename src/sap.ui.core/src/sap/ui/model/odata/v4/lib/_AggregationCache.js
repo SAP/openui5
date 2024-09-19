@@ -2480,6 +2480,9 @@ sap.ui.define([
 				if (Array.isArray(vProperty)) {
 					_Helper.inheritPathValue(vProperty, oGroupNode, oElement);
 				} else if (!(vProperty in oElement)) {
+					if (oGroupNode[vProperty + "@$ui5.noData"]) {
+						oElement[vProperty + "@$ui5.noData"] = true;
+					}
 					oElement[vProperty] = oGroupNode[vProperty];
 				}
 			});
