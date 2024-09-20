@@ -245,8 +245,7 @@ sap.ui.define([
 
 		// Assert
 		assert.equal(oWarningSpy.callCount, 1, "");
-		assert.ok(oWarningSpy.args[0][0].indexOf("destroyed") !== -1, "The message contains the correct keyword");
-		assert.strictEqual(oWarningSpy.args[0][1], oRouterToBeDestroyed, "The second parameter to the warning call is correct");
+		assert.ok(oWarningSpy.args[0][0].indexOf("destroyed") !== -1, oRouterToBeDestroyed.toString() + ": The message contains the correct keyword");
 		oFirstRouter.destroy();
 	});
 

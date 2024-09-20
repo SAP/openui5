@@ -1611,7 +1611,7 @@ sap.ui.define([
 			manifest: true
 		}).then(function(oComponent){
 			assert.equal(oErrorLogSpy.callCount, 1, "error logged");
-			assert.ok(oErrorLogSpy.calledWith(sinon.match(/Mandatory init\(\) not called for UIComponent: 'manifestModules.scenario11'. This is likely caused by a missing super call in the component's init implementation./)), "missing init super error logged");
+			assert.ok(oErrorLogSpy.calledWith(sinon.match(/Mandatory init\(\) not called for UIComponent: 'manifestModules.scenario11'. A sub-class of sap.ui.core.UIComponent which overrides the init\(\) function must apply the super init\(\) function as well./)), "missing init super error logged");
 			oComponent.destroy();
 			future.active = undefined;
 		}).catch(function() {

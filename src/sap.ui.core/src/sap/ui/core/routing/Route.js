@@ -137,9 +137,9 @@ sap.ui.define([
 				if (oConfig.parent) {
 					var oRoute = this._getParentRoute(oConfig.parent);
 					if (!oRoute) {
-						future.errorThrows("No parent route with '" + oConfig.parent + "' could be found", this);
+						future.errorThrows(`${this}: No parent route with "${oConfig.parent}" could be found`);
 					} else if (oRoute._aPattern.length > 1) {
-						future.errorThrows("Routes with multiple patterns cannot be used as parent for nested routes", this);
+						future.errorThrows(`${this}: Routes with multiple patterns cannot be used as parent for nested routes`);
 						return;
 					} else {
 						this._oNestingParent = oRoute;
@@ -639,11 +639,11 @@ sap.ui.define([
 
 			_validateConfig: function(oConfig) {
 				if (!oConfig.name) {
-					future.errorThrows("A name has to be specified for every route", this);
+					future.errorThrows(`${this}: A name has to be specified for every route`);
 				}
 
 				if (oConfig.viewName) {
-					future.errorThrows("The 'viewName' option shouldn't be used in Route. please use 'view' instead", this);
+					future.errorThrows(`${this}: The 'viewName' option shouldn't be used in Route. please use 'view' instead`);
 				}
 			},
 

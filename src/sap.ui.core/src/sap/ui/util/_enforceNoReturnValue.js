@@ -19,7 +19,7 @@ sap.ui.define([
 				});
 			}
 			// for any return value other than 'undefined'
-			future.fatalThrows(`The registered Event Listener ${sFunctionName}must not have a return value.`, mLogInfo.component);
+			future.fatalThrows(`${mLogInfo.component}: The registered Event Listener ${sFunctionName}must not have a return value.`);
 		}
 	}
 	return _enforceNoReturnValue;

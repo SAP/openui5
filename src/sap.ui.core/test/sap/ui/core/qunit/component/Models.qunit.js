@@ -455,15 +455,15 @@ sap.ui.define([
 
 
 			// Log.error
-			sinon.assert.calledWithExactly(this.oLogSpy, sinon.match(/Component Manifest: Missing \"type\" for model \"no-model-type\"/), "[\"sap.ui5\"][\"models\"][\"no-model-type\"]", this.oComponent.getMetadata().getComponentName());
-			sinon.assert.calledWithExactly(this.oLogSpy, sinon.match(/Class \"sap.ui.not.defined.Model\" for model \"missing-model-class\" could not be loaded./), "[\"sap.ui5\"][\"models\"][\"missing-model-class\"]", this.oComponent.getMetadata().getComponentName());
-			sinon.assert.calledWithExactly(this.oLogSpy, sinon.match(/Component Manifest: Class \"testdata.v2models.parent.ModelNotDefined\" for model \"model-not-found\" could not be found/), "[\"sap.ui5\"][\"models\"][\"model-not-found\"]", this.oComponent.getMetadata().getComponentName());
-			sinon.assert.calledWithExactly(this.oLogSpy, sinon.match(/Component Manifest: ODataAnnotation \"undefined\" for dataSource \"odata-invalid-annotations\" could not be found in manifest/), "[\"sap.app\"][\"dataSources\"][\"undefined\"]", this.oComponent.getMetadata().getComponentName());
-			sinon.assert.calledWithExactly(this.oLogSpy, sinon.match(/Component Manifest: Missing \"uri\" for ODataAnnotation \"annotation-without-uri\"/), "[\"sap.app\"][\"dataSources\"][\"annotation-without-uri\"]", this.oComponent.getMetadata().getComponentName());
-			sinon.assert.calledWithExactly(this.oLogSpy, sinon.match(/Component Manifest: dataSource \"json\" was expected to have type \"ODataAnnotation\" but was \"JSON\"/), "[\"sap.app\"][\"dataSources\"][\"json\"]", this.oComponent.getMetadata().getComponentName());
-			sinon.assert.calledWithExactly(this.oLogSpy, sinon.match(/Component Manifest: dataSource \"invalid\" for model \"dataSource-invalid\" not found or invalid/), "[\"sap.app\"][\"dataSources\"][\"invalid\"]", this.oComponent.getMetadata().getComponentName());
-			sinon.assert.calledWithExactly(this.oLogSpy, sinon.match(/Component Manifest: dataSource \"does-not-exist\" for model \"dataSource-not-found\" not found or invalid/), "[\"sap.app\"][\"dataSources\"][\"does-not-exist\"]", this.oComponent.getMetadata().getComponentName());
-			sinon.assert.calledWithExactly(this.oLogSpy, sinon.match(/Component Manifest: Provided OData version \"3.0\" in dataSource \"unknown-odataVersion\" for model \"v2-ODataModel-unknown-odataVersion\" is unknown. Falling back to default model type \"sap.ui.model.odata.v2.ODataModel\"./), "[\"sap.app\"][\"dataSources\"][\"unknown-odataVersion\"]", this.oComponent.getMetadata().getComponentName());
+			sinon.assert.calledWith(this.oLogSpy, sinon.match(/Component Manifest: Missing \"type\" for model \"no-model-type\". \[\"sap.ui5\"\]\[\"models\"\]\[\"no-model-type\"\]./));
+			sinon.assert.calledWith(this.oLogSpy, sinon.match(/Class \"sap.ui.not.defined.Model\" for model \"missing-model-class\" could not be loaded. \[\"sap.ui5\"\]\[\"models\"\]\[\"missing-model-class\"\]./));
+			sinon.assert.calledWith(this.oLogSpy, sinon.match(/Component Manifest: Class \"testdata.v2models.parent.ModelNotDefined\" for model \"model-not-found\" could not be found. \[\"sap.ui5\"\]\[\"models\"\]\[\"model-not-found\"\]./));
+			sinon.assert.calledWith(this.oLogSpy, sinon.match(/Component Manifest: ODataAnnotation \"undefined\" for dataSource \"odata-invalid-annotations\" could not be found in manifest. \[\"sap.app\"\]\[\"dataSources\"\]\[\"undefined\"\]./));
+			sinon.assert.calledWith(this.oLogSpy, sinon.match(/Component Manifest: Missing \"uri\" for ODataAnnotation \"annotation-without-uri\". \[\"sap.app\"\]\[\"dataSources\"\]\[\"annotation-without-uri\"\]./));
+			sinon.assert.calledWith(this.oLogSpy, sinon.match(/Component Manifest: dataSource \"json\" was expected to have type \"ODataAnnotation\" but was \"JSON\". \[\"sap.app\"\]\[\"dataSources\"\]\[\"json\"\]./));
+			sinon.assert.calledWith(this.oLogSpy, sinon.match(/Component Manifest: dataSource \"invalid\" for model \"dataSource-invalid\" not found or invalid. \[\"sap.app\"\]\[\"dataSources\"\]\[\"invalid\"\]./));
+			sinon.assert.calledWith(this.oLogSpy, sinon.match(/Component Manifest: dataSource \"does-not-exist\" for model \"dataSource-not-found\" not found or invalid. \[\"sap.app\"\]\[\"dataSources\"\]\[\"does-not-exist\"\]./));
+			sinon.assert.calledWith(this.oLogSpy, sinon.match(/Component Manifest: Provided OData version \"3.0\" in dataSource \"unknown-odataVersion\" for model \"v2-ODataModel-unknown-odataVersion\" is unknown. \[\"sap.app\"\]\[\"dataSources\"\]\[\"unknown-odataVersion\"\]. Falling back to default model type \"sap.ui.model.odata.v2.ODataModel\"./));
 
 
 			// check if models are set on component (and save them internally)

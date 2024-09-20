@@ -490,17 +490,17 @@ sap.ui.define([
 			controller: oController
 		});
 		assert.ok(oView, "View is created");
-		assert.ok(oFatalLogSpy.getCall(0).calledWith("[FUTURE FATAL] The registered Event Listener 'onInit' must not have a return value."), "Correct Fatal Log displayed");
+		assert.ok(oFatalLogSpy.getCall(0).calledWith("[FUTURE FATAL] my.Controller09: The registered Event Listener 'onInit' must not have a return value."), "Correct Fatal Log displayed");
 
 		// render view to enforce lifecycle-Hooks to be triggered
 		oView.placeAt("qunit-fixture");
 		await nextUIUpdate();
 		assert.ok(oView.getDomRef(), "View is rendered");
-		assert.ok(oFatalLogSpy.getCall(1).calledWith("[FUTURE FATAL] The registered Event Listener 'onBeforeRendering' must not have a return value."), "Correct Fatal Log displayed");
-		assert.ok(oFatalLogSpy.getCall(2).calledWith("[FUTURE FATAL] The registered Event Listener 'onAfterRendering' must not have a return value."), "Correct Fatal Log displayed");
+		assert.ok(oFatalLogSpy.getCall(1).calledWith("[FUTURE FATAL] my.Controller09: The registered Event Listener 'onBeforeRendering' must not have a return value."), "Correct Fatal Log displayed");
+		assert.ok(oFatalLogSpy.getCall(2).calledWith("[FUTURE FATAL] my.Controller09: The registered Event Listener 'onAfterRendering' must not have a return value."), "Correct Fatal Log displayed");
 
 		oView.destroy();
-		assert.ok(oFatalLogSpy.getCall(3).calledWith("[FUTURE FATAL] The registered Event Listener 'onExit' must not have a return value."), "Correct Fatal Log displayed");
+		assert.ok(oFatalLogSpy.getCall(3).calledWith("[FUTURE FATAL] my.Controller09: The registered Event Listener 'onExit' must not have a return value."), "Correct Fatal Log displayed");
 
 		await (async () => {
 			await Promise.allSettled(aPromises);
@@ -524,7 +524,7 @@ sap.ui.define([
 			});
 		});
 
-		const expectedMessage = "The registered Event Listener 'onInit' must not have a return value.";
+		const expectedMessage = "my.Controller10: The registered Event Listener 'onInit' must not have a return value.";
 		const oController = await Controller.create({
 			name: "my.Controller10"
 		});
@@ -549,7 +549,7 @@ sap.ui.define([
 			});
 		});
 
-		const expectedMessage = "The registered Event Listener 'onExit' must not have a return value.";
+		const expectedMessage = "my.Controller11: The registered Event Listener 'onExit' must not have a return value.";
 		const oController = await Controller.create({
 			name: "my.Controller11"
 		});
@@ -581,7 +581,7 @@ sap.ui.define([
 			});
 		});
 
-		const expectedMessage = "The registered Event Listener 'onBeforeRendering' must not have a return value.";
+		const expectedMessage = "my.Controller12: The registered Event Listener 'onBeforeRendering' must not have a return value.";
 		const oController = await Controller.create({
 			name: "my.Controller12"
 		});
@@ -610,7 +610,7 @@ sap.ui.define([
 			});
 		});
 
-		const expectedMessage = "The registered Event Listener 'onAfterRendering' must not have a return value.";
+		const expectedMessage = "my.Controller13: The registered Event Listener 'onAfterRendering' must not have a return value.";
 		const oController = await Controller.create({
 			name: "my.Controller13"
 		});

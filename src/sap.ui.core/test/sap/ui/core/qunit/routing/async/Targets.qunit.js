@@ -204,7 +204,7 @@ sap.ui.define([
 		assert.strictEqual(oParent._oOptions.type, "View", "config is converted to the new format");
 		assert.notOk(oParent._oOptions.viewName, "config is converted to the new format");
 		// Check whether the error message is thrown
-		sinon.assert.calledWith(oStub, sinon.match(/myParent/), sinon.match(this.oTargets));
+		sinon.assert.calledWith(oStub, sinon.match(/myParent/) && sinon.match(this.oTargets.toString()));
 		future.active = undefined;
 	});
 
@@ -216,7 +216,7 @@ sap.ui.define([
 			this.oTargets.addTarget("myParent", {
 				viewName: "myNewParentView"
 			});
-		}, new Error("Target with name myParent already exists"), "");
+		}, new Error("EventProvider sap.ui.core.routing.Targets: Target with name \"myParent\" already exists"), "");
 
 		future.active = undefined;
 	});
@@ -286,7 +286,7 @@ sap.ui.define([
 		const oTargets = new Targets(oIncorrectConfig);
 
 		// Assert
-		sinon.assert.calledWith(oErrorStub, sinon.match(/was not found/), sinon.match(oTargets));
+		sinon.assert.calledWith(oErrorStub, sinon.match(/was not found/) && sinon.match(oTargets.toString()));
 
 		oTargets.destroy();
 		future.active = undefined;
@@ -305,7 +305,7 @@ sap.ui.define([
 
 		// System under test + Act
 		assert.throws(() => { this.oTargets = new Targets(oIncorrectConfig); },
-			new Error("The target 'myChildWithoutParent' has a parent 'foo' defined, but it was not found in the other targets"), "Throws an error because parent doesn't exist.");
+			new Error("EventProvider sap.ui.core.routing.Targets: The target \"myChildWithoutParent\" has a parent \"foo\" defined, but it was not found in the other targets"), "Throws an error because parent doesn't exist.");
 
 		future.active = undefined;
 	});
@@ -401,14 +401,14 @@ sap.ui.define([
 			assert.strictEqual(aViewInfos[0].name, "foo", "Matching target info is returned");
 			assert.ok(aViewInfos[0].error.includes("The target with the name \"foo\" does not exist!"), "Matching error message is returned");
 			// Assert
-			sinon.assert.calledWith(oErrorStub, sinon.match(/does not exist/), sinon.match(this.oTargets));
+			sinon.assert.calledWith(oErrorStub, sinon.match(/does not exist/) && sinon.match(this.oTargets.toString()));
 			future.active = undefined;
 		}.bind(this));
 	});
 
 	QUnit.test("Should throw an error if user tries to display a non existing Target (future=true)", function (assert) {
 		future.active = true;
-		assert.throws(() => { this.oTargets.display("foo"); }, new Error("The target with the name \"foo\" does not exist!"), "Promise rejects because target does not exist");
+		assert.throws(() => { this.oTargets.display("foo"); }, new Error("EventProvider sap.ui.core.routing.Targets: The target with the name \"foo\" does not exist!"), "Promise rejects because target does not exist");
 		future.active = undefined;
 	});
 
@@ -1091,7 +1091,7 @@ sap.ui.define([
 		};
 
 		// Assert
-		assert.throws(myAssertFn, new Error("The target with the name \"myNoTitleTarget\" where the titleChanged event should be fired does not exist!"),
+		assert.throws(myAssertFn, new Error("EventProvider sap.ui.core.routing.Targets: The target with the name \"myNoTitleTarget\" where the titleChanged event should be fired does not exist!"),
 			"Throws an error because target does not exist.");
 		assert.ok(fnEventSpy.notCalled, "the event isn't fired");
 		future.active = undefined;
@@ -1145,7 +1145,7 @@ sap.ui.define([
 		const myAssertFn = () => {
 			this.oTargets.display(["myTarget"], oData, "foo");
 		};
-		assert.throws(myAssertFn, new Error("The target with the name \"foo\" where the titleChanged event should be fired does not exist!"),
+		assert.throws(myAssertFn, new Error("EventProvider sap.ui.core.routing.Targets: The target with the name \"foo\" where the titleChanged event should be fired does not exist!"),
 			"Throws an error because TitleTarget is invalid.");
 		assert.ok(fnEventSpy.notCalled, "the event isn't fired");
 

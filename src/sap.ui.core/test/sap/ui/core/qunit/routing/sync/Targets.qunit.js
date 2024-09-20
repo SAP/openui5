@@ -189,7 +189,7 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oParent._oOptions.viewName, "myParentView", "options stay the same");
 		// Check whether the error message is thrown
-		sinon.assert.calledWith(oStub, sinon.match(/myParent/), sinon.match(this.oTargets));
+		sinon.assert.calledWith(oStub, sinon.match(/myParent/) && sinon.match(this.oTargets.toString()));
 	});
 
 	QUnit.module("config - defaults and additional values", {
@@ -257,7 +257,7 @@ sap.ui.define([
 		this.oTargets = new Targets(oIncorrectConfig);
 
 		// Assert
-		sinon.assert.calledWith(oErrorStub, sinon.match(/was not found/), sinon.match(this.oTargets));
+		sinon.assert.calledWith(oErrorStub, sinon.match(/was not found/) && sinon.match(this.oTargets.toString()));
 	});
 
 	QUnit.module("display", {

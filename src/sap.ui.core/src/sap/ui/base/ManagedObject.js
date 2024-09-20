@@ -2654,7 +2654,7 @@ sap.ui.define([
 	ManagedObject.prototype._removeChild = function(oChild, sAggregationName, bSuppressInvalidate) {
 		if (!sAggregationName) {
 			// an aggregation name has to be specified!
-			future.errorThrows("Cannot remove aggregated child without aggregation name.", null, this);
+			future.errorThrows(`${this}: Cannot remove aggregated child without aggregation name.`);
 		} else {
 			// set suppress invalidate flag
 			if (bSuppressInvalidate) {

@@ -3447,7 +3447,7 @@ sap.ui.define([
 		const oMySample = new MySampleManagedObject({
 			id: "sample1"
 		});
-		assert.ok(oFutureFatalSpy.getCall(0).calledWith("[FUTURE FATAL] The registered Event Listener 'init' must not have a return value."), "init() should be logged correctly.");
+		assert.ok(oFutureFatalSpy.getCall(0).calledWith("[FUTURE FATAL] sample1: The registered Event Listener 'init' must not have a return value."), "init() should be logged correctly.");
 
 		/**
 		 * @deprecated
@@ -3458,7 +3458,7 @@ sap.ui.define([
 		oMySample.destroy();
 
 		await Promise.allSettled(aPromises);
-		assert.ok(oFutureFatalSpy.getCall(1).calledWith("[FUTURE FATAL] The registered Event Listener 'exit' must not have a return value."), "exit() should be logged correctly.");
+		assert.ok(oFutureFatalSpy.getCall(1).calledWith("[FUTURE FATAL] sample1: The registered Event Listener 'exit' must not have a return value."), "exit() should be logged correctly.");
 
 		/**
 		 * @deprecated
@@ -3491,7 +3491,7 @@ sap.ui.define([
 			new MySampleManagedObject({
 				id: "sample2"
 			});
-		}, new Error("The registered Event Listener 'init' must not have a return value."), "Error thrown because 'init' hook has a return value.");
+		}, new Error("sample2: The registered Event Listener 'init' must not have a return value."), "Error thrown because 'init' hook has a return value.");
 
 		future.active = undefined;
 	});
@@ -3519,7 +3519,7 @@ sap.ui.define([
 
 		assert.throws(() => {
 			oMySample.destroy();
-		}, new Error("The registered Event Listener 'exit' must not have a return value."), "Error thrown because 'exit' hook has a return value.");
+		}, new Error("sample3: The registered Event Listener 'exit' must not have a return value."), "Error thrown because 'exit' hook has a return value.");
 
 		future.active = undefined;
 	});

@@ -314,7 +314,7 @@ sap.ui.define([
 
 		// V1 and V2: Check for error concerning the missing module content
 		const sClassName = "sap.ui.core.qunit.mvc.viewprocessing.BadControl";
-		const sErrorLogMessage = `[FUTURE FATAL] Control '${sClassName}' did not return a class definition from sap.ui.define.`;
+		const sErrorLogMessage = `[FUTURE FATAL] XMLTemplateProcessor: Control '${sClassName}' did not return a class definition from sap.ui.define.`;
 		assert.ok(oLogSpy.calledWith(sinon.match(sErrorLogMessage)), "Error log for missing class definition is correct.");
 
 		/**

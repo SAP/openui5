@@ -28,7 +28,7 @@ sap.ui.define([
 			// The first error log call is done in ElementRegistry
 			// The second error log call is done in XMLTemplateProcessor
 			assert.equal(this.logSpy.callCount, 2, "duplicate id error is logged");
-			sinon.assert.calledWithMatch(this.logSpy.getCall(1), sinon.match("An Error occured during XML processing of 'sap.ui.core.Fragment' with id 'syncFragment':"));
+			sinon.assert.calledWithMatch(this.logSpy.getCall(1), sinon.match(`sap.ui.core.Fragment: An Error occured during XML processing of '<Panel id="panel" xmlns="sap.m"><Button id="button4"/><Button id="button4" text="text"/></Panel>' with id 'syncFragment'`));
 			assert.deepEqual(oFrag, [], "No control can be returned");
 		} catch (error) {
 			assert.ok(false, "error shouldn't be thrown");

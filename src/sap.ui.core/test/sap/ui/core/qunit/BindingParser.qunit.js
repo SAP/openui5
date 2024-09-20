@@ -922,16 +922,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("mergeParts fails for unsupported properties, error is logged (future=true)", function (assert) {
+		const sBindingString = "{:= ${parts:[{path:'/foo'},{path:'/bar'}],type:'" + Currency.getMetadata().getName() + "'} }";
 		try {
 			future.active = true;
 
 			// code under test - use Currency to avoid that the UI5 2.0 build removes the unused dependency
-			parse("{:= ${parts:[{path:'/foo'},{path:'/bar'}],type:'" + Currency.getMetadata().getName() + "'} }");
+			parse(sBindingString);
 
 			assert.ok(false, "Unexpected success");
 		} catch (oError) {
 			assert.ok(oError instanceof Error);
-			assert.strictEqual(oError.message, "Cannot merge parts: Unsupported property: type");
+			assert.strictEqual(oError.message, "sap.ui.base.BindingParser: Cannot merge parts for binding \"" + sBindingString + "\"");
 		} finally {
 			future.active = undefined; // restores configured default
 		}
