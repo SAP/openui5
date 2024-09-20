@@ -70,6 +70,17 @@ sap.ui.define([
 	});
 
 	/**
+	 * Returns a copy of all active bindings of the model.
+	 *
+	 * @return {sap.ui.model.Binding[]} The active bindings of the model
+	 *
+	 * @function
+	 * @name sap.ui.model.json.JSONModel.prototype.getBindings
+	 * @private
+	 * @ui5-restricted sap.ushell
+	 */
+
+	/**
 	 * Sets the data, passed as a JS object tree, to the model.
 	 *
 	 * @param {object} oData the data to set on the model
