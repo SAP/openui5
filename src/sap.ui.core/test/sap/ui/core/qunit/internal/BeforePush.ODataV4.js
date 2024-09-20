@@ -33,11 +33,14 @@ sap.ui.define([
 						? oTest.$app.replace("test-resources/sap/ui/core/", "")
 						: "demokit/sample/common/index.html?component=odata.v4." + sName;
 
+
 				aLinks = [
 					sApp,
 					sApp + (sApp.includes("?") ? "&" : "?") + "realOData=true",
 					sOpa + "&supportAssistant=true"
 				];
+				// hide OPAs w/o corresponding app
+				aLinks.$hidden = oTest.$app === "";
 
 				mApps[sName] = aLinks;
 				mTests[sOpa + "&supportAssistant=true"] = "both";
@@ -76,6 +79,16 @@ sap.ui.define([
 
 	addAppsAndTests(oODataSuite, "odata/v4/testsuite.odatav4.qunit");
 	addAppsAndTests(oFeatureSuite, "internal/testsuite.feature-odata-v4.qunit");
+	[
+		"Ancestry", "ConsumeV2Service", "DataAggregation_CAP", "DataAggregation_RAP",
+		"FlatDataAggregation", "GridTable", "HierarchyBindAction", "MusicArtists"
+	].forEach((sName) => {
+			mApps[sName] = [
+				"demokit/sample/common/index.html?component=odata.v4." + sName
+			];
+		});
+	mApps["DataAggregation_CAP"][4] = "//snippix#303638";
+	mApps["DataAggregation_RAP"][4] = "//snippix#909737";
 
 	return {
 		actions : {

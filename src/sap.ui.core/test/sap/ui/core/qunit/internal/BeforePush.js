@@ -134,6 +134,9 @@
 
 	// adjusts the URL to the page's base, knows where Test.qunit.html is
 	function normalizeUrl(sSimplifiedUrl) {
+		if (sSimplifiedUrl.includes("//")) {
+			return sSimplifiedUrl;
+		}
 		return sSimplifiedUrl.startsWith("Test.qunit.html?")
 			? "../../../../resources/sap/ui/test/starter/" + sSimplifiedUrl
 			: "test-resources/sap/ui/core/" + sSimplifiedUrl;
@@ -401,7 +404,8 @@
 	}
 
 	// Show a list of test apps (if given). mApps must be a map from name to an array of URLs:
-	// the app, the app with realOData, the OPA and (optionally) the OPA with realOData
+	// the app, the app with realOData, the OPA and the OPA with realOData, and a Snippix; all
+	// optional except the first one.
 	function showApps(mApps) {
 		var oTable = document.getElementById("apps");
 
@@ -414,6 +418,8 @@
 				oContent = document.createElement("a");
 				oContent.setAttribute("href", normalizeUrl(sUrl));
 				oContent.appendChild(oTextNode);
+			} else if (arguments.length > 2) {
+				return;
 			}
 			oCell.appendChild(oContent);
 			oRow.appendChild(oCell);
@@ -422,17 +428,19 @@
 		if (!mApps) {
 			return;
 		}
-		Object.keys(mApps).forEach(function (sApp) {
-			var aLinks = mApps[sApp],
-				oRow = document.createElement("tr");
+		Object.keys(mApps).sort().forEach(function (sApp) {
+			const aLinks = mApps[sApp];
+			if (aLinks.$hidden) {
+				return;
+			}
 
+			const oRow = document.createElement("tr");
 			addCell(oRow, sApp);
 			addCell(oRow, "App", aLinks[0]);
 			addCell(oRow, "(realOData)", aLinks[1]);
 			addCell(oRow, "OPA", aLinks[2]);
-			if (aLinks.length > 3) {
-				addCell(oRow, "(realOData)", aLinks[3]);
-			}
+			addCell(oRow, "(realOData)", aLinks[3]);
+			addCell(oRow, "Snippix", aLinks[4]);
 			oTable.appendChild(oRow);
 		});
 	}
