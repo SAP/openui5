@@ -1034,8 +1034,8 @@ sap.ui.define([
 	 * and the binding is relative or points to metadata, the binding may have an object value;
 	 * in this case and unless the binding refers to an action advertisement the binding's mode must
 	 * be {@link sap.ui.model.BindingMode.OneTime}. {@link sap.ui.model.BindingMode.OneWay OneWay}
-	 * is also supported (@experimental as of version 1.126.0) for complex types and collections
-	 * thereof; for entity types, use {@link #bindContext} instead.
+	 * is also supported (since 1.130.0) for complex types and collections thereof; for entity
+	 * types, use {@link #bindContext} instead.
 	 *
 	 * @param {string} sPath
 	 *   The binding path in the model; must not end with a slash
