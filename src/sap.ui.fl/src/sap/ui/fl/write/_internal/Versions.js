@@ -321,6 +321,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Property Bag
 	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested (this reference must not contain the ".Component" suffix)
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
+	 * @param {boolean} [mPropertyBag.discardDraftAndKeepActiveVersion] - discard draft and keep active version
 	 * @returns {Promise<object>} Promise resolving to an object to indicate if a discarding took place on backend side and/or dirty changes were discarded;
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
@@ -332,8 +333,11 @@ sap.ui.define([
 		return oDiscardPromise.then(function() {
 			var aVersions = oModel.getProperty("/versions");
 			aVersions.shift();
-			_updateVersionModelWhenDiscardOrActivate(oModel, oModel.getProperty("/activeVersion"));
-
+			let sDisplayedVersion = oModel.getProperty("/activeVersion");
+			if (mPropertyBag.discardDraftAndKeepActiveVersion) {
+				sDisplayedVersion = oModel.getProperty("/displayedVersion");
+			}
+			_updateVersionModelWhenDiscardOrActivate(oModel, sDisplayedVersion);
 			return {
 				backendChangesDiscarded: bBackendDraftExists
 			};

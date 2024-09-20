@@ -22844,8 +22844,8 @@ sap.ui.define([
 			.expectChange("isExpanded", [true, undefined, undefined])
 			.expectChange("isTotal", [true, false, false])
 			.expectChange("level", [0, 1, 1])
-			.expectChange("lifecycleStatus", ["", "Z", "Y"])
-			.expectChange("lifecycleStatusDesc", ["", "<Z>", "<Y>"])
+			.expectChange("lifecycleStatus", [null, "Z", "Y"])
+			.expectChange("lifecycleStatusDesc", [null, "<Z>", "<Y>"])
 			.expectChange("grossAmount", ["12345", "1", "2"])
 			.expectChange("currencyCode", ["", "EUR", "GBP"]);
 
@@ -22918,9 +22918,9 @@ sap.ui.define([
 			.expectChange("isExpanded", [true, undefined, undefined])
 			.expectChange("isTotal", [true, false, false])
 			.expectChange("level", [0, 1, 1])
-			.expectChange("lifecycleStatus", ["", "Z", "Y"])
+			.expectChange("lifecycleStatus", [null, "Z", "Y"])
 			.expectChange("grossAmount", ["12345", "1", "2"])
-			.expectChange("salesOrderID", ["", "26", "25"]);
+			.expectChange("salesOrderID", [null, "26", "25"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oPromise,
@@ -23178,7 +23178,7 @@ sap.ui.define([
 			.expectChange("isTotal", [true, true, true])
 			.expectChange("level", [1, 1, 1])
 			.expectChange("region", ["Z", "Y", "X"])
-			.expectChange("accountResponsible", ["", "", ""])
+			.expectChange("accountResponsible", [null, null, null])
 			.expectChange("salesAmount", ["100", "200", "300"])
 			.expectChange("salesNumber", [null, null, null])
 			.expectChange("regionDetail");
@@ -23199,7 +23199,7 @@ sap.ui.define([
 				.expectChange("isTotal", [/*true*/, false, false])
 				.expectChange("level", [/*1*/, 2, 2])
 				.expectChange("region", [/*"Z"*/, "Z", "Z"])
-				.expectChange("accountResponsible", [/*""*/, "a", "b"])
+				.expectChange("accountResponsible", [/*null*/, "a", "b"])
 				.expectChange("salesAmount", [/*"100"*/, "10", "20"])
 				.expectChange("salesNumber", [/*null*/, "1", "2"]);
 
@@ -23243,7 +23243,7 @@ sap.ui.define([
 				.expectChange("isTotal", [,,, false, false, true])
 				.expectChange("level", [,,, 2, 2, 1])
 				.expectChange("region", [,,, "Z", "Z", "Y"])
-				.expectChange("accountResponsible", [,,, "c", "d", ""])
+				.expectChange("accountResponsible", [,,, "c", "d", null])
 				.expectChange("salesAmount", [,,, "30", "40", "200"])
 				.expectChange("salesNumber", [,,, "3", "4", null]);
 
@@ -23284,7 +23284,7 @@ sap.ui.define([
 				.expectChange("isTotal", [, /*true*/, true, true, true, true])
 				.expectChange("level", [, /*1*/, 1, 1, 1, 1])
 				.expectChange("region", [, /*"Y"*/, "X", "W", "V", "U"])
-				.expectChange("accountResponsible", [, /*""*/, "", "", "", ""])
+				.expectChange("accountResponsible", [, /*null*/, null, null, null, null])
 				.expectChange("salesAmount", [, /*"200"*/, "300", "400", "500", "600"])
 				.expectChange("salesNumber", [, /*null*/, null, null, null, null])
 				.expectChange("regionDetail", null); // detail's context was destroyed
@@ -23311,7 +23311,7 @@ sap.ui.define([
 				.expectChange("isTotal", [/*true*/, false, false, false, false])
 				.expectChange("level", [/*1*/, 2, 2, 2, 2])
 				.expectChange("region", [/*"Z"*/, "Z", "Z", "Z", "Z"])
-				.expectChange("accountResponsible", [/*""*/, "a", "b", "c", "d"])
+				.expectChange("accountResponsible", [/*null*/, "a", "b", "c", "d"])
 				.expectChange("salesAmount", [/*"100"*/, "10", "20", "30", "40"])
 				.expectChange("salesNumber", [/*null*/, "1", "2", "3", "4"]);
 
@@ -23388,7 +23388,7 @@ sap.ui.define([
 			.expectChange("isTotal", [true, true, true])
 			.expectChange("level", [1, 1, 1])
 			.expectChange("region", ["Z", "Y", "X"])
-			.expectChange("accountResponsible", ["", "", ""])
+			.expectChange("accountResponsible", [null, null, null])
 			.expectChange("salesAmount", ["100", "280", "300"])
 			.expectChange("salesNumber", [null, null, null]);
 
@@ -23416,7 +23416,7 @@ sap.ui.define([
 				.expectChange("isTotal", [/*true*/, false, false])
 				.expectChange("level", [/*1*/, 2, 2])
 				.expectChange("region", [/*"Z"*/, "Z", "Z"])
-				.expectChange("accountResponsible", [/*""*/, "a", "b"])
+				.expectChange("accountResponsible", [/*null*/, "a", "b"])
 				.expectChange("salesAmount", [/*"100"*/, "10", "20"])
 				.expectChange("salesNumber", [/*null*/, "1", "2"]);
 
@@ -23438,7 +23438,7 @@ sap.ui.define([
 				.expectChange("isTotal", [,,, false, false, true])
 				.expectChange("level", [,,, 2, 2, 1])
 				.expectChange("region", [,,,, "Z", "Y"])
-				.expectChange("accountResponsible", [,,, "c", "d", ""])
+				.expectChange("accountResponsible", [,,, "c", "d", null])
 				.expectChange("salesAmount", [,,, "30", "40", "280"])
 				.expectChange("salesNumber", [,,, "3", "4", null]);
 
@@ -23486,9 +23486,9 @@ sap.ui.define([
 				.expectChange("isTotal", [,,,,,,,,,,,,, false, true, true])
 				.expectChange("level", [,,,,,,,,,,,,, 2, 1, 1])
 				.expectChange("region", [,,,,,,,,,,,,, "Y", "X", "W"])
-				.expectChange("accountResponsible", [,,,,,,,,,,,,, "h", "", ""])
+				.expectChange("accountResponsible", [,,,,,,,,,,,,, "h", null/*, null*/])
 				.expectChange("salesAmount", [,,,,,,,,,,,,, "80", "300", "400"])
-				.expectChange("salesNumber", [,,,,,,,,,,,,, "8", null, null]);
+				.expectChange("salesNumber", [,,,,,,,,,,,,, "8", null/*, null*/]);
 
 			// code under test
 			// creates a gap to show that we are not requesting unnecessary data
@@ -23525,7 +23525,7 @@ sap.ui.define([
 				.expectChange("isTotal", [true])
 				.expectChange("level", [1])
 				.expectChange("region", ["Z", "Z", "Z"])
-				.expectChange("accountResponsible", ["", "a", "b"])
+				.expectChange("accountResponsible", [null, "a", "b"])
 				.expectChange("salesAmount", ["100", "10", "20"])
 				.expectChange("salesNumber", [null, "1", "2"]);
 
@@ -23595,7 +23595,7 @@ sap.ui.define([
 				.expectChange("isTotal", [true, true, true])
 				.expectChange("level", [1, 1, 1])
 				.expectChange("region", ["Z", "Y", "X"])
-				.expectChange("accountResponsible", ["", "", ""])
+				.expectChange("accountResponsible", [null, null, null])
 				.expectChange("salesAmount", ["100", "200", "300"])
 				.expectChange("salesNumber", [null, null, null]);
 
@@ -23655,9 +23655,7 @@ sap.ui.define([
 						.expectChange("isTotal", [,,,, true, true, true])
 						.expectChange("level", [,,,, 1, 1, 1])
 						.expectChange("region", [/*Z*/, /*Y*/, /*Y*/, /*X*/, "W", "V", "U"])
-						.expectChange("accountResponsible", [,,,, "", "", ""])
 						.expectChange("salesAmount", [,,,, "400", "500", "600"])
-						.expectChange("salesNumber", [,,,, null, null, null])
 						.expectCanceledError("Failed to get contexts for /aggregation/BusinessPartners"
 								+ " with start index 3 and length 3",
 							"Collapse or expand before read has finished")
@@ -23672,9 +23670,7 @@ sap.ui.define([
 						.expectChange("isTotal", [,,,, true, true, true])
 						.expectChange("level", [,,,, 1, 1, 1])
 						.expectChange("region", [/*Z*/, /*Y*/, /*X*/, /*W*/, "V", "U", "T"])
-						.expectChange("accountResponsible", [,,,, "", "", ""])
-						.expectChange("salesAmount", [,,,, "500", "600", "700"])
-						.expectChange("salesNumber", [,,,, null, null, null]);
+						.expectChange("salesAmount", [,,,, "500", "600", "700"]);
 				}
 				// code under test
 				fnRespondScroll1();
@@ -23810,11 +23806,11 @@ sap.ui.define([
 			.expectChange("isExpanded", [true, false, false, false])
 			.expectChange("isTotal", [true, true, true, true])
 			.expectChange("level", [0, 1, 1, 1])
-			.expectChange("country", ["", "Z", "Y", "X"])
-			.expectChange("region", ["", "", "", ""])
-			.expectChange("amountPerSale", ["10", null, null, null])
-			.expectChange("salesAmount", ["38610", null, null, null])
-			.expectChange("currency", ["DEM", "", "", ""])
+			.expectChange("country", [null, "Z", "Y", "X"])
+			.expectChange("region", [null, null, null, null])
+			.expectChange("amountPerSale", ["10", undefined, undefined, undefined])
+			.expectChange("salesAmount", ["38610", undefined, undefined, undefined])
+			.expectChange("currency", ["DEM", null, null, null])
 			.expectChange("salesAmountLocalCurrency", ["35100", "100", "200", "300"])
 			.expectChange("localCurrency", ["", "GBP", "USD", "EUR"])
 			.expectChange("salesNumber", ["0", null, null, null]);
@@ -23915,13 +23911,13 @@ sap.ui.define([
 				.expectChange("isTotal", [,,,,,, false, false, false, true])
 				.expectChange("level", [,,,,,, 2, 2, 2, 1])
 				.expectChange("country", [,,,,,, "X", "X", "X", "W"])
-				.expectChange("region", [,,,,,, "c", "d", "e", ""])
-				.expectChange("amountPerSale", [,,,,,,, "10", "10", null])
-				.expectChange("salesAmount", [,,,,,, "30.30", "40.40", "50.50", null])
-				.expectChange("currency", [,,,,,,, "DEM", "DEM", ""])
+				.expectChange("region", [,,,,,, "c", "d", "e"/*, null*/])
+				.expectChange("amountPerSale", [,,,,,,, "10", "10"/*, undefined*/])
+				.expectChange("salesAmount", [,,,,,, "30.30", "40.40", "50.50"/*, undefined*/])
+				.expectChange("currency", [,,,,,,, "DEM", "DEM"/*, null*/])
 				.expectChange("salesAmountLocalCurrency", [,,,,,, "30", "40", "50", "400"])
 				.expectChange("localCurrency", [,,,,,, "USD", "USD", "USD", "JPY"])
-				.expectChange("salesNumber", [,,,,,, "3", "4", "5", null]);
+				.expectChange("salesNumber", [,,,,,, "3", "4", "5"/*, null*/]);
 
 			// code under test
 			oTable.setFirstVisibleRow(6);
@@ -23991,13 +23987,13 @@ sap.ui.define([
 				this.expectChange("isExpanded", [undefined, undefined, undefined,,,,, true])
 					.expectChange("isTotal", [false, false, false,,,,, true])
 					.expectChange("level", [1, 1, 1,,,,, 0])
-					.expectChange("country", ["Z", "Y", "X",,,,, ""])
+					.expectChange("country", ["Z", "Y", "X",,,,, null])
 					.expectChange("salesNumber", ["26", "25", "24",,,,, "0"]);
 			} else {
 				this.expectChange("isExpanded", [true, undefined, undefined, undefined,,,,, undefined])
 					.expectChange("isTotal", [true, false, false, false,,,,, true])
 					.expectChange("level", [0, 1, 1, 1,,,,, 0])
-					.expectChange("country", ["", "Z", "Y", "X",,,,, ""])
+					.expectChange("country", [null, "Z", "Y", "X",,,,, null])
 					.expectChange("salesNumber", ["0", "26", "25", "24",,,,, "0"]);
 			}
 
@@ -24404,7 +24400,7 @@ sap.ui.define([
 			.expectChange("isExpanded", [false, true])
 			.expectChange("isTotal", [false, true])
 			.expectChange("level", [1, 0])
-			.expectChange("country", ["Z", ""])
+			.expectChange("country", ["Z", null])
 			.expectChange("salesNumber", [null, "0"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -24458,7 +24454,7 @@ sap.ui.define([
 			.expectChange("isTotal", [true, true])
 			.expectChange("level", [1, 1])
 			.expectChange("country", ["US", "UK"])
-			.expectChange("region", ["", ""])
+			.expectChange("region", [null, null])
 			.expectChange("salesAmount", ["100", "200"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -24571,10 +24567,10 @@ sap.ui.define([
 			.expectChange("level", [1, 1, 1, 1])
 			.expectChange("country", ["US", "UK", "DE", "IT"])
 			.expectChange("countryText", ["<US>", "<UK>", "<DE>", "<IT>"])
-			.expectChange("region", ["", "", "", ""])
-			.expectChange("regionText", ["", "", "", ""])
-			.expectChange("segment", ["", "", "", ""])
-			.expectChange("accountResponsible", ["", "", "", ""])
+			.expectChange("region", [null, null, null, null])
+			.expectChange("regionText", [null, null, null, null])
+			.expectChange("segment", [null, null, null, null])
+			.expectChange("accountResponsible", [null, null, null, null])
 			.expectChange("salesAmount", ["100", "200", "300", "400"])
 			.expectChange("salesNumber", [null, null, null, null]);
 
@@ -24671,10 +24667,10 @@ sap.ui.define([
 				.expectChange("level", [, 1, 1, 1])
 				.expectChange("country", [, "UK", "DE", "IT"])
 				.expectChange("countryText", [, "<UK>", "<DE>", "<IT>"])
-				.expectChange("region", [, "", "", ""])
-				.expectChange("regionText", [, "", "", ""])
-				.expectChange("segment", [,, "", ""])
-				.expectChange("accountResponsible", [,,, ""])
+				.expectChange("region", [, null, null, null])
+				.expectChange("regionText", [, null, null, null])
+				.expectChange("segment", [,, null, null])
+				.expectChange("accountResponsible", [,,, null])
 				.expectChange("salesAmount", [, "200", "300", "400"])
 				.expectChange("salesNumber", [,,, null]);
 
@@ -24725,8 +24721,8 @@ sap.ui.define([
 				.expectChange("level", [,, 2, 2])
 				.expectChange("region", [,, "Y", "X"])
 				.expectChange("regionText", [,, "<Y>", "<X>"])
-				.expectChange("segment", [,, "", ""])
-				.expectChange("accountResponsible", [,,, ""])
+				.expectChange("segment", [,, null, null])
+				.expectChange("accountResponsible", [,,, null])
 				.expectChange("salesAmount", [,, "20", "30"])
 				.expectChange("salesNumber", [,,, null]);
 
@@ -24808,11 +24804,11 @@ sap.ui.define([
 			.expectChange("level", [1, 1])
 			.expectChange("isActiveEntity", [false, true])
 			.expectChange("inProcessByUser", ["JOHNDOE", ""])
-			.expectChange("name", ["", ""])
-			.expectChange("bestFriendName", ["", ""])
-			.expectChange("artistID", ["", ""])
-			.expectChange("city", ["", ""])
-			.expectChange("sendsAutographs", [null, null]);
+			.expectChange("name", [null, null])
+			.expectChange("bestFriendName", [null, null])
+			.expectChange("artistID", [null, null])
+			.expectChange("city", [null, null])
+			.expectChange("sendsAutographs", [undefined, undefined]);
 
 		return this.createView(assert, sView, this.createSpecialCasesModel()).then(function () {
 			oTable = that.oView.byId("table");
@@ -24831,12 +24827,12 @@ sap.ui.define([
 				.expectChange("isTotal", [,, false, false])
 				.expectChange("level", [,, 2, 2])
 				.expectChange("isActiveEntity", [,, true, true])
-				.expectChange("inProcessByUser", [,, "", ""])
+				.expectChange("inProcessByUser", [,, "", ""]) // Note: inherited from parent
 				.expectChange("name", [,, "A", "B"])
 				.expectChange("bestFriendName", [,, "A's best friend", "B's best friend"])
-				.expectChange("artistID", [,, "", ""])
-				.expectChange("city", [,, "", ""])
-				.expectChange("sendsAutographs", [,, null, null]);
+				.expectChange("artistID", [,, null, null])
+				.expectChange("city", [,, null, null])
+				.expectChange("sendsAutographs", [,, undefined, undefined]);
 
 			// code under test
 			oTable.getRows()[1].getBindingContext().expand();
@@ -24929,8 +24925,8 @@ sap.ui.define([
 				.expectChange("isTotal", [false, false, false])
 				.expectChange("level", [1, 1, 1])
 				.expectChange("region", ["Z", "Y", "X"])
-				.expectChange("accountResponsible", ["", "", ""])
-				.expectChange("salesAmount", [null, null, null]);
+				.expectChange("accountResponsible", [null, null, null])
+				.expectChange("salesAmount", [undefined, undefined, undefined]);
 
 			return this.createView(assert, sView, oModel).then(function () {
 				oTable = that.oView.byId("table");
@@ -24974,8 +24970,6 @@ sap.ui.define([
 						.expectChange("isTotal", [,,, false, false])
 						.expectChange("level", [,,, 1, 1])
 						.expectChange("region", [,,, "X", "W"])
-						.expectChange("accountResponsible", [,,, "", ""])
-						.expectChange("salesAmount", [,,, null, null])
 						.expectCanceledError("Failed to get contexts for /aggregation/BusinessPartners"
 								+ " with start index 2 and length 3",
 							"Collapse or expand before read has finished");
@@ -24987,8 +24981,6 @@ sap.ui.define([
 						.expectChange("isTotal", [,,, false, false, false])
 						.expectChange("level", [,,, 1, 1, 1])
 						.expectChange("region", [,,, "X", "W", "V"])
-						.expectChange("accountResponsible", [,,, "", "", ""])
-						.expectChange("salesAmount", [,,, null, null, null])
 						.expectCanceledError("Failed to get contexts for /aggregation/BusinessPartners"
 								+ " with start index 3 and length 3",
 							"Collapse or expand before read has finished");
@@ -25066,8 +25058,8 @@ sap.ui.define([
 			.expectChange("isTotal", [true, true, true, true, true, true, true, true])
 			.expectChange("level", [1, 1, 1, 1, 1, 1, 1, 1])
 			.expectChange("country", ["US", "UK", "DE", "IT", "FR", "BE", "NL", "LU"])
-			.expectChange("region", ["", "", "", "", "", "", "", ""])
-			.expectChange("segment", ["", "", "", "", "", "", "", ""])
+			.expectChange("region", [null, null, null, null, null, null, null, null])
+			.expectChange("segment", [null, null, null, null, null, null, null, null])
 			.expectChange("salesAmount", ["100", "200", "300", "400", "500", "600", "700", "800"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -25130,7 +25122,7 @@ sap.ui.define([
 				.expectChange("isExpanded", [false, false, false])
 				.expectChange("level", [, 1, 1, 1])
 				.expectChange("country", [, "UK", "DE", "IT", "FR", "BE", "NL", "LU"])
-				.expectChange("region", [, "", "", ""])
+				.expectChange("region", [, null, null, null])
 				.expectChange("salesAmount", [, "200", "300", "400", "500", "600", "700", "800"])
 				.expectRequest("BusinessPartners?$apply=filter(Country eq 'US' and Region eq 'Z')"
 					+ "/groupby((Segment),aggregate(SalesAmount))&$count=true&$skip=0&$top=8", {
@@ -25229,7 +25221,7 @@ sap.ui.define([
 			.expectChange("isTotal", [true])
 			.expectChange("level", [1])
 			.expectChange("country", ["US"])
-			.expectChange("region", [""])
+			.expectChange("region", [null])
 			.expectChange("salesAmount", ["100"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -25284,7 +25276,7 @@ sap.ui.define([
 				.expectChange("isExpanded", [false,,,, undefined])
 				.expectChange("isTotal", [true,,,, false])
 				.expectChange("level", [1,,,, 2])
-				.expectChange("region", ["",,,, "W"])
+				.expectChange("region", [null,,,, "W"])
 				.expectChange("salesAmount", ["100",,,, "40"]);
 
 			// code under test
@@ -25396,8 +25388,8 @@ sap.ui.define([
 						value : aResponse
 					})
 					.expectChange("count")
-					.expectChange("country", ["",, "b", "c", "d", "e"])
-					.expectChange("region", ["",, "Y", "X", "W", "V"])
+					.expectChange("country", [null,, "b", "c", "d", "e"])
+					.expectChange("region", [null,, "Y", "X", "W", "V"])
 					.expectChange("salesNumber", ["351",, "2", "3", "4", "5"]);
 
 				return this.createView(assert, sView, oModel).then(function () {
@@ -25527,8 +25519,8 @@ sap.ui.define([
 				]);
 
 				// Note: no request, grand total row already available
-				that.expectChange("country", ["", "a", "b", "c", "d"])
-					.expectChange("region", ["", "Z", "Y", "X", "W"])
+				that.expectChange("country", [null, "a", "b", "c", "d"])
+					.expectChange("region", [null, "Z", "Y", "X", "W"])
 					.expectChange("salesNumber", ["351", "1", "2", "3", "4"]);
 
 				oTable.setFirstVisibleRow(0);
@@ -25616,7 +25608,7 @@ sap.ui.define([
 					SalesAmountSum : "4"
 				}]
 			})
-			.expectChange("region", ["", "Z", "Y", "X", "W"])
+			.expectChange("region", [null, "Z", "Y", "X", "W"])
 			.expectChange("salesNumber", [null, "1", "2", "3", "4"])
 			.expectChange("salesAmountSum", ["351", "1", "2", "3", "4"])
 			.expectChange("currency", ["EUR", "EUR", "EUR", "EUR", "EUR"]);
@@ -25912,19 +25904,19 @@ sap.ui.define([
 				"@$ui5.node.isTotal" : true,
 				"@$ui5.node.level" : 0,
 				Currency : "DEM",
-				Region : null,
+				"Region@$ui5.noData" : true,
 				SalesAmount : "0",
 				"SalesAmount@odata.type" : "#Decimal"
 			}, {
 				"@$ui5.node.isTotal" : false,
 				"@$ui5.node.level" : 1,
-				Currency : null,
+				"Currency@$ui5.noData" : true,
 				Region : "A",
 				SalesAmount : "100"
 			}, {
 				"@$ui5.node.isTotal" : false,
 				"@$ui5.node.level" : 1,
-				Currency : null,
+				"Currency@$ui5.noData" : true,
 				Region : "B",
 				SalesAmount : "200"
 			}]);
@@ -26020,19 +26012,19 @@ sap.ui.define([
 				"@$ui5.node.isTotal" : true,
 				"@$ui5.node.level" : 0,
 				Currency : "DEM",
-				Region : null,
+				"Region@$ui5.noData" : true,
 				SalesAmountSum : "0",
 				"SalesAmountSum@odata.type" : "#Decimal"
 			}, {
 				"@$ui5.node.isTotal" : false,
 				"@$ui5.node.level" : 1,
-				Currency : null,
+				"Currency@$ui5.noData" : true,
 				Region : "A",
 				SalesAmountSum : "100"
 			}, {
 				"@$ui5.node.isTotal" : false,
 				"@$ui5.node.level" : 1,
-				Currency : null,
+				"Currency@$ui5.noData" : true,
 				Region : "B",
 				SalesAmountSum : "200"
 			}]);
@@ -26193,8 +26185,8 @@ sap.ui.define([
 			.expectChange("isExpanded", [true, false, false])
 			.expectChange("isTotal", [true, true, true])
 			.expectChange("level", [0, 1, 1])
-			.expectChange("country", ["", "A", "B"])
-			.expectChange("region", ["", "", ""])
+			.expectChange("country", [null, "A", "B"])
+			.expectChange("region", [null, null, null])
 			.expectChange("salesNumber", ["351", "101", "102"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -26413,7 +26405,7 @@ sap.ui.define([
 					"@odata.count" : "1",
 					value : [{LifecycleStatus : "Y"}]
 				})
-				.expectChange("grossAmount", [null])
+				.expectChange("grossAmount", [undefined])
 				.expectChange("lifecycleStatus", ["Y"]);
 
 			// code under test
@@ -26483,7 +26475,7 @@ sap.ui.define([
 		this.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true&$skip=0&$top=100",
 				{"@odata.count" : "1", value : [{Region : "A"}]})
 			.expectChange("region", ["A"])
-			.expectChange("salesAmount", [null]);
+			.expectChange("salesAmount", [undefined]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			// expect no request

@@ -51,6 +51,9 @@ sap.ui.define([
 ) {
   "use strict";
 
+  // shortcut for sap.m.FlexRendertype
+  const FlexRendertype = mobileLibrary.FlexRendertype;
+
   // shortcut for sap.m.FlexAlignItems
   const FlexAlignItems = mobileLibrary.FlexAlignItems;
 
@@ -372,7 +375,8 @@ sap.ui.define([
 				  new Link("defocus", { text: "Close" })
 			  ],
 			  justifyContent: FlexJustifyContent.SpaceAround,
-			  alignItems: FlexAlignItems.Center
+			  alignItems: FlexAlignItems.Center,
+			  renderType: FlexRendertype.Bare
 		  })
 	  ],
 	  contentWidth: "20em",

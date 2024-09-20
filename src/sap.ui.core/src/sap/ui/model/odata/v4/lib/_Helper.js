@@ -689,7 +689,7 @@ sap.ui.define([
 
 		/**
 		 * Drills down into the given object according to the given path, creating missing objects
-		 * along the way, and setting a <code>null<code> value at the end in case the final
+		 * along the way, and setting a "...@$ui5.noData" annotation at the end in case the final
 		 * property is missing.
 		 *
 		 * @param {object} oObject
@@ -705,7 +705,12 @@ sap.ui.define([
 		createMissing : function (oObject, aSegments) {
 			aSegments.reduce(function (oCurrent, sSegment, i) {
 				if (!(sSegment in oCurrent)) { // Note: TypeError if !oCurrent
-					oCurrent[sSegment] = i + 1 < aSegments.length ? {} : null;
+					if (i + 1 < aSegments.length) {
+						oCurrent[sSegment] = {};
+					} else {
+						oCurrent[sSegment] = undefined;
+						oCurrent[sSegment + "@$ui5.noData"] = true;
+					}
 				}
 				return oCurrent[sSegment];
 			}, oObject);
@@ -1822,7 +1827,7 @@ sap.ui.define([
 		/**
 		 * Inherits a property value according to the given path from the given source object to the
 		 * given target. That is, the value is copied unless the target already has a value. Creates
-		 * missing objects along the way.
+		 * missing objects along the way. Copies a "...@$ui5.noData" annotation at the property.
 		 *
 		 * Like the following, but for paths ;-)
 		 * if (!(sProperty in oTarget)) {
@@ -1856,6 +1861,9 @@ sap.ui.define([
 					oSource = oSource[sSegment];
 					oTarget = oTarget[sSegment];
 				} else if (bMissing) {
+					if (oSource[sSegment + "@$ui5.noData"]) {
+						oTarget[sSegment + "@$ui5.noData"] = true;
+					}
 					oTarget[sSegment] = oSource[sSegment];
 				}
 			});

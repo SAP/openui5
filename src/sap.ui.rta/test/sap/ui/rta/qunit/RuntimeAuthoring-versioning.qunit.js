@@ -446,7 +446,8 @@ sap.ui.define([
 				canUndo: true
 			},
 			expectation: {
-				dialogCreated: true
+				dialogCreated: true,
+				discardDraft: false
 			}
 		}, {
 			testName: "and a new draft is created, an old draft exists and clicks on OK",
@@ -457,7 +458,8 @@ sap.ui.define([
 				discardConfirmed: true
 			},
 			expectation: {
-				dialogCreated: true
+				dialogCreated: true,
+				discardDraft: true
 			}
 		}, {
 			testName: "in the current draft",
@@ -467,7 +469,8 @@ sap.ui.define([
 				canUndo: true
 			},
 			expectation: {
-				dialogCreated: false
+				dialogCreated: false,
+				discardDraft: false
 			}
 		}, {
 			testName: "when the stack was modified but nothing can be undone",
@@ -477,7 +480,8 @@ sap.ui.define([
 				canUndo: false
 			},
 			expectation: {
-				dialogCreated: false
+				dialogCreated: false,
+				discardDraft: false
 			}
 		}, {
 			testName: "and a new draft is created, an old draft does not exist",
@@ -487,7 +491,8 @@ sap.ui.define([
 				canUndo: true
 			},
 			expectation: {
-				dialogCreated: false
+				dialogCreated: false,
+				discardDraft: false
 			}
 		}].forEach(function(mSetup) {
 			QUnit.test(mSetup.testName, function(assert) {
@@ -498,11 +503,13 @@ sap.ui.define([
 				this.oRta._oVersionsModel.setProperty("/displayedVersion", mSetup.input.versionDisplayed);
 				this.oRta._oVersionsModel.setProperty("/backendDraft", mSetup.input.backendDraft);
 				sandbox.stub(this.oRta.getCommandStack(), "canUndo").returns(mSetup.input.canUndo);
+				var oVersionAPIDiscardDraftStub = sandbox.stub(VersionsAPI, "discardDraft").resolves();
 
 				function doAssertions() {
 					assert.strictEqual(oShowMessageBoxStub.callCount,
 						mSetup.expectation.dialogCreated ? 1 : 0, "the message box display was handled correct"
 					);
+					assert.equal(oVersionAPIDiscardDraftStub.callCount, mSetup.expectation.discardDraft ? 1 : 0, "discard draft was handled correct");
 					fnDone();
 				}
 

@@ -9,6 +9,8 @@ sap.ui.define(['sap/ui/core/Lib', 'sap/ui/core/Renderer', 'sap/ui/core/AccessKey
 // shortcut for sap.ui.core.TextDirection
 var TextDirection = coreLibrary.TextDirection;
 
+const TextAlign = coreLibrary.TextAlign;
+
 // shortcut for sap.ui.core.VerticalAlign
 var VerticalAlign = coreLibrary.VerticalAlign;
 
@@ -33,8 +35,7 @@ var LabelRenderer = {
  */
 LabelRenderer.render = function(rm, oLabel){
 	// convenience variable
-	var r = LabelRenderer,
-		sTextDir = oLabel.getTextDirection(),
+	var sTextDir = oLabel.getTextDirection(),
 		sTextAlign = oLabel.getTextAlign(),
 		sWidth = oLabel.getWidth(),
 		sLabelText = oLabel.getText(),
@@ -86,9 +87,10 @@ LabelRenderer.render = function(rm, oLabel){
 
 	// style for text alignment
 	if (sTextAlign) {
-		sTextAlign = r.getTextAlign(sTextAlign, sTextDir);
-		if (sTextAlign) {
-			rm.style("text-align", sTextAlign);
+		const sActualTextAlign = LabelRenderer.getTextAlign(sTextAlign, sTextDir);
+
+		if (sActualTextAlign) {
+			rm.style("text-align", sActualTextAlign);
 		}
 	}
 
@@ -108,6 +110,19 @@ LabelRenderer.render = function(rm, oLabel){
 
 	if (sTooltip) {
 		rm.attr("title", sTooltip);
+	}
+
+	rm.openEnd();
+
+	rm.openStart("div").class("sapMLabelInner");
+
+	// style for text alignment
+	if (sTextAlign) {
+		const sJustifyContent = LabelRenderer.textAlignToJustifyContent(sTextAlign);
+
+		if (sJustifyContent) {
+			rm.style("justify-content", sJustifyContent);
+		}
 	}
 
 	rm.openEnd();
@@ -151,6 +166,8 @@ LabelRenderer.render = function(rm, oLabel){
 	rm.openEnd();
 	rm.close("span");
 
+	rm.close("div");
+
 	rm.close(sHtmlTagToRender);
 };
 
@@ -160,6 +177,32 @@ LabelRenderer.render = function(rm, oLabel){
  * @private
  */
 LabelRenderer.getTextAlign = Renderer.getTextAlign;
+
+LabelRenderer.textAlignToJustifyContent = function (sTextAlign) {
+	let sJustifyContent;
+
+	switch (sTextAlign) {
+		case TextAlign.Begin:
+			sJustifyContent = "flex-start";
+			break;
+		case TextAlign.End:
+			sJustifyContent = "flex-end";
+			break;
+		case TextAlign.Left:
+			sJustifyContent = "left";
+			break;
+		case TextAlign.Right:
+			sJustifyContent = "right";
+			break;
+		case TextAlign.Center:
+			sJustifyContent = "center";
+			break;
+		default:
+			sJustifyContent = "";
+	}
+
+	return sJustifyContent;
+};
 
 return LabelRenderer;
 

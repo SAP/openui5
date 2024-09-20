@@ -781,6 +781,9 @@ sap.ui.define([
 								+ that.sResourcePath, sPropertyPath);
 						}
 					}
+					if (!bAgain && oValue[sSegment + "@$ui5.noData"]) {
+						return undefined; // Note: do not use null here!
+					}
 					if (!bTransient) {
 						// If there is no entity with a key predicate, try it with the cache root
 						// object (in case of SimpleCache, the root object of CollectionCache is an

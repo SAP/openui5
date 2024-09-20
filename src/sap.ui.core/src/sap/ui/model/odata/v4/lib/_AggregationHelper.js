@@ -1235,7 +1235,7 @@ sap.ui.define([
 
 		/**
 		 * Sets the "@$ui5.node.*" annotations for the given element as indicated and adds
-		 * <code>null</code> values for all missing properties.
+		 * "...@$ui5.noData" annotations for all missing properties.
 		 *
 		 * @param {object} oElement
 		 *   Any node or leaf element
@@ -1261,7 +1261,8 @@ sap.ui.define([
 					if (Array.isArray(vProperty)) {
 						_Helper.createMissing(oElement, vProperty);
 					} else if (!(vProperty in oElement)) {
-						oElement[vProperty] = null;
+						oElement[vProperty] = undefined;
+						oElement[vProperty + "@$ui5.noData"] = true;
 					}
 				});
 			}
