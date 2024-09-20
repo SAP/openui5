@@ -1516,7 +1516,8 @@ sap.ui.define([
 							if (oItem.valueTokens && !deepEqual(this._beforeLayerManifestChanges[oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueTokens"], oItem.valueTokens)) {
 								mResult[oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueTokens"] = oItem.valueTokens;
 							}
-							if (typeof oItem.value !== "undefined" && !deepEqual(this._beforeLayerManifestChanges[oItem.manifestpath], oItem.value)) {
+							var beforeLayerChange = this._beforeLayerManifestChanges[oItem.manifestpath];
+							if (typeof oItem.value !== "undefined" && !deepEqual(beforeLayerChange, oItem.value)) {
 								switch (oItem.type) {
 									case "string":
 										if (!oItem.translatable) {
@@ -1531,6 +1532,20 @@ sap.ui.define([
 										}
 										break;
 									case "group":
+										break;
+									case "date":
+									case "datetime":
+										if (beforeLayerChange) {
+											if (oItem.value) {
+												var beforeDate = new Date(beforeLayerChange);
+												var date = new Date(oItem.value);
+												if (beforeDate.getTime() !== date.getTime()) {
+													mResult[oItem.manifestpath] = oItem.value;
+												}
+											}
+										} else if (oItem.value) {
+											mResult[oItem.manifestpath] = oItem.value;
+										}
 										break;
 									case "object":
 										if (oItem.value && oItem.value !== "" && typeof oItem.value === "object") {
