@@ -316,6 +316,48 @@ sap.ui.define([
 		this.oDataProvider.triggerDataUpdate();
 	});
 
+	QUnit.test("Event: dataChanged", function (assert) {
+		// Arrange
+		assert.expect(1);
+		const done = assert.async();
+		let currentData = 0;
+		this.stub(this.oDataProvider, "getData").callsFake(() => {
+			return Promise.resolve(currentData++);
+		});
+
+		this.oDataProvider.attachDataChanged((e) => {
+			assert.strictEqual(e.getParameter("data"), 2, "Should receive data from the last request only.");
+			done();
+		});
+
+		// Act
+		this.oDataProvider.setSettings({
+			request: {
+				url: "/data/provider/test/url",
+				parameters: {
+					key: 1
+				}
+			}
+		});
+		this.oDataProvider.triggerDataUpdate();
+
+		this.oDataProvider.setSettings({
+			request: {
+				url: "/data/provider/test/url",
+				key: 2
+			}
+		});
+		this.oDataProvider.triggerDataUpdate();
+
+		this.oDataProvider.setSettings({
+			request: {
+				url: "/data/provider/test/url",
+				key: 3
+			}
+		});
+		this.oDataProvider.triggerDataUpdate();
+	});
+
 	QUnit.module("RequestDataProvider", {
 		beforeEach: function () {
 			this.oRequestStub = sinon.stub(RequestDataProvider.prototype, "_request");
