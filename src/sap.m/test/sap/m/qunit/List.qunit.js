@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Avatar",
 	"sap/m/Button",
-	"sap/m/Bar",
 	"sap/m/List",
 	"sap/m/DisplayListItem",
 	"sap/m/StandardListItem",
@@ -31,7 +30,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/Sorter",
 	"sap/ui/core/date/UI5Date"
-], function(Library, jQuery, nextUIUpdate, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, Text, KeyCodes, Control, Element, ListItemBase, Log, Sorter, UI5Date) {
+], function(Library, jQuery, nextUIUpdate, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, Text, KeyCodes, Control, Element, ListItemBase, Log, Sorter, UI5Date) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 
@@ -48,13 +47,7 @@ sap.ui.define([
 	// ================================================================================
 	*/
 	const listOverview = new Page("listOverview", {
-		title : "List Overview",
-		footer : new Bar({
-			contentMiddle : [ new Button({
-				text : "Embedded",
-				press : switchStyle
-			}) ]
-		})
+		title : "List Overview"
 	});
 
 	const detailPage = new Page("detailPage", {
@@ -72,13 +65,7 @@ sap.ui.define([
 		showNavButton : true,
 		navButtonPress : function() {
 			app.back();
-		},
-		footer : new Bar({
-			contentMiddle : [ new Button({
-				text : "Embedded",
-				press : switchStyle
-			}) ]
-		})
+		}
 	});
 
 	const standardListIcon = new Page("standardListIcon", {
@@ -86,13 +73,7 @@ sap.ui.define([
 		showNavButton : true,
 		navButtonPress : function() {
 			app.back();
-		},
-		footer : new Bar({
-			contentMiddle : [ new Button({
-				text : "Embedded",
-				press : switchStyle
-			}) ]
-		})
+		}
 	});
 
 	const standardListTitle = new Page("standardListTitle", {
@@ -100,13 +81,7 @@ sap.ui.define([
 		showNavButton : true,
 		navButtonPress : function() {
 			app.back();
-		},
-		footer : new Bar({
-			contentMiddle : [ new Button({
-				text : "Embedded",
-				press : switchStyle
-			}) ]
-		})
+		}
 	});
 
 	const standardListNoImage = new Page("standardListNoImage", {
@@ -122,13 +97,7 @@ sap.ui.define([
 		showNavButton : true,
 		navButtonPress : function() {
 			app.back();
-		},
-		footer : new Bar({
-			contentMiddle : [ new Button({
-				text : "Embedded",
-				press : switchStyle
-			}) ]
-		})
+		}
 	});
 
 	const inputList = new Page("inputList", {
@@ -136,13 +105,7 @@ sap.ui.define([
 		showNavButton : true,
 		navButtonPress : function() {
 			app.back();
-		},
-		footer : new Bar({
-			contentMiddle : [ new Button({
-				text : "Embedded",
-				press : switchStyle
-			}) ]
-		})
+		}
 	});
 
 	const customList = new Page("customList", {
@@ -150,13 +113,7 @@ sap.ui.define([
 		showNavButton : true,
 		navButtonPress : function() {
 			app.back();
-		},
-		footer : new Bar({
-			contentMiddle : [ new Button({
-				text : "Embedded",
-				press : switchStyle
-			}) ]
-		})
+		}
 	});
 
 	const groupedList = new Page("groupedList", {
@@ -164,13 +121,7 @@ sap.ui.define([
 		showNavButton : true,
 		navButtonPress : function() {
 			app.back();
-		},
-		footer : new Bar({
-			contentMiddle : [ new Button({
-				text : "Embedded",
-				press : switchStyle
-			}) ]
-		})
+		}
 	});
 
 	const groupedNoHeaderList = new Page("groupedNoHeaderList", {
@@ -178,13 +129,7 @@ sap.ui.define([
 		showNavButton : true,
 		navButtonPress : function() {
 			app.back();
-		},
-		footer : new Bar({
-			contentMiddle : [ new Button({
-				text : "Embedded",
-				press : switchStyle
-			}) ]
-		})
+		}
 	});
 
 	const selectionList = new Page("selectionList", {
@@ -192,31 +137,7 @@ sap.ui.define([
 		showNavButton : true,
 		navButtonPress : function() {
 			app.back();
-		},
-		footer : new Bar({
-			contentMiddle : [
-				new Button({
-					text : "Embedded",
-					press : switchStyle
-				}),
-				new Button({
-					text : "None",
-					press : switchModeNone
-				}),
-				new Button({
-					text : "Single",
-					press : switchModeSingle
-				}),
-				new Button({
-					text : "Multi",
-					press : switchModeMulti
-				}),
-				new Button({
-					text : "Delete",
-					press : switchModeDelete
-				})
-			]
-		})
+		}
 	});
 
 	const invisibleList = new Page("invisibleList", {
@@ -232,31 +153,7 @@ sap.ui.define([
 		showNavButton : true,
 		navButtonPress : function() {
 			app.back();
-		},
-		footer : new Bar({
-			contentMiddle : [
-				new Button({
-					text : "Embedded",
-					press : switchStyle
-				}),
-				new Button({
-					text : "None",
-					press : function() {switchModeNone(oListNoData); }
-				}),
-				new Button({
-					text : "Single",
-					press : function() {switchModeSingle(oListNoData); }
-				}),
-				new Button({
-					text : "Multi",
-					press : function() {switchModeMulti(oListNoData); }
-				}),
-				new Button({
-					text : "Delete",
-					press : function() {switchModeDelete(oListNoData); }
-				})
-			]
-		})
+		}
 	});
 
 	let swipeContentList;
@@ -780,17 +677,6 @@ sap.ui.define([
 		model.updateBindings();
 	}
 
-	function switchStyle() {
-		const listArray = Array.from(document.querySelectorAll(".sapMList"), function(oElement) {
-			return Element.closestTo(oElement);
-		});
-		const inset = !listArray[listArray.length - 1].getInset();
-		for (let i = 0; i < listArray.length; i++) {
-			listArray[i].setInset(inset);
-		}
-		app.getCurrentPage()._refreshIScroll();
-	}
-
 	function timeout(iDuration) {
 		return new Promise(function(resolve) {
 			window.setTimeout(resolve, iDuration);
@@ -913,15 +799,6 @@ sap.ui.define([
 	// selection list: functions to switch list selection mode
 	// ================================================================================
 	*/
-	function switchModeNone() {
-		oListSelection.setHeaderText("Travel [List-Mode: None]");
-		oListSelection.setMode(library.ListMode.None);
-	}
-
-	function switchModeSingle() {
-		oListSelection.setHeaderText("Travel [List-Mode: Single]");
-		oListSelection.setMode(library.ListMode.SingleSelect);
-	}
 
 	function switchModeSingleLeft() {
 		oListSelection.setHeaderText("Travel [List-Mode: SingleLeft]");
