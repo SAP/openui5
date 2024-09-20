@@ -4,20 +4,11 @@
 /* ==================================== */
 
 .sapMILI {
-	display: -webkit-box;
-	display: flex;
-	height: 3rem;
+	min-height: 3rem;
 }
 
 .sapMILILabel {
-	-webkit-box-flex: 1;
-	flex: auto;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	display: block;
 	font-size: 1.125rem;
-	max-width: 60%;	/*we can have very long title so lets give a limit */
 	color: @sapUiListTextColor;
 }
 
@@ -25,18 +16,26 @@
 	cursor: pointer;
 }
 
-.sapMILI > .sapMLIBContent {
-	display: -webkit-box;
+.sapMILIContentWrapper {
 	display: flex;
-	-webkit-box-align: center;
+	gap: 0 1rem;
 	align-items: center;
 }
 
+.sapMILIContentWrapperL {
+	flex-wrap: wrap;
+	& > .sapMILILabel {
+		flex: 1 1 auto;
+	}
+}
+
+.sapMILILabel {
+	padding: 0.25rem 0;
+}
+
 .sapMILIDiv {
-	-webkit-box-flex: 9;
-	flex: 1 0 auto;
+	flex: 1 1 auto;
 	text-align: right;
-	margin: 0 0 0 1rem;
 }
 
 html[dir=rtl] .sapMILIDiv {
@@ -49,7 +48,7 @@ html[dir=rtl] .sapMILIDiv {
 
 /* Compact size */
 .sapUiSizeCompact .sapMILI {
-	height: 2rem;
+	min-height: 2rem;
 }
 
 .sapUiSizeCompact .sapMILILabel {

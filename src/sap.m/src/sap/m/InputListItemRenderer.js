@@ -32,12 +32,18 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 	};
 
 	InputListItemRenderer.renderLIContent = function(rm, oLI) {
+		rm.openStart("div", oLI.getId() + "-contentWrapper").class("sapMILIContentWrapper");
+		rm.class("sapMILIContentWrapper" + oLI.getContentSize());
+		rm.openEnd();
+		this.renderLabel(rm, oLI);
+		this.renderInput(rm, oLI);
+		rm.close("div");
+	};
 
-		// List item label
+	InputListItemRenderer.renderLabel = function(rm, oLI) {
 		var sLabel = oLI.getLabel();
-		var sInnerLabel = oLI.getId() + "-label";
 		if (sLabel) {
-			rm.openStart("span", sInnerLabel);
+			rm.openStart("span", oLI.getId() + "-label");
 			rm.class("sapMILILabel");
 
 			var sLabelDir = oLI.getLabelTextDirection();
@@ -49,17 +55,21 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 			rm.text(sLabel);
 			rm.close("span");
 		}
+	};
 
+	InputListItemRenderer.renderInput = function(rm, oLI) {
 		rm.openStart("div").class("sapMILIDiv").class("sapMILI-CTX").openEnd();
 		oLI.getContent().forEach(function(oControl) {
-			if (oControl.addAriaLabelledBy && oControl.getAriaLabelledBy().indexOf(sInnerLabel) === -1) {
-				oControl.addAriaLabelledBy(sInnerLabel);
+			if (oControl.addAriaLabelledBy) {
+				const sInnerLabel = oLI.getId() + "-label";
+				if (oControl.getAriaLabelledBy().indexOf(sInnerLabel) === -1) {
+					oControl.addAriaLabelledBy(sInnerLabel);
+				}
 			}
 			rm.renderControl(oControl);
 		});
 		rm.close("div");
 	};
-
 
 	return InputListItemRenderer;
 
