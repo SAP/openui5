@@ -487,7 +487,6 @@ sap.ui.define([
 	 */
 	GenericTile.prototype._handleThemeApplied = function () {
 		this._bThemeApplied = true;
-		this._oTitle.clampHeight();
 		Theming.detachApplied(this._handleThemeApplied.bind(this));
 	};
 
