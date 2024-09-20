@@ -186,7 +186,7 @@ sap.ui.define([
 			}
 			// create token parsing RegExp
 			let sRegExp;
-			let sTokenText = this.tokenText && escapeRegExp(this.tokenText);
+			const sTokenText = this.tokenText && escapeRegExp(this.tokenText);
 			if (oConfiguration.tokenParse) {
 				this.tokenParse = oConfiguration.tokenParse.replace(/#tokenText#/g, sTokenText);
 				for (let i = 0; i < this.valueTypes.length; i++) {
@@ -216,8 +216,7 @@ sap.ui.define([
 
 			// create token formatter
 			if (oConfiguration.tokenFormat) {
-				sTokenText = this.tokenText;
-				this.tokenFormat = oConfiguration.tokenFormat.replace(/\#tokenText\#/g, sTokenText);
+				this.tokenFormat = oConfiguration.tokenFormat.replace(/\#tokenText\#/g, this.tokenText);
 			} else {
 				this.tokenFormat = this.tokenText || this.longText; // static operator with no value (e.g. "THIS YEAR")
 			}
