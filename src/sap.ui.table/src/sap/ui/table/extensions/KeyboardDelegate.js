@@ -1017,7 +1017,7 @@ sap.ui.define([
 			const oBusyIndicator = this.getDomRef("busyIndicator");
 			if (oBusyIndicator) {
 				this._getKeyboardExtension().setSilentFocus(oBusyIndicator);
-			} else if (this.getColumnHeaderVisible() && (TableUtils.getVisibleColumnCount(this) || this.getSelectionMode() !== SelectionMode.None)) {
+			} else if (this.getColumnHeaderVisible() && (TableUtils.getVisibleColumnCount(this) || TableUtils.hasRowHeader(this))) {
 				setFocusOnColumnHeaderOfLastFocusedDataCell(this, oEvent);
 			} else if (bNoData) {
 				this._getKeyboardExtension().setSilentFocus(this.$("noDataCnt"));
@@ -1029,7 +1029,7 @@ sap.ui.define([
 				this._getKeyboardExtension().setSilentFocus(oBusyIndicator);
 			} else if (this.getRows().length && !TableUtils.isNoDataVisible(this)) {
 				restoreFocusOnLastFocusedDataCell(this, oEvent);
-			} else if (this.getColumnHeaderVisible() && (TableUtils.getVisibleColumnCount(this) || this.getSelectionMode() !== SelectionMode.None)) {
+			} else if (this.getColumnHeaderVisible() && (TableUtils.getVisibleColumnCount(this) || TableUtils.hasRowHeader(this))) {
 				setFocusOnColumnHeaderOfLastFocusedDataCell(this, oEvent);
 			}
 		}
