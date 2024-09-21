@@ -334,6 +334,17 @@ sap.ui.define([
 				}
 			},
 
+			"apply/_internal/changes/descriptor/ui5/ChangeModel": {
+				group: "Apply Internal - Descriptor Change Merger",
+				coverage: {
+					only: [
+						"sap/ui/fl/apply/_internal/changes/descriptor/ui5/ChangeModel",
+						"sap/ui/fl/util/DescriptorChangeCheck",
+						"sap/ui/fl/util/changePropertyValueByPath"
+					]
+				}
+			},
+
 			"apply/_internal/changes/descriptor/app/ChangeDataSource": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
@@ -629,6 +640,13 @@ sap.ui.define([
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexState/compVariants/Utils"]
+				}
+			},
+
+			"apply/_internal/flexState/compVariants/CompVariantManagementState": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantManagementState"]
 				}
 			},
 

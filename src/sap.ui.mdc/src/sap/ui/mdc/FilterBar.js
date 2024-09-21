@@ -48,6 +48,8 @@ sap.ui.define([
 	 * @public
 	 * @since 1.61.0
 	 * @alias sap.ui.mdc.FilterBar
+	 * @see {@link topic:1dd2aa91115d43409452a271d11be95b sap.ui.mdc}
+	 * @see {@link topic:78386110817d43978ffd6988d1704e38 FilterBar Building Block (OData V4)}
 	 */
 	const FilterBar = FilterBarBase.extend("sap.ui.mdc.FilterBar", {
 		metadata: {

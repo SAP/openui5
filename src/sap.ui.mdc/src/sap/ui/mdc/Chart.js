@@ -80,6 +80,8 @@ sap.ui.define([
 		 *
 		 * @since 1.88
 		 * @alias sap.ui.mdc.Chart
+		 * @see {@link topic:1dd2aa91115d43409452a271d11be95b sap.ui.mdc}
+		 * @see {@link topic:52d065ab8bb740c58c834a0c985e3b9e Chart Building Block (OData V4)}
 		 * @experimental As of version 1.88
 		 */
 		const Chart = Control.extend("sap.ui.mdc.Chart", /** @lends sap.ui.mdc.Chart.prototype */ {
@@ -453,7 +455,7 @@ sap.ui.define([
 		});
 
 		const MDCRb = Library.getResourceBundleFor("sap.ui.mdc");
-		const {ToolbarDesign} = MLibrary;
+		const { ToolbarDesign } = MLibrary;
 
 		FilterIntegrationMixin.call(Chart.prototype);
 
@@ -1211,7 +1213,7 @@ sap.ui.define([
 				return this.getAggregation("_toolbar");
 			} else if (!this._bIsDestroyed) {
 				const oToolbar = new ActionToolbar(this.getId() + "--toolbar", {
-					design: ToolbarDesign[ThemeParameters.get({name: "_sap_ui_mdc_Chart_ToolbarDesign"})], //"Transparent",
+					design: ToolbarDesign[ThemeParameters.get({ name: "_sap_ui_mdc_Chart_ToolbarDesign" })], //"Transparent",
 					enabled: false
 				});
 
@@ -1226,7 +1228,7 @@ sap.ui.define([
 		Chart.prototype.onThemeChanged = function() {
 			const oToolbar = this._getToolbar();
 			if (oToolbar) {
-				const sToolBarDesign = ToolbarDesign[ThemeParameters.get({name: "_sap_ui_mdc_Chart_ToolbarDesign"})];
+				const sToolBarDesign = ToolbarDesign[ThemeParameters.get({ name: "_sap_ui_mdc_Chart_ToolbarDesign" })];
 				oToolbar.setDesign(sToolBarDesign);
 			}
 		};

@@ -103,11 +103,11 @@ sap.ui.define([
 ) => {
 	"use strict";
 
-	const {ToolbarDesign} = MLibrary;
-	const {ToolbarStyle} = MLibrary;
-	const {IllustratedMessageType} = MLibrary;
-	const {TitleLevel} = coreLibrary;
-	const {SortOrder} = coreLibrary;
+	const { ToolbarDesign } = MLibrary;
+	const { ToolbarStyle } = MLibrary;
+	const { IllustratedMessageType } = MLibrary;
+	const { TitleLevel } = coreLibrary;
+	const { SortOrder } = coreLibrary;
 	const internalMap = new window.WeakMap();
 	const internal = function(oTable) {
 		if (!internalMap.has(oTable)) {
@@ -272,6 +272,8 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @since 1.58
 	 * @alias sap.ui.mdc.Table
+	 * @see {@link topic:1dd2aa91115d43409452a271d11be95b sap.ui.mdc}
+	 * @see {@link topic:3801656db27b4b7a9099b6ed5fa1d769 Table Building Block (OData V4)}
 	 * @public
 	 */
 	const Table = Control.extend("sap.ui.mdc.Table", {
@@ -721,7 +723,7 @@ sap.ui.define([
 				 * <b>Note:</b> Each time the properties of the settings are changed, they have to be applied again via <code>setRowSettings</code>
 				 * for the changes to take effect.
 				 */
-				rowSettings: {type: "sap.ui.mdc.table.RowSettings", multiple: false},
+				rowSettings: { type: "sap.ui.mdc.table.RowSettings", multiple: false },
 
 				/**
 				 * <code>DataStateIndicator</code> plugin that can be used to show binding-related messages.
@@ -742,7 +744,7 @@ sap.ui.define([
 				 *
 				 * @since 1.106
 				 */
-				noData: {type: "sap.ui.core.Control", multiple: false, altTypes: ["string"]},
+				noData: { type: "sap.ui.core.Control", multiple: false, altTypes: ["string"] },
 
 				/**
 				 * Defines an aggregation for the <code>CopyProvider</code> plugin that provides copy to clipboard capabilities for the selected rows
@@ -767,7 +769,7 @@ sap.ui.define([
 				 *
 				 * @since 1.118
 				 */
-				contextMenu: {type: "sap.ui.core.IContextMenu", multiple: false},
+				contextMenu: { type: "sap.ui.core.IContextMenu", multiple: false },
 
 				/**
 				 * Defines an aggregation for the <code>CellSelector</code> plugin that provides cell selection capabilities.
@@ -891,7 +893,7 @@ sap.ui.define([
 						 *
 						 * <b>Note:</b> This parameter can be undefined if the area where the context menu opens is not related to a column instance.
 						 */
-						column: {type: "sap.ui.mdc.table.Column"}
+						column: { type: "sap.ui.mdc.table.Column" }
 					}
 				}
 			}
@@ -991,7 +993,7 @@ sap.ui.define([
 		// (incorrect) default type instance can be avoided.
 		// The delegate must be part of the early settings, because it can only be applied once (see sap.ui.mdc.mixin.DelegateMixin).
 		if (mSettings && "type" in mSettings) {
-			const mEarlySettings = {type: mSettings.type};
+			const mEarlySettings = { type: mSettings.type };
 
 			if ("delegate" in mSettings) {
 				mEarlySettings.delegate = mSettings.delegate;
@@ -1319,7 +1321,7 @@ sap.ui.define([
 			return this;
 		}
 		this.setProperty("headerStyle", sStyle, true);
-		this._oTitle?.setTitleStyle(this.getHeaderStyle() || TitleLevel[ThemeParameters.get({name: "_sap_ui_mdc_Table_HeaderStyle"})]);
+		this._oTitle?.setTitleStyle(this.getHeaderStyle() || TitleLevel[ThemeParameters.get({ name: "_sap_ui_mdc_Table_HeaderStyle" })]);
 		return this;
 	};
 
@@ -1454,12 +1456,12 @@ sap.ui.define([
 		}
 
 		const mRegistryOptions = {
-			Column: new ColumnController({control: this, stableKeys: aStableKeys}),
-			Sort: new SortController({control: this}),
-			Group: new GroupController({control: this}),
-			Filter: new FilterController({control: this}),
-			Aggregate: new AggregateController({control: this}),
-			ColumnWidth: new ColumnWidthController({control: this, exposeXConfig: true})
+			Column: new ColumnController({ control: this, stableKeys: aStableKeys }),
+			Sort: new SortController({ control: this }),
+			Group: new GroupController({ control: this }),
+			Filter: new FilterController({ control: this }),
+			Aggregate: new AggregateController({ control: this }),
+			ColumnWidth: new ColumnWidthController({ control: this, exposeXConfig: true })
 		};
 
 		this.getActiveP13nModes().forEach((sMode) => {
@@ -1619,7 +1621,7 @@ sap.ui.define([
 	}
 
 	function getFilterInfoBar(oTable) {
-		const {oFilterInfoBar} = internal(oTable);
+		const { oFilterInfoBar } = internal(oTable);
 
 		if (oFilterInfoBar?.isDestroyStarted()) {
 			return null;
@@ -1900,7 +1902,7 @@ sap.ui.define([
 				text: "{$sap.ui.mdc.Table>/header}"
 			}).toStatic();
 			this._oTable.addAriaLabelledBy(this.getId() + "-invisibleTitle");
-		// When the table type changes, the aria label reference gets deleted thus needs to be recreated
+			// When the table type changes, the aria label reference gets deleted thus needs to be recreated
 		} else if (this._oInvisibleTitle && !this._oTable.getAriaLabelledBy().includes(this.getId() + "-invisibleTitle")) {
 			this._oTable.addAriaLabelledBy(this.getId() + "-invisibleTitle");
 		}
@@ -1977,11 +1979,11 @@ sap.ui.define([
 				text: this.getHeader(),
 				width: this.getHeaderVisible() ? undefined : "0px",
 				level: this.getHeaderLevel(),
-				titleStyle: this.getHeaderStyle() || TitleLevel[ThemeParameters.get({name: "_sap_ui_mdc_Table_HeaderStyle"})]
+				titleStyle: this.getHeaderStyle() || TitleLevel[ThemeParameters.get({ name: "_sap_ui_mdc_Table_HeaderStyle" })]
 			});
 			// Create Toolbar
 			this._oToolbar = new ActionToolbar(this.getId() + "-toolbar", {
-				design: ToolbarDesign[ThemeParameters.get({name: "_sap_ui_mdc_Table_ToolbarDesign"})],
+				design: ToolbarDesign[ThemeParameters.get({ name: "_sap_ui_mdc_Table_ToolbarDesign" })],
 				begin: [
 					this._oTitle
 				],
@@ -2214,7 +2216,7 @@ sap.ui.define([
 
 	Table.prototype._getCopyButton = function() {
 		if (window.isSecureContext) {
-			return this.getCopyProvider()?.getCopyButton({id: this.getId() + "-copy"});
+			return this.getCopyProvider()?.getCopyButton({ id: this.getId() + "-copy" });
 		}
 	};
 
@@ -2441,7 +2443,7 @@ sap.ui.define([
 
 		return new Promise((fnResolve, fnReject) => {
 			Promise.all([
-				that.getControlDelegate().fetchExportCapabilities(that), Library.load({name: "sap.ui.export"})
+				that.getControlDelegate().fetchExportCapabilities(that), Library.load({ name: "sap.ui.export" })
 			]).then((aResult) => {
 				const [oExportCapabilities] = aResult;
 
@@ -2550,8 +2552,8 @@ sap.ui.define([
 		}
 
 		if (!this._oColumnHeaderMenu) {
-			this._oQuickActionContainer = new QuickActionContainer({table: this});
-			this._oItemContainer = new ItemContainer({table: this});
+			this._oQuickActionContainer = new QuickActionContainer({ table: this });
+			this._oItemContainer = new ItemContainer({ table: this });
 			this._oColumnHeaderMenu = new ColumnMenu({
 				id: this.getId() + "-columnHeaderMenu"
 			});
@@ -2986,7 +2988,7 @@ sap.ui.define([
 		this._finalizeBindingInfo(oBindingInfo);
 		this._oTable.setShowOverlay(false);
 		this._updateColumnsBeforeBinding();
-		this.getControlDelegate().updateBinding(this, oBindingInfo, this._bForceRebind ? null : this.getRowBinding(), {forceRefresh: bForceRefresh});
+		this.getControlDelegate().updateBinding(this, oBindingInfo, this._bForceRebind ? null : this.getRowBinding(), { forceRefresh: bForceRefresh });
 		this._updateInnerTableNoData();
 		this._bForceRebind = false;
 	};
@@ -3061,17 +3063,17 @@ sap.ui.define([
 	 */
 	Table.prototype.onThemeChanged = function() {
 		if (this._oExportButton) {
-			const sButtonType = MLibrary.ButtonType[ThemeParameters.get({name: "_sap_ui_mdc_Table_ExportButtonType"})];
+			const sButtonType = MLibrary.ButtonType[ThemeParameters.get({ name: "_sap_ui_mdc_Table_ExportButtonType" })];
 			this._oExportButton.setType(sButtonType);
 		}
 
 		if (this._oToolbar) {
-			const sToolBarDesign = ToolbarDesign[ThemeParameters.get({name: "_sap_ui_mdc_Table_ToolbarDesign"})];
+			const sToolBarDesign = ToolbarDesign[ThemeParameters.get({ name: "_sap_ui_mdc_Table_ToolbarDesign" })];
 			this._oToolbar.setDesign(sToolBarDesign);
 		}
 
 		if (this._oTitle && !this.getHeaderStyle()) {
-			const sHeaderStyle = TitleLevel[ThemeParameters.get({name: "_sap_ui_mdc_Table_HeaderStyle"})];
+			const sHeaderStyle = TitleLevel[ThemeParameters.get({ name: "_sap_ui_mdc_Table_HeaderStyle" })];
 			this._oTitle.setTitleStyle(sHeaderStyle);
 		}
 	};

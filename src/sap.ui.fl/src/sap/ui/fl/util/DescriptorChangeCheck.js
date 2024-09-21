@@ -91,10 +91,10 @@ sap.ui.define([
 		return (sKey !== "dataSource") ? aObjectKeys[aObjectKeys.length - 1] : aObjectKeys;
 	}
 
-	function checkChange(oEntityPropertyChange, aSupportedProperties, aSupportedOperations, oSupportedPropertyPattern, aNotAllowedToBeDeleteProperties) {
+	function checkChange(oEntityPropertyChange, aSupportedProperties, aSupportedOperations, oSupportedPropertyPattern, aNotAllowedToBeDeleteProperties, oSupportedPropertyTypes) {
 		const aEntityPropertyChanges = Array.isArray(oEntityPropertyChange) ? oEntityPropertyChange : [oEntityPropertyChange];
 		aEntityPropertyChanges.forEach(function(oChange) {
-			formatEntityCheck(oChange, aSupportedProperties, aSupportedOperations, aNotAllowedToBeDeleteProperties);
+			formatEntityCheck(oChange, aSupportedProperties, aSupportedOperations, aNotAllowedToBeDeleteProperties, oSupportedPropertyTypes);
 			checkPropertyValuePattern(oChange, oSupportedPropertyPattern);
 		});
 	}
@@ -130,13 +130,20 @@ sap.ui.define([
 	 * @returns {boolean} Property Path is supported or is not supported
 	 */
 	function isGenericPropertyPathSupported(aSupportedProperties, sPropertyPath) {
-		var aClearedGenericPath = getClearedGenericPath(aSupportedProperties);
-		return aClearedGenericPath.some(function(path) {
-			return sPropertyPath.startsWith(path);
+		const aClearedGenericPath = getClearedGenericPath(aSupportedProperties);
+		let bIsGenericPathSupported = false;
+		aClearedGenericPath.forEach(function(path) {
+			if (sPropertyPath.startsWith(path)) {
+				const sPathWithoutRoot = sPropertyPath.replace(path, "");
+				if (sPathWithoutRoot.startsWith("/") || sPathWithoutRoot === "") {
+					bIsGenericPathSupported = true;
+				}
+			}
 		});
+		return bIsGenericPathSupported;
 	}
 
-	function formatEntityCheck(oChangeEntity, aSupportedProperties, aSupportedOperations, aNotAllowedToBeDeleteProperties) {
+	function formatEntityCheck(oChangeEntity, aSupportedProperties, aSupportedOperations, aNotAllowedToBeDeleteProperties, oSupportedPropertyTypes) {
 		if (!oChangeEntity.propertyPath) {
 			throw new Error("Invalid change format: The mandatory 'propertyPath' is not defined. Please define the mandatory property 'propertyPath'");
 		}
@@ -145,8 +152,10 @@ sap.ui.define([
 		}
 		const sOpertationUpperCase = oChangeEntity.operation.toUpperCase();
 		if (sOpertationUpperCase === "DELETE") {
-			if (aNotAllowedToBeDeleteProperties.includes(oChangeEntity.propertyPath)) {
-				throw new Error(`The property '${oChangeEntity.propertyPath}' was attempted to be deleted. The mandatory properties ${aNotAllowedToBeDeleteProperties.join("|")} cannot be deleted.`);
+			if (aNotAllowedToBeDeleteProperties) {
+				if (aNotAllowedToBeDeleteProperties.includes(oChangeEntity.propertyPath)) {
+					throw new Error(`The property '${oChangeEntity.propertyPath}' was attempted to be deleted. The mandatory properties ${aNotAllowedToBeDeleteProperties.join("|")} cannot be deleted.`);
+				}
 			}
 			if (oChangeEntity.hasOwnProperty("propertyValue")) {
 				throw new Error(`The property 'propertyValue' must not be provided in a 'DELETE' operation. Please remove 'propertyValue'.`);
@@ -156,9 +165,17 @@ sap.ui.define([
 			if (!oChangeEntity.hasOwnProperty("propertyValue")) {
 				throw new Error("Invalid change format: The mandatory 'propertyValue' is not defined. Please define the mandatory property 'propertyValue'");
 			}
-
 			if (!aSupportedProperties.includes(oChangeEntity.propertyPath) && !isGenericPropertyPathSupported(aSupportedProperties, oChangeEntity.propertyPath)) {
 				throw new Error(`Changing ${oChangeEntity.propertyPath} is not supported. The supported 'propertyPath' is: ${aSupportedProperties.join("|")}`);
+			}
+			if (oSupportedPropertyTypes) {
+				const aPropertyPath = oChangeEntity.propertyPath.split("/");
+				const sProperty = aPropertyPath[aPropertyPath.length - 1];
+				if (oSupportedPropertyTypes[sProperty]) {
+					if (String(typeof oChangeEntity.propertyValue) !== oSupportedPropertyTypes[sProperty]) {
+						throw new Error(`The property '${sProperty}' is type of '${typeof oChangeEntity.propertyValue}'. Supported type for property '${sProperty}' is '${oSupportedPropertyTypes[sProperty]}'.`);
+					}
+				}
 			}
 		}
 		if (!aSupportedOperations.includes(sOpertationUpperCase)) {
@@ -178,7 +195,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.suite.ui.generic.template
 	 */
-	function checkEntityPropertyChange(oChange, aSupportedProperties, aSupportedOperations, oSupportedPropertyPattern, aNotAllowedToBeDeleteProperties) {
+	function checkEntityPropertyChange(oChange, aSupportedProperties, aSupportedOperations, oSupportedPropertyPattern, aNotAllowedToBeDeleteProperties, oSupportedPropertyTypes) {
 		var sId = Object.keys(oChange).filter(function(sKey) {
 			return sKey.endsWith("Id");
 		}).shift();
@@ -189,7 +206,7 @@ sap.ui.define([
 			throw new Error(`Changes for "${oChange[sId]}" are not provided.`);
 		}
 
-		checkChange(oChange.entityPropertyChange, aSupportedProperties, aSupportedOperations, oSupportedPropertyPattern, aNotAllowedToBeDeleteProperties);
+		checkChange(oChange.entityPropertyChange, aSupportedProperties, aSupportedOperations, oSupportedPropertyPattern, aNotAllowedToBeDeleteProperties, oSupportedPropertyTypes);
 	}
 
 	var layer_prefixes = {};
@@ -248,11 +265,13 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl, sap.suite.ui.generic.template
 	 */
 	function checkPropertyValuePattern(oChange, oSupportedPattern) {
-		// if no pattern is provided, everything is allowed
-		if (!Object.keys(oSupportedPattern).includes(oChange.propertyPath)) { return; }
-		if (!oChange.propertyValue.match(oSupportedPattern[oChange.propertyPath])) {
-			throw new Error(`Not supported format for propertyPath ${oChange.propertyPath}. ` +
-							`The supported pattern is ${oSupportedPattern[oChange.propertyPath]}`);
+		if (oSupportedPattern) {
+			// if no pattern is provided, everything is allowed
+			if (!Object.keys(oSupportedPattern).includes(oChange.propertyPath)) { return; }
+			if (!oChange.propertyValue.match(oSupportedPattern[oChange.propertyPath])) {
+				throw new Error(`Not supported format for propertyPath ${oChange.propertyPath}. ` +
+								`The supported pattern is ${oSupportedPattern[oChange.propertyPath]}`);
+			}
 		}
 	}
 

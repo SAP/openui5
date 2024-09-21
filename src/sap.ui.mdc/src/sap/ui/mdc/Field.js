@@ -56,9 +56,10 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @alias sap.ui.mdc.Field
+	 * @see {@link topic:1dd2aa91115d43409452a271d11be95b sap.ui.mdc}
+	 * @see {@link topic:5260b9ca249f465ab33769b9edb442aa Field Building Block (OData V4)}
 	 * @version ${version}
 	 * @since 1.54.0
-	 *
 	 * @public
 	 */
 	const Field = FieldBase.extend("sap.ui.mdc.Field", /* @lends sap.ui.mdc.Field.prototype */ {
@@ -170,10 +171,11 @@ sap.ui.define([
 			oBindingInfo.targetType = "raw"; // provide internal value to inner control
 			oDataType = this.getContentFactory().getDataType();
 			if (oBindingInfo.type && (!oDataType ||
-					oDataType.getMetadata().getName() !== oBindingInfo.type.getMetadata().getName() ||
-					!deepEqual(oDataType.getFormatOptions(), oBindingInfo.type.getFormatOptions()) ||
-					!deepEqual(oDataType.getConstraints(), oBindingInfo.type.getConstraints()) ||
-					oDataType._bCreatedByOperator !== oBindingInfo.type._bCreatedByOperator)) {
+				oDataType.getMetadata().getName() !== oBindingInfo.type.getMetadata().getName() ||
+				!deepEqual(oDataType.getFormatOptions(), oBindingInfo.type.getFormatOptions()) ||
+				!deepEqual(oDataType.getConstraints(), oBindingInfo.type.getConstraints()) ||
+				oDataType._bCreatedByOperator !== oBindingInfo.type._bCreatedByOperator)
+			) {
 				this.getContentFactory().setDataType(oBindingInfo.type);
 				this.getContentFactory().setDateOriginalType(undefined);
 				this.getContentFactory().setUnitOriginalType(undefined);
@@ -192,10 +194,11 @@ sap.ui.define([
 			oBindingInfo.targetType = "raw"; // provide internal value to inner control
 			oDataType = this.getContentFactory().getAdditionalDataType();
 			if (oBindingInfo.type && (!oDataType ||
-					oDataType.getMetadata().getName() !== oBindingInfo.type.getMetadata().getName() ||
-					!deepEqual(oDataType.getFormatOptions(), oBindingInfo.type.getFormatOptions()) ||
-					!deepEqual(oDataType.getConstraints(), oBindingInfo.type.getConstraints()) ||
-					oDataType._bCreatedByOperator !== oBindingInfo.type._bCreatedByOperator)) {
+				oDataType.getMetadata().getName() !== oBindingInfo.type.getMetadata().getName() ||
+				!deepEqual(oDataType.getFormatOptions(), oBindingInfo.type.getFormatOptions()) ||
+				!deepEqual(oDataType.getConstraints(), oBindingInfo.type.getConstraints()) ||
+				oDataType._bCreatedByOperator !== oBindingInfo.type._bCreatedByOperator)
+			) {
 				this.getContentFactory().setAdditionalDataType(oBindingInfo.type);
 				if (oBindingInfo.type.isA("sap.ui.model.CompositeType") && oBindingInfo.parts) {
 					aTypes = [];

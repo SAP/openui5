@@ -55,9 +55,10 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @alias sap.ui.mdc.FilterField
+	 * @see {@link topic:1dd2aa91115d43409452a271d11be95b sap.ui.mdc}
+	 * @see {@link topic:2df783760a8e4540ad19ce5ec3ed91c8 FilterField Building Block (OData V4)}
 	 * @version ${version}
 	 * @since 1.48.0
-	 *
 	 * @public
 	 */
 	const FilterField = FieldBase.extend("sap.ui.mdc.FilterField", /* @lends sap.ui.mdc.FilterField.prototype */ {
@@ -464,7 +465,7 @@ sap.ui.define([
 		return [...oMap.entries()].find((aEntry) => deepEqual(aEntry[0], oCondition));
 	};
 
-	FilterField.prototype.getFormattingPromise = function () {
+	FilterField.prototype.getFormattingPromise = function() {
 		if (this._mDescriptionPromises) {
 			const aRunningPromises = [...this._mDescriptionPromises.values()];
 			if (aRunningPromises?.length) {
@@ -474,7 +475,7 @@ sap.ui.define([
 		return undefined;
 	};
 
-	FilterField.prototype._persistFormatConditions = function () {
+	FilterField.prototype._persistFormatConditions = function() {
 		if (!this.getFormattingPromise()) { // No running formatting promises? We only want to propagate results when formatting is completely done
 			const aConditions = this.getConditions();
 			const aNextConditions = aConditions.map((oCondition) => {
@@ -491,7 +492,7 @@ sap.ui.define([
 		const that = this;
 		return {
 			...FieldBase.prototype.getFormatOptions.apply(this, arguments),
-			awaitFormatCondition: function (oCondition, oFormattingPromise) {
+			awaitFormatCondition: function(oCondition, oFormattingPromise) {
 				const oFormatConditionPromise = oFormattingPromise.then((oFormattedCondition) => {
 					if (oFormattedCondition) {
 						that._mDescriptions.set(oCondition, oFormattedCondition);

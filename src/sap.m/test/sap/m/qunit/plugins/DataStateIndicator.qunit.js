@@ -428,6 +428,7 @@ sap.ui.define([
 
 		assert.equal(oPlugin._oLink.getText(), "Clear Filter", "Clear Filter link is shown");
 		assert.equal(oList.getInfoToolbar().getContent()[0].getText(), "Filtered By: Errors", "InfoToolbar message is correct");
+		assert.equal(oList.getInfoToolbar().getAriaLabelledBy()[0], oList.getInfoToolbar().getContent()[0].getId(), "InfoToolbar is labelled by the context");
 		assert.ok(oList.getInfoToolbar().getActive(), "Info toolbar is active");
 		assert.equal(oList.getItems().length, 1, "After message filtering the list has only 1 item");
 		assert.notOk(oPlugin._oMessageStrip.getShowCloseButton(), "Close button of the MessageStrip is hidden");

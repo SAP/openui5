@@ -422,7 +422,8 @@ sap.ui.define(["./PluginBase", "sap/ui/base/ManagedObjectObserver", "sap/ui/core
 					design: "Info",
 					content: this._oInfoText,
 					active: this.hasListeners("filterInfoPress"),
-					press: this.fireEvent.bind(this, "filterInfoPress")
+					press: this.fireEvent.bind(this, "filterInfoPress"),
+					ariaLabelledBy: this._oInfoText
 				});
 				this._showFilterInfo();
 			}.bind(this));
