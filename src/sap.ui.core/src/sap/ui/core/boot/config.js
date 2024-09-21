@@ -79,44 +79,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Determine whether a bootstrap reboot URL is set to reboot UI5 from a different URL
-	 */
-	(function() {
-		var sRebootUrl;
-		try { // Necessary for FF when Cookies are disabled
-			sRebootUrl = window.localStorage.getItem("sap-ui-reboot-URL");
-		} catch (e) { /* no warning, as this will happen on every startup, depending on browser settings */ }
-
-		/*
-		 * Determine whether sap-bootstrap-debug is set, run debugger statement
-		 * to allow early debugging in browsers with broken dev tools
-		 */
-		var bDebugBootstrap = config.get({
-			name: "sapBootstrapDebug",
-			type: config.Type.Boolean,
-			external: true,
-			freeze: true
-		});
-		if (bDebugBootstrap) {
-			/*eslint-disable no-debugger */
-			debugger;
-			/*eslint-enable no-debugger */
-		}
-
-		if (sRebootUrl) {
-			var sDebugRebootPath = ensureSlash(sBaseUrl) + 'sap/ui/core/support/debugReboot.js';
-
-			// This won't work in case this script is loaded async (e.g. dynamic script tag)
-			document.write("<script src=\"" + sDebugRebootPath + "\"></script>");
-
-			var oRestart = new Error("This is not a real error. Aborting UI5 bootstrap and rebooting from: " + sRebootUrl);
-			oRestart.name = "Restart";
-			throw oRestart;
-		}
-
-	})();
-
-	/**
 	 * Determine whether to use debug sources depending on URL parameter, local storage
 	 * and script tag attribute.
 	 * If full debug mode is required, restart with a debug version of the bootstrap.
@@ -164,34 +126,6 @@ sap.ui.define([
 		if ( window["sap-ui-optimized"] && vDebugInfo ) {
 			// if current sources are optimized and any debug sources should be used, enable the "-dbg" suffix
 			window['sap-ui-loaddbg'] = true;
-			// if debug sources should be used in general, restart with debug URL (if not disabled, e.g. by test runner)
-			if ( vDebugInfo === true && !window["sap-ui-debug-no-reboot"] ) {
-				var sDebugUrl;
-				if ( sBootstrapUrl != null ) {
-					sDebugUrl = sBootstrapUrl.replace(/\/(?:sap-ui-cachebuster\/)?([^\/]+)\.js/, "/$1-dbg.js");
-				} else {
-					// when no boot script could be identified, we can't derive the name of the
-					// debug boot script from it, so fall back to a default debug boot script
-					sDebugUrl = ensureSlash(sBaseUrl) + 'sap-ui-core.js';
-				}
-				// revert changes to global names
-				ui5loader.config({
-					amd:false
-				});
-				window["sap-ui-optimized"] = false;
-
-				if (ui5loader.config().async) {
-					var script = document.createElement("script");
-					script.src = sDebugUrl;
-					document.head.appendChild(script);
-				} else {
-					document.write("<script src=\"" + sDebugUrl + "\"></script>");
-				}
-
-				var oRestart = new Error("This is not a real error. Aborting UI5 bootstrap and restarting from: " + sDebugUrl);
-				oRestart.name = "Restart";
-				throw oRestart;
-			}
 		}
 
 		function makeRegExp(sGlobPattern) {
