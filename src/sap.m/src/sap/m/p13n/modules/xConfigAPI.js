@@ -94,6 +94,13 @@ sap.ui.define([
 			});
 	};
 
+	async function findAsync(arr, asyncCallback) {
+		const promises = arr.map(asyncCallback);
+		const results = await Promise.all(promises);
+		const index = results.findIndex((result) => result);
+		return arr[index];
+	}
+
 	xConfigAPI.getCurrentItemState = async function(oControl, oModificationPayload, oConfig, sAggregationName) {
 		const changeType = oModificationPayload?.changeType;
 		if (!oModificationPayload.propertyBag || !changeType || changeType.indexOf("Item") === -1) {
@@ -112,13 +119,30 @@ sap.ui.define([
 			aCurrentState.sort((a,b) => a.position - b.position);
 			aCurrentState.map((o) => delete o.position);
 		} else {
+
+
 			await aAggregationItems.reduce(async (pAccum, oItem, iIndex) => {
 				const pCurrentAccum = await pAccum; //synchronize async loop
-				const sId = appComponent ? appComponent.getRootControl()?.getLocalId(modifier.getId(oItem)) : modifier.getId(oItem);
-				const vRelevant = await modifier.getProperty(oItem, "visible");
-				if (vRelevant && sId) {
-					aCurrentState.push({key: sId});
+
+				const aCustomData = await modifier.getAggregation(oItem, "customData");
+				const oAffectedItem = await findAsync(aCustomData, async (oItemCustomData) => {
+					return await modifier.getProperty(oItemCustomData, "key") === "p13nKey";
+				});
+
+				if (oAffectedItem) {
+					const sKey = await modifier.getProperty(oAffectedItem, "value");
+					const vRelevant = await modifier.getProperty(oItem, "visible");
+					if (vRelevant && sKey) {
+						aCurrentState.push({key: sKey});
+					}
+				} else {
+					const sId = appComponent ? appComponent.getRootControl()?.getLocalId(modifier.getId(oItem)) : modifier.getId(oItem);
+					const vRelevant = await modifier.getProperty(oItem, "visible");
+					if (vRelevant && sId) {
+						aCurrentState.push({key: sId});
+					}
 				}
+
 				return pCurrentAccum;
 			}, Promise.resolve());
 		}
