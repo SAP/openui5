@@ -951,6 +951,14 @@ sap.ui.define([
 		checkUnsupportedType(assert, dateType, "parseValue", true);
 		assert.throws(function () { dateType.parseValue(true, "boolean"); }, ParseException, "parse test");
 		assert.throws(function () { dateType.parseValue("test", "string"); }, checkParseException, "parse test");
+		TestUtils.withNormalizedMessages(() => {
+			this.mock(dateType.oOutputFormat).expects("getSampleValue").withExactArgs().returns(["~sampleValue"]);
+			this.mock(dateType.oOutputFormat).expects("format").withExactArgs("~sampleValue")
+				.returns(["~formattedSampleValue"]);
+			assert.throws(function () {
+				dateType.parseValue("foo", "string");
+			}, new ParseException("EnterDateTime ~formattedSampleValue"), "parse test");
+		});
 	});
 
 	QUnit.test("dateTime validateValue", function (assert) {
@@ -1832,6 +1840,15 @@ sap.ui.define([
 		checkUnsupportedType(assert, timeType, "parseValue", true);
 		assert.throws(function () { timeType.parseValue(true, "boolean"); }, ParseException, "parse test");
 		assert.throws(function () { timeType.parseValue("test", "string"); }, checkParseException, "parse test");
+
+		TestUtils.withNormalizedMessages(() => {
+			this.mock(timeType.oOutputFormat).expects("getSampleValue").withExactArgs().returns(["~sampleValue"]);
+			this.mock(timeType.oOutputFormat).expects("format").withExactArgs("~sampleValue")
+				.returns(["~formattedSampleValue"]);
+			assert.throws(function () {
+				timeType.parseValue("foo", "string");
+			}, new ParseException("EnterTime ~formattedSampleValue"), "parse test");
+		});
 	});
 
 	QUnit.test("time validateValue", function (assert) {
