@@ -246,7 +246,7 @@ sap.ui.define([
 			oKeptElement = aElements.$byPredicate[sPredicate];
 			if (oKeptElement && oKeptElement !== oElement
 					&& !(oKeptElement instanceof SyncPromise)) {
-				if (!sHierarchyQualifier) {
+				if (!sHierarchyQualifier || aElements.includes(oKeptElement)) {
 					throw new Error("Duplicate predicate: " + sPredicate);
 				}
 				if (!oKeptElement["@odata.etag"]

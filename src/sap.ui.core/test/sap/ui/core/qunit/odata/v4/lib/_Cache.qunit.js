@@ -7416,7 +7416,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [undefined, "same", "other"].forEach(function (sKeptETag) {
-	var sTitle = "CollectionCache#handleResponse: kept-alive element, kept eTag=" + sKeptETag;
+	[false, true].forEach((bDuplicate) => {
+		var sTitle = "CollectionCache#handleResponse: kept-alive element, kept eTag=" + sKeptETag
+			+ ", duplicate=" + bDuplicate;
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = this.createCache("Employees"),
@@ -7435,9 +7437,7 @@ sap.ui.define([
 				"@my.name" : "oElement3",
 				"@odata.etag" : "same"
 			},
-			// oElement0 is placed in an unrealistic position here to make sure that newly created
-			// ones are not searched for everywhere, but only in the range [0, $created[
-			aElements = [oElement1, oElement2, 3, 4, 5, 6, 7, oElement0], // could be promises...
+			aElements = [oElement1, oElement2, 3, 4, 5, 6, 7, 8], // could be promises...
 			oFetchTypesResult = {},
 			oKeptElement = {
 				"@odata.etag" : sKeptETag
@@ -7453,9 +7453,13 @@ sap.ui.define([
 		};
 		aElements.$created = 2;
 		oCache.aElements = aElements;
+		if (bDuplicate) {
+			// already inside the collection, somewhere... (interesting edge case)
+			aElements[aElements.$created] = oKeptElement;
+		}
 		this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oResult), sinon.match.same(oFetchTypesResult),
-				undefined, undefined, 2)
+				undefined, undefined, 3)
 			.callsFake(function () {
 				_Helper.setPrivateAnnotation(oElement0, "predicate", "foo");
 				_Helper.setPrivateAnnotation(oElement1, "predicate", "new1");
@@ -7467,37 +7471,50 @@ sap.ui.define([
 		this.mock(oCache).expects("hasPendingChangesForPath").exactly(sKeptETag === "other" ? 1 : 0)
 			.withExactArgs("bar").returns(false);
 
+		if (bDuplicate) {
+			assert.throws(function () {
+				// code under test
+				oCache.handleResponse(oResult, 3, oFetchTypesResult);
+			}, new Error("Duplicate predicate: bar"));
+			return;
+		}
+
 		assert.strictEqual(
 			// code under test
-			oCache.handleResponse(oResult, 2, oFetchTypesResult),
+			oCache.handleResponse(oResult, 3, oFetchTypesResult),
 			2);
 
 		// Note: for each newly created, one undefined is written at the end of oResult, so to say
-		assert.deepEqual(oCache.aElements, [oElement1, oElement2, oElement0,
-			sKeptETag === "other" ? oElement3 : oKeptElement, undefined, undefined, 7, oElement0]);
+		assert.deepEqual(oCache.aElements, [oElement1, oElement2, 3, oElement0,
+			sKeptETag === "other" ? oElement3 : oKeptElement, undefined, undefined, 8]);
 		assert.strictEqual(oCache.aElements.$byPredicate["foo"], oElement0);
 		assert.strictEqual(oCache.aElements.$byPredicate["new1"], oElement1);
 		assert.strictEqual(oCache.aElements.$byPredicate["new2"], oElement2);
-		assert.strictEqual(oCache.aElements.$byPredicate["bar"], oCache.aElements[3]);
+		assert.strictEqual(oCache.aElements.$byPredicate["bar"], oCache.aElements[4]);
 		assert.deepEqual(Object.keys(oCache.aElements.$byPredicate),
 			["bar", "new1", "new2", "foo"]);
+	});
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#handleResponse: kept-alive element", function (assert) {
+[false, true].forEach(function (bIn) {
+	var sTitle = "CollectionCache#handleResponse: kept-alive element, already in: " + bIn;
+
+	QUnit.test(sTitle, function (assert) {
 		var oCache = this.createCache("Employees"),
 			oElement = { // kept alive
 				"@my.name" : "oElement",
 				"@odata.etag" : "same"
 			},
-			// oElement is placed in an unrealistic position here to make sure that newly created
-			// ones are not searched for everywhere, but only in the range [0, $created[
-			aElements = [1, 2, 3, 4, 5, 6, 7, oElement]; // could be promises...
+			aElements = [];
 
 		_Helper.setPrivateAnnotation(oElement, "predicate", "bar");
 		aElements.$byPredicate = {bar : oElement};
 		aElements.$created = 0;
+		if (bIn) {
+			aElements[2] = oElement; // overwriting is not a duplicate
+		}
 		oCache.aElements = aElements;
 		this.mock(oCache).expects("visitResponse"); // args do not matter for this test
 		this.mock(_Helper).expects("updateNonExisting"); // args do not matter for this test
@@ -7506,7 +7523,12 @@ sap.ui.define([
 			// code under test
 			oCache.handleResponse({value : [oElement]}, 2, {/*oFetchTypesResult*/}),
 			0);
+
+		assert.deepEqual(oCache.aElements, [undefined, undefined, oElement]);
+		assert.deepEqual(oCache.aElements.$byPredicate, {bar : oElement});
+		assert.strictEqual(oCache.aElements.$created, 0);
 	});
+});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bShortRead) {
