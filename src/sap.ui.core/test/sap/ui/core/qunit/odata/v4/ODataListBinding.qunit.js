@@ -8587,7 +8587,9 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: refreshSingle needed, refreshSingle fails", function (assert) {
 		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
-			oContext = {},
+			oContext = {
+				getPath : mustBeMocked
+			},
 			oBinding = bindList(this, "/Set"),
 			oError = new Error(),
 			sGroupId = "group",
@@ -8598,8 +8600,11 @@ sap.ui.define([
 		this.mock(_AggregationHelper).expects("isAffected").never();
 		oCacheMock.expects("isDeletingInOtherGroup").never();
 		oCacheMock.expects("getPendingRequestsPromise").withExactArgs().returns(null);
-		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		oCacheMock.expects("requestSideEffects").never();
+		this.mock(oContext).expects("getPath").withExactArgs().returns("/Set('42')");
+		this.mock(this.oModel).expects("withUnresolvedBindings")
+			.withExactArgs("removeCachesAndMessages", "Set('42')");
+		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		this.mock(oBinding).expects("refreshSingle")
 			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock),
 				/*bAllowRemoval*/false, /*bKeepCacheOnError*/true, /*bWithMessages*/true)
@@ -8693,6 +8698,8 @@ sap.ui.define([
 			oGroupLock = {},
 			oResult = {};
 
+		this.mock(this.oModel).expects("withUnresolvedBindings")
+			.withExactArgs("removeCachesAndMessages", "EMPLOYEES('42')");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("group").returns(oGroupLock);
 		this.mock(oBinding).expects("refreshSingle")
 			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock),
