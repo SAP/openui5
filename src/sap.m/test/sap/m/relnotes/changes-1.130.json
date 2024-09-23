@@ -1,0 +1,17 @@
+{
+  "1.130.0": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "92ff968c15582aa96e577b94fd5e4080865d42fb",
+        "type": "FIX",
+        "text": " sap.m.Label: Ensure colon and asterisk are always displayed by using flex box"
+      },
+      {
+        "id": "0d648b5f4ab4a00b40ccc68ad22db22ed0fc1c14",
+        "type": "FIX",
+        "text": " Demo Kit: Icon explorer scroll fixed"
+      }
+    ]
+  }
+}

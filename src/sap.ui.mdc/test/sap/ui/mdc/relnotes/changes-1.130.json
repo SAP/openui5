@@ -1,0 +1,12 @@
+{
+  "1.130.0": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "342e128c3b1efd2e6305327db86f4767e9892b4c",
+        "type": "FIX",
+        "text": " RangeOperator: runtime error if longText contains special characters"
+      }
+    ]
+  }
+}
