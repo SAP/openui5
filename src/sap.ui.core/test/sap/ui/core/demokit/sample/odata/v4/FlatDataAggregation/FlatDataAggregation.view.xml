@@ -1,124 +1,118 @@
 <mvc:View
 	class="sapUiSizeCompact"
 	controllerName="sap.ui.core.sample.odata.v4.FlatDataAggregation.FlatDataAggregation"
-	xmlns="sap.m"
+	xmlns="sap.ui.table"
+	xmlns:m="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:table="sap.ui.table"
-	xmlns:tablerm="sap.ui.table.rowmodes">
-
-	<Title text="Responsive Table" titleStyle="H1"/>
+	xmlns:rm="sap.ui.table.rowmodes">
 
 	<!-- Note: for $$aggregation, see controller's onInit! -->
-	<Table growing="true" growingThreshold="5" id="mTable" items="{path : '/BusinessPartners',
+	<Table id="table" ariaLabelledBy="title"
+		rows="{path : '/Bookings',
 			parameters : {
 				$count : true,
-				$orderby : 'Region desc'
-			}, suspended : true}">
-		<headerToolbar>
-			<Toolbar>
-				<Title id="title" text="Sales Number by Region ({headerContext>$count})"
-					titleStyle="H2"/>
-				<Button icon="sap-icon://refresh" press="onRefreshResponsive" tooltip="Refresh"/>
-				<Button enabled="{ui>/bRealOData}" icon="sap-icon://sort-ascending"
-					press="onSortResponsive" tooltip="Sort Ascending"/>
-				<Button icon="sap-icon://download" press="onDownloadResponsive" tooltip="Download"/>
-				<SearchField placeholder="Filter by sales number greater than..."
-					value="{path : 'ui>/sFilterResponsive'}"
-					visible="{ui>/bRealOData}" width="50%" search="onFilterResponsive"/>
-			</Toolbar>
-		</headerToolbar>
-		<columns>
-			<Column>
-				<Text text="Region"/>
-			</Column>
-			<Column>
-				<Text text="Sales Amount"/>
-			</Column>
-			<Column>
-				<Text text="Currency"/>
-			</Column>
-			<Column>
-				<Text text="Sales Number"/>
-			</Column>
-		</columns>
-		<ColumnListItem>
-			<Text text="{Region}"/>
-			<Text text="{SalesAmount}"/>
-			<Text text="{Currency}"/>
-			<Text text="{SalesNumber}"/>
-		</ColumnListItem>
+				$orderby : 'airline,ConnectionID,FlightDate,status'
+			}, suspended : true}"
+		selectionMode="None" threshold="100">
+		<extension>
+			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
+				<m:Title id="title" level="H1"
+					text="{$count} Flight Bookings per Flight &amp; Status"/>
+				<m:ToolbarSpacer/>
+				<m:SearchField id="search" placeholder="Search for anything..." search="onSearch"
+					width="40%"/>
+				<m:Button icon="sap-icon://download" press="onDownload" tooltip="Download"/>
+			</m:Toolbar>
+		</extension>
+		<rowMode>
+			<rm:Interactive fixedTopRowCount="1" rowCount="20"/>
+		</rowMode>
+		<Column width="10em">
+			<m:Label text="Airline"/>
+			<template>
+				<m:Text text="{airline} - {airlineName}"  visible="{= !%{@$ui5.node.isTotal}}"
+					wrapping="false"/>
+			</template>
+		</Column>
+		<Column width="7em">
+			<m:Label text="Connection ID"/>
+			<template>
+				<m:Text text="{ConnectionID}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column width="10em">
+			<m:Label text="Departure"/>
+			<template>
+				<m:Text text="{DepAirport} - {DepCity}"  visible="{= !%{@$ui5.node.isTotal}}"
+					wrapping="false"/>
+			</template>
+		</Column>
+		<Column width="10em">
+			<m:Label text="Destination"/>
+			<template>
+				<m:Text text="{DestAirport} - {DestCity}"  visible="{= !%{@$ui5.node.isTotal}}"
+					wrapping="false"/>
+			</template>
+		</Column>
+		<Column hAlign="End" width="7em">
+			<m:Label text="Distance"/>
+			<template>
+				<m:Text text="{
+					parts : ['Distance', 'DistanceUnit', {
+						mode : 'OneTime',
+						path : '/##@@requestUnitsOfMeasure',
+						targetType : 'any'
+					}],
+					type : 'sap.ui.model.odata.type.Unit'
+				}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column width="7em">
+			<m:Label text="Flight Date"/>
+			<template>
+				<m:Text text="{FlightDate}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column width="6em">
+			<m:Label text="Plane Type"/>
+			<template>
+				<m:Text text="{PlaneType}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column width="7em">
+			<m:Label text="Status"/>
+			<template>
+				<m:Text text="{status} - {statusName}" visible="{= !%{@$ui5.node.isTotal}}"
+					wrapping="false"/>
+			</template>
+		</Column>
+		<Column hAlign="End" width="7em">
+			<m:Label text="Flight Price"/>
+			<template>
+				<m:Text text="{
+					parts : ['FlightPrice', 'CurrencyCode_code', {
+						mode : 'OneTime',
+						path : '/##@@requestCurrencyCodes',
+						targetType : 'any'
+					}],
+					type : 'sap.ui.model.odata.type.Currency',
+					formatOptions : { showMeasure : false }
+				}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column width="5em">
+			<m:Label text="Currency"/>
+			<template>
+				<m:Text text="{CurrencyCode_code}" wrapping="false"/>
+			</template>
+		</Column>
 	</Table>
 
-	<Title text="Grid Table" titleStyle="H1"/>
-
-	<!-- Note: for $$aggregation, see controller's onInit! -->
-	<table:Table id="tTable" rows="{path : '/BusinessPartners', suspended : true}"
-			selectionMode="None" threshold="0" ariaLabelledBy="tableTitle">
-		<table:extension>
-			<Toolbar class="sapMTBHeader-CTX">
-				<Title id="tableTitle" text="Sales Number by Region ({headerContext>$count})"
-					titleStyle="H2"/>
-				<Button icon="sap-icon://refresh" press="onRefreshGrid" tooltip="Refresh"/>
-				<Button enabled="{ui>/bRealOData}" icon="sap-icon://sort-ascending"
-					press="onSortGrid" tooltip="Sort Ascending"/>
-				<Button icon="sap-icon://download" press="onDownloadGrid" tooltip="Download"/>
-				<SearchField placeholder="Filter by sales number greater than..."
-					value="{path : 'ui>/sFilterGrid'}"
-					visible="{ui>/bRealOData}" width="50%" search="onFilterGrid"/>
-			</Toolbar>
-		</table:extension>
-		<table:rowMode>
-			<tablerm:Fixed rowCount="5"/>
-		</table:rowMode>
-		<table:Column>
-			<Label text="Region"/>
-			<table:template>
-				<Text text="{Region}" wrapping="false"/>
-			</table:template>
-		</table:Column>
-		<table:Column hAlign="End">
-			<Label text="Amount Per Sale"/>
-			<table:template>
-				<Text text="{AmountPerSale}" wrapping="false"/>
-			</table:template>
-		</table:Column>
-		<table:Column>
-			<Label text="Currency"/>
-			<table:template>
-				<Text text="{Currency}" wrapping="false"/>
-			</table:template>
-		</table:Column>
-		<table:Column hAlign="End">
-			<Label text="Sales Amount"/>
-			<table:template>
-				<Text text="{SalesAmount}" wrapping="false"/>
-			</table:template>
-		</table:Column>
-		<table:Column>
-			<Label text="Currency"/>
-			<table:template>
-				<Text text="{Currency}" wrapping="false"/>
-			</table:template>
-		</table:Column>
-		<table:Column hAlign="End">
-			<Label text="Local Sales Amount"/>
-			<table:template>
-				<Text text="{SalesAmountLocalCurrency}" wrapping="false"/>
-			</table:template>
-		</table:Column>
-		<table:Column>
-			<Label text="Local Currency"/>
-			<table:template>
-				<Text text="{LocalCurrency}" wrapping="false"/>
-			</table:template>
-		</table:Column>
-		<table:Column hAlign="End">
-			<Label text="Sales Number"/>
-			<table:template>
-				<!-- TODO derive type from "SalesNumberSum@odata.type" : "#Decimal" -->
-				<Text text="{path : 'SalesNumberSum', type : 'sap.ui.model.odata.type.Decimal'}"
-					wrapping="false"/>
-			</table:template>
-		</table:Column>
-	</table:Table>
+	<m:FormattedText htmlText="&lt;em>Available URL parameters:&lt;/em>
+		&lt;ul>
+			&lt;li> &lt;code>filter&lt;/code> - Comma separated list of UI5-like filter conditions,
+			for example &lt;code>status EQ B,Distance BT 1000 5000&lt;/code>
+			&lt;li> &lt;code>grandTotalAtBottomOnly&lt;/code> - Optional boolean (empty, false, or true)
+			&lt;li> &lt;code>$orderby&lt;/code> - OData system query option for sorting,
+			for example &lt;code>FlightPrice asc&lt;/code>"/>
 </mvc:View>
