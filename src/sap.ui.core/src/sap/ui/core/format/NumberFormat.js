@@ -227,7 +227,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Derives the maximal possible decimals from the given format option's <code>maxFractionDigits</code>
+	 * Derives the maximum number of possible decimals from the given format option's <code>maxFractionDigits</code>
 	 * and <code>decimals</code> properties.
 	 *
 	 * If <code>decimals</code> and <code>maxFractionDigits</code> are >= 0, then the minimum of
@@ -245,7 +245,7 @@ sap.ui.define([
 	 * @private
 	 * @static
 	 */
-	NumberFormat.getMaximalDecimals = function ({decimals, maxFractionDigits}) {
+	NumberFormat.getMaximumDecimals = function ({decimals, maxFractionDigits}) {
 		if (maxFractionDigits >= 0 && decimals > 0 && maxFractionDigits < decimals) {
 			return maxFractionDigits;
 		}
@@ -767,7 +767,9 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.maxFractionDigits=99] defines the maximum number of decimal digits
 	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines the maximum number of non-decimal digits.
 	 *   If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
-	 * @param {int} [oFormatOptions.minFractionDigits=0] defines the minimal number of decimal digits
+	 * @param {int} [oFormatOptions.minFractionDigits=0] Deprecated as of 1.130; this format option does not have
+	 *   an effect on currency formats since decimals can always be determined, either through the given format options,
+	 *   custom currencies or the CLDR
 	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines the minimal number of non-decimal digits
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {boolean} [oFormatOptions.parseAsString=false] since 1.28.2 defines whether to output
@@ -1481,7 +1483,7 @@ sap.ui.define([
 
 			// either take the decimals/precision on the custom units or fallback to the given format-options
 			oOptions.decimals = (mUnitPatterns && (typeof mUnitPatterns.decimals === "number" && mUnitPatterns.decimals >= 0)) ? mUnitPatterns.decimals : oOptions.decimals;
-			oOptions.decimals = NumberFormat.getMaximalDecimals(oOptions);
+			oOptions.decimals = NumberFormat.getMaximumDecimals(oOptions);
 			oOptions.precision = (mUnitPatterns && (typeof mUnitPatterns.precision === "number" && mUnitPatterns.precision >= 0)) ? mUnitPatterns.precision : oOptions.precision;
 		}
 
@@ -1523,7 +1525,11 @@ sap.ui.define([
 				// we either take the custom decimals or use decimals defined in the format-options
 				// we check for undefined here, since 0 is an accepted value
 				oOptions.decimals = oOptions.customCurrencies[sMeasure].decimals !== undefined ? oOptions.customCurrencies[sMeasure].decimals : oOptions.decimals;
-				oOptions.decimals = NumberFormat.getMaximalDecimals(oOptions);
+				oOptions.decimals = NumberFormat.getMaximumDecimals(oOptions);
+			}
+			if (oOptions.decimals === undefined) {
+				oOptions.decimals = this.oLocaleData.getCurrencyDigits(sMeasure);
+				oOptions.decimals = NumberFormat.getMaximumDecimals(oOptions);
 			}
 		}
 
@@ -1582,23 +1588,6 @@ sap.ui.define([
 
 		if (oOptions.type == mNumberType.PERCENT) {
 			vValue = NumberFormat._shiftDecimalPoint(vValue, 2);
-		}
-
-		//handle measure
-		if (oOptions.type == mNumberType.CURRENCY) {
-			var iDigits = this.oLocaleData.getCurrencyDigits(sMeasure);
-
-			// decimals might be undefined, yet 0 is accepted of course
-			if (oOptions.customCurrencies && oOptions.customCurrencies[sMeasure] && oOptions.customCurrencies[sMeasure].decimals !== undefined) {
-				iDigits = oOptions.customCurrencies[sMeasure].decimals;
-			}
-
-			if (oOptions.maxFractionDigits === undefined) {
-				oOptions.maxFractionDigits = iDigits;
-			}
-			if (oOptions.minFractionDigits === undefined) {
-				oOptions.minFractionDigits = iDigits;
-			}
 		}
 
 		// Rounding the value with oOptions.maxFractionDigits and oOptions.roundingMode.

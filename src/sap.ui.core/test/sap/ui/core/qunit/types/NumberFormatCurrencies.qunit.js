@@ -250,13 +250,13 @@ sap.ui.define([
 		assert.strictEqual(oFormat.format([-123456.789, null]), "-123,456.79", "-123456.789 null");
 	});
 
-	QUnit.test("Currency Format with fraction as decimals", function (assert) {
-		var oFormat = getCurrencyInstance({minFractionDigits:6, maxFractionDigits: 6});
-		assert.strictEqual(oFormat.format(2, "EUR"), "EUR" + "\xa0" + "2.000000", "fractions should set the decimals if not specified");
+	QUnit.test("Currency Format falls back to CLDR decimals", function (assert) {
+		var oFormat = getCurrencyInstance({minFractionDigits: 6, maxFractionDigits: 6});
+		assert.strictEqual(oFormat.format("2.123456", "EUR"), "EUR\xa02.12");
 	});
 
 	//*********************************************************************************************
-[// integrative tests for NumberFormat#getMaximalDecimals
+[// integrative tests for NumberFormat#getMaximumDecimals
 	{iDecimals: 3, iMaxFractionDigits: 4, iValue: 1234.5678, sExpected: "1,234.568\xa0BTC"},
 	{iDecimals: 3, iMaxFractionDigits: Infinity, iValue: 1234.5678, sExpected: "1,234.568\xa0BTC" },
 	{iDecimals: 3, iMaxFractionDigits: 2, iValue: 1234.567, sExpected: "1,234.57\xa0BTC" },
@@ -265,14 +265,26 @@ sap.ui.define([
 ].forEach(({iDecimals, iMaxFractionDigits, iValue, sExpected}, i) => {
 	QUnit.test("Currency formatOptions: take min of maxFractionDigits and decimals: " + i, function (assert) {
 		const oFormatOptions = {customCurrencies: {BTC: {decimals: iDecimals}}, maxFractionDigits: iMaxFractionDigits};
+		const oNumberCurrencyFormat = NumberFormat.getCurrencyInstance(oFormatOptions);
+		const oNumberFormatMock = this.mock(NumberFormat);
 
-		this.mock(NumberFormat).expects("getMaximalDecimals").withExactArgs(sinon.match(oFormatOptions)).callThrough();
+		oNumberFormatMock.expects("getMaximumDecimals")
+			.withExactArgs(sinon.match(oNumberCurrencyFormat.oFormatOptions))
+			.callThrough();
 
-		 // only for the iDecimals:undefined fixture: otherwise the default 2 by Locale.getCurrencyDigits wins
-		oFormatOptions.minFractionDigits = iDecimals === undefined && "~notUndefined";
+		if (iDecimals === undefined) {
+			// If no decimals are given, we fallback to the CLDR data and determine the minimum between the
+			// CLDR decimals and the set maxFractionDigits
+			this.mock(oNumberCurrencyFormat.oLocaleData).expects("getCurrencyDigits")
+				.withExactArgs("BTC")
+				.callThrough();
+			oNumberFormatMock.expects("getMaximumDecimals")
+				.withExactArgs(sinon.match(oNumberCurrencyFormat.oFormatOptions))
+				.callThrough();
+		}
 
 		// code under test
-		assert.strictEqual(NumberFormat.getCurrencyInstance(oFormatOptions).format(iValue, "BTC"), sExpected);
+		assert.strictEqual(oNumberCurrencyFormat.format(iValue, "BTC"), sExpected);
 	});
 });
 
@@ -2177,4 +2189,74 @@ sap.ui.define([
 		assert.deepEqual(this.oFormat.parse("ipß 2000"), [2000, "IPß"]);
 		assert.deepEqual(this.oFormat.parse("ipss 2000"), [2000, "IPSS"]);
 	});
+
+	//*********************************************************************************************
+	// SNOW: DINC0239044
+	// If no code list customizing is given (e.g. in case of CAP scenarios) a fall back to the CLDR
+	// configuration, regarding the decimals, has to happen when formatting currencies.
+	// Both variants should behave the same when it comes to calculating the number for decimals.
+[{
+	// preserveDecimals results in no loss of decimals
+	oFormatOptions: {maxFractionDigits: 10, preserveDecimals: true},
+	sExpectedResult: "USD\xa099.99999999999"
+}, {
+	// In the "en" locale currency "USD" has 2 decimal places defined
+	oFormatOptions: {maxFractionDigits: 10},
+	sExpectedResult: "USD\xa0100.00"
+}, {
+	// The minimum of CLDRDecimals and maxFractionDigits is chosen as the number of decimal places for formatting
+	oFormatOptions: {maxFractionDigits: 1},
+	sExpectedResult: "USD\xa0100.0" // CLDR data defines "USD" with 2 decimal places and loses over the 1
+}, {
+	// Only the minimum of decimals and maxFractionDigits is used as the number of decimal places for formatting
+	oFormatOptions: {minFractionDigits: 1},
+	sExpectedResult: "USD\xa0100.00"
+}, {
+	// If "decimals" are set, they should win over the CLDR configuration
+	oFormatOptions: {decimals: 4},
+	sExpectedResult: "USD\xa0100.0000"
+}, {
+	// If "decimals" are set, they should win over the CLDR configuration (with different rounding)
+	oFormatOptions: {decimals: 4, roundingMode: "floor"},
+	sExpectedResult: "USD\xa099.9999"
+}, {
+	// If maxFractionDigits < CLDR decimals, the set maxFractionDigits win
+	oFormatOptions: {maxFractionDigits: 1},
+	sExpectedResult: "USD\xa0100.0"
+}, {
+	// The minimum of CLDRDecimals and maxFractionDigits is chosen as the number of decimals
+	// minFractionDigits do not have an effect on the result
+	// (This specific case can occur but is considered to be a configuration issue)
+	oFormatOptions: {maxFractionDigits: 0, minFractionDigits: 4},
+	sExpectedResult: "USD\xa0100"
+}, {
+	// The decimals provided in the customCurrencies are selected to determine the minimum between
+	// decimals and the maxFractionDigits which are then chosen as the number of decimal places for formatting
+	oFormatOptions: {
+		customCurrencies: {"USD": {"decimals": 2}},
+		decimals: 4,
+		maxFractionDigits: 10,
+		minFractionDigits: 5
+	},
+	sExpectedResult: "USD\xa0100.00"
+}, {
+	// If customCurrencies are provided but do not define decimals for the currency,
+	// the minimum of the given decimals and the maxFractionDigits is used for formatting
+	oFormatOptions: {
+		customCurrencies: {"USD": {}},
+		decimals: 4,
+		maxFractionDigits: 10,
+		minFractionDigits: 2
+	},
+	sExpectedResult: "USD\xa0100.0000"
+}].forEach(({oFormatOptions, sExpectedResult}, i) => {
+	QUnit.test(`Currency type with no currency customizing and decimal options fall back to CLDR ${i}`,
+			function (assert) {
+		var oFormat = getCurrencyInstance(oFormatOptions, new Locale("en"));
+
+		// code under test
+		assert.deepEqual(oFormat.format(["99.99999999999", "USD"]), sExpectedResult);
+	});
+});
+
 });

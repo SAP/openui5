@@ -150,9 +150,9 @@ sap.ui.define([
 	{oFormatOptions: {maxFractionDigits: Infinity, decimals: 24}, iResult: 24},
 	{oFormatOptions: {maxFractionDigits: 42, decimals: Infinity}, iResult: 42}
 ].forEach(({oFormatOptions, iResult}) => {
-	QUnit.test(`getMaximalDecimals, formatOptions: ${JSON.stringify(oFormatOptions)}`, function (assert) {
+	QUnit.test(`getMaximumDecimals, formatOptions: ${JSON.stringify(oFormatOptions)}`, function (assert) {
 		// code under test
-		assert.strictEqual(NumberFormat.getMaximalDecimals(oFormatOptions), iResult);
+		assert.strictEqual(NumberFormat.getMaximumDecimals(oFormatOptions), iResult);
 	});
 });
 
@@ -1718,7 +1718,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[// integrative tests for NumberFormat#getMaximalDecimals
+[// integrative tests for NumberFormat#getMaximumDecimals
 	{iDecimals: 3, iMaxFractionDigits: 4, iValue: 1234.5678, sExpected: "1,234.568 Cats"},
 	{iDecimals: 3, iMaxFractionDigits: 2, iValue: 1234.567, sExpected: "1,234.57 Cats"},
 	{iDecimals: undefined, iMaxFractionDigits: 1, iValue: 1234.56789, sExpected: "1,234.6 Cats"},
@@ -1729,7 +1729,7 @@ sap.ui.define([
 			customUnits: {cats: {"unitPattern-count-other": "{0} Cats", decimals: iDecimals}},
 			maxFractionDigits: iMaxFractionDigits
 		};
-		this.mock(NumberFormat).expects("getMaximalDecimals")
+		this.mock(NumberFormat).expects("getMaximumDecimals")
 			.withExactArgs(sinon.match((oFormatOptions0) =>
 				( oFormatOptions0.maxFractionDigits === (iMaxFractionDigits || 99) // undefined defaulted to 99
 					&& oFormatOptions0.customUnits.cats.decimals === iDecimals )
