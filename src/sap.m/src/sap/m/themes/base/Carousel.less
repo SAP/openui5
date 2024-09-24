@@ -7,6 +7,8 @@
 @_sap_m_Carousel_BackgroundColorTransparent: transparent;
 @_sap_m_Carousel_BackgroundColorTranslucent: var(--sapGroup_ContentBackground);
 @_sap_m_Carousel_MinWidth: 20rem;
+@_sap_m_Carousel_PageIndicatorBarHeight: 3.5rem;
+@_sap_m_Carousel_BottomArrowsOffset: calc(~'3.5rem + 1px');
 @_sap_m_Carousel_ControlsNoArrowsHeight: 2rem;
 @_sap_m_Carousel_NumericIndicatorTextColor: var(--sapContent_LabelColor);
 @_sap_m_Carousel_PrevAndNextSize: 2rem;
@@ -191,7 +193,7 @@ html[data-sap-ui-animation='off'] .sapMCrsl .sapMCrslInner {
 */
 .sapMCrslControls {
 	text-align: center;
-	height: 3.5rem;
+	height: @_sap_m_Carousel_PageIndicatorBarHeight;
 	display: flex;
 	justify-content: center;
 	width: 100%;
@@ -207,8 +209,8 @@ html[data-sap-ui-animation='off'] .sapMCrsl .sapMCrslInner {
 
 .sapMCrslHud .sapMCrslArrow {
 	z-index: 2;
-	opacity: 0;
-	display: none;
+	opacity: 1;
+	display: block;
 	position: absolute;
 	margin: -1.5625px 0 0 0;
 	box-shadow: @_sap_m_Carousel_ContentArrowBoxShadow;
@@ -218,6 +220,11 @@ html[data-sap-ui-animation='off'] .sapMCrsl .sapMCrslInner {
 		opacity: 1;
 		display: block;
 	}
+}
+
+html.sap-desktop .sapMCrslHud .sapMCrslArrow {
+	opacity: 0;
+	display: none;
 }
 
 .sapMCrslPrev,
@@ -307,13 +314,13 @@ html[data-sap-ui-animation='off'] .sapMCrsl .sapMCrslInner {
 	}
 
 	&.sapMCrslTopArrowsOffset .sapMCrslItem {
-		padding-top: calc(~'3.5rem + 1px');
+		padding-top: @_sap_m_Carousel_BottomArrowsOffset;
 
 		&:focus {
 
 			&::before,
 			&::after {
-				top: calc(~'3.5rem + 1px');
+				top: @_sap_m_Carousel_BottomArrowsOffset;
 			}
 		}
 	}
@@ -335,13 +342,13 @@ html[data-sap-ui-animation='off'] .sapMCrsl .sapMCrslInner {
 	}
 
 	&.sapMCrslBottomArrowsOffset .sapMCrslItem {
-		padding-bottom: calc(~'3.5rem + 1px');
+		padding-bottom: @_sap_m_Carousel_BottomArrowsOffset;
 
 		&:focus {
 
 			&::before,
 			&::after {
-				bottom: calc(~'3.5rem + 1px');
+				bottom: @_sap_m_Carousel_BottomArrowsOffset;
 			}
 		}
 	}
@@ -471,6 +478,13 @@ html[data-sap-ui-animation='off'] .sapMCrsl .sapMCrslInner {
 	display: flex;
 	justify-content: center;
 	align-self: center;
+
+	&.sapMCrslPageIndicatorHidden {
+		opacity: 0;
+		width: 0;
+		margin: 0;
+		border: 0;
+	}
 }
 
 .sapMCrslControlsNoArrows .sapMCrslBulleted,

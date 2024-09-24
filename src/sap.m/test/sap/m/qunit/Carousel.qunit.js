@@ -350,6 +350,7 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(this.oCarousel.$().find('.sapMCrslHud').length, 1, "Arrows should be rendered next to the image");
+		assert.strictEqual(this.oCarousel.$().find('.sapMCrslPrev').css("opacity"), "0", "Arrows should be hidden");
 		assert.ok(this.oCarousel.$().find('.sapMCrslPrev').attr('title'), "Prev Arrow has a tooltip");
 		assert.ok(this.oCarousel.$().find('.sapMCrslNext').attr('title'), "Next Arrow has a tooltip");
 	});
