@@ -255,7 +255,7 @@ sap.ui.define([
 				return FeaturesAPI.isSeenFeaturesAvailable();
 			}.bind(this))
 			.then(function(isAvailable) {
-				if (isAvailable) {
+				if (isAvailable && !ReloadManager.getDontShowWhatsNewAfterReload()) {
 					this.addDependent(new WhatsNew({ layer: this.getLayer() }), "whatsNew");
 				}
 				return Promise.resolve();
@@ -601,6 +601,7 @@ sap.ui.define([
 			if (!bSkipRestart) {
 				ReloadInfoAPI.removeInfoSessionStorage(this.getRootControlInstance());
 				ReloadManager.handleReloadOnExit(oReloadInfo);
+				ReloadManager.removeDontShowWhatsNewAfterReload();
 			}
 			VersionsAPI.clearInstances();
 		} catch (vError) {
