@@ -446,12 +446,12 @@ sap.ui.define([
 		 * Error message will be written in any case.
 		 *
 		 * @param {array.<function>} aPromiseQueue - List of asynchronous functions that returns promises
-		 * @param {boolean} bThrowError - true: errors will be rethrown and therefore break the execution
+		 * @param {boolean} bThrowError - true: errors will be re-thrown and therefore break the execution
 		 * @param {boolean} bAsync - true: asynchronous processing with Promise, false: synchronous processing with FakePromise
-		 * @param {boolean} bSupressAdditionalErrorMessage - true: additional error message will be suppressed
+		 * @param {boolean} bSuppressAdditionalErrorMessage - true: additional error message will be suppressed
 		 * @returns {Promise} Returns empty resolved Promise or FakePromise when all passed promises inside functions have been executed
 		 */
-		execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync, bSupressAdditionalErrorMessage) {
+		execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync, bSuppressAdditionalErrorMessage) {
 			if (aPromiseQueue.length === 0) {
 				if (bAsync) {
 					return Promise.resolve();
@@ -478,7 +478,7 @@ sap.ui.define([
 					Log.error(sErrorMessage, e);
 
 					if (bThrowError) {
-						if (bSupressAdditionalErrorMessage) {
+						if (bSuppressAdditionalErrorMessage) {
 							throw new Error(e.message);
 						} else {
 							throw new Error(sErrorMessage);
@@ -486,12 +486,12 @@ sap.ui.define([
 					}
 				})
 				.then(function() {
-					return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync, bSupressAdditionalErrorMessage);
+					return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync, bSuppressAdditionalErrorMessage);
 				}.bind(this));
 			}
 
 			Log.error("Changes could not be applied, promise not wrapped inside function.");
-			return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync, bSupressAdditionalErrorMessage);
+			return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync, bSuppressAdditionalErrorMessage);
 		},
 
 		/**
@@ -562,7 +562,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Searches in the control metadata for the aggregation defintion
+		 * Searches in the control metadata for the aggregation definition
 		 * @param {sap.ui.base.ManagedObject|Element} oControl - Control which has the aggregation
 		 * @param {string} sAggregationName - Aggregation name
 		 * @returns {object} Aggregation metadata
