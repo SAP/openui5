@@ -1081,3 +1081,32 @@ html.sap-desktop .sapMListTblHasPopin .sapMObjStatusActive:focus {
 		}
 	}
 }
+
+/* BCP: 2370130730 - when there is a text in Thai languiage, the text decorations are cut, that's why there is */
+/* CSS class provided - sapUiHigherText - that can be applied on control level or on parent element/BODY level */
+/* in general this class should fix the cutting on most of the languages that have characters with decorations */
+.sapUiHigherText.sapMObjStatus,
+.sapUiHigherText .sapMObjStatus {
+	.sapMObjStatusTitle {
+		line-height: inherit;
+		vertical-align: initial;
+	}
+
+	.sapMObjStatusIcon,
+	.sapMObjStatusText {
+		line-height: 1.6;
+	}
+
+	.sapMObjStatusWrapper {
+		align-items: baseline;
+	}
+
+	.sapMObjStatusIcon {
+
+		.sapUiIcon {
+			line-height: inherit;
+			top: 0.0625rem;
+		}
+	}
+}
+
