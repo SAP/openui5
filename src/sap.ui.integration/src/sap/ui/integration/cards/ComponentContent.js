@@ -8,14 +8,14 @@ sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/m/IllustratedMessageType",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/Component"
+	"sap/ui/core/ComponentHooks"
 ], function (
 	BaseContent,
 	ComponentContentRenderer,
 	library,
 	IllustratedMessageType,
 	ComponentContainer,
-	Component
+	ComponentHooks
 ) {
 	"use strict";
 
@@ -53,12 +53,12 @@ sap.ui.define([
 	 * Global hook when a new component instance of any kind is created.
 	 * @param {sap.ui.core.Component} oInstance The created component instance.
 	 */
-	Component._fnOnInstanceCreated = function (oInstance) {
+	ComponentHooks.onInstanceCreated.register(function (oInstance) {
 		var oCompData = oInstance.getComponentData();
 		if (oCompData && oCompData["__sapUiIntegration_card"] && oInstance.onCardReady) {
 			oInstance.onCardReady(oCompData["__sapUiIntegration_card"]);
 		}
-	};
+	});
 
 	ComponentContent.prototype.onAfterRendering = function () {
 		if (this._oComponent?.tileSetVisible) {

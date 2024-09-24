@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/base/util/fetch",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/Component",
+	"sap/ui/core/ComponentHooks",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
@@ -15,6 +16,7 @@ sap.ui.define([
 	fetch,
 	LoaderExtensions,
 	Component,
+	ComponentHooks,
 	Library,
 	Manifest,
 	UIComponent,
@@ -523,7 +525,7 @@ sap.ui.define([
 			this.oManifestLoad.restore();
 
 			// remove registered callbacks
-			Component._fnLoadComponentCallback = undefined;
+			ComponentHooks.onComponentLoaded.deregister();
 		}
 	});
 
@@ -613,7 +615,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Hook _fnLoadComponentCallback", function(assert) {
+	QUnit.test("Hook 'onComponentLoaded'", function(assert) {
 
 		assert.expect(9); // ensure a complete test execution
 
@@ -639,7 +641,7 @@ sap.ui.define([
 			var manifestInCallback;
 
 			// install a manifest load callback hook
-			Component._fnLoadComponentCallback = function(oPassedConfig, oPassedManifest) {
+			ComponentHooks.onComponentLoaded.register(function(oPassedConfig, oPassedManifest) {
 
 				// ignore any call to the hook other than the one for the component under test
 				// (hook is also called when loading a component dependency)
@@ -647,7 +649,7 @@ sap.ui.define([
 					return;
 				}
 
-				assert.ok(true, "Component._fnLoadComponentCallback called!");
+				assert.ok(true, "sap.ui.core.Component: 'onComponentLoaded' hook called!");
 				assert.deepEqual(oConfig, oPassedConfig, "a config was passed");
 				assert.notStrictEqual(oConfig, oPassedConfig, "the passed config is a copy");
 				assert.deepEqual(oOriginalManifest, oPassedManifest.getRawJson(),
@@ -661,7 +663,7 @@ sap.ui.define([
 				manifestInCallback = oPassedManifest;
 
 				return Promise.resolve();
-			};
+			});
 
 			// start test
 			return Component.create(oConfig).then(function(oComponent) {
