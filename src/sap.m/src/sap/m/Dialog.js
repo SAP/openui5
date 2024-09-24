@@ -1692,7 +1692,7 @@ function(
 
 			if (oWithin === window) {
 				Device.resize.detachHandler(this._onResize, this);
-			} else {
+			} else if (this._oWithinAreaResizeObserver) {
 				this._oWithinAreaResizeObserver.disconnect();
 				this._oWithinAreaResizeObserver = null;
 			}
