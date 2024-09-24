@@ -4,39 +4,41 @@
 
 // Provides the render manager sap.ui.core.RenderManager
 sap.ui.define([
-	'./LabelEnablement',
-	'sap/ui/base/Object',
-	'sap/ui/performance/trace/Interaction',
-	'sap/base/util/uid',
-	"sap/ui/util/ActivityDetection",
-	"sap/ui/thirdparty/jquery",
-	"sap/base/security/encodeXML",
-	"sap/base/security/encodeCSS",
-	"sap/base/assert",
-	"sap/ui/performance/Measurement",
-	"sap/base/Log",
-	"sap/base/util/extend",
 	"./ControlBehavior",
+	"./FocusHandler",
 	"./InvisibleRenderer",
+	'./LabelEnablement',
 	"./Patcher",
-	"./FocusHandler"
+	"sap/base/assert",
+	"sap/base/future",
+	"sap/base/Log",
+	"sap/base/security/encodeCSS",
+	"sap/base/security/encodeXML",
+	"sap/base/util/extend",
+	'sap/base/util/uid',
+	'sap/ui/base/Object',
+	"sap/ui/performance/Measurement",
+	'sap/ui/performance/trace/Interaction',
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/util/ActivityDetection"
 ], function(
-	LabelEnablement,
-	BaseObject,
-	Interaction,
-	uid,
-	ActivityDetection,
-	jQuery,
-	encodeXML,
-	encodeCSS,
-	assert,
-	Measurement,
-	Log,
-	extend,
 	ControlBehavior,
+	FocusHandler,
 	InvisibleRenderer,
+	LabelEnablement,
 	Patcher,
-	FocusHandler
+	assert,
+	future,
+	Log,
+	encodeCSS,
+	encodeXML,
+	extend,
+	uid,
+	BaseObject,
+	Measurement,
+	Interaction,
+	jQuery,
+	ActivityDetection
 ) {
 
 	"use strict";
@@ -1969,13 +1971,20 @@ sap.ui.define([
 	RenderManager.prototype.icon = function(sURI, aClasses, mAttributes){
 		var IconPool = sap.ui.require("sap/ui/core/IconPool");
 		if (!IconPool) {
-			Log.warning("Synchronous loading of IconPool due to sap.ui.core.RenderManager#icon call. " +
-				"Ensure that 'sap/ui/core/IconPool is loaded before this function is called" , "SyncXHR", null, function() {
-				return {
-					type: "SyncXHR",
-					name: "rendermanager-icon"
-				};
-			});
+			future.warningThrows(
+				"sap/ui/core/IconPool must be loaded before sap.ui.core.RenderManager#icon can be called.",
+				{
+					details: "Falling back to synchronous loading of IconPool"
+				},
+				"SyncXHR",
+				null,
+				function() {
+					return {
+						type: "SyncXHR",
+						name: "rendermanager-icon"
+					};
+				}
+			);
 			IconPool = sap.ui.requireSync("sap/ui/core/IconPool"); // legacy-relevant: Sync fallback
 		}
 
