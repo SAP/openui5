@@ -3209,6 +3209,18 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("requestAbsoluteSideEffects: refresh in progress", function (assert) {
+		const oBinding = new ODataBinding({
+			oCache : undefined, // looks like a refresh in progress
+			getResolvedPath : function () { return "/foo"; }
+			// no requestSideEffects, no refreshInternal
+		});
+
+		// code under test
+		assert.strictEqual(oBinding.requestAbsoluteSideEffects("group", ["/foo/bar"]), undefined);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("refreshSuspended", function () {
 		var oBinding = new ODataBinding();
 

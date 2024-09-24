@@ -33623,6 +33623,64 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
+	// Scenario: Invoke two actions for selected rows (assuming that the action deletes the row from
+	// the list). After each action request absolute side effects for the table. Only one
+	// side-effects refresh must be sent.
+	// SNOW: CS20240008208963
+	QUnit.test("CS20240008208963", async function (assert) {
+		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
+		const sView = `
+<Table id="list" items="{/SalesOrderList}">
+	<Text id="id" text="{SalesOrderID}"/>
+</Table>`;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+				value : [
+					{SalesOrderID : "1"},
+					{SalesOrderID : "2"}
+				]
+			})
+			.expectChange("id", ["1", "2"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const sSchema = "com.sap.gateway.default.zui5_epm_sample.v0002";
+		const sAction = sSchema + ".SalesOrder_Confirm";
+		this.expectRequest({
+				method : "POST",
+				url : "SalesOrderList('1')/" + sAction,
+				payload : {}
+			})
+			.expectRequest({
+				method : "POST",
+				url : "SalesOrderList('2')/" + sAction,
+				payload : {}
+			})
+			.expectRequest("SalesOrderList?$select=SalesOrderID"
+				+ "&$filter=SalesOrderID eq '1' or SalesOrderID eq '2'&$top=2",
+				{value : []})
+			.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+				value : [
+					{SalesOrderID : "3"}
+				]
+			})
+			.expectChange("id", ["3"]);
+
+		const aContexts = this.oView.byId("list").getBinding("items").getCurrentContexts();
+		aContexts.forEach((oContext) => { oContext.setSelected(true); });
+		const aPromises = [];
+		aContexts.forEach((oContext) => {
+			aPromises.push(oModel.bindContext(sAction + "(...)", oContext).execute());
+			aPromises.push(oContext.requestSideEffects([`/${sSchema}.Container/SalesOrderList`]));
+		});
+
+		await Promise.all([
+			...aPromises,
+			this.waitForChanges(assert, "actions")
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Object page bound to active entity: Call the "Edit" bound action on an active
 	// entity which responds with the inactive entity. The execute for the "Edit" operation binding
 	// resolves with the context for the inactive entity. Data for the inactive entity is displayed
@@ -53076,11 +53134,7 @@ make root = ${bMakeRoot}`;
 		}).then(function () {
 			oListBinding = oModel.bindList("/SalesOrderList");
 
-			that.expectRequest("SalesOrderList/$count", -1)
-				.expectRequest("SalesOrderList/$count", 42)
-				.expectCanceledError("Failed to read path /SalesOrderList/$count",
-					sODPrB + ": /SalesOrderList/$count is ignoring response from inactive cache: "
-						+ sSalesOrderService + "SalesOrderList/$count")
+			that.expectRequest("SalesOrderList/$count", 42)
 				.expectChange("count", "42");
 
 			return Promise.all([

@@ -1330,6 +1330,10 @@ sap.ui.define([
 		var aPaths = [],
 			sMetaPath = _Helper.getMetaPath(this.getResolvedPath());
 
+		if (this.oCache === undefined) {
+			return undefined; // nothing to do - looks like a refresh in progress
+		}
+
 		aAbsolutePaths.some(function (sAbsolutePath) {
 			var sRelativePath = _Helper.getRelativePath(sAbsolutePath, sMetaPath);
 
