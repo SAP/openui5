@@ -3049,11 +3049,13 @@ sap.ui.define([
 		var oSelectedSection = Element.getElementById(this.getSelectedSection()),
 			sSelectedSubSectionId = oSelectedSection?.getSelectedSubSection(),
 			oSelectedSubSection = Element.getElementById(sSelectedSubSectionId),
-			iScrollTop;
+			iScrollTop,
+			// we make sure that the selected section is visible and UX riules are applied (DINC0271567)
+			oSubSectionInfo = oSelectedSubSection && this._oSectionInfo[sSelectedSubSectionId];
 
 		this._requestAdjustLayout(true);
 
-		iScrollTop = oSelectedSection ? this._computeScrollPosition(oSelectedSubSection || oSelectedSection) : 0;
+		iScrollTop = oSelectedSection ? this._computeScrollPosition((oSubSectionInfo && oSelectedSubSection ) || oSelectedSection) : 0;
 
 		//reset the scroll for anchorbar & scrolling management
 		this._sScrolledSectionId = "";
