@@ -7,6 +7,7 @@ sap.ui.define([
 	'sap/base/i18n/Localization',
 	'sap/ui/core/Element',
 	'sap/ui/core/Theming',
+	"sap/ui/core/Lib",
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/calendar/Month',
@@ -21,6 +22,7 @@ sap.ui.define([
 		Localization,
 		Element,
 		Theming,
+		Library,
 		CalendarDate,
 		CalendarUtils,
 		Month,
@@ -74,9 +76,11 @@ sap.ui.define([
 			var aCells = oControl._getCells(),
 				aVerticalLabels = oControl._getVerticalLabels(),
 				iColumns = oControl._getColumns(),
+				sWeekText = Library.getResourceBundleFor("sap.ui.unified").getText("CALENDAR_WEEK"),
 				aMoreCountPerCell = [],
 				aAppsPerDay = [],
 				iCellIndex,
+				iWeekNumber,
 				oDay,
 				aApps,
 				aPreviousWeekApps,
@@ -88,6 +92,7 @@ sap.ui.define([
 
 			for (i = 0; i < oControl._getRows(); i++) {
 				iWeekMaxAppCount = 0;
+				iWeekNumber = aVerticalLabels[i];
 
 				oRm.openStart("div");
 				oRm.attr("role", "grid");
@@ -97,8 +102,10 @@ sap.ui.define([
 				// render week number
 				oRm.openStart("div");
 				oRm.class("sapMSPCMonthWeekNumber");
+				oRm.attr("id", `${oControl.getId()}-week-${iWeekNumber}`);
+				oRm.attr("aria-label", `${sWeekText} ${iWeekNumber}`);
 				oRm.openEnd();
-				oRm.text(aVerticalLabels[i]);
+				oRm.text(iWeekNumber);
 				oRm.close("div");
 
 				for (j = 0; j < iColumns; j++) {
@@ -148,14 +155,14 @@ sap.ui.define([
 				for (j = 0; j < iColumns; j++) {
 					iCellIndex = i * iColumns + j;
 					oDay = aCells[iCellIndex];
-					this.renderDay(oRm, oControl, oDay, oLocaleData, aMoreCountPerCell[iCellIndex], iCellIndex);
+					this.renderDay(oRm, oControl, oDay, oLocaleData, aMoreCountPerCell[iCellIndex], iCellIndex, iWeekNumber);
 				}
 				oRm.close("div"); // end cells
 				oRm.close("div"); // end grid
 			}
 		};
 
-		SinglePlanningCalendarMonthGridRenderer.renderDay = function(oRm, oControl, oDay, oLocaleData, more, iCellIndex) {
+		SinglePlanningCalendarMonthGridRenderer.renderDay = function(oRm, oControl, oDay, oLocaleData, more, iCellIndex, iWeekNumber) {
 			var aSpecialDates = oControl._getSpecialDates(),
 				aDayTypes = Month.prototype._getDateTypes.call(oControl, oDay),
 				oFormat = oControl._getDateFormatter(),
@@ -188,7 +195,7 @@ sap.ui.define([
 
 			oRm.attr("sap-ui-date", oDay.valueOf().toString());
 			oRm.attr("tabindex", -1);
-			oRm.attr("aria-labelledby", oFormat.format(oDay.toLocalJSDate()) + "-Descr");
+			oRm.attr("aria-labelledby", `${oFormat.format(oDay.toLocalJSDate())}-Descr ${oControl.getId()}-week-${iWeekNumber}`);
 			oRm.openEnd();
 
 			this.renderDndPlaceholder(oRm, oControl.getAggregation("_appsPlaceholders")[iCellIndex]);
