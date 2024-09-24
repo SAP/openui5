@@ -3039,10 +3039,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Internal loading method to decouple "sap.ui.component" / "sap.ui.component.load".
+	 * Internal loading method used by the factory methods.
 	 *
-	 * @param {object} oConfig see <code>sap.ui.component</code> / <code>sap.ui.component.load</code>
-	 * @param {object} mOptions internal loading configurations
+	 * @param {object} oConfig
+	 *     Configuration options as provided to the calling factory, see e.g. {@link sap.ui.core.Component.create}
+	 * @param {object} [oConfig.async]
+	 *     Whether the Component loading should be done asynchronously
+	 * @param {object} mOptions Additional, internal loading configuration
 	 * @param {string[]} mOptions.activeTerminologies list of active terminologies.
 	 *                   See the public API documentation for more detail: {@link sap.ui.core.Component.create Component.create}
 	 * @param {boolean} mOptions.failOnError see <code>sap.ui.component.load</code>
@@ -3053,7 +3056,8 @@ sap.ui.define([
 	 * @return {function|Promise<function>} the constructor of the Component class or a Promise that will be fulfilled with the same
 	 *
 	 * @private
-	*/
+	 * @ui5-transform-hint replace-param oConfig.async true
+	 */
 	function loadComponent(oConfig, mOptions) {
 		var aActiveTerminologies = mOptions.activeTerminologies,
 			sName = oConfig.name,
