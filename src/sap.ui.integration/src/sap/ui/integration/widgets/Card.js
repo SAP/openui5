@@ -1451,9 +1451,7 @@ sap.ui.define([
 		return vValue;
 	};
 
-	/**
-	 * @override
-	 */
+	// @override
 	Card.prototype.getParameters = function () {
 		var vValue = this.getProperty("parameters");
 		if (vValue && typeof vValue === "object") {
