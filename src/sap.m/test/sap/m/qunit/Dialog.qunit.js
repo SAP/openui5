@@ -3583,6 +3583,21 @@ sap.ui.define([
 		this.assertIsInsideWithinArea(assert);
 	});
 
+	QUnit.test("Custom Within Area. Close and Destroy", function (assert) {
+		// Arrange
+		Popup.setWithinArea(this.oWithinArea);
+
+		try {
+			// Act
+			this.oDialog.close();
+			this.oDialog.destroy();
+
+			assert.ok(true);
+		} catch (e) {
+			assert.ok(false, "Error occurred: " + e);
+		}
+	});
+
 	QUnit.module("Resize of Within Area", {
 		beforeEach: function () {
 			this.oDialog = new Dialog();
