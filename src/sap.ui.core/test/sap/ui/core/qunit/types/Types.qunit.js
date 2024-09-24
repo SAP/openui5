@@ -1019,6 +1019,16 @@ sap.ui.define([
 			oDateTimeIntervalType.parseValue("Feb 1, 2003, 4:05:06 AM \u2013 Feb 2, 2003, 5:06:07 AM", "string"),
 			[oDateTime1, oDateTime2], "Interval string can be parsed into an array of dates");
 
+		TestUtils.withNormalizedMessages(() => {
+			this.mock(oDateTimeIntervalType.oOutputFormat).expects("getSampleValue").withExactArgs()
+				.returns(["~sampleValue"]);
+			this.mock(oDateTimeIntervalType.oOutputFormat).expects("format").withExactArgs("~sampleValue")
+				.returns(["~formattedSampleValue"]);
+			assert.throws(function () {
+				oDateTimeIntervalType.parseValue("foo", "string");
+			}, new ParseException("EnterDateTimeInterval ~formattedSampleValue"));
+		});
+
 		oDateTimeIntervalType = new DateTimeIntervalType({
 			source: {}
 		});
@@ -1894,6 +1904,16 @@ sap.ui.define([
 		var aTimeIntervalResult = oTimeIntervalType.parseValue("4:58:49 PM \u2013  5:00:00 PM", "string");
 
 		assert.deepEqual([aTimeIntervalResult[0].getTime(), aTimeIntervalResult[1].getTime()], [oTime1.getTime(), oTime2.getTime()], "Interval string can be parsed into an array of dates");
+
+		TestUtils.withNormalizedMessages(() => {
+			this.mock(oTimeIntervalType.oOutputFormat).expects("getSampleValue").withExactArgs()
+				.returns(["~sampleValue"]);
+			this.mock(oTimeIntervalType.oOutputFormat).expects("format").withExactArgs("~sampleValue")
+				.returns(["~formattedSampleValue"]);
+			assert.throws(function () {
+				oTimeIntervalType.parseValue("foo", "string");
+			}, new ParseException("EnterTimeInterval ~formattedSampleValue"));
+		});
 
 		oTimeIntervalType = new TimeIntervalType({
 			source: {}
