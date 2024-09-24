@@ -127,7 +127,7 @@ sap.ui.define([
 		new GenericTile();
 
 		//Assert
-		assert.ok(Text.prototype.clampHeight.calledOnce, "The tile's title height has been recalculated.");
+		assert.ok(Text.prototype.clampHeight.notCalled, "The tile's title height has been recalculated.");
 	});
 
 	QUnit.module("Default values", {

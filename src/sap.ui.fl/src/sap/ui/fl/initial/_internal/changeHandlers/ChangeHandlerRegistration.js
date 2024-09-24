@@ -111,7 +111,8 @@ sap.ui.define([
 
 		/**
 		 * Registers the predefined change handlers to the <code>ChangeHandlerStorage</code>.
-		 * This includes both default (e.g. <code>UnhideControl</code> or <code>MoveControls</code>) and <code>DeveloperMode</code> change handlers (e.g. <code>AddXML</code> or <code>propertyChange</code>)
+		 * This includes both default (e.g. <code>UnhideControl</code> or <code>MoveControls</code>)
+		 * and <code>DeveloperMode</code> change handlers (e.g. <code>AddXML</code> or <code>propertyChange</code>)
 		 */
 		registerPredefinedChangeHandlers() {
 			ChangeHandlerStorage.registerPredefinedChangeHandlers(mDefaultHandlers, mDeveloperModeHandlers);
