@@ -506,7 +506,13 @@ function(
 								type: "sap.ui.core.Item"
 							}
 						}
-					}
+					},
+
+					/**
+					 * This event is triggered prior to the opening of the <code>sap.m.SelectList</code>.
+					 * @since 1.130
+					 */
+					beforeOpen: {}
 				},
 				designtime: "sap/m/designtime/Select.designtime"
 			},
@@ -966,6 +972,8 @@ function(
 
 			// call the hook to add additional content to the list
 			this.addContent();
+
+			this.fireEvent("beforeOpen");
 
 			this.addContentToFlex();
 
