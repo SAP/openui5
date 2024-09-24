@@ -190,5 +190,15 @@
         "text": " Table: Size of filter field in column menu"
       }
     ]
+  },
+  "1.120.21": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "6b11b15367da4cdc9e0ff37b44217aca96f1917b",
+        "type": "FIX",
+        "text": " Tables: Announce required state of columns with 'custom' label controls"
+      }
+    ]
   }
 }

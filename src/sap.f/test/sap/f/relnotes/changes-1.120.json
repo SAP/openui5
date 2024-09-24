@@ -209,5 +209,26 @@
         "text": " sap.f.DynamicPage: Correct header placement after expanded state change"
       }
     ]
+  },
+  "1.120.21": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "130b08f88d694196883c856fa0c0ec4b2ad763d1",
+        "type": "FIX",
+        "text": " sap.m.Label: Revert"
+      },
+      {
+        "id": "9465c82fcb7112a0c310e654ba1cdcbd4425bbbe",
+        "type": "FIX",
+        "text": " FCL: Restore focus same column fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370131414"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -874,5 +874,80 @@
         "text": " We've now introduced the fileSize parameter in fileSizeExceeded event of UploadSet"
       }
     ]
+  },
+  "1.120.21": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "130b08f88d694196883c856fa0c0ec4b2ad763d1",
+        "type": "FIX",
+        "text": " sap.m.Label: Revert"
+      },
+      {
+        "id": "b966e2a3bef0b1da47425e39d00662287a257ef2",
+        "type": "FIX",
+        "text": " We now ensure that UploadSet does not insert or removes any item if they are bound to a model"
+      },
+      {
+        "id": "1effbf0b6522e68ca120fb3f0c83d89e63491155",
+        "type": "FIX",
+        "text": " sap.m.Label: Asteriks is visible when parent container has a set width"
+      },
+      {
+        "id": "21618be23c060863b9cba96edc941ebfcf31c131",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Icon on Firefox is not cut now"
+      },
+      {
+        "id": "6b11b15367da4cdc9e0ff37b44217aca96f1917b",
+        "type": "FIX",
+        "text": " Tables: Announce required state of columns with 'custom' label controls"
+      },
+      {
+        "id": "7d98567e1f4d63ff8e2448e5fea5b33a0733d46a",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: buttons in split mode have separate tooltips"
+      },
+      {
+        "id": "4b4345095125f161cbefe865bd9ed68d1282567e",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Content padding classes are applied to the header if additional class is present"
+      },
+      {
+        "id": "b0979e004a39b391cc2c14c275a3e3c7e2ddfdc5",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed incorrect ACC reading of required sap.m.Select"
+      },
+      {
+        "id": "3fa12db9d81469049cd17694e3f07c53b158820a",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: remove roledescription announcement"
+      },
+      {
+        "id": "ee02a635eb995966850716ddf46af65b04a86dc4",
+        "type": "FIX",
+        "text": " sap.m.Carousel: fix page disappearing when scrolling"
+      },
+      {
+        "id": "872e993ad5657226f4216aec04d68ce10b77dd2f",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: adjust screen reader announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370112153"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370145352"
+          }
+        ]
+      },
+      {
+        "id": "1bacd74ccb553e5ca6377ba887c101380525047d",
+        "type": "FIX",
+        "text": " sap.m.Menu: properties string values are escaped when creating internal controls"
+      }
+    ]
   }
 }

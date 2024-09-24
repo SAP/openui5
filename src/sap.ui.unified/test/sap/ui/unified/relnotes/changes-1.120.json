@@ -128,5 +128,20 @@
         "text": " sap.ui.unified.Menu: Custom image icon is displayed correctly now"
       }
     ]
+  },
+  "1.120.21": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "f98bb44c7317c1e8de6c5ba2e0ec25605af354a0",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Calendar with two months in one column is displayed correctly now"
+      },
+      {
+        "id": "6e2ca4996e0857c3a92ddc2716d868ed30959cdf",
+        "type": "FIX",
+        "text": " sap.ui.unified.DatesRow: render week numbers"
+      }
+    ]
   }
 }

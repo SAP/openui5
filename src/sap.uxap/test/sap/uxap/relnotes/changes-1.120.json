@@ -72,5 +72,15 @@
         ]
       }
     ]
+  },
+  "1.120.21": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "3c79ee9eb0f695cbcadc5894bd46ced5ab91de23",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeaderContent: correct box-shadow styles"
+      }
+    ]
   }
 }

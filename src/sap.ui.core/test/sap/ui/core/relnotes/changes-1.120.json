@@ -868,5 +868,20 @@
         ]
       }
     ]
+  },
+  "1.120.21": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "ada25816ec9c64d00e7b5a7c9d8147e30437008e",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/v2/ODataListBinding: fire dataReceived event for aborted requests"
+      },
+      {
+        "id": "43d2f44333aaf95e6689757fee4776423f64ebdd",
+        "type": "FIX",
+        "text": " Adjust link in sap.ui.core.MessageType documentation"
+      }
+    ]
   }
 }
