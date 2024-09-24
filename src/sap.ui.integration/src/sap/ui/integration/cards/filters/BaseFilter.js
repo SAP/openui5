@@ -314,7 +314,7 @@ sap.ui.define([
 	};
 
 	BaseFilter.prototype._isDataProviderJson = function () {
-		return this._oDataProvider && this._oDataProvider.getSettings() && this._oDataProvider.getSettings()["json"];
+		return !!this._oDataProvider?.getConfiguration()?.json;
 	};
 
 	return BaseFilter;

@@ -29,6 +29,23 @@ sap.ui.define([
 			}
 		});
 
+		aRequests.push({
+			method: "POST",
+			path: "\/avatar",
+			response: function (oXhr) {
+				const body = oXhr.requestBody;
+
+				if (!body || !body.get("avatar")) {
+					oXhr.respond(400, null, "Avatar upload failed.");
+					return;
+				}
+
+				const avatar = body.get("avatar");
+
+				oXhr.respond(200, null, `${avatar.name} uploaded successfully.`);
+			}
+		});
+
 		oMockServer.setRequests(aRequests);
 		oMockServer.start();
 	}

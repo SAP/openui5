@@ -3640,6 +3640,70 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.module("Card#request", {
+			beforeEach: async function () {
+				this.oCard = new Card({
+					manifest: {
+						"sap.app": {
+							"id": "test.card.request"
+						},
+						"sap.card": {
+							"type": "List",
+							"header": {},
+							"content": {
+								"data": {
+									"json": []
+								},
+								"item": {
+									"title": "{Name}"
+								}
+							}
+						}
+					}
+				});
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+				await nextCardReadyEvent(this.oCard);
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Request data with FormData", async function (assert) {
+			// Arrange
+			const oServer = sinon.fakeServer.create({
+				autoRespond: true
+			});
+
+			oServer.respondWith("/uploadFormData", function (xhr) {
+				const body = xhr.requestBody;
+
+				if (body instanceof FormData && body.get("key") === "value") {
+					xhr.respond(200, {"Content-Type": "text/plain"}, "Success");
+					return;
+				}
+
+				xhr.respond(400, {"Content-Type": "text/plain"}, "Error");
+			});
+
+			const oFormData = new FormData();
+			oFormData.append("key", "value");
+
+			// Act
+			const res = await this.oCard.request({
+				"url": "/uploadFormData",
+				"method": "POST",
+				"parameters": oFormData
+			});
+
+			// Assert
+			assert.strictEqual(res, "Success", "FormData should be uploaded successfully");
+
+			// Clean up
+			oServer.restore();
+		});
+
 	}
 );
 

@@ -229,7 +229,7 @@ sap.ui.define([
 		);
 
 		// Assert
-		assert.deepEqual(oStubRequest.thisValues[0].getSettings().request.parameters, oDefaultPayload, "Default payload is correct");
+		assert.deepEqual(oStubRequest.thisValues[0].getResolvedConfiguration().request.parameters, oDefaultPayload, "Default payload is correct");
 	});
 
 	QUnit.test("Custom payload (specified in 'configuration/actionHandlers')", async function (assert) {
@@ -274,7 +274,7 @@ sap.ui.define([
 		);
 
 		// Assert
-		assert.deepEqual(oStubRequest.thisValues[0].getSettings().request.parameters, oCustomPayload, "Custom payload should override the default");
+		assert.deepEqual(oStubRequest.thisValues[0].getResolvedConfiguration().request.parameters, oCustomPayload, "Custom payload should override the default");
 	});
 
 	QUnit.test("Undefined values in data request", async function (assert) {
@@ -326,7 +326,7 @@ sap.ui.define([
 			CardActionType.Submit
 		);
 
-		var oDataProviderSettings = oStubRequest.thisValues[0].getSettings();
+		var oDataProviderSettings = oStubRequest.thisValues[0].getResolvedConfiguration();
 
 		// Assert
 		assert.ok(oDataProviderSettings.request.parameters.user.hasOwnProperty("email"), "Key with 'undefined' value should be part of the payload");
@@ -375,7 +375,7 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(
-			oDataProviderStub.thisValues[0].getSettings().request.url,
+			oDataProviderStub.thisValues[0].getResolvedConfiguration().request.url,
 			"some/fake/api",
 			"Binding should be resolved"
 		);
@@ -383,7 +383,8 @@ sap.ui.define([
 
 	QUnit.test("Binding in action handler parameters", async function (assert) {
 		this.oCard.getModel("form").setData({
-			userName: "DonnaMoore"
+			userName: "DonnaMoore",
+			password: "{someSpecialSymbols>/password}"
 		});
 		this.oCard.setManifest({
 			"sap.app": {
@@ -398,7 +399,8 @@ sap.ui.define([
 							"url": "some-fake-api",
 							"parameters": {
 								"user": {
-									"name": "My name is {form>/userName}"
+									"name": "My name is {form>/userName}",
+									"password": "{form>/password}"
 								}
 							}
 						}
@@ -413,7 +415,18 @@ sap.ui.define([
 		await nextCardReadyEvent(this.oCard);
 
 		// Arrange
-		var oDataProviderStub = this.stub(RequestDataProvider.prototype, "getData").resolves("Success");
+		const oGetDataSpy = this.spy(RequestDataProvider.prototype, "getData");
+		const oFetchSpy = this.stub(RequestDataProvider.prototype, "_fetch").resolves("");
+		this.stub(this.oCard.getCardContent(), "onActionSubmitEnd").callsFake(() => {
+			assert.deepEqual(
+				oFetchSpy.args[0][0].parameters.user,
+				{
+					name: "My name is DonnaMoore",
+					password: "{someSpecialSymbols>/password}"
+				},
+				"Request should be made with resolved bindings"
+			);
+		});
 
 		// Act
 		this.oCard.getCardContent().getActions().fireAction(
@@ -422,14 +435,20 @@ sap.ui.define([
 		);
 
 		// Assert
-		assert.strictEqual(
-			oDataProviderStub.thisValues[0].getSettings().request.parameters.user.name,
-			"My name is DonnaMoore",
-			"Binding should be resolved"
+		assert.deepEqual(
+			oGetDataSpy.thisValues[0].getResolvedConfiguration().request.parameters.user,
+			{
+				name: "My name is DonnaMoore",
+				password: "{someSpecialSymbols>/password}"
+			},
+			"Already resolved configuration should be set to the data provider."
 		);
 	});
 
 	QUnit.test("Expression binding in action handler parameters", async function (assert) {
+		this.oCard.getModel("form").setData({
+			password: "{= ${someSpecialSymbols>/password} ? 'password' : 'no password'}"
+		});
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "test.adaptive.submit.action.payload",
@@ -443,7 +462,8 @@ sap.ui.define([
 							"url": "some-fake-api",
 							"parameters": {
 								"user": {
-									"name": "The winner is {= 1 > 2 ? 'first player' : 'second player'}"
+									"name": "The winner is {= 1 > 2 ? 'first player' : 'second player'}",
+									"password": "{form>/password}"
 								}
 							}
 						}
@@ -458,7 +478,18 @@ sap.ui.define([
 		await nextCardReadyEvent(this.oCard);
 
 		// Arrange
-		var oDataProviderStub = this.stub(RequestDataProvider.prototype, "getData").resolves("Success");
+		const oGetDataSpy = this.spy(RequestDataProvider.prototype, "getData");
+		const oFetchSpy = this.stub(RequestDataProvider.prototype, "_fetch").resolves("");
+		this.stub(this.oCard.getCardContent(), "onActionSubmitEnd").callsFake(() => {
+			assert.deepEqual(
+				oFetchSpy.args[0][0].parameters.user,
+				{
+					name: "The winner is second player",
+					password: "{= ${someSpecialSymbols>/password} ? 'password' : 'no password'}"
+				},
+				"Request should be made with resolved bindings"
+			);
+		});
 
 		// Act
 		this.oCard.getCardContent().getActions().fireAction(
@@ -467,10 +498,13 @@ sap.ui.define([
 		);
 
 		// Assert
-		assert.strictEqual(
-			oDataProviderStub.thisValues[0].getSettings().request.parameters.user.name,
-			"The winner is second player",
-			"Binding should be resolved"
+		assert.deepEqual(
+			oGetDataSpy.thisValues[0].getResolvedConfiguration().request.parameters.user,
+			{
+				name: "The winner is second player",
+				password: "{= ${someSpecialSymbols>/password} ? 'password' : 'no password'}"
+			},
+			"Already resolved configuration should be set to the data provider."
 		);
 	});
 

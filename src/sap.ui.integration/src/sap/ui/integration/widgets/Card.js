@@ -1942,7 +1942,7 @@ sap.ui.define([
 				this.fireEvent("_dataPassedToContent");
 				this._handleError({
 					requestErrorParams: oEvent.getParameters(),
-					requestSettings: this._oDataProvider.getSettings()
+					requestSettings: this._oDataProvider.getResolvedConfiguration()
 				});
 				this.onDataRequestComplete();
 			}.bind(this));
@@ -2617,7 +2617,9 @@ sap.ui.define([
 	 * @param {string} oConfiguration.url The URL of the resource.
 	 * @param {string} [oConfiguration.mode="cors"] The mode of the request. Possible values are "cors", "no-cors", "same-origin".
 	 * @param {string} [oConfiguration.method="GET"] The HTTP method. Possible values are "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", and "HEAD".
-	 * @param {object} [oConfiguration.parameters] The request parameters. If the HTTP method is "POST", "PUT", "PATCH", or "DELETE" the parameters will be put as key/value pairs into the body of the request.
+	 * @param {object|FormData} [oConfiguration.parameters] The request parameters. If the HTTP method is "POST", "PUT", "PATCH", or "DELETE" the parameters will be put into the body of the request.
+	 *
+	 *                                                      <b>Note:</b> If parameters are of type "FormData", the "FormData" will not be resolved for bindings, destinations and others. It will be sent as it is.
 	 * @param {string} [oConfiguration.dataType="json"] Deprecated. Use the correct Accept headers and correct Content-Type header in the response.
 	 * @param {object} [oConfiguration.headers] The HTTP headers of the request.
 	 * @param {boolean} [oConfiguration.withCredentials=false] Indicates whether cross-site requests should be made using credentials.
@@ -3155,7 +3157,7 @@ sap.ui.define([
 	 * @returns {boolean} True if data provider is JSON.
 	 */
 	Card.prototype._isDataProviderJson = function () {
-		return this._oDataProvider && this._oDataProvider.getSettings() && this._oDataProvider.getSettings()["json"];
+		return !!this._oDataProvider?.getConfiguration()?.json;
 	};
 
 	/**
