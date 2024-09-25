@@ -1255,6 +1255,15 @@ sap.ui.define([
 			Popover: {
 				title: "QUnit Page for sap.m.Popover"
 			},
+			PopoverResize: {
+				title: "QUnit Page for resizing in sap.m.Popover"
+			},
+			PopoverResizeRTL: {
+				title: "QUnit Page for resizing in sap.m.Popover in RTL mode",
+				ui5: {
+					rtl: true
+				}
+			},
 			ProgressIndicator: {
 				title: "QUnit ProgressIndicator",
 				sinon: {
