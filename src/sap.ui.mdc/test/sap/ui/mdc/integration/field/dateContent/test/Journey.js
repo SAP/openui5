@@ -6,6 +6,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Lib",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/mdc/integration/field/Util",
@@ -16,6 +17,7 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat"
 ], function(
 	Library,
+	UI5Date,
 	Opa5,
 	opaTest,
 	FieldTestUtil,
@@ -134,29 +136,34 @@ sap.ui.define([
 		return oDateTimeType.formatValue(oStartDate, "string") + sConnection + oDateTimeType.formatValue(oEndDate, "string");
 	};
 
+	const oSampleDate = UI5Date.getInstance(UI5Date.getInstance().getFullYear(), 11, 31, 23, 59, 58, 123);
+	const sInvalidDate = oRb.getText("EnterDate", [oDateType.formatValue(oSampleDate, "string")]);
+	const sInvalidDateTime = oRb.getText("EnterDateTime", [oDateTimeType.formatValue(oSampleDate, "string")]);
+	const sInvalidTime = oRb.getText("EnterTime", [oTimeType.formatValue(oSampleDate, "string")]);
+
 	const aFields = [
-		{ id: "F-Date", initialValue: oDateType.formatValue(oFieldDate, "string"), innerControl: "sap.m.DatePicker", valueStateText: oRb.getText("Date.Invalid") },
-		{ id: "F-DateTime", initialValue: oDateTimeType.formatValue(oFieldDate, "string"), innerControl: "sap.m.DateTimePicker", valueStateText: oRb.getText("DateTime.Invalid") },
-		{ id: "F-Time", initialValue: oTimeType.formatValue(oFieldDate, "string"), innerControl: "sap.m.TimePicker", valueStateText: oRb.getText("Date.Invalid") }
+		{ id: "F-Date", initialValue: oDateType.formatValue(oFieldDate, "string"), innerControl: "sap.m.DatePicker", valueStateText: sInvalidDate },
+		{ id: "F-DateTime", initialValue: oDateTimeType.formatValue(oFieldDate, "string"), innerControl: "sap.m.DateTimePicker", valueStateText: sInvalidDateTime },
+		{ id: "F-Time", initialValue: oTimeType.formatValue(oFieldDate, "string"), innerControl: "sap.m.TimePicker", valueStateText: sInvalidDate }
 	];
 
 	const aFilterFields = [
 		// FilterFields with maxConditions="1"
-		{ id: "FF-Date", innerControl: "sap.m.DatePicker", valueStateText: oRb.getText("Date.Invalid") },
-		{ id: "FF-DateTime", innerControl: "sap.m.DateTimePicker", valueStateText: oRb.getText("DateTime.Invalid") },
-		{ id: "FF-Time", innerControl: "sap.m.TimePicker", valueStateText: oRb.getText("Date.Invalid") },
-		{ id: "FF-DateRange", innerControl: "sap.m.DateRangeSelection", valueStateText: oRb.getText("Date.Invalid") },
+		{ id: "FF-Date", innerControl: "sap.m.DatePicker", valueStateText: sInvalidDate },
+		{ id: "FF-DateTime", innerControl: "sap.m.DateTimePicker", valueStateText: sInvalidDateTime },
+		{ id: "FF-Time", innerControl: "sap.m.TimePicker", valueStateText: sInvalidDate },
+		{ id: "FF-DateRange", innerControl: "sap.m.DateRangeSelection", valueStateText: sInvalidDate },
 		{ id: "FF-DateTimeRange", innerControl: "sap.m.DynamicDateRange", valueStateText: "Incorrect value" },
 		{ id: "FF-DDR-Date", innerControl: "sap.m.DynamicDateRange", valueStateText: "Incorrect value" },
 		{ id: "FF-DDR-DateTime", innerControl: "sap.m.DynamicDateRange", valueStateText: "Incorrect value" },
 		// FilterFields with maxConditions="-1"
-		{ id: "FF-Date-2", innerControl: "sap.ui.mdc.field.FieldMultiInput", valueStateText: oRb.getText("Date.Invalid") },
-		{ id: "FF-DateTime-2", innerControl: "sap.ui.mdc.field.FieldMultiInput", valueStateText: oRb.getText("DateTime.Invalid") },
-		{ id: "FF-Time-2", innerControl: "sap.ui.mdc.field.FieldMultiInput", valueStateText: oRb.getText("Time.Invalid") },
-		{ id: "FF-DateRange-2", innerControl: "sap.ui.mdc.field.FieldMultiInput", valueStateText: oRb.getText("Date.Invalid") },
-		{ id: "FF-DateTimeRange-2", innerControl: "sap.ui.mdc.field.FieldMultiInput", valueStateText: oRb.getText("DateTime.Invalid") },
-		{ id: "FF-DDR-Date-2", innerControl: "sap.ui.mdc.field.FieldMultiInput", valueStateText: oRb.getText("Date.Invalid") },
-		{ id: "FF-DDR-DateTime-2", innerControl: "sap.ui.mdc.field.FieldMultiInput", valueStateText: oRb.getText("DateTime.Invalid") }
+		{ id: "FF-Date-2", innerControl: "sap.ui.mdc.field.FieldMultiInput", valueStateText: sInvalidDate },
+		{ id: "FF-DateTime-2", innerControl: "sap.ui.mdc.field.FieldMultiInput", valueStateText: sInvalidDateTime },
+		{ id: "FF-Time-2", innerControl: "sap.ui.mdc.field.FieldMultiInput", valueStateText: sInvalidTime },
+		{ id: "FF-DateRange-2", innerControl: "sap.ui.mdc.field.FieldMultiInput", valueStateText: sInvalidDate },
+		{ id: "FF-DateTimeRange-2", innerControl: "sap.ui.mdc.field.FieldMultiInput", valueStateText: sInvalidDateTime },
+		{ id: "FF-DDR-Date-2", innerControl: "sap.ui.mdc.field.FieldMultiInput", valueStateText: sInvalidDate },
+		{ id: "FF-DDR-DateTime-2", innerControl: "sap.ui.mdc.field.FieldMultiInput", valueStateText: sInvalidDateTime }
 	];
 
 	QUnit.module("Sanity");
