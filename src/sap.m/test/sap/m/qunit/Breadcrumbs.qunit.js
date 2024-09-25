@@ -224,6 +224,15 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 		helpers.resetScreenSize();
 	});
 
+	QUnit.test("Select's picker offsetY decorated on desktop", function (assert) {
+		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl,
+			iOffsetY = 4; // px
+
+		const oSelect = oStandardBreadCrumbsControl._getSelect();
+		const oPicker = oSelect.getPicker();
+		assert.strictEqual(oPicker.getOffsetY(), iOffsetY, "Picker offset Y is correctly set");
+	});
+
 	QUnit.test("Select width", function (assert) {
 		// arrange
 		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl;
