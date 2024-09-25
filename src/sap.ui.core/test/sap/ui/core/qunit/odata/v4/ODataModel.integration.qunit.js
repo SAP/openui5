@@ -48594,7 +48594,13 @@ make root = ${bMakeRoot}`;
 	// are kept untouched. If there are unresolved bindings, their cached data which depends on the
 	// refreshed sales order is discarded and the corresponding messages are removed. Resolved
 	// bindings for other binding hierarchies are not affected. (CPOUI5UISERVICESV3-1575)
-	QUnit.test("sap.ui.model.odata.v4.Context#refresh: caches and messages", function (assert) {
+	//
+	// Side-effects refresh should also remove cached data (SNOW: DINC0229498)
+[false, true].forEach((bSideEffect) => {
+	const sTitle = "sap.ui.model.odata.v4.Context#refresh: caches and messages"
+		+ "; side-effects refresh: " + bSideEffect;
+
+	QUnit.test(sTitle, function (assert) {
 		var sView = '\
 <Table id="tableSalesOrder" items="{/SalesOrderList}">\
 	<Text id="salesOrder" text="{SalesOrderID}"/>\
@@ -48798,11 +48804,23 @@ make root = ${bMakeRoot}`;
 		}).then(function () {
 			// refresh the first sales order, caches and messages of unresolved bindings for this
 			// sales order are discarded
-			that.expectRequest("SalesOrderList('0500000347')?$select=SalesOrderID",
-					{SalesOrderID : "0500000347"})
-				.expectMessages([]);
+			if (bSideEffect) {
+				that.expectRequest("SalesOrderList('0500000347')?$select=Messages,SalesOrderID",
+						{Messages : [], SalesOrderID : "0500000347"});
+			} else {
+				that.expectRequest("SalesOrderList('0500000347')?$select=SalesOrderID",
+						{SalesOrderID : "0500000347"});
+			}
+			that.expectMessages([]);
 
-			that.oView.byId("tableSalesOrder").getItems()[0].getBindingContext().refresh();
+			const oContext = that.oView.byId("tableSalesOrder").getItems()[0].getBindingContext();
+			if (bSideEffect) {
+				// code under test
+				oContext.requestSideEffects([""]);
+			} else {
+				// code under test
+				oContext.refresh();
+			}
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -48928,6 +48946,7 @@ make root = ${bMakeRoot}`;
 			return that.waitForChanges(assert);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Change a property in a dependent binding with an own cache below a list binding.
@@ -52696,7 +52715,13 @@ make root = ${bMakeRoot}`;
 	// Scenario: Dependent binding uses $$canonicalPath; hasPendingChanges and refresh consider
 	// caches of the dependent binding.
 	// CPOUI5UISERVICESV3-1706
-	QUnit.test("hasPendingChanges and refresh with $$canonicalPath", function (assert) {
+	//
+	// Side-effects refresh should also remove cached data (SNOW: DINC0229498)
+[false, true].forEach((bSideEffect) => {
+	const sTitle = "hasPendingChanges and refresh with $$canonicalPath"
+		+ "; side-effects refresh: " + bSideEffect;
+
+	QUnit.test(sTitle, function (assert) {
 		var oBusinessPartnerContext,
 			oBusinessPartnerList,
 			oForm,
@@ -52845,7 +52870,13 @@ make root = ${bMakeRoot}`;
 				})
 				.expectMessages([]);
 
-			oBusinessPartnerContext.refresh();
+			if (bSideEffect) {
+				// code under test
+				oBusinessPartnerContext.requestSideEffects([""], "$auto");
+			} else {
+				// code under test
+				oBusinessPartnerContext.refresh();
+			}
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -52872,6 +52903,7 @@ make root = ${bMakeRoot}`;
 			return that.waitForChanges(assert);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: unnecessary context bindings to confuse auto-$expand/$select
