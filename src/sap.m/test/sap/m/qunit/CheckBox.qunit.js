@@ -1226,6 +1226,27 @@ sap.ui.define([
 		oCheckBox.destroy();
 	});
 
+	QUnit.test("_getVisualOnlyMode returning true", function (assert) {
+		// system under test
+		var oCheckBox = new CheckBox();
+
+		oCheckBox._getVisualOnlyMode = function () {
+			return true;
+		};
+
+		// assert
+		oCheckBox.placeAt("content");
+		Core.applyChanges();
+
+		// assert
+		assert.ok(oCheckBox.getDomRef().getAttribute("role"), "presentation", "role=presentation should be set to a visual only checkbox");
+		assert.notOk(oCheckBox.getDomRef().getAttribute("aria-checked"), "role=checkbox related attributes should not be applied");
+		assert.notOk(oCheckBox.getDomRef().getAttribute("tabindex"), "tabindex should not be applied");
+
+		// cleanup
+		oCheckBox.destroy();
+	});
+
 	// test that ariaLabelledBy includes the external label's id when the labelFor is set and there is value in the text property
 	QUnit.test("AriaLabelledBy", function (assert) {
 		// system under test
