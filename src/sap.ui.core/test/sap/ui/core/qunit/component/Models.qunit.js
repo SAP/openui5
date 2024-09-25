@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/base/util/deepExtend",
 	"sap/ui/base/config/URLConfigurationProvider",
 	"sap/ui/core/Component",
+	"sap/ui/core/ComponentHooks",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponentMetadata"
@@ -19,6 +20,7 @@ sap.ui.define([
 	deepExtend,
 	URLConfigurationProvider,
 	Component,
+	ComponentHooks,
 	Library,
 	Manifest,
 	UIComponentMetadata
@@ -1846,12 +1848,12 @@ sap.ui.define([
 			this.oConfigurationGetPreloadStub.restore();
 			this.oServer.restore();
 			this.restoreGetUriParameters();
-			Component._fnLoadComponentCallback = null;
+			ComponentHooks.onComponentLoaded.deregister();
 		}
 	});
 
 	QUnit.test("Early model instantiation", function(assert) {
-		Component._fnLoadComponentCallback = function() {
+		ComponentHooks.onComponentLoaded.register(function() {
 			// OData / JSON / ResourceModels Models should be created before the Component instance
 
 			// sap.ui.model.odata.v2.ODataModel
@@ -1874,7 +1876,7 @@ sap.ui.define([
 
 			// sap.ui.model.resource.ResourceModel
 			sinon.assert.callCount(this.modelSpy.resource, 2);
-		}.bind(this);
+		}.bind(this));
 
 		return Component.create({
 			manifest: "/anylocation/manifest.json"
@@ -1935,10 +1937,10 @@ sap.ui.define([
 				return fnJQuerySapResource.apply(this, arguments);
 			});
 
-		Component._fnLoadComponentCallback = function() {
+		ComponentHooks.onComponentLoaded.register(function() {
 			assert.equal(iLoadResourceBundleAsync, 2, "loadResourceBundle async should be called twice before component instantiation");
 			assert.equal(that.modelSpy.resource.callCount, 1, "One ResourceModel should be created (preload=true)");
-		};
+		});
 
 		return Component.create({
 			manifest: "/anylocation/manifest.json"
@@ -1969,7 +1971,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Early model instantiation (with startupParameters)", function(assert) {
-		Component._fnLoadComponentCallback = function() {
+		ComponentHooks.onComponentLoaded.register(function() {
 			// OData / JSON / Resource Models should be created before the Component instance
 
 			// sap.ui.model.odata.v2.ODataModel
@@ -1992,7 +1994,7 @@ sap.ui.define([
 
 			// sap.ui.model.resource.ResourceModel
 			sinon.assert.callCount(this.modelSpy.resource, 2);
-		}.bind(this);
+		}.bind(this));
 
 		return Component.create({
 			manifest: "/anylocation/manifest.json",
@@ -2036,7 +2038,7 @@ sap.ui.define([
 			// check if all models got destroyed (uses the models from #assertModelInstances)
 			this.assertModelsDestroyed();
 
-			Component._fnLoadComponentCallback = null;
+			ComponentHooks.onComponentLoaded.deregister();
 
 		}.bind(this));
 	});

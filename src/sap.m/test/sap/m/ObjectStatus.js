@@ -681,6 +681,17 @@ sap.ui.define([
   }).addStyleClass("sapMObjectStatusLarge"), oPage);
 
   addToPage(new ObjectStatus({
+	  icon: "sap-icon://alert",
+	  text: "สั่งซื้อแล้ว"
+  }).addStyleClass("sapUiHigherText"), oPage);
+
+  addToPage(new ObjectStatus({
+	  inverted: true,
+	  icon: "sap-icon://alert",
+	  text: "สั่งซื้อแล้ว"
+  }).addStyleClass("sapUiHigherText"), oPage);
+
+  addToPage(new ObjectStatus({
 	  state: "Error",
 	  icon: "sap-icon://alert",
 	  text : "Very long not active status containing only text Ñagçyfox Created by John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John DoeÑagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe"

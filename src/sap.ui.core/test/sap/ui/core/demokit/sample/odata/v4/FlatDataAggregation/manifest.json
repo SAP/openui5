@@ -1,5 +1,5 @@
 {
-	"_version" : "1.8.0",
+	"_version" : "1.66.0",
 	"sap.app" : {
 		"ach" : "CA-UI5-COR",
 		"applicationVersion" : {
@@ -7,14 +7,14 @@
 		},
 		"dataSources" : {
 			"default" : {
-				"uri" : "/serviceroot.svc/",
+				"uri" : "/analytics/",
 				"type" : "OData",
 				"settings" : {
 					"odataVersion" : "4.0"
 				}
 			}
 		},
-		"description" : "Example for OData V4 Data Aggregation w/o visual grouping",
+		"description" : "Example for OData V4 Data Aggregation w/o visual grouping; based on https://github.com/SAP-samples/cap-sflight",
 		"id" : "sap.ui.core.sample.odata.v4.FlatDataAggregation",
 		"title" : "OData V4 Flat Data Aggregation",
 		"type" : "application"
@@ -41,7 +41,7 @@
 				"sap.ui.core" : {},
 				"sap.ui.table" : {}
 			},
-			"minUI5Version" : "1.59"
+			"minUI5Version" : "1.129.0"
 		},
 		"handleValidation" : true,
 		"models" : {
@@ -52,9 +52,7 @@
 					"autoExpandSelect" : false,
 					"earlyRequests" : true,
 					"operationMode" : "Server"
-				},
-				"type" : "sap.ui.core.sample.odata.v4.FlatDataAggregation.SandboxModel",
-				"uriSettingName" : "serviceUrl"
+				}
 			}
 		},
 		"rootView" : {

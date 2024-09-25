@@ -190,7 +190,7 @@ sap.ui.define([
 		});
 
 		// manifest descriptor changes for ABAP mixed mode can only be applied in this hook,
-		// because at this point all libs have been loaded (in contrast to the first Component._fnPreprocessManifest hook),
+		// because at this point all libs have been loaded (in contrast to the first Component(s) 'onPreprocessManifest' hook),
 		// but the manifest is still adaptable
 		return AppDescriptorApplier.applyChangesIncludedInManifest(oManifest, ApplyStrategyFactory.getRuntimeStrategy());
 	}
