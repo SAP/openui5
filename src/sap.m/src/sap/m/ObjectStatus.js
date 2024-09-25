@@ -42,6 +42,7 @@ sap.ui.define([
 	 *
 	 * With 1.63, large design of the control is supported by setting <code>sapMObjectStatusLarge</code> CSS class to the <code>ObjectStatus</code>.
 	 * With 1.110, Inner text wrapping could be enabled by adding <code>sapMObjectStatusLongText</code> CSS class to the <code>ObjectStatus</code>. This class can be added by using оObjectStatus.addStyleClass("sapMObjectStatusLongText");
+	 * With 1.130, bigger line height for texts that require it (like Thai) can be enabled by adding <code>sapUiHigherText</code> CSS class to the <code>ObjectStatus</code>. This class can be added by using оObjectStatus.addStyleClass("sapUiHigherText");
 
 	 *
 	 * @extends sap.ui.core.Control

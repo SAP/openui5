@@ -5,6 +5,7 @@
 // Provides base class sap.ui.core.Component for all components
 sap.ui.define([
 	'./Manifest',
+	'./ComponentHooks',
 	'./ComponentMetadata',
 	'./ElementRegistry',
 	'sap/base/config',
@@ -32,6 +33,7 @@ sap.ui.define([
 	'sap/ui/core/util/_LocalizationHelper'
 ], function(
 	Manifest,
+	ComponentHooks,
 	ComponentMetadata,
 	ElementRegistry,
 	BaseConfig,
@@ -1968,10 +1970,8 @@ sap.ui.define([
 			var oModel = new fnFactory();
 
 			// Call hook and provide model instance, manifest model ID to UI5 flex lib
-			if (typeof Component._fnCreateModel === "function") {
-				if (oModel.isA("sap.ui.model.odata.v2.ODataModel") || oModel.isA("sap.ui.model.odata.v4.ODataModel")) {
-					Component._fnCreateModel(oModel, sModelName, oConfig);
-				}
+			if (oModel.isA("sap.ui.model.odata.v2.ODataModel") || oModel.isA("sap.ui.model.odata.v4.ODataModel")) {
+				ComponentHooks.onModelCreated.execute(oModel, sModelName, oConfig);
 			}
 
 			// add model instance to the result map
@@ -2137,98 +2137,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Callback handler which will be executed once the component is loaded. A copy of the
-	 * configuration object together with a copy of the manifest object will be passed into
-	 * the registered function.
-	 * Also a return value is not expected from the callback handler.
-	 * It will only be called for asynchronous manifest first scenarios.
-	 * <p>
-	 * Example usage:
-	 * <pre>
-	 * sap.ui.require(['sap/ui/core/Component'], function(Component) {
-	 *   Component._fnLoadComponentCallback = function(oConfig, oManifest) {
-	 *     // do some logic with the config
-	 *   };
-	 * });
-	 * </pre>
-	 * <p>
-	 * <b>ATTENTION:</b> This hook must only be used by UI flexibility (library:
-	 * sap.ui.fl) and will be replaced with a more generic solution!
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.fl
-	 * @since 1.37.0
-	 */
-	Component._fnLoadComponentCallback = null;
-
-	/**
-	 * Callback handler which will be executed once a component instance has
-	 * been created by {#link sap.ui.component}. The component instance and the
-	 * configuration object will be passed into the registered function.
-	 * For async scenarios (<code>vConfig.async = true</code>) a Promise can be provided as
-	 * return value from the callback handler to delay resolving the Promise
-	 * returned by {@link sap.ui.component}.
-	 * In synchronous scenarios the return value will be ignored.
-	 *
-	 * Example usage:
-	 * <pre>
-	 * sap.ui.require(['sap/ui/core/Component'], function(Component) {
-	 *   Component._fnOnInstanceCreated = function(oComponent, oConfig) {
-	 *     // do some logic with the config
-	 *
-	 *     // optionally return a Promise
-	 *     return doAsyncStuff();
-	 *   };
-	 * });
-	 * </pre>
-	 * <b>ATTENTION:</b> This hook must only be used by UI flexibility (sap.ui.fl)
-	 * or the sap.ui.integration library.
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.fl,sap.ui.integration
-	 * @since 1.43.0
-	 */
-	var _aInstanceCreatedListeners = [];
-
-	// [Compatibility]: We need to accept multiple onInstanceCreated listeners,
-	//                  but still want to support the definition via assignment
-	Object.defineProperty(Component, "_fnOnInstanceCreated", {
-		get : function () { return _aInstanceCreatedListeners[0]; },
-		set : function (fn) {
-			if (typeof fn === "function") {
-				_aInstanceCreatedListeners.push(fn);
-			} else {
-				// falsy values clear the list of listeners (a null assignment is used in different unit-tests)
-				_aInstanceCreatedListeners = [];
-			}
-		}
-	});
-
-	/**
-	 * Callback handler which will be executed once the manifest.json was
-	 * loaded for a component, but before the manifest is interpreted.
-	 * The loaded manifest will be passed into the registered function.
-	 *
-	 * The callback may modify the parsed manifest object and must return a Promise which
-	 * resolves with the manifest object. If the Promise is rejected, the component creation
-	 * fails with the rejection reason.
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.fl
-	 * @since 1.70.0
-	 */
-	Component._fnPreprocessManifest = null;
-
-
-	/**
-	 * Callback handler that executes when a manifest model is created.
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.fl
-	 */
-	Component._fnCreateModel = null;
-
-	/**
 	 * Asynchronously creates a new component instance from the given configuration.
 	 *
 	 * If the component class does not already exists, the component class is loaded and
@@ -2383,26 +2291,19 @@ sap.ui.define([
 			}
 		}
 
-		// collect instance-created listeners
-		function callInstanceCreatedListeners(oInstance, vConfig) {
-			return _aInstanceCreatedListeners.map(function(fn) {
-				return fn(oInstance, vConfig);
-			});
-		}
-
 		function notifyOnInstanceCreated(oInstance, vConfig) {
 			if (vConfig.async) {
 				var pRootControlReady = oInstance.rootControlLoaded ? oInstance.rootControlLoaded() : Promise.resolve();
 
 				// collect instance-created listeners
-				var aOnInstanceCreatedPromises = callInstanceCreatedListeners(oInstance, vConfig);
+				var aOnInstanceCreatedPromises = ComponentHooks.onInstanceCreated.execute(oInstance, vConfig) ||  [];
 
 				// root control loaded promise
 				aOnInstanceCreatedPromises.push(pRootControlReady);
 
 				return Promise.all(aOnInstanceCreatedPromises);
 			} else {
-				callInstanceCreatedListeners(oInstance, vConfig);
+				ComponentHooks.onInstanceCreated.execute(oInstance, vConfig);
 			}
 			return oInstance;
 		}
@@ -2642,21 +2543,22 @@ sap.ui.define([
 	};
 
 	/**
-	 * Internal loading method to decouple "sap.ui.component" / "sap.ui.component.load".
-	 *
-	 * @param {object} oConfig see <code>sap.ui.component</code> / <code>sap.ui.component.load</code>
-	 * @param {object} mOptions internal loading configurations
-	 * @param {string[]} mOptions.activeTerminologies list of active terminologies.
-	 *                   See the public API documentation for more detail: {@link sap.ui.core.Component.create Component.create}
-	 * @param {boolean} mOptions.failOnError see <code>sap.ui.component.load</code>
-	 * @param {boolean} mOptions.createModels whether models from manifest should be created during
-	 *                                        component preload (should only be set via <code>sap.ui.component</code>)
-	 * @param {boolean} mOptions.preloadOnly see <code>sap.ui.component.load</code> (<code>vConfig.asyncHints.preloadOnly</code>)
-	 * @param {Promise|Promise[]} mOptions.waitFor see <code>sap.ui.component</code> (<code>vConfig.asyncHints.waitFor</code>)
-	 * @return {function|Promise<function>} the constructor of the Component class or a Promise that will be fulfilled with the same
-	 *
-	 * @private
-	*/
+		 * Internal loading method used by the factory methods.
+		 *
+		 * @param {object} oConfig
+		 *     Configuration options as provided to the calling factory, see e.g. {@link sap.ui.core.Component.create}
+		 * @param {object} mOptions Additional, internal loading configuration
+		 * @param {string[]} mOptions.activeTerminologies list of active terminologies.
+		 *                   See the public API documentation for more detail: {@link sap.ui.core.Component.create Component.create}
+		 * @param {boolean} mOptions.failOnError see <code>sap.ui.component.load</code>
+		 * @param {boolean} mOptions.createModels whether models from manifest should be created during
+		 *                                        component preload (should only be set via <code>sap.ui.component</code>)
+		 * @param {boolean} mOptions.preloadOnly see <code>sap.ui.component.load</code> (<code>vConfig.asyncHints.preloadOnly</code>)
+		 * @param {Promise|Promise[]} mOptions.waitFor see <code>sap.ui.component</code> (<code>vConfig.asyncHints.waitFor</code>)
+		 * @return {function|Promise<function>} the constructor of the Component class or a Promise that will be fulfilled with the same
+		 *
+		 * @private
+		 */
 	function loadComponent(oConfig, mOptions) {
 		var aActiveTerminologies = mOptions.activeTerminologies,
 			sName = oConfig.name,
@@ -2673,23 +2575,19 @@ sap.ui.define([
 		function createSanitizedManifest( oRawManifestJSON, mOptions ) {
 			var oManifestCopy = JSON.parse(JSON.stringify(oRawManifestJSON));
 
-			if (oConfig.async) {
-				return preprocessManifestJSON(oManifestCopy).then(function(oFinalJSON) {
-					// oFinalJSON might be modified by the flex-hook
-					return new Manifest(oFinalJSON, mOptions);
-				});
-			} else {
-				return new Manifest(oManifestCopy, mOptions);
-			}
+			return preprocessManifestJSON(oManifestCopy).then(function(oFinalJSON) {
+				// oFinalJSON might be modified by the flex-hook
+				return new Manifest(oFinalJSON, mOptions);
+			});
 		}
 
 		function preprocessManifestJSON(oRawJson) {
 			// the preprocessing flex-hook is only called if a manifest.json was loaded or an object was given via config
-			if (typeof Component._fnPreprocessManifest === "function" && oRawJson != null) {
+			if (ComponentHooks.onPreprocessManifest.isRegistered() && oRawJson != null) {
 				try {
 					// secure configuration from manipulation
 					var oConfigCopy = deepExtend({}, oConfig);
-					return Component._fnPreprocessManifest(oRawJson, oConfigCopy);
+					return ComponentHooks.onPreprocessManifest.execute(oRawJson, oConfigCopy);
 				} catch (oError) {
 					// in case the hook itself crashes without 'safely' rejecting, we log the error and reject directly
 					Log.error("Failed to execute flexibility hook for manifest preprocessing.", oError);
@@ -2715,14 +2613,10 @@ sap.ui.define([
 		Interaction.setStepComponent(sName);
 
 		if (vManifest !== undefined) {
-			// in case of manifest property is set, by default we load async
-			if ( oConfig.async === undefined ) {
-				oConfig.async = true;
-			}
 			// determine the semantic of the manifest property
 			bManifestFirst = !!vManifest;
 			sManifestUrl = vManifest && typeof vManifest === 'string' ? vManifest : undefined;
-			oManifest = vManifest && typeof vManifest === 'object' ? createSanitizedManifest(vManifest, {url: oConfig && oConfig.altManifestUrl, activeTerminologies: aActiveTerminologies, process: !oConfig.async}) : undefined;
+			oManifest = vManifest && typeof vManifest === 'object' ? createSanitizedManifest(vManifest, {url: oConfig && oConfig.altManifestUrl, activeTerminologies: aActiveTerminologies, process: false}) : undefined;
 		}
 
 		// if we find a manifest URL in the configuration
@@ -2733,7 +2627,7 @@ sap.ui.define([
 				manifestUrl: sManifestUrl,
 				componentName: sName,
 				processJson: preprocessManifestJSON,
-				async: oConfig.async,
+				async: true,
 				// If a dedicated manifest URL is given, e.g. for a Variant
 				// we expect that the Manifest can be loaded successfully
 				// If not, the manifest loading promise rejects and the further Component creation is stopped
@@ -2741,20 +2635,9 @@ sap.ui.define([
 			});
 		}
 
-		// once the manifest is available we extract the controller name
-		if (oManifest && !oConfig.async) {
-			sName = oManifest.getComponentName();
-
-			// if a component name and a URL is given, we register this URL for the name of the component:
-			// the name is the package in which the component is located (dot separated)
-			if (sName && typeof sUrl === 'string') {
-				registerModulePath(sName, sUrl);
-			}
-		}
-
 		// Only if loading a manifest is done asynchronously we will skip the
 		// name check because this will be done once the manifest is loaded!
-		if (!(oManifest && oConfig.async)) {
+		if (!(oManifest)) {
 
 			// check for an existing name
 			if (!sName) {
@@ -2775,7 +2658,7 @@ sap.ui.define([
 				activeTerminologies: aActiveTerminologies,
 				manifestUrl: getManifestUrl(sName),
 				componentName: sName,
-				async: oConfig.async,
+				async: true,
 				processJson: preprocessManifestJSON,
 				// Legacy components might not have a manifest.json but use the Component metadata instead.
 				// For compatibility reasons we don't want to break the Component creation in these cases.
@@ -2984,468 +2867,444 @@ sap.ui.define([
 
 		}
 
-		if ( oConfig.async ) {
-
-			// trigger loading of libraries and component preloads and collect the given promises
-			var hints = oConfig.asyncHints || {},
-				promises = [],
-				reflect = function(oPromise) {
-					// In order to make the error handling of the Promise.all() happen after all Promises finish, we catch all rejected Promises and make them resolve with an marked object.
-					oPromise = oPromise.then(
-						function(v) {
-							return {
-								result: v,
-								rejected: false
-							};
-						},
-						function(v) {
-							return {
-								result: v,
-								rejected: true
-							};
-						}
-					);
-					return oPromise;
-				},
-				collect = function(oPromise) {
-					if ( oPromise ) {
-						promises.push(reflect(oPromise));
+		// trigger loading of libraries and component preloads and collect the given promises
+		var hints = oConfig.asyncHints || {},
+			promises = [],
+			reflect = function(oPromise) {
+				// In order to make the error handling of the Promise.all() happen after all Promises finish, we catch all rejected Promises and make them resolve with an marked object.
+				oPromise = oPromise.then(
+					function(v) {
+						return {
+							result: v,
+							rejected: false
+						};
+					},
+					function(v) {
+						return {
+							result: v,
+							rejected: true
+						};
 					}
-				},
-				identity = function($) { return $; },
-				phase1Preloads,
-				libs;
-
-			phase1Preloads = [];
-
-			// load any required preload bundles
-			if ( Array.isArray(hints.preloadBundles) ) {
-				hints.preloadBundles.forEach(function(vBundle) {
-					phase1Preloads.push(
-						sap.ui.loader._.loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true) );
-				});
-			}
-
-			// preload any libraries
-			if ( Array.isArray(hints.libs) ) {
-				libs = hints.libs.map(processOptions).filter(identity);
-				phase1Preloads.push(
-					Library._load( libs, { preloadOnly: true } )
 				);
-			}
+				return oPromise;
+			},
+			collect = function(oPromise) {
+				if ( oPromise ) {
+					promises.push(reflect(oPromise));
+				}
+			},
+			identity = function($) { return $; },
+			phase1Preloads,
+			libs;
 
-			// sync preloadBundles and preloads of libraries first before requiring the libs
-			// Note: component preloads are assumed to be always independent from libs
-			// therefore those requests are not synchronized with the require calls for the libs
-			phase1Preloads = Promise.all( phase1Preloads );
-			if ( libs && !mOptions.preloadOnly ) {
-				phase1Preloads = phase1Preloads.then( function() {
-					return Library._load( libs );
+		phase1Preloads = [];
+
+		// load any required preload bundles
+		if ( Array.isArray(hints.preloadBundles) ) {
+			hints.preloadBundles.forEach(function(vBundle) {
+				phase1Preloads.push(
+					sap.ui.loader._.loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true) );
+			});
+		}
+
+		// preload any libraries
+		if ( Array.isArray(hints.libs) ) {
+			libs = hints.libs.map(processOptions).filter(identity);
+			phase1Preloads.push(
+				Library._load( libs, { preloadOnly: true } )
+			);
+		}
+
+		// sync preloadBundles and preloads of libraries first before requiring the libs
+		// Note: component preloads are assumed to be always independent from libs
+		// therefore those requests are not synchronized with the require calls for the libs
+		phase1Preloads = Promise.all( phase1Preloads );
+		if ( libs && !mOptions.preloadOnly ) {
+			phase1Preloads = phase1Preloads.then( function() {
+				return Library._load( libs );
+			});
+		}
+		collect( phase1Preloads );
+
+		// if a hint about "used" components is given, preload those components
+		if ( hints.components ) {
+			Object.keys(hints.components).forEach(function(sComp) {
+				collect(preload(processOptions(hints.components[sComp]), true));
+			});
+		}
+
+		// preload the component itself
+		if (!oManifest) {
+			collect(preload(sName, true));
+		} else {
+			var aI18nProperties = [];
+			// // we have a manifest, so we can register the module path for the component
+			// // and resolve any "ui5://" pseudo-protocol URLs inside.
+			// // This needs to be done before we create the "afterPreload" models.
+			oManifest = oManifest.then(function(oManifest) {
+				// if a URL is given we register this URL for the name of the component:
+				// the name is the package in which the component is located (dot separated)
+				var sComponentName = oManifest.getComponentName();
+
+				if (typeof sUrl === 'string') {
+					registerModulePath(sComponentName, sUrl);
+				}
+
+				// define resource roots, so they can be respected for "ui5://..." URL resolution
+				oManifest.defineResourceRoots();
+
+				oManifest._preprocess({
+					resolveUI5Urls: true,
+					i18nProperties: aI18nProperties
 				});
-			}
-			collect( phase1Preloads );
 
-			// if a hint about "used" components is given, preload those components
-			if ( hints.components ) {
-				Object.keys(hints.components).forEach(function(sComp) {
-					collect(preload(processOptions(hints.components[sComp]), true));
-				});
-			}
+				return oManifest;
+			});
 
-			// preload the component itself
-			if (!oManifest) {
-				collect(preload(sName, true));
-			} else {
-				var aI18nProperties = [];
-				// // we have a manifest, so we can register the module path for the component
-				// // and resolve any "ui5://" pseudo-protocol URLs inside.
-				// // This needs to be done before we create the "afterPreload" models.
-				oManifest = oManifest.then(function(oManifest) {
-					// if a URL is given we register this URL for the name of the component:
-					// the name is the package in which the component is located (dot separated)
+			// create "afterPreload" models in parallel to loading the component preload (below)
+			if (mOptions.createModels) {
+				collect(oManifest.then(async function(oManifest) {
 					var sComponentName = oManifest.getComponentName();
+					// Calculate configurations of preloaded models once the manifest is available
+					mPreloadModelConfigs = getPreloadModelConfigsFromManifest(oManifest);
 
-					if (typeof sUrl === 'string') {
-						registerModulePath(sComponentName, sUrl);
+					// Create preloaded models directly after the manifest has been loaded
+					if (Object.keys(mPreloadModelConfigs.afterManifest).length > 0) {
+						await Component._loadManifestModelClasses(mPreloadModelConfigs.afterManifest, sComponentName);
+
+						// deep clone is needed as manifest only returns a read-only copy (frozen object)
+						var oManifestDataSources = merge({}, oManifest.getEntry("/sap.app/dataSources"));
+						var mAllModelConfigurations = Component._createManifestModelConfigurations({
+							models: mPreloadModelConfigs.afterManifest,
+							dataSources: oManifestDataSources,
+							manifest: oManifest,
+							componentData: oConfig.componentData,
+							cacheTokens: hints.cacheTokens,
+							activeTerminologies: aActiveTerminologies
+						});
+
+						mModels = Component._createManifestModels(mAllModelConfigurations, oConfig);
 					}
-
-					// define resource roots, so they can be respected for "ui5://..." URL resolution
-					oManifest.defineResourceRoots();
-
-					oManifest._preprocess({
-						resolveUI5Urls: true,
-						i18nProperties: aI18nProperties
-					});
 
 					return oManifest;
-				});
-
-				// create "afterPreload" models in parallel to loading the component preload (below)
-				if (mOptions.createModels) {
-					collect(oManifest.then(async function(oManifest) {
-						var sComponentName = oManifest.getComponentName();
-						// Calculate configurations of preloaded models once the manifest is available
-						mPreloadModelConfigs = getPreloadModelConfigsFromManifest(oManifest);
-
-						// Create preloaded models directly after the manifest has been loaded
-						if (Object.keys(mPreloadModelConfigs.afterManifest).length > 0) {
-							await Component._loadManifestModelClasses(mPreloadModelConfigs.afterManifest, sComponentName);
-
-							// deep clone is needed as manifest only returns a read-only copy (frozen object)
-							var oManifestDataSources = merge({}, oManifest.getEntry("/sap.app/dataSources"));
-							var mAllModelConfigurations = Component._createManifestModelConfigurations({
-								models: mPreloadModelConfigs.afterManifest,
-								dataSources: oManifestDataSources,
-								manifest: oManifest,
-								componentData: oConfig.componentData,
-								cacheTokens: hints.cacheTokens,
-								activeTerminologies: aActiveTerminologies
-							});
-
-							mModels = Component._createManifestModels(mAllModelConfigurations, oConfig);
-						}
-
-						return oManifest;
-					}));
-				}
-
-				// in case of manifest first we need to load the manifest
-				// to know the component name and then preload the component itself
-				collect(oManifest.then(function(oManifest) {
-
-					// preload the component only if not embedded in a library
-					// If the Component controller is not preloaded, the Component.js file is loaded as a single request later on.
-					// This situation should be fixed by the factory caller, so we log it as a warning.
-					var pPreload = Promise.resolve();
-					var sEmbeddedBy = oManifest.getEntry("/sap.app/embeddedBy");
-					var sComponentName = oManifest.getComponentName();
-					if (!sEmbeddedBy) {
-						pPreload = preload(sComponentName, true);
-					} else if (!sap.ui.loader._.getModuleState(getControllerModuleName() + ".js")) {
-						Log.warning(
-							"Component '" + sComponentName + "' is defined to be embedded in a library or another component" +
-							"The relatively given preload for the embedding resource was not loaded before hand. " +
-							"Please make sure to load the embedding resource containing this Component before instantiating.",
-							undefined,
-							"sap.ui.core.Component#embeddedBy"
-						);
-					}
-
-					return pPreload.then(function() {
-						// after preload is finished, load the i18n resource and process the placeholder texts
-						return oManifest._processI18n(true, aI18nProperties);
-					}).then(function() {
-						// after i18n resource is finished, the resource models from the manifest are loaded
-
-						if (!mOptions.createModels) {
-							return null;
-						}
-
-						var aResourceModelNames = Object.keys(mPreloadModelConfigs.afterPreload);
-
-						if (aResourceModelNames.length === 0) {
-							return null;
-						}
-
-						// if there are resource models to be loaded, load the resource bundle async first.
-						// a promise is returned which resolves after all resource models are loaded
-						return new Promise(function(resolve, reject) {
-							// load the sap.ui.model/resource/ResourceModel class async if it's not loaded yet
-							sap.ui.require(["sap/ui/model/resource/ResourceModel"], function(ResourceModel) {
-								// Directly resolve as otherwise uncaught exceptions can't be handled
-								resolve(ResourceModel);
-							}, reject);
-						}).then(function(ResourceModel) {
-
-							// deep clone is needed as manifest only returns a read-only copy (frozen object)
-							var oManifestDataSources = merge({}, oManifest.getEntry("/sap.app/dataSources"));
-							var mAfterPreloadModelConfigurations = Component._createManifestModelConfigurations({
-								models: mPreloadModelConfigs.afterPreload,
-								dataSources: oManifestDataSources,
-								manifest: oManifest,
-								componentData: oConfig.componentData,
-								cacheTokens: hints.cacheTokens,
-								activeTerminologies: aActiveTerminologies
-							});
-
-							function loadResourceBundle(sModelName) {
-								var mModelConfig = mAfterPreloadModelConfigurations[sModelName];
-								if (Array.isArray(mModelConfig.settings) && mModelConfig.settings.length > 0) {
-									var mModelSettings = mModelConfig.settings[0]; // first argument is the config map
-
-									// in order to load the whole ResourceBundle/terminologies closure upfront
-									// we need pass the active terminologies to the ResourceModel/-Bundle.
-									mModelSettings.activeTerminologies = mOptions.activeTerminologies;
-
-									return ResourceModel.loadResourceBundle(mModelSettings, true).then(function(oResourceBundle) {
-										// Extend the model settings with the preloaded bundle so that no sync request
-										// is triggered once the model gets created
-										mModelSettings.bundle = oResourceBundle;
-
-										/*
-										 * Compatibility concerning ResourceModel API:
-										 * If active terminologies were given we need to remove the "enhanceWith", "terminologies" and "activeTerminologies"
-										 * parameters from the model settings. The ResourceModel's constructor does not accept a mixed scenario
-										 * where a constructed bundle, as well as additional enhance bundles with terminologies, are given.
-										 */
-										delete mModelSettings.terminologies;
-										delete mModelSettings.activeTerminologies;
-										delete mModelSettings.enhanceWith;
-
-									}, function(err) {
-										Log.error("Component Manifest: Could not preload ResourceBundle for ResourceModel. " +
-											"The model will be skipped here and tried to be created on Component initialization.",
-											"[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", oManifest.getComponentName());
-										Log.error(err);
-
-										// If the resource bundle can't be loaded, the resource model will be skipped.
-										// But once the component instance gets created, the model will be tried to created again.
-										delete mAfterPreloadModelConfigurations[sModelName];
-									});
-								} else {
-									// Can't load bundle as no settings are defined.
-									// Should not happen as those models won't be part of "afterPreload"
-									return Promise.resolve();
-								}
-							}
-
-							// Load all ResourceBundles for all models in parallel
-							return Promise.all(aResourceModelNames.map(loadResourceBundle)).then(function() {
-								if (Object.keys(mAfterPreloadModelConfigurations).length > 0) {
-									var mResourceModels = Component._createManifestModels(mAfterPreloadModelConfigurations);
-									if (!mModels) {
-										mModels = {};
-									}
-									for (var sKey in mResourceModels) {
-										mModels[sKey] = mResourceModels[sKey];
-									}
-								}
-							});
-						});
-					});
 				}));
-
-				fnCallLoadComponentCallback = function(oLoadedManifest) {
-					// if a callback is registered to the component load, call it with the configuration
-					if (typeof Component._fnLoadComponentCallback === "function") {
-						// secure configuration from manipulation, manifest can be adjusted by late changes
-						var oConfigCopy = deepExtend({}, oConfig);
-						// trigger the callback with a copy of its required data
-						// do not await any result from the callback nor stop component loading on an occurring error
-						try {
-							return Component._fnLoadComponentCallback(oConfigCopy, oLoadedManifest);
-						} catch (oError) {
-							future.errorThrows("Callback for loading the component \"" + oLoadedManifest.getComponentName() +
-								"\" run into an error.", { cause: oError , suffix: "The callback was skipped and the component loading resumed." }, oError, "sap.ui.core.Component");
-						}
-					}
-				};
 			}
 
-			// combine given promises
-			return Promise.all(promises).then(function(v) {
-				// If any promise is rejected, a new rejected Promise is forwarded on the chain which leads to the catch clause
-				var aResults = [],
-					bErrorFound = false,
-					vError;
+			// in case of manifest first we need to load the manifest
+			// to know the component name and then preload the component itself
+			collect(oManifest.then(function(oManifest) {
 
-				bErrorFound = v.some(function(oResult) {
-					if (oResult && oResult.rejected) {
-						vError = oResult.result;
-						return true;
+				// preload the component only if not embedded in a library
+				// If the Component controller is not preloaded, the Component.js file is loaded as a single request later on.
+				// This situation should be fixed by the factory caller, so we log it as a warning.
+				var pPreload = Promise.resolve();
+				var sEmbeddedBy = oManifest.getEntry("/sap.app/embeddedBy");
+				var sComponentName = oManifest.getComponentName();
+				if (!sEmbeddedBy) {
+					pPreload = preload(sComponentName, true);
+				} else if (!sap.ui.loader._.getModuleState(getControllerModuleName() + ".js")) {
+					Log.warning(
+						"Component '" + sComponentName + "' is defined to be embedded in a library or another component" +
+						"The relatively given preload for the embedding resource was not loaded before hand. " +
+						"Please make sure to load the embedding resource containing this Component before instantiating.",
+						undefined,
+						"sap.ui.core.Component#embeddedBy"
+					);
+				}
+
+				return pPreload.then(function() {
+					// after preload is finished, load the i18n resource and process the placeholder texts
+					return oManifest._processI18n(true, aI18nProperties);
+				}).then(function() {
+					// after i18n resource is finished, the resource models from the manifest are loaded
+
+					if (!mOptions.createModels) {
+						return null;
 					}
-					aResults.push(oResult.result);
-					return false;
-				});
 
-				if (bErrorFound) {
-					return Promise.reject(vError);
-				}
+					var aResourceModelNames = Object.keys(mPreloadModelConfigs.afterPreload);
 
-				return aResults;
-			}).then(function (v) {
-				// after all promises including the loading of dependent libs have been resolved
-				// pass the manifest to the callback function in case the manifest is present and a callback was set
-				if (oManifest && fnCallLoadComponentCallback) {
-					return oManifest.then(fnCallLoadComponentCallback).then(function() {
-						return v;
-					});
-				}
-				return v;
-			}).then(function(v) {
-				Log.debug("Component.load: all promises fulfilled, then " + v);
-				if (oManifest) {
-					return oManifest.then(function(oLoadedManifest) {
-						if (!oLoadedManifest._bLoadManifestRequestFailed) {
-							// store the loaded manifest in the oManifest variable
-							// which is used for the scope constructor function
-							oManifest = oLoadedManifest;
-							// read the component name from the manifest and
-							// preload the dependencies defined in the manifest
-							sName = oManifest.getComponentName();
-							return preloadDependencies(sName, oManifest, true);
-						} else {
-							// Set oManifest to undefined in case the loadManifest request failed
-							// This should be only the case if manifestFirst is true but there was
-							// no manifest.json
-							oManifest = undefined;
-							return oManifest;
+					if (aResourceModelNames.length === 0) {
+						return null;
+					}
+
+					// if there are resource models to be loaded, load the resource bundle async first.
+					// a promise is returned which resolves after all resource models are loaded
+					return new Promise(function(resolve, reject) {
+						// load the sap.ui.model/resource/ResourceModel class async if it's not loaded yet
+						sap.ui.require(["sap/ui/model/resource/ResourceModel"], function(ResourceModel) {
+							// Directly resolve as otherwise uncaught exceptions can't be handled
+							resolve(ResourceModel);
+						}, reject);
+					}).then(function(ResourceModel) {
+
+						// deep clone is needed as manifest only returns a read-only copy (frozen object)
+						var oManifestDataSources = merge({}, oManifest.getEntry("/sap.app/dataSources"));
+						var mAfterPreloadModelConfigurations = Component._createManifestModelConfigurations({
+							models: mPreloadModelConfigs.afterPreload,
+							dataSources: oManifestDataSources,
+							manifest: oManifest,
+							componentData: oConfig.componentData,
+							cacheTokens: hints.cacheTokens,
+							activeTerminologies: aActiveTerminologies
+						});
+
+						function loadResourceBundle(sModelName) {
+							var mModelConfig = mAfterPreloadModelConfigurations[sModelName];
+							if (Array.isArray(mModelConfig.settings) && mModelConfig.settings.length > 0) {
+								var mModelSettings = mModelConfig.settings[0]; // first argument is the config map
+
+								// in order to load the whole ResourceBundle/terminologies closure upfront
+								// we need pass the active terminologies to the ResourceModel/-Bundle.
+								mModelSettings.activeTerminologies = mOptions.activeTerminologies;
+
+								return ResourceModel.loadResourceBundle(mModelSettings, true).then(function(oResourceBundle) {
+									// Extend the model settings with the preloaded bundle so that no sync request
+									// is triggered once the model gets created
+									mModelSettings.bundle = oResourceBundle;
+
+									/*
+									 * Compatibility concerning ResourceModel API:
+									 * If active terminologies were given we need to remove the "enhanceWith", "terminologies" and "activeTerminologies"
+									 * parameters from the model settings. The ResourceModel's constructor does not accept a mixed scenario
+									 * where a constructed bundle, as well as additional enhance bundles with terminologies, are given.
+									 */
+									delete mModelSettings.terminologies;
+									delete mModelSettings.activeTerminologies;
+									delete mModelSettings.enhanceWith;
+
+								}, function(err) {
+									Log.error("Component Manifest: Could not preload ResourceBundle for ResourceModel. " +
+										"The model will be skipped here and tried to be created on Component initialization.",
+										"[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", oManifest.getComponentName());
+									Log.error(err);
+
+									// If the resource bundle can't be loaded, the resource model will be skipped.
+									// But once the component instance gets created, the model will be tried to created again.
+									delete mAfterPreloadModelConfigurations[sModelName];
+								});
+							} else {
+								// Can't load bundle as no settings are defined.
+								// Should not happen as those models won't be part of "afterPreload"
+								return Promise.resolve();
+							}
 						}
+
+						// Load all ResourceBundles for all models in parallel
+						return Promise.all(aResourceModelNames.map(loadResourceBundle)).then(function() {
+							if (Object.keys(mAfterPreloadModelConfigurations).length > 0) {
+								var mResourceModels = Component._createManifestModels(mAfterPreloadModelConfigurations);
+								if (!mModels) {
+									mModels = {};
+								}
+								for (var sKey in mResourceModels) {
+									mModels[sKey] = mResourceModels[sKey];
+								}
+							}
+						});
 					});
-				} else {
-					return v;
+				});
+			}));
+
+			fnCallLoadComponentCallback = function(oLoadedManifest) {
+				// if a callback is registered to the component load, call it with the configuration
+				if (ComponentHooks.onComponentLoaded.isRegistered()) {
+					// secure configuration from manipulation, manifest can be adjusted by late changes
+					var oConfigCopy = deepExtend({}, oConfig);
+					// trigger the callback with a copy of its required data
+					// do not await any result from the callback nor stop component loading on an occurring error
+					try {
+						return ComponentHooks.onComponentLoaded.execute(oConfigCopy, oLoadedManifest);
+					} catch (oError) {
+						future.errorThrows("Callback for loading the component \"" + oLoadedManifest.getComponentName() +
+							"\" run into an error.", { cause: oError , suffix: "The callback was skipped and the component loading resumed." }, oError, "sap.ui.core.Component");
+					}
 				}
-			}).then(function() {
-				if ( mOptions.preloadOnly ) {
+			};
+		}
+
+		// combine given promises
+		return Promise.all(promises).then(function(v) {
+			// If any promise is rejected, a new rejected Promise is forwarded on the chain which leads to the catch clause
+			var aResults = [],
+				bErrorFound = false,
+				vError;
+
+			bErrorFound = v.some(function(oResult) {
+				if (oResult && oResult.rejected) {
+					vError = oResult.result;
 					return true;
 				}
+				aResults.push(oResult.result);
+				return false;
+			});
 
-				return new Promise(function(resolve, reject) {
-					// asynchronously require component controller class
-					sap.ui.require( [ getControllerModuleName() ], function(oClass) {
-						// Directly resolve as otherwise uncaught exceptions can't be handled
-						resolve(oClass);
-					}, reject);
-				}).then(function(oClass) {
-					var oMetadata = oClass.getMetadata();
-					var sName = oMetadata.getComponentName();
-					var sDefaultManifestUrl = getManifestUrl(sName);
-					var aPromises = [];
+			if (bErrorFound) {
+				return Promise.reject(vError);
+			}
 
-					// Check if we loaded the manifest.json from the default location
-					// In this case it can be directly passed to its metadata class to prevent an additional request
-					if (oManifest && typeof vManifest !== "object" && (typeof sManifestUrl === "undefined" || sManifestUrl === sDefaultManifestUrl)) {
-						// We could use oManifest.getJson() to avoid calling '_processI18n(true)' at the next line.
-						// However, we have to use oManifest.getRawJson() instead of oManifest.getJson() because the
-						//  urls start with "ui5://" are already resolved in the oManifest.getJson() and
-						//  ComponentMetadata needs to keep them unresolved until the resource roots are set.
-						oMetadata._applyManifest(JSON.parse(JSON.stringify(oManifest.getRawJson())), true /* skip processing */);
-						aPromises.push(oMetadata.getManifestObject()._processI18n(true));
-					}
-
-					aPromises.push(loadManifests(oMetadata));
-
-					return Promise.all(aPromises).then(function() {
-
-						// The following processing of the sap.app/i18n resources happens under two conditions:
-						//    1. The manifest is defined in the component metadata (no Manifest object yet)
-						//    2. We have instance specific information (activeTerminologies)
-						// In case of a manifest-first approach (Manifest object exists already),
-						// the i18n processing has already happened and we skip this part.
-
-						// Why do we set the oManifest object here?
-						// > If we have instance specific information like "activeTerminologies" (non-empty array), the resulting
-						//   Manifest instance differs from the Manifest that is stored on the ComponentMetadata.
-						//   The function prepareControllerClass() then creates a ComponentMetadata Proxy,
-						//   which encapsulates this single instance specific Manifest object.
-						var pProcessI18n = Promise.resolve();
-						if (!oManifest && Array.isArray(mOptions.activeTerminologies) && mOptions.activeTerminologies.length > 0) {
-							oManifest = new Manifest(oMetadata.getManifestObject().getRawJson(), {
-								process: false,
-								activeTerminologies: aActiveTerminologies
-							});
-							pProcessI18n = oManifest._processI18n(true);
-						}
-
-						// prepare the loaded class and resolve with it
-						return pProcessI18n.then(prepareControllerClass.bind(undefined, oClass));
-					});
+			return aResults;
+		}).then(function (v) {
+			// after all promises including the loading of dependent libs have been resolved
+			// pass the manifest to the callback function in case the manifest is present and a callback was set
+			if (oManifest && fnCallLoadComponentCallback) {
+				return oManifest.then(fnCallLoadComponentCallback).then(function() {
+					return v;
 				});
-			}).then(function(oControllerClass) {
-				if (!oManifest) {
-					return oControllerClass;
-				}
-
-				// collect routing related class names for async loading
-				const oClassMetadata = oControllerClass.getMetadata();
-				const aModuleNames = findRoutingClasses(oClassMetadata);
-
-				// lookup model classes
-				var mManifestModels = merge({}, oManifest.getEntry("/sap.ui5/models"));
-				var mManifestDataSources = merge({}, oManifest.getEntry("/sap.app/dataSources"));
-				var mAllModelConfigurations = Component._findManifestModelClasses({
-					models: mManifestModels,
-					dataSources: mManifestDataSources,
-					componentName: oManifest.getComponentName()
+			}
+			return v;
+		}).then(function(v) {
+			Log.debug("Component.load: all promises fulfilled, then " + v);
+			if (oManifest) {
+				return oManifest.then(function(oLoadedManifest) {
+					if (!oLoadedManifest._bLoadManifestRequestFailed) {
+						// store the loaded manifest in the oManifest variable
+						// which is used for the scope constructor function
+						oManifest = oLoadedManifest;
+						// read the component name from the manifest and
+						// preload the dependencies defined in the manifest
+						sName = oManifest.getComponentName();
+						return preloadDependencies(sName, oManifest, true);
+					} else {
+						// Set oManifest to undefined in case the loadManifest request failed
+						// This should be only the case if manifestFirst is true but there was
+						// no manifest.json
+						oManifest = undefined;
+						return oManifest;
+					}
 				});
-				for (var mModelName in mAllModelConfigurations) {
-					if (!mAllModelConfigurations.hasOwnProperty(mModelName)) {
-						continue;
-					}
-					var oModelConfig = mAllModelConfigurations[mModelName];
-					if (!oModelConfig.type) {
-						continue;
-					}
-					var sModuleName = oModelConfig.type.replace(/\./g, "/");
-					if (aModuleNames.indexOf(sModuleName) === -1) {
-						aModuleNames.push(sModuleName);
-					}
+			} else {
+				return v;
+			}
+		}).then(function() {
+			if ( mOptions.preloadOnly ) {
+				return true;
+			}
+
+			return new Promise(function(resolve, reject) {
+				// asynchronously require component controller class
+				sap.ui.require( [ getControllerModuleName() ], function(oClass) {
+					// Directly resolve as otherwise uncaught exceptions can't be handled
+					resolve(oClass);
+				}, reject);
+			}).then(function(oClass) {
+				var oMetadata = oClass.getMetadata();
+				var sName = oMetadata.getComponentName();
+				var sDefaultManifestUrl = getManifestUrl(sName);
+				var aPromises = [];
+
+				// Check if we loaded the manifest.json from the default location
+				// In this case it can be directly passed to its metadata class to prevent an additional request
+				if (oManifest && typeof vManifest !== "object" && (typeof sManifestUrl === "undefined" || sManifestUrl === sDefaultManifestUrl)) {
+					// We could use oManifest.getJson() to avoid calling '_processI18n(true)' at the next line.
+					// However, we have to use oManifest.getRawJson() instead of oManifest.getJson() because the
+					//  urls start with "ui5://" are already resolved in the oManifest.getJson() and
+					//  ComponentMetadata needs to keep them unresolved until the resource roots are set.
+					oMetadata._applyManifest(JSON.parse(JSON.stringify(oManifest.getRawJson())), true /* skip processing */);
+					aPromises.push(oMetadata.getManifestObject()._processI18n(true));
 				}
 
-				if (aModuleNames.length > 0) {
-					const sComponentName = oManifest.getComponentName();
-					return Promise.all(aModuleNames.map(function(sModuleName) {
-						// All modules are required separately to have a better error logging.
-						// Most of the classes collected here will be instantiated during the (UI)Component constructor.
-						// The upfront async loading is done to prevent synchronous loading during instantiation.
-						// If loading fails, the component should still be created which might fail once the required module is actually used / loaded.
-						return loadModuleAndLog(sModuleName, sComponentName);
-					})).then(function() {
-						return oControllerClass;
-					});
-				} else {
-					return oControllerClass;
-				}
-			}).then(function(oControllerClass) {
-				var waitFor = mOptions.waitFor;
-				if (waitFor) {
-					// when waitFor Promises have been specified we also wait for
-					// them before we call the component constructor
-					var aPromises = Array.isArray(waitFor) ? waitFor : [ waitFor ];
-					return Promise.all(aPromises).then(function() {
-						return oControllerClass;
-					});
-				}
+				aPromises.push(loadManifests(oMetadata));
+
+				return Promise.all(aPromises).then(function() {
+
+					// The following processing of the sap.app/i18n resources happens under two conditions:
+					//    1. The manifest is defined in the component metadata (no Manifest object yet)
+					//    2. We have instance specific information (activeTerminologies)
+					// In case of a manifest-first approach (Manifest object exists already),
+					// the i18n processing has already happened and we skip this part.
+
+					// Why do we set the oManifest object here?
+					// > If we have instance specific information like "activeTerminologies" (non-empty array), the resulting
+					//   Manifest instance differs from the Manifest that is stored on the ComponentMetadata.
+					//   The function prepareControllerClass() then creates a ComponentMetadata Proxy,
+					//   which encapsulates this single instance specific Manifest object.
+					var pProcessI18n = Promise.resolve();
+					if (!oManifest && Array.isArray(mOptions.activeTerminologies) && mOptions.activeTerminologies.length > 0) {
+						oManifest = new Manifest(oMetadata.getManifestObject().getRawJson(), {
+							process: false,
+							activeTerminologies: aActiveTerminologies
+						});
+						pProcessI18n = oManifest._processI18n(true);
+					}
+
+					// prepare the loaded class and resolve with it
+					return pProcessI18n.then(prepareControllerClass.bind(undefined, oClass));
+				});
+			});
+		}).then(function(oControllerClass) {
+			if (!oManifest) {
 				return oControllerClass;
-			}).catch(function(vError) {
-				// handle preload errors
+			}
 
-				// destroy "preloaded" models in case of any error to prevent memory leaks
-				if (mModels) {
-					for (var sName in mModels) {
-						var oModel = mModels[sName];
-						if (oModel && typeof oModel.destroy === "function") {
-							oModel.destroy();
-						}
+			// collect routing related class names for async loading
+			const oClassMetadata = oControllerClass.getMetadata();
+			const aModuleNames = findRoutingClasses(oClassMetadata);
+
+			// lookup model classes
+			var mManifestModels = merge({}, oManifest.getEntry("/sap.ui5/models"));
+			var mManifestDataSources = merge({}, oManifest.getEntry("/sap.app/dataSources"));
+			var mAllModelConfigurations = Component._findManifestModelClasses({
+				models: mManifestModels,
+				dataSources: mManifestDataSources,
+				componentName: oManifest.getComponentName()
+			});
+			for (var mModelName in mAllModelConfigurations) {
+				if (!mAllModelConfigurations.hasOwnProperty(mModelName)) {
+					continue;
+				}
+				var oModelConfig = mAllModelConfigurations[mModelName];
+				if (!oModelConfig.type) {
+					continue;
+				}
+				var sModuleName = oModelConfig.type.replace(/\./g, "/");
+				if (aModuleNames.indexOf(sModuleName) === -1) {
+					aModuleNames.push(sModuleName);
+				}
+			}
+
+			if (aModuleNames.length > 0) {
+				const sComponentName = oManifest.getComponentName();
+				return Promise.all(aModuleNames.map(function(sModuleName) {
+					// All modules are required separately to have a better error logging.
+					// Most of the classes collected here will be instantiated during the (UI)Component constructor.
+					// The upfront async loading is done to prevent synchronous loading during instantiation.
+					// If loading fails, the component should still be created which might fail once the required module is actually used / loaded.
+					return loadModuleAndLog(sModuleName, sComponentName);
+				})).then(function() {
+					return oControllerClass;
+				});
+			} else {
+				return oControllerClass;
+			}
+		}).then(function(oControllerClass) {
+			var waitFor = mOptions.waitFor;
+			if (waitFor) {
+				// when waitFor Promises have been specified we also wait for
+				// them before we call the component constructor
+				var aPromises = Array.isArray(waitFor) ? waitFor : [ waitFor ];
+				return Promise.all(aPromises).then(function() {
+					return oControllerClass;
+				});
+			}
+			return oControllerClass;
+		}).catch(function(vError) {
+			// handle preload errors
+
+			// destroy "preloaded" models in case of any error to prevent memory leaks
+			if (mModels) {
+				for (var sName in mModels) {
+					var oModel = mModels[sName];
+					if (oModel && typeof oModel.destroy === "function") {
+						oModel.destroy();
 					}
 				}
+			}
 
-				// re-throw error to hand it over to the application
-				throw vError;
+			// re-throw error to hand it over to the application
+			throw vError;
 
-			});
-
-		}
-
-		/**
-		 * Sync creation path
-		 */
-		if (oManifest) {
-
-			// define resource roots, so they can be respected for "ui5://..." URL resolution
-			oManifest.defineResourceRoots();
-
-			oManifest._preprocess({
-				resolveUI5Urls: true
-			});
-			preloadDependencies(sName, oManifest);
-		}
-		preload(sName);
-
-		// synchronously load the controller class, prepare and return it
-		return prepareControllerClass(
-			sap.ui.requireSync( getControllerModuleName() ) // legacy-relevant: Sync path
-		);
+		});
 	}
 
 	/**

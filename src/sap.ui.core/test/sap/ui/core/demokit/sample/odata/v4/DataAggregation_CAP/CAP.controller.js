@@ -27,6 +27,7 @@ sap.ui.define([
 					bBookingID = oUriParameters.has("BookingID"),
 					sFilter = oUriParameters.get("filter"),
 					sGrandTotalAtBottomOnly = oUriParameters.get("grandTotalAtBottomOnly"),
+					sOrderby = oUriParameters.get("$orderby"),
 					sSubtotalsAtBottomOnly = oUriParameters.get("subtotalsAtBottomOnly"),
 					oTable = this.byId("table"),
 					oTitle = this.byId("title"),
@@ -53,11 +54,14 @@ sap.ui.define([
 						airline : {additionally : ["airlineName"]},
 						ConnectionID : {
 							additionally : ["DepAirport", "DepCity", "DestAirport", "DestCity",
-								"Distance", "DistanceUnit", "PlaneType"]
+								"Distance", "DistanceUnit"]
+						},
+						FlightDate : {
+							additionally : ["PlaneType"]
 						},
 						status : {additionally : ["statusName"]}
 					},
-					groupLevels : ["airline", "ConnectionID", "status", "FlightDate", "TravelID"]
+					groupLevels : ["airline", "ConnectionID", "FlightDate", "status", "TravelID"]
 				};
 				if (bBookingID) { // leaf level is individual bookings
 					this._oAggregation.group.BookingID = {};
@@ -96,6 +100,9 @@ sap.ui.define([
 							value2 : aPieces[3]
 						});
 					}));
+				}
+				if (sOrderby) {
+					oRowsBinding.changeParameters({$orderby : sOrderby});
 				}
 				oRowsBinding.resume(); // now that "ui" model is available...
 			}, this);

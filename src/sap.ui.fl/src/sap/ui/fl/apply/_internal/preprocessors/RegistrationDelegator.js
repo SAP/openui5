@@ -6,7 +6,7 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/Component",
+	"sap/ui/core/ComponentHooks",
 	"sap/ui/core/ExtensionPoint",
 	"sap/ui/fl/apply/_internal/changes/descriptor/Preprocessor",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
@@ -20,7 +20,7 @@ sap.ui.define([
 ], function(
 	MvcController,
 	XMLView,
-	Component,
+	ComponentHooks,
 	ExtensionPoint,
 	Preprocessor,
 	ManifestUtils,
@@ -45,7 +45,7 @@ sap.ui.define([
 	var RegistrationDelegator = {};
 
 	function registerChangesInComponent() {
-		Component._fnOnInstanceCreated = ComponentLifecycleHooks.instanceCreatedHook;
+		ComponentHooks.onInstanceCreated.register(ComponentLifecycleHooks.instanceCreatedHook);
 	}
 
 	function registerChangeHandlers() {
@@ -54,7 +54,7 @@ sap.ui.define([
 	}
 
 	function registerLoadComponentEventHandler() {
-		Component._fnLoadComponentCallback = ComponentLifecycleHooks.componentLoadedHook;
+		ComponentHooks.onComponentLoaded.register(ComponentLifecycleHooks.componentLoadedHook);
 	}
 
 	function registerExtensionProvider() {
@@ -68,7 +68,7 @@ sap.ui.define([
 	}
 
 	function registerDescriptorChangeHandler() {
-		Component._fnPreprocessManifest = Preprocessor.preprocessManifest;
+		ComponentHooks.onPreprocessManifest.register(Preprocessor.preprocessManifest);
 	}
 
 	function getExtensionPointProvider(oView) {
