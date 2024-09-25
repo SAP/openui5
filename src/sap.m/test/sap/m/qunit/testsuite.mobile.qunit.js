@@ -201,6 +201,13 @@ sap.ui.define([
 					language: "en"
 				}
 			},
+			"opa/messageview/URLValidationOPA": {
+				title: "OPA Test Page for sap.m.MessageView URL validation",
+				ui5: {
+					libs: "sap.m",
+					language: "en"
+				}
+			},
 			ContentConfig: {
 				title: "QUnit Test Page for sap.m.ContentConfig",
 				coverage: {

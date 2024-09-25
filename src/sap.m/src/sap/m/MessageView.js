@@ -1085,7 +1085,11 @@ sap.ui.define([
 				promise: oPromiseArgument
 			};
 
-			fnAsyncURLHandler(config);
+			// apply validation asynchronously
+			// details page should be fully rendered to change the links inside
+			setTimeout(() => {
+				fnAsyncURLHandler(config);
+			}, 0);
 		});
 
 		oPromise.id = iValidationTaskId;

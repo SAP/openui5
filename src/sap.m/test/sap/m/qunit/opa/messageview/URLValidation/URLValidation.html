@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Input TypeAhead Functionality Integration Testing</title>
+
+		<script
+			id="sap-ui-bootstrap"
+			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:local/URLValidation"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-resource-roots='{
+				"local": "./"
+			}'
+			data-sap-ui-theme="sap_horizon"
+		></script>
+
+		<script id="mainView" type="text/xml">
+			<mvc:View
+				viewName="MyView"
+				xmlns:core="sap.ui.core"
+				xmlns:mvc="sap.ui.core.mvc"
+				controllerName="mainView.controller"
+				xmlns="sap.m"
+				height="100%">
+
+				<App>
+					<Page id="page" title="Input with type ahead">
+						<MessageView id="messageView" items="{ path: '/' }" groupItems="true">
+							<MessageItem
+								type="Warning"
+								title="{message}"
+								groupName="{group}"
+								description="{description}"
+								markupDescription="true" />
+						</MessageView>
+					</Page>
+				</App>
+			</mvc:View>
+		</script>
+	</head>
+
+	<body class='sapUiBody'>
+		<div id='content'></div>
+	</body>
+
+</html>
