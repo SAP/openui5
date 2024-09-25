@@ -2766,11 +2766,6 @@ sap.ui.define([
 			persistent : true,
 			technical : true,
 			type : "Error"
-		}, {
-			message : "HTTP request was not processed because $batch failed",
-			persistent : true,
-			technical : true,
-			type : "Error"
 		}]);
 
 		return this.createView(assert, '<Text text="{/EMPLOYEES(\'1\')/ID}"/>', oModel);
@@ -9167,12 +9162,14 @@ sap.ui.define([
 		} else {
 			this.expectChange("note", ["Note1", "Note2", "Note3", "Note4", "Note5"]);
 			if (bResolve === false) {
-				this.expectMessages(Array(3).fill({
-					message : "HTTP request was not processed because $batch failed",
+				this.oLogMock.expects("error").withArgs("DB migration in progress");
+				this.expectMessages([{
+					code : "DB_MIGRATION",
+					message : "DB migration in progress",
 					persistent : true,
 					technical : true,
 					type : "Error"
-				}));
+				}]);
 			}
 			this.oLogMock.expects("error").withArgs("Failed to delete /SalesOrderList('1')");
 			this.oLogMock.expects("error").withArgs("Failed to delete /SalesOrderList('2')");
@@ -51657,8 +51654,7 @@ make root = ${bMakeRoot}`;
 				that.oView.byId("form").getElementBinding().getBoundContext()
 					.requestSideEffects([{$NavigationPropertyPath : ""}])
 						.then(mustFail(assert), function (oError) {
-							assert.strictEqual(oError.message, "HTTP request was not processed"
-								+ " because the previous request failed");
+							assert.strictEqual(oError.message, sPreviousFailed);
 							assert.strictEqual(oError.cause.error.message,
 								"Request 1 intentionally failed");
 						}),
@@ -55160,12 +55156,13 @@ make root = ${bMakeRoot}`;
 					url : "SalesOrderList('42')?sap-client=123"
 				}, createError())
 				.expectMessages([{
-					message : "HTTP request was not processed because $batch failed",
+					message : "Communication error: 500 ",
 					persistent : true,
 					technical : true,
 					type : "Error"
 				}]);
-			that.oLogMock.expects("error").withArgs("Failed to delete /SalesOrderList(\'42\')");
+			that.oLogMock.expects("error").withArgs("Communication error: 500 ");
+			that.oLogMock.expects("error").withArgs("Failed to delete /SalesOrderList('42')");
 
 			// code under test, test error handling for a failed $batch with $single groupId
 			const oPromise = oModel.delete("/SalesOrderList('42')", "$single").catch((oError) => {
@@ -56354,14 +56351,6 @@ make root = ${bMakeRoot}`;
 					httpStatus : 500 // CPOUI5ODATAV4-428
 				},
 				type : "Error"
-			}, {
-				message : "HTTP request was not processed because $batch failed",
-				persistent : true,
-				technical : true,
-				technicalDetails : {
-					httpStatus : 500 // CPOUI5ODATAV4-428
-				},
-				type : "Error"
 			}]);
 
 		return oCausingError;
@@ -56412,11 +56401,6 @@ make root = ${bMakeRoot}`;
 				}) // no response required
 				.expectMessages([{
 					message : "Communication error: 500 ",
-					persistent : true,
-					technical : true,
-					type : "Error"
-				}, {
-					message : "HTTP request was not processed because $batch failed",
 					persistent : true,
 					technical : true,
 					type : "Error"
@@ -56654,11 +56638,6 @@ make root = ${bMakeRoot}`;
 					persistent : true,
 					technical : true,
 					type : "Error"
-				}, {
-					message : "HTTP request was not processed because $batch failed",
-					persistent : true,
-					technical : true,
-					type : "Error"
 				}])
 				.expectRequest({
 					batchNo : 3,
@@ -56748,11 +56727,6 @@ make root = ${bMakeRoot}`;
 		}).then(function () {
 			that.expectMessages([{
 					message : "Communication error: 500 ",
-					persistent : true,
-					technical : true,
-					type : "Error"
-				}, {
-					message : "HTTP request was not processed because $batch failed",
 					persistent : true,
 					technical : true,
 					type : "Error"
@@ -68278,11 +68252,6 @@ make root = ${bMakeRoot}`;
 				.withArgs("POST on 'EMPLOYEES' failed; will be repeated automatically");
 			that.expectMessages([{
 					message : "Communication error: 500 ",
-					persistent : true,
-					technical : true,
-					type : "Error"
-				}, {
-					message : "HTTP request was not processed because $batch failed",
 					persistent : true,
 					technical : true,
 					type : "Error"
