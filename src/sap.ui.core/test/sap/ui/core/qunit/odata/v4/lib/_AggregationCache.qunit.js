@@ -5255,17 +5255,19 @@ sap.ui.define([
 					"@$ui5.node.level" : bMakeRoot ? 1 : 10,
 					"@$ui5.context.isTransient" : undefined
 				});
-		oHelperMock.expects("setPrivateAnnotation")
-			.withExactArgs(sinon.match.same(oChildNode), "rank", 17);
+		const oDeleteRankExpectation = oHelperMock.expects("deletePrivateAnnotation")
+			.withExactArgs(sinon.match.same(oChildNode), "rank");
 		const oGetInsertIndexExpectation = oCacheMock.expects("getInsertIndex")
 			.withExactArgs(17).returns(7);
-		oCacheMock.expects("adjustDescendantCount")
+		const oAdjustDescendantCountExpectation = oCacheMock.expects("adjustDescendantCount")
 			.withExactArgs(sinon.match.same(oChildNode), 7, +(4 + 1))
 			.callsFake(function () {
 				assert.deepEqual(oCache.aElements,
 					["a", "b", "d", "e", "f", "g", "h", oChildNode, "i"],
 					"already moved");
 			});
+		const oSetRankExpectation = oHelperMock.expects("setPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oChildNode), "rank", 17);
 
 		// code under test
 		const {promise : oSyncPromise, refresh : bRefresh}
@@ -5282,7 +5284,9 @@ sap.ui.define([
 		]);
 		assert.deepEqual(oCache.aElements,
 			["a", "b", "d", "e", "f", "g", "h", oChildNode, "i"]);
-		assert.ok(oShiftRankForMoveExpectation.calledBefore(oGetInsertIndexExpectation));
+		sinon.assert.callOrder(oShiftRankForMoveExpectation, oGetInsertIndexExpectation);
+		sinon.assert.callOrder(oDeleteRankExpectation, oAdjustDescendantCountExpectation,
+			oSetRankExpectation);
 	});
 		});
 	});
