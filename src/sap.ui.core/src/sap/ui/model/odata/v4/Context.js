@@ -1770,6 +1770,9 @@ sap.ui.define([
 				break;
 			}
 			if (!oBinding.getBoundContext) {
+				if (oBinding.oCache === undefined) {
+					return undefined; // nothing to do - looks like a refresh in progress
+				}
 				throw new Error("Not a context binding: " + oBinding);
 			}
 			oCandidate = oParentContext;

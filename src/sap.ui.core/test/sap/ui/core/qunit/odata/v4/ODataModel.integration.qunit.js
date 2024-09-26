@@ -57345,6 +57345,78 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
+	// Scenario: An object page with an items table. Request a side effect for a single row and one
+	// for the root object which refreshes the items table. This must not fail due to call order.
+	QUnit.test("DINC0012327", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<FlexBox id="team" binding="{/TEAMS('TEAM_01')}">
+	<Text id="teamId" text="{Team_Id}"/>
+	<Text id="teamName" text="{Name}"/>
+	<Table id="employees" items="{path : 'TEAM_2_EMPLOYEES', parameters : {$$ownRequest : true}}">
+		<Text id="employeeId" text="{ID}"/>
+		<Text id="employeeName" text="{Name}"/>
+	</Table>
+</FlexBox>`;
+		this.expectRequest("TEAMS('TEAM_01')?$select=Name,Team_Id", {
+				Name : "Team #1",
+				Team_Id : "TEAM_01"
+			})
+			.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=100", {
+				value : [{
+					ID : "2",
+					Name : "Frederic Fall"
+				}]
+			})
+			.expectChange("teamId", "TEAM_01")
+			.expectChange("teamName", "Team #1")
+			.expectChange("employeeId", ["2"])
+			.expectChange("employeeName", ["Frederic Fall"]);
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name&$filter=ID eq '2'", {
+				value : [{
+					ID : "2",
+					Name : "Frederic Winter"
+				}]
+			})
+			.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=100", {
+				value : [{
+					ID : "2",
+					Name : "Frederic Winter"
+				}]
+			})
+			.expectChange("employeeName", ["Frederic Winter"]);
+
+		const oTeamContext = this.oView.byId("team").getBindingContext();
+		let oEmployeeContext
+			= this.oView.byId("employees").getBinding("items").getCurrentContexts()[0];
+
+		await Promise.all([
+			oEmployeeContext.requestSideEffects(["Name"]),
+			oTeamContext.requestSideEffects(["TEAM_2_EMPLOYEES"]),
+			this.waitForChanges(assert)
+		]);
+
+		this.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=100", {
+				value : [{
+					ID : "2",
+					Name : "Frederic Spring"
+				}]
+			})
+			.expectChange("employeeName", ["Frederic Spring"]);
+
+		oEmployeeContext = this.oView.byId("employees").getBinding("items").getCurrentContexts()[0];
+
+		await Promise.all([
+			oTeamContext.requestSideEffects(["TEAM_2_EMPLOYEES"]),
+			oEmployeeContext.requestSideEffects(["Name"]),
+			this.waitForChanges(assert)
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario:
 	// (1) Binding for a part of a structural instance annotation works without binding the
 	//     property itself

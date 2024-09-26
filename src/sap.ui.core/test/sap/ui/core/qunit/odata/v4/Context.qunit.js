@@ -2866,6 +2866,26 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("requestSideEffectsInternal without own cache: list binding refresh in progress",
+			function (assert) {
+		var oListBinding = {
+				oCache : undefined, // looks like a refresh in progress
+				// getBoundContext : function () {},
+				getContext : function () { return {}; },
+				getPath : function () { return "TEAM_2_EMPLOYEES"; },
+				toString : mustBeMocked
+			},
+			oMetaModel = {},
+			oModel = {
+				getMetaModel : function () { return oMetaModel; }
+			},
+			oContext = Context.create(oModel, oListBinding, "/TEAMS('1')/TEAM_2_EMPLOYEES('2')");
+
+		// code under test
+		assert.strictEqual(oContext.requestSideEffectsInternal(["ID"], "groupId"), undefined);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("requestSideEffects: error on transient context", function (assert) {
 		var oBinding = {
 				checkSuspended : function () {}
