@@ -3,8 +3,18 @@
  */
 
 sap.ui.define([
-	"./ItemBaseFlex", "./Util", "sap/ui/fl/changeHandler/common/ChangeCategories"
-], (ItemBaseFlex, Util, ChangeCategories) => {
+	"./ItemBaseFlex",
+	"./Util",
+	"sap/ui/fl/changeHandler/common/ChangeCategories",
+	"./actiontoolbar/CombineAction",
+	"./actiontoolbar/SplitAction"
+], (
+	ItemBaseFlex,
+	Util,
+	ChangeCategories,
+	CombineAction,
+	SplitAction
+) => {
 	"use strict";
 
 	const oActionFlex = Object.assign({}, ItemBaseFlex);
@@ -125,7 +135,13 @@ sap.ui.define([
 	};
 
 	return {
-		moveAction: oActionFlex.createMoveChangeHandler()
+		moveAction: oActionFlex.createMoveChangeHandler(),
+		"combineButtons": {
+			"changeHandler": CombineAction
+		},
+		"splitMenuButton": {
+			"changeHandler": SplitAction
+		}
 	};
 
 });
