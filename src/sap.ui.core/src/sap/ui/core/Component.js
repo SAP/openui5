@@ -2564,8 +2564,7 @@ sap.ui.define([
 		const def = new Deferred();
 
 		sap.ui.require([sModuleName], def.resolve, (err) => {
-			future.warningRejects(def.resolve, def.reject, `Cannot load module '${sModuleName}'.`,
-				sComponentName, "sap.ui.core.Component");
+			future.warningRejects(def.resolve, def.reject, `sap.ui.core.Component: Cannot load module '${sModuleName}' during creation of component: "${sComponentName}".`);
 			Log.warning(err);
 		});
 
