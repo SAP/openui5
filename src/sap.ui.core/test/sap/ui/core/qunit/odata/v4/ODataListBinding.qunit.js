@@ -1865,6 +1865,9 @@ sap.ui.define([
 		const oGetContextsExpectation = this.mock(oBinding).expects("getContextsInViewOrder")
 			.withExactArgs(5, 10)
 			.returns(aContexts);
+		this.mock(oBinding).expects("_isExpectingMoreContexts")
+			.withExactArgs(sinon.match.same(aContexts), 5, 10)
+			.returns("~bExpectMore~");
 		this.mock(oBinding).expects("_fireChange")
 			.exactly(bAsync && bChanged ? 1 : 0)
 			.withExactArgs({reason : ChangeReason.Change});
@@ -1874,6 +1877,7 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.oReadGroupLock, "~oReadGroupLock~");
 		assert.strictEqual(aResults, aContexts);
+		assert.strictEqual(aResults.bExpectMore, "~bExpectMore~");
 		assert.strictEqual(oBinding.iCurrentBegin, bKeepCurrent ? 2 : 5);
 		assert.strictEqual(oBinding.iCurrentEnd, bKeepCurrent ? 7 : 15);
 		if (bAsync) {
@@ -2292,11 +2296,15 @@ sap.ui.define([
 		this.mock(oBinding).expects("fetchContexts").never();
 		this.mock(oBinding).expects("getContextsInViewOrder").withExactArgs(0, 10)
 			.returns(aContexts);
+		this.mock(oBinding).expects("_isExpectingMoreContexts")
+			.withExactArgs(sinon.match.same(aContexts), 0, 10)
+			.returns("~bExpectMore~");
 
 		// code under test
 		aResults = oBinding.getContexts(0, 10);
 
 		assert.strictEqual(aResults, aContexts);
+		assert.strictEqual(aResults.bExpectMore, "~bExpectMore~");
 		assert.strictEqual(aContexts.dataRequested, false);
 		assert.strictEqual(aContexts.diff, aDiff);
 		assert.strictEqual(oBinding.oDiff, undefined);
@@ -2317,7 +2325,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("getDiff").never();
 		this.mock(oBinding).expects("fetchContexts").never();
-		this.mock(oBinding).expects("getContextsInViewOrder").withExactArgs(0, 20);
+		this.mock(oBinding).expects("getContextsInViewOrder").withExactArgs(0, 20).returns([]);
 
 		// code under test
 		assert.throws(function () {
