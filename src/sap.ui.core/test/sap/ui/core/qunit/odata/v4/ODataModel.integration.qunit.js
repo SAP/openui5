@@ -73530,14 +73530,16 @@ make root = ${bMakeRoot}`;
 		const sLateQueryOptions = "?custom=foo&$select=BestFriend"
 			+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 			+ ",SiblingEntity($select=ArtistID,IsActiveEntity,Name)";
+		// Note: keep $expand/$select unordered to prove implicit sorting
 		const sExpandSelect = `
 			$expand : {
-				BestFriend : {$select : 'ArtistID,IsActiveEntity,Name'},
-				BestPublication : {$select : 'CurrencyCode,PublicationID'},
-				SiblingEntity : {$select : 'ArtistID,IsActiveEntity,Name'}
+				SiblingEntity : {$select : 'Name,ArtistID,IsActiveEntity'},
+				BestFriend : {$select : 'Name,ArtistID,IsActiveEntity'},
+				BestPublication : {$select : 'CurrencyCode,PublicationID'}
 			},
-			$select : 'ArtistID,IsActiveEntity,Name',
+			$select : 'Name,ArtistID,IsActiveEntity',
 		`;
+		// Note: keep parameters unordered to prove implicit sorting
 		const sView = `
 <Table growing="true" growingThreshold="2" id="table"
 		items="{
@@ -73545,12 +73547,12 @@ make root = ${bMakeRoot}`;
 			parameters : {
 				$$separate : ['BestFriend', 'SiblingEntity'],
 				${bAutoExpandSelect ? "" : sExpandSelect}
-				$apply : 'A.P.P.L.E.',
 				$count : true,
 				$filter : 'IsActiveEntity eq true',
+				$apply : 'A.P.P.L.E.',
+				custom : 'foo',
 				$orderby : 'ArtistID',
-				$search : 'covfefe',
-				custom : 'foo'
+				$search : 'covfefe'
 			}
 		}">
 	<Text id="name" text="{Name}"/>
