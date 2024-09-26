@@ -9,6 +9,7 @@
 	<f:DynamicPage
 		class="sapUiNoContentPadding"
 		toggleHeaderOnTitleClick="false"
+		fitContent="true"
 		id="page">
 		<f:landmarkInfo>
 			<f:DynamicPageAccessibleLandmarkInfo
