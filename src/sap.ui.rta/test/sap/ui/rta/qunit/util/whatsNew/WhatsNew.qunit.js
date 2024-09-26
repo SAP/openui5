@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/util/whatsNew/WhatsNewUtils",
 	"sap/ui/rta/util/whatsNew/WhatsNew",
 	"sap/ui/qunit/utils/nextUIUpdate",
@@ -14,6 +15,7 @@ sap.ui.define([
 	Element,
 	Settings,
 	FeaturesAPI,
+	ReloadManager,
 	WhatsNewUtils,
 	WhatsNew,
 	nextUIUpdate,
@@ -104,7 +106,11 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("When the Dialog is opened", function(assert) {
-			assert.ok(this.oWhatsNewDialog.isOpen());
+			assert.ok(this.oWhatsNewDialog.isOpen(), "then the dialog is opened");
+			assert.ok(
+				ReloadManager.getDontShowWhatsNewAfterReload(),
+				"then the reload flag is set and the dialog won't be shown during the session again"
+			);
 			const oModel = this.oWhatsNewDialog.getModel("whatsNewModel");
 			const aFeatures = oModel.getProperty("/featureCollection");
 			const oDontShowAgainCheckbox = Element.getElementById("whatsNewDialog_DontShowAgain");

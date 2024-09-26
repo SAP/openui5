@@ -1424,7 +1424,7 @@ sap.ui.define([
 					"HTTP request was not processed because $batch failed");
 
 				oRequestError.cause = oError;
-				oRequestError.$reported = oError.$reported;
+				oRequestError.$reported = true; // do not create a message for this error
 				reject(oRequestError, aRequests);
 				throw oError;
 			}).finally(function () {
@@ -1891,9 +1891,7 @@ sap.ui.define([
 					aRequests[iChangeSetNo].push(oRequest);
 				}
 				if (sGroupId === "$single") {
-					that.submitBatch("$single").catch(() => {
-						// nothing to do, see "HTTP request was not processed because $batch failed"
-					});
+					that.submitBatch("$single").catch(that.oModelInterface.getReporter());
 				}
 			});
 			oRequest.$promise = oPromise;
@@ -2086,7 +2084,12 @@ sap.ui.define([
 							}).catch(() => { /* catch is only needed due to finally */ });
 							that.oRetryAfterPromise.catch((oError) => {
 								// own error reason is not reported to the message model
-								oError.$reported = oError !== oRetryAfterError;
+								if (oError === oRetryAfterError) {
+									that.oModelInterface
+										.reportError(oError.message, sClassName, oError);
+								} else {
+									oError.$reported = true;
+								}
 							});
 						}
 						that.oRetryAfterPromise.then(send, fnReject);
@@ -2337,6 +2340,8 @@ sap.ui.define([
 	 * @param {function} oModelInterface.onCreateGroup
 	 *   A callback function that is called with the group name as parameter when the first
 	 *   request is added to a group
+	 * @param {function} oModelInterface.reportError
+	 *   A function to report OData errors
 	 * @param {function} oModelInterface.reportStateMessages
 	 *   A function to report OData state messages
 	 * @param {function} oModelInterface.reportTransitionMessages

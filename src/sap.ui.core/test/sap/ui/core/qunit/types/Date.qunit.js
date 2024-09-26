@@ -152,7 +152,11 @@ sap.ui.define([
 
 		checkParseException(assert, oDateType, true, "boolean",
 			"Don't know how to parse Date from boolean");
-		checkParseException(assert, oDateType, "test", "string", "Date.Invalid");
+
+		this.mock(oDateType.oOutputFormat).expects("getSampleValue").withExactArgs().returns(["~sampleValue"]);
+		this.mock(oDateType.oOutputFormat).expects("format").withExactArgs("~sampleValue")
+			.returns(["~formattedSampleValue"]);
+		checkParseException(assert, oDateType, "foo", "string", "EnterDate ~formattedSampleValue");
 	});
 
 	//*****************************************************************************************************************
