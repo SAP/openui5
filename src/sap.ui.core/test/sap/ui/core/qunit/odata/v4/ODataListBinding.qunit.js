@@ -4070,6 +4070,8 @@ sap.ui.define([
 		assert.strictEqual(oContext3.getIndex(), 0);
 		assert.strictEqual(oBinding.aContexts[1], oContext0);
 		assert.strictEqual(oContext0.getIndex(), 1);
+		assert.strictEqual(oContext1.getIndex(), undefined);
+		assert.strictEqual(oContext2.getIndex(), undefined);
 
 		return Promise.all([
 			oContext0.created(),

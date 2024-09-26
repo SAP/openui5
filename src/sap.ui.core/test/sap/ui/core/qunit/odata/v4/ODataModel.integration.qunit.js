@@ -5319,6 +5319,46 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: create a context in a non-empty table which remains transient. Then call
+	// resetChanges and delete the context. This must not fail although resetChanges already deletes
+	// the context.
+	// SNOW: DINC0263007
+	QUnit.test("DINC0263007", async function (assert) {
+		const oModel = this.createSalesOrdersModel({updateGroupId : "update"});
+		const sView = `
+<Table id="table" items="{/SalesOrderList}">
+	<Text id="id" text="{SalesOrderID}"/>
+</Table>`;
+
+		this.expectRequest("SalesOrderList?$skip=0&$top=100", {
+				value : [{SalesOrderID : "0"}]
+			})
+			.expectChange("id", ["0"]);
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectChange("id", ["new", "0"]);
+
+		const oBinding = this.oView.byId("table").getBinding("items");
+		const oContext = oBinding.create({SalesOrderID : "new"});
+
+		await this.waitForChanges(assert, "create");
+
+		this.expectChange("id", ["0"]);
+
+		await Promise.all([
+			oBinding.resetChanges().then(function () {
+				return oContext.delete();
+			}),
+			oContext.created().then(mustFail(assert), function (oError) {
+				assert.strictEqual(oError.message,
+					"Request canceled: POST SalesOrderList; group: update");
+			}),
+			this.waitForChanges(assert, "delete")
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: ODCB, late property at a binding for a complex type, so that no entity can be found
 	// in the cache.
 	// JIRA: CPOUI5ODATAV4-23

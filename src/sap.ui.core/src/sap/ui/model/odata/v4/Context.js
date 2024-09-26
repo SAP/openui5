@@ -320,6 +320,9 @@ sap.ui.define([
 		}
 		this.oBinding.checkSuspended();
 		if (this.isTransient()) {
+			if (this.iIndex === undefined) {
+				return Promise.resolve(); // already deleted, nothing to do
+			}
 			sGroupId = null;
 		} else if (sGroupId === null) {
 			if (!(this.isKeepAlive() && this.iIndex === undefined)) {
