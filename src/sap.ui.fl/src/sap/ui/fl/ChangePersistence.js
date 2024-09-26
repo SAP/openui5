@@ -109,13 +109,8 @@ sap.ui.define([
 		return bCondenserEnabled;
 	}
 
-	function isBackendCondensingEnabled(aChanges) {
-		var bEnabled = Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().isCondensingEnabled();
-		if (bEnabled && !checkIfOnlyOne(aChanges, "getNamespace")) {
-			bEnabled = false;
-		}
-
-		return bEnabled;
+	function isBackendCondensingEnabled() {
+		return Settings.getInstanceOrUndef()?.isCondensingEnabled();
 	}
 
 	function updateCacheAndDeleteUnsavedChanges(aAllChanges, aCondensedChanges, bSkipUpdateCache, bAlreadyDeletedViaCondense) {
@@ -224,7 +219,7 @@ sap.ui.define([
 			sCurrentLayer
 		);
 		var bIsCondensingEnabled = (
-			isBackendCondensingEnabled(aRelevantChangesForCondensing)
+			isBackendCondensingEnabled()
 			&& canGivenChangesBeCondensed(oAppComponent, aRelevantChangesForCondensing, bCondenseAnyLayer)
 		);
 		var aAllChanges = bIsCondensingEnabled ? aRelevantChangesForCondensing : aDirtyChanges;
@@ -252,7 +247,6 @@ sap.ui.define([
 						return oResponse;
 					}.bind(this));
 				}
-				// Non-condensing route
 				return executeWriteAndRemoveCalls.call(
 					this,
 					sCurrentLayer,

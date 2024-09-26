@@ -371,7 +371,7 @@ sap.ui.define([
 		 * @returns {Promise<boolean>} Promise resolves with true
 		 * @deprecated
 		 */
-		 isContextSharingEnabled() {
+		isContextSharingEnabled() {
 			return Promise.resolve(true);
 		},
 
@@ -432,19 +432,70 @@ sap.ui.define([
 		},
 
 		/**
-		 * Write flex data into LRep back end; This method is called with a map of condensed changes
-		 * that also condense the stored changes on the backend.
+		 * Write flex data into LRep back end; This function splits the condense format by namespaces.
 		 *
 		 * @param {object} mPropertyBag Property bag
 		 * @param {object} mPropertyBag.flexObjects Map of condensed changes
+		 * @param {object} mPropertyBag.allChanges Original set of changes
 		 * @param {string} mPropertyBag.url Configured url for the connector
 		 * @param {string} [mPropertyBag.transport] The transport ID
 		 * @param {boolean} [mPropertyBag.isLegacyVariant] Whether the new flex data has file type .variant or not
 		 * @returns {Promise} Promise resolves as soon as the writing was completed
 		 */
 		condense(mPropertyBag) {
+			const oFlexObjects = mPropertyBag.flexObjects;
+			const oNamespaceMap = {};
+
+			// Helper to process each change and add it to the correct namespace/action
+			function processChange(sAction, sNamespace, sFileType, sFileName, oChange) {
+				// Ensure the namespace object exists
+				oNamespaceMap[sNamespace] ||= {
+					namespace: sNamespace,
+					layer: oFlexObjects.layer
+				};
+
+				oNamespaceMap[sNamespace][sAction] ||= {};
+				oNamespaceMap[sNamespace][sAction][sFileType] ||= [];
+
+				// For 'delete' and 'reorder', just add the file name
+				if (sAction === "delete" || sAction === "reorder") {
+					oNamespaceMap[sNamespace][sAction][sFileType].push(sFileName);
+				} else {
+					// For 'create' and 'update', add the full change object
+					oNamespaceMap[sNamespace][sAction][sFileType].push({
+						[sFileName]: oChange[sFileName] || oChange
+					});
+				}
+			}
+
+			// Loop through the actions to organize changes by namespace
+			["create", "reorder", "update", "delete"].forEach((sAction) => {
+				const oChangesByAction = oFlexObjects[sAction];
+
+				if (oChangesByAction) {
+					Object.keys(oChangesByAction).forEach((sFileType) => {
+						oChangesByAction[sFileType].forEach((oChange) => {
+							const sFileName = oChange.fileName || (typeof oChange === "object" ? Object.keys(oChange)[0] : oChange);
+
+							if (sAction === "delete" || sAction === "reorder") {
+								// Find namespace for 'delete' and 'reorder' via allChanges
+								const oMatchingChange = mPropertyBag.allChanges.find((oChangeItem) => oChangeItem.getId() === sFileName);
+								const sNamespace = oMatchingChange ? oMatchingChange.getNamespace() : undefined;
+								processChange(sAction, sNamespace, sFileType, sFileName, oChange);
+							} else {
+								// For 'create' and 'update', use the namespace inside the change object
+								const sNamespace = oChange[sFileName]?.namespace || oChange[sFileType]?.namespace;
+								processChange(sAction, sNamespace, sFileType, sFileName, oChange);
+							}
+						});
+					});
+				}
+			});
+
+			mPropertyBag.flexObjects = Object.values(oNamespaceMap);
 			mPropertyBag.method = "POST";
 			mPropertyBag.isCondensingEnabled = true;
+
 			return _doWrite(mPropertyBag);
 		},
 
