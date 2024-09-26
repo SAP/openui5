@@ -4056,22 +4056,24 @@ sap.ui.define([
 			},
 			oContext = Context.create(oModel, oBinding, "/path"),
 			oError = new Error(),
-			oPromise = bSuccess ? Promise.resolve() : Promise.reject(oError),
-			fnReporter = sinon.spy();
+			oSyncPromise = bSuccess ? SyncPromise.resolve("n/a") : SyncPromise.reject(oError);
 
 		this.mock(oContext).expects("isExpanded").withExactArgs().returns(false);
 		this.mock(oBinding).expects("expand")
 			.withExactArgs(sinon.match.same(oContext), iLevels || 1)
-			.returns(oPromise);
-		this.mock(oModel).expects("getReporter").withExactArgs().returns(fnReporter);
+			.returns(oSyncPromise);
 
 		// code under test
-		oContext.expand(iLevels);
+		const oResult = oContext.expand(iLevels);
 
-		return oPromise.then(function () {
-			assert.notOk(fnReporter.called);
-		}, function () {
-			sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.same(oError));
+		assert.strictEqual(oResult instanceof Promise, true);
+
+		return oResult.then(function (vResult) {
+			assert.ok(bSuccess);
+			assert.strictEqual(vResult, undefined, "without a defined result");
+		}, function (oError0) {
+			assert.notOk(bSuccess);
+			assert.strictEqual(oError0, oError);
 		});
 	});
 	});

@@ -23325,7 +23325,7 @@ sap.ui.define([
 			.expectChange("salesNumber", [null, null, null])
 			.expectChange("regionDetail");
 
-		return this.createView(assert, sView, oModel).then(function () {
+		return this.createView(assert, sView, oModel).then(async function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Z')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
 					+ "/orderby(AccountResponsible)&$count=true&$skip=0&$top=3", {
@@ -23364,8 +23364,14 @@ sap.ui.define([
 			// therefore not available
 			assert.strictEqual(oListBinding.getCount(), undefined);
 
+			assert.strictEqual(oListBinding.getLength(), 26, "before expand");
+			const oContextRegionZ = oTable.getItems()[0].getBindingContext();
+
 			// code under test
-			oTable.getItems()[0].getBindingContext().expand();
+			await oContextRegionZ.expand();
+
+			assert.strictEqual(oContextRegionZ.getProperty("@$ui5.node.groupLevelCount"), 4);
+			assert.strictEqual(oListBinding.getLength(), 30, "after expand");
 
 			return that.waitForChanges(assert, "expand 'Z'");
 		}).then(function () {
@@ -23457,10 +23463,11 @@ sap.ui.define([
 				.expectChange("salesAmount", [/*"100"*/, "10", "20", "30", "40"])
 				.expectChange("salesNumber", [/*null*/, "1", "2", "3", "4"]);
 
-			// code under test
-			oTable.getItems()[0].getBindingContext().expand();
-
-			return that.waitForChanges(assert, "expand 'Z'");
+			return Promise.all([
+				// code under test
+				oTable.getItems()[0].getBindingContext().expand(),
+				that.waitForChanges(assert, "expand 'Z'")
+			]);
 		}).then(function () {
 			assert.strictEqual(iDataRequestedCount, 3);
 			assert.strictEqual(iDataReceivedCount, 3);
@@ -23562,10 +23569,11 @@ sap.ui.define([
 				.expectChange("salesAmount", [/*"100"*/, "10", "20"])
 				.expectChange("salesNumber", [/*null*/, "1", "2"]);
 
-			// code under test
-			oTable.getRows()[0].getBindingContext().expand();
-
-			return that.waitForChanges(assert, "expand node 'Z'");
+			return Promise.all([
+				// code under test
+				oTable.getRows()[0].getBindingContext().expand(),
+				that.waitForChanges(assert, "expand node 'Z'")
+			]);
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply="
 					+ "filter(Region eq 'Z' and (AccountResponsible ge 'a'))"
@@ -23604,10 +23612,11 @@ sap.ui.define([
 				.expectChange("groupLevelCount", [,,,,, 8])
 				.expectChange("isExpanded", [,,,,, true]);
 
-			// code under test
-			oTable.getRows()[2].getBindingContext().expand();
-
-			return that.waitForChanges(assert, "expand node 'Y'");
+			return Promise.all([
+				// code under test
+				oTable.getRows()[2].getBindingContext().expand(),
+				that.waitForChanges(assert, "expand node 'Y'")
+			]);
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply="
 					+ "filter(Region eq 'Y' and (AccountResponsible ge 'a'))"
@@ -23693,7 +23702,8 @@ sap.ui.define([
 	var sTitle = "Data Aggregation: intersecting requests, with expand = " + bWithExpand;
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = this.createAggregationModel(),
+		var oExpandPromise,
+			oModel = this.createAggregationModel(),
 			fnRespondExpand,
 			fnRespondScroll1,
 			fnRespondScroll2,
@@ -23759,7 +23769,7 @@ sap.ui.define([
 					);
 
 				// code under test
-				oTable.getRows()[1].getBindingContext().expand();
+				oExpandPromise = oTable.getRows()[1].getBindingContext().expand();
 			}
 
 			return that.waitForChanges(assert, "expand 'Y' before scroll");
@@ -23818,7 +23828,10 @@ sap.ui.define([
 			fnRespondScroll1();
 			fnRespondScroll2();
 
-			return that.waitForChanges(assert, "result");
+			return Promise.all([
+				oExpandPromise,
+				that.waitForChanges(assert, "result")
+			]);
 		}).then(function () {
 			// Check oCache.aElements because only there the error case is observable.
 			assert.deepEqual(
@@ -24021,10 +24034,11 @@ sap.ui.define([
 				})
 				.expectChange("isExpanded", [,,, true]);
 
-			// code under test
-			oTable.getRows()[3].getBindingContext().expand();
-
-			return that.waitForChanges(assert, "expand node 'X'");
+			return Promise.all([
+				// code under test
+				oTable.getRows()[3].getBindingContext().expand(),
+				that.waitForChanges(assert, "expand node 'X'")
+			]);
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'X')/groupby((Region)"
 					+ ",aggregate(AmountPerSale,Currency,SalesAmount,SalesAmountLocalCurrency"
@@ -24263,10 +24277,11 @@ sap.ui.define([
 				})
 				.expectChange("level", [,, 2, 1, 0]);
 
-			// code under test
-			oListBinding.getCurrentContexts()[1].expand();
-
-			return that.waitForChanges(assert, "expand node 'A'");
+			return Promise.all([
+				// code under test
+				oListBinding.getCurrentContexts()[1].expand(),
+				that.waitForChanges(assert, "expand node 'A'")
+			]);
 		}).then(function () {
 			checkTable("node 'A' expanded", assert, oTable, [
 				"/BusinessPartners()",
@@ -24303,10 +24318,11 @@ sap.ui.define([
 				})
 				.expectChange("level", [,,, 3, 3, 3, 2, 1, 0]);
 
-			// code under test
-			oListBinding.getCurrentContexts()[2].expand();
-
-			return that.waitForChanges(assert, "expand node 'A/EUR'");
+			return Promise.all([
+				// code under test
+				oListBinding.getCurrentContexts()[2].expand(),
+				that.waitForChanges(assert, "expand node 'A/EUR'")
+			]);
 		}).then(function () {
 			checkTable("node 'A/EUR' expanded", assert, oTable, [
 				"/BusinessPartners()",
@@ -24428,10 +24444,11 @@ sap.ui.define([
 				})
 				.expectChange("level", [,, 2, 0]);
 
-			// code under test
-			oListBinding.getCurrentContexts()[1].expand();
-
-			return that.waitForChanges(assert, "expand node 'A'");
+			return Promise.all([
+				// code under test
+				oListBinding.getCurrentContexts()[1].expand(),
+				that.waitForChanges(assert, "expand node 'A'")
+			]);
 		}).then(function () {
 			checkTable("node 'A' expanded", assert, oTable, [
 				"/BusinessPartners()",
@@ -24459,10 +24476,11 @@ sap.ui.define([
 				})
 				.expectChange("level", [,,, 3, 3, 3, 0]);
 
-			// code under test
-			oListBinding.getCurrentContexts()[2].expand();
-
-			return that.waitForChanges(assert, "expand node 'A/EUR'");
+			return Promise.all([
+				// code under test
+				oListBinding.getCurrentContexts()[2].expand(),
+				that.waitForChanges(assert, "expand node 'A/EUR'")
+			]);
 		}).then(function () {
 			checkTable("node 'A/EUR' expanded", assert, oTable, [
 				"/BusinessPartners()",
@@ -24620,10 +24638,11 @@ sap.ui.define([
 				.expectChange("region", [,, "Z", "Y"])
 				.expectChange("salesAmount", [,, "10", "20"]);
 
-			// code under test
-			oTable.getRows()[1].getBindingContext().expand();
-
-			return that.waitForChanges(assert, "expand 'UK'");
+			return Promise.all([
+				// code under test
+				oTable.getRows()[1].getBindingContext().expand(),
+				that.waitForChanges(assert, "expand 'UK'")
+			]);
 		}).then(function () {
 			var oThirdRow = oTable.getRows()[2].getBindingContext();
 
@@ -24748,10 +24767,11 @@ sap.ui.define([
 				.expectChange("regionText", [, "<Z>", "<Y>", "<X>"])
 				.expectChange("salesAmount", [, "10", "20", "30"]);
 
-			// code under test
-			oTable.getRows()[0].getBindingContext().expand();
-
-			return that.waitForChanges(assert, "first expand 'US'");
+			return Promise.all([
+				// code under test
+				oTable.getRows()[0].getBindingContext().expand(),
+				that.waitForChanges(assert, "first expand 'US'")
+			]);
 		}).then(function () {
 			assert.strictEqual(oRowsBinding.getLength(), 26 + 3);
 
@@ -24771,10 +24791,11 @@ sap.ui.define([
 				.expectChange("segment", [,, "z", "y"])
 				.expectChange("salesAmount", [,, "10", "20"]);
 
-			// code under test
-			oTable.getRows()[1].getBindingContext().expand();
-
-			return that.waitForChanges(assert, "second expand 'US-Z'");
+			return Promise.all([
+				// code under test
+				oTable.getRows()[1].getBindingContext().expand(),
+				that.waitForChanges(assert, "second expand 'US-Z'")
+			]);
 		}).then(function () {
 			assert.strictEqual(oRowsBinding.getLength(), 26 + 3 + 2);
 
@@ -24796,10 +24817,11 @@ sap.ui.define([
 				.expectChange("salesAmount", [,,, "10"])
 				.expectChange("salesNumber", [,,, "1"]);
 
-			// code under test
-			oTable.getRows()[2].getBindingContext().expand();
-
-			return that.waitForChanges(assert, "third expand 'US-Z-z'");
+			return Promise.all([
+				// code under test
+				oTable.getRows()[2].getBindingContext().expand(),
+				that.waitForChanges(assert, "third expand 'US-Z-z'")
+			]);
 		}).then(function () {
 			assert.strictEqual(oRowsBinding.getLength(), 26 + 3 + 2 + 1);
 
@@ -24838,10 +24860,11 @@ sap.ui.define([
 				.expectChange("salesAmount", [, "10", "10", "10"])
 				.expectChange("salesNumber", [,,, "1"]);
 
-			// code under test
-			oTable.getRows()[0].getBindingContext().expand();
-
-			return that.waitForChanges(assert, "expand 'US' again");
+			return Promise.all([
+				// code under test
+				oTable.getRows()[0].getBindingContext().expand(),
+				that.waitForChanges(assert, "expand 'US' again")
+			]);
 		}).then(function () {
 			var oUKContext0;
 
@@ -24976,10 +24999,11 @@ sap.ui.define([
 				.expectChange("city", [,, null, null])
 				.expectChange("sendsAutographs", [,, undefined, undefined]);
 
-			// code under test
-			oTable.getRows()[1].getBindingContext().expand();
-
-			return that.waitForChanges(assert, "1st expand");
+			return Promise.all([
+				// code under test
+				oTable.getRows()[1].getBindingContext().expand(),
+				that.waitForChanges(assert, "1st expand")
+			]);
 		}).then(function () {
 			that.expectRequest("Artists?$apply=filter(IsActiveEntity eq true and Name eq 'B')"
 					+ "/groupby((ArtistID,Address/City),aggregate(sendsAutographs))"
@@ -25008,10 +25032,11 @@ sap.ui.define([
 				.expectChange("city", [,,,, "Liverpool", "London"])
 				.expectChange("sendsAutographs", [,,,, false, true]);
 
-			// code under test
-			oTable.getRows()[3].getBindingContext().expand();
-
-			return that.waitForChanges(assert, "2nd expand");
+			return Promise.all([
+				// code under test
+				oTable.getRows()[3].getBindingContext().expand(),
+				that.waitForChanges(assert, "2nd expand")
+			]);
 		});
 	});
 
@@ -25071,6 +25096,8 @@ sap.ui.define([
 			.expectChange("salesAmount", [undefined, undefined, undefined]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oPromise;
+
 			oTable = that.oView.byId("table");
 
 			// "client side expand"
@@ -25096,7 +25123,7 @@ sap.ui.define([
 				});
 
 			// code under test
-			oTable.getRows()[1].getBindingContext().expand();
+			oPromise = oTable.getRows()[1].getBindingContext().expand();
 
 			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$skip=3&$top="
 					+ (bSecondScroll ? "3" : "2"), {
@@ -25131,7 +25158,10 @@ sap.ui.define([
 				oTable.setFirstVisibleRow(3);
 			}
 
-			return that.waitForChanges(assert, "expand and paging in parallel");
+			return Promise.all([
+				oPromise,
+				that.waitForChanges(assert, "expand and paging in parallel")
+			]);
 		}).then(function () {
 			assert.deepEqual(oTable.getBinding("rows").getContexts(0, 6).map(getPath), [
 				"/BusinessPartners(Region='Z')",
@@ -25222,11 +25252,12 @@ sap.ui.define([
 				})
 				.expectChange("isExpanded", [false]);
 
-			// code under test
-			oTable.getRows()[0].getBindingContext().expand();
-			oTable.getRows()[0].getBindingContext().collapse();
-
-			return that.waitForChanges(assert, "expand and collapse 'US'");
+			return Promise.all([
+				// code under test
+				oTable.getRows()[0].getBindingContext().expand(),
+				oTable.getRows()[0].getBindingContext().collapse(), // Note: no promise here
+				that.waitForChanges(assert, "expand and collapse 'US'")
+			]);
 		}).then(function () {
 			var oUKContext0;
 
@@ -25253,10 +25284,11 @@ sap.ui.define([
 				.expectChange("region", [, "Z", "Y", "X"])
 				.expectChange("salesAmount", [, "10", "20", "30", "200", "300", "400", "500"]);
 
-			// code under test
-			oTable.getRows()[0].getBindingContext().expand();
-
-			return that.waitForChanges(assert, "expand 'US' again");
+			return Promise.all([
+				// code under test
+				oTable.getRows()[0].getBindingContext().expand(),
+				that.waitForChanges(assert, "expand 'US' again")
+			]);
 		}).then(function () {
 			assert.strictEqual(oRowsBinding.getLength(), 26 + 3);
 
@@ -25282,12 +25314,13 @@ sap.ui.define([
 					]
 				});
 
-			// code under test
-			oTable.getRows()[1].getBindingContext().expand();
-			oTable.getRows()[2].getBindingContext().expand();
-			oTable.getRows()[0].getBindingContext().collapse();
-
-			return that.waitForChanges(assert, "expand 'US-Z' and 'US-Y' and collapse 'US'");
+			return Promise.all([
+				// code under test
+				oTable.getRows()[1].getBindingContext().expand(),
+				oTable.getRows()[2].getBindingContext().expand(),
+				oTable.getRows()[0].getBindingContext().collapse(), // Note: no promise here
+				that.waitForChanges(assert, "expand 'US-Z' and 'US-Y' and collapse 'US'")
+			]);
 		}).then(function () {
 			assert.strictEqual(oRowsBinding.getLength(), 26);
 
@@ -25310,10 +25343,11 @@ sap.ui.define([
 				.expectChange("segment", [,, "z", "y",, "a"])
 				.expectChange("salesAmount", [, "10", "1", "2", "20", "26", "30", "200"]);
 
-			// code under test
-			oTable.getRows()[0].getBindingContext().expand();
-
-			return that.waitForChanges(assert, "expand 'US' again");
+			return Promise.all([
+				// code under test
+				oTable.getRows()[0].getBindingContext().expand(),
+				that.waitForChanges(assert, "expand 'US' again")
+			]);
 		}).then(function () {
 			assert.strictEqual(oRowsBinding.getLength(), 26 + 3 + 2 + 1);
 		});
@@ -25391,10 +25425,11 @@ sap.ui.define([
 				.expectChange("region", [, "Z", "Y", "X"])
 				.expectChange("salesAmount", [, "10", "20", "30"]);
 
-			// code under test
-			oUSContext.expand();
-
-			return that.waitForChanges(assert, "expand 'US'");
+			return Promise.all([
+				// code under test
+				oUSContext.expand(),
+				that.waitForChanges(assert, "expand 'US'")
+			]);
 		}).then(function () {
 			assert.strictEqual(oRowsBinding.getLength(), 1 + 26);
 
@@ -25435,10 +25470,11 @@ sap.ui.define([
 				.expectChange("region", [, "Z", "Y", "X"])
 				.expectChange("salesAmount", [, "10", "20", "30"]);
 
-			// code under test
-			oUSContext.expand();
-
-			return that.waitForChanges(assert, "expand 'US' again");
+			return Promise.all([
+				// code under test
+				oUSContext.expand(),
+				that.waitForChanges(assert, "expand 'US' again")
+			]);
 		}).then(function () {
 			assert.strictEqual(oRowsBinding.getLength(), 1 + 26);
 
@@ -26359,10 +26395,11 @@ sap.ui.define([
 				.expectChange("region", [,, "a"])
 				.expectChange("salesNumber", [,, "1"]);
 
-			// code under test
-			oTable.getRows()[1].getBindingContext().expand();
-
-			return that.waitForChanges(assert, "expand");
+			return Promise.all([
+				// code under test
+				oTable.getRows()[1].getBindingContext().expand(),
+				that.waitForChanges(assert, "expand")
+			]);
 		}).then(function () {
 			assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
 			assert.strictEqual(oListBinding.getLength(), 1 + 26 + 12,
@@ -27179,10 +27216,11 @@ sap.ui.define([
 					}]
 				});
 
-			// code under test
-			oListBinding.getCurrentContexts()[0].expand();
-
-			return that.waitForChanges(assert, "expand");
+			return Promise.all([
+				// code under test
+				oListBinding.getCurrentContexts()[0].expand(),
+				that.waitForChanges(assert, "expand")
+			]);
 		}).then(function () {
 			checkTable("after expand", assert, oTable, [
 				"/Artists(ArtistID='1',IsActiveEntity=true)",
@@ -27753,9 +27791,10 @@ sap.ui.define([
 					}]
 				});
 
-			oRoot.expand();
-
-			return that.waitForChanges(assert, "expand");
+			return Promise.all([
+				oRoot.expand(),
+				that.waitForChanges(assert, "expand")
+			]);
 		}).then(function () {
 			oChildAmountBinding = oTable.getRows()[1].getCells()[4].getBinding("value");
 			oChild = oChildAmountBinding.getContext();
@@ -28147,10 +28186,11 @@ sap.ui.define([
 			// code under test
 			assert.strictEqual(oListBinding.getCount(), 24);
 
-			// code under test
-			oRoot.expand();
-
-			return that.waitForChanges(assert, "expand root");
+			return Promise.all([
+				// code under test
+				oRoot.expand(),
+				that.waitForChanges(assert, "expand root")
+			]);
 		}).then(function () {
 			checkTable("root expanded", assert, oTable, [
 				"/EMPLOYEES('0')",
@@ -28183,10 +28223,11 @@ sap.ui.define([
 					}]
 				});
 
-			// code under test
-			oCollapsed.expand();
-
-			return that.waitForChanges(assert, "expand initially collapsed node");
+			return Promise.all([
+				// code under test
+				oCollapsed.expand(),
+				that.waitForChanges(assert, "expand initially collapsed node")
+			]);
 		}).then(function () {
 			const [, oBeta, oGamma] = oListBinding.getCurrentContexts();
 			// code under test (JIRA: CPOUI5ODATAV4-2558)
@@ -28358,10 +28399,11 @@ sap.ui.define([
 					}]
 				});
 
-			// code under test
-			oRoot.expand();
-
-			return that.waitForChanges(assert, "expand 0 (Alpha) again");
+			return Promise.all([
+				// code under test
+				oRoot.expand(),
+				that.waitForChanges(assert, "expand 0 (Alpha) again")
+			]);
 		}).then(function () {
 			checkTable("after expand 0 (Alpha) again", assert, oTable, [
 				"/EMPLOYEES('9')",
@@ -29061,10 +29103,11 @@ sap.ui.define([
 				})
 				.expectChange("id", [, "1"]);
 
-			// code under test
-			oRoot.expand();
-
-			return that.waitForChanges(assert, "expand root");
+			return Promise.all([
+				// code under test
+				oRoot.expand(),
+				that.waitForChanges(assert, "expand root")
+			]);
 		}).then(function () {
 			that.expectChange("id", [, "1", "2"]);
 
@@ -29386,10 +29429,11 @@ sap.ui.define([
 					}]
 				});
 
-			// code under test
-			oAlpha.expand();
-
-			return that.waitForChanges(assert, "expand 0 (Alpha)");
+			return Promise.all([
+				// code under test
+				oAlpha.expand(),
+				that.waitForChanges(assert, "expand 0 (Alpha)")
+			]);
 		}).then(function () {
 			checkTable("after expand 0 (Alpha)", assert, oTable, [
 				"/EMPLOYEES('B')",
@@ -29493,11 +29537,12 @@ sap.ui.define([
 			//  ]);
 			// }).then(function () {
 
-			// code under test
-			// Note: oNewChild (Gimel) restored from "context" here
-			oAlpha.expand();
-
-			return that.waitForChanges(assert, "expand 0 (Alpha) again");
+			return Promise.all([
+				// code under test
+				// Note: oNewChild (Gimel) restored from "context" here
+				oAlpha.expand(),
+				that.waitForChanges(assert, "expand 0 (Alpha) again")
+			]);
 		}).then(function () {
 			checkTable("after expand 0 (Alpha) again", assert, oTable, [
 				oNewRoot, // "/EMPLOYEES('B')",
@@ -29773,9 +29818,10 @@ sap.ui.define([
 					}]
 				});
 
-			oXi.expand();
-
-			return that.waitForChanges(assert, "expand 4.1.1 (Xi)");
+			return Promise.all([
+				oXi.expand(),
+				that.waitForChanges(assert, "expand 4.1.1 (Xi)")
+			]);
 		}).then(function () {
 			checkTable("after expand 4.1.1 (Xi)", assert, oTable, [
 				"/EMPLOYEES('0')",
@@ -29944,10 +29990,11 @@ sap.ui.define([
 					}]
 				});
 
-			// code under test
-			oBeta.expand();
-
-			return that.waitForChanges(assert, "expand 1 (Beta) again");
+			return Promise.all([
+				// code under test
+				oBeta.expand(),
+				that.waitForChanges(assert, "expand 1 (Beta) again")
+			]);
 		}).then(function () {
 			var oDelta = {
 					AGE : 138,
@@ -30026,10 +30073,11 @@ sap.ui.define([
 						sinon.match(sErrorMessage), sODLB);
 			}
 
-			// code under test
-			oGamma.expand();
-
-			return that.waitForChanges(assert, "expand 1.1 (Gamma) again");
+			return Promise.all([
+				// code under test
+				oGamma.expand(),
+				that.waitForChanges(assert, "expand 1.1 (Gamma) again")
+			]);
 		}).then(function () {
 			if (sStructuralChange) {
 				return; // no use to check state after error
@@ -30252,10 +30300,11 @@ sap.ui.define([
 					}]
 				});
 
-			// code under test
-			oAlpha.expand();
-
-			return that.waitForChanges(assert, "expand 0 (Alpha) again");
+			return Promise.all([
+				// code under test
+				oAlpha.expand(),
+				that.waitForChanges(assert, "expand 0 (Alpha) again")
+			]);
 		}).then(function () {
 			checkTable("after expand 0 (Alpha) again", assert, oTable, [
 				"/EMPLOYEES('0')",
@@ -30373,9 +30422,10 @@ sap.ui.define([
 					}]
 				});
 
-			oBeta.expand();
-
-			return that.waitForChanges(assert, "expand 1 (Beta)");
+			return Promise.all([
+				oBeta.expand(),
+				that.waitForChanges(assert, "expand 1 (Beta)")
+			]);
 		}).then(function () {
 			checkTable("after expand 1 (Beta)", assert, oTable, [
 				"/EMPLOYEES('0')",
@@ -30695,9 +30745,10 @@ sap.ui.define([
 				})
 				.expectChange("name", [, "Beta", "Gamma"]);
 
-			oTable.getRows()[0].getBindingContext().expand();
-
-			return that.waitForChanges(assert, "expand");
+			return Promise.all([
+				oTable.getRows()[0].getBindingContext().expand(),
+				that.waitForChanges(assert, "expand")
+			]);
 		}).then(function () {
 			that.expectRequest("EMPLOYEES"
 					+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
@@ -30940,9 +30991,11 @@ sap.ui.define([
 			.expectChange("name", [, "Beta", "Delta"]);
 
 		oTable = this.oView.byId("table");
-		oTable.getItems()[0].getBindingContext().expand();
 
-		await this.waitForChanges(assert, "expand Alpha");
+		await Promise.all([
+			oTable.getItems()[0].getBindingContext().expand(),
+			this.waitForChanges(assert, "expand Alpha")
+		]);
 
 		this.expectRequest("EMPLOYEES"
 				+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '1'),1)"
@@ -30959,9 +31012,11 @@ sap.ui.define([
 			.expectChange("name", [,, "Gamma", "Delta"]);
 
 		const oBeta = oTable.getItems()[1].getBindingContext();
-		oBeta.expand();
 
-		await this.waitForChanges(assert, "expand Beta");
+		await Promise.all([
+			oBeta.expand(),
+			this.waitForChanges(assert, "expand Beta")
+		]);
 
 		expectTable("after expand", true);
 
@@ -31080,9 +31135,11 @@ sap.ui.define([
 			});
 
 		const oTable = this.oView.byId("table");
-		oTable.getItems()[0].getBindingContext().expand();
 
-		await this.waitForChanges(assert, "expand Alpha");
+		await Promise.all([
+			oTable.getItems()[0].getBindingContext().expand(),
+			this.waitForChanges(assert, "expand Alpha")
+		]);
 
 		checkTable("after expand Alpha", assert, oTable, [
 			"/EMPLOYEES('0')",
@@ -31827,9 +31884,10 @@ sap.ui.define([
 			.expectChange("expanded", [, true])
 			.expectChange("name", [,, "Delta", "Epsilon"]);
 
-		oTable.getRows()[0].getBindingContext().expand();
-
-		await this.waitForChanges(assert, "expand Gamma");
+		await Promise.all([
+			oTable.getRows()[0].getBindingContext().expand(),
+			this.waitForChanges(assert, "expand Gamma")
+		]);
 
 		checkTable("after expand Gamma", assert, oTable, [
 			"/EMPLOYEES('2')",
@@ -32471,10 +32529,11 @@ sap.ui.define([
 				.expectChange("etag", [, "etag2.3", "etag1.3"])
 				.expectChange("name", [, "Gamma #1", "Beta #1"]);
 
-			// code under test
-			oRoot.expand();
-
-			return that.waitForChanges(assert, "expand root again");
+			return Promise.all([
+				// code under test
+				oRoot.expand(),
+				that.waitForChanges(assert, "expand root again")
+			]);
 		}).then(function () {
 			checkTable("after expand root again", assert, oTable, [
 				sFriend + "(ArtistID='0',IsActiveEntity=false)",
@@ -32600,9 +32659,10 @@ sap.ui.define([
 				.expectChange("etag", [, "etag2.4", "etag1.4"])
 				.expectChange("name", [, "Gamma #2", "Beta #2"]);
 
-			oRoot.expand();
-
-			return that.waitForChanges(assert, "expand root again #2");
+			return Promise.all([
+				oRoot.expand(),
+				that.waitForChanges(assert, "expand root again #2")
+			]);
 		}).then(function () {
 			checkTable("after expand root again #2", assert, oTable, [
 				oRoot, //sFriend + "(ArtistID='0',IsActiveEntity=false)"
@@ -33294,12 +33354,13 @@ sap.ui.define([
 			oZeta.expand();
 		}, new Error("Not currently part of the hierarchy: " + oZeta));
 
-		oAlpha.expand();
+		await oAlpha.expand();
+
 		// reinsert oZeta into aContexts (Note: oZeta restored from "context" here)
 		oAlpha.getBinding().getAllCurrentContexts();
 
 		// code under test
-		oZeta.expand();
+		await oZeta.expand();
 
 		oAlpha.collapse();
 
@@ -33308,7 +33369,7 @@ sap.ui.define([
 			oZeta.collapse();
 		}, new Error("Not currently part of the hierarchy: " + oZeta));
 
-		oAlpha.expand();
+		await oAlpha.expand();
 
 		// 0 Alpha
 		//   1 Beta
@@ -33646,11 +33707,12 @@ sap.ui.define([
 			[undefined, 2, "Delta"]
 		], 10);
 
-		// code under test
-		// Note: oOut5 restored from "context" here
-		oGamma.expand();
-
-		await this.waitForChanges(assert, "expand Gamma");
+		await Promise.all([
+			// code under test
+			// Note: oOut5 restored from "context" here
+			oGamma.expand(),
+			this.waitForChanges(assert, "expand Gamma")
+		]);
 
 		checkTable("after expand Gamma", assert, oTable, [
 			"/EMPLOYEES('Out2')",
@@ -33799,10 +33861,11 @@ sap.ui.define([
 			[undefined, 1, "Eta"]
 		]);
 
-		// code under test
-		oAlpha.expand();
-
-		await this.waitForChanges(assert, "expand Alpha");
+		await Promise.all([
+			// code under test
+			oAlpha.expand(),
+			this.waitForChanges(assert, "expand Alpha")
+		]);
 
 		checkTable("after expand Alpha", assert, oTable, [
 			"/EMPLOYEES('Out2')",
@@ -34077,9 +34140,11 @@ sap.ui.define([
 					[, "change", {reason : "change"}]
 				])
 				.expectChange("id", [,, "1", "2", "3"]);
-			oAlpha.expand();
 
-			await this.waitForChanges(assert, "expand 0 (Alpha)");
+			await Promise.all([
+				oAlpha.expand(),
+				this.waitForChanges(assert, "expand 0 (Alpha)")
+			]);
 		}
 
 		checkTable("after move 0 (Alpha) to 9 (Omega)", assert, oTable, [
@@ -34291,9 +34356,11 @@ sap.ui.define([
 			.expectChange("id", [,, "1.1", "1.2", "2", "3", "8"]);
 
 		oEta.collapse();
-		oBeta.expand();
 
-		await this.waitForChanges(assert, "collapse 8 (Eta), expand 1 (Beta)");
+		await Promise.all([
+			oBeta.expand(),
+			this.waitForChanges(assert, "collapse 8 (Eta), expand 1 (Beta)")
+		]);
 
 		checkTable("initial collapse 8 (Eta), expand 1 (Beta)", assert, oTable, [
 			"/EMPLOYEES('0')",
@@ -35937,9 +36004,10 @@ sap.ui.define([
 				}]
 			});
 
-		oAlpha.expand();
-
-		await this.waitForChanges(assert, "(1) expand Alpha");
+		await Promise.all([
+			oAlpha.expand(),
+			this.waitForChanges(assert, "(1) expand Alpha")
+		]);
 
 		checkTable("after (1)", assert, oTable, [
 			sFriend + "(ArtistID='1',IsActiveEntity=false)",
@@ -36051,10 +36119,13 @@ sap.ui.define([
 				}]
 			});
 
-		// code under test: side-effects expand
-		oBeta.expand();
-
-		await this.waitForChanges(assert, "(3) expand Beta");
+		await Promise.all([
+			// code under test: side-effects expand
+			oBeta.expand().then((vResult) => {
+				assert.strictEqual(vResult, undefined, "without a defined result");
+			}),
+			this.waitForChanges(assert, "(3) expand Beta")
+		]);
 
 		checkTable("after (3)", assert, oTable, [
 			sFriend + "(ArtistID='1',IsActiveEntity=false)",
@@ -36111,10 +36182,11 @@ sap.ui.define([
 		//   4 Delta
 		// 5 Epsilon
 
-		// code under test: expand and insert spliced children
-		oAlpha.expand();
-
-		await this.waitForChanges(assert, "(6) expand Alpha");
+		await Promise.all([
+			// code under test: expand and insert spliced children
+			oAlpha.expand(),
+			this.waitForChanges(assert, "(6) expand Alpha")
+		]);
 
 		checkTable("after (6)", assert, oTable, [
 			sFriend + "(ArtistID='1',IsActiveEntity=false)",
@@ -36227,10 +36299,11 @@ sap.ui.define([
 				}]
 			});
 
-		// code under test
-		oAlpha.expand();
-
-		await this.waitForChanges(assert, "(9) expand Alpha");
+		await Promise.all([
+			// code under test
+			oAlpha.expand(),
+			this.waitForChanges(assert, "(9) expand Alpha")
+		]);
 
 		checkTable("after (9)", assert, oTable, [
 			sFriend + "(ArtistID='5',IsActiveEntity=false)",
@@ -36504,10 +36577,11 @@ sap.ui.define([
 		//   2 Beta (collapsed)
 		// 5 Epsilon
 
-		// code under test
-		oAlpha.expand();
-
-		await this.waitForChanges(assert, "(5) expand Alpha");
+		await Promise.all([
+			// code under test
+			oAlpha.expand(),
+			this.waitForChanges(assert, "(5) expand Alpha")
+		]);
 
 		checkTable("after (5)", assert, oTable, [
 			sFriend + "(ArtistID='1',IsActiveEntity=false)",
@@ -36618,10 +36692,11 @@ sap.ui.define([
 				}]
 			});
 
-		// code under test
-		oAlpha.expand();
-
-		await this.waitForChanges(assert, "(8) expand Alpha");
+		await Promise.all([
+			// code under test
+			oAlpha.expand(),
+			this.waitForChanges(assert, "(8) expand Alpha")
+		]);
 
 		checkTable("after (8)", assert, oTable, [
 			sFriend + "(ArtistID='5',IsActiveEntity=false)",
@@ -36674,10 +36749,11 @@ sap.ui.define([
 				}]
 			});
 
-		// code under test
-		oBeta.expand();
-
-		await this.waitForChanges(assert, "(9) expand Beta");
+		await Promise.all([
+			// code under test
+			oBeta.expand(),
+			this.waitForChanges(assert, "(9) expand Beta")
+		]);
 
 		checkTable("after (9)", assert, oTable, [
 			sFriend + "(ArtistID='5',IsActiveEntity=false)",
@@ -36831,9 +36907,10 @@ sap.ui.define([
 				}]
 			});
 
-		oAlpha.expand();
-
-		await this.waitForChanges(assert, "(1) expand Alpha");
+		await Promise.all([
+			oAlpha.expand(),
+			this.waitForChanges(assert, "(1) expand Alpha")
+		]);
 
 		checkTable("after (1)", assert, oTable, [
 			`/${sFriend}(ArtistID='1',IsActiveEntity=false)`,
@@ -38611,11 +38688,12 @@ sap.ui.define([
 
 		expectSideEffectsRequests();
 
-		// code under test
-		// Note: oNew1, oNew2 restored from "context" here
-		oAlpha.expand();
-
-		await this.waitForChanges(assert, "(6) expand Alpha");
+		await Promise.all([
+			// code under test
+			// Note: oNew1, oNew2 restored from "context" here
+			oAlpha.expand(),
+			this.waitForChanges(assert, "(6) expand Alpha")
+		]);
 
 		assert.strictEqual(oNew1.getBinding().getAllCurrentContexts()[1], oNew1, "still the same");
 		assert.strictEqual(oNew1.getBinding().getAllCurrentContexts()[2], oNew2, "still the same");
@@ -39146,7 +39224,7 @@ make root = ${bMakeRoot}`;
 		assert.strictEqual(oEta.getProperty("Name"), "Eta", "double check that index was right");
 
 		// code under test
-		oEta.expand();
+		await oEta.expand();
 
 		await this.checkAllContexts("after expand all again", assert, oListBinding,
 			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
@@ -39619,9 +39697,10 @@ make root = ${bMakeRoot}`;
 				}]
 			});
 
-		oAlpha.expand();
-
-		await this.waitForChanges(assert, "expand Alpha");
+		await Promise.all([
+			oAlpha.expand(),
+			this.waitForChanges(assert, "expand Alpha")
+		]);
 
 		checkTable("after expand Alpha", assert, oTable, [
 			"/EMPLOYEES('1')",
@@ -40818,10 +40897,13 @@ make root = ${bMakeRoot}`;
 				}]
 			});
 
-		// code under test
-		oBeta.expand();
-
-		await this.waitForChanges(assert, "expand Beta");
+		await Promise.all([
+			// code under test: side-effects expand
+			oBeta.expand().then((vResult) => {
+				assert.strictEqual(vResult, undefined, "without a defined result");
+			}),
+			this.waitForChanges(assert, "expand Beta")
+		]);
 
 		checkTable("after expand Beta", assert, oTable, [
 			"/Artists(ArtistID='1',IsActiveEntity=false)",
@@ -40913,9 +40995,10 @@ make root = ${bMakeRoot}`;
 			})
 			.expectChange("id", [, "1"]);
 
-		oAlpha.expand();
-
-		await this.waitForChanges(assert, "expand 0 (Alpha)");
+		await Promise.all([
+			oAlpha.expand(),
+			this.waitForChanges(assert, "expand 0 (Alpha)")
+		]);
 
 		checkTable("after expand 0 (Alpha)", assert, oTable, [
 			"/EMPLOYEES('0')",
@@ -41757,10 +41840,11 @@ make root = ${bMakeRoot}`;
 				}]
 			});
 
-		// code under test
-		oDelta.expand();
-
-		await this.waitForChanges(assert, "expand 1.2 (Delta)");
+		await Promise.all([
+			// code under test
+			oDelta.expand(),
+			this.waitForChanges(assert, "expand 1.2 (Delta)")
+		]);
 
 		checkTable("after expand 1.2 (Delta)", assert, oTable, [
 			"/Artists(ArtistID='0',IsActiveEntity=false)",
@@ -42774,10 +42858,11 @@ make root = ${bMakeRoot}`;
 				}]
 			});
 
-		// code under test
-		oAlpha.expand();
-
-		await this.waitForChanges(assert, "expand 0 (Alpha)");
+		await Promise.all([
+			// code under test
+			oAlpha.expand(),
+			this.waitForChanges(assert, "expand 0 (Alpha)")
+		]);
 
 		checkTable("after expand 0 (Alpha)", assert, oTable, [
 			"/EMPLOYEES('0')"
@@ -42960,10 +43045,11 @@ make root = ${bMakeRoot}`;
 				.expectChange("id", [, "1", "2"])
 				.expectChange("name", [, "Beta", "Gamma"]);
 
-			// code under test
-			oRoot.expand();
-
-			return that.waitForChanges(assert, "expand");
+			return Promise.all([
+				// code under test
+				oRoot.expand(),
+				that.waitForChanges(assert, "expand")
+			]);
 		}).then(function () {
 			checkTable("after expand", assert, oTable, [
 				"/Artists(ArtistID='0',IsActiveEntity=false)",
@@ -43252,9 +43338,10 @@ make root = ${bMakeRoot}`;
 				]
 			});
 
-		oAlpha.expand();
-
-		await this.waitForChanges(assert, "(1) expand Alpha");
+		await Promise.all([
+			oAlpha.expand(),
+			this.waitForChanges(assert, "(1) expand Alpha")
+		]);
 
 		checkTable("after (1)", assert, oTable, [
 			"/EMPLOYEES('1')",
@@ -43743,9 +43830,10 @@ make root = ${bMakeRoot}`;
 
 		this.expectChange("name", [,,,,, "Zeta*", "Eta*"]);
 
-		oAlpha.expand();
-
-		await this.waitForChanges(assert, "(6) expand Alpha");
+		await Promise.all([
+			oAlpha.expand(),
+			this.waitForChanges(assert, "(6) expand Alpha")
+		]);
 
 		assert.strictEqual(oBeta.isTransient(), false, "created persisted");
 		assert.strictEqual(oBeta.getProperty("@$ui5.context.isTransient"), undefined, "not now");
@@ -44154,7 +44242,12 @@ make root = ${bMakeRoot}`;
 				}]
 			});
 
-		oBeta.expand();
+		assert.strictEqual(oBeta.getBinding().getLength(), 3, "before expand");
+
+		await oBeta.expand();
+
+		assert.strictEqual(oBeta.getBinding().getLength(), 4, "after expand");
+
 		oBeta.collapse();
 
 		this.expectRequest(sUrl + ",ExpandLevels=" + JSON.stringify([{NodeID : "1", Levels : null}])
@@ -44434,9 +44527,11 @@ make root = ${bMakeRoot}`;
 
 		const oTable = this.oView.byId("table");
 		const oAlpha = oTable.getRows()[0].getBindingContext();
-		oAlpha.expand();
 
-		await this.waitForChanges(assert, "expand Alpha");
+		await Promise.all([
+			oAlpha.expand(),
+			this.waitForChanges(assert, "expand Alpha")
+		]);
 
 		this.expectRequest("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
 				+ ",filter(ID eq '1'),1" + sSelect + "&$count=true&$skip=0&$top=4", {
@@ -44449,9 +44544,11 @@ make root = ${bMakeRoot}`;
 			});
 
 		let oBeta = oTable.getRows()[1].getBindingContext();
-		oBeta.expand();
 
-		await this.waitForChanges(assert, "expand Beta");
+		await Promise.all([
+			oBeta.expand(),
+			this.waitForChanges(assert, "expand Beta")
+		]);
 
 		this.expectRequest("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
 				+ ",filter(ID eq '1.1'),1" + sSelect + "&$count=true&$skip=0&$top=4", {
@@ -44464,9 +44561,11 @@ make root = ${bMakeRoot}`;
 			});
 
 		let oGamma = oTable.getRows()[2].getBindingContext();
-		oGamma.expand();
 
-		await this.waitForChanges(assert, "expand Gamma");
+		await Promise.all([
+			oGamma.expand(),
+			this.waitForChanges(assert, "expand Gamma")
+		]);
 
 		checkTable("after expand Alpha, Beta, Gamma", assert, oTable, [
 			"/EMPLOYEES('0')",
@@ -44493,11 +44592,11 @@ make root = ${bMakeRoot}`;
 			[false, 1, "0", "Alpha"]
 		]);
 
-		// code under test
-		oAlpha.expand();
-
-		// table update takes a moment
-		await this.waitForChanges(assert, "expand Alpha again");
+		await Promise.all([
+			// code under test
+			oAlpha.expand(),
+			this.waitForChanges(assert, "expand Alpha again") // table update takes a moment
+		]);
 
 		checkTable("after expand Alpha again", assert, oTable, [
 			"/EMPLOYEES('0')",
@@ -44508,11 +44607,12 @@ make root = ${bMakeRoot}`;
 		]);
 
 		oBeta = oTable.getRows()[1].getBindingContext();
-		// code under test
-		oBeta.expand();
 
-		// table update takes a moment
-		await this.waitForChanges(assert, "expand Beta again");
+		await Promise.all([
+			// code under test
+			oBeta.expand(),
+			this.waitForChanges(assert, "expand Beta again") // table update takes a moment
+		]);
 
 		checkTable("after expand Beta again", assert, oTable, [
 			"/EMPLOYEES('0')",
@@ -44525,11 +44625,12 @@ make root = ${bMakeRoot}`;
 		]);
 
 		oGamma = oTable.getRows()[2].getBindingContext();
-		// code under test
-		oGamma.expand();
 
-		// table update takes a moment
-		await this.waitForChanges(assert, "expand Gamma again");
+		await Promise.all([
+			// code under test
+			oGamma.expand(),
+			this.waitForChanges(assert, "expand Gamma again") // table update takes a moment
+		]);
 
 		checkTable("after expand Gamma again", assert, oTable, [
 			"/EMPLOYEES('0')",
@@ -44724,11 +44825,11 @@ make root = ${bMakeRoot}`;
 				}]
 			});
 
-		// code under test
-		oAlpha.expand();
-
-		// table update takes a moment
-		await this.waitForChanges(assert, "expand Alpha");
+		await Promise.all([
+			// code under test
+			oAlpha.expand(),
+			this.waitForChanges(assert, "expand Alpha") // table update takes a moment
+		]);
 
 		checkTable("after expand Alpha", assert, oTable, [
 			"/EMPLOYEES('0')",
@@ -44765,11 +44866,12 @@ make root = ${bMakeRoot}`;
 			});
 
 		const oBeta = oTable.getRows()[1].getBindingContext();
-		// code under test
-		oBeta.expand();
 
-		// table update takes a moment
-		await this.waitForChanges(assert, "expand Beta");
+		await Promise.all([
+			// code under test
+			oBeta.expand(),
+			this.waitForChanges(assert, "expand Beta") // table update takes a moment
+		]);
 
 		checkTable("expand Beta", assert, oTable, [
 			"/EMPLOYEES('0')",
@@ -44852,9 +44954,11 @@ make root = ${bMakeRoot}`;
 
 		const oTable = this.oView.byId("table");
 		let oGamma = oTable.getRows()[2].getBindingContext();
-		oGamma.expand();
 
-		await this.waitForChanges(assert, "expand Gamma");
+		await Promise.all([
+			oGamma.expand(),
+			this.waitForChanges(assert, "expand Gamma")
+		]);
 
 		checkTable("after expand Gamma", assert, oTable, [
 			"/EMPLOYEES('0')",
@@ -44903,10 +45007,11 @@ make root = ${bMakeRoot}`;
 				}]
 			});
 
-		// code under test
-		oAlpha.expand();
-
-		await this.waitForChanges(assert, "expand Alpha again");
+		await Promise.all([
+			// code under test
+			oAlpha.expand(),
+			this.waitForChanges(assert, "expand Alpha again")
+		]);
 
 		checkTable("after expand Alpha again", assert, oTable, [
 			"/EMPLOYEES('0')",
@@ -44944,10 +45049,12 @@ make root = ${bMakeRoot}`;
 			});
 
 		const oBeta = oTable.getRows()[1].getBindingContext();
-		// code under test
-		oBeta.expand();
 
-		await this.waitForChanges(assert, "expand Beta");
+		await Promise.all([
+			// code under test
+			oBeta.expand(),
+			this.waitForChanges(assert, "expand Beta")
+		]);
 
 		checkTable("after expand Beta", assert, oTable, [
 			"/EMPLOYEES('0')",
@@ -44988,10 +45095,12 @@ make root = ${bMakeRoot}`;
 			});
 
 		oGamma = oTable.getRows()[2].getBindingContext();
-		// code under test
-		oGamma.expand();
 
-		await this.waitForChanges(assert, "expand Gamma again");
+		await Promise.all([
+			// code under test
+			oGamma.expand(),
+			this.waitForChanges(assert, "expand Gamma again")
+		]);
 
 		checkTable("after expand Gamma again", assert, oTable, [
 			"/EMPLOYEES('0')",
@@ -45218,10 +45327,11 @@ make root = ${bMakeRoot}`;
 				}]
 			});
 
-		// code under test
-		oAlpha.expand();
-
-		await this.waitForChanges(assert, "expand Alpha");
+		await Promise.all([
+			// code under test
+			oAlpha.expand(),
+			this.waitForChanges(assert, "expand Alpha")
+		]);
 
 		checkTable("after expand Alpha", assert, oTable, [
 			oAlpha, // "/EMPLOYEES('0')",
