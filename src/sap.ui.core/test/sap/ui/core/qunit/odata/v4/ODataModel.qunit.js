@@ -450,6 +450,7 @@ sap.ui.define([
 						isIgnoreETag : sinon.match.func,
 						onCreateGroup : sinon.match.func,
 						onHttpResponse : sinon.match.func,
+						reportError : sinon.match.func,
 						reportStateMessages : sinon.match.func,
 						reportTransitionMessages : sinon.match.func,
 						updateMessages : sinon.match.func
@@ -480,6 +481,7 @@ sap.ui.define([
 				oExpectedBind7,
 				oExpectedBind8,
 				oExpectedBind9,
+				oExpectedBind10,
 				oExpectedCreate = this.mock(_Requestor).expects("create"),
 				oModel,
 				oModelInterface,
@@ -506,6 +508,7 @@ sap.ui.define([
 						isIgnoreETag : sinon.match.func,
 						onCreateGroup : sinon.match.func,
 						onHttpResponse : sinon.match.func,
+						reportError : "~fnReportError~",
 						reportStateMessages : "~fnReportStateMessages~",
 						reportTransitionMessages : "~fnReportTransitionMessages~",
 						updateMessages : sinon.match.func
@@ -536,6 +539,8 @@ sap.ui.define([
 				.returns("~fnReportTransitionMessages~");
 			oExpectedBind9 = this.mock(ODataModel.prototype.reportStateMessages).expects("bind")
 				.returns("~fnReportStateMessages~");
+			oExpectedBind10 = this.mock(ODataModel.prototype.reportError).expects("bind")
+				.returns("~fnReportError~");
 
 			// code under test
 			oModel = this.createModel("?sap-client=123", {}, true);
@@ -552,6 +557,7 @@ sap.ui.define([
 			assert.strictEqual(oExpectedBind7.firstCall.args[0], oModel);
 			assert.strictEqual(oExpectedBind8.firstCall.args[0], oModel);
 			assert.strictEqual(oExpectedBind9.firstCall.args[0], oModel);
+			assert.strictEqual(oExpectedBind10.firstCall.args[0], oModel);
 			oModelInterface = oExpectedCreate.firstCall.args[1];
 			assert.strictEqual(oModelInterface, oModel.oInterface);
 

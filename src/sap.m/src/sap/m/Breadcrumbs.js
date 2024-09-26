@@ -51,7 +51,9 @@ sap.ui.define([
 		SeparatorStyle = library.BreadcrumbsSeparatorStyle,
 
 		// shortcut for texts resource bundle
-		oResource = Library.getResourceBundleFor("sap.m");
+		oResource = Library.getResourceBundleFor("sap.m"),
+
+		PICKER_OFFSET_Y = 4;
 
 	/**
 	 * Constructor for a new <code>Breadcrumbs</code>.
@@ -408,6 +410,10 @@ sap.ui.define([
 		oSelect.getPicker()
 			.attachAfterOpen(this._removeItemNavigation, this)
 			.attachBeforeClose(this._restoreItemNavigation, this);
+
+		if (!Device.system.phone) {
+			oSelect.getPicker().setOffsetY(PICKER_OFFSET_Y);
+		}
 
 		oSelect._onBeforeOpenDialog = this._onSelectBeforeOpenDialog.bind(this);
 		oSelect._onBeforeOpenPopover = this._onSelectBeforeOpenPopover.bind(this);

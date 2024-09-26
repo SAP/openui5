@@ -157,7 +157,10 @@ sap.ui.define([
 			"empty string can be parsed into an array of nulls");
 		assert.deepEqual(oDateInterval.parseValue("Nov 6 - Dec 6, 2003", "string"),
 			[oDate1, oDate2], "Interval string can be parsed into an array of dates");
-		checkParseException(assert, oDateInterval, "Nov 6", "string", "DateInterval.Invalid");
+		this.mock(oDateInterval.oOutputFormat).expects("getSampleValue").withExactArgs().returns(["~sampleValue"]);
+		this.mock(oDateInterval.oOutputFormat).expects("format").withExactArgs("~sampleValue")
+			.returns(["~formattedSampleValue"]);
+		checkParseException(assert, oDateInterval, "Nov 6", "string", "EnterDateInterval ~formattedSampleValue");
 
 		oDateInterval = new DateInterval({format: "yMMMd", source: {pattern: "timestamp"}});
 
@@ -205,7 +208,10 @@ sap.ui.define([
 
 		assert.deepEqual(oDateInterval.parseValue("Nov 6, 2003", "string"), [oDate1, null],
 			"Interval string can be parsed into an array of dates");
-		checkParseException(assert, oDateInterval, "Nov 6", "string", "DateInterval.Invalid");
+		this.mock(oDateInterval.oOutputFormat).expects("getSampleValue").withExactArgs().returns(["~sampleValue"]);
+		this.mock(oDateInterval.oOutputFormat).expects("format").withExactArgs("~sampleValue")
+			.returns(["~formattedSampleValue"]);
+		checkParseException(assert, oDateInterval, "Nov 6", "string", "EnterDateInterval ~formattedSampleValue");
 	});
 
 	//*********************************************************************************************

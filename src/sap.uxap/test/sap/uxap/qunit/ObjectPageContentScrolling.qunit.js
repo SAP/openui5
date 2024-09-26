@@ -13,9 +13,10 @@ sap.ui.define([
 	"sap/uxap/testblocks/GenericDiv",
 	"sap/ui/Device",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/Element",
 	"sap/uxap/library"
 ],
-function(nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, ObjectPageDynamicHeaderTitle, Button, Text, Title, Panel, VBox, GenericDiv, Device, XMLView, lib) {
+function(nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, ObjectPageDynamicHeaderTitle, Button, Text, Title, Panel, VBox, GenericDiv, Device, XMLView, Element, lib) {
 
 	"use strict";
 
@@ -1515,7 +1516,7 @@ function(nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 
 	QUnit.module("No visible section", {
 		beforeEach: function (assert) {
-			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, 1);
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, 5);
 		},
 		afterEach: function () {
 			this.oObjectPage.destroy();
@@ -1540,6 +1541,28 @@ function(nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			done();
 		});
 		await helpers.renderObject(this.oObjectPage);
+	});
+
+	QUnit.test("Resetting visibility of subsection does not lead to exception", async function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oSubSection = oObjectPage.getSections()[0].getSubSections()[0],
+			oComputeScrollPositionSpy,
+			oSelectedSection;
+
+		await helpers.renderObject(oObjectPage);
+
+		oSubSection.setVisible(false);
+		oObjectPage._applyUxRules();
+
+		oSelectedSection = Element.getElementById(oObjectPage.getSelectedSection());
+		oSelectedSection.setSelectedSubSection(oSubSection);
+
+		oComputeScrollPositionSpy = this.spy(oObjectPage, "_computeScrollPosition");
+
+		oObjectPage._initAnchorBarScroll();
+
+		assert.ok(oComputeScrollPositionSpy.calledWith(oSelectedSection), "scroll position fallback to parent section from subsection with still not registered info");
+
 	});
 
 	function isObjectPageHeaderStickied(oObjectPage) {

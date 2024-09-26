@@ -810,13 +810,12 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.Context#move move} must be pending, and no other modification
 	 * (including collapse of some ancestor node) must happen while this creation is pending!
 	 *
-	 * When using the <code>createInPlace</code> parameter
-	 * (see {@link #setAggregation}, @experimental as of version 1.125.0), the new
-	 * {@link sap.ui.model.odata.v4.Context#isTransient transient} child is hidden until its
-	 * {@link sap.ui.model.odata.v4.Context#created created promise} resolves, and then it is shown
-	 * at a position determined by the back end and the current sort order. Note that the returned
-	 * context is not always part of this list binding's collection and can only be used for the
-	 * following scenarios:
+	 * When using the <code>createInPlace</code> parameter (see {@link #setAggregation},
+	 * since 1.130.0), the new {@link sap.ui.model.odata.v4.Context#isTransient transient} child is
+	 * hidden until its {@link sap.ui.model.odata.v4.Context#created created promise} resolves, and
+	 * then it is shown at a position determined by the back end and the current sort order. Note
+	 * that the returned context is not always part of this list binding's collection and can only
+	 * be used for the following scenarios:
 	 * <ul>
 	 *   <li> The position of the new child can be retrieved by using its
 	 *     {@link sap.ui.model.odata.v4.Context#getIndex index}. If the created child does not
@@ -4303,6 +4302,9 @@ sap.ui.define([
 			}
 		}
 		if (bSingle) {
+			this.oModel.withUnresolvedBindings("removeCachesAndMessages",
+				oContext.getPath().slice(1));
+
 			return this.refreshSingle(oContext, this.lockGroup(sGroupId), /*bAllowRemoval*/false,
 				/*bKeepCacheOnError*/true, /*bWithMessages*/true);
 		}
@@ -4537,7 +4539,7 @@ sap.ui.define([
 	 *   </ul>
 	 * @param {boolean} [oAggregation.createInPlace]
 	 *   Whether created nodes are shown in place at the position specified by the service
-	 *   (@experimental as of version 1.125.0); only the value <code>true</code> is allowed.
+	 *   (since 1.130.0); only the value <code>true</code> is allowed.
 	 *   Otherwise, created nodes are displayed out of place as the first children of their parent
 	 *   or as the first roots, but not in their usual position as defined by the service and the
 	 *   current sort order.
