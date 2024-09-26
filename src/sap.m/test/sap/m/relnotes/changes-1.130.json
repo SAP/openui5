@@ -3,6 +3,37 @@
     "date": "September 2024",
     "notes": [
       {
+        "id": "30436b965bf5f2f881441f2ab37572d9f7e1be99",
+        "type": "FEATURE",
+        "text": " CellSelector: Provide selection change event"
+      },
+      {
+        "id": "f6239a79eb3bfb4d30133375c36a1502f806333a",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: add week announcement to grid cells"
+      },
+      {
+        "id": "0eaed191eb137caa4b5dc990a6d76b7461e660a1",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: new CSS class for languages with higher line heights",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370130730"
+          }
+        ]
+      },
+      {
+        "id": "115f145e6f12d892c5e8449d2420e0d059d71821",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Prevent null within area resize observer deregistration"
+      },
+      {
+        "id": "687345ec74925b1b5d4e498e1e1eff8c4ccbca6c",
+        "type": "FIX",
+        "text": " We've now fixed the issue of truncating characters in the GenericTile header section by removing the usage of sap.m.Text deprecated method"
+      },
+      {
         "id": "92ff968c15582aa96e577b94fd5e4080865d42fb",
         "type": "FIX",
         "text": " sap.m.Label: Ensure colon and asterisk are always displayed by using flex box"

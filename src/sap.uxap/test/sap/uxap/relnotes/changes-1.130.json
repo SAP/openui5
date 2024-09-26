@@ -1,0 +1,12 @@
+{
+  "1.130.0": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "7b133c703ecc3266c135d572b2adb706aff7c708",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Timing issue fixed"
+      }
+    ]
+  }
+}
