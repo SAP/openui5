@@ -4026,7 +4026,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("addElements: duplicate predicate", function (assert) {
+	QUnit.test("addElements: duplicate predicate (outside)", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group : {},
@@ -4036,7 +4036,27 @@ sap.ui.define([
 			oElement = {};
 
 		oCache.aElements.length = 2; // avoid "Array index out of bounds: 1"
-		oCache.aElements[0] = {/*unexpected element*/};
+		oCache.aElements.$byPredicate["foo"] = {/*unexpected element outside*/};
+		_Helper.setPrivateAnnotation(oElement, "predicate", "foo");
+		this.mock(_Helper).expects("updateNonExisting").never();
+		this.mock(oCache).expects("hasPendingChangesForPath").never();
+
+		assert.throws(function () {
+			// code under test
+			oCache.addElements([oElement], 1); // oCache/iStart does not matter here
+		}, new Error("Duplicate predicate: foo"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addElements: duplicate predicate (inside)", function (assert) {
+		var oAggregation = {
+				hierarchyQualifier : "X"
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation),
+			oElement = {};
+
+		oCache.aElements.length = 2; // avoid "Array index out of bounds: 1"
+		oCache.aElements[0] = {/*unexpected element inside*/};
 		oCache.aElements.$byPredicate["foo"] = oCache.aElements[0];
 		_Helper.setPrivateAnnotation(oElement, "predicate", "foo");
 		this.mock(_Helper).expects("updateNonExisting").never();

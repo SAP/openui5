@@ -3046,6 +3046,11 @@ sap.ui.define([
 						throw new Error("Modified on client and on server: "
 							+ this.sResourcePath + sPredicate);
 					} // else: ETag changed, ignore kept element!
+
+					const iIndex = aElements.indexOf(oKeptElement);
+					if (iIndex >= 0 && iIndex !== iStart + i - iOffset) {
+						throw new Error("Duplicate predicate: " + sPredicate);
+					}
 				}
 				aElements.$byPredicate[sPredicate] = oElement;
 			}
