@@ -65,13 +65,17 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.odata.v2.ODataModel",
 		aDeepCreateParametersAllowlist = ["context", "properties"],
 		mMessageType2Severity = {},
-		aRequestSideEffectsParametersAllowList = ["groupId", "urlParameters"];
+		aRequestSideEffectsParametersAllowList = ["groupId", "urlParameters"],
+		bFinal = true;
 
 	mMessageType2Severity[MessageType.Error] = 0;
 	mMessageType2Severity[MessageType.Warning] = 1;
 	mMessageType2Severity[MessageType.Success] = 2;
 	mMessageType2Severity[MessageType.Information] = 3;
 	mMessageType2Severity[MessageType.None] = 4;
+
+	/** @deprecated */
+	bFinal = false;
 
 	/**
 	 * Constructor for a new ODataModel.
@@ -531,7 +535,8 @@ sap.ui.define([
 			                 "setDefaultBindingMode", "getDefaultBindingMode", "getDefaultCountMode",
 			                 "setProperty", "getSecurityToken", "refreshSecurityToken", "setHeaders",
 			                 "getHeaders", "setUseBatch", "setDeferredBatchGroups", "getDeferredBatchGroups",
-			                 "setChangeBatchGroups", "getChangeBatchGroups"]
+			                 "setChangeBatchGroups", "getChangeBatchGroups"],
+			"final": bFinal
 		}
 	});
 
@@ -9060,6 +9065,18 @@ sap.ui.define([
 		this.pAnnotationChanges ??= SyncPromise.resolve(); // now it's too late for the setter
 
 		return this.pAnnotationChanges;
+	};
+	/** @deprecated */
+	const fnOriginalExtend = ODataModel.extend;
+	/**
+	 * DO NOT EXTEND THIS CLASS.
+	 *
+	 * @returns {function} The created class / constructor function
+	 * @deprecated
+	 */
+	ODataModel.extend = function () {
+		Log.error("[FUTURE FATAL] sap.ui.model.v2.ODataModel must not be extended");
+		return fnOriginalExtend.apply(this, arguments);
 	};
 
 	return ODataModel;
