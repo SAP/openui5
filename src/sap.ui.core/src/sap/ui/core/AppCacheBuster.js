@@ -174,10 +174,16 @@ sap.ui.define([
 					AppCacheBuster.onIndexLoaded(sUrl, data);
 					// add the index file to the index map
 					extend(mIndex, data);
+					pDeferred?.resolve(data);
 				};
 
 				fnErrorCallback = function(sUrl) {
-					Log.error("Failed to batch load AppCacheBuster index file from: \"" + sUrl + "\".");
+					const sErrorMessage = `Failed to batch load AppCacheBuster index file from: "${sUrl}".`;
+					if (pDeferred) {
+						pDeferred.reject(new Error(sErrorMessage));
+					} else {
+						Log.error(sErrorMessage);
+					}
 				};
 			}
 
@@ -214,10 +220,16 @@ sap.ui.define([
 					AppCacheBuster.onIndexLoaded(sUrl, data);
 					// add the index file to the index map
 					mIndex[sAbsoluteBaseUrl] = data;
+					pDeferred?.resolve(data);
 				};
 
 				fnErrorCallback = function(sUrl) {
-					Log.error("Failed to load AppCacheBuster index file from: \"" + sUrl + "\".");
+					const sErrorMessage = `Failed to load AppCacheBuster index file from: "${sUrl}"."`;
+					if (pDeferred) {
+						pDeferred.reject(new Error(sErrorMessage));
+					} else {
+						Log.error(sErrorMessage);
+					}
 				};
 			}
 
@@ -235,23 +247,6 @@ sap.ui.define([
 				fnSuccessCallback(mIndexInfo);
 			} else {
 				var bAsync = !bSync && !!pDeferred;
-
-				// use the Deferred only during boot => otherwise the Deferred
-				// is not given because during runtime the registration needs to
-				// be done synchronously.
-				if (bAsync) {
-					var fnSuccess = fnSuccessCallback, fnError = fnErrorCallback;
-					fnSuccessCallback = function(data) {
-						fnSuccess.apply(this, arguments);
-						pDeferred.
-						pDeferred.resolve();
-					};
-
-					fnErrorCallback = function() {
-						fnError.apply(this, arguments);
-						pDeferred.reject();
-					};
-				}
 
 				// load it
 				Log.info("Loading AppCacheBuster index file from: \"" + sUrl + "\".");
