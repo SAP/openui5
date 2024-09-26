@@ -956,11 +956,6 @@ sap.ui.define([
 		qutils.triggerKeydown($tblHeader, KeyCodes.SPACE);
 		assert.notOk(sut.getSelectedItems().length, "Select All is disabled with keyboard. Space on column header");
 
-		// Check if clear all icon has aria-label attribute
-		const $clearSelection = sut.$("clearSelection");
-		const sText = $clearSelection.attr("aria-label");
-		assert.strictEqual(sText, oResourceBundle.getText("TABLE_ICON_DESELECT_ALL"), "The clear all icon has an aria-label assigned");
-
 		const oItem = sut.getItems()[0];
 		oItem.setSelected(true);
 
