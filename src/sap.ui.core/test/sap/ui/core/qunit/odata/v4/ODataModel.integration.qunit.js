@@ -25942,6 +25942,52 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: Filtering on a list binding with data aggregation does not split the filters if
+	// there is no data aggregation on leaf level.
+	// JIRA: CPOUI5ODATAV4-2745
+	QUnit.test("Data Aggregation: filter w/o aggregation on leaves", async function (assert) {
+		const oModel = this.createAggregationModel({autoExpandSelect : true});
+
+		await this.createView(assert, "", oModel);
+
+		const oListBinding = oModel.bindList("/BusinessPartners", null, null, [
+				new Filter("Currency", FilterOperator.EQ, "USD"),
+				new Filter("SalesAmount", FilterOperator.GT, "0")
+			], {
+				$$aggregation : {
+					aggregate : {
+						SalesAmount : {grandTotal : true}
+					},
+					group : {
+						Currency : {},
+						Id : {},
+						Region : {}
+					},
+					search : "covfefe"
+				},
+				$orderby : "Region asc,SalesAmount desc"
+			});
+
+		this.expectRequest("BusinessPartners?$apply=filter(Currency eq 'USD' and SalesAmount gt 0)"
+				+ "/search(covfefe)/concat(aggregate(SalesAmount)"
+					+ ",groupby((Currency,Id,Region),aggregate(SalesAmount))"
+				+ "/orderby(Region asc,SalesAmount desc)"
+				// Note: $count is requested automatically
+				+ "/concat(aggregate($count as UI5__count),top(99)))", {
+				value : [
+					{SalesAmount : "n/a", "SalesAmount@odata.type" : "#Decimal"},
+					{UI5__count : "26", "UI5__count@odata.type" : "#Decimal"}
+					// ... (don't care)
+				]
+			});
+
+		await Promise.all([
+			oListBinding.requestContexts(),
+			this.waitForChanges(assert)
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Filtering on a list binding with data aggregation splits the filters in two parts:
 	// - those filters that can be applied before aggregating
 	// - those filters that must be applied after aggregating
@@ -26005,7 +26051,7 @@ sap.ui.define([
 				new Sorter("Region")
 			], [
 				new Filter("Name", FilterOperator.EQ, "Foo"),
-				new Filter("SalesAmount", FilterOperator.GT, 0)
+				new Filter("SalesAmount", FilterOperator.GT, "0")
 			], {
 				$$aggregation : {
 					aggregate : {

@@ -6578,8 +6578,7 @@ sap.ui.define([
 				oPropertyMetadata = {$Type : "Edm.Type"};
 
 			// call getMetaContext only if there are filters
-			oMetaModelMock.expects("getMetaContext").exactly(oFixture.filters.length ? 1 : 0)
-				.withExactArgs(oBinding.sPath).returns("~");
+			oMetaModelMock.expects("getMetaContext").withExactArgs(oBinding.sPath).returns("~");
 			oFixture.filters.forEach(function (vFilter) {
 				var sPath,
 					sValue;
@@ -7029,28 +7028,43 @@ sap.ui.define([
 	split : [new Filter("a", FilterOperator.GT, 42), new Filter("b", FilterOperator.EQ, "before")],
 	result : ["a gt 42", "b eq 'before'", undefined]
 }].forEach(function (oFixture, i) {
-	QUnit.test("fetchFilter: list binding aggregates data " + i, function (assert) {
+	[false, true].forEach((bDataAggregation) => {
+		const sTitle = "fetchFilter: list binding aggregates data " + i + ", data aggregation: "
+			+ bDataAggregation;
+
+	QUnit.test(sTitle, function (assert) {
 		var oAggregation = {},
 			oBinding = this.bindList("Set"),
 			oContext = {},
 			oFilter = {/*any filter*/},
+			oMetaContext = {
+				getPath : mustBeMocked
+			},
 			oMetaModelMock = this.mock(this.oModel.oMetaModel);
 
 		oBinding.mParameters.$$aggregation = oAggregation;
 
+		oMetaModelMock.expects("getMetaContext").withExactArgs("~").returns(oMetaContext);
 		this.mock(FilterProcessor).expects("combineFilters").returns(oFilter);
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(bDataAggregation);
+		this.mock(oMetaContext).expects("getPath").exactly(bDataAggregation ? 1 : 0)
+			.returns("/some/meta/path");
+		oMetaModelMock.expects("fetchObject").exactly(bDataAggregation ? 1 : 0)
+			.withExactArgs("/some/meta/path/")
+			.returns(SyncPromise.resolve(Promise.resolve("~oEntityType~")));
 		this.mock(_AggregationHelper).expects("splitFilter")
-			.withExactArgs(sinon.match.same(oFilter), sinon.match.same(oAggregation))
+			.withExactArgs(sinon.match.same(oFilter), sinon.match.same(oAggregation),
+				bDataAggregation ? "~oEntityType~" : undefined)
 			.returns(oFixture.split);
 		this.mock(this.oModel).expects("resolve").withExactArgs("Set", sinon.match.same(oContext))
 			.returns("~");
-		oMetaModelMock.expects("getMetaContext").withExactArgs("~").returns("oMetaContext");
-		oMetaModelMock.expects("resolve").withExactArgs("a", "oMetaContext").atLeast(0)
-			.returns("/resolved/a");
+		oMetaModelMock.expects("resolve").withExactArgs("a", sinon.match.same(oMetaContext))
+			.atLeast(0).returns("/resolved/a");
 		oMetaModelMock.expects("fetchObject").withExactArgs("/resolved/a").atLeast(0)
 			.returns(Promise.resolve({$Type : "Edm.Decimal"}));
-		oMetaModelMock.expects("resolve").withExactArgs("b", "oMetaContext").atLeast(0)
-			.returns("/resolved/b");
+		oMetaModelMock.expects("resolve").withExactArgs("b", sinon.match.same(oMetaContext))
+			.atLeast(0).returns("/resolved/b");
 		oMetaModelMock.expects("fetchObject").withExactArgs("/resolved/b").atLeast(0)
 			.returns(Promise.resolve({$Type : "Edm.String"}));
 
@@ -7058,6 +7072,7 @@ sap.ui.define([
 		return oBinding.fetchFilter(oContext, oFixture.staticFilter).then(function (aFilterValues) {
 			assert.deepEqual(aFilterValues, oFixture.result);
 		});
+	});
 	});
 });
 
