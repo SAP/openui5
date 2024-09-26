@@ -445,8 +445,9 @@ sap.ui.define([
 				this.oLogMock.expects("error").withArgs(...oFixture.expectedError);
 			}
 
-			TestUtils.onRequest(function (sMessage) {
+			TestUtils.onRequest(function (sMessage, sRequestLine) {
 				assert.strictEqual(sMessage, oFixture.requestBody);
+				assert.strictEqual(sRequestLine, oFixture.method + " " + oFixture.url);
 			});
 			return request(oFixture.method, oFixture.url, mHeaders, oFixture.requestBody
 			).then(function (oXHR) {
@@ -481,11 +482,12 @@ sap.ui.define([
 				this.oLogMock.expects("error").withExactArgs(...oFixture.expectedError);
 			}
 
-			TestUtils.onRequest(function (sMessage) {
+			TestUtils.onRequest(function (sMessage, sRequestLine) {
 				assert.ok(sMessage.includes(oFixture.method + " " + sUrl));
 				if (oFixture.requestBody) {
 					assert.ok(sMessage.includes(oFixture.requestBody));
 				}
+				assert.strictEqual(sRequestLine, "POST /Foo/$batch");
 			});
 			return request("POST", "/Foo/$batch", mInitialHeaders,
 				"--batch_id-0123456789012-345\r\n"

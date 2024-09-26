@@ -9249,6 +9249,138 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: "Retry-After" handling: expired X-CSRF-Token runs into 503 "Retry-After" error
+	// 1) Initial $batch data request fails with 403 (token required)
+	// 2) Token HEAD request fails with 503, token remains unchanged
+	// 3) $batch repeated, fails also with 503
+	// 4) "Retry-After" handler resolves "Retry-After" promise
+	// 5) $batch repeated, fails again with 403
+	// 6) Token HEAD request completes successfully and returns new token
+	// 7) $batch repeated and succeeds
+	// JIRA: CPOUI5MODELS-2730
+	QUnit.test('503, "Retry-After" handling: fetch security token', async function (assert) {
+		let iStep = 0; // test starts with $metadata request
+		const oModel = this.createSalesOrdersModel({}, {
+			"POST $batch" : [{
+				code : 403,
+				headers : {"X-CSRF-Token" : "required"},
+				ifMatch : () => iStep === 1 || iStep === 5
+			}, {
+				code : 503,
+				headers : {"Retry-After" : "42"},
+				ifMatch : () => iStep === 3
+			}],
+			["HEAD " + sSalesOrderService] : [{
+				code : 503,
+				headers : {"Retry-After" : "42"},
+				ifMatch : () => iStep === 2
+			}, {
+				code : 200,
+				headers : {"X-CSRF-Token" : "token"},
+				ifMatch : () => iStep === 6
+			}],
+			"SalesOrderList?$skip=0&$top=100" : [{
+				headers : {"X-CSRF-Token" : "token"},
+				ifMatch : () => iStep === 7,
+				message : {
+					value : [
+						{Note : "Note1", SalesOrderID : "1"}
+					]
+				}
+			}]
+		});
+		oModel.$keepSend = true; // do not stub sendBatch/-Request
+		const aRequestPayloads = [];
+		TestUtils.onRequest((sPayload, sRequestLine) => {
+			iStep += 1;
+			aRequestPayloads.push(sPayload || sRequestLine);
+		});
+		oModel.setRetryAfterHandler(() => {
+			assert.strictEqual(iStep, 4);
+			iStep = 5;
+			assert.strictEqual(aRequestPayloads.shift(), "GET " + sSalesOrderService + "$metadata");
+			assert.ok(aRequestPayloads.shift().includes("GET SalesOrderList?$skip=0&$top=100"));
+			assert.strictEqual(aRequestPayloads.shift(), "HEAD " + sSalesOrderService);
+			assert.ok(aRequestPayloads.shift().includes("GET SalesOrderList?$skip=0&$top=100"));
+			assert.strictEqual(aRequestPayloads.length, 0);
+			return Promise.resolve();
+		});
+		const sView = `
+<Table id="table" items="{/SalesOrderList}">
+	<Text id="note" text="{Note}"/>
+</Table>`;
+
+		this.expectChange("note", ["Note1"]);
+
+		await this.createView(assert, sView, oModel);
+
+		assert.ok(aRequestPayloads.shift().includes("GET SalesOrderList?$skip=0&$top=100"));
+		assert.strictEqual(aRequestPayloads.shift(), "HEAD " + sSalesOrderService);
+		assert.ok(aRequestPayloads.shift().includes("GET SalesOrderList?$skip=0&$top=100"));
+		assert.strictEqual(aRequestPayloads.length, 0);
+		assert.strictEqual(iStep, 8, "all expected steps taken");
+		TestUtils.onRequest(null);
+	});
+
+	//*********************************************************************************************
+	// Scenario: "Retry-After" handling: expired X-CSRF-Token runs into 503 "Retry-After" error,
+	// avoid endless loop
+	// 1) Initial $batch data request fails with 403 token required
+	// 2) Token HEAD request fails with 503, token remains unchanged
+	// 3) $batch repeated, fails again with 403 -> must be rejected in order to avoid endless loop
+	// JIRA: CPOUI5MODELS-2730
+	QUnit.test('503, "Retry-After" handling: fetch security token, loop', async function (assert) {
+		const oModel = this.createSalesOrdersModel({}, {
+			"POST $batch" : {
+				code : 403,
+				headers : {"X-CSRF-Token" : "required"}
+			},
+			["HEAD " + sSalesOrderService] : {
+				code : 503,
+				headers : {"Retry-After" : "42"}
+			}
+		});
+		oModel.$keepSend = true; // do not stub sendBatch/-Request
+		const aRequestPayloads = [];
+		TestUtils.onRequest((sPayload, sRequestLine) => {
+			aRequestPayloads.push(sPayload || sRequestLine);
+		});
+		oModel.setRetryAfterHandler(() => {
+			assert.ok(false);
+		});
+		const sView = `
+<Table id="table" items="{/SalesOrderList}">
+	<Text id="note" text="{Note}"/>
+</Table>`;
+
+		this.expectChange("note", [])
+			.expectMessages([{
+				message : "Communication error: 403 Forbidden",
+				persistent : true,
+				technical : true,
+				type : "Error"
+			}, {
+				message : "HTTP request was not processed because $batch failed",
+				persistent : true,
+				technical : true,
+				type : "Error"
+			}]);
+		this.oLogMock.expects("error").withArgs("$batch failed");
+		this.oLogMock.expects("error").withArgs("Failed to get contexts for "
+			+ sSalesOrderService + "SalesOrderList"
+			+ " with start index 0 and length 100");
+
+		await this.createView(assert, sView, oModel);
+
+		assert.strictEqual(aRequestPayloads.shift(), "GET " + sSalesOrderService + "$metadata");
+		assert.ok(aRequestPayloads.shift().includes("GET SalesOrderList?$skip=0&$top=100"));
+		assert.strictEqual(aRequestPayloads.shift(), "HEAD " + sSalesOrderService);
+		assert.ok(aRequestPayloads.shift().includes("GET SalesOrderList?$skip=0&$top=100"));
+		assert.strictEqual(aRequestPayloads.length, 0);
+		TestUtils.onRequest(null);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Table gets a binding context for which data was already loaded and then a refresh
 	// is performed synchronously.
 	// SNOW: CS20240007657519

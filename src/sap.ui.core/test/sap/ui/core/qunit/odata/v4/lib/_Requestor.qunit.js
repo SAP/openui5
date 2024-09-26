@@ -1726,10 +1726,11 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bWithCredentials) {
-	[false, true].forEach(function (bSuccess) {
-		const sTitle = "refreshSecurityToken, success=" + bSuccess + ", withCredentials="
+	[false, /* 503 w/o header */null, true, /*503 w/ header */"503"].forEach(function (vSuccess) {
+		const sTitle = "refreshSecurityToken, success=" + vSuccess + ", withCredentials="
 			+ bWithCredentials;
 		QUnit.test(sTitle, function (assert) {
+			const bSuccess = !!vSuccess;
 			var oError = {},
 				oPromise,
 				mHeaders = {},
@@ -1753,20 +1754,30 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(oTokenRequiredResponse),
 					"Could not refresh security token")
 				.returns(oError);
-			this.mock(_Helper).expects("parseRawHeaders").exactly(bSuccess ? 2 : 0)
+			this.mock(_Helper).expects("parseRawHeaders").exactly(vSuccess === true ? 2 : 0)
 				.withExactArgs("~getAllResponseHeaders~").returns("~mHeaders~");
-			this.mock(oModelInterface).expects("onHttpResponse").exactly(bSuccess ? 2 : 0)
+			this.mock(oModelInterface).expects("onHttpResponse").exactly(vSuccess === true ? 2 : 0)
 				.withExactArgs("~mHeaders~");
 			this.mock(jQuery).expects("ajax").twice()
 				.withExactArgs("/Service/?sap-client=123", oAjaxSettings)
-				.callsFake(function () {
+				.callsFake(() => {
 					var jqXHR;
 
-					if (bSuccess) {
+					if (vSuccess === true) {
 						jqXHR = createMock(assert, undefined, "nocontent", {
 							"OData-Version" : "4.0",
 							"X-CSRF-Token" : "abc123"
 						});
+					} else if (vSuccess === "503" || vSuccess === null) { // 503 w/ and w/o header
+						oTokenRequiredResponse.getResponseHeader = () => {};
+						oTokenRequiredResponse.status = 503;
+						jqXHR = new jQuery.Deferred();
+						this.mock(oTokenRequiredResponse).expects("getResponseHeader")
+							.withExactArgs("Retry-After")
+							.returns(vSuccess === "503" ? "42" : null);
+						setTimeout(function () {
+							jqXHR.reject(oTokenRequiredResponse);
+						}, 0);
 					} else {
 						jqXHR = new jQuery.Deferred();
 						setTimeout(function () {
@@ -1788,11 +1799,14 @@ sap.ui.define([
 
 			return oPromise.then(function () {
 				assert.ok(bSuccess, "success possible");
-				assert.strictEqual(oRequestor.mHeaders["X-CSRF-Token"], "abc123");
+				assert.strictEqual(oRequestor.mHeaders["X-CSRF-Token"],
+					vSuccess === true ? "abc123" : undefined);
+				assert.strictEqual(oRequestor.oSecurityTokenPromise, null);
 			}, function (oError0) {
 				assert.ok(!bSuccess, "certain failure");
 				assert.strictEqual(oError0, oError);
 				assert.strictEqual("X-CSRF-Token" in oRequestor.mHeaders, false);
+				assert.strictEqual(oRequestor.oSecurityTokenPromise, null);
 			}).then(function () {
 				// code under test
 				return oRequestor.refreshSecurityToken("some_old_token").then(function () {
