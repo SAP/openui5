@@ -1,9 +1,9 @@
 {
 	"_version": "1.15.0",
 	"sap.app": {
-		"id": "sap.f.cardsDemo.pagination.timeline.serverSide",
+		"id": "card.explorer.pagination.timeline",
 		"type": "card",
-		"title": "Cards with Client-Side Pagination",
+		"title": "Timeline Card with Pagination",
 		"subTitle": "",
 		"applicationVersion": {
 			"version": "1.0.0"
@@ -34,14 +34,14 @@
 				"parameters": {
 					"$count": true,
 					"$skip": "{paginator>/skip}",
-					"$top": 5,
+					"$top": "{paginator>/size}",
 					"$orderby": "OrderDate desc"
 				}
 			},
 			"path": "/value"
 		},
 		"header": {
-			"title": "Server-Side Pagination",
+			"title": "Timeline Pagination",
 			"status": {
 				"text": {
 					"format": {
@@ -60,7 +60,7 @@
 					"value": "{OrderDate}"
 				},
 				"description": {
-					"value": "{ShipAddress}"
+					"value": "Order: {OrderID}, Address: {ShipAddress}"
 				},
 				"title": {
 					"value": "{ShipName}"

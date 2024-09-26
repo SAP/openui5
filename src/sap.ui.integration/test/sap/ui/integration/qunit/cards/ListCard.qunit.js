@@ -1985,37 +1985,23 @@ sap.ui.define([
 	QUnit.test("Creation of Microcharts and Pagination", function (assert) {
 		const done = assert.async();
 
-		const fnLoadDependencies = sinon.stub(ListContent.prototype, "loadDependencies").callsFake(function(){
-			return new Promise(function (resolve) {
-				pIfMicrochartsAvailable
-					.then(function () {
-						setTimeout(function () {
-							resolve();
-						}, 100);
-					})
-					.catch(function () {
-						assert.ok(true, "Usage of Microcharts is not available with this distribution.");
-						fnLoadDependencies.restore();
-						done();
-					});
+		return pIfMicrochartsAvailable.then(() => {
+			const oCard = this.oCard;
+
+			oCard.attachEventOnce("_ready", function () {
+				const oPaginator = oCard._oPaginator;
+
+				assert.ok(oPaginator, "paginator is created");
+
+				done();
 			});
+
+			oCard.setManifest(oManifest_ListCard_Microchart_Pagination);
+		}).catch(function () {
+			assert.ok(true, "Usage of Microcharts is not available with this distribution.");
+
+			done();
 		});
-
-		const oCard = this.oCard;
-
-		oCard.attachEventOnce("_ready", function () {
-			pIfMicrochartsAvailable
-				.then(function () {
-					const oPaginator = oCard.getAggregation("_footer").getPaginator();
-
-					assert.ok(oPaginator, "paginator is created");
-					assert.strictEqual(oPaginator.getPageCount(), 2, "page count is correct");
-
-					fnLoadDependencies.restore();
-					done();
-				});
-		});
-		oCard.setManifest(oManifest_ListCard_Microchart_Pagination);
 	});
 
 	QUnit.module("Legend", {

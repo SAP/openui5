@@ -109,7 +109,6 @@ sap.ui.define([
 				}
 			},
 			aggregations: {
-
 				/**
 				 * Defines the content of the control.
 				 */
@@ -581,7 +580,7 @@ sap.ui.define([
 
 				this.getLoadDependenciesPromise().then(function (bLoadSuccessful){
 					if (bLoadSuccessful && !this.isDestroyed()) {
-						oModel.setData(oData);
+						this.setModelData(oData, oModel);
 					}
 				}.bind(this));
 			}.bind(this));
@@ -681,6 +680,10 @@ sap.ui.define([
 				this.onDataChanged();
 			}
 		}.bind(this));
+	};
+
+	BaseContent.prototype.setModelData = function (vData, oModel) {
+		oModel.setData(vData);
 	};
 
 	/**
@@ -873,8 +876,6 @@ sap.ui.define([
 		var oCard = this.getCardInstance();
 		return oCard && oCard.isSkeleton();
 	};
-
-	BaseContent.prototype.sliceData = function (iStartIndex, iEndIndex) { };
 
 	BaseContent.prototype.getDataLength = function () {
 		return 0;

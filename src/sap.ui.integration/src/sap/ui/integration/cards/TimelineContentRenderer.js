@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
+sap.ui.define(["./BaseListContentRenderer"], function (BaseListContentRenderer) {
 	"use strict";
 
 	/**
@@ -10,7 +10,7 @@ sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
 	 * @author SAP SE
 	 * @namespace
 	 */
-	var TimelineContentRenderer = BaseContentRenderer.extend("sap.ui.integration.cards.TimelineContentRenderer", {
+	var TimelineContentRenderer = BaseListContentRenderer.extend("sap.ui.integration.cards.TimelineContentRenderer", {
 		apiVersion: 2
 	});
 

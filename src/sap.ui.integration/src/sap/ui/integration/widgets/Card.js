@@ -6,6 +6,7 @@ sap.ui.define([
 	"../cards/Footer",
 	"../controls/ActionsToolbar",
 	"../controls/BlockingMessage",
+	"../delegate/Paginator",
 	"sap/ui/base/Interface",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
@@ -44,6 +45,7 @@ sap.ui.define([
 	Footer,
 	ActionsToolbar,
 	BlockingMessage,
+	Paginator,
 	Interface,
 	Element,
 	Library,
@@ -87,6 +89,7 @@ sap.ui.define([
 		HEADER_POSITION: "/sap.card/headerPosition",
 		CONTENT: "/sap.card/content",
 		FOOTER: "/sap.card/footer",
+		PAGINATOR: "/sap.card/footer/paginator",
 		SERVICES: "/sap.ui5/services",
 		APP_TYPE: "/sap.app/type",
 		PARAMS: "/sap.card/configuration/parameters",
@@ -344,6 +347,16 @@ sap.ui.define([
 					type: "boolean",
 					group: "Behavior",
 					defaultValue: false
+				},
+
+				/**
+				 * @since 1.128
+				 */
+				showCloseButton: {
+					type: "boolean",
+					group: "Behavior",
+					defaultValue: false,
+					visibility: "hidden"
 				}
 			},
 			aggregations: {
@@ -725,6 +738,7 @@ sap.ui.define([
 		this._awaitEvent("_headerReady");
 		this._awaitEvent("_filterBarReady");
 		this._awaitEvent("_contentReady");
+		this._awaitEvent("_paginatorReady");
 
 		Promise.all(this._aReadyPromises).then(function () {
 			if ( aReadyPromises === this._aReadyPromises ) {
@@ -1409,7 +1423,6 @@ sap.ui.define([
 	 * Cleans up internal models and other before new manifest processing.
 	 */
 	Card.prototype._cleanupOldManifest = function() {
-
 		if (this._fnOnModelChange) {
 			this.getModel().detachEvent("change", this._fnOnModelChange, this);
 			delete this._fnOnModelChange;
@@ -1432,6 +1445,11 @@ sap.ui.define([
 			this._oDataProviderFactory.destroy();
 			this._oDataProviderFactory = null;
 			this._oDataProvider = null;
+		}
+
+		if (this._oPaginator) {
+			this._oPaginator.destroy();
+			this._oPaginator = null;
 		}
 
 		this._setLoadingProviderState(false);
@@ -1849,8 +1867,9 @@ sap.ui.define([
 		this._applyFilterBarManifestSettings();
 		this._applyDataManifestSettings();
 		this._applyHeaderManifestSettings();
-		this._applyContentManifestSettings();
 		this._applyFooterManifestSettings();
+		this._applyPaginatorManifestSettings();
+		this._applyContentManifestSettings();
 
 		this.fireManifestApplied();
 	};
@@ -1934,7 +1953,7 @@ sap.ui.define([
 
 			this._oDataProvider.attachDataChanged(function (oEvent) {
 				this.fireEvent("_dataReady");
-				oModel.setData(oEvent.getParameter("data"));
+				this._setModelData(oEvent.getParameter("data"), oModel);
 			}.bind(this));
 
 			this._oDataProvider.attachError(function (oEvent) {
@@ -1951,6 +1970,14 @@ sap.ui.define([
 		} else {
 			this.fireEvent("_dataReady");
 			this.fireEvent("_dataPassedToContent");
+		}
+	};
+
+	Card.prototype._setModelData = function (vData, oModel) {
+		if (this._oPaginator?.isLoadingMore()) {
+			this._oPaginator.setModelData(vData, oModel);
+		} else {
+			oModel.setData(vData);
 		}
 	};
 
@@ -2093,7 +2120,6 @@ sap.ui.define([
 	};
 
 	Card.prototype._applyFooterManifestSettings = function () {
-
 		this.destroyAggregation("_footer");
 
 		if (this._shouldIgnoreFooter()) {
@@ -2150,7 +2176,8 @@ sap.ui.define([
 				serviceManager: this._oServiceManager,
 				dataProviderFactory: this._oDataProviderFactory,
 				iconFormatter: this._oIconFormatter,
-				noDataConfiguration: this._oCardManifest.get(MANIFEST_PATHS.NO_DATA_MESSAGES)
+				noDataConfiguration: this._oCardManifest.get(MANIFEST_PATHS.NO_DATA_MESSAGES),
+				paginator: this._oPaginator
 			});
 		} catch (e) {
 			this._handleError({
@@ -2164,6 +2191,30 @@ sap.ui.define([
 		}
 
 		this._setCardContent(oContent);
+	};
+
+	Card.prototype._applyPaginatorManifestSettings = function () {
+		const oManifestPaginator = this._oCardManifest.get(MANIFEST_PATHS.PAGINATOR);
+
+		if (!oManifestPaginator) {
+			this.fireEvent("_paginatorReady");
+			return;
+		}
+
+		this._oPaginator = Paginator.create({
+			card: this,
+			configuration: oManifestPaginator,
+			paginatorModel: this.getModel("paginator"),
+			active: !!this.getAssociation("openerReference")
+		});
+
+		if (this._oPaginator.getActive()) {
+			this._oPaginator.attachEventOnce("_ready", () => {
+				this.fireEvent("_paginatorReady");
+			});
+		} else {
+			this.fireEvent("_paginatorReady");
+		}
 	};
 
 	/**
@@ -2278,7 +2329,15 @@ sap.ui.define([
 			return null;
 		}
 
-		return Footer.create(this, oManifestFooter);
+		return Footer.create({
+			card: this,
+			configuration: oManifestFooter,
+			showCloseButton: this.getProperty("showCloseButton"),
+			showMore: this.hasPaginator() && !this.getAssociation("openerReference"),
+			showMorePress: () => {
+				this._oPaginator?.openDialog();
+			}
+		});
 	};
 
 	Card.prototype.getContentManifest = function () {
@@ -2604,8 +2663,6 @@ sap.ui.define([
 		}
 
 		this._setLoadingProviderState(false);
-
-		this._fireContentDataChange();
 	};
 
 	/**
@@ -2893,7 +2950,6 @@ sap.ui.define([
 	};
 
 	Card.prototype._fireContentDataChange = function () {
-		this.fireEvent("_contentDataChange");
 		this._fireDataChange();
 	};
 
@@ -2990,11 +3046,10 @@ sap.ui.define([
 	 */
 	Card.prototype.getContentPageSize = function (oContentConfig) {
 		var vMaxItems,
-			iMaxItems,
-			oFooter = this.getCardFooter();
+			iMaxItems;
 
-		if (oFooter && oFooter.getPaginator()) {
-			return oFooter.getPaginator().getPageSize();
+		if (this._oPaginator) {
+			return this._oPaginator.getPageSize();
 		}
 
 		vMaxItems = BindingResolver.resolveValue(oContentConfig.maxItems, this);
@@ -3032,8 +3087,7 @@ sap.ui.define([
 	};
 
 	Card.prototype.hasPaginator = function () {
-		var oManifestFooter = this._oCardManifest.get(MANIFEST_PATHS.FOOTER);
-		return oManifestFooter && oManifestFooter.paginator;
+		return !!this._oCardManifest.get(MANIFEST_PATHS.PAGINATOR);
 	};
 
 	/**
@@ -3041,8 +3095,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.integration
 	 */
 	Card.prototype.resetPaginator = function () {
-		if (this.hasPaginator()) {
-			this.getCardFooter().getPaginator().reset();
+		if (this._oPaginator) {
+			this._oPaginator.reset();
 		}
 	};
 
@@ -3112,10 +3166,12 @@ sap.ui.define([
 			oChildCard = this._createCard({
 				host: this.getHostInstance(),
 				parameters: oParameters.parameters,
-				referenceId: this.getReferenceId()
+				referenceId: this.getReferenceId(),
+				dataMode: oParameters.dataMode
 			});
 
 		oChildCard.setAssociation("openerReference", this);
+		oChildCard.setProperty("showCloseButton", !!oParameters.showCloseButton);
 
 		if (oData) {
 			each(oData, function (sModelName, oModelData) {
@@ -3126,7 +3182,7 @@ sap.ui.define([
 		}
 
 		if (typeof vManifest === "string") {
-			oChildCard.setManifest(this.getRuntimeUrl(vManifest));
+			oChildCard.setManifest(this.hasPaginator() ? vManifest : this.getRuntimeUrl(vManifest));
 			if (sBaseUrl) {
 				oChildCard.setBaseUrl(sBaseUrl);
 			}

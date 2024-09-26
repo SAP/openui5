@@ -3,7 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/integration/cards/BaseContent",
+	"./BaseContent",
+	"./BaseListContentRenderer",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/m/IllustratedMessageType",
 	"sap/ui/integration/library",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/ui/model/Sorter"
 ], function (
 	BaseContent,
+	BaseListContentRenderer,
 	BindingResolver,
 	IllustratedMessageType,
 	library,
@@ -42,9 +44,7 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.integration"
 		},
-		renderer: {
-			apiVersion: 2
-		}
+		renderer: BaseListContentRenderer
 	});
 
 	/**
@@ -82,6 +82,21 @@ sap.ui.define([
 				illustrationType: IllustratedMessageType.NoEntries,
 				title: this.getCardInstance().getTranslatedText("CARD_NO_ITEMS_ERROR_LISTS")
 			});
+		}
+
+		this.getPaginator()?.onDataChanged(this);
+	};
+
+	/**
+	 * @override
+	 */
+	BaseListContent.prototype.setModelData = function (vData, oModel) {
+		const oPaginator = this.getPaginator();
+
+		if (oPaginator?.isLoadingMore()) {
+			oPaginator.setModelData(vData, oModel);
+		} else {
+			BaseContent.prototype.setModelData.apply(this, arguments);
 		}
 	};
 
@@ -129,19 +144,28 @@ sap.ui.define([
 		}
 
 		var oList = this.getInnerList(),
-			bHasPaginator = this.getCard() ? this.getCardInstance().hasPaginator() : false,
 			maxItems = BindingResolver.resolveValue(oConfiguration.maxItems, this);
 
 		if (!Number.isNaN(parseInt(maxItems))) {
 			maxItems = parseInt(maxItems);
 		}
 
-		if (oList && maxItems && !bHasPaginator) {
-			oList.applySettings({
-				growing: true,
-				growingThreshold: maxItems
-			});
-			oList.addStyleClass("sapFCardMaxItems");
+		const oPaginator = this.getPaginator();
+
+		if (oList && (!oPaginator || !oPaginator.getActive())) {
+			let iDisplayCount = maxItems;
+
+			if (oPaginator) {
+				iDisplayCount = oPaginator.getPageSize();
+			}
+
+			if (iDisplayCount) {
+				oList.applySettings({
+					growing: true,
+					growingThreshold: iDisplayCount
+				});
+				oList.addStyleClass("sapFCardMaxItems");
+			}
 		}
 
 		this._fMinHeight = 0;
@@ -164,6 +188,14 @@ sap.ui.define([
 	 */
 	BaseListContent.prototype.getItemsLength = function () {
 		return 0;
+	};
+
+	BaseListContent.prototype.setPaginator = function (oPaginator) {
+		this._oPaginator = oPaginator;
+	};
+
+	BaseListContent.prototype.getPaginator = function () {
+		return this._oPaginator;
 	};
 
 	/**
@@ -270,13 +302,6 @@ sap.ui.define([
 		});
 
 		return oSorter;
-	};
-
-	BaseListContent.prototype.sliceData = function (iStartIndex, iEndIndex) {
-		this.getModel().sliceData(iStartIndex, iEndIndex);
-		if (iStartIndex !== 0) {
-			this._keepHeight();
-		}
 	};
 
 	BaseListContent.prototype.getDataLength = function () {

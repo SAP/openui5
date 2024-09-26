@@ -226,7 +226,7 @@
 		"footer": {
 			"actionsStrip": [
 				{
-					"text": "View More",
+					"text": "Show More",
 					"actions": [
 						{
 							"type": "ShowCard",
