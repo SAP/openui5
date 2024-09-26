@@ -1974,7 +1974,7 @@ sap.ui.define([
 			future.warningThrows(
 				"sap/ui/core/IconPool must be loaded before sap.ui.core.RenderManager#icon can be called.",
 				{
-					details: "Falling back to synchronous loading of IconPool"
+					suffix: "Falling back to synchronous loading of IconPool"
 				},
 				"SyncXHR",
 				null,
