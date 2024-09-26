@@ -582,12 +582,6 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/flexState/compVariants/Utils"]
 				}
 			},
-			"apply/_internal/flexState/compVariants/CompVariantManagementState": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantManagementState"]
-				}
-			},
 			"apply/_internal/preprocessors/ControllerExtension": {
 				group: "Apply Internal",
 				coverage: {
