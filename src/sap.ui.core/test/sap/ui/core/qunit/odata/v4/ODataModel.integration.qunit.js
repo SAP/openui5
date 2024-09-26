@@ -9359,11 +9359,6 @@ sap.ui.define([
 				persistent : true,
 				technical : true,
 				type : "Error"
-			}, {
-				message : "HTTP request was not processed because $batch failed",
-				persistent : true,
-				technical : true,
-				type : "Error"
 			}]);
 		this.oLogMock.expects("error").withArgs("$batch failed");
 		this.oLogMock.expects("error").withArgs("Failed to get contexts for "
