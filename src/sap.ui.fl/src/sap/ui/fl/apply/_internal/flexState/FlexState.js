@@ -262,10 +262,6 @@ sap.ui.define([
 		oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
 	}
 
-	function getCompVariantsMap(sReference) {
-		return getInstanceEntryOrThrowError(sReference, "compVariants");
-	}
-
 	function buildRuntimePersistence(oFlexStateInstance, aExternalFlexObjects) {
 		const oStorageResponse = oFlexStateInstance.storageResponse;
 		var oRuntimePersistence = {
@@ -832,7 +828,7 @@ sap.ui.define([
 	};
 
 	FlexState.getCompVariantsMap = function(sReference) {
-		return getCompVariantsMap(sReference);
+		return getInstanceEntryOrThrowError(sReference, "compVariants");
 	};
 
 	FlexState.callPrepareFunction = function(sMapName, mPropertyBag) {

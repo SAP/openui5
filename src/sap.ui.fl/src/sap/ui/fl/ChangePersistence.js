@@ -270,7 +270,7 @@ sap.ui.define([
 		var oFirstNewChange;
 		if (sParentVersion) {
 			// in case of changes saved for a draft only the first writing operation must have the parentVersion targeting the basis
-			// followup changes must point the the existing draft created with the first request
+			// followup changes must point the existing draft created with the first request
 			var aNewChanges = aDirtyChanges.filter(function(oChange) {
 				return oChange.getState() === States.LifecycleState.NEW;
 			});
