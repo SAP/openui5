@@ -64,7 +64,8 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.odata.v2.ODataModel",
 		aDeepCreateParametersAllowlist = ["context", "properties"],
 		mMessageType2Severity = {},
-		aRequestSideEffectsParametersAllowList = ["groupId", "urlParameters"];
+		aRequestSideEffectsParametersAllowList = ["groupId", "urlParameters"],
+		bFinal = true;
 
 	mMessageType2Severity[MessageType.Error] = 0;
 	mMessageType2Severity[MessageType.Warning] = 1;
@@ -524,7 +525,9 @@ sap.ui.define([
 				this.oHeaders["X-Requested-With"] = "XMLHttpRequest";
 			}
 		},
-		metadata : {}
+		metadata : {
+			"final": bFinal
+		}
 	});
 
 	//

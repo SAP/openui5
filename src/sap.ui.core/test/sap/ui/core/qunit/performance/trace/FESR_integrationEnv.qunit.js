@@ -1,0 +1,51 @@
+/* global QUnit, sinon */
+QUnit.config.autostart = false;
+
+globalThis.fnInit = () => {
+	"use strict";
+
+	sap.ui.require([
+		"sap/ui/Device",
+		"sap/ui/performance/trace/Interaction"
+	], function (
+		Device,
+		Interaction
+	) {
+
+		let requestCounter = 0;
+
+		QUnit.module("FESR", {
+			dummyRequest: function(bUseUrlObject) {
+				var xhr = new XMLHttpRequest();
+				const sUrl = "resources/ui5loader.js?noCache=" + Date.now() + "-" + (++requestCounter);
+				xhr.open("GET", bUseUrlObject ?  new URL(sUrl, document.baseURI) : sUrl, false);
+				xhr.send();
+				return xhr;
+			}
+		});
+
+		QUnit.test("Scenario for Integration Environment", function (assert) {
+			const sIntegrationEnv = new URLSearchParams(globalThis.location.search).get("sap-ui-fesr-env"),
+				oSinonSandbox = sinon.createSandbox(),
+				oHeaderSpy = oSinonSandbox.spy(XMLHttpRequest.prototype, "setRequestHeader");
+
+
+			// first interaction ends with end
+			Interaction.end(true);
+			this.dummyRequest();
+
+			assert.ok(oHeaderSpy.args.some(function(args) {
+				if (args[0] === "SAP-Perf-FESRec-opt") {
+					var values = args[1].split(",");
+					// Integration environment
+					return values[3] === `${Device.browser.reportingName}_${Device.browser.version}${sIntegrationEnv ? ":" + sIntegrationEnv : ""}`.substring(0, 20);
+				}
+				return false;
+			}), `Found the FESR header field value and the integration environemnt is ${sIntegrationEnv ? sIntegrationEnv : "not provided"}.`);
+
+			oSinonSandbox.restore();
+		});
+
+		QUnit.start();
+	});
+};

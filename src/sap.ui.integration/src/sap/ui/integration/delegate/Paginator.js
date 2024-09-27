@@ -105,12 +105,9 @@ sap.ui.define([
 
 	Paginator.prototype.openDialog = function() {
 		const oCard = this.getCard();
-		const oManifest = oCard.getManifestEntry("/");
-
-		oManifest["sap.app"].id = oManifest["sap.app"].id + uid();
 
 		openCardDialog(oCard, {
-			manifest: oManifest,
+			manifest: this._createManifest(),
 			baseUrl: oCard.getBaseUrl(),
 			resizable: true,
 			showCloseButton: true,
@@ -248,6 +245,19 @@ sap.ui.define([
 
 	Paginator.prototype._getLastPageNumber = function () {
 		return Math.max(0, this._iPageCount - 1);
+	};
+
+	Paginator.prototype._createManifest = function() {
+		const oCard = this.getCard();
+		const oManifest = oCard.getManifestEntry("/");
+
+		oManifest["sap.app"].id = oManifest["sap.app"].id + uid();
+
+		oCard.getAggregation("_filterBar")?._getFilters().forEach((oFilter) => {
+			oFilter.writeValueToConfiguration(oManifest["sap.card"].configuration.filters[oFilter.getKey()]);
+		});
+
+		return oManifest;
 	};
 
 	return Paginator;

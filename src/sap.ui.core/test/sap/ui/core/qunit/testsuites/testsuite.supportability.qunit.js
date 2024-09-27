@@ -32,6 +32,21 @@ sap.ui.define([], function() {
 				title: "sap.ui.performance.FESRHelper"
 			},
 
+			"performance/trace/FESR_integrationEnv_available": {
+				page: "test-resources/sap/ui/core/qunit/performance/trace/FESR_integrationEnv.qunit.html?sap-ui-fesr=true&sap-ui-fesr-env=MST:N",
+				title: "sap.ui.performance.trace.FESR: Integration environment provided"
+			},
+
+			"performance/trace/FESR_integrationEnv_available_exceeding": {
+				page: "test-resources/sap/ui/core/qunit/performance/trace/FESR_integrationEnv.qunit.html?sap-ui-fesr=true&sap-ui-fesr-env=myVeryLongNameForIntegrationEnvironment",
+				title: "sap.ui.performance.trace.FESR: Integration environment provided"
+			},
+
+			"performance/trace/FESR_integrationEnv_notAvailable": {
+				page: "test-resources/sap/ui/core/qunit/performance/trace/FESR_integrationEnv.qunit.html?sap-ui-fesr=true",
+				title: "sap.ui.performance.trace.FESR: Integration environment not provided"
+			},
+
 			"performance/trace/InitFESR_metatag": {
 				page: "test-resources/sap/ui/core/qunit/performance/trace/InitFESR_metatag.qunit.html",
 				title: "sap.ui.performance.trace.FESR: Activation of FESR via meta-tag"
