@@ -459,7 +459,7 @@ sap.ui.define([
 			});
 		});
 
-		const expectedMessage = "The registered Event Listener 'onInit' must not have a return value.";
+		const expectedMessage = "my.Controller10: The registered Event Listener 'onInit' must not have a return value.";
 		const oController = await Controller.create({
 			name: "my.Controller10"
 		});
@@ -484,7 +484,7 @@ sap.ui.define([
 			});
 		});
 
-		const expectedMessage = "The registered Event Listener 'onExit' must not have a return value.";
+		const expectedMessage = "my.Controller11: The registered Event Listener 'onExit' must not have a return value.";
 		const oController = await Controller.create({
 			name: "my.Controller11"
 		});
@@ -516,7 +516,7 @@ sap.ui.define([
 			});
 		});
 
-		const expectedMessage = "The registered Event Listener 'onBeforeRendering' must not have a return value.";
+		const expectedMessage = "my.Controller12: The registered Event Listener 'onBeforeRendering' must not have a return value.";
 		const oController = await Controller.create({
 			name: "my.Controller12"
 		});
@@ -545,7 +545,7 @@ sap.ui.define([
 			});
 		});
 
-		const expectedMessage = "The registered Event Listener 'onAfterRendering' must not have a return value.";
+		const expectedMessage = "my.Controller13: The registered Event Listener 'onAfterRendering' must not have a return value.";
 		const oController = await Controller.create({
 			name: "my.Controller13"
 		});

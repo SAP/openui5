@@ -352,7 +352,7 @@ sap.ui.define([
 			 */
 			addRoute : function (oConfig, oParent) {
 				if (!oConfig.name) {
-					future.errorThrows("A name has to be specified for every route", this);
+					future.errorThrows(`${this}: A name has to be specified for every route`);
 				}
 
 				if (this._oRoutes[oConfig.name]) {
@@ -371,7 +371,7 @@ sap.ui.define([
 				if (this._oRouter) {
 					this._oRouter.parse(sNewHash);
 				} else {
-					future.warningThrows("This router has been destroyed while the hash changed. No routing events where fired by the destroyed instance.", this);
+					future.warningThrows(`${this}: This router has been destroyed while the hash changed. No routing events where fired by the destroyed instance.`);
 				}
 			},
 
@@ -404,7 +404,7 @@ sap.ui.define([
 				};
 
 				if (!this.oHashChanger) {
-					future.errorThrows("navTo of the router is called before the router is initialized. If you want to replace the current hash before you initialize the router you may use getUrl and use replaceHash of the Hashchanger.", this);
+					future.errorThrows(`${this}: navTo of the router is called before the router is initialized. If you want to replace the current hash before you initialize the router you may use getUrl and use replaceHash of the Hashchanger.`);
 					return this;
 				}
 
@@ -623,7 +623,7 @@ sap.ui.define([
 				if (oRoute) {
 					return oRoute.getURL(oParameters);
 				} else {
-					future.warningThrows("Route with name " + sName + " does not exist", this);
+					future.warningThrows(`${this}: Route with name "${sName}" does not exist`);
 				}
 			},
 
@@ -809,7 +809,7 @@ sap.ui.define([
 				}
 
 				if (!oRoute) {
-					future.warningThrows("Route with name " + sName + " does not exist", this);
+					future.warningThrows(`${this}: Route with name "${sName}" does not exist`);
 					return this;
 				}
 

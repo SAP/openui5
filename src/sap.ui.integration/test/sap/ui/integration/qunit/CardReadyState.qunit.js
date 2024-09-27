@@ -211,7 +211,7 @@ sap.ui.define([
 		allPromises = allPromises.concat(oldPromises);
 
 		// Act
-		["_dataReady", "_dataPassedToContent", "_headerReady", "_filterBarReady", "_contentReady"]
+		["_dataReady", "_dataPassedToContent", "_headerReady", "_filterBarReady", "_contentReady", "_paginatorReady"]
 		.forEach((e) => oCard.fireEvent(e));
 
 		await Promise.all(allPromises);

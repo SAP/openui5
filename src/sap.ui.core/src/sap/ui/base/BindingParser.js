@@ -168,9 +168,7 @@ sap.ui.define([
 		try {
 			BindingParser.mergeParts(oBindingInfo);
 		} catch (e) {
-			future.errorThrows("Cannot merge parts: " + e.message, sBinding,
-				"sap.ui.base.BindingParser");
-			// rely on error in ManagedObject
+			future.errorThrows(`sap.ui.base.BindingParser: Cannot merge parts for binding "${sBinding}"`, { cause: e });
 		}
 	}
 

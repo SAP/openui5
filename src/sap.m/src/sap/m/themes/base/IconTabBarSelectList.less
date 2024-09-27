@@ -20,19 +20,10 @@
 
 .sapMITBSelectList .sapMITBSelectItem {
 	position: relative;
-
-	width : 100%;
-
+	width: 100%;
 	box-sizing: border-box;
-
-	display: -webkit-box;
-	display: -webkit-flex;
 	display: flex;
-
-	-webkit-box-align: center;
-	-webkit-align-items: center;
 	align-items: center;
-
 	cursor: pointer;
 
 	.sapUiIcon {
@@ -63,17 +54,17 @@
 		border: 0;
 		position: relative;
 		height: 0.25rem;
-		padding-right: 17px; // big enough to cover the case when a scrollbar appears
+		padding-right: 17px; /* big enough to cover the case when a scrollbar appears */
 
 		&::before {
 			width: 1rem;
-			content: "";
+			content: '';
 		}
 
 		&::after {
-			content: "";
+			content: '';
 			width: 100%;
-			border-top: 0.0625rem solid @sapUiGroupTitleBorderColor;
+			border-top: 0.0625rem solid var(--sapGroup_TitleBorderColor);
 		}
 	}
 
@@ -95,7 +86,7 @@
 	display: block;
 	padding: 0 1rem 0 0;
 	pointer-events: none;
-	min-width: 0;  // chrome flex overflow issue
+	min-width: 0; /* chrome flex overflow issue */
 	overflow: visible;
 	white-space: normal;
 	font-size: @sapMFontMediumSize;
@@ -112,6 +103,7 @@
 
 /* Compact size */
 .sapUiSizeCompact {
+
 	.sapMITBSelectList .sapMITBSelectItem:not(.sapMITBSep) {
 		padding: 0.5rem 0 0.5rem;
 	}
@@ -122,6 +114,7 @@
 	}
 
 	.sapMITBSelectList .sapMITBSep {
+
 		&.sapMITBSepLine {
 			padding-right: 0.5rem;
 
@@ -133,14 +126,16 @@
 }
 
 .sapMITBSelectItem {
-	background-color: @sapUiListBackground;
+	background-color: var(--sapList_Background);
 }
 
 .sapMITBSelectItem {
+
 	&.sapMITBFilterNeutral,
 	&.sapMITBFilterNegative,
 	&.sapMITBFilterPositive,
 	&.sapMITBFilterCritical {
+
 		.sapMITBText {
 			color: inherit;
 		}
@@ -148,29 +143,31 @@
 }
 
 .sapMITBSelectItem {
+
 	&.sapMITBFilterDefault {
+
 		.sapMITBInlineIcon {
-			color: @sapUiListTextColor
+			color: var(--sapList_TextColor);
 		}
 	}
 }
 
 .sapMITBSelectItem:not(.sapMITHUnselectable):hover {
-	background-color: @sapUiListHoverBackground;
+	background-color: var(--sapList_Hover_Background);
 }
 
 .sapMITBSelectList .sapMITBSelectItem:not(.sapMITHUnselectable) {
 
 	&:not(.sapUiDnDDragging):active,
 	&.sapMITBSelectItemSelected:not(.sapUiDnDDragging):active {
-		background-color: @sapUiListActiveBackground;
+		background-color: var(--sapList_Active_Background);
 
 		& > .sapMITBText {
-			color: @sapUiListActiveTextColor;
+			color: var(--sapList_Active_TextColor);
 		}
 
 		& > .sapUiIcon {
-			color: @sapUiListActiveTextColor;
+			color: var(--sapList_Active_TextColor);
 		}
 	}
 }
@@ -180,9 +177,9 @@
 }
 
 .sapMITBSelectItem:focus::before {
-	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	position: absolute;
-	content: " ";
+	content: ' ';
 	top: @_sap_m_IconTabBar_List_Focus_Offset;
 	right:  @_sap_m_IconTabBar_List_Focus_Offset;
 	bottom:  @_sap_m_IconTabBar_List_Focus_Offset;
@@ -193,7 +190,7 @@
 }
 
 .sapMITBSelectItem.sapMITBSelectItemSelected {
-	background-color: @sapUiListSelectionBackgroundColor;
+	background-color: var(--sapList_SelectionBackgroundColor);
 }
 
 .sapMITBSelectItem.sapMITBSelectItemSelected:hover {

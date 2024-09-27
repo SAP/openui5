@@ -570,12 +570,13 @@ function(
 				try {
 					pContentPromise.unwrap();
 				} catch (e) {
-					future.errorThrows("An Error occured during XML processing of '" +
-							this.getMetadata().getName() +
+					future.errorThrows(this.getMetadata().getName() +
+							": An Error occured during XML processing of '" +
+							(mSettings.fragmentName || mSettings.fragmentContent) +
 							"' with id '" +
 							this.getId() +
-							"':\n" +
-							e.stack);
+							"'",
+							{ cause: e });
 				}
 			}
 			return pContentPromise;

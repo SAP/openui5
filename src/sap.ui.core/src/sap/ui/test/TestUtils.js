@@ -400,7 +400,7 @@ sap.ui.define([
 					mODataHeaders = getODataHeaders(oRequest);
 
 				if (fnOnRequest) {
-					fnOnRequest(oRequest.requestBody);
+					fnOnRequest(oRequest.requestBody, oRequest.method + " " + oRequest.url);
 				}
 
 				oRequest.respond(200,
@@ -799,7 +799,7 @@ sap.ui.define([
 					return false;
 				}
 				if (fnOnRequest) {
-					fnOnRequest(oRequest.requestBody);
+					fnOnRequest(oRequest.requestBody, oRequest.method + " " + oRequest.url);
 				}
 				oRequest.respond(oResponse.code, oResponse.headers, oResponse.message);
 				return true;
@@ -985,12 +985,13 @@ sap.ui.define([
 		},
 
 		/**
-		 * Sets a callback function which is called when the fake server responds with a fake
-		 * request. The function will be called with the request body as first parameter.
+		 * Sets a listener function which is called when the fake server responds. The function will
+		 * be called with the request body as first parameter and the request HTTP verb plus request
+		 * URL as second parameter e.g. "GET /foo/bar".
 		 *
 		 * Pass <code>null</code> to remove the listener.
 		 *
-		 * @param {function(string)} [fnCallback] - The function
+		 * @param {function(string, string)} [fnCallback] - The listener function
 		 *
 		 * @ui5-restricted sap.ui.model.odata.v4
 		 */

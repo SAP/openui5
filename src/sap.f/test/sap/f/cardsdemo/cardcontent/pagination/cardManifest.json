@@ -28,24 +28,6 @@
 	},
 	"sap.card": {
 		"type": "List",
-		"configuration": {
-			"filters": {
-				"f1": {
-					"type": "Select",
-					"value": "1",
-					"items": [
-						{
-							"title": "Filter 1",
-							"key": 1
-						},
-						{
-							"title": "Filter 2",
-							"key": 2
-						}
-					]
-				}
-			}
-		},
 		"header": {
 			"title": "Client-Side Pagination with Static Data"
 		},
@@ -90,6 +72,33 @@
 					},
 					{
 						"Name": "Name 13"
+					},
+					{
+						"Name": "Name 14"
+					},
+					{
+						"Name": "Name 15"
+					},
+					{
+						"Name": "Name 16"
+					},
+					{
+						"Name": "Name 17"
+					},
+					{
+						"Name": "Name 18"
+					},
+					{
+						"Name": "Name 19"
+					},
+					{
+						"Name": "Name 20"
+					},
+					{
+						"Name": "Name 21"
+					},
+					{
+						"Name": "Name 22"
 					}
 				]
 			},

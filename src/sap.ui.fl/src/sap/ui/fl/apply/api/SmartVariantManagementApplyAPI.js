@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -11,7 +10,6 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils"
 ], function(
-	CompVariantManagementState,
 	CompVariantMerger,
 	CompVariantUtils,
 	FlexState,
@@ -21,27 +19,45 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	/**
+	 * Returns the SmartVariant <code>ChangeMap</code> from the Change Persistence.
+	 *
+	 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
+	 * 	sap.ui.comp.smartfilterbar.SmartFilterBar|
+	 * 	sap.ui.comp.smarttable.SmartTable|
+	 * 	sap.ui.comp.smartchart.SmartChart} oControl - Variant management control
+	 * @returns {object} <code>persistencyKey</code> map and corresponding changes, or an empty object
+	 */
+	function getVariantsMapForKey(oControl) {
+		const sReference = ManifestUtils.getFlexReferenceForControl(oControl);
+		const sPersistencyKey = CompVariantUtils.getPersistencyKey(oControl);
+		const mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
+		return mCompVariantsMap._getOrCreate(sPersistencyKey);
+	}
+
 	function getCompEntities(mPropertyBag) {
 		var oControl = mPropertyBag.control;
 		var oVMControl = oControl.getVariantManagement?.() || oControl;
 		var sSVMControlId = oVMControl.getId();
+		var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
 
 		return FlexState.initialize({
-			reference: mPropertyBag.reference,
+			reference: sReference,
 			componentData: {},
 			manifest: Utils.getAppDescriptor(oControl),
 			componentId: Utils.getAppComponentForControl(oControl).getId()
 		}).then(function() {
-			var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
+			var sPersistencyKey = CompVariantUtils.getPersistencyKey(oControl);
+			var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
 			// Store external input data to FlexState so they can be restored after invalidating cache
 			FlexState.setInitialNonFlCompVariantData(
-				mPropertyBag.reference,
-				mPropertyBag.persistencyKey,
+				sReference,
+				sPersistencyKey,
 				mPropertyBag.standardVariant,
 				mPropertyBag.variants,
 				sSVMControlId
 			);
-			return mCompVariantsMap._initialize(mPropertyBag.persistencyKey, mPropertyBag.variants, sSVMControlId);
+			return mCompVariantsMap._initialize(sPersistencyKey, mPropertyBag.variants, sSVMControlId);
 		});
 	}
 
@@ -108,23 +124,16 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.comp
 		 */
 		async loadVariants(mPropertyBag) {
-			mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
-			mPropertyBag.persistencyKey = CompVariantUtils.getPersistencyKey(mPropertyBag.control);
-
 			const mCompMaps = await getCompEntities(mPropertyBag);
-
+			const sPersistencyKey = CompVariantUtils.getPersistencyKey(mPropertyBag.control);
+			const sDefaultVariantId = CompVariantUtils.getDefaultVariantId(getVariantsMapForKey(mPropertyBag.control));
 			const mMergedCompVariants = CompVariantMerger.merge(
-				mPropertyBag.persistencyKey,
+				sPersistencyKey,
 				mCompMaps,
 				mPropertyBag.standardVariant,
 				mPropertyBag.control
 			);
-
-			mMergedCompVariants.defaultVariantId = CompVariantManagementState.getDefaultVariantId({
-				persistencyKey: mPropertyBag.persistencyKey,
-				reference: mPropertyBag.reference,
-				variants: mMergedCompVariants.variants
-			});
+			mMergedCompVariants.defaultVariantId = sDefaultVariantId;
 			return mMergedCompVariants;
 		}
 	};

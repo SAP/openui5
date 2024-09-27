@@ -33,19 +33,21 @@
 			"path": "/value"
 		},
 		"header": {
-			"title": "Products",
-			"subTitle": "In Stock Information",
+			"title": "Available Products in Store with Stock Details per Category",
+			"titleMaxLines": 1,
+			"subTitle": "In Stock Information - Presented Units Depend on the Product Category",
+			"subTitleMaxLines": 1,
 			"icon": {
 				"src": "sap-icon://product"
 			},
 			"status": {
-				"text": "{= format.text(${i18n>CARD.COUNT_X_OF_Y}, [${paginator>/skip} + ${parameters>/visibleItems}, ${/value}.length]) }"
+				"text": "{= format.text(${i18n>CARD.COUNT_X_OF_Y}, [${parameters>/visibleItems}, ${/value}.length]) }"
 			}
 		},
 		"content": {
 			"item": {
 				"title": "{ProductName}",
-				"description": "{UnitsInStock} units in stock",
+				"description": "{UnitsInStock} units in stock, {QuantityPerUnit} per unit, {= format.currency(${UnitPrice}, 'USD')} per unit",
 				"highlight": "{= ${Discontinued} ? 'Error' : 'Success'}"
 			}
 		},

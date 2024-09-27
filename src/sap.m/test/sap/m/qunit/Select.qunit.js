@@ -10660,6 +10660,20 @@ sap.ui.define([
 			this.oSelect.open();
 		});
 
+		QUnit.test("beforeOpen event is fired", function(assert) {
+			assert.expect(1);
+
+			var fnDone = assert.async();
+
+			this.oSelect.attachBeforeOpen(function() {
+				assert.ok(true, "The beforeOpen event was fired."); // Assertion for event firing
+				fnDone();
+			});
+
+			// Open the Select to trigger the beforeOpen event
+			this.oSelect.open();
+		});
+
 		QUnit.module("Hidden select element", {
 			beforeEach: function () {
 				this.oSelect = new Select({

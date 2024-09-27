@@ -730,7 +730,7 @@ sap.ui.define([
 				if (!fnClass) {
 					const sErrorLogMessage = `Control '${sClassName}' did not return a class definition from sap.ui.define.`;
 
-					future.errorThrows(sErrorLogMessage, "", "XMLTemplateProcessor");
+					future.errorThrows(`XMLTemplateProcessor: ${sErrorLogMessage}`);
 				}
 				return fnClass;
 			}
@@ -779,7 +779,7 @@ sap.ui.define([
 			if (node.nodeType === 1 /* ELEMENT_NODE */) {
 				// Using native HTML in future is not allowed. We need to check explicitely in order to throw
 				if (node.namespaceURI === XHTML_NAMESPACE || node.namespaceURI === SVG_NAMESPACE) {
-					future.warningThrows(`Using native HTML content in XMLViews is deprecated.`, oView.getId());
+					future.warningThrows(`${oView.getId()}: Using native HTML content in XMLViews is deprecated.`);
 				}
 				pResult = createControlOrExtension(node, pRequireContext, oClosestBinding);
 				if (bRenderingRelevant) {
@@ -1007,7 +1007,7 @@ sap.ui.define([
 								try {
 									mMetaContextsInfo = XMLTemplateProcessor._calculatedModelMapping(sValue, oView._oContainingView.oController, true);
 								} catch (e) {
-									future.errorThrows("" + oView + ":" + e.message);
+									future.errorThrows(`Failed to parse metadataContexts in view "${oView}"`,  { cause: e });
 								}
 
 								if (mMetaContextsInfo) {

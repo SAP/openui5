@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/integration/cards/ObjectContent",
 	"sap/ui/integration/cards/TableContent",
 	"sap/ui/integration/cards/TimelineContent",
-	"sap/ui/integration/cards/WebPageContent"
+	"sap/ui/integration/cards/WebPageContent",
+	"sap/ui/integration/cards/BaseListContent"
 ], function (
 	BaseFactory,
 	Log,
@@ -30,7 +31,8 @@ sap.ui.define([
 	ObjectContent,
 	TableContent,
 	TimelineContent,
-	WebPageContent
+	WebPageContent,
+	BaseListContent
 ) {
 	"use strict";
 
@@ -80,6 +82,10 @@ sap.ui.define([
 
 		if (!(oContent instanceof AdaptiveContent)) {
 			oContent.setDataConfiguration(mConfig.contentManifest.data);
+		}
+
+		if (oContent instanceof BaseListContent) {
+			oContent.setPaginator(mConfig.paginator);
 		}
 
 		oContent.setLoadDependenciesPromise(

@@ -676,7 +676,7 @@ sap.ui.define([
 		assert.strictEqual(View._mPreprocessors["XML"]["controls"][0].preprocessor, noop, "Registration for content successful");
 
 		logSpyError.resetHistory();
-		let sExpectedMessage = 'Preprocessor could not be registered due to unknown sType "UNKNOWN"';
+		let sExpectedMessage = 'sap.ui.core.mvc.XMLView: Preprocessor could not be registered due to unknown sType "UNKNOWN"';
 		assert.throws(() => XMLView.registerPreprocessor("unknown", noop, false, {type: "unknown"}),
 			new Error(sExpectedMessage),
 			"Error logged when registering invalid type");
@@ -684,7 +684,7 @@ sap.ui.define([
 
 		logSpyError.resetHistory();
 		XMLView.registerPreprocessor(XMLView.PreprocessorType.XML, noop, false, true);
-		sExpectedMessage = 'Registration for "xml" failed, only one on-demand-preprocessor allowed';
+		sExpectedMessage = 'sap.ui.core.mvc.View: Registration for "xml" failed, only one on-demand-preprocessor allowed';
 		assert.throws(() => XMLView.registerPreprocessor(XMLView.PreprocessorType.XML, noop, false, true),
 			new Error(sExpectedMessage),
 			"Error logged when registering more than one ondemand pp");

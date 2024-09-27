@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["./BaseContentRenderer", "../library"], function (BaseContentRenderer, library) {
+sap.ui.define(["./BaseListContentRenderer", "../library"], function (BaseListContentRenderer, library) {
 	"use strict";
 
 	/**
@@ -10,7 +10,7 @@ sap.ui.define(["./BaseContentRenderer", "../library"], function (BaseContentRend
 	 * @author SAP SE
 	 * @namespace
 	 */
-	var TableContentRenderer = BaseContentRenderer.extend("sap.ui.integration.cards.TableContentRenderer", {
+	var TableContentRenderer = BaseListContentRenderer.extend("sap.ui.integration.cards.TableContentRenderer", {
 		apiVersion: 2
 	});
 

@@ -150,7 +150,7 @@ sap.ui.define([
 						assert.ok(false, "Callback should not be executed");
 					}
 				});
-			}, new Error("One or more parameters could not be found."), "Throws Error.");
+			}, new Error("sap.ui.core.theming.Parameters: The following parameters could not be found: \"sapUiNotExistingTestParam\""), "Throws Error.");
 			future.active = undefined;
 			done();
 		});
@@ -201,7 +201,7 @@ sap.ui.define([
 						assert.ok(false, "Callback should not be executed");
 					}
 				});
-			}, new Error("One or more parameters could not be found."), "Throws Error.");
+			}, new Error("sap.ui.core.theming.Parameters: The following parameters could not be found: \"\""), "Throws Error.");
 			future.active = undefined;
 			done();
 		});

@@ -614,7 +614,7 @@ sap.ui.define([
 
 		oComponent.deactivate();
 		assert.throws(() => oComponent.activate(),
-			new Error("The registered Event Listener 'onActivate' must not have a return value."),
+			new Error("component: The registered Event Listener 'onActivate' must not have a return value."),
 			"The 'onActivate' should not return a value."
 		);
 
@@ -633,7 +633,7 @@ sap.ui.define([
 		assert.ok(oComponent.isActive(), "Component: Initially, the component is active");
 
 		assert.throws(() => oComponent.deactivate(),
-			new Error("The registered Event Listener 'onDeactivate' must not have a return value."),
+			new Error("component: The registered Event Listener 'onDeactivate' must not have a return value."),
 			"The 'onDeactivate' should not return a value."
 		);
 

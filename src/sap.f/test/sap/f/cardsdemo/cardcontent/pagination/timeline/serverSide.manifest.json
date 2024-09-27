@@ -34,7 +34,8 @@
 				"parameters": {
 					"$count": true,
 					"$skip": "{paginator>/skip}",
-					"$top": 5
+					"$top": 5,
+					"$orderby": "OrderDate desc"
 				}
 			},
 			"path": "/value"
