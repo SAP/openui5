@@ -12,15 +12,11 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/Localization",
 	"sap/ui/Device",
-	"sap/ui/core/AnimationMode",
-	"sap/ui/core/ControlBehavior",
 	"sap/ui/dom/_ready"
 ], (
 	Log,
 	Localization,
 	Device,
-	AnimationMode,
-	ControlBehavior,
 	_ready
 ) => {
 	"use strict";
@@ -31,25 +27,6 @@ sap.ui.define([
 			resolve();
 		}, reject);
 	});
-
-	function _setupAnimation() {
-		function adaptAnimationMode() {
-			var html = document.documentElement;
-			var sAnimationMode = ControlBehavior.getAnimationMode();
-			html.dataset.sapUiAnimationMode = sAnimationMode;
-			var bAnimation = (sAnimationMode !== AnimationMode.minimal && sAnimationMode !== AnimationMode.none);
-			html.dataset.sapUiAnimation = bAnimation ? "on" : "off";
-			if (typeof jQuery !== "undefined") {
-				jQuery.fx.off = !bAnimation;
-			}
-		}
-		ControlBehavior.attachChange((oEvent) => {
-			if (oEvent.animationMode) {
-				adaptAnimationMode();
-			}
-		});
-		adaptAnimationMode();
-	}
 
 	/**
 	 * Set the document's dir property
@@ -105,7 +82,6 @@ sap.ui.define([
 					_setupContentDirection();
 					_setupBrowser();
 					_setupOS();
-					_setupAnimation();
 				}),
 				pLoaded
 			]);

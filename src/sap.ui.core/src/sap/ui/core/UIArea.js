@@ -18,13 +18,15 @@ sap.ui.define([
 	"sap/ui/performance/Measurement",
 	"sap/base/util/uid",
 	"sap/base/util/isEmptyObject",
+	"sap/ui/core/AnimationMode",
+	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Rendering",
 	"sap/ui/core/util/_LocalizationHelper",
 	"sap/ui/events/ControlEvents",
 	"sap/ui/events/F6Navigation",
 	"sap/ui/events/jquery/EventExtension",
-	"sap/ui/events/jquery/EventSimulation",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/jquery/EventSimulation"
 ],
 	function(
 		ManagedObject,
@@ -41,13 +43,15 @@ sap.ui.define([
 		Measurement,
 		uid,
 		isEmptyObject,
+		AnimationMode,
+		ControlBehavior,
 		Rendering,
 		_LocalizationHelper,
 		ControlEvents,
 		F6Navigation,
 		EventExtension,
-		EventSimulation,
-		jQuery
+		jQuery /*,
+		EventSimulation */
 	) {
 		"use strict";
 
@@ -1360,6 +1364,23 @@ sap.ui.define([
 				}
 			}
 		};
+
+		function adaptAnimationMode() {
+			var html = document.documentElement;
+			var sAnimationMode = ControlBehavior.getAnimationMode();
+			html.dataset.sapUiAnimationMode = sAnimationMode;
+			var bAnimation = (sAnimationMode !== AnimationMode.minimal && sAnimationMode !== AnimationMode.none);
+			html.dataset.sapUiAnimation = bAnimation ? "on" : "off";
+			if (typeof jQuery !== "undefined") {
+				jQuery.fx.off = !bAnimation;
+			}
+		}
+		ControlBehavior.attachChange((oEvent) => {
+			if (oEvent.animationMode) {
+				adaptAnimationMode();
+			}
+		});
+		adaptAnimationMode();
 
 		_LocalizationHelper.registerForUpdate("UIAreas", UIAreaRegistry.all);
 

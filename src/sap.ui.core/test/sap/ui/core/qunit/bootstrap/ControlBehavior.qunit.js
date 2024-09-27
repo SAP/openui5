@@ -3,12 +3,14 @@ sap.ui.define([
     "sap/base/config",
     "sap/base/config/GlobalConfigurationProvider",
     "sap/ui/core/AnimationMode",
-    "sap/ui/core/ControlBehavior"
+    "sap/ui/core/ControlBehavior",
+	"sap/ui/core/UIArea"
 ], (
     BaseConfig,
     GlobalConfigurationProvider,
     AnimationMode,
     ControlBehavior
+	/* UIArea - Configures AnimationMode */
 ) => {
 	"use strict";
 

@@ -30,7 +30,7 @@ sap.ui.define([
 	/*global */
 
 	/** configuration */
-	var ui5loader = globalThis.sap && globalThis.sap.ui && globalThis.sap.ui.loader;
+	var ui5loader = globalThis.sap?.ui?.loader;
 
 	if (ui5loader == null) {
 		throw new Error("ui5loader-autoconfig.js: ui5loader is needed, but could not be found");
@@ -243,6 +243,7 @@ sap.ui.define([
 
 	defineModuleSync('ui5loader.js', null);
 
+	// ui5lint-disable no-globals
 	if (bNojQuery && typeof jQuery === 'function') {
 		// when we're executed in the context of the sap-ui-core-noJQuery file,
 		// we try to detect an existing jQuery / jQuery position plugin and register them as modules
@@ -251,6 +252,7 @@ sap.ui.define([
 			defineModuleSync('sap/ui/thirdparty/jqueryui/jquery-ui-position.js', jQuery);
 		}
 	}
+	// ui5lint-enable no-globals
 
 	var sMainModule = config.get({
 		name: "sapUiMain",
