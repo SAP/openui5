@@ -274,7 +274,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if item is selected
 	 * @public
 	 * @since 1.101.0
-	 * @deprecated (since 1.118.0) - replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.findConditionsForContext findConditionsForContext}
+	 * @deprecated As of version 1.118, replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.findConditionsForContext findConditionsForContext}.
 	 * @name module:sap/ui/mdc/ValueHelpDelegate.isFilterableListItemSelected
 	 * @function
 	 */
