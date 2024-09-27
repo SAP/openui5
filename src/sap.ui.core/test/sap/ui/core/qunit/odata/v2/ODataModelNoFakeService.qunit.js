@@ -27,11 +27,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v2/ODataTreeBinding",
 	"sap/ui/thirdparty/datajs"
-], function (Log, Localization, SyncPromise, Messaging, UI5Date, Message, _Helper, BaseContext,
-		FilterProcessor, Model, _ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser,
-		ODataMetaModel, ODataPropertyBinding, ODataUtils, _CreatedContextsCache, Context,
-		ODataAnnotations, ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding, OData
-) {
+], function(Log, Localization, SyncPromise, Messaging, UI5Date, Message, _Helper, BaseContext, FilterProcessor, Model, _ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser, ODataMetaModel, ODataPropertyBinding, ODataUtils, _CreatedContextsCache, Context, ODataAnnotations, ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding, OData) {
 	/*global QUnit,sinon*/
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
@@ -9730,5 +9726,12 @@ sap.ui.define([
 		assert.ok(oPromise.isFulfilled());
 		assert.strictEqual(oModel.pAnnotationChanges, oPromise);
 		assert.strictEqual(oPromise.getResult(), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("No extend in UI5 2.x", function (assert) {
+		// code under test
+		assert.ok(ODataModel.getMetadata().isFinal());
+		assert.notOk(ODataModel.extend);
 	});
 });

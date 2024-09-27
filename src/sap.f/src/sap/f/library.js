@@ -47,6 +47,7 @@ sap.ui.define([
 		  "sap.f.AvatarType",
 		  "sap.f.AvatarColor",
 		  "sap.f.AvatarGroupType",
+		  "sap.f.CardBadgeVisibilityMode",
 		  "sap.f.cards.HeaderPosition",
 		  "sap.f.cards.NumericHeaderSideIndicatorsAlignment",
 		  "sap.f.DynamicPageTitleShrinkRatio",

@@ -17,6 +17,43 @@ sap.ui.define([
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
+	QUnit.module("Select Filter - Base Methods");
+
+	QUnit.test("writeValueToConfiguration", async function (assert) {
+		// Arrange
+		const oSF = new SelectFilter({
+			configuration: {
+				value: "all",
+				items: [
+					{
+						key: "all"
+					},
+					{
+						key: "notebooks"
+					}
+				]
+			}
+		});
+		oSF.getField().setSelectedKey("notebooks");
+		await nextUIUpdate();
+		const oConfiguration = {};
+
+		// Act
+		oSF.writeValueToConfiguration(oConfiguration);
+
+		// Assert
+		assert.deepEqual(
+			oConfiguration,
+			{
+				value: "notebooks"
+			},
+			"Value is written correctly to the configuration"
+		);
+
+		// Clean up
+		oSF.destroy();
+	});
+
 	QUnit.module("Initialization", {
 		beforeEach: function () {
 			this.oCard = new Card({

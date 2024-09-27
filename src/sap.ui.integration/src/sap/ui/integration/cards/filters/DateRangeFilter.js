@@ -70,6 +70,16 @@ sap.ui.define([
 		return DateRangeHelper.getValueForModel(this._getDdr());
 	};
 
+	/**
+	 * @override
+	 */
+	DateRangeFilter.prototype.writeValueToConfiguration = function (oConfiguration) {
+		const oValueForModel = this.getValueForModel();
+
+		oConfiguration.value.option = oValueForModel.value.option;
+		oConfiguration.value.values = oValueForModel.value.values;
+	};
+
 	DateRangeFilter.prototype._getDdr = function () {
 		var oControl = this.getAggregation("_ddr");
 		if (!oControl) {

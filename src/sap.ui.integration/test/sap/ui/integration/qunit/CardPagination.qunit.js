@@ -306,7 +306,6 @@ sap.ui.define([
 						"shipper": {
 							"value": "1",
 							"type": "Select",
-							"label": "Shipper",
 							"items": [
 								{
 									"title": 1,
