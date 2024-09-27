@@ -394,12 +394,12 @@ sap.ui.define([
 
 		});
 
-		opaTest("should combine 'Export as PDF' and 'Export to Excel'", function(Given, When, Then) {
+		opaTest("should combine 'Action 5', 'Export as PDF' and 'Export to Excel'", function(Given, When, Then) {
 			When.onTheApp.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("ActionToolbarTesting---app");
 			Then.onPageWithRTA.iShouldSeeTheToolbar().and.iShouldSeeTheOverlayForTheApp("ActionToolbarTesting---app", undefined);
 
-			When.onTheApp.iCombineActions(oTestSetting.toolbarID, [
-				"Export as PDF", "Export to Excel"
+			When.onTheApp.iSelectElementOverlaysOfActions(oTestSetting.toolbarID, [
+				"Action 5", "Export as PDF", "Export to Excel"
 			]);
 
 			Then.onPageWithRTA.iShouldSeetheContextMenu();
@@ -408,15 +408,11 @@ sap.ui.define([
 
 			// Check button order
 			Then.onTheApp.iShouldSeeActionToolbarWithActions(oTestSetting.toolbarID, {
-				"Action 5": {
+				"Action 5/Export as PDF/Export to Excel": {
 					alignment: ActionToolbarActionAlignment.Begin,
 					aggregationName: "end"
 				},
 				"Rename Test": {
-					alignment: ActionToolbarActionAlignment.Begin,
-					aggregationName: "end"
-				},
-				"Export as PDF/Export to Excel": {
 					alignment: ActionToolbarActionAlignment.Begin,
 					aggregationName: "end"
 				},
@@ -464,15 +460,11 @@ sap.ui.define([
 
 			// Check button order
 			Then.onTheApp.iShouldSeeActionToolbarWithActions(oTestSetting.toolbarID, {
-				"Action 5": {
+				"Action 5/Export as PDF/Export to Excel": {
 					alignment: ActionToolbarActionAlignment.Begin,
 					aggregationName: "end"
 				},
 				"Rename Test": {
-					alignment: ActionToolbarActionAlignment.Begin,
-					aggregationName: "end"
-				},
-				"Export as PDF/Export to Excel": {
 					alignment: ActionToolbarActionAlignment.Begin,
 					aggregationName: "end"
 				},
@@ -502,15 +494,11 @@ sap.ui.define([
 
 			// Check button order
 			Then.onTheApp.iShouldSeeActionToolbarWithActions(oTestSetting.toolbarID, {
-				"Action 5": {
+				"Action 5/Export as PDF/Export to Excel": {
 					alignment: ActionToolbarActionAlignment.Begin,
 					aggregationName: "end"
 				},
 				"Rename Test": {
-					alignment: ActionToolbarActionAlignment.Begin,
-					aggregationName: "end"
-				},
-				"Export as PDF/Export to Excel": {
 					alignment: ActionToolbarActionAlignment.Begin,
 					aggregationName: "end"
 				},

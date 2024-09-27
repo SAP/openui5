@@ -3,16 +3,16 @@
 */
 
 sap.ui.define([
-	"sap/ui/base/ManagedObject",
 	"sap/base/util/uid",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/openCardDialog",
 	"sap/ui/integration/util/Utils",
 	"sap/m/BusyIndicator"
 ], (
-	ManagedObject,
 	uid,
+	ManagedObject,
 	library,
 	BindingResolver,
 	openCardDialog,
