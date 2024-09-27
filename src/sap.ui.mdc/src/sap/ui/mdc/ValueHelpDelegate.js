@@ -238,13 +238,13 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
  	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
 	 * @param {object} oItem - Entry of a given list
- 	 * @param {method} oItem.getBindingContext - Get the binding context of this object for the given model name.
+ 	 * @param {function} oItem.getBindingContext - Get the binding context of this object for the given model name.
 	 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions current conditions
 	 * @returns {boolean} <code>true</code> if item is selected
 	 * @public
 	 * @since 1.101.0
-  	 * @deprecated (since 1.118.0) - replaced by {@link sap.ui.mdc.ValueHelpDelegate.findConditionsForContext}
-	 * @name sap.ui.mdc.ValueHelpDelegate#isFilterableListItemSelected
+	 * @deprecated As of version 1.118, replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.findConditionsForContext findConditionsForContext}.
+	 * @name module:sap/ui/mdc/ValueHelpDelegate.isFilterableListItemSelected
 	 * @function
 	 */
 
