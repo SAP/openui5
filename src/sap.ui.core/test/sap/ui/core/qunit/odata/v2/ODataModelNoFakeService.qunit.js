@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/Localization",
+	"sap/ui/base/Metadata",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/date/UI5Date",
@@ -27,7 +28,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v2/ODataTreeBinding",
 	"sap/ui/thirdparty/datajs"
-], function (Log, Localization, SyncPromise, Messaging, UI5Date, Message, _Helper, BaseContext,
+], function (Log, Localization, Metadata, SyncPromise, Messaging, UI5Date, Message, _Helper, BaseContext,
 		FilterProcessor, Model, _ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser,
 		ODataMetaModel, ODataPropertyBinding, ODataUtils, _CreatedContextsCache, Context,
 		ODataAnnotations, ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding, OData
@@ -9794,5 +9795,27 @@ sap.ui.define([
 		assert.ok(oPromise.isFulfilled());
 		assert.strictEqual(oModel.pAnnotationChanges, oPromise);
 		assert.strictEqual(oPromise.getResult(), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("No extend in UI5 2.x", function (assert) {
+		/** @deprecated */
+		const bVersion1 = true;
+		/** @deprecated */
+		if (bVersion1) {
+			this.oLogMock.expects("error")
+				.withExactArgs("[FUTURE FATAL] sap.ui.model.v2.ODataModel must not be extended");
+			this.mock(Metadata).expects("createClass")
+				.withExactArgs(ODataModel, "foo.bar.MyODataModel", "~oSCClassInfo", "~fnSCMetaImpl")
+				.returns("~oClass");
+
+			// code under test
+			assert.strictEqual(ODataModel.extend("foo.bar.MyODataModel", "~oSCClassInfo", "~fnSCMetaImpl"), "~oClass");
+
+			return;
+		}
+		// code under test
+		assert.ok(ODataModel.getMetadata().isFinal());
+		assert.notOk(ODataModel.extend);
 	});
 });
