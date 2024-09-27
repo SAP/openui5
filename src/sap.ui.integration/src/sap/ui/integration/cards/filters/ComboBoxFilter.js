@@ -176,6 +176,19 @@ sap.ui.define([
 		return oStaticConfiguration;
 	};
 
+	/**
+	 * @override
+	 */
+	ComboBoxFilter.prototype.writeValueToConfiguration = function (oConfiguration) {
+		const oValueForModel = this.getValueForModel();
+
+		oConfiguration.value = oValueForModel.value;
+
+		if (oValueForModel.selectedItem) {
+			oConfiguration.selectedKey = oValueForModel.selectedItem.key;
+		}
+	};
+
 	ComboBoxFilter.prototype._getComboBox = function () {
 		let oControl = this.getAggregation("_comboBox");
 		if (!oControl) {

@@ -17,6 +17,31 @@ sap.ui.define([
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
+	QUnit.module("ComboBox Filter - Base Methods");
+
+	QUnit.test("writeValueToConfiguration", function (assert) {
+		// Arrange
+		const oCBF = new ComboBoxFilter();
+		oCBF.placeAt(DOM_RENDER_LOCATION);
+		oCBF.getField().setValue("new value");
+		const oConfiguration = {};
+
+		// Act
+		oCBF.writeValueToConfiguration(oConfiguration);
+
+		// Assert
+		assert.deepEqual(
+			oConfiguration,
+			{
+				value: "new value"
+			},
+			"Value is written correctly to the configuration"
+		);
+
+		// Clean up
+		oCBF.destroy();
+	});
+
 	QUnit.module("ComboBox Initialization", {
 		beforeEach: function () {
 			this.oCard = new Card({

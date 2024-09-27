@@ -217,6 +217,13 @@ sap.ui.define([
 		return oResult;
 	};
 
+	/**
+	 * @private
+	 * @ui5-restricted sap.ui.integration.delegate.Paginator
+	 * @param {object} oConfiguration Filter configuration where the value will be written.
+	 */
+	BaseFilter.prototype.writeValueToConfiguration = function (oConfiguration) { };
+
 	BaseFilter.prototype._showError = function () {
 		var sMessage = Library.getResourceBundleFor("sap.ui.integration").getText("CARD_FILTER_DATA_LOAD_ERROR");
 

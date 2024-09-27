@@ -27,6 +27,39 @@ sap.ui.define([
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
+	QUnit.module("DateRangeFilter - Base Methods");
+
+	QUnit.test("writeValueToConfiguration", function (assert) {
+		// Arrange
+		const oDRF = new DateRangeFilter();
+		oDRF.placeAt(DOM_RENDER_LOCATION);
+		oDRF.getField().setValue({
+			operator: "TODAY",
+			values: []
+		});
+		const oConfiguration = {
+			value: {}
+		};
+
+		// Act
+		oDRF.writeValueToConfiguration(oConfiguration);
+
+		// Assert
+		assert.deepEqual(
+			oConfiguration,
+			{
+				value: {
+					option: "today",
+					values: []
+				}
+			},
+			"Value is written correctly to the configuration"
+		);
+
+		// Clean up
+		oDRF.destroy();
+	});
+
 	QUnit.module("DateRangeFilter Generic", {
 		beforeEach: function () {
 			this.oCard = new Card({

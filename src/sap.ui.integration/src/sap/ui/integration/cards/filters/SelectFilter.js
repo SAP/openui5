@@ -150,6 +150,13 @@ sap.ui.define([
 		return oStaticConfiguration;
 	};
 
+	/**
+	 * @override
+	 */
+	SelectFilter.prototype.writeValueToConfiguration = function (oConfiguration) {
+		oConfiguration.value = this.getValueForModel().value;
+	};
+
 	SelectFilter.prototype._getSelect = function () {
 		var oControl = this.getAggregation("_select");
 		if (!oControl) {
