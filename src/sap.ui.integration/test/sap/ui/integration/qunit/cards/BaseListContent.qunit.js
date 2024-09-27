@@ -6,16 +6,14 @@ sap.ui.define([
 	"sap/ui/integration/util/ServiceManager",
 	"sap/ui/integration/model/ObservableModel",
 	"sap/m/List",
-	"sap/ui/integration/controls/ListContentItem",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/integration/controls/ListContentItem"
 ], function (
 	SampleServices,
 	BaseListContent,
 	ServiceManager,
 	ObservableModel,
 	List,
-	ListContentItem,
-	nextUIUpdate
+	ListContentItem
 ) {
 	"use strict";
 
@@ -133,31 +131,5 @@ sap.ui.define([
 
 		// assert
 		assert.ok(oChangeEventSpy.notCalled, "The model is not changed");
-	});
-
-	QUnit.module("Methods", {
-		beforeEach: function () {
-			this.oBLC = new BaseListContent();
-			this.oBLC.getInnerList = function () {
-				if (!this._oList) {
-					this._oList = createFakeList();
-				}
-
-				return this._oList;
-			};
-
-			this.oBLC.setModel(this.oBLC.getInnerList().getModel());
-		},
-		afterEach: function () {
-			this.oBLC.getInnerList().destroy();
-			this.oBLC.destroy();
-		}
-	});
-
-	QUnit.test("sliceData", async function (assert) {
-		assert.strictEqual(this.oBLC.getInnerList().getItems().length, 2, "items length is correct");
-		this.oBLC.sliceData(1, 2);
-		await nextUIUpdate();
-		assert.strictEqual(this.oBLC.getInnerList().getItems().length, 1, "items length is correct");
 	});
 });

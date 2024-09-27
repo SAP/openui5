@@ -364,7 +364,7 @@ sap.ui.define([
 				oExtControllerDef = mRegistry[sControllerName] || oExtControllerDef;
 				if (oExtControllerDef !== undefined) {
 					if (oExtControllerDef.getMetadata && oExtControllerDef.getMetadata().isA("sap.ui.core.mvc.Controller")) {
-						future.fatalThrows("Attempt to load Extension Controller " + sControllerName + " was not successful", "Controller extension should be a plain object.", null, function() {
+						future.fatalThrows("Attempt to load Extension Controller " + sControllerName + " was not successful. Controller extension should be a plain object.", "", null, function() {
 							return {
 								type: "ControllerExtension",
 								name: sControllerName
@@ -496,7 +496,7 @@ sap.ui.define([
 	 */
 	Controller.prototype._getDestroyables = function() {
 		if (!this._aDestroyables) {
-			future.errorThrows("Mandatory super constructor not called for Controller: '" + this.getMetadata().getName() + "'.",
+			future.errorThrows(`${this.getMetadata().getName()}: A sub-class of sap.ui.core.mvc.Controller which overrides the constructor must apply the super constructor as well.`,
 				null,
 				"sap.ui.support",
 				function() {

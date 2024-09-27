@@ -353,7 +353,7 @@ sap.ui.define([
 		});
 
 		// Act - trigger both routers
-		assert.throws(() => { hasher.setHash("matches"); }, new Error("This router has been destroyed while the hash changed. No routing events where fired by the destroyed instance."), "Error thrown because router has been destroyed while the hash changed.");
+		assert.throws(() => { hasher.setHash("matches"); }, new Error(oFirstRouter.toString() + ": This router has been destroyed while the hash changed. No routing events where fired by the destroyed instance."), "Error thrown because router has been destroyed while the hash changed.");
 
 		future.active = undefined;
 	});
@@ -412,10 +412,9 @@ sap.ui.define([
 
 	QUnit.test("Throw Error when setting invalid option 'viewName' in route (future=true)", function (assert) {
 		future.active = true;
-
 		//Arrange System under Test
 		assert.throws(() => {
-			fnCreateRouter({
+				fnCreateRouter({
 				name: {
 					// This is a wrong usage, the option "view" should be set
 					// instead of "viewName"
@@ -426,7 +425,7 @@ sap.ui.define([
 					pattern: "view1"
 				}
 			});
-		}, new Error("The 'viewName' option shouldn't be used in Route. please use 'view' instead"), "Error thrown because invalid option 'viewName' is set for route.");
+		}, new Error("EventProvider sap.ui.core.routing.Route: The 'viewName' option shouldn't be used in Route. please use 'view' instead"), "Error thrown because invalid option 'viewName' is set for route.");
 
 		future.active = undefined;
 	});
@@ -1081,7 +1080,7 @@ sap.ui.define([
 		future.active = true;
 		const oRouter = fnCreateRouter();
 
-		assert.throws(() => oRouter.navTo("home"), new Error("Route with name home does not exist"), "Error thrown because route does not exist.");
+		assert.throws(() => oRouter.navTo("home"), new Error(oRouter.toString() + ": Route with name \"home\" does not exist"), "Error thrown because route does not exist.");
 		future.active = undefined;
 	});
 

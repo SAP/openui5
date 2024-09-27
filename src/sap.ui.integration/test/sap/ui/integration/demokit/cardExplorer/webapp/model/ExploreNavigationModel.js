@@ -2404,6 +2404,9 @@ sap.ui.define([
 							{
 								title: 'Client-Side Pagination',
 								key: "client",
+								settings: {
+									columns: 4
+								},
 								files: [
 									{
 										url: '/samples/pagination/client/manifest.json',
@@ -2445,6 +2448,28 @@ sap.ui.define([
 								files: [
 									{
 										url: '/samples/pagination/clientactions/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Pagination in Table Card',
+								key: "table",
+								files: [
+									{
+										url: '/samples/pagination/table/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								'title': 'Pagination in Timeline Card',
+								'key': 'timeline',
+								files: [
+									{
+										url: '/samples/pagination/timeline/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
 									}

@@ -3389,7 +3389,7 @@ sap.ui.define([
 			new MySampleManagedObject({
 				id: "sample2"
 			});
-		}, new Error("The registered Event Listener 'init' must not have a return value."), "Error thrown because 'init' hook has a return value.");
+		}, new Error("sample2: The registered Event Listener 'init' must not have a return value."), "Error thrown because 'init' hook has a return value.");
 
 		future.active = undefined;
 	});
@@ -3417,7 +3417,7 @@ sap.ui.define([
 
 		assert.throws(() => {
 			oMySample.destroy();
-		}, new Error("The registered Event Listener 'exit' must not have a return value."), "Error thrown because 'exit' hook has a return value.");
+		}, new Error("sample3: The registered Event Listener 'exit' must not have a return value."), "Error thrown because 'exit' hook has a return value.");
 
 		future.active = undefined;
 	});

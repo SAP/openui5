@@ -681,7 +681,7 @@ sap.ui.define([
 			name: "testdata.v2models.parent",
 			manifest: oManifestJson
 		}).catch((error) => {
-			assert.ok(error.message.includes(`Cannot load module 'sap/ui/not/defined/Model'.`),
+			assert.ok(error.message.includes(`Cannot load module 'sap/ui/not/defined/Model'`),
 				"Error thrown because defined model class is not found.");
 
 			future.active = undefined;

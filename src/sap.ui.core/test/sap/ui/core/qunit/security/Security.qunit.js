@@ -1,5 +1,5 @@
 /* globals QUnit, sinon */
-sap.ui.require([
+sap.ui.define([
 	"sap/base/config",
 	"sap/base/config/GlobalConfigurationProvider",
 	"sap/ui/security/Security"

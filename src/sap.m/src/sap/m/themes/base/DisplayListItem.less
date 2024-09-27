@@ -4,23 +4,20 @@
 /* ====================================== */
 
 .sapMDLI {
-	display: -webkit-box;
 	display: flex;
 	height: 3rem;
 }
 
 .sapMDLILabel {
-	-webkit-box-flex: 1;
 	flex: auto;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	min-width: 3rem;
 	display: block;
-	font-size: @sapFontLargeSize;
-	-webkit-box-align: center;
+	font-size: var(--sapFontLargeSize);
 	align-items: center;
-	color: @sapUiListTextColor;
+	color: var(--sapList_TextColor);
 }
 
 .sapMLIBActionable .sapMDLILabel {
@@ -28,7 +25,6 @@
 }
 
 .sapMDLIValue {
-	-webkit-box-flex: 1;
 	flex: auto;
 	white-space: nowrap;
 	overflow: hidden;
@@ -37,11 +33,10 @@
 	font-size: @sapMFontMediumSize;
 	margin-left: 1rem;
 	text-align: right;
-	color: @sapUiContentLabelColor;
+	color: var(--sapContent_LabelColor);
 }
 
 .sapMDLI > .sapMLIBContent {
-	display: -webkit-box;
 	display: flex;
 	white-space: nowrap;
 	text-overflow: ellipsis;
@@ -53,11 +48,11 @@ html[dir=rtl] .sapMDLIValue {
 }
 
 .sapMLIBActive .sapMDLILabel {
-	color: @sapUiListActiveTextColor;
+	color: var(--sapList_Active_TextColor);
 }
 
 .sapMLIBActive .sapMDLIValue {
-	color: @sapUiListActiveTextColor;
+	color: var(--sapList_Active_TextColor);
 }
 
 /* Compact size */

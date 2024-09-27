@@ -7370,6 +7370,40 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[
+	{autoExpandSelect : false, separate : undefined, sortExpandSelect : false},
+	{autoExpandSelect : true, separate : undefined, sortExpandSelect : true},
+	{autoExpandSelect : false, separate : "~separate~", sortExpandSelect : true}
+].forEach(function (oFixture, i) {
+	QUnit.test("doCreateCache: use of bSortExpandSelect, " + i, function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		const oCache = {registerChangeListener : function () {}};
+		this.oModel.bAutoExpandSelect = oFixture.autoExpandSelect;
+		oBinding.bSharedRequest = "~sharedRequest~";
+		if (oFixture.separate) {
+			oBinding.mParameters.$$separate = oFixture.separate;
+		}
+
+		this.mock(oBinding).expects("inheritQueryOptions")
+			.withExactArgs("~queryOptions~", "~context~").returns("~mergedQueryOptions~");
+		this.mock(oBinding).expects("getCacheAndMoveKeepAliveContexts")
+			.withExactArgs("resource/path", "~mergedQueryOptions~").returns(undefined);
+		this.mock(oBinding).expects("isGrouped").withExactArgs().returns("~isGrouped~");
+		this.mock(_AggregationCache).expects("create")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "resource/path",
+				"deep/resource/path", "~mergedQueryOptions~", /*$$aggregation*/undefined,
+				oFixture.sortExpandSelect, "~sharedRequest~", "~isGrouped~", oFixture.separate)
+			.returns(oCache);
+
+		assert.strictEqual(
+			// code under test
+			oBinding.doCreateCache("resource/path", "~queryOptions~", "~context~",
+				"deep/resource/path"),
+			oCache);
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("getQueryOptionsFromParameters", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES");
 

@@ -113,7 +113,7 @@ sap.ui.define([
 					}
 				]
 			};
-			fnReturnData(500, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
+			fnReturnData(500, {"Content-Type": "application/json"}, JSON.stringify(oExpectedResponse));
 
 			var mPropertyBag = {url: "/sap/bc/lrep", reference: "reference", layer: Layer.VENDOR};
 			return WriteLrepConnector.getFlexInfo(mPropertyBag).catch(function(oError) {
@@ -128,7 +128,7 @@ sap.ui.define([
 				isResetEnabled: false,
 				isPublishEnabled: false
 			};
-			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
+			fnReturnData(200, {"Content-Type": "application/json"}, JSON.stringify(oExpectedResponse));
 
 			var mPropertyBag = {url: "/sap/bc/lrep", reference: "reference", layer: Layer.VENDOR};
 			var sUrl = "/sap/bc/lrep/flex/info/reference?layer=VENDOR";
@@ -153,7 +153,7 @@ sap.ui.define([
 				],
 				lastHitReached: true
 			};
-			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
+			fnReturnData(200, {"Content-Type": "application/json"}, JSON.stringify(oExpectedResponse));
 
 			var mPropertyBag = {url: "/sap/bc/lrep", type: "role", $skip: 100, $filter: "SAP"};
 			var sUrl = "/sap/bc/lrep/flex/contexts/?type=role&%24skip=100&%24filter=SAP";
@@ -178,7 +178,7 @@ sap.ui.define([
 				],
 				lastHitReached: true
 			};
-			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
+			fnReturnData(200, {"Content-Type": "application/json"}, JSON.stringify(oExpectedResponse));
 
 			var mPropertyBag = {url: "/sap/bc/lrep", flexObjects: {role: ["/IWBEP/RT_MGW_DSP"]}};
 			var sUrl = "/sap/bc/lrep/flex/contexts/?sap-language=EN";
@@ -283,25 +283,45 @@ sap.ui.define([
 
 		QUnit.test("when calling condense successfully", function(assert) {
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
+
+			// Simulate allChanges with namespaces for the delete actions
+			var allChanges = [
+				{
+					getId: () => "change3",
+					getNamespace: () => "namespace0",
+					getFileType: () => "change",
+					convertToFileContent: () => ({namespace: "namespace0", fileName: "change3"})
+				},
+				{
+					getId: () => "change4",
+					getNamespace: () => "namespace0",
+					getFileType: () => "change",
+					convertToFileContent: () => ({namespace: "namespace0", fileName: "change4"})
+				},
+				{
+					getId: () => "change5",
+					getNamespace: () => "namespace0",
+					getFileType: () => "change",
+					convertToFileContent: () => ({namespace: "namespace0", fileName: "change5"})
+				},
+				{
+					getId: () => "change6",
+					getNamespace: () => "namespace1",
+					getFileType: () => "change",
+					convertToFileContent: () => ({namespace: "namespace1", fileName: "change6"})
+				}
+			];
+
+			// Input data: mCondense as a single object with delete containing filenames
 			var mCondense = {
-				namespace: "namespace",
-				layer: this.sLayer,
-				"delete": {
-					change: ["change1", "change2"]
-				},
-				update: {
-					change: []
-				},
-				reorder: {
-					change: []
-				},
+				layer: "CUSTOMER",
 				create: {
 					change: [{
 						change3: {
 							fileType: "change",
-							layer: this.sLayer,
+							layer: "CUSTOMER",
 							fileName: "change3",
-							namespace: "b",
+							namespace: "namespace0",
 							packageName: "$TMP",
 							changeType: "labelChange",
 							creation: "",
@@ -314,16 +334,225 @@ sap.ui.define([
 							}
 						}
 					}]
+				},
+				"delete": {
+					change: ["change4", "change5", "change6"]
 				}
 			};
+
+			// Expected output: aExpectedCondense as an array of objects
+			var aExpectedCondense = [
+				{
+					namespace: "namespace0",
+					layer: "CUSTOMER",
+					create: {
+						change: [{
+							change3: {
+								fileType: "change",
+								layer: "CUSTOMER",
+								fileName: "change3",
+								namespace: "namespace0",
+								packageName: "$TMP",
+								changeType: "labelChange",
+								creation: "",
+								reference: "",
+								selector: {
+									id: "abc123"
+								},
+								content: {
+									something: "change_content"
+								}
+							}
+						}]
+					},
+					"delete": {
+						change: ["change4", "change5"]
+					}
+				},
+				{
+					namespace: "namespace1",
+					layer: "CUSTOMER",
+					"delete": {
+						change: ["change6"]
+					}
+				}
+			];
 
 			return WriteLrepConnector.condense({
 				flexObjects: mCondense,
 				url: "/sap/bc/lrep",
-				reference: this.sReference
+				reference: this.sReference,
+				allChanges // Simulate the original allChanges
 			}).then(function() {
 				assert.equal(oStubSendRequest.args[0][0], "/sap/bc/lrep/actions/condense/sampleComponent?sap-language=EN", "the correct route is used");
-				assert.equal(oStubSendRequest.args[0][2].payload, JSON.stringify(mCondense), "the request contains the correct map of changes as payload");
+				assert.deepEqual(JSON.parse(oStubSendRequest.args[0][2].payload), aExpectedCondense, "the request contains the correct array of changes as payload");
+				WriteUtils.sendRequest.restore();
+			});
+		});
+
+		QUnit.test("when condense is called with single namespace and multiple actions", function(assert) {
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
+
+			// Simulate allChanges with a single namespace for all actions
+			var allChanges = [
+				{
+					getId: () => "change1",
+					getNamespace: () => "namespace1",
+					getFileType: () => "change",
+					convertToFileContent: () => ({namespace: "namespace1", fileName: "change1"})
+				},
+				{
+					getId: () => "change2",
+					getNamespace: () => "namespace1",
+					getFileType: () => "change",
+					convertToFileContent: () => ({namespace: "namespace1", fileName: "change2"})
+				}
+			];
+
+			var mCondense = {
+				layer: "CUSTOMER",
+				create: {
+					change: [
+						{
+							change1: {
+								fileType: "change",
+								layer: "CUSTOMER",
+								fileName: "change1",
+								namespace: "namespace1",
+								packageName: "$TMP",
+								changeType: "labelChange",
+								creation: "",
+								reference: "",
+								selector: {
+									id: "abc123"
+								},
+								content: {
+									something: "change_content"
+								}
+							}
+						}
+					]
+				},
+				"delete": {
+					change: ["change2"]
+				}
+			};
+
+			var aExpectedCondense = [
+				{
+					namespace: "namespace1",
+					layer: "CUSTOMER",
+					create: {
+						change: [
+							{
+								change1: {
+									fileType: "change",
+									layer: "CUSTOMER",
+									fileName: "change1",
+									namespace: "namespace1",
+									packageName: "$TMP",
+									changeType: "labelChange",
+									creation: "",
+									reference: "",
+									selector: {
+										id: "abc123"
+									},
+									content: {
+										something: "change_content"
+									}
+								}
+							}
+						]
+					},
+					"delete": {
+						change: ["change2"]
+					}
+				}
+			];
+
+			return WriteLrepConnector.condense({
+				flexObjects: mCondense,
+				url: "/sap/bc/lrep",
+				reference: this.sReference,
+				allChanges
+			}).then(function() {
+				assert.equal(oStubSendRequest.args[0][0], "/sap/bc/lrep/actions/condense/sampleComponent?sap-language=EN", "the correct route is used");
+				assert.deepEqual(JSON.parse(oStubSendRequest.args[0][2].payload), aExpectedCondense, "the request contains the correct array of changes as payload");
+				WriteUtils.sendRequest.restore();
+			});
+		});
+
+		QUnit.test("when condense is called with multiple namespaces, reorder and update actions", function(assert) {
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
+
+			// Simulate allChanges with namespaces for the delete and reorder actions
+			var allChanges = [
+				{
+					getId: () => "change7",
+					getNamespace: () => "namespace2",
+					getFileType: () => "change",
+					convertToFileContent: () => ({namespace: "namespace2", fileName: "change7"})
+				},
+				{
+					getId: () => "change8",
+					getNamespace: () => "namespace3",
+					getFileType: () => "change",
+					convertToFileContent: () => ({namespace: "namespace3", fileName: "change8", content: {something: "new_content"}})
+				}
+			];
+
+			// Input data: mCondense as a single object with delete and reorder actions
+			var mCondense = {
+				layer: "CUSTOMER",
+				reorder: {
+					change: ["change7"]
+				},
+				update: {
+					change: [{
+						change8: {
+							fileType: "change",
+							layer: "CUSTOMER",
+							fileName: "change8",
+							namespace: "namespace3",
+							content: {something: "new_content"}
+						}
+					}]
+				}
+			};
+
+			var aExpectedCondense = [
+				{
+					namespace: "namespace2",
+					layer: "CUSTOMER",
+					reorder: {
+						change: ["change7"]
+					}
+				},
+				{
+					namespace: "namespace3",
+					layer: "CUSTOMER",
+					update: {
+						change: [{
+							change8: {
+								fileType: "change",
+								layer: "CUSTOMER",
+								fileName: "change8",
+								namespace: "namespace3",
+								content: {something: "new_content"}
+							}
+						}]
+					}
+				}
+			];
+
+			return WriteLrepConnector.condense({
+				flexObjects: mCondense,
+				url: "/sap/bc/lrep",
+				reference: this.sReference,
+				allChanges
+			}).then(function() {
+				assert.equal(oStubSendRequest.args[0][0], "/sap/bc/lrep/actions/condense/sampleComponent?sap-language=EN", "the correct route is used");
+				assert.deepEqual(JSON.parse(oStubSendRequest.args[0][2].payload), aExpectedCondense, "the request contains the correct array of changes as payload");
 				WriteUtils.sendRequest.restore();
 			});
 		});
@@ -841,7 +1070,7 @@ sap.ui.define([
 			};
 			var oExpectedResponse = true;
 			var sUrl = "/sap/bc/ui2/app_index/ui5_app_mani_first_supported/?id=test.app.id";
-			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
+			fnReturnData(200, {"Content-Type": "application/json"}, JSON.stringify(oExpectedResponse));
 
 			return WriteLrepConnector.appVariant.getManifirstSupport(mPropertyBag).then(function(oResponse) {
 				assert.equal(oResponse, true);
@@ -1288,8 +1517,7 @@ sap.ui.define([
 			return WriteLrepConnector.contextBasedAdaptation.create(mPropertyBag).then(function() {
 				assert.equal(this.oStubWriteSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubWriteSendRequest.getCall(0).args;
-				assert.strictEqual(oCallArguments[0], `/sap/bc/lrep/flex/apps/${this.sAppId}/adaptations/?parentVersion=${
-					 mPropertyBag.parentVersion}&sap-language=EN`, "the correct url was passed");
+				assert.strictEqual(oCallArguments[0], `/sap/bc/lrep/flex/apps/${this.sAppId}/adaptations/?parentVersion=${mPropertyBag.parentVersion}&sap-language=EN`, "the correct url was passed");
 				assert.strictEqual(oCallArguments[1], "POST", "the correct http method was passed");
 				assert.deepEqual(oCallArguments[2].payload, JSON.stringify(contextBasedAdaptationData), "the correct payload was passed");
 			}.bind(this));
@@ -1317,8 +1545,7 @@ sap.ui.define([
 			return WriteLrepConnector.contextBasedAdaptation.update(mPropertyBag).then(function() {
 				assert.equal(this.oStubWriteSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubWriteSendRequest.getCall(0).args;
-				assert.strictEqual(oCallArguments[0], `/sap/bc/lrep/flex/apps/${this.sAppId}/adaptations/${mPropertyBag.adaptationId}?parentVersion=${
-					 mPropertyBag.parentVersion}&sap-language=EN`, "the correct url was passed");
+				assert.strictEqual(oCallArguments[0], `/sap/bc/lrep/flex/apps/${this.sAppId}/adaptations/${mPropertyBag.adaptationId}?parentVersion=${mPropertyBag.parentVersion}&sap-language=EN`, "the correct url was passed");
 				assert.strictEqual(oCallArguments[1], "PUT", "the correct http method was passed");
 				assert.deepEqual(oCallArguments[2].payload, JSON.stringify(contextBasedAdaptationData), "the correct payload was passed");
 			}.bind(this));
@@ -1442,11 +1669,13 @@ sap.ui.define([
 				initialConnector: InitialLrepConnector,
 				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/com.sap.test.app"
 			};
-			var aReturnedVersions = {versions: [{
-				versionId: Version.Number.Draft
-			}, {
-				versionId: "versionGUID"
-			}]};
+			var aReturnedVersions = {
+				versions: [{
+					versionId: Version.Number.Draft
+				}, {
+					versionId: "versionGUID"
+				}]
+			};
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: aReturnedVersions});
 			return WriteLrepConnector.versions.load(mPropertyBag).then(function(oResponse) {
 				assert.deepEqual(oResponse, [{
@@ -1696,7 +1925,7 @@ sap.ui.define([
 		QUnit.test("getSeenFeatureIds", async function(assert) {
 			sandbox.stub(FlexUtils, "getUrlParameter").returns("120");
 			const oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves(
-				{ response: { seenFeatureIds: ["feature1", "feature2"] } }
+				{response: {seenFeatureIds: ["feature1", "feature2"]}}
 			);
 			const oResult = await WriteLrepConnector.getSeenFeatureIds({
 				layer: Layer.CUSTOMER, url: "/sap/bc/lrep"
@@ -1711,7 +1940,7 @@ sap.ui.define([
 		QUnit.test("setSeenFeatureIds", async function(assert) {
 			sandbox.stub(FlexUtils, "getUrlParameter").returns("120");
 			const oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves(
-				{ response: { seenFeatureIds: ["feature1", "feature2", "feature3"] } }
+				{response: {seenFeatureIds: ["feature1", "feature2", "feature3"]}}
 			);
 			const oResult = await WriteLrepConnector.setSeenFeatureIds({
 				layer: Layer.CUSTOMER, seenFeatureIds: ["feature1", "feature2", "feature3"], url: "/sap/bc/lrep"
@@ -1720,7 +1949,7 @@ sap.ui.define([
 			assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
 				initialConnector: InitialLrepConnector,
 				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
-				payload: JSON.stringify({ seenFeatureIds: ["feature1", "feature2", "feature3"] }),
+				payload: JSON.stringify({seenFeatureIds: ["feature1", "feature2", "feature3"]}),
 				dataType: "json",
 				contentType: "application/json; charset=utf-8"
 			}), "a PUT request with correct parameters is sent");

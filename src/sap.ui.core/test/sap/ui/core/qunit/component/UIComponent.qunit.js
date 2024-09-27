@@ -1107,7 +1107,7 @@ sap.ui.define([
 		}).catch((err) => {
 			assert.equal(
 				err.message,
-				"Cannot load module 'sap/ui/model/odata/ODataModelNotExists'.",
+				"sap.ui.core.Component: Cannot load module 'sap/ui/model/odata/ODataModelNotExists' during creation of component: \"manifestModules.scenario4\".",
 				"Component creation rejects with correct error"
 			);
 			future.active = undefined;
@@ -1155,7 +1155,7 @@ sap.ui.define([
 		}).catch((err) => {
 			assert.equal(
 				err.message,
-				"Cannot load module 'someRouterNotExists'.",
+				"sap.ui.core.Component: Cannot load module 'someRouterNotExists' during creation of component: \"manifestModules.scenario4\".",
 				"Component creation rejects with correct error"
 			);
 			future.active = undefined;

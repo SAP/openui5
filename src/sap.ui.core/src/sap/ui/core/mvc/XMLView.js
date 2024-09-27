@@ -670,7 +670,7 @@ sap.ui.define([
 			if (XMLView.PreprocessorType[sType]) {
 				View.registerPreprocessor(XMLView.PreprocessorType[sType], vPreprocessor, sOwnViewType, bSyncSupport, bOnDemand, mSettings);
 			} else {
-				future.errorThrows("Preprocessor could not be registered due to unknown sType \"" + sType + "\"", this.getMetadata().getName());
+				future.errorThrows(`${this.getMetadata().getName()}: Preprocessor could not be registered due to unknown sType "${sType}"`);
 			}
 		};
 

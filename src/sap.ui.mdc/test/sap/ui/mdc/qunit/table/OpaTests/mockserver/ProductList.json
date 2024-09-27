@@ -1444,7 +1444,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1202",
+	  "ProductID": "HT-1902",
 	  "TypeCode": "PR",
 	  "Category": "Notebooks",
 	  "Name": "Notebook Basic 18",
@@ -1468,7 +1468,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1203",
+	  "ProductID": "HT-1903",
 	  "TypeCode": "PR",
 	  "Category": "Notebooks",
 	  "Name": "Notebook Basic 19",
@@ -1492,7 +1492,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1210",
+	  "ProductID": "HT-1910",
 	  "TypeCode": "PR",
 	  "Category": "Notebooks",
 	  "Name": "Notebook Professional 15",
@@ -1516,7 +1516,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1211",
+	  "ProductID": "HT-1911",
 	  "TypeCode": "PR",
 	  "Category": "Notebooks",
 	  "Name": "Notebook Professional 17",
@@ -1540,7 +1540,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1222",
+	  "ProductID": "HT-1922",
 	  "TypeCode": "PR",
 	  "Category": "PDAs & Organizers",
 	  "Name": "Comfort Easy",
@@ -1564,7 +1564,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1236",
+	  "ProductID": "HT-1936",
 	  "TypeCode": "PR",
 	  "Category": "Flat Screen Monitors",
 	  "Name": "Flat Future",
@@ -1588,7 +1588,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1237",
+	  "ProductID": "HT-1937",
 	  "TypeCode": "PR",
 	  "Category": "Flat Screen Monitors",
 	  "Name": "Flat XL",
@@ -1612,7 +1612,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1240",
+	  "ProductID": "HT-1940",
 	  "TypeCode": "PR",
 	  "Category": "Laser Printers",
 	  "Name": "Laser Professional Eco",
@@ -1636,7 +1636,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1241",
+	  "ProductID": "HT-1941",
 	  "TypeCode": "PR",
 	  "Category": "Laser Printers",
 	  "Name": "Laser Basic",
@@ -1660,7 +1660,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1242",
+	  "ProductID": "HT-1942",
 	  "TypeCode": "PR",
 	  "Category": "Laser Printers",
 	  "Name": "Laser Allround",
@@ -1684,7 +1684,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1251",
+	  "ProductID": "HT-1951",
 	  "TypeCode": "PR",
 	  "Category": "Ink Jet Printers",
 	  "Name": "Ultra Jet Mobile",
@@ -1708,7 +1708,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1252",
+	  "ProductID": "HT-1952",
 	  "TypeCode": "PR",
 	  "Category": "Ink Jet Printers",
 	  "Name": "Ultra Jet Super Highspeed",
@@ -1732,7 +1732,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1255",
+	  "ProductID": "HT-1955",
 	  "TypeCode": "PR",
 	  "Category": "Multifunction Printers",
 	  "Name": "Multi Print",
@@ -1756,7 +1756,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1256",
+	  "ProductID": "HT-1956",
 	  "TypeCode": "PR",
 	  "Category": "Multifunction Printers",
 	  "Name": "Multi Color",
@@ -1780,7 +1780,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1260",
+	  "ProductID": "HT-1960",
 	  "TypeCode": "PR",
 	  "Category": "Mice",
 	  "Name": "Cordless Mouse",
@@ -1804,7 +1804,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1265",
+	  "ProductID": "HT-1965",
 	  "TypeCode": "PR",
 	  "Category": "Keyboards",
 	  "Name": "Media Keyboard",
@@ -1828,7 +1828,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1266",
+	  "ProductID": "HT-1966",
 	  "TypeCode": "PR",
 	  "Category": "Mousepads",
 	  "Name": "Mousepad",
@@ -1852,7 +1852,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1267",
+	  "ProductID": "HT-1967",
 	  "TypeCode": "PR",
 	  "Category": "Mousepads",
 	  "Name": "Ergo Mousepad",
@@ -1876,7 +1876,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1268",
+	  "ProductID": "HT-1968",
 	  "TypeCode": "PR",
 	  "Category": "Mousepads",
 	  "Name": "Designer Mousepad",
@@ -1900,7 +1900,7 @@
 	},
 	{
 	  "@odata.etag": "W/\"20170423190945.0000000\"",
-	  "ProductID": "HT-1269",
+	  "ProductID": "HT-1969",
 	  "TypeCode": "PR",
 	  "Category": "Computer System Accessories",
 	  "Name": "Universal card reader",

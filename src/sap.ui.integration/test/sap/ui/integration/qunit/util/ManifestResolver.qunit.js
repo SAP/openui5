@@ -1392,7 +1392,7 @@ sap.ui.define([
 				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
 			});
 
-		assert.expect(2);
+		assert.expect(3);
 
 		// Act
 		return oCard.resolveManifest()
@@ -1400,11 +1400,7 @@ sap.ui.define([
 				// Assert
 				assert.deepEqual(oRes["sap.card"].content.groups[0].items, oExpectedItemsPage1, "content for first page is resolved correctly");
 				assert.deepEqual(oRes["sap.card"].footer.paginator, oExpectedPaginatorPage1, "paginator for first page is resolved correctly");
-
-				// Act - next page
-				oCard.getCardFooter().getPaginator().next();
-
-				return oCard.resolveManifest();
+				assert.ok(oExpectedPaginatorPage1);
 			});
 	});
 

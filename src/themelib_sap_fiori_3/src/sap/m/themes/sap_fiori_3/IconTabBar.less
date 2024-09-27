@@ -3,39 +3,39 @@
 /* Quartz Light theme                 */
 /* ================================= */
 
-// ==========================================================================
-// Variables overriding
-// ==========================================================================
+/* ========================================================================== */
+/* Variables overriding */
+/* ========================================================================== */
 
-@_sap_m_IconTabBar_TextColor: @sapUiContentLabelColor;
+@_sap_m_IconTabBar_TextColor: var(--sapContent_LabelColor);
 @_sap_m_IconTabBar_TextShadow: none;
-@_sap_m_IconTab_Bar_Separator_Line: @sapUiGroupTitleBorderColor;
+@_sap_m_IconTab_Bar_Separator_Line: var(--sapGroup_TitleBorderColor);
 
-// ==================== Cozy size ====================
+/* ==================== Cozy size ==================== */
 
-// Content arrow
+/* Content arrow */
 @_sap_m_IconTabBar_ContentArrowBorderWidth: 0.1875rem;
 @_sap_m_IconTabBar_ContentArrowHeight: 0.875rem;
 
-// Inline mode
+/* Inline mode */
 @_sap_m_IconTabBar_InLineFilterMargin: 0.875rem 0 0 0;
 @_sap_m_IconTabBar_InLineTextOnlyVerticalHeight: 2.75rem;
 @_sap_m_IconTabBar_InLineTextOnlyContentArrowHeight: @_sap_m_IconTabBar_ContentArrowHeight;
 
-// TextOnly mode
+/* TextOnly mode */
 @_sap_m_IconTabBar_TextOnlyTabPadding: 0 0 0.125rem 0;
 @_sap_m_IconTabBar_TextOnlyVerticalHeight: 3rem;
 
-// NoText mode
+/* NoText mode */
 @_sap_m_IconTabBar_NoTextFilterWidth: 3.125rem;
 @_sap_m_IconTabBar_NoTextVerticalHeight: 3.75rem;
 
-// All tabs
+/* All tabs */
 @_sap_m_IconTabBar_AllTabHeight: 2.875rem;
 @_sap_m_IconTabBar_AllTabLineHeight: 2.875rem;
 @_sap_m_IconTabBar_AllTabMarginBottom: 0.375rem;
 
-// Horizontal tabs
+/* Horizontal tabs */
 @_sap_m_IconTabBar_HorizontalFilterHeight: 3.75rem;
 @_sap_m_IconTabBar_HorizontalTabHeight: 2.75rem;
 @_sap_m_IconTabBar_HorizontalWrapperHeight: 2.75rem;
@@ -44,18 +44,18 @@
 @_sap_m_IconTabBar_HorizontalTextPaddingTop: 0.375rem;
 @_sap_m_IconTabBar_HorizontalTextPaddingLeft: 0.125rem;
 
-// Vertical tabs
+/* Vertical tabs */
 @_sap_m_IconTabBar_VerticalHeight: 4.625rem;
 @_sap_m_IconTabBar_VerticalContentArrowHeight: 0.625rem;
 
-// Filter icon
+/* Filter icon */
 @_sap_m_IconTabBar_FilterIconHeight: 2.75rem;
 @_sap_m_IconTabBar_FilterIconWidth: 2.75rem;
 
-// Filter text
+/* Filter text */
 @_sap_m_IconTabBar_FilterTextLineHeight: 0.875rem;
 
-// Separator
+/* Separator */
 @_sap_m_IconTabBar_SeparatorHeight: 2rem;
 @_sap_m_IconTabBar_SeparatorMargin: 0.75rem 0.25rem 0;
 @_sap_m_IconTabBar_TextOnlySeparatorMargin: 0.375rem 0.25rem 0.375rem;
@@ -63,79 +63,79 @@
 @_sap_m_IconTabBar_SeparatorIconHeight: 2.75rem;
 @__sap_m_IconTabBar_SeparatorIconLineHeight: 2.75rem;
 
-// Left and Right arrows
+/* Left and Right arrows */
 @_sap_m_IconTabBar_ArrowScrollPadding: 0.875rem 0.4rem;
 @_sap_m_IconTabBar_SplitContainerArrowScrollPadding: 0.875rem 0.4rem;
 
-// Header
-@_sap_m_IconTabBar_HeaderBackgroundTranslucent: @sapUiObjectHeaderBackground;
+/* Header */
+@_sap_m_IconTabBar_HeaderBackgroundTranslucent: var(--sapObjectHeader_Background);
 
 @_sap_m_IconTabBar_HeaderBorderBottom: none;
-@_sap_m_IconTabBar_HeaderShadow: 0 0.25rem 0.25rem -0.25rem fade(@sapUiContentShadowColor, 15), inset 0 -0.0625rem 0 0 @sapUiObjectHeaderBorderColor;
+@_sap_m_IconTabBar_HeaderShadow: 0 0.25rem 0.25rem -0.25rem fade(@sapUiContentShadowColor, 15), inset 0 -0.0625rem 0 0 var(--sapObjectHeader_BorderColor);
 
-// Content
-@_sap_m_IconTabBar_ContentBackground: @sapUiBaseBG;
-@_sap_m_IconTabBar_ContentBackgroundTranslucent: @sapUiGroupContentBackground;
+/* Content */
+@_sap_m_IconTabBar_ContentBackground: var(--sapBackgroundColor);
+@_sap_m_IconTabBar_ContentBackgroundTranslucent: var(--sapGroup_ContentBackground);
 
-// ==================== Compact size ====================
+/* ==================== Compact size ==================== */
 
-// Content arrow
+/* Content arrow */
 @_sap_m_IconTabBar_Compact_NoTextContentArrowHeight: 1rem;
 @_sap_m_IconTabBar_Compact_ContentArrowHeight: 1rem;
 @_sap_m_IconTabBar_Compact_NoTextContentArrowWidth: 2.375rem;
 
-// Inline mode (same as cozy)
+/* Inline mode (same as cozy) */
 @_sap_m_IconTabBar_Compact_InLineVerticalTabHeight: @_sap_m_IconTabBar_InLineTextOnlyVerticalHeight;
 @_sap_m_IconTabBar_Compact_InLineFilterTextMargin: @_sap_m_IconTabBar_InLineFilterMargin;
 @_sap_m_IconTabBar_Compact_TextOnlyContentArrowHeight: @_sap_m_IconTabBar_VerticalContentArrowHeight;
 
-// TextOnly (same as cozy)
+/* TextOnly (same as cozy) */
 @_sap_m_IconTabBar_Compact_TextOnlyVerticalHeight: @_sap_m_IconTabBar_TextOnlyVerticalHeight;
 @_sap_m_IconTabBar_Compact_TextOnlyTabPadding: @_sap_m_IconTabBar_TextOnlyTabPadding;
 @_sap_m_IconTabBar_Compact_TextOnlyHeadPadding: 0 0.925rem 0 0.1875rem;
 @_sap_m_IconTabBar_Compact_TextOnlyTextLineHeight: 1rem;
 @_sap_m_IconTabBar_Compact_TextOnlyTextPadding: 0;
 
-// NoText
+/* NoText */
 @_sap_m_IconTabBar_Compact_NoTextTabWidth: 2.375rem;
 @_sap_m_IconTabBar_Compact_NoTextVerticalHeight: 3rem;
 
-// Horizontal
+/* Horizontal */
 @_sap_m_IconTabBar_Compact_HorizontalHeight: 3rem;
 @_sap_m_IconTabBar_Compact_HorizontalContentArrowHeight: 1rem;
 
-// Vertical
+/* Vertical */
 @_sap_m_IconTabBar_Compact_VerticalHeight: 3.875rem;
 
-// Filter text
+/* Filter text */
 @_sap_m_IconTabBar_Compact_FilterTextPadding: 0.375rem 0 0;
 
-// Focus border
+/* Focus border */
 @_sap_m_IconTabBar_Compact_HorizontalFocusBottom: 1rem;
 
-// =========== Phone ===========
+/* =========== Phone =========== */
 
-// Content arrow
+/* Content arrow */
 @_sap_m_IconTabBar_Phone_ContentArrowHeight: 0.625rem;
 
 @_sap_m_IconTabBar_Phone_TextOnlyContentArrowHeight: 0.5rem;
 @_sap_m_IconTabBar_Phone_Compact_TextOnlyContentArrowHeight: 0.75rem;
 
-// ==========================================================================
-// Variables
-// ==========================================================================
+/* ========================================================================== */
+/* Variables */
+/* ========================================================================== */
 
 @_sap_m_IconTabBar_TextHoverColor: darken(@sapUiGroupTitleTextColor, 10);
-@_sap_m_IconTabBar_SelectedTextColor: @sapUiSelected;
+@_sap_m_IconTabBar_SelectedTextColor: var(--sapSelectedColor);
 @_sap_m_IconTabBar_SelectedTextHoverColor: darken(@sapUiSelected, 10);
 @_sap_m_IconTabBar_ArrowScroll_AfterHeight: 1px;
 
-// =========== Shell ===========
-@_sap_m_IconTabBar_ShellHeaderShadow: @sapUiShellShadow;
+/* =========== Shell =========== */
+@_sap_m_IconTabBar_ShellHeaderShadow: var(--sapShell_Shadow);
 
 /* Head Container */
 .sapMITH {
-	z-index: 1; // shows the bottom shadow of the ITHeader over the content of the ITB
+	z-index: 1; /* shows the bottom shadow of the ITHeader over the content of the ITB */
 
 	.sapMITBHead {
 		padding-top: 0.875rem;
@@ -228,9 +228,9 @@
 	border-bottom: none;
 	position: relative;
 
-	// creates border bottom with rounded top corners
+	/* creates border bottom with rounded top corners */
 	&::after {
-		content: "";
+		content: '';
 		position: absolute;
 		bottom: 0;
 		left: 0;
@@ -251,7 +251,7 @@
 /* Content Container */
 
 .sapMITBContent {
-	border-bottom: 0.0625rem solid @sapUiObjectHeaderBorderColor;
+	border-bottom: 0.0625rem solid var(--sapObjectHeader_BorderColor);
 }
 
 /* Tab Filter Item */
@@ -271,11 +271,11 @@
 	}
 
 	.sapMITBFilterNeutral .sapMITBText {
-		color: @sapUiNeutralText;
+		color: var(--sapNeutralTextColor);
 	}
 
 	.sapMITBFilterPositive .sapMITBText {
-		color: @sapUiPositiveText;
+		color: var(--sapPositiveTextColor);
 	}
 
 	.sapMITBFilterPositive:hover .sapMITBText {
@@ -283,7 +283,7 @@
 	}
 
 	.sapMITBFilterNegative .sapMITBText {
-		color: @sapUiNegativeText;
+		color: var(--sapNegativeTextColor);
 	}
 
 	.sapMITBFilterNegative:hover .sapMITBText {
@@ -291,7 +291,7 @@
 	}
 
 	.sapMITBFilterCritical .sapMITBText {
-		color: @sapUiCriticalText;
+		color: var(--sapCriticalTextColor);
 	}
 
 	.sapMITBFilterCritical:hover .sapMITBText {
@@ -300,32 +300,32 @@
 }
 
 .sapMITBFilterIcon {
-	border: 1px solid @sapUiHighlight;
+	border: 1px solid var(--sapHighlightColor);
 }
 
 .sapMITBFilterDefault {
-	color: @sapUiHighlight;
-	border-color: @sapUiHighlight;
+	color: var(--sapHighlightColor);
+	border-color: var(--sapHighlightColor);
 }
 
 .sapMITBFilterNeutral {
-	color: @sapUiNeutralElement;
-	border-color: @sapUiNeutralElement;
+	color: var(--sapNeutralElementColor);
+	border-color: var(--sapNeutralElementColor);
 }
 
 .sapMITBFilterPositive {
-	color: @sapUiPositiveElement;
-	border-color: @sapUiPositiveElement;
+	color: var(--sapPositiveElementColor);
+	border-color: var(--sapPositiveElementColor);
 }
 
 .sapMITBFilterNegative {
-	color: @sapUiNegativeElement;
-	border-color: @sapUiNegativeElement;
+	color: var(--sapNegativeElementColor);
+	border-color: var(--sapNegativeElementColor);
 }
 
 .sapMITBFilterCritical {
-	color: @sapUiCriticalElement;
-	border-color: @sapUiCriticalElement;
+	color: var(--sapCriticalElementColor);
+	border-color: var(--sapCriticalElementColor);
 }
 
 .sapMITBSelected {
@@ -335,44 +335,44 @@
 	}
 
 	&.sapMITBFilterNeutral .sapMITBContentArrow::after {
-		background: @sapUiNeutralElement;
+		background: var(--sapNeutralElementColor);
 	}
 
 	&.sapMITBFilterPositive .sapMITBContentArrow::after {
-		background: @sapUiPositiveElement;
+		background: var(--sapPositiveElementColor);
 	}
 
 	&.sapMITBFilterNegative .sapMITBContentArrow::after {
-		background: @sapUiNegativeElement;
+		background: var(--sapNegativeElementColor);
 	}
 
 	&.sapMITBFilterCritical .sapMITBContentArrow::after {
-		background: @sapUiCriticalElement;
+		background: var(--sapCriticalElementColor);
 	}
 
 	.sapMITBFilterDefault {
 		background: @_sap_m_IconTabBar_SelectedTextColor;
-		color: @sapUiContentContrastIconColor;
+		color: var(--sapContent_ContrastIconColor);
 	}
 
 	.sapMITBFilterNeutral {
-		background: @sapUiNeutralElement;
-		color: @sapUiGroupContentBackground;
+		background: var(--sapNeutralElementColor);
+		color: var(--sapGroup_ContentBackground);
 	}
 
 	.sapMITBFilterPositive {
-		background: @sapUiPositiveElement;
-		color: @sapUiGroupContentBackground;
+		background: var(--sapPositiveElementColor);
+		color: var(--sapGroup_ContentBackground);
 	}
 
 	.sapMITBFilterNegative {
-		background: @sapUiNegativeElement;
-		color: @sapUiGroupContentBackground;
+		background: var(--sapNegativeElementColor);
+		color: var(--sapGroup_ContentBackground);
 	}
 
 	.sapMITBFilterCritical {
-		background: @sapUiCriticalElement;
-		color: @sapUiGroupContentBackground;
+		background: var(--sapCriticalElementColor);
+		color: var(--sapGroup_ContentBackground);
 	}
 }
 
@@ -396,6 +396,7 @@
 }
 
 .sapMITH.sapMITBNoText .sapMITBHead {
+
 	> .sapMITBSepLine {
 		margin: 0.25rem 0.25rem 0 0;
 	}
@@ -404,6 +405,7 @@
 .sapMITH.sapUiSizeCompact {
 
 	&.sapMITBNoText .sapMITBHead {
+
 		> .sapMITBSepLine {
 			margin: 0 0.125rem 0 0.125rem;
 		}
@@ -423,9 +425,11 @@
 	}
 
 	&.sapMITBHorizontal {
+
 		.sapMITBTab {
 			margin-top: 0;
 		}
+
 		+ .sapMITBSepLine {
 			margin-top: 0.5rem;
 		}
@@ -446,7 +450,9 @@
 
 /* Custom focus outline */
 html.sap-desktop {
+
 	.sapMITBItem:not(.sapUiDnDDragging):focus.sapMITBAll {
+
 		&::after {
 			top: 0.75rem;
 			bottom: 1.75rem;
@@ -456,6 +462,7 @@ html.sap-desktop {
 	.sapMITH.sapUiSizeCompact {
 
 		.sapMITBItem:focus.sapMITBAll {
+
 			&::after {
 				bottom: 1.3rem;
 				top: 0.125rem;
@@ -464,11 +471,14 @@ html.sap-desktop {
 	}
 
 	.sapMITH {
+
 		.sapMITHStartOverflow,
 		.sapMITHEndOverflow {
+
 			.sapMITBItem {
+
 				&:active::after {
-					// when overflow is pressed, make the focus white
+					/* when overflow is pressed, make the focus white */
 					border-color: @_sap_m_IconTabBar_Overflow_TextColorPressed;
 				}
 			}

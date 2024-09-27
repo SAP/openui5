@@ -27,6 +27,7 @@ sap.ui.define([
 	 * @class
 	 * The user can change the number of displayed rows by dragging a resizer. The resizer is focusable and allows resizing via keyboard shortcuts and
 	 * context menu.
+	 * Double clicking the bar performs a quick resize that toggles between the minimum, the default, and the maximum row count.
 	 *
 	 * @extends sap.ui.table.rowmodes.RowMode
 	 * @constructor

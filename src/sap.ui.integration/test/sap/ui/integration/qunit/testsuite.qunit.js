@@ -283,7 +283,6 @@ sap.ui.define([
 				}
 			},
 
-			"controls/Paginator": {},
 			"controls/ListContentItem": {},
 			"controls/Microchart": {},
 			"controls/MicrochartLegend": {},

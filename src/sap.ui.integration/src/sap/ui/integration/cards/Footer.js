@@ -5,18 +5,24 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/base/util/merge",
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/integration/controls/ActionsStrip",
-	"sap/ui/integration/controls/Paginator",
-	"sap/ui/integration/util/BindingHelper"
+	"sap/ui/integration/util/BindingHelper",
+	"sap/m/library",
+	"sap/m/Button"
 ], function (
 	Control,
 	merge,
 	Element,
+	Library,
 	ActionsStrip,
-	Paginator,
-	BindingHelper
+	BindingHelper,
+	mLibrary,
+	Button
 ) {
 	"use strict";
+
+	const ButtonType = mLibrary.ButtonType;
 
 	/**
 	 * Constructor for a new <code>Footer</code>.
@@ -45,21 +51,30 @@ sap.ui.define([
 				 */
 				configuration: {
 					type: "object"
+				},
+				showMore: {
+					type: "boolean"
+				},
+				showCloseButton: {
+					type: "boolean"
 				}
 			},
 			aggregations: {
-
 				actionsStrip: {
 					type: "sap.ui.integration.controls.ActionsStrip",
 					multiple: false
 				},
-
-				paginator: {
-					type: "sap.ui.integration.controls.Paginator",
-					multiple: false
+				_showMore: {
+					type: "sap.m.Button",
+					multiple: false,
+					visibility: "hidden"
+				},
+				_closeButton: {
+					type: "sap.m.Button",
+					multiple: false,
+					visibility: "hidden"
 				}
 			},
-
 			associations: {
 
 				/**
@@ -69,21 +84,15 @@ sap.ui.define([
 					type: "sap.ui.integration.widgets.Card",
 					multiple: false
 				}
+			},
+			events: {
+				showMorePress: { }
 			}
-
 		},
-
 		renderer: {
 			apiVersion: 2,
 			render: function (oRM, oFooter) {
-				var oActionsStrip = oFooter.getActionsStrip(),
-					oPaginator = oFooter.getPaginator();
-
 				oRM.openStart("div", oFooter).class("sapFCardFooter");
-
-				if (oActionsStrip) {
-					oRM.class("sapFCardFooterWithActionsStrip");
-				}
 
 				if (oFooter.getCardInstance().isLoading() && oFooter._hasBinding()) {
 					oRM.class("sapFCardFooterLoading");
@@ -91,18 +100,54 @@ sap.ui.define([
 
 				oRM.openEnd();
 
-				if (oPaginator) {
-					oRM.renderControl(oPaginator);
-				}
+				const oActionsStrip = oFooter.getActionsStrip();
 
 				if (oActionsStrip) {
 					oRM.renderControl(oActionsStrip);
+				}
+
+				const oShowMore = oFooter.getAggregation("_showMore");
+
+				if (oShowMore) {
+					oRM.renderControl(oShowMore);
+				}
+
+				const oCloseButton = oFooter.getAggregation("_closeButton");
+
+				if (oCloseButton) {
+					oRM.renderControl(oCloseButton);
 				}
 
 				oRM.close("div");
 			}
 		}
 	});
+
+	Footer.create = function ({ card, configuration, showMore, showCloseButton,showMorePress }) {
+		return new Footer({
+			configuration: BindingHelper.createBindingInfos(configuration, card.getBindingNamespaces()),
+			card,
+			showMore,
+			showCloseButton,
+			showMorePress,
+			actionsStrip: ActionsStrip.create(configuration.actionsStrip, card, true),
+			visible: configuration.visible
+		});
+	};
+
+	Footer.prototype.onBeforeRendering = function () {
+		if (this.getShowMore()) {
+			this._createShowMore();
+		} else {
+			this.destroyAggregation("_showMore");
+		}
+
+		if (this.getShowCloseButton()) {
+			this._createCloseButton();
+		} else {
+			this.destroyAggregation("_closeButton");
+		}
+	};
 
 	Footer.prototype.onDataChanged = function () {
 		if (this.getActionsStrip()) {
@@ -155,7 +200,7 @@ sap.ui.define([
 	 */
 	Footer.prototype.getStaticConfiguration = function () {
 		var oConfiguration = merge({}, this.getConfiguration()),
-			oPaginator = this.getPaginator();
+			oPaginator = this.getCardInstance()._oPaginator;
 
 		if (oPaginator) {
 			oConfiguration.paginator = oPaginator.getStaticConfiguration();
@@ -164,14 +209,36 @@ sap.ui.define([
 		return oConfiguration;
 	};
 
-	Footer.create = function (oCard, oConfiguration) {
-		return new Footer({
-			configuration: BindingHelper.createBindingInfos(oConfiguration, oCard.getBindingNamespaces()),
-			card: oCard,
-			actionsStrip: ActionsStrip.create(oConfiguration.actionsStrip, oCard, true),
-			paginator: Paginator.create(oCard, oConfiguration.paginator),
-			visible: oConfiguration.visible
-		});
+	Footer.prototype._createShowMore = function () {
+		let oMore = this.getAggregation("_showMore");
+
+		if (!oMore) {
+			oMore = new Button({
+				text: Library.getResourceBundleFor("sap.ui.integration").getText("CARD_FOOTER_SHOW_MORE"),
+				type: ButtonType.Transparent,
+				press: this.fireShowMorePress.bind(this)
+			});
+
+			this.setAggregation("_showMore", oMore);
+		}
+
+		return oMore;
+	};
+
+	Footer.prototype._createCloseButton = function () {
+		let oButton = this.getAggregation("_closeButton");
+
+		if (!oButton) {
+			oButton = new Button({
+				text: Library.getResourceBundleFor("sap.ui.integration").getText("CARD_DIALOG_CLOSE_BUTTON"),
+				type: ButtonType.Emphasized,
+				press: this.getCardInstance().hide.bind(this.getCardInstance())
+			});
+
+			this.setAggregation("_closeButton", oButton);
+		}
+
+		return oButton;
 	};
 
 	return Footer;

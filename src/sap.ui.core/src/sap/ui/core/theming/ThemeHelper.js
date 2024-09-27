@@ -152,14 +152,14 @@ sap.ui.define([
 				var bResult = bNoLinkElement || bSheet || bInnerHtml || bLinkElementFinishedLoading;
 
 				if (bLog) {
-					Log.debug("ThemeHelper: " + sId + ": " + bResult + " (noLinkElement: " + bNoLinkElement + ", sheet: " + bSheet + ", innerHtml: " + bInnerHtml + ", linkElementFinishedLoading: " + bLinkElementFinishedLoading + ")");
+					Log.debug("sap.ui.core.theming.ThemeHelper: " + sId + ": " + bResult + " (noLinkElement: " + bNoLinkElement + ", sheet: " + bSheet + ", innerHtml: " + bInnerHtml + ", linkElementFinishedLoading: " + bLinkElementFinishedLoading + ")");
 				}
 
 				return bResult;
 
 			} catch (e) {
 				if (bLog) {
-					future.errorThrows("ThemeHelper: " + sId + ": Error during check styles '" + sId + "'", e);
+					future.errorThrows(`sap.ui.core.theming.ThemeHelper: Error during check styles for Id: "${sId}"`, { cause: e });
 				}
 			}
 

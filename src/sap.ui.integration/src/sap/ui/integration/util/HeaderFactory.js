@@ -70,7 +70,7 @@ sap.ui.define([
 
 		mConfiguration = this.createBindingInfos(mConfiguration, oCard.getBindingNamespaces());
 
-		if (bIsInDialog) {
+		if (bIsInDialog && !oCard.hasPaginator()) {
 			oToolbar = this._createCloseButton(mConfiguration);
 		}
 

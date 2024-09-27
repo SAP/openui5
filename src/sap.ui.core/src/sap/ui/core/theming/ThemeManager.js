@@ -447,7 +447,7 @@ sap.ui.define([
 
 			} catch (e) {
 				// parsing error
-				future.errorThrows("Custom check: Error parsing JSON string for custom.css indication.", e);
+				future.errorThrows("Custom check: Error parsing JSON string for custom.css indication.", { cause: e });
 			}
 		}
 
