@@ -290,8 +290,8 @@ sap.ui.define([
 					invalidate: true
 				},
 				/**
-				 * This property has no effect and will be rmoved soon.
-				 * @deprecated Do not use.
+				 * This property has no effect and will be removed soon.
+				 * @deprecated As of version 1.115, the concept has been discarded.
 				 */
 				height: {
 					type: "sap.ui.core.CSSSize",
