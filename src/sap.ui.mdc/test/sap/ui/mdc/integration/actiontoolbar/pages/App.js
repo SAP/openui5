@@ -200,7 +200,7 @@ sap.ui.require([
 						}
 					});
 				},
-				iCombineActions: function(sActionToolbarId, aActions) {
+				iSelectElementOverlaysOfActions: function(sActionToolbarId, aActions) {
 					return this.waitFor({
 						controlType: "sap.ui.mdc.ActionToolbar",
 						id: sActionToolbarId,

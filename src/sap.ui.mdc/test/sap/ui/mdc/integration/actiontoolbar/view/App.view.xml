@@ -26,8 +26,7 @@
 					</mdc:end>
 					<mdc:actions>
 						<mdcat:ActionToolbarAction id="standaloneAction1">
-							<Button text="Action 1" id="standaloneButton1"
-								dt:designtime="not-adaptable" />
+							<Button text="Action 1" id="standaloneButton1" />
 						</mdcat:ActionToolbarAction>
 						<mdcat:ActionToolbarAction id="standaloneAction2"
 							layoutInformation="{
@@ -52,8 +51,7 @@
 							<Button text="Action 4" id="standaloneButton4" />
 						</mdcat:ActionToolbarAction>
 						<mdcat:ActionToolbarAction id="standaloneAction5">
-							<Button text="Action 5" id="standaloneButton5"
-								dt:designtime="not-adaptable-tree" />
+							<Button text="Action 5" id="standaloneButton5" />
 						</mdcat:ActionToolbarAction>
 						<mdcat:ActionToolbarAction id="standaloneAction6" label="Action 6">
 							<OverflowToolbarMenuButton id="standaloneMenuButton" tooltip="Export"
