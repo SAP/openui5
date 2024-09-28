@@ -1785,8 +1785,23 @@
 									},
 									{
 										"type": "object",
+										"properties": {
+											"optional": {
+												"type": "boolean",
+												"default": false
+											}
+										},
 										"propertyNames": {
-											"$ref": "#/definitions/obj-method-propertyNames"
+											"anyOf": [
+												{
+													"$ref": "#/definitions/obj-method-propertyNames"
+												},
+												{
+													"enum": [
+														"optional"
+													]
+												}
+											]
 										}
 									}
 								]
