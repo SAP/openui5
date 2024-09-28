@@ -1754,6 +1754,9 @@
 							"type": "boolean",
 							"default": false
 						},
+						"hideconstructor": {
+							"type": "boolean"
+						},
 						"constructor": {
 							"$ref": "#/definitions/obj-constructor"
 						},
@@ -1800,6 +1803,7 @@
 									"final",
 									"ui5-metadata",
 									"ui5-metamodel",
+									"hideconstructor",
 									"constructor",
 									"properties",
 									"events",
