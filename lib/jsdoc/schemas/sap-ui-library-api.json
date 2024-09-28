@@ -1301,6 +1301,9 @@
 										"typedef"
 									]
 								},
+								"final": {
+									"type": "boolean"
+								},
 								"type": {
 									"$ref": "#/definitions/typeExpression"
 								}
@@ -1312,6 +1315,7 @@
 									},
 									{
 										"enum": [
+											"final",
 											"type"
 										]
 									}
