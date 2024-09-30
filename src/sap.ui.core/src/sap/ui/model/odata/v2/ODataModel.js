@@ -61,21 +61,22 @@ sap.ui.define([
 ) {
 
 	"use strict";
+	/**
+	 * Whether the ODataModel is marked as final.
+	 * @ui5-transform-hint replace-local true
+	 */
+	const bFinal = false;
 
 	var sClassName = "sap.ui.model.odata.v2.ODataModel",
 		aDeepCreateParametersAllowlist = ["context", "properties"],
 		mMessageType2Severity = {},
-		aRequestSideEffectsParametersAllowList = ["groupId", "urlParameters"],
-		bFinal = true;
+		aRequestSideEffectsParametersAllowList = ["groupId", "urlParameters"];
 
 	mMessageType2Severity[MessageType.Error] = 0;
 	mMessageType2Severity[MessageType.Warning] = 1;
 	mMessageType2Severity[MessageType.Success] = 2;
 	mMessageType2Severity[MessageType.Information] = 3;
 	mMessageType2Severity[MessageType.None] = 4;
-
-	/** @deprecated */
-	bFinal = false;
 
 	/**
 	 * Constructor for a new ODataModel.
@@ -9075,7 +9076,7 @@ sap.ui.define([
 	 * @deprecated
 	 */
 	ODataModel.extend = function () {
-		Log.error("[FUTURE FATAL] sap.ui.model.v2.ODataModel must not be extended");
+		Log.error("[FUTURE FATAL] sap.ui.model.odata.v2.ODataModel must not be extended");
 		return fnOriginalExtend.apply(this, arguments);
 	};
 
