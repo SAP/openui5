@@ -9841,7 +9841,7 @@ sap.ui.define([
 		/** @deprecated */
 		if (bVersion1) {
 			this.oLogMock.expects("error")
-				.withExactArgs("[FUTURE FATAL] sap.ui.model.v2.ODataModel must not be extended");
+				.withExactArgs("[FUTURE FATAL] sap.ui.model.odata.v2.ODataModel must not be extended");
 			this.mock(Metadata).expects("createClass")
 				.withExactArgs(ODataModel, "foo.bar.MyODataModel", "~oSCClassInfo", "~fnSCMetaImpl")
 				.returns("~oClass");
