@@ -1,1550 +1,78 @@
 {
-	"pharmacy": {
+	"accelerated": {
 		"tags": [
-			"medicine",
-			"pills",
-			"drugs",
-			"pharmacy",
-			"pain",
-			"medication"
-		]
-	},
-	"message-success": {
-		"tags": [
-			"message",
-			"success",
-			"positive",
-			"notifications",
-			"status"
-		]
-	},
-	"hr-approval": {
-		"tags": [
-			"person",
-			"accept",
-			"approval",
-			"employee",
-			"hr",
-			"human resources"
-		]
-	},
-	"sales-order": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"sales order",
-			"money",
-			"bill",
-			"details",
-			"quote"
-		]
-	},
-	"share-2": {
-		"tags": [
-			"share",
-			"distribute",
-			"share with connections"
-		]
-	},
-	"customer-and-contacts": {
-		"tags": [
-			"customer",
-			"user",
-			"person",
-			"individual",
-			"contacts",
-			"address",
-			"email",
-			"e-mail"
-		]
-	},
-	"horizontal-waterfall-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data"
-		]
-	},
-	"question-mark": {
-		"tags": [
-			"message",
-			"question mark",
-			"neutral",
-			"notifications",
-			"status"
-		]
-	},
-	"collections-management": {
-		"tags": [
-			"calculator",
-			"counting",
-			"simulate",
-			"collections management",
-			"total",
-			"accounting"
-		]
-	},
-	"cargo-train": {
-		"tags": [
-			"train",
-			"cargo",
-			"delivery",
-			"transit"
-		]
-	},
-	"search": {
-		"tags": [
-			"search",
-			"magnifier",
-			"glass"
-		]
-	},
-	"sales-order-item": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"sales order item",
-			"money",
-			"bill",
-			"details",
-			"quote"
-		]
-	},
-	"multiple-radar-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"multiple radar chart"
-		]
-	},
-	"business-card": {
-		"tags": [
-			"business card",
-			"contact",
-			"networking",
-			"colleague",
-			"person",
-			"address",
-			"identification",
-			"details",
-			"profile"
-		]
-	},
-	"warning2": {
-		"tags": [
-			"warning",
-			"to be reviewed",
-			"indicator",
-			"information"
-		]
-	},
-	"role": {
-		"tags": [
-			"person",
-			"individual",
-			"user",
-			"customer",
-			"permission",
-			"access",
-			"granted",
-			"open",
-			"restrictions",
-			"unlocked"
-		]
-	},
-	"paging": {
-		"tags": [
-			"paging",
-			"navigation"
-		]
-	},
-	"video": {
-		"tags": [
-			"camera",
-			"recorder",
-			"video",
-			"movie",
-			"clip"
-		]
-	},
-	"collision": {
-		"tags": [
-			"car",
-			"crash",
-			"accident",
-			"damage"
-		]
-	},
-	"create-form": {
-		"tags": [
-			"create",
-			"form",
-			"new",
-			"add",
-			"plus",
-			"additional",
-			"another",
-			"more"
-		]
-	},
-	"message-error": {
-		"tags": [
-			"message",
-			"error",
-			"negative",
-			"notifications",
-			"status"
-		]
-	},
-	"cart-approval": {
-		"tags": [
-			"cart",
-			"trolley",
-			"basket",
-			"shopping",
-			"item",
-			"approve",
-			"approval",
-			"accept",
-			"check"
-		]
-	},
-	"image-viewer": {
-		"tags": [
-			"image",
-			"placeholder",
-			"picture",
-			"hills",
-			"mountains",
-			"sun",
-			"viewer",
-			"carousel",
-			"lightbox"
-		]
-	},
-	"manager-insight": {
-		"tags": [
-			"manager",
-			"insight",
-			"company",
-			"overview",
-			"analyse",
-			"inform",
-			"board",
-			"report"
-		]
-	},
-	"microphone": {
-		"tags": [
-			"microphone",
-			"mic",
-			"keynote",
-			"announcement",
-			"speech",
-			"talk",
-			"audio",
-			"dictate",
-			"record"
-		]
-	},
-	"duplicate": {
-		"tags": [
-			"duplicate",
-			"objects",
-			"arrow"
-		]
-	},
-	"sort-descending": {
-		"tags": [
-			"sort",
-			"descending",
-			"down",
-			"table",
-			"aggregate"
-		]
-	},
-	"theater": {
-		"tags": [
-			"theater",
-			"show",
-			"play",
-			"masks"
-		]
-	},
-	"doc-attachment": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"attachment",
-			"word",
-			"text"
-		]
-	},
-	"header": {
-		"tags": [
-			"maximize",
-			"header",
-			"screen"
-		]
-	},
-	"sound-loud": {
-		"tags": [
-			"sound",
-			"audio",
-			"audio",
-			"speaker",
-			"loud",
-			"louder"
-		]
-	},
-	"lead-outdated": {
-		"tags": [
-			"lead outdated",
-			"circle",
-			"dollar"
-		]
-	},
-	"fallback": {
-		"tags": [
-			"folder",
-			"fallback",
-			"marked",
-			"object"
-		]
-	},
-	"blank-tag": {
-		"tags": [
-			"tag",
-			"label",
-			"marker",
-			"indicator",
-			"blank"
-		]
-	},
-	"horizontal-bar-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"bar",
-			"horizontal"
-		]
-	},
-	"per-diem": {
-		"tags": [
-			"euro",
-			"time",
-			"per diem",
-			"calendar"
-		]
-	},
-	"multiple-line-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"multiple line chart"
-		]
-	},
-	"paste": {
-		"tags": [
-			"paste",
-			"document",
-			"clipboards",
-			"file",
-			"text"
-		]
-	},
-	"toaster-down": {
-		"tags": [
-			"toaster",
-			"down",
-			"details"
-		]
-	},
-	"business-by-design": {
-		"tags": [
-			"business by design"
-		]
-	},
-	"activity-individual": {
-		"tags": [
-			"activity",
-			"activities",
-			"tasks",
-			"to do",
-			"list",
-			"individual",
-			"person"
-		]
-	},
-	"add-document": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"text",
-			"new",
-			"add",
-			"plus",
-			"additional",
-			"another",
-			"more"
-		]
-	},
-	"inbox": {
-		"tags": [
-			"inbox",
-			"in",
-			"arrow"
-		]
-	},
-	"full-screen": {
-		"tags": [
-			"full",
-			"screen",
-			"arrow"
-		]
-	},
-	"batch-payments": {
-		"tags": [
-			"folder",
-			"open",
-			"money",
-			"documents"
-		]
-	},
-	"feeder-arrow": {
-		"tags": [
-			"feeder",
-			"arrow",
-			"input",
-			"enter text",
-			"execute",
-			"send"
-		]
-	},
-	"sap-logo-shape": {
-		"tags": [
-			"sap",
-			"logo",
-			"shape"
-		]
-	},
-	"travel-expense": {
-		"tags": [
-			"plane",
-			"dollar",
-			"money",
-			"trip",
-			"expense",
-			"travel",
-			"holiday",
-			"flight",
-			"budget",
-			"billing",
-			"invoice",
-			"cost",
-			"payments"
-		]
-	},
-	"status-negative": {
-		"tags": [
-			"negative",
-			"attention",
-			"led",
-			"traffic lights",
-			"street sign",
-			"lifecycle"
-		]
-	},
-	"photo-voltaic": {
-		"tags": [
-			"photovoltaic",
-			"voltaic",
-			"electricity",
-			"power",
-			"solar",
-			"panel",
-			"sun"
-		]
-	},
-	"cancel-maintenance": {
-		"tags": [
-			"wrench",
-			"control",
-			"configuration",
-			"settings",
-			"tool",
-			"cancel maintenance"
-		]
-	},
-	"sys-find-next": {
-		"tags": [
-			"find",
-			"binoculars",
-			"look up",
-			"add",
-			"plus",
-			"additional",
-			"another",
-			"more"
-		]
-	},
-	"text-align-justified": {
-		"tags": [
-			"align",
-			"text",
-			"justified",
-			"text edit",
-			"rich-text"
-		]
-	},
-	"map": {
-		"tags": [
-			"map",
-			"pin",
-			"location",
-			"place",
-			"area"
-		]
-	},
-	"internet-browser": {
-		"tags": [
-			"screen",
-			"internet",
-			"website",
-			"browser",
-			"web app",
-			"globe",
-			"www",
-			"html"
-		]
-	},
-	"bubble-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"bubble chart"
-		]
-	},
-	"meeting-room": {
-		"tags": [
-			"meeting",
-			"room",
-			"collaborate",
-			"colleagues",
-			"teamwork",
-			"peer to peer"
-		]
-	},
-	"synchronize": {
-		"tags": [
-			"synchronize",
-			"reload",
-			"refresh",
-			"arrow"
-		]
-	},
-	"org-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"overview",
-			"map",
-			"org",
-			"tree"
-		]
-	},
-	"tags": {
-		"tags": [
-			"tag",
-			"label",
-			"marker",
-			"indicator",
-			"detail"
-		]
-	},
-	"trend-down": {
-		"tags": [
-			"trend",
-			"down",
-			"diagonal",
-			"decrease",
-			"decline",
-			"arrow"
-		]
-	},
-	"value-help": {
-		"tags": [
-			"value",
-			"help",
-			"popup",
-			"assistance",
-			"multi input"
-		]
-	},
-	"developer-settings": {
-		"tags": [
-			"settings",
-			"cogwheel",
-			"configuration",
-			"settings",
-			"tools",
-			"modify",
-			"customize",
-			"developer",
-			"runtime authoring"
-		]
-	},
-	"time-account": {
-		"tags": [
-			"time",
-			"account",
-			"clock",
-			"list"
-		]
-	},
-	"rhombus-milestone": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"gantt",
-			"shape",
-			"rhombus",
-			"milestone"
-		]
-	},
-	"add-contact": {
-		"tags": [
-			"person",
-			"contact",
-			"business card",
-			"customer",
-			"details",
-			"address",
-			"information",
-			"add",
-			"plus",
-			"additional",
-			"another",
-			"more"
-		]
-	},
-	"pushpin-on": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"attachment",
-			"pin",
-			"pushpin",
-			"stick",
-			"unstick",
-			"snap",
-			"remove pin",
-			"unpin",
-			"off",
-			"on"
-		]
-	},
-	"full-stacked-column-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"full stacked column chart"
-		]
-	},
-	"history": {
-		"tags": [
-			"time",
-			"clock",
-			"history",
-			"past",
-			"chronicle"
-		]
-	},
-	"drop-down-list": {
-		"tags": [
-			"dropdown",
-			"list",
-			"arrow",
-			"megamenu"
-		]
-	},
-	"target-group": {
-		"tags": [
-			"arrow",
-			"dart",
-			"dartboard",
-			"target group",
-			"goal",
-			"audience",
-			"specific"
-		]
-	},
-	"travel-itinerary": {
-		"tags": [
-			"travel",
-			"airplane",
-			"plane",
-			"car",
-			"itinerary",
-			"schedule",
-			"plan",
-			"flight",
-			"drive"
-		]
-	},
-	"legend": {
-		"tags": [
-			"legend",
-			"description",
-			"colors",
-			"charts",
-			"table",
-			"planning",
-			"calendar"
-		]
-	},
-	"background": {
-		"tags": [
-			"image",
-			"placeholder",
-			"picture",
-			"hills",
-			"mountains",
-			"sun"
-		]
-	},
-	"notes": {
-		"tags": [
-			"notes",
-			"marks",
-			"info",
-			"draft"
-		]
-	},
-	"menu2": {
-		"tags": [
-			"menu",
-			"hamburger menu",
-			"main menu"
-		]
-	},
-	"business-objects-mobile": {
-		"tags": [
-			"business objects mobile",
-			"analytics",
-			"chart",
-			"display",
-			"data"
-		]
-	},
-	"settings": {
-		"tags": [
-			"cogwheels",
-			"configuration",
-			"settings",
-			"tools",
-			"modify",
-			"customize"
-		]
-	},
-	"switch-views": {
-		"tags": [
-			"switch",
-			"views",
-			"objects",
-			"arrange"
-		]
-	},
-	"vds-file": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"text",
-			"attachment",
-			"Visual Design Stream",
-			"vds"
-		]
-	},
-	"lead": {
-		"tags": [
-			"money",
-			"dollar",
-			"currency",
-			"payment"
-		]
-	},
-	"add-equipment": {
-		"tags": [
-			"wrench",
-			"control",
-			"configuration",
-			"settings",
-			"tool",
-			"add",
-			"plus",
-			"additional",
-			"another",
-			"more"
-		]
-	},
-	"wallet": {
-		"tags": [
-			"money",
-			"wallet",
-			"purse",
-			"coins",
-			"bank",
-			"allowance",
-			"worth",
-			"wealth",
-			"cash",
-			"notes"
-		]
-	},
-	"doctor": {
-		"tags": [
-			"doctor",
-			"medical",
-			"cross",
-			"emergency",
-			"hospital"
-		]
-	},
-	"pause": {
-		"tags": [
-			"pause"
-		]
-	},
-	"idea-wall": {
-		"tags": [
-			"idea",
-			"wall",
-			"collaborate",
-			"teamwork",
-			"peer to peer",
-			"design thinking",
-			"work",
-			"together",
-			"project",
-			"improve"
-		]
-	},
-	"media-reverse": {
-		"tags": [
-			"reverse",
-			"media",
-			"arrow"
-		]
-	},
-	"vertical-stacked-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"vertical stacked chart"
-		]
-	},
-	"future": {
-		"tags": [
-			"time",
-			"clock",
-			"arrow",
-			"future",
-			"hereafter"
-		]
-	},
-	"measurement-document": {
-		"tags": [
-			"measure",
-			"weight",
-			"scale",
-			"precision",
-			"technical",
-			"calibrate",
-			"calibration",
-			"calculation"
-		]
-	},
-	"jam": {
-		"tags": [
-			"sap",
-			"logo",
-			"jam",
-			"social",
-			"collaborate",
-			"share"
-		]
-	},
-	"sys-help": {
-		"tags": [
-			"system",
-			"help",
-			"circle",
-			"question"
-		]
-	},
-	"clinical-order": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"text",
-			"medical",
-			"clinical"
-		]
-	},
-	"wrench": {
-		"tags": [
-			"wrench",
-			"control",
-			"configuration",
-			"settings",
-			"tool"
-		]
-	},
-	"key": {
-		"tags": [
-			"key",
-			"data",
-			"lock",
-			"important"
-		]
-	},
-	"umbrella": {
-		"tags": [
-			"rain",
-			"umbrella",
-			"brolly",
-			"shelter",
-			"keep dry"
-		]
-	},
-	"display": {
-		"tags": [
-			"display",
-			"details",
-			"inspect",
-			"spectacles",
-			"glasses"
-		]
-	},
-	"navigation-down-arrow": {
-		"tags": [
-			"navigation",
-			"down",
-			"collapse",
-			"expanded tree",
-			"tree arrow",
-			"arrow",
-			"megamenu"
-		]
-	},
-	"screen-split-two": {
-		"tags": [
-			"screen",
-			"split",
-			"two",
-			"half"
-		]
-	},
-	"media-play": {
-		"tags": [
-			"play",
-			"media",
-			"arrow"
-		]
-	},
-	"co": {
-		"tags": [
-			"co pilot",
-			"mnemonics",
-			"assistant",
-			"launchpad"
-		]
-	},
-	"lightbulb": {
-		"tags": [
-			"lightbulb",
-			"light",
-			"lamp",
-			"idea"
-		]
-	},
-	"overflow": {
-		"tags": [
-			"overflow",
-			"dots",
-			"ellipsis",
-			"more"
-		]
-	},
-	"drill-down": {
-		"tags": [
-			"drill down",
-			"arrow",
-			"detail",
-			"hierarchy",
-			"level",
-			"megamenu"
-		]
-	},
-	"capital-projects": {
-		"tags": [
-			"capital projects",
-			"building",
-			"dollar",
-			"money"
-		]
-	},
-	"factory": {
-		"tags": [
-			"factory",
-			"production",
-			"supplier",
-			"manufacturing"
-		]
-	},
-	"paper-plane": {
-		"tags": [
-			"send",
-			"flight",
-			"paper",
-			"plane",
-			"fly",
-			"message",
-			"note",
-			"folded"
-		]
-	},
-	"pdf-reader": {
-		"tags": [
-			"pdf reader",
-			"document",
-			"display",
-			"file"
-		]
-	},
-	"example": {
-		"tags": [
-			"example",
-			"dots",
-			"cicles",
-			"individual",
-			"odd"
-		]
-	},
-	"curriculum": {
-		"tags": [
-			"folder",
-			"curriculum",
-			"learning",
-			"documents",
-			"content"
-		]
-	},
-	"washing-machine": {
-		"tags": [
-			"washing",
-			"machine",
-			"laundry",
-			"clean",
-			"wash",
-			"purify"
-		]
-	},
-	"locate-me": {
-		"tags": [
-			"arrow",
-			"locate",
-			"me",
-			"map",
-			"location",
-			"pointer",
-			"navigation"
-		]
-	},
-	"simulate": {
-		"tags": [
-			"calculator",
-			"calculate",
-			"count",
-			"numbers",
-			"counting",
-			"simulate",
-			"divide",
-			"calculation",
-			"tot up",
-			"digits",
-			"algorithm",
-			"mathematician",
-			"mathematics"
-		]
-	},
-	"measure": {
-		"tags": [
-			"measure",
-			"weight",
-			"scale",
-			"precision",
-			"technical",
-			"calibrate",
-			"calibration",
-			"calculation"
-		]
-	},
-	"date-time": {
-		"tags": [
-			"date",
+			"calendar",
+			"speed",
 			"time"
 		]
 	},
-	"ipad": {
+	"accept": {
 		"tags": [
-			"ipad",
-			"tablet",
-			"portrait",
-			"mobile",
-			"responsive",
-			"cozy"
+			"accept",
+			"affirmative",
+			"approve",
+			"checkmark",
+			"correct",
+			"tick"
 		]
 	},
-	"horizontal-stacked-chart": {
+	"accessibility": {
 		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"horizontal stacked chart"
-		]
-	},
-	"sales-document": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"text",
-			"sales",
-			"money"
-		]
-	},
-	"collapse-group": {
-		"tags": [
-			"collapse",
-			"group",
-			"move to top",
-			"arrow"
-		]
-	},
-	"education": {
-		"tags": [
-			"education",
-			"course",
-			"learning",
-			"e book",
-			"bookmark",
-			"open",
-			"knowledge",
-			"school",
-			"college"
-		]
-	},
-	"lab": {
-		"tags": [
-			"lab",
-			"chemicals",
-			"liquid",
-			"mixture",
-			"chemistry",
-			"science",
-			"laboratory"
-		]
-	},
-	"course-book": {
-		"tags": [
-			"education",
-			"course",
-			"learning",
-			"e book",
-			"bookmark",
-			"open",
-			"knowledge",
-			"course book",
-			"program"
-		]
-	},
-	"system-exit-2": {
-		"tags": [
-			"system",
-			"exit"
-		]
-	},
-	"response": {
-		"tags": [
-			"reply",
-			"response",
-			"arrow"
-		]
-	},
-	"write-new": {
-		"tags": [
-			"write",
-			"new",
-			"create",
-			"pencil",
-			"pen"
-		]
-	},
-	"numbered-text": {
-		"tags": [
-			"numbered",
-			"text",
-			"1, 2, 3",
-			"text edit",
-			"rich-text"
-		]
-	},
-	"endoscopy": {
-		"tags": [
-			"endoscopy",
-			"medical",
-			"procedure"
-		]
-	},
-	"pull-down": {
-		"tags": [
-			"navigation",
-			"pull down",
-			"refresh",
-			"arrow"
-		]
-	},
-	"employee": {
-		"tags": [
-			"user",
+			"accessibility",
+			"accessible",
+			"inclusion",
+			"inclusive",
+			"people",
 			"person",
-			"employee",
-			"member",
-			"operator",
-			"representative"
+			"user"
 		]
 	},
-	"table-view": {
+	"accidental-leave": {
 		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"table",
-			"grid",
-			"waffle",
-			"view",
-			"columns",
-			"rows"
-		]
-	},
-	"calendar": {
-		"tags": [
-			"calendar"
-		]
-	},
-	"eam-work-order": {
-		"tags": [
-			"enterprise asset management",
-			"work",
-			"order",
-			"hard hat",
-			"check",
-			"tick mark"
-		]
-	},
-	"course-program": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"attachment",
-			"course",
-			"education",
-			"course",
-			"learning",
-			"e book",
-			"bookmark",
-			"open",
-			"knowledge",
-			"coursebook",
-			"program"
-		]
-	},
-	"edit": {
-		"tags": [
-			"pencil",
-			"pen",
-			"write",
-			"edit",
-			"modify",
-			"text"
-		]
-	},
-	"sonography": {
-		"tags": [
-			"sonography",
+			"accidental",
+			"cross",
+			"emergency",
+			"hospital",
+			"leave",
 			"medical",
-			"ultrasound",
-			"ultrasonography"
+			"plus"
 		]
 	},
-	"bar-chart": {
+	"account": {
 		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data"
+			"menu",
+			"settings",
+			"user"
 		]
 	},
-	"minimize": {
+	"accounting-document-verification": {
 		"tags": [
-			"minimize",
-			"screen",
-			"window",
-			"reduce",
-			"hide"
-		]
-	},
-	"add-filter": {
-		"tags": [
-			"filter",
-			"organise",
-			"aggregate",
-			"data",
-			"add",
-			"plus",
-			"additional",
-			"another",
-			"more"
-		]
-	},
-	"dimension": {
-		"tags": [
-			"dimension",
-			"layers",
-			"stacked"
-		]
-	},
-	"detail-view": {
-		"tags": [
-			"search",
-			"form",
-			"look up",
-			"find",
-			"view",
-			"detial"
-		]
-	},
-	"status-inactive": {
-		"tags": [
-			"inactive",
-			"neutral",
-			"information",
-			"led",
-			"traffic lights",
-			"street sign",
-			"lifecycle"
-		]
-	},
-	"inspect-down": {
-		"tags": [
-			"cancel",
-			"x",
-			"close",
-			"dialog",
-			"popup"
-		]
-	},
-	"person-placeholder": {
-		"tags": [
-			"person",
-			"individual",
-			"user",
-			"customer",
-			"human",
-			"profile",
-			"me"
-		]
-	},
-	"visits": {
-		"tags": [
-			"user",
-			"arrow",
-			"door",
-			"visit",
-			"login",
-			"entry"
-		]
-	},
-	"it-system": {
-		"tags": [
-			"server",
-			"it",
-			"machine",
-			"computer",
-			"technology",
-			"device",
-			"system"
-		]
-	},
-	"zoom-out": {
-		"tags": [
-			"zoom",
-			"out",
-			"glass",
-			"minus",
-			"reduce",
-			"smaller"
-		]
-	},
-	"subway-train": {
-		"tags": [
-			"subway train",
-			"underground",
-			"tube"
-		]
-	},
-	"trend-up": {
-		"tags": [
-			"trend",
-			"up",
-			"diagonal",
-			"increase",
-			"improve",
-			"arrow"
-		]
-	},
-	"insurance-life": {
-		"tags": [
+			"accounting",
+			"approve",
+			"coins",
 			"document",
-			"page",
-			"file",
-			"attachment",
-			"insurance",
-			"life"
-		]
-	},
-	"sys-minus": {
-		"tags": [
-			"minus",
-			"remove",
-			"subtract"
-		]
-	},
-	"manager": {
-		"tags": [
-			"manager",
-			"company",
-			"overview",
-			"inform",
-			"board",
-			"leader",
-			"conference",
-			"meeting",
-			"keynote",
-			"speech",
-			"presentation"
-		]
-	},
-	"sap-box": {
-		"tags": [
-			"container",
-			"box",
-			"work load",
-			"collection",
-			"documents",
-			"files",
-			"filing",
-			"directory",
-			"storage"
-		]
-	},
-	"time-entry-request": {
-		"tags": [
-			"time",
-			"entry",
-			"request",
-			"clock",
-			"list"
-		]
-	},
-	"insurance-car": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"attachment",
-			"insurance",
-			"car"
-		]
-	},
-	"increase-line-height": {
-		"tags": [
-			"increase",
-			"line height",
-			"leading",
-			"text edit",
-			"spacing",
-			"rich-text",
-			"more space",
-			"enlarge",
-			"expand",
-			"arrows"
-		]
-	},
-	"exit-full-screen": {
-		"tags": [
-			"exit",
-			"fullscreen",
-			"arrow"
-		]
-	},
-	"receipt": {
-		"tags": [
 			"money",
-			"bill",
-			"details",
-			"proof",
-			"sale",
-			"receipt"
+			"verify"
 		]
 	},
-	"chart-axis": {
+	"action": {
 		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"chart axis",
-			"arrows",
-			"directions"
+			"actions",
+			"arrow",
+			"collection",
+			"forward actions",
+			"more actions",
+			"share options"
+		]
+	},
+	"action-settings": {
+		"tags": [
+			"cogwheel",
+			"configuration",
+			"customize",
+			"modify",
+			"settings",
+			"tools"
 		]
 	},
 	"activate": {
@@ -1553,216 +81,565 @@
 			"ignite",
 			"initiate",
 			"magic",
-			"wand",
-			"spark"
-		]
-	},
-	"cart-2": {
-		"tags": [
-			"cart",
-			"trolley",
-			"basket",
-			"shopping",
-			"empty",
-			"remove",
-			"take out",
-			"clear",
-			"up",
-			"arrow"
-		]
-	},
-	"vertical-bar-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"bar",
-			"vertical"
-		]
-	},
-	"generate-shortcut": {
-		"tags": [
-			"generate",
-			"shortcut",
-			"arrow"
-		]
-	},
-	"time-overtime": {
-		"tags": [
-			"time",
-			"overtime",
-			"clock",
-			"money",
-			"hours"
-		]
-	},
-	"expand-group": {
-		"tags": [
-			"expand",
-			"group",
-			"move to bottom",
-			"arrow"
-		]
-	},
-	"cart-4": {
-		"tags": [
-			"cart",
-			"trolley",
-			"basket",
-			"shopping",
-			"item",
-			"add",
-			"put in",
-			"insert",
-			"add",
-			"plus",
-			"additional",
-			"another",
-			"more"
-		]
-	},
-	"employee-rejections": {
-		"tags": [
-			"person",
-			"x",
-			"rejections",
-			"employee",
-			"hr",
-			"human resources"
-		]
-	},
-	"cart-3": {
-		"tags": [
-			"cart",
-			"trolley",
-			"basket",
-			"shopping",
-			"item",
-			"add",
-			"put in",
-			"insert",
-			"down",
-			"arrow"
-		]
-	},
-	"pending": {
-		"tags": [
-			"time",
-			"clock",
-			"pend",
-			"pending",
-			"awaiting",
-			"unresolved",
-			"unsettled"
-		]
-	},
-	"reset": {
-		"tags": [
-			"reset",
-			"x",
-			"cancel"
-		]
-	},
-	"cart-5": {
-		"tags": [
-			"cart",
-			"trolley",
-			"basket",
-			"shopping",
-			"item",
-			"sap"
+			"spark",
+			"wand"
 		]
 	},
 	"activities": {
 		"tags": [
 			"activities",
+			"list",
 			"tasks",
-			"to do",
-			"list"
+			"to do"
 		]
 	},
-	"border": {
+	"activity-2": {
 		"tags": [
-			"border",
-			"square",
-			"outline"
+			"activities",
+			"activity",
+			"check list",
+			"correct",
+			"list",
+			"success",
+			"tasks",
+			"tick mark",
+			"to do"
 		]
 	},
-	"bus-public-transport": {
+	"activity-assigned-to-goal": {
 		"tags": [
-			"bus",
-			"public",
-			"traffic",
-			"vehicle"
+			"activities",
+			"activity",
+			"assigned to goal",
+			"objective",
+			"target",
+			"tasks",
+			"to do"
 		]
 	},
-	"nav-back": {
+	"activity-individual": {
 		"tags": [
-			"navigation",
-			"back",
-			"previous",
-			"arrow"
+			"activities",
+			"activity",
+			"individual",
+			"list",
+			"person",
+			"tasks",
+			"to do"
 		]
 	},
-	"refresh": {
+	"activity-items": {
 		"tags": [
-			"reload",
-			"refresh",
-			"arrow"
+			"activities",
+			"activity",
+			"items",
+			"list",
+			"tasks",
+			"to do"
 		]
 	},
-	"move": {
+	"add": {
 		"tags": [
-			"move",
-			"relocate",
-			"left",
-			"right",
-			"up",
+			"add",
+			"add item",
+			"add object",
+			"add row",
+			"additional",
+			"another",
+			"more",
+			"plus"
+		]
+	},
+	"add-activity": {
+		"tags": [
+			"activities",
+			"activity",
+			"add",
+			"additional",
+			"another",
+			"list",
+			"more",
+			"plus",
+			"tasks",
+			"to do"
+		]
+	},
+	"add-activity-2": {
+		"tags": [
+			"activities",
+			"activity",
+			"add",
+			"additional",
+			"another",
+			"check list",
+			"correct",
+			"list",
+			"more",
+			"plus",
+			"success",
+			"tasks",
+			"tick mark",
+			"to do"
+		]
+	},
+	"add-calendar": {
+		"tags": [
+			"add",
+			"appointment",
+			"calendar",
+			"leave",
+			"plus",
+			"request",
+			"vacation"
+		]
+	},
+	"add-contact": {
+		"tags": [
+			"add",
+			"additional",
+			"address",
+			"another",
+			"business card",
+			"contact",
+			"customer",
+			"details",
+			"information",
+			"more",
+			"person",
+			"plus"
+		]
+	},
+	"add-coursebook": {
+		"tags": [
+			"add",
+			"additional",
+			"another",
+			"bookmark",
+			"course",
+			"course book",
+			"e book",
+			"education",
+			"knowledge",
+			"learning",
+			"more",
+			"open",
+			"plus",
+			"program"
+		]
+	},
+	"add-document": {
+		"tags": [
+			"add",
+			"additional",
+			"another",
+			"document",
+			"file",
+			"more",
+			"new",
+			"page",
+			"plus",
+			"text"
+		]
+	},
+	"add-employee": {
+		"tags": [
+			"add",
+			"additional",
+			"contacts",
+			"customer",
+			"employee",
+			"hr",
+			"human resources",
+			"individual",
+			"person",
+			"plus",
+			"user"
+		]
+	},
+	"add-equipment": {
+		"tags": [
+			"add",
+			"additional",
+			"another",
+			"configuration",
+			"control",
+			"more",
+			"plus",
+			"settings",
+			"tool",
+			"wrench"
+		]
+	},
+	"add-favorite": {
+		"tags": [
+			"add",
+			"additional",
+			"another",
+			"favorite",
+			"favourite",
+			"more",
+			"plus",
+			"star"
+		]
+	},
+	"add-filter": {
+		"tags": [
+			"add",
+			"additional",
+			"aggregate",
+			"another",
+			"data",
+			"filter",
+			"more",
+			"organise",
+			"plus"
+		]
+	},
+	"add-folder": {
+		"tags": [
+			"add",
+			"additional",
+			"directory",
+			"folder",
+			"library"
+		]
+	},
+	"add-photo": {
+		"tags": [
+			"add",
+			"additional",
+			"another",
+			"camera",
+			"device",
+			"image",
+			"more",
+			"photograph",
+			"plus",
+			"snap shot"
+		]
+	},
+	"add-process": {
+		"tags": [
+			"add",
+			"additional",
+			"another",
+			"more",
+			"plus",
+			"process"
+		]
+	},
+	"add-product": {
+		"tags": [
+			"add",
+			"additional",
+			"another",
+			"box",
+			"inventory",
+			"more",
+			"package",
+			"plus",
+			"product",
+			"unit"
+		]
+	},
+	"address-book": {
+		"tags": [
+			"@",
+			"addresses",
+			"at",
+			"companies",
+			"contacts",
+			"customers",
+			"directory",
+			"e-mail",
+			"email"
+		]
+	},
+	"addresses": {
+		"tags": [
+			"addresses",
+			"companies",
+			"contacts",
+			"customers",
+			"directory",
+			"e-mail",
+			"email",
+			"homes",
+			"houses"
+		]
+	},
+	"ai": {
+		"tags": [
+			"ai",
+			"artificial",
+			"artificial intelligence",
+			"assistance",
+			"automate",
+			"automation",
+			"contextual understanding",
+			"digital",
+			"generate",
+			"generic",
+			"information",
+			"intelligence",
+			"machine",
+			"machine learning",
+			"magic",
+			"robot",
+			"situation",
+			"sparkle",
+			"star",
+			"virtual"
+		]
+	},
+	"alert": {
+		"tags": [
+			"critical",
+			"message",
+			"notifications",
+			"status",
+			"warning"
+		]
+	},
+	"along-stacked-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display"
+		]
+	},
+	"alphabetical-order": {
+		"tags": [
+			"a to z",
+			"alphabet",
+			"descending",
+			"function",
+			"letters",
+			"order",
+			"sorting"
+		]
+	},
+	"appear-offline": {
+		"tags": [
+			"appear-offline",
+			"blocked",
+			"circle",
+			"hide",
+			"me",
+			"offline"
+		]
+	},
+	"appointment": {
+		"tags": [
+			"appointment",
+			"calendar",
+			"date picker",
+			"day",
+			"month",
+			"week"
+		]
+	},
+	"appointment-2": {
+		"tags": [
+			"appointment",
+			"calendar",
+			"date picker",
+			"day",
+			"month",
+			"week"
+		]
+	},
+	"approvals": {
+		"tags": [
+			"accepted",
+			"approvals",
+			"checkmark",
+			"details",
+			"form",
+			"text"
+		]
+	},
+	"area-chart": {
+		"tags": [
+			"analytics",
+			"area",
+			"chart",
+			"data",
+			"display"
+		]
+	},
+	"arobase": {
+		"tags": [
+			"@",
+			"address",
+			"at",
+			"email"
+		]
+	},
+	"arrow-bottom": {
+		"tags": [
+			"arrow bottom",
 			"down"
 		]
 	},
-	"employee-lookup": {
+	"arrow-down": {
 		"tags": [
-			"customer",
-			"user",
-			"person",
-			"individual",
-			"contacts",
-			"look up",
-			"find",
-			"search"
+			"arrow",
+			"circle",
+			"down",
+			"management",
+			"megamenu",
+			"options",
+			"selection",
+			"variant"
 		]
 	},
-	"navigation-up-arrow": {
+	"arrow-left": {
 		"tags": [
-			"navigation",
-			"up",
-			"arrow"
+			"arrow left"
+		]
+	},
+	"arrow-right": {
+		"tags": [
+			"arrow right"
+		]
+	},
+	"arrow-top": {
+		"tags": [
+			"arrow top",
+			"up"
+		]
+	},
+	"attachment": {
+		"tags": [
+			"attach",
+			"file",
+			"paper clip"
+		]
+	},
+	"attachment-audio": {
+		"tags": [
+			"attachment",
+			"audio",
+			"document",
+			"file",
+			"page",
+			"sound"
+		]
+	},
+	"attachment-e-pub": {
+		"tags": [
+			"document",
+			"e book",
+			"e pub",
+			"electronic publication",
+			"file",
+			"page"
+		]
+	},
+	"attachment-html": {
+		"tags": [
+			"attachment",
+			"document",
+			"file",
+			"html",
+			"page",
+			"web",
+			"website"
+		]
+	},
+	"attachment-photo": {
+		"tags": [
+			"attachment",
+			"document",
+			"file",
+			"image",
+			"page",
+			"photo"
+		]
+	},
+	"attachment-text-file": {
+		"tags": [
+			"document",
+			"file",
+			"page",
+			"text"
+		]
+	},
+	"attachment-video": {
+		"tags": [
+			"attachment",
+			"document",
+			"file",
+			"film",
+			"movie",
+			"page",
+			"video"
+		]
+	},
+	"attachment-zip-file": {
+		"tags": [
+			"compressed",
+			"document",
+			"file",
+			"page",
+			"zip"
+		]
+	},
+	"away": {
+		"tags": [
+			"appear away",
+			"availability",
+			"away",
+			"be right back",
+			"chronicle",
+			"clock",
+			"me",
+			"off work",
+			"time"
 		]
 	},
 	"back-to-top": {
 		"tags": [
-			"back to top",
-			"jump",
-			"beginning",
 			"arrow",
+			"back to top",
+			"beginning",
+			"jump",
 			"up"
 		]
 	},
-	"menu": {
+	"background": {
 		"tags": [
-			"menu",
-			"list"
+			"hills",
+			"image",
+			"mountains",
+			"picture",
+			"placeholder",
+			"sun"
 		]
 	},
-	"text-align-left": {
+	"badge": {
 		"tags": [
-			"align",
-			"text",
-			"left",
-			"text edit",
-			"rich-text"
+			"authority",
+			"award",
+			"badge",
+			"coat of arms",
+			"identity",
+			"insignia",
+			"legitimate",
+			"membership",
+			"rank",
+			"service",
+			"star"
+		]
+	},
+	"bar-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display"
 		]
 	},
 	"bar-code": {
@@ -1774,1448 +651,145 @@
 			"verify"
 		]
 	},
-	"document-text": {
+	"basket": {
 		"tags": [
-			"document",
-			"page",
-			"file",
-			"text"
+			"basket",
+			"shopping"
 		]
 	},
-	"tag-cloud-chart": {
+	"batch-payments": {
 		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"speech",
-			"tag",
-			"cloud"
-		]
-	},
-	"scissors": {
-		"tags": [
-			"cut",
-			"scissors",
-			"document",
-			"clipboards",
-			"file",
-			"text"
-		]
-	},
-	"burglary": {
-		"tags": [
-			"money",
-			"thief",
-			"loss",
-			"theft",
-			"safe",
-			"unsafe",
-			"burglary",
-			"robbery",
-			"bank"
-		]
-	},
-	"lateness": {
-		"tags": [
-			"time",
-			"timer",
-			"waiting",
-			"lateness",
-			"loading",
-			"hour glass",
-			"sand",
-			"out of time"
-		]
-	},
-	"x-ray": {
-		"tags": [
-			"x ray",
-			"procedure",
-			"scan",
-			"medical"
-		]
-	},
-	"comment": {
-		"tags": [
-			"speech",
-			"bubble",
-			"comment",
-			"discussion"
-		]
-	},
-	"business-one": {
-		"tags": [
-			"business one"
-		]
-	},
-	"newspaper": {
-		"tags": [
-			"newspaper",
-			"headlines",
-			"latest",
-			"updates"
-		]
-	},
-	"incident": {
-		"tags": [
-			"incident",
-			"question",
-			"message"
-		]
-	},
-	"outbox": {
-		"tags": [
-			"outbox",
-			"out",
-			"arrow"
-		]
-	},
-	"home": {
-		"tags": [
-			"home",
-			"house",
-			"index",
-			"landing page",
-			"start",
-			"main"
-		]
-	},
-	"family-care": {
-		"tags": [
-			"family",
-			"protection",
-			"people",
-			"family"
-		]
-	},
-	"waiver": {
-		"tags": [
-			"waiver",
-			"money bag",
-			"percentage"
-		]
-	},
-	"ui-notifications": {
-		"tags": [
-			"notify",
-			"ui",
-			"notifications",
-			"alerts",
-			"launchpad"
-		]
-	},
-	"retail-store-manager": {
-		"tags": [
-			"retail store manager"
-		]
-	},
-	"attachment-photo": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"attachment",
-			"photo",
-			"image"
-		]
-	},
-	"paid-leave": {
-		"tags": [
-			"paid leave",
-			"money",
-			"dollar",
-			"bill",
-			"approved"
-		]
-	},
-	"slim-arrow-left": {
-		"tags": [
-			"slim",
-			"thin",
-			"skinny",
-			"arrow",
-			"left",
-			"scroll left"
-		]
-	},
-	"sys-back-2": {
-		"tags": [
-			"system",
-			"back",
-			"arrows"
-		]
-	},
-	"expense-report": {
-		"tags": [
-			"expense",
-			"report",
 			"documents",
+			"folder",
 			"money",
-			"dollar"
+			"open"
 		]
 	},
-	"dropdown": {
+	"bbyd-active-sales": {
 		"tags": [
-			"dropdown",
-			"menu",
-			"menu button",
-			"arrow",
-			"megamenu"
-		]
-	},
-	"decision": {
-		"tags": [
-			"hand shake",
-			"decision",
-			"hands",
-			"agreement",
-			"colleagues",
-			"contract"
-		]
-	},
-	"upload": {
-		"tags": [
-			"upload",
-			"arrow"
-		]
-	},
-	"family-protection": {
-		"tags": [
-			"family",
-			"protection",
-			"people",
-			"house",
-			"roof",
-			"family"
-		]
-	},
-	"monitor-payments": {
-		"tags": [
-			"report",
-			"bill",
-			"billing",
+			"active",
+			"approvals",
+			"book",
+			"business by design",
+			"check",
 			"sales",
-			"expense",
-			"quote",
-			"envelope",
-			"invoice",
-			"dollar",
-			"money",
-			"monitor payments"
+			"search"
 		]
 	},
-	"sys-cancel": {
+	"bbyd-dashboard": {
 		"tags": [
-			"clear",
-			"remove",
-			"cancel",
-			"x"
-		]
-	},
-	"fob-watch": {
-		"tags": [
-			"fob watch",
-			"time",
-			"stop watch",
-			"timer",
-			"countdown"
-		]
-	},
-	"ipad-2": {
-		"tags": [
-			"ipad",
-			"landscape",
-			"tablet",
-			"mobile",
-			"responsive",
-			"cozy"
-		]
-	},
-	"restart": {
-		"tags": [
-			"restart",
-			"process",
-			"play"
-		]
-	},
-	"hello-world": {
-		"tags": [
-			"bubble",
-			"ui5",
-			"hello",
-			"world"
-		]
-	},
-	"sys-monitor": {
-		"tags": [
-			"screen",
-			"monitor",
-			"tv"
-		]
-	},
-	"product": {
-		"tags": [
-			"product",
-			"commodity",
-			"goods",
-			"stock",
-			"merchandise",
-			"package"
-		]
-	},
-	"flight": {
-		"tags": [
-			"plane",
-			"trip",
-			"travel",
-			"holiday",
-			"flight",
-			"Aeroplane",
-			"transit",
-			"shipment"
-		]
-	},
-	"crossed-line-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"crossed line chart"
-		]
-	},
-	"wounds-doc": {
-		"tags": [
-			"wounds",
-			"doc",
-			"injury",
-			"accident",
-			"hospital",
-			"patient",
-			"emergency",
-			"health",
-			"illness",
-			"cross"
-		]
-	},
-	"filter-facets": {
-		"tags": [
-			"analytics",
-			"filter",
-			"organise",
-			"chart",
-			"customize",
-			"display",
-			"data"
-		]
-	},
-	"gantt-bars": {
-		"tags": [
-			"calendar",
-			"gantt",
-			"bars",
-			"gantt bars",
-			"chart",
-			"schedule"
-		]
-	},
-	"account": {
-		"tags": [
-			"user",
-			"menu",
-			"settings"
-		]
-	},
-	"arrow-bottom": {
-		"tags": [
-			"arrow bottom",
-			"down"
-		]
-	},
-	"repost": {
-		"tags": [
-			"post again",
-			"circulate"
-		]
-	},
-	"warning": {
-		"tags": [
-			"warning",
-			"exclamation mark",
-			"indicator",
-			"information"
-		]
-	},
-	"cause": {
-		"tags": [
-			"get",
-			"reason",
-			"incoming",
-			"arrow",
-			"relocate",
-			"take"
-		]
-	},
-	"offsite-work": {
-		"tags": [
-			"offsite work",
-			"external",
-			"company",
-			"office",
-			"outside"
-		]
-	},
-	"save": {
-		"tags": [
-			"save",
-			"diskette",
-			"floppy disc",
-			"local disc",
-			"hard disc"
-		]
-	},
-	"energy-saving-lightbulb": {
-		"tags": [
-			"lightbulb",
-			"light",
-			"lamp",
-			"idea",
-			"eco",
-			"energy saving"
-		]
-	},
-	"palette": {
-		"tags": [
-			"palette",
-			"paint",
-			"color",
-			"spot",
-			"mixing",
-			"artist",
-			"theme",
-			"design"
-		]
-	},
-	"program-triangles-2": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"gantt",
-			"shape",
-			"triangle",
-			"program"
-		]
-	},
-	"choropleth-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"choropleth chart",
-			"geographic",
-			"map",
-			"world"
-		]
-	},
-	"notification-2": {
-		"tags": [
-			"speech",
-			"bubble",
-			"comment",
-			"discussion",
-			"notification"
-		]
-	},
-	"checklist": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"gantt",
-			"shape",
-			"checklist"
-		]
-	},
-	"attachment-video": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"attachment",
-			"video",
-			"film",
-			"movie"
-		]
-	},
-	"soccer": {
-		"tags": [
-			"soccer",
-			"ball",
-			"football",
-			"world cup"
-		]
-	},
-	"create-leave-request": {
-		"tags": [
-			"holiday",
-			"vacation",
-			"leave",
-			"request",
-			"deck chair",
-			"sun",
-			"create",
-			"add",
-			"plus",
-			"additional",
-			"another",
-			"more"
-		]
-	},
-	"Chart-Tree-Map": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data"
-		]
-	},
-	"request": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"text",
-			"edit",
-			"write",
-			"new",
-			"pencil",
-			"pen",
-			"request"
-		]
-	},
-	"goalseek": {
-		"tags": [
-			"goal",
-			"goalseek",
-			"target",
-			"result",
-			"objective",
-			"aim"
-		]
-	},
-	"action": {
-		"tags": [
-			"actions",
-			"collection",
-			"share options",
-			"forward actions",
-			"more actions",
-			"arrow"
-		]
-	},
-	"outgoing-call": {
-		"tags": [
-			"call",
-			"communicate",
-			"phone",
-			"telephone",
-			"outgoing",
-			"arrow"
-		]
-	},
-	"sap-ui5": {
-		"tags": [
-			"ui5",
-			"framework",
-			"development",
-			"sap"
-		]
-	},
-	"sys-first-page": {
-		"tags": [
-			"system",
-			"first",
-			"page",
-			"up",
-			"top",
-			"arrows"
-		]
-	},
-	"radar-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"radar-chart"
-		]
-	},
-	"table-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"table",
-			"columns",
-			"rows",
-			"grid",
-			"waffle",
-			"view"
-		]
-	},
-	"study-leave": {
-		"tags": [
-			"study",
-			"education",
-			"graduate",
-			"school",
-			"college",
-			"student",
-			"qualification"
-		]
-	},
-	"heading2": {
-		"tags": [
-			"heading",
-			"header",
-			"h2",
-			"large text",
-			"title",
-			"level 2",
-			"text edit",
-			"rich-text"
+			"business by design",
+			"dashboard"
 		]
 	},
 	"bed": {
 		"tags": [
 			"bed",
-			"sleep",
-			"ill",
 			"hospital",
-			"sick",
+			"ill",
 			"medical",
-			"tired",
+			"night",
+			"sick",
+			"sleep",
 			"snooze",
-			"night"
+			"tired"
 		]
 	},
-	"heading1": {
+	"begin": {
 		"tags": [
-			"heading",
-			"header",
-			"h1",
-			"large text",
-			"title",
-			"level 1",
-			"text edit",
-			"rich-text"
-		]
-	},
-	"customer-history": {
-		"tags": [
-			"person",
-			"history",
-			"customer",
-			"user",
-			"clock",
-			"account"
-		]
-	},
-	"heading3": {
-		"tags": [
-			"heading",
-			"header",
-			"h3",
-			"large text",
-			"title",
-			"level 3",
-			"text edit",
-			"rich-text"
-		]
-	},
-	"general-leave-request": {
-		"tags": [
-			"holiday",
-			"vacation",
-			"leave",
-			"request",
-			"deck",
-			"chair",
-			"sun",
-			"create"
-		]
-	},
-	"machine": {
-		"tags": [
-			"machine",
-			"factory",
-			"production",
-			"supplier",
-			"technical"
-		]
-	},
-	"vertical-bullet-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data"
-		]
-	},
-	"open-command-field": {
-		"tags": [
-			"open command field",
-			"navigation",
-			"right",
-			"page right",
-			"next",
-			"arrow"
-		]
-	},
-	"business-objects-explorer": {
-		"tags": [
-			"business objects explorer",
-			"compass"
-		]
-	},
-	"approvals": {
-		"tags": [
-			"form",
-			"details",
-			"text",
-			"approvals",
-			"accepted",
-			"checkmark"
-		]
-	},
-	"flag": {
-		"tags": [
-			"flag",
-			"mark",
-			"marker",
-			"important"
-		]
-	},
-	"underline-text": {
-		"tags": [
-			"underline",
-			"text",
-			"format",
-			"text decoration",
-			"text edit",
-			"rich-text"
-		]
-	},
-	"appointment-2": {
-		"tags": [
-			"date picker",
-			"calendar",
-			"month",
-			"week",
-			"day",
-			"appointment"
-		]
-	},
-	"overlay": {
-		"tags": [
-			"overlay",
-			"circle",
-			"dot"
-		]
-	},
-	"attachment-audio": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"attachment",
-			"audio",
-			"sound"
-		]
-	},
-	"redo": {
-		"tags": [
-			"redo",
-			"arrow",
-			"previous state",
-			"history",
-			"forwards"
-		]
-	},
-	"arobase": {
-		"tags": [
-			"at",
-			"@",
-			"email",
-			"address"
-		]
-	},
-	"sys-enter": {
-		"tags": [
-			"system",
-			"enter",
-			"correct",
-			"tick",
-			"affirmative"
-		]
-	},
-	"line-chart-dual-axis": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"line chart",
-			"dual axis"
-		]
-	},
-	"create-session": {
-		"tags": [
-			"create",
-			"session"
-		]
-	},
-	"headset": {
-		"tags": [
-			"headset",
-			"call",
-			"help",
-			"support",
-			"talk",
-			"mic",
-			"listen"
-		]
-	},
-	"heatmap-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data"
-		]
-	},
-	"checklist-item": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"gantt",
-			"shape",
-			"checklist",
-			"item"
-		]
-	},
-	"rhombus-milestone-2": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"gantt",
-			"shape",
-			"rhombus",
-			"milestone"
-		]
-	},
-	"key-user-settings": {
-		"tags": [
-			"settings",
-			"cogwheel",
-			"configuration",
-			"settings",
-			"tools",
-			"modify",
-			"customize",
-			"administrator",
-			"key user",
-			"runtime authoring"
-		]
-	},
-	"vertical-grip": {
-		"tags": [
-			"vertical",
-			"grip",
-			"move left",
-			"move right",
-			"splitter"
-		]
-	},
-	"add": {
-		"tags": [
-			"add",
-			"plus",
-			"additional",
-			"another",
-			"more",
-			"add row",
-			"add object",
-			"add item"
-		]
-	},
-	"mri-scan": {
-		"tags": [
-			"mri",
-			"scan",
-			"medical"
-		]
-	},
-	"slim-arrow-down": {
-		"tags": [
-			"slim",
-			"thin",
-			"skinny",
-			"arrow",
-			"down",
-			"select navigation",
-			"combobox",
-			"multi combobox"
-		]
-	},
-	"chart-table-view": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"table",
-			"columns",
-			"rows",
-			"grid",
-			"waffle",
-			"view"
-		]
-	},
-	"it-host": {
-		"tags": [
-			"server",
-			"it",
-			"machine",
-			"computer",
-			"technology",
-			"device",
-			"host"
-		]
-	},
-	"grid": {
-		"tags": [
-			"grid",
-			"waffle",
-			"layout",
-			"boxes",
-			"squares",
-			"modular"
-		]
-	},
-	"line-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"line chart"
-		]
-	},
-	"outdent": {
-		"tags": [
-			"outdent",
-			"paragraph",
-			"move left",
-			"align",
-			"text edit",
-			"spacing",
-			"rich-text",
-			"arrows"
-		]
-	},
-	"less": {
-		"tags": [
-			"less",
-			"minus",
-			"subtract"
-		]
-	},
-	"my-sales-order": {
-		"tags": [
-			"document",
-			"page",
-			"sales",
-			"order",
-			"money",
-			"bill",
-			"details",
-			"quote",
-			"invoice"
-		]
-	},
-	"puzzle": {
-		"tags": [
-			"puzzle",
-			"pieces",
-			"fit",
-			"together",
-			"jigsaw",
-			"thinking",
-			"objects",
-			"challenge"
-		]
-	},
-	"building": {
-		"tags": [
-			"building",
-			"company",
-			"firm",
-			"factory",
-			"office"
-		]
-	},
-	"crm-service-manager": {
-		"tags": [
-			"crm service manager",
-			"task",
-			"dropdown",
-			"list"
-		]
-	},
-	"task": {
-		"tags": [
-			"clipboard",
-			"task",
-			"checkbox",
-			"checklist",
-			"list",
-			"checkmark"
-		]
-	},
-	"play": {
-		"tags": [
-			"play"
-		]
-	},
-	"list": {
-		"tags": [
-			"list",
-			"text",
-			"ordered"
-		]
-	},
-	"hint": {
-		"tags": [
-			"information",
-			"hint",
-			"about",
-			"details"
-		]
-	},
-	"message-warning": {
-		"tags": [
-			"message",
-			"warning",
-			"critical",
-			"notifications",
-			"status"
-		]
-	},
-	"past": {
-		"tags": [
-			"time",
-			"clock",
-			"past",
-			"bygone",
-			"former",
-			"late"
-		]
-	},
-	"provision": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"table",
-			"columns",
-			"rows",
-			"grid",
-			"waffle",
-			"settings",
-			"modify",
-			"customize"
-		]
-	},
-	"print": {
-		"tags": [
-			"print",
-			"printer",
-			"send to print",
-			"hard copy",
-			"output",
-			"paper",
-			"document",
-			"file"
-		]
-	},
-	"database": {
-		"tags": [
-			"database",
-			"big data",
-			"cube",
-			"complex",
-			"complicated",
-			"simple",
-			"information",
-			"backend"
-		]
-	},
-	"multiselect-none": {
-		"tags": [
-			"multi select",
-			"list",
-			"table",
-			"data",
-			"none",
-			"deselected"
-		]
-	},
-	"web-cam": {
-		"tags": [
-			"web cam",
-			"camera",
-			"live",
-			"video",
-			"visual"
-		]
-	},
-	"opportunity": {
-		"tags": [
-			"chart",
-			"line",
-			"star",
-			"opportunity",
-			"stock",
-			"market",
-			"exchange",
-			"trade"
-		]
-	},
-	"mirrored-task-circle": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"gantt",
-			"shape",
-			"mirrored",
-			"circle",
-			"task"
-		]
-	},
-	"journey-depart": {
-		"tags": [
-			"journey",
-			"depart",
-			"arrow",
-			"move",
-			"placement"
-		]
-	},
-	"sorting-ranking": {
-		"tags": [
-			"sort",
-			"ranking",
-			"ascending",
-			"descending",
-			"arrow"
-		]
-	},
-	"text-align-center": {
-		"tags": [
-			"align",
-			"text",
-			"center",
-			"text edit",
-			"rich-text"
-		]
-	},
-	"user-edit": {
-		"tags": [
-			"user",
-			"edit",
-			"person",
-			"pencil",
-			"pen"
-		]
-	},
-	"step": {
-		"tags": [
-			"process",
-			"flow",
-			"step",
-			"arrow"
-		]
-	},
-	"master-task-triangle-2": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"gantt",
-			"shape",
-			"triangle",
-			"task",
-			"master"
-		]
-	},
-	"discussion": {
-		"tags": [
-			"speech",
-			"bubble",
-			"comment",
-			"discussion",
-			"blank"
-		]
-	},
-	"resize-horizontal": {
-		"tags": [
-			"resize",
-			"horizontal",
-			"column",
-			"screen",
-			"bigger",
-			"smaller",
-			"enlarge",
-			"reduce",
 			"arrows",
-			"lines",
-			"side to side"
+			"begin",
+			"start"
 		]
 	},
-	"display-more": {
+	"bell": {
 		"tags": [
-			"display",
-			"details",
-			"more",
-			"arrow"
+			"alarm",
+			"alerts",
+			"bell",
+			"notify"
+		]
+	},
+	"bell-2": {
+		"tags": [
+			"alarm",
+			"alerts",
+			"bell",
+			"filled",
+			"full",
+			"notify"
+		]
+	},
+	"biometric-face": {
+		"tags": [
+			"face",
+			"faceid",
+			"id",
+			"recognition",
+			"viewfinder"
+		]
+	},
+	"biometric-thumb": {
+		"tags": [
+			"finger",
+			"fingerprint",
+			"id",
+			"recognition",
+			"thumb"
+		]
+	},
+	"blank-tag": {
+		"tags": [
+			"blank",
+			"indicator",
+			"label",
+			"marker",
+			"tag"
+		]
+	},
+	"blank-tag-2": {
+		"tags": [
+			"blank",
+			"indicator",
+			"label",
+			"marker",
+			"tag"
+		]
+	},
+	"blur": {
+		"tags": [
+			"blur",
+			"blurry",
+			"distort",
+			"edit",
+			"effects",
+			"filter",
+			"image",
+			"modify",
+			"screenshot",
+			"smudge",
+			"tool"
 		]
 	},
 	"bo-strategy-management": {
 		"tags": [
 			"bo strategy management",
 			"business",
-			"object",
-			"circle"
-		]
-	},
-	"customer": {
-		"tags": [
-			"person",
-			"individual",
-			"user",
-			"customer",
-			"human",
 			"circle",
-			"profile",
-			"me"
+			"object"
 		]
 	},
-	"attachment-zip-file": {
+	"bold-text": {
 		"tags": [
-			"document",
-			"page",
-			"file",
-			"zip",
-			"compressed"
-		]
-	},
-	"temperature": {
-		"tags": [
-			"temperature",
-			"hot",
-			"heat",
-			"cold",
-			"cool",
-			"illness",
-			"sickness",
-			"health",
-			"medical"
-		]
-	},
-	"unlocked": {
-		"tags": [
-			"unlocked",
-			"open padlock",
-			"open",
-			"status",
-			"available",
-			"access",
-			"unrestricted"
-		]
-	},
-	"hide": {
-		"tags": [
-			"hide",
-			"eye"
-		]
-	},
-	"forward": {
-		"tags": [
-			"forward",
-			"arrow"
-		]
-	},
-	"status-critical": {
-		"tags": [
-			"critical",
-			"in process",
-			"warning",
-			"led",
-			"traffic lights",
-			"street sign",
-			"lifecycle"
-		]
-	},
-	"incoming-call": {
-		"tags": [
-			"call",
-			"communicate",
-			"incoming",
-			"phone",
-			"telephone",
-			"arrow"
-		]
-	},
-	"home-share": {
-		"tags": [
-			"globe",
-			"world",
-			"geographical",
-			"earth",
-			"planet",
-			"share",
-			"global distribution",
-			"arrow"
-		]
-	},
-	"journey-arrive": {
-		"tags": [
-			"journey",
-			"arrive",
-			"arrow",
-			"placement"
-		]
-	},
-	"navigation-left-arrow": {
-		"tags": [
-			"navigation",
-			"left",
-			"arrow"
-		]
-	},
-	"opportunities": {
-		"tags": [
-			"user",
-			"person",
-			"dollar",
-			"equal to",
-			"opportunity"
-		]
-	},
-	"upstacked-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"upstacked"
-		]
-	},
-	"donut-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data"
-		]
-	},
-	"supplier": {
-		"tags": [
-			"supplier",
-			"package",
-			"product",
-			"satisfaction",
-			"returns",
-			"deliveries",
-			"warehouse",
-			"person",
-			"seller",
-			"buyer",
-			"inventory"
-		]
-	},
-	"signature": {
-		"tags": [
-			"pencil",
-			"pen",
-			"signature",
-			"sign"
-		]
-	},
-	"circle-task": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"gantt",
-			"shape",
-			"circle",
-			"task"
-		]
-	},
-	"copy": {
-		"tags": [
-			"copy",
-			"document",
-			"file",
-			"duplicate",
-			"text"
-		]
-	},
-	"close-command-field": {
-		"tags": [
-			"close command field",
-			"navigation",
-			"left",
-			"page left",
-			"previous",
-			"arrow"
-		]
-	},
-	"activity-2": {
-		"tags": [
-			"activity",
-			"activities",
-			"tasks",
-			"to do",
-			"list",
-			"check list",
-			"correct",
-			"success",
-			"tick mark"
-		]
-	},
-	"windows-doors": {
-		"tags": [
-			"window",
-			"door",
-			"entry"
+			"bold",
+			"bulk",
+			"fat",
+			"format",
+			"rich-text",
+			"text",
+			"text decoration",
+			"text edit",
+			"weight"
 		]
 	},
 	"bookmark": {
@@ -3226,2446 +800,155 @@
 			"save"
 		]
 	},
-	"mileage": {
+	"bookmark-2": {
 		"tags": [
-			"mileage",
-			"tank",
-			"petrol",
-			"fuel",
-			"fill up",
-			"gas",
-			"station"
-		]
-	},
-	"fax-machine": {
-		"tags": [
-			"fax",
-			"machine",
-			"communicate"
-		]
-	},
-	"pdf-attachment": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"attachment",
-			"pdf"
-		]
-	},
-	"sys-find": {
-		"tags": [
-			"find",
-			"binoculars",
-			"look up"
-		]
-	},
-	"master-task-triangle": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"gantt",
-			"shape",
-			"triangle",
-			"task",
-			"master"
-		]
-	},
-	"text-align-right": {
-		"tags": [
-			"align",
-			"text",
-			"right",
-			"text edit",
-			"rich-text"
-		]
-	},
-	"learning-assistant": {
-		"tags": [
-			"education",
-			"course",
-			"learning",
-			"e book",
 			"bookmark",
-			"open",
-			"knowledge",
-			"school",
-			"college",
-			"help",
-			"tutor",
-			"assistant",
-			"teacher",
-			"professor"
-		]
-	},
-	"favorite": {
-		"tags": [
-			"favorite",
-			"favourite",
-			"star"
-		]
-	},
-	"log": {
-		"tags": [
-			"log",
-			"logout",
-			"log on",
-			"log off"
-		]
-	},
-	"loan": {
-		"tags": [
-			"money bag",
-			"bank",
-			"dollar",
-			"tag"
-		]
-	},
-	"toaster-top": {
-		"tags": [
-			"toaster",
-			"top",
-			"details"
-		]
-	},
-	"download-from-cloud": {
-		"tags": [
-			"download",
-			"cloud",
-			"arrow"
-		]
-	},
-	"sys-enter-2": {
-		"tags": [
-			"system",
-			"enter",
-			"correct",
-			"tick",
-			"affirmative"
-		]
-	},
-	"sys-last-page": {
-		"tags": [
-			"system",
-			"last",
-			"page",
-			"down",
-			"bottom",
-			"arrows"
-		]
-	},
-	"to-be-reviewed": {
-		"tags": [
-			"to be reviewed",
-			"indicator",
-			"information"
-		]
-	},
-	"electrocardiogram": {
-		"tags": [
-			"electrocardiogram",
-			"heart",
-			"scan",
-			"monitor",
-			"medical"
-		]
-	},
-	"marketing-campaign": {
-		"tags": [
-			"marketing campaign",
-			"loud speaker",
-			"megaphone",
-			"notify",
-			"announcenment",
-			"public address"
-		]
-	},
-	"timesheet": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"attachment",
-			"timesheet",
-			"clock",
-			"hours",
-			"days",
-			"workday"
-		]
-	},
-	"horizontal-bar-chart-2": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"horizontal bar chart"
-		]
-	},
-	"navigation-right-arrow": {
-		"tags": [
-			"navigation",
-			"right",
-			"expand",
-			"collapsed tree",
-			"tree arrow",
-			"arrow"
-		]
-	},
-	"sort": {
-		"tags": [
-			"sort",
-			"aggregate",
-			"ascending",
-			"descending",
-			"arrow"
-		]
-	},
-	"taxi": {
-		"tags": [
-			"car",
-			"taxi",
-			"cab",
-			"transportation"
-		]
-	},
-	"sys-next-page": {
-		"tags": [
-			"system",
-			"next",
-			"page",
-			"down",
-			"arrows"
-		]
-	},
-	"full-stacked-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"full stacked chart"
-		]
-	},
-	"sys-back": {
-		"tags": [
-			"system",
-			"back",
-			"arrows"
-		]
-	},
-	"multiselect-all": {
-		"tags": [
-			"multi select",
-			"list",
-			"table",
-			"data",
-			"all",
-			"selected"
-		]
-	},
-	"collections-insight": {
-		"tags": [
-			"collections",
-			"insight",
-			"report",
-			"bill",
-			"billing",
-			"sales",
-			"expense",
-			"quote",
-			"envelope",
-			"invoice",
-			"dollar",
-			"money"
-		]
-	},
-	"attachment-text-file": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"text"
-		]
-	},
-	"arrow-right": {
-		"tags": [
-			"arrow right"
-		]
-	},
-	"source-code": {
-		"tags": [
-			"source",
-			"code",
-			"develop",
-			"write",
-			"syntax"
-		]
-	},
-	"leads": {
-		"tags": [
-			"user",
-			"person",
-			"leads",
-			"star",
-			"equal to"
-		]
-	},
-	"document": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"attachment",
-			"blank",
-			"new"
-		]
-	},
-	"column-chart-dual-axis": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"column",
-			"dual axis"
-		]
-	},
-	"syringe": {
-		"tags": [
-			"medical",
-			"emergency",
-			"hospital",
-			"syringe",
-			"needle",
-			"shot",
-			"injection"
-		]
-	},
-	"switch-classes": {
-		"tags": [
-			"switch",
-			"views",
-			"objects",
-			"arrange",
-			"classes"
-		]
-	},
-	"thing-type": {
-		"tags": [
-			"popup",
-			"speech",
-			"bubble",
-			"thing-type"
-		]
-	},
-	"initiative": {
-		"tags": [
-			"initiative",
-			"initiate",
-			"begin",
-			"enter",
-			"right",
-			"arrow",
-			"circle"
-		]
-	},
-	"documents": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"attachment",
-			"documents"
-		]
-	},
-	"unpaid-leave": {
-		"tags": [
-			"unpaid leave",
-			"money",
-			"dollar",
-			"bill",
-			"rejected"
-		]
-	},
-	"checklist-2": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"gantt",
-			"shape",
-			"checklist"
-		]
-	},
-	"clinical-task-tracker": {
-		"tags": [
-			"clinical",
-			"task",
-			"tracker",
-			"clipboard",
-			"medical",
-			"checklist",
-			"check boxes"
-		]
-	},
-	"arrow-left": {
-		"tags": [
-			"arrow left"
-		]
-	},
-	"up": {
-		"tags": [
-			"up",
-			"triangle"
-		]
-	},
-	"functional-location": {
-		"tags": [
-			"arrow",
-			"locate",
-			"me",
-			"map",
-			"location",
-			"pointer",
-			"navigation",
-			"functional"
-		]
-	},
-	"vehicle-repair": {
-		"tags": [
-			"car",
-			"crash",
-			"accident",
-			"damage",
-			"repair",
-			"fix",
-			"garage",
-			"vehicle"
-		]
-	},
-	"inventory": {
-		"tags": [
-			"inventory",
-			"truck",
-			"wrench",
-			"tools"
-		]
-	},
-	"basket": {
-		"tags": [
-			"basket",
-			"shopping"
-		]
-	},
-	"end-user-experience-monitoring": {
-		"tags": [
-			"end user experience monitoring",
-			"gauge",
-			"measure",
-			"speed",
-			"monitor"
-		]
-	},
-	"down": {
-		"tags": [
-			"down",
-			"triangle",
-			"megamenu"
-		]
-	},
-	"pipeline-analysis": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data"
-		]
-	},
-	"competitor": {
-		"tags": [
-			"competitor",
-			"winner",
-			"prize",
-			"award",
-			"trophy",
-			"cup"
-		]
-	},
-	"world": {
-		"tags": [
-			"globe",
-			"world",
-			"goegraphical",
-			"earth",
-			"planet",
-			"international",
-			"global"
-		]
-	},
-	"customer-briefing": {
-		"tags": [
-			"customer",
-			"user",
-			"person",
-			"individual",
-			"contacts",
-			"address",
-			"email",
-			"e-mail",
-			"briefing"
-		]
-	},
-	"add-activity-2": {
-		"tags": [
-			"activity",
-			"activities",
-			"tasks",
-			"to do",
-			"list",
-			"check list",
-			"correct",
-			"success",
-			"tick mark",
-			"add",
-			"plus",
-			"additional",
-			"another",
-			"more"
-		]
-	},
-	"iphone-2": {
-		"tags": [
-			"iphone",
-			"phone",
-			"smart phone",
-			"landscape",
-			"tablet",
-			"mobile",
-			"responsive",
-			"cozy"
-		]
-	},
-	"cancel": {
-		"tags": [
-			"unable",
-			"forbidden",
-			"do not",
-			"cancel",
-			"not allowed",
-			"not allowed"
-		]
-	},
-	"pushpin-off": {
-		"tags": [
-			"pin",
-			"pushpin",
-			"stick",
-			"unstick",
-			"snap",
-			"remove pin",
-			"unpin",
-			"off",
-			"on"
-		]
-	},
-	"download": {
-		"tags": [
-			"download",
-			"arrow"
-		]
-	},
-	"inspection": {
-		"tags": [
-			"search",
-			"document",
-			"inspect"
-		]
-	},
-	"scatter-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"scatter chart"
-		]
-	},
-	"retail-store": {
-		"tags": [
-			"shop",
-			"store",
-			"retail",
-			"market"
-		]
-	},
-	"crop": {
-		"tags": [
-			"crop",
-			"clip",
-			"snip",
-			"cut",
-			"picture",
-			"image",
-			"shape",
-			"obect"
-		]
-	},
-	"contacts": {
-		"tags": [
-			"customers",
-			"contacts",
-			"address",
-			"email",
-			"e-mail",
-			"phone book",
-			"directory",
-			"phone numbers",
-			"companies"
-		]
-	},
-	"folder-full": {
-		"tags": [
-			"folder",
-			"full"
-		]
-	},
-	"filter-fields": {
-		"tags": [
-			"analytics",
-			"filter",
-			"organise",
-			"chart",
-			"customize",
-			"display",
-			"data"
-		]
-	},
-	"unwired": {
-		"tags": [
-			"unwired",
-			"gauge",
-			"measure",
-			"speed",
-			"monitor",
-			"performance"
-		]
-	},
-	"bbyd-active-sales": {
-		"tags": [
-			"business by design",
-			"active",
-			"sales",
-			"search",
-			"approvals",
-			"check",
-			"book"
-		]
-	},
-	"expand": {
-		"tags": [
-			"expand all",
-			"plus",
-			"group all",
-			"arrow"
-		]
-	},
-	"card": {
-		"tags": [
-			"image",
-			"placeholder",
-			"picture",
-			"hills",
-			"mountains",
-			"sun",
-			"card"
-		]
-	},
-	"blank-tag-2": {
-		"tags": [
-			"tag",
-			"label",
+			"choose me",
+			"later",
 			"marker",
-			"indicator",
-			"blank"
+			"not selected",
+			"remove selection",
+			"save",
+			"unfilled"
 		]
 	},
-	"instance": {
+	"border": {
 		"tags": [
-			"instance",
-			"process",
-			"clock",
-			"chevron"
-		]
-	},
-	"collapse": {
-		"tags": [
-			"collapse all",
-			"minus",
-			"ungroup all",
-			"arrow"
-		]
-	},
-	"draw-rectangle": {
-		"tags": [
-			"draw",
-			"rectangle",
-			"resize",
-			"shape",
-			"create"
-		]
-	},
-	"physical-activity": {
-		"tags": [
-			"physical activity",
-			"runing",
-			"run",
-			"jogging"
-		]
-	},
-	"address-book": {
-		"tags": [
-			"customers",
-			"contacts",
-			"addresses",
-			"email",
-			"e-mail",
-			"directory",
-			"companies",
-			"@",
-			"at"
-		]
-	},
-	"multi-select": {
-		"tags": [
-			"multi select",
-			"list",
-			"table",
-			"data"
-		]
-	},
-	"add-activity": {
-		"tags": [
-			"activity",
-			"activities",
-			"tasks",
-			"to do",
-			"list",
-			"add",
-			"plus",
-			"additional",
-			"another",
-			"more"
-		]
-	},
-	"customer-view": {
-		"tags": [
-			"customer",
-			"view",
-			"analytics",
-			"overview"
-		]
-	},
-	"technical-object": {
-		"tags": [
-			"technical",
-			"object",
-			"wrench",
-			"tool",
-			"fine tune",
-			"tweak",
-			"fix",
-			"work",
-			"component"
-		]
-	},
-	"cart": {
-		"tags": [
-			"cart",
-			"trolley",
-			"basket",
-			"shopping"
-		]
-	},
-	"collaborate": {
-		"tags": [
-			"group",
-			"team",
-			"people",
-			"colleagues",
-			"communication",
-			"collaborate",
-			"teamwork",
-			"peer to peer",
-			"design thinking",
-			"work",
-			"together",
-			"project"
-		]
-	},
-	"message-information": {
-		"tags": [
-			"message",
-			"information",
-			"neutral",
-			"notifications",
-			"status"
-		]
-	},
-	"arrow-top": {
-		"tags": [
-			"arrow top",
-			"up"
-		]
-	},
-	"bell": {
-		"tags": [
-			"bell",
-			"alarm",
-			"notify",
-			"alerts"
-		]
-	},
-	"syntax": {
-		"tags": [
-			"source",
-			"code",
-			"develop",
-			"write",
-			"syntax"
-		]
-	},
-	"checklist-item-2": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"gantt",
-			"shape",
-			"checklist",
-			"item"
-		]
-	},
-	"project-definition-triangle-2": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"gantt",
-			"shape",
-			"triangle",
-			"project",
-			"definition"
-		]
-	},
-	"email": {
-		"tags": [
-			"envelope",
-			"email",
-			"e-mail",
-			"electronic mail",
-			"mail",
-			"correspondence"
-		]
-	},
-	"sound": {
-		"tags": [
-			"sound",
-			"audio",
-			"audio",
-			"speaker"
-		]
-	},
-	"edit-outside": {
-		"tags": [
-			"pencil",
-			"pen",
-			"write",
-			"edit",
-			"modify",
-			"text",
-			"outside",
-			"arrow"
-		]
-	},
-	"Netweaver-business-client": {
-		"tags": [
-			"netweaver business client",
-			"bird"
-		]
-	},
-	"user-settings": {
-		"tags": [
-			"settings",
-			"cogwheel",
-			"configuration",
-			"settings",
-			"tools",
-			"modify",
-			"customize",
-			"person",
-			"user",
-			"runtime authoring"
-		]
-	},
-	"credit-card": {
-		"tags": [
-			"credit card",
-			"master-card",
-			"money",
-			"debit",
-			"order",
-			"buy",
-			"purchase",
-			"shopping",
-			"book online"
-		]
-	},
-	"check-availability": {
-		"tags": [
-			"date picker",
-			"calendar",
-			"month",
-			"week",
-			"day",
-			"appointment",
-			"search",
-			"look up",
-			"check",
-			"availability",
-			"find"
-		]
-	},
-	"employee-pane": {
-		"tags": [
-			"user",
-			"person",
-			"employee",
-			"member",
-			"operator",
-			"representative",
-			"profile",
-			"me"
-		]
-	},
-	"nutrition-activity": {
-		"tags": [
-			"apple",
-			"nutrition",
-			"activity",
-			"health",
-			"fruit"
-		]
-	},
-	"alphabetical-order": {
-		"tags": [
-			"function",
-			"alphabet",
-			"letters",
-			"a to z",
-			"descending",
-			"sorting",
-			"order"
-		]
-	},
-	"along-stacked-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data"
-		]
-	},
-	"passenger-train": {
-		"tags": [
-			"train",
-			"public transportation",
-			"passenger"
-		]
-	},
-	"group-2": {
-		"tags": [
-			"group",
-			"data",
-			"aggregate",
-			"list",
-			"table"
-		]
-	},
-	"personnel-view": {
-		"tags": [
-			"view",
-			"person",
-			"profile",
-			"personnel",
-			"overview"
-		]
-	},
-	"complete": {
-		"tags": [
-			"complete",
-			"checkmark",
-			"tick",
-			"affirmative",
-			"enter",
-			"finish"
-		]
-	},
-	"performance": {
-		"tags": [
-			"gauge",
-			"measure",
-			"speed",
-			"monitor",
-			"performance"
-		]
-	},
-	"feed": {
-		"tags": [
-			"feed",
-			"messages",
-			"input",
-			"news",
-			"updates",
-			"latest",
-			"real-time"
+			"border",
+			"outline",
+			"square"
 		]
 	},
 	"broken-link": {
 		"tags": [
-			"unlink",
 			"broken",
 			"chain",
-			"hyperlink"
+			"hyperlink",
+			"unlink"
 		]
 	},
-	"mirrored-task-circle-2": {
+	"browse-folder": {
 		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"gantt",
-			"shape",
-			"mirrored",
-			"circle",
-			"task"
-		]
-	},
-	"globe": {
-		"tags": [
-			"globe",
-			"world",
-			"goegraphical",
-			"earth",
-			"planet",
-			"international",
-			"global"
-		]
-	},
-	"e-care": {
-		"tags": [
-			"e care",
-			"digital customer care",
-			"service",
-			"electronic",
-			"leaf",
-			"leaves",
-			"nature",
-			"organic",
-			"health",
-			"environment"
-		]
-	},
-	"eraser": {
-		"tags": [
-			"pencil",
-			"pen",
-			"erase",
-			"remove",
-			"undo",
-			"text"
-		]
-	},
-	"sound-off": {
-		"tags": [
-			"sound",
-			"audio",
-			"off",
-			"mute",
-			"quiet",
-			"speaker",
-			"cancel"
-		]
-	},
-	"camera": {
-		"tags": [
-			"camera",
-			"photograph",
-			"device",
-			"image",
-			"snap shot"
-		]
-	},
-	"attachment": {
-		"tags": [
-			"attach",
-			"file",
-			"paper clip"
-		]
-	},
-	"write-new-document": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"text",
-			"edit",
-			"write",
-			"new",
-			"pencil",
-			"pen"
-		]
-	},
-	"iphone": {
-		"tags": [
-			"iphone",
-			"phone",
-			"smart phone",
-			"portrait",
-			"tablet",
-			"mobile",
-			"responsive",
-			"cozy"
-		]
-	},
-	"vertical-bar-chart-2": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"vertical bar chart"
-		]
-	},
-	"appointment": {
-		"tags": [
-			"date picker",
-			"calendar",
-			"month",
-			"week",
-			"day",
-			"appointment"
-		]
-	},
-	"upload-to-cloud": {
-		"tags": [
-			"save",
-			"upload",
-			"cloud",
-			"arrow"
-		]
-	},
-	"message-popup": {
-		"tags": [
-			"message",
-			"popup",
-			"speech",
-			"bubble",
-			"exclamation",
-			"notifications",
-			"status"
-		]
-	},
-	"circle-task-2": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"gantt",
-			"shape",
-			"circle",
-			"task"
-		]
-	},
-	"kpi-managing-my-area": {
-		"tags": [
-			"user",
-			"person",
-			"kpi",
-			"checkmark",
-			"equal to"
-		]
-	},
-	"project-definition-triangle": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"gantt",
-			"shape",
-			"triangle",
-			"project",
-			"definition"
-		]
-	},
-	"widgets": {
-		"tags": [
-			"widgets",
-			"random",
-			"star",
-			"dollar",
-			"plane",
-			"music",
-			"apps"
-		]
-	},
-	"cursor-arrow": {
-		"tags": [
-			"cursor",
-			"arrow",
-			"mouse",
-			"pointer",
-			"select"
-		]
-	},
-	"work-history": {
-		"tags": [
+			"browse",
+			"browse folder",
+			"directory",
+			"find",
 			"folder",
-			"person",
-			"work history"
+			"library",
+			"look up",
+			"search"
 		]
 	},
-	"bold-text": {
-		"tags": [
-			"bold",
-			"fat",
-			"bulk",
-			"weight",
-			"text",
-			"format",
-			"text decoration",
-			"text edit",
-			"rich-text"
-		]
-	},
-	"accept": {
-		"tags": [
-			"accept",
-			"approve",
-			"correct",
-			"checkmark",
-			"tick",
-			"affirmative"
-		]
-	},
-	"tag": {
-		"tags": [
-			"tag",
-			"label",
-			"marker",
-			"indicator",
-			"detail"
-		]
-	},
-	"media-pause": {
-		"tags": [
-			"pause",
-			"media",
-			"arrow"
-		]
-	},
-	"resize-corner": {
-		"tags": [
-			"resize",
-			"dialog",
-			"corner"
-		]
-	},
-	"customize": {
-		"tags": [
-			"settings",
-			"configuration",
-			"settings",
-			"modify",
-			"customize",
-			"equaliser",
-			"fine tune"
-		]
-	},
-	"tree": {
+	"bubble-chart": {
 		"tags": [
 			"analytics",
+			"bubble chart",
 			"chart",
-			"display",
 			"data",
-			"overview",
-			"map",
-			"org",
-			"tree"
+			"display"
 		]
 	},
-	"area-chart": {
+	"building": {
 		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"area"
-		]
-	},
-	"attachment-html": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"attachment",
-			"html",
-			"web",
-			"website"
-		]
-	},
-	"laptop": {
-		"tags": [
-			"laptop",
-			"device",
-			"computer"
-		]
-	},
-	"accounting-document-verification": {
-		"tags": [
-			"document",
-			"approve",
-			"verify",
-			"accounting",
-			"money",
-			"coins"
-		]
-	},
-	"shelf": {
-		"tags": [
-			"shelf",
-			"storage",
-			"drawers",
-			"compartments"
-		]
-	},
-	"add-photo": {
-		"tags": [
-			"camera",
-			"photograph",
-			"device",
-			"image",
-			"snap shot",
-			"add",
-			"plus",
-			"additional",
-			"another",
-			"more"
-		]
-	},
-	"vertical-waterfall-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data"
-		]
-	},
-	"dishwasher": {
-		"tags": [
-			"dishwasher",
-			"dish",
-			"wash",
-			"appliance"
+			"building",
+			"company",
+			"factory",
+			"firm",
+			"office"
 		]
 	},
 	"bullet-text": {
 		"tags": [
 			"bullet",
-			"text",
 			"dots",
-			"text edit",
-			"rich-text"
-		]
-	},
-	"projector": {
-		"tags": [
-			"beamer",
-			"projector",
-			"show",
-			"movie",
-			"presentation",
-			"keynote"
-		]
-	},
-	"horizontal-grip": {
-		"tags": [
-			"horizontal",
-			"grip",
-			"move up",
-			"move down",
-			"splitter"
-		]
-	},
-	"media-rewind": {
-		"tags": [
-			"rewind",
-			"media",
-			"arrow",
-			"start",
-			"back"
-		]
-	},
-	"form": {
-		"tags": [
-			"form",
-			"details",
-			"text"
-		]
-	},
-	"customer-financial-fact-sheet": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"attachment",
-			"customer",
-			"financial",
-			"fact sheet",
-			"money"
-		]
-	},
-	"alert": {
-		"tags": [
-			"message",
-			"warning",
-			"critical",
-			"notifications",
-			"status"
-		]
-	},
-	"compare": {
-		"tags": [
-			"compare",
-			"law",
-			"justice",
-			"scale",
-			"measure",
-			"weight",
-			"balance",
-			"compare",
-			"comparison"
-		]
-	},
-	"favorite-list": {
-		"tags": [
-			"favorite",
-			"favourite",
-			"star",
-			"menu",
-			"list"
-		]
-	},
-	"clear-filter": {
-		"tags": [
-			"filter",
-			"organise",
-			"aggregate",
-			"data",
-			"clear",
-			"delete",
-			"remove",
-			"cancel"
-		]
-	},
-	"commission-check": {
-		"tags": [
-			"commission check",
-			"coins",
-			"stack",
-			"search",
-			"percentage",
-			"money"
-		]
-	},
-	"create": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"attachment",
-			"create",
-			"new"
-		]
-	},
-	"goal": {
-		"tags": [
-			"goal",
-			"target",
-			"result",
-			"objective",
-			"aim"
-		]
-	},
-	"attachment-e-pub": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"e pub",
-			"electronic publication",
-			"e book"
-		]
-	},
-	"discussion-2": {
-		"tags": [
-			"speech",
-			"bubble",
-			"comment",
-			"discussion",
-			"text"
-		]
-	},
-	"record": {
-		"tags": [
-			"record"
-		]
-	},
-	"accidental-leave": {
-		"tags": [
-			"accidental",
-			"leave",
-			"medical",
-			"cross",
-			"plus",
-			"emergency",
-			"hospital"
-		]
-	},
-	"present": {
-		"tags": [
-			"time",
-			"clock",
-			"star",
-			"current",
-			"present"
-		]
-	},
-	"travel-request": {
-		"tags": [
-			"bubble",
-			"question",
-			"exclamation",
-			"notifications",
-			"status",
-			"help"
-		]
-	},
-	"text-formatting": {
-		"tags": [
-			"customize",
-			"text",
-			"format",
-			"options",
-			"text decoration",
-			"text edit",
-			"rich-text"
-		]
-	},
-	"it-instance": {
-		"tags": [
-			"server",
-			"it",
-			"machine",
-			"computer",
-			"technology",
-			"device",
-			"instance"
-		]
-	},
-	"locked": {
-		"tags": [
-			"locked",
-			"padlock",
-			"private",
-			"status",
-			"in use",
-			"forbidden",
-			"restricted",
-			"safe"
-		]
-	},
-	"addresses": {
-		"tags": [
-			"customers",
-			"contacts",
-			"addresses",
-			"email",
-			"e-mail",
-			"directory",
-			"companies",
-			"houses",
-			"homes"
-		]
-	},
-	"shield": {
-		"tags": [
-			"authority",
-			"legitimate",
-			"official",
-			"important",
-			"protection",
-			"defense",
-			"security"
-		]
-	},
-	"inspect": {
-		"tags": [
-			"inspect",
-			"dialog",
-			"popup",
-			"popout",
-			"arrow"
-		]
-	},
-	"italic-text": {
-		"tags": [
-			"itlalic",
-			"slanted",
-			"leaning",
-			"text",
-			"format",
-			"text decoration",
-			"text edit",
-			"rich-text"
-		]
-	},
-	"thumb-down": {
-		"tags": [
-			"thumbs",
-			"down",
-			"dislike",
-			"negative"
-		]
-	},
-	"cancel-share": {
-		"tags": [
-			"cancel share",
-			"cancel distribution",
-			"do not share with connections"
-		]
-	},
-	"cart-full": {
-		"tags": [
-			"cart",
-			"trolley",
-			"basket",
-			"shopping",
-			"full",
-			"capacity",
-			"load"
-		]
-	},
-	"private": {
-		"tags": [
-			"person",
-			"individual",
-			"user",
-			"customer",
-			"human",
-			"locked",
-			"in use",
-			"occupied",
-			"restricted",
-			"private",
-			"forbidden"
-		]
-	},
-	"geographic-bubble-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"geographic",
-			"bubble",
-			"map",
-			"world"
-		]
-	},
-	"media-forward": {
-		"tags": [
-			"forward",
-			"media",
-			"arrow",
-			"end",
-			"finish"
-		]
-	},
-	"journey-change": {
-		"tags": [
-			"journey",
-			"change",
-			"direction",
-			"arrow",
-			"placement"
-		]
-	},
-	"color-fill": {
-		"tags": [
-			"square",
-			"filled",
-			"color"
-		]
-	},
-	"decrease-line-height": {
-		"tags": [
-			"decrease",
-			"line height",
-			"leading",
-			"text edit",
-			"spacing",
 			"rich-text",
-			"less space",
-			"reduce",
-			"compress",
-			"arrows"
-		]
-	},
-	"delete": {
-		"tags": [
-			"bin",
-			"trash can",
-			"rubbish",
-			"delete"
-		]
-	},
-	"screen-split-one": {
-		"tags": [
-			"screen",
-			"split",
-			"two",
-			"master",
-			"detail",
-			"split app"
-		]
-	},
-	"workflow-tasks": {
-		"tags": [
-			"calendar",
-			"workflow",
-			"task",
-			"process",
-			"steps",
-			"project"
-		]
-	},
-	"system-exit": {
-		"tags": [
-			"system",
-			"exit"
-		]
-	},
-	"crm-sales": {
-		"tags": [
-			"crm sales",
-			"customer",
-			"relationship",
-			"management",
-			"person",
-			"star",
-			"money",
-			"list"
-		]
-	},
-	"disconnected": {
-		"tags": [
-			"plug",
-			"disconnected",
-			"unplug",
-			"state"
-		]
-	},
-	"post": {
-		"tags": [
-			"speech",
-			"bubble",
-			"comment",
-			"post"
-		]
-	},
-	"car-rental": {
-		"tags": [
-			"car",
-			"auto",
-			"rental",
-			"company car",
-			"hire",
-			"vehicle",
-			"transportation"
-		]
-	},
-	"screen-split-three": {
-		"tags": [
-			"screen",
-			"split",
-			"three",
-			"columns"
-		]
-	},
-	"action-settings": {
-		"tags": [
-			"settings",
-			"cogwheel",
-			"configuration",
-			"tools",
-			"modify",
-			"customize"
-		]
-	},
-	"money-bills": {
-		"tags": [
-			"money",
-			"cash",
-			"payment",
-			"bills",
-			"dollar"
-		]
-	},
-	"resize-vertical": {
-		"tags": [
-			"resize",
-			"vertical",
-			"row",
-			"screen",
-			"bigger",
-			"smaller",
-			"enlarge",
-			"reduce",
-			"arrows",
-			"lines",
-			"up and down"
-		]
-	},
-	"drill-up": {
-		"tags": [
-			"drill up",
-			"arrow",
-			"detail",
-			"hierarchy",
-			"level"
-		]
-	},
-	"popup-window": {
-		"tags": [
-			"computer",
-			"dialog",
-			"popup",
-			"window",
-			"screen",
-			"popout"
-		]
-	},
-	"heating-cooling": {
-		"tags": [
-			"temperature",
-			"air conditioning",
-			"ac",
-			"heat",
-			"cold",
-			"sun",
-			"snowflake"
-		]
-	},
-	"process": {
-		"tags": [
-			"process",
-			"flow",
-			"arrow",
-			"chevron"
-		]
-	},
-	"folder": {
-		"tags": [
-			"folder",
-			"details"
-		]
-	},
-	"chevron-phase": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"gantt",
-			"shape",
-			"chevron",
-			"phase"
-		]
-	},
-	"thumb-up": {
-		"tags": [
-			"thumbs",
-			"up",
-			"like",
-			"appreciate",
-			"positive"
-		]
-	},
-	"cloud": {
-		"tags": [
-			"cloud",
-			"platform",
-			"storage",
-			"big data",
-			"sap"
-		]
-	},
-	"sales-quote": {
-		"tags": [
-			"document",
-			"page",
-			"file",
 			"text",
-			"sales",
+			"text edit"
+		]
+	},
+	"burglary": {
+		"tags": [
+			"bank",
+			"burglary",
+			"loss",
 			"money",
-			"bill",
+			"robbery",
+			"safe",
+			"theft",
+			"thief",
+			"unsafe"
+		]
+	},
+	"bus-public-transport": {
+		"tags": [
+			"bus",
+			"public",
+			"traffic",
+			"vehicle"
+		]
+	},
+	"business-by-design": {
+		"tags": [
+			"business by design"
+		]
+	},
+	"business-card": {
+		"tags": [
+			"address",
+			"business card",
+			"colleague",
+			"contact",
 			"details",
-			"quote"
-		]
-	},
-	"badge": {
-		"tags": [
-			"badge",
-			"insignia",
-			"star",
-			"service",
-			"identity",
-			"authority",
-			"legitimate",
-			"coat of arms",
-			"membership",
-			"award",
-			"rank"
-		]
-	},
-	"sales-notification": {
-		"tags": [
-			"bubble",
-			"sales",
-			"notification"
-		]
-	},
-	"trip-report": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"suitcase",
-			"trip",
-			"report",
-			"business trip"
-		]
-	},
-	"unfavorite": {
-		"tags": [
-			"remove",
-			"unfavorite",
-			"star"
-		]
-	},
-	"phone": {
-		"tags": [
-			"phone",
-			"telephone",
-			"landline",
-			"number",
-			"call",
-			"dial"
-		]
-	},
-	"ppt-attachment": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"attachment",
-			"ppt",
-			"powerpoint"
-		]
-	},
-	"undo": {
-		"tags": [
-			"undo",
-			"arrow",
-			"previous state",
-			"history",
-			"backwards"
-		]
-	},
-	"connected": {
-		"tags": [
-			"plug",
-			"connected",
-			"on",
-			"state"
-		]
-	},
-	"decline": {
-		"tags": [
-			"reject",
-			"close",
-			"remove",
-			"cancel",
-			"x",
-			"decline"
-		]
-	},
-	"quality-issue": {
-		"tags": [
-			"quality issue",
-			"warning",
-			"problem",
-			"attention",
-			"status",
-			"details"
-		]
-	},
-	"show": {
-		"tags": [
-			"show",
-			"eye"
-		]
-	},
-	"line-charts": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data"
-		]
-	},
-	"official-service": {
-		"tags": [
-			"official",
-			"service",
-			"government",
-			"court house",
-			"law",
-			"legal",
-			"authority",
-			"official"
-		]
-	},
-	"citizen-connect": {
-		"tags": [
-			"citizen connect",
-			"people",
-			"colleagues",
-			"communication",
-			"collaborate",
-			"teamwork",
-			"peer to peer",
-			"design thinking",
-			"work",
-			"together",
-			"project"
-		]
-	},
-	"resize": {
-		"tags": [
-			"resize",
-			"bigger",
-			"smaller"
-		]
-	},
-	"accelerated": {
-		"tags": [
-			"calendar",
-			"time",
-			"speed"
-		]
-	},
-	"explorer": {
-		"tags": [
-			"explorer",
-			"compass"
-		]
-	},
-	"stethoscope": {
-		"tags": [
-			"stethoscope",
-			"medical",
-			"health",
-			"doctor",
-			"hospital",
-			"nurse"
-		]
-	},
-	"nurse": {
-		"tags": [
-			"nurse",
-			"medical",
-			"cross",
-			"emergency",
-			"hospital"
-		]
-	},
-	"zoom-in": {
-		"tags": [
-			"zoom",
-			"in",
-			"magnify",
-			"glass",
-			"plus",
-			"enlarge",
-			"bigger"
-		]
-	},
-	"survey": {
-		"tags": [
-			"survey",
-			"form",
-			"checklist",
-			"list",
-			"checkbox",
-			"checkmark",
-			"x"
-		]
-	},
-	"map-2": {
-		"tags": [
-			"map",
-			"card",
-			"navigation",
-			"hunt",
-			"destination",
-			"location"
-		]
-	},
-	"weather-proofing": {
-		"tags": [
-			"weather",
-			"proofing",
-			"protection"
-		]
-	},
-	"map-3": {
-		"tags": [
-			"map",
-			"card",
-			"x marks the spot",
-			"treasure",
-			"navigation",
-			"hunt",
-			"find",
-			"destination",
-			"location"
-		]
-	},
-	"chevron-phase-2": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"gantt",
-			"shape",
-			"chevron",
-			"phase"
-		]
-	},
-	"positive": {
-		"tags": [
-			"plus",
-			"positive"
+			"identification",
+			"networking",
+			"person",
+			"profile"
 		]
 	},
 	"business-objects-experience": {
 		"tags": [
 			"analytics",
+			"business objects experience",
 			"chart",
-			"display",
 			"data",
-			"business objects experience"
+			"display"
 		]
 	},
-	"order-status": {
+	"business-objects-explorer": {
 		"tags": [
-			"document",
-			"page",
-			"file",
-			"attachment",
-			"order",
-			"status"
+			"business objects explorer",
+			"compass"
 		]
 	},
-	"activity-assigned-to-goal": {
-		"tags": [
-			"activity",
-			"activities",
-			"tasks",
-			"to do",
-			"assigned to goal",
-			"target",
-			"objective"
-		]
-	},
-	"indent": {
-		"tags": [
-			"indent",
-			"paragraph",
-			"move right",
-			"align",
-			"text edit",
-			"spacing",
-			"rich-text",
-			"arrows"
-		]
-	},
-	"my-view": {
-		"tags": [
-			"my view",
-			"person",
-			"profile",
-			"tv",
-			"monitor",
-			"video call",
-			"individual",
-			"cutomer",
-			"user"
-		]
-	},
-	"letter": {
-		"tags": [
-			"letter",
-			"mail",
-			"post",
-			"postal",
-			"envelope",
-			"address",
-			"contact",
-			"correspondence"
-		]
-	},
-	"create-entry-time": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"attachment",
-			"timesheet",
-			"clock",
-			"hours",
-			"days",
-			"workday",
-			"create entry time",
-			"add",
-			"plus",
-			"additional",
-			"another",
-			"more"
-		]
-	},
-	"slim-arrow-up": {
-		"tags": [
-			"slim",
-			"thin",
-			"skinny",
-			"arrow",
-			"up"
-		]
-	},
-	"filter-analytics": {
+	"business-objects-mobile": {
 		"tags": [
 			"analytics",
-			"filter",
-			"organise",
+			"business objects mobile",
 			"chart",
-			"customize",
-			"display",
-			"data"
-		]
-	},
-	"permission": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"permission",
-			"access",
-			"granted",
-			"open",
-			"restrictions",
-			"unlocked"
-		]
-	},
-	"payment-approval": {
-		"tags": [
-			"sales",
-			"simple payment",
-			"money",
-			"bill",
-			"details",
-			"quote",
-			"accept",
-			"approval",
-			"checkmark"
-		]
-	},
-	"add-process": {
-		"tags": [
-			"process",
-			"add",
-			"plus",
-			"additional",
-			"another",
-			"more"
-		]
-	},
-	"pie-chart": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
 			"data",
-			"pie",
-			"segments"
+			"display"
 		]
 	},
-	"compare-2": {
+	"business-one": {
 		"tags": [
-			"compare",
-			"law",
-			"justice",
-			"scale",
-			"measure",
-			"weight",
-			"balance",
-			"compare",
-			"comparison"
+			"business one"
 		]
 	},
-	"sys-prev-page": {
+	"busy": {
 		"tags": [
-			"system",
-			"previous",
-			"page",
-			"up",
-			"arrows"
+			"blocked",
+			"busy",
+			"circle",
+			"dot",
+			"me",
+			"not responsive",
+			"unavailable",
+			"working"
 		]
 	},
-	"open-folder": {
+	"calendar": {
 		"tags": [
-			"folder",
-			"open"
-		]
-	},
-	"excel-attachment": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"attachment",
-			"excel",
-			"spreadsheet",
-			"accounting"
-		]
-	},
-	"picture": {
-		"tags": [
-			"picture",
-			"photo",
-			"photograph",
-			"shot",
-			"image"
-		]
-	},
-	"chain-link": {
-		"tags": [
-			"link",
-			"chain",
-			"hyperlink"
-		]
-	},
-	"shipping-status": {
-		"tags": [
-			"shipping status",
-			"truck",
-			"products",
-			"delivery",
-			"supplier",
-			"transit",
-			"lorry",
-			"van",
-			"shipment"
-		]
-	},
-	"add-product": {
-		"tags": [
-			"product",
-			"box",
-			"package",
-			"unit",
-			"inventory",
-			"add",
-			"plus",
-			"additional",
-			"another",
-			"more"
-		]
-	},
-	"kpi-corporate-performance": {
-		"tags": [
-			"chart",
-			"line",
-			"kpi",
-			"checkmark",
-			"performance"
-		]
-	},
-	"e-learning": {
-		"tags": [
-			"education",
-			"course",
-			"e learning",
-			"e book",
-			"bookmark",
-			"open",
-			"knowledge",
-			"school",
-			"college",
-			"computer",
-			"screen"
-		]
-	},
-	"filter": {
-		"tags": [
-			"filter",
-			"organise",
-			"aggregate",
-			"data"
-		]
-	},
-	"program-triangles": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"gantt",
-			"shape",
-			"triangle",
-			"program"
+			"calendar"
 		]
 	},
 	"call": {
@@ -5676,1304 +959,6010 @@
 			"telephone"
 		]
 	},
-	"stop": {
+	"camera": {
 		"tags": [
-			"stop",
-			"process",
-			"play"
+			"camera",
+			"device",
+			"image",
+			"photograph",
+			"snap shot"
 		]
 	},
-	"sys-add": {
+	"cancel": {
+		"tags": [
+			"cancel",
+			"do not",
+			"forbidden",
+			"not allowed",
+			"unable"
+		]
+	},
+	"cancel-maintenance": {
+		"tags": [
+			"cancel maintenance",
+			"configuration",
+			"control",
+			"settings",
+			"tool",
+			"wrench"
+		]
+	},
+	"cancel-share": {
+		"tags": [
+			"cancel distribution",
+			"cancel share",
+			"do not share with connections"
+		]
+	},
+	"capital-projects": {
+		"tags": [
+			"building",
+			"capital projects",
+			"dollar",
+			"money"
+		]
+	},
+	"car-rental": {
+		"tags": [
+			"auto",
+			"car",
+			"company car",
+			"hire",
+			"rental",
+			"transportation",
+			"vehicle"
+		]
+	},
+	"card": {
+		"tags": [
+			"card",
+			"hills",
+			"image",
+			"mountains",
+			"picture",
+			"placeholder",
+			"sun"
+		]
+	},
+	"cargo-train": {
+		"tags": [
+			"cargo",
+			"delivery",
+			"train",
+			"transit"
+		]
+	},
+	"cart": {
+		"tags": [
+			"basket",
+			"cart",
+			"shopping",
+			"trolley"
+		]
+	},
+	"cart-2": {
+		"tags": [
+			"arrow",
+			"basket",
+			"cart",
+			"clear",
+			"empty",
+			"remove",
+			"shopping",
+			"take out",
+			"trolley",
+			"up"
+		]
+	},
+	"cart-3": {
 		"tags": [
 			"add",
-			"plus",
+			"arrow",
+			"basket",
+			"cart",
+			"down",
+			"insert",
+			"item",
+			"put in",
+			"shopping",
+			"trolley"
+		]
+	},
+	"cart-4": {
+		"tags": [
+			"add",
 			"additional",
 			"another",
+			"basket",
+			"cart",
+			"insert",
+			"item",
 			"more",
-			"add row",
-			"add object",
-			"add item"
+			"plus",
+			"put in",
+			"shopping",
+			"trolley"
 		]
 	},
-	"multiple-pie-chart": {
+	"cart-5": {
 		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"multiple",
-			"pie chart"
+			"basket",
+			"cart",
+			"item",
+			"sap",
+			"shopping",
+			"trolley"
 		]
 	},
-	"simple-payment": {
+	"cart-approval": {
 		"tags": [
-			"sales",
-			"simple payment",
-			"money",
-			"bill",
-			"details",
-			"quote"
+			"accept",
+			"approval",
+			"approve",
+			"basket",
+			"cart",
+			"check",
+			"item",
+			"shopping",
+			"trolley"
 		]
 	},
-	"sort-ascending": {
+	"cart-full": {
 		"tags": [
-			"sort",
-			"ascending",
-			"up",
-			"table",
-			"aggregate"
+			"basket",
+			"capacity",
+			"cart",
+			"full",
+			"load",
+			"shopping",
+			"trolley"
 		]
 	},
-	"email-read": {
+	"cause": {
 		"tags": [
-			"mail",
-			"letter",
-			"e-mail",
-			"envelope",
-			"open",
-			"read"
+			"arrow",
+			"get",
+			"incoming",
+			"reason",
+			"relocate",
+			"take"
+		]
+	},
+	"chain-link": {
+		"tags": [
+			"chain",
+			"hyperlink",
+			"link"
 		]
 	},
 	"chalkboard": {
 		"tags": [
 			"chalkboard",
-			"education",
-			"teaching",
-			"learning",
 			"classroom",
+			"college",
+			"education",
+			"learning",
 			"school",
-			"college"
+			"teaching"
 		]
 	},
-	"arrow-down": {
+	"chart-axis": {
+		"tags": [
+			"analytics",
+			"arrows",
+			"chart",
+			"chart axis",
+			"data",
+			"directions",
+			"display"
+		]
+	},
+	"chart-table-view": {
+		"tags": [
+			"analytics",
+			"chart",
+			"columns",
+			"data",
+			"display",
+			"grid",
+			"rows",
+			"table",
+			"view",
+			"waffle"
+		]
+	},
+	"Chart-Tree-Map": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display"
+		]
+	},
+	"check-availability": {
+		"tags": [
+			"appointment",
+			"availability",
+			"calendar",
+			"check",
+			"date picker",
+			"day",
+			"find",
+			"look up",
+			"month",
+			"search",
+			"week"
+		]
+	},
+	"checklist": {
+		"tags": [
+			"analytics",
+			"chart",
+			"checklist",
+			"data",
+			"display",
+			"gantt",
+			"shape"
+		]
+	},
+	"checklist-2": {
+		"tags": [
+			"analytics",
+			"chart",
+			"checklist",
+			"data",
+			"display",
+			"gantt",
+			"shape"
+		]
+	},
+	"checklist-item": {
+		"tags": [
+			"analytics",
+			"chart",
+			"checklist",
+			"data",
+			"display",
+			"gantt",
+			"item",
+			"shape"
+		]
+	},
+	"checklist-item-2": {
+		"tags": [
+			"analytics",
+			"chart",
+			"checklist",
+			"data",
+			"display",
+			"gantt",
+			"item",
+			"shape"
+		]
+	},
+	"chevron-phase": {
+		"tags": [
+			"analytics",
+			"chart",
+			"chevron",
+			"data",
+			"display",
+			"gantt",
+			"phase",
+			"shape"
+		]
+	},
+	"chevron-phase-2": {
+		"tags": [
+			"analytics",
+			"chart",
+			"chevron",
+			"data",
+			"display",
+			"gantt",
+			"phase",
+			"shape"
+		]
+	},
+	"choropleth-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"choropleth chart",
+			"data",
+			"display",
+			"geographic",
+			"map",
+			"world"
+		]
+	},
+	"circle-task": {
+		"tags": [
+			"analytics",
+			"chart",
+			"circle",
+			"data",
+			"display",
+			"gantt",
+			"shape",
+			"task"
+		]
+	},
+	"circle-task-2": {
+		"tags": [
+			"analytics",
+			"chart",
+			"circle",
+			"data",
+			"display",
+			"gantt",
+			"shape",
+			"task"
+		]
+	},
+	"citizen-connect": {
+		"tags": [
+			"citizen connect",
+			"collaborate",
+			"colleagues",
+			"communication",
+			"design thinking",
+			"peer to peer",
+			"people",
+			"project",
+			"teamwork",
+			"together",
+			"work"
+		]
+	},
+	"clear-all": {
+		"tags": [
+			"check",
+			"clear",
+			"clear-all",
+			"delete",
+			"remove",
+			"square",
+			"uncheck",
+			"x"
+		]
+	},
+	"clear-filter": {
+		"tags": [
+			"aggregate",
+			"cancel",
+			"clear",
+			"data",
+			"delete",
+			"filter",
+			"organise",
+			"remove"
+		]
+	},
+	"clinical-order": {
+		"tags": [
+			"clinical",
+			"document",
+			"file",
+			"medical",
+			"page",
+			"text"
+		]
+	},
+	"clinical-task-tracker": {
+		"tags": [
+			"check boxes",
+			"checklist",
+			"clinical",
+			"clipboard",
+			"medical",
+			"task",
+			"tracker"
+		]
+	},
+	"close-command-field": {
 		"tags": [
 			"arrow",
-			"circle",
-			"down",
-			"variant",
-			"management",
-			"selection",
-			"options",
-			"megamenu"
+			"close command field",
+			"left",
+			"navigation",
+			"page left",
+			"previous"
 		]
 	},
-	"bbyd-dashboard": {
+	"cloud": {
 		"tags": [
-			"business by design",
-			"dashboard"
+			"big data",
+			"cloud",
+			"platform",
+			"sap",
+			"storage"
+		]
+	},
+	"cloud-check": {
+		"tags": [
+			"check",
+			"cloud",
+			"data"
+		]
+	},
+	"co": {
+		"tags": [
+			"assistant",
+			"co pilot",
+			"launchpad",
+			"mnemonics"
+		]
+	},
+	"collaborate": {
+		"tags": [
+			"collaborate",
+			"colleagues",
+			"communication",
+			"design thinking",
+			"group",
+			"peer to peer",
+			"people",
+			"project",
+			"team",
+			"teamwork",
+			"together",
+			"work"
+		]
+	},
+	"collapse": {
+		"tags": [
+			"arrow",
+			"collapse all",
+			"minus",
+			"ungroup all"
+		]
+	},
+	"collapse-all": {
+		"tags": [
+			"all",
+			"arrow",
+			"close",
+			"close all",
+			"collapse",
+			"collapse all",
+			"list",
+			"table",
+			"tree"
+		]
+	},
+	"collapse-group": {
+		"tags": [
+			"arrow",
+			"collapse",
+			"group",
+			"move to top"
+		]
+	},
+	"collections-insight": {
+		"tags": [
+			"bill",
+			"billing",
+			"collections",
+			"dollar",
+			"envelope",
+			"expense",
+			"insight",
+			"invoice",
+			"money",
+			"quote",
+			"report",
+			"sales"
+		]
+	},
+	"collections-management": {
+		"tags": [
+			"accounting",
+			"calculator",
+			"collections management",
+			"counting",
+			"simulate",
+			"total"
+		]
+	},
+	"collision": {
+		"tags": [
+			"accident",
+			"car",
+			"crash",
+			"damage"
+		]
+	},
+	"color-fill": {
+		"tags": [
+			"color",
+			"filled",
+			"square"
+		]
+	},
+	"column-chart-dual-axis": {
+		"tags": [
+			"analytics",
+			"chart",
+			"column",
+			"data",
+			"display",
+			"dual axis"
+		]
+	},
+	"combine": {
+		"tags": [
+			"aggregate",
+			"arrow",
+			"arrows-right",
+			"combine",
+			"glue",
+			"interflow",
+			"join",
+			"meld",
+			"merge",
+			"runtime adaptation",
+			"runtime authoring",
+			"together",
+			"ui adaptation",
+			"unite"
+		]
+	},
+	"command-line-interfaces": {
+		"tags": [
+			"code",
+			"command",
+			"command-line",
+			"develop",
+			"interfaces",
+			"programming",
+			"source",
+			"source-code",
+			"syntax",
+			"technical",
+			"write"
+		]
+	},
+	"comment": {
+		"tags": [
+			"bubble",
+			"comment",
+			"discussion",
+			"speech"
+		]
+	},
+	"commission-check": {
+		"tags": [
+			"coins",
+			"commission check",
+			"money",
+			"percentage",
+			"search",
+			"stack"
+		]
+	},
+	"company-view": {
+		"tags": [
+			"company",
+			"firm",
+			"group",
+			"overview",
+			"personnel",
+			"view"
+		]
+	},
+	"compare": {
+		"tags": [
+			"balance",
+			"compare",
+			"compare",
+			"comparison",
+			"justice",
+			"law",
+			"measure",
+			"scale",
+			"weight"
+		]
+	},
+	"compare-2": {
+		"tags": [
+			"balance",
+			"compare",
+			"comparison",
+			"justice",
+			"law",
+			"measure",
+			"scale",
+			"weight"
+		]
+	},
+	"competitor": {
+		"tags": [
+			"award",
+			"competitor",
+			"cup",
+			"prize",
+			"trophy",
+			"winner"
+		]
+	},
+	"complete": {
+		"tags": [
+			"affirmative",
+			"checkmark",
+			"complete",
+			"enter",
+			"finish",
+			"tick"
+		]
+	},
+	"connected": {
+		"tags": [
+			"connected",
+			"on",
+			"plug",
+			"state"
+		]
+	},
+	"contacts": {
+		"tags": [
+			"address",
+			"companies",
+			"contacts",
+			"customers",
+			"directory",
+			"e-mail",
+			"email",
+			"phone book",
+			"phone numbers"
+		]
+	},
+	"copy": {
+		"tags": [
+			"copy",
+			"document",
+			"duplicate",
+			"file",
+			"text"
+		]
+	},
+	"course-book": {
+		"tags": [
+			"bookmark",
+			"course",
+			"course book",
+			"e book",
+			"education",
+			"knowledge",
+			"learning",
+			"open",
+			"program"
+		]
+	},
+	"course-program": {
+		"tags": [
+			"attachment",
+			"bookmark",
+			"course",
+			"coursebook",
+			"document",
+			"e book",
+			"education",
+			"file",
+			"knowledge",
+			"learning",
+			"open",
+			"page",
+			"program"
+		]
+	},
+	"create": {
+		"tags": [
+			"attachment",
+			"create",
+			"document",
+			"file",
+			"new",
+			"page"
+		]
+	},
+	"create-entry-time": {
+		"tags": [
+			"add",
+			"additional",
+			"another",
+			"attachment",
+			"clock",
+			"create entry time",
+			"days",
+			"document",
+			"file",
+			"hours",
+			"more",
+			"page",
+			"plus",
+			"timesheet",
+			"workday"
+		]
+	},
+	"create-form": {
+		"tags": [
+			"add",
+			"additional",
+			"another",
+			"create",
+			"form",
+			"more",
+			"new",
+			"plus"
+		]
+	},
+	"create-leave-request": {
+		"tags": [
+			"add",
+			"additional",
+			"another",
+			"create",
+			"deck chair",
+			"holiday",
+			"leave",
+			"more",
+			"plus",
+			"request",
+			"sun",
+			"vacation"
+		]
+	},
+	"create-session": {
+		"tags": [
+			"create",
+			"session"
+		]
+	},
+	"credit-card": {
+		"tags": [
+			"book online",
+			"buy",
+			"credit card",
+			"debit",
+			"master-card",
+			"money",
+			"order",
+			"purchase",
+			"shopping"
+		]
+	},
+	"crm-sales": {
+		"tags": [
+			"crm sales",
+			"customer",
+			"list",
+			"management",
+			"money",
+			"person",
+			"relationship",
+			"star"
+		]
+	},
+	"crm-service-manager": {
+		"tags": [
+			"crm service manager",
+			"dropdown",
+			"list",
+			"task"
+		]
+	},
+	"crop": {
+		"tags": [
+			"clip",
+			"crop",
+			"cut",
+			"image",
+			"object",
+			"picture",
+			"shape",
+			"snip"
+		]
+	},
+	"crossed-line-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"crossed line chart",
+			"data",
+			"display"
+		]
+	},
+	"currency": {
+		"tags": [
+			"bills",
+			"cash",
+			"currency",
+			"money",
+			"payment"
+		]
+	},
+	"curriculum": {
+		"tags": [
+			"content",
+			"curriculum",
+			"documents",
+			"folder",
+			"learning"
+		]
+	},
+	"cursor-arrow": {
+		"tags": [
+			"arrow",
+			"cursor",
+			"mouse",
+			"pointer",
+			"select"
+		]
+	},
+	"customer": {
+		"tags": [
+			"circle",
+			"customer",
+			"human",
+			"individual",
+			"me",
+			"person",
+			"profile",
+			"user"
+		]
+	},
+	"customer-and-contacts": {
+		"tags": [
+			"address",
+			"contacts",
+			"customer",
+			"e-mail",
+			"email",
+			"individual",
+			"person",
+			"user"
+		]
+	},
+	"customer-and-supplier": {
+		"tags": [
+			"buyer",
+			"customer and supplier",
+			"inventory",
+			"package",
+			"person",
+			"product",
+			"returns",
+			"satisfaction",
+			"seller",
+			"warehouse"
+		]
+	},
+	"customer-briefing": {
+		"tags": [
+			"address",
+			"briefing",
+			"contacts",
+			"customer",
+			"e-mail",
+			"email",
+			"individual",
+			"person",
+			"user"
+		]
+	},
+	"customer-financial-fact-sheet": {
+		"tags": [
+			"attachment",
+			"customer",
+			"document",
+			"fact sheet",
+			"file",
+			"financial",
+			"money",
+			"page"
+		]
+	},
+	"customer-history": {
+		"tags": [
+			"account",
+			"clock",
+			"customer",
+			"history",
+			"person",
+			"user"
 		]
 	},
 	"customer-order-entry": {
 		"tags": [
-			"sign",
-			"signature",
-			"order",
-			"entry",
-			"customer",
+			"agreement",
 			"contract",
-			"agreement"
+			"customer",
+			"entry",
+			"order",
+			"sign",
+			"signature"
+		]
+	},
+	"customer-view": {
+		"tags": [
+			"analytics",
+			"customer",
+			"overview",
+			"view"
+		]
+	},
+	"customize": {
+		"tags": [
+			"configuration",
+			"customize",
+			"equaliser",
+			"fine tune",
+			"modify",
+			"settings",
+			"settings"
+		]
+	},
+	"da": {
+		"tags": [
+			"ai",
+			"artificial",
+			"artificial intelligence",
+			"assistance",
+			"assistant",
+			"chatbot",
+			"contextual understanding",
+			"conversational ai",
+			"digital",
+			"intelligence",
+			"machine",
+			"machine learning",
+			"npl",
+			"NPL",
+			"virtual",
+			"voice recognition"
+		]
+	},
+	"da-2": {
+		"tags": [
+			"ai",
+			"artificial",
+			"artificial intelligence",
+			"assistance",
+			"assistant",
+			"chatbot",
+			"contextual understanding",
+			"conversational ai",
+			"digital",
+			"filled",
+			"full",
+			"intelligence",
+			"machine",
+			"machine learning",
+			"npl",
+			"NPL",
+			"virtual",
+			"voice recognition"
+		]
+	},
+	"dark-mode": {
+		"tags": [
+			"dark",
+			"mode",
+			"moon",
+			"night"
+		]
+	},
+	"database": {
+		"tags": [
+			"backend",
+			"big data",
+			"complex",
+			"complicated",
+			"cube",
+			"database",
+			"information",
+			"simple"
+		]
+	},
+	"date-time": {
+		"tags": [
+			"date",
+			"time"
+		]
+	},
+	"decision": {
+		"tags": [
+			"agreement",
+			"colleagues",
+			"contract",
+			"decision",
+			"hand shake",
+			"hands"
+		]
+	},
+	"decline": {
+		"tags": [
+			"cancel",
+			"close",
+			"decline",
+			"reject",
+			"remove",
+			"x"
+		]
+	},
+	"decrease-line-height": {
+		"tags": [
+			"arrows",
+			"compress",
+			"decrease",
+			"leading",
+			"less space",
+			"line height",
+			"reduce",
+			"rich-text",
+			"spacing",
+			"text edit"
+		]
+	},
+	"delete": {
+		"tags": [
+			"bin",
+			"delete",
+			"rubbish",
+			"trash can"
+		]
+	},
+	"desktop-mobile": {
+		"tags": [
+			"adaptive",
+			"compact",
+			"cozy",
+			"desktop",
+			"mobile",
+			"phone",
+			"responsive",
+			"tablet",
+			"web app"
+		]
+	},
+	"detail-less": {
+		"tags": [
+			"data",
+			"detail",
+			"hide",
+			"hide detail",
+			"information",
+			"less",
+			"popin",
+			"reduce",
+			"table"
+		]
+	},
+	"detail-more": {
+		"tags": [
+			"data",
+			"detail",
+			"extend",
+			"grow",
+			"information",
+			"more",
+			"popin",
+			"show",
+			"show detail",
+			"table"
+		]
+	},
+	"detail-view": {
+		"tags": [
+			"detail",
+			"find",
+			"form",
+			"look up",
+			"search",
+			"view"
+		]
+	},
+	"developer-settings": {
+		"tags": [
+			"cogwheel",
+			"configuration",
+			"customize",
+			"developer",
+			"modify",
+			"runtime authoring",
+			"settings",
+			"tools"
+		]
+	},
+	"dimension": {
+		"tags": [
+			"dimension",
+			"layers",
+			"stacked"
+		]
+	},
+	"direction-arrows": {
+		"tags": [
+			"arrow",
+			"direction",
+			"left",
+			"right",
+			"slider"
+		]
+	},
+	"disconnected": {
+		"tags": [
+			"disconnected",
+			"plug",
+			"state",
+			"unplug"
+		]
+	},
+	"discussion": {
+		"tags": [
+			"blank",
+			"bubble",
+			"comment",
+			"discussion",
+			"speech"
+		]
+	},
+	"discussion-2": {
+		"tags": [
+			"bubble",
+			"comment",
+			"discussion",
+			"speech",
+			"text"
+		]
+	},
+	"dishwasher": {
+		"tags": [
+			"appliance",
+			"dish",
+			"dishwasher",
+			"wash"
+		]
+	},
+	"display": {
+		"tags": [
+			"details",
+			"display",
+			"glasses",
+			"inspect",
+			"spectacles"
+		]
+	},
+	"display-more": {
+		"tags": [
+			"arrow",
+			"details",
+			"display",
+			"more"
+		]
+	},
+	"doc-attachment": {
+		"tags": [
+			"attachment",
+			"document",
+			"file",
+			"page",
+			"text",
+			"word"
+		]
+	},
+	"doctor": {
+		"tags": [
+			"cross",
+			"doctor",
+			"emergency",
+			"hospital",
+			"medical"
+		]
+	},
+	"document": {
+		"tags": [
+			"attachment",
+			"blank",
+			"document",
+			"file",
+			"new",
+			"page"
+		]
+	},
+	"document-text": {
+		"tags": [
+			"document",
+			"file",
+			"page",
+			"text"
+		]
+	},
+	"documents": {
+		"tags": [
+			"attachment",
+			"document",
+			"documents",
+			"file",
+			"page"
+		]
+	},
+	"donut-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display"
+		]
+	},
+	"down": {
+		"tags": [
+			"down",
+			"megamenu",
+			"triangle"
+		]
+	},
+	"download": {
+		"tags": [
+			"arrow",
+			"download"
+		]
+	},
+	"download-from-cloud": {
+		"tags": [
+			"arrow",
+			"cloud",
+			"download"
+		]
+	},
+	"draw-rectangle": {
+		"tags": [
+			"create",
+			"draw",
+			"rectangle",
+			"resize",
+			"shape"
+		]
+	},
+	"drill-down": {
+		"tags": [
+			"arrow",
+			"detail",
+			"drill down",
+			"hierarchy",
+			"level",
+			"megamenu"
+		]
+	},
+	"drill-up": {
+		"tags": [
+			"arrow",
+			"detail",
+			"drill up",
+			"hierarchy",
+			"level"
+		]
+	},
+	"drop-down-list": {
+		"tags": [
+			"arrow",
+			"dropdown",
+			"list",
+			"megamenu"
+		]
+	},
+	"dropdown": {
+		"tags": [
+			"arrow",
+			"dropdown",
+			"megamenu",
+			"menu",
+			"menu button"
+		]
+	},
+	"duplicate": {
+		"tags": [
+			"arrow",
+			"duplicate",
+			"objects"
+		]
+	},
+	"e-care": {
+		"tags": [
+			"digital customer care",
+			"e care",
+			"electronic",
+			"environment",
+			"health",
+			"leaf",
+			"leaves",
+			"nature",
+			"organic",
+			"service"
+		]
+	},
+	"e-learning": {
+		"tags": [
+			"bookmark",
+			"college",
+			"computer",
+			"course",
+			"e book",
+			"e learning",
+			"education",
+			"knowledge",
+			"open",
+			"school",
+			"screen"
+		]
+	},
+	"eam-work-order": {
+		"tags": [
+			"check",
+			"enterprise asset management",
+			"hard hat",
+			"order",
+			"tick mark",
+			"work"
+		]
+	},
+	"edit": {
+		"tags": [
+			"edit",
+			"modify",
+			"pen",
+			"pencil",
+			"text",
+			"write"
+		]
+	},
+	"edit-outside": {
+		"tags": [
+			"arrow",
+			"edit",
+			"modify",
+			"outside",
+			"pen",
+			"pencil",
+			"text",
+			"write"
+		]
+	},
+	"education": {
+		"tags": [
+			"bookmark",
+			"college",
+			"course",
+			"e book",
+			"education",
+			"knowledge",
+			"learning",
+			"open",
+			"school"
+		]
+	},
+	"electrocardiogram": {
+		"tags": [
+			"electrocardiogram",
+			"heart",
+			"medical",
+			"monitor",
+			"scan"
+		]
+	},
+	"electronic-medical-record": {
+		"tags": [
+			"cross",
+			"electronic medical record",
+			"emergency",
+			"hospital",
+			"medical"
+		]
+	},
+	"email": {
+		"tags": [
+			"correspondence",
+			"e-mail",
+			"electronic mail",
+			"email",
+			"envelope",
+			"mail"
+		]
+	},
+	"email-read": {
+		"tags": [
+			"e-mail",
+			"envelope",
+			"letter",
+			"mail",
+			"open",
+			"read"
+		]
+	},
+	"employee": {
+		"tags": [
+			"employee",
+			"member",
+			"operator",
+			"person",
+			"representative",
+			"user"
+		]
+	},
+	"employee-approvals": {
+		"tags": [
+			"accept",
+			"approval",
+			"employee",
+			"hr",
+			"human resources",
+			"person"
+		]
+	},
+	"employee-lookup": {
+		"tags": [
+			"contacts",
+			"customer",
+			"find",
+			"individual",
+			"look up",
+			"person",
+			"search",
+			"user"
+		]
+	},
+	"employee-pane": {
+		"tags": [
+			"employee",
+			"me",
+			"member",
+			"operator",
+			"person",
+			"profile",
+			"representative",
+			"user"
+		]
+	},
+	"employee-rejections": {
+		"tags": [
+			"employee",
+			"hr",
+			"human resources",
+			"person",
+			"rejections",
+			"x"
+		]
+	},
+	"enablement": {
+		"tags": [
+			"chart",
+			"enable",
+			"people",
+			"person",
+			"setting",
+			"tool",
+			"widgets",
+			"wrench"
+		]
+	},
+	"end-user-experience-monitoring": {
+		"tags": [
+			"end user experience monitoring",
+			"gauge",
+			"measure",
+			"monitor",
+			"speed"
+		]
+	},
+	"endoscopy": {
+		"tags": [
+			"endoscopy",
+			"medical",
+			"procedure"
+		]
+	},
+	"energy-saving-lightbulb": {
+		"tags": [
+			"eco",
+			"energy saving",
+			"idea",
+			"lamp",
+			"light",
+			"lightbulb"
+		]
+	},
+	"enter-more": {
+		"tags": [
+			"arrow",
+			"details",
+			"enter",
+			"more"
+		]
+	},
+	"eraser": {
+		"tags": [
+			"erase",
+			"pen",
+			"pencil",
+			"remove",
+			"text",
+			"undo"
+		]
+	},
+	"error": {
+		"tags": [
+			"error",
+			"message",
+			"negative",
+			"notifications",
+			"solid",
+			"status"
+		]
+	},
+	"example": {
+		"tags": [
+			"cicles",
+			"dots",
+			"example",
+			"individual",
+			"odd"
+		]
+	},
+	"excel-attachment": {
+		"tags": [
+			"accounting",
+			"attachment",
+			"document",
+			"excel",
+			"file",
+			"page",
+			"spreadsheet"
+		]
+	},
+	"exit-full-screen": {
+		"tags": [
+			"arrow",
+			"exit",
+			"fullscreen"
+		]
+	},
+	"expand": {
+		"tags": [
+			"arrow",
+			"expand all",
+			"group all",
+			"plus"
+		]
+	},
+	"expand-all": {
+		"tags": [
+			"all",
+			"arrow",
+			"expand",
+			"expand all",
+			"list",
+			"open",
+			"open all",
+			"table",
+			"tree"
+		]
+	},
+	"expand-group": {
+		"tags": [
+			"arrow",
+			"expand",
+			"group",
+			"move to bottom"
+		]
+	},
+	"expense-report": {
+		"tags": [
+			"documents",
+			"dollar",
+			"expense",
+			"money",
+			"report"
+		]
+	},
+	"explorer": {
+		"tags": [
+			"compass",
+			"explorer"
+		]
+	},
+	"factory": {
+		"tags": [
+			"factory",
+			"manufacturing",
+			"production",
+			"supplier"
+		]
+	},
+	"fallback": {
+		"tags": [
+			"fallback",
+			"folder",
+			"marked",
+			"object"
+		]
+	},
+	"family-care": {
+		"tags": [
+			"family",
+			"people",
+			"protection"
+		]
+	},
+	"family-protection": {
+		"tags": [
+			"family",
+			"family",
+			"house",
+			"people",
+			"protection",
+			"roof"
+		]
+	},
+	"favorite": {
+		"tags": [
+			"favorite",
+			"favourite",
+			"star"
+		]
+	},
+	"favorite-list": {
+		"tags": [
+			"favorite",
+			"favourite",
+			"list",
+			"menu",
+			"star"
+		]
+	},
+	"fax-machine": {
+		"tags": [
+			"communicate",
+			"fax",
+			"machine"
+		]
+	},
+	"feed": {
+		"tags": [
+			"feed",
+			"input",
+			"latest",
+			"messages",
+			"news",
+			"real-time",
+			"updates"
+		]
+	},
+	"feedback": {
+		"tags": [
+			"callout",
+			"comment",
+			"feedback",
+			"shell",
+			"smiley",
+			"speech"
+		]
+	},
+	"feeder-arrow": {
+		"tags": [
+			"arrow",
+			"enter text",
+			"execute",
+			"feeder",
+			"input",
+			"send"
+		]
+	},
+	"female": {
+		"tags": [
+			"female",
+			"gender",
+			"girl",
+			"shapes",
+			"symbol",
+			"woman"
+		]
+	},
+	"filter": {
+		"tags": [
+			"aggregate",
+			"data",
+			"filter",
+			"organise"
+		]
+	},
+	"filter-analytics": {
+		"tags": [
+			"analytics",
+			"chart",
+			"customize",
+			"data",
+			"display",
+			"filter",
+			"organise"
+		]
+	},
+	"filter-facets": {
+		"tags": [
+			"analytics",
+			"chart",
+			"customize",
+			"data",
+			"display",
+			"filter",
+			"organise"
+		]
+	},
+	"filter-fields": {
+		"tags": [
+			"analytics",
+			"chart",
+			"customize",
+			"data",
+			"display",
+			"filter",
+			"organise"
+		]
+	},
+	"flag": {
+		"tags": [
+			"flag",
+			"important",
+			"mark",
+			"marker"
+		]
+	},
+	"flag-2": {
+		"tags": [
+			"choose me",
+			"flag",
+			"important",
+			"mark",
+			"not selected",
+			"remove marker",
+			"remove selection",
+			"unfilled",
+			"unflag",
+			"unmark"
+		]
+	},
+	"flight": {
+		"tags": [
+			"Aeroplane",
+			"flight",
+			"holiday",
+			"plane",
+			"shipment",
+			"transit",
+			"travel",
+			"trip"
+		]
+	},
+	"fob-watch": {
+		"tags": [
+			"countdown",
+			"fob watch",
+			"stop watch",
+			"time",
+			"timer"
+		]
+	},
+	"folder": {
+		"tags": [
+			"details",
+			"folder"
+		]
+	},
+	"folder-2": {
+		"tags": [
+			"choose",
+			"content",
+			"detail",
+			"filled",
+			"folder",
+			"full",
+			"selected"
+		]
+	},
+	"folder-blank": {
+		"tags": [
+			"blank",
+			"folder"
+		]
+	},
+	"folder-full": {
+		"tags": [
+			"folder",
+			"full"
+		]
+	},
+	"form": {
+		"tags": [
+			"details",
+			"form",
+			"text"
+		]
+	},
+	"forward": {
+		"tags": [
+			"arrow",
+			"forward"
+		]
+	},
+	"fridge": {
+		"tags": [
+			"appliance",
+			"cooler",
+			"freezer",
+			"fridge",
+			"icebox",
+			"refrigerator"
+		]
+	},
+	"full-screen": {
+		"tags": [
+			"arrow",
+			"full",
+			"screen"
+		]
+	},
+	"full-stacked-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"full stacked chart"
+		]
+	},
+	"full-stacked-column-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"full stacked column chart"
+		]
+	},
+	"functional-location": {
+		"tags": [
+			"arrow",
+			"functional",
+			"locate",
+			"location",
+			"map",
+			"me",
+			"navigation",
+			"pointer"
+		]
+	},
+	"future": {
+		"tags": [
+			"arrow",
+			"clock",
+			"future",
+			"hereafter",
+			"time"
+		]
+	},
+	"gantt-bars": {
+		"tags": [
+			"bars",
+			"calendar",
+			"chart",
+			"gantt",
+			"gantt bars",
+			"schedule"
+		]
+	},
+	"gender-male-and-female": {
+		"tags": [
+			"boy",
+			"female",
+			"gender",
+			"girl",
+			"male",
+			"man",
+			"shapes",
+			"symbol",
+			"woman"
+		]
+	},
+	"general-leave-request": {
+		"tags": [
+			"chair",
+			"create",
+			"deck",
+			"holiday",
+			"leave",
+			"request",
+			"sun",
+			"vacation"
+		]
+	},
+	"generate-shortcut": {
+		"tags": [
+			"arrow",
+			"generate",
+			"shortcut"
+		]
+	},
+	"geographic-bubble-chart": {
+		"tags": [
+			"analytics",
+			"bubble",
+			"chart",
+			"data",
+			"display",
+			"geographic",
+			"map",
+			"world"
+		]
+	},
+	"globe": {
+		"tags": [
+			"earth",
+			"geographical",
+			"global",
+			"globe",
+			"international",
+			"planet",
+			"world"
+		]
+	},
+	"goal": {
+		"tags": [
+			"aim",
+			"goal",
+			"objective",
+			"result",
+			"target"
+		]
+	},
+	"goalseek": {
+		"tags": [
+			"aim",
+			"goal",
+			"goalseek",
+			"objective",
+			"result",
+			"target"
+		]
+	},
+	"grid": {
+		"tags": [
+			"boxes",
+			"grid",
+			"layout",
+			"modular",
+			"squares",
+			"waffle"
+		]
+	},
+	"group": {
+		"tags": [
+			"audience",
+			"category",
+			"collaborate",
+			"communication",
+			"customers",
+			"design thinking",
+			"group",
+			"peer to peer",
+			"people",
+			"project",
+			"team",
+			"teamwork",
+			"together",
+			"work"
+		]
+	},
+	"group-2": {
+		"tags": [
+			"aggregate",
+			"data",
+			"group",
+			"list",
+			"table"
+		]
+	},
+	"header": {
+		"tags": [
+			"header",
+			"maximize",
+			"screen"
+		]
+	},
+	"heading1": {
+		"tags": [
+			"h1",
+			"header",
+			"heading",
+			"large text",
+			"level 1",
+			"rich-text",
+			"text edit",
+			"title"
+		]
+	},
+	"heading2": {
+		"tags": [
+			"h2",
+			"header",
+			"heading",
+			"large text",
+			"level 2",
+			"rich-text",
+			"text edit",
+			"title"
+		]
+	},
+	"heading3": {
+		"tags": [
+			"h3",
+			"header",
+			"heading",
+			"large text",
+			"level 3",
+			"rich-text",
+			"text edit",
+			"title"
+		]
+	},
+	"headset": {
+		"tags": [
+			"call",
+			"headset",
+			"help",
+			"listen",
+			"mic",
+			"support",
+			"talk"
+		]
+	},
+	"heart": {
+		"tags": [
+			"care",
+			"choose",
+			"content",
+			"emotion",
+			"favorite",
+			"feeling",
+			"filled",
+			"full",
+			"heart",
+			"love",
+			"selected"
+		]
+	},
+	"heart-2": {
+		"tags": [
+			"care",
+			"choose me",
+			"emotion",
+			"empty",
+			"feeling",
+			"heart",
+			"love",
+			"not loved",
+			"not selected",
+			"unfavorite",
+			"unfilled",
+			"unfulfilled",
+			"unloved"
+		]
+	},
+	"heating-cooling": {
+		"tags": [
+			"ac",
+			"air conditioning",
+			"cold",
+			"heat",
+			"snowflake",
+			"sun",
+			"temperature"
+		]
+	},
+	"heatmap-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display"
+		]
+	},
+	"hello-world": {
+		"tags": [
+			"bubble",
+			"hello",
+			"ui5",
+			"world"
+		]
+	},
+	"hide": {
+		"tags": [
+			"eye",
+			"hide"
+		]
+	},
+	"high-priority": {
+		"tags": [
+			"!",
+			"alert",
+			"critical",
+			"exclamation",
+			"message",
+			"notification",
+			"status",
+			"warning"
+		]
+	},
+	"hint": {
+		"tags": [
+			"about",
+			"details",
+			"hint",
+			"information"
+		]
+	},
+	"history": {
+		"tags": [
+			"chronicle",
+			"clock",
+			"history",
+			"past",
+			"time"
+		]
+	},
+	"home": {
+		"tags": [
+			"home",
+			"house",
+			"index",
+			"landing page",
+			"main",
+			"start"
+		]
+	},
+	"home-share": {
+		"tags": [
+			"arrow",
+			"earth",
+			"geographical",
+			"global distribution",
+			"globe",
+			"planet",
+			"share",
+			"world"
+		]
+	},
+	"horizontal-bar-chart": {
+		"tags": [
+			"analytics",
+			"bar",
+			"chart",
+			"data",
+			"display",
+			"horizontal"
+		]
+	},
+	"horizontal-bar-chart-2": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"horizontal bar chart"
 		]
 	},
 	"horizontal-bullet-chart": {
 		"tags": [
 			"analytics",
 			"chart",
+			"data",
+			"display"
+		]
+	},
+	"horizontal-combination-chart": {
+		"tags": [
+			"analytics",
+			"bar",
+			"chart",
+			"combination",
+			"data",
 			"display",
-			"data"
+			"horizontal",
+			"line-chart"
 		]
 	},
-	"shortcut": {
+	"horizontal-grip": {
 		"tags": [
-			"shortcut",
-			"redirect",
-			"arrow"
+			"grip",
+			"horizontal",
+			"move down",
+			"move up",
+			"splitter"
 		]
 	},
-	"toaster-up": {
+	"horizontal-stacked-chart": {
 		"tags": [
-			"toaster",
-			"up",
-			"details"
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"horizontal stacked chart"
 		]
 	},
-	"share": {
+	"horizontal-waterfall-chart": {
 		"tags": [
-			"share",
-			"reshare",
-			"distribute",
-			"arrow"
+			"analytics",
+			"chart",
+			"data",
+			"display"
 		]
 	},
-	"pool": {
+	"hr-approval": {
 		"tags": [
-			"pool",
-			"basin",
-			"swim"
-		]
-	},
-	"add-favorite": {
-		"tags": [
-			"favorite",
-			"favourite",
-			"star",
-			"add",
-			"plus",
-			"additional",
-			"another",
-			"more"
-		]
-	},
-	"customer-and-supplier": {
-		"tags": [
-			"customer and supplier",
-			"package",
-			"product",
-			"satisfaction",
-			"returns",
-			"warehouse",
-			"person",
-			"seller",
-			"buyer",
-			"inventory"
-		]
-	},
-	"meal": {
-		"tags": [
-			"meal",
-			"knife and fork",
-			"dinner",
-			"lunch",
-			"eating",
-			"dine",
-			"expenses"
-		]
-	},
-	"insurance-house": {
-		"tags": [
-			"document",
-			"page",
-			"file",
-			"attachment",
-			"insurance",
-			"house"
-		]
-	},
-	"employee-approvals": {
-		"tags": [
-			"person",
 			"accept",
 			"approval",
 			"employee",
 			"hr",
-			"human resources"
+			"human resources",
+			"person"
 		]
 	},
-	"error": {
+	"idea-wall": {
 		"tags": [
-			"message",
-			"error",
-			"negative",
-			"notifications",
+			"collaborate",
+			"design thinking",
+			"idea",
+			"improve",
+			"peer to peer",
+			"project",
+			"teamwork",
+			"together",
+			"wall",
+			"work"
+		]
+	},
+	"image-viewer": {
+		"tags": [
+			"carousel",
+			"hills",
+			"image",
+			"lightbox",
+			"mountains",
+			"picture",
+			"placeholder",
+			"sun",
+			"viewer"
+		]
+	},
+	"in-progress": {
+		"tags": [
+			"clock",
+			"current",
+			"in process",
+			"on-going",
+			"Square",
 			"status",
-			"solid"
+			"Time",
+			"working"
 		]
 	},
-	"electronic-medical-record": {
+	"in-progress-2": {
 		"tags": [
-			"electronic medical record",
-			"medical",
-			"cross",
-			"emergency",
-			"hospital"
+			"clock",
+			"current",
+			"filled",
+			"full",
+			"in process",
+			"on-going",
+			"Square",
+			"status",
+			"Time",
+			"working"
 		]
 	},
-	"suitcase": {
+	"inbox": {
 		"tags": [
-			"travel",
-			"suitcase",
-			"business trip",
-			"personal",
-			"possessions",
-			"articles",
-			"items",
-			"collection"
+			"arrow",
+			"in",
+			"inbox"
 		]
 	},
-	"enter-more": {
+	"incident": {
 		"tags": [
-			"enter",
-			"details",
-			"more",
-			"arrow"
-		]
-	},
-	"tools-opportunity": {
-		"tags": [
-			"analytics",
-			"chart",
-			"display",
-			"data",
-			"overview",
-			"map",
-			"org",
-			"tree"
-		]
-	},
-	"measuring-point": {
-		"tags": [
-			"measure",
-			"point",
-			"scale",
-			"precision",
-			"arrow"
-		]
-	},
-	"activity-items": {
-		"tags": [
-			"activity",
-			"activities",
-			"tasks",
-			"to do",
-			"list",
-			"items"
-		]
-	},
-	"sys-help-2": {
-		"tags": [
-			"system",
-			"help",
-			"circle",
+			"incident",
+			"message",
 			"question"
 		]
 	},
-	"add-coursebook": {
+	"incoming-call": {
 		"tags": [
-			"education",
-			"course",
-			"learning",
-			"e book",
-			"bookmark",
-			"open",
-			"knowledge",
-			"course book",
-			"program",
-			"add",
-			"plus",
-			"additional",
-			"another",
-			"more"
+			"arrow",
+			"call",
+			"communicate",
+			"incoming",
+			"phone",
+			"telephone"
 		]
 	},
-	"overview-chart": {
+	"increase-line-height": {
+		"tags": [
+			"arrows",
+			"enlarge",
+			"expand",
+			"increase",
+			"leading",
+			"line height",
+			"more space",
+			"rich-text",
+			"spacing",
+			"text edit"
+		]
+	},
+	"indent": {
+		"tags": [
+			"align",
+			"arrows",
+			"indent",
+			"move right",
+			"paragraph",
+			"rich-text",
+			"spacing",
+			"text edit"
+		]
+	},
+	"information": {
+		"tags": [
+			"filled",
+			"i",
+			"info",
+			"information",
+			"message",
+			"message-information",
+			"notification"
+		]
+	},
+	"initiative": {
+		"tags": [
+			"arrow",
+			"begin",
+			"circle",
+			"enter",
+			"initiate",
+			"initiative",
+			"right"
+		]
+	},
+	"inspect": {
+		"tags": [
+			"arrow",
+			"dialog",
+			"inspect",
+			"popout",
+			"popup"
+		]
+	},
+	"inspect-down": {
+		"tags": [
+			"cancel",
+			"close",
+			"dialog",
+			"popup",
+			"x"
+		]
+	},
+	"inspection": {
+		"tags": [
+			"document",
+			"inspect",
+			"search"
+		]
+	},
+	"instance": {
+		"tags": [
+			"chevron",
+			"clock",
+			"instance",
+			"process"
+		]
+	},
+	"insurance-car": {
+		"tags": [
+			"attachment",
+			"car",
+			"document",
+			"file",
+			"insurance",
+			"page"
+		]
+	},
+	"insurance-house": {
+		"tags": [
+			"attachment",
+			"document",
+			"file",
+			"house",
+			"insurance",
+			"page"
+		]
+	},
+	"insurance-life": {
+		"tags": [
+			"attachment",
+			"document",
+			"file",
+			"insurance",
+			"life",
+			"page"
+		]
+	},
+	"internet-browser": {
+		"tags": [
+			"browser",
+			"globe",
+			"html",
+			"internet",
+			"screen",
+			"web app",
+			"website",
+			"www"
+		]
+	},
+	"inventory": {
+		"tags": [
+			"inventory",
+			"tools",
+			"truck",
+			"wrench"
+		]
+	},
+	"ipad": {
+		"tags": [
+			"cozy",
+			"ipad",
+			"mobile",
+			"portrait",
+			"responsive",
+			"tablet"
+		]
+	},
+	"ipad-2": {
+		"tags": [
+			"cozy",
+			"ipad",
+			"landscape",
+			"mobile",
+			"responsive",
+			"tablet"
+		]
+	},
+	"iphone": {
+		"tags": [
+			"cozy",
+			"iphone",
+			"mobile",
+			"phone",
+			"portrait",
+			"responsive",
+			"smart phone",
+			"tablet"
+		]
+	},
+	"iphone-2": {
+		"tags": [
+			"cozy",
+			"iphone",
+			"landscape",
+			"mobile",
+			"phone",
+			"responsive",
+			"smart phone",
+			"tablet"
+		]
+	},
+	"it-host": {
+		"tags": [
+			"computer",
+			"device",
+			"host",
+			"it",
+			"machine",
+			"server",
+			"technology"
+		]
+	},
+	"it-instance": {
+		"tags": [
+			"computer",
+			"device",
+			"instance",
+			"it",
+			"machine",
+			"server",
+			"technology"
+		]
+	},
+	"it-system": {
+		"tags": [
+			"computer",
+			"device",
+			"it",
+			"machine",
+			"server",
+			"system",
+			"technology"
+		]
+	},
+	"italic-text": {
+		"tags": [
+			"format",
+			"italic",
+			"leaning",
+			"rich-text",
+			"slanted",
+			"text",
+			"text decoration",
+			"text edit"
+		]
+	},
+	"jam": {
+		"tags": [
+			"collaborate",
+			"jam",
+			"logo",
+			"sap",
+			"share",
+			"social"
+		]
+	},
+	"journey-arrive": {
+		"tags": [
+			"arrive",
+			"arrow",
+			"journey",
+			"placement"
+		]
+	},
+	"journey-change": {
+		"tags": [
+			"arrow",
+			"change",
+			"direction",
+			"journey",
+			"placement"
+		]
+	},
+	"journey-depart": {
+		"tags": [
+			"arrow",
+			"depart",
+			"journey",
+			"move",
+			"placement"
+		]
+	},
+	"key": {
+		"tags": [
+			"data",
+			"important",
+			"key",
+			"lock"
+		]
+	},
+	"key-user-settings": {
+		"tags": [
+			"administrator",
+			"cogwheel",
+			"configuration",
+			"customize",
+			"key user",
+			"modify",
+			"runtime authoring",
+			"settings",
+			"tools"
+		]
+	},
+	"keyboard-and-mouse": {
+		"tags": [
+			"click",
+			"compact",
+			"condensed",
+			"controls",
+			"desktop",
+			"devices",
+			"keyboard",
+			"mouse"
+		]
+	},
+	"kpi-corporate-performance": {
+		"tags": [
+			"chart",
+			"checkmark",
+			"kpi",
+			"line",
+			"performance"
+		]
+	},
+	"kpi-managing-my-area": {
+		"tags": [
+			"checkmark",
+			"equal to",
+			"kpi",
+			"person",
+			"user"
+		]
+	},
+	"lab": {
+		"tags": [
+			"chemicals",
+			"chemistry",
+			"lab",
+			"laboratory",
+			"liquid",
+			"mixture",
+			"science"
+		]
+	},
+	"laptop": {
+		"tags": [
+			"computer",
+			"device",
+			"laptop"
+		]
+	},
+	"lateness": {
+		"tags": [
+			"hour glass",
+			"lateness",
+			"loading",
+			"out of time",
+			"sand",
+			"time",
+			"timer",
+			"waiting"
+		]
+	},
+	"lead": {
+		"tags": [
+			"currency",
+			"dollar",
+			"money",
+			"payment"
+		]
+	},
+	"lead-outdated": {
+		"tags": [
+			"circle",
+			"dollar",
+			"lead outdated"
+		]
+	},
+	"leads": {
+		"tags": [
+			"equal to",
+			"leads",
+			"person",
+			"star",
+			"user"
+		]
+	},
+	"learning-assistant": {
+		"tags": [
+			"assistant",
+			"bookmark",
+			"college",
+			"course",
+			"e book",
+			"education",
+			"help",
+			"knowledge",
+			"learning",
+			"open",
+			"professor",
+			"school",
+			"teacher",
+			"tutor"
+		]
+	},
+	"legend": {
+		"tags": [
+			"calendar",
+			"charts",
+			"colors",
+			"description",
+			"legend",
+			"planning",
+			"table"
+		]
+	},
+	"less": {
+		"tags": [
+			"less",
+			"minus",
+			"subtract"
+		]
+	},
+	"letter": {
+		"tags": [
+			"address",
+			"contact",
+			"correspondence",
+			"envelope",
+			"letter",
+			"mail",
+			"post",
+			"postal"
+		]
+	},
+	"light-mode": {
+		"tags": [
+			"day",
+			"light",
+			"mode",
+			"sun",
+			"sunny"
+		]
+	},
+	"lightbulb": {
+		"tags": [
+			"idea",
+			"lamp",
+			"light",
+			"lightbulb"
+		]
+	},
+	"line-chart": {
 		"tags": [
 			"analytics",
 			"chart",
-			"display",
 			"data",
-			"overview",
-			"map",
-			"org"
+			"display",
+			"line chart"
 		]
 	},
-	"status-positive": {
+	"line-chart-dual-axis": {
 		"tags": [
-			"positive",
-			"completed",
-			"on track",
-			"led",
-			"traffic lights",
-			"street sign",
-			"lifecycle"
-		]
-	},
-	"folder-blank": {
-		"tags": [
-			"folder",
-			"blank"
-		]
-	},
-	"begin": {
-		"tags": [
-			"begin",
-			"start",
-			"arrows"
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"dual axis",
+			"line chart"
 		]
 	},
 	"line-chart-time-axis": {
 		"tags": [
+			"axis",
 			"chart",
 			"line",
-			"time",
-			"axis"
+			"time"
 		]
 	},
-	"slim-arrow-right": {
+	"line-charts": {
 		"tags": [
-			"slim",
-			"thin",
-			"skinny",
+			"analytics",
+			"chart",
+			"data",
+			"display"
+		]
+	},
+	"list": {
+		"tags": [
+			"list",
+			"ordered",
+			"text"
+		]
+	},
+	"loan": {
+		"tags": [
+			"bank",
+			"dollar",
+			"money bag",
+			"tag"
+		]
+	},
+	"locate-me": {
+		"tags": [
 			"arrow",
-			"right",
-			"scroll right"
+			"locate",
+			"location",
+			"map",
+			"me",
+			"navigation",
+			"pointer"
 		]
 	},
-	"number-sign": {
+	"locate-me-2": {
 		"tags": [
-			"number sign",
-			"hash",
-			"#'"
+			"arrow",
+			"filled",
+			"locate",
+			"location",
+			"map",
+			"me",
+			"navigation",
+			"pointer"
 		]
 	},
-	"travel-expense-report": {
+	"locked": {
 		"tags": [
-			"report",
+			"forbidden",
+			"in use",
+			"locked",
+			"padlock",
+			"private",
+			"restricted",
+			"safe",
+			"status"
+		]
+	},
+	"log": {
+		"tags": [
+			"log",
+			"log off",
+			"log on",
+			"logout"
+		]
+	},
+	"machine": {
+		"tags": [
+			"factory",
+			"machine",
+			"production",
+			"supplier",
+			"technical"
+		]
+	},
+	"male": {
+		"tags": [
+			"boy",
+			"gender",
+			"male",
+			"man",
+			"shapes",
+			"symbol"
+		]
+	},
+	"manager": {
+		"tags": [
+			"board",
+			"company",
+			"conference",
+			"inform",
+			"keynote",
+			"leader",
+			"manager",
+			"meeting",
+			"overview",
+			"presentation",
+			"speech"
+		]
+	},
+	"manager-insight": {
+		"tags": [
+			"analyse",
+			"board",
+			"company",
+			"inform",
+			"insight",
+			"manager",
+			"overview",
+			"report"
+		]
+	},
+	"map": {
+		"tags": [
+			"area",
+			"location",
+			"map",
+			"pin",
+			"place"
+		]
+	},
+	"map-2": {
+		"tags": [
+			"card",
+			"destination",
+			"hunt",
+			"location",
+			"map",
+			"navigation"
+		]
+	},
+	"map-3": {
+		"tags": [
+			"card",
+			"destination",
+			"find",
+			"hunt",
+			"location",
+			"map",
+			"navigation",
+			"treasure",
+			"x marks the spot"
+		]
+	},
+	"map-fill": {
+		"tags": [
+			"area",
+			"fill",
+			"filled",
+			"location",
+			"map",
+			"pin",
+			"place",
+			"solid"
+		]
+	},
+	"marketing-campaign": {
+		"tags": [
+			"announcement",
+			"loud speaker",
+			"marketing campaign",
+			"megaphone",
+			"notify",
+			"public address"
+		]
+	},
+	"master-task-triangle": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"gantt",
+			"master",
+			"shape",
+			"task",
+			"triangle"
+		]
+	},
+	"master-task-triangle-2": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"gantt",
+			"master",
+			"shape",
+			"task",
+			"triangle"
+		]
+	},
+	"meal": {
+		"tags": [
+			"dine",
+			"dinner",
+			"eating",
+			"expenses",
+			"knife and fork",
+			"lunch",
+			"meal"
+		]
+	},
+	"measure": {
+		"tags": [
+			"calculation",
+			"calibrate",
+			"calibration",
+			"measure",
+			"precision",
+			"scale",
+			"technical",
+			"weight"
+		]
+	},
+	"measurement-document": {
+		"tags": [
+			"calculation",
+			"calibrate",
+			"calibration",
+			"measure",
+			"precision",
+			"scale",
+			"technical",
+			"weight"
+		]
+	},
+	"measuring-point": {
+		"tags": [
+			"arrow",
+			"measure",
+			"point",
+			"precision",
+			"scale"
+		]
+	},
+	"media-forward": {
+		"tags": [
+			"arrow",
+			"end",
+			"finish",
+			"forward",
+			"media"
+		]
+	},
+	"media-pause": {
+		"tags": [
+			"arrow",
+			"media",
+			"pause"
+		]
+	},
+	"media-play": {
+		"tags": [
+			"arrow",
+			"media",
+			"play"
+		]
+	},
+	"media-reverse": {
+		"tags": [
+			"arrow",
+			"media",
+			"reverse"
+		]
+	},
+	"media-rewind": {
+		"tags": [
+			"arrow",
+			"back",
+			"media",
+			"rewind",
+			"start"
+		]
+	},
+	"meeting-room": {
+		"tags": [
+			"collaborate",
+			"colleagues",
+			"meeting",
+			"peer to peer",
+			"room",
+			"teamwork"
+		]
+	},
+	"megamenu": {
+		"tags": [
+			"arrow-down",
+			"arrows-down",
+			"down",
+			"navigation",
+			"shell"
+		]
+	},
+	"menu": {
+		"tags": [
+			"list",
+			"menu"
+		]
+	},
+	"menu2": {
+		"tags": [
+			"hamburger menu",
+			"main menu",
+			"menu"
+		]
+	},
+	"message-error": {
+		"tags": [
+			"error",
+			"message",
+			"negative",
+			"notifications",
+			"status"
+		]
+	},
+	"message-information": {
+		"tags": [
+			"information",
+			"message",
+			"neutral",
+			"notifications",
+			"status"
+		]
+	},
+	"message-popup": {
+		"tags": [
+			"bubble",
+			"exclamation",
+			"message",
+			"notifications",
+			"popup",
+			"speech",
+			"status"
+		]
+	},
+	"message-success": {
+		"tags": [
+			"message",
+			"notifications",
+			"positive",
+			"status",
+			"success"
+		]
+	},
+	"message-warning": {
+		"tags": [
+			"critical",
+			"message",
+			"notifications",
+			"status",
+			"warning"
+		]
+	},
+	"microphone": {
+		"tags": [
+			"announcement",
+			"audio",
+			"dictate",
+			"keynote",
+			"mic",
+			"microphone",
+			"record",
+			"speech",
+			"talk"
+		]
+	},
+	"mileage": {
+		"tags": [
+			"fill up",
+			"fuel",
+			"gas",
+			"mileage",
+			"petrol",
+			"station",
+			"tank"
+		]
+	},
+	"minimize": {
+		"tags": [
+			"hide",
+			"minimize",
+			"reduce",
+			"screen",
+			"window"
+		]
+	},
+	"mirrored-task-circle": {
+		"tags": [
+			"analytics",
+			"chart",
+			"circle",
+			"data",
+			"display",
+			"gantt",
+			"mirrored",
+			"shape",
+			"task"
+		]
+	},
+	"mirrored-task-circle-2": {
+		"tags": [
+			"analytics",
+			"chart",
+			"circle",
+			"data",
+			"display",
+			"gantt",
+			"mirrored",
+			"shape",
+			"task"
+		]
+	},
+	"money-bills": {
+		"tags": [
+			"bills",
+			"cash",
+			"dollar",
+			"money",
+			"payment"
+		]
+	},
+	"monitor-payments": {
+		"tags": [
 			"bill",
 			"billing",
-			"sales",
-			"travel",
-			"expense",
-			"quote",
+			"dollar",
 			"envelope",
-			"invoice"
+			"expense",
+			"invoice",
+			"money",
+			"monitor payments",
+			"quote",
+			"report",
+			"sales"
 		]
 	},
-	"fridge": {
+	"move": {
 		"tags": [
-			"fridge",
-			"refrigerator",
-			"icebox",
-			"freezer",
-			"cooler",
-			"appliance"
+			"down",
+			"left",
+			"move",
+			"relocate",
+			"right",
+			"up"
+		]
+	},
+	"mri-scan": {
+		"tags": [
+			"medical",
+			"mri",
+			"scan"
+		]
+	},
+	"multi-select": {
+		"tags": [
+			"data",
+			"list",
+			"multi select",
+			"table"
 		]
 	},
 	"multiple-bar-chart": {
 		"tags": [
 			"analytics",
 			"chart",
-			"display",
 			"data",
+			"display",
 			"multiple bar chart"
 		]
 	},
-	"company-view": {
+	"multiple-line-chart": {
 		"tags": [
-			"view",
-			"group",
-			"company",
-			"personnel",
-			"firm",
-			"overview"
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"multiple line chart"
+		]
+	},
+	"multiple-pie-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"multiple",
+			"pie chart"
+		]
+	},
+	"multiple-radar-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"multiple radar chart"
+		]
+	},
+	"multiselect-all": {
+		"tags": [
+			"all",
+			"data",
+			"list",
+			"multi select",
+			"selected",
+			"table"
+		]
+	},
+	"multiselect-none": {
+		"tags": [
+			"data",
+			"deselected",
+			"list",
+			"multi select",
+			"none",
+			"table"
+		]
+	},
+	"my-sales-order": {
+		"tags": [
+			"bill",
+			"details",
+			"document",
+			"invoice",
+			"money",
+			"order",
+			"page",
+			"quote",
+			"sales"
+		]
+	},
+	"my-view": {
+		"tags": [
+			"cutomer",
+			"individual",
+			"monitor",
+			"my view",
+			"person",
+			"profile",
+			"tv",
+			"user",
+			"video call"
+		]
+	},
+	"nav-back": {
+		"tags": [
+			"arrow",
+			"back",
+			"navigation",
+			"previous"
+		]
+	},
+	"navigation-down-arrow": {
+		"tags": [
+			"arrow",
+			"collapse",
+			"down",
+			"expanded tree",
+			"megamenu",
+			"navigation",
+			"tree arrow"
+		]
+	},
+	"navigation-left-arrow": {
+		"tags": [
+			"arrow",
+			"left",
+			"navigation"
+		]
+	},
+	"navigation-right-arrow": {
+		"tags": [
+			"arrow",
+			"collapsed tree",
+			"expand",
+			"navigation",
+			"right",
+			"tree arrow"
+		]
+	},
+	"navigation-up-arrow": {
+		"tags": [
+			"arrow",
+			"navigation",
+			"up"
 		]
 	},
 	"negative": {
 		"tags": [
 			"minus",
+			"negative",
 			"remove",
-			"subtract",
-			"negative"
+			"subtract"
 		]
 	},
-	"group": {
+	"Netweaver-business-client": {
 		"tags": [
-			"group",
-			"team",
-			"people",
-			"communication",
-			"collaborate",
-			"teamwork",
-			"peer to peer",
-			"design thinking",
-			"work",
-			"together",
-			"project",
-			"customers",
-			"audience",
-			"category"
+			"bird",
+			"netweaver business client"
 		]
 	},
-	"sys-cancel-2": {
+	"newspaper": {
 		"tags": [
-			"clear",
-			"remove",
-			"cancel",
-			"x"
+			"headlines",
+			"latest",
+			"newspaper",
+			"updates"
 		]
 	},
-	"add-folder": {
+	"non-binary": {
+		"tags": [
+			"gender",
+			"non-binary",
+			"shapes",
+			"symbol"
+		]
+	},
+	"not-editable": {
+		"tags": [
+			"crossed-out",
+			"editable false",
+			"not editable",
+			"pencil",
+			"status"
+		]
+	},
+	"notes": {
+		"tags": [
+			"draft",
+			"info",
+			"marks",
+			"notes"
+		]
+	},
+	"notification-2": {
+		"tags": [
+			"bubble",
+			"comment",
+			"discussion",
+			"notification",
+			"speech"
+		]
+	},
+	"number-sign": {
+		"tags": [
+			"#'",
+			"hash",
+			"number sign"
+		]
+	},
+	"numbered-text": {
+		"tags": [
+			"1, 2, 3",
+			"numbered",
+			"rich-text",
+			"text",
+			"text edit"
+		]
+	},
+	"nurse": {
+		"tags": [
+			"cross",
+			"emergency",
+			"hospital",
+			"medical",
+			"nurse"
+		]
+	},
+	"nutrition-activity": {
+		"tags": [
+			"activity",
+			"apple",
+			"fruit",
+			"health",
+			"nutrition"
+		]
+	},
+	"official-service": {
+		"tags": [
+			"authority",
+			"court house",
+			"government",
+			"law",
+			"legal",
+			"official",
+			"service"
+		]
+	},
+	"offsite-work": {
+		"tags": [
+			"company",
+			"external",
+			"office",
+			"offsite work",
+			"outside"
+		]
+	},
+	"open-command-field": {
+		"tags": [
+			"arrow",
+			"navigation",
+			"next",
+			"open command field",
+			"page right",
+			"right"
+		]
+	},
+	"open-folder": {
 		"tags": [
 			"folder",
-			"add",
-			"directory",
-			"additional",
-			"library"
+			"open"
 		]
 	},
-	"away": {
+	"opportunities": {
 		"tags": [
-			"time",
-			"clock",
-			"away",
-			"availability",
-			"chronicle",
-			"be right back",
-			"appear away",
-			"off work",
-			"me"
+			"dollar",
+			"equal to",
+			"opportunity",
+			"person",
+			"user"
 		]
 	},
-	"busy": {
+	"opportunity": {
 		"tags": [
-			"busy",
-			"unavailable",
-			"not responsive",
-			"blocked",
+			"chart",
+			"exchange",
+			"line",
+			"market",
+			"opportunity",
+			"star",
+			"stock",
+			"trade"
+		]
+	},
+	"order-status": {
+		"tags": [
+			"attachment",
+			"document",
+			"file",
+			"order",
+			"page",
+			"status"
+		]
+	},
+	"org-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"map",
+			"org",
+			"overview",
+			"tree"
+		]
+	},
+	"outbox": {
+		"tags": [
+			"arrow",
+			"out",
+			"outbox"
+		]
+	},
+	"outdent": {
+		"tags": [
+			"align",
+			"arrows",
+			"move left",
+			"outdent",
+			"paragraph",
+			"rich-text",
+			"spacing",
+			"text edit"
+		]
+	},
+	"outgoing-call": {
+		"tags": [
+			"arrow",
+			"call",
+			"communicate",
+			"outgoing",
+			"phone",
+			"telephone"
+		]
+	},
+	"overflow": {
+		"tags": [
+			"dots",
+			"ellipsis",
+			"more",
+			"overflow"
+		]
+	},
+	"overlay": {
+		"tags": [
 			"circle",
 			"dot",
+			"overlay"
+		]
+	},
+	"overview-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"map",
+			"org",
+			"overview"
+		]
+	},
+	"paging": {
+		"tags": [
+			"navigation",
+			"paging"
+		]
+	},
+	"paid-leave": {
+		"tags": [
+			"approved",
+			"bill",
+			"dollar",
+			"money",
+			"paid leave"
+		]
+	},
+	"paint-bucket": {
+		"tags": [
+			"bucket",
+			"color",
+			"colour",
+			"drop",
+			"fill",
+			"filled",
+			"spill"
+		]
+	},
+	"palette": {
+		"tags": [
+			"artist",
+			"color",
+			"design",
+			"mixing",
+			"paint",
+			"palette",
+			"spot",
+			"theme"
+		]
+	},
+	"paper-plane": {
+		"tags": [
+			"flight",
+			"fly",
+			"folded",
+			"message",
+			"note",
+			"paper",
+			"plane",
+			"send"
+		]
+	},
+	"passenger-train": {
+		"tags": [
+			"passenger",
+			"public transportation",
+			"train"
+		]
+	},
+	"past": {
+		"tags": [
+			"bygone",
+			"clock",
+			"former",
+			"late",
+			"past",
+			"time"
+		]
+	},
+	"paste": {
+		"tags": [
+			"clipboards",
+			"document",
+			"file",
+			"paste",
+			"text"
+		]
+	},
+	"pause": {
+		"tags": [
+			"pause"
+		]
+	},
+	"payment-approval": {
+		"tags": [
+			"accept",
+			"approval",
+			"bill",
+			"checkmark",
+			"details",
+			"money",
+			"quote",
+			"sales",
+			"simple payment"
+		]
+	},
+	"pdf-attachment": {
+		"tags": [
+			"attachment",
+			"document",
+			"file",
+			"page",
+			"pdf"
+		]
+	},
+	"pdf-reader": {
+		"tags": [
+			"display",
+			"document",
+			"file",
+			"pdf reader"
+		]
+	},
+	"pending": {
+		"tags": [
+			"awaiting",
+			"clock",
+			"pend",
+			"pending",
+			"time",
+			"unresolved",
+			"unsettled"
+		]
+	},
+	"people-connected": {
+		"tags": [
+			"collaborate",
+			"collaboration",
+			"connected",
+			"connection",
+			"people",
+			"task-center",
+			"team",
+			"work"
+		]
+	},
+	"per-diem": {
+		"tags": [
+			"calendar",
+			"euro",
+			"per diem",
+			"time"
+		]
+	},
+	"performance": {
+		"tags": [
+			"gauge",
+			"measure",
+			"monitor",
+			"performance",
+			"speed"
+		]
+	},
+	"permission": {
+		"tags": [
+			"access",
+			"document",
+			"file",
+			"granted",
+			"open",
+			"page",
+			"permission",
+			"restrictions",
+			"unlocked"
+		]
+	},
+	"person-placeholder": {
+		"tags": [
+			"customer",
+			"human",
+			"individual",
 			"me",
-			"working"
+			"person",
+			"profile",
+			"user"
 		]
 	},
-	"appear-offline": {
+	"personnel-view": {
 		"tags": [
-			"appear-offline",
-			"offline",
-			"hide",
-			"blocked",
-			"circle",
-			"me"
+			"overview",
+			"person",
+			"personnel",
+			"profile",
+			"view"
 		]
 	},
-	"blur": {
+	"pharmacy": {
 		"tags": [
-			"blur",
-			"tool",
-			"screenshot",
+			"drugs",
+			"medication",
+			"medicine",
+			"pain",
+			"pharmacy",
+			"pills"
+		]
+	},
+	"phone": {
+		"tags": [
+			"call",
+			"dial",
+			"landline",
+			"number",
+			"phone",
+			"telephone"
+		]
+	},
+	"photo-voltaic": {
+		"tags": [
+			"electricity",
+			"panel",
+			"photovoltaic",
+			"power",
+			"solar",
+			"sun",
+			"voltaic"
+		]
+	},
+	"physical-activity": {
+		"tags": [
+			"jogging",
+			"physical activity",
+			"run",
+			"running"
+		]
+	},
+	"picture": {
+		"tags": [
 			"image",
-			"edit",
-			"modify",
-			"distort",
-			"smudge",
-			"blurry",
-			"filter",
-			"effects"
+			"photo",
+			"photograph",
+			"picture",
+			"shot"
+		]
+	},
+	"pie-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"pie",
+			"segments"
+		]
+	},
+	"pipeline-analysis": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display"
 		]
 	},
 	"pixelate": {
 		"tags": [
-			"pixel",
-			"tool",
-			"screenshot",
-			"image",
-			"edit",
-			"modify",
 			"distort",
-			"pixelate",
-			"squares",
 			"dots",
+			"edit",
+			"image",
+			"modify",
+			"noise",
+			"pixel",
+			"pixelate",
 			"resolution",
-			"noise"
+			"screenshot",
+			"squares",
+			"tool"
 		]
 	},
-	"horizontal-combination-chart": {
+	"play": {
+		"tags": [
+			"play"
+		]
+	},
+	"pool": {
+		"tags": [
+			"basin",
+			"pool",
+			"swim"
+		]
+	},
+	"popup-window": {
+		"tags": [
+			"computer",
+			"dialog",
+			"popout",
+			"popup",
+			"screen",
+			"window"
+		]
+	},
+	"positive": {
+		"tags": [
+			"plus",
+			"positive"
+		]
+	},
+	"post": {
+		"tags": [
+			"bubble",
+			"comment",
+			"post",
+			"speech"
+		]
+	},
+	"ppt-attachment": {
+		"tags": [
+			"attachment",
+			"document",
+			"file",
+			"page",
+			"powerpoint",
+			"ppt"
+		]
+	},
+	"present": {
+		"tags": [
+			"clock",
+			"current",
+			"present",
+			"star",
+			"time"
+		]
+	},
+	"primary-key": {
+		"tags": [
+			"data",
+			"important",
+			"key",
+			"lock",
+			"primary"
+		]
+	},
+	"print": {
+		"tags": [
+			"document",
+			"file",
+			"hard copy",
+			"output",
+			"paper",
+			"print",
+			"printer",
+			"send to print"
+		]
+	},
+	"private": {
+		"tags": [
+			"customer",
+			"forbidden",
+			"human",
+			"in use",
+			"individual",
+			"locked",
+			"occupied",
+			"person",
+			"private",
+			"restricted",
+			"user"
+		]
+	},
+	"process": {
+		"tags": [
+			"arrow",
+			"chevron",
+			"flow",
+			"process"
+		]
+	},
+	"product": {
+		"tags": [
+			"commodity",
+			"goods",
+			"merchandise",
+			"package",
+			"product",
+			"stock"
+		]
+	},
+	"program-triangles": {
 		"tags": [
 			"analytics",
 			"chart",
-			"display",
 			"data",
-			"combination",
-			"line-chart",
-			"bar",
-			"horizontal"
+			"display",
+			"gantt",
+			"program",
+			"shape",
+			"triangle"
 		]
 	},
-	"add-employee": {
+	"program-triangles-2": {
 		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"gantt",
+			"program",
+			"shape",
+			"triangle"
+		]
+	},
+	"project-definition-triangle": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"definition",
+			"display",
+			"gantt",
+			"project",
+			"shape",
+			"triangle"
+		]
+	},
+	"project-definition-triangle-2": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"definition",
+			"display",
+			"gantt",
+			"project",
+			"shape",
+			"triangle"
+		]
+	},
+	"projector": {
+		"tags": [
+			"beamer",
+			"keynote",
+			"movie",
+			"presentation",
+			"projector",
+			"show"
+		]
+	},
+	"provision": {
+		"tags": [
+			"analytics",
+			"chart",
+			"columns",
+			"customize",
+			"data",
+			"display",
+			"grid",
+			"modify",
+			"rows",
+			"settings",
+			"table",
+			"waffle"
+		]
+	},
+	"pull-down": {
+		"tags": [
+			"arrow",
+			"navigation",
+			"pull down",
+			"refresh"
+		]
+	},
+	"pushpin-off": {
+		"tags": [
+			"off",
+			"on",
+			"pin",
+			"pushpin",
+			"remove pin",
+			"snap",
+			"stick",
+			"unpin",
+			"unstick"
+		]
+	},
+	"pushpin-on": {
+		"tags": [
+			"attachment",
+			"document",
+			"file",
+			"off",
+			"on",
+			"page",
+			"pin",
+			"pushpin",
+			"remove pin",
+			"snap",
+			"stick",
+			"unpin",
+			"unstick"
+		]
+	},
+	"puzzle": {
+		"tags": [
+			"challenge",
+			"fit",
+			"jigsaw",
+			"objects",
+			"pieces",
+			"puzzle",
+			"thinking",
+			"together"
+		]
+	},
+	"qr-code": {
+		"tags": [
+			"code",
+			"qr",
+			"qr-code",
+			"qrcode",
+			"scan"
+		]
+	},
+	"quality-issue": {
+		"tags": [
+			"attention",
+			"details",
+			"problem",
+			"quality issue",
+			"status",
+			"warning"
+		]
+	},
+	"question-mark": {
+		"tags": [
+			"message",
+			"neutral",
+			"notifications",
+			"question mark",
+			"status"
+		]
+	},
+	"radar-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"radar-chart"
+		]
+	},
+	"receipt": {
+		"tags": [
+			"bill",
+			"details",
+			"money",
+			"proof",
+			"receipt",
+			"sale"
+		]
+	},
+	"record": {
+		"tags": [
+			"record"
+		]
+	},
+	"redo": {
+		"tags": [
+			"arrow",
+			"forwards",
+			"history",
+			"previous state",
+			"redo"
+		]
+	},
+	"refresh": {
+		"tags": [
+			"arrow",
+			"refresh",
+			"reload"
+		]
+	},
+	"repost": {
+		"tags": [
+			"circulate",
+			"post again"
+		]
+	},
+	"request": {
+		"tags": [
+			"document",
+			"edit",
+			"file",
+			"new",
+			"page",
+			"pen",
+			"pencil",
+			"request",
+			"text",
+			"write"
+		]
+	},
+	"reset": {
+		"tags": [
+			"cancel",
+			"reset",
+			"x"
+		]
+	},
+	"resize": {
+		"tags": [
+			"bigger",
+			"resize",
+			"smaller"
+		]
+	},
+	"resize-corner": {
+		"tags": [
+			"corner",
+			"dialog",
+			"resize"
+		]
+	},
+	"resize-horizontal": {
+		"tags": [
+			"arrows",
+			"bigger",
+			"column",
+			"enlarge",
+			"horizontal",
+			"lines",
+			"reduce",
+			"resize",
+			"screen",
+			"side to side",
+			"smaller"
+		]
+	},
+	"resize-vertical": {
+		"tags": [
+			"arrows",
+			"bigger",
+			"enlarge",
+			"lines",
+			"reduce",
+			"resize",
+			"row",
+			"screen",
+			"smaller",
+			"up and down",
+			"vertical"
+		]
+	},
+	"response": {
+		"tags": [
+			"arrow",
+			"reply",
+			"response"
+		]
+	},
+	"responsive": {
+		"tags": [
+			"adaptive",
+			"compact",
+			"cozy",
+			"desktop",
+			"mobile",
+			"phone",
+			"tablet",
+			"web app"
+		]
+	},
+	"restart": {
+		"tags": [
+			"play",
+			"process",
+			"restart"
+		]
+	},
+	"retail-store": {
+		"tags": [
+			"market",
+			"retail",
+			"shop",
+			"store"
+		]
+	},
+	"retail-store-manager": {
+		"tags": [
+			"retail store manager"
+		]
+	},
+	"rhombus-milestone": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"gantt",
+			"milestone",
+			"rhombus",
+			"shape"
+		]
+	},
+	"rhombus-milestone-2": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"gantt",
+			"milestone",
+			"rhombus",
+			"shape"
+		]
+	},
+	"role": {
+		"tags": [
+			"access",
 			"customer",
-			"user",
-			"person",
+			"granted",
 			"individual",
-			"contacts",
+			"open",
+			"permission",
+			"person",
+			"restrictions",
+			"unlocked",
+			"user"
+		]
+	},
+	"rotate": {
+		"tags": [
+			"around",
+			"arrow",
+			"direction",
+			"object",
+			"rotate",
+			"square"
+		]
+	},
+	"s4hana": {
+		"tags": [
+			"hana",
+			"product",
+			"product switch",
+			"S/4",
+			"S/4HANA",
+			"s4hana",
+			"switch"
+		]
+	},
+	"sales-document": {
+		"tags": [
+			"document",
+			"file",
+			"money",
+			"page",
+			"sales",
+			"text"
+		]
+	},
+	"sales-notification": {
+		"tags": [
+			"bubble",
+			"notification",
+			"sales"
+		]
+	},
+	"sales-order": {
+		"tags": [
+			"bill",
+			"details",
+			"document",
+			"file",
+			"money",
+			"page",
+			"quote",
+			"sales order"
+		]
+	},
+	"sales-order-item": {
+		"tags": [
+			"bill",
+			"details",
+			"document",
+			"file",
+			"money",
+			"page",
+			"quote",
+			"sales order item"
+		]
+	},
+	"sales-quote": {
+		"tags": [
+			"bill",
+			"details",
+			"document",
+			"file",
+			"money",
+			"page",
+			"quote",
+			"sales",
+			"text"
+		]
+	},
+	"sap-box": {
+		"tags": [
+			"box",
+			"collection",
+			"container",
+			"directory",
+			"documents",
+			"files",
+			"filing",
+			"storage",
+			"work load"
+		]
+	},
+	"sap-logo-shape": {
+		"tags": [
+			"logo",
+			"sap",
+			"shape"
+		]
+	},
+	"sap-ui5": {
+		"tags": [
+			"development",
+			"framework",
+			"sap",
+			"ui5"
+		]
+	},
+	"save": {
+		"tags": [
+			"diskette",
+			"floppy disc",
+			"hard disc",
+			"local disc",
+			"save"
+		]
+	},
+	"scatter-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"scatter chart"
+		]
+	},
+	"scissors": {
+		"tags": [
+			"clipboards",
+			"cut",
+			"document",
+			"file",
+			"scissors",
+			"text"
+		]
+	},
+	"screen-split-one": {
+		"tags": [
+			"detail",
+			"master",
+			"screen",
+			"split",
+			"split app",
+			"two"
+		]
+	},
+	"screen-split-three": {
+		"tags": [
+			"columns",
+			"screen",
+			"split",
+			"three"
+		]
+	},
+	"screen-split-two": {
+		"tags": [
+			"half",
+			"screen",
+			"split",
+			"two"
+		]
+	},
+	"search": {
+		"tags": [
+			"glass",
+			"magnifier",
+			"search"
+		]
+	},
+	"select-appointments": {
+		"tags": [
+			"appointment",
+			"calendar",
+			"check",
+			"choose",
+			"date picker",
+			"day",
+			"month",
+			"select",
+			"week"
+		]
+	},
+	"settings": {
+		"tags": [
+			"cogwheels",
+			"configuration",
+			"customize",
+			"modify",
+			"settings",
+			"tools"
+		]
+	},
+	"share": {
+		"tags": [
+			"arrow",
+			"distribute",
+			"reshare",
+			"share"
+		]
+	},
+	"share-2": {
+		"tags": [
+			"distribute",
+			"share",
+			"share with connections"
+		]
+	},
+	"shelf": {
+		"tags": [
+			"compartments",
+			"drawers",
+			"shelf",
+			"storage"
+		]
+	},
+	"shield": {
+		"tags": [
+			"authority",
+			"defense",
+			"important",
+			"legitimate",
+			"official",
+			"protection",
+			"security"
+		]
+	},
+	"shipping-status": {
+		"tags": [
+			"delivery",
+			"lorry",
+			"products",
+			"shipment",
+			"shipping status",
+			"supplier",
+			"transit",
+			"truck",
+			"van"
+		]
+	},
+	"shortcut": {
+		"tags": [
+			"arrow",
+			"redirect",
+			"shortcut"
+		]
+	},
+	"show": {
+		"tags": [
+			"eye",
+			"show"
+		]
+	},
+	"signature": {
+		"tags": [
+			"pen",
+			"pencil",
+			"sign",
+			"signature"
+		]
+	},
+	"simple-payment": {
+		"tags": [
+			"bill",
+			"details",
+			"money",
+			"quote",
+			"sales",
+			"simple payment"
+		]
+	},
+	"simulate": {
+		"tags": [
+			"algorithm",
+			"calculate",
+			"calculation",
+			"calculator",
+			"count",
+			"counting",
+			"digits",
+			"divide",
+			"mathematician",
+			"mathematics",
+			"numbers",
+			"simulate",
+			"tot up"
+		]
+	},
+	"slim-arrow-down": {
+		"tags": [
+			"arrow",
+			"combobox",
+			"down",
+			"multi combobox",
+			"select navigation",
+			"skinny",
+			"slim",
+			"thin"
+		]
+	},
+	"slim-arrow-left": {
+		"tags": [
+			"arrow",
+			"left",
+			"scroll left",
+			"skinny",
+			"slim",
+			"thin"
+		]
+	},
+	"slim-arrow-right": {
+		"tags": [
+			"arrow",
+			"right",
+			"scroll right",
+			"skinny",
+			"slim",
+			"thin"
+		]
+	},
+	"slim-arrow-up": {
+		"tags": [
+			"arrow",
+			"skinny",
+			"slim",
+			"thin",
+			"up"
+		]
+	},
+	"soccer": {
+		"tags": [
+			"ball",
+			"football",
+			"soccer",
+			"world cup"
+		]
+	},
+	"sonography": {
+		"tags": [
+			"medical",
+			"sonography",
+			"ultrasonography",
+			"ultrasound"
+		]
+	},
+	"sort": {
+		"tags": [
+			"aggregate",
+			"arrow",
+			"ascending",
+			"descending",
+			"sort"
+		]
+	},
+	"sort-ascending": {
+		"tags": [
+			"aggregate",
+			"ascending",
+			"sort",
+			"table",
+			"up"
+		]
+	},
+	"sort-descending": {
+		"tags": [
+			"aggregate",
+			"descending",
+			"down",
+			"sort",
+			"table"
+		]
+	},
+	"sorting-ranking": {
+		"tags": [
+			"arrow",
+			"ascending",
+			"descending",
+			"ranking",
+			"sort"
+		]
+	},
+	"sound": {
+		"tags": [
+			"audio",
+			"sound",
+			"speaker"
+		]
+	},
+	"sound-loud": {
+		"tags": [
+			"audio",
+			"loud",
+			"louder",
+			"sound",
+			"speaker"
+		]
+	},
+	"sound-off": {
+		"tags": [
+			"audio",
+			"cancel",
+			"mute",
+			"off",
+			"quiet",
+			"sound",
+			"speaker"
+		]
+	},
+	"source-code": {
+		"tags": [
+			"code",
+			"develop",
+			"source",
+			"syntax",
+			"write"
+		]
+	},
+	"space-navigation": {
+		"tags": [
+			"circle",
+			"line",
+			"navigation",
+			"shape",
+			"space"
+		]
+	},
+	"split": {
+		"tags": [
+			"arrow",
+			"arrows-right",
+			"break",
+			"cleave",
+			"clove",
+			"cut up",
+			"runtime adaptation",
+			"runtime authoring",
+			"separate",
+			"split",
+			"ui adaptation"
+		]
+	},
+	"status-critical": {
+		"tags": [
+			"critical",
+			"in process",
+			"led",
+			"lifecycle",
+			"street sign",
+			"traffic lights",
+			"warning"
+		]
+	},
+	"status-inactive": {
+		"tags": [
+			"inactive",
+			"information",
+			"led",
+			"lifecycle",
+			"neutral",
+			"street sign",
+			"traffic lights"
+		]
+	},
+	"status-negative": {
+		"tags": [
+			"attention",
+			"led",
+			"lifecycle",
+			"negative",
+			"street sign",
+			"traffic lights"
+		]
+	},
+	"status-positive": {
+		"tags": [
+			"completed",
+			"led",
+			"lifecycle",
+			"on track",
+			"positive",
+			"street sign",
+			"traffic lights"
+		]
+	},
+	"step": {
+		"tags": [
+			"arrow",
+			"flow",
+			"process",
+			"step"
+		]
+	},
+	"stethoscope": {
+		"tags": [
+			"doctor",
+			"health",
+			"hospital",
+			"medical",
+			"nurse",
+			"stethoscope"
+		]
+	},
+	"stop": {
+		"tags": [
+			"play",
+			"process",
+			"stop"
+		]
+	},
+	"strikethrough": {
+		"tags": [
+			"cross out",
+			"edit",
+			"formatting",
+			"letters",
+			"options",
+			"review",
+			"rich",
+			"rich-text",
+			"strike"
+		]
+	},
+	"study-leave": {
+		"tags": [
+			"college",
+			"education",
+			"graduate",
+			"qualification",
+			"school",
+			"student",
+			"study"
+		]
+	},
+	"subway-train": {
+		"tags": [
+			"subway train",
+			"tube",
+			"underground"
+		]
+	},
+	"suitcase": {
+		"tags": [
+			"articles",
+			"business trip",
+			"collection",
+			"items",
+			"personal",
+			"possessions",
+			"suitcase",
+			"travel"
+		]
+	},
+	"sum": {
+		"tags": [
+			"addition",
+			"aggregate",
+			"amount",
+			"covariance",
+			"covariance matrix",
+			"sigma",
+			"sum",
+			"summation",
+			"total"
+		]
+	},
+	"supplier": {
+		"tags": [
+			"buyer",
+			"deliveries",
+			"inventory",
+			"package",
+			"person",
+			"product",
+			"returns",
+			"satisfaction",
+			"seller",
+			"supplier",
+			"warehouse"
+		]
+	},
+	"survey": {
+		"tags": [
+			"checkbox",
+			"checklist",
+			"checkmark",
+			"form",
+			"list",
+			"survey",
+			"x"
+		]
+	},
+	"switch-classes": {
+		"tags": [
+			"arrange",
+			"classes",
+			"objects",
+			"switch",
+			"views"
+		]
+	},
+	"switch-views": {
+		"tags": [
+			"arrange",
+			"objects",
+			"switch",
+			"views"
+		]
+	},
+	"synchronize": {
+		"tags": [
+			"arrow",
+			"refresh",
+			"reload",
+			"synchronize"
+		]
+	},
+	"syntax": {
+		"tags": [
+			"code",
+			"develop",
+			"source",
+			"syntax",
+			"write"
+		]
+	},
+	"syringe": {
+		"tags": [
+			"emergency",
+			"hospital",
+			"injection",
+			"medical",
+			"needle",
+			"shot",
+			"syringe"
+		]
+	},
+	"sys-add": {
+		"tags": [
+			"add",
+			"add item",
+			"add object",
+			"add row",
+			"additional",
+			"another",
+			"more",
+			"plus"
+		]
+	},
+	"sys-back": {
+		"tags": [
+			"arrows",
+			"back",
+			"system"
+		]
+	},
+	"sys-back-2": {
+		"tags": [
+			"arrows",
+			"back",
+			"system"
+		]
+	},
+	"sys-cancel": {
+		"tags": [
+			"cancel",
+			"clear",
+			"remove",
+			"x"
+		]
+	},
+	"sys-cancel-2": {
+		"tags": [
+			"cancel",
+			"clear",
+			"remove",
+			"x"
+		]
+	},
+	"sys-enter": {
+		"tags": [
+			"affirmative",
+			"correct",
+			"enter",
+			"system",
+			"tick"
+		]
+	},
+	"sys-enter-2": {
+		"tags": [
+			"affirmative",
+			"correct",
+			"enter",
+			"system",
+			"tick"
+		]
+	},
+	"sys-find": {
+		"tags": [
+			"binoculars",
+			"find",
+			"look up"
+		]
+	},
+	"sys-find-next": {
+		"tags": [
 			"add",
 			"additional",
-			"employee",
-			"hr",
-			"human resources",
+			"another",
+			"binoculars",
+			"find",
+			"look up",
+			"more",
 			"plus"
+		]
+	},
+	"sys-first-page": {
+		"tags": [
+			"arrows",
+			"first",
+			"page",
+			"system",
+			"top",
+			"up"
+		]
+	},
+	"sys-help": {
+		"tags": [
+			"circle",
+			"help",
+			"question",
+			"system"
+		]
+	},
+	"sys-help-2": {
+		"tags": [
+			"circle",
+			"help",
+			"question",
+			"system"
+		]
+	},
+	"sys-last-page": {
+		"tags": [
+			"arrows",
+			"bottom",
+			"down",
+			"last",
+			"page",
+			"system"
+		]
+	},
+	"sys-minus": {
+		"tags": [
+			"minus",
+			"remove",
+			"subtract"
+		]
+	},
+	"sys-monitor": {
+		"tags": [
+			"monitor",
+			"screen",
+			"tv"
+		]
+	},
+	"sys-next-page": {
+		"tags": [
+			"arrows",
+			"down",
+			"next",
+			"page",
+			"system"
+		]
+	},
+	"sys-prev-page": {
+		"tags": [
+			"arrows",
+			"page",
+			"previous",
+			"system",
+			"up"
+		]
+	},
+	"system-exit": {
+		"tags": [
+			"exit",
+			"system"
+		]
+	},
+	"system-exit-2": {
+		"tags": [
+			"exit",
+			"system"
+		]
+	},
+	"table-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"columns",
+			"data",
+			"display",
+			"grid",
+			"rows",
+			"table",
+			"view",
+			"waffle"
+		]
+	},
+	"table-column": {
+		"tags": [
+			"columns",
+			"data",
+			"display",
+			"grid",
+			"table",
+			"table column",
+			"view",
+			"waffle"
+		]
+	},
+	"table-row": {
+		"tags": [
+			"data",
+			"display",
+			"grid",
+			"rows",
+			"table",
+			"table row",
+			"view",
+			"waffle"
+		]
+	},
+	"table-view": {
+		"tags": [
+			"analytics",
+			"chart",
+			"columns",
+			"data",
+			"display",
+			"grid",
+			"rows",
+			"table",
+			"view",
+			"waffle"
+		]
+	},
+	"tag": {
+		"tags": [
+			"detail",
+			"indicator",
+			"label",
+			"marker",
+			"tag"
+		]
+	},
+	"tag-cloud-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"cloud",
+			"data",
+			"display",
+			"speech",
+			"tag"
+		]
+	},
+	"tags": {
+		"tags": [
+			"detail",
+			"indicator",
+			"label",
+			"marker",
+			"tag"
+		]
+	},
+	"target-group": {
+		"tags": [
+			"arrow",
+			"audience",
+			"dart",
+			"dartboard",
+			"goal",
+			"specific",
+			"target group"
+		]
+	},
+	"task": {
+		"tags": [
+			"checkbox",
+			"checklist",
+			"checkmark",
+			"clipboard",
+			"list",
+			"task"
+		]
+	},
+	"taxi": {
+		"tags": [
+			"cab",
+			"car",
+			"taxi",
+			"transportation"
+		]
+	},
+	"technical-object": {
+		"tags": [
+			"component",
+			"fine tune",
+			"fix",
+			"object",
+			"technical",
+			"tool",
+			"tweak",
+			"work",
+			"wrench"
+		]
+	},
+	"temperature": {
+		"tags": [
+			"cold",
+			"cool",
+			"health",
+			"heat",
+			"hot",
+			"illness",
+			"medical",
+			"sickness",
+			"temperature"
+		]
+	},
+	"text": {
+		"tags": [
+			"edit",
+			"formatting",
+			"input",
+			"letters",
+			"rich",
+			"rich-text",
+			"text"
+		]
+	},
+	"text-align-center": {
+		"tags": [
+			"align",
+			"center",
+			"rich-text",
+			"text",
+			"text edit"
+		]
+	},
+	"text-align-justified": {
+		"tags": [
+			"align",
+			"justified",
+			"rich-text",
+			"text",
+			"text edit"
+		]
+	},
+	"text-align-left": {
+		"tags": [
+			"align",
+			"left",
+			"rich-text",
+			"text",
+			"text edit"
+		]
+	},
+	"text-align-right": {
+		"tags": [
+			"align",
+			"rich-text",
+			"right",
+			"text",
+			"text edit"
 		]
 	},
 	"text-color": {
 		"tags": [
 			"color",
-			"formatting",
-			"edit",
 			"colour",
-			"letters",
-			"rich",
-			"rich-text",
-			"options"
-		]
-	},
-	"browse-folder": {
-		"tags": [
-			"browse folder",
-			"search",
-			"look up",
-			"folder",
-			"browse",
-			"directory",
-			"library",
-			"find"
-		]
-	},
-	"primary-key": {
-		"tags": [
-			"key",
-			"primary",
-			"data",
-			"lock",
-			"important"
-		]
-	},
-	"two-keys": {
-		"tags": [
-			"key",
-			"primary",
-			"foreign",
-			"data",
-			"lock",
-			"important"
-		]
-	},
-	"strikethrough": {
-		"tags": [
-			"strike",
-			"formatting",
 			"edit",
-			"cross out",
+			"formatting",
 			"letters",
-			"rich",
-			"rich-text",
 			"options",
-			"review"
-		]
-	},
-	"text": {
-		"tags": [
-			"text",
-			"formatting",
-			"edit",
-			"input",
-			"letters",
 			"rich",
 			"rich-text"
 		]
 	},
-	"responsive": {
+	"text-formatting": {
 		"tags": [
-			"desktop",
-			"tablet",
-			"mobile",
-			"phone",
-			"adaptive",
-			"cozy",
-			"compact",
-			"web app"
-		]
-	},
-	"desktop-mobile": {
-		"tags": [
-			"desktop",
-			"tablet",
-			"mobile",
-			"phone",
-			"adaptive",
-			"cozy",
-			"compact",
-			"web app",
-			"responsive",
-			"adaptive"
-		]
-	},
-	"table-row": {
-		"tags": [
-			"display",
-			"data",
-			"table",
-			"table row",
-			"grid",
-			"waffle",
-			"view",
-			"rows"
-		]
-	},
-	"table-column": {
-		"tags": [
-			"display",
-			"data",
-			"table",
-			"table column",
-			"grid",
-			"waffle",
-			"view",
-			"columns"
-		]
-	},
-	"validate": {
-		"tags": [
-			"message",
-			"check",
-			"validate",
-			"security",
-			"status",
-			"approve",
-			"reject",
-			"decision",
-			"certify"
-		]
-	},
-	"keyboard-and-mouse": {
-		"tags": [
-			"mouse",
-			"desktop",
-			"click",
-			"keyboard",
-			"compact",
-			"condensed",
-			"controls",
-			"devices"
-		]
-	},
-	"touch": {
-		"tags": [
-			"finger",
-			"mobile",
-			"press",
-			"touch",
-			"cozy",
-			"comfortable",
-			"controls",
-			"devices"
-		]
-	},
-	"expand-all": {
-		"tags": [
-			"expand",
-			"all",
-			"open",
-			"open all",
-			"expand all",
-			"arrow",
-			"table",
-			"tree",
-			"list"
-		]
-	},
-	"collapse-all": {
-		"tags": [
-			"collapse",
-			"all",
-			"close",
-			"close all",
-			"collapse all",
-			"arrow",
-			"table",
-			"tree",
-			"list"
-		]
-	},
-	"combine": {
-		"tags": [
-			"merge",
-			"arrow",
-			"combine",
-			"glue",
-			"together",
-			"join",
-			"meld",
-			"unite",
-			"aggregate",
-			"interflow",
-			"runtime authoring",
-			"runtime adaptation",
-			"ui adaptation",
-			"arrows-right"
-		]
-	},
-	"split": {
-		"tags": [
-			"split",
-			"arrow",
-			"separate",
-			"break",
-			"cleave",
-			"clove",
-			"cut up",
-			"runtime authoring",
-			"runtime adaptation",
-			"ui adaptation",
-			"arrows-right"
-		]
-	},
-	"megamenu": {
-		"tags": [
-			"navigation",
-			"arrows-down",
-			"arrow-down",
-			"down",
-			"shell"
-		]
-	},
-	"feedback": {
-		"tags": [
-			"feedback",
-			"smiley",
-			"comment",
-			"shell",
-			"callout",
-			"speech"
-		]
-	},
-	"information": {
-		"tags": [
-			"information",
-			"info",
-			"message",
-			"message-information",
-			"i",
-			"filled",
-			"notification"
-		]
-	},
-	"s4hana": {
-		"tags": [
-			"s4hana",
-			"S/4HANA",
-			"S/4",
-			"hana",
-			"product switch",
-			"product",
-			"switch"
-		]
-	},
-	"translate": {
-		"tags": [
-			"translate",
+			"customize",
+			"format",
+			"options",
+			"rich-text",
 			"text",
-			"letters",
-			"translation",
-			"A",
-			"arrows"
+			"text decoration",
+			"text edit"
 		]
 	},
-	"clear-all": {
+	"theater": {
 		"tags": [
-			"clear",
-			"clear-all",
-			"square",
-			"x",
-			"delete",
-			"remove",
-			"check",
-			"uncheck"
-		]
-	},
-	"command-line-interfaces": {
-		"tags": [
-			"command",
-			"command-line",
-			"interfaces",
-			"code",
-			"develop",
-			"source",
-			"source-code",
-			"write",
-			"syntax",
-			"programming",
-			"technical"
-		]
-	},
-	"sum": {
-		"tags": [
-			"sigma",
-			"sum",
-			"summation",
-			"addition",
-			"total",
-			"aggregate",
-			"amount",
-			"covariance",
-			"covariance matrix"
-		]
-	},
-	"qr-code": {
-		"tags": [
-			"qr",
-			"qrcode",
-			"qr-code",
-			"scan",
-			"code"
-		]
-	},
-	"space-navigation": {
-		"tags": [
-			"space",
-			"navigation",
-			"circle",
-			"shape",
-			"line"
-		]
-	},
-	"in-progress": {
-		"tags": [
-			"in process",
-			"status",
-			"working",
-			"current",
-			"on-going",
-			"clock",
-			"Time",
-			"Square"
-		]
-	},
-	"not-editable": {
-		"tags": [
-			"not editable",
-			"pencil",
-			"status",
-			"editable false",
-			"crossed-out"
-		]
-	},
-	"bookmark-2": {
-		"tags": [
-			"bookmark",
-			"later",
-			"marker",
-			"save",
-			"remove selection",
-			"choose me",
-			"not selected",
-			"unfilled"
-		]
-	},
-	"detail-less": {
-		"tags": [
-			"detail",
-			"hide detail",
-			"popin",
-			"table",
-			"less",
-			"information",
-			"data",
-			"hide",
-			"reduce"
-		]
-	},
-	"detail-more": {
-		"tags": [
-			"detail",
-			"show detail",
-			"popin",
-			"table",
-			"more",
-			"information",
-			"data",
+			"masks",
+			"play",
 			"show",
-			"extend",
-			"grow"
+			"theater"
 		]
 	},
-	"flag-2": {
+	"thing-type": {
 		"tags": [
-			"unflag",
-			"flag",
-			"unmark",
-			"mark",
-			"remove marker",
-			"important",
-			"remove selection",
-			"choose me",
-			"not selected",
-			"unfilled"
+			"bubble",
+			"popup",
+			"speech",
+			"thing-type"
 		]
 	},
-	"folder-2": {
+	"thumb-down": {
 		"tags": [
-			"folder",
-			"full",
-			"content",
-			"detail",
-			"choose",
-			"selected",
-			"filled"
+			"dislike",
+			"down",
+			"negative",
+			"thumbs"
 		]
 	},
-	"heart": {
+	"thumb-up": {
 		"tags": [
-			"heart",
-			"full",
-			"love",
-			"feeling",
-			"emotion",
-			"care",
-			"favorite",
-			"choose",
-			"selected",
-			"filled",
-			"content"
+			"appreciate",
+			"like",
+			"positive",
+			"thumbs",
+			"up"
 		]
 	},
-	"heart-2": {
+	"time-account": {
 		"tags": [
-			"heart",
-			"empty",
-			"unfulfilled",
-			"love",
-			"unloved",
-			"not loved",
-			"feeling",
-			"emotion",
-			"care",
-			"unfavorite",
-			"choose me",
-			"not selected",
-			"unfilled"
-		]
-	},
-	"paint-bucket": {
-		"tags": [
-			"filled",
-			"color",
-			"colour",
-			"bucket",
-			"spill",
-			"drop",
-			"fill"
-		]
-	},
-	"tri-state": {
-		"tags": [
-			"third",
-			"state",
-			"parial",
-			"selected",
-			"square",
-			"box",
-			"table",
-			"tree",
+			"account",
+			"clock",
 			"list",
-			"selection",
-			"tri",
-			"tri-state"
+			"time"
 		]
 	},
-	"non-binary": {
+	"time-entry-request": {
 		"tags": [
-			"non-binary",
-			"shapes",
-			"symbol",
-			"gender"
-		]
-	},
-	"direction-arrows": {
-		"tags": [
-			"arrow",
-			"slider",
-			"direction",
-			"left",
-			"right"
-		]
-	},
-	"female": {
-		"tags": [
-			"female",
-			"woman",
-			"girl",
-			"shapes",
-			"symbol",
-			"gender"
-		]
-	},
-	"gender-male-and-female": {
-		"tags": [
-			"male",
-			"man",
-			"boy",
-			"female",
-			"woman",
-			"girl",
-			"shapes",
-			"symbol",
-			"gender"
-		]
-	},
-	"male": {
-		"tags": [
-			"male",
-			"man",
-			"boy",
-			"shapes",
-			"symbol",
-			"gender"
-		]
-	},
-	"rotate": {
-		"tags": [
-			"arrow",
-			"square",
-			"object",
-			"rotate",
-			"around",
-			"direction"
-		]
-	},
-	"cloud-check": {
-		"tags": [
-			"cloud",
-			"check",
-			"data"
-		]
-	},
-	"enablement": {
-		"tags": [
-			"people",
-			"person",
-			"setting",
-			"chart",
-			"enable",
-			"tool",
-			"wrench",
-			"widgets"
-		]
-	},
-	"locate-me-2": {
-		"tags": [
-			"arrow",
-			"locate",
-			"me",
-			"map",
-			"location",
-			"pointer",
-			"navigation",
-			"filled"
-		]
-	},
-	"map-fill": {
-		"tags": [
-			"map",
-			"pin",
-			"location",
-			"place",
-			"area",
-			"solid",
-			"fill",
-			"filled"
-		]
-	},
-	"biometric-face": {
-		"tags": [
-			"face",
-			"faceid",
-			"viewfinder",
-			"id",
-			"recognition"
-		]
-	},
-	"biometric-thumb": {
-		"tags": [
-			"fingerprint",
-			"finger",
-			"thumb",
-			"id",
-			"recognition"
-		]
-	},
-	"dark-mode": {
-		"tags": [
-			"dark",
-			"moon",
-			"night",
-			"mode"
-		]
-	},
-	"light-mode": {
-		"tags": [
-			"light",
-			"sun",
-			"sunny",
-			"mode",
-			"day"
-		]
-	},
-	"people-connected": {
-		"tags": [
-			"people",
-			"connection",
-			"connected",
-			"collaboration",
-			"task-center",
-			"team",
-			"collaborate",
-			"work"
-		]
-	},
-	"select-appointments": {
-		"tags": [
-			"date picker",
-			"calendar",
-			"month",
-			"week",
-			"day",
-			"appointment",
-			"check",
-			"select",
-			"choose"
-		]
-	},
-	"accessibility": {
-		"tags": [
-			"user",
-			"person",
-			"accessible",
-			"accessibility",
-			"inclusive",
-			"inclusion",
-			"people"
-		]
-	},
-	"add-calendar": {
-		"tags": [
-			"appointment",
-			"vacation",
-			"leave",
+			"clock",
+			"entry",
+			"list",
 			"request",
-			"add",
-			"plus",
-			"calendar"
-		]
-	},
-	"bell-2": {
-		"tags": [
-			"bell",
-			"alarm",
-			"notify",
-			"alerts",
-			"full",
-			"filled"
-		]
-	},
-	"currency": {
-		"tags": [
-			"money",
-			"bills",
-			"currency",
-			"payment",
-			"cash"
-		]
-	},
-	"high-priority": {
-		"tags": [
-			"warning",
-			"critical",
-			"message",
-			"alert",
-			"status",
-			"!",
-			"notification",
-			"exclamation"
+			"time"
 		]
 	},
 	"time-off": {
 		"tags": [
-			"holiday",
-			"vacation",
-			"leave",
-			"request",
-			"out-of-office",
-			"out",
 			"appointment",
-			"calendar"
+			"calendar",
+			"holiday",
+			"leave",
+			"out",
+			"out-of-office",
+			"request",
+			"vacation"
 		]
 	},
-	"da": {
+	"time-overtime": {
 		"tags": [
-			"artificial intelligence",
-			"voice recognition",
-			"npl",
-			"NPL",
-			"assistant",
-			"chatbot",
-			"machine learning",
-			"ai",
-			"digital",
-			"assistance",
-			"virtual",
-			"intelligence",
-			"conversational ai",
-			"contextual understanding",
-			"artificial",
-			"machine"
-		]
-	},
-	"da-2": {
-		"tags": [
-			"artificial intelligence",
-			"voice recognition",
-			"npl",
-			"NPL",
-			"assistant",
-			"chatbot",
-			"machine learning",
-			"ai",
-			"digital",
-			"assistance",
-			"virtual",
-			"intelligence",
-			"conversational ai",
-			"contextual understanding",
-			"artificial",
-			"machine",
-			"filled",
-			"full"
-		]
-	},
-	"ai": {
-		"tags": [
-			"artificial intelligence",
-			"star",
-			"information",
-			"sparkle",
-			"magic",
-			"generate",
-			"automate",
-			"automation",
-			"generic",
-			"situation",
-			"machine learning",
-			"ai",
-			"digital",
-			"assistance",
-			"virtual",
-			"intelligence",
-			"contextual understanding",
-			"artificial",
-			"robot",
-			"machine"
-		]
-	},
-	"in-progress-2": {
-		"tags": [
-			"in process",
-			"status",
-			"working",
-			"current",
-			"on-going",
 			"clock",
-			"Time",
-			"Square",
-			"filled",
-			"full"
+			"hours",
+			"money",
+			"overtime",
+			"time"
+		]
+	},
+	"timesheet": {
+		"tags": [
+			"attachment",
+			"clock",
+			"days",
+			"document",
+			"file",
+			"hours",
+			"page",
+			"timesheet",
+			"workday"
+		]
+	},
+	"to-be-reviewed": {
+		"tags": [
+			"indicator",
+			"information",
+			"to be reviewed"
+		]
+	},
+	"toaster-down": {
+		"tags": [
+			"details",
+			"down",
+			"toaster"
+		]
+	},
+	"toaster-top": {
+		"tags": [
+			"details",
+			"toaster",
+			"top"
+		]
+	},
+	"toaster-up": {
+		"tags": [
+			"details",
+			"toaster",
+			"up"
+		]
+	},
+	"tools-opportunity": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"map",
+			"org",
+			"overview",
+			"tree"
+		]
+	},
+	"touch": {
+		"tags": [
+			"comfortable",
+			"controls",
+			"cozy",
+			"devices",
+			"finger",
+			"mobile",
+			"press",
+			"touch"
+		]
+	},
+	"translate": {
+		"tags": [
+			"A",
+			"arrows",
+			"letters",
+			"text",
+			"translate",
+			"translation"
+		]
+	},
+	"travel-expense": {
+		"tags": [
+			"billing",
+			"budget",
+			"cost",
+			"dollar",
+			"expense",
+			"flight",
+			"holiday",
+			"invoice",
+			"money",
+			"payments",
+			"plane",
+			"travel",
+			"trip"
+		]
+	},
+	"travel-expense-report": {
+		"tags": [
+			"bill",
+			"billing",
+			"envelope",
+			"expense",
+			"invoice",
+			"quote",
+			"report",
+			"sales",
+			"travel"
+		]
+	},
+	"travel-itinerary": {
+		"tags": [
+			"airplane",
+			"car",
+			"drive",
+			"flight",
+			"itinerary",
+			"plan",
+			"plane",
+			"schedule",
+			"travel"
+		]
+	},
+	"travel-request": {
+		"tags": [
+			"bubble",
+			"exclamation",
+			"help",
+			"notifications",
+			"question",
+			"status"
+		]
+	},
+	"tree": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"map",
+			"org",
+			"overview",
+			"tree"
+		]
+	},
+	"trend-down": {
+		"tags": [
+			"arrow",
+			"decline",
+			"decrease",
+			"diagonal",
+			"down",
+			"trend"
+		]
+	},
+	"trend-up": {
+		"tags": [
+			"arrow",
+			"diagonal",
+			"improve",
+			"increase",
+			"trend",
+			"up"
+		]
+	},
+	"tri-state": {
+		"tags": [
+			"box",
+			"list",
+			"partial",
+			"selected",
+			"selection",
+			"square",
+			"state",
+			"table",
+			"third",
+			"tree",
+			"tri",
+			"tri-state"
+		]
+	},
+	"trip-report": {
+		"tags": [
+			"analytics",
+			"business trip",
+			"chart",
+			"data",
+			"display",
+			"report",
+			"suitcase",
+			"trip"
+		]
+	},
+	"two-keys": {
+		"tags": [
+			"data",
+			"foreign",
+			"important",
+			"key",
+			"lock",
+			"primary"
+		]
+	},
+	"ui-notifications": {
+		"tags": [
+			"alerts",
+			"launchpad",
+			"notifications",
+			"notify",
+			"ui"
+		]
+	},
+	"umbrella": {
+		"tags": [
+			"brolly",
+			"keep dry",
+			"rain",
+			"shelter",
+			"umbrella"
+		]
+	},
+	"underline-text": {
+		"tags": [
+			"format",
+			"rich-text",
+			"text",
+			"text decoration",
+			"text edit",
+			"underline"
+		]
+	},
+	"undo": {
+		"tags": [
+			"arrow",
+			"backwards",
+			"history",
+			"previous state",
+			"undo"
+		]
+	},
+	"unfavorite": {
+		"tags": [
+			"remove",
+			"star",
+			"unfavorite"
+		]
+	},
+	"unlocked": {
+		"tags": [
+			"access",
+			"available",
+			"open",
+			"open padlock",
+			"status",
+			"unlocked",
+			"unrestricted"
+		]
+	},
+	"unpaid-leave": {
+		"tags": [
+			"bill",
+			"dollar",
+			"money",
+			"rejected",
+			"unpaid leave"
+		]
+	},
+	"unwired": {
+		"tags": [
+			"gauge",
+			"measure",
+			"monitor",
+			"performance",
+			"speed",
+			"unwired"
+		]
+	},
+	"up": {
+		"tags": [
+			"triangle",
+			"up"
+		]
+	},
+	"upload": {
+		"tags": [
+			"arrow",
+			"upload"
+		]
+	},
+	"upload-to-cloud": {
+		"tags": [
+			"arrow",
+			"cloud",
+			"save",
+			"upload"
+		]
+	},
+	"upstacked-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"upstacked"
+		]
+	},
+	"user-edit": {
+		"tags": [
+			"edit",
+			"pen",
+			"pencil",
+			"person",
+			"user"
+		]
+	},
+	"user-settings": {
+		"tags": [
+			"cogwheel",
+			"configuration",
+			"customize",
+			"modify",
+			"person",
+			"runtime authoring",
+			"settings",
+			"settings",
+			"tools",
+			"user"
+		]
+	},
+	"validate": {
+		"tags": [
+			"approve",
+			"certify",
+			"check",
+			"decision",
+			"message",
+			"reject",
+			"security",
+			"status",
+			"validate"
+		]
+	},
+	"value-help": {
+		"tags": [
+			"assistance",
+			"help",
+			"multi input",
+			"popup",
+			"value"
+		]
+	},
+	"vds-file": {
+		"tags": [
+			"attachment",
+			"document",
+			"file",
+			"page",
+			"text",
+			"vds",
+			"Visual Design Stream"
+		]
+	},
+	"vehicle-repair": {
+		"tags": [
+			"accident",
+			"car",
+			"crash",
+			"damage",
+			"fix",
+			"garage",
+			"repair",
+			"vehicle"
+		]
+	},
+	"vertical-bar-chart": {
+		"tags": [
+			"analytics",
+			"bar",
+			"chart",
+			"data",
+			"display",
+			"vertical"
+		]
+	},
+	"vertical-bar-chart-2": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"vertical bar chart"
+		]
+	},
+	"vertical-bullet-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display"
+		]
+	},
+	"vertical-grip": {
+		"tags": [
+			"grip",
+			"move left",
+			"move right",
+			"splitter",
+			"vertical"
+		]
+	},
+	"vertical-stacked-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display",
+			"vertical stacked chart"
+		]
+	},
+	"vertical-waterfall-chart": {
+		"tags": [
+			"analytics",
+			"chart",
+			"data",
+			"display"
+		]
+	},
+	"video": {
+		"tags": [
+			"camera",
+			"clip",
+			"movie",
+			"recorder",
+			"video"
+		]
+	},
+	"visits": {
+		"tags": [
+			"arrow",
+			"door",
+			"entry",
+			"login",
+			"user",
+			"visit"
+		]
+	},
+	"waiver": {
+		"tags": [
+			"money bag",
+			"percentage",
+			"waiver"
+		]
+	},
+	"wallet": {
+		"tags": [
+			"allowance",
+			"bank",
+			"cash",
+			"coins",
+			"money",
+			"notes",
+			"purse",
+			"wallet",
+			"wealth",
+			"worth"
+		]
+	},
+	"warning": {
+		"tags": [
+			"exclamation mark",
+			"indicator",
+			"information",
+			"warning"
+		]
+	},
+	"warning2": {
+		"tags": [
+			"indicator",
+			"information",
+			"to be reviewed",
+			"warning"
+		]
+	},
+	"washing-machine": {
+		"tags": [
+			"clean",
+			"laundry",
+			"machine",
+			"purify",
+			"wash",
+			"washing"
+		]
+	},
+	"weather-proofing": {
+		"tags": [
+			"proofing",
+			"protection",
+			"weather"
+		]
+	},
+	"web-cam": {
+		"tags": [
+			"camera",
+			"live",
+			"video",
+			"visual",
+			"web cam"
+		]
+	},
+	"widgets": {
+		"tags": [
+			"apps",
+			"dollar",
+			"music",
+			"plane",
+			"random",
+			"star",
+			"widgets"
+		]
+	},
+	"windows-doors": {
+		"tags": [
+			"door",
+			"entry",
+			"window"
+		]
+	},
+	"work-history": {
+		"tags": [
+			"folder",
+			"person",
+			"work history"
+		]
+	},
+	"workflow-tasks": {
+		"tags": [
+			"calendar",
+			"process",
+			"project",
+			"steps",
+			"task",
+			"workflow"
+		]
+	},
+	"world": {
+		"tags": [
+			"earth",
+			"geographical",
+			"global",
+			"globe",
+			"international",
+			"planet",
+			"world"
+		]
+	},
+	"wounds-doc": {
+		"tags": [
+			"accident",
+			"cross",
+			"doc",
+			"emergency",
+			"health",
+			"hospital",
+			"illness",
+			"injury",
+			"patient",
+			"wounds"
+		]
+	},
+	"wrench": {
+		"tags": [
+			"configuration",
+			"control",
+			"settings",
+			"tool",
+			"wrench"
+		]
+	},
+	"write-new": {
+		"tags": [
+			"create",
+			"new",
+			"pen",
+			"pencil",
+			"write"
+		]
+	},
+	"write-new-document": {
+		"tags": [
+			"document",
+			"edit",
+			"file",
+			"new",
+			"page",
+			"pen",
+			"pencil",
+			"text",
+			"write"
+		]
+	},
+	"x-ray": {
+		"tags": [
+			"medical",
+			"procedure",
+			"scan",
+			"x ray"
+		]
+	},
+	"zoom-in": {
+		"tags": [
+			"bigger",
+			"enlarge",
+			"glass",
+			"in",
+			"magnify",
+			"plus",
+			"zoom"
+		]
+	},
+	"zoom-out": {
+		"tags": [
+			"glass",
+			"minus",
+			"out",
+			"reduce",
+			"smaller",
+			"zoom"
 		]
 	}
 }
