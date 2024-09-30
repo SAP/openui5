@@ -8,5 +8,15 @@
         "text": " ObjectPageLayout: Fix lazy loading of data of BlockBases"
       }
     ]
+  },
+  "1.124.7": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "24c5b17d7d8568cf84f51ce39959922c6d090fb2",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: lazy loading with selected SubSection"
+      }
+    ]
   }
 }

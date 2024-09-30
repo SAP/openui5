@@ -304,5 +304,15 @@
         "text": " sap.m.IconTabBar: Content padding classes are applied to the header if additional class is present"
       }
     ]
+  },
+  "1.124.7": {
+    "date": "September 2024",
+    "notes": [
+      {
+        "id": "41ace6d1506a8fa0c5956dc70c2affc2b005fe5c",
+        "type": "FIX",
+        "text": " CellSelector: Return correct row contexts when grouping"
+      }
+    ]
   }
 }
