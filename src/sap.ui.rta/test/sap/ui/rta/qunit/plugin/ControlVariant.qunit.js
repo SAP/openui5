@@ -14,10 +14,13 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/ContextSharingAPI",
+	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/qunit/utils/nextUIUpdate",
@@ -30,10 +33,10 @@ sap.ui.define([
 	"sap/ui/rta/plugin/ControlVariant",
 	"sap/ui/rta/plugin/RenameHandler",
 	"sap/ui/rta/Utils",
+	"sap/ui/thirdparty/sinon-4",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
-	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
@@ -50,10 +53,13 @@ sap.ui.define([
 	OverlayRegistry,
 	DtUtil,
 	KeyCodes,
+	FlexObjectFactory,
+	FlexObjectState,
 	ControlVariantApplyAPI,
 	VariantManagement,
 	ChangesWriteAPI,
 	ContextSharingAPI,
+	VersionsAPI,
 	Layer,
 	VerticalLayout,
 	nextUIUpdate,
@@ -66,10 +72,10 @@ sap.ui.define([
 	ControlVariantPlugin,
 	RenameHandler,
 	RtaUtils,
+	sinon,
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
-	sinon,
 	FlexTestAPI,
 	RtaQunitUtils
 ) {
@@ -420,36 +426,142 @@ sap.ui.define([
 		});
 
 		QUnit.test("when configureVariants is called", function(assert) {
-			var done = assert.async();
-			var aChanges = ["change1", "change2"];
+			const done = assert.async();
+			const aChanges = ["change1", "change2"];
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
-			sandbox.stub(this.oModel, "manageVariants").resolves(aChanges);
-			var oCreateComponentSpy = sandbox.spy(ContextSharingAPI, "createComponent");
+			sandbox.stub(this.oModel, "manageVariants").resolves({ changes: aChanges, variantsToBeDeleted: [] });
+			sandbox.stub(VersionsAPI, "getDraftFilenames").returns([]);
+			const oCreateComponentSpy = sandbox.spy(ContextSharingAPI, "createComponent");
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
 				assert.ok(oEvent, "then fireElementModified is called once");
-				var oCommand = oEvent.getParameter("command");
-				assert.ok(oCommand instanceof ControlVariantConfigure, "then a configure Variant event is received with a configure command");
-				assert.equal(oCommand.getChanges(), aChanges, "and the command contains the given changes");
+				const oCommand = oEvent.getParameter("command");
+				assert.ok(
+					oCommand instanceof ControlVariantConfigure,
+					"then a configure Variant event is received with a configure command"
+				);
+				assert.strictEqual(oCommand.getChanges(), aChanges, "and the command contains the given changes");
 				done();
 			});
 			this.oControlVariantPlugin.configureVariants([this.oVariantManagementOverlay]);
-			var oArgs = oCreateComponentSpy.getCall(0).args[0];
+			const oArgs = oCreateComponentSpy.getCall(0).args[0];
 			assert.ok(oArgs.variantManagementControl, "then the correct control is used");
 		});
 
 		QUnit.test("when configureVariants is called without changes", function(assert) {
-			var done = assert.async();
-			var aChanges = [];
+			const done = assert.async();
+			const aChanges = [];
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
-			sandbox.stub(this.oModel, "manageVariants").resolves(aChanges);
-			var oFireElementModifiedSpy = sandbox.spy(this.oControlVariantPlugin, "fireElementModified");
+			sandbox.stub(this.oModel, "manageVariants").resolves({ changes: aChanges, variantsToBeDeleted: [] });
+			sandbox.stub(VersionsAPI, "getDraftFilenames").returns([]);
+			const oFireElementModifiedSpy = sandbox.spy(this.oControlVariantPlugin, "fireElementModified");
 
 			return this.oControlVariantPlugin.configureVariants([this.oVariantManagementOverlay])
 			.then(function() {
 				assert.ok(oFireElementModifiedSpy.notCalled, "then the command is not built");
 				done();
 			});
+		});
+
+		QUnit.test("when configureVariants is called and variants are deleted", function(assert) {
+			const fnDone = assert.async();
+			const aChanges = ["change1", "change2"];
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+			sandbox.stub(this.oModel, "manageVariants").resolves({ changes: aChanges, variantsToBeDeleted: ["dummyVariant"] });
+
+			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
+				assert.ok(oEvent, "then fireElementModified is called once");
+				const oCommand = oEvent.getParameter("command");
+				assert.ok(
+					oCommand instanceof ControlVariantConfigure,
+					"then a configure Variant event is received with a configure command"
+				);
+				assert.strictEqual(oCommand.getChanges(), aChanges, "and the command contains the given changes");
+				assert.strictEqual(oCommand.getDeletedVariants()[0], "dummyVariant", "and the command contains the deleted variant");
+				fnDone();
+			});
+			this.oControlVariantPlugin.configureVariants([this.oVariantManagementOverlay]);
+		});
+
+		QUnit.test("when configureVariants is called and a dirty variant is deleted", function(assert) {
+			const done = assert.async();
+			const oVariant = FlexObjectFactory.createFlVariant({
+				id: "variant1",
+				reference: "dummyReference",
+				layer: Layer.USER
+			});
+			const oSetTitleVariantChange = FlexObjectFactory.createFromFileContent({
+				fileType: "ctrl_variant_change",
+				layer: Layer.USER,
+				changeType: "setTitle",
+				selector: {
+					id: "variant1"
+				}
+			});
+			const oVMDependentChange = FlexObjectFactory.createFromFileContent({
+				fileType: "change",
+				layer: Layer.USER,
+				changeType: "dummyChange",
+				variantReference: "variant1"
+			});
+
+			sandbox.stub(FlexObjectState, "getDirtyFlexObjects").returns([oVariant, oSetTitleVariantChange, oVMDependentChange]);
+
+			const aChanges = [oSetTitleVariantChange, oVMDependentChange];
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+			sandbox.stub(this.oModel, "manageVariants").resolves({ changes: aChanges, variantsToBeDeleted: [oVariant.getId()] });
+			sandbox.stub(VersionsAPI, "getDraftFilenames").returns([]);
+
+			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
+				assert.ok(oEvent, "then fireElementModified is called once");
+				const oCommand = oEvent.getParameter("command");
+				assert.ok(
+					oCommand instanceof ControlVariantConfigure,
+					"then a configure Variant event is received with a configure command"
+				);
+				assert.strictEqual(oCommand.getChanges(), aChanges, "and the command contains the given changes");
+				assert.deepEqual(oCommand.getDeletedVariants(), [oVariant.getId()], "and the command contains the deleted dirty variant");
+				done();
+			});
+			this.oControlVariantPlugin.configureVariants([this.oVariantManagementOverlay]);
+		});
+
+		QUnit.test("when configureVariants is called and dirty + draft variants are deleted", function(assert) {
+			const done = assert.async();
+			const oVariant = FlexObjectFactory.createFlVariant({
+				id: "variant1",
+				reference: "dummyReference",
+				layer: Layer.USER
+			});
+			const oVariant2 = FlexObjectFactory.createFlVariant({
+				id: "variant2",
+				reference: "dummyReference",
+				layer: Layer.USER
+			});
+
+			sandbox.stub(FlexObjectState, "getDirtyFlexObjects").returns([oVariant]);
+
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+			sandbox.stub(this.oModel, "manageVariants")
+			.resolves({ changes: ["SetVisibleFalse"], variantsToBeDeleted: [oVariant.getId(), oVariant2.getId()] });
+			sandbox.stub(VersionsAPI, "getDraftFilenames").returns([oVariant2.getId()]);
+
+			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
+				assert.ok(oEvent, "then fireElementModified is called once");
+				const oCommand = oEvent.getParameter("command");
+				assert.ok(
+					oCommand instanceof ControlVariantConfigure,
+					"then a configure Variant event is received with a configure command"
+				);
+				assert.strictEqual(oCommand.getChanges()[0], "SetVisibleFalse", "and the command contains the given changes");
+				assert.deepEqual(
+					oCommand.getDeletedVariants(),
+					[oVariant.getId(), oVariant2.getId()],
+					"and the command contains both variants"
+				);
+				done();
+			});
+			this.oControlVariantPlugin.configureVariants([this.oVariantManagementOverlay]);
 		});
 
 		QUnit.test("when createSaveCommand is called and the key user presses the save button", function(assert) {

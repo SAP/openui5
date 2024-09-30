@@ -29,6 +29,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
+	"sap/ui/fl/write/_internal/controlVariants/ControlVariantWriteUtils",
 	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
@@ -68,6 +69,7 @@ sap.ui.define([
 	Settings,
 	VariantManagement,
 	VariantModel,
+	ControlVariantWriteUtils,
 	UIChangeManager,
 	FlexObjectManager,
 	ContextBasedAdaptationsAPI,
@@ -1288,7 +1290,7 @@ sap.ui.define([
 				}],
 				def: "variant0"
 			});
-			const aChanges = this.oModel._collectModelChanges(sVMReference, Layer.CUSTOMER, oManageEvent);
+			const aChanges = this.oModel._collectModelChanges(sVMReference, Layer.CUSTOMER, oManageEvent).changes;
 			assert.strictEqual(aChanges.length, 6, "then 6 changes with mPropertyBags were created");
 		});
 
@@ -1313,7 +1315,7 @@ sap.ui.define([
 				def: "variant0"
 			});
 
-			const aChanges = this.oModel._collectModelChanges(sVMReference, Layer.USER, oManageEvent);
+			const aChanges = this.oModel._collectModelChanges(sVMReference, Layer.USER, oManageEvent).changes;
 			assert.strictEqual(aChanges.length, 5, "then 5 changes with mPropertyBags were created");
 			aChanges.forEach(function(oChange) {
 				if (oChange.variantReference === "variant3" && oChange.changeType === "setVisible") {
@@ -1331,10 +1333,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'manageVariants' in Adaptation mode with changes", function(assert) {
-			var oVariantManagement = new VariantManagement(sVMReference);
-			var sLayer = Layer.CUSTOMER;
-			var sDummyClass = "DummyClass";
-			var oFakeComponentContainerPromise = {property: "fake"};
+			const oVariantManagement = new VariantManagement(sVMReference);
+			const sLayer = Layer.CUSTOMER;
+			const sDummyClass = "DummyClass";
+			const oFakeComponentContainerPromise = {property: "fake"};
 			oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			const sVariant1Key = this.oModel.oData[sVMReference].variants[1].key;
@@ -1358,15 +1360,15 @@ sap.ui.define([
 				}],
 				def: "variant0"
 			};
-			var oOpenManagementDialogStub = sandbox.stub(oVariantManagement, "openManagementDialog")
+			const oOpenManagementDialogStub = sandbox.stub(oVariantManagement, "openManagementDialog")
 			.callsFake(() => oVariantManagement.fireManage(oManageParameters));
-			var oVariantInstance = createVariant(this.oModel.oData[sVMReference].variants[1]);
+			const oVariantInstance = createVariant(this.oModel.oData[sVMReference].variants[1]);
 			sandbox.stub(this.oModel, "getVariant").returns({instance: oVariantInstance});
 
 			this.oModel.setModelPropertiesForControl(sVMReference, true, oVariantManagement);
 
 			return this.oModel.manageVariants(oVariantManagement, sVMReference, sLayer, sDummyClass, oFakeComponentContainerPromise)
-			.then(function(aChanges) {
+			.then(function({ changes: aChanges, variantsToBeDeleted: aVariantsToBeDeleted }) {
 				assert.strictEqual(aChanges.length, 6, "then 6 changes were returned since changes were made in the manage dialog");
 				assert.deepEqual(aChanges[0], {
 					variantReference: "variant0",
@@ -1413,6 +1415,11 @@ sap.ui.define([
 					oOpenManagementDialogStub.calledWith(true, sDummyClass, oFakeComponentContainerPromise),
 					"then openManagementControl is called with the right parameters"
 				);
+				assert.deepEqual(
+					aVariantsToBeDeleted,
+					["variant0"],
+					"then the removed variant is returned as variant to be deleted"
+				);
 				oVariantManagement.destroy();
 			});
 		});
@@ -1422,6 +1429,7 @@ sap.ui.define([
 			oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 			const oVariantInstance = createVariant(this.oModel.getData()[sVMReference].variants[1]);
 			sandbox.stub(this.oModel, "getVariant").returns({instance: oVariantInstance});
+			const oDeleteVariantSpy = sandbox.stub(ControlVariantWriteUtils, "deleteVariant");
 
 			const sVariantKey = this.oModel.getData()[sVMReference].variants[1].key;
 			const oManageParameters = {
@@ -1448,6 +1456,7 @@ sap.ui.define([
 			assert.strictEqual(aArgs[1], false, "the second parameter is false");
 			assert.deepEqual(aArgs[2].length, 4, "an array with 4 changes was passed");
 			assert.strictEqual(oAddVariantChangesSpy.lastCall.args[1].length, 4, "4 changes were added");
+			assert.ok(oDeleteVariantSpy.notCalled, "for the CUSTOMER layer variant, deleteVariant is not called");
 			oVariantManagement.destroy();
 		});
 
@@ -1480,6 +1489,43 @@ sap.ui.define([
 			});
 
 			oVariantManagement.fireManage(oManageParameters, {variantManagementReference: sVMReference});
+		});
+
+		QUnit.test("when the VM Control fires the manage event in Personalization mode deleting a USER and a PUBLIC layer variant", function(assert) {
+			const fnDone = assert.async();
+			const oVariantManagement = new VariantManagement(sVMReference);
+			oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
+			const oVariantInstance = createVariant(this.oModel.getData()[sVMReference].variants[4]);
+			sandbox.stub(this.oModel, "getVariant").returns({ instance: oVariantInstance });
+			const aFlexObjectsToBeDeleted = ["delete1", "delete2"];
+			const oDeleteVariantStub = sandbox.stub(ControlVariantWriteUtils, "deleteVariant").returns(aFlexObjectsToBeDeleted);
+
+			const oManageParameters = {
+				deleted: ["variant2", "variant3"]
+			};
+
+			sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").callsFake((oAppComponent, bSkipUpdateCache, aChanges) => {
+				assert.ok(
+					oDeleteVariantStub.calledWith(this.oComponent.name, sVMReference, "variant3"),
+					"then the variant and related objects were deleted"
+				);
+				assert.notOk(
+					oDeleteVariantStub.calledWith(this.oComponent.name, sVMReference, "variant2"),
+					"then the PUBLIC variant is only hidden and not deleted"
+				);
+				assert.ok(
+					aChanges.find((oChange) => oChange.getChangeType?.() === "setVisible"),
+					"then the setVisible change is passed to the saveDirtyChanges function"
+				);
+				assert.ok(
+					aChanges.find((oChange) => oChange === "delete1") && aChanges.find((oChange) => oChange === "delete2"),
+					"then the additional flex objects to be deleted are passed to the saveDirtyChanges function"
+				);
+				oVariantManagement.destroy();
+				fnDone();
+			});
+
+			oVariantManagement.fireManage(oManageParameters, { variantManagementReference: sVMReference });
 		});
 
 		QUnit.test("when calling '_initializeManageVariantsEvents'", function(assert) {

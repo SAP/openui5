@@ -146,6 +146,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the list of Flex Objects file names which belong to the current draft.
+	 *
+	 * @param {object} mPropertyBag - Property bag
+	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
+	 * @param {string} mPropertyBag.layer - Layer for which the file names should be retrieved
+	 * @returns {string[]} List of file names for the draft
+	 */
+	VersionsAPI.getDraftFilenames = function(mPropertyBag) {
+		const oModel = getVersionsModel(mPropertyBag);
+		return oModel.getProperty("/draftFilenames");
+	};
+
+	/**
 	 * Returns a flag if the displayed version is not the active version for the current application and layer.
 	 *
 	 * @param {object} mPropertyBag - Property bag

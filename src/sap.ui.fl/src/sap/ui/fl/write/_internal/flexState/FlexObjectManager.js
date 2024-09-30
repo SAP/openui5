@@ -307,7 +307,38 @@ sap.ui.define([
 			removeFlexObjectFromDependencyHandler(mPropertyBag.reference, oFlexObject);
 		});
 		FlexState.removeDirtyFlexObjects(mPropertyBag.reference, aToBeRemovedDirtyFlexObjects);
-		FlexObjectManager.addDirtyFlexObjects(mPropertyBag.reference, aToBeDeletedFlexObjects);
+		const aAddedFlexObjects = FlexObjectManager.addDirtyFlexObjects(mPropertyBag.reference, aToBeDeletedFlexObjects);
+		if (!aToBeRemovedDirtyFlexObjects.length && !aAddedFlexObjects.length) {
+			const oFlexObjectsDataSelector = FlexState.getFlexObjectsDataSelector();
+			oFlexObjectsDataSelector.checkUpdate({
+				reference: mPropertyBag.reference
+			});
+		}
+	};
+
+	/**
+	 * Restores previously deleted flex objects. They can be in state DELETED or NEW (when they were dirty and removed from the FlexState).
+	 * Objects are restored to the state they were in before deletion.
+	 * If the flex object was not persisted, it is added as a dirty object again.
+	 * Deleting a change in the State NEW is done by just removing the change from the map instead of changing the state to DELETED.
+	 *
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {string} mPropertyBag.reference - Flex reference of the application
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} mPropertyBag.flexObjects - Flex objects to be restored
+	 */
+	FlexObjectManager.restoreDeletedFlexObjects = function(mPropertyBag) {
+		const aDeletedFlexObjects = mPropertyBag.flexObjects.filter((oFlexObject) => (
+			oFlexObject.getState() === States.LifecycleState.DELETED
+			|| oFlexObject.getState() === States.LifecycleState.NEW
+		));
+		aDeletedFlexObjects.forEach((oFlexObject) => {
+			oFlexObject.restorePreviousState();
+		});
+
+		const aDirtyFlexObjectsToBeAdded = aDeletedFlexObjects.filter((oFlexObject) => (
+			oFlexObject.getState() !== States.LifecycleState.PERSISTED
+		));
+		FlexObjectManager.addDirtyFlexObjects(mPropertyBag.reference, aDirtyFlexObjectsToBeAdded);
 	};
 
 	/**
