@@ -252,7 +252,7 @@ sap.ui.define([
 			const aElements0 = oListBinding.oCache.oFirstLevel.aElements;
 			if (!aElements0.$created && aElements0.$count === aElements0.length) {
 				aElements0.forEach((oElement, i) => {
-					if (oElement["@$ui5.node.isExpanded"]) {
+					if (oElement?.["@$ui5.node.isExpanded"]) {
 						const iLevel = oElement["@$ui5.node.level"];
 						let iDescendants = 0;
 						for (let j = i + 1; j < aElements0.length; j += 1) {
@@ -40595,6 +40595,290 @@ make root = ${bMakeRoot}`;
 			[true, 4, "6", "Zeta"],
 			[undefined, 5, "7", "Eta"]
 		], 7);
+	});
+
+	//*********************************************************************************************
+	// Scenario: A hierarchy uses "$$aggregation.createInPlace". A new child node is created below
+	// an expanded (root) node that has not all children loaded yet. The new node is placed as the
+	// last child and the parent node can still be collapsed properly, despite those placeholders
+	// between parent and created node.
+	// JIRA: CPOUI5ODATAV4-2642
+	QUnit.test("Recursive Hierarchy: createInPlace, placeholders", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sSelect = "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name";
+		const sUrl = "EMPLOYEES"
+			+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+			+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)";
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				createInPlace : true,
+				expandTo : 2,
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="2">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 1 Alpha
+		//   1.1 Beta
+		//   1.2 Gamma (not loaded)
+		//   1.3 Delta (not loaded)
+		//   1.4 Epsilon (created)
+		// 9 Omega
+		this.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "5",
+				value : [{
+					DescendantCount : "3",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "1.1",
+					Name : "Beta"
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial page", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')"
+		], [
+			[true, 1, "1", "Alpha"],
+			[undefined, 2, "1.1", "Beta"]
+		], 5);
+		const oListBinding = oTable.getBinding("rows");
+		const [oAlpha] = oListBinding.getAllCurrentContexts();
+
+		this.expectRequest({
+				method : "POST",
+				url : "EMPLOYEES",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('1')",
+					Name : "Epsilon"
+				}
+			}, {
+				ID : "1.4",
+				Name : "Epsilon"
+			})
+			.expectRequest(sUrl + "&$filter=ID eq '1.4'&$select=LimitedRank", {
+				value : [{LimitedRank : "4"}]
+			});
+
+		// code under test
+		const oEpsilon = oListBinding.create({
+			"@$ui5.node.parent" : oAlpha,
+			Name : "Epsilon"
+		}, /*bSkipRefresh*/true);
+
+		await oEpsilon.created();
+
+		assert.strictEqual(oEpsilon.getIndex(), 4, "last child");
+
+		await this.waitForChanges(assert, "create Epsilon");
+
+		checkTable("after create Epsilon", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('1.4')"
+		], [
+			[true, 1, "1", "Alpha"],
+			[undefined, 2, "1.1", "Beta"]
+		], 6);
+
+		this.expectRequest(sUrl + sSelect + "&$skip=5&$top=1", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "9",
+					Name : "Omega"
+				}]
+			});
+
+		oTable.setFirstVisibleRow(oEpsilon.getIndex());
+
+		await this.waitForChanges(assert, "scroll to Epsilon");
+
+		checkTable("after scroll to Epsilon", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('1.4')",
+			"/EMPLOYEES('9')"
+		], [
+			[undefined, 2, "1.4", "Epsilon"],
+			[undefined, 1, "9", "Omega"]
+		], 6);
+
+		oAlpha.collapse();
+
+		await resolveLater(); // table update takes a moment
+
+		checkTable("after collapse Alpha (not too much, not too few)", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('9')"
+		], [
+			[false, 1, "1", "Alpha"],
+			[undefined, 1, "9", "Omega"]
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: A new child node is moved below an expanded (root) node that has not all children
+	// loaded yet. The moved node is placed as the last child and the parent node can still be
+	// collapsed properly, despite those placeholders between parent and moved node. "expand all"
+	// is needed and "nextSibling" must not be used in order to avoid a side-effects refresh when
+	// moving!
+	// JIRA: CPOUI5ODATAV4-2642
+	QUnit.test("Recursive Hierarchy: move, placeholders", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sSelect = "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name";
+		const sUrl = "EMPLOYEES"
+			+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+			+ ",HierarchyQualifier='OrgChart',NodeProperty='ID')";
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				expandTo : 1E16,
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="2">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 1 Alpha
+		//   1.1 Beta (moved to the end)
+		//   1.2 Gamma
+		//   1.3 Delta (not loaded)
+		//   1.4 Epsilon (not loaded)
+		// 9 Omega
+		this.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "6",
+				value : [{
+					DescendantCount : "4",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "1.1",
+					Name : "Beta"
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial page", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')"
+		], [
+			[true, 1, "1", "Alpha"],
+			[undefined, 2, "1.1", "Beta"]
+		], 6);
+		const oListBinding = oTable.getBinding("rows");
+		const [oAlpha, oBeta] = oListBinding.getAllCurrentContexts();
+
+		this.expectRequest({
+				batchNo : 2,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('1')"
+				},
+				url : "EMPLOYEES('1.1')"
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 2,
+				url : sUrl + "&$filter=ID eq '1.1'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "4" // Edm.Int64
+				}]
+			})
+			.expectRequest({
+				batchNo : 3,
+				url : sUrl + sSelect + "&$skip=1&$top=1"
+			}, {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "1.2",
+					Name : "Gamma"
+				}]
+			});
+
+		// code under test
+		await oBeta.move({parent : oAlpha});
+
+		assert.strictEqual(oBeta.getIndex(), 4, "last child");
+
+		await this.waitForChanges(assert, "move Beta");
+
+		checkTable("after move Beta", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.2')",
+			"/EMPLOYEES('1.1')"
+		], [
+			[true, 1, "1", "Alpha"],
+			[undefined, 2, "1.2", "Gamma"]
+		], 6);
+
+		this.expectRequest(sUrl + sSelect + "&$skip=5&$top=1", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "9",
+					Name : "Omega"
+				}]
+			});
+
+		oTable.setFirstVisibleRow(oBeta.getIndex());
+
+		await this.waitForChanges(assert, "scroll to Beta");
+
+		checkTable("after scroll to Beta", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.2')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('9')"
+		], [
+			[undefined, 2, "1.1", "Beta"],
+			[undefined, 1, "9", "Omega"]
+		], 6);
+
+		oAlpha.collapse();
+
+		await resolveLater(); // table update takes a moment
+
+		checkTable("after collapse Alpha (not too much, not too few)", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('9')"
+		], [
+			[false, 1, "1", "Alpha"],
+			[undefined, 1, "9", "Omega"]
+		]);
 	});
 
 	//*********************************************************************************************

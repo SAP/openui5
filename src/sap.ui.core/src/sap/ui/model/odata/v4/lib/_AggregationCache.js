@@ -578,6 +578,8 @@ sap.ui.define([
 			_Helper.deletePrivateAnnotation(oEntityData, "transientPredicate");
 			delete aElements.$byPredicate[sTransientPredicate];
 			if (iRank !== undefined) {
+				// Note: a node w/ rank in oFirstLevel is counted in "descendants", thus we must
+				// first adjust "descendants" before setting the rank!
 				this.adjustDescendantCount(oEntityData, iIndex0, +1);
 				oCache.restoreElement(iRank, oEntityData);
 				_Helper.setPrivateAnnotation(oEntityData, "rank", iRank);
@@ -1610,10 +1612,13 @@ sap.ui.define([
 					"@$ui5.context.isTransient" : undefined,
 					"@$ui5.node.level" : oParentNode ? oParentNode["@$ui5.node.level"] + 1 : 1
 				});
-				_Helper.setPrivateAnnotation(oChildNode, "rank", iRank);
+				// Note: a node w/ rank in oFirstLevel is counted in "descendants", thus we must
+				// first adjust "descendants" before setting the new rank!
+				_Helper.deletePrivateAnnotation(oChildNode, "rank");
 				const iNewIndex = this.getInsertIndex(iRank);
 				this.aElements.splice(iNewIndex, 0, oChildNode);
 				this.adjustDescendantCount(oChildNode, iNewIndex, +iOffset);
+				_Helper.setPrivateAnnotation(oChildNode, "rank", iRank);
 
 				return [iResult, iNewIndex, iCount];
 			});
