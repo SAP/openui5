@@ -51,6 +51,12 @@ sap.ui.define([
 		Message, MessageType, BindingMode, BaseContext, Model, OperationMode, URI) {
 	"use strict";
 
+	/**
+	 * Whether the ODataModel is marked as final.
+	 * @ui5-transform-hint replace-local true
+	 */
+	const bFinal = false;
+
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
 		// system query options allowed within a $expand query option
 		aExpandQueryOptions = ["$count", "$expand", "$filter", "$levels", "$orderby", "$search",
@@ -236,7 +242,8 @@ sap.ui.define([
 		 */
 		ODataModel = Model.extend("sap.ui.model.odata.v4.ODataModel",
 			/** @lends sap.ui.model.odata.v4.ODataModel.prototype */{
-				constructor : constructor
+				constructor : constructor,
+				metadata : {final : bFinal}
 			});
 
 	//*********************************************************************************************
@@ -3054,6 +3061,21 @@ sap.ui.define([
 			prefix : "sap.ui.model.odata.v4.optimisticBatch:"
 		});
 	};
+
+	/** @deprecated */
+	(() => {
+		const fnOriginalExtend = ODataModel.extend;
+		/**
+		 * DO NOT EXTEND THIS CLASS.
+		 *
+		 * @returns {function} The created class / constructor function
+		 * @deprecated
+		 */
+		ODataModel.extend = function () {
+			Log.error("[FUTURE FATAL] sap.ui.model.odata.v4.ODataModel must not be extended");
+			return fnOriginalExtend.apply(this, arguments);
+		};
+	})();
 
 	return ODataModel;
 });
