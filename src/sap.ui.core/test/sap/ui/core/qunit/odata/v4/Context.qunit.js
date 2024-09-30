@@ -1507,6 +1507,29 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("delete: already removed via resetChanges", function (assert) {
+		const oBinding = {
+			checkSuspended : function () {},
+			mParameters : "~mParameters~"
+			// no delete
+		};
+		const oContext = Context.create("~oModel~", oBinding, "/EMPLOYEES($uid=id-1-23)", -1);
+
+		oContext.iIndex = undefined; // simulate remove via resetChanges
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs("~mParameters~").returns(false);
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
+
+		// code under test
+		const oPromise = oContext.delete("myGroup");
+
+		assert.ok(oPromise instanceof Promise);
+
+		return oPromise;
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bFailure) {
 	QUnit.test("doDelete: " + (bFailure ? "failure" : "success"), function (assert) {
 		var aAllBindings = [

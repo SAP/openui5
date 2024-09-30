@@ -4071,6 +4071,7 @@ sap.ui.define([
 			}
 		}
 		this.aContexts.splice(iIndex, 1);
+		oContext.iIndex = undefined;
 		if (!oContext.isEffectivelyKeptAlive()) {
 			this.destroyLater(oContext);
 		}
