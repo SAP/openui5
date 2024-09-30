@@ -1798,6 +1798,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns this model's base URI of the data service (as defined by the "serviceUrl" model parameter; see
+	 * {@link #constructor}), without query options.
+	 *
+	 * @returns {string} The service's base URI without query options
+	 *
+	 * @public
+	 * @since 1.130.0
+	 */
+	ODataModel.prototype.getServiceUrl = function () {
+		return this.sServiceUrl;
+	};
+
+	/**
 	 * Invalidate the model data.
 	 *
 	 * Mark all entries in the model cache as invalid. Next time a context or list is bound
