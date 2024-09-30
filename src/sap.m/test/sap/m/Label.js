@@ -386,8 +386,24 @@ sap.ui.define([
 		id: "oVL5",
 		width: "130px",
 		content: [
-			new Label("reqLabelParentWidth", {text:"Lorem ipsum dolor sit amet, Lorem ipsum dolor sit amet", required:true}),
-			new Label("reqColonLabelParentWidth", {text: "Lorem ipsum dolor sit amet, Lorem ipsum dolor sit amet", required:true, showColon: true})
+			new Label({text: "parent container with set width", wrapping: true, wrappingType: "Normal", design: "Bold"}),
+			new Label("reqLabelParentWidth", {text:"Lorem ipsum dolor sit amet, Lorem ipsum dolor sit amet", required: true}),
+			new Label("reqColonLabelParentWidth", {text: "Lorem ipsum dolor sit amet, Lorem ipsum dolor sit amet", required: true, showColon: true})
+		]
+	});
+
+	var oVL6 = new VerticalLayout({
+		id: "oVL6",
+		content: [
+			new Label({text: "labels with percent width", wrapping: true, wrappingType: "Normal", design: "Bold"}),
+			new Label("percentLabel", {text:"Lorem", width: "15%"}),
+			new Label("percentLabelRequired", {text: "Lorem", width: "15%", required: true}),
+			new Label("percentLabelColon", {text: "Lorem", width: "15%", showColon: true}),
+			new Label("percentLabelColonRequired", {text: "Lorem", width: "15%", required: true, showColon: true}),
+			new Label({text:"Lorem ipsum dolor sit amet, Lorem ipsum dolor sit amet", width: "15%"}),
+			new Label({text: "Lorem ipsum dolor sit amet, Lorem ipsum dolor sit amet", width: "15%", required: true}),
+			new Label({text: "Lorem ipsum dolor sit amet, Lorem ipsum dolor sit amet", width: "15%", showColon: true}),
+			new Label({text: "Lorem ipsum dolor sit amet, Lorem ipsum dolor sit amet", width: "15%", required: true, showColon: true})
 		]
 	});
 
@@ -472,6 +488,7 @@ sap.ui.define([
 					oVL3,
 					oVL4,
 					oVL5,
+					oVL6,
 					sf, sf2
 				]
 			})
