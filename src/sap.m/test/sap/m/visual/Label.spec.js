@@ -280,7 +280,7 @@ describe("sap.m.Label", function() {
 		var lbl = element(by.id('labelToResize'));
 
 		browser.executeScript("document.getElementById('labelToResize').scrollIntoView()").then(function () {
-			expect(takeScreenshot(lbl)).toLookAs("35_label_colon_not truncated");
+			expect(takeScreenshot(lbl)).toLookAs("35_label_colon_not_truncated");
 		});
 	});
 
