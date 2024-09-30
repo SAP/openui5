@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/Localization",
+	"sap/ui/base/Metadata",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/Rendering",
 	"sap/ui/core/Supportability",
@@ -25,8 +26,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/core/message/MessageType",
 	"sap/ui/test/TestUtils"
-], function (Log, Localization, SyncPromise, Rendering, Supportability, CacheManager, Message,
-		Messaging, Binding, BindingMode, BaseContext, Model, OperationMode, Context,
+], function (Log, Localization, Metadata, SyncPromise, Rendering, Supportability, CacheManager,
+		Message, Messaging, Binding, BindingMode, BaseContext, Model, OperationMode, Context,
 		ODataMetaModel, ODataModel, SubmitMode, _Helper, _MetadataRequestor, _Parser, _Requestor,
 		MessageType, TestUtils) {
 	"use strict";
@@ -3586,6 +3587,31 @@ sap.ui.define([
 	QUnit.test("getKeyPredicate, requestKeyPredicate", function (assert) {
 		return TestUtils.checkGetAndRequest(this, this.createModel(), assert, "fetchKeyPredicate",
 			["~metapath~", {/*oEntity*/}], true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("No extend in UI5 2.x", function (assert) {
+		/** @deprecated */
+		const bVersion1 = true;
+		/** @deprecated */
+		if (bVersion1) {
+			this.oLogMock.expects("error")
+				.withExactArgs("[FUTURE FATAL] sap.ui.model.odata.v4.ODataModel must not be"
+					+ " extended");
+			this.mock(Metadata).expects("createClass")
+				.withExactArgs(ODataModel, "foo.bar.MyODataModel", "~oSCClassInfo", "~fnSCMetaImpl")
+				.returns("~oClass");
+
+			assert.strictEqual(
+				// code under test
+				ODataModel.extend("foo.bar.MyODataModel", "~oSCClassInfo", "~fnSCMetaImpl"),
+				"~oClass");
+
+			return;
+		}
+		// code under test
+		assert.ok(ODataModel.getMetadata().isFinal());
+		assert.notOk(ODataModel.extend);
 	});
 });
 //TODO constructor: test that the service root URL is absolute?
