@@ -3,6 +3,16 @@
     "date": "September 2024",
     "notes": [
       {
+        "id": "2959e39ccddf81bc09fc244c4f025006cc6a5c3b",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Prevent null within area resize observer deregistration"
+      },
+      {
+        "id": "e44ac2a4d715a6789a61a307e59b8040ea026f55",
+        "type": "FIX",
+        "text": " Demo Kit: Icon explorer scroll fixed"
+      },
+      {
         "id": "b6a1971aa42d6cddd15a6cc617903cb8497164f2",
         "type": "FIX",
         "text": " sap.m.Label: Revert"
