@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/events/KeyCodes",
 	"sap/m/BadgeCustomData",
 	"sap/m/IconTabHeader",
@@ -20,6 +21,7 @@ sap.ui.define([
 ], function(
 	Library1,
 	QUnitUtils,
+	nextUIUpdate,
 	KeyCodes,
 	BadgeCustomData,
 	IconTabHeader,
@@ -1068,11 +1070,13 @@ sap.ui.define([
 		assert.strictEqual("+" + iOverflownTabsInEndOverflow, oEndOverflowText, "end overflow has correct tab count: " + iOverflownTabsInEndOverflow);
 	});
 
-	QUnit.test("Start overflow button is visible when fourth item is selected", function (assert) {
+	QUnit.test("Start overflow button is visible when fourth item is selected", async function (assert) {
 		// Arrange
+		const oSetItemsForStripSpy = this.spy(this.oITH, "_setItemsForStrip");
 		this.oITH.setSelectedKey("3");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
+		assert.ok(oSetItemsForStripSpy.called, "_setItemsForStrip should be called");
 		assert.ok(this.oITH._getStartOverflow().$().hasClass("sapMITHOverflowVisible"), "start overflow button is visible");
 		assert.strictEqual(this.oITH._getStartOverflow().getText(), "+2", "start overflow button text is correct");
 	});
