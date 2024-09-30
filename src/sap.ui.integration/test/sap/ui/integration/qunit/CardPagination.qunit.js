@@ -174,22 +174,7 @@ sap.ui.define([
 				"path": "/value"
 			},
 			"header": {
-				"title": "Products",
-				"subTitle": "In Stock Information",
-				"icon": {
-					"src": "sap-icon://product"
-				},
-				"status": {
-					"text": {
-						"format": {
-							"translationKey": "i18n>CARD.COUNT_X_OF_Y",
-							"parts": [
-								"parameters>/visibleItems",
-								"/@odata.count"
-							]
-						}
-					}
-				}
+				"title": "Products"
 			},
 			"content": {
 				"item": {
@@ -224,11 +209,7 @@ sap.ui.define([
 				"path": "/value"
 			},
 			"header": {
-				"title": "Products",
-				"subTitle": "In Stock Information",
-				"icon": {
-					"src": "sap-icon://product"
-				}
+				"title": "Products"
 			},
 			"content": {
 				"item": {
@@ -343,13 +324,45 @@ sap.ui.define([
 		assert.strictEqual(oPaginatorModel.getProperty("/size"), 4, "initial value of '/size' should be correct");
 	});
 
-	QUnit.test("Pagination - client side whith single page", async function (assert) {
+	QUnit.test("Pagination - client side with single page", async function (assert) {
 		this.oCard.setManifest(oManifestClientSideSinglePage);
 
 		await nextCardReadyEvent(this.oCard);
 		await nextUIUpdate();
 
 		assert.notOk(this.oCard.getCardFooter().getAggregation("_showMore").getDomRef(), "'Show More' is not rendered when single page");
+	});
+
+	QUnit.test("Pagination - client side with no data", async function (assert) {
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test1"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Title"
+				},
+				"content": {
+					"data": {
+						"json": []
+					},
+					"item": {
+						"title": "{Name}"
+					}
+				},
+				"footer": {
+					"paginator": {
+						"pageSize": 4
+					}
+				}
+			}
+		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		assert.notOk(this.oCard.getCardFooter().getAggregation("_showMore").getDomRef(), "'Show More' is not rendered when there is no data");
 	});
 
 	QUnit.test("Event stateChanged is fired", async function (assert) {
@@ -487,6 +500,15 @@ sap.ui.define([
 					"@odata.count": iTotalCount
 				}));
 			});
+
+			this.oServer.respondWith("GET", /fakeService\/getProductsNoData/, function (oXhr) {
+				oXhr.respond(200, {
+					"Content-Type": "application/json"
+				}, JSON.stringify({
+					"value": [],
+					"@odata.count": 0
+				}));
+			});
 		},
 		afterEach: function () {
 			this.oCard.destroy();
@@ -536,6 +558,42 @@ sap.ui.define([
 		assert.notOk(this.oCard.getCardFooter().getAggregation("_showMore").getDomRef(), "'Show More' is not rendered when single page");
 	});
 
+	QUnit.test("Pagination - server side with no data", async function (assert) {
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test5"
+			},
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"request": {
+						"url": "/fakeService/getProductsNoData",
+						"method": "GET"
+					}
+				},
+				"header": {
+					"title": "Products"
+				},
+				"content": {
+					"item": {
+						"title": "{ProductName}"
+					}
+				},
+				"footer": {
+					"paginator": {
+						"totalCount": 5,
+						"pageSize": 5
+					}
+				}
+			}
+		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		assert.notOk(this.oCard.getCardFooter().getAggregation("_showMore").getDomRef(), "'Show More' is not rendered when single page");
+	});
+
 	QUnit.test("Pagination - server side without bindings", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
@@ -565,18 +623,7 @@ sap.ui.define([
 					"path": "/value"
 				},
 				"header": {
-					"title": "Products",
-					"status": {
-						"text": {
-							"format": {
-								"translationKey": "i18n>CARD.COUNT_X_OF_Y",
-								"parts": [
-									"parameters>/visibleItems",
-									"/@odata.count"
-								]
-							}
-						}
-					}
+					"title": "Products"
 				},
 				"content": {
 					"item": {
