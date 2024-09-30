@@ -49,12 +49,13 @@ function(library, Localization, Control, coreLibrary, Device, HyphenationSupport
 	 * to <code>true</code>.
 	 *
 	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.core.IShrinkable, sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent
+	 * @implements sap.ui.core.IShrinkable, sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent, sap.ui.core.ILabelable
 	 *
 	 * @borrows sap.ui.core.ISemanticFormContent.getFormFormattedValue as #getFormFormattedValue
 	 * @borrows sap.ui.core.ISemanticFormContent.getFormValueProperty as #getFormValueProperty
 	 * @borrows sap.ui.core.ISemanticFormContent.getFormObservingProperties as #getFormObservingProperties
 	 * @borrows sap.ui.core.ISemanticFormContent.getFormRenderAsControl as #getFormRenderAsControl
+	 * @borrows sap.ui.core.ILabelable.hasLabelableHTMLElement as #hasLabelableHTMLElement
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -73,7 +74,8 @@ function(library, Localization, Control, coreLibrary, Device, HyphenationSupport
 				"sap.ui.core.IFormContent",
 				"sap.ui.core.ISemanticFormContent",
 				"sap.m.IHyphenation",
-				"sap.m.IToolbarInteractiveControl"
+				"sap.m.IToolbarInteractiveControl",
+				"sap.ui.core.ILabelable"
 			],
 			library: "sap.m",
 			properties: {
@@ -521,6 +523,16 @@ function(library, Localization, Control, coreLibrary, Device, HyphenationSupport
 
 	Text.prototype.getFormRenderAsControl = function () {
 		return true;
+	};
+
+	/**
+	 * Returns if the control can be bound to a label
+	 *
+	 * @returns {boolean} <code>true</code> if the control can be bound to a label
+	 * @public
+	 */
+	Text.prototype.hasLabelableHTMLElement = function () {
+		return false;
 	};
 
 	// Add hyphenation to Text functionality
