@@ -3,6 +3,11 @@
     "date": "September 2024",
     "notes": [
       {
+        "id": "c17388e40c80053bf33402ed7666bc971efd1915",
+        "type": "FEATURE",
+        "text": " FESR: Enhance FESR to enable reporting of integration env"
+      },
+      {
         "id": "2b95eba5c5c2412585c4cfe0ed950b3899f0fb31",
         "type": "FIX",
         "text": " sap.ui.model.odata.v4.lib._AggregationCache: use undefined instead of null for dimensions or aggregates not present in a row"

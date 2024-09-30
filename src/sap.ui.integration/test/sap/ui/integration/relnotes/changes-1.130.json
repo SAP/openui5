@@ -3,6 +3,11 @@
     "date": "September 2024",
     "notes": [
       {
+        "id": "6a01cd00274e34b9a1cfa79ebc095c83ad20018b",
+        "type": "FEATURE",
+        "text": " Integration Cards: Cards opened by ShowCard or paginator now have preset dimensions"
+      },
+      {
         "id": "7b3a255eb488562b276989908c08894798ee1fd6",
         "type": "FEATURE",
         "text": " Integration Cards: New pagination experience"
