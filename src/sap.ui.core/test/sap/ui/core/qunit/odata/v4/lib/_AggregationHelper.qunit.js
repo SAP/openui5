@@ -1826,11 +1826,35 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("splitFilter: oAggregation or oAggregation.aggregate empty", function (assert) {
-		var oFilter = {};
+		var oFilter = "~oFilter~";
 
 		assert.deepEqual(_AggregationHelper.splitFilter(oFilter), [oFilter]);
 		assert.deepEqual(_AggregationHelper.splitFilter(oFilter, null), [oFilter]);
 		assert.deepEqual(_AggregationHelper.splitFilter(oFilter, {}), [oFilter]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("splitFilter: no data aggregation on leaf level", function (assert) {
+		const oAggregation = {
+			aggregate : {
+				a1 : {}
+			},
+			group : {
+				A : {},
+				B : {},
+				C : {}
+			}
+		};
+		const oEntityType = {
+			$Key : ["A", "C"]
+		};
+		const oFilter = new Filter("a1", FilterOperator.GT, "0");
+
+		// code under test
+		const aResult = _AggregationHelper.splitFilter(oFilter, oAggregation, oEntityType);
+
+		assert.deepEqual(aResult, [undefined, oFilter]);
+		assert.strictEqual(aResult[1], oFilter);
 	});
 
 	//*********************************************************************************************
@@ -1890,8 +1914,15 @@ sap.ui.define([
 				a1 : {},
 				a2 : {subtotals : bHasSubtotals}
 			},
-			"grandTotal like 1.84" : bOldSchool
+			"grandTotal like 1.84" : bOldSchool,
+			group : {} // Note: added by _AggregationHelper.buildApply before
 		};
+		const oEntityType = {
+			$Key : ["bar", "foo"]
+		};
+		if (bHasGrandTotal) { // *some* key properties used for grouping, but not *every*
+			oAggregation.group.bar = {};
+		}
 		this.mock(_AggregationHelper).expects("hasGrandTotal")
 			.exactly(bHasSubtotals || bOldSchool ? 0 : 1)
 			.withExactArgs(sinon.match.same(oAggregation.aggregate))
@@ -1899,7 +1930,7 @@ sap.ui.define([
 
 		assert.deepEqual(
 			// code under test
-			_AggregationHelper.splitFilter(oFixture.filter, oAggregation),
+			_AggregationHelper.splitFilter(oFixture.filter, oAggregation, oEntityType),
 			(bHasGrandTotal || bHasSubtotals) && !bOldSchool
 				? [undefined, oFixture.result[1], oFixture.result[0]]
 				: oFixture.result
