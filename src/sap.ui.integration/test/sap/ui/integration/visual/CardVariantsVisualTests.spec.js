@@ -41,19 +41,19 @@ describe("sap.ui.integration.CardVariantsVisualTests", function () {
 	it("TilesVariants - 2x2", function () {
 		utils.navigateTo("Tiles Variants");
 
-		testTileVariant(["card1", "card2", "card3", "card7", "card9", "card21", "card31", "card35", "card41"]);
+		testTileVariant(["card1", "card2", "card3", "card7", "card9", "card21", "card31", "card35", "card39", "card41", "card44"]);
 	});
 
 	it("TilesVariants - 4x2", function () {
-		testTileVariant(["card4", "card5",  "card6", "card8", "card10", "card22", "card32", "card36"]);
+		testTileVariant(["card4", "card5",  "card6", "card8", "card10", "card22", "card32", "card36", "card40", "card45"]);
 	});
 
 	it("TilesVariants - 2x1", function () {
-		testTileVariant(["card11", "card12", "card13", "card17", "card19", "card23", "card33", "card37"]);
+		testTileVariant(["card11", "card12", "card13", "card17", "card19", "card23", "card33", "card37", "card42", "card46"]);
 	});
 
 	it("TilesVariants - 4x1", function () {
-		testTileVariant(["card14", "card15", "card16",  "card18", "card20", "card24", "card34", "card38"]);
+		testTileVariant(["card14", "card15", "card16",  "card18", "card20", "card24", "card34", "card38", "card43", "card47"]);
 
 		utils.navigateBack();
 	});

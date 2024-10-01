@@ -9,8 +9,8 @@
 			"type": "Numeric",
 			"data": {
 				"request": {
-					"url": "./data5.json"
-					}
+					"url": "./data10.json"
+				}
 			},
 			"title": "{title}",
 			"icon": {

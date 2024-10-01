@@ -15,7 +15,8 @@
 			"subTitle": "{subTitle}",
 			"icon": {
 				"src": "{icon/src}",
-				"shape": "{icon/shape}"
+				"shape": "{icon/shape}",
+				"fitType": "{icon/fitType}"
 			},
 			"actions": [
 				{

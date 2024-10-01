@@ -2588,6 +2588,21 @@
         "backgroundColor": {
           "$ref": "#/definitions/iconBackgroundColor"
         },
+        "fitType": {
+          "description": "Defines how the image fits in the icon area",
+          "oneOf": [
+            {
+              "enum": [
+                "Cover",
+                "Contain"
+              ],
+              "default": "Cover"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
         "visible": {
           "description": "Visibility of the icon",
           "$ref": "#/definitions/visibility"

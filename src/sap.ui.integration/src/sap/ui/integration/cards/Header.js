@@ -82,6 +82,7 @@ sap.ui.define([
 				mSettings.iconAlt = mConfiguration.icon.alt;
 				mSettings.iconBackgroundColor = sBackgroundColor;
 				mSettings.iconVisible = mConfiguration.icon.visible;
+				mSettings.iconFitType = mConfiguration.icon.fitType;
 			}
 
 			if (mSettings.iconSrc) {
