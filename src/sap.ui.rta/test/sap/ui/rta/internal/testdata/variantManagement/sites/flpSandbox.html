@@ -29,10 +29,11 @@
 			data-sap-ui-async="true"
 			data-sap-ui-libs="sap.m, sap.ushell, sap.ui.rta"
 			data-sap-ui-compat-version="edge"
-			data-sap-ui-flexibility-services='[{"connector": "LocalStorageConnector"}]'
+			data-sap-ui-flexibility-services='[{"loadConnector": "sap/ui/rta/test/CustomConnector", "writeConnector": "sap/ui/rta/test/CustomConnector"}]'
 			data-sap-ui-oninit="module:flpSandboxConfig/appStart"
 			data-sap-ui-resourceroots='{
-				"flpSandboxConfig": "./flpSandboxConfig"
+				"flpSandboxConfig": "./flpSandboxConfig",
+				"sap.ui.rta.test": "./"
 			}'
 			src="../../../../../../../../resources/sap-ui-core.js">
 		</script>

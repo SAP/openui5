@@ -2,15 +2,17 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/MessageBox",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/rta/api/startKeyUserAdaptation"
 ], function(
 	Log,
 	MessageBox,
 	Controller,
-	LayerUtils,
+	ControlVariantApplyAPI,
 	ControlPersonalizationWriteAPI,
+	LayerUtils,
 	startKeyUserAdaptation
 ) {
 	"use strict";
@@ -137,6 +139,12 @@ sap.ui.define([
 					}
 				}.bind(this)
 			});
+		},
+
+		loadVariant() {
+			// eslint-disable-next-line no-alert
+			const sId = window.prompt("Please enter the variant ID");
+			ControlVariantApplyAPI.activateVariant({element: this.byId("variantManagementOrdersTable"), variantReference: sId});
 		},
 
 		isDataReady() {

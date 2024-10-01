@@ -339,7 +339,6 @@ sap.ui.define([
 		}
 		if (!_mInstances[sReference].storageResponse) {
 			_mInstances[sReference].storageResponse = filterByMaxLayer(sReference, _mInstances[sReference].unfilteredStorageResponse);
-			_mInstances[sReference].maxLayer = FlexInfoSession.getByReference(sReference).maxLayer;
 			// Flex objects need to be recreated
 			delete _mInstances[sReference].runtimePersistence;
 			bDataUpdated = true;
@@ -364,9 +363,10 @@ sap.ui.define([
 
 	function filterByMaxLayer(sReference, mResponse) {
 		const mFilteredReturn = merge({}, mResponse);
+		mFilteredReturn.changes = { ...StorageUtils.getEmptyFlexDataResponse(), ...mFilteredReturn.changes };
 		const mFlexObjects = mFilteredReturn.changes;
+		const oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 		if (LayerUtils.isLayerFilteringRequired(sReference)) {
-			const oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 			each(_mFlexObjectInfo, function(iIndex, mFlexObjectInfo) {
 				mFlexObjectInfo.pathInResponse.forEach(function(sPath) {
 					const aFilterByMaxLayer = ObjectPath.get(sPath, mFlexObjects).filter(function(oChangeDefinition) {
@@ -376,6 +376,7 @@ sap.ui.define([
 				});
 			});
 		}
+		_mInstances[sReference].maxLayer = oFlexInfoSession.maxLayer;
 		return mFilteredReturn;
 	}
 
@@ -544,6 +545,32 @@ sap.ui.define([
 	};
 
 	/**
+	 * Updates the saved backend response and the runtime persistence with new data.
+	 * The new data must not be already available in the storageResponse or runtimePersistence.
+	 * As of now this does not work with nested structures (comp related objects) or ui2personalization.
+	 *
+	 * @param {object} mPropertyBag - Contains additional data needed for reading and storing changes
+	 * @param {string} mPropertyBag.reference - Flex reference of the app
+	 * @param {object} mPropertyBag.newData - New Data to be added. Needs to have the structure of the storageResponse.changes object
+	 */
+	FlexState.updateWithDataProvided = function(mPropertyBag) {
+		if (!_mInstances[mPropertyBag.reference]) {
+			initializeEmptyState(mPropertyBag.reference);
+		}
+		const oInstance = _mInstances[mPropertyBag.reference];
+		Object.entries(mPropertyBag.newData).forEach(([sKey, vValue]) => {
+			oInstance.unfilteredStorageResponse.changes[sKey].push(...vValue);
+		});
+		oInstance.storageResponse = filterByMaxLayer(mPropertyBag.reference, oInstance.unfilteredStorageResponse);
+		oInstance.runtimePersistence.flexObjects =
+		[
+			...oInstance.runtimePersistence.flexObjects,
+			...createFlexObjects(filterByMaxLayer(mPropertyBag.reference, { changes: mPropertyBag.newData }))
+		];
+		oFlexObjectsDataSelector.checkUpdate({ reference: mPropertyBag.reference });
+	};
+
+	/**
 	 * Triggers a call to the backend to fetch new data and update the runtime persistence
 	 *
 	 * @param {object} mPropertyBag - Contains additional data needed for reading and storing changes
@@ -557,8 +584,8 @@ sap.ui.define([
 	 */
 	FlexState.update = async function(mPropertyBag) {
 		enhancePropertyBag(mPropertyBag);
-		var sReference = mPropertyBag.reference;
-		var oCurrentRuntimePersistence = _mInstances[sReference].runtimePersistence;
+		const sReference = mPropertyBag.reference;
+		const oCurrentRuntimePersistence = _mInstances[sReference].runtimePersistence;
 
 		const oOldInitPromise = _mInitPromises[sReference].promise;
 		const oNewInitPromise = new Deferred();
@@ -566,8 +593,7 @@ sap.ui.define([
 		await oOldInitPromise;
 		await loadFlexData(mPropertyBag);
 		_mInstances[sReference].storageResponse = filterByMaxLayer(sReference, _mInstances[sReference].unfilteredStorageResponse);
-		_mInstances[sReference].maxLayer = FlexInfoSession.getByReference(sReference).maxLayer;
-		var bUpdated = updateRuntimePersistence(
+		const bUpdated = updateRuntimePersistence(
 			sReference,
 			_mInstances[sReference].storageResponse,
 			oCurrentRuntimePersistence
@@ -737,7 +763,6 @@ sap.ui.define([
 		if (_mInstances[sReference]) {
 			_mInstances[sReference].preparedMaps = {};
 			_mInstances[sReference].storageResponse = filterByMaxLayer(sReference, _mInstances[sReference].unfilteredStorageResponse);
-			_mInstances[sReference].maxLayer = FlexInfoSession.getByReference(sReference).maxLayer;
 			// Storage response has changed, recreate the flex objects
 			_mInstances[sReference].runtimePersistence = buildRuntimePersistence(
 				_mInstances[sReference],

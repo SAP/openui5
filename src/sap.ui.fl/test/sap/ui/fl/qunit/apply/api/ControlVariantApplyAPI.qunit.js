@@ -5,6 +5,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
@@ -17,6 +19,8 @@ sap.ui.define([
 	Log,
 	Component,
 	URLHandler,
+	VariantManagementState,
+	ManifestUtils,
 	ControlVariantApplyAPI,
 	VariantManagement,
 	VariantModel,
@@ -110,6 +114,7 @@ sap.ui.define([
 			this.oDummyControl = new VariantManagement("dummyControl");
 
 			this.oAppComponent = new Component("AppComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("myReference");
 			this.oModel = new VariantModel(this.oData, {
 				flexController: {},
 				appComponent: this.oAppComponent
@@ -265,6 +270,46 @@ sap.ui.define([
 			.catch(function(oError) {
 				checkActivateVariantErrorResponse.call(this, assert, "No variant management model found for the passed control or application component", oError.message);
 			}.bind(this));
+		});
+
+		QUnit.test("when calling 'activateVariant' with an unavailable variant", async function(assert) {
+			stubUpdateCurrentVariant.call(this);
+			const oLazyLoadStub = sandbox.stub(VariantManagementState, "loadVariants").callsFake((mPropertyBag) => {
+				assert.strictEqual(mPropertyBag.reference, "myReference", "then the reference is passed");
+				assert.deepEqual(mPropertyBag.variantReferences, ["notYetLoadedVariant"], "then the variant reference is passed");
+
+				// simulate what would happen if the variant was loaded and added to the model
+				this.oModel.getData().variantMgmtId1.variants.push({
+					key: "notYetLoadedVariant"
+				});
+			});
+			await ControlVariantApplyAPI.activateVariant({
+				element: "dummyControl",
+				variantReference: "notYetLoadedVariant"
+			});
+			assert.strictEqual(this.oModel.waitForVMControlInit.callCount, 1, "the function waits for the control");
+			assert.strictEqual(oLazyLoadStub.callCount, 1, "then the variant is loaded lazily");
+			checkUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "notYetLoadedVariant");
+		});
+
+		QUnit.test("when calling 'activateVariant' with an unavailable variant, but the variant can't be loaded", async function(assert) {
+			assert.expect(4);
+			const oUpdateVariantStub = sandbox.stub(this.oModel, "updateCurrentVariant");
+			const oLazyLoadStub = sandbox.stub(VariantManagementState, "loadVariants")
+			.rejects(new Error("Variant with reference 'notYetLoadedVariant' could not be found"));
+			const bLogStub = sandbox.stub(Log, "error");
+
+			try {
+				await ControlVariantApplyAPI.activateVariant({
+					element: "dummyControl",
+					variantReference: "notYetLoadedVariant"
+				});
+			} catch (oError) {
+				assert.strictEqual(oError.message, "Variant with reference 'notYetLoadedVariant' could not be found", "then the error is thrown");
+				assert.strictEqual(bLogStub.callCount, 1, "then an error is logged");
+			}
+			assert.strictEqual(oLazyLoadStub.callCount, 1, "then the variant loading is triggered");
+			assert.strictEqual(oUpdateVariantStub.callCount, 0, "then the variant is not activated");
 		});
 
 		QUnit.test("when calling 'attachVariantApplied' when the model is already set on the app component", function(assert) {

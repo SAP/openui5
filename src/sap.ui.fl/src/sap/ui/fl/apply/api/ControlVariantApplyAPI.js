@@ -7,12 +7,14 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/Element",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/Utils"
 ], function(
 	Log,
 	Component,
 	Element,
 	URLHandler,
+	VariantManagementState,
 	Utils
 ) {
 	"use strict";
@@ -114,6 +116,7 @@ sap.ui.define([
 		/**
 		 *
 		 * Activates the passed variant applicable to the passed control/component.
+		 * If the Variant is not available and the backend supports lazy loading, a backend request is made to fetch the variant.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.base.ManagedObject|string} mPropertyBag.element - Component or control (instance or ID) on which the <code>variantModel</code> is set
@@ -123,13 +126,13 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		activateVariant(mPropertyBag) {
+		async activateVariant(mPropertyBag) {
 			function logAndReject(oError) {
 				Log.error(oError);
 				return Promise.reject(oError);
 			}
 
-			var oElement;
+			let oElement;
 			if (typeof mPropertyBag.element === "string") {
 				oElement = Component.getComponentById(mPropertyBag.element);
 				if (!(oElement instanceof Component)) {
@@ -143,34 +146,46 @@ sap.ui.define([
 				oElement = mPropertyBag.element;
 			}
 
-			var oAppComponent = Utils.getAppComponentForControl(oElement);
+			const oAppComponent = Utils.getAppComponentForControl(oElement);
 			if (!oAppComponent) {
 				return logAndReject(Error("A valid variant management control or component (instance or ID) should be passed as parameter"));
 			}
 
-			var oVariantModel = oAppComponent.getModel(VARIANT_MODEL_NAME);
+			const oVariantModel = oAppComponent.getModel(VARIANT_MODEL_NAME);
 			if (!oVariantModel) {
 				return logAndReject(Error("No variant management model found for the passed control or application component"));
 			}
-			var sVariantManagementReference = oVariantModel.getVariantManagementReference(mPropertyBag.variantReference).variantManagementReference;
+
+			// if the variant management reference is not available, the variant is not yet loaded
+			if (!oVariantModel.getVariantManagementReference(mPropertyBag.variantReference).variantManagementReference) {
+				try {
+					await VariantManagementState.loadVariants({
+						reference: oVariantModel.sFlexReference,
+						variantReferences: [mPropertyBag.variantReference]
+					});
+				} catch (oError) {
+					return logAndReject(Error(`Variant with reference '${mPropertyBag.variantReference}' could not be found`));
+				}
+			}
+
+			const sVariantManagementReference = oVariantModel.getVariantManagementReference(mPropertyBag.variantReference).variantManagementReference;
 			if (!sVariantManagementReference) {
 				return logAndReject(Error("A valid control or component, and a valid variant/ID combination are required"));
 			}
 
 			// sap/fe is using this API very early during app start, sometimes before FlexState is initialized
-			return oVariantModel.waitForVMControlInit(sVariantManagementReference)
+			await oVariantModel.waitForVMControlInit(sVariantManagementReference);
 
-			.then(function() {
+			try {
 				return oVariantModel.updateCurrentVariant({
 					variantManagementReference: sVariantManagementReference,
 					newVariantReference: mPropertyBag.variantReference,
 					appComponent: oAppComponent
 				});
-			})
-			.catch(function(oError) {
+			} catch (oError) {
 				Log.error(oError);
 				throw oError;
-			});
+			}
 		},
 
 		/**
