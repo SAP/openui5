@@ -154,8 +154,12 @@ sap.ui.define([
 	}
 
 	MTable.prototype.onBeforeShow = function(bInitial) {
-		if (bInitial) {
-			return Promise.resolve(FilterableListContent.prototype.onBeforeShow.apply(this, arguments)).then(() => {
+
+		return Promise.resolve(FilterableListContent.prototype.onBeforeShow.apply(this, arguments)).then(() => {
+			const oTable = this._getTable();
+			_attachTableEvents.call(this, oTable);
+
+			if (bInitial) {
 				const oListBinding = this.getListBinding();
 				const oListBindingInfo = this.getListBindingInfo();
 				const bBindingSuspended = oListBinding && oListBinding.isSuspended();
@@ -165,13 +169,10 @@ sap.ui.define([
 					return undefined;
 				}
 
-				const oTable = this._getTable();
-				_attachTableEvents.call(this, oTable);
-
 				return this.applyFilters();
-			});
-		}
-		return undefined;
+			}
+		});
+
 	};
 
 	MTable.prototype.applyFilters = function() {
