@@ -384,7 +384,7 @@ sap.ui.define([
 			iconInset : false,
 			type : "Detail",
 			counter: 99,
-			selected: {path: 'ProductId', type: BooleanType , formatter: productSelectionFormatter },
+			selected: {path: 'ProductId', type: new BooleanType(), formatter: productSelectionFormatter },
 			info: "{Price/CurrencyCode}",
 			infoState: "Warning"
 		});
