@@ -290,6 +290,7 @@ sap.ui.define([
 				oCollectedResponse.response.push(...oResponse.response);
 			}
 		}
+		FlexState.getFlexObjectsDataSelector().checkUpdate({reference: this._mComponent.name});
 		return oCollectedResponse;
 	};
 
@@ -347,7 +348,6 @@ sap.ui.define([
 				default:
 			}
 			oDirtyChange.setState(States.LifecycleState.PERSISTED);
-			FlexState.getFlexObjectsDataSelector().checkUpdate({reference: this._mComponent.name});
 		}
 	};
 
@@ -360,6 +360,7 @@ sap.ui.define([
 		aDirtyChanges.forEach(function(oDirtyChange) {
 			this._updateCacheAndDirtyState(oDirtyChange, bSkipUpdateCache);
 		}, this);
+		FlexState.getFlexObjectsDataSelector().checkUpdate({reference: this._mComponent.name});
 	};
 
 	function getRequests(aDirtyChanges) {

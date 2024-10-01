@@ -975,10 +975,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("(Save As scenario) Shall save the dirty changes for the new created app variant in a bulk when pressing a 'Save As' button", function(assert) {
-			var oChangeContent1;
-			var oChangeContent2;
-
-			oChangeContent1 = {
+			const oChangeContent1 = {
 				fileName: "ChangeFileName1",
 				layer: Layer.CUSTOMER,
 				fileType: "change",
@@ -988,7 +985,7 @@ sap.ui.define([
 				originalLanguage: "DE"
 			};
 
-			oChangeContent2 = {
+			const oChangeContent2 = {
 				fileName: "ChangeFileName2",
 				layer: Layer.CUSTOMER,
 				fileType: "change",
@@ -998,6 +995,7 @@ sap.ui.define([
 				originalLanguage: "DE"
 			};
 			UIChangeManager.addDirtyChanges(sReference, [oChangeContent1, oChangeContent2], this._oComponentInstance);
+			const oCheckUpdatableSpy = sandbox.spy(FlexState.getFlexObjectsDataSelector(), "checkUpdate");
 
 			this.oServer.respondWith([
 				200,
@@ -1017,6 +1015,7 @@ sap.ui.define([
 					oChangeContent1.fileName, "the first change was processed first");
 				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[1].fileName,
 					oChangeContent2.fileName, "the second change was processed afterwards");
+				assert.strictEqual(oCheckUpdatableSpy.callCount, 1, "the checkUpdate method was called just once");
 			}.bind(this));
 		});
 
@@ -1093,11 +1092,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("saveSequenceOfDirtyChanges shall save a sequence of the dirty changes in a bulk", function(assert) {
-			var oChangeContent1;
-			var oChangeContent2;
-			var oChangeContent3;
-
-			oChangeContent1 = {
+			const oChangeContent1 = {
 				fileName: "ChangeFileName1",
 				layer: Layer.VENDOR,
 				fileType: "change",
@@ -1107,7 +1102,7 @@ sap.ui.define([
 				originalLanguage: "DE"
 			};
 
-			oChangeContent2 = {
+			const oChangeContent2 = {
 				fileName: "ChangeFileName2",
 				layer: Layer.VENDOR,
 				fileType: "change",
@@ -1117,7 +1112,7 @@ sap.ui.define([
 				originalLanguage: "DE"
 			};
 
-			oChangeContent3 = {
+			const oChangeContent3 = {
 				fileName: "ChangeFileName3",
 				layer: Layer.VENDOR,
 				fileType: "change",
@@ -1149,7 +1144,8 @@ sap.ui.define([
 				],
 				this._oComponentInstance
 			);
-			var aDirtyChanges = [oDirtyChange1, oDirtyChange3];
+			const aDirtyChanges = [oDirtyChange1, oDirtyChange3];
+			const oCheckUpdatableSpy = sandbox.spy(FlexState.getFlexObjectsDataSelector(), "checkUpdate");
 
 			return this.oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges).then(function(oResponse) {
 				assert.equal(this.oWriteStub.callCount, 2, "the create method of the connector is called for each selected change");
@@ -1161,6 +1157,7 @@ sap.ui.define([
 				assert.deepEqual(oResponse, {
 					response: [oChangeContent1, oChangeContent3]
 				}, "the collected storage response is returned");
+				assert.strictEqual(oCheckUpdatableSpy.callCount, 1, "the checkUpdate method was called just once");
 			}.bind(this));
 		});
 
