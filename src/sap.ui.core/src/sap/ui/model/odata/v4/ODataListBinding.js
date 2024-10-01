@@ -1862,7 +1862,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.fetchFilter = function (oContext, sStaticFilter) {
-		var oCombinedFilter, aFilters, oMetaModel, oMetaContext;
+		const oMetaModel = this.oModel.getMetaModel();
+		const oMetaContext = oMetaModel.getMetaContext(this.oModel.resolve(this.sPath, oContext));
 
 		/*
 		 * Returns the $filter value for the given single filter using the given Edm type to
@@ -2006,26 +2007,32 @@ sap.ui.define([
 			return bWrap ? "(" + sFilter + ")" : sFilter;
 		}
 
-		oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
+		const oCombinedFilter
+			= FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
 		if (!oCombinedFilter) {
 			return SyncPromise.resolve([sStaticFilter]);
 		}
 		if (oCombinedFilter === Filter.NONE) {
 			return SyncPromise.resolve(["false"]);
 		}
-		aFilters = _AggregationHelper.splitFilter(oCombinedFilter, this.mParameters.$$aggregation);
-		oMetaModel = this.oModel.getMetaModel();
-		oMetaContext = oMetaModel.getMetaContext(this.oModel.resolve(this.sPath, oContext));
 
-		return SyncPromise.all([
-			fetchFilter(aFilters[0], {}, /*bWithinAnd*/sStaticFilter).then(function (sFilter) {
-				return sFilter && sStaticFilter
-					? sFilter + " and (" + sStaticFilter + ")"
-					: sFilter || sStaticFilter;
-			}),
-			fetchFilter(aFilters[1], {}), // $$filterBeforeAggregate
-			fetchFilter(aFilters[2], {}, undefined, /*bThese*/true) // $$filterOnAggregate
-		]);
+		const oPromise = _Helper.isDataAggregation(this.mParameters)
+			? oMetaModel.fetchObject(oMetaContext.getPath() + "/")
+			: SyncPromise.resolve();
+
+		return oPromise.then((oEntityType) => {
+			const aFilters = _AggregationHelper.splitFilter(oCombinedFilter,
+				this.mParameters.$$aggregation, oEntityType);
+
+			return SyncPromise.all([
+				fetchFilter(aFilters[0], {}, /*bWithinAnd*/sStaticFilter)
+					.then((sFilter) => (sFilter && sStaticFilter
+						? sFilter + " and (" + sStaticFilter + ")"
+						: sFilter || sStaticFilter)),
+				fetchFilter(aFilters[1], {}), // $$filterBeforeAggregate
+				fetchFilter(aFilters[2], {}, undefined, /*bThese*/true) // $$filterOnAggregate
+			]);
+		});
 	};
 
 	/**
@@ -4071,6 +4078,7 @@ sap.ui.define([
 			}
 		}
 		this.aContexts.splice(iIndex, 1);
+		oContext.iIndex = undefined;
 		if (!oContext.isEffectivelyKeptAlive()) {
 			this.destroyLater(oContext);
 		}

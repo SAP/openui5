@@ -224,7 +224,8 @@ sap.ui.define([
 		 */
 		ODataModel = Model.extend("sap.ui.model.odata.v4.ODataModel",
 			/** @lends sap.ui.model.odata.v4.ODataModel.prototype */{
-				constructor : constructor
+				constructor : constructor,
+				metadata : {final : true}
 			});
 
 	//*********************************************************************************************

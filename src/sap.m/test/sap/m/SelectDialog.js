@@ -2,7 +2,6 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
-
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/m/Button",
@@ -15,7 +14,8 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/ui/core/library",
 	"sap/m/StandardListItem",
-	"sap/m/Bar"
+	"sap/m/Bar",
+	"sap/ui/model/type/Boolean"
 ], function(
 	App,
 	MessageBox,
@@ -32,7 +32,8 @@ sap.ui.define([
 	Input,
 	coreLibrary,
 	StandardListItem,
-	Bar
+	Bar,
+	BooleanType
 ) {
 	"use strict";
 
@@ -383,7 +384,7 @@ sap.ui.define([
 			iconInset : false,
 			type : "Detail",
 			counter: 99,
-			selected: {path: 'ProductId', type: 'sap.ui.model.type.Boolean' , formatter: productSelectionFormatter },
+			selected: {path: 'ProductId', type: BooleanType , formatter: productSelectionFormatter },
 			info: "{Price/CurrencyCode}",
 			infoState: "Warning"
 		});

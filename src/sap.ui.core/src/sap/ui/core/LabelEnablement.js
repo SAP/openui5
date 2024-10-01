@@ -12,18 +12,6 @@ var CONTROL_TO_LABELS_MAPPING = {};
 // Mapping between the outer control and the inner control when outer control overwrites 'getIdForLabel'
 const CONTROL_TO_INNERCONTROL_MAPPING = {};
 
-// The controls which should not be referenced by a "for" attribute (Specified in the HTML standard).
-// Extend when needed.
-var NON_LABELABLE_CONTROLS = [
-	"sap.ui.comp.navpopover.SmartLink",
-	"sap.m.Link",
-	"sap.m.Label",
-	"sap.m.Text",
-	"sap.m.Select",
-	"sap.ui.webc.main.Label",
-	"sap.ui.webc.main.Link"
-];
-
 var Element;
 
 // Returns the control for the given id (if available) and invalidates it if desired
@@ -192,8 +180,7 @@ function isLabelableControl(oControl) {
 		return oControl.hasLabelableHTMLElement();
 	}
 
-	var sName = oControl.getMetadata().getName();
-	return NON_LABELABLE_CONTROLS.indexOf(sName) < 0;
+	return true;
 }
 
 /**

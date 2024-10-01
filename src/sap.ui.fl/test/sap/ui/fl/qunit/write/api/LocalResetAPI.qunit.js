@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/LocalResetAPI",
@@ -26,6 +27,7 @@ sap.ui.define([
 	FlexObjectState,
 	FlexState,
 	ManifestUtils,
+	UIChangeManager,
 	FlexObjectManager,
 	ChangesWriteAPI,
 	LocalResetAPI,
@@ -71,6 +73,7 @@ sap.ui.define([
 			];
 			aChanges[0].setState(States.LifecycleState.PERSISTED);
 			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").returns(this.oChangePersistence);
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").withArgs(this.oComponent).returns(this.oComponent.name);
 			sandbox.stub(UIChangesState, "getAllUIChanges").returns(aChanges);
 		},
 		afterEach() {
@@ -131,13 +134,13 @@ sap.ui.define([
 			sandbox.stub(ChangesWriteAPI, "revert").resolves();
 
 			return LocalResetAPI.resetChanges(aNestedChanges, this.oComponent).then(function() {
-				var oAddStub = sandbox.stub(PersistenceWriteAPI, "add");
+				const oRestoreStub = sandbox.spy(UIChangeManager, "restoreDeletedChanges");
 				var oApplyStub = sandbox.stub(ChangesWriteAPI, "apply").resolves();
 
 				return LocalResetAPI.restoreChanges(aNestedChanges, this.oComponent).then(function() {
 					assert.ok(
-						oAddStub.calledWith({flexObjects: aNestedChanges, selector: this.oComponent}),
-						"Then all changes are added again"
+						oRestoreStub.calledWith("MyComponent", aNestedChanges, this.oComponent),
+						"Then all changes are restored"
 					);
 					assert.strictEqual(oApplyStub.callCount, 2, "Then all changes are applied again");
 					assert.strictEqual(
@@ -208,7 +211,7 @@ sap.ui.define([
 				name: "MyComponent"
 			};
 			this.oChangePersistence = new ChangePersistence(oComponent);
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(oComponent.name);
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").withArgs(oComponent).returns(oComponent.name);
 		},
 		afterEach() {
 			sandbox.restore();

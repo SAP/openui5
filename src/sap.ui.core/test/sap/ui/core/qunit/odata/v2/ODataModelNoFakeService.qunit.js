@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/Messaging",
+	"sap/ui/core/Supportability",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/_Helper",
@@ -27,7 +28,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v2/ODataTreeBinding",
 	"sap/ui/thirdparty/datajs"
-], function(Log, Localization, SyncPromise, Messaging, UI5Date, Message, _Helper, BaseContext, FilterProcessor, Model, _ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser, ODataMetaModel, ODataPropertyBinding, ODataUtils, _CreatedContextsCache, Context, ODataAnnotations, ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding, OData) {
+], function(Log, Localization, SyncPromise, Messaging, Supportability, UI5Date, Message, _Helper, BaseContext, FilterProcessor, Model, _ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser, ODataMetaModel, ODataPropertyBinding, ODataUtils, _CreatedContextsCache, Context, ODataAnnotations, ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding, OData) {
 	/*global QUnit,sinon*/
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
@@ -286,6 +287,42 @@ sap.ui.define([
 
 			return oPromise;
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getServiceUrl", function (assert) {
+		this.mock(ODataModel.prototype).expects("createCodeListModelParameters").withExactArgs(undefined)
+			.returns("~codeListModelParameters");
+		this.mock(ODataModel.prototype).expects("setDeferredGroups").withExactArgs(["changes"]);
+		this.mock(ODataModel.prototype).expects("setChangeGroups").withExactArgs({"*":{groupId: "changes"}});
+		this.mock(Supportability).expects("isStatisticsEnabled").withExactArgs().returns(false);
+		this.mock(ODataModel.prototype).expects("setHeaders").withExactArgs(undefined)
+			.callThrough(/*initializes this.mCustomHeaders*/);
+		this.mock(ODataModel.prototype).expects("_createMetadataUrl").withExactArgs("/$metadata")
+			.returns("~metadataUrl");
+		this.mock(ODataModel.prototype).expects("_getServerUrl").withExactArgs().returns("~serverUrl");
+		const oDataModelMock = this.mock(ODataModel);
+		oDataModelMock.expects("_getSharedData").withExactArgs("server", "~serverUrl").returns({});
+		oDataModelMock.expects("_getSharedData").withExactArgs("service", "/foo/bar;o=SYS").returns({});
+		const oMetadata = {oMetadata: {isLoaded() {}, loaded() {}}};
+		oDataModelMock.expects("_getSharedData").withExactArgs("meta", "~metadataUrl").returns(oMetadata);
+		this.mock(ODataModel.prototype).expects("_cacheSupported").withExactArgs("~metadataUrl").returns(false);
+		this.mock(ODataModel.prototype).expects("_getAnnotationCacheKey").withExactArgs("~metadataUrl")
+			.returns(undefined);
+		// called in ODataMetadata#constructor and ODataAnnotations#constructor
+		const oPromise = Promise.resolve("~metadata");
+		this.mock(oMetadata.oMetadata).expects("loaded").withExactArgs().exactly(3).returns(oPromise);
+		this.mock(oMetadata.oMetadata).expects("isLoaded").withExactArgs().returns(true);
+		this.mock(ODataModel.prototype).expects("_initializeMetadata").withExactArgs();
+		this.mock(ODataAnnotations.prototype).expects("addSource")
+			.withExactArgs([{type : "xml", data : sinon.match.instanceOf(Promise)}]);
+		this.mock(Localization).expects("getLanguageTag").withExactArgs().returns("~languageTag");
+		const oModel = new ODataModel("/foo/bar;o=SYS/?sap-client=100");
+
+		// code under test
+		assert.strictEqual(oModel.getServiceUrl(), "/foo/bar;o=SYS");
+
+		return oPromise;
 	});
 
 	//*********************************************************************************************

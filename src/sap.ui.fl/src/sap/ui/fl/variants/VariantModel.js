@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
+	"sap/ui/fl/write/_internal/controlVariants/ControlVariantWriteUtils",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
@@ -58,6 +59,7 @@ sap.ui.define([
 	Settings,
 	UIChangeManager,
 	FlexObjectManager,
+	ControlVariantWriteUtils,
 	ContextBasedAdaptationsAPI,
 	Layer,
 	LayerUtils,
@@ -819,6 +821,7 @@ sap.ui.define([
 		const aModelVariants = oData.variants;
 		const aChanges = [];
 		const oSettings = Settings.getInstanceOrUndef();
+		const aVariantsToBeDeleted = [];
 
 		const findVariant = (sVariantKey) => {
 			return aModelVariants.find((oModelVariant) => oModelVariant.key === sVariantKey);
@@ -883,6 +886,7 @@ sap.ui.define([
 					visible: false
 				}
 			);
+			aVariantsToBeDeleted.push(sVariantKey);
 		});
 		oEvent.getParameter("contexts")?.forEach(({key: sVariantKey, contexts: aNewContexts}) => {
 			const oVariant = findVariant(sVariantKey);
@@ -906,7 +910,10 @@ sap.ui.define([
 			});
 		}
 
-		return aChanges;
+		return {
+			changes: aChanges,
+			variantsToBeDeleted: aVariantsToBeDeleted
+		};
 	};
 
 	/**
@@ -1202,32 +1209,50 @@ sap.ui.define([
 
 	VariantModel.prototype._initializeManageVariantsEvents = function() {
 		this.fnManageClickRta = function(oEvent, oData) {
-			var aConfiguredChanges = this._collectModelChanges(oData.variantManagementReference, oData.layer, oEvent);
-			oData.resolve(aConfiguredChanges);
+			const oModelChanges = this._collectModelChanges(oData.variantManagementReference, oData.layer, oEvent);
+			oData.resolve(oModelChanges);
 		};
 
 		this.fnManageClick = function(oEvent, oData) {
 			(async () => {
+				const sVMReference = oData.variantManagementReference;
 				if (!this.oFlexController || !this.getData()) {
 					return;
 				}
-				var aConfigurationChangesContent = this._collectModelChanges(oData.variantManagementReference, Layer.USER, oEvent);
+				const {
+					changes: aConfigurationChangesContent,
+					variantsToBeDeleted: aVariantsToBeDeleted
+				} = this._collectModelChanges(sVMReference, Layer.USER, oEvent);
 
 				if (aConfigurationChangesContent.some((oChange) => {
 					return oChange.visible === false
-					&& oChange.variantReference === this.getCurrentVariantReference(oData.variantManagementReference);
+					&& oChange.variantReference === this.getCurrentVariantReference(sVMReference);
 				})) {
 					await this.updateCurrentVariant({
-						variantManagementReference: oData.variantManagementReference,
-						newVariantReference: oData.variantManagementReference
+						variantManagementReference: sVMReference,
+						newVariantReference: sVMReference
 					});
 				}
 
-				var aChanges = [];
 				aConfigurationChangesContent.forEach(function(oChangeProperties) {
 					oChangeProperties.appComponent = this.oAppComponent;
 				}.bind(this));
-				aChanges = aChanges.concat(this.addVariantChanges(oData.variantManagementReference, aConfigurationChangesContent));
+
+				const aNewVariantChanges = this.addVariantChanges(sVMReference, aConfigurationChangesContent);
+				const aVariantDeletionChanges = aVariantsToBeDeleted
+				.map((sVariantKey) => {
+					const oVariant = VariantManagementState.getVariant({
+						reference: this.sFlexReference,
+						vmReference: sVMReference,
+						vReference: sVariantKey
+					});
+					if (oVariant.layer === Layer.USER) {
+						return ControlVariantWriteUtils.deleteVariant(this.sFlexReference, sVMReference, sVariantKey);
+					}
+					return [];
+				})
+				.flat();
+				const aChanges = [...aVariantDeletionChanges, ...aNewVariantChanges];
 				this.oChangePersistence.saveDirtyChanges(this.oAppComponent, false, aChanges);
 			})();
 		};

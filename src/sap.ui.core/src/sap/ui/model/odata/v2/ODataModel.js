@@ -64,8 +64,7 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.odata.v2.ODataModel",
 		aDeepCreateParametersAllowlist = ["context", "properties"],
 		mMessageType2Severity = {},
-		aRequestSideEffectsParametersAllowList = ["groupId", "urlParameters"],
-		bFinal = true;
+		aRequestSideEffectsParametersAllowList = ["groupId", "urlParameters"];
 
 	mMessageType2Severity[MessageType.Error] = 0;
 	mMessageType2Severity[MessageType.Warning] = 1;
@@ -526,7 +525,7 @@ sap.ui.define([
 			}
 		},
 		metadata : {
-			"final": bFinal
+			"final": true
 		}
 	});
 
@@ -1764,6 +1763,19 @@ sap.ui.define([
 		aBindings.forEach(function(oBinding) {
 			oBinding.initialize();
 		});
+	};
+
+	/**
+	 * Returns this model's base URI of the data service (as defined by the "serviceUrl" model parameter; see
+	 * {@link #constructor}), without query options.
+	 *
+	 * @returns {string} The service's base URI without query options
+	 *
+	 * @public
+	 * @since 1.130.0
+	 */
+	ODataModel.prototype.getServiceUrl = function () {
+		return this.sServiceUrl;
 	};
 
 	/**

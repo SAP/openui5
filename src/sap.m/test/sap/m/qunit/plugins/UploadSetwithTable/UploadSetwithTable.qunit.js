@@ -449,6 +449,171 @@ sap.ui.define([
 
 	});
 
+	// Test to verify if dragdrop config is removed from the table when uploadEnabled is disabled.
+	QUnit.test("Plugin to remove dragdrop config from table when uploadEnabled is disabled", async function (assert) {
+		// arrange
+		const oTable = await createMDCTable();
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			uploadEnabled: false
+		});
+
+		// act
+		oTable.addDependent(oUploadSetwithTablePlugin);
+		await oTable.initialized();
+
+		// assert
+		assert.ok(!oUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin connected to MDC table - uploading is disabled");
+		assert.ok(!oTable.getDragDropConfig().length, "DragDropConfig is not added to the table.");
+
+		oTable.destroy();
+
+
+		// write the same test for responsive table
+		const oResponsiveTable = await createResponsiveTable();
+		const oResponsiveUploadSetwithTablePlugin = new UploadSetwithTable({
+			uploadEnabled: false
+		});
+
+		// act
+		oResponsiveTable.addDependent(oResponsiveUploadSetwithTablePlugin);
+
+		// assert
+		assert.ok(!oResponsiveUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin connected to Responsive table - uploading is disabled");
+		assert.ok(!oResponsiveTable.getDragDropConfig().length, "DragDropConfig is not added to the table");
+
+		oResponsiveTable.destroy();
+
+		// write the same test for grid table
+		const oGridTable = await createGridTable();
+		const oGridUploadSetwithTablePlugin = new UploadSetwithTable({
+			uploadEnabled: false
+		});
+
+		// act
+		oGridTable.addDependent(oGridUploadSetwithTablePlugin);
+
+		// assert
+		assert.ok(!oGridUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin coonected to grid table - uploading is disabled");
+		assert.ok(!oGridTable.getDragDropConfig().length, "DragDropConfig is not added to the table");
+	});
+
+	// Test to verify if dragdrop config is added to the table when uploadEnabled is enabled.
+	QUnit.test("Plugin to add dragdrop config to table when uploadEnabled is enabled", async function (assert) {
+		// arrange
+		const oTable = await createMDCTable();
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			uploadEnabled: true
+		});
+
+		// act
+		oTable.addDependent(oUploadSetwithTablePlugin);
+		await oTable.initialized();
+
+		// assert
+		const oInnerTable = oTable._oTable;
+		assert.ok(oUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin connnected to MDC table - upload is enabled");
+		assert.ok(!!oInnerTable?.getDragDropConfig()?.length , "DragDropConfig is added to the table");
+
+		oTable.destroy();
+
+		// write the same test for responsive table
+		const oResponsiveTable = await createResponsiveTable();
+		const oResponsiveUploadSetwithTablePlugin = new UploadSetwithTable({
+			uploadEnabled: true
+		});
+
+		// act
+		oResponsiveTable.addDependent(oResponsiveUploadSetwithTablePlugin);
+
+		// assert
+		assert.ok(oResponsiveUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin coonected to Responsive table - upload is enabled");
+		assert.ok(oResponsiveTable.getDragDropConfig().length, "DragDropConfig is added to the table");
+
+		oResponsiveTable.destroy();
+
+		// same test for grid table
+		const oGridTable = await createGridTable();
+		const oGridUploadSetwithTablePlugin = new UploadSetwithTable({
+			uploadEnabled: true
+		});
+
+		// act
+		oGridTable.addDependent(oGridUploadSetwithTablePlugin);
+
+		// assert
+		assert.ok(oGridUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin connected to Grid table - upload is enabled");
+		assert.ok(oGridTable.getDragDropConfig().length, "DragDropConfig is added to the table");
+
+		oGridTable.destroy();
+	});
+
+	// Test to verify if dragdrop config is removed from the table when uploadEnabled is toiggeled from enabled to disabled.
+	QUnit.test("Plugin to remove dragdrop config from table when uploadEnabled is toggled from enabled to disabled", async function (assert) {
+		// arrange
+		const oTable = await createMDCTable();
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			uploadEnabled: true
+		});
+
+		// act
+		oTable.addDependent(oUploadSetwithTablePlugin);
+		await oTable.initialized();
+
+		// assert
+		assert.ok(oUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin connected to MDC table - uploading is enabled");
+		assert.ok(!!oTable?._oTable?.getDragDropConfig().length, "DragDropConfig is added to the table");
+
+		oUploadSetwithTablePlugin.setUploadEnabled(false);
+
+		// assert
+		assert.ok(!oUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin connected to MDC table - uploading is disabled");
+		assert.ok(!oTable.getDragDropConfig().length, "DragDropConfig is removed from the table");
+
+		oTable.destroy();
+
+		// write the same test for responsive table
+		const oResponsiveTable = await createResponsiveTable();
+		const oResponsiveUploadSetwithTablePlugin = new UploadSetwithTable({
+			uploadEnabled: true
+		});
+
+		// act
+		oResponsiveTable.addDependent(oResponsiveUploadSetwithTablePlugin);
+
+		// assert
+		assert.ok(oResponsiveUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin connected to Responsive table - uploading is enabled");
+		assert.ok(oResponsiveTable.getDragDropConfig().length, "DragDropConfig is added to the table");
+
+		oResponsiveUploadSetwithTablePlugin.setUploadEnabled(false);
+
+		// assert
+		assert.ok(!oResponsiveUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin connected to Responsive table - uploading is disabled");
+		assert.ok(!oResponsiveTable.getDragDropConfig().length, "DragDropConfig is removed from the table");
+
+		oResponsiveTable.destroy();
+
+		// write the same test for grid table
+		const oGridTable = await createGridTable();
+		const oGridUploadSetwithTablePlugin = new UploadSetwithTable({
+			uploadEnabled: true
+		});
+
+		// act
+		oGridTable.addDependent(oGridUploadSetwithTablePlugin);
+
+		// assert
+		assert.ok(oGridUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin connected to Grid table - uploading is enabled");
+		assert.ok(oGridTable.getDragDropConfig().length, "DragDropConfig is added to the table");
+
+		oGridUploadSetwithTablePlugin.setUploadEnabled(false);
+
+		// assert
+		assert.ok(!oGridUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin connected to Grid table - uploading is disabled");
+		assert.ok(!oGridTable.getDragDropConfig().length, "DragDropConfig is removed from the table");
+
+		oGridTable.destroy();
+	});
+
 
 	QUnit.module("Plugin properties & aggregations", {
 		beforeEach: function() {

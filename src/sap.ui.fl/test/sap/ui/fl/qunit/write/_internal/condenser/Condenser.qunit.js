@@ -906,15 +906,35 @@ sap.ui.define([
 
 			// mix in some objects that are not of type sap.ui.fl.apply._internal.flexObjects.UIChange
 			const aChanges = [].concat(this.aChanges);
-			aChanges.splice(0, 0, "not a change");
-			aChanges.splice(20, 0, {type: "variant"});
-			aChanges.splice(30, 0, false);
+			const oDeletedVariant1 = FlexObjectFactory.createFromFileContent(({
+				fileName: "someOtherFlexObject1",
+				layer: Layer.CUSTOMER,
+				fileType: "variant",
+				reference: "sap.ui.rta.test"
+			}));
+			oDeletedVariant1.markForDeletion();
+			aChanges.splice(0, 0, oDeletedVariant1);
+			aChanges.splice(20, 0, FlexObjectFactory.createFromFileContent(({
+				fileName: "someOtherFlexObject2",
+				layer: Layer.CUSTOMER,
+				fileType: "variant",
+				reference: "sap.ui.rta.test"
+			})));
+			aChanges.splice(30, 0, FlexObjectFactory.createFromFileContent(({
+				fileName: "someOtherFlexObject3",
+				layer: Layer.CUSTOMER,
+				fileType: "variant",
+				reference: "sap.ui.rta.test"
+			})));
 
 			const aRemainingChanges = await Condenser.condense(oAppComponent, aChanges);
-			assert.strictEqual(aRemainingChanges.length, 13, `Expected number of remaining changes: ${13}`);
-			assert.strictEqual(aRemainingChanges[0], "not a change", "the non UI Change was sorted correctly");
-			assert.deepEqual(aRemainingChanges[4], {type: "variant"}, "the non UI Change was sorted correctly");
-			assert.strictEqual(aRemainingChanges[5], false, "the non UI Change was sorted correctly");
+			assert.strictEqual(
+				aRemainingChanges.length,
+				12,
+				"The deleted variant is removed by the condenser, expected number of remaining changes: 12"
+			);
+			assert.strictEqual(aRemainingChanges[3].getId(), "someOtherFlexObject2", "the non UI Change was sorted correctly");
+			assert.strictEqual(aRemainingChanges[4].getId(), "someOtherFlexObject3", "the non UI Change was sorted correctly");
 		});
 
 		QUnit.test("mix of not applied changes in between", async function(assert) {
@@ -922,7 +942,7 @@ sap.ui.define([
 			this.aChanges = aLoadedChanges;
 			await applyChangeSequentially(aLoadedChanges);
 
-			// mix in some objects that are not of type sap.ui.fl.apply._internal.flexObjects.UIChange
+			// mix in some objects that are not applied
 			const aChanges = [].concat(this.aChanges);
 			aChanges.splice(0, 0, FlexObjectFactory.createFromFileContent(({
 				fileName: "idRename0",

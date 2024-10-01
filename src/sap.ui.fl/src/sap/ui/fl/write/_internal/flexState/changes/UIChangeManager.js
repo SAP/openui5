@@ -7,17 +7,21 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
-	"sap/ui/fl/apply/_internal/flexState/FlexState"
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager"
 ], function(
 	_omit,
 	Component,
 	Applier,
 	FlexObjectFactory,
+	States,
 	DependencyHandler,
 	FlexObjectState,
-	FlexState
+	FlexState,
+	FlexObjectManager
 ) {
 	"use strict";
 
@@ -78,6 +82,25 @@ sap.ui.define([
 			finalizeChangeCreation(sReference, oChange, oAppComponent);
 		});
 		return aAddedChanges;
+	};
+
+	/**
+	 * Restores previously deleted UIChanges.
+	 * They can be in state DELETED or NEW (when they were dirty and removed from the FlexState).
+	 *
+	 * @param {string} sReference - Flex reference of the application
+	 * @param {sap.ui.fl.apply._internal.flexObjects.UIChange[]} aChanges - Array of UIChange instances to be restored
+	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
+	 */
+	UIChangeManager.restoreDeletedChanges = function(sReference, aChanges, oAppComponent) {
+		FlexObjectManager.restoreDeletedFlexObjects({
+			reference: sReference,
+			flexObjects: aChanges
+		});
+		const aDirtyChanges = aChanges.filter((oChange) => oChange.getState() !== States.LifecycleState.PERSISTED);
+		aDirtyChanges.forEach((oChange) => {
+			finalizeChangeCreation(sReference, oChange, oAppComponent);
+		});
 	};
 
 	return UIChangeManager;

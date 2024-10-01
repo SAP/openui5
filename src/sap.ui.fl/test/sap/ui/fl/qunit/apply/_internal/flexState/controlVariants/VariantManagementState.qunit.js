@@ -1448,6 +1448,63 @@ sap.ui.define([
 				"then all references are returned"
 			);
 		});
+
+		QUnit.test("when retrieving variant management changes", function(assert) {
+			VariantManagementState.addRuntimeSteadyObject(
+				sReference,
+				sComponentId,
+				createVariant({
+					fileName: "someOtherVM",
+					variantManagementReference: "someOtherVM"
+				})
+			);
+			const oSetDefaultVariantChange = FlexObjectFactory.createUIChange({
+				id: "someSetDefaultVariantChange",
+				layer: Layer.CUSTOMER,
+				changeType: "setDefault",
+				fileType: "ctrl_variant_management_change",
+				selector: {
+					id: sVariantManagementReference
+				},
+				content: {
+					defaultVariant: "customVariant"
+				}
+			});
+			const oSetDefaultVariantChange2 = FlexObjectFactory.createUIChange({
+				id: "someSetDefaultVariantChange2",
+				layer: Layer.CUSTOMER,
+				changeType: "setDefault",
+				fileType: "ctrl_variant_management_change",
+				selector: {
+					id: "someOtherVM"
+				},
+				content: {
+					defaultVariant: "someOtherVM"
+				}
+			});
+			stubFlexObjectsSelector([
+				oSetDefaultVariantChange,
+				oSetDefaultVariantChange2
+			]);
+			const aVMChanges = VariantManagementState.getVariantManagementChanges({
+				reference: sReference
+			});
+			assert.deepEqual(
+				aVMChanges,
+				[oSetDefaultVariantChange, oSetDefaultVariantChange2],
+				"then both VM changes are returned if no variant is provided"
+			);
+
+			const aVMChangesForVariant = VariantManagementState.getVariantManagementChanges({
+				reference: sReference,
+				vReference: "customVariant"
+			});
+			assert.deepEqual(
+				aVMChangesForVariant,
+				[oSetDefaultVariantChange],
+				"then only the VM change for the provided variant is returned"
+			);
+		});
 	});
 
 	QUnit.module("Initial changes handling", {

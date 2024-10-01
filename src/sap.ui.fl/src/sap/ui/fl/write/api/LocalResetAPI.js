@@ -3,25 +3,25 @@
  */
 
 sap.ui.define([
+	"sap/base/util/restricted/_union",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
-	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/Utils",
-	"sap/base/util/restricted/_union"
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/Utils"
 ], function(
+	union,
+	JsControlTreeModifier,
 	States,
 	UIChangesState,
-	FlexObjectState,
 	ManifestUtils,
-	PersistenceWriteAPI,
+	UIChangeManager,
 	ChangesWriteAPI,
-	JsControlTreeModifier,
-	Utils,
-	union
+	PersistenceWriteAPI,
+	Utils
 ) {
 	"use strict";
 
@@ -104,28 +104,18 @@ sap.ui.define([
 	};
 
 	LocalResetAPI.restoreChanges = function(aChanges, oAppComponent) {
-		var aApplyQueue = aChanges.map(function(oChange) {
-			return function() {
-				oChange.restorePreviousState();
-				var oControl = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-				if (oChange.getState() === States.LifecycleState.PERSISTED) {
-					const aDirtyChanges = FlexObjectState.getDirtyFlexObjects(oAppComponent.name);
-					var iIndex = aDirtyChanges.indexOf(oChange);
-					if (iIndex >= 0) {
-						aDirtyChanges.splice(iIndex, 1);
-					}
-				}
+		const sReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
+		UIChangeManager.restoreDeletedChanges(sReference, aChanges, oAppComponent);
+		const aApplyQueue = aChanges.map((oChange) =>
+			() => {
+				const oControl = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
 				return ChangesWriteAPI.apply({
 					change: oChange,
 					element: oControl,
 					modifier: JsControlTreeModifier
 				});
-			};
-		});
-		PersistenceWriteAPI.add({
-			flexObjects: aChanges,
-			selector: oAppComponent
-		});
+			}
+		);
 		return Utils.execPromiseQueueSequentially(aApplyQueue);
 	};
 

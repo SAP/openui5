@@ -25,10 +25,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/core/message/MessageType",
 	"sap/ui/test/TestUtils"
-], function (Log, Localization, SyncPromise, Rendering, Supportability, CacheManager, Message,
-		Messaging, Binding, BindingMode, BaseContext, Model, OperationMode, Context,
-		ODataMetaModel, ODataModel, SubmitMode, _Helper, _MetadataRequestor, _Parser, _Requestor,
-		MessageType, TestUtils) {
+], function(Log, Localization, SyncPromise, Rendering, Supportability, CacheManager, Message, Messaging, Binding, BindingMode, BaseContext, Model, OperationMode, Context, ODataMetaModel, ODataModel, SubmitMode, _Helper, _MetadataRequestor, _Parser, _Requestor, MessageType, TestUtils) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
@@ -3548,6 +3545,13 @@ sap.ui.define([
 	QUnit.test("getKeyPredicate, requestKeyPredicate", function (assert) {
 		return TestUtils.checkGetAndRequest(this, this.createModel(), assert, "fetchKeyPredicate",
 			["~metapath~", {/*oEntity*/}], true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("No extend in UI5 2.x", function (assert) {
+		// code under test
+		assert.ok(ODataModel.getMetadata().isFinal());
+		assert.notOk(ODataModel.extend);
 	});
 });
 //TODO constructor: test that the service root URL is absolute?

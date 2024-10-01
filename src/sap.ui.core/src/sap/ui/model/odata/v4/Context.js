@@ -320,6 +320,9 @@ sap.ui.define([
 		}
 		this.oBinding.checkSuspended();
 		if (this.isTransient()) {
+			if (this.iIndex === undefined) {
+				return Promise.resolve(); // already deleted, nothing to do
+			}
 			sGroupId = null;
 		} else if (sGroupId === null) {
 			if (!(this.isKeepAlive() && this.iIndex === undefined)) {
@@ -649,6 +652,9 @@ sap.ui.define([
 	 *   The number of levels to expand (@experimental as of version 1.127.0),
 	 *   <code>iLevels >= Number.MAX_SAFE_INTEGER</code> can be used to expand all levels. If a node
 	 *   is expanded a second time, the expand state of the descendants is not changed.
+	 * @returns {Promise<void>}
+	 *   A promise which is resolved without a defined result when the expand is successful, or
+	 *   rejected in case of an error
 	 * @throws {Error}
 	 *   If the context points to a node that is not expandable or already expanded, the given
 	 *   number of levels is not a positive number, or the given number of levels is greater than
@@ -665,8 +671,7 @@ sap.ui.define([
 		}
 		switch (this.isExpanded()) {
 			case false:
-				this.oBinding.expand(this, iLevels).catch(this.oModel.getReporter());
-				break;
+				return Promise.resolve(this.oBinding.expand(this, iLevels)).then(() => {});
 			case true:
 				throw new Error("Already expanded: " + this);
 			default:

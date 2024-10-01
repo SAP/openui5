@@ -511,6 +511,14 @@ sap.ui.define([
 	UploadSetwithTable.prototype.setUploadEnabled = function (bEnable) {
 		if (bEnable !== this.getUploadEnabled()) {
 			this.getDefaultFileUploader().setEnabled(bEnable);
+
+			const oPlugin = this.getConfig("getPluginInstance");
+			if (bEnable && !oPlugin._oDragDropConfig) {
+				this.getConfig("setDragDropConfig");
+			} else if (!bEnable) {
+				this.getConfig("resetDragDropConfig");
+			}
+
 			this.setProperty("uploadEnabled", bEnable, false);
 		}
 		return this;
@@ -1603,7 +1611,10 @@ sap.ui.define([
 			return this._oControlInstance;
 		},
 		setPluginDefaultSettings: function() {
-			this.setDragDropConfig();
+			const oPlugin = this.getPluginInstance();
+			if (oPlugin.getUploadEnabled()) {
+				this.setDragDropConfig();
+			}
 			this.setDefaultIllustrations();
 		},
 		setIsTableBound: function(oControl) {
@@ -1645,6 +1656,14 @@ sap.ui.define([
 			}, () => {
 				Log.error("Failed to load MDC library for Drag and Drop configuration.");
 			});
+		},
+		resetDragDropConfig: function() {
+			const oPlugin = this.getPluginInstance();
+			const oControl = this.getControlInstance();
+			if (oPlugin && oControl && oPlugin._oDragDropConfig) {
+				oControl.removeDragDropConfig(oPlugin._oDragDropConfig);
+				oPlugin._oDragDropConfig = null;
+			}
 		},
 		// Set default illustrations for the table when no data is available. set only when upload plugin is activated.
 		setDefaultIllustrations: function() {
@@ -1734,7 +1753,10 @@ sap.ui.define([
 			return this._oControlInstance;
 		},
 		setPluginDefaultSettings: function() {
-			this.setDragDropConfig();
+			const oPlugin = this.getPluginInstance();
+			if (oPlugin.getUploadEnabled()) {
+				this.setDragDropConfig();
+			}
 			this.setDefaultIllustrations();
 		},
 		setIsTableBound: function(oControl) {
@@ -1760,11 +1782,11 @@ sap.ui.define([
 			const oPlugin = this.getPluginInstance();
 			const oControl = this.getControlInstance();
 
-			var oDragDropConfig = new DragDropInfo({
+			var oDragDropConfig = oPlugin._oDragDropConfig = new DragDropInfo({
 				sourceAggregation: "items",
 				targetAggregation: "items"
 			});
-			var oDropConfig = new DropInfo({
+			var oDropConfig = oPlugin._oDropConfig = new DropInfo({
 				dropEffect:"Move",
 				dropPosition:"OnOrBetween",
 				dragEnter: [oPlugin?._onDragEnterFile, oPlugin],
@@ -1772,6 +1794,16 @@ sap.ui.define([
 			});
 			oControl?.addDragDropConfig(oDragDropConfig);
 			oControl?.addDragDropConfig(oDropConfig);
+		},
+		resetDragDropConfig: function() {
+			const oPlugin = this.getPluginInstance();
+			const oControl = this.getControlInstance();
+			if (oPlugin && oControl) {
+				oControl.removeDragDropConfig(oPlugin._oDragDropConfig);
+				oControl.removeDragDropConfig(oPlugin._oDropConfig);
+				oPlugin._oDragDropConfig = null;
+				oPlugin._oDropConfig = null;
+			}
 		},
 		// Set default illustrations for the table when no data is available. set only when upload plugin is activated.
 		setDefaultIllustrations: function() {
@@ -1856,7 +1888,10 @@ sap.ui.define([
 			return this._oControlInstance;
 		},
 		setPluginDefaultSettings: function() {
-			this.setDragDropConfig();
+			const oPlugin = this.getPluginInstance();
+			if (oPlugin.getUploadEnabled()) {
+				this.setDragDropConfig();
+			}
 			this.setDefaultIllustrations();
 		},
 		setIsTableBound: function(oControl) {
@@ -1882,11 +1917,11 @@ sap.ui.define([
 			const oPlugin = this.getPluginInstance();
 			const oControl = this.getControlInstance();
 
-			var oDragDropConfig = new DragDropInfo({
+			var oDragDropConfig = oPlugin._oDragDropConfig = new DragDropInfo({
 				sourceAggregation: "rows",
 				targetAggregation: "rows"
 			});
-			var oDropConfig = new DropInfo({
+			var oDropConfig = oPlugin._oDropConfig = new DropInfo({
 				dropEffect:"Move",
 				dropPosition:"OnOrBetween",
 				dragEnter: [oPlugin?._onDragEnterFile, oPlugin],
@@ -1894,6 +1929,16 @@ sap.ui.define([
 			});
 			oControl?.addDragDropConfig(oDragDropConfig);
 			oControl?.addDragDropConfig(oDropConfig);
+		},
+		resetDragDropConfig: function() {
+			const oPlugin = this.getPluginInstance();
+			const oControl = this.getControlInstance();
+			if (oPlugin && oControl) {
+				oControl.removeDragDropConfig(oPlugin._oDragDropConfig);
+				oControl.removeDragDropConfig(oPlugin._oDropConfig);
+				oPlugin._oDragDropConfig = null;
+				oPlugin._oDropConfig = null;
+			}
 		},
 		// Set default illustrations for the table when no data is available. set only when upload plugin is activated.
 		setDefaultIllustrations: function() {
