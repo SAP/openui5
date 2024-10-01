@@ -179,6 +179,10 @@ sap.ui.define([
 				wrapCharLimit: 10000
 			});
 
+			oListItem.getMultiSelectControl(true)._getVisualOnlyMode = function () {
+				return true;
+			};
+
 			// Constructor does not escape properly curly braces and binding. We need to use the setters instead.
 			oListItem.setTitle(oItem.getText());
 			oListItem.setInfo((oItem.getAdditionalText && bShowSecondaryValues) ? oItem.getAdditionalText() : "");
