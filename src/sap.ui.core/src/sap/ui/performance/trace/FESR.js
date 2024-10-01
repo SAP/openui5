@@ -298,26 +298,25 @@ sap.ui.define([
 	/**
 	 * @param {boolean} bActive State of the FESR header creation
 	 * @param {string} [sUrl] beacon url
+	 * @returns {Promise} Resolves when FESR is active
 	 * @private
 	 * @ui5-restricted sap.ui.core
 	 */
-	FESR.setActive = function (bActive, sUrl) {
+	FESR.setActive = async function (bActive, sUrl) {
 		if (bActive && !bFesrActive) {
 			oBeaconRequest = sUrl ? BeaconRequest.isSupported() && new BeaconRequest({url: sUrl}) : null;
 			sBeaconURL = sUrl;
 			bFesrActive = true;
 			Passport.setActive(true);
-			Interaction.setActive(true);
+			await Interaction.setActive(true);
 			XHRInterceptor.register("PASSPORT_HEADER", "open", passportHeaderOverride);
 			if (!oBeaconRequest) {
 				XHRInterceptor.register("FESR", "open" , fesrHeaderOverride);
 			}
-			Interaction.onInteractionStarted = onInteractionStarted;
-			Interaction.onInteractionFinished = onInteractionFinished;
-			Interaction.passportHeader = wmPassportHeader;
+			Interaction.setFESR(FESR);
 		} else if (!bActive && bFesrActive) {
 			bFesrActive = false;
-			Interaction.setActive(false);
+			await Interaction.setActive(false);
 			XHRInterceptor.unregister("FESR", "open");
 			// passport stays active so far
 			if (XHRInterceptor.isRegistered("PASSPORT_HEADER", "open")) {
@@ -333,8 +332,7 @@ sap.ui.define([
 				oBeaconRequest = null;
 				sBeaconURL = null;
 			}
-			Interaction.onInteractionFinished = null;
-			Interaction.onInteractionStarted = null;
+			Interaction.setFESR(null);
 		}
 	};
 
@@ -369,6 +367,10 @@ sap.ui.define([
 			interactionType: oFESRHandle.interactionType
 		};
 	};
+
+	FESR.onInteractionStarted = onInteractionStarted;
+	FESR.onInteractionFinished = onInteractionFinished;
+	FESR.passportHeader = wmPassportHeader;
 
 	return FESR;
 });

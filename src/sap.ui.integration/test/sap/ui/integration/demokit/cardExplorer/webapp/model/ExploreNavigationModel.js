@@ -407,6 +407,32 @@ sap.ui.define([
 								]
 							},
 							{
+								title: 'Icon FitType',
+								key: 'iconFitType',
+								files: [
+									{
+										url: '/samples/object/iconFitType/iconFitType.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/object/iconFitType/images/team.jpg',
+										name: 'images/team.jpg',
+										key: 'images/team.jpg'
+									},
+									{
+										url: '/samples/object/iconFitType/images/leader.jpg',
+										name: 'images/leader.jpg',
+										key: 'images/leader.jpg'
+									},
+									{
+										url: '/samples/object/iconFitType/images/supervisor.png',
+										name: 'images/supervisor.png',
+										key: 'images/supervisor.png'
+									}
+								]
+							},
+							{
 								title: 'Image',
 								key: 'objectCardWithImage',
 								experimental: true,

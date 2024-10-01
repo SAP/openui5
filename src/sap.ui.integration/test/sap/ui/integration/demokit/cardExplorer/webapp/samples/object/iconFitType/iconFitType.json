@@ -1,0 +1,114 @@
+{
+	"sap.app": {
+		"id": "card.explorer.object.imageFitType",
+		"type": "card",
+		"title": "Sample of an Object Card with Icons",
+		"subTitle": "Sample of an Object Card with Icons",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Icon",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"configuration": {
+			"parameters": {
+				"visibleCompanyFields": {
+					"value": ["companyDetails", "companyName"]
+				}
+			}
+		},
+		"data": {
+			"json": {
+				"title": "Project Team Overview",
+				"subtitle": "Current Status and Metrics",
+				"billing": "RN47565.0.1",
+				"customer": "Domestic US Customer 1",
+				"photo": "./images/team.jpg",
+				"fit": "Cover",
+				"team": {
+				    "manager": {
+					    "firstName": "Donna",
+					    "lastName": "Moore",
+					    "photo": "./images/leader.jpg",
+					    "fit": "Contain"
+				    },
+				    "supervisor": {
+				    	"firstName": "Alain",
+				    	"lastName": "Chevalier",
+				    	"photo": "./images/supervisor.png",
+				    	"fit": "Cover"
+				    }
+				}
+			}
+		},
+		"header": {
+			"icon": {
+				"src": "{photo}",
+				"fitType": "{fit}"
+			},
+			"title": "{title}",
+			"subTitle": "{subtitle}"
+		},
+		"content": {
+			"groups": [
+				{
+					"title": "Status Metrics",
+					"items": [
+					    {
+							"value": "Project is on track",
+							"type": "Status",
+							"state": "Success",
+							"showStateIcon": true
+						},
+						{
+							"label": "Billing Element",
+							"value": "{billing}"
+						},
+						{
+							"label": "Customer",
+							"value": "{customer}"
+						}
+					]
+				},
+				{
+					"title": "Team Details",
+					"items": [
+						{
+							"label": "Direct Manager",
+							"value": "{team/manager/firstName} {team/manager/lastName}",
+							"icon": {
+								"src": "{team/manager/photo}",
+								"fitType": "{team/manager/fit}"
+							}
+						},
+						{
+							"label": "Supervisor",
+							"value": "{team/supervisor/firstName} {team/supervisor/lastName}",
+							"icon": {
+								"src": "{team/supervisor/photo}",
+								"fitType": "{team/supervisor/fit}"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

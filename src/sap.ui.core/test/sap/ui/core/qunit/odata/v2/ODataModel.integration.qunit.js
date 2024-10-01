@@ -622,6 +622,52 @@ sap.ui.define([
 		},
 
 		/**
+		 * Creates an OData V2 tree response based on the "cds_zrh_erhaordermanage" service. It takes an object
+		 * representing the tree response. Each property of the object results in a node with the property name as the
+		 * key and name of the node. The property value determines the drill state.
+		 * "L" for leaf nodes, "C" for collapsed nodes and an object if the node should be expanded with a child node.
+		 * E.g.: {"1" : "L", "2": {"2.1": "C"}} results in a tree with 3 nodes. Node 1 is a leaf, Node 2 is the
+		 * expanded parent node of Node 2.1 which itself is a collapsed node.
+		 *
+		 * @param {object} oTree The object representing the tree response.
+		 * @param {number} [iLevel=0] The level of the node
+		 * @param {string} [sParentNode=""] The parent node
+		 * @returns {object[]} The tree response
+		 */
+		buildTreeResponse : function (oTree, iLevel = 0, sParentNode = "") {
+			const aResult = [];
+
+			Object.keys(oTree).forEach((sKey, i) => {
+				const oNode = {
+					__metadata: {uri: "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='" + sKey + "')"},
+					ErhaOrder: "1",
+					ErhaOrderItem: sKey,
+					ErhaOrderItemName: sKey,
+					HierarchyParentNode: sParentNode,
+					HierarchyDescendantCount: 0,
+					HierarchyDistanceFromRoot: iLevel,
+					HierarchyDrillState: "expanded",
+					HierarchyNode: sKey,
+					HierarchyPreorderRank: 0,
+					HierarchySiblingRank: i
+				};
+				aResult.push(oNode);
+
+				if (typeof oTree[sKey] === "object") {
+					const aChildren = this.buildTreeResponse(oTree[sKey], iLevel + 1, sKey);
+					aResult.push(...aChildren );
+					oNode.HierarchyDescendantCount += aChildren.length;
+				} else if (oTree[sKey] !== "E") {
+					oNode.HierarchyDrillState = oTree[sKey] === "L" ? "leaf" : "collapsed";
+				}
+			});
+			aResult.forEach((oNode, i) => {
+				oNode.HierarchyPreorderRank = i;
+			});
+			return aResult;
+		},
+
+		/**
 		 * Checks the messages and finishes the test if no pending changes are left, all
 		 * expected requests have been received and the expected number of messages have been
 		 * reported.
@@ -707,6 +753,36 @@ sap.ui.define([
 
 			assert.deepEqual(aCurrentMessages, aExpectedMessages,
 				this.aMessages.length + " expected messages in message manager");
+		},
+
+		/**
+		 * Checks the expected node states for the node in the given table.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @param {object} oTable The table
+		 * @param {string[]} aExpectedNodeState The expected node states,
+		 *   e.g.: ["C", "E", "L"] for a collapsed, expanded and a leaf node in that order in the table.
+		 *   The index in the array represents the index in a table. If you want to skip the check for a node at a
+		 *   certain index use <code>null</code>.
+		 */
+		checkNodeState : function (assert, oTable, aExpectedNodeState) {
+			aExpectedNodeState.forEach((sNodeState, i) => {
+				if (sNodeState === null) {
+					return;
+				}
+				const oContext = oTable.getContextByIndex(i);
+				const sNode = oContext.getObject().ErhaOrderItem;
+				if (sNodeState === "L") {
+					assert.strictEqual(oContext._mProxyInfo.isLeaf, true, sNode + " is leaf");
+					assert.strictEqual(oContext._mProxyInfo.isExpanded, false);
+				} else if (sNodeState === "E") {
+					assert.strictEqual(oContext._mProxyInfo.isLeaf, false);
+					assert.strictEqual(oContext._mProxyInfo.isExpanded, true, sNode + " is expanded");
+				} else { // else "C" (collapsed)
+					assert.strictEqual(oContext._mProxyInfo.isLeaf, false);
+					assert.strictEqual(oContext._mProxyInfo.isExpanded, false, sNode + " is collapsed");
+				}
+			});
 		},
 
 		/**
@@ -20414,6 +20490,753 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 		}).then(() => {
 			assert.deepEqual(getTableContent(oTable), [["0"], ["1"], ["1.0"], ["1.0.0"]]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario 1: If the last child node is deleted from its parent node, then the parent node becomes a leaf.
+	// Scenario 2: If the last child node is deleted from the last parent node in the tree (child node is last
+	// and parent node is second last), then the parent node becomes a leaf.
+	// ODataModel#resetChanges restores original state
+	// Scenario 3: When moving the last child of a parent node, the parent node turns into a leaf. This can be reverted
+	// with reset changes.
+	// JIRA: CPOUI5MODELS-1002
+	QUnit.test("CPOUI5MODELS-1002: ODataTreeBindingFlat - switch between node and leaf, server nodes",
+			function (assert) {
+		let oBinding;
+		const oModel = createHierarchyMaintenanceModel();
+		let oTable;
+		const sView = `
+<t:TreeTable id="table"
+		rows="{
+			parameters: {countMode: 'Inline', numberOfExpandedLevels: 1},
+			path: '/ErhaOrder(\\'1\\')/to_Item'
+		}"
+		visibleRowCount="5">
+	<Text id="itemName" text="{ErhaOrderItemName}" />
+</t:TreeTable>`;
+
+		this.expectHeadRequest()
+			.expectRequest(
+				"ErhaOrder('1')/to_Item?$skip=0&$top=105&$inlinecount=allpages&$filter=HierarchyDistanceFromRoot le 1",
+				{__count: "5", results: this.buildTreeResponse({"1" : {"1.1": "L"}, "2": "L", "3": {"3.1": "L"}})}
+			);
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], ["2"], ["3"], ["3.1"]]);
+			this.checkNodeState(assert, oTable, ["E", "L", "L", "E", "L"]);
+
+			oBinding = oTable.getBinding("rows");
+
+			// code under test
+			oBinding.removeContext(oTable.getContextByIndex(1));
+
+			return this.waitForChanges(assert, "scenario 1: delete last child of node '1'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["3"], ["3.1"], [""]]);
+			this.checkNodeState(assert, oTable, ["L", "L", "E", "L"]);
+
+			// code under test
+			oBinding.removeContext(oTable.getContextByIndex(3));
+
+			return this.waitForChanges(assert, "scenario 2: delete last child at the end of the dataset of node '3'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["3"], [""], [""]]);
+			this.checkNodeState(assert, oTable, ["L", "L", "L"]);
+
+			// code under test
+			oModel.resetChanges();
+
+			return this.waitForChanges(assert, "scenario 1/2: reset all changes");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], ["2"], ["3"], ["3.1"]]);
+			this.checkNodeState(assert, oTable, ["E", "L", "L", "E", "L"]);
+
+			const oMoveContext = oTable.getContextByIndex(4);
+
+			// code under test
+			oBinding.removeContext(oMoveContext);
+			oBinding.addContexts(oTable.getContextByIndex(1), [oMoveContext]);
+
+			return this.waitForChanges(assert, "scenario 3: moving last child of node '3' to node '1.1'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], ["2"], ["3"], [""]]);
+			this.checkNodeState(assert, oTable, ["E", "C", "L", "L"]);
+
+			// code under test
+			oModel.resetChanges();
+
+			return this.waitForChanges(assert, "scenario 3: reset all changes");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], ["2"], ["3"], ["3.1"]]);
+			this.checkNodeState(assert, oTable, ["E", "L", "L", "E", "L"]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario 1: If the last child node is deleted from its parent node, then the parent node becomes a leaf.
+	// Scenario 2: If the last child node is deleted from the last parent node in the tree (child node is last
+	// and parent node is second last), then the parent node becomes a leaf.
+	// ODataModel#resetChanges restores original state
+	// Scenario 3: When moving the last child of a parent node, the parent node turns into a leaf. This can be reverted
+	// with reset changes.
+	// JIRA: CPOUI5MODELS-1002
+	QUnit.test("CPOUI5MODELS-1002: ODataTreeBindingFlat - switch between node and leaf, deep nodes", function (assert) {
+		let oBinding;
+		const oModel = createHierarchyMaintenanceModel();
+		let oTable;
+		const sView = `
+<t:TreeTable id="table"
+		rows="{
+			parameters: {countMode: 'Inline', numberOfExpandedLevels: 0},
+			path: '/ErhaOrder(\\'1\\')/to_Item'
+		}"
+		visibleRowCount="5">
+	<Text id="itemName" text="{ErhaOrderItemName}" />
+</t:TreeTable>`;
+
+		this.expectHeadRequest()
+			.expectRequest(
+				"ErhaOrder('1')/to_Item?$skip=0&$top=105&$inlinecount=allpages&$filter=HierarchyDistanceFromRoot le 0",
+				{__count: "3", results: this.buildTreeResponse({"1" : "C", "2": "L", "3": "C"})}
+			);
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["3"], [""], [""]]);
+			this.checkNodeState(assert, oTable, ["C", "L", "C"]);
+
+			oBinding = oTable.getBinding("rows");
+			this.expectRequest(
+				"ErhaOrder('1')/to_Item?$skip=0&$top=105&$inlinecount=allpages&$filter=HierarchyParentNode eq '1'",
+				{__count: "1", results: this.buildTreeResponse({"1.1" : "L"}, 1, "1")}
+			);
+
+			// code under test
+			oBinding.expand(0);
+
+			return this.waitForChanges(assert, "expand node '1'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], ["2"], ["3"], [""]]);
+			this.checkNodeState(assert, oTable, ["E", "L", "L", "C"]);
+
+			// code under test
+			oBinding.removeContext(oTable.getContextByIndex(1));
+
+			return this.waitForChanges(assert, "scenario 1: delete child of node '1'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["3"], [""], [""]]);
+			this.checkNodeState(assert, oTable, ["L", "L", "C"]);
+
+			this.expectRequest(
+				"ErhaOrder('1')/to_Item?$skip=0&$top=105&$inlinecount=allpages&$filter=HierarchyParentNode eq '3'",
+				{__count: "1", results: this.buildTreeResponse({"3.1" : "L"}, 1, "3")}
+			);
+
+			// code under test
+			oBinding.expand(2);
+
+			return this.waitForChanges(assert, "expand node '3'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["3"], ["3.1"], [""]]);
+			this.checkNodeState(assert, oTable, ["L", "L", "E", "L"]);
+
+			// code under test
+			oBinding.removeContext(oTable.getContextByIndex(3));
+
+			return this.waitForChanges(assert, "scenario 2: delete child of node '3'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["3"], [""], [""]]);
+			this.checkNodeState(assert, oTable, ["L", "L", "L"]);
+
+			// code under test
+			oModel.resetChanges();
+
+			return this.waitForChanges(assert, "scenario 1 & 2: reset all changes");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], ["2"], ["3"], ["3.1"]]);
+			this.checkNodeState(assert, oTable, ["E", "L", "L", "E", "L"]);
+
+			const oMoveContext = oTable.getContextByIndex(4);
+
+			// code under test
+			oBinding.removeContext(oMoveContext);
+			oBinding.addContexts(oTable.getContextByIndex(1), [oMoveContext]);
+
+			return this.waitForChanges(assert, "scenario 3: moving node '3.1' from node '3' to node '1.1'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], ["2"], ["3"], [""]]);
+			this.checkNodeState(assert, oTable, ["E", "C", "L", "L"]);
+
+			// code under test
+			oBinding.expand(1);
+
+			return this.waitForChanges(assert, "scenario 3: expand node '1.1'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], ["3.1"], ["2"], ["3"]]);
+			this.checkNodeState(assert, oTable, ["E", "E", "L", "L", "L"]);
+
+			// code under test
+			oModel.resetChanges();
+
+			return this.waitForChanges(assert, "scenario 3: reset all changes");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], ["2"], ["3"], ["3.1"]]);
+			this.checkNodeState(assert, oTable, ["E", "L", "L", "E", "L"]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario 4 with server index nodes and deep nodes: When deleting leaves in a subtree, parent nodes turn to
+	// leaves every time the last child node is deleted, ODataModel#resetChanges restores the complete subtree.
+	// JIRA: CPOUI5MODELS-1002
+	QUnit.test("CPOUI5MODELS-1002: ODataTreeBindingFlat - multiple deletions of children in a subtree",
+			function (assert) {
+		let oBinding;
+		const oModel = createHierarchyMaintenanceModel();
+		let oTable;
+		const sView = `
+<t:TreeTable id="table"
+		rows="{
+			parameters: {countMode: 'Inline', numberOfExpandedLevels: 2},
+			path: '/ErhaOrder(\\'1\\')/to_Item'
+		}"
+		visibleRowCount="5">
+	<Text id="itemName" text="{ErhaOrderItemName}" />
+</t:TreeTable>`;
+
+		this.expectHeadRequest()
+			.expectRequest(
+				"ErhaOrder('1')/to_Item?$skip=0&$top=105&$inlinecount=allpages&$filter=HierarchyDistanceFromRoot le 2",
+				{__count: "3", results: this.buildTreeResponse({"1" : {"1.1": {"1.1.1": "C"}}})}
+			);
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], ["1.1.1"], [""], [""]]);
+			this.checkNodeState(assert, oTable, ["E", "E", "C"]);
+
+			this.expectRequest(
+				"ErhaOrder('1')/to_Item?$skip=0&$top=105&$inlinecount=allpages&$filter=HierarchyParentNode eq '1.1.1'",
+				{__count: "1", results: this.buildTreeResponse({"1.1.1.1" : "C"}, 3, "1.1.1")}
+			);
+
+			// code under test
+			oBinding.expand(2);
+
+			return this.waitForChanges(assert, "expand node 1.1.1");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], ["1.1.1"], ["1.1.1.1"], [""]]);
+			this.checkNodeState(assert, oTable, ["E", "E", "E", "C"]);
+
+			this.expectRequest(
+				"ErhaOrder('1')/to_Item?$skip=0&$top=105&$inlinecount=allpages"
+					+ "&$filter=HierarchyParentNode eq '1.1.1.1'",
+				{__count: "1", results: this.buildTreeResponse({"1.1.1.1.1" : "L"}, 3, "1.1.1.1")}
+			);
+
+			// code under test
+			oBinding.expand(3);
+
+			return this.waitForChanges(assert, "expand node 1.1.1.1");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], ["1.1.1"], ["1.1.1.1"], ["1.1.1.1.1"]]);
+			this.checkNodeState(assert, oTable, ["E", "E", "E", "E", "L"]);
+
+			oBinding.removeContext(oTable.getContextByIndex(4));
+
+			return this.waitForChanges(assert, "delete last child 1.1.1.1.1");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], ["1.1.1"], ["1.1.1.1"], [""]]);
+			this.checkNodeState(assert, oTable, ["E", "E", "E", "L"]);
+
+			// code under test
+			oBinding.removeContext(oTable.getContextByIndex(3));
+
+			return this.waitForChanges(assert, "delete last child 1.1.1.1");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], ["1.1.1"], [""], [""]]);
+			this.checkNodeState(assert, oTable, ["E", "E", "L"]);
+
+			// code under test
+			oBinding.removeContext(oTable.getContextByIndex(2));
+
+			return this.waitForChanges(assert, "delete last child 1.1.1");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], [""], [""], [""]]);
+			this.checkNodeState(assert, oTable, ["E", "L"]);
+			// code under test
+			oBinding.removeContext(oTable.getContextByIndex(1));
+
+			return this.waitForChanges(assert, "delete last child 1.1");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], [""], [""], [""], [""]]);
+			this.checkNodeState(assert, oTable, ["L"]);
+
+			// code under test
+			oModel.resetChanges();
+
+			return this.waitForChanges(assert, "reset all changes");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], ["1.1.1"], ["1.1.1.1"], ["1.1.1.1.1"]]);
+			this.checkNodeState(assert, oTable, ["E", "E", "E", "E", "L"]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario 5 with server index nodes: If a child node is moved from node A to node B, node A turns to a leaf and
+	// node B becomes a parent node. When the child node is moved back from node B to node A, node B turns to a leaf and
+	// node A becomes a parent node again.
+	// JIRA: CPOUI5MODELS-1002
+	QUnit.test("CPOUI5MODELS-1002: ODataTreeBindingFlat - move and move back child node manually, server nodes",
+			function (assert) {
+		let oBinding;
+		const oModel = createHierarchyMaintenanceModel();
+		let oTable;
+		const sView = `
+<t:TreeTable id="table"
+		rows="{
+			parameters: {countMode: 'Inline', numberOfExpandedLevels: 1},
+			path: '/ErhaOrder(\\'1\\')/to_Item'
+		}"
+		visibleRowCount="3">
+	<Text id="itemName" text="{ErhaOrderItemName}" />
+</t:TreeTable>`;
+
+		this.expectHeadRequest()
+			.expectRequest(
+				"ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages&$filter=HierarchyDistanceFromRoot le 1",
+				{__count: "3", results: this.buildTreeResponse({"1" : "L", "2": {"2.1": "L"}})}
+			);
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["2.1"]]);
+			this.checkNodeState(assert, oTable, ["L", "E", "L"]);
+
+			oBinding = oTable.getBinding("rows");
+
+			const oMoveContext = oTable.getContextByIndex(2);
+
+			// code under test
+			oBinding.removeContext(oMoveContext);
+			oBinding.addContexts(oTable.getContextByIndex(0), [oMoveContext]);
+
+			return this.waitForChanges(assert, "move node '2.1' from node '2' to node '1'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], [""]]);
+			this.checkNodeState(assert, oTable, ["C", "L"]);
+
+			// code under test
+			oBinding.expand(0);
+
+			return this.waitForChanges(assert, "expand node '1'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2.1"], ["2"]]);
+			this.checkNodeState(assert, oTable, ["E", "L", "L"]);
+
+			const oMoveContext = oTable.getContextByIndex(1);
+			const oReceivingContext = oTable.getContextByIndex(2);
+
+			// code under test
+			oBinding.removeContext(oMoveContext);
+			oBinding.addContexts(oReceivingContext, [oMoveContext]);
+
+			return this.waitForChanges(assert, "move node '2.1' from node '1' back to node '2'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], [""]]);
+			this.checkNodeState(assert, oTable, ["L", "C"]);
+
+			// code under test
+			oBinding.expand(1);
+
+			return this.waitForChanges(assert, "expand node '2'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["2.1"]]);
+			this.checkNodeState(assert, oTable, ["L", "E", "L"]);
+
+			// code under test
+			oModel.resetChanges();
+
+			return this.waitForChanges(assert, "reset changes");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["2.1"]]);
+			this.checkNodeState(assert, oTable, ["L", "E", "L"]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario 5 with deep nodes: If a child node is moved from node A to node B, node A turns to a leaf and
+	// node B becomes a parent node. When the child node is moved back from node B to node A, node B turns to a leaf and
+	// node A becomes a parent node again.
+	// JIRA: CPOUI5MODELS-1002
+	QUnit.test("CPOUI5MODELS-1002: ODataTreeBindingFlat - move and move back child node manually, deep nodes",
+			function (assert) {
+		let oBinding;
+		const oModel = createHierarchyMaintenanceModel();
+		let oTable;
+		const sView = `
+<t:TreeTable id="table"
+		rows="{
+			parameters: {countMode: 'Inline', numberOfExpandedLevels: 0},
+			path: '/ErhaOrder(\\'1\\')/to_Item'
+		}"
+		visibleRowCount="3">
+	<Text id="itemName" text="{ErhaOrderItemName}" />
+</t:TreeTable>`;
+
+		this.expectHeadRequest()
+			.expectRequest(
+				"ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages&$filter=HierarchyDistanceFromRoot le 0",
+				{__count: "3", results: this.buildTreeResponse({"1": "L", "2": "C", "3": "L"})}
+			);
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["3"]]);
+			this.checkNodeState(assert, oTable, ["L", "C", "L"]);
+
+			this.expectRequest(
+				"ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages&$filter=HierarchyParentNode eq '2'",
+				{__count : "1", results : this.buildTreeResponse({"2.1" : "L"}, 1, "2")}
+			);
+
+			// code under test
+			oBinding.expand(1);
+
+			return this.waitForChanges(assert, "expand node '2'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["2.1"]]);
+			this.checkNodeState(assert, oTable, ["L", "E", "L"]);
+
+			oBinding = oTable.getBinding("rows");
+
+			const oMoveContext = oTable.getContextByIndex(2);
+
+			// code under test
+			oBinding.removeContext(oMoveContext);
+			oBinding.addContexts(oTable.getContextByIndex(0), [oMoveContext]);
+
+			return this.waitForChanges(assert, "move node '2.1' from node '2' to node '1'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["3"]]);
+			this.checkNodeState(assert, oTable, ["C", "L", "L"]);
+
+			// code under test
+			oBinding.expand(0);
+
+			return this.waitForChanges(assert, "expand node '1'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2.1"], ["2"]]);
+			this.checkNodeState(assert, oTable, ["E", "L", "L"]);
+
+			const oMoveContext = oTable.getContextByIndex(1);
+			const oReceivingContext = oTable.getContextByIndex(2);
+
+			// code under test
+			oBinding.removeContext(oMoveContext);
+			oBinding.addContexts(oReceivingContext, [oMoveContext]);
+
+			return this.waitForChanges(assert, "move node '2.1' from node '1' back to node '2'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["3"]]);
+			this.checkNodeState(assert, oTable, ["L", "C", "L"]);
+
+			// code under test
+			oBinding.expand(1);
+
+			return this.waitForChanges(assert, "expand node '2'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["2.1"]]);
+			this.checkNodeState(assert, oTable, ["L", "E", "L"]);
+
+			// code under test
+			oModel.resetChanges();
+
+			return this.waitForChanges(assert, "reset changes");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["2.1"]]);
+			this.checkNodeState(assert, oTable, ["L", "E", "L"]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario 6 with server index nodes: If a child node is moved from node A to node B and node B to node C, node A
+	// and node B turn to a leaves and node C becomes a parent node. ODataModel#resetChanges restores the initial tree
+	// state.
+	// JIRA: CPOUI5MODELS-1002
+	QUnit.test("CPOUI5MODELS-1002: ODataTreeBindingFlat - move a child node at least twice, server nodes",
+			function (assert) {
+		let oBinding;
+		const oModel = createHierarchyMaintenanceModel();
+		let oTable;
+		const sView = `
+<t:TreeTable id="table"
+		rows="{
+			parameters: {countMode: 'Inline', numberOfExpandedLevels: 1},
+			path: '/ErhaOrder(\\'1\\')/to_Item'
+		}"
+		visibleRowCount="4">
+	<Text id="itemName" text="{ErhaOrderItemName}" />
+</t:TreeTable>`;
+
+		this.expectHeadRequest()
+			.expectRequest(
+				"ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages&$filter=HierarchyDistanceFromRoot le 1",
+				{__count: "4", results: this.buildTreeResponse({"1": {"1.1": "L"}, "2": "L", "3": "L"})}
+			);
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], ["2"], ["3"]]);
+			this.checkNodeState(assert, oTable, ["E", "L", "L", "L"]);
+
+			oBinding = oTable.getBinding("rows");
+
+			const oMoveContext = oTable.getContextByIndex(1);
+
+			// code under test
+			oBinding.removeContext(oMoveContext);
+			oBinding.addContexts(oTable.getContextByIndex(1), [oMoveContext]);
+
+			return this.waitForChanges(assert, "move node '1.1' from node '1' to node '2'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["3"], [""]]);
+			this.checkNodeState(assert, oTable, ["L", "C", "L"]);
+
+			// code under test
+			oBinding.expand(1);
+
+			return this.waitForChanges(assert, "expand node '2'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["1.1"], ["3"]]);
+			this.checkNodeState(assert, oTable, ["L", "E", "L", "L"]);
+
+			const oMoveContext = oTable.getContextByIndex(2);
+
+			// code under test
+			oBinding.removeContext(oMoveContext);
+			oBinding.addContexts(oTable.getContextByIndex(2), [oMoveContext]);
+
+			return this.waitForChanges(assert, "move node '1.1' from node '2' to node '3'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["3"], [""]]);
+			this.checkNodeState(assert, oTable, ["L", "L", "C"]);
+
+			// code under test
+			oBinding.expand(2);
+
+			return this.waitForChanges(assert, "expand node '3'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["3"], ["1.1"]]);
+			this.checkNodeState(assert, oTable, ["L", "L", "E", "L"]);
+
+			// code under test
+			oModel.resetChanges();
+
+			return this.waitForChanges(assert, "reset changes");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], ["2"], ["3"]]);
+			this.checkNodeState(assert, oTable, ["E", "L", "L", "L"]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario 6 with deep nodes: If a child node is moved from node A to node B and node B to node C, node A
+	// and node B turn to a leaves and node C becomes a parent node. ODataModel#resetChanges restores the initial tree
+	// state
+	// JIRA: CPOUI5MODELS-1002
+	QUnit.test("CPOUI5MODELS-1002: ODataTreeBindingFlat - move a child node at least twice, deep nodes",
+			function (assert) {
+		let oBinding;
+		const oModel = createHierarchyMaintenanceModel();
+		let oTable;
+		const sView = `
+<t:TreeTable id="table"
+		rows="{
+			parameters: {countMode: 'Inline', numberOfExpandedLevels: 0},
+			path: '/ErhaOrder(\\'1\\')/to_Item'
+		}"
+		visibleRowCount="4">
+	<Text id="itemName" text="{ErhaOrderItemName}" />
+</t:TreeTable>`;
+
+		this.expectHeadRequest()
+			.expectRequest(
+				"ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages&$filter=HierarchyDistanceFromRoot le 0",
+				{__count: "4", results: this.buildTreeResponse({"1": "C", "2": "L", "3": "L", "4": "L"})}
+			);
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["3"], ["4"]]);
+			this.checkNodeState(assert, oTable, ["C", "L", "L", "L"]);
+
+			this.expectRequest(
+				"ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages&$filter=HierarchyParentNode eq '1'",
+				{__count : "1", results : this.buildTreeResponse({"1.1" : "L"}, 1, "1")}
+			);
+
+			// code under test
+			oBinding.expand(0);
+
+			return this.waitForChanges(assert, "expand node 1");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], ["2"], ["3"]]);
+			this.checkNodeState(assert, oTable, ["E", "L", "L", "L"]);
+
+			const oMoveContext = oTable.getContextByIndex(1);
+
+			// code under test
+			oBinding.removeContext(oMoveContext);
+			oBinding.addContexts(oTable.getContextByIndex(1), [oMoveContext]);
+
+			return this.waitForChanges(assert, "move node '1.1' from node '1' to node '2'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["3"], ["4"]]);
+			this.checkNodeState(assert, oTable, ["L", "C", "L", "L"]);
+
+			// code under test
+			oBinding.expand(1);
+
+			return this.waitForChanges(assert, "expand node '2'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["1.1"], ["3"]]);
+			this.checkNodeState(assert, oTable, ["L", "E", "L", "L"]);
+
+			const oMoveContext = oTable.getContextByIndex(2);
+
+			// code under test
+			oBinding.removeContext(oMoveContext);
+			oBinding.addContexts(oTable.getContextByIndex(2), [oMoveContext]);
+
+			return this.waitForChanges(assert, "move node '1.1' from node '2' to node '3'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["3"], ["4"]]);
+			this.checkNodeState(assert, oTable, ["L", "L", "C", "L"]);
+
+			// code under test
+			oBinding.expand(2);
+
+			return this.waitForChanges(assert, "expand node '3'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"], ["3"], ["1.1"]]);
+			this.checkNodeState(assert, oTable, ["L", "L", "E", "L"]);
+
+			// code under test
+			oModel.resetChanges();
+
+			return this.waitForChanges(assert, "reset changes");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["1"], ["1.1"], ["2"], ["3"]]);
+			this.checkNodeState(assert, oTable, ["E", "L", "L", "L"]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario 7 with server index nodes: If a child node is removed from node A while node A is not yet loaded, node A
+	// must turn to a leaf although it comes as an expanded node from the backend. ODataMdoel#resetChanges restores the
+	// initial tree state.
+	// JIRA: CPOUI5MODELS-1002
+	QUnit.test("CPOUI5MODELS-1002: ODataTreeBindingFlat - remove child from a not yet loaded node, server nodes",
+			function (assert) {
+		let oBinding;
+		const oModel = createHierarchyMaintenanceModel();
+		let oTable;
+		const sView = `
+<t:TreeTable id="table"
+		rows="{
+			parameters: {countMode: 'Inline', numberOfExpandedLevels: 1},
+			path: '/ErhaOrder(\\'1\\')/to_Item'
+		}"
+		visibleRowCount="2">
+	<Text id="itemName" text="{ErhaOrderItemName}" />
+</t:TreeTable>`;
+
+		this.expectHeadRequest()
+			.expectRequest(
+				"ErhaOrder('1')/to_Item?$skip=0&$top=102&$inlinecount=allpages&$filter=HierarchyDistanceFromRoot le 1",
+				{__count: "5", results: this.buildTreeResponse({"1": "L", "2": {"2.1": "L"}, "3": "L", "4": "L"})}
+			);
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["1"], ["2"]]);
+			this.checkNodeState(assert, oTable, ["L", "E"]);
+
+			// code under test
+			oTable.setFirstVisibleRow(2);
+
+			return this.waitForChanges(assert, "set node '2.1' as first visible row");
+		}).then(() => {
+			oBinding = oTable.getBinding("rows");
+
+			assert.deepEqual(getTableContent(oTable), [["2.1"], ["3"]]);
+			this.checkNodeState(assert, oTable, ["L", "E", "L", "L"]); //checkNodeState checks all nodes of the binding
+
+			const aResults = this.buildTreeResponse({"2.1": "L"}, 1, "2")
+				.concat(this.buildTreeResponse({"3": "L", "4": "L"}));
+			this.expectRequest(
+				"ErhaOrder('1')/to_Item?$skip=2&$top=102&$inlinecount=allpages&$filter=HierarchyDistanceFromRoot le 1",
+				{__count: "5", results: aResults}
+			);
+
+			// code under test
+			oBinding.refresh();
+
+			return this.waitForChanges(assert, "refresh binding");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["2.1"], ["3"]]);
+			this.checkNodeState(assert, oTable, [null, null, "L", "L"]);
+
+			// code under test
+			oBinding.removeContext(oTable.getContextByIndex(2));
+
+			return this.waitForChanges(assert, "remove node '2.1'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["3"], ["4"]]);
+			this.checkNodeState(assert, oTable, [null, null, "L", "L"]);
+
+			this.expectRequest(
+				"ErhaOrder('1')/to_Item?$skip=1&$top=101&$filter=HierarchyDistanceFromRoot le 1",
+				{results: this.buildTreeResponse({"2": "E", "3": "L"})}
+			);
+
+			// code under test
+			oTable.setFirstVisibleRow(1);
+
+			return this.waitForChanges(assert, "set node '2' as first visible row");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["2"], ["3"]]);
+			this.checkNodeState(assert, oTable, [null, "L", "L"]);
+
+			// code under test
+			oModel.resetChanges();
+
+			return this.waitForChanges(assert, "rest changes");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["2"], ["2.1"]]);
+			this.checkNodeState(assert, oTable, [null, "E", "L"]);
 		});
 	});
 

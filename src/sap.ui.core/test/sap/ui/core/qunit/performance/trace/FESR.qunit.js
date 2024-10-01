@@ -43,20 +43,20 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		}
 	});
 
-	QUnit.test("activation", function(assert) {
+	QUnit.test("activation", async function(assert) {
 		assert.expect(9);
 		assert.notOk(XHRInterceptor.isRegistered("FESR", "open"), "FESR must not be registered");
-		FESR.setActive(true);
+		await FESR.setActive(true);
 		assert.ok(FESR.getActive(), "FESR should must be active");
 		assert.ok(XHRInterceptor.isRegistered("FESR", "open"), "FESR must be registered");
 		assert.ok(XHRInterceptor.isRegistered("PASSPORT_ID", "open"), "PASSPORT_ID must be registered");
 		assert.ok(XHRInterceptor.isRegistered("PASSPORT_HEADER", "open"), "PASSPORT_HEADER must be registered");
-		FESR.setActive(false);
+		await FESR.setActive(false);
 		assert.notOk(FESR.getActive(), "should must not be active");
 		assert.notOk(XHRInterceptor.isRegistered("FESR", "open"), "FESR must not be registered");
 	});
 
-	QUnit.test("onBeforeCreated hook: interactionType 1", function(assert) {
+	QUnit.test("onBeforeCreated hook: interactionType 1", async function(assert) {
 		assert.expect(8);
 
 		var oHandle = {
@@ -69,7 +69,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		var oHeaderSpy = sinon.spy(XMLHttpRequest.prototype, "setRequestHeader");
 		var fnOnBeforeCreated = FESR.onBeforeCreated;
 
-		FESR.setActive(true);
+		await FESR.setActive(true);
 
 		// implement hook
 		FESR.onBeforeCreated = function(oFESRHandle, oInteraction) {
@@ -120,13 +120,13 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		assert.throws(function() { oInteraction.component = "badComponent"; }, "Should throw an error after trying to overwrite the interaction object.");
 		assert.ok(Object.isFrozen(oInteraction), "Interaction is not editable.");
 		Interaction.clear();
-		FESR.setActive(false);
+		await FESR.setActive(false);
 		FESR.onBeforeCreated = fnOnBeforeCreated;
 		oHeaderSpy.restore();
 		oXhrHandle.abort();
 	});
 
-	QUnit.test("onBeforeCreated hook: interactionType 2", function(assert) {
+	QUnit.test("onBeforeCreated hook: interactionType 2", async function(assert) {
 		assert.expect(8);
 
 		var oHandle = {
@@ -140,7 +140,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		var fnOnBeforeCreated = FESR.onBeforeCreated;
 
 		// startup
-		FESR.setActive(true);
+		await FESR.setActive(true);
 		Interaction.end(true);
 
 		// next interaction
@@ -196,19 +196,19 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		assert.ok(Object.isFrozen(oInteraction), "Interaction is not editable.");
 		Interaction.clear();
 		FESR.onBeforeCreated = fnOnBeforeCreated;
-		FESR.setActive(false);
+		await FESR.setActive(false);
 		FESR.onBeforeCreated = fnOnBeforeCreated;
 		oHeaderSpy.restore();
 		oXhrHandle.abort();
 	});
 
-	QUnit.test("Passport Integration - Passport Action in Client ID field", function(assert) {
+	QUnit.test("Passport Integration - Passport Action in Client ID field", async function(assert) {
 		assert.expect(6);
 
 		var oHeaderSpy = sinon.spy(XMLHttpRequest.prototype, "setRequestHeader");
 		var oPassportHeaderSpy = sinon.spy(Passport, "header");
 
-		FESR.setActive(true);
+		await FESR.setActive(true);
 		Interaction.notifyStepStart("startup", "startup", true);
 		// trigger at least one request to enable header creation
 		var oXhrHandle = this.dummyRequest();
@@ -242,23 +242,23 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 
 		Interaction.end(true);
 		Interaction.clear();
-		FESR.setActive(false);
+		await FESR.setActive(false);
 		oHeaderSpy.restore();
 		oPassportHeaderSpy.restore();
 		oXhrHandle.abort();
 	});
 
-	QUnit.test("Beacon URL", function(assert) {
+	QUnit.test("Beacon URL", async function(assert) {
 		assert.expect(4);
 
-		FESR.setActive(true, "example.url");
+		await FESR.setActive(true, "example.url");
 		assert.equal(FESR.getBeaconURL(), "example.url", "Returns beacon url");
 
-		FESR.setActive(false);
+		await FESR.setActive(false);
 		assert.equal(FESR.getBeaconURL(), undefined, "Beacon URL was reset");
 	});
 
-	QUnit.test("Beacon strategy", function(assert) {
+	QUnit.test("Beacon strategy",async  function(assert) {
 		assert.expect(9);
 		this.clock = mockPerformanceObject();
 		var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
@@ -276,7 +276,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			notifyAsyncStepCallback();
 		}.bind(this);
 
-		FESR.setActive(true, "example.url");
+		await FESR.setActive(true, "example.url");
 		for (var index = 0; index < 10; index++) {
 			Interaction.start();
 			addFakeProcessingTime();
@@ -306,12 +306,12 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 
 		// cleanup
 		cleanPerformanceObject();
-		FESR.setActive(false);
+		await FESR.setActive(false);
 		sendBeaconStub.restore();
 		this.clock.restore();
 	});
 
-	QUnit.test("Beacon timeout", function(assert) {
+	QUnit.test("Beacon timeout", async function(assert) {
 		assert.expect(9);
 		this.clock = mockPerformanceObject();
 		var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
@@ -324,7 +324,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			notifyAsyncStepCallback();
 		}.bind(this);
 
-		FESR.setActive(true, "example.url");
+		await FESR.setActive(true, "example.url");
 		Interaction.start();
 		addFakeProcessingTime();
 		Interaction.end(true);
@@ -358,7 +358,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		Interaction.start();
 		addFakeProcessingTime();
 		Interaction.end(true);
-		FESR.setActive(false);
+		await FESR.setActive(false);
 		assert.ok(sendBeaconStub.calledOnce, "Beacon immediately called after deactivation");
 		sendBeaconStub.resetHistory();
 
@@ -371,7 +371,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		this.clock.restore();
 	});
 
-	QUnit.test("Semantic Stepname", function(assert) {
+	QUnit.test("Semantic Stepname", async function(assert) {
 		assert.expect(3);
 		this.clock = mockPerformanceObject();
 		var addFakeProcessingTime = function () {
@@ -394,13 +394,13 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			};
 		};
 
-		FESR.setActive(true, "example.url");
+		await FESR.setActive(true, "example.url");
 		Interaction.start();
 		addFakeProcessingTime();
 		Interaction.getPending().semanticStepName = "SemanticStepName";
 		Interaction.end(true);
 		this.clock.tick(60000);
-		FESR.setActive(false);
+		await FESR.setActive(false);
 
 		// cleanup
 		cleanPerformanceObject();

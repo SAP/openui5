@@ -1,0 +1,29 @@
+{
+	"title": "Numeric Header with icon fitType 'Cover'",
+	"icon": {
+		"src": "./images/example.jpg",
+		"shape": "Square",
+		"fitType": "Cover"
+	},
+	"unitOfMeasurement": "EUR",
+	"mainIndicator": {
+		"number": "200",
+		"unit": "K",
+		"trend": "Up",
+		"state": "Good"
+	},
+	"sideIndicator1": {
+			"title": "Target",
+			"number": "210",
+			"unit": "K"
+	},
+	"sideIndicator2": {
+			"title": "Deviation",
+			"number": "5",
+			"unit": "%"
+	},
+	"details": {
+		"text": "Q4, 2023",
+		"state": "Success"
+	}
+}

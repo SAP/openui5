@@ -148,6 +148,13 @@ sap.ui.define([
 				iconSize: { type: "sap.m.AvatarSize", defaultValue: AvatarSize.S },
 
 				/**
+				 * Defines how the image fits in the icon area.
+				 *
+				 * @since 1.130
+				 */
+				iconFitType: { type: "sap.m.AvatarImageFitType", defaultValue: AvatarImageFitType.Cover },
+
+				/**
 				 * General unit of measurement for the header. Displayed as side information to the subtitle.
 				 */
 				unitOfMeasurement: { "type": "string", group : "Data" },
@@ -324,7 +331,8 @@ sap.ui.define([
 			.setInitials(this.getIconInitials())
 			.setTooltip(this.getIconAlt())
 			.setBackgroundColor(this.getIconBackgroundColor())
-			.setDisplaySize(this.getIconSize());
+			.setDisplaySize(this.getIconSize())
+			.setImageFitType(this.getIconFitType());
 
 		this._getDetails()
 			.setText(this.getDetails())
@@ -428,9 +436,7 @@ sap.ui.define([
 	NumericHeader.prototype._getAvatar = function () {
 		var oAvatar = this.getAggregation("_avatar");
 		if (!oAvatar) {
-			oAvatar = new Avatar({
-				imageFitType: AvatarImageFitType.Contain
-			}).addStyleClass("sapFCardIcon");
+			oAvatar = new Avatar().addStyleClass("sapFCardIcon");
 			this.setAggregation("_avatar", oAvatar);
 		}
 		return oAvatar;

@@ -220,7 +220,7 @@ sap.ui.define([
 	 * @param {int} iMaxConditions More than 1 condition must be allowed in <code>MultiValueField</code>
 	 * @returns {this} <code>this</code> to allow method chaining.
 	 * @public
-	 * @deprecated Not supported, this property is not supported for the <code>MultiValueField</code> control.
+	 * @deprecated As of version 1.93, this property is not supported for the <code>MultiValueField</code> control.
 	 * @ui5-not-supported
 	 */
 	Field.prototype.setMaxConditions = function(iMaxConditions) {
@@ -394,7 +394,7 @@ sap.ui.define([
 	 * @param {object[]} aConditions Conditions to be set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public
-	 * @deprecated Not supported, use the <code>items</code> aggregation to bind the control.
+	 * @deprecated As of version 1.54, this property is not supported for the <code>MultiValueField</code>. Use the <code>items</code> aggregation to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#setConditions
 	 * @function
@@ -408,7 +408,7 @@ sap.ui.define([
 	 *
 	 * @returns {object[]} conditions of the field
 	 * @public
-	 * @deprecated Not supported, use the <code>items</code> aggregation to bind the control.
+	 * @deprecated As of version 1.54, this property is not supported for the <code>MultiValueField</code>. Use the <code>items</code> aggregation to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#getConditions
 	 * @function
@@ -425,7 +425,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.ManagedObject.PropertyBindingInfo} oBindingInfo The binding information
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public
-	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
+	 * @deprecated As of version 1.93, this property is not supported for the <code>MultiValueField</code>. Use the <code>items</code> aggregation to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#bindConditions
 	 * @function
@@ -439,7 +439,7 @@ sap.ui.define([
 	 *
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public
-	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
+	 * @deprecated As of version 1.93, this property is not supported for the <code>MultiValueField</code>. Use the <code>items</code> aggregation to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#unbindConditions
 	 * @function
@@ -456,7 +456,7 @@ sap.ui.define([
 	 * @param {string|undefined} sDataType DataType to be set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public
-	 * @deprecated Not supported, the type in the binding to the <code>items</code> aggregation is used.
+	 * @deprecated As of version 1.93, this property is not supported for the <code>MultiValueField</code>. The type in the binding to the <code>items</code> aggregation is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#setDataType
 	 * @function
@@ -472,7 +472,7 @@ sap.ui.define([
 	 *
 	 * @returns {string} Value of property <code>dataType</code>
 	 * @public
-	 * @deprecated Not supported, the type in the binding to the <code>value</code> property is used.
+	 * @deprecated As of version 1.93, this property is not supported for the <code>MultiValueField</code>. The type in the binding to the <code>items</code> aggregation is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#getDataType
 	 * @function
@@ -489,7 +489,7 @@ sap.ui.define([
 	 * @param {object|undefined} oDataTypeConstraints Constraints to be set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public
-	 * @deprecated Not supported, the type in the binding to the <code>items</code> aggregation is used.
+	 * @deprecated As of version 1.93, this property is not supported for the <code>MultiValueField</code>. The type in the binding to the <code>items</code> aggregation is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#setDataTypeConstraints
 	 * @function
@@ -505,7 +505,7 @@ sap.ui.define([
 	 *
 	 * @returns {object} Value of property <code>dataTypeConstraints</code>
 	 * @public
-	 * @deprecated Not supported, the <code>Constraints</code> of the type in the binding to the <code>value</code> property is used.
+	 * @deprecated As of version 1.93, this property is not supported for the <code>MultiValueField</code>. The type in the binding to the <code>items</code> aggregation is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#getDataTypeConstraints
 	 * @function
@@ -522,7 +522,7 @@ sap.ui.define([
 	 * @param {object|undefined} oDataTypeFormatOptions Format options to be set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public
-	 * @deprecated Not supported, the type in the binding to the <code>items</code> aggregation is used.
+	 * @deprecated As of version 1.93, this property is not supported for the <code>MultiValueField</code>. The type in the binding to the <code>items</code> aggregation is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#setDataTypeFormatOptions
 	 * @function
@@ -538,7 +538,7 @@ sap.ui.define([
 	 *
 	 * @returns {object} Value of property <code>dataTypeFormatOptions</code>
 	 * @public
-	 * @deprecated Not supported, the <code>FormatOptions</code> of the type in the binding to the <code>value</code> property is used.
+	 * @deprecated As of version 1.93, this property is not supported for the <code>MultiValueField</code>. The type in the binding to the <code>items</code> aggregation is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#getDataTypeFormatOptions
 	 * @function
@@ -550,7 +550,7 @@ sap.ui.define([
 	 * @param {boolean} [bMultipleLines=false] New value for property <code>multipleLines</code>
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public
-	 * @deprecated This property is not supported for multi-value fields.
+	 * @deprecated As of version 1.93, this property is not supported for the <code>MultiValueField</code>.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#setMultipleLines
 	 * @function
@@ -561,7 +561,7 @@ sap.ui.define([
 	 *
 	 * @returns {boolean} Value for property <code>multipleLines</code>
 	 * @public
-	 * @deprecated This property is not supported for multi-value fields.
+	 * @deprecated As of version 1.93, this property is not supported for the <code>MultiValueField</code>.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#getMultipleLines
 	 * @function

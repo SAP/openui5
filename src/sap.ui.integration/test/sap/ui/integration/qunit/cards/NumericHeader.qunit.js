@@ -13,6 +13,7 @@ sap.ui.define([
 ) => {
 	"use strict";
 
+	const AvatarImageFitType = mLibrary.AvatarImageFitType;
 	const DOM_RENDER_LOCATION = "qunit-fixture";
 	const WrappingType = mLibrary.WrappingType;
 
@@ -535,6 +536,48 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(this.oCard.getCardHeader().getDetails(), "", "Target 'details' property is empty string.");
 		assert.notOk(this.oCard.getCardHeader().getDomRef().querySelector(".sapFCardHeaderDetails"), "Details are not rendered.");
+	});
+
+	QUnit.test("Numeric Header Avatar", async function (assert) {
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.card.numericHeader.avatar"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"icon": {
+						"initials": "AJ",
+						"shape": "Circle",
+						"fitType": "Contain"
+					},
+					"title": "Project Cloud Transformation",
+					"sideIndicators": [
+						{
+							"title": "Target",
+							"number": "3252.234",
+							"unit": "K"
+						},
+						{
+							"title": "Long Deviation Long Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		// Assert
+		const oHeader = this.oCard.getAggregation("_header");
+		assert.notOk(oHeader.getAggregation("_avatar").getSrc(), "Card header icon src should be empty.");
+		assert.equal(oHeader.getAggregation("_avatar").getDisplayShape(), "Circle", "Card header icon shape should be 'Circle'.");
+		assert.equal(oHeader.getAggregation("_avatar").getInitials(), "AJ", "Card header initials should be 'AJ'.");
+		assert.equal(oHeader.getAggregation("_avatar").getImageFitType(), AvatarImageFitType.Contain, "ImageFitType should be 'Contain'.");
 	});
 
 });

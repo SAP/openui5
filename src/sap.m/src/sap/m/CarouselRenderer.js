@@ -59,7 +59,7 @@ sap.ui.define([
 
 		this._renderInnerDiv(oRM, oCarousel, aPages, sPageIndicatorPlacement);
 
-		if (Device.system.desktop && iPageCount > oCarousel._getNumberOfItemsToShow() && sArrowsPlacement === CarouselArrowsPlacement.Content) {
+		if (iPageCount > oCarousel._getNumberOfItemsToShow() && sArrowsPlacement === CarouselArrowsPlacement.Content) {
 			this._renderHudArrows(oRM, oCarousel);
 		}
 
@@ -194,7 +194,7 @@ sap.ui.define([
 	 */
 	CarouselRenderer._renderPageIndicatorAndArrows = function (oRM, oCarousel, mSettings) {
 		var iPageCount = mSettings.iPageCount,
-			bShowIndicatorArrows = Device.system.desktop && mSettings.sArrowsPlacement === CarouselArrowsPlacement.PageIndicator,
+			bShowIndicatorArrows = mSettings.sArrowsPlacement === CarouselArrowsPlacement.PageIndicator,
 			sId = oCarousel.getId(),
 			aOffsetClasses = [],
 			iNumberOfItemsToShow = oCarousel._getNumberOfItemsToShow(),
@@ -237,7 +237,7 @@ sap.ui.define([
 		oRM.openStart("div", sId + "-pageIndicator");
 
 		if (!mSettings.bShowPageIndicator) {
-			oRM.style("opacity", "0");
+			oRM.class("sapMCrslPageIndicatorHidden");
 		}
 
 		if (iPageCount < CarouselRenderer._BULLETS_TO_NUMBERS_THRESHOLD) {
@@ -293,7 +293,7 @@ sap.ui.define([
 			sArrowPositionHudClass = "sapMCrslHudMiddle";
 		}
 
-		//heads up controls for desktop browsers
+		//heads up controls
 		oRM.openStart("div", oCarousel.getId() + "-hud")
 			.class("sapMCrslHud")
 			.class(sArrowPositionHudClass)
@@ -360,7 +360,7 @@ sap.ui.define([
 
 					if (oPage.isA("sap.m.Image")) {
 						var sImgClass = "sapMCrslImgNoArrows",
-							bShowIndicatorArrows = Device.system.desktop && oCarousel.getArrowsPlacement() === CarouselArrowsPlacement.PageIndicator;
+							bShowIndicatorArrows = oCarousel.getArrowsPlacement() === CarouselArrowsPlacement.PageIndicator;
 						if (bShowIndicatorArrows) {
 							sImgClass = "sapMCrslImg";
 						}

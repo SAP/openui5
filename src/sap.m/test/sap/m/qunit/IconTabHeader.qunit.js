@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/core/CustomData",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Panel",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/base/util/Deferred"
 ], function(
 	Library1,
 	QUnitUtils,
@@ -33,7 +34,8 @@ sap.ui.define([
 	CustomData,
 	createAndAppendDiv,
 	Panel,
-	Library
+	Library,
+	Deferred
 ) {
 	"use strict";
 
@@ -90,6 +92,22 @@ sap.ui.define([
 				key: i
 			}));
 		}
+	}
+
+	function headerThemeApplied(oHeader) {
+		if (oHeader._bThemeApplied) {
+			return Promise.resolve();
+		}
+
+		const oDeferred = new Deferred();
+
+		const fnHandleThemeApplied = oHeader._handleThemeApplied;
+		oHeader._handleThemeApplied = function () {
+			fnHandleThemeApplied.apply(this, arguments);
+			oDeferred.resolve();
+		};
+
+		return oDeferred.promise;
 	}
 
 	QUnit.module("Methods");
@@ -1072,6 +1090,7 @@ sap.ui.define([
 		// Arrange
 		const oSetItemsForStripSpy = this.spy(this.oITH, "_setItemsForStrip");
 		this.oITH.setSelectedKey("3");
+		await headerThemeApplied(this.oITH);
 		await nextUIUpdate(this.clock);
 
 		assert.ok(oSetItemsForStripSpy.called, "_setItemsForStrip should be called");

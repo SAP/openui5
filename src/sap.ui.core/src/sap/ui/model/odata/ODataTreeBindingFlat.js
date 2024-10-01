@@ -64,6 +64,7 @@ sap.ui.define([
 		this._aAdded = [];
 		this._aNodeChanges = [];
 		this._aAllChangedNodes = [];
+		this._aTurnedToLeaf = [];
 
 		// a map of all subtree handles, which are removed from the tree (and may be re-inserted)
 		this._mSubtreeHandles = {};
@@ -273,14 +274,59 @@ sap.ui.define([
 			: this._mapRetrieveNodeSection(iStartIndex, iLength);
 	};
 
+	/**
+	 * Checks whether there is a pending request to get the children for the given node key.
+	 *
+	 * @param {string} sNodeKey The node key
+	 *
+	 * @returns {boolean} Whether there is a pending request fetching the children of the given node
+	 *
+	 * @private
+	 */
+	ODataTreeBindingFlat.prototype._hasPendingRequest = function (sNodeKey) {
+		return this._aPendingChildrenRequests.some((oRequest) => oRequest.sParent === sNodeKey);
+	};
+
+	/**
+	 * Turn the given node to a leaf
+	 *
+	 * @param {object} oNode The node
+	 *
+	 * @private
+	 */
+	ODataTreeBindingFlat.prototype._turnNodeToLeaf = function (oNode) {
+		oNode.nodeState.collapsed = false;
+		oNode.nodeState.expanded = false;
+		oNode.nodeState.isLeaf = true;
+		oNode.nodeState.wasExpanded = true;
+		this._aTurnedToLeaf.push(oNode);
+	};
+
 	/*
 	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._mapRetrieveNodeSection = function (iStartIndex, iLength) {
+		const iLastNodeIndex = this.getLength() - 1;
 		var iNodeCounter = -1;
-		var aNodes =  [];
-		this._map(function (oNode, oRecursionBreaker, sIndexType, iIndex, oParent) {
+		var aNodes = [];
+		let oPreviousNode;
+
+		this._map((oNode, oRecursionBreaker, sIndexType, iIndex, oParent) => {
 			iNodeCounter++;
+			if (oNode && this._aRemoved.length) {
+				// check if previous node has to be a leaf node
+				if (oPreviousNode && oPreviousNode.nodeState.expanded
+						&& oPreviousNode.level >= oNode.level
+						&& !this._hasPendingRequest(oPreviousNode.key)) {
+					this._turnNodeToLeaf(oPreviousNode);
+				} else if (oNode.nodeState.expanded && iLastNodeIndex === iNodeCounter
+					&& !this._hasPendingRequest(oNode.key)) {
+					// Leaf transformation process for the last element in the tree
+					this._turnNodeToLeaf(oNode);
+				}
+			}
+			oPreviousNode = oNode;
+
 			if (iNodeCounter >= iStartIndex) {
 				// if we have a missing node and it is a server-indexed node -> introduce a gap object
 				if (!oNode) {
@@ -1912,7 +1958,8 @@ sap.ui.define([
 			bVisibleNewParent,
 			iDelta = 0,
 			fnCheckVisible = function(oNode, oBreaker) {
-				if (oNode.nodeState.collapsed || (oNode.nodeState.removed && !oNode.nodeState.reinserted)) {
+				if (oNode.nodeState.isLeaf || oNode.nodeState.collapsed
+						|| (oNode.nodeState.removed && !oNode.nodeState.reinserted)) {
 					bVisible = false;
 					oBreaker.broken = true;
 				}
@@ -2274,17 +2321,26 @@ sap.ui.define([
 			}
 		}
 
-		this._aRemoved.forEach(function (oNode) {
-			ODataTreeBindingFlat._resetMovedOrRemovedNode(oNode);
+		this._aRemoved.forEach((oNode) => {
+			this._resetMovedOrRemovedNode(oNode);
 		});
-		this._aAdded.forEach(function (oNode) {
-			ODataTreeBindingFlat._resetParentState(oNode);
+		this._aAdded.forEach((oNode) => {
+			this._resetParentState(oNode);
+		});
+		this._aTurnedToLeaf.forEach((oNode) => {
+			if (!oNode.initiallyIsLeaf) {
+				oNode.nodeState.isLeaf = false;
+				oNode.nodeState.expanded = true;
+				oNode.nodeState.collapsed = false;
+				delete oNode.nodeState.wasExpanded;
+			}
 		});
 		this._mSubtreeHandles = {};
 		this._aAdded = [];
 		this._aRemoved = [];
 		this._aAllChangedNodes = [];
 		this._aNodeCache = [];
+		this._aTurnedToLeaf = [];
 
 		this._cleanTreeStateMaps();
 		this._fireChange({reason: ChangeReason.Change});
@@ -4985,18 +5041,43 @@ sap.ui.define([
 	// @see sap.ui.model.odata.v2.ODataTreeBinding#getNodeContexts
 	ODataTreeBindingFlat.prototype.getNodeContexts = function () {};
 
-	//*********************************************
-	//              Static Functions              *
-	//*********************************************
+	/**
+	 * Find the parent node for a given node.
+	 *
+	 * @param {object} oNode The node for which to search its parent
+	 *
+	 * @returns {object|undefined} The parent node of the given node or <code>undefined</code> if no parent node can be
+	 * found
+	 *
+	 * @private
+	 */
+	ODataTreeBindingFlat.prototype._findParentNode = function (oNode) {
+		if (oNode.parent) {
+			return oNode.parent;
+		}
+
+		let i = oNode.serverIndex;
+		let oParentNode;
+		do {
+			i -= 1;
+			oParentNode = this._aNodes[i];
+			if (!oParentNode) {
+				break;
+			}
+		} while (oParentNode.level >= oNode.level);
+
+		return oParentNode;
+	};
 
 	/**
 	 * Resets the change information of a moved or removed node to its initial values.
 	 *
-	 * @param {object} oNode
-	 *   The node
+	 * @param {object} oNode The node
+	 *
+	 * @private
 	 */
-	ODataTreeBindingFlat._resetMovedOrRemovedNode = function (oNode) {
-		ODataTreeBindingFlat._resetParentState(oNode);
+	ODataTreeBindingFlat.prototype._resetMovedOrRemovedNode = function (oNode) {
+		this._resetParentState(oNode);
 		oNode.level = oNode.originalLevel;
 		oNode.parent = oNode.originalParent;
 		delete oNode.containingSubtreeHandle;
@@ -5007,11 +5088,12 @@ sap.ui.define([
 	/**
 	 * Resets the change information of the parent of a changed node.
 	 *
-	 * @param {object} oNode
-	 *   The node
+	 * @param {object} oNode The node
+	 *
+	 * @private
 	 */
-	ODataTreeBindingFlat._resetParentState = function (oNode) {
-		var oParentNode = oNode.parent;
+	ODataTreeBindingFlat.prototype._resetParentState = function (oNode) {
+		const oParentNode = this._findParentNode(oNode);
 
 		// a removed server-index node has no parent
 		if (oParentNode) {
@@ -5020,9 +5102,14 @@ sap.ui.define([
 				oParentNode.nodeState.isLeaf = true;
 				oParentNode.nodeState.expanded = false;
 				oParentNode.nodeState.collapsed = false;
+			} else if (oParentNode.nodeState.wasExpanded) {
+				oParentNode.nodeState.isLeaf = false;
+				oParentNode.nodeState.expanded = true;
+				oParentNode.nodeState.collapsed = false;
+				delete oParentNode.nodeState.wasExpanded;
+				this._aTurnedToLeaf.splice(this._aTurnedToLeaf.indexOf(oParentNode), 1);
 			}
 		}
 	};
-
 	return ODataTreeBindingFlat;
 });

@@ -626,6 +626,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines if the Control is used in visual only mode (hidden from the accessibility tree).
+	 *
+	 * @returns {boolean} If it is an visual only checkbox
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.MultiComboBox
+	 */
+	CheckBox.prototype._getVisualOnlyMode = function () {
+		return false;
+	};
+
+	/**
 	 * Checkbox without label must not be stretched in Form.
 	 * @returns {boolean} If the width of the control should not be adjusted
 	 */
