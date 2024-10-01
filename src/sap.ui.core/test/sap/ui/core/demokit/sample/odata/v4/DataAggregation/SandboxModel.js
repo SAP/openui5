@@ -75,9 +75,10 @@ sap.ui.define([
 	// for simplicity, accept minor differences due to position of grand total row
 	duplicate("$top=5", "$top=4");
 
-	return ODataModel.extend("sap.ui.core.sample.odata.v4.DataAggregation.SandboxModel", {
-		constructor : function (mParameters) {
-			return SandboxModelHelper.adaptModelParametersAndCreateModel(mParameters, oMockData);
-		}
-	});
+	function SandboxModel(mParameters) {
+		return SandboxModelHelper.adaptModelParametersAndCreateModel(mParameters, oMockData);
+	}
+	SandboxModel.getMetadata = ODataModel.getMetadata;
+
+	return SandboxModel;
 });
