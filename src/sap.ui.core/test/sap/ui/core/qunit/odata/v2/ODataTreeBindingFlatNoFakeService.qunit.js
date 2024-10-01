@@ -979,23 +979,26 @@ sap.ui.define([
 	//*********************************************************************************************
 [undefined, ["foo", "~path", "bar"]].forEach(function (aPaths) {
 	QUnit.test("_resetChanges: " + (aPaths ? "with" : "without") + " aPaths", function (assert) {
-		var oBinding = {
-				_aAdded : ["~change0", "~change1"],
-				_aAllChangedNodes : ["~change0", "~change1", "~change2", "~change3"],
-				_aRemoved : ["~change2", "~change3"],
-				_cleanTreeStateMaps : function () {},
-				_fireChange : function () {},
-				getResolvedPath : function () {}
-			},
-			oTreeBindingFlatMock = this.mock(ODataTreeBindingFlat);
+		const oBinding = {
+			_aAdded : ["~oNode0", "~oNode1"],
+			_aAllChangedNodes : ["~oNode0", "~oNode1", "~oNode2", "~oNode3"],
+			_aRemoved : ["~oNode2", "~oNode3"],
+			_aTurnedToLeaf : [],
+			_cleanTreeStateMaps() {},
+			_fireChange() {},
+			_resetMovedOrRemovedNode() {},
+			_resetParentState() {},
+			getResolvedPath() {}
+		};
+		const oBindingMock = this.mock(oBinding);
 
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~path");
-		oTreeBindingFlatMock.expects("_resetMovedOrRemovedNode").withExactArgs("~change2");
-		oTreeBindingFlatMock.expects("_resetMovedOrRemovedNode").withExactArgs("~change3");
-		oTreeBindingFlatMock.expects("_resetParentState").withExactArgs("~change0");
-		oTreeBindingFlatMock.expects("_resetParentState").withExactArgs("~change1");
-		this.mock(oBinding).expects("_cleanTreeStateMaps").withExactArgs();
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason: ChangeReason.Change});
+		oBindingMock.expects("getResolvedPath").withExactArgs().returns("~path");
+		oBindingMock.expects("_resetMovedOrRemovedNode").withExactArgs("~oNode2");
+		oBindingMock.expects("_resetMovedOrRemovedNode").withExactArgs("~oNode3");
+		oBindingMock.expects("_resetParentState").withExactArgs("~oNode0");
+		oBindingMock.expects("_resetParentState").withExactArgs("~oNode1");
+		oBindingMock.expects("_cleanTreeStateMaps").withExactArgs();
+		oBindingMock.expects("_fireChange").withExactArgs({reason: ChangeReason.Change});
 
 		// code under test
 		ODataTreeBindingFlat.prototype._resetChanges.call(oBinding, aPaths);
@@ -1005,16 +1008,63 @@ sap.ui.define([
 		assert.deepEqual(oBinding._aRemoved, []);
 		assert.deepEqual(oBinding._aAllChangedNodes, []);
 		assert.deepEqual(oBinding._aNodeCache, []);
+		assert.deepEqual(oBinding._aTurnedToLeaf, []);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_resetChanges resets nodeState", function (assert) {
+		const oParentNode0 = {
+			initiallyCollapsed : false,
+			initiallyIsLeaf : false,
+			key : "~Node0",
+			nodeState : {collapsed : true, expanded : false, isLeaf : true, wasExpanded : true}
+		};
+		const oParentNode1 = {
+			initiallyCollapsed : false,
+			initiallyIsLeaf : true,
+			key : "~Node1",
+			nodeState : {collapsed : false, expanded : false, isLeaf : true, wasExpanded : true}
+		};
+		const oChildNode = {key : "~Node0.0", originalParent : oParentNode0};
+		const oBinding = {
+			_aAdded : [],
+			_aAllChangedNodes : [oChildNode],
+			_aRemoved : [oChildNode],
+			_aTurnedToLeaf : [oParentNode0, oParentNode1],
+			_cleanTreeStateMaps() {},
+			_fireChange() {},
+			_resetMovedOrRemovedNode() {},
+			getResolvedPath() {}
+		};
+		const oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("getResolvedPath").withExactArgs().returns("~path");
+		oBindingMock.expects("_resetMovedOrRemovedNode").withExactArgs(oChildNode);
+		oBindingMock.expects("_cleanTreeStateMaps").withExactArgs();
+		oBindingMock.expects("_fireChange").withExactArgs({reason: ChangeReason.Change});
+
+		// code under test
+		ODataTreeBindingFlat.prototype._resetChanges.call(oBinding);
+
+		assert.deepEqual(oBinding._mSubtreeHandles, {});
+		assert.deepEqual(oBinding._aAdded, []);
+		assert.deepEqual(oBinding._aRemoved, []);
+		assert.deepEqual(oBinding._aAllChangedNodes, []);
+		assert.deepEqual(oBinding._aNodeCache, []);
+		assert.deepEqual(oBinding._aTurnedToLeaf, []);
+		assert.deepEqual(oParentNode0.nodeState, {collapsed : false, expanded : true, isLeaf : false});
+		assert.deepEqual(oParentNode1.nodeState, {
+			collapsed : false, expanded : false, isLeaf : true, wasExpanded : true});
+	});
 
 	//*********************************************************************************************
 [{
 	inputNode : {foo : "bar", parent : null},
 	expectedResult : {foo : "bar", parent : null}
 }, {
-	inputNode : {foo : "bar", parent : {initiallyIsLeaf : false}},
-	expectedResult : {foo : "bar", parent : {initiallyIsLeaf : false, addedSubtrees : []}}
+	inputNode : {foo : "bar", parent : {initiallyIsLeaf : false, nodeState : {}}},
+	expectedResult : {foo : "bar", parent : {initiallyIsLeaf : false, nodeState : {}, addedSubtrees : []}}
 }, {
 	inputNode : {foo : "bar", parent : {initiallyIsLeaf : true, nodeState : {}}},
 	expectedResult : {
@@ -1025,18 +1075,41 @@ sap.ui.define([
 			nodeState : {collapsed : false, expanded : false, isLeaf : true}
 		}
 	}
+}, {
+	inputNode : {foo : "bar", parent : {initiallyIsLeaf : false, nodeState : {wasExpanded : true}}},
+	expectedResult : {
+		foo : "bar",
+		parent : {
+			initiallyIsLeaf : false,
+			addedSubtrees : [],
+			nodeState : {collapsed : false, expanded : true, isLeaf : false}
+		}
+	}
 }].forEach(function (oFixture, i) {
 	QUnit.test("_resetParentState: #" + i, function (assert) {
+		const oBinding = {
+			_aTurnedToLeaf : [],
+			_findParentNode() {}
+		};
+		if (i === 3) {
+			oBinding._aTurnedToLeaf.push(oFixture.inputNode.parent);
+		}
+		this.mock(oBinding).expects("_findParentNode")
+			.withExactArgs(oFixture.inputNode)
+			.returns(oFixture.inputNode.parent);
+
 		// code under test
-		ODataTreeBindingFlat._resetParentState(oFixture.inputNode);
+		ODataTreeBindingFlat.prototype._resetParentState.call(oBinding, oFixture.inputNode);
 
 		assert.deepEqual(oFixture.inputNode, oFixture.expectedResult);
+		assert.deepEqual(oBinding._aTurnedToLeaf, []);
 	});
 });
 
 	//*********************************************************************************************
 	QUnit.test("_resetMovedOrRemovedNode", function (assert) {
-		var oNode = {
+		const oBinding = {_resetParentState() {}};
+		const oNode = {
 				containingSubtreeHandle : "~containingSubtreeHandle",
 				level : "~level",
 				nodeState : {reinserted : "~reinserted", removed : "~removed"},
@@ -1045,11 +1118,10 @@ sap.ui.define([
 				parent : "~parent"
 			};
 
-		this.mock(ODataTreeBindingFlat).expects("_resetParentState")
-			.withExactArgs(sinon.match.same(oNode));
+		this.mock(oBinding).expects("_resetParentState").withExactArgs(sinon.match.same(oNode));
 
 		// code under test
-		ODataTreeBindingFlat._resetMovedOrRemovedNode(oNode);
+		ODataTreeBindingFlat.prototype._resetMovedOrRemovedNode.call(oBinding, oNode);
 
 		assert.deepEqual(oNode, {
 			level : "~originalLevel",
@@ -1058,6 +1130,167 @@ sap.ui.define([
 			originalParent : "~originalParent",
 			parent : "~originalParent"
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_findParentNode: the node has a parent", function (assert) {
+		const oParenNode = {};
+
+		// code under test,
+		assert.strictEqual(ODataTreeBindingFlat.prototype._findParentNode({parent : oParenNode}), oParenNode);
+	});
+
+	//*********************************************************************************************
+[
+	{indexOfNode : 1, nodes : [undefined, {level : 1, serverIndex : 1}]},
+	{indexOfNode : 3, nodes : [{level : 2}, {level : 3}, {level : 4}, {level : 3, serverIndex : 3}]}
+].forEach(function (oFixture, i) {
+	QUnit.test("_findParentNode: the node does not have a parent " + i, function (assert) {
+		const oBinding = {_aNodes : oFixture.nodes};
+
+		// code under test
+		assert.strictEqual(
+			ODataTreeBindingFlat.prototype._findParentNode.call(oBinding, oFixture.nodes[oFixture.indexOfNode]),
+			oFixture.nodes[0]);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_hasPendingRequest", function (assert) {
+		const oBinding = {_aPendingChildrenRequests : [{sParent : "~sParent"}]};
+		const sNodeKey = "~sParent";
+
+		// code under test,
+		assert.ok(ODataTreeBindingFlat.prototype._hasPendingRequest.call(oBinding, sNodeKey), true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_turnNodeToLeaf", function (assert) {
+		const oBinding = {_aTurnedToLeaf : []};
+		const oNode = {nodeState : {collapsed : false, expanded : true, isLeaf : false}};
+
+		// code under test
+		ODataTreeBindingFlat.prototype._turnNodeToLeaf.call(oBinding, oNode);
+
+		assert.deepEqual(oNode.nodeState, {collapsed : false, expanded : false, isLeaf : true, wasExpanded : true});
+		assert.strictEqual(oBinding._aTurnedToLeaf[0], oNode);
+	});
+
+	//*********************************************************************************************
+[{
+	aNodes : [
+		{key : "Node1", nodeState : {expanded : false}}
+	],
+	iLength : 1
+}, {
+	aNodes : [
+		{key : "Node1", nodeState : {expanded : false}},
+		{key : "Node2", nodeState : {expanded : true}}
+	],
+	iLength : 2
+}, {
+	aNodes : [
+		{key : "Node1", level : 0, nodeState : {expanded : true}, bHasPendingRequest : true},
+		{key : "Node2", level : 1, nodeState : {expanded : true}, bHasPendingRequest : true}
+	],
+	iLength : 2
+}].forEach(function (oFixture, i) {
+	QUnit.test("_mapRetrieveNodeSection: don't call _turnNodeToLeaf: " + i, function (assert) {
+		const oBinding = {
+			_aRemoved : [],
+			_aTurnedToLeaf : [],
+			_hasPendingRequest() {},
+			_map() {},
+			_turnNodeToLeaf() {},
+			getLength() {}
+		};
+		const oBindingMock = this.mock(oBinding);
+		oBindingMock.expects("getLength").withExactArgs().returns(oFixture.iLength);
+		oBindingMock.expects("_map").withExactArgs(sinon.match.func)
+			.callsFake((fnMap) => {
+				oBindingMock.expects("_turnNodeToLeaf").never();
+
+				// code under test
+				oFixture.aNodes.forEach((key) => {
+					if (oFixture.aNodes.bHasPendingRequest) {
+						oBindingMock.expects("_hasPendingRequest").withExactArgs("Node1").returns(false);
+					}
+					fnMap(key, {/*~oRecursionBreaker*/}, "~sTndexType", "~iIndex", {/*~oParent*/});
+				});
+			});
+
+		// code under test
+		ODataTreeBindingFlat.prototype._mapRetrieveNodeSection.call(oBinding, 0 /*oFixture.iLength*/);
+	});
+});
+
+//*********************************************************************************************
+[{
+	aNodes : [
+		{key : "Node1", nodeState : {expanded : true}}
+	],
+	iLength : 1
+}, {
+	aNodes : [
+		{key : "Node1", level : 0, nodeState : {expanded : true}},
+		{key : "Node2", level : 0, nodeState : {expanded : false}}
+	],
+	iLength : 2
+}, {
+	aNodes : [
+		{key : "Node1.1", level : 1, nodeState : {expanded : true}},
+		{key : "Node2", level : 0, nodeState : {expanded : false}}
+	],
+	iLength : 2
+}].forEach(function (oFixture, i) {
+	QUnit.test("_mapRetrieveNodeSection: call _turnNodeToLeaf: " + i, function (assert) {
+		const oBinding = {
+			_aRemoved : [{}],
+			_aTurnedToLeaf : [],
+			_hasPendingRequest() {},
+			_map() {},
+			_turnNodeToLeaf() {},
+			getLength() {}};
+		const oBindingMock = this.mock(oBinding);
+		oBindingMock.expects("getLength").withExactArgs().returns(oFixture.iLength);
+		oBindingMock.expects("_map").withExactArgs(sinon.match.func)
+			.callsFake((fnMap) => {
+				oBindingMock.expects("_turnNodeToLeaf").withExactArgs(sinon.match.same(oFixture.aNodes[0]));
+
+				// code under test
+				oFixture.aNodes.forEach((key) => {
+					if (oFixture.aNodes.bHasPendingRequest) {
+						oBindingMock.expects("_hasPendingRequest").withExactArgs("Node1").returns(false);
+					}
+					fnMap(key, {/*~oRecursionBreaker*/}, "~sTndexType", "~iIndex", {/*~oParent*/});
+				});
+			});
+
+		// code under test
+		ODataTreeBindingFlat.prototype._mapRetrieveNodeSection.call(oBinding, 0 /*oFixture.iLength*/);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_mapCleanTreeStateMaps: parent of a removed node was turned to a leaf", function (assert) {
+		const oParentNode = {nodeState : {isLeaf : true}};
+		const oRemovedNode = {
+			nodeState : {removed: true},
+			parent : oParentNode
+		};
+		const oTreeBinding = new TreeBinding("model", "/path");
+		ODataTreeBindingFlat.call(oTreeBinding);
+		oTreeBinding._aRemoved.push(oRemovedNode);
+		const oTreeBindingMock = this.mock(oTreeBinding);
+		oTreeBindingMock.expects("_up").withExactArgs(oRemovedNode, sinon.match.func, false).callThrough();
+		oTreeBindingMock.expects("_getParent").withExactArgs(oRemovedNode, false).returns(oParentNode);
+		oTreeBindingMock.expects("_structuralUp")
+			.withExactArgs(oParentNode, sinon.match.func, sinon.match({broken: false}), false)
+			.callThrough();
+		oTreeBindingMock.expects("_flatUp").never();
+
+		// code under test
+		assert.strictEqual(oTreeBinding._mapCleanTreeStateMaps(), 0);
 	});
 
 	//*********************************************************************************************
