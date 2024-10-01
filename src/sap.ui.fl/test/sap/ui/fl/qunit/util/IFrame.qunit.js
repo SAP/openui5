@@ -25,7 +25,7 @@ sap.ui.define([
 
 	var sTitle = "IFrame Title";
 	var sProtocol = "https";
-	var sOpenUI5Url = sProtocol + "://openui5/";
+	var sOpenUI5Url = sProtocol + "://openui5.org/";
 	var sDefaultSize = "500px";
 	var sUserFirstName = "John";
 	var sUserLastName = "Doe";
@@ -65,25 +65,35 @@ sap.ui.define([
 			return checkUrl(assert, this.oIFrame, sOpenUI5Url, "then the value is rejected");
 		});
 
-		QUnit.test("when changing a navigation parameter", function(assert) {
-			var sNewUrl = sOpenUI5Url + "#someNavParameter";
+		QUnit.test("when changing a navigation parameter only", function(assert) {
+			var sNewUrl = sOpenUI5Url + '#someNavParameter';
 			var oReplaceLocationSpy = sandbox.spy(this.oIFrame, "_replaceIframeLocation");
 			this.oIFrame.setUrl(sNewUrl);
-			return checkUrl(assert, this.oIFrame, sNewUrl)
-			.then(function() {
-				Core.applyChanges();
-				assert.strictEqual(oReplaceLocationSpy.callCount, 2, "then the iframe location is properly replaced");
-				assert.strictEqual(
-					oReplaceLocationSpy.firstCall.args[0],
-					"about:blank",
-					"then the iframe is unloaded"
-				);
-				assert.strictEqual(
-					oReplaceLocationSpy.lastCall.args[0],
-					sNewUrl,
-					"then the proper url is loaded"
-				);
-			});
+			var sTestUrlRegex = new RegExp(sOpenUI5Url + '\\?sap-ui-xx-fl-forceEmbeddedContentRefresh=([\\d-]+)#someNavParameter');
+			assert.ok(
+				sTestUrlRegex.test(this.oIFrame.getUrl()),
+				"then the url is properly updated"
+			);
+			var sFrameRefreshSearchParameter = sTestUrlRegex.exec(this.oIFrame.getUrl())[1];
+			Core.applyChanges();
+			assert.strictEqual(oReplaceLocationSpy.callCount, 1, "then the iframe location is properly replaced");
+			assert.ok(
+				sTestUrlRegex.test(oReplaceLocationSpy.lastCall.args[0]),
+				"then the proper url is loaded and a frame refresh search parameter is added"
+			);
+
+			// Change the navigation parameter again
+			this.oIFrame.setUrl(sOpenUI5Url + '#someNavParameter,someOtherNavParameter');
+			assert.ok(
+				sTestUrlRegex.test(this.oIFrame.getUrl()),
+				"then the url still contains a frame refresh search parameter"
+			);
+			var sNewFrameRefreshSearchParameter = sTestUrlRegex.exec(this.oIFrame.getUrl())[1];
+			assert.notStrictEqual(
+				sFrameRefreshSearchParameter,
+				sNewFrameRefreshSearchParameter,
+				"then the frame refresh search parameter is updated"
+			);
 		});
 
 		QUnit.test("when changing a navigation parameter (legacy)", function(assert) {
@@ -119,8 +129,8 @@ sap.ui.define([
 				Core.applyChanges();
 				assert.strictEqual(
 					oReplaceLocationSpy.callCount,
-					2,
-					"then the new useLegacyNavigation approach is chosen by default and the iframe location is properly replaced"
+					1,
+					"then the new navigation approach is chosen by default and the iframe location is properly replaced"
 				);
 				assert.strictEqual(
 					oReplaceLocationSpy.lastCall.args[0],

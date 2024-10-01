@@ -5,6 +5,7 @@
 // Provides control sap.ui.fl.util.IFrame
 sap.ui.define([
 	"../library",
+	"sap/base/util/uid",
 	"sap/base/util/restricted/_omit",
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
@@ -17,6 +18,7 @@ sap.ui.define([
 	"sap/ui/core/library"
 ], function(
 	library,
+	uid,
 	_omit,
 	Control,
 	JSONModel,
@@ -167,7 +169,23 @@ sap.ui.define([
 					this._setUrlLegacy(sEncodedUrl);
 				} else {
 					// Set by replacing the last entry
-					this.setProperty("url", sEncodedUrl);
+					var oNewUrl = IFrame._toUrl(sEncodedUrl);
+					var oOldUrl = IFrame._toUrl(this.getUrl() || "about:blank");
+					if (oOldUrl.searchParams.has("sap-ui-xx-fl-forceEmbeddedContentRefresh")) {
+						// Always keep the refresh parameter and update it to avoid false negatives
+						// when the URL doesn't change except for the refresh parameter itself + hash
+						oNewUrl.searchParams.set("sap-ui-xx-fl-forceEmbeddedContentRefresh", uid().substring(3));
+					} else if (
+						oOldUrl.origin === oNewUrl.origin
+						&& oOldUrl.pathname === oNewUrl.pathname
+						&& oOldUrl.search === oNewUrl.search
+						&& oOldUrl.hash !== oNewUrl.hash
+					) {
+						// Only the hash changed, site is not going to reload automatically
+						// Set an artificial search parameter to force a refresh
+						oNewUrl.searchParams.append("sap-ui-xx-fl-forceEmbeddedContentRefresh", uid().substring(3));
+					}
+					this.setProperty("url", oNewUrl.toString());
 				}
 			} else {
 				Log.error("Provided URL is not valid as an IFrame src");
@@ -183,7 +201,6 @@ sap.ui.define([
 
 		onAfterRendering: function() {
 			if (!this.getUseLegacyNavigation()) {
-				this._replaceIframeLocation("about:blank");
 				this._replaceIframeLocation(this.getUrl());
 			}
 		},
@@ -230,10 +247,14 @@ sap.ui.define([
 		return document.location;
 	};
 
+	IFrame._toUrl = function(sUrl) {
+		var oDocumentLocation = IFrame._getDocumentLocation();
+		return new URL(sUrl, oDocumentLocation.href);
+	};
+
 	IFrame.isValidUrl = function(sUrl) {
 		try {
-			var oDocumentLocation = IFrame._getDocumentLocation();
-			var oUrl = new URL(sUrl, oDocumentLocation.href);
+			var oUrl = IFrame._toUrl(sUrl);
 			return (
 				// Forbid dangerous javascript pseudo protocol
 				!/javascript/i.test(oUrl.protocol)
@@ -242,7 +263,7 @@ sap.ui.define([
 					!/http(?!s)/.test(oUrl.protocol)
 					// Exception: Host is using http, no protocol downgrade happening
 					// Required for local testing and onPrem systems
-					|| /http(?!s)/.test(oDocumentLocation.protocol)
+					|| /http(?!s)/.test(IFrame._getDocumentLocation().protocol)
 				)
 				// Take further customer restrictions into account
 				&& URLListValidator.validate(sUrl)

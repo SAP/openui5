@@ -23,7 +23,11 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sUrl = "testURL";
+	// The iframe url setter constructs an absolute url based on the relative url
+	// to perform further checks and modify search parameters if necessary
+	// When running assertions on the Iframe, use an absolute url as well
+	var sUrl = new URL("testURL", document.location.href).href;
+
 
 	QUnit.module("Given a AddIFrame Change Handler", {
 		beforeEach: function() {

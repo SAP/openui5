@@ -26,7 +26,7 @@ sap.ui.define([
 	"use strict";
 
 	var BASE_ID = "test";
-	var EXAMPLE_URL = "exampleurl";
+	var EXAMPLE_URL = new URL("exampleurl", document.location.href).href;
 
 	QUnit.module("Given a AddIFrameObjectPageLayout Change Handler", {
 		beforeEach : function() {
