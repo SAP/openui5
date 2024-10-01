@@ -29,10 +29,18 @@ globalThis.fnInit = () => {
 				oSinonSandbox = sinon.createSandbox(),
 				oHeaderSpy = oSinonSandbox.spy(XMLHttpRequest.prototype, "setRequestHeader");
 
+			// create new interaction
+			Interaction.start("new_interaction");
+
+			// trigger at least one request for header creation
+			const oXhrHandle = this.dummyRequest();
 
 			// first interaction ends with end
 			Interaction.end(true);
-			this.dummyRequest();
+			oXhrHandle.abort();
+
+			// trigger another request to send FESR using URL object to ensure isCORSRequest can handle URL objects as well
+			this.dummyRequest(/* bUseUrlObject */ true);
 
 			assert.ok(oHeaderSpy.args.some(function(args) {
 				if (args[0] === "SAP-Perf-FESRec-opt") {
