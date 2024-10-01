@@ -795,6 +795,45 @@ sap.ui.define([
 						]
 					}
 				]
+			},
+			{
+				title: "Spacing",
+				icon: 'sap-icon://tree',
+				key: 'spacing',
+				target: 'exploreOverview',
+				hasExpander: false,
+				items:[
+					{
+						key: 'linkSpacing',
+						target: 'exploreSamples',
+						title: 'Link Spacing',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/linkSpacing/View.view.xml',
+								name: 'linkSpacing.view.xml',
+								key: 'linkSpacing.view.xml'
+							},
+							{
+								url: '/samples/linkSpacing/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/linkSpacing/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								isApplicationManifest: true
+							},
+							{
+								url: '/samples/linkSpacing/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							}
+						]
+					}
+				]
 			}
 		]
 	});
