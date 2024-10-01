@@ -137,12 +137,27 @@ sap.ui.define([
 				])
 			);
 
+			sinon.spy(oContent, "applyFilters");
+
 			return oContent.onBeforeShow(true).then(() => {
 				assert.ok(oFilterBar.cleanUpAllFilterFieldsInErrorState.called, "FilterBar.cleanUpAllFilterFieldsInErrorState called");
 				assert.ok(StateUtil.applyExternalState.calledWith(oFilterBar, {filter: oConditions}), "StateUtil.applyExternalState called");
-				oFilterBar.cleanUpAllFilterFieldsInErrorState.restore();
-				ValueHelpDelegate.getFilterConditions.restore();
-				FilterBarDelegate.fetchProperties.restore();
+				oFilterBar.fireSearch();
+				assert.ok(oContent.applyFilters.called, "applyFilters called");
+				oFilterBar.cleanUpAllFilterFieldsInErrorState.reset();
+				StateUtil.applyExternalState.reset();
+				oContent.applyFilters.reset();
+
+				return oContent.onBeforeShow(false).then(() => {
+					assert.notOk(oFilterBar.cleanUpAllFilterFieldsInErrorState.called, "FilterBar.cleanUpAllFilterFieldsInErrorState called");
+					assert.notOk(StateUtil.applyExternalState.calledWith(oFilterBar, {filter: oConditions}), "StateUtil.applyExternalState called");
+					oFilterBar.fireSearch();
+					assert.ok(oContent.applyFilters.called, "applyFilters called");
+					oFilterBar.cleanUpAllFilterFieldsInErrorState.restore();
+					ValueHelpDelegate.getFilterConditions.restore();
+					FilterBarDelegate.fetchProperties.restore();
+					oContent.applyFilters.restore();
+				});
 			});
 		});
 

@@ -541,13 +541,19 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
 	FilterableListContent.prototype.onBeforeShow = function(bInitial) {
+		const oFilterBar = this.getActiveFilterBar();
+
+		if (oFilterBar && !oFilterBar._bAttached) {
+			oFilterBar.attachSearch(this._handleSearch, this); // event only needed if shown
+			oFilterBar._bAttached = true;
+		}
+
 		if (bInitial) {
 			this._updateBasicSearchField();
 			const oDelegate = this.getValueHelpDelegate();
 			return Promise.resolve(oDelegate && oDelegate.getFilterConditions(this.getValueHelpInstance(), this)).then((oConditions) => {
 				this._oInitialFilterConditions = oConditions;
 
-				const oFilterBar = this.getActiveFilterBar();
 				if (oFilterBar) { // apply initial conditions to filterbar if existing
 					let sSearchPath = "$search";
 					/**
@@ -568,14 +574,12 @@ sap.ui.define([
 					});
 
 					oFilterBar.cleanUpAllFilterFieldsInErrorState();
-					oFilterBar.attachSearch(this._handleSearch, this); // event only needed if shown
-					oFilterBar._bAttached = true;
 
 					return pHandleConditions.then(() => oFilterBar.awaitPendingModification());
 				}
 			});
 		}
-		return undefined;
+		return Promise.resolve();
 	};
 
 	FilterableListContent.prototype.onHide = function() {
