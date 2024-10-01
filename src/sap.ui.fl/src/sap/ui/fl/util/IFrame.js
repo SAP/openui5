@@ -203,7 +203,7 @@ sap.ui.define([
 				} else {
 					Object.keys(mSettings)
 						.filter(function (sPropertyName) {
-							return !!mSettings[sPropertyName];
+							return mSettings[sPropertyName] !== undefined;
 						})
 						.forEach(function (sPropertyName) {
 							mMergedSettings[sPropertyName] = unbind(mSettings[sPropertyName]);

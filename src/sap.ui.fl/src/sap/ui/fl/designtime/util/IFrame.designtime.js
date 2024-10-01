@@ -35,7 +35,8 @@ sap.ui.define([
 			var oNewContent = {
 				url: oInitialSettings.url,
 				height: oInitialSettings.height,
-				width: oInitialSettings.width
+				width: oInitialSettings.width,
+				useLegacyNavigation: oInitialSettings.useLegacyNavigation
 			};
 
 			if (mSettings.frameHeight + mSettings.frameHeightUnit !== oInitialSettings.height) {
