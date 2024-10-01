@@ -51,9 +51,7 @@ sap.ui.define([
 				 * Paginator configuration from the manifest
 				 */
 				configuration: { type: "object" },
-				paginatorModel: { type: "object" },
-				pageSize: { type: "int", defaultValue: 0 },
-				totalCount: { type: "int", defaultValue: 0 }
+				paginatorModel: { type: "object" }
 			}
 		}
 	});
@@ -93,10 +91,8 @@ sap.ui.define([
 			oParent = oCard.getCardContent();
 		}
 
-		this.applySettings(BindingResolver.resolveValue({
-			totalCount: oConfiguration.totalCount,
-			pageSize: iPageSize
-		}, oParent));
+		this._iTotalCount = BindingResolver.resolveValue(oConfiguration.totalCount, oParent);
+		this._iPageSize = BindingResolver.resolveValue(iPageSize, oParent);
 	};
 
 	Paginator.prototype.exit = function () {
@@ -116,23 +112,25 @@ sap.ui.define([
 	};
 
 	Paginator.prototype.isServerSide = function() {
-		return this.getTotalCount() > 0;
+		return this._iTotalCount > 0;
 	};
 
 	Paginator.prototype.onDataChanged = function(oContent) {
 		if (!oContent.hasData()) {
 			this._iPageCount = 0;
+			this.fireEvent("_ready");
 			return;
 		}
 
 		this._applySettings();
 
 		const oList = oContent.getInnerList();
-		const iTotalCount = this.getTotalCount() || oContent.getDataLength();
-		this._iPageCount = Math.ceil(iTotalCount / this.getPageSize());
+		const iTotalCount = this._iTotalCount || oContent.getDataLength();
+		this._iPageCount = Math.ceil(iTotalCount / this._iPageSize);
 		this._iPageNumber = Math.min(Math.max(0, this._iPageNumber), this._getLastPageNumber());
 
 		if (!this.getActive()) {
+			this.fireEvent("_ready");
 			return;
 		}
 
@@ -224,6 +222,14 @@ sap.ui.define([
 		};
 	};
 
+	Paginator.prototype.getPageCount = function() {
+		return this._iPageCount;
+	};
+
+	Paginator.prototype.getPageSize = function() {
+		return this._iPageSize;
+	};
+
 	Paginator.prototype._loadMore = function() {
 		if (!this.isServerSide()) {
 			return;
@@ -237,8 +243,8 @@ sap.ui.define([
 
 	Paginator.prototype._updatePaginatorModel = function() {
 		this.getPaginatorModel().setData({
-			skip: this._iPageNumber * this.getPageSize(),
-			size: this.getPageSize(),
+			skip: this._iPageNumber * this._iPageSize,
+			size: this._iPageSize,
 			pageIndex: this._iPageNumber
 		});
 	};

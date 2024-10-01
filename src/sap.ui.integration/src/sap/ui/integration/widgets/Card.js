@@ -1867,8 +1867,8 @@ sap.ui.define([
 		this._applyFilterBarManifestSettings();
 		this._applyDataManifestSettings();
 		this._applyHeaderManifestSettings();
-		this._applyFooterManifestSettings();
 		this._applyPaginatorManifestSettings();
+		this._applyFooterManifestSettings();
 		this._applyContentManifestSettings();
 
 		this.fireManifestApplied();
@@ -2333,10 +2333,7 @@ sap.ui.define([
 			card: this,
 			configuration: oManifestFooter,
 			showCloseButton: this.getProperty("showCloseButton"),
-			showMore: this.hasPaginator() && !this.getAssociation("openerReference"),
-			showMorePress: () => {
-				this._oPaginator?.openDialog();
-			}
+			paginator: this._oPaginator
 		});
 	};
 

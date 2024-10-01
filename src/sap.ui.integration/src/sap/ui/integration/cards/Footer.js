@@ -52,9 +52,6 @@ sap.ui.define([
 				configuration: {
 					type: "object"
 				},
-				showMore: {
-					type: "boolean"
-				},
 				showCloseButton: {
 					type: "boolean"
 				}
@@ -84,9 +81,6 @@ sap.ui.define([
 					type: "sap.ui.integration.widgets.Card",
 					multiple: false
 				}
-			},
-			events: {
-				showMorePress: { }
 			}
 		},
 		renderer: {
@@ -123,20 +117,22 @@ sap.ui.define([
 		}
 	});
 
-	Footer.create = function ({ card, configuration, showMore, showCloseButton,showMorePress }) {
-		return new Footer({
+	Footer.create = function ({ card, configuration, paginator, showCloseButton }) {
+		const oFooter = new Footer({
 			configuration: BindingHelper.createBindingInfos(configuration, card.getBindingNamespaces()),
 			card,
-			showMore,
 			showCloseButton,
-			showMorePress,
 			actionsStrip: ActionsStrip.create(configuration.actionsStrip, card, true),
 			visible: configuration.visible
 		});
+
+		oFooter.setPaginator(paginator);
+
+		return oFooter;
 	};
 
 	Footer.prototype.onBeforeRendering = function () {
-		if (this.getShowMore()) {
+		if (this._oPaginator && !this._oPaginator.getActive()) {
 			this._createShowMore();
 		} else {
 			this.destroyAggregation("_showMore");
@@ -199,24 +195,36 @@ sap.ui.define([
 	 * @returns {object} Footer configuration with static values.
 	 */
 	Footer.prototype.getStaticConfiguration = function () {
-		var oConfiguration = merge({}, this.getConfiguration()),
-			oPaginator = this.getCardInstance()._oPaginator;
+		var oConfiguration = merge({}, this.getConfiguration());
 
-		if (oPaginator) {
-			oConfiguration.paginator = oPaginator.getStaticConfiguration();
+		if (this._oPaginator) {
+			oConfiguration.paginator = this._oPaginator.getStaticConfiguration();
 		}
 
 		return oConfiguration;
+	};
+
+	Footer.prototype.setPaginator = function (oPaginator) {
+		this._oPaginator = oPaginator;
 	};
 
 	Footer.prototype._createShowMore = function () {
 		let oMore = this.getAggregation("_showMore");
 
 		if (!oMore) {
+			const oPaginator = this._oPaginator;
+
 			oMore = new Button({
 				text: Library.getResourceBundleFor("sap.ui.integration").getText("CARD_FOOTER_SHOW_MORE"),
 				type: ButtonType.Transparent,
-				press: this.fireShowMorePress.bind(this)
+				press: () => {
+					oPaginator.openDialog();
+				},
+				visible: oPaginator.getPageCount() > 1
+			});
+
+			oPaginator.attachEvent("_ready", () => {
+				oMore.setVisible(oPaginator.getPageCount() > 1);
 			});
 
 			this.setAggregation("_showMore", oMore);
