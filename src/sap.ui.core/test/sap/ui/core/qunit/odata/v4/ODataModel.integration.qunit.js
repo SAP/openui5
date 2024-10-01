@@ -74590,6 +74590,11 @@ make root = ${bMakeRoot}`;
 	// which was not part of the main list response. The unexpected data is ignored. Instead, the
 	// missing separate data according to the main list is separately fetched with late property
 	// requests.
+	// While separate property requests are not yet completed, further paging is possible and
+	// overtaking paging responses (incl. separate properties) become visible earlier. While still
+	// waiting for the previous separate response, a dependent entity can be bound to an object
+	// page, which shows the already available information. If the separate request is completed,
+	// the response data is reflected to the table and the object page.
 	// JIRA: CPOUI5ODATAV4-2691
 	// JIRA: CPOUI5ODATAV4-2692
 [false, true].forEach(function (bAutoExpandSelect) {
@@ -74629,7 +74634,11 @@ make root = ${bMakeRoot}`;
 	<Text id="publicationCurrency" text="{BestPublication/CurrencyCode}"/>
 	<Text id="friend" text="{BestFriend/Name}"/>
 	<Text id="sibling" text="{SiblingEntity/Name}"/>
-</Table>`;
+</Table>
+<FlexBox id="details">
+	<Text id="detailName" text="{Name}"/>
+	<Text id="detailFriendName" text="{BestFriend/Name}"/>
+</FlexBox>`;
 
 		let fnResolveBestFriend;
 		let fnResolveSiblingEntity;
@@ -74637,7 +74646,7 @@ make root = ${bMakeRoot}`;
 				batchNo : bAutoExpandSelect ? 3 : 1,
 				url : sMainUrl + "&$skip=0&$top=2"
 			}, {
-				"@odata.count" : "5",
+				"@odata.count" : "7",
 				value : [{
 					ArtistID : "10",
 					BestPublication : {CurrencyCode : "EUR", PublicationID : "Pub1"},
@@ -74654,6 +74663,8 @@ make root = ${bMakeRoot}`;
 			.expectChange("publicationCurrency", ["EUR", "USD"])
 			.expectChange("friend", [null, null])
 			.expectChange("sibling", [null, null])
+			.expectChange("detailName")
+			.expectChange("detailFriendName")
 			.expectRequest({
 				batchNo : bAutoExpandSelect ? 1 : 2,
 				url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
@@ -74731,7 +74742,7 @@ make root = ${bMakeRoot}`;
 				url : sMainUrl + "&$skip=2&$top=1"
 			}, new Promise(function (resolve) {
 				fnResolveMain = resolve.bind(null, {
-					"@odata.count" : "5",
+					"@odata.count" : "7",
 					value : [{
 						ArtistID : "30",
 						BestPublication : {CurrencyCode : "JPY", PublicationID : "Pub3"},
@@ -74741,7 +74752,8 @@ make root = ${bMakeRoot}`;
 				});
 			}));
 
-		this.oView.byId("table").requestItems(1);
+		const oTable = this.oView.byId("table");
+		oTable.requestItems(1);
 
 		await this.waitForChanges(assert, "load more items: main request is delayed");
 
@@ -74788,7 +74800,7 @@ make root = ${bMakeRoot}`;
 				batchNo : 9,
 				url : sMainUrl + "&$skip=3&$top=2"
 			}, {
-				"@odata.count" : "5",
+				"@odata.count" : "7",
 				value : [{
 					ArtistID : "40",
 					BestPublication : {CurrencyCode : "DKK", PublicationID : "Pub4"},
@@ -74822,9 +74834,113 @@ make root = ${bMakeRoot}`;
 			.expectChange("friend", [,,,, "Friend E"])
 			.expectChange("sibling", [,,, "Sibling D"]);
 
-		this.oView.byId("table").requestItems();
+		oTable.requestItems();
 
 		await this.waitForChanges(assert, "separate response with unexpected entity");
+
+		let fnResolveBestFriend60;
+		this.expectRequest({
+				batchNo : 11,
+				url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=5&$top=1"
+			}, new Promise(function (resolve) {
+				fnResolveBestFriend60 = resolve.bind(null, {
+					value : [{
+						ArtistID : "60",
+						BestFriend : {ArtistID : "F6", IsActiveEntity : true, Name : "Friend F"},
+						IsActiveEntity : true
+					}]
+				});
+			}))
+			.expectRequest({
+				batchNo : 12,
+				url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=5&$top=1"
+			}, {
+				value : [{
+					ArtistID : "60",
+					IsActiveEntity : true,
+					SiblingEntity : {ArtistID : "S6", IsActiveEntity : true, Name : "Sibling F"}
+				}]
+			})
+			.expectRequest({
+				batchNo : 13,
+				url : sMainUrl + "&$skip=5&$top=1"
+			}, {
+				"@odata.count" : "7",
+				value : [{
+					ArtistID : "60",
+					BestPublication : {CurrencyCode : "CAD", PublicationID : "Pub6"},
+					IsActiveEntity : true,
+					Name : "Artist F"
+				}]
+			})
+			.expectChange("name", [,,,,, "Artist F"])
+			.expectChange("publicationCurrency", [,,,,, "CAD"])
+			.expectChange("friend", [,,,,, null])
+			.expectChange("sibling", [,,,,, "Sibling F"]);
+
+		oTable.requestItems(1);
+
+		await this.waitForChanges(assert, "load item 60, delayed BestFriend");
+
+		this.expectRequest({
+				batchNo : 14,
+				url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=6&$top=1"
+			}, {
+				value : [{
+					ArtistID : "70",
+					BestFriend : {ArtistID : "F7", IsActiveEntity : true, Name : "Friend G"},
+					IsActiveEntity : true
+				}]
+			})
+			.expectRequest({
+				batchNo : 15,
+				url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=6&$top=1"
+			}, {
+				value : [{
+					ArtistID : "70",
+					IsActiveEntity : true,
+					SiblingEntity : {ArtistID : "S7", IsActiveEntity : true, Name : "Sibling G"}
+				}]
+			})
+			.expectRequest({
+				batchNo : 16,
+				url : sMainUrl + "&$skip=6&$top=1"
+			}, {
+				"@odata.count" : "7",
+				value : [{
+					ArtistID : "70",
+					BestPublication : {CurrencyCode : "EUR", PublicationID : "Pub7"},
+					IsActiveEntity : true,
+					Name : "Artist G"
+				}]
+			})
+			.expectChange("name", [,,,,,, "Artist G"])
+			.expectChange("publicationCurrency", [,,,,,, "EUR"])
+			.expectChange("friend", [,,,,,, "Friend G"])
+			.expectChange("sibling", [,,,,,, "Sibling G"]);
+
+		oTable.requestItems(1);
+
+		await this.waitForChanges(assert, "load item 70, overtakes 60's BestFriend");
+
+		this.expectChange("detailName", "Artist F")
+			.expectChange("detailFriendName", null);
+
+		// code under test
+		this.oView.byId("details").setBindingContext(oTable.getItems()[5].getBindingContext());
+
+		await this.waitForChanges(assert, "show item 60 on object page");
+
+		this.expectChange("friend", [,,,,, "Friend F"])
+			.expectChange("detailFriendName", "Friend F");
+
+		fnResolveBestFriend60();
+
+		await this.waitForChanges(assert, "resolve 60's BestFriend");
 	});
 });
 });

@@ -756,11 +756,12 @@ sap.ui.define([
 				}
 			}
 
-			const oSeparateRequestRange = that.mSeparateProperty2ReadRequest?.[sSegment];
-			if (oSeparateRequestRange) {
+			const aSeparateRequestRanges = that.mSeparateProperty2ReadRequest?.[sSegment];
+			if (aSeparateRequestRanges) {
 				// separate properties always operate on entities of that.aElements
 				const iIndex = that.aElements.indexOf(oValue);
-				if (iIndex >= oSeparateRequestRange.start && iIndex < oSeparateRequestRange.end) {
+				if (aSeparateRequestRanges.some(
+						(oRange) => iIndex >= oRange.start && iIndex < oRange.end)) {
 					return undefined; // separate property request still pending
 				}
 			}
@@ -2593,8 +2594,11 @@ sap.ui.define([
 		// - iEnd: the end (exclusive)
 		this.aReadRequests = [];
 		this.aSeparateProperties = aSeparateProperties ?? []; // properties to be loaded separately
-		// maps separate property to the requested $skip/$top range (see aReadRequests)
+		// maps separate property to an array of requested $skip/$top ranges (see aReadRequests)
 		this.mSeparateProperty2ReadRequest = {};
+		this.aSeparateProperties.forEach((sProperty) => {
+			this.mSeparateProperty2ReadRequest[sProperty] = [];
+		});
 		this.bServerDrivenPaging = false;
 		this.oSyncPromiseAll = undefined;
 	}
@@ -3569,8 +3573,9 @@ sap.ui.define([
 		// types are needed for selecting the key properties, see #getQueryString called by
 		// #getResourcePathWithQuery
 		const oTypes = await this.fetchTypes();
+		const oReadRange = {start : iStart, end : iEnd};
 		const aRequestPromises = this.aSeparateProperties.map((sProperty) => {
-			this.mSeparateProperty2ReadRequest[sProperty] = {start : iStart, end : iEnd};
+			this.mSeparateProperty2ReadRequest[sProperty].push(oReadRange);
 			return this.oRequestor.request("GET",
 				this.getResourcePathWithQuery(iStart, iEnd, sProperty),
 				this.oRequestor.lockGroup("$single", this));
@@ -3580,7 +3585,8 @@ sap.ui.define([
 		aRequestPromises.forEach(async (oRequestPromise, i) => {
 			const oResult = await oRequestPromise;
 			const sProperty = this.aSeparateProperties[i];
-			delete this.mSeparateProperty2ReadRequest[sProperty];
+			this.mSeparateProperty2ReadRequest[sProperty].splice(
+				this.mSeparateProperty2ReadRequest[sProperty].indexOf(oReadRange), 1);
 			this.visitResponse(oResult, oTypes, undefined, undefined, iStart);
 			for (const oSeparateData of oResult.value) {
 				const sPredicate = _Helper.getPrivateAnnotation(oSeparateData, "predicate");
