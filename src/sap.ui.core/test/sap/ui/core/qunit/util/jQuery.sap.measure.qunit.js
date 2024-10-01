@@ -413,19 +413,19 @@ sap.ui.define([
 	});
 
 	QUnit.module("Interaction", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oButton = new Button();
-			Interaction.setActive(true);
+			await Interaction.setActive(true);
 			jQuery.sap.measure.endInteraction(true);
 			jQuery.sap.measure.clearInteractionMeasurements();
 			jQuery.sap.measure.clear();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oButton.destroy();
 			jQuery.sap.measure.endInteraction(true);
 			jQuery.sap.measure.clearInteractionMeasurements();
 			jQuery.sap.measure.clear();
-			Interaction.setActive(false);
+			await Interaction.setActive(false);
 		}
 	});
 
@@ -605,7 +605,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Component determination", function(assert) {
+	QUnit.test("Component determination", async function(assert) {
 		// setup
 		var done = assert.async();
 		var oButton = this.oButton;
@@ -629,7 +629,7 @@ sap.ui.define([
 		});
 		var oComp = new Comp();
 
-		jQuery.sap.measure.setActive(true);
+		await jQuery.sap.measure.setActive(true);
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		// Tests synchronous time intensive API which makes use of measurement API
 		jQuery.sap.require("sap.m.List");

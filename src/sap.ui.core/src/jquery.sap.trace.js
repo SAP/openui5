@@ -51,12 +51,13 @@ function(jQuery, Passport, Interaction, FESR, Log, BaseConfig/* ,Global */) {
 	 * Enables the interaction tracking.
 	 *
 	 * @param {boolean} bActive state of the interaction detection
+	 * @returns {Promise} When activtion is ready
 	 * @public
 	 * @since 1.36
 	 */
-	jQuery.sap.interaction.setActive = function() {
+	jQuery.sap.interaction.setActive = function(bActive) {
 		logSupportWarning();
-		Interaction.setActive.apply(this, arguments);
+		return Interaction.setActive.apply(this, arguments);
 	};
 
 	/**
@@ -66,19 +67,20 @@ function(jQuery, Passport, Interaction, FESR, Log, BaseConfig/* ,Global */) {
 	 * @private
 	 * @since 1.32
 	 */
-	jQuery.sap.interaction.getActive = Interaction.getActive;
+	jQuery.sap.interaction.getActive = () => { return Interaction.getActive(); };
 
 	/**
 	 * This method starts the actual interaction measurement when all criteria are met. As it is the starting point
 	 * for the new interaction the creation of the FESR headers for the last interaction is triggered here, so that
 	 * the headers can be sent with the first request of the current interaction.<br>
 	 *
+	 * @param {string} sEventId The Event id
 	 * @param {sap.ui.core.Element} oElement Element on which the interaction has been triggered
 	 * @param {boolean} bForce forces the interaction to start independently from a currently active browser event
 	 * @private
 	 * @since 1.32
 	 */
-	jQuery.sap.interaction.notifyStepStart = Interaction.notifyStepStart;
+	jQuery.sap.interaction.notifyStepStart = (sEventId, oElement, bForce) => { Interaction.notifyStepStart(sEventId, oElement, bForce); };
 
 	/**
 	 * This method ends the started interaction measurement.
@@ -86,7 +88,7 @@ function(jQuery, Passport, Interaction, FESR, Log, BaseConfig/* ,Global */) {
 	 * @private
 	 * @since 1.32
 	 */
-	jQuery.sap.interaction.notifyStepEnd = Interaction.notifyStepEnd;
+	jQuery.sap.interaction.notifyStepEnd = () => { Interaction.notifyStepEnd(); };
 
 	/**
 	 * This method notifies if a relevant event has been triggered.
@@ -95,7 +97,7 @@ function(jQuery, Passport, Interaction, FESR, Log, BaseConfig/* ,Global */) {
 	 * @private
 	 * @since 1.32
 	 */
-	jQuery.sap.interaction.notifyEventStart = Interaction.notifyEventStart;
+	jQuery.sap.interaction.notifyEventStart = (oEvent) => { Interaction.notifyEventStart(oEvent); };
 
 	/**
 	 * This method notifies if a scroll event has been triggered. Some controls require this special treatment,
@@ -105,7 +107,7 @@ function(jQuery, Passport, Interaction, FESR, Log, BaseConfig/* ,Global */) {
 	 * @private
 	 * @since 1.36.2
 	 */
-	 jQuery.sap.interaction.notifyScrollEvent = Interaction.notifyScrollEvent;
+	 jQuery.sap.interaction.notifyScrollEvent = (oEvent) => { Interaction.notifyScrollEvent(oEvent); };
 
 	/**
 	 * This method notifies if a relevant event has ended by detecting another interaction.
@@ -113,7 +115,7 @@ function(jQuery, Passport, Interaction, FESR, Log, BaseConfig/* ,Global */) {
 	 * @private
 	 * @since 1.32
 	 */
-	jQuery.sap.interaction.notifyEventEnd = Interaction.notifyEventEnd;
+	jQuery.sap.interaction.notifyEventEnd = () => { Interaction.notifyEventEnd(); };
 
 	/**
 	 * This method sets the component name for an interaction.
@@ -121,7 +123,7 @@ function(jQuery, Passport, Interaction, FESR, Log, BaseConfig/* ,Global */) {
 	 * @private
 	 * @since 1.38.5
 	 */
-	jQuery.sap.interaction.setStepComponent = Interaction.setStepComponent;
+	jQuery.sap.interaction.setStepComponent = () => { Interaction.setStepComponent(); };
 
 
 	/**
@@ -149,12 +151,13 @@ function(jQuery, Passport, Interaction, FESR, Log, BaseConfig/* ,Global */) {
 
 	/**
 	 * @param {boolean} bActive state of the FESR header creation
+	 * @returns {Promise} Resolves when activation is ready
 	 * @private
 	 * @since 1.32
 	 */
-	jQuery.sap.fesr.setActive = function() {
+	jQuery.sap.fesr.setActive = function(bActive) {
 		logSupportWarning();
-		FESR.setActive.apply(this, arguments);
+		return FESR.setActive.apply(this, arguments);
 	};
 
 	/**
@@ -162,21 +165,21 @@ function(jQuery, Passport, Interaction, FESR, Log, BaseConfig/* ,Global */) {
 	 * @private
 	 * @since 1.36.2
 	 */
-	jQuery.sap.fesr.getActive = FESR.getActive;
+	jQuery.sap.fesr.getActive = () => { return FESR.getActive(); };
 
 	/**
 	 * @return {string} ID of the currently processed transaction
 	 * @private
 	 * @since 1.32
 	 */
-	jQuery.sap.fesr.getCurrentTransactionId = Passport.getTransactionId;
+	jQuery.sap.fesr.getCurrentTransactionId = () => { return Passport.getTransactionId(); };
 
 	/**
 	 * @return {string} Root ID of the current session
 	 * @private
 	 * @since 1.32
 	 */
-	jQuery.sap.fesr.getRootId = Passport.getRootId;
+	jQuery.sap.fesr.getRootId = () => { return Passport.getRootId(); };
 
 
 	/**
@@ -184,7 +187,7 @@ function(jQuery, Passport, Interaction, FESR, Log, BaseConfig/* ,Global */) {
 	 * @private
 	 * @since 1.36.2
 	 */
-	jQuery.sap.fesr.addBusyDuration = Interaction.addBusyDuration;
+	jQuery.sap.fesr.addBusyDuration = (iDuration) => { Interaction.addBusyDuration(iDuration); };
 
 
 	/**
@@ -216,9 +219,6 @@ function(jQuery, Passport, Interaction, FESR, Log, BaseConfig/* ,Global */) {
 	 * @since 1.32
 	 */
 	jQuery.sap.passport.traceFlags = Passport.traceFlags;
-
-	// start initial interaction
-	jQuery.sap.interaction.notifyStepStart(null, true);
 
 	// activate FESR header generation
 	FESR.setActive(BaseConfig.get({

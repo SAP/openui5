@@ -40,10 +40,10 @@ sap.ui.define([
 		jQuery.sap.fesr.setActive(false);
 	});
 
-	QUnit.test("FESR", function(assert) {
+	QUnit.test("FESR", async function(assert) {
 		var spy;
 		// setup
-		jQuery.sap.fesr.setActive(true);
+		await jQuery.sap.fesr.setActive(true);
 		assert.ok(jQuery.sap.interaction.getActive(), "Implicit interaction activation successful");
 		jQuery.sap.interaction.notifyStepStart(null, null, true);
 		var oReq = new XMLHttpRequest();
@@ -62,7 +62,7 @@ sap.ui.define([
 		sinon.assert.calledWith(spy, "SAP-PASSPORT");
 		sinon.assert.calledWith(spy, "SAP-Perf-FESRec");
 		sinon.assert.calledWith(spy, "SAP-Perf-FESRec-opt");
-		jQuery.sap.fesr.setActive(false);
+		await jQuery.sap.fesr.setActive(false);
 		assert.ok(!jQuery.sap.interaction.getActive(), "Implicit interaction deactivation successful");
 	});
 
@@ -78,9 +78,9 @@ sap.ui.define([
 		jQuery.sap.passport.setActive(false);
 	});
 
-	QUnit.test("interaction", function(assert) {
+	QUnit.test("interaction",async  function(assert) {
 		// setup
-		jQuery.sap.interaction.setActive(true);
+		await jQuery.sap.interaction.setActive(true);
 		assert.ok(jQuery.sap.interaction.getActive(), "Activation successful");
 		jQuery.sap.interaction.notifyStepStart(null, null, true);
 		var oReq = new XMLHttpRequest();
@@ -92,7 +92,7 @@ sap.ui.define([
 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements(true).pop();
 		assert.ok(oMeasurement.bytesSent, "bytesSent is set");
 		assert.ok(oMeasurement.bytesReceived, "bytesReceived is set");
-		jQuery.sap.interaction.setActive(false);
+		await jQuery.sap.interaction.setActive(false);
 		assert.ok(!jQuery.sap.interaction.getActive(), "Deactivation successful");
 	});
 
@@ -120,9 +120,9 @@ sap.ui.define([
 			this.spy = sinon.spy(window.XMLHttpRequest.prototype, "setRequestHeader");
 			this.stub = sinon.stub(performance, "getEntriesByType").returns([]);
 			this.start = function(aRequests) {
-				return new Promise(function (resolve) {
+				return new Promise(async function (resolve) {
 					var iEndtimeOfLastRequest = 0;
-					jQuery.sap.fesr.setActive(true);
+					await jQuery.sap.fesr.setActive(true);
 					jQuery.sap.interaction.notifyStepStart(null, null, true);
 					// Save performance.now() timestamp after interaction was started and before it was ended
 					var iNow = performance.now();
@@ -149,12 +149,12 @@ sap.ui.define([
 				}.bind(this));
 			};
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.spy.restore();
 			this.stub.restore();
 			jQuery.sap.measure.endInteraction(true);
 			jQuery.sap.measure.clearInteractionMeasurements();
-			jQuery.sap.fesr.setActive(false);
+			await jQuery.sap.fesr.setActive(false);
 		}
 	});
 
@@ -354,8 +354,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Global busy duration measurement",{
-		beforeEach: function() {
-			jQuery.sap.fesr.setActive(true);
+		beforeEach: async function() {
+			await jQuery.sap.fesr.setActive(true);
 			jQuery.sap.interaction.notifyStepStart(null, null, true);
 			this.oReq = new XMLHttpRequest();
 			// first request with FESR header of startup interaction
@@ -367,10 +367,10 @@ sap.ui.define([
 			// second request with FESR header belonging to first interaction after startup
 			this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 			this.oReq.send();
-		}, afterEach: function() {
+		}, afterEach: async function() {
 			jQuery.sap.interaction.notifyStepEnd();
 			jQuery.sap.measure.endInteraction(true);
-			jQuery.sap.fesr.setActive(false);
+			await jQuery.sap.fesr.setActive(false);
 			jQuery.sap.measure.clearInteractionMeasurements();
 		}
 	});
@@ -420,8 +420,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("component integration", {
-		beforeEach: function() {
-			jQuery.sap.fesr.setActive(true);
+		beforeEach: async function() {
+			await jQuery.sap.fesr.setActive(true);
 			jQuery.sap.interaction.notifyStepStart(null, null, true);
 			this.oReq = new XMLHttpRequest();
 			// first request with FESR header of startup interaction
@@ -434,21 +434,21 @@ sap.ui.define([
 			this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 			this.oReq.send();
 			jQuery.sap.interaction.notifyStepEnd();
-		}, afterEach: function() {
+		}, afterEach: async function() {
 			jQuery.sap.interaction.notifyStepEnd();
 			jQuery.sap.measure.endInteraction(true);
-			jQuery.sap.fesr.setActive(false);
+			await jQuery.sap.fesr.setActive(false);
 			jQuery.sap.measure.clearInteractionMeasurements();
 		}
 	});
 
-	QUnit.test("named component", function(assert) {
+	QUnit.test("named component", async function(assert) {
 		jQuery.sap.interaction.notifyStepStart(null, null, true);
 		var sName = "foo.sap.ui.fesr.test.a.component.name.with.seventy.characters.Component.js";
 
 		try {
 			// mock a component initialization
-			Component.create({name:sName});
+			await Component.create({name:sName});
 		} catch (e) {/* we do not really want to load the component */}
 
 		var fnSpy = this.spy;
