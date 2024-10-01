@@ -102,8 +102,45 @@ sap.ui.define([
 			},
 			"footer": {
 				"paginator": {
-					"pageSize": 4,
-					"visible": false
+					"pageSize": 4
+				}
+			}
+		}
+	};
+
+	var oManifestClientSideSinglePage = {
+		"sap.app": {
+			"id": "test1"
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "Title"
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"Name": "Name 1"
+						},
+						{
+							"Name": "Name 2"
+						},
+						{
+							"Name": "Name 3"
+						},
+						{
+							"Name": "Name 4"
+						}
+					]
+				},
+				"item": {
+					"title": "{Name}"
+				}
+			},
+			"footer": {
+				"paginator": {
+					"pageSize": 4
 				}
 			}
 		}
@@ -137,22 +174,7 @@ sap.ui.define([
 				"path": "/value"
 			},
 			"header": {
-				"title": "Products",
-				"subTitle": "In Stock Information",
-				"icon": {
-					"src": "sap-icon://product"
-				},
-				"status": {
-					"text": {
-						"format": {
-							"translationKey": "i18n>CARD.COUNT_X_OF_Y",
-							"parts": [
-								"parameters>/visibleItems",
-								"/@odata.count"
-							]
-						}
-					}
-				}
+				"title": "Products"
 			},
 			"content": {
 				"item": {
@@ -163,6 +185,41 @@ sap.ui.define([
 				"paginator": {
 					"totalCount": "{/@odata.count}",
 					"pageSize": "{parameters>/top/value}"
+				}
+			}
+		}
+	};
+
+	var oManifestServerSideSinglePage = {
+		"sap.app": {
+			"id": "test5"
+		},
+		"sap.card": {
+			"type": "List",
+			"data": {
+				"request": {
+					"url": "/fakeService/getProducts",
+					"method": "GET",
+					"parameters": {
+						"$format": "json",
+						"$skip": "{paginator>/skip}",
+						"$top": 5
+					}
+				},
+				"path": "/value"
+			},
+			"header": {
+				"title": "Products"
+			},
+			"content": {
+				"item": {
+					"title": "{ProductName}"
+				}
+			},
+			"footer": {
+				"paginator": {
+					"totalCount": 5,
+					"pageSize": 5
 				}
 			}
 		}
@@ -265,6 +322,47 @@ sap.ui.define([
 		assert.strictEqual(oPaginatorModel.getProperty("/skip"), 0, "initial value of '/skip' should be correct");
 		assert.strictEqual(oPaginatorModel.getProperty("/pageIndex"), 0, "initial value of '/pageIndex' should be correct");
 		assert.strictEqual(oPaginatorModel.getProperty("/size"), 4, "initial value of '/size' should be correct");
+	});
+
+	QUnit.test("Pagination - client side with single page", async function (assert) {
+		this.oCard.setManifest(oManifestClientSideSinglePage);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		assert.notOk(this.oCard.getCardFooter().getAggregation("_showMore").getDomRef(), "'Show More' is not rendered when single page");
+	});
+
+	QUnit.test("Pagination - client side with no data", async function (assert) {
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test1"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Title"
+				},
+				"content": {
+					"data": {
+						"json": []
+					},
+					"item": {
+						"title": "{Name}"
+					}
+				},
+				"footer": {
+					"paginator": {
+						"pageSize": 4
+					}
+				}
+			}
+		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		assert.notOk(this.oCard.getCardFooter().getAggregation("_showMore").getDomRef(), "'Show More' is not rendered when there is no data");
 	});
 
 	QUnit.test("Event stateChanged is fired", async function (assert) {
@@ -402,6 +500,15 @@ sap.ui.define([
 					"@odata.count": iTotalCount
 				}));
 			});
+
+			this.oServer.respondWith("GET", /fakeService\/getProductsNoData/, function (oXhr) {
+				oXhr.respond(200, {
+					"Content-Type": "application/json"
+				}, JSON.stringify({
+					"value": [],
+					"@odata.count": 0
+				}));
+			});
 		},
 		afterEach: function () {
 			this.oCard.destroy();
@@ -442,6 +549,51 @@ sap.ui.define([
 		assert.strictEqual(oPaginatorModel.getProperty("/size"), 5, "initial value of '/size' should be correct");
 	});
 
+	QUnit.test("Pagination - server side with single page", async function (assert) {
+		this.oCard.setManifest(oManifestServerSideSinglePage);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		assert.notOk(this.oCard.getCardFooter().getAggregation("_showMore").getDomRef(), "'Show More' is not rendered when single page");
+	});
+
+	QUnit.test("Pagination - server side with no data", async function (assert) {
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test5"
+			},
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"request": {
+						"url": "/fakeService/getProductsNoData",
+						"method": "GET"
+					}
+				},
+				"header": {
+					"title": "Products"
+				},
+				"content": {
+					"item": {
+						"title": "{ProductName}"
+					}
+				},
+				"footer": {
+					"paginator": {
+						"totalCount": 5,
+						"pageSize": 5
+					}
+				}
+			}
+		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		assert.notOk(this.oCard.getCardFooter().getAggregation("_showMore").getDomRef(), "'Show More' is not rendered when single page");
+	});
+
 	QUnit.test("Pagination - server side without bindings", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
@@ -464,25 +616,14 @@ sap.ui.define([
 						"parameters": {
 							"$format": "json",
 							"$count": true,
-							"$skip": 2,
-							"$top": 5
+							"$skip": "{paginator>/skip}",
+							"$top": "{paginator>/size}"
 						}
 					},
 					"path": "/value"
 				},
 				"header": {
-					"title": "Products",
-					"status": {
-						"text": {
-							"format": {
-								"translationKey": "i18n>CARD.COUNT_X_OF_Y",
-								"parts": [
-									"parameters>/visibleItems",
-									"/@odata.count"
-								]
-							}
-						}
-					}
+					"title": "Products"
 				},
 				"content": {
 					"item": {
@@ -491,7 +632,7 @@ sap.ui.define([
 				},
 				"footer": {
 					"paginator": {
-						"totalCount": 5,
+						"totalCount": "{/@odata.count}",
 						"pageSize": "{parameters>/top/value}"
 					}
 				}
@@ -516,9 +657,9 @@ sap.ui.define([
 
 		await nextUIUpdate();
 
-		assert.strictEqual(oPaginatedCardPaginator._iPageCount, 1, "page count is correct");
-		assert.strictEqual(oPaginatedCardList.getItems().length, oPaginator.getPageSize(), "list items number is correct");
-		assert.strictEqual(oPaginatedCardList.getItems()[0].getTitle(), "Name 2", "same page is shown");
+		assert.strictEqual(oPaginatedCardPaginator.getPageCount(), 16, "page count is correct");
+		assert.ok(oPaginatedCardList.getItems().length >= oPaginator.getPageSize(), "list items number is correct - same or larger then the page size");
+		assert.strictEqual(oPaginatedCardList.getItems()[0].getTitle(), "Name 0", "same page is shown");
 	});
 
 	QUnit.test("Page is reset after data is refreshed", async function (assert) {

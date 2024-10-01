@@ -45,12 +45,20 @@ sap.ui.define([
 		tooltip: "This is a tooltip"
 	});
 
-	var oLabel01a = new Label({text:'Display only'}),
-		oRating01a = new RatingIndicator("displayOnly", {
+	var oLabel01a = new Label({text:'Display only with size and compact mode'}),
+		oRating01a = new RatingIndicator("displayOnlyCompact", {
 			displayOnly: true,
 			value: 2.5,
+			iconSize: "1rem",
 			tooltip: "This is a tooltip"
-		});
+		}).addStyleClass("sapUiSizeCompact");
+
+	var oLabel01aa = new Label({text:'Display only default size'}),
+	oRating01aa = new RatingIndicator("displayOnly", {
+		displayOnly: true,
+		value: 2.5,
+		tooltip: "This is a tooltip"
+	});
 
 	var oLabel01b = new Label({text:'Read only'}),
 		oRating01b = new RatingIndicator("readOnly", {
@@ -113,6 +121,8 @@ sap.ui.define([
 		oRating01,
 		oLabel01a,
 		oRating01a,
+		oLabel01aa,
+		oRating01aa,
 		oLabel01b,
 		oRating01b,
 		oLabel0,

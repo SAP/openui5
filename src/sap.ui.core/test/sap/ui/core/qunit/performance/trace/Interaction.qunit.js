@@ -32,10 +32,10 @@ sap.ui.define([
 
 	QUnit.module("Interaction API", {
 		before: function() {
-			Interaction.setActive(true);
+			return Interaction.setActive(true);
 		},
 		after: function() {
-			Interaction.setActive(false);
+			return Interaction.setActive(false);
 		}
 	});
 

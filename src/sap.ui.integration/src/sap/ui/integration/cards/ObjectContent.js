@@ -467,7 +467,7 @@ sap.ui.define([
 			displayShape: oIconConfiguration.shape,
 			tooltip: oIconConfiguration.alt,
 			backgroundColor: oIconConfiguration.backgroundColor || (vInitials ? undefined : AvatarColor.Transparent),
-			imageFitType: AvatarImageFitType.Contain,
+			imageFitType: oIconConfiguration.fitType || AvatarImageFitType.Cover,
 			visible: oIconConfiguration.visible
 		}).addStyleClass("sapFCardObjectItemAvatar sapFCardIcon");
 

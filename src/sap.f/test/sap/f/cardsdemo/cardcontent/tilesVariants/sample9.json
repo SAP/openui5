@@ -1,0 +1,65 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.tilesVariants.sample5",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"type": "Numeric",
+			"data": {
+				"request": {
+					"url": "./data9.json"
+				}
+			},
+			"title": "{title}",
+			"icon": {
+				"src": "{icon/src}",
+				"shape": "{icon/shape}",
+				"fitType": "{icon/fitType}"
+			},
+			"unitOfMeasurement": "{unitOfMeasurement}",
+			"mainIndicator": {
+				"number": "{mainIndicator/number}",
+				"unit": "{mainIndicator/unit}",
+				"trend": "{mainIndicator/trend}",
+				"state": "{mainIndicator/state}"
+			},
+			"sideIndicators": [
+				{
+					"title": "{sideIndicator1/title}",
+					"number": "{sideIndicator1/number}",
+					"unit": "{sideIndicator1/unit}"
+				},
+				{
+					"title": "{sideIndicator2/title}",
+					"number": "{sideIndicator2/number}",
+					"unit": "{sideIndicator2/unit}"
+				}
+			],
+			"details": {
+				"text": "{details/text}",
+				"state": "{details/state}"
+			},
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "http://sap.com"
+					}
+				}
+			]
+		},
+		"content": {
+			"data": {
+				"json": [{
+						"Name": "Comfort Easy"
+					}
+				]
+			},
+			"item": {
+				"title": "{Name}"
+			}
+		}
+	}
+}

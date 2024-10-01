@@ -1544,7 +1544,7 @@ sap.ui.define([
 		_attachNavigated();
 
 		oMTable.setConditions([]);
-		return oMTable.onBeforeShow(true).then(() => {
+		return oMTable.onBeforeShow(false).then(() => {
 			oMTable.onShow(); // to simulate Open
 			oModel.checkUpdate(true); // force model update
 			sinon.stub(oListBinding, "getLength").onFirstCall().returns(undefined); // to fake pending binding

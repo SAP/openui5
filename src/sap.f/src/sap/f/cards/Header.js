@@ -127,7 +127,14 @@ sap.ui.define([
 				 *
 				 * @experimental Since 1.119 this feature is experimental and the API may change.
 				 */
-				iconSize: { type: "sap.m.AvatarSize", defaultValue: AvatarSize.S }
+				iconSize: { type: "sap.m.AvatarSize", defaultValue: AvatarSize.S },
+
+				/**
+				 * Defines how the image fits in the icon area.
+				 *
+				 * @since 1.130
+				 */
+				iconFitType: { type: "sap.m.AvatarImageFitType", defaultValue: AvatarImageFitType.Cover }
 			},
 			aggregations: {
 
@@ -213,9 +220,7 @@ sap.ui.define([
 	Header.prototype._getAvatar = function () {
 		var oAvatar = this.getAggregation("_avatar");
 		if (!oAvatar) {
-			oAvatar = new Avatar({
-				imageFitType: AvatarImageFitType.Contain
-			}).addStyleClass("sapFCardIcon");
+			oAvatar = new Avatar().addStyleClass("sapFCardIcon");
 			this.setAggregation("_avatar", oAvatar);
 		}
 		return oAvatar;
@@ -248,7 +253,8 @@ sap.ui.define([
 			.setInitials(this.getIconInitials())
 			.setTooltip(this.getIconAlt())
 			.setBackgroundColor(this.getIconBackgroundColor())
-			.setDisplaySize(this.getIconSize());
+			.setDisplaySize(this.getIconSize())
+			.setImageFitType(this.getIconFitType());
 	};
 
 	/**

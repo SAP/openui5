@@ -90,22 +90,30 @@ CheckBoxRenderer.render = function(oRm, oCheckBox){
 		oRm.attr("title", sTooltip);
 	}
 
-	if (bInteractive) {
-		oRm.attr("tabindex", oCheckBox.getTabIndex());
-	}
+	if (oCheckBox._getVisualOnlyMode()) {
+		oRm.accessibilityState(oCheckBox, {
+			role: "presentation",
+			selected: null,
+			required: null
+		});
+	} else {
+		if (bInteractive) {
+			oRm.attr("tabindex", oCheckBox.getTabIndex());
+		}
 
-	//ARIA attributes
-	oRm.accessibilityState(oCheckBox, {
-		role: "checkbox",
-		selected: null,
-		required: oCheckBox._isRequired() || undefined,
-		checked: oCheckBox._getAriaChecked(),
-		describedby: sTooltip && bEditableAndEnabled ? sId + "-Descr" : undefined,
-		labelledby: { value: oCbLabel ? oCbLabel.getId() : undefined, append: true }
-	});
+		//ARIA attributes
+		oRm.accessibilityState(oCheckBox, {
+			role: "checkbox",
+			selected: null,
+			required: oCheckBox._isRequired() || undefined,
+			checked: oCheckBox._getAriaChecked(),
+			describedby: sTooltip && bEditableAndEnabled ? sId + "-Descr" : undefined,
+			labelledby: { value: oCbLabel ? oCbLabel.getId() : undefined, append: true }
+		});
 
-	if (bDisplayOnlyApplied) {
-		oRm.attr("aria-readonly", true);
+		if (bDisplayOnlyApplied) {
+			oRm.attr("aria-readonly", true);
+		}
 	}
 
 	oRm.openEnd();		// DIV element
@@ -136,26 +144,29 @@ CheckBoxRenderer.render = function(oRm, oCheckBox){
 
 	oRm.openEnd();		// DIV element
 
-	oRm.voidStart("input", oCheckBox.getId() + "-CB");
-	oRm.attr("type", "CheckBox");
+	if (!oCheckBox._getVisualOnlyMode()) {
+		oRm.voidStart("input", oCheckBox.getId() + "-CB");
+		oRm.attr("type", "CheckBox");
 
-	if (oCheckBox.getSelected()) {
-		oRm.attr("checked", "checked");
+		if (oCheckBox.getSelected()) {
+			oRm.attr("checked", "checked");
+		}
+
+		if (oCheckBox.getName()) {
+			oRm.attr("name", oCheckBox.getName());
+		}
+
+		if (!bEnabled) {
+			oRm.attr("disabled", "disabled");
+		}
+
+		if (!bEditable) {
+			oRm.attr("readonly", "readonly");
+		}
+
+		oRm.voidEnd();
 	}
 
-	if (oCheckBox.getName()) {
-		oRm.attr("name", oCheckBox.getName());
-	}
-
-	if (!bEnabled) {
-		oRm.attr("disabled", "disabled");
-	}
-
-	if (!bEditable) {
-		oRm.attr("readonly", "readonly");
-	}
-
-	oRm.voidEnd();
 	oRm.close("div");
 
 	if (oCbLabel) {
