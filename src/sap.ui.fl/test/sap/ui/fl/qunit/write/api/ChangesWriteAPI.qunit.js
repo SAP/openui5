@@ -6,23 +6,27 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Component",
 	"sap/ui/core/Element",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
+	"sap/ui/fl/write/_internal/controlVariants/ControlVariantWriteUtils",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
+	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Lib",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Log,
@@ -30,23 +34,27 @@ sap.ui.define([
 	JsControlTreeModifier,
 	Component,
 	Element,
-	ManifestUtils,
+	Lib,
 	DescriptorChangeTypes,
 	Applier,
 	Reverter,
 	ControlVariantUtils,
 	States,
 	FlexObjectState,
+	ManifestUtils,
 	DescriptorChangeFactory,
-	Settings,
 	ChangeHandlerStorage,
+	Settings,
+	VariantManagement,
 	AppVariantInlineChangeFactory,
+	ControlVariantWriteUtils,
+	FlexObjectManager,
 	ChangesWriteAPI,
 	ContextBasedAdaptationsAPI,
+	VersionsAPI,
 	Layer,
 	FlexUtils,
 	sinon,
-	Lib,
 	RtaQunitUtils
 ) {
 	"use strict";
@@ -504,6 +512,55 @@ sap.ui.define([
 			assert.strictEqual(oKeyUserVariant.getFlexObjectMetadata().reference, "flexReference", "then the flex reference is set");
 			assert.strictEqual(oKeyUserVariant.getSupportInformation().generator, "myGenerator", "then the generator is set");
 			assert.strictEqual(oKeyUserVariant.getSupportInformation().user, ControlVariantUtils.DEFAULT_AUTHOR, "then the user is set");
+		});
+
+		QUnit.test("when deleteVariantsAndRelatedObjects is called without a Variant Management control", function(assert) {
+			try {
+				ChangesWriteAPI.deleteVariantsAndRelatedObjects({});
+			} catch (oError) {
+				assert.strictEqual(oError.message, "Please provide a valid Variant Management control", "the function throws an error");
+			}
+		});
+
+		QUnit.test("when deleteVariantsAndRelatedObjects is called", function(assert) {
+			const oVariantManagement = new VariantManagement("vmId");
+			sandbox.stub(JsControlTreeModifier, "getSelector").returns({id: "vmReference"});
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("flexReference");
+			sandbox.stub(VersionsAPI, "getDraftFilenames").withArgs({
+				control: oVariantManagement,
+				layer: Layer.CUSTOMER
+			}).returns(["draftVariant"]);
+			sandbox.stub(FlexObjectState, "getDirtyFlexObjects").withArgs("flexReference").returns([{
+				getId: () => "dirtyVariant"
+			}]);
+			const oDeleteVariantStub = sandbox.stub(ControlVariantWriteUtils, "deleteVariant")
+			.withArgs("flexReference", "vmReference", "draftVariant")
+			.returns(["DraftObject1", "DraftObject2"])
+			.withArgs("flexReference", "vmReference", "dirtyVariant")
+			.returns(["DirtyObject1", "DirtyObject2"]);
+			const aDeletedObjects = ChangesWriteAPI.deleteVariantsAndRelatedObjects({
+				variantManagementControl: oVariantManagement,
+				layer: Layer.CUSTOMER,
+				variants: ["draftVariant", "dirtyVariant", "anotherVariant"]
+			});
+			assert.notOk(
+				oDeleteVariantStub.calledWith("flexReference", "vmReference", "anotherVariant"),
+				"then the delete function is not called for the variant that is neither dirty nor draft"
+			);
+			assert.deepEqual(
+				aDeletedObjects,
+				["DraftObject1", "DraftObject2", "DirtyObject1", "DirtyObject2"],
+				"then all relevant objects are deleted"
+			);
+		});
+
+		QUnit.test("when restoreDeletedFlexObjects is called", function(assert) {
+			const oRestoreDeletedFlexObjectsStub = sandbox.stub(FlexObjectManager, "restoreDeletedFlexObjects");
+			ChangesWriteAPI.restoreDeletedFlexObjects({reference: "reference", flexObjects: ["flexObject"]});
+			assert.ok(
+				oRestoreDeletedFlexObjectsStub.calledWith({reference: "reference", flexObjects: ["flexObject"]}),
+				"then the restoreDeletedFlexObjects function is called with the correct parameters"
+			);
 		});
 	});
 

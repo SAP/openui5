@@ -998,6 +998,17 @@ sap.ui.define([
 						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 					}
 				},
+				"integration/ControlVariantRemove": {
+					group: "Integration",
+					ui5: {
+						resourceroots: {
+							qunit: "test-resources/sap/ui/rta/qunit/",
+							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
+							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
+						},
+						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
+					}
+				},
 				"integration/EndToEnd": {
 					group: "Integration",
 					ui5: {

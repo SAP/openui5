@@ -1001,6 +1001,55 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("restoreDeletedFlexObjects", {
+		async beforeEach() {
+			sandbox.stub(ManifestUtils, "getFlexReferenceForSelector").returns(sReference);
+			this.oRemoveChangeFromMapStub = sandbox.stub(DependencyHandler, "removeChangeFromMap");
+			this.oRemoveChangeFromDepStub = sandbox.stub(DependencyHandler, "removeChangeFromDependencies");
+			this.oFlexObject1 = createChange("flexObject1", Layer.USER);
+			this.oFlexObject2 = createChange("flexObject2", Layer.USER);
+
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {
+				changes: [{
+					fileName: "flexObject3",
+					changeType: "renameField",
+					layer: Layer.USER
+				}, {
+					fileName: "flexObject4",
+					changeType: "renameField",
+					layer: Layer.USER
+				}]
+			});
+			FlexObjectManager.addDirtyFlexObjects(sReference, [this.oFlexObject1, this.oFlexObject2]);
+		},
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("with flex objects in various states", function(assert) {
+			const aAllFlexObjects = FlexObjectState.getAllApplicableUIChanges(sReference);
+			assert.strictEqual(aAllFlexObjects.length, 4, "initially 4 flex objects are present");
+
+			aAllFlexObjects[0].setState(States.LifecycleState.UPDATED);
+			sandbox.stub(aAllFlexObjects[0], "isValidForDependencyMap").returns(true);
+			sandbox.stub(aAllFlexObjects[2], "isValidForDependencyMap").returns(true);
+
+			FlexObjectManager.deleteFlexObjects({
+				reference: sReference,
+				flexObjects: aAllFlexObjects
+			});
+			FlexObjectManager.restoreDeletedFlexObjects({
+				reference: sReference,
+				flexObjects: [aAllFlexObjects[0], aAllFlexObjects[1]]
+			});
+
+			const aFlexObjects = FlexObjectState.getAllApplicableUIChanges(sReference);
+			assert.strictEqual(aFlexObjects.length, 2, "then the deleted changes are restored");
+			assert.strictEqual(aFlexObjects[0].getState(), States.LifecycleState.UPDATED, "then the state is correct");
+			assert.strictEqual(aFlexObjects[1].getState(), States.LifecycleState.PERSISTED, "then the state is correct");
+		});
+	});
+
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});

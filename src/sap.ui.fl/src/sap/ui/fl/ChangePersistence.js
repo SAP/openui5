@@ -148,19 +148,13 @@ sap.ui.define([
 	}
 
 	function executeWriteAndRemoveCalls(sCurrentLayer, sRequest, sParentVersion, bSkipUpdateCache, aAllChanges, aCondensedChanges) {
-		var aCondensedDeleteChanges = [];
-		var pRemoveCallsPromise = Promise.resolve();
-		var aNewChanges = aCondensedChanges.filter(function(oCondensedChange) {
-			if (oCondensedChange.getState() === States.LifecycleState.DELETED) {
-				aCondensedDeleteChanges.push(oCondensedChange);
-				return false;
-			}
-			return true;
-		});
+		let pRemoveCallsPromise = Promise.resolve();
+		const aDeletedChanges = aAllChanges.filter((oChange) => oChange.getState() === States.LifecycleState.DELETED);
+		const aNewChanges = aCondensedChanges.filter((oCondensedChange) => (oCondensedChange.getState() !== States.LifecycleState.DELETED));
 
 		// "remove" only supports a single change; multiple calls are required
-		if (aCondensedDeleteChanges.length) {
-			pRemoveCallsPromise = this.saveSequenceOfDirtyChanges(aCondensedDeleteChanges, bSkipUpdateCache, sParentVersion);
+		if (aDeletedChanges.length) {
+			pRemoveCallsPromise = this.saveSequenceOfDirtyChanges(aDeletedChanges, bSkipUpdateCache, sParentVersion);
 		}
 
 		// "write" supports multiple changes at once
@@ -209,41 +203,40 @@ sap.ui.define([
 		bCondenseAnyLayer,
 		sLayer
 	) {
-		var aDirtyChanges = aChanges || FlexObjectState.getDirtyFlexObjects(this._mComponent.name);
-		var sCurrentLayer = aDirtyChanges.length && aDirtyChanges[0].getLayer() || sLayer;
-		var aRelevantChangesForCondensing = getAllRelevantChangesForCondensing.call(
+		const aDirtyChanges = aChanges || FlexObjectState.getDirtyFlexObjects(this._mComponent.name);
+		const sCurrentLayer = aDirtyChanges.length && aDirtyChanges[0].getLayer() || sLayer;
+		const aRelevantChangesForCondensing = getAllRelevantChangesForCondensing.call(
 			this,
 			aDirtyChanges,
 			aDraftFilenames,
 			bCondenseAnyLayer,
 			sCurrentLayer
 		);
-		var bIsCondensingEnabled = (
+		const bIsCondensingEnabled = (
 			isBackendCondensingEnabled()
 			&& canGivenChangesBeCondensed(oAppComponent, aRelevantChangesForCondensing, bCondenseAnyLayer)
 		);
-		var aAllChanges = bIsCondensingEnabled ? aRelevantChangesForCondensing : aDirtyChanges;
-		var aChangesClone = aAllChanges.slice(0);
-		var aRequests = getRequests(aDirtyChanges);
+		const aAllFlexObjects = bIsCondensingEnabled ? aRelevantChangesForCondensing : aDirtyChanges;
+		const aChangesClone = aAllFlexObjects.slice(0);
+		const aRequests = getRequests(aDirtyChanges);
 
 		// Condensing is only allowed if all dirty changes belong to the same Transport Request
 		if (checkLayerAndSingleTransportRequest(aDirtyChanges)) {
-			var oCondensedChangesPromise = Promise.resolve(aChangesClone);
-			if (canGivenChangesBeCondensed(oAppComponent, aChangesClone, bCondenseAnyLayer)) {
-				oCondensedChangesPromise = Condenser.condense(oAppComponent, aChangesClone);
-			}
+			const oCondensedChangesPromise = canGivenChangesBeCondensed(oAppComponent, aChangesClone, bCondenseAnyLayer)
+				? Condenser.condense(oAppComponent, aChangesClone)
+				: Promise.resolve(aChangesClone);
 			return oCondensedChangesPromise.then(function(aCondensedChanges) {
-				var sRequest = aRequests[0];
+				const sRequest = aRequests[0];
 				if (bIsCondensingEnabled) {
 					return Storage.condense({
-						allChanges: aAllChanges,
+						allChanges: aAllFlexObjects,
 						condensedChanges: aCondensedChanges,
 						layer: sCurrentLayer,
 						transport: sRequest,
 						isLegacyVariant: false,
 						parentVersion: sParentVersion
 					}).then(function(oResponse) {
-						updateCacheAndDeleteUnsavedChanges.call(this, aAllChanges, aCondensedChanges, bSkipUpdateCache, true);
+						updateCacheAndDeleteUnsavedChanges.call(this, aAllFlexObjects, aCondensedChanges, bSkipUpdateCache, true);
 						return oResponse;
 					}.bind(this));
 				}
@@ -253,7 +246,7 @@ sap.ui.define([
 					sRequest,
 					sParentVersion,
 					bSkipUpdateCache,
-					aAllChanges,
+					aAllFlexObjects,
 					aCondensedChanges
 				);
 			}.bind(this));

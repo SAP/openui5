@@ -567,10 +567,11 @@ sap.ui.define([
 		var aNotCondensableChanges = [];
 		var aCondensableChanges = [];
 		aChanges.slice(0).reverse().forEach(function(oChange) {
+			if (oChange.getState() === States.LifecycleState.DELETED) {
+				oChange.condenserState = "delete";
+			}
 			if (oChange instanceof UIChange) {
-				if (oChange.getState() === States.LifecycleState.DELETED) {
-					oChange.condenserState = "delete";
-				} else if (oChange.isSuccessfullyApplied()) {
+				if (oChange.isSuccessfullyApplied()) {
 					aCondensableChanges.push(oChange);
 				} else {
 					aNotCondensableChanges.push(oChange);

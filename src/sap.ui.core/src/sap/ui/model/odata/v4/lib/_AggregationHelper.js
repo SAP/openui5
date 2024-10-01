@@ -1303,10 +1303,12 @@ sap.ui.define([
 		 *   aggregation via the special syntax "$these/aggregate(...)" because it relates to
 		 *   aggregates; it is present only when grand totals are used, but "grandTotal like 1.84"
 		 *   is not.
+		 * @param {object} [oEntityType]
+		 *   The metadata for the entity type; needed only in case of aggregates
 		 *
 		 * @public
 		 */
-		splitFilter : function (oFilter, oAggregation) {
+		splitFilter : function (oFilter, oAggregation, oEntityType) {
 			var aFiltersNoAggregate = [],
 				aFiltersOnAggregate = [];
 
@@ -1353,7 +1355,12 @@ sap.ui.define([
 			}
 
 			if (!oAggregation || !oAggregation.aggregate) {
+				// no data aggregation at all
 				return [oFilter];
+			}
+			if (oEntityType.$Key.every((sKey) => sKey in oAggregation.group)) {
+				// no data aggregation on leaf level (all keys used for grouping)
+				return [undefined, oFilter];
 			}
 
 			split(oFilter);

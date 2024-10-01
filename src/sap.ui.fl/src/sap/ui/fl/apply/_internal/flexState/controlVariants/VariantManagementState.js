@@ -7,9 +7,9 @@ sap.ui.define([
 	"sap/base/util/restricted/_pick",
 	"sap/base/util/ObjectPath",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/DataSelector",
-	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/LayerUtils"
 ], function(
@@ -17,9 +17,9 @@ sap.ui.define([
 	_pick,
 	ObjectPath,
 	VariantsApplyUtil,
+	States,
 	DependencyHandler,
 	DataSelector,
-	States,
 	FlexState,
 	LayerUtils
 ) {
@@ -588,6 +588,31 @@ sap.ui.define([
 		return Object.keys(oVariantsMap).reduce(function(aPrev, sCurr) {
 			return aPrev.concat(oVariantsMap[sCurr].variants);
 		}, []);
+	};
+
+	/**
+	 * Returns all variant management changes related to the current variant management map.
+	 *
+	 * @param {object} mPropertyBag - Object with the necessary properties
+	 * @param {string} mPropertyBag.reference - Flex reference of the current app
+	 * @param {string} [mPropertyBag.vReference] - Variant reference, provide this parameter to filter for changes related to a specific variant
+	 * @returns {object[]} Array of variant management changes
+	 */
+	VariantManagementState.getVariantManagementChanges = function(mPropertyBag) {
+		const oVariantsMap = oVariantManagementMapDataSelector.get({
+			reference: mPropertyBag.reference
+		});
+		const aVariantManagementChanges = Object.values(oVariantsMap)
+		.map((oVariantManagement) => oVariantManagement.variantManagementChanges)
+		.flat();
+
+		if (!mPropertyBag.vReference) {
+			return aVariantManagementChanges;
+		}
+		return aVariantManagementChanges.filter((oVariantManagementChange) => {
+			// Currently setDefault changes are the only type of variant management changes
+			return mPropertyBag.vReference === oVariantManagementChange.getContent().defaultVariant;
+		});
 	};
 
 	/**

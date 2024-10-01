@@ -3,41 +3,41 @@
  */
 
 sap.ui.define([
+	"sap/base/Log",
+	"sap/m/MessageBox",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
-	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/rta/plugin/RenameHandler",
-	"sap/ui/rta/Utils",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/Util",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/write/api/ContextSharingAPI",
-	"sap/ui/base/ManagedObject",
-	"sap/base/Log",
-	"sap/m/MessageBox"
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/rta/plugin/RenameHandler",
+	"sap/ui/rta/Utils"
 ], function(
+	Log,
+	MessageBox,
+	ManagedObject,
 	Element,
 	Lib,
-	Plugin,
-	RenameHandler,
-	Utils,
 	ElementOverlay,
 	OverlayRegistry,
 	OverlayUtil,
 	DtUtil,
-	flUtils,
-	Layer,
 	ControlVariantApplyAPI,
 	VariantManagement,
 	ContextSharingAPI,
-	ManagedObject,
-	Log,
-	MessageBox
+	Layer,
+	flUtils,
+	Plugin,
+	RenameHandler,
+	Utils
 ) {
 	"use strict";
 
@@ -593,14 +593,15 @@ sap.ui.define([
 			Utils.getRtaStyleClassName(),
 			ContextSharingAPI.createComponent(mComponentPropertyBag)
 		)
-		.then(function(aConfiguredChanges) {
-			if (aConfiguredChanges.length > 0) {
+		.then(function(oModelChanges) {
+			if (oModelChanges.changes.length > 0) {
 				return this.getCommandFactory().getCommandFor(
 					oVariantManagementControl,
 					"configure",
 					{
 						control: oVariantManagementControl,
-						changes: aConfiguredChanges
+						changes: oModelChanges.changes,
+						deletedVariants: oModelChanges.variantsToBeDeleted
 					},
 					oDesignTimeMetadata,
 					sVariantManagementReference

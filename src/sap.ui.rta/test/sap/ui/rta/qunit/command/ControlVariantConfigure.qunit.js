@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/library",
@@ -12,6 +13,7 @@ sap.ui.define([
 ], function(
 	_omit,
 	VariantManagement,
+	ChangesWriteAPI,
 	Layer,
 	CommandFactory,
 	rtaLibrary,
@@ -125,9 +127,22 @@ sap.ui.define([
 			};
 			const aChanges = [oTitleChange, oFavoriteChange, oVisibleChange, oContextsChange, oDefaultChange];
 
+			const aDummyDeletedFlexObjects = ["deletedFlexObject1", "deletedFlexObject2"];
+			const aDeletedVariants = ["variant0"];
+			sandbox.stub(ChangesWriteAPI, "deleteVariantsAndRelatedObjects")
+			.withArgs({
+				variantManagementControl: this.oVariantManagement,
+				layer: Layer.CUSTOMER,
+				variants: aDeletedVariants
+			})
+			.returns(aDummyDeletedFlexObjects);
+
+			const oRestoreDeletedFlexObjectsStub = sandbox.stub(ChangesWriteAPI, "restoreDeletedFlexObjects");
+
 			const oConfigureCommand = await CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
 				control: this.oVariantManagement,
-				changes: aChanges
+				changes: aChanges,
+				deletedVariants: aDeletedVariants
 			}, {}, {layer: Layer.CUSTOMER});
 
 			await oConfigureCommand.execute();
@@ -139,9 +154,17 @@ sap.ui.define([
 				assert.equal(oChange.generator, rtaLibrary.GENERATOR_NAME, "the generator was correctly set");
 			});
 			assert.strictEqual(this.oSwitchStub.callCount, 0, "the variant was not switched");
+			assert.deepEqual(
+				oConfigureCommand._aDeletedFlexObjects,
+				aDummyDeletedFlexObjects,
+				"the deleted flex objects are saved in the command"
+			);
 
 			await oConfigureCommand.undo();
-
+			assert.ok(
+				oRestoreDeletedFlexObjectsStub.calledWith({ reference: "Dummy", flexObjects: aDummyDeletedFlexObjects }),
+				"the flex objects got restored"
+			);
 			assert.strictEqual(this.oDeleteVariantChangeStub.callCount, 5, "all changes got removed");
 			assert.deepEqual(
 				_omit(this.oDeleteVariantChangeStub.getCall(0).args[1], "appComponent"), oTitleUndoChange,
@@ -177,9 +200,12 @@ sap.ui.define([
 
 			const oConfigureCommand = await CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
 				control: this.oVariantManagement,
-				changes: [oVisibleChange]
+				changes: [oVisibleChange],
+				deletedVariants: ["variant1"]
 			}, {}, {layer: Layer.CUSTOMER});
 
+			sandbox.stub(ChangesWriteAPI, "restoreDeletedFlexObjects");
+			sandbox.stub(ChangesWriteAPI, "deleteVariantsAndRelatedObjects");
 			await oConfigureCommand.execute();
 
 			assert.strictEqual(this.oAddVariantChangeStub.callCount, 1, "1 change got added");

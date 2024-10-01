@@ -13,6 +13,14 @@
 			"description": "( package '/' )* name",
 			"pattern": "^([a-zA-Z_][a-zA-Z0-9_.$]*/)*[a-zA-Z_][a-zA-Z0-9_.\\-$]*$"
 		},
+		"typeName": {
+			"description": "The name of a single type",
+			"type": "string"
+		},
+		"typeExpression": {
+			"description": "A type expression (e.g. union, structure, function signature)",
+			"type": "string"
+		},
 		"since": {
 			"description": "Version with which the documented entity has been introduced the first time, no matter in what state it has been introduced",
 			"$ref": "#/definitions/libraryVersion"
@@ -27,7 +35,8 @@
 				"text": {
 					"type": "string"
 				}
-			}
+			},
+			"additionalProperties": false
 		},
 		"deprecated": {
 			"description": "If the entity has been deprecated, this element should contain information about when and why this happened and should describe any potential alternatives",
@@ -39,44 +48,37 @@
 				"text": {
 					"type": "string"
 				}
-			}
+			},
+			"additionalProperties": false
 		},
-		"examples": {
-			"type": "array",
-			"items": {
-				"type": "object",
-				"properties": {
-					"caption": {
-						"type": "string"
-					},
-					"text": {
-						"type": "string"
-					}
+		"example": {
+			"type": "object",
+			"properties": {
+				"caption": {
+					"type": "string"
 				},
-				"additionalProperties": false
-			}
-		},
-		"exceptions": {
-			"description": "With this element, a callable (constructor, method) can document the exceptions that may occur during its execution",
-			"type": "array",
-			"items": {
-				"type": "object",
-				"properties": {
-					"type": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					}
+				"text": {
+					"type": "string"
 				}
-			}
+			},
+			"additionalProperties": false
 		},
-		"references": {
+		"exception": {
+			"description": "With this element, a callable (constructor, method) can document the exceptions that may occur during its execution",
+			"type": "object",
+			"properties": {
+				"type": {
+					"$ref": "#/definitions/typeName"
+				},
+				"description": {
+					"type": "string"
+				}
+			},
+			"additionalProperties": false
+		},
+		"reference": {
 			"description": "references to internal or external sources of information that are related to the documented entity. References can be URLs, absolute or relative JSDoc symbol names. Relative JSDoc symbols usually are meant to be relative to the documented entity",
-			"type": "array",
-			"items": {
-				"type": "string"
-			}
+			"type": "string"
 		},
 		"nestedProperties": {
 			"type": "object",
@@ -88,7 +90,7 @@
 						"minLength": 1
 					},
 					"type": {
-						"type": "string"
+						"$ref": "#/definitions/typeExpression"
 					},
 					"parameterProperties": {
 						"$ref": "#/definitions/nestedProperties"
@@ -98,7 +100,7 @@
 					},
 					"optional": {
 						"type": "boolean",
-						"defaultValue": false
+						"default": false
 					},
 					"defaultValue": {
 					},
@@ -134,7 +136,7 @@
 						"private",
 						"restricted"
 					],
-					"defaultValue": "public"
+					"default": "public"
 				},
 				"allowedFor": {
 					"$comment": "Only present if visibility is 'restricted'",
@@ -147,7 +149,7 @@
 					"type": "boolean"
 				},
 				"type": {
-					"type": "string"
+					"$ref": "#/definitions/typeName"
 				},
 				"value": {
 					"oneOf": [
@@ -156,6 +158,9 @@
 						},
 						{
 							"type": "integer"
+						},
+						{
+							"type": "boolean"
 						}
 					]
 				},
@@ -172,10 +177,16 @@
 					"$ref": "#/definitions/deprecated"
 				},
 				"examples": {
-					"$ref": "#/definitions/examples"
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/example"
+					}
 				},
 				"references": {
-					"$ref": "#/definitions/references"
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/reference"
+					}
 				}
 			},
 			"additionalProperties": false,
@@ -198,7 +209,7 @@
 						"private",
 						"restricted"
 					],
-					"defaultValue": "public"
+					"default": "public"
 				},
 				"allowedFor": {
 					"$comment": "Only present if visibility is 'restricted'",
@@ -211,7 +222,7 @@
 					"type": "boolean"
 				},
 				"type": {
-					"type": "string"
+					"$ref": "#/definitions/typeExpression"
 				},
 				"optional": {
 					"type": "boolean"
@@ -232,6 +243,7 @@
 			]
 		},
 		"obj-property": {
+			"description": "A property of any object-like structure like class, interface or namespace",
 			"type": "object",
 			"properties": {
 				"name": {
@@ -255,7 +267,7 @@
 						"private",
 						"restricted"
 					],
-					"defaultValue": "public"
+					"default": "public"
 				},
 				"allowedFor": {
 					"$comment": "Only present if visibility is 'restricted'",
@@ -268,7 +280,7 @@
 					"type": "boolean"
 				},
 				"type": {
-					"type": "string"
+					"$ref": "#/definitions/typeExpression"
 				},
 				"description": {
 					"type": "string"
@@ -283,10 +295,16 @@
 					"$ref": "#/definitions/deprecated"
 				},
 				"examples": {
-					"$ref": "#/definitions/examples"
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/example"
+					}
 				},
 				"references": {
-					"$ref": "#/definitions/references"
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/reference"
+					}
 				}
 			},
 			"additionalProperties": false,
@@ -295,33 +313,42 @@
 			]
 		},
 		"obj-callable-parameter": {
+			"description": "A positional parameter of a callable (a method or a function. Note: in contrast to ES6 classes, the constructor also counts as a callable in UI5's api.json).",
 			"type": "object",
 			"properties": {
 				"name": {
+					"description": "Name of the parameter",
 					"type": "string",
 					"minLength": 1
 				},
 				"type": {
-					"type": "string"
+					"description": "Type of the parameter, can be a simple type name or a JSDoc type expression",
+					"$ref": "#/definitions/typeExpression"
 				},
 				"optional": {
+					"description": "Whether the parameter is optional. Should only be used in a way that is compatible with ES6, that is, only trailing parameters can be declared optional",
 					"type": "boolean",
-					"defaultValue": false
+					"default": false
 				},
 				"omissible": {
+					"description": "Whether a non-trailing parameter can be omitted from a call. This implies that the implementation does some parameter shifting.",
 					"type": "boolean",
-					"defaultValue": false
+					"default": false
 				},
 				"repeatable": {
+					"description": "Whether the parameter is a rest parameter. Only the last parameter in a signature can be a rest parameter",
 					"type": "boolean",
-					"defaultValue": false
+					"default": false
 				},
 				"defaultValue": {
+					"description": "The default value that is used for the parameter when it is omitted in a call."
 				},
 				"parameterProperties": {
+					"description": "Nested properties of the parameter. Should only occur for parameters of type 'object'",
 					"$ref": "#/definitions/nestedProperties"
 				},
 				"description": {
+					"description": "Documentation for the parameter, corresponds to the content of a @desc tag in JSdoc or to the leading text before any JSDoc tag",
 					"type": "string"
 				},
 				"since": {
@@ -340,12 +367,6 @@
 				"type"
 			]
 		},
-		"obj-callable-parameters": {
-			"type": "array",
-			"items": {
-				"$ref": "#/definitions/obj-callable-parameter"
-			}
-		},
 		"obj-constructor": {
 			"type": "object",
 			"properties": {
@@ -357,7 +378,7 @@
 						"private",
 						"restricted"
 					],
-					"defaultValue": "public"
+					"default": "public"
 				},
 				"allowedFor": {
 					"$comment": "Only present if visibility is 'restricted'",
@@ -367,42 +388,73 @@
 					}
 				},
 				"typeParameters": {
-					"type": "object",
-					"properties": {
-						"name": {
-							"type": "string"
-						},
-						"type": {
-							"type": "string"
-						},
-						"default": {
-							"type": "string"
-						}
-					},
-					"required": [
-						"name"
-					],
-					"additionalProperties": false
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/typeParameter"
+					}
 				},
 				"parameters": {
-					"$ref": "#/definitions/obj-callable-parameters"
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/obj-callable-parameter"
+					}
 				},
 				"throws": {
-					"$ref": "#/definitions/exceptions"
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/exception"
+					}
 				},
 				"description": {
 					"type": "string"
 				},
 				"examples": {
-					"$ref": "#/definitions/examples"
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/example"
+					}
 				},
 				"references": {
-					"$ref": "#/definitions/references"
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/reference"
+					}
 				}
 			},
 			"additionalProperties": false,
 			"required": [
-
+			]
+		},
+		"typeParameter": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"type": {
+					"$ref": "#/definitions/typeExpression"
+				},
+				"default": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"name"
+			],
+			"additionalProperties": false
+		},
+		"returnValue": {
+			"type": "object",
+			"properties": {
+				"type": {
+					"$ref": "#/definitions/typeExpression"
+				},
+				"description": {
+					"type": "string"
+				}
+			},
+			"additionalProperties": false,
+			"required": [
 			]
 		},
 		"obj-method": {
@@ -420,7 +472,7 @@
 						"private",
 						"restricted"
 					],
-					"defaultValue": "public"
+					"default": "public"
 				},
 				"allowedFor": {
 					"$comment": "Only present if visibility is 'restricted'",
@@ -433,43 +485,25 @@
 					"type": "boolean"
 				},
 				"typeParameters": {
-					"type": "object",
-					"properties": {
-						"name": {
-							"type": "string"
-						},
-						"type": {
-							"type": "string"
-						},
-						"default": {
-							"type": "string"
-						}
-					},
-					"required": [
-						"name"
-					],
-					"additionalProperties": false
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/typeParameter"
+					}
 				},
 				"parameters": {
-					"$ref": "#/definitions/obj-callable-parameters"
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/obj-callable-parameter"
+					}
 				},
 				"returnValue": {
-					"type": "object",
-					"properties": {
-						"type": {
-							"type": "string"
-						},
-						"description": {
-							"type": "string"
-						}
-					},
-					"additionalProperties": false,
-					"required": [
-
-					]
+					"$ref": "#/definitions/returnValue"
 				},
 				"throws": {
-					"$ref": "#/definitions/exceptions"
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/exception"
+					}
 				},
 				"description": {
 					"type": "string"
@@ -484,19 +518,25 @@
 					"$ref": "#/definitions/deprecated"
 				},
 				"examples": {
-					"$ref": "#/definitions/examples"
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/example"
+					}
 				},
 				"references": {
-					"$ref": "#/definitions/references"
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/reference"
+					}
 				},
 				"ui5-metamodel": {
 					"type": "boolean",
-					"defaultValue": false
+					"default": false
 				},
 				"tsSkip": {
-					"documentation": "Whether the method should be omitted from the TypeScript declaration files",
+					"description": "Whether the method should be omitted from the TypeScript declaration files",
 					"type": "boolean",
-					"defaultValue": false
+					"default": false
 				}
 			},
 			"required": [
@@ -509,6 +549,7 @@
 				"visibility",
 				"allowedFor",
 				"static",
+				"typeParameters",
 				"returnValue",
 				"parameters",
 				"throws",
@@ -543,7 +584,7 @@
 						"private",
 						"restricted"
 					],
-					"defaultValue": "public"
+					"default": "public"
 				},
 				"allowedFor": {
 					"$comment": "Only present if visibility is 'restricted'",
@@ -565,7 +606,7 @@
 								"minLength": 1
 							},
 							"type": {
-								"type": "string"
+								"$ref": "#/definitions/typeExpression"
 							},
 							"parameterProperties": {
 								"$ref": "#/definitions/nestedProperties"
@@ -603,10 +644,16 @@
 					"$ref": "#/definitions/deprecated"
 				},
 				"examples": {
-					"$ref": "#/definitions/examples"
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/example"
+					}
 				},
 				"references": {
-					"$ref": "#/definitions/references"
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/reference"
+					}
 				}
 			},
 			"additionalProperties": false,
@@ -615,6 +662,7 @@
 			]
 		},
 		"ui5-settingName": {
+			"description": "Name of a managed setting, limited by the regular expression '_*[a-z][a-zA-Z0-9_]*'.",
 			"type": "string",
 			"pattern": "_*[a-z][a-zA-Z0-9_]*"
 		},
@@ -625,8 +673,12 @@
 					"$ref": "#/definitions/ui5-settingName"
 				},
 				"type": {
-					"type": "string",
-					"defaultValue": "string"
+					"oneOf": [
+						{
+							"$ref": "#/definitions/typeName"
+						}
+					],
+					"default": "string"
 				},
 				"visibility": {
 					"type": "string",
@@ -636,7 +688,7 @@
 						"restricted",
 						"hidden"
 					],
-					"defaultValue": "public"
+					"default": "public"
 				},
 				"allowedFor": {
 					"$comment": "Only present if visibility is 'restricted'",
@@ -676,12 +728,22 @@
 					"$ref": "#/definitions/ui5-settingName"
 				},
 				"type": {
-					"type": "string",
-					"defaultValue": "string"
+					"description": "The type shown in the documentation and in TypeScript signatures; should be a subtype of the `dataType`",
+					"oneOf": [
+						{
+							"$ref": "#/definitions/typeExpression"
+						}
+					],
+					"default": "string"
 				},
 				"dataType": {
-					"type": "string",
-					"defaultValue": "string"
+					"description": "The name of the DataType instance to use for validation",
+					"oneOf": [
+						{
+							"$ref": "#/definitions/typeName"
+						}
+					],
+					"default": "string"
 				},
 				"defaultValue": {
 				},
@@ -696,7 +758,7 @@
 						"restricted",
 						"hidden"
 					],
-					"defaultValue": "public"
+					"default": "public"
 				},
 				"allowedFor": {
 					"$comment": "Only present if visibility is 'restricted'",
@@ -713,7 +775,7 @@
 				},
 				"bindable": {
 					"type": "boolean",
-					"defaultValue": false
+					"default": false
 				},
 				"experimental": {
 					"$ref": "#/definitions/experimental"
@@ -743,8 +805,12 @@
 					"$ref": "#/definitions/ui5-settingName"
 				},
 				"type": {
-					"type": "string",
-					"defaultValue": "sap.ui.core.Control"
+					"oneOf": [
+						{
+							"$ref": "#/definitions/typeName"
+						}
+					],
+					"default": "sap.ui.core.Control"
 				},
 				"altTypes": {
 					"type": "array",
@@ -758,7 +824,7 @@
 						"0..1",
 						"0..n"
 					],
-					"defaultValue": "0..n"
+					"default": "0..n"
 				},
 				"visibility": {
 					"type": "string",
@@ -768,7 +834,7 @@
 						"restricted",
 						"hidden"
 					],
-					"defaultValue": "public"
+					"default": "public"
 				},
 				"allowedFor": {
 					"$comment": "Only present if visibility is 'restricted'",
@@ -779,7 +845,7 @@
 				},
 				"bindable": {
 					"type": "boolean",
-					"defaultValue": false
+					"default": false
 				},
 				"description": {
 					"type": "string"
@@ -819,9 +885,10 @@
 										"Vertical",
 										"Horizontal"
 									],
-									"defaultValue": "Vertical"
+									"default": "Vertical"
 								}
-							}
+							},
+							"additionalProperties": false
 						}
 					]
 				}
@@ -841,8 +908,12 @@
 					"$ref": "#/definitions/ui5-settingName"
 				},
 				"type": {
-					"type": "string",
-					"defaultValue": "sap.ui.core.Control"
+					"oneOf": [
+						{
+							"$ref": "#/definitions/typeName"
+						}
+					],
+					"default": "sap.ui.core.Control"
 				},
 				"cardinality": {
 					"type": "string",
@@ -850,7 +921,7 @@
 						"0..1",
 						"0..n"
 					],
-					"defaultValue": "0..1"
+					"default": "0..1"
 				},
 				"visibility": {
 					"type": "string",
@@ -860,7 +931,7 @@
 						"restricted",
 						"hidden"
 					],
-					"defaultValue": "public"
+					"default": "public"
 				},
 				"allowedFor": {
 					"$comment": "Only present if visibility is 'restricted'",
@@ -907,7 +978,7 @@
 						"restricted",
 						"hidden"
 					],
-					"defaultValue": "public"
+					"default": "public"
 				},
 				"allowedFor": {
 					"$comment": "Only present if visibility is 'restricted'",
@@ -937,7 +1008,7 @@
 								"$ref": "#/definitions/ui5-settingName"
 							},
 							"type": {
-								"type": "string"
+								"$ref": "#/definitions/typeExpression"
 							},
 							"description": {
 								"type": "string"
@@ -961,11 +1032,11 @@
 				},
 				"allowPreventDefault": {
 					"type": "boolean",
-					"defaultValue": false
+					"default": false
 				},
 				"enableEventBubbling": {
 					"type": "boolean",
-					"defaultValue": false
+					"default": false
 				},
 				"methods": {
 					"type": "array",
@@ -992,7 +1063,8 @@
 						"library",
 						"controller",
 						"controllerextension",
-						"template"
+						"template",
+						"webcomponent"
 					]
 				},
 				"specialSettings": {
@@ -1041,11 +1113,11 @@
 							"properties": {
 								"draggable": {
 									"type": "boolean",
-									"defaultValue": false
+									"default": false
 								},
 								"droppable": {
 									"type": "boolean",
-									"defaultValue": false
+									"default": false
 								}
 							},
 							"additionalProperties": false
@@ -1104,7 +1176,7 @@
 						"boolean",
 						"string"
 					],
-					"defaultValue": false
+					"default": false
 				},
 				"metadataClass": {
 					"type": "string"
@@ -1116,6 +1188,7 @@
 			]
 		},
 		"symbol": {
+			"$comment": "Note that 'examples' is not used for the symbol kind 'class', but this has not been modeled to reduce the schema's complexity",
 			"type": "object",
 			"properties": {
 				"kind": {
@@ -1157,7 +1230,7 @@
 						"private",
 						"restricted"
 					],
-					"defaultValue": "public"
+					"default": "public"
 				},
 				"allowedFor": {
 					"$comment": "Only present if visibility is 'restricted'",
@@ -1179,11 +1252,16 @@
 					"$ref": "#/definitions/deprecated"
 				},
 				"examples": {
-					"$comment": "Note that 'examples' 'is not used for the symbol kind 'class', but this has not been modeled to reduce the schema's complexity",
-					"$ref": "#/definitions/examples"
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/example"
+					}
 				},
 				"references": {
-					"$ref": "#/definitions/references"
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/reference"
+					}
 				}
 			}
 		},
@@ -1223,8 +1301,11 @@
 										"typedef"
 									]
 								},
+								"final": {
+									"type": "boolean"
+								},
 								"type": {
-									"type": "string"
+									"$ref": "#/definitions/typeExpression"
 								}
 							},
 							"propertyNames": {
@@ -1234,6 +1315,7 @@
 									},
 									{
 										"enum": [
+											"final",
 											"type"
 										]
 									}
@@ -1253,7 +1335,7 @@
 									]
 								},
 								"extends": {
-									"type": "string"
+									"$ref": "#/definitions/typeName"
 								},
 								"properties": {
 									"type": "array",
@@ -1289,13 +1371,16 @@
 									]
 								},
 								"parameters": {
-									"$ref": "#/definitions/obj-callable-parameters"
+									"type": "array",
+									"items": {
+										"$ref": "#/definitions/obj-callable-parameter"
+									}
 								},
 								"returnValue": {
 									"type": "object",
 									"properties": {
 										"type": {
-											"type": "string"
+											"$ref": "#/definitions/typeExpression"
 										},
 										"description": {
 											"type": "string"
@@ -1307,7 +1392,10 @@
 									]
 								},
 								"throws": {
-									"$ref": "#/definitions/exceptions"
+									"type": "array",
+									"items": {
+										"$ref": "#/definitions/exception"
+									}
 								}
 							},
 							"propertyNames": {
@@ -1356,7 +1444,7 @@
 						"methods": {
 							"type": "array",
 							"items": {
-								"$comment": "Modules can contribute methods to namespaces declared in ohter modules (declaration merging). Methods in namespaces therefore can have module,export and reosufce properties",
+								"$comment": "Modules can contribute methods to namespaces declared in other modules (declaration merging). Methods in namespaces therefore can have module,export and reosufce properties",
 								"allOf": [
 									{
 										"$ref": "#/definitions/obj-method"
@@ -1456,7 +1544,7 @@
 									"type": "string"
 								},
 								"range": {
-									"$commemt": "Value range for numeric types",
+									"$comment": "Value range for numeric types",
 									"type": "object",
 									"properties": {
 										"minExclusive": {
@@ -1505,6 +1593,7 @@
 					"$ref": "#/definitions/symbol"
 				},
 				{
+					"type": "object",
 					"properties": {
 						"kind": {
 							"enum": [
@@ -1512,11 +1601,11 @@
 							]
 						},
 						"extends": {
-							"type": "string"
+							"$ref": "#/definitions/typeName"
 						},
 						"ui5-metamodel": {
 							"type": "boolean",
-							"defaultValue": false
+							"default": false
 						},
 						"methods": {
 							"type": "array",
@@ -1531,7 +1620,7 @@
 										"properties": {
 											"optional": {
 												"type": "boolean",
-												"defaultValue": false
+												"default": false
 											}
 										},
 										"propertyNames": {
@@ -1582,6 +1671,7 @@
 					"$ref": "#/definitions/symbol"
 				},
 				{
+					"type": "object",
 					"properties": {
 						"kind": {
 							"enum": [
@@ -1590,7 +1680,7 @@
 						},
 						"ui5-metamodel": {
 							"type": "boolean",
-							"defaultValue": false
+							"default": false
 						},
 						"properties": {
 							"type": "array",
@@ -1635,6 +1725,7 @@
 					"$ref": "#/definitions/symbol"
 				},
 				{
+					"type": "object",
 					"properties": {
 						"kind": {
 							"enum": [
@@ -1654,18 +1745,21 @@
 						},
 						"abstract": {
 							"type": "boolean",
-							"defaultValue": "false"
+							"default": "false"
 						},
 						"final": {
 							"type": "boolean",
-							"defaultValue": "false"
+							"default": "false"
 						},
 						"ui5-metadata": {
 							"$ref": "#/definitions/ui5-metadata"
 						},
 						"ui5-metamodel": {
 							"type": "boolean",
-							"defaultValue": false
+							"default": false
+						},
+						"hideconstructor": {
+							"type": "boolean"
 						},
 						"constructor": {
 							"$ref": "#/definitions/obj-constructor"
@@ -1691,8 +1785,23 @@
 									},
 									{
 										"type": "object",
+										"properties": {
+											"optional": {
+												"type": "boolean",
+												"default": false
+											}
+										},
 										"propertyNames": {
-											"$ref": "#/definitions/obj-method-propertyNames"
+											"anyOf": [
+												{
+													"$ref": "#/definitions/obj-method-propertyNames"
+												},
+												{
+													"enum": [
+														"optional"
+													]
+												}
+											]
 										}
 									}
 								]
@@ -1713,6 +1822,7 @@
 									"final",
 									"ui5-metadata",
 									"ui5-metamodel",
+									"hideconstructor",
 									"constructor",
 									"properties",
 									"events",
@@ -1734,6 +1844,7 @@
 					"$ref": "#/definitions/obj-method"
 				},
 				{
+					"type": "object",
 					"properties": {
 						"kind": {
 							"type": "string",

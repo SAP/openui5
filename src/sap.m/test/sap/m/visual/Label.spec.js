@@ -260,7 +260,7 @@ describe("sap.m.Label", function() {
 		});
 	});
 
-	it("should visualize label with asterisk  with truncated text", function () {
+	it("should visualize label with asterisk with truncated text", function () {
 		var lbl = element(by.id('reqLabelParentWidth'));
 
 		browser.executeScript("document.getElementById('reqLabelParentWidth').scrollIntoView()").then(function () {
@@ -280,7 +280,15 @@ describe("sap.m.Label", function() {
 		var lbl = element(by.id('labelToResize'));
 
 		browser.executeScript("document.getElementById('labelToResize').scrollIntoView()").then(function () {
-			expect(takeScreenshot(lbl)).toLookAs("35_label_colon_not truncated");
+			expect(takeScreenshot(lbl)).toLookAs("35_label_colon_not_truncated");
+		});
+	});
+
+	it("should visualize labels with percent width", function () {
+		var lbls = element(by.id('oVL6'));
+
+		browser.executeScript("document.getElementById('oVL6').scrollIntoView()").then(function () {
+			expect(takeScreenshot(lbls)).toLookAs("36_labels_percent_width");
 		});
 	});
 });

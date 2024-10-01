@@ -19,8 +19,11 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
-	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
+	"sap/ui/fl/write/_internal/controlVariants/ControlVariantWriteUtils",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
+	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils"
 ], function(
@@ -40,8 +43,11 @@ sap.ui.define([
 	ManifestUtils,
 	DescriptorChangeFactory,
 	ChangeHandlerStorage,
-	ContextBasedAdaptationsAPI,
 	AppVariantInlineChangeFactory,
+	ControlVariantWriteUtils,
+	FlexObjectManager,
+	ContextBasedAdaptationsAPI,
+	VersionsAPI,
 	Layer,
 	Utils
 ) {
@@ -310,6 +316,58 @@ sap.ui.define([
 			mPropertyBag.modifier,
 			mPropertyBag.layer
 		);
+	};
+
+	/**
+	 * Deletes the variants and their related FlexObjects. Only variants that are in the draft or dirty state can be deleted,
+	 * as they have no dependencies on them. Returns all FlexObjects that were deleted in the process.
+	 *
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {sap.ui.core.Control} mPropertyBag.variantManagementControl - Variant management control
+	 * @param {string[]} mPropertyBag.variants - Variant IDs to be deleted
+	 * @param {string} mPropertyBag.layer - Layer to get the draft objects from
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Array of deleted FlexObjects
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta, similar tools
+	 */
+	ChangesWriteAPI.deleteVariantsAndRelatedObjects = function(mPropertyBag) {
+		if (!(mPropertyBag.variantManagementControl?.isA("sap.ui.fl.variants.VariantManagement"))) {
+			throw new Error("Please provide a valid Variant Management control");
+		}
+		const oVariantManagementControl = mPropertyBag.variantManagementControl;
+		const oAppComponent = Utils.getAppComponentForControl(oVariantManagementControl);
+		const sVariantManagementReference = JsControlTreeModifier.getSelector(oVariantManagementControl, oAppComponent).id;
+		const sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
+		const aDraftFilenames = VersionsAPI.getDraftFilenames({
+			control: oVariantManagementControl,
+			layer: mPropertyBag.layer
+		});
+		const aDirtyFlexObjectIds = FlexObjectState.getDirtyFlexObjects(sFlexReference).map((oFlexObject) => (
+			oFlexObject.getId()
+		));
+		const aVariantsToBeDeleted = mPropertyBag.variants.filter((sVariantID) => (
+			aDraftFilenames.includes(sVariantID) || aDirtyFlexObjectIds.includes(sVariantID)
+		));
+		return aVariantsToBeDeleted
+		.map((sVariantId) => (
+			ControlVariantWriteUtils.deleteVariant(sFlexReference, sVariantManagementReference, sVariantId)
+		))
+		.flat();
+	};
+
+	/**
+	 * Restores previously deleted FlexObjects. Objects are restored to the state they were in before deletion.
+	 * If the flex object was not persisted, it is added as a dirty object again.
+	 * Once the deletion is persisted, changes will not be restored.
+	 *
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {string} mPropertyBag.reference - Flex reference of the application
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} mPropertyBag.flexObjects - FlexObjects to be restored
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta, similar tools
+	 */
+	ChangesWriteAPI.restoreDeletedFlexObjects = function(mPropertyBag) {
+		FlexObjectManager.restoreDeletedFlexObjects(mPropertyBag);
 	};
 
 	return ChangesWriteAPI;
