@@ -123,7 +123,7 @@ sap.ui.define([
 	 * </ul>
 	 * <h3>Responsive Behavior</h3>
 	 * <ul>
-	 * <li>On touch devices, navigation is performed with swipe gestures (swipe right or swipe left).</li>
+	 * <li>On touch devices, navigation is performed with swipe gestures (swipe right or swipe left) or with the navigation arrows.</li>
 	 * <li>On desktop, navigation is done with the navigation arrows.</li>
 	 * <li>The paging indicator (when activated) is visible on each form factor.</li>
 	 * </ul>
@@ -169,7 +169,7 @@ sap.ui.define([
 				 * Possible values are sap.m.CarouselPageIndicatorPlacementType.Top, sap.m.CarouselPageIndicatorPlacementType.Bottom,
 				 * CarouselPageIndicatorPlacementType.OverContentTop and CarouselPageIndicatorPlacementType.OverContentBottom.
 				 *
-				 * <b>Note:</b> when the page indicator is placed over the carousel's content (values "OverContentBottom" and "OverContentTop"),
+				 * <b>Note:</b> When the page indicator is placed over the carousel's content (values "OverContentBottom" and "OverContentTop"),
 				 * the properties <code>pageIndicatorBackgroundDesign</code> and <code>pageIndicatorBorderDesign</code> will not take effect.
 				 *
 				 * <b>Note:</b> We recommend using a page indicator placed over the carousel's content (values "OverContentBottom" and "OverContentTop")
