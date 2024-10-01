@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/integration/cards/NumericHeader",
 	"sap/ui/integration/cards/Header",
 	"sap/ui/integration/util/Utils",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/m/AvatarImageFitType"
 ], function (
 	BaseFactory,
 	Log,
@@ -26,7 +27,8 @@ sap.ui.define([
 	NumericHeader,
 	Header,
 	Utils,
-	Button
+	Button,
+	AvatarImageFitType
 ) {
 	"use strict";
 
@@ -159,6 +161,10 @@ sap.ui.define([
 
 		if (!mConfiguration.titleMaxLines) {
 			oHeader.setTitleMaxLines(bIsFlatTile ? 1 : 2);
+		}
+
+		if (!mConfiguration.icon?.fitType) {
+			oHeader.setIconFitType(AvatarImageFitType.Contain);
 		}
 
 		if (bIsFlatTile) {
