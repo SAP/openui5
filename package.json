@@ -41,14 +41,7 @@
     "karma:sap.ui.webc.main": "npm run karma -- --lib=sap.ui.webc.main",
     "karma:sap.ui.webc.fiori": "npm run karma -- --lib=sap.ui.webc.fiori",
     "karma:sap.uxap": "npm run karma -- --lib=sap.uxap",
-    "generate-cldr": "cd lib/cldr-openui5 && npm start",
-    "webc:build.common": "cd src/sap.ui.webc.common && npm run build",
-    "webc:build.main": "cd src/sap.ui.webc.main && npm run build",
-    "webc:build.fiori": "cd src/sap.ui.webc.fiori && npm run build",
-    "webc:build": "npm-run-all webc:build.common webc:build.main webc:build.fiori",
-    "webc:generate.main": "cd src/sap.ui.webc.main && npm run generate",
-    "webc:generate.fiori": "cd src/sap.ui.webc.fiori && npm run generate",
-    "webc:generate": "npm-run-all webc:generate.main webc:generate.fiori"
+    "generate-cldr": "cd lib/cldr-openui5 && npm start"
   },
   "keywords": [
     "openui5",
@@ -110,7 +103,6 @@
     "load-grunt-config": "^3.0.1",
     "moment": "^2.29.4",
     "node-fetch": "^3.2.10",
-    "npm-run-all": "^4.1.5",
     "pacote": "^15.1.1",
     "rimraf": "^4.3.1",
     "semver": "^7.5.4",
