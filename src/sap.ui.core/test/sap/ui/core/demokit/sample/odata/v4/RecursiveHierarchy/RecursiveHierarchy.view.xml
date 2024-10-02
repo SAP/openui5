@@ -92,11 +92,10 @@
 			</template>
 		</Column>
 		<Column>
-			<m:CheckBox selected="{path : 'header>@$ui5.context.isSelected', targetType: 'any'}"
-				text="Select" tooltip="Select All"/>
+			<m:CheckBox selected="{header>@$ui5.context.isSelected}" text="Select"
+				tooltip="Select All"/>
 			<template>
-				<m:CheckBox selected="{path : '@$ui5.context.isSelected', targetType: 'any'}"
-					tooltip="Select"/>
+				<m:CheckBox selected="{@$ui5.context.isSelected}" tooltip="Select"/>
 			</template>
 		</Column>
 		<Column width="27em">
@@ -208,11 +207,10 @@
 			</template>
 		</Column>
 		<Column>
-			<m:CheckBox selected="{path : 'treeHeader>@$ui5.context.isSelected', targetType: 'any'}"
-				text="Select" tooltip="Select All"/>
+			<m:CheckBox selected="{treeHeader>@$ui5.context.isSelected}" text="Select"
+				tooltip="Select All"/>
 			<template>
-				<m:CheckBox selected="{path : '@$ui5.context.isSelected', targetType: 'any'}"
-					tooltip="Select"/>
+				<m:CheckBox selected="{@$ui5.context.isSelected}" tooltip="Select"/>
 			</template>
 		</Column>
 		<Column width="27em">

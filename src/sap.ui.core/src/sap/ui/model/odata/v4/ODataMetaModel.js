@@ -55,9 +55,11 @@ sap.ui.define([
 				}
 			}
 		}),
-		oCountType,
+		oBooleanType,
 		mCodeListUrl2Promise = new Map(),
 		DEBUG = Log.Level.DEBUG,
+		aInt64Names = ["$count", "@$ui5.node.groupLevelCount", "@$ui5.node.level"],
+		oInt64Type,
 		rLeftBraces = /\$\(/g,
 		rNumber = /^-?\d+$/,
 		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
@@ -1662,17 +1664,25 @@ sap.ui.define([
 	 * @see #requestUI5Type
 	 */
 	ODataMetaModel.prototype.fetchUI5Type = function (sPath, mFormatOptions) {
-		var oMetaContext = this.getMetaContext(sPath),
-			that = this;
-
-		if (sPath.endsWith("/$count")) {
-			oCountType ??= new Int64();
-			return SyncPromise.resolve(oCountType);
+		const sLastSegment = sPath.slice(sPath.lastIndexOf("/") + 1);
+		if (sLastSegment[0] === "$" || sLastSegment[0] === "@") {
+			if (aInt64Names.includes(sLastSegment)) {
+				oInt64Type ??= new Int64();
+				return SyncPromise.resolve(oInt64Type);
+			}
+			if (sLastSegment.startsWith("@$ui5.context.is")
+					|| sLastSegment.startsWith("@$ui5.node.is")) {
+				oBooleanType ??= new Boolean();
+				return SyncPromise.resolve(oBooleanType);
+			}
 		}
+
+		const oMetaContext = this.getMetaContext(sPath);
+
 		// Note: undefined is more efficient than "" here
 		return this.fetchObject(undefined, oMetaContext).catch(
 			this.oModel.getReporter()
-		).then(function (oProperty) {
+		).then((oProperty) => {
 			var oType = oRawType,
 				oTypeInfo;
 
@@ -1707,7 +1717,7 @@ sap.ui.define([
 				oTypeInfo = mUi5TypeForEdmType[oProperty.$Type];
 				if (oTypeInfo) {
 					oType = new oTypeInfo.Type(mFormatOptions,
-						that.getConstraints(oProperty, oMetaContext.getPath()));
+						this.getConstraints(oProperty, oMetaContext.getPath()));
 				} else {
 					Log.warning("Unsupported type '" + oProperty.$Type + "', using "
 						+ oType.getName(), sPath, sODataMetaModel);
