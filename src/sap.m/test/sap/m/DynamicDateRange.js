@@ -60,7 +60,7 @@ sap.ui.define([
 			change: handleValueChange
 		}),
 		oDDR2 = new DynamicDateRange({
-			standardOptions: ["DATE", "TODAY", "LASTDAYS", "LASTQUARTERS", "TODAYFROMTO"],
+			standardOptions: ["DATE", "TODAY", "LASTDAYS", "LASTQUARTERS", "LASTWEEKSINCLUDED", "LASTWEEKS", "LASTMONTHSINCLUDED", "TODAYFROMTO"],
 			value: {
 				path: '/val2',
 				type: new DynamicDate()
