@@ -78,7 +78,7 @@ sap.ui.define([
 			return "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS";
 		}
 
-		if (oReloadInfo.initialDraftGotActivated) {
+		if (oReloadInfo.initialDraftGotActivated || oReloadInfo.activeVersionNotSelected) {
 			return "MSG_RELOAD_ACTIVATED_DRAFT";
 		}
 
