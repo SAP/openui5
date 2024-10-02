@@ -20,7 +20,8 @@ sap.ui.define([
 			this.oPlugin.setPropertyInfos([{
 				key: "Property1",
 				path: "prop1",
-				isKey: true
+				isKey: true,
+				additionally: ["prop4"]
 			}, {
 				key: "Property2",
 				path: "prop2",
@@ -86,6 +87,23 @@ sap.ui.define([
 						contextDefiningProperties: ["Property4", "Property5"]
 					}
 				}
+			}, {
+				key: "Property11",
+				path: "prop11",
+				groupable: true,
+				text: "Property12"
+			}, {
+				key: "Property12",
+				path: "prop12",
+				groupable: true,
+				additionalProperties: ["Property11"]
+			}, {
+				key: "Property13",
+				path: "prop13",
+				aggregatable: true,
+				groupable: true,
+				unit: "Property4",
+				additionalProperties: ["Property5"]
 			}]);
 		},
 		afterEach: function() {
@@ -132,7 +150,7 @@ sap.ui.define([
 		aggregationInfo: {
 			visible: ["Property2"]
 		},
-		expectedGroup: {prop1: {}, prop2: {}},
+		expectedGroup: {prop1: {}, prop2: {additionally: []}},
 		expectedAggregate: {},
 		expectedGroupLevels: []
 	}, {
@@ -158,7 +176,7 @@ sap.ui.define([
 			subtotals: ["Property5", "Property6"],
 			grandTotal: ["Property6"]
 		},
-		expectedGroup: {prop1: {}, prop2: {}, prop3: {additionally: []}},
+		expectedGroup: {prop1: {}, prop2: {}, prop3: {additionally: ["prop4"]}},
 		expectedAggregate: {prop5: {subtotals: true}, prop6: {grandTotal: true, subtotals: true, unit: "prop4"}},
 		expectedGroupLevels: []
 	}, {
@@ -177,6 +195,23 @@ sap.ui.define([
 		},
 		expectedGroup: {prop1: {}, prop2: {}, prop3: {}, prop4: {}, prop5: {}},
 		expectedAggregate: {prop8: {}, prop10: {}},
+		expectedGroupLevels: []
+	}, {
+		label: "Aggregated property with additional properties",
+		aggregationInfo: {
+			visible: ["Property13"]
+		},
+		expectedGroup: {prop1: {}, prop2: {}, prop5: {}, prop13: {}},
+		expectedAggregate: {},
+		expectedGroupLevels: []
+	}, {
+		label: "Aggregated property with additional properties and totals",
+		aggregationInfo: {
+			visible: ["Property13"],
+			grandTotal: ["Property13"]
+		},
+		expectedGroup: {prop1: {}, prop2: {}, prop5: {}},
+		expectedAggregate: {prop13: {grandTotal: true, unit: "prop4"}},
 		expectedGroupLevels: []
 	}, {
 		label: "Aggregated property with unit and empty context-defining properties",
@@ -203,7 +238,7 @@ sap.ui.define([
 			subtotals: ["Property7"],
 			grandTotal: ["Property7"]
 		},
-		expectedGroup: {prop1: {}, prop2: {}},
+		expectedGroup: {prop1: {}, prop2: {additionally: []}},
 		expectedAggregate: {prop7: {grandTotal: true, subtotals: true}},
 		expectedGroupLevels: []
 	}, {
@@ -216,13 +251,37 @@ sap.ui.define([
 		expectedAggregate: {},
 		expectedGroupLevels: ["prop3"]
 	}, {
+		label: "ID<->Text; ID visible",
+		aggregationInfo: {
+			visible: ["Property11"]
+		},
+		expectedGroup: {prop1: {}, prop2: {}, prop11: {additionally: ["prop12"]}},
+		expectedAggregate: {},
+		expectedGroupLevels: []
+	}, {
+		label: "ID<->Text; Text visible",
+		aggregationInfo: {
+			visible: ["Property12"]
+		},
+		expectedGroup: {prop1: {}, prop2: {}, prop12: {additionally: ["prop11"]}},
+		expectedAggregate: {},
+		expectedGroupLevels: []
+	}, {
+		label: "ID<->Text; Both visible",
+		aggregationInfo: {
+			visible: ["Property11", "Property12"]
+		},
+		expectedGroup: {prop1: {}, prop2: {}, prop11: {additionally: ["prop12"]}},
+		expectedAggregate: {},
+		expectedGroupLevels: []
+	}, {
 		label: "Search",
 		testData: [{
 			aggregationInfo: {
 				visible: ["Property1", "Property2"],
 				search: "Property"
 			},
-			expectedGroup: {prop1: {}, prop2: {}},
+			expectedGroup: {prop1: {}, prop2: {additionally: []}},
 			expectedAggregate: {},
 			expectedGroupLevels: [],
 			expectedSearch: "Property"
@@ -230,7 +289,7 @@ sap.ui.define([
 			aggregationInfo: {
 				visible: ["Property1", "Property2"]
 			},
-			expectedGroup: {prop1: {}, prop2: {}},
+			expectedGroup: {prop1: {}, prop2: {additionally: []}},
 			expectedAggregate: {},
 			expectedGroupLevels: []
 		}]
