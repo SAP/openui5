@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/mdc/Table", "sap/ui/mdc/table/CreationRow", "sap/ui/model/json/JSONModel", "sap/ui/mdc/enums/TableType"
-], function(Table, CreationRow, JSONModel, TableType) {
+	"sap/ui/mdc/Table", "sap/ui/mdc/table/CreationRow", "sap/ui/model/json/JSONModel", "sap/ui/mdc/enums/TableType", "sap/ui/mdc/table/GridTableType"
+], function(Table, CreationRow, JSONModel, TableType, GridTableType) {
 	"use strict";
 
 	QUnit.module("Inner creation row", {
@@ -10,6 +10,9 @@ sap.ui.define([
 			this.oMDCGridTable = new Table();
 			this.oMDCResponsiveTable = new Table({
 				type: TableType.ResponsiveTable
+			});
+			this.oMDCGridTableInteractive = new Table({
+				type: new GridTableType({rowCountMode: "Interactive"})
 			});
 
 			return Promise.all([this.oMDCGridTable.initialized(), this.oMDCResponsiveTable.initialized()]);
@@ -118,6 +121,12 @@ sap.ui.define([
 
 		}).then(function() {
 			that.oCreationRow._getTable.returns(that.oMDCGridTable);
+			return that.oCreationRow.update();
+		}).then(function() {
+			assert.ok(that.oCreationRow._oInnerCreationRow.isA("sap.ui.table.CreationRow"), "Change from ResponsiveTable to Table: Inner creation row is a sap.ui.table.CreationRow");
+
+		}).then(function() {
+			that.oCreationRow._getTable.returns(that.oMDCGridTableInteractive);
 			return that.oCreationRow.update();
 		}).then(function() {
 			assert.ok(that.oCreationRow._oInnerCreationRow.isA("sap.ui.table.CreationRow"), "Change from ResponsiveTable to Table: Inner creation row is a sap.ui.table.CreationRow");

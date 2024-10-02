@@ -89,14 +89,21 @@ sap.ui.define([
 		const oType = this.oTable.getType();
 		const oInnerTable = this.oTable._oTable;
 
+		const oCreationRowStub = sinon.stub(this.oTable, "getCreationRow").returns({
+			getVisible: function() {
+				return true;
+			}
+		});
+
 		this.oTable.setThreshold(30);
 		assert.equal(oInnerTable.getThreshold(), 30, "Table.threshold=30: threshold");
 
 		oType.setRowCountMode(RowCountMode.Fixed);
 		assert.equal(oInnerTable.getRowMode().isA("sap.ui.table.rowmodes.Fixed"), true, "Type.rowCountMode=Fixed: rowMode");
+		assert.equal(oInnerTable.getRowMode().getHideEmptyRows(), true, `Type.rowCountMode=Fixed.hideEmptyRows: ${true}`);
 
 		oType.setRowCount(12);
-		assert.equal(oInnerTable.getRowMode().getRowCount(), 12, "Type.rowCount=12: rowMode.minRowCount");
+		assert.equal(oInnerTable.getRowMode().getRowCount(), 12, "Type.rowCount=12: rowMode.rowCount");
 
 		oType.setFixedColumnCount(1);
 		assert.equal(oInnerTable.getFixedColumnCount(), 1, "Type.fixedColumnCount=1: fixedColumnCount");
@@ -106,6 +113,18 @@ sap.ui.define([
 
 		this.oTable.setSelectionMode("Multi");
 		assert.equal(oInnerTable.getSelectionBehavior(), "RowSelector", "Table.selectionMode=MultiToggle: selectionBehavior");
+
+		oType.setRowCountMode(RowCountMode.Interactive);
+		assert.equal(oInnerTable.getRowMode().isA("sap.ui.table.rowmodes.Interactive"), true, "Type.rowCountMode=Interactive: rowMode");
+
+		oType.setRowCount(15);
+		assert.equal(oInnerTable.getRowMode().getRowCount(), 15, "Type.rowCount=15: rowMode.rowCount");
+
+		oType.setRowCountMode(RowCountMode.Fixed);
+		assert.equal(oInnerTable.getRowMode().isA("sap.ui.table.rowmodes.Fixed"), true, "Type.rowCountMode=Fixed: rowMode");
+		assert.equal(oInnerTable.getRowMode().getHideEmptyRows(), true, `Type.rowCountMode=Fixed.hideEmptyRows: ${true}`);
+
+		oCreationRowStub.restore();
 	});
 
 	QUnit.module("API", {
