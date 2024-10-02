@@ -73100,13 +73100,14 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2493
 	//
 	// Check for selectionChanged events (JIRA: CPOUI5ODATAV4-2198)
+	// Automatic type detection for client-side annotations (JIRA: CPOUI5ODATAV4-2728)
 	QUnit.test("Selection on header context and row context", async function (assert) {
 		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
 		const sView = `
-<Input id="selectAll" value="{path: '@$ui5.context.isSelected', targetType: 'any'}"/>
+<Input id="selectAll" value="{@$ui5.context.isSelected}"/>
 <Table id="table" growing="true" growingThreshold="3" items="{/SalesOrderList}">
 	<Text id="id" text="{SalesOrderID}"/>
-	<Input id="selected" value="{path : '@$ui5.context.isSelected', targetType: 'any'}"/>
+	<Input id="selected" value="{@$ui5.context.isSelected}"/>
 </Table>`;
 
 		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=3", {
@@ -73118,7 +73119,7 @@ sap.ui.define([
 			})
 			.expectChange("selectAll")
 			.expectChange("id", ["1", "2", "3"])
-			.expectChange("selected", [undefined, undefined, undefined]);
+			.expectChange("selected", [null, null, null]);
 
 		await this.createView(assert, sView, oModel);
 
@@ -73133,7 +73134,7 @@ sap.ui.define([
 			assert.strictEqual(aEventHandlers.length, 0, "selectionChanged event received");
 		});
 
-		this.expectChange("selected", [true]);
+		this.expectChange("selected", ["Yes"]);
 
 		aEventHandlers.push((oContext0) => {
 			assert.strictEqual(oContext0.isSelected(), true);
@@ -73146,7 +73147,7 @@ sap.ui.define([
 		checkSelected(assert, oContext, true);
 		await this.waitForChanges(assert, "rowContext selected");
 
-		this.expectChange("selected", [false]);
+		this.expectChange("selected", ["No"]);
 
 		aEventHandlers.push((oContext0) => {
 			assert.strictEqual(oContext0.isSelected(), false);
@@ -73164,8 +73165,8 @@ sap.ui.define([
 		oSelectAllInput.setBindingContext(oHeaderContext);
 		const oSelectAllBinding = oSelectAllInput.getBinding("value");
 
-		this.expectChange("selectAll", true)
-			.expectChange("selected", [true, true, true]);
+		this.expectChange("selectAll", "Yes")
+			.expectChange("selected", ["Yes", "Yes", "Yes"]);
 
 		aEventHandlers.push((oContext0) => {
 			assert.strictEqual(oContext0.isSelected(), true);
@@ -73179,7 +73180,7 @@ sap.ui.define([
 		await this.waitForChanges(assert, "headerContext selected via setValue");
 
 		this.expectChange("id", [""])
-			.expectChange("selected", [true]);
+			.expectChange("selected", ["Yes"]);
 
 		// code under test - newly created row context is selected
 		const oInactiveContext = oListBinding.create(undefined, true, false, true);
@@ -73190,8 +73191,8 @@ sap.ui.define([
 
 		await this.waitForChanges(assert, "new row is selected");
 
-		this.expectChange("selectAll", false)
-			.expectChange("selected", [false, false, false]);
+		this.expectChange("selectAll", "No")
+			.expectChange("selected", ["No", "No", "No"]);
 
 		aEventHandlers.push((oContext0) => {
 			assert.strictEqual(oContext0.isSelected(), false);
@@ -73204,8 +73205,8 @@ sap.ui.define([
 		checkSelected(assert, oHeaderContext, false);
 		await this.waitForChanges(assert, "headerContext deselected via setValue");
 
-		this.expectChange("selectAll", true)
-			.expectChange("selected", [true, true, true]);
+		this.expectChange("selectAll", "Yes")
+			.expectChange("selected", ["Yes", "Yes", "Yes"]);
 
 		aEventHandlers.push((oContext0) => {
 			assert.strictEqual(oContext0.isSelected(), true);
@@ -73218,8 +73219,8 @@ sap.ui.define([
 		checkSelected(assert, oHeaderContext, true);
 		await this.waitForChanges(assert, "headerContext selected via setProperty");
 
-		this.expectChange("selectAll", false)
-			.expectChange("selected", [false, false, false]);
+		this.expectChange("selectAll", "No")
+			.expectChange("selected", ["No", "No", "No"]);
 
 		aEventHandlers.push((oContext0) => {
 			assert.strictEqual(oContext0.isSelected(), false);
@@ -73232,8 +73233,8 @@ sap.ui.define([
 		checkSelected(assert, oHeaderContext, false);
 		await this.waitForChanges(assert, "headerContext deselected via setProperty");
 
-		this.expectChange("selectAll", true)
-			.expectChange("selected", [true, true, true]);
+		this.expectChange("selectAll", "Yes")
+			.expectChange("selected", ["Yes", "Yes", "Yes"]);
 
 		aEventHandlers.push((oContext0) => {
 			assert.strictEqual(oContext0.isSelected(), true);
@@ -73253,15 +73254,15 @@ sap.ui.define([
 				]
 			})
 			.expectChange("id", [,,, "3", "4", "5"])
-			.expectChange("selected", [,,, true, true, true]);
+			.expectChange("selected", [,,, "Yes", "Yes", "Yes"]);
 
 		// code under test
 		oTable.requestItems();
 
 		await this.waitForChanges(assert, "contexts created by paging are also selected");
 
-		this.expectChange("selectAll", false)
-			.expectChange("selected", [false, false, false, false, false, false]);
+		this.expectChange("selectAll", "No")
+			.expectChange("selected", ["No", "No", "No", "No", "No", "No"]);
 
 		aEventHandlers.push((oContext0) => {
 			assert.strictEqual(oContext0.isSelected(), false);
@@ -73274,7 +73275,7 @@ sap.ui.define([
 		checkSelected(assert, oHeaderContext, false);
 		await this.waitForChanges(assert, "headerContext deselected via setSelected");
 
-		this.expectChange("selectAll", true); // for setBindingContext
+		this.expectChange("selectAll", "Yes"); // for setBindingContext
 
 		const oNewListBinding = this.oModel.bindList("/SalesOrderList");
 		oNewListBinding.getHeaderContext().setSelected(true);
@@ -73297,6 +73298,7 @@ sap.ui.define([
 	// SNOW: CS20240007001494
 	//
 	// Check for selectionChanged events (JIRA: CPOUI5ODATAV4-2198)
+	// Automatic type detection for client-side annotations (JIRA: CPOUI5ODATAV4-2728)
 	[
 		{method : "filter", value : FilterType.Application, query : "GrossAmount ge 0"},
 		{method : "filter", value : FilterType.Control, query : "GrossAmount ge 0"},
@@ -73311,7 +73313,7 @@ sap.ui.define([
 	<Table id="table" items="{parameters: {$$clearSelectionOnFilter: true}, path:'/SalesOrderList'}">
 		<Text id="id" text="{SalesOrderID}"/>
 		<Text id="grossAmount" text="{GrossAmount}"/>
-		<Input id="selected" value="{path : '@$ui5.context.isSelected', targetType: 'any'}"/>
+		<Input id="selected" value="{@$ui5.context.isSelected}"/>
 	</Table>`;
 
 			this.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID&$skip=0&$top=100", {
@@ -73323,7 +73325,7 @@ sap.ui.define([
 				})
 				.expectChange("id", ["1", "2", "3"])
 				.expectChange("grossAmount", ["1,000.00", "2,000.00", "3,000.00"])
-				.expectChange("selected", [undefined, undefined, undefined]);
+				.expectChange("selected", [null, null, null]);
 
 			await this.createView(assert, sView, oModel);
 
@@ -73338,8 +73340,8 @@ sap.ui.define([
 				assert.strictEqual(aEventHandlers.length, 0, "selectionChanged event received");
 			});
 
-			this.expectChange("selected", [true, true, true]);
-			this.expectChange("selected", [, false]);
+			this.expectChange("selected", ["Yes", "Yes", "Yes"]);
+			this.expectChange("selected", [, "No"]);
 
 			aEventHandlers.push((oContext) => {
 				assert.strictEqual(oContext.isSelected(), true);
@@ -73367,8 +73369,8 @@ sap.ui.define([
 					]
 				})
 				// #filter / #changeParameters resets the selection for "old" contexts
-				.expectChange("selected", [false, /*false*/, false])
-				.expectChange("selected", [undefined, undefined, undefined]);
+				.expectChange("selected", ["No", /*"No"*/, "No"])
+				.expectChange("selected", [null, null, null]);
 
 			aEventHandlers.push((oContext) => {
 				assert.strictEqual(oContext.isSelected(), false);
@@ -73393,10 +73395,10 @@ sap.ui.define([
 
 			await this.waitForChanges(assert, "after (1)");
 
-			this.expectChange("selected", [true, true, true]);
-			this.expectChange("selected", [false]);
-			this.expectChange("selected", [true]);
-			this.expectChange("selected", [false, false, false]); // preparation for test below
+			this.expectChange("selected", ["Yes", "Yes", "Yes"]);
+			this.expectChange("selected", ["No"]);
+			this.expectChange("selected", ["Yes"]);
+			this.expectChange("selected", ["No", "No", "No"]); // preparation for test below
 
 			aEventHandlers.push((oContext) => {
 				assert.strictEqual(oContext.isSelected(), true);
@@ -73430,7 +73432,7 @@ sap.ui.define([
 
 			await this.waitForChanges(assert, "reselect all (2)");
 
-			this.expectChange("selected", [true, , true]);
+			this.expectChange("selected", ["Yes", , "Yes"]);
 
 			aEventHandlers.push((oContext) => {
 				assert.strictEqual(oContext.isSelected(), true);
@@ -73458,8 +73460,8 @@ sap.ui.define([
 						{SalesOrderID : "3", GrossAmount : "3000"}
 					]
 				})
-				.expectChange("selected", [false, , false])
-				.expectChange("selected", [undefined, undefined, undefined]);
+				.expectChange("selected", ["No", , "No"])
+				.expectChange("selected", [null, null, null]);
 
 			// selection state of header context did not change, but the selection state of row contexts
 			// was changed

@@ -2696,18 +2696,17 @@ sap.ui.define([
 
 		this.oPopup.setPosition(my, at, of);
 		this.oPopup.setFollowOf(true);
+
+		const oSpy = this.spy(Popup, "checkDocking");
+		this.oPopup.attachOpened(() => {
+			assert.ok(oSpy.callCount > 0, "checkDocking method is called");
+			done();
+		});
 		this.oPopup.open();
 
 		try {
 			// simulate rerendering and make the of a dangling DOM
 			this.oPopup._oLastPosition.of = document.createElement("input");
-
-			var oSpy = this.spy(Popup, "checkDocking");
-
-			window.setTimeout(function() {
-				assert.ok(oSpy.callCount > 0, "checkDocking method is called");
-				done();
-			}, 300);
 		} catch (e) {
 			assert.ok(false, "Error occurred during check docking");
 			done();

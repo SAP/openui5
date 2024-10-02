@@ -84,12 +84,6 @@
 									<Text text="Amount"/>
 								</Column>
 								<Column width="4em"/>
-								<Column width="4em">
-									<CheckBox id="productsSelectAll"
-										selected="{path : 'headerContext0>@$ui5.context.isSelected',
-											targetType: 'any'}"
-										tooltip="Select All Products"/>
-								</Column>
 							</columns>
 							<ColumnListItem id="highlight">
 								<core:Icon id="productState"
@@ -124,10 +118,6 @@
 									tooltip="{= %{@$ui5.context.isInactive} === 1
 											? 'Reset'
 											: 'Delete Product' }"/>
-								<CheckBox id="productSelection"
-										selected="{path : '@$ui5.context.isSelected',
-										targetType: 'any'}"
-								/>
 							</ColumnListItem>
 						</Table>
 					</f:beginColumnPages>

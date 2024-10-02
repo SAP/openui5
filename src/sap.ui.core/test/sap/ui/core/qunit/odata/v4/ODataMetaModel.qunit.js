@@ -3111,39 +3111,66 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchUI5Type: fetchObject fails", function (assert) {
-		var oError = new Error(),
-			oMetaContext = {},
-			oPromise = SyncPromise.resolve(Promise.reject(oError)),
-			fnReporter = sinon.spy();
+	["bar", "$bar", "@$ui5.node.bar", "@$ui5.node.parent"].forEach((sLastSegment) => {
+		QUnit.test("fetchUI5Type: fetchObject fails for " + sLastSegment, function (assert) {
+			var oError = new Error(),
+				oMetaContext = {},
+				sPath = "/Foo/" + sLastSegment,
+				oPromise = SyncPromise.resolve(Promise.reject(oError)),
+				fnReporter = sinon.spy();
 
-		this.oMetaModelMock.expects("getMetaContext")
-			.withExactArgs("/Foo/bar").returns(oMetaContext);
-		this.oMetaModelMock.expects("fetchObject")
-			.withExactArgs(undefined, sinon.match.same(oMetaContext))
-			.returns(oPromise);
-		this.mock(this.oModel).expects("getReporter").withExactArgs().returns(fnReporter);
-		this.oLogMock.expects("warning")
-			.withExactArgs("No metadata for path '/Foo/bar', using sap.ui.model.odata.type.Raw",
-				undefined, sODataMetaModel);
+			this.oMetaModelMock.expects("getMetaContext")
+				.withExactArgs(sPath).returns(oMetaContext);
+			this.oMetaModelMock.expects("fetchObject")
+				.withExactArgs(undefined, sinon.match.same(oMetaContext))
+				.returns(oPromise);
+			this.mock(this.oModel).expects("getReporter").withExactArgs().returns(fnReporter);
+			this.oLogMock.expects("warning")
+				.withExactArgs("No metadata for path '" + sPath
+					+ "', using sap.ui.model.odata.type.Raw", undefined, sODataMetaModel);
 
-		// code under test
-		return this.oMetaModel.fetchUI5Type("/Foo/bar").then(function (oType) {
-			assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Raw");
-			sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.same(oError));
+			// code under test
+			return this.oMetaModel.fetchUI5Type(sPath).then(function (oType) {
+				assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Raw");
+				sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.same(oError));
+			});
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchUI5Type: $count", function (assert) {
-		var sPath = "/T€AMS/$count",
-			oType;
+	["$count", "@$ui5.node.groupLevelCount", "@$ui5.node.level"].forEach((sInt64Name) => {
+		QUnit.test("fetchUI5Type: " + sInt64Name, function (assert) {
+			var sPath = "/some/meta/path/" + sInt64Name,
+				oType;
 
-		// code under test
-		oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
+			this.oMetaModelMock.expects("getMetaContext").never();
+			this.oMetaModelMock.expects("fetchObject").never();
 
-		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Int64");
-		assert.strictEqual(this.oMetaModel.getUI5Type(sPath), oType, "cached");
+			// code under test
+			oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
+
+			assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Int64");
+			assert.strictEqual(this.oMetaModel.getUI5Type(sPath), oType, "cached");
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		"@$ui5.context.is", "@$ui5.context.isFoo", "@$ui5.node.is", "@$ui5.node.isBar"
+	].forEach((sBooleanName) => {
+		QUnit.test("fetchUI5Type: " + sBooleanName, function (assert) {
+			var sPath = "/some/meta/path/" + sBooleanName,
+				oType;
+
+			this.oMetaModelMock.expects("getMetaContext").never();
+			this.oMetaModelMock.expects("fetchObject").never();
+
+			// code under test
+			oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
+
+			assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Boolean");
+			assert.strictEqual(this.oMetaModel.getUI5Type(sPath), oType, "cached");
+		});
 	});
 
 	//*********************************************************************************************
