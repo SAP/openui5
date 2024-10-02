@@ -988,7 +988,7 @@ sap.ui.define([
 		var parts = [new Blob([])];
 
 		var oFileMetaData = {
-			type: oItem.getParameter('fileType'),
+			type: oItem.getParameter('mimeType'),
 			webkitRelativePath: '',
 			name: oItem.getParameter('fileName')
 		};

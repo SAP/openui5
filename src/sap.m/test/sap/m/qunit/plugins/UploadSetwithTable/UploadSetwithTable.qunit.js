@@ -19,8 +19,9 @@ sap.ui.define([
 	"sap/m/upload/ActionsPlaceholder",
 	"sap/m/OverflowToolbar",
 	"sap/m/upload/UploaderTableItem",
-	"sap/ui/model/type/Boolean"
-], function (Text, MTable, MColumn, ColumnListItem, UploadSetwithTable, MDCTable, MDCColumn, JSONModel, qutils, nextUIUpdate, GridColumn, GridTable, TemplateHelper, ActionsPlaceholder, OverflowToolbar, Uploader) {
+	"sap/ui/model/type/Boolean",
+	"sap/ui/base/Event"
+], function (Text, MTable, MColumn, ColumnListItem, UploadSetwithTable, MDCTable, MDCColumn, JSONModel, qutils, nextUIUpdate, GridColumn, GridTable, TemplateHelper, ActionsPlaceholder, OverflowToolbar, Uploader, Boolean, EventBase) {
 	"use strict";
 
 	const oJSONModel = new JSONModel();
@@ -609,6 +610,62 @@ sap.ui.define([
 		assert.ok(!oGridTable.getDragDropConfig().length, "DragDropConfig is removed from the table");
 
 		oGridTable.destroy();
+	});
+
+	QUnit.test("Plugin to fire fileTypeMismatch event when file type is not supported", async function (assert) {
+
+		// arrange
+		const oTable = await createMDCTable();
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			fileTypes: ["jpg", "png"]
+		});
+
+		oTable.addDependent(oUploadSetwithTablePlugin);
+		await oTable.initialized();
+
+		const oFile = new File([""], "test.txt", { type: "text/plain" });
+
+		const oUploadSpy = this.spy(oUploadSetwithTablePlugin, "fireFileTypeMismatch");
+
+		const oEvent = new EventBase("change", oUploadSetwithTablePlugin, {
+			files: [oFile]
+		});
+
+		// act
+		oUploadSetwithTablePlugin._onFileUploaderChange(oEvent);
+
+		// assert
+		assert.ok(oUploadSpy.calledOnce, "fileTypeMismatch event is fired when file type is not supported");
+
+		oTable.destroy();
+	});
+
+	QUnit.test("Plugin to fire mediaTypeMismatch event when media type is not supported", async function (assert) {
+
+		// arrange
+		const oTable = await createMDCTable();
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			mediaTypes: ["image/*"]
+		});
+
+		oTable.addDependent(oUploadSetwithTablePlugin);
+		await oTable.initialized();
+
+		const oFile = new File([""], "test.txt", { type: "text/plain" });
+
+		const oUploadSpy = this.spy(oUploadSetwithTablePlugin, "fireMediaTypeMismatch");
+
+		const oEvent = new EventBase("change", oUploadSetwithTablePlugin, {
+			files: [oFile]
+		});
+
+		// act
+		oUploadSetwithTablePlugin._onFileUploaderChange(oEvent);
+
+		// assert
+		assert.ok(oUploadSpy.calledOnce, "mediaTypeMismatch event is fired when media type is not supported");
+
+		oTable.destroy();
 	});
 
 
