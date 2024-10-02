@@ -120,7 +120,6 @@ sap.ui.define([
 
 			oFirstFocusElement.setAttribute("id", StaticArea.STATIC_UIAREA_ID + "-firstfe");
 			oFirstFocusElement.setAttribute("tabindex", -1);
-			oFirstFocusElement.setAttribute("aria-hidden", true);
 			oFirstFocusElement.style.fontSize = 0;
 
 			oStaticArea.appendChild(oFirstFocusElement);
