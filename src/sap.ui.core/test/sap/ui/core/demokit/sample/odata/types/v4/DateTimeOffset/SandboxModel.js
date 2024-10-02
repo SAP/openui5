@@ -10,37 +10,37 @@ sap.ui.define([
 ], function (ODataModel, TestUtils, sinon) {
 	"use strict";
 
-	// DO NOT extend the OData V4 model in your productive code - only used to mock requests
-	return ODataModel.extend("sap.ui.core.sample.odata.types.v4.DateTimeOffset.SandboxModel", {
-		constructor : function (mParameters) {
-			var oModel,
-				oSandbox = sinon.sandbox.create();
+	function SandboxModel(mParameters) {
+		var oModel,
+			oSandbox = sinon.sandbox.create();
 
-			TestUtils.setupODataV4Server(oSandbox, {
-					"EdmTypesCollection('1')?$select=ID,Timestamp": {
-						source: "EdmTypesV4.json"
-					}
-				},
-				"sap/ui/core/sample/odata/types/v4/DateTimeOffset/data",
-				"/sap/demo/zui5_edm_types_v4/",
-				/*aRegExpFixture*/[{
-					regExp: /GET .*\/\$metadata/,
-					response: {
-						source: "metadataV4.xml"
-					}
-				}]);
-
-			oModel = new ODataModel(mParameters);
-			oModel.destroy = function () {
-				if (oSandbox) { // may be called twice
-					oSandbox.restore();
-					oSandbox = undefined;
+		TestUtils.setupODataV4Server(oSandbox, {
+				"EdmTypesCollection('1')?$select=ID,Timestamp": {
+					source: "EdmTypesV4.json"
 				}
+			},
+			"sap/ui/core/sample/odata/types/v4/DateTimeOffset/data",
+			"/sap/demo/zui5_edm_types_v4/",
+			/*aRegExpFixture*/[{
+				regExp: /GET .*\/\$metadata/,
+				response: {
+					source: "metadataV4.xml"
+				}
+			}]);
 
-				return ODataModel.prototype.destroy.apply(this);
-			};
+		oModel = new ODataModel(mParameters);
+		oModel.destroy = function () {
+			if (oSandbox) { // may be called twice
+				oSandbox.restore();
+				oSandbox = undefined;
+			}
 
-			return oModel;
-		}
-	});
+			return ODataModel.prototype.destroy.apply(this);
+		};
+
+		return oModel;
+	}
+	SandboxModel.getMetadata = ODataModel.getMetadata;
+
+	return SandboxModel;
 });
