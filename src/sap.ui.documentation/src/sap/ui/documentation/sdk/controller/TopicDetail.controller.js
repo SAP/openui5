@@ -22,7 +22,8 @@ sap.ui.define([
 		"sap/ui/dom/includeStylesheet",
 		"sap/ui/dom/includeScript",
 		"sap/ui/util/openWindow",
-		"sap/ui/documentation/sdk/controller/util/Highlighter"
+		"sap/ui/documentation/sdk/controller/util/Highlighter",
+		"sap/ui/events/KeyCodes"
 	],
 	function (
 		jQuery,
@@ -44,7 +45,8 @@ sap.ui.define([
 		includeStylesheet,
 		includeScript,
 		openWindow,
-		Highlighter
+		Highlighter,
+		KeyCodes
 	) {
 		"use strict";
 
@@ -76,6 +78,8 @@ sap.ui.define([
 
 				this._oConfig = oConfig = this.getConfig();
 				this.oMatchedTopicDataTablesConfig = {};
+				this.fnOnPageKeyDownListener = this._onPageKeyDown.bind(this);
+				document.addEventListener('keydown', this.fnOnPageKeyDownListener);
 
 				if ( !window.hljs ) {
 					//solarized-light
@@ -183,6 +187,7 @@ sap.ui.define([
 
 				ResizeHandler.deregister(this._onResize.bind(this));
 				Device.orientation.detachHandler(this._onOrientationChange, this);
+				document.removeEventListener('keydown', this.fnOnPageKeyDownListener);
 
 				if (this.highlighter) {
 					this.highlighter.destroy();
@@ -214,6 +219,12 @@ sap.ui.define([
 					// collapsible sections
 					oSection = oTarget.parentNode;
 					oSection.classList.toggle("expanded");
+				}
+			},
+
+			_onPageKeyDown: function (oEvent) {
+				if (oEvent.ctrlKey && oEvent.which === KeyCodes.F) {
+					this._openAllCodeSamples();
 				}
 			},
 
@@ -366,6 +377,8 @@ sap.ui.define([
 				}
 
 				if (this.sQueryFromUrl) {
+					this._openAllCodeSamples();
+
 					this._updateHighlighting(this.sQueryFromUrl);
 				}
 			},
@@ -382,6 +395,14 @@ sap.ui.define([
 					});
 					this.highlighter.highlight(sQuery);
 				}
+			},
+
+			_openAllCodeSamples: function () {
+				var aCodeSamples = document.querySelectorAll('.collapsible-icon');
+				aCodeSamples.forEach(function(oCodeSample) {
+					var oSection = oCodeSample.parentNode;
+					oSection.classList.add("expanded");
+				});
 			},
 
 			_enableImageMap: function (imageMap, bIsSideBySide) {
