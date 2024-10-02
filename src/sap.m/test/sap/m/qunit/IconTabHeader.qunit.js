@@ -1088,16 +1088,16 @@ sap.ui.define([
 		assert.strictEqual("+" + iOverflownTabsInEndOverflow, oEndOverflowText, "end overflow has correct tab count: " + iOverflownTabsInEndOverflow);
 	});
 
-	QUnit.test("Start overflow button is visible when fourth item is selected", async function (assert) {
+	QUnit.test("Start overflow button is visible when fifth item is selected", async function (assert) {
 		// Arrange
 		const oSetItemsForStripSpy = this.spy(this.oITH, "_setItemsForStrip");
-		this.oITH.setSelectedKey("3");
+		this.oITH.setSelectedKey("4");
 		await headerThemeApplied(this.oITH);
 		await nextUIUpdate(this.clock);
 
 		assert.ok(oSetItemsForStripSpy.called, "_setItemsForStrip should be called");
 		assert.ok(this.oITH._getStartOverflow().$().hasClass("sapMITHOverflowVisible"), "start overflow button is visible");
-		assert.strictEqual(this.oITH._getStartOverflow().getText(), "+2", "start overflow button text is correct");
+		assert.strictEqual(this.oITH._getStartOverflow().getText(), "+3", "start overflow button text is correct");
 	});
 
 	QUnit.test("End overflow button is visible when the before last item is selected", function (assert) {
