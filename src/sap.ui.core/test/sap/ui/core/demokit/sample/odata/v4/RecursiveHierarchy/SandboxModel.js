@@ -9,38 +9,36 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataModel"
 ], function (SandboxModelHelper, ODataModel) {
 	"use strict";
-	const SandboxModel = ODataModel.extend(
-		"sap.ui.core.sample.odata.v4.RecursiveHierarchy.SandboxModel", {
-			constructor : function (mParameters) {
-				return SandboxModelHelper.adaptModelParametersAndCreateModel(mParameters, {
-					sFilterBase : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
-					mFixture : {},
-					aRegExps : [{
-						regExp : /^DELETE \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\('([^']*)'\)$/,
-						response : {buildResponse : buildDeleteResponse, code : 204}
-					}, {
-						regExp : /^GET [\w\/.]+\$metadata([\w?&\-=]+sap-language=..|)$/,
-						response : {source : "metadata.xml"}
-					}, {
-						regExp : /^GET \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\?(.*)$/,
-						response : {buildResponse : buildGetCollectionResponse}
-					}, {
-						regExp : /^GET \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\('([^']*)'\)\?(.*)$/,
-						response : {buildResponse : buildGetSingleResponse}
-					}, {
-						regExp : /^PATCH \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\('([^']*)'\)$/,
-						response : {buildResponse : buildPatchResponse, code : 204}
-					}, {
-						regExp : /^POST \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES$/,
-						response : {buildResponse : buildPostResponse}
-					}, {
-						regExp : /^POST \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\('([^']*)'\)\/com\.sap\.gateway\.default\.iwbep\.tea_busi\.v0001\.__FAKE__AcChangeNextSibling$/,
-						response : {buildResponse : buildChangeNextSiblingResponse}
-					}],
-					sSourceBase : "sap/ui/core/sample/odata/v4/RecursiveHierarchy/data"
-				});
-			}
+	function SandboxModel(mParameters) {
+		return SandboxModelHelper.adaptModelParametersAndCreateModel(mParameters, {
+			sFilterBase : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
+			mFixture : {},
+			aRegExps : [{
+				regExp : /^DELETE \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\('([^']*)'\)$/,
+				response : {buildResponse : buildDeleteResponse, code : 204}
+			}, {
+				regExp : /^GET [\w\/.]+\$metadata([\w?&\-=]+sap-language=..|)$/,
+				response : {source : "metadata.xml"}
+			}, {
+				regExp : /^GET \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\?(.*)$/,
+				response : {buildResponse : buildGetCollectionResponse}
+			}, {
+				regExp : /^GET \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\('([^']*)'\)\?(.*)$/,
+				response : {buildResponse : buildGetSingleResponse}
+			}, {
+				regExp : /^PATCH \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\('([^']*)'\)$/,
+				response : {buildResponse : buildPatchResponse, code : 204}
+			}, {
+				regExp : /^POST \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES$/,
+				response : {buildResponse : buildPostResponse}
+			}, {
+				regExp : /^POST \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\('([^']*)'\)\/com\.sap\.gateway\.default\.iwbep\.tea_busi\.v0001\.__FAKE__AcChangeNextSibling$/,
+				response : {buildResponse : buildChangeNextSiblingResponse}
+			}],
+			sSourceBase : "sap/ui/core/sample/odata/v4/RecursiveHierarchy/data"
 		});
+	}
+	SandboxModel.getMetadata = ODataModel.getMetadata;
 
 	// IDEAS:
 	// - AGE determines sibling order (ascending), parents are older than their children

@@ -92,9 +92,10 @@ sap.ui.define([
 			sSourceBase : "sap/ui/core/sample/odata/v4/Draft/data"
 	};
 
-	return ODataModel.extend("sap.ui.core.sample.odata.v4.Draft.SandboxModel", {
-		constructor : function (mParameters) {
-			return SandboxModelHelper.adaptModelParametersAndCreateModel(mParameters, oMockData);
-		}
-	});
+	function SandboxModel(mParameters) {
+		return SandboxModelHelper.adaptModelParametersAndCreateModel(mParameters, oMockData);
+	}
+	SandboxModel.getMetadata = ODataModel.getMetadata;
+
+	return SandboxModel;
 });

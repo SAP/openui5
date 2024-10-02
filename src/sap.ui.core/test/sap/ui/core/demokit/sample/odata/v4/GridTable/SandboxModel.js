@@ -120,8 +120,44 @@ sap.ui.define([
 			sSourceBase : "sap/ui/core/sample/odata/v4/GridTable/data"
 		},
 		iRevision = 0,
-		mRevisionOfAgeById = {},
-		SandboxModel;
+		mRevisionOfAgeById = {};
+
+	function SandboxModel(mParameters) {
+		return SandboxModelHelper.adaptModelParametersAndCreateModel(mParameters, oMockData);
+	}
+	SandboxModel.getMetadata = ODataModel.getMetadata;
+
+	SandboxModel.getNodes = function (iSkip, iTop) {
+		return aNodes.slice(iSkip, iSkip + iTop);
+	};
+
+	/**
+	 * Returns a copy of the given nodes, updated to the current revision.
+	 *
+	 * @param {object[]} aNodes0
+	 *  A list of (original or updated) nodes, might include <code>null</code> values
+	 * @returns {object[]}
+	 *   An updated copy
+	 */
+	SandboxModel.update = function (aNodes0) {
+		return aNodes0.map(function (oNode) {
+			if (oNode && (iRevision || mRevisionOfAgeById[oNode.ID])) {
+				oNode = Object.assign({}, oNode);
+				if ("Name" in oNode) {
+					oNode.Name = oNode.Name.split(" ")[0] + " #" + iRevision;
+					if (mRevisionOfAgeById[oNode.ID]) {
+						oNode.Name += "+" + mRevisionOfAgeById[oNode.ID];
+					}
+				}
+				if ("AGE" in oNode) {
+					oNode.AGE
+						= (oNode.AGE % 100) + 100 * (iRevision + mRevisionOfAgeById[oNode.ID]);
+				}
+			}
+
+			return oNode;
+		});
+	};
 
 	function countSkipTop(sRelativeUrlPrefix, aRows) {
 		oMockData.aRegExps.push({
@@ -199,46 +235,6 @@ sap.ui.define([
 			}
 		}
 	});
-
-	SandboxModel = ODataModel.extend(
-		"sap.ui.core.sample.odata.v4.GridTable.SandboxModel", {
-			constructor : function (mParameters) {
-				return SandboxModelHelper.adaptModelParametersAndCreateModel(mParameters,
-					oMockData);
-			}
-		});
-
-	SandboxModel.getNodes = function (iSkip, iTop) {
-		return aNodes.slice(iSkip, iSkip + iTop);
-	};
-
-	/**
-	 * Returns a copy of the given nodes, updated to the current revision.
-	 *
-	 * @param {object[]} aNodes0
-	 *  A list of (original or updated) nodes, might include <code>null</code> values
-	 * @returns {object[]}
-	 *   An updated copy
-	 */
-	SandboxModel.update = function (aNodes0) {
-		return aNodes0.map(function (oNode) {
-			if (oNode && (iRevision || mRevisionOfAgeById[oNode.ID])) {
-				oNode = Object.assign({}, oNode);
-				if ("Name" in oNode) {
-					oNode.Name = oNode.Name.split(" ")[0] + " #" + iRevision;
-					if (mRevisionOfAgeById[oNode.ID]) {
-						oNode.Name += "+" + mRevisionOfAgeById[oNode.ID];
-					}
-				}
-				if ("AGE" in oNode) {
-					oNode.AGE
-						= (oNode.AGE % 100) + 100 * (iRevision + mRevisionOfAgeById[oNode.ID]);
-				}
-			}
-
-			return oNode;
-		});
-	};
 
 	return SandboxModel;
 });

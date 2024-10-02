@@ -157,14 +157,14 @@ sap.ui.define([
 			sSourceBase : "sap/ui/core/sample/odata/v4/MultipleInlineCreationRowsGrid/data"
 		};
 
-	return ODataModel.extend(
-		"sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.SandboxModel", {
-		constructor : function (mParameters) {
-			mParameters = SandboxModelHelper.adaptModelParameters(mParameters,
-				TestUtils.retrieveData("sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid"
-					+ ".updateGroupId")); // updateGroupId controlled by OPA
+	function SandboxModel(mParameters) {
+		mParameters = SandboxModelHelper.adaptModelParameters(mParameters,
+			TestUtils.retrieveData("sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid"
+				+ ".updateGroupId")); // updateGroupId controlled by OPA
 
-			return SandboxModelHelper.createModel(mParameters, oMockData);
-		}
-	});
+		return SandboxModelHelper.createModel(mParameters, oMockData);
+	}
+	SandboxModel.getMetadata = ODataModel.getMetadata;
+
+	return SandboxModel;
 });
