@@ -17,9 +17,10 @@ sap.ui.define([
 		sSourceBase : "sap/ui/core/sample/odata/v4/FlatDataAggregation/data"
 	};
 
-	return ODataModel.extend("sap.ui.core.sample.odata.v4.FlatDataAggregation.SandboxModel", {
-		constructor : function (mParameters) {
-			return SandboxModelHelper.adaptModelParametersAndCreateModel(mParameters, oMockData);
-		}
-	});
+	function SandboxModel(mParameters) {
+		return SandboxModelHelper.adaptModelParametersAndCreateModel(mParameters, oMockData);
+	}
+	SandboxModel.getMetadata = ODataModel.getMetadata;
+
+	return SandboxModel;
 });

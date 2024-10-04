@@ -600,30 +600,31 @@ sap.ui.define([
 			sSourceBase : "sap/ui/core/sample/odata/v4/SalesOrders/data"
 		};
 
-	return ODataModel.extend("sap.ui.core.sample.odata.v4.SalesOrders.SandboxModel", {
-		constructor : function (mParameters) {
-			var mModelParameters = SandboxModelHelper.adaptModelParameters(mParameters,
-					TestUtils.retrieveData("sap.ui.core.sample.odata.v4.SalesOrders"
-						+ ".updateGroupId")), // updateGroupId controlled by OPA
-				sUpdateGroupId = mParameters.updateGroupId !== mModelParameters.updateGroupId
-					? mModelParameters.updateGroupId
-					: undefined;
+	function SandboxModel(mParameters) {
+		var mModelParameters = SandboxModelHelper.adaptModelParameters(mParameters,
+				TestUtils.retrieveData("sap.ui.core.sample.odata.v4.SalesOrders"
+					+ ".updateGroupId")), // updateGroupId controlled by OPA
+			sUpdateGroupId = mParameters.updateGroupId !== mModelParameters.updateGroupId
+				? mModelParameters.updateGroupId
+				: undefined;
 
-			if (sUpdateGroupId) {
-				// "SalesOrderUpdateGroup" should have same submit mode as default update group
-				if (sUpdateGroupId in mModelParameters.groupProperties) {
-					mModelParameters.groupProperties.SalesOrderUpdateGroup
-						= mModelParameters.groupProperties[sUpdateGroupId];
-				} else if (sUpdateGroupId.startsWith("$auto")) {
-					mModelParameters.groupProperties.SalesOrderUpdateGroup.submit
-						= SubmitMode.Auto;
-				} else if (sUpdateGroupId === "$direct") {
-					mModelParameters.groupProperties.SalesOrderUpdateGroup.submit
-						= SubmitMode.Direct;
-				}
+		if (sUpdateGroupId) {
+			// "SalesOrderUpdateGroup" should have same submit mode as default update group
+			if (sUpdateGroupId in mModelParameters.groupProperties) {
+				mModelParameters.groupProperties.SalesOrderUpdateGroup
+					= mModelParameters.groupProperties[sUpdateGroupId];
+			} else if (sUpdateGroupId.startsWith("$auto")) {
+				mModelParameters.groupProperties.SalesOrderUpdateGroup.submit
+					= SubmitMode.Auto;
+			} else if (sUpdateGroupId === "$direct") {
+				mModelParameters.groupProperties.SalesOrderUpdateGroup.submit
+					= SubmitMode.Direct;
 			}
-
-			return SandboxModelHelper.createModel(mModelParameters, oMockData);
 		}
-	});
+
+		return SandboxModelHelper.createModel(mModelParameters, oMockData);
+	}
+	SandboxModel.getMetadata = ODataModel.getMetadata;
+
+	return SandboxModel;
 });

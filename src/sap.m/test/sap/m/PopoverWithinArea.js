@@ -430,7 +430,8 @@ sap.ui.define([
                     new Link("defocus", { text: "Close" })
                 ],
                 justifyContent: mLibrary.FlexJustifyContent.SpaceAround,
-                alignItems: mLibrary.FlexAlignItems.Center
+                alignItems: mLibrary.FlexAlignItems.Center,
+                renderType: mLibrary.FlexRendertype.Bare
             })
         ],
         contentWidth: "20em",

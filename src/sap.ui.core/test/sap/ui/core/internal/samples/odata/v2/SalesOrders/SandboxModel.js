@@ -1039,40 +1039,41 @@ sap.ui.define([
 		return iTimesSaved === iCallCount;
 	}
 
-	return ODataModel.extend("sap.ui.core.internal.samples.odata.v2.SalesOrders.SandboxModel", {
-		constructor : function (mParameters) {
-			var oMockServerFixtures, oModel, sParameter, oSandbox, oUriParameters;
+	function fnSandboxModel(mParameters) {
+		var oMockServerFixtures, oModel, sParameter, oSandbox, oUriParameters;
 
-			if (!TestUtils.isRealOData()) {
-				oMockServerFixtures = getMockServerFixtures();
-				oSandbox = sinon.sandbox.create();
-				TestUtils.setupODataV4Server(oSandbox, oMockServerFixtures.mFixture,
-					"sap/ui/core/internal/samples/odata/v2/SalesOrders/data",
-					"/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/", oMockServerFixtures.aRegExpFixture);
-			} else {
-				mParameters = Object.assign({}, mParameters);
-				oUriParameters = new URLSearchParams(window.location.search);
-				sParameter = OperationMode[oUriParameters.get("operationMode")];
-				if (sParameter) {
-					mParameters.defaultOperationMode = sParameter;
-				}
-				sParameter = CountMode[oUriParameters.get("countMode")];
-				if (sParameter) {
-					mParameters.defaultCountMode = sParameter;
-				}
+		if (!TestUtils.isRealOData()) {
+			oMockServerFixtures = getMockServerFixtures();
+			oSandbox = sinon.sandbox.create();
+			TestUtils.setupODataV4Server(oSandbox, oMockServerFixtures.mFixture,
+				"sap/ui/core/internal/samples/odata/v2/SalesOrders/data",
+				"/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/", oMockServerFixtures.aRegExpFixture);
+		} else {
+			mParameters = Object.assign({}, mParameters);
+			oUriParameters = new URLSearchParams(window.location.search);
+			sParameter = OperationMode[oUriParameters.get("operationMode")];
+			if (sParameter) {
+				mParameters.defaultOperationMode = sParameter;
 			}
-
-			// avoid caching the metadata to reset global counters when the metadata is requested
-			ODataModel.mSharedData = {meta: {}, server: {}, service: {}};
-			oModel = new ODataModel(mParameters);
-			oModel.destroy = function () {
-				if (oSandbox) {
-					oSandbox.restore();
-					oSandbox = undefined;
-				}
-				return ODataModel.prototype.destroy.apply(this, arguments);
-			};
-			return oModel;
+			sParameter = CountMode[oUriParameters.get("countMode")];
+			if (sParameter) {
+				mParameters.defaultCountMode = sParameter;
+			}
 		}
-	});
+
+		// avoid caching the metadata to reset global counters when the metadata is requested
+		ODataModel.mSharedData = {meta: {}, server: {}, service: {}};
+		oModel = new ODataModel(mParameters);
+		oModel.destroy = function () {
+			if (oSandbox) {
+				oSandbox.restore();
+				oSandbox = undefined;
+			}
+			return ODataModel.prototype.destroy.apply(this, arguments);
+		};
+		return oModel;
+	}
+	fnSandboxModel.getMetadata = ODataModel.getMetadata;
+
+	return fnSandboxModel;
 });

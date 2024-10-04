@@ -3871,6 +3871,48 @@ sap.ui.define([
 		 LASTYEARS : "LASTYEARS",
 
 		 /**
+		  * The range will contain the last X minutes including the current one. The count of the minutes is selected from a StepInput.
+		  * @public
+		  */
+		 LASTMINUTESINCLUDED : "LASTMINUTESINCLUDED",
+
+		 /**
+		  * The range will contain the last X hours including the current one. The count of the hours is selected from a StepInput.
+		  * @public
+		  */
+		  LASTHOURSINCLUDED : "LASTHOURSINCLUDED",
+
+		 /**
+		  * The range will contain the last X days including the current one. The count of the days is selected from a StepInput.
+		  * @public
+		  */
+		 LASTDAYSINCLUDED : "LASTDAYSINCLUDED",
+
+		 /**
+		  * The range will contain the last X weeks including the current one. The count of the weeks is selected from a StepInput.
+		  * @public
+		  */
+		 LASTWEEKSINCLUDED : "LASTWEEKSINCLUDED",
+
+		 /**
+		  * The range will contain the last X months including the current one. The count of the months is selected from a StepInput.
+		  * @public
+		  */
+		 LASTMONTHSINCLUDED : "LASTMONTHSINCLUDED",
+
+		 /**
+		  * The range will contain the last X quarters including the current one. The count of the quarters is selected from a StepInput.
+		  * @public
+		  */
+		 LASTQUARTERSINCLUDED : "LASTQUARTERSINCLUDED",
+
+		 /**
+		  * The range will contain the last X years including the current one. The count of the years is selected from a StepInput.
+		  * @public
+		  */
+		 LASTYEARSINCLUDED : "LASTYEARSINCLUDED",
+
+		 /**
 		  * The range will contain the next X minutes. The count of the minutes is selected from a StepInput.
 		  * @public
 		  */
@@ -3911,6 +3953,48 @@ sap.ui.define([
 		  * @public
 		  */
 		 NEXTYEARS : "NEXTYEARS",
+
+		 /**
+		  * The range will contain the next X minutes including the current one. The count of the minutes is selected from a StepInput.
+		  * @public
+		  */
+		 NEXTMINUTESINCLUDED : "NEXTMINUTESINCLUDED",
+
+		 /**
+		  * The range will contain the next X hours including the current one. The count of the hours is selected from a StepInput.
+		  * @public
+		  */
+		 NEXTHOURSINCLUDED : "NEXTHOURSINCLUDED",
+
+		 /**
+		  * The range will contain the next X days including the current one. The count of the days is selected from a StepInput.
+		  * @public
+		  */
+		 NEXTDAYSINCLUDED : "NEXTDAYSINCLUDED",
+
+		 /**
+		  * The range will contain the next X weeks including the current one. The count of the weeks is selected from a StepInput.
+		  * @public
+		  */
+		 NEXTWEEKSINCLUDED : "NEXTWEEKSINCLUDED",
+
+		 /**
+		  * The range will contain the next X months including the current one. The count of the months is selected from a StepInput.
+		  * @public
+		  */
+		 NEXTMONTHSINCLUDED : "NEXTMONTHSINCLUDED",
+
+		 /**
+		  * The range will contain the next X quarters including the current one. The count of the quarters is selected from a StepInput.
+		  * @public
+		  */
+		 NEXTQUARTERSINCLUDED: "NEXTQUARTERSINCLUDED",
+
+		 /**
+		  * The range will contain the next X years including the current one. The count of the years is selected from a StepInput.
+		  * @public
+		  */
+		 NEXTYEARSINCLUDED : "NEXTYEARSINCLUDED",
 
 		 /**
 		  * The range will contain the last X days and the next Y days. The count of the days is selected from a StepInput.

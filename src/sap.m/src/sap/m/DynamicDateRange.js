@@ -127,6 +127,20 @@ sap.ui.define([
 				"NEXTMONTHS": new StandardDynamicDateOption({ key: "NEXTMONTHS", valueTypes: ["int"] }),
 				"NEXTQUARTERS": new StandardDynamicDateOption({ key: "NEXTQUARTERS", valueTypes: ["int"] }),
 				"NEXTYEARS": new StandardDynamicDateOption({ key: "NEXTYEARS", valueTypes: ["int"] }),
+				"LASTMINUTESINCLUDED": new StandardDynamicDateOption({ key: "LASTMINUTESINCLUDED", valueTypes: ["int", "included"] }),
+				"LASTHOURSINCLUDED": new StandardDynamicDateOption({ key: "LASTHOURSINCLUDED", valueTypes: ["int", "included"] }),
+				"LASTDAYSINCLUDED": new StandardDynamicDateOption({ key: "LASTDAYSINCLUDED", valueTypes: ["int", "included"] }),
+				"LASTWEEKSINCLUDED": new StandardDynamicDateOption({ key: "LASTWEEKSINCLUDED", valueTypes: ["int", "included"] }),
+				"LASTMONTHSINCLUDED": new StandardDynamicDateOption({ key: "LASTMONTHSINCLUDED", valueTypes: ["int", "included"] }),
+				"LASTQUARTERSINCLUDED": new StandardDynamicDateOption({ key: "LASTQUARTERSINCLUDED", valueTypes: ["int", "included"] }),
+				"LASTYEARSINCLUDED": new StandardDynamicDateOption({ key: "LASTYEARSINCLUDED", valueTypes: ["int", "included"] }),
+				"NEXTMINUTESINCLUDED": new StandardDynamicDateOption({ key: "NEXTMINUTESINCLUDED", valueTypes: ["int", "included"] }),
+				"NEXTHOURSINCLUDED": new StandardDynamicDateOption({ key: "NEXTHOURSINCLUDED", valueTypes: ["int", "included"] }),
+				"NEXTDAYSINCLUDED": new StandardDynamicDateOption({ key: "NEXTDAYSINCLUDED", valueTypes: ["int", "included"] }),
+				"NEXTWEEKSINCLUDED": new StandardDynamicDateOption({ key: "NEXTWEEKSINCLUDED", valueTypes: ["int", "included"] }),
+				"NEXTMONTHSINCLUDED": new StandardDynamicDateOption({ key: "NEXTMONTHSINCLUDED", valueTypes: ["int", "included"] }),
+				"NEXTQUARTERSINCLUDED": new StandardDynamicDateOption({ key: "NEXTQUARTERSINCLUDED", valueTypes: ["int", "included"] }),
+				"NEXTYEARSINCLUDED": new StandardDynamicDateOption({ key: "NEXTYEARSINCLUDED", valueTypes: ["int", "included"] }),
 				"FROM": new StandardDynamicDateOption({ key: "FROM", valueTypes: ["date"] }),
 				"TO": new StandardDynamicDateOption({ key: "TO", valueTypes: ["date"] }),
 				"FROMDATETIME": new StandardDynamicDateOption({ key: "FROMDATETIME", valueTypes: ["datetime"] }),
@@ -181,6 +195,20 @@ sap.ui.define([
 				"NEXTMONTHS",
 				"NEXTQUARTERS",
 				"NEXTYEARS",
+				"LASTMINUTESINCLUDED",
+				"LASTHOURSINCLUDED",
+				"LASTDAYSINCLUDED",
+				"LASTWEEKSINCLUDED",
+				"LASTMONTHSINCLUDED",
+				"LASTQUARTERSINCLUDED",
+				"LASTYEARSINCLUDED",
+				"NEXTMINUTESINCLUDED",
+				"NEXTHOURSINCLUDED",
+				"NEXTDAYSINCLUDED",
+				"NEXTWEEKSINCLUDED",
+				"NEXTMONTHSINCLUDED",
+				"NEXTQUARTERSINCLUDED",
+				"NEXTYEARSINCLUDED",
 				"TODAYFROMTO",
 				"THISWEEK",
 				"LASTWEEK",
@@ -401,6 +429,13 @@ sap.ui.define([
 							"LASTMONTHS",
 							"LASTQUARTERS",
 							"LASTYEARS",
+							"LASTMINUTESINCLUDED",
+							"LASTHOURSINCLUDED",
+							"LASTDAYSINCLUDED",
+							"LASTWEEKSINCLUDED",
+							"LASTMONTHSINCLUDED",
+							"LASTQUARTERSINCLUDED",
+							"LASTYEARSINCLUDED",
 							"NEXTMINUTES",
 							"NEXTHOURS",
 							"NEXTDAYS",
@@ -408,6 +443,13 @@ sap.ui.define([
 							"NEXTMONTHS",
 							"NEXTQUARTERS",
 							"NEXTYEARS",
+							"NEXTMINUTESINCLUDED",
+							"NEXTHOURSINCLUDED",
+							"NEXTDAYSINCLUDED",
+							"NEXTWEEKSINCLUDED",
+							"NEXTMONTHSINCLUDED",
+							"NEXTQUARTERSINCLUDED",
+							"NEXTYEARSINCLUDED",
 							"TODAYFROMTO",
 							"THISWEEK",
 							"LASTWEEK",
@@ -518,6 +560,8 @@ sap.ui.define([
 		var aDateTimeOperators = aLastDateTimeOperators.concat(aNextDateTimeOperators);
 		var aLastOptions = ["LASTMINUTES", "LASTHOURS", "LASTDAYS", "LASTWEEKS", "LASTMONTHS", "LASTQUARTERS", "LASTYEARS"];
 		var aNextOptions = ["NEXTMINUTES", "NEXTHOURS", "NEXTDAYS", "NEXTWEEKS", "NEXTMONTHS", "NEXTQUARTERS", "NEXTYEARS"];
+		var aLastIncludedOptions = ["LASTMINUTESINCLUDED", "LASTHOURSINCLUDED", "LASTDAYSINCLUDED", "LASTWEEKSINCLUDED", "LASTMONTHSINCLUDED", "LASTQUARTERSINCLUDED", "LASTYEARSINCLUDED"];
+		var aNextIncludedOptions = ["NEXTMINUTESINCLUDED", "NEXTHOURSINCLUDED", "NEXTDAYSINCLUDED", "NEXTWEEKSINCLUDED", "NEXTMONTHSINCLUDED", "NEXTQUARTERSINCLUDED", "NEXTYEARSINCLUDED"];
 
 		DynamicDateRange.prototype.init = function() {
 			var bValueHelpDecorative = !Device.support.touch || Device.system.desktop ? true : false;
@@ -962,8 +1006,8 @@ sap.ui.define([
 
 		DynamicDateRange.prototype._getValueHelpTypeForFormatter = function() {
 			var	sOptionKey = this._oSelectedOption ? this._oSelectedOption.getKey() : '',
-				aLastOptionsSelectedIndex = aLastOptions.indexOf(sOptionKey),
-				aNextOptionsSelectedIndex = aNextOptions.indexOf(sOptionKey),
+				aLastOptionsSelectedIndex = this.lastOptionsIndex(sOptionKey),
+				aNextOptionsSelectedIndex = this.nextOptionsIndex(sOptionKey),
 				aPopupContent = this._oNavContainer ? this._oNavContainer.getPages()[1].getContent()[3] || [] : [],
 				aButtons = aPopupContent.getButtons ? aPopupContent.getButtons() : [],
 				aSuggestionItems = this.getAggregation('_input').getAggregation('suggestionItems'),
@@ -996,12 +1040,12 @@ sap.ui.define([
 			}
 
 			aOptionKeys.forEach(function(sOption) {
-				if (aLastOptions.indexOf(sOption) > -1) {
+				if (this.lastOptionsIndex(sOption) > -1) {
 					aLastActualOrder.push(sOption);
-				} else if (aNextOptions.indexOf(sOption) > -1) {
+				} else if (this.nextOptionsIndex(sOption) > -1) {
 					aNextActualOrder.push(sOption);
 				}
-			});
+			}.bind(this));
 
 			if (oCustomData) {
 				sSuggestionOptionKey = oCustomData.getValue();
@@ -1499,6 +1543,9 @@ sap.ui.define([
 		DynamicDateRange.prototype._updateInternalControls = function(oOption) {
 			var bValidValueHelpUI = oOption.validateValueHelpUI(this);
 			if (bValidValueHelpUI) {
+				if (oOption.alignValueHelpUI) {
+					oOption.alignValueHelpUI(this);
+				}
 				this._updateDatesLabel();
 			}
 			this._setApplyButtonEnabled(bValidValueHelpUI);
@@ -1589,7 +1636,7 @@ sap.ui.define([
 					oOption = aOptions.filter(
 						function (oItem) { return oItem.getOptionKey && oItem.getOptionKey() === aLastOptions[0];}
 					)[0];
-				} else if (aNextOptions.indexOf(oValue.operator) > -1) {
+				} else if (this.nextOptionsIndex(oValue.operator) > -1) {
 					oOption = aOptions.filter(
 						function (oItem) { return oItem.getOptionKey && oItem.getOptionKey() === aNextOptions[0];}
 					)[0];
@@ -1920,6 +1967,28 @@ sap.ui.define([
 			}
 
 			return oNewValue;
+		};
+
+		/**
+		 * Find the index of the last X period option
+		 *
+		 * @param {string} sOption The key of the option.
+		 * @private
+		 * @returns {number} The index of the option.
+		 */
+		DynamicDateRange.prototype.lastOptionsIndex = function(sOption) {
+			return aLastOptions.concat(aLastIncludedOptions).indexOf(sOption) % aLastOptions.length;
+		};
+
+		/**
+		 * Find the index of the next X period option
+		 *
+		 * @param {string} sOption The key of the option.
+		 * @private
+		 * @returns {number} The index of the option.
+		 */
+		DynamicDateRange.prototype.nextOptionsIndex = function(sOption) {
+			return aNextOptions.concat(aNextIncludedOptions).indexOf(sOption) % aNextOptions.length;
 		};
 
 		/**
