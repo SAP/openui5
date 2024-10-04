@@ -6103,5 +6103,9 @@
 	"calendarPreference": [
 		"gregorian",
 		"chinese"
-	]
+	],
+	"sap-calendarWeek": {
+		"narrow": "CW {0}",
+		"wide": "Calendar Week {0}"
+	}
 }

@@ -6232,5 +6232,9 @@
 		"noon": {
 			"_at": "12:00"
 		}
+	},
+	"sap-calendarWeek": {
+		"narrow": "KS {0}",
+		"wide": "Kalendorin\\u0117 savait\\u0117 {0}"
 	}
 }

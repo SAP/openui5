@@ -6234,5 +6234,9 @@
 		"noon": {
 			"_at": "12:00"
 		}
+	},
+	"sap-calendarWeek": {
+		"narrow": "KN {0}",
+		"wide": "Kalendarska nedjelja {0}"
 	}
 }

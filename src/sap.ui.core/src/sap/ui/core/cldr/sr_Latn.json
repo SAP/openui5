@@ -88,7 +88,7 @@
 		"ckb_alt-menu": "centralni kurdski",
 		"ckb_alt-variant": "centralni kurdski",
 		"clc": "čilkotin",
-		"cnr": "црногорски",
+		"cnr": "crnogorski",
 		"co": "korzikanski",
 		"cop": "koptski",
 		"cr": "kri",
@@ -5931,5 +5931,9 @@
 	},
 	"calendarPreference": [
 		"gregorian"
-	]
+	],
+	"sap-calendarWeek": {
+		"narrow": "KN {0}",
+		"wide": "Kalendarska nedelja {0}"
+	}
 }

@@ -5760,5 +5760,9 @@
 			"_before": "04:00",
 			"_from": "20:00"
 		}
+	},
+	"sap-calendarWeek": {
+		"narrow": "CW {0}",
+		"wide": "\\u0397\\u03BC/\\u03B3\\u03B9\\u03B1\\u03BA\\u03AE \\u0392\\u03B4\\u03BF\\u03BC\\u03AC\\u03B4\\u03B1 {0}"
 	}
 }

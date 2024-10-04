@@ -1395,24 +1395,19 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	{aArguments: ["~anyNumber"], sKey: "date.week.calendarweek.wide", sNumber: "~anyNumber", sStyle: "wide"},
-	{aArguments: ["~anyNumber"], sKey: "date.week.calendarweek.narrow", sNumber: "~anyNumber", sStyle: "narrow"},
-	{aArguments: undefined, sKey: "date.week.calendarweek.wide", sNumber: "", sStyle: "wide"},
-	{aArguments: undefined, sKey: "date.week.calendarweek.narrow", sNumber: undefined, sStyle: "narrow"}
-].forEach((oFixture, i) => {
-	QUnit.test("getCalendarWeek: #" + i, function (assert) {
-		const oLocaleData = {
-			oLocale: {
-				toString() { return "~locale"; }
-			}
-		};
-		const oBundle = {getText() {}};
-		this.mock(Lib).expects("getResourceBundleFor").withExactArgs("sap.ui.core", "~locale").returns(oBundle);
-		this.mock(oBundle).expects("getText").withExactArgs(oFixture.sKey, oFixture.aArguments).returns("~result");
+	{sNumber: undefined, sStyle: "narrow", sResult: "~narrow {0}"},
+	{sNumber: "01", sStyle: "narrow", sResult: "~narrow 01"},
+	{sNumber: "42", sStyle: "wide", sResult: "42 ~wide"},
+	{sNumber: undefined, sStyle: "wide", sResult: "{0} ~wide"}
+].forEach(({sNumber, sStyle, sResult}, i) => {
+	QUnit.test("getCalendarWeek: " + i, function (assert) {
+		const oLocaleData = {_get() {}};
+		this.mock(oLocaleData).expects("_get")
+			.withExactArgs("sap-calendarWeek")
+			.returns({narrow: "~narrow {0}", wide: "{0} ~wide"});
 
 		// code under test
-		assert.strictEqual(LocaleData.prototype.getCalendarWeek.call(oLocaleData, oFixture.sStyle, oFixture.sNumber),
-			"~result");
+		assert.strictEqual(LocaleData.prototype.getCalendarWeek.call(oLocaleData, sStyle, sNumber), sResult);
 	});
 });
 

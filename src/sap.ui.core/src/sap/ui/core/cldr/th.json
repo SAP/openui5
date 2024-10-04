@@ -5890,5 +5890,9 @@
 	"calendarPreference": [
 		"buddhist",
 		"gregorian"
-	]
+	],
+	"sap-calendarWeek": {
+		"narrow": "CW {0}",
+		"wide": "\\u0E2A\\u0E31\\u0E1B\\u0E14\\u0E32\\u0E2B\\u0E4C\\u0E15\\u0E32\\u0E21\\u0E1B\\u0E0F\\u0E34\\u0E17\\u0E34\\u0E19 {0}"
+	}
 }

@@ -2007,11 +2007,13 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the pattern for representing the calendar week number in the given style.
+		 * Returns the pattern for representing the calendar week number in the given style. If
+		 * <code>iWeekNumber</code> is given, the weeknumber placeholder will be replaced with it.
 		 *
-		 * @param {"narrow"|"wide"} sStyle the style of the pattern
-		 * @param {int} iWeekNumber the week number
-		 * @return {string} the week number string
+		 * @param {"narrow"|"wide"} sStyle The style of the pattern
+		 * @param {string} [sWeekNumber] The week number, e.g. "01" or "42"
+		 * @returns {string}
+		 *   The calendar week with the week number placeholder or the week number e.g. "Calendar Week {0}" or "CW 01"
 		 *
 		 * @public
 		 * @since 1.32.0
@@ -2019,10 +2021,9 @@ sap.ui.define([
 		getCalendarWeek: function(sStyle, iWeekNumber) {
 			assert(sStyle == "wide" || sStyle == "narrow" , "sStyle must be wide or narrow");
 
-			const oMessageBundle = Lib.getResourceBundleFor("sap.ui.core", this.oLocale.toString());
-			const sKey = "date.week.calendarweek." + sStyle;
+			const sText = this._get("sap-calendarWeek")[sStyle];
 
-			return oMessageBundle.getText(sKey, iWeekNumber ? [iWeekNumber] : undefined);
+			return iWeekNumber ? sText.replace("{0}", iWeekNumber) : sText;
 		},
 
 		/**
