@@ -29,7 +29,6 @@ sap.ui.define([
      * @since 1.122
      *
      * @public
-     * @experimental since 1.122
      * @alias sap.m.ActionTileContent
     */
 

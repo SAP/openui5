@@ -203,7 +203,6 @@ sap.ui.define([
 					/**
 					* Enables grid layout in mobile view.
         			* @since 1.99
-					* @experimental since 1.99
 					*/
 					gridLayout: {type: "boolean", defaultValue: false},
 					/**
