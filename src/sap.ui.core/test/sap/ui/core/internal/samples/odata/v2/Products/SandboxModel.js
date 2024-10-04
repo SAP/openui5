@@ -35,26 +35,27 @@ sap.ui.define([
 			}]
 		};
 
-	return ODataModel.extend("sap.ui.core.internal.samples.odata.v2.Products.SandboxModel", {
-		constructor : function (mParameters) {
-			var oModel, oSandbox;
+	function fnSandboxModel(mParameters) {
+		var oModel, oSandbox;
 
-			if (!TestUtils.isRealOData()) {
-				oSandbox = sinon.sandbox.create();
-				TestUtils.setupODataV4Server(oSandbox, oMockData.mFixture,
-					"sap/ui/core/internal/samples/odata/v2/Products/data",
-					"/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/", oMockData.aRegExpFixture);
-			}
-
-			oModel = new ODataModel(mParameters);
-			oModel.destroy = function () {
-				if (oSandbox) {
-					oSandbox.restore();
-					oSandbox = undefined;
-				}
-				return ODataModel.prototype.destroy.apply(this, arguments);
-			};
-			return oModel;
+		if (!TestUtils.isRealOData()) {
+			oSandbox = sinon.sandbox.create();
+			TestUtils.setupODataV4Server(oSandbox, oMockData.mFixture,
+				"sap/ui/core/internal/samples/odata/v2/Products/data",
+				"/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/", oMockData.aRegExpFixture);
 		}
-	});
+
+		oModel = new ODataModel(mParameters);
+		oModel.destroy = function () {
+			if (oSandbox) {
+				oSandbox.restore();
+				oSandbox = undefined;
+			}
+			return ODataModel.prototype.destroy.apply(this, arguments);
+		};
+		return oModel;
+	}
+	fnSandboxModel.getMetadata = ODataModel.getMetadata;
+
+	return fnSandboxModel;
 });

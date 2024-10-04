@@ -40,10 +40,20 @@ sap.ui.define([
 	 * Status information that can be either text with a value state, or an icon.
 	 *
 	 *
+	 * <h3>Wrapping and Truncation Behavior</h3>
+	 *
+	 * The <code>ObjectStatus</code> usually is a short text. However, if the text is longer it wraps (word by word). Icon and text can be separated.
+	 * <b>Note:</b> It maybe handled differently depending on the individual control use case. For example in <code>sap.ui.table.Table</code> the text of the control is truncated.
+	 *
+	 *
 	 * With 1.63, large design of the control is supported by setting <code>sapMObjectStatusLarge</code> CSS class to the <code>ObjectStatus</code>.
-	 * With 1.110, Inner text wrapping could be enabled by adding <code>sapMObjectStatusLongText</code> CSS class to the <code>ObjectStatus</code>. This class can be added by using оObjectStatus.addStyleClass("sapMObjectStatusLongText");
+	 *
+	 *
+	 * With 1.110, Inner text wrapping could be enabled for longer texts without spaces (such as a serial number that doesn't fit on one line) by adding <code>sapMObjectStatusLongText</code> CSS class to the <code>ObjectStatus</code>. This class can be added by using оObjectStatus.addStyleClass("sapMObjectStatusLongText");
+	 *
+	 *
 	 * With 1.130, bigger line height for texts that require it (like Thai) can be enabled by adding <code>sapUiHigherText</code> CSS class to the <code>ObjectStatus</code>. This class can be added by using оObjectStatus.addStyleClass("sapUiHigherText");
-
+	 *
 	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent

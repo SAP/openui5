@@ -10,35 +10,35 @@ sap.ui.define([
 ], function (ODataModel, TestUtils, sinon) {
 	"use strict";
 
-	// DO NOT extend the OData V2 model in your productive code - only used to mock requests
-	return ODataModel.extend("sap.ui.core.sample.odata.types.v2.Time.SandboxModel", {
-		constructor : function (mParameters) {
-			var oModel,
-				oSandbox = sinon.sandbox.create();
+	function SandboxModel(mParameters) {
+		var oModel,
+			oSandbox = sinon.sandbox.create();
 
-			TestUtils.useFakeServer(oSandbox, "sap/ui/core/sample/odata/types/v2/Time/data", {
-					"/sap/demo/ZUI5_EDM_TYPES/EdmTypesCollection(ID='1')" : {
-						source : "EdmTypesV2.json"
-					}
-				},
-				/*aRegExpFixture*/[{
-					regExp : /GET .*\/\$metadata/,
-					response : {
-						source : "metadataV2.xml"
-					}
-				}], "/sap/demo/ZUI5_EDM_TYPES/");
-
-			oModel = new ODataModel(mParameters);
-			oModel.destroy = function () {
-				if (oSandbox) { // may be called twice
-					oSandbox.restore();
-					oSandbox = undefined;
+		TestUtils.useFakeServer(oSandbox, "sap/ui/core/sample/odata/types/v2/Time/data", {
+				"/sap/demo/ZUI5_EDM_TYPES/EdmTypesCollection(ID='1')" : {
+					source : "EdmTypesV2.json"
 				}
+			},
+			/*aRegExpFixture*/[{
+				regExp : /GET .*\/\$metadata/,
+				response : {
+					source : "metadataV2.xml"
+				}
+			}], "/sap/demo/ZUI5_EDM_TYPES/");
 
-				return ODataModel.prototype.destroy.apply(this);
-			};
+		oModel = new ODataModel(mParameters);
+		oModel.destroy = function () {
+			if (oSandbox) { // may be called twice
+				oSandbox.restore();
+				oSandbox = undefined;
+			}
 
-			return oModel;
-		}
-	});
+			return ODataModel.prototype.destroy.apply(this);
+		};
+
+		return oModel;
+	}
+	SandboxModel.getMetadata = ODataModel.getMetadata;
+
+	return SandboxModel;
 });

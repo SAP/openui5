@@ -575,9 +575,9 @@ sap.ui.define([
 		assert.strictEqual(aControls[1].getMin(), 1, "The step input has correct min value");
 		assert.strictEqual(aControls[1].getMax(), 6000, "The step input has correct max value");
 		assert.ok(aControls[2].isA("sap.m.Label"), "created the correct control");
-		assert.ok(aControls[3].isA("sap.m.RadioButtonGroup"), "created the correct control");
+		assert.ok(aControls[3].isA("sap.m.Select"), "created the correct control");
 
-		assert.strictEqual(aControls[3].getButtons().length, 2, "two radio buttons are created");
+		assert.strictEqual(aControls[3].getItems().length, 2, "two options are created");
 
 		oOptionLast.destroy();
 	});
@@ -603,19 +603,19 @@ sap.ui.define([
 			fnUpdateCallback = this.spy(),
 			aControls,
 			oStepInput,
-			oRadioButton;
+			oSelect;
 
 		aControls = oOptionLast.createValueHelpUI(this.ddr, fnUpdateCallback);
 		oStepInput = aControls[1];
-		oRadioButton = aControls[3];
+		oSelect = aControls[3];
 
 		//simulate input interaction
 		oStepInput.fireChange();
 
 		assert.strictEqual(fnUpdateCallback.callCount, 1, "value update callback was called");
 
-		//simulate radio button interaction
-		oRadioButton.fireSelect();
+		//simulate select button interaction
+		oSelect.fireChange( { selectedItem: {}} );
 
 		assert.strictEqual(fnUpdateCallback.callCount, 2, "value update callback was called");
 

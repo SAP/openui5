@@ -680,42 +680,43 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets Arrows' visibility after page has changed
+	 * Adjusts arrows' visibility
 	 *
 	 * @private
 	 */
 	Carousel.prototype._adjustArrowsVisibility = function() {
-		if (Device.system.desktop && !this._loops() && this.getPages().length > 1) {
-			//update HUD arrow visibility for left- and rightmost pages
-			var $HUDContainer = this.$('hud');
-			var $ArrowPrev = this.$("arrow-previous");
-			var $ArrowNext = this.$("arrow-next");
-			var iFirstDisplayedPageIndex = this._aAllActivePagesIndexes[0];
-			var iLastDisplayedPageIndex = this._aAllActivePagesIndexes[this._aAllActivePagesIndexes.length - 1];
+		if (this._loops() || this.getPages().length <= 1) {
+			return;
+		}
 
-			//clear marker classes first
+		var $HUDContainer = this.$("hud");
+		var $ArrowPrev = this.$("arrow-previous");
+		var $ArrowNext = this.$("arrow-next");
+		var iFirstDisplayedPageIndex = this._aAllActivePagesIndexes[0];
+		var iLastDisplayedPageIndex = this._aAllActivePagesIndexes[this._aAllActivePagesIndexes.length - 1];
+
+		// clear marker classes first
+		if (this.getArrowsPlacement() === CarouselArrowsPlacement.Content) {
+			$HUDContainer.removeClass(Carousel._LEFTMOST_CLASS).removeClass(Carousel._RIGHTMOST_CLASS);
+		} else {
+			$ArrowPrev.removeClass(Carousel._LEFTMOST_CLASS);
+			$ArrowNext.removeClass(Carousel._RIGHTMOST_CLASS);
+		}
+
+		if (iFirstDisplayedPageIndex === 0) {
 			if (this.getArrowsPlacement() === CarouselArrowsPlacement.Content) {
-				$HUDContainer.removeClass(Carousel._LEFTMOST_CLASS).removeClass(Carousel._RIGHTMOST_CLASS);
+				$HUDContainer.addClass(Carousel._LEFTMOST_CLASS);
 			} else {
-				$ArrowPrev.removeClass(Carousel._LEFTMOST_CLASS);
-				$ArrowNext.removeClass(Carousel._RIGHTMOST_CLASS);
+				$ArrowPrev.addClass(Carousel._LEFTMOST_CLASS);
 			}
+		}
 
-			if (iFirstDisplayedPageIndex === 0) {
-				if (this.getArrowsPlacement() === CarouselArrowsPlacement.Content) {
-					$HUDContainer.addClass(Carousel._LEFTMOST_CLASS);
-				} else {
-					$ArrowPrev.addClass(Carousel._LEFTMOST_CLASS);
-				}
-			}
+		if (iLastDisplayedPageIndex === this.getPages().length - 1) {
+			if (this.getArrowsPlacement() === CarouselArrowsPlacement.Content) {
+				$HUDContainer.addClass(Carousel._RIGHTMOST_CLASS);
+			} else {
+				$ArrowNext.addClass(Carousel._RIGHTMOST_CLASS);
 
-			if (iLastDisplayedPageIndex === this.getPages().length - 1) {
-				if (this.getArrowsPlacement() === CarouselArrowsPlacement.Content) {
-					$HUDContainer.addClass(Carousel._RIGHTMOST_CLASS);
-				} else {
-					$ArrowNext.addClass(Carousel._RIGHTMOST_CLASS);
-
-				}
 			}
 		}
 	};
