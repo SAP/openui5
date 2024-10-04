@@ -79,7 +79,6 @@
 		},
 		"routing" : {
 			"config" : {
-				"async" : true,
 				"bypassed" : {
 					"target" : "notFound"
 				},
