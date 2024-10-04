@@ -154,17 +154,14 @@ sap.ui.define([
 				 directory: {type: "boolean", group: "Behavior", defaultValue: false},
 				/**
 				  * Enables CloudFile picker feature to upload files from cloud.
-				  * @experimental Since 1.120
 				  */
 				cloudFilePickerEnabled: { type: "boolean", group: "Behavior", defaultValue: false },
 				/**
 				  * Url of the FileShare OData V4 service supplied for CloudFile picker control.
-				  * @experimental Since 1.120.
 				  */
 				cloudFilePickerServiceUrl: { type: "sap.ui.core.URI", group: "Data", defaultValue: "" },
 				/**
 				  * The text of the CloudFile picker button. The default text is "Upload from cloud" (translated to the respective language).
-				  * @experimental Since 1.120.
 				  */
 				cloudFilePickerButtonText: { type: 'string', defaultValue: "" }
 			},

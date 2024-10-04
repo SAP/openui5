@@ -126,13 +126,11 @@ sap.ui.define([
 				/**
 				 * Backend system context information
 				 * @since 1.92.0
-				 * @experimental Since 1.92
 				 */
 				systemInfo: {type:"string",  group: "Misc", defaultValue:null},
 				/**
 				 * Application information such as ID/Shortcut
 				 * @since 1.92.0
-				 * @experimental Since 1.92
 				 */
 				appShortcut: {type:"string",  group: "Misc", defaultValue:null},
 				/**
@@ -185,18 +183,18 @@ sap.ui.define([
 				/**
 				 * Renders the given link as a button, enabling the option of opening the link in new tab/window functionality.
 				 * Works only in ArticleMode.
-				 * @experimental since 1.96
+				 * @since 1.96
 				 */
 				enableNavigationButton: {type: "boolean", group: "Misc", defaultValue: false},
 				/**
 				 * Disables press event for the tile control.
-				 * @experimental since 1.96
+				 * @since 1.96
 				 */
 				 pressEnabled: {type: "boolean", group: "Misc", defaultValue: true},
 				 /**
 				 * Text for navigate action button. Default Value is "Read More".
 				 * Works only in ArticleMode.
-				 * @experimental since 1.96
+				 * @since 1.96
 				 */
 				navigationButtonText: {type: "string", group: "Misc", defaultValue: null},
 				/**
@@ -217,30 +215,25 @@ sap.ui.define([
 				/**
 				 * Icon of the GenericTile. Only applicable for IconMode.
 				 * @since 1.96
-				 * @experimental Since 1.96
 				*/
 				tileIcon: {type: "sap.ui.core.URI"},
 				/**
 				 * Background color of the GenericTile. Only applicable for IconMode.
 				 * @since 1.96
-				 * @experimental Since 1.96
 				*/
 				backgroundColor: {type: "string", group: "Appearance",defaultValue : DEFAULT_BG_COLOR},
 				/**
 				 * The semantic color of the value.
-				 * @experimental Since 1.95
 				 * @since 1.95
 				 */
 				valueColor: {type: "sap.m.ValueColor", group: "Appearance", defaultValue: "None"},
 				/**
 				 * The load state of the tileIcon.
-				 * @experimental Since 1.103
 				 * @since 1.103
 				 */
 				iconLoaded: {type: "boolean", group: "Misc", defaultValue: true},
 				/**
 				 * The Tile rerenders on theme change.
-				 * @experimental Since 1.106
 				 * @since 1.106
 				 */
 				 renderOnThemeChange: {type: "boolean", group: "Misc", defaultValue: false},
@@ -249,14 +242,12 @@ sap.ui.define([
 				 * When enabled, the badge information is displayed inside a folder icon.
 				 * Display limited only for tile in IconMode in TwoByHalf frameType.
 				 * Characters currently trimmed to 3.
-				 * @experimental Since 1.113
 				 * @since 1.113
 				 */
 				tileBadge: { type: "string", group: "Misc", defaultValue: "" },
 				/**
 				 * Sets the offset for the Drop Area associated with a Generic Tile.
 				 * The offset is applied uniformly to all the tile edges.
-				 * @experimental Since 1.113
 				 * @since 1.118
 				 * @ui5-restricted Used by S/4 MyHome (ux.eng.s4producthomes1)
 				 */
@@ -281,12 +272,12 @@ sap.ui.define([
 				icon: {type: "sap.ui.core.Control", multiple: false, deprecated: true},
 				/**
 				 * Action buttons added in ActionMode.
-				 * @experimental since 1.96
+				 * @since 1.96
 				 */
 				actionButtons: {type: "sap.m.Button", multiple: true, bindable: "bindable"},
 				/**
 				 *  A badge that is attached to the GenericTile.
-				 * @experimental since 1.124
+				 * @since 1.124
 				 */
 				badge: {type: "sap.m.TileInfo",multiple:false,bindable: "bindable"},
 				/**
@@ -303,13 +294,11 @@ sap.ui.define([
 				_invisibleText: {type:"sap.ui.core.InvisibleText",multiple: false, visibility: "hidden"},
 				/**
 				 * The hidden aggregation for the Tile Icon Works only in IconMode.
-				 * @experimental since 1.96
 				 * @private
 				 */
 				_tileIcon: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"},
 				 /**
 				 * The hidden aggregation for the Tile Icon Image. Works only in IconMode.
-				 * @experimental since 1.96
 				 * @private
 				 */
 				_tileIconImage: {type: "sap.m.Image", multiple: false, visibility: "hidden"}
@@ -1242,7 +1231,7 @@ sap.ui.define([
 	 * Provides an interface to the tile's layout information consistent in all modes and content densities.
 	 *
 	 * @returns {object[]} An array containing all of the tile's bounding rectangles
-	 * @experimental since 1.44.1 This method's implementation is subject to change
+	 * @since 1.44.1 This method's implementation is subject to change
 	 * @protected
 	 */
 	GenericTile.prototype.getBoundingRects = function () {
