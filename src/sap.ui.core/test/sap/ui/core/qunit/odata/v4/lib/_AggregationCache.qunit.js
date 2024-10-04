@@ -1938,7 +1938,7 @@ sap.ui.define([
 					assert.strictEqual(oCache.aElements.$count, 42);
 				}
 
-				assert.ok(oHandleOutOfPlaceNodesExpectation.calledAfter(oAddElementsExpectation));
+				sinon.assert.callOrder(oAddElementsExpectation, oHandleOutOfPlaceNodesExpectation);
 			});
 	});
 });
@@ -4390,9 +4390,9 @@ sap.ui.define([
 		oCache.reset(aKeptElementPredicates, sGroupId, mQueryOptions, oNewAggregation);
 
 		if (!sGroupId) {
-			assert.ok(oTreeStateResetExpectation.calledBefore(oGetExpandLevelsExpectation));
+			sinon.assert.callOrder(oTreeStateResetExpectation, oGetExpandLevelsExpectation);
 		}
-		assert.ok(oResetExpectation.calledBefore(oGetDownloadUrlExpectation));
+		sinon.assert.callOrder(oResetExpectation, oGetDownloadUrlExpectation);
 		assert.strictEqual(oCache.oAggregation, oNewAggregation);
 		assert.strictEqual(oCache.oAggregation.$ExpandLevels, "~sExpandLevels~");
 		assert.strictEqual(oCache.sDownloadUrl, "~sDownloadUrl~");
@@ -6119,7 +6119,9 @@ sap.ui.define([
 		return oDeletePromise.then(function () {
 			assert.strictEqual(fnCallback.callCount, 1);
 			assert.deepEqual(fnCallback.args[0], [4, -1]);
-			assert.ok(oRemoveExpectation.calledBefore(oCountExpectation));
+			if (!oFixture.firstLevel) {
+				sinon.assert.callOrder(oRemoveExpectation, oCountExpectation);
+			}
 		});
 	});
 	});
@@ -6366,7 +6368,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("handleOutOfPlaceNodes", function (assert) {
+	QUnit.test("handleOutOfPlaceNodes", function () {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 			hierarchyQualifier : "X",
 			$DrillState : "~DrillState~",
@@ -6499,10 +6501,8 @@ sap.ui.define([
 		oCache.handleOutOfPlaceNodes([oRankResult, oOutOfPlaceNodeResult1, oOutOfPlaceNodeResult2,
 			oOutOfPlaceNodeResult3, oOutOfPlaceNodeResult4]);
 
-		assert.ok(oDeleteOutOfPlace6Expectation
-			.calledBefore(oOutOfPlaceGroupedByParentExpectation));
-		assert.ok(oDeleteOutOfPlace7Expectation
-			.calledBefore(oOutOfPlaceGroupedByParentExpectation));
+		sinon.assert.callOrder(oDeleteOutOfPlace6Expectation, oDeleteOutOfPlace7Expectation,
+			oOutOfPlaceGroupedByParentExpectation);
 	});
 
 	//*********************************************************************************************

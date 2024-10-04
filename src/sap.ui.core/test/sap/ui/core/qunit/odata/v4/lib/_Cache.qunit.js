@@ -2478,8 +2478,7 @@ sap.ui.define([
 					assert.strictEqual(bCanceled, false);
 					assert.strictEqual(oResult, undefined, "no result");
 					if (oUpdateExistingCall.called) {
-						assert.ok(oUpdateExistingCall.calledBefore(oUnlockCall),
-							"cache update happens before unlock");
+						sinon.assert.callOrder(oUpdateExistingCall, oUnlockCall);
 					}
 				}, function (oResult) {
 					assert.notOk(fnError.called);
@@ -2805,8 +2804,7 @@ sap.ui.define([
 					assert.notOk(bCanceled);
 					sinon.assert.calledOnceWithExactly(fnError0, oError1);
 					assert.strictEqual(oResult, undefined, "no result");
-					assert.ok(oUnlockCall.calledBefore(oRequestCall2),
-						"unlock called before second PATCH request");
+					sinon.assert.callOrder(oUnlockCall, oRequestCall2);
 				}, function (oError) {
 					assert.ok(bCanceled);
 					sinon.assert.calledOnceWithExactly(fnError0, oError1);
@@ -4591,8 +4589,8 @@ sap.ui.define([
 				assert.strictEqual(mQueryOptionsForPathCopy.$apply, "apply");
 				assert.strictEqual(mQueryOptionsForPathCopy.$search, undefined);
 				if (!oFixture.inCollection) {
-					assert.ok(oRemoveExpectation.calledAfter(oCopySelectedExpectation));
-					assert.ok(oReplaceExpectation.calledAfter(oRemoveExpectation));
+					sinon.assert.callOrder(oCopySelectedExpectation, oRemoveExpectation,
+						oReplaceExpectation);
 					sinon.assert.calledOnceWithExactly(fnOnRemove, true);
 				}
 				assert.deepEqual(oReadResponse.value[0],
@@ -4896,7 +4894,7 @@ sap.ui.define([
 		return oPromise.then(function (oResult) {
 			assert.notOk(bDataReceivedFails);
 			assert.strictEqual(oResult, undefined);
-			assert.ok(oEventExpectation.calledAfter(oUpdateExpectation));
+			sinon.assert.callOrder(oUpdateExpectation, oEventExpectation);
 		}, function (oError) {
 			assert.ok(bDataReceivedFails);
 			assert.strictEqual(oError, "~oError~");
@@ -5127,7 +5125,7 @@ sap.ui.define([
 
 		return oPromise.then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
-			assert.ok((oUpdateSelectedCall.calledAfter(oVisitResponseCall)));
+			sinon.assert.callOrder(oVisitResponseCall, oUpdateSelectedCall);
 		});
 	});
 
@@ -7762,12 +7760,12 @@ sap.ui.define([
 
 		return oPromise.then(function () {
 			assert.ok(bSuccess);
-			assert.ok(oCheckRangeExpectation.calledBefore(oHandleResponseExpectation));
+			sinon.assert.callOrder(oCheckRangeExpectation, oHandleResponseExpectation);
 		}, function (oRequestError) {
 			assert.notOk(bSuccess);
 			if (bSuccess === false) {
 				assert.strictEqual(oRequestError, oError);
-				assert.ok(oCheckRangeExpectation.calledBefore(oResetExpectation));
+				sinon.assert.callOrder(oCheckRangeExpectation, oResetExpectation);
 			} else {
 				assert.ok(oRequestError.canceled);
 				assert.strictEqual(oRequestError.message, "Request is obsolete");
@@ -7814,7 +7812,7 @@ sap.ui.define([
 		assert.strictEqual(oFillExpectation.args[0][0], oPromise);
 
 		return oPromise.then(function () {
-			assert.ok(oCheckRangeExpectation.calledBefore(oHandleResponseExpectation));
+			sinon.assert.callOrder(oCheckRangeExpectation, oHandleResponseExpectation);
 		});
 	});
 
@@ -8854,7 +8852,7 @@ sap.ui.define([
 				sinon.assert.calledOnceWithExactly(_Helper.removeByPath,
 					sinon.match.same(oCache.mPostRequests), sPathInCache,
 					sinon.match.same(oInitialData));
-				assert.ok(oCancelNestedExpectation.calledBefore(oUpdateNestedExpectation));
+				sinon.assert.callOrder(oCancelNestedExpectation, oUpdateNestedExpectation);
 			});
 		});
 			});
@@ -10476,7 +10474,7 @@ sap.ui.define([
 			+ bBeforeUpdateSelected + ", #beforeRequestSideEffects="
 			+ bBeforeRequestSideEffects;
 
-	QUnit.test(sTitle, async function (assert) {
+	QUnit.test(sTitle, async function () {
 		const oCache = this.createCache("TEAMS('42')/Foo");
 		this.mock(oCache).expects("getTypes").withExactArgs().returns("~mTypeForMetaPath~");
 		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
@@ -10540,8 +10538,8 @@ sap.ui.define([
 		await oCache.requestSideEffects("~oGroupLock~", "~aPaths~", ["('a')", "n/a"],
 			/*bSingle*/true, "~bWithMessages~");
 
-		assert.ok(oExtractMergeableQueryOptionsExpectation
-			.calledBefore(oBuildQueryStringExpectation));
+		sinon.assert.callOrder(oExtractMergeableQueryOptionsExpectation,
+			oBuildQueryStringExpectation);
 	});
 	});
 });
@@ -10816,7 +10814,7 @@ sap.ui.define([
 						}, function (oError) {
 							assert.strictEqual(oError.message,
 								"Expected 1 row(s), but instead saw " + aData.length);
-							assert.ok(oBeforeExpectation.calledBefore(oFilterExpectation));
+							sinon.assert.callOrder(oBeforeExpectation, oFilterExpectation);
 						});
 				});
 		});
@@ -10927,8 +10925,8 @@ sap.ui.define([
 				.then(function () {
 					if (bSkip === false) {
 						assert.deepEqual(oGetRelativePathExpectation.args, [["", "EMPLOYEE"]]);
-						assert.ok(oVisitResponseExpectation
-							.calledBefore(oUpdateSelectedExpectation));
+						sinon.assert.callOrder(oVisitResponseExpectation,
+							oUpdateSelectedExpectation);
 					} else if (bSkip === undefined) {
 						assert.deepEqual(oGetRelativePathExpectation.args, [
 							["", "EMPLOYEE"],
@@ -11203,7 +11201,7 @@ sap.ui.define([
 		assert.deepEqual(oCache.aElements.$byPredicate, {});
 		assert.strictEqual(oCache.iLimit, Infinity);
 		assert.deepEqual(oCache.mChangeListeners, {"" : "~listeners~"});
-		assert.ok(oSetQueryOptionsExpectation.calledBefore(oFireChangeExpectation));
+		sinon.assert.callOrder(oSetQueryOptionsExpectation, oFireChangeExpectation);
 	});
 
 	//*********************************************************************************************
@@ -11352,7 +11350,7 @@ sap.ui.define([
 					bCreateOnDemand, "fnGetOriginalResourcePath")
 				.then(function (oResult) {
 					assert.strictEqual(oResult, oExpectedResult);
-					assert.ok(oRegisterExpectation.calledBefore(oRequestExpectation));
+					sinon.assert.callOrder(oRegisterExpectation, oRequestExpectation);
 				})
 		];
 		oOldPromise = oCache.oPromise;
@@ -11369,7 +11367,7 @@ sap.ui.define([
 				.then(function (oResult) {
 					assert.strictEqual(oResult, "bar");
 					assert.strictEqual(oCache.getValue("foo"), "bar", "data available");
-					assert.ok(oResponseExpectation.calledAfter(oPathExpectation));
+					sinon.assert.callOrder(oPathExpectation, oResponseExpectation);
 				})
 		);
 		assert.strictEqual(oCache.oPromise, oOldPromise);
@@ -11646,10 +11644,10 @@ sap.ui.define([
 
 		return oResult.then(function (oResult0) {
 				assert.strictEqual(oResult0, oReturnValue);
+				sinon.assert.callOrder(oPathExpectation, oResponseExpectation);
 				if (oUnlockExpectation) {
-					assert.ok(oUnlockExpectation.calledAfter(oResponseExpectation));
+					sinon.assert.callOrder(oResponseExpectation, oUnlockExpectation);
 				}
-				assert.ok(oResponseExpectation.calledAfter(oPathExpectation));
 			});
 	});
 		});
@@ -12196,8 +12194,8 @@ sap.ui.define([
 				.then(function () {
 					if (bSkip === false) {
 						assert.deepEqual(oGetRelativePathExpectation.args, [["", "ROOM_ID"]]);
-						assert.ok(oVisitResponseExpectation
-							.calledBefore(oUpdateSelectedExpectation));
+						sinon.assert.callOrder(oVisitResponseExpectation,
+							oUpdateSelectedExpectation);
 					} else if (bSkip === undefined) {
 						assert.deepEqual(oGetRelativePathExpectation.args, [
 							["", "ROOM_ID"],
@@ -12943,7 +12941,7 @@ sap.ui.define([
 		const oSyncPromise = oCache.read(0, 5, 10, oGroupLock, "~fnDataRequested~");
 
 		assert.ok(oSyncPromise.isPending());
-		assert.ok(oUnlockExpectation.calledAfter(oGetUnlockedCopyExpectation));
+		sinon.assert.callOrder(oGetUnlockedCopyExpectation, oUnlockExpectation);
 
 		await oSyncPromise; // no need to check result, it's defined by aElements way above
 	});
@@ -12999,7 +12997,7 @@ sap.ui.define([
 		const oSyncPromise = oCache.read(20, 5, iPrefetchLength, oGroupLock, "~fnDataRequested~");
 
 		assert.ok(oSyncPromise.isPending());
-		assert.ok(oUnlockExpectation.calledAfter(oGetUnlockedCopyExpectation));
+		sinon.assert.callOrder(oGetUnlockedCopyExpectation, oUnlockExpectation);
 
 		await oSyncPromise; // no need to check result, it's defined by aElements way above
 	});
