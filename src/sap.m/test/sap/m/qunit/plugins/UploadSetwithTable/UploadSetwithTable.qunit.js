@@ -668,6 +668,39 @@ sap.ui.define([
 		oTable.destroy();
 	});
 
+	// write test case to check if custom classes added to sap.m.upload.ActionsPlaceholder are passed to the action control.
+	QUnit.test("Plugin to pass custom style classes added to the placeholder control to the action control", async function (assert) {
+
+		// arrange
+
+		const oActionPlaceholder = new ActionsPlaceholder({
+			id: "uploadButton",
+			placeholderFor: "UploadButtonPlaceholder"
+		});
+		oActionPlaceholder.addStyleClass("customStyleClass");
+
+		const oTable = await createMDCTable({
+			actions: [
+				oActionPlaceholder
+			]
+		});
+
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			actions: ["uploadButton"]
+		});
+
+		oTable.addDependent(oUploadSetwithTablePlugin);
+		await oTable.initialized();
+
+		const oTargetAction = oTable.getActions().find((oAction) => oAction?.getAction()?.isA("sap.m.upload.ActionsPlaceholder"));
+		const oActionPlaceholderControl = oTargetAction?.getAction();
+
+		// assert
+		assert.ok(oActionPlaceholderControl?.hasStyleClass("customStyleClass"), "Custom class customClass1 is added to the action control");
+
+		oTable.destroy();
+	});
+
 
 	QUnit.module("Plugin properties & aggregations", {
 		beforeEach: function() {
