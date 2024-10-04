@@ -36,6 +36,14 @@ sap.ui.define([
 
 			oMetaModel.setDefaultBindingMode("OneWay");
 
+			this.oUiModel = new JSONModel({
+				sCode : "",
+				bCodeVisible : false,
+				bRealOData : bRealOData,
+				icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
+				iconTooltip : bRealOData ? "real OData service" : "mock OData service"
+			});
+
 			View.create({
 				async : true,
 				bindingContexts : {
@@ -45,13 +53,7 @@ sap.ui.define([
 					// Note: XML Templating creates bindings to default model only!
 					undefined : oModel,
 					metaModel : oMetaModel,
-					ui : new JSONModel({
-						sCode : "",
-						bCodeVisible : false,
-						bRealOData : bRealOData,
-						icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
-						iconTooltip : bRealOData ? "real OData service" : "mock OData service"
-					})
+					ui : this.oUiModel
 				},
 				preprocessors : {
 					xml : {
@@ -71,6 +73,10 @@ sap.ui.define([
 			});
 
 			return oLayout;
+		},
+
+		exit : function () {
+			this.oUiModel.destroy();
 		}
 	});
 });

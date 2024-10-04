@@ -94,6 +94,11 @@ sap.ui.define([
 			this.byId("Equipments").getBinding("items").refresh();
 		},
 
+		onExit : function () {
+			this.getView().getModel("ui").destroy();
+			return Controller.prototype.onExit.apply(this, arguments);
+		},
+
 		onInit : function () {
 			var oView = this.getView();
 

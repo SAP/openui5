@@ -105,6 +105,14 @@ sap.ui.define([
 				oModel.setAnnotationChangePromise(Promise.resolve(aAnnotationChanges));
 			}
 
+			this.oUIModel = new JSONModel({
+				sCode : "",
+				bCodeVisible : false,
+				bRealOData : bRealOData,
+				icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
+				iconTooltip : bRealOData ? "real OData service" : "mock OData service"
+			});
+
 			View.create({
 				async : true,
 				bindingContexts : {
@@ -114,13 +122,7 @@ sap.ui.define([
 					// Note: XML Templating creates bindings to default model only!
 					undefined : oModel,
 					metaModel : oMetaModel,
-					ui : new JSONModel({
-						sCode : "",
-						bCodeVisible : false,
-						bRealOData : bRealOData,
-						icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
-						iconTooltip : bRealOData ? "real OData service" : "mock OData service"
-					})
+					ui : this.oUIModel
 				},
 				preprocessors : {
 					xml : {
@@ -140,6 +142,10 @@ sap.ui.define([
 			});
 
 			return oLayout;
+		},
+
+		exit : function () {
+			this.oUIModel.destroy();
 		}
 	});
 });

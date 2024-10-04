@@ -67,7 +67,7 @@ sap.ui.define([
 				if (sOrderby) {
 					oRowsBinding.changeParameters({$orderby : sOrderby});
 				}
-				oRowsBinding.resume(); // now that "ui" model is available...
+				oRowsBinding.resume();
 			}, this);
 		},
 

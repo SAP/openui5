@@ -132,7 +132,7 @@ sap.ui.define([
 
 		onExit : function () {
 			this.oUIModel.destroy(); // avoid changes on UI elements if this view destroys
-			Controller.prototype.onExit.apply(this);
+			Controller.prototype.onExit.apply(this, arguments);
 		},
 
 		onFilterSalesOrders : function (oEvent) {

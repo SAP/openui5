@@ -99,30 +99,33 @@ sap.ui.define([
 				Log.debug("ETags: " + JSON.stringify(oModel.getMetaModel().getETags()),
 					"sap.ui.core.sample.odata.v4.SalesOrders.Component");
 
-				this.runAsOwner(function () {
+				this.oUiModel = new JSONModel({
+					bCreateItemPending : false,
+					filterProductID : "",
+					filterValue : "",
+					itemFilter : aItemFilter,
+					bLineItemSelected : false,
+					iMessages : 0,
+					bRealOData : TestUtils.isRealOData(),
+					bSalesOrderDeleted : false,
+					bSalesOrderSelected : false,
+					bScheduleSelected : false,
+					bSelectedSalesOrderItemTransient : false,
+					bSelectedSalesOrderTransient : false,
+					bSortGrossAmountDescending : undefined,
+					bSortSalesOrderIDDescending : undefined,
+					sSortGrossAmountIcon : "",
+					sSortSalesOrderIDIcon : "",
+					aStrictMessages : []
+				});
+
+				this.runAsOwner(() => {
 					View.create({
 						id : "sap.ui.core.sample.odata.v4.SalesOrders.Main",
-						models : {undefined : oModel,
-							ui : new JSONModel({
-								bCreateItemPending : false,
-								filterProductID : "",
-								filterValue : "",
-								itemFilter : aItemFilter,
-								bLineItemSelected : false,
-								iMessages : 0,
-								bRealOData : TestUtils.isRealOData(),
-								bSalesOrderDeleted : false,
-								bSalesOrderSelected : false,
-								bScheduleSelected : false,
-								bSelectedSalesOrderItemTransient : false,
-								bSelectedSalesOrderTransient : false,
-								bSortGrossAmountDescending : undefined,
-								bSortSalesOrderIDDescending : undefined,
-								sSortGrossAmountIcon : "",
-								sSortSalesOrderIDIcon : "",
-								aStrictMessages : []
-							}
-						)},
+						models : {
+							undefined : oModel,
+							ui : this.oUiModel
+						},
 						type : ViewType.XML,
 						viewName : "sap.ui.core.sample.odata.v4.SalesOrders.Main"
 					}).then(function (oView) {
@@ -131,6 +134,10 @@ sap.ui.define([
 				});
 			}.bind(this));
 			return oLayout;
+		},
+
+		exit : function () {
+			this.oUiModel.destroy();
 		}
 	});
 });
