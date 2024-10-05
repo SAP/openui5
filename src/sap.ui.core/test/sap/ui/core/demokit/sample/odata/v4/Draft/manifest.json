@@ -88,8 +88,7 @@
 				"viewType" : "XML",
 				"path" : "sap.ui.core.sample.odata.v4.Draft",
 				"controlId" : "layout",
-				"controlAggregation" : "beginColumnPages",
-				"async" : true
+				"controlAggregation" : "beginColumnPages"
 			},
 			"routes" : [{
 				"layout" : "OneColumn",
