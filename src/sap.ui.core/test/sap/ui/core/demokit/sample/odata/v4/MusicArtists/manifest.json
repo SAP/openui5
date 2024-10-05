@@ -68,7 +68,6 @@
 		},
 		"routing" : {
 			"config" : {
-				"async" : true,
 				"controlAggregation" : "pages",
 				"controlId" : "app",
 				"routerClass" : "sap.m.routing.Router",
