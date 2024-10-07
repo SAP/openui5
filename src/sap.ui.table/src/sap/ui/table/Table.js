@@ -1187,6 +1187,16 @@ sap.ui.define([
 		this.firePaste({data: aData});
 	};
 
+	// Override "focusfail" handler, see sap.ui.core.Element#onfocusfail
+	Table.prototype.onfocusfail = function() {
+		// Disable default handler for DragAndDrop.
+		if (this._bReorderInProcess) {
+			return undefined;
+		} else {
+			return Control.prototype.onfocusfail.apply(this, arguments);
+		}
+	};
+
 	/**
 	 * Theme changed
 	 * @private

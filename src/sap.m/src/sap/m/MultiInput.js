@@ -263,12 +263,24 @@ function(
 		oTokenizer.updateTokens = function () {
 			var oDomRef = that.getDomRef();
 
-			this.destroyTokens();
-			this.updateAggregation("tokens");
-
 			// trigger tokenizer's focus handling only if focus is already applied to the Multi Input
 			if (oDomRef && oDomRef.contains(document.activeElement)) {
 				that.bTokensUpdated = true;
+			}
+
+			this.destroyTokens();
+			this.updateAggregation("tokens");
+
+		};
+
+		// Override "focusfail" handler, see sap.ui.core.Element#onfocusfail
+		oTokenizer.onfocusfail = function() {
+			// Check if tokens are updated via binding and the delete key was pressed
+			if (that.bTokensUpdated && that.bDeletePressed) {
+				// If both conditions are true, do nothing further. The MultiInput will handle the focus for the tokenizer.
+				return undefined;
+			} else {
+				return Element.prototype.onfocusfail.apply(this, arguments);
 			}
 		};
 
