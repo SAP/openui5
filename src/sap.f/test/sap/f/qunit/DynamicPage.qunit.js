@@ -2571,6 +2571,102 @@ function(
 		Core.applyChanges();
 	});
 
+	QUnit.test("DynamicPage _bIsLastToggleUserInitiated flag", function (assert) {
+		// Arrange
+		var oDynamicPage = this.oDynamicPage;
+
+		function expectState(oOptions) {
+			assert.strictEqual(oDynamicPage.getHeaderExpanded(), oOptions.headerExpanded,
+				"the header is " + (oOptions.headerExpanded ? "expanded" : "snapped"));
+			assert.strictEqual(oDynamicPage._bIsLastToggleUserInitiated, oOptions.isLastToggleUserInitiated,
+				"the flag is " + (oOptions.isLastToggleUserInitiated ? "enabled" : "disabled"));
+		}
+
+		function mockScrollToPosition(iScrollTop) {
+			oDynamicPage.$wrapper.scrollTop(iScrollTop);
+			// call the scroll listener synchrounously to speed-up the test
+			oDynamicPage._toggleHeaderOnScroll();
+		}
+
+		function mockUserTitleClick() {
+			oDynamicPage._titleExpandCollapseWhenAllowed(true);
+		}
+
+		Core.applyChanges();
+
+		// Assert initial state
+		expectState({
+			headerExpanded: true,
+			isLastToggleUserInitiated: false
+		});
+
+		// Act: snap by user-interaction
+		mockUserTitleClick();
+		expectState({ // Assert
+			headerExpanded: false,
+			isLastToggleUserInitiated: true
+		});
+
+		// Act: expand programatically
+		oDynamicPage.setHeaderExpanded(true);
+		expectState({ // Assert
+			headerExpanded: true,
+			isLastToggleUserInitiated: false
+		});
+		oDynamicPage._toggleHeaderOnScroll(); // complete the expand; call the listener synchrounously to speed-up the test; required as header is moved to the title-area to expand
+
+		// Act: snap by user scroll
+		mockScrollToPosition(oDynamicPage._getSnappingHeight() + 100);
+		expectState({ // Assert
+			headerExpanded: false,
+			isLastToggleUserInitiated: true
+		});
+		oDynamicPage._toggleHeaderOnScroll(); // complete the snap; call synchrounously the listener to speed-up the test; call required as header is moved to the scrolling area upon user scroll-to-snap
+
+		// Act: expand by user scroll
+		mockScrollToPosition(0);
+		expectState({ // Assert
+			headerExpanded: true,
+			isLastToggleUserInitiated: true
+		});
+
+		// Act: snap programatically
+		oDynamicPage.setHeaderExpanded(false);
+		expectState({ // Assert
+			headerExpanded: false,
+			isLastToggleUserInitiated: false
+		});
+
+		// Act: expand by user-interaction
+		mockUserTitleClick();
+		expectState({ // Assert
+			headerExpanded: true,
+			isLastToggleUserInitiated: true
+		});
+	});
+
+	QUnit.test("DynamicPage _shouldAutoExpandHeaderOnResize() when user cannot scroll to expand", function (assert) {
+		// Arrange
+		var oDynamicPage = this.oDynamicPage;
+		oDynamicPage.setToggleHeaderOnTitleClick(false);
+
+		oDynamicPage._snapHeader(true, true /* userInteraction */);
+		this.stub(oDynamicPage, "_canSnapHeaderOnScroll").returns(false);
+
+		assert.ok(oDynamicPage._shouldAutoExpandHeaderOnResize({ target: oDynamicPage.getDomRef()}), "should auto expand header on resize");
+	});
+
+	QUnit.test("DynamicPage _shouldAutoExpandHeaderOnResize() when user can scroll to expand", function (assert) {
+		// Arrange
+		var oDynamicPage = this.oDynamicPage;
+		oDynamicPage.setToggleHeaderOnTitleClick(false);
+
+		oDynamicPage._snapHeader(true, true /* userInteraction */);
+		this.stub(oDynamicPage, "_canSnapHeaderOnScroll").returns(true);
+
+		assert.notOk(oDynamicPage._shouldAutoExpandHeaderOnResize({ target: oDynamicPage.getDomRef()}), "should auto expand header on resize");
+	});
+
 	/* --------------------------- DynamicPage Toggle Header On Scroll ---------------------------------- */
 	QUnit.module("DynamicPage - Toggle Header On Scroll", {
 		beforeEach: function () {
