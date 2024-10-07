@@ -2536,7 +2536,10 @@ sap.ui.define([
 	 *   Whether this call keeps the result of {@link #getCurrentContexts} untouched; since 1.86.0.
 	 * @returns {sap.ui.model.odata.v4.Context[]}
 	 *   The array of already created contexts with the first entry containing the context for
-	 *   <code>iStart</code>
+	 *   <code>iStart</code>. Since 1.130.0, the array has an additional property
+	 *   <code>bExpectMore</code>, which is <code>true</code> if the response is not complete, a
+	 *   {@link #event:change 'change'} event will follow, and a busy indicator should be switched
+	 *   on.
 	 * @throws {Error}
 	 *   If the binding's root binding is suspended, if <code>iMaximumPrefetchSize</code> and
 	 *   <code>bKeepCurrent</code> are set, if extended change detection is enabled and
@@ -2689,6 +2692,7 @@ sap.ui.define([
 			this.iCurrentEnd = iStart + iLength;
 		}
 		aContexts = this.getContextsInViewOrder(iStart, iLength);
+		aContexts.bExpectMore = this._isExpectingMoreContexts(aContexts, iStart, iLength);
 		if (this.bUseExtendedChangeDetection) {
 			if (this.oDiff && iLength !== this.oDiff.iLength) {
 				throw new Error("Extended change detection protocol violation: Expected "
