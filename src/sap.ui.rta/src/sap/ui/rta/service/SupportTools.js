@@ -3,11 +3,13 @@
  */
 
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/Element",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/write/api/ChangesWriteAPI"
 ], function(
+	Log,
 	Element,
 	JsControlTreeModifier,
 	OverlayRegistry,
@@ -31,12 +33,28 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 
-	var sHighlightClass = "sapUiFlexibilitySupportExtension_Selected";
+	const sHighlightClass = "sapUiFlexibilitySupportExtension_Selected";
+	const sGlobalVariableName = "ui5flex$temp";
+	window[sGlobalVariableName] = {}; // Container for all temp. variables
+	const aTempVariables = window[sGlobalVariableName];
+	let nTempVarCount = 0;
+
+	/**
+	 * Logs a message to the console
+	 * @param {string} sMessage - Message to be logged
+	 * @param {object} oVariable - Variable containing Object to be logged
+	 */
+	function logToConsole(sMessage, oVariable) {
+		console.log(`Flextention: ${sMessage}`); // eslint-disable-line no-console
+		if (oVariable) {
+			console.log(oVariable); // eslint-disable-line no-console
+		}
+	}
 
 	function getPluginChangeHandler(oPlugin, oElementOverlay, oRta) {
-		var oAction = oPlugin.getAction(oElementOverlay);
+		const oAction = oPlugin.getAction(oElementOverlay);
 		if (oAction && oAction.changeType) {
-			var oElement = oAction.changeOnRelevantContainer
+			const oElement = oAction.changeOnRelevantContainer
 				? oElementOverlay.getRelevantContainer()
 				: oElementOverlay.getElement();
 			return ChangesWriteAPI.getChangeHandler({
@@ -66,10 +84,10 @@ sap.ui.define([
 	}
 
 	function getPluginByName(oRta, sPluginName) {
-		var bIsSibling = isPluginForSibling(sPluginName);
-		var oAllPlugins = oRta.getPlugins();
+		const bIsSibling = isPluginForSibling(sPluginName);
+		const oAllPlugins = oRta.getPlugins();
 		return Object.values(oAllPlugins).find(function(oPlugin) {
-			var sName = oPlugin._retrievePluginName
+			const sName = oPlugin._retrievePluginName
 				? oPlugin._retrievePluginName(bIsSibling)
 				: oPlugin.getMetadata().getName();
 			return sName === sPluginName;
@@ -80,10 +98,10 @@ sap.ui.define([
 	 * Removes the highlighting of a non-selectable overlay
 	 */
 	function removeSelectionHighlight() {
-		var aHighlightedDom = document.getElementsByClassName(sHighlightClass);
-		 if (aHighlightedDom.length > 0) {
-			 aHighlightedDom[0].classList.remove(sHighlightClass);
-		 }
+		const aHighlightedDom = document.getElementsByClassName(sHighlightClass);
+		if (aHighlightedDom.length > 0) {
+			aHighlightedDom[0].classList.remove(sHighlightClass);
+		}
 	}
 
 	/*
@@ -100,11 +118,11 @@ sap.ui.define([
 	 * @returns {Promise<object|null>} Resolves with the overlay info
 	 */
 	async function getOverlayInfo(oRta, mPayload) {
-		var oOverlay = Element.getElementById(mPayload.overlayId);
+		const oOverlay = Element.getElementById(mPayload.overlayId);
 		if (!oOverlay) {
 			return null;
 		}
-		var oElement = oOverlay.getElement();
+		const oElement = oOverlay.getElement();
 
 		// remove previous selection highlighting on clicking in the app
 		if (oOverlay.getSelectable()) {
@@ -118,8 +136,8 @@ sap.ui.define([
 		});
 
 		const aPlugins = await Promise.all(aEditableByPlugins.map(async function(sPluginName) {
-			var oInstance = getPluginByName(oRta, sPluginName);
-			var bIsSibling = isPluginForSibling(sPluginName);
+			const oInstance = getPluginByName(oRta, sPluginName);
+			const bIsSibling = isPluginForSibling(sPluginName);
 
 			const oChangeHandler = await getPluginChangeHandler(oInstance, oOverlay, oRta);
 			return {
@@ -137,19 +155,36 @@ sap.ui.define([
 		};
 	}
 
-	/*
+	/**
 	 * Prints the change handler to the console
-	 *
 	 * @param {sap.ui.rta.RuntimeAuthoring} oRta - Instance of the RuntimeAuthoring class
 	 * @param {object} mPayload - Property Bag
-	 * @param {string} mPayload.overlayId
-	 * @param {string} mPayload.pluginName
+	 * @param {string} mPayload.overlayId - ID of the Overlay
+	 * @param {string} mPayload.pluginName - Name of the Plugin
 	 */
-	function printChangeHandler(oRta, mPayload) {
-		var oOverlay = Element.getElementById(mPayload.overlayId);
-		var oPlugin = getPluginByName(oRta, mPayload.pluginName);
-		getPluginChangeHandler(oPlugin, oOverlay, oRta)
-		.then(console.log); // eslint-disable-line no-console
+	async function printChangeHandler(oRta, mPayload) {
+		const oOverlay = Element.getElementById(mPayload.overlayId);
+		const oPlugin = getPluginByName(oRta, mPayload.pluginName);
+		const oChangeHandler = await getPluginChangeHandler(oPlugin, oOverlay, oRta);
+		if (oPlugin) {
+			try {
+				const sPluginId = oPlugin.getId();
+				const sTempVariableName = aTempVariables[sPluginId] && aTempVariables[sPluginId].savedAs || `ui5flex$${nTempVarCount++}`;
+				aTempVariables[sPluginId] = {
+					description: `ChangeHandler for Plugin: ${sPluginId} - ${mPayload.pluginName}`,
+					changeHandler: oChangeHandler,
+					savedAs: sTempVariableName
+				};
+				const oVariable = aTempVariables[sPluginId];
+				window[sTempVariableName] = aTempVariables[sPluginId];
+				const sMessage = `ChangeHandler copied to global var ${sTempVariableName}, all vars are collected in global var ${sGlobalVariableName}`;
+				logToConsole(sMessage, oVariable);
+			} catch (oError) {
+				// Ignore errors
+			}
+		} else {
+			logToConsole("ChangeHandler could not be logged", undefined);
+		}
 	}
 
 	/*
@@ -161,7 +196,7 @@ sap.ui.define([
 	 */
 	function closeContextMenu(oRta) {
 		if (document.getElementsByClassName("sapUiDtContextMenu").length > 0) {
-			var oContextMenu = oRta.getPlugins().contextMenu;
+			const oContextMenu = oRta.getPlugins().contextMenu;
 			oContextMenu.oContextMenuControl.close();
 		}
 	}
@@ -177,7 +212,7 @@ sap.ui.define([
 	 */
 	function changeOverlaySelection(oRta, mPayload) {
 		// set new focus and enforce collecting overlay info data
-		var oOverlay = Element.getElementById(mPayload.overlayId);
+		const oOverlay = Element.getElementById(mPayload.overlayId);
 		oOverlay.focus();
 		window.postMessage({
 			type: "getOverlayInfo",
@@ -192,19 +227,18 @@ sap.ui.define([
 		// close the contextmenu in UI-Adaptation
 		closeContextMenu(oRta);
 
+		// remove current selection(s)
+		const aSelection = oRta.getSelection();
+		aSelection.forEach(function(oSelectedOverlay) {
+			oSelectedOverlay.setSelected(false);
+		});
+
 		// set new selection (selectable overlays)
 		if (oOverlay.getSelectable()) {
 			oOverlay.setSelected(true);
-		} else {
-			// remove current selection(s)
-			var aSelection = oRta.getSelection();
-			aSelection.forEach(function(oSelectedOverlay) {
-				oSelectedOverlay.setSelected(false);
-			});
+		} else if (oOverlay.getDomRef()) {
 			// highlight unselectable overlay
-			if (oOverlay.getDomRef()) {
-				oOverlay.getDomRef().classList.add("sapUiFlexibilitySupportExtension_Selected");
-			}
+			oOverlay.getDomRef().classList.add("sapUiFlexibilitySupportExtension_Selected");
 		}
 	}
 
@@ -216,12 +250,12 @@ sap.ui.define([
 	 */
 	function collectOverlayTableData() {
 		// create an array with all relevant overlays (no aggregation overlays)
-		var aAllOverlays = OverlayRegistry.getOverlays();
-		var aRelevantOverlayList = [];
+		const aAllOverlays = OverlayRegistry.getOverlays();
+		const aRelevantOverlayList = [];
 		aAllOverlays.forEach(function(oOverlay) {
 			if (!oOverlay.isA("sap.ui.dt.AggregationOverlay")) {
-				var sParentId = oOverlay.getParentElementOverlay()?.getId();
-				var aChildren = oOverlay.getChildren().map(function(oChild) {
+				const sParentId = oOverlay.getParentElementOverlay()?.getId();
+				const aChildren = oOverlay.getChildren().map(function(oChild) {
 					return oChild.getId();
 				});
 				aRelevantOverlayList.push({
@@ -238,13 +272,38 @@ sap.ui.define([
 		return aRelevantOverlayList;
 	}
 
+	/**
+	 * Prints the design time metadata to the console
+	 * @param {sap.ui.rta.RuntimeAuthoring} oRta - Instance of the RuntimeAuthoring class
+	 * @param {object} mPayload - Property Bag
+	 * @param {string} mPayload.overlayId - ID of the Overlay
+	 */
 	function printDesignTimeMetadata(oRta, mPayload) {
-		var oOverlay = Element.getElementById(mPayload.overlayId);
-		console.log(oOverlay.getDesignTimeMetadata().getData()); // eslint-disable-line no-console
+		const oOverlay = Element.getElementById(mPayload.overlayId);
+		const oMetaData = oOverlay.getDesignTimeMetadata().getData();
+		if (oMetaData) {
+			try {
+				const sMetaDataId = oOverlay.getDesignTimeMetadata().getId();
+				const sTempVariableName = aTempVariables[sMetaDataId] && aTempVariables[sMetaDataId].savedAs || `ui5flex$${nTempVarCount++}`;
+				aTempVariables[sMetaDataId] = {
+					description: `DesignTimeMetaData: ${sMetaDataId} for Overlay: ${mPayload.overlayId}`,
+					metaData: oMetaData,
+					savedAs: sTempVariableName
+				};
+				const oVariable = aTempVariables[sMetaDataId];
+				window[sTempVariableName] = aTempVariables[sMetaDataId];
+				const sMessage = `MetaData copied to global var ${sTempVariableName}, all vars are collected in global var ${sGlobalVariableName}`;
+				logToConsole(sMessage, oVariable);
+			} catch (oError) {
+				// Ignore errors
+			}
+		} else {
+			logToConsole("DesignTimeMetaData could not be logged", undefined);
+		}
 	}
 
 	// List of supported handlers
-	var mHandlers = {
+	const mHandlers = {
 		getOverlayInfo: {
 			handler: getOverlayInfo,
 			returnMessageType: "overlayInfo",
@@ -314,13 +373,13 @@ sap.ui.define([
 			return;
 		}
 
-		var aHandler = Object.entries(mHandlers).find(function(aEntry) {
+		const aHandler = Object.entries(mHandlers).find(function(aEntry) {
 			return (
 				aEntry[0] === oEvent.data.type
 				&& aEntry[1].id === oEvent.data.id
 			);
 		});
-		var mHandler = aHandler && aHandler[1];
+		const mHandler = aHandler && aHandler[1];
 
 		if (mHandler) {
 			Promise.resolve(mHandler.handler(oRta, oEvent.data.content))
@@ -337,7 +396,7 @@ sap.ui.define([
 	}
 
 	return function(oRta) {
-		var fnOnMessageReceivedBound = onMessageReceived.bind(null, oRta);
+		const fnOnMessageReceivedBound = onMessageReceived.bind(null, oRta);
 		window.addEventListener("message", fnOnMessageReceivedBound);
 		oRta.attachEventOnce("stop", onRtaStop);
 		onRtaStart();
