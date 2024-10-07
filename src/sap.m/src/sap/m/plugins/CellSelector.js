@@ -381,9 +381,8 @@ sap.ui.define([
 	/**
 	 * Determines whether there is a cell selection.
 	 *
-	 * @private
+	 * @public
 	 * @returns {boolean} Whether there is a cell selection
-	 * @ui5-restricted sap.m.plugins.CopyProvider
 	 */
 	CellSelector.prototype.hasSelection = function() {
 		return Boolean(this._bSelecting && this._oSession?.mSource);
