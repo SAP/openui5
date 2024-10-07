@@ -47,7 +47,8 @@ sap.ui.define([
 					visibleEdit: false,
 					selected: true
 				}
-			]
+			],
+			noDataTitle: "I am no data title"
 		};
 	}
 	QUnit.module("UploadSet general functionality", {
@@ -591,20 +592,38 @@ sap.ui.define([
 		assert.equal(oIllustratedMessage.getDomRef().querySelector("svg").getAttribute("aria-labelledby"), this.oUploadSet._oInvisibleText.getId(), "AriaLabelledBy is set correctly.");
 	});
 
-	QUnit.test("No data type illustrated message rendering if set via aggregation", async function (assert) {
+	QUnit.test("No data type illustrated message rendering if set via aggregation with correct title binding", async function (assert) {
+		// Arrange
+		var oViewModel = new JSONModel({ noDataTitle: "I am no data title" });
+		this.oUploadSet.setModel(oViewModel, "viewModel");
+
 		var oIllustratedMessage = new IllustratedMessage({
-			illustrationType: "sapIllus-NoActivities"
+			illustrationType: "sapIllus-NoActivities",
+			title: "{viewModel>/noDataTitle}"  // Bind title to viewModel
 		});
+
 		this.oUploadSet.setAggregation("illustratedMessage", oIllustratedMessage);
 		this.oUploadSet.placeAt("qunit-fixture");
 		await nextUIUpdate();
 
-		//Arrange
+		// Act
 		this.oUploadSet.unbindAggregation("items");
-		//Assert
+
+		// Assert
 		var oIllustratedAggregation = this.oUploadSet.getAggregation("illustratedMessage");
 
-		assert.equal(oIllustratedAggregation.getIllustrationType(), "sapIllus-NoActivities", "illustrated message Aggregation rendered correctly");
+		assert.strictEqual(
+			oIllustratedAggregation.getIllustrationType(),
+			"sapIllus-NoActivities",
+			"Illustrated message aggregation rendered with correct illustration type"
+		);
+
+		assert.strictEqual(
+			oIllustratedAggregation.getTitle(),
+			"I am no data title",
+			"Illustrated message title bound correctly to viewModel"
+		);
+
 		oIllustratedMessage.destroy();
 	});
 

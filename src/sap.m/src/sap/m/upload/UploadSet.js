@@ -1015,33 +1015,61 @@ sap.ui.define([
 
 	UploadSet.prototype._getIllustratedMessage = function () {
 		var oAggregation = this.getAggregation("illustratedMessage");
-		// Invoke rendering of illustrated message only when the list is empty else no scope of illustrated message.
-		if (oAggregation && this._oList && this._oList.getItems && !this._oList.getItems().length) {
-			if (this._getDragIndicator()) {
-				oAggregation.setIllustrationType(IllustratedMessageType.UploadCollection);
-				oAggregation.setTitle(this.getDragDropText());
-				oAggregation.setDescription(this.getUploadEnabled() ? this.getDragDropDescription() : " ");
-				oAggregation.removeAllAdditionalContent();
+
+		// Early return if no aggregation or the list is not empty
+		if (!oAggregation || !this._oList || !this._oList.getItems || this._oList.getItems().length) {
+			return oAggregation;
+		}
+
+		var oIllustratedMessageClone = this._oIllustratedMessageClone;
+
+		// Helper to set the title based on various conditions
+		const setTitle = (title) => {
+			if (title) {
+				oAggregation.setTitle(title);
+			} else if (oIllustratedMessageClone.isBound("title")) {
+				const boundTitle = oAggregation.mBindingInfos.title.binding.getValue();
+				oAggregation.setTitle(boundTitle);
 			} else {
-				oAggregation.setIllustrationType(this._oIllustratedMessageClone.getIllustrationType());
-				if (this._oIllustratedMessageClone.getTitle()) {
-					oAggregation.setTitle(this._oIllustratedMessageClone.getTitle());
-				} else {
-					oAggregation.setTitle(this._oRb.getText("UPLOAD_SET_NO_DATA_TEXT"));
-				}
-				if (this._oIllustratedMessageClone.getDescription()) {
-					oAggregation.setDescription(this.getUploadEnabled() ? this._oIllustratedMessageClone.getDescription() : " ");
-				} else {
-					oAggregation.setDescription(this.getUploadEnabled() ? this._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION") : " ");
-				}
-				if (this._oIllustratedMessageClone.getAdditionalContent().length) {
-					oAggregation.removeAllAdditionalContent();
-					oAggregation.addAdditionalContent(new Button(this._oIllustratedMessageClone.getAdditionalContent()[0].mProperties));
-				} else {
-					oAggregation.addAdditionalContent(this.getUploadButtonForIllustratedMessage());
-				}
+				oAggregation.setTitle(this._oRb.getText("UPLOAD_SET_NO_DATA_TEXT"));
+			}
+		};
+
+		// Helper to set the description based on various conditions
+		const setDescription = (description) => {
+			if (description) {
+				oAggregation.setDescription(this.getUploadEnabled() ? description : " ");
+			} else if (oIllustratedMessageClone.isBound("description")) {
+				const boundDescription = oAggregation.mBindingInfos.description.binding.getValue();
+				oAggregation.setDescription(boundDescription);
+			} else {
+				oAggregation.setDescription(
+					this.getUploadEnabled() ? this._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION") : " "
+				);
+			}
+		};
+
+		// Set the illustrated message based on drag indicator presence
+		if (this._getDragIndicator()) {
+			oAggregation.setIllustrationType(IllustratedMessageType.UploadCollection);
+			oAggregation.setTitle(this.getDragDropText());
+			oAggregation.setDescription(this.getUploadEnabled() ? this.getDragDropDescription() : " ");
+		} else {
+			oAggregation.setIllustrationType(oIllustratedMessageClone.getIllustrationType());
+			setTitle(oIllustratedMessageClone.getTitle());
+			setDescription(oIllustratedMessageClone.getDescription());
+
+			// Handle additional content
+			oAggregation.removeAllAdditionalContent();
+			if (oIllustratedMessageClone.getAdditionalContent().length) {
+				oAggregation.addAdditionalContent(
+					new Button(oIllustratedMessageClone.getAdditionalContent()[0].mProperties)
+				);
+			} else {
+				oAggregation.addAdditionalContent(this.getUploadButtonForIllustratedMessage());
 			}
 		}
+
 		return oAggregation;
 	};
 
