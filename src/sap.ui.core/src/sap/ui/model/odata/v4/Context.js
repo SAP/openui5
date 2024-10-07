@@ -236,8 +236,8 @@ sap.ui.define([
 	 *
 	 * Since 1.105 such a pending deletion is a pending change. It causes
 	 * <code>hasPendingChanges</code> to return <code>true</code> for the context, the binding
-	 * containing it, and the model. The <code>resetChanges</code> method called on the context
-	 * (since 1.109.0), the binding, or the model cancels the deletion and restores the context.
+	 * containing it, and the model. The <code>resetChanges</code> method called on the context, the
+	 * binding, or the model cancels the deletion and restores the context.
 	 *
 	 * If the DELETE request succeeds, the context is destroyed and must not be used anymore. If it
 	 * fails or is canceled, the context is restored, reinserted into the list, and fully functional
@@ -1298,15 +1298,15 @@ sap.ui.define([
 
 	/**
 	 * Tells whether this context is currently selected, but not {@link #delete deleted} on the
-	 * client. Since 1.122.0 the selection state can also be accessed via instance annotation
-	 * "@$ui5.context.isSelected" at the entity. Note that the annotation does not take the deletion
-	 * state into account.
+	 * client. Selection was experimental as of version 1.111.0. Since 1.122.0, the selection state
+	 * can also be accessed via instance annotation "@$ui5.context.isSelected" at the entity. Note
+	 * that the annotation does not take the deletion state into account.
 	 *
 	 * @returns {boolean} Whether this context is currently selected
 	 *
-	 * @experimental As of version 1.111.0
 	 * @public
 	 * @see #setSelected
+	 * @since 1.130.0
 	 */
 	Context.prototype.isSelected = function () {
 		return this.bSelected && !this.oDeletePromise;
@@ -2349,9 +2349,11 @@ sap.ui.define([
 	 * event is fired on the list binding which this context belongs to. While a context is
 	 * currently {@link #delete deleted} on the client, it does not appear as
 	 * {@link #isSelected selected}. If the preconditions of {@link #setKeepAlive} hold, a best
-	 * effort is made to implicitly keep a selected context alive in order to preserve the selection
-	 * state. Once the selection is no longer needed, for example because you perform an operation
-	 * on this context which logically removes it from its list, you need to reset the selection.
+	 * effort is made to implicitly keep a (de-)selected context alive in order to preserve the
+	 * selection state of every exception to the "select all" state defined by the list binding's
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#getHeaderContext header context}. Once the
+	 * selection is no longer needed, for example because you perform an operation on this context
+	 * which logically removes it from its list, you need to reset the selection.
 	 *
 	 * If this context is a header context of a list binding, the new selection state is propagated
 	 * to all row contexts. If the selection state of this header context changes, a
@@ -2363,6 +2365,8 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.ODataListBinding#event:selectionChanged 'selectionChanged'}
 	 * event is nevertheless fired for this header context, but not for the row context.
 	 *
+	 * Selection was experimental as of version 1.111.0.
+	 *
 	 * <b>Note:</b> It is unsafe to keep a reference to a context instance which is not
 	 * {@link #isKeepAlive kept alive}.
 	 *
@@ -2371,9 +2375,9 @@ sap.ui.define([
 	 *   If this context does not belong to a list binding, or if it is {@link #isDeleted deleted}
 	 *   and <code>bSelected</code> is <code>true</code>
 	 *
-	 * @experimental As of version 1.111.0
 	 * @public
 	 * @see #isSelected
+	 * @since 1.130.0
 	 */
 	Context.prototype.setSelected = function (bSelected) {
 		if (this.oBinding && !this.oBinding.getHeaderContext) {
