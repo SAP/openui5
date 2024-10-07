@@ -3760,5 +3760,21 @@
         ]
       }
     ]
+  },
+  "1.38.63": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "02f979b68258a88ef8554e8d7f981d2281caa15d",
+        "type": "FEATURE",
+        "text": " Prepare for upcoming 'unload' event deprecation and deprecate APIs 'onWindowBeforeUnload', 'onWindowUnload' and 'onWindowError' in 'sap/ui/core/Component'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

@@ -6273,5 +6273,21 @@
         ]
       }
     ]
+  },
+  "1.38.63": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "1d4ab97c5b8ccf7dc1b9dc872ba1b096f29a5516",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004628532023"
+          }
+        ]
+      }
+    ]
   }
 }
