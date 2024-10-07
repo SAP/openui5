@@ -1926,7 +1926,7 @@ sap.ui.define([
 			}
 		}
 		for (var i = 0; i < uploadSetItemsToUpdate.length; i++) {
-			uploadSetItemsToUpdate[i].setSelected(selected);
+			uploadSetItemsToUpdate[i].setSelected((selected === undefined) ? true : !!selected);
 		}
 	};
 
