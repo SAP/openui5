@@ -275,59 +275,56 @@ sap.ui.define([
 			this._aGroupLevels = undefined;
 			this._sSearch = undefined;
 		} else {
-			const aAllUnitProperties = [];
-			let aAllAdditionalProperties = [];
-			let aAdditionalProperties;
+			const oAllUnitPropertyPaths = new Set();
+			const oAllAdditionalPropertyPaths = new Set();
+			const aVisiblePropertyKeys = oAggregateInfo.visible.concat(); // Copy
 
 			// Always use keys in the properties to be grouped
 			this._mGroup = this.getPropertyInfos().reduce(function(mGroup, oPropertyInfo) {
 				if (oPropertyInfo.isKey) {
 					mGroup[oPropertyInfo.path] = {};
-					aAdditionalProperties = getAdditionalPropertyPaths(this, oPropertyInfo);
-					if (aAdditionalProperties) {
-						mGroup[oPropertyInfo.path].additionally = aAdditionalProperties;
-						aAllAdditionalProperties.concat(aAdditionalProperties);
-					}
 				}
 				return mGroup;
-			}.bind(this), {});
-
+			}, {});
 			this._mAggregate = {};
 
-			// Find grouped and aggregated properties
-			const aVisible = oAggregateInfo.visible.concat();	// Copy
+			// We need to consider groupLevels as visible properties, to add them in the query properly if they have additional properties
 			if (oAggregateInfo.groupLevels) {
-				// We need to consider groupLevels as visible properties, to add them in the query properly if they have an 'additionally' property
 				oAggregateInfo.groupLevels.forEach(function(sGroupLevelName) {
-					if (aVisible.indexOf(sGroupLevelName) < 0) {
-						aVisible.push(sGroupLevelName);
+					if (aVisiblePropertyKeys.indexOf(sGroupLevelName) < 0) {
+						aVisiblePropertyKeys.push(sGroupLevelName);
 					}
 				});
 			}
-			aVisible.forEach(function(sVisiblePropertyName) {
-				const oPropertyInfo = this.findPropertyInfo(sVisiblePropertyName);
 
-				if (!oPropertyInfo) {
-					return;
+			for (const sPropertyKey of aVisiblePropertyKeys) {
+				const oPropertyInfo = this.findPropertyInfo(sPropertyKey);
+
+				if (!oPropertyInfo || !oPropertyInfo.groupable && !oPropertyInfo.aggregatable) {
+					continue;
 				}
+
+				// Skip text property if its id is visible.
+				const oAdditionalProperty = this.findPropertyInfo(oPropertyInfo.additionalProperties?.[0]);
+				if (oAdditionalProperty?.text === oPropertyInfo.key && aVisiblePropertyKeys.includes(oAdditionalProperty.key)) {
+					continue;
+				}
+
+				// TODO: We cannot really support properties that are both groupable and aggregatable. Either text or unit will be missing. Let
+				// property validation fail in MDC if both technicallyAggregatable and technicallyGroupable are true?
 
 				if (oPropertyInfo.groupable) {
 					this._mGroup[oPropertyInfo.path] = {};
-					aAdditionalProperties = getAdditionalPropertyPaths(this, oPropertyInfo);
-					if (aAdditionalProperties) {
-						this._mGroup[oPropertyInfo.path].additionally = aAdditionalProperties;
-						aAllAdditionalProperties = aAllAdditionalProperties.concat(aAdditionalProperties);
-					}
 				}
 
 				if (oPropertyInfo.aggregatable) {
 					this._mAggregate[oPropertyInfo.path] = {};
 
-					if (oAggregateInfo.grandTotal && (oAggregateInfo.grandTotal.indexOf(sVisiblePropertyName) >= 0)) {
+					if (oAggregateInfo.grandTotal && (oAggregateInfo.grandTotal.indexOf(oPropertyInfo.key) >= 0)) {
 						this._mAggregate[oPropertyInfo.path].grandTotal = true;
 					}
 
-					if (oAggregateInfo.subtotals && (oAggregateInfo.subtotals.indexOf(sVisiblePropertyName) >= 0)) {
+					if (oAggregateInfo.subtotals && (oAggregateInfo.subtotals.indexOf(oPropertyInfo.key) >= 0)) {
 						this._mAggregate[oPropertyInfo.path].subtotals = true;
 					}
 
@@ -335,30 +332,34 @@ sap.ui.define([
 						const oUnitPropertyInfo = this.findPropertyInfo(oPropertyInfo.unit);
 						if (oUnitPropertyInfo) {
 							this._mAggregate[oPropertyInfo.path].unit = oUnitPropertyInfo.path;
-							aAllUnitProperties.push(oUnitPropertyInfo.path);
+							oAllUnitPropertyPaths.add(oUnitPropertyInfo.path);
 						}
 					}
 
-					if (oPropertyInfo.aggregationDetails &&
-						oPropertyInfo.aggregationDetails.customAggregate &&
-						oPropertyInfo.aggregationDetails.customAggregate.contextDefiningProperties) {
-
+					if (!oPropertyInfo.additionalProperties?.length && oPropertyInfo.aggregationDetails?.customAggregate?.contextDefiningProperties) {
 						oPropertyInfo.aggregationDetails.customAggregate.contextDefiningProperties.forEach(function(sContextDefiningPropertyName) {
 							const oDefiningPropertyInfo = this.findPropertyInfo(sContextDefiningPropertyName);
 							if (oDefiningPropertyInfo) {
 								this._mGroup[oDefiningPropertyInfo.path] = {};
-								aAdditionalProperties = getAdditionalPropertyPaths(this, oPropertyInfo);
-								if (aAdditionalProperties) {
-									this._mGroup[oDefiningPropertyInfo.path].additionally = aAdditionalProperties;
-									aAllAdditionalProperties = aAllAdditionalProperties.concat(aAdditionalProperties);
-								}
 							}
 						}.bind(this));
 					}
 				}
-			}.bind(this));
 
-			// Handle group levels
+				// Additional properties
+				const aAdditionalPropertyPaths = getAdditionalPropertyPaths(this, oPropertyInfo);
+
+				if (oPropertyInfo.aggregatable) {
+					for (const sPropertyPath of aAdditionalPropertyPaths) {
+						this._mGroup[sPropertyPath] = {};
+					}
+				} else if (oPropertyInfo.groupable && oPropertyInfo.path in this._mGroup) {
+					this._mGroup[oPropertyInfo.path].additionally = aAdditionalPropertyPaths;
+					aAdditionalPropertyPaths.forEach((sPath) => oAllAdditionalPropertyPaths.add(sPath));
+				}
+			}
+
+			// Visual grouping (expandable groups)
 			this._aGroupLevels = [];
 			if (oAggregateInfo.groupLevels) {
 				oAggregateInfo.groupLevels.forEach(function(sGroupLevelName) {
@@ -373,29 +374,22 @@ sap.ui.define([
 			}
 
 			// Sanitize the aggregation info
-			Object.keys(this._mGroup).forEach(function(sKey) {
+			for (const sPath in this._mGroup) {
 				// A property may not be in both "group" and "aggregate".
-				if (this._mAggregate.hasOwnProperty(sKey)) {
-					if (this._mAggregate[sKey].grandTotal || this._mAggregate[sKey].subtotals) {
-						delete this._mGroup[sKey];
-						return;
+				if (sPath in this._mAggregate) {
+					if (this._mAggregate[sPath].grandTotal || this._mAggregate[sPath].subtotals) {
+						delete this._mGroup[sPath];
+						continue;
 					} else {
-						delete this._mAggregate[sKey];
+						delete this._mAggregate[sPath];
 					}
 				}
 
-				// A property may not be in "group.additionally" if it is in "aggregation.unit".
-				if (this._mGroup[sKey].additionally) {
-					this._mGroup[sKey].additionally = this._mGroup[sKey].additionally.filter(function(sAdditionalProperty) {
-						return aAllUnitProperties.indexOf(sAdditionalProperty) === -1;
-					});
-				}
-
 				// A property may not be in "group" if it is in "group.additionally".
-				if (aAllAdditionalProperties.indexOf(sKey) > -1) {
-					delete this._mGroup[sKey];
+				if (oAllAdditionalPropertyPaths.has(sPath)) {
+					delete this._mGroup[sPath];
 				}
-			}.bind(this));
+			}
 
 			this._sSearch = oAggregateInfo.search;
 		}
@@ -429,14 +423,19 @@ sap.ui.define([
 	};
 
 	function getAdditionalPropertyPaths(oPlugin, oPropertyInfo) {
+		const oPropertyPaths = new Set();
+
 		if (oPropertyInfo.text) {
 			const oTextPropertyInfo = oPlugin.findPropertyInfo(oPropertyInfo.text);
-			if (oTextPropertyInfo) {
-				return [oTextPropertyInfo.path];
-			}
+			oPropertyPaths.add(oTextPropertyInfo.path);
 		}
 
-		return null;
+		for (const sPropertyKey of oPropertyInfo.additionalProperties ?? []) {
+			const oPropertyInfo = oPlugin.findPropertyInfo(sPropertyKey);
+			oPropertyPaths.add(oPropertyInfo.path);
+		}
+
+		return Array.from(oPropertyPaths);
 	}
 
 	function expandRow(oRow) {
