@@ -219,5 +219,15 @@
         "text": " sap.m.Page: Fix failing tests"
       }
     ]
+  },
+  "1.127.2": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "f1c5ac545f5e4ceba206c566da830708f045c554",
+        "type": "FIX",
+        "text": " CellSelector: Return correct row contexts when grouping"
+      }
+    ]
   }
 }
