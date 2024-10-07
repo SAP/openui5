@@ -1,0 +1,12 @@
+{
+  "1.130.0": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "e1ae7f8abcf9700952e329c7fc4ac9edfdaca71d",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: Display only compact indicator fixed"
+      }
+    ]
+  }
+}

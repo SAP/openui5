@@ -1,7 +1,53 @@
 {
   "1.130.0": {
-    "date": "September 2024",
+    "date": "October 2024",
     "notes": [
+      {
+        "id": "2f9c333fa53c9e247be9e55bfc1995024377c6d7",
+        "type": "FIX",
+        "text": " We now ensure that the Upload button has a left margin same as other buttons in the table action row"
+      },
+      {
+        "id": "9ffeb76125d0cba65ffac7b3deedca7d6816f361",
+        "type": "FIX",
+        "text": " We've now updated the filetypeMismatch event to send the correct filetype or mimetype"
+      },
+      {
+        "id": "33eff2e3cb5aa002ffecc0aa3f326416108c0bb7",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: Add new options",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "0713d78e45c9ba39b9ae06eb2400dcc195a7cd98",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: update documentation regarding wrapping behavior of the control"
+      },
+      {
+        "id": "fbb9a1f25c352d2f275f7c90fda823e8aa0af3e4",
+        "type": "FEATURE",
+        "text": " sap.m.Carousel: On touch devices navigation arrows are always visible"
+      },
+      {
+        "id": "e1ae7f8abcf9700952e329c7fc4ac9edfdaca71d",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: Display only compact indicator fixed"
+      },
+      {
+        "id": "bfdb81a1df81815a0d65e0d5f22a002dc8ad1cf6",
+        "type": "FIX",
+        "text": ": sap.m.Label: when the label is with percent width it works"
+      },
+      {
+        "id": "55415910cef6d03e092a68e9d11c3d0ffa49f04a",
+        "type": "FIX",
+        "text": " We now ensure that the UploadEnabled property setting enables or disables drag and drop that is attached from the plugin"
+      },
       {
         "id": "30436b965bf5f2f881441f2ab37572d9f7e1be99",
         "type": "FEATURE",

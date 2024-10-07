@@ -1,0 +1,12 @@
+{
+  "1.130.0": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "69f0e126a7f7ce551fc862f5e0995aaca95f471e",
+        "type": "FIX",
+        "text": " sap.ui.fl: Fixed page freezing after deleting a variant"
+      }
+    ]
+  }
+}

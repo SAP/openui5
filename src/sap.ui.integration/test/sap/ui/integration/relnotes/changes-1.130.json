@@ -1,7 +1,12 @@
 {
   "1.130.0": {
-    "date": "September 2024",
+    "date": "October 2024",
     "notes": [
+      {
+        "id": "9522d7888236098d911762b4752f04cd5f79a4cf",
+        "type": "FEATURE",
+        "text": " Integration Cards: Add fitType property for icons in Header and Object Card content"
+      },
       {
         "id": "6a01cd00274e34b9a1cfa79ebc095c83ad20018b",
         "type": "FEATURE",
