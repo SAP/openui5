@@ -1031,6 +1031,18 @@ sap.ui.define([
 		TableUtils.Grouping.isInTreeMode.restore();
 	});
 
+	QUnit.test("#_getContexts behavior with suspended binding/hidden table and resumed binding/visible table", async function(assert) {
+		oTable.setVisible(false);
+		oTable.getBinding().suspend();
+		await TableQUnitUtils.wait(100);
+		assert.notOk(oTable.getRows()[0].getBindingContext(), "Table has no rows with bindingContext");
+
+		oTable.setVisible(true);
+		oTable.getBinding().resume();
+		await TableQUnitUtils.wait(100);
+		assert.ok(oTable.getRows()[0].getBindingContext(), "Table has rows with bindingContext");
+	});
+
 	QUnit.module("Column operations", {
 		beforeEach: async function() {
 			await createTable();
@@ -4424,6 +4436,13 @@ sap.ui.define([
 		assert.equal(oGetContexts.callCount, 1, "Called with (1, null, undefined, true): Binding#getContexts called once");
 		assert.ok(oGetContexts.calledWithExactly(1, null, undefined, true),
 			"Called with (1, null, undefined, true): Binding#getContexts call arguments");
+
+		oGetContexts.resetHistory();
+		this.oTable.setVisible(false);
+		assert.deepEqual(this.oTable._getContexts(), [], "Called without arguments on invisible and suspended table: Return value");
+		assert.equal(oGetContexts.callCount, 0, "Called without arguments: Binding#getContexts not called");
+		this.oTable.setVisible(true);
+		this.oTable.getBinding().resume();
 
 		this.oTable.unbindRows();
 		assert.deepEqual(this.oTable._getContexts(1, 2, 3), [], "Called without binding: Return value");
