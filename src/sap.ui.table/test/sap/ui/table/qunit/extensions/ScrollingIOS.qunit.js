@@ -191,22 +191,21 @@ sap.ui.define([
 	});
 
 	QUnit.test("touchMove on scroll thumb", function(assert) {
-		assert.ok(true, "This needs to be fixed");
-//		const that = this;
-//		const oTable = this.oTable;
-//
-//		return oTable.qunit.whenRenderingFinished().then(function() {
-//			oTable.qunit.preventFocusOnTouch();
-//			TableQUnitUtils.startTouchScrolling(oTable._getScrollIOSExtension().getVerticalScrollbarThumb());
-//		}).then(that.scrollWithTouch(-400)).then(function() {
-//			that.assertThumbPosition(assert);
-//		}).then(that.scrollWithTouch(-400)).then(function() {
-//			that.assertThumbPosition(assert);
-//		}).then(that.scrollWithTouch(1000)).then(function() {
-//			that.assertThumbPosition(assert);
-//		}).finally(function() {
-//			TableQUnitUtils.endTouchScrolling();
-//		});
+		const that = this;
+		const oTable = this.oTable;
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oTable.qunit.preventFocusOnTouch();
+			TableQUnitUtils.startTouchScrolling(oTable._getScrollIOSExtension().getVerticalScrollbarThumb());
+		}).then(that.scrollWithTouch(-400)).then(function() {
+			that.assertThumbPosition(assert);
+		}).then(that.scrollWithTouch(-400)).then(function() {
+			that.assertThumbPosition(assert);
+		}).then(that.scrollWithTouch(1000)).then(function() {
+			that.assertThumbPosition(assert);
+		}).finally(function() {
+			TableQUnitUtils.endTouchScrolling();
+		});
 	});
 
 	QUnit.test("pointerDown on scrollbar", function(assert) {
