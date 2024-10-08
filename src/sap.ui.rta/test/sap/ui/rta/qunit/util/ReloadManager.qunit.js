@@ -193,6 +193,19 @@ sap.ui.define([
 				},
 				testName: "with hasHigherLayerChanges in Customer layer and switchEndUserAdaptation",
 				expectedMessageKey: "MSG_RELOAD_WITH_PERSONALIZATION_AND_CONTEXT_BASED_ADAPTATION"
+			},
+			{
+				oReloadInfo: {
+					hasHigherLayerChanges: false,
+					layer: Layer.CUSTOMER,
+					isDraftAvailable: false,
+					allContexts: false,
+					initialDraftGotActivated: false,
+					changesNeedReload: false,
+					activeVersionNotSelected: true
+				},
+				testName: "with active version not selected",
+				expectedMessageKey: "MSG_RELOAD_ACTIVATED_DRAFT"
 			}
 		].forEach(function(oTestInfo) {
 			QUnit.test(oTestInfo.testName, function(assert) {

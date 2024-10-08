@@ -163,9 +163,9 @@ sap.ui.define([
 	 * @property {boolean} [isKey=false]
 	 *   Defines whether a property is a key or part of a key in the data.
 	 * @property {string} [unit]
-	 *   Name of the unit property that is related to this property.
+	 *   Key of the unit property that is related to this property.
 	 * @property {string} [text]
-	 *   Name of the text property that is related to this property in a 1:1 relation.
+	 *   Key of the text property that is related to this property in a 1:1 relation.
 	 * @property {object} [exportSettings]
 	 *   Object that contains information about the export settings, see {@link sap.ui.export.Spreadsheet}.
 	 * @property {object} [clipboardSettings]
@@ -191,10 +191,10 @@ sap.ui.define([
 	 * @property {boolean} [visualSettings.widthCalculation.verticalArrangement=false]
 	 *   Whether the referenced properties are arranged vertically
 	 * @property {string[]} [visualSettings.widthCalculation.excludeProperties]
-	 *   A list of invisible referenced property names
+	 *   A list of invisible referenced property keys
 	 * @property {string[]} [propertyInfos]
 	 *   The availability of this property makes the <code>PropertyInfo</code> a complex <code>PropertyInfo</code>. Provides a list of related
-	 *   properties (by name). These related properties must not themselves be complex.
+	 *   properties (by key). These related properties must not themselves be complex.
 	 *
 	 * @public
 	 */
@@ -223,8 +223,7 @@ sap.ui.define([
 	 *   <li><code>aggregatable</code></li>
 	 *   <li><code>extension.technicallyGroupable</code></li>
 	 *   <li><code>extension.technicallyAggregatable</code></li>
-	 *   <li><code>extension.customAggregate</code></li>
-	 *   <li><code>extension.customAggregate.contextDefiningProperties</code></li>
+	 *   <li><code>extension.additionalProperties</code></li>
 	 * </ul>
 	 *
 	 * If the property is complex, the following attributes need to be specified:
@@ -235,20 +234,38 @@ sap.ui.define([
 	 * </ul>
 	 *
 	 * @property {boolean} [aggregatable=false]
-	 *   Defines whether a property is aggregatable.
+	 *   Defines whether the property is aggregatable. A property can only be declared aggregatable if there is a <code>CustomAggregate</code> whose
+	 *   <code>Qualifier</code> is equal to the property key.
 	 * @property {Object} [extension]
 	 *   Contains model-specific information.
 	 * @property {boolean} [extension.technicallyGroupable=false]
 	 *   If <code>groupable</code> is set to <code>false</code> to exclude it from group personalization on the UI, the UI still needs to know that
-	 *   this property is groupable for data requests.
+	 *   this property is groupable for data requests. If this attribute is not set, the default value is the same as the value of
+	 *   <code>groupable</code>.
 	 * @property {boolean} [extension.technicallyAggregatable=false]
 	 *   If <code>aggregatable</code> is set to <code>false</code> to exclude it from aggregate personalization on the UI, the UI still needs to know
-	 *   that this property is aggregatable for data requests.
-	 * @property {Object} [extension.customAggregate]
-	 *   Provide an object, it can be empty, if there is a <code>CustomAggregate</code> whose <code>Qualifier</code> is equal to the name of this
-	 *   property. This enables the option to show totals if <code>aggregatable</code> is <code>true</code>.
-	 * @property {string[]} [extension.customAggregate.contextDefiningProperties]
-	 *   A list of related properties (by name) that are the context-defining properties of the <code>CustomAggregate</code>.
+	 *   that this property is aggregatable for data requests. If this attribute is not set, the default value is the same as the value of
+	 *   <code>aggregatable</code>.
+	 * @property {string[]} [extension.additionalProperties]
+	 *   Properties that are loaded in addition if this property is loaded. These properties must be technically groupable, otherwise they can't be
+	 *   loaded.
+	 *   This attribute is only taken into account if the <code>p13nMode</code> <code>Aggregate</code>, or <code>Group</code> is enabled and the
+	 *   table type is {@link sap.ui.mdc.table.GridTableType GridTable}.
+	 *   These properties are not considered for any other functionality, such as export or column width calculation, for example.
+	 *
+	 *   The following restrictions apply:
+	 *   <ul>
+	 *     <li>If the property is neither technically groupable nor technically aggregatable, it must not reference additional properties.</li>
+	 * 	   <li>If the property is technically groupable but not technically aggregatable, not more than one additional property must be referenced.
+	 *         The additional property must be the property that is referencing this property in its <code>text</code> attribute (bidirectional
+	 *         reference).
+	 *         Regardless of the <code>groupable</code> attribute, the property cannot be grouped via the UI. This might change. If this change is not
+	 *         desired, set <code>groupable</code> to <code>false</code> explicitly.
+	 * 	       Do not group this property via API, for example, with the <code>StateUtil</code>.</li>
+	 *     <li>If the property is both technically groupable and technically aggregatable, it must reference only properties that are related to the
+	 * 	       <code>CustomAggregate</code>.</li>
+	 *     <li>Properties that are referenced via <code>text</code> or <code>unit</code> must not be repeated here.</li>
+	 *   </ul>
 	 *
 	 * @public
 	 */

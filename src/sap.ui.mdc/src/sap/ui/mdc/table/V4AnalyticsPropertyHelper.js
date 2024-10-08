@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-	"./PropertyHelper"
+	"./PropertyHelper",
+	"../util/PropertyHelper"
 ], (
-	TablePropertyHelper
+	TablePropertyHelper,
+	PropertyHelperBase
 ) => {
 	"use strict";
 
@@ -51,9 +53,10 @@ sap.ui.define([
 				},
 				customAggregate: {
 					type: {
-						contextDefiningProperties: { type: "PropertyReference[]" }
+						contextDefiningProperties: {type: "PropertyReference[]"}
 					}
-				}
+				},
+				additionalProperties: {type: "PropertyReference[]"}
 			});
 		}
 	});
@@ -64,11 +67,45 @@ sap.ui.define([
 	PropertyHelper.prototype.validateProperty = function(oProperty, aProperties, aPreviousProperties) {
 		TablePropertyHelper.prototype.validateProperty.apply(this, arguments);
 
-		if (oProperty.groupable && oProperty.extension && oProperty.extension.technicallyGroupable === false) {
-			throw new Error("Invalid property definition: A property cannot be groupable when not technically groupable.\n" + oProperty);
+		// TODO: Make method in base class to throw standardized "Invalid property definition" error reusable.
+
+		if (oProperty.groupable && oProperty.extension?.technicallyGroupable === false) {
+			throw new Error("Invalid property definition: A property cannot be groupable when not technically groupable.");
 		}
-		if (oProperty.aggregatable && oProperty.extension && oProperty.extension.technicallyAggregatable === false) {
-			throw new Error("Invalid property definition: A property cannot be aggregatable when not technically aggregatable.\n" + oProperty);
+		if (oProperty.aggregatable && oProperty.extension?.technicallyAggregatable === false) {
+			throw new Error("Invalid property definition: A property cannot be aggregatable when not technically aggregatable.");
+		}
+
+		const bGroupable = (oProperty.groupable || oProperty.extension?.technicallyGroupable) === true;
+		const bAggregatable = (oProperty.aggregatable || oProperty.extension?.technicallyAggregatable) === true;
+		const aAdditionalProperties = oProperty.extension?.additionalProperties ?? [];
+
+		if (!bGroupable && !bAggregatable && aAdditionalProperties.length > 0) {
+			throw new Error("Invalid property definition: 'additionalProperties' may not contain property keys if the property is neither"
+				+ " technically groupable nor technically aggregatable.");
+		}
+
+		if (bGroupable && !bAggregatable) {
+			if (aAdditionalProperties.length > 1) {
+				throw new Error("Invalid property definition: 'additionalProperties' contains more than one property.");
+			}
+			if (aAdditionalProperties.length === 1) {
+				if (!aProperties.some((oOtherProperty) => {
+					return oProperty.extension.additionalProperties[0] === oOtherProperty.key && oOtherProperty.text === oProperty.key;
+				})) {
+					throw new Error("Invalid property definition: The property in 'additionalProperties' does not reference this property in"
+						+ " 'text'.");
+				}
+			}
+		}
+
+		if (aAdditionalProperties.length > 0) {
+			if (aAdditionalProperties.includes(oProperty.text)) {
+				throw new Error("Invalid property definition: 'additionalProperties' may not contain the text.");
+			}
+			if (aAdditionalProperties.includes(oProperty.unit)) {
+				throw new Error("Invalid property definition: 'additionalProperties' may not contain the unit.");
+			}
 		}
 	};
 
@@ -77,6 +114,10 @@ sap.ui.define([
 	 */
 	PropertyHelper.prototype.prepareProperty = function(oProperty, mProperties) {
 		TablePropertyHelper.prototype.prepareProperty.apply(this, arguments);
+
+		if (!PropertyHelperBase.isPropertyComplex(oProperty) && oProperty.extension.additionalProperties.length > 0) {
+			oProperty.groupable = false;
+		}
 
 		Object.defineProperty(oProperty, "getAggregatableProperties", {
 			value: function() {
@@ -118,7 +159,8 @@ sap.ui.define([
 				text: oProperty.text,
 				unit: oProperty.unit,
 				groupable: oProperty.extension.technicallyGroupable,
-				aggregatable: oProperty.extension.technicallyAggregatable
+				aggregatable: oProperty.extension.technicallyAggregatable,
+				additionalProperties: oProperty.extension.additionalProperties
 			};
 
 			if (oProperty.extension.customAggregate) {
