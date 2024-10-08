@@ -10,5 +10,6 @@
         "@ui5/webcomponents-icons-business-suite",
         "@ui5/webcomponents-icons-tnt",
         "@ui5/webcomponents-theming"
-    ]
+    ],
+    "commitMessagePrefix": "[INTERNAL] Infra:"
 }
