@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @since 1.58
-	 * @public
+	 * @private
 	 * @experimental
 	 * @alias sap.ui.mdc.actiontoolbar.ActionToolbarAction
 	 */
