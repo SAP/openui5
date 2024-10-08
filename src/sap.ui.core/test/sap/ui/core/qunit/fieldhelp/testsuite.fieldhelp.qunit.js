@@ -44,6 +44,7 @@ sap.ui.define(function () {
 		},
 		tests : {
 			FieldHelp : {},
+			FieldHelpCustomData : {},
 			FieldHelpUtil : {}
 		}
 	};
