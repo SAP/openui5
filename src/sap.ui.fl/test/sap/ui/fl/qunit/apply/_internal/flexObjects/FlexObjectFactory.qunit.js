@@ -2,14 +2,24 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexObjects/AnnotationChange",
+	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
+	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
+	"sap/ui/fl/apply/_internal/flexObjects/ControllerExtensionChange",
 	"sap/ui/fl/apply/_internal/flexObjects/UpdatableChange",
+	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	States,
+	AnnotationChange,
+	AppDescriptorChange,
+	CompVariant,
+	ControllerExtensionChange,
 	UpdatableChange,
+	FlVariant,
 	UIChange,
 	FlexObjectFactory,
 	Layer,
@@ -71,6 +81,42 @@ sap.ui.define([
 				"FlexObjectFactory.createFromFileContent",
 				"then the default generator is set"
 			);
+		});
+
+		[{
+			fileType: "variant",
+			expectedType: CompVariant
+		}, {
+			fileType: "ctrl_variant",
+			expectedType: FlVariant
+		}, {
+			fileType: "change",
+			appDescriptorChange: true,
+			expectedType: AppDescriptorChange
+		}, {
+			fileType: "change",
+			changeType: "codeExt",
+			expectedType: ControllerExtensionChange
+		}, {
+			fileType: "annotation_change",
+			expectedType: AnnotationChange
+		}, {
+			fileType: "change",
+			changeType: "defaultVariant",
+			expectedType: UpdatableChange
+		}, {
+			fileType: "change",
+			expectedType: UIChange
+		}].forEach((testParameters) => {
+			QUnit.test(`when a object is provided with different types (${testParameters.fileType} ${testParameters.changeType ? `- ${testParameters.changeType}` : ""})`, function(assert) {
+				const oFile = {
+					fileType: testParameters.fileType,
+					appDescriptorChange: testParameters.appDescriptorChange,
+					changeType: testParameters.changeType
+				};
+				const oFlexObject = FlexObjectFactory.createFromFileContent(oFile);
+				assert.ok(oFlexObject instanceof testParameters.expectedType, "then the correct class is used");
+			});
 		});
 
 		QUnit.test("when a custom object class is provided", function(assert) {
