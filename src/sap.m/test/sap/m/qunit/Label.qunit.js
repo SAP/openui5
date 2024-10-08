@@ -227,7 +227,7 @@ sap.ui.define([
 
 	QUnit.test("Label wrappingType (Hyphenation)", function(assert) {
 		var done = assert.async();
-		l1.setText("pneumonoultramicroscopicsilicovolcanoconiosis");
+		l1.setText("pneumonoultramic roscopicsilicovolcanoconiosis");
 		var iHeight = l1.$().outerHeight();
 		l1.setWidth("200px");
 		l1.setWrapping(true);
