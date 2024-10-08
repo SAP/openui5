@@ -79,7 +79,7 @@
     "cookie": "^0.4.2",
     "decompress": "^4.2.1",
     "eslint": "^8.56.0",
-    "glob": "^7.2.3",
+    "glob": "^11.0.0",
     "grunt": "~1.5.3",
     "grunt-contrib-clean": "^1.0.0",
     "grunt-contrib-concat": "^1.0.1",
