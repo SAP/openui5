@@ -142,14 +142,15 @@ sap.ui.define([
 	 * @returns {object} An object with a start and end fields, which represent how the appointment intersects with the given date
 	 * @private
 	 */
-	CalendarAppointment.prototype._getDateRangeIntersectionText = function (oCurrentlyDisplayedDate) {
+	CalendarAppointment.prototype._getDateRangeIntersectionText = function (oCurrentlyDisplayedDate, bUse12HourFormat) {
 		var oStartDate = this.getStartDate(),
 			oEndDate = this.getEndDate() ? this.getEndDate() : UI5Date.getInstance(864000000000000), //in case of emergency call this number
+			sPattern = bUse12HourFormat ? "h:mm a" : "HH:mm",
 			sFirstLineText,
 			sSecondLineText,
 			oCurrentDayStart = UI5Date.getInstance(oCurrentlyDisplayedDate.getFullYear(), oCurrentlyDisplayedDate.getMonth(), oCurrentlyDisplayedDate.getDate(), 0, 0, 0),
 			oNextDayStart = UI5Date.getInstance(oCurrentDayStart.getFullYear(), oCurrentDayStart.getMonth(), oCurrentDayStart.getDate() + 1),
-			oTimeFormat = DateFormat.getTimeInstance({pattern: "HH:mm"}),
+			oTimeFormat = DateFormat.getTimeInstance({pattern: sPattern}),
 			oResourceBundle = Library.getResourceBundleFor("sap.m"),
 			oHourFormat = NumberFormat.getUnitInstance({
 				allowedUnits: ["duration-hour"]
