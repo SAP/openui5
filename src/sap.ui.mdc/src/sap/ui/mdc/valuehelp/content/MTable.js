@@ -165,7 +165,7 @@ sap.ui.define([
 				const bBindingSuspended = oListBinding && oListBinding.isSuspended();
 				const bBindingWillBeSuspended = !oListBinding && oListBindingInfo && oListBindingInfo.suspended;
 
-				if ((bBindingSuspended || bBindingWillBeSuspended) && (!this.isTypeahead() || Device.system.phone)) { // in dialog or phone case do not resume suspended table on opening
+				if ((bBindingSuspended || bBindingWillBeSuspended) && !this.isTypeahead()) { // in dialog case do not resume suspended table on opening
 					return undefined;
 				}
 
