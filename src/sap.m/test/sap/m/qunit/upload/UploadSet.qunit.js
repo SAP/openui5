@@ -1930,6 +1930,20 @@ sap.ui.define([
 		assert.ok(this.oUploadSet.getSelectedItems()[0] instanceof UploadSetItem, "First item returned is UploadSetItem");
 	});
 
+	QUnit.test("Set and get selected items by Id without 2nd parameter", function(assert) {
+		//Arrange
+		var aAllItems = this.oUploadSet.getItems();
+		this.oUploadSet.setMode(ListMode.MultiSelect);
+
+		//Act
+		var oReturnedUploadSet = this.oUploadSet.setSelectedItemById(aAllItems[0].getId(), true);
+
+		//Assert
+		assert.ok(oReturnedUploadSet instanceof UploadSet, "Returned value is UploadSet");
+		assert.deepEqual(this.oUploadSet.getSelectedItems()[0], aAllItems[0], "Data of first selected item is correct");
+		assert.ok(this.oUploadSet.getSelectedItems()[0] instanceof UploadSetItem, "First item returned is UploadSetItem");
+	});
+
 	QUnit.test("Get selected items without selection", function(assert) {
 		//Assert
 		assert.equal(this.oUploadSet.getSelectedItems().length, 0, "0 items have been selected");
@@ -1955,6 +1969,21 @@ sap.ui.define([
 
 		//Act
 		var oReturnedUploadSet = this.oUploadSet.setSelectedItemById(aAllItems[0].getId(), true);
+
+		//Assert
+		assert.deepEqual(oReturnedUploadSet, this.oUploadSet, "Local UploadSet and returned element are deepEqual");
+		assert.deepEqual(this.oUploadSet.getSelectedItem()[0], aAllItems[0], "Selected item is correct");
+		assert.ok(oReturnedUploadSet.getItems()[0].getSelected(), "The getSelected of UploadSetItem has been set correctly");
+		assert.ok(this.oUploadSet.getSelectedItem()[0] instanceof UploadSetItem, "Item returned is UploadSetItem");
+	});
+
+	QUnit.test("Set and get selected item by Id without 2nd parameter", function(assert) {
+		//Arrange
+		var aAllItems = this.oUploadSet.getItems();
+		this.oUploadSet.setMode(ListMode.SingleSelectLeft);
+
+		//Act
+		var oReturnedUploadSet = this.oUploadSet.setSelectedItemById(aAllItems[0].getId());
 
 		//Assert
 		assert.deepEqual(oReturnedUploadSet, this.oUploadSet, "Local UploadSet and returned element are deepEqual");
