@@ -94,7 +94,7 @@ sap.ui.define([
 	 * It must not be used stand-alone.
 	 *
 	 * @extends sap.ui.mdc.Control
-	 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent, sap.m.IOverflowToolbarContent
+	 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent, sap.m.IOverflowToolbarContent, sap.ui.core.ILabelable
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -108,12 +108,13 @@ sap.ui.define([
 	 * @borrows sap.ui.core.ISemanticFormContent.getFormValueProperty as #getFormValueProperty
 	 * @borrows sap.ui.core.ISemanticFormContent.getFormObservingProperties as #getFormObservingProperties
 	 * @borrows sap.ui.core.ISemanticFormContent.getFormRenderAsControl as #getFormRenderAsControl
+	 * @borrows sap.ui.core.ILabelable.hasLabelableHTMLElement as #hasLabelableHTMLElement
 	 *
 	 * @public
 	 */
 	const FieldBase = Control.extend("sap.ui.mdc.field.FieldBase", /* @lends sap.ui.mdc.field.FieldBase.prototype */ {
 		metadata: {
-			interfaces: ["sap.ui.core.IFormContent", "sap.ui.core.ISemanticFormContent", "sap.m.IOverflowToolbarContent"],
+			interfaces: ["sap.ui.core.IFormContent", "sap.ui.core.ISemanticFormContent", "sap.m.IOverflowToolbarContent", "sap.ui.core.ILabelable"],
 			designtime: "sap/ui/mdc/designtime/field/FieldBase.designtime",
 			library: "sap.ui.mdc",
 			properties: {
@@ -1461,6 +1462,29 @@ sap.ui.define([
 		}
 
 		return sId;
+
+	};
+
+	// return the lableable settings of the  used control
+	/**
+	 * Returns if the control can be bound to a label
+	 *
+	 * @returns {boolean} <code>true</code> if the control can be bound to a label
+	 * @public
+	 * @since 1.121.0
+	 */
+	FieldBase.prototype.hasLabelableHTMLElement = function() {
+
+		let bHasLabelableHTMLElement = false;
+		const aContent = this.getCurrentContent();
+		if (aContent.length > 0 && aContent[0].hasLabelableHTMLElement) {
+			bHasLabelableHTMLElement = aContent[0].hasLabelableHTMLElement();
+		} else { // not already rendered or content don't provide information use EditMode to determine behaviour
+			const sEditMode = this.getEditMode();
+			bHasLabelableHTMLElement = sEditMode !== FieldEditMode.Display;
+		}
+
+		return bHasLabelableHTMLElement;
 
 	};
 
