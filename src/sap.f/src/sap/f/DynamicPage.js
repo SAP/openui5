@@ -410,6 +410,7 @@ sap.ui.define([
 		this._headerBiggerThanAllowedHeight = false;
 		this._oStickySubheader = null;
 		this._bStickySubheaderInTitleArea = false;
+		this._bIsLastToggleUserInitiated = false;
 		this._oScrollHelper = new ScrollEnablement(this, this.getId() + "-content", {
 			horizontal: false,
 			vertical: true
@@ -810,6 +811,7 @@ sap.ui.define([
 		}
 
 		this.setProperty("headerExpanded", false, true);
+		this._bIsLastToggleUserInitiated = !!bUserInteraction;
 		this._adjustStickyContent();
 		if (this._hasVisibleTitleAndHeader()) {
 			this.$titleArea.addClass(Device.system.phone && oDynamicPageTitle.getSnappedTitleOnMobile() ?
@@ -850,6 +852,7 @@ sap.ui.define([
 		}
 
 		this.setProperty("headerExpanded", true, true);
+		this._bIsLastToggleUserInitiated = !!bUserInteraction;
 		this._adjustStickyContent();
 		if (this._hasVisibleTitleAndHeader()) {
 			this.$titleArea.removeClass(Device.system.phone && oDynamicPageTitle.getSnappedTitleOnMobile() ?
@@ -1920,9 +1923,28 @@ sap.ui.define([
 			oDynamicPageTitle._onResize(iCurrentWidth);
 		}
 
+		if (this._shouldAutoExpandHeaderOnResize(oEvent)) {
+			this._expandHeader(true, false /* bUserInteraction */);
+		}
+
 		this._adjustSnap();
 		this._updateTitlePositioning();
 		this._updateMedia(iCurrentWidth);
+	};
+
+	DynamicPage.prototype._shouldAutoExpandHeaderOnResize = function (oResizeEvent) {
+		var oDynamicPageHeader = this.getHeader(),
+			bHeaderSnappedByUser = exists(oDynamicPageHeader) && !this.getHeaderExpanded() && this._bIsLastToggleUserInitiated,
+			bPageResized = oResizeEvent.target === this.getDomRef(),
+			canToggleHeaderOnScroll = this._canSnapHeaderOnScroll.bind(this);
+
+		// auto-expand the header if the user had snapped it but
+		// can no longer expand it neither by scrolling nor by title-click
+		return !this._preserveHeaderStateOnScroll() // header state is not locked
+			&& bHeaderSnappedByUser
+			&& bPageResized
+			&& !this.getToggleHeaderOnTitleClick() // user cannot expand the header by title-click
+			&& !canToggleHeaderOnScroll(); // user cannot expand the header by scrolling
 	};
 
 	/**

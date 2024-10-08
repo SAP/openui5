@@ -501,5 +501,24 @@ sap.ui.define(['./Binding', './Filter', './FilterType', './Sorter', 'sap/base/ut
 		 * @protected
 		 */
 
+		/**
+		 * Returns whether more contexts for the given range can be expected than those in <code>aContexts</code>.
+		 *
+		 * @param {sap.ui.model.Context[]} aContexts - The context list
+		 * @param {number} iStart - The start index of the range
+		 * @param {number} iLength - The range length
+		 * @returns {boolean} Whether more contexts can be expected
+		 *
+		 * @private
+		 */
+		ListBinding.prototype._isExpectingMoreContexts = function (aContexts, iStart, iLength) {
+			if (aContexts.includes(undefined)) { // Note: aContexts may be sparse
+				return true;
+			}
+
+			return aContexts.length < iLength
+				&& (!this.isLengthFinal() || iStart + aContexts.length < this.getLength());
+		};
+
 		return ListBinding;
 	});

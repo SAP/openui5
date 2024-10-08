@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/model/Sorter"
 ], function (Log, Filter, ListBinding, Sorter) {
 	/*global QUnit, sinon*/
+	/*eslint no-sparse-arrays: 0 */
 	"use strict";
 
 	//*********************************************************************************************
@@ -126,4 +127,53 @@ sap.ui.define([
 		}, new Error(oFixture.sExpectedError));
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_isExpectingMoreContexts", function (assert) {
+		const oBinding = new ListBinding("~oModel", "~sPath");
+		const oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("isLengthFinal").never();
+		oBindingMock.expects("getLength").never();
+
+		// code under test
+		assert.strictEqual(oBinding._isExpectingMoreContexts(["a", "b", "c"], 10, 3), false,
+			"as requested");
+
+		// code under test
+		assert.strictEqual(oBinding._isExpectingMoreContexts(["a",, "c"], 10, 3), true,
+			"length as expected, but sparse");
+
+		// code under test
+		assert.strictEqual(oBinding._isExpectingMoreContexts(["a", undefined, "c"], 10, 3), true,
+			"length as expected, but contains undefined");
+
+		// code under test
+		assert.strictEqual(oBinding._isExpectingMoreContexts([, "b"], 10, 3), true,
+			"too short and sparse");
+
+		// code under test
+		assert.strictEqual(oBinding._isExpectingMoreContexts([undefined, "b"], 10, 3), true,
+			"too short and contains undefined");
+
+		oBindingMock.expects("isLengthFinal").returns(false);
+
+		// code under test
+		assert.strictEqual(oBinding._isExpectingMoreContexts(["a", "b"], 10, 3), true,
+			"too short and not final");
+
+		oBindingMock.expects("isLengthFinal").returns(true);
+		oBindingMock.expects("getLength").returns(12);
+
+		// code under test
+		assert.strictEqual(oBinding._isExpectingMoreContexts(["a", "b"], 10, 3), false,
+			"too short and final, but limited by the collection length");
+
+		oBindingMock.expects("isLengthFinal").returns(true);
+		oBindingMock.expects("getLength").returns(13);
+
+		// code under test
+		assert.strictEqual(oBinding._isExpectingMoreContexts(["a", "b"], 10, 3), true,
+			"too short and final, but collection length not reached yet");
+	});
 });

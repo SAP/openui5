@@ -1840,15 +1840,22 @@ sap.ui.define([
 			title: "Some title",
 			beginButton: new Button({text: "button"}),
 			content: [
-				// add 3 texts to avoid same height - because there is min height of 3 rems
+				// add 4 texts to avoid same height - because there is min height of 3 rems
 				new Text({
-					text: "Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag"
+					text: "Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag",
+					width: "100%"
 				}),
 				new Text({
-					text: "Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag"
+					text: "Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag",
+					width: "100%"
+				}),
+				new Text({
+					text: "Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag",
+					width: "100%"
 				}),
 				new Text("txt", {
-					text: "Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag"
+					text: "Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag",
+					width: "100%"
 				})
 			]
 		});
