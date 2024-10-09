@@ -542,8 +542,12 @@ sap.ui.define([
 	 *   to "0.005".
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
-	 * @param {int} [oFormatOptions.precision] defines the numerical precision; the number of decimals
-	 *   is calculated dependent on the integer digits
+	 * @param {int} [oFormatOptions.precision] The maximum number of digits in the formatted representation of a number;
+	 *   if the <code>precision</code> is less than the overall length of the number, its fractional part is truncated
+	 *   through rounding. As the <code>precision</code> only affects the rounding of a number, its integer part can
+	 *   retain more digits than defined by this parameter.
+	 *   <b>Example:</b> With a <code>precision</code> of 2, <code>234.567</code> is formatted to <code>235</code>.
+	 *   <b>Note:</b> The formatted output may differ depending on locale.
 	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves
 	 *   decimal digits except trailing zeros in case there are more decimals than the
 	 *   <code>maxFractionDigits</code> format option allows.
@@ -636,8 +640,15 @@ sap.ui.define([
 	 *   to "5000".
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
-	 * @param {int} [oFormatOptions.precision] defines the numerical precision; the number of decimals
-	 *   is calculated dependent on the integer digits
+	 * @param {int} [oFormatOptions.precision] <b>Note:</b> Only considered if the number format leads to a
+	 *   representation with decimal places, e.g. if the option <code>style: "short"</code> is set.
+	 *   The maximum number of digits in the formatted representation of a number; if the <code>precision</code> is
+	 *   less than the overall length of the number, its fractional part is truncated through rounding.
+	 *   As the <code>precision</code> only affects the rounding of a number, its integer part can retain more digits
+	 *   than defined by this parameter.
+	 *   <b>Example:</b> With a <code>precision</code> of 2 and <code>style: "short"</code>,
+	 *   <code>234567</code> is formatted to <code>"235K"</code>.
+	 *   <b>Note:</b> The formatted output may differ depending on locale.
 	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves
 	 *   decimal digits except trailing zeros in case there are more decimals than the
 	 *   <code>maxFractionDigits</code> format option allows.
@@ -907,8 +918,13 @@ sap.ui.define([
 	 *   to "0.005".
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
-	 * @param {int} [oFormatOptions.precision] defines the numerical precision; the number of decimals
-	 *   is calculated dependent on the integer digits
+	 * @param {int} [oFormatOptions.precision] The maximum number of digits in the formatted representation of a number;
+	 *   if the <code>precision</code> is less than the overall length of the number, its fractional part is truncated
+	 *   through rounding. As the <code>precision</code> only affects the rounding of a number, its integer part can
+	 *   retain more digits than defined by this parameter.
+	 *   <b>Example:</b> With a <code>precision</code> of 2, the parameters <code>"234.567", "mass-kilogram"</code> are
+	 *   formatted to <code>"235 kg"</code>.
+	 *   <b>Note:</b> The formatted output may differ depending on locale.
 	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves
 	 *   decimal digits except trailing zeros in case there are more decimals than the
 	 *   <code>maxFractionDigits</code> format option allows.
@@ -1006,8 +1022,13 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
 	 * @param {string} [oFormatOptions.percentSign] defines the used percent symbol
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
-	 * @param {int} [oFormatOptions.precision] defines the numerical precision; the number of decimals
-	 *   is calculated dependent on the integer digits
+	 * @param {int} [oFormatOptions.precision] The maximum number of digits in the formatted representation of a number;
+	 *   if the <code>precision</code> is less than the overall length of the number, its fractional part is truncated
+	 *   through rounding. As the <code>precision</code> only affects the rounding of a number, its integer part
+	 *   can retain more digits than defined by this parameter.
+	 *   <b>Example:</b> With a <code>precision</code> of 2, <code>234.567</code> is formatted to
+	 *   <code>"23,457%"</code>.
+	 *   <b>Note:</b> The formatted output may differ depending on locale.
 	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves
 	 *   decimal digits except trailing zeros in case there are more decimals than the
 	 *   <code>maxFractionDigits</code> format option allows.
