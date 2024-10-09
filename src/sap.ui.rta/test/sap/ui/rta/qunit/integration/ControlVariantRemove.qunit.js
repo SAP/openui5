@@ -6,6 +6,9 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/RuntimeAuthoring",
@@ -17,6 +20,9 @@ sap.ui.define([
 	OverlayRegistry,
 	States,
 	VariantManagementState,
+	FlexState,
+	nextUIUpdate,
+	QUnitUtils,
 	CommandFactory,
 	Stack,
 	RuntimeAuthoring,
@@ -40,7 +46,6 @@ sap.ui.define([
 			return RtaQunitUtils.clear();
 		},
 		afterEach: () => {
-			this.oRta.destroy();
 			sandbox.restore();
 			return RtaQunitUtils.clear();
 		},
@@ -218,6 +223,56 @@ sap.ui.define([
 				),
 				"then the variant is removed from the variant management state"
 			);
+
+			this.oRta.destroy();
+		});
+
+		QUnit.test("Personalization save and remove", (assert) => {
+			const fnDone = assert.async();
+			const oVMControl = Element.getElementById("Comp1---idMain1--variantManagementBar");
+
+			oVMControl._createSaveAsDialog();
+			const oEmbeddedVM = oVMControl._getEmbeddedVM();
+			oEmbeddedVM.oSaveAsDialog.attachAfterOpen(() => {
+				oEmbeddedVM.oInputName.setValue("New");
+
+				const oUpdateStorageResponseStub = sandbox.stub(FlexState, "updateStorageResponse").callsFake(async (...aArgs) => {
+					oUpdateStorageResponseStub.wrappedMethod.apply(this, aArgs);
+
+					function updateStorageStubCheck() {
+						oUpdateStorageResponseStub.wrappedMethod.apply(this, aArgs);
+						assert.notOk(oUpdateStorageResponseStub.threw(), "then FlexState.updateStorageResponse does not throw an error");
+						fnDone();
+					}
+					oUpdateStorageResponseStub.callsFake(updateStorageStubCheck);
+
+					oVMControl.fireManage();
+					oVMControl.openManagementDialog();
+
+					// Delete new variant
+					const oManagementTable = oVMControl.getManageDialog().getContent()[0];
+					const aItems = oManagementTable.getItems();
+					const aCells = aItems[1].getCells();
+					const oDeleteButton = aCells[7].getFocusDomRef();
+					QUnitUtils.triggerTouchEvent("tap", oDeleteButton, {
+						srcControl: null
+					});
+					await nextUIUpdate();
+
+					// Save
+					const oSaveButton = oEmbeddedVM.oManagementSave.getFocusDomRef();
+					QUnitUtils.triggerTouchEvent("tap", oSaveButton, {
+						srcControl: null
+					});
+					await nextUIUpdate();
+				});
+
+				var oTarget = oEmbeddedVM.oSaveSave.getFocusDomRef();
+				QUnitUtils.triggerTouchEvent("tap", oTarget, {
+					srcControl: null
+				});
+			});
+			oEmbeddedVM.openSaveAsDialog("STYLECLASS");
 		});
 	});
 
