@@ -246,6 +246,53 @@ sap.ui.define([
 			});
 		});
 
+		// TODO: Remove after consolidation of change content into "content" property. todos#4
+		QUnit.test("when create is called for a change with change-specific data packed in a content object", function(assert) {
+			const fnDone = assert.async();
+			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
+				completeChangeContent(oFlexObject, oChangeSpecificData) {
+					assert.deepEqual(oChangeSpecificData.name, "foo", "the content is copied to the changeSpecificData object");
+					fnDone();
+				}
+			});
+			const mPropertyBag = {
+				changeSpecificData: {
+					changeType: "dummyChangeType",
+					content: {
+						name: "foo"
+					}
+				},
+				selector: this.vSelector
+			};
+			ChangesWriteAPI.create(mPropertyBag);
+		});
+
+		// TODO: Remove after consolidation of change content into "content" property. todos#4
+		QUnit.test("when create is called for a change with change-specific property packed in content but the property is also in the object", function(assert) {
+			const fnDone = assert.async();
+			const oLogStub = sandbox.stub(Log, "error");
+			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
+				completeChangeContent() {
+					assert.ok(
+						oLogStub.calledWith("The property 'name' is defined both in the change specific data and its content."),
+						"the proper error was logged"
+					);
+					fnDone();
+				}
+			});
+			const mPropertyBag = {
+				changeSpecificData: {
+					changeType: "dummyChangeType",
+					name: "foo",
+					content: {
+						name: "foo"
+					}
+				},
+				selector: this.vSelector
+			};
+			ChangesWriteAPI.create(mPropertyBag);
+		});
+
 		QUnit.test("when apply is called without element", function(assert) {
 			return ChangesWriteAPI.apply({
 				element: "notAnElement"
