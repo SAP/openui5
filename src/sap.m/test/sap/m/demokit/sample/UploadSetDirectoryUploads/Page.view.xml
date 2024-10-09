@@ -19,7 +19,8 @@
 				items="{path: '/items', templateShareable: false}"
 				mode="MultiSelect"
 				selectionChanged="onSelectionChange"
-				directory="true">
+				directory="true"
+				afterItemRemoved="onAfterItemRemoved">
 			<upload:toolbar>
 				<OverflowToolbar>
 					<ToolbarSpacer/>
