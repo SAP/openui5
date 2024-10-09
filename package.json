@@ -92,7 +92,7 @@
     "grunt-jsdoc": "^2.4.1",
     "grunt-openui5": "^0.18.4",
     "grunt-text-replace": "^0.4.0",
-    "grunt-timer": "^0.5.4",
+    "grunt-timer": "^0.6.0",
     "http-proxy": "^1.18.1",
     "karma": "^6.4.2",
     "karma-chrome-launcher": "^3.2.0",
