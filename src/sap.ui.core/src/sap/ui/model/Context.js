@@ -29,7 +29,6 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Model} oModel the model
 	 * @param {string} sPath the binding path
-	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.Context
 	 * @extends sap.ui.base.Object
