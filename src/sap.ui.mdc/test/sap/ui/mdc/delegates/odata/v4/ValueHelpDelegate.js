@@ -43,11 +43,17 @@ sap.ui.define([
 	};
 
 	ODataV4ValueHelpDelegate.updateBindingInfo = function(oValueHelp, oContent, oBindingInfo) {
+		const $count = oBindingInfo.parameters?.$count;
+
 		ValueHelpDelegate.updateBindingInfo(oValueHelp, oContent, oBindingInfo);
 
 		if (!PayloadSearchKeys.inUse(oValueHelp) && oContent.isSearchSupported()){
 			const sSearch = this.adjustSearch ? this.adjustSearch(oValueHelp, oContent.isTypeahead(), oContent.getSearch()) : oContent.getSearch();
 			oBindingInfo.parameters.$search = sSearch || undefined;
+		}
+
+		if (typeof $count !== "undefined") {
+			oBindingInfo.parameters.$count = $count;
 		}
 	};
 
