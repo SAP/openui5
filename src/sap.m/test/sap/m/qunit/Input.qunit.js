@@ -5861,6 +5861,27 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Exact match with autocomplete=false", async function (assert) {
+		var oInput = new Input({
+			showSuggestion: true,
+			autocomplete: false,
+			suggestionItems: [
+				new Item({text: "AA"}),
+				new Item({text: "A"})
+			]
+		}).placeAt("content");
+		await nextUIUpdate(this.clock);
+
+		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.A });
+		// act
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("A").trigger("input");
+		this.clock.tick(1000);
+
+		assert.notOk(oInput._oSuggestionPopup.getContent()[0].getItems()[1].getSelected(), "Exact match should not be selected from the list when autocomplete=false");
+
+		oInput.destroy();
+	});
+
 	QUnit.test("Autocomplete on desktop", async function (assert) {
 		// arrange
 		var oInput = new Input({
