@@ -466,23 +466,26 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.vReference - ID of the variant
 	 * @param {string} mPropertyBag.reference - Component reference
 	 * @param {boolean} [mPropertyBag.includeDirtyChanges] - Whether dirty changes of the current session should be included, <code>true</code> by default
+	 * @param {boolean} [mPropertyBag.includeReferencedChanges] - Whether changes from referenced variants should be included, <code>true</code> by default
 	 *
 	 * @returns {object[]|sap.ui.fl.apply._internal.flexObjects.FlexObject[]} All changes of the variant
 	 * @private
 	 * @ui5-restricted
 	 */
 	VariantManagementState.getControlChangesForVariant = function(mPropertyBag) {
-		var aResult = [];
-		var oVariant = VariantManagementState.getVariant(mPropertyBag);
+		const oVariant = VariantManagementState.getVariant(mPropertyBag);
 		if (oVariant) {
-			aResult = oVariant.controlChanges.filter(function(oChange) {
+			return oVariant.controlChanges.filter(function(oChange) {
+				const bIsDirty = oChange.getState() !== States.LifecycleState.PERSISTED;
+				const bIsFromReferencedVariant = oChange.getVariantReference() !== mPropertyBag.vReference;
+
 				return (
-					mPropertyBag.includeDirtyChanges !== false
-					|| oChange.getState() === States.LifecycleState.PERSISTED
+					(mPropertyBag.includeDirtyChanges !== false || !bIsDirty)
+					&& (mPropertyBag.includeReferencedChanges !== false || !bIsFromReferencedVariant)
 				);
 			});
 		}
-		return aResult;
+		return [];
 	};
 
 	/**
