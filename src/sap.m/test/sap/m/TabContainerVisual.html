@@ -8,7 +8,7 @@
 			id='sap-ui-bootstrap'
 			src='../../../resources/sap-ui-core.js'
 			data-sap-ui-theme='sap_horizon'
-			data-sap-ui-libs='sap.m'
+			data-sap-ui-libs='sap.m, sap.ui.layout'
 			data-sap-ui-compatVersion="edge">
 
 
@@ -36,9 +36,28 @@
 			document.querySelector("html").classList.remove("sap-desktop");
 
 			var oApp = new App();
-			oApp.addPage(new Page({
+			oApp.addPage(new Page("testPage", {
 				title: "sap.m.TabContainer visual test page",
 				content: [
+				new sap.ui.layout.Splitter({
+						orientation: "Horizontal",
+						height: "300px",
+						contentAreas: [
+							new TabContainer("five", {
+								items: [
+									new TabContainerItem({
+										name: "Tab one",
+										additionalText: "Tab one"
+									}),
+									new TabContainerItem({
+										name: "Tab two",
+										additionalText: "Tab two"
+									})
+								]
+							}),
+							new sap.m.Text({text: 'right'})
+						]
+					}),
 					new Panel({
 						headerText: "One tab present",
 						content: [
@@ -104,6 +123,7 @@
 							})
 						]
 					})
+
 				]
 			}));
 
