@@ -5295,7 +5295,8 @@ sap.ui.define([
 		});
 		oVHIcon.firePress();
 		sinon.stub(oValueHelp, "isOpen").returns(true);
-		oValueHelp.fireOpened({itemId: "myItem"});
+		sinon.spy(oContent, "_applySuggestionAcc");
+		oValueHelp.fireOpened({itemId: "myItem", items: 3});
 		await nextUIUpdate();
 		assert.equal($FocusDomRef.attr("role"), "combobox", "Open: Role Combobox set");
 		assert.equal($FocusDomRef.attr("aria-roledescription"), "RoleDescription", "Open: Role Description set - from ValueHelp");
@@ -5304,6 +5305,7 @@ sap.ui.define([
 		assert.equal($FocusDomRef.attr("aria-expanded"), "true", "Open: aria-expanded set to true");
 		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Open: aria-controls set");
 		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "Open: aria-activedescendant not set");
+		assert.ok(oContent._applySuggestionAcc.calledWith(3), "_applySuggestionAcc called");
 
 		oValueHelp.close();
 		oValueHelp.fireClosed();
@@ -5367,14 +5369,16 @@ sap.ui.define([
 		});
 		oVHIcon.firePress();
 		sinon.stub(oValueHelp, "isOpen").returns(true);
+		sinon.spy(oContent, "_applySuggestionAcc");
 		oField._bFocusOnValueHelp = true; // fake open with focus
-		oValueHelp.fireOpened({itemId: "myItem", focused: true});
+		oValueHelp.fireOpened({itemId: "myItem", items: undefined, focused: true});
 		await nextUIUpdate();
 		assert.equal($FocusDomRef.attr("aria-expanded"), "true", "Open: aria-expanded set to true");
 		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Open: aria-controls set");
 		assert.equal($FocusDomRef.attr("aria-activedescendant"), "myItem", "Open: aria-activedescendant set");
 		assert.notOk(oContent.hasStyleClass("sapMFocus"), "Focus outline removed");
 		assert.ok(oValueHelp.navigate.calledWith(0), "Navigated to first item");
+		assert.notOk(oContent._applySuggestionAcc.called, "_applySuggestionAcc not called");
 
 		oValueHelp.close();
 		oValueHelp.fireClosed();

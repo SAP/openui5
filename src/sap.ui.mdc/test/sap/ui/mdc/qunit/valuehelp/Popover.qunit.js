@@ -247,16 +247,18 @@ sap.ui.define([
 
 		let iOpened = 0;
 		let sItemId;
+		let iItems;
 		oPopover.attachEvent("opened", function(oEvent) {
 			iOpened++;
 			sItemId = oEvent.getParameter("itemId");
+			iItems = oEvent.getParameter("items");
 		});
 		let iClosed = 0;
 		oPopover.attachEvent("closed", function(oEvent) {
 			iClosed++;
 		});
 
-		sinon.stub(oContent, "onShow").returns("MyItem");
+		sinon.stub(oContent, "onShow").returns({itemId: "MyItem", items: 3});
 		sinon.spy(oContent, "onHide");
 		sinon.spy(oPopover, "_openContainerByTarget");
 		oContent.getContentHeight = function () {
@@ -272,6 +274,7 @@ sap.ui.define([
 				setTimeout(function() { // wait until open
 					assert.equal(iOpened, 1, "Opened event fired once");
 					assert.equal(sItemId, "MyItem", "Opened event returns itemId");
+					assert.equal(iItems, 3, "Opened event returns items");
 					const oContainer = oPopover.getAggregation("_container");
 					assert.ok(oPopover._openContainerByTarget.called, "_openContainerByTarget was called.");
 					assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
@@ -967,16 +970,18 @@ sap.ui.define([
 
 		let iOpened = 0;
 		let sItemId;
+		let iItems;
 		oPopover.attachEvent("opened", function(oEvent) {
 			iOpened++;
 			sItemId = oEvent.getParameter("itemId");
+			iItems = oEvent.getParameter("items");
 		});
 		let iClosed = 0;
 		oPopover.attachEvent("closed", function(oEvent) {
 			iClosed++;
 		});
 
-		sinon.stub(oContent, "onShow").returns("MyItem");
+		sinon.stub(oContent, "onShow").returns({itemId: "MyItem", items: 3});
 		sinon.spy(oContent, "onHide");
 		sinon.spy(oPopover, "_openContainerByTarget");
 		oContent.getContentHeight = function () {
@@ -992,6 +997,7 @@ sap.ui.define([
 				setTimeout(function() { // wait until open
 					assert.equal(iOpened, 1, "Opened event fired once");
 					assert.equal(sItemId, "MyItem", "Opened event returns itemId");
+					assert.equal(iItems, 3, "Opened event returns items");
 					const oContainer = oPopover.getAggregation("_container");
 					assert.notOk(oPopover._openContainerByTarget.called, "_openContainerByTarget was not called.");
 					assert.ok(oContainer.isA("sap.m.Dialog"), "Container is sap.m.Dialog");

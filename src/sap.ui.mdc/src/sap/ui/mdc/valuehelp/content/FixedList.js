@@ -565,7 +565,10 @@ sap.ui.define([
 			sItemId = oSelectedItem.getId();
 		}
 
-		return sItemId;
+		const aRelevantContexts = this.getListBinding()?.getCurrentContexts();
+		const iItems = aRelevantContexts?.length;
+
+		return {itemId: sItemId, items: iItems};
 
 	};
 
