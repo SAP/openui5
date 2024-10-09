@@ -26,13 +26,12 @@ sap.ui.define(['sap/ui/base/DataType'], (DataType) => {
 		 * @protected
 		 */
 		replace: function(sName) {
-
+			const uid = function(){
+				return "_" + Date.now().toString(36) + Math.random().toString(36).substring(2, 12).padStart(12, 0) + "_";
+			};
 			const t = DataType.getType("sap.ui.core.ID");
 			if (!t.isValid(sName)) {
-				sName = sName.replace(/[^A-Za-z0-9_.:]+/g, "__mdc__");
-				if (!t.isValid(sName)) {
-					sName = "__mdc__" + sName;
-				}
+				sName = sName.replace(/[^A-Za-z0-9_.:]+/g, uid());
 			}
 			return sName;
 		},
@@ -57,7 +56,7 @@ sap.ui.define(['sap/ui/base/DataType'], (DataType) => {
 		 * @protected
 		 */
 		getPropertyKey: function(oProperty) {
-			return oProperty.name;
+			return oProperty.key || oProperty.name;
 		},
 
 		getPropertyPath: function(oProperty) {
