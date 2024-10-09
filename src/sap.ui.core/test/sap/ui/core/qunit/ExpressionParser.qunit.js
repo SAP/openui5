@@ -611,6 +611,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("odata.compare, ODataUtils is loaded", function (assert) {
 		const oDataUtils = {compare() {}};
+		// ui5lint-disable-next-line no-globals
 		const oSapUiMock = this.mock(sap.ui);
 		oSapUiMock.expects("require").withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(oDataUtils);
 		this.mock(oDataUtils).expects("compare").withExactArgs(2, 3).returns("-1");
@@ -624,6 +625,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("odata.compare throws error if ODataUtils is not loaded", function (assert) {
+		// ui5lint-disable-next-line no-globals
 		const oSapUiMock = this.mock(sap.ui);
 
 		oSapUiMock.expects("require").withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(undefined);
@@ -644,6 +646,7 @@ sap.ui.define([
 	/** @deprecated As of version 1.120.0 */
 	QUnit.test("odata.compare, load ODataUtils on demand", function (assert) {
 		const oDataUtils = {compare() {}};
+		// ui5lint-disable-next-line no-globals
 		const oSapUiMock = this.mock(sap.ui);
 
 		oSapUiMock.expects("require").withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(undefined);
@@ -660,6 +663,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("odata.uriEncode, ODataUtils is loaded", function (assert) {
 		const oDataUtils = {formatValue() {}};
+		// ui5lint-disable-next-line no-globals
 		const oSapUiMock = this.mock(sap.ui);
 		oSapUiMock.expects("require").withExactArgs("sap/ui/model/odata/ODataUtils").returns(oDataUtils);
 		this.mock(oDataUtils).expects("formatValue").withExactArgs("foo", "Edm.String").returns("'foo'");
@@ -673,6 +677,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("odata.uriEncode throws error if ODataUtils is not loaded", function (assert) {
+		// ui5lint-disable-next-line no-globals
 		const oSapUiMock = this.mock(sap.ui);
 		oSapUiMock.expects("require").withExactArgs("sap/ui/model/odata/ODataUtils").returns(undefined);
 		/** @deprecated As of version 1.120.0 */
@@ -692,6 +697,7 @@ sap.ui.define([
 	/** @deprecated As of version 1.120.0 */
 	QUnit.test("odata.uriEncode, load ODataUtils on demand", function (assert) {
 		const oDataUtils = {formatValue() {}};
+		// ui5lint-disable-next-line no-globals
 		const oSapUiMock = this.mock(sap.ui);
 		oSapUiMock.expects("require").withExactArgs("sap/ui/model/odata/ODataUtils").returns(undefined);
 		oSapUiMock.expects("requireSync").withExactArgs("sap/ui/model/odata/ODataUtils").returns(oDataUtils);
@@ -707,6 +713,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("odata.fillUriTemplate, URITemplate is loaded", function (assert) {
 		const oOriginalExpand = URI.expand;
+		// ui5lint-disable-next-line no-globals
 		const oSapUiMock = this.mock(sap.ui);
 		const oURI = {expand() {}};
 		this.mock(oURI).expects("expand").withExactArgs("http://foo/{t},{m}", {m : "tel", t : "mail"})
@@ -728,6 +735,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("odata.fillUriTemplate throws error if URITemplate is not loaded", function (assert) {
 		const oOriginalExpand = URI.expand;
+		// ui5lint-disable-next-line no-globals
 		const oSapUiMock = this.mock(sap.ui);
 		/** @deprecated As of version 1.120.0 */
 		oSapUiMock.expects("requireSync").withExactArgs("sap/ui/thirdparty/URITemplate");
@@ -751,6 +759,7 @@ sap.ui.define([
 	/** @deprecated As of version 1.120.0 */
 	QUnit.test("odata.fillUriTemplate, load URITemplate on demand", function (assert) {
 		const oOriginalExpand = URI.expand;
+		// ui5lint-disable-next-line no-globals
 		const oSapUiMock = this.mock(sap.ui);
 		const oURI = {expand() {}};
 		oSapUiMock.expects("requireSync").withExactArgs("sap/ui/thirdparty/URITemplate").callsFake(function () {
