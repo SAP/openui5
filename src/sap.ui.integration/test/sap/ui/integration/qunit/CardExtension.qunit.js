@@ -419,16 +419,16 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		const oHeader = this.oCard.getCardHeader();
-		const aActionButtons = oHeader.getToolbar().getAggregation("_actionSheet").getButtons();
+		const aActionMenuItems = oHeader.getToolbar().getAggregation("_actionsMenu").getItems();
 
-		assert.strictEqual(aActionButtons.length, 1, "there is 1 action");
-		assert.strictEqual(aActionButtons[0].getText(), "AutoOpen - SAP website - Extension", "action text is correct");
+		assert.strictEqual(aActionMenuItems.length, 1, "there is 1 action");
+		assert.strictEqual(aActionMenuItems[0].getText(), "AutoOpen - SAP website - Extension", "action text is correct");
 	});
 
 	QUnit.test("setActions method", async function (assert) {
 		// arrange
 		var oHeader,
-			aActionButtons,
+			aActionMenuItems,
 			oToolbar,
 			aNewActions = [
 				{
@@ -461,11 +461,11 @@ sap.ui.define([
 		assert.strictEqual(oToolbar, oHeader.getToolbar(), "The toolbar is kept the same");
 
 		oToolbar = oHeader.getToolbar();
-		aActionButtons = oToolbar.getAggregation("_actionSheet").getButtons();
+		aActionMenuItems = oToolbar.getAggregation("_actionsMenu").getItems();
 
-		assert.strictEqual(aActionButtons.length, 2, "there are 2 actions");
-		assert.strictEqual(aActionButtons[0].getText(), "Action 1", "action text is correct");
-		assert.strictEqual(aActionButtons[1].getText(), "Action 2", "action text is correct");
+		assert.strictEqual(aActionMenuItems.length, 2, "there are 2 actions");
+		assert.strictEqual(aActionMenuItems[0].getText(), "Action 1", "action text is correct");
+		assert.strictEqual(aActionMenuItems[1].getText(), "Action 2", "action text is correct");
 
 		// set the new actions again
 		this.oCard.getAggregation("_extension").setActions(aNewActions);
