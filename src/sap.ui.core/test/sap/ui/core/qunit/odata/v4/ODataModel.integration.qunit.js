@@ -74161,20 +74161,21 @@ make root = ${bMakeRoot}`;
 
 	//*********************************************************************************************
 	// Scenario: With binding parameter $$separate the main list request omits the specified
-	// navigation properties. Instead, they are loaded as late property requests in separate $batch
-	// requests. Same applies for scrolling (load more items).
-	// Parameter $$separate works independently of autoExpandSelect.
+	// navigation properties. Instead, each of them is loaded in a separate $batch request using the
+	// same $skip und $top as the main list request. The separate requests are independent. The
+	// response data becomes visible as soon as a separate request is completed. In case a separate
+	// request is faster than the main list request, its processing waits until the main data is
+	// available.
 	// JIRA: CPOUI5ODATAV4-2691
+	// JIRA: CPOUI5ODATAV4-2692
 [false, true].forEach(function (bAutoExpandSelect) {
 	QUnit.test("$$separate: autoExpandSelect=" + bAutoExpandSelect, async function (assert) {
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : bAutoExpandSelect});
-		const sListUrl = "Artists?custom=foo&$apply=A.P.P.L.E.&$count=true"
-			+ "&$expand=BestPublication($select=CurrencyCode,PublicationID)"
-			+ "&$filter=IsActiveEntity eq true&$orderby=ArtistID&$search=covfefe"
+		const sUrl = "Artists?custom=foo&$apply=A.P.P.L.E.";
+		const sFilterSort = "&$filter=IsActiveEntity eq true&$orderby=ArtistID&$search=covfefe";
+		const sMainUrl = sUrl + "&$count=true"
+			+ "&$expand=BestPublication($select=CurrencyCode,PublicationID)" + sFilterSort
 			+ "&$select=ArtistID,IsActiveEntity,Name";
-		const sLateQueryOptions = "?custom=foo&$select=BestFriend"
-			+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
-			+ ",SiblingEntity($select=ArtistID,IsActiveEntity,Name)";
 		// Note: keep $expand/$select unordered to prove implicit sorting
 		const sExpandSelect = `
 			$expand : {
@@ -74206,11 +74207,11 @@ make root = ${bMakeRoot}`;
 	<Text id="sibling" text="{SiblingEntity/Name}"/>
 </Table>`;
 
-		let fnResolve10;
-		let fnResolve20;
+		let fnResolveBestFriend;
+		let fnResolveSiblingEntity;
 		this.expectRequest({
-				batchNo : 1,
-				url : sListUrl + "&$skip=0&$top=2"
+				batchNo : bAutoExpandSelect ? 3 : 1,
+				url : sMainUrl + "&$skip=0&$top=2"
 			}, {
 				"@odata.count" : "3",
 				value : [{
@@ -74227,72 +74228,107 @@ make root = ${bMakeRoot}`;
 			})
 			.expectChange("name", ["Artist A", "Artist B"])
 			.expectChange("publicationCurrency", ["EUR", "USD"])
-			.expectChange("friend", [])
-			.expectChange("sibling", [])
+			.expectChange("friend", [null, null])
+			.expectChange("sibling", [null, null])
 			.expectRequest({
-				batchNo : 2,
-				url : "Artists(ArtistID='10',IsActiveEntity=true)" + sLateQueryOptions
+				batchNo : bAutoExpandSelect ? 1 : 2,
+				url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=0&$top=2"
 			}, new Promise(function (resolve) {
-				fnResolve10 = resolve.bind(null, {
-					BestFriend : {ArtistID : "F1", IsActiveEntity : true, Name : "Friend A"},
-					SiblingEntity : {ArtistID : "S1", IsActiveEntity : true, Name : "Sibling A"}
+				fnResolveBestFriend = resolve.bind(null, {
+					value : [{
+						ArtistID : "10",
+						BestFriend : {ArtistID : "F1", IsActiveEntity : true, Name : "Friend A"},
+						IsActiveEntity : true
+					}, {
+						ArtistID : "20",
+						BestFriend : {ArtistID : "F2", IsActiveEntity : true, Name : "Friend B"},
+						IsActiveEntity : true
+					}]
 				});
 			}))
 			.expectRequest({
-				batchNo : 2,
-				url : "Artists(ArtistID='20',IsActiveEntity=true)" + sLateQueryOptions
+				batchNo : bAutoExpandSelect ? 2 : 3,
+				url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=0&$top=2"
 			}, new Promise(function (resolve) {
-				fnResolve20 = resolve.bind(null, {
-					BestFriend : {ArtistID : "F2", IsActiveEntity : true, Name : "Friend B"},
-					SiblingEntity : {ArtistID : "S2", IsActiveEntity : true, Name : "Sibling B"}
+				fnResolveSiblingEntity = resolve.bind(null, {
+					value : [{
+						ArtistID : "10",
+						IsActiveEntity : true,
+						SiblingEntity : {ArtistID : "S1", IsActiveEntity : true, Name : "Sibling A"}
+					}, {
+						ArtistID : "20",
+						IsActiveEntity : true,
+						SiblingEntity : {ArtistID : "S2", IsActiveEntity : true, Name : "Sibling B"}
+					}]
 				});
 			}));
 
 		await this.createView(assert, sView, oModel);
 
-		this.expectChange("friend", ["Friend A", "Friend B"])
-			.expectChange("sibling", ["Sibling A", "Sibling B"]);
+		this.expectChange("friend", ["Friend A", "Friend B"]);
 
-		fnResolve10();
-		fnResolve20();
+		fnResolveBestFriend();
 
-		await this.waitForChanges(assert, "$$separate responses");
+		await this.waitForChanges(assert, "$$separate response: BestFriend");
 
-		let fnResolve30;
+		this.expectChange("sibling", ["Sibling A", "Sibling B"]);
+
+		fnResolveSiblingEntity();
+
+		await this.waitForChanges(assert, "$$separate response: SiblingEntity");
+
+		let fnResolveMain;
 		this.expectRequest({
-				batchNo : 3,
-				url : sListUrl + "&$skip=2&$top=1"
+				batchNo : 4,
+				url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=2&$top=1"
 			}, {
-				"@odata.count" : "3",
 				value : [{
 					ArtistID : "30",
-					BestPublication : {CurrencyCode : "JPY", PublicationID : "Pub3"},
-					IsActiveEntity : true,
-					Name : "Artist C"
+					BestFriend : {ArtistID : "F3", IsActiveEntity : true, Name : "Friend C"},
+					IsActiveEntity : true
 				}]
 			})
-			.expectChange("name", [,, "Artist C"])
-			.expectChange("publicationCurrency", [,, "JPY"])
 			.expectRequest({
-				batchNo : 4,
-				url : "Artists(ArtistID='30',IsActiveEntity=true)" + sLateQueryOptions
-			}, new Promise(function (resolve) {
-				fnResolve30 = resolve.bind(null, {
-					BestFriend : {ArtistID : "F3", IsActiveEntity : true, Name : "Friend C"},
+				batchNo : 5,
+				url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=2&$top=1"
+			}, {
+				value : [{
+					ArtistID : "30",
+					IsActiveEntity : true,
 					SiblingEntity : {ArtistID : "S3", IsActiveEntity : true, Name : "Sibling C"}
+				}]
+			})
+			.expectRequest({
+				batchNo : 6,
+				url : sMainUrl + "&$skip=2&$top=1"
+			}, new Promise(function (resolve) {
+				fnResolveMain = resolve.bind(null, {
+					"@odata.count" : "3",
+					value : [{
+						ArtistID : "30",
+						BestPublication : {CurrencyCode : "JPY", PublicationID : "Pub3"},
+						IsActiveEntity : true,
+						Name : "Artist C"
+					}]
 				});
 			}));
 
 		this.oView.byId("table").requestItems();
 
-		await this.waitForChanges(assert, "load more items");
+		await this.waitForChanges(assert, "load more items: main request is delayed");
 
-		this.expectChange("friend", [,, "Friend C"])
+		this.expectChange("name", [,, "Artist C"])
+			.expectChange("publicationCurrency", [,, "JPY"])
+			.expectChange("friend", [,, "Friend C"])
 			.expectChange("sibling", [,, "Sibling C"]);
 
-		fnResolve30();
+		fnResolveMain();
 
-		await this.waitForChanges(assert, "$$separate responses, again");
+		await this.waitForChanges(assert, "delayed main response");
 	});
 });
 });
