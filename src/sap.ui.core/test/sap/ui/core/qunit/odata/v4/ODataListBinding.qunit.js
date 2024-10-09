@@ -258,7 +258,7 @@ sap.ui.define([
 		oBinding.initialize();
 
 		assert.strictEqual(oBinding.sChangeReason, ChangeReason.Refresh);
-		assert.ok(oCheckDataStateExpectation.calledBefore(oRefreshExpectation));
+		sinon.assert.callOrder(oCheckDataStateExpectation, oRefreshExpectation);
 	});
 
 	//*********************************************************************************************
@@ -279,7 +279,7 @@ sap.ui.define([
 		oBinding.initialize();
 
 		assert.strictEqual(oBinding.sChangeReason, "AddVirtualContext");
-		assert.ok(oFireChangeExpectation.calledAfter(oCheckDataStateExpectation));
+		sinon.assert.callOrder(oCheckDataStateExpectation, oFireChangeExpectation);
 	});
 
 	//*********************************************************************************************
@@ -1041,7 +1041,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("applyParameters: reset selection", function (assert) {
+	QUnit.test("applyParameters: reset selection", function () {
 		const oBinding = this.bindList("/EMPLOYEES");
 		const oBindingMock = this.mock(oBinding);
 		const oContextMock = this.mock(oBinding.oHeaderContext);
@@ -1066,7 +1066,7 @@ sap.ui.define([
 		// code under test
 		oBinding.applyParameters({$$clearSelectionOnFilter : true}, undefined, ["$filter"]);
 
-		assert.ok(oSetSelectedExpectation.calledBefore(oRemoveCacheExpectation));
+		sinon.assert.callOrder(oSetSelectedExpectation, oRemoveCacheExpectation);
 
 		oContextMock.expects("setSelected").exactly(2).withExactArgs(false);
 		oBindingMock.expects("removeCachesAndMessages").exactly(2).withExactArgs("");
@@ -1448,7 +1448,7 @@ sap.ui.define([
 		return oPromise.then(function (oResult) {
 			assert.strictEqual(oResult, oData);
 			if (oFixture.elements) {
-				assert.ok(oSetCollectionMock.calledBefore(oReadMock));
+				sinon.assert.callOrder(oSetCollectionMock, oReadMock);
 			}
 
 			oBindingMock.expects("checkSameCache").on(oBinding)
@@ -1576,7 +1576,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bFirstCreateAtEnd) {
-	QUnit.test("fetchContexts: created, atEnd=" + bFirstCreateAtEnd, function (assert) {
+	QUnit.test("fetchContexts: created, atEnd=" + bFirstCreateAtEnd, function () {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			bChanged = {/*boolean*/},
 			fnDataRequested = {/*function*/},
@@ -1602,7 +1602,7 @@ sap.ui.define([
 		// code under test
 		return oBinding.fetchContexts(1, 2, 3, oGroupLock, false, fnDataRequested)
 			.then(function () {
-				assert.ok(oCheckStillValidExpectation.calledBefore(oCreateContextsExpectation));
+				sinon.assert.callOrder(oCheckStillValidExpectation, oCreateContextsExpectation);
 			});
 	});
 });
@@ -1881,7 +1881,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.iCurrentBegin, bKeepCurrent ? 2 : 5);
 		assert.strictEqual(oBinding.iCurrentEnd, bKeepCurrent ? 7 : 15);
 		if (bAsync) {
-			assert.ok(oCreateExpectation.calledBefore(oGetContextsExpectation));
+			sinon.assert.callOrder(oCreateExpectation, oGetContextsExpectation);
 		}
 
 		return oFetchContextsPromise;
@@ -2508,7 +2508,7 @@ sap.ui.define([
 		// code under test
 		oBinding.setContext(oContext);
 
-		assert.ok(oFetchCacheCall.calledAfter(oResetKeepAliveCall));
+		sinon.assert.callOrder(oResetKeepAliveCall, oFetchCacheCall);
 		assert.strictEqual(oBinding.sChangeReason, sExpectedChangeReason);
 		assert.deepEqual(oBinding.mCanUseCachePromiseByChildPath,
 			i === 0 ? {} : "~mCanUseCachePromiseByChildPath~");
@@ -2516,8 +2516,7 @@ sap.ui.define([
 			assert.deepEqual(oBinding.mPreviousContextsByPath, {
 				"/foo/Suppliers" : oOldHeaderContext
 			});
-			assert.ok(oRestoreCreatedCall.calledAfter(oFetchCacheCall));
-			assert.ok(oRestoreCreatedCall.calledBefore(oBindingSetContextCall));
+			sinon.assert.callOrder(oFetchCacheCall, oRestoreCreatedCall, oBindingSetContextCall);
 		} else {
 			assert.deepEqual(oBinding.mPreviousContextsByPath, {});
 		}
@@ -3672,7 +3671,7 @@ sap.ui.define([
 				assert.strictEqual(oBinding.filter(oFilter, sFilterType), oBinding, "chaining");
 
 				if (!bSuspended) {
-					assert.ok(oSetSelectedExpectation.calledBefore(oRemoveCacheExpectation));
+					sinon.assert.callOrder(oSetSelectedExpectation, oRemoveCacheExpectation);
 				}
 
 				if (sFilterType === FilterType.Control) {
@@ -4975,7 +4974,7 @@ sap.ui.define([
 		}, function (oError) {
 			assert.strictEqual(oError, "~oError~");
 
-			assert.ok(oBindingResetCall.calledAfter(oCacheResetCall));
+			sinon.assert.callOrder(oCacheResetCall, oBindingResetCall);
 		});
 	});
 });
@@ -5074,7 +5073,7 @@ sap.ui.define([
 		// code under test - call fnCancelCallback to simulate cancellation
 		oPromise = oLockGroupExpectation.args[0][3]();
 
-		assert.ok(oSetSelectedExpectation.calledBefore(oRemoveCreatedExpectation));
+		sinon.assert.callOrder(oSetSelectedExpectation, oRemoveCreatedExpectation);
 
 		// expect the event to be fired asynchronously
 		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Remove});
@@ -7348,7 +7347,7 @@ sap.ui.define([
 				"deep/resource/path", undefined, bWithOld ? oOldCache : undefined),
 			bAggregation ? oAggregationCache : oCache);
 		if (oGetExpectation) {
-			assert.ok(oMoveExpectation.calledBefore(oGetExpectation));
+			sinon.assert.callOrder(oMoveExpectation, oGetExpectation);
 		}
 	});
 			});
@@ -7936,8 +7935,8 @@ sap.ui.define([
 
 						if (bCreated) { // removeCreated adjusted aContexts
 							if (!bStillAlive) {
-								assert.ok(oResetKeepAliveExpectation
-									.calledBefore(oRemoveCreatedExpectation));
+								sinon.assert.callOrder(oResetKeepAliveExpectation,
+									oRemoveCreatedExpectation);
 							}
 						} else {
 							assert.strictEqual(oBinding.aContexts.length, 7);
@@ -8304,10 +8303,9 @@ sap.ui.define([
 			oBinding.resumeInternal(true/*ignored*/);
 
 			assert.strictEqual(oBinding.sResumeChangeReason, undefined);
-			assert.ok(oFetchCacheExpectation.calledAfter(oResetExpectation));
-			assert.ok(oGetDependentBindingsExpectation.calledAfter(oFetchCacheExpectation));
-			assert.ok(oFireExpectation.calledAfter(oGetDependentBindingsExpectation));
-			assert.ok(oHeaderContextCheckUpdateExpectation.calledAfter(oFireExpectation));
+			sinon.assert.callOrder(oResetExpectation, oFetchCacheExpectation,
+				oGetDependentBindingsExpectation, oFireExpectation,
+				oHeaderContextCheckUpdateExpectation);
 		});
 	});
 	//TODO This is very similar to ODCB#resumeInternal; both should be refactored to
@@ -8451,7 +8449,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resumeInternal: reset selection", function (assert) {
+	QUnit.test("resumeInternal: reset selection", function () {
 		var oBinding = this.bindList("/EMPLOYEES");
 
 		oBinding.sResumeChangeReason = ChangeReason.Filter;
@@ -8465,7 +8463,7 @@ sap.ui.define([
 		// code under test
 		oBinding.resumeInternal();
 
-		assert.ok(oSetSelectedExpectation.calledBefore(oRemoveCacheExpectation));
+		sinon.assert.callOrder(oSetSelectedExpectation, oRemoveCacheExpectation);
 
 		oBinding.mParameters = {};
 
@@ -10677,7 +10675,7 @@ sap.ui.define([
 				}
 				if (bKeepAlive) {
 					assert.ok(oSetKeepAliveExpectation.called);
-					assert.ok(oSetKeepAliveExpectation.calledAfter(oDoReplaceWithExpectation));
+					sinon.assert.callOrder(oDoReplaceWithExpectation, oSetKeepAliveExpectation);
 				}
 				assert.strictEqual(oOldContext.iIndex, undefined);
 				assert.strictEqual(oBinding.aContexts.indexOf(oNewContext),
@@ -11021,7 +11019,7 @@ sap.ui.define([
 				assert.ok(oSetKeepAliveExpectation.called);
 				assert.ok(oPredicateExpectation.called);
 				assert.ok(oAddKeptElementExpectation.called);
-				assert.ok(oPredicateExpectation.calledBefore(oAddKeptElementExpectation));
+				sinon.assert.callOrder(oPredicateExpectation, oAddKeptElementExpectation);
 				assert.strictEqual(oPredicateExpectation.args[0][0],
 					oAddKeptElementExpectation.args[0][0], "same empty object");
 				if (sGroupId) { // Note: order not important for this call
@@ -11812,7 +11810,7 @@ sap.ui.define([
 		// code under test
 		oBinding.onChange();
 
-		assert.ok(oDependentsExpectation.calledBefore(oResetExpectation));
+		sinon.assert.callOrder(oDependentsExpectation, oResetExpectation);
 
 		oRejectedPromise.catch(function () {});
 	});
@@ -12054,7 +12052,7 @@ sap.ui.define([
 			assert.ok(false);
 		}, function (oError) {
 			assert.strictEqual(oError, "~oError~");
-			assert.ok(oUpdateExpectation.calledAfter(oResetExpectation));
+			sinon.assert.callOrder(oResetExpectation, oUpdateExpectation);
 		});
 	});
 
@@ -12101,8 +12099,8 @@ sap.ui.define([
 			assert.ok(false);
 		}, function (oError) {
 			assert.strictEqual(oError, "~oError~");
-			assert.ok(oUpdateExpectation.calledAfter(oResetExpectation));
-			assert.ok(oFetchContextsExpectation.calledAfter(oResetExpectation));
+			sinon.assert.callOrder(oResetExpectation, oFetchContextsExpectation,
+				oUpdateExpectation);
 		});
 	});
 });
