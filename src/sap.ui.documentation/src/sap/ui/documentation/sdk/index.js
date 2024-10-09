@@ -9,7 +9,6 @@
     },
 
     sSampleId = getUrlParam('sap-ui-xx-sample-id'),
-    sOrigin = getUrlParam('sap-ui-xx-sample-origin'),
     sLib = getUrlParam('sap-ui-xx-sample-lib'),
     sPresetTheme = getUrlParam('sap-ui-theme') || 'sap_horizon',
     sPresetRTL = getUrlParam('sap-ui-rtl') || false,
@@ -223,24 +222,11 @@
             });
         };
 
-    if (sOrigin === "" || sOrigin === ".") {
-        var sHref = document.location.href;
-        sOrigin = sHref.substring(0, sHref.lastIndexOf('resources/sap/ui/documentation/sdk/') - 1);
-    } else {
-        sOrigin = new URL(sOrigin, document.baseURI).pathname;
-    }
-
-    var sOriginEncoded = encodeURI(sOrigin);
-
-    oPath["sap/ui/demo/mock"] = sOriginEncoded + "/test-resources/sap/ui/documentation/sdk";
+    oPath["sap/ui/demo/mock"] = "test-resources/sap/ui/documentation/sdk";
     oPath["test-resources/sap/ui/documentation/sdk"] = ".";
 
-    var oBaseTag = document.createElement("base");
-    oBaseTag.setAttribute("href", sOriginEncoded + "/");
-    document.head.appendChild(oBaseTag);
-
     var oScriptTag = document.createElement("script");
-    oScriptTag.setAttribute("src", sOriginEncoded + "/resources/sap-ui-core.js");
+    oScriptTag.setAttribute("src", "resources/sap-ui-core.js");
     oScriptTag.setAttribute("id", "sap-ui-bootstrap");
     oScriptTag.dataset.sapUiLibs = "sap.m";
     oScriptTag.dataset.sapUiAsync = true;
