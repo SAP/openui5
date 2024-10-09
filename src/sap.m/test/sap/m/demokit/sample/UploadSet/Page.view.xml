@@ -18,7 +18,8 @@
 				uploadUrl="../../../../upload"
 				items="{path: '/items', templateShareable: false}"
 				mode="MultiSelect"
-				selectionChanged="onSelectionChange">
+				selectionChanged="onSelectionChange"
+				afterItemRemoved="onAfterItemRemoved">
 			<upload:toolbar>
 				<OverflowToolbar>
 					<ToolbarSpacer/>
