@@ -38,7 +38,6 @@
   	},
 	"sap.ui5": {
 		"rootView": {
-			"async": true,
 			"viewName": "sap.ui.core.sample.Messaging.ODataBackendMessagesComp.view.App"
 		},
 		"handleValidation"  : true,
