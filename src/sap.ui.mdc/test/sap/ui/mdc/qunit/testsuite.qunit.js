@@ -143,6 +143,10 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				group: "Util",
 				module: "./util/FilterUtil.qunit"
 			},
+			"IdentifierUtil": {
+				group: "Util",
+				module: "./util/IdentifierUtil.qunit"
+			},
 			"DateUtil": {
 				group: "Util",
 				module: "./util/DateUtil.qunit",
