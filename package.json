@@ -76,7 +76,7 @@
     "@ui5/webcomponents-theming": "1.18.0",
     "async": "^3.2.4",
     "cheerio": "1.0.0",
-    "cookie": "^0.4.2",
+    "cookie": "^1.0.0",
     "decompress": "^4.2.1",
     "eslint": "^8.56.0",
     "glob": "^11.0.0",
