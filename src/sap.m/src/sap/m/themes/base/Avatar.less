@@ -281,6 +281,23 @@ html:not(.sap-desktop) .sapFAvatarFocusable.sapMAvatarPressed {
 	}
 }
 
+.generateBadgeColor(@i) when (@i =< 10) {
+	@color: 'sapAccentColor@{i}';
+	@background: 'sapAccentBackgroundColor@{i}';
+
+	.sapFAvatarBadgeColorAccent@{i} .sapFAvatarBadgeIcon {
+		box-shadow: @_sap_m_Avatar_Hover_Box_Shadow_Offset @@color;
+		background-color: @@background;
+		> .sapUiIcon {
+			color: @@color;
+		}
+	}
+
+	.generateBadgeColor(@i + 1);
+}
+
+.generateBadgeColor(1);
+
 .sapFAvatarWarning .sapFAvatarBadgeIcon {
 	background-color: var(--sapWarningBackground);
 	box-shadow: @_sap_m_Avatar_Hover_Box_Shadow_Offset var(--sapWarningBorderColor);
