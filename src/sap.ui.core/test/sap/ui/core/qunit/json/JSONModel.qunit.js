@@ -417,6 +417,7 @@ sap.ui.define([
 		oModelChild.destroy();
 	});
 
+	/** @deprecated As of version 1.107, reason JSONModel#loadData, parameter bAsync */
 	QUnit.test("test JSONModel loadData: sync",function(assert) {
 		var testModel = new JSONModel();
 		testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata.json", null, false);
@@ -426,6 +427,7 @@ sap.ui.define([
 		testModel.destroy();
 	});
 
+	/** @deprecated As of version 1.107, reason JSONModel#loadData, parameter bAsync */
 	QUnit.test("test JSONModel loadData: sync - error",function(assert) {
 		var testModel = new JSONModel();
 		testModel.attachRequestCompleted(function(e) {

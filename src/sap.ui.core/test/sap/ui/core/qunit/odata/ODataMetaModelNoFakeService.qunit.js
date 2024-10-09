@@ -222,15 +222,23 @@ sap.ui.define([
 
 			assert.throws(() => { oMetaModel.refresh(); }, /Unsupported operation: ODataMetaModel#refresh/);
 
-			oMetaModel.setLegacySyntax(); // allowed
-			oMetaModel.setLegacySyntax(false); // allowed
-			assert.throws(() => { oMetaModel.setLegacySyntax(true); }, /Legacy syntax not supported by ODataMetaModel/);
-
 			assert.strictEqual(oMetaModel.getDefaultBindingMode(), BindingMode.OneTime);
 			assert.strictEqual(oMetaModel.oModel.getDefaultBindingMode(), BindingMode.OneTime);
 			assert.throws(() => { oMetaModel.setDefaultBindingMode(BindingMode.OneWay); });
 			assert.throws(() => { oMetaModel.setDefaultBindingMode(BindingMode.TwoWay); });
 		});
+	});
+
+	/** @deprecated As of version 1.88.0, reason sap.ui.model.Model#setLegacySyntax */
+	//*********************************************************************************************
+	QUnit.test("setLegacySyntax", function (assert) {
+		const oMetaModel = {};
+
+		//code under test
+		ODataMetaModel.prototype.setLegacySyntax.call(oMetaModel); // allowed
+		ODataMetaModel.prototype.setLegacySyntax.call(oMetaModel, false); // allowed
+		assert.throws(() => { ODataMetaModel.prototype.setLegacySyntax.call(oMetaModel, true); },
+			/Legacy syntax not supported by ODataMetaModel/);
 	});
 
 	//*********************************************************************************************
