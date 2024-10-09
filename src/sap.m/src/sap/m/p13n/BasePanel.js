@@ -25,7 +25,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/library",
 	"sap/m/p13n/MessageStrip",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/m/table/Util"
 ], (
 	Element,
 	Library,
@@ -49,7 +50,8 @@ sap.ui.define([
 	library,
 	coreLibrary,
 	MessageStrip,
-	InvisibleText
+	InvisibleText,
+	TableUtil
 ) => {
 	"use strict";
 
@@ -596,7 +598,10 @@ sap.ui.define([
 					shrinkable: true,
 					priority: "High",
 					maxWidth: "16rem"
-				})
+				}),
+				change: () => {
+					TableUtil.announceTableUpdate(this.getTableInvisibleText().getText(), this._oListControl.getItems().length);
+				}
 			});
 		}
 		return this._oSearchField;
@@ -612,6 +617,17 @@ sap.ui.define([
 	 */
 	BasePanel.prototype.getInitialFocusedControl = function() {
 		return this._oSearchField;
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted sap.m.p13n
+	 * Returns the <code>InvisibleText</code> control describing the table in the personalization panel.
+	 *
+	 * @returns {sap.ui.core.InvisibleText} The invisible text describing the table control.
+	 */
+	BasePanel.prototype.getTableInvisibleText = function() {
+		return this._oInvText;
 	};
 
 	BasePanel.prototype.setTitle = function(sTitle) {
