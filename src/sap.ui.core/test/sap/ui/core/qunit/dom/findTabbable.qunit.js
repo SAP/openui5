@@ -53,4 +53,41 @@ sap.ui.define([
 
 		oDiv.remove();
 	});
+
+	QUnit.test("Web Component with unslotted child node", function(assert) {
+		customElements.define(
+			"my-web-component-1",
+			class extends HTMLElement {
+				constructor() {
+					super();
+
+					const shadowRoot = this.attachShadow({ mode: "open" });
+
+					const slot1 = document.createElement("slot");
+					slot1.setAttribute("name", "slot1");
+					shadowRoot.appendChild(slot1);
+				}
+			}
+		);
+
+		const oDiv = createAndAppendDiv("my-web-component-parent");
+
+		const oSpan1 = document.createElement("span");
+		oSpan1.appendChild(document.createTextNode("unslotted span"));
+
+		const oMyWebComponent = document.createElement("my-web-component-1");
+		oMyWebComponent.appendChild(oSpan1);
+
+		oDiv.appendChild(oMyWebComponent);
+
+		const oRes = findTabbable(oSpan1, {
+			scope: oMyWebComponent,
+			forward: true
+		});
+
+		assert.equal(oRes.element, null, "findTabbable should end without endless loop");
+		assert.equal(oRes.startOver, true, "findTabbable should end without endless loop");
+
+		oDiv.remove();
+	});
 });
