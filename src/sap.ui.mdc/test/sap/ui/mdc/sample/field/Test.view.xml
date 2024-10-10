@@ -360,6 +360,9 @@
 													<m:Text text="{Description}"/>
 												</m:ColumnListItem>
 											</m:items>
+											<m:noData>
+												<m:Text text="Nothing found"/>
+											</m:noData>
 										</m:Table>
 									</mdcValueHelpContent:MTable>
 								</mdcValueHelp:Popover>

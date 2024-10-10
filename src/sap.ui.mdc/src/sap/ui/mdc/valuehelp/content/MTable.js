@@ -372,6 +372,10 @@ sap.ui.define([
 				return oSelectedItem.getId();
 			} else {
 				this._bScrollToSelectedItem = true;
+
+				if (oTable.getItems().length === 0 && oTable.getShowNoData()) { // if no items return no-data text to announce it on field
+					return oTable.getId("nodata-text");
+				}
 			}
 		}
 
