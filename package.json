@@ -98,7 +98,7 @@
     "karma-chrome-launcher": "^3.2.0",
     "karma-coverage": "^2.2.1",
     "karma-junit-reporter": "^2.0.1",
-    "karma-ui5": "^3.0.4",
+    "karma-ui5": "^4.0.0",
     "lit-html": "2.2.2",
     "load-grunt-config": "^3.0.1",
     "moment": "^2.29.4",
