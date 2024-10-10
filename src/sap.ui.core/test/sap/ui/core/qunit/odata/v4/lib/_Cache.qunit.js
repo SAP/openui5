@@ -11298,6 +11298,7 @@ sap.ui.define([
 		oCache.sContext = "~context~";
 		oCache.aElements.$count = oCache.iLimit = 3;
 		oCache.aReadRequests = [{iStart : 1, iEnd : 2}, {iStart : 3, iEnd : 4}];
+		oCache.mSeparateProperty2ReadRequest = {prop1 : ["range0", "range1"], prop2 : ["range2"]};
 
 		oSetQueryOptionsExpectation = this.mock(oCache).expects("setQueryOptions")
 			.withExactArgs("~mQueryOptions~", true);
@@ -11325,6 +11326,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.iLimit, Infinity);
 		assert.deepEqual(oCache.mChangeListeners, {"" : "~listeners~"});
 		sinon.assert.callOrder(oSetQueryOptionsExpectation, oFireChangeExpectation);
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {prop1 : [], prop2 : []});
 	});
 
 	//*********************************************************************************************
@@ -13439,6 +13441,36 @@ sap.ui.define([
 		});
 
 		return oResult;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#requestSeparateProperties: skip import", async function () {
+		const oCache = _Cache.create(this.oRequestor, "SalesOrders", undefined, undefined,
+			undefined, undefined, ["separate"]);
+
+		this.mock(oCache).expects("fetchTypes").withExactArgs().resolves("n/a");
+		this.mock(oCache).expects("getResourcePathWithQuery").withExactArgs(3, 5, "separate")
+			.returns("~sResourcePath~");
+		this.mock(oCache.oRequestor).expects("lockGroup")
+			.withExactArgs("$single", sinon.match.same(oCache))
+			.returns("~oGroupLock~");
+		let fnResolveSeparate;
+		const oSeparatePromise = new Promise(function (resolve) { fnResolveSeparate = resolve; });
+		this.mock(oCache.oRequestor).expects("request")
+			.withExactArgs("GET", "~sResourcePath~", "~oGroupLock~")
+			.returns(oSeparatePromise);
+
+		// code under test
+		await oCache.requestSeparateProperties(3, 5, "~oMainPromise~");
+
+		// simulate #reset
+		oCache.mSeparateProperty2ReadRequest.separate = [];
+
+		this.mock(oCache).expects("visitResponse").never();
+		this.mock(_Helper).expects("updateSelected").never();
+
+		fnResolveSeparate("~oResult~");
+		await oSeparatePromise;
 	});
 
 	//*********************************************************************************************
