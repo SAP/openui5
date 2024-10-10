@@ -154,7 +154,7 @@ sap.ui.define([
 
 		// forward press event
 		this._getAnchorBar().attachSelect(function(oEvent) {
-			this.forwardPressToCustomButton(oEvent.getParameter("item"));
+			this._forwardPressToCustomButton(oEvent.getParameter("item"));
 		}, this);
 	};
 
