@@ -337,6 +337,15 @@ sap.ui.define([
 					only: "//sap\/m\/[\\w]*DynamicDate.*/"
 				}
 			},
+			DynamicDateRangeDE: {
+				title: "Test Page for sap.m.DynamicDateRange in German",
+				ui5: {
+					language: "de-DE"
+				},
+				coverage: {
+					only: "//sap\/m\/[\\w]*DynamicDate.*/"
+				}
+			},
 			ExpandableText: {
 				title: "QUnit Tests - sap.m.ExpandableText",
 				sinon: {

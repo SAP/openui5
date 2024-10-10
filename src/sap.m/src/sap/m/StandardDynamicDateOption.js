@@ -590,7 +590,7 @@ sap.ui.define([
 					return "";
 				}
 
-				return _resourceBundle.getText("DYNAMIC_DATE_" + sOptionName.toUpperCase());
+				return sOptionName.toUpperCase();
 			});
 
 			const filteredArray = aOptionsStrings.filter(function(str) {
