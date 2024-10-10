@@ -21,12 +21,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_AggregationHelper",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
-	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/ui/model/odata/v4/lib/_Parser"
+	"sap/ui/model/odata/v4/lib/_Helper"
 ], function (Log, SyncPromise, Binding, ChangeReason, Filter, FilterOperator, FilterProcessor,
 		FilterType, ListBinding, Sorter, OperationMode, Context, ODataListBinding, ODataModel,
-		asODataParentBinding, _AggregationCache, _AggregationHelper, _Cache, _GroupLock, _Helper,
-		_Parser) {
+		asODataParentBinding, _AggregationCache, _AggregationHelper, _Cache, _GroupLock, _Helper) {
 	/*eslint no-sparse-arrays: 0 */
 	"use strict";
 
@@ -10318,7 +10316,7 @@ sap.ui.define([
 		var fnCallback,
 			oBinding = this.bindList("/TEAMS"),
 			aFilters = [],
-			oListBindingMock = this.mock(ODataListBinding),
+			oHelperMock = this.mock(_Helper),
 			that = this;
 
 		aFilters = oFixture.predicates.map(function () {
@@ -10334,10 +10332,10 @@ sap.ui.define([
 				that.mock(that.oModel).expects("getMessagesByPath")
 					.withExactArgs("/TEAMS", true).returns(oFixture.messages);
 				if (oFixture.predicates.length === 0) {
-					oListBindingMock.expects("getFilterForPredicate").never();
+					oHelperMock.expects("getFilterForPredicate").never();
 				} else {
 					oFixture.predicates.forEach(function (sPredicate, i) {
-						oListBindingMock.expects("getFilterForPredicate")
+						oHelperMock.expects("getFilterForPredicate")
 							.withExactArgs(sPredicate, "~entity~type~",
 								sinon.match.same(that.oModel.oMetaModel), "~meta~path~")
 							.returns(aFilters[i]);
@@ -10440,76 +10438,6 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oBinding.isUnchangedParameter("$$aggregation", "~vOtherValue~"),
 			"~result3~");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getFilterForPredicate (one key property)", function (assert) {
-		var oEntityType = {
-				$Key : ["key"]
-			},
-			oFilter,
-			oMetaModel = {
-				getObject : function () {}
-			};
-
-		this.mock(_Parser).expects("parseKeyPredicate").withExactArgs("('value')")
-			.returns({"" : "'value'"});
-		this.mock(oMetaModel).expects("getObject").withExactArgs("~meta~path~/key/$Type")
-			.returns("type");
-		this.mock(window).expects("decodeURIComponent").withExactArgs("'value'")
-			.returns("decoded value");
-		this.mock(_Helper).expects("parseLiteral").withExactArgs("decoded value", "type", "key")
-			.returns("parsed value");
-
-		// code under test
-		oFilter = ODataListBinding.getFilterForPredicate("('value')", oEntityType, oMetaModel,
-			"~meta~path~");
-
-		assert.ok(oFilter instanceof Filter);
-		assert.deepEqual(oFilter, new Filter("key", FilterOperator.EQ, "parsed value"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getFilterForPredicate (more key properties, aliases)", function (assert) {
-		var oEntityType = {
-				$Key : ["key1", "key2", {alias : "key3/p"}]
-			},
-			oFilter,
-			oHelperMock = this.mock(_Helper),
-			oMetaModel = {
-				getObject : function () {}
-			},
-			oMetaModelMock = this.mock(oMetaModel);
-
-		this.mock(_Parser).expects("parseKeyPredicate")
-			.withExactArgs("(key1='42',key2=43,alias='44')")
-			.returns({key1 : "'42'", key2 : "43", alias : "'44'"});
-		oMetaModelMock.expects("getObject").withExactArgs("~meta~path~/key1/$Type")
-			.returns("type1");
-		oMetaModelMock.expects("getObject").withExactArgs("~meta~path~/key2/$Type")
-			.returns("type2");
-		oMetaModelMock.expects("getObject").withExactArgs("~meta~path~/key3/p/$Type")
-			.returns("type3");
-		oHelperMock.expects("parseLiteral").withExactArgs("'42'", "type1", "key1")
-			.returns("42");
-		oHelperMock.expects("parseLiteral").withExactArgs("43", "type2", "key2")
-			.returns(43);
-		oHelperMock.expects("parseLiteral").withExactArgs("'44'", "type3", "key3/p")
-			.returns("44");
-
-		// code under test
-		oFilter = ODataListBinding.getFilterForPredicate("(key1='42',key2=43,alias='44')",
-			oEntityType, oMetaModel, "~meta~path~");
-
-		assert.ok(oFilter instanceof Filter);
-		assert.deepEqual(oFilter, new Filter({
-			and : true,
-			filters : [
-				new Filter("key1", FilterOperator.EQ, "42"),
-				new Filter("key2", FilterOperator.EQ, 43),
-				new Filter("key3/p", FilterOperator.EQ, "44")
-			]
-		}));
 	});
 
 	//*********************************************************************************************

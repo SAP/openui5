@@ -11,7 +11,6 @@ sap.ui.define([
 	"./lib/_Cache",
 	"./lib/_GroupLock",
 	"./lib/_Helper",
-	"./lib/_Parser",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
@@ -24,8 +23,8 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/OperationMode"
 ], function (Context, asODataParentBinding, _AggregationCache, _AggregationHelper, _Cache,
-		_GroupLock, _Helper, _Parser, Log, SyncPromise, Binding, ChangeReason, Filter,
-		FilterOperator, FilterProcessor, FilterType, ListBinding, Sorter, OperationMode) {
+		_GroupLock, _Helper, Log, SyncPromise, Binding, ChangeReason, Filter, FilterOperator,
+		FilterProcessor, FilterType, ListBinding, Sorter, OperationMode) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -4233,8 +4232,8 @@ sap.ui.define([
 			});
 
 			aFilters = Object.keys(mPredicates).map(function (sPredicate) {
-				return ODataListBinding.getFilterForPredicate(sPredicate, oEntityType,
-					oMetaModel, sMetaPath);
+				return _Helper
+					.getFilterForPredicate(sPredicate, oEntityType, oMetaModel, sMetaPath);
 			});
 
 			if (aFilters.length === 0) {
@@ -5010,46 +5009,6 @@ sap.ui.define([
 	//*********************************************************************************************
 	// "static" functions
 	//*********************************************************************************************
-
-	/**
-	 * Calculates the filter for the given key predicate.
-	 *
-	 * @param {string} sPredicate The key predicate of a message target
-	 * @param {object} oEntityType The metadata for the entity type
-	 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel The meta model
-	 * @param {string} sMetaPath The meta path
-	 * @returns {sap.ui.model.Filter} an {@link sap.ui.model.Filter} for the given key predicate
-	 *
-	 * @private
-	 */
-	ODataListBinding.getFilterForPredicate = function (sPredicate, oEntityType, oMetaModel,
-			sMetaPath) {
-		var aFilters,
-			mValueByKeyOrAlias = _Parser.parseKeyPredicate(sPredicate);
-
-		if ("" in mValueByKeyOrAlias) {
-			// unnamed key e.g. {"" : ('42')} => replace it by the name of the only key property
-			mValueByKeyOrAlias[oEntityType.$Key[0]] = mValueByKeyOrAlias[""];
-			delete mValueByKeyOrAlias[""];
-		}
-
-		aFilters = oEntityType.$Key.map(function (vKey) {
-			var sKeyOrAlias, sKeyPath;
-
-			if (typeof vKey === "string") {
-				sKeyPath = sKeyOrAlias = vKey;
-			} else {
-				sKeyOrAlias = Object.keys(vKey)[0]; // alias
-				sKeyPath = vKey[sKeyOrAlias];
-			}
-
-			return new Filter(sKeyPath, FilterOperator.EQ,
-				_Helper.parseLiteral(decodeURIComponent(mValueByKeyOrAlias[sKeyOrAlias]),
-					oMetaModel.getObject(sMetaPath + "/" + sKeyPath + "/$Type"), sKeyPath));
-		});
-
-		return aFilters.length === 1 ? aFilters[0] : new Filter({and : true, filters : aFilters});
-	};
 
 	/**
 	 * Returns whether this binding is below an ODLB with data aggregation.
