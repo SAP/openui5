@@ -118,13 +118,13 @@ sap.ui.define([
 			[]);
 
 		// 4. setting a valid theme again should work
-		Theming.setTheme("sap_belize");
+		Theming.setTheme("sap_fiori_3");
 
-		await fnAssert("sap_belize",
+		await fnAssert("sap_fiori_3",
 			// change event for "theme"
-			[{ theme: { "old": sCalculatedDefaultTheme, "new": "sap_belize" } }],
+			[{ theme: { "old": sCalculatedDefaultTheme, "new": "sap_fiori_3" } }],
 			// applied event with new theme name
-			[{ theme: "sap_belize" }]);
+			[{ theme: "sap_fiori_3" }]);
 	});
 
 });

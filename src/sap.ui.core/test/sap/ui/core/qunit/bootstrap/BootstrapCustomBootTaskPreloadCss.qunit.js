@@ -34,7 +34,7 @@ sap.ui.define([
 	 */
 	QUnit.test("ThemeChanged event should wait for CSS files loaded after changeTheme", function(assert) {
 		var done = assert.async();
-		Theming.setTheme("sap_hcb");
+		Theming.setTheme("sap_horizon_hcb");
 		// Note: any listener attached after setTheme will only be called after the new theme has been applied
 		Theming.attachApplied(function () {
 			assert.equal(Parameters.get({ name: "sapUiThemeParamForFantasyLib" }), "#fafafa",

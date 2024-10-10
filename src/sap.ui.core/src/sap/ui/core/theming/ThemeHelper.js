@@ -38,17 +38,20 @@ sap.ui.define([
 		"sap_fiori_3_hcb",
 		"sap_fiori_3_hcw",
 
-		// belize
-		"sap_belize",
-		"sap_belize_plus",
-		"sap_belize_hcb",
-		"sap_belize_hcw",
+		/** @deprecated Obsolete themes should be removed in main */
+		...[
+			// belize (deprecated as of 1.120)
+			"sap_belize",
+			"sap_belize_plus",
+			"sap_belize_hcb",
+			"sap_belize_hcw",
 
-		// bluecrystal (deprecated)
-		"sap_bluecrystal",
+			// bluecrystal (deprecated as of 1.40)
+			"sap_bluecrystal",
 
-		// hcb (deprecated) - the standard HCB theme, newer themes have a dedicated HCB/HCW variant
-		"sap_hcb"
+			// hcb (deprecated as of 1.46) - the standard HCB theme, newer themes have a dedicated HCB/HCW variant
+			"sap_hcb"
+		]
 	];
 
 	// cache for already calculated theme fallbacks
