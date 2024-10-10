@@ -4,21 +4,22 @@
 /* =========================== */
 
 .sapMLnk {
-	color: @sapUiLink;
-	text-decoration: @sapUiLinkTextDecoration;
+	color: var(--sapLinkColor);
+	text-decoration: var(--sapLink_TextDecoration);
 	display: inline-block;
-	font-family: @sapUiFontFamily;
+	font-family: var(--sapFontFamily);
 	font-size: @sapMFontMediumSize;
 	cursor: pointer;
 
 	&:visited {
-		color: @sapUiLinkVisitedColor;
+		color: var(--sapLink_Visited_Color);
 	}
 
 	&:not(.sapMLnkDsbl) {
+
 		&:active {
-			color: @sapUiLinkActiveColor;
-			text-decoration: @sapUiLinkActiveTextDecoration;
+			color: var(--sapLink_Active_Color);
+			text-decoration: var(--sapLink_Active_TextDecoration);
 		}
 	}
 
@@ -50,21 +51,21 @@
 }
 
 html.sap-desktop .sapMLnk:not(.sapMLnkDsbl) {
+
 	&:focus {
-		outline: 1px dotted @sapUiContentFocusColor;
+		outline: 1px dotted var(--sapContent_FocusColor);
 		outline-offset: -1px;
 		text-decoration: underline;
 	}
 
 	&:hover:not(:active):not(:focus) {
-		color: @sapUiLinkHoverColor;
-		text-decoration: @sapUiLinkHoverTextDecoration;
+		color: var(--sapLink_Hover_Color);
+		text-decoration: var(--sapLink_Hover_TextDecoration);
 	}
-
 }
 
 .sapUiInverted-CTX .sapUiLnk {
-	color: @sapUiLinkInvertedColor;
+	color: var(--sapLink_InvertedColor);
 }
 
 .sapMLnk.sapMLnkWrapping {
@@ -81,7 +82,6 @@ html.sap-desktop .sapMLnk:not(.sapMLnkDsbl) {
 .sapMLnkMaxWidth {
 	max-width: 100%;
 }
-
 
 /* Link in sap.ui.table.* tables */
 
@@ -115,7 +115,7 @@ html.sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnk
 .sapUiFormEdit .sapMLnk {
 	line-height: normal;
 	margin-top: 1rem; /* don't use padding as this would stretch the focus outline */
-	margin-bottom: 0.75rem; /* for some reason browser adds 4px, display: block would lead to stretched focus outline*/
+	margin-bottom: 0.75rem; /* for some reason browser adds 4px, display: block would lead to stretched focus outline */
 }
 
 .sapUiFormToolbar .sapMTB .sapMLnk {
@@ -125,7 +125,7 @@ html.sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnk
 }
 
 .sapMLnkEmphasized {
-	font-family: @sapUiFontBoldFamily;
+	font-family: var(--sapFontBoldFamily);
 }
 
 .sapMLnk .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
@@ -138,9 +138,8 @@ html.sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnk
 
 .sapMShowEmpty-CTX .sapMLnk .sapMEmptyIndicator.sapMEmptyIndicatorAuto,
 .sapMLnk .sapMEmptyIndicator {
-	color: @sapUiBaseText;
+	color: var(--sapTextColor);
 }
-
 
 .sapMListTblRow.sapMLIBActive .sapMLnk,
 .sapMListTblSubRow.sapMLIBActive .sapMLnk,
