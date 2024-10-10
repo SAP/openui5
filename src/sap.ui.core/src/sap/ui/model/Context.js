@@ -46,7 +46,6 @@ sap.ui.define([
 		},
 
 		metadata : {
-			"abstract" : true,
 		  publicMethods : [
 				"getModel", "getPath", "getProperty", "getObject"
 			]
