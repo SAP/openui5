@@ -74166,6 +74166,10 @@ make root = ${bMakeRoot}`;
 	// response data becomes visible as soon as a separate request is completed. In case a separate
 	// request is faster than the main list request, its processing waits until the main data is
 	// available.
+	// Due to a creation in the back end the separate requests respond with an unexpected entity
+	// which was not part of the main list response. The unexpected data is ignored. Instead, the
+	// missing separate data according to the main list is separately fetched with late property
+	// requests.
 	// JIRA: CPOUI5ODATAV4-2691
 	// JIRA: CPOUI5ODATAV4-2692
 [false, true].forEach(function (bAutoExpandSelect) {
@@ -74213,7 +74217,7 @@ make root = ${bMakeRoot}`;
 				batchNo : bAutoExpandSelect ? 3 : 1,
 				url : sMainUrl + "&$skip=0&$top=2"
 			}, {
-				"@odata.count" : "3",
+				"@odata.count" : "5",
 				value : [{
 					ArtistID : "10",
 					BestPublication : {CurrencyCode : "EUR", PublicationID : "Pub1"},
@@ -74307,7 +74311,7 @@ make root = ${bMakeRoot}`;
 				url : sMainUrl + "&$skip=2&$top=1"
 			}, new Promise(function (resolve) {
 				fnResolveMain = resolve.bind(null, {
-					"@odata.count" : "3",
+					"@odata.count" : "5",
 					value : [{
 						ArtistID : "30",
 						BestPublication : {CurrencyCode : "JPY", PublicationID : "Pub3"},
@@ -74317,7 +74321,7 @@ make root = ${bMakeRoot}`;
 				});
 			}));
 
-		this.oView.byId("table").requestItems();
+		this.oView.byId("table").requestItems(1);
 
 		await this.waitForChanges(assert, "load more items: main request is delayed");
 
@@ -74329,6 +74333,78 @@ make root = ${bMakeRoot}`;
 		fnResolveMain();
 
 		await this.waitForChanges(assert, "delayed main response");
+
+		this.expectRequest({
+				batchNo : 7,
+				url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=3&$top=2"
+			}, {
+				value : [{
+					ArtistID : "99", // unexpected entity
+					BestFriend : {ArtistID : "F99", IsActiveEntity : true, Name : "Friend Z"},
+					IsActiveEntity : true
+				}, {
+					ArtistID : "40",
+					BestFriend : {ArtistID : "F4", IsActiveEntity : true, Name : "Friend D"},
+					IsActiveEntity : true
+				}]
+			})
+			.expectRequest({
+				batchNo : 8,
+				url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=3&$top=2"
+			}, {
+				value : [{
+					ArtistID : "50",
+					IsActiveEntity : true,
+					SiblingEntity : {ArtistID : "S5", IsActiveEntity : true, Name : "Sibling E"}
+				}, {
+					ArtistID : "99", // unexpected entity
+					IsActiveEntity : true,
+					SiblingEntity : {ArtistID : "S99", IsActiveEntity : true, Name : "Sibling Z"}
+				}]
+			})
+			.expectRequest({
+				batchNo : 9,
+				url : sMainUrl + "&$skip=3&$top=2"
+			}, {
+				"@odata.count" : "5",
+				value : [{
+					ArtistID : "40",
+					BestPublication : {CurrencyCode : "DKK", PublicationID : "Pub4"},
+					IsActiveEntity : true,
+					Name : "Artist D"
+				}, {
+					ArtistID : "50",
+					BestPublication : {CurrencyCode : "CZK", PublicationID : "Pub5"},
+					IsActiveEntity : true,
+					Name : "Artist E"
+				}]
+			})
+			.expectChange("name", [,,, "Artist D", "Artist E"])
+			.expectChange("publicationCurrency", [,,, "DKK", "CZK"])
+			.expectChange("friend", [,,, "Friend D"])
+			.expectChange("sibling", [,,,, "Sibling E"])
+			.expectRequest({
+				batchNo : 10,
+				url : "Artists(ArtistID='40',IsActiveEntity=true)?custom=foo&$select=SiblingEntity"
+					+ "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+			}, {
+				SiblingEntity : {ArtistID : "S4", IsActiveEntity : true, Name : "Sibling D"}
+			})
+			.expectRequest({
+				batchNo : 10,
+				url : "Artists(ArtistID='50',IsActiveEntity=true)?custom=foo&$select=BestFriend"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+			}, {
+				BestFriend : {ArtistID : "F5", IsActiveEntity : true, Name : "Friend E"}
+			})
+			.expectChange("friend", [,,,, "Friend E"])
+			.expectChange("sibling", [,,, "Sibling D"]);
+
+		this.oView.byId("table").requestItems();
+
+		await this.waitForChanges(assert, "separate response with unexpected entity");
 	});
 });
 });

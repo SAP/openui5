@@ -3585,8 +3585,10 @@ sap.ui.define([
 			for (const oSeparateData of oResult.value) {
 				const sPredicate = _Helper.getPrivateAnnotation(oSeparateData, "predicate");
 				const oElement = this.aElements.$byPredicate[sPredicate];
-				_Helper.updateSelected(this.mChangeListeners, sPredicate, oElement, oSeparateData,
-					[sProperty]);
+				if (oElement) {
+					_Helper.updateSelected(this.mChangeListeners, sPredicate, oElement,
+						oSeparateData, [sProperty]);
+				}
 			}
 		});
 	};

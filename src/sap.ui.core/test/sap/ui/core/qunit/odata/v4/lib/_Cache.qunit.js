@@ -13409,7 +13409,7 @@ sap.ui.define([
 
 		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {foo : {start : 3, end : 5}});
 
-		const oFooResult = {value : ["foo0"]};
+		const oFooResult = {value : ["foo0", "unknown"]};
 		oCacheMock.expects("visitResponse")
 			.withExactArgs(sinon.match.same(oFooResult), "~types~", undefined, undefined, 3);
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("foo0", "predicate")
@@ -13417,6 +13417,8 @@ sap.ui.define([
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('foo0')", "~foo0~", "foo0",
 				["foo"]);
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("unknown", "predicate")
+			.returns("('unknown')");
 
 		// code under test: resolve separate promise for "foo"
 		fnResolveFoo(oFooResult);
