@@ -231,5 +231,41 @@ sap.ui.define([
 		.then(loadVariantsAuthorsFromConnectors.bind(this, sReference));
 	};
 
+	/**
+	 * Loads the flex objects for the given variant references
+	 *
+	 * @param {object} mPropertyBag - Object with the necessary properties
+	 * @param {string} mPropertyBag.reference - Flexibility reference
+	 * @param {string[]} mPropertyBag.variantReferences - List of variant references to be loaded
+	 * @returns {Promise<object>} Resolves with the data for the variants
+	 */
+	Storage.loadFlVariants = async function(mPropertyBag) {
+		const aConnectors = await StorageUtils.getLoadConnectors();
+		const aResponses = [];
+		for (const oConnectorConfig of aConnectors) {
+			if (oConnectorConfig?.loadConnectorModule?.loadFlVariants) {
+				const oConnectorSpecificPropertyBag = {
+					...mPropertyBag,
+					url: oConnectorConfig.url,
+					layers: oConnectorConfig.layers
+				};
+				try {
+					aResponses.push(await oConnectorConfig.loadConnectorModule.loadFlVariants(oConnectorSpecificPropertyBag));
+				} catch (oError) {
+					aResponses.push({});
+				}
+			}
+		}
+		const aRelevantKeys = ["variants", "variantChanges", "variantDependentControlChanges", "variantManagementChanges"];
+		return aResponses.reduce((oResult, oResponse) => {
+			aRelevantKeys.forEach((sKey) => {
+				if (oResponse[sKey]) {
+					oResult[sKey] = [...(oResult[sKey] || []), ...oResponse[sKey]];
+				}
+			});
+			return oResult;
+		}, {});
+	};
+
 	return Storage;
 });
