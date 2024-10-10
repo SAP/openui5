@@ -213,7 +213,16 @@ sap.ui.define([
 			}
 
 			if (oNextElement === oScope) {
-				bStartOver = true;
+				if (bStartOver) {
+					// we meet oScope for the second time and can't find
+					// oOriginalElement anymore. Return to avoid endless loop.
+					return {
+						element: null,
+						startOver: true
+					};
+				} else {
+					bStartOver = true;
+				}
 			}
 
 			if (bStartOver && oNextElement === oOriginalElement) {
