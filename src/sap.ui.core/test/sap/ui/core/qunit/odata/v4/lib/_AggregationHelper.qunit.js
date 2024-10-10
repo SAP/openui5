@@ -1351,23 +1351,34 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [{
-	sExpectedApply : "descendants($root/some(0)/path,XYZ,myID,filter(ID eq '42'),1)"
+	sExpectedApply : "descendants($root/some(0)/path,XYZ,myID,filter(ID eq '42'),1)",
+	sExpectedAllLevelsApply : "descendants($root/some(0)/path,XYZ,myID,filter(ID eq '42'))"
 }, {
 	sExpectedApply : "ancestors($root/some(0)/path,XYZ,myID,filter(~$filter~),keep start)"
 		+ "/descendants($root/some(0)/path,XYZ,myID,filter(ID eq '42'),1)",
+	sExpectedAllLevelsApply : "ancestors($root/some(0)/path,XYZ,myID,filter(~$filter~),keep start)"
+		+ "/descendants($root/some(0)/path,XYZ,myID,filter(ID eq '42'))",
 	mQueryOptions : {$filter : "~$filter~"}
 }, {
 	sExpectedApply : "descendants($root/some(0)/path,XYZ,myID,filter(ID eq '42'),1)"
+		+ "/orderby(~$orderby~)",
+	sExpectedAllLevelsApply : "descendants($root/some(0)/path,XYZ,myID,filter(ID eq '42'))"
 		+ "/orderby(~$orderby~)",
 	mQueryOptions : {$orderby : "~$orderby~"}
 }, {
 	oAggregation : {search : "~$search~"},
 	sExpectedApply : "ancestors($root/some(0)/path,XYZ,myID,search(~$search~),keep start)"
-		+ "/descendants($root/some(0)/path,XYZ,myID,filter(ID eq '42'),1)"
+		+ "/descendants($root/some(0)/path,XYZ,myID,filter(ID eq '42'),1)",
+	sExpectedAllLevelsApply : "ancestors($root/some(0)/path,XYZ,myID,search(~$search~),keep start)"
+		+ "/descendants($root/some(0)/path,XYZ,myID,filter(ID eq '42'))"
 }, {
 	oAggregation : {search : "~$search~"},
 	sExpectedApply : "ancestors($root/some(0)/path,XYZ,myID,filter(~$filter~)/search(~$search~)"
 		+ ",keep start)/descendants($root/some(0)/path,XYZ,myID,filter(ID eq '42'),1)"
+		+ "/orderby(~$orderby~)",
+	sExpectedAllLevelsApply :
+		"ancestors($root/some(0)/path,XYZ,myID,filter(~$filter~)/search(~$search~)"
+		+ ",keep start)/descendants($root/some(0)/path,XYZ,myID,filter(ID eq '42'))"
 		+ "/orderby(~$orderby~)",
 	mQueryOptions : {$filter : "~$filter~", $orderby : "~$orderby~"}
 }].forEach(function (mFixture, i) {
@@ -1376,8 +1387,9 @@ sap.ui.define([
 		{DrillState : {$Path : "path/to/aDrillState"}}
 	].forEach((oRecursiveHierarchy, j) => {
 		[false, true].forEach((bStored) => {
-			const sTitle = "buildApply4Hierarchy: children of a given parent, #" + i + ", #" + j
-				+ ", $LimitedRank already stored: " + bStored;
+			[false, true].forEach((bAllLevels) => {
+				const sTitle = "buildApply4Hierarchy: children of a given parent, #" + i + ", #" + j
+					+ ", $LimitedRank already stored: " + bStored + ", all levels: " + bAllLevels;
 
 	QUnit.test(sTitle, function (assert) {
 		var oAggregation = Object.assign({
@@ -1412,9 +1424,10 @@ sap.ui.define([
 				"/meta/path/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchyActions#XYZ")
 			.returns(SyncPromise.resolve("~actions~"));
 
-		// code under test
-		assert.deepEqual(_AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions), {
-				$apply : mFixture.sExpectedApply,
+		assert.deepEqual(
+			// code under test
+			_AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions, bAllLevels), {
+				$apply : bAllLevels ? mFixture.sExpectedAllLevelsApply : mFixture.sExpectedApply,
 				// no more $filter or $orderby!
 				$select : ["ID", "myID", "path/to/aDrillState"],
 				foo : "bar"
@@ -1431,6 +1444,7 @@ sap.ui.define([
 		assert.strictEqual(oAggregation.$NodeProperty, "myID");
 		assert.strictEqual(oAggregation.$ParentNavigationProperty, "myParentNavigation");
 	});
+			});
 		});
 	});
 });
