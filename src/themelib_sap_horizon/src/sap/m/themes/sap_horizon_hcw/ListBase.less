@@ -4,42 +4,42 @@
 /* ================================== */
 
 .sapMListHdrText {
-	border-bottom: 0.188rem solid @sapUiGroupTitleBorderColor;
-	font-size: @sapUiGroupTitleFontSize;
+	border-bottom: 0.188rem solid var(--sapGroup_TitleBorderColor);
+	font-size: var(--sapGroup_Title_FontSize);
 }
 
-/*Growing feature*/
+/* Growing feature */
 
-/*HCB additional styles for Growing feature*/
+/* HCB additional styles for Growing feature */
 .sapMLIBContent > .sapMGrowingListTrigger {
 	box-sizing: border-box;
 	border-radius: 0.375rem;
-	background: @sapUiButtonBackground;
-	border: @sapUiListBorderWidth solid @sapUiButtonBorderColor;
+	background: var(--sapButton_Background);
+	border: var(--sapList_BorderWidth) solid var(--sapButton_BorderColor);
 }
 
 html.sap-desktop .sapMLIBContent > .sapMGrowingListTrigger:hover {
-	background: @sapUiButtonHoverBackground;
+	background: var(--sapButton_Hover_Background);
 }
 
 html.sap-desktop .sapMGrowingList > .sapMCLI:hover {
-	background: @sapUiListBackground !important;
+	background: var(--sapList_Background) !important;
 }
 
-//Needed to fix the margin collapsing behaviour on safari
+/*Needed to fix the margin collapsing behaviour on safari */
 html.sap-desktop .sapMGrowingList > .sapMCLI {
 	padding: 0.25rem;
 }
 
-html.sap-desktop .sapMGrowingList  .sapMCLI.sapMLIB.sapMLIB-CTX:focus{
+html.sap-desktop .sapMGrowingList .sapMCLI.sapMLIB.sapMLIB-CTX:focus {
 	outline:none;
 }
 
 html.sap-desktop .sapMLIB-CTX:focus .sapMGrowingListTrigger {
-	border: 0.125rem dotted @sapUiContentFocusColor;
+	border: 0.125rem dotted var(--sapContent_FocusColor);
 	border-radius: 0;
 }
 
 .sapMGrowingListDummyColumn {
-	border-right: 1px solid @sapUiListTableFixedBorderColor;
+	border-right: 1px solid var(--sapList_TableFixedBorderColor);
 }
