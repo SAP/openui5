@@ -156,6 +156,7 @@
 	  "maxItems": 5,
 	  "maxLegendItems": 5,
 	  "noItemsText": "You have nothing planned for this day",
+	  "calendarWeekNumbering": "Default",
 	  "item": {
 		"template": {
 		  "startDate": "{start}",
