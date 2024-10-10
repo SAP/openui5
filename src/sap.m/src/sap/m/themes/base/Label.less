@@ -3,11 +3,6 @@
 /* Base theme                   */
 /* ============================ */
 
-@_sap_m_Label_AsteriskOffsetWidth: 0.5rem;
-@_sap_m_Label_ColonOffsetWidth: 0.25rem;
-@_sap_m_Label_ColonOffsetWidth_lang_FR: 0.5rem;
-@_sap_m_Label_ColonOffsetWidth_lang_ZH: 0.875rem;
-
 .sapMLabel {
 	color: @sapUiContentLabelColor;
 	font-size: @sapMFontMediumSize;
@@ -18,7 +13,15 @@
 	cursor: text;
 	overflow: hidden;
 	box-sizing: border-box;
-	--_sap_m_Label_ReservedSpace: 0%;
+}
+
+.sapMLabelInner {
+	display: inline-flex;
+	width: 100%;
+}
+
+.sapMLabel.sapMLabelWrapped .sapMLabelInner {
+	display: contents;
 }
 
 .sapMLabel .sapMLabelTextWrapper {
@@ -26,46 +29,8 @@
 	overflow: hidden;
 }
 
-.sapMLabel:not(.sapMLabelWrapped) .sapMLabelTextWrapper {
-	display: inline-block;
-	vertical-align: top;
-	max-width: calc(~"100% - var(--_sap_m_Label_ReservedSpace)");
-}
-
-.sapMLabel:not(.sapMLabelWrapped):not(.sapMLabelMaxWidth) {
-	&.sapMLabelRequired {
-		--_sap_m_Label_ReservedSpace: @_sap_m_Label_AsteriskOffsetWidth;
-	}
-
-	&.sapMLabelShowColon {
-		--_sap_m_Label_ReservedSpace: @_sap_m_Label_ColonOffsetWidth;
-
-		&:lang(fr) {
-			--_sap_m_Label_ReservedSpace: @_sap_m_Label_ColonOffsetWidth_lang_FR;
-		}
-
-		&:lang(zh-TW),
-		&:lang(zh-CN),
-		&:lang(zh-Hans),
-		&:lang(zh-Hant) {
-			--_sap_m_Label_ReservedSpace: @_sap_m_Label_ColonOffsetWidth_lang_ZH;
-		}
-	}
-
-	&.sapMLabelRequired.sapMLabelShowColon {
-		--_sap_m_Label_ReservedSpace: @_sap_m_Label_AsteriskOffsetWidth + @_sap_m_Label_ColonOffsetWidth;
-
-		&:lang(fr) {
-			--_sap_m_Label_ReservedSpace: @_sap_m_Label_AsteriskOffsetWidth + @_sap_m_Label_ColonOffsetWidth_lang_FR;
-		}
-
-		&:lang(zh-TW),
-		&:lang(zh-CN),
-		&:lang(zh-Hans),
-		&:lang(zh-Hant) {
-			--_sap_m_Label_ReservedSpace: @_sap_m_Label_AsteriskOffsetWidth + @_sap_m_Label_ColonOffsetWidth_lang_ZH;
-		}
-	}
+.sapMLabelNoText.sapMLabelRequired {
+	line-height: @sapMFontMediumSize;
 }
 
 .sapMLabelBold,
@@ -79,15 +44,6 @@
 
 .sapMLIBActionable .sapMLabel {
 	cursor: pointer;
-}
-
-.sapMLabel .sapMLabelColonAndRequired {
-	display: inline;
-	vertical-align: top;
-}
-
-.sapMLabel .sapMLabelColonAndRequired::before {
-	vertical-align: top;
 }
 
 .sapMLabel.sapMLabelRequired .sapMLabelColonAndRequired::after {
@@ -179,14 +135,6 @@ td.sapUiFormElementLbl:not(.sapUiGridLabelFull) > .sapMLabel{
 /* Label in Form - Colon and Asterisk */
 /* ================================== */
 .sapUiFormLblColon {
-	// Label alone on row, truncating. Don't let ":" and "*" truncate by using flex
-	.sapUiFormElementLbl > .sapMLabel:not(.sapMLabelWrapped) {
-		display: inline-flex;
-
-		&.sapMLabelRequired .sapMLabelTextWrapper {
-			max-width: 100%;
-		}
-	}
 
 	// Label side by side with a field
 	// In this case we need to align all : and * in the form
@@ -203,31 +151,33 @@ td.sapUiFormElementLbl:not(.sapUiGridLabelFull) > .sapMLabel{
 	.sapUiFormCL.sapUiFormCLSmallColumns :not(.sapUiFormCLCellsS12),
 	.sapUiFormCL.sapUiFormCLWideColumns :not(.sapUiFormCLCellsL12) {
 		&.sapUiFormElementLbl > .sapMLabel {
-			display: inline-block;
-			position: relative;
-
-			// Accommodate space for colon + asterisk
-			// The use of em is intentional since it has to relate to the current font size applied to the label
-			padding-right: 0.85em;
-
-			&:lang(fr) {
-				padding-right: 1.125em;
-			}
-			&:lang(zh-TW) {
-				padding-right: 1.59em;
-			}
-			&:lang(zh-CN) {
-				padding-right: 1.59em;
-			}
-			&:lang(zh-Hans) {
-				padding-right: 1.59em;
-			}
-			&:lang(zh-Hant) {
-				padding-right: 1.59em;
+			.sapMLabelInner {
+				display: inline-flex;
+				align-items: flex-end;
+				justify-content: flex-end !important;
 			}
 
 			.sapMLabelColonAndRequired {
-				position: absolute;
+				display: inline-flex;
+				align-items: center;
+				min-width: 0.85em; // Accommodate space for colon + asterisk. The use of em is intentional since it has to relate to the current font size applied to the label
+			}
+
+			// Accommodate space for colon + asterisk for specific languages
+			&:lang(fr) .sapMLabelColonAndRequired {
+				min-width: 1.125em;
+			}
+			&:lang(zh-TW) .sapMLabelColonAndRequired {
+				min-width: 1.59em;
+			}
+			&:lang(zh-CN) .sapMLabelColonAndRequired{
+				min-width: 1.59em;
+			}
+			&:lang(zh-Hans) .sapMLabelColonAndRequired {
+				min-width: 1.59em;
+			}
+			&:lang(zh-Hant) .sapMLabelColonAndRequired {
+				min-width: 1.59em;
 			}
 		}
 	}
