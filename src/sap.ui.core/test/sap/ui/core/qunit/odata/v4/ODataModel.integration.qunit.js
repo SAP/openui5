@@ -45265,6 +45265,336 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
+	// Scenario: Manually expand Alpha, Beta and Gamma. Shrink visible row count, so Gamma is not
+	// visible anymore. Perform a side-effects refresh to enter unified cache mode. Collapse all
+	// below Alpha and expand Alpha again. See that ExpandLevels parameter is cleaned up and Beta is
+	// collapsed. A single clean up request is sent in the same batch request as a data request.
+	// JIRA: CPOUI5ODATAV4-2702
+	QUnit.test("Recursive Hierarchy: clean up tree state after collapse all",
+			async function (assert) {
+		const sCountRequestUrl = "Artists/$count?$filter=lastUsedChannel eq 'All'"
+			+ " and (sendsAutographs)&custom=foo&$search=covfefe";
+		const sFilterSearch = "ancestors($root/Artists,OrgChart,_/NodeID,"
+			+ "filter(lastUsedChannel eq 'All' and (sendsAutographs))/search(covfefe),keep start)";
+		const sBaseUrl = "Artists?$expand=_Publication($select=Price)"
+			+ "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID,lastUsedChannel"
+			+ "&custom=foo&$apply=" + sFilterSearch;
+		const sUrl = sBaseUrl + "/orderby(defaultChannel desc)/"
+			+ "com.sap.vocabularies.Hierarchy.v1.TopLevels("
+			+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart',NodeProperty='_/NodeID'"
+			+ ",Levels=1";
+		const sUnifiedUrl = sUrl.replace(",_/DrillState,", // unified cache needs more node prop's
+			",_/DescendantCount,_/DistanceFromRoot,_/DrillState,");
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/Artists',
+		filters : {path : 'lastUsedChannel', operator : 'EQ', value1 : 'All'},
+		parameters : {
+			$$aggregation : {
+				hierarchyQualifier : 'OrgChart',
+				search : 'covfefe'
+			},
+			$$groupId : '$auto.Heroes',
+			$count : true,
+			$expand : {'_Publication' : {$select : 'Price'}},
+			$filter : 'sendsAutographs',
+			$orderby : 'defaultChannel desc',
+			$select : 'lastUsedChannel',
+			custom : 'foo'
+		}}" threshold="0" visibleRowCount="4">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ArtistID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 1 Alpha
+		//   1.1 Beta
+		//     1.1.1 Gamma
+		//       1.1.1.1 Delta
+		// 9 Omega
+
+		this.expectRequest(sCountRequestUrl, 5)
+			.expectRequest(sUrl + ")&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "2",
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DrillState : "collapsed",
+						NodeID : "1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "9",
+					IsActiveEntity : false,
+					Name : "Omega",
+					_ : {
+						DrillState : "leaf",
+						NodeID : "9,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oAlpha = oTable.getRows()[0].getBindingContext();
+
+		this.expectRequest(sBaseUrl + "/descendants($root/Artists,OrgChart,_/NodeID"
+			+ ",filter(ArtistID eq '1' and IsActiveEntity eq false),1)"
+			+ "/orderby(defaultChannel desc)&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "1",
+				value : [{
+					ArtistID : "1.1",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DrillState : "collapsed",
+						NodeID : "1.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}]
+			});
+
+		await Promise.all([
+			oAlpha.expand(),
+			this.waitForChanges(assert, "expand Alpha")
+		]);
+
+		const oBeta = oTable.getRows()[1].getBindingContext();
+
+		this.expectRequest(sBaseUrl + "/descendants($root/Artists,OrgChart,_/NodeID"
+			+ ",filter(ArtistID eq '1.1' and IsActiveEntity eq false),1)"
+			+ "/orderby(defaultChannel desc)&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "1",
+				value : [{
+					ArtistID : "1.1.1",
+					IsActiveEntity : false,
+					Name : "Gamma",
+					_ : {
+						DrillState : "collapsed",
+						NodeID : "1.1.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}]
+			});
+
+		await Promise.all([
+			oBeta.expand(),
+			this.waitForChanges(assert, "expand Beta")
+		]);
+
+		const oGamma = oTable.getRows()[2].getBindingContext();
+
+		this.expectRequest(sBaseUrl + "/descendants($root/Artists,OrgChart,_/NodeID"
+			+ ",filter(ArtistID eq '1.1.1' and IsActiveEntity eq false),1)"
+			+ "/orderby(defaultChannel desc)&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "1",
+				value : [{
+					ArtistID : "1.1.1.1",
+					IsActiveEntity : false,
+					Name : "Delta",
+					_ : {
+						DrillState : "leaf",
+						NodeID : "1.1.1.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}]
+			});
+
+		await Promise.all([
+			oGamma.expand(),
+			this.waitForChanges(assert, "expand Gamma")
+		]);
+
+		checkTable("after expand Gamma", assert, oTable, [
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.1.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.1.1.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='9',IsActiveEntity=false)"
+		], [
+			[true, 1, "1", "Alpha"],
+			[true, 2, "1.1", "Beta"],
+			[true, 3, "1.1.1", "Gamma"],
+			[undefined, 4, "1.1.1.1", "Delta"]
+		]);
+
+		oTable.getRowMode().setRowCount(2);
+
+		this.expectRequest(sCountRequestUrl, 5)
+			.expectRequest(sUnifiedUrl + ",ExpandLevels=" + JSON.stringify([
+					{NodeID : "1,false", Levels : 1},
+					{NodeID : "1.1,false", Levels : 1},
+					{NodeID : "1.1.1,false", Levels : 1}
+				]) + ")&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "5",
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha*",
+					_ : {
+						DescendantCount : "3",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.1",
+					IsActiveEntity : false,
+					Name : "Beta*",
+					_ : {
+						DescendantCount : "2",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "1.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}]
+			});
+
+		await Promise.all([
+			oTable.getBinding("rows").getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "perform side-effects refresh")
+		]);
+
+		checkTable("after side-effects refresh", assert, oTable, [
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.1',IsActiveEntity=false)"
+		], [
+			[true, 1, "1", "Alpha*"],
+			[true, 2, "1.1", "Beta*"]
+		], 5);
+
+		this.expectRequest({
+				batchNo : 6,
+				groupId : "$auto.Heroes",
+				url : "Artists?custom=foo&$apply=" + sFilterSearch
+					+ "/descendants($root/Artists,OrgChart,_/NodeID"
+					+ ",filter(ArtistID eq '1' and IsActiveEntity eq false))"
+					+ "&$filter=ArtistID eq '1.1.1' and IsActiveEntity eq false"
+					+ "&$select=ArtistID,IsActiveEntity&$top=1"
+			}, {
+				value : [{
+					ArtistID : "1.1.1",
+					IsActiveEntity : false
+				}]
+			})
+			.expectRequest({
+				batchNo : 6,
+				groupId : "$auto.Heroes",
+				url : sUnifiedUrl + ",ExpandLevels=" + JSON.stringify([
+						{NodeID : "1,false", Levels : 1},
+						{NodeID : "1.1,false", Levels : 1},
+						{NodeID : "1.1.1,false", Levels : 1}
+					]) + ")&$skip=4&$top=1"
+			}, {
+				value : [{
+					ArtistID : "9",
+					IsActiveEntity : false,
+					Name : "Omega*",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "leaf",
+						NodeID : "9,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}]
+			});
+
+		oAlpha.collapse(/*bAll*/true);
+		oTable.getRowMode().setRowCount(4);
+
+		await this.waitForChanges(assert, "collapse all"); //TODO should work w/o this?
+
+		checkTable("after collapse all", assert, oTable, [
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='9',IsActiveEntity=false)"
+		], [
+			[false, 1, "1", "Alpha*"],
+			[undefined, 1, "9", "Omega*"],
+			[undefined, undefined, "1.1.1", "Gamma"], //TODO Why is Gamma still there
+			[undefined, undefined, "1.1.1.1", "Delta"] //TODO Why is Delta still there
+		]);
+
+		this.expectRequest(sCountRequestUrl, 5)
+			// Note: no {NodeID : "1.1,false", Levels : 1} and
+			// no {NodeID : "1.1.1,false", Levels : 1} in ExpandLevels
+			.expectRequest(sUnifiedUrl
+				+ ",ExpandLevels=" + JSON.stringify([{NodeID : "1,false", Levels : 1}])
+				+ ")&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "3",
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha*",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.1",
+					IsActiveEntity : false,
+					Name : "Beta*",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "collapsed",
+						NodeID : "1.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "9",
+					IsActiveEntity : false,
+					Name : "Omega*",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "leaf",
+						NodeID : "9,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}]
+			});
+
+		await Promise.all([
+			// code under test
+			oAlpha.expand(),
+			this.waitForChanges(assert, "expand Alpha again")
+		]);
+
+		checkTable("after expand Alpha again", assert, oTable, [
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='9',IsActiveEntity=false)"
+		], [
+			[true, 1, "1", "Alpha*"],
+			[false, 2, "1.1", "Beta*"],
+			[undefined, 1, "9", "Omega*"],
+			[undefined, undefined, "1.1.1.1", "Delta"] //TODO Why is Delta still there
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Show the single root node of a recursive hierarchy. Expand Alpha, Beta, and Gamma.
 	// Collapse Alpha completely. Expand Alpha, Beta, and Gamma again. See that their children are
 	// collapsed and that no request is sent. Collapse Alpha completely again. Expand all below

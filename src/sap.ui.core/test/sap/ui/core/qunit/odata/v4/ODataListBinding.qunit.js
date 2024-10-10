@@ -10113,8 +10113,12 @@ sap.ui.define([
 			.withExactArgs().returns("~bindingpath~");
 		this.mock(_Helper).expects("getRelativePath").exactly(bCountGiven ? 0 : 1)
 			.withExactArgs("~contextpath~", "~bindingpath~").returns("~cachepath~");
+		this.mock(oBinding).expects("lockGroup").exactly(bAll && !bCountGiven ? 1 : 0)
+			.withExactArgs()
+			.returns("~oGroupLock~");
 		oCollapseExpectation = this.mock(oBinding.oCache).expects("collapse")
-			.exactly(bCountGiven ? 0 : 1).withExactArgs("~cachepath~", bAll)
+			.exactly(bCountGiven ? 0 : 1)
+			.withExactArgs("~cachepath~", bAll ? "~oGroupLock~" : undefined)
 			.returns(iCount);
 		oFireChangeExpectation = this.mock(oBinding).expects("_fireChange")
 			.exactly(iCount && !bSilent ? 1 : 0)
