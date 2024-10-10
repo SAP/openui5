@@ -1704,6 +1704,15 @@
 				<Annotation Term="SAP__common.DocumentationRef"
 					String="urn:sap-com:documentation:key?=type=DTEL&amp;id=ITEMNOTE"/>
 			</Annotations>
+			<!-- annotations for testing SNOW: DINC0285223 -->
+			<Annotations Target="GWSAMPLE_BASIC.VH_Currency/Waers" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__common.DocumentationRef"
+					String="urn:sap-com:documentation:key?=type=DTEL&amp;id=%2fFOO%2fCURRENCY"/>
+			</Annotations>
+			<Annotations Target="GWSAMPLE_BASIC.VH_Currency/Ltext" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__common.DocumentationRef"
+					String="urn:sap-com:documentation:key?=type=DTEL&amp;id=LTEXT"/>
+			</Annotations>
 			<!-- annotations for testing annotation changes, see CPOUI5MODELS-1783 -->
 			<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/FaxNumber" xmlns="http://docs.oasis-open.org/odata/ns/edm">
 				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Fax Number from metadata annotation"/>
