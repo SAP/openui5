@@ -2334,7 +2334,7 @@ sap.ui.define([
 		const aElements = ["0", "1", {}, "3", "4"];
 		aElements.$byPredicate = {"('2')" : aElements[2]};
 		oCache.aElements = aElements;
-		oCache.mSeparateProperty2ReadRequest = {expensive : oRange};
+		oCache.mSeparateProperty2ReadRequest = {expensive : [{start : 7, end : 9}, oRange]};
 
 		this.mock(_Helper).expects("getMetaPath").withExactArgs("('2')/expensive").returns("n/a");
 		this.mock(_Helper).expects("getAnnotationKey").never();
@@ -2356,7 +2356,7 @@ sap.ui.define([
 		const aElements = ["0", "1", {"@$ui5._" : {predicate : ("('2')")}}, "3", "4"];
 		aElements.$byPredicate = {"('2')" : aElements[2]};
 		oCache.aElements = aElements;
-		oCache.mSeparateProperty2ReadRequest = {expensive : oRange};
+		oCache.mSeparateProperty2ReadRequest = {expensive : [{start : 7, end : 9}, oRange]};
 
 		this.mock(_Helper).expects("getMetaPath").withExactArgs("('2')/expensive")
 			.returns("~metaPath~");
@@ -5854,14 +5854,16 @@ sap.ui.define([
 		// code under test
 		oCache = _Cache.create(this.oRequestor, "resource/path", mQueryOptions,
 			"bSortExpandSelect", "deep/resource/path", bSharedRequest,
-			bSharedRequest ? undefined : "~aSeparateProperties~");
+			bSharedRequest ? undefined : ["separate0", "separate1"]);
 
 		assert.strictEqual(oCache.oRequestor, this.oRequestor);
 		assert.strictEqual(oCache.bSortExpandSelect, "bSortExpandSelect");
 		assert.strictEqual(oCache.sOriginalResourcePath, "deep/resource/path");
 		assert.strictEqual(oCache.bSharedRequest, bSharedRequest);
-		assert.deepEqual(oCache.aSeparateProperties, bSharedRequest ? [] : "~aSeparateProperties~");
-		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {});
+		assert.deepEqual(oCache.aSeparateProperties,
+			bSharedRequest ? [] : ["separate0", "separate1"]);
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequest,
+			bSharedRequest ? {} : {separate0 : [], separate1 : []});
 		assert.strictEqual(oCache.iActiveElements, 0);
 	});
 });
@@ -13332,8 +13334,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#requestSeparateProperties", async function (assert) {
-		const oCache = _Cache.create(this.oRequestor, "SalesOrders");
-		oCache.aSeparateProperties = ["foo", "bar"];
+		const oCache = _Cache.create(this.oRequestor, "SalesOrders", undefined, undefined,
+			undefined, undefined, ["foo", "bar"]);
 
 		let fnResolveMain;
 		const oMainPromise = new Promise(function (resolve) { fnResolveMain = resolve; });
@@ -13371,9 +13373,13 @@ sap.ui.define([
 		fnResolveTypes("~types~");
 		await oTypesPromise;
 
+		// simulate other simultaneous request ranges, proof the deleting index is dynamic
+		oCache.mSeparateProperty2ReadRequest.foo.push("~range~");
+		oCache.mSeparateProperty2ReadRequest.bar.unshift("~range~");
+
 		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {
-			foo : {start : 3, end : 5},
-			bar : {start : 3, end : 5}
+			foo : [{start : 3, end : 5}, "~range~"],
+			bar : ["~range~", {start : 3, end : 5}]
 		});
 
 		const oBarResult = {value : ["bar0", "bar1"]};
@@ -13407,7 +13413,10 @@ sap.ui.define([
 		await oMainPromise;
 		await oBarPromise;
 
-		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {foo : {start : 3, end : 5}});
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {
+			foo : [{start : 3, end : 5}, "~range~"],
+			bar : ["~range~"]
+		});
 
 		const oFooResult = {value : ["foo0", "unknown"]};
 		oCacheMock.expects("visitResponse")
@@ -13424,7 +13433,10 @@ sap.ui.define([
 		fnResolveFoo(oFooResult);
 		await oFooPromise;
 
-		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {});
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {
+			foo : ["~range~"],
+			bar : ["~range~"]
+		});
 
 		return oResult;
 	});
