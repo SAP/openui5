@@ -28,21 +28,20 @@ sap.ui.define([
 	"use strict";
 
 	// Regression test
-	function testSetSettings(DataProviderClass) {
+	function testSetConfiguration(DataProviderClass) {
 		var oDataProvider = new DataProviderClass();
 
-		QUnit.test("setSettings - regression test for " + oDataProvider.getMetadata().getName(), function (assert) {
-
+		QUnit.test("setConfiguration - regression test for " + oDataProvider.getMetadata().getName(), function (assert) {
 			// Arrange
-			var oSettings = {
+			const oConfiguration = {
 				"key": "value"
 			};
 
 			// Act
-			oDataProvider.setSettings(oSettings);
+			oDataProvider.setConfiguration(oConfiguration);
 
 			// Assert
-			assert.deepEqual(oDataProvider.getSettings(), oSettings, "Getters and setters should work as expected.");
+			assert.deepEqual(oDataProvider.getConfiguration(), oConfiguration, "Getters and setters should work as expected.");
 
 			// Cleanup
 			oDataProvider.destroy();
@@ -56,10 +55,9 @@ sap.ui.define([
 			this.oDataProviderFactory = new DataProviderFactory({
 				card: this.oCard
 			});
-			sinon.spy(DataProvider.prototype, "setSettings");
+			this.spy(DataProvider.prototype, "setConfiguration");
 		},
 		afterEach: function () {
-			DataProvider.prototype.setSettings.restore();
 			this.oDataProviderFactory.destroy();
 			this.oDataProviderFactory = null;
 			this.oCard.destroy();
@@ -69,46 +67,46 @@ sap.ui.define([
 	QUnit.test("create with null or undefined", function (assert) {
 		assert.notOk(this.oDataProviderFactory.create(null), "Should have NOT created a DataProvider instance.");
 		assert.notOk(this.oDataProviderFactory.create(), "Should have NOT created a DataProvider instance.");
-		assert.notOk(DataProvider.prototype.setSettings.calledOnce, "Should have NOT called setSettings.");
+		assert.notOk(DataProvider.prototype.setConfiguration.calledOnce, "Should have NOT called setConfiguration.");
 	});
 
-	QUnit.test("create with unknown settings", function (assert) {
+	QUnit.test("create with unknown configuration", function (assert) {
 		// Arrange
-		var oDataSettings = {
+		const oConfiguration = {
 			destination: {
 				url: "/some/relative/url"
 			}
 		};
 
 		// Act
-		var oDataProvider = this.oDataProviderFactory.create(oDataSettings);
+		const oDataProvider = this.oDataProviderFactory.create(oConfiguration);
 
 		// Assert
 		assert.notOk(oDataProvider, "Should have NOT created a DataProvider instance.");
-		assert.notOk(DataProvider.prototype.setSettings.calledOnce, "Should have NOT called setSettings.");
+		assert.notOk(DataProvider.prototype.setConfiguration.calledOnce, "Should have NOT called setConfiguration.");
 	});
 
-	QUnit.test("create with request settings", function (assert) {
+	QUnit.test("create with request configuration", function (assert) {
 		// Arrange
-		var oDataSettings = {
+		const oConfiguration = {
 			request: {
 				url: "/some/relative/url"
 			}
 		};
 
 		// Act
-		var oDataProvider = this.oDataProviderFactory.create(oDataSettings);
+		const oDataProvider = this.oDataProviderFactory.create(oConfiguration);
 
 		// Assert
 		assert.ok(oDataProvider, "Should have created a DataProvider instance.");
 		assert.ok(oDataProvider.isA("sap.ui.integration.util.RequestDataProvider"), "Should have created a DataProvider instance of type RequestDataProvider.");
-		assert.ok(DataProvider.prototype.setSettings.calledOnce, "Should have called setSettings.");
-		assert.ok(DataProvider.prototype.setSettings.getCall(0).calledWith(oDataSettings), "Should have called setSettings with correct arguments.");
+		assert.ok(DataProvider.prototype.setConfiguration.calledOnce, "Should have called setConfiguration.");
+		assert.ok(DataProvider.prototype.setConfiguration.getCall(0).calledWith(oConfiguration), "Should have called setConfiguration with correct arguments.");
 	});
 
-	QUnit.test("create with service settings", function (assert) {
+	QUnit.test("create with service configuration", function (assert) {
 		// Arrange
-		var oDataSettings = {
+		const oConfiguration = {
 			service: {
 				name: "UserRecent"
 			}
@@ -117,13 +115,13 @@ sap.ui.define([
 		sinon.stub(ServiceDataProvider.prototype, "createServiceInstances");
 
 		// Act
-		var oDataProvider = this.oDataProviderFactory.create(oDataSettings, oServiceManager);
+		const oDataProvider = this.oDataProviderFactory.create(oConfiguration, oServiceManager);
 
 		// Assert
 		assert.ok(oDataProvider, "Should have created a DataProvider instance.");
 		assert.ok(oDataProvider.isA("sap.ui.integration.util.ServiceDataProvider"), "Should have created a DataProvider instance of type ServiceDataProvider.");
-		assert.ok(DataProvider.prototype.setSettings.calledOnce, "Should have called setSettings.");
-		assert.ok(DataProvider.prototype.setSettings.getCall(0).calledWith(oDataSettings), "Should have called setSettings with correct arguments.");
+		assert.ok(DataProvider.prototype.setConfiguration.calledOnce, "Should have called setConfiguration.");
+		assert.ok(DataProvider.prototype.setConfiguration.getCall(0).calledWith(oConfiguration), "Should have called setConfiguration with correct arguments.");
 		assert.ok(ServiceDataProvider.prototype.createServiceInstances.calledOnce, "Should have called createServiceInstances.");
 		assert.ok(ServiceDataProvider.prototype.createServiceInstances.getCall(0).calledWith(oServiceManager), "Should have called createServiceInstances with ServiceManager reference.");
 
@@ -131,9 +129,9 @@ sap.ui.define([
 		ServiceDataProvider.prototype.createServiceInstances.restore();
 	});
 
-	QUnit.test("create with static JSON settings", function (assert) {
+	QUnit.test("create with static JSON configuration", function (assert) {
 		// Arrange
-		var oDataSettings = {
+		const oConfiguration = {
 			json: {
 				"key": "value"
 			},
@@ -141,24 +139,24 @@ sap.ui.define([
 		};
 
 		// Act
-		var oDataProvider = this.oDataProviderFactory.create(oDataSettings);
+		const oDataProvider = this.oDataProviderFactory.create(oConfiguration);
 
 		// Assert
-		assert.ok(DataProvider.prototype.setSettings.calledOnce, "Should have called setSettings.");
-		assert.ok(DataProvider.prototype.setSettings.getCall(0).calledWith(oDataSettings), "Should have called setSettings with correct arguments.");
+		assert.ok(DataProvider.prototype.setConfiguration.calledOnce, "Should have called setConfiguration.");
+		assert.ok(DataProvider.prototype.setConfiguration.getCall(0).calledWith(oConfiguration), "Should have called setConfiguration with correct arguments.");
 		assert.ok(oDataProvider, "Should have created a DataProvider instance.");
 		assert.ok(oDataProvider.isA("sap.ui.integration.util.DataProvider"), "Should have created a DataProvider instance.");
 	});
 
 	QUnit.test("destroy", function (assert) {
 		// Arrange
-		var oSettings = {
+		const oConfiguration = {
 			json: {
 				key: "value"
 			}
 		};
 
-		var oDataProvider = this.oDataProviderFactory.create(oSettings),
+		const oDataProvider = this.oDataProviderFactory.create(oConfiguration),
 			oDestroySpy = sinon.spy(oDataProvider, "destroy");
 
 		// Act
@@ -168,9 +166,9 @@ sap.ui.define([
 		assert.ok(oDestroySpy.calledOnce, "Should destroy all created instances when destroying the factory.");
 	});
 
-	QUnit.test("Binding parts that depend on user input (form model), which are not suitable for settingsJson", function (assert) {
+	QUnit.test("Binding parts that depend on user input (form model), which are not suitable for configurationJson", function (assert) {
 		// Arrange
-		var oSettings = {
+		const oConfiguration = {
 			request: {
 				parameters: {
 					reason: "{form>/reason/value}"
@@ -183,15 +181,15 @@ sap.ui.define([
 
 		assert.throws(
 			function () {
-				this.oDataProviderFactory.create(oSettings);
+				this.oDataProviderFactory.create(oConfiguration).getResolvedConfiguration();
 			}.bind(this),
-			"Exception is thrown when settingsJson is bound to illegal input"
+			"Exception is thrown when configurationJson is bound to illegal input"
 		);
 	});
 
-	QUnit.test("Configuration settings shouldn't be modified", function (assert) {
+	QUnit.test("Configuration shouldn't be modified", function (assert) {
 		// Arrange
-		var oSettings = {
+		const oConfiguration = {
 			request: {
 				parameters: {
 					reason: "{form>/reason/value}"
@@ -201,14 +199,14 @@ sap.ui.define([
 				json: {}
 			}
 		};
-		var oOriginalSettings = JSON.parse(JSON.stringify(oSettings));
+		const oOriginalConfiguration = JSON.parse(JSON.stringify(oConfiguration));
 		this.oCard.setPreviewMode(integrationLibrary.CardPreviewMode.MockData);
 
 		// Act
-		this.oDataProviderFactory.create(oSettings);
+		this.oDataProviderFactory.create(oConfiguration);
 
 		// Assert
-		assert.deepEqual(oSettings, oOriginalSettings, "Settings given to #create method were modified");
+		assert.deepEqual(oConfiguration, oOriginalConfiguration, "Configuration given to #create method were modified");
 	});
 
 	QUnit.module("DataProvider", {
@@ -221,20 +219,20 @@ sap.ui.define([
 		}
 	});
 
-	testSetSettings(DataProvider);
+	testSetConfiguration(DataProvider);
 
 	QUnit.test("updateInterval", function (assert) {
 		var done = assert.async();
 
 		// Arrange
-		var oSettings = {
+		const oConfiguration = {
 			json: {
 				"key": "value"
 			},
 			updateInterval: 1
 		};
 
-		this.oDataProvider.setSettings(oSettings);
+		this.oDataProvider.setConfiguration(oConfiguration);
 		var fnSpy = this.spy(this.oDataProvider, "onDataRequestComplete");
 
 		// Act
@@ -250,11 +248,11 @@ sap.ui.define([
 		var done = assert.async();
 
 		// Arrange
-		var oSettings = {
+		const oConfiguration = {
 			updateInterval: 1
 		};
 
-		this.oDataProvider.setSettings(oSettings);
+		this.oDataProvider.setConfiguration(oConfiguration);
 		var fnSpy = sinon.spy(this.oDataProvider, "triggerDataUpdate");
 
 		// Act
@@ -272,20 +270,20 @@ sap.ui.define([
 
 		// Arrange
 		var done = assert.async();
-		var oSettings = {
+		const oConfiguration = {
 			json: {
 				"key": "value"
 			}
 		};
 		var fnErrorSpy = sinon.spy();
-		this.oDataProvider.setSettings(oSettings);
+		this.oDataProvider.setConfiguration(oConfiguration);
 		this.oDataProvider.attachError(fnErrorSpy);
 		this.oDataProvider.attachDataChanged(function (oEvent) {
 
 			// Assert
 			var oData = oEvent.getParameter("data");
 			assert.ok(fnErrorSpy.notCalled, "Should NOT call error event handler.");
-			assert.deepEqual(oSettings.json, oData, "Should have correct data.");
+			assert.deepEqual(oConfiguration.json, oData, "Should have correct data.");
 
 			done();
 		});
@@ -298,9 +296,9 @@ sap.ui.define([
 
 		// Arrange
 		var done = assert.async();
-		var oSettings = {};
+		const oConfiguration = {};
 		var fnDataChangedSpy = sinon.spy();
-		this.oDataProvider.setSettings(oSettings);
+		this.oDataProvider.setConfiguration(oConfiguration);
 		this.oDataProvider.attachError(function (oEvent) {
 
 			// Assert
@@ -331,7 +329,7 @@ sap.ui.define([
 		});
 
 		// Act
-		this.oDataProvider.setSettings({
+		this.oDataProvider.setConfiguration({
 			request: {
 				url: "/data/provider/test/url",
 				parameters: {
@@ -341,7 +339,7 @@ sap.ui.define([
 		});
 		this.oDataProvider.triggerDataUpdate();
 
-		this.oDataProvider.setSettings({
+		this.oDataProvider.setConfiguration({
 			request: {
 				url: "/data/provider/test/url",
 				key: 2
@@ -349,7 +347,7 @@ sap.ui.define([
 		});
 		this.oDataProvider.triggerDataUpdate();
 
-		this.oDataProvider.setSettings({
+		this.oDataProvider.setConfiguration({
 			request: {
 				url: "/data/provider/test/url",
 				key: 3
@@ -370,7 +368,7 @@ sap.ui.define([
 		}
 	});
 
-	testSetSettings(RequestDataProvider);
+	testSetConfiguration(RequestDataProvider);
 
 	QUnit.test("method _isValidRequest", function (assert) {
 		assert.notOk(this.oDataProvider._isValidRequest({}), "Should have an invalid request.");
@@ -400,13 +398,13 @@ sap.ui.define([
 
 		// Arrange
 		var done = assert.async();
-		var oSettings = {
+		const oConfiguration = {
 			request: {
 				"url": "some/relative/url"
 			}
 		};
 		var fnErrorSpy = sinon.spy();
-		this.oDataProvider.setSettings(oSettings);
+		this.oDataProvider.setConfiguration(oConfiguration);
 		this.oDataProvider.attachError(fnErrorSpy);
 		this.oDataProvider.attachDataChanged(function (oEvent) {
 
@@ -434,9 +432,9 @@ sap.ui.define([
 
 		// Arrange
 		var done = assert.async();
-		var oSettings = {};
+		const oConfiguration = {};
 		var fnDataChangedSpy = sinon.spy();
-		this.oDataProvider.setSettings(oSettings);
+		this.oDataProvider.setConfiguration(oConfiguration);
 		this.oDataProvider.attachError(function (oEvent) {
 
 			// Assert
@@ -456,11 +454,11 @@ sap.ui.define([
 
 		// Arrange
 		var done = assert.async();
-		var oSettings = {
+		const oConfiguration = {
 			request: 5
 		};
 		var fnDataChangedSpy = sinon.spy();
-		this.oDataProvider.setSettings(oSettings);
+		this.oDataProvider.setConfiguration(oConfiguration);
 		this.oDataProvider.attachError(function (oEvent) {
 
 			// Assert
@@ -480,13 +478,13 @@ sap.ui.define([
 
 		// Arrange
 		var done = assert.async();
-		var oSettings = {
+		const oConfiguration = {
 			request: {
 				"url": "some/relative/url"
 			}
 		};
 		var fnDataChangedSpy = sinon.spy();
-		this.oDataProvider.setSettings(oSettings);
+		this.oDataProvider.setConfiguration(oConfiguration);
 		this.oDataProvider.attachError(function (oEvent) {
 
 			// Assert
@@ -509,7 +507,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("RequestDataProvider - Settings", {
+	QUnit.module("RequestDataProvider - Configuration", {
 		beforeEach: function () {
 			this.oDataProviderFactory = new DataProviderFactory();
 			this.oServer = sinon.createFakeServer({
@@ -615,7 +613,7 @@ sap.ui.define([
 	QUnit.test("Content-Type: application/json", function (assert) {
 		// Arrange
 		var done = assert.async();
-		this.oDataProvider.setSettings({
+		this.oDataProvider.setConfiguration({
 			request: {
 				url: "/data/provider/test/url",
 				method: "POST",
@@ -648,7 +646,7 @@ sap.ui.define([
 	QUnit.test("Content-Type: application/x-www-form-urlencoded (default)", function (assert) {
 		// Arrange
 		var done = assert.async();
-		this.oDataProvider.setSettings({
+		this.oDataProvider.setConfiguration({
 			request: {
 				url: "/data/provider/test/url",
 				method: "POST",
@@ -677,7 +675,7 @@ sap.ui.define([
 
 		assert.expect(2);
 
-		this.oDataProvider.setSettings({
+		this.oDataProvider.setConfiguration({
 			request: {
 				url: "/data/provider/test/url",
 				retryAfter: 1
@@ -711,7 +709,7 @@ sap.ui.define([
 
 		assert.expect(2);
 
-		this.oDataProvider.setSettings({
+		this.oDataProvider.setConfiguration({
 			request: {
 				url: "/data/provider/test/url"
 			}
@@ -746,7 +744,7 @@ sap.ui.define([
 
 		assert.expect(2);
 
-		oDataProvider.setSettings({
+		oDataProvider.setConfiguration({
 			request: {
 				url: "/data/provider/test/url"
 			}
@@ -779,7 +777,7 @@ sap.ui.define([
 
 		assert.expect(2);
 
-		oDataProvider.setSettings({
+		oDataProvider.setConfiguration({
 			request: {
 				url: "/data/provider/test/url",
 				retryAfter: "2050-01-01"
@@ -897,13 +895,13 @@ sap.ui.define([
 		}
 	});
 
-	testSetSettings(ServiceDataProvider);
+	testSetConfiguration(ServiceDataProvider);
 
 	QUnit.test("triggerDataUpdate - data request successful", function (assert) {
 
 		// Arrange
 		var done = assert.async();
-		var oDataSettings = {
+		const oConfiguration = {
 			service: "UserRecent"
 		};
 		var fnErrorSpy = sinon.spy();
@@ -917,7 +915,7 @@ sap.ui.define([
 
 			done();
 		}.bind(this));
-		this.oDataProvider.setSettings(oDataSettings);
+		this.oDataProvider.setConfiguration(oConfiguration);
 		this.oDataProvider.createServiceInstances(this.oServiceManagerMock);
 
 		// Act
@@ -928,7 +926,7 @@ sap.ui.define([
 
 		// Arrange
 		var done = assert.async();
-		var oDataSettings = {
+		const oConfiguration = {
 			service: "UserRecent"
 		};
 		var fnDataChangedSpy = sinon.spy();
@@ -943,7 +941,7 @@ sap.ui.define([
 
 			done();
 		});
-		this.oDataProvider.setSettings(oDataSettings);
+		this.oDataProvider.setConfiguration(oConfiguration);
 		this.oDataProvider.createServiceInstances(this.oServiceManagerMock);
 
 		// Act
@@ -954,7 +952,7 @@ sap.ui.define([
 
 		// Arrange
 		var done = assert.async();
-		var oDataSettings = {
+		const oConfiguration = {
 			service: "UserRecent"
 		};
 		var fnDataChangedSpy = sinon.spy();
@@ -969,7 +967,7 @@ sap.ui.define([
 
 			done();
 		});
-		this.oDataProvider.setSettings(oDataSettings);
+		this.oDataProvider.setConfiguration(oConfiguration);
 
 		// Act
 		this.oDataProvider.triggerDataUpdate();
@@ -979,7 +977,7 @@ sap.ui.define([
 
 		// Arrange
 		var done = assert.async();
-		var oDataSettings = {
+		const oConfiguration = {
 			service: "UserRecent"
 		};
 		var fnDataChangedSpy = sinon.spy();
@@ -994,7 +992,7 @@ sap.ui.define([
 
 			done();
 		});
-		this.oDataProvider.setSettings(oDataSettings);
+		this.oDataProvider.setConfiguration(oConfiguration);
 		this.oDataProvider.createServiceInstances(this.oServiceManagerMock);
 
 		// Act
@@ -1005,7 +1003,7 @@ sap.ui.define([
 
 		// Arrange
 		var done = assert.async();
-		var oDataSettings = {
+		const oConfiguration = {
 			service: {
 				name: "UserRecent"
 			}
@@ -1015,7 +1013,7 @@ sap.ui.define([
 
 		this.oDataProvider.attachError(fnErrorSpy);
 		this.oDataProvider.attachDataChanged(fnDataChangedSpy);
-		this.oDataProvider.setSettings(oDataSettings);
+		this.oDataProvider.setConfiguration(oConfiguration);
 		this.oDataProvider.createServiceInstances(this.oServiceManagerMock);
 
 		this.oDataProvider._oDataServicePromise.then(function () {
@@ -1033,11 +1031,11 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("createServiceInstances after setSettings", function (assert) {
+	QUnit.test("createServiceInstances after setConfiguration", function (assert) {
 
 		// Arrange
 		var done = assert.async();
-		var oDataSettings = {
+		const oConfiguration = {
 			service: {
 				name: "UserRecent"
 			}
@@ -1048,7 +1046,7 @@ sap.ui.define([
 		this.oDataProvider.attachError(fnErrorSpy);
 		this.oDataProvider.attachDataChanged(fnDataChangedSpy);
 		this.oDataProvider.createServiceInstances(this.oServiceManagerMock);
-		this.oDataProvider.setSettings(oDataSettings);
+		this.oDataProvider.setConfiguration(oConfiguration);
 
 		// Act
 		this.oDataProvider.triggerDataUpdate().then(function () {
@@ -1112,8 +1110,8 @@ sap.ui.define([
 		oDataProvider.setHost(oHost);
 		oDataProvider.setCard(oExpectedCard);
 
-		oHost.modifyRequestHeaders = function (mHeaders, mSettings, oCard) {
-			assert.strictEqual(mSettings.request["url"], "/test/url", "Settings in modifyRequestHeaders are correct.");
+		oHost.modifyRequestHeaders = function (mHeaders, oConfiguration, oCard) {
+			assert.strictEqual(oConfiguration.request["url"], "/test/url", "Configuration in modifyRequestHeaders is correct.");
 			assert.strictEqual(oExpectedCard, oCard, "Expected card is sent to modifyRequestHeaders.");
 
 			mHeaders["x-test"] = "test";
@@ -1149,8 +1147,8 @@ sap.ui.define([
 		oDataProvider.setHost(oHost);
 		oDataProvider.setCard(oExpectedCard);
 
-		oHost.modifyRequest = function (mRequest, mSettings, oCard) {
-			assert.strictEqual(mSettings.request["url"], "/test/url", "Settings in modifyRequest are correct.");
+		oHost.modifyRequest = function (mRequest, oConfiguration, oCard) {
+			assert.strictEqual(oConfiguration.request["url"], "/test/url", "Configuration in modifyRequest are correct.");
 			assert.strictEqual(oExpectedCard, oCard, "Expected card is sent to modifyRequest.");
 
 			mRequest.url += "?test=test";
@@ -1240,14 +1238,14 @@ sap.ui.define([
 	QUnit.test("Extension can override fetch", function (assert) {
 		var done = assert.async(),
 			sExpectedResource = "/test/url",
-			mExpectedSettings = {
+			oExpectedRequestConfiguration = {
 				url: sExpectedResource,
 				headers: {
 					"test": "test"
 				}
 			},
 			oDataProvider = this.oDataProviderFactory.create({
-				request: mExpectedSettings
+				request: oExpectedRequestConfiguration
 			}),
 			oExtension = new Extension(),
 			oCard = new Card();
@@ -1258,16 +1256,16 @@ sap.ui.define([
 		oExtension._setCard(oCard);
 		oCard.setAggregation("_extension", oExtension);
 
-		oExtension.fetch = function (sResource, mOptions, mRequestSettings) {
+		oExtension.fetch = function (sResource, mOptions, oRequestConfiguration) {
 			assert.strictEqual(sResource, sExpectedResource, "The resource is as expected.");
 			assert.strictEqual(mOptions.method, "GET", "The request options method is as expected.");
 			assert.strictEqual(mOptions.headers.get("test"), "test", "The request options headers are as expected.");
-			assert.deepEqual(mRequestSettings, mExpectedSettings, "The request settings are a copy of the expected settings.");
+			assert.deepEqual(oRequestConfiguration, oExpectedRequestConfiguration, "The request configuration is a copy of the expected configuration.");
 
 			sResource += "?test=test";
 			mOptions.headers.set("test", "test2");
 
-			return Extension.prototype.fetch.call(this, sResource, mOptions, mRequestSettings);
+			return Extension.prototype.fetch.call(this, sResource, mOptions, oRequestConfiguration);
 		};
 
 		this.oServer.respondWith("GET", "/test/url?test=test", function (oXhr) {
@@ -1286,14 +1284,14 @@ sap.ui.define([
 	QUnit.test("Host can override fetch", function (assert) {
 		var done = assert.async(),
 			sExpectedResource = "/test/url",
-			mExpectedSettings = {
+			oExpectedConfiguration = {
 				url: sExpectedResource,
 				headers: {
 					"test": "test"
 				}
 			},
 			oDataProvider = this.oDataProviderFactory.create({
-				request: mExpectedSettings
+				request: oExpectedConfiguration
 			}),
 			oHost = new Host(),
 			oExpectedCard = new Card();
@@ -1303,17 +1301,17 @@ sap.ui.define([
 		oDataProvider.setHost(oHost);
 		oDataProvider.setCard(oExpectedCard);
 
-		oHost.fetch = function (sResource, mOptions, mRequestSettings, oCard) {
+		oHost.fetch = function (sResource, mOptions, oRequestConfiguration, oCard) {
 			assert.strictEqual(sResource, sExpectedResource, "The resource is as expected.");
 			assert.strictEqual(mOptions.method, "GET", "The request options method is as expected.");
 			assert.strictEqual(mOptions.headers.get("test"), "test", "The request options headers are as expected.");
-			assert.deepEqual(mRequestSettings, mExpectedSettings, "The request settings are a copy of the expected settings.");
+			assert.deepEqual(oRequestConfiguration, oExpectedConfiguration, "The request configuration is a copy of the expected configuration.");
 			assert.strictEqual(oCard, oExpectedCard, "The card is as expected.");
 
 			sResource += "?test=test";
 			mOptions.headers.set("test", "test2");
 
-			return Host.prototype.fetch.call(this, sResource, mOptions, mRequestSettings, oCard);
+			return Host.prototype.fetch.call(this, sResource, mOptions, oRequestConfiguration, oCard);
 		};
 
 		this.oServer.respondWith("GET", "/test/url?test=test", function (oXhr) {
@@ -1353,21 +1351,21 @@ sap.ui.define([
 		oDataProvider.setCard(oCard);
 		oDataProvider.setHost(oHost);
 
-		oExtension.fetch = function (sResource, mOptions, mRequestSettings) {
+		oExtension.fetch = function (sResource, mOptions, oRequestConfiguration) {
 			assert.strictEqual(mOptions.headers.get("test"), "test", "The initial request headers are as expected.");
 
 			mOptions.headers.set("test-extension", "test-extension");
 
-			return Extension.prototype.fetch.call(this, sResource, mOptions, mRequestSettings);
+			return Extension.prototype.fetch.call(this, sResource, mOptions, oRequestConfiguration);
 		};
 
-		oHost.fetch = function (sResource, mOptions, mRequestSettings) {
+		oHost.fetch = function (sResource, mOptions, oRequestConfiguration) {
 			assert.strictEqual(mOptions.headers.get("test"), "test", "The initial request headers are as expected.");
 			assert.strictEqual(mOptions.headers.get("test-extension"), "test-extension", "The request headers are modified by extension.");
 
 			mOptions.headers.set("test-host", "test-host");
 
-			return Host.prototype.fetch.call(this, sResource, mOptions, mRequestSettings, oCard);
+			return Host.prototype.fetch.call(this, sResource, mOptions, oRequestConfiguration, oCard);
 		};
 
 		fnHostSpy = this.spy(oHost, "fetch");

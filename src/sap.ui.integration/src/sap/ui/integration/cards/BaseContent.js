@@ -588,7 +588,7 @@ sap.ui.define([
 			this._oDataProvider.attachError(function (oEvent) {
 				this.handleError({
 					requestErrorParams: oEvent.getParameters(),
-					requestSettings: this._oDataProvider.getSettings()
+					requestSettings: this._oDataProvider.getResolvedConfiguration()
 				});
 				this.onDataRequestComplete();
 			}.bind(this));
@@ -897,7 +897,7 @@ sap.ui.define([
 	};
 
 	BaseContent.prototype._isDataProviderJson = function () {
-		return this._oDataProvider && this._oDataProvider.getSettings() && this._oDataProvider.getSettings()["json"];
+		return !!this._oDataProvider?.getConfiguration()?.json;
 	};
 
 	/*

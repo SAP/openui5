@@ -1378,6 +1378,33 @@ sap.ui.define([
 										key: 'card/dt/Configuration.js'
 									}
 								]
+							},
+							{
+								title: 'Upload File',
+								key: 'uploadFile',
+								mockServer: true,
+								files: [
+									{
+										url: '/samples/component/uploadFile/manifest.json',
+										name: 'card/manifest.json',
+										key: 'card/manifest.json'
+									},
+									{
+										url: '/samples/component/uploadFile/Component.js',
+										name: 'card/Component.js',
+										key: 'card/Component.js'
+									},
+									{
+										url: '/samples/component/uploadFile/View.view.xml',
+										name: 'card/View.view.xml',
+										key: 'card/View.view.xml'
+									},
+									{
+										url: '/samples/component/uploadFile/Main.controller.js',
+										name: 'card/Main.controller.js',
+										key: 'card/Main.controller.js'
+									}
+								]
 							}
 						]
 					},

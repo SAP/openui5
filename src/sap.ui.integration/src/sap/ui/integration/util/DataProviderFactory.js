@@ -123,12 +123,13 @@ sap.ui.define([
 	 * @param {object} oDataConfiguration The data configuration.
 	 * @param {sap.ui.integration.util.ServiceManager} [oServiceManager] A reference to the service manager.
 	 * @param {boolean} [bIsFilter=false] Whether the caller of this method is Filter.
-	 * @param {boolean} [bConfigurationAlreadyResolved=false] Whether configuration bindings are already resolved. Useful, when they depend on user input. In this case they should already be resolved.
+	 * @param {boolean} [bConfigurationResolved=false] Whether parsing and resolving of the configuration is done.
+	 * @param {boolean} [bApiCardRequest=false] Whether the request is coming from a card API.
 	 * @private
 	 * @ui5-restricted sap.ui.integration, shell-toolkit
 	 * @returns {sap.ui.integration.util.DataProvider|null} A data provider instance used for data retrieval.
 	 */
-	DataProviderFactory.prototype.create = function (oDataConfiguration, oServiceManager, bIsFilter, bConfigurationAlreadyResolved, bApiCardRequest) {
+	DataProviderFactory.prototype.create = function (oDataConfiguration, oServiceManager, bIsFilter, bConfigurationResolved, bApiCardRequest) {
 		var oCard = this._oCard;
 
 		if (!DataProviderFactory.isProvidingConfiguration(oDataConfiguration) || oCard && oCard.getPreviewMode() === CardPreviewMode.Abstract) {
@@ -142,7 +143,7 @@ sap.ui.define([
 		var oEditor = this._oEditor,
 			oHost = this._oHost || (oCard && oCard.getHostInstance()) || (oEditor && oEditor.getHostInstance()),
 			bUseExperimentalCaching = oHost && oHost.bUseExperimentalCaching,
-			oSettings = this._createDataProviderSettings(oDataConfiguration, bConfigurationAlreadyResolved),
+			oSettings = this._createDataProviderSettings(oDataConfiguration, bConfigurationResolved),
 			oDataProvider;
 
 		if (oDataConfiguration.request && bUseExperimentalCaching) {
@@ -165,7 +166,6 @@ sap.ui.define([
 		oDataProvider.setConfiguration(oDataConfiguration);
 
 		if (oCard) {
-			oDataProvider.setCard(oCard);
 			BindingHelper.propagateModels(oCard, oDataProvider);
 		} else if (oEditor) {
 			BindingHelper.propagateModels(oEditor, oDataProvider);
@@ -230,27 +230,26 @@ sap.ui.define([
 		}
 	};
 
-	DataProviderFactory.prototype._createDataProviderSettings = function (oDataConfiguration, bConfigurationAlreadyResolved) {
-		var oCard = this._oCard;
-		var oEditor = this._oEditor;
-		var oConfig = {};
+	DataProviderFactory.prototype._createDataProviderSettings = function (oDataConfiguration, bConfigurationResolved) {
+		const oSettings = {};
+		const oCard = this._oCard;
+		const oEditor = this._oEditor;
 
 		if (oCard) {
-			oConfig.baseRuntimeUrl = oCard.getRuntimeUrl("/");
+			oSettings.baseRuntimeUrl = oCard.getRuntimeUrl("/");
+			oSettings.card = oCard;
 
-			if (bConfigurationAlreadyResolved) {
-				oConfig.settings = oDataConfiguration;
-			} else {
-				oConfig.settingsJson = JSONBindingHelper.createJsonWithBindingInfos(oDataConfiguration, oCard.getBindingNamespaces());
+			if (!bConfigurationResolved) {
+				oSettings.configurationJson = JSONBindingHelper.createJsonWithBindingInfos(oDataConfiguration, oCard.getBindingNamespaces());
 			}
 		} else if (oEditor) {
-			oConfig.baseRuntimeUrl = oEditor.getRuntimeUrl("/");
-			oConfig.settingsJson = JSONBindingHelper.createJsonWithBindingInfos(oDataConfiguration, oEditor.getBindingNamespaces());
+			oSettings.baseRuntimeUrl = oEditor.getRuntimeUrl("/");
+			oSettings.configurationJson = JSONBindingHelper.createJsonWithBindingInfos(oDataConfiguration, oEditor.getBindingNamespaces());
 		} else {
-			oConfig.settingsJson = JSONBindingHelper.createJsonWithBindingInfos(oDataConfiguration, {});
+			oSettings.configurationJson = JSONBindingHelper.createJsonWithBindingInfos(oDataConfiguration, {});
 		}
 
-		return oConfig;
+		return oSettings;
 	};
 
 	DataProviderFactory.prototype._applyMockDataConfiguration = function (oDataConfiguration) {

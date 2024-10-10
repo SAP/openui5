@@ -7,7 +7,13 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/deepExtend",
 	"sap/ui/core/date/UI5Date"
-], function (Element, RequestDataProvider, Log, deepExtend, UI5Date) {
+], function (
+	Element,
+	RequestDataProvider,
+	Log,
+	deepExtend,
+	UI5Date
+) {
 	"use strict";
 
 	/**
@@ -65,10 +71,6 @@ sap.ui.define([
 		return Element.getElementById(this.getHost());
 	};
 
-	CacheAndRequestDataProvider.prototype.getCardInstance = function () {
-		return Element.getElementById(this.getCard());
-	};
-
 	CacheAndRequestDataProvider.prototype.getCardInstanceHeader = function () {
 		var oCard = this.getCardInstance();
 
@@ -80,18 +82,18 @@ sap.ui.define([
 	};
 
 	CacheAndRequestDataProvider.prototype.onDataRequestComplete = function () {
-		var iInterval;
+		const oConfiguration = this.getResolvedConfiguration();
 
 		if (this._iUpdateIntervalTimeout) {
 			clearTimeout(this._iUpdateIntervalTimeout);
 			this._iUpdateIntervalTimeout = null;
 		}
 
-		if (!this.getSettings() || !this.getSettings().updateInterval) {
+		if (!oConfiguration || !oConfiguration.updateInterval) {
 			return;
 		}
 
-		iInterval = parseInt(this.getSettings().updateInterval);
+		const iInterval = parseInt(oConfiguration.updateInterval);
 
 		if (isNaN(iInterval)) {
 			return;
@@ -165,16 +167,16 @@ sap.ui.define([
 	/**
 	 * @inheritdoc
 	 */
-	CacheAndRequestDataProvider.prototype._modifyRequestBeforeSent = function (oRequest, oSettings) {
-		oSettings.request = this._addCacheSettings(oSettings.request);
+	CacheAndRequestDataProvider.prototype._modifyRequestBeforeSent = function (oRequest, oConfiguration) {
+		oConfiguration.request = this._addCacheConfiguration(oConfiguration.request);
 
-		return RequestDataProvider.prototype._modifyRequestBeforeSent.call(this, oRequest, oSettings);
+		return RequestDataProvider.prototype._modifyRequestBeforeSent.call(this, oRequest, oConfiguration);
 	};
 
 	/**
 	 * @inheritdoc
 	 */
-	CacheAndRequestDataProvider.prototype._addCacheSettings = function (oSettings) {
+	CacheAndRequestDataProvider.prototype._addCacheConfiguration = function (oRequestConfiguration) {
 		var oDefault = {
 				cache: {
 					enabled: true,
@@ -182,8 +184,8 @@ sap.ui.define([
 					staleWhileRevalidate: true
 				}
 			},
-			oNewSettings = deepExtend(oDefault, oSettings),
-			oCache = oNewSettings.cache;
+			oNewConfiguration = deepExtend(oDefault, oRequestConfiguration),
+			oCache = oNewConfiguration.cache;
 
 		if (oCache.noStore) {
 			// temporary needed for backward compatibility
@@ -200,14 +202,14 @@ sap.ui.define([
 			}
 		}
 
-		return oNewSettings;
+		return oNewConfiguration;
 	};
 
 	/**
 	 * @override
 	 */
-	CacheAndRequestDataProvider.prototype._getRequestSettings = function () {
-		return this._addCacheSettings(this.getSettings().request);
+	CacheAndRequestDataProvider.prototype._getResolvedRequestConfiguration = function () {
+		return this._addCacheConfiguration(this.getResolvedConfiguration().request);
 	};
 
 	/**

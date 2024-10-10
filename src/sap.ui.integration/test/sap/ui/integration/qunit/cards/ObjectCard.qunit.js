@@ -2424,7 +2424,7 @@ sap.ui.define([
 
 		// Assert
 		assert.deepEqual(
-			oDataProviderStub.thisValues[0].getSettings().request.parameters,
+			oDataProviderStub.thisValues[0].getResolvedConfiguration().request.parameters,
 			{
 				"status": "approved",
 				"comment": '{"reason": "{form>/reason/key}"}'
