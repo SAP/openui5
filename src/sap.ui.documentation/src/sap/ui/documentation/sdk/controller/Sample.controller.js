@@ -527,30 +527,6 @@ sap.ui.define([
 				}
 			},
 
-			/**
-			 * Extends the sSampleId with the relative path defined in sIframePath and returns the resulting path.
-			 * @param {string} sSampleId
-			 * @param {string} sIframePath
-			 * @returns {string}
-			 * @private
-			 */
-			_resolveIframePath: function (sSampleId, sIframePath) {
-				var aIFramePathParts = sIframePath.split("/"),
-					i;
-
-				for (i = 0; i < aIFramePathParts.length - 1; i++) {
-					if (aIFramePathParts[i] == "..") {
-						// iframe path has parts pointing one folder up so remove last part of the sSampleId
-						sSampleId = sSampleId.substring(0, sSampleId.lastIndexOf("."));
-					} else {
-						// append the part of the iframe path to the sample's id
-						sSampleId += "." + aIFramePathParts[i];
-					}
-				}
-
-				return sSampleId;
-			},
-
 			_createIframe : function () {
 				return new Promise(function (resolve, reject) {
 
@@ -612,30 +588,10 @@ sap.ui.define([
 			},
 
 			fnMessageInit: function(eMessage) {
-				var sSampleId,
-					sIframePath = "",
-					rExtractFilename = /\/([^\/]*)$/,// extracts everything after the last slash (e.g. some/path/index.html -> index.html)
-					rStripUI5Ending = /\..+$/,// removes everything after the first dot in the filename (e.g. someFile.qunit.html -> .qunit.html)
-					aFileNameMatches,
-					sFileName,
-					sFileEnding,
-					vIframe,
-					oSettingsData = this.oModel.getData();
+				var oSettingsData = this.oModel.getData();
 
-				if (eMessage.data.config && eMessage.data.config.sample && eMessage.data.config.sample.iframe) {
-					sSampleId = this._sId;
-					vIframe = eMessage.data.config.sample.iframe;
-					sIframePath = this._resolveIframePath(sSampleId, vIframe);
-
-					//vlaid only for samples that contains own index.html
-					// strip the file extension to be able to use jQuery.sap.getModulePath
-					aFileNameMatches = rExtractFilename.exec(vIframe);
-					sFileName = (aFileNameMatches && aFileNameMatches.length > 1 ? aFileNameMatches[1] : vIframe);
-					sFileEnding = rStripUI5Ending.exec(sFileName)[0];
-					var sIframeWithoutUI5Ending = sFileName.replace(rStripUI5Ending, "");
-
-					// combine namespace with the file name again
-					this.sIFrameUrl = (sap.ui.require.toUrl((sIframePath + "/" + sIframeWithoutUI5Ending).replace(/\./g, "/")) + sFileEnding || ".html");
+				if (eMessage.data.config?.sample?.iframe) {
+					this.sIFrameUrl = sap.ui.require.toUrl(this._sId.replace(/\./g, "/")) + "/" + eMessage.data.config.sample.iframe;
 					this._setStandAloneIndexIframeSetting(oSettingsData.theme, oSettingsData.density, oSettingsData.rtl);
 				}
 				this._oHtmlControl.getDomRef().contentWindow.postMessage({
