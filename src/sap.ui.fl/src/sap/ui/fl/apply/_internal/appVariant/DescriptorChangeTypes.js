@@ -59,7 +59,8 @@ sap.ui.define([
 				"appdescr_fe_changePageConfiguration",
 				"appdescr_ui5_changeModel",
 				"appdescr_ui_generic_app_addNewObjectPage",
-				"appdescr_ui_generic_app_changePageConfiguration"
+				"appdescr_ui_generic_app_changePageConfiguration",
+				"appdescr_fe_addNewPage"
 			];
 		},
 		getCondensableChangeTypes() {
