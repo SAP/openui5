@@ -1,9 +1,12 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Locale",
 	"sap/ui/core/date/UniversalDateUtils",
 	"sap/ui/core/date/UniversalDate",
-	"sap/ui/core/CalendarType"
-], function(UniversalDateUtils, UniversalDate, CalendarType) {
+	"sap/ui/core/CalendarType",
+	"sap/ui/core/date/CalendarWeekNumbering",
+	'sap/ui/core/Core'
+], function(Locale, UniversalDateUtils, UniversalDate, CalendarType, CalendarWeekNumbering, Core) {
 	"use strict";
 
 	// Add asserts for comparison of numeric values
@@ -201,6 +204,50 @@ sap.ui.define([
 		oDate = UniversalDateUtils.getWeekStartDate(new UniversalDate(), "de");
 		assert.strictEqual(oDate.getDay(), 1, "en-US first day of week is Monday (1)");
 
+	});
+
+	QUnit.test("Static Methods Test _getDateFromWeekStartByDayOffset", function (assert) {
+		var oUDate = UniversalDateUtils._getDateFromWeekStartByDayOffset(undefined, undefined),
+			sCalendarType = Core.getConfiguration().getCalendarType(),
+			oLocale = new Locale(Core.getConfiguration().getFormatLocale()),
+			oUniversalDate = UniversalDateUtils.createNewUniversalDate(),
+			iWeek = oUniversalDate.getWeek().week,
+			iYear = oUniversalDate.getWeek().year,
+			oFirstDateOfWeek = UniversalDate.getFirstDateOfWeek(sCalendarType, iYear, iWeek, oLocale, CalendarWeekNumbering.Default),
+			oDateWithFirstDateOfWeek = new UniversalDate(oFirstDateOfWeek.year, oFirstDateOfWeek.month, oFirstDateOfWeek.day, 0, 0, 0),
+			iOffsetDay = 4;
+
+		assert.strictEqual(oUDate.oDate.getTime(), oDateWithFirstDateOfWeek.oDate.getTime(), "_getDateFromWeekStartByDayOffset: The date that is returned is correctly created.");
+
+		oUDate = UniversalDateUtils._getDateFromWeekStartByDayOffset(undefined, iOffsetDay);
+		oDateWithFirstDateOfWeek.setDate(oFirstDateOfWeek.day + iOffsetDay);
+
+		assert.strictEqual(oUDate.oDate.getTime(), oDateWithFirstDateOfWeek.oDate.getTime(), "_getDateFromWeekStartByDayOffset: The date that is returned is correctly created.");
+
+		iOffsetDay = -4;
+		oUDate = UniversalDateUtils._getDateFromWeekStartByDayOffset(undefined, iOffsetDay);
+		oDateWithFirstDateOfWeek.setDate(oFirstDateOfWeek.day + iOffsetDay);
+
+		assert.strictEqual(oUDate.oDate.getTime(), oDateWithFirstDateOfWeek.oDate.getTime(), "_getDateFromWeekStartByDayOffset: The date that is returned is correctly created.");
+
+		iOffsetDay = 0;
+		oFirstDateOfWeek = UniversalDate.getFirstDateOfWeek(sCalendarType, iYear, iWeek, oLocale, CalendarWeekNumbering.ISO_8601);
+		oDateWithFirstDateOfWeek = new UniversalDate(oFirstDateOfWeek.year, oFirstDateOfWeek.month, oFirstDateOfWeek.day, 0, 0, 0);
+		oUDate = UniversalDateUtils._getDateFromWeekStartByDayOffset(CalendarWeekNumbering.ISO_8601, iOffsetDay);
+
+		assert.strictEqual(oUDate.oDate.getTime(), oDateWithFirstDateOfWeek.oDate.getTime(), "_getDateFromWeekStartByDayOffset: The date that is returned is correctly created.");
+
+		oFirstDateOfWeek = UniversalDate.getFirstDateOfWeek(sCalendarType, iYear, iWeek, oLocale, CalendarWeekNumbering.MiddleEastern);
+		oDateWithFirstDateOfWeek = new UniversalDate(oFirstDateOfWeek.year, oFirstDateOfWeek.month, oFirstDateOfWeek.day, 0, 0, 0);
+		oUDate = UniversalDateUtils._getDateFromWeekStartByDayOffset(CalendarWeekNumbering.MiddleEastern, iOffsetDay);
+
+		assert.strictEqual(oUDate.oDate.getTime(), oDateWithFirstDateOfWeek.oDate.getTime(), "_getDateFromWeekStartByDayOffset: The date that is returned is correctly created.");
+
+		oFirstDateOfWeek = UniversalDate.getFirstDateOfWeek(sCalendarType, iYear, iWeek, oLocale, CalendarWeekNumbering.WesternTraditional);
+		oDateWithFirstDateOfWeek = new UniversalDate(oFirstDateOfWeek.year, oFirstDateOfWeek.month, oFirstDateOfWeek.day, 0, 0, 0);
+		oUDate = UniversalDateUtils._getDateFromWeekStartByDayOffset(CalendarWeekNumbering.WesternTraditional, iOffsetDay);
+
+		assert.strictEqual(oUDate.oDate.getTime(), oDateWithFirstDateOfWeek.oDate.getTime(), "_getDateFromWeekStartByDayOffset: The date that is returned is correctly created.");
 	});
 
 	QUnit.test("Checking ranges", function (assert) {
@@ -418,7 +465,7 @@ sap.ui.define([
 		oDate.setMonth(4);
 		oDate.setFullYear(2000);
 
-		oUniversalDateUtilsStub = sinon.stub(UniversalDateUtils, "createNewUniversalDate").returns( oDate);
+		oUniversalDateUtilsStub = sinon.stub(UniversalDateUtils, "createNewUniversalDate").returns(oDate);
 
 
 		//yearToDate
