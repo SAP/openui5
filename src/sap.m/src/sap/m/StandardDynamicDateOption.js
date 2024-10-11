@@ -620,10 +620,11 @@ sap.ui.define([
 					}
 				}
 
-				var iOptionIndex = aOptionsArray.indexOf(oValue.operator.slice(4).replace("INCLUDED", "").toLowerCase());
+				var sKey = oValue.operator.slice(4).replace("INCLUDED", ""),
+					iOptionIndex = aOptionsArray.indexOf(sKey?.toLowerCase());
 
 				if (iOptionIndex !== -1) {
-					oControl.setSelectedIndex(iOptionIndex);
+					oControl.setSelectedKey(sKey);
 				}
 			}
 
@@ -766,14 +767,15 @@ sap.ui.define([
 		StandardDynamicDateOption.prototype.getValueHelpOutput = function(oControl) {
 			var oOptions = oControl._getOptions();
 			var aParams = this.getValueHelpUITypes(oControl),
+				bHasIncludedControl = oControl.aControlsByParameters && oControl.aControlsByParameters[this.getKey()] && oControl.aControlsByParameters[this.getKey()].length > 1,
 				aResult = {},
 				vOutput;
 
-			if (aLastOptions.indexOf(this.getKey()) !== -1 && oControl.aControlsByParameters[this.getKey()].length > 1) {
+			if (aLastOptions.indexOf(this.getKey()) !== -1 && bHasIncludedControl) {
 				aResult.operator = oOptions.filter(function(option) {
 					return this._shouldAddLastOrNextOption(oOptions, option, aLastOptions);
 				}.bind(this))[oControl.aControlsByParameters[this.getKey()][1].getSelectedIndex()].getKey();
-			} else if (aNextOptions.indexOf(this.getKey()) !== -1 && oControl.aControlsByParameters[this.getKey()].length > 1) {
+			} else if (aNextOptions.indexOf(this.getKey()) !== -1 && bHasIncludedControl) {
 				aResult.operator = oOptions.filter(function(option) {
 					return this._shouldAddLastOrNextOption(oOptions, option, aNextOptions);
 				}.bind(this))[oControl.aControlsByParameters[this.getKey()][1].getSelectedIndex()].getKey();
@@ -783,7 +785,7 @@ sap.ui.define([
 
 			if (aLastOptions.indexOf(this.getKey()) !== -1 || aNextOptions.indexOf(this.getKey()) !== -1) {
 				const bCurrentOptionHasAlsoIncluded = oControl.getStandardOptions().indexOf(aResult.operator + "INCLUDED") > -1;
-				const bIncludedRadioButtonIsSelected = oControl.aControlsByParameters[this.getKey()][2]?.getItems()[2].getSelected();
+				const bIncludedRadioButtonIsSelected = oControl.aControlsByParameters && oControl.aControlsByParameters[this.getKey()] && oControl.aControlsByParameters[this.getKey()][2]?.getItems()[2].getSelected();
 
 				if (bIncludedRadioButtonIsSelected && bCurrentOptionHasAlsoIncluded) {
 					aResult.operator = aResult.operator + "INCLUDED";

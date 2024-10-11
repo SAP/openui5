@@ -31,17 +31,17 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 */
-	var UIReconstruction = {};
+	const UIReconstruction = {};
 
-	var INDEX_RELATED = {
+	const INDEX_RELATED = {
 		create: Create,
 		destroy: Destroy,
 		move: Move
 	};
 
 	function forEveryMapInMap(mMap, fnCallback) {
-		each(mMap, function(sOuterKey, mOuterMap) {
-			each(mOuterMap, function(sInnerKey, mInnerMap) {
+		each(mMap, (sOuterKey, mOuterMap) => {
+			each(mOuterMap, (sInnerKey, mInnerMap) => {
 				fnCallback(mOuterMap, sOuterKey, mInnerMap, sInnerKey);
 			});
 		});
@@ -66,20 +66,20 @@ sap.ui.define([
 	 * @returns {Map} Simulation of the UI reconstruction
 	 */
 	function defineContainersMap(mUIReconstructions, aCondenserInfos) {
-		var mContainers = {};
-		forEveryMapInMap(mUIReconstructions, function(mUIState, sContainerKey, mUIAggregationState, sAggregationName) {
-			var aTargetElementIds = mUIAggregationState[Utils.TARGET_UI];
-			var aSourceElementIds = mUIAggregationState[Utils.INITIAL_UI];
+		const mContainers = {};
+		forEveryMapInMap(mUIReconstructions, (mUIState, sContainerKey, mUIAggregationState, sAggregationName) => {
+			const aTargetElementIds = mUIAggregationState[Utils.TARGET_UI];
+			const aSourceElementIds = mUIAggregationState[Utils.INITIAL_UI];
 
-			aCondenserInfos.forEach(function(oCondenserInfo) {
-				var bElementPartOfInitialOrTargetUi = aTargetElementIds.indexOf(oCondenserInfo.affectedControl) > -1
+			aCondenserInfos.forEach((oCondenserInfo) => {
+				const bElementPartOfInitialOrTargetUi = aTargetElementIds.indexOf(oCondenserInfo.affectedControl) > -1
 					|| aSourceElementIds.indexOf(oCondenserInfo.affectedControl) > -1;
 
 				if (sAggregationName === oCondenserInfo.targetAggregation && bElementPartOfInitialOrTargetUi) {
 					mContainers[sContainerKey] ||= {};
-					var mAggregations = mContainers[sContainerKey];
+					const mAggregations = mContainers[sContainerKey];
 					mAggregations[sAggregationName] ||= [];
-					var aContainerElements = mAggregations[sAggregationName];
+					const aContainerElements = mAggregations[sAggregationName];
 					aContainerElements.push(oCondenserInfo);
 				}
 			});
@@ -94,7 +94,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the array of condenser info objects contains only changes of type 'create'
 	 */
 	function containsOnlyCreateChanges(aCondenserInfos) {
-		return !aCondenserInfos.some(function(vElement) {
+		return !aCondenserInfos.some((vElement) => {
 			return vElement.classification !== CondenserClassification.Create;
 		});
 	}
@@ -106,7 +106,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the array of elements contains no unknown elements
 	 */
 	function containsNoPlaceholder(aElements) {
-		return !aElements.some(function(vElement) {
+		return !aElements.some((vElement) => {
 			return Utils.isUnknown(vElement);
 		});
 	}
@@ -127,9 +127,9 @@ sap.ui.define([
 	 * @param {object[]} aCondenserInfos - Array of condenser info objects
 	 */
 	function sortAscendingByTargetIndex(aCondenserInfos) {
-		aCondenserInfos.sort(function(a, b) {
-			var iCurrentTargetIndex = getTargetIndex(a);
-			var iNextTargetIndex = getTargetIndex(b);
+		aCondenserInfos.sort((a, b) => {
+			const iCurrentTargetIndex = getTargetIndex(a);
+			const iNextTargetIndex = getTargetIndex(b);
 			return iCurrentTargetIndex - iNextTargetIndex;
 		});
 	}
@@ -141,7 +141,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the array of elements contains an unknown element
 	 */
 	function containsOnlyPlaceholder(aElements) {
-		return !aElements.some(function(vElement) {
+		return !aElements.some((vElement) => {
 			return !Utils.isUnknown(vElement);
 		});
 	}
@@ -154,7 +154,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the passed arrays are equal
 	 */
 	function isEqual(a, b) {
-		var c;
+		let c;
 		if (a.length < b.length) {
 			c = b.slice(a.length);
 			if (!containsOnlyPlaceholder(c)) {
@@ -182,20 +182,20 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the simulated and the target UI reconstructions are equal
 	 */
 	function isEqualReconstructedUI(sContainerKey, sAggregationName, aInitialUIElementIds, aTargetUIElementIds, aCondenserInfos) {
-		var mUISimulatedStates = {};
+		const mUISimulatedStates = {};
 
-		aCondenserInfos.forEach(function(oCondenserInfo) {
-			var sContainerKey = oCondenserInfo.targetContainer;
+		aCondenserInfos.forEach((oCondenserInfo) => {
+			const sContainerKey = oCondenserInfo.targetContainer;
 			mUISimulatedStates[sContainerKey] ||= {};
-			var mUIAggregationState = mUISimulatedStates[sContainerKey];
+			const mUIAggregationState = mUISimulatedStates[sContainerKey];
 			mUIAggregationState[sAggregationName] ||= Utils.initializeArrayWithPlaceholders(0, aInitialUIElementIds.length - 1);
 
 			INDEX_RELATED[oCondenserInfo.classification].simulate(mUIAggregationState[sAggregationName], oCondenserInfo, aInitialUIElementIds);
 		});
 
-		var aSortedUIElementIds = mUISimulatedStates[sContainerKey][sAggregationName];
+		const aSortedUIElementIds = mUISimulatedStates[sContainerKey][sAggregationName];
 		if (isEqual(aTargetUIElementIds, aSortedUIElementIds)) {
-			aCondenserInfos.forEach(function(oCondenserInfo) {
+			aCondenserInfos.forEach((oCondenserInfo) => {
 				if (oCondenserInfo.sameIndex) {
 					oCondenserInfo.change.condenserState = "delete";
 				}
@@ -217,7 +217,7 @@ sap.ui.define([
 				// setting the target index will most likely make the change dirty,
 				// but the condenser needs the current state of the change.
 				// so in this function the state should not change
-				var sOldState = oCondenserInfo.change.getState();
+				const sOldState = oCondenserInfo.change.getState();
 				oCondenserInfo.setTargetIndex(oCondenserInfo.change, iIndex);
 				oCondenserInfo.change.setState(sOldState);
 				if (oCondenserInfo.change.isPersisted()) {
@@ -227,11 +227,11 @@ sap.ui.define([
 		}
 
 		function adjustReconstructionMap(mUIStates, sContainerId, mUIAggregationState) {
-			mUIAggregationState[Utils.TARGET_UI].forEach(function(sTargetElementId, iIndex) {
+			mUIAggregationState[Utils.TARGET_UI].forEach((sTargetElementId, iIndex) => {
 				if (!Utils.isUnknown(sTargetElementId)) {
-					var mTypes = mReducedChanges[sTargetElementId];
-					var mAggregations = mTypes[Utils.INDEX_RELEVANT];
-					forEveryMapInMap(mAggregations, function(mSubtypes, sAggregationName, aCondenserInfos, sSubtypeKey) {
+					const mTypes = mReducedChanges[sTargetElementId];
+					const mAggregations = mTypes[Utils.INDEX_RELEVANT];
+					forEveryMapInMap(mAggregations, (mSubtypes, sAggregationName, aCondenserInfos, sSubtypeKey) => {
 						if (sSubtypeKey !== CondenserClassification.Destroy) {
 							aCondenserInfos.forEach(updateCondenserChange.bind(this, iIndex));
 						}
@@ -245,21 +245,22 @@ sap.ui.define([
 
 	/**
 	 * Compares the initial and target UI reconstructions of the corresponding container.
-	 * If the UI reconstructions are equal, the corresponding index-related changes will be removed from the data structure with the reduced changes.
+	 * If the UI reconstructions are equal, the corresponding index-related changes will be removed
+	 * from the data structure with the reduced changes.
 	 *
 	 * @param {Map} mReducedChanges - Map of reduced changes
 	 * @param {Map} mUIReconstructions - Map of UI reconstructions
 	 */
 	function compareUIReconstructions(mReducedChanges, mUIReconstructions) {
-		forEveryMapInMap(mUIReconstructions, function(mUIStates, sContainerId, mUIAggregationState, sKey) {
-			var aInitialElementIds = mUIAggregationState[Utils.INITIAL_UI];
-			var aTargetElementIds = mUIAggregationState[Utils.TARGET_UI];
+		forEveryMapInMap(mUIReconstructions, (mUIStates, sContainerId, mUIAggregationState, sKey) => {
+			const aInitialElementIds = mUIAggregationState[Utils.INITIAL_UI];
+			const aTargetElementIds = mUIAggregationState[Utils.TARGET_UI];
 			if (isEqual(aInitialElementIds, aTargetElementIds)) {
-				aTargetElementIds.forEach(function(sTargetElementId) {
-					var mTypes = mReducedChanges[sTargetElementId];
+				aTargetElementIds.forEach((sTargetElementId) => {
+					const mTypes = mReducedChanges[sTargetElementId];
 					if (mTypes !== undefined) {
-						forEveryMapInMap(mTypes[Utils.INDEX_RELEVANT], function(mSubtypes, sAggregationName, aCondenserInfos) {
-							aCondenserInfos.forEach(function(oCondenserInfo) {
+						forEveryMapInMap(mTypes[Utils.INDEX_RELEVANT], (mSubtypes, sAggregationName, aCondenserInfos) => {
+							aCondenserInfos.forEach((oCondenserInfo) => {
 								oCondenserInfo.change.condenserState = "delete";
 							});
 						});
@@ -279,14 +280,14 @@ sap.ui.define([
 	 * @param {Map} mUIReconstructions - Map of UI reconstructions
 	 */
 	function updateTargetUIReconstructions(mReducedChanges, mUIReconstructions) {
-		forEveryMapInMap(mUIReconstructions, function(mUIStates, sContainerId, mUIAggregationState, sAggregationName) {
-			var aInitialElementIds = mUIAggregationState[Utils.INITIAL_UI];
-			var aTargetElementIds = mUIAggregationState[Utils.TARGET_UI];
-			aInitialElementIds.forEach(function(initialElementId, index) {
-				var mTypes = mReducedChanges[initialElementId];
+		forEveryMapInMap(mUIReconstructions, (mUIStates, sContainerId, mUIAggregationState, sAggregationName) => {
+			const aInitialElementIds = mUIAggregationState[Utils.INITIAL_UI];
+			const aTargetElementIds = mUIAggregationState[Utils.TARGET_UI];
+			aInitialElementIds.forEach((initialElementId, index) => {
+				const mTypes = mReducedChanges[initialElementId];
 				if (!mTypes || !ObjectPath.get([Utils.INDEX_RELEVANT, sAggregationName], mTypes)) {
-					var sPlaceholder = Utils.PLACEHOLDER + index;
-					var iTargetIndex = aTargetElementIds.indexOf(initialElementId);
+					const sPlaceholder = Utils.PLACEHOLDER + index;
+					const iTargetIndex = aTargetElementIds.indexOf(initialElementId);
 					if (iTargetIndex >= 0) {
 						aTargetElementIds[iTargetIndex] = sPlaceholder;
 					}
@@ -303,10 +304,10 @@ sap.ui.define([
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aAllReducedChanges - Array of all reduced changes
 	 */
 	UIReconstruction.swapChanges = function(aSortedIndexRelatedChanges, aAllReducedChanges) {
-		var aIndexes = aSortedIndexRelatedChanges.map(function(oChange) {
+		const aIndexes = aSortedIndexRelatedChanges.map((oChange) => {
 			return aAllReducedChanges.indexOf(oChange);
 		}).sort();
-		aSortedIndexRelatedChanges.forEach(function(oChange) {
+		aSortedIndexRelatedChanges.forEach((oChange) => {
 			aAllReducedChanges[aIndexes.shift()] = oChange;
 		});
 	};
@@ -319,13 +320,13 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Sorted array of index-related changes
 	 */
 	UIReconstruction.sortIndexRelatedChanges = function(mUIReconstructions, aCondenserInfos) {
-		var aSortedIndexRelatedChangesPerContainer = [];
-		var mContainers = defineContainersMap(mUIReconstructions, aCondenserInfos);
+		const aSortedIndexRelatedChangesPerContainer = [];
+		const mContainers = defineContainersMap(mUIReconstructions, aCondenserInfos);
 
-		forEveryMapInMap(mContainers, function(mAggregations, sContainerKey, aCondenserInfos, sAggregationName) {
-			var aTargetElementIds = mUIReconstructions[sContainerKey][sAggregationName][Utils.TARGET_UI];
-			var aInitialElementIds = mUIReconstructions[sContainerKey][sAggregationName][Utils.INITIAL_UI];
-			var bCorrectSortingFound = true;
+		forEveryMapInMap(mContainers, (mAggregations, sContainerKey, aCondenserInfos, sAggregationName) => {
+			const aTargetElementIds = mUIReconstructions[sContainerKey][sAggregationName][Utils.TARGET_UI];
+			const aInitialElementIds = mUIReconstructions[sContainerKey][sAggregationName][Utils.INITIAL_UI];
+			let bCorrectSortingFound = true;
 
 			if (
 				containsNoPlaceholder(aTargetElementIds)
@@ -337,10 +338,10 @@ sap.ui.define([
 				bCorrectSortingFound = isEqualReconstructedUI(sContainerKey, sAggregationName, aInitialElementIds, aTargetElementIds, aCondenserInfos);
 			} else if (!isEqualReconstructedUI(sContainerKey, sAggregationName, aInitialElementIds, aTargetElementIds, aCondenserInfos)) {
 				bCorrectSortingFound = false;
-				var iTimes = aCondenserInfos.length;
+				let iTimes = aCondenserInfos.length;
 				while (iTimes !== 0 && !bCorrectSortingFound) {
-					var iOldIndex = 0;
-					var iNewIndex = 1;
+					let iOldIndex = 0;
+					let iNewIndex = 1;
 					// TODO implement intelligent / efficient sorting  -> smart sort
 					while (iNewIndex < aCondenserInfos.length && !bCorrectSortingFound) {
 						shiftElement(aCondenserInfos, iOldIndex, iNewIndex);
@@ -356,11 +357,11 @@ sap.ui.define([
 				throw Error(`no correct sorting found for the container: ${sContainerKey}`);
 			}
 
-			aCondenserInfos = aCondenserInfos.filter(function(oCondenserInfo) {
+			aCondenserInfos = aCondenserInfos.filter((oCondenserInfo) => {
 				return oCondenserInfo.change.condenserState !== "delete";
 			});
 
-			aSortedIndexRelatedChangesPerContainer.push(aCondenserInfos.map(function(oCondenserInfo) {
+			aSortedIndexRelatedChangesPerContainer.push(aCondenserInfos.map((oCondenserInfo) => {
 				if (oCondenserInfo.revertIndex > -1) {
 					oCondenserInfo.setIndexInRevertData(oCondenserInfo.change, oCondenserInfo.revertIndex);
 					oCondenserInfo.sourceIndex = oCondenserInfo.revertIndex;
@@ -372,8 +373,8 @@ sap.ui.define([
 		return aSortedIndexRelatedChangesPerContainer;
 	};
 
-	UIReconstruction.addChange = function(mUIReconstructions, oCondenserInfo) {
-		return INDEX_RELATED[oCondenserInfo.classification].addToReconstructionMap(mUIReconstructions, oCondenserInfo);
+	UIReconstruction.addChange = async function(mUIReconstructions, oCondenserInfo) {
+		await INDEX_RELATED[oCondenserInfo.classification].addToReconstructionMap(mUIReconstructions, oCondenserInfo);
 	};
 
 	UIReconstruction.compareAndUpdate = function(mReducedChanges, mUIReconstructions) {

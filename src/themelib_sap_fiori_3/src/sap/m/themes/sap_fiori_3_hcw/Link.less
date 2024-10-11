@@ -3,42 +3,40 @@
 /* Quartz High Contrast White theme  */
 /* ================================= */
 
-@_sap_m_Link_TextShadowColor: none;
-@sapUiLinkSubtleColor: darken(@sapUiLink, 15);
-
 .sapMLnk {
 	text-decoration: underline;
 }
 
 .sapMLnkDsbl {
-	opacity: @sapUiContentDisabledOpacity;
+	opacity: var(--sapContent_DisabledOpacity);
 	outline: none;
 	cursor: default;
 }
 
 .sapMLnk.sapMLnkSubtle {
-	color: @sapLinkColor;
+	color: var(--sapLinkColor);
 }
 
 .sapMLnkSubtle:focus {
-	color: @sapUiContentFocusColor;
+	color: var(--sapContent_FocusColor);
 }
 
 html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
 	text-decoration: none;
-	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline: 0.125rem dotted var(--sapContent_FocusColor);
 }
 
 html.sap-desktop .sapMLnk:hover:not(.sapMLnkDsbl) {
 	text-decoration: none;
 }
 
-.sapMLnk:hover.sapMLnkDsbl, .sapMLnk:focus.sapMLnkDsbl {
+.sapMLnk:hover.sapMLnkDsbl,
+.sapMLnk:focus.sapMLnkDsbl {
 	outline: none;
 }
 
 /* align Link in Form with Label */
 .sapUiFormEdit .sapMLnk {
 	margin-top: 0.875rem; /* don't use padding as this would stretch the focus outline */
-	margin-bottom: 0.625rem; /* for some reason browser adds 4px, display: block would lead to stretched focus outline*/
+	margin-bottom: 0.625rem; /* for some reason browser adds 4px, display: block would lead to stretched focus outline */
 }

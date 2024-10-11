@@ -269,7 +269,9 @@ sap.ui.define([
 	};
 
 	ODataFilterBarDelegate.addItem = function(oFilterBar, sPropertyName, mPropertyBag) {
-		return Promise.resolve(this._createFilter(sPropertyName, oFilterBar, mPropertyBag));
+		return ODataFilterBarDelegate._updatePropertyInfo(sPropertyName, oFilterBar, mPropertyBag).then(function() {
+			return Promise.resolve(this._createFilter(sPropertyName, oFilterBar, mPropertyBag));
+		}.bind(this));
 	};
 
 
@@ -320,7 +322,10 @@ sap.ui.define([
 			return Promise.resolve();
 		}
 
-		var oModifier = mPropertyBag.modifier;
+		var oModifier = mPropertyBag?.modifier;
+		if (!oModifier || (oModifier === JsControlTreeModifier)) {
+			return Promise.resolve();
+		}
 
 		return oModifier.getProperty(oFilterBar, "propertyInfo")
 		.then(function(aPropertyInfo) {

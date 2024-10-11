@@ -209,14 +209,12 @@ sap.ui.define([
 					aURNs.forEach(oURNSet.add.bind(oURNSet)); // add to the Set to filter duplicates
 				});
 				Array.from(oURNSet).forEach((sURN) => {
-					if (sControlIDToDisplayFieldHelp !== sControlID) {
-						if (oFieldHelpDisplayControlIDToAddedURNs[sControlIDToDisplayFieldHelp]?.[sURN]) {
-							return; // already added for another control
-						}
-
-						oFieldHelpDisplayControlIDToAddedURNs[sControlIDToDisplayFieldHelp] ??= {};
-						oFieldHelpDisplayControlIDToAddedURNs[sControlIDToDisplayFieldHelp][sURN] = true;
+					if (oFieldHelpDisplayControlIDToAddedURNs[sControlIDToDisplayFieldHelp]?.[sURN]) {
+						return; // already added for another control
 					}
+
+					oFieldHelpDisplayControlIDToAddedURNs[sControlIDToDisplayFieldHelp] ??= {};
+					oFieldHelpDisplayControlIDToAddedURNs[sControlIDToDisplayFieldHelp][sURN] = true;
 					const oParameters = new URLSearchParams(sURN.slice(sURNPrefix.length));
 					const sOrigin = oParameters.get("origin");
 					aFieldHelpHotspots.push({

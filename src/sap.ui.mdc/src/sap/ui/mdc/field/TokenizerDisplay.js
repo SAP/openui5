@@ -26,9 +26,13 @@ sap.ui.define([
 	 * The <code>TokenizerDisplay</code> control is used to render a Tokenizer inside a control based on {@link sap.ui.mdc.field.FieldBase FieldBase}.
 	 * It enhances the {@link sap.m.Tokenizer Tokenizer} control to support display only tokens.
 	 * @extends sap.m.Tokenizer
+	 * @implements sap.ui.core.ILabelable
 	 * @version ${version}
 	 * @constructor
 	 * @abstract
+	 *
+	 * @borrows sap.ui.core.ILabelable.hasLabelableHTMLElement as #hasLabelableHTMLElement
+	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since 1.99.0
@@ -37,6 +41,7 @@ sap.ui.define([
 	const TokenizerDisplay = Tokenizer.extend("sap.ui.mdc.field.TokenizerDisplay", /** @lends sap.ui.mdc.field.TokenizerDisplay.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
+			interfaces: ["sap.ui.core.ILabelable"],
 			properties: {
 
 				/**
@@ -101,6 +106,17 @@ sap.ui.define([
 		}).join(" ");
 
 		return { description: sText };
+	};
+
+	/**
+	 * Returns if the control can be bound to a label
+	 *
+	 * @returns {boolean} <code>true</code> if the control can be bound to a label
+	 * @public
+	 * @since 1.121.0
+	 */
+	TokenizerDisplay.prototype.hasLabelableHTMLElement = function() {
+		return false; // renders only SPANs -> cannot be labeled
 	};
 
 	return TokenizerDisplay;

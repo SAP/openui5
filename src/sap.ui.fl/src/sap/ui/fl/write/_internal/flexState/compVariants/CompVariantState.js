@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexObjects/UpdatableChange",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
+	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/registry/Settings",
@@ -33,6 +34,7 @@ sap.ui.define([
 	States,
 	UpdatableChange,
 	CompVariantMerger,
+	CompVariantManagementState,
 	FlexState,
 	Version,
 	Settings,
@@ -339,12 +341,11 @@ sap.ui.define([
 		// TODO: remove as soon as the development uses an IDE using rta which passes the correct parameter
 		mPropertyBag.layer ||= new URLSearchParams(window.location.search).get("sap-ui-layer") || Layer.USER;
 
-		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference)._getOrCreate(mPropertyBag.persistencyKey);
-		var sChangeType = "defaultVariant";
-		var aDefaultVariantChanges = mCompVariantsMap.defaultVariants;
-		var oChange = aDefaultVariantChanges[aDefaultVariantChanges.length - 1];
+		let oChange = CompVariantManagementState.getDefaultChanges(mPropertyBag).slice(-1)[0];
 
 		if (!oChange || !isChangeUpdatable(oChange, mPropertyBag)) {
+			var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference)._getOrCreate(mPropertyBag.persistencyKey);
+			var sChangeType = "defaultVariant";
 			var oChangeParameter = {
 				fileName: Utils.createDefaultFileName(sChangeType),
 				fileType: "change",
@@ -361,7 +362,6 @@ sap.ui.define([
 			oChangeParameter.adaptationId = mPropertyBag.changeSpecificData?.adaptationId;
 			oChangeParameter.support.generator ||= `CompVariantState.${sChangeType}`;
 			oChange = FlexObjectFactory.createFromFileContent(oChangeParameter, UpdatableChange);
-			mCompVariantsMap.defaultVariants.push(oChange);
 			mCompVariantsMap.byId[oChange.getId()] = oChange;
 			oChange.addRevertInfo(new RevertData({
 				type: CompVariantState.operationType.NewChange
@@ -388,16 +388,15 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.persistencyKey - ID of the variant management internal identifier
 	 */
 	CompVariantState.revertSetDefaultVariantId = function(mPropertyBag) {
-		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference)._getOrCreate(mPropertyBag.persistencyKey);
-		var aDefaultVariantChanges = mCompVariantsMap.defaultVariants;
-		var oChange = aDefaultVariantChanges[aDefaultVariantChanges.length - 1];
-		var oRevertInfo = oChange.popLatestRevertInfo();
+		const aDefaultChanges = CompVariantManagementState.getDefaultChanges(mPropertyBag);
+		const oChange = aDefaultChanges?.slice(-1)[0];
+		const oRevertInfo = oChange.popLatestRevertInfo();
 		if (oRevertInfo.getType() === CompVariantState.operationType.ContentUpdate) {
 			oChange.setContent(oRevertInfo.getContent().previousContent);
 			oChange.setState(oRevertInfo.getContent().previousState);
 		} else {
 			oChange.setState(States.LifecycleState.DELETED);
-			mCompVariantsMap.defaultVariants.pop();
+			aDefaultChanges.pop();
 		}
 	};
 
@@ -917,9 +916,18 @@ sap.ui.define([
 		const sPersistencyKey = mPropertyBag.persistencyKey;
 		const mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
 		const mCompVariantsMapByPersistencyKey = mCompVariantsMap._getOrCreate(sPersistencyKey);
+		const aSetDefaultChanges = CompVariantManagementState.getDefaultChanges({
+			reference: mPropertyBag.reference,
+			persistencyKey: mPropertyBag.persistencyKey
+		});
+
+		const aCompVariantEntities = [
+			...getAllCompVariantObjects(mCompVariantsMapByPersistencyKey),
+			...aSetDefaultChanges
+		];
 
 		const oStoredResponse = await FlexState.getStorageResponse(sReference);
-		const aFlexObjects = getAllCompVariantObjects(mCompVariantsMapByPersistencyKey).filter(needsPersistencyCall);
+		const aFlexObjects = aCompVariantEntities.filter(needsPersistencyCall);
 		const aPromises = aFlexObjects.map(function(oFlexObject, index) {
 			if (index === 0) {
 				const sParentVersion = getPropertyFromVersionsModel("/persistedVersion", {

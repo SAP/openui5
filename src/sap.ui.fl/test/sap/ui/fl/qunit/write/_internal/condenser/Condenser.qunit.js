@@ -39,6 +39,7 @@ sap.ui.define([
 
 	let oAppComponent;
 	let oComponentContainer;
+	const sReference = "sap.ui.rta.test";
 	const sAffectedControlMgs = "Affected control under index";
 	const sContainerElementsMsg = "Expected number of container elements: ";
 	const sChangeTypeMsg = "Expected change type: ";
@@ -115,7 +116,8 @@ sap.ui.define([
 				}
 			},
 			modifier: JsControlTreeModifier,
-			appComponent: oAppComponent
+			appComponent: oAppComponent,
+			reference: sReference
 		};
 		return Reverter.revertMultipleChanges([].concat(aChanges).reverse(), mPropertyBag);
 	}
@@ -910,7 +912,7 @@ sap.ui.define([
 				fileName: "someOtherFlexObject1",
 				layer: Layer.CUSTOMER,
 				fileType: "variant",
-				reference: "sap.ui.rta.test"
+				reference: sReference
 			}));
 			oDeletedVariant1.markForDeletion();
 			aChanges.splice(0, 0, oDeletedVariant1);
@@ -918,13 +920,13 @@ sap.ui.define([
 				fileName: "someOtherFlexObject2",
 				layer: Layer.CUSTOMER,
 				fileType: "variant",
-				reference: "sap.ui.rta.test"
+				reference: sReference
 			})));
 			aChanges.splice(30, 0, FlexObjectFactory.createFromFileContent(({
 				fileName: "someOtherFlexObject3",
 				layer: Layer.CUSTOMER,
 				fileType: "variant",
-				reference: "sap.ui.rta.test"
+				reference: sReference
 			})));
 
 			const aRemainingChanges = await Condenser.condense(oAppComponent, aChanges);
@@ -948,7 +950,7 @@ sap.ui.define([
 				fileName: "idRename0",
 				layer: Layer.CUSTOMER,
 				changeType: "renameField",
-				reference: "sap.ui.rta.test",
+				reference: sReference,
 				selector: {
 					id: "idMain1--Victim",
 					idIsLocal: true
@@ -958,7 +960,7 @@ sap.ui.define([
 				fileName: "idRename1",
 				layer: Layer.CUSTOMER,
 				changeType: "renameField",
-				reference: "sap.ui.rta.test",
+				reference: sReference,
 				selector: {
 					id: "idMain1--Victim",
 					idIsLocal: true

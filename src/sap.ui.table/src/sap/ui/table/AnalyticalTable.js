@@ -61,7 +61,7 @@ sap.ui.define([
 		library: "sap.ui.table",
 		properties: {
 			/**
-			 * If set to <code>true</code>, the full set of <code>MenuItem</code> instances shown in to the group header menu. The value
+			 * If set to <code>true</code>, the full set of <code>MenuItem</code> instances is shown in the group header menu. The value
 			 * <code>false</code> means that only a reduced set of group header menu items is shown.
 			 */
 			extendedGroupHeaderMenu: {type: "boolean", group: "Behavior", defaultValue: true, visibility: "hidden"}

@@ -42,24 +42,24 @@ sap.ui.define(["sap/ui/integration/util/DataProvider"], function (DataProvider) 
 	 * @returns {Promise} A promise resolved when the data is available and rejected in case of an error.
 	 */
 	ExtensionDataProvider.prototype.getData = function () {
-		var oExtensionSettings = this.getSettings().extension;
+		const oConfiguration = this.getResolvedConfiguration().extension;
 
 		if (!this._oExtension) {
 			return Promise.reject("The extension module is not loaded properly or doesn't export a correct value.");
 		}
 
-		if (!this._oExtension[oExtensionSettings.method]) {
-			return Promise.reject("Extension doesn't implement " + oExtensionSettings.method + " method.");
+		if (!this._oExtension[oConfiguration.method]) {
+			return Promise.reject("Extension doesn't implement " + oConfiguration.method + " method.");
 		}
 
-		return this._oExtension[oExtensionSettings.method].apply(this._oExtension, oExtensionSettings.args);
+		return this._oExtension[oConfiguration.method].apply(this._oExtension, oConfiguration.args);
 	};
 
 	/**
  	 * @override
  	 */
 	ExtensionDataProvider.prototype.getDetails = function () {
-		return "Load data from Extension. Method: " + this.getSettings().extension.method;
+		return "Load data from Extension. Method: " + this.getResolvedConfiguration().extension.method;
 	};
 
 	return ExtensionDataProvider;

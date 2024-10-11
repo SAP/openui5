@@ -733,8 +733,11 @@ sap.ui.define([
 		} // else: no update needed!
 
 		if (iLevels >= Number.MAX_SAFE_INTEGER) { // expand all below oGroupNode
-			// nothing to do
-		} else if (aSpliced) {
+			return SyncPromise.resolve(this.validateAndDeleteExpandInfo(oGroupLock, oGroupNode))
+				.then(() => -1); // refresh needed
+		}
+
+		if (aSpliced) {
 			_Helper.deletePrivateAnnotation(oGroupNode, "spliced");
 			const aOldElements = this.aElements;
 			const iIndex = aOldElements.indexOf(oGroupNode) + 1;
@@ -2436,6 +2439,56 @@ sap.ui.define([
 		if (iRank !== undefined) {
 			_Helper.getPrivateAnnotation(oElement, "parent").drop(iRank, sPredicate, true);
 		} // else: special handling inside #readGap
+	};
+
+	/**
+	 * Validates for all nodes which contribute to the ExpandLevels parameter whether they are a
+	 * descendant of the given node. If a node is a descendant, its expand info is deleted.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   An unlocked lock for the group to associate the requests with
+	 * @param {object} oGroupNode
+	 *   A collapsed(!) group node
+	 * @return {Promise<void>}
+	 *   A promise resolving when the expand info objects have been deleted
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.validateAndDeleteExpandInfo = async function (oGroupLock,
+			oGroupNode) {
+		// returns a list of filters for all nodes which contribute to the ExpandLevels parameter
+		// and are not in the flat list
+		const aFilters = this.oTreeState.getExpandFilters((sPredicate) => {
+			const oNode = this.aElements.$byPredicate[sPredicate];
+			return !this.aElements.includes(oNode);
+		});
+		if (!aFilters.length) {
+			return;
+		}
+
+		const mTypeForMetaPath = this.getTypes();
+		let mQueryOptions = {...this.mQueryOptions};
+		mQueryOptions.$$filterBeforeAggregate
+			= _Helper.getKeyFilter(oGroupNode, this.sMetaPath, mTypeForMetaPath);
+		delete mQueryOptions.$count;
+		delete mQueryOptions.$expand;
+		delete mQueryOptions.$orderby;
+		mQueryOptions
+			= _AggregationHelper.buildApply4Hierarchy(this.oAggregation, mQueryOptions, true);
+		mQueryOptions.$filter = aFilters.sort().join(" or ");
+		mQueryOptions.$select = [];
+		_Helper.selectKeyProperties(mQueryOptions, mTypeForMetaPath[this.sMetaPath]);
+		mQueryOptions.$top = aFilters.length;
+		const sResourcePath = this.sResourcePath
+			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true, true);
+
+		const oResult = await this.oRequestor.request("GET", sResourcePath,
+				this.oRequestor.getUnlockedAutoCopy(oGroupLock));
+
+		oResult.value.forEach((oNode) => {
+			this.calculateKeyPredicate(oNode, mTypeForMetaPath, this.sMetaPath);
+			this.oTreeState.deleteExpandInfo(oNode);
+		});
 	};
 
 	//*********************************************************************************************

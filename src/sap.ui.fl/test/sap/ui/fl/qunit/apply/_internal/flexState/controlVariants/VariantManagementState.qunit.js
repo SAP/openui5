@@ -12,8 +12,10 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/InitialPrepareFunctions",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
+	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/Layer",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	RtaQunitUtils,
 	Deferred,
@@ -26,8 +28,10 @@ sap.ui.define([
 	FlexState,
 	InitialPrepareFunctions,
 	Loader,
+	Storage,
 	Layer,
-	sinon
+	sinon,
+	FlQUnitUtils
 ) {
 	"use strict";
 	const sandbox = sinon.createSandbox();
@@ -1651,6 +1655,36 @@ sap.ui.define([
 			stubFlexObjectsSelector(aFlexObjects);
 			const aFilteredFlexObjects = VariantManagementState.filterHiddenFlexObjects(aFlexObjects, sReference);
 			assert.strictEqual(aFilteredFlexObjects.length, 1, "only the visible variant is left");
+		});
+	});
+
+	QUnit.module("lazy load variants", {
+		async beforeEach() {
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {
+				changes: [{ fileName: "change1" }],
+				variantDependentControlChanges: [{ fileName: "change2" }],
+				variants: [{ fileName: "variant1" }]
+			});
+		},
+		afterEach() {
+			FlexState.clearState();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("with the Storage returning a full response", async function(assert) {
+			const oUpdateSpy = sandbox.spy(FlexState, "updateWithDataProvided");
+			const oResponse = await fetch("test-resources/sap/ui/fl/qunit/testResources/TestVariantsConnectorResponse.json");
+			const oJson = await oResponse.json();
+			sandbox.stub(Storage, "loadFlVariants").resolves(oJson);
+			await VariantManagementState.loadVariants({
+				reference: sReference,
+				variantReferences: [sVariantManagementReference]
+			});
+			assert.ok(oUpdateSpy.calledOnce, "then the storage response is updated");
+			assert.strictEqual(oUpdateSpy.lastCall.args[0].reference, sReference, "with the correct reference");
+			assert.deepEqual(oUpdateSpy.lastCall.args[0].newData, oJson, "with the correct response");
+			const aAllFlexObjects = FlexState.getFlexObjectsDataSelector().get({ reference: sReference });
+			assert.strictEqual(aAllFlexObjects.length, 37, "all flex objects are loaded");
 		});
 	});
 

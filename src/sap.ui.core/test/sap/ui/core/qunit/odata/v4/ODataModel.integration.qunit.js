@@ -44827,10 +44827,430 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 1.
-	// Expand Alpha, Beta, and Gamma. Collapse Alpha completely. Expand Alpha, Beta, and Gamma
-	// again. See that their children are collapsed and that no request is sent. Collapse Alpha
-	// completely again. Expand all below Alpha and see that the request is sent with "Levels=null".
+	// Scenario: Show a recursive hierarchy, fully expanded. Collapse Zeta and afterwards Delta to
+	// guarantee that the filter statements in the 'descendants' request are sorted. Collapse Iota
+	// and afterwards Theta to add a filter for Iota to the 'descendants' request (Iota is not a
+	// decendant of Alpha, therefore Iota will not be part of the response). Collapse Beta to see
+	// that for a decendant where it is possible to determine the parent a filter is not set.
+	// Collapse Alpha. Perform a side-effects refresh (transforms the already read data again to
+	// placeholders), see that Alpha and Theta are still collapsed. Expand Alpha completely and see
+	// that the 'descendants' request is sent to determine which of the collapsed nodes are
+	// descendants of Alpha and must be expanded again. Afterwards see that all nodes under Alpha
+	// are expanded, but Theta is still collapsed.
+	// JIRA: CPOUI5ODATAV4-2701
+	QUnit.test("Recursive Hierarchy: clean up tree state before expand all",
+			async function (assert) {
+		const sCountRequestUrl = "Artists/$count?$filter=lastUsedChannel eq 'All'"
+			+ " and (sendsAutographs)&custom=foo&$search=covfefe";
+		const sFilterSearch = "ancestors($root/Artists,OrgChart,_/NodeID,"
+			+ "filter(lastUsedChannel eq 'All' and (sendsAutographs))/search(covfefe),keep start)";
+		const sUrl = "Artists?$expand=_Publication($select=Price)"
+			+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot,"
+			+ "_/DrillState,_/NodeID,lastUsedChannel"
+			+ "&custom=foo&$apply=" + sFilterSearch + "/orderby(defaultChannel desc)/"
+			+ "com.sap.vocabularies.Hierarchy.v1.TopLevels("
+			+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart',NodeProperty='_/NodeID'";
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/Artists',
+		filters : {path : 'lastUsedChannel', operator : 'EQ', value1 : 'All'},
+		parameters : {
+			$$aggregation : {
+				expandTo : 1E16,
+				hierarchyQualifier : 'OrgChart',
+				search : 'covfefe'
+			},
+			$count : true,
+			$expand : {'_Publication' : {$select : 'Price'}},
+			$filter : 'sendsAutographs',
+			$orderby : 'defaultChannel desc',
+			$select : 'lastUsedChannel',
+			custom : 'foo'
+		}}" threshold="0" visibleRowCount="10">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ArtistID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 1 Alpha
+		//   1.1 Beta
+		//     1.1.1 Gamma
+		//   1.2 Delta
+		//     1.2.1 Epsilon
+		//   1.3 Zeta
+		//     1.3.1 Eta
+		// 2 Theta
+		//   2.1 Iota
+		//     2.1.1 Kappa
+		this.expectRequest(sCountRequestUrl, 10)
+			.expectRequest(sUrl + ")&$count=true&$skip=0&$top=10", {
+				"@odata.count" : "10",
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DescendantCount : "6",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.1",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "1.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.1.1",
+					IsActiveEntity : false,
+					Name : "Gamma",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "1.1.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.2",
+					IsActiveEntity : false,
+					Name : "Delta",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "1.2,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.2.1",
+					IsActiveEntity : false,
+					Name : "Epsilon",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "1.2.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.3",
+					IsActiveEntity : false,
+					Name : "Zeta",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "1.3,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.3.1",
+					IsActiveEntity : false,
+					Name : "Eta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "1.3.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Theta",
+					_ : {
+						DescendantCount : "2",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "2,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "2.1",
+					IsActiveEntity : false,
+					Name : "Iota",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "2.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "2.1.1",
+					IsActiveEntity : false,
+					Name : "Kappa",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "2.1.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oAlpha = oTable.getRows()[0].getBindingContext();
+		const oBeta = oTable.getRows()[1].getBindingContext();
+		const oDelta = oTable.getRows()[3].getBindingContext();
+		const oZeta = oTable.getRows()[5].getBindingContext();
+		const oTheta = oTable.getRows()[7].getBindingContext();
+		const oIota = oTable.getRows()[8].getBindingContext();
+
+		// collapsing Zeta before Delta guarantees that the filters in the request are sorted
+		oZeta.collapse();
+		oDelta.collapse();
+		// collapsing Iota and Theta adds a filter for Iota, which is not a descendant of Alpha
+		oIota.collapse();
+		oTheta.collapse();
+		// we know that Beta is a descendant of Alpha, therefore there will be no filter for Beta
+		oBeta.collapse();
+		oAlpha.collapse();
+
+		await this.waitForChanges(assert, "collapse Zeta, Delta, Iota, Theta, Beta, Alpha");
+
+		this.expectRequest(sCountRequestUrl, 10)
+			.expectRequest(sUrl + ",ExpandLevels="
+				+ JSON.stringify([
+					{NodeID : "1.3,false", Levels : 0},
+					{NodeID : "1.2,false", Levels : 0},
+					{NodeID : "2.1,false", Levels : 0},
+					{NodeID : "2,false", Levels : 0},
+					{NodeID : "1.1,false", Levels : 0},
+					{NodeID : "1,false", Levels : 0}
+				])
+				+ ")&$count=true&$skip=0&$top=10", {
+				"@odata.count" : "2",
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "collapsed",
+						NodeID : "1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Theta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "collapsed",
+						NodeID : "2,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}]
+			});
+
+		await Promise.all([
+			oTable.getBinding("rows").getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "perform side-effects refresh")
+		]);
+
+		checkTable("after side-effects refresh", assert, oTable, [
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='2',IsActiveEntity=false)"
+		], [
+			[false, 1, "1", "Alpha"],
+			[false, 1, "2", "Theta"]
+		]);
+
+		this.expectRequest({
+				batchNo : 3,
+				url : "Artists?custom=foo&$apply=" + sFilterSearch
+					+ "/descendants($root/Artists,OrgChart,_/NodeID"
+					+ ",filter(ArtistID eq '1' and IsActiveEntity eq false))"
+					+ "&$filter=ArtistID eq '1.1' and IsActiveEntity eq false"
+					+ " or ArtistID eq '1.2' and IsActiveEntity eq false"
+					+ " or ArtistID eq '1.3' and IsActiveEntity eq false"
+					+ " or ArtistID eq '2.1' and IsActiveEntity eq false"
+					+ "&$select=ArtistID,IsActiveEntity&$top=4"
+				// sort order changed intentionally, without $orderby response needs not be sorted!
+			}, {
+				value : [{
+					ArtistID : "1.3",
+					IsActiveEntity : false
+				}, {
+					ArtistID : "1.2",
+					IsActiveEntity : false
+				}, {
+					ArtistID : "1.1",
+					IsActiveEntity : false
+				}]
+			})
+			.expectRequest({
+				batchNo : 4,
+				url : sCountRequestUrl
+			}, 10)
+			.expectRequest({
+				batchNo : 4,
+				url : sUrl + ",ExpandLevels="
+					+ JSON.stringify([
+						{NodeID : "2.1,false", Levels : 0},
+						{NodeID : "2,false", Levels : 0},
+						{NodeID : "1,false", Levels : null}
+					])
+					+ ")&$count=true&$skip=0&$top=10"
+			}, {
+				"@odata.count" : "8",
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DescendantCount : "6",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.1",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						nodeID : "1.1, false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.1.1",
+					IsActiveEntity : false,
+					Name : "Gamma",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "1.1.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.2",
+					IsActiveEntity : false,
+					Name : "Delta",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "1.2,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.2.1",
+					IsActiveEntity : false,
+					Name : "Epsilon",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "1.2.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.3",
+					IsActiveEntity : false,
+					Name : "Zeta",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "1.3,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "1.3.1",
+					IsActiveEntity : false,
+					Name : "Eta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "1.3.1,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}, {
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Theta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "collapsed",
+						NodeID : "2,false"
+					},
+					lastUsedChannel : "All",
+					_Publication : {/*don't care*/}
+				}]
+			});
+
+		// code under test
+		oAlpha.expand(Number.MAX_SAFE_INTEGER);
+
+		await this.waitForChanges(assert, "expand all below Alpha");
+
+		checkTable("after expand all below Alpha", assert, oTable, [
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.1.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.3',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.3.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='2',IsActiveEntity=false)"
+		], [
+			[true, 1, "1", "Alpha"],
+			[true, 2, "1.1", "Beta"],
+			[undefined, 3, "1.1.1", "Gamma"],
+			[true, 2, "1.2", "Delta"],
+			[undefined, 3, "1.2.1", "Epsilon"],
+			[true, 2, "1.3", "Zeta"],
+			[undefined, 3, "1.3.1", "Eta"],
+			[false, 1, "2", "Theta"]
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Show the single root node of a recursive hierarchy. Expand Alpha, Beta, and Gamma.
+	// Collapse Alpha completely. Expand Alpha, Beta, and Gamma again. See that their children are
+	// collapsed and that no request is sent. Collapse Alpha completely again. Expand all below
+	// Alpha and see that the request is sent with "Levels=null".
 	// JIRA: CPOUI5ODATAV4-2668
 	QUnit.test("Recursive Hierarchy: collapse all, expandTo=1", async function (assert) {
 		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
@@ -45057,9 +45477,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 1.
-	// Expand Alpha completely. Collapse Alpha completely and see that all nodes under Alpha
-	// are collapsed. Expand Alpha and Beta again and see that their children are collapsed.
+	// Scenario: Show the single root node of a recursive hierarchy. Expand Alpha completely.
+	// Collapse Alpha completely and see that all nodes under Alpha are collapsed. Expand Alpha and
+	// Beta again and see that their children are collapsed.
 	// JIRA: CPOUI5ODATAV4-2668
 	QUnit.test("Recursive Hierarchy: expand all, collapse all, expand", async function (assert) {
 		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
@@ -74143,20 +74563,30 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: With binding parameter $$separate the main list request omits the specified
-	// navigation properties. Instead, they are loaded as late property requests in separate $batch
-	// requests. Same applies for scrolling (load more items).
-	// Parameter $$separate works independently of autoExpandSelect.
+	// navigation properties. Instead, each of them is loaded in a separate $batch request using the
+	// same $skip und $top as the main list request. The separate requests are independent. The
+	// response data becomes visible as soon as a separate request is completed. In case a separate
+	// request is faster than the main list request, its processing waits until the main data is
+	// available.
+	// Due to a creation in the back end the separate requests respond with an unexpected entity
+	// which was not part of the main list response. The unexpected data is ignored. Instead, the
+	// missing separate data according to the main list is separately fetched with late property
+	// requests.
+	// While separate property requests are not yet completed, further paging is possible and
+	// overtaking paging responses (incl. separate properties) become visible earlier. While still
+	// waiting for the previous separate response, a dependent entity can be bound to an object
+	// page, which shows the already available information. If the separate request is completed,
+	// the response data is reflected to the table and the object page.
 	// JIRA: CPOUI5ODATAV4-2691
+	// JIRA: CPOUI5ODATAV4-2692
 	[false, true].forEach(function (bAutoExpandSelect) {
 		QUnit.test("$$separate: autoExpandSelect=" + bAutoExpandSelect, async function (assert) {
 			const oModel = this.createSpecialCasesModel({autoExpandSelect : bAutoExpandSelect});
-			const sListUrl = "Artists?custom=foo&$apply=A.P.P.L.E.&$count=true"
-				+ "&$expand=BestPublication($select=CurrencyCode,PublicationID)"
-				+ "&$filter=IsActiveEntity eq true&$orderby=ArtistID&$search=covfefe"
+			const sUrl = "Artists?custom=foo&$apply=A.P.P.L.E.";
+			const sFilterSort = "&$filter=IsActiveEntity eq true&$orderby=ArtistID&$search=covfefe";
+			const sMainUrl = sUrl + "&$count=true"
+				+ "&$expand=BestPublication($select=CurrencyCode,PublicationID)" + sFilterSort
 				+ "&$select=ArtistID,IsActiveEntity,Name";
-			const sLateQueryOptions = "?custom=foo&$select=BestFriend"
-				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
-				+ ",SiblingEntity($select=ArtistID,IsActiveEntity,Name)";
 			// Note: keep $expand/$select unordered to prove implicit sorting
 			const sExpandSelect = `
 				$expand : {
@@ -74186,15 +74616,19 @@ sap.ui.define([
 		<Text id="publicationCurrency" text="{BestPublication/CurrencyCode}"/>
 		<Text id="friend" text="{BestFriend/Name}"/>
 		<Text id="sibling" text="{SiblingEntity/Name}"/>
-	</Table>`;
+	</Table>
+	<FlexBox id="details">
+		<Text id="detailName" text="{Name}"/>
+		<Text id="detailFriendName" text="{BestFriend/Name}"/>
+	</FlexBox>`;
 
-			let fnResolve10;
-			let fnResolve20;
+			let fnResolveBestFriend;
+			let fnResolveSiblingEntity;
 			this.expectRequest({
-					batchNo : 1,
-					url : sListUrl + "&$skip=0&$top=2"
+					batchNo : bAutoExpandSelect ? 3 : 1,
+					url : sMainUrl + "&$skip=0&$top=2"
 				}, {
-					"@odata.count" : "3",
+					"@odata.count" : "7",
 					value : [{
 						ArtistID : "10",
 						BestPublication : {CurrencyCode : "EUR", PublicationID : "Pub1"},
@@ -74209,72 +74643,286 @@ sap.ui.define([
 				})
 				.expectChange("name", ["Artist A", "Artist B"])
 				.expectChange("publicationCurrency", ["EUR", "USD"])
-				.expectChange("friend", [])
-				.expectChange("sibling", [])
+				.expectChange("friend", [null, null])
+				.expectChange("sibling", [null, null])
+				.expectChange("detailName")
+				.expectChange("detailFriendName")
 				.expectRequest({
-					batchNo : 2,
-					url : "Artists(ArtistID='10',IsActiveEntity=true)" + sLateQueryOptions
+					batchNo : bAutoExpandSelect ? 1 : 2,
+					url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+						+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=0&$top=2"
 				}, new Promise(function (resolve) {
-					fnResolve10 = resolve.bind(null, {
-						BestFriend : {ArtistID : "F1", IsActiveEntity : true, Name : "Friend A"},
-						SiblingEntity : {ArtistID : "S1", IsActiveEntity : true, Name : "Sibling A"}
+					fnResolveBestFriend = resolve.bind(null, {
+						value : [{
+							ArtistID : "10",
+							BestFriend : {ArtistID : "F1", IsActiveEntity : true, Name : "Friend A"},
+							IsActiveEntity : true
+						}, {
+							ArtistID : "20",
+							BestFriend : {ArtistID : "F2", IsActiveEntity : true, Name : "Friend B"},
+							IsActiveEntity : true
+						}]
 					});
 				}))
 				.expectRequest({
-					batchNo : 2,
-					url : "Artists(ArtistID='20',IsActiveEntity=true)" + sLateQueryOptions
+					batchNo : bAutoExpandSelect ? 2 : 3,
+					url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+						+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=0&$top=2"
 				}, new Promise(function (resolve) {
-					fnResolve20 = resolve.bind(null, {
-						BestFriend : {ArtistID : "F2", IsActiveEntity : true, Name : "Friend B"},
-						SiblingEntity : {ArtistID : "S2", IsActiveEntity : true, Name : "Sibling B"}
+					fnResolveSiblingEntity = resolve.bind(null, {
+						value : [{
+							ArtistID : "10",
+							IsActiveEntity : true,
+							SiblingEntity : {ArtistID : "S1", IsActiveEntity : true, Name : "Sibling A"}
+						}, {
+							ArtistID : "20",
+							IsActiveEntity : true,
+							SiblingEntity : {ArtistID : "S2", IsActiveEntity : true, Name : "Sibling B"}
+						}]
 					});
 				}));
 
 			await this.createView(assert, sView, oModel);
 
-			this.expectChange("friend", ["Friend A", "Friend B"])
-				.expectChange("sibling", ["Sibling A", "Sibling B"]);
+			this.expectChange("friend", ["Friend A", "Friend B"]);
 
-			fnResolve10();
-			fnResolve20();
+			fnResolveBestFriend();
 
-			await this.waitForChanges(assert, "$$separate responses");
+			await this.waitForChanges(assert, "$$separate response: BestFriend");
 
-			let fnResolve30;
+			this.expectChange("sibling", ["Sibling A", "Sibling B"]);
+
+			fnResolveSiblingEntity();
+
+			await this.waitForChanges(assert, "$$separate response: SiblingEntity");
+
+			let fnResolveMain;
 			this.expectRequest({
-					batchNo : 3,
-					url : sListUrl + "&$skip=2&$top=1"
+					batchNo : 4,
+					url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+						+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=2&$top=1"
 				}, {
-					"@odata.count" : "3",
 					value : [{
 						ArtistID : "30",
-						BestPublication : {CurrencyCode : "JPY", PublicationID : "Pub3"},
-						IsActiveEntity : true,
-						Name : "Artist C"
+						BestFriend : {ArtistID : "F3", IsActiveEntity : true, Name : "Friend C"},
+						IsActiveEntity : true
 					}]
 				})
-				.expectChange("name", [,, "Artist C"])
-				.expectChange("publicationCurrency", [,, "JPY"])
 				.expectRequest({
-					batchNo : 4,
-					url : "Artists(ArtistID='30',IsActiveEntity=true)" + sLateQueryOptions
-				}, new Promise(function (resolve) {
-					fnResolve30 = resolve.bind(null, {
-						BestFriend : {ArtistID : "F3", IsActiveEntity : true, Name : "Friend C"},
+					batchNo : 5,
+					url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+						+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=2&$top=1"
+				}, {
+					value : [{
+						ArtistID : "30",
+						IsActiveEntity : true,
 						SiblingEntity : {ArtistID : "S3", IsActiveEntity : true, Name : "Sibling C"}
+					}]
+				})
+				.expectRequest({
+					batchNo : 6,
+					url : sMainUrl + "&$skip=2&$top=1"
+				}, new Promise(function (resolve) {
+					fnResolveMain = resolve.bind(null, {
+						"@odata.count" : "7",
+						value : [{
+							ArtistID : "30",
+							BestPublication : {CurrencyCode : "JPY", PublicationID : "Pub3"},
+							IsActiveEntity : true,
+							Name : "Artist C"
+						}]
 					});
 				}));
 
-			this.oView.byId("table").requestItems();
+			const oTable = this.oView.byId("table");
+			oTable.requestItems(1);
 
-			await this.waitForChanges(assert, "load more items");
+			await this.waitForChanges(assert, "load more items: main request is delayed");
 
-			this.expectChange("friend", [,, "Friend C"])
+			this.expectChange("name", [,, "Artist C"])
+				.expectChange("publicationCurrency", [,, "JPY"])
+				.expectChange("friend", [,, "Friend C"])
 				.expectChange("sibling", [,, "Sibling C"]);
 
-			fnResolve30();
+			fnResolveMain();
 
-			await this.waitForChanges(assert, "$$separate responses, again");
+			await this.waitForChanges(assert, "delayed main response");
+
+			this.expectRequest({
+					batchNo : 7,
+					url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+						+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=3&$top=2"
+				}, {
+					value : [{
+						ArtistID : "99", // unexpected entity
+						BestFriend : {ArtistID : "F99", IsActiveEntity : true, Name : "Friend Z"},
+						IsActiveEntity : true
+					}, {
+						ArtistID : "40",
+						BestFriend : {ArtistID : "F4", IsActiveEntity : true, Name : "Friend D"},
+						IsActiveEntity : true
+					}]
+				})
+				.expectRequest({
+					batchNo : 8,
+					url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+						+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=3&$top=2"
+				}, {
+					value : [{
+						ArtistID : "50",
+						IsActiveEntity : true,
+						SiblingEntity : {ArtistID : "S5", IsActiveEntity : true, Name : "Sibling E"}
+					}, {
+						ArtistID : "99", // unexpected entity
+						IsActiveEntity : true,
+						SiblingEntity : {ArtistID : "S99", IsActiveEntity : true, Name : "Sibling Z"}
+					}]
+				})
+				.expectRequest({
+					batchNo : 9,
+					url : sMainUrl + "&$skip=3&$top=2"
+				}, {
+					"@odata.count" : "7",
+					value : [{
+						ArtistID : "40",
+						BestPublication : {CurrencyCode : "DKK", PublicationID : "Pub4"},
+						IsActiveEntity : true,
+						Name : "Artist D"
+					}, {
+						ArtistID : "50",
+						BestPublication : {CurrencyCode : "CZK", PublicationID : "Pub5"},
+						IsActiveEntity : true,
+						Name : "Artist E"
+					}]
+				})
+				.expectChange("name", [,,, "Artist D", "Artist E"])
+				.expectChange("publicationCurrency", [,,, "DKK", "CZK"])
+				.expectChange("friend", [,,, "Friend D"])
+				.expectChange("sibling", [,,,, "Sibling E"])
+				.expectRequest({
+					batchNo : 10,
+					url : "Artists(ArtistID='40',IsActiveEntity=true)?custom=foo&$select=SiblingEntity"
+						+ "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+				}, {
+					SiblingEntity : {ArtistID : "S4", IsActiveEntity : true, Name : "Sibling D"}
+				})
+				.expectRequest({
+					batchNo : 10,
+					url : "Artists(ArtistID='50',IsActiveEntity=true)?custom=foo&$select=BestFriend"
+						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+				}, {
+					BestFriend : {ArtistID : "F5", IsActiveEntity : true, Name : "Friend E"}
+				})
+				.expectChange("friend", [,,,, "Friend E"])
+				.expectChange("sibling", [,,, "Sibling D"]);
+
+			oTable.requestItems();
+
+			await this.waitForChanges(assert, "separate response with unexpected entity");
+
+			let fnResolveBestFriend60;
+			this.expectRequest({
+					batchNo : 11,
+					url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+						+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=5&$top=1"
+				}, new Promise(function (resolve) {
+					fnResolveBestFriend60 = resolve.bind(null, {
+						value : [{
+							ArtistID : "60",
+							BestFriend : {ArtistID : "F6", IsActiveEntity : true, Name : "Friend F"},
+							IsActiveEntity : true
+						}]
+					});
+				}))
+				.expectRequest({
+					batchNo : 12,
+					url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+						+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=5&$top=1"
+				}, {
+					value : [{
+						ArtistID : "60",
+						IsActiveEntity : true,
+						SiblingEntity : {ArtistID : "S6", IsActiveEntity : true, Name : "Sibling F"}
+					}]
+				})
+				.expectRequest({
+					batchNo : 13,
+					url : sMainUrl + "&$skip=5&$top=1"
+				}, {
+					"@odata.count" : "7",
+					value : [{
+						ArtistID : "60",
+						BestPublication : {CurrencyCode : "CAD", PublicationID : "Pub6"},
+						IsActiveEntity : true,
+						Name : "Artist F"
+					}]
+				})
+				.expectChange("name", [,,,,, "Artist F"])
+				.expectChange("publicationCurrency", [,,,,, "CAD"])
+				.expectChange("friend", [,,,,, null])
+				.expectChange("sibling", [,,,,, "Sibling F"]);
+
+			oTable.requestItems(1);
+
+			await this.waitForChanges(assert, "load item 60, delayed BestFriend");
+
+			this.expectRequest({
+					batchNo : 14,
+					url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+						+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=6&$top=1"
+				}, {
+					value : [{
+						ArtistID : "70",
+						BestFriend : {ArtistID : "F7", IsActiveEntity : true, Name : "Friend G"},
+						IsActiveEntity : true
+					}]
+				})
+				.expectRequest({
+					batchNo : 15,
+					url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+						+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=6&$top=1"
+				}, {
+					value : [{
+						ArtistID : "70",
+						IsActiveEntity : true,
+						SiblingEntity : {ArtistID : "S7", IsActiveEntity : true, Name : "Sibling G"}
+					}]
+				})
+				.expectRequest({
+					batchNo : 16,
+					url : sMainUrl + "&$skip=6&$top=1"
+				}, {
+					"@odata.count" : "7",
+					value : [{
+						ArtistID : "70",
+						BestPublication : {CurrencyCode : "EUR", PublicationID : "Pub7"},
+						IsActiveEntity : true,
+						Name : "Artist G"
+					}]
+				})
+				.expectChange("name", [,,,,,, "Artist G"])
+				.expectChange("publicationCurrency", [,,,,,, "EUR"])
+				.expectChange("friend", [,,,,,, "Friend G"])
+				.expectChange("sibling", [,,,,,, "Sibling G"]);
+
+			oTable.requestItems(1);
+
+			await this.waitForChanges(assert, "load item 70, overtakes 60's BestFriend");
+
+			this.expectChange("detailName", "Artist F")
+				.expectChange("detailFriendName", null);
+
+			// code under test
+			this.oView.byId("details").setBindingContext(oTable.getItems()[5].getBindingContext());
+
+			await this.waitForChanges(assert, "show item 60 on object page");
+
+			this.expectChange("friend", [,,,,, "Friend F"])
+				.expectChange("detailFriendName", "Friend F");
+
+			fnResolveBestFriend60();
+
+			await this.waitForChanges(assert, "resolve 60's BestFriend");
 		});
 	});
 });

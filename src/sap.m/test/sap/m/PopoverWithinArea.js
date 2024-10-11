@@ -521,7 +521,7 @@ sap.ui.define([
                 }
             }).addStyleClass("sapUiSmallMarginEnd"),
             new Title({
-                text: "Popover"
+                text: "sap.m.Popover"
             }),
             new ToolbarSpacer({
                 width: "600px"

@@ -2,10 +2,18 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/util/merge",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Element",
+	"sap/ui/integration/util/BindingHelper",
+	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/Measurement"
 ], function (
+	merge,
 	ManagedObject,
+	Element,
+	BindingHelper,
+	BindingResolver,
 	Measurement
 ) {
 	"use strict";
@@ -40,23 +48,17 @@ sap.ui.define([
 			library: "sap.ui.integration",
 			properties: {
 				/**
-				 * Data provider configuration from the manifest
+				 * Data provider configuration in manifest format. May contain FormData.
 				 */
 				configuration: {
 					type: "object"
 				},
 
 				/**
-				 * Data settings.
+				 * Configuration in stringified JSON format. Should be used when binding resolving is wanted.
+				 * Anytime this value is changed, a new data update is triggered.
 				 */
-				settings: {
-					type: "object"
-				},
-
-				/**
-				 * Data settings in json format. Will override <code>settings</code>.
-				 */
-				settingsJson: {
+				configurationJson: {
 					type: "string"
 				},
 
@@ -145,18 +147,30 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the data settings for the <code>DataProvider</code> in json format.
+	 * Sets the configuration for the <code>DataProvider</code> in JSON format.
 	 *
-	 * @param {string} sSettingsJson The data settings in json format.
+	 * @param {string} sConfigurationJson The data settings in JSON format.
 	 * @override
 	 */
-	DataProvider.prototype.setSettingsJson = function (sSettingsJson) {
-		this.setProperty("settingsJson", sSettingsJson);
-		this.setSettings(JSON.parse(sSettingsJson));
+	DataProvider.prototype.setConfigurationJson = function (sConfigurationJson) {
+		this.setProperty("configurationJson", sConfigurationJson);
 
 		if (this._bActive) {
 			this._scheduleDataUpdate(0);
 		}
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted sap.ui.integration
+	 * @returns {object} The resolved configuration.
+	 */
+	DataProvider.prototype.getResolvedConfiguration = function () {
+		if (this.getConfigurationJson()) {
+			return JSON.parse(this.getConfigurationJson());
+		}
+
+		return this.getConfiguration();
 	};
 
 	/**
@@ -254,10 +268,11 @@ sap.ui.define([
 	 * @returns {Promise} A promise resolved when the data is available and rejected in case of an error.
 	 */
 	DataProvider.prototype.getData = function () {
-		var oDataSettings = this.getSettings();
+		const oConfiguration = this.getResolvedConfiguration();
+
 		return new Promise(function (resolve, reject) {
-			if (oDataSettings.json) {
-				resolve(oDataSettings.json);
+			if (oConfiguration.json) {
+				resolve(oConfiguration.json);
 			} else {
 				reject("Could not get card data.");
 			}
@@ -284,7 +299,7 @@ sap.ui.define([
 
 	DataProvider.prototype.onDataRequestComplete = function () {
 		var iInterval;
-		var oSettings = this.getSettings();
+		var oSettings = this.getResolvedConfiguration();
 
 		if (!oSettings || !oSettings.updateInterval) {
 			return;
@@ -297,6 +312,10 @@ sap.ui.define([
 		}
 
 		this._scheduleDataUpdate(iInterval * 1000);
+	};
+
+	DataProvider.prototype.getCardInstance = function () {
+		return Element.getElementById(this.getCard());
 	};
 
 	/**

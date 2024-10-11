@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/getVariantAuthor",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
+	"sap/ui/fl/apply/_internal/flexObjects/UpdatableChange",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
@@ -29,6 +30,7 @@ sap.ui.define([
 	getVariantAuthor,
 	States,
 	UIChange,
+	UpdatableChange,
 	Settings,
 	Layer,
 	LayerUtils,
@@ -37,13 +39,13 @@ sap.ui.define([
 	"use strict";
 
 	const FLEX_OBJECT_TYPES = {
-		BASE_FLEX_OBJECT: FlexObject,
 		COMP_VARIANT_OBJECT: CompVariant,
 		FL_VARIANT_OBJECT: FlVariant,
 		CONTROLLER_EXTENSION: ControllerExtensionChange,
 		APP_DESCRIPTOR_CHANGE: AppDescriptorChange,
 		ANNOTATION_CHANGE: AnnotationChange,
-		UI_CHANGE: UIChange
+		UI_CHANGE: UIChange,
+		UPDATABLE_CHANGE: UpdatableChange
 	};
 
 	function getFlexObjectClass(oNewFileContent) {
@@ -57,6 +59,8 @@ sap.ui.define([
 			return FLEX_OBJECT_TYPES.APP_DESCRIPTOR_CHANGE;
 		} else if (oNewFileContent.fileType === "annotation_change") {
 			return FLEX_OBJECT_TYPES.ANNOTATION_CHANGE;
+		} else if (oNewFileContent.fileType === "change" && oNewFileContent.changeType === "defaultVariant") {
+			return FLEX_OBJECT_TYPES.UPDATABLE_CHANGE;
 		}
 		return FLEX_OBJECT_TYPES.UI_CHANGE;
 	}

@@ -700,7 +700,7 @@ sap.ui.define([
 			.then(function() {
 				FlexState.getAppDescriptorChanges(sReference);
 				assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 1, "the check was made once");
-				assert.equal(this.oGetFlexInfoSessionStub.callCount, 4, "get flex info session");
+				assert.equal(this.oGetFlexInfoSessionStub.callCount, 3, "get flex info session");
 			}.bind(this))
 			.then(FlexState.initialize.bind(null, {
 				reference: sReference,
@@ -719,7 +719,7 @@ sap.ui.define([
 			});
 			FlexState.getAppDescriptorChanges(sReference);
 			assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 1, "the check was made once");
-			assert.equal(this.oGetFlexInfoSessionStub.callCount, 4, "get flex info session");
+			assert.equal(this.oGetFlexInfoSessionStub.callCount, 3, "get flex info session");
 
 			FlexState.rebuildFilteredResponse(sReference);
 			await FlexState.initialize({
@@ -729,7 +729,7 @@ sap.ui.define([
 
 			FlexState.getAppDescriptorChanges(sReference);
 			assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 2, "the check was made again");
-			assert.equal(this.oGetFlexInfoSessionStub.callCount, 8, "get flex info session again");
+			assert.equal(this.oGetFlexInfoSessionStub.callCount, 6, "get flex info session again");
 		});
 	});
 
@@ -1468,6 +1468,39 @@ sap.ui.define([
 				// Use assert.async instead of direct return to make sure that the promise is rejected
 				fnDone();
 			});
+		});
+	});
+
+	QUnit.module("FlexState.updateWithDataProvided", {
+		afterEach() {
+			FlexState.clearState();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("without an initialized state and without max layer filtering", async function(assert) {
+			sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(false);
+			sandbox.stub(FlexInfoSession, "getByReference").returns({maxLayer: Layer.CUSTOMER});
+			const oResponse = await fetch("test-resources/sap/ui/fl/qunit/testResources/TestVariantsConnectorResponse.json");
+			const oJson = await oResponse.json();
+			FlexState.updateWithDataProvided({
+				reference: sReference,
+				newData: oJson
+			});
+			const aAllFlexObjects = FlexState.getFlexObjectsDataSelector().get({ reference: sReference });
+			assert.strictEqual(aAllFlexObjects.length, 34, "all flex objects are loaded");
+		});
+
+		QUnit.test("without an initialized state and with max layer filtering", async function(assert) {
+			sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(true);
+			sandbox.stub(FlexInfoSession, "getByReference").returns({maxLayer: Layer.CUSTOMER});
+			const oResponse = await fetch("test-resources/sap/ui/fl/qunit/testResources/TestVariantsConnectorResponse.json");
+			const oJson = await oResponse.json();
+			FlexState.updateWithDataProvided({
+				reference: sReference,
+				newData: oJson
+			});
+			const aAllFlexObjects = FlexState.getFlexObjectsDataSelector().get({ reference: sReference });
+			assert.strictEqual(aAllFlexObjects.length, 30, "all flex objects are loaded");
 		});
 	});
 

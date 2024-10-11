@@ -36,7 +36,8 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	'sap/ui/mdc/p13n/StateUtil',
 	"sap/m/p13n/Engine",
-	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment"
+	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment",
+	"sap/m/table/Util"
 ], function(
 	Library,
 	qutils,
@@ -68,7 +69,8 @@ sap.ui.define([
 	nextUIUpdate,
 	StateUtil,
 	Engine,
-	createAppEnvironment
+	createAppEnvironment,
+	MTableUtil
 ) {
 	"use strict";
 
@@ -1772,7 +1774,7 @@ sap.ui.define([
 					assert.ok(oFlexContent.isA("sap.m.Panel"), "FlexContent is sap.m.Panel");
 					assert.ok(oFlexContent.getExpanded(), "Panel is expanded");
 					assert.equal(oFlexContent.getHeight(), "100%", "Panel height");
-					assert.equal(oFlexContent.getHeaderText(), oResourceBundle.getText("valuehelp.TABLETITLENONUMBER"), "Panel headerText");
+					assert.equal(oFlexContent.getHeaderText(), oResourceBundle.getText("valuehelp.TABLETITLE", [3]), "Panel headerText");
 					assert.ok(oFlexContent.hasStyleClass("sapMdcTablePanel"), "Panel has style class sapMdcTablePanel");
 					assert.equal(oFlexContent.getContent().length, 1, "Panel number of items");
 					const oScrollContainer = oFlexContent.getContent()[0];
@@ -1995,5 +1997,45 @@ sap.ui.define([
 		assert.ok(aItems[1].focus.called, "navigation focused item");
 
 		oMTable.setHighlightId();
+	});
+
+	QUnit.test("announces table update", function(assert) {
+		const oContent = oMTable.getContent();
+		if (oContent) {
+			const fnDone = assert.async();
+			oContent.then(function(oContent) {
+				oMTable.onBeforeShow(true).then(() => {
+					sinon.spy(oMTable, "_updateHeaderText");
+					sinon.spy(MTableUtil, "announceTableUpdate");
+					oMTable.onShow(); // to update selection and scroll
+					assert.ok(oMTable._updateHeaderText.called, "Table header is updated immediately.");
+					oMTable._updateHeaderText.resetHistory();
+					setTimeout(() => {
+						assert.ok(oMTable._updateHeaderText.called, "Table header was updated again on table update");
+						assert.ok(MTableUtil.announceTableUpdate.called, "Table update was announced");
+						assert.deepEqual(MTableUtil.announceTableUpdate.args[0], ["Items", 3], "Table update announcement receives expected arguments");
+						const oFilterBar = oMTable.getAggregation("_defaultFilterBar");
+						sinon.stub(oFilterBar, "getConditions").returns({
+							additionalText: [Condition.createCondition(OperatorName.Contains, "2")]
+						});
+						oMTable._updateHeaderText.resetHistory();
+						oFilterBar.fireSearch();
+						setTimeout(() => {
+							assert.ok(oMTable._updateHeaderText.called, "Table header was updated again on table update");
+							assert.ok(MTableUtil.announceTableUpdate.calledTwice, "Table update was announced");
+							assert.deepEqual(MTableUtil.announceTableUpdate.args[1], ["Items", 1], "Table update announcement receives expected arguments");
+							oMTable._updateHeaderText.restore();
+							MTableUtil.announceTableUpdate.restore();
+							oFilterBar.getConditions.restore();
+							fnDone();
+						},0);
+					},0);
+				});
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+				fnDone();
+			});
+		}
+
 	});
 });

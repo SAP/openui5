@@ -25,6 +25,7 @@
 								<Bar>
 									<contentLeft>
 										<Button text="Personalization Changes" press=".createChanges" ariaDescribedBy="defaultButtonDescription genericButtonDescription" />
+										<Button text="Load Variant" visible="{app>/showLazyLoadButton}" press=".loadVariant" />
 									</contentLeft>
 									<contentRight>
 										<vm:VariantManagement id="variantManagementOrdersTable" for="ObjectPageLayout" updateVariantInURL="true" />

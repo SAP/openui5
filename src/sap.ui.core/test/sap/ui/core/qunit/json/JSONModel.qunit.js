@@ -379,42 +379,6 @@ sap.ui.define([
 		oModelChild.destroy();
 	});
 
-	QUnit.test("test JSONModel loadData: sync",function(assert) {
-		var testModel = new JSONModel();
-		testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata.json", null, false);
-		assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
-		assert.equal(testModel.getProperty("/bar"), "ABCDEFG");
-		assert.equal(testModel.getProperty("/baz")[1], 97);
-		testModel.destroy();
-	});
-
-	QUnit.test("test JSONModel loadData: sync - error",function(assert) {
-		var testModel = new JSONModel();
-		testModel.attachRequestCompleted(function(e) {
-			var mParams = e.getParameters();
-
-			assert.ok(mParams.errorobject.message);
-			assert.equal(mParams.errorobject.statusCode, 404);
-			assert.ok(mParams.errorobject.statusText);
-			assert.ok(mParams.errorobject.responseText);
-
-			assert.equal(mParams.url, "nothingThere.json");
-			assert.notOk(mParams.async);
-		});
-
-		testModel.attachRequestFailed(function(e) {
-			var mParams = e.getParameters();
-
-			assert.ok(mParams.message);
-			assert.equal(mParams.statusCode, 404);
-			assert.ok(mParams.statusText);
-			assert.ok(mParams.responseText);
-		});
-
-		testModel.loadData("nothingThere.json", null, false);
-		testModel.destroy();
-	});
-
 	QUnit.test("test JSONModel loadData: async - error",function(assert) {
 		var done = assert.async();
 		var testModel = new JSONModel();

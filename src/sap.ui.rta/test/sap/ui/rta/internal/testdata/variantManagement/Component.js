@@ -69,8 +69,10 @@ sap.ui.define([
 		},
 
 		_adaptButtonConfiguration() {
+			const bLazyLoad = new URLSearchParams(window.location.search).get("sap-ui-fl-xx-lazyLoadVariants") === "true";
 			var oAppModel = new JSONModel({
-				showAdaptButton: false
+				showAdaptButton: false,
+				showLazyLoadButton: bLazyLoad
 			});
 			this.setModel(oAppModel, "app");
 

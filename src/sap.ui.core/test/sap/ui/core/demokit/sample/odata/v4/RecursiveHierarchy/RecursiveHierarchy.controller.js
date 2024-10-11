@@ -307,18 +307,18 @@ sap.ui.define([
 			this.refresh("treeTable", bKeepTreeState);
 		},
 
-		onShowSelected : function (_oEvent, sTableId = "table") {
-			const oBinding = this.byId(sTableId).getBinding("rows");
-			const aContexts = oBinding.getAllCurrentContexts();
-			const oHeaderContext = oBinding.getHeaderContext();
+		onShowSelected : async function (_oEvent, sTableId = "table") {
+			const oListBinding = this.byId(sTableId).getBinding("rows");
+			const bSelectAll = oListBinding.getHeaderContext().isSelected();
 
-			const bSelectAll = oHeaderContext.isSelected();
-			const sText = (bSelectAll ? "All except " : "")
-				+ aContexts.filter((oContext) => oContext.isSelected() !== bSelectAll)
-					.map((oContext) => oContext.getProperty("Name"))
-					.join(", ");
+			const aNames = await Promise.all(
+				oListBinding.getAllCurrentContexts()
+					.filter((oContext) => oContext.isSelected() !== bSelectAll)
+					.map((oContext) => oContext.requestProperty("Name"))
+			);
 
-			MessageBox.information(sText, {title : "Selected Names"});
+			MessageBox.information((bSelectAll ? "All except " : "") + aNames.join(", "),
+				{title : "Selected Names"});
 		},
 
 		onSynchronize : function () {

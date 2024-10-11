@@ -2189,7 +2189,7 @@ sap.ui.define([
 		aPromises.push(oRequestor.processBatch("group1").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 			assert.deepEqual(aResults, [null, null, null], "all batch requests already resolved");
-			assert.ok(oBatchResponseReceivedExpectation.calledAfter(oSendBatchExpectation));
+			sinon.assert.callOrder(oSendBatchExpectation, oBatchResponseReceivedExpectation);
 		}));
 
 		assert.ok(oBatchRequestSentExpectation.calledImmediatelyBefore(oSendBatchExpectation));

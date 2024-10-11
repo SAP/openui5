@@ -351,7 +351,6 @@ sap.ui.define([
 		Element.prototype.init.apply(this, arguments);
 
 		this._oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
-
 		this._oObserver.observe(this, {
 			//			properties: ["filterValue", "conditions"],
 			aggregations: ["typeahead", "dialog"]
@@ -365,6 +364,11 @@ sap.ui.define([
 
 	ValueHelp.prototype.exit = function() {
 
+		delete this._oConditions;
+
+		this._oObserver.disconnect();
+		this._oObserver.destroy();
+		delete this._oObserver;
 
 		if (this._oManagedObjectModel) {
 			this._oManagedObjectModel.destroy();

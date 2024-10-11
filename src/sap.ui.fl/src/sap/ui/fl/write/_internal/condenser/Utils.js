@@ -11,7 +11,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var Utils = {};
+	const Utils = {};
 
 	Utils.TARGET_UI = "targetUI";
 	Utils.INITIAL_UI = "initialUI";
@@ -41,9 +41,9 @@ sap.ui.define([
 	 */
 	Utils.getInitialUIContainerElementIds = function(mUIReconstructions, sContainerKey, sAggregationName, aContainerElements) {
 		mUIReconstructions[sContainerKey] ||= {};
-		var mUIStates = mUIReconstructions[sContainerKey];
+		const mUIStates = mUIReconstructions[sContainerKey];
 		mUIStates[sAggregationName] ||= {};
-		var mUIAggregationState = mUIStates[sAggregationName];
+		const mUIAggregationState = mUIStates[sAggregationName];
 		mUIAggregationState[Utils.TARGET_UI] ||= aContainerElements;
 		mUIAggregationState[Utils.INITIAL_UI] ||= aContainerElements.slice(0);
 		return mUIAggregationState[Utils.INITIAL_UI];
@@ -58,14 +58,12 @@ sap.ui.define([
 	 * @param {string} [sAffectedControlIdProperty] - Property name of the ID used for the container element
 	 * @returns {Promise<string[]>} Array of Ids wrapped in Promise
 	 */
-	Utils.getContainerElementIds = function(sContainerId, sAggregationName, aCustomAggregation, sAffectedControlIdProperty) {
-		var oContainer = Element.getElementById(sContainerId);
+	Utils.getContainerElementIds = async function(sContainerId, sAggregationName, aCustomAggregation, sAffectedControlIdProperty) {
+		const oContainer = Element.getElementById(sContainerId);
 
-		return Promise.resolve(aCustomAggregation || JsControlTreeModifier.getAggregation(oContainer, sAggregationName))
-		.then(function(aContainerElements) {
-			return aContainerElements.map(function(oElement) {
-				return sAffectedControlIdProperty ? oElement[sAffectedControlIdProperty] : oElement.getId();
-			});
+		const aContainerElements = aCustomAggregation || await JsControlTreeModifier.getAggregation(oContainer, sAggregationName);
+		return aContainerElements.map((oElement) => {
+			return sAffectedControlIdProperty ? oElement[sAffectedControlIdProperty] : oElement.getId();
 		});
 	};
 
@@ -77,17 +75,17 @@ sap.ui.define([
 	 * @returns {string} Array of Placeholders
 	 */
 	Utils.initializeArrayWithPlaceholders = function(iTargetIndex, iSourceIndex) {
-		var iLength = getNeededLengthOfNewArray(iSourceIndex, iTargetIndex);
-		return Array(iLength).fill(Utils.PLACEHOLDER).map(function(sPlaceholder, iIterator) {
+		const iLength = getNeededLengthOfNewArray(iSourceIndex, iTargetIndex);
+		return Array(iLength).fill(Utils.PLACEHOLDER).map((sPlaceholder, iIterator) => {
 			return sPlaceholder + iIterator;
 		});
 	};
 
 	Utils.extendArrayWithPlaceholders = function(aElements, iSourceIndex, iTargetIndex) {
-		var iLength = getNeededLengthOfNewArray(iSourceIndex, iTargetIndex);
+		const iLength = getNeededLengthOfNewArray(iSourceIndex, iTargetIndex);
 		if (aElements.length < iLength) {
-			var sUnknown;
-			for (var i = aElements.length; i <= iLength; i++) {
+			let sUnknown;
+			for (let i = aElements.length; i <= iLength; i++) {
 				sUnknown = Utils.PLACEHOLDER + (aElements.length);
 				aElements.splice(aElements.length, 0, sUnknown);
 			}
@@ -105,8 +103,8 @@ sap.ui.define([
 	Utils.extendElementsArray = function(aElements, iSourceIndex, iTargetIndex, sAffectedControlId) {
 		Utils.extendArrayWithPlaceholders(aElements, iSourceIndex, iTargetIndex);
 
-		var iCurrentIndex = aElements.indexOf(sAffectedControlId);
-		var iUnknownIndex = aElements.indexOf(Utils.PLACEHOLDER + iSourceIndex);
+		const iCurrentIndex = aElements.indexOf(sAffectedControlId);
+		const iUnknownIndex = aElements.indexOf(Utils.PLACEHOLDER + iSourceIndex);
 		if (
 			iCurrentIndex !== iSourceIndex
 			&& iSourceIndex !== undefined
@@ -143,8 +141,8 @@ sap.ui.define([
 			sValue !== undefined
 			&& sValue.indexOf(Utils.PLACEHOLDER) === 0
 		) {
-			var sResult = sValue.slice(1, sValue.length);
-			var iParsedIndex = parseInt(sResult);
+			const sResult = sValue.slice(1, sValue.length);
+			const iParsedIndex = parseInt(sResult);
 			if (isNaN(iParsedIndex)) {
 				return false;
 			}

@@ -25,7 +25,14 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 		 *
 		 * @public
 		 */
-		Fixed: "Fixed"
+		Fixed: "Fixed",
+		/**
+		 * The user can change the number of displayed rows by dragging a resizer
+		 *
+		 * @public
+		 * @since 1.130
+		 */
+		Interactive: "Interactive"
 	};
 
 	DataType.registerEnum("sap.ui.mdc.enums.TableRowCountMode", TableRowCountMode);

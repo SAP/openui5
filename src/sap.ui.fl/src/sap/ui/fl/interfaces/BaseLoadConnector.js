@@ -52,6 +52,20 @@ sap.ui.define([], function() {
 		 */
 		loadVariantsAuthors() {
 			return Promise.reject("loadVariantsAuthors is not implemented");
+		},
+
+		/**
+		 * Fetches all flex objects related to the given variant references
+		 *
+		 * @param {object} mPropertyBag - Property bag
+		 * @param {string} mPropertyBag.reference - Flexibility reference
+		 * @param {string[]} mPropertyBag.variantReferences - List of variant references to be loaded
+		 * @param {string} [mPropertyBag.url] - Configured URL for the connector
+		 * @param {sap.ui.fl.Layer} [mPropertyBag.layer] - Layer of the objects to be loaded
+		 * @returns {Promise<object>} Resolves with the data for variants
+		 */
+		loadFlVariants() {
+			return Promise.reject("loadFlVariants is not implemented");
 		}
 	};
 

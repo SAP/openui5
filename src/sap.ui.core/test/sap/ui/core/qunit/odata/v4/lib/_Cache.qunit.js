@@ -2325,6 +2325,57 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[{start : 1, end : 3}, {start : 2, end : 4}].forEach(function (oRange) {
+	const sTitle = "_Cache#drillDown: skip already requested separate property"
+		+ ", range=" + JSON.stringify(oRange);
+
+	QUnit.test(sTitle, async function (assert) {
+		const oCache = new _Cache(this.oRequestor, "Products");
+		const aElements = ["0", "1", {}, "3", "4"];
+		aElements.$byPredicate = {"('2')" : aElements[2]};
+		oCache.aElements = aElements;
+		oCache.mSeparateProperty2ReadRequest = {expensive : [{start : 7, end : 9}, oRange]};
+
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("('2')/expensive").returns("n/a");
+		this.mock(_Helper).expects("getAnnotationKey").never();
+		this.oModelInterfaceMock.expects("fetchMetadata").never();
+		this.mock(oCache).expects("fetchLateProperty").never();
+
+		// code under test
+		assert.strictEqual(await oCache.drillDown(aElements, "('2')/expensive"), undefined);
+	});
+});
+
+	//*********************************************************************************************
+[{start : 0, end : 2}, {start : 3, end : 5}].forEach(function (oRange) {
+	const sTitle = "_Cache#drillDown: separate property not requested in current range"
+		+ ", range=" + JSON.stringify(oRange);
+
+	QUnit.test(sTitle, async function (assert) {
+		const oCache = new _Cache(this.oRequestor, "Products");
+		const aElements = ["0", "1", {"@$ui5._" : {predicate : ("('2')")}}, "3", "4"];
+		aElements.$byPredicate = {"('2')" : aElements[2]};
+		oCache.aElements = aElements;
+		oCache.mSeparateProperty2ReadRequest = {expensive : [{start : 7, end : 9}, oRange]};
+
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("('2')/expensive")
+			.returns("~metaPath~");
+		this.mock(_Helper).expects("getAnnotationKey")
+			.withExactArgs(sinon.match.same(aElements[2]), ".Permissions", "expensive");
+		this.oModelInterfaceMock.expects("fetchMetadata").withExactArgs("/Products/~metaPath~")
+			.resolves("~oProperty~");
+		this.mock(oCache).expects("fetchLateProperty")
+			.withExactArgs("~oGroupLock~", sinon.match.same(aElements[2]), "('2')", "expensive")
+			.resolves("~lateResult~");
+
+		// code under test
+		assert.strictEqual(
+			await oCache.drillDown(aElements, "('2')/expensive", "~oGroupLock~"),
+			"~lateResult~");
+	});
+});
+
+	//*********************************************************************************************
 	[{
 		bCanceled : false,
 		sEntityPath : "patch/without/side/effects",
@@ -2478,8 +2529,7 @@ sap.ui.define([
 					assert.strictEqual(bCanceled, false);
 					assert.strictEqual(oResult, undefined, "no result");
 					if (oUpdateExistingCall.called) {
-						assert.ok(oUpdateExistingCall.calledBefore(oUnlockCall),
-							"cache update happens before unlock");
+						sinon.assert.callOrder(oUpdateExistingCall, oUnlockCall);
 					}
 				}, function (oResult) {
 					assert.notOk(fnError.called);
@@ -2805,8 +2855,7 @@ sap.ui.define([
 					assert.notOk(bCanceled);
 					sinon.assert.calledOnceWithExactly(fnError0, oError1);
 					assert.strictEqual(oResult, undefined, "no result");
-					assert.ok(oUnlockCall.calledBefore(oRequestCall2),
-						"unlock called before second PATCH request");
+					sinon.assert.callOrder(oUnlockCall, oRequestCall2);
 				}, function (oError) {
 					assert.ok(bCanceled);
 					sinon.assert.calledOnceWithExactly(fnError0, oError1);
@@ -4591,8 +4640,8 @@ sap.ui.define([
 				assert.strictEqual(mQueryOptionsForPathCopy.$apply, "apply");
 				assert.strictEqual(mQueryOptionsForPathCopy.$search, undefined);
 				if (!oFixture.inCollection) {
-					assert.ok(oRemoveExpectation.calledAfter(oCopySelectedExpectation));
-					assert.ok(oReplaceExpectation.calledAfter(oRemoveExpectation));
+					sinon.assert.callOrder(oCopySelectedExpectation, oRemoveExpectation,
+						oReplaceExpectation);
 					sinon.assert.calledOnceWithExactly(fnOnRemove, true);
 				}
 				assert.deepEqual(oReadResponse.value[0],
@@ -4896,7 +4945,7 @@ sap.ui.define([
 		return oPromise.then(function (oResult) {
 			assert.notOk(bDataReceivedFails);
 			assert.strictEqual(oResult, undefined);
-			assert.ok(oEventExpectation.calledAfter(oUpdateExpectation));
+			sinon.assert.callOrder(oUpdateExpectation, oEventExpectation);
 		}, function (oError) {
 			assert.ok(bDataReceivedFails);
 			assert.strictEqual(oError, "~oError~");
@@ -5127,7 +5176,7 @@ sap.ui.define([
 
 		return oPromise.then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
-			assert.ok((oUpdateSelectedCall.calledAfter(oVisitResponseCall)));
+			sinon.assert.callOrder(oVisitResponseCall, oUpdateSelectedCall);
 		});
 	});
 
@@ -5805,13 +5854,16 @@ sap.ui.define([
 		// code under test
 		oCache = _Cache.create(this.oRequestor, "resource/path", mQueryOptions,
 			"bSortExpandSelect", "deep/resource/path", bSharedRequest,
-			bSharedRequest ? undefined : "~aSeparateProperties~");
+			bSharedRequest ? undefined : ["separate0", "separate1"]);
 
 		assert.strictEqual(oCache.oRequestor, this.oRequestor);
 		assert.strictEqual(oCache.bSortExpandSelect, "bSortExpandSelect");
 		assert.strictEqual(oCache.sOriginalResourcePath, "deep/resource/path");
 		assert.strictEqual(oCache.bSharedRequest, bSharedRequest);
-		assert.deepEqual(oCache.aSeparateProperties, bSharedRequest ? [] : "~aSeparateProperties~");
+		assert.deepEqual(oCache.aSeparateProperties,
+			bSharedRequest ? [] : ["separate0", "separate1"]);
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequest,
+			bSharedRequest ? {} : {separate0 : [], separate1 : []});
 		assert.strictEqual(oCache.iActiveElements, 0);
 	});
 });
@@ -6967,7 +7019,7 @@ sap.ui.define([
 	const sTitle = "CollectionCache#getQueryString: $$separate, all: " + bAllSeparate;
 
 	QUnit.test(sTitle, function (assert) {
-		var oCache = this.createCache("Employees", {
+		var oCache = this.createCache("Artists('42')/_Friend", {
 			foo : "bar",
 			$expand : {
 				BestFriend : "~BestFriend~",
@@ -7006,6 +7058,61 @@ sap.ui.define([
 		}, "unchanged");
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#getQueryString: $$separate, expand property", function (assert) {
+		const oCache = this.createCache("Artists('42')/_Friend", {
+			foo : "bar",
+			$apply : "~apply~",
+			$count : true,
+			$expand : {
+				BestFriend : "~BestFriend~",
+				BestPublication : "~BestPublication~",
+				SiblingEntity : "~SiblingEntity~"
+			},
+			$filter : "~filter~",
+			$orderby : "~orderby~",
+			$search : "~search~",
+			$select : ["Name", "Address"]
+		});
+		const sQueryOptions = JSON.stringify(oCache.mQueryOptions);
+
+		oCache.sQueryString = "?foo=bar";
+		oCache.aSeparateProperties = ["BestFriend", "BestPublication", "SiblingEntity"];
+		oCache.bSortExpandSelect = "~bSortExpandSelect~";
+		this.mock(oCache).expects("getExclusiveFilter").withExactArgs().returns(undefined);
+		this.mock(oCache).expects("getTypes").withExactArgs()
+			.returns({"/Artists/_Friend" : "types"});
+		this.mock(_Helper).expects("selectKeyProperties").withExactArgs({
+				foo : "bar",
+				$apply : "~apply~",
+				$expand : {BestPublication : "~BestPublication~"},
+				$filter : "~filter~",
+				$orderby : "~orderby~",
+				$search : "~search~",
+				$select : []
+			}, "types")
+			.callsFake(function (mQueryOptions) {
+				mQueryOptions.$select = ["ID"];
+			});
+		this.mock(this.oRequestor).expects("buildQueryString")
+			.withExactArgs("/Artists/_Friend", {
+					foo : "bar",
+					$apply : "~apply~",
+					$expand : {BestPublication : "~BestPublication~"},
+					$filter : "~filter~",
+					$orderby : "~orderby~",
+					$search : "~search~",
+					$select : ["ID"]
+				}, false, "~bSortExpandSelect~", true)
+			.returns("?~");
+
+		// code under test
+		assert.strictEqual(oCache.getQueryString("BestPublication"), "?~");
+
+		assert.strictEqual(oCache.sQueryString, "?foo=bar", "unchanged");
+		assert.strictEqual(JSON.stringify(oCache.mQueryOptions), sQueryOptions, "unchanged");
+	});
 
 	//*********************************************************************************************
 ["?foo=bar", ""].forEach(function (sQuery) {
@@ -7133,7 +7240,8 @@ sap.ui.define([
 				oCreateGroupLock0 = {getGroupId : function () {}},
 				oCreateGroupLock1 = {getGroupId : function () {}};
 
-			this.mock(oCache).expects("getQueryString").returns(oFixture.sQueryString);
+			this.mock(oCache).expects("getQueryString").withExactArgs("~sSeparateProperty~")
+				.returns(oFixture.sQueryString);
 			this.mock(oCreateGroupLock0).expects("getGroupId").withExactArgs().returns("create");
 			this.oRequestorMock.expects("request").withArgs("POST", "Employees",
 					sinon.match.same(oCreateGroupLock0))
@@ -7150,7 +7258,8 @@ sap.ui.define([
 				{}, null, false, function fnSubmitCallback() {});
 
 			// code under test
-			assert.strictEqual(oCache.getResourcePathWithQuery(oFixture.iStart, oFixture.iEnd),
+			assert.strictEqual(oCache.getResourcePathWithQuery(oFixture.iStart, oFixture.iEnd,
+					"~sSeparateProperty~"),
 				oFixture.sResourcePath);
 		});
 	});
@@ -7685,6 +7794,9 @@ sap.ui.define([
 			oCacheMock.expects("handleCount")
 				.withExactArgs(sinon.match.same(oGroupLock), "~iTransientElements~", iStart, iEnd,
 					sinon.match.same(oResult), "~iFiltered~"); // .returns(undefined)
+			const oRequestSeparatePropertiesExpectation
+				= oCacheMock.expects("requestSeparateProperties")
+					.withExactArgs(iStart, iEnd, sinon.match.instanceOf(SyncPromise));
 			oCacheMock.expects("fill")
 				.withExactArgs(sinon.match(function (oSyncPromise) {
 					oPromise = oSyncPromise;
@@ -7700,6 +7812,7 @@ sap.ui.define([
 
 			assert.strictEqual(oCache.bSentRequest, true);
 			assert.strictEqual(oCache.aElements.$tail, bTail ? oPromise : undefined);
+			assert.strictEqual(oRequestSeparatePropertiesExpectation.args[0][2], oPromise);
 
 			return Promise.all([oFetchPromise, oRequestPromise, oPromise]).then(function () {
 				assert.strictEqual(oCache.aElements.$tail, undefined);
@@ -7747,6 +7860,9 @@ sap.ui.define([
 			.returns("~iFiltered~");
 		oCacheMock.expects("handleCount").exactly(bSuccess ? 1 : 0)
 			.withExactArgs("~oGroupLock~", 0, iStart, iEnd, "~oResult~", "~iFiltered~");
+		const oRequestSeparatePropertiesExpectation
+			= oCacheMock.expects("requestSeparateProperties")
+				.withExactArgs(iStart, iEnd, sinon.match.instanceOf(SyncPromise));
 		oFillExpectation = oCacheMock.expects("fill")
 			.withExactArgs(sinon.match.instanceOf(SyncPromise), iStart, iEnd);
 
@@ -7758,16 +7874,17 @@ sap.ui.define([
 			oCache.aReadRequests[0].bObsolete = true;
 		}
 		assert.strictEqual(oCache.bSentRequest, true);
+		assert.strictEqual(oRequestSeparatePropertiesExpectation.args[0][2], oPromise);
 		assert.strictEqual(oFillExpectation.args[0][0], oPromise);
 
 		return oPromise.then(function () {
 			assert.ok(bSuccess);
-			assert.ok(oCheckRangeExpectation.calledBefore(oHandleResponseExpectation));
+			sinon.assert.callOrder(oCheckRangeExpectation, oHandleResponseExpectation);
 		}, function (oRequestError) {
 			assert.notOk(bSuccess);
 			if (bSuccess === false) {
 				assert.strictEqual(oRequestError, oError);
-				assert.ok(oCheckRangeExpectation.calledBefore(oResetExpectation));
+				sinon.assert.callOrder(oCheckRangeExpectation, oResetExpectation);
 			} else {
 				assert.ok(oRequestError.canceled);
 				assert.strictEqual(oRequestError.message, "Request is obsolete");
@@ -7793,6 +7910,9 @@ sap.ui.define([
 		oCacheMock.expects("getResourcePathWithQuery").never();
 		this.oRequestorMock.expects("request").never();
 		oCacheMock.expects("fetchTypes").withExactArgs().returns(SyncPromise.resolve("~mTypes~"));
+		const oRequestSeparatePropertiesExpectation
+			= oCacheMock.expects("requestSeparateProperties")
+				.withExactArgs(iStart, iEnd, sinon.match.instanceOf(SyncPromise));
 		oFillExpectation = oCacheMock.expects("fill")
 			.withExactArgs(sinon.match.instanceOf(SyncPromise), iStart, iEnd);
 		Promise.resolve().then(function () { // must be called asynchronously
@@ -7811,10 +7931,11 @@ sap.ui.define([
 		assert.deepEqual(oCache.aReadRequests, [{iStart, iEnd, bObsolete : false}]);
 
 		assert.strictEqual(oCache.bSentRequest, true);
+		assert.strictEqual(oRequestSeparatePropertiesExpectation.args[0][2], oPromise);
 		assert.strictEqual(oFillExpectation.args[0][0], oPromise);
 
 		return oPromise.then(function () {
-			assert.ok(oCheckRangeExpectation.calledBefore(oHandleResponseExpectation));
+			sinon.assert.callOrder(oCheckRangeExpectation, oHandleResponseExpectation);
 		});
 	});
 
@@ -8854,7 +8975,7 @@ sap.ui.define([
 				sinon.assert.calledOnceWithExactly(_Helper.removeByPath,
 					sinon.match.same(oCache.mPostRequests), sPathInCache,
 					sinon.match.same(oInitialData));
-				assert.ok(oCancelNestedExpectation.calledBefore(oUpdateNestedExpectation));
+				sinon.assert.callOrder(oCancelNestedExpectation, oUpdateNestedExpectation);
 			});
 		});
 			});
@@ -10476,7 +10597,7 @@ sap.ui.define([
 			+ bBeforeUpdateSelected + ", #beforeRequestSideEffects="
 			+ bBeforeRequestSideEffects;
 
-	QUnit.test(sTitle, async function (assert) {
+	QUnit.test(sTitle, async function () {
 		const oCache = this.createCache("TEAMS('42')/Foo");
 		this.mock(oCache).expects("getTypes").withExactArgs().returns("~mTypeForMetaPath~");
 		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
@@ -10540,8 +10661,8 @@ sap.ui.define([
 		await oCache.requestSideEffects("~oGroupLock~", "~aPaths~", ["('a')", "n/a"],
 			/*bSingle*/true, "~bWithMessages~");
 
-		assert.ok(oExtractMergeableQueryOptionsExpectation
-			.calledBefore(oBuildQueryStringExpectation));
+		sinon.assert.callOrder(oExtractMergeableQueryOptionsExpectation,
+			oBuildQueryStringExpectation);
 	});
 	});
 });
@@ -10816,7 +10937,7 @@ sap.ui.define([
 						}, function (oError) {
 							assert.strictEqual(oError.message,
 								"Expected 1 row(s), but instead saw " + aData.length);
-							assert.ok(oBeforeExpectation.calledBefore(oFilterExpectation));
+							sinon.assert.callOrder(oBeforeExpectation, oFilterExpectation);
 						});
 				});
 		});
@@ -10927,8 +11048,8 @@ sap.ui.define([
 				.then(function () {
 					if (bSkip === false) {
 						assert.deepEqual(oGetRelativePathExpectation.args, [["", "EMPLOYEE"]]);
-						assert.ok(oVisitResponseExpectation
-							.calledBefore(oUpdateSelectedExpectation));
+						sinon.assert.callOrder(oVisitResponseExpectation,
+							oUpdateSelectedExpectation);
 					} else if (bSkip === undefined) {
 						assert.deepEqual(oGetRelativePathExpectation.args, [
 							["", "EMPLOYEE"],
@@ -11203,7 +11324,7 @@ sap.ui.define([
 		assert.deepEqual(oCache.aElements.$byPredicate, {});
 		assert.strictEqual(oCache.iLimit, Infinity);
 		assert.deepEqual(oCache.mChangeListeners, {"" : "~listeners~"});
-		assert.ok(oSetQueryOptionsExpectation.calledBefore(oFireChangeExpectation));
+		sinon.assert.callOrder(oSetQueryOptionsExpectation, oFireChangeExpectation);
 	});
 
 	//*********************************************************************************************
@@ -11352,7 +11473,7 @@ sap.ui.define([
 					bCreateOnDemand, "fnGetOriginalResourcePath")
 				.then(function (oResult) {
 					assert.strictEqual(oResult, oExpectedResult);
-					assert.ok(oRegisterExpectation.calledBefore(oRequestExpectation));
+					sinon.assert.callOrder(oRegisterExpectation, oRequestExpectation);
 				})
 		];
 		oOldPromise = oCache.oPromise;
@@ -11369,7 +11490,7 @@ sap.ui.define([
 				.then(function (oResult) {
 					assert.strictEqual(oResult, "bar");
 					assert.strictEqual(oCache.getValue("foo"), "bar", "data available");
-					assert.ok(oResponseExpectation.calledAfter(oPathExpectation));
+					sinon.assert.callOrder(oPathExpectation, oResponseExpectation);
 				})
 		);
 		assert.strictEqual(oCache.oPromise, oOldPromise);
@@ -11646,10 +11767,10 @@ sap.ui.define([
 
 		return oResult.then(function (oResult0) {
 				assert.strictEqual(oResult0, oReturnValue);
+				sinon.assert.callOrder(oPathExpectation, oResponseExpectation);
 				if (oUnlockExpectation) {
-					assert.ok(oUnlockExpectation.calledAfter(oResponseExpectation));
+					sinon.assert.callOrder(oResponseExpectation, oUnlockExpectation);
 				}
-				assert.ok(oResponseExpectation.calledAfter(oPathExpectation));
 			});
 	});
 		});
@@ -12196,8 +12317,8 @@ sap.ui.define([
 				.then(function () {
 					if (bSkip === false) {
 						assert.deepEqual(oGetRelativePathExpectation.args, [["", "ROOM_ID"]]);
-						assert.ok(oVisitResponseExpectation
-							.calledBefore(oUpdateSelectedExpectation));
+						sinon.assert.callOrder(oVisitResponseExpectation,
+							oUpdateSelectedExpectation);
 					} else if (bSkip === undefined) {
 						assert.deepEqual(oGetRelativePathExpectation.args, [
 							["", "ROOM_ID"],
@@ -12943,7 +13064,7 @@ sap.ui.define([
 		const oSyncPromise = oCache.read(0, 5, 10, oGroupLock, "~fnDataRequested~");
 
 		assert.ok(oSyncPromise.isPending());
-		assert.ok(oUnlockExpectation.calledAfter(oGetUnlockedCopyExpectation));
+		sinon.assert.callOrder(oGetUnlockedCopyExpectation, oUnlockExpectation);
 
 		await oSyncPromise; // no need to check result, it's defined by aElements way above
 	});
@@ -12999,7 +13120,7 @@ sap.ui.define([
 		const oSyncPromise = oCache.read(20, 5, iPrefetchLength, oGroupLock, "~fnDataRequested~");
 
 		assert.ok(oSyncPromise.isPending());
-		assert.ok(oUnlockExpectation.calledAfter(oGetUnlockedCopyExpectation));
+		sinon.assert.callOrder(oGetUnlockedCopyExpectation, oUnlockExpectation);
 
 		await oSyncPromise; // no need to check result, it's defined by aElements way above
 	});
@@ -13209,6 +13330,130 @@ sap.ui.define([
 		assert.notOk(oCache.isMissing(20));
 		assert.notOk(oCache.isMissing(9999));
 		assert.ok(oCache.isMissing(10000));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#requestSeparateProperties", async function (assert) {
+		const oCache = _Cache.create(this.oRequestor, "SalesOrders", undefined, undefined,
+			undefined, undefined, ["foo", "bar"]);
+
+		let fnResolveMain;
+		const oMainPromise = new Promise(function (resolve) { fnResolveMain = resolve; });
+		let fnResolveTypes;
+		const oTypesPromise = new Promise(function (resolve) { fnResolveTypes = resolve; });
+
+		const oCacheMock = this.mock(oCache);
+		oCacheMock.expects("fetchTypes").withExactArgs().returns(oTypesPromise);
+
+		// code under test
+		const oResult = oCache.requestSeparateProperties(3, 5, oMainPromise);
+
+		assert.ok(oResult instanceof Promise);
+
+		let fnResolveFoo;
+		const oFooPromise = new Promise(function (resolve) { fnResolveFoo = resolve; });
+		let fnResolveBar;
+		const oBarPromise = new Promise(function (resolve) { fnResolveBar = resolve; });
+
+		const oRequestorMock = this.mock(oCache.oRequestor);
+		oCacheMock.expects("getResourcePathWithQuery").withExactArgs(3, 5, "foo")
+			.returns("~fooPath~");
+		oRequestorMock.expects("lockGroup").withExactArgs("$single", sinon.match.same(oCache))
+			.returns("~fooLock~");
+		oRequestorMock.expects("request").withExactArgs("GET", "~fooPath~", "~fooLock~")
+			.returns(oFooPromise);
+		oCacheMock.expects("getResourcePathWithQuery").withExactArgs(3, 5, "bar")
+			.returns("~barPath~");
+		oRequestorMock.expects("lockGroup").withExactArgs("$single", sinon.match.same(oCache))
+			.returns("~barLock~");
+		oRequestorMock.expects("request").withExactArgs("GET", "~barPath~", "~barLock~")
+			.returns(oBarPromise);
+
+		// code under test: resolve fetchTypes
+		fnResolveTypes("~types~");
+		await oTypesPromise;
+
+		// simulate other simultaneous request ranges, proof the deleting index is dynamic
+		oCache.mSeparateProperty2ReadRequest.foo.push("~range~");
+		oCache.mSeparateProperty2ReadRequest.bar.unshift("~range~");
+
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {
+			foo : [{start : 3, end : 5}, "~range~"],
+			bar : ["~range~", {start : 3, end : 5}]
+		});
+
+		const oBarResult = {value : ["bar0", "bar1"]};
+
+		// code under test: resolve separate promise for "bar", separate promise order is
+		// irrelevant, but processing is delayed until main promise is resolved
+		fnResolveBar(oBarResult);
+
+		oCacheMock.expects("visitResponse")
+			.withExactArgs(sinon.match.same(oBarResult), "~types~", undefined, undefined, 3);
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("bar0", "predicate")
+			.returns("('bar0')");
+		oHelperMock.expects("updateSelected")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('bar0')", "~bar0~", "bar0",
+				["bar"]);
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("bar1", "predicate")
+			.returns("('bar1')");
+		oHelperMock.expects("updateSelected")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('bar1')", "~bar1~", "bar1",
+				["bar"]);
+
+		oCache.aElements.$byPredicate = {
+			"('bar0')" : "~bar0~",
+			"('bar1')" : "~bar1~",
+			"('foo0')" : "~foo0~"
+		};
+
+		// code under test: resolve oMainPromise, earlier separate promise "bar" starts processing
+		fnResolveMain();
+		await oMainPromise;
+		await oBarPromise;
+
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {
+			foo : [{start : 3, end : 5}, "~range~"],
+			bar : ["~range~"]
+		});
+
+		const oFooResult = {value : ["foo0", "unknown"]};
+		oCacheMock.expects("visitResponse")
+			.withExactArgs(sinon.match.same(oFooResult), "~types~", undefined, undefined, 3);
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("foo0", "predicate")
+			.returns("('foo0')");
+		oHelperMock.expects("updateSelected")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('foo0')", "~foo0~", "foo0",
+				["foo"]);
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("unknown", "predicate")
+			.returns("('unknown')");
+
+		// code under test: resolve separate promise for "foo"
+		fnResolveFoo(oFooResult);
+		await oFooPromise;
+
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {
+			foo : ["~range~"],
+			bar : ["~range~"]
+		});
+
+		return oResult;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#requestSeparateProperties, no requests", function (assert) {
+		const oCache = _Cache.create(this.oRequestor, "SalesOrders");
+
+		this.mock(oCache).expects("fetchTypes").never();
+		this.mock(oCache.oRequestor).expects("request").never();
+
+		assert.deepEqual(oCache.aSeparateProperties, []);
+
+		// code under test
+		const oResult = oCache.requestSeparateProperties(3, 5, "~oMainPromise~");
+
+		return oResult;
 	});
 
 	//*********************************************************************************************

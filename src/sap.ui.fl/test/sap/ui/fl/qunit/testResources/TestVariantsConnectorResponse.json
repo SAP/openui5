@@ -1,84 +1,11 @@
 {
-	"ui2personalization": {},
-	"appDescriptorChanges": [],
-	"changes" : [
-		{
-			"variantReference":"",
-			"fileName":"id_1445501120486_25",
-			"fileType":"change",
-			"changeType":"hideControl",
-			"reference":"sap.ui.rta.test.Demo.md",
-			"packageName":"$TMP",
-			"content":{},
-			"selector":{
-				"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-			},
-			"layer":"CUSTOMER",
-			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
-			"creation":"2018-10-16T08:00:07",
-			"originalLanguage":"EN",
-			"conditions":{},
-			"support":{
-				"generator":"Change.createInitialFileContent",
-				"service":"",
-				"user":""
-			}
-		},
-		{
-			"variantReference":"",
-			"fileName":"id_1445501120486_26",
-			"fileType":"change",
-			"changeType":"hideControl",
-			"reference":"sap.ui.rta.test.Demo.md",
-			"packageName":"$TMP",
-			"content":{},
-			"selector":{
-				"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-			},
-			"layer":"CUSTOMER",
-			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
-			"creation":"2018-10-16T08:00:02",
-			"originalLanguage":"EN",
-			"conditions":{},
-			"support":{
-				"generator":"Change.createInitialFileContent",
-				"service":"",
-				"user":""
-			}
-		},
-		{
-			"variantReference":"",
-			"fileName":"id_1445501120486_27",
-			"fileType":"change",
-			"changeType":"hideControl",
-			"reference":"sap.ui.rta.test.Demo.md",
-			"packageName":"$TMP",
-			"content":{},
-			"selector":{
-				"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-			},
-			"layer":"CUSTOMER",
-			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
-			"creation":"2018-10-16T08:00:01",
-			"originalLanguage":"EN",
-			"conditions":{},
-			"support":{
-				"generator":"Change.createInitialFileContent",
-				"service":"",
-				"user":""
-			}
-		}
-	],
 	"variants": [
 		{
 			"fileName":"variant0",
 			"fileType":"ctrl_variant",
 			"variantManagementReference":"vmReference1",
 			"variantReference":"",
-			"reference":"sap.ui.rta.test.Demo.md",
+			"reference":"flexReference",
 			"packageName":"$TMP",
 			"content":{
 				"title":"variant A"
@@ -90,7 +17,6 @@
 					"type": "myTextType"
 				}
 			},
-			"namespace":"sap.ui.rta.test.Demo.md",
 			"creation":"",
 			"originalLanguage":"EN",
 			"conditions":{},
@@ -105,14 +31,13 @@
 			"fileType":"ctrl_variant",
 			"variantManagementReference":"vmReference1",
 			"variantReference":"variant0",
-			"reference":"sap.ui.rta.test.Demo.md",
+			"reference":"flexReference",
 			"packageName":"$TMP",
 			"content":{
 				"title":"variant AA"
 			},
 			"layer":"CUSTOMER",
 			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
 			"creation":"",
 			"originalLanguage":"EN",
 			"conditions":{},
@@ -127,14 +52,13 @@
 			"fileType":"ctrl_variant",
 			"variantManagementReference":"vmReference2",
 			"variantReference":"variant00",
-			"reference":"sap.ui.rta.test.Demo.md",
+			"reference":"flexReference",
 			"packageName":"$TMP",
 			"content":{
 				"title":"variant B"
 			},
 			"layer":"USER",
 			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
 			"creation":"",
 			"originalLanguage":"EN",
 			"conditions":{},
@@ -149,14 +73,13 @@
 			"fileType": "ctrl_variant",
 			"variantManagementReference": "vmReference2",
 			"variantReference": "",
-			"reference": "sap.ui.rta.test.Demo.md",
+			"reference": "flexReference",
 			"packageName": "$TMP",
 			"content": {
 				"title": "variant C"
 			},
 			"layer": "CUSTOMER",
 			"texts": {},
-			"namespace": "sap.ui.rta.test.Demo.md",
 			"creation": "",
 			"originalLanguage": "EN",
 			"conditions": {},
@@ -171,14 +94,13 @@
 			"fileType":"ctrl_variant",
 			"variantManagementReference":"vmReference2",
 			"variantReference":"",
-			"reference":"sap.ui.rta.test.Demo.md",
+			"reference":"flexReference",
 			"packageName":"$TMP",
 			"content":{
 				"title":"variant A"
 			},
 			"layer":"CUSTOMER",
 			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
 			"creation":"",
 			"originalLanguage":"EN",
 			"conditions":{},
@@ -193,14 +115,13 @@
 			"fileType":"ctrl_variant",
 			"variantManagementReference":"vmReference2",
 			"variantReference":"",
-			"reference":"sap.ui.rta.test.Demo.md",
+			"reference":"flexReference",
 			"packageName":"$TMP",
 			"content":{
 				"title":"variant A"
 			},
 			"layer":"CUSTOMER",
 			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
 			"creation":"",
 			"originalLanguage":"EN",
 			"conditions":{},
@@ -215,14 +136,13 @@
 			"fileType":"ctrl_variant",
 			"variantManagementReference":"vmReference3",
 			"variantReference":"vmReference3",
-			"reference":"sap.ui.rta.test.Demo.md",
+			"reference":"flexReference",
 			"packageName":"$TMP",
 			"content":{
 				"title":"variant AB"
 			},
 			"layer":"CUSTOMER",
 			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
 			"creation":"",
 			"originalLanguage":"EN",
 			"conditions":{},
@@ -241,6 +161,7 @@
 			"selector": {
 				"id": "invisibleVariant"
 			},
+			"layer":"CUSTOMER",
 			"content": {
 				"visible": false,
 				"createdByReset": true
@@ -411,7 +332,7 @@
 			"fileName":"id_1445501120486_41",
 			"fileType":"change",
 			"changeType":"hideControl",
-			"reference":"sap.ui.rta.test.Demo.md",
+			"reference":"flexReference",
 			"packageName":"$TMP",
 			"content":{},
 			"selector":{
@@ -419,7 +340,6 @@
 			},
 			"layer":"VENDOR",
 			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
 			"creation":"2018-10-16T08:00:02",
 			"originalLanguage":"EN",
 			"conditions":{},
@@ -434,7 +354,7 @@
 			"fileName":"id_1445501120486_42",
 			"fileType":"change",
 			"changeType":"hideControl",
-			"reference":"sap.ui.rta.test.Demo.md",
+			"reference":"flexReference",
 			"packageName":"$TMP",
 			"content":{},
 			"selector":{
@@ -442,7 +362,6 @@
 			},
 			"layer":"CUSTOMER",
 			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
 			"creation":"2018-10-16T08:00:01",
 			"originalLanguage":"EN",
 			"conditions":{},
@@ -457,7 +376,7 @@
 			"fileName":"id_1445501120486_43",
 			"fileType":"change",
 			"changeType":"hideControl",
-			"reference":"sap.ui.rta.test.Demo.md",
+			"reference":"flexReference",
 			"packageName":"$TMP",
 			"content":{},
 			"selector":{
@@ -465,7 +384,6 @@
 			},
 			"layer":"VENDOR",
 			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
 			"creation":"2018-10-16T08:00:04",
 			"originalLanguage":"EN",
 			"conditions":{},
@@ -480,7 +398,7 @@
 			"fileName":"id_1445501120486_41",
 			"fileType":"change",
 			"changeType":"hideControl",
-			"reference":"sap.ui.rta.test.Demo.md",
+			"reference":"flexReference",
 			"packageName":"$TMP",
 			"content":{},
 			"selector":{
@@ -488,7 +406,6 @@
 			},
 			"layer":"VENDOR",
 			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
 			"creation":"",
 			"originalLanguage":"EN",
 			"conditions":{},
@@ -503,7 +420,7 @@
 			"fileName":"id_1445501120486_44",
 			"fileType":"change",
 			"changeType":"hideControl",
-			"reference":"sap.ui.rta.test.Demo.md",
+			"reference":"flexReference",
 			"packageName":"$TMP",
 			"content":{},
 			"selector":{
@@ -511,7 +428,6 @@
 			},
 			"layer":"CUSTOMER",
 			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
 			"creation":"",
 			"originalLanguage":"EN",
 			"conditions":{},
@@ -526,7 +442,7 @@
 			"fileName":"id_1445501120486_41",
 			"fileType":"change",
 			"changeType":"hideControl",
-			"reference":"sap.ui.rta.test.Demo.md",
+			"reference":"flexReference",
 			"packageName":"$TMP",
 			"content":{},
 			"selector":{
@@ -534,7 +450,6 @@
 			},
 			"layer":"CUSTOMER",
 			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
 			"creation":"",
 			"originalLanguage":"EN",
 			"conditions":{},
@@ -549,7 +464,7 @@
 			"fileName":"id_1445501120486_42",
 			"fileType":"change",
 			"changeType":"hideControl",
-			"reference":"sap.ui.rta.test.Demo.md",
+			"reference":"flexReference",
 			"packageName":"$TMP",
 			"content":{},
 			"selector":{
@@ -557,7 +472,6 @@
 			},
 			"layer":"CUSTOMER",
 			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
 			"creation":"",
 			"originalLanguage":"EN",
 			"conditions":{},
@@ -572,7 +486,7 @@
 			"fileName":"id_1445501120486_51",
 			"fileType":"change",
 			"changeType":"hideControl",
-			"reference":"sap.ui.rta.test.Demo.md",
+			"reference":"flexReference",
 			"packageName":"$TMP",
 			"content":{},
 			"selector":{
@@ -580,7 +494,6 @@
 			},
 			"layer":"CUSTOMER",
 			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
 			"creation":"",
 			"originalLanguage":"EN",
 			"conditions":{},
@@ -595,7 +508,7 @@
 			"fileName":"id_1445501120486_52",
 			"fileType":"change",
 			"changeType":"hideControl",
-			"reference":"sap.ui.rta.test.Demo.md",
+			"reference":"flexReference",
 			"packageName":"$TMP",
 			"content":{},
 			"selector":{
@@ -603,7 +516,6 @@
 			},
 			"layer":"CUSTOMER",
 			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
 			"creation":"",
 			"originalLanguage":"EN",
 			"conditions":{},
@@ -618,7 +530,7 @@
 			"fileName":"id_1445501120486_51",
 			"fileType":"change",
 			"changeType":"hideControl",
-			"reference":"sap.ui.rta.test.Demo.md",
+			"reference":"flexReference",
 			"packageName":"$TMP",
 			"content":{},
 			"selector":{
@@ -626,7 +538,6 @@
 			},
 			"layer":"USER",
 			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
 			"creation":"",
 			"originalLanguage":"EN",
 			"conditions":{},
@@ -641,7 +552,7 @@
 			"fileName":"id_1445501120486_53",
 			"fileType":"change",
 			"changeType":"hideControl",
-			"reference":"sap.ui.rta.test.Demo.md",
+			"reference":"flexReference",
 			"packageName":"$TMP",
 			"content":{},
 			"selector":{
@@ -649,7 +560,6 @@
 			},
 			"layer":"USER",
 			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
 			"creation":"",
 			"originalLanguage":"EN",
 			"conditions":{},
@@ -664,7 +574,7 @@
 			"fileName":"id_1445501120999_53",
 			"fileType":"change",
 			"changeType":"hideControl",
-			"reference":"sap.ui.rta.test.Demo.md",
+			"reference":"flexReference",
 			"packageName":"$TMP",
 			"content":{},
 			"selector":{
@@ -672,7 +582,6 @@
 			},
 			"layer":"USER",
 			"texts":{},
-			"namespace":"sap.ui.rta.test.Demo.md",
 			"creation":"",
 			"originalLanguage":"EN",
 			"conditions":{},
@@ -688,6 +597,7 @@
 			"fileName": "id_1510920910626_29_setDefault",
 			"fileType": "ctrl_variant_management_change",
 			"changeType": "setDefault",
+			"layer": "CUSTOMER",
 			"content": {
 				"defaultVariant": "variant0"
 			},
@@ -699,6 +609,7 @@
 			"fileName": "id_1510920910626_30_setDefault",
 			"fileType": "ctrl_variant_management_change",
 			"changeType": "setDefault",
+			"layer": "CUSTOMER",
 			"content": {
 				"defaultVariant": "variant00"
 			},
@@ -710,6 +621,7 @@
 			"fileName": "id_1510920910626_30_setDefault",
 			"fileType": "ctrl_variant_management_change",
 			"changeType": "setDefault",
+			"layer": "CUSTOMER",
 			"content": {
 				"defaultVariant": "foo"
 			},

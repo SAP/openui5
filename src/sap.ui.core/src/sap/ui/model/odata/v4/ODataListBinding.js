@@ -549,7 +549,8 @@ sap.ui.define([
 
 	/**
 	 * The 'selectionChanged' event is fired if the selection state of a context changes; for more
-	 * information see {@link sap.ui.model.odata.v4.Context#setSelected}.
+	 * information see {@link sap.ui.model.odata.v4.Context#setSelected}. This event was
+	 * experimental as of version 1.126.0.
 	 *
 	 * @param {sap.ui.base.Event} oEvent The event object
 	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
@@ -559,8 +560,8 @@ sap.ui.define([
 	 *   The context for which {@link sap.ui.model.odata.v4.Context#setSelected} was called
 	 *
 	 * @event sap.ui.model.odata.v4.ODataListBinding#selectionChanged
-	 * @experimental As of version 1.126.0
 	 * @public
+	 * @since 1.130.0
 	 */
 
 	/**

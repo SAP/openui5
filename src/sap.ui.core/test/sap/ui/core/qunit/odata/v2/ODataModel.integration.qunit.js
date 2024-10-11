@@ -1949,6 +1949,28 @@ sap.ui.define([
 			});
 
 			return oPromise;
+		},
+
+		/**
+		 * Returns a promise which resolves after the given callback function has been called with the given field help
+		 * hotspots.
+		 *
+		 * @param {object} assert
+		 *   The QUnit assert object
+		 * @param {function} fnUpdateHotspotsStub
+		 *   A sinon stub used as update hotspot callback when activating the field help
+		 * @param {object[]} aExpectedHotspots
+		 *   The array of expected hotspots
+		 * @returns {Promise}
+		 *   A promise that is resolved when the callback has been called with the expected hotspots
+		 */
+		waitForFieldHelpUpdate(assert, fnUpdateHotspotsStub, aExpectedHotspots) {
+			return new Promise((resolve) => {
+				fnUpdateHotspotsStub.callsFake((aCurrentHotspots) => {
+					assert.deepEqual(aCurrentHotspots.sort(compareHotspots), aExpectedHotspots.sort(compareHotspots));
+					resolve();
+				});
+			});
 		}
 	});
 
@@ -23525,8 +23547,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// information is updated accordingly.
 	// JIRA: CPOUI5MODELS-1740
 	QUnit.test("Field Help", function (assert) {
-		const oModel = createSalesOrdersModel({defaultBindingMode: BindingMode.TwoWay});
-		const oFilterModel = new JSONModel({filter: "42"});
 		const sView = `
 <Label labelFor="FilterWithFieldHelp" text="Label for filter with field help" />
 <Input id="FilterWithFieldHelp" value="Foo Bar" />
@@ -23575,19 +23595,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	<Label labelFor="Note0" text="Label for Item or Sales Order Note" />
 	<Input id="Note0" value="{Note}" />
 </FlexBox>`;
-		let fnResolve;
-		function updateCallback(aCurrentHotspots) {
-			fnResolve(aCurrentHotspots);
-		}
-		function waitForUpdate(aHotspots, sTestTitle) {
-			const aExpectedHotspots = aHotspots;
-			return new Promise((resolve) => {
-				fnResolve = resolve;
-			}).then((aCurrentHotspots) => {
-				assert.deepEqual(aCurrentHotspots.sort(compareHotspots), aExpectedHotspots.sort(compareHotspots),
-					"Update called: " + sTestTitle);
-			});
-		}
 
 		this.expectHeadRequest()
 			.expectRequest("SalesOrderSet('1')", {
@@ -23604,7 +23611,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectValue("DeliveryStatus", "N")
 			.expectValue("Note", "Sales Order Note");
 
-		return this.createView(assert, sView, {undefined: oModel, filter: oFilterModel}).then(() => {
+		return this.createView(assert, sView, createSalesOrdersModel()).then(() => {
 			const oView = this.oView;
 			// manually add documentation refs - simulate filter fields
 			const oFilterWithFieldHelp = oView.byId("FilterWithFieldHelp");
@@ -23616,50 +23623,44 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			FieldHelpUtil.setDocumentationRef(oFilterDynamicallyDestroyed,
 				"urn:sap-com:documentation:key?=type=DTEL&id=SALESORDERID");
 			const aExpectedHotspots = [{
-				"backendHelpKey": {id: "FOO", type: "DTEL"},
-				"hotspotId": oFilterWithFieldHelp.getId(),
-				"labelText": "Label for filter with field help"
+				backendHelpKey: {id: "FOO", type: "DTEL"},
+				hotspotId: oFilterWithFieldHelp.getId(),
+				labelText: "Label for filter with field help"
 			}, {
-				"backendHelpKey": {id: "Bar", origin: "Origin", type: "DTEL"},
-				"hotspotId": oFilterWithFieldHelp.getId(),
-				"labelText": "Label for filter with field help"
+				backendHelpKey: {id: "Bar", origin: "Origin", type: "DTEL"},
+				hotspotId: oFilterWithFieldHelp.getId(),
+				labelText: "Label for filter with field help"
 			}, { // documentation ref from OData annotation
-				"backendHelpKey": {id: "NOTE", origin: "MyOrigin", type: "DTEL"},
-				"hotspotId": oView.byId("Note").getId(),
-				"labelText": "Label for Note"
+				backendHelpKey: {id: "NOTE", origin: "MyOrigin", type: "DTEL"},
+				hotspotId: oView.byId("Note").getId(),
+				labelText: "Label for Note"
 			}, { // documentation ref from OData annotation - composite binding part 0
-				"backendHelpKey": {id: "GROSSAMOUNT", type: "DTEL"},
-				"hotspotId": oView.byId("Amount0").getId(),
-				"labelText": "Label for both amount and currency"
+				backendHelpKey: {id: "GROSSAMOUNT", type: "DTEL"},
+				hotspotId: oView.byId("Amount0").getId(),
+				labelText: "Label for both amount and currency"
 			}, { // documentation ref from OData annotation - composite binding part 1
-				"backendHelpKey": {id: "/FOO/CURRENCY", type: "DTEL"},
-				"hotspotId": oView.byId("Amount0").getId(),
-				"labelText": "Label for both amount and currency"
+				backendHelpKey: {id: "/FOO/CURRENCY", type: "DTEL"},
+				hotspotId: oView.byId("Amount0").getId(),
+				labelText: "Label for both amount and currency"
 			}, { // documentation ref from OData annotation - composite binding showning only one part
-				"backendHelpKey": {id: "GROSSAMOUNT", type: "DTEL"},
-				"hotspotId": oView.byId("Amount1").getId(),
-				"labelText": "Label for amount only"
+				backendHelpKey: {id: "GROSSAMOUNT", type: "DTEL"},
+				hotspotId: oView.byId("Amount1").getId(),
+				labelText: "Label for amount only"
 			}];
-			const oUpdateCalledPromise = waitForUpdate(aExpectedHotspots, "initial activation");
+			const fnUpdateHotspots = this.stub();
 
 			// code under test
-			FieldHelp.getInstance().activate(updateCallback);
+			FieldHelp.getInstance().activate(fnUpdateHotspots);
 
 			// code under test - destroy a field with field help - async callback does not consider that control
 			oFilterDynamicallyDestroyed.destroy();
 
+			const fnWaitForFieldHelpUpdate = this.waitForFieldHelpUpdate.bind(this, assert, fnUpdateHotspots);
 			return Promise.all([
-				oUpdateCalledPromise,
+				fnWaitForFieldHelpUpdate(aExpectedHotspots),
 				this.waitForChanges(assert, "Initial activation")
 			]).then(() => {
 				const oLateFilterField = new Input();
-				const oUpdateCalledPromise = waitForUpdate([
-					...aExpectedHotspots,
-					{
-						"backendHelpKey": {id: "BAZ", type: "DTEL"},
-						"hotspotId": oLateFilterField.getId(),
-						"labelText": "Label for late filter field"
-					}], "late creation of a filter field");
 
 				// code under test - field help is active; add a filter field with field help afterwards
 				FieldHelpUtil.setDocumentationRef(oLateFilterField, "urn:sap-com:documentation:key?=type=DTEL&id=BAZ");
@@ -23668,27 +23669,18 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				oForm.addItem(new Label({labelFor: oLateFilterField.getId(), text: "Label for late filter field"}));
 				oForm.addItem(oLateFilterField);
 
-				return oUpdateCalledPromise.then(() => {
-					const oUpdateCalledPromise = waitForUpdate(aExpectedHotspots, "late destroying a filter field");
-
+				return fnWaitForFieldHelpUpdate([...aExpectedHotspots, {
+						backendHelpKey: {id: "BAZ", type: "DTEL"},
+						hotspotId: oLateFilterField.getId(),
+						labelText: "Label for late filter field"
+					}]
+				).then(() => {
 					// code under test - destroy late filter field again
 					oLateFilterField.destroy();
 
-					return oUpdateCalledPromise;
+					return fnWaitForFieldHelpUpdate(aExpectedHotspots);
 				});
 			}).then(() => {
-				const oUpdateCalledPromise = waitForUpdate([
-					...aExpectedHotspots,
-					{
-						"backendHelpKey": {id: "GROSSAMOUNT", type: "DTEL"},
-						"hotspotId": oView.byId("Amount2").getId(),
-						"labelText": "Label for both amount and currency, lazy bound"
-					}, {
-						"backendHelpKey": {id: "/FOO/CURRENCY", type: "DTEL"},
-						"hotspotId": oView.byId("Amount2").getId(),
-						"labelText": "Label for both amount and currency, lazy bound"
-					}], "late composite binding");
-
 				// code under test - field help is active; create new composite binding with field help afterwards
 				oView.byId("Amount2").bindProperty("value", {
 					parts: [{
@@ -23703,14 +23695,20 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					type: 'sap.ui.model.type.Currency'
 				});
 
-				return oUpdateCalledPromise;
+				return fnWaitForFieldHelpUpdate([...aExpectedHotspots, {
+						backendHelpKey: {id: "GROSSAMOUNT", type: "DTEL"},
+						hotspotId: oView.byId("Amount2").getId(),
+						labelText: "Label for both amount and currency, lazy bound"
+					}, {
+						backendHelpKey: {id: "/FOO/CURRENCY", type: "DTEL"},
+						hotspotId: oView.byId("Amount2").getId(),
+						labelText: "Label for both amount and currency, lazy bound"
+					}]);
 			}).then(() => {
-				const oUpdateCalledPromise = waitForUpdate(aExpectedHotspots, "late destroying a binding");
-
 				// code under test - field help is active; destroy a binding with field help afterwards
 				oView.byId("Amount2").unbindProperty("value");
 
-				return oUpdateCalledPromise;
+				return fnWaitForFieldHelpUpdate(aExpectedHotspots);
 			}).then(() => {
 				this.expectRequest("SalesOrderLineItemSet(SalesOrderID='1', ItemPosition='1')", {
 						__metadata: {uri: "SalesOrderLineItemSet(SalesOrderID='1', ItemPosition='1')"},
@@ -23719,30 +23717,20 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						SalesOrderID: "1"
 					})
 					.expectValue("Note0", "Sales Order Item Note");
-				const oUpdateCalledPromise = waitForUpdate([
-					...aExpectedHotspots,
-					{
-						"backendHelpKey": {id: "ITEMNOTE", type: "DTEL"},
-						"hotspotId": oView.byId("Note0").getId(),
-						"labelText": "Label for Item or Sales Order Note"
-					}], "late initially setting a binding context");
 
 				// code under test - field help is active; initially set a context for a binding with field help
 				// afterwards
 				oView.byId("form0").bindObject({path: "/SalesOrderLineItemSet(SalesOrderID='1', ItemPosition='1')"});
 
 				return Promise.all([
-					oUpdateCalledPromise,
+					fnWaitForFieldHelpUpdate([...aExpectedHotspots,{
+							backendHelpKey: {id: "ITEMNOTE", type: "DTEL"},
+							hotspotId: oView.byId("Note0").getId(),
+							labelText: "Label for Item or Sales Order Note"
+						}]),
 					this.waitForChanges(assert, "Bind SalesOrderLineItem to form0")
 				]);
 			}).then(() => {
-				const oUpdateCalledPromise = waitForUpdate([
-					...aExpectedHotspots,
-					{
-						"backendHelpKey": {id: "NOTE", origin: "MyOrigin", type: "DTEL"},
-						"hotspotId": oView.byId("Note0").getId(),
-						"labelText": "Label for Item or Sales Order Note"
-					}], "late changing a binding context to different entity");
 				this.expectValue("Note0", "Sales Order Note");
 
 				// code under test - field help is active; set a context of a different entity for a binding with field
@@ -23750,18 +23738,21 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				oView.byId("form0").bindObject({path: "/SalesOrderSet('1')", parameters: {select: 'Note'}});
 
 				return Promise.all([
-					oUpdateCalledPromise,
+					fnWaitForFieldHelpUpdate([...aExpectedHotspots, {
+						backendHelpKey: {id: "NOTE", origin: "MyOrigin", type: "DTEL"},
+						hotspotId: oView.byId("Note0").getId(),
+						labelText: "Label for Item or Sales Order Note"
+					}]),
 					this.waitForChanges(assert, "Bind SalesOrder to form0")
 				]);
 			}).then(() => {
-				const oUpdateCalledPromise = waitForUpdate(aExpectedHotspots, "late removing a binding context");
 				this.expectValue("Note0", "");
 
 				// code under test - field help is active; remove the context for a binding with field help afterwards
 				oView.byId("form0").unbindObject();
 
 				return Promise.all([
-					oUpdateCalledPromise,
+					fnWaitForFieldHelpUpdate(aExpectedHotspots),
 					this.waitForChanges(assert, "Unbind form0")
 				]);
 			});
@@ -23779,7 +23770,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// a BindingInfo.OriginalParent symbol assigned.
 	// JIRA: CPOUI5MODELS-1761
 	QUnit.test("Field Help: fieldHelpDisplay association and BindingInfo.OriginalParent symbol", function (assert) {
-		const oModel = createSalesOrdersModel({defaultBindingMode: BindingMode.TwoWay});
 		const sView = `
 <FlexBox id="form" binding="{/SalesOrderSet('1')}">
 	<Label labelFor="ShowFieldHelp0" text="Element displaying field help" />
@@ -23853,19 +23843,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		<Input id="Note1" value="{path: 'Note', type: 'sap.ui.model.odata.type.String'}" />
 	</FlexBox>
 </FlexBox>`;
-		let fnResolve;
-		function updateCallback(aCurrentHotspots) {
-			fnResolve(aCurrentHotspots);
-		}
-		function waitForUpdate(aHotspots, sTestTitle) {
-			const aExpectedHotspots = aHotspots;
-			return new Promise((resolve) => {
-				fnResolve = resolve;
-			}).then((aCurrentHotspots) => {
-				assert.deepEqual(aCurrentHotspots.sort(compareHotspots), aExpectedHotspots.sort(compareHotspots),
-					"Update called: " + sTestTitle);
-			});
-		}
 
 		this.expectHeadRequest()
 			.expectRequest("SalesOrderSet('1')", {
@@ -23881,42 +23858,89 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectValue("Amount0", "1.23\xa0EUR")
 			.expectValue("Note", "Sales Order Note");
 
-		return this.createView(assert, sView, {undefined: oModel, filter: new JSONModel({filter: "42"})}).then(() => {
+		return this.createView(assert, sView, createSalesOrdersModel()).then(() => {
 			const oView = this.oView;
 			oView.byId("ParentWithFieldHelpDisplay").setFieldHelpDisplay(oView.byId("ShowFieldHelp0"));
 			oView.byId("ParentWithOriginalParentSymbol")[BindingInfo.OriginalParent] = oView.byId("ShowFieldHelp1");
-			const aExpectedHotspots = [{
-				"backendHelpKey": {id: "GROSSAMOUNT", type: "DTEL"},
-				"hotspotId": oView.byId("ShowFieldHelp0").getId(),
-				"labelText": "Element displaying field help"
-			}, {
-				"backendHelpKey": {id: "/FOO/CURRENCY", type: "DTEL"},
-				"hotspotId": oView.byId("ShowFieldHelp0").getId(),
-				"labelText": "Element displaying field help"
-			}, {
-				"backendHelpKey": {id: "NOTE", origin: "MyOrigin", type: "DTEL"},
-				"hotspotId": oView.byId("ShowFieldHelp0").getId(),
-				"labelText": "Element displaying field help"
-			},{
-				"backendHelpKey": {id: "GROSSAMOUNT", type: "DTEL"},
-				"hotspotId": oView.byId("ShowFieldHelp1").getId(),
-				"labelText": "Element displaying field help (OriginalParent)"
-			}, {
-				"backendHelpKey": {id: "/FOO/CURRENCY", type: "DTEL"},
-				"hotspotId": oView.byId("ShowFieldHelp1").getId(),
-				"labelText": "Element displaying field help (OriginalParent)"
-			}, {
-				"backendHelpKey": {id: "NOTE", origin: "MyOrigin", type: "DTEL"},
-				"hotspotId": oView.byId("ShowFieldHelp1").getId(),
-				"labelText": "Element displaying field help (OriginalParent)"
-			}];
-			const oUpdateCalledPromise = waitForUpdate(aExpectedHotspots, "initial activation");
+			const sShowFieldHelp0Id = oView.byId("ShowFieldHelp0").getId();
+			const sShowFieldHelp1Id = oView.byId("ShowFieldHelp1").getId();
+			const fnUpdateHotspots = this.stub();
 
 			// code under test
-			FieldHelp.getInstance().activate(updateCallback);
+			FieldHelp.getInstance().activate(fnUpdateHotspots);
 
 			return Promise.all([
-				oUpdateCalledPromise,
+				this.waitForFieldHelpUpdate(assert, fnUpdateHotspots, [{
+					backendHelpKey: {id: "GROSSAMOUNT", type: "DTEL"},
+					hotspotId: sShowFieldHelp0Id,
+					labelText: "Element displaying field help"
+				}, {
+					backendHelpKey: {id: "/FOO/CURRENCY", type: "DTEL"},
+					hotspotId: sShowFieldHelp0Id,
+					labelText: "Element displaying field help"
+				}, {
+					backendHelpKey: {id: "NOTE", origin: "MyOrigin", type: "DTEL"},
+					hotspotId: sShowFieldHelp0Id,
+					labelText: "Element displaying field help"
+				},{
+					backendHelpKey: {id: "GROSSAMOUNT", type: "DTEL"},
+					hotspotId: sShowFieldHelp1Id,
+					labelText: "Element displaying field help (OriginalParent)"
+				}, {
+					backendHelpKey: {id: "/FOO/CURRENCY", type: "DTEL"},
+					hotspotId: sShowFieldHelp1Id,
+					labelText: "Element displaying field help (OriginalParent)"
+				}, {
+					backendHelpKey: {id: "NOTE", origin: "MyOrigin", type: "DTEL"},
+					hotspotId: sShowFieldHelp1Id,
+					labelText: "Element displaying field help (OriginalParent)"
+				}]),
+				this.waitForChanges(assert, "Initial activation")
+			]);
+		}).finally(() => {
+			FieldHelp.getInstance().deactivate();
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: If there is a control (e.g. a sap.m.Select) which has already field help information for certain
+	// properties and the control has an aggregation (e.g. "items") with other properties having field help
+	// information, then avoid sending duplicate entries to the SAP Companion.
+	// SNOW: DINC0285223
+	QUnit.test("Field Help: avoid duplicate entries", function (assert) {
+		const sView = `
+<FlexBox id="form" binding="{/SalesOrderSet('1')}">
+	<Label labelFor="select" text="Currency" />
+	<Select id="select" selectedKey="{CurrencyCode}" items="{/VH_CurrencySet}">
+		<MenuItem key="{Waers}" text="{Ltext}" />
+	</Select>
+</FlexBox>`;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
+				__metadata: {uri: "SalesOrderSet('1')"},
+				CurrencyCode: "EUR",
+				SalesOrderID: "1"
+			})
+			.expectRequest("VH_CurrencySet?$skip=0&$top=100", {
+				results: [
+					{__metadata: {uri: "/VH_CurrencySet('EUR')"}, Waers: "EUR", Ltext: "European Euro"},
+					{__metadata: {uri: "/VH_CurrencySet('USD')"}, Waers: "USD", Ltext: "United States Dollar"}
+				]
+			});
+
+		return this.createView(assert, sView, createSalesOrdersModel()).then(() => {
+			const fnUpdateHotspots = this.stub();
+
+			// code under test
+			FieldHelp.getInstance().activate(fnUpdateHotspots);
+
+			const sSelectId = this.oView.byId("select").getId();
+			return Promise.all([
+				this.waitForFieldHelpUpdate(assert, fnUpdateHotspots, [
+					{backendHelpKey: {id: "/FOO/CURRENCY", type: "DTEL"}, hotspotId: sSelectId, labelText: "Currency"},
+					{backendHelpKey: {id: "LTEXT", type: "DTEL"}, hotspotId: sSelectId, labelText: "Currency"}
+				]),
 				this.waitForChanges(assert, "Initial activation")
 			]);
 		}).finally(() => {

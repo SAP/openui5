@@ -45,6 +45,7 @@ sap.ui.define([
 	 * @typedef {object} sap.ui.mdc.valuehelp.content.GroupLabel
 	 * @property {string} label Label with counter. The placeholder for counter needs to be defined with <code>{0}</code>
 	 * @property {string} nnLabel Label without counter
+	 * @since 1.101
 	 * @public
 	 */
 
@@ -101,8 +102,8 @@ sap.ui.define([
 				 * <b>Sample:</b>
 				 * <pre>
 				 * {
-				 * group1: {label: "Label 1", nnLabel: "Label 1 ({0})"},
-				 * group2: {label: "Label 2", nnLabel: "Label 2 ({0})"}
+				 * group1: {label: "Label 1 ({0})", nnLabel: "Label 1"},
+				 * group2: {label: "Label 2 ({0})", nnLabel: "Label 2"}
 				 * }
 				 * </pre>
 				 */
