@@ -10,15 +10,15 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.DataAggregation.DataAggregation", {
-		onExit : function () {
-			this.getView().getModel("ui").destroy();
-			return Controller.prototype.onExit.apply(this, arguments);
-		},
-
 		onDownload : function () {
 			this.byId("table").getBinding("rows").requestDownloadUrl().then(function (sUrl) {
 				window.open(sUrl, sUrl);
 			});
+		},
+
+		onExit : function () {
+			this.getView().getModel("ui").destroy();
+			return Controller.prototype.onExit.apply(this, arguments);
 		},
 
 		onInit : function () {

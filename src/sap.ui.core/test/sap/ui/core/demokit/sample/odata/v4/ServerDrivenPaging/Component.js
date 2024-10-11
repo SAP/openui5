@@ -30,13 +30,15 @@ sap.ui.define([
 				}),
 				oModel = this.getModel();
 
+			this.oUiModel = new JSONModel({
+				bRealOData : TestUtils.isRealOData()
+			});
+
 			View.create({
 				async : true,
 				models : {
 					undefined : oModel,
-					ui : new JSONModel({
-						bRealOData : TestUtils.isRealOData()
-					})
+					ui : this.oUiModel
 				},
 				type : ViewType.XML,
 				viewName : "sap.ui.core.sample.odata.v4.ServerDrivenPaging.Main"
@@ -45,6 +47,10 @@ sap.ui.define([
 			});
 
 			return oLayout;
+		},
+
+		exit : function () {
+			this.oUiModel.destroy();
 		}
 	});
 });
