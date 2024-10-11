@@ -918,7 +918,7 @@ sap.ui.define([
 
 		if (oHeaderContent && oHeaderContent.supportsPinUnpin() && this._bPinned) {
 			this._unPin(bUserInteraction);
-			oHeaderContent.getAggregation("_pinButton").setPressed(false);
+			oHeaderContent._togglePinButton(false);
 			bAppendHeaderToContent = true;
 		}
 

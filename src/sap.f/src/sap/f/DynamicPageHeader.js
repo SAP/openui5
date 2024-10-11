@@ -383,7 +383,11 @@ sap.ui.define([
 		};
 
 		DynamicPageHeader.prototype.onThemeChanged = function () {
+			var oPinButton = this._getPinButton();
 			this._setPressedStatePinIcon();
+
+			// Theme change event may be fired after the control was rendered and _togglePinButton was already called (if icon should be pressed, we need to update it here)
+			oPinButton.setIcon(oPinButton.getPressed() ? this._sPressedStatePinIconURI : DynamicPageHeader.UNPRESSED_PIN_ICON);
 		};
 
 		/**
