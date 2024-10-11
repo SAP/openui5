@@ -36,7 +36,10 @@ sap.ui.define([
 			vReference: sVariantReference
 		};
 		const aVMChanges = VariantManagementState.getVariantManagementChanges(mPropertyBag);
-		const aControlChanges = VariantManagementState.getControlChangesForVariant(mPropertyBag);
+		const aControlChanges = VariantManagementState.getControlChangesForVariant({
+			...mPropertyBag,
+			includeReferencedChanges: false
+		});
 		const oVariant = VariantManagementState.getVariant(mPropertyBag).instance;
 		const aVariantChanges = VariantManagementState.getVariantChangesForVariant(mPropertyBag);
 
