@@ -802,6 +802,26 @@ sap.ui.define([
 		assert.ok(secondFilterFirstPageRequested, "First page should be requested for the second filter");
 	});
 
+	QUnit.test("Initial load of data", async function (assert) {
+		const done = assert.async();
+		this.oCard.setManifest(oManifestServerSide);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		// Act
+		this.oCard.getCardFooter().getAggregation("_showMore").$().trigger("tap");
+		const oDialog = this.oCard.getDependents()[0];
+		const oPaginationCard = oDialog.getContent()[0];
+		await nextCardManifestAppliedEvent(oPaginationCard);
+		const oLoadMoreSpy = this.spy(oPaginationCard._oPaginator, "_loadMore");
+
+		oPaginationCard.attachEventOnce("_ready", () => {
+			assert.ok(oLoadMoreSpy.callCount >= 1, "At least 1 more page should be loaded before _ready event of the card is fired");
+			done();
+		});
+	});
+
 	QUnit.module("Busy indicator", {
 		beforeEach: function () {
 			this.oCard = new Card({
