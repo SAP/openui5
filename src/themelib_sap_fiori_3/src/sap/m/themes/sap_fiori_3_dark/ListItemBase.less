@@ -12,11 +12,11 @@
 }
 
 .sapMLIB.sapMLIBSelected {
-	border-bottom: 0.0625rem solid @sapUiListSelectionBorderColor;
+	border-bottom: 0.0625rem solid var(--sapList_SelectionBorderColor);
 }
 
 .sapMLIBActive.sapMLIBFocusable:focus {
-	outline-color: @sapUiContentContrastFocusColor;
+	outline-color: var(--sapContent_ContrastFocusColor);
 }
 
 /* Fix for IE/Edge visual appearance of buttons */
@@ -25,7 +25,7 @@
 	border-color: transparent;
 }
 
-// adding margin-right 0.75rem so that width + margin-right = 2.75rem (according to the specs)
+/* adding margin-right 0.75rem so that width + margin-right = 2.75rem (according to the specs) */
 .sapUiSizeCompact .sapMLIBSelectM,
 .sapUiSizeCompact .sapMListModeSingleSelectLeft > .sapMLIB > .sapMLIBSelectS {
 	margin-right: .75rem;
