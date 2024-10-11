@@ -1,6 +1,8 @@
+/*global QUnit,sinon*/
 sap.ui.define([
 	"sap/ui/dt/enablement/elementDesigntimeTest",
 	"sap/ui/rta/enablement/elementActionTest",
+	"sap/f/changeHandler/MoveDynamicPageTitleActions",
 	"sap/f/DynamicPageTitle",
 	"sap/m/Text",
 	"sap/m/Title",
@@ -10,6 +12,7 @@ sap.ui.define([
 function (
 	elementDesigntimeTest,
 	elementActionTest,
+	MoveDynamicPageTitleActions,
 	DynamicPageTitle,
 	Text,
 	Title,
@@ -586,6 +589,108 @@ function (
 			afterAction : fnConfirmActionsElement1IsOn3rdPosition,
 			afterUndo : fnConfirmActionsElement1IsOn1stPosition,
 			afterRedo : fnConfirmActionsElement1IsOn3rdPosition
+		});
+	})
+	.then(function() {
+
+		// --------- MOVING THE CONTROL'S ACTIONS CONTENT WHEN CONDENSING UNDEFINED ---------
+		// Check that condensing is skipped when getCondenserInfo returns undefined
+		var fnConfirmActionsElement1IsOn3rdPosition = function(oAppComponent, oViewAfterAction, assert) {
+
+		assert.strictEqual(oViewAfterAction.byId("action1").getId(),                   // Id of element at first position in original view
+			oViewAfterAction.byId("title").getActions()[2].getId(),   // Id of third element in group after change has been applied
+			"then the control has been moved to the right position");
+		};
+		var fnConfirmActionsElement1IsOn1stPosition = function(oAppComponent, oViewAfterAction, assert) {
+		assert.strictEqual(oViewAfterAction.byId("action1").getId(),                   // Id of element at first position in original view
+			oViewAfterAction.byId("title").getActions()[0].getId(),   // Id of first element in group after change has been undone
+			"then the control has been moved to the previous position");
+		};
+
+		// Use elementActionTest to check if a control is ready for the move action of UI adaptation
+		elementActionTest("Checking the move action for a simple control in DynamicPageTitle's action aggregation", {
+			xmlView : '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.f">' +
+				'<DynamicPageTitle id="title">' +
+					'<actions>' +
+					'<m:Button id="action1" text="Action 1" />' +
+					'<m:Button id="action2" text="Action 2" />' +
+					'<m:Button id="action3" text="Action 3" />' +
+					'</actions>' +
+				'</DynamicPageTitle>' +
+			'</mvc:View>'
+			,
+			action : {
+				name : "move",
+				controlId : "title",
+				parameter : function(oView) {
+					return {
+						movedElements : [{
+							element : oView.byId("action1"),
+							sourceIndex : 1,
+							targetIndex : 2
+						}],
+						source : {
+							aggregation: "actions",
+							parent: oView.byId("title")
+						},
+						target : {
+							aggregation: "actions",
+							parent: oView.byId("title")
+						}
+					};
+				}
+			},
+			previousActions: [ // OPTIONAL
+				{
+					name : "move",
+					controlId : "title",
+					parameter : function(oView) {
+						return {
+							movedElements : [{
+								element : oView.byId("action1"),
+								sourceIndex : 0,
+								targetIndex : 1
+							}],
+							source : {
+								aggregation: "actions",
+								parent: oView.byId("title")
+							},
+							target : {
+								aggregation: "actions",
+								parent: oView.byId("title")
+							}
+						};
+					}
+				}
+			],
+			changesAfterCondensing: 2, // no condensing when getCondenserInfo returns undefined
+			before: function() {
+				// Act: make getCondenserInfo return undefined
+				this.oStub = sinon.stub(MoveDynamicPageTitleActions, "getCondenserInfo").returns(undefined);
+			},
+			after: function() {
+				this.oStub.restore();
+				this.oStub = null;
+			},
+			afterAction : fnConfirmActionsElement1IsOn3rdPosition,
+			afterUndo : fnConfirmActionsElement1IsOn1stPosition,
+			afterRedo : fnConfirmActionsElement1IsOn3rdPosition
+		});
+	})
+	.then(function() {
+		QUnit.module("Legacy changes", function() {
+			QUnit.test("No condensing for changes with no targetAggregation and no targetContainer", function(assert) {
+				var oSpy = sinon.spy(MoveDynamicPageTitleActions, "getCondenserInfo");
+				var oMockChange = {
+					getContent: function() {
+						return {};
+					},
+					getRevertData: function() {}
+				};
+				MoveDynamicPageTitleActions.getCondenserInfo(oMockChange);
+				assert.ok(oSpy.returned(undefined), "getCondenserInfo return value is correct");
+				oSpy.restore();
+			});
 		});
 	});
 });
