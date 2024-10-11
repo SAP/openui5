@@ -91,7 +91,8 @@ sap.ui.define([
 			}
 			if (aAdditionalProperties.length === 1) {
 				if (!aProperties.some((oOtherProperty) => {
-					return oProperty.extension.additionalProperties[0] === oOtherProperty.key && oOtherProperty.text === oProperty.key;
+					const getKey = (oProperty) => oProperty.key || oProperty.name;
+					return oProperty.extension.additionalProperties[0] === getKey(oOtherProperty) && oOtherProperty.text === getKey(oProperty);
 				})) {
 					throw new Error("Invalid property definition: The property in 'additionalProperties' does not reference this property in"
 						+ " 'text'.");
