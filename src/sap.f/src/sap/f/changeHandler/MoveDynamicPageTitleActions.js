@@ -129,21 +129,24 @@ sap.ui.define([], function() {
 		MoveActions.getCondenserInfo = function(oChange) {
 			var oChangeContent = oChange.getContent();
 			var oRevertData = oChange.getRevertData();
-			return {
-				affectedControl: oChangeContent.movedElements[0].selector,
-				classification: sap.ui.fl.condenser.Classification.Move,
-				sourceContainer: oRevertData.sourceParent,
-				targetContainer: oChangeContent.targetContainer,
-				sourceIndex: oRevertData.index,
-				sourceAggregation: oRevertData.aggregation,
-				targetAggregation: oChangeContent.targetAggregation,
-				setTargetIndex: function(oChange, iNewTargetIndex) {
-					oChange.getContent().movedElements[0].targetIndex = iNewTargetIndex;
-				},
-				getTargetIndex: function(oChange) {
-					return oChange.getContent().movedElements[0].targetIndex;
-				}
-			};
+			var bSupportsCondenser = oChangeContent.targetAggregation && oChangeContent.targetContainer;
+			if (bSupportsCondenser) {
+				return {
+					affectedControl: oChangeContent.movedElements[0].selector,
+					classification: sap.ui.fl.condenser.Classification.Move,
+					sourceContainer: oRevertData.sourceParent,
+					targetContainer: oChangeContent.targetContainer,
+					sourceIndex: oRevertData.index,
+					sourceAggregation: oRevertData.aggregation,
+					targetAggregation: oChangeContent.targetAggregation,
+					setTargetIndex: function(oChange, iNewTargetIndex) {
+						oChange.getContent().movedElements[0].targetIndex = iNewTargetIndex;
+					},
+					getTargetIndex: function(oChange) {
+						return oChange.getContent().movedElements[0].targetIndex;
+					}
+				};
+			}
 		};
 
 		return MoveActions;
