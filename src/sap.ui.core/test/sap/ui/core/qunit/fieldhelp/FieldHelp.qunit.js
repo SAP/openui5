@@ -461,7 +461,7 @@ sap.ui.define([
 		const oElement1 = {getId() {}};
 		const oElement1Mock = this.mock(oElement1);
 		oElement1Mock.expects("getId").withExactArgs().returns("~element1");
-		oFieldHelpMock.expects("_updateHotspots").withExactArgs().withExactArgs().returns(oUpdateHotspotsPromise);
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
 		oUpdateHotspotsPromiseMock.expects("catch").withExactArgs(sinon.match.func).callThrough();
 
 		// code under test - multiple URNs for a control
@@ -471,7 +471,7 @@ sap.ui.define([
 		]);
 
 		oElement1Mock.expects("getId").withExactArgs().returns("~element1");
-		oFieldHelpMock.expects("_updateHotspots").withExactArgs().withExactArgs().returns(oUpdateHotspotsPromise);
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
 		oUpdateHotspotsPromiseMock.expects("catch").withExactArgs(sinon.match.func).callThrough();
 
 		// code under test - single URN for a control property
@@ -480,7 +480,7 @@ sap.ui.define([
 		]);
 
 		oElement1Mock.expects("getId").withExactArgs().returns("~element1");
-		oFieldHelpMock.expects("_updateHotspots").withExactArgs().withExactArgs().returns(oUpdateHotspotsPromise);
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
 		oUpdateHotspotsPromiseMock.expects("catch").withExactArgs(sinon.match.func).callThrough();
 
 		// code under test - duplicate URN for a different control property
@@ -516,7 +516,7 @@ sap.ui.define([
 		}]);
 
 		oElement1Mock.expects("getId").withExactArgs().returns("~element1");
-		oFieldHelpMock.expects("_updateHotspots").withExactArgs().withExactArgs().returns(oUpdateHotspotsPromise);
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
 		oUpdateHotspotsPromiseMock.expects("catch").withExactArgs(sinon.match.func).callThrough();
 
 		// code under test - overwrites existing control URN, e.g. caused by switching the parent context
@@ -543,14 +543,14 @@ sap.ui.define([
 		}]);
 
 		oElement1Mock.expects("getId").withExactArgs().returns("~element1");
-		oFieldHelpMock.expects("_updateHotspots").withExactArgs().withExactArgs().returns(oUpdateHotspotsPromise);
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
 		oUpdateHotspotsPromiseMock.expects("catch").withExactArgs(sinon.match.func).callThrough();
 
 		// code under test - delete URNs for the control
 		oFieldHelp._setFieldHelpDocumentationRefs(oElement1, undefined, []);
 
 		oElement1Mock.expects("getId").withExactArgs().returns("~element1");
-		oFieldHelpMock.expects("_updateHotspots").withExactArgs().withExactArgs().returns(oUpdateHotspotsPromise);
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
 		oUpdateHotspotsPromiseMock.expects("catch").withExactArgs(sinon.match.func).callThrough();
 
 		// code under test - delete URNs for a control property
@@ -571,7 +571,7 @@ sap.ui.define([
 		}]);
 
 		oElement1Mock.expects("getId").withExactArgs().returns("~element1");
-		oFieldHelpMock.expects("_updateHotspots").withExactArgs().withExactArgs().returns(oUpdateHotspotsPromise);
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
 		oUpdateHotspotsPromiseMock.expects("catch").withExactArgs(sinon.match.func).callThrough();
 
 		// code under test - remove all URNs of the last control property, of a control entry
@@ -587,7 +587,7 @@ sap.ui.define([
 		}]);
 
 		oElement0Mock.expects("getId").withExactArgs().returns("~element0");
-		oFieldHelpMock.expects("_updateHotspots").withExactArgs().withExactArgs().returns(oUpdateHotspotsPromise);
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
 		oUpdateHotspotsPromiseMock.expects("catch").withExactArgs(sinon.match.func).callThrough();
 
 		// code under test - remove the last registered URN
@@ -609,21 +609,27 @@ sap.ui.define([
 			"urn:sap-com:documentation:key?=type=~customType0&id=~customId0"
 		]);
 		const oElement1 = {getId() {return "~element1";}};
-		oFieldHelpMock.expects("_updateHotspots").withExactArgs().withExactArgs().returns(oUpdateHotspotsPromise);
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
 		oFieldHelp._setFieldHelpDocumentationRefs(oElement1, undefined, [
 			"urn:sap-com:documentation:key?=type=~customType1&id=~customId1&origin=~origin1"
 		]);
 		// Element2 has the same documentation ref as Element0 - does not appear in result
 		const oElement2 = {getId() {return "~element2";}};
-		oFieldHelpMock.expects("_updateHotspots").withExactArgs().withExactArgs().returns(oUpdateHotspotsPromise);
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
 		oFieldHelp._setFieldHelpDocumentationRefs(oElement2, undefined, [
 			"urn:sap-com:documentation:key?=type=~customType0&id=~customId0"
 		]);
 
-		const oHeaderElement = {};
-		this.mock(Element).expects("getElementById").withExactArgs("~HeaderElement").exactly(3).returns(oHeaderElement);
+		const oHeaderElement = {getId() {return "~HeaderElement";}};
+		// HeaderElement has the same documentation ref as Element1 - does not appear twice in the result
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
+		oFieldHelp._setFieldHelpDocumentationRefs(oHeaderElement, undefined, [
+			"urn:sap-com:documentation:key?=type=~customType1&id=~customId1&origin=~origin1"
+		]);
+
+		this.mock(Element).expects("getElementById").withExactArgs("~HeaderElement").exactly(4).returns(oHeaderElement);
 		this.mock(LabelEnablement).expects("_getLabelTexts").withExactArgs(sinon.match.same(oHeaderElement))
-			.exactly(3).returns(["~sLabel"]);
+			.exactly(4).returns(["~sLabel"]);
 		oFieldHelpMock.expects("_getFieldHelpDisplayMapping").withExactArgs().atLeast(1)
 			.returns({"~element0": "~HeaderElement", "~element1": "~HeaderElement", "~element2": "~HeaderElement"});
 

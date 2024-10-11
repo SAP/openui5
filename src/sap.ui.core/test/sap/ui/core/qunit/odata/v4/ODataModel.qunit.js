@@ -2441,17 +2441,16 @@ sap.ui.define([
 		assert.ok(fnFirstTask.calledOnce);
 		assert.ok(fnFirstTask.calledOn());
 		assert.ok(fnFirstTask.calledWithExactly());
-		assert.ok(fnFirstTask.calledAfter(fnPrerenderingTask0));
 
 		assert.ok(fnPrerenderingTask1.calledOnce);
 		assert.ok(fnPrerenderingTask1.calledOn());
 		assert.ok(fnPrerenderingTask1.calledWithExactly());
-		assert.ok(fnPrerenderingTask1.calledAfter(fnFirstTask));
 
 		assert.ok(fnLastTask.calledOnce);
 		assert.ok(fnLastTask.calledOn());
 		assert.ok(fnLastTask.calledWithExactly());
-		assert.ok(fnLastTask.calledAfter(fnPrerenderingTask1));
+
+		sinon.assert.callOrder(fnPrerenderingTask0, fnFirstTask, fnPrerenderingTask1, fnLastTask);
 
 		assert.strictEqual(oModel.aPrerenderingTasks, null);
 	});

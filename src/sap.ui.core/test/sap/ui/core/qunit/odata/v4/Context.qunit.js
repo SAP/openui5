@@ -3521,7 +3521,7 @@ sap.ui.define([
 					assert.ok(false, "Unexpected success");
 				}
 				if (bFireCreateActivate) {
-					assert.ok(oSetPropertyExpectation.calledBefore(oFireCreateActivateExpectation));
+					sinon.assert.callOrder(oSetPropertyExpectation, oFireCreateActivateExpectation);
 					sinon.assert.calledOnceWithExactly(fnReporter, "~error~");
 				}
 			}, function (oError0) {

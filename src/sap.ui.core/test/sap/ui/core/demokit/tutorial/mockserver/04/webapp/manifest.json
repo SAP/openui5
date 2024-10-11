@@ -54,7 +54,6 @@
 		"rootView": {
 			"viewName": "sap.ui.demo.MockServer.view.App",
 			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"dependencies": {

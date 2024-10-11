@@ -9,11 +9,14 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
+	"sap/ui/fl/apply/_internal/flexObjects/UpdatableChange",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
+	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantManagementState",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/Layer",
@@ -30,11 +33,14 @@ sap.ui.define([
 	FlexObjectFactory,
 	States,
 	UIChange,
+	UpdatableChange,
 	CompVariantMerger,
 	FlexState,
+	SmartVariantManagementApplyAPI,
 	Version,
 	Settings,
 	CompVariantState,
+	CompVariantManagementState,
 	Storage,
 	Versions,
 	Layer,
@@ -370,12 +376,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("persist", {
-		afterEach() {
-			FlexState.clearState(sComponentId);
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("Given persist is called with public variant with favorite check", function(assert) {
+		beforeEach() {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isPublicLayerAvailable() {
 					return true;
@@ -384,6 +385,13 @@ sap.ui.define([
 					return "userA";
 				}
 			});
+		},
+		afterEach() {
+			FlexState.clearState(sComponentId);
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("Given persist is called with public variant with favorite check", function(assert) {
 			const sPersistencyKey = "persistency.key";
 			assert.equal(CompVariantState.hasDirtyChanges(sComponentId), false, "hasDirtyChanges is false at beginning");
 			const oVariant = CompVariantState.addVariant({
@@ -527,21 +535,32 @@ sap.ui.define([
 					States.LifecycleState.PERSISTED,
 					"the addFavorite change is persisted"
 				);
+
+				const aSetDefaultChanges = CompVariantManagementState.getDefaultChanges({
+					reference: sComponentId,
+					persistencyKey: sPersistencyKey
+				});
+
 				assert.strictEqual(
-					oCompVariantStateMapForPersistencyKey.defaultVariants[0].getState(),
+					aSetDefaultChanges[0].getState(),
 					States.LifecycleState.PERSISTED,
 					"the set default variant is persisted"
 				);
 				assert.strictEqual(
-					oCompVariantStateMapForPersistencyKey.defaultVariants[0].getNamespace(),
+					aSetDefaultChanges[0].getNamespace(),
 					"apps/the.app.component/changes/",
 					"the set default variant change has namespace in the content"
 				);
 			})
 			.then(function() {
+				const aSetDefaultChanges = CompVariantManagementState.getDefaultChanges({
+					reference: sComponentId,
+					persistencyKey: sPersistencyKey
+				});
+
 				oCompVariantStateMapForPersistencyKey.variants[0].setState(States.LifecycleState.DELETED);
 				oCompVariantStateMapForPersistencyKey.changes[0].setState(States.LifecycleState.UPDATED);
-				oCompVariantStateMapForPersistencyKey.defaultVariants[0].setState(States.LifecycleState.DELETED);
+				aSetDefaultChanges[0].setState(States.LifecycleState.DELETED);
 			})
 			.then(CompVariantState.persist.bind(undefined, {
 				reference: sComponentId,
@@ -612,6 +631,7 @@ sap.ui.define([
 					type: "pageVariant",
 					content: {}
 				},
+				layer: Layer.CUSTOMER,
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey,
 				control: {
@@ -644,9 +664,9 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			});
 
-			var oWriteStub = sandbox.stub(Storage, "write").resolves();
-			var oUpdateStub = sandbox.stub(Storage, "update").resolves();
-			var oRemoveStub = sandbox.stub(Storage, "remove").resolves();
+			var oWriteStub = sandbox.stub(Storage, "write");
+			var oUpdateStub = sandbox.stub(Storage, "update");
+			var oRemoveStub = sandbox.stub(Storage, "remove");
 			// Preparation ends
 
 			return CompVariantState.persist({
@@ -707,62 +727,6 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given setDefault is called twice and adaptationId is not provided", function(assert) {
-			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey);
-			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isVersioningEnabled() {
-					return false;
-				}
-			});
-
-			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariant, undefined,
-				"no defaultVariant change is set under the persistencyKey");
-			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 0, "no entities are present");
-
-			var oChange = CompVariantState.setDefault({
-				reference: sComponentId,
-				defaultVariantId: this.sVariantId1,
-				persistencyKey: this.sPersistencyKey,
-				layer: Layer.CUSTOMER
-			});
-			assert.strictEqual(oChange.getContent().defaultVariantName, this.sVariantId1);
-			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants.length, 1, "the change was stored into the map");
-			assert.strictEqual(
-				oCompVariantStateMapForPersistencyKey.defaultVariants[0],
-				oChange,
-				"the change is set under the persistencyKey"
-			);
-			assert.strictEqual(oChange.getContent().defaultVariantName, this.sVariantId1, "the change content is correct");
-			assert.strictEqual(
-				Object.keys(oCompVariantStateMapForPersistencyKey.byId).length,
-				1,
-				"one entity for persistencyKeys is present"
-			);
-			assert.strictEqual(oChange.getLayer(), Layer.CUSTOMER, "The default layer is set to CUSTOMER");
-			assert.notOk(oChange.getAdaptationId(), "the change does not contain adaptation id");
-
-			var oChange2 = CompVariantState.setDefault({
-				reference: sComponentId,
-				defaultVariantId: this.sVariantId2,
-				persistencyKey: this.sPersistencyKey,
-				layer: Layer.CUSTOMER
-			});
-			assert.strictEqual(oChange.getContent().defaultVariantName, this.sVariantId2, "the change content was updated");
-			assert.strictEqual(
-				oCompVariantStateMapForPersistencyKey.defaultVariants[0],
-				oChange2,
-				"the change is set under the persistencyKey"
-			);
-			assert.strictEqual(oChange, oChange2, "it is still the same change object");
-			assert.strictEqual(
-				Object.keys(oCompVariantStateMapForPersistencyKey.byId).length,
-				1,
-				"still one entity for persistencyKeys is present"
-			);
-			assert.strictEqual(oChange.getLayer(), Layer.CUSTOMER, "The default layer is still set to CUSTOMER");
-			assert.notOk(oChange.getAdaptationId(), "the change does not contain adaptation id");
-		});
-
 		QUnit.test("Given setDefault is called twice with adaptationId", function(assert) {
 			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey);
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
@@ -771,8 +735,11 @@ sap.ui.define([
 				}
 			});
 
-			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariant, undefined,
-				"no defaultVariant change is set under the persistencyKey");
+			const aInitialDefaultChanges = CompVariantManagementState.getDefaultChanges({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			});
+			assert.deepEqual(aInitialDefaultChanges, [], "no defaultVariant change is set under the persistencyKey");
 			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 0, "no entities are present");
 
 			var oChange = CompVariantState.setDefault({
@@ -785,9 +752,18 @@ sap.ui.define([
 				}
 			});
 			assert.strictEqual(oChange.getContent().defaultVariantName, this.sVariantId1);
-			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants.length, 1, "the change was stored into the map");
+
+			const aDefaultChangesAfterFirstSetDefault = CompVariantManagementState.getDefaultChanges({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			});
 			assert.strictEqual(
-				oCompVariantStateMapForPersistencyKey.defaultVariants[0],
+				aDefaultChangesAfterFirstSetDefault.length,
+				1,
+				"the change was stored into the map"
+			);
+			assert.strictEqual(
+				aDefaultChangesAfterFirstSetDefault[0],
 				oChange, "the change is set under the persistencyKey"
 			);
 			assert.strictEqual(oChange.getContent().defaultVariantName, this.sVariantId1, "the change content is correct");
@@ -808,9 +784,19 @@ sap.ui.define([
 					adaptationId: "test-AdaptationId2"
 				}
 			});
+
+			const aDefaultChangesAfterSecondSetDefault = CompVariantManagementState.getDefaultChanges({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			});
+
 			assert.strictEqual(oChange.getContent().defaultVariantName, this.sVariantId2, "the change content was updated");
 			assert.strictEqual(
-				oCompVariantStateMapForPersistencyKey.defaultVariants[0],
+				aDefaultChangesAfterSecondSetDefault.length,
+				1,
+				"there is still only one change set under the persistencyKey"
+			);assert.strictEqual(
+				aDefaultChangesAfterSecondSetDefault[0],
 				oChange2,
 				"the change is set under the persistencyKey"
 			);
@@ -845,8 +831,13 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey,
 				layer: Layer.USER
 			});
-			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[1], oChange2,
-				"the new CUSTOMER change is now the the defaultVariant");
+
+			const aDefaultChanges = CompVariantManagementState.getDefaultChanges({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			});
+
+			assert.strictEqual(aDefaultChanges[1], oChange2, "the new CUSTOMER change is now the the defaultVariant");
 			assert.strictEqual(
 				Object.keys(oCompVariantStateMapForPersistencyKey.byId).length,
 				2,
@@ -874,7 +865,13 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey,
 				layer: Layer.CUSTOMER
 			});
-			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[1], oChange2,
+
+			const aDefaultChanges = CompVariantManagementState.getDefaultChanges({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			});
+
+			assert.strictEqual(aDefaultChanges[1], oChange2,
 				"the new CUSTOMER change is now the the defaultVariant");
 			assert.strictEqual(
 				Object.keys(oCompVariantStateMapForPersistencyKey.byId).length,
@@ -905,8 +902,13 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey,
 				layer: Layer.CUSTOMER
 			});
-			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[1], oChange2,
-				"the new CUSTOMER change is now the the defaultVariant");
+
+			const aDefaultChanges = CompVariantManagementState.getDefaultChanges({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			});
+
+			assert.strictEqual(aDefaultChanges[1], oChange2, "the new CUSTOMER change is now the the defaultVariant");
 			assert.strictEqual(
 				Object.keys(oCompVariantStateMapForPersistencyKey.byId).length,
 				2,
@@ -1998,7 +2000,7 @@ sap.ui.define([
 			mMapForPersistencyKey.standardVariant = oMockedStandardVariant;
 			mMapForPersistencyKey.byId[oMockedStandardVariant.getVariantId()] = oMockedStandardVariant;
 
-			CompVariantMerger.applyChangeOnVariant(oMockedStandardVariant, new UIChange({
+			CompVariantMerger.applyChangeOnVariant(oMockedStandardVariant, new UpdatableChange({
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey,
 				flexObjectMetadata: {
@@ -2024,7 +2026,7 @@ sap.ui.define([
 			mMapForPersistencyKey.standardVariant = oMockedStandardVariant;
 			mMapForPersistencyKey.byId[oMockedStandardVariant.getVariantId()] = oMockedStandardVariant;
 
-			CompVariantMerger.applyChangeOnVariant(oMockedStandardVariant, new UIChange({
+			CompVariantMerger.applyChangeOnVariant(oMockedStandardVariant, new UpdatableChange({
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey,
 				flexObjectMetadata: {
@@ -2155,6 +2157,7 @@ sap.ui.define([
 
 		QUnit.test("Given persist is called with parentVersion", function(assert) {
 			var sParentVersion = "GUIDParentVersion";
+			const {sPersistencyKey} = this;
 			var oVersionsModel = new JSONModel({
 				persistedVersion: sParentVersion,
 				draftFilenames: [this.oVariant.getId()],
@@ -2168,7 +2171,7 @@ sap.ui.define([
 					layer: Layer.CUSTOMER
 				},
 				reference: sComponentId,
-				persistencyKey: this.sPersistencyKey,
+				persistencyKey: sPersistencyKey,
 				control: {
 					getCurrentVariantId() {
 						return "";
@@ -2177,14 +2180,14 @@ sap.ui.define([
 			});
 			CompVariantState.updateVariant({
 				reference: sComponentId,
-				persistencyKey: this.sPersistencyKey,
+				persistencyKey: sPersistencyKey,
 				id: this.oVariant.getId(),
 				executeOnSelection: true,
 				layer: Layer.CUSTOMER
 			});
 			CompVariantState.setDefault({
 				reference: sComponentId,
-				persistencyKey: this.sPersistencyKey,
+				persistencyKey: sPersistencyKey,
 				defaultVariantId: "id_123_pageVariant",
 				conntent: {},
 				layer: Layer.CUSTOMER
@@ -2195,7 +2198,7 @@ sap.ui.define([
 					layer: Layer.CUSTOMER
 				}]
 			};
-			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey);
+			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(sPersistencyKey);
 
 			var oWriteStub = sandbox.stub(Storage, "write").resolves(oResponse);
 			var oUpdateStub = sandbox.stub(Storage, "update").resolves(oResponse);
@@ -2205,7 +2208,7 @@ sap.ui.define([
 
 			return CompVariantState.persist({
 				reference: sComponentId,
-				persistencyKey: this.sPersistencyKey
+				persistencyKey: sPersistencyKey
 			})
 			.then(function() {
 				assert.equal(oWriteStub.callCount, 3, "then the write method was called three times,");
@@ -2220,12 +2223,17 @@ sap.ui.define([
 				assert.equal(oVersionsOnAllChangesSaved.callCount, 3, "and versions.onAllChangesSaved is called three time");
 			})
 			.then(function() {
+				const aDefaultChanges = CompVariantManagementState.getDefaultChanges({
+					reference: sComponentId,
+					persistencyKey: sPersistencyKey
+				});
+
 				oCompVariantStateMapForPersistencyKey.variants[0].setState(States.LifecycleState.UPDATED);
-				oCompVariantStateMapForPersistencyKey.defaultVariants[0].setState(States.LifecycleState.DELETED);
+				aDefaultChanges[0].setState(States.LifecycleState.DELETED);
 			})
 			.then(CompVariantState.persist.bind(undefined, {
 				reference: sComponentId,
-				persistencyKey: this.sPersistencyKey
+				persistencyKey: sPersistencyKey
 			}))
 			.then(function() {
 				assert.equal(oWriteStub.callCount, 3, "AFTER SOME CHANGES; still the write method was called three times,");
@@ -2402,12 +2410,12 @@ sap.ui.define([
 						persistencyKey: "persistencyKey1"
 					}
 				}),
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createFromFileContent({
 					id: "uichange1",
 					layer: Layer.USER,
 					changeType: "notUpdateVariant"
 				}),
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createFromFileContent({
 					id: "uichange2",
 					layer: Layer.USER,
 					changeType: "updateVariant",
@@ -2415,7 +2423,7 @@ sap.ui.define([
 						variantId: "variant1"
 					}
 				}),
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createFromFileContent({
 					id: "uichange3",
 					layer: Layer.USER,
 					changeType: "updateVariant",
@@ -2423,7 +2431,7 @@ sap.ui.define([
 						variantId: "deletedVariant"
 					}
 				}),
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createFromFileContent({
 					id: "uichange4",
 					layer: Layer.USER,
 					changeType: "defaultVariant",
@@ -2431,7 +2439,7 @@ sap.ui.define([
 						defaultVariantName: "deletedVariant"
 					}
 				}),
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createFromFileContent({
 					id: "uichange5",
 					layer: Layer.USER,
 					changeType: "defaultVariant",

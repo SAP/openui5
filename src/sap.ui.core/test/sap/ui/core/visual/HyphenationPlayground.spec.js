@@ -65,9 +65,12 @@ describe("sap.ui.core.HyphenationPlayground", function() {
 
 			browser.executeScript(function (sId, width) {
 				var Element = sap.ui.require("sap/ui/core/Element");
-				Element.getElementById(sId).setWidth(width);
-				document.getElementById(sId).scrollIntoView();
+					Element.getElementById(sId).setWidth(width);
 				}, 'formWithTexts-' + sLang, aFormWidth[sLang]);
+
+			browser.executeScript(function (sId) {
+				document.getElementById(sId).scrollIntoView();
+				}, 'hyph-' + sLang);
 
 			expect(takeScreenshot(oText)).toLookAs(n + "_thirdParty_language_" + sLang);
 		});

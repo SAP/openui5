@@ -222,10 +222,6 @@ sap.ui.define([
 
 			assert.throws(() => { oMetaModel.refresh(); }, /Unsupported operation: ODataMetaModel#refresh/);
 
-			oMetaModel.setLegacySyntax(); // allowed
-			oMetaModel.setLegacySyntax(false); // allowed
-			assert.throws(() => { oMetaModel.setLegacySyntax(true); }, /Legacy syntax not supported by ODataMetaModel/);
-
 			assert.strictEqual(oMetaModel.getDefaultBindingMode(), BindingMode.OneTime);
 			assert.strictEqual(oMetaModel.oModel.getDefaultBindingMode(), BindingMode.OneTime);
 			assert.throws(() => { oMetaModel.setDefaultBindingMode(BindingMode.OneWay); });
@@ -353,198 +349,198 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{
-	oPropertyAnnotations: {
-		"~namespace.~entityTypeName": {
-			"~propertyName": {
-				"com.sap.vocabularies.Common.v1.Label": "~LabelViaValueList",
-				"com.sap.vocabularies.Common.v1.ValueList": "~oValueList"
-			}
-		}
-	},
-	mValueLists: {"~bar": "~baz"},
-	bWithValueList: true
-}, {
-	oPropertyAnnotations: {},
-	mValueLists: {},
-	bWithValueList: false
-}].forEach((oFixture) => {
-	const sTitle = "getODataValueLists: " + (oFixture.bWithValueList ? "success case" : "no value list from server");
-	QUnit.test(sTitle, function (assert) {
-		const oModel = {getObject() {}};
-		const oMetaModel = {
-			mContext2Promise: {},
-			oModel: oModel,
-			mQName2PendingRequest: {},
-			_sendBundledRequest() {}
-		};
-		const oMetaModelMock = this.mock(oMetaModel);
-		const oPropertyContext = {getObject() {}, getPath() {}};
-		const sPropertyMetaPath = "/dataServices/schema/0/entityType/13/property/42";
-		this.mock(oPropertyContext).expects("getPath").withExactArgs().returns(sPropertyMetaPath);
-		const oProperty = {
-			"com.sap.vocabularies.Common.v1.Label": "~Label",
-			name: "~propertyName",
-			"sap:value-list": "foo"
-		};
-		this.mock(oPropertyContext).expects("getObject").withExactArgs().returns(oProperty);
-		const oODataMetaModelUtilsMock = this.mock(ODataMetaModelUtils);
-		oODataMetaModelUtilsMock.expects("getValueLists").withExactArgs(sinon.match.same(oProperty)).returns({});
-		const oModelMock = this.mock(oModel);
-		oModelMock.expects("getObject").withExactArgs("/dataServices/schema/0")
-			.returns({namespace: "~namespace"});
-		oModelMock.expects("getObject").withExactArgs("/dataServices/schema/0/entityType/13")
-			.returns({name: "~entityTypeName"});
-		const oSendBundleRequestExpectation = oMetaModelMock.expects("_sendBundledRequest").withExactArgs();
-
-		// code under test
-		const oValueListLoadPromise = ODataMetaModel.prototype.getODataValueLists.call(oMetaModel, oPropertyContext);
-
-		assert.ok(oValueListLoadPromise instanceof Promise);
-		assert.strictEqual(oMetaModel.mContext2Promise[sPropertyMetaPath], oValueListLoadPromise);
-		const oPendingRequest = oMetaModel.mQName2PendingRequest["~namespace.~entityTypeName/~propertyName"];
-		assert.ok(typeof oPendingRequest.resolve === "function");
-
-		setTimeout(() => {
-			assert.ok(oSendBundleRequestExpectation.calledOnce);
-			const oResponse = {
-				"annotations": {
-					"propertyAnnotations": oFixture.oPropertyAnnotations
+	[{
+		oPropertyAnnotations: {
+			"~namespace.~entityTypeName": {
+				"~propertyName": {
+					"com.sap.vocabularies.Common.v1.Label": "~LabelViaValueList",
+					"com.sap.vocabularies.Common.v1.ValueList": "~oValueList"
 				}
+			}
+		},
+		mValueLists: {"~bar": "~baz"},
+		bWithValueList: true
+	}, {
+		oPropertyAnnotations: {},
+		mValueLists: {},
+		bWithValueList: false
+	}].forEach((oFixture) => {
+		const sTitle = "getODataValueLists: " + (oFixture.bWithValueList ? "success case" : "no value list from server");
+		QUnit.test(sTitle, function (assert) {
+			const oModel = {getObject() {}};
+			const oMetaModel = {
+				mContext2Promise: {},
+				oModel: oModel,
+				mQName2PendingRequest: {},
+				_sendBundledRequest() {}
 			};
-			oODataMetaModelUtilsMock.expects("getValueLists").withExactArgs(sinon.match.same(oProperty))
-				.returns(oFixture.mValueLists);
+			const oMetaModelMock = this.mock(oMetaModel);
+			const oPropertyContext = {getObject() {}, getPath() {}};
+			const sPropertyMetaPath = "/dataServices/schema/0/entityType/13/property/42";
+			this.mock(oPropertyContext).expects("getPath").withExactArgs().returns(sPropertyMetaPath);
+			const oProperty = {
+				"com.sap.vocabularies.Common.v1.Label": "~Label",
+				name: "~propertyName",
+				"sap:value-list": "foo"
+			};
+			this.mock(oPropertyContext).expects("getObject").withExactArgs().returns(oProperty);
+			const oODataMetaModelUtilsMock = this.mock(ODataMetaModelUtils);
+			oODataMetaModelUtilsMock.expects("getValueLists").withExactArgs(sinon.match.same(oProperty)).returns({});
+			const oModelMock = this.mock(oModel);
+			oModelMock.expects("getObject").withExactArgs("/dataServices/schema/0")
+				.returns({namespace: "~namespace"});
+			oModelMock.expects("getObject").withExactArgs("/dataServices/schema/0/entityType/13")
+				.returns({name: "~entityTypeName"});
+			const oSendBundleRequestExpectation = oMetaModelMock.expects("_sendBundledRequest").withExactArgs();
 
 			// code under test
-			oPendingRequest.resolve(oResponse);
+			const oValueListLoadPromise = ODataMetaModel.prototype.getODataValueLists.call(oMetaModel, oPropertyContext);
 
-			assert.strictEqual(oProperty["com.sap.vocabularies.Common.v1.Label"], "~Label"); // not overwitten!
-			if (oFixture.bWithValueList) {
-				assert.strictEqual(oProperty["com.sap.vocabularies.Common.v1.ValueList"], "~oValueList");
-				assert.notOk(oMetaModel.mContext2Promise[sPropertyMetaPath]);
-			} else {
-				assert.strictEqual(oMetaModel.mContext2Promise[sPropertyMetaPath], oValueListLoadPromise);
-			}
-		}, 0);
+			assert.ok(oValueListLoadPromise instanceof Promise);
+			assert.strictEqual(oMetaModel.mContext2Promise[sPropertyMetaPath], oValueListLoadPromise);
+			const oPendingRequest = oMetaModel.mQName2PendingRequest["~namespace.~entityTypeName/~propertyName"];
+			assert.ok(typeof oPendingRequest.resolve === "function");
 
-		return oValueListLoadPromise.then((mValueLists0) => {
-			assert.ok(oFixture.bWithValueList);
-			assert.strictEqual(mValueLists0, oFixture.mValueLists);
-		}, (oError) => {
-			assert.notOk(oFixture.bWithValueList);
-			assert.strictEqual(oError.message, "No value lists returned for " + sPropertyMetaPath);
+			setTimeout(() => {
+				assert.ok(oSendBundleRequestExpectation.calledOnce);
+				const oResponse = {
+					"annotations": {
+						"propertyAnnotations": oFixture.oPropertyAnnotations
+					}
+				};
+				oODataMetaModelUtilsMock.expects("getValueLists").withExactArgs(sinon.match.same(oProperty))
+					.returns(oFixture.mValueLists);
+
+				// code under test
+				oPendingRequest.resolve(oResponse);
+
+				assert.strictEqual(oProperty["com.sap.vocabularies.Common.v1.Label"], "~Label"); // not overwitten!
+				if (oFixture.bWithValueList) {
+					assert.strictEqual(oProperty["com.sap.vocabularies.Common.v1.ValueList"], "~oValueList");
+					assert.notOk(oMetaModel.mContext2Promise[sPropertyMetaPath]);
+				} else {
+					assert.strictEqual(oMetaModel.mContext2Promise[sPropertyMetaPath], oValueListLoadPromise);
+				}
+			}, 0);
+
+			return oValueListLoadPromise.then((mValueLists0) => {
+				assert.ok(oFixture.bWithValueList);
+				assert.strictEqual(mValueLists0, oFixture.mValueLists);
+			}, (oError) => {
+				assert.notOk(oFixture.bWithValueList);
+				assert.strictEqual(oError.message, "No value lists returned for " + sPropertyMetaPath);
+			});
 		});
 	});
-});
 
 	//*********************************************************************************************
-[{
-	oEntityContainerAnnotations: {
-		"~namespace.~entityContainerName": {
-			"~functionName/~propertyName": {
-				"com.sap.vocabularies.Common.v1.Label": "~LabelViaValueList",
-				"com.sap.vocabularies.Common.v1.ValueList": "~oValueList"
+	[{
+		oEntityContainerAnnotations: {
+			"~namespace.~entityContainerName": {
+				"~functionName/~propertyName": {
+					"com.sap.vocabularies.Common.v1.Label": "~LabelViaValueList",
+					"com.sap.vocabularies.Common.v1.ValueList": "~oValueList"
+				}
 			}
-		}
-	},
-	mValueLists: {"~bar": "~baz"},
-	bWithValueList: true
-}, {
-	oEntityContainerAnnotations: {"~namespace.~entityContainerName": {}},
-	mValueLists: {},
-	bWithValueList: false
-}, {
-	oEntityContainerAnnotations: {},
-	mValueLists: {},
-	bWithValueList: false
-}].forEach((oFixture, i) => {
-	QUnit.test("getODataValueLists: for function import parameter, #" + i, function (assert) {
-		const oParameterContext = {getObject() {}, getPath() {}};
-		const sParameterMetaPath = "/dataServices/schema/1/entityContainer/2/functionImport/3/parameter/4";
-		this.mock(oParameterContext).expects("getPath").withExactArgs().returns(sParameterMetaPath);
-		const oParameter = {
-			"com.sap.vocabularies.Common.v1.Label": "~Label",
-			name: "~propertyName",
-			"sap:value-list": "foo"
-		};
-		this.mock(oParameterContext).expects("getObject").withExactArgs().returns(oParameter);
-		const oODataMetaModelUtilsMock = this.mock(ODataMetaModelUtils);
-		oODataMetaModelUtilsMock.expects("getValueLists").withExactArgs(sinon.match.same(oParameter)).returns({});
-		const oModel = {getObject() {}};
-		const oModelMock = this.mock(oModel);
-		oModelMock.expects("getObject").withExactArgs("/dataServices/schema/1").returns({namespace: "~namespace"});
-		oModelMock.expects("getObject").withExactArgs("/dataServices/schema/1/entityContainer/2")
-			.returns({name: "~entityContainerName"});
-		oModelMock.expects("getObject").withExactArgs("/dataServices/schema/1/entityContainer/2/functionImport/3")
-			.returns({name: "~functionName"});
-		const oMetaModel = {
-			mContext2Promise: {},
-			oModel: oModel,
-			mQName2PendingRequest: {},
-			_sendBundledRequest() {}
-		};
-		const oSendBundleRequestExpectation = this.mock(oMetaModel).expects("_sendBundledRequest").withExactArgs();
-
-		// code under test
-		const oValueListLoadPromise = ODataMetaModel.prototype.getODataValueLists.call(oMetaModel, oParameterContext);
-
-		assert.ok(oValueListLoadPromise instanceof Promise);
-		assert.strictEqual(oMetaModel.mContext2Promise[sParameterMetaPath], oValueListLoadPromise);
-		const oPendingRequest = oMetaModel.mQName2PendingRequest
-			["~namespace.~entityContainerName/~functionName/~propertyName"];
-		assert.ok(typeof oPendingRequest.resolve === "function");
-
-		setTimeout(() => {
-			assert.ok(oSendBundleRequestExpectation.calledOnce);
-			oODataMetaModelUtilsMock.expects("getValueLists").withExactArgs(sinon.match.same(oParameter))
-				.returns(oFixture.mValueLists);
-			const oResponse = {
-				"annotations": {"EntityContainer": oFixture.oEntityContainerAnnotations}
+		},
+		mValueLists: {"~bar": "~baz"},
+		bWithValueList: true
+	}, {
+		oEntityContainerAnnotations: {"~namespace.~entityContainerName": {}},
+		mValueLists: {},
+		bWithValueList: false
+	}, {
+		oEntityContainerAnnotations: {},
+		mValueLists: {},
+		bWithValueList: false
+	}].forEach((oFixture, i) => {
+		QUnit.test("getODataValueLists: for function import parameter, #" + i, function (assert) {
+			const oParameterContext = {getObject() {}, getPath() {}};
+			const sParameterMetaPath = "/dataServices/schema/1/entityContainer/2/functionImport/3/parameter/4";
+			this.mock(oParameterContext).expects("getPath").withExactArgs().returns(sParameterMetaPath);
+			const oParameter = {
+				"com.sap.vocabularies.Common.v1.Label": "~Label",
+				name: "~propertyName",
+				"sap:value-list": "foo"
 			};
+			this.mock(oParameterContext).expects("getObject").withExactArgs().returns(oParameter);
+			const oODataMetaModelUtilsMock = this.mock(ODataMetaModelUtils);
+			oODataMetaModelUtilsMock.expects("getValueLists").withExactArgs(sinon.match.same(oParameter)).returns({});
+			const oModel = {getObject() {}};
+			const oModelMock = this.mock(oModel);
+			oModelMock.expects("getObject").withExactArgs("/dataServices/schema/1").returns({namespace: "~namespace"});
+			oModelMock.expects("getObject").withExactArgs("/dataServices/schema/1/entityContainer/2")
+				.returns({name: "~entityContainerName"});
+			oModelMock.expects("getObject").withExactArgs("/dataServices/schema/1/entityContainer/2/functionImport/3")
+				.returns({name: "~functionName"});
+			const oMetaModel = {
+				mContext2Promise: {},
+				oModel: oModel,
+				mQName2PendingRequest: {},
+				_sendBundledRequest() {}
+			};
+			const oSendBundleRequestExpectation = this.mock(oMetaModel).expects("_sendBundledRequest").withExactArgs();
 
 			// code under test
-			oPendingRequest.resolve(oResponse);
+			const oValueListLoadPromise = ODataMetaModel.prototype.getODataValueLists.call(oMetaModel, oParameterContext);
 
-			assert.strictEqual(oParameter["com.sap.vocabularies.Common.v1.Label"], "~Label"); // not overwitten!
-			if (oFixture.bWithValueList) {
-				assert.strictEqual(oParameter["com.sap.vocabularies.Common.v1.ValueList"], "~oValueList");
-				assert.notOk(oMetaModel.mContext2Promise[sParameterMetaPath]);
-			} else {
-				assert.strictEqual(oMetaModel.mContext2Promise[sParameterMetaPath], oValueListLoadPromise);
-			}
-		}, 0);
+			assert.ok(oValueListLoadPromise instanceof Promise);
+			assert.strictEqual(oMetaModel.mContext2Promise[sParameterMetaPath], oValueListLoadPromise);
+			const oPendingRequest = oMetaModel.mQName2PendingRequest
+				["~namespace.~entityContainerName/~functionName/~propertyName"];
+			assert.ok(typeof oPendingRequest.resolve === "function");
 
-		return oValueListLoadPromise.then((mValueLists0) => {
-			assert.ok(oFixture.bWithValueList);
-			assert.strictEqual(mValueLists0, oFixture.mValueLists);
-		}, (oError) => {
-			assert.notOk(oFixture.bWithValueList);
-			assert.strictEqual(oError.message, "No value lists returned for " + sParameterMetaPath);
+			setTimeout(() => {
+				assert.ok(oSendBundleRequestExpectation.calledOnce);
+				oODataMetaModelUtilsMock.expects("getValueLists").withExactArgs(sinon.match.same(oParameter))
+					.returns(oFixture.mValueLists);
+				const oResponse = {
+					"annotations": {"EntityContainer": oFixture.oEntityContainerAnnotations}
+				};
+
+				// code under test
+				oPendingRequest.resolve(oResponse);
+
+				assert.strictEqual(oParameter["com.sap.vocabularies.Common.v1.Label"], "~Label"); // not overwitten!
+				if (oFixture.bWithValueList) {
+					assert.strictEqual(oParameter["com.sap.vocabularies.Common.v1.ValueList"], "~oValueList");
+					assert.notOk(oMetaModel.mContext2Promise[sParameterMetaPath]);
+				} else {
+					assert.strictEqual(oMetaModel.mContext2Promise[sParameterMetaPath], oValueListLoadPromise);
+				}
+			}, 0);
+
+			return oValueListLoadPromise.then((mValueLists0) => {
+				assert.ok(oFixture.bWithValueList);
+				assert.strictEqual(mValueLists0, oFixture.mValueLists);
+			}, (oError) => {
+				assert.notOk(oFixture.bWithValueList);
+				assert.strictEqual(oError.message, "No value lists returned for " + sParameterMetaPath);
+			});
 		});
 	});
-});
 
 	//*********************************************************************************************
-[
-	"foo", // invalid path
-	"/dataServices/schema/0", // path to schema
-	"/dataServices/schema/0/entityType/13", // path to entity type
-	"/dataServices/schema/0/entityType/13/navigationProperty/0", // path to navigation property
-	"/dataServices/schema/0/complexType/13", // path to complex type
-	"/dataServices/schema/0/entityContainer/2", // path to entity container
-	"/dataServices/schema/0/entityContainer/2/functionImport/3" // path to function import
-].forEach((sPath) => {
-	QUnit.test(`getODataValueLists: unsupported context with path "${sPath}"`, function (assert) {
-		const oMetaModel = {mContext2Promise: {}};
-		const oContext = {getPath() {}};
-		this.mock(oContext).expects("getPath").withExactArgs().returns(sPath);
+	[
+		"foo", // invalid path
+		"/dataServices/schema/0", // path to schema
+		"/dataServices/schema/0/entityType/13", // path to entity type
+		"/dataServices/schema/0/entityType/13/navigationProperty/0", // path to navigation property
+		"/dataServices/schema/0/complexType/13", // path to complex type
+		"/dataServices/schema/0/entityContainer/2", // path to entity container
+		"/dataServices/schema/0/entityContainer/2/functionImport/3" // path to function import
+	].forEach((sPath) => {
+		QUnit.test(`getODataValueLists: unsupported context with path "${sPath}"`, function (assert) {
+			const oMetaModel = {mContext2Promise: {}};
+			const oContext = {getPath() {}};
+			this.mock(oContext).expects("getPath").withExactArgs().returns(sPath);
 
-		// code under test
-		assert.throws(() => {
-			ODataMetaModel.prototype.getODataValueLists.call(oMetaModel, oContext);
-		}, new Error("\"" + sPath + "\" neither references a property nor a function import parameter"));
+			// code under test
+			assert.throws(() => {
+				ODataMetaModel.prototype.getODataValueLists.call(oMetaModel, oContext);
+			}, new Error("\"" + sPath + "\" neither references a property nor a function import parameter"));
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getFunctionImportParameterContext: success case", function (assert) {
@@ -602,34 +598,34 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[true, false].forEach((bWithSharedModel) => {
-	[true, false].forEach((bWithInternalModel) => {
-	const sTitle = "destroy: " + (bWithSharedModel ? "with" : "without") + " shared model; "
-			+ (bWithInternalModel ? "with" : "without") + " internal model";
+	[true, false].forEach((bWithSharedModel) => {
+		[true, false].forEach((bWithInternalModel) => {
+		const sTitle = "destroy: " + (bWithSharedModel ? "with" : "without") + " shared model; "
+				+ (bWithInternalModel ? "with" : "without") + " internal model";
 
-	QUnit.test(sTitle, function (assert) {
-		const oODataMetaModel = {};
-		this.mock(MetaModel.prototype).expects("destroy").withExactArgs("parameters", "passed", "through");
-		if (bWithSharedModel) {
-			oODataMetaModel.oSharedModelCache = {
-				bFirstCodeListRequested: false,
-				oModel: {destroy() {}}
-			};
-			this.mock(oODataMetaModel.oSharedModelCache.oModel).expects("destroy");
-		}
-		if (bWithInternalModel) {
-			oODataMetaModel.oModel = {destroy() {}};
-			this.mock(oODataMetaModel.oModel).expects("destroy").returns("~destroyed");
-		}
+		QUnit.test(sTitle, function (assert) {
+			const oODataMetaModel = {};
+			this.mock(MetaModel.prototype).expects("destroy").withExactArgs("parameters", "passed", "through");
+			if (bWithSharedModel) {
+				oODataMetaModel.oSharedModelCache = {
+					bFirstCodeListRequested: false,
+					oModel: {destroy() {}}
+				};
+				this.mock(oODataMetaModel.oSharedModelCache.oModel).expects("destroy");
+			}
+			if (bWithInternalModel) {
+				oODataMetaModel.oModel = {destroy() {}};
+				this.mock(oODataMetaModel.oModel).expects("destroy").returns("~destroyed");
+			}
 
-		// code under test
-		assert.strictEqual(ODataMetaModel.prototype.destroy.call(oODataMetaModel, "parameters", "passed", "through"),
-			bWithInternalModel ? "~destroyed" : undefined);
+			// code under test
+			assert.strictEqual(ODataMetaModel.prototype.destroy.call(oODataMetaModel, "parameters", "passed", "through"),
+				bWithInternalModel ? "~destroyed" : undefined);
 
-		assert.notOk("oSharedModelCache" in oODataMetaModel);
+			assert.notOk("oSharedModelCache" in oODataMetaModel);
+		});
+		});
 	});
-	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getCodeListTerm", function (assert) {
@@ -652,82 +648,82 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{key: {propertyRef: undefined}},
-	{key: {propertyRef: []}},
-	{key: {propertyRef: ["~key1", "~key2"]}}
-].forEach(function (oType, i) {
-	QUnit.test("_getKeyPath: error case: " + i, function (assert) {
-		// code under test
-		assert.throws(() => {
-			ODataMetaModel._getKeyPath(oType, "~sTypePath");
-		}, new Error("Single key expected: ~sTypePath"));
+	[
+		{key: {propertyRef: undefined}},
+		{key: {propertyRef: []}},
+		{key: {propertyRef: ["~key1", "~key2"]}}
+	].forEach(function (oType, i) {
+		QUnit.test("_getKeyPath: error case: " + i, function (assert) {
+			// code under test
+			assert.throws(() => {
+				ODataMetaModel._getKeyPath(oType, "~sTypePath");
+			}, new Error("Single key expected: ~sTypePath"));
+		});
 	});
-});
 
 	//*********************************************************************************************
-[{
-	standardCode: undefined,
-	typeMetadata: {}
-}, {
-	standardCode: {Path: "~StandardCode"},
-	typeMetadata: {
-		"Org.OData.Core.V1.AlternateKeys": [{
-			Key: [{
-				Name: {Path: "~ExternalCode"}
+	[{
+		standardCode: undefined,
+		typeMetadata: {}
+	}, {
+		standardCode: {Path: "~StandardCode"},
+		typeMetadata: {
+			"Org.OData.Core.V1.AlternateKeys": [{
+				Key: [{
+					Name: {Path: "~ExternalCode"}
+				}]
 			}]
-		}]
-	}
-}].forEach(function (oFixture, i) {
-	QUnit.test("_getPropertyNamesForCodeListCustomizing: success case: " + i, function (assert) {
-		const oDataModel = {getObject() {}};
-		const oDataModelMock = this.mock(oDataModel);
-		oDataModelMock.expects("getObject").withExactArgs("/~collectionPath/##").returns(oFixture.typeMetadata);
-		this.mock(ODataMetaModel).expects("_getKeyPath")
-			.withExactArgs(oFixture.typeMetadata, "/~collectionPath/##")
-			.returns("~keyPath");
-		const oKeyMetadata = {
-			"com.sap.vocabularies.CodeList.v1.StandardCode": oFixture.standardCode,
-			"com.sap.vocabularies.Common.v1.Text": {Path: "~Text"},
-			"com.sap.vocabularies.Common.v1.UnitSpecificScale": {Path: "~UnitSpecificScale"}
-		};
-		oDataModelMock.expects("getObject").withExactArgs("/~collectionPath/~keyPath/##").returns(oKeyMetadata);
-		const oMetaModel = {oDataModel: oDataModel};
+		}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("_getPropertyNamesForCodeListCustomizing: success case: " + i, function (assert) {
+			const oDataModel = {getObject() {}};
+			const oDataModelMock = this.mock(oDataModel);
+			oDataModelMock.expects("getObject").withExactArgs("/~collectionPath/##").returns(oFixture.typeMetadata);
+			this.mock(ODataMetaModel).expects("_getKeyPath")
+				.withExactArgs(oFixture.typeMetadata, "/~collectionPath/##")
+				.returns("~keyPath");
+			const oKeyMetadata = {
+				"com.sap.vocabularies.CodeList.v1.StandardCode": oFixture.standardCode,
+				"com.sap.vocabularies.Common.v1.Text": {Path: "~Text"},
+				"com.sap.vocabularies.Common.v1.UnitSpecificScale": {Path: "~UnitSpecificScale"}
+			};
+			oDataModelMock.expects("getObject").withExactArgs("/~collectionPath/~keyPath/##").returns(oKeyMetadata);
+			const oMetaModel = {oDataModel: oDataModel};
 
-		// code under test
-		assert.deepEqual(
-			ODataMetaModel.prototype._getPropertyNamesForCodeListCustomizing.call(oMetaModel, "~collectionPath"),
-			{
-				code: oFixture.typeMetadata["Org.OData.Core.V1.AlternateKeys"] ? "~ExternalCode" : "~keyPath",
-				standardCode: oFixture.standardCode ? "~StandardCode" : undefined,
-				text: "~Text",
-				unitSpecificScale: "~UnitSpecificScale"
-			});
+			// code under test
+			assert.deepEqual(
+				ODataMetaModel.prototype._getPropertyNamesForCodeListCustomizing.call(oMetaModel, "~collectionPath"),
+				{
+					code: oFixture.typeMetadata["Org.OData.Core.V1.AlternateKeys"] ? "~ExternalCode" : "~keyPath",
+					standardCode: oFixture.standardCode ? "~StandardCode" : undefined,
+					text: "~Text",
+					unitSpecificScale: "~UnitSpecificScale"
+				});
+		});
 	});
-});
 
 	//*********************************************************************************************
-[{
-	error: "Single alternative expected: /~collectionPath/##Org.OData.Core.V1.AlternateKeys",
-	typeMetadata: {"Org.OData.Core.V1.AlternateKeys": [{Key: [{/* not relevant */}]}, {Key: [{/* not relevant */}]}]}
-}, {
-	error: "Single key expected: /~collectionPath/##Org.OData.Core.V1.AlternateKeys/0/Key",
-	typeMetadata: {"Org.OData.Core.V1.AlternateKeys": [{Key: [{/* not relevant */}, {/* not relevant */}]}]}
-}].forEach((oFixture, i) => {
-	QUnit.test("_getPropertyNamesForCodeListCustomizing: error case: " + i, function (assert) {
-		const oDataModel = {getObject() {}};
-		const oDataModelMock = this.mock(oDataModel);
-		oDataModelMock.expects("getObject").withExactArgs("/~collectionPath/##").returns(oFixture.typeMetadata);
-		this.mock(ODataMetaModel).expects("_getKeyPath")
-			.withExactArgs(sinon.match.same(oFixture.typeMetadata), "/~collectionPath/##")
-			.returns("~keyPath");
-		oDataModelMock.expects("getObject").withExactArgs("/~collectionPath/~keyPath/##").returns("~oKeyMetadata");
-		const oMetaModel = {oDataModel: oDataModel};
+	[{
+		error: "Single alternative expected: /~collectionPath/##Org.OData.Core.V1.AlternateKeys",
+		typeMetadata: {"Org.OData.Core.V1.AlternateKeys": [{Key: [{/* not relevant */}]}, {Key: [{/* not relevant */}]}]}
+	}, {
+		error: "Single key expected: /~collectionPath/##Org.OData.Core.V1.AlternateKeys/0/Key",
+		typeMetadata: {"Org.OData.Core.V1.AlternateKeys": [{Key: [{/* not relevant */}, {/* not relevant */}]}]}
+	}].forEach((oFixture, i) => {
+		QUnit.test("_getPropertyNamesForCodeListCustomizing: error case: " + i, function (assert) {
+			const oDataModel = {getObject() {}};
+			const oDataModelMock = this.mock(oDataModel);
+			oDataModelMock.expects("getObject").withExactArgs("/~collectionPath/##").returns(oFixture.typeMetadata);
+			this.mock(ODataMetaModel).expects("_getKeyPath")
+				.withExactArgs(sinon.match.same(oFixture.typeMetadata), "/~collectionPath/##")
+				.returns("~keyPath");
+			oDataModelMock.expects("getObject").withExactArgs("/~collectionPath/~keyPath/##").returns("~oKeyMetadata");
+			const oMetaModel = {oDataModel: oDataModel};
 
-		// code under test
-		assert.throws(() => {
-			ODataMetaModel.prototype._getPropertyNamesForCodeListCustomizing.call(oMetaModel, "~collectionPath");
-		}, oFixture.error);
+			// code under test
+			assert.throws(() => {
+				ODataMetaModel.prototype._getPropertyNamesForCodeListCustomizing.call(oMetaModel, "~collectionPath");
+			}, oFixture.error);
+		});
 	});
-});
 });

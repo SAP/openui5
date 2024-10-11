@@ -83,6 +83,7 @@ sap.ui.define([
 			this.oRequestor = {
 				buildQueryString : function () { return ""; },
 				getServiceUrl : function () { return "/~/"; },
+				getUnlockedAutoCopy : mustBeMocked,
 				request : mustBeMocked
 			};
 
@@ -1123,9 +1124,9 @@ sap.ui.define([
 			.returns("~Key~");
 		this.mock(this.oRequestor).expects("buildQueryString")
 			.withExactArgs(null, {$apply : "ancestors($root/path,X,NodeID,filter(~Key~),1)"})
-			.returns("/~QueryString~");
+			.returns("?~QueryString~");
 		this.mock(this.oRequestor).expects("request")
-			.withExactArgs("GET", "Foo/~QueryString~", "~GroupLock~")
+			.withExactArgs("GET", "Foo?~QueryString~", "~oGroupLock~")
 			.callsFake(async () => {
 				var oPropertiesExpectation, oNodePropertyExpectation;
 
@@ -1143,7 +1144,7 @@ sap.ui.define([
 				oHelperMock.expects("setPrivateAnnotation")
 					.withExactArgs("~Parent~", "parent", sinon.match.same(oCache.oFirstLevel));
 				this.mock(oCache).expects("requestRank")
-					.withExactArgs("~Parent~", "~GroupLock~")
+					.withExactArgs("~Parent~", "~oGroupLock~")
 					.callsFake(async () => {
 						await "next tick";
 
@@ -1166,20 +1167,20 @@ sap.ui.define([
 					});
 				oPropertiesExpectation = this.mock(oCache).expects("requestProperties")
 					.withExactArgs("~Parent~", ["DistFromRoot", "myDrillState",
-						"LtdDescendant_Count"], "~GroupLock~", true)
+						"LtdDescendant_Count"], "~oGroupLock~", true)
 					.resolves();
 				oNodePropertyExpectation = this.mock(oCache).expects("requestNodeProperty")
-					.withExactArgs("~Parent~", "~GroupLock~", false)
+					.withExactArgs("~Parent~", "~oGroupLock~", false)
 					.resolves();
 
 				return {value : ["~Parent~"]};
 			});
 
 		// code under test
-		const oPromise = oCache.fetchParentIndex(26, "~GroupLock~");
-		const oPromise0 = oCache.fetchParentIndex(23, "~GroupLock~");
-		const oPromise1 = oCache.fetchParentIndex(26, "~GroupLock~");
-		const oPromise2 = oCache.fetchParentIndex(23, "~GroupLock~");
+		const oPromise = oCache.fetchParentIndex(26, "~oGroupLock~");
+		const oPromise0 = oCache.fetchParentIndex(23, "~oGroupLock~");
+		const oPromise1 = oCache.fetchParentIndex(26, "~oGroupLock~");
+		const oPromise2 = oCache.fetchParentIndex(23, "~oGroupLock~");
 
 		assert.strictEqual(_Helper.getPrivateAnnotation(oNode, "parentIndexPromise"), oPromise,
 			"cached");
@@ -1219,9 +1220,9 @@ sap.ui.define([
 			.returns("~Key~");
 		this.mock(this.oRequestor).expects("buildQueryString")
 			.withExactArgs(null, {$apply : "ancestors($root/path,X,NodeID,filter(~Key~),1)"})
-			.returns("/~QueryString~");
+			.returns("?~QueryString~");
 		this.mock(this.oRequestor).expects("request")
-			.withExactArgs("GET", "Foo/~QueryString~", "~GroupLock~")
+			.withExactArgs("GET", "Foo?~QueryString~", "~oGroupLock~")
 			.callsFake(async () => {
 				await "next tick";
 
@@ -1239,7 +1240,7 @@ sap.ui.define([
 			});
 
 		// code under test
-		const oPromise = oCache.fetchParentIndex(23, "~GroupLock~");
+		const oPromise = oCache.fetchParentIndex(23, "~oGroupLock~");
 
 		assert.strictEqual(_Helper.getPrivateAnnotation(oNode, "parentIndexPromise"), oPromise,
 			"cached");
@@ -1273,14 +1274,14 @@ sap.ui.define([
 			.returns("~Key~");
 		this.mock(this.oRequestor).expects("buildQueryString")
 			.withExactArgs(null, {$apply : "ancestors($root/path,X,NodeID,filter(~Key~),1)"})
-			.returns("/~QueryString~");
+			.returns("?~QueryString~");
 		const oError = new Error();
 		this.mock(this.oRequestor).expects("request")
-			.withExactArgs("GET", "Foo/~QueryString~", "~GroupLock~")
+			.withExactArgs("GET", "Foo?~QueryString~", "~oGroupLock~")
 			.rejects(oError);
 
 		// code under test
-		const oPromise = oCache.fetchParentIndex(23, "~GroupLock~");
+		const oPromise = oCache.fetchParentIndex(23, "~oGroupLock~");
 
 		assert.strictEqual(_Helper.getPrivateAnnotation(oNode, "parentIndexPromise"), oPromise,
 			"cached");
@@ -1938,7 +1939,7 @@ sap.ui.define([
 					assert.strictEqual(oCache.aElements.$count, 42);
 				}
 
-				assert.ok(oHandleOutOfPlaceNodesExpectation.calledAfter(oAddElementsExpectation));
+				sinon.assert.callOrder(oAddElementsExpectation, oHandleOutOfPlaceNodesExpectation);
 			});
 	});
 });
@@ -3166,13 +3167,21 @@ sap.ui.define([
 				{"@$ui5.node.isExpanded" : true});
 		this.mock(oCache.oTreeState).expects("expand")
 			.withExactArgs("~oGroupNode~", iLevels);
+		this.mock(oCache).expects("validateAndDeleteExpandInfo")
+			.withExactArgs("~oGroupLock~", "~oGroupNode~")
+			.resolves("n/a");
 		this.mock(_Helper).expects("deletePrivateAnnotation").never();
 		this.mock(oCache).expects("createGroupLevelCache").never();
 
 		// code under test
 		const oPromise = oCache.expand("~oGroupLock~", "~path~", iLevels, "~fnDataRequested~");
 
-		assert.strictEqual(oPromise.getResult(), -1);
+		assert.ok(oPromise instanceof SyncPromise);
+		assert.ok(oPromise.isPending());
+
+		return oPromise.then((iCount) => {
+			assert.strictEqual(iCount, -1);
+		});
 	});
 });
 
@@ -4390,9 +4399,9 @@ sap.ui.define([
 		oCache.reset(aKeptElementPredicates, sGroupId, mQueryOptions, oNewAggregation);
 
 		if (!sGroupId) {
-			assert.ok(oTreeStateResetExpectation.calledBefore(oGetExpandLevelsExpectation));
+			sinon.assert.callOrder(oTreeStateResetExpectation, oGetExpandLevelsExpectation);
 		}
-		assert.ok(oResetExpectation.calledBefore(oGetDownloadUrlExpectation));
+		sinon.assert.callOrder(oResetExpectation, oGetDownloadUrlExpectation);
 		assert.strictEqual(oCache.oAggregation, oNewAggregation);
 		assert.strictEqual(oCache.oAggregation.$ExpandLevels, "~sExpandLevels~");
 		assert.strictEqual(oCache.sDownloadUrl, "~sDownloadUrl~");
@@ -5935,12 +5944,12 @@ sap.ui.define([
 				foo : "bar",
 				"sap-client" : "123"
 			}, false, true)
-			.returns("~queryString~");
+			.returns("?~queryString~");
 		const oGroupLock = {getUnlockedCopy : mustBeMocked};
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
 			.returns("~oGroupLockCopy~");
 		this.mock(oCache.oRequestor).expects("request")
-			.withExactArgs("GET", "Foo~queryString~", "~oGroupLockCopy~", undefined, undefined,
+			.withExactArgs("GET", "Foo?~queryString~", "~oGroupLockCopy~", undefined, undefined,
 				undefined, undefined, "/Foo", undefined, false, {$select : aSelect},
 				sinon.match.same(oCache))
 			.resolves({
@@ -6076,7 +6085,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oElement), "predicate")
 			.returns("~predicate~");
 		this.mock(this.oRequestor).expects("request")
-			.withExactArgs("DELETE", "~editUrl~", "~groupLock~", {
+			.withExactArgs("DELETE", "~editUrl~", "~oGroupLock~", {
 				"If-Match" : sinon.match.same(oElement)
 			})
 			.callsFake(() => {
@@ -6112,14 +6121,16 @@ sap.ui.define([
 			});
 
 		// code under test
-		const oDeletePromise = oCache._delete("~groupLock~", "~editUrl~", "2", "n/a", fnCallback);
+		const oDeletePromise = oCache._delete("~oGroupLock~", "~editUrl~", "2", "n/a", fnCallback);
 
 		assert.ok(oDeletePromise.isPending(), "a SyncPromise");
 
 		return oDeletePromise.then(function () {
 			assert.strictEqual(fnCallback.callCount, 1);
 			assert.deepEqual(fnCallback.args[0], [4, -1]);
-			assert.ok(oRemoveExpectation.calledBefore(oCountExpectation));
+			if (!oFixture.firstLevel) {
+				sinon.assert.callOrder(oRemoveExpectation, oCountExpectation);
+			}
 		});
 	});
 	});
@@ -6135,12 +6146,12 @@ sap.ui.define([
 
 		oCache.aElements[2] = oElement;
 		this.mock(this.oRequestor).expects("request")
-			.withExactArgs("DELETE", "~editUrl~", "~groupLock~",
+			.withExactArgs("DELETE", "~editUrl~", "~oGroupLock~",
 				{"If-Match" : sinon.match.same(oElement)})
 			.returns(Promise.reject("~error~"));
 
 		// code under test
-		const oDeletePromise = oCache._delete("~groupLock~", "~editUrl~", "2", "n/a", fnCallback);
+		const oDeletePromise = oCache._delete("~oGroupLock~", "~editUrl~", "2", "n/a", fnCallback);
 
 		assert.ok(oDeletePromise.isPending(), "a SyncPromise");
 
@@ -6175,12 +6186,12 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oElement), "transientPredicate")
 			.returns("~transientPredicate~");
 		this.mock(oParentCache).expects("_delete")
-			.withExactArgs("~groupLock~", "~editUrl~", "~transientPredicate~")
+			.withExactArgs("~oGroupLock~", "~editUrl~", "~transientPredicate~")
 			.returns("~promise~");
 
 		assert.strictEqual(
 			// code under test
-			oCache._delete("~groupLock~", "~editUrl~", "2"),
+			oCache._delete("~oGroupLock~", "~editUrl~", "2"),
 			"~promise~"
 		);
 	});
@@ -6321,10 +6332,10 @@ sap.ui.define([
 			.returns("~queryOptions0~");
 		const oRequestorMock = this.mock(oCache.oRequestor);
 		oRequestorMock.expects("buildQueryString")
-			.withExactArgs("/Foo", "~queryOptions0~", false, true).returns("~query0~");
+			.withExactArgs("/Foo", "~queryOptions0~", false, true).returns("?~query0~");
 		const oGroupLockMock = this.mock(oGroupLock);
 		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns("~oGroupLock0~");
-		oRequestorMock.expects("request").withExactArgs("GET", "Foo~query0~", "~oGroupLock0~")
+		oRequestorMock.expects("request").withExactArgs("GET", "Foo?~query0~", "~oGroupLock0~")
 			.returns("~request0~");
 		// outOfPlace1
 		oAggregationHelperMock.expects("getQueryOptionsForOutOfPlaceNodesData")
@@ -6332,9 +6343,9 @@ sap.ui.define([
 				sinon.match.same(oCache.mQueryOptions))
 			.returns("~queryOptions1~");
 		oRequestorMock.expects("buildQueryString")
-			.withExactArgs("/Foo", "~queryOptions1~", false, true).returns("~query1~");
+			.withExactArgs("/Foo", "~queryOptions1~", false, true).returns("?~query1~");
 		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns("~oGroupLock1~");
-		oRequestorMock.expects("request").withExactArgs("GET", "Foo~query1~", "~oGroupLock1~")
+		oRequestorMock.expects("request").withExactArgs("GET", "Foo?~query1~", "~oGroupLock1~")
 			.returns("~request1~");
 		// outOfPlace2
 		oAggregationHelperMock.expects("getQueryOptionsForOutOfPlaceNodesData")
@@ -6342,9 +6353,9 @@ sap.ui.define([
 				sinon.match.same(oCache.mQueryOptions))
 			.returns("~queryOptions2~");
 		oRequestorMock.expects("buildQueryString")
-			.withExactArgs("/Foo", "~queryOptions2~", false, true).returns("~query2~");
+			.withExactArgs("/Foo", "~queryOptions2~", false, true).returns("?~query2~");
 		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns("~oGroupLock2~");
-		oRequestorMock.expects("request").withExactArgs("GET", "Foo~query2~", "~oGroupLock2~")
+		oRequestorMock.expects("request").withExactArgs("GET", "Foo?~query2~", "~oGroupLock2~")
 			.returns("~request2~");
 
 		// code under test
@@ -6366,7 +6377,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("handleOutOfPlaceNodes", function (assert) {
+	QUnit.test("handleOutOfPlaceNodes", function () {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 			hierarchyQualifier : "X",
 			$DrillState : "~DrillState~",
@@ -6499,10 +6510,8 @@ sap.ui.define([
 		oCache.handleOutOfPlaceNodes([oRankResult, oOutOfPlaceNodeResult1, oOutOfPlaceNodeResult2,
 			oOutOfPlaceNodeResult3, oOutOfPlaceNodeResult4]);
 
-		assert.ok(oDeleteOutOfPlace6Expectation
-			.calledBefore(oOutOfPlaceGroupedByParentExpectation));
-		assert.ok(oDeleteOutOfPlace7Expectation
-			.calledBefore(oOutOfPlaceGroupedByParentExpectation));
+		sinon.assert.callOrder(oDeleteOutOfPlace6Expectation, oDeleteOutOfPlace7Expectation,
+			oOutOfPlaceGroupedByParentExpectation);
 	});
 
 	//*********************************************************************************************
@@ -7175,4 +7184,110 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("validateAndDeleteExpandInfo: no filters", function () {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		this.mock(oCache.oTreeState).expects("getExpandFilters")
+			.withExactArgs(sinon.match.func)
+			.returns([]);
+		this.mock(this.oRequestor).expects("request").never();
+
+		// code under test
+		return oCache.validateAndDeleteExpandInfo();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("validateAndDeleteExpandInfo", async function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo(42)/toBars", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		// restore _AggregationHelper.buildApply4Hierarchy of beforeEach to allow mocking it again
+		_AggregationHelper.buildApply4Hierarchy.restore();
+		oCache.mQueryOptions = {
+			$count : true,
+			$expand : {},
+			$filter : "~filter~",
+			$select : ["n/a"],
+			$orderby : "n/a",
+			foo : "bar"
+		};
+		const sQueryOptions = JSON.stringify(oCache.mQueryOptions);
+		const oTreeStateMock = this.mock(oCache.oTreeState);
+		oTreeStateMock.expects("getExpandFilters")
+			.withExactArgs(sinon.match.func)
+			.callsFake(function (fnFilter) {
+				oCache.aElements.$byPredicate = {
+					"~predicate1~" : "~in~",
+					"~predicate2~" : "~out~"
+				};
+				oCache.aElements[0] = "~in~";
+
+				assert.strictEqual(fnFilter("~predicate1~"), false);
+				assert.strictEqual(fnFilter("~predicate2~"), true, "not in the flat list");
+
+				return ["~filter2~", "~filter1~"]; // intentionally reversed order
+			});
+		const mTypes = {"/Foo/toBars" : "~Type~"};
+		const oCacheMock = this.mock(oCache);
+		oCacheMock.expects("getTypes").withExactArgs().returns(mTypes);
+		this.mock(_Helper).expects("getKeyFilter")
+			.withExactArgs("~oGroupNode~", "/Foo/toBars", sinon.match.same(mTypes))
+			.returns("~filterBeforeAggregate~");
+		this.mock(_AggregationHelper).expects("buildApply4Hierarchy")
+			.withExactArgs(sinon.match.same(oCache.oAggregation), {
+				$$filterBeforeAggregate : "~filterBeforeAggregate~",
+				// no $count, $expand, $orderby anymore
+				$filter : "~filter~",
+				$select : ["n/a"],
+				foo : "bar"
+			}, true)
+			.returns({
+				// Note: buildApply4Hierarchy moves $$filterBeforeAggregate and $filter into $apply!
+				$apply : "A.P.P.L.E.",
+				$select : ["n/a"],
+				foo : "bar"
+			});
+		this.mock(_Helper).expects("selectKeyProperties")
+			.withExactArgs({
+				$apply : "A.P.P.L.E.",
+				$filter : "~filter1~ or ~filter2~",
+				$select : [],
+				foo : "bar"
+			}, "~Type~")
+			.callsFake((mQueryOptions) => {
+				mQueryOptions.$select.push("~key~");
+			});
+		this.mock(this.oRequestor).expects("buildQueryString")
+			.withExactArgs("/Foo/toBars", {
+				$apply : "A.P.P.L.E.",
+				$filter : "~filter1~ or ~filter2~",
+				$select : ["~key~"],
+				$top : 2,
+				foo : "bar"
+			}, false, true, true)
+			.returns("?~query~");
+		this.mock(this.oRequestor).expects("getUnlockedAutoCopy").withExactArgs("~oGroupLock~")
+			.returns("~oUnlockedAutoCopy~");
+		this.mock(this.oRequestor).expects("request")
+			.withExactArgs("GET", "Foo(42)/toBars?~query~", "~oUnlockedAutoCopy~")
+			.resolves({value : ["~oResult0~", "~oResult1~"]});
+
+		const aExpectations = [
+			oCacheMock.expects("calculateKeyPredicate")
+				.withExactArgs("~oResult0~", sinon.match.same(mTypes), "/Foo/toBars"),
+			oTreeStateMock.expects("deleteExpandInfo").withExactArgs("~oResult0~"),
+			oCacheMock.expects("calculateKeyPredicate")
+				.withExactArgs("~oResult1~", sinon.match.same(mTypes), "/Foo/toBars"),
+			oTreeStateMock.expects("deleteExpandInfo").withExactArgs("~oResult1~")
+		];
+
+		// code under test
+		await oCache.validateAndDeleteExpandInfo("~oGroupLock~", "~oGroupNode~");
+
+		assert.strictEqual(JSON.stringify(oCache.mQueryOptions), sQueryOptions, "unchanged");
+		sinon.assert.callOrder(...aExpectations);
+	});
 });

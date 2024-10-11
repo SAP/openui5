@@ -18,7 +18,8 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/ui/core/Element',
 	'sap/ui/Device',
-	'sap/ui/dom/containsOrEquals'
+	'sap/ui/dom/containsOrEquals',
+	"sap/m/table/Util"
 ], (
 	Library,
 	FilterableListContent,
@@ -35,7 +36,8 @@ sap.ui.define([
 	Log,
 	Element,
 	Device,
-	containsOrEquals
+	containsOrEquals,
+	MTableUtil
 ) => {
 	"use strict";
 
@@ -61,9 +63,6 @@ sap.ui.define([
 			interfaces: [
 				"sap.ui.mdc.valuehelp.base.ITypeaheadContent", "sap.ui.mdc.valuehelp.base.IDialogContent"
 			],
-			properties: {
-
-			},
 			aggregations: {
 				/**
 				 * Table that is used in the value help.
@@ -88,7 +87,8 @@ sap.ui.define([
 		FilterableListContent.prototype.init.apply(this, arguments);
 
 		this._oObserver.observe(this, {
-			aggregations: ["table"]
+			aggregations: ["table"],
+			properties: ["showRowCount"]
 		});
 
 		this._oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
@@ -98,6 +98,7 @@ sap.ui.define([
 
 		this._sHighlightId = undefined;
 
+		this._bAnnounceTableUpdate = false;
 	};
 
 	MTable.prototype.getValueHelpIcon = function() {
@@ -159,7 +160,7 @@ sap.ui.define([
 				const bBindingSuspended = oListBinding && oListBinding.isSuspended();
 				const bBindingWillBeSuspended = !oListBinding && oListBindingInfo && oListBindingInfo.suspended;
 
-				if ((bBindingSuspended || bBindingWillBeSuspended) && (!this.isTypeahead() || Device.system.phone)) { // in dialog or phone case do not resume suspended table on opening
+				if ((bBindingSuspended || bBindingWillBeSuspended) && !this.isTypeahead()) { // in dialog case do not resume suspended table on opening
 					return undefined;
 				}
 
@@ -170,6 +171,9 @@ sap.ui.define([
 	};
 
 	MTable.prototype.applyFilters = function() {
+
+		// only announce updates for MTable in dialog if user triggers applyFilters
+		this._bAnnounceTableUpdate = !this.isTypeahead() && this.isContainerOpen();
 
 		if (this._iNavigateIndex >= 0) { // initialize navigation
 			this._iNavigateIndex = -1;
@@ -276,8 +280,23 @@ sap.ui.define([
 		}
 	};
 
+	MTable.prototype._updateHeaderText = function(bAllowAnnounce) {
+		const oListBinding = this.getListBinding();
+		if (!this.isTypeahead() && this._oTablePanel && oListBinding) {
+			const sNoNumberText = this.getModel("$i18n").getResourceBundle().getText("valuehelp.TABLETITLENONUMBER");
+			const iRowCount = this.getListBinding()?.getCount?.() || 0;
+			const sHeaderText = iRowCount > 0 ? this.getModel("$i18n").getResourceBundle().getText("valuehelp.TABLETITLE", [iRowCount]) : sNoNumberText;
+			this._oTablePanel.setHeaderText(sHeaderText);
+			if (bAllowAnnounce && this._bAnnounceTableUpdate) {
+				MTableUtil.announceTableUpdate(sNoNumberText, iRowCount);
+				this._bAnnounceTableUpdate = false;
+			}
+		}
+	};
+
 	MTable.prototype._handleUpdateFinished = function() {
 		_updateSelection.apply(this);
+		this._updateHeaderText(true);
 
 		if (this._bScrollToSelectedItem) {
 			const oTable = this._getTable();
@@ -349,6 +368,8 @@ sap.ui.define([
 				this._bScrollToSelectedItem = true;
 			}
 		}
+
+		this._updateHeaderText();
 	};
 
 	MTable.prototype.onHide = function() {
@@ -398,15 +419,7 @@ sap.ui.define([
 						};
 
 						this.setModel(new ResourceModel({ bundleName: "sap/ui/mdc/messagebundle", async: false }), "$i18n");
-						const _formatTableTitle = function(sText) {
-							const iItems = 0; //TODO from where do we get the count
-							if (iItems === 0) {
-								sText = this.getModel("$i18n").getResourceBundle().getText("valuehelp.TABLETITLENONUMBER");
-							}
-							return formatMessage(sText, iItems);
-						};
-
-						this._oTablePanel = new Panel(this.getId() + "-TablePanel", { expanded: true, height: "100%", headerText: { parts: ['$i18n>valuehelp.TABLETITLE'], formatter: _formatTableTitle } });
+						this._oTablePanel = new Panel(this.getId() + "-TablePanel", { expanded: true, height: "100%", headerText: this.getModel("$i18n").getResourceBundle().getText("valuehelp.TABLETITLENONUMBER") });
 						this._oTablePanel.addStyleClass("sapMdcTablePanel");
 
 						this._oContentLayout = new FixFlex(this.getId() + "-FF", { minFlexSize: 200, fixContent: this._oFilterBarVBox, flexContent: this._oTablePanel });
@@ -1018,6 +1031,10 @@ sap.ui.define([
 
 	MTable.prototype.observeChanges = function(oChanges) {
 
+		if (oChanges.name === "showRowCount") {
+			this._updateHeaderText();
+		}
+
 		if (oChanges.name === "config") {
 			_adjustTable.call(this);
 		}
@@ -1112,7 +1129,6 @@ sap.ui.define([
 	};
 
 	MTable.prototype.exit = function() {
-
 		Common.cleanup(this, [
 			"_sTableWidth",
 			"_oTable",
@@ -1123,7 +1139,8 @@ sap.ui.define([
 			"_oMResourceBundle",
 			"_oResourceBundle",
 			"_oTableDelegate",
-			"_sHighlightId"
+			"_sHighlightId",
+			"_bAnnounceTableUpdate"
 		]);
 
 		FilterableListContent.prototype.exit.apply(this, arguments);

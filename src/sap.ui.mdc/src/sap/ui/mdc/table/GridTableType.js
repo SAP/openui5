@@ -15,7 +15,7 @@ sap.ui.define([
 ) => {
 	"use strict";
 
-	let InnerTable, InnerColumn, InnerRowAction, InnerRowActionItem, InnerFixedRowMode, InnerAutoRowMode, InnerRowSettings;
+	let InnerTable, InnerColumn, InnerRowAction, InnerRowActionItem, InnerRowModeMap, InnerRowSettings;
 
 	/**
 	 * Constructor for a new <code>GridTableType</code>.
@@ -44,7 +44,7 @@ sap.ui.define([
 				/**
 				 * Row count of the inner table.<br>
 				 * This property specifies the minimum row count if <code>sap.ui.mdc.enums.TableRowCountMode.Auto</code> is used.<br>
-				 * This property specifies the row count if <code>sap.ui.mdc.enums.TableRowCountMode.Fixed</code> is used.
+				 * This property specifies the row count if <code>sap.ui.mdc.enums.TableRowCountMode.Interactive</code> or <code>sap.ui.mdc.enums.TableRowCountMode.Fixed</code> is used.<br>
 				 */
 				rowCount: {
 					type: "int",
@@ -130,15 +130,20 @@ sap.ui.define([
 			let bHideEmptyRows = false;
 
 			if (oRowMode && (vValue === TableRowCountMode.Fixed && !oRowMode.isA("sap.ui.table.rowmodes.Fixed") ||
-					vValue === TableRowCountMode.Auto && !oRowMode.isA("sap.ui.table.rowmodes.Auto"))) {
-				bHideEmptyRows = oRowMode.getHideEmptyRows();
+					vValue === TableRowCountMode.Auto && !oRowMode.isA("sap.ui.table.rowmodes.Auto") ||
+					vValue === TableRowCountMode.Interactive && !oRowMode.isA("sap.ui.table.rowmodes.Interactive"))) {
+				const oCreationRow = this.getTable().getCreationRow();
+				if (oCreationRow) {
+					bHideEmptyRows = oCreationRow.getVisible();
+				}
 				oRowMode.destroy();
 				oRowMode = null;
 			}
 
 			if (!oRowMode) {
-				const RowMode = vValue === TableRowCountMode.Fixed ? InnerFixedRowMode : InnerAutoRowMode;
-				oGridTable.setRowMode(new RowMode().setHideEmptyRows(bHideEmptyRows));
+				const RowMode = InnerRowModeMap[vValue] ?? InnerRowModeMap[TableRowCountMode.Auto];
+				const oRowMode = new RowMode();
+				oGridTable.setRowMode(oRowMode.setHideEmptyRows?.(bHideEmptyRows) ?? oRowMode);
 			}
 
 			this._updateTableRowCount();
@@ -150,7 +155,7 @@ sap.ui.define([
 	GridTableType.prototype._updateTableRowCount = function() {
 		const oGridTable = this.getInnerTable();
 
-		if (this.getRowCountMode() === TableRowCountMode.Fixed) {
+		if (this.getRowCountMode() === TableRowCountMode.Fixed || this.getRowCountMode() === TableRowCountMode.Interactive) {
 			oGridTable.getRowMode().setRowCount(this.getRowCount());
 		} else {
 			oGridTable.getRowMode().setMinRowCount(this.getRowCount());
@@ -178,14 +183,18 @@ sap.ui.define([
 					"sap/ui/table/RowActionItem",
 					"sap/ui/table/rowmodes/Fixed",
 					"sap/ui/table/rowmodes/Auto",
+					"sap/ui/table/rowmodes/Interactive",
 					"sap/ui/table/RowSettings"
-				], (GridTable, GridColumn, RowAction, RowActionItem, FixedRowMode, AutoRowMode, RowSettings) => {
+				], (GridTable, GridColumn, RowAction, RowActionItem, FixedRowMode, AutoRowMode, InteractiveRowMode, RowSettings) => {
 					InnerTable = GridTable;
 					InnerColumn = GridColumn;
 					InnerRowAction = RowAction;
 					InnerRowActionItem = RowActionItem;
-					InnerFixedRowMode = FixedRowMode;
-					InnerAutoRowMode = AutoRowMode;
+					InnerRowModeMap = {
+						[TableRowCountMode.Fixed]: FixedRowMode,
+						[TableRowCountMode.Auto]: AutoRowMode,
+						[TableRowCountMode.Interactive]: InteractiveRowMode
+					};
 					InnerRowSettings = RowSettings;
 					resolve();
 				}, () => {

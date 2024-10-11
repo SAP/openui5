@@ -48,12 +48,14 @@ sap.ui.define(["sap/ui/integration/util/DataProvider"], function (DataProvider) 
 	 */
 	ServiceDataProvider.prototype.createServiceInstances = function (oServiceManager) {
 		this._oServiceManager = oServiceManager;
+		const oConfiguration = this.getResolvedConfiguration();
 
-		if (!this.getSettings() || !this.getSettings().service) {
+		if (!oConfiguration || !oConfiguration.service) {
 			return;
 		}
 
-		var vService = this.getSettings().service;
+		let vService = oConfiguration.service;
+
 		if (vService && typeof vService === "object") {
 			vService = vService.name;
 		}
@@ -67,14 +69,14 @@ sap.ui.define(["sap/ui/integration/util/DataProvider"], function (DataProvider) 
 	 * @param {string} sServiceName The name of the service to create an instance of.
 	 */
 	ServiceDataProvider.prototype._createServiceInstance = function (sServiceName) {
-		var oDataSettings = this.getSettings();
+		const oConfiguration = this.getResolvedConfiguration();
 
 		this._oDataServicePromise = this._oServiceManager
 			.getService(sServiceName)
 			.then(function (oDataService) {
 				oDataService.attachDataChanged(function (oEvent) {
 					this.fireDataChanged({ data: oEvent.data });
-				}.bind(this), oDataSettings.service.parameters);
+				}.bind(this), oConfiguration.service.parameters);
 
 				return oDataService;
 			}.bind(this));
@@ -85,8 +87,8 @@ sap.ui.define(["sap/ui/integration/util/DataProvider"], function (DataProvider) 
 	 * @returns {Promise} A promise resolved when the data is available and rejected in case of an error.
 	 */
 	ServiceDataProvider.prototype.getData = function () {
-		var oDataSettings = this.getSettings();
-		var oService = oDataSettings.service;
+		const oConfiguration = this.getResolvedConfiguration();
+		const oService = oConfiguration.service;
 
 		return new Promise(function (resolve, reject) {
 			if (oService && this._oDataServicePromise) {

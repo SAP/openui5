@@ -938,9 +938,9 @@ sap.ui.define([
 	 *   An array of navigation property names which are omitted from the main list request and
 	 *   loaded in a separate request instead (@experimental as of version 1.129.0). This results in
 	 *   the main list becoming available faster, while the separate properties are merged as soon
-	 *   as the data is received. Note that the separate properties must be part of the '$expand'
-	 *   system query option, either automatically via the "autoExpandSelect" model parameter (see
-	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}) or manually. The
+	 *   as the data is received. Note that the separate properties must be single valued and part
+	 *   of the '$expand' system query option, either automatically via the "autoExpandSelect" model
+	 *   parameter (see {@link sap.ui.model.odata.v4.ODataModel#constructor}) or manually. The
 	 *   <code>$$separate</code> parameter must not be combined with <code>$$aggregation</code>.
 	 * @param {boolean} [mParameters.$$sharedRequest]
 	 *   Whether multiple bindings for the same resource path share the data, so that it is

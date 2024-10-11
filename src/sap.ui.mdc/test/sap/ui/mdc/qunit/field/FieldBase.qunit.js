@@ -687,12 +687,23 @@ sap.ui.define([
 		oField.placeAt("content");
 		await nextUIUpdate();
 
+		let aContent = oField.getAggregation("_content");
+		let oContent = aContent?.length > 0 && aContent[0];
+		sinon.spy(oContent, "hasLabelableHTMLElement");
+		assert.equal(oLabel.getLabelForRendering(), "F1", "Label for rendering points to field");
+		assert.ok(oContent.hasLabelableHTMLElement.called, "hasLabelableHTMLElement of content control called to determine if labelable");
 		assert.equal(jQuery("#L1").attr("for"), "F1-inner-inner", "Label points to DomRef of inner control");
+		assert.equal(document.getElementById("L1").nodeName, "LABEL", "Label ist rendered as LABEL");
 
-		oField.setEditMode(FieldEditMode.Display);
+		oField.setEditMode(FieldEditMode.Display); // TokenizerDispaly rendered
 		await nextUIUpdate();
 
-		assert.equal(jQuery("#L1").attr("for"), "F1-inner", "Label points to DomRef of inner control");
+		aContent = oField.getAggregation("_content");
+		oContent = aContent?.length > 0 && aContent[0];
+		sinon.spy(oContent, "hasLabelableHTMLElement");
+		assert.notOk(oLabel.getLabelForRendering(), "Label for rendering is empty");
+		assert.ok(oContent.hasLabelableHTMLElement.called, "hasLabelableHTMLElement of content control called to determine if labelable");
+		assert.equal(document.getElementById("L1").nodeName, "SPAN", "Label ist rendered as SPAN");
 		oLabel.destroy();
 
 	});

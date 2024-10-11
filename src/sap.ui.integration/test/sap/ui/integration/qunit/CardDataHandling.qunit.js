@@ -963,13 +963,13 @@ function(
 				"key1": "value1",
 				"key2": "value2"
 			};
-			this._fnRequestStub = sinon.stub(RequestDataProvider.prototype, "getData").callsFake(fnFake);
+			this._fnFetchStub = sinon.stub(RequestDataProvider.prototype, "_fetch").callsFake(fnFake);
 		},
 		afterEach: function () {
 			this.oCard.destroy();
 			this.oCard = null;
 			this.oData = null;
-			this._fnRequestStub.restore();
+			this._fnFetchStub.restore();
 		}
 	});
 
@@ -1000,7 +1000,7 @@ function(
 
 		await nextCardReadyEvent(this.oCard);
 
-		var oRequestedURL = this.oCard._oDataProvider.getSettings().request.url;
+		const oRequestedURL = this._fnFetchStub.args[0][0].url;
 
 		// Assert
 		assert.strictEqual(oRequestedURL, "someurl/param1", "Expression binding in the 'url' should be resolved.");
@@ -1033,7 +1033,7 @@ function(
 
 		await nextCardReadyEvent(this.oCard);
 
-		var oRequestedURL = this.oCard.getCardHeader()._oDataProvider.getSettings().request.url;
+		const oRequestedURL = this._fnFetchStub.args[0][0].url;
 
 		// Assert
 		assert.strictEqual(oRequestedURL, "someurl/param1", "Expression binding in the 'url' should be resolved.");
@@ -1071,8 +1071,7 @@ function(
 
 		await nextCardReadyEvent(this.oCard);
 
-		var oFilter = this.oCard.getAggregation("_filterBar")._getFilters()[0],
-			oRequestedURL = oFilter._oDataProvider.getSettings().request.url;
+		const oRequestedURL = this._fnFetchStub.args[0][0].url;
 
 		// Assert
 		assert.strictEqual(oRequestedURL, "someurl/?f=value1", "Filter value in the 'url' should be resolved.");
@@ -1104,7 +1103,7 @@ function(
 
 		await nextCardReadyEvent(this.oCard);
 
-		var oRequestedURL = this.oCard.getCardContent()._oDataProvider.getSettings().request.url;
+		const oRequestedURL = this._fnFetchStub.args[0][0].url;
 
 		// Assert
 		assert.strictEqual(oRequestedURL, "someurl/param1", "Expression binding in the 'url' should be resolved.");
@@ -1120,11 +1119,11 @@ function(
 			this.oData = {
 				title: "Hello World"
 			};
-			this._fnRequestStub = sinon.stub(RequestDataProvider.prototype, "getData").callsFake(fnFake);
+			this._fnFetchStub = sinon.stub(RequestDataProvider.prototype, "_fetch").callsFake(fnFake);
 		},
 		afterEach: function () {
 			this.oCard.destroy();
-			this._fnRequestStub.restore();
+			this._fnFetchStub.restore();
 		}
 	});
 
@@ -1167,7 +1166,7 @@ function(
 
 		await nextCardReadyEvent(this.oCard);
 
-		var oRequestedURL = this.oCard._oDataProvider.getSettings().request.url;
+		const oRequestedURL = this._fnFetchStub.args[0][0].url;
 
 		// Assert
 		assert.strictEqual(oRequestedURL, "someurl/data", "Filter value in the url is properly resolved on card level");
@@ -1211,7 +1210,7 @@ function(
 
 		await nextCardReadyEvent(this.oCard);
 
-		var oRequestedURL = this.oCard.getCardHeader()._oDataProvider.getSettings().request.url;
+		const oRequestedURL = this._fnFetchStub.args[0][0].url;
 
 		// Assert
 		assert.strictEqual(oRequestedURL, "someurl/data", "Filter value in the url is properly resolved on header level");
@@ -1255,7 +1254,7 @@ function(
 
 		await nextCardReadyEvent(this.oCard);
 
-		var oRequestedURL = this.oCard.getCardContent()._oDataProvider.getSettings().request.url;
+		const oRequestedURL = this._fnFetchStub.args[0][0].url;
 
 		// Assert
 		assert.strictEqual(oRequestedURL, "someurl/data", "Filter value in the url is properly resolved on header level");

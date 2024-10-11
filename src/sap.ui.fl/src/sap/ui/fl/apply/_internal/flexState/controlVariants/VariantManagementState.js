@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/DataSelector",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/LayerUtils"
 ], function(
 	_omit,
@@ -21,6 +22,7 @@ sap.ui.define([
 	DependencyHandler,
 	DataSelector,
 	FlexState,
+	Storage,
 	LayerUtils
 ) {
 	"use strict";
@@ -456,6 +458,24 @@ sap.ui.define([
 		aFlexObjects.forEach((oFlexObject) => FlexState.getRuntimeOnlyData(sReference).flexObjects.push(oFlexObject));
 		// Only called during destruction, no need to recalculate new state immediately
 		FlexState.getFlexObjectsDataSelector().clearCachedResult({ reference: sReference });
+	};
+
+	/**
+	 * Loads the flex objects for the given variant references and adds them to the FlexState.
+	 *
+	 * @param {object} mPropertyBag - Object with the necessary properties
+	 * @param {string} mPropertyBag.reference - Flexibility reference
+	 * @param {string[]} mPropertyBag.variantReferences - List of variant references to be loaded
+	 */
+	VariantManagementState.loadVariants = async function(mPropertyBag) {
+		const oStorageResponse = await Storage.loadFlVariants({
+			variantReferences: mPropertyBag.variantReferences,
+			reference: mPropertyBag.reference
+		});
+		FlexState.updateWithDataProvided({
+			reference: mPropertyBag.reference,
+			newData: oStorageResponse
+		});
 	};
 
 	/**

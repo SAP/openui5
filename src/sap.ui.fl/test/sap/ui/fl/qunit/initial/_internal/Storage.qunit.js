@@ -1069,6 +1069,54 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("loadFlVariants", {
+		beforeEach() {
+		},
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when there are multiple connectors configured", async function(assert) {
+			const sUrl = "some/url";
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
+				{
+					connector: "LrepConnector",
+					url: sUrl,
+					layers: []
+				},
+				// the JsObjectConnector does not extend the BaseLoadConnector and has no loadFlVariants function
+				{
+					connector: "JsObjectConnector",
+					layers: [Layer.CUSTOMER]
+				},
+				{
+					connector: "PersonalizationConnector",
+					url: sUrl,
+					layers: [Layer.USER]
+				}
+			]);
+			sandbox.stub(LrepConnector, "loadFlVariants").resolves({
+				variants: [{fileName: "variant1"}],
+				variantDependentControlChanges: [{fileName: "change1"}],
+				variantChanges: [{fileName: "variantChange1"}],
+				variantManagementChanges: [{fileName: "vmChange1"}]
+			});
+			sandbox.stub(PersonalizationConnector, "loadFlVariants").resolves({
+				variants: [{fileName: "variant2"}],
+				variantDependentControlChanges: [{fileName: "change2"}],
+				variantChanges: [{fileName: "variantChange2"}],
+				variantManagementChanges: [{fileName: "vmChange2"}]
+			});
+			const oResult = await Storage.loadFlVariants({reference: sFlexReference, variantReferences: ["variant1", "variant2"]});
+			assert.deepEqual(oResult, {
+				variants: [{fileName: "variant1"}, {fileName: "variant2"}],
+				variantDependentControlChanges: [{fileName: "change1"}, {fileName: "change2"}],
+				variantChanges: [{fileName: "variantChange1"}, {fileName: "variantChange2"}],
+				variantManagementChanges: [{fileName: "vmChange1"}, {fileName: "vmChange2"}]
+			}, "the result is correct");
+		});
+	});
+
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});

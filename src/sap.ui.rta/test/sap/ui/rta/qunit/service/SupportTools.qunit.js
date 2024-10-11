@@ -44,12 +44,13 @@ sap.ui.define([
 			QUnit.config.fixture = null;
 			this.oButton1 = new Button("button1");
 			this.oButton2 = new Button("button2");
+			this.oButton3 = new Button("button3");
 			this.oComponent = RtaQunitUtils.createAndStubAppComponent(
 				sandbox,
 				"fixture.application",
 				undefined,
 				new Page("page", {
-					content: [this.oButton1, this.oButton2]
+					content: [this.oButton1, this.oButton2, this.oButton3]
 				})
 			);
 			this.oPage = this.oComponent.getRootControl();
@@ -80,6 +81,8 @@ sap.ui.define([
 		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
+			delete window.ui5flex$0;
+			delete window.ui5flex$temp;
 		},
 		after() {
 			QUnit.config.fixture = "";
@@ -143,9 +146,11 @@ sap.ui.define([
 			}).then(function(oChangeHandler) {
 				oConsoleStub
 				.callThrough()
-				.withArgs(oChangeHandler)
-				.callsFake(function() {
+				.withArgs(sinon.match(function(oLoggedObject) {return oLoggedObject.changeHandler === oChangeHandler;}))
+				.callsFake(function(oLoggedObject) {
 					assert.ok(true, "then the change handler is printed to console");
+					assert.ok(oLoggedObject.savedAs.includes("ui5flex$"), "and a temporary variable is saved");
+					assert.ok(oLoggedObject.description.includes("ChangeHandler"), "and the correct Control Identification is set");
 					fnDone();
 				});
 
@@ -168,9 +173,11 @@ sap.ui.define([
 
 			oConsoleStub
 			.callThrough()
-			.withArgs(oButtonDesigntimeMetadata)
-			.callsFake(function() {
+			.withArgs(sinon.match(function(oLoggedObject) {return oLoggedObject.metaData === oButtonDesigntimeMetadata;}))
+			.callsFake(function(oLoggedObject) {
 				assert.ok(true, "then the design time metadata is printed to console");
+				assert.ok(oLoggedObject.savedAs.includes("ui5flex$"), "and a temporary variable is saved");
+				assert.ok(oLoggedObject.description.includes("DesignTimeMetaData"), "and the correct Control Identification is set");
 				fnDone();
 			});
 
@@ -317,6 +324,40 @@ sap.ui.define([
 			});
 
 			window.addEventListener("message", onMessageReceived);
+		});
+
+		QUnit.test("when an 'changeOverlaySelection' event is triggered on multiple selection", function(assert) {
+			var fnDone = assert.async();
+			// We have to fake a Multiselection of Buttons using Selectionmanager
+			const oSelectionManager = this.oRta._oDesignTime.getSelectionManager();
+			oSelectionManager.add(OverlayRegistry.getOverlay("button1"));
+			oSelectionManager.add(OverlayRegistry.getOverlay("button2"));
+			assert.ok(OverlayRegistry.getOverlay("button1").getSelected(), "Initially, button1 is selected");
+			assert.ok(OverlayRegistry.getOverlay("button2").getSelected(), "Initially, button2 is selected");
+			assert.ok(this.oRta.getSelection().length = 2, "Initially, two buttons are selected");
+			function onMessage(oEvent) {
+				if (
+					oEvent.data.id === "ui5FlexibilitySupport.submodules.overlayInfo"
+					&& oEvent.data.type === "changeOverlaySelection"
+				) {
+					assert.notOk(OverlayRegistry.getOverlay("button1").getSelected(), "After processing button1 is not selected");
+					assert.notOk(OverlayRegistry.getOverlay("button2").getSelected(), "After processing button2 is not selected");
+					assert.ok(this.oRta.getSelection().length = 1, "After processing, only one overlay is selected");
+					assert.strictEqual(this.oRta.getSelection()[0],
+						OverlayRegistry.getOverlay("button3"), "After processing the correct Overlay is selected");
+					fnDone();
+				}
+			}
+
+			window.postMessage({
+				id: "ui5FlexibilitySupport.submodules.overlayInfo",
+				type: "changeOverlaySelection",
+				content: {
+					overlayId: OverlayRegistry.getOverlay("button3").getId()
+				}
+			});
+
+			window.addEventListener("message", onMessage.bind(this), { once: true });
 		});
 
 		QUnit.test("when contextmenu is closed", async function(assert) {

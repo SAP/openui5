@@ -125,8 +125,8 @@ sap.ui.define([
 	 * @override
 	 */
 	RequestDataProvider.prototype.getData = function () {
-		var oRequestConfig = this.getSettings().request,
-			pRequestChain = Promise.resolve(oRequestConfig);
+		const oRequestConfig = this._getResolvedRequestConfiguration();
+		let pRequestChain = Promise.resolve(oRequestConfig);
 
 		if (this._oDestinations) {
 			pRequestChain = this._oDestinations.process(oRequestConfig);
@@ -152,6 +152,25 @@ sap.ui.define([
 		this._retryDueExpiredToken = false;
 
 		return DataProvider.prototype.triggerDataUpdate.apply(this, arguments);
+	};
+
+	/**
+	 * @override
+	 */
+	RequestDataProvider.prototype.getResolvedConfiguration = function () {
+		const oConfiguration = DataProvider.prototype.getResolvedConfiguration.apply(this, arguments);
+
+		this._reviveFormData(oConfiguration);
+
+		return oConfiguration;
+	};
+
+	RequestDataProvider.prototype._reviveFormData = function (oResolvedConfiguration) {
+		const oConfiguration = this.getConfiguration();
+
+		if (oConfiguration?.request?.parameters instanceof FormData) {
+			oResolvedConfiguration.request.parameters = oConfiguration.request.parameters;
+		}
 	};
 
 	RequestDataProvider.prototype._handleExpiredToken = function (oError) {
@@ -207,6 +226,8 @@ sap.ui.define([
 				vBody = JSON.stringify(oParameters);
 			} else if (bGetMethod) {
 				sUrl = combineUrlAndParams(sUrl, oParameters);
+			} else if (oParameters instanceof FormData) {
+				vBody = oParameters;
 			} else {
 				// application/x-www-form-urlencoded
 				vBody = new URLSearchParams(oParameters);
@@ -240,7 +261,7 @@ sap.ui.define([
 			oRequest.options.headers.set("Accept", mDataTypeHeaders[sDataType]);
 		}
 
-		oRequest = this._modifyRequestBeforeSent(oRequest, this.getSettings());
+		oRequest = this._modifyRequestBeforeSent(oRequest, this.getResolvedConfiguration());
 
 		if (!this._isValidRequest(oRequest)) {
 			Log.error(sMessage);
@@ -260,7 +281,7 @@ sap.ui.define([
 	};
 
 	RequestDataProvider.prototype._request = function (oRequest, bNoRetry) {
-		var fnFetch = this._getFetchMethod(this._getRequestSettings());
+		var fnFetch = this._getFetchMethod(this._getResolvedRequestConfiguration());
 
 		return fnFetch(oRequest.url, oRequest.options)
 			.then(function (oResponse) {
@@ -340,7 +361,7 @@ sap.ui.define([
 	 * @returns {int} The number of seconds after which to retry the request.
 	 */
 	RequestDataProvider.prototype._getRetryAfter = function (oResponse) {
-		var oRequestConfig = this.getSettings().request,
+		const oRequestConfig = this._getResolvedRequestConfiguration(),
 			vRetryAfter = oResponse.headers.get("Retry-After") || oRequestConfig.retryAfter;
 
 		if (!vRetryAfter) {
@@ -362,31 +383,48 @@ sap.ui.define([
 	/**
 	 * Gets the method which should execute the HTTP fetch.
 	 * @private
-	 * @param {object} oRequestSettings settings in manifest format
+	 * @param {object} oRequestConfiguration Configuration in manifest format
 	 * @returns {Function} The function to use for HTTP fetch.
 	 */
-	RequestDataProvider.prototype._getFetchMethod = function (oRequestSettings) {
-		var oCard = Element.getElementById(this.getCard()),
+	RequestDataProvider.prototype._getFetchMethod = function (oRequestConfiguration) {
+		var oCard = this.getCardInstance(),
 			oExtension = oCard && oCard.getAggregation("_extension"),
 			oHost = Element.getElementById(this.getHost());
 
 		if (oExtension) {
-			return function (sResource, mOptions) {
-				return oExtension.fetch(sResource, mOptions, deepClone(oRequestSettings, 1000));
+			return (sResource, mOptions) => {
+				return oExtension.fetch(sResource, mOptions, this._cloneRequestConfiguration(oRequestConfiguration));
 			};
 		}
 
 		if (oHost) {
-			return function (sResource, mOptions) {
-				return oHost.fetch(sResource, mOptions, deepClone(oRequestSettings, 1000), oCard);
+			return (sResource, mOptions) => {
+				return oHost.fetch(sResource, mOptions, this._cloneRequestConfiguration(oRequestConfiguration), oCard);
 			};
 		}
 
 		return fetch;
 	};
 
-	RequestDataProvider.prototype._getRequestSettings = function () {
-		return this.getSettings().request;
+	RequestDataProvider.prototype._getResolvedRequestConfiguration = function () {
+		return this.getResolvedConfiguration().request;
+	};
+
+	RequestDataProvider.prototype._cloneRequestConfiguration = function (oRequestConfiguration) {
+		let oFormData;
+
+		if (oRequestConfiguration?.parameters instanceof FormData) {
+			oFormData = oRequestConfiguration.parameters;
+			delete oRequestConfiguration.parameters;
+		}
+
+		const oClonedConfiguration = deepClone(oRequestConfiguration, 1000);
+
+		if (oFormData) {
+			oClonedConfiguration.parameters = oFormData;
+		}
+
+		return oClonedConfiguration;
 	};
 
 	/**
@@ -493,13 +531,13 @@ sap.ui.define([
 	 * Override if modification to the request is needed.
 	 * Allows the host to modify the headers or the full request.
 	 * @param {object} oRequest The current request.
-	 * @param {object} oSettings The request settings
+	 * @param {object} oConfiguration The request configuration
 	 * @returns {object} The modified request
 	 */
-	RequestDataProvider.prototype._modifyRequestBeforeSent = function (oRequest, oSettings) {
+	RequestDataProvider.prototype._modifyRequestBeforeSent = function (oRequest, oConfiguration) {
 		var oHost = Element.getElementById(this.getHost());
 
-		Element.getElementById(this.getCard());
+		this.getCardInstance();
 
 		if (!oHost) {
 			return oRequest;
@@ -512,7 +550,7 @@ sap.ui.define([
 	 * @override
 	 */
 	RequestDataProvider.prototype.getDetails = function () {
-		return "Backend interaction - load data from URL: " + this.getSettings().request.url;
+		return "Backend interaction - load data from URL: " + this._getResolvedRequestConfiguration().url;
 	};
 
 	return RequestDataProvider;

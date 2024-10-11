@@ -59,6 +59,9 @@ sap.ui.define([
 					],
 					items: {
 						path : "/Authors",
+						parameters: {
+							$count: true
+						},
 						length: 10,
 						suspended: bSuspended,
 						template : new ColumnListItem({
@@ -159,6 +162,9 @@ sap.ui.define([
 						],
 						items: {
 							path : "/Authors",
+							parameters: {
+								$count: true
+							},
 							suspended: bSuspended,
 							template : new ColumnListItem({
 								type: "Active",
@@ -217,6 +223,9 @@ sap.ui.define([
 						],
 						items: {
 							path : "/Authors",
+							parameters: {
+								$count: true
+							},
 							suspended: bSuspended,
 							template : new ColumnListItem({
 								type: "Active",

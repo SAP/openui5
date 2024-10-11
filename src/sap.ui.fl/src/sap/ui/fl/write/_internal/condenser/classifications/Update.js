@@ -2,11 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([
-	"sap/base/util/each"
-], function(
-	each
-) {
+sap.ui.define([], function() {
 	"use strict";
 
 	return {
@@ -29,11 +25,7 @@ sap.ui.define([
 		},
 
 		getChangesFromMap(mObjects, sUniqueKey) {
-			var aChanges = [];
-			each(mObjects[sUniqueKey], function(sKey, oCondenserInfo) {
-				aChanges.push(oCondenserInfo.change);
-			});
-			return aChanges;
+			return Object.values(mObjects[sUniqueKey]).map((oCondenserInfo) => oCondenserInfo.change);
 		}
 	};
 });

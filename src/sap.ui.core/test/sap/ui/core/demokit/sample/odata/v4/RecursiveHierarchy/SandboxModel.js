@@ -377,8 +377,18 @@ sap.ui.define([
 				// + ",filter(STATUS%20ne%20'Out'),keep%20start)"
 				// + "/descendants($root/EMPLOYEES,OrgChart,ID,filter(ID%20eq%20'" + sParentId
 				// + "'),1)/orderby(AGE)"
-				const sParentId = mQueryOptions.$apply.match(/,filter\(ID%20eq%20'([^']*)'\)/)[1];
-				let aChildren = mChildrenByParentId[sParentId];
+				let aDescendants = [];
+				const addDescendants = (sParentId, bAll) => {
+					mChildrenByParentId[sParentId]?.forEach((oChild) => {
+						aDescendants.push(oChild);
+						if (bAll) {
+							addDescendants(oChild.ID, true);
+						}
+					});
+				};
+				const [, sParentId, bSingle]
+					= mQueryOptions.$apply.match(/,filter\(ID%20eq%20'([^']*)'\)(,1)?/);
+				addDescendants(sParentId, !bSingle);
 				if ("$filter" in mQueryOptions) {
 					const bNot = mQueryOptions.$filter.startsWith("not%20(");
 					if (bNot) {
@@ -389,9 +399,10 @@ sap.ui.define([
 					const aIDs = mQueryOptions.$filter
 						.split("%20or%20")
 						.map((sID_Predicate) => sID_Predicate.split("%20eq%20")[1].slice(1, -1));
-					aChildren = aChildren.filter((oChild) => aIDs.includes(oChild.ID) !== bNot);
+					aDescendants
+						= aDescendants.filter((oChild) => aIDs.includes(oChild.ID) !== bNot);
 				}
-				selectCountSkipTop(aChildren, mQueryOptions, oResponse);
+				selectCountSkipTop(aDescendants, mQueryOptions, oResponse);
 				return;
 			}
 

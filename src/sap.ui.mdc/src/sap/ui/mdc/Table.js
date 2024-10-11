@@ -249,7 +249,7 @@ sap.ui.define([
 	 * @property {string[]} [extension.additionalProperties]
 	 *   Properties that are loaded in addition if this property is loaded. These properties must be technically groupable, otherwise they can't be
 	 *   loaded.
-	 *   This attribute is only taken into account if the <code>p13nMode</code> <code>Aggregate</code>, or <code>Group</code> is enabled and the
+	 *   This attribute is only taken into account if the <code>Aggregate</code> or <code>Group</code> <code>p13nMode</code> is enabled and the
 	 *   table type is {@link sap.ui.mdc.table.GridTableType GridTable}.
 	 *   These properties are not considered for any other functionality, such as export or column width calculation, for example.
 	 *

@@ -2823,7 +2823,7 @@ sap.ui.define([
 					fnGetEntity, "~bIgnoreETag~"),
 				oPromise);
 			assert.strictEqual(oBinding.oReturnValueContext, null);
-			assert.ok(oDestroyExpectation.calledBefore(oExpectation));
+			sinon.assert.callOrder(oDestroyExpectation, oExpectation);
 			assert.strictEqual(oBinding.oOperation.bAction, true);
 			assert.strictEqual(oBinding.oCache, oSingleCache);
 			assert.strictEqual(oBinding.oCachePromise.getResult(), oSingleCache);
@@ -4139,9 +4139,8 @@ sap.ui.define([
 		// code under test
 		oBinding.resumeInternal(bCheckUpdate);
 
-		assert.ok(oResumeInternalExpectation0.calledAfter(oFetchCacheExpectation));
-		assert.ok(oResumeInternalExpectation1.calledAfter(oFetchCacheExpectation));
-		assert.ok(oFireChangeExpectation.calledAfter(oResumeInternalExpectation1));
+		sinon.assert.callOrder(oFetchCacheExpectation, oResumeInternalExpectation0,
+			oResumeInternalExpectation1, oFireChangeExpectation);
 		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
 	});
 

@@ -61,12 +61,13 @@ sap.ui.define([
 			if (bNested || oExpandInfo && oExpandInfo.levels !== 0) {
 				delete this.mPredicate2ExpandInfo[sPredicate];
 			} else {
-				// must determine node ID now; the node may be missing when calling #getExpandLevels
-				const sNodeId = _Helper.drillDown(oNode, this.sNodeProperty);
+				// must determine node ID and key filter now; the node may be missing when calling
+				// #getExpandLevels or #getExpandFilters
 				this.mPredicate2ExpandInfo[sPredicate] = {
 					collapseAll : bAll,
+					filter : this.fnGetKeyFilter(oNode),
 					levels : 0,
-					nodeId : sNodeId
+					nodeId : _Helper.drillDown(oNode, this.sNodeProperty)
 				};
 			}
 		}
@@ -97,7 +98,7 @@ sap.ui.define([
 		 *
 		 * @param {object} oNode - The node
 		 *
-		 * @private
+		 * @public
 		 */
 		deleteExpandInfo(oNode) {
 			delete this.mPredicate2ExpandInfo[_Helper.getPrivateAnnotation(oNode, "predicate")];
@@ -160,18 +161,37 @@ sap.ui.define([
 			if (oExpandInfo && !oExpandInfo.levels && !oExpandInfo.collapseAll) {
 				delete this.mPredicate2ExpandInfo[sPredicate];
 			} else {
-				// must determine node ID now; the node may be missing when calling #getExpandLevels
-				const sNodeId = _Helper.drillDown(oNode, this.sNodeProperty);
-				this.mPredicate2ExpandInfo[sPredicate] = {levels : iLevels, nodeId : sNodeId};
+				// must determine node ID and key filter now; the node may be missing when calling
+				// #getExpandLevels or #getExpandFilters
+				this.mPredicate2ExpandInfo[sPredicate] = {
+					filter : this.fnGetKeyFilter(oNode),
+					levels : iLevels,
+					nodeId : _Helper.drillDown(oNode, this.sNodeProperty)
+				};
 			}
 		}
 
 		/**
-		 * Returns the ExpandLevels parameter to the TopLevels function describing the tree state in
-		 * $apply.
+		 * Returns an unsorted list of filter strings for the "$filter" system query option for all
+		 * nodes which contribute to the "ExpandLevels" parameter and where the given filter
+		 * function is matching.
+		 *
+		 * @param {function(string):boolean} fnFilter - A filter function for the predicates
+		 * @return {string[]} The filter strings
+		 *
+		 * @public
+		 */
+		getExpandFilters(fnFilter) {
+			return Object.keys(this.mPredicate2ExpandInfo).filter(fnFilter)
+				.map((sPredicate) => this.mPredicate2ExpandInfo[sPredicate].filter);
+		}
+
+		/**
+		 * Returns the "ExpandLevels" parameter to the "TopLevels" function describing the tree
+		 * state in "$apply".
 		 *
 		 * @returns {string|undefined}
-		 *   The ExpandLevels parameter or undefined if no tree state is kept
+		 *   The "ExpandLevels" parameter or undefined if no tree state is kept
 		 *
 		 * @public
 		 */

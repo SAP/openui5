@@ -3360,7 +3360,7 @@ sap.ui.define([
 			oBinding.detachChange(handler);
 			oBinding.detachRefresh(handler);
 			var oProperties = {CategoryID:99,CategoryName:"Food",Description:"Food Desc", undefProp:undefined};
-			var oContext = oModel.createEntry("Categories",{properties: oProperties, batchGroupId : "myId"});
+			var oContext = oModel.createEntry("Categories",{properties: oProperties, groupId : "myId"});
 			assert.ok(oContext, "context check");
 			var oEntry = oModel.getProperty("", oContext);
 			assert.ok(oEntry, "entry check");
@@ -4115,9 +4115,9 @@ sap.ui.define([
 		function fnError() { oInfo.error++; }
 		oModel.attachMetadataLoaded(function() {
 			oModel.setDeferredGroups(["myId"]);
-			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
-			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
-						oModel.read("/Categories(4)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError, groupId : "myId"});
+			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError, groupId : "myId"});
+						oModel.read("/Categories(4)", {success: fnSuccess, error: fnError, groupId : "myId"});
 			oRequest1.abort();
 			oRequest2.abort();
 
@@ -4162,9 +4162,9 @@ sap.ui.define([
 		function fnError() { oInfo.error++; }
 		oModel.attachMetadataLoaded(function() {
 			oModel.setDeferredGroups(["myId"]);
-			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
-			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
-			oModel.read("/Categories(4)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
+			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError, groupId : "myId"});
+			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError, groupId : "myId"});
+			oModel.read("/Categories(4)", {success: fnSuccess, error: fnError, groupId : "myId"});
 
 			oModel.attachBatchRequestSent(function() {
 				oRequest1.abort();
