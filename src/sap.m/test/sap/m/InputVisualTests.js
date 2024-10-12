@@ -206,6 +206,33 @@ sap.ui.define([
 			})
 		});
 
+		var oInputWithShowItems = new sap.m.Input("inputWithShowItems", {
+			width: "30rem",
+			showSuggestion: true,
+			suggestionRows: {
+				path: "/",
+				template: new sap.m.ColumnListItem({
+					cells: [
+						new sap.m.Text({text:"{name}"})
+					]
+				})
+			},
+			suggestionColumns: [
+				new sap.m.Column({
+					header: new sap.m.Label({text: "Text"})
+				})
+			]
+		});
+
+		oInputWithShowItems.setModel(oModel);
+		oInputWithShowItems.addEventDelegate({
+			onfocusin: function () {
+				oInputWithShowItems.showItems(function () {
+					return true;
+				});
+			}
+		});
+
 		var oSuggestTableInput = new Input("inputWithTabularSuggestions", {
 			width: "300px",
 			showSuggestion: true,
@@ -545,7 +572,9 @@ sap.ui.define([
 						new Label({text: "Input with long suggestions", labelFor: "inputLongSugg"}),
 						oLongSuggInput,
 						new Label({text: "Input with clear icon", labelFor: "inputClearIcon"}),
-						oClearIconInput
+						oClearIconInput,
+						new Label({text: "Input with showItems() on focusin", labelFor: "inputWithShowItems"}),
+						oInputWithShowItems
 					]
 				})
 
