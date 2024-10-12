@@ -94,7 +94,8 @@ sap.ui.define([
 	}
 
 	function createAndCompleteFlexObjectWithChangeHandlerInfo(mPropertyBag) {
-		const oFlexObject = FlexObjectFactory.createUIChange(mPropertyBag.changeSpecificData);
+		const oChangeSpecificData = mPropertyBag.changeSpecificData;
+		const oFlexObject = FlexObjectFactory.createUIChange(oChangeSpecificData);
 		return ChangeHandlerStorage.getChangeHandler(
 			oFlexObject.getChangeType(),
 			mPropertyBag.controlType,
@@ -103,7 +104,18 @@ sap.ui.define([
 			oFlexObject.getLayer()
 		)
 		.then((oChangeHandler) => {
-			return oChangeHandler.completeChangeContent(oFlexObject, mPropertyBag.changeSpecificData, {
+			// Copy the content properties into the change specific data so any change handler can use the "settings" change structure
+			// TODO: consolidate in all commands/change handlers so the "content" structure is always used. todos#4
+			if (oChangeSpecificData.content) {
+				Object.keys(oChangeSpecificData.content).forEach((sKey) => {
+					if (!oChangeSpecificData[sKey]) {
+						oChangeSpecificData[sKey] = oChangeSpecificData.content[sKey];
+					} else {
+						Log.error(`The property '${sKey}' is defined both in the change specific data and its content.`);
+					}
+				});
+			}
+			return oChangeHandler.completeChangeContent(oFlexObject, oChangeSpecificData, {
 				modifier: JsControlTreeModifier,
 				appComponent: mPropertyBag.appComponent,
 				view: Utils.getViewForControl(mPropertyBag.selector)

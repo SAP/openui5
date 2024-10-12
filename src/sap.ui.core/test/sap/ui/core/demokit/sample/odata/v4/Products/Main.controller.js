@@ -108,6 +108,11 @@ sap.ui.define([
 			this.iCreates += 1;
 		},
 
+		onExit : function () {
+			this.getView().getModel("ui").destroy();
+			return Controller.prototype.onExit.apply(this, arguments);
+		},
+
 		/*
 		 * Controller's initialization.
 		 */

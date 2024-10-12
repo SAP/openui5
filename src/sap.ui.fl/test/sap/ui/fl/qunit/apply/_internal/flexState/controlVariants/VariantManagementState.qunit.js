@@ -1289,29 +1289,36 @@ sap.ui.define([
 		QUnit.test("when retrieving the control changes for a variant", function(assert) {
 			const oPersistedUIChange = FlexObjectFactory.createUIChange({
 				id: "somePersistedUIChange",
-				layer: Layer.CUSTOMER,
+				layer: Layer.USER,
 				variantReference: "customVariant"
 			});
 			oPersistedUIChange.setState(States.LifecycleState.PERSISTED);
 			const oDirtyUIChange = FlexObjectFactory.createUIChange({
 				id: "someDirtyUIChange",
-				layer: Layer.CUSTOMER,
+				layer: Layer.USER,
 				variantReference: "customVariant"
+			});
+			const oForeignChange = FlexObjectFactory.createUIChange({
+				id: "someUIChangOnReferencedVariant",
+				variantReference: sVariantManagementReference,
+				layer: Layer.CUSTOMER
 			});
 			stubFlexObjectsSelector([
 				createVariant({
 					variantReference: sVariantManagementReference,
-					fileName: "customVariant"
+					fileName: "customVariant",
+					layer: Layer.USER
 				}),
 				oPersistedUIChange,
 				oDirtyUIChange,
+				oForeignChange,
 				FlexObjectFactory.createUIChange({
 					id: "someNonVariantRelatedUIChange",
-					layer: Layer.CUSTOMER
+					layer: Layer.USER
 				}),
 				FlexObjectFactory.createUIChange({
 					id: "someCompChange",
-					layer: Layer.CUSTOMER,
+					layer: Layer.USER,
 					selector: {
 						persistencyKey: "foo"
 					}
@@ -1324,8 +1331,17 @@ sap.ui.define([
 					vmReference: sVariantManagementReference,
 					vReference: "customVariant"
 				}).length,
-				2,
-				"then all changes are returned"
+				3,
+				"then all changes on the same or referenced variants are returned"
+			);
+			assert.notOk(
+				VariantManagementState.getControlChangesForVariant({
+					reference: sReference,
+					vmReference: sVariantManagementReference,
+					vReference: "customVariant",
+					includeReferencedChanges: false
+				}).includes(oForeignChange),
+				"then referenced variant changes can be filtered out via a parameter"
 			);
 			const aControlChanges = VariantManagementState.getControlChangesForVariant({
 				reference: sReference,
@@ -1336,7 +1352,7 @@ sap.ui.define([
 			assert.strictEqual(
 				aControlChanges.length,
 				1,
-				"then dirty changes can be filtered via a parameter"
+				"then dirty changes can be filtered out via a parameter"
 			);
 			assert.strictEqual(
 				aControlChanges[0].getId(),
@@ -1344,8 +1360,8 @@ sap.ui.define([
 				"then the persisted UI change is still returned"
 			);
 			assert.strictEqual(
-				VariantManagementState.getVariantDependentFlexObjects({reference: sReference}).length, 3,
-				"all three changes are returned"
+				VariantManagementState.getVariantDependentFlexObjects({reference: sReference}).length, 4,
+				"all four changes are returned"
 			);
 		});
 

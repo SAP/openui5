@@ -1238,22 +1238,19 @@ sap.ui.define([
 					oChangeProperties.appComponent = this.oAppComponent;
 				}.bind(this));
 
-				const aNewVariantChanges = this.addVariantChanges(sVMReference, aConfigurationChangesContent);
-				const aVariantDeletionChanges = aVariantsToBeDeleted
-				.map((sVariantKey) => {
+				this.addVariantChanges(sVMReference, aConfigurationChangesContent);
+				aVariantsToBeDeleted
+				.forEach((sVariantKey) => {
 					const oVariant = VariantManagementState.getVariant({
 						reference: this.sFlexReference,
 						vmReference: sVMReference,
 						vReference: sVariantKey
 					});
 					if (oVariant.layer === Layer.USER) {
-						return ControlVariantWriteUtils.deleteVariant(this.sFlexReference, sVMReference, sVariantKey);
+						ControlVariantWriteUtils.deleteVariant(this.sFlexReference, sVMReference, sVariantKey);
 					}
-					return [];
-				})
-				.flat();
-				const aChanges = [...aVariantDeletionChanges, ...aNewVariantChanges];
-				this.oChangePersistence.saveDirtyChanges(this.oAppComponent, false, aChanges);
+				});
+				this.oChangePersistence.saveDirtyChanges(this.oAppComponent, false);
 			})();
 		};
 	};

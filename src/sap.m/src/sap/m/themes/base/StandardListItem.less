@@ -239,6 +239,17 @@ html[dir=rtl] .sapMSLIInfo {
 
 .sapMSLIWrapping > .sapMLIBContent > .sapMSLIDiv {
 	padding: 1rem 0;
+
+	&:has(.sapMSLIDescription) {
+		padding-bottom: 0.5rem;
+		.sapMSLITitle {
+			padding-bottom: 0.25rem;
+		}
+	}
+
+	.sapMSLIDescription {
+		padding: 0.5rem 0;
+	}
 }
 
 .sapMSLINoTitleAdapt.sapMSLIWrapping > .sapMLIBContent > .sapMSLIDiv > .sapMSLITitleOnly {
@@ -251,6 +262,8 @@ html[dir=rtl] .sapMSLIInfo {
 }
 
 .sapMSLIExpandCollapse {
+	text-wrap: nowrap;
+	position: relative;
 	color: @sapUiLink;
 	cursor: pointer;
 	padding: 0 1px;
@@ -263,6 +276,14 @@ html[dir=rtl] .sapMSLIInfo {
 
 .sapMSLIExpandCollapse:focus {
 	outline: @_sap_m_ListItemBase_Focus_Outline;
+}
+
+.sapMSLIExpandCollapse:before {
+	position: absolute;
+	content: '';
+	height: 1.5rem;
+	top: -0.25rem;
+	width: 100%;
 }
 
 .sapMSLIImgIcon {

@@ -1116,6 +1116,118 @@ sap.ui.define([
 		oTable.getControlDelegate().updateBindingInfo.restore();
 	});
 
+	QUnit.module("#updateBindingInfo", {
+		before: function() {
+			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
+				name: "Name",
+				path: "Name_Path",
+				label: "Name_Label",
+				dataType: "String"
+			}, {
+				name: "FirstName",
+				path: "FirstName_Path",
+				label: "FirstName_Label",
+				dataType: "String"
+			}, {
+				name: "ID",
+				path: "ID_Path",
+				label: "ID_Label",
+				dataType: "String"
+			}]);
+		},
+		afterEach: function() {
+			this.destroyTable();
+		},
+		after: function() {
+			TableQUnitUtils.restorePropertyInfos(Table.prototype);
+		},
+		initTable: function(mSettings) {
+			this.destroyTable();
+			this.oTable = new Table({
+				autoBindOnInit: false,
+				delegate: {
+					name: "sap/ui/mdc/odata/v4/TableDelegate"
+				},
+				...mSettings
+			});
+			return this.oTable._fullyInitialized();
+		},
+		destroyTable: function() {
+			this.oTable?.destroy();
+		}
+	});
+
+	// BCP: 2380131026
+	QUnit.test("Sort invisible property if analytics is enabled", async function(assert) {
+		await this.initTable({
+			p13nMode: ["Sort", "Filter", "Group", "Aggregate"],
+			columns: [
+				new Column({
+					propertyKey: "Name",
+					header: new Text({
+						text: "Name_Label"
+					}),
+					template: new Text({
+						text: "{Name_Path}"
+					})
+				})
+			],
+			sortConditions: {
+				sorters: [
+					{name: "Name", descending: true},
+					{name: "FirstName", descending: true}
+				]
+			},
+			filterConditions: {
+				ID: [{
+					isEmpty: null,
+					operator: OperatorName.EQ,
+					validated: ConditionValidated.NotValidated,
+					values: ["test"]
+				}]
+			}
+		});
+
+		const oBindingInfo = {};
+		const aExpectedSorter = [new Sorter("Name_Path", true)];
+		const aExpectedFilter = [
+			FilterUtil.getFilterInfo(this.oTable.getControlDelegate().getTypeMap(),
+				this.oTable.getConditions(),
+				this.oTable.getPropertyHelper().getProperties()).filters
+		];
+
+		TableDelegate.updateBindingInfo(this.oTable, oBindingInfo);
+		assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aExpectedSorter, filters: aExpectedFilter}, "Table");
+
+		this.oTable.setType("ResponsiveTable");
+		aExpectedSorter.push(new Sorter("FirstName_Path", true));
+		TableDelegate.updateBindingInfo(this.oTable, oBindingInfo);
+		assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aExpectedSorter, filters: aExpectedFilter}, "ResponsiveTable");
+	});
+
+	QUnit.test("$$aggregation.expandTo binding parameter", async function(assert) {
+		await this.initTable();
+
+		const oBindingInfo = {};
+
+		sinon.stub(this.oTable, "getRowBinding").returns({
+			getAggregation: () => {return {expandTo: 3};}
+		});
+
+		TableDelegate.updateBindingInfo(this.oTable, oBindingInfo);
+		assert.deepEqual(oBindingInfo.parameters, {
+			$$aggregation: {
+				expandTo: 3
+			}
+		});
+
+		this.oTable.getRowBinding.returns({
+			getAggregation: () => undefined
+		});
+		TableDelegate.updateBindingInfo(this.oTable, oBindingInfo);
+		assert.deepEqual(oBindingInfo.parameters, {});
+	});
+
 	QUnit.module("#updateBinding", {
 		before: function() {
 			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
@@ -1142,41 +1254,37 @@ sap.ui.define([
 				p13nMode: ["Column", "Sort", "Filter", "Group", "Aggregate"],
 				delegate: {
 					name: "odata.v4.TestDelegate"
-				}
-			}).addColumn(new Column({
-				header: "Name",
-				propertyKey: "Name",
-				dataType: "String",
-				template: new Text({text: "Name"})
-			})).setModel(new ODataModel({
-				serviceUrl: "serviceUrl/",
-				operationMode: "Server"
-			}));
+				},
+				models: new ODataModel({
+					serviceUrl: "serviceUrl/",
+					operationMode: "Server",
+					autoExpandSelect: true
+				}),
+				columns: new Column({
+					header: "Name",
+					propertyKey: "Name",
+					dataType: "String",
+					template: new Text({text: "Name"})
+				})
+			});
 
 			await this.oTable.initialized();
 			await this.oTable.rebind();
 			this.oInnerTable = this.oTable._oTable;
-			this.oRowBinding = this.oTable.getRowBinding();
-			this.oSetAggregationSpy = sinon.spy(PluginBase.getPlugin(this.oInnerTable, "sap.ui.table.plugins.V4Aggregation"),
+			this.oSetAggregationInfoSpy = this.spy(PluginBase.getPlugin(this.oInnerTable, "sap.ui.table.plugins.V4Aggregation"),
 				"setAggregationInfo");
-			this.oRebindSpy = sinon.spy(this.oTable.getControlDelegate(), "rebind");
-			this.oChangeParametersSpy = sinon.spy(this.oRowBinding, "changeParameters");
-			this.oFilterSpy = sinon.spy(this.oRowBinding, "filter");
-			this.oSortSpy = sinon.spy(this.oRowBinding, "sort");
-			this.oSuspendSpy = sinon.spy(this.oRowBinding, "suspend");
-			this.oResumeSpy = sinon.spy(this.oRowBinding, "resume");
-			this.oRefreshSpy = sinon.spy(this.oRowBinding, "refresh");
+			this.oRowBinding = this.oTable.getRowBinding();
+			this.oRebindSpy = this.spy(this.oTable.getControlDelegate(), "rebind");
+			this.oChangeParametersSpy = this.spy(this.oRowBinding, "changeParameters");
+			this.oFilterSpy = this.spy(this.oRowBinding, "filter");
+			this.oSortSpy = this.spy(this.oRowBinding, "sort");
+			this.oSuspendSpy = this.spy(this.oRowBinding, "suspend");
+			this.oResumeSpy = this.spy(this.oRowBinding, "resume");
+			this.oRefreshSpy = this.spy(this.oRowBinding, "refresh");
+			this.oSetAggregationSpy = this.spy(this.oRowBinding, "setAggregation");
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-			this.oSetAggregationSpy.restore();
-			this.oRebindSpy.restore();
-			this.oChangeParametersSpy.restore();
-			this.oFilterSpy.restore();
-			this.oSortSpy.restore();
-			this.oSuspendSpy.restore();
-			this.oResumeSpy.restore();
-			this.oRefreshSpy.restore();
 		},
 		after: function() {
 			TableQUnitUtils.restorePropertyInfos(Table.prototype);
@@ -1191,14 +1299,22 @@ sap.ui.define([
 		await this.oTable.rebind();
 
 		const aTableProperties = this.oTable.getPropertyHelper().getProperties();
-		assert.equal(this.oSortSpy.callCount, 1, "Binding#sort called once");
+		assert.equal(this.oSortSpy.callCount, 1, "Binding#sort call");
 		sinon.assert.calledWithExactly(this.oSortSpy, [new Sorter("Name", true)]);
-		assert.equal(this.oFilterSpy.callCount, 1, "Binding#filter called once");
+		assert.equal(this.oFilterSpy.callCount, 1, "Binding#filter call");
 		sinon.assert.calledWithExactly(this.oFilterSpy, [FilterUtil.getFilterInfo(this.oTable.getControlDelegate().getTypeMap(), this.oTable.getConditions(), aTableProperties).filters], "Application");
-		assert.equal(this.oChangeParametersSpy.callCount, 1, "Binding#changeParameters called once");
+		assert.equal(this.oChangeParametersSpy.callCount, 1, "Binding#changeParameters call");
 		sinon.assert.calledWithExactly(this.oChangeParametersSpy, {});
-		assert.equal(this.oSetAggregationSpy.callCount, 1, "Binding#setAggregation called once");
+		assert.equal(this.oSetAggregationSpy.callCount, 1, "Binding#setAggregation call");
 		sinon.assert.calledWithExactly(this.oSetAggregationSpy, {
+			aggregate: {},
+			grandTotalAtBottomOnly: true,
+			group: {Name: {additionally: []}},
+			groupLevels: ["Name"],
+			search: undefined,
+			subtotalsAtBottomOnly: true
+		});
+		sinon.assert.calledWithExactly(this.oSetAggregationInfoSpy, {
 			columnState: createColumnStateIdMap(this.oTable, [{grandTotal: true, subtotals: true}]),
 			grandTotal: ["Name"],
 			groupLevels: ["Name"],
@@ -1266,11 +1382,11 @@ sap.ui.define([
 	QUnit.test("Group", async function(assert) {
 		this.oTable.setGroupConditions({groupLevels: [{name: "Name"}]});
 		await this.oTable.rebind();
-		assert.ok(this.oSetAggregationSpy.firstCall.calledWithMatch({groupLevels: ["Name"]}));
+		assert.ok(this.oSetAggregationInfoSpy.firstCall.calledWithMatch({groupLevels: ["Name"]}));
 
 		this.oTable.setGroupConditions();
 		await this.oTable.rebind();
-		assert.ok(this.oSetAggregationSpy.secondCall.calledWithMatch({groupLevels: []}));
+		assert.ok(this.oSetAggregationInfoSpy.secondCall.calledWithMatch({groupLevels: []}));
 		assert.equal(this.oRebindSpy.callCount, 0);
 
 		// Test grouping on non visible column in ResponsiveTable
@@ -1284,19 +1400,19 @@ sap.ui.define([
 	QUnit.test("Aggregates", async function(assert) {
 		this.oTable.setAggregateConditions({Name: {}});
 		await this.oTable.rebind();
-		assert.ok(this.oSetAggregationSpy.firstCall.calledWithMatch({
+		assert.ok(this.oSetAggregationInfoSpy.firstCall.calledWithMatch({
 			grandTotal: ["Name"],
 			subtotals: ["Name"]
 		}));
 
 		this.oTable.setAggregateConditions();
 		await this.oTable.rebind();
-		assert.ok(this.oSetAggregationSpy.secondCall.calledWithMatch({grandTotal: [], subtotals: []}));
+		assert.ok(this.oSetAggregationInfoSpy.secondCall.calledWithMatch({grandTotal: [], subtotals: []}));
 		assert.equal(this.oRebindSpy.callCount, 0);
 	});
 
 	QUnit.test("Parameters", async function(assert) {
-		const oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
+		const oUpdateBindingInfoStub = this.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
 
 		oUpdateBindingInfoStub.onCall(0).callsFake(function(oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
@@ -1354,6 +1470,81 @@ sap.ui.define([
 		await this.oTable._rebind(true);
 		assert.equal(this.oRebindSpy.callCount, 0, "No rebind was performed");
 		assert.equal(this.oRefreshSpy.callCount, 1, "Binding#refresh has been called");
+	});
+
+	QUnit.test("$$aggregation binding parameter", async function(assert) {
+		const oUpdateBindingInfo = this.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
+
+		oUpdateBindingInfo.callsFake(function(oTable, oBindingInfo) {
+			this.updateBindingInfo.wrappedMethod.apply(this, arguments);
+			oBindingInfo.parameters.$$aggregation = {
+				hierarchyQualifier: "Hierarchy",
+				expandTo: 3
+			};
+		});
+		this.oTable.setP13nMode(["Column", "Sort", "Filter"]);
+		this.oSetAggregationSpy.resetHistory();
+		await this.oTable.rebind();
+		assert.equal(this.oSetAggregationSpy.callCount, 1, "setAggregation call if $$aggregation is set");
+		sinon.assert.calledWithExactly(this.oSetAggregationSpy, {
+			hierarchyQualifier: "Hierarchy",
+			expandTo: 3
+		});
+
+		oUpdateBindingInfo.callsFake(function(oTable, oBindingInfo) {
+			this.updateBindingInfo.wrappedMethod.apply(this, arguments);
+			oBindingInfo.parameters.$$aggregation.hierarchyQualifier = "Hierarchy";
+		});
+		this.oSetAggregationSpy.resetHistory();
+		await this.oTable.rebind();
+		assert.equal(this.oSetAggregationSpy.callCount, 1, "setAggregation call if $$aggregation is set without expandTo");
+		sinon.assert.calledWithExactly(this.oSetAggregationSpy, {
+			hierarchyQualifier: "Hierarchy",
+			expandTo: 3
+		});
+
+		this.oRowBinding.setAggregation({...this.oRowBinding.getAggregation(), ...{expandTo: 4}});
+		this.oSetAggregationSpy.resetHistory();
+		await this.oTable.rebind();
+		assert.equal(this.oSetAggregationSpy.callCount, 1, "setAggregation call if expandTo was changed via binding API");
+		sinon.assert.calledWithExactly(this.oSetAggregationSpy, {
+			hierarchyQualifier: "Hierarchy",
+			expandTo: 4
+		});
+
+		oUpdateBindingInfo.callsFake(function(oTable, oBindingInfo) {
+			this.updateBindingInfo.wrappedMethod.apply(this, arguments);
+			delete oBindingInfo.parameters.$$aggregation;
+		});
+		this.oSetAggregationSpy.resetHistory();
+		await this.oTable.rebind();
+		assert.equal(this.oSetAggregationSpy.callCount, 1, "setAggregation call if $$aggregation is not set");
+		sinon.assert.calledWithExactly(this.oSetAggregationSpy, undefined);
+
+		assert.equal(this.oRebindSpy.callCount, 0, "No rebind was performed");
+	});
+
+	QUnit.test("$$aggregation binding parameter if analytical features are enabled", async function(assert) {
+		this.stub(this.oTable.getControlDelegate(), "updateBindingInfo").callsFake(function(oTable, oBindingInfo) {
+			this.updateBindingInfo.wrappedMethod.apply(this, arguments);
+			oBindingInfo.parameters.$$aggregation = {
+				hierarchyQualifier: "Hierarchy",
+				expandTo: 3
+			};
+		});
+
+		await this.oTable.rebind();
+		assert.equal(this.oSetAggregationSpy.callCount, 1, "setAggregation call");
+		sinon.assert.calledWithExactly(this.oSetAggregationSpy, {
+			aggregate: {},
+			grandTotalAtBottomOnly: true,
+			group: {Name: {additionally: []}},
+			groupLevels: [],
+			search: undefined,
+			subtotalsAtBottomOnly: true
+		});
+
+		assert.equal(this.oRebindSpy.callCount, 0, "No rebind was performed");
 	});
 
 	QUnit.module("#validateState", {
@@ -1567,75 +1758,6 @@ sap.ui.define([
 				this.oTable.destroy();
 			}
 		}
-	});
-
-	// BCP: 2380131026
-	QUnit.test("#updateBindingInfo - Sort invisible property if analytics is enabled", function(assert) {
-		TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
-			name: "Name",
-			path: "Name_Path",
-			label: "Name_Label",
-			dataType: "String"
-		}, {
-			name: "FirstName",
-			path: "FirstName_Path",
-			label: "FirstName_Label",
-			dataType: "String"
-		}, {
-			name: "ID",
-			path: "ID_Path",
-			label: "ID_Label",
-			dataType: "String"
-		}]);
-
-		return this.initTable({
-			p13nMode: ["Sort", "Filter", "Group", "Aggregate"],
-			columns: [
-				new Column({
-					propertyKey: "Name",
-					header: new Text({
-						text: "Name_Label"
-					}),
-					template: new Text({
-						text: "{Name_Path}"
-					})
-				})
-			],
-			sortConditions: {
-				sorters: [
-					{name: "Name", descending: true},
-					{name: "FirstName", descending: true}
-				]
-			},
-			filterConditions: {
-				ID: [{
-					isEmpty: null,
-					operator: OperatorName.EQ,
-					validated: ConditionValidated.NotValidated,
-					values: ["test"]
-				}]
-			}
-		}).then(() => {
-			return this.oTable._fullyInitialized();
-		}).then(() => {
-			const aExpectedSorter = [new Sorter("Name_Path", true)];
-			const aExpectedFilter = [
-				FilterUtil.getFilterInfo(this.oTable.getControlDelegate().getTypeMap(),
-					this.oTable.getConditions(),
-					this.oTable.getPropertyHelper().getProperties()).filters
-			];
-
-			const oBindingInfo = {};
-			TableDelegate.updateBindingInfo(this.oTable, oBindingInfo);
-			assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aExpectedSorter, filters: aExpectedFilter}, "Table");
-
-			this.oTable.setType("ResponsiveTable");
-			aExpectedSorter.push(new Sorter("FirstName_Path", true));
-			TableDelegate.updateBindingInfo(this.oTable, oBindingInfo);
-			assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aExpectedSorter, filters: aExpectedFilter}, "ResponsiveTable");
-		}).finally(() => {
-			TableQUnitUtils.restorePropertyInfos(Table.prototype);
-		});
 	});
 
 	QUnit.test("#getSupportedFeatures", function(assert) {

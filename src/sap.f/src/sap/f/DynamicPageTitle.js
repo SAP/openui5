@@ -816,6 +816,16 @@ sap.ui.define([
 		oAction._sOriginalParentAggregationName = null;
 	};
 
+	DynamicPageTitle.prototype.onfocusfail = function (oEvent) {
+		var oSourceControl = oEvent.srcControl;
+
+		if (oSourceControl.sParentAggregationName === "actions") {
+			this.getAggregation("_actionsToolbar")?.onfocusfail(oEvent);
+		} else {
+			Control.prototype.onfocusfail.apply(this, arguments);
+		}
+	};
+
 	/**
 	 * Called when LayoutData of actions/content buttons is changed
 	 */

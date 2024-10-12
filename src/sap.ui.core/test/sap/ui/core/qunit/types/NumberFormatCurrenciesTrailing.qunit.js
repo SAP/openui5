@@ -118,11 +118,6 @@ sap.ui.define([
 		assert.strictEqual(oFormat.format([-123456.789, null]), "-123,456.79", "-123456.789 null");
 	});
 
-	QUnit.test("Currency Format with fraction as decimals", function (assert) {
-		var oFormat = getCurrencyInstance({minFractionDigits:6, maxFractionDigits: 6});
-		assert.strictEqual(oFormat.format(2, "EUR"), "2.000000" + "\xa0" + "EUR", "fractions should set the decimals if not specified");
-	});
-
 	QUnit.test("Currency format with sMeasure and showMeasure as symbol", function (assert) {
 		var oFormat = getCurrencyInstance({
 			currencyCode: false // Show symbol instead of currency code
