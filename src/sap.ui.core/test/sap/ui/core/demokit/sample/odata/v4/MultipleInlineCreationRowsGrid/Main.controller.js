@@ -192,7 +192,7 @@ sap.ui.define([
 			this.deleteInactiveRows(this.getView().byId("parts").getBinding("rows"));
 			this.deleteInactiveRows(this.getView().byId("products").getBinding("items"));
 			this.oUIModel.destroy();
-			Controller.prototype.onExit.apply(this);
+			Controller.prototype.onExit.apply(this, arguments);
 		},
 
 		onInit : function () {

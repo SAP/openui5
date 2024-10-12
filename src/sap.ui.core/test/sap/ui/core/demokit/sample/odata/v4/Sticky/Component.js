@@ -20,13 +20,19 @@ sap.ui.define([
 		},
 
 		createContent : function () {
+			this.oUiModel = new JSONModel({iMessages : 0, bSticky : false});
+
 			return XMLView.create({
 				models : {
 					undefined : this.getModel(),
-					ui : new JSONModel({iMessages : 0, bSticky : false})
+					ui : this.oUiModel
 				},
 				viewName : "sap.ui.core.sample.odata.v4.Sticky.Main"
 			});
+		},
+
+		exit : function () {
+			this.oUiModel.destroy();
 		}
 	});
 });

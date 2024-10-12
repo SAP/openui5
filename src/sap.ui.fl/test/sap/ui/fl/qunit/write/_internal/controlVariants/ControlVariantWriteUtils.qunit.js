@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/controlVariants/ControlVariantWriteUtils",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
@@ -11,6 +12,7 @@ sap.ui.define([
 ], function(
 	FlexObjectFactory,
 	VariantManagementState,
+	FlexState,
 	Settings,
 	ControlVariantWriteUtils,
 	FlexObjectManager,
@@ -21,12 +23,29 @@ sap.ui.define([
 
 	const sandbox = sinon.createSandbox();
 
-	function createFlexObjects(sReference) {
+	function stubFlexObjectsSelector(aFlexObjects) {
+		const oFlexObjectsSelector = FlexState.getFlexObjectsDataSelector();
+		const oGetFlexObjectsStub = sandbox.stub(oFlexObjectsSelector, "get");
+		oGetFlexObjectsStub.callsFake(function(...aArgs) {
+			return aFlexObjects.concat(oGetFlexObjectsStub.wrappedMethod.apply(this, aArgs));
+		});
+		oFlexObjectsSelector.checkUpdate();
+	}
+
+	function createFlexObjects(sReference, sVMReference) {
 		return [
 			FlexObjectFactory.createFlVariant({
-				variantName: "variant1",
-				id: "testVariant",
+				id: sVMReference,
 				reference: sReference,
+				variantManagementReference: sVMReference,
+				layer: Layer.CUSTOMER
+			}),
+			FlexObjectFactory.createFlVariant({
+				variantName: "Variant 1",
+				id: "variant1",
+				reference: sReference,
+				variantReference: sVMReference, // Inherits from standard
+				variantManagementReference: sVMReference,
 				layer: Layer.USER
 			}),
 			FlexObjectFactory.createFromFileContent({
@@ -35,6 +54,9 @@ sap.ui.define([
 				layer: Layer.USER,
 				content: {
 					defaultVariant: "variant1"
+				},
+				selector: {
+					id: sVMReference
 				}
 			}),
 			FlexObjectFactory.createFromFileContent({
@@ -64,6 +86,14 @@ sap.ui.define([
 				layer: Layer.USER,
 				changeType: "dummyChange",
 				variantReference: "variant1"
+			}),
+			// Referenced UI Change
+			FlexObjectFactory.createFromFileContent({
+				fileType: "change",
+				reference: sReference,
+				layer: Layer.CUSTOMER,
+				changeType: "dummyChange",
+				variantReference: sVMReference
 			})
 		];
 	}
@@ -82,43 +112,31 @@ sap.ui.define([
 			});
 			const sReference = "appReference";
 			const sVMReference = "vmReference";
-			const sVariantReference = "variantReference";
-			const mExpectedPropertyBag = {
-				reference: sReference,
-				vmReference: sVMReference,
-				vReference: sVariantReference
-			};
+			const sVariantReference = "variant1";
 
+			const aAllChanges = createFlexObjects(sReference, sVMReference);
 			const [
+				, // Standard variant
 				oVariant,
 				oVMChange,
 				oSetVisibleVariantChange,
 				oSetTitleVariantChange,
 				oVMDependentChange
-			] = createFlexObjects(sReference);
-			sandbox.stub(VariantManagementState, "getVariant").withArgs(mExpectedPropertyBag).returns({instance: oVariant});
-			sandbox.stub(VariantManagementState, "getVariantManagementChanges").withArgs(mExpectedPropertyBag).returns([oVMChange]);
-			sandbox.stub(
-				VariantManagementState,
-				"getVariantChangesForVariant"
-			).withArgs(mExpectedPropertyBag).returns([oSetVisibleVariantChange, oSetTitleVariantChange]);
-			sandbox.stub(
-				VariantManagementState,
-				"getControlChangesForVariant"
-			).withArgs(mExpectedPropertyBag).returns([oVMDependentChange]);
+			] = aAllChanges;
+			stubFlexObjectsSelector(aAllChanges);
+			const aExpectedChanges = [oVariant, oVMChange, oSetVisibleVariantChange, oSetTitleVariantChange, oVMDependentChange];
 
-			const aAllChanges = [oVariant, oVMChange, oSetVisibleVariantChange, oSetTitleVariantChange, oVMDependentChange];
 			sandbox.stub(FlexObjectManager, "deleteFlexObjects");
 			const aDeletedChanges = ControlVariantWriteUtils.deleteVariant(sReference, sVMReference, sVariantReference);
 			assert.deepEqual(
-				aDeletedChanges,
-				aAllChanges,
-				"then all changes are returned"
+				aDeletedChanges.map((oChange) => oChange.getId()),
+				aExpectedChanges.map((oChange) => oChange.getId()),
+				"then all changes are returned as deleted, except the referenced UI Change"
 			);
 			assert.ok(
 				FlexObjectManager.deleteFlexObjects.calledWith({
 					reference: sReference,
-					flexObjects: aAllChanges
+					flexObjects: aExpectedChanges
 				}),
 				"then FlexObjectManager.deleteFlexObjects is called with the correct parameters"
 			);
@@ -133,31 +151,10 @@ sap.ui.define([
 			});
 			const sReference = "appReference";
 			const sVMReference = "vmReference";
-			const sVariantReference = "variantReference";
-			const mExpectedPropertyBag = {
-				reference: sReference,
-				vmReference: sVMReference,
-				vReference: sVariantReference
-			};
+			const sVariantReference = "variant1";
 
-			const [
-				oVariant,
-				oVMChange,
-				oSetVisibleVariantChange,
-				oSetTitleVariantChange,
-				oVMDependentChange
-			] = createFlexObjects(sReference);
-			sandbox.stub(VariantManagementState, "getVariant").withArgs(mExpectedPropertyBag).returns({instance: oVariant});
-			sandbox.stub(VariantManagementState, "getVariantManagementChanges").withArgs(mExpectedPropertyBag).returns([oVMChange]);
-			sandbox.stub(
-				VariantManagementState,
-				"getVariantChangesForVariant"
-			).withArgs(mExpectedPropertyBag).returns([oSetVisibleVariantChange, oSetTitleVariantChange]);
-			sandbox.stub(
-				VariantManagementState,
-				"getControlChangesForVariant"
-			).withArgs(mExpectedPropertyBag).returns([oVMDependentChange]);
-
+			const aAllChanges = createFlexObjects(sReference, sVMReference);
+			stubFlexObjectsSelector(aAllChanges);
 			sandbox.stub(FlexObjectManager, "deleteFlexObjects");
 			const aDeletedChanges = ControlVariantWriteUtils.deleteVariant(sReference, sVMReference, sVariantReference);
 			assert.strictEqual(aDeletedChanges.length, 0, "then no changes are returned");

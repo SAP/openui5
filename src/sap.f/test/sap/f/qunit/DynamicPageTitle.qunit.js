@@ -1,11 +1,11 @@
 /*global QUnit, sinon*/
 sap.ui.define([
-	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/f/DynamicPage",
 	"sap/f/DynamicPageTitle",
 	"./DynamicPageUtil",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/Button",
 	"sap/m/Link",
 	"sap/m/Title",
@@ -14,12 +14,12 @@ sap.ui.define([
 	"sap/m/OverflowToolbarLayoutData"
 ],
 function(
-	nextUIUpdate,
 	$,
 	Device,
 	DynamicPage,
 	DynamicPageTitle,
 	DynamicPageUtil,
+	nextUIUpdate,
 	Button,
 	Link,
 	Title,
@@ -644,6 +644,33 @@ function(
 
 		// Assert
 		assert.strictEqual(document.activeElement, oActiveElement, "focus is unchanged");
+
+		// Clean up
+		oDynamicPage.destroy();
+	});
+
+	QUnit.module("DynamicPage - Focus on actions buttons");
+
+	QUnit.test("Focus is moved to overflow button of 'actions' toolbar, when Dialog is closed", async function (assert) {
+		// Arrange
+		var oButton = new Button({text: "Button" }),
+			oDynamicPageTitle = new DynamicPageTitle({
+				heading: new Title({text: "Looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong title"}),
+				actions: [oButton]
+			}),
+			oDynamicPage = new DynamicPage({
+				title: oDynamicPageTitle
+			});
+
+		oUtil.renderObject(oDynamicPage);
+		await nextUIUpdate();
+
+		// Act - simulation of the Dialog close and focus fail to move to the previously focused button
+		oDynamicPageTitle.onfocusfail({ srcControl: oButton });
+
+		// Assert
+		assert.strictEqual(document.activeElement, oDynamicPageTitle.getAggregation("_actionsToolbar")._getOverflowButton().getDomRef(),
+			"Overflow menu button is focused");
 
 		// Clean up
 		oDynamicPage.destroy();

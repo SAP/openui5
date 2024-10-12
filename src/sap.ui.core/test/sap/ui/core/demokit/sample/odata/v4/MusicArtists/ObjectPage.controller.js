@@ -153,6 +153,11 @@ sap.ui.define([
 			});
 		},
 
+		onExit : function () {
+			this.getView().getModel("ui-op").destroy();
+			return Controller.prototype.onExit.apply(this, arguments);
+		},
+
 		onInit : function () {
 			var oRouter = UIComponent.getRouterFor(this);
 

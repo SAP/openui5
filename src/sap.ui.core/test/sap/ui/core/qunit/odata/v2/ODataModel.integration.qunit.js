@@ -11195,6 +11195,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	<Input id="Amount0" value="{\
 			formatOptions : {showMeasure : false},\
 			parts : [{\
+				constraints : {scale : 2},\
 				path : \'GrossAmount\',\
 				type : \'sap.ui.model.odata.type.Decimal\'\
 			}, {'

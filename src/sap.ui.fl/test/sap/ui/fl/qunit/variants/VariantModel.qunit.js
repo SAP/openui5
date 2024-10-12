@@ -1454,7 +1454,6 @@ sap.ui.define([
 			const aArgs = oSaveDirtyChangesStub.lastCall.args;
 			assert.strictEqual(aArgs[0], this.oComponent, "the app component was passed");
 			assert.strictEqual(aArgs[1], false, "the second parameter is false");
-			assert.deepEqual(aArgs[2].length, 4, "an array with 4 changes was passed");
 			assert.strictEqual(oAddVariantChangesSpy.lastCall.args[1].length, 4, "4 changes were added");
 			assert.ok(oDeleteVariantSpy.notCalled, "for the CUSTOMER layer variant, deleteVariant is not called");
 			oVariantManagement.destroy();
@@ -1474,7 +1473,7 @@ sap.ui.define([
 
 			const oUpdateVariantStub = sandbox.stub(this.oModel, "updateCurrentVariant");
 			const oAddVariantChangesSpy = sandbox.spy(this.oModel, "addVariantChanges");
-			sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").callsFake((oAppComponent, bSkipUpdateCache, aChanges) => {
+			sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").callsFake((oAppComponent, bSkipUpdateCache) => {
 				assert.strictEqual(oUpdateVariantStub.callCount, 1, "the variant was switched");
 				assert.deepEqual(oUpdateVariantStub.lastCall.args[0], {
 					variantManagementReference: sVMReference,
@@ -1482,7 +1481,6 @@ sap.ui.define([
 				}, "the correct variant was switched to");
 				assert.strictEqual(oAppComponent, this.oComponent, "the app component was passed");
 				assert.strictEqual(bSkipUpdateCache, false, "the second parameter is false");
-				assert.deepEqual(aChanges.length, 1, "an array with 1 change was passed");
 				assert.strictEqual(oAddVariantChangesSpy.lastCall.args[1].length, 1, "1 changes were added");
 				oVariantManagement.destroy();
 				done();
@@ -1513,13 +1511,10 @@ sap.ui.define([
 					oDeleteVariantStub.calledWith(this.oComponent.name, sVMReference, "variant2"),
 					"then the PUBLIC variant is only hidden and not deleted"
 				);
-				assert.ok(
-					aChanges.find((oChange) => oChange.getChangeType?.() === "setVisible"),
-					"then the setVisible change is passed to the saveDirtyChanges function"
-				);
-				assert.ok(
-					aChanges.find((oChange) => oChange === "delete1") && aChanges.find((oChange) => oChange === "delete2"),
-					"then the additional flex objects to be deleted are passed to the saveDirtyChanges function"
+				assert.strictEqual(
+					aChanges,
+					undefined,
+					"then the changes are not passed to the method but fetched from the state"
 				);
 				oVariantManagement.destroy();
 				fnDone();

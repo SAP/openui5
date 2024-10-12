@@ -12,6 +12,11 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.Ancestry.Main", {
+		onExit : function () {
+			this.getView().getModel("ui").destroy();
+			Controller.prototype.onExit.apply(this, arguments);
+		},
+
 		onExport : function () {
 			var oRowsBinding = this.byId("table").getBinding("rows"),
 				oSettings = {

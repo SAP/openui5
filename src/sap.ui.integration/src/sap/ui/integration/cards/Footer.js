@@ -218,7 +218,7 @@ sap.ui.define([
 				text: Library.getResourceBundleFor("sap.ui.integration").getText("CARD_FOOTER_SHOW_MORE"),
 				type: ButtonType.Transparent,
 				press: () => {
-					oPaginator.openDialog();
+					oPaginator.openDialog(oMore);
 				},
 				visible: oPaginator.getPageCount() > 1
 			});
