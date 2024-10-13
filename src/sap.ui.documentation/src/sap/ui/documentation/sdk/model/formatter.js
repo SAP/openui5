@@ -360,6 +360,10 @@ sap.ui.define([
 					return sType;
 				}
 				return "api/" + sType.replace("[]", "");
+			},
+
+			stringify: function (oObject) {
+				return JSON.stringify(oObject, null, 2);
 			}
 		};
 
