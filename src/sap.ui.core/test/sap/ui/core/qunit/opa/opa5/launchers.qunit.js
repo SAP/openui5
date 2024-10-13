@@ -131,10 +131,13 @@ sap.ui.define([
 		});
 	});
 
-	[EMPTY_SITE_URL, [EMPTY_SITE_URL]].forEach(function (vUrl) {
-		QUnit.test("Should start an IFrame with app params and source " + vUrl, function(assert) {
+	[EMPTY_SITE_URL, {source:EMPTY_SITE_URL}, [EMPTY_SITE_URL]].forEach(function (vUrl) {
+		QUnit.test("Should start an IFrame with app params and source " + JSON.stringify(vUrl), function(assert) {
 			var fnDone = assert.async();
 			var oOpa5 = new Opa5();
+
+			const sSource = typeof vUrl.source === "string" ? vUrl.source : String(vUrl);
+			var mOriginalSearch = new URI(sSource).search(true);
 
 			oOpa5.iStartMyAppInAFrame(vUrl);
 
@@ -142,8 +145,8 @@ sap.ui.define([
 				success: function () {
 					var oUriParams = new URI(Opa5.getWindow().location.href).search(true);
 					assert.strictEqual(oUriParams.key, "value", "Should include params from OPA config");
-					for (var sKey in this.mOriginalSearch) {
-						assert.strictEqual(oUriParams[sKey], this.mOriginalSearch[sKey], "Should include initial param " + sKey);
+					for (var sKey in mOriginalSearch) {
+						assert.strictEqual(oUriParams[sKey], mOriginalSearch[sKey], "Should include initial param " + sKey);
 					}
 				}
 			});
@@ -153,8 +156,8 @@ sap.ui.define([
 			Opa5.emptyQueue().done(function () {
 				var oUriParams = new URI().search(true);
 				assert.ok(!oUriParams.key, "Should remove params from OPA config");
-				for (var sKey in this.mOriginalSearch) {
-					assert.strictEqual(oUriParams[sKey], this.mOriginalSearch[sKey], "Should not remove initial params");
+				for (var sKey in mOriginalSearch) {
+					assert.strictEqual(oUriParams[sKey], mOriginalSearch[sKey], "Should not remove initial params");
 				}
 				fnDone();
 			});
