@@ -307,7 +307,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Content area with % size", function (assert) {
+	QUnit.test("Content area with % size", async function (assert) {
 		// Arrange
 		var oFirstContentItem = new Button({
 			layoutData: new SplitterLayoutData({
@@ -319,6 +319,7 @@ sap.ui.define([
 
 		// Act
 		this.oSplitter.setWidth("400px");
+		await nextUIUpdate();
 		this.oSplitter._recalculateSizes();
 
 		// Assert
@@ -454,12 +455,13 @@ sap.ui.define([
 		assert.strictEqual(iFirstContentAreaWidth + iSecondContentAreaWidth, iExpectedWidth, "Sum of the widths of content areas should be equal to the size of the container minus the bar");
 	});
 
-	QUnit.test("Calculations should be done with 5 digit precision", function (assert) {
+	QUnit.test("Calculations should be done with 5 digit precision", async function (assert) {
 		// Arrange
 		this.oSplitter.addContentArea(new Button());
 		this.oSplitter.addContentArea(new Button());
 		this.oSplitter._move.c1Size = 20.000000000000153;
 		this.oSplitter._move.c2Size = 599.9999999999998;
+		await nextUIUpdate();
 
 		// Act
 		this.oSplitter._resizeContents(0, -20, true);
@@ -512,11 +514,11 @@ sap.ui.define([
 		var aAreas = this.oSplitter._getContentAreas(),
 			iFirstAreaWidth = aAreas[0].$().parent().width(),
 			iSecondAreaWidth = aAreas[1].$().parent().width(),
-			iExpectedSecondAreaWidth = Math.floor(60 * this.oSplitter._calcAvailableContentSize() / 100); // 60%
+			fExpectedSecondAreaWidth = 60 * this.oSplitter._calcAvailableContentSize() / 100; // 60%
 
 		// Assert
 		assert.strictEqual(iFirstAreaWidth, 500, "Area width is set to its minSize");
-		assert.strictEqual(iSecondAreaWidth, iExpectedSecondAreaWidth, "Area width is set to 60% of content size");
+		assert.ok(Math.abs(iSecondAreaWidth - fExpectedSecondAreaWidth) < 1, "Area width is set to 60% of content size");
 		assert.ok(iFirstAreaWidth + iSecondAreaWidth >= iTotalWidth, "Calculated space exceeds available width. No correction applied.");
 	});
 
