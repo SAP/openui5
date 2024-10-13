@@ -192,7 +192,7 @@ sap.ui.define([
 
 					//TODO: Do we really need this? Should be avoided.
 					/**
-					 * Defines the minimum width.
+					 * Defines the minimum width of the chart.
 					 */
 					minWidth: {
 						type: "sap.ui.core.CSSSize",
@@ -203,7 +203,7 @@ sap.ui.define([
 
 					//TODO: Do we really need this? Should be avoided.
 					/**
-					 * Defines the minimum height.
+					 * Defines the minimum height of the chart.
 					 */
 					minHeight: {
 						type: "sap.ui.core.CSSSize",
@@ -236,7 +236,8 @@ sap.ui.define([
 					},
 
 					/**
-					 * Controls the visibility of the chart tooltip. If set to <code>true</code>, a call of the <code>delegate.setChartTooltipVisibility</code> will be triggered and can be used to make the <code>Chart</code> tooltip visible.
+					 * Controls the visibility of the chart tooltip.<br>
+					 * If set to <code>true</code>, a call of the <code>delegate.setChartTooltipVisibility</code> will be triggered and can be used to make the <code>Chart</code> tooltip visible.
 					 *
 					 * @since 1.88
 					 */
@@ -278,7 +279,8 @@ sap.ui.define([
 					 * Specifies the chart metadata.<br>
 					 * <b>Note:</b> This property must not be bound.<br>
 					 * <b>Note:</b> This property is exclusively used for handling SAPUI5 flexibility changes. Do not use it otherwise.<br>
-					 * <b>Note</b>: Existing properties (set via <code>sap.ui.mdc.Chart#setPropertyInfo</code>) must not be removed and their attributes must not be changed during the {@link module:sap/ui/mdc/ChartDelegate.fetchProperties fetchProperties} callback. Otherwise validation errors might occur whenever personalization-related control features (such as the opening of any personalization dialog) are activated.
+					 * <b>Note</b>: Existing properties (set via <code>sap.ui.mdc.Chart#setPropertyInfo</code>) must not be removed and their attributes must not be changed during the {@link module:sap/ui/mdc/ChartDelegate.fetchProperties fetchProperties} callback
+					 * Otherwise validation errors might occur whenever personalization-related control features (such as the opening of any personalization dialog) are activated.
 					 *
 					 * <b>Note</b>: For more information about the supported inner elements, see {@link sap.ui.mdc.chart.PropertyInfo PropertyInfo}.
 					 *
@@ -355,7 +357,7 @@ sap.ui.define([
 						}
 					},
 					/**
-					 * Feeds details actions for data point selection in the mdc chart.<br>
+					 * Feeds details popover actions for data point selection in the mdc chart.<br>
 					 * For more information, see {@link sap.ui.mdc.chart.SelectionDetailsActions SelectionDetailsActions}.
 					 */
 					selectionDetailsActions: {
@@ -600,7 +602,12 @@ sap.ui.define([
 			//may only return conditions if the inner FilterBar has already been initialized
 			return this.getInbuiltFilter() ? this.getInbuiltFilter().getConditions() : [];
 		};
-
+		/**
+		 * Registers the chart rebind to the filter bar search event.
+		 *
+		 * @param {sap.ui.mdc.filterbar.p13n.AdaptionFilterBar} oFilter The FilterBar instance to be attached to.
+		 * @private
+		 */
 		Chart.prototype._registerInnerFilter = function(oFilter) {
 			oFilter.attachSearch(function() {
 				this._rebind();
@@ -680,7 +687,10 @@ sap.ui.define([
 
 			this._createToolbarContent();
 		};
-
+		/**
+		 * Creates the content for the chart toolbar.
+		 * @private
+		 */
 		Chart.prototype._createToolbarContent = function() {
 			const aP13nMode = this.getP13nMode() || [];
 			const aIgnoreToolbarActions = this.getIgnoreToolbarActions();
@@ -869,7 +879,13 @@ sap.ui.define([
 
 			this._updateVariantManagementStyle();
 		};
-
+		/**
+		 * Creates the SelectionDetails control used in the toolbar.
+		 *
+		 * @param {string} sId Id of the MDC chart
+		 * @returns {sap.m.SelectionDetails} The SelectionDetails instance
+		 * @private
+		 */
 		Chart.prototype._createSelectionDetails = function(sId) {
 			const fnActionPress = function(oEvent) {
 				// extract binding information of each item
@@ -899,7 +915,10 @@ sap.ui.define([
 
 			return oSelectionDetailsBtn;
 		};
-
+		/**
+		 * Creates the info toolbar.
+		 * @private
+		 */
 		Chart.prototype._initInfoToolbar = function() {
 			this.setAggregation("_infoToolbar", new InfoBar(this.getId() + "--infoToolbar", {
 				infoText: this._getFilterInfoText(),
@@ -939,13 +958,21 @@ sap.ui.define([
 				this.getDomRef().setAttribute("aria-labelledby", this.getAggregation("_infoToolbar").getACCTextId());
 			}
 		};
-
+		/**
+		 * Updates the info toolbar instance.
+		 * @private
+		 */
 		Chart.prototype._updateInfoToolbar = function() {
 			if (this.getP13nMode().includes("Filter") && this.getAggregation("_infoToolbar")) {
 				this.getAggregation("_infoToolbar").setInfoText(this._getFilterInfoText());
 			}
 		};
-
+		/**
+		 * Getter for the filter info text used to update the info toolbar.
+		 *
+		 * @returns {string} The info text
+		 * @private
+		 */
 		Chart.prototype._getFilterInfoText = function() {
 			if (this.getInbuiltFilter()) {
 				let sText;
@@ -1001,7 +1028,10 @@ sap.ui.define([
 				}
 			});
 		};
-
+		/**
+		 * Creates the bread crumbs control to visualize the drill depth of the chart.
+		 * @private
+		 */
 		Chart.prototype._createBreadcrumbs = function() {
 			let _oBreadcrumbs = this.getAggregation("_breadcrumbs");
 			if (!_oBreadcrumbs && !this._bIsDestroyed) {
@@ -1202,10 +1232,10 @@ sap.ui.define([
 			}
 		};
 
-
 		/**
-		 * Creates a new instance of ChartToolbar
+		 * Creates a new instance of a toolbar or, if already set, returns the existing one.
 		 *
+		 * @returns {sap.m.Toolbar|sap.ui.mdc.ActionToolbar} The toolbar instance
 		 * @private
 		 */
 		Chart.prototype._getToolbar = function() {
@@ -1234,7 +1264,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Calls the update function on the toolbar, if toolbar exists
+		 * Calls the update function on the toolbar, if a toolbar exists
 		 *
 		 * @private
 		 */
@@ -1254,7 +1284,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * This checks the enablement of the zoom button in the toolbar.
+		 * This checks the enablement of the zoom buttons in the toolbar.
+		 * <b>Note:</b> Buttons will be disabled when no zoom state is available or is disabled.
 		 *
 		 * @experimental
 		 * @private
@@ -1290,7 +1321,10 @@ sap.ui.define([
 
 		};
 
-
+		/**
+		 * Initialises the selection details control by attaching to its selection handler.
+		 * @private
+		 */
 		Chart.prototype._initSelectionDetails = function() {
 			const oSelectionDetailsBtn = this._oSelectionDetailsBtn;
 			if (oSelectionDetailsBtn && !oSelectionDetailsBtn._oChangeHandler) {
@@ -1341,7 +1375,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Zooms in the inner chart.
+		 * Zooms in on the inner chart.
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
@@ -1352,7 +1386,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Zooms out the inner chart.
+		 * Zooms out on the inner chart.
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
@@ -1448,7 +1482,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Gets information about the current chart type.
+		 * Getter for information about the current chart type.
 		 *
 		 * @returns {object} object containing information about the chart type
 		 *
@@ -1461,9 +1495,9 @@ sap.ui.define([
 		};
 
 		/**
-		 * Gets the available chart types for the current state of the inner chart
+		 * Getter for the available chart types of inner chart based on its current state.
 		 *
-		 * @returns {array} Array containing the available chart types
+		 * @returns {sap.ui.mdc.chart.ChartTypeObject[]} Array containing the currently available chart types
 		 *
 		 * @private
 		 */
@@ -1689,7 +1723,10 @@ sap.ui.define([
 
 			return this;
 		};
-
+		/**
+		 * Returns the variant management control of the MDC Chart.
+		 * @returns {sap.ui.fl.variants.VariantManagement} The variant management instance
+		 */
 		Chart.prototype.getVariant = function() {
 			let oVariantManagement;
 			const oToolbar = this.getAggregation("_toolbar");
