@@ -585,6 +585,36 @@ sap.ui.define([
 			assert.equal(oModifyPluginListSpy.callCount, 0, "then _modifyPluginList is not called");
 		});
 
+		QUnit.test("when the event elementModified is thrown - wait for command execution", function(assert) {
+			const fnDone = assert.async();
+			sandbox.restore();
+			const oEvaluateEditableStub = sandbox.stub(this.oRenamePlugin, "evaluateEditable");
+			let fnResolveCommandExecutionPromise;
+			const pCommandExecutionPromise = new Promise((fnResolve) => {
+				fnResolveCommandExecutionPromise = fnResolve;
+			});
+			oEvaluateEditableStub.callsFake(() => {
+				assert.ok(true, "then _modifyPluginList is called after command is executed");
+				fnDone();
+			});
+
+			this.oRenamePlugin.setCommandStack({
+				getLastCommandExecuted: () => {
+					fnResolveCommandExecutionPromise();
+					return pCommandExecutionPromise;
+				}
+			});
+			sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oLayoutOverlay]);
+			this.oLayoutOverlay.fireElementModified({
+				type: "propertyChanged",
+				name: "visible",
+				value: false,
+				id: this.oLayoutOverlay.getId()
+			});
+
+			assert.ok(oEvaluateEditableStub.notCalled, "then _modifyPluginList is not called before command is executed");
+		});
+
 		QUnit.test("when _modifyPluginList is called multiple times", function(assert) {
 			assert.deepEqual(
 				getEditableByPluginsArray(this.oButtonOverlay),
