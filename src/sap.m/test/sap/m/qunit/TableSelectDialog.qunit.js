@@ -23,7 +23,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/m/ObjectIdentifier"
 ], function(
 	UI5Element,
 	Library,
@@ -48,7 +49,8 @@ sap.ui.define([
 	jQuery,
 	Device,
 	KeyCodes,
-	oCore
+	oCore,
+	ObjectIdentifier
 ) {
 	"use strict";
 
@@ -974,6 +976,159 @@ sap.ui.define([
 		});
 		oTableSelectDialog._oDialog.close();
 	});
+
+	QUnit.module("Single select dialog with rememberSelections", {
+		beforeEach: function () {
+			this.oTableSelectDialog = new TableSelectDialog({
+				title: "Title",
+				noDataText: "No Data",
+				search : doSearch,
+				liveChange : doLiveChange,
+				columns : [
+					new Column({
+						styleClass : "name",
+						hAlign : "Left",
+						header : new Label({
+							text : "Name"
+						})
+					}),
+					new Column({
+						hAlign : "Center",
+						styleClass : "qty",
+						header : new Label({
+							text : "Qty"
+						}),
+						minScreenWidth : "Desktop",
+						demandPopin : true
+					}),
+					new Column({
+						hAlign : "Right",
+						styleClass : "limit",
+						width : "30%",
+						header : new Label({
+							text : "Value"
+						}),
+						minScreenWidth : "Desktop",
+						demandPopin : true
+					}),
+					new Column({
+						hAlign : "Right",
+						styleClass : "price",
+						width : "30%",
+						header : new Label({
+							text : "Price"
+						}),
+						minScreenWidth : "Desktop",
+						demandPopin : true
+					})
+				]
+			});
+
+			// create the template for the items binding
+			const template = new ColumnListItem({
+				type : "Navigation",
+				unread : false,
+				cells : [
+					new ObjectIdentifier({
+						title: "{name}",
+						text: "{qty}"
+					}),
+					new Label({
+						text : "{name}"
+					}),
+					new Label({
+						text: "{qty}"
+					}), new Label({
+						text: "{limit}"
+					}), new Label({
+						text : "{price}"
+					}),
+					new ObjectIdentifier({
+						title: "{name}",
+						text: "{qty}"
+					}),
+					new ObjectIdentifier({
+						title: "{name}",
+						text: "{qty}"
+					})
+				]
+			});
+
+			// then set model & bind Aggregation
+			this.oTableSelectDialog.setModel(oModel);
+			this.oTableSelectDialog.bindAggregation("items", "/navigation", template);
+
+			this.oFirstTableItem = this.oTableSelectDialog.getItems()[0];
+			this.oTableSelectDialog._oTable.setSelectedItem(this.oFirstTableItem);
+			this.oTableSelectDialog.setRememberSelections(true);
+		},
+		afterEach: function() {
+			this.oTableSelectDialog.destroy();
+			this.oTableSelectDialog = null;
+			this.oFirstTableItem.destroy();
+			this.oFirstTableItem = null;
+		}
+	});
+
+	QUnit.test("Clicking on already selected item with rememberSelections=true should close the dialog", async function (assert) {
+
+		const oDialogCloseSpy = this.spy(this.oTableSelectDialog._oDialog, "close");
+
+		this.oTableSelectDialog.open();
+		await nextUIUpdate();
+
+
+		this.oFirstTableItem.$().trigger("tap");
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oDialogCloseSpy.callCount, 1, "Dialog close method was called.");
+
+		// Cleanup
+		oDialogCloseSpy.restore();
+	});
+
+	QUnit.test("Clicking on already selected item with rememberSelections=true should not fire selectionChange", async function (assert) {
+
+		const oSelectionChangeSpy = this.spy(this.oTableSelectDialog, "fireSelectionChange");
+
+
+		this.oTableSelectDialog.open();
+		await nextUIUpdate();
+
+
+		this.oFirstTableItem.$().trigger("tap");
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oSelectionChangeSpy.callCount, 0, "Dialog fireSelectionChange method was called.");
+
+		// Cleanup
+		oSelectionChangeSpy.restore();
+	});
+
+	QUnit.test("Clicking on non selected item with rememberSelections=true should fire selectionChange and close dialog", async function (assert) {
+
+		const oDialogCloseSpy = this.spy(this.oTableSelectDialog._oDialog, "close"),
+			oSelectionChangeSpy = this.spy(this.oTableSelectDialog, "fireSelectionChange");
+
+
+		this.oTableSelectDialog.open();
+		await nextUIUpdate();
+
+
+		this.oTableSelectDialog.getItems()[1].$().trigger("tap");
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oSelectionChangeSpy.callCount, 1, "Dialog fireSelectionChange method was called");
+		assert.ok(oDialogCloseSpy.called, "Dialog close method was called.");
+
+		// Cleanup
+		oDialogCloseSpy.restore();
+		oSelectionChangeSpy.restore();
+	});
+
 
 	QUnit.module("Keyboard Handling", {
 		beforeEach: function() {
