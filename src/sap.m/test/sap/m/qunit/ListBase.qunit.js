@@ -823,6 +823,31 @@ sap.ui.define([
 			oList.destroy();
 		});
 
+		QUnit.test("InputListItem", async function(assert) {
+			const oList = new List({
+				items: [
+					new InputListItem({
+						inputSize: "L",
+						label: "Large size content",
+						content: [new Input()]
+					}),
+					new InputListItem({
+						inputSize: "S",
+						label: "Small size content",
+						content: [new Input()]
+					})
+				]
+			});
+			oList.placeAt("qunit-fixture");
+			await nextUIUpdate();
+
+			oList.getItems().forEach(function(oItem, iIndex) {
+				assert.ok(oItem.getDomRef("contentWrapper").classList.contains("sapMILIContentWrapper" + oItem.getContentSize()), "Correct size class is added to the content wrapper");
+			});
+
+			oList.destroy();
+		});
+
 		/********************************************************************************/
 		QUnit.module("Getter/Setter methods", {
 			beforeEach: function() {
