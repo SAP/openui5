@@ -264,6 +264,10 @@ sap.ui.define([
 	 * @private
 	 */
 	NavigationListItemBase.prototype.onkeydown = function (oEvent) {
+		if (oEvent.key ? oEvent.key === " " : oEvent.keyCode === KeyCodes.SPACE) {
+			oEvent.preventDefault();
+		}
+
 		if (!this._isListExpanded()) {
 			return;
 		}
@@ -272,7 +276,9 @@ sap.ui.define([
 			return;
 		}
 
-		oEvent.setMarked("subItem");
+		if (oEvent.srcControl.getLevel() === 1) {
+			oEvent.setMarked("subItem");
+		}
 
 		if (this.getLevel() !== 0) {
 			return;
