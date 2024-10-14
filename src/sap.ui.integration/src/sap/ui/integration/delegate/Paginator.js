@@ -95,7 +95,7 @@ sap.ui.define([
 		this._oBusyIndicator?.destroy();
 	};
 
-	Paginator.prototype.openDialog = function(oOpener) {
+	Paginator.prototype.openDialog = function() {
 		const oCard = this.getCard();
 
 		openCardDialog(
@@ -105,8 +105,7 @@ sap.ui.define([
 				baseUrl: oCard.getBaseUrl(),
 				resizable: true,
 				showCloseButton: true
-			},
-			oOpener
+			}
 		);
 	};
 

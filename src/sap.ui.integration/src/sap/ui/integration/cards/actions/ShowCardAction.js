@@ -41,7 +41,7 @@ sap.ui.define([
 			return;
 		}
 
-		openCardDialog(oParentCard, this.getParameters(), this.getSourceInstance());
+		openCardDialog(oParentCard, this.getParameters());
 	};
 
 	return ShowCardAction;
