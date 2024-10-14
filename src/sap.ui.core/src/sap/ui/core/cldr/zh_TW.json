@@ -5806,5 +5806,9 @@
 		"gregorian",
 		"roc",
 		"chinese"
-	]
+	],
+	"sap-calendarWeek": {
+		"narrow": "\\u66C6\\u9031 {0}",
+		"wide": "\\u66C6\\u9031 {0}"
+	}
 }

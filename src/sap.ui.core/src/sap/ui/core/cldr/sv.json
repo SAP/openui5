@@ -5984,5 +5984,9 @@
 			"_before": "05:00",
 			"_from": "00:00"
 		}
+	},
+	"sap-calendarWeek": {
+		"narrow": "KV {0}",
+		"wide": "Kalendervecka {0}"
 	}
 }

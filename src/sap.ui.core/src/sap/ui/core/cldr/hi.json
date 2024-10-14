@@ -5812,5 +5812,9 @@
 	"calendarPreference": [
 		"gregorian",
 		"indian"
-	]
+	],
+	"sap-calendarWeek": {
+		"narrow": "CW {0}",
+		"wide": "\\u0915\\u0948\\u0932\\u0947\\u0902\\u0921\\u0930 \\u0938\\u092A\\u094D\\u0924\\u093E\\u0939 {0}"
+	}
 }
