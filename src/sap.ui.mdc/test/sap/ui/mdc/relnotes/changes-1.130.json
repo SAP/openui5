@@ -3,6 +3,27 @@
     "date": "October 2024",
     "notes": [
       {
+        "id": "b27c4954129323e26a19fa7676d85451a3797a01",
+        "type": "FEATURE",
+        "text": " MDCTable: Enable Interactive Row Mode"
+      },
+      {
+        "id": "1cb3d1054eab3dc9285edb29f4cc74446f1d28e4",
+        "type": "FIX",
+        "text": " MTable: ValueHelpDelegate.UpdateBinding not called in phone"
+      },
+      {
+        "id": "593390479b0b15c1b281725213b2aae339966b3f",
+        "type": "FIX",
+        "text": " Field: use sap.ui.core.ILabelable interface",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370141402"
+          }
+        ]
+      },
+      {
         "id": "aa37f3cdc914d9ce627dad1e0b36f961742b1090",
         "type": "FEATURE",
         "text": " ActionToolbar: combine / split RTA"

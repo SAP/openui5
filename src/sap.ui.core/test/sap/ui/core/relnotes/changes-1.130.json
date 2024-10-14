@@ -3,6 +3,16 @@
     "date": "October 2024",
     "notes": [
       {
+        "id": "5de10b6bdb76c82ae20e7c5f8785b106b80fc399",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat#format: CLDR data for currencies is considered correctly without currency customizing"
+      },
+      {
+        "id": "5fc8acb03098b55e782aaf8ed2c7982f70edc8ca",
+        "type": "FIX",
+        "text": " dom/findTabbable: return when meet the scope element twice"
+      },
+      {
         "id": "c17388e40c80053bf33402ed7666bc971efd1915",
         "type": "FEATURE",
         "text": " FESR: Enhance FESR to enable reporting of integration env"

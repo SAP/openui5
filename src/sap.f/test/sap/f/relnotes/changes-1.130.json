@@ -3,6 +3,11 @@
     "date": "October 2024",
     "notes": [
       {
+        "id": "b537e42f6e722a22cc139e956783044b113caa1c",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Fix focus lost on actions"
+      },
+      {
         "id": "9522d7888236098d911762b4752f04cd5f79a4cf",
         "type": "FEATURE",
         "text": " Integration Cards: Add fitType property for icons in Header and Object Card content"

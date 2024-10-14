@@ -3,6 +3,11 @@
     "date": "October 2024",
     "notes": [
       {
+        "id": "e5975bac79a90bba7071e44ae04d46c0d1c48585",
+        "type": "FEATURE",
+        "text": " Integration Cards: request method now supports FormData"
+      },
+      {
         "id": "9522d7888236098d911762b4752f04cd5f79a4cf",
         "type": "FEATURE",
         "text": " Integration Cards: Add fitType property for icons in Header and Object Card content"

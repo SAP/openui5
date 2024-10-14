@@ -3,6 +3,11 @@
     "date": "October 2024",
     "notes": [
       {
+        "id": "65456ee9d0471fa7c9848723b8b16e4e2d7364e5",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Typo fixed"
+      },
+      {
         "id": "7b133c703ecc3266c135d572b2adb706aff7c708",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Timing issue fixed"

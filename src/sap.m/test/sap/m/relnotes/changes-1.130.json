@@ -3,6 +3,21 @@
     "date": "October 2024",
     "notes": [
       {
+        "id": "0dd1f4663221e02f350a5bc351b3b24c8f673bcd",
+        "type": "FIX",
+        "text": " sap.m.Slider, sap.m.RangeSlider: Documentation update"
+      },
+      {
+        "id": "98792b8c6b426b5ff2748790ace52a6dd13f3043",
+        "type": "FIX",
+        "text": " sap.m.Input: Exact match with no autocomplete behavior corrected"
+      },
+      {
+        "id": "9ad7166421826a57cedf864f06572e040d10f6cc",
+        "type": "FIX",
+        "text": " We now ensure that the correct list item is selected when the setSelectedItemById API is used"
+      },
+      {
         "id": "2f9c333fa53c9e247be9e55bfc1995024377c6d7",
         "type": "FIX",
         "text": " We now ensure that the Upload button has a left margin same as other buttons in the table action row"
@@ -27,6 +42,11 @@
         "id": "0713d78e45c9ba39b9ae06eb2400dcc195a7cd98",
         "type": "FIX",
         "text": " sap.m.ObjectStatus: update documentation regarding wrapping behavior of the control"
+      },
+      {
+        "id": "b0fb5d5e0276b56858e7fa59b2b48980141a74d5",
+        "type": "FIX",
+        "text": " sap.m.MessageView: invalidate details page before navigation"
       },
       {
         "id": "fbb9a1f25c352d2f275f7c90fda823e8aa0af3e4",
