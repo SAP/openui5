@@ -407,20 +407,14 @@ sap.ui.define([
 				path: "Name",
 				dataType: "String",
 				groupable: true,
-				aggregatable: true,
-				extension: {
-					customAggregate: {}
-				}
+				aggregatable: true
 			}, {
 				name: "Country",
 				label: "Country",
 				path: "Country",
 				dataType: "String",
 				groupable: true,
-				aggregatable: true,
-				extension: {
-					customAggregate: {}
-				}
+				aggregatable: true
 			}, {
 				name: "name_country",
 				label: "Complex Title & Description",
@@ -1636,20 +1630,14 @@ sap.ui.define([
 				path: "Name",
 				dataType: "String",
 				groupable: true,
-				aggregatable: true,
-				extension: {
-					customAggregate: {}
-				}
+				aggregatable: true
 			}, {
 				name: "Country",
 				label: "Country",
 				path: "Country",
 				dataType: "String",
 				groupable: true,
-				aggregatable: true,
-				extension: {
-					customAggregate: {}
-				}
+				aggregatable: true
 			}, {
 				name: "name_country",
 				label: "Complex Title & Description",
