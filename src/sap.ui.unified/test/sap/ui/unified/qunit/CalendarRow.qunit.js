@@ -547,7 +547,7 @@ sap.ui.define([
 		assert.ok(!$Appointment0.hasClass("sapUiCalendarAppSel"), "Appointment0: not rendered as selected");
 		assert.ok($Appointment0.hasClass("sapUiCalendarAppSmall"), "Appointment0: rendered as small appointment");
 		// outerWdith() dimensions may be incorrect when the page is zoomed by the user; browsers do not expose an API to detect this condition.
-		assert.equal($Appointment0.outerWidth(), $AppointmentDummy.outerWidth(), "Appointment0 hat min. width");
+		assert.ok(Math.abs($Appointment0.outerWidth() - $AppointmentDummy.outerWidth()) < 1, "Appointment0 hat min. width");
 		assert.ok(!$Appointment1.get(0), "Appointment1 not rendered");
 		assert.ok($Appointment2.get(0), "Appointment2 rendered");
 		assert.equal($Appointment2.attr("data-sap-level"), sLevel, "Appointment2 has same level like before");
