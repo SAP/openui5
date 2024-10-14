@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:DataServices>
+		<Schema Namespace="foo">
+			<Annotations Target="com.sap.gateway.f4.d_pr_type-fv.v0001.D_PR_TYPE_FV/DESCRIPTION">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label"
+						String="Description's New Label"/>
+			</Annotations>
+			<Annotations Target="com.sap.gateway.f4.d_pr_type-fv.v0001.D_PR_TYPE_FV/FIELD_VALUE">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Field Value"/>
+			</Annotations>
+			<Annotations Target="com.sap.gateway.f4.d_pr_type-fv-ext.v0001.Container">
+				<Annotation Term="foo" String="bar (overwritten)"/>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

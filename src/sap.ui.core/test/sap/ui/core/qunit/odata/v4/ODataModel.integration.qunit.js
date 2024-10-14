@@ -61680,14 +61680,24 @@ make root = ${bMakeRoot}`;
 	//*********************************************************************************************
 	// Scenario: A value list model is used multiple times, but the request is shared.
 	// JIRA: CPOUI5ODATAV4-344
+	//
+	// Add and modify annotations for the value list model via local annotation files, including one
+	// in a referenced scope.
+	// JIRA: CPOUI5ODATAV4-2732
 [false, true].forEach(function (bAutoExpandSelect) {
 	var sTitle = "$$sharedRequest and ODMM#getOrCreateSharedModel, bAutoExpandSelect = "
 			+ bAutoExpandSelect;
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = this.createSalesOrdersModel({}, {
+		var oModel = this.createSalesOrdersModel({
+				annotationURI : "/sap/opu/odata4/annotations_zui5_epm_sample.xml"
+			}, {
+				"/sap/opu/odata4/annotations_zui5_epm_sample.xml"
+					: {source : "odata/v4/data/annotations_zui5_epm_sample.xml"},
 				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TYPE_CODE%27/$metadata"
-					: {source : "odata/v4/data/VH_ProductTypeCode.xml"}
+					: {source : "odata/v4/data/VH_ProductTypeCode.xml"},
+				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv-ext/0001/$metadata"
+					: {source : "odata/v4/data/VH_ProductTypeCode_ext.xml"}
 			}),
 			sView = '\
 <FlexBox binding="{/ProductList(\'1\')}">\
@@ -61723,6 +61733,10 @@ make root = ${bMakeRoot}`;
 		}).then(function (mValueListInfo) {
 			var oValueListModel = mValueListInfo[""].$model;
 
+			assert.throws(function () {
+				oValueListModel.setAnnotationChangePromise(Promise.resolve([]));
+			}, new Error("Too late"), "cannot set key user changes at the value list model");
+
 			that.expectRequest("D_PR_TYPE_FV_SET?"
 					+ (bAutoExpandSelect ? "$select=DESCRIPTION,FIELD_VALUE&" : "")
 					+ "$skip=0&$top=100", {
@@ -61741,7 +61755,26 @@ make root = ${bMakeRoot}`;
 			that.oView.byId("list1").setModel(oValueListModel).getBinding("items").resume();
 			that.oView.byId("list2").setModel(oValueListModel).getBinding("items").resume();
 
-			return that.waitForChanges(assert);
+			return Promise.all([
+				oValueListModel.getMetaModel()
+					.requestObject("/com.sap.gateway.f4.d_pr_type-fv.v0001.D_PR_TYPE_FV/DESCRIPTION"
+						+ "@com.sap.vocabularies.Common.v1.Label")
+					.then(function (sLabel) {
+						assert.strictEqual(sLabel, "Description's New Label");
+					}),
+				oValueListModel.getMetaModel()
+					.requestObject("/com.sap.gateway.f4.d_pr_type-fv.v0001.D_PR_TYPE_FV/FIELD_VALUE"
+						+ "@com.sap.vocabularies.Common.v1.Label")
+					.then(function (sLabel) {
+						assert.strictEqual(sLabel, "Field Value");
+					}),
+				oValueListModel.getMetaModel()
+					.requestObject("/com.sap.gateway.f4.d_pr_type-fv-ext.v0001.Container@foo")
+					.then(function (sValue) {
+						assert.strictEqual(sValue, "bar (overwritten)");
+					}),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 });
