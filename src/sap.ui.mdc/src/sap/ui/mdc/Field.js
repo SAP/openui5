@@ -39,7 +39,7 @@ sap.ui.define([
 	 * <ul>
 	 * <li>In display mode, usually a {@link sap.m.Text Text} control is rendered.</li>
 	 * <li>If <code>multipleLines</code> is set, an {@link sap.m.ExpandableText ExpandableText} control is rendered.</li>
-	 * <li>If <code>fieldInfo</code> is set and it is configured to be triggerable, a {@link sap.m.Link Link} control is rendered.</li>
+	 * <li>If <code>fieldInfo</code> is set and it is configured to be triggerable, a {@link sap.m.Link Link} control is rendered. The <code>multipleLines</code> property is forwarded to the <code>wrapping</code> property of the {@link sap.m.Link Link} control.</li>
 	 * <li>In edit mode, usually an {@link sap.m.Input Input} control is rendered.</li>
 	 * <li>If <code>multipleLines</code> is set, a {@link sap.m.TextArea TextArea} control is rendered.</li>
 	 * <li>If a date type is used, a {@link sap.m.DatePicker DatePicker} control is rendered.</li>
