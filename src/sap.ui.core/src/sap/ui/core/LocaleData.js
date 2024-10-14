@@ -2008,7 +2008,7 @@ sap.ui.define([
 
 		/**
 		 * Returns the pattern for representing the calendar week number in the given style. If
-		 * <code>iWeekNumber</code> is given, the weeknumber placeholder will be replaced with it.
+		 * <code>iWeekNumber</code> is given, the week number placeholder will be replaced by it.
 		 *
 		 * @param {"narrow"|"wide"} sStyle The style of the pattern
 		 * @param {string} [sWeekNumber] The week number, e.g. "01" or "42"
