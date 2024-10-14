@@ -193,6 +193,11 @@ sap.ui.define([
 						if (oValueHelp) {
 							aContentControls.push(oValueHelp);
 						}
+
+						for (const oControl of aContentControls) {
+							oControl._bByContentFactory = true;
+						}
+
 						return aContentControls;
 					} else {
 						return [];
@@ -426,6 +431,9 @@ sap.ui.define([
 				oConditionType = this._oContentConditionTypes.contentEdit.oConditionType;
 				oConditionsType = this._oContentConditionTypes.contentEdit.oConditionsType;
 			}
+		} else if (this._oContentConditionTypes?._content) { // content created via Delegate
+			oConditionType = this._oContentConditionTypes._content.oConditionType;
+			oConditionsType = this._oContentConditionTypes._content.oConditionsType;
 		}
 
 		if (oConditionType) {

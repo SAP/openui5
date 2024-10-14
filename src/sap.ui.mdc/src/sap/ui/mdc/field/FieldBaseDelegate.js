@@ -43,6 +43,14 @@ sap.ui.define([
 	 * Provides the possibility to customize / replace the internal content of a field
 	 * <br/>By default, this method returns suitable controls for the given {@link sap.ui.mdc.enums.BaseType BaseType}, {@link  sap.ui.mdc.field.FieldBase#setMaxConditions maxConditions} and {@link sap.ui.mdc.enums.ContentMode ContentMode}.
 	 *
+	 * <b>Note:</b> Bind the value-holding property of the control to <code>'$field>/conditions'</code>
+	 * using {@link sap.ui.mdc.field.ConditionsType ConditionsType} as type.
+	 *
+	 * If the control needs to show multiple conditions, bind its aggregation to </code>'$field>/conditions'</code>.
+	 * Bind the item controls value-holding property using {@link sap.ui.mdc.field.ConditionType ConditionType} as type.
+	 *
+	 * <b>Warning:</b> The returned controls must implement {@link sap.ui.core.IFormContent IFormContent}.
+	 * Other controls might lead to layouting or usabillity issues.
  	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
 	 * @param {sap.ui.mdc.enums.ContentMode} sContentMode A given content mode
 	 * @param {string} sId ID of the internal control to be created.
