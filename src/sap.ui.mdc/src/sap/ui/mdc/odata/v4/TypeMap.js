@@ -10,6 +10,7 @@ sap.ui.define([
 	/**
 	 * @class ODataV4-specific {@link module:sap/ui/mdc/util/TypeMap TypeMap} configuration.
 	 *
+  	 * <b>Note:</b> The modules of all data types registered in a <code>TypeMap</code> must be loaded in advance.<br>
 	 * <b>Note:</b> This <code>TypeMap</code> implementation contains the following types including ODataV4-specific configuration:
 	 *
 	 * <ul>
