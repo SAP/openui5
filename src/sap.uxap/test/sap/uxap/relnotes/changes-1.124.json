@@ -18,5 +18,15 @@
         "text": " sap.uxap.ObjectPageLayout: lazy loading with selected SubSection"
       }
     ]
+  },
+  "1.124.8": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "c0a9d7a5e958138de641f122b2b6845cb45cc4af",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Timing issue fixed"
+      }
+    ]
   }
 }

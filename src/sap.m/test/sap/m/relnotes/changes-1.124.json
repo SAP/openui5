@@ -314,5 +314,20 @@
         "text": " CellSelector: Return correct row contexts when grouping"
       }
     ]
+  },
+  "1.124.8": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "479a1940826f427798353581bde3dc1d71636a9c",
+        "type": "FIX",
+        "text": " sap.m.Input: Exact match with no autocomplete behavior corrected"
+      },
+      {
+        "id": "3c4213e7592740f5fc3f5ee371e47e7fce2e1b68",
+        "type": "FIX",
+        "text": " sap.m.Popover: Height calculations for scrollable contents are preserved after invalidation"
+      }
+    ]
   }
 }
