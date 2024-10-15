@@ -22,6 +22,8 @@ sap.ui.define([
 	 * Configuration class for type handling in delegates.
 	 * Allows mapping of model types to {@link sap.ui.mdc.enums.BaseType} and enables model-specific type configuration.
 	 *
+	 * <b>Note:</b> The modules of all data types registered in a <code>TypeMap</code> must be loaded in advance.
+	 *
 	 * @namespace
 	 * @author SAP SE
 	 * @public
@@ -210,7 +212,6 @@ sap.ui.define([
 	/**
 	 * Gets a data type class based on a given name.
 	 *
-	 * <b>Note:</b> The module of the data type needs to be loaded before.
 	 * @final
 	 * @param {string} sDataType Class path as <code>string</code> where each name is separated by '.'
 	 * @returns {function(new: sap.ui.model.SimpleType)} Corresponding data type class
@@ -218,9 +219,19 @@ sap.ui.define([
 	 */
 	TypeMap.getDataTypeClass = function(sDataType) {
 		const sTypeName = this.getDataTypeClassName(sDataType);
-		const TypeClass = sTypeName ?
-			sap.ui.require(sTypeName.replace(/\./g, "/")) || ObjectPath.get(sTypeName) :
-			undefined;
+		let TypeClass;
+
+		if (sTypeName) {
+			TypeClass = sap.ui.require(sTypeName.replace(/\./g, "/"));
+
+			/**
+			 * @deprecated As of version 1.120 with no replacement.
+			 */
+			if (!TypeClass) {
+				TypeClass = ObjectPath.get(sTypeName);
+			}
+		}
+
 		if (!TypeClass) {
 			throw new Error("DataType '" + sDataType + "' cannot be determined");
 		}
