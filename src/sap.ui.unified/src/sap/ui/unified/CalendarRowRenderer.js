@@ -505,8 +505,16 @@ sap.ui.define([
 		var sIcon = oAppointment.getIcon();
 		var sId = oAppointment.getId();
 		var bReducedHeight = oRow._getAppointmentReducedHeight(oAppointmentInfo);
+		var bAppointmentSelected = oAppointment.getSelected();
 		var mAccProps = {
-			labelledby: {value: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT") + " " + sId + "-Descr", append: true},
+			role: "listitem",
+			labelledby: {
+				value: InvisibleText.getStaticId("sap.m", "ACC_CTR_TYPE_LISTITEM") + " "
+						+ InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT") + " "
+						+ sId.concat("-Descr"),
+				append: true
+			},
+			describedby: {value: bAppointmentSelected ? InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED") : "", append: true},
 			selected: null
 		};
 		var iRowCount = oRow._getAppointmentRowCount(oAppointmentInfo, bReducedHeight);
@@ -528,9 +536,8 @@ sap.ui.define([
 		oRm.openStart("div", oAppointment);
 		oRm.class("sapUiCalendarApp");
 		oRm.class("sapUiCalendarAppHeight" + iRowCount);
-		if (oAppointment.getSelected()) {
+		if (bAppointmentSelected) {
 			oRm.class("sapUiCalendarAppSel");
-			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 		}
 
 		if (oAppointment.getTentative()) {
