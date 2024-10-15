@@ -12,6 +12,7 @@ sap.ui.define([
 	*
 	* Generic {@link sap.ui.mdc.util.TypeMap TypeMap} configuration for simple use cases.
 	*
+	* <b>Note:</b> The modules of all data types registered in a <code>TypeMap</code> must be loaded in advance.<br>
 	* <b>Note:</b> This {@link sap.ui.mdc.util.TypeMap TypeMap} implementation contains the following types:
 	*
 	* <ul>
