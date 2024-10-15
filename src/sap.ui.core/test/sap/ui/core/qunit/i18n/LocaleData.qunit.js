@@ -1561,4 +1561,22 @@ sap.ui.define([
 			assert.deepEqual(oLocaleData.getScripts(), {"baz": "foo"});
 		});
 	});
+
+	//*********************************************************************************************
+[
+	{calendarType: undefined, _getArg: "eras-~foo"},
+	{calendarType: CalendarType.Buddhist, _getArg: "eras-buddhist"}
+].forEach(({calendarType, _getArg}) => {
+	QUnit.test("getEraDates: sCalendarType=" + calendarType, function(assert) {
+		const oLocaleData = {_get() {}};
+
+		this.mock(Formatting).expects("getCalendarType").withExactArgs().exactly(!calendarType ? 1 : 0).returns("~foo");
+		this.mock(oLocaleData).expects("_get").withExactArgs(_getArg).returns({0: "~eraOne", 1: "~eraTwo"});
+
+		// code under test
+		const aEraDates = LocaleData.prototype.getEraDates.call(oLocaleData, calendarType);
+
+		assert.deepEqual(aEraDates, ["~eraOne", "~eraTwo"]);
+	});
+});
 });
