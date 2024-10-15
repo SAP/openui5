@@ -343,6 +343,17 @@ sap.ui.define([
 				"The radio button for HSL color mode has correct tooltip text.");
 		});
 
+		QUnit.test("Current and New color box tooltips", function (oAssert) {
+			var oRB = Library.getResourceBundleFor("sap.ui.unified");
+
+			// Assert
+			oAssert.strictEqual(document.getElementsByClassName("sapUiColorPicker-ColorPickerOldColor")[0].title, oRB.getText("COLOR_PICKER_CURRENT_COLOR_TOOLTIP"),
+				"The Current color box has correct tooltip text.");
+
+			oAssert.strictEqual(document.getElementsByClassName("sapUiColorPicker-ColorPickerNewColor")[0].title, oRB.getText("COLOR_PICKER_NEW_COLOR_TOOLTIP"),
+				"The New color box has correct tooltip text.");
+		});
+
 		QUnit.module("Private methods", {
 			beforeEach: function () {
 				this.oCP = new ColorPicker();
