@@ -75698,4 +75698,75 @@ make root = ${bMakeRoot}`;
 		await this.waitForChanges(assert, "resolve old separate request, ignore response");
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: A list binding uses binding parameter $$separate. If a main list request fails, the
+	// response of the separate request is ignored. If the separate request fails, the column for
+	// the separate data remains empty. In both cases the error is reported as UI5 message.
+	// JIRA: CPOUI5ODATAV4-2776
+[/*main failed*/false, true].forEach(function (bSeparateFailed) {
+	const sTitle = "$$separate: error handling, " + (bSeparateFailed ? "separate" : "main")
+		+ " request failed";
+
+	QUnit.test(sTitle, async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<Table growing="true" growingThreshold="2" id="table"
+		items="{
+			path : '/EMPLOYEES',
+			parameters : {
+				$$separate : ['EMPLOYEE_2_TEAM']
+			}
+		}">
+	<Text id="name" text="{Name}"/>
+	<Text id="team" text="{EMPLOYEE_2_TEAM/Name}"/>
+</Table>`;
+
+		if (bSeparateFailed) {
+			this.oLogMock.expects("error")
+				.withArgs("Loading $$separate property 'EMPLOYEE_2_TEAM' failed");
+		} else {
+			this.oLogMock.expects("error").twice()
+				.withArgs("Failed to get contexts for " + sTeaBusi + "EMPLOYEES with start index 0"
+					+ " and length 2");
+		}
+		const oError = createErrorInsideBatch();
+		this.expectRequest({
+				batchNo : 1,
+				url : "EMPLOYEES?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=ID"
+					+ "&$skip=0&$top=2"
+			}, bSeparateFailed ? oError : {
+				value : [{
+					EMPLOYEE_2_TEAM : {Name : "Team A", Team_Id : "A"},
+					ID : "0"
+				}, {
+					EMPLOYEE_2_TEAM : {Name : "Team B", Team_Id : "B"},
+					ID : "1"
+				}]
+			})
+			.expectRequest({
+				batchNo : 2,
+				url : "EMPLOYEES?$select=ID,Name&$skip=0&$top=2"
+			}, bSeparateFailed ? {
+				value : [{
+					ID : "0",
+					Name : "Employee 0"
+				}, {
+					ID : "1",
+					Name : "Employee 1"
+				}]
+			} : oError)
+			.expectMessage({
+				code : "CODE",
+				message : "Request intentionally failed",
+				persistent : true,
+				technical : true,
+				type : "Error"
+			})
+			.expectChange("name", bSeparateFailed ? ["Employee 0", "Employee 1"] : [])
+			.expectChange("team", bSeparateFailed ? [null, null] : []);
+
+		await this.createView(assert, sView, oModel);
+	});
+});
 });

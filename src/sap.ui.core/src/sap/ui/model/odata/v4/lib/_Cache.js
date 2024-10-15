@@ -3558,7 +3558,8 @@ sap.ui.define([
 	 * @param {number} iEnd
 	 *   The index after the last element
 	 * @param {sap.ui.base.SyncPromise} oMainPromise
-	 *   A promise which is resolved when the main request is finished
+	 *   A promise which is resolved when the main request is finished; the caller must take care of
+	 *   error handling
 	 * @returns {Promise<void>}
 	 *   A promise which is resolved without a defined result at no defined point in time
 	 *
@@ -3572,32 +3573,35 @@ sap.ui.define([
 
 		// types are needed for selecting the key properties, see #getQueryString called by
 		// #getResourcePathWithQuery
-		const oTypes = await this.fetchTypes();
+		const mTypeForMetaPath = await this.fetchTypes();
+		oMainPromise = oMainPromise.catch(() => { /* handled by caller */ });
 		const oReadRange = {start : iStart, end : iEnd};
-		const aRequestPromises = this.aSeparateProperties.map((sProperty) => {
-			this.mSeparateProperty2ReadRequest[sProperty].push(oReadRange);
-			return this.oRequestor.request("GET",
-				this.getResourcePathWithQuery(iStart, iEnd, sProperty),
-				this.oRequestor.lockGroup("$single", this));
-		});
+		this.aSeparateProperties.forEach(async (sProperty) => {
+			try {
+				this.mSeparateProperty2ReadRequest[sProperty].push(oReadRange);
+				const oResult = await this.oRequestor.request("GET",
+					this.getResourcePathWithQuery(iStart, iEnd, sProperty),
+					this.oRequestor.lockGroup("$single", this));
 
-		await oMainPromise;
-		aRequestPromises.forEach(async (oRequestPromise, i) => {
-			const oResult = await oRequestPromise;
-			const sProperty = this.aSeparateProperties[i];
-			const iRangeIndex = this.mSeparateProperty2ReadRequest[sProperty].indexOf(oReadRange);
-			if (iRangeIndex < 0) { // stop import after #reset
-				return;
-			}
-			this.mSeparateProperty2ReadRequest[sProperty].splice(iRangeIndex, 1);
-			this.visitResponse(oResult, oTypes, undefined, undefined, iStart);
-			for (const oSeparateData of oResult.value) {
-				const sPredicate = _Helper.getPrivateAnnotation(oSeparateData, "predicate");
-				const oElement = this.aElements.$byPredicate[sPredicate];
-				if (oElement) {
-					_Helper.updateSelected(this.mChangeListeners, sPredicate, oElement,
-						oSeparateData, [sProperty]);
+				await oMainPromise;
+				const iIndex = this.mSeparateProperty2ReadRequest[sProperty].indexOf(oReadRange);
+				if (iIndex < 0) { // stop import after #reset
+					return;
 				}
+
+				this.mSeparateProperty2ReadRequest[sProperty].splice(iIndex, 1);
+				this.visitResponse(oResult, mTypeForMetaPath, undefined, undefined, iStart);
+				for (const oSeparateData of oResult.value) {
+					const sPredicate = _Helper.getPrivateAnnotation(oSeparateData, "predicate");
+					const oElement = this.aElements.$byPredicate[sPredicate];
+					if (oElement) {
+						_Helper.updateSelected(this.mChangeListeners, sPredicate, oElement,
+							oSeparateData, [sProperty]);
+					}
+				}
+			} catch (oError) {
+				this.oRequestor.getModelInterface().reportError(
+					`Loading $$separate property '${sProperty}' failed`, sClassName, oError);
 			}
 		});
 	};
