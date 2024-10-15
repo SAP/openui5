@@ -87,6 +87,13 @@
 	height: 100%;
 }
 
+/** fix DINC0240923**/
+html[data-sap-ui-browser^="sf"] .sapUiIntegrationEditor .sapMInputBaseInner::selection, 
+html[data-sap-ui-browser^="cr"] .sapUiIntegrationEditor .sapMInputBaseInner::selection {
+	background-color: var(--sapField_Focus_BorderColor, inherit) !important;
+	color: var(--sapField_Focus_Background, inherit) !important;
+}
+
 #sap-ui-static .sapMSliderTooltip {
 	min-width: 3.2rem;
 }
