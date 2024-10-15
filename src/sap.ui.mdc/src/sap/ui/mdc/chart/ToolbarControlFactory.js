@@ -142,7 +142,7 @@ sap.ui.define([
 			sorted: "ascending",
 
 			type: "Transparent",
-			ariaHasPopup: AriaHasPopup.ListBox,
+			ariaHasPopup: AriaHasPopup.Dialog,
 			layoutData: new OverflowToolbarLayoutData({
 				closeOverflowOnInteraction: false
 			})

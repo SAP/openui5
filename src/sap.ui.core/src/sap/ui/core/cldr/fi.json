@@ -6087,5 +6087,9 @@
 		"noon": {
 			"_at": "12:00"
 		}
+	},
+	"sap-calendarWeek": {
+		"narrow": "Vk {0}",
+		"wide": "Kalenteriviikko {0}"
 	}
 }

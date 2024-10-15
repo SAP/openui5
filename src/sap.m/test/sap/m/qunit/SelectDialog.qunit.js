@@ -354,16 +354,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("Open SelectDialog without a parent (should be added to static area)", function (assert) {
-			var that = this;
 			assert.strictEqual(this.oSelectDialog.getParent(), null, "Dialog has no parent before opening");
 			assert.strictEqual(this.oSelectDialog.getUIArea(), null, "Dialog has no ui area before opening");
 
-			jQuery.when(this.oSelectDialog.open()).then(function (oEvent) {
-				assert.ok(document.getElementById("selectDialog-dialog"), "Dialog is opened");
-				assert.ok(that.oSelectDialog.getParent().isA("sap.ui.core.UIArea"), "Dialog is now a direct child of the UI Area");
-				assert.strictEqual(that.oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
-				assert.strictEqual(that.oSelectDialog._oSearchField.$("I").attr("aria-labelledby"), InvisibleText.getStaticId("sap.m", "SELECTDIALOG_SEARCH"), "aria-labelledby is correctly set");
-			});
+			this.oSelectDialog.open();
+			assert.ok(document.getElementById("selectDialog-dialog"), "Dialog is opened");
+			assert.ok(this.oSelectDialog.getParent().isA("sap.ui.core.UIArea"), "Dialog is now a direct child of the UI Area");
+			assert.strictEqual(this.oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
+			assert.strictEqual(this.oSelectDialog._oSearchField.$("I").attr("aria-labelledby"), InvisibleText.getStaticId("sap.m", "SELECTDIALOG_SEARCH"), "aria-labelledby is correctly set");
 		});
 
 		QUnit.test("No InfoToolbar should be shown in single select mode even if there is a selected option", function (assert) {
@@ -501,8 +499,7 @@ sap.ui.define([
 		QUnit.test("Open SelectDialog that is defined within an XML view without parent (has no UI area, temporary fix: will be added to static area)", function (assert) {
 			var xml = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 			'      <SelectDialog id="xmlSelectDialog"></SelectDialog>' +
-			'    </mvc:View>',
-				that = this;
+			'    </mvc:View>';
 
 			return XMLView.create({
 				definition: xml
@@ -515,19 +512,17 @@ sap.ui.define([
 				assert.strictEqual(this.oSelectDialog.getParent().getParent(), null, "The XML view has no parent");
 				assert.strictEqual(this.oSelectDialog.getUIArea(), null, "Dialog has no ui area before opening");
 
-				return jQuery.when(this.oSelectDialog.open()).then(function (oEvent) {
-					assert.ok(document.getElementById(that.oXmlViewOrFragment.createId("xmlSelectDialog-dialog")), "Dialog is opened");
-					assert.ok(that.oSelectDialog.getParent().isA("sap.ui.core.UIArea"), "Dialog is now a direct child of the UI Area");
-					assert.strictEqual(that.oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
-				});
+				this.oSelectDialog.open();
+				assert.ok(document.getElementById(this.oXmlViewOrFragment.createId("xmlSelectDialog-dialog")), "Dialog is opened");
+				assert.ok(this.oSelectDialog.getParent().isA("sap.ui.core.UIArea"), "Dialog is now a direct child of the UI Area");
+				assert.strictEqual(this.oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
 			}.bind(this));
 		});
 
 		QUnit.test("Open SelectDialog that is defined within a fragment", function (assert) {
 			var sFragmentText = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">' +
 			 '      <SelectDialog id="fragmentSelectDialog"></SelectDialog>' +
-			 '    </core:FragmentDefinition>',
-				that = this;
+			 '    </core:FragmentDefinition>';
 
 			return Fragment.load({
 				definition: sFragmentText
@@ -538,11 +533,10 @@ sap.ui.define([
 				assert.strictEqual(this.oSelectDialog.getParent(), null, "Dialog's parent is null");
 				assert.strictEqual(this.oSelectDialog.getUIArea(), null, "Dialog has no ui area before opening");
 
-				return jQuery.when(this.oSelectDialog.open()).then(function (oEvent) {
-					assert.ok(document.getElementById("fragmentSelectDialog-dialog"), "Dialog is opened");
-					assert.ok(that.oSelectDialog.getParent().isA("sap.ui.core.UIArea"), "Dialog is now a direct child of the UI Area");
-					assert.strictEqual(that.oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
-				});
+				this.oSelectDialog.open();
+				assert.ok(document.getElementById("fragmentSelectDialog-dialog"), "Dialog is opened");
+				assert.ok(this.oSelectDialog.getParent().isA("sap.ui.core.UIArea"), "Dialog is now a direct child of the UI Area");
+				assert.strictEqual(this.oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
 			}.bind(this));
 		});
 
@@ -705,19 +699,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("Open Dialog", function (assert) {
-			jQuery.when(this.oSelectDialog.open()).then(function (oEvent) {
-				// assert
-				assert.ok(document.getElementById("selectDialog-dialog"), "Dialog is opened");
-				assert.ok(document.getElementById("selectDialog-dialog-title"), "Dialog title should be rendered");
-				assert.ok(document.getElementById("selectDialog-searchField"), "Dialog should have a searchfield");
-				assert.ok(document.getElementById("selectDialog-list"), "Dialog should have a list");
-				assert.ok(!document.getElementById("selectDialog-ok"), "Dialog should not have an ok button");
-			});
+			this.oSelectDialog.open();
+			// assert
+			assert.ok(document.getElementById("selectDialog-dialog"), "Dialog is opened");
+			assert.ok(document.getElementById("selectDialog-dialog-title"), "Dialog title should be rendered");
+			assert.ok(document.getElementById("selectDialog-searchField"), "Dialog should have a searchfield");
+			assert.ok(document.getElementById("selectDialog-list"), "Dialog should have a list");
+			assert.ok(!document.getElementById("selectDialog-ok"), "Dialog should not have an ok button");
 		});
 
 		QUnit.test("Open with string and filter", function (assert) {
-			var that = this,
-				oFilter = new Filter("Title", FilterOperator.Contains , "Title1");
+			var oFilter = new Filter("Title", FilterOperator.Contains , "Title1");
 
 			this.oSelectDialog.bindAggregation("items", {
 				path: "/items",
@@ -727,12 +719,11 @@ sap.ui.define([
 			bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem(), filters: oFilter});
 			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
-			jQuery.when(this.oSelectDialog.open('Chuck')).then(function (oEvent) {
-				assert.strictEqual(that.oSelectDialog._oSearchField.getValue(), "Chuck", 'The search field value is "Title1" after passing "Title1" to the open method');
-				assert.strictEqual(that.oSelectDialog._oList.getItems().length, 2, 'There are 2 items filtered and displayed in the list ');
-				assert.strictEqual(that.oSelectDialog._oList.getItems()[0].getTitle(), "Title1", 'The first item in the list is "Title1"');
-				assert.strictEqual(that.oSelectDialog._oList.getItems()[1].getTitle(), "Title10", 'The second item in the list is "Title10"');
-			});
+			this.oSelectDialog.open('Chuck');
+			assert.strictEqual(this.oSelectDialog._oSearchField.getValue(), "Chuck", 'The search field value is "Title1" after passing "Title1" to the open method');
+			assert.strictEqual(this.oSelectDialog._oList.getItems().length, 2, 'There are 2 items filtered and displayed in the list ');
+			assert.strictEqual(this.oSelectDialog._oList.getItems()[0].getTitle(), "Title1", 'The first item in the list is "Title1"');
+			assert.strictEqual(this.oSelectDialog._oList.getItems()[1].getTitle(), "Title10", 'The second item in the list is "Title10"');
 		});
 
 		QUnit.module("Event testing", {
@@ -752,14 +743,12 @@ sap.ui.define([
 
 		QUnit.test("Search event", function (assert) {
 			// Arrange
-			var fnFireSelectSpy = sinon.spy(),
-				that = this;
+			var fnFireSelectSpy = sinon.spy();
 			this.oSelectDialog.attachSearch(fnFireSelectSpy);
 
-			jQuery.when(this.oSelectDialog.open()).then(function (oEvent) {
-				that.oSelectDialog._oSearchField.fireSearch();
-				assert.strictEqual(fnFireSelectSpy.callCount, 1, 'Search event is fired once');
-			});
+			this.oSelectDialog.open();
+			this.oSelectDialog._oSearchField.fireSearch();
+			assert.strictEqual(fnFireSelectSpy.callCount, 1, 'Search event is fired once');
 		});
 
 		QUnit.test("liveChange event", function (assert) {
@@ -768,16 +757,14 @@ sap.ui.define([
 				// Asert
 				assert.strictEqual(oEvent.getParameter('value'), 'abc');
 			}),
-			that = this,
 			clock = this.clock;
 			this.oSelectDialog.attachLiveChange(fnFireLiveChangeSpy);
 
-			jQuery.when(this.oSelectDialog.open()).then(function(oEvent) {
-				// Act
-				that.oSelectDialog._oSearchField.$('I').trigger("focus").val("abc").trigger("input");
-				// liveChange is triggered after 300ms
-				clock.tick(400);
-			});
+			this.oSelectDialog.open();
+			// Act
+			this.oSelectDialog._oSearchField.$('I').trigger("focus").val("abc").trigger("input");
+			// liveChange is triggered after 300ms
+			clock.tick(400);
 		});
 
 		QUnit.test("liveChange event fired when 'clear' is pressed on a TSD that has initial value set", function (assert) {
@@ -831,10 +818,9 @@ sap.ui.define([
 				done();
 			});
 
-			jQuery.when(this.oSelectDialog.open()).then(function () {
-				that.oSelectDialog._getOkButton().firePress();
-				that.clock.tick(350);
-			});
+			this.oSelectDialog.open();
+			this.oSelectDialog._getOkButton().firePress();
+			this.clock.tick(350);
 		});
 
 		QUnit.test("Cancel Event with unfiltered selection", function (assert) {
@@ -1755,17 +1741,15 @@ sap.ui.define([
 
 	QUnit.test("Clear button pressed should fire search event with the correct clearButtonPressed value passed from SearchField", function (assert) {
 		// Arrange
-		var fnFireSelectSpy = sinon.spy(this.oSelectDialog, 'fireSearch'),
-			that = this;
+		var fnFireSelectSpy = sinon.spy(this.oSelectDialog, 'fireSearch');
 
-		jQuery.when(this.oSelectDialog.open()).then(function () {
-			// Act
-			that.oSelectDialog._oSearchField.fireSearch({clearButtonPressed: true});
+		this.oSelectDialog.open();
+		// Act
+		this.oSelectDialog._oSearchField.fireSearch({clearButtonPressed: true});
 
-			// Assert
-			assert.strictEqual(fnFireSelectSpy.callCount, 1, 'Search event is fired once');
-			assert.strictEqual(fnFireSelectSpy.args[0][0].clearButtonPressed, true, 'Search event is fired with the correct clearButtonPressed value');
-		});
+		// Assert
+		assert.strictEqual(fnFireSelectSpy.callCount, 1, 'Search event is fired once');
+		assert.strictEqual(fnFireSelectSpy.args[0][0].clearButtonPressed, true, 'Search event is fired with the correct clearButtonPressed value');
 	});
 
 	QUnit.module("Search and Growing", {

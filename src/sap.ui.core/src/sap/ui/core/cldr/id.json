@@ -5744,5 +5744,9 @@
 		"islamic",
 		"islamic-civil",
 		"islamic-tbla"
-	]
+	],
+	"sap-calendarWeek": {
+		"narrow": "CW {0}",
+		"wide": "Minggu Kalender {0}"
+	}
 }

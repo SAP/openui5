@@ -97,8 +97,7 @@
 		"ckb_alt-menu": "کردی، مرکزی",
 		"ckb_alt-variant": "کردی سورانی",
 		"clc": "چیلکوتن",
-		"cnr": "صربی (مونته‌نگرو)",
-		"cnr_ME": "صربی (مونته‌نگرو)",
+		"cnr": "Montenegrin",
 		"co": "کورسی",
 		"cop": "قبطی",
 		"cr": "کریایی",
@@ -5941,5 +5940,9 @@
 		"islamic",
 		"islamic-civil",
 		"islamic-tbla"
-	]
+	],
+	"sap-calendarWeek": {
+		"narrow": "CW {0}",
+		"wide": "Calendar Week {0}"
+	}
 }

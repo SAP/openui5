@@ -1472,6 +1472,58 @@ sap.ui.define([
 		assert.equal(this.oRefreshSpy.callCount, 1, "Binding#refresh has been called");
 	});
 
+	QUnit.test("$search binding parameter", async function(assert) {
+		const oUpdateBindingInfo = this.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
+
+		oUpdateBindingInfo.callsFake(function(oTable, oBindingInfo) {
+			this.updateBindingInfo.wrappedMethod.apply(this, arguments);
+			oBindingInfo.parameters.$search = "Name";
+		});
+		this.oTable.setP13nMode(["Column", "Sort", "Filter"]);
+		await this.oTable.rebind();
+		assert.equal(this.oChangeParametersSpy.callCount, 1, "changeParameters call if $search is set");
+		sinon.assert.calledWithExactly(this.oChangeParametersSpy, {$search: "Name"});
+
+		oUpdateBindingInfo.restore();
+		this.oChangeParametersSpy.resetHistory();
+		await this.oTable.rebind();
+		assert.equal(this.oChangeParametersSpy.callCount, 1, "changeParameters call if $search is not set");
+		sinon.assert.calledWithExactly(this.oChangeParametersSpy, {});
+
+		assert.equal(this.oRebindSpy.callCount, 0, "No rebind was performed");
+	});
+
+	QUnit.test("$search binding parameter if analytical features are enabled", async function(assert) {
+		const oUpdateBindingInfo = this.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
+
+		oUpdateBindingInfo.callsFake(function(oTable, oBindingInfo) {
+			this.updateBindingInfo.wrappedMethod.apply(this, arguments);
+			oBindingInfo.parameters.$search = "Name";
+		});
+		await this.oTable.rebind();
+		assert.equal(this.oChangeParametersSpy.callCount, 1, "changeParameters call if $search is set");
+		sinon.assert.calledWithExactly(this.oChangeParametersSpy, {});
+
+		oUpdateBindingInfo.callThrough();
+		this.oChangeParametersSpy.resetHistory();
+		await this.oTable.rebind();
+		assert.equal(this.oChangeParametersSpy.callCount, 1, "changeParameters call if $search is not set");
+		sinon.assert.calledWithExactly(this.oChangeParametersSpy, {});
+
+		assert.equal(this.oRebindSpy.callCount, 0, "No rebind was performed");
+
+		oUpdateBindingInfo.callsFake(function(oTable, oBindingInfo) {
+			this.updateBindingInfo.wrappedMethod.apply(this, arguments);
+			oBindingInfo.parameters.$search = "Name";
+			oTable._oBindingInfo = oBindingInfo;
+		});
+		this.oChangeParametersSpy.restore();
+		this.oChangeParametersSpy = this.stub(this.oRowBinding, "changeParameters").throws();
+		await this.oTable.rebind();
+		assert.equal(this.oRebindSpy.callCount, 1, "Rebind call if changeParameters throws an error and $search is set");
+		assert.equal(this.oRebindSpy.firstCall.args[1].parameters.$search, undefined, "$search parameter");
+	});
+
 	QUnit.test("$$aggregation binding parameter", async function(assert) {
 		const oUpdateBindingInfo = this.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
 
@@ -1522,6 +1574,22 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.oSetAggregationSpy, undefined);
 
 		assert.equal(this.oRebindSpy.callCount, 0, "No rebind was performed");
+
+		oUpdateBindingInfo.callsFake(function(oTable, oBindingInfo) {
+			this.updateBindingInfo.wrappedMethod.apply(this, arguments);
+			oBindingInfo.parameters.$$aggregation = {
+				hierarchyQualifier: "Hierarchy",
+				expandTo: 3
+			};
+		});
+		this.oChangeParametersSpy.restore();
+		this.oChangeParametersSpy = this.stub(this.oRowBinding, "changeParameters").throws();
+		await this.oTable.rebind();
+		assert.equal(this.oRebindSpy.callCount, 1, "Rebind call if changeParameters throws an error and $$aggregation is set");
+		assert.deepEqual(this.oRebindSpy.firstCall.args[1].parameters.$$aggregation, {
+			hierarchyQualifier: "Hierarchy",
+			expandTo: 3
+		}, "$$aggregation parameter");
 	});
 
 	QUnit.test("$$aggregation binding parameter if analytical features are enabled", async function(assert) {
@@ -1545,6 +1613,19 @@ sap.ui.define([
 		});
 
 		assert.equal(this.oRebindSpy.callCount, 0, "No rebind was performed");
+
+		this.oChangeParametersSpy.restore();
+		this.oChangeParametersSpy = this.stub(this.oRowBinding, "changeParameters").throws();
+		await this.oTable.rebind();
+		assert.equal(this.oRebindSpy.callCount, 1, "Rebind call if changeParameters throws an error");
+		assert.deepEqual(this.oRebindSpy.firstCall.args[1].parameters.$$aggregation, {
+			aggregate: {},
+			grandTotalAtBottomOnly: true,
+			group: {Name: {additionally: []}},
+			groupLevels: [],
+			search: undefined,
+			subtotalsAtBottomOnly: true
+		}, "$$aggregation parameter");
 	});
 
 	QUnit.module("#validateState", {

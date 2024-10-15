@@ -176,20 +176,21 @@ sap.ui.define([
 				oRootBinding.suspend();
 			}
 
-			const oAggregation = oBindingInfo.parameters?.$$aggregation;
-
 			// Multiple setAggregation calls with different parameters can lead to an unnecessary request. For example, if the aggregation is set
 			// to undefined and then to the previous value, it's basically a refresh.
-			// Custom $$aggregation is not supported in analytical scenarios and is deleted to avoid an error in changeParameters.
+			// Custom $$aggregation is not supported in analytical scenarios.
 
 			if (isAnalyticsEnabled(oTable)) {
 				setAggregation(oTable, oBindingInfo);
 			} else {
-				oBinding.setAggregation(oAggregation);
+				oBinding.setAggregation(oBindingInfo.parameters?.$$aggregation);
 			}
 
-			delete oBindingInfo.parameters?.$$aggregation;
-			oBinding.changeParameters(oBindingInfo.parameters);
+			oBinding.changeParameters((() => {
+				const mParameters = {...oBindingInfo.parameters};
+				delete mParameters.$$aggregation;
+				return mParameters;
+			})());
 			oBinding.filter(oBindingInfo.filters, "Application");
 			oBinding.sort(oBindingInfo.sorter);
 

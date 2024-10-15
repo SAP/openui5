@@ -6075,5 +6075,9 @@
 		"noon": {
 			"_at": "12:00"
 		}
+	},
+	"sap-calendarWeek": {
+		"narrow": "SC {0}",
+		"wide": "Semana do calend\\u00E1rio {0}"
 	}
 }

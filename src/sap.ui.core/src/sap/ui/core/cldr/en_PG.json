@@ -6099,5 +6099,9 @@
 		"noon": {
 			"_at": "12:00"
 		}
+	},
+	"sap-calendarWeek": {
+		"narrow": "CW {0}",
+		"wide": "Calendar Week {0}"
 	}
 }

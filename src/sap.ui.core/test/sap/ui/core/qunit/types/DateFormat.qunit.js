@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
 	"sap/base/util/extend",
+	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/format/FormatUtils",
 	"sap/ui/core/Locale",
@@ -19,8 +20,8 @@ sap.ui.define([
 	"sap/ui/core/date/Islamic",
 	"sap/ui/core/date/Japanese",
 	"sap/ui/core/date/Persian"
-], function(Log, Formatting, Localization, extend, DateFormat, FormatUtils, Locale, LocaleData, Buddhist, UniversalDate,
-		UI5Date, library, Supportability, CalendarWeekNumbering, TestUtils) {
+], function(Log, Formatting, Localization, extend, LoaderExtensions, DateFormat, FormatUtils, Locale, LocaleData,
+		Buddhist, UniversalDate, UI5Date, library, Supportability, CalendarWeekNumbering, TestUtils) {
 	"use strict";
 	/* eslint-disable max-nested-callbacks */
 	/*global QUnit, sinon */
@@ -5433,5 +5434,18 @@ sap.ui.define([
 		assert.strictEqual(
 			DateFormat.prototype.oSymbols.L.format(oField, new Date(Date.UTC(2023, 2, 1)), undefined, oFormat),
 			"baz");
+	});
+
+	//*****************************************************************************************************************
+	QUnit.test("CPOUI5MODELS-1764: #getCalendarWeek doesn't use core message bundle", function (assert) {
+		this.mock(LoaderExtensions).expects("loadResource")
+			.withExactArgs("sap/ui/core/cldr/de.json", sinon.match.object)
+			.atMost(1)
+			.callThrough();
+
+		const oDateFormatInstance = DateFormat.getInstance({pattern: "www"}, new Locale("de-DE"));
+
+		// code under test
+		assert.strictEqual(oDateFormatInstance.format(new Date("1970-01-01")), "KW 01");
 	});
 });

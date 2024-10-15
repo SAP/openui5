@@ -976,6 +976,64 @@ sap.ui.define([
 		this._bNeverRendered = false;
 	};
 
+	FlexibleColumnLayout.prototype.setLayoutData = function (oLayoutData) {
+		if (oLayoutData.isA("sap.f.FlexibleColumnLayoutData")) {
+			oLayoutData.attachEvent("_layoutDataPropertyChanged", this._layoutDataPropertyChanged, this);
+		}
+
+		return this.setAggregation("layoutData", oLayoutData);
+	};
+
+	FlexibleColumnLayout.prototype.destroyLayoutData = function (oLayoutData) {
+		if (oLayoutData.isA("sap.f.FlexibleColumnLayoutData")) {
+			oLayoutData.dettachEvent("_layoutDataPropertyChanged", this._layoutDataPropertyChanged, this);
+		}
+
+		return this.destroyAggregation("layoutData", oLayoutData);
+	};
+
+	/**
+	 * Handles the case, when initial values of layoutData were not set before FCL is rendered for the first time
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._layoutDataPropertyChanged = function (oEvent) {
+		var oSource = oEvent.getParameter("srcControl"),
+			oLayoutData = this.getLayoutData(),
+			sMediaKey = this._getMediaKey(),
+			sNewColumnsDistribution = oEvent.getParameter("newValue"),
+			oCurrentColumnsWidth,
+			sCurrentColumnsWidth;
+
+		if (oEvent.getParameter("layout") === this.getLayout() &&
+			((oSource === oLayoutData?.getDesktopLayoutData() && sMediaKey === "desktop") || (oSource === oLayoutData?.getTabletLayoutData() && sMediaKey === "tablet"))) {
+
+			// As some of the columns may not be fully resized at this point, we use the oMoveInfo, if available (during interactive resize), to check the current columns' widths
+			if (this._oMoveInfo) {
+				oCurrentColumnsWidth = this._convertColumnPxWidthToPercent(this._oMoveInfo.columnWidths, this.getLayout());
+				sCurrentColumnsWidth = Object.values(oCurrentColumnsWidth).join("/");
+			}
+
+			if (!sNewColumnsDistribution || sCurrentColumnsWidth === oEvent.getParameter("newValue")) {
+				// Prevent second resize when applications update the layout data properties after columnsDistributionChange event is fired
+				return;
+			}
+
+			// No animations for performance optimization in case properties are set after the initial rendering
+			this._resizeColumns({ hasAnimations: false });
+		}
+	};
+
+	/**
+	 * Handles the case, when new desktopLayoutData/tabletLayoutData aggregations of FlexibleColumnLayoutData are set
+	 */
+	FlexibleColumnLayout.prototype.onLayoutDataChange = function (oEvent) {
+		var oSource = oEvent.srcControl;
+
+		if (oSource.isA("sap.f.FlexibleColumnLayoutData")) {
+			this.invalidate();
+		}
+	};
+
 	FlexibleColumnLayout.prototype.onmousedown = function (oEvent) {
 		if (this._ignoreMouse) {
 			return;

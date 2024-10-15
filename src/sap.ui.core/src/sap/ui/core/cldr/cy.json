@@ -6202,5 +6202,9 @@
 		"noon": {
 			"_at": "12:00"
 		}
+	},
+	"sap-calendarWeek": {
+		"narrow": "WG {0}",
+		"wide": "Wythnos Galendr {0}"
 	}
 }

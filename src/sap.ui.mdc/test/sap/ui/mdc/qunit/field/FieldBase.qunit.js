@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/TokenDisplay",
 	"sap/ui/mdc/field/DynamicDateRangeConditionsType",
 	"sap/ui/mdc/field/content/DefaultContent",
+	"sap/ui/mdc/enums/ContentMode",
 	"sap/ui/mdc/enums/FieldEditMode",
 	"sap/ui/mdc/enums/FieldDisplay",
 	"sap/ui/mdc/enums/ConditionValidated",
@@ -105,6 +106,7 @@ sap.ui.define([
 	TokenDisplay,
 	DynamicDateRangeConditionsType,
 	DefaultContent,
+	ContentMode,
 	FieldEditMode,
 	FieldDisplay,
 	ConditionValidated,
@@ -670,6 +672,69 @@ sap.ui.define([
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "internal content exist");
 		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldMultiInput", "sap.ui.mdc.field.FieldMultiInput is used");
+
+	});
+
+	QUnit.test("external control via Delegate", async function(assert) {
+
+		const oDelegate = oField.getControlDelegate();
+		sinon.stub(oDelegate, "createContent").callsFake((oField, sContentMode, sId, bProvideDefaultValueHelp) => {
+			const oConditionsType = new ConditionsType();
+			oConditionsType._sId = "myType"; // to identify instance
+			let oControl;
+			if (sContentMode === ContentMode.Display) {
+				oControl = new ProgressIndicator(sId, {percentValue: {path: '$field>/conditions', type: oConditionsType}});
+			} else {
+				oControl = new Slider(sId, {value: {path: '$field>/conditions', type: oConditionsType}});
+			}
+			return Promise.resolve([oControl]);
+		});
+
+		oField.setMaxConditions(1);
+		oField.setDataType("Edm.Float");
+		const oCondition = Condition.createCondition(OperatorName.EQ, [70]);
+		oField.setConditions([oCondition]);
+		oField.placeAt("content");
+		await nextUIUpdate();
+
+		const fnDone = assert.async();
+		sap.ui.require(["sap/ui/model/odata/type/Single"], function(aModules) { // as type-module is loaded by creating control, check after this is done
+			setTimeout(async function() { // as the order of the CallBack function ist not clear and a Promise is used inside Delegate
+				let aContent = oField.getAggregation("_content");
+				let oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.ok(oContent, "Field has internal content");
+				assert.ok(oContent.isA("sap.m.Slider"), "Slider is internal content");
+				assert.ok(oContent.getDomRef(), "Slider rendered");
+				assert.equal(oContent.getValue(), 70, "Value of Slider");
+				assert.equal(oContent.getModel("$field"), oField._oManagedObjectModel, "Slider has ManagedObjectModel of Field");
+				assert.equal(oContent.getBindingPath("value"), "/conditions", "Slider value bound to Fields conditions");
+				assert.equal(oContent.aBeforeDelegates.length, 1, "Delegate with keyboard handling added");
+				let oConditionsType = oContent.getBinding("value").getType();
+				assert.equal(oField._oContentFactory._oConditionsType, oConditionsType, "ConditionsType of Slider used in Field");
+				let oFormatOptions = oConditionsType.getFormatOptions();
+				assert.ok(oFormatOptions.valueType.isA("sap.ui.model.odata.type.Single"), "valueType");
+
+				oField.setEditMode(FieldEditMode.Display);
+				await nextUIUpdate();
+
+				aContent = oField.getAggregation("_content");
+				oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.ok(oContent, "Field has internal content");
+				assert.ok(oContent.isA("sap.m.ProgressIndicator"), "ProgressIndicator is internal content");
+				assert.ok(oContent.getDomRef(), "ProgressIndicator rendered");
+				assert.equal(oContent.getPercentValue(), 70, "Value of ProgressIndicator");
+				assert.equal(oContent.getModel("$field"), oField._oManagedObjectModel, "ProgressIndicator has ManagedObjectModel of Field");
+				assert.equal(oContent.getBindingPath("percentValue"), "/conditions", "ProgressIndicator value bound to Fields conditions");
+				assert.equal(oContent.aBeforeDelegates.length, 1, "Delegate with keyboard handling added");
+				oConditionsType = oContent.getBinding("percentValue").getType();
+				assert.equal(oField._oContentFactory._oConditionsType, oConditionsType, "ConditionsType of ProgressIndicator used in Field");
+				oFormatOptions = oConditionsType.getFormatOptions();
+				assert.ok(oFormatOptions.valueType.isA("sap.ui.model.odata.type.Single"), "valueType");
+
+				oDelegate.createContent.restore();
+				fnDone();
+			}, 0);
+		});
 
 	});
 

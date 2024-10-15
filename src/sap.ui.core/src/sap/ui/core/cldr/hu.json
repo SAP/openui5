@@ -5847,5 +5847,9 @@
 		"noon": {
 			"_at": "12:00"
 		}
+	},
+	"sap-calendarWeek": {
+		"narrow": "{0}. NH",
+		"wide": "{0}. napt\\u00E1ri h\\u00E9t"
 	}
 }

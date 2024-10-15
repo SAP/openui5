@@ -6022,5 +6022,9 @@
 		"noon": {
 			"_at": "12:00"
 		}
+	},
+	"sap-calendarWeek": {
+		"narrow": "KT {0}",
+		"wide": "Kalend\\u00E1rny t\\u00FD\\u017Ede\\u0148 {0}"
 	}
 }

@@ -270,7 +270,7 @@ sap.ui.define([
 
 		if (oContent) {
 			return oMTable.onBeforeShow(true).then(() => {
-				const sItemId = oMTable.onShow(); // to update selection and scroll
+				let sItemId = oMTable.onShow(); // to update selection and scroll
 				assert.ok(oContent, "Content returned");
 				assert.equal(oContent, oTable, "Content is given Table");
 				assert.equal(oTable.getMode(), ListMode.SingleSelectMaster, "Table mode");
@@ -308,6 +308,16 @@ sap.ui.define([
 				// assert.notOk(oItem.getSelected(), "Item1 is not selected");
 				// oItem = aItems[2];
 				// assert.ok(oItem.getSelected(), "Item2 is selected");
+
+				// check if empty indicator returned
+				oModel.setData({items: []});
+				oModel.checkUpdate(true);
+				sItemId = oMTable.onShow();
+				assert.equal(sItemId, oTable.getId("nodata-text"), "OnShow returns nodata-text ID");
+
+				oTable.setShowNoData(false);
+				sItemId = oMTable.onShow();
+				assert.notOk(sItemId, "OnShow returns no ID");
 
 				oMTable.onHide();
 				assert.notOk(oTable.hasStyleClass("sapMComboBoxList"), "List style class sapMComboBoxList removed");

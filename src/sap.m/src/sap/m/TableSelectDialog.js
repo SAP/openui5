@@ -21,7 +21,8 @@ sap.ui.define([
 	'sap/m/BusyIndicator',
 	'sap/m/Bar',
 	'sap/m/Title',
-	'sap/base/Log'
+	'sap/base/Log',
+	'sap/ui/core/Element'
 ], function(
 	Button,
 	Dialog,
@@ -40,7 +41,8 @@ sap.ui.define([
 	BusyIndicator,
 	Bar,
 	Title,
-	Log
+	Log,
+	Element
 ) {
 	"use strict";
 
@@ -338,21 +340,16 @@ sap.ui.define([
 	 */
 	TableSelectDialog.prototype.init = function () {
 		var that = this,
-			iLiveChangeTimer = 0,
-			fnResetAfterClose = null;
-
-		fnResetAfterClose = function () {
-			that._oSelectedItem = that._oTable.getSelectedItem();
-			that._aSelectedItems = that._oTable.getSelectedItems();
-
-			that._oDialog.detachAfterClose(fnResetAfterClose);
-			that._fireConfirmAndUpdateSelection();
-		};
-
+			iLiveChangeTimer = 0;
 		this._bAppendedToUIArea = false;
 		this._bInitBusy = false;
 		this._bFirstRender = true;
 		this._oRb = Library.getResourceBundleFor("sap.m");
+		this._bAfterCloseAttached = false;
+		this._oItemDelegate = {
+			ontap: this._tableColumnsEventDelegates.bind(this),
+			onsapselect: this._tableColumnsEventDelegates.bind(this)
+		};
 
 		// store a reference to the table for binding management
 		this._oTable = new Table(this.getId() + "-table", {
@@ -371,22 +368,16 @@ sap.ui.define([
 				]
 			}),
 			ariaLabelledBy: SelectDialogBase.getInvisibleText(),
-			selectionChange: function (oEvent) {
-				that.fireSelectionChange(oEvent.getParameters());
-
-				if (that._oDialog) {
-					if (!that.getMultiSelect()) {
-						// attach the reset function to afterClose to hide the dialog changes from the end user
-						that._oDialog.attachAfterClose(fnResetAfterClose);
-						that._oDialog.close();
-					} else {
-						that._updateSelectionIndicator();
-						that._announceSelectionIndicator();
-					}
-				}
-			},
+			selectionChange: this._selectionChange.bind(this),
 			updateStarted: this._updateStarted.bind(this),
-			updateFinished: this._updateFinished.bind(this)
+			updateFinished: this._updateFinished.bind(this),
+			popinChanged: function (oEvent) {
+				if (oEvent.getParameter("hasPopin")) {
+					this._oTable.getItems().forEach(function (oItem) {
+						oItem._oPopin?.addEventDelegate(this._oItemDelegate);
+					}, this);
+				}
+			}.bind(this)
 		});
 
 		this._table = this._oTable; // for downward compatibility
@@ -1034,6 +1025,47 @@ sap.ui.define([
 		return this;
 	};
 
+
+	TableSelectDialog.prototype._resetAfterClose = function() {
+		this._oSelectedItem = this._oTable.getSelectedItem();
+		this._aSelectedItems = this._oTable.getSelectedItems();
+
+		this._bAfterCloseAttached = false;
+		this._fireConfirmAndUpdateSelection();
+	};
+
+	/**
+	 * Handles user interaction on pressing OK, Space or clicking on item in the list.
+	 *
+	 * @private
+	 */
+	TableSelectDialog.prototype._selectionChange = function (oEvent) {
+		if (oEvent.getParameters) {
+			this.fireSelectionChange(oEvent.getParameters());
+		}
+
+		if (!this._oDialog) {
+			return;
+		}
+
+		// The following logic handles the item tap / select when:
+		// -- the TableSelectDialog is in multi select mode - only update the indicator
+		if (this.getMultiSelect()) {
+			this._updateSelectionIndicator();
+			this._announceSelectionIndicator();
+			return; // the TableSelectDialog should remain open
+		}
+
+		// -- the TableSelectDialog in single select mode - close and update the selection of the dialog
+		if (!this._bAfterCloseAttached) {
+			// if the resetAfterclose function is not attached already
+			// attach it to afterClose to hide the dialog changes from the end user
+			this._oDialog.attachEventOnce("afterClose", this._resetAfterClose, this);
+			this._bAfterCloseAttached = true;
+		}
+		this._oDialog.close();
+	};
+
 	/**
 	 * Shows/hides a local busy indicator, hides/shows the list based on the parameter flag and enables/disables the search field.
 	 * @private
@@ -1090,6 +1122,12 @@ sap.ui.define([
 
 		// we received a request (from this or from another control) so set the counter to 0
 		this._iTableUpdateRequested = 0;
+
+		// List items' delegates to handle mouse clicks/taps & keyboard when an item is already selected
+		this._oTable.getItems().forEach(function (oItem) {
+				oItem.addEventDelegate(this._oItemDelegate);
+				oItem._oPopin?.addEventDelegate(this._oItemDelegate);
+		}, this);
 	};
 
 	/**
@@ -1281,6 +1319,38 @@ sap.ui.define([
 				this._oTable.setSelectedItem(this._aInitiallySelectedItems[i]);
 			}
 		}
+	};
+
+	TableSelectDialog.prototype._tableColumnsEventDelegates = function (oEvent) {
+		let oTarget = oEvent.target.closest(".sapMLIB"),
+				oListItem;
+
+			// popin is pressed not list item
+			if (!oTarget){
+
+				oTarget = oEvent.target.closest(".sapMListTblSubRow");
+
+				const oPopin = Element.closestTo(oTarget);
+
+				oListItem = oPopin.getParent();
+			} else {
+				oListItem = Element.closestTo(oTarget);
+			}
+
+			if (oListItem._eventHandledByControl) {
+				return;
+			}
+
+			if (oEvent && oEvent.isDefaultPrevented && oEvent.isMarked &&
+				(oEvent.isDefaultPrevented() || oEvent.isMarked("preventSelectionChange"))) {
+				return;
+			}
+
+			if (oEvent && oEvent.srcControl.isA("sap.m.GroupHeaderListItem")){
+				return;
+			}
+
+			this._selectionChange(oEvent); // Mouse and Touch events
 	};
 
 	/* =========================================================== */

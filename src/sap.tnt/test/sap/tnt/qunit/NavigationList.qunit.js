@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	'sap/base/Log',
+	'sap/base/util/Deferred',
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
@@ -20,6 +21,7 @@ sap.ui.define([
 	'sap/ui/qunit/utils/waitForThemeApplied'
 ], function(
 	Log,
+	Deferred,
 	Element,
 	Library,
 	coreLibrary,
@@ -393,7 +395,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection Indicator", function (assert) {
-		var deferred = new jQuery.Deferred();
+		var deferred = new Deferred();
 		var sExpectedDisplay = Parameters.get({
 			name: [ "_sap_tnt_NavigationList_SelectionIndicatorDisplay"],
 			callback: function (_sExpectedDisplay) {
@@ -406,7 +408,7 @@ sap.ui.define([
 			deferred.resolve();
 		}
 
-		return deferred.then(async () => {
+		return deferred.promise.then(async () => {
 			// Arrange
 			var oItem = new NavigationListItem({
 					text: "item"
@@ -431,6 +433,7 @@ sap.ui.define([
 
 			// Clean up
 			oNL.destroy();
+			await clearPendingUIUpdates(this.clock);
 		});
 	});
 
