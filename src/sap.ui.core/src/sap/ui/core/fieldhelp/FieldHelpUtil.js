@@ -2,24 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/base/ManagedObjectObserver"
-], function (ManagedObjectObserver) {
+	"sap/ui/core/fieldhelp/FieldHelpCustomData"
+], function (FieldHelpCustomData) {
 	"use strict";
-
-	const oObserver = new ManagedObjectObserver(handleDestroy);
-
-	/**
-	 * Updates the field help information for a destroyed control for which <code>setDocumentationRef</code> had been
-	 * called.
-	 *
-	 * @param {object} oParameters
-	 *   The event handler parameters
-	 * @param {object} oParameters.object
-	 *   The destroyed control for which the field help information has to be updated
-	 */
-	function handleDestroy(oParameters) {
-		oParameters.object.updateFieldHelp?.();
-	}
 
 	/**
 	 * Util class to set field help information for controls like filter fields that don't have OData property bindings.
@@ -43,20 +28,31 @@ sap.ui.define([
 		 * @param {string|string[]} vDocumentationRefs
 		 *   The string value or an array of string values of
 		 *   <code>com.sap.vocabularies.Common.v1.DocumentationRef</code> OData annotations
+		 * @throws {Error}
+		 *   If there is already a custom data with key <code>sap-ui-DocumentationRef</code> that is not of type
+		 *   {@link module:sap/ui/core/fieldhelp/FieldHelpCustomData}
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.comp.filterbar, sap.fe.templates.ListReport
 		 */
 		static setDocumentationRef(oElement, vDocumentationRefs) {
-			oElement.data("sap-ui-DocumentationRef",
-				Array.isArray(vDocumentationRefs) ? vDocumentationRefs : [vDocumentationRefs],
-				false);
-			// For elements, for which the field help information is set manually (e.g. filter fields), the
-			// field help has to be displayed at that element, even if there are child bindings (e.g. value help)
-			// that also contribute to the field help information
-			oElement.setFieldHelpDisplay(oElement);
-			oElement.updateFieldHelp?.();
-			oObserver.observe(oElement, {destroy: true});
+			const aValue = Array.isArray(vDocumentationRefs) ? vDocumentationRefs : [vDocumentationRefs];
+			const sDocumentationRefKey = FieldHelpCustomData.DOCUMENTATION_REF_KEY;
+			const oDocumentationRefCustomData = oElement.getCustomData().find((oCustomData) =>
+				oCustomData.getKey() === sDocumentationRefKey
+			);
+			if (oDocumentationRefCustomData) {
+				if (!(oDocumentationRefCustomData instanceof FieldHelpCustomData)) {
+					throw new Error(`Unsupported custom data type for key "${sDocumentationRefKey}"`);
+				}
+				oDocumentationRefCustomData.setValue(aValue);
+			} else {
+				const oCustomData = new FieldHelpCustomData({
+					key: FieldHelpCustomData.DOCUMENTATION_REF_KEY,
+					value: aValue
+				});
+				oElement.addAggregation("customData", oCustomData, true);
+			}
 		}
 	}
 
