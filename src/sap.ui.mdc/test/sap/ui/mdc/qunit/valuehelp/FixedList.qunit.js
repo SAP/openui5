@@ -136,7 +136,7 @@ sap.ui.define([
 		if (oContent) {
 			const fnDone = assert.async();
 			oContent.then(function(oContent) {
-				const sItemId = oFixedList.onShow(); // to update selection and scroll
+				const oShowResult = oFixedList.onShow(); // to update selection and scroll
 				assert.ok(oContent, "Content returned");
 				assert.ok(oContent.isA("sap.m.List"), "Content is sap.m.List");
 				assert.notOk(oContent.hasStyleClass("sapMListFocus"), "List has no style class sapMListFocus");
@@ -166,7 +166,8 @@ sap.ui.define([
 				assert.ok(oItem.getSelected(), "Item1 selected");
 				assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item1 has style class sapMComboBoxNonInteractiveItem");
 				assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "Item is not focused");
-				assert.equal(sItemId, oItem.getId(), "OnShow returns selected itemId");
+				assert.equal(oShowResult?.itemId, oItem.getId(), "OnShow returns selected itemId");
+				assert.equal(oShowResult?.items, 3, "OnShow returns number of items");
 				oItem = oContent.getItems()[2];
 				assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item2 is DisplayListItem");
 				assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item2 type");

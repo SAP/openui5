@@ -270,7 +270,7 @@ sap.ui.define([
 
 		if (oContent) {
 			return oMTable.onBeforeShow(true).then(() => {
-				let sItemId = oMTable.onShow(); // to update selection and scroll
+				let oShowResult = oMTable.onShow(); // to update selection and scroll
 				assert.ok(oContent, "Content returned");
 				assert.equal(oContent, oTable, "Content is given Table");
 				assert.equal(oTable.getMode(), ListMode.SingleSelectMaster, "Table mode");
@@ -287,7 +287,8 @@ sap.ui.define([
 				oItem = aItems[1];
 				assert.ok(oItem.getSelected(), "Item1 is selected");
 				assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "Item1 is focused");
-				assert.equal(sItemId, oItem.getId(), "OnShow returns selected itemId");
+				assert.equal(oShowResult?.itemId, oItem.getId(), "OnShow returns selected itemId");
+				assert.equal(oShowResult?.items, 3, "OnShow returns number of items");
 				oItem = aItems[2];
 				assert.notOk(oItem.getSelected(), "Item2 not selected");
 
@@ -312,12 +313,14 @@ sap.ui.define([
 				// check if empty indicator returned
 				oModel.setData({items: []});
 				oModel.checkUpdate(true);
-				sItemId = oMTable.onShow();
-				assert.equal(sItemId, oTable.getId("nodata-text"), "OnShow returns nodata-text ID");
+				oShowResult = oMTable.onShow();
+				assert.equal(oShowResult?.itemId, oTable.getId("nodata-text"), "OnShow returns nodata-text ID");
+				assert.equal(oShowResult?.items, 0, "OnShow returns number of items");
 
 				oTable.setShowNoData(false);
-				sItemId = oMTable.onShow();
-				assert.notOk(sItemId, "OnShow returns no ID");
+				oShowResult = oMTable.onShow();
+				assert.notOk(oShowResult?.itemId, "OnShow returns no ID");
+				assert.equal(oShowResult?.items, 0, "OnShow returns number of items");
 
 				oMTable.onHide();
 				assert.notOk(oTable.hasStyleClass("sapMComboBoxList"), "List style class sapMComboBoxList removed");
