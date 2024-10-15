@@ -62,9 +62,6 @@ sap.ui.define([
 				 *
 				 * If the table type is {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}, the <code>press</code> event and the table's
 				 * <code>rowPress</code> event are fired when a row with a row action item is pressed.
-				 *
-				 * @private
-				 * @ui5-restricted sap.ui.mdc.table.RowActionItem
 				 */
 				press: {
 					parameters: {
