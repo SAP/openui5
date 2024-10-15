@@ -6068,5 +6068,9 @@
 			"_before": "06:00",
 			"_from": "00:00"
 		}
+	},
+	"sap-calendarWeek": {
+		"narrow": "KW {0}",
+		"wide": "Kalenderweek {0}"
 	}
 }

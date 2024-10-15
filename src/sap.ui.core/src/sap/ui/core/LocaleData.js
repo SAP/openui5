@@ -4,19 +4,19 @@
 
 //Provides the locale object sap.ui.core.LocaleData
 sap.ui.define([
-	"./CalendarType",
 	"./Lib",
 	"./Locale",
 	"sap/base/assert",
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/LanguageTag",
 	"sap/base/i18n/Localization",
+	"sap/base/i18n/date/CalendarType",
 	"sap/base/util/extend",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/base/Object",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/date/CalendarWeekNumbering"
-], function(CalendarType, Lib, Locale, assert, Formatting, LanguageTag, Localization, extend, LoaderExtensions,
+], function(Lib, Locale, assert, Formatting, LanguageTag, Localization, CalendarType, extend, LoaderExtensions,
 		BaseObject, SyncPromise, CalendarWeekNumbering) {
 	"use strict";
 
@@ -115,7 +115,7 @@ sap.ui.define([
 		 *
 		 * @param {"abbreviated"|"narrow"|"wide"} sWidth
 		 *   The required width for the month names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType]
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType]
 		 *   The type of calendar; defaults to the calendar type either set in configuration or calculated from the
 		 *   locale
 		 * @returns {array}
@@ -133,7 +133,7 @@ sap.ui.define([
 		 *
 		 * @param {"abbreviated"|"narrow"|"wide"} sWidth
 		 *   The required width for the month names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType]
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType]
 		 *   The type of calendar; defaults to the calendar type either set in configuration or calculated from the
 		 *   locale
 		 * @returns {array}
@@ -289,7 +289,7 @@ sap.ui.define([
 		 *
 		 * @param {"abbreviated"|"narrow"|"wide"} sWidth
 		 *   The required width for the month names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType]
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType]
 		 *   The type of calendar; defaults to the calendar type either set in configuration or calculated from the
 		 *   locale
 		 * @returns {string[]}
@@ -308,7 +308,7 @@ sap.ui.define([
 		 *
 		 * @param {"abbreviated"|"narrow"|"wide"} sWidth
 		 *   The required width for the month names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType]
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType]
 		 *   The type of calendar; defaults to the calendar type either set in configuration or calculated from the
 		 *   locale
 		 * @returns {string[]}
@@ -326,7 +326,7 @@ sap.ui.define([
 		 * Get day names in the given width.
 		 *
 		 * @param {"abbreviated"|"narrow"|"short"|"wide"} sWidth the required width for the day names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string[]} array of day names (starting with Sunday)
 		 * @public
 		 */
@@ -339,7 +339,7 @@ sap.ui.define([
 		 * Get standalone day names in the given width.
 		 *
 		 * @param {"abbreviated"|"narrow"|"short"|"wide"} sWidth the required width for the day names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string[]} array of day names (starting with Sunday)
 		 * @public
 		 */
@@ -352,7 +352,7 @@ sap.ui.define([
 		 * Get quarter names in the given width.
 		 *
 		 * @param {"abbreviated"|"narrow"|"wide"} sWidth the required width for the quarter names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string[]} array of quarters
 		 * @public
 		 */
@@ -365,7 +365,7 @@ sap.ui.define([
 		 * Get standalone quarter names in the given width.
 		 *
 		 * @param {"abbreviated"|"narrow"|"wide"} sWidth the required width for the quarter names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string[]} array of quarters
 		 * @public
 		 */
@@ -378,7 +378,7 @@ sap.ui.define([
 		 * Get day periods in the given width.
 		 *
 		 * @param {"abbreviated"|"narrow"|"wide"} sWidth the required width for the day period names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string[]} array of day periods (AM, PM)
 		 * @public
 		 */
@@ -391,7 +391,7 @@ sap.ui.define([
 		 * Get standalone day periods in the given width.
 		 *
 		 * @param {"abbreviated"|"narrow"|"wide"} sWidth the required width for the day period names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string[]} array of day periods (AM, PM)
 		 * @public
 		 */
@@ -404,7 +404,7 @@ sap.ui.define([
 		 * Get date pattern in the given style.
 		 *
 		 * @param {"full"|"long"|"medium"|"short"} sStyle the required style for the date pattern
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string} the selected date pattern
 		 * @public
 		 */
@@ -418,7 +418,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sWidth
 		 *   The required width for the flexible day period names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType]
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType]
 		 *   The type of calendar. If it's not set, it falls back to the calendar type either set in
 		 *   configuration or calculated from locale.
 		 * @returns {object|undefined}
@@ -447,7 +447,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sWidth
 		 *   The required width for the flexible day period names
-		 * @param {sap.ui.core.CalendarType} [sCalendarType]
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType]
 		 *   The type of calendar. If it's not set, it falls back to the calendar type either set in
 		 *   configuration or calculated from locale.
 		 * @returns {object|undefined}
@@ -549,7 +549,7 @@ sap.ui.define([
 		 * Get time pattern in the given style.
 		 *
 		 * @param {"full"|"long"|"medium"|"short"} sStyle the required style for the time pattern
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string} the selected time pattern
 		 * @public
 		 */
@@ -562,7 +562,7 @@ sap.ui.define([
 		 * Get datetime pattern in the given style.
 		 *
 		 * @param {"full"|"long"|"medium"|"short"} sStyle the required style for the datetime pattern
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string} the selected datetime pattern
 		 * @public
 		 */
@@ -578,7 +578,7 @@ sap.ui.define([
 		 *
 		 * @param {"full"|"long"|"medium"|"short"} sDateStyle the required style for the date part
 		 * @param {"full"|"long"|"medium"|"short"} sTimeStyle the required style for the time part
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string} the combined datetime pattern
 		 * @public
 		 */
@@ -605,7 +605,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sDateStyle The required style for the date part
 		 * @param {string} sTimeStyle The required style for the time part
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] The type of calendar. If it's not set,
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType] The type of calendar. If it's not set,
 		 *   it falls back to the calendar type either set in the configuration or calculated from
 		 *   the locale.
 		 * @returns {string} the combined pattern with datetime and timezone
@@ -678,7 +678,7 @@ sap.ui.define([
 		 * See https://unicode.org/reports/tr35/tr35-dates.html#availableFormats_appendItems
 		 *
 		 * @param {string} sSkeleton the wanted skeleton format for the datetime pattern
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string} the best matching datetime pattern
 		 * @since 1.34
 		 * @public
@@ -695,7 +695,7 @@ sap.ui.define([
 		 * The empty Id ("") might be used to retrieve the interval format fallback.
 		 *
 		 * @param {string} sId Id of the interval format, e.g. "d-d"
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string} interval format string with placeholders {0} and {1}
 		 * @public
 		 * @since 1.17.0
@@ -725,7 +725,7 @@ sap.ui.define([
 		 * pattern based on a given pattern, using the fallback interval pattern.
 		 *
 		 * @param {string} sPattern the single date pattern to use within the interval pattern
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string} the calculated interval pattern
 		 * @since 1.46
 		 * @public
@@ -755,7 +755,7 @@ sap.ui.define([
 		 * @param {object|string} vGreatestDiff is either a string which represents the symbol matching the greatest difference in the two dates to format or an object which contains key-value pairs.
 		 *  The value is always true. The key is one of the date field symbol groups whose value are different between the two dates. The key can only be set with 'Year', 'Quarter', 'Month', 'Week',
 		 *  'Day', 'DayPeriod', 'Hour', 'Minute', or 'Second'.
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string|string[]} the best matching interval pattern if interval difference is given otherwise an array with all possible interval patterns which match the given skeleton format
 		 * @since 1.46
 		 * @public
@@ -1958,7 +1958,7 @@ sap.ui.define([
 		 * Returns array of eras in the given width.
 		 *
 		 * @param {"abbreviated"|"narrow"|"wide"} sWidth the width of the era name
-		 * @param {sap.ui.core.CalendarType} [sCalendarType]
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType]
 		 *   The type of calendar; defaults to the calendar type either set in configuration or calculated from the
 		 *   locale
 		 * @return {string[]} the array of eras
@@ -1980,7 +1980,7 @@ sap.ui.define([
 		/**
 		 * Returns the map of era IDs to era dates.
 		 *
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType] the type of calendar
 		 * @return {object[]} the array of eras containing objects with either an _end or _start property with a date
 		 * @public
 		 * @since 1.32.0
@@ -1996,11 +1996,13 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the pattern for representing the calendar week number in the given style.
+		 * Returns the pattern for representing the calendar week number in the given style. If
+		 * <code>iWeekNumber</code> is given, the week number placeholder will be replaced by it.
 		 *
-		 * @param {"narrow"|"wide"} sStyle the style of the pattern
-		 * @param {int} iWeekNumber the week number
-		 * @return {string} the week number string
+		 * @param {"narrow"|"wide"} sStyle The style of the pattern
+		 * @param {string} [sWeekNumber] The week number, e.g. "01" or "42"
+		 * @returns {string}
+		 *   The calendar week with the week number placeholder or the week number e.g. "Calendar Week {0}" or "CW 01"
 		 *
 		 * @public
 		 * @since 1.32.0
@@ -2008,10 +2010,9 @@ sap.ui.define([
 		getCalendarWeek: function(sStyle, iWeekNumber) {
 			assert(sStyle == "wide" || sStyle == "narrow" , "sStyle must be wide or narrow");
 
-			const oMessageBundle = Lib.getResourceBundleFor("sap.ui.core", this.oLocale.toString());
-			const sKey = "date.week.calendarweek." + sStyle;
+			const sText = this._get("sap-calendarWeek")[sStyle];
 
-			return oMessageBundle.getText(sKey, iWeekNumber ? [iWeekNumber] : undefined);
+			return iWeekNumber ? sText.replace("{0}", iWeekNumber) : sText;
 		},
 
 		/**
@@ -2027,9 +2028,10 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the preferred calendar type for the current locale which exists in {@link sap.ui.core.CalendarType}
+		 * Returns the preferred calendar type for the current locale which exists in
+		 * {@link module:sap/base/i18n/date/CalendarType}
 		 *
-		 * @returns {sap.ui.core.CalendarType} the preferred calendar type
+		 * @returns {module:sap/base/i18n/date/CalendarType} the preferred calendar type
 		 * @public
 		 * @since 1.28.6
 		 */
@@ -2527,7 +2529,8 @@ sap.ui.define([
 	 * Returns the corresponding calendar name in CLDR of the given calendar type, or the calendar type
 	 * from the configuration, in case sCalendarType is undefined.
 	 *
-	 * @param {sap.ui.core.CalendarType} sCalendarType the type defined in {@link sap.ui.core.CalendarType}.
+	 * @param {module:sap/base/i18n/date/CalendarType} sCalendarType
+	 *   The type defined in {@link module:sap/base/i18n/date/CalendarType}.
 	 * @returns {string} calendar name
 	 * @private
 	 */

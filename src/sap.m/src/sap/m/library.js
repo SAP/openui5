@@ -126,6 +126,7 @@ sap.ui.define([
 		  "sap.m.IllustratedMessageSize",
 		  "sap.m.IllustratedMessageType",
 		  "sap.m.ImageMode",
+		  "sap.m.InputListItemContentSize",
 		  "sap.m.InputTextFormatMode",
 		  "sap.m.InputType",
 		  "sap.m.LabelDesign",
@@ -2234,6 +2235,29 @@ sap.ui.define([
 
 	 };
 
+	 /**
+	  * Defines the available content sizes for the <code>InputListItem</code> control.
+	  *
+	  * @enum {string}
+	  * @public
+	  */
+	 thisLib.InputListItemContentSize = {
+
+		 /**
+		  * Large: Recommended for larger input controls, such as {@link sap.m.Input} or {@link sap.m.RatingIndicator}. If there is limited space,
+		  * the input control moves to a new line below the label.
+		  * @public
+		  */
+		 L : "L",
+
+		 /**
+		  * Small: Recommended for smaller controls, such as {@link sap.m.Switch} or {@link sap.m.Checkbox}. If there is limited space, only the label
+		  * is wrapped. The input control is always right-aligned horizontally and middle-aligned vertically.
+		  * @public
+		  */
+		 S : "S"
+
+	 };
 
 	 /**
 	  *

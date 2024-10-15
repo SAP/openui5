@@ -66,5 +66,9 @@ sap.ui.define(['sap/ui/core/LayoutData'],
 			}
 		});
 
+		FlexibleColumnLayoutDataForDesktop.prototype.invalidate = function() {
+			// Override basic LayoutData implementation, as we listen to changes in the parent control (FlexibleColumnLayoutData), where we have more information what has been changed.
+		};
+
 		return FlexibleColumnLayoutDataForDesktop;
 	});

@@ -6228,5 +6228,9 @@
 		"noon": {
 			"_at": "12:00"
 		}
+	},
+	"sap-calendarWeek": {
+		"narrow": "TK {0}",
+		"wide": "Tydzie\\u0144 kalendarzowy {0}"
 	}
 }

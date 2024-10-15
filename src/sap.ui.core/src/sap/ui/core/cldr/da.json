@@ -5820,5 +5820,9 @@
 			"_before": "05:00",
 			"_from": "00:00"
 		}
+	},
+	"sap-calendarWeek": {
+		"narrow": "KU {0}",
+		"wide": "Kalenderuge {0}"
 	}
 }

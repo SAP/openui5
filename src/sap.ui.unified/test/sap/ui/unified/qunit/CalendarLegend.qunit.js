@@ -428,8 +428,8 @@ sap.ui.define([
 				}
 			}
 
-			this.oCalendar.placeAt("qunit-fixture");
-			this.oLegend.placeAt("qunit-fixture");
+			this.oCalendar.placeAt("content");
+			this.oLegend.placeAt("content");
 			await nextUIUpdate();
 
 		},
@@ -510,6 +510,186 @@ sap.ui.define([
 		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[1]).length, 1, "the second month in calendar shows 1 special date from the second calendar legend type");
 		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[2]).length, 2, "the first month in calendar shows 2 special dates from the third calendar legend type");
 		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[2]).length, 1, "the second month in calendar shows 1 special date from the third calendar legend type");
+	});
+
+	QUnit.test("Filtering special dates with color in calendar", async function (assert) {
+		const aLegendItems = this.oLegend.getItems();
+		const aStandardItems = this.oLegend.getAggregation("_standardItems");
+		const aMonths = this.oCalendar.getAggregation("month");
+		const oColor = {};
+		aLegendItems.forEach((oItem, iIndex) => {
+				if (oItem.getType() === CalendarDayType.None || oItem.getType() === CalendarDayType.NonWorking || oItem.getType() === CalendarDayType.Working) {
+					return;
+				}
+				const sColor = `#${String(iIndex).repeat(5)}a`;
+				oColor[oItem.getType()] = sColor;
+				oItem.setColor(sColor);
+		});
+		this.oCalendar.getSpecialDates().forEach((oItem) => {
+			if (oItem.getType() === "Type02") {
+				return;
+			}
+			oItem.setColor(oColor[oItem.getType()]);
+		});
+		await nextUIUpdate();
+
+
+		// Assert (no calendar legend items are focused and no filtered special day types)
+		assert.notOk(document.activeElement.classList.contains(".sapUiUnifiedLegendItem"), "there are no calendar legend items focused");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[0]).length, 2, "the first month in calendar shows 2 special dates from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[0]).length, 1, "the second month in calendar shows 1 special date from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[1]).length, 2, "the first month in calendar shows 2 special dates from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[1]).length, 1, "the second month in calendar shows 1 special date from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[2]).length, 2, "the first month in calendar shows 2 special dates from the third calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[2]).length, 1, "the second month in calendar shows 1 special date from the third calendar legend type");
+
+		// Act (focus first standard calendar legend item)
+		aStandardItems[0].focus();
+		await nextUIUpdate();
+
+		// Assert (no filtered special day types)
+		assert.strictEqual(document.activeElement.id, aStandardItems[0].getId(), "the first standard legend item is focused");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[0]).length, 2, "the first month in calendar shows 2 special dates from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[0]).length, 1, "the second month in calendar shows 1 special date from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[1]).length, 2, "the first month in calendar shows 2 special dates from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[1]).length, 1, "the second month in calendar shows 1 special date from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[2]).length, 2, "the first month in calendar shows 2 special dates from the third calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[2]).length, 1, "the second month in calendar shows 1 special date from the third calendar legend type");
+
+		// Act (focus first calendar legend item)
+		aLegendItems[0].focus();
+		await nextUIUpdate();
+
+		// Assert (filter first special day type)
+		assert.strictEqual(document.activeElement.id, aLegendItems[0].getId(), "the first calendar legend item is focused");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[0]).length, 2, "the first month in calendar shows 2 special dates from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[0]).length, 1, "the second month in calendar shows 1 special date from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[1]).length, 0, "the first month in calendar shows 0 special dates from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[1]).length, 0, "the second month in calendar shows 0 special date from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[2]).length, 0, "the first month in calendar shows 0 special dates from the third calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[2]).length, 0, "the second month in calendar shows 0 special date from the third calendar legend type");
+
+		// Act (focus second calendar legend item)
+		aLegendItems[1].focus();
+		await nextUIUpdate();
+
+		// Assert (filter first special day type)
+		assert.strictEqual(document.activeElement.id, aLegendItems[1].getId(), "the second calendar legend item is focused");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[0]).length, 0, "the first month in calendar shows 0 special dates from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[0]).length, 0, "the second month in calendar shows 0 special date from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[1]).length, 0, "the first month in calendar shows 0 special dates from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[1]).length, 0, "the second month in calendar shows 0 special date from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[2]).length, 0, "the first month in calendar shows 0 special dates from the third calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[2]).length, 0, "the second month in calendar shows 0 special date from the third calendar legend type");
+
+		// Act (focus the calendar)
+		this.oCalendar.focus();
+		await nextUIUpdate();
+
+		// Assert (again no filtered special day types)
+		assert.notOk(document.activeElement.classList.contains(".sapUiUnifiedLegendItem"), "there are no calendar legend items focused");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[0]).length, 2, "the first month in calendar shows 2 special dates from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[0]).length, 1, "the second month in calendar shows 1 special date from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[1]).length, 2, "the first month in calendar shows 2 special dates from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[1]).length, 1, "the second month in calendar shows 1 special date from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[2]).length, 2, "the first month in calendar shows 2 special dates from the third calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[2]).length, 1, "the second month in calendar shows 1 special date from the third calendar legend type");
+	});
+
+	QUnit.test("Filtering special dates with color in calendar", async function (assert) {
+		const aSpecialDays = [
+			["20140915", undefined, "Type and color", "Type09", "#AA2C95"],
+			["20140916", undefined, "Color without type", undefined, "#A1D129"],
+			["20140917", undefined, "Type.None and color", CalendarDayType.None, "#1E47AE"]
+		];
+
+		this.oLegend.addItem(new CalendarLegendItem({
+			text: "Type and color",
+			type: "Type09",
+			color: "#aa2c95"
+		}));
+		this.oLegend.addItem(new CalendarLegendItem({
+			text: "Color without type",
+			color: "#a1d129"
+		}));
+		this.oLegend.addItem(new CalendarLegendItem({
+			text: "Type.None and color",
+			type: CalendarDayType.None,
+			color: "#1e47ae"
+		}));
+
+		aSpecialDays.forEach((aSpecialDate) => {
+			const oSpecialDate = new DateTypeRange({
+				startDate: oFormatYyyymmdd.parse(aSpecialDate[0]),
+				endDate: oFormatYyyymmdd.parse(aSpecialDate[1]),
+				type: aSpecialDate[3],
+				tooltip: aSpecialDate[2],
+				color: aSpecialDate[4]
+			});
+			this.oCalendar.addSpecialDate(oSpecialDate);
+		});
+
+		const aLegendItems = this.oLegend.getItems();
+		const aMonths = this.oCalendar.getAggregation("month");
+		let aFilterByColor;
+
+		await nextUIUpdate();
+
+		// Act (focus second calendar legend item)
+		aLegendItems[3].focus();
+		await nextUIUpdate();
+
+		// Assert (filter first special day type)
+		assert.strictEqual(document.activeElement.id, aLegendItems[3].getId(), "the second calendar legend item (Type and color) is focused");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[0]).length, 0, "the first month in calendar shows 0 special dates from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[0]).length, 0, "the second month in calendar shows 0 special date from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[1]).length, 0, "the first month in calendar shows 0 special dates from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[1]).length, 0, "the second month in calendar shows 0 special date from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[2]).length, 0, "the first month in calendar shows 0 special dates from the third calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[2]).length, 0, "the second month in calendar shows 0 special date from the third calendar legend type");
+
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[3]).length, 0, "the second month in calendar shows 0 special date from the third calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[3]).length, 1, "the second month in calendar shows 1 special date from the third calendar legend type and color");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[4]).length, 0, "the second month in calendar shows 0 special date from the third calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[4]).length, 0, "the second month in calendar shows 0 special date from the third calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[5]).length, 0, "the second month in calendar shows 0 special date from the third calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[5]).length, 0, "the second month in calendar shows 0 special date from the third calendar legend type");
+
+
+		// Act (focus second calendar legend item)
+		aLegendItems[4].focus();
+		await nextUIUpdate();
+
+		aFilterByColor = Array.from(aMonths[1].getDomRef().querySelectorAll("div .sapUiCalSpecialDate")).filter((oItem) => {
+			return oItem.style?.backgroundColor;
+		});
+
+		// Assert
+		assert.strictEqual(aFilterByColor.length, 1, "the second month in calendar shows 1 special date from the second calendar legend color without type");
+
+		// Act (focus second calendar legend item)
+		aLegendItems[5].focus();
+		await nextUIUpdate();
+		aFilterByColor = Array.from(aMonths[1].getDomRef().querySelectorAll("div .sapUiCalSpecialDate")).filter((oItem) => {
+			return oItem.style?.backgroundColor;
+		});
+
+		// Assert
+		assert.strictEqual(aFilterByColor.length, 1, "the second month in calendar shows 1 special date from the second calendar legend Type.None and color");
+
+		// Act (focus the calendar)
+		this.oCalendar.focus();
+		await nextUIUpdate();
+
+		// Assert (again no filtered special day types)
+		assert.notOk(document.activeElement.classList.contains(".sapUiUnifiedLegendItem"), "there are no calendar legend items focused");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[0]).length, 2, "the first month in calendar shows 2 special dates from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[0]).length, 2, "the second month in calendar shows 1 special date from the first calendar legend type (The second item has the default type01)");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[1]).length, 2, "the first month in calendar shows 2 special dates from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[1]).length, 1, "the second month in calendar shows 1 special date from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[2]).length, 2, "the first month in calendar shows 2 special dates from the third calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[2]).length, 1, "the second month in calendar shows 1 special date from the third calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[3]).length, 1, "the second month in calendar shows 1 special date from the third calendar legend type");
 	});
 
 	QUnit.test("Accessibility attributes", function (assert) {

@@ -5923,5 +5923,9 @@
 		"noon": {
 			"_at": "12:00"
 		}
+	},
+	"sap-calendarWeek": {
+		"narrow": "KN {0}",
+		"wide": "Kalendrin\\u00E4dal {0}"
 	}
 }

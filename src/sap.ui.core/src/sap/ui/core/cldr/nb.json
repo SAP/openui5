@@ -113,8 +113,7 @@
 		"ckb_alt-menu": "kurdisk (sentral)",
 		"ckb_alt-variant": "kurdisk (sorani)",
 		"clc": "chilcotin",
-		"cnr": "serbisk (Montenegro)",
-		"cnr_ME": "serbisk (Montenegro)",
+		"cnr": "Montenegrinsk",
 		"co": "korsikansk",
 		"cop": "koptisk",
 		"cps": "kapiz",
@@ -5930,5 +5929,9 @@
 			"_before": "06:00",
 			"_from": "00:00"
 		}
+	},
+	"sap-calendarWeek": {
+		"narrow": "Uke {0}",
+		"wide": "Kalenderuke {0}"
 	}
 }

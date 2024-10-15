@@ -6036,5 +6036,9 @@
 		"noon": {
 			"_at": "12:00"
 		}
+	},
+	"sap-calendarWeek": {
+		"narrow": "KT {0}",
+		"wide": "Koledarski teden {0}"
 	}
 }

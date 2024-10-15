@@ -5937,5 +5937,9 @@
 		"noon": {
 			"_at": "12:00"
 		}
+	},
+	"sap-calendarWeek": {
+		"narrow": "KT {0}",
+		"wide": "Kalendarski tjedan {0}"
 	}
 }

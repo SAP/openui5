@@ -5974,5 +5974,9 @@
 			"_before": "24:00",
 			"_from": "21:00"
 		}
+	},
+	"sap-calendarWeek": {
+		"narrow": "Setmana natural {0}",
+		"wide": "Setmana natural {0}"
 	}
 }
