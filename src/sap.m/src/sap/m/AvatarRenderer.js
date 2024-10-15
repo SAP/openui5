@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.m.Avatar
-sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
-	function (library, encodeCSS) {
+sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", 	"sap/ui/core/IconPool"],
+	function (library, encodeCSS, IconPool) {
 		"use strict";
 
 		// shortcut for sap.m.AvatarSize
@@ -41,15 +41,19 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				sCustomDisplaySize = oAvatar.getCustomDisplaySize(),
 				sCustomFontSize = oAvatar.getCustomFontSize(),
 				sSrc = oAvatar._getAvatarSrc(),
+				bIsIconURI = IconPool.isIconURI(sSrc),
+				bHasDetailBox = !!oAvatar.getDetailBox(),
+				bHasBadgeIcon = !!oAvatar.getBadgeIcon(),
 				sAvatarClass = "sapFAvatar",
 				sTooltip = oAvatar.getTooltip_AsString(),
 				aLabelledBy = oAvatar._getAriaLabelledBy(),
 				aDescribedBy = oAvatar.getAriaDescribedBy(),
 				aHasPopup = oAvatar.getAriaHasPopup(),
 				bHasListener = oAvatar.hasListeners("press"),
-				bHasSrc = (!oAvatar._bIsDefaultIcon && oAvatar.getDetailBox()) || (!oAvatar.getDetailBox()),
+				bHasSrc = (!oAvatar._bIsDefaultIcon && bHasDetailBox) || (!bHasDetailBox),
+				bHideBadge = bHasDetailBox && bIsIconURI && !bHasBadgeIcon,
 				bShouldBeClickable = bHasListener && bHasSrc,
-				oBadge = bHasSrc ?  oAvatar._getBadge() : null,
+				oBadge = bHasSrc && !bHideBadge ?  oAvatar._getBadge() : null,
 				sDefaultTooltip = oAvatar._getDefaultTooltip(),
 				sInitialsLength = sInitials.length,
 				bActive = oAvatar.getActive() && bShouldBeClickable,
