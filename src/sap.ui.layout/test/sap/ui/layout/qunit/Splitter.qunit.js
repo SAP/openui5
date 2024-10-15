@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Panel",
 	"sap/m/ScrollContainer",
+	"sap/ui/Device",
 	"sap/ui/core/library",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/ResizeHandler",
@@ -19,6 +20,7 @@ sap.ui.define([
 	Button,
 	Panel,
 	ScrollContainer,
+	Device,
 	coreLibrary,
 	RenderManager,
 	ResizeHandler,
@@ -916,6 +918,39 @@ sap.ui.define([
 
 		// Clean up
 		oSplitter.destroy();
+	});
+
+	QUnit.module("Resize Handling on Touch-Enabled Devices", {
+		beforeEach: async function () {
+			this.stub(Device.support, "touch").value(true);
+			this.oSplitter = new Splitter({
+				contentAreas: [
+					new Button(),
+					new Button(),
+					new Button()
+				]
+			});
+			this.oSplitter.placeAt("qunit-fixture");
+			await nextUIUpdate();
+		},
+		afterEach: function () {
+			this.oSplitter.destroy();
+		}
+	});
+
+	QUnit.test("When dragging a bar, native 'pull to refresh' is not triggered", function (assert) {
+		// Arrange
+		const oTouchEvent = new TouchEvent("touchstart", {
+			bubbles: true,
+			cancelable: true,
+			touches: [new Touch({ identifier: 1, target: this.oSplitter.getDomRef("splitbar-0") })]
+		});
+
+		// Act
+		this.oSplitter.getDomRef("splitbar-0").dispatchEvent(oTouchEvent);
+
+		// Assert
+		assert.ok(oTouchEvent.defaultPrevented, "Default action of touch event should be prevented");
 	});
 
 	QUnit.module("Resize Handling with fake timers", {
