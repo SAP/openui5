@@ -1480,20 +1480,26 @@ sap.ui.define([
 
 		oMTable.setConditions([Condition.createItemCondition("I2", "Item 2")]);
 		oMTable.navigate(1);
-		_checkNavigatedItem(assert, oTable, false, 0, 1, Condition.createItemCondition("I1", "Item 1"), false);
+		const fnDone = assert.async();
+		setTimeout( function(){ // as waiting for Promise
+			_checkNavigatedItem(assert, oTable, false, 0, 1, Condition.createItemCondition("I1", "Item 1"), false);
 
-		// no previous item
-		oMTable.navigate(-1);
-		_checkNavigatedItem(assert, oTable, false, 0, 1, Condition.createItemCondition("I1", "Item 1"), true);
+			// no previous item
+			oMTable.navigate(-1);
+			_checkNavigatedItem(assert, oTable, false, 0, 1, Condition.createItemCondition("I1", "Item 1"), true);
 
-		// next item , selected one needs to be skipped
-		oMTable.navigate(1);
-		_checkNavigatedItem(assert, oTable, false, 2, 1, Condition.createItemCondition("I3", "X-Item 3"), false);
-		oMTable.onConnectionChange(); // simulate new assignment
+			// next item , selected one needs to be skipped
+			oMTable.navigate(1);
+			_checkNavigatedItem(assert, oTable, false, 2, 1, Condition.createItemCondition("I3", "X-Item 3"), false);
+			oMTable.onConnectionChange(); // simulate new assignment
 
-		// navigate to last
-		oMTable.navigate(-1);
-		_checkNavigatedItem(assert, oTable, false, 2, 1, Condition.createItemCondition("I3", "X-Item 3"), false);
+			// navigate to last
+			oMTable.navigate(-1);
+			setTimeout( function(){ // as waiting for Promise
+				_checkNavigatedItem(assert, oTable, false, 2, 1, Condition.createItemCondition("I3", "X-Item 3"), false);
+				fnDone();
+			}, 0);
+		}, 0);
 
 	});
 

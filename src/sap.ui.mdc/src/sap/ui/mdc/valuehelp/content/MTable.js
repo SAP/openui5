@@ -157,8 +157,10 @@ sap.ui.define([
 	MTable.prototype.onBeforeShow = function(bInitial) {
 
 		return Promise.resolve(FilterableListContent.prototype.onBeforeShow.apply(this, arguments)).then(() => {
-			const oTable = this._getTable();
-			_attachTableEvents.call(this, oTable);
+			if (!this._bNavigateInitialize) {
+				const oTable = this._getTable();
+				_attachTableEvents.call(this, oTable);
+			}
 
 			if (bInitial) {
 				const oListBinding = this.getListBinding();
@@ -673,9 +675,16 @@ sap.ui.define([
 
 		const bIsOpen = this.getParent().isOpen();
 
-		if (!bIsOpen && this._iNavigateIndex < 0) {
-			this.onShow(true, false); // to force loading of data
+		if (!bIsOpen && this._iNavigateIndex < 0 && !this._bNavigateInitialize) {
+			this._bNavigateInitialize = true;
+			this.onBeforeShow(true).then(() => { // to determine intial filters, update bindings and load data
+				this.onShow(true, false);
+				this.navigate(iStep);
+			});
+			return;
 		}
+
+		this._bNavigateInitialize = false;
 
 		const oListBinding = this.getListBinding();
 
@@ -907,7 +916,7 @@ sap.ui.define([
 		const sFilterValue = this.getFilterValue();
 		const bUseFirstMatch = this.getUseFirstMatch();
 
-		if (bTypeahead && bUseFirstMatch && sFilterValue) {
+		if (bTypeahead && bUseFirstMatch && sFilterValue && !this._bNavigateInitialize) {
 			const oValueHelpDelegate = this.getValueHelpDelegate();
 			const bCaseSensitive = oValueHelpDelegate.isFilteringCaseSensitive(this.getValueHelpInstance(), this);
 			let oFirstMatchContext;
