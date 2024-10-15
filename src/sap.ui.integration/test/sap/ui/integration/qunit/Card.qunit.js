@@ -2182,6 +2182,7 @@ sap.ui.define([
 			beforeEach: function () {
 				this.oServer = sinon.fakeServer.create();
 				this.oServer.autoRespond = true;
+				this._bUseFiltersInitial = this.oServer.xhr.useFilters;
 				this.oServer.xhr.useFilters = true;
 				this.oServer.xhr.addFilter(function (method, url) {
 					return !url.startsWith("/GetSales");
@@ -2211,7 +2212,8 @@ sap.ui.define([
 				this.oCard.destroy();
 				this.oCard = null;
 
-				this.oServer.reset();
+				this.oServer.xhr.useFilters = this._bUseFiltersInitial;
+				this.oServer.restore();
 				this.oServer = null;
 			}
 		});
