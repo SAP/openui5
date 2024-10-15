@@ -74943,4 +74943,124 @@ make root = ${bMakeRoot}`;
 		await this.waitForChanges(assert, "resolve 60's BestFriend");
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: A list binding uses binding parameter $$separate. When the binding is refreshed
+	// while a previous separate request is not yet resolved, the response for the old request is
+	// ignored. This behavior applies for a full refresh (new cache) as well as for a cache reset.
+	// The reset is made by setting any entity as kept-alive before refreshing the binding.
+	// JIRA: CPOUI5ODATAV4-2692
+[false, true].forEach(function (bReset) {
+	QUnit.test(`$$separate: refresh ${bReset ? "w/" : "w/o"} reset`, async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sMainUrl = "Artists?$select=ArtistID,IsActiveEntity,Name";
+		const sFriendUrl = "Artists?$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+			+ "&$select=ArtistID,IsActiveEntity";
+		const sView = `
+<Table growing="true" growingThreshold="2" id="table"
+		items="{
+			path : '/Artists',
+			parameters : {
+				$$separate : ['BestFriend']
+			}
+		}">
+	<Text id="name" text="{Name}"/>
+	<Text id="friend" text="{BestFriend/Name}"/>
+</Table>`;
+
+		let fnResolveBestFriend;
+		this.expectRequest(sFriendUrl + "&$skip=0&$top=2", new Promise(function (resolve) {
+				fnResolveBestFriend = resolve.bind(null, {
+					value : [{
+						ArtistID : "10",
+						BestFriend : {ArtistID : "F1", IsActiveEntity : true, Name : "OLD A"},
+						IsActiveEntity : true
+					}, {
+						ArtistID : "20",
+						BestFriend : {ArtistID : "F2", IsActiveEntity : true, Name : "OLD B"},
+						IsActiveEntity : true
+					}]
+				});
+			}))
+			.expectRequest(sMainUrl + "&$skip=0&$top=2", {
+				value : [{
+					ArtistID : "10",
+					IsActiveEntity : true,
+					Name : "Artist A"
+				}, {
+					ArtistID : "20",
+					IsActiveEntity : true,
+					Name : "Artist B"
+				}]
+			})
+			.expectChange("name", ["Artist A", "Artist B"])
+			.expectChange("friend", [null, null]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oBinding = this.oView.byId("table").getBinding("items");
+		const [oArtistA] = oBinding.getAllCurrentContexts();
+		if (bReset) {
+			// reset requests kept-alive element
+			this.expectRequest({
+					batchNo : 4,
+					groupId : "$auto",
+					url : sMainUrl
+						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+						+ "&$filter=ArtistID eq '10' and IsActiveEntity eq true"
+				}, {
+					value : [{
+						ArtistID : "10",
+						BestFriend : {ArtistID : "F1", IsActiveEntity : true, Name : "Friend A #2"},
+						IsActiveEntity : true,
+						Name : "Artist A #2"
+					}]
+				})
+				.expectChange("friend", ["Friend A #2"]);
+
+			oArtistA.setKeepAlive(true); // set kept-alive to reset (instead of recreate) the cache
+		}
+		this.expectRequest({
+				batchNo : 3,
+				groupId : "$single",
+				url : sFriendUrl + "&$skip=0&$top=2"
+			}, {
+				value : [{
+					ArtistID : "10",
+					BestFriend : {ArtistID : "F1", IsActiveEntity : true, Name : "Friend A #1"},
+					IsActiveEntity : true
+				}, {
+					ArtistID : "20",
+					BestFriend : {ArtistID : "F2", IsActiveEntity : true, Name : "Friend B #1"},
+					IsActiveEntity : true
+				}]
+			})
+			.expectRequest({
+				batchNo : 4,
+				groupId : "$auto",
+				url : sMainUrl + "&$skip=0&$top=2"
+			}, {
+				value : [{
+					ArtistID : "10",
+					IsActiveEntity : true,
+					Name : "Artist A #1"
+				}, {
+					ArtistID : "20",
+					IsActiveEntity : true,
+					Name : "Artist B #1"
+				}]
+			})
+			.expectChange("name", [`Artist A #${bReset ? "2" : "1"}`, "Artist B #1"])
+			.expectChange("friend", ["Friend A #1", "Friend B #1"]);
+
+		await Promise.all([
+			oBinding.requestRefresh(),
+			this.waitForChanges(assert, "refresh binding")
+		]);
+
+		fnResolveBestFriend();
+
+		await this.waitForChanges(assert, "resolve old separate request, ignore response");
+	});
+});
 });
