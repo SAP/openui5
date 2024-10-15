@@ -374,8 +374,9 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupNodePath
 	 *   The group node path relative to the cache
-	 * @param {boolean} [bAll]
-	 *   Whether collapsing the node and all its descendants
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 *   An unlocked lock for the group to associate the clean-up request with; this indicates
+	 *   whether to collapse the node and all its descendants
 	 * @param {boolean} [bNested]
 	 *   Whether the "collapse all" was performed at an ancestor
 	 * @returns {number}
@@ -384,10 +385,11 @@ sap.ui.define([
 	 * @public
 	 * @see #expand
 	 */
-	_AggregationCache.prototype.collapse = function (sGroupNodePath, bAll, bNested) {
+	_AggregationCache.prototype.collapse = function (sGroupNodePath, oGroupLock, bNested) {
 		const oGroupNode = this.getValue(sGroupNodePath);
 		const oCollapsed = _AggregationHelper.getCollapsedObject(oGroupNode);
 		_Helper.updateAll(this.mChangeListeners, sGroupNodePath, oGroupNode, oCollapsed);
+		const bAll = !!oGroupLock;
 		this.oTreeState.collapse(oGroupNode, bAll, bNested);
 
 		const aElements = this.aElements;
@@ -406,7 +408,7 @@ sap.ui.define([
 			const oElement = aElements[i];
 			if (bAll && oElement["@$ui5.node.isExpanded"]) {
 				iRemaining -= this.collapse(
-					_Helper.getPrivateAnnotation(oElement, "predicate"), bAll, true);
+					_Helper.getPrivateAnnotation(oElement, "predicate"), oGroupLock, true);
 			}
 			// exceptions of selection are effectively kept alive (with recursive hierarchy)
 			if (!this.isSelectionDifferent(oElement)) {
@@ -424,6 +426,10 @@ sap.ui.define([
 			_Helper.setPrivateAnnotation(oGroupNode, "spliced", aSpliced);
 		}
 		aElements.$count -= iRemaining;
+
+		if (bAll && !bNested) {
+			this.validateAndDeleteExpandInfo(oGroupLock, oGroupNode);
+		}
 
 		return iCount;
 	};
@@ -2446,7 +2452,7 @@ sap.ui.define([
 	 * descendant of the given node. If a node is a descendant, its expand info is deleted.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   An unlocked lock for the group to associate the requests with
+	 *   An unlocked lock for the group to associate the request with
 	 * @param {object} oGroupNode
 	 *   A collapsed(!) group node
 	 * @return {Promise<void>}
