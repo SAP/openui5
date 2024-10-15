@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/Popover",
 	"sap/m/Text",
+	"sap/m/Token",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/Element",
 	"sap/ui/core/library",
@@ -18,6 +19,7 @@ sap.ui.define([
 	Log,
 	Popover,
 	Text,
+	Token,
 	Controller,
 	Element,
 	coreLibrary,
@@ -35,10 +37,15 @@ sap.ui.define([
 
 	var _aTextInputFields = ["frameUrl", "title"];
 	var _aNumericInputFields = ["frameWidth", "frameHeight"];
-	var _aOtherInputFields = ["frameWidthUnit", "frameHeightUnit", "useLegacyNavigation"];
+	var _aOtherInputFields = ["frameWidthUnit", "frameHeightUnit", "useLegacyNavigation", "advancedSettings"];
 
 	function isValidUrl(sUrl) {
 		return IFrame.isValidUrl(encodeURI(sUrl));
+	}
+
+	function multiInputValidator(oValue) {
+		const sText = oValue.text;
+		return new Token({key: sText, text: sText});
 	}
 
 	return Controller.extend("sap.ui.rta.plugin.iframe.AddIFrameDialogController", {
@@ -47,6 +54,39 @@ sap.ui.define([
 			this._oJSONModel = oJSONModel;
 			this._importSettings(mSettings);
 			this._mParameterHashMap = this._buildParameterHashMap(mSettings);
+		},
+
+		configureMultiInput() {
+			// This syntax is the suggested way by the UI5 documentation to trigger a submit on the input field on focus loss
+			const oMultiInput = Element.getElementById("sapUiRtaAddIFrameDialog_AddAdditionalParametersInput");
+			oMultiInput.addValidator(multiInputValidator);
+		},
+
+		onSwitchChange() {
+			this._oJSONModel.setProperty("/settingsUpdate/value", true);
+		},
+
+		/**
+		 * Event handler for token update
+		 * @param {sap.ui.base.Event} oEvent - Event
+		 */
+		onTokenUpdate(oEvent) {
+			let aSandboxParameters = this._oJSONModel.getProperty("/advancedSettings/value/additionalSandboxParameters");
+
+			if (oEvent.getParameter("type") === "added") {
+				oEvent.getParameter("addedTokens").forEach(function(oToken) {
+					aSandboxParameters = [...aSandboxParameters, oToken.getText()];
+				});
+			} else if (oEvent.getParameter("type") === "removed") {
+				oEvent.getParameter("removedTokens").forEach(function(oToken) {
+					aSandboxParameters = aSandboxParameters.filter(function(sText) {
+						return sText !== oToken.getText();
+					});
+				});
+			}
+
+			this._oJSONModel.setProperty("/advancedSettings/value/additionalSandboxParameters", aSandboxParameters);
+			this._oJSONModel.setProperty("/settingsUpdate/value", true);
 		},
 
 		/**
@@ -107,6 +147,9 @@ sap.ui.define([
 					this._oJSONModel.getProperty("/useLegacyNavigation/value")
 				);
 				oIFrame.setUrl(sURL);
+				this._oJSONModel.setProperty("/settingsUpdate/value", false);
+
+				oIFrame.applySettings({ url: sURL, advancedSettings: {...this._oJSONModel.getProperty("/advancedSettings/value")} });
 			} catch (oError) {
 				Log.error("Error previewing the URL: ", oError);
 			}
@@ -315,6 +358,10 @@ sap.ui.define([
 				Object.keys(mSettings).forEach(function(sFieldName) {
 					if (sFieldName === "frameWidth" || sFieldName === "frameHeight") {
 						this._importIFrameSize(sFieldName, mSettings[sFieldName]);
+					} else if (sFieldName === "advancedSettings" && !mSettings[sFieldName]) {
+						// legacy iframes do not have advancedSettings properties so we need to skip the setProperty
+						// on the json model to not overwrite the default values with undefined
+						return;
 					} else {
 						this._oJSONModel.setProperty(`/${sFieldName}/value`, mSettings[sFieldName]);
 					}

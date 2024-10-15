@@ -33,8 +33,13 @@ sap.ui.define([
 			mIFrameSettings[sIFrameProperty] = vValue;
 			mIFrameSettings._settings[sIFrameProperty] = vValue;
 		});
+
 		mIFrameSettings.useLegacyNavigation = !!oChangeContent.useLegacyNavigation;
 		mIFrameSettings._settings.useLegacyNavigation = !!oChangeContent.useLegacyNavigation;
+		if (oChangeContent?.advancedSettings) {
+			mIFrameSettings.advancedSettings = oChangeContent.advancedSettings;
+			mIFrameSettings._settings.advancedSettings = oChangeContent?.advancedSettings;
+		}
 
 		if (mRenameInfo) {
 			mIFrameSettings.renameInfo = mRenameInfo;

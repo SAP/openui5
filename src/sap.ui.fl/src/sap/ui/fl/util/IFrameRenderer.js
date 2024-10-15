@@ -13,6 +13,13 @@ sap.ui.define([
 		}
 	}
 
+	 function createsSandboxAttributesString(oAdvancedSettings) {
+		return Object.keys(oAdvancedSettings)
+		.filter((sKey) => oAdvancedSettings[sKey])
+		.map((sKey) => sKey.replace(/[A-Z]/g, "-$&").toLowerCase())
+		.join(" ");
+	}
+
 	/**
 	 * IFrame renderer.
 	 * @namespace
@@ -37,11 +44,17 @@ sap.ui.define([
 		oRm.style("display", "block");
 		oRm.style("border", "none");
 
-		oRm.attr("sandbox", "allow-forms allow-popups allow-scripts allow-same-origin allow-modals");
+		const oAdvancedSettings = oIFrame.getAdvancedSettings();
+		const { additionalSandboxParameters: aAdditionalSandboxParameters, ...oFilteredAdvancedSettings } = oAdvancedSettings;
+		const sAdditionalSandboxParameters = aAdditionalSandboxParameters?.join(" ");
+		const sSandboxAttributes = createsSandboxAttributesString(oFilteredAdvancedSettings);
+		const sCombinedSandboxAttributes = sAdditionalSandboxParameters ? `${sSandboxAttributes} ${sAdditionalSandboxParameters}` : sSandboxAttributes;
+		oRm.attr("sandbox", sCombinedSandboxAttributes);
 
 		if (oIFrame.getUseLegacyNavigation()) {
 			oRm.attr("src", oIFrame.getUrl());
 		} else {
+			// Always set the src to about:blank to avoid adding history entries when parameters are resolved
 			// With the new location.replace approach, the actual
 			// target url will be set onAfterRendering
 			oRm.attr("src", "about:blank");

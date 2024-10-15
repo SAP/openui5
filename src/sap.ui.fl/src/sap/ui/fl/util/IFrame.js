@@ -4,7 +4,6 @@
 
 // Provides control sap.ui.fl.util.IFrame
 sap.ui.define([
-	"../library",
 	"sap/base/util/uid",
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
@@ -14,9 +13,9 @@ sap.ui.define([
 	"sap/base/security/URLListValidator",
 	"sap/base/Log",
 	"./IFrameRenderer",
+	"../library",
 	"sap/ui/core/library"
 ], function(
-	library,
 	uid,
 	Control,
 	JSONModel,
@@ -103,12 +102,31 @@ sap.ui.define([
 				},
 
 				/**
+				 * Contains the Iframe sandbox attributes
+				 */
+				advancedSettings: {
+					type: "object",
+					defaultValue: {
+						allowForms: true,
+						allowPopups: true,
+						allowScripts: true,
+						allowModals: true,
+						allowSameOrigin: true,
+						additionalSandboxParameters: []
+					}
+				},
+
+				/**
 				 * Backup of the initial settings for the dialogs.
 				 *
 				 *  @private
 				 *  @ui5-restricted sap.ui.fl
 				 */
-				_settings: {type: "object", group: "Data", defaultValue: null}
+				_settings: {
+					type: "object",
+					group: "Data",
+					defaultValue: null
+				}
 			},
 
 			designtime: "sap/ui/fl/designtime/util/IFrame.designtime"
@@ -201,6 +219,22 @@ sap.ui.define([
 		onAfterRendering() {
 			if (!this.getUseLegacyNavigation()) {
 				this._replaceIframeLocation(this.getUrl());
+
+				// The contentWindow might change without causing a rerender, e.g.
+				// when the parent element changes due to an appendChild call
+				// This will cause the iframe src to change and we need to replace the
+				// location again to ensure the correct content
+				this._oLastContentWindow = this.getDomRef().contentWindow;
+				this.getDomRef().addEventListener("load", () => {
+					if (!this.getDomRef()) {
+					// The iframe was removed before the load event was triggered
+						return;
+					}
+					if (this._oLastContentWindow !== this.getDomRef().contentWindow) {
+						this._oLastContentWindow = this.getDomRef().contentWindow;
+						this._replaceIframeLocation(this.getUrl());
+					}
+				});
 			}
 		},
 
@@ -209,7 +243,7 @@ sap.ui.define([
 			Control.prototype.applySettings.apply(this, [mOtherSettings, ...aOtherArgs]);
 			Control.prototype.applySettings.apply(this, [{ url }, ...aOtherArgs]);
 			if (mSettings) {
-				var mMergedSettings = this.getProperty("_settings") || {};
+				const mMergedSettings = {...this.getProperty("_settings") || {}};
 				if (mSettings._settings) {
 					extend(mMergedSettings, mSettings._settings);
 				} else {
@@ -221,7 +255,7 @@ sap.ui.define([
 						mMergedSettings[sPropertyName] = unbind(mSettings[sPropertyName]);
 					});
 				}
-				this.setProperty("_settings", mMergedSettings);
+				this.setProperty("_settings", { ...mMergedSettings });
 			}
 		},
 

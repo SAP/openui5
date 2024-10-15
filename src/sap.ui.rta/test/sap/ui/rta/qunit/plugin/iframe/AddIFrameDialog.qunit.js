@@ -1,32 +1,44 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/rta/plugin/iframe/AddIFrameDialog",
 	"sap/base/util/isEmptyObject",
-	"sap/ui/core/library",
-	"sap/ui/core/Lib",
-	"sap/ui/rta/plugin/iframe/AddIFrameDialogController",
-	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/qunit/QUnitUtils",
+	"sap/m/Button",
+	"sap/m/Token",
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
+	"sap/ui/core/library",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/fl/Utils",
+	"sap/ui/model/Context",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/rta/plugin/iframe/AddIFrameDialog",
+	"sap/ui/rta/plugin/iframe/AddIFrameDialogController",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	AddIFrameDialog,
 	isEmptyObject,
-	coreLibrary,
-	Lib,
-	AddIFrameDialogController,
-	nextUIUpdate,
-	QUnitUtils,
+	Button,
+	Token,
 	Element,
+	Lib,
+	coreLibrary,
 	KeyCodes,
-	JSONModel
+	FlUtils,
+	Context,
+	JSONModel,
+	QUnitUtils,
+	nextUIUpdate,
+	AddIFrameDialog,
+	AddIFrameDialogController,
+	sinon
 ) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
 	var {ValueState} = coreLibrary;
+
+	const sandbox = sinon.createSandbox();
 
 	var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 	var aTextInputFields = ["frameUrl"];
@@ -193,6 +205,9 @@ sap.ui.define([
 	QUnit.module("Given that a AddIFrameDialog is available...", {
 		beforeEach() {
 			this.oAddIFrameDialog = new AddIFrameDialog();
+		},
+		afterEach() {
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("When AddIFrameDialog gets initialized and open is called,", function(assert) {
@@ -400,6 +415,107 @@ sap.ui.define([
 			return this.oAddIFrameDialog.open();
 		});
 
+		QUnit.test("when an url is entered and the useLegacyNavigation switch is toggled", function(assert) {
+			this.oAddIFrameDialog.attachOpened(async () => {
+				const oPreviewButton = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewButton");
+				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
+				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled by default");
+				const oSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_UseLegacyNavigationToggle");
+				oUrlTextArea.setValue("someUrl");
+				oSwitch.focus();
+				QUnitUtils.triggerKeyup(oSwitch.getDomRef(), KeyCodes.SPACE);
+				this.oAddIFrameDialog._oController._oJSONModel.refresh();
+				await nextUIUpdate();
+				assert.ok(oPreviewButton.getEnabled(), "then the preview button is enabled after switch was toggled");
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled after refreshing the preview");
+				clickOnCancel();
+			});
+			return this.oAddIFrameDialog.open();
+		});
+
+		QUnit.test("when advanced settings switches are toggled", function(assert) {
+			this.oAddIFrameDialog.attachOpened(() => {
+				const oAllowFormsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowFormsSwitch");
+				assert.strictEqual(oAllowFormsSwitch.getState(), true, "then the allow forms switch is enabled by default");
+				const oAllowScriptsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowScriptsSwitch");
+				assert.strictEqual(oAllowScriptsSwitch.getState(), true, "then the allow scripts switch is enabled by default");
+				const oAllowSameOriginSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowSameOriginSwitch");
+				assert.strictEqual(oAllowSameOriginSwitch.getState(), true, "then the allow same origin switch is disabled by default");
+				const oAllowPopupsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowPopupsSwitch");
+				assert.strictEqual(oAllowPopupsSwitch.getState(), false, "then the allow popups switch is diabled by default");
+				const oAllowModalsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowModalsSwitch");
+				assert.strictEqual(oAllowModalsSwitch.getState(), false, "then the allow modals switch is diabled by default");
+				const oAllowTopNavigationSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowTopNavigationSwitch");
+				assert.strictEqual(
+					oAllowTopNavigationSwitch.getState(),
+					false,
+					"then the allow top navigation switch is disabled by default"
+				);
+				const oAllowDownloadsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowDownloadsSwitch");
+				assert.strictEqual(oAllowDownloadsSwitch.getState(), false, "then the allow downloads switch is disabled by default");
+				const oAllowDownloadsWithoutUserActivationSwitch = Element.getElementById(
+					"sapUiRtaAddIFrameDialog_allowDownloadsWithoutUserActivationSwitch"
+				);
+				assert.strictEqual(
+					oAllowDownloadsWithoutUserActivationSwitch.getState(),
+					false,
+					"then the allow downloads without user activation switch is disabled by default"
+				);
+				const oAdditionalParametersInput = Element.getElementById("sapUiRtaAddIFrameDialog_AddAdditionalParametersInput");
+				assert.strictEqual(oAdditionalParametersInput.getValue(), "", "then the additional parameters input is empty by default");
+				assert.strictEqual(
+					oAdditionalParametersInput.getTokens().length,
+					0,
+					"then the additional parameters input has no tokens by default"
+				);
+
+				const oAdvancedSettings = this.oAddIFrameDialog._oJSONModel.getProperty("/advancedSettings/value");
+				assert.strictEqual(oAdvancedSettings.allowForms, true, "then the model is set correctly");
+				oAllowFormsSwitch.setState(false);
+				assert.strictEqual(oAdvancedSettings.allowForms, false, "then the model is updated correctly");
+
+				oAdditionalParametersInput.setValue("allow-pointer-lock");
+				QUnitUtils.triggerKeydown(oAdditionalParametersInput.getFocusDomRef(), KeyCodes.ENTER);
+				const oToken = oAdditionalParametersInput.getTokens()[0];
+				assert.strictEqual(oToken.getText(), "allow-pointer-lock", "then the token is added");
+				assert.strictEqual(
+					oAdvancedSettings.additionalSandboxParameters[0],
+					"allow-pointer-lock",
+					"then the model is set correctly"
+				);
+				oToken.fireDelete();
+				assert.strictEqual(oAdvancedSettings.additionalSandboxParameters.length, 0, "then model is updated correctly");
+
+				clickOnCancel();
+			});
+			return this.oAddIFrameDialog.open();
+		});
+
+		QUnit.test("When the sandbox parameters are updated", function(assert) {
+			this.oAddIFrameDialog.attachOpened(async function() {
+				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
+				const oPreviewButton = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewButton");
+				const oAllowFormsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowFormsSwitch");
+				const oPreviewIframe = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewFrame");
+				oUrlTextArea.setValue("https://example.com");
+				oAllowFormsSwitch.setState(true);
+				this.oAddIFrameDialog._oController.onShowPreview();
+				await nextUIUpdate();
+				assert.strictEqual(oPreviewIframe.getDomRef().sandbox.contains("allow-forms"), true, "then the property is set correctly");
+				oAllowFormsSwitch.setState(false);
+				oAllowFormsSwitch.fireChange();
+				await nextUIUpdate();
+				assert.ok(oPreviewButton.getEnabled(), "then the preview button is enabled after sandbox parameter was updated");
+				this.oAddIFrameDialog._oController.onShowPreview();
+				await nextUIUpdate();
+				assert.strictEqual(oPreviewIframe.getDomRef().sandbox.contains("allow-forms"), false, "then the property is set correctly");
+				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled after refreshing the preview");
+				clickOnCancel();
+			}.bind(this));
+			return this.oAddIFrameDialog.open();
+		});
+
 		QUnit.test("when a forbidden url is entered", function(assert) {
 			this.oAddIFrameDialog.attachOpened(async function() {
 				var oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
@@ -451,6 +567,65 @@ sap.ui.define([
 					"then vh is selected as the default frame height unit"
 				);
 			});
+		});
+
+		QUnit.test("When the iframe is opened without advancedSettings", async function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				aTextInputFields.forEach(function(sFieldName) {
+					this.oAddIFrameDialog._oJSONModel.getData()[sFieldName].value = "Text entered";
+					const oAllowFormsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowFormsSwitch");
+					assert.strictEqual(oAllowFormsSwitch.getState(), true, "then the allow forms switch is enabled by default");
+					const oAllowScriptsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowScriptsSwitch");
+					assert.strictEqual(oAllowScriptsSwitch.getState(), true, "then the allow scripts switch is enabled by default");
+					const oAllowSameOriginSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowSameOriginSwitch");
+					assert.strictEqual(oAllowSameOriginSwitch.getState(), true, "then the allow same origin switch is disabled by default");
+					const oAllowPopupsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowPopupsSwitch");
+					assert.strictEqual(oAllowPopupsSwitch.getState(), false, "then the allow popups switch is disabled by default");
+					const oAllowModalsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowModalsSwitch");
+					assert.strictEqual(oAllowModalsSwitch.getState(), false, "then the allow modals switch is disabled by default");
+					const oAllowTopNavigationSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowTopNavigationSwitch");
+					assert.strictEqual(
+						oAllowTopNavigationSwitch.getState(),
+						false,
+						"then the allow top navigation switch is disabled by default"
+					);
+					const oAllowDownloadsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowDownloadsSwitch");
+					assert.strictEqual(oAllowDownloadsSwitch.getState(), false, "then the allow downloads switch is disabled by default");
+					const oAllowDownloadsWithoutUserActivationSwitch = Element.getElementById(
+						"sapUiRtaAddIFrameDialog_allowDownloadsWithoutUserActivationSwitch"
+					);
+					assert.strictEqual(
+						oAllowDownloadsWithoutUserActivationSwitch.getState(),
+						false,
+						"then the allow downloads without user activation switch is disabled by default"
+					);
+					const oAdditionalParametersInput = Element.getElementById("sapUiRtaAddIFrameDialog_AddAdditionalParametersInput");
+					assert.strictEqual(
+						oAdditionalParametersInput.getValue(),
+						"",
+						"then the additional parameters input is empty by default"
+					);
+					assert.strictEqual(
+						oAdditionalParametersInput.getTokens().length,
+						0,
+						"then the additional parameters input has no tokens by default"
+					);
+					const oAdvancedSettings = this.oAddIFrameDialog._oJSONModel.getProperty("/advancedSettings/value");
+					assert.strictEqual(oAdvancedSettings.allowForms, true, "then the model is set correctly");
+				}, this);
+				clickOnSave();
+			}, this);
+			const oResponse = await this.oAddIFrameDialog.open({ frameUrl: "test_url" });
+			assert.deepEqual(
+				oResponse.advancedSettings,
+				{
+					allowForms: true,
+					allowScripts: true,
+					allowSameOrigin: true,
+					additionalSandboxParameters: []
+				},
+				"then the default parameters should be added to the settings"
+			);
 		});
 
 		QUnit.test("When OK button is clicked then the returned settings should be correct", function(assert) {
