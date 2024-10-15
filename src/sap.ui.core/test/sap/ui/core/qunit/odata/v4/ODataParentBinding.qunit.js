@@ -3273,10 +3273,11 @@ sap.ui.define([
 		// code under test
 		oBinding.destroy();
 
-		//TODO does not work with SalesOrdersRTATest
-		// assert.deepEqual(oBinding.mAggregatedQueryOptions, undefined);
+		assert.strictEqual(oBinding.mAggregatedQueryOptions, undefined);
 		assert.deepEqual(oBinding.aChildCanUseCachePromises, []);
+		assert.strictEqual(oBinding.oRefreshPromise, undefined);
 		assert.strictEqual(oBinding.oResumePromise, undefined);
+		assert.strictEqual(oBinding.mCanUseCachePromiseByChildPath, undefined);
 	});
 
 	//*********************************************************************************************

@@ -3825,8 +3825,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.aContexts, undefined);
 		assert.strictEqual(oBinding.oDiff, undefined);
 		assert.strictEqual(oBinding.aFilters, undefined);
-		//TODO does not work with ODataModel.integration "suspend/resume"
-		// assert.strictEqual(oBinding.mParameters, undefined);
+		assert.strictEqual(oBinding.mParameters, undefined);
 		assert.strictEqual(oBinding.mPreviousContextsByPath, undefined);
 		assert.strictEqual(oBinding.aPreviousData, undefined);
 		assert.strictEqual(oBinding.mQueryOptions, undefined);

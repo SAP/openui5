@@ -2291,7 +2291,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("destroy", function (assert) {
-		var oPropertyBinding = this.oModel.bindProperty("Name");
+		var oPropertyBinding = this.oModel.bindProperty("Name", null, {scope : {}});
 
 		oPropertyBinding.oCheckUpdateCallToken = {};
 		oPropertyBinding.vValue = "foo";
@@ -2304,8 +2304,9 @@ sap.ui.define([
 		oPropertyBinding.destroy();
 
 		assert.strictEqual(oPropertyBinding.oCheckUpdateCallToken, undefined);
-		assert.strictEqual(oPropertyBinding.vValue, undefined);
 		assert.strictEqual(oPropertyBinding.mQueryOptions, undefined);
+		assert.strictEqual(oPropertyBinding.mScope, undefined);
+		assert.strictEqual(oPropertyBinding.vValue, undefined);
 	});
 
 	//*********************************************************************************************
