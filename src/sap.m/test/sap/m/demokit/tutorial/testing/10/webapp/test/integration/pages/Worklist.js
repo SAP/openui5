@@ -1,4 +1,4 @@
-sap.ui.require([
+sap.ui.define([
 		'sap/ui/test/Opa5',
 		'sap/ui/test/matchers/AggregationLengthEquals',
 		'sap/ui/test/matchers/I18NText',
