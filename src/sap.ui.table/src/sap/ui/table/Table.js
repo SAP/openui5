@@ -2663,7 +2663,8 @@ sap.ui.define([
 	/**
 	 * Triggers automatic resizing of a column to the widest content.
 	 *
-	 * @experimental Experimental! Presently implemented to only work with a very limited set of controls (e.g. sap.m.Text).
+	 * See {@link sap.ui.table.Column#autoResize} for details about the auto-resize feature.
+	 *
 	 * @param {int} iColIndex The index of the column in the list of visible columns.
 	 * @function
 	 * @public
