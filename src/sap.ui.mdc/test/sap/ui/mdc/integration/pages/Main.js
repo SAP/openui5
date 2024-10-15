@@ -1,4 +1,4 @@
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/mdc/integrations/pages/CommonActions",
 	"sap/ui/mdc/integrations/pages/CommonAssertions",
