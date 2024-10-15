@@ -631,8 +631,8 @@ sap.ui.define([
 						FilterOperatorUtil.checkConditionsEmpty(oCondition, _getOperators.call(this));
 						this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
 					}
-					if (!oCondition.invalid && (oOperator.valueTypes.length === 0 || oOperator.valueTypes[0] === OperatorValueType.Static)) {
-						// static condition added, it is ready to use -> fire event
+					if (!oCondition.invalid && ((oOperator.valueTypes.length === 0 || oOperator.valueTypes[0] === OperatorValueType.Static) || (oOperatorOld.valueTypes.length === 0 || oOperatorOld.valueTypes[0] === OperatorValueType.Static))) {
+						// static condition added oe removed, it is ready to use -> fire event
 						this.fireConditionProcessed();
 					}
 				}
