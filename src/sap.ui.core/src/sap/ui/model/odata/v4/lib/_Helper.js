@@ -4,14 +4,18 @@
 
 //Provides class sap.ui.model.odata.v4.lib._Helper
 sap.ui.define([
+	"./_Parser",
 	"sap/base/Log",
 	"sap/base/util/deepEqual",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/base/util/uid",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/thirdparty/URI"
-], function (Log, deepEqual, isEmptyObject, merge, uid, SyncPromise, URI) {
+], function (_Parser, Log, deepEqual, isEmptyObject, merge, uid, SyncPromise, Filter,
+		FilterOperator, URI) {
 	"use strict";
 
 	var rAmpersand = /&/g,
@@ -1405,6 +1409,52 @@ sap.ui.define([
 		 */
 		getContentID : function (oMessage) {
 			return _Helper.getAnnotation(oMessage, ".ContentID");
+		},
+
+		/**
+		 * Calculates the filter for the given key predicate.
+		 *
+		 * @param {string} sPredicate - The key predicate (for example, of a message target)
+		 * @param {object} oEntityType - The metadata for the entity type
+		 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel - The meta model
+		 * @param {string} sMetaPath - The meta path to the entity type
+		 * @param {boolean} [bIgnore$Key]
+		 *   Whether to ignore the entity type's $Key, except to resolve an unnamed key like ('42');
+		 *   this allows for fake predicates with non-key properties as used for data aggregation
+		 * @returns {sap.ui.model.Filter} A filter for the given key predicate
+		 *
+		 * @public
+		 */
+		getFilterForPredicate : function (sPredicate, oEntityType, oMetaModel,
+				sMetaPath, bIgnore$Key) {
+			var aFilters,
+				mValueByKeyOrAlias = _Parser.parseKeyPredicate(sPredicate);
+
+			if ("" in mValueByKeyOrAlias) {
+				// unnamed key e.g. {"" : ('42')} => replace it by the name of the only key property
+				mValueByKeyOrAlias[oEntityType.$Key[0]] = mValueByKeyOrAlias[""];
+				delete mValueByKeyOrAlias[""];
+			}
+
+			aFilters = (bIgnore$Key ? Object.keys(mValueByKeyOrAlias) : oEntityType.$Key)
+			.map(function (vKey) {
+				var sKeyOrAlias, sKeyPath;
+
+				if (typeof vKey === "string") {
+					sKeyPath = sKeyOrAlias = vKey;
+				} else {
+					sKeyOrAlias = Object.keys(vKey)[0]; // alias
+					sKeyPath = vKey[sKeyOrAlias];
+				}
+
+				return new Filter(sKeyPath, FilterOperator.EQ,
+					_Helper.parseLiteral(decodeURIComponent(mValueByKeyOrAlias[sKeyOrAlias]),
+						oMetaModel.getObject(sMetaPath + "/" + sKeyPath + "/$Type"), sKeyPath));
+			});
+
+			return aFilters.length === 1
+				? aFilters[0]
+				: new Filter({and : true, filters : aFilters});
 		},
 
 		/**

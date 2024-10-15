@@ -849,6 +849,46 @@ sap.ui.define([
 	Context.prototype.getCanonicalPath = _Helper.createGetMethod("fetchCanonicalPath", true);
 
 	/**
+	 * Returns a filter object corresponding to this context. For an ordinary row context of a list
+	 * binding, the filter matches exactly the entity's key properties. For a subtotal row (see
+	 * {@link sap.ui.model.odata.v4.ODataListBinding.setAggregation}), the filter matches exactly
+	 * the groupable properties corresponding to this context. For a grand total, <code>null</code>
+	 * is returned.
+	 *
+	 * @returns {sap.ui.model.Filter|null}
+	 *   A filter object corresponding to this context
+	 * @throws {Error} If this context is
+	 *   <ul>
+	 *     <li> not a list binding's row context,
+	 *     <li> currently transient,
+	 *     <li> using key aliases,
+	 *     <li> using an index, not a key predicate in the last segment of its path,
+	 *     <li> just created via {@link sap.ui.model.odata.v4.ODataModel#getKeepAliveContext} and
+	 *       metadata is not yet available
+	 *   </ul>
+	 *
+	 * @public
+	 * @since 1.130.0
+	 */
+	Context.prototype.getFilter = function () {
+		if (!this.oBinding.getHeaderContext || this.isTransient()) {
+			throw new Error("Not a list context path to an entity: " + this);
+		}
+
+		const iPredicateIndex = _Helper.getPredicateIndex(this.sPath);
+		const sPredicate = this.sPath.slice(iPredicateIndex).replace(/,?\$isTotal=true\)$/, ")");
+		if (sPredicate === "()") {
+			return null; // grand total
+		}
+
+		const oMetaModel = this.oModel.getMetaModel();
+		const sMetaPath = _Helper.getMetaPath(this.sPath);
+		const oEntityType = oMetaModel.getObject(sMetaPath + "/");
+
+		return _Helper.getFilterForPredicate(sPredicate, oEntityType, oMetaModel, sMetaPath, true);
+	};
+
+	/**
 	 * Returns the unique number of this context's generation, or <code>0</code> if it does not
 	 * belong to any specific generation. This number can be inherited from a parent binding.
 	 *

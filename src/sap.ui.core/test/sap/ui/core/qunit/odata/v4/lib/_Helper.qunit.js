@@ -7,9 +7,13 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/util/uid",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/thirdparty/URI"
-], function (Log, deepEqual, merge, uid, SyncPromise, _Helper, URI) {
+], function (Log, deepEqual, merge, uid, SyncPromise, Filter, FilterOperator, _Helper, _Parser,
+		URI) {
 	/*eslint no-sparse-arrays: 0 */
 	"use strict";
 
@@ -1347,6 +1351,114 @@ sap.ui.define([
 			// code under test
 			_Helper.getKeyFilter(oInstance, sMetaPath, mTypeForMetaPath, aKeyProperties),
 			undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFilterForPredicate (one key property)", function (assert) {
+		var oEntityType = {
+				$Key : ["key"]
+			},
+			oFilter,
+			oMetaModel = {
+				getObject : function () {}
+			};
+
+		this.mock(_Parser).expects("parseKeyPredicate").withExactArgs("('value')")
+			.returns({"" : "'value'"});
+		this.mock(oMetaModel).expects("getObject").withExactArgs("~meta~path~/key/$Type")
+			.returns("type");
+		this.mock(window).expects("decodeURIComponent").withExactArgs("'value'")
+			.returns("decoded value");
+		this.mock(_Helper).expects("parseLiteral").withExactArgs("decoded value", "type", "key")
+			.returns("parsed value");
+
+		// code under test
+		oFilter = _Helper.getFilterForPredicate("('value')", oEntityType, oMetaModel,
+			"~meta~path~");
+
+		assert.ok(oFilter instanceof Filter);
+		assert.deepEqual(oFilter, new Filter("key", FilterOperator.EQ, "parsed value"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFilterForPredicate (more key properties, aliases)", function (assert) {
+		var oEntityType = {
+				$Key : ["key1", "key2", {alias : "key3/p"}]
+			},
+			oFilter,
+			oHelperMock = this.mock(_Helper),
+			oMetaModel = {
+				getObject : function () {}
+			},
+			oMetaModelMock = this.mock(oMetaModel);
+
+		this.mock(_Parser).expects("parseKeyPredicate")
+			.withExactArgs("(key1='42',key2=43,alias='44')")
+			.returns({key1 : "'42'", key2 : "43", alias : "'44'"});
+		oMetaModelMock.expects("getObject").withExactArgs("~meta~path~/key1/$Type")
+			.returns("type1");
+		oMetaModelMock.expects("getObject").withExactArgs("~meta~path~/key2/$Type")
+			.returns("type2");
+		oMetaModelMock.expects("getObject").withExactArgs("~meta~path~/key3/p/$Type")
+			.returns("type3");
+		oHelperMock.expects("parseLiteral").withExactArgs("'42'", "type1", "key1")
+			.returns("42");
+		oHelperMock.expects("parseLiteral").withExactArgs("43", "type2", "key2")
+			.returns(43);
+		oHelperMock.expects("parseLiteral").withExactArgs("'44'", "type3", "key3/p")
+			.returns("44");
+
+		// code under test
+		oFilter = _Helper.getFilterForPredicate("(key1='42',key2=43,alias='44')",
+			oEntityType, oMetaModel, "~meta~path~");
+
+		assert.ok(oFilter instanceof Filter);
+		assert.deepEqual(oFilter, new Filter({
+			and : true,
+			filters : [
+				new Filter("key1", FilterOperator.EQ, "42"),
+				new Filter("key2", FilterOperator.EQ, 43),
+				new Filter("key3/p", FilterOperator.EQ, "44")
+			]
+		}));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFilterForPredicate (bIgnore$Key)", function (assert) {
+		this.mock(_Parser).expects("parseKeyPredicate")
+			.withExactArgs("(a='42',b=43,c='44')")
+			.returns({a : "'42'", b : "43", c : "'44'"});
+		const oMetaModel = {
+				getObject : function () {}
+			};
+		const oMetaModelMock = this.mock(oMetaModel);
+		oMetaModelMock.expects("getObject").withExactArgs("~meta~path~/a/$Type")
+			.returns("type1");
+		oMetaModelMock.expects("getObject").withExactArgs("~meta~path~/b/$Type")
+			.returns("type2");
+		oMetaModelMock.expects("getObject").withExactArgs("~meta~path~/c/$Type")
+			.returns("type3");
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("parseLiteral").withExactArgs("'42'", "type1", "a")
+			.returns("42");
+		oHelperMock.expects("parseLiteral").withExactArgs("43", "type2", "b")
+			.returns(43);
+		oHelperMock.expects("parseLiteral").withExactArgs("'44'", "type3", "c")
+			.returns("44");
+
+		// code under test
+		const oFilter = _Helper.getFilterForPredicate("(a='42',b=43,c='44')",
+			/*oEntityType*/undefined, oMetaModel, "~meta~path~", /*bIgnore$Key*/true);
+
+		assert.ok(oFilter instanceof Filter);
+		assert.deepEqual(oFilter, new Filter({
+			and : true,
+			filters : [
+				new Filter("a", FilterOperator.EQ, "42"),
+				new Filter("b", FilterOperator.EQ, 43),
+				new Filter("c", FilterOperator.EQ, "44")
+			]
+		}));
 	});
 
 	//*********************************************************************************************

@@ -386,7 +386,7 @@ sap.ui.define([
 	 * @param {sap.m.Table|sap.ui.table.Table} oTable - A table
 	 * @param {string[]|sap.ui.model.odata.v4.Context} aExpectedPaths
 	 *   List of all expected (normalized) current context paths or the corresponding context
-	 * @param {any[][]} aExpectedContent - "Table" of expected cell contents
+	 * @param {any[][]} [aExpectedContent] - "Table" of expected cell contents
 	 * @param {number} [iExpectedLength=aExpectedPaths.length] - Expected length
 	 */
 	// eslint-disable-next-line valid-jsdoc -- [][] is unsupported
@@ -408,19 +408,21 @@ sap.ui.define([
 		});
 		assert.deepEqual(aAllExistingContexts.map(getNormalizedPath), aExpectedPaths);
 
-		aExpectedContent = aExpectedContent.map(function (aTexts) {
-			return aTexts.map(function (vText) {
-				return vText !== undefined ? String(vText) : "";
+		if (aExpectedContent) {
+			aExpectedContent = aExpectedContent.map(function (aTexts) {
+				return aTexts.map(function (vText) {
+					return vText !== undefined ? String(vText) : "";
+				});
 			});
-		});
-		while (aExpectedContent.length < aRows.length) { // pad with "empty" rows
-			aExpectedContent.push(aExpectedContent[0].slice().fill(""));
+			while (aExpectedContent.length < aRows.length) { // pad with "empty" rows
+				aExpectedContent.push(aExpectedContent[0].slice().fill(""));
+			}
+			assert.deepEqual(aRows.map(function (oRow) {
+				return oRow.getCells().map(function (oCell) {
+					return oCell.getText ? oCell.getText() : oCell.getValue();
+				});
+			}), aExpectedContent, sTitle);
 		}
-		assert.deepEqual(aRows.map(function (oRow) {
-			return oRow.getCells().map(function (oCell) {
-				return oCell.getText ? oCell.getText() : oCell.getValue();
-			});
-		}), aExpectedContent, sTitle);
 
 		if (oListBinding.getAggregation()?.hierarchyQualifier) {
 			checkAggregationCache(sTitle, assert, oListBinding);
@@ -4636,6 +4638,8 @@ sap.ui.define([
 	// 4. Request side effects on sales order line items with an absolute path to refresh the whole
 	//    collection. BCP: 2180132755
 	// JIRA: CPOUI5ODATAV4-398
+	//
+	// Test v4.Context#getFilter (JIRA: CPOUI5ODATAV4-2768)
 	QUnit.test("requestSideEffects: absolute paths", function (assert) {
 		var oBusinessPartnerContext,
 			oModel = this.createSalesOrdersModel123({autoExpandSelect : true}),
@@ -4661,7 +4665,7 @@ sap.ui.define([
 
 		this.expectRequest("ContactList?sap-client=123&$select=ContactGUID,LastName"
 				+ "&$skip=0&$top=100", {
-				value : [{ContactGUID : "guid", LastName : "Doe"}]
+				value : [{ContactGUID : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177", LastName : "Doe"}]
 			})
 			.expectChange("lastName", ["Doe"])
 			.expectRequest("SalesOrderList('SO1')?sap-client=123&$select=SalesOrderID", {
@@ -4694,8 +4698,8 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oBusinessPartner = that.oView.byId("partner");
 
-			that.expectRequest("ContactList(guid)/CONTACT_2_BP?sap-client=123"
-					+ "&$select=BusinessPartnerID,CompanyName,WebAddress", {
+			that.expectRequest("ContactList(fa163e7a-d4f1-1ee8-84ac-11f9c591d177)/CONTACT_2_BP"
+					+ "?sap-client=123&$select=BusinessPartnerID,CompanyName,WebAddress", {
 					BusinessPartnerID : "BP1",
 					CompanyName : "TECUM",
 					WebAddress : "www.tecum.com"
@@ -4703,14 +4707,25 @@ sap.ui.define([
 				.expectChange("companyName", "TECUM")
 				.expectChange("webAddress", "www.tecum.com");
 
-			oBusinessPartner.setBindingContext(
-				that.oView.byId("contacts").getItems()[0].getBindingContext());
+			const oContactContext = that.oView.byId("contacts").getItems()[0].getBindingContext();
+			oBusinessPartner.setBindingContext(oContactContext);
 			oBusinessPartnerContext = oBusinessPartner.getBindingContext();
+
+			assert.deepEqual(
+				// code under test (JIRA: CPOUI5ODATAV4-2768)
+				oContactContext.getFilter(),
+				new Filter("ContactGUID", FilterOperator.EQ, "fa163e7a-d4f1-1ee8-84ac-11f9c591d177")
+			);
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2768)
+				oBusinessPartnerContext.getFilter();
+			}, new Error("Not a list context path to an entity:"
+				+ " /ContactList(fa163e7a-d4f1-1ee8-84ac-11f9c591d177)/CONTACT_2_BP"));
 
 			return that.waitForChanges(assert, "get business partner");
 		}).then(function () {
-			that.expectRequest("ContactList(guid)/CONTACT_2_BP?sap-client=123"
-					+ "&$select=BusinessPartnerID,CompanyName,WebAddress", {
+			that.expectRequest("ContactList(fa163e7a-d4f1-1ee8-84ac-11f9c591d177)/CONTACT_2_BP"
+					+ "?sap-client=123&$select=BusinessPartnerID,CompanyName,WebAddress", {
 					BusinessPartnerID : "BP1",
 					CompanyName : "TECUM*",
 					WebAddress : "www.tecum.com*"
@@ -4743,8 +4758,8 @@ sap.ui.define([
 				that.waitForChanges(assert, "(1)")
 			]);
 		}).then(function () {
-			that.expectRequest("ContactList(guid)/CONTACT_2_BP?sap-client=123"
-					+ "&$select=BusinessPartnerID,CompanyName", {
+			that.expectRequest("ContactList(fa163e7a-d4f1-1ee8-84ac-11f9c591d177)/CONTACT_2_BP"
+					+ "?sap-client=123&$select=BusinessPartnerID,CompanyName", {
 					BusinessPartnerID : "BP1",
 					CompanyName : "TECUM*2"
 				})
@@ -5279,6 +5294,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-36
 	//
 	// Selecting a context does not interfere with reset (JIRA: CPOUI5ODATAV4-1944).
+	// Test v4.Context#getFilter (JIRA: CPOUI5ODATAV4-2768)
 	QUnit.test("create an entity and immediately reset changes (no UI) V4-36", function (assert) {
 		var // use autoExpandSelect so that the cache is created asynchronously
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
@@ -5288,6 +5304,11 @@ sap.ui.define([
 			var oListBindingWithoutUI = oModel.bindList("/SalesOrderList"),
 				oContext = oListBindingWithoutUI.create({}, true),
 				oCreatedPromise = oContext.created();
+
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2768; Note: no $metadata yet)
+				oContext.getFilter();
+			}, new Error("Not a list context path to an entity: " + oContext));
 
 			oContext.setSelected(true);
 
@@ -6061,6 +6082,8 @@ sap.ui.define([
 	// Scenario: One-way property binding for an object of complex type. Check that refresh of a
 	// kept-alive element works.
 	// JIRA: CPOUI5ODATAV4-2638
+	//
+	// Test v4.Context#getFilter (JIRA: CPOUI5ODATAV4-2768)
 	QUnit.test("CPOUI5ODATAV4-2638: OneWay - object w/ ComplexType, #2", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sView = `
@@ -6084,6 +6107,12 @@ sap.ui.define([
 
 		await this.createView(assert, sView, oModel, oController);
 
+		const oContext = oModel.getKeepAliveContext("/EMPLOYEES('1')");
+		assert.throws(function () {
+			// code under test (JIRA: CPOUI5ODATAV4-2768)
+			oContext.getFilter();
+		}, "no $metadata yet"); // TypeError("Cannot read properties of undefined (reading '$Key')")
+
 		this.expectRequest("EMPLOYEES('1')?$select=ID,SALARY", {
 				ID : "1",
 				SALARY : {
@@ -6093,7 +6122,6 @@ sap.ui.define([
 			})
 			.expectChange("salary", "1234 DEM");
 
-		const oContext = oModel.getKeepAliveContext("/EMPLOYEES('1')");
 		this.oView.byId("form").setBindingContext(oContext);
 
 		await this.waitForChanges(assert, "set binding context");
@@ -9471,6 +9499,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Read and modify an entity with key aliases
 	// CPOUI5ODATAV4-1580: show usage of ODataModel#getKeyPredicate
+	//
+	// Test v4.Context#getFilter (JIRA: CPOUI5ODATAV4-2768)
 	QUnit.test("Entity with key aliases", function (assert) {
 		var sView = '\
 <Table id="table" items="{/EntitiesWithComplexKey}">\
@@ -9511,13 +9541,19 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oEntity = that.oView.byId("table").getItems()[0].getBindingContext().getObject();
+			var oContext = that.oView.byId("table").getItems()[0].getBindingContext(),
+				oEntity = oContext.getObject();
 
 			assert.strictEqual(
 				// code under test
 				oModel.getKeyPredicate("/EntitiesWithComplexKey", oEntity),
 				"(Key1='foo',Key2=42)"
 			);
+
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2768)
+				oContext.getFilter();
+			}, Error("Key1: Unsupported type: undefined"), "no support for key aliases");
 		});
 	});
 
@@ -20135,6 +20171,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Deferred operation binding returns a collection. A dependent list binding for
 	// "value" with auto-$expand/$select displays the result.
+	//
+	// Test v4.Context#getFilter (JIRA: CPOUI5ODATAV4-2768)
 	QUnit.test("Deferred operation returns collection, auto-$expand/$select", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -20157,9 +20195,15 @@ sap.ui.define([
 				})
 				.expectChange("nickname", ["a", "b", "c"]);
 
+			const oOperationBinding = that.oView.byId("function").getObjectBinding();
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2768)
+				oOperationBinding.getBoundContext().getFilter();
+			}, new Error("Not a list context path to an entity: /GetSOContactList(...)"));
+
 			return Promise.all([
 				// code under test
-				that.oView.byId("function").getObjectBinding()
+				oOperationBinding
 					.setParameter("SalesOrderID", "0500000001")
 					.invoke(),
 				that.waitForChanges(assert)
@@ -20225,6 +20269,8 @@ sap.ui.define([
 	//
 	// A header message is returned in the response. The target of the message is pointing to the
 	// binding parameter. The UI5 message contains the adjusted target. (SNOW: DINC0122620)
+	//
+	// Test v4.Context#getFilter (JIRA: CPOUI5ODATAV4-2768)
 	QUnit.test("Rel. bound function, auto-$expand/$select (BCP 2070134549)", function (assert) {
 		var oMessage = {
 				// additional targets are missing intentionally
@@ -20245,7 +20291,8 @@ sap.ui.define([
 			<Text id="name" text="{Name}"/>\
 		</Table>\
 	</FlexBox>\
-</FlexBox>';
+</FlexBox>',
+			that = this;
 
 		this.expectRequest("MANAGERS('1')?$select=ID,TEAM_ID", {
 				ID : "1",
@@ -20278,7 +20325,13 @@ sap.ui.define([
 			.expectChange("id", ["3", "6"])
 			.expectChange("name", ["Jonathan Smith", "Susan Bay"]);
 
-		return this.createView(assert, sView, oModel);
+		return this.createView(assert, sView, oModel).then(function () {
+			const oOperationContext = that.oView.byId("function").getBindingContext();
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2768)
+				oOperationContext.getFilter();
+			}, new Error("Not a list context path to an entity: " + oOperationContext));
+		});
 	});
 
 	//*********************************************************************************************
@@ -22973,17 +23026,11 @@ sap.ui.define([
 	// Scenario: Data aggregation with grand total, but no visual grouping. Observe the node status.
 	// BCP: 2080089628
 	//
-	// Use a unit for the grand total.
-	// JIRA: CPOUI5ODATAV4-583
-	//
-	// Show additional text property even w/o group levels.
-	// JIRA: CPOUI5ODATAV4-680
-	//
-	// Check the download URL.
-	// JIRA: CPOUI5ODATAV4-609
-	//
-	// Test ODLB#getCount
-	// JIRA: CPOUI5ODATAV4-958
+	// Use a unit for the grand total (JIRA: CPOUI5ODATAV4-583)
+	// Show additional text property even w/o group levels (JIRA: CPOUI5ODATAV4-680)
+	// Check the download URL (JIRA: CPOUI5ODATAV4-609)
+	// Test ODLB#getCount (JIRA: CPOUI5ODATAV4-958)
+	// Test v4.Context#getFilter (JIRA: CPOUI5ODATAV4-2768)
 	QUnit.test("Data Aggregation: $$aggregation w/ grand total w/ unit", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -23032,7 +23079,8 @@ sap.ui.define([
 			.expectChange("currencyCode", ["", "EUR", "GBP"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oListBinding = that.oView.byId("table").getBinding("items");
+			var oTable = that.oView.byId("table"),
+				oListBinding = oTable.getBinding("items");
 
 			// code under test
 			assert.deepEqual(oListBinding.getAggregation(), {
@@ -23053,6 +23101,33 @@ sap.ui.define([
 				"CPOUI5ODATAV4-609");
 			assert.strictEqual(oListBinding.getLength(), 3, "table length");
 			assert.strictEqual(oListBinding.getCount(), 2, "count of leaves");
+
+			checkTable("initial state", assert, oTable, [
+				"/SalesOrderList()",
+				"/SalesOrderList(LifecycleStatus='Z')",
+				"/SalesOrderList(LifecycleStatus='Y')"
+			]);
+
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2768)
+				oListBinding.getHeaderContext().getFilter();
+			}, new Error("Not a list context path to an entity: /SalesOrderList"));
+			assert.strictEqual(
+				// code under test (JIRA: CPOUI5ODATAV4-2768)
+				oListBinding.getCurrentContexts()[0].getFilter(),
+				null,
+				"grand total"
+			);
+			assert.deepEqual(
+				// code under test (JIRA: CPOUI5ODATAV4-2768)
+				oListBinding.getCurrentContexts()[1].getFilter(),
+				new Filter("LifecycleStatus", FilterOperator.EQ, "Z")
+			);
+			assert.deepEqual(
+				// code under test (JIRA: CPOUI5ODATAV4-2768)
+				oListBinding.getCurrentContexts()[2].getFilter(),
+				new Filter("LifecycleStatus", FilterOperator.EQ, "Y")
+			);
 		});
 	});
 
@@ -23162,6 +23237,8 @@ sap.ui.define([
 	// lifecycle status) via $$aggregation or directly via $apply. Expect no issues with duplicate
 	// key predicates.
 	// BCP: 2280187516
+	//
+	// Test v4.Context#getFilter (JIRA: CPOUI5ODATAV4-2768)
 [false, true].forEach(function (bApply) {
 	var sTitle = "Data Aggregation: aggregate a key property, use $apply: " + bApply;
 
@@ -23209,6 +23286,11 @@ sap.ui.define([
 				{LifecycleStatus : "Y", SalesOrderID : 3, "SalesOrderID@odata.type" : "#Int32"},
 				{LifecycleStatus : "X", SalesOrderID : 1, "SalesOrderID@odata.type" : "#Int32"}
 			]);
+
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2768)
+				aContexts[0].getFilter();
+			}, new Error("Not a list context path to an entity: /SalesOrderList/0"));
 		});
 	});
 });
@@ -24221,6 +24303,8 @@ sap.ui.define([
 	// Scenario: sap.m.Table with aggregation, visual grouping, grand total at top and bottom, and
 	// subtotals at both top and bottom - or at bottom only. Expand and collapse the last node.
 	// JIRA: CPOUI5ODATAV4-681
+	//
+	// Test v4.Context#getFilter (JIRA: CPOUI5ODATAV4-2768)
 [false, true].forEach(function (bSubtotalsAtBottomOnly) {
 	var sTitle = "Data Aggregation: subtotalsAtBottomOnly=" + bSubtotalsAtBottomOnly;
 
@@ -24337,6 +24421,27 @@ sap.ui.define([
 				[undefined, undefined, true, 0, "", "", "3510", ""]
 			]);
 
+			assert.deepEqual(
+				// code under test (JIRA: CPOUI5ODATAV4-2768)
+				oListBinding.getCurrentContexts()[2].getFilter(),
+				new Filter({and : true, filters : [
+					new Filter("Country", FilterOperator.EQ, "A"),
+					new Filter("LocalCurrency", FilterOperator.EQ, "EUR")
+				]})
+			);
+			assert.deepEqual(
+				// code under test (JIRA: CPOUI5ODATAV4-2768)
+				oListBinding.getCurrentContexts()[3].getFilter(),
+				new Filter("Country", FilterOperator.EQ, "A"),
+				",$isTotal=true"
+			);
+			assert.deepEqual(
+				// code under test (JIRA: CPOUI5ODATAV4-2768)
+				oListBinding.getCurrentContexts()[4].getFilter(),
+				null,
+				"$isTotal=true"
+			);
+
 			that.expectRequest("BusinessPartners"
 					+ "?$apply=filter(Country eq 'A' and LocalCurrency eq 'EUR')"
 					+ "/groupby((Region),aggregate(SalesAmountLocalCurrency,LocalCurrency))"
@@ -24386,6 +24491,17 @@ sap.ui.define([
 				[undefined, undefined, true, 1, "", "", "10", "EUR"],
 				[undefined, undefined, true, 0, "", "", "3510", ""]
 			]);
+
+			assert.deepEqual(
+				// code under test (JIRA: CPOUI5ODATAV4-2768)
+				oListBinding.getCurrentContexts()[3].getFilter(),
+				new Filter({and : true, filters : [
+					new Filter("Country", FilterOperator.EQ, "A"),
+					new Filter("LocalCurrency", FilterOperator.EQ, "EUR"),
+					new Filter("Region", FilterOperator.EQ, "a")
+				]}),
+				"three in a row, no nesting"
+			);
 
 			that.expectChange("level", [,, 0]);
 
@@ -26836,6 +26952,8 @@ sap.ui.define([
 	// Retrieve "DrillState" property path via verbose ODLB#getAggregation & include it in the
 	// downloadUrl
 	// JIRA: CPOUI5ODATAV4-2275
+	//
+	// Test v4.Context#getFilter (JIRA: CPOUI5ODATAV4-2768)
 [false, true].forEach(function (bKeepAlive) {
 	["OldChart", "OrgChart"].forEach((sHierarchyQualifier) => {
 		var sTitle = "Recursive Hierarchy: root is leaf; bKeepAlive=" + bKeepAlive
@@ -26961,6 +27079,15 @@ sap.ui.define([
 						NodeID : "0,true"
 					}
 				}, "technical properties have been removed");
+
+			assert.deepEqual(
+				// code under test (JIRA: CPOUI5ODATAV4-2768)
+				oRoot.getFilter(),
+				new Filter({and : true, filters : [
+					new Filter("ArtistID", FilterOperator.EQ, "0"),
+					new Filter("IsActiveEntity", FilterOperator.EQ, true) // not a string!
+				]})
+			);
 
 			// code under test
 			assert.strictEqual(oRoot.getSibling(-1), null, "CPOUI5ODATAV4-2558");
@@ -62152,6 +62279,8 @@ make root = ${bMakeRoot}`;
 	// (9) Call the given API function again and see that the created persisted row disappears
 	// (10) Remove the filter and see that data is requested from the server
 	// JIRA: CPOUI5ODATAV4-2321
+	//
+	// Test v4.Context#getFilter (JIRA: CPOUI5ODATAV4-2768)
 [
 	{desc : "grid table", table : "t:Table", parameters : "", rows : "rows", top : 110},
 	{desc : "responsive table", table : "Table", parameters : "", rows : "items", top : 100},
@@ -62218,10 +62347,21 @@ make root = ${bMakeRoot}`;
 		const oKeptAliveContext0 = oBinding.getCurrentContexts()[0];
 		oKeptAliveContext0.setKeepAlive(true);
 
+		assert.deepEqual(
+			// code under test (JIRA: CPOUI5ODATAV4-2768)
+			oKeptAliveContext0.getFilter(),
+			new Filter("SalesOrderID", FilterOperator.EQ, "42")
+		);
+
 		oBinding.attachCreateActivate(createActivateCallback);
 
 		const oContext0 = oBinding.create(undefined, true, true, true);
 		const oContext1 = oBinding.create({Note : "bar"}, true, true, true);
+
+		assert.throws(function () {
+			// code under test (JIRA: CPOUI5ODATAV4-2768; transient row)
+			oContext0.getFilter();
+		}, new Error("Not a list context path to an entity: " + oContext0));
 
 		await resolveLater(); // table update takes a moment
 
