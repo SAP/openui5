@@ -47,7 +47,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("min and max dimensions", async function (assert) {
+	QUnit.test("max dimensions", async function (assert) {
 		// Act
 		const oDialog = openCardDialog(
 			this.oCard,
@@ -82,14 +82,54 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		const oCardDomRef = oCard.getDomRef();
-		const oMainCardDomRef = this.oCard.getDomRef();
 		const oWithinAreaDimensions = oDialog._getAreaDimensions();
+
+		// Assert
+		assert.strictEqual(oCardDomRef.style.maxHeight, oWithinAreaDimensions.height * 70 / 100 + "px",  "max height is 70% of the within area height");
+		assert.strictEqual(oCardDomRef.style.maxWidth, oWithinAreaDimensions.width * 70 / 100 + "px",  "max width is 70% of the within area width");
+	});
+
+	QUnit.test("min dimensions", async function (assert) {
+		// Act
+		const oDialog = openCardDialog(
+			this.oCard,
+			{
+				manifest: {
+					"sap.app": {
+						id: "test.card"
+					},
+					"sap.card": {
+						type: "Table",
+						data: {
+							json: []
+						},
+						content: {
+							row: {
+								columns: [
+									{
+										title: "Sales Order",
+										value: "{product}"
+									}
+								]
+							}
+						}
+					}
+				}
+			},
+			true
+		);
+
+		const oCard = oDialog.getContent()[0];
+
+		await nextCardReadyEvent(oCard);
+		await nextUIUpdate();
+
+		const oCardDomRef = oCard.getDomRef();
+		const oMainCardDomRef = this.oCard.getDomRef();
 
 		// Assert
 		assert.strictEqual(oCardDomRef.style.minHeight, oMainCardDomRef.offsetHeight + "px",  "min height equals main card height");
 		assert.strictEqual(oCardDomRef.style.minWidth, oMainCardDomRef.offsetWidth + "px",  "min width equals main card width");
-		assert.strictEqual(oCardDomRef.style.maxHeight, oWithinAreaDimensions.height * 70 / 100 + "px",  "max height is 70% of the within area height");
-		assert.strictEqual(oCardDomRef.style.maxWidth, oWithinAreaDimensions.width * 70 / 100 + "px",  "max width is 70% of the within area width");
 	});
 
 	QUnit.test("Busy/loading state of the opener while waiting", async function (assert) {
