@@ -982,6 +982,7 @@
 		  "category": "Container",
 		  "since": "1.28",
 		  "samples": [
+			"sap.m.sample.OverflowToolbarDifferentControls",
 			"sap.m.sample.OverflowToolbarSimple",
 			"sap.m.sample.OverflowToolbarFooter",
 			"sap.m.sample.ToolbarAlignment",
@@ -3682,6 +3683,11 @@
 		  "id": "sap.m.sample.ContainerPaddingAndMargin",
 		  "name": "Container Content Padding and Margins",
 		  "description": "By combining the margin and padding concepts you can flexibly design your application layout without having to write any custom CSS. This example shows a HorizontalLayout that is layouted with the standard margin and padding classes provided by UI5."
+		},
+		{
+		  "id": "sap.m.sample.OverflowToolbarDifferentControls",
+		  "name": "Overflow Toolbar - Different Controls",
+		  "description": "Demonstrates different controls and their behavior when they are part of the OverflowToolbar."
 		},
 		{
 		  "id": "sap.m.sample.OverflowToolbarSimple",
