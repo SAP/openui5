@@ -3,6 +3,16 @@
     "date": "October 2024",
     "notes": [
       {
+        "id": "1deeb030cc9d3ea35041d41418dd4ea63132474d",
+        "type": "FEATURE",
+        "text": " sap.f.CalendarInCard: Now allows 12 hour format of appointment time"
+      },
+      {
+        "id": "fa367fed4666ce48ac1b7d6bf45d404ca80cb602",
+        "type": "FEATURE",
+        "text": " sap.f.CalendarInCard: Add support for calendarWeekNumbering"
+      },
+      {
         "id": "e5975bac79a90bba7071e44ae04d46c0d1c48585",
         "type": "FEATURE",
         "text": " Integration Cards: request method now supports FormData"

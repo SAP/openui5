@@ -3,6 +3,31 @@
     "date": "October 2024",
     "notes": [
       {
+        "id": "1deeb030cc9d3ea35041d41418dd4ea63132474d",
+        "type": "FEATURE",
+        "text": " sap.f.CalendarInCard: Now allows 12 hour format of appointment time"
+      },
+      {
+        "id": "a6141cd544405b6a6ffd39f758cc5f3c1b55eced",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: sync customData between outer and internal controls"
+      },
+      {
+        "id": "588a09cd8090d3b3ee5f2cc04e80f1f24ed244f2",
+        "type": "FIX",
+        "text": " We've now removed sap.m.upload.UploadSetwithTable deprecated control along with its files and folders from the repository, since it was introduced as an experimental control"
+      },
+      {
+        "id": "f429f59a624ee55250c31de0bbec0c1c643ee501",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: doesn't show scroll bar if not needed"
+      },
+      {
+        "id": "131d69d0e2f5ae203caaf60fc538c6afcfe0874d",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: translations are now correclty applied"
+      },
+      {
         "id": "0dd1f4663221e02f350a5bc351b3b24c8f673bcd",
         "type": "FIX",
         "text": " sap.m.Slider, sap.m.RangeSlider: Documentation update"

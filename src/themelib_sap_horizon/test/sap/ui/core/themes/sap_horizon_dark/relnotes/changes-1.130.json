@@ -3,6 +3,11 @@
     "date": "October 2024",
     "notes": [
       {
+        "id": "ec0bcec502c18139797cba8c42609b0b96b5809e",
+        "type": "FIX",
+        "text": " sap.m.SplitButton: adjust focus outline on key down"
+      },
+      {
         "id": "fbb9a1f25c352d2f275f7c90fda823e8aa0af3e4",
         "type": "FEATURE",
         "text": " sap.m.Carousel: On touch devices navigation arrows are always visible"

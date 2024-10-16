@@ -3,6 +3,21 @@
     "date": "October 2024",
     "notes": [
       {
+        "id": "3913141c9364fd2c4d900d6a3be66320c199650e",
+        "type": "FIX",
+        "text": " Field with ValueHelp: number of items not announced"
+      },
+      {
+        "id": "f38e26068fdd53d907ba6209a4af3cc8c81e705b",
+        "type": "FIX",
+        "text": " MTable: arrow navigation on closed ValueHelp not working"
+      },
+      {
+        "id": "4a3140096295a916662515f3dd7490085954b963",
+        "type": "FIX",
+        "text": " MTable: announce no-data text if used a dropdown"
+      },
+      {
         "id": "b27c4954129323e26a19fa7676d85451a3797a01",
         "type": "FEATURE",
         "text": " MDCTable: Enable Interactive Row Mode"

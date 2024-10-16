@@ -1,0 +1,22 @@
+{
+  "1.130.0": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "1deeb030cc9d3ea35041d41418dd4ea63132474d",
+        "type": "FEATURE",
+        "text": " sap.f.CalendarInCard: Now allows 12 hour format of appointment time"
+      },
+      {
+        "id": "408b1448546a64c87dc14d4c6daf86cf5098c508",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: tooltip is displayed now for the current and new color box"
+      },
+      {
+        "id": "0c2600bec1388d80e9a0c05f0157e59345a7e9e9",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarLegend: Filtering of elements by the color property"
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "1.130.0": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "408b1448546a64c87dc14d4c6daf86cf5098c508",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: tooltip is displayed now for the current and new color box"
+      }
+    ]
+  }
+}

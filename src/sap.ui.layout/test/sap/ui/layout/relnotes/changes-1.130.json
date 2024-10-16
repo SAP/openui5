@@ -1,0 +1,12 @@
+{
+  "1.130.0": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "cbc9d50e581f8a30b7e85d085623a40e65813843",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Native pull-to-refresh is now not triggered when dragging splitter bar"
+      }
+    ]
+  }
+}
