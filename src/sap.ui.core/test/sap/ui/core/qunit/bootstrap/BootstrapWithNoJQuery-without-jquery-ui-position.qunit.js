@@ -1,11 +1,7 @@
 /*global QUnit */
 QUnit.config.autostart = false;
 
-sap.ui.require([
-	"sap/ui/core/Core"
-], (
-	Core
-) => {
+function main() {
 	"use strict";
 
 	QUnit.test("After loading sap-ui-core-nojQuery.js ...", function(assert) {
@@ -26,5 +22,5 @@ sap.ui.require([
 		});
 	});
 
-	Core.ready(QUnit.start);
-});
+	QUnit.start();
+}

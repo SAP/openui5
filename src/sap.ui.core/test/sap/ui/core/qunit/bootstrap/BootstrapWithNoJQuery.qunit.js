@@ -1,15 +1,12 @@
 /*global QUnit */
 QUnit.config.autostart = false;
 
-sap.ui.require([
-	"sap/ui/core/Core"
-], (
-	Core
-) => {
+function main() {
 	"use strict";
 
 	QUnit.test("After loading sap-ui-core-nojQuery.js ...", function(assert) {
 		const done = assert.async();
+		// ui5lint-ignore-next-line no-globals
 		const jQueryGlobal = globalThis.jQuery;
 		sap.ui.require(['sap/ui/thirdparty/jquery', 'sap/ui/thirdparty/jqueryui/jquery-ui-position'], (jQuery, jQueryUI) => {
 			assert.strictEqual(typeof jQuery, "function", "...function jQuery should exist");
@@ -24,5 +21,5 @@ sap.ui.require([
 		});
 	});
 
-	Core.ready(QUnit.start);
-});
+	QUnit.start();
+}
