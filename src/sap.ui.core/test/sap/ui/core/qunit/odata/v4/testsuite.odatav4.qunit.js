@@ -146,16 +146,6 @@ sap.ui.define(function () {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/SalesOrdersTemplate/Opa.qunit"]
 			},
-			"OPA.SalesOrderTP100_V2" : {
-				autostart : false,
-				module : ["sap/ui/core/sample/odata/v4/SalesOrderTP100_V2/Opa.qunit"],
-				realOData : false // different back end
-			},
-			"OPA.SalesOrderTP100_V4" : {
-				autostart : false,
-				module : ["sap/ui/core/sample/odata/v4/SalesOrderTP100_V4/Opa.qunit"],
-				realOData : false // different back end
-			},
 			"OPA.ServerDrivenPaging" : {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/ServerDrivenPaging/Opa.qunit"]
