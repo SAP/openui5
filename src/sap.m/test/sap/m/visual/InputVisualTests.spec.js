@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect,browser, protractor*/
+/*global describe,it,element,by,takeScreenshot,expect,browser,protractor*/
 
 describe("sap.m.InputVisualTests", function() {
 	"use strict";
@@ -279,6 +279,26 @@ describe("sap.m.InputVisualTests", function() {
 			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
 			browser.actions().sendKeys(protractor.Key.ENTER).perform();
 			expect(takeScreenshot()).toLookAs("input_dropdown_closed_group");
+		});
+	});
+
+	// Input - showItems() on focusin
+	it("should not reinitalize value after CTRL+A & Backspace", function () {
+		var inputShowItems = element(by.id("inputWithShowItems"));
+		var inputClearIcon = element(by.id("inputClearIcon"));
+
+		browser.executeScript("document.getElementById('inputWithShowItems').scrollIntoView()").then(function() {
+			inputShowItems.click();
+
+			browser.actions().sendKeys("A").perform();
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ENTER).perform();
+
+			inputClearIcon.click(); // trigger focusout
+			browser.actions().doubleClick(inputShowItems).perform(); // select the value of the input
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+
+			expect(takeScreenshot()).toLookAs("input_show_items_value");
 		});
 	});
 });
