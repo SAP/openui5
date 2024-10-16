@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/m/Text",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/QUnitUtils"
-], function (BasePanel, ColumnListItem, sinon, Event, MessageStrip, nextUIUpdate, VBox, Text, KeyCodes, qutils) {
+	"sap/ui/qunit/QUnitUtils",
+	"sap/m/table/Util"
+], function (BasePanel, ColumnListItem, sinon, Event, MessageStrip, nextUIUpdate, VBox, Text, KeyCodes, qutils, TableUtil) {
 	"use strict";
 
 	QUnit.module("BasePanel API tests", {
@@ -403,6 +404,13 @@ sap.ui.define([
 			selectAll: false,
 			listItems: aEventRangeParameterFake
 		});
+	});
+
+	QUnit.test("Announcement on SearchField change", function(assert){
+		const oTableUtiLSpy = sinon.spy(TableUtil, "announceTableUpdate");
+		const oSearchField = this.oBasePanel._getSearchField();
+		oSearchField.fireChange();
+		assert.ok(oTableUtiLSpy.calledOnce, "TableUtil.announceTableUpdate has been called");
 	});
 
 });
