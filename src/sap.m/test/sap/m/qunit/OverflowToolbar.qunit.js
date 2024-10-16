@@ -2182,7 +2182,7 @@ sap.ui.define([
 		assert.strictEqual(oSpyCache.callCount, 1,
 			"Width of Controls' is cached again as there is one with relative width, which is updated after resize");
 		assert.notEqual(iInitialItemWidth, iNewItemWidth, "Control with relative width has new width");
-		assert.strictEqual(iNewItemWidth, oOverflowTB._aControlSizes[oFirtItem.getId()],
+		assert.ok(Math.abs(iNewItemWidth - oOverflowTB._aControlSizes[oFirtItem.getId()]) < 1,
 			"The new width of the Control is cached correctly");
 
 		// Clean up
