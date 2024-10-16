@@ -5850,6 +5850,6 @@
 	},
 	"sap-calendarWeek": {
 		"narrow": "{0}. NH",
-		"wide": "{0}. napt\\u00E1ri h\\u00E9t"
+		"wide": "{0}. naptári hét"
 	}
 }

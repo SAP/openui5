@@ -6231,6 +6231,6 @@
 	},
 	"sap-calendarWeek": {
 		"narrow": "TK {0}",
-		"wide": "Tydzie\\u0144 kalendarzowy {0}"
+		"wide": "Tydzień kalendarzowy {0}"
 	}
 }

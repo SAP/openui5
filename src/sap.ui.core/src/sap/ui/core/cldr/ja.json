@@ -5978,6 +5978,6 @@
 	],
 	"sap-calendarWeek": {
 		"narrow": "CW {0}",
-		"wide": "\\u30AB\\u30EC\\u30F3\\u30C0\\u9031 {0}"
+		"wide": "カレンダ週 {0}"
 	}
 }

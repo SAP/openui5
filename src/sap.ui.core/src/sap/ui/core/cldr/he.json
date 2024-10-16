@@ -6149,7 +6149,7 @@
 		"islamic-tbla"
 	],
 	"sap-calendarWeek": {
-		"narrow": "\\u05E9\\u05D1\\u05D5\\u05E2 \\u05E7\\u05DC\\u05E0\\u05D3\\u05E8\\u05D9 {0}",
-		"wide": "\\u05E9\\u05D1\\u05D5\\u05E2 \\u05E7\\u05DC\\u05E0\\u05D3\\u05E8\\u05D9 {0}"
+		"narrow": "שבוע קלנדרי {0}",
+		"wide": "שבוע קלנדרי {0}"
 	}
 }
