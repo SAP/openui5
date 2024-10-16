@@ -1877,21 +1877,6 @@ sap.ui.define([
 					"./upload/UploadSetOpenFileDialog.qunit"
 				]
 			},
-			UploadSetwithTable: {
-				title: "Test Page for sap.m.upload.UploadSetwithTable",
-				coverage: {
-					only: "[sap/m/upload/UploadSetwithTable.js,sap/m/upload/UploadSetwithTableItem.js,sap/m/upload/FilePreviewDialog.js,sap/m/upload/UploadSetwithTableRenderer.js,sap/m/upload/UploadSetwithTableItemRenderer.js]"
-				},
-				ui5: {
-					language: "en",
-					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
-				},
-				module: [
-					"./upload/UploadSetwithTable.qunit",
-					"./upload/UploadSetwithTableItem.qunit",
-					"./upload/FilePreviewDialog.qunit"
-				]
-			},
 			VBox: {
 				title: "QUnit Page for sap.m.VBox"
 			},

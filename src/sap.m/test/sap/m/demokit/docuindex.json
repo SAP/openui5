@@ -537,19 +537,6 @@
 			]
 		},
 		{
-			"id": "sap.m.upload.UploadSetwithTable",
-			"name": "Upload Set with Table",
-			"category": "Action",
-			"since": "1.120",
-			"samples":[
-				"sap.m.sample.UploadSetwithTable.UploadSetwithTableSimple",
-				"sap.m.sample.UploadSetwithTable.UploadSetwithTableFileUploads",
-				"sap.m.sample.UploadSetwithTable.UploadSetwithTableFilePreview",
-				"sap.m.sample.UploadSetwithTable.UploadSetwithTableGrowing",
-				"sap.m.sample.UploadSetwithTable.UploadSetwithTablePersonalization"
-			]
-		},
-		{
 		  "id": "sap.m.GenericTag",
 		  "name": "Generic Tag",
 		  "category": "Action",
