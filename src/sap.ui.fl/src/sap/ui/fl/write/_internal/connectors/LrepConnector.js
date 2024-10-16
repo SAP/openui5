@@ -468,7 +468,7 @@ sap.ui.define([
 				}
 			}
 
-			// Loop through the actions to organize changes by namespace
+			// Loop through flexObjects to organize changes by namespace
 			["create", "reorder", "update", "delete"].forEach((sAction) => {
 				const oChangesByAction = oFlexObjects[sAction];
 
@@ -476,15 +476,16 @@ sap.ui.define([
 					Object.keys(oChangesByAction).forEach((sFileType) => {
 						oChangesByAction[sFileType].forEach((oChange) => {
 							const sFileName = oChange.fileName || (typeof oChange === "object" ? Object.keys(oChange)[0] : oChange);
+							var sNamespace = oChange[sFileName]?.namespace || oChange[sFileType]?.namespace;
 
-							if (sAction === "delete" || sAction === "reorder") {
-								// Find namespace for 'delete' and 'reorder' via allChanges
+							// If namespace is missing, fallback to allChanges to resolve it
+							if (!sNamespace) {
 								const oMatchingChange = mPropertyBag.allChanges.find((oChangeItem) => oChangeItem.getId() === sFileName);
-								const sNamespace = oMatchingChange ? oMatchingChange.getNamespace() : undefined;
-								processChange(sAction, sNamespace, sFileType, sFileName, oChange);
-							} else {
-								// For 'create' and 'update', use the namespace inside the change object
-								const sNamespace = oChange[sFileName]?.namespace || oChange[sFileType]?.namespace;
+								sNamespace = oMatchingChange ? oMatchingChange.getNamespace() : undefined;
+							}
+
+							// Ensure we have a valid namespace and process the change
+							if (sNamespace) {
 								processChange(sAction, sNamespace, sFileType, sFileName, oChange);
 							}
 						});
