@@ -180,7 +180,7 @@ sap.ui.define([
 			autoPopinMode: true,
 			contextualWidth: "Auto",
 			growing: true,
-			sticky: ["ColumnHeaders", "HeaderToolbar", "InfoToolbar"],
+			sticky: ["ColumnHeaders", "GroupHeaders", "HeaderToolbar", "InfoToolbar"],
 			growingThreshold: {
 				path: "$sap.ui.mdc.Table>/threshold",
 				formatter: function(iThreshold) {
