@@ -848,11 +848,6 @@ sap.ui.define([
 			aRegExpFixture : [{
 				regExp : /GET .*\/\$metadata/,
 				response : {
-					ifMatch : function (request) {
-						iTimesSaved = 0; // reset counter with each metadata request
-
-						return true;
-					},
 					source : "../../../../../../qunit/odata/v2/data/ZUI5_GWSAMPLE_BASIC.metadata.xml"
 				}
 			}, {
@@ -1061,16 +1056,13 @@ sap.ui.define([
 			}
 		}
 
-		// avoid caching the metadata to reset global counters when the metadata is requested
-		ODataModel.mSharedData = {meta: {}, server: {}, service: {}};
+		iTimesSaved = 0; // reset global counter on model construction
 		oModel = new ODataModel(mParameters);
-		oModel.destroy = function () {
-			if (oSandbox) {
-				oSandbox.restore();
-				oSandbox = undefined;
-			}
-			return ODataModel.prototype.destroy.apply(this, arguments);
+		oModel.restoreSandbox = () => {
+			oSandbox?.restore();
+			oSandbox = undefined;
 		};
+
 		return oModel;
 	}
 	fnSandboxModel.getMetadata = ODataModel.getMetadata;
