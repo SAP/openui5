@@ -1,16 +1,14 @@
-/* global QUnit */
-QUnit.config.autostart = false;
+sap.ui.define([
+	"sap/ui/test/Opa5",
+	"./arrangements/Startup",
+	"./WorklistJourney",
+	"./PostJourney"
+], function (Opa5, Startup) {
+	"use strict";
 
-sap.ui.require(
-    [
-        "sap/ui/core/Core",
-        "sap/ui/demo/bulletinboard/test/integration/AllJourneys"
-    ],
-    async function (Core, ComponentContainer) {
-        "use strict";
-
-		await Core.ready();
-
-        QUnit.start();
-    }
-);
+	Opa5.extendConfig({
+		arrangements: new Startup(),
+		viewNamespace: "sap.ui.demo.bulletinboard.view.",
+		autoWait: true
+	});
+});

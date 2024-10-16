@@ -222,43 +222,47 @@ sap.ui.define([
 	QUnit.module("callbacks");
 
 	QUnit.test("Should close all dialogs and trigger a callback", function(assert) {
+		const done = assert.async();
 
 		//Arrange
+		const attachSpy = this.spy();
+		const closeSpy = this.spy();
 
-		var callback  = this.spy(),
-			closeSpy = this.spy(),
-			events = [],
-			fakeDialog = {
-				close : closeSpy,
+		function FakeDialog(id) {
+			return {
+				id,
+				listeners: [],
+				close() {
+					closeSpy();
+					this.listeners.forEach((listener) => listener());
+				},
 				getCloseOnNavigation: function () {
 					return true;
 				},
-				attachEvent : function(eventName, fnFireEvent){
-						events.push(fnFireEvent);
+				attachEvent : function(eventName, fnFireEvent) {
+					if ( eventName === "afterClose" ) {
+						attachSpy();
+						this.listeners.push(fnFireEvent);
+					}
 				}
-			},
-			dialogs = [ fakeDialog , fakeDialog ];
+			};
+		}
 
+		const dialogs = [
+			new FakeDialog("diag1"),
+			new FakeDialog("diag2")
+		];
 
 		this.stub(InstanceManager, "getOpenDialogs").returns(dialogs);
 
-
 		//System under Test + Act
-		InstanceManager.closeAllDialogs(callback);
-
-
-		//Assert
-		assert.strictEqual(events.length, dialogs.length, "registered to event");
-		assert.strictEqual(closeSpy.callCount, dialogs.length, "close was called");
-
-
-		//fire first close event
-		events[0]();
-		assert.strictEqual(callback.callCount, 0, "callback was not executed yet");
-
-		//fire second close event
-		events[1]();
-		assert.strictEqual(callback.callCount, 1, "callback was executed");
+		InstanceManager.closeAllDialogs(() => {
+			//Assert
+			assert.ok("callback called");
+			assert.strictEqual(attachSpy.callCount, dialogs.length, "attach was called");
+			assert.strictEqual(closeSpy.callCount, dialogs.length, "close was called");
+			done();
+		});
 	});
 
 

@@ -3585,8 +3585,11 @@ sap.ui.define([
 		aRequestPromises.forEach(async (oRequestPromise, i) => {
 			const oResult = await oRequestPromise;
 			const sProperty = this.aSeparateProperties[i];
-			this.mSeparateProperty2ReadRequest[sProperty].splice(
-				this.mSeparateProperty2ReadRequest[sProperty].indexOf(oReadRange), 1);
+			const iRangeIndex = this.mSeparateProperty2ReadRequest[sProperty].indexOf(oReadRange);
+			if (iRangeIndex < 0) { // stop import after #reset
+				return;
+			}
+			this.mSeparateProperty2ReadRequest[sProperty].splice(iRangeIndex, 1);
 			this.visitResponse(oResult, oTypes, undefined, undefined, iStart);
 			for (const oSeparateData of oResult.value) {
 				const sPredicate = _Helper.getPrivateAnnotation(oSeparateData, "predicate");
@@ -3815,6 +3818,9 @@ sap.ui.define([
 		this.aReadRequests?.forEach((oReadRequest) => {
 			oReadRequest.bObsolete = true;
 		});
+		for (const sProperty in this.mSeparateProperty2ReadRequest) {
+			this.mSeparateProperty2ReadRequest[sProperty] = [];
+		}
 		if (mChangeListeners[""]) {
 			this.mChangeListeners[""] = mChangeListeners[""];
 			_Helper.fireChange(this.mChangeListeners, "");

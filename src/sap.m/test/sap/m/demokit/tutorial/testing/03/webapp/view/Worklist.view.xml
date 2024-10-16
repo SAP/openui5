@@ -1,25 +1,25 @@
 <mvc:View
-		controllerName="sap.ui.demo.bulletinboard.controller.Worklist"
-		xmlns="sap.m"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:semantic="sap.m.semantic">
+	controllerName="sap.ui.demo.bulletinboard.controller.Worklist"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:semantic="sap.m.semantic">
 	<semantic:FullscreenPage
-			id="page"
-			title="{i18n>worklistViewTitle}">
+		id="page"
+		title="{i18n>worklistViewTitle}">
 		<semantic:content>
 			<Table
-					id="table"
-					width="auto"
-					class="sapUiResponsiveMargin"
-					items="{
+				id="table"
+				width="auto"
+				class="sapUiResponsiveMargin"
+				items="{
 					path: '/Posts',
 					sorter: {
 						path: 'Title',
 						descending: false
 						}
 					}"
-					busyIndicatorDelay="{worklistView>/tableBusyDelay}"
-					updateFinished=".onUpdateFinished">
+				busyIndicatorDelay="{worklistView>/tableBusyDelay}"
+				updateFinished=".onUpdateFinished">
 				<headerToolbar>
 					<Toolbar>
 						<Label id="tableHeader" text="{worklistView>/worklistTableTitle}"/>
@@ -40,19 +40,19 @@
 					<ColumnListItem vAlign="Middle">
 						<cells>
 							<ObjectIdentifier
-									title="{Title}"/>
+								title="{Title}"/>
 							<Text
-									text="{Category}"/>
+								text="{Category}"/>
 							<ObjectNumber
-									number="{
-										path: 'Price',
-										formatter: '.formatter.numberUnit'
-									}"
-									state="{
-										path: 'Price',
-										formatter: '.formatter.priceState'
-									}"
-									unit="{Currency}"/>
+								number="{
+									path: 'Price',
+									formatter: '.formatter.numberUnit'
+								}"
+								state="{
+									path: 'Price',
+									formatter: '.formatter.priceState'
+								}"
+								unit="{Currency}"/>
 						</cells>
 					</ColumnListItem>
 				</items>

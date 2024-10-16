@@ -151,8 +151,10 @@ sap.ui.define([
 	MTable.prototype.onBeforeShow = function(bInitial) {
 
 		return Promise.resolve(FilterableListContent.prototype.onBeforeShow.apply(this, arguments)).then(() => {
-			const oTable = this._getTable();
-			_attachTableEvents.call(this, oTable);
+			if (!this._bNavigateInitialize) {
+				const oTable = this._getTable();
+				_attachTableEvents.call(this, oTable);
+			}
 
 			if (bInitial) {
 				const oListBinding = this.getListBinding();
@@ -349,31 +351,36 @@ sap.ui.define([
 			}
 		}
 
-		FilterableListContent.prototype.onShow.apply(this, arguments);
+		const oResult = FilterableListContent.prototype.onShow.apply(this, arguments);
 
 		const bSingleSelect = this.isSingleSelect();
-		if (oTable && this.isTypeahead() && bSingleSelect) { // if Typeahed and SingleSelect (ComboBox case) scroll to selected item
-			let oSelectedItem;
-			if (this._iNavigateIndex >= 0) {
-				oSelectedItem = oTable.getItems()[this._iNavigateIndex];
-			} else if (this._sHighlightId) {
-				oSelectedItem = oTable.getItems().find((oItem) => oItem.getId() === this._sHighlightId);
-			} else {
-				oSelectedItem = oTable.getSelectedItem();
-			}
-			if (oSelectedItem) {
-				this._handleScrolling(oSelectedItem);
-				return oSelectedItem.getId();
-			} else {
-				this._bScrollToSelectedItem = true;
+		if (oTable && this.isTypeahead()) {
+			if (bSingleSelect) { // if Typeahed and SingleSelect (ComboBox case) scroll to selected item
+				let oSelectedItem;
+				if (this._iNavigateIndex >= 0) {
+					oSelectedItem = oTable.getItems()[this._iNavigateIndex];
+				} else if (this._sHighlightId) {
+					oSelectedItem = oTable.getItems().find((oItem) => oItem.getId() === this._sHighlightId);
+				} else {
+					oSelectedItem = oTable.getSelectedItem();
+				}
+				if (oSelectedItem) {
+					this._handleScrolling(oSelectedItem);
+					oResult.itemId = oSelectedItem.getId();
+				} else {
+					this._bScrollToSelectedItem = true;
 
-				if (oTable.getItems().length === 0 && oTable.getShowNoData()) { // if no items return no-data text to announce it on field
-					return oTable.getId("nodata-text");
+					if (oTable.getItems().length === 0 && oTable.getShowNoData()) { // if no items return no-data text to announce it on field
+						oResult.itemId = oTable.getId("nodata-text");
+					}
 				}
 			}
+
+			oResult.items = _getItemCount.call(this);
 		}
 
 		this._updateHeaderText();
+		return oResult;
 	};
 
 	MTable.prototype.onHide = function() {
@@ -667,9 +674,16 @@ sap.ui.define([
 
 		const bIsOpen = this.getParent().isOpen();
 
-		if (!bIsOpen && this._iNavigateIndex < 0) {
-			this.onShow(true, false); // to force loading of data
+		if (!bIsOpen && this._iNavigateIndex < 0 && !this._bNavigateInitialize) {
+			this._bNavigateInitialize = true;
+			this.onBeforeShow(true).then(() => { // to determine intial filters, update bindings and load data
+				this.onShow(true, false);
+				this.navigate(iStep);
+			});
+			return;
 		}
+
+		this._bNavigateInitialize = false;
 
 		const oListBinding = this.getListBinding();
 
@@ -901,7 +915,7 @@ sap.ui.define([
 		const sFilterValue = this.getFilterValue();
 		const bUseFirstMatch = this.getUseFirstMatch();
 
-		if (bTypeahead && bUseFirstMatch && sFilterValue) {
+		if (bTypeahead && bUseFirstMatch && sFilterValue && !this._bNavigateInitialize) {
 			const oValueHelpDelegate = this.getValueHelpDelegate();
 			const bCaseSensitive = oValueHelpDelegate.isFilteringCaseSensitive(this.getValueHelpInstance(), this);
 			let oFirstMatchContext;
@@ -914,8 +928,7 @@ sap.ui.define([
 					control: this.getControl(),
 					caseSensitive: this.getCaseSensitive()
 				});
-				const aRelevantContexts = this.getListBinding()?.getCurrentContexts();
-				iItems = aRelevantContexts?.length;
+				iItems = _getItemCount.call(this);
 			}
 
 			if (oFirstMatchContext) {
@@ -1200,6 +1213,17 @@ sap.ui.define([
 			this._oTable.detachSelectionChange(this._handleSelectionChange, this);
 			this._oTable.detachUpdateFinished(this._handleUpdateFinished, this);
 			oTable._bAttached = false;
+		}
+
+	}
+
+	function _getItemCount() {
+
+		const oListBinding = this.getListBinding();
+		const oBindingInfo = this.getListBindingInfo();
+		if (oListBinding?.isLengthFinal() || oBindingInfo.length) { // there are no additional unread items or shown items are limited.
+			const aRelevantContexts = this.getListBinding().getCurrentContexts();
+			return aRelevantContexts?.length;
 		}
 
 	}

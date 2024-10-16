@@ -1,12 +1,40 @@
-/* eslint-disable new-cap */
-window.suite = function() {
+sap.ui.define(function() {
 	"use strict";
 
-	var oSuite = new parent.jsUnitTestSuite(),
-		sContextPath = location.pathname.substring(0, location.pathname.lastIndexOf("/") + 1);
-
-	oSuite.addTestPage(sContextPath + "unit/unitTests.qunit.html");
-	oSuite.addTestPage(sContextPath + "integration/opaTests.qunit.html");
-
-	return oSuite;
-};
+	return {
+		name: "QUnit test suite for Bulletin Board",
+		defaults: {
+			page: "ui5://test-resources/sap/ui/demo/bulletinboard/Test.qunit.html?testsuite={suite}&test={name}",
+			qunit: {
+				version: 2
+			},
+			sinon: {
+				version: 1
+			},
+			ui5: {
+				language: "EN",
+				theme: "sap_horizon"
+			},
+			coverage: {
+				only: "sap/ui/demo/bulletinboard/",
+				never: [
+					"sap/ui/demo/bulletinboard/test/",
+					"sap/ui/demo/bulletinboard/localService/"
+				]
+			},
+			loader: {
+				paths: {
+					"sap/ui/demo/bulletinboard": "../"
+				}
+			}
+		},
+		tests: {
+			"unit/unitTests": {
+				title: "Unit tests for Bulletin Board"
+			},
+			"integration/opaTests": {
+				title: "Integration tests for Bulletin Board"
+			}
+		}
+	};
+});

@@ -109,9 +109,7 @@ sap.ui.define([
 		}
 
 		if (oTable.isAggregationEnabled()) {
-			const aPropertiesThatCanBeTotaled = oPropertyHelper.getProperty(oColumn.getPropertyKey()).getAggregatableProperties().filter((oProperty) => {
-				return oProperty.extension && oProperty.extension.customAggregate;
-			});
+			const aPropertiesThatCanBeTotaled = oPropertyHelper.getProperty(oColumn.getPropertyKey()).getAggregatableProperties();
 			const mAggregatedProperties = oTable._getAggregatedProperties();
 
 			if (aPropertiesThatCanBeTotaled.length > 0) {

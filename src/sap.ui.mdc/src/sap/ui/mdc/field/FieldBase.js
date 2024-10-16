@@ -3256,9 +3256,9 @@ sap.ui.define([
 	function _handleValueHelpOpened(oEvent) {
 
 		let sItemId;
+		const oContent = this.getControlForSuggestion();
 
 		if (this._bFocusOnValueHelp) {
-			const oContent = this.getControlForSuggestion();
 			const oValueHelp = oEvent.getSource();
 			_setVisualFocusToValueHelp(oContent, oValueHelp);
 
@@ -3270,10 +3270,14 @@ sap.ui.define([
 			oValueHelp.navigate(0);
 		}
 		_setAriaAttributes.call(this, true, sItemId);
-		_setShowValueStateMessage.call(this, false);
+		_setShowValueStateMessage.call(this, false);// close ValueState message on opening, because opened is sometimes very delayed what would lead to strange effect
 		delete this._bFocusOnValueHelp; // only used while opening
 
-		// close ValueState message on opening, because opened is sometimes very delayed what would lead to strange effect
+		// announce number of found items
+		const iItems = oEvent.getParameter("items");
+		if (iItems && oContent?._applySuggestionAcc) {
+			oContent._applySuggestionAcc(iItems);
+		}
 
 	}
 

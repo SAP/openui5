@@ -254,7 +254,12 @@ sap.ui.define([
 						/**
 						 * ID of the initially selected item
 						 */
-						itemId: { type: "string" }
+						itemId: { type: "string" },
+						/**
+						 * Number of found items
+						 * @since 1.130.0
+						 */
+						items: { type: "int" }
 					}
 				},
 
@@ -1121,7 +1126,7 @@ sap.ui.define([
 	}
 
 	function _handleOpened(oEvent) {
-		this.fireOpened({ container: oEvent.getSource(), itemId: oEvent.getParameter("itemId") });
+		this.fireOpened({ container: oEvent.getSource(), itemId: oEvent.getParameter("itemId"), items: oEvent.getParameter("items") });
 	}
 
 	function _handleClosed(oEvent) {

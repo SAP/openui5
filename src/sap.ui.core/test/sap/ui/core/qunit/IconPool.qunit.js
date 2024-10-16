@@ -446,7 +446,7 @@ sap.ui.define([
 
 	QUnit.test("registerFont with SAP-icons-TNT (switching themes) ", function(assert) {
 		// set initial theme so that we enforce a theme change event
-		Theming.setTheme("sap_belize");
+		Theming.setTheme("sap_fiori_3");
 
 		IconPool.registerFont({
 			collectionName: "sap-tnt-icons-horizon-2",

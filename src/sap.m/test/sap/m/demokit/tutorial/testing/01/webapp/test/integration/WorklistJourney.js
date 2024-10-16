@@ -1,8 +1,9 @@
 /*global QUnit*/
+
 sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"./pages/Worklist"
-],  function (opaTest) {
+], function (opaTest) {
 	"use strict";
 
 	QUnit.module("Posts");

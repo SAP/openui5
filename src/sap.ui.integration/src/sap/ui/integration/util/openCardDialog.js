@@ -105,9 +105,9 @@ sap.ui.define([
 		oDialog.addEventDelegate(oDelegate);
 	}
 
-	function _openDialog(oChildCard, oParentCard, oParameters, oOpener) {
+	function _openDialog(oChildCard, oParentCard, oParameters) {
 		oChildCard.setDisplayVariant("Large"); // always use large variant for dialog, scrolling content is possible
-		oOpener.setBusy(true).setBusyIndicatorDelay(750);
+		oParentCard.setBusy(true).setBusyIndicatorDelay(750);
 
 		const oDialog = new Dialog({
 				content: [
@@ -125,7 +125,7 @@ sap.ui.define([
 				},
 				resizable: oParameters.resizable,
 				afterOpen: () => {
-					oOpener.setBusy(false);
+					oParentCard.setBusy(false);
 				},
 				afterClose: () => {
 					oDialog.destroy();
@@ -167,7 +167,7 @@ sap.ui.define([
 		}
 	}
 
-	function openCardDialog(oParentCard, oParameters, oOpener) {
+	function openCardDialog(oParentCard, oParameters) {
 		let oChildCard;
 
 		if (oParameters._cardId) {
@@ -179,7 +179,7 @@ sap.ui.define([
 			});
 		}
 
-		return _openDialog(oChildCard, oParentCard, oParameters, oOpener);
+		return _openDialog(oChildCard, oParentCard, oParameters);
 	}
 
 	return openCardDialog;

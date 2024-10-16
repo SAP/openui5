@@ -85,14 +85,14 @@ sap.ui.define([
 		var done = assert.async();
 
 		function fnApplied(oEvent) {
-			if (oEvent.theme === "sap_bluecrystal") {
+			if (oEvent.theme === "sap_fiori_3") {
 				Theming.detachApplied(fnApplied);
 
 				var oLink = document.getElementById("sap-ui-theme-sap.ui.core");
 				var sHref = oLink.href;
 				var sCoreVersion = Lib.all()["sap.ui.core"].version;
 
-				var sExpectedHref = new URL(sap.ui.require.toUrl("sap/ui/core/themes/sap_bluecrystal/library.css"), document.baseURI);
+				var sExpectedHref = new URL(sap.ui.require.toUrl("sap/ui/core/themes/sap_fiori_3/library.css"), document.baseURI);
 
 				if (mOptions.versionedLibCss) {
 					assert.equal(
@@ -112,7 +112,7 @@ sap.ui.define([
 			}
 		}
 		Theming.attachApplied(fnApplied);
-		Theming.setTheme("sap_bluecrystal");
+		Theming.setTheme("sap_fiori_3");
 	});
 
 	QUnit.test("RTL Change", function(assert) {

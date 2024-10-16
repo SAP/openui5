@@ -339,6 +339,10 @@ sap.ui.define([
 					control: this._getMoreButton()
 				});
 			}
+
+			if (oConfiguration.calendarWeekNumbering) {
+				this._oCalendar.setCalendarWeekNumbering(oConfiguration.calendarWeekNumbering);
+			}
 		};
 
 		CalendarContent.prototype._getStaticConfigurationLegendItems = function (aLegendItems, aLegendAppointmentItems, oConfiguration, oLegend) {

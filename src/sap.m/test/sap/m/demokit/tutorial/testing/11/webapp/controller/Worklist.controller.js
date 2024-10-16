@@ -4,7 +4,7 @@ sap.ui.define([
 	'../model/formatter',
 	'../model/FlaggedType',
 	'sap/m/library'
-], function (BaseController, JSONModel, formatter, FlaggedType, mobileLibrary) {
+], function(BaseController, JSONModel, formatter, FlaggedType, mobileLibrary) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.bulletinboard.controller.Worklist", {
@@ -123,5 +123,4 @@ sap.ui.define([
 			);
 		}
 	});
-
 });
