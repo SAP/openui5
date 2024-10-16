@@ -251,6 +251,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		font-family: var(--sapFontHeaderFamily);
 
 		.sapUiIcon {
 			font-size: 1rem;
@@ -871,6 +872,7 @@
 
 .sapMITBBackgroundDesignTransparent > .sapMITBContainerContent > .sapMITBContent {
 	background-color: transparent;
+	border-bottom: none;
 }
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
@@ -923,6 +925,12 @@
 			margin-right: 0;
 		}
 	}
+
+	&.sapMITHBackgroundDesignTransparent {
+		box-shadow: none;
+		border-bottom: 0.0625rem solid var(--sapObjectHeader_BorderColor);
+	}
+
 }
 
 /* Custom focus outline */
@@ -1416,7 +1424,7 @@ html[dir=rtl] {
 		.sapMITBText,
 		.sapMITBCount {
 			color: @_sap_m_IconTabBar_ShellTextColor;
-			font-family: var(--sapFontFamily);
+			font-family: var(--sapFontHeaderFamily);
 			font-size: @sapMFontMediumSize;
 		}
 
