@@ -688,6 +688,56 @@ sap.ui.define([
 		oLightBox.destroy();
 	});
 
+	QUnit.test("Avatar with icon URI handling press event and LightBox", async function(oAssert) {
+		// Assert
+		oAssert.expect(4);
+
+		//Arrange
+		var oLightBox = new LightBox(),
+			sIconURI = "sap-icon://home";
+
+		// Act
+		this.oAvatar.setSrc(sIconURI);
+		this.oAvatar.setDetailBox(oLightBox);
+		await nextUIUpdate();
+
+		// Assert
+		oAssert.notOk(this.oAvatar.hasListeners("press"), "There should be no press event attached to the Avatar if its src is an icon uri");
+		oAssert.notOk(this.oAvatar._fnLightBoxOpen, "Internal method for opening the LightBox shouldn`t be available if Avatar`s src is an icon uri");
+
+		// Act
+		this.oAvatar.setSrc(sImagePath);
+		await nextUIUpdate();
+
+		// Assert
+		oAssert.ok(this.oAvatar.hasListeners("press"), "There should be a press event attached to the Avatar if its src is an image");
+		oAssert.ok(this.oAvatar._fnLightBoxOpen, "Internal method for opening the LightBox should be available if Avatar`s src is an image");
+	});
+
+	QUnit.test("Avatar with icon URI should not display badge even when detailBox is set", async function(oAssert) {
+		// Assert
+		oAssert.expect(2);
+
+		// Arrange
+		var oLightBox = new LightBox(),
+			sIconURI = "sap-icon://home";
+
+		// Act
+		this.oAvatar.setSrc(sIconURI);
+		this.oAvatar.setDetailBox(oLightBox);
+		await nextUIUpdate();
+
+		// Assert
+		oAssert.notOk(this.oAvatar._getBadgeIconSource(), "Badge is not attached to Avatar with detailBox, if its src is an icon URI");
+
+		// Act
+		this.oAvatar.setSrc(sImagePath);
+		await nextUIUpdate();
+
+		// Assert
+		oAssert.strictEqual(this.oAvatar._getBadgeIconSource(), "sap-icon://zoom-in", "Badge is attached to Avatar with detailBox, if its src is image");
+	});
+
 	QUnit.test("cloning of press event handler", function (assert) {
 		// Arrange
 		var oLightBox = new LightBox(),

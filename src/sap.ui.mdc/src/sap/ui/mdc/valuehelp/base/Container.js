@@ -130,7 +130,13 @@ sap.ui.define([
 						/**
 						 * ID of the initially selected item
 						 */
-						itemId: { type: "string" }
+						itemId: { type: "string" },
+						/**
+						 * Number of found items
+						 * @since 1.130.0
+						 */
+						items: { type: "int" }
+
 					}
 				},
 				/**

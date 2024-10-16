@@ -79,6 +79,13 @@ sap.ui.define(['sap/ui/core/Element',
 				 */
 				_image: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
 			},
+			associations : {
+				/**
+				 * Internal association for managing the tab strip item element.
+				 */
+				_tabStripItem : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
+
+			},
 			events : {
 
 				/**
@@ -108,6 +115,18 @@ sap.ui.define(['sap/ui/core/Element',
 			},
 			dnd: { draggable: true, droppable: false }
 		}});
+
+		TabContainerItem.prototype.init = function() {
+			var oTabStripItem = new TabStripItem();
+			this.setAssociation("_tabStripItem", oTabStripItem, true);
+		};
+
+		TabContainerItem.prototype.exit = function() {
+			var oTabStripItem = this._getTabStripItem();
+			if (oTabStripItem) {
+				oTabStripItem.destroy();
+			}
+		};
 
 		/**
 		 * Overwrites the method in order to suppress invalidation for some properties.
@@ -176,6 +195,26 @@ sap.ui.define(['sap/ui/core/Element',
 		TabContainerItem.prototype._getImage = function () {
 			return this.getAggregation("_image");
 		};
+
+		/**
+		 * Gets a reference to the instance of the TabStripItem.
+		 * @returns {sap.m.TabStripItem} The tab strip item instance.
+		 */
+		TabContainerItem.prototype._getTabStripItem = function () {
+			return Element.getElementById(this.getAssociation("_tabStripItem"));
+		};
+
+		// Override customData getters/setters to forward the customData added to TabContainerItem to the internal TabStripItem
+		["addCustomData", "getCustomData", "destroyCustomData", "indexOfCustomData",
+		 "insertCustomData", "removeAllCustomData", "removeCustomData", "data"].forEach(function(sName){
+			TabContainerItem.prototype[sName] = function() {
+				var oTabStripItem = this._getTabStripItem();
+				if (oTabStripItem && oTabStripItem[sName]) {
+					var res = oTabStripItem[sName].apply(oTabStripItem, arguments);
+					return res === oTabStripItem ? this : res;
+				}
+			};
+		});
 
 		return TabContainerItem;
 });

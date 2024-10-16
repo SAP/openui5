@@ -322,25 +322,25 @@ sap.ui.define([
 	});
 
 	QUnit.test("setTheme", function(assert) {
-		Theming.setTheme("sap_hcb");
+		Theming.setTheme("sap_horizon_hcb");
 
-		return fnAssert("sap_hcb", [{
+		return fnAssert("sap_horizon_hcb", [{
 			theme: {
 				"old": ThemeHelper.getDefaultThemeInfo().DEFAULT_THEME,
-				"new": "sap_hcb"
+				"new": "sap_horizon_hcb"
 			}
 		}], [{
-			theme: "sap_hcb"
+			theme: "sap_horizon_hcb"
 		}]).then(function() {
-			Theming.setTheme("sap_hcb");
-			return fnAssert("sap_hcb");
+			Theming.setTheme("sap_horizon_hcb");
+			return fnAssert("sap_horizon_hcb");
 		}).then(function() {
 			assert.throws(function() {
 				Theming.setTheme("sap_fiori_3@sap/custom/themeroot");
 			}, new TypeError("Providing a theme root as part of the theme parameter is not allowed."), "Providing a theme root using setTheme should throw an error.");
 			// Setting theme to undefined, should not change anything
 			Theming.setTheme();
-			return fnAssert("sap_hcb");
+			return fnAssert("sap_horizon_hcb");
 		});
 	});
 

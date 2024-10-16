@@ -300,10 +300,11 @@ sap.ui.define([
 			assert.ok(oContainer.open.calledOnce, "Container open called for typeahead opening");
 			assert.equal(oContainer.open.lastCall.args[1], true, "Container open called with bTypeahead");
 			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called for typeahead opening");
-			oContainer.fireOpened({itemId: "MyItem", focused: true});
+			oContainer.fireOpened({itemId: "MyItem", items: 3, focused: true});
 			assert.ok(oValueHelp.fireOpened.called, "ValueHelp opened event fired for typeahead opening");
 			assert.equal(oValueHelp.fireOpened.lastCall.args[0].container, oContainer, "ValueHelp opened event carries correct container");
 			assert.equal(oValueHelp.fireOpened.lastCall.args[0].itemId, "MyItem", "ValueHelp opened event carries itemId");
+			assert.equal(oValueHelp.fireOpened.lastCall.args[0].items, 3, "ValueHelp opened event carries items");
 
 			ValueHelpDelegate.retrieveContent.restore();
 			oValueHelp.fireOpen.restore();

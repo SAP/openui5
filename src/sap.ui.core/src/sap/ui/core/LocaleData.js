@@ -1980,12 +1980,15 @@ sap.ui.define([
 		/**
 		 * Returns the map of era IDs to era dates.
 		 *
-		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType] the type of calendar
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType]
+		 *   The type of calendar; defaults to the calendar type either set via the "calendar-type" formatting
+		 *   configuration option, see {@link topic:91f2d03b6f4d1014b6dd926db0e91070 Configuration Options and URL
+		 *   Parameters}, or determined from the current locale
 		 * @return {object[]} the array of eras containing objects with either an _end or _start property with a date
 		 * @public
 		 * @since 1.32.0
 		 */
-		getEraDates: function(sCalendarType) {
+		getEraDates: function(sCalendarType = Formatting.getCalendarType()) {
 			//TODO Adapt generation so that eradates are an array instead of object
 			var oEraDates = this._get("eras-" + sCalendarType.toLowerCase()),
 				aEraDates = [];

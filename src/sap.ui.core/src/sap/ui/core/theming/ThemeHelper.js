@@ -31,24 +31,11 @@ sap.ui.define([
 		"sap_horizon_dark",
 		"sap_horizon_hcb",
 		"sap_horizon_hcw",
-
 		// fiori_3
 		"sap_fiori_3",
 		"sap_fiori_3_dark",
 		"sap_fiori_3_hcb",
-		"sap_fiori_3_hcw",
-
-		// belize
-		"sap_belize",
-		"sap_belize_plus",
-		"sap_belize_hcb",
-		"sap_belize_hcw",
-
-		// bluecrystal (deprecated)
-		"sap_bluecrystal",
-
-		// hcb (deprecated) - the standard HCB theme, newer themes have a dedicated HCB/HCW variant
-		"sap_hcb"
+		"sap_fiori_3_hcw"
 	];
 
 	// cache for already calculated theme fallbacks

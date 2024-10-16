@@ -131,13 +131,6 @@ sap.ui.define([
 				if (sTooltip) {
 					oRm.attr("title", sTooltip);
 				}
-				if (oControl.getChanges().length > 4) {
-					oRm.class("sapUiRtaChangeIndicatorColorDark");
-				} else if (oControl.getChanges().length > 1) {
-					oRm.class("sapUiRtaChangeIndicatorColorMedium");
-				} else {
-					oRm.class("sapUiRtaChangeIndicatorColorLight");
-				}
 				oRm.openEnd();
 				if (sTooltip) {
 					oRm.openStart("span", `${oControl.getId()}-tooltip`);

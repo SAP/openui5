@@ -45,7 +45,7 @@
 				<Property MaxLength="60" Name="Date" Nullable="false" Type="Edm.DateTime" sap:creatable="false" sap:label="Date" sap:sortable="true"
 					sap:updatable="false"/>
 			</EntityType>
-			<Association sap:content-version="1" Name="PostToComment" >
+			<Association sap:content-version="1" Name="PostToComment">
 				<End Type="BULLETINBOARD.Post" Multiplicity="1" Role="FromRole_PostToComment" />
 				<End Type="BULLETINBOARD.Comment" Multiplicity="*" Role="ToRole_PostToComment" />
 				<ReferentialConstraint>

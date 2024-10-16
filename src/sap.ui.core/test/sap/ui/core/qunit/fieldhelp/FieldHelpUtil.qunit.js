@@ -3,10 +3,11 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/Element",
+	"sap/ui/core/CustomData",
+	"sap/ui/core/fieldhelp/FieldHelpCustomData",
 	"sap/ui/core/fieldhelp/FieldHelpUtil"
-], function (Log, Element, FieldHelpUtil) {
-	/*global sinon, QUnit*/
+], function (Log, CustomData, FieldHelpCustomData, FieldHelpUtil) {
+	/*global QUnit*/
 	"use strict";
 
 	//*********************************************************************************************
@@ -19,39 +20,54 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[true, false].forEach((bFieldHelpActive) => {
-	QUnit.test("setDocumentationRef: field help is active: " + bFieldHelpActive, function (assert) {
-		const oElement = new Element();
-		const oElementMock = this.mock(oElement);
-		const aDocumentationRefs = ["~vValue"];
-		oElementMock.expects("data")
-			.withExactArgs("sap-ui-DocumentationRef",
-				sinon.match.same(aDocumentationRefs).and(sinon.match(["~vValue"])),
-				false);
-		oElementMock.expects("setFieldHelpDisplay").withExactArgs(sinon.match.same(oElement));
-		if (bFieldHelpActive) {
-			oElement.updateFieldHelp = () => {};
-			oElementMock.expects("updateFieldHelp").withExactArgs();
-		}
+["~DocumentationRef", ["~DocumentationRef"]].forEach((vDoumenationRef, i) => {
+	QUnit.test("setDocumentationRef: new custom data, #" + i, function (assert) {
+		const oCustomData0 = {getKey() {}};
+		this.mock(oCustomData0).expects("getKey").withExactArgs().returns("~foo");
+		const oElement = {addAggregation() {}, getCustomData() {}};
+		this.mock(oElement).expects("getCustomData").withExactArgs().returns([oCustomData0]);
+		this.mock(oElement).expects("addAggregation")
+			.callsFake((sAggregationName, oCustomData, bSuppressInvalidate) => {
+				assert.strictEqual(sAggregationName, "customData");
+				assert.ok(oCustomData instanceof FieldHelpCustomData);
+				assert.strictEqual(oCustomData.getKey(), FieldHelpCustomData.DOCUMENTATION_REF_KEY);
+				assert.deepEqual(oCustomData.getValue(), ["~DocumentationRef"]);
+				assert.strictEqual(bSuppressInvalidate, true);
+			});
 
 		// code under test
-		FieldHelpUtil.setDocumentationRef(oElement, aDocumentationRefs);
-
-		oElementMock.expects("data").withExactArgs("sap-ui-DocumentationRef", ["~vValue0"], false);
-		oElementMock.expects("setFieldHelpDisplay").withExactArgs(sinon.match.same(oElement));
-		if (bFieldHelpActive) {
-			oElementMock.expects("updateFieldHelp").withExactArgs();
-		}
-
-		// code under test - single documentation ref is always passed as array for the update
-		FieldHelpUtil.setDocumentationRef(oElement, "~vValue0");
-
-		if (bFieldHelpActive) {
-			oElementMock.expects("updateFieldHelp").withExactArgs();
-		}
-
-		// code under test
-		oElement.destroy();
+		FieldHelpUtil.setDocumentationRef(oElement, vDoumenationRef);
 	});
 });
+
+	//*********************************************************************************************
+["~DocumentationRef", ["~DocumentationRef"]].forEach((vDoumenationRef, i) => {
+	QUnit.test("setDocumentationRef: replace existing custom data value, #" + i, function () {
+		const oCustomData = new FieldHelpCustomData({key: FieldHelpCustomData.DOCUMENTATION_REF_KEY});
+		this.mock(oCustomData).expects("getKey").withExactArgs().callThrough();
+		const oElement = {getCustomData() {}};
+		this.mock(oElement).expects("getCustomData").withExactArgs().returns([oCustomData]);
+		this.mock(oCustomData).expects("setValue").withExactArgs(["~DocumentationRef"]);
+
+		// code under test
+		FieldHelpUtil.setDocumentationRef(oElement, vDoumenationRef);
+
+		oCustomData.destroy();
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("setDocumentationRef: throw error if custom data has wrong type", function (assert) {
+		const oCustomData = new CustomData({key: FieldHelpCustomData.DOCUMENTATION_REF_KEY});
+		this.mock(oCustomData).expects("getKey").withExactArgs().callThrough();
+		const oElement = {getCustomData() {}};
+		this.mock(oElement).expects("getCustomData").withExactArgs().returns([oCustomData]);
+
+		assert.throws(() => {
+			// code under test
+			FieldHelpUtil.setDocumentationRef(oElement, ["~DocumentationRef"]);
+		}, new Error('Unsupported custom data type for key "sap-ui-DocumentationRef"'));
+
+		oCustomData.destroy();
+	});
 });

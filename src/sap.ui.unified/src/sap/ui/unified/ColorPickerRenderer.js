@@ -15,6 +15,9 @@ var ColorPickerRenderer = {
 	apiVersion: 2
 };
 
+// shortcut for library resource bundle
+var oRb = Library.getResourceBundleFor("sap.ui.unified");
+
 /**
  * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
  *
@@ -29,7 +32,7 @@ ColorPickerRenderer.render = function(oRm, oControl){
 
 	oRm.accessibilityState(oControl, {
 		role: "group",
-		roledescription: Library.getResourceBundleFor("sap.ui.unified").getText("COLOR_PICKER_TITLE")
+		roledescription: oRb.getText("COLOR_PICKER_TITLE")
 	});
 
 	if (bResponsive) {
@@ -234,10 +237,12 @@ ColorPickerRenderer.renderDesktopSwatchesAndHexFields = function(oRm, oControl) 
 	oRm.openEnd();
 	oRm.openStart("div", oControl.getId() + "-ocBox");
 	oRm.class("sapUiColorPicker-ColorPickerOldColor");
+	oRm.attr("title", oRb.getText("COLOR_PICKER_CURRENT_COLOR_TOOLTIP"));
 	oRm.openEnd();
 	oRm.close("div");
 	oRm.openStart("div", oControl.getId() + "-ncBox");
 	oRm.class("sapUiColorPicker-ColorPickerNewColor");
+	oRm.attr("title", oRb.getText("COLOR_PICKER_NEW_COLOR_TOOLTIP"));
 	oRm.openEnd();
 	oRm.close("div");
 	oRm.close("div");

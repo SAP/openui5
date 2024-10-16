@@ -1184,6 +1184,88 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getFilter: no header context", function (assert) {
+		const oContext = Context.create(null, {/*oBinding*/}, "/EMPLOYEES('1')");
+		this.mock(oContext).expects("isTransient").never();
+
+		// code under test
+		assert.throws(function () {
+			oContext.getFilter();
+		}, new Error("Not a list context path to an entity: " + oContext));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFilter: transient", function (assert) {
+		const oContext = Context.create(null, {
+			getHeaderContext : mustBeMocked // Note: serves only as a marker
+		}, "/EMPLOYEES('1')");
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
+
+		// code under test
+		assert.throws(function () {
+			oContext.getFilter();
+		}, new Error("Not a list context path to an entity: " + oContext));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFilter: getPredicateIndex throws", function (assert) {
+		const oContext = Context.create(null, {
+			getHeaderContext : mustBeMocked // Note: serves only as a marker
+		}, "/EMPLOYEES('1')");
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		const oError = new Error("Intentionally failed");
+		this.mock(_Helper).expects("getPredicateIndex").withExactArgs("/EMPLOYEES('1')")
+			.throws(oError);
+
+		// code under test
+		assert.throws(function () {
+			oContext.getFilter();
+		}, oError);
+	});
+
+	//*********************************************************************************************
+["/EMPLOYEES()", "/EMPLOYEES($isTotal=true)"].forEach((sPath) => {
+	QUnit.test("getFilter: grand total", function (assert) {
+		const oContext = Context.create(null, {
+			getHeaderContext : mustBeMocked // Note: serves only as a marker
+		}, sPath);
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(_Helper).expects("getPredicateIndex").withExactArgs(sPath).returns(10);
+
+		// code under test
+		assert.strictEqual(oContext.getFilter(), null);
+	});
+});
+
+	//*********************************************************************************************
+["/EMPLOYEES(TEAM_ID='1')", "/EMPLOYEES(TEAM_ID='1',$isTotal=true)"].forEach((sPath) => {
+	QUnit.test("getFilter: subtotal", function (assert) {
+		const oModel = {
+			getMetaModel : mustBeMocked
+		};
+		const oContext = Context.create(oModel, {
+			getHeaderContext : mustBeMocked // Note: serves only as a marker
+		}, sPath);
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(_Helper).expects("getPredicateIndex").withExactArgs(sPath).returns(10);
+		const oMetaModel = {
+			getObject : mustBeMocked
+		};
+		this.mock(oModel).expects("getMetaModel").withExactArgs().returns(oMetaModel);
+		this.mock(_Helper).expects("getMetaPath").withExactArgs(sPath).returns("~sMetaPath~");
+		this.mock(oMetaModel).expects("getObject").withExactArgs("~sMetaPath~/")
+			.returns("~oEntityType~");
+		this.mock(_Helper).expects("getFilterForPredicate")
+			.withExactArgs("(TEAM_ID='1')", "~oEntityType~", sinon.match.same(oMetaModel),
+				"~sMetaPath~", true)
+			.returns("~oFilter~");
+
+		// code under test
+		assert.strictEqual(oContext.getFilter(), "~oFilter~");
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("getQueryOptionsForPath: delegation to parent binding", function (assert) {
 		var oBinding = {
 				getQueryOptionsForPath : function () {}

@@ -3,32 +3,34 @@
  */
 
 sap.ui.define([
+	"./_SplitterRegistry",
+	'./SplitterRenderer',
+	"./SplitterLayoutData",
+	'./library',
 	"sap/base/i18n/Localization",
 	'sap/ui/core/Control',
 	"sap/ui/core/Core",
 	'sap/ui/core/CustomData',
-	'./library',
 	'sap/ui/core/library',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/RenderManager',
-	'./SplitterRenderer',
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/layout/SplitterLayoutData"
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
+		_SplitterRegistry,
+		SplitterRenderer,
+		SplitterLayoutData,
+		library,
 		Localization,
 		Control,
 		Core,
 		CustomData,
-		library,
 		coreLibrary,
 		ResizeHandler,
 		RenderManager,
-		SplitterRenderer,
 		Log,
-		jQuery,
-		SplitterLayoutData
+		jQuery
 	) {
 		"use strict";
 
@@ -176,6 +178,7 @@ sap.ui.define([
 		};
 
 		Splitter.prototype.exit = function() {
+			_SplitterRegistry.removeInstance(this);
 			this._disableAutoResize();
 			delete this._resizeCallback;
 
@@ -187,10 +190,12 @@ sap.ui.define([
 		};
 
 		Splitter.prototype.onBeforeRendering = function() {
+			_SplitterRegistry.removeInstance(this);
 			this._initOrientationProperties();
 		};
 
 		Splitter.prototype.onAfterRendering = function() {
+			_SplitterRegistry.addInstance(this);
 			this._$SplitterOverlay = this.$("overlay");
 			this._$SplitterOverlayBar = this.$("overlayBar");
 
@@ -1052,8 +1057,6 @@ sap.ui.define([
 
 			this._keyboardEnabled = false;
 		};
-
-		///////////////////////////////////////// Hidden Functions /////////////////////////////////////////
 
 		/**
 		 * Returns the bar for the given target. If there isn't such, null is returned

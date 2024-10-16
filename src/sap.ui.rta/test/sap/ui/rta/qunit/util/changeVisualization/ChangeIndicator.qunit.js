@@ -110,10 +110,6 @@ sap.ui.define([
 			await nextUIUpdate();
 			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
 			assert.ok(
-				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorColorLight"),
-				"then the correct indicator color is used"
-			);
-			assert.ok(
 				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorVerticallyCentered"),
 				"then the indicator is vertically centered"
 			);
@@ -195,10 +191,6 @@ sap.ui.define([
 			await nextUIUpdate();
 			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
 			assert.ok(
-				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorColorLight"),
-				"then the correct indicator color is used"
-			);
-			assert.ok(
 				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorVerticallyCentered"),
 				"then the indicator is vertically centered"
 			);
@@ -262,10 +254,6 @@ sap.ui.define([
 			});
 			await nextUIUpdate();
 			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
-			assert.ok(
-				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorColorLight"),
-				"then the correct indicator color is used"
-			);
 			assert.ok(
 				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorVerticallyCentered"),
 				"then the indicator is vertically centered"
@@ -435,10 +423,6 @@ sap.ui.define([
 			await nextUIUpdate();
 
 			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
-			assert.ok(
-				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorColorMedium"),
-				"then the correct indicator color is used"
-			);
 			assert.strictEqual(
 				this.oChangeIndicator.getDomRef().title,
 				"2 changes",
@@ -495,10 +479,6 @@ sap.ui.define([
 				]
 			});
 			await nextUIUpdate();
-			assert.ok(
-				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorColorDark"),
-				"then the correct indicator color is used"
-			);
 			assert.strictEqual(
 				this.oChangeIndicator.getDomRef().title,
 				"6 changes",

@@ -6,7 +6,9 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/ui/Device",
 	"sap/m/TabContainer",
-	"sap/m/TabContainerItem"
+	"sap/m/TabContainerItem",
+	"sap/ui/layout/Splitter",
+	"sap/m/Text"
 ],
 function(
 	App,
@@ -14,7 +16,9 @@ function(
 	Panel,
 	Device,
 	TabContainer,
-	TabContainerItem
+	TabContainerItem,
+	Splitter,
+	Text
 ) {
 	"use strict";
 	Device.system.phone = true;
@@ -23,9 +27,28 @@ function(
 	document.querySelector("html").classList.remove("sap-desktop");
 
 	var oApp = new App();
-	oApp.addPage(new Page({
+	oApp.addPage(new Page("testPage", {
 		title: "sap.m.TabContainer visual test page",
 		content: [
+		new Splitter({
+				orientation: "Horizontal",
+				height: "300px",
+				contentAreas: [
+					new TabContainer("five", {
+						items: [
+							new TabContainerItem({
+								name: "Tab one",
+								additionalText: "Tab one"
+							}),
+							new TabContainerItem({
+								name: "Tab two",
+								additionalText: "Tab two"
+							})
+						]
+					}),
+					new Text({text: 'right'})
+				]
+			}),
 			new Panel({
 				headerText: "One tab present",
 				content: [
@@ -91,6 +114,7 @@ function(
 					})
 				]
 			})
+
 		]
 	}));
 
