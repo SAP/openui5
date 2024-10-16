@@ -61,10 +61,10 @@
     "npm": ">= 8"
   },
   "devDependencies": {
-    "@ui5/builder": "^4.0.2",
-    "@ui5/cli": "^4.0.5",
-    "@ui5/project": "^4.0.2",
-    "@ui5/server": "^4.0.3",
+    "@ui5/builder": "^4.0.3",
+    "@ui5/cli": "^4.0.9",
+    "@ui5/project": "^4.0.3",
+    "@ui5/server": "^4.0.5",
     "@ui5/tooling-webc": "^0.2.14",
     "@ui5/webcomponents": "1.18.0",
     "@ui5/webcomponents-base": "1.18.0",
@@ -76,7 +76,7 @@
     "@ui5/webcomponents-theming": "1.18.0",
     "async": "^3.2.4",
     "cheerio": "1.0.0",
-    "cookie": "^1.0.0",
+    "cookie": "^1.0.1",
     "decompress": "^4.2.1",
     "eslint": "^8.56.0",
     "glob": "^11.0.0",
