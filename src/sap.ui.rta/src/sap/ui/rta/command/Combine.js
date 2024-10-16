@@ -25,13 +25,16 @@ sap.ui.define([
 			library: "sap.ui.rta",
 			properties: {
 				newElementId: {
-					type: "string"
+					type: "string",
+					group: "content"
 				},
 				source: {
-					type: "any"
+					type: "any",
+					group: "content"
 				},
 				combineElements: {
-					type: "any[]"
+					type: "any[]",
+					group: "content"
 				}
 			},
 			associations: {},
@@ -48,10 +51,12 @@ sap.ui.define([
 			aFieldIds.push(oField.getId());
 		});
 		var mSpecificInfo = {
-			newElementId: this.getNewElementId(),
 			changeType: this.getChangeType(),
-			sourceControlId: this.getSource().getId(),
-			combineElementIds: aFieldIds
+			content: {
+				newElementId: this.getNewElementId(),
+				sourceControlId: this.getSource().getId(),
+				combineElementIds: aFieldIds
+			}
 		};
 		return mSpecificInfo;
 	};

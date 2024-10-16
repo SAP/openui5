@@ -32,21 +32,23 @@ sap.ui.define([
 		}
 	}, {
 		changeType: "moveControls",
-		source: {
-			id: "myFancySource"
-		},
-		target: {
-			id: "myFancyTarget"
-		},
-		movedElements: [{
-			id: "myFancyMovedElementId1",
-			sourceIndex: 1,
-			targetIndex: 4
-		}, {
-			id: "myFancyMovedElementId2",
-			sourceIndex: 2,
-			targetIndex: 5
-		}]
+		content: {
+			source: {
+				id: "myFancySource"
+			},
+			target: {
+				id: "myFancyTarget"
+			},
+			movedElements: [{
+				id: "myFancyMovedElementId1",
+				sourceIndex: 1,
+				targetIndex: 4
+			}, {
+				id: "myFancyMovedElementId2",
+				sourceIndex: 2,
+				targetIndex: 5
+			}]
+		}
 	});
 
 	QUnit.done(function() {

@@ -18,10 +18,12 @@ sap.ui.define([
 		newValue: "myFancyNewValue"
 	}, {
 		changeType: "rename",
-		renamedElement: {
-			id: "myFancyRenamedElement"
-		},
-		value: "myFancyNewValue"
+		content: {
+			renamedElement: {
+				id: "myFancyRenamedElement"
+			},
+			value: "myFancyNewValue"
+		}
 	});
 
 	QUnit.done(function() {

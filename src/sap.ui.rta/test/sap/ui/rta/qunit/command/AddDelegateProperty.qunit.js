@@ -7,8 +7,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var mSameProperties = {
-		changeType: "addFields",
+	const mContent = {
 		index: 1,
 		newControlId: "newControlId",
 		parentId: "myFancyParentId",
@@ -23,15 +22,19 @@ sap.ui.define([
 			designtimeActionStructure: ["add", "delegate"]
 		},
 		{
-			...mSameProperties,
+			changeType: "addFields",
+			...mContent,
 			bindingString: "myFancyBindingPath",
 			propertyName: "propertyName",
 			oDataServiceUri: "serviceUri",
 			entityType: "myFancyEntityType"
 		},
 		{
-			...mSameProperties,
-			bindingPath: "myFancyBindingPath",
+			changeType: "addFields",
+			content: {
+				...mContent,
+				bindingPath: "myFancyBindingPath"
+			},
 			oDataInformation: {
 				oDataServiceUri: "serviceUri",
 				propertyName: "propertyName",

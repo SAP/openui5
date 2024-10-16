@@ -280,41 +280,47 @@ sap.ui.define([
 				 */
 				completeChangeContent(oChange, mSpecificChangeInfo, mPropertyBag) {
 					const oAppComponent = mPropertyBag.appComponent;
+					// TODO: Remove assignment without content after all derived change handlers are adjusted to use content. todos#4
+					const oChangeInfoContent = mSpecificChangeInfo.content || mSpecificChangeInfo;
 					const oContent = {};
-					if (mSpecificChangeInfo.parentId) {
+					if (oChangeInfoContent.parentId) {
 						if (isFunction(mAddViaDelegateSettings.mapParentIdIntoChange)) {
-							mAddViaDelegateSettings.mapParentIdIntoChange(oChange, mSpecificChangeInfo, mPropertyBag);
+							mAddViaDelegateSettings.mapParentIdIntoChange(oChange, oChangeInfoContent, mPropertyBag);
 						} else {
-							oChange.addDependentControl(mSpecificChangeInfo.parentId, mAddViaDelegateSettings.parentAlias, mPropertyBag);
+							oChange.addDependentControl(
+								oChangeInfoContent.parentId,
+								mAddViaDelegateSettings.parentAlias,
+								mPropertyBag
+							);
 						}
 						try {
-							oContent.parentId = mPropertyBag.modifier.getSelector(mSpecificChangeInfo.parentId, oAppComponent);
+							oContent.parentId = mPropertyBag.modifier.getSelector(oChangeInfoContent.parentId, oAppComponent);
 						} catch (e) {
 							// If the parentId is not stable, e.g. in the case of SimpleForm groups
 							// don't set the parentId. This error is safe to ignore as a missing parentId
 							// will disable condensing
 						}
 					} else {
-						throw new Error("mSpecificChangeInfo.parentId attribute required");
+						throw new Error("mSpecificChangeInfo.content.parentId attribute required");
 					}
-					if (mSpecificChangeInfo.bindingPath) {
-						oContent.bindingPath = mSpecificChangeInfo.bindingPath;
+					if (oChangeInfoContent.bindingPath) {
+						oContent.bindingPath = oChangeInfoContent.bindingPath;
 					} else {
-						throw new Error("mSpecificChangeInfo.bindingPath attribute required");
+						throw new Error("mSpecificChangeInfo.content.bindingPath attribute required");
 					}
-					if (mSpecificChangeInfo.newControlId) {
-						oContent.newFieldSelector = mPropertyBag.modifier.getSelector(mSpecificChangeInfo.newControlId, oAppComponent);
+					if (oChangeInfoContent.newControlId) {
+						oContent.newFieldSelector = mPropertyBag.modifier.getSelector(oChangeInfoContent.newControlId, oAppComponent);
 					} else {
-						throw new Error("mSpecificChangeInfo.newControlId attribute required");
+						throw new Error("mSpecificChangeInfo.content.newControlId attribute required");
 					}
-					if (mSpecificChangeInfo.index === undefined) {
-						throw new Error("mSpecificChangeInfo.targetIndex attribute required");
+					if (oChangeInfoContent.index === undefined) {
+						throw new Error("mSpecificChangeInfo.content.targetIndex attribute required");
 					} else {
-						oContent.newFieldIndex = mSpecificChangeInfo.index;
+						oContent.newFieldIndex = oChangeInfoContent.index;
 					}
-					if (mSpecificChangeInfo.oDataServiceVersion) {
+					if (oChangeInfoContent.oDataServiceVersion) {
 						// used to connect to change handler mediator
-						oContent.oDataServiceVersion = mSpecificChangeInfo.oDataServiceVersion;
+						oContent.oDataServiceVersion = oChangeInfoContent.oDataServiceVersion;
 					}
 					oChange.setContent(oContent);
 				},

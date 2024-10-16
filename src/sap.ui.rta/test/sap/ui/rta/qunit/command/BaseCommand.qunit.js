@@ -1324,7 +1324,7 @@ sap.ui.define([
 				assert.deepEqual(oCreateChangeFromDataSpy.args[0][1], oExpectedFlexSettings, "and '_createChangeFromData' is called with the enriched set of flex settings");
 				assert.strictEqual(oRevealCommand.getPreparedChange().getOriginalSelector().id, oExpectedFlexSettings.originalSelector, "and the prepared change contains the original selector as dependency");
 				assert.strictEqual(oRevealCommand.getPreparedChange().getContent().boundAggregation, "items", "and the bound aggregation is written to the change content");
-				assert.strictEqual(oRevealCommand._getChangeSpecificData().revealedElementId, oTextItem.getId(), "and the change specific content of the change is also adjusted");
+				assert.strictEqual(oRevealCommand._getChangeSpecificData().content.revealedElementId, oTextItem.getId(), "and the change specific content of the change is also adjusted");
 				return oRevealCommand.execute();
 			})
 

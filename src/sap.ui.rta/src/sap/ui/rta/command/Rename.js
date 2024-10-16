@@ -21,11 +21,13 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 			library: "sap.ui.rta",
 			properties: {
 				renamedElement: {
-					type: "object"
+					type: "object",
+					group: "content"
 				},
 				newValue: {
 					type: "string",
-					defaultValue: "new text"
+					defaultValue: "new text",
+					group: "content"
 				}
 			},
 			associations: {},
@@ -36,10 +38,12 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	Rename.prototype._getChangeSpecificData = function() {
 		var mSpecificInfo = {
 			changeType: this.getChangeType(),
-			renamedElement: {
-				id: this.getRenamedElement().getId()
-			},
-			value: this.getNewValue()
+			content: {
+				renamedElement: {
+					id: this.getRenamedElement().getId()
+				},
+				value: this.getNewValue()
+			}
 		};
 
 		return mSpecificInfo;

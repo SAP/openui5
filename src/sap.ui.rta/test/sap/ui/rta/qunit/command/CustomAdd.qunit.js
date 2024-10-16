@@ -7,8 +7,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var mProperties = {
-		changeType: "addViaCustom",
+	const mContent = {
 		index: 4,
 		addElementInfo: {info: "myFancyAddElementInfo"},
 		aggregationName: "myFancyAggregationName",
@@ -21,7 +20,13 @@ sap.ui.define([
 		additionalDesigntimeAttributes: {
 			getItems() {}
 		}
-	}, { ...mProperties }, { ...mProperties });
+	}, {
+		changeType: "addViaCustom",
+		...mContent
+	 }, {
+		changeType: "addViaCustom",
+		content: mContent
+	  });
 
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";

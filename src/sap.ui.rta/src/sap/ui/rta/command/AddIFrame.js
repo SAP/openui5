@@ -89,7 +89,7 @@ sap.ui.define([
 		delete mChangeSpecificData.changeType;
 		return {
 			changeType: sChangeType,
-			content: mChangeSpecificData
+			content: mChangeSpecificData.content
 		};
 	};
 
