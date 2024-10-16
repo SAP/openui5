@@ -5737,7 +5737,7 @@
 		"chinese"
 	],
 	"sap-calendarWeek": {
-		"narrow": "\\u65E5\\u5386\\u5468 {0}",
-		"wide": "\\u65E5\\u5386\\u5468 {0}"
+		"narrow": "日历周 {0}",
+		"wide": "日历周 {0}"
 	}
 }
