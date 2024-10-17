@@ -1,7 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/base//util/Deferred",
+	"sap/base/util/Deferred",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/util/openCardDialog",
 	"sap/ui/integration/util/DataProvider",
