@@ -11,7 +11,7 @@
  * might break in future releases.
  */
 
-/*global sap:true, Blob, console, document, Promise, URL, XMLHttpRequest */
+/*global Blob, console, document, Promise, URL, XMLHttpRequest */
 
 (function(__global) {
 	"use strict";
@@ -2683,8 +2683,8 @@
 	 * @public
 	 * @name sap
 	 */
-
-	__global.sap = __global.sap || {};
+	// ui5lint-disable-next-line no-globals
+	const sap = __global.sap = __global.sap || {};
 	sap.ui = sap.ui || {};
 
 	/**
@@ -2695,6 +2695,7 @@
 	 * @public
 	 * @namespace
 	 * @ui5-global-only
+	 * @name sap.ui.loader
 	 */
 	sap.ui.loader = {
 
@@ -3221,6 +3222,7 @@
 	 * @see https://github.com/amdjs/amdjs-api
 	 * @function
 	 * @ui5-global-only
+	 * @name sap.ui.define
 	 */
 	sap.ui.define = ui5Define;
 
@@ -3229,6 +3231,7 @@
 	 * @ui5-restricted bundles created with UI5 tooling
 	 * @function
 	 * @ui5-global-only
+	 * @name sap.ui.predefine
 	 */
 	sap.ui.predefine = predefine;
 
@@ -3288,6 +3291,7 @@
 	 * @public
 	 * @function
 	 * @ui5-global-only
+	 * @name sap.ui.require
 	 */
 	sap.ui.require = ui5Require;
 
@@ -3355,6 +3359,7 @@
 	 * @ui5-restricted sap.ui.core
 	 * @function
 	 * @ui5-global-only
+	 * @name sap.ui.requireSync
 	 * @deprecated As of version 1.120, sync loading is deprecated without replacement due to the deprecation
 	 *   of sync XMLHttpRequests in the web standard.
 	 */
