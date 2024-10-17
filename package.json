@@ -104,7 +104,7 @@
     "moment": "^2.29.4",
     "node-fetch": "^3.2.10",
     "pacote": "^19.0.0",
-    "rimraf": "^4.3.1",
+    "rimraf": "^6.0.0",
     "semver": "^7.5.4",
     "set-cookie-parser": "^2.5.1",
     "wsrun": "^5.2.0"
