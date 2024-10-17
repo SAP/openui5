@@ -25,6 +25,14 @@ sap.ui.define([
 		properties: {},
 		aggregations: {
 			_content: {
+				// If the inner table has height 0px (can happen with GridTable in Auto mode), RTA incorrectly thinks that all elements inside this
+				// table are invisible, and therefore doesn't show overlays. Unfortunately, it also ignores the inner table's designtime that contains
+				// a solution for this issue.
+				// To fix the issue here, we tell RTA to not take the domRef of the direct child in the _content aggregation, but the one of the
+				// MDCTable itself (":sap-domref" is a magic pointer to the domRef of the "main" control).
+				// This should not affect the size or position of any overlays, it just fixes the RTA algorithm for determining the visibility of
+				// an element.
+				domRef: ":sap-domref",
 				propagateMetadata: function(oElement) {
 					if (oElement.isA("sap.ui.fl.variants.VariantManagement") ||
 						oElement.isA("sap.ui.mdc.ActionToolbar") ||
