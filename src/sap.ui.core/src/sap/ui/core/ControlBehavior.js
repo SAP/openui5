@@ -107,6 +107,11 @@ sap.ui.define([
 				defaultValue: undefined,
 				external: true
 			});
+
+			/**
+			 * "animation" option is deprecated as of 1.50
+			 * @ui5-transform-hint replace-local false
+			 */
 			const bAnimation = oWritableConfig.get({
 				name: "sapUiAnimation",
 				type: BaseConfig.Type.Boolean,
