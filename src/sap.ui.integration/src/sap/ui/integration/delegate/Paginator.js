@@ -105,7 +105,8 @@ sap.ui.define([
 				baseUrl: oCard.getBaseUrl(),
 				resizable: true,
 				showCloseButton: true
-			}
+			},
+			true
 		);
 	};
 
