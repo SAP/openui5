@@ -354,16 +354,16 @@ sap.ui.define([
 		assert.strictEqual(this.oPopover.getDomRef("cont").offsetWidth, 450);
 	});
 
-	QUnit.test('it should set the width of the content to "50px"', function(assert) {
+	QUnit.test('it should set the width of the content to "150px"', function(assert) {
 		// act
-		this.oPopover.setContentWidth("50px");
+		this.oPopover.setContentWidth("150px");
 
 		// arrange
 		this.oButton.firePress();
 		this.clock.tick(1000);  // wait 1s after the open animation is completed
 
 		// assert
-		assert.strictEqual(this.oPopover.getDomRef("cont").offsetWidth, 50);
+		assert.strictEqual(this.oPopover.getDomRef().offsetWidth, 150);
 	});
 
 	QUnit.test('ESCAPE should not dismiss the Popover in certain situations', function (assert) {
@@ -848,7 +848,7 @@ sap.ui.define([
 		this.oButton.firePress();
 		this.clock.tick(500);
 		var $content = this.oPopover.$("cont");
-		assert.ok($content.width() <= (jQuery(window).width() * 0.5), "Calculated width " + $content.width() + " should be less or equal than the part of window width " + jQuery(window).width() * 0.5);
+		assert.ok(this.oPopover.$().width() - 2 <= (jQuery(window).width() * 0.5), "Calculated width " + $content.width() + " should be less or equal than the part of window width " + jQuery(window).width() * 0.5);
 		assert.ok($content.height() <= (jQuery(window).height() * 0.5), "Calculated height " + $content.height() + " should be less or equal than the part of window height " + jQuery(window).height() * 0.5);
 	});
 
