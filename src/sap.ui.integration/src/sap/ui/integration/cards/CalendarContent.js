@@ -97,7 +97,9 @@ sap.ui.define([
 					/**
 					 * Defines the text that is displayed when no {@link sap.f.CalendarAppointmentInCard CalendarAppointmentInCard} are assigned.
 					 */
-					noAppointmentsText : {type : "string", group : "Misc", defaultValue : null}
+					noAppointmentsText : {type : "string", group : "Misc", defaultValue : null},
+
+					use12HourFormat : { type : "boolean", defaultValue : false }
 				},
 				aggregations: {
 					/**
@@ -326,6 +328,10 @@ sap.ui.define([
 
 			if (oConfiguration.maxLegendItems) {
 				this._addMaxLegendItems(oConfiguration.maxLegendItems);
+			}
+
+			if (oConfiguration.use12HourFormat) {
+				this.setUse12HourFormat(oConfiguration.use12HourFormat);
 			}
 
 			if (oConfiguration.noItemsText) {

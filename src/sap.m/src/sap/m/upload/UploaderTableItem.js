@@ -8,10 +8,9 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/util/File",
 	"sap/ui/Device",
-	"sap/m/upload/UploadSetwithTableItem",
 	"sap/m/upload/UploaderHttpRequestMethod",
 	"sap/m/upload/UploadItem"
-], function (Log, MobileLibrary, Element, FileUtil, Device, UploadSetItem, UploaderHttpRequestMethod, UploadItem) {
+], function (Log, MobileLibrary, Element, FileUtil, Device, UploaderHttpRequestMethod, UploadItem) {
 	"use strict";
 
 	/**
@@ -58,7 +57,7 @@ sap.ui.define([
 				uploadStarted: {
 					parameters: {
 						/**
-						 * The item {@link sap.m.upload.UploadSetwithTableItem UploadSetwithTableItem} or {@link sap.m.upload.UploadItem UploadItem} that is going to be uploaded.
+						 * The item {@link sap.m.upload.UploadItem UploadItem} that is going to be uploaded.
 						 */
 						item: {type: "any"}
 					}
@@ -69,7 +68,7 @@ sap.ui.define([
 				uploadProgressed: {
 					parameters: {
 						/**
-						 * The item {@link sap.m.upload.UploadSetwithTableItem UploadSetwithTableItem} or {@link sap.m.upload.UploadItem UploadItem} that is being uploaded.
+						 * The item {@link sap.m.upload.UploadItem UploadItem} that is being uploaded.
 						 */
 						item: {type: "any"},
 						/**
@@ -90,7 +89,7 @@ sap.ui.define([
 				uploadCompleted: {
 					parameters: {
 						/**
-						 * The item {@link sap.m.upload.UploadSetwithTableItem UploadSetwithTableItem} or {@link sap.m.upload.UploadItem UploadItem} that was uploaded.
+						 * The item {@link sap.m.upload.UploadItem UploadItem} that was uploaded.
 						 */
 						item: {type: "any"},
 						/**
@@ -156,7 +155,7 @@ sap.ui.define([
 	/**
 	 * Starts the process of uploading the specified file.
 	 *
-	 * @param {sap.m.upload.UploadSetwithTableItem | sap.m.upload.UploadItem} oItem Item representing the file to be uploaded.
+	 * @param {sap.m.upload.UploadItem} oItem Item representing the file to be uploaded.
 	 * @param {sap.ui.core.Item[]} [aHeaderFields] Collection of request header fields to be send along.
 	 * @public
 	 */
@@ -219,7 +218,7 @@ sap.ui.define([
 	/**
 	 * Starts the process of downloading a file.
 	 *
-	 * @param {sap.m.upload.UploadSetwithTableItem | sap.m.upload.UploadItem} oItem Item representing the file to be downloaded.
+	 * @param {sap.m.upload.UploadItem} oItem Item representing the file to be downloaded.
 	 * @param {sap.ui.core.Item[]} aHeaderFields List of header fields to be added to the GET request.
 	 * @param {boolean} bAskForLocation If it is true, the location of where the file is to be downloaded is queried by a browser dialog.
 	 * @return {boolean} It returns true if the download is processed successfully
@@ -250,8 +249,6 @@ sap.ui.define([
 				let targetItem = UploadItem;
 				if (oItem instanceof UploadItem) {
 					targetItem = UploadItem;
-				} else if (oItem instanceof UploadSetItem) {
-					targetItem = UploadSetItem;
 				}
 				var sFileName = oItem.getFileName(),
 					oSplit = targetItem._splitFileName(sFileName, false);

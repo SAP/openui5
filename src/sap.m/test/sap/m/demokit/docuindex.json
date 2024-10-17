@@ -549,19 +549,6 @@
 				]
 			},
 			{
-				"id": "sap.m.upload.UploadSetwithTable",
-				"name": "Upload Set with Table",
-				"category": "Action",
-				"since": "1.120",
-				"samples": [
-					"sap.m.sample.UploadSetwithTable.UploadSetwithTableSimple",
-					"sap.m.sample.UploadSetwithTable.UploadSetwithTableFileUploads",
-					"sap.m.sample.UploadSetwithTable.UploadSetwithTableFilePreview",
-					"sap.m.sample.UploadSetwithTable.UploadSetwithTableGrowing",
-					"sap.m.sample.UploadSetwithTable.UploadSetwithTablePersonalization"
-				]
-			},
-			{
 				"id": "sap.m.GenericTag",
 				"name": "Generic Tag",
 				"category": "Action",
@@ -1021,6 +1008,7 @@
 				"category": "Container",
 				"since": "1.28",
 				"samples": [
+					"sap.m.sample.OverflowToolbarDifferentControls",
 					"sap.m.sample.OverflowToolbarSimple",
 					"sap.m.sample.OverflowToolbarFooter",
 					"sap.m.sample.ToolbarAlignment",
@@ -3674,6 +3662,11 @@
 				"id": "sap.m.sample.ContainerPaddingAndMargin",
 				"name": "Container Content Padding and Margins",
 				"description": "By combining the margin and padding concepts you can flexibly design your application layout without having to write any custom CSS. This example shows a HorizontalLayout that is layouted with the standard margin and padding classes provided by UI5."
+			},
+			{
+				"id": "sap.m.sample.OverflowToolbarDifferentControls",
+				"name": "Overflow Toolbar - Different Controls",
+				"description": "Demonstrates different controls and their behavior when they are part of the OverflowToolbar."
 			},
 			{
 				"id": "sap.m.sample.OverflowToolbarSimple",

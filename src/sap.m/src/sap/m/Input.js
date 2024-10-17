@@ -3024,7 +3024,6 @@ function(
 
 			oItemToBeSelected = this._hasTabularSuggestions() ? mTypeAheadInfo.selectedItem : ListHelpers.getListItem(mTypeAheadInfo.selectedItem);
 			oItemToBeSelected.setSelected(true);
-			this.setSelectionUpdatedFromList(true);
 		}, this);
 
 		if (this.isMobileDevice()) {
