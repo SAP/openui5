@@ -225,7 +225,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when saveAll is called with draft and no change was saved", function(assert) {
-			return _runSaveAllAndAssumeVersionsCall.call(this, assert, undefined, Version.Number.Draft, 0, 0);
+			return _runSaveAllAndAssumeVersionsCall.call(this, assert, undefined, Version.Number.Draft, 0, 1);
 		});
 
 		QUnit.test("when saveAll is called with draft and a change was saved", function(assert) {
