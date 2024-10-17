@@ -19,7 +19,6 @@
 @_sap_m_Carousel_PageIndicatorWidthSizeM: 16rem;
 @_sap_m_Carousel_PageIndicatorWidthSizeL: 20rem;
 @_sap_m_Carousel_PageIndicatorWidthSizeXL: 24rem;
-@_sap_m_Carousel_ContentArrowBoxShadow: @sapUiShadowLevel1;
 @_sap_m_Carousel_BulletInactiveBackground: var(--sapContent_NonInteractiveIconColor);
 @_sap_m_Carousel_BulletInactiveBorderColor: var(--sapContent_NonInteractiveIconColor);
 @_sap_m_Carousel_BulletActiveBackground: var(--sapSelectedColor);
@@ -213,7 +212,7 @@ html[data-sap-ui-animation='off'] .sapMCrsl .sapMCrslInner {
 	display: block;
 	position: absolute;
 	margin: -1.5625px 0 0 0;
-	box-shadow: @_sap_m_Carousel_ContentArrowBoxShadow;
+	box-shadow: var(--sapContent_Shadow0);
 
 	&:hover,
 	&:focus {
@@ -237,7 +236,7 @@ html.sap-desktop .sapMCrslHud .sapMCrslArrow {
 	transition: opacity 0.1s ease-in;
 	box-sizing: border-box;
 	background-color: var(--sapButton_Background);
-	border: 1px solid var(--sapButton_BorderColor);
+	border: var(--sapButton_BorderWidth) solid var(--sapButton_BorderColor);
 	color: var(--sapButton_IconColor);
 	cursor: pointer;
 	-webkit-user-select: none;
@@ -251,13 +250,13 @@ html.sap-desktop .sapMCrslHud .sapMCrslArrow {
 		background: var(--sapButton_Hover_Background);
 		border-color: var(--sapButton_Hover_BorderColor);
 		color: var(--sapButton_Hover_TextColor);
-		box-shadow: var(--sapContent_Interaction_Shadow);
 	}
 
 	&:active {
 		background-color: var(--sapButton_Active_Background);
 		border-color: var(--sapButton_Active_BorderColor);
 		color: var(--sapButton_Active_TextColor);
+		box-shadow: none;
 	}
 }
 
