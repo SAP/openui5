@@ -1092,14 +1092,25 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._getMaxScrollPosition = function() {
 		var $wrapperDom,
-			iClientHeight;
+			iClientHeight,
+			bIsIE = Device.browser.msie;
 
 		if (exists(this.$wrapper)) {
 			$wrapperDom = this.$wrapper[0];
 			// we obtain the ceiled <code>iClientHeight</code> value
 			// to avoid ending up with that <code>iClientHeight</code> that is only a single pixel
 			// bigger than <code>scrollHeight</code> due to rounding (=> will cause redundand scrollbar)
-			iClientHeight = Math.max($wrapperDom.clientHeight, Math.ceil($wrapperDom.getBoundingClientRect().height));
+			if (bIsIE) {
+				try {	// IE11 throws "Unspecified error" if $wrapperDom is not defined
+					iClientHeight = Math.max($wrapperDom.clientHeight, Math.ceil($wrapperDom.getBoundingClientRect().height));
+				} catch (e) {
+					iClientHeight = $wrapperDom.clientHeight;
+				}
+			} else {
+				iClientHeight = Math.max($wrapperDom.clientHeight, Math.ceil($wrapperDom.getBoundingClientRect().height));
+			}
+
+
 			return $wrapperDom.scrollHeight - iClientHeight;
 		}
 		return 0;
