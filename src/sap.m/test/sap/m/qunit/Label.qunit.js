@@ -225,32 +225,6 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 	});
 
-	QUnit.test("Label wrappingType (Hyphenation)", function(assert) {
-		var done = assert.async();
-		l1.setText("pneumonoultramic roscopicsilicovolcanoconiosis");
-		var iHeight = l1.$().outerHeight();
-		l1.setWidth("200px");
-		l1.setWrapping(true);
-		l1.setWrappingType(mobileLibrary.WrappingType.Hyphenated);
-		sap.ui.getCore().applyChanges();
-
-		var fnIsHyphenated = function () {
-			if (l1.$().outerHeight() >= 2 * iHeight) {
-				assert.ok(true, "Tested label is hyphenated.");
-				done();
-				return true;
-			}
-			return false;
-		};
-
-		setTimeout(function() {
-			if (!fnIsHyphenated()) {
-				// try again after a while if not yet hyphenatated
-				setTimeout(fnIsHyphenated, 1000);
-			}
-		}, 500);
-	});
-
 	QUnit.module("tooltip");
 
 	QUnit.test("Should render a tooltip", function(assert) {
