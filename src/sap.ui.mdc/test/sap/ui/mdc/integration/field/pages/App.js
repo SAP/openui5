@@ -17,7 +17,7 @@ sap.ui.define([
 
 	const fnConvertDatesToStrings = function(aDates) {
 		return aDates.map(function(oDate) {
-			return oDate.toString();
+			return oDate instanceof Date ? oDate.toString() : oDate; // for "Last X Days" it is an integer
 		});
 	};
 
