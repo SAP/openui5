@@ -1,0 +1,84 @@
+<mvc:View
+	controllerName="sap.m.sample.OverflowToolbarDifferentControls.OverflowToolbar"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+
+	<MessageStrip
+		class="sapUiTinyMargin"
+		text="Use this slider to resize the toolbar and observe their behaviour."
+		type="Information"
+		showIcon="true">
+	</MessageStrip>
+
+	<Slider value="{/viewPortPercentWidth}" liveChange="onSliderMoved"/>
+
+	<MessageStrip
+		class="sapUiTinyMargin"
+		text="When controls have no special layout, they are all moved to the overflow area."
+		type="Information"
+		showIcon="true">
+	</MessageStrip>
+
+	<OverflowToolbar id="otb1">
+		<Label text="Label:"/>
+		<Button text="Button"/>
+		<ToggleButton text="ToggleButton"/>
+		<CheckBox text="CheckBox"/>
+		<SegmentedButton selectedKey="two">
+			<items>
+				<SegmentedButtonItem text="Segmented One" key="one"/>
+				<SegmentedButtonItem text="Segmented Two" key="two"/>
+			</items>
+		</SegmentedButton>
+		<ToolbarSeparator/>
+		<ComboBox
+			items="{
+				path: '/CountriesCollection',
+				sorter: { path: 'text' }
+			}">
+			<core:Item key="{key}" text="{text}" />
+		</ComboBox>
+		<DatePicker
+			width="200px"
+			placeholder="Date Picker"/>
+		<Breadcrumbs currentLocationText="Breadcrumbs">
+			<Link text="Breadcrumbs"/>
+		</Breadcrumbs>
+		<MenuButton text="Menu Button">
+			<menu>
+				<Menu>
+					<MenuItem text="basic" icon="sap-icon://chalkboard">
+						<items>
+							<MenuItem text="add" icon="sap-icon://add" />
+							<MenuItem text="subtract" icon="sap-icon://less" />
+							<MenuItem text="multiply" icon="sap-icon://decline" />
+						</items>
+					</MenuItem>
+					<MenuItem text="complex" icon="sap-icon://display">
+						<items>
+							<MenuItem text="square" icon="sap-icon://status-completed" />
+						</items>
+					</MenuItem>
+				</Menu>
+			</menu>
+		</MenuButton>
+		<DateRangeSelection/>
+		<ToolbarSpacer/>
+		<GenericTag text="Generic Tag"/>
+		<Input placeholder="Input"/>
+		<SearchField placeholder="SearchField"/>
+		<TimePicker />
+		<DateTimePicker />
+		<DateTimeInput />
+		<Select
+			items="{
+				path: '/CountriesCollection',
+				sorter: { path: 'text' }
+			}">
+			<core:Item key="{key}" text="{text}" />
+		</Select>
+		<OverflowToolbarButton text="OverflowToolbarButton"/>
+		<OverflowToolbarToggleButton text="OverflowToolbarToggleButton"/>
+	</OverflowToolbar>
+</mvc:View>

@@ -127,12 +127,12 @@ sap.ui.define([
 		oRm.openStart("div");
 		oRm.class("sapUiCalendarAppStart");
 		oRm.openEnd();
-		oRm.text(oAppointment._getDateRangeIntersectionText(oSelectedDate).start);
+		oRm.text(oAppointment._getDateRangeIntersectionText(oSelectedDate, oCalendarContent.getUse12HourFormat()).start);
 		oRm.close("div");
 		oRm.openStart("div");
 		oRm.class("sapUiCalendarAppEnd");
 		oRm.openEnd();
-		oRm.text(oAppointment._getDateRangeIntersectionText(oSelectedDate).end);
+		oRm.text(oAppointment._getDateRangeIntersectionText(oSelectedDate, oCalendarContent.getUse12HourFormat()).end);
 		oRm.close("div");
 		oRm.close("div");
 		oRm.openStart("div");

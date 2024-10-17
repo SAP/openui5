@@ -557,6 +557,76 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when an update change has no namespace and falls back to allChanges for namespace resolution, grouped by namespace", function(assert) {
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({ response: [] });
+
+			// Simulate allChanges containing a create change with a namespace and an update change without a namespace
+			var allChanges = [
+				{
+					getId: () => "id_1728912232920_335_moveControls",
+					getNamespace: () => "apps/sap.ui.demoapps.rta.freestyle/changes/",
+					getFileType: () => "change",
+					convertToFileContent: () => ({
+						namespace: "apps/sap.ui.demoapps.rta.freestyle/changes/",
+						fileName: "id_1728912232920_335_moveControls"
+					})
+				}
+			];
+
+			// Input data: mCondense with an update change missing its namespace
+			var mCondense = {
+				layer: "CUSTOMER",
+				update: {
+					change: [{
+						id_1728912232920_335_moveControls: {
+							fileType: "change",
+							layer: "CUSTOMER",
+							fileName: "id_1728912232920_335_moveControls"
+						}
+					}]
+				},
+				create: {
+					change: []
+				},
+				"delete": {
+					change: []
+				},
+				reorder: {
+					change: []
+				}
+			};
+
+			/* Expected output: The update action should be correctly grouped under the
+			"apps/sap.ui.demoapps.rta.freestyle/changes/" namespace */
+			var aExpectedCondense = [
+				{
+					namespace: "apps/sap.ui.demoapps.rta.freestyle/changes/",
+					layer: "CUSTOMER",
+					update: {
+						change: [{
+							id_1728912232920_335_moveControls: {
+								fileType: "change",
+								layer: "CUSTOMER",
+								fileName: "id_1728912232920_335_moveControls"
+							}
+						}]
+					}
+				}
+			];
+
+			// Call the condense function
+			return WriteLrepConnector.condense({
+				flexObjects: mCondense,
+				url: "/sap/bc/lrep",
+				reference: this.sReference,
+				allChanges // Simulate the original allChanges
+			}).then(function() {
+				assert.equal(oStubSendRequest.args[0][0], "/sap/bc/lrep/actions/condense/sampleComponent?sap-language=EN", "the correct route is used");
+				assert.deepEqual(JSON.parse(oStubSendRequest.args[0][2].payload), aExpectedCondense, "the request contains the correct array of changes as payload grouped by namespace");
+				WriteUtils.sendRequest.restore();
+			});
+		});
+
 		QUnit.test("when calling reset in VENDOR layer with mix content of $TMP and transported changes", function(assert) {
 			var oMockTransportInfo = {
 				packageName: "PackageName",

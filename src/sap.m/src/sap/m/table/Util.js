@@ -438,7 +438,7 @@ sap.ui.define([
 	 * @param {string} sText The header text to be announced
 	 * @param {int|undefined} iRowCount The row count. If not provided, the row count will not be announced
 	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc, sap.ui.comp
+	 * @ui5-restricted sap.fe, sap.ui.mdc, sap.ui.comp, sap.m.p13n
 	 * @since 1.114
 	 */
 	Util.announceTableUpdate = function(sText, iRowCount) {

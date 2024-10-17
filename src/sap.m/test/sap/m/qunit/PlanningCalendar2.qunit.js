@@ -2100,6 +2100,13 @@ sap.ui.define([
 		assert.equal(aAppInfos[6]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, "07:00");
 		assert.equal(aAppInfos[6]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, "34 mins");
 
+		assert.equal(aAppInfos[2]._getDateRangeIntersectionText(oCurrentlyDisplayedDate, true).start, "until");
+		assert.equal(aAppInfos[2]._getDateRangeIntersectionText(oCurrentlyDisplayedDate, true).end, "11:00 am");
+		assert.equal(aAppInfos[3]._getDateRangeIntersectionText(oCurrentlyDisplayedDate, true).start, "from");
+		assert.equal(aAppInfos[3]._getDateRangeIntersectionText(oCurrentlyDisplayedDate, true).end, "9:00 am");
+		assert.equal(aAppInfos[4]._getDateRangeIntersectionText(oCurrentlyDisplayedDate, true).start, "7:00 am");
+		assert.equal(aAppInfos[4]._getDateRangeIntersectionText(oCurrentlyDisplayedDate, true).end, "8 hrs");
+
 		Formatting.setLanguageTag(sOriginalFormatLocale);
 	});
 
