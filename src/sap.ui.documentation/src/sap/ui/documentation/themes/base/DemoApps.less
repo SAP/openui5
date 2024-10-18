@@ -174,12 +174,17 @@
 						padding-bottom: .5rem;
 
 						.sapMListItems .sapMLIB {
-							padding: 1.5rem;
+							padding: 0.5rem 1.5rem;
 
-							.sapMILILabel {
-								font-size: @sapMFontMediumSize;
-								white-space: normal;
+							[class^="sapMILIContentWrapper"] {
+								flex-wrap: nowrap;
+
+								.sapMILILabel {
+									font-size: @sapMFontMediumSize;
+									white-space: normal;
+								}
 							}
+
 						}
 					}
 				}
@@ -190,10 +195,16 @@
 
 				.sapUiDemoKitDemoAppsAsidePanel {
 					.sapMList {
-						.sapMILILabel {
-							font-size: @sapMFontMediumSize;
-							white-space: normal;
+
+						[class^="sapMILIContentWrapper"] {
+							flex-wrap: nowrap;
+
+							.sapMILILabel {
+								font-size: @sapMFontMediumSize;
+								white-space: normal;
+							}
 						}
+
 					}
 				}
 			}
