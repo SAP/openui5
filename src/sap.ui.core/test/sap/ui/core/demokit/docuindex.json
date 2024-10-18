@@ -265,9 +265,7 @@
 					"sap.ui.core.sample.odata.v4.FlatDataAggregation",
 					"sap.ui.core.sample.odata.v4.ListBinding",
 					"sap.ui.core.sample.odata.v4.SalesOrders",
-					"sap.ui.core.sample.odata.v4.SalesOrdersTemplate",
-					"sap.ui.core.sample.odata.v4.SalesOrderTP100_V4",
-					"sap.ui.core.sample.odata.v4.SalesOrderTP100_V2"
+					"sap.ui.core.sample.odata.v4.SalesOrdersTemplate"
 				]
 			},
 			{
@@ -663,16 +661,6 @@
 				"id": "sap.ui.core.sample.odata.v4.SalesOrdersTemplate",
 				"name": "Sales Orders Template",
 				"description": "Example for OData V4 EPM Sales Orders using XML Templating"
-			},
-			{
-				"id": "sap.ui.core.sample.odata.v4.SalesOrderTP100_V4",
-				"name": "Sales Orders TP100",
-				"description": "Example for consuming an OData V4 Service"
-			},
-			{
-				"id": "sap.ui.core.sample.odata.v4.SalesOrderTP100_V2",
-				"name": "Sales Orders TP100 via OData V2 Service",
-				"description": "Example for consuming an OData V2 Service via an OData V4 Model"
 			},
 			{
 				"id": "sap.ui.core.sample.XMLComposite.01",
