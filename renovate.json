@@ -13,5 +13,8 @@
         "lit-html"
     ],
     "commitMessagePrefix": "[INTERNAL] Infra:",
-    "reviewers": ["UI5 Foundation"]
+    "reviewers": ["UI5 Foundation"],
+    "maven": {
+       "enabled": false
+    }
 }
