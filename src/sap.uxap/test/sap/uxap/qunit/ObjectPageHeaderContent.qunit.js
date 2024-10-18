@@ -1,6 +1,6 @@
 /*global QUnit*/
-sap.ui.define(["sap/ui/core/Element", "sap/ui/qunit/utils/nextUIUpdate", "sap/ui/thirdparty/jquery", "sap/ui/core/Core", "sap/m/Label", "sap/m/Text", "sap/uxap/ObjectPageDynamicHeaderTitle", "sap/uxap/ObjectPageLayout", "sap/uxap/testblocks/GenericDiv", "sap/ui/core/mvc/XMLView"],
-function(Element, nextUIUpdate, jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLayout, GenericDiv, XMLView) {
+sap.ui.define(["sap/ui/core/Element", "sap/ui/qunit/utils/nextUIUpdate", "sap/ui/thirdparty/jquery", "sap/ui/core/Core", "sap/m/Label", "sap/m/Text", "sap/f/DynamicPageHeader", "sap/uxap/ObjectPageDynamicHeaderTitle", "sap/uxap/ObjectPageLayout", "sap/uxap/testblocks/GenericDiv", "sap/ui/core/mvc/XMLView"],
+function(Element, nextUIUpdate, jQuery, Core, Label, Text, DynamicPageHeader, ObjectPageDynamicHeaderTitle, ObjectPageLayout, GenericDiv, XMLView) {
 	"use strict";
 
 	QUnit.module("API", {
@@ -140,6 +140,29 @@ function(Element, nextUIUpdate, jQuery, Core, Label, Text, ObjectPageDynamicHead
 		await nextUIUpdate();
 
 		assert.equal(this.contentView.byId("ObjectPageLayout").getHeaderContent().length, 0, "contents length is 0 after destroying HeaderContent");
+	});
+
+	QUnit.test("pin button icon is updated when header is snapped", async function(assert) {
+		// Arrange
+		var oHeaderTitle = new ObjectPageDynamicHeaderTitle(),
+			oPage = new ObjectPageLayout({
+				headerContentPinned: true,
+				headerTitle: oHeaderTitle,
+				headerContent: [new Text({text: "test"})]
+			}),
+			fnSpy;
+
+		oPage.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Act
+		fnSpy = this.spy(oPage._getHeaderContent(), "_togglePinButton");
+		oPage._handleDynamicTitlePress();
+
+		// Assert
+		assert.ok(fnSpy.calledWith(false), "Pin button is toggled to unpinned state");
+		assert.strictEqual(oPage._getHeaderContent().getAggregation("_pinButton").getIcon() === DynamicPageHeader.UNPRESSED_PIN_ICON, true,
+			"Pin button icon is updated to unpinned state");
 	});
 
 	QUnit.module("Dynamic Header State Preserved On Scroll", {

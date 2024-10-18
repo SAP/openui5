@@ -35,11 +35,6 @@ sap.ui.define([
 	var Settings = Plugin.extend("sap.ui.rta.plugin.Settings", /** @lends sap.ui.rta.plugin.Settings.prototype */ {
 		metadata: {
 			library: "sap.ui.rta",
-			properties: {
-				commandStack: {
-					type: "any"
-				}
-			},
 			associations: {},
 			events: {}
 		}

@@ -329,5 +329,19 @@ function(
 
 			done();
 		});
-  });
+	});
+
+	QUnit.test("Icon is set to pin button when themeChanged is fired", function(assert) {
+		// Arrange
+		var oDynamicPageHeader = this.oDynamicPage.getHeader(),
+			oPinButton = oDynamicPageHeader._getPinButton(),
+			fnSpy;
+
+		// Act
+		fnSpy = this.spy(oPinButton, "setIcon");
+		oDynamicPageHeader.onThemeChanged();
+
+		// Assert
+		assert.ok(fnSpy.calledOnce, "Icon is set to pin button when themeChanged event is fired");
+	});
 });

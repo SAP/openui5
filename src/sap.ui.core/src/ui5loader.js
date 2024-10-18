@@ -11,7 +11,7 @@
  * might break in future releases.
  */
 
-/*global sap:true, Blob, console, document, Promise, URL */
+/*global Blob, console, document, Promise, URL */
 
 (function(__global) {
 	"use strict";
@@ -2046,6 +2046,14 @@
 	 */
 	const amdRequire = createContextualRequire(null, true);
 
+	function requireSync(sModuleName) {
+		sModuleName = getMappedName(sModuleName + '.js');
+		if ( log.isLoggable() ) {
+			log.warning(`sync require of '${sModuleName}'`);
+		}
+		return unwrapExport(requireModule(null, sModuleName, /* bAsync = */ false));
+	}
+
 	/**
 		 * @private
 		 */
@@ -2464,8 +2472,8 @@
 	 * @public
 	 * @name sap
 	 */
-
-	__global.sap = __global.sap || {};
+	// ui5lint-disable-next-line no-globals
+	const sap = __global.sap = __global.sap || {};
 	sap.ui = sap.ui || {};
 
 	/**
@@ -2476,6 +2484,7 @@
 	 * @public
 	 * @namespace
 	 * @ui5-global-only
+	 * @name sap.ui.loader
 	 */
 	sap.ui.loader = {
 
@@ -3002,6 +3011,7 @@
 	 * @see https://github.com/amdjs/amdjs-api
 	 * @function
 	 * @ui5-global-only
+	 * @name sap.ui.define
 	 */
 	sap.ui.define = ui5Define;
 
@@ -3010,6 +3020,7 @@
 	 * @ui5-restricted bundles created with UI5 tooling
 	 * @function
 	 * @ui5-global-only
+	 * @name sap.ui.predefine
 	 */
 	sap.ui.predefine = predefine;
 
@@ -3069,44 +3080,47 @@
 	 * @public
 	 * @function
 	 * @ui5-global-only
+	 * @name sap.ui.require
 	 */
 	sap.ui.require = ui5Require;
 
 	/**
-		 * Calculates a URL from the provided resource name.
-		 *
-		 * The calculation takes any configured ID mappings or resource paths into account
-		 * (see {@link sap.ui.loader.config config options map and paths}. It also supports relative
-		 * segments such as <code>./</code> and <code>../</code> within the path, but not at its beginning.
-		 * If relative navigation would cross the root namespace (e.g. <code>sap.ui.require.toUrl("../")</code>)
-		 * or when the resource name starts with a slash or with a relative segment, an error is thrown.
-		 *
-		 * <b>Note:</b> <code>toUrl</code> does not resolve the returned URL; whether it is an absolute
-		 * URL or a relative URL depends on the configured <code>baseUrl</code> and <code>paths</code>.
-		 *
-		 * @example
-		 *   sap.ui.loader.config({
-		 *     baseUrl: "/home"
-		 *   });
-		 *
-		 *   sap.ui.require.toUrl("app/data")              === "/home/app/data"
-		 *   sap.ui.require.toUrl("app/data.json")         === "/home/app/data.json"
-		 *   sap.ui.require.toUrl("app/data/")             === "/home/app/data/"
-		 *   sap.ui.require.toUrl("app/.config")           === "/home/app/.config"
-		 *   sap.ui.require.toUrl("app/test/../data.json") === "/home/data.json"
-		 *   sap.ui.require.toUrl("app/test/./data.json")  === "/home/test/data.json"
-		 *   sap.ui.require.toUrl("app/../../data")        throws Error because root namespace is left
-		 *   sap.ui.require.toUrl("/app")                  throws Error because first character is a slash
-		 *
-		 * @param {string} sName Name of a resource e.g. <code>'app/data.json'</code>
-		 * @returns {string} Path to the resource, e.g. <code>'/home/app/data.json'</code>
-		 * @see https://github.com/amdjs/amdjs-api/wiki/require#requiretourlstring-
-		 * @throws {Error} If the input name is absolute (starts with a slash character <code>'/'</code>),
-		 *   starts with a relative segment or if resolving relative segments would cross the root
-		 *   namespace
-		 * @public
-		 * @name sap.ui.require.toUrl
-		 * @function
-		 * @ui5-global-only
-		 */
+	 * Calculates a URL from the provided resource name.
+	 *
+	 * The calculation takes any configured ID mappings or resource paths into account
+	 * (see {@link sap.ui.loader.config config options map and paths}. It also supports relative
+	 * segments such as <code>./</code> and <code>../</code> within the path, but not at its beginning.
+	 * If relative navigation would cross the root namespace (e.g. <code>sap.ui.require.toUrl("../")</code>)
+	 * or when the resource name starts with a slash or with a relative segment, an error is thrown.
+	 *
+	 * <b>Note:</b> <code>toUrl</code> does not resolve the returned URL; whether it is an absolute
+	 * URL or a relative URL depends on the configured <code>baseUrl</code> and <code>paths</code>.
+	 *
+	 * @example
+	 *   sap.ui.loader.config({
+	 *     baseUrl: "/home"
+	 *   });
+	 *
+	 *   sap.ui.require.toUrl("app/data")              === "/home/app/data"
+	 *   sap.ui.require.toUrl("app/data.json")         === "/home/app/data.json"
+	 *   sap.ui.require.toUrl("app/data/")             === "/home/app/data/"
+	 *   sap.ui.require.toUrl("app/.config")           === "/home/app/.config"
+	 *   sap.ui.require.toUrl("app/test/../data.json") === "/home/data.json"
+	 *   sap.ui.require.toUrl("app/test/./data.json")  === "/home/test/data.json"
+	 *   sap.ui.require.toUrl("app/../../data")        throws Error because root namespace is left
+	 *   sap.ui.require.toUrl("/app")                  throws Error because first character is a slash
+	 *
+	 * @param {string} sName Name of a resource e.g. <code>'app/data.json'</code>
+	 * @returns {string} Path to the resource, e.g. <code>'/home/app/data.json'</code>
+	 * @see https://github.com/amdjs/amdjs-api/wiki/require#requiretourlstring-
+	 * @throws {Error} If the input name is absolute (starts with a slash character <code>'/'</code>),
+	 *   starts with a relative segment or if resolving relative segments would cross the root
+	 *   namespace
+	 * @public
+	 * @name sap.ui.require.toUrl
+	 * @function
+	 * @ui5-global-only
+	 */
+
+	sap.ui.requireSync = requireSync;
 }(globalThis));

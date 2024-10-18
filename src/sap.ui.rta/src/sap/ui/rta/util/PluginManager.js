@@ -228,13 +228,13 @@ sap.ui.define([
 			this._destroyDefaultPlugins(this.getPlugins());
 		}
 
-		Object.keys(this.getPlugins()).forEach(function(sPluginName) {
+		Object.keys(this.getPlugins()).forEach((sPluginName) => {
 			if (this.getPlugin(sPluginName).attachElementModified) {
 				this.getPlugin(sPluginName).attachElementModified(fnHandleElementModified);
 			}
-		}.bind(this));
+		});
 
-		this.provideCommandStack("settings", oCommandStack);
+		this.provideCommandStack(oCommandStack);
 	};
 
 	/**
@@ -256,13 +256,14 @@ sap.ui.define([
 
 	/**
 	 * Provides command stack to plugins.
-	 * @param {string} sPluginName - Plugin name
 	 * @param {sap.ui.rta.command.Stack} oCommandStack - Command stack required in plugins
 	 */
-	PluginManager.prototype.provideCommandStack = function(sPluginName, oCommandStack) {
-		if (this.getPlugin(sPluginName)) {
-			this.getPlugin(sPluginName).setCommandStack(oCommandStack);
-		}
+	PluginManager.prototype.provideCommandStack = function(oCommandStack) {
+		Object.keys(this.getPlugins()).forEach((sPluginName) => {
+			if (this.getPlugin(sPluginName) && this.getPlugin(sPluginName).setCommandStack) {
+				this.getPlugin(sPluginName).setCommandStack(oCommandStack);
+			}
+		});
 	};
 
 	/**
