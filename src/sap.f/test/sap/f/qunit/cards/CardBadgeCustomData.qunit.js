@@ -1,8 +1,10 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/f/Card",
 	"sap/f/cards/Header",
+	"sap/ui/core/CustomData",
 	"sap/f/cards/CardBadgeCustomData",
 	"sap/m/BadgeCustomData",
 	"sap/f/library",
@@ -11,8 +13,10 @@ sap.ui.define([
 	"sap/ui/core/Element"
 ],
 function (
+	Lib,
 	Card,
 	CardHeader,
+	CustomData,
 	CardBadgeCustomData,
 	BadgeCustomData,
 	fLibrary,
@@ -38,7 +42,7 @@ function (
 	}
 
 	QUnit.module("Card Badge", {
-		beforeEach: function () {
+		beforeEach:  function () {
 			this.oCard = new Card({
 				header: new CardHeader({ title: "Title" }),
 				content: new Text({ text: "Text" })
@@ -198,5 +202,252 @@ function (
 		// Assert
 		assert.notOk(oInvText.getText().indexOf(SAnnText) > 0, "Accessibility text is updated correctly.");
 
+	});
+
+	QUnit.module("Adding, removing and updating badges wtih custom data", {
+		beforeEach:  function () {
+			this.oCard = new Card({
+				header: new CardHeader({ title: "Title" }),
+				content: new Text({ text: "Text" })
+			});
+		},
+		afterEach: afterEach
+	});
+
+	QUnit.test("Inserting custom data", async function (assert) {
+		// Arrange
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+
+		const sValue1 = "One",
+			sValue2 = "Two",
+			sValue3 = "Three";
+
+		const customData = new CardBadgeCustomData({value: sValue1}),
+			customData2 = new CardBadgeCustomData({value: sValue2}),
+			customData3 = new CardBadgeCustomData({value: sValue3});
+
+		this.oCard.addCustomData(customData);
+		this.oCard.insertCustomData(customData3, 0);
+		this.oCard.insertCustomData(customData2, 1);
+		await nextUIUpdate(this.clock);
+
+		const aCardBadges = this.oCard.getAggregation("_cardBadges");
+		const index = this.oCard.indexOfCustomData(customData);
+
+		// Assert
+		assert.strictEqual(aCardBadges[0].getText(), sValue3, "Badge3 is correctly inserted at position 0");
+		assert.strictEqual(aCardBadges[1].getText(), sValue2, "Badge2 is correctly inserted at position 1");
+		assert.strictEqual(index, 2, "Badge1 is correctly inserted at the end");
+	});
+
+	QUnit.test("Updating badges invisible text when badge is added after rendering", async function (assert) {
+		// Arrange
+		const customData = new CardBadgeCustomData({value: "first"});
+		customData.setAnnouncementText("first");
+		this.oCard.addCustomData(customData);
+
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+
+		const customData1 = new CardBadgeCustomData({value: "second"});
+		customData1.setAnnouncementText("second");
+
+		this.oCard.addCustomData(customData1);
+		await nextUIUpdate(this.clock);
+
+		const $card = this.oCard.$(),
+			sAriaId = $card.attr("aria-describedby"),
+			text = document.getElementById(sAriaId).textContent,
+			expectedText = " " + customData.getAnnouncementText() + " " + customData1.getAnnouncementText();
+
+		// Assert
+		assert.equal(text, expectedText, "Accessibility text is updated correctly.");
+	});
+
+	QUnit.test("Adding custom data one after another", async function (assert) {
+		// Arrange
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+
+		const customData = new CardBadgeCustomData({value: "Old"});
+		this.oCard.addCustomData(customData);
+		await nextUIUpdate(this.clock);
+
+		const $cardBadges = this.oCard.$().find(".sapMObjStatus");
+		// Assert
+		assert.ok($cardBadges.length === 1, "First badge is rendered");
+
+		// Arrange
+		const customData2 = new CardBadgeCustomData({value: "New"});
+		this.oCard.addCustomData(customData2);
+		await nextUIUpdate(this.clock);
+
+		const $cardBadges1 = this.oCard.$().find(".sapMObjStatus");
+		// Assert
+		assert.ok($cardBadges1.length === 2, "Second badge is rendered");
+	});
+
+	QUnit.test("Removing custom data", async function (assert) {
+		// Arrange
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+
+		const customData = new CardBadgeCustomData({value: "Test"});
+		this.oCard.addCustomData(customData);
+		await nextUIUpdate(this.clock);
+
+		const $cardBadges = this.oCard.$().find(".sapMObjStatus");
+		// Assert
+		assert.ok($cardBadges.length === 1, "Badge is rendered");
+
+		// Arrange
+		this.oCard.removeCustomData(customData);
+		await nextUIUpdate(this.clock);
+
+		const $cardBadges1 = this.oCard.$().find(".sapMObjStatus");
+		// Assert
+		assert.ok($cardBadges1.length === 0, "Badge is removed");
+	});
+
+	QUnit.test("Destroying custom data", async function (assert) {
+		// Arrange
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+
+		const customData = new CardBadgeCustomData({value: "Test"});
+		this.oCard.addCustomData(customData);
+		await nextUIUpdate(this.clock);
+
+		const $cardBadges = this.oCard.$().find(".sapMObjStatus");
+		// Assert
+		assert.ok($cardBadges.length === 1, "Badge is rendered");
+
+		// Arrange
+		this.oCard.destroyCustomData(customData);
+		await nextUIUpdate(this.clock);
+
+		const $cardBadges1 = this.oCard.$().find(".sapMObjStatus");
+		// Assert
+		assert.ok($cardBadges1.length === 0, "Badge is destroyed");
+	});
+
+	QUnit.test("Updating badge property before card is rendered", async function (assert) {
+		// Arrange
+		const customData = new CardBadgeCustomData({value: "Test"});
+		this.oCard.addCustomData(customData);
+
+		customData.setValue("Updated");
+
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+
+		const $cardBadges = this.oCard.$().find(".sapMObjStatus");
+		const sCardBadgeText = this.oCard.$().find(".sapMObjStatusText").text();
+
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.ok($cardBadges.length === 1, "Badge is rendered");
+		assert.strictEqual(sCardBadgeText, "Updated", "Badge has correct value");
+	});
+
+	QUnit.test("Add custom data which is not CardBadgeCustomData", async function (assert) {
+		// Arrange
+		const oCustomData1 = new CustomData({value: "Not a badge 1"});
+		this.oCard.addCustomData(oCustomData1);
+
+		const oBadge1 = new CardBadgeCustomData({value: "Badge 1"}),
+			oBadge2 = new CardBadgeCustomData({value: "Badge 2"});
+
+		this.oCard.addCustomData(oBadge2);
+		await nextUIUpdate(this.clock);
+
+		const oCustomData2 = new CustomData({value: "Not a badge 2"});
+		this.oCard.addCustomData(oCustomData2);
+
+		this.oCard.insertCustomData(oBadge1, 0);
+
+		// Assert
+		const aCustomData = this.oCard.getCustomData();
+		assert.strictEqual(aCustomData.length, 4, "There are 4 custom data.");
+
+		assert.strictEqual(aCustomData[0].getValue(), "Badge 1", "Custom data at position 0 is correct.");
+		assert.strictEqual(aCustomData[1].getValue(), "Not a badge 1", "Custom data at position 1 is correct.");
+		assert.strictEqual(aCustomData[2].getValue(), "Badge 2", "Custom data at position 2 is correct.");
+		assert.strictEqual(aCustomData[3].getValue(), "Not a badge 2", "Custom data at position 3 is correct.");
+
+		const aCardBadges = this.oCard.getAggregation("_cardBadges");
+		assert.strictEqual(aCardBadges.length, 2, "There are 2 badges.");
+
+		assert.strictEqual(aCardBadges[0].getText(), "Badge 1", "Badge at position 0 is correct.");
+		assert.strictEqual(aCardBadges[1].getText(), "Badge 2", "Badge data at position 1 is correct.");
+	});
+
+	QUnit.module("Destroying the card");
+
+	QUnit.test("Destroying the card destroyes badge related objects", async function (assert) {
+		// Arrange
+		const oCard = new Card({
+			header: new CardHeader({ title: "Title" }),
+			content: new Text({ text: "Text" })
+		});
+
+		oCard.addCustomData(new CardBadgeCustomData({value: "Test"}));
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+
+		const oObserver = oCard._customDataObserver;
+		const aCardBadges = oCard.getAggregation("_cardBadges");
+		const oInvisibleText = oCard.getAggregation("_oInvisibleCardBadgeText");
+
+		// Act
+		oCard.destroy();
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(oObserver.isObserved(oCard), "Obeserver is destroyed.");
+		assert.notOk(oCard._customDataObserver, "Obeserver is not there.");
+
+		assert.ok(aCardBadges[0].isDestroyed(), "Card badge is destroyed.");
+		assert.notOk(oCard.getAggregation("_cardBadges"), "Card badges aggregation is cleared.");
+
+		assert.ok(oInvisibleText.isDestroyed(), "Card badges invisible text is destroyed.");
+		assert.notOk(oCard.getAggregation("_oInvisibleCardBadgeText"), "Card badges invisible text aggregation is cleared.");
+	});
+
+	QUnit.test("Destroying the card and creating it again with same id", async function (assert) {
+		// Arrange
+		const oRb = Lib.getResourceBundleFor("sap.f");
+		const oCard = new Card("myCard", {
+			header: new CardHeader({ title: "Title" }),
+			content: new Text({ text: "Text" })
+		});
+
+		oCard.addCustomData(new CardBadgeCustomData({value: "Test"}));
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+
+		// Act - destroy
+		oCard.destroy();
+		await nextUIUpdate(this.clock);
+
+		// Act - create second card
+		const oCard2 = new Card("myCard", {
+			header: new CardHeader({ title: "Title" }),
+			content: new Text({ text: "Text" })
+		});
+
+		oCard2.addCustomData(new CardBadgeCustomData({value: "Test"}));
+		oCard2.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+
+		const $card = oCard2.$(),
+			sAriaId = $card.attr("aria-describedby"),
+			text = document.getElementById(sAriaId).textContent,
+			expectedText = " " + oRb.getText("CARD_BADGE", ["Test"]);
+
+		// Assert
+		assert.equal(text, expectedText, "Accessibility text is updated correctly.");
 	});
 });
