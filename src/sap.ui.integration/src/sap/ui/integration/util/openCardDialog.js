@@ -19,15 +19,18 @@ sap.ui.define([
 
 	const CardDataMode = library.CardDataMode;
 
-	function _addDimensionsDelegate(oDialog, oParentCard) {
+	function _addDimensionsDelegate(oDialog, oParentCard, bSetMinSize) {
 		const oChildCard = oDialog.getContent()[0];
 		let bSetMaxDimensions = true;
 
 		oChildCard.addEventDelegate({
 			onAfterRendering: () => {
 				const oChildCardDomRef = oChildCard.getDomRef();
-				oChildCardDomRef.style.minHeight = oParentCard.getDomRef().offsetHeight + "px";
-				oChildCardDomRef.style.minWidth = oParentCard.getDomRef().offsetWidth + "px";
+
+				if (bSetMinSize) {
+					oChildCardDomRef.style.minHeight = oParentCard.getDomRef().offsetHeight + "px";
+					oChildCardDomRef.style.minWidth = oParentCard.getDomRef().offsetWidth + "px";
+				}
 
 				if (bSetMaxDimensions) {
 					oChildCardDomRef.style.maxHeight = oDialog._getAreaDimensions().height * 70 / 100 + "px";
@@ -105,7 +108,7 @@ sap.ui.define([
 		oDialog.addEventDelegate(oDelegate);
 	}
 
-	function _openDialog(oChildCard, oParentCard, oParameters) {
+	function _openDialog(oChildCard, oParentCard, oParameters, bSetMinSize) {
 		oChildCard.setDisplayVariant("Large"); // always use large variant for dialog, scrolling content is possible
 		oParentCard.setBusy(true).setBusyIndicatorDelay(750);
 
@@ -141,7 +144,7 @@ sap.ui.define([
 		});
 
 		if (!Device.system.phone) {
-			_addDimensionsDelegate(oDialog, oParentCard);
+			_addDimensionsDelegate(oDialog, oParentCard, bSetMinSize);
 			_addAnimationDelegate(oDialog, oParentCard);
 			_addResizeDelegate(oDialog, oChildCard);
 		}
@@ -167,7 +170,7 @@ sap.ui.define([
 		}
 	}
 
-	function openCardDialog(oParentCard, oParameters) {
+	function openCardDialog(oParentCard, oParameters, bSetMinSize = false) {
 		let oChildCard;
 
 		if (oParameters._cardId) {
@@ -179,7 +182,7 @@ sap.ui.define([
 			});
 		}
 
-		return _openDialog(oChildCard, oParentCard, oParameters);
+		return _openDialog(oChildCard, oParentCard, oParameters, bSetMinSize);
 	}
 
 	return openCardDialog;

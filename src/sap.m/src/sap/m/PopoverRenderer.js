@@ -29,7 +29,9 @@ sap.ui.define([
 	 */
 	PopoverRenderer.render = function(oRm, oControl) {
 		oRm.openStart("div", oControl);
-		var aClassNames = this.generateRootClasses(oControl);
+		var aClassNames = this.generateRootClasses(oControl),
+			sContentWidth = oControl.getContentWidth();
+
 		aClassNames.forEach(function(sClassName) {
 			oRm.class(sClassName);
 		});
@@ -45,6 +47,10 @@ sap.ui.define([
 		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
 			oRm.attr("title", sTooltip);
+		}
+
+		if (oControl.isResized() && sContentWidth) {
+			oRm.style("width", sContentWidth);
 		}
 
 		oRm.attr("tabindex", "-1")

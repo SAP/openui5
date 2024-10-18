@@ -57,7 +57,7 @@ sap.ui.define([],
 			var done = assert.async(),
 				oFrame = this.iframe,
 				oSettings = {
-					"sap-ui-theme": "sap_belize",
+					"sap-ui-theme": "sap_horizon_hcb",
 					"sap-ui-rtl": true,
 					"sap-ui-density": "sapUiSizeCondensed"
 				};

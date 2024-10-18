@@ -638,7 +638,7 @@ sap.ui.define([
 		}
 
 		if (this.getPluginManager && this.getPluginManager()) {
-			this.getPluginManager().provideCommandStack("settings", oCommandStack);
+			this.getPluginManager().provideCommandStack(oCommandStack);
 		}
 
 		return oResult;

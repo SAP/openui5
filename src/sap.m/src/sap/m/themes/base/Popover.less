@@ -310,22 +310,71 @@ html[data-sap-ui-browser^="sf"] .sapMPopover {
 
 .sapMPopoverResizeHandle {
 	position: absolute;
-	top: -0.5rem;
-	right: -0.5rem;
 	width: 1.5rem;
 	height: 1.5rem;
 	border-radius: 50%;
-	cursor: ne-resize;
 	z-index: 10;
 
 	.sapMPopoverResizeHandleIcon {
 		position: absolute;
-		bottom: 0;
-		left: 0;
 		width: 1rem;
 		height: 1rem;
-		transform: rotate(270deg);
 		cursor: inherit;
+	}
+}
+
+.sapMPopoverResizeHandleTopRight {
+	.sapMPopoverResizeHandle {
+		top: -0.5rem;
+		right: -0.5rem;
+		cursor: ne-resize;
+
+		.sapMPopoverResizeHandleIcon {
+			bottom: 0;
+			left: 0;
+			transform: rotate(270deg);
+		}
+	}
+}
+
+.sapMPopoverResizeHandleTopLeft {
+	.sapMPopoverResizeHandle {
+		top: -0.5rem;
+		left: -0.5rem;
+		cursor: nw-resize;
+
+		.sapMPopoverResizeHandleIcon {
+			bottom: 0;
+			right: 0;
+			transform: rotate(180deg);
+		}
+	}
+}
+
+.sapMPopoverResizeHandleBottomLeft {
+	.sapMPopoverResizeHandle {
+		bottom: -0.5rem;
+		left: -0.5rem;
+		cursor: ne-resize;
+
+		.sapMPopoverResizeHandleIcon {
+			top: 0;
+			right: 0;
+			transform: rotate(90deg);
+		}
+	}
+}
+
+.sapMPopoverResizeHandleBottomRight {
+	.sapMPopoverResizeHandle {
+		bottom: -0.5rem;
+		right: -0.5rem;
+		cursor: nw-resize;
+
+		.sapMPopoverResizeHandleIcon {
+			top: 0;
+			left: 0;
+		}
 	}
 }
 

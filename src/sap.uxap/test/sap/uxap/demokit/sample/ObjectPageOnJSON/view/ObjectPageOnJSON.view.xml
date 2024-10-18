@@ -11,6 +11,7 @@
 		showTitleInHeaderContent="true"
 		showEditHeaderButton="true"
 		editHeaderButtonPress="handleEditBtnPress"
+		headerContentPinned="true"
 		upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>

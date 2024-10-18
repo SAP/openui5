@@ -117,6 +117,10 @@ sap.ui.define([
 				commandFactory: {
 					type: "object",
 					multiple: false
+				},
+				commandStack: {
+					type: "object",
+					multiple: false
 				}
 			},
 			events: {
@@ -167,7 +171,11 @@ sap.ui.define([
 		mDebounceFunctions[sOverlayId][sName]();
 	}
 
-	var _onElementModified = function(oEvent) {
+	var _onElementModified = async function(oEvent) {
+		// Wait for all commands to be executed before evaluating the results of the element modified event
+		if (this.getCommandStack()) {
+			await this.getCommandStack().getLastCommandExecuted();
+		}
 		// Initialize here because plugins may not extend the rta.Plugin and
 		// instead inherit the method via rta.Utils.extendWith
 		// Therefore the constructor/init might not be properly called

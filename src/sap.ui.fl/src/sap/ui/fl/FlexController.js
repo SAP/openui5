@@ -118,12 +118,12 @@ sap.ui.define([
 			sLayer
 		))
 		.then(function(oResult) {
-			if (oResult && bDraft) {
+			if (bDraft) {
 				var mPropertyBag = {
 					reference: this._sComponentName,
 					layer: Layer.CUSTOMER // only the customer layer has draft active
 				};
-				if (oResult.response && oResult.response.length > 0) {
+				if (oResult?.response && oResult.response.length > 0) {
 					var aDraftFilenames = [];
 					if (Array.isArray(oResult.response)) {
 						oResult.response.forEach(function(change) {

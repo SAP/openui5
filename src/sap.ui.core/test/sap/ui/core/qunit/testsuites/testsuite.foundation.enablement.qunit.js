@@ -55,6 +55,10 @@ sap.ui.define(function() {
 				title: "QUnit Page for uniqueSort"
 			},
 
+			"base/util/clamp": {
+				title: "QUnit Page for clamp"
+			},
+
 			"base/util/deepClone": {
 				title: "QUnit Page for deepClone"
 			},

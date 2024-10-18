@@ -87,6 +87,14 @@ sap.ui.define([
 				saved: {
 					type: "boolean",
 					defaultValue: false
+				},
+
+				/**
+				 * Promise is resolved when last command of the stack is executed
+				 */
+				lastCommandExecuted: {
+					type: "object",
+					defaultValue: Promise.resolve()
 				}
 			},
 			aggregations: {
@@ -167,7 +175,6 @@ sap.ui.define([
 	Stack.prototype.init = function() {
 		this._aCommandExecutionHandler = [];
 		this._toBeExecuted = -1;
-		this._oLastCommand = Promise.resolve();
 	};
 
 	Stack.prototype._waitForCommandExecutionHandler = function(mParam) {
@@ -233,49 +240,51 @@ sap.ui.define([
 	};
 
 	Stack.prototype.execute = function() {
-		this._oLastCommand = this._oLastCommand.catch(function() {
+		this.setLastCommandExecuted(
+			this.getLastCommandExecuted().catch(function() {
 			// continue also if previous command failed
-		}).then(function() {
-			var oCommand = this._getCommandToBeExecuted();
-			if (oCommand) {
-				var mParam = {
-					command: oCommand,
-					undo: false
-				};
-				return oCommand.execute()
+			}).then(function() {
+				var oCommand = this._getCommandToBeExecuted();
+				if (oCommand) {
+					var mParam = {
+						command: oCommand,
+						undo: false
+					};
+					return oCommand.execute()
 
-				.then(this._waitForCommandExecutionHandler.bind(this, mParam))
+					.then(this._waitForCommandExecutionHandler.bind(this, mParam))
 
-				.then(function() {
-					this._toBeExecuted--;
-					const aDiscardedChanges = oCommand.getDiscardedChanges?.();
-					if (aDiscardedChanges) {
-						handleDiscardedChanges.call(this, aDiscardedChanges, false);
-					}
-					this.fireCommandExecuted(mParam);
-					this.fireModified();
-				}.bind(this))
+					.then(function() {
+						this._toBeExecuted--;
+						const aDiscardedChanges = oCommand.getDiscardedChanges?.();
+						if (aDiscardedChanges) {
+							handleDiscardedChanges.call(this, aDiscardedChanges, false);
+						}
+						this.fireCommandExecuted(mParam);
+						this.fireModified();
+					}.bind(this))
 
-				.catch(function(oError) {
-					oError ||= new Error("Executing of the change failed.");
-					oError.index = this._toBeExecuted;
-					oError.command = this.removeCommand(this._toBeExecuted); // remove failing command
-					this._toBeExecuted--;
-					var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
-					// AddXMLAtExtensionPoint errors explain to the user what they did wrong, so they shouldn't open an incident
-					const sErrorMessage = oCommand.isA("sap.ui.rta.command.AddXMLAtExtensionPoint") ?
-						oError.message : oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", [oError.message]);
-					showMessageBox(
-						sErrorMessage,
-						{title: oRtaResourceBundle.getText("HEADER_ERROR")},
-						"error"
-					);
-					return Promise.reject(oError);
-				}.bind(this));
-			}
-			return undefined;
-		}.bind(this));
-		return this._oLastCommand;
+					.catch(function(oError) {
+						oError ||= new Error("Executing of the change failed.");
+						oError.index = this._toBeExecuted;
+						oError.command = this.removeCommand(this._toBeExecuted); // remove failing command
+						this._toBeExecuted--;
+						var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
+						// AddXMLAtExtensionPoint errors explain to the user what they did wrong, so they shouldn't open an incident
+						const sErrorMessage = oCommand.isA("sap.ui.rta.command.AddXMLAtExtensionPoint") ?
+							oError.message : oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", [oError.message]);
+						showMessageBox(
+							sErrorMessage,
+							{title: oRtaResourceBundle.getText("HEADER_ERROR")},
+							"error"
+						);
+						return Promise.reject(oError);
+					}.bind(this));
+				}
+				return undefined;
+			}.bind(this))
+		);
+		return this.getLastCommandExecuted();
 	};
 
 	Stack.prototype._unExecute = function() {

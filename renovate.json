@@ -12,5 +12,6 @@
         "@ui5/webcomponents-theming",
         "lit-html"
     ],
-    "commitMessagePrefix": "[INTERNAL] Infra:"
+    "commitMessagePrefix": "[INTERNAL] Infra:",
+    "reviewers": ["UI5 Foundation"]
 }

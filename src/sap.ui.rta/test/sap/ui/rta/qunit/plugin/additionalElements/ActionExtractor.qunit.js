@@ -1,32 +1,32 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/rta/plugin/additionalElements/ActionExtractor",
-	"sap/ui/rta/plugin/additionalElements/AdditionalElementsUtils",
-	"sap/ui/dt/ElementDesignTimeMetadata",
-	"sap/ui/dt/DesignTime",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
+	"sap/base/Log",
 	"sap/m/Bar",
 	"sap/m/Button",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/layout/VerticalLayout",
-	"sap/base/Log",
 	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/plugin/additionalElements/ActionExtractor",
+	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
+	"sap/ui/rta/plugin/additionalElements/AdditionalElementsUtils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	ActionExtractor,
-	AdditionalElementsUtils,
-	ElementDesignTimeMetadata,
-	DesignTime,
-	OverlayRegistry,
-	CommandFactory,
-	AdditionalElementsPlugin,
+	Log,
 	Bar,
 	Button,
+	DesignTime,
+	ElementDesignTimeMetadata,
+	OverlayRegistry,
 	VerticalLayout,
-	Log,
 	nextUIUpdate,
+	CommandFactory,
+	ActionExtractor,
+	AdditionalElementsPlugin,
+	AdditionalElementsUtils,
 	sinon
 ) {
 	"use strict";

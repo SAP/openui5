@@ -656,54 +656,31 @@ sap.ui.define([
 		oLink.destroy();
 	});
 
-	QUnit.test("Prevent default on touchstart event when using iOS Safari", async function(assert) {
+	QUnit.test("Prevent navigation on mobile devices", async function(assert) {
 		// Prepare
 		var oLink = new Link({ text: "text", href: "#" }),
 			oTouchStartEvent = new Event("touchstart", { bubbles: true, cancelable: true }),
+			oClickEvent = new Event("click", { bubbles: true, cancelable: true }),
+			oPressSpy = this.spy(oLink, "firePress"),
 			oPreventDefaultSpy = this.spy(oTouchStartEvent, "preventDefault"),
+			oPreventDefaultOnClickSpy = this.spy(oClickEvent, "preventDefault"),
 			oDeviceStub = this.stub(Device, "system").value({
 				desktop: false,
 				tablet: false,
 				phone: true
-			}),
-			oBrowserStub = this.stub(Device, "browser").value({ safari: true });
+			});
 
 		oLink.placeAt("qunit-fixture");
 		await nextUIUpdate();
 
 		// Act
 		oLink.getDomRef().dispatchEvent(oTouchStartEvent);
-
-		// Assert
-		assert.ok(oPreventDefaultSpy.calledOnce, "Default action is prevented");
-
-
-		// Clean
-		oPreventDefaultSpy.resetHistory();
-		oLink.destroy();
-		oDeviceStub.restore();
-		oBrowserStub.restore();
-	});
-
-	QUnit.test("Prevent navigation", async function(assert) {
-		// Prepare
-		var oLink = new Link({text: "text"}),
-			oClickEvent = new Event("click", {bubbles: true, cancelable: true}),
-			oPressSpy = this.spy(oLink, "firePress"),
-			oPreventDefaultSpy = this.spy(oClickEvent, "preventDefault");
-
-		var oDeviceStub = this.stub(Device, "system").value({ phone: true });
-
-		oLink.placeAt("qunit-fixture");
-		await nextUIUpdate();
-
-		// Act
 		oLink.getDomRef().dispatchEvent(oClickEvent);
 
 		// Assert
 		assert.ok(oPressSpy.calledOnce, "Press event still fired");
-		// The event is prevented twice due to the native event handling and siumlated event handling
-		assert.ok(oPreventDefaultSpy.calledTwice, "Default action is prevented");
+		assert.ok(oPreventDefaultSpy.calledOnce, "Default action is prevented after touch start event");
+		assert.ok(oPreventDefaultOnClickSpy.calledOnce, "Default action is prevented again after press is fired");
 
 		// Clean
 		oPreventDefaultSpy.resetHistory();
@@ -713,6 +690,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		// Act
+		oLink.getDomRef().dispatchEvent(oTouchStartEvent);
 		oLink.getDomRef().dispatchEvent(oClickEvent);
 
 		// Assert

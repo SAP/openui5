@@ -44,6 +44,10 @@ sap.ui.define([
 				commandFactory: {
 					type: "object",
 					multiple: false
+				},
+				commandStack: {
+					type: "object",
+					multiple: false
 				}
 			},
 			events: {
