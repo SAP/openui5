@@ -1,16 +1,19 @@
-/* ==================================== */
-/* CSS for control sap.m/MenuButton     */
-/* Horizon theme                        */
-/* ==================================== */
+/* ================================= */
+/* CSS for control sap.m/MenuButton  */
+/* Horizon theme                     */
+/* ================================= */
 
 /* Compact size */
 .sapUiSizeCompact {
+
 	.sapMMenuBtn {
+
 		.sapMBtnInner.sapMBtnText .sapMBtnIcon {
 			margin-left: 0;
 			margin-right: 0;
 		}
 	}
+
 	.sapMMenuBtn .sapMBtnIcon {
 		margin-left: 0.4375rem;
 		margin-right: 0.4375rem;
@@ -22,11 +25,11 @@
 }
 
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner:not(.sapMBtnText) {
-	padding-left: 0rem;
+	padding-left: 0;
 }
 
 .sapMMenuBtn .sapMBtn:not(.sapMSBArrow) .sapMBtnInner.sapMBtnIconFirst:not(.sapMBtnText) .sapMBtnIcon {
-	padding-right: 0rem;
+	padding-right: 0;
 }
 
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
@@ -34,17 +37,18 @@
 }
 
 .sapMMenuBtnRegular.sapMMenuBtn .sapMBtnDisabled {
-	opacity: @sapUiContentDisabledOpacity;
+	opacity: var(--sapContent_DisabledOpacity);
 }
 
 .sapMIBar .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnTransparent::after,
 .sapMIBar .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnDefault::after,
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnTransparent::after,
 .sapMMenuBtn.sapMMenuBtnRegular:hover .sapMBtnInner.sapMBtnDefault::after {
-	color: @sapUiButtonActiveTextColor;
+	color: var(--sapButton_Active_TextColor);
 }
 
 .sapMMenuBtnSplit .sapMSB:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnEmphasized.sapMBtnActive {
+
 	.sapMBtnContent {
 		position: relative;
 		left: 0;
@@ -52,10 +56,12 @@
 }
 
 .sapUiSizeCompact {
+
 	.sapMMenuBtnSplit .sapMSB:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnEmphasized.sapMBtnActive {
 		padding-right: 0.3125rem;
 		padding-left: 0.3125rem;
 	}
+
 	.sapMMenuBtn .sapMBtn:not(.sapMSBArrow) .sapMBtnInner .sapMBtnIcon,
 	.sapMMenuBtn .sapMBtn:not(.sapMSBArrow) .sapMBtnInner .sapMBtnContent {
 		position: relative;
@@ -65,24 +71,25 @@
 }
 
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnReject.sapMBtnActive::after {
-	color: @sapUiButtonRejectSelectedTextColor;
+	color: var(--sapButton_Reject_Selected_TextColor);
 }
 
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnAttention.sapMBtnActive::after {
-	color: @sapUiButtonAttentionTextColor;
+	color: var(--sapButton_Attention_TextColor);
 }
 
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnAccept.sapMBtnActive::after {
-	color: @sapUiButtonAcceptSelectedTextColor;
+	color: var(--sapButton_Accept_Selected_TextColor);
 }
+
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnNegative.sapMBtnActive::after {
-	color: @sapUiButtonNegativeActiveTextColor;
+	color: var(--sapButton_Negative_Active_TextColor);
 }
 
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnCritical.sapMBtnActive::after {
-	color: @sapUiButtonCriticalActiveTextColor;
+	color: var(--sapButton_Critical_Active_TextColor);
 }
 
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnSuccess.sapMBtnActive::after {
-	color: @sapUiButtonSuccessActiveTextColor;
+	color: var(--sapButton_Success_Active_TextColor);
 }

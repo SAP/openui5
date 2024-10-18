@@ -64,6 +64,15 @@ sap.ui.define([
 					type: "sap.m.ObjectStatus",
 					multiple: true,
 					visibility: "hidden"
+				},
+
+				/**
+				 * Holds the text used for announcing the card badges to the screen reader.
+				 */
+				_oInvisibleCardBadgeText: {
+					type: "sap.ui.core.InvisibleText",
+					multiple: false,
+					visibility: "hidden"
 				}
 			}
 		},
@@ -86,6 +95,7 @@ sap.ui.define([
 
 		this._ariaText = new InvisibleText({id: this.getId() + "-ariaText"});
 		this._ariaText.setText(this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD"));
+
 		this.initCardBadgeEnablement();
 	};
 
@@ -102,6 +112,8 @@ sap.ui.define([
 			this._ariaText.destroy();
 			this._ariaText = null;
 		}
+
+		this.destroyCardBadgeEnablement();
 	};
 
 	CardBase.prototype.setAggregation = function (sAggregationName, oObject) {

@@ -137,38 +137,34 @@ sap.ui.define([
 	 * @override
 	 */
 	BaseListContent.prototype.applyConfiguration = function () {
-		var oConfiguration = this.getParsedConfiguration();
+		const oConfiguration = this.getParsedConfiguration();
+		const oList = this.getInnerList();
 
-		if (!oConfiguration) {
+		if (!oConfiguration || !oList) {
 			return;
 		}
 
-		var oList = this.getInnerList(),
-			maxItems = BindingResolver.resolveValue(oConfiguration.maxItems, this);
-
-		if (!Number.isNaN(parseInt(maxItems))) {
-			maxItems = parseInt(maxItems);
-		}
+		this._fMinHeight = 0;
 
 		const oPaginator = this.getPaginator();
-
-		if (oList && (!oPaginator || !oPaginator.getActive())) {
-			let iDisplayCount = maxItems;
-
-			if (oPaginator) {
-				iDisplayCount = oPaginator.getPageSize();
-			}
-
-			if (iDisplayCount) {
-				oList.applySettings({
-					growing: true,
-					growingThreshold: iDisplayCount
-				});
-				oList.addStyleClass("sapFCardMaxItems");
-			}
+		if (oPaginator?.getActive()) {
+			return;
 		}
 
-		this._fMinHeight = 0;
+		let vMaxItems = BindingResolver.resolveValue(oConfiguration.maxItems, this);
+		vMaxItems = parseInt(vMaxItems);
+
+		if (oPaginator && (Number.isNaN(vMaxItems) || !vMaxItems)) {
+			vMaxItems = oPaginator.getPageSize();
+		}
+
+		if (vMaxItems) {
+			oList.applySettings({
+				growing: true,
+				growingThreshold: vMaxItems
+			});
+			oList.addStyleClass("sapFCardMaxItems");
+		}
 	};
 
 	/**

@@ -101,18 +101,12 @@ sap.ui.define([
 		 * @since 1.120
 		 */
 		getAnimationMode: () => {
-			let sAnimationMode = oWritableConfig.get({
+			return oWritableConfig.get({
 				name: "sapUiAnimationMode",
 				type: AnimationMode,
-				defaultValue: undefined,
+				defaultValue: undefined ?? AnimationMode.full,
 				external: true
 			});
-
-			if (sAnimationMode === undefined) {
-				sAnimationMode = AnimationMode.minimal;
-			}
-			BaseConfig._.checkEnum(AnimationMode, sAnimationMode, "animationMode");
-			return sAnimationMode;
 		},
 
 		/**

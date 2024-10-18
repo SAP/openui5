@@ -9,8 +9,11 @@
 		<l:content>
 			<Button
 				text="Show Popover"
-				press="handlePopoverPress"
+				press=".handlePopoverPress"
 				ariaHasPopup="Dialog" />
+			<Button press=".handleResizablePopoverPress"
+					text="Show Resizable Popover"
+					ariaHasPopup="Dialog" />
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>
