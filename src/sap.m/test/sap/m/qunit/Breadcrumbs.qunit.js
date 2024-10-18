@@ -817,6 +817,24 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 		oBreadcrumbs.destroy();
 	});
 
+	QUnit.test("disabled links are not included in ItemNavigation object", function (assert) {
+		// Prepare
+		var oLink1 = new Link({text: "Sales Organization"}),
+			oLink2 = new Link({text: "Order Type", enabled: false}),
+			oBreadcrumbs = new Breadcrumbs({
+			links: [oLink1, oLink2]
+		});
+
+		// Act
+		helpers.renderObject(oBreadcrumbs);
+
+		// Assert
+		assert.strictEqual(oBreadcrumbs._getItemNavigation().getItemDomRefs().length, 1, "there should be only one link in item navigation's items.");
+
+		// Cleanup
+		oBreadcrumbs.destroy();
+	});
+
 	QUnit.module("OverflowToolbar configuration");
 
 	QUnit.test("OverflowToolbar configuration is set correctly", function (assert) {

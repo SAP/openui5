@@ -2244,6 +2244,34 @@
             }
           ]
         },
+        "use12HourFormat": {
+          "description": "Displays the time for calendar appointments in either 12h or 24h formats. By default, time is displayed in 24h format.",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "calendarWeekNumbering": {
+          "description": "Set the first day of week based on one of the available options Default, ISO_8601, MiddleEastern, or WesternTraditional.",
+          "oneOf": [
+            {
+              "enum": [
+                "Default",
+                "ISO_8601",
+                "MiddleEastern",
+                "WesternTraditional"
+              ],
+              "default": "Default"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
         "moreItems": {
           "description": "Defines actions that can be applied on the button showing there are more items than the shown",
           "type": "object",

@@ -957,7 +957,7 @@ sap.ui.define([
 					if (aFilterNames.length > 1) {
 						sText = MDCRb.getText("chart.MULTIPLE_FILTERS_ACTIVE", [aFilterNames.length, oListFormat.format(aFilterNames)]);
 					} else {
-						sText = MDCRb.getText("chart.ONE_FILTER_ACTIVE", aFilterNames[0]);
+						sText = MDCRb.getText("chart.ONE_FILTER_ACTIVE", [aFilterNames[0]]);
 					}
 				}
 

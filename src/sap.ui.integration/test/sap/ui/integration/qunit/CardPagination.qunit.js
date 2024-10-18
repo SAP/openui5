@@ -95,7 +95,6 @@ sap.ui.define([
 						}
 					]
 				},
-				"maxItems": 0,
 				"item": {
 					"title": "{Name}"
 				}
@@ -433,8 +432,7 @@ sap.ui.define([
 				"content": {
 					"item": {
 						"title": "{ShipName}"
-					},
-					"maxItems": 5
+					}
 				},
 				"footer": {
 					"paginator": {
@@ -466,6 +464,45 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oList.getItems()[0].getTitle(), "Name 0ShipperID eq 2", "First page should be shown in the list");
+	});
+
+	QUnit.test("Pagination - client side with maxItems set", async function (assert) {
+		const iMaxItems = 2;
+		const oManifest = deepExtend({}, oManifestClientSideWithStaticData);
+		deepExtend(oManifest, {
+			"sap.card": {
+				"content": {
+					"maxItems": iMaxItems
+				}
+			}
+		});
+
+		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		const oPaginator = this.oCard._oPaginator,
+			oList = this.oCard.getCardContent().getInnerList(),
+			oPaginatorModel = this.oCard.getModel("paginator");
+
+		assert.ok(oPaginator, "paginator is created");
+		assert.strictEqual(oList.getItems().length, iMaxItems, "list items number is correct");
+
+		// Act
+		const oPaginatedCard = await openPaginationCard(this.oCard);
+		await nextUIUpdate();
+		const oPaginatedCardPaginator = oPaginatedCard._oPaginator;
+		const oPaginatedCardList = oPaginatedCard.getCardContent().getInnerList();
+
+		assert.ok(oPaginatedCardPaginator, "paginator is created");
+		assert.strictEqual(oPaginatedCardPaginator._iPageNumber, 0, "page number is correct");
+		assert.strictEqual(oPaginatedCardPaginator.getPageSize(), 4, "page size is correct");
+		assert.strictEqual(oPaginatedCardPaginator._iPageCount, 4, "page count is correct");
+		assert.strictEqual(oPaginatedCardList.getItems().length, 13, "all list items should be created");
+		assert.strictEqual(oPaginatorModel.getProperty("/skip"), 0, "initial value of '/skip' should be correct");
+		assert.strictEqual(oPaginatorModel.getProperty("/pageIndex"), 0, "initial value of '/pageIndex' should be correct");
+		assert.strictEqual(oPaginatorModel.getProperty("/size"), 4, "initial value of '/size' should be correct");
 	});
 
 	QUnit.module("Server-Side Pagination", {
@@ -820,6 +857,44 @@ sap.ui.define([
 			assert.ok(oLoadMoreSpy.callCount >= 1, "At least 1 more page should be loaded before _ready event of the card is fired");
 			done();
 		});
+	});
+
+	QUnit.test("Pagination - server side with maxItems", async function (assert) {
+		const iMaxItems = 2;
+		const oManifest = deepExtend({}, oManifestServerSide);
+		deepExtend(oManifest, {
+			"sap.card": {
+				"content": {
+					"maxItems": iMaxItems
+				}
+			}
+		});
+
+		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		const oPaginator = this.oCard._oPaginator,
+			oList = this.oCard.getCardContent().getInnerList(),
+			oPaginatorModel = this.oCard.getModel("paginator");
+
+		assert.ok(oPaginator, "paginator is created");
+		assert.strictEqual(oList.getItems().length, iMaxItems, "list items number is correct");
+
+		// Act
+		const oPaginatedCard = await openPaginationCard(this.oCard);
+		await nextUIUpdate();
+		const oPaginatedCardPaginator = oPaginatedCard._oPaginator;
+		const oPaginatedCardList = oPaginatedCard.getCardContent().getInnerList();
+
+		assert.ok(oPaginatedCardPaginator, "paginator is created");
+		assert.strictEqual(oPaginatedCardPaginator.getPageSize(), 5, "page size is correct");
+		assert.strictEqual(oPaginatedCardPaginator._iPageCount, 16, "page count is correct");
+		assert.ok(oPaginatedCardList.getItems().length > oPaginator.getPageSize(), "More list items should be displayed in the pagination card");
+		assert.strictEqual(oPaginatorModel.getProperty("/skip"), 0, "initial value of '/skip' should be correct");
+		assert.strictEqual(oPaginatorModel.getProperty("/pageIndex"), 0, "initial value of '/pageIndex' should be correct");
+		assert.strictEqual(oPaginatorModel.getProperty("/size"), 5, "initial value of '/size' should be correct");
 	});
 
 	QUnit.module("Busy indicator", {

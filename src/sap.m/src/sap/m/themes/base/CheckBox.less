@@ -15,29 +15,34 @@
 	padding: 0 0 0 3rem;
 
 	&:not(.sapMCbBgDis):not(.sapMCbDisplayOnly) {
+
 		&:hover,
 		.sapMCbLabel:hover {
 			cursor: pointer;
 		}
-		&.sapMCbHasLabel:focus:before {
+
+		&.sapMCbHasLabel:focus::before {
 			pointer-events: none;
 		}
 	}
 
 	&.sapMCbDisplayOnly {
+
 		&.sapMCbErr,
 		&.sapMCbInfo,
 		&.sapMCbWarn,
 		&.sapMCbSucc {
+
 			.sapMCbBg {
 				border: none;
-				&.sapMCbMarkChecked:before {
-					color: @sapUiBaseText;
-				}
-				&.sapMCbMarkPartiallyChecked{
-					border: solid 0.0625rem #89919a
+
+				&.sapMCbMarkChecked::before {
+					color: var(--sapTextColor);
 				}
 
+				&.sapMCbMarkPartiallyChecked {
+					border: solid 0.0625rem var(--sapField_BorderColor); /* was stated in #89919a */
+				}
 			}
 		}
 	}
@@ -55,6 +60,7 @@
 		top: 0;
 		margin: 0;
 	}
+
 	&.sapMCbWrapped.sapMCbHasLabel > .sapMLabel.sapMLabelWrapped {
 		margin: 0;
 		line-height: 1.125rem;
@@ -63,6 +69,7 @@
 
 .sapMCb.sapMCbWrapped.sapMCbHasLabel {
 	height: auto;
+
 	> .sapMLabel.sapMLabelWrapped {
 		margin: 0.875rem 0;
 		line-height: 1.4rem;
@@ -94,7 +101,7 @@ html[dir="rtl"] .sapMCb {
 	}
 }
 
-.sapMCb>label {
+.sapMCb > label {
 	vertical-align: top;
 	overflow: hidden;
 	text-overflow:ellipsis;
@@ -103,8 +110,8 @@ html[dir="rtl"] .sapMCb {
 }
 
 .sapMCbBg { /* check box itself */
-	background-color: @sapUiFieldBackground;
-	border: solid 0.125rem @sapUiFieldBorderColor;
+	background-color: var(--sapField_Background);
+	border: solid 0.125rem var(--sapField_BorderColor);
 	display: inline-block;
 	position: absolute;
 	left: 0.8125rem;
@@ -116,8 +123,8 @@ html[dir="rtl"] .sapMCb {
 	text-align: center;
 	font-size: 1rem;
 
-	// note: some browsers like Samsung Galaxy S4 with Android 4.2 does not support the "border-radius" shorthand property
-	// but does support the long-hand properties for each corner like "border-top-left-radius"
+	/* note: some browsers like Samsung Galaxy S4 with Android 4.2 does not support the "border-radius" shorthand property
+	but does support the long-hand properties for each corner like "border-top-left-radius" */
 	border-top-left-radius: 0.125rem;
 	border-top-right-radius: 0.125rem;
 	border-bottom-right-radius: 0.125rem;
@@ -126,18 +133,18 @@ html[dir="rtl"] .sapMCb {
 }
 
 .sapMCbBg > .sapMCbMark,
-.sapMCbBg.sapMCbMark > input{
+.sapMCbBg.sapMCbMark > input {
 	font-size: inherit;
 }
 
-.sapMCbBg.sapMCbMarkChecked:before {
-	content: "\e05b";
-	font-family: "SAP-icons";
+.sapMCbBg.sapMCbMarkChecked::before {
+	content: '\e05b';
+	font-family: var(--sapContent_IconFontFamily);
 	display: inline-block;
 }
 
-.sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked:before{
-	content: "";
+.sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before {
+	content: '';
 	width: 100%;
 	height: 100%;
 	background-color: currentColor;
@@ -146,7 +153,7 @@ html[dir="rtl"] .sapMCb {
 	background-clip: padding-box;
 }
 
-.sapUiSizeCompact .sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked:before {
+.sapUiSizeCompact .sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before {
 	border-width: 0.125rem;
 }
 
@@ -164,24 +171,24 @@ html[data-sap-ui-browser^=ff] .sapMCbBg > input {
 
 /* Read only */
 .sapMCbRo .sapMCbBg {
-	background-color: @sapUiFieldReadOnlyBackground;
-	border-color: @sapUiFieldReadOnlyBorderColor;
+	background-color: var(--sapField_ReadOnly_Background);
+	border-color: var(--sapField_ReadOnly_BorderColor);
 }
 
-.sapMCbRo > .sapMCbBg.sapMCbMarkChecked:before {
-	color: @sapUiContentNonInteractiveIconColor;
+.sapMCbRo > .sapMCbBg.sapMCbMarkChecked::before {
+	color: var(--sapContent_NonInteractiveIconColor);
 }
 
 /* Display only */
 .sapMCbDisplayOnly {
-	font-family: "SAP-icons";
+	font-family: var(--sapContent_IconFontFamily);
 
-	.sapMCbBg.sapMCbMark.sapMCbMarkChecked.sapMCbMarkPartiallyChecked{
+	.sapMCbBg.sapMCbMark.sapMCbMarkChecked.sapMCbMarkPartiallyChecked {
 		border-radius: 0.0625rem;
-		border: 1px solid @sapUiBaseText ;
+		border: 1px solid var(--sapTextColor);
 
-		&:before {
-			background-color: @sapUiBaseText;
+		&::before {
+			background-color: var(--sapTextColor);
 		}
 	}
 
@@ -190,14 +197,14 @@ html[data-sap-ui-browser^=ff] .sapMCbBg > input {
 		border: none;
 		margin: 0.125rem;
 
-		&:before {
-			content: "\e19a";
+		&::before {
+			content: '\e19a';
 			font-size: 1rem;
 		}
 
-		&.sapMCbMarkChecked:before {
-			color: @sapUiBaseText;
-			content: "\e03f";
+		&.sapMCbMarkChecked::before {
+			color: var(--sapTextColor);
+			content: '\e03f';
 		}
 	}
 }
@@ -213,6 +220,7 @@ html[data-sap-ui-browser^=ff] .sapMCbBg > input {
 
 	.sapMCb.sapMCbWrapped.sapMCbHasLabel {
 		height: auto;
+
 		> .sapMLabel.sapMLabelWrapped {
 			margin: 0.3rem 0;
 		}

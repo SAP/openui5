@@ -60,7 +60,8 @@
 				"title": "{ProductName}",
 				"description": "{UnitsInStock} units in stock",
 				"highlight": "{= ${Discontinued} ? 'Error' : 'Success'}"
-			}
+			},
+			"maxItems": 3
 		},
 		"footer": {
 			"paginator": {
