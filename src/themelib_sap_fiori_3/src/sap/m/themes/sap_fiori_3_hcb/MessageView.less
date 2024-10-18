@@ -2,12 +2,15 @@
 /* CSS for control sap.m/MessageView  */
 /* Quartz High Contrast Black theme   */
 /* ================================== */
+
 @_sap_m_MessageView_DescIcon_Width: 1rem;
 
 .sapMMsgView {
+
 	.sapMMsgViewDetailsPage section {
 		padding: 1rem;
 	}
+
 	.sapMMsgViewItem {
 		padding-left: 0;
 
@@ -27,19 +30,19 @@
 	}
 
 	.sapMSLITitle {
-		color: @sapUiGroupTitleTextColor;
+		color: var(--sapGroup_TitleTextColor);
 	}
 
 	.sapMSLIDescription {
-		color: @sapUiContentLabelColor;
+		color: var(--sapContent_LabelColor);
 	}
 
 	.sapMMsgViewDescriptionText {
 		padding-bottom: 0;
 		margin: 0 0 1rem 2.5rem;
 		line-height: 1.4;
-		font-family: @sapUiFontFamily;
-		color: @sapUiBaseText;
+		font-family: var(--sapFontFamily);
+		color: var(--sapTextColor);
 	}
 
 	.sapMMsgViewTitleText {
@@ -48,10 +51,10 @@
 
 	.sapMMsgViewDescriptionLink {
 		margin: 0 0 1rem 2.5rem;
-		font-family: @sapUiFontFamily;
+		font-family: var(--sapFontFamily);
 		font-size: @sapMFontMediumSize;
 		font-weight: normal;
-		color: @sapUiLink;
+		color: var(--sapLinkColor);
 	}
 
 	.sapMSLIWithDescription > .sapMLIBContent > .sapMSLIDiv > .sapMSLIDescription {
@@ -65,7 +68,7 @@
 }
 
 .sapMMsgView .sapMIBar.sapMHeader-CTX {
-	background-color: @sapUiGroupContentBackground;
+	background-color: var(--sapGroup_ContentBackground);
 	padding-left: 1rem;
 }
 
@@ -85,6 +88,7 @@
 
 /* Compact size */
 .sapUiSizeCompact .sapMMsgView {
+
 	.sapMMsgViewDescIcon {
 		line-height: 1rem;
 	}
