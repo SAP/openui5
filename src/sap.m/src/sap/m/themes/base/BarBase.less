@@ -8,7 +8,7 @@
 }
 
 .sapMIBar .sapMBarChild {
-	margin-left:0.25rem;
+	margin-left: 0.25rem;
 }
 
 .sapMIBar > .sapMBarChild:last-child {
@@ -16,12 +16,12 @@
 }
 
 .sapMIBar-CTX.sapMFooter-CTX {
-	color: @sapUiPageFooterTextColor;
+	color: var(--sapPageFooter_TextColor);
 	/* 1px down black shadow with 50% opacity */
 	text-shadow: @sapUiShadowText;
-	background-color: @sapUiPageFooterBackground;
+	background-color: var(--sapPageFooter_Background);
 	background-image: none;
-	border-top: 1px solid @sapUiPageFooterBorderColor;
+	border-top: 1px solid var(--sapPageFooter_BorderColor);
 	box-shadow: none;
 }
 
@@ -30,13 +30,13 @@
 }
 
 .sapMIBar.sapMSubHeader-CTX {
-	color: @sapUiPageHeaderTextColor;
-	background-color: @sapUiPageHeaderBackground;
+	color: var(--sapPageHeader_TextColor);
+	background-color: var(--sapPageHeader_Background);
 }
 
 html.sap-desktop .sapMIBar.sapMFooter-CTX {
-	background-color: @sapUiPageFooterBackground;
-	border-top: 1px solid @sapUiPageFooterBorderColor;
+	background-color: var(--sapPageFooter_Background);
+	border-top: 1px solid var(--sapPageFooter_BorderColor);
 }
 
 .sapMIBar-CTX.sapMFooter-CTX.sapMTBClear,
@@ -46,18 +46,18 @@ html.sap-desktop .sapContrast.sapMIBar.sapMFooter-CTX.sapMTBClear {
 
 /* footer separator inside of a SplitContainer control */
 .sapMSplitContainerMaster .sapMFooter-CTX:not(.sapMIBar) {
-	border-right: 1px solid @sapUiPageFooterBorderColor;
+	border-right: 1px solid var(--sapPageFooter_BorderColor);
 }
 
 .sapMIBar.sapMHeader-CTX {
-	color: @sapUiPageHeaderTextColor;
-	background-color: @sapUiPageHeaderBackground;
+	color: var(--sapPageHeader_TextColor);
+	background-color: var(--sapPageHeader_Background);
 	filter: none;
 	background-image: none;
 }
 
 .sapMPopup-CTX .sapMIBar.sapMHeader-CTX { /* remove gradient in popups; restore grey header color when in popup on desktop */
-	background-color: @sapUiPageHeaderBackground;
+	background-color: var(--sapPageHeader_Background);
 	filter: none;
 	background-image: none;
 }
