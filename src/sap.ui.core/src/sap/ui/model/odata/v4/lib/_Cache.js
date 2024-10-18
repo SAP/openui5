@@ -1207,11 +1207,14 @@ sap.ui.define([
 	 *   The list's path relative to the cache; may be empty, but not <code>undefined</code>
 	 * @param {object} [mCustomQueryOptions]
 	 *   The custom query options, needed iff. a non-empty path is given
+	 * @param {object} [mAdditionalExpand]
+	 *   Additional query options to be added even for an empty path; should contain exactly one
+	 *   $expand
 	 * @returns {string} The download URL
 	 *
 	 * @public
 	 */
-	_Cache.prototype.getDownloadUrl = function (sPath, mCustomQueryOptions) {
+	_Cache.prototype.getDownloadUrl = function (sPath, mCustomQueryOptions, mAdditionalExpand) {
 		var mQueryOptions = this.mQueryOptions;
 
 		if (sPath) {
@@ -1220,11 +1223,15 @@ sap.ui.define([
 			// add the custom query options again
 			mQueryOptions = _Helper.merge({}, mCustomQueryOptions, mQueryOptions);
 		}
+
+		mQueryOptions = _Helper.merge({}, mQueryOptions, mAdditionalExpand);
+
 		return this.oRequestor.getServiceUrl()
 			+ _Helper.buildPath(this.sResourcePath, sPath)
 			+ this.oRequestor.buildQueryString(
 				_Helper.buildPath(this.sMetaPath, _Helper.getMetaPath(sPath)),
-				this.getDownloadQueryOptions(mQueryOptions), false, true);
+				this.getDownloadQueryOptions(mQueryOptions), false, /*bSortExpandSelect*/true,
+				/*bSortSystemQueryOptions*/!_Helper.isEmptyObject(mAdditionalExpand));
 	};
 
 	/**

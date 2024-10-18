@@ -48583,6 +48583,10 @@ make root = ${bMakeRoot}`;
 	// Add a sub-object page with a late property. Ensure that the property is still known and late
 	// after the rebind.
 	// JIRA: CPOUI5ODATAV4-936
+	//
+	// See that #getDownloadUrl handles backlinks correctly: backlink leads to a different cache,
+	// multiple properties of the same entity
+	// JIRA: CPOUI5ODATAV4-2733
 	QUnit.test("BCP: 2180125559", function (assert) {
 		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oObjectPage,
@@ -48595,6 +48599,7 @@ make root = ${bMakeRoot}`;
 			}">\
 		<Text id="price" text="{Price}"/>\
 		<Text id="channel" text="{_Artist/defaultChannel}"/>\
+		<Text id="tableName" text="{_Artist/Name}"/>\
 	</Table>\
 </FlexBox>\
 <FlexBox id="subObjectPage">\
@@ -48605,6 +48610,7 @@ make root = ${bMakeRoot}`;
 		this.expectChange("name")
 			.expectChange("price", [])
 			.expectChange("channel", [])
+			.expectChange("tableName", [])
 			.expectChange("currency");
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -48644,7 +48650,8 @@ make root = ${bMakeRoot}`;
 				})
 				.expectChange("name", "Hour Frustrated again")
 				.expectChange("price", ["9.99"])
-				.expectChange("channel", ["Channel 2"]);
+				.expectChange("channel", ["Channel 2"])
+				.expectChange("tableName", ["Hour Frustrated again"]);
 
 			oObjectPage.setBindingContext(
 				oModel.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)")
@@ -48652,12 +48659,34 @@ make root = ${bMakeRoot}`;
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+			const oBinding = that.oView.byId("table").getBinding("items");
 
+			assert.strictEqual(
+				// code under test
+				oBinding.getDownloadUrl(),
+				"/special/cases/Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+					+ "?$expand=_Artist($select=Name,defaultChannel)"
+					+ "&$select=Price,PublicationID",
+				"JIRA: CPOUI5ODATAV4-2733"
+			);
+
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication('42-0')"
+					+ "?$select=Price,PublicationID", {
+					Price : "9.99",
+					PublicationID : "42-0"
+				});
+
+			return Promise.all([
+				// code under test - verify that there is no $expand to _Artist now
+				oBinding.getCurrentContexts()[0].requestRefresh(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication('42-0')"
 					+ "?$select=CurrencyCode", {CurrencyCode : "EUR"})
 				.expectChange("currency", "EUR");
 
+			const oContext = that.oView.byId("table").getItems()[0].getBindingContext();
 			that.oView.byId("subObjectPage").setBindingContext(oContext);
 
 			return that.waitForChanges(assert);
@@ -48681,6 +48710,7 @@ make root = ${bMakeRoot}`;
 				.expectChange("name", "Hour Frustrated again and again")
 				.expectChange("price", ["10.99"])
 				.expectChange("channel", ["Channel 3"])
+				.expectChange("tableName", ["Hour Frustrated again and again"])
 				.expectChange("currency", "USD");
 
 			oObjectPage.setBindingContext(
@@ -57077,6 +57107,9 @@ make root = ${bMakeRoot}`;
 	// "SOITEM_2_SO/CurrencyCode" is not expanded, but taken from the parent sales order in the same
 	// cache and written back to it.
 	// JIRA: CPOUI5UISERVICESV3-1877
+	//
+	// See that #getDownloadUrl handles backlinks correctly: backlink remains in same cache
+	// JIRA: CPOUI5ODATAV4-2733
 	QUnit.test("Reduce path: property in same cache", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -57119,6 +57152,15 @@ make root = ${bMakeRoot}`;
 			oBinding.setValue("USD");
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(
+				// code under test
+				that.oView.byId("table").getBinding("items").getDownloadUrl(),
+					sSalesOrderService + "SalesOrderList('1')/SO_2_SOITEM"
+					+ "?$expand=SOITEM_2_SO($select=CurrencyCode)"
+					+ "&$select=ItemPosition,Note,SalesOrderID",
+				"JIRA: CPOUI5ODATAV4-2733"
+			);
 		});
 	});
 
@@ -57217,6 +57259,10 @@ make root = ${bMakeRoot}`;
 	//*********************************************************************************************
 	// Scenario: Reduce path by removing multiple pairs of partner attributes.
 	// JIRA: CPOUI5UISERVICESV3-1877
+	//
+	// See that #getDownloadUrl handles backlinks correctly: multiple backlinks remaining in same
+	// cache, adding to existing $expand
+	// JIRA: CPOUI5ODATAV4-2733
 	QUnit.test("Reduce path by removing multiple pairs of partner attributes", function (assert) {
 		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
@@ -57224,30 +57270,52 @@ make root = ${bMakeRoot}`;
 	<FlexBox binding="{AtoB}">\
 		<Table id="table" items="{BtoDs}">\
 			<Text id="aValue" text="{DtoB/BtoA/AValue}"/>\
+			<Text id="cValue" text="{DtoC/CValue}"/>\
 		</Table>\
 	</FlexBox>\
-</FlexBox>';
+</FlexBox>',
+			that = this;
 
 		this.expectRequest("As(1)?$select=AID,AValue"
-				+ "&$expand=AtoB($select=BID;$expand=BtoDs($select=DID))", {
+				+ "&$expand=AtoB($select=BID;$expand=BtoDs($select=DID;"
+					+ "$expand=DtoC($select=CID,CValue)))", {
 				AID : 1,
 				AValue : 42,
 				AtoB : {
 					BID : 2,
 					BtoDs : [{
-						DID : 3
+						DID : 3,
+						DtoC : {
+							CID : 4,
+							CValue : 24
+						}
 					}]
 				}
 			})
-			.expectChange("aValue", ["42"]);
+			.expectChange("aValue", ["42"])
+			.expectChange("cValue", ["24"]);
 
-		return this.createView(assert, sView, oModel);
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.strictEqual(
+				// code under test
+				that.oView.byId("table").getBinding("items").getDownloadUrl(),
+				"/special/cases/As(1)/AtoB/BtoDs?$expand="
+						+ "DtoB($expand=BtoA($select=AValue)),"
+						+ "DtoC($select=CID,CValue)"
+					+ "&$select=DID",
+				"JIRA: CPOUI5ODATAV4-2733"
+			);
+		});
 	});
 
 	//*********************************************************************************************
 	// Scenario: Reduce path by removing multiple pairs of partner attributes. See that AValue is
 	// taken from two caches above.
 	// JIRA: CPOUI5UISERVICESV3-1877
+	//
+	// See that #getDownloadUrl handles backlinks correctly: multiple backlinks stepping up multiple
+	// caches
+	// JIRA: CPOUI5ODATAV4-2733
 	QUnit.test("Reduce path and step up multiple caches", function (assert) {
 		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
@@ -57259,7 +57327,8 @@ make root = ${bMakeRoot}`;
 			<Text id="aValue" text="{DtoB/BtoA/AValue}"/>\
 		</Table>\
 	</FlexBox>\
-</FlexBox>';
+</FlexBox>',
+			that = this;
 
 		this.expectRequest("As(1)?$select=AID,AValue", {
 				AID : 1,
@@ -57277,12 +57346,24 @@ make root = ${bMakeRoot}`;
 			})
 			.expectChange("aValue", ["42", "42"]);
 
-		return this.createView(assert, sView, oModel);
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.strictEqual(
+				// code under test
+				that.oView.byId("table").getBinding("items").getDownloadUrl(),
+				"/special/cases/As(1)/AtoB/BtoDs?$expand=DtoB($expand=BtoA($select=AValue))"
+					+ "&$select=DID,DValue",
+				"JIRA: CPOUI5ODATAV4-2733"
+			);
+		});
 	});
 
 	//*********************************************************************************************
 	// Scenario: Reduced path must not be shorter than root binding's path.
 	// JIRA: CPOUI5UISERVICESV3-1877
+	//
+	// See that #getDownloadUrl handles backlinks correctly: backlink in same cache, partial
+	// reduction
+	// JIRA: CPOUI5ODATAV4-2733
 	QUnit.test("Reduced path must not be shorter than root binding's path", function (assert) {
 		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
@@ -57291,7 +57372,8 @@ make root = ${bMakeRoot}`;
 	<Table id="table" items="{BtoDs}">\
 		<Text id="table::aValue" text="{DtoB/BtoA/AValue}"/>\
 	</Table>\
-</FlexBox>';
+</FlexBox>',
+			that = this;
 
 		this.expectRequest("As(1)/AtoB?$select=BID"
 				+ "&$expand=BtoA($select=AID,AValue),BtoDs($select=DID)", {
@@ -57307,7 +57389,15 @@ make root = ${bMakeRoot}`;
 			.expectChange("aValue", "42")
 			.expectChange("table::aValue", ["42"]);
 
-		return this.createView(assert, sView, oModel);
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.strictEqual(
+				// code under test
+				that.oView.byId("table").getBinding("items").getDownloadUrl(),
+				"/special/cases/As(1)/AtoB/BtoDs?$expand=DtoB($expand=BtoA($select=AValue))"
+					+ "&$select=DID",
+				"JIRA: CPOUI5ODATAV4-2733"
+			);
+		});
 	});
 
 	//*********************************************************************************************

@@ -1865,8 +1865,19 @@ sap.ui.define([
 			return SyncPromise.resolve(null);
 		}
 
+		const sMetaPath = _Helper.getMetaPath(this.getResolvedPath());
+		// Note: All paths in mChildPathsReducedToParent start with the partner navigation property
+		// of the last segment in the binding's path because they are backlinks. When wrapped, this
+		// results in exactly one $expand.
+		const mAdditionalExpand = {};
+		for (const sChildPath in this.mChildPathsReducedToParent) {
+			const mQueryOptions = _Helper.wrapChildQueryOptions(sMetaPath, sChildPath, {},
+				this.oModel.oInterface.fetchMetadata, /*bDoNotSelectKeyProperties*/true);
+			_Helper.aggregateExpandSelect(mAdditionalExpand, mQueryOptions);
+		}
+
 		return this.withCache(function (oCache, sPath) {
-			return oCache.getDownloadUrl(sPath, mUriParameters);
+			return oCache.getDownloadUrl(sPath, mUriParameters, mAdditionalExpand);
 		});
 	};
 
@@ -4791,7 +4802,9 @@ sap.ui.define([
 					this.oHeaderContext ??= Context.create(this.oModel, this, sResolvedPath);
 					if (this.mParameters.$$aggregation) {
 						_AggregationHelper.setPath(this.mParameters.$$aggregation, sResolvedPath);
-					} else if (this.bHasPathReductionToParent && this.oModel.bAutoExpandSelect) {
+					} else if (!_Helper.isEmptyObject(this.mChildPathsReducedToParent)
+							&& this.oModel.bAutoExpandSelect) {
+						// restart auto-$expand/$select
 						this.mCanUseCachePromiseByChildPath = {};
 						this.sChangeReason = "AddVirtualContext"; // JIRA: CPOUI5ODATAV4-848
 					}

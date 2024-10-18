@@ -1441,13 +1441,6 @@ sap.ui.define([
 		// code under test
 		oPromise = oBinding.fetchData(1, 2, 3, oGroupLock, fnDataRequested);
 
-		oBinding.sChangeReason = "sChangeReason";
-		oBinding.bHasPathReductionToParent = true;
-		this.oModel.bAutoExpandSelect = true;
-		oBindingMock.expects("checkSuspended").never();
-
-		assert.strictEqual(oBinding.sChangeReason, "sChangeReason");
-
 		return oPromise.then(function (oResult) {
 			assert.strictEqual(oResult, oData);
 			if (oFixture.elements) {
@@ -2485,7 +2478,6 @@ sap.ui.define([
 		}
 		oBinding.mCanUseCachePromiseByChildPath = "~mCanUseCachePromiseByChildPath~";
 		oBinding.sChangeReason = "sChangeReason";
-		oBinding.bHasPathReductionToParent = oFixture.backLink;
 
 		// code under test - nothing must happen
 		oBinding.setContext(oBinding.oContext);
@@ -2509,6 +2501,10 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"/bar/Suppliers")
 			.returns(oNewHeaderContext);
+		this.mock(_Helper).expects("isEmptyObject")
+			.exactly(oFixture.newContext && !oFixture.aggregation ? 1 : 0)
+			.withExactArgs(sinon.match.same(oBinding.mChildPathsReducedToParent))
+			.returns(!oFixture.backLink);
 		this.mock(_AggregationHelper).expects("setPath").exactly(oFixture.aggregation ? 1 : 0)
 			.withExactArgs(sinon.match.same(oAggregation), "/bar/Suppliers");
 		oBindingSetContextCall = this.mock(Binding.prototype).expects("setContext").on(oBinding)
@@ -2519,6 +2515,7 @@ sap.ui.define([
 
 		sinon.assert.callOrder(oResetKeepAliveCall, oFetchCacheCall);
 		assert.strictEqual(oBinding.sChangeReason, sExpectedChangeReason);
+		// restart auto-$expand/$select iff. i === 0
 		assert.deepEqual(oBinding.mCanUseCachePromiseByChildPath,
 			i === 0 ? {} : "~mCanUseCachePromiseByChildPath~");
 		if (oFixture.newContext) {
@@ -9639,21 +9636,43 @@ sap.ui.define([
 	QUnit.test("fetchDownloadUrl", function (assert) {
 		var oBinding = this.bindList("n/a"),
 			oCache = {
-				getDownloadUrl : function () {}
+				getDownloadUrl : mustBeMocked
 			},
 			oExpectation,
 			oPromise = {};
 
+		oBinding.mChildPathsReducedToParent = {"~foo~" : true, "~bar~" : true};
+
 		this.mock(oBinding).expects("checkTransient").withExactArgs();
 		this.mock(oBinding).expects("isResolved").returns(true);
 		this.mock(oBinding).expects("hasFilterNone").returns(false);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath~");
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("getMetaPath").withExactArgs("~resolvedPath~").returns("~metaPath~");
+		oHelperMock.expects("wrapChildQueryOptions")
+			.withExactArgs("~metaPath~", "~foo~", {}, this.oModel.oInterface.fetchMetadata, true)
+			.returns("~fooQueryOptions~");
+		oHelperMock.expects("aggregateExpandSelect")
+			.withExactArgs({/*initially empty!*/}, "~fooQueryOptions~")
+			.callsFake((mAdditionalExpand) => {
+				mAdditionalExpand.foo = "~fooSelect~";
+			});
+		oHelperMock.expects("wrapChildQueryOptions")
+			.withExactArgs("~metaPath~", "~bar~", {}, this.oModel.oInterface.fetchMetadata, true)
+			.returns("~barQueryOptions~");
+		oHelperMock.expects("aggregateExpandSelect")
+			.withExactArgs({foo : "~fooSelect~"}, "~barQueryOptions~")
+			.callsFake((mAdditionalExpand) => {
+				mAdditionalExpand.bar = "~barSelect~";
+			});
 		oExpectation = this.mock(oBinding).expects("withCache").returns(oPromise);
 
 		// code under test
 		assert.strictEqual(oBinding.fetchDownloadUrl(), oPromise);
 
 		this.mock(oCache).expects("getDownloadUrl")
-			.withExactArgs("~path~", sinon.match.same(this.oModel.mUriParameters))
+			.withExactArgs("~path~", sinon.match.same(this.oModel.mUriParameters),
+				{foo : "~fooSelect~", bar : "~barSelect~"})
 			.returns("~url~");
 
 		// code under test - callback function

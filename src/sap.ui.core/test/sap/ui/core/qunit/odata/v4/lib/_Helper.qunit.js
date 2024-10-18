@@ -3576,6 +3576,19 @@ sap.ui.define([
 			}
 		}
 	}, {
+		childPath : "NavigationProperty",
+		childQueryOptions : {
+			$select : ["Property"]
+		},
+		doNotSelectKeyProperties : true,
+		expected : {
+			$expand : {
+				NavigationProperty : {
+					$select : ["Property"]
+				}
+			}
+		}
+	}, {
 		childPath : "NavigationProperty/Property",
 		childQueryOptions : {},
 		expected : {
@@ -3662,6 +3675,10 @@ sap.ui.define([
 				mWrappedQueryOptions,
 				oMetaModelMock = this.mock(oMetaModel);
 
+			if (oFixture.doNotSelectKeyProperties) {
+				this.mock(Object).expects("assign").never();
+			}
+
 			aMetaPathSegments.forEach(function (sSegment, j, aMetaPathSegments0) {
 				var sPropertyMetaPath = "/EMPLOYEES/"
 						+ aMetaPathSegments0.slice(0, j + 1).join("/"),
@@ -3674,7 +3691,7 @@ sap.ui.define([
 				oMetaModelMock.expects("fetchObject")
 					.withExactArgs(sPropertyMetaPath)
 					.returns(SyncPromise.resolve({$kind : sKind}));
-				if (sKind === "NavigationProperty") {
+				if (sKind === "NavigationProperty" && !oFixture.doNotSelectKeyProperties) {
 					oMetaModelMock.expects("fetchObject")
 						.withExactArgs(sPropertyMetaPath + "/")
 						.returns(SyncPromise.resolve({$Key : ["Property_1", "Property_2"]}));
@@ -3683,7 +3700,8 @@ sap.ui.define([
 
 			// code under test
 			mWrappedQueryOptions = _Helper.wrapChildQueryOptions("/EMPLOYEES", oFixture.childPath,
-				oFixture.childQueryOptions, oMetaModel.fetchObject);
+				oFixture.childQueryOptions, oMetaModel.fetchObject,
+				oFixture.doNotSelectKeyProperties);
 
 			assert.deepEqual(mWrappedQueryOptions, oFixture.expected);
 			assert.strictEqual(JSON.stringify(oFixture.childQueryOptions), sChildQueryOptions);

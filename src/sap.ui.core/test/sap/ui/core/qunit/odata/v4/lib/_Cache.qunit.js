@@ -5499,36 +5499,51 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#getDownloadUrl: empty path", function (assert) {
+[false, true].forEach(function (bHasAdditionalExpand) {
+	const sTitle = "Cache#getDownloadUrl: empty path, additionalExpand=" + bHasAdditionalExpand;
+
+	QUnit.test(sTitle, function (assert) {
 		var mDownloadQueryOptions = {},
 			mQueryOptions = {},
 			oCache = new _Cache(this.oRequestor, "Employees", mQueryOptions, false),
 			oHelperMock = this.mock(_Helper);
 
 		oCache.sMetaPath = "/cache/meta/path";
+		oHelperMock.expects("merge")
+			.withExactArgs({}, sinon.match.same(mQueryOptions), "~additionalExpand~")
+			.returns("~enhancedQueryOptions~");
 		oHelperMock.expects("buildPath").withExactArgs("Employees", "").returns("resource/path");
 		oHelperMock.expects("getMetaPath").withExactArgs("").returns("meta/path");
 		oHelperMock.expects("buildPath").withExactArgs("/cache/meta/path", "meta/path")
 			.returns("~");
 		this.mock(oCache).expects("getDownloadQueryOptions")
-			.withExactArgs(sinon.match.same(mQueryOptions)).returns(mDownloadQueryOptions);
+			.withExactArgs("~enhancedQueryOptions~").returns(mDownloadQueryOptions);
+		oHelperMock.expects("isEmptyObject").withExactArgs("~additionalExpand~")
+			.returns(bHasAdditionalExpand);
 		this.mock(this.oRequestor).expects("buildQueryString")
-			.withExactArgs("~", sinon.match.same(mDownloadQueryOptions), false, true)
+			.withExactArgs("~", sinon.match.same(mDownloadQueryOptions), false, true,
+				!bHasAdditionalExpand)
 			.returns("?~query~");
 
 		// code under test
-		assert.strictEqual(oCache.getDownloadUrl(""), "/~/resource/path?~query~");
+		assert.strictEqual(
+			oCache.getDownloadUrl("", undefined, "~additionalExpand~"),
+			"/~/resource/path?~query~");
 	});
+});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#getDownloadUrl: non-empty path", function (assert) {
+[false, true].forEach(function (bHasAdditionalExpand) {
+	const sTitle = "Cache#getDownloadUrl: non-empty path, additionalExpand="
+		+ bHasAdditionalExpand;
+
+	QUnit.test(sTitle, function (assert) {
 		var mCustomQueryOptions = {},
 			mDownloadQueryOptions = {},
 			mQueryOptions = {},
 			oCache = new _Cache(this.oRequestor, "Employees", mQueryOptions, false),
 			oHelperMock = this.mock(_Helper),
-			mQueryOptionsForPath = {},
-			mResultingQueryOptions = {};
+			mQueryOptionsForPath = {};
 
 		oCache.sMetaPath = "/cache/meta/path";
 		oHelperMock.expects("getQueryOptionsForPath")
@@ -5537,22 +5552,30 @@ sap.ui.define([
 		oHelperMock.expects("merge")
 			.withExactArgs({}, sinon.match.same(mCustomQueryOptions),
 				sinon.match.same(mQueryOptionsForPath))
-			.returns(mResultingQueryOptions);
+			.returns("~customizedQueryOptions~");
+		oHelperMock.expects("merge")
+			.withExactArgs({}, sinon.match.same("~customizedQueryOptions~"), "~additionalExpand~")
+			.returns("~enhancedQueryOptions~");
 		oHelperMock.expects("buildPath").withExactArgs("Employees", "cache/path")
 			.returns("resource/path");
 		oHelperMock.expects("getMetaPath").withExactArgs("cache/path").returns("meta/path");
 		oHelperMock.expects("buildPath").withExactArgs("/cache/meta/path", "meta/path")
 			.returns("~");
 		this.mock(oCache).expects("getDownloadQueryOptions")
-			.withExactArgs(sinon.match.same(mResultingQueryOptions)).returns(mDownloadQueryOptions);
+			.withExactArgs("~enhancedQueryOptions~").returns(mDownloadQueryOptions);
+		oHelperMock.expects("isEmptyObject").withExactArgs("~additionalExpand~")
+			.returns(bHasAdditionalExpand);
 		this.mock(this.oRequestor).expects("buildQueryString")
-			.withExactArgs("~", sinon.match.same(mDownloadQueryOptions), false, true)
+			.withExactArgs("~", sinon.match.same(mDownloadQueryOptions), false, true,
+				!bHasAdditionalExpand)
 			.returns("?~query~");
 
 		// code under test
-		assert.strictEqual(oCache.getDownloadUrl("cache/path", mCustomQueryOptions),
+		assert.strictEqual(
+			oCache.getDownloadUrl("cache/path", mCustomQueryOptions, "~additionalExpand~"),
 			"/~/resource/path?~query~");
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("Cache#getResourcePath", function (assert) {
