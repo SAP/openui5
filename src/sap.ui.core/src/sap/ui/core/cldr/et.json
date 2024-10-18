@@ -5926,6 +5926,6 @@
 	},
 	"sap-calendarWeek": {
 		"narrow": "KN {0}",
-		"wide": "Kalendrin\\u00E4dal {0}"
+		"wide": "Kalendrinädal {0}"
 	}
 }

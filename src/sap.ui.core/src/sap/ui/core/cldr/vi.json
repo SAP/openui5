@@ -5794,7 +5794,7 @@
 		}
 	},
 	"sap-calendarWeek": {
-		"narrow": "Li\\u0323ch tu\\u00E2\\u0300n {0}",
-		"wide": "Li\\u0323ch tu\\u00E2\\u0300n {0}"
+		"narrow": "Lịch tuần {0}",
+		"wide": "Lịch tuần {0}"
 	}
 }

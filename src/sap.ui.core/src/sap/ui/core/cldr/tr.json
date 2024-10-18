@@ -6001,6 +6001,6 @@
 	],
 	"sap-calendarWeek": {
 		"narrow": "CW {0}",
-		"wide": "Takvim haftas\\u0131 {0}"
+		"wide": "Takvim haftası {0}"
 	}
 }
