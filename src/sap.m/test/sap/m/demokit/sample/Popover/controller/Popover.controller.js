@@ -34,10 +34,32 @@ sap.ui.define([
 				oPopover.openBy(oButton);
 			});
 		},
+		handleResizablePopoverPress: function (oEvent) {
+			var oButton = oEvent.getSource(),
+				oView = this.getView();
 
-		handleEmailPress: function (oEvent) {
+			// create popover
+			if (!this._pResizablePopover) {
+				this._pResizablePopover = Fragment.load({
+					id: oView.getId(),
+					name: "sap.m.sample.Popover.view.ResizablePopover",
+					controller: this
+				}).then(function(oPopover) {
+					oView.addDependent(oPopover);
+					oPopover.bindElement("/ProductCollection/0");
+					return oPopover;
+				});
+			}
+			this._pResizablePopover.then(function(oPopover) {
+				oPopover.openBy(oButton);
+			});
+		},
+		handleEmailPress: function () {
 			this.byId("myPopover").close();
 			MessageToast.show("E-Mail has been sent");
+		},
+		handleClose: function () {
+			this.byId("myResizablePopover").close();
 		}
 	});
 });
