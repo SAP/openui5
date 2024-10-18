@@ -3047,22 +3047,22 @@ sap.ui.define([
 		var vMaxItems,
 			iMaxItems;
 
-		if (this._oPaginator) {
+		if (this._oPaginator?.getActive()) {
 			return this._oPaginator.getPageSize();
 		}
 
 		vMaxItems = BindingResolver.resolveValue(oContentConfig.maxItems, this);
-		if (vMaxItems == null) {
-			return null;
-		}
 
 		iMaxItems = parseInt(vMaxItems);
-		if (isNaN(iMaxItems)) {
-			Log.error("Value for maxItems must be integer.");
-			return null;
+		if (!isNaN(iMaxItems) && iMaxItems) {
+			return iMaxItems;
 		}
 
-		return iMaxItems;
+		if (this._oPaginator) {
+			return this._oPaginator.getPageSize();
+		}
+
+		return null;
 	};
 
 	/**
