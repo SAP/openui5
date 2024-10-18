@@ -635,7 +635,7 @@ function(
 		 */
 		TimePicker.prototype.onmouseup = function() {
 			if (this._isMaskEnabled() && this._isValueEmpty()) {
-				this._setCursorPosition(0);
+				this._positionCaret();
 			}
 		};
 
