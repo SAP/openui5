@@ -6078,6 +6078,6 @@
 	},
 	"sap-calendarWeek": {
 		"narrow": "SC {0}",
-		"wide": "Semana do calend\\u00E1rio {0}"
+		"wide": "Semana do calendário {0}"
 	}
 }

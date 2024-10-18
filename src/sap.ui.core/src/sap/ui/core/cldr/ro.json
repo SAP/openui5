@@ -5940,6 +5940,6 @@
 	},
 	"sap-calendarWeek": {
 		"narrow": "SC {0}",
-		"wide": "S\\u0103pt\\u0103m\\u00E2n\\u0103 calendaristic\\u0103 {0}"
+		"wide": "Săptămână calendaristică {0}"
 	}
 }

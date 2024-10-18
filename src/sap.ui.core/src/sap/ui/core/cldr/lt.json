@@ -6235,6 +6235,6 @@
 	},
 	"sap-calendarWeek": {
 		"narrow": "KS {0}",
-		"wide": "Kalendorin\\u0117 savait\\u0117 {0}"
+		"wide": "Kalendorinė savaitė {0}"
 	}
 }
