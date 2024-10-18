@@ -1840,30 +1840,41 @@ sap.ui.define([
 
 		return fnTest(TableType.Table, {
 			p13nModes: ["Column", "Sort", "Filter", "Group", "Aggregate"],
-			"export": true,
-			expandAllRows: false,
-			collapseAllRows: false
+			"export": true
 		}).then(function() {
 			return fnTest(TableType.TreeTable, {
 				p13nModes: ["Column", "Sort", "Filter"],
-				"export": true,
-				expandAllRows: true,
-				collapseAllRows: true
+				"export": true
 			});
 		}).then(function() {
 			return fnTest(TableType.ResponsiveTable, {
 				p13nModes: ["Column", "Sort", "Filter", "Group"],
-				"export": true,
-				expandAllRows: false,
-				collapseAllRows: false
+				"export": true
 			});
 		});
 	});
 
-	QUnit.test("#expandAllRows", function(assert) {
+	QUnit.test("#fetchExpandAndCollapseConfiguration", async function(assert) {
+		const fnTest = async (sTableType, bHasMethods) => {
+			const pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable({type: sTableType});
+			await pInit;
+
+			const oConfig = await this.oTable.getControlDelegate().fetchExpandAndCollapseConfiguration(this.oTable);
+			assert.equal(oConfig.expandAll !== undefined, bHasMethods, `${sTableType}#expandAll - exists -> ${bHasMethods}`);
+			assert.equal(oConfig.collapseAll !== undefined, bHasMethods, `${sTableType}#collapseAll - exists -> ${bHasMethods}`);
+			assert.equal(oConfig.expandAll !== undefined, bHasMethods, `${sTableType}#expandAll - exists -> ${bHasMethods}`);
+		};
+
+		await fnTest(TableType.Table, false);
+		await fnTest(TableType.ResponsiveTable, false);
+		await fnTest(TableType.TreeTable, true);
+	});
+
+	QUnit.test("ExpandAndCollapseConfiguration#expandAll", function(assert) {
 		const fnTest = async (sTableType, bSupportsExpandAll) => {
 			const pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable({type: sTableType});
 			const oTable = await pInit;
+			const oConfig = await this.oTable.getControlDelegate().fetchExpandAndCollapseConfiguration(this.oTable);
 			let iExpandTo = 1;
 
 			sinon.stub(oTable, "getRowBinding").returns({
@@ -1882,19 +1893,17 @@ sap.ui.define([
 			if (bSupportsExpandAll) {
 				const oBinding = oTable.getRowBinding();
 
-				oTable.getControlDelegate().expandAllRows(oTable);
+				oConfig.expandAll(oTable);
 				assert.ok(oBinding.setAggregation.calledOnce, sTableType + ": Binding#setAggregation called once if expandTo changes");
 				assert.ok(oBinding.refresh.notCalled, sTableType + ": Binding#refresh not called if expandTo changes");
 
 				oBinding.setAggregation.resetHistory();
 				oBinding.refresh.resetHistory();
-				oTable.getControlDelegate().expandAllRows(oTable);
+				oConfig.expandAll(oTable);
 				assert.ok(oBinding.setAggregation.notCalled, sTableType + ": Binding#setAggregation not called if expandTo doesn't change");
 				assert.ok(oBinding.refresh.calledOnceWithExactly(), sTableType + ": Binding#refresh called once if expandTo doesn't change");
 			} else {
-				assert.throws(() => {
-					oTable.getControlDelegate().expandAllRows(oTable);
-				}, Error("Unsupported operation: Not supported for the current table type"), sTableType + ": Throws an error");
+				assert.deepEqual(oConfig, {}, "Config object is empty");
 			}
 
 			oTable.getRowBinding.restore();
@@ -1907,10 +1916,38 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("#collapseAllRows", function(assert) {
+	QUnit.test("ExpandAndCollapseConfiguration#expandAllFromNode", function(assert) {
+		const fnTest = async (sTableType, bSupportsExpandAll) => {
+			const pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable({type: sTableType});
+			const oTable = await pInit;
+			const oConfig = await this.oTable.getControlDelegate().fetchExpandAndCollapseConfiguration(this.oTable);
+
+			const oMockBindingContext = {
+				expand: function(iToLevel) {
+					assert.ok(true, "BindingContext#expand called");
+					assert.equal(iToLevel, Number.MAX_SAFE_INTEGER, "BindingContext#expand called with Number.MAX_SAFE_INTEGER");
+				}
+			};
+
+			if (bSupportsExpandAll) {
+				oConfig.expandAllFromNode(oTable, oMockBindingContext);
+			} else {
+				assert.deepEqual(oConfig, {}, "Config object is empty");
+			}
+		};
+
+		return fnTest(TableType.TreeTable, true).then(function() {
+			return fnTest(TableType.Table, false);
+		}).then(function() {
+			return fnTest(TableType.ResponsiveTable, false);
+		});
+	});
+
+	QUnit.test("ExpandAndCollapseconfiguration#collapseAll", function(assert) {
 		const fnTest = async (sTableType, bSupportsCollapseAll) => {
 			const pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable({type: sTableType});
 			const oTable = await pInit;
+			const oConfig = await this.oTable.getControlDelegate().fetchExpandAndCollapseConfiguration(this.oTable);
 			let iExpandTo = 2;
 
 			sinon.stub(oTable, "getRowBinding").returns({
@@ -1928,22 +1965,47 @@ sap.ui.define([
 			if (bSupportsCollapseAll) {
 				const oBinding = oTable.getRowBinding();
 
-				oTable.getControlDelegate().collapseAllRows(oTable);
+				oConfig.collapseAll(oTable);
 				assert.ok(oBinding.setAggregation.calledOnce, sTableType + ": Binding#setAggregation called once if expandTo changes");
 				assert.ok(oBinding.refresh.notCalled, sTableType + ": Binding#refresh not called if expandTo changes");
 
 				oBinding.setAggregation.resetHistory();
 				oBinding.refresh.resetHistory();
-				oTable.getControlDelegate().collapseAllRows(oTable);
+				oConfig.collapseAll(oTable);
 				assert.ok(oBinding.setAggregation.notCalled, sTableType + ": Binding#setAggregation not called if expandTo doesn't change");
 				assert.ok(oBinding.refresh.calledOnceWithExactly(), sTableType + ": Binding#refresh called once if expandTo doesn't change");
 			} else {
-				assert.throws(() => {
-					oTable.getControlDelegate().collapseAllRows(oTable);
-				}, Error("Unsupported operation: Not supported for the current table type"), sTableType + ": Throws an error");
+				assert.deepEqual(oConfig, {}, "Config object is empty");
 			}
 
 			oTable.getRowBinding.restore();
+		};
+
+		return fnTest(TableType.TreeTable, true).then(function() {
+			return fnTest(TableType.Table, false);
+		}).then(function() {
+			return fnTest(TableType.ResponsiveTable, false);
+		});
+	});
+
+	QUnit.test("ExpandAndCollapseConfiguration#collapseAllFromNode", function(assert) {
+		const fnTest = async (sTableType, bSupportsExpandAll) => {
+			const pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable({type: sTableType});
+			const oTable = await pInit;
+			const oConfig = await this.oTable.getControlDelegate().fetchExpandAndCollapseConfiguration(this.oTable);
+
+			const oMockBindingContext = {
+				collapse: function(bCollapseAll) {
+					assert.ok(true, "BindingContext#expand called");
+					assert.ok(bCollapseAll, "BindingContext#expand called with true");
+				}
+			};
+
+			if (bSupportsExpandAll) {
+				oConfig.collapseAllFromNode(oTable, oMockBindingContext);
+			} else {
+				assert.deepEqual(oConfig, {}, "Config object is empty");
+			}
 		};
 
 		return fnTest(TableType.TreeTable, true).then(function() {

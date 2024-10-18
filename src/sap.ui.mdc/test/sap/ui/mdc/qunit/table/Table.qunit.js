@@ -5939,52 +5939,125 @@ sap.ui.define([
 		afterEach: function() {
 			if (this.oTable) {
 				this.oTable.destroy();
-				this.oGetSupportedFeaturesStub.restore();
-				this.oExpandAllSpy.restore();
-				this.oCollapseAllSpy.restore();
+				this.oFetchExpandAndCollapseConfiguration.restore();
 			}
 		},
-		createTable: async function(mSettings, bExpandCollapseSupported) {
+		createTable: async function(mSettings, bExpandCollapseSupported, bExpandFromNodeSupported, bCollapseFromNodeSupported, bIsNodeExpandedSupported) {
 			this.oTable = new Table(Object.assign({
+				type: "TreeTable",
 				delegate: {
 					name: sDelegatePath,
 					payload: {
-						collectionPath: "/testPath"
+						collectionPath: "/catalog/clothing"
 					}
 				},
 				columns: [
 					new Column({
 						id: "lastnamecol",
 						template: new Text(),
-						propertyKey: "lastname"
+						propertyKey: "name"
 					}),
 					new Column({
 						id: "agecol",
 						template: new Text(),
-						propertyKey: "age"
+						propertyKey: "amount"
+					}),
+					new Column({
+						id: "currency",
+						template: new Text(),
+						propertyKey: "currency"
 					})
-				]
+				],
+				models: new JSONModel({
+					"catalog": {
+						"clothing": {
+							"categories": [
+								{
+									"name": "Women", "categories": [
+										{
+											"name": "Clothing", "categories": [
+												{
+													"name": "Dresses", "categories": [
+														{ "name": "Casual Red Dress", "amount": 16.99, "currency": "EUR", "size": "S" },
+														{ "name": "Short Black Dress", "amount": 47.99, "currency": "EUR", "size": "M" },
+														{ "name": "Long Blue Dinner Dress", "amount": 103.99, "currency": "USD", "size": "L" }
+													]
+												},
+												{
+													"name": "Tops", "categories": [
+														{ "name": "Printed Shirt", "amount": 24.99, "currency": "USD", "size": "M" },
+														{ "name": "Tank Top", "amount": 14.99, "currency": "USD", "size": "S" }
+													]
+												}
+											]
+										}
+									]
+								},
+								{
+									"name": "Men", "categories": [
+										{
+											"name": "Clothing", "categories": [
+												{
+													"name": "Shirts", "categories": [
+														{ "name": "Black T-shirt", "amount": 9.99, "currency": "USD", "size": "XL" },
+														{ "name": "Polo T-shirt", "amount": 47.99, "currency": "USD", "size": "M" },
+														{ "name": "White Shirt", "amount": 103.99, "currency": "USD", "size": "L" }
+													]
+												},
+												{
+													"name": "Pants", "categories": [
+														{ "name": "Blue Jeans", "amount": 78.99, "currency": "USD", "size": "M" },
+														{ "name": "Stretch Pant", "amount": 54.99, "currency": "USD", "size": "S" }
+													]
+												},
+												{
+													"name": "Shorts", "categories": [
+														{ "name": "Trouser Short", "amount": 62.99, "currency": "USD", "size": "M" },
+														{ "name": "Slim Short", "amount": 44.99, "currency": "USD", "size": "S" }
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					}
+				})
 			}, mSettings));
 			this.oTable.placeAt("qunit-fixture");
 
 			const oDelegate = await this.oTable.awaitControlDelegate();
-			this.oGetSupportedFeaturesStub = sinon.stub(oDelegate, "getSupportedFeatures").returns({
-				p13nModes: [],
-				expandAllRows: bExpandCollapseSupported,
-				collapseAllRows: bExpandCollapseSupported
-			});
-			this.oExpandAllSpy = sinon.spy(oDelegate, "expandAllRows");
-			this.oCollapseAllSpy = sinon.spy(oDelegate, "collapseAllRows");
+
+			const oSupport = {};
+			if (bExpandCollapseSupported) {
+				oSupport.expandAll = function() {};
+				oSupport.collapseAll = function() {};
+			}
+
+			if (bExpandFromNodeSupported) {
+				oSupport.expandAllFromNode = function() {};
+			}
+
+			if (bCollapseFromNodeSupported) {
+				oSupport.collapseAllFromNode = function() {};
+			}
+
+			if (bIsNodeExpandedSupported) {
+				oSupport.isNodeExpanded = (oTable, oContext) => {
+					return this.bIsNodeExpanded;
+				};
+			}
+
+			this.oFetchExpandAndCollapseConfiguration = sinon.stub(oDelegate, "fetchExpandAndCollapseConfiguration").returns(Promise.resolve(oSupport));
 
 			await TableQUnitUtils.waitForBinding(this.oTable);
 			await nextUIUpdate();
 		}
 	});
 
-	QUnit.test("Delegate supports expand/collapse all", async function(assert) {
-		await this.createTable({
-			models: new JSONModel({testPath: [{"lastname": "A"}, {"age": "B"}]})
-		}, true);
+	QUnit.test("Delegate supports expand/collapse all (Button)", async function(assert) {
+		await this.createTable({}, true);
 
 		assert.ok(this.oTable._oExpandAllButton, "Expand All Button was created");
 		FESRHelper.setSemanticStepname(this.oTable._oExpandAllButton, "press", "mdc:tbl:expandAll");
@@ -5999,9 +6072,9 @@ sap.ui.define([
 		assert.ok(this.oTable._oCollapseAllButton.getDomRef(), "Collapse All button DOM ref exists");
 	});
 
-	QUnit.test("Delegate supports expand/collapse all, but no data", async function(assert) {
+	QUnit.test("Delegate supports expand/collapse all, but no data (Button)", async function(assert) {
 		await this.createTable({
-			models: new JSONModel({testPath: []})
+			models: new JSONModel({})
 		}, true);
 
 		assert.ok(this.oTable._oExpandAllButton, "Expand All Button was created");
@@ -6015,13 +6088,191 @@ sap.ui.define([
 		assert.ok(this.oTable._oCollapseAllButton.getDomRef(), "Collapse All button DOM ref exists");
 	});
 
-	QUnit.test("Delegate does not support expand/collapse all", async function(assert) {
-		await this.createTable({
-			models: new JSONModel({testPath: [{"lastname": "A", "age": 10}, {"lastname": "B", "age": 20}]})
-		}, false);
+	QUnit.test("Delegate does not support expand/collapse all (Button)", async function(assert) {
+		await this.createTable({}, false);
 
 		assert.notOk(this.oTable._oExpandAllButton, "Expand All Button was not created");
 		assert.notOk(this.oTable._oCollapseAllButton, "Collapse All Button was not created");
+	});
+
+	QUnit.test("Expand/Collapse with different selection modes", async function(assert) {
+		function checkButtonStates(bShouldBeMenuButton) {
+			const sClass = bShouldBeMenuButton ? "sap.m.OverflowToolbarMenuButton" : "sap.m.Button";
+
+			assert.ok(this.oTable._oExpandAllButton, "Expand All Button was created");
+			assert.ok(this.oTable._oExpandAllButton.getVisible(), "Expand All Button is visible");
+			assert.ok(this.oTable._oExpandAllButton.getEnabled(), "Expand All Button is enabled");
+			assert.ok(this.oTable._oExpandAllButton.getDomRef(), "Expand All button DOM ref exists");
+			assert.ok(this.oTable._oExpandAllButton.isA(sClass), "Expand All Button is a MenuButton");
+
+			assert.ok(this.oTable._oCollapseAllButton, "Collapse All Button was created");
+			assert.ok(this.oTable._oCollapseAllButton.getVisible(), "Collapse All Button is visible");
+			assert.ok(this.oTable._oCollapseAllButton.getEnabled(), "Collapse All Button is enabled");
+			assert.ok(this.oTable._oCollapseAllButton.getDomRef(), "Collapse All button DOM ref exists");
+			assert.ok(this.oTable._oCollapseAllButton.isA(sClass), "Collapse All Button is a MenuButton");
+		}
+
+		await this.createTable({}, true, true, true, true);
+		checkButtonStates.call(this, false);
+
+		this.oTable.setSelectionMode("Multi");
+		await nextUIUpdate();
+		checkButtonStates.call(this, true);
+
+		this.oTable.setSelectionMode("Single");
+		await nextUIUpdate();
+		checkButtonStates.call(this, true);
+
+		this.oTable.setSelectionMode("SingleMaster");
+		await nextUIUpdate();
+		checkButtonStates.call(this, true);
+
+		this.oTable.setSelectionMode("None");
+		await nextUIUpdate();
+		checkButtonStates.call(this, false);
+	});
+
+	// With MenuButton (selection)
+	QUnit.test("Delegate supports expand/collapse all (MenuButton)", async function(assert) {
+		await this.createTable({
+			selectionMode: "Multi"
+		}, true, true, true, true);
+
+		const oSelectionPlugin = this.oTable._oTable.getDependents().find((oDependent) => oDependent.isA("sap.ui.table.plugins.SelectionPlugin"));
+
+		// No Row Selected => Node option should be not enabled
+		assert.ok(this.oTable._oExpandAllButton, "Expand All Button was created");
+		this.oTable._oExpandAllButton.fireBeforeMenuOpen(); // simulate beforeMenuOpen event
+		assert.ok(this.oTable._oExpandAllButton.getMenu().getItems()[0].getEnabled(), "Expand All option is enabled");
+		assert.notOk(this.oTable._oExpandAllButton.getMenu().getItems()[1].getEnabled(), "Expand Node option is disabled");
+
+		assert.ok(this.oTable._oCollapseAllButton, "Collapse All Button was created");
+		this.oTable._oCollapseAllButton.fireBeforeMenuOpen(); // simulate beforeMenuOpen event
+		assert.ok(this.oTable._oCollapseAllButton.getMenu().getItems()[0].getEnabled(), "Collapse All option is enabled");
+		assert.notOk(this.oTable._oCollapseAllButton.getMenu().getItems()[1].getEnabled(), "Collapse Node option is disabled");
+
+		// One Row Selected => Node option should be enabled
+		await new Promise((resolve) => {
+			oSelectionPlugin.attachEventOnce("selectionChange", resolve);
+			oSelectionPlugin.setSelectedIndex(0, true);
+		});
+
+		this.bIsNodeExpanded = false;
+		this.oTable._oExpandAllButton.fireBeforeMenuOpen(); // simulate beforeMenuOpen event
+		assert.ok(this.oTable._oExpandAllButton.getMenu().getItems()[1].getEnabled(), "Expand Node option is enabled");
+
+		this.bIsNodeExpanded = true;
+		this.oTable._oCollapseAllButton.fireBeforeMenuOpen(); // simulate beforeMenuOpen event
+		assert.ok(this.oTable._oCollapseAllButton.getMenu().getItems()[1].getEnabled(), "Collapse Node option is enabled");
+
+		// One Row Selected, but node is not correct expansion state => Node option should be disabled
+		this.bIsNodeExpanded = true;
+		this.oTable._oExpandAllButton.fireBeforeMenuOpen(); // simulate beforeMenuOpen event
+		assert.notOk(this.oTable._oExpandAllButton.getMenu().getItems()[1].getEnabled(), "Expand Node option is not enabled");
+
+		this.bIsNodeExpanded = false;
+		this.oTable._oCollapseAllButton.fireBeforeMenuOpen(); // simulate beforeMenuOpen event
+		assert.notOk(this.oTable._oCollapseAllButton.getMenu().getItems()[1].getEnabled(), "Collapse Node option is not enabled");
+
+		// One Row Selected, but node is a leaf
+		this.bIsNodeExpanded = undefined;
+		this.oTable._oExpandAllButton.fireBeforeMenuOpen(); // simulate beforeMenuOpen event
+		assert.notOk(this.oTable._oExpandAllButton.getMenu().getItems()[1].getEnabled(), "Expand Node option is not enabled");
+		this.oTable._oCollapseAllButton.fireBeforeMenuOpen(); // simulate beforeMenuOpen event
+		assert.notOk(this.oTable._oCollapseAllButton.getMenu().getItems()[1].getEnabled(), "Collapse Node option is not enabled");
+
+		// Multiple Rows Selected => Node option should be disabled
+		await new Promise((resolve) => {
+			oSelectionPlugin.attachEventOnce("selectionChange", resolve);
+			oSelectionPlugin.setSelectionInterval(0, 1);
+		});
+
+		this.bIsNodeExpanded = false;
+		this.oTable._oExpandAllButton.fireBeforeMenuOpen(); // simulate beforeMenuOpen event
+		assert.notOk(this.oTable._oExpandAllButton.getMenu().getItems()[1].getEnabled(), "Expand Node option is not enabled");
+
+		this.bIsNodeExpanded = true;
+		this.oTable._oCollapseAllButton.fireBeforeMenuOpen(); // simulate beforeMenuOpen event
+		assert.notOk(this.oTable._oCollapseAllButton.getMenu().getItems()[1].getEnabled(), "Collapse Node option is not enabled");
+	});
+
+	QUnit.test("Delegate supports expand/collapse all, but misses methods for expandFromNode or collapseFromNode (MenuButton)", async function (assert) {
+		// Delegate does not implement expand/collapseFromNode and isNodeExpanded => should render button
+		await this.createTable({
+			selectionMode: "Multi"
+		}, true, false, false, false);
+
+		assert.ok(this.oTable._oExpandAllButton, "Expand All Button was created");
+		assert.ok(this.oTable._oExpandAllButton.isA("sap.m.Button"), "Expand All Button is a sap.m.Button");
+		assert.ok(this.oTable._oCollapseAllButton, "Collapse All Button was created");
+		assert.ok(this.oTable._oCollapseAllButton.isA("sap.m.Button"), "Collapse All Button is a sap.m.Button");
+
+		// Delegate does not implement collapseFromnode and isNodeExpanded => should render button
+		this.oTable.destroy();
+		this.oFetchExpandAndCollapseConfiguration.restore();
+		await this.createTable({
+			selectionMode: "Multi"
+		}, true, true, false, false);
+
+		assert.ok(this.oTable._oExpandAllButton, "Expand All Button was created");
+		assert.ok(this.oTable._oExpandAllButton.isA("sap.m.Button"), "Expand All Button is a sap.m.Button");
+		assert.ok(this.oTable._oCollapseAllButton, "Collapse All Button was created");
+		assert.ok(this.oTable._oCollapseAllButton.isA("sap.m.Button"), "Collapse All Button is a sap.m.Button");
+
+		// Delegate does not implement collapseFromnode => should render button for collapse, but menu button for expand
+		this.oTable.destroy();
+		this.oFetchExpandAndCollapseConfiguration.restore();
+		await this.createTable({
+			selectionMode: "Multi"
+		}, true, true, false, true);
+
+		assert.ok(this.oTable._oExpandAllButton, "Expand All Button was created");
+		assert.ok(this.oTable._oExpandAllButton.isA("sap.m.MenuButton"), "Expand All Button is a sap.m.MenuButton");
+		assert.ok(this.oTable._oCollapseAllButton, "Collapse All Button was created");
+		assert.ok(this.oTable._oCollapseAllButton.isA("sap.m.Button"), "Collapse All Button is a sap.m.Button");
+
+		// Delegate does not implement expandFromNode and isNodeExpanded => should render button
+		this.oTable.destroy();
+		this.oFetchExpandAndCollapseConfiguration.restore();
+		await this.createTable({
+			selectionMode: "Multi"
+		}, true, false, true, false);
+
+		assert.ok(this.oTable._oExpandAllButton, "Expand All Button was created");
+		assert.ok(this.oTable._oExpandAllButton.isA("sap.m.Button"), "Expand All Button is a sap.m.Button");
+		assert.ok(this.oTable._oCollapseAllButton, "Collapse All Button was created");
+		assert.ok(this.oTable._oCollapseAllButton.isA("sap.m.Button"), "Collapse All Button is a sap.m.Button");
+
+		// Delegate does not implement expandFromNode => should render button for expand, menu button for collapse
+		this.oTable.destroy();
+		this.oFetchExpandAndCollapseConfiguration.restore();
+		await this.createTable({
+			selectionMode: "Multi"
+		}, true, false, true, true);
+
+		assert.ok(this.oTable._oExpandAllButton, "Expand All Button was created");
+		assert.ok(this.oTable._oExpandAllButton.isA("sap.m.Button"), "Expand All Button is a sap.m.Button");
+		assert.ok(this.oTable._oCollapseAllButton, "Collapse All Button was created");
+		assert.ok(this.oTable._oCollapseAllButton.isA("sap.m.MenuButton"), "Collapse All Button is a sap.m.MenuButton");
+	});
+
+	QUnit.test("Delegate supports expand/collapseFromNode, but misses method for expand/collapseAll (MenuButton)", async function(assert) {
+		await this.createTable({
+			selectionMode: "Multi"
+		}, false, true, true, true);
+
+		assert.ok(this.oTable._oExpandAllButton, "Expand All Button was created");
+		assert.ok(this.oTable._oExpandAllButton.isA("sap.m.MenuButton"), "Expand All Button is a sap.m.MenuButton");
+		assert.ok(this.oTable._oCollapseAllButton, "Collapse All Button was created");
+		assert.ok(this.oTable._oCollapseAllButton.isA("sap.m.MenuButton"), "Collapse All Button is a sap.m.MenuButton");
+
+		this.oTable._oExpandAllButton.fireBeforeMenuOpen(); // simulate beforeMenuOpen event
+		assert.equal(this.oTable._oExpandAllButton.getMenu().getItems().length, 2, "Expand All Button has 2 items");
+		assert.notOk(this.oTable._oExpandAllButton.getMenu().getItems()[0].getEnabled(), "Expand Entire Tree option is disabled");
+
+		this.oTable._oCollapseAllButton.fireBeforeMenuOpen(); // simulate beforeMenuOpen event
+		assert.equal(this.oTable._oCollapseAllButton.getMenu().getItems().length, 2, "Collapse All Button has 2 items");
+		assert.notOk(this.oTable._oCollapseAllButton.getMenu().getItems()[0].getEnabled(), "Collapse Entire Tree option is disabled");
 	});
 
 	QUnit.module("Initialized promise", {
