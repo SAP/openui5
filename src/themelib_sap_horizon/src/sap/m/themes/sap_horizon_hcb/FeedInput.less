@@ -1,28 +1,31 @@
 /* ================================== */
 /* CSS for control sap.m/FeedInput    */
 /* Horizon High Contrast Black theme  */
-/* ==========0======================= */
+/* ================================== */
 
 .sapMFeedIn {
-    	background-color: @sapGroup_ContentBackground;
+	background-color: var(--sapGroup_ContentBackground);
 }
+
 .sapMFeedInFigure {
-    	border-color: @sapUiHcReducedAltForeground;
+	border-color: @sapUiHcReducedAltForeground;
 }
+
 .sapMFeedIn .sapMBtn {
-    	position: absolute;
-    	right: 0rem;
-    	bottom: 0rem;
-    	border-width: @sapButton_BorderWidth;
-    	border-radius: @sapButton_BorderCornerRadius;
-    	background-color:@sapGroup_ContentBackground;
-    	font-size: @sapFontSize;
-    	font-family: @sapFontSemiboldDuplexFamily;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	border-width: var(--sapButton_BorderWidth);
+	border-radius: var(--sapButton_BorderCornerRadius);
+	background-color: var(--sapGroup_ContentBackground);
+	font-size: @sapFontSize;
+	font-family: var(--sapFontSemiboldDuplexFamily);
 }
-.sapMFeedIn .sapMBtnInner{
-    	padding:0;
-    	border-radius: @sapButton_BorderCornerRadius;
-    	background-color:@sapButton_Background;
-    	border: 1px solid @sapButton_BorderColor;
-    	color:@sapButton_TextColor
+
+.sapMFeedIn .sapMBtnInner {
+	padding: 0;
+	border-radius: var(--sapButton_BorderCornerRadius);
+	background-color: var(--sapButton_Background);
+	border: 1px solid var(--sapButton_BorderColor);
+	color: var(--sapButton_TextColor);
 }

@@ -1,10 +1,15 @@
-@sapMGenericTagBorderWidth: 0.25rem;
-@sapMGenericTagPaddingLeft: 0.25rem;
-@sapMGenericTagStatusIconWidth: 1rem;
-@sapMGenericTagIconPaddingRight: 0.5rem;
-@sapMGenericTagTextMinWidth: 1.5625rem;
-@sapMGenericTagHeightCompact: 1.625rem;
-@sapMGenericTagHeightCozy: 2.5rem;
+/* ================================= */
+/* CSS for control sap.m/GenericTag  */
+/* Base theme                        */
+/* ================================= */
+
+@_sap_m_GenericTag_BorderWidth: 0.25rem;
+@_sap_m_GenericTag_PaddingLeft: 0.25rem;
+@_sap_m_GenericTag_StatusIconWidth: 1rem;
+@_sap_m_GenericTag_IconPaddingRight: 0.5rem;
+@_sap_m_GenericTag_TextMinWidth: 1.5625rem;
+@_sap_m_GenericTag_HeightCompact: 1.625rem;
+@_sap_m_GenericTag_HeightCozy: 2.5rem;
 
 .sapMGenericTag {
 	margin-top: 0.1875rem;
@@ -15,21 +20,27 @@
 	&:focus {
 		outline: none;
 	}
+
 	&:-moz-focus-inner {
 		padding: 0;
 		border: 0
 	}
+
 	&.sapMGenericTagOverflowToolbar {
 		margin-right: 0;
 		max-width: 20rem;
+
 		.sapMGenericTagWrap {
 			width: 100%;
 		}
+
 		.sap-phone & {
 			max-width: 100%;
 		}
 	}
+
 	.sapMBarChild& {
+
 		>.sapMGenericTagWrap {
 			display: flex;
 		}
@@ -38,9 +49,10 @@
 
 html.sap-desktop .sapMGenericTag:focus {
 	position: relative;
-	&:before {
+
+	&::before {
 		position: absolute;
-		content: " ";
+		content: ' ';
 		top: 1px;
 		right: 1px;
 		bottom: 1px;
@@ -49,9 +61,9 @@ html.sap-desktop .sapMGenericTag:focus {
 		pointer-events: none;
 	}
 
-	&:after {
+	&::after {
 		position: absolute;
-		content: " ";
+		content: ' ';
 		top: 1px;
 		right: 1px;
 		bottom: 1px;
@@ -62,63 +74,63 @@ html.sap-desktop .sapMGenericTag:focus {
 }
 
 .sapMGenericTagWrap {
-	background: @sapUiListBackground;
+	background: var(--sapList_Background);
 	box-shadow: @sapUiShadowLevel0;
 	box-sizing: border-box;
 	border-radius: 0.125rem;
-	border-left-width: @sapMGenericTagBorderWidth;
+	border-left-width: @_sap_m_GenericTag_BorderWidth;
 	border-left-style: solid;
-	padding: 0 0.5rem 0  @sapMGenericTagPaddingLeft;
+	padding: 0 0.5rem 0 @_sap_m_GenericTag_PaddingLeft;
 	display: inline-flex;
 	max-width: 100%;
 	flex-flow: row nowrap;
 	align-items: center;
 	page-break-after: auto;
-	height: @sapMGenericTagHeightCompact;
-	min-width: @sapMGenericTagBorderWidth + @sapMGenericTagPaddingLeft + @sapMGenericTagStatusIconWidth + @sapMGenericTagIconPaddingRight+ @sapMGenericTagTextMinWidth;
+	height: @_sap_m_GenericTag_HeightCompact;
+	min-width: @_sap_m_GenericTag_BorderWidth + @_sap_m_GenericTag_PaddingLeft + @_sap_m_GenericTag_StatusIconWidth + @_sap_m_GenericTag_IconPaddingRight + @_sap_m_GenericTag_TextMinWidth;
 
 	.sapMGenericTagIcon {
 		width: 1rem;
-		padding-right: @sapMGenericTagIconPaddingRight;
+		padding-right: @_sap_m_GenericTag_IconPaddingRight;
 	}
 
 	.sapMGenericTagError & {
-		border-color: @sapUiErrorBorder;
+		border-color: var(--sapErrorBorderColor);
 
 		.sapMGenericTagIcon {
-			color: @sapUiNegativeText;
+			color: var(--sapNegativeTextColor);
 		}
 	}
 
 	.sapMGenericTagWarning & {
-		border-color: @sapUiWarningBorder;
+		border-color: var(--sapWarningBorderColor);
 
 		.sapMGenericTagIcon {
-			color: @sapUiCriticalText;
+			color: var(--sapCriticalTextColor);
 		}
 	}
 
 	.sapMGenericTagSuccess & {
-		border-color: @sapUiSuccessBorder;
+		border-color: var(--sapSuccessBorderColor);
 
 		.sapMGenericTagIcon {
-			color: @sapUiPositiveText;
+			color: var(--sapPositiveTextColor);
 		}
 	}
 
 	.sapMGenericTagInformation & {
-		border-color: @sapUiInformationBorder;
+		border-color: var(--sapInformationBorderColor);
 
 		.sapMGenericTagIcon {
-			color: @sapUiInformativeText;
+			color: var(--sapInformativeTextColor);
 		}
 	}
 
 	.sapMGenericTagNone & {
-		border-color: @sapUiNeutralBorder;
+		border-color: var(--sapNeutralColor);
 
 		.sapMGenericTagIcon {
-			color: @sapUiNeutralText;
+			color: var(--sapNeutralTextColor);
 		}
 	}
 
@@ -127,38 +139,38 @@ html.sap-desktop .sapMGenericTag:focus {
 		cursor: pointer;
 	}
 
-	.sapMGenericTagActive &  {
-		background-color: @sapUiListActiveBackground;
+	.sapMGenericTagActive & {
+		background-color: var(--sapList_Active_Background);
 
 		.sapMGenericTagIcon,
 		.sapMGenericTagText,
 		.sapMGenericTagValue,
 		.sapMGenericTagErrorIcon {
-			color: @sapUiListActiveTextColor;
+			color: var(--sapList_Active_TextColor);
 		}
 	}
 
 	.sapMGenericTagErrorIcon {
 		overflow: hidden;
-		color: @sapUiNegativeText;
+		color: var(--sapNegativeTextColor);
 		padding-left: 0.5rem;
 
-		&:before {
+		&::before {
 			line-height: normal;
 		}
 	}
 
 	.sapMGenericTagText {
-		font-family: @sapUiFontFamily;
+		font-family: var(--sapFontFamily);
 		font-size: @sapMFontMediumSize;
 		font-weight: normal;
-		color: @sapUiBaseText;
+		color: var(--sapTextColor);
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		box-sizing: border-box;
 		flex: 1 10000 auto;
-		min-width: @sapMGenericTagTextMinWidth;
+		min-width: @_sap_m_GenericTag_TextMinWidth;
 	}
 
 	.sapMGenericTagValue {
@@ -173,13 +185,15 @@ html.sap-desktop .sapMGenericTag:focus {
 
 		.sapMObjectNumberText {
 			min-width: 0.75rem;
+
 			&::after {
-				//simulate ObjectNumber's styling: The ObjectNumber value and unit are inline blocks and
-				//have an empty space between them. That's because the browser interprets the line-break and spaces
-				//in the HTML as content. Since we change the styling of the ObjectNumber we must have the same styling.
-				content: "\00a0";
+				/* simulate ObjectNumber's styling: The ObjectNumber value and unit are inline blocks and */
+				/* have an empty space between them. That's because the browser interprets the line-break and spaces */
+				/* in the HTML as content. Since we change the styling of the ObjectNumber we must have the same styling. */
+				content: '\00a0';
 			}
 		}
+
 		.sapMObjectNumberUnit {
 			min-width: 0.75rem;
 		}
@@ -187,12 +201,12 @@ html.sap-desktop .sapMGenericTag:focus {
 }
 
 .sapUiSizeCozy {
+
 	.sapMGenericTag {
 		margin: 0.25rem 0;
 
 		.sapMGenericTagWrap {
-			height:  @sapMGenericTagHeightCozy;
+			height: @_sap_m_GenericTag_HeightCozy;
 		}
 	}
 }
-
