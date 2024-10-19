@@ -12,7 +12,7 @@
 					<Toolbar>
 						<Title text="Item List"/>
 						<ToolbarSpacer/>
-						<SearchField width="50%" search="onFilterList" selectOnFocus="false"/>
+						<SearchField width="50%" search="onFilterList"/>
 					</Toolbar>
 				</headerToolbar>
 				<columns>

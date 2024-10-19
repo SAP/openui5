@@ -2550,7 +2550,7 @@ sap.ui.define([
 				if ( sShortcutPkg ) {
 					lazy(sShortcutPkg, aClasses[i].toLowerCase(), sPackage + aClasses[i]);
 				} else {
-				  lazy(sPackage + aClasses[i], "new extend getMetadata");
+					lazy(sPackage + aClasses[i], "new extend getMetadata");
 				}
 			}
 		}
@@ -2559,7 +2559,7 @@ sap.ui.define([
 		lazy("sap.ui.core.message.MessageManager");
 		lazy("sap.ui.core.BusyIndicator", "show hide attachOpen detachOpen attachClose detachClose");
 		lazy("sap.ui.core.tmpl.Template", "registerType unregisterType");
-		lazy("sap.ui.core.Fragment", "registerType byId createId");
+		lazy("sap.ui.core.Fragment", "registerType byId createId load");
 		lazy("sap.ui.core.IconPool", "createControlByURI addIcon getIconURI getIconInfo isIconURI getIconCollectionNames getIconNames getIconForMimeType");
 		lazy("sap.ui.core.service.ServiceFactoryRegistry", "register unregister get");
 
@@ -2583,7 +2583,11 @@ sap.ui.define([
 		each("sap.ui.model.odata.type.", ["Boolean","Byte","Currency","Date","DateTime","DateTimeOffset","DateTimeWithTimezone","Decimal","Double","Guid","Int16","Int32","Int64","Raw","SByte","Single","Stream","String","Time","TimeOfDay","Unit"]);
 		each("sap.ui.core.", ["Locale","LocaleData","mvc.Controller", "UIComponent"]);
 		each("sap.ui.core.mvc.", ["Controller", "View", "JSView", "JSONView", "XMLView", "HTMLView", "TemplateView"], "sap.ui");
+		lazy("sap.ui.core.mvc.Controller", "create");
+		lazy("sap.ui.core.mvc.View", "create");
+		lazy("sap.ui.core.mvc.XMLView", "create");
 		each("sap.ui.core.", ["Component"], "sap.ui");
+		each("sap.ui.core.Component", "create");
 		each("sap.ui.core.tmpl.", ["Template"], "sap.ui");
 		each("sap.ui.core.routing.", ["HashChanger", "History", "Route", "Router", "Target", "Targets", "Views"]);
 		each("sap.ui.core.service.", ["ServiceFactory", "Service"]);

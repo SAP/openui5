@@ -1,27 +1,30 @@
 /*global QUnit */
-sap.ui.define(["sap/ui/dom/includeScript"], function(includeScript) {
+sap.ui.define([
+	"./testdata/dataStore",
+	"sap/ui/dom/includeScript"
+], function(dataStore, includeScript) {
 	"use strict";
 
 	var sPath = sap.ui.require.toUrl("testdata/core");
 
-	QUnit.module("sap.ui.dom.includeScript", {
+	QUnit.module("sap/ui/dom/includeScript", {
 		beforeEach: function() {
-			window.sap.jsunittestvalue = 0;
+			dataStore.counter = 0;
 		}
 	});
 
-	QUnit.test("basic", function(assert) {
+	QUnit.test("basic (callback)", function(assert) {
 		var done = assert.async();
 		function handleError () {
 			assert.notOk(true, "Error callback called");
 			done();
 		}
-		includeScript(sPath + "/dom/testdata/sapjsunittestvalueincrementor.js", "jsunitIncludeScriptTestScript", function() {
-			var iBefore = sap.jsunittestvalue;
+		includeScript(sPath + "/dom/testdata/incrementDataStoreCounter.js", "includeScriptTestScript", function() {
+			var iBefore = dataStore.counter;
 			var iScriptCnt = document.getElementsByTagName("SCRIPT").length;
-			includeScript(sPath + "/dom/testdata/sapjsunittestvalueincrementor.js", "jsunitIncludeScriptTestScript", function() {
-				assert.strictEqual(iBefore + 1, sap.jsunittestvalue, "testvalue should have been incremented");
-				assert.strictEqual(iScriptCnt, document.getElementsByTagName("SCRIPT").length, "no new script element should have been created");
+			includeScript(sPath + "/dom/testdata/incrementDataStoreCounter.js", "includeScriptTestScript", function() {
+				assert.strictEqual(dataStore.counter, iBefore + 1, "dataStore.counter should have been incremented");
+				assert.strictEqual(document.getElementsByTagName("SCRIPT").length, iScriptCnt, "no new script element should have been created");
 				done();
 			}, handleError);
 		}, handleError);
@@ -31,18 +34,18 @@ sap.ui.define(["sap/ui/dom/includeScript"], function(includeScript) {
 		var iBefore;
 		var iScriptCnt;
 		return includeScript({
-			url: sPath + "/dom/testdata/sapjsunittestvalueincrementor.js",
-			id: "jsunitIncludeScriptTestScript"
+			url: sPath + "/dom/testdata/incrementDataStoreCounter.js",
+			id: "includeScriptTestScript"
 		}).then(function() {
-			iBefore = sap.jsunittestvalue;
+			iBefore = dataStore.counter;
 			iScriptCnt = document.getElementsByTagName("SCRIPT").length;
 			return includeScript({
-				url: sPath + "/dom/testdata/sapjsunittestvalueincrementor.js",
-				id: "jsunitIncludeScriptTestScript"
+				url: sPath + "/dom/testdata/incrementDataStoreCounter.js",
+				id: "includeScriptTestScript"
 			});
 		}).then(function() {
-			assert.strictEqual(iBefore + 1, sap.jsunittestvalue, "testvalue should have been incremented");
-			assert.strictEqual(iScriptCnt, document.getElementsByTagName("SCRIPT").length, "no new script element should have been created");
+			assert.strictEqual(dataStore.counter, iBefore + 1, "dataStore.counter should have been incremented");
+			assert.strictEqual(document.getElementsByTagName("SCRIPT").length, iScriptCnt, "no new script element should have been created");
 		});
 	});
 
@@ -63,14 +66,14 @@ sap.ui.define(["sap/ui/dom/includeScript"], function(includeScript) {
 		}).then(function() {
 			var oScript = document.getElementById("myscript");
 			assert.ok(oScript, "script should have been found");
-			assert.strictEqual("attrval", oScript.getAttribute("data-sap-ui-attr"), "script should have a custom attribute");
+			assert.strictEqual(oScript.getAttribute("data-sap-ui-attr"), "attrval", "script should have a custom attribute");
 			return includeScriptWrapped(sPath + "/dom/testdata/dummy.js", {
 				"id": "myscript",
 				"data-sap-ui-attr": "otherval"
 			}).then(function() {
 				var oScript = document.getElementById("myscript");
 				assert.ok(oScript, "script should have been found");
-				assert.strictEqual("otherval", oScript.getAttribute("data-sap-ui-attr"), "script should have replaced the custom attribute");
+				assert.strictEqual(oScript.getAttribute("data-sap-ui-attr"), "otherval", "script should have replaced the custom attribute");
 			});
 		}));
 
@@ -80,7 +83,7 @@ sap.ui.define(["sap/ui/dom/includeScript"], function(includeScript) {
 		}).then(function() {
 			var oScript = document.querySelectorAll("script[data-sap-ui-id='myscript']")[0];
 			assert.ok(oScript, "script should have been found");
-			assert.strictEqual("attrval", oScript.getAttribute("data-sap-ui-attr"), "script should have a custom attribute");
+			assert.strictEqual(oScript.getAttribute("data-sap-ui-attr"), "attrval", "script should have a custom attribute");
 		}));
 
 		aPromises.push(includeScript({
@@ -92,7 +95,7 @@ sap.ui.define(["sap/ui/dom/includeScript"], function(includeScript) {
 		}).then(function() {
 			var oScript = document.getElementById("myscript-async-attrid");
 			assert.ok(oScript, "script should have been found");
-			assert.strictEqual("attrval", oScript.getAttribute("data-sap-ui-attr"), "script should have a custom attribute");
+			assert.strictEqual(oScript.getAttribute("data-sap-ui-attr"), "attrval", "script should have a custom attribute");
 			return includeScript({
 				"url": sPath + "/dom/testdata/dummy.js",
 				"attributes": {
@@ -102,7 +105,7 @@ sap.ui.define(["sap/ui/dom/includeScript"], function(includeScript) {
 			}).then(function() {
 				var oScript = document.getElementById("myscript-async-attrid");
 				assert.ok(oScript, "script should have been found");
-				assert.strictEqual("otherval", oScript.getAttribute("data-sap-ui-attr"), "script should have replaced the custom attribute");
+				assert.strictEqual(oScript.getAttribute("data-sap-ui-attr"), "otherval", "script should have replaced the custom attribute");
 			});
 		}));
 
@@ -117,7 +120,7 @@ sap.ui.define(["sap/ui/dom/includeScript"], function(includeScript) {
 			var oScript = document.getElementById("myscript-async");
 			assert.ok(oScript, "script should have been found");
 			assert.notOk(document.getElementById("myscript-async-override"), "script should have not been found");
-			assert.strictEqual("attrval", oScript.getAttribute("data-sap-ui-attr"), "script should have a custom attribute");
+			assert.strictEqual(oScript.getAttribute("data-sap-ui-attr"), "attrval", "script should have a custom attribute");
 		}));
 
 		aPromises.push(includeScript({
@@ -129,7 +132,7 @@ sap.ui.define(["sap/ui/dom/includeScript"], function(includeScript) {
 		}).then(function() {
 			var oScript = document.querySelectorAll("script[data-sap-ui-id='myscript-async']")[0];
 			assert.ok(oScript, "script should have been found");
-			assert.strictEqual("attrval", oScript.getAttribute("data-sap-ui-attr"), "script should have a custom attribute");
+			assert.strictEqual(oScript.getAttribute("data-sap-ui-attr"), "attrval", "script should have a custom attribute");
 		}));
 
 		Promise.all(aPromises).then(function() {
