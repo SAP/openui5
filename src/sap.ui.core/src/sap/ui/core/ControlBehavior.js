@@ -104,7 +104,7 @@ sap.ui.define([
 			return oWritableConfig.get({
 				name: "sapUiAnimationMode",
 				type: AnimationMode,
-				defaultValue: undefined ?? AnimationMode.full,
+				defaultValue: AnimationMode.full,
 				external: true
 			});
 		},

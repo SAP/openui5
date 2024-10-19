@@ -34,8 +34,8 @@
 				"ref": "test-resources/sap/m/demokit/tutorial/testing/14/webapp/test/mockServer.html",
 				"links": {
 					"View Tutorial": "topic/291c9121e6044ab381e0b51716f97f52",
-					"Run Unit Tests": "test-resources/sap/m/demokit/tutorial/testing/14/webapp/test/unit/unitTests.qunit.html",
-					"Run Integration Tests": "test-resources/sap/m/demokit/tutorial/testing/14/webapp/test/integration/opaTests.qunit.html"
+					"Run Unit Tests": "test-resources/sap/m/demokit/tutorial/testing/14/webapp/test/Test.qunit.html?testsuite=test-resources/sap/ui/demo/bulletinboard/testsuite.qunit&test=unit/unitTests",
+					"Run Integration Tests": "test-resources/sap/m/demokit/tutorial/testing/14/webapp/test/Test.qunit.html?testsuite=test-resources/sap/ui/demo/bulletinboard/testsuite.qunit&test=integration/opaTests"
 				},
 				"teaser": "test-resources/sap/m/demokit/tutorial/testing/demoappteaser",
 				"category": "Tutorial",

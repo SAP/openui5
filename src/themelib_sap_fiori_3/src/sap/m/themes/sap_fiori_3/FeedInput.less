@@ -6,58 +6,63 @@
 @_sap_m_FeedInput_BackgroundColor: darken(@sapUiBaseColor, 9);
 
 .sapMFeedIn {
-    	background-color:@sapGroup_ContentBackground;
+	background-color: var(--sapGroup_ContentBackground);
 }
+
 .sapMFeedIn.sapMFeedInDisabled {
-    	opacity: @sapContent_DisabledOpacity;
+	opacity: var(--sapContent_DisabledOpacity);
 }
 
-.sapMFeedIn .sapMInputBase .sapMTextArea .sapMTextAreaInner{
-		min-width: 6rem;
-		margin-top: 0.25rem;
-		
+.sapMFeedIn .sapMInputBase .sapMTextArea .sapMTextAreaInner {
+	min-width: 6rem;
+	margin-top: 0.25rem;
 }
+
 .sapMFeedInImage {
-    	font-size: 1.25rem;
+	font-size: 1.25rem;
 }
 
-.sapMFeedIn .sapMInputBase .sapMTextArea{
-		background-color: @sapUiFieldBackground;
-		padding: 0rem;
+.sapMFeedIn .sapMInputBase .sapMTextArea {
+	background-color: var(--sapField_Background);
+	padding: 0;
 }
 
-.sapMFeedIn >.sapMFeedInContainer > .sapMTextArea> .sapMInputBaseInner {
-    	color: @sapField_TextColor;
+.sapMFeedIn > .sapMFeedInContainer > .sapMTextArea > .sapMInputBaseInner {
+	color: var(--sapField_TextColor);
 }
+
 .sapMFeedIn .sapMBtn {
-		width: 4.0rem;
-		height: 3.75rem;
-		padding: 0.25rem 0.625rem 0.25rem 0.625rem;
-		margin: 0.125rem 0 0.125rem 0.5rem;
-		position: absolute;
-		right: 0rem;
-		bottom: 0rem;
-		border-width: @sapButton_BorderWidth;
-		border-radius: @sapButton_BorderCornerRadius;
-		background-color:@sapGroup_ContentBackground;
-		font-size: @sapFontSize;
-		font-family: @sapFontSemiboldDuplexFamily;
+	width: 4.0rem;
+	height: 3.75rem;
+	padding: 0.25rem 0.625rem 0.25rem 0.625rem;
+	margin: 0.125rem 0 0.125rem 0.5rem;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	border-width: var(--sapButton_BorderWidth);
+	border-radius: var(--sapButton_BorderCornerRadius);
+	background-color: var(--sapGroup_ContentBackground);
+	font-size: @sapFontSize;
+	font-family: var(--sapFontSemiboldDuplexFamily);
 }
-.sapMFeedIn .sapMBtnInner{
-		padding:0;
-		border-radius: @sapButton_BorderCornerRadius;
-		background-color:@sapButton_Background;
-		border: 1px solid @sapButton_BorderColor;
-		color:@sapButton_TextColor;
+
+.sapMFeedIn .sapMBtnInner {
+	padding: 0;
+	border-radius: var(--sapButton_BorderCornerRadius);
+	background-color: var(--sapButton_Background);
+	border: 1px solid var(--sapButton_BorderColor);
+	color: var(--sapButton_TextColor);
 }
-.sapMFeedIn .sapMBtnIcon{
-		width: 2.25rem;
-		height: 2.25rem;
-		margin: 0.125rem 0 0.125rem 0;
-		padding: 0 0.625rem 0 0.625rem;
-		border-width: @sapButton_BorderWidth;
-		border-radius: @sapButton_BorderCornerRadius;
+
+.sapMFeedIn .sapMBtnIcon {
+	width: 2.25rem;
+	height: 2.25rem;
+	margin: 0.125rem 0 0.125rem 0;
+	padding: 0 0.625rem 0 0.625rem;
+	border-width: var(--sapButton_BorderWidth);
+	border-radius: var(--sapButton_BorderCornerRadius);
 }
+
 .sapMFeedIn .sapMFeedInContainer {
-    	background-color: @sapGroup_ContentBackground;
+	background-color: var(--sapGroup_ContentBackground);
 }

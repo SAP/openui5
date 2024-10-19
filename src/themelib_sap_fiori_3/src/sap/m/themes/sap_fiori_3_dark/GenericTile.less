@@ -4,6 +4,7 @@
 /* ================================== */
 
 .sapMGT.sapMGTBackgroundImage {
+
 	.sapMGTContent {
 		border-bottom-left-radius: 0.125rem;
 		border-bottom-right-radius: 0.125rem;
@@ -12,10 +13,10 @@
 }
 
 .sapMGT.sapMGTScopeActions.sapMGTBackgroundImage .sapMGTMoreIcon {
-	color: @sapUiContentContrastTextColor;
+	color: var(--sapContent_ContrastTextColor);
 }
 
-/************************ LINE MODE LIST VIEW ********************/
+/* LINE MODE LIST VIEW */
 
 .sapMGT.sapMGTLineMode {
 	transition: background 0.2s;
@@ -23,6 +24,7 @@
 }
 
 .sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
+
 	&:not(.sapMGTLineModePress):hover {
 		background: fade(@sapUiShellHoverBackground, 10);
 	}
@@ -38,7 +40,7 @@
 
 .sapMGTLineMode .sapMGTLineModeFailedIcon {
 	cursor: pointer;
-	color: @sapUiContentNonInteractiveIconColor;
+	color: var(--sapContent_NonInteractiveIconColor);
 	text-shadow: @sapUiShadowText;
 }
 
@@ -51,11 +53,11 @@
 }
 
 .sapMGTLineMode .sapMGTActionsContainer .sapMGTRemoveButton {
-	background-color: @sapUiButtonBackground;
-	color: @sapUiButtonTextColor;
+	background-color: var(--sapButton_Background);
+	color: var(--sapButton_TextColor);
 
-	&:before {
-		color: @sapUiButtonIconColor;
+	&::before {
+		color: var(--sapButton_IconColor);
 	}
 }
 
@@ -66,35 +68,44 @@
 		-webkit-mask-image: linear-gradient(to left, #FFF ~"calc(100% - 1.5rem)", transparent);
 	}
 
-	.sapMGTHdrTxt, .sapMGTSubHdrTxt {
+	.sapMGTHdrTxt,
+	.sapMGTSubHdrTxt {
 		text-overflow: clip;
 	}
 }
 
-/************************ LINE MODE FLOATING VIEW *****************/
+/* LINE MODE FLOATING VIEW */
 
 .sapUiMedia-GenericTileDeviceSet-large {
+
 	.sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
-		&:focus, &.sapMGTLineModePress {
-			.sapMGTLineStyleHelperInner:before {
-				content: "";
+
+		&:focus,
+		&.sapMGTLineModePress {
+
+			.sapMGTLineStyleHelperInner::before {
+				content: '';
 				position: absolute;
 				top: 1px;
 				left: 1px;
 				bottom: 1px;
 				right: 1px;
 				box-sizing: border-box;
-				border: 1px dotted @sapUiContentFocusColor;
+				border: 1px dotted var(--sapContent_FocusColor);
 			}
 		}
 	}
 }
+
 .sapUiMedia-GenericTileDeviceSet-large {
+
 	.sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
+
 		&:hover .sapMGTLineStyleHelperInner {
-			background: @sapUiTileHoverBackground;
+			background: var(--sapTile_Hover_Background);
 		}
 	}
+
 	.sapMGT.sapMGTLineMode {
 		font-size: @sapMFontMediumSize;
 
@@ -109,6 +120,7 @@
 		}
 
 		.sapMGTLineStyleHelper {
+
 			&:first-child:not(:only-child) .sapMGTLineStyleHelperInner {
 				margin-right: 0.125rem;
 			}
@@ -116,6 +128,7 @@
 			&:not(:first-child) .sapMGTLineStyleHelperInner {
 				margin: 0 0.125rem;
 			}
+
 			&:last-child .sapMGTLineStyleHelperInner {
 				margin-right: 0;
 			}
@@ -136,7 +149,10 @@
 		}
 
 		&.sapMGTLineModePress:not(.sapMGTDisabled) {
-			&, &:hover {
+
+			&,
+			&:hover {
+
 				.sapMGTLineStyleHelperInner {
 					background: fade(@sapUiShellHoverBackground, 12);
 				}
@@ -145,16 +161,14 @@
 	}
 }
 
-/************************************************************/
-
 .sapMGTLineMode .sapMGTHdrTxt {
-	color: @sapLinkColor;
+	color: var(--sapLinkColor);
 	font-size: @sapMFontMediumSize;
 	text-shadow: @sapUiShadowText;
 }
 
 .sapMGTLineMode .sapMGTSubHdrTxt {
-	color: @sapUiTileTextColor;
+	color: var(--sapTile_TextColor);
 	font-size: @sapMFontMediumSize;
 	text-shadow: @sapUiShadowText;
 }
@@ -188,10 +202,10 @@ html.sap-tablet .sapMGTWithImageHoverOverlay {
 	box-shadow: 0 0 0 1px fade(@sapUiContentContrastShadowColor, 30);
 
 	&:not(.sapMGTBackgroundImage) {
-		background: @sapUiTileActiveBackground;
+		background: var(--sapTile_Active_Background);
 	}
 
-	&.sapMGTScopeActions .sapMTileCntContent:after {
+	&.sapMGTScopeActions .sapMTileCntContent::after {
 		background-color: fade(@sapUiTileActiveBackground, 70);
 	}
 }
@@ -205,7 +219,7 @@ html.sap-tablet .sapMGTWithImageHoverOverlay {
 	transition: background 0.2s;
 
 	&:not(.sapMGTBackgroundImage) {
-		background: @sapUiTileHoverBackground;
+		background: var(--sapTile_Hover_Background);
 	}
 
 	.sapMGTWithImageHoverOverlay {
@@ -213,39 +227,40 @@ html.sap-tablet .sapMGTWithImageHoverOverlay {
 		transition: background 0.2s;
 	}
 
-	&.sapMGTScopeActions .sapMTileCntContent:after {
+	&.sapMGTScopeActions .sapMTileCntContent::after {
 		background-color: fade(@sapUiTileHoverBackground, 70);
 		transition: background 0.2s;
 	}
 }
 
+.sapMGTActionButtonPress.sapMGT:active {
 
-.sapMGTActionButtonPress.sapMGT:active
-{
-	.sapMGTFocusDiv{
+	.sapMGTFocusDiv {
 		border: none;
 	}
 }
 
-.sapMGTActionButtonPress.sapMGT:focus-visible
-{
-	.sapMGTFocusDiv{
-	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+.sapMGTActionButtonPress.sapMGT:focus-visible {
+
+	.sapMGTFocusDiv {
+		border: var(--sapContent_FocusColor) var(--sapContent_FocusStyle) var(--sapContent_FocusWidth);
 	}
 }
 
 .sapMGT.sapMGTBackgroundImage:focus .sapMGTFocusDiv,
 .sapMGT.sapMGTBackgroundImage:active .sapMGTFocusDiv {
+
 	&:after {
-		content: "";
+		content: '';
 		.sapMGTOverlayMixin();
 		border-radius: 0.25rem;
-		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentContrastFocusColor;
+		border: var(--sapContent_ContrastFocusColor) var(--sapContent_FocusStyle) var(--sapContent_FocusWidth);
 		z-index: 0;
 	}
 }
 
 .sapMGT.sapMGTBackgroundImage {
+
 	.sapMGTOverlay {
 		border-radius: 0.15rem;
 	}
