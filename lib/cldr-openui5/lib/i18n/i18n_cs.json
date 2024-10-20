@@ -2,5 +2,13 @@
   "languagename.cnr" : {
     "comment" : "XTIT: the official language name of Montenegro: Montenegrin",
     "text" : "Černohorština"
+  },
+  "calendarweek.wide" : {
+    "comment" : "XTIT: the long pattern for formatting a date using calendar week number",
+    "text" : "Kalendářní týden {0}"
+  },
+  "calendarweek.narrow" : {
+    "comment" : "XTIT: the short pattern for formatting a date using calendar week number",
+    "text" : "KT {0}"
   }
 }
