@@ -1624,7 +1624,7 @@ sap.ui.define([
 			}).then(function() {
 				return testScroll(-1);
 			}).then(function() {
-				oList.setSticky(['HeaderToolbar']);
+				oList.setSticky(["ColumnHeaders", "GroupHeaders", "HeaderToolbar", "InfoToolbar"]);
 				return testScroll(0);
 			}).then(function() {
 				oSpy.restore();
