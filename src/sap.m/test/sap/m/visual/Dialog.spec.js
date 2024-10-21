@@ -71,6 +71,14 @@ describe('sap.m.Dialog', function() {
 		element(by.id('dialogWithCustomHeadersDialogCloseButton')).click();
 	});
 
+	it('custom headers could be with bigger than on line height', function() {
+		element(by.id('dialogWithCustomHeaderWithBiggerHeightButton')).click();
+		var dialog = element(by.id('dialogWithCustomHeaderWithBiggerHeight'));
+		expect(takeScreenshot(dialog)).toLookAs('dialog-custom-header-with-bigger-height');
+
+		element(by.id('dialogWithCustomHeaderWithBiggerHeightClose')).click();
+	});
+
 	it('should open warning state dialog', function() {
 		element(by.id('dialogWithStateButton')).click();
 		var dialogWarningState = element(by.id('dialog1'));
