@@ -828,7 +828,7 @@ sap.ui.define([
 		this.oPopover.setSubHeader(oSubHeader);
 		this.oButton.firePress();
 		await nextUIUpdate();
-		assert.ok(this.oPopover.$().children(".sapMPopoverSubHeader")[0], "Sub header is rendered");
+		assert.equal(this.oPopover.getDomRef().getElementsByClassName("sapMPopoverSubHeader").length, 1, "Sub header is rendered");
 		oSubHeader.destroy();
 	});
 
