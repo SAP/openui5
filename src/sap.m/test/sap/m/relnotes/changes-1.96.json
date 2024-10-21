@@ -2004,5 +2004,15 @@
         "text": " sap.m.TimePicker: fix cursor position when there is mask and no entry"
       }
     ]
+  },
+  "1.96.35": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "9f9c90371a94986331721bca2287abddf215feb8",
+        "type": "FIX",
+        "text": " sap.m.Link: prevent default before press on mobile"
+      }
+    ]
   }
 }

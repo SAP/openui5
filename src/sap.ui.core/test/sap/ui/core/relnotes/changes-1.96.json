@@ -829,5 +829,15 @@
         "text": " sap/ui/model/resource/ResourceModel#_handleLocalizationChange: wait for resource bundle to be loaded"
       }
     ]
+  },
+  "1.96.35": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "1504f31c9140a0d4b02818ced53d6e54229ee32b",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: align current week calculations"
+      }
+    ]
   }
 }
