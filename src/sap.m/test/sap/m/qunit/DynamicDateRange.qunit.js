@@ -569,7 +569,7 @@ sap.ui.define([
 
 		aControls = oOptionLast.createValueHelpUI(this.ddr);
 
-		assert.strictEqual(aControls.length, 4, "created controls");
+		assert.strictEqual(aControls.length, 6, "created controls");
 		assert.ok(aControls[0].isA("sap.m.Label"), "created the correct control");
 		assert.ok(aControls[1].isA("sap.m.StepInput"), "created the correct control");
 		assert.strictEqual(aControls[1].getMin(), 1, "The step input has correct min value");
@@ -591,13 +591,30 @@ sap.ui.define([
 
 		aControls = oOptionLast.createValueHelpUI(this.ddr);
 
-		assert.strictEqual(aControls.length, 2, "controls are only 2");
+		assert.strictEqual(aControls.length, 6, "controls are only 6");
 		assert.ok(aControls[0].isA("sap.m.Label"), "a label");
 		assert.ok(aControls[1].isA("sap.m.StepInput"), "an input");
 
 		oOptionLast.destroy();
 	});
 
+
+	QUnit.test("last x one option creating value help UI", function(assert) {
+		var oOptionLast = new StandardDynamicDateOption({ key: "LASTMINUTESINCLUDED" }),
+			aParams,
+			aLastIncludedOptions = ["LASTMINUTESINCLUDED", "LASTHOURSINCLUDED", "LASTDAYSINCLUDED", "LASTWEEKSINCLUDED", "LASTMONTHSINCLUDED", "LASTQUARTERSINCLUDED", "LASTYEARSINCLUDED"];
+
+		// leave only one option
+		this.ddr.setStandardOptions(["LASTMINUTESINCLUDED", "LASTDAYSINCLUDED"]);
+
+		aParams = oOptionLast._getOptionIncludedParams(aLastIncludedOptions, this.ddr._getOptions());
+
+		assert.strictEqual(aParams.getOptions().length , 2, "two options are listed");
+		assert.strictEqual(aParams.getOptions()[0] , "minutes", "first option is correct");
+		assert.strictEqual(aParams.getOptions()[1] , "days", "second option is correct");
+
+		oOptionLast.destroy();
+	});
 	QUnit.test("creating value help UI - values update callback", function(assert) {
 		var oOptionLast = new StandardDynamicDateOption({ key: "LASTDAYS" }),
 			fnUpdateCallback = this.spy(),
