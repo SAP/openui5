@@ -42,7 +42,6 @@ sap.ui.define([
 		 *
 		 * @constructor
 		 * @private
-		 * @experimental This control is only for internal/experimental use and the API will change!
 		 *
 		 * @since 1.48
 		 * @alias sap.ui.layout.AlignedFlowLayout
