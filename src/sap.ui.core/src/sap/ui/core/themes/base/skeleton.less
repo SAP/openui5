@@ -1,11 +1,11 @@
 // /**
 // * Copyright (c) 2012-2024 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine 14.0.2
-// * data:{"sModified":"2024-08-08T08:45:16Z"}
+// * Theming Engine 14.0.23
+// * data:{"sModified":"2024-10-02T13:14:44Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/baseTheme/skeleton.less (Version 11.18.0) *******************/
+/******************* FILE /Base/baseLib/baseTheme/skeleton.less (Version 11.19.0) *******************/
 
 /*!SAP_POSTPROCESS_REDUCE_START*/
 
@@ -116,6 +116,7 @@
   --sapContent_ForegroundTextColor: @sapContent_ForegroundTextColor;
   --sapContent_BadgeBackground: @sapContent_BadgeBackground;
   --sapContent_BadgeTextColor: @sapContent_BadgeTextColor;
+  --sapContent_BadgeBorderColor: @sapContent_BadgeBorderColor;
   --sapContent_DragAndDropActiveColor: @sapContent_DragAndDropActiveColor;
   --sapContent_Selected_TextColor: @sapContent_Selected_TextColor;
   --sapContent_Selected_Background: @sapContent_Selected_Background;
@@ -142,6 +143,17 @@
   --sapContent_Illustrative_Color18: @sapContent_Illustrative_Color18;
   --sapContent_Illustrative_Color19: @sapContent_Illustrative_Color19;
   --sapContent_Illustrative_Color20: @sapContent_Illustrative_Color20;
+  --sapContent_Illustrative_Color21: @sapContent_Illustrative_Color21;
+  --sapContent_Illustrative_Color22: @sapContent_Illustrative_Color22;
+  --sapContent_Illustrative_Color23: @sapContent_Illustrative_Color23;
+  --sapContent_Illustrative_Color24: @sapContent_Illustrative_Color24;
+  --sapContent_Illustrative_Color25: @sapContent_Illustrative_Color25;
+  --sapContent_Illustrative_Color26: @sapContent_Illustrative_Color26;
+  --sapContent_Illustrative_Color27: @sapContent_Illustrative_Color27;
+  --sapContent_Illustrative_Color28: @sapContent_Illustrative_Color28;
+  --sapContent_Illustrative_Color29: @sapContent_Illustrative_Color29;
+  --sapContent_Illustrative_Color30: @sapContent_Illustrative_Color30;
+  --sapContent_Illustrative_Color31: @sapContent_Illustrative_Color31;
   --sapFontLightFamily: @sapFontLightFamily;
   --sapFontBoldFamily: @sapFontBoldFamily;
   --sapFontSemiboldFamily: @sapFontSemiboldFamily;
@@ -196,6 +208,7 @@
   --sapShell_InformativeColor: @sapShell_InformativeColor;
   --sapShell_NeutralColor: @sapShell_NeutralColor;
   --sapShell_Assistant_ForegroundColor: @sapShell_Assistant_ForegroundColor;
+  --sapShell_SubBrand_TextColor: @sapShell_SubBrand_TextColor;
   --sapShell_Category_1_Background: @sapShell_Category_1_Background;
   --sapShell_Category_1_BorderColor: @sapShell_Category_1_BorderColor;
   --sapShell_Category_1_TextColor: @sapShell_Category_1_TextColor;
@@ -281,38 +294,49 @@
   --sapAvatar_1_Background: @sapAvatar_1_Background;
   --sapAvatar_1_BorderColor: @sapAvatar_1_BorderColor;
   --sapAvatar_1_TextColor: @sapAvatar_1_TextColor;
+  --sapAvatar_1_Hover_Background: @sapAvatar_1_Hover_Background;
   --sapAvatar_2_Background: @sapAvatar_2_Background;
   --sapAvatar_2_BorderColor: @sapAvatar_2_BorderColor;
   --sapAvatar_2_TextColor: @sapAvatar_2_TextColor;
+  --sapAvatar_2_Hover_Background: @sapAvatar_2_Hover_Background;
   --sapAvatar_3_Background: @sapAvatar_3_Background;
   --sapAvatar_3_BorderColor: @sapAvatar_3_BorderColor;
   --sapAvatar_3_TextColor: @sapAvatar_3_TextColor;
+  --sapAvatar_3_Hover_Background: @sapAvatar_3_Hover_Background;
   --sapAvatar_4_Background: @sapAvatar_4_Background;
   --sapAvatar_4_BorderColor: @sapAvatar_4_BorderColor;
   --sapAvatar_4_TextColor: @sapAvatar_4_TextColor;
+  --sapAvatar_4_Hover_Background: @sapAvatar_4_Hover_Background;
   --sapAvatar_5_Background: @sapAvatar_5_Background;
   --sapAvatar_5_BorderColor: @sapAvatar_5_BorderColor;
   --sapAvatar_5_TextColor: @sapAvatar_5_TextColor;
+  --sapAvatar_5_Hover_Background: @sapAvatar_5_Hover_Background;
   --sapAvatar_6_Background: @sapAvatar_6_Background;
   --sapAvatar_6_BorderColor: @sapAvatar_6_BorderColor;
   --sapAvatar_6_TextColor: @sapAvatar_6_TextColor;
+  --sapAvatar_6_Hover_Background: @sapAvatar_6_Hover_Background;
   --sapAvatar_7_Background: @sapAvatar_7_Background;
   --sapAvatar_7_BorderColor: @sapAvatar_7_BorderColor;
   --sapAvatar_7_TextColor: @sapAvatar_7_TextColor;
+  --sapAvatar_7_Hover_Background: @sapAvatar_7_Hover_Background;
   --sapAvatar_8_Background: @sapAvatar_8_Background;
   --sapAvatar_8_BorderColor: @sapAvatar_8_BorderColor;
   --sapAvatar_8_TextColor: @sapAvatar_8_TextColor;
+  --sapAvatar_8_Hover_Background: @sapAvatar_8_Hover_Background;
   --sapAvatar_9_Background: @sapAvatar_9_Background;
   --sapAvatar_9_BorderColor: @sapAvatar_9_BorderColor;
   --sapAvatar_9_TextColor: @sapAvatar_9_TextColor;
+  --sapAvatar_9_Hover_Background: @sapAvatar_9_Hover_Background;
   --sapAvatar_10_Background: @sapAvatar_10_Background;
   --sapAvatar_10_BorderColor: @sapAvatar_10_BorderColor;
   --sapAvatar_10_TextColor: @sapAvatar_10_TextColor;
+  --sapAvatar_10_Hover_Background: @sapAvatar_10_Hover_Background;
   --sapButton_Background: @sapButton_Background;
   --sapButton_BorderColor: @sapButton_BorderColor;
   --sapButton_BorderWidth: @sapButton_BorderWidth;
   --sapButton_BorderCornerRadius: @sapButton_BorderCornerRadius;
   --sapButton_TextColor: @sapButton_TextColor;
+  --sapButton_FontFamily: @sapButton_FontFamily;
   --sapButton_Hover_Background: @sapButton_Hover_Background;
   --sapButton_Hover_BorderColor: @sapButton_Hover_BorderColor;
   --sapButton_Hover_TextColor: @sapButton_Hover_TextColor;
@@ -322,7 +346,9 @@
   --sapButton_Active_TextColor: @sapButton_Active_TextColor;
   --sapButton_Emphasized_Background: @sapButton_Emphasized_Background;
   --sapButton_Emphasized_BorderColor: @sapButton_Emphasized_BorderColor;
+  --sapButton_Emphasized_BorderWidth: @sapButton_Emphasized_BorderWidth;
   --sapButton_Emphasized_TextColor: @sapButton_Emphasized_TextColor;
+  --sapButton_Emphasized_FontFamily: @sapButton_Emphasized_FontFamily;
   --sapButton_Emphasized_Hover_Background: @sapButton_Emphasized_Hover_Background;
   --sapButton_Emphasized_Hover_BorderColor: @sapButton_Emphasized_Hover_BorderColor;
   --sapButton_Emphasized_Hover_TextColor: @sapButton_Emphasized_Hover_TextColor;
@@ -526,6 +552,12 @@
   --sapField_InformationBorderWidth: @sapField_InformationBorderWidth;
   --sapField_InformationBorderStyle: @sapField_InformationBorderStyle;
   --sapField_InformationShadow: @sapField_InformationShadow;
+  --sapField_Selector_BorderStyle: @sapField_Selector_BorderStyle;
+  --sapField_Selector_ReadOnly_BorderStyle: @sapField_Selector_ReadOnly_BorderStyle;
+  --sapField_Selector_InvalidBorderStyle: @sapField_Selector_InvalidBorderStyle;
+  --sapField_Selector_WarningBorderStyle: @sapField_Selector_WarningBorderStyle;
+  --sapField_Selector_SuccessBorderStyle: @sapField_Selector_SuccessBorderStyle;
+  --sapField_Selector_InformationBorderStyle: @sapField_Selector_InformationBorderStyle;
   --sapGroup_TitleBackground: @sapGroup_TitleBackground;
   --sapGroup_TitleBorderColor: @sapGroup_TitleBorderColor;
   --sapGroup_TitleTextColor: @sapGroup_TitleTextColor;
