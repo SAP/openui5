@@ -184,17 +184,20 @@ sap.ui.define([
 	 *
 	 * @param {string} sUrl The metadata URL
 	 * @param {boolean} bSuppressEvents Suppress metadata events
+	 * @param {function} [fnRequest] Request function which can handle 503 "Retry-After" responses,
+	 *   see {@link sap.ui.model.odata.v2.ODataModel#_request}
 	 * @returns {Promise} Promise for metadata loading
 	 * @private
 	 */
-	ODataMetadata.prototype._loadMetadata = function(sUrl, bSuppressEvents) {
+	ODataMetadata.prototype._loadMetadata = function(sUrl, bSuppressEvents, fnRequest) {
 
 		// request the metadata of the service
 		var that = this;
 		sUrl = sUrl || this.sUrl;
 
+		let oRequest;
 		if (!this.sMetadata) {
-			var oRequest = this._createRequest(sUrl);
+			oRequest = this._createRequest(sUrl);
 		}
 
 		return new Promise(function(resolve, reject) {
@@ -270,7 +273,12 @@ sap.ui.define([
 			}
 
 			// execute the request
-			oRequestHandle = OData.request(oRequest, _handleSuccess, _handleError, OData.metadataHandler);
+			if (fnRequest) {
+				oRequestHandle = fnRequest(oRequest, _handleSuccess, _handleError, OData.metadataHandler,
+					/*oHttpClient*/undefined, /*oMetadata*/undefined, /*bSkipHandleTracking*/true);
+			} else {
+				oRequestHandle = OData.request(oRequest, _handleSuccess, _handleError, OData.metadataHandler);
+			}
 			if (that.bAsync) {
 				oRequestHandle.id = uid();
 				that.mRequestHandles[oRequestHandle.id] = oRequestHandle;
@@ -1378,14 +1386,16 @@ sap.ui.define([
 	 * Add metadata url: The response will be merged with the existing metadata object.
 	 *
 	 * @param {string|string[]} vUrl Either one URL as string or an array of URI strings
+	 * @param {function} [fnRequest] Request function which can handle 503 "Retry-After" responses,
+	 *   see {@link sap.ui.model.odata.v2.ODataModel#_request}
 	 * @returns {Promise} The Promise for metadata loading
 	 * @private
 	 */
-	ODataMetadata.prototype._addUrl = function(vUrl) {
+	ODataMetadata.prototype._addUrl = function(vUrl, fnRequest) {
 		var aUrls = [].concat(vUrl);
 
 		return Promise.all(aUrls.map(function(sUrl) {
-			return this._loadMetadata(sUrl, true);
+			return this._loadMetadata(sUrl, true, fnRequest);
 		}, this));
 	};
 

@@ -3463,12 +3463,13 @@ sap.ui.define([
 	 * @param {object} oRequestHandle
 	 *   The preliminary created request handle whose abort function is replaced with the abort function
 	 *   of the repeated request
+	 * @param {boolean} [bSkipHandleTracking] Whether the request is excluded from the tracking of request handles
 	 * @returns {boolean}
 	 *   Whether it is a 503 "Retry-After" error response and the error is processed by the "Retry-After" handler
 	 * @private
 	 */
 	ODataModel.prototype.checkAndProcessRetryAfterError = function(oRequest, oErrorResponse, fnSuccess, fnError,
-			oHandler, oHttpClient, oMetadata, oRequestHandle) {
+			oHandler, oHttpClient, oMetadata, oRequestHandle, bSkipHandleTracking) {
 		if (oErrorResponse.response?.statusCode === 503
 			&& this._getHeader("retry-after", oErrorResponse.response.headers)
 			&& this.fnRetryAfter
@@ -3480,7 +3481,8 @@ sap.ui.define([
 			this.pRetryAfter.then(() => {
 				this.pRetryAfter = this.oRetryAfterError = null;
 				oRequestHandle.abort =
-					this._request(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata).abort;
+					this._request(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata, bSkipHandleTracking)
+						.abort;
 			}, (oReason) => {
 				this.pRetryAfter = null; // this.oRetryAfterError must not be reset!
 				this.onRetryAfterRejected(fnError, oErrorResponse, oReason);
@@ -6294,7 +6296,7 @@ sap.ui.define([
 			}
 		});
 
-		return this.oMetadata._addUrl(aMetadataUrls).then(function(aParams) {
+		return this.oMetadata._addUrl(aMetadataUrls, this._request.bind(this)).then(function(aParams) {
 			return Promise.all(aParams.map(function(oParam) {
 				aEntitySets = aEntitySets.concat(oParam.entitySets);
 				return that.oAnnotations.addSource({
@@ -6304,7 +6306,7 @@ sap.ui.define([
 			}));
 		}).then(function() {
 			return that.oAnnotations.addSource(aAnnotationUrls);
-		}).then(function(oParam) {
+		}).then(function() {
 			return {
 				annotations: that.oAnnotations.getData(),
 				entitySets: aEntitySets
@@ -7830,10 +7832,12 @@ sap.ui.define([
 	 * @param {object} oHandler The request handler object
 	 * @param {object} oHttpClient The HttpClient object
 	 * @param {object} oMetadata The metadata object
+	 * @param {boolean} [bSkipHandleTracking] Whether the request is excluded from the tracking of request handles
 	 * @returns {object} The request handle
 	 * @private
 	 */
-	ODataModel.prototype._request = function(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata) {
+	ODataModel.prototype._request = function(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata,
+			bSkipHandleTracking) {
 		var oRequestHandle;
 
 		if (this.bDestroyed) {
@@ -7864,7 +7868,7 @@ sap.ui.define([
 		function handle503Error(fnError0) {
 			return function (oErrorResponse) {
 				if (that.checkAndProcessRetryAfterError(oRequest, oErrorResponse, fnSuccess, fnError0, oHandler,
-						oHttpClient, oMetadata, oRequestHandle)) {
+						oHttpClient, oMetadata, oRequestHandle, bSkipHandleTracking)) {
 					return;
 				}
 				fnError0(oErrorResponse);
@@ -7875,7 +7879,8 @@ sap.ui.define([
 			oRequestHandle = {abort() {}};
 			this.pRetryAfter.then(() => {
 				oRequestHandle.abort =
-					this._request(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata).abort;
+					this._request(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata,
+						bSkipHandleTracking).abort;
 			}, (oReason) => {
 				this.onRetryAfterRejected(fnError, undefined, oReason);
 			});
@@ -7890,8 +7895,7 @@ sap.ui.define([
 				oMetadata
 			);
 
-			// add request handle to array and return it (only for async requests)
-			if (oRequest.async !== false) {
+			if (!bSkipHandleTracking && oRequest.async !== false) {
 				this.aPendingRequestHandles.push(oRequestHandle);
 			}
 		}
