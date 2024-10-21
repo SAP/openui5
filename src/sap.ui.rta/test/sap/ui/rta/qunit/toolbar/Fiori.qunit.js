@@ -37,13 +37,14 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
+	const sLogoSource = "test-resources/sap/ui/rta/testdata/sap_logo.png";
 
 	function stubFioriRenderer(assert) {
-		var done = assert.async();
+		const done = assert.async();
 
 		this.oImage = new Image({
-			src: "test-resources/sap/ui/rta/testdata/sap_logo.png"
+			src: sLogoSource
 		});
 
 		this.oImage.attachEventOnce("load", function() {
@@ -58,7 +59,7 @@ sap.ui.define([
 					getShellHeader: function() {
 						return {
 							getLogo() {
-								return "logo";
+								return sLogoSource;
 							},
 							addStyleClass: function(sText) {
 								this.sAdd = sText;
@@ -97,28 +98,31 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when the toolbar gets initialized", function(assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oToolbar = new Fiori({
 				textResources: Lib.getResourceBundleFor("sap.ui.rta")
 			});
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 
-			this.oToolbar.onFragmentLoaded().then(function() {
-				var oImage = this.oToolbar.getControl("icon");
+			this.oToolbar.onFragmentLoaded().then(async function() {
+				const oImage = this.oToolbar.getControl("icon");
 				assert.ok(oImage, "then the logo is among the controls");
 				assert.equal(oImage.getMetadata().getName(), "sap.m.Image", "then the logo control is set correctly");
-				assert.equal(oImage.getSrc(), "logo", "then the name of the logo is correctly set");
+				assert.equal(
+					oImage.getSrc(),
+					sLogoSource,
+					"then the source of the logo is correctly set"
+				);
 
-				var oErrorStub = sandbox.stub(Log, "error");
-				var oImg = document.createElement("img");
-				oImg.width = "5px";
-				oImg.height = "5px";
-				this.oToolbar._checkLogoSize(oImg, 6, 6);
-				assert.equal(oErrorStub.callCount, 1, "then an error was thrown");
-
-				this.oToolbar.show();
+				await this.oToolbar.show();
 				assert.equal(this.sAdd, "sapUiRtaFioriHeaderInvisible", "then the correct StyleClass got added");
+
+				const oErrorStub = sandbox.stub(Log, "error");
+				this.oToolbar._checkLogoSize(oImage.getDomRef(), 20, 20);
+				assert.equal(oErrorStub.callCount, 1, "then an error is thrown if the logo size is incorrect");
+				this.oToolbar._checkLogoSize(oImage.getDomRef(), 54.75, 27.25);
+				assert.equal(oErrorStub.callCount, 1, "then an error is not thrown if the logo size is correct when rounded");
 
 				sandbox.stub(Adaptation.prototype, "hide").returns(Promise.resolve());
 				return this.oToolbar.hide().then(function() {
@@ -130,19 +134,19 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the Fiori header is destroyed while the toolbar is being hidden", function(assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oToolbar = new Fiori({
 				textResources: Lib.getResourceBundleFor("sap.ui.rta")
 			});
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 
-			var oAdaptationDestroyStub = sandbox.stub(Adaptation.prototype, "destroy").callsFake(function(...aArgs) {
+			const oAdaptationDestroyStub = sandbox.stub(Adaptation.prototype, "destroy").callsFake(function(...aArgs) {
 				oAdaptationDestroyStub.wrappedMethod.apply(this, aArgs);
 				assert.ok(true, "then the destroy is executed without errors");
 			});
 
-			var oRemoveStyleClassSpy = sandbox.spy(this.oToolbar._oFioriHeader, "removeStyleClass");
+			const oRemoveStyleClassSpy = sandbox.spy(this.oToolbar._oFioriHeader, "removeStyleClass");
 
 			this.oToolbar.onFragmentLoaded().then(function() {
 				this.oToolbar.show();
@@ -161,7 +165,7 @@ sap.ui.define([
 
 	function createAndStartRTA() {
 		this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
-		var oButton = new Button("testButton");
+		const oButton = new Button("testButton");
 		this.oContainer = new VerticalLayout({
 			id: this.oComponent.createId("myVerticalLayout"),
 			content: [oButton],
@@ -187,7 +191,7 @@ sap.ui.define([
 				this.placeAt("qunit-fixture");
 			});
 			sandbox.stub(RtaUtils, "isOriginalFioriToolbarAccessible").returns(true);
-			var oVersionsModel = new JSONModel({
+			const oVersionsModel = new JSONModel({
 				versioningEnabled: true
 			});
 			oVersionsModel.setDirtyChanges = function() {};
@@ -210,9 +214,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the toolbar gets initially shown in a narrow window (600px)", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			document.getElementById("qunit-fixture").style.width = "600px";
-			var oSetLogoVisibilityStub = sandbox.stub(Fiori.prototype, "_setLogoVisibility")
+			const oSetLogoVisibilityStub = sandbox.stub(Fiori.prototype, "_setLogoVisibility")
 			.callsFake(function(...aArgs) {
 				oSetLogoVisibilityStub.wrappedMethod.apply(this.oToolbar, aArgs);
 				assert.notOk(this.oToolbar.getControl("iconBox").getVisible(), "then the logo is not visible");
@@ -222,9 +226,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the toolbar gets initially shown in a wide window (1600px), then the window is reduced and then expanded again", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			document.getElementById("qunit-fixture").style.width = "1600px";
-			var oSetLogoVisibilityStub = sandbox.stub(Fiori.prototype, "_setLogoVisibility")
+			const oSetLogoVisibilityStub = sandbox.stub(Fiori.prototype, "_setLogoVisibility")
 			.callsFake(function(...aArgs) {
 				oSetLogoVisibilityStub.wrappedMethod.apply(this.oToolbar, aArgs);
 				assert.notOk(this.oToolbar.getControl("iconBox").getVisible(), "then the logo disappears");
