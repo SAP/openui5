@@ -1,0 +1,32 @@
+{
+  "1.131.0": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "5f1bbaeb67bc934466a480a0d54bf98ec09e4f7a",
+        "type": "FIX",
+        "text": " LocalBusyIndicator: Set correct border radius in Horizon theme"
+      },
+      {
+        "id": "edf4b41689fdb4e661c910891e58557ecea10d18",
+        "type": "FIX",
+        "text": " core/Element: use duck typing to check DOM element in 'closestTo'"
+      },
+      {
+        "id": "9c5998d7eb75502b95b9751c5a45dab6bb809b57",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: Update documentation for format option \"precision\""
+      },
+      {
+        "id": "3039d7fa3d8521d4cedbb93701b968dc50a1e502",
+        "type": "FIX",
+        "text": " sap/ui/core/cldr/*.json: fix translations for sap-calendarWeek.narrow and .wide"
+      },
+      {
+        "id": "c264807868a51b96b3a27169e35e51889e47edc9",
+        "type": "FEATURE",
+        "text": " sap.m.Popover: resizable property now covers all cases"
+      }
+    ]
+  }
+}

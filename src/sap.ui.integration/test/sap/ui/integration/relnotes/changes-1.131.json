@@ -1,0 +1,12 @@
+{
+  "1.131.0": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "172cb794900301ebd0414b14b99856a40158a632",
+        "type": "FIX",
+        "text": " Integration Cards: Avoid horizontally overflowing content in ShowCard action dialog"
+      }
+    ]
+  }
+}

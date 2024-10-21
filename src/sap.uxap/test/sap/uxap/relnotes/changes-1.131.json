@@ -1,0 +1,12 @@
+{
+  "1.131.0": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "6f77ec4a9b159b444a8d183c6041facf809f8c83",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: pin button is fixed"
+      }
+    ]
+  }
+}

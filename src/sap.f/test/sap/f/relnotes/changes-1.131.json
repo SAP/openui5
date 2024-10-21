@@ -1,0 +1,22 @@
+{
+  "1.131.0": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "c20f2e5961cb783d3472f8f99678f5e60e1af6b9",
+        "type": "FIX",
+        "text": " Integration Cards: Adjust Badge creation"
+      },
+      {
+        "id": "8a9392f923e1532b78be5cdaad603ca9a5d33c74",
+        "type": "FEATURE",
+        "text": " sap.f.SidePanel: visual alignments"
+      },
+      {
+        "id": "6f77ec4a9b159b444a8d183c6041facf809f8c83",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: pin button is fixed"
+      }
+    ]
+  }
+}

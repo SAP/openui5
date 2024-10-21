@@ -1,0 +1,37 @@
+{
+  "1.131.0": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "c9a4dd7e3266cc23569daaba8fb79d61f2639a82",
+        "type": "FIX",
+        "text": " Demo Kit: Fix broken link in \"Bulletin Board\" Demo App"
+      },
+      {
+        "id": "1d6caf3e82851ee4197c52661fc7774c40c4db3a",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Horizontal tab text is no longer cut off when extra text spacing is applied"
+      },
+      {
+        "id": "38014c076ad5726a49c9258adfdbde622b972922",
+        "type": "FIX",
+        "text": " sap.m.Link: prevent default before press on mobile"
+      },
+      {
+        "id": "c264807868a51b96b3a27169e35e51889e47edc9",
+        "type": "FEATURE",
+        "text": " sap.m.Popover: resizable property now covers all cases"
+      },
+      {
+        "id": "91bb74378c73299d6627ca9ad138fd0de6b7941b",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: fix cursor position when there is mask and no entry"
+      },
+      {
+        "id": "fab751ec8113c0f23db8c0a33efd80d0879026cf",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Fixed disabled Links tab order"
+      }
+    ]
+  }
+}
