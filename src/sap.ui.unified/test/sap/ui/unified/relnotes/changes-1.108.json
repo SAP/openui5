@@ -308,5 +308,21 @@
         "text": " sap.ui.unified.Calendar: add tooltips for calendar legend types"
       }
     ]
+  },
+  "1.108.36": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "27d8f270745f4020afe0e1102af7cb912c9b511d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: remove appointments not selected announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280162468"
+          }
+        ]
+      }
+    ]
   }
 }

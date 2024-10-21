@@ -1760,5 +1760,36 @@
         "text": " sap.m.Popover: Height calculations for scrollable contents are preserved after invalidation"
       }
     ]
+  },
+  "1.108.36": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "a16d56e0d60403615a4eb981fe0f4cf8c811c2bb",
+        "type": "FIX",
+        "text": " sap.m.Link: prevent default before press on mobile"
+      },
+      {
+        "id": "ad874323f86739abfe74391bc3083e61c6af5352",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: fix cursor position when there is mask and no entry"
+      },
+      {
+        "id": "27d8f270745f4020afe0e1102af7cb912c9b511d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: remove appointments not selected announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280162468"
+          }
+        ]
+      },
+      {
+        "id": "65c6953b7dcbbfb56e8cb11dccafde2e326838e2",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: align current week calculations"
+      }
+    ]
   }
 }

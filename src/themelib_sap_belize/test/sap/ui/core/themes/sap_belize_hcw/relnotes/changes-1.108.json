@@ -125,5 +125,15 @@
         "text": " sap.m.Page: Focus element is scrolled into view"
       }
     ]
+  },
+  "1.108.36": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "e5d2262e65e94bf460c37ce6697ea8e961d991f6",
+        "type": "FIX",
+        "text": " sap.m.Button: Transparent button is correct in Bar for Belize theme"
+      }
+    ]
   }
 }

@@ -657,5 +657,20 @@
         "text": " sap/ui/model/odata/v2/ODataListBinding: fire dataReceived event for aborted requests"
       }
     ]
+  },
+  "1.108.36": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "b21a6758d139573292725dde999f7e4645d33734",
+        "type": "FIX",
+        "text": " core/Element: use duck typing to check DOM element in 'closestTo'"
+      },
+      {
+        "id": "65c6953b7dcbbfb56e8cb11dccafde2e326838e2",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: align current week calculations"
+      }
+    ]
   }
 }

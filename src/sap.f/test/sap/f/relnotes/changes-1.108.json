@@ -251,5 +251,29 @@
         "text": " sap.f.DynamicPage: Correct header placement after expanded state change"
       }
     ]
+  },
+  "1.108.36": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "e343b5d38f794c217d2f5d8602336c3427d3325a",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Footer handling improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270187596"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380041732"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380073093"
+          }
+        ]
+      }
+    ]
   }
 }
