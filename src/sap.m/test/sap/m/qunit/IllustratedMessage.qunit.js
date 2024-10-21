@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Core",
 	'sap/ui/core/library',
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/ui/dom/getScrollbarSize"
 ],
 function(
 	library,
@@ -17,7 +18,8 @@ function(
 	Button,
 	Core,
 	coreLibrary,
-	InvisibleText
+	InvisibleText,
+	getScrollbarSize
 ) {
 	"use strict";
 
@@ -505,6 +507,27 @@ function(
 			"_updateMedia is called with the oMockEvent's new width size");
 	});
 
+	QUnit.test("_updateMedia (with altered width to prevent infinite resize)", function (assert) {
+		// Arrange
+		var oMockEvent = {size: {width: 666, height: 666},
+			target: { parentNode: {
+				scrollHeight: 2,
+				clientHeight: 1
+			}}
+		},
+		fnUpdateMediaSpy = this.spy(this.oIllustratedMessage, "_updateMedia");
+
+		// Act
+		this.oIllustratedMessage._onResize(oMockEvent);
+
+		// Assert
+		assert.ok(fnUpdateMediaSpy.calledWithExactly(oMockEvent.size.width + getScrollbarSize().width, oMockEvent.size.height),
+			"_updateMedia is called with the correct arguments. Scrollbar width is added to the usual width in the needed case.");
+
+		// Clear
+		fnUpdateMediaSpy.resetHistory();
+	});
+
 	QUnit.test("_updateMedia (with invalid input)", function (assert) {
 		// Arrange
 		var fnUpdateMediaStyleSpy = this.spy(this.oIllustratedMessage, "_updateMediaStyle");
@@ -554,7 +577,7 @@ function(
 
 	QUnit.test("_updateMedia (vertical) with enableVerticalResponsiveness property", function (assert) {
 		// Assert
-		assert.expect(23);
+		assert.expect(24);
 
 		// Arrange
 		var fnUpdateMediaStyleSpy = this.spy(this.oIllustratedMessage, "_updateMediaStyle");
@@ -565,6 +588,8 @@ function(
 		this.oIllustratedMessage._updateMedia(9999, IllustratedMessage.BREAK_POINTS_HEIGHT[IllustratedMessage.BREAK_POINTS_HEIGHT.Dialog]);
 
 		// Assert
+		assert.ok(fnUpdateMediaStyleSpy.calledOnce,
+			"_updateMediaStyle is called once inside the _updateMedia call even if enableVerticalResponsiveness is 'false'");
 		assert.ok(fnUpdateSymbolSpy.calledOnce,
 			"_updateSymbol is called once inside the _updateMedia call even if enableVerticalResponsiveness is 'false'");
 		assert.notOk(this.oIllustratedMessage.$().hasClass(sScalableClass),
@@ -600,24 +625,6 @@ function(
 			fnUpdateMediaStyleSpy.resetHistory();
 			fnUpdateSymbolSpy.resetHistory();
 		}, this);
-	});
-
-	QUnit.test("_updateMedia prevents infinite resize", function (assert) {
-
-		var fnUpdateMediaStyleSpy = this.spy(this.oIllustratedMessage, "_updateMediaStyle");
-
-		// Act - setting initial size
-		this.oIllustratedMessage._updateMedia(IllustratedMessage.BREAK_POINTS["DIALOG"], IllustratedMessage.BREAK_POINTS_HEIGHT["DIALOG"]);
-
-		// Act - setting new size
-		this.oIllustratedMessage._updateMedia(IllustratedMessage.BREAK_POINTS["SCENE"], IllustratedMessage.BREAK_POINTS_HEIGHT["SCENE"]);
-
-		// Act - back to initial size
-		fnUpdateMediaStyleSpy.resetHistory();
-		this.oIllustratedMessage._updateMedia(IllustratedMessage.BREAK_POINTS["DIALOG"], IllustratedMessage.BREAK_POINTS_HEIGHT["DIALOG"]);
-
-		// Assert
-		assert.strictEqual(fnUpdateMediaStyleSpy.callCount, 0, "_updateMediaStyle not called. Infinite resize prevented.");
 	});
 
 	QUnit.test("IllustratedMessage should fit its container height when enableVerticalResponsiveness property is true", function (assert) {
