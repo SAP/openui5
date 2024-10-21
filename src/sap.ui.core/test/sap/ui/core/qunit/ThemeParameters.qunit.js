@@ -33,7 +33,7 @@ sap.ui.define([
 	 * @returns {string} Normalized, 6-hex-digit color string, e.g. #aabbcc
 	 */
 	function unifyHexNotation(input) {
-		if (input.length === 4) {
+		if (input?.length === 4) {
 			var colorShortNotationRegexp = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
 			var sResult = colorShortNotationRegexp.exec(input);
 			if (sResult) {
@@ -43,12 +43,21 @@ sap.ui.define([
 		return input;
 	}
 
-	function getParameterInUnifiedHexNotation(key, oElement) {
-		var sParameter = Parameters.get(key, oElement);
-		if (sParameter) {
-			return unifyHexNotation(sParameter);
-		}
-		return sParameter;
+	function Parameters_getAsync(key, oElement) {
+		return new Promise((resolve) => {
+			const sParameter = Parameters.get({
+				name: key,
+				scopeElement: oElement,
+				callback: resolve
+			});
+			if (sParameter !== undefined) {
+				resolve(sParameter);
+			}
+		});
+	}
+
+	async function getParameterInUnifiedHexNotation(key, oElement) {
+		return unifyHexNotation(await Parameters_getAsync(key, oElement));
 	}
 
 	function checkLibraryParametersJsonRequestForLib(sLibNumber) {
@@ -264,10 +273,10 @@ sap.ui.define([
 
 	QUnit.test("Read parameter first time from lib which CSS is already loaded shouldn't trigger a library-parameters.json request", async function(assert) {
 		var done = assert.async();
-		var fnAssertApplied = function() {
+		var fnAssertApplied = async function() {
 
 			// parameters of base theme should now be present
-			assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParam1ForLib10"), "#123321", "sapUiThemeParam1ForLib10 must be defined as '#123321'");
+			assert.equal(await getParameterInUnifiedHexNotation("sapUiThemeParam1ForLib10"), "#123321", "sapUiThemeParam1ForLib10 must be defined as '#123321'");
 			assert.strictEqual(checkLibraryParametersJsonRequestForLib("10").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib10");
 
 			Theming.detachApplied(fnAssertApplied);
@@ -297,7 +306,7 @@ sap.ui.define([
 
 		await nextUIUpdate();
 
-		var fnAssertApplied = function () {
+		var fnAssertApplied = async function () {
 			// CSS is loaded and scope 'TestScope1' is defined therefore different scope chains expected
 			assert.deepEqual(Parameters.getActiveScopesFor(oOuterBar, true), [], "OuterBar - no own scope - empty scope chain");
 			assert.deepEqual(Parameters.getActiveScopesFor(oInnerBar, true), [["TestScope1"]], "InnerBar - TestScope1 - [['TestScope1']]");
@@ -306,12 +315,12 @@ sap.ui.define([
 			assert.deepEqual(Parameters.getActiveScopesFor(oInnerIcon1, true), [["TestScope1"]], "InnerIcon1 - no own scope - [['TestScope1']]");
 			assert.deepEqual(Parameters.getActiveScopesFor(oInnerIcon2, true), [["TestScope1"], ["TestScope1"]], "InnerIcon2 - TestScope1 - [['TestScope1'], ['TestScope1']]");
 
-			assert.deepEqual(Parameters.get("sapUiThemeParam1ForLib11", oOuterBar), "#111213", "OuterBar - no own scope - default scope value #111213");
-			assert.deepEqual(Parameters.get("sapUiThemeParam1ForLib11", oInnerBar), "#312111", "InnerBar - TestScope1 - TestScope1 value #312111");
-			assert.deepEqual(Parameters.get("sapUiThemeParam1ForLib11", oOuterIcon1), "#111213", "OuterBar - no own scope - default scope value #111213");
-			assert.deepEqual(Parameters.get("sapUiThemeParam1ForLib11", oOuterIcon2), "#312111", "OuterIcon2 - TestScope1 - TestScope1 value #312111");
-			assert.deepEqual(Parameters.get("sapUiThemeParam1ForLib11", oInnerIcon1), "#312111", "InnerIcon1 - no own scope - TestScope1 value #312111");
-			assert.deepEqual(Parameters.get("sapUiThemeParam1ForLib11", oInnerIcon2), "#312111", "InnerIcon2 - TestScope1 - TestScope1 value #312111");
+			assert.deepEqual(await Parameters_getAsync("sapUiThemeParam1ForLib11", oOuterBar), "#111213", "OuterBar - no own scope - default scope value #111213");
+			assert.deepEqual(await Parameters_getAsync("sapUiThemeParam1ForLib11", oInnerBar), "#312111", "InnerBar - TestScope1 - TestScope1 value #312111");
+			assert.deepEqual(await Parameters_getAsync("sapUiThemeParam1ForLib11", oOuterIcon1), "#111213", "OuterBar - no own scope - default scope value #111213");
+			assert.deepEqual(await Parameters_getAsync("sapUiThemeParam1ForLib11", oOuterIcon2), "#312111", "OuterIcon2 - TestScope1 - TestScope1 value #312111");
+			assert.deepEqual(await Parameters_getAsync("sapUiThemeParam1ForLib11", oInnerIcon1), "#312111", "InnerIcon1 - no own scope - TestScope1 value #312111");
+			assert.deepEqual(await Parameters_getAsync("sapUiThemeParam1ForLib11", oInnerIcon2), "#312111", "InnerIcon2 - TestScope1 - TestScope1 value #312111");
 
 			oOuterBar.destroy();
 			Theming.detachApplied(fnAssertApplied);
@@ -349,15 +358,15 @@ sap.ui.define([
 
 				Parameters.get({
 					name: "sapUiThemeParamForLib14",
-					callback: function (oParamResult) {
+					callback: async function (oParamResult) {
 						assert.deepEqual(oParamResult, "#dfdfdf", "Value for the given param 'sapUiThemeParamForLib14' must be defined as '#dfdfdf' for theme 'base'");
-						assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamForLib13"), "#efefef", "sapUiThemeParamForLib13 must be defined as '#efefef' for theme 'base'");
+						assert.equal(await getParameterInUnifiedHexNotation("sapUiThemeParamForLib13"), "#efefef", "sapUiThemeParamForLib13 must be defined as '#efefef' for theme 'base'");
 
 						Theming.attachApplied(fnContinue);
 						Theming.setTheme("sap_horizon_hcb");
 					}
 				});
-				assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamForLib13"), "#fefefe", "sapUiThemeParamForLib13 must be defined as '#fefefe' for theme 'hcb'");
+				assert.equal(await getParameterInUnifiedHexNotation("sapUiThemeParamForLib13"), "#fefefe", "sapUiThemeParamForLib13 must be defined as '#fefefe' for theme 'hcb'");
 				Theming.setTheme("base");
 			}
 		};
