@@ -22,7 +22,6 @@ sap.ui.define([
 	 * @constructor
 	 * @since 1.58
 	 * @private
-	 * @experimental
 	 * @alias sap.ui.mdc.actiontoolbar.ActionToolbarAction
 	 */
 	const ActionToolbarAction = Control.extend("sap.ui.mdc.actiontoolbar.ActionToolbarAction", {
