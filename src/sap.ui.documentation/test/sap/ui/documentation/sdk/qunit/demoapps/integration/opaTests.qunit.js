@@ -167,6 +167,7 @@ sap.ui.require([
 		opaTest("Should be able to download all apps", function (Given, When, Then) {
 			var fnCreateArchive;
 			var fnHandleError;
+			var fnHandleWarning;
 
 			When.waitFor({
 				viewName: sViewName,
@@ -175,6 +176,7 @@ sap.ui.require([
 					var oController = oPage.getParent().getController();
 					fnCreateArchive = sinon.stub(oController, "createArchive", function () { });
 					fnHandleError = sinon.stub(oController, "handleError", function () { });
+					fnHandleWarning = sinon.stub(oController, "handleWarning", function () { });
 				}
 			});
 
@@ -191,6 +193,9 @@ sap.ui.require([
 								sinon.assert.notCalled(fnHandleError);
 								if (fnHandleError.callCount > 0) {
 									Opa5.stopQueue();
+								}
+								if (fnHandleWarning.callCount > 0) {
+									Opa5.assert.ok(true, "Warning was handled during download process.");
 								}
 							}
 						});

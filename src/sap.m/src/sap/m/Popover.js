@@ -1042,7 +1042,6 @@ sap.ui.define([
 			oStyle.bottom = "";
 			oStyle.width = (this.isResized() && sContentWidth) ? sContentWidth : "";
 			oStyle.height = "";
-			oStyle.overflow = "";
 
 			oScrollAreaStyle.width = "";
 			oScrollAreaStyle.display = "";
@@ -2271,9 +2270,6 @@ sap.ui.define([
 				if (bUseContrastContainer) {
 					$arrow.addClass("sapContrast sapContrastPlus");
 				}
-
-				// Prevent the popover from hiding the arrow
-				$popover.css("overflow", "visible");
 			}
 
 			this._afterAdjustPositionAndArrowHook();

@@ -1164,7 +1164,7 @@ sap.ui.define([
 		};
 
 		HeaderContainer.prototype._getParentCell = function (oDomElement) {
-			return jQuery(oDomElement).parents(".sapMHrdrCntrInner").andSelf(".sapMHrdrCntrInner").get(0);
+			return jQuery(oDomElement).parents(".sapMHrdrCntrInner").addBack(".sapMHrdrCntrInner").get(0);
 		};
 
 

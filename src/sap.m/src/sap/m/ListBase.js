@@ -2921,11 +2921,11 @@ function(
 			switch (stickyOption) {
 				case Sticky.HeaderToolbar:
 					oControl = this.getHeaderToolbar();
-					oDomRef = oControl && oControl.getDomRef() || this.getDomRef("header");
+					oDomRef = oControl?.getDomRef() || this.getDomRef("header");
 					break;
 				case Sticky.InfoToolbar:
 					oControl = this.getInfoToolbar();
-					oDomRef = oControl && oControl.getDomRef();
+					oDomRef = oControl?.getDomRef();
 					break;
 				case Sticky.ColumnHeaders:
 					oDomRef = this.getDomRef("tblHeader");
@@ -2934,7 +2934,7 @@ function(
 					//get domRef which is in view currently (Multiple groupHeaders)
 					oDomRef = this.getItems(true).find((oItem) => {
 						return oItem.isGroupHeader();
-					}).getDomRef();
+					})?.getDomRef();
 					break;
 				default:
 			}
