@@ -44,8 +44,11 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/base/Log", "sa
 					// we simply take the first label text and ignore all others
 					var oLabel = Element.getElementById(sLabelId);
 					if (oLabel.getMetadata().isInstanceOf("sap.ui.core.Label") && oLabel.getText) {
-						if (oMessage.getAdditionalText() !== oLabel.getText()) {
-							oMessage.setAdditionalText(oLabel.getText());
+						let sAdditionalText = oMessage.getAdditionalText();
+						const sLabel = oLabel.getText();
+						if (!sAdditionalText || !sAdditionalText.includes(sLabel)) {
+							sAdditionalText = sAdditionalText ? `${sAdditionalText}, ${sLabel}` : sLabel;
+							oMessage.setAdditionalText(sAdditionalText);
 							bForceUpdate = true;
 						}
 					} else {
