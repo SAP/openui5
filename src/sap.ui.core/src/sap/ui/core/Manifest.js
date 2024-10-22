@@ -443,7 +443,7 @@ sap.ui.define([
 
 			/**
 			 * Load JS files.
-			 * @eprecated As of version 1.94, standard dependencies should be used instead.
+			 * @deprecated As of version 1.94, standard dependencies should be used instead.
 			 */
 			if (mResources["js"]) {
 				var aJSResources = mResources["js"];
