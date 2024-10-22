@@ -156,6 +156,9 @@ sap.ui.define([
 						"foo.bar": "../../foo/bar"
 					},
 					"resources": {
+						/**
+						 * @deprecated as of version As of version 1.94, see Manifest#_loadIncludes
+						 */
 						"js": [
 							{
 								"uri": "script.js"
