@@ -492,7 +492,7 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.getRootContexts
-	 * @param {object|int} mParameters
+	 * @param {object|int} [mParameters=0]
 	 *   Parameter map specifying how the topmost aggregation level shall be fetched. If this
 	 *   parameter map is set, the optional function parameters are ignored. Optionally, instead
 	 *   of a parameter map an integer value can be set to define the parameter
@@ -599,9 +599,9 @@ sap.ui.define([
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.getNodeContexts
 	 * @param {sap.ui.model.Context} oContext
 	 *            Parent context identifying the requested group of child contexts
-	 * @param {object|int} mParameters
+	 * @param {object|int} [mParameters=0]
 	 *            Parameters, specifying the aggregation level for which contexts shall be fetched
-	 *            or (legacy signature variant) index of first child entry to return from the parent context (zero-based)
+	 *            or the index of the first child entry to return from the parent contexts
 	 * @param {int} mParameters.level
 	 *            Level number for oContext, because it might occur at multiple levels; context with group ID <code>"/"</code> has level 0
 	 * @param {int} [mParameters.numberOfExpandedLevels=0]
@@ -643,7 +643,7 @@ sap.ui.define([
 			iLevel = mParameters.level;
 			iNumberOfExpandedLevels = mParameters.numberOfExpandedLevels;
 			bSupressRequest = mParameters.supressRequest;
-		} else { // due to compatibility; can be removed if table is adapted
+		} else {
 			iStartIndex = arguments[1];
 			iLength = arguments[2];
 			iThreshold = arguments[3];
