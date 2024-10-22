@@ -213,31 +213,37 @@ sap.ui.define([
 			 */
 			buildAndApplyFilters: function () {
 				var aFilters = [];
+				var aItemTypeFilters = [];
 				var noWhitespaceFilter = this._sFilter ? this._sFilter.replace(/\s/g, '') : '';
 				var dotToSlashFilter = noWhitespaceFilter.replace(/\./g, '/');
 				var slashesToDotFilter = noWhitespaceFilter.replace(/\//g, '.');
 
-				if (!this._bIncludeDeprecated) {
-					var deprecatedFilter = new Filter({
-						filters: [
-							new Filter({ path: "preserveInTreeList", operator: FilterOperator.EQ, value1: true }),
-							new Filter({ path: "bAllContentDeprecated", operator: FilterOperator.EQ, value1: false })
-						],
-						and: false
-					});
-					aFilters.push(deprecatedFilter);
+				var baseFilter = new Filter({
+					filters: [
+						new Filter({ path: "bAllContentDeprecated", operator: FilterOperator.EQ, value1: false }),
+						new Filter({ path: "experimental", operator: FilterOperator.EQ, value1: false })
+					],
+					and: true
+				});
+
+				var preserveFilter = new Filter({ path: "preserveInTreeList", operator: FilterOperator.EQ, value1: true });
+
+				aItemTypeFilters.push(preserveFilter);
+				aItemTypeFilters.push(baseFilter);
+
+				if (this._bIncludeDeprecated) {
+					aItemTypeFilters.push(
+						new Filter({ path: "bAllContentDeprecated", operator: FilterOperator.EQ, value1: true })
+					);
 				}
 
-				if (!this._bIncludeExperimental) {
-					var experimentalFilter = new Filter({
-						filters: [
-							new Filter({ path: "preserveInTreeList", operator: FilterOperator.EQ, value1: true }),
-							new Filter({ path: "experimental", operator: FilterOperator.EQ, value1: false })
-						],
-						and: false
-					});
-					aFilters.push(experimentalFilter);
+				if (this._bIncludeExperimental) {
+					aItemTypeFilters.push(
+						new Filter({ path: "experimental", operator: FilterOperator.EQ, value1: true })
+					);
 				}
+
+				aFilters.push(new Filter({ and: false, filters: aItemTypeFilters }));
 
 				if (this._sFilter) {
 					var stringFilter = new Filter({
