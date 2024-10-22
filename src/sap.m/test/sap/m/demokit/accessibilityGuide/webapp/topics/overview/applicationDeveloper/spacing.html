@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Spacing</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Spacing</h1>
+			<p>In accordance with the WCAG 2.2 Target Size Criterion 2.5.8, application developers have to ensure that targets meet a minimum size or have sufficient spacing around them. This helps avoid cases where users try to activate an interactive element but accidentally activate another element.</p>
+			<ul>
+				<li>The size of the target for pointer inputs is at least 24 by 24 CSS pixels.</li>
+				<li>Position any undersized targets (those less than 24 by 24 CSS pixels) carefully. Ensure that if you center a 24 CSS pixel diameter circle on the bounding box of each target, the circles don't intersect with another target or with the circle of another undersized target.</li>
+			</ul>
+			<h2 id="link">Controls Displayed as Links</h2>
+			<p>Those controls can display links as part of sentences or paragraphs. In such cases, the target size of the link is constrained by the line height of the non-target text:</p>
+			<ul>
+				<li>sap.m.Link</li>
+				<li>sap.m.ObjectStatus</li>
+				<li>sap.m.ObjectNumber</li>
+				<li>sap.m.ObjectIdentifier</li>
+				<li>sap.m.ObjectMarker</li>
+			</ul>
+			<p>In all other cases you need to ensure that each interactive element has no other interactive elements nearby.</p>
+			<p>For example, in the following snippet we've increased the horizontal spacing between the links in the context of a <code>sap.m.OverflowToolbar</code> by providing additional left and right margins with the help of the <code>sapUiTinyMarginBeginEnd</code> class:</p>
+			<pre class="lang-xml">
+&lt;OverflowToolbar&gt;
+	&lt;ObjectIdentifier
+		<mark>class="sapUiTinyMarginBeginEnd"</mark>
+		titleActive="true"
+		title="HT-2001"
+	/&gt;
+	&lt;Link
+		<mark>class="sapUiTinyMarginBeginEnd"</mark>
+		text="10 Portable DVD player"
+	/&gt;
+	&lt;ObjectStatus
+		<mark>class="sapUiTinyMarginBeginEnd"</mark>
+		active="true"
+		state="Success"
+		text="Product Shipped"
+		icon="sap-icon://sys-enter-2"
+	/&gt;
+	&lt;ObjectNumber
+		<mark>class="sapUiTinyMarginBeginEnd"</mark>
+		active="true"
+		number="150"
+		state="Success"
+		unit="EUR"
+	/&gt;
+&lt;/OverflowToolbar&gt;
+			</pre>
+			<a class="try-button" href="../../../index.html#/explore/linkSpacing" target="_parent">See Example</a>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Overview</a></div>
+			<div><a href="#link">Controls Displayed as Links</a></div>
+		</div>
+	</div>
+</body>
+</html>

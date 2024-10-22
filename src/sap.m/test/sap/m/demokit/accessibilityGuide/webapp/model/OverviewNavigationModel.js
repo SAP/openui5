@@ -47,6 +47,11 @@ sap.ui.define([
 						title: 'Message Handling',
 						target: 'overview',
 						key: 'messageHandling'
+					},
+					{
+						title: 'Spacing',
+						target: 'overview',
+						key: 'spacing'
 					}
 				]
 			},
