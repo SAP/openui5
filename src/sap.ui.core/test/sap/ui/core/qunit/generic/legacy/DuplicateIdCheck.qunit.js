@@ -322,7 +322,9 @@ sap.ui.define([
 
 			if (FNClass === Control) {
 
-				if (oControl.isA("sap.ui.commons.InPlaceEdit") && oAggregation.name === "content") {
+				/** @ui5-transform-hint replace-local false */
+				const useTextField = oControl.isA("sap.ui.commons.InPlaceEdit") && oAggregation.name === "content";
+				if (useTextField) {
 					oElement = new CommonsTextField();
 				} else {
 					// this aggregation is a typical container aggregation, allowing any control as child.

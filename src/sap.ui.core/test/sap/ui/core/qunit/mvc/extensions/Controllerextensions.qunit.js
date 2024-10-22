@@ -8,6 +8,9 @@ sap.ui.define([
 ], function(Controller, XMLView, ControllerExtension, OverrideExecution, deepEqual) {
 	"use strict";
 
+	const oParams = new URLSearchParams(window.location.search);
+	const NAME_OF_OVERRIDES_PROPERTY = oParams.has("useLegacyTermOverride") ? "override" : "overrides";
+
 	var mAllPublicMethods = {
 		"byId":{"public":true, "final":true, "reloadNeeded": false},
 		"getMetadata":{"public":true, "final":true, "reloadNeeded": false},
@@ -175,7 +178,7 @@ sap.ui.define([
 		myAfter: function() {
 			this.base.overrideCalledAfter = true;
 		},
-		overrides: {
+		[NAME_OF_OVERRIDES_PROPERTY]: {
 			callbackMethod: function() {
 				return "callbackOfControllerExt1";
 			}
@@ -299,7 +302,7 @@ sap.ui.define([
 			},
 			myAfter: function() {
 			},
-			overrides: {
+			[NAME_OF_OVERRIDES_PROPERTY]: {
 				extHookLegacy: function() {
 					return "extHookLegacy App implementation";
 				},
@@ -373,7 +376,7 @@ sap.ui.define([
 			},
 			myAfter: function() {
 			},
-			overrides: {
+			[NAME_OF_OVERRIDES_PROPERTY]: {
 				extension: {
 					"example.ProviderExt1": {
 						publicMethodToOverride: function() {
@@ -395,6 +398,12 @@ sap.ui.define([
 		//this is just an example, normally they would be a lookup in the component settings and flex changes for the component
 		//ideally the code of the controller would be outsourced to
 		var ExtensionProvider = function() {};
+		/**
+		 * @param {string} sControllerName Name of the controller
+		 * @param {string} sComponentId Name of the compoonent
+		 * @param {boolean} bAsync Whether the extensions should be provided synchronously
+		 * @ui5-transform-hint replace-param bAsync true
+		 */
 		ExtensionProvider.prototype.getControllerExtensions = function(sControllerName, sComponentId, bAsync) {
 			if (sControllerName == "example.BaseController") {
 				if (bAsync) {

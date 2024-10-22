@@ -8,28 +8,35 @@
 		<script
 			id='sap-ui-bootstrap'
 			src='../../../../../../../../resources/sap-ui-core.js'
-			data-sap-ui-theme='sap_belize'
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
 			data-sap-ui-libs='sap.m'
+			data-sap-ui-on-init="main"
 			data-sap-ui-resourceroots='{
 				"appUnderTest" : "./"
 			}'
-			data-sap-ui-preload='async'>
+			>
 		</script>
 		<script>
-			sap.ui.require(["sap/ui/core/Core"], function (Core) {
+			function main() {
 				"use strict";
-				Core.ready().then(function () {
-					new sap.m.Shell('Shell', {
+
+				sap.ui.require([
+					"sap/m/Shell",
+					"sap/ui/core/ComponentContainer"
+				], function(Shell, ComponentContainer) {
+					new Shell('Shell', {
 						title: 'Application under test',
-						app: new sap.ui.core.ComponentContainer({
+						app: new ComponentContainer({
 							name: 'appUnderTest',
 							settings : {
 								id : "appUnderTest"
-							}
+							},
+							manifest: true
 						})
 					}).placeAt('content');
 				});
-			});
+			}
 		</script>
 	</head>
 	<body class="sapUiBody" id="content"></body>

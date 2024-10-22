@@ -53,7 +53,7 @@
 </mvc:View>
 </script>
 <script>
-	sap.ui.controller("managedobjectmodel.example.Controller", {
+	const MOMController = sap.ui.core.mvc.Controller.extend("managedobjectmodel.example.Controller", {
 		onInit: function(oEvent) {
 			jQuery.sap.require("sap.ui.model.base.ManagedObjectModel");
 			var oModel = new sap.ui.model.base.ManagedObjectModel(this.getView());
@@ -78,7 +78,7 @@
 		}
 	});
 
-	var myView = sap.ui.xmlview({viewContent: jQuery('#view1').html()});
+	var myView = sap.ui.xmlview({viewContent: jQuery('#view1').html(), controller: new MOMController()});
 	myView.placeAt("content");
 	var select = new sap.m.Select();
 	select.placeAt("content");

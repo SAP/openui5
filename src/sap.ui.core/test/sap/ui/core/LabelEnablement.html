@@ -12,13 +12,12 @@
 	></script>
 
 	<script id="view1" type="sapui5/xmlview">
-		<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form"
-				controllerName="my.own.controller">
+		<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
 
 			<Label id="someFieldLabel" text="SomeLabel" labelFor="someField"/>
 			<Input id="someField"/>
 
-			<f:Form id="FormChange354" minWidth="1024" maxContainerCols="2" editable="true">
+			<f:Form id="FormChange354" editable="true">
 				<f:title>
 					<core:Title text="Address" />
 				</f:title>
@@ -93,7 +92,6 @@
 	</script>
 
 	<script>
-		sap.ui.controller("my.own.controller", {});
 		var myView = sap.ui.xmlview({viewContent: jQuery('#view1').html()});
 		myView.placeAt("content");
 	</script>

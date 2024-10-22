@@ -19,16 +19,16 @@ sap.ui.define(function() {
 		},
 		tests: {
 			"dom/findTabbable": {
-				title: "sap.ui.dom.findTabbable"
+				title: "sap/ui/dom/findTabbable"
 			},
 			"dom/getComputedStyleFix": {
-				title: "sap.ui.dom.getComputedStyleFix"
+				title: "sap/ui/dom/getComputedStyleFix"
 			},
 			"dom/includeScript": {
-				title: "sap.ui.dom.includeScript"
+				title: "sap/ui/dom/includeScript"
 			},
 			"dom/includeStylesheet": {
-				title: "sap.ui.dom.includeStylesheet"
+				title: "sap/ui/dom/includeStylesheet"
 			},
 			"ui/Device": {
 				title: "sap.ui.Device"

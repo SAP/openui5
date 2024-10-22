@@ -31,8 +31,7 @@
 			oModel.setData(oData);
 
 			// create the UI
-			const XMLView = sap.ui.requireSync("sap/ui/core/mvc/XMLView");
-			XMLView.create({
+			sap.ui.core.mvc.XMLView.create({
 				viewName:"mvc.betweenLists"
 			}).then((oView) => {
 				oView.setModel(oModel).placeAt("content");
