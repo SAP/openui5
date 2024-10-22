@@ -8,6 +8,7 @@ module.exports = [
 	"CardActionsVisualTests.spec.js",
 	"CardErrorsMessagesVisualTests.spec.js",
 	"CardHeaderFooterVisualTests.spec.js",
+	"CardStandaloneHeaderVisualTests.spec.js",
 	"CardInitializationDataVisualTests.spec.js",
 	"CardLayoutsVisualTests.spec.js",
 	"CardLocalizationCustomizationVisualTests.spec.js",
