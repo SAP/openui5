@@ -14,6 +14,9 @@ sap.ui.define([
 		"DatePicker",
 		"DateRangeSelection",
 		"DateTimeField",
+		/**
+		 * @deprecated as of version 1.32.8
+		 */
 		"DateTimeInput",
 		"DateTimePicker",
 		"FeedInput",
