@@ -1,3 +1,8 @@
+/* ==================================== */
+/* CSS for control sap.m/MultiComboBox  */
+/* Morning Horizon theme                */
+/* ==================================== */
+
 .sapMMultiComboBox.sapMInputBaseReadonly.sapMMultiComboBoxHasToken.sapMFocus .sapMTokenizer {
 	left: 0;
 }
@@ -8,7 +13,7 @@
 
 .sapMMultiComboBoxPicker .sapMMultiComboBoxSelectAll.sapMTB.sapMIBar.sapMMultiComboBoxSelectAllFocused,
 .sapMMultiComboBoxPicker .sapMValueStateHeaderRoot.sapMFocusable:focus {
-	outline: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
+	outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	outline-offset: -0.25rem;
 }
 
@@ -18,6 +23,7 @@
 
 .sapUiSizeCondensed .sapUiTableDataCell .sapMMultiComboBox .sapMTokenizer {
 	padding-top: 0px;
+
 	.sapMToken {
 		margin-top: 0.0625rem;
 		margin-bottom: 0.0625rem;
@@ -25,7 +31,9 @@
 }
 
 .sapUiSizeCompact {
+
 	.sapMMultiComboBox.sapMMultiComboBoxHasToken .sapMInputBaseContentWrapper.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
+
 		.sapMToken {
 			margin-top: 0.125rem;
 			margin-bottom: 0.125rem;
