@@ -4351,12 +4351,15 @@ sap.ui.define([
 				width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null}
 			}
 		},
-		renderer: function(oRm, oControl) {
-			oRm.openStart("div", oControl);
-			oRm.style("width", oControl.getWidth());
-			oRm.class("sapUiCalendarRowAppsPlaceholder");
-			oRm.openEnd();
-			oRm.close("div");
+		renderer: {
+			apiVersion: 2,
+			render(oRm, oControl) {
+				oRm.openStart("div", oControl);
+				oRm.style("width", oControl.getWidth());
+				oRm.class("sapUiCalendarRowAppsPlaceholder");
+				oRm.openEnd();
+				oRm.close("div");
+			}
 		}
 	});
 
