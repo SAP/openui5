@@ -158,17 +158,21 @@ sap.ui.define([
 		 * @returns {Promise} A promise that resolves with the file.
 		 */
 		handleFilePromise: function (sFilePath, oZipFile, aFails, oConfig) {
-			var oPromise = ResourceDownloadUtil.fetch(oConfig.cwd + sFilePath);
+			var oFilePromise = ResourceDownloadUtil.fetch(oConfig.cwd + sFilePath);
 
-			oPromise.then(function (oContent) {
-				if (oContent.errorMessage) {
-					aFails.push(oContent.errorMessage);
-				} else if (!sFilePath.startsWith("../")) {
-					oZipFile.file(sFilePath, oContent, { base64: false, binary: true });
-				}
+			var oFilePromiseWrapper = new Promise(function (resolve) {
+				oFilePromise.then(function (oContent) {
+					if (!sFilePath.startsWith("../")) {
+						oZipFile.file(sFilePath, oContent, { base64: false, binary: true });
+					}
+					resolve();
+				}).catch(function () {
+					aFails.push(sFilePath);
+					resolve();
+				});
 			});
 
-			return oPromise;
+			return oFilePromiseWrapper;
 		},
 
 		/**
@@ -208,7 +212,7 @@ sap.ui.define([
 					var sCompleteErrorMessage = aFails.reduce(function (sErrorMessage, sError) {
 						return sErrorMessage + sError + "\n";
 					}, "Could not locate the following download files:\n");
-					this.handleError(sCompleteErrorMessage);
+					this.handleWarning(sCompleteErrorMessage);
 				}
 
 				sLabel = (typeof oItem.getLabel === 'function') ? oItem.getLabel() : oItem.data("label");
@@ -227,6 +231,14 @@ sap.ui.define([
 		 */
 		handleError: function (sError) {
 			MessageBox.error(sError);
+		},
+		/**
+		 * Warning handler function
+		 * @param {string} sWarning the warning message
+		 * @private
+		 */
+		handleWarning: function (sWarning) {
+			MessageBox.warning(sWarning);
 		}
 	});
 });

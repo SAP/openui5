@@ -20,7 +20,7 @@ function(
 	 * This class is being assigned to the original Fiori Header Toolbar when RTA Toolbar shows
 	 * @type {string}
 	 */
-	var FIORI_HIDDEN_CLASS = "sapUiRtaFioriHeaderInvisible";
+	const FIORI_HIDDEN_CLASS = "sapUiRtaFioriHeaderInvisible";
 
 	/**
 	 * Constructor for a new sap.ui.rta.toolbar.Fiori control
@@ -37,7 +37,7 @@ function(
 	 * @since 1.48
 	 * @alias sap.ui.rta.toolbar.Fiori
 	 */
-	var Fiori = Adaptation.extend("sap.ui.rta.toolbar.Fiori", {
+	const Fiori = Adaptation.extend("sap.ui.rta.toolbar.Fiori", {
 		metadata: {
 			library: "sap.ui.rta"
 		},
@@ -58,14 +58,14 @@ function(
 
 	Fiori.prototype.buildControls = function(...aArgs) {
 		return Adaptation.prototype.buildControls.apply(this, aArgs).then(function(aControls) {
-			var sLogoPath = this._oFioriHeader.getLogo();
+			const sLogoPath = this._oFioriHeader.getLogo();
 
 			if (this._oFioriHeader.getShowLogo() && sLogoPath) {
 				// Unstable: if FLP changes ID of <img> element, logo could be not found
 				// $() is still needed because this._oFioriHeader does not offer a getDomRef method
-				var oLogo = this._oFioriHeader.$().find("#shell-header-icon").get(0);
-				var iWidth;
-				var iHeight;
+				const oLogo = this._oFioriHeader.$().find("#shell-header-icon").get(0);
+				let iWidth;
+				let iHeight;
 
 				if (oLogo) {
 					iWidth = oLogo.getBoundingClientRect().width;
@@ -100,10 +100,10 @@ function(
 	};
 
 	Fiori.prototype._checkLogoSize = function(oLogo, iWidth, iHeight) {
-		var iNaturalWidth = oLogo.naturalWidth;
-		var iNaturalHeight = oLogo.naturalHeight;
+		const iNaturalWidth = oLogo.naturalWidth;
+		const iNaturalHeight = oLogo.naturalHeight;
 
-		if (iWidth !== iNaturalWidth || iHeight !== iNaturalHeight) {
+		if (Math.round(iWidth) !== iNaturalWidth || Math.round(iHeight) !== iNaturalHeight) {
 			Log.error([
 				"sap.ui.rta: please check Fiori Launchpad logo, expected size is",
 				`${iWidth}x${iHeight},`,
@@ -122,7 +122,7 @@ function(
 
 	Fiori.prototype._hideElementsOnIntersection = function(...aArgs) {
 		const [sSectionName, aEntries] = aArgs;
-		var bWiderThanLogo;
+		let bWiderThanLogo;
 
 		if (aEntries[0].intersectionRatio === 0) {
 			this.adjustToolbarSectionWidths();
@@ -134,7 +134,7 @@ function(
 				!this._iLogoVisibilityLimit
 				&& sSectionName === Adaptation.LEFT_SECTION
 			) {
-				var iHiddenWidth = aEntries[0].boundingClientRect.width - aEntries[0].intersectionRect.width;
+				const iHiddenWidth = aEntries[0].boundingClientRect.width - aEntries[0].intersectionRect.width;
 				bWiderThanLogo = iHiddenWidth > this._iLogoWidth;
 				this._iLogoVisibilityLimit = this._calculateWindowWidth(aEntries);
 				this._setLogoVisibility(false);
@@ -148,8 +148,8 @@ function(
 	};
 
 	Fiori.prototype._setLogoVisibility = function(bVisible) {
-		var oIconBox = this.getControl("iconBox");
-		var oIconSpacer = this.getControl("iconSpacer");
+		const oIconBox = this.getControl("iconBox");
+		const oIconSpacer = this.getControl("iconSpacer");
 		oIconBox.setVisible(bVisible);
 		oIconSpacer.setVisible(bVisible);
 	};

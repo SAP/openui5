@@ -141,6 +141,7 @@
 											class="sapUiDemoKitDemoAppsCardDownloadLink"
 											text="{i18n>DEMO_APPS_CARD_DOWNLOAD_LINK}"
 											press=".onDownloadPress"
+											visible="{= !!${config} }"
 											wrapping="true"  />
 									</VBox>
 								</f:content>

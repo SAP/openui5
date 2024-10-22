@@ -12,7 +12,6 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	 * @public
 	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.ActionToolbarActionAlignment
-	 * @experimental As of version 1.115
 	 */
 	const ActionToolbarActionAlignment = {
 		/**

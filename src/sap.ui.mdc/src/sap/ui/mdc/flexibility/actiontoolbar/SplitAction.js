@@ -16,7 +16,6 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.flexibility.actiontoolbar.SplitAction
 	 * @author SAP SE
 	 * @version ${version}
-	 * @experimental Since 1.129
 	 */
 	const SplitAction = {
 		...SplitMenuButtonHandler,

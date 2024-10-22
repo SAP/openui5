@@ -4,7 +4,9 @@ sap.ui.define(['sap/m/MessageToast','sap/ui/core/mvc/Controller'],
 
 	return Controller.extend("sap.ui.unified.sample.FileUploaderComplex.Controller", {
 		handleUploadComplete: function(oEvent) {
-			var sResponse = oEvent.getParameter("response"),
+			// Please note that the event response should be taken from the event parameters but for our test example, it is hardcoded.
+
+			 var sResponse = "File upload complete. Status: 200",
 				iHttpStatusCode = parseInt(/\d{3}/.exec(sResponse)[0]),
 				sMessage;
 
