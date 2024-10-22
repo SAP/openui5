@@ -756,7 +756,7 @@ sap.ui.define([
 
 		const oControl = Engine.getControlInstance(vControl);
 		const oRegistryEntry = this._getRegistryEntry(vControl);
-		const sPersistenceIdentifier = mEnhanceConfig && mEnhanceConfig.value && mEnhanceConfig.value.controllerKey ? mEnhanceConfig.value.controllerKey : undefined;
+		const sPersistenceIdentifier = mEnhanceConfig?.value?.controllerKey ?? mEnhanceConfig?.value?.persistenceIdentifier;
 		mEnhanceConfig.currentState = Engine.getInstance().getController(oControl, mEnhanceConfig.changeType, sPersistenceIdentifier)?.getCurrentState();
 
 		return xConfigAPI.enhanceConfig(oControl, mEnhanceConfig)
