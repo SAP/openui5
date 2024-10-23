@@ -1,6 +1,7 @@
 sap.ui.define([
-  "sap/ui/model/json/JSONModel"
-], function(JSONModel) {
+  "sap/ui/model/json/JSONModel",
+  "sap/ui/core/mvc/XMLView"
+], function(JSONModel, XMLView) {
   "use strict";
   // Note: the HTML page 'dragBetweenLists.html' loads this module via data-sap-ui-on-init
 
@@ -20,7 +21,6 @@ sap.ui.define([
   oModel.setData(oData);
 
   // create the UI
-  const XMLView = sap.ui.requireSync("sap/ui/core/mvc/XMLView");
   XMLView.create({
 	  viewName:"mvc.betweenLists"
   }).then((oView) => {

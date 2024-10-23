@@ -64,35 +64,35 @@
             </columns>
 
             <items>
-                <ColumnListItem>
+                <ColumnListItem app:p13nKey="P1">
                     <Text text="P1"/>
                     <Text text="Peter"/>
                     <Text text="Mueller"/>
                     <Text text="Walldorf"/>
                     <Text text="1.75"/>
                 </ColumnListItem>
-                <ColumnListItem>
+                <ColumnListItem app:p13nKey="P2">
                     <Text text="P2"/>
                     <Text text="Petra"/>
                     <Text text="Maier"/>
                     <Text text="Walldorf"/>
                     <Text text="1.85"/>
                 </ColumnListItem>
-                <ColumnListItem>
+                <ColumnListItem app:p13nKey="P3">
                     <Text text="P3"/>
                     <Text text="Thomas"/>
                     <Text text="Smith"/>
                     <Text text="Walldorf"/>
                     <Text text="1.95"/>
                 </ColumnListItem>
-                <ColumnListItem>
+                <ColumnListItem app:p13nKey="P4">
                     <Text text="P4"/>
                     <Text text="John"/>
                     <Text text="Williams"/>
                     <Text text="Walldorf"/>
                     <Text text="1.65"/>
                 </ColumnListItem>
-                <ColumnListItem>
+                <ColumnListItem app:p13nKey="P5">
                     <Text text="P5"/>
                     <Text text="Maria"/>
                     <Text text="Jones"/>

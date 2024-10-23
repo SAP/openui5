@@ -23,11 +23,10 @@
 	right: auto;
 }
 
-
 html.sap-desktop .sapMImageContent:focus {
-	outline-color: @sapUiContentFocusColor;
-	outline-style: @sapUiContentFocusStyle;
-	outline-width: @sapUiContentFocusWidth;
+	outline-color: var(--sapContent_FocusColor);
+	outline-style: var(--sapContent_FocusStyle);
+	outline-width: var(--sapContent_FocusWidth);
 }
 
 html.sap-desktop .sapMImageContent:focus:not([tabindex]) {
@@ -36,11 +35,12 @@ html.sap-desktop .sapMImageContent:focus:not([tabindex]) {
 
 .sapMImageContentImageIcon.sapUiIcon {
 	font-size: 1.75rem;
-	color: @sapUiTileIconColor;
+	color: var(--sapTile_IconColor);
 	padding-bottom: 0.675rem;
 }
 
 .sapMTileSmallPhone {
+
 	.sapMImageContent {
 		height: 3.438rem;
 		width: 8rem;

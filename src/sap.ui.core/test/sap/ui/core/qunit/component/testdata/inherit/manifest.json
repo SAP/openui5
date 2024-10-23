@@ -1,7 +1,5 @@
 {
-
 	"name": "testdata.inherit.Component",
-
 	"sap.app": {
 		"id": "testdata.inherit",
 		"applicationVersion": {
@@ -10,20 +8,11 @@
 		"title": "{{title}}",
 		"description": "{{description}}"
 	},
-
 	"sap.ui5": {
-
 		"resourceRoots": {
 			"foo.bar": "../../foo/bar"
 		},
-
 		"resources": {
-			"js": [
-				{
-					"uri": "script.js"
-				},
-				{}
-			],
 			"css": [
 				{
 					"uri": "style.css",
@@ -32,7 +21,6 @@
 				{}
 			]
 		},
-
 		"dependencies": {
 			"minUI5Version": "1.22.5",
 			"libs": {
@@ -47,7 +35,6 @@
 				}
 			}
 		},
-
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
@@ -58,7 +45,6 @@
 				"uri": "./some/odata/service/"
 			}
 		},
-
 		"config": {
 			"any1": {
 				"entry": "configuration"
@@ -69,21 +55,23 @@
 				}
 			},
 			"any3": {
-				"anyarray": [1, 2, 3]
+				"anyarray": [
+					1,
+					2,
+					3
+				]
 			},
 			"zero": 0
 		},
-
 		"routing": {
 			"routes": [
 				{
-					"name" : "myRouteName1",
-					"pattern" : "FirstView/{from}",
-					"view" : "myViewId"
+					"name": "myRouteName1",
+					"pattern": "FirstView/{from}",
+					"view": "myViewId"
 				}
 			]
 		},
-
 		"extends": {
 			"component": "testdata.inherit.parent",
 			"extensions": {
@@ -113,10 +101,7 @@
 				}
 			}
 		}
-
 	},
-
 	"foo": {},
 	"foo.bar": "string as entry value is not valid!"
-
 }

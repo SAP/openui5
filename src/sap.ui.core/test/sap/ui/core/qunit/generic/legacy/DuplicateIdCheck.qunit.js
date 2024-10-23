@@ -15,12 +15,11 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Item",
 	"sap/ui/core/Lib",
-	"sap/ui/commons/TextField",
 	"sap/m/Text",
 	"sap/ui/dom/includeStylesheet",
 	"sap/ui/test/utils/nextUIUpdate",
 	"require"
-], function (Log, ObjectPath, VersionInfo, DataType, Element, ElementRegistry, Control, Item, Library, CommonsTextField, MobileText, includeStylesheet, nextUIUpdate, require) {
+], function(Log, ObjectPath, VersionInfo, DataType, Element, ElementRegistry, Control, Item, Library, MobileText, includeStylesheet, nextUIUpdate, require) {
 	"use strict";
 
 	var aKnownLibraries = [
@@ -303,16 +302,10 @@ sap.ui.define([
 			}
 
 			if (FNClass === Control) {
-
-				if (oControl.isA("sap.ui.commons.InPlaceEdit") && oAggregation.name === "content") {
-					oElement = new CommonsTextField();
-				} else {
-					// this aggregation is a typical container aggregation, allowing any control as child.
-					// Or it is more specific, but allows different child types, and Control is the common base class.
-					// Let's try adding a Text control.
-					oElement = new MobileText();
-				}
-
+				// this aggregation is a typical container aggregation, allowing any control as child.
+				// Or it is more specific, but allows different child types, and Control is the common base class.
+				// Let's try adding a Text control.
+				oElement = new MobileText();
 			} else if (FNClass === Element) {
 				// This aggregation accepts any sap.ui.core.Element?? Strange. Give an Item, then.
 				oElement = new Item();

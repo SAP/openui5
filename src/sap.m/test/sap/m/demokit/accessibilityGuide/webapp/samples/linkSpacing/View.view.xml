@@ -1,0 +1,40 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+        xmlns:l="sap.ui.layout"
+		height="100%">
+		<App>
+			<Page
+				showHeader="false"
+				id="page"
+				backgroundDesign="Solid">
+                <VBox class="sapUiSmallMargin">
+                    <OverflowToolbar>
+                        <ObjectIdentifier
+                            class="sapUiTinyMarginBeginEnd"
+                            titleActive="true"
+                            title="HT-2001"
+                        />
+                        <Link
+                            class="sapUiTinyMarginBeginEnd"
+                            text="10 Portable DVD player"
+                        />
+                        <ObjectStatus
+                            class="sapUiTinyMarginBeginEnd"
+                            active="true"
+                            state="Success"
+                            text="Product Shipped"
+                            icon="sap-icon://sys-enter-2"
+                        />
+                        <ObjectNumber
+                            class="sapUiTinyMarginBeginEnd"
+                            active="true"
+                            number="150"
+                            state="Success"
+                            unit="EUR"
+                        />
+                    </OverflowToolbar>
+				</VBox>
+			</Page>
+		</App>
+</mvc:View>

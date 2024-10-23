@@ -1153,14 +1153,15 @@ sap.ui.define([
 		};
 
 		if (this._oVersionsModel.getProperty("/versioningEnabled")) {
-			let sVersion = bActivateVersion ? this._oVersionsModel.getProperty("/displayedVersion") : undefined;
+			const sDisplayedVersion = this._oVersionsModel.getProperty("/displayedVersion");
+			let sVersion = bActivateVersion ? sDisplayedVersion : undefined;
 
 			// If a draft is being processed, saving without exiting must retrieve the updated state of the draft version
 			sVersion ||= bIsExit ? undefined : Version.Number.Draft;
 			mPropertyBag.version = sVersion;
 
 			// Save changes on the current layer and discard dirty changes on other layers
-			mPropertyBag.saveAsDraft = this.getLayer() === Layer.CUSTOMER;
+			mPropertyBag.saveAsDraft = this.getLayer() === Layer.CUSTOMER && sDisplayedVersion === Version.Number.Draft;
 		}
 		if (this._oContextBasedAdaptationsModel.getProperty("/contextBasedAdaptationsEnabled")) {
 			// If an adaptation is being processed, saving without exiting must retrieve the updated state of the adaptation

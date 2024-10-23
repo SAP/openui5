@@ -155,12 +155,6 @@ sap.ui.define([
 						"foo.bar": "../../foo/bar"
 					},
 					"resources": {
-						"js": [
-							{
-								"uri": "script.js"
-							},
-							{}
-						],
 						"css": [
 							{
 								"uri": "style.css",

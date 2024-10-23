@@ -3,8 +3,7 @@
 sap.ui.define([
   "sap/ui/core/mvc/XMLView",
   "sap/ui/core/Control",
-  "sap/ui/core/InvisibleText",
-  "sap/ui/core/mvc/Controller"
+  "sap/ui/core/InvisibleText"
 ], async function(XMLView, Control, InvisibleText) {
   "use strict";
 
@@ -56,9 +55,7 @@ sap.ui.define([
 
 
 
-  sap.ui.controller("my.own.controller", {});
-  var xml = '<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-	  + '              controllerName="my.own.controller" xmlns:html="http://www.w3.org/1999/xhtml">'
+  var xml = '<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc">'
 	  + '       <core:TestControl ariaLabelledBy="myViewText"/>'
 	  + '       <core:InvisibleText id="myViewText" text="Some text"/>'
 	  + '    </mvc:View>';

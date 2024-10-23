@@ -1,18 +1,18 @@
 sap.ui.define([
   "sap/ui/core/mvc/XMLView",
   "sap/ui/model/base/ManagedObjectModel",
+  "sap/ui/core/mvc/Controller",
   "sap/m/Label",
   "sap/m/Select",
   "sap/ui/core/Item",
   "sap/m/Input",
   "sap/m/Button",
-  "sap/ui/thirdparty/jquery",
-  "sap/ui/core/mvc/Controller"
-], async function(XMLView, ManagedObjectModel, Label, Select, Item, Input, Button, jQuery) {
+  "sap/ui/thirdparty/jquery"
+], async function(XMLView, ManagedObjectModel, Controller, Label, Select, Item, Input, Button, jQuery) {
   "use strict";
   // Note: the HTML page 'ManagedObjectModel.html' loads this module via data-sap-ui-on-init
 
-  sap.ui.controller("managedobjectmodel.example.Controller", {
+  const MOMController = Controller.extend("managedobjectmodel.example.Controller", {
 	  onInit: function(oEvent) {
 		  var oModel = new ManagedObjectModel(this.getView());
 		  this.getView().setModel(oModel, "$ct");
@@ -36,7 +36,7 @@ sap.ui.define([
 	  }
   });
 
-  var myView = await XMLView.create({definition: jQuery('#view1').html()});
+  var myView = await XMLView.create({definition: jQuery('#view1').html(), controller: new MOMController()});
   myView.placeAt("content");
   var select = new Select();
   select.placeAt("content");

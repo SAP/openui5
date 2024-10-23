@@ -1,35 +1,30 @@
 // Note: the HTML page 'HTMLControl.html' loads this module via data-sap-ui-on-init
 
-sap.ui.define(["sap/ui/core/Element", "sap/ui/commons/layout/MatrixLayout", "sap/m/Button", "sap/ui/layout/VerticalLayout", "sap/ui/layout/HorizontalLayout", "sap/m/Input", "sap/ui/core/HTML", "sap/m/Dialog", "sap/ui/thirdparty/jquery"], function(Element, MatrixLayout, Button, VerticalLayout, HorizontalLayout, Input, HTML, Dialog, jQuery) {
+sap.ui.define(["sap/ui/core/Element", "sap/m/Button", "sap/ui/layout/VerticalLayout", "sap/ui/layout/HorizontalLayout", "sap/m/Input", "sap/ui/core/HTML", "sap/m/Dialog", "sap/ui/thirdparty/jquery"], function(Element, Button, VerticalLayout, HorizontalLayout, Input, HTML, Dialog, jQuery) {
 	"use strict";
-	// create the controls in the head
-	var oLayout = new MatrixLayout();
-	oLayout.setLayoutFixed(false);
-	var oButton1 = new Button({
+
+	new Button({
 		text: "Wrap With SAPUI5 Controls",
 		tooltip : "Creates a Control Tree around the existing HTML and places it at the 'target1' div below",
 		press: createOuterControlTree
-	});
-	var oButton2 = new Button({
+	}).placeAt("controls");
+
+	new Button({
 		text: "Create Nested Control",
 		tooltip : "Creates a Control and places it within the HTML Container",
 		press: createNestedControlTree
-	});
-	oLayout.createRow(oButton1, oButton2);
-	oLayout.placeAt("controls");
+	}).placeAt("controls");
 
 	jQuery(document).ready(
 		function() {
-			jQuery("#embedded span").on("click", {
-					function(event) {
-						var sColor = event.target && jQuery.css(event.target, "background-color").toLowerCase();
-						var bRed = sColor == "#ff0000" || sColor == "rgb(255, 0, 0)";
-						if ( bRed ) {
-							jQuery("<span>red clicked" + new Date() + "</span><br>").appendTo(jQuery("#log"));
-						} else {
-							jQuery("<span>yellow clicked" + new Date() + "</span><br>").appendTo(jQuery("#log"));
-						}
-					}
+			jQuery("#embedded span").on("click", function(event) {
+				var sColor = event.target && jQuery.css(event.target, "background-color").toLowerCase();
+				var bRed = sColor == "#ff0000" || sColor == "rgb(255, 0, 0)";
+				if ( bRed ) {
+					jQuery("<span>red clicked" + new Date() + "</span><br>").appendTo(jQuery("#log"));
+				} else {
+					jQuery("<span>yellow clicked" + new Date() + "</span><br>").appendTo(jQuery("#log"));
+				}
 			});
 			animate();
 		}
@@ -86,14 +81,14 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/commons/layout/MatrixLayout", "sap
 
 	function animate() {
 		var html5 = jQuery("#embedded");
-		html5.css("-webkit-perspective", 500);
+		html5.css("perspective", "500px");
 		d = 0.0;
 		setTimeout(step, 50);
 	}
 
 	function step() {
 		var html5 = jQuery("#embedded > div");
-		html5.css("-webkit-transform", "rotateY(" + d + "deg)");
+		html5.css("transform", "rotateY(" + d + "deg)");
 		d = d + delta;
 		if ( d >= 360 ) {
 			d = 0;

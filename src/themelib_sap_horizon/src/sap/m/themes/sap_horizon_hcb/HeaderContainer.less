@@ -8,28 +8,28 @@
 }
 
 .sapMHdrCntrBtn .sapMBtnIcon {
-	color: @sapUiContentIconColor;
+	color: var(--sapContent_IconColor);
 	font-size: 22px;
 }
 
-.sapMHrdrCntrInner:focus:not ([tabindex]) {
+.sapMHrdrCntrInner:focus:not([tabindex]) {
 	outline: none;
 }
 
 .sapMHrdrCntrInner {
-    border: 2px solid transparent;
+	border: 2px solid transparent;
 }
 
 .sapMHdrCntrBtnIcon{
-	color: @sapContent_NonInteractiveIconColor;
+	color: var(--sapContent_NonInteractiveIconColor);
 }
 
 .sapMHrdrCntrDvdrs.Horizontal .sapMHrdrCntrInner::after {
-	border-left: 1px solid @sapList_BorderColor;
+	border-left: 1px solid var(--sapList_BorderColor);
 }
 
 .sapMHrdrCntrDvdrs.Vertical .sapMHrdrCntrInner::after {
-	border-top: 1px solid @sapList_BorderColor;
+	border-top: 1px solid var(--sapList_BorderColor);
 }
 
 .sapMHdrCntrBGTransparent {

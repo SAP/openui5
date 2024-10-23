@@ -1,7 +1,5 @@
 {
-
 	"name": "testdata.v2asyncRootView.Component",
-
 	"sap.app": {
 		"id": "testdata.v2asyncRootView",
 		"applicationVersion": {
@@ -10,21 +8,12 @@
 		"title": "{{title}}",
 		"description": "{{description}}"
 	},
-
 	"sap.ui5": {
-
 		"resourceRoots": {
 			"x.y.z": "anypath",
 			"foo.bar": "../../foo/bar"
 		},
-
 		"resources": {
-			"js": [
-				{
-					"uri": "script.js"
-				},
-				{}
-			],
 			"css": [
 				{
 					"uri": "style.css",
@@ -33,7 +22,6 @@
 				{}
 			]
 		},
-
 		"dependencies": {
 			"minUI5Version": "1.22.5",
 			"libs": {
@@ -48,7 +36,6 @@
 				}
 			}
 		},
-
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
@@ -59,13 +46,11 @@
 				"uri": "./some/odata/service/"
 			}
 		},
-
 		"rootView": {
 			"viewName": "testdata.view.Main",
 			"type": "XML",
 			"async": true
 		},
-
 		"config": {
 			"any1": {
 				"entry": "configuration"
@@ -76,15 +61,18 @@
 				}
 			},
 			"any3": {
-				"anyarray": [1, 2, 3]
+				"anyarray": [
+					1,
+					2,
+					3
+				]
 			},
 			"zero": 0
 		},
-
 		"routing": {
 			"config": {
 				"type": "View",
-				"viewType" : "XML",
+				"viewType": "XML",
 				"path": "NavigationWithoutMasterDetailPattern.view",
 				"targetParent": "myViewId",
 				"targetControl": "app",
@@ -93,13 +81,12 @@
 			},
 			"routes": [
 				{
-					"name" : "myRouteName1",
-					"pattern" : "FirstView/{from}",
-					"view" : "myViewId"
+					"name": "myRouteName1",
+					"pattern": "FirstView/{from}",
+					"view": "myViewId"
 				}
 			]
 		},
-
 		"extends": {
 			"extensions": {
 				"sap.ui.viewReplacements": {
@@ -128,10 +115,7 @@
 				}
 			}
 		}
-
 	},
-
 	"foo": {},
 	"foo.bar": "string as entry value is not valid!"
-
 }

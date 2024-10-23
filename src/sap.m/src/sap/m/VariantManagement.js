@@ -2392,6 +2392,8 @@ sap.ui.define([
 
 
 	VariantManagement.prototype._openManagementDialog = function() {
+		this._clearDeletedItems();
+		this._clearRenamedItems();
 		this._createManagementDialog();
 
 		if (this.oVariantPopOver) {
@@ -2400,8 +2402,6 @@ sap.ui.define([
 
 		this._suspendManagementTableBinding();
 
-		this._clearDeletedItems();
-		this._clearRenamedItems();
 		this._sDefaultKey = this.getDefaultKey();
 		this._sOriginalDefaultKey = this._sDefaultKey;
 

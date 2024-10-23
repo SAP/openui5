@@ -4,7 +4,7 @@
 /* =============================== */
 
 .sapMList {
-	position: relative;	/* This should not break the list but help swipe list content position calculation */
+	position: relative; /* This should not break the list but help swipe list content position calculation */
 	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
@@ -31,9 +31,7 @@
 	z-index: 1;
 	opacity: 0;
 	pointer-events: auto;
-	display: -webkit-box;
 	display: flex;
-	-webkit-box-align: center;
 	align-items: center;
 	margin-top: -1px;
 }
@@ -45,65 +43,48 @@
 .sapMListDummyAreaSticky {
 	position: sticky; /* keep it in the scrollable area, so that browser does not scroll on focus */
 	height: 0.1px; /* webkit needs height for the sticky elements */
-	bottom: 0px;
+	bottom: 0;
 }
 
 /* swipe animations */
-@-webkit-keyframes sapMListSwpInAnim {
-	0% {
-		opacity: 0;
-	}
-	100% {
-		opacity: 1;
-	}
-}
 @keyframes sapMListSwpInAnim {
+
 	0% {
 		opacity: 0;
 	}
+
 	100% {
 		opacity: 1;
 	}
 }
 
-@-webkit-keyframes sapMListSwpOutAnim {
-	0% {
-		opacity: 1;
-	}
-	100% {
-		opacity: 0;
-	}
-}
 @keyframes sapMListSwpOutAnim {
+
 	0% {
 		opacity: 1;
 	}
+
 	100% {
 		opacity: 0;
 	}
 }
 
 .sapMListSwpInAnim {
-	-webkit-animation: sapMListSwpInAnim 0.2s ease-in forwards;
 	animation: sapMListSwpInAnim 0.2s ease-in forwards;
 }
 
 .sapMListSwpOutAnim {
-	-webkit-animation: sapMListSwpOutAnim 0.2s ease-in forwards;
 	animation: sapMListSwpOutAnim 0.2s ease-in forwards;
 }
 
 .sapMListNoData {
 	list-style-type: none;
-	display: -webkit-box;
 	display: flex;
-	-webkit-box-align: center;
 	align-items: center;
-	-webkit-box-pack: center;
 	justify-content: center;
-	color: @sapUiListTextColor;
-	background-color: @sapUiListBackground;
-	border-bottom: 1px solid @sapUiListBorderColor;
+	color: var(--sapList_TextColor);
+	background-color: var(--sapList_Background);
+	border-bottom: 1px solid var(--sapList_BorderColor);
 	padding: 0.5rem 1rem !important;
 	min-height: 3rem;
 	line-height: 1.4;
@@ -111,7 +92,7 @@
 
 .sapMListNoDataText {
 	overflow: hidden;
-    overflow: clip;
+	overflow: clip;
 	white-space: pre-wrap;
 	text-align: center;
 }
@@ -121,15 +102,15 @@
 }
 
 .sapMListShowSeparatorsAll {
-	/*class will be added for others, just a reminder*/
+	/* class will be added for others, just a reminder */
 }
 
 .sapMListShowSeparatorsInner {
-	/*class will be added for others, just a reminder*/
+	/* class will be added for others, just a reminder */
 }
 
 .sapMListShowSeparatorsNone {
-	/*class will be added for others, just a reminder*/
+	/* class will be added for others, just a reminder */
 }
 
 /* Growing feature */
@@ -142,11 +123,11 @@
 	display: block;
 	text-align: center;
 	overflow: hidden;
-	border-top: 1px solid @sapUiListHeaderBorderColor;
+	border-top: 1px solid var(--sapList_HeaderBorderColor);
 }
 
 .sapMGrowingListDummyColumn {
-	border-right: 1px solid @sapList_TableFooterBorder;
+	border-right: 1px solid var(--sapList_TableFooterBorder);
 }
 
 /* .sapMSLIDescription also has padding defined, hence making the style rule stronger */
@@ -176,11 +157,13 @@
 .sapUiFioriObjectPage > section > .sapMList:not(.sapMListInsetBG) {
 	margin: 1rem 0;
 	padding: 0 1rem;
-	box-sizing:           border-box;
+	box-sizing: border-box;
 }
+
 .sapUiFioriObjectPage > section > .sapMITB + .sapMList:not(.sapMListInsetBG) {
 	margin-top: 1rem;
 }
+
 html.sap-phone .sapUiFioriObjectPage > section > .sapMList:not(.sapMListInsetBG) {
 	padding: 0;
 }
@@ -191,7 +174,7 @@ html.sap-phone .sapUiFioriObjectPage > section > .sapMList:not(.sapMListInsetBG)
 }
 
 html.sap-phone .sapUIMeTabContainerContent .sapMList {
-	padding: 0rem;
+	padding: 0;
 	box-sizing: border-box;
 }
 
@@ -203,9 +186,10 @@ html.sap-phone .sapUIMeTabContainerContent .sapMList {
 	margin-right: 2rem;
 }
 
-html.sap-phone .sapMListInsetBG{
+html.sap-phone .sapMListInsetBG {
 	padding: 1rem;
 }
+
 html.sap-phone .sapMListInsetBG > .sapMListSwp {
 	margin-right: 1rem;
 }
@@ -215,24 +199,24 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	box-sizing: border-box;
-	font-size: @sapMFontHeader4Size;
-	font-family: @sapUiFontHeaderFamily;
-	color: @sapUiGroupTitleTextColor;
+	font-size: var(--sapFontHeader4Size);
+	font-family: var(--sapFontHeaderFamily);
+	color: var(--sapGroup_TitleTextColor);
 	height: 3rem;
 	line-height: 3rem;
 	padding: 0 1rem;
-	background-color: @sapUiGroupTitleBackground;
-	border-bottom: 1px solid @sapUiGroupTitleBorderColor;
+	background-color: var(--sapGroup_TitleBackground);
+	border-bottom: 1px solid var(--sapGroup_TitleBorderColor);
 }
 
-.sapMListFtr{
+.sapMListFtr {
 	height: 2rem;
 	box-sizing: border-box;
-	-webkit-text-size-adjust: none;	/* To improve readability Mobile Safari automatically increases the size of small text so let's disable this */
+	-webkit-text-size-adjust: none; /* To improve readability Mobile Safari automatically increases the size of small text so let's disable this */
 	font-size: @sapMFontMediumSize;
 	line-height: 2rem;
-	background-color: @sapUiListFooterBackground;
-	color: @sapUiListFooterTextColor;
+	background-color: var(--sapList_FooterBackground);
+	color: var(--sapList_FooterTextColor);
 	padding: 0 1rem;
 	white-space: nowrap;
 	overflow: hidden;
@@ -240,11 +224,11 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 }
 
 .sapMListTopBorder {
-	border-top: 1px solid @sapUiListBorderColor;
+	border-top: 1px solid var(--sapList_BorderColor);
 }
 
 .sapMListShowSeparatorsNone .sapMListNoData {
-	border-bottom: 0px;
+	border-bottom: 0;
 }
 
 .sapUIMeTabContainerContent .sapMFeedListItem {
@@ -254,7 +238,7 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 
 /* Growing feature */
 .sapMGrowingListBusyIndicator {
-	margin: 1.5rem 1.0rem ;
+	margin: 1.5rem 1.0rem;
 	position: absolute;
 }
 
@@ -265,25 +249,25 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 .sapMGrowingListTriggerText > .sapMSLITitle {
 	margin: 0.813rem 0; /* overwrites any user-agent default margin values */
 	padding-bottom: 0;
-	color: @sapUiButtonTextColor;
+	color: var(--sapButton_TextColor);
 	font-weight: bold;
 }
 
 .sapMGrowingListDescription.sapMSLIDescription {
-	color: @sapUiButtonTextColor;
+	color: var(--sapButton_TextColor);
 }
 
 /* sticky headers */
 .sapMSticky > .sapMListHdr,
 .sapMSticky > .sapMListInfoTBarContainer,
-.sapMSticky .sapMGHLI  {
+.sapMSticky .sapMGHLI {
 	position: sticky;
 }
 
 /* sticky headerToolbar/headerText background when transparent */
 .sapMSticky > .sapMListHdrText,
 .sapMSticky > .sapMListHdrTBar.sapMTB-Transparent-CTX {
-	background: @sapUiListHeaderBackground;
+	background: var(--sapList_HeaderBackground);
 }
 
 .sapMSticky > .sapMListHdr,
@@ -306,18 +290,19 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 /* top: 3rem sticky conditions : 2nd sticky elements*/
 .sapMSticky3 > .sapMListInfoTBarContainer {
 	z-index: 2;
-	top: @sapUiElementLineHeight;
+	top: var(--sapElement_LineHeight);
 }
 
 /* handle transparent background on rounded corners to not show underlaying elements on scrolling */
 ._sap_m_ListBase_Rounded_HeaderToolbarMixin() {
+
 	.sapMSticky:has(> .sapMListHdr):not(:has(> .sapMMsgStrip))::before {
 		position: sticky;
-		content: "";
+		content: '';
 		display: block;
-		background: @sapUiGroupContentBackground;
-		height: @sapUiElementBorderCornerRadius;
-		margin-bottom: -@sapUiElementBorderCornerRadius; /* prevent new empty space above sticky element */
+		background: var(--sapGroup_ContentBackground);
+		height: var(--sapElement_BorderCornerRadius);
+		margin-bottom: ~"calc(var(--sapElement_BorderCornerRadius) * -1)"; /* prevent new empty space above sticky element */
 		top: 0;
 		z-index: 2;
 
@@ -334,6 +319,6 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 	font-size: @sapMFontMediumSize;
 }
 
-.sapUiSizeCompact .sapMGrowingListDescription{
+.sapUiSizeCompact .sapMGrowingListDescription {
 	padding-top: 0;
 }

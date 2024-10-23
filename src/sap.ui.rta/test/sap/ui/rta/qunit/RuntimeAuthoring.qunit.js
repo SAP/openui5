@@ -641,6 +641,21 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when stopping rta with saving changes and current displayed version is not draft", function(assert) {
+			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
+			this.oRta._oVersionsModel.setProperty("/displayedVersion", "-1");
+			this.oRta._oContextBasedAdaptationsModel.setProperty("/contextBasedAdaptationsEnabled", false);
+			const oSaveStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
+
+			return this.oRta._serializeToLrep(true, true)
+			.then(function() {
+				assert.equal(oSaveStub.callCount, 1, "save was triggered");
+				const aSavePropertyBag = oSaveStub.getCall(0).args[0];
+				assert.strictEqual(aSavePropertyBag.draft, false, "the draft flag is set to false");
+				assert.notOk(aSavePropertyBag.version, "the version is not passed because we switch to active version");
+			});
+		});
+
 		QUnit.test("when calling condenseAndSaveChanges", function(assert) {
 			var oSerializeStub = sandbox.stub(this.oRta, "_serializeToLrep");
 			this.oRta.condenseAndSaveChanges(true);
