@@ -16,5 +16,8 @@
     "reviewers": ["UI5 Foundation"],
     "maven": {
        "enabled": false
+    },
+    "lockFileMaintenance": {
+        "enabled": true
     }
 }
