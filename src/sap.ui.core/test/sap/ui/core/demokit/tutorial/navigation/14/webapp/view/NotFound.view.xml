@@ -2,10 +2,12 @@
 	controllerName="sap.ui.demo.nav.controller.NotFound"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
-	<MessagePage
+	<IllustratedMessage
+		illustrationType="sapIllus-PageNotFound"
 		title="{i18n>NotFound}"
-		text="{i18n>NotFound.text}"
-		description="{i18n>NotFound.description}"
-		showNavButton="true"
-		navButtonPress=".onNavBack"/>
+		description="{i18n>NotFound.description}">
+		<additionalContent>
+			<Button text="{i18n>NotFound.backToHome}" press=".onNavBack"></Button>
+		</additionalContent>
+	</IllustratedMessage>
 </mvc:View>

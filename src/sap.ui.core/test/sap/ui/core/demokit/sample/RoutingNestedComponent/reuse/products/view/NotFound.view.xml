@@ -1,7 +1,8 @@
 <mvc:View xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
-	<MessagePage title="{i18n>detailViewTitle} Not Found"
-		text="This resource was not found"
-		description="Check your code"
-		class="productsPage" />
+	<IllustratedMessage
+		class="productsPage"
+		illustrationType="sapIllus-PageNotFound"
+		title="{i18n>detailViewTitle} Not Found"
+		description="This resource was not found, check your code" />
 </mvc:View>
