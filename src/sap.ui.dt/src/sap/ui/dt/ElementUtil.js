@@ -487,7 +487,8 @@ sap.ui.define([
 			index: iIndex
 		});
 
-		if (sAggregationName && oParent.getBinding(sAggregationName)) {
+		// the parent might not be available yet
+		if (sAggregationName && oParent?.getBinding(sAggregationName)) {
 			var oBinding = oParent.getBindingInfo(sAggregationName);
 			var oTemplate = oBinding && oBinding.template;
 
