@@ -18,13 +18,13 @@
 .sapMObjectAttributeActive .sapMObjectAttributeText:focus::after {
 	pointer-events: none;
 	display: block;
-	content: "";
+	content: '';
 	position: absolute;
 	top: 2px;
 	left: 1px;
 	bottom: 2px;
 	right: 1px;
-	outline: 2px dotted @sapUiContentFocusColor;
+	outline: 2px dotted var(--sapContent_FocusColor);
 }
 
 .sapMObjectAttributeActive .sapMObjectAttributeText:active,
@@ -40,7 +40,7 @@
 .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:hover,
 .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:focus {
 	text-decoration: underline;
-	color: @sapUiLinkHoverColor;
+	color: var(--sapLink_Hover_Color);
 }
 
 /*=========================================== */
