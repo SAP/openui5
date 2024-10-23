@@ -119,8 +119,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Components Includes", function(assert){
-		assert.ok(typeof foo == 'function', "function foo from included js exists");
-		assert.equal(foo(), "bar", "function from JS include invoked");
+		/**
+		 * @deprecated As of version 1.94, see Manifest#_loadIncludes
+		 */
+		(() => {
+			assert.ok(typeof foo == 'function', "function foo from included js exists");
+			assert.equal(foo(), "bar", "function from JS include invoked");
+		})();
+
 		var oLink = document.querySelector(
 			"link[data-sap-ui-manifest-uid='" + this.oComp.getManifestObject()._uid + "']"
 		);
