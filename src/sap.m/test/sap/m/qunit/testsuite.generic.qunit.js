@@ -70,8 +70,7 @@ sap.ui.define([
 				moduleName: "sap/m/PlanningCalendar"
 			},
 			"sap.m._PlanningCalendarIntervalPlaceholder": {
-				moduleName: "sap/m/PlanningCalendar",
-				apiVersion: 1
+				moduleName: "sap/m/PlanningCalendar"
 			},
 			"sap.m.internal.PlanningCalendarRowListItem": {
 				moduleName: "sap/m/PlanningCalendar"
