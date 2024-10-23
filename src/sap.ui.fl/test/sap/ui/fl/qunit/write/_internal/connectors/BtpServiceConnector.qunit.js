@@ -1,6 +1,8 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/base/util/restricted/_omit",
 	"sap/ui/fl/initial/_internal/connectors/BtpServiceConnector",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/BtpServiceConnector",
@@ -8,6 +10,8 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	Localization,
+	_omit,
 	InitialConnector,
 	InitialUtils,
 	BtpServiceConnector,
@@ -55,6 +59,70 @@ sap.ui.define([
 				contentType: "application/json; charset=utf-8"
 			}), "a PUT request with correct parameters is sent");
 			assert.deepEqual(oResult, ["feature1", "feature2", "feature3"], "the seen feature ids are returned");
+		});
+	});
+
+	QUnit.module("condense", {
+		beforeEach() {
+			sandbox.stub(Localization, "getLanguage").returns("de");
+		},
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("with parentVersion", async function(assert) {
+			const oPayload = {
+				layer: "CUSTOMER",
+				create: {},
+				update: {},
+				reorder: {},
+				"delete": {}
+			};
+			const oSendRequestStub = sandbox.stub(WriteUtils, "sendRequest").resolves("response");
+			const oResult = await BtpServiceConnector.condense({
+				url: "my/url",
+				flexObjects: oPayload,
+				allChanges: [],
+				parentVersion: "0",
+				reference: "my/fancy/reference"
+			});
+			const aArgs = oSendRequestStub.lastCall.args;
+			assert.strictEqual(aArgs[0], "my/url/flex/all/v3/actions/condense/my/fancy/reference?parentVersion=0&sap-language=de");
+			assert.strictEqual(aArgs[1], "POST");
+			assert.deepEqual(_omit(aArgs[2], "initialConnector"), {
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				payload: JSON.stringify(oPayload),
+				tokenUrl: BtpServiceConnector.ROUTES.TOKEN
+			});
+			assert.strictEqual(oResult, "response", "the function returns the response of the request");
+		});
+
+		QUnit.test("without parentVersion", async function(assert) {
+			const oPayload = {
+				layer: "USER",
+				create: {},
+				update: {},
+				reorder: {},
+				"delete": {}
+			};
+			const oSendRequestStub = sandbox.stub(WriteUtils, "sendRequest").resolves("response");
+			const oResult = await BtpServiceConnector.condense({
+				url: "my/url",
+				flexObjects: oPayload,
+				allChanges: [],
+				reference: "my/fancy/reference"
+			});
+			const aArgs = oSendRequestStub.lastCall.args;
+			assert.strictEqual(aArgs[0], "my/url/flex/all/v3/actions/condense/my/fancy/reference?sap-language=de");
+			assert.strictEqual(aArgs[1], "POST");
+			assert.deepEqual(_omit(aArgs[2], "initialConnector"), {
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				payload: JSON.stringify(oPayload),
+				tokenUrl: BtpServiceConnector.ROUTES.TOKEN
+			});
+			assert.strictEqual(oResult, "response", "the function returns the response of the request");
 		});
 	});
 
