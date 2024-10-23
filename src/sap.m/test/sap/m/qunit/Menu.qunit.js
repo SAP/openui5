@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/MenuItem",
 	"sap/m/MenuItemGroup",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/resource/ResourceModel",
 	"sap/m/Button",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -26,6 +27,7 @@ sap.ui.define([
 	MenuItem,
 	MenuItemGroup,
 	JSONModel,
+	ResourceModel,
 	Button,
 	Filter,
 	FilterOperator,
@@ -784,12 +786,11 @@ sap.ui.define([
 		assert.ok(!Element.getElementById(oItemId), 'The item that does not fit in the filter is destroyed');
 	});
 
-	QUnit.test("use escapeSettingsValue() when creating internal controls", async function(assert) {
+	QUnit.test("_handleSettingsValue when creating internal controls", async function(assert) {
 		var oData = {
 				item0: "[test{test1]",
 				item1: "[test{test2]",
-				item2: "[test{test3]",
-				item3: "[test{test4]"
+				item2: "[test test3]"
 			},
 			oModel = new JSONModel(oData),
 			oInternalMenuItems;
@@ -799,20 +800,44 @@ sap.ui.define([
 		this.sut.addItem(new MenuItem({ text: "{/item0}" }));
 		this.sut.addItem(new MenuItem({ text: "{/item1}" }));
 		this.sut.addItem(new MenuItem({ text: "{/item2}" }));
-		this.sut.addItem(new MenuItem({ text: "{/item3}" }));
 		this.sut.openBy(this.oButton);
 		await nextUIUpdate(this.clock);
 		oInternalMenuItems = this.sut._getMenu().getItems();
 
 		// Assert
-		assert.strictEqual(oInternalMenuItems[0].getText(), oData.item0, 'The first item has proper text');
-		assert.strictEqual(oInternalMenuItems[1].getText(), oData.item1, 'The first item has proper text');
-		assert.strictEqual(oInternalMenuItems[2].getText(), oData.item2, 'The first item has proper text');
-		assert.strictEqual(oInternalMenuItems[3].getText(), oData.item3, 'The first item has proper text');
+		assert.strictEqual(oInternalMenuItems[0].getText(), oData.item0, 'The first item text was escaped with escapeSettingsValue since it is not valid binding string');
+		assert.strictEqual(oInternalMenuItems[1].getText(), oData.item1, 'The second item text was escaped with escapeSettingsValue since it is not valid binding string');
+		assert.strictEqual(oInternalMenuItems[2].getText(), oData.item2, 'The third item text was not escaped since it is valid binding string');
 
 		// Cleanup
 		oModel.destroy();
 		oModel = null;
+	});
+
+	QUnit.test("_handleSettingsValue when creating internal controls binding i18n text", async function(assert) {
+		var i18n = new ResourceModel({
+				bundleName: "resourceroot.data.i18n.i18n_menu"
+			}),
+			oInternalMenuItems;
+
+		// Act
+		this.sut.setModel(i18n, "i18n");
+		var mi = new MenuItem();
+		mi.setText("{i18n>MENU_ITEM1}");
+		this.sut.addItem(mi);
+		this.sut.addItem(new MenuItem({ text: "{i18n>MENU_ITEM2}" }));
+		await nextUIUpdate(this.clock);
+		this.sut.openBy(this.oButton);
+		await nextUIUpdate(this.clock);
+		oInternalMenuItems = this.sut._getMenu().getItems();
+
+		// Assert
+		assert.strictEqual(oInternalMenuItems[0].getText(), "menu item1", 'The first item text was not escaped since it is a valid binding string');
+		assert.strictEqual(oInternalMenuItems[1].getText(), "menu item2", 'The second item text was not escaped since it is a valid binding string');
+
+		// Cleanup
+		i18n.destroy();
+		i18n = null;
 	});
 
 	QUnit.module('MenuItem(inside Menu)', {
