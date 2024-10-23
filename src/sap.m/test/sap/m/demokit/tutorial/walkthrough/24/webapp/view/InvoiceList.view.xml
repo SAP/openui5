@@ -1,7 +1,7 @@
 <mvc:View
 	controllerName="ui5.walkthrough.controller.InvoiceList"
 	xmlns="sap.m"
-	xmlns="sap.ui.core"
+	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 >
 	<List
