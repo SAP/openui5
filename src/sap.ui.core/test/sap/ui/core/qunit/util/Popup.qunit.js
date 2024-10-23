@@ -2580,18 +2580,22 @@ sap.ui.define([
 
 	QUnit.test("Open two modal popups and destroy the second one. Blocklayer should stay", function(assert) {
 		var done = assert.async();
-		this.oPopup.setModal(true);
+		this.oPopup.setModal(true, "myCustomClass");
 
 		var oPopup2 = new Popup(document.getElementById("popup2"));
-		oPopup2.setModal(true);
+		oPopup2.setModal(true, "myCustomClass2");
 
 		var fnOpened = function() {
+			const oBlockLayer = document.getElementById("sap-ui-blocklayer-popup");
+			assert.ok(oBlockLayer.classList.contains("myCustomClass2"), "Popup2's custom class should be added to blocklayer");
+			assert.notOk(oBlockLayer.classList.contains("myCustomClass"), "Popup1's custom class should not be added to blocklayer");
 			oPopup2.destroy();
 		};
 
 		var fnClosed = function() {
-			var $DomRefBL = jQuery("#sap-ui-blocklayer-popup");
-			assert.equal($DomRefBL.css("visibility"), "visible", "blocklayer is still visible");
+			const oBlockLayer = document.getElementById("sap-ui-blocklayer-popup");
+			assert.equal(oBlockLayer.style.visibility, "visible", "blocklayer is still visible");
+			assert.ok(oBlockLayer.classList.contains("myCustomClass"), "Custom css class should be restored on blocklayer.");
 
 			done();
 		};

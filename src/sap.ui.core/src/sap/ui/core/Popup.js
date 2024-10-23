@@ -2798,6 +2798,12 @@ sap.ui.define([
 				FocusHandler.removeFocusInfoExtender(this._extendFocusInfo, this);
 			}
 
+			// remove custom css classes if available
+			const aCurrentCustomClasses = this._sModalCSSClass?.split(" ") ?? [];
+			aCurrentCustomClasses.forEach((sModalCSSClass) => {
+				oBlockLayerDomRef.classList.remove(sModalCSSClass);
+			});
+
 			// if there are more z-indices this means there are more dialogs stacked
 			// up. So redisplay the block layer (with new z-index) under the new
 			// current dialog which should be displayed.
@@ -2808,6 +2814,12 @@ sap.ui.define([
 				oLastPopupInfo = Popup.blStack[Popup.blStack.length - 1];
 				// set the block layer z-index to the last z-index in the stack and show it
 				oBlockLayerDomRef.style.zIndex = oLastPopupInfo.zIndex;
+
+				// restore custom css classes if available
+				const aModalCSSClasses = oLastPopupInfo.popup._sModalCSSClass?.split(" ") ?? [];
+				aModalCSSClasses.forEach((sModalCSSClass) => {
+					oBlockLayerDomRef.classList.add(sModalCSSClass);
+				});
 
 				oBlockLayerDomRef.style.visibility = "visible";
 				oBlockLayerDomRef.style.display = "block";
