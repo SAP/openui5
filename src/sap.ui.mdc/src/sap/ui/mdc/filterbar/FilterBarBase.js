@@ -24,7 +24,9 @@ sap.ui.define([
 		"sap/ui/mdc/enums/OperatorName",
 		"sap/m/library",
 		"sap/m/Button",
-		"./FilterBarBaseRenderer"
+		"./FilterBarBaseRenderer",
+		"sap/ui/mdc/FilterField",
+		"sap/ui/mdc/filterbar/PropertyInfoValidator"
 	],
 	(
 		Element,
@@ -49,13 +51,17 @@ sap.ui.define([
 		OperatorName,
 		mLibrary,
 		Button,
-		FilterBarBaseRenderer
+		FilterBarBaseRenderer,
+		FilterField,
+		PropertyInfoValidator
 	) => {
 		"use strict";
 
 		// sap.ui.fl-related classes (loaded async after library load)
 		let FlexApplyAPI;
 		const { ValueState } = coreLibrary;
+
+		const SEARCH_CONDITION = "$search";
 
 		/**
 		 * Constructor for a new <code>FilterBarBase</code> control.
@@ -193,6 +199,7 @@ sap.ui.define([
 					 * This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not bindable.
 					 * Any changes of the initial aggregation content might result in undesired effects.
 					 * Changes of the aggregation have to be made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
+					 * Also, the <code>conditions</code> property of <code>filterItems</code> is managed by the control.
 					 */
 					filterItems: {
 						type: "sap.ui.mdc.FilterField",
@@ -201,7 +208,8 @@ sap.ui.define([
 
 					/**
 					 * Contains the optional basic search field.
-					 * <b>Note:</b> This field has to be bound against the <code>$search</code> property.
+					 * <b>Note:</b> The <code>conditions</code> property of this field is managed by the control.
+					 * The <code>propertyKey</code> property of this field has to be <code>$search</code> and is enforced by this control.
 					 */
 					basicSearchField: {
 						type: "sap.ui.mdc.FilterField",
@@ -404,10 +412,35 @@ sap.ui.define([
 		FilterBarBase.prototype.applySettings = function(mSettings, oScope) {
 			this._setPropertyHelperClass(PropertyHelper);
 			this._setupPropertyInfoStore("propertyInfo");
+			// mSettings.filterItems can also be a binding, therefore check if it's an array
+			if (mSettings?.propertyInfo && mSettings?.filterItems && Array.isArray(mSettings.filterItems)) {
+				this._validatePropertyInfos(mSettings.propertyInfo, mSettings.filterItems);
+			}
 			this._applySettings(mSettings, oScope);
 			Promise.all([this.awaitPropertyHelper()]).then(() => {
 				if (!this._bIsBeingDestroyed) {
 					this._applyInitialFilterConditions();
+					this.getFilterItems().forEach((oFilterField) => {
+						this._enhanceFilterField(oFilterField);
+					});
+
+					const oBasicSearchField = this.getBasicSearchField();
+					if (oBasicSearchField) {
+						this._enhanceBasicSearchField(oBasicSearchField);
+					}
+				}
+			});
+		};
+
+		FilterBarBase.prototype._validatePropertyInfos = function(aPropertyInfos, aFilterItems) {
+			aFilterItems.forEach((oFilterItem) => {
+				const sPropertyKey = oFilterItem.getPropertyKey();
+				const fnIsPropertyInfo = (oPropertyInfo) => {
+					return oPropertyInfo.name === sPropertyKey;
+				};
+				if (sPropertyKey && aPropertyInfos.some(fnIsPropertyInfo)) {
+					const oPropertyInfo = aPropertyInfos.find(fnIsPropertyInfo);
+					PropertyInfoValidator.comparePropertyInfoWithControl(oFilterItem, oPropertyInfo);
 				}
 			});
 		};
@@ -514,7 +547,7 @@ sap.ui.define([
 			if (oModel) {
 				aFilterNames = [];
 
-				const aConditions = oModel.getConditions("$search");
+				const aConditions = oModel.getConditions(SEARCH_CONDITION);
 				if (aConditions && aConditions.length > 0) {
 					aFilterNames.push(this._oRb.getText("filterbar.ADAPT_SEARCHTERM"));
 				}
@@ -552,7 +585,7 @@ sap.ui.define([
 					const oProperty = this._getPropertyByName(sFieldPath);
 					if (oProperty && !oProperty.hiddenFilter && (aAllConditions[sFieldPath].length > 0)) {
 						++nActive;
-						if (!(((sFieldPath === "$search") && this.getAggregation("basicSearchField")) || this._getFilterField(sFieldPath))) {
+						if (!(((sFieldPath === SEARCH_CONDITION) && this.getAggregation("basicSearchField")) || this._getFilterField(sFieldPath))) {
 							++nNonVisible;
 						}
 					}
@@ -1593,7 +1626,8 @@ sap.ui.define([
 				if (oChanges.name === "filterItems") {
 					switch (oChanges.mutation) {
 						case "insert":
-							oFilterField = this._enhanceFilterField(oChanges.child);
+							oFilterField = oChanges.child;
+							oFilterField = this._enhanceFilterField(oFilterField);
 							oFilterField.attachChange(this._handleFilterItemChanges, this);
 							oFilterField.attachSubmit(this._handleFilterItemSubmit, this);
 							this._filterItemInserted(oFilterField);
@@ -1711,59 +1745,37 @@ sap.ui.define([
 		};
 
 		FilterBarBase.prototype._enhanceFilterField = function(oFilterField) {
-			let sPropertyKey, oProperty;
-
 			if (oFilterField) {
-				sPropertyKey = oFilterField.getPropertyKey();
+				const sPropertyKey = oFilterField.getPropertyKey();
 
 				if (!sPropertyKey) {
 					Log.error("filter field with the id = '" + oFilterField.getId() + "' should have an assigned 'propertyKey'");
 					return oFilterField;
 				}
 
-// is default
-//				if (!oFilterField.getDelegate()) {
-//					oFilterField.setDelegate({name: "sap/ui/mdc/field/FieldBaseDelegate"});
-//				}
 				if (!oFilterField.getBindingInfo("conditions")) {
 					oFilterField.bindProperty("conditions",{
-						path: '/conditions/' + sPropertyKey,
-						model: "$filters"});
-				}
-				oProperty = this._getPropertyByName(sPropertyKey);
-				if (!oProperty && this.getPropertyInfo().length > 0) { //the data in propertyInfo may still not be propagated to property helper, so we check also directly
-					this.getPropertyInfo().some((oPropertyInfo) => {
-						if ((oPropertyInfo.key === sPropertyKey) || (oPropertyInfo.name === sPropertyKey)) {
-							oProperty = oPropertyInfo;
-						}
-						return oProperty;
+						path: `/conditions/${sPropertyKey}`,
+						model: "$filters"
 					});
 				}
-				if (!oProperty) {
+
+				let oFilterFieldPropertyInfo = this._getPropertyByName(sPropertyKey);
+				const aPropertyInfos = this.getPropertyInfo();
+				if (!oFilterFieldPropertyInfo && aPropertyInfos.length > 0) { // the data in propertyInfo may still not be propagated to property helper, so we check also directly
+					oFilterFieldPropertyInfo = aPropertyInfos.find((oPropertyInfo) => (oPropertyInfo.key === sPropertyKey) || (oPropertyInfo.name === sPropertyKey));
+				}
+
+				if (!oFilterFieldPropertyInfo) {
 					if (!this.isA("sap.ui.mdc.valuehelp.FilterBar")) { // vh.FB does not support 'propertyInfo'...
 						Log.warning("Property '" + sPropertyKey + "' does not exist for filter field with the id = '" + oFilterField.getId() + "' on filter bar='" + this.getId() + "'");
 					}
+					PropertyInfoValidator.checkMandatoryProperties(oFilterField);
+
 					return oFilterField;
 				}
 
-				if (oFilterField.isPropertyInitial("dataType") && oProperty.hasOwnProperty("dataType") && oProperty.dataType) {
-					oFilterField.setDataType(oProperty.dataType);
-				}
-				if (oFilterField.isPropertyInitial("required") && oProperty.hasOwnProperty("required")) {
-					oFilterField.setRequired(oProperty.required);
-				}
-				if (oFilterField.isPropertyInitial("maxConditions") && oProperty.hasOwnProperty("maxConditions") && oProperty.maxConditions) {
-					oFilterField.setMaxConditions(oProperty.maxConditions);
-				}
-				if (!oFilterField.getLabel() && oProperty.hasOwnProperty("label") && oProperty.label) {
-					oFilterField.setLabel(oProperty.label);
-				}
-				if (!oFilterField.getDataTypeConstraints() && oProperty.hasOwnProperty("constraints") && oProperty.constraints) {
-					oFilterField.setDataTypeConstraints(oProperty.constraints);
-				}
-				if (!oFilterField.getDataTypeFormatOptions() && oProperty.hasOwnProperty("formatOptions") && oProperty.formatOptions) {
-					oFilterField.setDataTypeFormatOptions(oProperty.formatOptions);
-				}
+				PropertyInfoValidator.compareControlWithPropertyInfo(oFilterField, oFilterFieldPropertyInfo);
 				// no display, no valueHelp, no additionalDataType, no tooltip, no operators, no defaultOperator, no caseSensitive
 
 				oFilterField.triggerCheckCreateInternalContent();
@@ -1771,7 +1783,6 @@ sap.ui.define([
 
 			return oFilterField;
 		};
-
 
 		FilterBarBase.prototype.setBasicSearchField = function(oBasicSearchField) {
 
@@ -1783,6 +1794,7 @@ sap.ui.define([
 			this.setAggregation("basicSearchField", oBasicSearchField);
 
 			if (oBasicSearchField) {
+				this._enhanceBasicSearchField(oBasicSearchField);
 				if (!this._oObserver.isObserved(oBasicSearchField, { properties: ["visible"] })) {
 					this._oObserver.observe(oBasicSearchField, { properties: ["visible"] });
 				}
@@ -1791,12 +1803,24 @@ sap.ui.define([
 			return this;
 		};
 
+		FilterBarBase.prototype._enhanceBasicSearchField = function(oBasicSearchField) {
+			const sPropertyKey = oBasicSearchField.getPropertyKey();
+			if (sPropertyKey !== SEARCH_CONDITION) {
+				if (sPropertyKey || sPropertyKey === "") {
+					Log.warning(`sap.ui.mdc.FilterBar: BasicSearchField has incorrect 'propertyKey' '${sPropertyKey}'. Overriding to default '${SEARCH_CONDITION}'`);
+				}
+				oBasicSearchField.setPropertyKey(SEARCH_CONDITION);
+			}
+
+			this._enhanceFilterField(oBasicSearchField);
+		};
+
 		FilterBarBase.prototype._getNonHiddenPropertyInfoSet = function() {
 			const aVisibleProperties = [];
 			this.getPropertyInfoSet().every((oProperty) => {
 				if (!oProperty.hiddenFilter) {
 
-					if (IdentifierUtil.getPropertyKey(oProperty) !== "$search") {
+					if (IdentifierUtil.getPropertyKey(oProperty) !== SEARCH_CONDITION) {
 						aVisibleProperties.push(oProperty);
 					}
 				}
@@ -1991,8 +2015,8 @@ sap.ui.define([
 		 */
 		FilterBarBase.prototype.getConditions = function() {
 			const mConditions = this.getCurrentState().filter;
-			if (mConditions && mConditions["$search"]) {
-				delete mConditions["$search"];
+			if (mConditions && mConditions[SEARCH_CONDITION]) {
+				delete mConditions[SEARCH_CONDITION];
 			}
 
 			return mConditions;
@@ -2005,7 +2029,7 @@ sap.ui.define([
 		 * @returns {string} Value of search condition or empty
 		 */
 		FilterBarBase.prototype.getSearch = function() {
-			const aSearchConditions = this._getConditionModel() ? this._getConditionModel().getConditions("$search") : [];
+			const aSearchConditions = this._getConditionModel() ? this._getConditionModel().getConditions(SEARCH_CONDITION) : [];
 			return aSearchConditions[0] ? aSearchConditions[0].values[0] : "";
 		};
 
