@@ -483,10 +483,10 @@ sap.ui.define([
 				id  : sMenuListItemId,
 				type: oItem.getEnabled() ? ListType.Active : ListType.Inactive,
 				icon: oItem.getIcon(),
-				title: ManagedObject.escapeSettingsValue(oItem.getText()),
+				title: this._handleSettingsValue(oItem.getText()),
 				startsSection: oItem.getStartsSection(),
 				menuItem: oItem,
-				tooltip: ManagedObject.escapeSettingsValue(oItem.getTooltip()),
+				tooltip: this._handleSettingsValue(oItem.getTooltip()),
 				visible: oItem.getVisible(),
 				enabled: oItem.getEnabled()
 			});
@@ -510,9 +510,9 @@ sap.ui.define([
 			oUfMenuItem = new UfdMenuItem({
 				id: sUfMenuItemId,
 				icon: oItem.getIcon(),
-				text: ManagedObject.escapeSettingsValue(oItem.getText()),
+				text: this._handleSettingsValue(oItem.getText()),
 				startsSection: oItem.getStartsSection(),
-				tooltip: ManagedObject.escapeSettingsValue(oItem.getTooltip()),
+				tooltip: this._handleSettingsValue(oItem.getTooltip()),
 				visible: oItem.getVisible(),
 				enabled: oItem.getEnabled()
 			});
@@ -1005,6 +1005,24 @@ sap.ui.define([
 				return this;
 			};
 		});
+
+		/**
+		 * Checks if the given property value is binding value and if not escapes it
+		 * @param {string} sValue property value to be checked
+		 * @private
+		 * @returns {string} handled value
+		 */
+		Menu.prototype._handleSettingsValue = function(sValue) {
+			if (typeof sValue !== "string") {
+				return sValue;
+			}
+			try {
+				ManagedObject.bindingParser(sValue);
+				return sValue;
+			} catch {
+				return ManagedObject.escapeSettingsValue(sValue);
+			}
+		};
 
 		return Menu;
 	});
