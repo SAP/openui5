@@ -64,7 +64,11 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			},
 
 			"extensions/Controllerextensions_legacy": {
-				title: "QUnit Page for Controller Extensions with old 'override' property"
+				title: "QUnit Page for Controller Extensions with old 'override' property",
+				module: "test-resources/sap/ui/core/qunit/mvc/extensions/Controllerextensions.qunit",
+				uriParams: {
+					"useLegacyTermOverride": "true"
+				}
 			},
 
 			"extensions/ControllerMetadata": {

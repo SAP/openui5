@@ -439,39 +439,6 @@ sap.ui.define([
 
 			var sComponentName = this.getComponentName();
 
-			/**
-			 * Load JS files.
-			 * @eprecated As of version 1.94, standard dependencies should be used instead.
-			 */
-			if (mResources["js"]) {
-				var aJSResources = mResources["js"];
-				var requireAsync = function (sModule) {
-					// Wrap promise within function because OPA waitFor (sap/ui/test/autowaiter/_promiseWaiter.js)
-					// can't deal with a promise instance in the wrapped then handler
-					return function() {
-						return new Promise(function(resolve, reject) {
-							sap.ui.require([sModule], resolve, reject);
-						});
-					};
-				};
-
-				oPromise = Promise.resolve();
-				for (var i = 0; i < aJSResources.length; i++) {
-					var oJSResource = aJSResources[i];
-					var sFile = oJSResource.uri;
-					if (sFile) {
-						// load javascript file
-						var m = sFile.match(/\.js$/i);
-						if (m) {
-							// call internal sap.ui.require variant that accepts a requireJS path and loads the module synchronously
-							var sJsUrl = sComponentName.replace(/\./g, '/') + (sFile.slice(0, 1) === '/' ? '' : '/') + sFile.slice(0, m.index);
-							Log.info("Component \"" + sComponentName + "\" is loading JS: \"" + sJsUrl + "\"");
-							oPromise = oPromise.then(requireAsync(sJsUrl));
-						}
-					}
-				}
-			}
-
 			// include CSS files
 			var aCSSResources = mResources["css"];
 			if (aCSSResources) {

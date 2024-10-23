@@ -39,6 +39,38 @@ sap.ui.define([
 		return oPromise;
 	});
 
+	QUnit.test("Should hook into the Promise.withResolvers and remove from pending when 'resolve' is called", async function (assert) {
+		var fnDone = assert.async();
+		var { promise, resolve } = Promise.withResolvers();
+
+		assert.ok(_promiseWaiter.hasPending(), "Has pending promise");
+
+		setTimeout(function () {
+			resolve(mResolveValue);
+		}, 50);
+
+		await promise;
+
+		assert.ok(!_promiseWaiter.hasPending(), "Has no pending promises");
+		fnDone();
+	});
+
+	QUnit.test("Should hook into the Promise.withResolvers and remove from pending when 'reject' is called", async function (assert) {
+		var fnDone = assert.async();
+		var { promise, reject } = Promise.withResolvers();
+
+		assert.ok(_promiseWaiter.hasPending(), "Has pending promise");
+
+		try {
+			setTimeout(function () {
+				reject(mResolveValue);
+			}, 50);
+			await promise;
+		} catch (e) {
+			assert.ok(!_promiseWaiter.hasPending(), "Has no pending promises");
+			fnDone();
+		}
+	});
 
 	QUnit.test("Should hook into the Promise constructor and remove from pending when 'finally' is called", function (assert) {
 		var fnDone = assert.async();

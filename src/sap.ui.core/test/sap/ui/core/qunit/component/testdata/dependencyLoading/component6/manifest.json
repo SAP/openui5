@@ -14,14 +14,11 @@
 			"component": "testdata.dependencyLoading.component5"
 		},
 		"resources": {
-			"css": [{
-				"uri": "css/comp6extended.css"
-			}],
-			"js": [{
-				"uri": "scripts/component6_1_extendedSyncScript.js"
-			}, {
-				"uri": "scripts/component6_2_extendedSyncScript.js"
-			}]
+			"css": [
+				{
+					"uri": "css/comp6extended.css"
+				}
+			]
 		}
 	}
 }

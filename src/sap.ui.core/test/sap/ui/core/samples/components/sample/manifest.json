@@ -25,11 +25,6 @@
 			}
 		},
 		"resources": {
-			"js": [
-				{
-					"uri": "js/script.js"
-				}
-			],
 			"css": [
 				{
 					"uri": "css/style.css"

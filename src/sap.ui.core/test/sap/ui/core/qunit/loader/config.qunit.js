@@ -43,6 +43,7 @@
 			document.head.removeChild(oScript);
 		});
 		// finally remove the whole sap namespace
+		// ui5lint-disable-next-line no-globals
 		delete window.sap;
 		aScripts = [];
 	}

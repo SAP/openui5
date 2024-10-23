@@ -10,7 +10,6 @@
 		"description": "Description",
 		"ach": "ach"
 	},
-
 	"sap.ui": {
 		"technology": "UI5",
 		"icons": {
@@ -27,7 +26,6 @@
 			"phone": true
 		}
 	},
-
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.demo.navigationTests.view.App",
@@ -47,48 +45,46 @@
 			"compact": true,
 			"cozy": true
 		},
-		"resources": {
-		},
 		"routing": {
-		  "config": {
-			"routerClass": "sap.m.routing.Router",
-			"type": "View",
-			"viewType": "XML",
-			"path": "sap.ui.demo.navigationTests.view",
-			"controlId": "app",
-			"controlAggregation": "pages",
-			"async": true
-		  },
-		  "routes": [
-			{
-			  "pattern": "",
-			  "name": "home",
-			  "target": [
-				"home"
-			  ]
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"type": "View",
+				"viewType": "XML",
+				"path": "sap.ui.demo.navigationTests.view",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"async": true
 			},
-			{
-			  "pattern": "page2",
-			  "name": "page2",
-			  "target": [
-				"page2"
-			  ]
+			"routes": [
+				{
+					"pattern": "",
+					"name": "home",
+					"target": [
+						"home"
+					]
+				},
+				{
+					"pattern": "page2",
+					"name": "page2",
+					"target": [
+						"page2"
+					]
+				}
+			],
+			"targets": {
+				"home": {
+					"name": "Home",
+					"id": "home",
+					"level": 1,
+					"title": "Home"
+				},
+				"page2": {
+					"name": "Page2",
+					"id": "page2",
+					"level": 1,
+					"title": "Page2"
+				}
 			}
-		  ],
-		  "targets": {
-			"home": {
-			  "name": "Home",
-			  "id": "home",
-			  "level": 1,
-			  "title": "Home"
-			},
-			"page2": {
-			  "name": "Page2",
-			  "id": "page2",
-			  "level": 1,
-			  "title": "Page2"
-			}
-		  }
 		}
 	}
 }

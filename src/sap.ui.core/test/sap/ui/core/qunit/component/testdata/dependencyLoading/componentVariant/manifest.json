@@ -10,11 +10,6 @@
 				"sap.ui.core": {},
 				"sap.ui.table": {}
 			}
-		},
-		"resources": {
-			"js": [{
-				"uri": "scripts/componentVariant_1_inheritedScript.js"
-			}]
 		}
 	}
 }
