@@ -57,7 +57,9 @@ sap.ui.define([
 				selector: JsControlTreeModifier.getSelector(this.oButton, this.oComponent)
 			});
 			this.mSpecificChangeInfo = {
-				value: "Button New Text"
+				content: {
+					value: "Button New Text"
+				}
 			};
 		},
 		afterEach: () => {
@@ -68,7 +70,7 @@ sap.ui.define([
 		QUnit.test("when completeChangeContent & applyChange with JsControlTreeModifier are called for default handler", async (assert) => {
 			await this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag);
 			await this.oDefaultRenameChangeHandler.applyChange(this.oChange, this.oButton, this.mPropertyBag);
-			assert.strictEqual(this.oButton.getText(), this.mSpecificChangeInfo.value, "then the button text changes");
+			assert.strictEqual(this.oButton.getText(), this.mSpecificChangeInfo.content.value, "then the button text changes");
 		});
 
 		QUnit.test("when completeChangeContent & applyChange with JsControlTreeModifier are called for default handler and then reverted", async (assert) => {
@@ -83,7 +85,7 @@ sap.ui.define([
 		QUnit.test("when completeChangeContent & applyChange with JsControlTreeModifier are called for special handler", async (assert) => {
 			await this.oSpecialRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag);
 			await this.oSpecialRenameChangeHandler.applyChange(this.oChange, this.oButton, this.mPropertyBag);
-			assert.strictEqual(this.oButton.getText(), this.mSpecificChangeInfo.value, "then the button text changes");
+			assert.strictEqual(this.oButton.getText(), this.mSpecificChangeInfo.content.value, "then the button text changes");
 		});
 
 		QUnit.test("when completeChangeContent & applyChange with JsControlTreeModifier are called for special handler and then reverted", async (assert) => {
@@ -96,7 +98,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when completeChangeContent & applyChange with JsControlTreeModifier and binding value are called", async (assert) => {
-			this.mSpecificChangeInfo.value = "{i18n>textKey}";
+			this.mSpecificChangeInfo.content.value = "{i18n>textKey}";
 
 			await this.oSpecialRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag);
 			await this.oSpecialRenameChangeHandler.applyChange(this.oChange, this.oButton, this.mPropertyBag);
@@ -129,7 +131,11 @@ sap.ui.define([
 
 			await this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag);
 			await this.oDefaultRenameChangeHandler.applyChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
-			assert.strictEqual(this.oXmlButton.getAttribute("text"), this.mSpecificChangeInfo.value, "then the button text changes");
+			assert.strictEqual(
+				this.oXmlButton.getAttribute("text"),
+				this.mSpecificChangeInfo.content.value,
+				"then the button text changes"
+			);
 			await this.oDefaultRenameChangeHandler.revertChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
 			assert.strictEqual(this.oXmlButton.getAttribute("text"), "Initial Text", "then the button text doesn't change");
 			this.oLayout.destroy();
@@ -165,13 +171,17 @@ sap.ui.define([
 			try {
 				await this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag);
 				await this.oDefaultRenameChangeHandler.applyChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
-				assert.strictEqual(this.oXmlButton.getAttribute("text"), this.mSpecificChangeInfo.value, "then the button text changes");
+				assert.strictEqual(
+					this.oXmlButton.getAttribute("text"),
+					this.mSpecificChangeInfo.content.value,
+					"then the button text changes"
+				);
 				await this.oDefaultRenameChangeHandler.revertChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
 			} catch (oError) {
 				assert.ok(oError, "revert on XML throws an error because XML only supports strings as properties");
 
 				// the revert data are saved on the change; set button text also on button control
-				this.oButton.setText(this.mSpecificChangeInfo.value);
+				this.oButton.setText(this.mSpecificChangeInfo.content.value);
 				await this.oDefaultRenameChangeHandler.revertChange(this.oChange, this.oButton, {modifier: JsControlTreeModifier});
 				assert.strictEqual(this.oButton.getText(), "Initial Text", "the text binding got reset and the value is correct");
 
@@ -182,7 +192,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when completeChangeContent is called without a value", async (assert) => {
-			this.mSpecificChangeInfo.value = null;
+			this.mSpecificChangeInfo.content.value = null;
 
 			try {
 				await this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag);
@@ -200,7 +210,7 @@ sap.ui.define([
 			);
 			assert.strictEqual(
 				this.oChange.getText("newText"),
-				this.mSpecificChangeInfo.value,
+				this.mSpecificChangeInfo.content.value,
 				"then text is stored with the default change property Name inside the translateable part of the change"
 			);
 		});
@@ -214,7 +224,7 @@ sap.ui.define([
 			);
 			assert.strictEqual(
 				this.oChange.getText("buttonText"),
-				this.mSpecificChangeInfo.value,
+				this.mSpecificChangeInfo.content.value,
 				"then text is stored with the default change property Name inside the translateable part of the change"
 			);
 		});

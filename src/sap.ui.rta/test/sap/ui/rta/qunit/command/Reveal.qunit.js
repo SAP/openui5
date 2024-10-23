@@ -15,7 +15,9 @@ sap.ui.define([
 		revealedElementId: "myFancyRevealedElement"
 	}, {
 		changeType: "unhideControl",
-		revealedElementId: "myFancyRevealedElement"
+		content: {
+			revealedElementId: "myFancyRevealedElement"
+		}
 	});
 
 	QUnit.done(function() {

@@ -7,8 +7,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var mProperties = {
-		changeType: "createContainer",
+	const mContent = {
 		index: 4,
 		newControlId: "myFancyNewControlId",
 		parentId: "myFancyParentId"
@@ -19,11 +18,15 @@ sap.ui.define([
 		designtimeActionStructure: "createContainer",
 		aggregation: true
 	}, {
-		...mProperties,
+		changeType: "createContainer",
+		...mContent,
 		label: "myFancyLabel"
 	}, {
-		...mProperties,
-		newLabel: "myFancyLabel"
+		changeType: "createContainer",
+		content: {
+			...mContent,
+			newLabel: "myFancyLabel"
+		}
 	});
 
 	QUnit.done(function() {

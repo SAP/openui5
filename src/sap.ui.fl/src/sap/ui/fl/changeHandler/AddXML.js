@@ -70,17 +70,19 @@ sap.ui.define([
 	 * @name sap.ui.fl.changeHandler.AddXML#completeChangeContent
 	 */
 	AddXML.completeChangeContent = function(oChange, oSpecificChangeInfo) {
-		var oContent = {};
-		if (oSpecificChangeInfo.targetAggregation) {
-			oContent.targetAggregation = oSpecificChangeInfo.targetAggregation;
-		} else {
+		// TODO: Remove assignment without content after all derived change handlers are adjusted to use content. todos#4
+		const oChangeInfoContent = oSpecificChangeInfo.content || oSpecificChangeInfo;
+		const oContent = {};
+		if (!oChangeInfoContent.targetAggregation) {
 			BaseAddXml._throwMissingAttributeError("targetAggregation");
+		} else {
+			oContent.targetAggregation = oChangeInfoContent.targetAggregation;
 		}
 
-		if (oSpecificChangeInfo.index !== undefined) {
-			oContent.index = oSpecificChangeInfo.index;
-		} else {
+		if (oChangeInfoContent.index === undefined) {
 			BaseAddXml._throwMissingAttributeError("index");
+		} else {
+			oContent.index = oChangeInfoContent.index;
 		}
 
 		BaseAddXml.completeChangeContent(oChange, oSpecificChangeInfo, oContent);

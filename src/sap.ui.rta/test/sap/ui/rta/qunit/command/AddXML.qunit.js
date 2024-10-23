@@ -101,16 +101,14 @@ sap.ui.define([
 					layer: Layer.VENDOR,
 					developerMode: false
 				});
-				assert.notOk(oAddXmlCommand._oPreparedChange.getContent().fragment, "after preparing, the fragment content is not yet in the change");
 				return oAddXmlCommand.execute()
 
 				.then(function() { return oAddXmlCommand; });
 			})
 
-			.then(function(oAddXmlCommand) {
+			.then(function() {
 				assert.equal(oCompleteChangeContentSpy.callCount, 2, "then completeChangeContent is called twice");
 				assert.equal(oApplyChangeStub.callCount, 1, "then applyChange is called once");
-				assert.notOk(oAddXmlCommand._oPreparedChange.getContent.fragment, "after applying, the fragment content is not in the change anymore");
 				assert.ok(oPreloadSpy.lastCall.args[0][sPath], "the preload was called with the correct object");
 				assert.equal(oPreloadSpy.lastCall.args[0][sPath], sFragment, "the preload was called with the correct object");
 			})
@@ -278,10 +276,9 @@ sap.ui.define([
 				return oCommand.execute().then(function() { return oCommand; });
 			}.bind(this))
 
-			.then(function(oCommand) {
+			.then(function() {
 				assert.equal(oCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
 				assert.equal(oApplyChangeStub.callCount, 1, "then applyChange is called once");
-				assert.notOk(oCommand._oPreparedChange.getContent().fragment, "after applying, the fragment content is not in the change anymore");
 			});
 		});
 	});

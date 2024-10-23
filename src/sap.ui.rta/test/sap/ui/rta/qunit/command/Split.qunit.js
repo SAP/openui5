@@ -22,12 +22,14 @@ sap.ui.define([
 		parentElement: new Control("myFancyParentId")
 	}, {
 		changeType: "split",
-		newElementIds: [
-			"myFancyElementId1",
-			"myFancyElementId2"
-		],
-		sourceControlId: "myFancySourceId",
-		parentId: "myFancyParentId"
+		content: {
+			newElementIds: [
+				"myFancyElementId1",
+				"myFancyElementId2"
+			],
+			sourceControlId: "myFancySourceId",
+			parentId: "myFancyParentId"
+		}
 	});
 
 	QUnit.done(function() {

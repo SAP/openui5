@@ -35,10 +35,12 @@ sap.ui.define([
 			library: "sap.ui.rta",
 			properties: {
 				propertyName: {
-					type: "string"
+					type: "string",
+					group: "content"
 				},
 				newBinding: {
-					type: "string"
+					type: "string",
+					group: "content"
 				},
 				changeType: {
 					type: "string",

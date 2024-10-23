@@ -188,17 +188,12 @@ sap.ui.define([
 				// Change is applied but we need to create additional runtime only changes
 				// in case of duplicate extension points with different fragment id (fragment as template)
 				const oChangeFileContent = oChange.convertToFileContent();
-				const oChangeContent = oChange.getContent();
 				const mChangeSpecificData = _omit(oChangeFileContent, [
 					"dependentSelector",
 					"fileName",
 					"selector",
-					"content",
 					"adaptationId"
 				]);
-				Object.keys(oChangeContent).forEach(function(sKey) {
-					mChangeSpecificData[sKey] = oChangeContent[sKey];
-				});
 				mChangeSpecificData.support.sourceChangeFileName = oChange.getId() || "";
 				aPromises.push(
 					createAdditionalChange({

@@ -148,21 +148,23 @@ sap.ui.define([
 	};
 
 	/**
-	 * This method converts all command constructor parameters that are flagged with group 'content' into change specific data.
+	 * This method converts all command constructor parameters that are flagged with group 'content' into the corresponding object.
 	 * @return {object} Returns the <code>ChangeSpecificInfo</code> for change handler
 	 * @protected
 	 */
 	FlexCommand.prototype._getChangeSpecificData = function() {
 		var mProperties = this.getMetadata().getProperties();
 		var mChangeSpecificData = {
-			changeType: this.getChangeType()
+			changeType: this.getChangeType(),
+			content: mProperties.content?.get(this)
 		};
 		objectValues(mProperties)
 		.filter(function(oProperty) {
 			return oProperty.group === "content";
 		})
 		.forEach(function(oProperty) {
-			mChangeSpecificData[oProperty.name] = oProperty.get(this);
+			mChangeSpecificData.content ||= {};
+			mChangeSpecificData.content[oProperty.name] = oProperty.get(this);
 		}, this);
 		return mChangeSpecificData;
 	};
