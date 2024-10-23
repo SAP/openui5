@@ -126,13 +126,16 @@
 		display: block !important; /* otherwise will be overwritten by icon css rules in RTL */
 		position: absolute;
 		width: 100%;
-		vertical-align: baseline;
 		font-size: @_sap_ui_table_RowSelection_CheckBoxIconSizeCozy;
 		line-height: @_sap_ui_table_RowSelection_CheckBoxSizeCozy;
 		bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeight ~"-" @_sap_ui_table_RowSelection_CheckBoxSizeCozy ~") / 2");
 
 		.sapUiSizeCozy & {
 			bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeightCozy ~"-" @_sap_ui_table_RowSelection_CheckBoxSizeCozy ~") / 2");
+		}
+
+		.sapUiTableRowHighlights.sapUiTableRowSelectors & {
+			padding: 0 calc(~"(" @_sap_ui_table_RowHighlightWidth ~") / 2");
 		}
 	}
 
