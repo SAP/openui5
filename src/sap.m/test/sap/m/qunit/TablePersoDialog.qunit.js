@@ -711,4 +711,36 @@ sap.ui.define([
 			fnDone();
 		}, 1);
 	});
+
+	QUnit.test("Test #_fnHandleResize execution in afterOpen of the inner dialog", function (assert) {
+		var done = assert.async();
+
+		var oTablePersoDialog = new TablePersoDialog({
+			persoDialogFor: new Table("someTable", {
+				headerToolbar: new Toolbar({
+					content: [
+						new Label({text: "Random Data"}),
+						new ToolbarSpacer({}),
+						new Button("someTableButton", {
+							icon: "sap-icon://person-placeholder"
+						})
+					]
+				})
+			}),
+			columnInfoCallback: function(oColumn) {
+				return [];
+			}
+		});
+
+		var oResizeSpy = sinon.spy(oTablePersoDialog, "_fnHandleResize");
+
+		oTablePersoDialog.open();
+
+		oTablePersoDialog._oDialog.attachAfterOpen(function(oEvt) {
+			// call one time for the synchronous call and one time for the event handler in afterOpen of the dialoog
+			assert.equal(oResizeSpy.callCount, 2, "Resize handler should be called twice after open");
+			oTablePersoDialog.destroy();
+			done();
+		});
+	});
 });

@@ -326,6 +326,11 @@ sap.ui.define([
 		this._fnAfterDialogOpen = function () {
 			// Make sure that arrow buttons are updated when dialog is opened
 			that._fnUpdateArrowButtons.call(that);
+
+			// Trigger a second resizing in addition to the one triggered in the TablePersoDialog#open method
+			// it may be required since the rendering of the Dialog might not yet be finished to the time the first
+			// resizing is triggered
+			that._fnHandleResize();
 		};
 
 		this._fnAfterScrollContainerRendering = function () {
