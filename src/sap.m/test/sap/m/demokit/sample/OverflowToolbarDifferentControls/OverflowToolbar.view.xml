@@ -70,7 +70,6 @@
 		<SearchField placeholder="SearchField"/>
 		<TimePicker />
 		<DateTimePicker />
-		<DateTimeInput />
 		<Select
 			items="{
 				path: '/CountriesCollection',
