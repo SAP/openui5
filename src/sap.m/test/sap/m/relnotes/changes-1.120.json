@@ -949,5 +949,67 @@
         "text": " sap.m.Menu: properties string values are escaped when creating internal controls"
       }
     ]
+  },
+  "1.120.22": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "85aa0f83cc2a5b98d0d176f1cb0cdd8b6dc8bbb2",
+        "type": "FIX",
+        "text": " sap.m.Menu: menu items properties are handled correctly"
+      },
+      {
+        "id": "52c490f44d6a427aeb837115f782b76d0e644a8b",
+        "type": "FIX",
+        "text": " sap.m.Popover: Height calculations for scrollable contents are preserved after invalidation"
+      },
+      {
+        "id": "a4ab80eaf30728be32f32f6fc695342e34d39c59",
+        "type": "FIX",
+        "text": " We've now fixed the accessibility issue in aria-required-children within uploadCollection by changing the role 'option' to 'listitem'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370096513"
+          }
+        ]
+      },
+      {
+        "id": "f4de89e566f51e1d00ac8e77d918c9826725b682",
+        "type": "FIX",
+        "text": " sap.m.Link: prevent default before press on mobile"
+      },
+      {
+        "id": "4b818d9ce245116e9f064e4c074e91b0878be830",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: remove appointments not selected announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280162468"
+          }
+        ]
+      },
+      {
+        "id": "fb4aed894c00bfff95c6339a5b6c877fd445d650",
+        "type": "FIX",
+        "text": ": sap.m.Label: when the label is with percent width it works"
+      },
+      {
+        "id": "d0a4d70761eb919fd94738bb8ee97703e9dfd3ed",
+        "type": "FIX",
+        "text": " sap.m.Fiori20Adapter: Performance issue fixed"
+      },
+      {
+        "id": "c72bb69fc15cf4eac0638ed2e70af469e84471c5",
+        "type": "FIX",
+        "text": " sap.m.Label: Ensure colon and asterisk are always displayed by using flex box"
+      },
+      {
+        "id": "672bd474354102c9b9c9435f7003fdfc96c14812",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: adjust tooltip announcement"
+      }
+    ]
   }
 }

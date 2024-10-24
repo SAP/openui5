@@ -143,5 +143,21 @@
         "text": " sap.ui.unified.DatesRow: render week numbers"
       }
     ]
+  },
+  "1.120.22": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "4b818d9ce245116e9f064e4c074e91b0878be830",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: remove appointments not selected announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280162468"
+          }
+        ]
+      }
+    ]
   }
 }

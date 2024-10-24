@@ -883,5 +883,15 @@
         "text": " Adjust link in sap.ui.core.MessageType documentation"
       }
     ]
+  },
+  "1.120.22": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "0cedaff0b670d7e64aefc7e562e47b088eaba43d",
+        "type": "FIX",
+        "text": " core/Element: use duck typing to check DOM element in 'closestTo'"
+      }
+    ]
   }
 }
