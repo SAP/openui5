@@ -27,6 +27,9 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					},
 
 					"resources": {
+						/**
+						 * @deprecated As of version 1.94, see Manifest#_loadIncludes
+						 */
 						"js": [
 							{
 								"uri": "script.js"

@@ -157,7 +157,7 @@ sap.ui.define([
 					},
 					"resources": {
 						/**
-						 * @deprecated as of version As of version 1.94, see Manifest#_loadIncludes
+						 * @deprecated As of version 1.94, see Manifest#_loadIncludes
 						 */
 						"js": [
 							{
