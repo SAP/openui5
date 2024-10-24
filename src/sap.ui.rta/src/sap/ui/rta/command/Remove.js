@@ -21,7 +21,8 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 			library: "sap.ui.rta",
 			properties: {
 				removedElement: {
-					type: "any"
+					type: "any",
+					group: "content"
 				}
 			},
 			associations: {},

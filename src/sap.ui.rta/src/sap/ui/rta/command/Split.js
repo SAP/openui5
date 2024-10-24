@@ -23,13 +23,16 @@ sap.ui.define([
 			library: "sap.ui.rta",
 			properties: {
 				newElementIds: {
-					type: "string[]"
+					type: "string[]",
+					group: "content"
 				},
 				source: {
-					type: "any"
+					type: "any",
+					group: "content"
 				},
 				parentElement: {
-					type: "any"
+					type: "any",
+					group: "content"
 				}
 			},
 			associations: {},
@@ -42,10 +45,12 @@ sap.ui.define([
 	 */
 	Split.prototype._getChangeSpecificData = function() {
 		var mSpecificInfo = {
-			newElementIds: this.getNewElementIds(),
-			sourceControlId: this.getSource().getId(),
 			changeType: this.getChangeType(),
-			parentId: this.getParentElement().getId()
+			content: {
+				newElementIds: this.getNewElementIds(),
+				sourceControlId: this.getSource().getId(),
+				parentId: this.getParentElement().getId()
+			}
 		};
 		return mSpecificInfo;
 	};

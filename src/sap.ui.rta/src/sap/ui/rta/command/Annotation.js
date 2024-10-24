@@ -27,8 +27,7 @@ sap.ui.define([
 			library: "sap.ui.rta",
 			properties: {
 				content: {
-					type: "any",
-					group: "content"
+					type: "any"
 				}
 			},
 			events: {}

@@ -45,10 +45,13 @@ sap.ui.define([
 			this.oComponent = oComponent;
 			this.mPropertyBag = {modifier: JsControlTreeModifier, appComponent: oComponent};
 			this.mSpecificChangeInfo = {
-				newControlId: "someControlId",
-				bindingPath: "some/binding/path",
-				parentId: "testForm",
-				index: 0
+				content: {
+					newControlId: "someControlId",
+					bindingPath: "some/binding/path",
+					parentId: "testForm",
+					index: 0
+				}
+
 			};
 		}.bind(this));
 	}

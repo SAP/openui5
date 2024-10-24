@@ -26,8 +26,7 @@ sap.ui.define([
 			properties: {
 				// Generic structure is required as some implementations (e.g. Tables) create changes like in Settings action
 				content: {
-					type: "any",
-					group: "content"
+					type: "any"
 				},
 				changeType: {
 					type: "string",

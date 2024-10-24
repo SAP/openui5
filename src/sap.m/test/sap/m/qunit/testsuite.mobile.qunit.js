@@ -799,6 +799,11 @@ sap.ui.define([
 				sinon: {
 					useFakeTimers: true
 				},
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/"
+					}
+				},
 				ui5: {
 					language: "en-US",
 					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary

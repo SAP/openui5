@@ -46,7 +46,6 @@ sap.ui.define([
 	 * @since 1.93.0
 	 *
 	 * @public
-	 * @experimental As of version 1.93.0
 	 */
 	const Field = FieldBase.extend("sap.ui.mdc.MultiValueField", /* @lends sap.ui.mdc.MultiValueField.prototype */ {
 		metadata: {
@@ -420,7 +419,7 @@ sap.ui.define([
 	 * See {@link sap.ui.base.ManagedObject#bindProperty ManagedObject.bindProperty} for a detailed description of the possible properties of oBindingInfo
 	 *
 	 * Do not use the <code>conditions</code> property,
-	 * use the <code>value</code> and <code>additionalValue</code> properties instead.
+	 * use the <code>items</code> aggregation instead.
 	 *
 	 * @param {sap.ui.base.ManagedObject.PropertyBindingInfo} oBindingInfo The binding information
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
@@ -435,7 +434,7 @@ sap.ui.define([
 	 * Unbinds property {@link #getConditions conditions} from model data.
 	 *
 	 * Do not use the <code>conditions</code> property,
-	 * use the <code>value</code> and <code>additionalValue</code> properties instead.
+	 * use the <code>items</code> aggregation instead.
 	 *
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public

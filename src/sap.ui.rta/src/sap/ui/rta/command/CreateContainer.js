@@ -44,7 +44,7 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	CreateContainer.prototype._getChangeSpecificData = function() {
 		var mSpecificInfo = FlexCommand.prototype._getChangeSpecificData.apply(this);
 
-		mSpecificInfo.newLabel = this.getLabel();
+		mSpecificInfo.content.newLabel = this.getLabel();
 
 		return mSpecificInfo;
 	};

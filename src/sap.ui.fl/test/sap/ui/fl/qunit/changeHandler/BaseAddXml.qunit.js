@@ -79,9 +79,11 @@ sap.ui.define([
 			};
 
 			this.oChangeSpecificContent = {
-				fragmentPath: "fragments/Fragment.fragment.xml",
-				targetAggregation: "items",
-				index: 1
+				content: {
+					fragmentPath: "fragments/Fragment.fragment.xml",
+					targetAggregation: "items",
+					index: 1
+				}
 			};
 
 			this.oChange = FlexObjectFactory.createFromFileContent(oChangeJson);
@@ -109,7 +111,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When calling 'completeChangeContent' without complete information", function(assert) {
-			this.oChangeSpecificContent.fragmentPath = null;
+			this.oChangeSpecificContent.content.fragmentPath = null;
 			assert.throws(
 				() => {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent, this.oChange.getContent());},
 				Error("Attribute missing from the change specific content 'fragmentPath'"),
@@ -138,13 +140,15 @@ sap.ui.define([
 			};
 
 			this.oChangeSpecificContent = {
-				fragmentPath: "fragments/Fragment.fragment.xml",
-				targetAggregation: "items",
-				index: 1
+				content: {
+					fragmentPath: "fragments/Fragment.fragment.xml",
+					targetAggregation: "items",
+					index: 1
+				}
 			};
 			this.mChangeInfo = {
-				aggregationName: this.oChangeSpecificContent.targetAggregation,
-				index: this.oChangeSpecificContent.index
+				aggregationName: this.oChangeSpecificContent.content.targetAggregation,
+				index: this.oChangeSpecificContent.content.index
 			};
 
 			this.oChange = FlexObjectFactory.createFromFileContent(this.oChangeJson);
@@ -265,13 +269,15 @@ sap.ui.define([
 			};
 
 			this.oChangeSpecificContent = {
-				fragmentPath: "fragments/Fragment.fragment.xml",
-				targetAggregation: "items",
-				index: 1
+				content: {
+					fragmentPath: "fragments/Fragment.fragment.xml",
+					targetAggregation: "items",
+					index: 1
+				}
 			};
 			this.mChangeInfo = {
-				aggregationName: this.oChangeSpecificContent.targetAggregation,
-				index: this.oChangeSpecificContent.index
+				aggregationName: this.oChangeSpecificContent.content.targetAggregation,
+				index: this.oChangeSpecificContent.content.index
 			};
 
 			this.oChange = FlexObjectFactory.createFromFileContent(this.oChangeJson);

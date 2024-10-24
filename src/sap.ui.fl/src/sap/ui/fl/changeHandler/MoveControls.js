@@ -279,12 +279,14 @@ sap.ui.define([
 	 * @name sap.ui.fl.changeHandler.MoveControls#completeChangeContent
 	 */
 	MoveControls.completeChangeContent = async function(oChange, mSpecificChangeInfo, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier;
-		var oAppComponent = mPropertyBag.appComponent;
+		const oModifier = mPropertyBag.modifier;
+		const oAppComponent = mPropertyBag.appComponent;
+		// TODO: Remove assignment without content after all derived change handlers are adjusted to use content. todos#4
+		const oChangeContent = mSpecificChangeInfo.content || mSpecificChangeInfo;
 
-		checkCompleteChangeContentConditions(mSpecificChangeInfo);
-		const mCompleteSpecificChangeInfo = await completeSpecificChangeInfo(oModifier, mSpecificChangeInfo, oAppComponent);
-		var oContent = {
+		checkCompleteChangeContentConditions(oChangeContent);
+		const mCompleteSpecificChangeInfo = await completeSpecificChangeInfo(oModifier, oChangeContent, oAppComponent);
+		const oContent = {
 			movedElements: [],
 			source: {
 				selector: mCompleteSpecificChangeInfo.source.selector

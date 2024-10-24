@@ -57,12 +57,14 @@ sap.ui.define([
 
 		return FlexTestAPI.createFlexObject({
 			changeSpecificData: {
-				"parentId": "idFormContainer",
-				"newControlId": "addedFieldId",
-				"index" : 1,
-				"oDataServiceVersion" : "2.0",
-				"bindingPath" : "BindingPath1",
-				"changeType" : "addFormField"
+				changeType: "addFormField",
+				content: {
+					parentId: "idFormContainer",
+					newControlId: "addedFieldId",
+					index: 1,
+					oDataServiceVersion: "2.0",
+					bindingPath: "BindingPath1"
+				}
 			},
 			selector: this.oForm,
 			appComponent: this.oMockedAppComponent
@@ -89,12 +91,14 @@ sap.ui.define([
 
 				return FlexTestAPI.createFlexObject({
 					changeSpecificData: {
-						"parentId": "idFormContainer",
-						"newControlId": "addedFieldId2",
-						"index" : 0,
-						"oDataServiceVersion" : "2.0",
-						"bindingPath" : "BindingPath2",
-						"changeType" : "addFormField"
+						changeType: "addFormField",
+						content: {
+							parentId: "idFormContainer",
+							newControlId: "addedFieldId2",
+							index: 0,
+							oDataServiceVersion: "2.0",
+							bindingPath: "BindingPath2"
+						}
 					},
 					selector: this.oForm,
 					appComponent: this.oMockedAppComponent
@@ -149,12 +153,14 @@ sap.ui.define([
 
 		return FlexTestAPI.createFlexObject({
 			changeSpecificData: {
-				"parentId": "idFormContainer",
-				"newControlId": "addedFieldId",
-				"index" : 1,
-				"oDataServiceVersion" : "2.0",
-				"bindingPath" : "BindingPath1",
-				"changeType" : "addFormField"
+				changeType: "addFormField",
+				content: {
+					parentId: "idFormContainer",
+					newControlId: "addedFieldId",
+					index: 1,
+					oDataServiceVersion: "2.0",
+					bindingPath: "BindingPath1"
+				}
 			},
 			selector: this.oForm,
 			appComponent: this.oMockedAppComponent

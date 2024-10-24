@@ -115,6 +115,7 @@ sap.ui.define([
 					}
 				});
 			}
+
 			return oChangeHandler.completeChangeContent(oFlexObject, oChangeSpecificData, {
 				modifier: JsControlTreeModifier,
 				appComponent: mPropertyBag.appComponent,

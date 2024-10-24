@@ -2,8 +2,8 @@
 	controllerName="sap.ui.demo.nav.controller.NotFound"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
-	<MessagePage
+	<IllustratedMessage
+		illustrationType="sapIllus-PageNotFound"
 		title="{i18n>NotFound}"
-		text="{i18n>NotFound.text}"
-		description="{i18n>NotFound.description}"/>
+		description="{i18n>NotFound.text}\n{i18n>NotFound.description}" />
 </mvc:View>

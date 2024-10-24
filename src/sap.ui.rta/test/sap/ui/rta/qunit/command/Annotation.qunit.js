@@ -14,10 +14,14 @@ sap.ui.define([
 		designTimeAction: false
 	}, {
 		changeType: "annotation",
-		content: "myFancyContent"
+		content: {
+			myFancy: "Content"
+		}
 	}, {
 		changeType: "annotation",
-		content: "myFancyContent"
+		content: {
+			myFancy: "Content"
+		}
 	});
 
 	QUnit.module("AnnotationCommand Tests", {

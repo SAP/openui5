@@ -250,22 +250,24 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("When providing change data via specific change info", function(assert) {
 			var mSpecificChangeInfo = {
-				movedElements: [{
-					element: this.oObjectAttribute, // optional fallback for id
-					id: this.oObjectAttribute.getId(),
-					sourceIndex: 0,
-					targetIndex: 2
-				}],
-				source: {
-					id: this.oObjectHeader.getId(),
-					aggregation: "attributes"
-				},
-				target: {
-					id: this.oLayout.getId(),
-					aggregation: "content"
+				content: {
+					movedElements: [{
+						element: this.oObjectAttribute, // optional fallback for id
+						id: this.oObjectAttribute.getId(),
+						sourceIndex: 0,
+						targetIndex: 2
+					}],
+					source: {
+						id: this.oObjectHeader.getId(),
+						aggregation: "attributes"
+					},
+					target: {
+						id: this.oLayout.getId(),
+						aggregation: "content"
+					}
 				}
 			};
-			var oChange = new UIChange({selector: JsControlTreeModifier.getSelector(mSpecificChangeInfo.target.id, oComponent)});
+			var oChange = new UIChange({selector: JsControlTreeModifier.getSelector(mSpecificChangeInfo.content.target.id, oComponent)});
 
 			return MoveControlsHandler.completeChangeContent(
 				oChange,

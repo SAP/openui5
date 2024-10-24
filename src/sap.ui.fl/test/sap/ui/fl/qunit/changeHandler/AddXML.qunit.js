@@ -55,9 +55,11 @@ sap.ui.define([
 			};
 
 			this.oChangeSpecificContent = {
-				fragmentPath: "fragments/Fragment",
-				targetAggregation: "items",
-				index: 1
+				content: {
+					fragmentPath: "fragments/Fragment",
+					targetAggregation: "items",
+					index: 1
+				}
 			};
 
 			this.oChange = FlexObjectFactory.createFromFileContent(oChangeJson);
@@ -79,23 +81,23 @@ sap.ui.define([
 		});
 
 		QUnit.test("When calling 'completeChangeContent' without complete information", function(assert) {
-			this.oChangeSpecificContent.targetAggregation = null;
+			this.oChangeSpecificContent.content.targetAggregation = null;
 			assert.throws(
 				function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);},
 				Error("Attribute missing from the change specific content 'targetAggregation'"),
 				"without targetAggregation 'completeChangeContent' throws an error"
 			);
 
-			this.oChangeSpecificContent.targetAggregation = "items";
-			this.oChangeSpecificContent.fragmentPath = null;
+			this.oChangeSpecificContent.content.targetAggregation = "items";
+			this.oChangeSpecificContent.content.fragmentPath = null;
 			assert.throws(
 				function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);},
 				Error("Attribute missing from the change specific content 'fragmentPath'"),
 				"without fragmentPath 'completeChangeContent' throws an error"
 			);
 
-			this.oChangeSpecificContent.fragmentPath = "fragmentPath";
-			this.oChangeSpecificContent.index = undefined;
+			this.oChangeSpecificContent.content.fragmentPath = "fragmentPath";
+			this.oChangeSpecificContent.content.index = undefined;
 			assert.throws(
 				function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);},
 				Error("Attribute missing from the change specific content 'index'"),
@@ -124,9 +126,11 @@ sap.ui.define([
 			};
 
 			this.oChangeSpecificContent = {
-				fragmentPath: "fragments/Fragment",
-				targetAggregation: "items",
-				index: 1
+				content: {
+					fragmentPath: "fragments/Fragment",
+					targetAggregation: "items",
+					index: 1
+				}
 			};
 
 			this.oChange = FlexObjectFactory.createFromFileContent(oChangeJson);
@@ -168,7 +172,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When applying the change on a js control tree with an invalid targetAggregation", function(assert) {
-			this.oChangeSpecificContent.targetAggregation = "invalidAggregation";
+			this.oChangeSpecificContent.content.targetAggregation = "invalidAggregation";
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
 			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag)
 			.catch(function(oError) {
@@ -206,9 +210,11 @@ sap.ui.define([
 			};
 
 			this.oChangeSpecificContent = {
-				fragmentPath: "fragments/Fragment",
-				targetAggregation: "items",
-				index: 1
+				content: {
+					fragmentPath: "fragments/Fragment",
+					targetAggregation: "items",
+					index: 1
+				}
 			};
 
 			this.oChange = FlexObjectFactory.createFromFileContent(oChangeJson);
@@ -261,7 +267,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When applying the change on a xml control tree with an invalid targetAggregation", function(assert) {
-			this.oChangeSpecificContent.targetAggregation = "invalidAggregation";
+			this.oChangeSpecificContent.content.targetAggregation = "invalidAggregation";
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
 			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag)
 			.catch(function(oError) {

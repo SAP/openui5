@@ -13,10 +13,14 @@ sap.ui.define([
 		designtimeAction: false
 	}, {
 		changeType: "settings",
-		content: "myFancyContent"
+		content: {
+			myFancy: "Content"
+		}
 	}, {
 		changeType: "settings",
-		content: "myFancyContent"
+		content: {
+			myFancy: "Content"
+		}
 	});
 
 	QUnit.done(function() {

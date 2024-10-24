@@ -238,6 +238,13 @@ describe("sap.m.SinglePlanningCalendar", function() {
 		element(by.id("resetScaleFactor")).click();
 	});
 
+	it("should display Month view properly in 320px", function() {
+		var oSPC = element(by.id("SinglePlanningCalendar"));
+
+		element(by.id("BtnShrink")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("month_view_320_px");
+	});
+
 	// click on overflow button if available
 	function _checkForOverflowButton() {
 		element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).isPresent().then(function(presented){

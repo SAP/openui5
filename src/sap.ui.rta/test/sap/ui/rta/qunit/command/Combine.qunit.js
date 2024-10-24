@@ -22,9 +22,11 @@ sap.ui.define([
 		]
 	}, {
 		changeType: "combineStuff",
-		newElementId: "my-new-fancy-element-id",
-		sourceControlId: "source",
-		combineElementIds: ["combineElement1", "combineElement2"]
+		content: {
+			newElementId: "my-new-fancy-element-id",
+			sourceControlId: "source",
+			combineElementIds: ["combineElement1", "combineElement2"]
+		}
 	});
 
 	QUnit.done(function() {
