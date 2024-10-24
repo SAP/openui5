@@ -26240,4 +26240,49 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		getContexts(assert, oBinding, 10, []);
 	});
 }());
+
+	//*********************************************************************************************
+	// Scenario: When a table with entries is filtered with Filter.NONE and there are no created entries, the table
+	// is updated properly to show no data and a 'no data' text
+	// SNOW: DINC0301463
+	QUnit.test("Filter table with Filter.NONE empties the table", async function (assert) {
+		const oModel = createSalesOrdersModel();
+		const sView = '\
+<Table id="table" items="{/SalesOrderSet}" growing="true" growingThreshold="5">\
+	<Input id="note" value="{Note}" />\
+</Table>';
+
+		this.expectHeadRequest()
+			.expectRequest({
+				requestUri : "SalesOrderSet?$skip=0&$top=5"
+			}, {
+				results : [{
+					__metadata : {
+						uri : "SalesOrderSet('1')"
+					},
+					Note : "Bar",
+					SalesOrderID : "1"
+				}, {
+					__metadata : {
+						uri : "SalesOrderSet('2')"
+					},
+					Note : "Baz",
+					SalesOrderID : "2"
+				}]
+			})
+			.expectValue("note", ["Bar", "Baz"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oItemsBinding = oTable.getBinding("items");
+		this.expectValue("note", []);
+
+		// code under test
+		oItemsBinding.filter(Filter.NONE, FilterType.Application);
+
+		await this.waitForChanges(assert, "set Filter.NONE");
+
+		assert.strictEqual(oTable.getItems().length, 0);
+	});
 });

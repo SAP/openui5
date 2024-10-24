@@ -2222,7 +2222,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
 		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(true);
 		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
-		this.mock(oBinding).expects("_fireChange").never();
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
 
 		// code under test
 		ODataListBinding.prototype.getContexts.call(oBinding, 0, 2);

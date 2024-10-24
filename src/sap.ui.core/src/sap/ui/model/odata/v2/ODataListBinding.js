@@ -387,10 +387,10 @@ sap.ui.define([
 		}
 		if (this.bRefresh) {
 			this.bRefresh = false;
-			// if we do not need to load data after a refresh event (e.g. we have enough created
-			// contexts) we need to fire a change event to fulfill the contract that after a refresh
+			// if there is no need to load data after a refresh event (e.g. we have enough created contexts or
+			// FILTER.None is set), fire a change event to fulfill the contract that after a refresh
 			// event a change event is triggered when the data is available.
-			if (!aContexts.dataRequested && aContexts.length > 0) {
+			if (!aContexts.dataRequested) {
 				this._fireChange({reason : ChangeReason.Change});
 			}
 		} else if (!bKeepCurrent) {
