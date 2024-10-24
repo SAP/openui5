@@ -242,7 +242,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {object} vAction Action config object
+	 * @param {sap.ui.integration.ActionDefinition|object} vAction Action config object
 	 * @param {boolean} bIsActionDefinition
 	 * @returns {sap.m.MenuItem} MenuItem, which will be displayed in the menu
 	 */
@@ -284,6 +284,10 @@ sap.ui.define([
 
 		if (bIsActionDefinition) {
 			oMenuItem.setEnabled(mSettings.enabled);
+
+			vAction.setAssociation("_menuItem", oMenuItem);
+
+			this._attachObservers(vAction);
 		}
 
 		return oMenuItem;
@@ -323,26 +327,58 @@ sap.ui.define([
 	 * @param {object} oChanges The mutation info
 	 */
 	ActionsToolbar.prototype._observeActionsAggregation = function (oChanges) {
-		var oActionDefinition = oChanges.child;
+		const oActionDefinition = oChanges.child,
+			oParent = oChanges.object;
 
 		if (oChanges.mutation === "insert") {
-			var oMenuItem = this._createActionMenuItem(oActionDefinition, true);
+			const oMenuItem = this._createActionMenuItem(oActionDefinition, true),
+				iIndex = oParent.indexOfActionDefinition(oActionDefinition);
 
-			this.getAggregation("_actionsMenu").insertItem(oMenuItem, this.indexOfActionDefinition(oActionDefinition));
-			oActionDefinition.setAssociation("_menuItem", oMenuItem);
+			let oParentMenu;
+			if (oParent.isA("sap.ui.integration.ActionDefinition")) {
+				oParentMenu = Element.getElementById(oParent.getAssociation("_menuItem"));
+			} else {
+				oParentMenu = this.getAggregation("_actionsMenu");
+			}
 
-			var oActionObserver = new ManagedObjectObserver(this._observeSingleAction.bind(this));
-			oActionObserver.observe(oActionDefinition, {
-				properties: true,
-				aggregations: ["tooltip"]
-			});
-			this._mActionObservers.set(oActionDefinition.getId(), oActionObserver);
+			oParentMenu.insertItem(oMenuItem, iIndex);
+
 			this._updateVisibility();
 		} else if (oChanges.mutation === "remove") {
 			Element.getElementById(oActionDefinition.getAssociation("_menuItem")).destroy();
-			this._mActionObservers.get(oActionDefinition.getId()).disconnect();
-			this._mActionObservers.delete(oActionDefinition.getId());
+			this._detachObservers(oActionDefinition);
 		}
+	};
+
+	/**
+	 * @param {sap.ui.integration.ActionDefinition} oActionDefinition The ActionDefinition object to observe
+	 */
+	ActionsToolbar.prototype._attachObservers = function (oActionDefinition) {
+		// Observe for children action definitions
+		this._oObserver.observe(oActionDefinition, {
+			aggregations: [
+				"actionDefinitions"
+			]
+		});
+
+		// Observe for properties changes
+		var oActionObserver = new ManagedObjectObserver(this._observeSingleAction.bind(this));
+		oActionObserver.observe(oActionDefinition, {
+			properties: true,
+			aggregations: ["tooltip"]
+		});
+		this._mActionObservers.set(oActionDefinition.getId(), oActionObserver);
+	};
+
+	/**
+	 * @param {sap.ui.integration.ActionDefinition} oActionDefinition The ActionDefinition object to unobserve
+	 */
+	ActionsToolbar.prototype._detachObservers = function (oActionDefinition) {
+		// Observe for children action definitions
+		this._oObserver.unobserve(oActionDefinition);
+
+		this._mActionObservers.get(oActionDefinition.getId()).disconnect();
+		this._mActionObservers.delete(oActionDefinition.getId());
 	};
 
 	ActionsToolbar.prototype._observeSingleAction = function (oChanges) {
@@ -355,12 +391,8 @@ sap.ui.define([
 			return;
 		}
 
-		if (oChanges.type === "aggregation") {
+		if (oChanges.type === "aggregation" && sName !== "actionDefinitions") {
 			vVal = oChanges.child;
-		}
-
-		if (sName === "buttonType") {
-			sName = "type";
 		}
 
 		oMenuItem["set" + capitalize(sName)](vVal);

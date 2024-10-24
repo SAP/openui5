@@ -665,4 +665,131 @@ sap.ui.define([
 			done();
 		}, 300);
 	});
+
+	QUnit.module("Nested action definitions updates", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				manifest: "test-resources/sap/ui/integration/qunit/testResources/listCard.manifest.json"
+			});
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Nested action definitions can be removed and added after rendering", async function (assert) {
+		// Arrange
+		const oSubItem1 = new ActionDefinition({ text: "Item 1.1" });
+		const oSubItem2 = new ActionDefinition({ text: "Item 1.2" });
+		const oItem1 = new ActionDefinition({
+			text: "Item 1",
+			actionDefinitions: [
+				oSubItem1,
+				oSubItem2
+			]
+		});
+		const oItem2 = new ActionDefinition({
+			type: "Navigation",
+			text: "Item 2"
+		});
+
+		// Act
+		this.oCard.addActionDefinition(oItem1);
+		this.oCard.addActionDefinition(oItem2);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert
+		const oMenu = this.oCard.getCardHeader().getToolbar().getAggregation("_actionsMenu");
+		const aMenuItems = oMenu.getItems();
+
+		assert.strictEqual(aMenuItems[0].getItems().length, 2, "Menu item 1 has 2 sub items");
+		assert.strictEqual(aMenuItems[0].getItems()[0].getText(), "Item 1.1", "Sub menu item 1 is correct");
+		assert.strictEqual(aMenuItems[0].getItems()[1].getText(), "Item 1.2", "Sub menu item 2 is correct");
+		assert.strictEqual(aMenuItems[1].getItems().length, 0, "Menu item 2 has 0 sub items");
+
+		// Act - remove
+		oItem1.removeActionDefinition(1);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(aMenuItems[0].getItems().length, 1, "Menu item 1 has 1 sub item after removing the second one");
+
+		// Act - insert new
+		oItem1.insertActionDefinition(new ActionDefinition({ text: "Item 1.3" }), 0);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(aMenuItems[0].getItems().length, 2, "Menu item 1 has 2 sub item after inserting");
+		assert.strictEqual(aMenuItems[0].getItems()[0].getText(), "Item 1.3", "Sub menu item 1 is correct");
+		assert.strictEqual(aMenuItems[1].getItems().length, 0, "Menu item 2 has 0 sub items");
+
+		// Act - insert in item 2
+		oItem2.insertActionDefinition(new ActionDefinition({ text: "Item 2.1" }), 0);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(aMenuItems[0].getItems().length, 2, "Menu item 1 has 2 sub item after inserting");
+		assert.strictEqual(aMenuItems[1].getItems().length, 1, "Menu item 2 has 1 sub item");
+		assert.strictEqual(aMenuItems[1].getItems()[0].getText(), "Item 2.1", "Sub menu item 2.1 is correct");
+
+		// Act - insert 3th level of nesting
+		oSubItem1.insertActionDefinition(new ActionDefinition({ text: "Item 1.1.1" }), 0);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(aMenuItems[0].getItems().length, 2, "Menu item 1 has 2 sub items");
+		assert.strictEqual(aMenuItems[0].getItems()[1].getItems().length, 1, "Sub menu item 1.1 has 1 sub item");
+		assert.strictEqual(aMenuItems[0].getItems()[1].getItems()[0].getText(), "Item 1.1.1", "Sub menu item 1.1.1 is correct");
+	});
+
+	QUnit.test("Updates in nested action definitions are reflected in the menu", async function (assert) {
+		// Arrange
+		const oSubItem1 = new ActionDefinition({ text: "Item 1.1" });
+		const oSubItem2 = new ActionDefinition({ text: "Item 1.2" });
+		const oItem1 = new ActionDefinition({
+			text: "Item 1",
+			actionDefinitions: [
+				oSubItem1,
+				oSubItem2
+			]
+		});
+
+		// Act
+		this.oCard.addActionDefinition(oItem1);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert
+		const oMenu = this.oCard.getCardHeader().getToolbar().getAggregation("_actionsMenu");
+		const aSubMenuItems = oMenu.getItems()[0].getItems();
+
+		assert.strictEqual(aSubMenuItems[0].getText(), "Item 1.1", "Sub menu item 1 is correct");
+		assert.strictEqual(aSubMenuItems[1].getText(), "Item 1.2", "Sub menu item 2 is correct");
+
+		// Act - change text, icon, tooltip
+		oSubItem1.setText("Item 1.1 updated");
+		oSubItem1.setIcon("sap-icon://list");
+		oSubItem2.setText("Item 1.2 updated");
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(aSubMenuItems[0].getText(), "Item 1.1 updated", "Sub menu item 1 is correct");
+		assert.strictEqual(aSubMenuItems[0].getIcon(), "sap-icon://list", "Sub menu item 1 icon is correct");
+		assert.strictEqual(aSubMenuItems[1].getText(), "Item 1.2 updated", "Sub menu item 2 is correct");
+
+		// Act - visible, enabled
+		oSubItem1.setVisible(false);
+		oSubItem2.setEnabled(false);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(aSubMenuItems[0].getVisible(), false, "Sub menu item 1 visible is correct");
+		assert.strictEqual(aSubMenuItems[0].getEnabled(), true, "Sub menu item 1 enabled is correct");
+		assert.strictEqual(aSubMenuItems[1].getVisible(), true, "Sub menu item 2 visible is correct");
+		assert.strictEqual(aSubMenuItems[1].getEnabled(), false, "Sub menu item 2 enabled is correct");
+	});
 });
