@@ -3,10 +3,11 @@
 /* Base theme                                   */
 /* ============================================ */
 
-@_sap_m_NotificationListGroup_Background: @sapUiListGroupHeaderBackground;
-@_sap_m_NotificationListGroup_HeaderColor: @sapUiListTableGroupHeaderTextColor;
+@_sap_m_NotificationListGroup_Background: var(--sapList_GroupHeaderBackground);
+@_sap_m_NotificationListGroup_HeaderColor: var(--sapList_TableGroupHeaderTextColor);
 
 .sapMNLGroup {
+
 	&.sapMLIB {
 		display: block;
 		padding: 0;
@@ -23,7 +24,7 @@
 		position: relative;
 		min-height: 2.75rem;
 		background: @_sap_m_NotificationListGroup_Background;
-		border-bottom: 0.0625rem solid @sapUiListGroupHeaderBorderColor;
+		border-bottom: 0.0625rem solid var(--sapList_GroupHeaderBorderColor);
 		box-sizing: border-box;
 		padding: 0.75rem 0.5rem 0 1rem;
 		display: flex;
@@ -37,8 +38,8 @@
 		.sapMNLGroupTitle {
 			padding: 0.75rem 0;
 			color: @_sap_m_NotificationListGroup_HeaderColor;
-			font-size: @sapMFontHeader6Size;
-			font-family: @sapUiFontHeaderFamily;
+			font-size: var(--sapFontHeader6Size);
+			font-family: var(--sapFontHeaderFamily);
 			font-weight: bold;
 			overflow-wrap: break-word;
 			flex: 1;
@@ -47,8 +48,8 @@
 	}
 
 	&:focus .sapMNLGroupHeader::before {
-		content: " ";
-		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		content: ' ';
+		border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 		position: absolute;
 		top: 1px;
 		right: 1px;
@@ -70,21 +71,21 @@
 
 	.sapMNLGroupMaxNotifications {
 		padding: 1rem;
-		background: @sapUiListBackground;
+		background: var(--sapList_Background);
 		text-align: center;
 
 		.sapMNLGroupMNTitle {
-			font-family: @sapUiFontHeaderFamily;
-			font-size: @sapMFontHeader5Size;
+			font-family: var(--sapFontHeaderFamily);
+			font-size: var(--sapFontHeader5Size);
 			font-weight: @sapUiFontHeaderWeight;
-			color: @sapUiGroupTitleTextColor;
+			color: var(--sapGroup_TitleTextColor);
 			margin-bottom: 0.5rem;
 		}
 
 		.sapMNLGroupMNDescription {
-			font-family: @sapUiFontFamily;
+			font-family: var(--sapFontFamily);
 			font-size: @sapMFontMediumSize;
-			color: @sapUiContentLabelColor;
+			color: var(--sapContent_LabelColor);
 		}
 	}
 }
@@ -94,7 +95,9 @@
 }
 
 .sapUiSizeCompact {
+
 	.sapMNLGroup {
+
 		.sapMNLGroupHeader {
 			padding: 0.5rem 0.5rem 0 0.75rem;
 
