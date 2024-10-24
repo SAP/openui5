@@ -547,12 +547,16 @@ sap.ui.define([
 
 		var aLastDateTimeOperators = [
 			"LASTMINUTES",
-			"LASTHOURS"
+			"LASTHOURS",
+			"LASTMINUTESINCLUDED",
+			"LASTHOURSINCLUDED"
 		];
 
 		var aNextDateTimeOperators = [
 			"NEXTMINUTES",
-			"NEXTHOURS"
+			"NEXTHOURS",
+			"NEXTMINUTESINCLUDED",
+			"NEXTHOURSINCLUDED"
 		];
 
 		var aDateTimeOperators = aLastDateTimeOperators.concat(aNextDateTimeOperators);
@@ -697,6 +701,7 @@ sap.ui.define([
 			oValue = this._substituteValue(oValue);
 
 			this.setProperty("value", oValue);
+
 			this._oSelectedOption = this.getOption(sOptionKey);
 
 			// Forward Dynamic Date Range control property values to inner sap.m.Input instance.
@@ -1007,7 +1012,7 @@ sap.ui.define([
 				aLastOptionsSelectedIndex = this.lastOptionsIndex(sOptionKey),
 				aNextOptionsSelectedIndex = this.nextOptionsIndex(sOptionKey),
 				aPopupContent = this._oNavContainer ? this._oNavContainer.getPages()[1].getContent()[3] || [] : [],
-				aButtons = aPopupContent.getButtons ? aPopupContent.getButtons() : [],
+				oSelect = aPopupContent,
 				aSuggestionItems = this.getAggregation('_input').getAggregation('suggestionItems'),
 				oValue = this.getValue(),
 				aOptionKeys = this.getStandardOptions(),
@@ -1017,12 +1022,11 @@ sap.ui.define([
 				oCustomData,
 				aValueHelpTypes,
 				sType,
-				iButtonSelectedIndex,
 				sSuggestionOptionKey;
 
 			if (
 				!oValue &&
-				(!aButtons[0] || !aButtons[0].getDomRef()) &&
+				!oSelect &&
 				aSuggestionItems && aSuggestionItems.length &&
 				aSuggestionItems[aSuggestionItems.length - 1].getCustomData
 			) {
@@ -1060,14 +1064,11 @@ sap.ui.define([
 
 			//if option requires extra formatting.
 			if (
-				this._oNavContainer && !aButtons.length ||
-				(this._oNavContainer && aButtons.length && (aLastOptionsSelectedIndex > -1 || aNextOptionsSelectedIndex > -1))
+				this._oNavContainer ||
+				(this._oNavContainer && (aLastOptionsSelectedIndex > -1 || aNextOptionsSelectedIndex > -1))
 			) {
-				iButtonSelectedIndex = aButtons[0] ? aButtons[0].getParent().getSelectedIndex() : 0;
-				if (aLastDateTimeOperators.indexOf(sOptionKey) > -1) {
-					sActualSelectedOptionKey = aLastActualOrder[iButtonSelectedIndex];
-				} else if (aNextDateTimeOperators.indexOf(sOptionKey) > -1) {
-					sActualSelectedOptionKey = aNextActualOrder[iButtonSelectedIndex];
+				if ((aLastDateTimeOperators.indexOf(sOptionKey) > -1 || aNextDateTimeOperators.indexOf(sOptionKey) > -1) && oSelect) {
+					sActualSelectedOptionKey = this._oSelectedOption.getKey().slice(0, 4) + oSelect.getSelectedKey();
 				}
 
 				if (aDateTimeOperators.indexOf(sActualSelectedOptionKey) > -1) {
