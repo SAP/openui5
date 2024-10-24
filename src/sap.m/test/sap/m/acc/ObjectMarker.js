@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/ObjectListItem",
 	"sap/ui/core/library",
+	"sap/ui/layout/VerticalLayout",
 	"sap/m/ObjectAttribute",
 	"sap/m/ObjectStatus",
 	"sap/m/ObjectMarker",
@@ -23,6 +24,7 @@ sap.ui.define([
 	List,
 	ObjectListItem,
 	coreLibrary,
+	VerticalLayout,
 	ObjectAttribute,
 	ObjectStatus,
 	ObjectMarker,
@@ -39,6 +41,9 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	// shortcut for sap.m.ObjectMarkerType
 	var ObjectMarkerType = mobileLibrary.ObjectMarkerType;
@@ -246,12 +251,19 @@ sap.ui.define([
 		content: oTable
 	});
 
-	var oPage = new Page("page", {
-		title:"Object Marker",
+	var oPageLayout = new VerticalLayout({
 		content: [
 			oStandalonePanel,
 			oObjectListItemPanel,
 			oTablePanel
+		]
+	}).addStyleClass("sapUiSmallMargin");
+
+	var oPage = new Page("page", {
+		title:"Object Marker",
+		titleLevel: TitleLevel.H1,
+		content: [
+			oPageLayout
 		]
 	});
 
