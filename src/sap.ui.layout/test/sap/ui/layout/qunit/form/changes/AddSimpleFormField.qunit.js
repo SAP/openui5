@@ -65,12 +65,14 @@ sap.ui.define([
 
 		return FlexTestAPI.createFlexObject({
 			changeSpecificData: {
-				bindingPath: "BindingPath1",
 				changeType: "addSimpleFormField",
-				index: 0,
-				newControlId: "addedFieldId",
-				parentId: oTitle.getParent().getId(),
-				oDataServiceVersion : "2.0"
+				content: {
+					bindingPath: "BindingPath1",
+					index: 0,
+					newControlId: "addedFieldId",
+					parentId: oTitle.getParent().getId(),
+					oDataServiceVersion : "2.0"
+				}
 			},
 			selector: this.oSimpleForm,
 			appComponent: this.oMockedAppComponent
@@ -90,12 +92,14 @@ sap.ui.define([
 
 			return FlexTestAPI.createFlexObject({
 				changeSpecificData: {
-					bindingPath: "BindingPath2",
 					changeType: "addSimpleFormField",
-					index: 0,
-					newControlId: "addedFieldId2",
-					parentId: oTitle.getParent().getId(),
-					oDataServiceVersion : "2.0"
+					content: {
+						bindingPath: "BindingPath2",
+						index: 0,
+						newControlId: "addedFieldId2",
+						parentId: oTitle.getParent().getId(),
+						oDataServiceVersion : "2.0"
+					}
 				},
 				selector: this.oSimpleForm,
 				appComponent: this.oMockedAppComponent
@@ -121,12 +125,14 @@ sap.ui.define([
 
 			return FlexTestAPI.createFlexObject({
 				changeSpecificData: {
-					bindingPath: "BindingPath3",
 					changeType: "addSimpleFormField",
-					index: 1,
-					newControlId: "addedFieldId3",
-					parentId: oTitle.getParent().getId(),
-					oDataServiceVersion : "2.0"
+					content: {
+						bindingPath: "BindingPath3",
+						index: 1,
+						newControlId: "addedFieldId3",
+						parentId: oTitle.getParent().getId(),
+						oDataServiceVersion : "2.0"
+					}
 				},
 				selector: this.oSimpleForm,
 				appComponent: this.oMockedAppComponent
@@ -177,12 +183,14 @@ sap.ui.define([
 
 		return FlexTestAPI.createFlexObject({
 			changeSpecificData: {
-				bindingPath: "BindingPath1",
 				changeType: "addSimpleFormField",
-				index: 0,
-				newControlId: "addedFieldId",
-				parentId: oFormContainer.getId(),
-				oDataServiceVersion : "2.0"
+				content: {
+					bindingPath: "BindingPath1",
+					index: 0,
+					newControlId: "addedFieldId",
+					parentId: oFormContainer.getId(),
+					oDataServiceVersion : "2.0"
+				}
 			},
 			selector: this.oSimpleForm,
 			appComponent: this.oMockedAppComponent
@@ -227,12 +235,14 @@ sap.ui.define([
 
 		return FlexTestAPI.createFlexObject({
 			changeSpecificData: {
-				bindingPath: "BindingPath1",
 				changeType: "addSimpleFormField",
-				index: 0,
-				newControlId: "addedFieldId",
-				parentId: oFormContainer.getId(),
-				oDataServiceVersion : "2.0"
+				content: {
+					bindingPath: "BindingPath1",
+					index: 0,
+					newControlId: "addedFieldId",
+					parentId: oFormContainer.getId(),
+					oDataServiceVersion : "2.0"
+				}
 			},
 			selector: this.oSimpleForm,
 			appComponent: this.oMockedAppComponent
@@ -277,12 +287,14 @@ sap.ui.define([
 
 		return FlexTestAPI.createFlexObject({
 			changeSpecificData: {
-				bindingPath: "BindingPath1",
 				changeType: "addSimpleFormField",
-				index: 2,
-				newControlId: "addedFieldId",
-				parentId: oFormContainer.getId(),
-				oDataServiceVersion : "2.0"
+				content: {
+					bindingPath: "BindingPath1",
+					index: 2,
+					newControlId: "addedFieldId",
+					parentId: oFormContainer.getId(),
+					oDataServiceVersion : "2.0"
+				}
 			},
 			selector: this.oSimpleForm,
 			appComponent: this.oMockedAppComponent
@@ -332,12 +344,14 @@ sap.ui.define([
 
 		return FlexTestAPI.createFlexObject({
 			changeSpecificData: {
-				bindingPath: "BindingPath1",
 				changeType: "addSimpleFormField",
-				index: 0,
-				newControlId: "addedFieldId",
-				parentId: oFormContainer.getId(),
-				oDataServiceVersion : "2.0"
+				content: {
+					bindingPath: "BindingPath1",
+					index: 0,
+					newControlId: "addedFieldId",
+					parentId: oFormContainer.getId(),
+					oDataServiceVersion : "2.0"
+				}
 			},
 			selector: this.oSimpleForm,
 			appComponent: this.oMockedAppComponent
@@ -372,12 +386,14 @@ sap.ui.define([
 
 		return FlexTestAPI.createFlexObject({
 			changeSpecificData: {
-				bindingPath: "BindingPath1",
 				changeType: "addSimpleFormField",
-				index: 0,
-				newControlId: "addedFieldId",
-				parentId: oFormContainer.getId(),
-				oDataServiceVersion : "2.0"
+				content: {
+					bindingPath: "BindingPath1",
+					index: 0,
+					newControlId: "addedFieldId",
+					parentId: oFormContainer.getId(),
+					oDataServiceVersion : "2.0"
+				}
 			},
 			selector: this.oSimpleForm,
 			appComponent: this.oMockedAppComponent
@@ -438,12 +454,14 @@ sap.ui.define([
 
 		return FlexTestAPI.createFlexObject({
 			changeSpecificData: {
-				bindingPath: "BindingPath1",
 				changeType: "addSimpleFormField",
-				index: 10,
-				newControlId: "addedFieldId",
-				parentId: sTitleId,
-				oDataServiceVersion : "2.0"
+				content: {
+					bindingPath: "BindingPath1",
+					index: 10,
+					newControlId: "addedFieldId",
+					parentId: sTitleId,
+					oDataServiceVersion : "2.0"
+				}
 			},
 			selector: this.oSimpleForm,
 			appComponent: this.oMockedAppComponent
@@ -489,12 +507,14 @@ sap.ui.define([
 
 		return FlexTestAPI.createFlexObject({
 			changeSpecificData: {
-				bindingPath: "BindingPath1",
 				changeType: "addSimpleFormField",
-				index: 0,
-				newControlId: sAddedFieldId,
-				parentId: sTitleId,
-				oDataServiceVersion : "2.0"
+				content: {
+					bindingPath: "BindingPath1",
+					index: 0,
+					newControlId: sAddedFieldId,
+					parentId: sTitleId,
+					oDataServiceVersion : "2.0"
+				}
 			},
 			selector: this.oSimpleForm,
 			appComponent: this.oMockedAppComponent
@@ -543,12 +563,14 @@ sap.ui.define([
 
 		return FlexTestAPI.createFlexObject({
 			changeSpecificData: {
-				bindingPath: "BindingPath1",
 				changeType: "addSimpleFormField",
-				index: 1,
-				newControlId: sAddedFieldId,
-				parentId: sTitleId,
-				oDataServiceVersion : "2.0"
+				content: {
+					bindingPath: "BindingPath1",
+					index: 1,
+					newControlId: sAddedFieldId,
+					parentId: sTitleId,
+					oDataServiceVersion : "2.0"
+				}
 			},
 			selector: this.oSimpleForm,
 			appComponent: this.oMockedAppComponent

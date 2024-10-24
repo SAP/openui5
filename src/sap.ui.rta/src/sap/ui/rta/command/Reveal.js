@@ -21,7 +21,8 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 			library: "sap.ui.rta",
 			properties: {
 				revealedElementId: {
-					type: "string"
+					type: "string",
+					group: "content"
 				},
 				directParent: "object"
 			}
@@ -30,10 +31,11 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 
 	Reveal.prototype._getChangeSpecificData = function() {
 		var mSpecificChangeInfo = {
-			changeType: this.getChangeType()
+			changeType: this.getChangeType(),
+			content: {}
 		};
 		if (this.getRevealedElementId()) {
-			mSpecificChangeInfo.revealedElementId = this.getRevealedElementId();
+			mSpecificChangeInfo.content.revealedElementId = this.getRevealedElementId();
 		}
 		return mSpecificChangeInfo;
 	};

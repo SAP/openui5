@@ -104,7 +104,7 @@ sap.ui.define([
 	function createAndCompleteAddXmlAtExtensionPointChange(sPath, sFragmentPath, sSelectorExtensionName, sProjectId) {
 		var oChange = createAddXMLAtExtensionPointChange(sPath, sSelectorExtensionName, sProjectId);
 		var oChangeSpecificContent1 = {
-			fragmentPath: sFragmentPath
+			content: { fragmentPath: sFragmentPath }
 		};
 		this.oChangeHandler.completeChangeContent(oChange, oChangeSpecificContent1);
 		return oChange;
@@ -134,7 +134,7 @@ sap.ui.define([
 
 			this.oChange = createAddXMLAtExtensionPointChange(sFragmentPath, this.sExtensionName);
 			this.oChangeSpecificContent = {
-				fragmentPath: "fragments/Fragment"
+				content: {fragmentPath: "fragments/Fragment"}
 			};
 		},
 		afterEach() {
@@ -151,7 +151,7 @@ sap.ui.define([
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
 			assert.deepEqual(
 				this.oChange.getContent(),
-				this.oChangeSpecificContent,
+				this.oChangeSpecificContent.content,
 				"then the change specific content is in the change, but the fragment not"
 			);
 			assert.equal(
@@ -162,7 +162,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When calling 'completeChangeContent' without fragmentPath", function(assert) {
-			this.oChangeSpecificContent.fragmentPath = null;
+			this.oChangeSpecificContent.content.fragmentPath = null;
 			assert.throws(
 				function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);},
 				Error("Attribute missing from the change specific content 'fragmentPath'"),
@@ -222,7 +222,7 @@ sap.ui.define([
 			);
 			var oChange3 = createAddXMLAtExtensionPointChange(sThirdFragmentPath, "ExtensionPoint1");
 			var oChangeSpecificContent3 = {
-				fragmentPath: "fragments/ThirdFragment"
+				content: {fragmentPath: "fragments/ThirdFragment"}
 			};
 			this.oChangeHandler.completeChangeContent(oChange3, oChangeSpecificContent3);
 			var oHBoxItems = this.oHBox.childNodes[0];
@@ -281,7 +281,7 @@ sap.ui.define([
 		QUnit.test("When applying changes on extension point with default value in xml control tree", function(assert) {
 			var oChange4 = createAddXMLAtExtensionPointChange(sThirdFragmentPath, "ExtensionPoint4");
 			var oChangeSpecificContent4 = {
-				fragmentPath: "fragments/ThirdFragment"
+				content: {fragmentPath: "fragments/ThirdFragment"}
 			};
 			this.oChangeHandler.completeChangeContent(oChange4, oChangeSpecificContent4);
 			var oPanelContent = this.oPanel.childNodes[0];

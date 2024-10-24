@@ -26,13 +26,16 @@ function(
 			library: "sap.ui.rta",
 			properties: {
 				movedElements: {
-					type: "any[]"
+					type: "any[]",
+					group: "content"
 				},
 				target: {
-					type: "any"
+					type: "any",
+					group: "content"
 				},
 				source: {
-					type: "any"
+					type: "any",
+					group: "content"
 				}
 			},
 			associations: {},
@@ -58,13 +61,15 @@ function(
 		}
 		var mSpecificInfo = {
 			changeType: this.getChangeType(),
-			source: mSource,
-			target: mTarget,
-			movedElements: []
+			content: {
+				source: mSource,
+				target: mTarget,
+				movedElements: []
+			}
 		};
 
 		this.getMovedElements().forEach(function(mMovedElement) {
-			mSpecificInfo.movedElements.push({
+			mSpecificInfo.content.movedElements.push({
 				id: mMovedElement.id || (mMovedElement.element && mMovedElement.element.getId()),
 				sourceIndex: mMovedElement.sourceIndex,
 				targetIndex: mMovedElement.targetIndex

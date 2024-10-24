@@ -775,6 +775,15 @@ sap.ui.define([
 			})
 		});
 
+	var oBtnShrink = new Button("BtnShrink", {
+		text: "Shrink width",
+		press: function () {
+			oSPC.setSelectedView(oSPC.getViewByKey("Month"));
+			document.getElementById(oPage.getId()).style.width = "340px";
+		}
+	});
+
+
 	oSPC = new SinglePlanningCalendar("SinglePlanningCalendar", {
 		title: "SinglePlanningCalendar",
 		dateSelectionMode: "MultiSelect",
@@ -1010,7 +1019,9 @@ sap.ui.define([
 		title: "SinglePlanningCalendar test page",
 		titleLevel: TitleLevel.H1,
 		content: oSPC,
-		footer: new Bar()
+		footer: new Bar({
+			contentLeft: [oBtnShrink]
+		})
 	});
 	new App({
 		pages: oPage,

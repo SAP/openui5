@@ -164,11 +164,12 @@ sap.ui.define([
 	 */
 	BaseAddXml.completeChangeContent = function(oChange, oSpecificChangeInfo, oContent) {
 		oContent ||= {};
-		if (oSpecificChangeInfo.fragmentPath) {
-			oContent.fragmentPath = oSpecificChangeInfo.fragmentPath;
-		} else {
+		// TODO: Remove assignment without content after all derived change handlers are adjusted to use content. todos#4
+		const oSpecificChangeContent = oSpecificChangeInfo.content || oSpecificChangeInfo;
+		if (!oSpecificChangeContent.fragmentPath) {
 			BaseAddXml._throwMissingAttributeError("fragmentPath");
 		}
+		oContent.fragmentPath ??= oSpecificChangeContent.fragmentPath;
 		oChange.setContent(oContent);
 
 		// Calculate the moduleName for the fragment

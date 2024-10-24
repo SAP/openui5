@@ -34,6 +34,7 @@ module.exports = [
  "IconTabBarInheritCompact.spec.js",
  "IconTabBarInheritCozy.spec.js",
  "IconTabBarResponsivePaddings.spec.js",
+ "IconTabBarTransparentInContent.spec.js",
  "IconTabHeaderResponsivePaddings.spec.js",
  "Image.spec.js",
  "InputVisualTests.spec.js",

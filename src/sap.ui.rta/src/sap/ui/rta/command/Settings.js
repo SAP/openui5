@@ -21,8 +21,7 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 			library: "sap.ui.rta",
 			properties: {
 				content: {
-					type: "any",
-					group: "content"
+					type: "any"
 				}
 			},
 			associations: {},

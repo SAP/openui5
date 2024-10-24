@@ -23,35 +23,45 @@ sap.ui.define([
 			library: "sap.ui.rta",
 			properties: {
 				index: {
-					type: "int"
+					type: "int",
+					group: "content"
 				},
 				newControlId: {
-					type: "string"
+					type: "string",
+					group: "content"
 				},
 				// the name "bindingPath" conflicts with getBindingPath() method from ManagedObject
 				bindingString: {
-					type: "string"
-				},
-				entityType: {
-					type: "string"
-				},
-				parentId: {
-					type: "string"
-				},
-				oDataServiceVersion: {
-					type: "string"
-				},
-				oDataServiceUri: {
-					type: "string"
+					type: "string",
+					group: "content"
 				},
 				modelType: {
-					type: "string"
+					type: "string",
+					group: "content"
 				},
 				relevantContainerId: {
-					type: "string"
+					type: "string",
+					group: "content"
+				},
+				parentId: {
+					type: "string",
+					group: "content"
+				},
+				oDataServiceVersion: {
+					type: "string",
+					group: "content"
+				},
+				oDataServiceUri: {
+					type: "string",
+					group: "oDataInformation"
 				},
 				propertyName: {
-					type: "string"
+					type: "string",
+					group: "oDataInformation"
+				},
+				entityType: {
+					type: "string",
+					group: "oDataInformation"
 				}
 			}
 		}
@@ -61,16 +71,18 @@ sap.ui.define([
 		// general format
 		return {
 			changeType: this.getChangeType(),
-			index: this.getIndex(),
-			newControlId: this.getNewControlId(),
-			bindingPath: this.getBindingString(),
-			parentId: this.getParentId(),
-			// used to connect to default delegate
-			modelType: this.getModelType(),
-			// allow change handlers to access delegates if the change is not done on the relevant container
-			relevantContainerId: this.getRelevantContainerId(),
-			// used to connect to change handler mediator
-			oDataServiceVersion: this.getODataServiceVersion(),
+			content: {
+				index: this.getIndex(),
+				newControlId: this.getNewControlId(),
+				bindingPath: this.getBindingString(),
+				parentId: this.getParentId(),
+				// used to connect to default delegate
+				modelType: this.getModelType(),
+				// allow change handlers to access delegates if the change is not done on the relevant container
+				relevantContainerId: this.getRelevantContainerId(),
+				// used to connect to change handler mediator
+				oDataServiceVersion: this.getODataServiceVersion()
+			},
 			// necessary for custom fields support tools
 			oDataInformation: {
 				oDataServiceUri: this.getODataServiceUri(),
