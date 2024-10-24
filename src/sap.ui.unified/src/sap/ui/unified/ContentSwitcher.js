@@ -105,9 +105,13 @@ sap.ui.define([
 	 * sapUiUnifiedCSwitcherVisible
 	 */
 	ContentSwitcher.prototype._showActiveContent = function(iNumber) {
-		if (this._$Contents) {
-			this._$Contents[0].toggleClass("sapUiUfdCSwitcherVisible", iNumber === 1);
-			this._$Contents[1].toggleClass("sapUiUfdCSwitcherVisible", iNumber === 2);
+		var oContents1 = this.getDomRef("content1");
+		var oContents2 = this.getDomRef("content2");
+		if (oContents1) {
+			oContents1.classList.toggle("sapUiUfdCSwitcherVisible", iNumber === 1);
+		}
+		if (oContents2) {
+			oContents2.classList.toggle("sapUiUfdCSwitcherVisible", iNumber === 2);
 		}
 	};
 
@@ -164,14 +168,12 @@ sap.ui.define([
 			return this;
 		}
 
-		var $Dom = this.$();
-		if ($Dom[0]) {
+		var oDomRef = this.getDomRef();
+		if (oDomRef) {
 			// We are already rendered - so we have to change the class on the fly...
-			$Dom.toggleClass("sapUiUfdCSwitcherAnimation" + sCurrentAnimation, false);
-			$Dom.toggleClass("sapUiUfdCSwitcherAnimation" + sAnimation, true);
-		}/* else {
-			// The renderer will take care of it.
-		}/**/
+			oDomRef.classList.toggle("sapUiUfdCSwitcherAnimation" + sCurrentAnimation, false);
+			oDomRef.classList.toggle("sapUiUfdCSwitcherAnimation" + sAnimation, true);
+		}
 
 		return this.setProperty("animation", sAnimation, bSuppressInvalidate);
 	};

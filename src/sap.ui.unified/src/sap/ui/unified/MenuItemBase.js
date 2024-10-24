@@ -134,7 +134,9 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/core/IconPool', 'sap/
 	 */
 	MenuItemBase.prototype.onSubmenuToggle = function(bOpened){
 		// Subclasses may override this: Called when the items submenu is opend or closed
-		this.$().toggleClass("sapUiMnuItmSubMnuOpen", bOpened);
+		if (this.getDomRef()) {
+			this.getDomRef().classList.toggle("sapUiMnuItmSubMnuOpen", bOpened);
+		}
 	};
 
 	/**

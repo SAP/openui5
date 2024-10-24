@@ -211,7 +211,9 @@ sap.ui.define([
 	};
 
 	MenuItem.prototype.hover = function(bHovered, oMenu){
-		this.$().toggleClass("sapUiMnuItmHov", bHovered);
+		if (this.getDomRef()) {
+			this.getDomRef().classList.toggle("sapUiMnuItmHov", bHovered);
+		}
 	};
 
 	MenuItem.prototype.focus = function(oMenu){
