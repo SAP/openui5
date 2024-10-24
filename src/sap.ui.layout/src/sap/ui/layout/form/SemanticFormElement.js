@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides control sap.ui.layout.form.FormElement.
+// Provides control sap.ui.layout.form.SemanticFormElement.
 sap.ui.define([
 	'./FormElement',
 	'./FormHelper'
@@ -19,12 +19,14 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A <code>SemanticFormElement</code> element is a special <code>FormElement</code> that contains semantically connected
+	 * A <code>SemanticFormElement</code> element is a special {@link sap.ui.layout.form.FormElement FormElement} that contains semantically connected
 	 * fields. These field controls are divided by delimiter controls. In display mode, they are rendered as one condensed string,
 	 * in edit mode as separate fields.
 	 *
-	 * <b>Note:</b> Please use the <code>ColumnLayout</code> as <code>layout</code> of the <code>Form</code>. For other layouts, the
-	 * field arrangement might not be suitable in every case.
+	 * Only controls implementing the {@link sap.ui.core.ISemanticFormContent ISemanticFormContent} interface are supported.
+	 *
+	 * <b>Note:</b> Please use the {@link sap.ui.layout.form.ColumnLayout ColumnLayout} as {@link sap.ui.layout.form.Form#setLayout layout} of the {@link sap.ui.layout.form.Form Form}.
+	 * For other layouts, the field arrangement might not be suitable in every case.
 	 * @extends sap.ui.layout.form.FormElement
 	 *
 	 * @author SAP SE
@@ -32,7 +34,6 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @experimental As of version 1.86
 	 * @since 1.86.0
 	 * @alias sap.ui.layout.form.SemanticFormElement
 	 */
@@ -50,12 +51,10 @@ sap.ui.define([
 		aggregations : {
 
 			/**
-			 * Labels of the individual fields. Can either be a <code>Label</code> control or a string.
+			 * Labels of the individual fields.
 			 *
-			 * If a <code>Label</code> control is used, the properties of the <code>Label</code> can be set.
-			 *
-			 * These labels are not rendered directly. If the <code>Label</code> property of <code>SemanticFormElement</code> is not set,
-			 * the texts of the labels are concatenated into the <code>Label</code> property of <code>SemanticFormElement</code>. Otherwise the set
+			 * These labels are not rendered directly. If the {@link #getLabel label} aggregation of <code>SemanticFormElement</code> is not set,
+			 * the texts of the labels are concatenated into the {@link #setLabel label} aggregation of <code>SemanticFormElement</code>. Otherwise the set
 			 * <code>Label</code> is shown.
 			 *
 			 * <b>Note:</b> If this aggregation is used, a label is assigned to every single field of <code>SemanticFormElement</code>.
