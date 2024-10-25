@@ -160,7 +160,11 @@ sap.ui.define([
 	var fnOnItemSelected = function(oEvent) {
 		var oItem = oEvent.getParameter("item");
 		if (oItem) {
-			MessageToast.show("Item selected: " + oEvent.getParameter("item").getName(), {duration: 500});
+			var sItemName = oItem.getName();
+			if (!sItemName && oItem.getIcon() === "sap-icon://notes") {
+				sItemName = "Notes";
+			}
+			MessageToast.show("Item selected: " + sItemName, {duration: 500});
 		} else {
 			MessageToast.show("No Items selected", {duration: 500});
 		}
@@ -170,13 +174,19 @@ sap.ui.define([
 		// prevent the tab being closed by default
 		oEvent.preventDefault();
 		var oItemToClose = oEvent.getParameter('item');
-		MessageBox.confirm("Do you want to close the tab '" + oItemToClose.getName() + "'?", {
+		var sItemName = oItemToClose.getName();
+
+		if (!sItemName && oItemToClose.getIcon() === "sap-icon://notes") {
+			sItemName = "Notes";
+		}
+
+		MessageBox.confirm("Do you want to close the tab '" + sItemName + "'?", {
 			onClose: function (oAction) {
 				if (oAction === Action.OK) {
 					tabContainer.removeItem(oItemToClose);
-					MessageToast.show("Item closed: " + oItemToClose.getName(), {duration: 500});
+					MessageToast.show("Item closed: " + sItemName, {duration: 500});
 				} else {
-					MessageToast.show("Item close canceled: " + oItemToClose.getName(), {duration: 500});
+					MessageToast.show("Item close canceled: " + sItemName, {duration: 500});
 				}
 			}
 		});
