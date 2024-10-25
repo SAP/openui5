@@ -45704,6 +45704,129 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Manually expand Alpha and Beta. Shrink visible row count, so Beta is not
+	// visible anymore. Request side-effects to turn Beta into a placeholder. Collapse all below
+	// Alpha, it must not fail because of Beta.
+	// JIRA: CPOUI5ODATAV4-2772
+	QUnit.test("Recursive Hierarchy: collapse all and placeholders", async function (assert) {
+		const sSelect = "&$select=DrillState,ID,Name";
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="2">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 1 Alpha
+		//   1.1 Beta
+		//     1.1.1 Gamma
+
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+				+ ",NodeProperty='ID',Levels=1)" + sSelect + "&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "1",
+				value : [{
+					DrillState : "collapsed",
+					ID : "1",
+					Name : "Alpha"
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oAlpha = oTable.getRows()[0].getBindingContext();
+
+		this.expectRequest("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
+				+ ",filter(ID eq '1'),1)" + sSelect + "&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "1",
+				value : [{
+					DrillState : "collapsed",
+					ID : "1.1",
+					Name : "Beta"
+				}]
+			});
+
+		await Promise.all([
+			oAlpha.expand(),
+			this.waitForChanges(assert, "expand Alpha")
+		]);
+
+		const oBeta = oTable.getRows()[1].getBindingContext();
+
+		this.expectRequest("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
+				+ ",filter(ID eq '1.1'),1)"
+				+ sSelect + "&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "1",
+				value : [{
+					DrillState : "leaf",
+					ID : "1.1.1",
+					Name : "Gamma"
+				}]
+			});
+
+		await Promise.all([
+			oBeta.expand(),
+			this.waitForChanges(assert, "expand Beta")
+		]);
+
+		checkTable("after expand Beta", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')"
+		], [
+			[true, 1, "1", "Alpha"],
+			[true, 2, "1.1", "Beta"]
+		], 3);
+
+		oTable.getRowMode().setRowCount(1);
+
+		await this.waitForChanges(assert, "table update takes a moment");
+
+		this.expectRequest("EMPLOYEES?$select=ID,Name&$filter=ID eq '1'", {
+				value : [{
+					ID : "1",
+					Name : "Alpha*"
+				}]
+			});
+
+		await Promise.all([
+			oAlpha.getBinding("rows").getHeaderContext().requestSideEffects(["*"]),
+			this.waitForChanges(assert, "request side effects")
+		]);
+
+		checkTable("after request side effects", assert, oTable, [
+			"/EMPLOYEES('1')"
+		], [
+			[true, 1, "1", "Alpha*"]
+		], 3);
+
+		this.expectRequest("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID,"
+				+ "filter(ID eq '1'))&$filter=ID eq '1.1'&$select=ID&$top=1", {
+				value : [{
+					ID : "1.1"
+				}]
+			});
+
+		oAlpha.collapse(/*bAll*/true);
+
+		// table update takes a moment
+		await this.waitForChanges(assert, "collapse all");
+
+		checkTable("after collapse all", assert, oTable, [
+			"/EMPLOYEES('1')"
+		], [
+			[false, 1, "1", "Alpha*"]
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Show the single root node of a recursive hierarchy. Expand Alpha, Beta, and Gamma.
 	// Collapse Alpha completely. Expand Alpha, Beta, and Gamma again. See that their children are
 	// collapsed and that no request is sent. Collapse Alpha completely again. Expand all below

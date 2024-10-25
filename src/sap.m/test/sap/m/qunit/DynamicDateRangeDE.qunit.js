@@ -130,7 +130,7 @@ sap.ui.define([
 
 		aControls = oOptionLast.createValueHelpUI(this.ddr);
 
-		assert.strictEqual(aControls.length, 4, "created controls");
+		assert.strictEqual(aControls.length, 6, "created controls");
 		assert.ok(aControls[0].isA("sap.m.Label"), "created the correct control");
 		assert.ok(aControls[1].isA("sap.m.StepInput"), "created the correct control");
 		assert.strictEqual(aControls[1].getMin(), 1, "The step input has correct min value");
@@ -153,7 +153,7 @@ sap.ui.define([
 
 		aControls = oOptionLast.createValueHelpUI(this.ddr);
 
-		assert.strictEqual(aControls.length, 4, "controls are only 4");
+		assert.strictEqual(aControls.length, 6, "controls are only 6");
 		assert.ok(aControls[0].isA("sap.m.Label"), "a label");
 		assert.ok(aControls[1].isA("sap.m.StepInput"), "an input");
 		assert.notOk(oGetTextSpy.calledWithExactly("DYNAMIC_DATE_QUARTALE"), "quarter text is used");

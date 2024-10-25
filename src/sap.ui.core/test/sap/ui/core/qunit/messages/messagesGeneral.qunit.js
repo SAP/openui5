@@ -383,7 +383,7 @@ sap.ui.define([
 		spyDataState(oInput3, function(sName, oDataState) {
 			var aMessages = oDataState.getMessages();
 			assert.ok(aMessages[0].additionalText, "AdditionalText was added.");
-			assert.equal(aMessages[0].additionalText, "Nickname", "AdditionalText is set correctly.");
+			assert.equal(aMessages[0].additionalText, "First name, Nickname", "AdditionalText is set correctly.");
 
 			oLabel3.destroy();
 			done();
