@@ -77,7 +77,7 @@ sap.ui.define([
 				"subgenre_code": { "valueHelp": "FHSubGenre", "display": FieldDisplay.Description },
 				"detailgenre_code": { "valueHelp": "FHDetailGenre", "display": FieldDisplay.Description},
 				"currency_code": { "valueHelp": "FH-Currency", "display": FieldDisplay.Value, "operators": [OperatorName.EQ], "delegate": {"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": {"autoCompleteCaseSensitive": "description"}}},
-				"createdAt": { "operators": ["MYDATE", "MYDATERANGE", OperatorName.EQ, OperatorName.GE, OperatorName.LE, OperatorName.BT, OperatorName.LT, OperatorName.TODAY, OperatorName.YESTERDAY, OperatorName.TOMORROW, OperatorName.LASTDAYS, "MYNEXTDAYS", OperatorName.THISWEEK, OperatorName.THISMONTH, OperatorName.THISQUARTER, OperatorName.THISYEAR, OperatorName.NEXTHOURS, OperatorName.NEXTMINUTES, OperatorName.LASTHOURS] }
+				"createdAt": { "operators": ["MYDATE", "MYDATERANGE", OperatorName.EQ, OperatorName.GE, OperatorName.LE, OperatorName.BT, OperatorName.LT, OperatorName.TODAY, OperatorName.YESTERDAY, OperatorName.TOMORROW, OperatorName.LASTDAYS, "MYNEXTDAYS", OperatorName.THISWEEK, OperatorName.THISMONTH, OperatorName.THISQUARTER, OperatorName.THISYEAR, OperatorName.NEXTHOURS, OperatorName.NEXTMINUTES, OperatorName.LASTHOURS, OperatorName.NEXTMINUTESINCLUDED, OperatorName.LASTMINUTESINCLUDED, OperatorName.LASTHOURSINCLUDED] }
 			}, "$Filters");
 
 			return aProperties;

@@ -196,7 +196,10 @@ sap.ui.define([
 
 	QUnit.test("RangeOperators - integer (one value)", function(assert) {
 
-		const aOperators = ["LASTDAYS", "NEXTDAYS", "LASTWEEKS", "NEXTWEEKS", "LASTMONTHS", "NEXTMONTHS", "LASTQUARTERS", "NEXTQUARTERS", "LASTYEARS", "NEXTYEARS", "SPECIFICMONTH"];
+		const aOperators = ["LASTDAYS", "LASTDAYSINCLUDED", "NEXTDAYS", "NEXTDAYSINCLUDED", "LASTWEEKS", "LASTWEEKSINCLUDED", "NEXTWEEKS", "NEXTWEEKSINCLUDED",
+							"LASTMONTHS", "LASTMONTHSINCLUDED", "NEXTMONTHS", "NEXTMONTHSINCLUDED", "LASTQUARTERS", "LASTQUARTERSINCLUDED", "NEXTQUARTERS", "NEXTQUARTERSINCLUDED",
+							"LASTYEARS", "LASTYEARSINCLUDED", "NEXTYEARS", "NEXTYEARSINCLUDED", "SPECIFICMONTH"
+		];
 
 		for (let i = 0; i < aOperators.length; i++) {
 			const sOperator = aOperators[i];
@@ -209,7 +212,7 @@ sap.ui.define([
 
 	QUnit.test("RangeOperators - integer (two values)", function(assert) {
 
-		const aOperators = ["TODAYFROMTO"];
+		const aOperators = ["TODAYFROMTO", "SPECIFICMONTHINYEAR"];
 
 		for (let i = 0; i < aOperators.length; i++) {
 			const sOperator = aOperators[i];
@@ -265,6 +268,19 @@ sap.ui.define([
 		oCondition = _createCondition(OperatorName.LE, ["2022-02-08T12:22:30Z"]);
 		oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
 		assert.deepEqual(oResult, {operator: "TODATETIME", values: [UI5Date.getInstance(2022, 1, 8, 12, 22, 30)]}, "Result of formatting: " + oCondition.operator);
+
+	});
+
+	QUnit.test("RangeOperators - integer (one value)", function(assert) {
+
+		const aOperators = ["LASTMINUTES", "LASTMINUTESINCLUDED", "NEXTMINUTES", "NEXTMINUTESINCLUDED", "LASTHOURS", "LASTHOURSINCLUDED", "NEXTHOURS", "NEXTHOURSINCLUDED"];
+
+		for (let i = 0; i < aOperators.length; i++) {
+			const sOperator = aOperators[i];
+			const oCondition = _createCondition(sOperator, [2]);
+			const oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
+			assert.deepEqual(oResult, {operator: sOperator, values: [2]}, "Result of formatting: " + sOperator);
+		}
 
 	});
 
@@ -358,7 +374,10 @@ sap.ui.define([
 
 	QUnit.test("RangeOperators - integer (one value)", function(assert) {
 
-		const aOperators = ["LASTDAYS", "NEXTDAYS", "LASTWEEKS", "NEXTWEEKS", "LASTMONTHS", "NEXTMONTHS", "LASTQUARTERS", "NEXTQUARTERS", "LASTYEARS", "NEXTYEARS", "SPECIFICMONTH"];
+		const aOperators = ["LASTDAYS", "LASTDAYSINCLUDED", "NEXTDAYS", "NEXTDAYSINCLUDED", "LASTWEEKS", "LASTWEEKSINCLUDED", "NEXTWEEKS", "NEXTWEEKSINCLUDED",
+							"LASTMONTHS", "LASTMONTHSINCLUDED", "NEXTMONTHS", "NEXTMONTHSINCLUDED", "LASTQUARTERS", "LASTQUARTERSINCLUDED", "NEXTQUARTERS", "NEXTQUARTERSINCLUDED",
+							"LASTYEARS", "LASTYEARSINCLUDED", "NEXTYEARS", "NEXTYEARSINCLUDED", "SPECIFICMONTH"
+		];
 
 		for (let i = 0; i < aOperators.length; i++) {
 			const sOperator = aOperators[i];
@@ -371,7 +390,7 @@ sap.ui.define([
 
 	QUnit.test("RangeOperators - integer (two values)", function(assert) {
 
-		const aOperators = ["TODAYFROMTO"];
+		const aOperators = ["TODAYFROMTO", "SPECIFICMONTHINYEAR"];
 
 		for (let i = 0; i < aOperators.length; i++) {
 			const sOperator = aOperators[i];
@@ -412,6 +431,19 @@ sap.ui.define([
 		oCondition = _createCondition(OperatorName.LE, ["2022-02-08T12:22:30Z"]);
 		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "TODATETIME", values: [UI5Date.getInstance(2022, 1, 8, 12, 22, 30, 999)]});
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
+
+	});
+
+	QUnit.test("RangeOperators - integer (one value)", function(assert) {
+
+		const aOperators = ["LASTMINUTES", "LASTMINUTESINCLUDED", "NEXTMINUTES", "NEXTMINUTESINCLUDED", "LASTHOURS", "LASTHOURSINCLUDED", "NEXTHOURS", "NEXTHOURSINCLUDED"];
+
+		for (let i = 0; i < aOperators.length; i++) {
+			const sOperator = aOperators[i];
+			const oCondition = _createCondition(sOperator, [2]);
+			const aConditions = oDynamicDateRangeConditionsType.parseValue({operator: sOperator, values: [2]});
+			assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + sOperator);
+		}
 
 	});
 
