@@ -27,12 +27,6 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					},
 
 					"resources": {
-						"js": [
-							{
-								"uri": "script.js"
-							},
-							{}
-						],
 						"css": [
 							{
 								"uri": "style.css",

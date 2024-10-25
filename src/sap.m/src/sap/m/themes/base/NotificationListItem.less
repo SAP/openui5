@@ -3,8 +3,8 @@
 /* Base theme                                  */
 /* =========================================== */
 
-@_sap_m_NotificationListBase_ItemBackground: @sapUiListBackground;
-@_sap_m_NotificationListBase_ItemGroupedBackground: @sapUiListBackground;
+@_sap_m_NotificationListBase_ItemBackground: var(--sapList_Background);
+@_sap_m_NotificationListBase_ItemGroupedBackground: var(--sapList_Background);
 
 .sapMNLI {
 	background: @_sap_m_NotificationListBase_ItemBackground;
@@ -34,19 +34,17 @@
 	.sapMNLIContent {
 		display: flex;
 		flex-direction: column;
-		min-width: 0; // chrome flex overflow issue
+		min-width: 0; /* chrome flex overflow issue */
 		flex: 1;
 		padding-right: 1rem;
 
 		.sapMNLITitle {
 			display: flex;
 			align-items: flex-start;
-
-			font-size: @sapMFontHeader6Size;
+			font-size: var(--sapFontHeader6Size);
 			font-weight: @sapUiFontHeaderWeight;
 			line-height: 1.4;
-			color: @sapUiGroupTitleTextColor;
-
+			color: var(--sapGroup_TitleTextColor);
 			padding-bottom: 0.25rem;
 		}
 
@@ -66,18 +64,16 @@
 	.sapMNLIFooter {
 		display: flex;
 		align-items: center;
-
 		padding-top: 0.5rem;
 
 		.sapMNLIFooterItem {
 			font-size: @sapMFontMediumSize;
-			color: @sapUiContentLabelColor;
-
+			color: var(--sapContent_LabelColor);
 			padding-top: 2px;
 			white-space: nowrap;
 		}
 
-		// the author name should truncate
+		/* the author name should truncate */
 		.sapMNLIFooterItem:first-child {
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -95,7 +91,9 @@
 	}
 
 	&.sapMNLIUnread {
+
 		.sapMNLIContent {
+
 			.sapMNLITitle {
 				font-weight: bold;
 			}
@@ -108,8 +106,8 @@
 	}
 
 	&:focus::before {
-		content: " ";
-		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		content: ' ';
+		border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 		position: absolute;
 		top: 1px;
 		right: 1px;
@@ -129,7 +127,7 @@
 	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
-	max-height: 40px; // font-size * line-height (value 1.4) * 2 (number of rows)
+	max-height: 40px; /* font-size * line-height (value 1.4) * 2 (number of rows) */
 }
 
 .sapMNLIShowMore .sapMLnk {
@@ -138,7 +136,7 @@
 }
 
 .sapMNLITitleText {
-	font-size: @sapMFontHeader6Size;
+	font-size: var(--sapFontHeader6Size);
 }
 
 .sapMLIB.sapMNLI {
@@ -146,6 +144,7 @@
 }
 
 .sapUiSizeCompact {
+
 	.sapMNLI {
 		padding: 1rem 0.5rem 1rem 0.75rem;
 	}

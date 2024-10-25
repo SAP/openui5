@@ -32,7 +32,14 @@ sap.ui.define([
 	}
 
 	function getDefaultSuiteName() {
-		var sName = sap.ui.loader._.guessResourceName(location.href);
+		var sName = sap.ui.loader._.guessResourceName(window.location.href);
+
+		// special handling for karma runner: paths starting with /base/test/ should be /base/test-resources/
+		if ( sName == null && window.location.pathname.startsWith("/base/test/") ) {
+			const altPath = window.location.origin + window.location.pathname.replace("/base/test/", "/base/test-resources/");
+			sName = sap.ui.loader._.guessResourceName(altPath);
+		}
+
 		return sName ? sName.replace(/\.html$/, "") : null;
 	}
 

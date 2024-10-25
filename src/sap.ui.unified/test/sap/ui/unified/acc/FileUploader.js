@@ -129,7 +129,7 @@ sap.ui.define([
 			oLabel9,
 			oFU9
 		]
-	});
+	}).addStyleClass("sapUiContentPadding");
 
 	var app = new App("myApp");
 	var page = new Page("page", {

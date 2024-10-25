@@ -2015,13 +2015,13 @@ sap.ui.define([
 	  */
 
 	 /**
-	  * Marker interface for controls that can be used as content of <code>sap.ui.layout.form.SemanticFormElement</code>.
+	  * Marker interface for controls that can be used as content of {@link sap.ui.layout.form.SemanticFormElement SemanticFormElement}.
 	  *
 	  * If the value-holding property of the control is not <code>value</code or <code>text</code>, the name of the
-	  * value-holding property must be returned in the <code>getFormValueProperty</code> function.
+	  * value-holding property must be returned in the {@link sap.ui.core.ISemanticFormContent.getFormValueProperty getFormValueProperty} function.
 	  *
 	  * If the value of the control needs some special output formatting (to show a description instead of a key), this
-	  * formatted text needs to be returned in the <code>getFormFormattedValue</code> function.
+	  * formatted text needs to be returned in the {@link sap.ui.core.ISemanticFormContent.getFormFormattedValue getFormFormattedValue} function.
 	  *
 	  * @since 1.86.0
 	  * @name sap.ui.core.ISemanticFormContent
@@ -2030,12 +2030,12 @@ sap.ui.define([
 	  */
 
 	 /**
-	  * Returns the formatted value of a control used in a <code>SemanticFormElement</code>.
+	  * Returns the formatted value of a control used in a {@link sap.ui.layout.form.SemanticFormElement SemanticFormElement}.
 	  *
-	  * In the <code>SemanticFormElement</code> element, the assigned fields are rendered in edit mode. In display mode, a text
+	  * In the {@link sap.ui.layout.form.SemanticFormElement SemanticFormElement} element, the assigned fields are rendered in edit mode. In display mode, a text
 	  * is rendered that concatenates the values of all assigned fields. In some cases the displayed text does not match the value
 	  * of the field and needs some formatting. In other cases the control does not have a <code>value</code> property,
-	  * so the <code>SemanticFormElement</code> element cannot determine the value.
+	  * so the {@link sap.ui.layout.form.SemanticFormElement SemanticFormElement} element cannot determine the value.
 	  *
 	  * This is an optional method. If not defined, the <code>value</code> property or the <code>text</code> property is used to determine the value.
 	  *
@@ -2047,12 +2047,12 @@ sap.ui.define([
 	  */
 
 	 /**
-	  * Returns the name of the value-holding property of a control used in a <code>SemanticFormElement</code>.
+	  * Returns the name of the value-holding property of a control used in a {@link sap.ui.layout.form.SemanticFormElement SemanticFormElement}.
 	  *
-	  * In the <code>SemanticFormElement</code> element, the assigned fields are rendered in edit mode. In display mode, a text
+	  * In the {@link sap.ui.layout.form.SemanticFormElement SemanticFormElement} element, the assigned fields are rendered in edit mode. In display mode, a text
 	  * is rendered that concatenates the values of all assigned fields.
 	  * So the concatenated text needs to be updated if the value of a control changes. If a control does not have a <code>value</code> property,
-	  * the <code>SemanticFormElement</code> element needs to know the propery it has to listen for changes.
+	  * the {@link sap.ui.layout.form.SemanticFormElement SemanticFormElement} element needs to know the property it has to listen to for changes.
 	  *
 	  * This is an optional method. If not defined, the <code>value</code> property or the <code>text</code> property is used to determine the value.
 	  *
@@ -2064,14 +2064,14 @@ sap.ui.define([
 	  */
 
 	 /**
-	  * Returns the names of the properties of a control that might update the rendering in a <code>SemanticFormElement</code>.
+	  * Returns the names of the properties of a control that might update the rendering in a {@link sap.ui.layout.form.SemanticFormElement SemanticFormElement}.
 	  *
-	  * In the <code>SemanticFormElement</code> element, the assigned fields are rendered in edit mode. In display mode, depending on <code>getFormRenderAsControl</code>,
+	  * In the {@link sap.ui.layout.form.SemanticFormElement SemanticFormElement} element, the assigned fields are rendered in edit mode. In display mode, depending on {@link sap.ui.core.ISemanticFormContent.getFormRenderAsControl getFormRenderAsControl},
 	  * either a text is rendered, which concatenates the values of all assigned fields, or the control is rendered.
 	  * So if a property of the control changes that might lead to a different rendering (some controls have a special rendering in display mode), the
-	  * <code>SemanticFormElement</code> needs to check the rendering.
+	  * {@link sap.ui.layout.form.SemanticFormElement SemanticFormElement} needs to check the rendering.
 	  *
-	  * This is an optional method. If not defined, no check for updates (only for property defined in <code>getFormValueProperty</code>) is done once the control has been assigned.
+	  * This is an optional method. If not defined, no check for updates (only for property defined in {@link sap.ui.core.ISemanticFormContent.getFormValueProperty getFormValueProperty}) is done once the control has been assigned.
 	  *
 	  * @returns {string[]} Name of the properties
 	  * @since 1.117.0
@@ -2081,7 +2081,7 @@ sap.ui.define([
 	  */
 
 	 /**
-	  * If set to <code>true</code>, the <code>SemanticFormElement</code> also renders the control in display mode, if the used <code>FormLayout</code> supports this.
+	  * If set to <code>true</code>, the {@link sap.ui.layout.form.SemanticFormElement SemanticFormElement} also renders the control in display mode, if the used {@link sap.ui.layout.form.FormLayout FormLayout} supports this.
 	  *
 	  * This is an optional method. If not defined, just the text is rendered.
 	  *

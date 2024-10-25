@@ -3511,6 +3511,10 @@ sap.ui.define([
 		}, {
 			"@$ui5._" : {predicate : "('4.2')"}
 		}, {
+			// No calls to #collapse and to #isSelectionDifferent for this element
+			"@$ui5._" : {placeholder : "~truthy~", predicate : "('5')"},
+			"@$ui5.node.isExpanded" : true
+		}, {
 			"@$ui5._" : {predicate : "('99')"}
 		}];
 		const aExpectedElements = [{
@@ -3518,7 +3522,7 @@ sap.ui.define([
 		}, {
 			"@$ui5._" : {
 				predicate : "('1')",
-				spliced : aElements.slice(2, 5),
+				spliced : [...aElements.slice(2, 5), aElements[7]],
 				rank : "~rank~"
 			},
 			"@$ui5.node.level" : "1"
@@ -3543,7 +3547,8 @@ sap.ui.define([
 			"('4')" : aElements[4],
 			// "('4.1')" : aElements[5], // would be deleted by the recursion
 			// "('4.2')" : aElements[6], // would be deleted by the recursion
-			"('99')" : aElements[7]
+			// "('5')" : aElements[7], // is a placeholder
+			"('99')" : aElements[8]
 		};
 		const oCacheMock = this.mock(oCache);
 		oCacheMock.expects("collapse").withExactArgs("~path~", "~oGroupLock~", bNested)
@@ -3557,7 +3562,7 @@ sap.ui.define([
 		this.mock(oCache.oTreeState).expects("collapse")
 			.withExactArgs(sinon.match.same(aElements[1]), true, bNested);
 		oCacheMock.expects("countDescendants")
-			.withExactArgs(sinon.match.same(aElements[1]), 1).returns(5);
+			.withExactArgs(sinon.match.same(aElements[1]), 1).returns(6);
 		oCacheMock.expects("isSelectionDifferent")
 			.withExactArgs(sinon.match.same(aElements[2])).returns(false);
 		oCacheMock.expects("isSelectionDifferent")
@@ -3577,7 +3582,7 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			oCache.collapse("~path~", "~oGroupLock~", bNested),
-			5);
+			6);
 
 		assert.deepEqual(oCache.aElements, aExpectedElements);
 		assert.strictEqual(oCache.aElements.$count, aExpectedElements.length);
@@ -3586,7 +3591,7 @@ sap.ui.define([
 			"('1')" : aExpectedElements[1],
 			"('3')" : aElements[3], // because its selection is different
 			"($uid=1-24)" : aElements[3],
-			"('99')" : aElements[7]
+			"('99')" : aElements[8]
 		});
 	});
 		});

@@ -406,6 +406,9 @@ sap.ui.define([
 		let iRemaining = iCount; // with bAll this is the count of the direct children in the end
 		for (let i = iIndex + 1; i < iIndex + 1 + iRemaining; i += 1) {
 			const oElement = aElements[i];
+			if (_Helper.hasPrivateAnnotation(oElement, "placeholder")) {
+				continue;
+			}
 			if (bAll && oElement["@$ui5.node.isExpanded"]) {
 				iRemaining -= this.collapse(
 					_Helper.getPrivateAnnotation(oElement, "predicate"), oGroupLock, true);
