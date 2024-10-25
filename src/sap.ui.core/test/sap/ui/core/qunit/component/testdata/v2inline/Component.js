@@ -5,6 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("testdata.v2inline.Component", {
 
 		metadata: {
+			"interfaces": ["sap.ui.core.IAsyncContentCreation"],
 
 			"manifest": {
 
@@ -73,8 +74,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 
 					"rootView": {
 						"viewName": "testdata.view.Main",
-						"type": "XML",
-						"async": true
+						"type": "XML"
 					},
 
 					"config": {

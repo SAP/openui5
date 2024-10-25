@@ -67,15 +67,19 @@ sap.ui.define([
 	QUnit.test("Test init with custom settings", function (assert) {
 		Mobile.init({
 			viewport: false,
-			statusBar: "black",
-			homeIcon: "home.png",
-			homeIconPrecomposed: true
+			statusBar: "black"
 		});
 
 		// check viewport:  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 		// for ios platform: <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		var $v = jQuery("meta").filter("[name=viewport]");
 		assert.equal($v.length, 0, "There should be no viewport meta tag");
+
+		Mobile.setIcons({
+			phone: "home.png",
+			favicon: "home.png",
+			precomposed: true
+		});
 
 		// touch icon  <link rel="apple-touch-icon...
 		var $ti = jQuery("link").filter("[rel=apple-touch-icon-precomposed]");
@@ -146,15 +150,13 @@ sap.ui.define([
 
 
 	QUnit.test("Test init with resolution-specific home icons", function (assert) {
-		Mobile.init({
-			homeIcon: {
-				'phone':'phone-icon.png',
-				'phone@2':'phone-retina.png',
-				'tablet':'tablet-icon.png',
-				'tablet@2':'tablet-retina.png',
-				'icon': 'desktop.ico'
-			},
-			homeIconPrecomposed: false
+		Mobile.setIcons({
+			'phone':'phone-icon.png',
+			'phone@2':'phone-retina.png',
+			'tablet':'tablet-icon.png',
+			'tablet@2':'tablet-retina.png',
+			'favicon': 'desktop.ico',
+			'precomposed': false
 		});
 
 		// touch icon  <link rel="apple-touch-icon...

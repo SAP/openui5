@@ -62,8 +62,7 @@
 
 		"rootView": {
 			"viewName": "testdata.view.Main",
-			"type": "XML",
-			"async": true
+			"type": "XML"
 		},
 
 		"config": {

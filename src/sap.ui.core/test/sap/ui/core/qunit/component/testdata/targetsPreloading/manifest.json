@@ -15,8 +15,7 @@
 		},
 		"routing": {
 			"config": {
-				"targetsClass": "sap.m.routing.Targets",
-				"async": true
+				"targetsClass": "sap.m.routing.Targets"
 			},
 			"targets": {
 				"myTarget": {

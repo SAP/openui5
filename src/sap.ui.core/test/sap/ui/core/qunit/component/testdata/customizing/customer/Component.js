@@ -128,13 +128,16 @@ sap.ui.define([
 							"visible": false
 						}
 					},
-					"testdata.customizing.sap.Sub4Typed": {
-						"typedCustomizableText1": {
+					/**
+					 * @deprecated As of version 1.108 because HTMLView is deprecated
+					 */
+					"testdata.customizing.sap.Sub5": {
+						"Button2": {
 							"visible": false
 						}
 					},
-					"testdata.customizing.sap.Sub5": {
-						"Button2": {
+					"testdata.customizing.sap.Sub4Typed": {
+						"typedCustomizableText1": {
 							"visible": false
 						}
 					}

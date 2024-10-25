@@ -629,10 +629,12 @@
 	 * a testsuite or a QUnit testpage - also it returns the coverage
 	 * results.
 	 */
+	// ui5lint-disable no-globals
 	globalThis.sap = globalThis.sap || {};
 	globalThis.sap.ui = globalThis.sap.ui || {};
 	globalThis.sap.ui.qunit = globalThis.sap.ui.qunit || {};
 	globalThis.sap.ui.qunit.TestRunner = testRunner;
+	// ui5lint-enable no-globals
 	const ready = () => {
 		return new Promise(function(resolve, reject) {
 			if (document.readyState !== "loading") {

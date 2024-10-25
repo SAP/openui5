@@ -5,6 +5,7 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 	var Component = UIComponent.extend("testdata.v2asyncRootView.Component", {
 
 		metadata: {
+			"interfaces": ["sap.ui.core.IAsyncContentCreation"],
 
 			"properties": {},
 			"aggregations": {},
