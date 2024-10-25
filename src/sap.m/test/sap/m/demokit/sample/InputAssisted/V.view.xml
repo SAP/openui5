@@ -18,4 +18,19 @@
 			</suggestionItems>
 		</Input>
 	</l:VerticalLayout>
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Label text="No typeahead" labelFor="productInputTypeAhead" />
+		<Input
+			id="productInputTypeAhead"
+			placeholder="Enter product"
+			autocomplete="false"
+			showSuggestion="true"
+			showValueHelp="true"
+			valueHelpRequest=".onValueHelpRequest"
+			suggestionItems="{/ProductCollection}">
+			<suggestionItems>
+				<core:Item text="{Name}" />
+			</suggestionItems>
+		</Input>
+	</l:VerticalLayout>
 </mvc:View>
