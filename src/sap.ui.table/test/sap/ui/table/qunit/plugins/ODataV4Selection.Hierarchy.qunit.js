@@ -47,7 +47,7 @@ sap.ui.define([
 		beforeEach: async function() {
 			this.oTable = await TableQUnitUtils.createTable(TreeTable, {}, function(oTable) {
 				oTable._oProxy._bEnableV4 = true;
-				oTable.getBinding("rows").resume();
+				oTable.getBinding().resume();
 			});
 			this.oSelectionPlugin = this.oTable.getDependents()[0];
 			this.oSelectionChangeHandler = this.spy();
@@ -111,7 +111,7 @@ sap.ui.define([
 		beforeEach: async function() {
 			this.oTable = await TableQUnitUtils.createTable(TreeTable, {}, function(oTable) {
 				oTable._oProxy._bEnableV4 = true;
-				oTable.getBinding("rows").resume();
+				oTable.getBinding().resume();
 			});
 			this.oSelectionPlugin = this.oTable.getDependents()[0];
 			return this.oTable.qunit.whenRenderingFinished();
