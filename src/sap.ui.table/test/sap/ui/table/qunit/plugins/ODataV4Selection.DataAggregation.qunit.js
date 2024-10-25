@@ -73,11 +73,12 @@ sap.ui.define([
 	QUnit.module("Selection API", {
 		beforeEach: async function() {
 			this.oTable = await TableQUnitUtils.createTable(Table, {}, function(oTable) {
-				oTable.getBinding("rows").resume();
+				oTable.getBinding().resume();
 			});
 			this.oSelectionPlugin = this.oTable.getDependents()[0];
 			this.oSelectionChangeHandler = this.spy();
 			this.oSelectionPlugin.attachSelectionChange(this.oSelectionChangeHandler);
+			await this.oTable.qunit.whenBindingChange();
 			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
