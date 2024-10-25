@@ -126,9 +126,9 @@ sap.ui.define([
 				if (oDimensionDetails === undefined) {
 					logUnsupportedPropertyInSelect(oBinding.sPath, sPropertyName, oDimension);
 					bError = true;
-				} else {
-					// eslint-disable-next-line no-use-before-define
-					AnalyticalBinding._updateDimensionDetailsTextProperty(oDimension, sPropertyName, oDimensionDetails);
+				// eslint-disable-next-line no-use-before-define
+				} else if (AnalyticalBinding._updateDimensionDetailsTextProperty(oDimension, sPropertyName,
+						oDimensionDetails)) {
 					continue;
 				}
 			}
@@ -5019,6 +5019,8 @@ sap.ui.define([
 	 * @param {object} oDimension The dimension
 	 * @param {string} sPropertyName The property name
 	 * @param {object} oDimensionDetails The dimension details
+	 * @returns {boolean} Whether the given property name is the given dimension's text property and therefore has been
+	 *   added to the given dimension details.
 	 *
 	 * @private
 	 */
@@ -5026,7 +5028,11 @@ sap.ui.define([
 		var oTextProperty = oDimension.getTextProperty();
 		if (oTextProperty && oTextProperty.name === sPropertyName) {
 			oDimensionDetails.textPropertyName = sPropertyName;
+
+			return true;
 		}
+
+		return false;
 	};
 
 	AnalyticalBinding.Logger = oLogger;

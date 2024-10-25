@@ -9151,13 +9151,32 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					autoExpandMode : "Sequential",
 					numberOfExpandedLevels : 0,
 					provideGrandTotals : false,
-					select : "CompanyCode,AmountInCompanyCodeCurrency,Currency,Customer,CompanyName",
+					select : "CompanyCode,AmountInCompanyCodeCurrency,Currency,Customer,CompanyName,CompanyAttribute",
 					useBatchRequests : true
 				},
 				sorter : [new Sorter("CompanyName", true)]
 			});
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert).then(function () {
+				that.expectRequest({ // leaf level request
+					encodeRequestUri: false,
+					requestUri: "Items?"
+						+ "$select=CompanyCode,CompanyName,Customer,AmountInCompanyCodeCurrency,Currency,"
+						+ "CompanyAttribute"
+						+ "&$filter=(CompanyCode%20eq%20%27A0%27)"
+						+ "&$orderby=CompanyName%20desc,CompanyCode%20asc&$top=14&$inlinecount=allpages"
+				}, {
+					results: [
+						Object.assign(getFarCustomerLineItem("A0", "C0"), {CompanyAttribute: "CA0",
+							CompanyName: "A0Name"}),
+						Object.assign(getFarCustomerLineItem("A0", "C1"), {CompanyAttribute: "CA1",
+							CompanyName: "A0Name"})
+					]
+				});
+
+				// code under test - expand leaf level -> CompanyAttribute part of $select
+				that.oView.byId("table").expand(0);
+			});
 		});
 	});
 
@@ -9197,14 +9216,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectRequest({ // leaf level request
 					encodeRequestUri : false,
 					requestUri : "Items?"
-					+ "$select=CompanyCode,CompanyName,Customer,AmountInCompanyCodeCurrency,Currency&"
+					+ "$select=CompanyCode,CompanyName,Customer,AmountInCompanyCodeCurrency,Currency,CompanyAttribute&"
 					+ "$orderby=CompanyName%20desc,CompanyCode%20asc&$top=12"
 				}, {
 					results : [
-						Object.assign(getFarCustomerLineItem("A0"), {CompanyName: "A0Name"}),
-						Object.assign(getFarCustomerLineItem("A1"), {CompanyName: "A1Name"}),
-						Object.assign(getFarCustomerLineItem("A2"), {CompanyName: "A2Name"}),
-						Object.assign(getFarCustomerLineItem("A3"), {CompanyName: "A2Name"})
+						Object.assign(getFarCustomerLineItem("A0"), {CompanyAttribute: "CA0", CompanyName: "A0Name"}),
+						Object.assign(getFarCustomerLineItem("A1"), {CompanyAttribute: "CA1", CompanyName: "A1Name"}),
+						Object.assign(getFarCustomerLineItem("A2"), {CompanyAttribute: "CA2", CompanyName: "A2Name"}),
+						Object.assign(getFarCustomerLineItem("A3"), {CompanyAttribute: "CA3", CompanyName: "A2Name"})
 					]
 				});
 
@@ -9221,7 +9240,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				parameters : {
 					numberOfExpandedLevels : 1,
 					provideGrandTotals : false,
-					select : "CompanyCode,AmountInCompanyCodeCurrency,Currency,Customer,CompanyName",
+					select : "CompanyCode,AmountInCompanyCodeCurrency,Currency,Customer,CompanyName,CompanyAttribute",
 					useBatchRequests : true
 				},
 				sorter : [new Sorter("CompanyName", true)]

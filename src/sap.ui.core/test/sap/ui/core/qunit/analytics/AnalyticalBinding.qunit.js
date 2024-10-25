@@ -1326,14 +1326,15 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
-		additionalSelects : [],
+		additionalSelects : ["CostCenterAttribute", "CostElementAttribute"],
 		analyticalInfo : [oCostCenterGrouped, oCostElementGrouped, oCurrencyGrouped,
 			oActualCostsTotal],
 		dimensionToTextProperty : {
 			"CostElement" : "CostElementText",
 			"CostCenter" : "CostCenterText"
 		},
-		select : "CostCenter,CostElement,Currency,ActualCosts,CostElementText,CostCenterText"
+		select : "CostCenter,CostElement,Currency,ActualCosts,CostElementText,CostCenterText,"
+			+ "CostCenterAttribute,CostElementAttribute"
 	},
 	// CostElementText is contained in additionalSelects, and it will be part of $select
 	// calculated by the analytical binding; we don't want to reimplement the $select computation;
@@ -4135,7 +4136,8 @@ sap.ui.define([
 		var oDimensionDetails = {textPropertyName : "unchanged"};
 
 		// code under test
-		AnalyticalBinding._updateDimensionDetailsTextProperty(oDimension, "~propertyName", oDimensionDetails);
+		assert.strictEqual(AnalyticalBinding._updateDimensionDetailsTextProperty(oDimension, "~propertyName",
+			oDimensionDetails), false);
 
 		assert.strictEqual(oDimensionDetails.textPropertyName, "unchanged");
 	});
@@ -4148,7 +4150,8 @@ sap.ui.define([
 		var oDimensionDetails = {};
 
 		// code under test
-		AnalyticalBinding._updateDimensionDetailsTextProperty(oDimension, "~propertyName", oDimensionDetails);
+		assert.strictEqual(AnalyticalBinding._updateDimensionDetailsTextProperty(oDimension, "~propertyName",
+			oDimensionDetails), true);
 
 		assert.strictEqual(oDimensionDetails.textPropertyName, "~propertyName");
 	});
