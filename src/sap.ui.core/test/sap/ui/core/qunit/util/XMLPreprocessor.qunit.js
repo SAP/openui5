@@ -357,6 +357,7 @@ sap.ui.define([
 			this.oXMLTemplateProcessorMock.expects(`loadTemplate`).never();
 			this.oXMLTemplateProcessorMock.expects(`loadTemplatePromise`).never();
 
+			// ui5lint-disable-next-line no-globals
 			this.oSapUiMock = this.mock(sap.ui);
 			// @see sap.ui.base.Event#init: "sap/ui/core/Messaging"
 			// also "sap/ui/model/type/Boolean" ends up here
