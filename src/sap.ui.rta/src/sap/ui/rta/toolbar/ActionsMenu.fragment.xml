@@ -78,7 +78,6 @@
 				enabled="{controls>/newFeaturesOverview/enabled}"
 				visible="{controls>/newFeaturesOverview/visible}"
 				text="{i18n>BTN_WHATS_NEW_DIALOG_OVERVIEW}"
-				press=".openWhatsNewOverviewDialog"
-				ariaHasPopup="Dialog"/>
+				press=".openWhatsNewOverviewDialog"/>
 	</Menu>
 </core:FragmentDefinition>

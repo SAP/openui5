@@ -53,12 +53,14 @@ sap.ui.define([
 
 	WhatsNewOverview.closeWhatsNewOverviewDialog = function() {
 		if (oWhatsNewOverviewDialog) {
+			const oContext = oWhatsNewOverviewDialog.getBindingContext("whatsNewModel");
+			oContext?.setProperty("overviewActive", true);
 			oWhatsNewOverviewDialog.close();
 		}
 	};
 
 	WhatsNewOverview.backToOverview = function() {
-		var oContext = oWhatsNewOverviewDialog.getBindingContext("whatsNewModel");
+		const oContext = oWhatsNewOverviewDialog.getBindingContext("whatsNewModel");
 		oContext.setProperty("overviewActive", true);
 	};
 
