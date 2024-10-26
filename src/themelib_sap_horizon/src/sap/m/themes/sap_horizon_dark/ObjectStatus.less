@@ -105,21 +105,22 @@ html.sap-desktop .sapMObjStatusActive:not(.sapMObjStatusInverted) {
 	&:focus {
 		.sapMObjStatusLink::after {
 			outline: none;
-			border-radius: @sapUiButtonBorderCornerRadius;
+			border-radius: 0.125rem;
 			content: "";
 			position: absolute;
 			box-sizing: border-box;
 			left: 0;
 			top: -0.0625rem;
 			right: 0;
-			bottom: -0.0625rem;
+			bottom: 0.0625rem;
 			pointer-events: none;
 			border: 0.125rem solid @sapUiContentFocusColor;
 			z-index: -1;
 		}
 		.sapMObjStatusLink {
 			background: @sapUiContentFocusColor;
-			border-radius: @sapUiButtonBorderCornerRadius;
+			border-radius: 0.125rem;
+			line-height: 0.875rem;
 			.sapMObjStatusIcon > .sapUiIcon,
 			.sapMObjStatusText {
 				color: @sapUiContentContrastTextColor;

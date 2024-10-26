@@ -219,9 +219,10 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {sap.ui.core.Control} oParent The input control that instantiates this suggestions popover
+	 * @param {boolean} bTypeAhead Indicates whether the autocomplete is switch on or not.
 	 * @param {jQuery.Event} oEvent Arrow key event.
 	 */
-	SuggestionsPopover.prototype.handleListNavigation = function(oParent, oEvent) {
+	SuggestionsPopover.prototype.handleListNavigation = function(oParent, oEvent, bTypeAhead) {
 		var	oPopover = this.getPopover();
 
 		if (oEvent.isMarked()) {
@@ -246,12 +247,13 @@ sap.ui.define([
 			aSelectableItems = oList && oList.getItems().filter(function (oItem) {
 				return oItem.getVisible && oItem.getVisible();
 			}),
-			iSelectedItemIndex = aSelectableItems.indexOf(this.getFocusedListItem()),
 			oNewItem;
+
+		const iSelectedItemIndex = this.getSelectedListItemIndex();
 
 		switch (oEvent.type) {
 			case "sapdown":
-				oNewItem = this.handleArrowDown(aSelectableItems, iSelectedItemIndex, bFocusInInput, bHasValueStateHeader);
+				oNewItem = this.handleArrowDown(aSelectableItems, iSelectedItemIndex, bFocusInInput, bHasValueStateHeader, bTypeAhead);
 				break;
 			case "sapup":
 				oNewItem = this.handleArrowUp(aSelectableItems, iSelectedItemIndex, bFocusInInput, bHasValueStateHeader);
@@ -291,14 +293,14 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	SuggestionsPopover.prototype.handleArrowDown = function(aSelectableItems, iSelectedItemIndex, bFocusInInput, bHasValueStateHeader) {
+	SuggestionsPopover.prototype.handleArrowDown = function (aSelectableItems, iSelectedItemIndex, bFocusInInput, bHasValueStateHeader, bTypeAhead) {
 		// if the focus is on the input and there is no VSH available, return the first selectable item
-		if (bFocusInInput && !bHasValueStateHeader) {
+		if (bFocusInInput && !bHasValueStateHeader && !bTypeAhead) {
 			return aSelectableItems[0];
 		}
 
 		// if the focus is on the list, return the next item
-		if (!bFocusInInput && !this.getValueStateActiveState()) {
+		if (!bFocusInInput && !this.getValueStateActiveState() && !bTypeAhead) {
 			// if the focus is on the last item, it should remain there
 			if (iSelectedItemIndex === aSelectableItems.length - 1) {
 				return aSelectableItems[iSelectedItemIndex];
@@ -306,14 +308,29 @@ sap.ui.define([
 			return aSelectableItems[iSelectedItemIndex + 1];
 		}
 
+		if (bFocusInInput && bHasValueStateHeader) {
+			this.setValueStateActiveState(true);
+			return undefined;
+		}
+
 		// if the focus is on the value state header, return the first selectable item
 		// otherwise focus on the value state header
-		if (this.getValueStateActiveState()) {
+		if (this.getValueStateActiveState() && !bTypeAhead) {
+			this.setValueStateActiveState(false);
+			return  aSelectableItems[0];
+		}
+
+		if (bHasValueStateHeader && this.getValueStateActiveState() && bTypeAhead) {
 			this.setValueStateActiveState(false);
 			return aSelectableItems[0];
-		} else {
-			this.setValueStateActiveState(true);
 		}
+
+		// if the focus is on the last item, it should remain there
+		if (iSelectedItemIndex === aSelectableItems.length - 1 && bTypeAhead) {
+			return aSelectableItems[iSelectedItemIndex];
+		}
+		// if the focus is on the list, return the next item
+		return aSelectableItems[iSelectedItemIndex + 1];
 	};
 
 	/**
@@ -321,7 +338,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	SuggestionsPopover.prototype.handleArrowUp = function(aSelectableItems, iSelectedItemIndex, bFocusInInput, bHasValueStateHeader) {
+	SuggestionsPopover.prototype.handleArrowUp = function (aSelectableItems, iSelectedItemIndex, bFocusInInput, bHasValueStateHeader) {
 		// if the focus is on the input field, do nothing
 		if (bFocusInInput) {
 			return;
@@ -545,6 +562,23 @@ sap.ui.define([
 				return aListItems[i];
 			}
 		}
+	};
+
+	/**
+	 * Gets the index of currently selected list item, if any, or the currently focused group header item
+	 *
+	 * @private
+	 */
+	SuggestionsPopover.prototype.getSelectedListItemIndex = function () {
+		const oList = this.getItemsContainer();
+		const aListItems = oList && oList.getItems() || [];
+		const aVisibleItems = aListItems.filter((item) => item.getVisible && item.getVisible());
+
+		if (aListItems.filter((item) => item.getSelected()).length) {
+			return aVisibleItems.findIndex((item) => item.getSelected());
+		}
+
+		return aVisibleItems.findIndex((groupItem) => groupItem.hasStyleClass("sapMLIBFocused"));
 	};
 
 

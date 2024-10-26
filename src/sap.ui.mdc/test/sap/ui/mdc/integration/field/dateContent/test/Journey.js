@@ -108,6 +108,22 @@ sap.ui.define([
 				values: []
 			},
 			expectedDynamicDateRangeInputValue: "Yesterday (" + oDateType.formatValue(oYesterday, "string") + ")"
+		},
+		{
+			dynamicDate: "Last 3 Days",
+			expectedDynamicDateRangeValue: {
+				operator: "LASTDAYS",
+				values: [3]
+			},
+			expectedDynamicDateRangeInputValue: "Last 3 Days"
+		},
+		{
+			dynamicDate: "Last 3 Days Inclusive",
+			expectedDynamicDateRangeValue: {
+				operator: "LASTDAYSINCLUDED",
+				values: [3]
+			},
+			expectedDynamicDateRangeInputValue: "Last 3 Days Inclusive"
 		}
 	];
 

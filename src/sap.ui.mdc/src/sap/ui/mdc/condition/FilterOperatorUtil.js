@@ -17,6 +17,7 @@ sap.ui.define([
 		'sap/ui/mdc/util/loadModules',
 		'sap/ui/core/date/UniversalDate',
 		'sap/ui/core/date/UniversalDateUtils',
+		'sap/ui/core/date/UI5Date',
 		'sap/ui/core/format/DateFormat',
 		'sap/ui/core/StaticArea',
 		'sap/ui/model/json/JSONModel',
@@ -38,6 +39,7 @@ sap.ui.define([
 	loadModules,
 	UniversalDate,
 	UniversalDateUtils,
+	UI5Date,
 	DateFormat,
 	StaticArea,
 	JSONModel,
@@ -49,8 +51,10 @@ sap.ui.define([
 
 	// translation utils
 	let oMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
+	let oMessageBundleM = Library.getResourceBundleFor("sap.m");
 	Localization.attachChange(() => {
 		oMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
+		oMessageBundleM = Library.getResourceBundleFor("sap.m");
 	});
 
 	/**
@@ -621,7 +625,7 @@ sap.ui.define([
 			 */
 			lastDays: new RangeOperator({
 				name: OperatorName.LASTDAYS,
-				tokenText: _getText(OperatorName.LASTDAYS, false),
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTDAYS_FORMAT", undefined, true),
 				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 				paramTypes: ["(\\d+)"],
 				additionalInfo: "",
@@ -769,7 +773,7 @@ sap.ui.define([
 			 */
 			nextDays: new RangeOperator({
 				name: OperatorName.NEXTDAYS,
-				tokenText: _getText(OperatorName.NEXTDAYS, false),
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTDAYS_FORMAT", undefined, true),
 				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 				paramTypes: ["(\\d+)"],
 				additionalInfo: "",
@@ -815,7 +819,7 @@ sap.ui.define([
 			 */
 			lastWeeks: new RangeOperator({
 				name: OperatorName.LASTWEEKS,
-				tokenText: _getText(OperatorName.LASTWEEKS, false),
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTWEEKS_FORMAT", undefined, true),
 				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 				paramTypes: ["(\\d+)"],
 				additionalInfo: "",
@@ -828,7 +832,7 @@ sap.ui.define([
 			 */
 			nextWeeks: new RangeOperator({
 				name: OperatorName.NEXTWEEKS,
-				tokenText: _getText(OperatorName.NEXTWEEKS, false),
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTWEEKS_FORMAT", undefined, true),
 				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 				paramTypes: ["(\\d+)"],
 				additionalInfo: "",
@@ -874,7 +878,7 @@ sap.ui.define([
 			 */
 			lastMonths: new RangeOperator({
 				name: OperatorName.LASTMONTHS,
-				tokenText: _getText(OperatorName.LASTMONTHS, false),
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTMONTHS_FORMAT", undefined, true),
 				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 				paramTypes: ["(\\d+)"],
 				additionalInfo: "",
@@ -887,7 +891,7 @@ sap.ui.define([
 			 */
 			nextMonths: new RangeOperator({
 				name: OperatorName.NEXTMONTHS,
-				tokenText: _getText(OperatorName.NEXTMONTHS, false),
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTMONTHS_FORMAT", undefined, true),
 				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 				paramTypes: ["(\\d+)"],
 				additionalInfo: "",
@@ -933,7 +937,7 @@ sap.ui.define([
 			 */
 			lastQuarters: new RangeOperator({
 				name: OperatorName.LASTQUARTERS,
-				tokenText: _getText(OperatorName.LASTQUARTERS, false),
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTQUARTERS_FORMAT", undefined, true),
 				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 				paramTypes: ["(\\d+)"],
 				additionalInfo: "",
@@ -946,7 +950,7 @@ sap.ui.define([
 			 */
 			nextQuarters: new RangeOperator({
 				name: OperatorName.NEXTQUARTERS,
-				tokenText: _getText(OperatorName.NEXTQUARTERS, false),
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTQUARTERS_FORMAT", undefined, true),
 				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 				paramTypes: ["(\\d+)"],
 				additionalInfo: "",
@@ -1036,7 +1040,7 @@ sap.ui.define([
 			 */
 			lastYears: new RangeOperator({
 				name: OperatorName.LASTYEARS,
-				tokenText: _getText(OperatorName.LASTYEARS, false),
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTYEARS_FORMAT", undefined, true),
 				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 				paramTypes: ["(\\d+)"],
 				additionalInfo: "",
@@ -1049,7 +1053,7 @@ sap.ui.define([
 			 */
 			nextYears: new RangeOperator({
 				name: OperatorName.NEXTYEARS,
-				tokenText: _getText(OperatorName.NEXTYEARS, false),
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTYEARS_FORMAT", undefined, true),
 				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 				paramTypes: ["(\\d+)"],
 				additionalInfo: "",
@@ -1228,7 +1232,7 @@ sap.ui.define([
 			 */
 			lastMinutes: new RangeOperator({
 				name: OperatorName.LASTMINUTES,
-				tokenText: _getText(OperatorName.LASTMINUTES, false),
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTMINUTES_FORMAT", undefined, true),
 				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 				paramTypes: ["(\\d+)"],
 				additionalInfo: "",
@@ -1241,7 +1245,7 @@ sap.ui.define([
 			 */
 			nextMinutes: new RangeOperator({
 				name: OperatorName.NEXTMINUTES,
-				tokenText: _getText(OperatorName.NEXTMINUTES, false),
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTMINUTES_FORMAT", undefined, true),
 				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 				paramTypes: ["(\\d+)"],
 				additionalInfo: "",
@@ -1254,7 +1258,7 @@ sap.ui.define([
 			 */
 			lastHours: new RangeOperator({
 				name: OperatorName.LASTHOURS,
-				tokenText: _getText(OperatorName.LASTHOURS, false),
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTHOURS_FORMAT", undefined, true),
 				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 				paramTypes: ["(\\d+)"],
 				additionalInfo: "",
@@ -1267,12 +1271,222 @@ sap.ui.define([
 			 */
 			nextHours: new RangeOperator({
 				name: OperatorName.NEXTHOURS,
-				tokenText: _getText(OperatorName.NEXTHOURS, false),
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTHOURS_FORMAT", undefined, true),
 				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
 				paramTypes: ["(\\d+)"],
 				additionalInfo: "",
 				calcRange: function(iDuration) {
 					return UniversalDateUtils.ranges.nextHours(iDuration);
+				}
+			}),
+			/*
+			 * "Last X Minutes" operator including current minute
+			 */
+			lastMinutesIncluded: new RangeOperator({
+				name: OperatorName.LASTMINUTESINCLUDED,
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTMINUTESINCLUDED_FORMAT", undefined, true),
+				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
+				paramTypes: ["(\\d+)"],
+				additionalInfo: "",
+				calcRange: function(iDuration) {
+					const oResultValues = UniversalDateUtils.ranges.lastMinutes(iDuration - 1);
+					oResultValues[0].setSeconds(0);
+					return oResultValues;
+				}
+			}),
+			/*
+			 * "Next X Minutes" operator including current minute
+			 */
+			nextMinutesIncluded: new RangeOperator({
+				name: OperatorName.NEXTMINUTESINCLUDED,
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTMINUTESINCLUDED_FORMAT", undefined, true),
+				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
+				paramTypes: ["(\\d+)"],
+				additionalInfo: "",
+				calcRange: function(iDuration) {
+					const oResultValues = UniversalDateUtils.ranges.nextMinutes(iDuration - 1);
+					oResultValues[1].setSeconds(59);
+					return oResultValues;
+				}
+			}),
+			/*
+			 * "Last X Hours" operator including current hour
+			 */
+			lastHoursIncluded: new RangeOperator({
+				name: OperatorName.LASTHOURSINCLUDED,
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTHOURSINCLUDED_FORMAT", undefined, true),
+				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
+				paramTypes: ["(\\d+)"],
+				additionalInfo: "",
+				calcRange: function(iDuration) {
+					const oResultValues = UniversalDateUtils.ranges.lastHours(iDuration - 1);
+					oResultValues[0].setMinutes(0, 0);
+					return oResultValues;
+				}
+			}),
+			/*
+			 * "Next X Hours" operator including current hour
+			 */
+			nextHoursIncluded: new RangeOperator({
+				name: OperatorName.NEXTHOURSINCLUDED,
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTHOURSINCLUDED_FORMAT", undefined, true),
+				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
+				paramTypes: ["(\\d+)"],
+				additionalInfo: "",
+				calcRange: function(iDuration) {
+					const oResultValues = UniversalDateUtils.ranges.nextHours(iDuration - 1);
+					oResultValues[1].setMinutes(59, 59);
+					return oResultValues;
+				}
+			}),
+			/*
+			 * "Last X Days" operator including current day
+			 */
+			lastDaysIncluded: new RangeOperator({
+				name: OperatorName.LASTDAYSINCLUDED,
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTDAYSINCLUDED_FORMAT", undefined, true),
+				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
+				paramTypes: ["(\\d+)"],
+				additionalInfo: "",
+				calcRange: function(iDuration) {
+					const oResultValues = UniversalDateUtils.ranges.lastDays(iDuration - 1);
+					oResultValues[1] = UniversalDate.getInstance(UI5Date.getInstance());
+					return oResultValues;
+				}
+			}),
+			/*
+			 * "Next X Days" operator including current day
+			 */
+			nextDaysIncluded: new RangeOperator({
+				name: OperatorName.NEXTDAYSINCLUDED,
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTDAYSINCLUDED_FORMAT", undefined, true),
+				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
+				paramTypes: ["(\\d+)"],
+				additionalInfo: "",
+				calcRange: function(iDuration) {
+					const oResultValues = UniversalDateUtils.ranges.nextDays(iDuration - 1);
+					oResultValues[0] = UniversalDate.getInstance(UI5Date.getInstance());
+					return oResultValues;
+				}
+			}),
+			/*
+			 * "Last X Weeks" operator including current week
+			 */
+			lastWeeksIncluded: new RangeOperator({
+				name: OperatorName.LASTWEEKSINCLUDED,
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTWEEKSINCLUDED_FORMAT", undefined, true),
+				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
+				paramTypes: ["(\\d+)"],
+				additionalInfo: "",
+				calcRange: function(iDuration) {
+					const oResultValues = UniversalDateUtils.ranges.lastWeeks(iDuration - 1);
+					oResultValues[1] = UniversalDate.getInstance(UI5Date.getInstance());
+					return oResultValues;
+				}
+			}),
+			/*
+			 * "Next X Weeks" operator including current week
+			 */
+			nextWeeksIncluded: new RangeOperator({
+				name: OperatorName.NEXTWEEKSINCLUDED,
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTWEEKSINCLUDED_FORMAT", undefined, true),
+				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
+				paramTypes: ["(\\d+)"],
+				additionalInfo: "",
+				calcRange: function(iDuration) {
+					const oResultValues = UniversalDateUtils.ranges.nextWeeks(iDuration  - 1);
+					oResultValues[0] = UniversalDate.getInstance(UI5Date.getInstance());
+					return oResultValues;
+				}
+			}),
+			/*
+			 * "Last X Months" operator including current month
+			 */
+			lastMonthsIncluded: new RangeOperator({
+				name: OperatorName.LASTMONTHSINCLUDED,
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTMONTHSINCLUDED_FORMAT", undefined, true),
+				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
+				paramTypes: ["(\\d+)"],
+				additionalInfo: "",
+				calcRange: function(iDuration) {
+					const oResultValues = UniversalDateUtils.ranges.lastMonths(iDuration - 1);
+					oResultValues[1] = UniversalDate.getInstance(UI5Date.getInstance());
+					return oResultValues;
+				}
+			}),
+			/*
+			 * "Next X Months" operator including current month
+			 */
+			nextMonthsIncluded: new RangeOperator({
+				name: OperatorName.NEXTMONTHSINCLUDED,
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTMONTHSINCLUDED_FORMAT", undefined, true),
+				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
+				paramTypes: ["(\\d+)"],
+				additionalInfo: "",
+				calcRange: function(iDuration) {
+					const oResultValues = UniversalDateUtils.ranges.nextMonths(iDuration - 1);
+					oResultValues[0] = UniversalDate.getInstance(UI5Date.getInstance());
+					return oResultValues;
+				}
+			}),
+			/*
+			 * "Last X Quarters" operator including current quarter
+			 */
+			lastQuartersIncluded: new RangeOperator({
+				name: OperatorName.LASTQUARTERSINCLUDED,
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTQUARTERSINCLUDED_FORMAT", undefined, true),
+				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
+				paramTypes: ["(\\d+)"],
+				additionalInfo: "",
+				calcRange: function(iDuration) {
+					const oResultValues = UniversalDateUtils.ranges.lastQuarters(iDuration - 1);
+					oResultValues[1] = UniversalDate.getInstance(UI5Date.getInstance());
+					return oResultValues;
+				}
+			}),
+			/*
+			 * "Next X Quarters" operator including current quarter
+			 */
+			nextQuartersIncluded: new RangeOperator({
+				name: OperatorName.NEXTQUARTERSINCLUDED,
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTQUARTERSINCLUDED_FORMAT", undefined, true),
+				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
+				paramTypes: ["(\\d+)"],
+				additionalInfo: "",
+				calcRange: function(iDuration) {
+					const oResultValues = UniversalDateUtils.ranges.nextQuarters(iDuration - 1);
+					oResultValues[0] = UniversalDate.getInstance(UI5Date.getInstance());
+					return oResultValues;
+				}
+			}),
+			/*
+			 * "Last X Years" operator including current year
+			 */
+			lastYearsIncluded: new RangeOperator({
+				name: OperatorName.LASTYEARSINCLUDED,
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTYEARSINCLUDED_FORMAT", undefined, true),
+				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
+				paramTypes: ["(\\d+)"],
+				additionalInfo: "",
+				calcRange: function(iDuration) {
+					const oResultValues = UniversalDateUtils.ranges.lastYears(iDuration - 1);
+					oResultValues[1] = UniversalDate.getInstance(UI5Date.getInstance());
+					return oResultValues;
+				}
+			}),
+			/*
+			 * "Next X Years" operator including current year
+			 */
+			nextYearsIncluded: new RangeOperator({
+				name: OperatorName.NEXTYEARSINCLUDED,
+				tokenText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTYEARSINCLUDED_FORMAT", undefined, true),
+				valueTypes: [{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }, constraints: { minimum: 0 } }],
+				paramTypes: ["(\\d+)"],
+				additionalInfo: "",
+				calcRange: function(iDuration) {
+					const oResultValues = UniversalDateUtils.ranges.nextYears(iDuration - 1);
+					oResultValues[0] = UniversalDate.getInstance(UI5Date.getInstance());
+					return oResultValues;
 				}
 			})
 
@@ -1927,27 +2141,35 @@ sap.ui.define([
 			FilterOperatorUtil._mOperators.lastDayYear,
 			FilterOperatorUtil._mOperators.todayFromTo,
 			FilterOperatorUtil._mOperators.lastDays,
+			FilterOperatorUtil._mOperators.lastDaysIncluded,
 			FilterOperatorUtil._mOperators.nextDays,
+			FilterOperatorUtil._mOperators.nextDaysIncluded,
 
 			FilterOperatorUtil._mOperators.thisWeek,
 			FilterOperatorUtil._mOperators.lastWeek,
 			FilterOperatorUtil._mOperators.lastWeeks,
+			FilterOperatorUtil._mOperators.lastWeeksIncluded,
 			FilterOperatorUtil._mOperators.nextWeek,
 			FilterOperatorUtil._mOperators.nextWeeks,
+			FilterOperatorUtil._mOperators.nextWeeksIncluded,
 
 			FilterOperatorUtil._mOperators.specificMonth,
 			FilterOperatorUtil._mOperators.specificMonthInYear,
 			FilterOperatorUtil._mOperators.thisMonth,
 			FilterOperatorUtil._mOperators.lastMonth,
 			FilterOperatorUtil._mOperators.lastMonths,
+			FilterOperatorUtil._mOperators.lastMonthsIncluded,
 			FilterOperatorUtil._mOperators.nextMonth,
 			FilterOperatorUtil._mOperators.nextMonths,
+			FilterOperatorUtil._mOperators.nextMonthsIncluded,
 
 			FilterOperatorUtil._mOperators.thisQuarter,
 			FilterOperatorUtil._mOperators.lastQuarter,
 			FilterOperatorUtil._mOperators.lastQuarters,
+			FilterOperatorUtil._mOperators.lastQuartersIncluded,
 			FilterOperatorUtil._mOperators.nextQuarter,
 			FilterOperatorUtil._mOperators.nextQuarters,
+			FilterOperatorUtil._mOperators.nextQuartersIncluded,
 
 			FilterOperatorUtil._mOperators.quarter1,
 			FilterOperatorUtil._mOperators.quarter2,
@@ -1957,8 +2179,10 @@ sap.ui.define([
 			FilterOperatorUtil._mOperators.thisYear,
 			FilterOperatorUtil._mOperators.lastYear,
 			FilterOperatorUtil._mOperators.lastYears,
+			FilterOperatorUtil._mOperators.lastYearsIncluded,
 			FilterOperatorUtil._mOperators.nextYear,
 			FilterOperatorUtil._mOperators.nextYears,
+			FilterOperatorUtil._mOperators.nextYearsIncluded,
 
 			FilterOperatorUtil._mOperators.yearToDate,
 			FilterOperatorUtil._mOperators.dateToYear
@@ -1982,9 +2206,13 @@ sap.ui.define([
 			FilterOperatorUtil._mOperators.notGreaterEqual,
 
 			FilterOperatorUtil._mOperators.lastMinutes,
+			FilterOperatorUtil._mOperators.lastMinutesIncluded,
 			FilterOperatorUtil._mOperators.nextMinutes,
+			FilterOperatorUtil._mOperators.nextMinutesIncluded,
 			FilterOperatorUtil._mOperators.lastHours,
+			FilterOperatorUtil._mOperators.lastHoursIncluded,
 			FilterOperatorUtil._mOperators.nextHours,
+			FilterOperatorUtil._mOperators.nextHoursIncluded,
 
 			FilterOperatorUtil._mOperators.today,
 			FilterOperatorUtil._mOperators.yesterday,
@@ -1999,27 +2227,35 @@ sap.ui.define([
 			FilterOperatorUtil._mOperators.lastDayYear,
 			FilterOperatorUtil._mOperators.todayFromTo,
 			FilterOperatorUtil._mOperators.lastDays,
+			FilterOperatorUtil._mOperators.lastDaysIncluded,
 			FilterOperatorUtil._mOperators.nextDays,
+			FilterOperatorUtil._mOperators.nextDaysIncluded,
 
 			FilterOperatorUtil._mOperators.thisWeek,
 			FilterOperatorUtil._mOperators.lastWeek,
 			FilterOperatorUtil._mOperators.lastWeeks,
+			FilterOperatorUtil._mOperators.lastWeeksIncluded,
 			FilterOperatorUtil._mOperators.nextWeek,
 			FilterOperatorUtil._mOperators.nextWeeks,
+			FilterOperatorUtil._mOperators.nextWeeksIncluded,
 
 			FilterOperatorUtil._mOperators.specificMonth,
 			FilterOperatorUtil._mOperators.specificMonthInYear,
 			FilterOperatorUtil._mOperators.thisMonth,
 			FilterOperatorUtil._mOperators.lastMonth,
 			FilterOperatorUtil._mOperators.lastMonths,
+			FilterOperatorUtil._mOperators.lastMonthsIncluded,
 			FilterOperatorUtil._mOperators.nextMonth,
 			FilterOperatorUtil._mOperators.nextMonths,
+			FilterOperatorUtil._mOperators.nextMonthsIncluded,
 
 			FilterOperatorUtil._mOperators.thisQuarter,
 			FilterOperatorUtil._mOperators.lastQuarter,
 			FilterOperatorUtil._mOperators.lastQuarters,
+			FilterOperatorUtil._mOperators.lastQuartersIncluded,
 			FilterOperatorUtil._mOperators.nextQuarter,
 			FilterOperatorUtil._mOperators.nextQuarters,
+			FilterOperatorUtil._mOperators.nextQuartersIncluded,
 
 			FilterOperatorUtil._mOperators.quarter1,
 			FilterOperatorUtil._mOperators.quarter2,
@@ -2029,8 +2265,10 @@ sap.ui.define([
 			FilterOperatorUtil._mOperators.thisYear,
 			FilterOperatorUtil._mOperators.lastYear,
 			FilterOperatorUtil._mOperators.lastYears,
+			FilterOperatorUtil._mOperators.lastYearsIncluded,
 			FilterOperatorUtil._mOperators.nextYear,
 			FilterOperatorUtil._mOperators.nextYears,
+			FilterOperatorUtil._mOperators.nextYearsIncluded,
 
 			FilterOperatorUtil._mOperators.yearToDate,
 			FilterOperatorUtil._mOperators.dateToYear
