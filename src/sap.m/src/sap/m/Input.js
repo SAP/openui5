@@ -1552,12 +1552,14 @@ function(
 	 */
 	["onsapup", "onsapdown", "onsappageup", "onsappagedown", "onsaphome", "onsapend"].forEach(function(sName){
 		Input.prototype[sName] = function (oEvent) {
+			const bTypeAhead = this._bDoTypeAhead && !this.isComposingCharacter();
+
 			if ((sName === "onsapup" || sName === "onsapdown") && this.isComposingCharacter()) {
 				return;
 			}
 
 			if (this.getShowSuggestion()){
-				this._getSuggestionsPopover().handleListNavigation(this, oEvent);
+				this._getSuggestionsPopover().handleListNavigation(this, oEvent, bTypeAhead);
 
 				if (this._isIncrementalType()) {
 					oEvent.setMarked();

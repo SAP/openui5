@@ -626,7 +626,133 @@ sap.ui.define(() => {
 		 * @since 1.112.0
 		 * @public
 		 */
-		NEXTHOURS: "NEXTHOURS"
+		NEXTHOURS: "NEXTHOURS",
+
+		/**
+		 * "Last X Minutes" operator including current minute
+		 *
+		 * The operator is available for date/time types.
+		 * @since 1.131.0
+		 * @public
+		 */
+		LASTMINUTESINCLUDED: "LASTMINUTESINCLUDED",
+
+		/**
+		 * "Next X Minutes" operator including current minute
+		 *
+		 * The operator is available for date/time types.
+		 * @since 1.131.0
+		 * @public
+		 */
+		NEXTMINUTESINCLUDED: "NEXTMINUTESINCLUDED",
+
+		/**
+		 * "Last X Hours" operator including current hour
+		 *
+		 * The operator is available for date/time types.
+		 * @since 1.131.0
+		 * @public
+		 */
+		LASTHOURSINCLUDED: "LASTHOURSINCLUDED",
+
+		/**
+		 * "Next X Hours" operator including current hour
+		 *
+		 * The operator is available for date/time types.
+		 * @since 1.131.0
+		 * @public
+		 */
+		NEXTHOURSINCLUDED: "NEXTHOURSINCLUDED",
+
+		/**
+		 * "Last X Days" operator including current day
+		 *
+		 * The operator is available for date and date/time types.
+		 * @since 1.131.0
+		 * @public
+		 */
+		LASTDAYSINCLUDED: "LASTDAYSINCLUDED",
+
+		/**
+		 * "Next X Days" operator including current day
+		 *
+		 * The operator is available for date and date/time types.
+		 * @since 1.131.0
+		 * @public
+		 */
+		NEXTDAYSINCLUDED: "NEXTDAYSINCLUDED",
+
+		/**
+		 * "Last X Weeks" operator including current week
+		 *
+		 * The operator is available for date and date/time types.
+		 * @since 1.131.0
+		 * @public
+		 */
+		LASTWEEKSINCLUDED: "LASTWEEKSINCLUDED",
+
+		/**
+		 * "Next X Weeks" operator including current week
+		 *
+		 * The operator is available for date and date/time types.
+		 * @since 1.131.0
+		 * @public
+		 */
+		NEXTWEEKSINCLUDED: "NEXTWEEKSINCLUDED",
+
+		/**
+		 * "Last X Months" operator including current month
+		 *
+		 * The operator is available for date and date/time types.
+		 * @since 1.131.0
+		 * @public
+		 */
+		LASTMONTHSINCLUDED: "LASTMONTHSINCLUDED",
+
+		/**
+		 * "Next X Months" operator including current month
+		 *
+		 * The operator is available for date and date/time types.
+		 * @since 1.131.0
+		 * @public
+		 */
+		NEXTMONTHSINCLUDED: "NEXTMONTHSINCLUDED",
+
+		/**
+		 * "Last X Quarters" operator including current quarter
+		 *
+		 * The operator is available for date and date/time types.
+		 * @since 1.131.0
+		 * @public
+		 */
+		LASTQUARTERSINCLUDED: "LASTQUARTERSINCLUDED",
+
+		/**
+		 * "Next X Quarters" operator including current quarter
+		 *
+		 * The operator is available for date and date/time types.
+		 * @since 1.131.0
+		 * @public
+		 */
+		NEXTQUARTERSINCLUDED: "NEXTQUARTERSINCLUDED",
+
+		/**
+		 * "Last X Years" operator including current year
+		 *
+		 * The operator is available for date and date/time types.
+		 * @since 1.131.0
+		 * @public
+		 */
+		LASTYEARSINCLUDED: "LASTYEARSINCLUDED",
+
+		/**
+		 * "Next X Years" operator including current year
+		 *
+		 * The operator is available for date and date/time types.
+		 * @since 1.131.0
+		 * @public
+		 */
+		NEXTYEARSINCLUDED: "NEXTYEARSINCLUDED"
 	};
 
 	return OperatorName;

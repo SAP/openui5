@@ -100,6 +100,8 @@ sap.ui.define([
 			  {name: "Case, Justin", userid: "U11"},
 			  {name: "Time, Justin", userid: "U12"},
 			  {name: "Barr, Sandy", userid: "U13"},
+			  {name: "Barr, Bandy", userid: "U22"},
+			  {name: "Brat Bitt", userid: "U21"},
 			  {name: "Poole, Gene", userid: "U14"},
 			  {name: "Ander, Corey", userid: "U15"},
 			  {name: "Early, Brighton", userid: "U16"},
@@ -888,6 +890,7 @@ sap.ui.define([
 
   var oFormattedValueStateInput2 = new Input("fvsinput2", {
 	  valueState: "Warning",
+	  autocomplete: false,
 	  valueStateText: "Plain text warning message",
 	  placeholder: "Input with suggestions (countries) and error value state message with formatted text containing multiple links. Type 'B'",
 	  showSuggestion: true,

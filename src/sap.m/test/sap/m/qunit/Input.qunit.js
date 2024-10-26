@@ -799,7 +799,7 @@ sap.ui.define([
 
 			assert.ok(oInput._getSuggestionsPopover() && oInput._getSuggestionsPopover().getPopover().isOpen && oInput._getSuggestionsPopover().getPopover().isOpen(), "Suggestion Popup is open now");
 			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
-			checkSubmit("Enter pressed on open Suggestions", true, true, "abcTom");
+			checkSubmit("Enter pressed on open Suggestions", true, true, "abcPhilips");
 			assert.ok(oInput._getSuggestionsPopover() && oInput._getSuggestionsPopover().getPopover().isOpen && !oInput._getSuggestionsPopover().getPopover().isOpen(), "Suggestion Popup should be closed");
 		}
 
@@ -5728,6 +5728,13 @@ sap.ui.define([
 		qutils.triggerKeydown(oInput._$input, KeyCodes.ARROW_DOWN);
 
 		assert.strictEqual(oInput._$input[0].selectionEnd - oInput._$input[0].selectionStart > 0, true, "Typeahheaded text is selected.");
+		assert.strictEqual(oInput.getValue(), "Bulgaria", "Next item is selected when autocompete is on");
+
+		oInput.setAutocomplete(false);
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("Ger").trigger("input");
+		qutils.triggerKeydown(oInput._$input, KeyCodes.ARROW_DOWN);
+
+		assert.strictEqual(oInput.getValue(), "Germany", "First item is selected when autocompete is off");
 
 		// clean up
 		oInput.destroy();

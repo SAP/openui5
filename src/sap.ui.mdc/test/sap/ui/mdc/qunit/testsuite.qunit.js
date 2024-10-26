@@ -80,8 +80,9 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				coverage: {
 					only: "[sap/ui/mdc/condition]"
 				},
-				sinon: false
-			},
+				sinon: {
+					qunitBridge: true
+				}			},
 
 			"OperatorDynamicDateOption": {
 				group: "Condition",

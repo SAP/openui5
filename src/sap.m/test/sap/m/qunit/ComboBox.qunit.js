@@ -6076,7 +6076,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapdown the typed value should not get selected (test case 1)", async function (assert) {
+	QUnit.test("onsapdown the next item should be selected", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -6117,14 +6117,14 @@ sap.ui.define([
 		await nextUIUpdate(this.clock);
 
 		// assert
-		assert.strictEqual(oComboBox.getFocusDomRef().value, "Algeria");
-		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "lgeria");
+		assert.strictEqual(oComboBox.getFocusDomRef().value, "Argentina");
+		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "rgentina");
 
 		// cleanup
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapdown the typed value should not get selected (test case 2)", async function (assert) {
+	QUnit.test("onsapdown the whole next item is selected", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -6165,8 +6165,8 @@ sap.ui.define([
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 
 		// assert
-		assert.strictEqual(oComboBox.getFocusDomRef().value, "Algeria");
-		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "");
+		assert.strictEqual(oComboBox.getFocusDomRef().value, "Argentina");
+		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "Argentina");
 
 		// cleanup
 		oComboBox.destroy();
@@ -6481,7 +6481,7 @@ sap.ui.define([
 		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("onsapup the typed value should not get selected (test case 2)", async function (assert) {
+	QUnit.test("onsapup typed value is the same when navigating down and then up", async function (assert) {
 		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oComboBox = new ComboBox({
@@ -6525,7 +6525,6 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().value, "Algeria");
-		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "");
 
 		// cleanup
 		oComboBox.destroy();
@@ -9761,7 +9760,7 @@ sap.ui.define([
 	QUnit.test("onChange it should update the value of the comboBox as expected when search in both columns is enabled test case 2", async function (assert) {
 		this.clock = sinon.useFakeTimers();
 		// system under test
-		var sExpectedValue = "Algeria";
+		var sExpectedValue = "Denmark";
 		var oComboBox = new ComboBox({
 			filterSecondaryValues: true,
 			items: [
@@ -11894,9 +11893,7 @@ sap.ui.define([
 
 	QUnit.test("when focusing group header item with some input in the text field the input should stay", function (assert) {
 		this.clock = sinon.useFakeTimers();
-		var oExpectedItem = this.oComboBox.getItems()[0],
-			oExpectedListItem = ListHelpers.getListItem(oExpectedItem),
-			oFakeEvent = {
+		var oFakeEvent = {
 				target: {
 					value: "it"
 				},
@@ -11916,15 +11913,14 @@ sap.ui.define([
 		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 
 		// assert
-		assert.strictEqual(this.oComboBox.getFocusDomRef().value, "it", "The expected text was filled in the combo box.");
-		assert.strictEqual(jQuery(this.oComboBox.getFocusDomRef()).getSelectedText(), "", "Correct text was selected in the combo box.");
-		assert.ok(this.oComboBox.getSelectedItem() === null, "The expected item was selected.");
-		assert.ok(oExpectedListItem.hasStyleClass("sapMLIBFocused"), "The group header has visual focus");
+		assert.strictEqual(this.oComboBox.getFocusDomRef().value, "item12", "The expected text was filled in the combo box.");
+		assert.strictEqual(jQuery(this.oComboBox.getFocusDomRef()).getSelectedText(), "em12", "Correct text was selected in the combo box.");
+		assert.ok(this.oComboBox.getSelectedItem() !== null, "The expected item was selected.");
 	});
 
 	QUnit.test("when moving through group header, the user input should stay and be autocompleted", function (assert) {
 		this.clock = sinon.useFakeTimers();
-		var oExpectedItem = this.oComboBox.getItems()[1],
+		var oExpectedItem = this.oComboBox.getItems()[3],
 			oExpectedListItem,
 			oFakeEvent = {
 				target: {
@@ -11952,9 +11948,8 @@ sap.ui.define([
 		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 
 		// assert
-		assert.strictEqual(this.oComboBox.getFocusDomRef().value, "item11", "The expected text was filled in the combo box.");
-		assert.strictEqual(jQuery(this.oComboBox.getFocusDomRef()).getSelectedText(), "em11", "Correct text was selected in the combo box.");
-		assert.ok(this.oComboBox.getSelectedItem() === oExpectedItem, "The expected item was selected.");
+		assert.strictEqual(this.oComboBox.getFocusDomRef().value, "it", "Text do not change as group header is selected.");
+		assert.strictEqual(jQuery(this.oComboBox.getFocusDomRef()).getSelectedText(), "", "Correct text was selected in the combo box.");
 		assert.ok(oExpectedListItem.hasStyleClass("sapMLIBFocused"), "The item has visual focus");
 	});
 
@@ -12717,7 +12712,7 @@ sap.ui.define([
 		oValueStateHeader = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader();
 
 		// Assert
-		assert.notOk(oValueStateHeader.$().hasClass("sapMPseudoFocus"), "Pseudo focus is not the value state header");
+		assert.notOk(oValueStateHeader.$().hasClass("sapMPseudoFocus"), "Pseudo focus is not in the value state header");
 		assert.notOk(this.oErrorComboBox._getSuggestionsPopover().getItemsContainer().getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is not on the first item");
 		assert.ok(this.oErrorComboBox.$().hasClass("sapMFocus"), "The visual pseudo focus is on the input field");
 	});
@@ -12747,11 +12742,13 @@ sap.ui.define([
 		var	oValueStateHeader;
 
 		// Act
-		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
-		this.clock.tick();
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
+		this.clock.tick(1000);
 		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick();
 		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.TAB);
+		this.clock.tick();
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick();
 
 

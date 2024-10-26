@@ -85,11 +85,12 @@ sap.ui.define([
 					subtotals: ["SalesAmountLocalCurrency"],
 					grandTotal: ["SalesAmountLocalCurrency"]
 				});
-				oTable.getBinding("rows").resume();
+				oTable.getBinding().resume();
 			});
 			this.oSelectionPlugin = this.oTable.getDependents()[0];
 			this.oSelectionChangeHandler = this.spy();
 			this.oSelectionPlugin.attachSelectionChange(this.oSelectionChangeHandler);
+			await this.oTable.qunit.whenBindingChange();
 			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
@@ -255,12 +256,13 @@ sap.ui.define([
 					subtotals: ["SalesAmountLocalCurrency"],
 					grandTotal: ["SalesAmountLocalCurrency"]
 				});
-				oTable.getBinding("rows").resume();
+				oTable.getBinding().resume();
 			});
 			this.oSelectionPlugin = this.oTable.getDependents()[0];
 			this.oSelectionChangeHandler = this.spy();
 			this.oSelectionPlugin.attachSelectionChange(this.oSelectionChangeHandler);
 
+			await this.oTable.qunit.whenBindingChange();
 			await this.oTable.qunit.whenRenderingFinished();
 
 			this.oTable.getRows()[2].expand();
@@ -419,10 +421,11 @@ sap.ui.define([
 					subtotals: ["SalesAmountLocalCurrency"],
 					grandTotal: ["SalesAmountLocalCurrency"]
 				});
-				oTable.getBinding("rows").resume();
+				oTable.getBinding().resume();
 			});
 			this.oSelectionPlugin = this.oTable.getDependents()[0];
-			return this.oTable.qunit.whenRenderingFinished();
+			await this.oTable.qunit.whenBindingChange();
+			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
