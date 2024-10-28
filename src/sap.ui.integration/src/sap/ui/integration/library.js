@@ -249,7 +249,8 @@ sap.ui.define([
 		ContentItem: "ContentItem",
 		ActionsStrip: "ActionsStrip",
 		ContentItemDetail: "ContentItemDetail",
-		Header: "Header"
+		Header: "Header",
+		Card: "Card"
 	};
 
 	/**

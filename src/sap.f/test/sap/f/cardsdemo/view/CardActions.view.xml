@@ -1,0 +1,53 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	controllerName="sap.f.cardsdemo.controller.CardActions"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Card actions scenarios" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+
+		<Panel>
+			<VBox>
+				<VBox class="sapUiMediumMarginLeft">
+					<Text text="Cards with semanticRole: listitem. - Action on card level" />
+				</VBox>
+				<HBox wrap="Wrap">
+					<w:Card
+                        semanticRole="ListItem"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/noAction.json"
+						width="400px"
+						class="sapUiSmallMargin" />
+				</HBox>
+                <HBox wrap="Wrap">
+					<w:Card
+                        semanticRole="ListItem"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/basicAction.json"
+						width="400px"
+						class="sapUiSmallMargin" />
+				</HBox>
+                <HBox wrap="Wrap">
+					<w:Card
+                        semanticRole="ListItem"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/actionCardAndHeader.json"
+						width="400px"
+						class="sapUiSmallMargin" />
+				</HBox>
+                    <HBox wrap="Wrap">
+					<w:Card
+                        semanticRole="ListItem"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/actionHeader.json"
+						width="400px"
+						class="sapUiSmallMargin" />
+				</HBox>
+			</VBox>
+		</Panel>
+	</Page>
+</mvc:View>

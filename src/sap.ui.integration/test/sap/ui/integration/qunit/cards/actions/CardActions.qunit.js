@@ -963,6 +963,87 @@ sap.ui.define([
 			}
 		};
 
+		var oManifestListCardRequest = {
+			"_version": "1.8.0",
+			"sap.app": {
+				"id": "test.card.actions.card8",
+				"type": "card"
+			},
+			"sap.card": {
+				"actions": [{
+					"type": "Navigation",
+					"parameters": {
+						"url": "https://www.sap.com"
+					}
+				}],
+				"type": "List",
+				"header": {
+					"title": "List Card",
+					"subTitle": "With static list items"
+				},
+				"content": {
+					"data": {
+						"json": [{
+								"Name": "Comfort Easy"
+							}]
+					},
+					"item": {
+						"title": {
+							"value": "{Name}"
+						}
+					}
+				}
+			}
+		};
+
+		var oManifestActionsStripCardAction = {
+			"sap.app": {
+				"id": "card.explorer.footer.manyButtons",
+				"type": "card"
+			},
+			"sap.card": {
+				"actions": [{
+					"type": "Navigation",
+					"parameters": {
+						"url": "https://www.sap.com"
+					}
+				}],
+				"type": "Object",
+				"data": {
+					"json": {
+						"firstName": "Donna",
+						"company": {
+							"email": "mail@mycompany.com",
+							"emailSubject": "Subject"
+						}
+					}
+				},
+				"content": {
+					"groups": [{
+						"title": "Contact Details",
+						"items": [{
+							"label": "First Name",
+							"value": "{firstName}"
+						}]
+					}]
+				},
+				"footer": {
+					"actionsStrip": [{
+							"text": "Navigate",
+							"overflowPriority": "High",
+							"actions": [{
+
+							"type": "Navigation",
+							"parameters": {
+								"url": "https://www.sap.com"
+							}
+							}]
+						}
+					]
+				}
+			}
+		};
+
 		async function testNavigationServiceListContent(oManifest, assert) {
 			// Arrange
 			var oActionSpy = sinon.spy(CardActions, "fireAction"),
@@ -1981,6 +2062,69 @@ sap.ui.define([
 			assert.notOk(aButtons[2].getEnabled(), "Button is disabled.");
 		});
 
+		QUnit.module("Navigation Action - Card", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					semanticRole: "ListItem",
+					width: "400px",
+					height: "600px",
+					baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+				});
+
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Interactive card should navigate", async function (assert) {
+
+			var oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
+
+			this.oCard.setManifest(oManifestListCardRequest);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			qutils.triggerKeydown(this.oCard.getDomRef(), KeyCodes.ENTER);
+			await nextUIUpdate();
+
+			assert.ok(this.oCard.getDomRef().getAttribute("tabindex"),"0", "Tabindex is added");
+			assert.ok(this.oCard.getDomRef().classList["value"].indexOf("sapFCardInteractive") > -1, "Interactive styles are added");
+			assert.ok(oStubOpenUrl.callCount === 1, "Navigate is called");
+
+			oStubOpenUrl.restore();
+		});
+
+		QUnit.test("Interactive card should not fire press if interactive element inside card is pressed", async function (assert) {
+
+			const oPressSpy = this.spy(this.oCard, "firePress"),
+				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
+
+			this.oCard.setManifest(oManifestActionsStripCardAction);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			const oActionsStrip = this.oCard.getCardFooter().getActionsStrip(),
+				aItems = oActionsStrip._getToolbar().getContent();
+
+			assert.ok(this.oCard.getDomRef().getAttribute("tabindex"),"0", "Tabindex is added");
+			assert.ok(this.oCard.getDomRef().classList["value"].indexOf("sapFCardInteractive") > -1, "Interactive styles are added");
+
+			qutils.triggerKeydown(aItems[1].getDomRef(), KeyCodes.ENTER);
+			await nextUIUpdate();
+
+			assert.ok(oPressSpy.callCount === 0, "Press is not fired");
+			assert.ok(oStubOpenUrl.callCount === 1, "Only action of button is executed");
+
+			oPressSpy.restore();
+			oStubOpenUrl.restore();
+		});
+
 		return Library.load("sap.suite.ui.commons").then(function () {
 			QUnit.module("Navigation Action - Timeline Content", {
 				beforeEach: function () {
@@ -2028,4 +2172,5 @@ sap.ui.define([
 			});
 		});
 	}
+
 );

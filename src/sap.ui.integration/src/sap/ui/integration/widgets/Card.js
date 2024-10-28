@@ -84,6 +84,7 @@ sap.ui.define([
 
 	var MANIFEST_PATHS = {
 		TYPE: "/sap.card/type",
+		ACTIONS: "/sap.card/actions",
 		DATA: "/sap.card/data",
 		HEADER: "/sap.card/header",
 		HEADER_POSITION: "/sap.card/headerPosition",
@@ -103,6 +104,8 @@ sap.ui.define([
 	var RESERVED_PARAMETER_NAMES = ["visibleItems", "allItems"];
 
 	var HeaderPosition = fLibrary.cards.HeaderPosition;
+
+	var ActionArea = library.CardActionArea;
 
 	var CardArea = library.CardArea;
 
@@ -355,6 +358,15 @@ sap.ui.define([
 				showCloseButton: {
 					type: "boolean",
 					group: "Behavior",
+					defaultValue: false,
+					visibility: "hidden"
+				},
+
+				/**
+				 * Defines if the card is interactive.
+				 */
+				interactive: {
+					type: "boolean",
 					defaultValue: false,
 					visibility: "hidden"
 				}
@@ -1381,6 +1393,11 @@ sap.ui.define([
 			this._oActionsToolbar.destroy();
 			this._oActionsToolbar = null;
 		}
+
+		if (this._oActions) {
+			this._oActions.destroy();
+			this._oActions = null;
+		}
 	};
 
 	/**
@@ -1866,6 +1883,7 @@ sap.ui.define([
 		this._applyServiceManifestSettings();
 		this._applyFilterBarManifestSettings();
 		this._applyDataManifestSettings();
+		this._applyActionManifestSettings();
 		this._applyHeaderManifestSettings();
 		this._applyPaginatorManifestSettings();
 		this._applyFooterManifestSettings();
@@ -1979,6 +1997,27 @@ sap.ui.define([
 		} else {
 			oModel.setData(vData);
 		}
+	};
+
+	Card.prototype._applyActionManifestSettings = function () {
+		var oActionsSettings = this._oCardManifest.get(MANIFEST_PATHS.ACTIONS);
+
+		if (!oActionsSettings) {
+			return;
+		}
+
+		var oActions = new CardActions({
+			card: this
+		});
+
+		oActions.attach({
+			area: ActionArea.Card,
+			enabledPropertyName: "interactive",
+			actions: oActionsSettings,
+			control: this
+		});
+
+		this._oActions = oActions;
 	};
 
 	/**
@@ -3260,6 +3299,16 @@ sap.ui.define([
 		this.setProperty("displayVariant", sValue, bSuppressInvalidate);
 		this._oDisplayVariants.updateSizeModel();
 		return this;
+	};
+
+
+	/**
+	 * @override
+	 */
+	Card.prototype.isInteractive = function () {
+		const bIsInteractive = CardBase.prototype.isInteractive.apply(this, arguments);
+
+		return bIsInteractive && this.getProperty("interactive");
 	};
 
 	return Card;

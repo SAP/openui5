@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/integration/cards/Header",
 	"sap/ui/integration/util/Utils",
 	"sap/m/Button",
-	"sap/m/AvatarImageFitType"
+	"sap/m/AvatarImageFitType",
+	"sap/f/library"
 ], function (
 	BaseFactory,
 	Log,
@@ -28,7 +29,8 @@ sap.ui.define([
 	Header,
 	Utils,
 	Button,
-	AvatarImageFitType
+	AvatarImageFitType,
+	fLibrary
 ) {
 	"use strict";
 
@@ -39,6 +41,8 @@ sap.ui.define([
 	var ButtonType = mLibrary.ButtonType;
 
 	var CardDisplayVariant = library.CardDisplayVariant;
+
+	var SemanticRole = fLibrary.cards.SemanticRole;
 
 	var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 
@@ -130,6 +134,9 @@ sap.ui.define([
 			oHeader.setProperty("headingLevel", "1");
 		}
 
+		if (oCard.getSemanticRole() === SemanticRole.ListItem && !oHeader.isInteractive()){
+			oHeader.setProperty("focusable", false);
+		}
 		return oHeader;
 	};
 

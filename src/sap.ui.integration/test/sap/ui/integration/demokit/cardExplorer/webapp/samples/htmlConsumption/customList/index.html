@@ -1,0 +1,69 @@
+<!-- This file will be actually loaded and shown in the iframe. "indexTemplate.html" is used just for the code editor -->
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Card As Custom Element</title>
+	<script src="./editorOutput.js"></script>
+	<script src="../../../../../../../../../../resources/sap-ui-integration.js"
+		id="sap-ui-bootstrap"
+		data-sap-ui-compatVersion="edge"
+		data-sap-ui-theme="sap_horizon">
+	</script>
+	<style>
+		.myCard {
+			margin: 1rem;
+			width: 25rem;
+		}
+
+		.layout {
+			display: flex;
+			flex-direction: column;
+		}
+	</style>
+
+	<script>
+		window.onload = () => {
+
+			document.querySelectorAll("div[role='list']").forEach((list) => {
+
+				let listItems = list.querySelectorAll("div[role='listitem']"),
+					currentLI = 0;
+
+				list.addEventListener("keydown", function (event) {
+
+					switch (event.keyCode) {
+						case 38: // Up arrow
+								listItems[currentLI].setAttribute("tabindex", "-1");
+
+								currentLI = currentLI > 0 ? --currentLI : 0;     // Decrease the counter
+								listItems[currentLI].setAttribute("tabindex", "0");
+								listItems[currentLI].focus();
+								break;
+						case 40: // Down arrow
+							listItems[currentLI].setAttribute("tabindex", "-1");
+
+							currentLI = currentLI < listItems.length - 1 ? ++currentLI : listItems.length - 1; // Increase counter
+							listItems[currentLI].setAttribute("tabindex", "0");
+							listItems[currentLI].focus();
+							break;
+						}
+				});
+			});
+		}
+	</script>
+</head>
+
+<body>
+	<div class="layout" role="list">
+		<ui-integration-card semantic-role="ListItem" id="card3" manifest="./card3.json" class="myCard">
+		</ui-integration-card>
+		<ui-integration-card semantic-role="ListItem" id="card1" manifest="./manifest.json" class="myCard">
+		</ui-integration-card>
+		<ui-integration-card semantic-role="ListItem" id="card2" manifest="./card2.json" class="myCard">
+		</ui-integration-card>
+	</div>
+</body>
+
+</html>

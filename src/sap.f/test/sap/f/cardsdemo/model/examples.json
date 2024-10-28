@@ -99,6 +99,12 @@
 		"group": "Layout Examples"
 	},
 	{
+		"title": "Actions on Full Card",
+		"description": "Examples of actions on card level",
+		"route": "cardActions",
+		"group": "Card Actions"
+	},
+	{
 		"title": "Navigation Action",
 		"description": "Navigation action examples",
 		"route": "navigationService",
