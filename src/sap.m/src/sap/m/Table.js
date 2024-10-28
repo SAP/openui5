@@ -1084,11 +1084,9 @@ sap.ui.define([
 			} else if (this._clearAllIcon && sMultiSelectMode == "ClearAll" && !this._clearAllIcon.hasStyleClass("sapMTableDisableClearAll")) {
 				this.removeSelections(false, true, false);
 			}
-
 		} else if (oEvent.target.classList.contains("sapMTblCellFocusable")) {
 			// prevent from scrolling
 			oEvent.preventDefault();
-			oEvent.setMarked();
 		}
 	};
 
