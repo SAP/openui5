@@ -44,14 +44,11 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
-	 * @class TODO
-	 *        <h3><b>Note:</b></h3>
-	 *        The control is experimental and the API/behaviour is not finalised and hence this should not be used for productive usage.
+	 * @class
 	 * @extends sap.m.p13n.BasePanel
 	 * @author SAP SE
 	 * @constructor The API/behaviour is not finalised and hence this control should not be used for productive usage.
 	 * @private
-	 * @experimental
 	 * @since 1.97
 	 * @alias sap.ui.mdc.p13n.panels.ChartItemPanel
 	 */
