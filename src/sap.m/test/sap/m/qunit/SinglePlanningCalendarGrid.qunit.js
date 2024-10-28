@@ -555,6 +555,37 @@ sap.ui.define([
 		await nextUIUpdate(this.clock);
 	});
 
+	QUnit.test("Grid cells accessibility description", function (assert) {
+		// Prepare
+		var oCalendarStartDate = UI5Date.getInstance(2018, 11, 24),
+			oAppointment = new CalendarAppointment({
+				title: "Appointment",
+				startDate: UI5Date.getInstance(2018, 11, 24, 15, 30, 0),
+				endDate: UI5Date.getInstance(2018, 11, 24, 16, 30, 0)
+			}),
+			oBlokcer = new CalendarAppointment({
+				title: "Blocker",
+				startDate: UI5Date.getInstance(2018, 11, 24),
+				endDate: UI5Date.getInstance(2018, 11, 27)
+			}),
+			oGrid = new SinglePlanningCalendarGrid({
+				startDate: oCalendarStartDate,
+				appointments: [oAppointment, oBlokcer]
+			});
+
+		// Assert
+		assert.ok(
+			oGrid._doesContainAppointments(UI5Date.getInstance(2018, 11, 24, 15, 0, 0), UI5Date.getInstance(2018, 11, 24, 16, 0, 0)),
+			"Cells description properly set"
+		);
+		assert.notOk(
+			oGrid._doesContainAppointments(UI5Date.getInstance(2018, 11, 24, 14, 0, 0), UI5Date.getInstance(2018, 11, 24, 15, 0, 0)),
+			"Cells description not set"
+		);
+		assert.ok(oGrid._doesContainBlockers(CalendarDate.fromLocalJSDate(UI5Date.getInstance(2018, 11, 25, 0, 0, 0))), "Cells description properly set");
+		assert.notOk(oGrid._doesContainBlockers(CalendarDate.fromLocalJSDate(UI5Date.getInstance(2018, 11, 28, 0, 0, 0))), "Cells description not set");
+	});
+
 	QUnit.module("Events");
 
 	QUnit.test("appointmentSelect: select a single appointment", function (assert) {
