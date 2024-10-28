@@ -75050,6 +75050,83 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
+	// Scenario: A table has a list of created persisted (previously inactive) items which
+	// completely fills the given viewport. When doing a side-effects refresh, the list is directly
+	// available due to the created items which are kept on client side, but additionally the
+	// refresh request is sent. The table need not wait for the response, therefore no
+	// dataRequested/dataReceived events are fired.
+	// SNOW: DINC0278304
+	QUnit.test("DINC0278304", async function (assert) {
+		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" growing="true" growingThreshold="2" items="{/SalesOrderList}">
+	<Text id="note" text="{Note}"/>
+</Table>`;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=2", {
+				value : []
+			})
+			.expectChange("note", []);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oListBinding = oTable.getBinding("items");
+
+		this.expectChange("note", ["", ""]);
+
+		const oSalesOrder1 = oListBinding.create({}, true, false, /*bInactive*/true);
+		const oSalesOrder2 = oListBinding.create({}, true, false, /*bInactive*/true);
+
+		await this.waitForChanges(assert, "create inactive items");
+
+		this.expectChange("note", ["bar", "foo"])
+			.expectRequest({
+				method : "POST",
+				url : "SalesOrderList",
+				payload : {Note : "foo"}
+			}, {
+				Note : "foo",
+				SalesOrderID : "1"
+			})
+			.expectRequest({
+				method : "POST",
+				url : "SalesOrderList",
+				payload : {Note : "bar"}
+			}, {
+				Note : "bar",
+				SalesOrderID : "2"
+			});
+
+		oSalesOrder1.setProperty("Note", "foo");
+		oSalesOrder2.setProperty("Note", "bar");
+
+		await this.waitForChanges(assert, "persist items");
+
+		oListBinding.attachDataRequested(() => { throw new Error("unexpected dataRequested"); });
+		oListBinding.attachDataReceived(() => { throw new Error("unexpected dataReceived"); });
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+				+ "&$filter=SalesOrderID eq '1' or SalesOrderID eq '2'&$top=2", {
+				value : [
+					{Note : "foo - side effect", SalesOrderID : "1"},
+					{Note : "bar - side effect", SalesOrderID : "2"}
+				]
+			})
+			.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+				+ "&$filter=not (SalesOrderID eq '1' or SalesOrderID eq '2')&$skip=0&$top=2", {
+				value : []
+			})
+			.expectChange("note", ["bar - side effect", "foo - side effect"]);
+
+		await Promise.all([
+			// code under test
+			oListBinding.getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "side-effects refresh")
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: With binding parameter $$separate the main list request omits the specified
 	// navigation properties. Instead, each of them is loaded in a separate $batch request using the
 	// same $skip und $top as the main list request. The separate requests are independent. The
