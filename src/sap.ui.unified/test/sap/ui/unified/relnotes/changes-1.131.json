@@ -1,0 +1,12 @@
+{
+  "1.131.0": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "885239806d61a08de6b21b4d214b15fec46e4c95",
+        "type": "FIX",
+        "text": " sap.m.FileUploader: improve DemoKit samples"
+      }
+    ]
+  }
+}

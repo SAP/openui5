@@ -3,6 +3,51 @@
     "date": "October 2024",
     "notes": [
       {
+        "id": "cec4d21337c79f7d470755298b456e1f5448fe9c",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Improve Accessibility Test Page"
+      },
+      {
+        "id": "8ba97e1e36a3e4b984e9388f730e5ebceb12e543",
+        "type": "FEATURE",
+        "text": "sap.m.ComboBox: Improve arrow up and down behavior"
+      },
+      {
+        "id": "08fcd9bd050b8cefafb015956ed90e70a1137b6a",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: Update ACC test page"
+      },
+      {
+        "id": "37a3f7521a95f81fca3444f3c8b86bf661b800dc",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Fix failing test"
+      },
+      {
+        "id": "f8d4267e40f2a1b47cfec705a7ebbab4f240541c",
+        "type": "FIX",
+        "text": " sap.m.Menu: menu items properties are handled correctly"
+      },
+      {
+        "id": "e022d5bb90c078e5b16b070263545b7235907504",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: fixed week days position in 320px"
+      },
+      {
+        "id": "889987b58b1cf4868a4be8b054974c17c16ebe76",
+        "type": "FEATURE",
+        "text": " sap.m.IconTabBar: Transparent IconTabFilters inline mode"
+      },
+      {
+        "id": "609709880a470fb37e9318a6d8c5ce2fbc094bb0",
+        "type": "FIX",
+        "text": " VariantManagement clear deleted and renamed items before creating dialog"
+      },
+      {
+        "id": "33619c3b15f7daa41102392692e15a2a033f6887",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Prevent infinite resize"
+      },
+      {
         "id": "c9a4dd7e3266cc23569daaba8fb79d61f2639a82",
         "type": "FIX",
         "text": " Demo Kit: Fix broken link in \"Bulletin Board\" Demo App"

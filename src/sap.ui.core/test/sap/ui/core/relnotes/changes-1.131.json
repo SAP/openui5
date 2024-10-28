@@ -3,6 +3,16 @@
     "date": "October 2024",
     "notes": [
       {
+        "id": "9bcae72d1910b918b131bcfa9b485f403c44c2f4",
+        "type": "FIX",
+        "text": " sap/ui/model/analytics/AnalyticalBinding#updateAnalyticalInfo: keep attribute properties in additional select"
+      },
+      {
+        "id": "9fdc02ea3c9a52a83c6edbc872f9fbb091b1b4db",
+        "type": "FIX",
+        "text": " sap/ui/core/message/MessageMixin: fix additionalText calculation"
+      },
+      {
         "id": "5f1bbaeb67bc934466a480a0d54bf98ec09e4f7a",
         "type": "FIX",
         "text": " LocalBusyIndicator: Set correct border radius in Horizon theme"

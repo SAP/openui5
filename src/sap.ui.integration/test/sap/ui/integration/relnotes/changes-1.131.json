@@ -3,6 +3,16 @@
     "date": "October 2024",
     "notes": [
       {
+        "id": "e207a1344cd90603249653a380a8c6d8104eacd7",
+        "type": "FEATURE",
+        "text": "sap.ui.integration.widgets.Card: Action on card level"
+      },
+      {
+        "id": "e371b22059410f3674f51f4a4c5b14fe93670f30",
+        "type": "FIX",
+        "text": " Integration Cards: Corrected link for manifest parameters"
+      },
+      {
         "id": "172cb794900301ebd0414b14b99856a40158a632",
         "type": "FIX",
         "text": " Integration Cards: Avoid horizontally overflowing content in ShowCard action dialog"
