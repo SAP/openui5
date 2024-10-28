@@ -229,5 +229,45 @@
         "text": " CellSelector: Return correct row contexts when grouping"
       }
     ]
+  },
+  "1.127.3": {
+    "date": "October 2024",
+    "notes": [
+      {
+        "id": "53dee37981c5875be6b59d877f4c4ca18f5aa80a",
+        "type": "FIX",
+        "text": " We've now removed the no data description for cases where uploadEnabled is set to false"
+      },
+      {
+        "id": "6bb4bc220fa63760b03e65c36f5a9a9813619b41",
+        "type": "FIX",
+        "text": " We've now fixed the minimum height issue for the no data page in uploadSet control"
+      },
+      {
+        "id": "ea5b63a6d1a35588ee8ee7f58b13479b977be34d",
+        "type": "FIX",
+        "text": " sap.m.Popover: Height calculations for scrollable contents are preserved after invalidation"
+      },
+      {
+        "id": "19a6bb9f1dbac005cd473080cf368045e8b04b80",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: sync customData between outer and internal controls"
+      },
+      {
+        "id": "9864cab9a984cc5676711b5e8bee546479ce0215",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: fix cursor position when there is mask and no entry"
+      },
+      {
+        "id": "cc9a13f52a0d2a3b5b30fab544d020fe0eded349",
+        "type": "FIX",
+        "text": " We've now fixed the issue of truncating characters in the GenericTile header section by removing the usage of sap.m.Text deprecated method"
+      },
+      {
+        "id": "8ed79cf60a2ccc9576cf44e383dd7da021a672de",
+        "type": "FIX",
+        "text": " sap.m.Input: Exact match with no autocomplete behavior corrected"
+      }
+    ]
   }
 }
