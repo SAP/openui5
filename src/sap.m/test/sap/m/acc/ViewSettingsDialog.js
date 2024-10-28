@@ -110,16 +110,6 @@ sap.ui.define([
 							})
 						]
 					})
-				],
-				customTabs: [
-					new ViewSettingsCustomTab({
-						tooltip: "Custom tab",
-						content: [
-							new Button({
-								text: "Something random"
-							})
-						]
-					})
 				]
 
 			});
