@@ -56,8 +56,14 @@ sap.ui.define([
 		"					sap:label=\"Currency\" />\n" +
 		"				<Property Name=\"CostElementText\" Type=\"Edm.String\"\n" +
 		"					MaxLength=\"40\" sap:label=\"Cost Element\" sap:attribute-for=\"CostElement\" />\n" +
+						// property which is an attribute of a dimension SNOW: CS20240008302461
+		"				<Property Name=\"CostElementAttribute\" Type=\"Edm.String\"\n" +
+		"					MaxLength=\"40\" sap:label=\"Cost Element Attribute\" sap:attribute-for=\"CostElement\" />\n" +
 		"				<Property Name=\"CostCenterText\" Type=\"Edm.String\"\n" +
 		"					MaxLength=\"40\" sap:label=\"Cost Center\" sap:attribute-for=\"CostCenter\" />\n" +
+						// property which is an attribute of a dimension SNOW: CS20240008302461
+		"				<Property Name=\"CostCenterAttribute\" Type=\"Edm.String\"\n" +
+		"					MaxLength=\"40\" sap:label=\"Cost Center Attribute\" sap:attribute-for=\"CostCenter\" />\n" +
 		"				<Property Name=\"ControllingAreaText\" Type=\"Edm.String\"\n" +
 		"					MaxLength=\"40\" sap:label=\"Controlling Area\" sap:attribute-for=\"ControllingArea\" />\n" +
 		"				<Property Name=\"ActualCosts\" Type=\"Edm.Decimal\" Precision=\"34\"\n" +
