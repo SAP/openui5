@@ -1907,17 +1907,21 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getContexts: dataRequested/dataReceived", function () {
+	// sometimes all visible data is already available, but still a prefetch request is sent
+	// (SNOW: DINC0278304)
+[false, true].forEach(function (bAvailable, i) {
+	QUnit.test("getContexts: dataRequested/dataReceived #" + i, function () {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
 			oFetchContextsCall,
-			oFetchContextsPromise = SyncPromise.resolve(Promise.resolve()).then(function () {
-				// expect this when fetchContexts is finished
-				oBindingMock.expects("fireDataReceived")
-					.withExactArgs({data : {}}, "~bPreventBubbling~");
+			oFetchContextsPromise = SyncPromise.resolve(bAvailable ? undefined : Promise.resolve())
+				.then(function () {
+					// expect this when fetchContexts is finished
+					oBindingMock.expects("fireDataReceived").exactly(bAvailable ? 0 : 1)
+						.withExactArgs({data : {}}, "~bPreventBubbling~");
 
-				return false;
-			});
+					return false;
+				});
 
 		oFetchContextsCall = oBindingMock.expects("fetchContexts")
 			.withExactArgs(0, 10, 100, undefined, false, sinon.match.func)
@@ -1930,13 +1934,15 @@ sap.ui.define([
 		// code under test
 		oBinding.getContexts(0, 10, 100);
 
-		oBindingMock.expects("fireDataRequested").withExactArgs("~bPreventBubbling~");
+		oBindingMock.expects("fireDataRequested").exactly(bAvailable ? 0 : 1)
+			.withExactArgs("~bPreventBubbling~");
 
 		// code under test
 		oFetchContextsCall.args[0][5]();
 
 		return oFetchContextsPromise;
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("getContexts: default values", function () {
