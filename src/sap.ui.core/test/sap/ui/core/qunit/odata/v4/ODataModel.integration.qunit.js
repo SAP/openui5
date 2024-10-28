@@ -9187,6 +9187,10 @@ sap.ui.define([
 		const oDeletePromise1 = aContexts[1].delete("$single");
 
 		await this.waitForChanges(assert, "2");
+		// Note: this MUST not be called before #waitForChanges, probably due to timeout throttling
+		// https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout
+		// #reasons_for_delays_longer_than_specified
+		await resolveLater();
 
 		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('1')"));
 		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('2')"));
@@ -9199,6 +9203,7 @@ sap.ui.define([
 		const oDeletePromise2 = aContexts[2].delete("$single");
 
 		await this.waitForChanges(assert, "3");
+		await resolveLater();
 
 		assert.ok(aContexts[0].isDeleted());
 		assert.ok(aContexts[1].isDeleted());
@@ -9276,6 +9281,7 @@ sap.ui.define([
 		const oDeletePromise4 = aContexts[3].delete("$single");
 
 		await this.waitForChanges(assert, "5");
+		await resolveLater();
 
 		assert.ok(oModel.hasPendingChanges());
 		assert.ok(aContexts[3].isDeleted());
@@ -59644,8 +59650,9 @@ make root = ${bMakeRoot}`;
 		var oModel = this.createTeaBusiModel({groupId : "$direct"}),
 			that = this;
 
-		return this.createView(assert, "", oModel).then(function () {
+		return this.createView(assert, "", oModel).then(async function () {
 			var oContextBinding = oModel.bindContext("Manager_to_Team"),
+				oNewParentBinding,
 				fnRespond;
 
 			oContextBinding.setContext(
@@ -59662,8 +59669,12 @@ make root = ${bMakeRoot}`;
 							}
 						});
 					})
-				)
-				.expectMessages([{
+				);
+
+			const oPromise = oContextBinding.getBoundContext().setProperty("Name", "Darth Vader");
+			await that.waitForChanges(assert);
+
+			that.expectMessages([{
 					message : sinon.match.string, // browser-specific TypeError, see below
 					persistent : true,
 					technical : true,
@@ -59672,22 +59683,20 @@ make root = ${bMakeRoot}`;
 			that.oLogMock.expects("error")
 				.withArgs("Failed to update path /MANAGERS('1')/Manager_to_Team/Name");
 
-			return Promise.all([
-				oContextBinding.getBoundContext().setProperty("Name", "Darth Vader")
-					.then(mustFail(assert), function () {
-						// TypeError: Cannot read property 'resolve' of undefined
-						// --> setProperty fails somehow because the old bound context has already
-						// been destroyed; this is OK and better than changing the wrong data or so
-						assert.ok(true);
-					}),
-				resolveLater(function () {
-					oContextBinding.setContext(
-						oModel.bindContext("/MANAGERS('2')", null, {$expand : "Manager_to_Team"})
-							.getBoundContext());
-					fnRespond();
-				}, 10),
-				that.waitForChanges(assert)
-			]);
+			oNewParentBinding
+				= oModel.bindContext("/MANAGERS('2')", null, {$expand : "Manager_to_Team"});
+			oContextBinding.setContext(oNewParentBinding.getBoundContext());
+			fnRespond();
+
+			return oPromise.then(mustFail(assert), function () {
+				// TypeError: Cannot read property 'resolve' of undefined
+				// --> setProperty fails somehow because the old bound context has already
+				// been destroyed; this is OK and better than changing the wrong data or so
+				assert.ok(true);
+
+				// this ODCB is not needed anymore, destroy now to remove its read group lock early
+				oNewParentBinding.destroy();
+			});
 		});
 	});
 
