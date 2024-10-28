@@ -32,13 +32,15 @@ sap.ui.define([
 			return Util.waitForTable.call(this, {
 				success: function(oTable) {
 					var bAllSelected = true;
-					var aRows;
+					let aRows;
+					const aColumns = oTable.getColumns().filter((oColumn) => oColumn.getVisible());
 					if (oTable.isA("sap.ui.table.Table")) {
 						aRows = oTable.getRows();
 					} else {
 						aRows = oTable.getItems();
 					}
 
+					// Iterate over every cell and check their selection state
 					for (var iRow = 0; iRow < aRows.length; iRow++) {
 						var oRow = aRows[iRow];
 						var iRowIndex;
@@ -50,10 +52,18 @@ sap.ui.define([
 						var aCells = oRow.getCells();
 
 						for (var iCol = 0; iCol < aCells.length; iCol++) {
-							var bCellState = Util.getCellSelectionState(Util.getCellRef(oTable, aCells[iCol]));
+							let bCellState = false;
+							const oColumn = oTable.getColumns()[iCol];
+							if (!oColumn.getVisible()) {
+								continue;
+							}
+
+							const oCell = Util.getCell(oTable, iRowIndex, iCol);
+							bCellState = Util.getCellSelectionState(oCell);
 							if (!mFrom || !mTo
 								|| (iRowIndex < mFrom.rowIndex || iRowIndex > mTo.rowIndex
-								|| iCol < mFrom.colIndex || iCol > mTo.colIndex)) {
+								|| aColumns.indexOf(oColumn) < mFrom.colIndex || aColumns.indexOf(oColumn) > mTo.colIndex)) {
+								// If cell is out of range or in hidden column and not selected, it is not a problem
 								bCellState = !bCellState;
 							}
 
