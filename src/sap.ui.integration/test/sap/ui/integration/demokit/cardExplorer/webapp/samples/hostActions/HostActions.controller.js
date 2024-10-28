@@ -1,8 +1,8 @@
 sap.ui.define([
-		'sap/ui/core/mvc/Controller',
-		'sap/m/MessageToast',
-		'sap/ui/integration/Host'
-	], function(Controller, MessageToast, Host) {
+	'sap/ui/core/mvc/Controller',
+	'sap/m/MessageToast',
+	'sap/ui/integration/Host'
+], function (Controller, MessageToast, Host) {
 	"use strict";
 
 	var aMobileCards = [];
@@ -12,8 +12,7 @@ sap.ui.define([
 		onInit: function () {
 
 			var oHost = new Host({
-				actions: [
-					{
+				actions: [{
 						type: 'Navigation',
 						text: 'Open SAP website',
 						icon: 'sap-icon://globe',
@@ -57,6 +56,28 @@ sap.ui.define([
 								MessageToast.show("Card successfully removed from Mobile.");
 							}
 						}
+					},
+					{
+						type: 'Custom',
+						text: 'Approve Schedule',
+						icon: 'sap-icon://appointment-2',
+						actions: [{
+								type: 'Custom',
+								text: 'Approve',
+								icon: 'sap-icon://accept',
+								action: function () {
+									MessageToast.show("Approved.");
+								}
+							},
+							{
+								type: 'Custom',
+								text: 'Decline',
+								icon: 'sap-icon://decline',
+								action: function () {
+									MessageToast.show("Declined.");
+								}
+							}
+						]
 					}
 				]
 			});
