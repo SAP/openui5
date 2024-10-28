@@ -3628,7 +3628,6 @@ sap.ui.define([
 	/**
 	 * @enum {string}
 	 * @public
-	 * @experimental since version 1.26 !!! THIS TYPE IS ONLY FOR INTERNAL USE !!!
 	 */
 	thisLib.P13nConditionOperation = {
 		// filter operations
