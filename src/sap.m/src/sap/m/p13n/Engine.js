@@ -362,7 +362,6 @@ sap.ui.define([
 	 * registered controller key and an object matching the inner subcontroller logic.
 	 *
 	 * @public
-	 * @experimental Since 1.104. Please note that the API of this control is not yet finalized!
 	 *
 	 * @example {
 	 *		RegisteredSortControllerKey: [{
@@ -464,7 +463,6 @@ sap.ui.define([
 	 *  state object of the control.
 	 *
 	 * @public
-	 * @experimental Since 1.104. Please note that the API of this control is not yet finalized!
 	 * @param {sap.ui.core.Control} oControl The control instance implementing IxState to retrieve the externalized state
 	 *
 	 * @returns {Promise<sap.m.p13n.State>} A Promise resolving in the current control state

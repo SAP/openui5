@@ -152,7 +152,6 @@ sap.ui.define([
 
 				/**
 				 * Event raised if a filter item has been changed. reason can be added, updated or removed.
-				 * @experimental Since version 1.56
 				 */
 				filterItemChanged: {
 					parameters: {

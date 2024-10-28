@@ -16,7 +16,6 @@ sap.ui.define([
 	 *
 	 * @author SAP SE
 	 * @private
-	 * @experimental Since 1.104.
 	 * @alias sap.m.p13n.modification.LocalStorageModificationHandler
 	 */
 	const LocalStorageModificationHandler = Modificationhandler.extend("sap.m.p13n.modification.LocalStorageModificationHandler");

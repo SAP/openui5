@@ -14,7 +14,6 @@ sap.ui.define([
 	 *
 	 * @author SAP SE
 	 * @private
-	 * @experimental Since 1.104.
 	 * @alias sap.m.p13n.modification.ModificationHandler
 	 */
 	const ModificationHandler = BaseObject.extend("sap.m.p13n.modification.ModificationHandler");
