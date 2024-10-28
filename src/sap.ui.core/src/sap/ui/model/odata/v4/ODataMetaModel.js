@@ -660,14 +660,14 @@ sap.ui.define([
 	 * Merges the given schema's annotations into the root scope's $Annotations.
 	 *
 	 * @param {object} oSchema
-	 *   a schema; schema children are ignored because they do not contain $Annotations
+	 *   A schema; schema children are ignored because they do not contain $Annotations
 	 * @param {object} mAnnotations
-	 *   the root scope's $Annotations
+	 *   The root scope's $Annotations
 	 * @param {boolean} [bPrivileged]
-	 *   whether the schema has been loaded from a privileged source and thus may overwrite
+	 *   Whether the schema has been loaded from a privileged source and thus may overwrite
 	 *   existing annotations
 	 * @returns {boolean}
-	 *   whether at least one annotation has been merged
+	 *   Whether at least one annotation has been merged
 	 *
 	 * @private
 	 */
@@ -692,9 +692,7 @@ sap.ui.define([
 		}
 
 		for (const sTarget in oSchema.$Annotations) {
-			if (!(sTarget in mAnnotations)) {
-				mAnnotations[sTarget] = {};
-			}
+			mAnnotations[sTarget] ??= {};
 			extend(mAnnotations[sTarget], oSchema.$Annotations[sTarget]);
 		}
 		delete oSchema.$Annotations;
