@@ -3,6 +3,16 @@
     "date": "October 2024",
     "notes": [
       {
+        "id": "65fba719b50aa273980fa0e31c0adba20d6c7184",
+        "type": "FIX",
+        "text": " core/Element: use duck typing to check DOM element in 'closestTo'"
+      },
+      {
+        "id": "389127a87a8f5a6881b84681f87cb4776eed23c5",
+        "type": "FIX",
+        "text": " sap/ui/core/cldr/*.json: fix translations for sap-calendarWeek.narrow and .wide"
+      },
+      {
         "id": "5de10b6bdb76c82ae20e7c5f8785b106b80fc399",
         "type": "FIX",
         "text": " sap.ui.core.format.NumberFormat#format: CLDR data for currencies is considered correctly without currency customizing"

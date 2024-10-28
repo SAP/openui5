@@ -3,6 +3,11 @@
     "date": "October 2024",
     "notes": [
       {
+        "id": "31b42da6a5b5a7b27a8807288589f64b375588b0",
+        "type": "FIX",
+        "text": " Integration Cards: Avoid horizontally overflowing content in ShowCard action dialog"
+      },
+      {
         "id": "1deeb030cc9d3ea35041d41418dd4ea63132474d",
         "type": "FEATURE",
         "text": " sap.f.CalendarInCard: Now allows 12 hour format of appointment time"

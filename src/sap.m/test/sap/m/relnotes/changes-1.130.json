@@ -3,6 +3,16 @@
     "date": "October 2024",
     "notes": [
       {
+        "id": "45d411c6b3c6eaddba45ed8030bd4297216f7f5d",
+        "type": "FIX",
+        "text": " sap.m.Menu: menu items properties are handled correctly"
+      },
+      {
+        "id": "447d354f948fbbf613b5c69c8428881fa5e2bd16",
+        "type": "FIX",
+        "text": " sap.m.Input: Correct value restoration after backspace"
+      },
+      {
         "id": "1deeb030cc9d3ea35041d41418dd4ea63132474d",
         "type": "FEATURE",
         "text": " sap.f.CalendarInCard: Now allows 12 hour format of appointment time"

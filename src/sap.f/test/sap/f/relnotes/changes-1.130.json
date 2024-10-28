@@ -3,6 +3,11 @@
     "date": "October 2024",
     "notes": [
       {
+        "id": "e36c5f651bac41e85feba36d658b014e229a20c4",
+        "type": "FIX",
+        "text": " Integration Cards: Adjust Badge creation"
+      },
+      {
         "id": "b537e42f6e722a22cc139e956783044b113caa1c",
         "type": "FIX",
         "text": " sap.f.DynamicPageTitle: Fix focus lost on actions"
