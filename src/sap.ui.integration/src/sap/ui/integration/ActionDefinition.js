@@ -61,6 +61,7 @@ sap.ui.define([
 
 				/**
 				 * The type of the action button.
+				 * @deprecated Since 1.130 All <code>ActionDefinitions</code> are now rendered as menu items and don't have <code>buttonType</code>.
 				 */
 				buttonType: {
 					type: "sap.m.ButtonType", defaultValue: ButtonType.Transparent
@@ -86,6 +87,14 @@ sap.ui.define([
 				 */
 				parameters: {
 					type: "object"
+				},
+
+				/**
+				 * Defines whether a visual separator should be rendered before the item.
+				 * <b>Note</b>: If an item is invisible its separator is also not displayed.
+				 */
+				startsSection: {
+					type: "boolean", defaultValue: false
 				}
 			},
 			events: {
@@ -100,10 +109,20 @@ sap.ui.define([
 				/**
 				 * The button in the actions menu, which is related to this action.
 				 */
-				_menuButton: {
-					type: "sap.m.Button",
+				_menuItem: {
+					type: "sap.m.MenuItem",
 					multiple: false,
 					visibility: "hidden"
+				}
+			},
+			aggregations: {
+				/**
+				 * Action Definitions which will appear as nested items in the menu.
+				 * <b>Note</b>: The parent action definition will not fire a press anymore, it will only be used to hold the subitem.
+				 */
+				actionDefinitions: {
+					type: "sap.ui.integration.ActionDefinition",
+					multiple: true
 				}
 			}
 		}

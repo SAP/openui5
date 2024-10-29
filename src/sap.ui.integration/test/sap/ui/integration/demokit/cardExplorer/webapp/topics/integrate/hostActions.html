@@ -27,12 +27,12 @@
 				Examples may include, but are not limited to options like: share a card, remove a card.
 				<br>
 				<br>
-				When there are host actions defined, an additional toolbar is displayed in the card:
+				When there are host actions defined, an additional toolbar is displayed in the card, which opens a menu:
 				<br>
 				<img src="../images/hostActions.png" alt>
 				<br>
-				Each host action is represented as a button in the toolbar.
-				The button options can be specified.
+				Each host action is represented as a menu item in the toolbar.
+				The menu item options can be specified.
 				The host action may be managed as enabled or visible depending on the card.
 			</p>
 
@@ -76,7 +76,9 @@
 						<td>buttonType</td>
 						<td>string</td>
 						<td>No</td>
-						<td>The type of the action button.</td>
+						<td>The type of the action button.<br>
+						<b>Note:</b> Deprecated since 1.130 All <code>ActionDefinitions</code> are now rendered as menu items and don't have <code>buttonType</code>.<br>
+						</td>
 					</tr>
 					<tr>
 						<td>enabled</td>
@@ -96,6 +98,12 @@
 						<td>No</td>
 						<td>The action function.</td>
 					</tr>
+					<tr></tr>
+						<td>startsSection</td>
+						<td>Object</td>
+						<td>No</td>
+						<td>Defines whether a visual separator should be rendered before the item. Default value is false.</td>
+					
 					<tr>
 						<td>parameters</td>
 						<td>Object</td>

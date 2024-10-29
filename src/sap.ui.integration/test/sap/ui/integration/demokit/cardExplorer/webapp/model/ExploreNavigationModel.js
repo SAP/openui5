@@ -2831,28 +2831,64 @@ sap.ui.define([
 						key: 'htmlConsumption',
 						target: 'exploreSamples',
 						title: 'Consumption in HTML',
-						useIFrame: true,
-						isApplication: true,
-						files: [
+						subSamples: [
 							{
-								url: '/samples/htmlConsumption/indexTemplate.html',
-								name: 'index.html',
-								key: 'index.html'
+								key: 'simpleExmpl',
+								title: 'Consumption in HTML',
+								isApplication: true,
+								useIFrame: true,
+								files: [
+									{
+										url: '/samples/htmlConsumption/simpleExmpl/indexTemplate.html',
+										name: 'index.html',
+										key: 'index.html'
+									},
+									{
+										url: '/samples/htmlConsumption/simpleExmpl/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/htmlConsumption/simpleExmpl/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n/i18n.properties'
+									},
+									{
+										url: '/samples/htmlConsumption/simpleExmpl/items.json',
+										name: 'items.json',
+										key: 'items.json'
+									}
+								]
 							},
 							{
-								url: '/samples/htmlConsumption/manifest.json',
-								name: 'manifest.json',
-								key: 'manifest.json'
-							},
-							{
-								url: '/samples/htmlConsumption/i18n/i18n.properties',
-								name: 'i18n/i18n.properties',
-								key: 'i18n/i18n.properties'
-							},
-							{
-								url: '/samples/htmlConsumption/items.json',
-								name: 'items.json',
-								key: 'items.json'
+								key: 'customList',
+								title: 'Custom List',
+								isApplication: true,
+								useIFrame: true,
+								experimental: true,
+								files: [
+									{
+										url: '/samples/htmlConsumption/customList/indexTemplate.html',
+										name: 'index.html',
+										key: 'index.html'
+									},
+									{
+										url: '/samples/htmlConsumption/customList/card2.json',
+										name: 'card2.json',
+										key: 'card2.json'
+									},
+									{
+										url: '/samples/htmlConsumption/customList/card3.json',
+										name: 'card3.json',
+										key: 'card3.json'
+									}
+									,
+									{
+										url: '/samples/htmlConsumption/customList/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
 							}
 						]
 					},

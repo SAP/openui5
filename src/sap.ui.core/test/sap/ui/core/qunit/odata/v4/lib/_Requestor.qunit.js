@@ -961,7 +961,7 @@ sap.ui.define([
 				sinon.match.same(oRetryAfterError));
 		oJQueryMock.expects("ajax").withArgs("/Service/First").callsFake(() => {
 			const jqXHR = new jQuery.Deferred();
-			setTimeout(() => {
+			setTimeout(async () => {
 				assert.strictEqual(oRequestor.oRetryAfterPromise, null);
 
 				o503jqXHRMock.expects("getResponseHeader")
@@ -984,22 +984,26 @@ sap.ui.define([
 				// (1a)
 				jqXHR.reject(o503jqXHR);
 
+				try {
+					await jqXHR;
+				} catch (ex) {
+					// continue regardless of error
+				}
+
+				assert.strictEqual(oRequestor.oRetryAfterPromise, oRetryAfterPromise);
 				// register follow up request for oRetryAfterPromise and NOT oSecurityTokenPromise
 				oRequestor.oSecurityTokenPromise = {};
 
 				// code under test (2)
 				oSendPromise3 = oRequestor.sendRequest("POST", "Third");
-
-				assert.strictEqual(oRequestor.oRetryAfterPromise, oRetryAfterPromise);
 			}, 0);
+
 			return jqXHR;
 		});
 
 		oJQueryMock.expects("ajax").withArgs("/Service/Second").callsFake(() => {
 			const jqXHR = new jQuery.Deferred();
-			setTimeout(() => {
-				assert.strictEqual(oRequestor.oRetryAfterPromise, oRetryAfterPromise);
-
+			setTimeout(async () => {
 				o503jqXHRMock.expects("getResponseHeader")
 					.withExactArgs("SAP-ContextId")
 					.returns("n/a");
@@ -1012,6 +1016,14 @@ sap.ui.define([
 
 				// (1b)
 				jqXHR.reject(o503jqXHR);
+
+				try {
+					await jqXHR;
+				} catch (ex) {
+					// continue regardless of error
+				}
+
+				assert.strictEqual(oRequestor.oRetryAfterPromise, oRetryAfterPromise);
 
 				if (bResolve) {
 					oJQueryMock.expects("ajax")
@@ -1107,7 +1119,7 @@ sap.ui.define([
 		});
 
 		// code under test
-		oRequestor.sendRequest("GET", "Foo").then(function () {
+		return oRequestor.sendRequest("GET", "Foo").then(function () {
 			assert.ok(false);
 		}, (oError) => {
 			assert.strictEqual(oError, "~oError~");
@@ -4909,7 +4921,7 @@ sap.ui.define([
 			sResourcePath = "Employees('1')/namespace.Prepare",
 			that = this;
 
-		oClock = sinon.useFakeTimers();
+		oClock = sinon.useFakeTimers({shouldAdvanceTime : true});
 		return new Promise(function (resolve) {
 			oJQueryMock.expects("ajax")
 				.withExactArgs(sServiceUrl + sResourcePath, {

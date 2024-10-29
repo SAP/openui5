@@ -249,7 +249,8 @@ sap.ui.define([
 		ContentItem: "ContentItem",
 		ActionsStrip: "ActionsStrip",
 		ContentItemDetail: "ContentItemDetail",
-		Header: "Header"
+		Header: "Header",
+		Card: "Card"
 	};
 
 	/**
@@ -419,12 +420,14 @@ sap.ui.define([
 	 * @property {boolean|function} visible If the action is visible. Default value is <code>true</code>.
 	 * @property {function} action The action function.
 	 * @property {object} parameters The parameters of the action.
+	 * @property {boolean} startsSection If visual separator should be rendered before the item.
+	 * @property {array} actions The nested actions.
 	 */
 	thisLib.CardMenuAction = DataType.createType("sap.ui.integration.CardMenuAction", {
 		isValid: function (oValue) {
 			var aPossibleKeys = [
-				"type", "text", "icon", "tooltip", "buttonType", "enabled", "visible", "action", "parameters",
-				"target", "url" // do not document these as they should not be used
+				"type", "text", "icon", "tooltip", "buttonType", "enabled", "visible", "action", "parameters", "startsSection", "actions",
+				"target", "url"
 			];
 			return Object.keys(oValue).every(function (sKey) {
 				return aPossibleKeys.indexOf(sKey) !== -1;

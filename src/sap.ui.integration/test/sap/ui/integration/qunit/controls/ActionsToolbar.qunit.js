@@ -94,7 +94,7 @@ sap.ui.define([
 
 			// Assert
 			assert.ok(oHeader.getToolbar().getVisible(), "There is actions toolbar");
-			assert.strictEqual(oHeader.getToolbar().getAggregation("_actionSheet").getButtons().length, 1, "There is 1 item");
+			assert.strictEqual(oHeader.getToolbar().getAggregation("_actionsMenu").getItems().length, 1, "There is 1 item");
 
 			done();
 		}.bind(this), 1000);
@@ -123,7 +123,7 @@ sap.ui.define([
 
 			// Assert
 			assert.notOk(oHeader.getToolbar().getVisible(), "Actions toolbar is hidden");
-			assert.strictEqual(oHeader.getToolbar().getAggregation("_actionSheet").getButtons().length, 0, "There are no items");
+			assert.strictEqual(oHeader.getToolbar().getAggregation("_actionsMenu").getItems().length, 0, "There are no items");
 
 			done();
 		}.bind(this), 1000);
@@ -152,7 +152,7 @@ sap.ui.define([
 
 			// Assert
 			assert.notOk(oToolbar.getVisible(), "Actions toolbar is hidden");
-			assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons().length, 0, "There are no items");
+			assert.strictEqual(oToolbar.getAggregation("_actionsMenu").getItems().length, 0, "There are no items");
 			done();
 		}.bind(this), 1000);
 	});
@@ -175,14 +175,14 @@ sap.ui.define([
 
 		var oToolbar = this.oCard.getCardHeader().getToolbar();
 
-		oToolbar.getAggregation("_actionSheet").attachAfterOpen(function () {
+		setTimeout(function () {
 			// Act 3
-			oToolbar.getAggregation("_actionSheet").getButtons()[0].$().trigger("tap");
+			oToolbar.getAggregation("_actionsMenu")._getVisualParent().getItems()[0].$().trigger("click");
 
 			// Assert
 			assert.ok(oStub.calledOnce, "Press event is fired");
 			done();
-		});
+		}, 100);
 
 		// Act 2
 		oToolbar._getToolbar().$().trigger("tap");
@@ -216,7 +216,7 @@ sap.ui.define([
 		}.bind(this), 1000);
 	});
 
-	QUnit.test("removeActionDefinition removes button from the action sheet", async function (assert) {
+	QUnit.test("removeActionDefinition removes menuItem from the action menu", async function (assert) {
 		// Arrange
 		var oAI = new ActionDefinition({
 				type: "Navigation",
@@ -240,7 +240,7 @@ sap.ui.define([
 
 		await nextCardReadyEvent(this.oCard);
 
-		var oActionSheet = this.oCard.getCardHeader().getToolbar().getAggregation("_actionSheet");
+		var oActionMenu = this.oCard.getCardHeader().getToolbar().getAggregation("_actionsMenu");
 
 		// Act
 		this.oCard.removeActionDefinition(oAI); // by reference
@@ -248,7 +248,7 @@ sap.ui.define([
 		this.oCard.removeActionDefinition("cardAction"); // by id
 
 		// Assert
-		assert.strictEqual(oActionSheet.getButtons().length, 0, "Buttons are also removed from the toolbar");
+		assert.strictEqual(oActionMenu.getItems().length, 0, "MenuItems are also removed from the toolbar");
 	});
 
 	QUnit.test("actions aggregation is destroyed when manifest changes", async function (assert) {
@@ -286,10 +286,10 @@ sap.ui.define([
 
 		await nextUIUpdate();
 
-		var aButtons = this.oCard.getCardHeader().getToolbar().getAggregation("_actionSheet").getButtons();
+		var aMenuItems = this.oCard.getCardHeader().getToolbar().getAggregation("_actionsMenu").getItems();
 
 		// Assert
-		assert.notOk(aButtons[0].getEnabled(), "Button in the menu is disabled");
+		assert.notOk(aMenuItems[0].getEnabled(), "MenuItem in the menu is disabled");
 	});
 
 	QUnit.test("Actions toolbar item enabled=false set after rendering", async function (assert) {
@@ -310,10 +310,10 @@ sap.ui.define([
 			// Act
 			oAI.setEnabled(false);
 			await nextUIUpdate();
-			var aButtons = this.oCard.getCardHeader().getToolbar().getAggregation("_actionSheet").getButtons();
+			var aMenuItems = this.oCard.getCardHeader().getToolbar().getAggregation("_actionsMenu").getItems();
 
 			// Assert
-			assert.notOk(aButtons[0].getEnabled(), "Button in the menu is disabled");
+			assert.notOk(aMenuItems[0].getEnabled(), "MenuItem in the menu is disabled");
 			done();
 		}.bind(this), 500);
 	});
@@ -370,6 +370,18 @@ sap.ui.define([
 				actions: [{
 					type: 'Custom',
 					text: 'Host action'
+				},
+				{
+					type: 'Custom',
+					text: 'Host action With SubItems',
+					actions: [{
+						type: 'Custom',
+						text: 'Nested Host Action 1'
+					},
+					{
+						type: 'Custom',
+						text: 'Nested Host Action 2'
+					}]
 				}]
 			});
 
@@ -410,13 +422,13 @@ sap.ui.define([
 				var sTooltipText = oResourceBundle.getText("CARD_ACTIONS_OVERFLOW_BUTTON_TOOLTIP");
 				var oButton = oToolbar.getDomRef("overflowButton");
 
-				oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
+				setTimeout(function () {
 					// Assert
-					assert.ok(oToolbar.getAggregation("_actionSheet").isOpen(), "Action sheet is opened after overflow button is pressed.");
+					assert.ok(oToolbar.getAggregation("_actionsMenu").isOpen(), "Action sheet is opened after overflow button is pressed.");
 					assert.ok(fnHeaderPressStub.notCalled, "Header press is not triggered.");
 					assert.strictEqual(oButton.title, sTooltipText, "Overflow button tooltip is correctly set to string: " + sTooltipText);
 					done();
-				});
+				},100);
 
 				// Act
 				QUnitUtils.triggerEvent("tap", oButton);
@@ -438,17 +450,17 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		var oToolbar = this.oCard.getCardHeader().getToolbar(),
-			oActionSheet = oToolbar.getAggregation("_actionSheet");
+			oActionMenu = oToolbar.getAggregation("_actionsMenu");
 
 		// Assert
-		assert.strictEqual(oActionSheet.getButtons()[0].getText(), "Card action item", "First button in the menu is the one added by the card");
-		assert.strictEqual(oActionSheet.getButtons()[1].getText(), "Host action", "Second button in the menu is the one added by the host");
+		assert.strictEqual(oActionMenu.getItems()[0].getText(), "Card action item", "First menuItem in the menu is the one added by the card");
+		assert.strictEqual(oActionMenu.getItems()[1].getText(), "Host action", "Second menuItem in the menu is the one added by the host");
 
 		// Act
 		this.oCard.removeActionDefinition(0);
 
 		// Assert
-		assert.strictEqual(oActionSheet.getButtons()[0].getText(), "Host action", "Action added from the host is still there");
+		assert.strictEqual(oActionMenu.getItems()[0].getText(), "Host action", "Action added from the host is still there");
 
 		oAI.destroy();
 	});
@@ -461,12 +473,77 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		var oToolbar = this.oCard.getCardHeader().getToolbar(),
-			oActionSheet = oToolbar.getAggregation("_actionSheet");
+			oActionMenu = oToolbar.getAggregation("_actionsMenu");
 
 		// Act
 		this.oCard.addActionDefinition(new ActionDefinition({ text: "New card action item" }));
+		await nextUIUpdate();
 
-		assert.strictEqual(oActionSheet.getButtons()[0].getText(), "New card action item", "Action added by the card later should be at the top");
+		assert.strictEqual(oActionMenu.getItems()[0].getText(), "New card action item", "Action added by the card later should be at the top");
+	});
+
+	QUnit.test("Card actions as sub items", async function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oStub = sinon.stub();
+
+		// Act
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		const oToolbar = this.oCard.getCardHeader().getToolbar(),
+			oActionMenu = oToolbar.getAggregation("_actionsMenu");
+
+		// Act
+		this.oCard.addActionDefinition(new ActionDefinition({
+			text: "Card action item",
+			actionDefinitions: [
+				new ActionDefinition({
+					text: "Nested Action 1",
+					type: "Custom",
+					press: oStub
+				}),
+				new ActionDefinition({
+					text: "Nested Action 2"
+				})
+			]
+		}));
+		await nextUIUpdate();
+
+		setTimeout(function () {
+			// Act
+			oActionMenu._getVisualParent().getItems()[0].$().trigger("click");
+			oActionMenu._getVisualParent().getItems()[0].getSubmenu().getItems()[0].$().trigger("click");
+			// Assert
+			assert.ok(oStub.calledOnce, "Press event is fired on the nested item");
+			done();
+		}, 100);
+
+		// Act
+		oToolbar._getToolbar().$().trigger("tap");
+		await nextUIUpdate();
+
+		const oNestedItem = oActionMenu.getItems()[0].getItems()[0];
+
+		assert.strictEqual(oNestedItem.getText(), "Nested Action 1", "Actions can be nested");
+	});
+
+	QUnit.test("Nested host actions", async function (assert) {
+		// Arrange
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		const oToolbar = this.oCard.getCardHeader().getToolbar(),
+			oActionMenu = oToolbar.getAggregation("_actionsMenu");
+
+		const oNestedItem = oActionMenu.getItems()[1].getItems()[0];
+
+		assert.ok(oNestedItem.isA("sap.m.MenuItem"), "Nested items are created as menu items");
+		assert.strictEqual(oNestedItem.getText(), "Nested Host Action 1", "Nested actions have correct text");
 	});
 
 	QUnit.module("Translation", {
@@ -495,10 +572,10 @@ sap.ui.define([
 		await nextCardReadyEvent(this.oCard);
 		await nextUIUpdate();
 
-		var aButtons = this.oCard.getCardHeader().getToolbar().getAggregation("_actionSheet").getButtons();
+		var aMenuItems = this.oCard.getCardHeader().getToolbar().getAggregation("_actionsMenu").getItems();
 
 		// Assert
-		assert.strictEqual(aButtons[0].getText(), this.oCard.getTranslatedText("translatedText"), "Button text is translated");
+		assert.strictEqual(aMenuItems[0].getText(), this.oCard.getTranslatedText("translatedText"), "MenuItem text is translated");
 	});
 
 	QUnit.test("Action text is translated when added later in time", async function (assert) {
@@ -518,10 +595,10 @@ sap.ui.define([
 			// Act
 			this.oCard.addActionDefinition(oAI);
 			await nextUIUpdate();
-			var aButtons = this.oCard.getCardHeader().getToolbar().getAggregation("_actionSheet").getButtons();
+			var aMenuItems = this.oCard.getCardHeader().getToolbar().getAggregation("_actionsMenu").getItems();
 
 			// Assert
-			assert.strictEqual(aButtons[0].getText(), this.oCard.getTranslatedText("translatedText"), "Button text is translated");
+			assert.strictEqual(aMenuItems[0].getText(), this.oCard.getTranslatedText("translatedText"), "MenuItem text is translated");
 
 			done();
 		}.bind(this), 1000);

@@ -268,7 +268,7 @@ sap.ui.define([
 			}
 
 			if (aFormattedParams.length === 0) {
-				aFormattedParams = null;
+				aFormattedParams = undefined;
 			}
 
 			return this._resourceBundle.getText("DYNAMIC_DATE_" + sKey.toUpperCase() + "_FORMAT", aFormattedParams);

@@ -4,8 +4,6 @@
 /* =================================== */
 
 @_sap_tnt_ToolHeader_Height: 3.25rem;
-@_sap_tnt_ToolHeader_BorderRadius: 0.5rem;
-@_sap_tnt_ToolHeader_BoxShadow: @_sap_tnt_ToolHeader_Shadow;
 @_sap_tnt_ToolHeader_IconHeight: 0.75rem;
 @_sap_tnt_ToolHeader_DisabledOpacity: @sapUiContentDisabledOpacity;
 @_sap_tnt_ToolHeader_ArrowHeight: 0.125rem;
@@ -13,7 +11,6 @@
 @_sap_tnt_ToolHeader_Padding: 0 0.75rem;
 @_sap_tnt_ToolHeader_ArrowMarginBottom: 0.25rem;
 @_sap_tnt_ToolHeader_IconTabHeader_Height: auto;
-@_sap_tnt_ToolHeader_Shadow: 0 0 0.125rem 0 fade(@sapUiContentShadowColor,16), 0 0.5rem 1rem 0 fade(@sapUiContentShadowColor, 32);
 
 // ==========================================================================
 // sap.m.Toolbar overriding
@@ -39,24 +36,6 @@
 		background: none;
 		width: 0.75rem;
 	}
-}
-
-// Styling for the cases when we have Header and SubHeader
-.sapTntToolPageHeaderWithSubHeaderWrapper .sapTntToolPageHeader:first-of-type .sapTntToolHeader {
-	border-bottom-right-radius: 0;
-	border-bottom-left-radius: 0;
-	box-shadow: none;
-}
-
-.sapTntToolPageHeaderWithSubHeaderWrapper .sapTntToolPageHeader:nth-of-type(2) .sapTntToolHeader {
-	border-top-right-radius: 0;
-	border-top-left-radius: 0;
-	box-shadow: none;
-}
-
-.sapTntToolPageHeaderWrapper.sapTntToolPageHeaderWithSubHeaderWrapper {
-	box-shadow: @_sap_tnt_ToolHeader_BoxShadow;
-	border-radius: @_sap_tnt_ToolHeader_BorderRadius;
 }
 
 // ==========================================================================

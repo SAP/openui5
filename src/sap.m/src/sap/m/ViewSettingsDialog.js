@@ -1390,6 +1390,7 @@ function(
 	ViewSettingsDialog.prototype._focusFirstListItem = function() {
 		var oCurrentPage = this._getNavContainer().getCurrentPage(),
 			$firstFocusable;
+
 		if (oCurrentPage) {
 			$firstFocusable = oCurrentPage.$("cont").firstFocusableDomRef();
 			if ($firstFocusable) {
@@ -1714,6 +1715,8 @@ function(
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._globalReset = function () {
+		var bHasCustomItems = this._checkForCustomItems();
+
 		// clear filters
 		this.clearFilters();
 
@@ -1728,9 +1731,9 @@ function(
 		this._updateListSelection(this._groupOrderList, this._oInitialState.groupDescending);
 
 		if (Device.system.desktop) {
-			if (this._filterList && this._filterList.getDomRef()) {
+			if (!bHasCustomItems && this._filterList && this._filterList.getDomRef()) {
 				this._getNavContainer().attachEventOnce("afterNavigate", this._focusFirstListItem, this);
-			} else if ((this._sortList && this._sortList.getDomRef()) || (this._groupList  && this._groupList.getDomRef())) {
+			} else if (!bHasCustomItems && ((this._sortList && this._sortList.getDomRef()) || (this._groupList  && this._groupList.getDomRef()))) {
 				this._focusFirstListItem();
 			}
 		}
