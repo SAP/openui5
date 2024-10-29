@@ -26055,4 +26055,189 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.deepEqual(oParameter["com.sap.vocabularies.Common.v1.ValueList"], mValueLists[""]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Tests for bExpectMore simulating a control using a list binding. Use a length of 2, a prefetch of 4, and a
+	// collection length of 30. The tests do not use $count and find out about the length via short reads.
+	// JIRA: CPOUI5MODELS-1804
+	(function () {
+		/**
+		 * Creates a response with SalesOrderSet entries for the given range. The collection length is assumed to be 30.
+		 *
+		 * @param {number} iStart The start index
+		 * @param {number} iLength The length
+		 * @param {boolean} [bWithPromise=false] Whether response is wrapped in a promise
+		 * @returns {object} The response
+		 */
+		function respond(iStart, iLength, bWithPromise) {
+			const aElements = [];
+			const iEnd = Math.min(iStart + iLength, 30);
+			for (let i = iStart; i < iEnd; i += 1) {
+				aElements.push({
+					__metadata : {uri : "/SalesOrderSet('" + i + "')"},
+					SalesOrderID : i
+				});
+			}
+
+			return bWithPromise ? {data : {results : aElements}, statusCode : 200} : {results : aElements};
+		}
+
+		/**
+		 * Calls getContexts with length 2 and prefetch 4 at the binding and checks the response.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @param {sap.ui.model.odata.v2.ODataListBinding} oBinding The binding
+		 * @param {number} iStart The start index
+		 * @param {number[]} aExpectedIDs The expected IDs in the returned contexts
+		 * @param {boolean} bExpectMore Whether to expect more contexts
+		 */
+		function getContexts(assert, oBinding, iStart, aExpectedIDs, bExpectMore = false) {
+			// code under test
+			const aContexts = oBinding.getContexts(iStart, 2, 4);
+
+			assert.deepEqual(aContexts.map((oContext) => oContext?.getProperty("SalesOrderID")), aExpectedIDs,
+				`contexts ${iStart}`);
+			assert.strictEqual(aContexts.bExpectMore, bExpectMore, `bExpectMore ${iStart}`);
+		}
+
+		/**
+		 * Calls getContexts with length 2 and prefetch 4 at the binding, checks the response, waits for a change event,
+		 * calls getContexts, and checks the response again.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @param {sap.ui.model.odata.v2.ODataListBinding} oBinding The binding
+		 * @param {number} iStart The start index
+		 * @param {number[]} aExpectedInitialIDs The expected IDs in the returned contexts from the initial call
+		 * @param {number[]} aExpectedFinalIDs The expected IDs in the returned contexts after the change event
+		 * @returns {Promise} A promise that is resolved when the change event was processed
+		 */
+		function getContextsWithChangeEvent(assert, oBinding, iStart, aExpectedInitialIDs, aExpectedFinalIDs) {
+			getContexts(assert, oBinding, iStart, aExpectedInitialIDs, true);
+
+			return new Promise(function (resolve) {
+				const fnListener = () => {
+					getContexts(assert, oBinding, iStart, aExpectedFinalIDs, false);
+					oBinding.detachChange(fnListener);
+					resolve();
+				};
+				oBinding.attachChange(fnListener);
+			});
+		}
+
+	//*********************************************************************************************
+	// Scenario: Simulate a control using a list binding. Call #getContexts with various start values and listen to the
+	// change event in order to see that bExpectMore in the result of #getContexts is correct. With the initial call it
+	// may be true or false, in the call after the change event it must always be false.
+	// (1) initial getContexts at 0: fetching 0-1 and prefetching 2-5
+	// (2) getContexts at 2: taken from prefetch
+	// (3) getContexts at 5: only 5 is available (first response is short and incomplete),
+	//     fetching 6 and prefetching 7-11
+	// (4) getContexts at 7 before the response from (3) arrived: must wait for the response
+	// (5) response from (3) fulfills the getContexts from (3) and (4)
+	// (6) create a row (from now on row index and ID differ by one)
+	// (7) getContexts at 30: fetching IDs 29-30, prefetching IDs 25-28 and 31-34 (short read -> second response is
+	//     short, but complete)
+	// (8) getContexts at 25: only ID 25 is available (first response is an empty array), fetching ID 24 and prefetching
+	//     IDs 20-23
+	// JIRA: CPOUI5MODELS-1804
+	QUnit.test("getContexts: bExpectMore #1", async function (assert) {
+		const oModel = createSalesOrdersModel();
+		await this.createView(assert, "", oModel);
+		const oBinding = oModel.bindList("/SalesOrderSet");
+
+		oBinding.initialize();
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=6", respond(0, 6));
+
+		await Promise.all([
+			getContextsWithChangeEvent(assert, oBinding, 0, [], [0, 1]), // (1)
+			this.waitForChanges(assert, "(1)")
+		]);
+
+		getContexts(assert, oBinding, 2, [2, 3]); // (2)
+
+		let fnResolve;
+		this.expectRequest("SalesOrderSet?$skip=6&$top=5", new Promise((resolve) => {
+				fnResolve = resolve.bind(null, respond(6, 5, true));
+			}));
+
+		const oPromise3 = getContextsWithChangeEvent(assert, oBinding, 5, [5], [5, 6]); // (3)
+
+		await this.waitForChanges(assert, "(3)");
+
+		const oPromise4 = getContextsWithChangeEvent(assert, oBinding, 7, [], [7, 8]); // (4)
+
+		fnResolve(); // (5)
+
+		await Promise.all([oPromise3, oPromise4]);
+
+		oBinding.create(); // (6)
+
+		this.expectRequest("SalesOrderSet?$skip=25&$top=10", respond(25, 10));
+
+		await Promise.all([
+			getContextsWithChangeEvent(assert, oBinding, 30, [], [29]), // (7)
+			this.waitForChanges(assert, "(7)")
+		]);
+
+		this.expectRequest("SalesOrderSet?$skip=20&$top=5", respond(20, 5));
+
+		await Promise.all([
+			getContextsWithChangeEvent(assert, oBinding, 25, [], [24, 25]), // (8)
+			this.waitForChanges(assert, "(8)")
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Simulate a control using a list binding. Call #getContexts with various start values and listen to the
+	// change event in order to see that bExpectMore in the result of #getContexts is correct.
+	// (1) getContexts at 30: fetching 30-31, prefetching 26-29 and 32-35 (short read -> second response is empty, but
+	//     complete)
+	// (2) create a row at the end
+	// (3) getContexts at 25: only 26 is available, fetching 25 and prefetching 21-24
+	// JIRA: CPOUI5ODATAV4-1804
+	QUnit.test("getContexts: bExpectMore #2", async function (assert) {
+		const oModel = createSalesOrdersModel();
+		await this.createView(assert, "", oModel);
+		const oBinding = oModel.bindList("/SalesOrderSet");
+
+		oBinding.initialize();
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=26&$top=10", respond(26, 10));
+
+		await Promise.all([
+			getContextsWithChangeEvent(assert, oBinding, 30, [], []), // (1)
+			this.waitForChanges(assert, "(1)")
+		]);
+
+		oBinding.create({}, /*bAtEnd*/true); // (2)
+
+		this.expectRequest("SalesOrderSet?$skip=21&$top=5", respond(21, 5));
+
+		await Promise.all([
+			getContextsWithChangeEvent(assert, oBinding, 25, [], [25, 26]), // (3)
+			this.waitForChanges(assert, "(3)")
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Simulate a control using a list binding and a model with the client operation mode.
+	// JIRA: CPOUI5ODATAV4-1804
+	QUnit.test("getContexts: bExpectMore #3, model with clint operation mode", async function (assert) {
+		const oModel = createSalesOrdersModel({defaultOperationMode : "Client"});
+		await this.createView(assert, "", oModel);
+		const oBinding = oModel.bindList("/SalesOrderSet");
+
+		oBinding.initialize();
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet", respond(0, 6));
+
+		await Promise.all([
+			getContextsWithChangeEvent(assert, oBinding, 0, [], [0, 1]),
+			this.waitForChanges(assert, "(1)")
+		]);
+
+		getContexts(assert, oBinding, 10, []);
+	});
+}());
 });

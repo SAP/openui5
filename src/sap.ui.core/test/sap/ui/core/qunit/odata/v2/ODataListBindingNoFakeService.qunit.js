@@ -2169,6 +2169,7 @@ sap.ui.define([
 				_fireChange : function () {},
 				_getContexts : function () {},
 				_hasTransientParentContext : function () {},
+				_isExpectingMoreContexts : function () {},
 				_updateLastStartAndLength : function () {},
 				isFirstCreateAtEnd : function () {},
 				useClientMode : function () {}
@@ -2182,6 +2183,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("_updateLastStartAndLength")
 			.withExactArgs(0, 2, undefined, undefined);
 		this.mock(oBinding).expects("_getContexts").withExactArgs(0, 2).returns(aContexts);
+		this.mock(oBinding).expects("_isExpectingMoreContexts").withExactArgs(aContexts, 0, 2).returns("~bExpectMore");
 		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
 		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(true);
 		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
@@ -2193,6 +2195,7 @@ sap.ui.define([
 		aResultContexts = ODataListBinding.prototype.getContexts.call(oBinding, 0, 2);
 
 		assert.strictEqual(aResultContexts, aContexts);
+		assert.strictEqual(aResultContexts.bExpectMore, "~bExpectMore");
 	});
 });
 
@@ -2205,6 +2208,7 @@ sap.ui.define([
 				bRefresh : true,
 				_fireChange : function () {},
 				_getContexts : function () {},
+				_isExpectingMoreContexts : function () {},
 				_hasTransientParentContext : function () {},
 				_updateLastStartAndLength : function () {},
 				isFirstCreateAtEnd : function () {},
@@ -2214,6 +2218,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("_updateLastStartAndLength")
 			.withExactArgs(0, 2, undefined, undefined);
 		this.mock(oBinding).expects("_getContexts").withExactArgs(0, 2).returns([]);
+		this.mock(oBinding).expects("_isExpectingMoreContexts").withExactArgs([], 0, 2).returns("~bExpectMore");
 		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
 		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(true);
 		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
@@ -2235,6 +2240,7 @@ sap.ui.define([
 				_getLength : function () {},
 				_getSkipAndTop : function () {},
 				_hasTransientParentContext : function () {},
+				_isExpectingMoreContexts : function () {},
 				_updateLastStartAndLength : function () {},
 				isFirstCreateAtEnd : function () {},
 				loadData : function () {},
@@ -2248,6 +2254,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("_getContexts")
 			.withExactArgs(0, 10)
 			.returns(aContexts);
+		this.mock(oBinding).expects("_isExpectingMoreContexts").withExactArgs(aContexts, 0, 10).returns("~bExpectMore");
 		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
 		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(false);
 		this.mock(oBinding).expects("_getSkipAndTop")
@@ -2274,6 +2281,7 @@ sap.ui.define([
 				_getContexts : function () {},
 				_getMaximumLength : function () {},
 				_hasTransientParentContext : function () {},
+				_isExpectingMoreContexts : function () {},
 				_updateLastStartAndLength : function () {},
 				isFirstCreateAtEnd : function () {},
 				useClientMode : function () {}
@@ -2284,7 +2292,10 @@ sap.ui.define([
 		this.mock(oBinding).expects("_getMaximumLength").withExactArgs().returns("~iLength");
 		this.mock(oBinding).expects("_getContexts")
 			.withExactArgs(0, "~iLength")
-			.returns("~aContexts");
+			.returns(["~aContexts"]);
+		this.mock(oBinding).expects("_isExpectingMoreContexts")
+			.withExactArgs(["~aContexts"], 0, "~iLength")
+			.returns("~bExpectMore");
 		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
 		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(true);
 		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
@@ -2292,7 +2303,7 @@ sap.ui.define([
 
 		// code under test
 		assert.deepEqual(ODataListBinding.prototype.getContexts.call(oBinding, 0,
-			/*iLength*/undefined, 100), "~aContexts");
+			/*iLength*/undefined, 100), ["~aContexts"]);
 	});
 
 	//*********************************************************************************************
@@ -2313,6 +2324,7 @@ sap.ui.define([
 				_getContexts : function () {},
 				_getSkipAndTop : function () {},
 				_hasTransientParentContext : function () {},
+				_isExpectingMoreContexts : function () {},
 				_updateLastStartAndLength : function () {},
 				isFirstCreateAtEnd : function () {},
 				loadData : function () {},
@@ -2325,6 +2337,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("_getContexts")
 			.withExactArgs(0, 10)
 			.returns(aContexts);
+		this.mock(oBinding).expects("_isExpectingMoreContexts").withExactArgs(aContexts, 0, 10).returns("~bExpectMore");
 		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
 		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(false);
 		this.mock(oBinding).expects("_getSkipAndTop")
@@ -2394,6 +2407,7 @@ sap.ui.define([
 				_getContexts : function () {},
 				_getSkipAndTop : function () {},
 				_hasTransientParentContext : function () {},
+				_isExpectingMoreContexts : function () {},
 				_updateLastStartAndLength : function () {},
 				getContextData : function () {},
 				isFirstCreateAtEnd : function () {},
@@ -2415,6 +2429,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("_getContexts")
 			.withExactArgs(0, 10)
 			.returns(aContexts);
+		this.mock(oBinding).expects("_isExpectingMoreContexts").withExactArgs(aContexts, 0, 10).returns("~bExpectMore");
 		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
 		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(false);
 		this.mock(oBinding).expects("_getSkipAndTop")
@@ -2442,6 +2457,7 @@ sap.ui.define([
 		aResult = ODataListBinding.prototype.getContexts.call(oBinding, 0, 10, 100);
 
 		assert.strictEqual(aResult, aContexts);
+		assert.strictEqual(aResult.bExpectMore, "~bExpectMore");
 		assert.strictEqual(aResult.dataRequested, true);
 		assert.strictEqual(aResult.length, oFixture.iExpectedLength);
 
@@ -2486,6 +2502,7 @@ sap.ui.define([
 				bLengthFinal : true,
 				_getContexts : function () {},
 				_hasTransientParentContext : function () {},
+				_isExpectingMoreContexts : function () {},
 				_updateLastStartAndLength : function () {},
 				isFirstCreateAtEnd : function () {},
 				useClientMode : function () {}
@@ -2495,6 +2512,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("_updateLastStartAndLength")
 			.withExactArgs(7, 2, undefined, true);
 		this.mock(oBinding).expects("_getContexts").withExactArgs(7, 2).returns(aContexts);
+		this.mock(oBinding).expects("_isExpectingMoreContexts").withExactArgs(aContexts, 7, 2).returns("~bExpectMore");
 		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
 		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(true);
 		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
@@ -2522,6 +2540,7 @@ sap.ui.define([
 				_fireChange : function () {},
 				_getContexts : function () {},
 				_hasTransientParentContext : function () {},
+				_isExpectingMoreContexts : function () {},
 				_updateLastStartAndLength : function () {},
 				isFirstCreateAtEnd : function () {}
 				// never called: loadData : function () {}
@@ -2532,6 +2551,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("_updateLastStartAndLength")
 			.withExactArgs(0, 2, undefined, undefined);
 		this.mock(oBinding).expects("_getContexts").withExactArgs(0, 2).returns(aContexts);
+		this.mock(oBinding).expects("_isExpectingMoreContexts").withExactArgs(aContexts, 0, 2).returns("~bExpectMore");
 		this.mock(oBinding).expects("_hasTransientParentContext")
 			.withExactArgs()
 			.exactly(bFilterNone ? 0 : 1)
@@ -2543,6 +2563,7 @@ sap.ui.define([
 		aResultContexts = ODataListBinding.prototype.getContexts.call(oBinding, 0, 2);
 
 		assert.strictEqual(aResultContexts, aContexts);
+		assert.strictEqual(aResultContexts.bExpectMore, "~bExpectMore");
 	});
 });
 
