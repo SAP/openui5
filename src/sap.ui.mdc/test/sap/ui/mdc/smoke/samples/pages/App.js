@@ -1079,12 +1079,12 @@ sap.ui.define([
 						success: function(oTable) {
 							return this.waitFor({
 								check: function() {
-									return oTable.getRowBinding().getLength() === iLength;
+									return oTable.getRowBinding()?.getLength() === iLength;
 								},
 								success: function() {
 									Opa5.assert.ok(true, `Binding length is ${iLength}`);
 								},
-								errorMessage: `Binding length (expected: ${iLength}, actual: ${oTable.getRowBinding().getLength()})`
+								errorMessage: `Binding length does not match`
 							});
 						}
 					});
