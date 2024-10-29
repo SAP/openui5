@@ -125,6 +125,7 @@ sap.ui.define([
 		assert.strictEqual(oColumnHeaderLabel.getWidth(), "100%", "Initial: Label control 'width'");
 		assert.strictEqual(oColumnHeaderLabel.getRequired(), false, "Initial: Label control 'required'");
 		assert.strictEqual(oColumnHeaderLabel.getTooltip(), null, "Initial: Label control 'tooltip'");
+		assert.strictEqual(oColumnHeaderLabel._isInColumnHeaderContext, true, "Label is in column header context");
 
 		this.oColumn.setWidth("100px");
 		assert.strictEqual(oInnerColumn.getWidth(), "100px", "Change 'width': Inner column 'width'");
@@ -178,6 +179,7 @@ sap.ui.define([
 		assert.strictEqual(oColumnHeaderLabel.getWidth(), "100%", "Initial: Label control 'width'");
 		assert.strictEqual(oColumnHeaderLabel.getRequired(), false, "Initial: Label control 'required'");
 		assert.strictEqual(oColumnHeaderLabel.getTooltip(), null, "Initial: Label control 'tooltip'");
+		assert.strictEqual(oColumnHeaderLabel._isInColumnHeaderContext, true, "Label is in column header context");
 
 		this.oColumn.setWidth("100px");
 		assert.strictEqual(oInnerColumn.getWidth(), "100px", "Change 'width': Inner column 'width'");
