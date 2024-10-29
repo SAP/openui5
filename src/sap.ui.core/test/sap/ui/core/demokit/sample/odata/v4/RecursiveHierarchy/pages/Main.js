@@ -88,6 +88,31 @@ sap.ui.define([
 			"Row " + iRowIndex + ": Age is " + oActual.AGE);
 	}
 
+	function getTableAsString(oTable) {
+		let sResult = "";
+
+		for (const oRow of oTable.getRows()) {
+			const oRowContext = oRow.getBindingContext();
+			if (!oRowContext) {
+				break; // empty row found, no more data to process
+			}
+
+			const bDrillState = oRowContext.getProperty("@$ui5.node.isExpanded");
+			let sDrillState = "* "; // leaf by default
+			if (bDrillState === true) {
+				sDrillState = "- "; // expanded
+			} else if (bDrillState === false) {
+				sDrillState = "+ "; // collapsed
+			}
+
+			const iLevel = oRowContext.getProperty("@$ui5.node.level");
+			const sID = oRow.getCells()[bTreeTable ? 0 : 2].getText();
+			sResult += "\n" + "\t".repeat(iLevel - 1) + sDrillState + sID;
+		}
+
+		return sResult;
+	}
+
 	function getTableId() {
 		return bTreeTable ? "treeTable" : "table";
 	}
@@ -174,10 +199,10 @@ sap.ui.define([
 								}
 							},
 							controlType : getTableType(),
-							errorMessage : "Could not toggle Expand Button in row " + iRow,
+							errorMessage : "Could not toggle 'Expand' button in row " + iRow,
 							id : getTableId(),
 							success : function () {
-								Opa5.assert.ok(true, "Toggle Expand Button in row " + iRow
+								Opa5.assert.ok(true, "Toggle 'Expand' button in row " + iRow
 									+ ". " + sComment);
 							},
 							viewName : sViewName
@@ -186,30 +211,90 @@ sap.ui.define([
 						this.waitFor({
 							actions : new Press(),
 							controlType : "sap.m.Button",
-							errorMessage : "Could not toggle Expand Button in row " + iRow,
-							id : /expand/,
+							errorMessage : "Could not toggle 'Expand' button in row " + iRow,
+							id : /expandToggle/,
 							matchers : function (oControl) {
 								return oControl.getBindingContext().getIndex() === iRow;
 							},
 							success : function () {
-								Opa5.assert.ok(true, "Toggle Expand Button in row " + iRow
+								Opa5.assert.ok(true, "Toggle 'Expand' button in row " + iRow
 									+ ". " + sComment);
 							},
 							viewName : sViewName
 						});
 					}
+				},
+				expandLevels : function (iRow, iLevels, sComment) {
+					this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						errorMessage : `Could not press 'Expand Levels' button in row ${iRow}`,
+						id : bTreeTable ? /expandLevelsTreeTable/ : /expandLevelsTable/,
+						matchers : function (oControl) {
+							return oControl.getBindingContext().getIndex() === iRow;
+						},
+						success : function () {
+							Opa5.assert.ok(true,
+								`Pressed 'Expand Levels' button in row ${iRow}. ${sComment}`);
+						},
+						viewName : sViewName
+					});
+
+					this.waitFor({
+						actions : new EnterText({clearTextFirst : true, text : "" + iLevels}),
+						controlType : "sap.m.Input",
+						errorMessage : "Could not change 'Expand Levels'",
+						id : /levelsToExpand/,
+						success : function () {
+							Opa5.assert.ok(true,
+								`Changed 'Expand Levels' to ${iLevels}. ${sComment}`);
+						},
+						viewName : sViewName
+					});
+
+					this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						errorMessage : "Could not press 'Expand Levels Confirm' button",
+						id : /expandLevelsConfirm/,
+						success : function () {
+							Opa5.assert.ok(true,
+								`Pressed 'Expand Levels Confirm' button. ${sComment}`);
+						},
+						viewName : sViewName
+					});
+				},
+				collapseAll : function (iRow, sComment) {
+					this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						errorMessage : `Could not press 'Collapse All' button in row ${iRow}`,
+						id : bTreeTable ? /collapseAllTreeTable/ : /collapseAllTable/,
+						matchers : function (oControl) {
+							return oControl.getBindingContext().getIndex() === iRow;
+						},
+						success : function () {
+							Opa5.assert.ok(true,
+								`Pressed 'Collapse All' button in row  ${iRow}. ${sComment}`);
+						},
+						viewName : sViewName
+					});
 				}
 			},
 			assertions : {
-				checkTable : function (aExpected, mDefaults) {
-					var bTreeTable0 = bTreeTable; // remember current(!) value for later!
-
+				checkTable : function (vExpected, mDefaults, sComment) {
 					this.waitFor({
 						controlType : getTableType(),
 						id : getTableId(),
 						success : function (oTable) {
-							SandboxModel.update(aExpected)
-								.forEach(checkRow.bind(null, oTable, bTreeTable0, mDefaults));
+							if (typeof vExpected === "string") {
+								const sResult = getTableAsString(oTable);
+								Opa5.assert.strictEqual(sResult, vExpected, sComment);
+							} else {
+								SandboxModel.update(vExpected).forEach(
+									checkRow.bind(null, oTable, bTreeTable, mDefaults)
+								);
+							}
 						},
 						viewName : sViewName
 					});

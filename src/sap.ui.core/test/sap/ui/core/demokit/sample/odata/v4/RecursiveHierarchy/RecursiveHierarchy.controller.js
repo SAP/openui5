@@ -60,7 +60,7 @@ sap.ui.define([
 		},
 
 		onExpandLevelsConfirm : function (oEvent) {
-			const sValue = this.byId("expandLevels").getValue();
+			const sValue = this.byId("levelsToExpand").getValue();
 			try {
 				oEvent.getSource().getBindingContext()
 					.expand(sValue === "*"
