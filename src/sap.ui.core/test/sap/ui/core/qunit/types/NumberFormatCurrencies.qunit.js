@@ -204,7 +204,7 @@ sap.ui.define([
 		["long", "short"].forEach(function(sStyle) {
 			var oFormat = getCurrencyInstance({ style: sStyle }, oLocale);
 			// thousand format for locale "de" does not reformat the number (pattern: "100000-other": "0")
-			assert.strictEqual(oFormat.format(123456.789, "EUR"), "123.456,79" + "\xa0" + "EUR");
+			assert.strictEqual(oFormat.format(123456.789, "EUR"), "123.457" + "\xa0" + "EUR");
 			assert.strictEqual(oFormat.format(-123456.789, "JPY"), "-123.457" + "\xa0" + "JPY");
 
 			// million format for locale "de" does reformat the number (pattern: "1000000-other": "0 Mio'.' ¤")
@@ -268,18 +268,18 @@ sap.ui.define([
 		const oNumberCurrencyFormat = NumberFormat.getCurrencyInstance(oFormatOptions);
 		const oNumberFormatMock = this.mock(NumberFormat);
 
-		oNumberFormatMock.expects("getMaximumDecimals")
-			.withExactArgs(sinon.match(oNumberCurrencyFormat.oFormatOptions))
-			.callThrough();
-
 		if (iDecimals === undefined) {
 			// If no decimals are given, we fallback to the CLDR data and determine the minimum between the
 			// CLDR decimals and the set maxFractionDigits
 			this.mock(oNumberCurrencyFormat.oLocaleData).expects("getCurrencyDigits")
 				.withExactArgs("BTC")
-				.callThrough();
+				.returns(2);
 			oNumberFormatMock.expects("getMaximumDecimals")
-				.withExactArgs(sinon.match(oNumberCurrencyFormat.oFormatOptions))
+				.withExactArgs(sinon.match(oFormatOptions))
+				.callThrough();
+		} else {
+			oNumberFormatMock.expects("getMaximumDecimals")
+				.withExactArgs(sinon.match(oFormatOptions))
 				.callThrough();
 		}
 
@@ -2192,7 +2192,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// SNOW: DINC0239044
-	// If no code list customizing is given (e.g. in case of CAP scenarios) a fall back to the CLDR
+	// If no code list customizing is given (e.g. in case of CAP scenarios) a fallback to the CLDR
 	// configuration, regarding the decimals, has to happen when formatting currencies.
 	// Both variants should behave the same when it comes to calculating the number for decimals.
 [{
@@ -2249,6 +2249,12 @@ sap.ui.define([
 		minFractionDigits: 2
 	},
 	sExpectedResult: "USD\xa0100.0000"
+}, {
+	// If decimals is set explicitly to 0, no fallback to the CLDR must happen
+	oFormatOptions: {
+		decimals: 0
+	},
+	sExpectedResult: "USD\xa0100"
 }].forEach(({oFormatOptions, sExpectedResult}, i) => {
 	QUnit.test(`Currency type with no currency customizing and decimal options fall back to CLDR ${i}`,
 			function (assert) {
@@ -2259,4 +2265,86 @@ sap.ui.define([
 	});
 });
 
+	//*********************************************************************************************
+["short", "long"].forEach((sStyle) => {
+	[
+		// No fallback to the CLDR data in case "style: short/long" is set
+		{sExpected: "USD\xa0123.457M", iMax: 3, iMin: 3, sStyle: sStyle},
+		{sExpected: "USD\xa0123M", iMax: undefined, iMin: undefined,  sStyle: sStyle},
+		{sExpected: "USD\xa0123M", iMax: 0, iMin: 0,  sStyle: sStyle},
+		{sExpected: "USD\xa0123M", iMax: 0, iMin: undefined,  sStyle: sStyle},
+		// No fallback to the CLDR data in case "style: short/long" is set, expecting all digits to be
+		// displayed as we only define a minimum but no maximum for decimal places in the format options
+		{sExpected: "USD\xa0123.456789M", iMax: undefined, iMin: 0,  sStyle: sStyle},
+		// No usage of the customCurrencies decimals in case "style: short/long" is set
+		{oCustomCurrencies: {USD: {decimals: 2}}, sExpected: "USD\xa0123.457M", iMax: 3, iMin: 3,  sStyle: sStyle},
+		// Usage of the decimals as they are explicitly set in the format options
+		{iDecimals: 2, sExpected: "USD\xa0123.46M", iMax: 3, iMin: 3,  sStyle: sStyle},
+		{
+			oCustomCurrencies: {USD: {decimals: 4}},
+			iDecimals: 2,
+			sExpected: "USD\xa0123.46M",
+			iMax: 3,
+			iMin: 3,
+			sStyle: sStyle
+		}
+	].forEach(function({oCustomCurrencies, iDecimals, sExpected, iMax, iMin, iPrecision, sStyle}, i) {
+		QUnit.test(`Currency format does not use customizing for decimals when style "${sStyle}" is set ${i}`,
+				function (assert) {
+			const oFormat = getCurrencyInstance({
+					customCurrencies: oCustomCurrencies,
+					decimals: iDecimals,
+					ignorePrecision: false,
+					maxFractionDigits: iMax,
+					minFractionDigits: iMin,
+					precision: iPrecision,
+					style: sStyle
+				}, new Locale("en"));
+
+			// code under test
+			assert.strictEqual(oFormat.format(["123456789", "USD"]), sExpected);
+		});
+	});
+});
+
+	//*********************************************************************************************
+["short", "long"].forEach((sStyle) => {
+	[
+		// No fallback to the CLDR data in case "style: short/long" is set
+		{sExpected: "USD\xa0123.000", iMax: 3, iMin: 3, sStyle: sStyle},
+		{sExpected: "USD\xa0123", iMax: undefined, iMin: undefined,  sStyle: sStyle},
+		{sExpected: "USD\xa0123", iMax: 0, iMin: 0,  sStyle: sStyle},
+		{sExpected: "USD\xa0123", iMax: 0, iMin: undefined,  sStyle: sStyle},
+		{sExpected: "USD\xa0123", iMax: undefined, iMin: 0,  sStyle: sStyle},
+		// No usage of the customCurrencies decimals in case "style: short/long" is set
+		{oCustomCurrencies: {USD: {decimals: 2}}, sExpected: "USD\xa0123.000", iMax: 3, iMin: 3,  sStyle: sStyle},
+		// Usage of the decimals as they are explicitly set in the format options
+		{iDecimals: 2, sExpected: "USD\xa0123.00", iMax: 3, iMin: 3,  sStyle: sStyle},
+		{
+			oCustomCurrencies: {USD: {decimals: 4}},
+			iDecimals: 2,
+			sExpected: "USD\xa0123.00",
+			iMax: 3,
+			iMin: 3,
+			sStyle: sStyle
+		}
+	].forEach(function({oCustomCurrencies, iDecimals, sExpected, iMax, iMin, iPrecision, sStyle}, i) {
+		const sTitle = `Currency format does not use customizing for decimals when style "${sStyle}"`
+			+ ` even for small numbers ${i}`;
+		QUnit.test(sTitle, function (assert) {
+			const oFormat = getCurrencyInstance({
+					customCurrencies: oCustomCurrencies,
+					decimals: iDecimals,
+					ignorePrecision: false,
+					maxFractionDigits: iMax,
+					minFractionDigits: iMin,
+					precision: iPrecision,
+					style: sStyle
+				}, new Locale("en"));
+
+			// code under test
+			assert.strictEqual(oFormat.format(["123", "USD"]), sExpected);
+		});
+	});
+});
 });
