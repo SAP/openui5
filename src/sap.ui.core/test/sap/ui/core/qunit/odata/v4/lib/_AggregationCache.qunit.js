@@ -408,8 +408,7 @@ sap.ui.define([
 		assert.strictEqual(typeof oCache.read, "function");
 		// c'tor itself
 		assert.strictEqual(oCache.oAggregation, oAggregation);
-		assert.strictEqual(oCache.sDownloadUrl, "~downloadUrl~");
-		assert.strictEqual(oCache.getDownloadUrl(""), "~downloadUrl~"); // <-- code under test
+		assert.strictEqual(oCache.sToString, "~downloadUrl~");
 		assert.strictEqual(oCache.toString(), "~downloadUrl~"); // <-- code under test
 		assert.ok(oGetDownloadUrlExpectation.alwaysCalledOn(oCache));
 		assert.deepEqual(oCache.aElements, []);
@@ -562,8 +561,7 @@ sap.ui.define([
 		assert.strictEqual(typeof oCache.read, "function");
 		// c'tor itself
 		assert.strictEqual(oCache.oAggregation, oAggregation);
-		assert.strictEqual(oCache.sDownloadUrl, "~downloadUrl~");
-		assert.strictEqual(oCache.getDownloadUrl(""), "~downloadUrl~"); // code under test
+		assert.strictEqual(oCache.sToString, "~downloadUrl~");
 		assert.strictEqual(oCache.toString(), "~downloadUrl~"); // <-- code under test
 		assert.ok(oGetDownloadUrlExpectation.alwaysCalledOn(oCache));
 		assert.deepEqual(oCache.aElements, []);
@@ -4412,7 +4410,7 @@ sap.ui.define([
 			.callsFake(function () {
 				oCache.oBackup = sGroupId ? {} : null;
 			});
-		const oGetDownloadUrlExpectation = this.mock(_Cache.prototype).expects("getDownloadUrl")
+		const oGetDownloadUrlExpectation = this.mock(oCache).expects("getDownloadUrl")
 			.withExactArgs("")
 			.returns("~sDownloadUrl~");
 		const oTreeStateResetExpectation = this.mock(oCache.oTreeState).expects("reset")
@@ -4431,7 +4429,7 @@ sap.ui.define([
 		sinon.assert.callOrder(oResetExpectation, oGetDownloadUrlExpectation);
 		assert.strictEqual(oCache.oAggregation, oNewAggregation);
 		assert.strictEqual(oCache.oAggregation.$ExpandLevels, "~sExpandLevels~");
-		assert.strictEqual(oCache.sDownloadUrl, "~sDownloadUrl~");
+		assert.strictEqual(oCache.sToString, "~sDownloadUrl~");
 		assert.deepEqual(oCache.aElements.$byPredicate, {
 			bar : {
 				"@$ui5._" : {predicate : "bar"},
@@ -4478,7 +4476,7 @@ sap.ui.define([
 				hierarchyQualifier : "X"
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation),
-			sDownloadUrl = oCache.sDownloadUrl,
+			sToString = oCache.sToString,
 			oFirstLevel = oCache.oFirstLevel,
 			aKeptElementPredicates = ["foo"];
 
@@ -4486,7 +4484,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("hasPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oCache.aElements.$byPredicate.foo), "placeholder")
 			.returns(true);
-		this.mock(_Cache.prototype).expects("getDownloadUrl").never();
+		this.mock(oCache).expects("getDownloadUrl").never();
 		this.mock(oCache.oFirstLevel).expects("reset").never();
 		this.mock(oCache).expects("createGroupLevelCache").never();
 
@@ -4497,7 +4495,7 @@ sap.ui.define([
 
 		assert.strictEqual(oCache.oAggregation, oAggregation, "unchanged");
 		assert.deepEqual(oCache.oAggregation, {hierarchyQualifier : "X"}, "unchanged");
-		assert.strictEqual(oCache.sDownloadUrl, sDownloadUrl, "unchanged");
+		assert.strictEqual(oCache.sToString, sToString, "unchanged");
 		assert.strictEqual(oCache.oFirstLevel, oFirstLevel, "unchanged");
 	});
 
@@ -4506,7 +4504,7 @@ sap.ui.define([
 		var oCache = _AggregationCache.create(this.oRequestor, "~", "", {},
 				{hierarchyQualifier : "X"});
 
-		this.mock(_Cache.prototype).expects("getDownloadUrl").never();
+		this.mock(oCache).expects("getDownloadUrl").never();
 		this.mock(oCache.oFirstLevel).expects("reset").never();
 		this.mock(oCache).expects("createGroupLevelCache").never();
 

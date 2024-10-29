@@ -28046,7 +28046,9 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1851
 	//
 	// Use relative ODLB with an initially suspended parent (JIRA: CPOUI5ODATAV4-1985 etc.)
-	// Additionally, ODLB#getDownloadUrl is tested (JIRA: CPOUI5ODATAV4-1920. BCP: 2370011296).
+	// Additionally, ODLB#getDownloadUrl is tested (JIRA: CPOUI5ODATAV4-1920. BCP: 2370011296)
+	// Additionally, see that ODLB#getDownloadUrl handles backlinks (JIRA: CPOUI5ODATAV4-2733)
+	//
 	// #setAggregation before resolving the ODLB (JIRA: CPOUI5ODATAV4-2408)
 	//
 	// Ensure that a Return Value Context is created and the structure of the path is same like the
@@ -28070,6 +28072,7 @@ sap.ui.define([
 	<Input value="{SALARY/YEARLY_BONUS_AMOUNT}"/>\
 	<Text text="{SALARY/BONUS_CURR}"/>\
 	<Text text="{TEAM_ID}"/>\
+	<Text text="{EMPLOYEE_2_TEAM/MEMBER_COUNT}"/>\
 </t:Table>',
 			that = this;
 
@@ -28078,7 +28081,11 @@ sap.ui.define([
 
 			oTable = that.oView.byId("table");
 
-			that.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES"
+			that.expectRequest("TEAMS('42')?$select=MEMBER_COUNT,Team_Id", {
+					MEMBER_COUNT : 10,
+					Team_Id : "42"
+				})
+				.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES"
 					+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 						+ "HierarchyNodes=$root/TEAMS('42')/TEAM_2_EMPLOYEES"
 						+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=1)"
@@ -28094,7 +28101,7 @@ sap.ui.define([
 							BONUS_CURR : "EUR",
 							YEARLY_BONUS_AMOUNT : "1234"
 						},
-						TEAM_ID : "TEAM_0"
+						TEAM_ID : "42"
 					}]
 				});
 
@@ -28114,7 +28121,7 @@ sap.ui.define([
 			checkTable("root is collapsed", assert, oTable, [
 				"/TEAMS('42')/TEAM_2_EMPLOYEES('0')"
 			], [
-				[false, 1, "0", "", "1,234", "EUR", "TEAM_0"]
+				[false, 1, "0", "", "1,234", "EUR", "42", "10"]
 			]);
 
 			// code under test
@@ -28123,6 +28130,7 @@ sap.ui.define([
 				+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 					+ "HierarchyNodes=$root/TEAMS('42')/TEAM_2_EMPLOYEES"
 					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID')"
+				+ "&$expand=EMPLOYEE_2_TEAM($select=MEMBER_COUNT)"
 				+ "&$select=DistanceFromRoot,DrillState,ID,MANAGER_ID,SALARY/BONUS_CURR"
 					+ ",SALARY/YEARLY_BONUS_AMOUNT,TEAM_ID",
 				"JIRA: CPOUI5ODATAV4-1920, CPOUI5ODATAV4-2275");
@@ -28142,7 +28150,7 @@ sap.ui.define([
 							BONUS_CURR : "DEM",
 							YEARLY_BONUS_AMOUNT : "500"
 						},
-						TEAM_ID : "TEAM_1"
+						TEAM_ID : "42"
 					}]
 				});
 
@@ -28158,8 +28166,8 @@ sap.ui.define([
 				"/TEAMS('42')/TEAM_2_EMPLOYEES('0')",
 				"/TEAMS('42')/TEAM_2_EMPLOYEES('1')"
 			], [
-				[true, 1, "0", "", "1,234", "EUR", "TEAM_0"],
-				[undefined, 2, "1", "0", "500", "DEM", "TEAM_1"]
+				[true, 1, "0", "", "1,234", "EUR", "42", "10"],
+				[undefined, 2, "1", "0", "500", "DEM", "42", "10"]
 			]);
 
 			that.expectRequest({
@@ -28193,8 +28201,8 @@ sap.ui.define([
 				"/TEAMS('42')/TEAM_2_EMPLOYEES('0')",
 				"/TEAMS('42')/TEAM_2_EMPLOYEES('1')"
 			], [
-				[true, 1, "0", "", "2,345", "EUR", "TEAM_0"],
-				[undefined, 2, "1", "0", "700", "DEM", "TEAM_1"]
+				[true, 1, "0", "", "2,345", "EUR", "42", "10"],
+				[undefined, 2, "1", "0", "700", "DEM", "42", "10"]
 			]);
 
 			// code under test
@@ -28208,7 +28216,7 @@ sap.ui.define([
 					method : "POST",
 					url : "TEAMS('42')/TEAM_2_EMPLOYEES('0')/" + sAction
 						+ "?$expand=EMPLOYEE_2_TEAM($select=Team_Id)",
-					payload : {TeamID : "TEAM_23"}
+					payload : {TeamID : "23"}
 				}, {
 					EMPLOYEE_2_TEAM : {
 						Team_Id : "23"
@@ -28225,7 +28233,7 @@ sap.ui.define([
 					method : "POST",
 					url : "TEAMS('42')/TEAM_2_EMPLOYEES('1')/" + sAction
 						+ "?$expand=EMPLOYEE_2_TEAM($select=Team_Id)",
-					payload : {TeamID : "TEAM_42"}
+					payload : {TeamID : "42"}
 				}, {
 					EMPLOYEE_2_TEAM : {
 						Team_Id : "42"
@@ -28241,7 +28249,7 @@ sap.ui.define([
 
 			return Promise.all([
 				oModel.bindContext(sAction + "(...)", oRoot)
-					.setParameter("TeamID", "TEAM_23")
+					.setParameter("TeamID", "23")
 					.invoke()
 					.then(function (oReturnValueContext) {
 						assert.strictEqual(oRoot.getPath(),
@@ -28250,7 +28258,7 @@ sap.ui.define([
 							"/TEAMS('23')/TEAM_2_EMPLOYEES('0')");
 					}),
 				oModel.bindContext(sAction + "(...)", oChild)
-					.setParameter("TeamID", "TEAM_42")
+					.setParameter("TeamID", "42")
 					.invoke()
 					.then(function (oReturnValueContext) {
 						// Note: RVC has iGeneration === 2 instead of 0
@@ -28267,8 +28275,8 @@ sap.ui.define([
 				"/TEAMS('42')/TEAM_2_EMPLOYEES('0')",
 				"/TEAMS('42')/TEAM_2_EMPLOYEES('1')"
 			], [
-				[true, 1, "0", "", "23.23", "GBP", "23"],
-				[undefined, 2, "1", "0", "42.42", "USD", "42"]
+				[true, 1, "0", "", "23.23", "GBP", "23", "10"],
+				[undefined, 2, "1", "0", "42.42", "USD", "42", "10"]
 			]);
 		});
 	});
