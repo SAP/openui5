@@ -383,13 +383,14 @@ sap.ui.define([
 		SideNavigation.prototype._getTopArrowControl = function () {
 			var iconControl = this.getAggregation('_topArrowControl');
 			var that = this;
+			var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.tnt');
 
 			if (!iconControl) {
 				iconControl = new Icon({
 					src: 'sap-icon://navigation-up-arrow',
 					noTabStop: true,
 					useIconTooltip: false,
-					tooltip: '',
+					tooltip: oLibraryResourceBundle.getText('SIDE_NAV_SCROLL_UP_TOOLTIP'),
 					press: this._arrowPress.bind(that)
 				}).addStyleClass('sapTntSideNavigationScrollIcon sapTntSideNavigationScrollIconUp');
 				this.setAggregation("_topArrowControl", iconControl, true);
@@ -406,13 +407,14 @@ sap.ui.define([
 		SideNavigation.prototype._getBottomArrowControl = function () {
 			var iconControl = this.getAggregation('_bottomArrowControl');
 			var that = this;
+			var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.tnt');
 
 			if (!iconControl) {
 				iconControl = new Icon({
 					src: 'sap-icon://navigation-down-arrow',
 					noTabStop: true,
 					useIconTooltip: false,
-					tooltip: '',
+					tooltip: oLibraryResourceBundle.getText('SIDE_NAV_SCROLL_DOWN_TOOLTIP'),
 					press: this._arrowPress.bind(that)
 				}).addStyleClass('sapTntSideNavigationScrollIcon sapTntSideNavigationScrollIconDown');
 
