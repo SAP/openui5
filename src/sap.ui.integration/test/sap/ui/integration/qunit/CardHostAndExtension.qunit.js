@@ -307,26 +307,7 @@ function (
 			oToolbar = oHeader.getToolbar();
 
 		// Assert
-		assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getText(), "Test text", "The rendered action button text is the same as the host 'text' property");
-	});
-
-	QUnit.test("Action property 'buttonType'", async function(assert) {
-		// Arrange
-		this.oHost.setActions([{
-			type: 'Custom',
-			buttonType: 'Accept'
-		}]);
-		this.oCard.setHost(this.oHost);
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
-
-		await nextCardReadyEvent(this.oCard);
-		await nextUIUpdate();
-
-		var oHeader = this.oCard.getCardHeader(),
-			oToolbar = oHeader.getToolbar();
-
-		// Assert
-		assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getType(), "Accept", "The rendered action button type is the same as the host 'buttonType' property");
+		assert.strictEqual(oToolbar.getAggregation("_actionsMenu").getItems()[0].getText(), "Test text", "The rendered action menu item text is the same as the host 'text' property");
 	});
 
 	QUnit.test("Action property 'tooltip'", async function(assert) {
@@ -345,7 +326,7 @@ function (
 			oToolbar = oHeader.getToolbar();
 
 		// Assert
-		assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getTooltip(), "Action button tooltip", "The rendered action button tooltip is the same as the host 'tooltip' property");
+		assert.strictEqual(oToolbar.getAggregation("_actionsMenu").getItems()[0].getTooltip(), "Action button tooltip", "The rendered action button tooltip is the same as the host 'tooltip' property");
 	});
 
 	QUnit.test("Action property 'icon'", async function(assert) {
@@ -365,7 +346,7 @@ function (
 			oToolbar = oHeader.getToolbar();
 
 		// Assert
-		assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getIcon(), "sap-icon://help", "The rendered action button icon is the same as the host 'icon' property");
+		assert.strictEqual(oToolbar.getAggregation("_actionsMenu").getItems()[0].getIcon(), "sap-icon://help", "The rendered action button icon is the same as the host 'icon' property");
 	});
 
 	QUnit.test("Action property 'enabled' is true", async function(assert) {
@@ -391,8 +372,8 @@ function (
 		var oHeader = this.oCard.getCardHeader(),
 			oToolbar = oHeader.getToolbar();
 
-		oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
-			QUnitUtils.triggerEvent("tap", oToolbar.getAggregation("_actionSheet").getButtons()[0]);
+		setTimeout(function () {
+			oToolbar.getAggregation("_actionsMenu")._getVisualParent().getItems()[0].$().trigger("click");
 
 			// Assert
 			assert.ok(oSpyEnabled.called, "Host action is fired if host action is enabled.");
@@ -432,8 +413,8 @@ function (
 		var oHeader = this.oCard.getCardHeader(),
 			oToolbar = oHeader.getToolbar();
 
-		oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
-			QUnitUtils.triggerEvent("tap", oToolbar.getAggregation("_actionSheet").getButtons()[0]);
+		setTimeout(function () {
+			QUnitUtils.triggerEvent("tap", oToolbar.getAggregation("_actionsMenu").getItems()[0]);
 
 			// Assert
 			assert.notOk(oSpyDisabled.called, "Host action is not fired if host action is disabled.");
@@ -474,10 +455,10 @@ function (
 		var oHeader = this.oCard.getCardHeader(),
 			oToolbar = oHeader.getToolbar();
 
-		oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
+		setTimeout(function () {
 			// Assert
-			assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getText(), "Visible", "If the host action property 'visible' is set to false the action button is rendered");
-			assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[1].getDomRef(), null, "If the host action property 'visible' is set to false the action button is not rendered");
+			assert.strictEqual(oToolbar.getAggregation("_actionsMenu").getItems()[0].getText(), "Visible", "If the host action property 'visible' is set to false the action button is rendered");
+			assert.strictEqual(oToolbar.getAggregation("_actionsMenu").getItems()[1].getDomRef(), null, "If the host action property 'visible' is set to false the action button is not rendered");
 
 			done();
 		});
@@ -513,9 +494,9 @@ function (
 		var oHeader = this.oCard.getCardHeader(),
 			oToolbar = oHeader.getToolbar();
 
-		oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
+		setTimeout(function () {
 			// Assert
-			QUnitUtils.triggerEvent("tap", oToolbar.getAggregation("_actionSheet").getButtons()[0]);
+			oToolbar.getAggregation("_actionsMenu")._getVisualParent().getItems()[0].$().trigger("click");
 			assert.ok(oWindowOpenStub.calledWith("https://www.sap.com"), "Action triggered with host 'url' parameter");
 
 			//Cleanup
@@ -637,5 +618,48 @@ function (
 		var oToolbar = this.oCard.getCardHeader().getToolbar();
 
 		assert.strictEqual(oToolbar.$("overflowButton").attr("aria-haspopup"), "menu", "The menu button has aria-haspopup=menu.");
+	});
+
+	QUnit.test("Actions toolbar support nested actions", async function (assert) {
+		// Arrange
+		const done = assert.async(),
+			oStub = sinon.stub();
+
+		this.oHost.setActions([{
+			type: 'Custom',
+			text: 'Test',
+			actions: [{
+				type: 'Custom',
+				text: 'Nested Action',
+				action: oStub
+			}]
+		}]);
+		this.oCard.setHost(this.oHost);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		const oToolbar = this.oCard.getCardHeader().getToolbar(),
+			oActionMenu = oToolbar.getAggregation("_actionsMenu");
+
+
+		setTimeout(function () {
+			// Act
+			oActionMenu._getVisualParent().getItems()[0].$().trigger("click");
+			oActionMenu._getVisualParent().getItems()[0].getSubmenu().getItems()[0].$().trigger("click");
+			// Assert
+			assert.ok(oStub.calledOnce, "Press event is fired on the nested item");
+			done();
+		}, 100);
+
+		// Act
+		oToolbar._getToolbar().$().trigger("tap");
+		await nextUIUpdate();
+
+		const oNestedItem = oActionMenu.getItems()[0].getItems()[0];
+
+		assert.strictEqual(oNestedItem.getText(), "Nested Action", "Actions can be nested");
+
 	});
 });

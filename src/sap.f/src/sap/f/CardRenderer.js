@@ -11,7 +11,8 @@ sap.ui.define([
 	library
 ) {
 	"use strict";
-	var HeaderPosition = library.cards.HeaderPosition;
+	var HeaderPosition = library.cards.HeaderPosition,
+		SemanticRole = library.cards.SemanticRole;
 
 	/**
 	 * <code>Card</code> renderer.
@@ -37,7 +38,7 @@ sap.ui.define([
 		this.renderContainerAttributes(oRm, oCard);
 		oRm.openEnd();
 
-		 if (bHasCardBadgeCustomData) {
+		if (bHasCardBadgeCustomData) {
 			this.renderCardBadge(oRm, oCard);
 		}
 
@@ -72,6 +73,8 @@ sap.ui.define([
 	 * @param {sap.f.Card} oCard An object representation of the control that should be rendered.
 	 */
 	CardRenderer.renderContainerAttributes = function (oRm, oCard) {
+		const bIsInteractive = oCard.isInteractive();
+
 		var sHeight = oCard.getHeight(),
 			oHeader = oCard.getCardHeader(),
 			oContent = oCard.getCardContent(),
@@ -97,6 +100,16 @@ sap.ui.define([
 			oRm.class("sapFCardSectionInteractive");
 		}
 
+
+		if (oCard.getSemanticRole() === SemanticRole.ListItem) {
+			oRm.class("sapFCardFocus");
+			oRm.attr("tabindex", "0");
+
+			if (bIsInteractive) {
+				oRm.class("sapFCardInteractive");
+			}
+		}
+
 		if (bCardHeaderBottom) {
 			oRm.class("sapFCardBottomHeader");
 		}
@@ -111,7 +124,8 @@ sap.ui.define([
 
 		//Accessibility state
 		oRm.accessibilityState(oCard, {
-			role: "region",
+			// TODO if role is not only used with accessibility values, this should be changed
+			role: oCard.getSemanticRole().toLowerCase(),
 			labelledby: { value: oCard._getAriaLabelledIds(), append: true },
 			describedby: {value: bHasCardBadgeCustomData ? oCard._getInvisibleCardBadgeText().getId() : undefined}
 		});

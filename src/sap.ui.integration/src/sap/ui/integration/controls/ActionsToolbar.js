@@ -12,9 +12,10 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/m/Button",
-	"sap/m/ActionSheet",
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/integration/cards/actions/CardActions"
+	"sap/ui/integration/cards/actions/CardActions",
+	"sap/m/Menu",
+	"sap/m/MenuItem"
 ], function(
 	ActionsToolbarRenderer,
 	capitalize,
@@ -24,9 +25,10 @@ sap.ui.define([
 	Library,
 	coreLibrary,
 	Button,
-	ActionSheet,
 	ManagedObjectObserver,
-	CardActions
+	CardActions,
+	Menu,
+	MenuItem
 ) {
 	"use strict";
 
@@ -34,7 +36,7 @@ sap.ui.define([
 
 	var HasPopup = coreLibrary.aria.HasPopup;
 
-	function setButtonProperty(oButton, sPropertyName, oValue, oCard) {
+	function setMenuItemProperty(oMenuItem, sPropertyName, oValue, oCard) {
 
 		return new Promise(function (resolve) {
 
@@ -47,7 +49,7 @@ sap.ui.define([
 				if (oResolvedValue instanceof Promise) {
 
 					oResolvedValue.then(function (oResult) {
-						oButton.setProperty(sPropertyName, oResult);
+						oMenuItem.setProperty(sPropertyName, oResult);
 						resolve();
 					});
 
@@ -58,7 +60,7 @@ sap.ui.define([
 				oResolvedValue = oValue;
 			}
 
-			oButton.setProperty(sPropertyName, oResolvedValue);
+			oMenuItem.setProperty(sPropertyName, oResolvedValue);
 			resolve();
 		});
 	}
@@ -102,8 +104,8 @@ sap.ui.define([
 					visibility: "hidden"
 				},
 
-				_actionSheet: {
-					type: "sap.m.ActionSheet",
+				_actionsMenu: {
+					type: "sap.m.Menu",
 					multiple: false,
 					visibility: "hidden"
 				}
@@ -113,7 +115,11 @@ sap.ui.define([
 	});
 
 	ActionsToolbar.prototype.init = function () {
-		this.setAggregation("_actionSheet", new ActionSheet());
+		var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
+
+		this.setAggregation("_actionsMenu", new Menu({
+			title: oResourceBundle.getText("CARD_ACTIONS")
+		}));
 		this._aActions = []; // holds actions from host and extension
 		this._mActionObservers = new Map();
 		this._oObserver = new ManagedObjectObserver(this._observeActionsAggregation.bind(this));
@@ -143,10 +149,10 @@ sap.ui.define([
 	 */
 	ActionsToolbar.prototype.initializeContent = function (oCard) {
 		var that = this,
-			oActionButton,
-			aButtons = [],
+			oActionMenuItem,
+			aMenuItems = [],
 			aActions = [],
-			oActionSheet = this.getAggregation("_actionSheet"),
+			oActionMenu = this.getAggregation("_actionsMenu"),
 			oHost = oCard.getHostInstance();
 
 		oCard.getAggregation("_extension");
@@ -158,20 +164,20 @@ sap.ui.define([
 		this._aActions = aActions;
 
 		aActions.forEach(function (oAction) {
-			oActionButton = that._createActionButton(oAction, false);
-			aButtons.push(oActionButton);
+			oActionMenuItem = that._createActionMenuItem(oAction, false);
+			aMenuItems.push(oActionMenuItem);
 		});
 
-		if (this._aButtons) {
-			this._aButtons.forEach(function (oButton) {
-				oButton.destroy();
+		if (this._aMenuItems) {
+			this._aMenuItems.forEach(function (oMenuItem) {
+				oMenuItem.destroy();
 			});
 		}
-		aButtons.forEach(oActionSheet.addButton, oActionSheet);
-		this._aButtons = aButtons;
+		aMenuItems.forEach(oActionMenu.addItem, oActionMenu);
+		this._aMenuItems = aMenuItems;
 
 		// Make an initial check for 'visible' and 'enabled' for the buttons
-		this._refreshButtons().then(this._updateVisibility.bind(this));
+		this._refreshMenuItems().then(this._updateVisibility.bind(this));
 	};
 
 	ActionsToolbar.prototype.setCard = function (oCard) {
@@ -179,8 +185,8 @@ sap.ui.define([
 	};
 
 	ActionsToolbar.prototype._open = function () {
-		this._refreshButtons().then(function () {
-			this.getAggregation("_actionSheet").openBy(this._getToolbar());
+		this._refreshMenuItems().then(function () {
+			this.getAggregation("_actionsMenu").openBy(this._getToolbar());
 		}.bind(this));
 	};
 
@@ -205,42 +211,60 @@ sap.ui.define([
 		return oToolbar;
 	};
 
-	ActionsToolbar.prototype._refreshButtons = function () {
-		var aActions = this._aActions,
-			oCard = this._oCard,
-			aButtons = this._aButtons,
-			mAction,
-			oButton,
-			i,
-			aPromises = [];
+	ActionsToolbar.prototype._refreshMenuItems = function () {
+		const aPromises = [];
 
-		for (i = 0; i < aActions.length; i++) {
-			mAction = aActions[i];
-			oButton = aButtons[i];
-
-			aPromises.push(setButtonProperty(oButton, 'enabled', mAction.enabled, oCard));
-			aPromises.push(setButtonProperty(oButton, 'visible', mAction.visible, oCard));
-		}
+		this._refreshRecursiveMenuItems(this._aActions, this._aMenuItems, aPromises);
 
 		return Promise.all(aPromises);
+	};
+
+	ActionsToolbar.prototype._refreshRecursiveMenuItems = function (aActions, aMenuItems, aPromises) {
+		const oCard = this._oCard;
+
+		if (!aActions || !aMenuItems) {
+			return;
+		}
+
+		aActions.forEach((mAction, i) => {
+			const oMenuItem = aMenuItems[i];
+			aPromises.push(setMenuItemProperty(oMenuItem, 'enabled', mAction.enabled, oCard));
+			aPromises.push(setMenuItemProperty(oMenuItem, 'visible', mAction.visible, oCard));
+
+			this._refreshRecursiveMenuItems(mAction.actions, oMenuItem.getItems(), aPromises);
+		});
 	};
 
 	/**
 	 * @param {object} vAction Action config object
 	 * @param {boolean} bIsActionDefinition
-	 * @returns {sap.m.Button} Button, which will be displayed in the menu
+	 * @returns {sap.m.MenuItem} MenuItem, which will be displayed in the menu
 	 */
-	ActionsToolbar.prototype._createActionButton = function (vAction, bIsActionDefinition) {
+	ActionsToolbar.prototype._createActionMenuItem = function (vAction, bIsActionDefinition) {
 		var mSettings = bIsActionDefinition ? this._getActionConfig(vAction) : vAction;
+		const aNestedMenuItems = [];
 
-		var oBtn = new Button({
+		const aActions = bIsActionDefinition ? mSettings.actionDefinitions : mSettings.actions;
+		if (aActions) {
+			aActions.forEach((oSubAction) => {
+				aNestedMenuItems.push(this._createActionMenuItem(oSubAction, bIsActionDefinition));
+			});
+		}
+
+		var oMenuItem = new MenuItem({
 				icon: mSettings.icon,
 				text: mSettings.text,
 				tooltip: mSettings.tooltip,
-				type: mSettings.buttonType,
+				startsSection: mSettings.startsSection,
 				visible: bIsActionDefinition ? mSettings.visible : false,
+				items: aNestedMenuItems,
 				press: function (oEvent) {
 					var mCurrSettings = bIsActionDefinition ? this._getActionConfig(vAction) : vAction;
+
+					if (mCurrSettings.actionDefinitions?.length > 0 ||
+						mCurrSettings.actions?.length > 0) {
+						return;
+					}
 
 					CardActions.fireAction({
 						card: this._oCard,
@@ -253,15 +277,15 @@ sap.ui.define([
 			});
 
 		if (bIsActionDefinition) {
-			oBtn.setEnabled(mSettings.enabled);
+			oMenuItem.setEnabled(mSettings.enabled);
 		}
 
-		return oBtn;
+		return oMenuItem;
 	};
 
 	ActionsToolbar.prototype._updateVisibility = function () {
-		var bVisible = this.getAggregation("_actionSheet").getButtons().some(function (oButton) {
-			return oButton.getVisible();
+		var bVisible = this.getAggregation("_actionsMenu").getItems().some(function (oMenuItem) {
+			return oMenuItem.getVisible();
 		});
 
 		this.setVisible(bVisible);
@@ -276,7 +300,7 @@ sap.ui.define([
 	};
 
 	ActionsToolbar.prototype._getActionConfig = function (oActionDefinition) {
-		var mSettings = ["visible", "enabled", "icon", "text", "tooltip", "parameters", "buttonType", "type"].reduce(function (mAcc, sKey) {
+		var mSettings = ["visible", "enabled", "icon", "text", "tooltip", "parameters", "type", "actionDefinitions", "startsSection"].reduce(function (mAcc, sKey) {
 			mAcc[sKey] = oActionDefinition["get" + capitalize(sKey)]();
 			return mAcc;
 		}, {});
@@ -296,10 +320,10 @@ sap.ui.define([
 		var oActionDefinition = oChanges.child;
 
 		if (oChanges.mutation === "insert") {
-			var oButton = this._createActionButton(oActionDefinition, true);
+			var oMenuItem = this._createActionMenuItem(oActionDefinition, true);
 
-			this.getAggregation("_actionSheet").insertButton(oButton, this.indexOfActionDefinition(oActionDefinition));
-			oActionDefinition.setAssociation("_menuButton", oButton);
+			this.getAggregation("_actionsMenu").insertItem(oMenuItem, this.indexOfActionDefinition(oActionDefinition));
+			oActionDefinition.setAssociation("_menuItem", oMenuItem);
 
 			var oActionObserver = new ManagedObjectObserver(this._observeSingleAction.bind(this));
 			oActionObserver.observe(oActionDefinition, {
@@ -309,7 +333,7 @@ sap.ui.define([
 			this._mActionObservers.set(oActionDefinition.getId(), oActionObserver);
 			this._updateVisibility();
 		} else if (oChanges.mutation === "remove") {
-			Element.getElementById(oActionDefinition.getAssociation("_menuButton")).destroy();
+			Element.getElementById(oActionDefinition.getAssociation("_menuItem")).destroy();
 			this._mActionObservers.get(oActionDefinition.getId()).disconnect();
 			this._mActionObservers.delete(oActionDefinition.getId());
 		}
@@ -318,7 +342,7 @@ sap.ui.define([
 	ActionsToolbar.prototype._observeSingleAction = function (oChanges) {
 		var oActionDefinition = oChanges.object,
 			sName = oChanges.name,
-			oButton = Element.getElementById(oActionDefinition.getAssociation("_menuButton")),
+			oMenuItem = Element.getElementById(oActionDefinition.getAssociation("_menuItem")),
 			vVal = oChanges.current;
 
 		if (["type", "parameters"].indexOf(sName) !== -1) {
@@ -333,7 +357,7 @@ sap.ui.define([
 			sName = "type";
 		}
 
-		oButton["set" + capitalize(sName)](vVal);
+		oMenuItem["set" + capitalize(sName)](vVal);
 		this._updateVisibility();
 	};
 
@@ -343,7 +367,7 @@ sap.ui.define([
 		if (bValue) {
 			oToolbar.setEnabled(true);
 		} else {
-			this.getAggregation("_actionSheet").close();
+			this.getAggregation("_actionsMenu").close();
 			oToolbar.setEnabled(false);
 		}
 	};

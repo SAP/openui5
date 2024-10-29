@@ -116,7 +116,6 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @since 1.26.0
-	 * @experimental since version 1.26 !!! THIS CONTROL IS ONLY FOR INTERNAL USE !!!
 	 * @alias sap.m.P13nConditionPanel
 	 * @deprecated As of version 1.124, replaced by the artifacts in {@link sap.m.p13n}.
 	 */

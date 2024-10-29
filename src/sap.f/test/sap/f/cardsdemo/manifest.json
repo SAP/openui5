@@ -343,6 +343,11 @@
 					"pattern": "noLayout",
 					"name": "noLayout",
 					"target": "noLayout"
+				},
+				{
+					"pattern": "cardActions",
+					"name": "cardActions",
+					"target": "cardActions"
 				}
 			],
 			"targets": {
@@ -608,6 +613,11 @@
 				"noLayout": {
 					"id": "noLayout",
 					"name": "NoLayout",
+					"level": 1
+				},
+				"cardActions": {
+					"id": "cardActions",
+					"name": "cardActions",
 					"level": 1
 				}
 			}

@@ -94,6 +94,7 @@ sap.ui.define([
 			"CardHostAndExtension": {},
 			"CardMeasurements": {},
 			"CardReadyState": {},
+			"CardRole": { },
 
 			"CardHost": {
 				coverage: {

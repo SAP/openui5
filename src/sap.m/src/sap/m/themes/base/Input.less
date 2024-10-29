@@ -8,16 +8,16 @@
 }
 
 .sapMListFocus .sapMLIBFocused {
-	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	outline-offset: -0.125rem;
 }
 
 .sapMInputDescriptionText {
 	padding-left: 0.5rem;
-	font-size: @sapFontSize;
+	font-size: var(--sapFontSize);
 	line-height: normal;
-	color: @sapUiFieldTextColor;
-	font-family: @sapUiFontFamily;
+	color: var(--sapField_TextColor);
+	font-family: var(--sapFontFamily);
 	font-style: normal;
 	font-weight: normal;
 	white-space: nowrap;
@@ -34,9 +34,12 @@
 }
 
 /* Input with description */
-.sapMInputBaseHasEndIcons, .sapMInputBaseHasBeginIcons {
+.sapMInputBaseHasEndIcons,
+.sapMInputBaseHasBeginIcons {
+
 	.sapMInputDescriptionWrapper {
 		max-width: ~"calc(100% - (@{_InputBase_Control_OneIcon_MinWidth}))";
+
 		.sapMInputBaseState:not(.sapMInputBaseContentWrapperSuccess) & {
 			max-width: ~"calc(100% - (@{_InputBase_Control_OneIcon_State_MinWidth}))";
 		}
@@ -44,8 +47,10 @@
 }
 
 .sapMInputBaseHasEndIcons.sapMInputBaseHasBeginIcons {
+
 	.sapMInputDescriptionWrapper {
 		max-width: ~"calc(100% - (@{_InputBase_Control_TwoIcons_MinWidth}))";
+
 		.sapMInputBaseState:not(.sapMInputBaseContentWrapperSuccess) & {
 			max-width: ~"calc(100% - (@{_InputBase_Control_TwoIcons_State_MinWidth}))";
 		}
@@ -53,8 +58,10 @@
 }
 
 .sapMInputBase:not(.sapMInputBaseHasEndIcons):not(.sapMInputBaseHasBeginIcons) {
+
 	.sapMInputDescriptionWrapper {
 		max-width: ~"calc(100% - (@{_InputBase_Control_MinWidth}))";
+
 		.sapMInputBaseState:not(.sapMInputBaseContentWrapperSuccess) & {
 			max-width: ~"calc(100% - (@{_InputBase_Control_State_MinWidth}*2))";
 		}
@@ -62,9 +69,13 @@
 }
 
 .sapUiSizeCompact {
-	.sapMInputBaseHasEndIcons, .sapMInputBaseHasBeginIcons {
+
+	.sapMInputBaseHasEndIcons,
+	.sapMInputBaseHasBeginIcons {
+
 		.sapMInputDescriptionWrapper {
 			max-width: ~"calc(100% - (@{_InputBase_Control_OneIcon_MinWidth_Compact}))";
+
 			.sapMInputBaseState:not(.sapMInputBaseContentWrapperSuccess) & {
 				max-width: ~"calc(100% - (@{_InputBase_Control_OneIcon_State_MinWidth_Compact}))";
 			}
@@ -72,8 +83,10 @@
 	}
 
 	.sapMInputBaseHasEndIcons.sapMInputBaseHasBeginIcons {
+
 		.sapMInputDescriptionWrapper {
 			max-width: ~"calc(100% - (@{_InputBase_Control_TwoIcons_MinWidth_Compact}))";
+
 			.sapMInputBaseState:not(.sapMInputBaseContentWrapperSuccess) & {
 				max-width: ~"calc(100% - (@{_InputBase_Control_TwoIcons_State_MinWidth_Compact}))";
 			}
@@ -81,8 +94,10 @@
 	}
 
 	.sapMInputBase:not(.sapMInputBaseHasEndIcons):not(.sapMInputBaseHasBeginIcons) {
+
 		.sapMInputDescriptionWrapper {
 			max-width: ~"calc(100% - (@{_InputBase_Control_MinWidth_Compact}))";
+
 			.sapMInputBaseState:not(.sapMInputBaseContentWrapperSuccess) & {
 				max-width: ~"calc(100% - (@{_InputBase_Control_State_MinWidth_Compact}*2))";
 			}
