@@ -47,9 +47,7 @@ sap.ui.define([
 			}).then((splashDiv) => {
 				sap.ui.require(["sap/ui/core/Rendering"], (Rendering) => {
 					Rendering.addPrerenderingTask(() => {
-						Core.ready().then(() => {
-							document.body.removeChild(splashDiv);
-						});
+						document.body.removeChild(splashDiv);
 					});
 				});
 			});

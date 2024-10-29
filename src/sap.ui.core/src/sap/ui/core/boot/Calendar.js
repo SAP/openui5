@@ -11,11 +11,11 @@
 sap.ui.define([
 	"sap/base/config",
 	"sap/base/i18n/Localization",
-	"sap/base/util/LoaderExtensions"
+	"sap/ui/core/LocaleData"
 ], (
 	config,
 	Localization,
-	LoaderExtensions
+	LocaleData
 ) => {
 	"use strict";
 
@@ -43,11 +43,7 @@ sap.ui.define([
 	return {
 		run: () => {
 			// load cldr
-			const pLocaleData = new Promise((resolve, reject) => {
-				sap.ui.require(["sap/ui/core/LocaleData"], (LocaleData) => {
-					LocaleData.requestInstance(Localization.getLanguageTag()).then(resolve);
-				}, reject);
-			});
+			const pLocaleData = LocaleData.requestInstance(Localization.getLanguageTag());
 			return Promise.all([pCalendarpBoot, pLocaleData]);
 		}
 	};
