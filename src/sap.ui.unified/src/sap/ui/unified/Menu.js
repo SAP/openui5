@@ -308,7 +308,11 @@ sap.ui.define([
 		}
 
 		this.setHoveredItem(oItem);
-		oItem && oItem.focus(this);
+
+		var bShouldFocusItem = oItem && (oItem.getDomRef() !== document.activeElement);
+		if (bShouldFocusItem) {
+			oItem.focus(this);
+		}
 
 		this._openSubMenuDelayed(oItem);
 	};
