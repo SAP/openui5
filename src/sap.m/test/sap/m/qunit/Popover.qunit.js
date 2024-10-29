@@ -436,6 +436,25 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
+	QUnit.test("Open invisible popover", function (assert) {
+		// Arrange
+		this.oPopover.setVisible(false);
+
+		// Act
+		this.oPopover.openBy(this.oButton);
+		this.clock.tick(500);
+
+		// Assert
+		assert.notOk(this.oPopover.isOpen(), "Invisible popover is not open");
+
+		// Act
+		this.oPopover.setVisible(true);
+		this.oPopover.openBy(this.oButton);
+		this.clock.tick(500);
+
+		assert.ok(this.oPopover.isOpen(), "Popover is open");
+	});
+
 	QUnit.module("Position calculation", {
 		beforeEach: function () {
 			this.clock = sinon.useFakeTimers();

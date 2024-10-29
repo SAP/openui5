@@ -819,7 +819,10 @@ sap.ui.define([
 		 * @public
 		 */
 		Popover.prototype.openBy = function (oControl, bSkipInstanceManager) {
-			// If already opened with the needed content then return
+			if (!this.getVisible()) {
+				return this;
+			}
+
 			var oPopup = this.oPopup,
 				ePopupState = this.oPopup.getOpenState(),
 			// The control that needs to be focused after popover is open is calculated in following sequence:
