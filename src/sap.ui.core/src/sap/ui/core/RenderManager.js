@@ -1985,6 +1985,9 @@ sap.ui.define([
 					};
 				}
 			);
+			/**
+			 * @deprecated As of version 1.120
+			 */
 			IconPool = sap.ui.requireSync("sap/ui/core/IconPool"); // legacy-relevant: Sync fallback
 		}
 
