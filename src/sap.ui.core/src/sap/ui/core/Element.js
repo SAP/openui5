@@ -8,6 +8,7 @@ sap.ui.define([
 	'../base/Object',
 	'../base/ManagedObject',
 	'./ElementMetadata',
+	'./FocusMode',
 	'../Device',
 	"sap/ui/dom/findTabbable",
 	"sap/ui/performance/trace/Interaction",
@@ -28,6 +29,7 @@ sap.ui.define([
 		BaseObject,
 		ManagedObject,
 		ElementMetadata,
+		FocusMode,
 		Device,
 		findTabbable,
 		Interaction,
@@ -557,7 +559,7 @@ sap.ui.define([
 		} else if (sPropertyName === "visible") {
 			ManagedObject.prototype.setProperty.apply(this, arguments);
 			if (vValue === false && this.getDomRef()?.contains(document.activeElement)) {
-				Element.fireFocusFail.call(this, /*bRenderingPending=*/true);
+				Element.fireFocusFail.call(this, FocusMode.RENDERING_PENDING);
 			}
 		}
 
@@ -565,6 +567,8 @@ sap.ui.define([
 	};
 
 	function _focusTarget(oOriginalDomRef, oFocusTarget) {
+		// In the meantime, the focus could be set somewhere else.
+		// If that element is focusable, then we don't steal the focus from it
 		if (oOriginalDomRef?.contains(document.activeElement) || !jQuery(document.activeElement).is(":sapFocusable")) {
 			oFocusTarget?.focus({
 				preventScroll: true
@@ -575,14 +579,23 @@ sap.ui.define([
 	/**
 	* Handles the 'focusfail' event by attempting to find and focus on a tabbable element.
 	* The 'focusfail' event is triggered when the current element, which initially holds the focus,
-	* becomes disabled or invisible. The event is received by the parent of the element that failed
+	* becomes disabled, invisible, or destroyed. The event is received by the parent of the element that failed
 	* to retain the focus.
 	*
 	* @param {Event} oEvent - The event object containing the source element that failed to gain focus.
 	* @protected
 	*/
 	Element.prototype.onfocusfail = function(oEvent) {
-		let oDomRef = oEvent.srcControl.getDomRef();
+		// oEvent._skipArea is set when all controls in an aggregation are
+		// removed/destroyed (via 'removeAllAggregation'). We need to skip the
+		// entire aggregation area since all controls' DOM elements will be
+		// removed and no focusable element can be found within
+		// oEvent._skipArea
+		//
+		// oEvent._skipArea is used as start point when it exists and
+		// the following 'findTabbable' call starts with its next/previous
+		// sibling
+		let oDomRef = oEvent._skipArea || oEvent.srcControl.getDomRef();
 		const oOriginalDomRef = oDomRef;
 
 		let oParent = this;
@@ -593,16 +606,15 @@ sap.ui.define([
 
 		do {
 			if (oParentDomRef?.contains(oDomRef)) {
-				// search tabbable element to the right
+				// Search for a tabbable element forward (to the right)
 				oRes = findTabbable(oDomRef, {
 					scope: oParentDomRef,
 					forward: true,
 					skipChild: true
 				});
 
-				// if nothing is found
+				// If no element is found, search backward (to the left)
 				if (oRes?.startOver) {
-					// search tabbable element to the left
 					oRes = findTabbable(oDomRef, {
 						scope: oParentDomRef,
 						forward: false
@@ -611,36 +623,43 @@ sap.ui.define([
 
 				oFocusTarget = oRes?.element;
 
+				// Reached the parent DOM which is tabbable, stop searching
 				if (oFocusTarget === oParentDomRef) {
-					// Reached the parent DOM which is tabbable
 					break;
 				}
 
-				// Continue with the parent's siblings
+				// Move up to the parent's siblings
 				oDomRef = oParentDomRef;
 				oParent = oParent?.getParent();
 				oParentDomRef = oParent?.getDomRef?.();
 			} else {
-				// The DOM Element which lost the focus isn't rendered within the parent
+				// If the lost focus element is outside the parent, look for the parent's first focusable element
 				oFocusTarget = oParentDomRef && jQuery(oParentDomRef).firstFocusableDomRef();
 				break;
 			}
 		} while ((!oRes || oRes.startOver) && oDomRef);
 
+		// Apply focus to the found target
 		if (oFocusTarget) {
-			// In the meantime, the focus could be set somewhere else.
-			// If that element is focusable, then we don't steal the focus from it
-			if (oEvent._bRenderingPending) {
-				Rendering.addPrerenderingTask(() => {
+			switch (oEvent.mode) {
+				case FocusMode.SYNC:
 					_focusTarget(oOriginalDomRef, oFocusTarget);
-				});
-			} else {
-				Promise.resolve().then(() => {
-					_focusTarget(oOriginalDomRef, oFocusTarget);
-				});
+					break;
+
+				case FocusMode.RENDERING_PENDING:
+					Rendering.addPrerenderingTask(() => {
+						_focusTarget(oOriginalDomRef, oFocusTarget);
+					});
+					break;
+
+				case FocusMode.DEFAULT:
+				default:
+					Promise.resolve().then(() => {
+						_focusTarget(oOriginalDomRef, oFocusTarget);
+					});
+					break;
 			}
 		}
-
 	};
 
 	Element.prototype.insertDependent = function(oElement, iIndex) {
@@ -664,6 +683,177 @@ sap.ui.define([
 	Element.prototype.destroyDependents = function() {
 		this.destroyAggregation("dependents", true);
 		return this; // explicitly return 'this' to fix controls that override destroyAggregation wrongly
+	};
+
+	/**
+	 * Helper to identify the entire aggregation area that should be skipped when searchin for focusable elements.
+	 * If the currently focused element is part of the aggregation being removed or destroyed,
+	 * the entire aggregation area needs to be skipped sinceh its DOM element will be removed
+	 * leaving no focusable element within the aggregation.
+	 *
+	 * @param {sap.ui.core.ManagedObject[]} aChildren The children that belong to the aggregation
+	 * @returns {HTMLElement|null} Returns the DOM which needs to be skipped, or 'null' if no relevant area is found.
+	 */
+	function searchAggregationAreaToSkip(aChildren) {
+		let oSkipArea = null;
+
+		for (let i = 0; i < aChildren.length; i++) {
+			const oChild = aChildren[i];
+			const oDomRef = oChild?.getDomRef?.();
+
+			if (oDomRef) {
+				if (!oSkipArea) {
+					oSkipArea = oDomRef.parentElement;
+				} else  {
+					while (oSkipArea && !oSkipArea.contains(oDomRef)) {
+						oSkipArea = oSkipArea.parentElement;
+					}
+				}
+			}
+		}
+		return oSkipArea;
+	}
+
+	/**
+	 *  Determines if the DOM removal needs to be performed synchronously.
+	 *
+	 *  @param {boolean|string} bSuppressInvalidate - Whether invalidation is suppressed. If set to "KeepDom", the DOM is retained.
+	 *  @param {boolean} bHasNoParent Whether the element has no parent. If true, it suggests that the element is being removed from the DOM tree.
+	 *  @returns {boolean} Returns true, if synchronous DOM removal is needed; otherwise 'false'.
+	 */
+	function needSyncDomRemoval(bSuppressInvalidate, bHasNoParent) {
+		const bKeepDom = (bSuppressInvalidate === "KeepDom");
+		const oDomRef = this.getDomRef();
+
+		// Conditions that require sync DOM removal
+		return (bSuppressInvalidate === true || // Explicit supression of invalidation
+				(!bKeepDom && bHasNoParent) || // No parent and DOM should not be kept
+				this.isA("sap.ui.core.PopupInterface") || // The element is a popup
+				RenderManager.isPreservedContent(oDomRef)); // The element is part of the 'preserve' area.
+	}
+
+	/**
+	 * Checks for a focused child within the provided children (array or single object)
+	 * and fired the focus fail event if necessary.
+	 *
+	 * @param {sap.ui.base.ManagedObject[]|sap.ui.base.ManagedObject} vChildren The children to check. Can be an array or a single object.
+	 * @param {boolean} bSuppressInvalidate If true, this ManagedObject is not marked as changed
+	 */
+	function checkAndFireFocusFail(vChildren, bSuppressInvalidate) {
+		let oFocusedChild = null;
+		let oSkipArea = null;
+
+		if (Array.isArray(vChildren)) {
+			for (let i = 0; i < vChildren.length; i++) {
+				const oChild = vChildren[i];
+				const oDomRef = oChild.getDomRef?.();
+
+				if (oDomRef?.contains(document.activeElement)) {
+					oFocusedChild = oChild;
+				}
+			}
+			if (oFocusedChild) {
+				oSkipArea = searchAggregationAreaToSkip(vChildren);
+			}
+		} else if (vChildren instanceof ManagedObject) {
+			oFocusedChild = vChildren;
+		}
+
+		if (!oFocusedChild) {
+			return;
+		}
+
+		const oDomRef = oFocusedChild.getDomRef?.();
+		if (oDomRef?.contains?.(document.activeElement) && !bSuppressInvalidate) {
+			// Determin if the DOM removal needs to happen sync or async
+			const bSyncRemoval = needSyncDomRemoval.call(oFocusedChild, bSuppressInvalidate, !this);
+			const sFocusMode = bSyncRemoval ? FocusMode.SYNC : FocusMode.RENDERING_PENDING;
+
+			if (!this._bIsBeingDestroyed) {
+				Element.fireFocusFail.call(oFocusedChild, sFocusMode, this, oSkipArea);
+			}
+		}
+	}
+
+	/**
+	 * Sets a new object in the named 0..1 aggregation of this ManagedObject and marks this ManagedObject as changed.
+	 * Manages the focus handling if the current aggregation is removed (i.e., when the object is set to <code>null</code>).
+	 * If the previous object in the aggregation was focused, a "focusfail" event is triggered.
+	 *
+	 * @param {string}
+	 *            sAggregationName name of an 0..1 aggregation
+	 * @param {sap.ui.base.ManagedObject}
+	 *            oObject the managed object that is set as aggregated object
+	 * @param {boolean}
+	 *            [bSuppressInvalidate=true] if true, this ManagedObject is not marked as changed
+	 * @returns {this} Returns <code>this</code> to allow method chaining
+	 * @throws {Error}
+	 * @protected
+	 */
+	Element.prototype.setAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
+		// Get current aggregation for the specified aggregation name before aggregation change
+		const oChild = this.getAggregation(sAggregationName);
+
+		// Call parent method to perform actual aggregation change
+		const vResult = ManagedObject.prototype.setAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
+		if (oChild && oObject == null) {
+			checkAndFireFocusFail.call(this, oChild, bSuppressInvalidate);
+		}
+		return vResult;
+	};
+
+	/**
+	 * Removes an object from the aggregation named <code>sAggregationName</code> with cardinality 0..n and manages
+	 * focus handling in case the removed object was focused. If the removed object held the focus, a "focusfail" event
+	 * is triggered to proper focus redirection.
+	 *
+	 * @param {string}
+	 *            sAggregationName the string identifying the aggregation that the given object should be removed from
+	 * @param {int | string | sap.ui.base.ManagedObject}
+	 *            vObject the position or ID of the ManagedObject that should be removed or that ManagedObject itself;
+	 *            if <code>vObject</code> is invalid, a negative value or a value greater or equal than the current size
+	 *            of the aggregation, nothing is removed.
+	 * @param {boolean}
+	 *            [bSuppressInvalidate=false] if true, this ManagedObject is not marked as changed
+	 * @returns {sap.ui.base.ManagedObject|null} the removed object or <code>null</code>
+	 * @protected
+	 */
+	Element.prototype.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
+		const vResult = ManagedObject.prototype.removeAggregation.call(this, sAggregationName, vObject, bSuppressInvalidate);
+		checkAndFireFocusFail.call(this, vResult, bSuppressInvalidate);
+		return vResult;
+	};
+
+	/**
+	 * Removes all child elements of a specified aggregation and handles focus management for elements that are currently focused.
+	 * If the currently focused element belongs to the aggregation being removed, a "focusfail" event is triggered to shift the
+	 * focus to a relevant element.
+	 *
+	 * @param {string} sAggregationName The name of the aggregation
+	 * @param {boolean} [bSuppressInvalidate=false] If true, this ManagedObject is not marked as changed
+	 * @returns {sap.ui.base.ManagedObject[]} An array of the removed elements (might be empty)
+	 * @protected
+	 */
+	Element.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate) {
+		const aChildren = ManagedObject.prototype.removeAllAggregation.call(this, sAggregationName, bSuppressInvalidate);
+		checkAndFireFocusFail.call(this, aChildren, bSuppressInvalidate);
+		return aChildren;
+	};
+
+	/**
+	 * Destroys all child elements of a specified aggregation and handles focus management for elements that are currently focused.
+	 * If the currently focused element belongs to the aggregation being destroyed, a "focusfail" event is triggered to shift the
+	 * focus to a relevant element.
+	 *
+	 * @param {string} sAggregationName The name of the aggregation
+	 * @param {boolean} [bSuppressInvalidate=false] If true, this ManagedObject is not marked as changed
+	 * @returns {this} Returns <code>this</code> to allow method chaining
+	 * @protected
+	 */
+	Element.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
+		const aChildren = this.getAggregation(sAggregationName);
+		checkAndFireFocusFail.call(this, aChildren, bSuppressInvalidate);
+		return ManagedObject.prototype.destroyAggregation.call(this, sAggregationName, bSuppressInvalidate);
 	};
 
 	/**
@@ -698,18 +888,27 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fires a "focusfail" event.
-	 * The event is propagated to the parent of the current element.
+	 * Fires a "focusfail" event to handle focus redirection when the current element loses focus due to a state change
+	 * (e.g., disabled, invisible, or destroyed). The event is propagated to the parent of the current element to manage
+	 * the focus shift.
 	 *
-	 * @private
+	 * @param {string} sFocusHandlingMode The mode of focus handling, determining whether the focus should be handled sync or async.
+	 * @param {sap.ui.core.Element} oParent The parent element that will handle the "focusfail" event.
+	 * @param {HTMLElement} [oSkipArea=null] Optional DOM area to be skipped during focus redirection.
+	 *
+	 * @protected
 	 */
-	Element.fireFocusFail = function(bRenderingPending) {
+	Element.fireFocusFail = function(sFocusHandlingMode, oParent, oSkipArea) {
 		const oEvent = jQuery.Event("focusfail");
 		oEvent.srcControl = this;
-		oEvent._bRenderingPending = bRenderingPending || false;
+		oEvent.mode = sFocusHandlingMode || FocusMode.DEFAULT;
+		oEvent._skipArea = oSkipArea;
 
-		const oParent = this.getParent();
-		oParent?._handleEvent?.(oEvent);
+		oParent ??= this.getParent();
+
+		if (oParent && !oParent._bIsBeingDestroyed) {
+			oParent._handleEvent?.(oEvent);
+		}
 	};
 
 	/**
@@ -752,13 +951,12 @@ sap.ui.define([
 		// If parent invalidation is not possible, either bSuppressInvalidate=true or there is no parent to invalidate then we must remove the control DOM synchronously.
 		// Controls that implement marker interface sap.ui.core.PopupInterface are by contract not rendered by their parent so we cannot keep the DOM of these controls.
 		// If the control is destroyed while its content is in the preserved area then we must remove DOM synchronously since we cannot invalidate the preserved area.
-		var bKeepDom = (bSuppressInvalidate === "KeepDom");
-		if (bSuppressInvalidate === true || (!bKeepDom && bHasNoParent) || this.isA("sap.ui.core.PopupInterface") || RenderManager.isPreservedContent(oDomRef)) {
+		if (needSyncDomRemoval.call(this, bSuppressInvalidate, bHasNoParent)) {
 			jQuery(oDomRef).remove();
 		} else {
 			// Make sure that the control DOM won't get preserved after it is destroyed (even if bSuppressInvalidate="KeepDom")
 			oDomRef.removeAttribute("data-sap-ui-preserve");
-			if (!bKeepDom) {
+			if (bSuppressInvalidate !== "KeepDom") {
 				// On destroy we do not remove the control DOM synchronously and just let the invalidation happen on the parent.
 				// At the next tick of the RenderManager, control DOM nodes will be removed via rerendering of the parent anyway.
 				// To make this new behavior more compatible we are changing the id of the control's DOM and all child nodes that start with the control id.
@@ -1195,8 +1393,8 @@ sap.ui.define([
 			// should not fire 'FocusFail' even when the oFocusDomRef isn't
 			// focusable because not all controls defines the 'getFocusDomRef'
 			// method properly
-			if (oDomRef && !oDomRef.contains(document.activeElement) && !this._bIsBeingDestroyed) {
-				Element.fireFocusFail.call(this);
+			if (oDomRef && !oDomRef.contains(document.activeElement) ) {
+				Element.fireFocusFail.call(this, FocusMode.DEFAULT);
 			}
 		}
 	};

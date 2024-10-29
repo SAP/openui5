@@ -2842,7 +2842,6 @@ sap.ui.define([
 		};
 
 		Popover.prototype.destroyAggregation = function (sAggregationName, bSuppressInvalidate) {
-			var oActiveControl = Element.closestTo(document.activeElement);
 			if (sAggregationName === "beginButton" || sAggregationName === "endButton") {
 				var sButton = this["_" + sAggregationName];
 				if (sButton) {
@@ -2851,11 +2850,6 @@ sap.ui.define([
 				}
 			} else {
 				Control.prototype.destroyAggregation.apply(this, arguments);
-			}
-
-			// set focus to the popover itself when the focused control is destroyed to keep the popover open
-			if (oActiveControl && !oActiveControl.getDomRef()) {
-				this.focus();
 			}
 
 			return this;

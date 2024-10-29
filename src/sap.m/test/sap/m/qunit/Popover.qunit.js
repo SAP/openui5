@@ -338,6 +338,7 @@ sap.ui.define([
 		this.clock.tick(1000);  // wait 1s after the open animation is completed
 
 		this.oPopover.destroyContent();
+		this.clock.tick(1000); // wait for focus restoration to happen
 
 		assert.strictEqual(document.activeElement, this.oPopover.getFocusDomRef(), "Focus should be on the Popover");
 	});
