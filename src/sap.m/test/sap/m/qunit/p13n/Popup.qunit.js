@@ -409,4 +409,20 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("#addStyleClass forwards to the inner container", function(assert) {
+		var oPanel = new SelectionPanel();
+		this.oPopup.addPanel(oPanel);
+		this.oPopup.open(this.oSource);
+		this.oPopup.addStyleClass("myClass");
+		assert.ok(this.oPopup._oPopup.hasStyleClass("myClass"), "The style class has been forwarded to the inner container");
+	});
+
+	QUnit.test("#removeStyleClass forwards to the inner container", function(assert) {
+		var oPanel = new SelectionPanel();
+		this.oPopup.addPanel(oPanel);
+		this.oPopup.open(this.oSource);
+		this.oPopup.removeStyleClass("myClass");
+		assert.ok(!this.oPopup._oPopup.hasStyleClass("myClass"), "The style class removal has been forwarded to the inner container");
+	});
+
 });
