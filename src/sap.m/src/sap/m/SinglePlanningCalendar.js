@@ -1157,12 +1157,14 @@ function(
 		this.getViews().forEach(function (oView) {
 			oView.setCalendarWeekNumbering(sCalendarWeekNumbering);
 		});
+
 		var oHeader = this._getHeader(),
 			oPicker = oHeader.getAggregation("_calendarPicker") ? oHeader.getAggregation("_calendarPicker") : oHeader._oPopup.getContent()[0],
 			oMonthGrid = this.getAggregation("_mvgrid");
 
-		oMonthGrid.setCalendarWeekNumbering(this.getCalendarWeekNumbering());
-		oPicker.setCalendarWeekNumbering(this.getCalendarWeekNumbering());
+		oHeader.setCalendarWeekNumbering(sCalendarWeekNumbering);
+		oMonthGrid.setCalendarWeekNumbering(sCalendarWeekNumbering);
+		oPicker.setCalendarWeekNumbering(sCalendarWeekNumbering);
 
 		this._alignColumns();
 
