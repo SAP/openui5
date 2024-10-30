@@ -16,7 +16,10 @@ sap.ui.define([
 			associations: {
 				ariaDescribedBy: { type: 'sap.ui.core.Control', multiple: true }
 			}
-		}
+		},
+
+		// no renderer needed in the test scenario
+		renderer: null
 	});
 
 	var TestContainer = Control.extend("sap.test.TestContainer", {
@@ -26,6 +29,10 @@ sap.ui.define([
 				title: { type: 'sap.test.TestControl', altTypes: [ 'string' ], multiple: false }
 			}
 		},
+
+		// no renderer needed in the test scenario
+		renderer: null,
+
 		init: function() {
 			this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 		}
@@ -43,7 +50,10 @@ sap.ui.define([
 				// a non-empty default value (emptyvalues must be written)
 				nonEmptyDefault: { type: 'string', defaultValue: "hello world!" }
 			}
-		}
+		},
+
+		// no renderer needed in the test scenario
+		renderer: null
 	});
 
 	function unescapeSpace(s) {

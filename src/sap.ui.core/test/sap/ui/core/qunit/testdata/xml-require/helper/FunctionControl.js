@@ -6,6 +6,8 @@ sap.ui.define(["sap/ui/core/Control"], function(Control) {
 			properties: {
 				handler: {type : "function", group : "Behavior", defaultValue : null}
 			}
-		}
+		},
+		// no renderer needed in the test scenario
+		renderer: null
 	});
 });

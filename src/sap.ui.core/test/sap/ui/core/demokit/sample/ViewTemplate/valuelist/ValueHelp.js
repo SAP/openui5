@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Input",
+	"sap/m/InputRenderer",
 	"sap/m/library",
 	"sap/m/MessageBox",
 	"sap/m/Popover",
 	"sap/m/Table",
 	"sap/m/Text"
-], function (Button, Column, ColumnListItem, Input, library, MessageBox, Popover, Table, Text) {
+], function (Button, Column, ColumnListItem, Input, InputRenderer, library, MessageBox,
+		Popover, Table, Text) {
 	"use strict";
 
 	var PlacementType = library.PlacementType, // shortcut for sap.m.PlacementType
@@ -77,7 +79,7 @@ sap.ui.define([
 				Input.prototype.onBeforeRendering.call(this);
 			},
 
-			renderer : "sap.m.InputRenderer",
+			renderer : InputRenderer,
 
 			setShowDetails : function (bShowDetails) {
 				this.setProperty("showDetails", bShowDetails);
