@@ -1053,6 +1053,22 @@ sap.ui.define([
 			assert.notOk(oGrid._isNonWorkingDay(CalendarDate.fromLocalJSDate(oWorkingWeekend)), "01.06.2018 is working day");
 		});
 
+		QUnit.test("Grid cells accessibility description", function (assert) {
+			// Prepare
+			var oDate = UI5Date.getInstance(2024, 8, 1),
+				oAppointment = new CalendarAppointment({
+					title: "Appointment",
+					startDate: oDate,
+					endDate: oDate
+				}),
+			oGrid = new SinglePlanningCalendarMonthGrid({
+				appointments: [oAppointment]
+			});
+
+			// Assert
+			assert.ok(oGrid._doesContainAppointments(CalendarDate.fromLocalJSDate(oDate)), "Cells description properly set");
+		});
+
 		QUnit.module("DOM attributes", {
 			beforeEach: async function() {
 				this.oSPC = new SinglePlanningCalendar({

@@ -318,6 +318,9 @@ sap.ui.define([
 				oRm.close("div");
 			}
 		},
+		setIsInColumnHeaderContext: function(bIsInColumnHeaderContext) {
+			this.getLabel()?.setIsInColumnHeaderContext(bIsInColumnHeaderContext);
+		},
 		getText: function() { // Used by inner table for the fieldHelpInfo, and by tests in MDC and FE.
 			return this.getLabel().getText();
 		},

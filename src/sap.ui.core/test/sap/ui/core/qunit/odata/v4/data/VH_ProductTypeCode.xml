@@ -9,6 +9,9 @@
 	<edmx:Reference Uri="../../../../default/sap/zui5_epm_sample/0002/$metadata">
 		<edmx:Include Namespace="com.sap.gateway.default.zui5_epm_sample.v0002" Alias="ParentService" />
 	</edmx:Reference>
+	<edmx:Reference Uri="../../d_pr_type-fv-ext/0001/$metadata">
+		<edmx:Include Namespace="com.sap.gateway.f4.d_pr_type-fv-ext.v0001" />
+	</edmx:Reference>
 	<edmx:DataServices>
 		<Schema Namespace="com.sap.gateway.f4.d_pr_type-fv.v0001" Alias="SAP__self">
 			<EntityType Name="D_PR_TYPE_FV">
@@ -35,6 +38,9 @@
 						</PropertyValue>
 					</Record>
 				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.D_PR_TYPE_FV/DESCRIPTION">
+				<Annotation Term="SAP__common.Label" String="Description"/>
 			</Annotations>
 		</Schema>
 	</edmx:DataServices>

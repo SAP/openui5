@@ -1,16 +1,18 @@
-/*global QUnit */
+/*global QUnit sinon*/
 sap.ui.define([
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/Element",
 	"sap/m/Button",
 	"sap/m/Dialog",
+	"sap/m/App",
+	"sap/m/Page",
 	"sap/m/Popover",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/Input",
 	"sap/m/Panel",
 	"sap/m/Text"
-], function(BusyIndicator, Element, Button, Dialog, Popover, createAndAppendDiv, nextUIUpdate, Input, Panel, Text) {
+], function(BusyIndicator, Element, Button, Dialog, App, Page, Popover, createAndAppendDiv, nextUIUpdate, Input, Panel, Text) {
 	"use strict";
 
 	QUnit.module("Focus Issue");
@@ -321,6 +323,159 @@ sap.ui.define([
 
 		assert.ok(document.activeElement === document.body, "After both buttons have been hidden, the focus is moved to the document.body");
 		oPanel.destroy();
+	});
+
+	QUnit.test("Focus correct when current element gets destroyed", async function(assert) {
+		createAndAppendDiv("uiarea_focus");
+
+		const oButton1 = new Button();
+		const oButton2 = new Button();
+		const oPanel = new Panel({
+			content: [oButton1, oButton2]
+		});
+
+		const oPage = new Page();
+		oPage.addContent(oPanel);
+
+		const oApp = new App();
+		oApp.addPage(oPage);
+
+		oApp.placeAt("uiarea_focus");
+		await nextUIUpdate();
+
+		oButton2.focus();
+		assert.ok(oButton2.getDomRef() === document.activeElement, "Initially, oButton2 should be focused");
+
+		oButton2.destroy();
+		await nextUIUpdate();
+
+		assert.ok(oButton1.getDomRef() === document.activeElement, "After oButton2 has been destroyed, the focus should be moved correctly on oButton1");
+
+		const oFireFocusFailSpy = sinon.spy(Element, "fireFocusFail");
+
+		oPage.destroy();
+		await nextUIUpdate();
+
+		assert.equal(oFireFocusFailSpy.callCount, 1, "Element.fireFocusFail() should be called only once, after Page has been destroyed.");
+		assert.ok(document.activeElement === document.body, "After both buttons have been destroyed, the focus is moved to the document.body");
+
+		oFireFocusFailSpy.restore();
+	});
+
+	QUnit.test("Focus correct when all aggregations are removed via 'removeAllAggregation'", async function(assert) {
+		createAndAppendDiv("uiarea_focus");
+
+		const done = assert.async();
+
+		const oPage = new Page();
+		const oButtonOutsidePanel = new Button({
+			text: "btnOutsidePanel"
+		});
+		const oButton1 = new Button({
+			text: "btn1"
+		});
+		const oButton2 = new Button({
+			text: "btn2"
+		});
+		const oPanel = new Panel({
+			content: [oButton1, oButton2]
+		});
+
+		oPage.addContent(oButtonOutsidePanel).addContent(oPanel);
+		oPage.placeAt("uiarea_focus");
+		await nextUIUpdate();
+
+		oButton1.focus();
+		assert.ok(oButton1.getDomRef() === document.activeElement, "Initially, oButton1 should be focused");
+
+		const oFireFocusFailSpy = sinon.spy(Element, "fireFocusFail");
+		oPanel.removeAllContent();
+
+		setTimeout(() => {
+			assert.ok(oButtonOutsidePanel.getDomRef() === document.activeElement, "After Panel content has been cleared, the button outside the Panel control should be focused");
+			assert.equal(oFireFocusFailSpy.callCount, 1, "Element.fireFocusFail() should be called only once, after content aggregation has been removed via 'removeAllAggregation'.");
+
+			oPage.destroy();
+			oFireFocusFailSpy.restore();
+			done();
+		}, 0);
+	});
+
+	QUnit.test("Focus correct when aggregation is being removed via 'destroyAggregation'", async function(assert) {
+		createAndAppendDiv("uiarea_focus");
+
+		const done = assert.async();
+
+		const oPage = new Page();
+		const oButtonOutsidePanel = new Button({
+			text: "btnOutsidePanel"
+		});
+		const oButton1 = new Button({
+			text: "btn1"
+		});
+		const oButton2 = new Button({
+			text: "btn2"
+		});
+		const oPanel = new Panel({
+			content: [oButton1, oButton2]
+		});
+
+		oPage.addContent(oButtonOutsidePanel).addContent(oPanel);
+		oPage.placeAt("uiarea_focus");
+		await nextUIUpdate();
+
+		oButton1.focus();
+		assert.ok(oButton1.getDomRef() === document.activeElement, "Initially, oButton1 should be focused");
+
+		const oFireFocusFailSpy = sinon.spy(Element, "fireFocusFail");
+		oPanel.destroyContent();
+
+		setTimeout(() => {
+			assert.ok(oButtonOutsidePanel.getDomRef() === document.activeElement, "After Panel content has been cleared, the button outside the Panel control should be focused");
+			assert.equal(oFireFocusFailSpy.callCount, 1, "Element.fireFocusFail() should be called only once, after content aggregation has been destroyed.");
+
+			oPage.destroy();
+			oFireFocusFailSpy.restore();
+			done();
+		}, 0);
+	});
+	QUnit.test("Focus correct when focused element is being removed via 'removeAggregation'", async function(assert) {
+		createAndAppendDiv("uiarea_focus");
+
+		const done = assert.async();
+
+		const oPage = new Page();
+		const oButtonOutsidePanel = new Button({
+			text: "btnOutsidePanel"
+		});
+		const oButton1 = new Button({
+			text: "btn1"
+		});
+		const oButton2 = new Button({
+			text: "btn2"
+		});
+		const oPanel = new Panel({
+			content: [oButton1, oButton2]
+		});
+
+		oPage.addContent(oButtonOutsidePanel).addContent(oPanel);
+		oPage.placeAt("uiarea_focus");
+		await nextUIUpdate();
+
+		oButton1.focus();
+		assert.ok(oButton1.getDomRef() === document.activeElement, "Initially, oButton1 should be focused");
+
+		const oFireFocusFailSpy = sinon.spy(Element, "fireFocusFail");
+		oPanel.removeContent(oButton1);
+
+		setTimeout(() => {
+			assert.ok(oButton2.getDomRef() === document.activeElement, "After oButton1 is removed, oButton2 should be focused");
+			assert.equal(oFireFocusFailSpy.callCount, 1, "Element.fireFocusFail() should be called only once, after content aggregation has been removed.");
+
+			oPage.destroy();
+			oFireFocusFailSpy.restore();
+			done();
+		}, 0);
 	});
 
 	QUnit.test("Popover, Dialog", async function(assert) {

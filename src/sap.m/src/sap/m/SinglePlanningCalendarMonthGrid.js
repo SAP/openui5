@@ -455,7 +455,7 @@ sap.ui.define([
 					const oStartDate = CalendarDate.fromLocalJSDate(oAppointment.getStartDate());
 					const oEndDate = CalendarDate.fromLocalJSDate(oAppointment.getEndDate());
 
-					return oDay.isSameOrAfter(oStartDate) && oDay.isBefore(oEndDate);
+					return oDay.isSameOrAfter(oStartDate) && oDay.isSameOrBefore(oEndDate);
 				}
 				return false;
 			});
@@ -612,19 +612,19 @@ sap.ui.define([
 			}
 
 			if (oEvent.target.classList.contains("sapMSPCMonthDay")) {
-				const parentContainer = oEvent.target.parentElement;
-				const aAppointments = parentContainer.querySelectorAll(".sapUiCalendarRowApps");
+				const oAppointmentsList = oEvent.target.parentElement;
+				const aAppointments = oAppointmentsList.querySelectorAll(".sapUiCalendarRowApps");
 				if (aAppointments.length) {
 					oEvent.preventDefault();
 					aAppointments[0].focus();
 				}
 			} else if (oEvent.shiftKey && oEvent.target.classList.contains("sapMLnk")) {
-				const parentContainer = oEvent.target.parentElement.parentElement.parentElement;
-				const aLinks = parentContainer.querySelectorAll(".sapMSPCMonthLnkMore");
+				const oAppointmentsList = oEvent.target.parentElement.parentElement.parentElement;
+				const aLinks = oAppointmentsList.querySelectorAll(".sapMSPCMonthLnkMore");
 				const oFirstLink = aLinks[0].querySelector(".sapMLnk");
 
 				if (oFirstLink.id === oEvent.target.id) {
-					const aAppointments = parentContainer.querySelectorAll(".sapUiCalendarRowApps");
+					const aAppointments = oAppointmentsList.querySelectorAll(".sapUiCalendarRowApps");
 					if (aAppointments.length) {
 						const oLastApp = aAppointments[aAppointments.length - 1];
 						oEvent.preventDefault();
@@ -632,12 +632,13 @@ sap.ui.define([
 					}
 				}
 			} else if (!oEvent.shiftKey && oEvent.target.classList.contains("sapUiCalendarRowApps")) {
-				const parentContainer = oEvent.target.parentElement;
-				const aAppointments = parentContainer.children;
+				const oAppointmentsList = oEvent.target.parentElement;
+				const aAppointments = oAppointmentsList.children;
 				if (aAppointments.length) {
 					const oLastApp = aAppointments[aAppointments.length - 1];
 					if (oLastApp.id === oEvent.target.id) {
-						const oMoreLink = parentContainer.parentElement.querySelector(".sapMSPCMonthLnkMore > .sapMLnk");
+						const oRow = oAppointmentsList.parentElement.parentElement;
+						const oMoreLink = oRow.querySelector(".sapMSPCMonthLnkMore > .sapMLnk");
 						if (oMoreLink) {
 							oEvent.preventDefault();
 							oMoreLink.focus();

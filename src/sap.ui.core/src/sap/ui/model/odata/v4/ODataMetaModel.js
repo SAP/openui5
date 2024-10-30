@@ -535,6 +535,7 @@ sap.ui.define([
 		// no need to use UI5Date.getInstance as only the timestamp is relevant
 		this.oLastModified = new Date(0);
 		this.oMetadataPromise = null;
+		this.oMetaModelForAnnotations = null; // see #_copyAnnotations
 		this.oModel = oModel;
 		this.mMetadataUrl2Promise = {};
 		this.oRequestor = oRequestor;
@@ -600,23 +601,59 @@ sap.ui.define([
 	};
 
 	/**
-	 * Changes the given map of annotations by applying the current array of change objects defining
-	 * a metamodel path (pointing to an annotation) and a value to be set for that annotation.
+	 * Changes the given scope's map of annotations by applying the current array of change objects
+	 * defining a metamodel path (pointing to an annotation) and a value to be set for that
+	 * annotation.
 	 *
-	 * @param {object} mAnnotations
-	 *   the root scope's $Annotations
+	 * Additionally imports annotations for all own schemas from
+	 * <code>oMetaModelForAnnotations</code>.
+	 *
+	 * @param {object} mScope
+	 *   The $metadata "JSON" of the root service
 	 *
 	 * @private
+	 * @see #_copyAnnotations
 	 */
-	ODataMetaModel.prototype._changeAnnotations = function (mAnnotations) {
+	ODataMetaModel.prototype._changeAnnotations = function (mScope) {
+		if (this.oMetaModelForAnnotations) {
+			Object.keys(mScope).forEach((sElement) => {
+				if (mScope[sElement].$kind === "Schema") {
+					this._doMergeAnnotations({
+						$Annotations
+							: this.oMetaModelForAnnotations._getAnnotationsForSchema(sElement)
+					}, mScope.$Annotations, true);
+				}
+			});
+		}
+
 		this.aAnnotationChanges?.forEach(({path : sPath, value : vValue}) => {
 			const iIndexOfAt = sPath.indexOf("@");
 			const sTarget = this.getObject(sPath.slice(0, iIndexOfAt) + "@$ui5.target");
 			if (sTarget) {
-				mAnnotations[sTarget] ??= {};
-				mAnnotations[sTarget][sPath.slice(iIndexOfAt)] = vValue;
+				mScope.$Annotations[sTarget] ??= {};
+				mScope.$Annotations[sTarget][sPath.slice(iIndexOfAt)] = vValue;
 			}
 		});
+	};
+
+	/**
+	 * Saves the meta model delivering annotations that have to be merged later.
+	 *
+	 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel
+	 *   The meta model delivering annotations
+	 * @throws {Error}
+	 *   If there are local annotation files
+	 *
+	 * @private
+	 * @see #_changeAnnotations
+	 * @see #_getAnnotationsForSchema
+	 */
+	ODataMetaModel.prototype._copyAnnotations = function (oMetaModel) {
+		if (this.aAnnotationUris) {
+			throw new Error("Must not copy annotations when there are local annotation files");
+		}
+
+		this.oMetaModelForAnnotations = oMetaModel;
 	};
 
 	/**
@@ -666,6 +703,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets all annotations targeting the given schema. The function expects that the metadata and
+	 * the local annotation files have already been loaded.
+	 *
+	 * @param {string} sSchema
+	 *   A namespace, for example "foo.bar.", of a schema
+	 * @returns {object}
+	 *   All annotations targeting the given schema
+	 *
+	 * @private
+	 * @see #_changeAnnotations
+	 * @see #_copyAnnotations
+	 */
+	ODataMetaModel.prototype._getAnnotationsForSchema = function (sSchema) {
+		const mAnnotations = {};
+		const mScope = this.fetchEntityContainer().getResult();
+		Object.keys(mScope.$Annotations).forEach((sTarget) => {
+			if (sTarget.startsWith(sSchema)) {
+				mAnnotations[sTarget] = mScope.$Annotations[sTarget];
+			}
+		});
+
+		return mAnnotations;
+	};
+
+	/**
 	 * Returns the schema with the given namespace, or a promise which is resolved as soon as the
 	 * schema has been included, or <code>undefined</code> in case the schema is neither present nor
 	 * referenced.
@@ -673,7 +735,7 @@ sap.ui.define([
 	 * @param {object} mScope
 	 *   The $metadata "JSON" of the root service
 	 * @param {string} sSchema
-	 *   A namespace, for example "foo.bar.", of a schema.
+	 *   A namespace, for example "foo.bar.", of a schema
 	 * @param {function} fnLog
 	 *   The log function
 	 * @returns {object|sap.ui.base.SyncPromise|undefined}
@@ -713,7 +775,7 @@ sap.ui.define([
 				}
 			}
 			if (bMerged) {
-				that._changeAnnotations(mScope.$Annotations);
+				that._changeAnnotations(mScope);
 			}
 		}
 
@@ -941,6 +1003,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Destroys this meta model.
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.destroy = function () {
+		this.oMetaModelForAnnotations = undefined;
+
+		MetaModel.prototype.destroy.apply(this);
+	};
+
+	/**
 	 * Returns a promise for an absolute data binding path of a "4.3.1 Canonical URL" for the given
 	 * context.
 	 *
@@ -1026,7 +1099,7 @@ sap.ui.define([
 				// apply annotation changes before anyone else has access, but after the promise has
 				// already resolved (else #fetchObject cannot really be used)
 				this.oMetadataPromise.then(
-					(mScope) => this._changeAnnotations(mScope.$Annotations),
+					(mScope) => this._changeAnnotations(mScope),
 					() => { /* avoid "Uncaught (in promise)" */ });
 			}
 		}
@@ -2400,7 +2473,8 @@ sap.ui.define([
 	/**
 	 * Creates an OData model for the given URL, normalizes the path, caches it, and retrieves it
 	 * from the cache upon further requests. The model is read-only ("OneWay") and can, thus, safely
-	 * be shared. It shares this meta model's security token.
+	 * be shared. It shares this meta model's security token. The function expects that the metadata
+	 * and the local annotation files have already been loaded.
 	 *
 	 * @param {string} sUrl
 	 *   The (relative) $metadata URL, for example "../ValueListService/$metadata"
@@ -2430,6 +2504,8 @@ sap.ui.define([
 				serviceUrl : sUrl,
 				sharedRequests : true
 			});
+			oSharedModel.getMetaModel()._copyAnnotations(this);
+
 			mSharedModelByUrl.set(sCacheKey, oSharedModel);
 		}
 		return oSharedModel;

@@ -4293,6 +4293,16 @@ sap.ui.define([
 		qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT");
 		assert.equal(document.activeElement, this.o1stItem.getDomRef("cell1"), "Focus is on the 2nd cell of the first row");
 
+		qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT");
+		qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT");
+		assert.equal(document.activeElement, this.o1stItem.getDomRef("cell3"), "Focus is on the 4th cell of the first row");
+
+		qutils.triggerEvent("keydown", document.activeElement, {code: "Enter"});
+		assert.equal(document.activeElement, this.o1stItem.getCells()[3].getDomRef(), "Focus is on the interactive element inside the cell");
+
+		qutils.triggerEvent("keydown", document.activeElement, {code: "F2"});
+		assert.equal(document.activeElement, this.o1stItem.getDomRef("cell3"), "Focus is on the cell");
+
 		qutils.triggerKeydown(document.activeElement, "HOME");
 		assert.equal(document.activeElement, this.o1stItem.getDomRef("cell0"), "Focus is on the 1st cell of the first row");
 

@@ -1237,6 +1237,7 @@ sap.ui.define([
 		assert.ok(oMetaModel instanceof MetaModel);
 		assert.strictEqual(oMetaModel.aAnnotationUris, undefined);
 		assert.ok(oMetaModel.hasOwnProperty("aAnnotationUris"), "own property aAnnotationUris");
+		assert.strictEqual(oMetaModel.oMetaModelForAnnotations, null);
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
 		assert.strictEqual(oMetaModel.sUrl, sUrl);
 		assert.strictEqual(oMetaModel.getDefaultBindingMode(), BindingMode.OneTime);
@@ -1294,6 +1295,18 @@ sap.ui.define([
 		oMetaModel = new ODataMetaModel(null, null, null, oModel, undefined, "~sLanguage~");
 
 		assert.strictEqual(oMetaModel.sLanguage, "~sLanguage~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("destroy", function (assert) {
+		this.oMetaModel.oMetaModelForAnnotations = "~metaModelForAnnotations~";
+
+		this.mock(MetaModel.prototype).expects("destroy").on(this.oMetaModel).withExactArgs();
+
+		// code under test
+		this.oMetaModel.destroy();
+
+		assert.strictEqual(this.oMetaModel.oMetaModelForAnnotations, undefined);
 	});
 
 	//*********************************************************************************************
@@ -1374,7 +1387,7 @@ sap.ui.define([
 			this.mock(this.oModel).expects("_requestAnnotationChanges").withExactArgs()
 				.resolves("~aAnnotationChanges~");
 			this.oMetaModelMock.expects("_changeAnnotations")
-				.withExactArgs(sinon.match.same(mRootScope.$Annotations))
+				.withExactArgs(sinon.match.same(mRootScope))
 				.callsFake(function () {
 					assert.strictEqual(that.oMetaModel.aAnnotationChanges, "~aAnnotationChanges~");
 					assert.strictEqual(oSyncPromise.isPending(), false);
@@ -2565,7 +2578,7 @@ sap.ui.define([
 				.withExactArgs("/empty/$metadata")
 				.resolves(mMostlyEmptyScope);
 			this.oMetaModelMock.expects("_changeAnnotations")
-				.withExactArgs(sinon.match.same(mClonedScope.$Annotations));
+				.withExactArgs(sinon.match.same(mClonedScope));
 
 			expectDebug("Namespace tea_busi_product.v0001. found in $Include"
 				+ " of /a/default/iwbep/tea_busi_product/0001/$metadata"
@@ -5215,42 +5228,98 @@ sap.ui.define([
 	);
 
 	//*********************************************************************************************
-	QUnit.test("_changeAnnotations", function (assert) {
-		const mAnnotations = {};
+	[false, true].forEach(function (bMetaModelForAnnotations) {
+		[false, true].forEach(function (bAnnotationsChanges) {
+			const sTitle = "_changeAnnotations: bMetaModelForAnnotations=" + bMetaModelForAnnotations
+				+ "bAnnotationsChanges=" + bAnnotationsChanges;
 
-		// code under test
-		this.oMetaModel._changeAnnotations(mAnnotations);
+		QUnit.test(sTitle, function (assert) {
+			const mScope0 = {
+				"foo." : {
+					$kind : "Schema"
+				},
+				"foo.Container" : {
+					$kind : "EntityContainer"
+				},
+				"bar." : {
+					$kind : "Schema"
+				},
+				"bar.Container" : {
+					$kind : "EntityContainer"
+				},
+				$Annotations : {}
+			};
+			const oMetaModelForAnnotations = {
+				_getAnnotationsForSchema : mustBeMocked
+			};
+			const oMetaModelForAnnotationsMock = this.mock(oMetaModelForAnnotations);
 
-		assert.deepEqual(mAnnotations, {}, "nothing to do yet");
-
-		this.oMetaModel.aAnnotationChanges = [{
-			path : "/first/part@second/part",
-			value : "foo"
-		}, {
-			path : "/first/part@other/part",
-			value : "bar"
-		}, {
-			path : "/not/yet/available@n/a",
-			value : "n/a"
-		}, {
-			path : "/no/target@n/a",
-			value : "n/a"
-		}];
-		this.oMetaModelMock.expects("getObject").twice().withExactArgs("/first/part@$ui5.target")
-			.returns("~target~");
-		this.oMetaModelMock.expects("getObject").withExactArgs("/not/yet/available@$ui5.target")
-			.returns(undefined);
-		this.oMetaModelMock.expects("getObject").withExactArgs("/no/target@$ui5.target")
-			.returns(undefined);
-
-		// code under test
-		this.oMetaModel._changeAnnotations(mAnnotations);
-
-		assert.deepEqual(mAnnotations, {
-			"~target~" : {
-				"@second/part" : "foo",
-				"@other/part" : "bar"
+			if (bAnnotationsChanges) {
+				this.oMetaModel.aAnnotationChanges = [
+					{
+						path : "/first/part@second/part",
+						value : "foo"
+					}, {
+						path : "/first/part@other/part",
+						value : "bar"
+					}, {
+						path : "/not/yet/available@n/a",
+						value : "n/a"
+					}, {
+						path : "/no/target@n/a",
+						value : "n/a"
+					}
+				];
 			}
+			if (bMetaModelForAnnotations) {
+				this.oMetaModel.oMetaModelForAnnotations = oMetaModelForAnnotations;
+			}
+			oMetaModelForAnnotationsMock.expects("_getAnnotationsForSchema")
+				.exactly(bMetaModelForAnnotations ? 1 : 0)
+				.withExactArgs("foo.")
+				.returns("~foo~annotations~");
+			const oFooAnnotationsExpectation = this.oMetaModelMock.expects("_doMergeAnnotations")
+				.exactly(bMetaModelForAnnotations ? 1 : 0)
+				.withExactArgs({$Annotations : "~foo~annotations~"},
+					sinon.match.same(mScope0.$Annotations), true);
+			oMetaModelForAnnotationsMock.expects("_getAnnotationsForSchema")
+				.exactly(bMetaModelForAnnotations ? 1 : 0)
+				.withExactArgs("bar.")
+				.returns("~bar~annotations~");
+			const oBarAnnotationsExpectation = this.oMetaModelMock.expects("_doMergeAnnotations")
+				.exactly(bMetaModelForAnnotations ? 1 : 0)
+				.withExactArgs({$Annotations : "~bar~annotations~"},
+					sinon.match.same(mScope0.$Annotations), true);
+			const oGetObject1Expectation = this.oMetaModelMock.expects("getObject")
+				.exactly(bAnnotationsChanges ? 2 : 0)
+				.withExactArgs("/first/part@$ui5.target")
+				.returns("~target~");
+			const oGetObject2Expectation = this.oMetaModelMock.expects("getObject")
+				.exactly(bAnnotationsChanges ? 1 : 0)
+				.withExactArgs("/not/yet/available@$ui5.target")
+				.returns(undefined);
+			const oGetObject3Expectation = this.oMetaModelMock.expects("getObject")
+				.exactly(bAnnotationsChanges ? 1 : 0)
+				.withExactArgs("/no/target@$ui5.target")
+				.returns(undefined);
+
+			// code under test
+			this.oMetaModel._changeAnnotations(mScope0);
+
+			assert.deepEqual(mScope0.$Annotations, bAnnotationsChanges
+				? {
+						"~target~" : {
+							"@second/part" : "foo",
+							"@other/part" : "bar"
+						}
+					}
+				: {}
+			);
+			if (bMetaModelForAnnotations && bAnnotationsChanges) {
+				sinon.assert.callOrder(oFooAnnotationsExpectation, oBarAnnotationsExpectation,
+					oGetObject1Expectation, oGetObject2Expectation, oGetObject3Expectation);
+			}
+		});
 		});
 	});
 
@@ -5318,6 +5387,9 @@ sap.ui.define([
 			this.mock(_MetadataRequestor).expects("create")
 				.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", undefined,
 					{"sap-language" : "~sLanguage~"}, undefined);
+			const oCopyAnnotationsExpectation
+				= this.mock(ODataMetaModel.prototype).expects("_copyAnnotations")
+					.withExactArgs(sinon.match.same(oMetaModel));
 
 			// code under test
 			oSharedModel = oMetaModel.getOrCreateSharedModel("../ValueListService/$metadata",
@@ -5330,6 +5402,7 @@ sap.ui.define([
 			assert.strictEqual(oSharedModel.sOperationMode, OperationMode.Server);
 			assert.strictEqual(oSharedModel.getGroupId(), "$auto");
 			assert.strictEqual(oSharedModel.bAutoExpandSelect, !!bAutoExpandSelect);
+			assert.ok(oCopyAnnotationsExpectation.calledOn(oSharedModel.getMetaModel()));
 
 			// code under test
 			assert.strictEqual(oMetaModel.getOrCreateSharedModel("/Foo/ValueListService/$metadata",
@@ -7609,6 +7682,46 @@ sap.ui.define([
 			// code under test
 			assert.strictEqual(oMetaModel.getUnitOrCurrencyPath(sPropertyPath),
 				oFixture.sExpectedPath);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_copyAnnotations", function (assert) {
+		// code under test
+		this.oMetaModel._copyAnnotations("~oMetaModelForAnnotations~");
+
+		assert.strictEqual(this.oMetaModel.oMetaModelForAnnotations, "~oMetaModelForAnnotations~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_copyAnnotations: annotation files", function (assert) {
+		const oModel = new ODataModel({
+			serviceUrl : sSampleServiceUrl,
+			annotationURI : "~sAnnotationUri~"
+		});
+
+		assert.throws(function () {
+			// code under test
+			oModel.getMetaModel()._copyAnnotations();
+		}, new Error("Must not copy annotations when there are local annotation files"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getAnnotationsForSchema", function (assert) {
+		this.oMetaModelMock.expects("fetchEntityContainer").withExactArgs()
+			.returns(SyncPromise.resolve({
+				$Annotations : {
+					"A.B.C" : {"@foo" : "A.B.C"},
+					"B.A" : {"@foo" : "B.A"},
+					"B.C" : {"@foo" : "B.C"},
+					"C.A" : {"@foo" : "C.A"}
+				}
+			}));
+
+		// code under test
+		assert.deepEqual(this.oMetaModel._getAnnotationsForSchema("B."), {
+			"B.A" : {"@foo" : "B.A"},
+			"B.C" : {"@foo" : "B.C"}
 		});
 	});
 });

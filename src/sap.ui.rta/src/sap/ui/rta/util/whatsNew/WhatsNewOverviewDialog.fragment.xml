@@ -59,15 +59,15 @@
 						text="{i18n>BTN_LEARN_MORE_WHATS_NEW_DIALOG}"
 						press=".onLearnMorePress"/>
 					<Button
-						id="sapUiRtaWhatsNewOverviewDialog_ButtonClose"
-						visible="{whatsNewModel>overviewActive}"
-						text="{i18n>BTN_CLOSE_FEEDBACK_DIALOG}"
-						press=".closeWhatsNewOverviewDialog"/>
-					<Button
 						id="sapUiRtaWhatsNewOverviewDialog_ButtonBack"
 						visible="{= ${whatsNewModel>overviewActive} === false}"
 						text="{i18n>BTN_BACK_WHATS_NEW_OVERVIEW_DIALOG}"
 						press=".backToOverview"/>
+					<Button
+						id="sapUiRtaWhatsNewOverviewDialog_ButtonClose"
+						visible="true"
+						text="{i18n>BTN_CLOSE_FEEDBACK_DIALOG}"
+						press=".closeWhatsNewOverviewDialog"/>
 				</content>
 			</Toolbar>
 		</footer>
