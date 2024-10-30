@@ -494,7 +494,7 @@ sap.ui.define([
 
 			for (var iIndex = 0; iIndex < aParams.length; iIndex++) {
 				oCurrentLabel = null;
-				if (aParams[iIndex].getOptions() && aParams[iIndex].getOptions().length <= 1) {
+				if (aParams[iIndex].getOptions() && aParams[iIndex].getOptions().length <= 1 && aParams[iIndex].getOptions().indexOf("included") !== -1) {
 					break;
 				} else if (aParams[ iIndex ].getText()) {
 					oCurrentLabel = new Label({
@@ -509,9 +509,9 @@ sap.ui.define([
 				switch (aParams[iIndex].getType()) {
 					case "int":
 						oInputControl = this._createIntegerControl(oValue, iIndex, fnControlsUpdated);
+						var bHasLastNextOption = oValue && aParams[1] && aParams[1].getOptions() && (aParams[1].getOptions().indexOf(oValue.operator.slice(4).toLowerCase()) !== -1 || aParams[1].getOptions().indexOf(oValue.operator.slice(4).toLowerCase().replace("included", "")) !== -1);
 
-						if (oValue && aParams[1] && aParams[1].getOptions()
-								&& aParams[1].getOptions().indexOf(oValue.operator.slice(4).toLowerCase()) !== -1) {
+						if (bHasLastNextOption) {
 							oInputControl.setValue(oValue.values[iIndex]);
 						}
 						break;
@@ -640,12 +640,12 @@ sap.ui.define([
 		StandardDynamicDateOption.prototype._createIncludedControl = function(oValue, fnControlsUpdated) {
 			const oIncludedRadioButton = new RadioButton({
 				text: _resourceBundle.getText("DDR_LASTNEXTX_INCLUDE_LABEL"),
-				groupName: "includedSelection"
+				groupName: `includedSelection-${this.getKey()}`
 			});
 			const oExcludedRadioButton = new RadioButton({
 				text: _resourceBundle.getText("DDR_LASTNEXTX_EXCLUDE_LABEL"),
 				selected: true,
-				groupName: "includedSelection"
+				groupName: `includedSelection-${this.getKey()}`
 			});
 
 			const oControl = new VBox({
@@ -702,6 +702,18 @@ sap.ui.define([
 						return aGroupOptions.indexOf(option.getKey()) !== -1;
 					}).map(function(option) {
 						return option.getKey().slice(4).toLowerCase();
+					}) : []
+				});
+			}
+
+			if (aGroupOptions.indexOf(this.getKey()) !== -1) {
+				return new DynamicDateValueHelpUIType({
+					text: _resourceBundle.getText("DDR_LASTNEXTX_TIME_UNIT_LABEL"),
+					type: "options",
+					options: oOptions ? oOptions.filter(function(option) {
+						return aGroupOptions.indexOf(option.getKey()) !== -1;
+					}).map(function(option) {
+						return option.getKey().replace("INCLUDED", "").slice(4).toLowerCase();
 					}) : []
 				});
 			}
@@ -768,14 +780,16 @@ sap.ui.define([
 			var oOptions = oControl._getOptions();
 			var aParams = this.getValueHelpUITypes(oControl),
 				bHasIncludedControl = oControl.aControlsByParameters && oControl.aControlsByParameters[this.getKey()] && oControl.aControlsByParameters[this.getKey()].length > 1,
+				bHasLastOption = aLastOptions.indexOf(this.getKey()) !== -1 || aLastIncludedOptions.indexOf(this.getKey()) !== -1,
+				bHasNextOption = aNextOptions.indexOf(this.getKey()) !== -1 || aNextIncludedOptions.indexOf(this.getKey()) !== -1,
 				aResult = {},
 				vOutput;
 
-			if (aLastOptions.indexOf(this.getKey()) !== -1 && bHasIncludedControl) {
+			if (bHasLastOption && bHasIncludedControl) {
 				aResult.operator = oOptions.filter(function(option) {
 					return this._shouldAddLastOrNextOption(oOptions, option, aLastOptions);
 				}.bind(this))[oControl.aControlsByParameters[this.getKey()][1].getSelectedIndex()].getKey();
-			} else if (aNextOptions.indexOf(this.getKey()) !== -1 && bHasIncludedControl) {
+			} else if (bHasNextOption && bHasIncludedControl) {
 				aResult.operator = oOptions.filter(function(option) {
 					return this._shouldAddLastOrNextOption(oOptions, option, aNextOptions);
 				}.bind(this))[oControl.aControlsByParameters[this.getKey()][1].getSelectedIndex()].getKey();
