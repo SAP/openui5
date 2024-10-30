@@ -29,7 +29,9 @@ sap.ui.define([
 			aggregations : {
 				"items" : {type: "MyListItem", multiple: true}
 			}
-		}
+		},
+		// no renderer needed in the test scenario
+		renderer: null
 	});
 
 	function setup(){

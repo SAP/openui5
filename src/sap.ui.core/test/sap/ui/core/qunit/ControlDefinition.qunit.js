@@ -299,7 +299,10 @@ sap.ui.define([
 				associations : {
 					"multiples" : { multiple : true }
 				}
-			}
+			},
+
+			// no renderer needed in the test scenario
+			renderer: null
 		});
 
 		var md = oClass.getMetadata();
@@ -439,7 +442,7 @@ sap.ui.define([
 		Library.attachLibraryChanged(onlibchange);
 
 		// create new class
-		oClass = Control.extend("my.lib.TestControl1", {});
+		oClass = Control.extend("my.lib.TestControl1", {renderer: null});
 		assert.equal(events.length, 1, "one event should have been received");
 		equalEvent(events[0], "my.lib.TestControl1", "control", oClass.getMetadata());
 
@@ -452,7 +455,7 @@ sap.ui.define([
 			equalEvent(events[2], "sap.ui.testlib", "library", Library.all()["sap.ui.testlib"]);
 			Library.detachLibraryChanged(onlibchange);
 
-			Control.extend("my.lib.TestControl1", {});
+			Control.extend("my.lib.TestControl1", {renderer: null});
 			assert.equal(events.length, 3, "no more event should have been received after detach");
 		});
 	});
@@ -533,7 +536,10 @@ sap.ui.define([
 					"somethingHappened" : {},
 					"somethingElseHappened" : { allowPreventDefault : true }
 				}
-			}
+			},
+
+			// no renderer needed in the test scenario
+			renderer: null
 		});
 
 		var md = result.getMetadata();

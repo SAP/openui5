@@ -13,7 +13,10 @@ sap.ui.define(['sap/ui/core/Control'],
 
 			designtime: true
 
-		}
+		},
+
+		// no renderer needed in the test scenario
+		renderer: null
 
 	});
 

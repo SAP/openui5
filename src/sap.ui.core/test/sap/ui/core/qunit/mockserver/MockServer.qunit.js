@@ -4959,7 +4959,9 @@ sap.ui.define([
 						multiple: true
 					}
 				}
-			}
+			},
+			// no renderer needed in the test scenario
+			renderer: null
 		});
 		const oList = new MyList();
 		const oListItem = new MyListItem();
