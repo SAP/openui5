@@ -377,6 +377,10 @@ sap.ui.define([
 		oPage.addContent(oSvgCircle);
 		await nextUIUpdate();
 
+		MessageToast._handleMouseDownEvent(jQuery.Event("mousedown", {
+			target: document.getElementById("svg-circle")
+		}));
+
 		MessageToast.show("test", {
 			onClose: function () {
 				oSvgCircle.destroy();
@@ -384,12 +388,6 @@ sap.ui.define([
 				done();
 			}
 		});
-
-		setTimeout(function(){
-			MessageToast._handleMouseDownEvent(jQuery.Event("mousedown", {
-				target: document.getElementById("svg-circle")
-			}));
-		}, 0);
 	});
 
 	QUnit.test("Callback", function(assert) {
