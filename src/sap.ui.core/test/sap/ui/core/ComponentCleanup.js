@@ -1,7 +1,7 @@
 // Note: the HTML page 'ComponentCleanup.html' loads this module via data-sap-ui-on-init
 
 /*global sinon */
-sap.ui.define(["sap/base/Log", "sap/ui/core/Core", "sap/ui/thirdparty/jquery", "sap/ui/core/Component"],function(Log, Core, jQuery) {
+sap.ui.define(["sap/base/Log", "sap/ui/core/Core", "sap/ui/thirdparty/jquery"],function(Log, Core, jQuery) {
 	"use strict";
 
 	Core.ready().then(function() {
@@ -132,29 +132,26 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/Core", "sap/ui/thirdparty/jquery", "
 		// execution
 		sap.ui.require(['sap/ui/core/Component'], function(Component) {
 
-			var oComponent = sap.ui.component({
+			Component.create({
 				name: "test1"
-			});
-			Log.debug(oComponent);
-
-			Promise.resolve(oComponent).then(function(oComponent) {
+			}).then(function(oComponent) {
 				Log.error(jQuery("link[href$='/style1.css']").length === 1);
 				return oComponent;
-			}).then(async function(oComponent) {
+			}).then(function(oComponent) {
 				oComponent.destroy();
 				Log.error(jQuery("link[href$='/style1.css']").length === 0);
-				return await Component.create({
+				return Component.create({
 					name: "test2"
 				});
 			}).then(function(oComponent) {
 				Log.error(jQuery("link[href$='/style2.css']").length === 1);
 				Log.error(jQuery("link[href$='/style1.css']").length === 0);
 				return oComponent;
-			}).then(async function(oComponent) {
+			}).then(function(oComponent) {
 				oComponent.destroy();
 				Log.error(jQuery("link[href$='/style2.css']").length === 0);
 				Log.error(jQuery("link[href$='/style1.css']").length === 0);
-				return await Component.create({
+				return Component.create({
 					name: "test3"
 				});
 			}).then(function(oComponent) {
@@ -168,7 +165,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/Core", "sap/ui/thirdparty/jquery", "
 				Log.error(jQuery("link[href$='/style2.css']").length === 0);
 				Log.error(jQuery("link[href$='/style1.css']").length === 0);
 				return Component.create({
-					manifestUrl: "manifest.json"
+					manifest: "manifest.json"
 				});
 			}).then(function(oComponent) {
 				Log.error(jQuery("link[href$='/style3.css']").length === 1);
@@ -181,7 +178,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/Core", "sap/ui/thirdparty/jquery", "
 				Log.error(jQuery("link[href$='/style2.css']").length === 0);
 				Log.error(jQuery("link[href$='/style1.css']").length === 0);
 				return Component.create({
-					manifestUrl: "manifest.json"
+					manifest: "manifest.json"
 				});
 			}).then(function(oComponent) {
 				Log.error(jQuery("link[href$='/style3.css']").length === 1);
@@ -194,7 +191,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/Core", "sap/ui/thirdparty/jquery", "
 				Log.error(jQuery("link[href$='/style2.css']").length === 0);
 				Log.error(jQuery("link[href$='/style1.css']").length === 0);
 				return Component.create({
-					manifestUrl: "manifest.appdescr"
+					manifest: "manifest.appdescr"
 				});
 			}).then(function(oComponent) {
 				Log.error(jQuery("link[href$='/style4.css']").length === 1);
@@ -202,13 +199,13 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/Core", "sap/ui/thirdparty/jquery", "
 				Log.error(jQuery("link[href$='/style2.css']").length === 0);
 				Log.error(jQuery("link[href$='/style1.css']").length === 0);
 				return oComponent;
-			}).then(async function(oComponent) {
+			}).then(function(oComponent) {
 				oComponent.destroy();
 				Log.error(jQuery("link[href$='/style4.css']").length === 0);
 				Log.error(jQuery("link[href$='/style3.css']").length === 0);
 				Log.error(jQuery("link[href$='/style2.css']").length === 0);
 				Log.error(jQuery("link[href$='/style1.css']").length === 0);
-				return await Component.create({
+				return Component.create({
 					name: "test3"
 				});
 			}).then(async function(oComponent3) {
@@ -223,13 +220,13 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/Core", "sap/ui/thirdparty/jquery", "
 				Log.error(jQuery("link[href$='/style3.css']").length === 1);
 				oComponent3.destroy();
 				Log.error(jQuery("link[href$='/style3.css']").length === 0);
-				return await Component.create({
+				return Component.create({
 					name: "test3"
 				});
 			}).then(function(oComponent3) {
 				Log.error(jQuery("link[href$='/style3.css']").length === 1);
 				return Component.create({
-					manifestUrl: "manifest1.appdescr"
+					manifest: "manifest1.appdescr"
 				});
 			}).then(function(oComponent3Variant) {
 				Log.error(jQuery("link[href$='/style3.css']").length === 2);

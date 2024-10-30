@@ -75,7 +75,7 @@ sap.ui.define([
 		["long", "short"].forEach(function(sStyle) {
 			var oFormat = getCurrencyInstance({ style: sStyle }, oLocale);
 			// thousand format for locale "de" does not reformat the number (pattern: "100000-other": "0")
-			assert.strictEqual(oFormat.format(123456.789, "EUR"), "123.456,79" + "\xa0" + "EUR");
+			assert.strictEqual(oFormat.format(123456.789, "EUR"), "123.457" + "\xa0" + "EUR");
 			assert.strictEqual(oFormat.format(-123456.789, "JPY"), "-123.457" + "\xa0" + "JPY");
 
 			// million format for locale "de" does reformat the number (pattern: "1000000-other": "0 Mio'.' ¤")

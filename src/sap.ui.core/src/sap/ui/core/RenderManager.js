@@ -1639,7 +1639,6 @@ sap.ui.define([
 					};
 				}
 			);
-			IconPool = sap.ui.requireSync("sap/ui/core/IconPool"); // legacy-relevant: Sync fallback
 		}
 
 		var bIconURI = IconPool.isIconURI(sURI),

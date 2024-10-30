@@ -3,7 +3,7 @@
  */
 
 // Provides mixin sap.ui.core.EnabledPropagator
-sap.ui.define([], function() {
+sap.ui.define(["./FocusMode"], function(FocusMode) {
 	"use strict";
 
 	let Element;
@@ -85,7 +85,7 @@ sap.ui.define([], function() {
 				this.setProperty("enabled", bEnabled);
 				if (!bEnabled && this.getDomRef()?.contains(document.activeElement)) {
 					Element ??= sap.ui.require("sap/ui/core/Element");
-					Element?.fireFocusFail.call(this, /*bRenderingPending=*/true);
+					Element?.fireFocusFail.call(this, FocusMode.RENDERING_PENDING);
 				}
 				return this;
 			};
@@ -98,7 +98,7 @@ sap.ui.define([], function() {
 				fnOrigSet.apply(this, arguments);
 				if (!bEnabled && this.getDomRef()?.contains(document.activeElement)) {
 					Element ??= sap.ui.require("sap/ui/core/Element");
-					Element?.fireFocusFail.call(this, /*bRenderingPending=*/true);
+					Element?.fireFocusFail.call(this, FocusMode.RENDERING_PENDING);
 				}
 				return this;
 			};

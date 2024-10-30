@@ -1541,15 +1541,15 @@ sap.ui.define([
 				}
 				return sMeasure;
 			}
-			// if decimals are given on a custom currency, they have precedence over the decimals defined on the format options
-			if (oOptions.customCurrencies && oOptions.customCurrencies[sMeasure]) {
-				// we either take the custom decimals or use decimals defined in the format-options
-				// we check for undefined here, since 0 is an accepted value
-				oOptions.decimals = oOptions.customCurrencies[sMeasure].decimals !== undefined ? oOptions.customCurrencies[sMeasure].decimals : oOptions.decimals;
-				oOptions.decimals = NumberFormat.getMaximumDecimals(oOptions);
-			}
-			if (oOptions.decimals === undefined) {
-				oOptions.decimals = this.oLocaleData.getCurrencyDigits(sMeasure);
+
+			if (oOptions.style === "long" || oOptions.style === "short") {
+				oOptions.maxFractionDigits ??= 0;
+			} else {
+				if (oOptions.customCurrencies?.[sMeasure]?.decimals !== undefined) {
+					oOptions.decimals = oOptions.customCurrencies[sMeasure].decimals;
+				} else {
+					oOptions.decimals ??= this.oLocaleData.getCurrencyDigits(sMeasure);
+				}
 				oOptions.decimals = NumberFormat.getMaximumDecimals(oOptions);
 			}
 		}

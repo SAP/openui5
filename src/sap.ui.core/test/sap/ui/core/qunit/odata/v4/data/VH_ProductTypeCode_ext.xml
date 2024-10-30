@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.f4.d_pr_type-fv-ext.v0001">
+			<EntityContainer Name="Container" />
+			<Annotations Target="com.sap.gateway.f4.d_pr_type-fv-ext.v0001.Container">
+				<Annotation Term="foo" String="bar"/>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

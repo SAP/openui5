@@ -65,6 +65,7 @@ sap.ui.define([
 					fireDataReceived : function () {},
 					fireDataRequested : function () {},
 					getMessagesByPath : function () { return []; },
+					reportError : function () {},
 					reportStateMessages : function () {},
 					updateMessages : function () {}
 				};
@@ -13335,12 +13336,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#requestSeparateProperties", async function (assert) {
+[true, false].forEach(function (bMainSuccessful, i) {
+	QUnit.test("CollectionCache#requestSeparateProperties #" + i, async function (assert) {
 		const oCache = _Cache.create(this.oRequestor, "SalesOrders", undefined, undefined,
 			undefined, undefined, ["foo", "bar"]);
 
-		let fnResolveMain;
-		const oMainPromise = new Promise(function (resolve) { fnResolveMain = resolve; });
+		let fnHandleMainPromise;
+		const oMainPromise = new Promise(function (resolve, reject) {
+			fnHandleMainPromise = bMainSuccessful ? resolve : reject;
+		});
 		let fnResolveTypes;
 		const oTypesPromise = new Promise(function (resolve) { fnResolveTypes = resolve; });
 
@@ -13410,10 +13414,11 @@ sap.ui.define([
 			"('foo0')" : "~foo0~"
 		};
 
-		// code under test: resolve oMainPromise, earlier separate promise "bar" starts processing
-		fnResolveMain();
-		await oMainPromise;
+		// code under test: resolve/reject oMainPromise (state is irrelevant, but must not be
+		// pending), earlier separate promise "bar" starts processing
+		fnHandleMainPromise();
 		await oBarPromise;
+		await oMainPromise.catch(() => { /* avoid "unhandled rejection" */ });
 
 		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {
 			foo : [{start : 3, end : 5}, "~range~"],
@@ -13434,6 +13439,7 @@ sap.ui.define([
 		// code under test: resolve separate promise for "foo"
 		fnResolveFoo(oFooResult);
 		await oFooPromise;
+		await "next tick";
 
 		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {
 			foo : ["~range~"],
@@ -13441,6 +13447,52 @@ sap.ui.define([
 		});
 
 		return oResult;
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#requestSeparateProperties: reports error", async function () {
+		const oCache = _Cache.create(this.oRequestor, "SalesOrders", undefined, undefined,
+			undefined, undefined, ["foo", "bar"]);
+
+		const oCacheMock = this.mock(oCache);
+		oCacheMock.expects("fetchTypes").withExactArgs().resolves("n/a");
+		oCacheMock.expects("getResourcePathWithQuery").withExactArgs(3, 5, "foo")
+			.returns("~fooPath~");
+		const oRequestorMock = this.mock(oCache.oRequestor);
+		oRequestorMock.expects("lockGroup").withExactArgs("$single", sinon.match.same(oCache))
+			.returns("~fooLock~");
+		let fnRejectFoo;
+		const oFooPromise = new Promise(function (_, reject) { fnRejectFoo = reject; });
+		oRequestorMock.expects("request").withExactArgs("GET", "~fooPath~", "~fooLock~")
+			.returns(oFooPromise);
+		oCacheMock.expects("getResourcePathWithQuery").withExactArgs(3, 5, "bar")
+			.returns("~barPath~");
+		oRequestorMock.expects("lockGroup").withExactArgs("$single", sinon.match.same(oCache))
+			.returns("~barLock~");
+		let fnRejectBar;
+		const oBarPromise = new Promise(function (_, reject) { fnRejectBar = reject; });
+		oRequestorMock.expects("request").withExactArgs("GET", "~barPath~", "~barLock~")
+			.returns(oBarPromise);
+		oCacheMock.expects("visitResponse").never();
+		this.mock(_Helper).expects("updateSelected").never();
+
+		// code under test
+		await oCache.requestSeparateProperties(3, 5, /*oMainPromise*/Promise.resolve());
+
+		this.oModelInterfaceMock.expects("reportError")
+			.withExactArgs("Loading $$separate property 'foo' failed", sClassName, "~fooError~");
+
+		// code under test: reject separate promise for "foo"
+		fnRejectFoo("~fooError~");
+		await oFooPromise.catch(() => { /* avoid "unhandled rejection" */ });
+
+		this.oModelInterfaceMock.expects("reportError")
+			.withExactArgs("Loading $$separate property 'bar' failed", sClassName, "~barError~");
+
+		// code under test: reject separate promise for "bar"
+		fnRejectBar("~barError~");
+		await oBarPromise.catch(() => { /* avoid "unhandled rejection" */ });
 	});
 
 	//*********************************************************************************************
@@ -13461,7 +13513,7 @@ sap.ui.define([
 			.returns(oSeparatePromise);
 
 		// code under test
-		await oCache.requestSeparateProperties(3, 5, "~oMainPromise~");
+		await oCache.requestSeparateProperties(3, 5, /*oMainPromise*/Promise.resolve());
 
 		// simulate #reset
 		oCache.mSeparateProperty2ReadRequest.separate = [];

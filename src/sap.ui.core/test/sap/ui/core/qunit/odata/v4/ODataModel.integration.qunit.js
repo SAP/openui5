@@ -61662,14 +61662,24 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: A value list model is used multiple times, but the request is shared.
 	// JIRA: CPOUI5ODATAV4-344
+	//
+	// Add and modify annotations for the value list model via local annotation files, including one
+	// in a referenced scope.
+	// JIRA: CPOUI5ODATAV4-2732
 	[false, true].forEach(function (bAutoExpandSelect) {
 		var sTitle = "$$sharedRequest and ODMM#getOrCreateSharedModel, bAutoExpandSelect = "
 				+ bAutoExpandSelect;
 
 		QUnit.test(sTitle, function (assert) {
-			var oModel = this.createSalesOrdersModel({}, {
+			var oModel = this.createSalesOrdersModel({
+					annotationURI : "/sap/opu/odata4/annotations_zui5_epm_sample.xml"
+				}, {
+					"/sap/opu/odata4/annotations_zui5_epm_sample.xml"
+						: {source : "odata/v4/data/annotations_zui5_epm_sample.xml"},
 					"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TYPE_CODE%27/$metadata"
-						: {source : "odata/v4/data/VH_ProductTypeCode.xml"}
+						: {source : "odata/v4/data/VH_ProductTypeCode.xml"},
+					"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv-ext/0001/$metadata"
+						: {source : "odata/v4/data/VH_ProductTypeCode_ext.xml"}
 				}),
 				sView = '\
 <FlexBox binding="{/ProductList(\'1\')}">\
@@ -61705,6 +61715,10 @@ sap.ui.define([
 			}).then(function (mValueListInfo) {
 				var oValueListModel = mValueListInfo[""].$model;
 
+				assert.throws(function () {
+					oValueListModel.setAnnotationChangePromise(Promise.resolve([]));
+				}, new Error("Too late"), "cannot set key user changes at the value list model");
+
 				that.expectRequest("D_PR_TYPE_FV_SET?"
 						+ (bAutoExpandSelect ? "$select=DESCRIPTION,FIELD_VALUE&" : "")
 						+ "$skip=0&$top=100", {
@@ -61723,7 +61737,26 @@ sap.ui.define([
 				that.oView.byId("list1").setModel(oValueListModel).getBinding("items").resume();
 				that.oView.byId("list2").setModel(oValueListModel).getBinding("items").resume();
 
-				return that.waitForChanges(assert);
+				return Promise.all([
+					oValueListModel.getMetaModel()
+						.requestObject("/com.sap.gateway.f4.d_pr_type-fv.v0001.D_PR_TYPE_FV/DESCRIPTION"
+							+ "@com.sap.vocabularies.Common.v1.Label")
+						.then(function (sLabel) {
+							assert.strictEqual(sLabel, "Description's New Label");
+						}),
+					oValueListModel.getMetaModel()
+						.requestObject("/com.sap.gateway.f4.d_pr_type-fv.v0001.D_PR_TYPE_FV/FIELD_VALUE"
+							+ "@com.sap.vocabularies.Common.v1.Label")
+						.then(function (sLabel) {
+							assert.strictEqual(sLabel, "Field Value");
+						}),
+					oValueListModel.getMetaModel()
+						.requestObject("/com.sap.gateway.f4.d_pr_type-fv-ext.v0001.Container@foo")
+						.then(function (sValue) {
+							assert.strictEqual(sValue, "bar (overwritten)");
+						}),
+					that.waitForChanges(assert)
+				]);
 			});
 		});
 	});
@@ -75645,6 +75678,77 @@ sap.ui.define([
 			fnResolveBestFriend();
 
 			await this.waitForChanges(assert, "resolve old separate request, ignore response");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A list binding uses binding parameter $$separate. If a main list request fails, the
+	// response of the separate request is ignored. If the separate request fails, the column for
+	// the separate data remains empty. In both cases the error is reported as UI5 message.
+	// JIRA: CPOUI5ODATAV4-2776
+	[/*main failed*/false, true].forEach(function (bSeparateFailed) {
+		const sTitle = "$$separate: error handling, " + (bSeparateFailed ? "separate" : "main")
+			+ " request failed";
+
+		QUnit.test(sTitle, async function (assert) {
+			const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+			const sView = `
+	<Table growing="true" growingThreshold="2" id="table"
+			items="{
+				path : '/EMPLOYEES',
+				parameters : {
+					$$separate : ['EMPLOYEE_2_TEAM']
+				}
+			}">
+		<Text id="name" text="{Name}"/>
+		<Text id="team" text="{EMPLOYEE_2_TEAM/Name}"/>
+	</Table>`;
+
+			if (bSeparateFailed) {
+				this.oLogMock.expects("error")
+					.withArgs("Loading $$separate property 'EMPLOYEE_2_TEAM' failed");
+			} else {
+				this.oLogMock.expects("error").twice()
+					.withArgs("Failed to get contexts for " + sTeaBusi + "EMPLOYEES with start index 0"
+						+ " and length 2");
+			}
+			const oError = createErrorInsideBatch();
+			this.expectRequest({
+					batchNo : 1,
+					url : "EMPLOYEES?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=ID"
+						+ "&$skip=0&$top=2"
+				}, bSeparateFailed ? oError : {
+					value : [{
+						EMPLOYEE_2_TEAM : {Name : "Team A", Team_Id : "A"},
+						ID : "0"
+					}, {
+						EMPLOYEE_2_TEAM : {Name : "Team B", Team_Id : "B"},
+						ID : "1"
+					}]
+				})
+				.expectRequest({
+					batchNo : 2,
+					url : "EMPLOYEES?$select=ID,Name&$skip=0&$top=2"
+				}, bSeparateFailed ? {
+					value : [{
+						ID : "0",
+						Name : "Employee 0"
+					}, {
+						ID : "1",
+						Name : "Employee 1"
+					}]
+				} : oError)
+				.expectMessage({
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				})
+				.expectChange("name", bSeparateFailed ? ["Employee 0", "Employee 1"] : [])
+				.expectChange("team", bSeparateFailed ? [null, null] : []);
+
+			await this.createView(assert, sView, oModel);
 		});
 	});
 });

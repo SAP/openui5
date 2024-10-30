@@ -338,6 +338,7 @@ sap.ui.define([
 		this.clock.tick(1000);  // wait 1s after the open animation is completed
 
 		this.oPopover.destroyContent();
+		this.clock.tick(1000); // wait for focus restoration to happen
 
 		assert.strictEqual(document.activeElement, this.oPopover.getFocusDomRef(), "Focus should be on the Popover");
 	});
@@ -434,6 +435,25 @@ sap.ui.define([
 
 		// Cleanup
 		oButton.destroy();
+	});
+
+	QUnit.test("Open invisible popover", function (assert) {
+		// Arrange
+		this.oPopover.setVisible(false);
+
+		// Act
+		this.oPopover.openBy(this.oButton);
+		this.clock.tick(500);
+
+		// Assert
+		assert.notOk(this.oPopover.isOpen(), "Invisible popover is not open");
+
+		// Act
+		this.oPopover.setVisible(true);
+		this.oPopover.openBy(this.oButton);
+		this.clock.tick(500);
+
+		assert.ok(this.oPopover.isOpen(), "Popover is open");
 	});
 
 	QUnit.module("Position calculation", {

@@ -303,7 +303,9 @@ sap.ui.define([
 	 *   Whether this call keeps the result of {@link #getCurrentContexts} untouched; since 1.102.0.
 	 * @return {sap.ui.model.odata.v2.Context[]}
 	 *   The array of already available contexts with the first entry containing the context for
-	 *   <code>iStartIndex</code>
+	 *   <code>iStartIndex</code>. Since 1.131.0, the array has an additional property <code>bExpectMore</code>, which
+	 *   is <code>true</code> if the response is not complete, a {@link #event:change 'change'} event will follow, and
+	 *   a busy indicator should be switched on.
 	 * @throws {Error}
 	 *   If extended change detection is enabled and <code>bKeepCurrent</code> is set, or if
 	 *   <code>iMaximumPrefetchSize</code> and <code>bKeepCurrent</code> are set
@@ -337,6 +339,7 @@ sap.ui.define([
 		}
 
 		aContexts = this._getContexts(iStartIndex, iLength);
+		aContexts.bExpectMore = this._isExpectingMoreContexts(aContexts, iStartIndex, iLength);
 		if (this.oCombinedFilter === Filter.NONE || this._hasTransientParentContext()) {
 			// skip #loadData
 		} else if (this.useClientMode()) {
@@ -363,10 +366,10 @@ sap.ui.define([
 		}
 		if (this.bRefresh) {
 			this.bRefresh = false;
-			// if we do not need to load data after a refresh event (e.g. we have enough created
-			// contexts) we need to fire a change event to fulfill the contract that after a refresh
+			// if there is no need to load data after a refresh event (e.g. we have enough created contexts or
+			// FILTER.None is set), fire a change event to fulfill the contract that after a refresh
 			// event a change event is triggered when the data is available.
-			if (!aContexts.dataRequested && aContexts.length > 0) {
+			if (!aContexts.dataRequested) {
 				this._fireChange({reason : ChangeReason.Change});
 			}
 		} else if (!bKeepCurrent) {
