@@ -460,19 +460,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Provides an announcement for the screen reader to inform the user that there are no settings available for the column.
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
-	 * @since 1.122
-	 */
-	Util.announceEmptyColumnMenu = function() {
-		var oInvisibleMessage = InvisibleMessage.getInstance();
-		var oResourceBundle = Library.getResourceBundleFor("sap.m");
-		oInvisibleMessage.announce(oResourceBundle.getText("table.ANNOUNCEMENT_EMPTY_COLUMN_MENU"));
-	};
-
-	/**
 	 * Checks whether the table is empty.
 	 *
 	 * @param {sap.ui.model.Binding} oRowBinding The row binding

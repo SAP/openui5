@@ -32,11 +32,11 @@ sap.ui.define([
 				},
 
 				iClickOnColumnHeaderMenuSortAscendingButton: function(sColumn) {
-					return TableActions.iClickOnAColumnHeaderMenuButtonWithText.call(this, sColumn, TestUtil.getTextFromResourceBundle("sap.m", "table.COLUMNMENU_SORT_ASCENDING"));
+					return TableActions.iClickOnAColumnHeaderMenuButtonWithIcon.call(this, sColumn, "sap-icon://sort-ascending");
 				},
 
 				iClickOnColumnHeaderMenuSortDescendingButton: function(sColumn) {
-					return TableActions.iClickOnAColumnHeaderMenuButtonWithText.call(this, sColumn, TestUtil.getTextFromResourceBundle("sap.m", "table.COLUMNMENU_SORT_DESCENDING"));
+					return TableActions.iClickOnAColumnHeaderMenuButtonWithIcon.call(this, sColumn, "sap-icon://sort-descending");
 				},
 
 				iClickOnTheColumnSettingsButton: function() {

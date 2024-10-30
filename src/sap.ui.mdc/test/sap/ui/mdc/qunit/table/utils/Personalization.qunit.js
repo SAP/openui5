@@ -214,6 +214,21 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("openSettingsDialog", async function(assert) {
+		const oTable = this.oTable;
+		const oInbuiltFilterVisibleFieldsSpy = sinon.spy(this.oTable.getInbuiltFilter(), "setVisibleFields");
+
+		PersonalizationUtils.openSettingsDialog(oTable);
+		assert.ok(oInbuiltFilterVisibleFieldsSpy.calledWith(null), "setVisibleFields is called with null");
+		await TableQUnitUtils.waitForP13nPopup(oTable);
+		await TableQUnitUtils.closeP13nPopup(oTable);
+		PersonalizationUtils.openSettingsDialog(oTable, oTable.getColumns()[0]);
+		assert.ok(oInbuiltFilterVisibleFieldsSpy.calledWith(["colA"]), "setVisibleFields is called with an array of the column's filterable properties");
+		await TableQUnitUtils.waitForP13nPopup(oTable);
+		await TableQUnitUtils.closeP13nPopup(oTable);
+		oInbuiltFilterVisibleFieldsSpy.restore();
+	});
+
 	QUnit.module("Reset changes", {
 		before: function() {
 			sinon.stub(TableDelegate, "getSupportedFeatures").callsFake(function() {

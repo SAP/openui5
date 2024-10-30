@@ -2,31 +2,25 @@
  * ${copyright}
  */
 sap.ui.define([
-	"../ResponsiveTableType",
 	"../utils/Personalization",
 	"sap/m/table/columnmenu/QuickActionContainer",
-	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/table/columnmenu/QuickSort",
 	"sap/m/table/columnmenu/QuickSortItem",
 	"sap/m/table/columnmenu/QuickGroup",
 	"sap/m/table/columnmenu/QuickGroupItem",
 	"sap/m/table/columnmenu/QuickTotal",
 	"sap/m/table/columnmenu/QuickTotalItem",
-	"sap/m/Button",
 	"sap/ui/core/Element",
 	"sap/ui/core/library"
 ], (
-	ResponsiveTableType,
 	PersonalizationUtils,
 	QuickActionContainerBase,
-	QuickAction,
 	QuickSort,
 	QuickSortItem,
 	QuickGroup,
 	QuickGroupItem,
 	QuickTotal,
 	QuickTotalItem,
-	Button,
 	Element,
 	CoreLibrary
 ) => {
@@ -46,7 +40,6 @@ sap.ui.define([
 		const oTable = this.getTable();
 		const oColumn = this.getColumn();
 		const oPropertyHelper = oTable.getPropertyHelper();
-		const pCreateContent = Promise.resolve();
 
 		this.destroyQuickActions(); // TODO: More efficient update would be good
 
@@ -133,8 +126,6 @@ sap.ui.define([
 		if (oTable.getEnableColumnResize()) {
 			this.addQuickAction(oTable._getType().createColumnResizeMenuItem(oColumn, this.getMenu()));
 		}
-
-		return pCreateContent;
 	};
 
 	QuickActionContainer.prototype.updateQuickActions = function(aKeys) {

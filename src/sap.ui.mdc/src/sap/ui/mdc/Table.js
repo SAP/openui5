@@ -41,7 +41,6 @@ sap.ui.define([
 	"sap/m/table/ColumnWidthController",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
 	"sap/ui/mdc/table/menu/QuickActionContainer",
-	"sap/ui/mdc/table/menu/ItemContainer",
 	"sap/ui/core/theming/Parameters",
 	"sap/base/Log",
 	"sap/ui/performance/trace/FESRHelper",
@@ -92,7 +91,6 @@ sap.ui.define([
 	ColumnWidthController,
 	ActionToolbarAction,
 	QuickActionContainer,
-	ItemContainer,
 	ThemeParameters,
 	Log,
 	FESRHelper,
@@ -1446,11 +1444,7 @@ sap.ui.define([
 
 	Table.prototype.setFilterConditions = function(mConditions) {
 		this.setProperty("filterConditions", mConditions, true);
-
-		const oP13nFilter = this.getInbuiltFilter();
-		if (oP13nFilter) {
-			oP13nFilter.setFilterConditions(mConditions);
-		}
+		this.getInbuiltFilter()?.setFilterConditions(mConditions);
 
 		updateFilterInfoBar(this);
 
@@ -2661,12 +2655,11 @@ sap.ui.define([
 
 		if (!this._oColumnHeaderMenu) {
 			this._oQuickActionContainer = new QuickActionContainer({ table: this });
-			this._oItemContainer = new ItemContainer({ table: this });
 			this._oColumnHeaderMenu = new ColumnMenu({
-				id: this.getId() + "-columnHeaderMenu"
+				id: this.getId() + "-columnHeaderMenu",
+				showTableSettingsButton: true
 			});
 			this._oColumnHeaderMenu.addAggregation("_quickActions", this._oQuickActionContainer);
-			this._oColumnHeaderMenu.addAggregation("_items", this._oItemContainer);
 			this.addDependent(this._oColumnHeaderMenu);
 
 			FESRHelper.setSemanticStepname(this._oColumnHeaderMenu, "beforeOpen", "mdc:tbl:p13n:col");
@@ -2684,22 +2677,20 @@ sap.ui.define([
 		oEvent.preventDefault();
 
 		this._oQuickActionContainer.setColumn(oColumn);
-		this._oItemContainer.setColumn(oColumn);
 
 		this._fullyInitialized().then(() => {
 			return this.finalizePropertyHelper();
 		}).then(() => {
-			Promise.all([
-				this._oQuickActionContainer.initializeQuickActions(), this._oItemContainer.initializeItems()
-			]).then(() => {
-				if (this._oQuickActionContainer.hasQuickActions() || this._oItemContainer.hasItems()) {
-					this._oColumnHeaderMenu.openBy(oInnerColumn, true);
-					PersonalizationUtils.detectUserPersonalizationCompletion(this, this._oColumnHeaderMenu);
-				} else {
-					MTableUtil.announceEmptyColumnMenu();
-				}
-			});
+			this._oQuickActionContainer.initializeQuickActions();
+			this._oColumnHeaderMenu.detachTableSettingsPressed(this._showTableP13nDialog, this);
+			this._oColumnHeaderMenu.attachTableSettingsPressed(oColumn, this._showTableP13nDialog, this);
+			this._oColumnHeaderMenu.openBy(oInnerColumn, true);
+			PersonalizationUtils.detectUserPersonalizationCompletion(this, this._oColumnHeaderMenu);
 		});
+	};
+
+	Table.prototype._showTableP13nDialog = function(oEvent, oColumn) {
+		PersonalizationUtils.openSettingsDialog(this, oColumn);
 	};
 
 	/**

@@ -154,6 +154,26 @@ sap.ui.define([
 			});
 		},
 
+		iShouldSeeFiltersInPanelList: function(aFilters) {
+			this.waitFor({
+				controlType: "sap.ui.mdc.p13n.panels.FilterPanel",
+				success: function(aFilterPanels) {
+					this.waitFor({
+						controlType: "sap.m.CustomListItem",
+						matchers: {
+							ancestor: aFilterPanels[0]
+						},
+						success: function(aItems) {
+							Opa5.assert.equal(aItems.length, aFilters.length + 1, "Correct number of filters in the list");
+							aFilters.forEach(function(sFilter, iIndex){
+								Opa5.assert.equal(aItems[iIndex].getContent()[0].getContent()[0].getItems()[0].getText(), sFilter, "Filter " + sFilter + " is in the list");
+							});
+						}
+					});
+				}
+			});
+		},
+
 		iShouldSeeAdaptFiltersTitle: function (sTitle) {
 			return this.waitFor({
 				searchOpenDialogs: true,

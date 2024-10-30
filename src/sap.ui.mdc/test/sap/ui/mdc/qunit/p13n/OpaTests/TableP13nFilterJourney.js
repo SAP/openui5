@@ -95,13 +95,8 @@ sap.ui.define([
 		When.onTheAppMDCTable.iPressOnColumnHeader(sTableID, "Founding Year");
 		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
 		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(2);
-		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuItems(4);
-		Then.onTheAppMDCTable.iShouldSeeColumnMenuItems([
-			TableTestUtil.P13nDialogInfo.Titles.sort,
-			TableTestUtil.P13nDialogInfo.Titles.filter,
-			TableTestUtil.P13nDialogInfo.Titles.group,
-			TableTestUtil.P13nDialogInfo.Titles.columns
-		]);
+		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuItems(0);
+		When.onTheAppMDCTable.iCloseTheColumnMenu();
 
 		//recheck filter dialog
 		Then.onTheMDCTable.iCheckFilterPersonalization(sTableID, [
@@ -121,6 +116,22 @@ sap.ui.define([
 		//Dialog cancelled --> no filters added
 		Then.onTheMDCTable.iCheckFilterPersonalization(sTableID, []);
 		Then.onTheMDCTable.iCheckAvailableFilters(sTableID, aAvailableFilters);
+	});
+
+	opaTest("Open dialog via the column menu should preselect column related filters", function (Given, When, Then) {
+		When.onTheAppMDCTable.iPressOnColumnHeader(sTableID, "Founding Year");
+		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
+		When.onTheAppMDCTable.iPressTableSettingsButton();
+		Then.P13nAssertions.iShouldSeeTheP13nDialog();
+		When.P13nActions.iSwitchToP13nTab("Filter");
+		Then.P13nAssertions.iShouldSeeFiltersInPanel(["Founding Year"]);
+
+		When.P13nActions.iPressDialogOk();
+		When.onTheAppMDCTable.iOpenP13nDialog();
+		Then.P13nAssertions.iShouldSeeTheP13nDialog();
+
+		When.P13nActions.iSwitchToP13nTab("Filter");
+		Then.P13nAssertions.iShouldSeeFiltersInPanel([]);
 
 		//shut down app frame for next test
 		Given.enableAndDeleteLrepLocalStorage();

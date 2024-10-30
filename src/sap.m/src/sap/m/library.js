@@ -4826,6 +4826,30 @@ sap.ui.define([
 		Generic: "Generic"
 	};
 
+	/**
+	 * Defines the available content sizes for the <code>sap.m.table.columnmenu.QuickAction</code> control.
+	 *
+	 * @enum {string}
+	 * @public
+	 */
+	thisLib.table.columnmenu.QuickActionContentSize = {
+
+		/**
+		 * Large: Recommended for larger input controls, such as {@link sap.m.Input} or {@link sap.m.RatingIndicator}. If there is limited space,
+		 * the input control moves to a new line below the label.
+		 * @public
+		 */
+		L : "L",
+
+		/**
+		 * Small: Recommended for smaller controls, such as {@link sap.m.Switch} or {@link sap.m.Checkbox}. If there is limited space, only the label
+		 * is wrapped. The input control is always right-aligned horizontally and middle-aligned vertically.
+		 * @public
+		 */
+		S : "S"
+
+	};
+	DataType.registerEnum("sap.m.table.columnmenu.QuickActionContentSize", thisLib.table.columnmenu.QuickActionContentSize);
 
 	/**
 	 * Predefined types for ObjectMarker.

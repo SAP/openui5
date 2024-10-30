@@ -380,7 +380,7 @@ sap.ui.define([
 				}
 			});
 		},
-		iClickOnAColumnHeaderMenuButtonWithText: function(sColumn, sText) {
+		iClickOnAColumnHeaderMenuButtonWithIcon: function(sColumn, sIcon) {
 			return waitForTable.call(this, {
 				success: function(oTable) {
 					waitForColumnHeader.call(this, {
@@ -392,12 +392,12 @@ sap.ui.define([
 								controlType: "sap.m.Button",
 								matchers: [
 									new PropertyStrictEquals({
-										name: "text",
-										value: sText
+										name: "icon",
+										value: sIcon
 									})
 								],
 								actions: new Press(),
-								errorMessage: "The column header menu button " + sText + " is not available"
+								errorMessage: "The column header menu button with icon " + sIcon + " is not available"
 							});
 						}
 					});
