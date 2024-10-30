@@ -435,6 +435,7 @@ sap.ui.define([
 		}
 
 		aLists.forEach(function(oList) {
+			oList.setBusyIndicatorDelay(0);
 			if (!oList.hasListeners("listItemsChange")) {
 				oList.attachEvent("listItemsChange", _listItemsChangeHandler.bind(this));
 			}
