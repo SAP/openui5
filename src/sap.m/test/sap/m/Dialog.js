@@ -1052,6 +1052,48 @@ sap.ui.define([
 		})
 	});
 
+	var oDialogWithCustomHeaderWithBiggerHeight = new Dialog("dialogWithCustomHeaderWithBiggerHeight", {
+		draggable: true,
+		resizable: true,
+		customHeader: new Toolbar({
+			height: "76px",
+			content: new sap.m.Title({
+				text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.",
+				wrapping: true
+			})
+		}),
+		content: [
+			new Text({text: "Here comes the content..."})
+		],
+		beginButton: new Button("dialogWithCustomHeaderWithBiggerHeightClose", {
+			press: function () {
+				oDialogWithCustomHeaderWithBiggerHeight.close();
+			},
+			text: "Close"
+		})
+	});
+
+	var oDialogWithCustomHeaderWithBiggerHeightTimeout = new Dialog({
+		draggable: true,
+		resizable: true,
+		customHeader: new Toolbar({
+			height: "76px",
+			content: new sap.m.Title({
+				text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.",
+				wrapping: true
+			})
+		}),
+		content: [
+			new Text({text: "Here comes the content..."})
+		],
+		beginButton: new Button({
+			press: function () {
+				oDialogWithCustomHeaderWithBiggerHeightTimeout.close();
+			},
+			text: "Close"
+		})
+	});
+
 	var confirmDialog;
 	var oEscapePreventDialog = new Dialog({
 		title : "Try closing me with escape",
@@ -1831,6 +1873,27 @@ sap.ui.define([
 				ariaHasPopup: coreLibrary.aria.HasPopup.Dialog,
 				press: function () {
 					oDialogWithCustomHeader.open();
+				}
+			}),
+			new Button("dialogWithCustomHeaderWithBiggerHeightButton", {
+				text: "With Custom Header With Bigger Height",
+				width: _buttonWidth,
+				ariaHasPopup: coreLibrary.aria.HasPopup.Dialog,
+				press: function () {
+					oDialogWithCustomHeaderWithBiggerHeight.open();
+				}
+			}),
+			new Button({
+				text: "With Custom Header With Bigger Height with timeout",
+				width: _buttonWidth,
+				ariaHasPopup: coreLibrary.aria.HasPopup.Dialog,
+				press: function () {
+					oDialogWithCustomHeaderWithBiggerHeightTimeout.open();
+
+					setTimeout(function() {
+						oDialogWithCustomHeaderWithBiggerHeightTimeout.getCustomHeader().setHeight("20rem");
+					}, 3000);
+
 				}
 			}),
 			new HTML({content: "<br>"}),
