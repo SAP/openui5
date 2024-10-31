@@ -40,19 +40,43 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("with both functions in DesignTimeMetadata", function(assert) {
-			assert.expect(2);
-			var sButtonId = this.oButton.getId();
+			assert.expect(3);
+			const sButtonId = this.oButton.getId();
 			this.oElementOverlay.setDesignTimeMetadata({
 				tool: {
 					start(oButton) {
 						assert.equal(oButton.getId(), sButtonId, "the function was called with the control as parameter");
 					},
-					stop(oButton) {
+					stop(oButton, oVersionWasActivated) {
 						assert.equal(oButton.getId(), sButtonId, "the function was called with the control as parameter");
+						assert.equal(
+							oVersionWasActivated.versionWasActivated,
+							false,
+							"the function was called with the correct version activated flag"
+						);
 					}
 				}
 			});
 			this.oToolHooksPlugin.registerElementOverlay(this.oElementOverlay);
+			this.oToolHooksPlugin.deregisterElementOverlay(this.oElementOverlay);
+		});
+
+		QUnit.test("when the flag versionWasActivated is set", function(assert) {
+			assert.expect(2);
+			const sButtonId = this.oButton.getId();
+			this.oToolHooksPlugin.setVersionWasActivated(true);
+			this.oElementOverlay.setDesignTimeMetadata({
+				tool: {
+					stop(oButton, oVersionWasActivated) {
+						assert.equal(oButton.getId(), sButtonId, "the function was called with the control as parameter");
+						assert.equal(
+							oVersionWasActivated.versionWasActivated,
+							true,
+							"the function was called with the correct version activated flag"
+						);
+					}
+				}
+			});
 			this.oToolHooksPlugin.deregisterElementOverlay(this.oElementOverlay);
 		});
 
