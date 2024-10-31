@@ -12,7 +12,9 @@ sap.ui.define(['sap/base/util/deepClone', 'sap/ui/core/Control'], function(deepC
 					type: "string"
 				}
 			}
-		}
+		},
+		// no renderer needed in the test scenario
+		renderer: null
 	});
 
 	/**

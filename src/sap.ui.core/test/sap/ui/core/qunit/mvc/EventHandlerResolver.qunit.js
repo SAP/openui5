@@ -20,7 +20,9 @@ sap.ui.define([
 			properties: {
 				someControlProperty: "string"
 			}
-		}
+		},
+		// no renderer needed in the test scenario
+		renderer: null
 	});
 
 	var oDummyEvent = {

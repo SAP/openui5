@@ -20,7 +20,9 @@ sap.ui.define([
 			properties : {
 				src : {type: "sap.ui.core.URI"}
 			}
-		}
+		},
+		// no renderer needed in the test scenario
+		renderer: null
 	});
 
 	var sOriginalLocation = window.location.href;

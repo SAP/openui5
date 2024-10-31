@@ -3,9 +3,11 @@ sap.ui.define(['sap/m/Text'], function(Text) {
 
 	// Control extension
 	var DraggableText = Text.extend("my.DraggableText", {
-		renderer: {},
 		metadata: {
 			dnd: true
+		},
+		renderer: {
+			apiVersion: 2
 		}
 	});
 

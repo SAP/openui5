@@ -562,20 +562,13 @@ html.sap-desktop .sapMCrslHud .sapMCrslArrow {
 	}
 }
 
-.sapMCrslActive {
-	visibility: visible;
+html[data-sap-ui-animation='off'] .sapMCrslItem {
 	transition: visibility 0s;
 }
 
-html[data-sap-ui-animation='off'] {
-
-	.sapMCrslItem {
-		transition: none;
-	}
-
-	.sapMCrslActive {
-		transition: none;
-	}
+.sapMCrslActive {
+	visibility: visible;
+	transition: visibility 0s;
 }
 
 /* Page Indicator Numeric
