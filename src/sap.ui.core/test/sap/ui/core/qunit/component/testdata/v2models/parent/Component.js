@@ -209,6 +209,9 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 							"uri": "/path/to/odata/service"
 						},
 
+						/**
+						 * @deprecated As of version 1.48
+						 */
 						"ODataModel": {
 							"type": "sap.ui.model.odata.ODataModel",
 							"dataSource": "OData",

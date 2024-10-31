@@ -15,8 +15,7 @@
 		},
 		"routing": {
 			"config": {
-				"routerClass": "sap.m.routing.Router",
-				"async": true
+				"routerClass": "sap.m.routing.Router"
 			},
 			"routes": [
 				{

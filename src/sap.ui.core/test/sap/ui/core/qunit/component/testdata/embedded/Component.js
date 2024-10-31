@@ -3,7 +3,9 @@ sap.ui.define(["sap/ui/core/Component"],
 	"use strict";
 
 	var EmbeddedComponent = Component.extend("testdata.embedded.Component", {
-		manifest: true
+		metadata: {
+			manifest: "json"
+		}
 	});
 	return EmbeddedComponent;
 });

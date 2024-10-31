@@ -211,9 +211,10 @@ sap.ui.define([
 	/*
 	 * Toggle All Blocked Button
 	 */
-	 var oToggleAllBlockedButton = new Button({
+	var oToggleAllBlockedButton = new Button({
 		text: "Toggle All - Blocked",
 		press: function () {
+			// ui5lint-disable no-deprecated-api
 			oMyListBox.setBlocked(!oMyListBox.getBlocked());
 			oMyTable.setBlocked(!oMyTable.getBlocked());
 			oIcon.setBlocked(!oIcon.getBlocked());
@@ -222,6 +223,7 @@ sap.ui.define([
 			oPanel.setBlocked(!oPanel.getBlocked());
 			oPanel2.setBlocked(!oPanel2.getBlocked(), "header");
 			oSC.setBlocked(!oSC.getBlocked());
+			// ui5lint-enable no-deprecated-api
 		}
 	});
 	oToggleAllBlockedButton.placeAt("toggleAll");
