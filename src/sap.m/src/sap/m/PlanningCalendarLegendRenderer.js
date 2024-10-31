@@ -40,9 +40,7 @@ sap.ui.define(['sap/ui/unified/CalendarLegendRenderer', 'sap/ui/core/Renderer'],
 			} else if (oLeg.getAppointmentItems().length && (oLeg.getItems().length || oLeg.getStandardItems().length)) {
 				//the upper list has items, and the lower list too, but the second header is an empty string
 				//and we still need a delimiter
-				oRm.voidStart("hr");
-				oRm.attr("role", "listitem");
-				oRm.voidEnd();
+				this._renderSeparator(oRm);
 			}
 		};
 
@@ -60,10 +58,18 @@ sap.ui.define(['sap/ui/unified/CalendarLegendRenderer', 'sap/ui/core/Renderer'],
 			oRm.openEnd();
 			oRm.text(sHeaderText);
 			oRm.close("div");
+			this._renderSeparator(oRm);
+		};
+
+		PlanningCalendarLegendRenderer._renderSeparator = function(oRm) {
+			oRm.openStart("div");
+			oRm.attr("role", "listitem");
+			oRm.openEnd();
 
 			oRm.voidStart("hr");
-			oRm.attr("role", "listitem");
 			oRm.voidEnd();
+
+			oRm.close("div");
 		};
 
 		/**
