@@ -330,7 +330,7 @@ sap.ui.define([
 				height: "8rem",
 				width: "8rem",
 				useIconTooltip: true,
-				decorative: false,
+				decorative: true,
 				alt: this.getIconAlt()
 			}, Image).addStyleClass("sapMMessagePageIcon");
 
