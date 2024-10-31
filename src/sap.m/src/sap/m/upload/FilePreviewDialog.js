@@ -302,7 +302,7 @@ sap.ui.define([
 						case PreviewableMediaType.Quicktime:
 						case PreviewableMediaType.MsVideo: {
 							oPage = new HTML({
-								content: "<video controls width='100%' height='100%' src='" + oItem.getUrl() + "'>"
+								content: `<video controls width='100%' height='100%' src=${oItem.getUrl()}>`
 							});
 							break;
 						}
