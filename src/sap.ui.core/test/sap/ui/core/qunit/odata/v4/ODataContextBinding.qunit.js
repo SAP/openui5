@@ -3490,8 +3490,10 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bHasChangeListeners) {
 	[false, true].forEach(function (bKeepCacheOnError) {
-		var sTitle = "refreshInternal: bHasChangeListeners=" + bHasChangeListeners
-				+ ", bKeepCacheOnError=" + bKeepCacheOnError;
+		[false, true].forEach(function (bHasLateProperties) {
+			var sTitle = "refreshInternal: bHasChangeListeners=" + bHasChangeListeners
+					+ ", bKeepCacheOnError=" + bKeepCacheOnError + ", bHasLateProperties"
+					+ bHasLateProperties;
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding,
@@ -3515,6 +3517,10 @@ sap.ui.define([
 
 		oBinding = this.bindContext("EMPLOYEE_2_TEAM", oContext, {foo : "bar"});
 
+		oBinding.mAggregatedQueryOptions = "~mAggregatedQueryOptions~";
+		if (bHasLateProperties) {
+			oBinding.mLateQueryOptions = "~mLateQueryOptions~";
+		}
 		oBinding.bHasFetchedExpandSelectProperties = true;
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getGroupId").never();
@@ -3529,7 +3535,12 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(sPath));
 		fnFetchCache = oBindingMock.expects("fetchCache")
 			.withExactArgs(sinon.match.same(oContext), false, false,
-				bKeepCacheOnError ? "myGroup" : undefined);
+				bKeepCacheOnError ? "myGroup" : undefined)
+			.callsFake(function () {
+				assert.strictEqual(oBinding.mLateQueryOptions, undefined);
+				assert.strictEqual(oBinding.mAggregatedQueryOptions,
+					bHasLateProperties ? "~mLateQueryOptions~" : "~mAggregatedQueryOptions~");
+			});
 		this.mock(oBinding).expects("createRefreshPromise").exactly(bHasChangeListeners ? 1 : 0)
 			.withExactArgs(bKeepCacheOnError).callThrough();
 		this.mock(oGroupLock).expects("unlock").exactly(bHasChangeListeners ? 0 : 1)
@@ -3553,6 +3564,7 @@ sap.ui.define([
 		}
 		return oRefreshResult;
 	});
+		});
 	});
 });
 
