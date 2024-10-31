@@ -383,6 +383,12 @@ sap.ui.define([
 		).join(" ");
 	};
 
+	CalendarLegend.prototype._getAllItems = function() {
+		var aStandardItems = this.getAggregation("_standardItems") || [],
+			aCustomItems = this.getItems() || [];
+		return aStandardItems.concat(aCustomItems);
+	};
+
 	return CalendarLegend;
 
 });
