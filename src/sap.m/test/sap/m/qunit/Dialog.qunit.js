@@ -1613,6 +1613,39 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
+	QUnit.test("Heading rendering when 'customHeader' aggregation is with bigger than one line height", function(assert) {
+		// arrange
+		var oToolbar = new Toolbar({
+			height: "76px",
+			content: new Title({
+				text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.",
+				wrapping: true
+			})
+		});
+
+		var oDialog = new Dialog({
+			customHeader: oToolbar,
+			content: [
+				new Text({text: "Here comes the content..."})
+			]
+		});
+
+		// act
+		oDialog.open();
+		this.clock.tick(500);
+
+		// assert
+		assert.strictEqual(oDialog.getDomRef().offsetHeight, 124, "Dialog is with the correct height");
+
+		oToolbar.setHeight("20rem");
+		oDialog.invalidate();
+
+		assert.strictEqual(oDialog.getDomRef().offsetHeight, 368, "Dialog is with the correct height");
+
+		// cleanup
+		oDialog.destroy();
+	});
+
 	QUnit.test("Check if footer toolbar role is set correctly", function(assert) {
 		// arrange
 		var oDialog = new Dialog({

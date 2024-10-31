@@ -1223,6 +1223,11 @@ function(
 			sContentWidth = this.getContentWidth(),
 			iMaxDialogWidth = this._calcMaxSizes().maxWidth; // 90% of the max screen size
 
+		if (this.getCustomHeader() && this.getCustomHeader().getDomRef()) {
+			const  sCustomHeaderHeight = this.getCustomHeader().getDomRef().getBoundingClientRect().height + "px";
+			this.getDomRef().style.paddingTop =  sCustomHeaderHeight;
+		}
+
 		//if height is set by manually resizing return;
 		if (this._oManuallySetSize) {
 			$dialogContent.css({
@@ -1695,6 +1700,10 @@ function(
 			});
 
 			this._oResizeObserver.observe(this.getDomRef("scrollCont"));
+
+			if (this.getDomRef().getElementsByClassName("sapMDialogTitleGroup") && this.getDomRef().getElementsByClassName("sapMDialogTitleGroup").length > 0) {
+				this._oResizeObserver.observe(this.getDomRef().getElementsByClassName("sapMDialogTitleGroup")[0]);
+			}
 		}
 
 		//set the initial size of the content container so when a dialog with large content is open there will be a scroller

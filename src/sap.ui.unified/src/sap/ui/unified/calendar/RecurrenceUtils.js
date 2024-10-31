@@ -54,7 +54,7 @@ sap.ui.define([
 
 		const iDayInMilliseconds = 24 * 60 * 60 * 1000;
 		const isDateInRange = oCurrentDate >= oStartDate && oCurrentDate <= this.getRecurrenceEndDate();
-		const isWithCorrectPattern = ((oCurrentDate.getTime() - oStartDate.getTime()) / iDayInMilliseconds) % this.getRecurrencePattern() === 0;
+		const isWithCorrectPattern = Math.floor((oCurrentDate.getTime() - oStartDate.getTime()) / iDayInMilliseconds) % this.getRecurrencePattern() === 0;
 
 		return  isDateInRange && isWithCorrectPattern;
 	};

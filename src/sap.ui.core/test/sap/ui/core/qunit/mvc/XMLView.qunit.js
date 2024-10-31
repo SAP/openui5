@@ -310,6 +310,7 @@ sap.ui.define([
 				return Control.extend("testdata.mvc.EmptyControl", {
 					metadata: {},
 					renderer: {
+						apiVersion: 2,
 						render: function() { /* empty renderer is intentional */ }
 					}
 				});

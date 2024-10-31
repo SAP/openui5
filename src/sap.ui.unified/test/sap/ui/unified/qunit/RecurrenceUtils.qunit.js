@@ -2,11 +2,13 @@
 sap.ui.define([
 	"sap/ui/unified/calendar/RecurrenceUtils",
 	"sap/ui/unified/NonWorkingPeriod",
+	"sap/ui/unified/RecurringNonWorkingPeriod",
 	"sap/ui/unified/TimeRange",
 	"sap/ui/core/date/UI5Date"
 ], function(
 	RecurrenceUtils,
 	NonWorkingPeriod,
+	RecurringNonWorkingPeriod,
 	TimeRange,
 	UI5Date
 ) {
@@ -203,5 +205,42 @@ sap.ui.define([
 		assert.strictEqual(aResult[0].duration, iExpectDuration, "The duration of the period is correct");
 		assert.strictEqual(aResult[1].type, "working", "The type must be defined as working");
 		assert.strictEqual(aResult[1].duration, iExpectDuration, "The duration of the period is correct");
+	});
+
+	QUnit.module("hasOccurrenceOnDate");
+
+	QUnit.test("hasOccurrenceOnDate for a leap year", (assert) => {
+		// Prepare
+		const oEndDate = UI5Date.getInstance(2025, 11, 2);
+		const oRecurrencePeriod = new RecurringNonWorkingPeriod({
+			recurrenceType: "Daily",
+			recurrenceEndDate: UI5Date.getInstance(2025, 11, 1),
+			recurrencePattern: 1,
+			date: UI5Date.getInstance(2024, 11 ,30),
+			timeRange: new TimeRange({
+				start: "1:55",
+				end:"2:15",
+				valueFormat:"HH:mm"
+			})
+		});
+		const hasOccurrenceOnDate = RecurrenceUtils.hasOccurrenceOnDate.bind(oRecurrencePeriod);
+		const oCurrentDate = UI5Date.getInstance(2024, 11 ,29);
+
+		// Assert
+		assert.notOk(hasOccurrenceOnDate(oCurrentDate), "It has been correctly determined that there is no non-working period for a date outside the recurring non-working interval");
+
+		// Act
+		oCurrentDate.setDate(oCurrentDate.getDate() + 1);
+
+		while (oCurrentDate.getTime() < oEndDate.getTime()) {
+			// Assert
+			assert.ok(hasOccurrenceOnDate(oCurrentDate), "It has been correctly determined that there is a non-working period for a date within the recurring non-working interval");
+
+			// Act
+			oCurrentDate.setDate(oCurrentDate.getDate() + 1);
+		}
+
+		// Assert
+		assert.notOk(hasOccurrenceOnDate(oCurrentDate), "It has been correctly determined that there is no non-working period for a date outside the recurring non-working interval");
 	});
 });

@@ -1739,7 +1739,9 @@ sap.ui.define([
 				aggregations: {
 					elements: "sap.ui.core.Element"
 				}
-			}
+			},
+			// no renderer needed in the test scenario
+			renderer: null
 		});
 
 		var MyComponent = UIComponent.extend("MyComponent", {
