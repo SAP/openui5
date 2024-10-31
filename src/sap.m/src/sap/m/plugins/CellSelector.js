@@ -261,6 +261,8 @@ sap.ui.define([
 
 					if (this._oOriginCell) {
 						this._selectCells(this._oOriginCell, oInfo);
+						oEvent.preventDefault();
+						oEvent.setMarked?.();
 					}
 				}
 			}
