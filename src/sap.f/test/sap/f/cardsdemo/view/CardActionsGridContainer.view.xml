@@ -1,0 +1,197 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:card="sap.f.cards"
+	xmlns:w="sap.ui.integration.widgets"
+	controllerName="sap.f.cardsdemo.controller.CardActions"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Card actions scenarios" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+		<f:GridContainer>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/noAction.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/card.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/cardAndListItem.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/cardAndHeader.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/header.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/cardAndHeaderAndListItem.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/cardAndHeaderAndListItemAndActionStrip.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/cardAndItemsActionStrip.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/object.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/objectCardAndContent.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/table.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/tableCardAndItemActions.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/analytical.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/analyticalCardAndContent.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/analyticalDonut.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/analyticalActionableAreaFull.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/calendar.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/adaptive.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/component/manifest.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/webpage.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<f:Card press=".onFCardPress">
+				<f:header>
+					<card:Header
+							title="sap.f.Card with Card Action"
+							subtitle="Sales executive" />
+				</f:header>
+				<f:content>
+					<HBox>
+						<VBox class="sapUiMediumMargin">
+							<Title text="Contact details" class="sapUiTinyMarginBottom" />
+							<Label text="First Name" />
+						</VBox>
+					</HBox>
+				</f:content>
+				<f:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</f:layoutData>
+			</f:Card>
+			<f:Card press=".onFCardPress">
+				<f:header>
+					<card:Header
+							press=".onFCardHeaderPress"
+							title="sap.f.Card with Card and Header Action"
+							subtitle="Sales executive" />
+				</f:header>
+				<f:content>
+					<HBox>
+						<VBox class="sapUiMediumMargin">
+							<Title text="Contact details" class="sapUiTinyMarginBottom" />
+							<Label text="First Name" />
+						</VBox>
+					</HBox>
+				</f:content>
+				<f:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</f:layoutData>
+			</f:Card>
+		</f:GridContainer>
+	</Page>
+</mvc:View>

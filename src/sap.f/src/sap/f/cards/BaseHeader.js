@@ -478,27 +478,17 @@ sap.ui.define([
 		}).join(" ");
 	};
 
-	/**
-	 * Returns if the control is inside a sap.f.GridContainer
-	 *
-	 * @private
-	 */
-	BaseHeader.prototype._isInsideGridContainer = function() {
-		var oParent = this.getParent();
-		if (!oParent) {
-			return false;
-		}
-
-		oParent = oParent.getParent();
-		if (!oParent) {
-			return false;
-		}
-
-		return oParent.isA("sap.f.GridContainer");
-	};
-
 	BaseHeader.prototype.isInteractive = function() {
 		return this.hasListeners("press");
+	};
+
+	BaseHeader.prototype.isFocusable = function() {
+		const oParent = this.getParent();
+		if (oParent && oParent.isA("sap.f.CardBase") && oParent.isRoleListItem()) {
+			return this.isInteractive();
+		}
+
+		return this.getProperty("focusable");
 	};
 
 	BaseHeader.prototype._isInsideToolbar = function(oElement) {
@@ -508,7 +498,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * When the option <code>useTooltips</code> is set to <code>true</code> - enhances the given text with a tooltip if the text is truncated.
+	 * When the option <code>useTooltips</code> is set to <code>true</code>,
+	 * a tooltip is added to the text in case it gets truncated.
 	 * @private
 	 * @param {sap.m.Text} oText The text control.
 	 */

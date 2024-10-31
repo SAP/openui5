@@ -5546,12 +5546,12 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", async f
 
 	QUnit.test("Right Arrow navigation through grid container", function (assert) {
 		// Arrange
-		var oItemWrapper1 = this.oGrid.getDomRef("listUl").children[0],
+		var oItem1 = this.oGrid.getItems()[0].getDomRef(),
 			bForward = true,
 			oMoreButton = this.oGrid.getItems()[0]._oMoreIcon;
 		//Act
-		oItemWrapper1.focus();
-		qutils.triggerKeydown(oItemWrapper1, KeyCodes.TAB);
+		oItem1.focus();
+		qutils.triggerKeydown(oItem1, KeyCodes.TAB);
 		var $Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], bForward);
 		if ($Tabbables.length) {
 			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
