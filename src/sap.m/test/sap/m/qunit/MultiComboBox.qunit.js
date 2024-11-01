@@ -3729,43 +3729,6 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("setSelection should trigger Tokenizer's scrollToEnd", async function (assert) {
-		this.clock = sinon.useFakeTimers();
-		var oFakeEvent = new Event();
-
-		// system under test
-		var oItem = new Item({
-				key : "DZ",
-				text : "Algeria"
-			}),
-			oMultiComboBox = new MultiComboBox({
-				items : [oItem]
-			});
-
-		// arrange
-		oMultiComboBox.placeAt("MultiComboBoxContent");
-		oMultiComboBox.setSelectedItems([oItem]);
-
-		var oSpy = this.spy(oMultiComboBox.getAggregation("tokenizer"), "scrollToEnd");
-		var oStubSetSelection = this.stub(Event.prototype, "getParameters");
-
-		await nextUIUpdate(this.clock);
-
-		oStubSetSelection.withArgs("id").returns(oItem.getId());
-		oStubSetSelection.withArgs("item").returns(oItem);
-		oStubSetSelection.withArgs("listItemUpdated").returns(true);
-
-		this.clock.tick(500);
-		oMultiComboBox.setSelection(oFakeEvent);
-
-		assert.ok(oSpy.called, "Tokenizer's scrollToEnd should be called when a new token is added");
-
-		// cleanup
-		oSpy.restore();
-		oFakeEvent.destroy();
-		oMultiComboBox.destroy();
-	});
-
 	QUnit.test("Clicking on token should not throw an exception", async function(assert) {
 		this.clock = sinon.useFakeTimers();
 		// system under test
@@ -5204,7 +5167,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Tokenizer should scroll to end when focus is outside MCB", async function(assert) {
+	QUnit.test("Tokenizer should be collapsed when the focus is outside MCB", async function(assert) {
 		this.clock = sinon.useFakeTimers();
 		var oFakeEvent = new Event(),
 			oMultiComboBox = new MultiComboBox({
@@ -5215,7 +5178,6 @@ sap.ui.define([
 				]
 			}).placeAt("MultiComboBoxContent");
 
-		var oSpy = this.spy(oMultiComboBox.getAggregation("tokenizer"), "scrollToEnd");
 		var oHandleFocusleaveStub = this.stub(Event.prototype, "getParameter");
 
 		await nextUIUpdate(this.clock);
@@ -5225,10 +5187,9 @@ sap.ui.define([
 
 		// assert
 		this.clock.tick();
-		assert.ok(oSpy.called, "Tokenizer's scrollToEnd should be called when focus is outside MCB");
+		assert.strictEqual(oMultiComboBox._oTokenizer.getRenderMode(), "Narrow", "Tokenizer's scrollToEnd should be called when focus is outside MCB");
 
 		// cleanup
-		oSpy.restore();
 		oMultiComboBox.destroy();
 	});
 
@@ -5913,7 +5874,7 @@ sap.ui.define([
 				]
 			});
 			this.oTokenizer = this.oMultiComboBox.getAggregation("tokenizer");
-			this.oMultiComboBox.placeAt("MultiComboBoxContent");
+			this.oMultiComboBox.placeAt("qunit-fixture");
 			await nextUIUpdate();
 		}, afterEach: function() {
 			this.oMultiComboBox.destroy();
@@ -6454,6 +6415,7 @@ sap.ui.define([
 		// Act
 		qutils.triggerKeydown(document.activeElement, KeyCodes.HOME);
 		this.clock.tick(500);
+
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused");
 	});
@@ -7877,6 +7839,7 @@ sap.ui.define([
 
 		// cleanup
 		oMultiComboBox.destroy();
+		this.clock.tick(500);
 	});
 
 	QUnit.test("Desktop: Autocomplete + Item selection", async function (assert) {
@@ -7931,6 +7894,7 @@ sap.ui.define([
 		// act
 		oMultiComboBox.oninput(oInputEvent);
 		this.clock.tick(500);
+
 		// assert
 		assert.strictEqual(oInputDomRef.value, "Argentina",
 				"Next match autocompleted, if the first one is already selected.");

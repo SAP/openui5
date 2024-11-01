@@ -32,7 +32,7 @@
 	line-height: 1;
 }
 
-.sapMToken.sapMTokenSelected::before {
+.sapMToken.sapMTokenSelected:not(.sapMTokenReadOnly)::before {
 	content: '';
 	position: absolute;
 	pointer-events: none;

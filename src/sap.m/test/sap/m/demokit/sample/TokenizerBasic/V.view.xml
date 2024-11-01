@@ -1,0 +1,44 @@
+<mvc:View
+    controllerName="sap.m.sample.TokenizerBasic.C"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core">
+	<l:HorizontalLayout class="sapUiContentPadding">
+		<Input id="tokenInput" placeholder="Insert token text" width="320px"/>
+		<Button class="sapUiTinyMarginStart"
+			text="Add Token"
+			press=".onAddToken" />
+		<CheckBox
+			text="Editable"
+			selected="true"
+			select=".onSelect" />
+	</l:HorizontalLayout>
+
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+	<Tokenizer
+		id="tokenizer"
+		width="65%"
+		tokenDelete=".onTokenDelete">
+		<tokens>
+			<Token text="First token" key="1" />
+			<Token text="Second token" key="2" />
+			<Token text="Third token" key="3" />
+		</tokens>
+	</Tokenizer>
+	</l:VerticalLayout>
+
+	<l:VerticalLayout class="sapUiContentPadding">
+		<Label text="Disabled tokenizer" class="sapUiLargeMarginTop" width="100%"/>
+		<Tokenizer
+			id="tokenizerDisabled"
+			width="320px"
+			enabled="false">
+			<tokens>
+				<Token text="Disabled token" key="1" />
+				<Token text="Disabled token 2" key="2" />
+				<Token text="Another disabled token" key="3" />
+			</tokens>
+		</Tokenizer>
+	</l:VerticalLayout>
+</mvc:View>
