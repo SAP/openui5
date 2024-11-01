@@ -310,12 +310,9 @@ sap.ui.define([
 	 */
 
 	QUnit.module("Component Metadata v2 with async rootView (manifest first)", {
-		beforeEach: function() {
+		beforeEach: function(assert) {
 			return moduleSetup.call(this, "v2asyncRootView", true).then(function() {
-				// fix the specials in the metadata for the v2 with async rootView manifest first
-				this.oExpectedManifest["sap.ui5"]["rootView"]["async"] = true;
-				this.oExpectedRawManifest["sap.ui5"]["rootView"]["async"] = true;
-				this.oExpectedMetadata["rootView"]["async"] = true;
+				assert.ok(this.oComponent.isA("sap.ui.core.IAsyncContentCreation"), "Component is marked with IAsyncContentCreation");
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -331,12 +328,9 @@ sap.ui.define([
 	 */
 
 	QUnit.module("Component Metadata v2 with async rootView (manifest first with component name)", {
-		beforeEach: function() {
+		beforeEach: function(assert) {
 			return moduleSetup.call(this, "v2asyncRootView", true, true).then(function() {
-				// fix the specials in the metadata for the v2 with async rootView manifest first
-				this.oExpectedManifest["sap.ui5"]["rootView"]["async"] = true;
-				this.oExpectedRawManifest["sap.ui5"]["rootView"]["async"] = true;
-				this.oExpectedMetadata["rootView"]["async"] = true;
+				assert.ok(this.oComponent.isA("sap.ui.core.IAsyncContentCreation"), "Component is marked with IAsyncContentCreation");
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -352,24 +346,20 @@ sap.ui.define([
 	 */
 
 	QUnit.module("Component Metadata v2 (inline)", {
-		beforeEach: function() {
-			return new Promise(function (resolve) {
+		beforeEach: function(assert) {
+			return new Promise((resolve) => {
 				sap.ui.require([
 					"sap/ui/model/resource/ResourceModel",
 					"sap/ui/model/odata/v2/ODataModel",
 					"sap/ui/core/routing/Router",
 					"sap/ui/core/mvc/XMLView"
-				], function (ResourceModel, OdataModel, Router, XMLView) {
-					moduleSetup.call(this, "v2inline").then(function() {
-						// fix the specials in the metadata for the v2 with async rootView manifest first
-						this.oExpectedManifest["sap.ui5"]["rootView"]["async"] = true;
-						this.oExpectedRawManifest["sap.ui5"]["rootView"]["async"] = true;
-						this.oExpectedMetadata["rootView"]["async"] = true;
-					}.bind(this)).then(function (oComponent) {
-						resolve(oComponent);
+				], (ResourceModel, OdataModel, Router, XMLView) => {
+					moduleSetup.call(this, "v2inline").then(() => {
+						assert.ok(this.oComponent.isA("sap.ui.core.IAsyncContentCreation"), "Component is marked with IAsyncContentCreation");
+						resolve();
 					});
-				}.bind(this));
-			}.bind(this));
+				});
+			});
 		},
 		afterEach: function() {
 			moduleTeardown.call(this);

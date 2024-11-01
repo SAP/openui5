@@ -323,12 +323,14 @@ sap.ui.define([
 
 	};
 
+	// ui5lint-disable no-globals
 	if ( !sap.ui.testfwk ) {
 		sap.ui.testfwk = {};
 	}
 
-	 // export to global
+	// export to global
 	window.testfwk = sap.ui.testfwk.TestFWK = TestFWK;
+	// ui5lint-enable no-globals
 
 	return TestFWK;
 });

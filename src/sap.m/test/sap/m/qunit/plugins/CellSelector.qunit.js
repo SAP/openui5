@@ -24,8 +24,10 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/plugins/MultiSelectionPlugin",
-	"sap/ui/model/Sorter"
-], function (Dialog, Text, MTable, MColumn, ColumnListItem, CellSelector, CustomData, MockServer, DragDropInfo, DropInfo, KeyCodes, MDCTable, MDCColumn, JSONModel, ODataModel, qutils, nextUIUpdate, GridColumn, GridTable, GridFixedRowMode, MultiSelectionPlugin, Sorter) {
+	"sap/ui/model/Sorter",
+	"sap/m/Input",
+	"sap/m/ComboBox"
+], function (Dialog, Text, MTable, MColumn, ColumnListItem, CellSelector, CustomData, MockServer, DragDropInfo, DropInfo, KeyCodes, MDCTable, MDCColumn, JSONModel, ODataModel, qutils, nextUIUpdate, GridColumn, GridTable, GridFixedRowMode, MultiSelectionPlugin, Sorter, Input, ComboBox) {
 	"use strict";
 
 	const sServiceURI = "/service/";
@@ -50,7 +52,9 @@ sap.ui.define([
 			columns: [
 				new GridColumn({ template: new Text({text: "{ProductId}"}) }),
 				new GridColumn({ template: new Text({text: "{Name}"}) }),
-				new GridColumn({ template: new Text({text: "{Category}"}) })
+				new GridColumn({ template: new Text({text: "{Category}"}) }),
+				new GridColumn({ template: new Input()}),
+				new GridColumn({ template: new ComboBox()})
 			],
 			rows: "{/Products}",
 			models: new ODataModel(sServiceURI, true),
@@ -754,5 +758,45 @@ sap.ui.define([
 				fnResolve();
 			});
 		});
+	});
+
+	QUnit.module("Interaction - Shift + Click", {
+		beforeEach: async function() {
+			this.oMockServer = new MockServer({ rootUri : sServiceURI });
+			this.oMockServer.simulate("test-resources/sap/m/qunit/data/metadata.xml", "test-resources/sap/m/qunit/data");
+			this.oMockServer.start();
+
+			this.oCellSelector = new CellSelector({ rangeLimit: 15 });
+			this.oTable = await getTable();
+			this.oTable.addDependent(this.oCellSelector);
+			this.oTable.placeAt("qunit-fixture");
+
+			await nextUIUpdate();
+		},
+		afterEach: function() {
+			this.oMockServer.destroy();
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Shift + Click on Input", function(assert) {
+		const oCell = getCell(this.oTable, 1, 0);
+		qutils.triggerKeydown(oCell, KeyCodes.SPACE);
+		qutils.triggerKeyup(oCell, KeyCodes.SPACE);
+		assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
+
+		const oInput = this.oTable.getRows()[0].getCells()[3];
+		qutils.triggerEvent("mousedown", oInput.getDomRef(), { button: 0, shiftKey: true });
+		assert.ok(this.oCellSelector._bMouseDown, "Flag has been set");
+		qutils.triggerEvent("mouseup", oInput.getDomRef());
+		assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 0, colIndex: 0}, to: {rowIndex: 1, colIndex: 3}}, "Cells has been selected");
+		assert.notEqual(oInput.getId(), document.activeElement.id, "Input is not focused");
+
+		const oComboBox = this.oTable.getRows()[0].getCells()[4];
+		qutils.triggerEvent("mousedown", oComboBox.getDomRef(), { button: 0, shiftKey: true });
+		assert.ok(this.oCellSelector._bMouseDown, "Flag has been set");
+		qutils.triggerEvent("mouseup", oComboBox.getDomRef());
+		assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 0, colIndex: 0}, to: {rowIndex: 1, colIndex: 4}}, "Cells has been selected");
+		assert.notEqual(oComboBox.getId(), document.activeElement.id, "ComboBox is not focused");
 	});
 });

@@ -36,7 +36,7 @@ sap.ui.define([
 			}
 		}
 
-		if (!browser.safari || (!browser.fullscreen && !browser.webview)) {
+		if (!browser.safari || !browser.fullscreen) {
 			assert.ok(value.indexOf(Math.floor(version)) != -1, "Version is set right in data attribute");
 		} else {
 			assert.ok(!/[0-9]+$/.test(value), "unknown browser versions shouldn't be added to the data attribute");

@@ -199,23 +199,12 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 					},
 
 					"models": {
-
 						"": "default",
-
 						"default-with-annotations": "default-with-annotations",
 
 						"old-uri-syntax": {
 							"type": "sap.ui.model.odata.v2.ODataModel",
 							"uri": "/path/to/odata/service"
-						},
-
-						"ODataModel": {
-							"type": "sap.ui.model.odata.ODataModel",
-							"dataSource": "OData",
-							"settings": {
-								"useBatch": false,
-								"refreshAfterChange": false
-							}
 						},
 
 						"ODataV4Model": {
@@ -261,7 +250,6 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 						"json": "json",
 						"json-relative": "json-relative",
 						"json-relative-2": "json-relative-2",
-
 						"xml": "xml",
 						"xml-relative": "xml-relative",
 
@@ -327,21 +315,24 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 						"no-model-type": {
 							"uri": "/path/to/foo/bar"
 						},
+
 						"missing-model-class": {
 							"type": "sap.ui.not.defined.Model"
 						},
+
 						"model-not-found": {
 							"type": "testdata.v2models.parent.ModelNotDefined"
 						},
+
 						"dataSource-not-found": {
 							"type": "sap.ui.model.odata.v2.ODataModel",
 							"dataSource": "does-not-exist"
 						},
+
 						"dataSource-invalid": {
 							"type": "sap.ui.model.odata.v2.ODataModel",
 							"dataSource": "invalid"
 						}
-
 					}
 
 				}

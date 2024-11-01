@@ -1,4 +1,5 @@
 sap.ui.define([
+  "sap/ui/core/ContextMenuSupport",
   "sap/ui/core/IconPool",
   "sap/m/Button",
   "sap/m/library",
@@ -10,19 +11,16 @@ sap.ui.define([
   "sap/m/StandardListItem",
   "sap/m/App",
   "sap/m/Page"
-], function(IconPool, Button, mobileLibrary, Menu, MenuItem, UnifiedMenu, UnifiedMenuItem, List, StandardListItem, App, Page) {
+], function(ContextMenuSupport, IconPool, Button, mobileLibrary, Menu, MenuItem, UnifiedMenu, UnifiedMenuItem, List, StandardListItem, App, Page) {
   "use strict";
-
   // shortcut for sap.m.ButtonType
   const ButtonType = mobileLibrary.ButtonType;
-
   var oButtonSample = new Button("myButtonSample", {
 	  type: ButtonType.Default,
 	  text: "Open Button ContextMenu",
 	  enabled: true,
 	  tooltip: "tooltip"
   });
-
   var oButtonContextMenu = new Menu({
 	  items: [
 		  new MenuItem({ text: "Open", icon: "sap-icon://add"}),
@@ -31,7 +29,6 @@ sap.ui.define([
 		  new MenuItem({ text: "More", icon: "sap-icon://overflow"})
 	  ]
   });
-
   var oListMenu = new Menu({
 	  items: [
 		  new MenuItem({ text: "Copy", icon: "sap-icon://copy" }),
@@ -44,7 +41,6 @@ sap.ui.define([
 		  new MenuItem({ text: "Fourth option" })
 	  ]
   });
-
   var oPageContextMenu = new UnifiedMenu({
 	  items: [
 		  new UnifiedMenuItem( { text: "Example with Unified Menu" } ),
@@ -52,8 +48,6 @@ sap.ui.define([
 		  new UnifiedMenuItem( { text: "Example" } )
 	  ]
   });
-
-
   var oList = new List({
 	  items: [
 		  new StandardListItem({
@@ -85,24 +79,18 @@ sap.ui.define([
 		  })
 	  ]
   });
-
   var oBasicButton = new Button({
 	  text: "Button without a ContextMenu"
   });
-
   var oLeftDownButton = new Button({
 	  id: "leftDownBtn",
 	  text: "Down Left"
   }).addStyleClass("down-left");
-
   var oRightDownButton = new Button({
 	  id: "rightDownBtn",
 	  text: "Down Right"
   }).addStyleClass("down-right");
-
-
   /* ---------------------------------------- */
-
   var oApp = new App();
   var oPage = new Page({
 	  id: "testPage",
@@ -115,19 +103,15 @@ sap.ui.define([
 	  ]
   });
   oApp.addPage(oPage);
-
   oPage.setContextMenu(oPageContextMenu);
   oButtonSample.setContextMenu(oButtonContextMenu);
   oLeftDownButton.setContextMenu(oButtonContextMenu);
   oRightDownButton.setContextMenu(oButtonContextMenu);
-
-
   oList.getItems().forEach(function(oListItem) {
 	  // mad hacks
-	  sap.ui.core.ContextMenuSupport.apply(oListItem);
+	  ContextMenuSupport.apply(oListItem);
 	  oListItem.setContextMenu(oListMenu);
   });
-
   oApp.addPage(oPage);
   oApp.placeAt("body");
 });

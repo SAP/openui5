@@ -354,6 +354,7 @@ sap.ui.define([
 		sap.ui.define("sap/test/enumlib/library", [
 			"sap/ui/core/Lib"
 		], function(Library) {
+			// ui5lint-disable-next-line no-deprecated-api
 			const thisLib = Library.init({
 				name: "sap.test.enumlib"
 				// apiVersion: 1 - legacy scenario
@@ -390,6 +391,7 @@ sap.ui.define([
 		sap.ui.define("sap/test/otherlib/library", [
 			"sap/ui/core/Lib"
 		], function(Library) {
+			// ui5lint-disable-next-line no-deprecated-api
 			const thisLib = Library.init({
 				name: "sap.test.otherlib"
 				// apiVersion: 1 - legacy scenario

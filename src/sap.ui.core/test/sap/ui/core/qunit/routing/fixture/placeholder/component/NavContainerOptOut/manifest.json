@@ -7,12 +7,10 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "module:qunit/placeholder/component/NavContainerOptOut/view/RootView",
-			"async": true
+			"viewName": "module:qunit/placeholder/component/NavContainerOptOut/view/RootView"
 		},
 		"routing": {
 			"config": {
-				"async": true,
 				"controlId": "navContainer",
 				"controlAggregation": "pages",
 				"routerClass": "sap.m.routing.Router",
