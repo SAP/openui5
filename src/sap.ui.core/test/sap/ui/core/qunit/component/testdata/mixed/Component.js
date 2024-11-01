@@ -3,16 +3,12 @@ sap.ui.define([
 ], function(UIComponent) {
 	"use strict";
 
-
 	var Component = UIComponent.extend("testdata.mixed.Component", {
-
 		metadata: {
-			manifest: "json"
+			manifest: "json",
+			interfaces: ["sap.ui.core.IAsyncContentCreation"]
 		}
-
 	});
 
-
 	return Component;
-
 });

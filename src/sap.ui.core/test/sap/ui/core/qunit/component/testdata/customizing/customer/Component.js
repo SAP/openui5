@@ -118,23 +118,21 @@ sap.ui.define([
 							"visible": false
 						}
 					},
+
 					"testdata.customizing.sap.Sub3": {
 						"customizableText": {
 							"visible": false
 						}
 					},
+
 					"testdata.customizing.sap.Sub4": {
 						"customizableText1": {
 							"visible": false
 						}
 					},
+
 					"testdata.customizing.sap.Sub4Typed": {
 						"typedCustomizableText1": {
-							"visible": false
-						}
-					},
-					"testdata.customizing.sap.Sub5": {
-						"Button2": {
 							"visible": false
 						}
 					}

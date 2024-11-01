@@ -364,7 +364,6 @@ sap.ui.define([
 	  *
 	  * @enum {string}
 	  * @public
-	  * @experimental Since 1.73.
 	  * @since 1.73
 	  */
 	 thisLib.AvatarGroupType = {
@@ -439,7 +438,6 @@ sap.ui.define([
 	  *
 	  * @since 1.63
 	  * @name sap.f.IShellBar
-	  * @experimental Since 1.63, that provides only limited functionality. Also, it can be removed in future versions.
 	  * @public
 	  * @interface
 	  */
