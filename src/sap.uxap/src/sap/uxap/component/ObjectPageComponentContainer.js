@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/ComponentContainer', "sap/base/Log", 'sap/ui/core/Component'],
-	function(ComponentContainer, Log, Component) {
+sap.ui.define(['sap/ui/core/ComponentContainer', 'sap/ui/core/ComponentContainerRenderer', "sap/base/Log", 'sap/ui/core/Component'],
+	function(ComponentContainer, ComponentContainerRenderer, Log, Component) {
 		"use strict";
 
 		/**
@@ -79,7 +79,7 @@ sap.ui.define(['sap/ui/core/ComponentContainer', "sap/base/Log", 'sap/ui/core/Co
 			/**
 			 * use the standard renderer
 			 */
-			renderer: "sap.ui.core.ComponentContainerRenderer"
+			renderer: ComponentContainerRenderer
 		});
 
 		return ObjectPageComponentContainer;

@@ -29,6 +29,10 @@ sap.ui.define([
 		metadata: {
 			interfaces: ["sap.ui.core.IContextMenu"]
 		},
+
+		// no rendering required for the tests in this module
+		renderer: null,
+
 		constructor: function() {
 			Control.apply(this, arguments);
 			this.openAsContextMenu = sinon.spy();

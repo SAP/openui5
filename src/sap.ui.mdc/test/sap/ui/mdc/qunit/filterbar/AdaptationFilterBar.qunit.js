@@ -153,7 +153,10 @@ sap.ui.define([
 					interfaces: [
 						"sap.ui.mdc.IFilter"
 					]
-				}
+				},
+
+				// no rendering required for the tests in this module
+				renderer: null
 			});
 			return new IFilterControl(mSettings);
 		},
@@ -175,7 +178,10 @@ sap.ui.define([
 					interfaces: [
 						"sap.ui.mdc.IFilterSource"
 					]
-				}
+				},
+
+				// no rendering required for the tests in this module
+				renderer: null
 			});
 			return new IFilterControl(mSettings);
 		},

@@ -1392,7 +1392,9 @@ sap.ui.define([
 		this.clock = sinon.useFakeTimers();
 		// system under test
 		var InputSubclass = InputBase.extend("InputSubclass", {
-			renderer: {},
+			renderer: {
+				apiVersion: 2
+			},
 			preventChangeOnFocusLeave: function() {
 				return true;
 			}
