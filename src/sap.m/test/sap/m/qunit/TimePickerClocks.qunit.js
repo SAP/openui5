@@ -1150,22 +1150,32 @@ sap.ui.define([
 			oMinutesButtonDom = this.oTPC._getMinutesButton().getDomRef(),
 			oSecondsButtonDom = this.oTPC._getSecondsButton().getDomRef(),
 			oRB = this.oTPC._oResourceBundle,
-			oClocksWrapper = jQuery(".sapMTPCClocks");
+			oClocksWrapper = jQuery(".sapMTPCClocks"),
+			oLabels = {
+				'hours': oRB.getText("TIMEPICKER_LBL_HOURS"),
+				'minutes': oRB.getText("TIMEPICKER_LBL_MINUTES"),
+				'seconds': oRB.getText("TIMEPICKER_LBL_SECONDS"),
+				'ampm': oRB.getText("TIMEPICKER_AMPM_BUTTON_TOOLTIP"),
+				'clock': oRB.getText("TIMEPICKER_CLOCK_DIAL_LABEL")
+			};
 
 		//assert
-		assert.equal(oHoursButtonDom.getAttribute("role"), "spinbutton", "Hours button have proper role attribute");
-		assert.equal(oHoursButtonDom.getAttribute("aria-valuetext"), "9 " + oRB.getText("TIMEPICKER_LBL_HOURS"), "Hours button have proper aria-valuetext attribute");
+		assert.equal(oHoursButtonDom.getAttribute("role"), "spinbutton", "Hours button has proper role attribute");
+		assert.equal(oHoursButtonDom.getAttribute("aria-valuetext"), "9 " + oLabels['hours'], "Hours button has proper aria-valuetext attribute");
+		assert.equal(oHoursButtonDom.getAttribute("title"), oLabels['hours'], "Hours button has proper tooltip");
 
-		assert.equal(oMinutesButtonDom.getAttribute("role"), "spinbutton", "Minutes button have proper role attribute");
-		assert.equal(oMinutesButtonDom.getAttribute("aria-valuetext"), "15 " + oRB.getText("TIMEPICKER_LBL_MINUTES"), "Minutes button have proper aria-valuetext attribute");
+		assert.equal(oMinutesButtonDom.getAttribute("role"), "spinbutton", "Minutes button has proper role attribute");
+		assert.equal(oMinutesButtonDom.getAttribute("aria-valuetext"), "15 " + oLabels["minutes"], "Minutes button has proper aria-valuetext attribute");
+		assert.equal(oMinutesButtonDom.getAttribute("title"), oLabels["minutes"], "Minutes button has proper tooltip");
 
-		assert.equal(oSecondsButtonDom.getAttribute("role"), "spinbutton", "Seconds button have proper role attribute");
-		assert.equal(oSecondsButtonDom.getAttribute("aria-valuetext"), "33 " + oRB.getText("TIMEPICKER_LBL_SECONDS"), "Hours button have proper aria-valuetext attribute");
+		assert.equal(oSecondsButtonDom.getAttribute("role"), "spinbutton", "Seconds button has proper role attribute");
+		assert.equal(oSecondsButtonDom.getAttribute("aria-valuetext"), "33 " + oLabels["seconds"], "Hours button has proper aria-valuetext attribute");
+		assert.equal(oSecondsButtonDom.getAttribute("title"), oLabels["seconds"], "Seconds button has proper tooltip");
 
-		assert.equal(this.oTPC._getFormatButton().getDomRef().getAttribute("title"), oRB.getText("TIMEPICKER_AMPM_BUTTON_TOOLTIP"), "AM/PM segmented button have proper tooltip");
+		assert.equal(this.oTPC._getFormatButton().getDomRef().getAttribute("title"), oLabels["ampm"], "AM/PM segmented button has proper tooltip");
 
-		assert.equal(oClocksWrapper.attr("role"), "img", "Clocks wrapper have proper role attribute");
-		assert.equal(oClocksWrapper.attr("aria-label"), oRB.getText("TIMEPICKER_CLOCK_DIAL_LABEL"), "Clocks wrapper have aria-label attribute");
+		assert.equal(oClocksWrapper.attr("role"), "img", "Clocks wrapper has proper role attribute");
+		assert.equal(oClocksWrapper.attr("aria-label"), oLabels["clock"], "Clocks wrapper has aria-label attribute");
 	});
 
 	QUnit.module("Misc", {

@@ -117,8 +117,8 @@ sap.ui.define([
 			mAccProps["valuemin"] = oButton.getMin();
 			mAccProps["valuemax"] = oButton.getMax();
 			mAccProps["valuenow"] = parseInt(oButton.getText());
-			mAccProps["label"] = oButton.getLabel();
-			mAccProps["valuetext"] = parseInt(oButton.getText()).toString() + " " + oButton.getLabel();
+			mAccProps["label"] = sTooltip;
+			mAccProps["valuetext"] = parseInt(oButton.getText()).toString() + " " + sTooltip;
 			mAccProps["role"] = "spinbutton";
 
 			oRm.accessibilityState(oButton, mAccProps);
@@ -133,6 +133,11 @@ sap.ui.define([
 			if (sWidth != "" || sWidth.toLowerCase() === "auto") {
 				oRm.style("width", sWidth);
 				oRm.style("min-width", "2.25rem");
+			}
+
+			// set tooltip
+			if (sTooltip) {
+				oRm.attr("title", sTooltip);
 			}
 
 			// set tabindex
@@ -866,7 +871,13 @@ sap.ui.define([
 				iHoursMax,
 				bPrependZero = false,
 				sValue,
-				oDate;
+				oDate,
+				oLabels = {
+					"hours": this._oResourceBundle.getText("TIMEPICKER_LBL_HOURS"),
+					"minutes": this._oResourceBundle.getText("TIMEPICKER_LBL_MINUTES"),
+					"seconds": this._oResourceBundle.getText("TIMEPICKER_LBL_SECONDS"),
+					"ampm": this._oResourceBundle.getText("TIMEPICKER_AMPM_BUTTON_TOOLTIP")
+				};
 
 			this._clockIndexes = {};
 			if (sFormat === undefined) {
@@ -901,7 +912,7 @@ sap.ui.define([
 			if (bHours) {
 				// add Hours clock
 				this.addAggregation("_clocks", new TimePickerClock(sId + "-clockH", {
-					label: this._oResourceBundle.getText("TIMEPICKER_LBL_HOURS"),
+					label: oLabels["hours"],
 					selectedValue: iSelectedHours,
 					itemMin: 1,
 					itemMax: 12,
@@ -917,7 +928,7 @@ sap.ui.define([
 					iHoursMax++;
 				}
 				this.addAggregation("_buttons", new ToggleSpinButton(sId + "-btnH", {
-					label: this._oResourceBundle.getText("TIMEPICKER_LBL_HOURS"),
+					tooltip: oLabels["hours"],
 					min: iHoursMin,
 					max: iHoursMax
 				}));
@@ -934,7 +945,7 @@ sap.ui.define([
 				}
 				// add Minutes clock
 				this.addAggregation("_clocks", new TimePickerClock(sId + "-clockM", {
-					label: this._oResourceBundle.getText("TIMEPICKER_LBL_MINUTES"),
+					label: oLabels["minutes"],
 					selectedValue: iSelectedMinutes,
 					itemMin: 1,
 					itemMax: 60,
@@ -944,7 +955,7 @@ sap.ui.define([
 				}));
 				// add Minutes button
 				this.addAggregation("_buttons", new ToggleSpinButton(sId + "-btnM", {
-					label: this._oResourceBundle.getText("TIMEPICKER_LBL_MINUTES"),
+					tooltip: oLabels["minutes"],
 					min: 0,
 					max: 59
 				}));
@@ -961,7 +972,7 @@ sap.ui.define([
 				}
 				// add Seconds clock
 				this.addAggregation("_clocks", new TimePickerClock(sId + "-clockS", {
-					label: this._oResourceBundle.getText("TIMEPICKER_LBL_SECONDS"),
+					label: oLabels["seconds"],
 					selectedValue: iSelectedSeconds,
 					itemMin: 1,
 					itemMax: 60,
@@ -971,7 +982,7 @@ sap.ui.define([
 				}));
 				// add Seconds button
 				this.addAggregation("_buttons", new ToggleSpinButton(sId + "-btnS", {
-					label: this._oResourceBundle.getText("TIMEPICKER_LBL_SECONDS"),
+					tooltip: oLabels["seconds"],
 					min: 0,
 					max: 59
 				}));
@@ -992,7 +1003,7 @@ sap.ui.define([
 						})
 					],
 					selectedKey: sSelectedAmPm,
-					tooltip: this._oResourceBundle.getText("TIMEPICKER_AMPM_BUTTON_TOOLTIP")
+					tooltip: oLabels["ampm"]
 				}));
 			}
 
