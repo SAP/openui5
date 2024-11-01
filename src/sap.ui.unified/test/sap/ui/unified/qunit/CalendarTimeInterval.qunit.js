@@ -261,6 +261,25 @@ sap.ui.define([
 		assert.equal($TimesRow.find(".sapUiCalItems").attr("role"), "row", "The hour cell's wrapper has role row");
 	});
 
+	QUnit.test("Time interval root element accessibility semantics", async function(assert) {
+		// prepare
+		var oCal = new CalendarTimeInterval(),
+			oCalDomRef;
+
+		oCal.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		oCalDomRef = oCal.getDomRef();
+
+		// act
+		// assert
+		assert.strictEqual(oCalDomRef.getAttribute("aria-roledescription"), "Calendar", "aria-roledescription attribute corretly set");
+		assert.strictEqual(oCalDomRef.getAttribute("role"), "group", "role attribute corretly set");
+
+		// clean
+		oCal.destroy();
+	});
+
 	QUnit.module("change date via API", {
 		beforeEach: async function () {
 			this.oCal1 = new CalendarTimeInterval("Cal1",{

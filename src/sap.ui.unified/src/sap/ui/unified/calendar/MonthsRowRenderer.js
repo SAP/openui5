@@ -30,7 +30,6 @@ sap.ui.define(["sap/ui/core/Element", 'sap/ui/unified/calendar/CalendarUtils', '
 		var oDate = oMonthsRow._getStartDate();
 		var sTooltip = oMonthsRow.getTooltip_AsString();
 		var sId = oMonthsRow.getId();
-		var oAriaLabel = {value: sId + "-Descr", append: true};
 
 		oRm.openStart("div", oMonthsRow);
 		oRm.class("sapUiCalMonthsRow");
@@ -43,17 +42,10 @@ sap.ui.define(["sap/ui/core/Element", 'sap/ui/unified/calendar/CalendarUtils', '
 		oRm.accessibilityState(oMonthsRow, {
 			role: "grid",
 			readonly: "true",
-			multiselectable: !oMonthsRow.getSingleSelection() || oMonthsRow.getIntervalSelection(),
-			labelledby: oAriaLabel
+			multiselectable: !oMonthsRow.getSingleSelection() || oMonthsRow.getIntervalSelection()
 		});
 
 		oRm.openEnd(); // div element
-
-		oRm.openStart("span", sId + "-Descr");
-		oRm.style("display", "none");
-		oRm.openEnd();
-		oRm.text(oMonthsRow._rb.getText("CALENDAR_DIALOG"));
-		oRm.close("span");
 
 		if (oMonthsRow.getIntervalSelection()) {
 			oRm.openStart("span", sId + "-Start");
