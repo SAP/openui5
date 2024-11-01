@@ -3874,8 +3874,24 @@ sap.ui.define([
 			for (var j = 0; j < aApps.length; j++) {
 				var oApp = Element.getElementById(aApps[j]);
 				if (oApp) {
+					var oAppColor = oApp.getColor(),
+						sBackgroundColor, oAppointmentDomRef, oAppointmentCont;
+
 					oApp.setProperty("selected", false, true);
 					oApp.$().removeClass("sapUiCalendarAppSel");
+
+					if (!oAppColor) {
+						continue;
+					}
+					sBackgroundColor = oApp._getCSSColorForBackground(oAppColor);
+
+					oAppointmentDomRef = oApp.getDomRef();
+					if (oAppointmentDomRef) {
+						oAppointmentCont = oAppointmentDomRef.querySelector('.sapUiCalendarAppCont');
+						if (oAppointmentCont) {
+							oAppointmentCont.style.backgroundColor = sBackgroundColor;
+						}
+					}
 				}
 
 			}

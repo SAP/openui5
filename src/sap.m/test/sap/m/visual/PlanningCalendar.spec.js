@@ -6,6 +6,19 @@ describe("sap.m.PlanningCalendar", function() {
 	it("Should check that non-work periods are displayed correctly in hours view", function() {
 		expect(takeScreenshot(element(by.id("PC1-TimesRow")))).toLookAs("non_working_hours_view");
 	});
+
+	it("Should update the background of appointments with custom color based on their selected state", function() {
+		var oToggleVisualizationButton = element(by.id("TB_AppVisualization")),
+			oAppointment = element(by.id("R4A4"));
+
+		oToggleVisualizationButton.click();
+		oAppointment.click();
+		expect(takeScreenshot(oAppointment)).toLookAs("appointment_custom_color_selected");
+		oAppointment.click();
+		expect(takeScreenshot(oAppointment)).toLookAs("appointment_custom_color_deselected");
+		oToggleVisualizationButton.click();
+	});
+
 	 /*
 		 Back and next button functionality
 	  */

@@ -522,6 +522,22 @@ sap.ui.define([
 		}
 	});
 
+	var oToggleAppVisualization = new ToggleButton("TB_AppVisualization", {
+		icon: "sap-icon://color-fill",
+		tooltip: "Toggle filled appointments",
+		type: ButtonType.Transparent,
+		press: function (oEvent) {
+			var oPC = Element.getElementById("PC1");
+			if (oEvent.getParameter("pressed")) {
+				oPC.setAppointmentsVisualization(CalendarAppointmentVisualization.Filled);
+				oVisSelect.setSelectedKey(CalendarAppointmentVisualization.Filled);
+			} else {
+				oPC.setAppointmentsVisualization(CalendarAppointmentVisualization.Standard);
+				oVisSelect.setSelectedKey(CalendarAppointmentVisualization.Standard);
+			}
+		}
+	});
+
 	var oButtonAddAppointment = new Button("B_AddAppointment", {
 		icon: "sap-icon://add",
 		tooltip: "Add appointment",
@@ -1402,6 +1418,7 @@ sap.ui.define([
 			oButtonAddRow,
 			oButtonDeleteRows,
 			oButtonSetDayToJan2015,
+			oToggleAppVisualization,
 			oButtonShowIntervalHeaders,
 			oButtonShowRowHeaders,
 			oButtonShowWeekNumbers,

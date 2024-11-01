@@ -427,7 +427,8 @@ sap.ui.define([
 
 		oRm.class("sapUiCalendarRowAppsIntHeadFirst");
 
-		if (oIntervalHeader.appointment.getSelected()) {
+		var bAppointmentSelected = oIntervalHeader.appointment.getSelected();
+		if (bAppointmentSelected) {
 			oRm.class("sapUiCalendarRowAppsIntHeadSel");
 		}
 
@@ -461,7 +462,7 @@ sap.ui.define([
 
 		oRm.class("sapUiCalendarIntervalHeaderCont");
 
-		if (sColor) {
+		if (!bAppointmentSelected && sColor) {
 			oRm.style("background-color", oIntervalHeader.appointment._getCSSColorForBackground(sColor));
 		}
 		oRm.openEnd();
@@ -625,7 +626,7 @@ sap.ui.define([
 		oRm.openStart("div");
 		oRm.class("sapUiCalendarAppCont");
 
-		if (sColor && oRow.getAppointmentsVisualization() === CalendarAppointmentVisualization.Filled) {
+		if (!bAppointmentSelected && sColor && oRow.getAppointmentsVisualization() === CalendarAppointmentVisualization.Filled) {
 			oRm.style("background-color", oAppointment._getCSSColorForBackground(sColor));
 		}
 
