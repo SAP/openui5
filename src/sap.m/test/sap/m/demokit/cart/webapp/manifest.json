@@ -38,7 +38,6 @@
 		"rootView": {
 			"viewName": "sap.ui.demo.cart.view.App",
 			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"dependencies": {
@@ -87,8 +86,7 @@
 						"home",
 						"notFound"
 					]
-				},
-				"async": true
+				}
 			},
 			"routes": [
 				{

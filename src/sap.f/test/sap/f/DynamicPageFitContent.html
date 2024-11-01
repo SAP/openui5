@@ -218,62 +218,64 @@
 
 				<f:content>
 					<IconTabBar class="sapUiResponsiveContentPadding"  stretchContentHeight="true">
-                        <items>
-                            <IconTabFilter text="Table">
-                                <t:AnalyticalTable visibleRowCountMode="Auto" selectionMode="MultiToggle" rowHeight="32">
-                                    <t:toolbar>
-                                        <OverflowToolbar>
-                                            <Title text="Title Bar Here"/>
-                                            <ToolbarSpacer/>
-                                            <SearchField width="12rem"/>
-                                            <SegmentedButton>
-                                                <buttons>
-                                                    <Button icon="sap-icon://table-view"/>
-                                                    <Button icon="sap-icon://bar-chart"/>
-                                                </buttons>
-                                            </SegmentedButton>
-                                            <Button icon="sap-icon://group-2" type="Transparent"/>
-                                            <Button icon="sap-icon://action-settings" type="Transparent"/>
-                                        </OverflowToolbar>
-                                    </t:toolbar>
-                                    <t:columns>
-                                        <t:AnalyticalColumn/>
-                                        <t:AnalyticalColumn/>
-                                        <t:AnalyticalColumn/>
-                                    </t:columns>
-                                    <t:layoutData>
-                                        <FlexItemData growFactor="1" baseSize="0%" styleClass="sapUiResponsiveContentPadding"/>
-                                    </t:layoutData>
-                                </t:AnalyticalTable>
-                            </IconTabFilter>
-                            <IconTabFilter text="Info">
-                                <form:SimpleForm
-                                    maxContainerCols="2"
-                                    layout="ResponsiveGridLayout" >
-                                    <form:title>
-                                        <core:Title text="A Form" />
-                                    </form:title>
-                                    <Label text="Label"/>
-                                    <Text text="Value"/>
-                                </form:SimpleForm>
-                                <FeedInput />
-                                <FeedInput />
-                                <FeedInput />
-                                <FeedInput />
-                                <FeedInput />
-                                <FeedInput />
-                            </IconTabFilter>
-                            <IconTabFilter
-                                text="Attachments">
-                                <List headerText="A List" showSeparators="Inner" >
-                                </List>
-                            </IconTabFilter>
-                            <IconTabFilter
-                                text="Notes">
-                                <FeedInput />
-                            </IconTabFilter>
-                        </items>
-                    </IconTabBar>
+						<items>
+							<IconTabFilter key="table" text="Table">
+								<t:AnalyticalTable visibleRowCountMode="Auto" selectionMode="MultiToggle" rowHeight="32">
+									<t:toolbar>
+										<OverflowToolbar>
+											<Title text="Title Bar Here"/>
+											<ToolbarSpacer/>
+											<SearchField width="12rem"/>
+											<SegmentedButton>
+												<buttons>
+													<Button icon="sap-icon://table-view"/>
+													<Button icon="sap-icon://bar-chart"/>
+												</buttons>
+											</SegmentedButton>
+											<Button icon="sap-icon://group-2" type="Transparent"/>
+											<Button icon="sap-icon://action-settings" type="Transparent"/>
+										</OverflowToolbar>
+									</t:toolbar>
+									<t:columns>
+										<t:AnalyticalColumn/>
+										<t:AnalyticalColumn/>
+										<t:AnalyticalColumn/>
+									</t:columns>
+									<t:layoutData>
+										<FlexItemData growFactor="1" baseSize="0%" styleClass="sapUiResponsiveContentPadding"/>
+									</t:layoutData>
+								</t:AnalyticalTable>
+							</IconTabFilter>
+							<IconTabFilter key="info" text="Info">
+								<form:SimpleForm
+									maxContainerCols="2"
+									layout="ResponsiveGridLayout" >
+									<form:title>
+										<core:Title text="A Form" />
+									</form:title>
+									<Label text="Label"/>
+									<Text text="Value"/>
+								</form:SimpleForm>
+								<FeedInput />
+								<FeedInput />
+								<FeedInput />
+								<FeedInput />
+								<FeedInput />
+								<FeedInput />
+							</IconTabFilter>
+							<IconTabFilter
+								key="attachments"
+								text="Attachments">
+								<List headerText="A List" showSeparators="Inner" >
+								</List>
+							</IconTabFilter>
+							<IconTabFilter
+								key="notes"
+								text="Notes">
+								<FeedInput />
+							</IconTabFilter>
+						</items>
+					</IconTabBar>
 				</f:content>
 
 				<f:footer>
@@ -295,7 +297,7 @@
 
 		var infoPage = sap.ui.xmlview('info' ,{viewContent:jQuery('#info').html()});
 
-		sap.ui.controller("vboxController", {
+		const VBoxController = sap.ui.core.mvc.Controller.extend("vboxController", {
 			onInit: function() {
 				var byId = function (id) {
 					return this.getView().byId(id);
@@ -329,9 +331,12 @@
 				this.dp.setShowFooter(event.getSource().getPressed());
 			}
 		});
-		var vbox = sap.ui.xmlview('vbox', {viewContent:jQuery('#vbox').html()});
+		var vbox = sap.ui.xmlview('vbox', {
+			viewContent: document.getElementById('vbox').textContent,
+			controller: new VBoxController()
+		});
 
-		sap.ui.controller("analyticalTableController", {
+		const AnalyticalTableController = sap.ui.core.mvc.Controller.extend("analyticalTableController", {
 			onInit: function() {
 				var byId = function (id) {
 					return this.getView().byId(id);
@@ -349,9 +354,12 @@
 				this.dp.setShowFooter(event.getSource().getPressed());
 			}
 		});
-		var analyticalTable = sap.ui.xmlview('analyticalTable', {viewContent:jQuery('#analyticalTable').html()});
+		var analyticalTable = sap.ui.xmlview('analyticalTable', {
+			viewContent: document.getElementById('analyticalTable').textContent,
+			controller: new AnalyticalTableController()
+		});
 
-		sap.ui.controller("iconTabBarAnalyticalTableController", {
+		const IconTabBarAnalyticalTableController = sap.ui.core.mvc.Controller.extend("iconTabBarAnalyticalTableController", {
 			onInit: function() {
 				var byId = function (id) {
 					return this.getView().byId(id);
@@ -369,7 +377,10 @@
 				this.dp.setShowFooter(event.getSource().getPressed());
 			}
 		});
-		var iconTabBarAnalyticalTable = sap.ui.xmlview('iconTabBarAnalyticalTable', {viewContent:jQuery('#iconTabBarAnalyticalTable').html()});
+		var iconTabBarAnalyticalTable = sap.ui.xmlview('iconTabBarAnalyticalTable', {
+			viewContent: document.getElementById('iconTabBarAnalyticalTable').textContent,
+			controller: new IconTabBarAnalyticalTableController()
+		});
 
 		var masterPage = new sap.m.List({
 				itemPress: function(oEvent) {
@@ -381,38 +392,34 @@
 					new sap.m.StandardListItem({
 						title: "Info",
 						type: "Active",
-						customData: {
-							Type:"sap.ui.core.CustomData",
+						customData: new sap.ui.core.CustomData({
 							key:"to",
 							value:"info"
-						}
+						})
 					}),
 					new sap.m.StandardListItem({
 						title: "VBox",
 						type: "Active",
-						customData: {
-							Type:"sap.ui.core.CustomData",
+						customData: new sap.ui.core.CustomData({
 							key:"to",
 							value:"vbox"
-						}
+						})
 					}),
 					new sap.m.StandardListItem({
 						title: "Analytical Table",
 						type: "Active",
-						customData: {
-							Type:"sap.ui.core.CustomData",
+						customData: new sap.ui.core.CustomData({
 							key:"to",
 							value:"analyticalTable"
-						}
+						})
 					}),
 					new sap.m.StandardListItem({
 						title: "IconTabBar > Analytical Table",
 						type: "Active",
-						customData: {
-							Type:"sap.ui.core.CustomData",
+						customData: new sap.ui.core.CustomData({
 							key:"to",
 							value:"iconTabBarAnalyticalTable"
-						}
+						})
 					})
 				]
 			});

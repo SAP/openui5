@@ -51,49 +51,49 @@
 					min: 1,
 					max: 100,
 					change: function(oEvent) {
-						sap.ui.getCore().byId("VBOX1").setWidth(this.getValue() + "%");
+						sap.ui.core.Element.getElementById("VBOX1").setWidth(this.getValue() + "%");
 					}
 				}),
 				new sap.m.Button("BTN20", {
 					text: "20%",
 					press: function() {
-						sap.ui.getCore().byId("SLD1").setValue(20);
-						sap.ui.getCore().byId("VBOX1").setWidth("20%");
+						sap.ui.core.Element.getElementById("SLD1").setValue(20);
+						sap.ui.core.Element.getElementById("VBOX1").setWidth("20%");
 					}
 				}),
 				new sap.m.Button("BTN40", {
 					text: "40%",
 					press: function() {
-						sap.ui.getCore().byId("SLD1").setValue(40);
-						sap.ui.getCore().byId("VBOX1").setWidth("40%");
+						sap.ui.core.Element.getElementById("SLD1").setValue(40);
+						sap.ui.core.Element.getElementById("VBOX1").setWidth("40%");
 					}
 				}),
 				new sap.m.Button("BTNBA", {
 					text: "America/Argentina/Buenos_Aires",
 					press: function() {
-						sap.ui.getCore().byId("DTP1").setTimezone(this.getText());
-						sap.ui.getCore().byId("DTP2").setTimezone(this.getText());
+						sap.ui.core.Element.getElementById("DTP1").setTimezone(this.getText());
+						sap.ui.core.Element.getElementById("DTP2").setTimezone(this.getText());
 					}
 				}),
 				new sap.m.Button("BTNNY", {
 					text: "America/New_York",
 					press: function() {
-						sap.ui.getCore().byId("DTP1").setTimezone(this.getText());
-						sap.ui.getCore().byId("DTP2").setTimezone(this.getText());
+						sap.ui.core.Element.getElementById("DTP1").setTimezone(this.getText());
+						sap.ui.core.Element.getElementById("DTP2").setTimezone(this.getText());
 					}
 				}),
 				new sap.m.Button("BTNS", {
 					text: "Europe/Sofia",
 					press: function() {
-						sap.ui.getCore().byId("DTP1").setTimezone(this.getText());
-						sap.ui.getCore().byId("DTP2").setTimezone(this.getText());
+						sap.ui.core.Element.getElementById("DTP1").setTimezone(this.getText());
+						sap.ui.core.Element.getElementById("DTP2").setTimezone(this.getText());
 					}
 				}),
 				new sap.m.Button("BTNLASTTIME", {
 					text: "Etc/GMT+12",
 					press: function() {
-						sap.ui.getCore().byId("DTP1").setTimezone(this.getText());
-						sap.ui.getCore().byId("DTP2").setTimezone(this.getText());
+						sap.ui.core.Element.getElementById("DTP1").setTimezone(this.getText());
+						sap.ui.core.Element.getElementById("DTP2").setTimezone(this.getText());
 					}
 				}),
 				new sap.m.Button("BTNCHANGEAPPTIMEZONE", {
@@ -107,9 +107,9 @@
 						oCore.getConfiguration().setTimezone(sCurrentTimezone === sTZ1 ? sTZ2 : sTZ1);
 						oCore.applyChanges();
 
-						oCore.byId("DTP1").rerender();
-						oCore.byId("DTP2").rerender();
-						oCore.byId("DTP3").rerender();
+						oCore.byId("DTP1").invalidate();
+						oCore.byId("DTP2").invalidate();
+						oCore.byId("DTP3").invalidate();
 					}
 				})
 			]

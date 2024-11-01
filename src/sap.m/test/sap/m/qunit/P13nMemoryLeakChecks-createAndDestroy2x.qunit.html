@@ -8,51 +8,50 @@
 	<script id="sap-ui-bootstrap" data-sap-ui-noConflict="true" data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
 	</script>
 
-	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit-2.css" media="screen" />
+	<script src="../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 	<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/qunit-coverage-istanbul.js"></script>
 	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 	<script>
+		QUnit.config.autostart = false;
 		jQuery(function() {
 			/* global QUnit */
 			sap.ui.require(
 				[
 					"jquery.sap.global",
-					"sap/ui/core/Element"
+					"sap/ui/VersionInfo",
+					"sap/ui/core/Element",
+					"sap/ui/core/Lib",
+					"sap/ui/test/utils/nextUIUpdate"
 				],
-				function(jQuery, Element) {
+				async function(jQuery, VersionInfo, Element, Library, nextUIUpdate) {
 					var iAllControls = 0,
 						iFullyTestedControls = 0,
 						iTestedWithoutRenderingControls = 0;
+
+					const noop = () => {};
 
 					/**
 					 * Iterates over all loaded libraries, but also all available libraries and tries to load them and their control lists.
 					 * @returns an object that maps each library name to an array of control names in this library
 					 */
-					function loadAllAvailableLibraries() {
+					async function loadAllAvailableLibraries() {
 
-						// We have a list of known libraries (in the bootstrap) that have to be checked. This list will be dynamically extended below with any new libraries. This static list here is just for fallback purposes.
-						var mLoadedLibraries = sap.ui.getCore().getLoadedLibraries();
+						var mLoadedLibraries = {};
 
 						// Maybe libraries have been added, so discover what is available in order to also test them. But only do this when we are in sapui5.runtime layer, not when this test is executed in dist layer.
-						var oInfo = sap.ui.getVersionInfo();
+						var oInfo = await VersionInfo.load();
 						for (var i = 0; i < oInfo.libraries.length; i++) {
 							var sInfoLibName = oInfo.libraries[i].name;
-							if (!mLoadedLibraries[sInfoLibName]) {
-								jQuery.sap.log.info("Library '" + sInfoLibName + "' is not loaded! Trying...");
-								try {
-									var oLibrary = sap.ui.getCore().loadLibrary(sInfoLibName);
-									mLoadedLibraries[sInfoLibName] = oLibrary.controls;
-									jQuery.sap.log.info("Library '" + sInfoLibName + "...successfully.");
-								} catch (e) {
-									// not a control lib? This happens for e.g. "sap.ui.server.java"...
-								}
-							} else {
-								mLoadedLibraries[sInfoLibName] = mLoadedLibraries[sInfoLibName].controls; // only the control list is needed
+							try {
+								var oLibrary = await Library.load(sInfoLibName);
+								mLoadedLibraries[sInfoLibName] = oLibrary.controls;
+								Log.info("Library '" + sInfoLibName + "...successfully.");
+							} catch (e) {
+								// not a control lib? This happens for e.g. "sap.ui.server.java"...
 							}
 						}
 
@@ -155,7 +154,7 @@
 
 					// Creates and renders two instances of the given control and asserts that the second instance does not leak any controls after destruction.
 					// Has some special logic to ignore or work around problems where certain controls do not work standalone.
-					var checkControl = function(sControlName, assert) {
+					async function checkControl(sControlName, assert) {
 
 					//	if (sControlName != "sap.m.P13nConditionPanel") {
 					//		return;
@@ -163,8 +162,18 @@
 
 						// Control Instance 1 - some control types statically create something for re-use across all instances
 
+						const oControlClass = await new Promise((resolve ,reject) => {
+							sap.ui.require([sControlName.replace(/\./g, "/")], (fnClass) => {
+								resolve(fnClass)
+							}, (err) => {
+								resolve(undefined)
+							});
+						});
+						if ( oControlClass == null ) {
+							return;
+						}
+
 						var mPrePreElements = getAllAliveControls(),
-							oControlClass = jQuery.sap.getObject(sControlName),
 							oControl1 = new oControlClass();
 
 						if (sControlName !== "sap.m.PlanningCalendar") {
@@ -182,7 +191,7 @@
 
 							if (oRenderer) {
 								oControl1.placeAt(CONTENT_DIV_ID);
-								sap.ui.getCore().applyChanges();
+								await nextUIUpdate().catch(noop);
 							} else {
 								// reported below
 							}
@@ -210,7 +219,7 @@
 
 							if (oRenderer) {
 								oControl2.placeAt(CONTENT_DIV_ID);
-								sap.ui.getCore().applyChanges();
+								await nextUIUpdate().catch(noop);
 								iFullyTestedControls++;
 							} else {
 								iTestedWithoutRenderingControls++;
@@ -240,7 +249,7 @@
 
 							if (oRenderer) {
 								oControl3.placeAt(CONTENT_DIV_ID);
-								sap.ui.getCore().applyChanges();
+								await nextUIUpdate().catch(noop);
 								iFullyTestedControls++;
 							} else {
 								iTestedWithoutRenderingControls++;
@@ -267,28 +276,25 @@
 
 
 
-					QUnit.module("Memory.Controls");
-
 					var CONTENT_DIV_ID = "QUNIT_TEST_CONTENT_DIV",
-						oContentDomElement;
+					oContentDomElement;
 
-					QUnit.moduleStart(function() {
-						oContentDomElement = document.createElement("div");
-						oContentDomElement.id = CONTENT_DIV_ID;
-						document.body.appendChild(oContentDomElement);
+					QUnit.module("Memory.Controls", {
+						before() {
+							oContentDomElement = document.createElement("div");
+							oContentDomElement.id = CONTENT_DIV_ID;
+							document.body.appendChild(oContentDomElement);
+						},
+						after() {
+							document.body.removeChild(oContentDomElement);
+						}
 					});
-
-					QUnit.moduleDone(function() {
-						document.body.removeChild(oContentDomElement);
-					});
-
-
 
 
 					// Actual Tests
 
 
-					var mAllLibraries = loadAllAvailableLibraries();
+					var mAllLibraries = await loadAllAvailableLibraries();
 
 
 					// sanity check to make sure this is actually testing something
@@ -305,30 +311,26 @@
 
 
 					// loop over all libs and controls and create a test for each
-					for (var sLibName in mAllLibraries) {
+					for (const sLibName in mAllLibraries) {
 
-						(function(sLibName) {
+						QUnit.test("test " + sLibName + " controls", async function(assert) {
+							if (!mAllLibraries[sLibName].length) { // there are libraries with no controls
+								assert.expect(0);
+							}
 
-							QUnit.test("test " + sLibName + " controls", function(assert) {
-								if (!mAllLibraries[sLibName].length) { // there are libraries with no controls
-									assert.expect(0);
-								}
+							for (var i = 0; i < mAllLibraries[sLibName].length; i++) {
+								var sControlName = mAllLibraries[sLibName][i];
 
-								for (var i = 0; i < mAllLibraries[sLibName].length; i++) {
-									var sControlName = mAllLibraries[sLibName][i];
+								if (sControlName) {
+									iAllControls++;
 
-									if (sControlName) {
-										iAllControls++;
-
-										if (!shouldIgnoreControl(sControlName, assert)) {
-											checkControl(sControlName, assert);
-										}
+									if (!shouldIgnoreControl(sControlName, assert)) {
+										await checkControl(sControlName, assert);
 									}
 								}
+							}
 
-							});
-
-						})(sLibName);
+						});
 
 					}
 
@@ -342,6 +344,7 @@
 						assert.ok(iFullyTestedControls >= 200 /* magic number... just make sure we have tested lots of controls */ , "Should have tested lots of controls, at least 200");
 					});
 
+					QUnit.start();
 				}
 			);
 

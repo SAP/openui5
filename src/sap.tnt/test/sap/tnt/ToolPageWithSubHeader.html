@@ -13,7 +13,6 @@
 		<mvc:View xmlns:mvc="sap.ui.core.mvc"
 			xmlns="sap.m"
 			xmlns:tnt="sap.tnt"
-			controllerName="myController"
 			displayBlock="true"
 			viewName="sap.tnt.ToolPageWithSubHeader">
 			<tnt:ToolPage id="toolPage">
@@ -98,10 +97,9 @@
 	</script>
 
 	<script>
-		sap.ui.controller("myController", {
-			onInit: function() {}
-		});
-		sap.ui.xmlview({ viewContent: jQuery('#myXml').html() }).placeAt("content");
+		sap.ui.xmlview({
+			viewContent: document.getElementById('myXml').textContent
+		}).placeAt("content");
 	</script>
 </head>
 <body id='content' class='sapUiBody'>

@@ -52,7 +52,7 @@
 					{objectType: "1", src: myPDF}
 				]
 			};
-			sap.ui.controller("myController", {
+			const MyController = sap.ui.core.mvc.Controller.extend("myController", {
 				onInit: function () {
 					this.x = 1;
 
@@ -98,7 +98,7 @@
 					that.dialog = new sap.m.Dialog({
 						horizontalScrolling: false, verticalScrolling: false,
 						contentHeight: '100%', contentWidth: '100%', stretch: true,
-						customHeader: new sap.m.Bar({contentMiddle: [new sap.m.Title({text: "title}"})]}),
+						customHeader: new sap.m.Bar({contentMiddle: [new sap.m.Title({text: "{title}"})]}),
 						content: [carousel],
 						buttons: new sap.m.Button({
 							text: "Close", press: function () {
@@ -125,7 +125,10 @@
 				}
 
 			});
-			sap.ui.xmlview({viewContent: jQuery('#myXml').html()}).placeAt("content");
+			sap.ui.xmlview({
+				viewContent: jQuery('#myXml').html(),
+				controller: new MyController()
+			}).placeAt("content");
 		</script>
 		</head>
 

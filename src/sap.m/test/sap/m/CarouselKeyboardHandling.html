@@ -12,7 +12,6 @@
 
 		<script id="mainView" type="sapui5/xmlview">
 			<mvc:View
-				controllerName="carousel.qunit.controller"
 				xmlns:core="sap.ui.core"
 				xmlns:mvc="sap.ui.core.mvc"
 				xmlns="sap.m">
@@ -275,15 +274,7 @@
 		});
 
 
-		// Create Test View and Controller
-
-		sap.ui.controller("carousel.qunit.controller", {
-
-			onInit: function(oEvent) {
-
-			}
-
-		});
+		// Create Test View
 
 		var oView = sap.ui.xmlview({ viewContent: jQuery('#mainView').html() });
 		oView.setModel(new sap.ui.model.json.JSONModel({
@@ -342,8 +333,8 @@
 				}).addStyleClass("lightboxDialog");
 				oDialog.open();
 			},
-			// render control with the image renderer
-			renderer: sap.m.ImageRenderer.render
+			// inherit image renderer
+			renderer: sap.m.ImageRenderer
 		});
 
 

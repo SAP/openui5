@@ -10,7 +10,7 @@
 			stickyHeader="true"
 			showIntervalHeaders="true"
 			showEmptyIntervalHeaders="false"
-			appointmentsReducedHeight="true"
+			appointmentHeight="Automatic"
 			startDate="{path: '/startDate'}"
 			rows="{path: '/people'}"
 			appointmentsVisualization="Filled"

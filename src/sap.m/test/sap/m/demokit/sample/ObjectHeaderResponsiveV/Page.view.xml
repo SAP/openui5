@@ -11,9 +11,6 @@
 		iconAlt="{Name}"
 		intro="{Description}"
 		title="{Name}"
-		showMarkers="false"
-		markFlagged="true"
-		markFavorite="true"
 		backgroundDesign="Translucent"
 		class="sapUiResponsivePadding--header" >
 		<ObjectAttribute
@@ -22,6 +19,10 @@
 		<ObjectAttribute
 			title="Dimension per unit"
 			text="{Width} x {Depth} x {Height} {DimUnit}"/>
+		<markers>
+			<ObjectMarker type="Favorite"/>
+			<ObjectMarker type="Flagged"/>
+		</markers>
 		<statuses>
 			<ObjectStatus
 				title="Approval"

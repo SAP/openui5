@@ -4,35 +4,32 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/FlexBox",
 	"sap/m/Label",
-	"sap/m/MessageToast",
 	"sap/m/Page",
 	"sap/m/RadioButton",
 	"sap/m/RadioButtonGroup",
-	"sap/ui/commons/layout/MatrixLayout",
-	"sap/ui/commons/layout/MatrixLayoutCell",
-	"sap/ui/commons/library",
 	"sap/ui/core/Element",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/layout/form/Form",
+	"sap/ui/layout/form/FormContainer",
+	"sap/ui/layout/form/FormElement",
+	"sap/ui/layout/form/ResponsiveGridLayout"
 ], function(
 	Log,
 	App,
 	Button,
 	FlexBox,
 	Label,
-	MessageToast,
 	Page,
 	RadioButton,
 	RadioButtonGroup,
-	MatrixLayout,
-	MatrixLayoutCell,
-	commonsLibrary,
 	Element,
-	coreLibrary
+	coreLibrary,
+	Form,
+	FormContainer,
+	FormElement,
+	ResponsiveGridLayout
 ) {
 	"use strict";
-
-	// shortcut for sap.ui.commons.layout.VAlign
-	var VAlign = commonsLibrary.layout.VAlign;
 
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
@@ -328,10 +325,6 @@ sap.ui.define([
 		]});
 
 	// test for methods
-	var oLyt = new MatrixLayout("matrix1");
-	oLyt.setLayoutFixed(false);
-	oLyt.setColumns(4);
-
 	var oRBGroupRBG5 = new RadioButtonGroup("RBG5");
 	oRBGroupRBG5.setColumns(2);
 	oRBGroupRBG5.setSelectedIndex(-1);
@@ -349,60 +342,96 @@ sap.ui.define([
 	oButton.setTooltip("Tooltip 3");
 	oRBGroupRBG5.addButton(oButton);
 
-	var oCell1 = new MatrixLayoutCell("Cell1");
-	oCell1.addContent(oRBGroupRBG5);
-	oCell1.setVAlign(VAlign.Top);
-	oCell1.setColSpan(2);
-	oCell1.setRowSpan(5);
+	var oLabeloRBGroupRBG5 = new Label({ text: "Group that is changed dynamically", labelFor: oRBGroupRBG5});
 
-	var oButton = new Button("B1");
-	oButton.setText("Add");
-	oButton.setTooltip("Add a RadioButton");
-	oButton.attachPress(handlePressAdd);
+	var flexBoxRBG5 = new FlexBox("rbg5", {
+		alignItems: "Start",
+		direction: "Column",
+		items: [
+			oLabeloRBGroupRBG5, oRBGroupRBG5
+		]});
 
-	oLyt.createRow(oCell1, oButton);
-
-	oButton = new Button("B2");
-	oButton.setText("Insert Before");
-	oButton.setTooltip("Insert a RadioButton before selected one");
-	oButton.attachPress(handlePressInsertBefore);
-
-	var oButton2 = new Button("B3");
-	oButton2.setText("Insert After");
-	oButton2.setTooltip("Insert a RadioButton after selected one");
-	oButton2.attachPress(handlePressInsertAfter);
-	oLyt.createRow(oButton, oButton2);
-
-	oButton = new Button("B4");
-	oButton.setText("Remove");
-	oButton.setTooltip("Remove first RadioButton");
-	oButton.attachPress(handlePressRemove);
-
-	oButton2 = new Button("B5");
-	oButton2.setText("Remove all");
-	oButton2.setTooltip("Remove all RadioButtons");
-	oButton2.attachPress(handlePressRemoveAll);
-
-	oLyt.createRow(oButton, oButton2);
-
-	oButton = new Button("B6");
-	oButton.setText("Destroy");
-	oButton.setTooltip("Destroy RadioButtons");
-	oButton.attachPress(handlePressDestroy);
-
-	oLyt.createRow(oButton);
-
-	oButton = new Button("B7");
-	oButton.setText("ReadOnly");
-	oButton.setTooltip("Toggle Editable");
-	oButton.attachPress(handlePressEditable);
-
-	oButton2 = new Button("B8");
-	oButton2.setText("Enabled");
-	oButton2.setTooltip("toggle Enabled");
-	oButton2.attachPress(handlePressEnabled);
-
-	oLyt.createRow(oButton, oButton2);
+	const form = new Form({
+		editable: true,
+		layout: new ResponsiveGridLayout({
+			breakpointM: 200,
+			labelSpanM: 6
+		}),
+		formContainers: [
+			new FormContainer({
+				formElements: [
+					new FormElement({
+						fields: [
+							new Button({
+								id: "B1",
+								text: "Add",
+								tooltip: "Add a RadioButton",
+								press: handlePressAdd
+							})
+						]
+					}),
+					new FormElement({
+						fields: [
+							new Button({
+								id: "B2",
+								text: "Insert Before",
+								tooltip: "Insert a RadioButton before selected one",
+								press: handlePressInsertBefore
+							}),
+							new Button({
+								id: "B3",
+								text: "Insert After",
+								tooltip: "Insert a RadioButton after selected one",
+								press: handlePressInsertAfter
+							})
+						]
+					}),
+					new FormElement({
+						fields: [
+							new Button({
+								id: "B4",
+								text: "Remove",
+								tooltip: "Remove first RadioButton",
+								press: handlePressRemove
+							}),
+							new Button({
+								id: "B5",
+								text: "Remove all",
+								tooltip: "Remove all RadioButtons",
+								press: handlePressRemoveAll
+							})
+						]
+					}),
+					new FormElement({
+						fields: [
+							new Button({
+								id: "B6",
+								text: "Destroy",
+								tooltip: "Destroy RadioButtons",
+								press: handlePressDestroy
+							})
+						]
+					}),
+					new FormElement({
+						fields: [
+							new Button({
+								id: "B7",
+								text: "ReadOnly",
+								tooltip: "Toggle Editable",
+								press: handlePressEditable
+							}),
+							new Button({
+								id: "B8",
+								text: "Enabled",
+								tooltip: "Toggle Enabled",
+								press: handlePressEnabled
+							})
+						]
+					})
+				]
+			})
+		]
+	});
 
 	var app = new App("myApp", {
 		initialPage:"rbg",
@@ -412,7 +441,14 @@ sap.ui.define([
 	var page = new Page("rbg", {
 		title:"Test Page for sap.m.RadioButtonGroup",
 		content : [
-			flexBoxRBG1,flexBoxRBG1a,flexBoxRBG2,flexBoxRBG3,flexBoxRBG3a,flexBoxRBG4, oLyt
+			flexBoxRBG1,
+			flexBoxRBG1a,
+			flexBoxRBG2,
+			flexBoxRBG3,
+			flexBoxRBG3a,
+			flexBoxRBG4,
+			flexBoxRBG5,
+			form
 		]
 	});
 
