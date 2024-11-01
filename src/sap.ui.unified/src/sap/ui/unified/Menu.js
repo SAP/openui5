@@ -151,7 +151,16 @@ sap.ui.define([
 				 * Fired when the menu is closed.
 				 * @since 1.129
 				 */
-				closed: {}
+				closed: {},
+
+				/**
+				 * Fired before the menu is closed.
+				 * This event can be prevented which effectively prevents the menu from closing.
+				 * sinnce 1.131
+				 */
+				beforeClose : {
+					allowPreventDefault : true
+				}
 
 			}
 		},
@@ -956,7 +965,7 @@ sap.ui.define([
 			}
 		}
 
-		if (!isInMenuHierarchy) {
+		if (!isInMenuHierarchy && this.fireBeforeClose()) {
 			this.close();
 		}
 	};
@@ -984,7 +993,9 @@ sap.ui.define([
 			// This is a normal item -> Close all menus and fire event.
 			// Call Menu.prototype.close with argument value equal to "true"
 			// in order not to ignore the opener DOM reference
-			this.getRootMenu().close(true);
+			if (this.fireBeforeClose()) {
+				this.getRootMenu().close(true);
+			}
 
 			if (oItem._getItemSelectionMode && oItem._getItemSelectionMode() !== ItemSelectionMode.None) {
 				oItem.setSelected(!oItem.getSelected());
