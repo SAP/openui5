@@ -136,6 +136,10 @@ sap.ui.define([
 				filtersChanged: {}
 			}
 		},
+
+		// no rendering required for the tests in this module
+		renderer: null,
+
 		getConditions: function() {return this.getCustomConditions();},
 		validate: function () {return Promise.resolve();},
 		getSearch: function() {return this.getCustomSearch();}

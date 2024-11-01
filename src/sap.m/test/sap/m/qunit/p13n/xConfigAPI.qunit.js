@@ -18,7 +18,10 @@ sap.ui.define([
 							type: "sap.ui.core.Item"
 						}
 					}
-				}
+				},
+
+				// no rendering required for the scenarios in this module
+				renderer: null
 			});
 
 			this.oControl = new TestClass();
