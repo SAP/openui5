@@ -1126,7 +1126,7 @@ sap.ui.define([
 					this.handleInlineListNavigation(sName);
 				} else {
 					var oSuggestionsPopover = this._getSuggestionsPopover();
-					oSuggestionsPopover && oSuggestionsPopover.handleListNavigation(this, oEvent, true);
+					oSuggestionsPopover && oSuggestionsPopover.handleListNavigation(this, oEvent, !!this.getSelectedItem());
 				}
 
 				// mark the event for components that needs to know if the event was handled

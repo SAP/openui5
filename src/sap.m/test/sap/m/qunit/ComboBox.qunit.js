@@ -12537,6 +12537,22 @@ sap.ui.define([
 		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), this.oErrorComboBox.getPicker().getCustomHeader().getFormattedText().getId(), "Aria attribute of input is the ID of the formatted value state text");
 	});
 
+	QUnit.test("Arrow down when the there is autocompleted item should focus the next item", async function (assert) {
+		// Act
+		this.oErrorComboBox.focus();
+		this.oErrorComboBox.getFocusDomRef().value = "A";
+		qutils.triggerEvent("input", this.oErrorComboBox.getFocusDomRef());
+
+		await nextUIUpdate(this.clock);
+
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.ok(this.oErrorComboBox._getList().getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is on the first item");
+	});
+
 	QUnit.test("Tapping on the input shoould apply the visual focus", async function (assert) {
 		// Arrange
 		var oComboBox = new ComboBox({
