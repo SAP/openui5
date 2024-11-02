@@ -4,8 +4,9 @@
  */
 sap.ui.define([
 	'sap/ui/core/Control',
-	'sap/uxap/ObjectPageSubSection'
-], function(Control, ObjectPageSubSection) {
+	'sap/uxap/ObjectPageSubSection',
+	'sap/uxap/ObjectPageSubSectionRenderer'
+], function(Control, ObjectPageSubSection, ObjectPageSubSectionRenderer) {
 	"use strict";
 
 	/**
@@ -19,7 +20,7 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.documentation"
 		},
-		renderer: "sap.uxap.ObjectPageSubSectionRenderer"
+		renderer: ObjectPageSubSectionRenderer
 	});
 
 	var Container = Control.extend("sap.ui.documentation.Container", {

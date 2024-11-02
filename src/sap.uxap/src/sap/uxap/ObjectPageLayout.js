@@ -2329,10 +2329,13 @@ sap.ui.define([
 		// we set *direct* scrolling by which we instruct the page to *skip* processing of intermediate sections (sections between current and requested)
 		this.setDirectScrollingToSection(oSection.getId());
 		// finally request the page to scroll to the requested section
+		this._iCurrentScrollPositionWhenTabPressed = this._$opWrapper.length && this._$opWrapper.scrollTop();
 		this.scrollToSection(oSectionBase.getId(), null, 0, true);
 
 		oSection.setAssociation("selectedSubSection", oSubSection, true);
 		this.setAssociation("selectedSection", oSection, true);
+
+		this._iCurrentScrollPositionWhenTabPressed = 0;
 	};
 
 	ObjectPageLayout.prototype._hasSingleVisibleFullscreenSubSection = function (oSection) {
@@ -2362,7 +2365,8 @@ sap.ui.define([
 			bExpandedMode = this._bHeaderExpanded;
 
 		if (bExpandedMode && this._isFirstVisibleSectionBase(oTargetSection)) { // preserve expanded header if no need to stick
-			iScrollTo = 0;
+			iScrollTo = this._iCurrentScrollPositionWhenTabPressed && this._iCurrentScrollPositionWhenTabPressed < iScrollTo ?
+				this._iCurrentScrollPositionWhenTabPressed : 0;
 		}
 
 		return iScrollTo;

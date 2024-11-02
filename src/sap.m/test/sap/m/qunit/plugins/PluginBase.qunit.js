@@ -13,7 +13,10 @@ sap.ui.define([
 			aggregations: {
 				content: {type : "sap.ui.core.Element", multiple : true, singularName : "content"}
 			}
-		}
+		},
+
+		// no rendering required for the scenarios in this module
+		renderer: null
 	});
 	var TestElement = Element.extend("sap.m.plugins.test.Element");
 

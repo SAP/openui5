@@ -61,7 +61,9 @@ sap.ui.define([
 
 		// system under test
 		var CustomControl = Select.extend("CustomControl", {
-			renderer: {}
+			renderer: {
+				apiVersion: 2
+			}
 		});
 
 		CustomControl.prototype.getValueStateMessageId = function () {
@@ -89,7 +91,9 @@ sap.ui.define([
 
 		// arrange
 		var CustomControl = Control.extend("CustomControl", {
-			renderer: {}
+			renderer: {
+				apiVersion: 2
+			}
 		});
 
 		CustomControl.prototype.iOpenMessagePopupDuration = 5;
@@ -113,7 +117,9 @@ sap.ui.define([
 
 		// arrange
 		var CustomControl = Control.extend("CustomControl", {
-			renderer: {}
+			renderer: {
+				apiVersion: 2
+			}
 		});
 
 		var oCustomControl = new CustomControl();

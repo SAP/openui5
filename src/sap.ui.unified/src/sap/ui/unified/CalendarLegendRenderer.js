@@ -26,8 +26,6 @@ CalendarLegendRenderer.render = function(oRm, oLeg) {
 		iCustomItemsLength = this.defineItemsLength(oLeg, aCustomItems.length),
 		iCount = (aStandardItems ? aStandardItems.length : 0) + (aCustomItems ? aCustomItems.length : 0),
 		sOwnedItemIds = "",
-		aStandardItems = aStandardItems || [],
-		aCustomItems = aCustomItems || [],
 		iSliceIndex = 4,
 		i,
 		iIdLength,
@@ -39,7 +37,7 @@ CalendarLegendRenderer.render = function(oRm, oLeg) {
 	oRm.class("sapUiUnifiedLegend");
 	oRm.attr("aria-label", oLeg._getLegendAriaLabel());
 	oRm.attr("role", "list");
-	sOwnedItemIds = oLeg._extractItemIdsString(aStandardItems.concat(aCustomItems));
+	sOwnedItemIds = oLeg._extractItemIdsString(oLeg._getAllItems());
 	oRm.attr("aria-owns", sOwnedItemIds);
 
 	oRm.openEnd();
@@ -238,7 +236,7 @@ CalendarLegendRenderer.getTypeAriaText = function(sType) {
 
 	if (!CalendarLegendRenderer.typeARIATexts[sType]) {
 		rb = Library.getResourceBundleFor("sap.ui.unified");
-		sText = rb.getText("LEGEND_UNNAMED_TYPE", parseInt(sType.slice(4)).toString());
+		sText = rb.getText("LEGEND_UNNAMED_TYPE", [parseInt(sType.slice(4)).toString()]);
 		CalendarLegendRenderer.typeARIATexts[sType] = new InvisibleText({ text: sText });
 		CalendarLegendRenderer.typeARIATexts[sType].toStatic();
 	}

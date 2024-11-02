@@ -1,6 +1,6 @@
 /* global QUnit */
 sap.ui.define([
-    "sap/ui/mdc/Control",
+	"sap/ui/mdc/Control",
 	"sap/ui/mdc/flexibility/xConfigFlex",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment",
@@ -18,26 +18,26 @@ sap.ui.define([
 
 	});
 
-    QUnit.test("Throw Error if property config is missing 'xConfigFlex#createSetChangeHandler", function(assert){
+	QUnit.test("Throw Error if property config is missing 'xConfigFlex#createSetChangeHandler", function(assert){
 
 		assert.throws(function() {
 			xConfigFlex.createSetChangeHandler({
-                aggregation: "test"
-            });
+				aggregation: "test"
+			});
 		}, "The method expects a config object containing 'aggregations' and 'name' key to create a changehandler");
 
 	});
 
-    QUnit.test("Throw Error if property config is missing 'xConfigFlex#createSetChangeHandler", function(assert){
+	QUnit.test("Throw Error if property config is missing 'xConfigFlex#createSetChangeHandler", function(assert){
 
-        const oHandler = xConfigFlex.createSetChangeHandler({
-            aggregation: "testAggregation",
-            property: "testProperty"
-        });
+		const oHandler = xConfigFlex.createSetChangeHandler({
+			aggregation: "testAggregation",
+			property: "testProperty"
+		});
 
-        assert.ok(oHandler.changeHandler.applyChange instanceof Function, "Change apply implemented");
-        assert.ok(oHandler.changeHandler.revertChange instanceof Function, "Change revert implemented");
-        assert.ok(oHandler.changeHandler.completeChangeContent instanceof Function, "Change completion implemented");
+		assert.ok(oHandler.changeHandler.applyChange instanceof Function, "Change apply implemented");
+		assert.ok(oHandler.changeHandler.revertChange instanceof Function, "Change revert implemented");
+		assert.ok(oHandler.changeHandler.completeChangeContent instanceof Function, "Change completion implemented");
 	});
 
 	const TestClass = MDCControl.extend("sap.ui.mdc.FlexTestControl", {
@@ -55,7 +55,10 @@ sap.ui.define([
 		},
 		initialized: function() {
 			return Promise.resolve();
-		}
+		},
+
+		// no rendering required for the tests in this module
+		renderer: null
 	});
 
 	QUnit.module("Generic Tests for applyChange/revertChange", {

@@ -950,7 +950,9 @@ sap.ui.define([
 
 		// system under test
 		var CustomSwitch = Switch.extend("sap.ui.test.CustomSwitch", {
-			renderer: {}
+			renderer: {
+				apiVersion: 2
+			}
 		});
 
 		var oCustomSwitch = new CustomSwitch();

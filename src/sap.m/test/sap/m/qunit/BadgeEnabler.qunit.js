@@ -19,6 +19,7 @@ sap.ui.define([
 			interfaces: "sap.m.IBadge"
 		},
 		renderer: {
+			apiVersion: 2,
 			render: function(oRm, oControl) {
 				oRm.openStart("div", oControl).openEnd().close("div");
 			}
