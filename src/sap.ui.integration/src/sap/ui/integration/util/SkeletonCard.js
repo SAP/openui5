@@ -32,7 +32,8 @@ sap.ui.define([
 	var SkeletonCard = Card.extend("sap.ui.integration.util.SkeletonCard", {
 		metadata: {
 			library: "sap.ui.integration"
-		}
+		},
+		renderer: null
 	});
 
 	SkeletonCard.prototype.init = function () {

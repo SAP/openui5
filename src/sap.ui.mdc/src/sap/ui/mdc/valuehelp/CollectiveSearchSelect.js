@@ -55,16 +55,8 @@ sap.ui.define([
 			}
 		},
 
-		/**
-		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-		 * @param {sap.ui.core.RenderManager} oRm - <code>RenderManager</code> that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control} oControl - Object representation of the control that is rendered
-		 */
-		renderer: {
-			renderer: function(oRm, oControl) {
-				VariantManagement.getMetadata().getRenderer().render(oRm, oControl);
-			}
-		}
+		// Inherit the base class renderer
+		renderer: VariantManagement.getMetadata().getRenderer()
 	});
 
 

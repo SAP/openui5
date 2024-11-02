@@ -385,7 +385,10 @@ sap.ui.define([
 					properties: {
 						customBooleanProperty: {type : "boolean", group : "Misc", defaultValue : true}
 					}
-				}
+				},
+
+				// no rendering required for the scenarios in this module
+				renderer: null
 			});
 
 			var oResponsivePopoverExtendedInstance = new ResponsivePopoverExtended();

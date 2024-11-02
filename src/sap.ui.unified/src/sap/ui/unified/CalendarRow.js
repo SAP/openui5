@@ -1667,6 +1667,24 @@ sap.ui.define([
 
 	}
 
+	function _updateAppointmentBackgroundColor(oAppointment, bSelected) {
+		var oAppointmentColor = oAppointment.getColor();
+
+		if (!oAppointmentColor) {
+			return;
+		}
+
+		var sBackgroundColor = bSelected ? "transparent" : oAppointment._getCSSColorForBackground(oAppointmentColor),
+			oAppointmentDomRef = oAppointment.getDomRef();
+
+		if (oAppointmentDomRef) {
+			var oAppointmentCont = oAppointmentDomRef.querySelector('.sapUiCalendarAppCont');
+			if (oAppointmentCont) {
+				oAppointmentCont.style.backgroundColor = sBackgroundColor;
+			}
+		}
+	}
+
 	function _selectAppointment(oAppointment, bRemoveOldSelection) {
 
 		var i = 0;
@@ -1678,6 +1696,7 @@ sap.ui.define([
 		var sCurrentAriaDescribedByNotSelected;
 		var sSelectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 		var bSelect = !oAppointment.getSelected();
+		var bUpdateBackgroundColor = this.getAppointmentsVisualization() === CalendarAppointmentVisualization.Filled;
 
 		if (bRemoveOldSelection) {
 			var aAppointments = this.getAppointments();
@@ -1708,6 +1727,7 @@ sap.ui.define([
 
 		if (oAppointment.getSelected()) {
 			oAppointment.setProperty("selected", false, true); // do not invalidate CalendarRow
+			bUpdateBackgroundColor && _updateAppointmentBackgroundColor(oAppointment, false);
 			oAppointment.$().removeClass("sapUiCalendarAppSel");
 			if (sCurrentAriaDescribedByNotSelected) {
 				oAppointment.$().attr("aria-describedby", sCurrentAriaDescribedByNotSelected);
@@ -1717,6 +1737,7 @@ sap.ui.define([
 			_removeAllAppointmentSelections(this, bRemoveOldSelection);
 		} else {
 			oAppointment.setProperty("selected", true, true); // do not invalidate CalendarRow
+			bUpdateBackgroundColor && _updateAppointmentBackgroundColor(oAppointment, true);
 			oAppointment.$().addClass("sapUiCalendarAppSel");
 			oAppointment.$().attr("aria-describedby", sCurrentAriaDescribedBySelected);
 			_removeAllAppointmentSelections(this, bRemoveOldSelection);

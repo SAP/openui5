@@ -25,7 +25,10 @@ sap.ui.define([
 		},
 		initialized: function() {
 			return Promise.resolve();
-		}
+		},
+
+		// no rendering required for the tests in this module
+		renderer: null
 	});
 
 	QUnit.module("Generic Tests", {

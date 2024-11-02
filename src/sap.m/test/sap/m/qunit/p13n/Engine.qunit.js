@@ -30,9 +30,9 @@ sap.ui.define([
 				helper: new MetadataHelper(),
 				controller: {
 					ModificationHandlerTest: new Controller({
-                        control: this.oControl,
-                        targetAggregation: "columns"
-                    })
+						control: this.oControl,
+						targetAggregation: "columns"
+					})
 				}
 			});
 		},
@@ -49,7 +49,7 @@ sap.ui.define([
 
 	});*/
 
-    QUnit.test("Check FlexModificationHandler payload execution PP(1) VM(0) --> Global changes", async function(assert){
+	QUnit.test("Check FlexModificationHandler payload execution PP(1) VM(0) --> Global changes", async function(assert){
 
 		/*
 		* This is done for testing purposes, as the persistence provider is created after the registry has been set.
@@ -176,7 +176,10 @@ sap.ui.define([
 						type: "sap.ui.core.Item"
 					}
 				}
-			}
+			},
+
+			// no rendering required for the scenarios in this module
+			renderer: null
 		});
 
 		this.oCustomAggregationControl = new TestClass();
@@ -234,7 +237,10 @@ sap.ui.define([
 				},
 				initialized: function() {
 					return Promise.resolve();
-				}
+				},
+
+				// no rendering required for the scenarios in this module
+				renderer: null
 			});
 
 			var oAdaptationControl = new TestClass();
@@ -245,18 +251,18 @@ sap.ui.define([
 
 				controller: {
 					Test: new Controller({
-                        control: oAdaptationControl,
-                        targetAggregation: "items"
-                    }),
+						control: oAdaptationControl,
+						targetAggregation: "items"
+					}),
 					Test2: new Controller({
-                        control: oAdaptationControl,
-                        targetAggregation: "items"
-                    }),
+						control: oAdaptationControl,
+						targetAggregation: "items"
+					}),
 					Test3: new Controller({
-                        control: oAdaptationControl,
+						control: oAdaptationControl,
 						persistenceIdentifier: this.persistenceIdentifier,
-                        targetAggregation: "items"
-                    })
+						targetAggregation: "items"
+					})
 				},
 				helper : new MetadataHelper([
 					{key: "a", label: "A label"},
@@ -532,9 +538,9 @@ sap.ui.define([
 			state: []
 		});
 
-        sinon.stub(Engine.getInstance(), '_processChanges').callsFake(function fakeFn(vControl, aChanges) {
+		sinon.stub(Engine.getInstance(), '_processChanges').callsFake(function fakeFn(vControl, aChanges) {
 			return Promise.resolve(aChanges);
-        });
+		});
 
 		assert.ok(oChangeCreation instanceof Promise, "Engine#createChanges returns a Promise");
 
@@ -880,7 +886,10 @@ sap.ui.define([
 				},
 				initialized: function() {
 					return Promise.resolve();
-				}
+				},
+
+				// no rendering required for the scenarios in this module
+				renderer: null
 			});
 
 			var oAdaptationControl = new TestClass();
@@ -890,13 +899,13 @@ sap.ui.define([
 
 				controller: {
 					Test: new Controller({
-                        control: oAdaptationControl,
-                        targetAggregation: "items"
-                    }),
+						control: oAdaptationControl,
+						targetAggregation: "items"
+					}),
 					Test2: new Controller({
-                        control: oAdaptationControl,
-                        targetAggregation: "items"
-                    })
+						control: oAdaptationControl,
+						targetAggregation: "items"
+					})
 				},
 				helper : new MetadataHelper([
 					{key: "a", label: "A label"},
@@ -987,9 +996,9 @@ sap.ui.define([
 			Engine.getInstance().register(this.oControl, {
 				controller: {
 					StateHandlerTest: new Controller({
-                        control: this.oControl,
-                        targetAggregation: "columns"
-                    })
+						control: this.oControl,
+						targetAggregation: "columns"
+					})
 				}
 			});
 

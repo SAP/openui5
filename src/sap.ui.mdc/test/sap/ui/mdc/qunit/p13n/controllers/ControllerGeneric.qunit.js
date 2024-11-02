@@ -28,7 +28,10 @@ sap.ui.define([
 						"sap.ui.mdc.IFilterSource",
 						"sap.ui.mdc.IxState"
 					]
-				}
+				},
+
+				// no rendering required for the tests in this module
+				renderer: null
 			});
 
 			this.oAdaptationControl = new TestClass();

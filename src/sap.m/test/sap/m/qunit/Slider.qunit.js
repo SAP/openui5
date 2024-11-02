@@ -278,6 +278,7 @@ sap.ui.define([
 		// system under test
 		Slider.extend("sap.m.RangeSlider", {
 			renderer: {
+				apiVersion: 2,
 				renderHandles: function(oRm, oSlider) {
 					this.renderHandle(oRm, oSlider, {
 						id: oSlider.getId() + "-handle1"

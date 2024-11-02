@@ -464,6 +464,37 @@ function(nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		});
 	});
 
+	QUnit.test("Scroll position is preserved upon switching tabs when header is expanded", async function(assert) {
+		// Arrange
+		var oObjectPage = helpers.generateObjectPageWithDynamicHeaderTitle(),
+			aSections = oObjectPage.getSections(),
+			iScrollPosition = 30,
+			oFirstSection = aSections[0],
+			oSecondSection = aSections[1],
+			done = assert.async();
+
+		oFirstSection.addSubSection(oFactory.getSubSection(1, new Panel({height: "1000px"})));
+		oSecondSection.addSubSection(oFactory.getSubSection(1, new Panel({height: "1000px"})));
+		oObjectPage.setUseIconTabBar(true);
+
+		assert.expect(2);
+
+		oObjectPage.placeAt('qunit-fixture');
+		await nextUIUpdate();
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			// scroll down without snapping the header
+			oObjectPage._scrollTo(iScrollPosition, 0);
+			// click on another tab
+			oObjectPage._oABHelper._getAnchorBar().setSelectedItem(oObjectPage._oABHelper._getAnchorBar().getItems()[1]);
+			// Check
+			assert.strictEqual(oObjectPage._bHeaderExpanded, true, "Header remains expanded");
+			assert.strictEqual(iScrollPosition, oObjectPage._$opWrapper.scrollTop(), "Scroll position is preserved");
+			done();
+		});
+	});
+
 	QUnit.test("Scrolls to correct Section when header is expanded", async function(assert) {
 		// Arrange
 		var oObjectPage = helpers.generateObjectPageWithDynamicHeaderTitle(),

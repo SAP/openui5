@@ -420,7 +420,8 @@ CalendarRowRenderer.renderIntervalHeader = function(oRm, oRow, oIntervalHeader, 
 
 	oRm.class("sapUiCalendarRowAppsIntHeadFirst");
 
-	if (oIntervalHeader.appointment.getSelected()) {
+	var bAppointmentSelected = oIntervalHeader.appointment.getSelected();
+	if (bAppointmentSelected) {
 		oRm.class("sapUiCalendarRowAppsIntHeadSel");
 	}
 
@@ -454,7 +455,7 @@ CalendarRowRenderer.renderIntervalHeader = function(oRm, oRow, oIntervalHeader, 
 
 	oRm.class("sapUiCalendarIntervalHeaderCont");
 
-	if (sColor) {
+	if (!bAppointmentSelected && sColor) {
 		oRm.style("background-color", oIntervalHeader.appointment._getCSSColorForBackground(sColor));
 	}
 	oRm.openEnd();
@@ -618,7 +619,7 @@ CalendarRowRenderer.renderAppointment = function(oRm, oRow, oAppointmentInfo, aT
 	oRm.openStart("div");
 	oRm.class("sapUiCalendarAppCont");
 
-	if (sColor && oRow.getAppointmentsVisualization() === CalendarAppointmentVisualization.Filled) {
+	if (!bAppointmentSelected && sColor && oRow.getAppointmentsVisualization() === CalendarAppointmentVisualization.Filled) {
 		oRm.style("background-color", oAppointment._getCSSColorForBackground(sColor));
 	}
 

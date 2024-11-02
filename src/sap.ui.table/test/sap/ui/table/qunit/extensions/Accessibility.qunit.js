@@ -59,6 +59,8 @@ sap.ui.define([
 				}
 			}
 		},
+		// no rendering required for the tests in this module
+		renderer: null,
 		getAccessibilityInfo: function() {
 			return {
 				description: this.getText()
