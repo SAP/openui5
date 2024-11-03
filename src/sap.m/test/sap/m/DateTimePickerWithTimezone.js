@@ -1,15 +1,14 @@
 sap.ui.define([
+  "sap/ui/core/Element",
   "sap/ui/qunit/utils/nextUIUpdate",
   "sap/base/i18n/Localization",
-  "sap/ui/core/Element",
   "sap/m/App",
   "sap/m/Page",
   "sap/m/VBox",
   "sap/m/DateTimePicker",
   "sap/m/Slider",
-  "sap/m/Button",
-  "sap/ui/core/Core"
-], function(nextUIUpdate, Localization, Element, App, Page, VBox, DateTimePicker, Slider, Button, Core) {
+  "sap/m/Button"
+], function(Element, nextUIUpdate, Localization, App, Page, VBox, DateTimePicker, Slider, Button) {
   "use strict";
   // Note: the HTML page 'DateTimePickerWithTimezone.html' loads this module via data-sap-ui-on-init
 

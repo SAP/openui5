@@ -8,6 +8,9 @@ sap.ui.define([
 	"use strict";
 
 	return BaseComponent.extend("sap.ui.mdc.sample.ResponsiveTable.Component", {
+		metadata: {
+			manifest: "json"
+		},
 
 		init : function(){
 			// call the init function of the parent

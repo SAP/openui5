@@ -9,7 +9,6 @@
 	"sap.ui5": {
 		"dependencies": {},
 		"rootView": {
-			"async": true,
 			"viewName": "appUnderTest.view.Main"
 		}
 	}

@@ -28,8 +28,7 @@ sap.ui.define([
   "sap/m/Carousel",
   "sap/m/App",
   "sap/base/Log",
-  "sap/ui/thirdparty/jquery",
-  "sap/ui/core/mvc/Controller"
+  "sap/ui/thirdparty/jquery"
 ], async function(
   ImageRenderer,
   XMLView,
@@ -303,15 +302,7 @@ sap.ui.define([
   });
 
 
-  // Create Test View and Controller
-
-  sap.ui.controller("carousel.qunit.controller", {
-
-	  onInit: function(oEvent) {
-
-	  }
-
-  });
+  // Create Test View
 
   var oView = await XMLView.create({ definition: jQuery('#mainView').html() });
   oView.setModel(new JSONModel({
@@ -369,8 +360,8 @@ sap.ui.define([
 		  }).addStyleClass("lightboxDialog");
 		  oDialog.open();
 	  },
-	  // render control with the image renderer
-	  renderer: ImageRenderer.render
+	  // inherit image renderer
+	  renderer: ImageRenderer
   });
 
 

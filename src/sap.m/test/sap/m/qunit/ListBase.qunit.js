@@ -3733,8 +3733,7 @@ sap.ui.define([
 
 					if (oContext.getProperty("groupHeader")) {
 						oUIControl = new GroupHeaderListItem({
-							title: oContext.getProperty("groupHeader"),
-							upperCase: true
+							title: oContext.getProperty("groupHeader")
 						});
 					} else {
 						oUIControl = new InputListItem(sId);

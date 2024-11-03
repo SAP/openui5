@@ -7,7 +7,7 @@ sap.ui.define([
   "sap/m/ScrollContainer",
   "sap/m/Text",
   "sap/f/ShellBar",
-  "sap/f/Avatar",
+  "sap/m/Avatar",
   "sap/m/Menu",
   "sap/m/MenuItem",
   "sap/m/OverflowToolbarButton",

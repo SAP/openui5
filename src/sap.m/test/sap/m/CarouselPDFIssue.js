@@ -1,5 +1,6 @@
 sap.ui.define([
   "sap/ui/core/mvc/XMLView",
+  "sap/ui/core/mvc/Controller",
   "sap/m/Carousel",
   "sap/ui/model/Filter",
   "sap/ui/model/FilterOperator",
@@ -9,9 +10,8 @@ sap.ui.define([
   "sap/m/Button",
   "sap/ui/model/json/JSONModel",
   "sap/m/PDFViewer",
-  "sap/ui/thirdparty/jquery",
-  "sap/ui/core/mvc/Controller"
-], async function(XMLView, Carousel, Filter, FilterOperator, Dialog, Bar, Title, Button, JSONModel, PDFViewer, jQuery) {
+  "sap/ui/thirdparty/jquery"
+], async function(XMLView, Controller, Carousel, Filter, FilterOperator, Dialog, Bar, Title, Button, JSONModel, PDFViewer, jQuery) {
   "use strict";
   // Note: the HTML page 'CarouselPDFIssue.html' loads this module via data-sap-ui-on-init
 
@@ -45,7 +45,7 @@ sap.ui.define([
 		  {objectType: "1", src: myPDF}
 	  ]
   };
-  sap.ui.controller("myController", {
+  const MyController = Controller.extend("myController", {
 	  onInit: function () {
 		  this.x = 1;
 
@@ -91,7 +91,7 @@ sap.ui.define([
 		  that.dialog = new Dialog({
 			  horizontalScrolling: false, verticalScrolling: false,
 			  contentHeight: '100%', contentWidth: '100%', stretch: true,
-			  customHeader: new Bar({contentMiddle: [new Title({text: "title}"})]}),
+			  customHeader: new Bar({contentMiddle: [new Title({text: "{title}"})]}),
 			  content: [carousel],
 			  buttons: new Button({
 				  text: "Close", press: function () {
@@ -118,5 +118,8 @@ sap.ui.define([
 	  }
 
   });
-  (await XMLView.create({definition: jQuery('#myXml').html()})).placeAt("content");
+  (await XMLView.create({
+	  definition: jQuery('#myXml').html(),
+	  controller: new MyController()
+  })).placeAt("content");
 });

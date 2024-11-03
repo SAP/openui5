@@ -5,13 +5,16 @@ sap.ui.define([
 	"use strict";
 
 	var Component = UIComponent.extend("sap.f.cardsdemo.cardcontent.transparent.component.Component", {
+		metadata: {
+			manifest: "json"
+		},
 
-	init: function () {
-		// call the init function of the parent
-		UIComponent.prototype.init.apply(this, arguments);
+		init: function () {
+			// call the init function of the parent
+			UIComponent.prototype.init.apply(this, arguments);
 
-		this.setModel(CardsPlayground, "cardsPlayground");
-	}
+			this.setModel(CardsPlayground, "cardsPlayground");
+		}
 	});
 
 	return Component;

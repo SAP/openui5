@@ -3,12 +3,11 @@
 		/* global QUnit */
 		sap.ui.define(
 			[
-				"sap/ui/core/Lib",
 				"sap/ui/core/Control",
-				"sap/base/util/ObjectPath",
+				"sap/ui/core/Lib",
 				"sap/ui/core/Core"
 			],
-			function(Library, Control, ObjectPath, Core) {
+			function(Control, Library, Core) {
 				"use strict";
 
 				function getDetachedControls(sControlName) {
@@ -34,21 +33,19 @@
 					this.push(aUnexpectedElements.length === 0, aUnexpectedElements.join(", "), "", sMessage);
 				};
 
-				var fnMemoryLeakCheckLibrary = function(assert, sLibName) {
-					var oCore = sap.ui.getCore();
+				async function fnMemoryLeakCheckLibrary(assert, sLibName) {
+					const oLibInfo = await Library.load(sLibName);
 
-					oCore.loadLibrary(sLibName);
-
-					var oLibInfo = Library.all();
-
-					oLibInfo[sLibName].controls.forEach(function(sControlName) {
+					for (sControlName of oLibInfo.controls) {
 						if (sControlName != "sap.m.P13nConditionPanel") {
-							return;
+							continue;
 						}
 						var oUiArea;
 						try {
+							const oControlClass = await new Promise((resolve, reject) => {
+								sap.ui.require([sControlName.replace(/\./g, "/")], (fnClass) => resolve(fnClass), reject);
+							});
 							var aPreElements = getDetachedControls(sControlName),
-								oControlClass = ObjectPath.get(sControlName || ""),
 								oControl = new oControlClass();
 
 							oControl.placeAt(CONTENT_DIV_ID);
@@ -66,31 +63,31 @@
 						}
 
 						oUiArea && oUiArea.destroy();
-					});
-				};
-
-				QUnit.module("Memory.Controls");
+					}
+				}
 
 				var CONTENT_DIV_ID = "QUNIT_TEST_CONTENT_DIV",
-					oContentDomElement;
-				QUnit.moduleStart(function() {
-					oContentDomElement = document.createElement("div");
-					oContentDomElement.id = CONTENT_DIV_ID;
-					document.body.appendChild(oContentDomElement);
-				});
+				oContentDomElement;
 
-				QUnit.moduleDone(function() {
-					document.body.removeChild(oContentDomElement);
+				QUnit.module("Memory.Controls", {
+					before() {
+						oContentDomElement = document.createElement("div");
+						oContentDomElement.id = CONTENT_DIV_ID;
+						document.body.appendChild(oContentDomElement);
+					},
+					after() {
+						document.body.removeChild(oContentDomElement);
+					}
 				});
 
 				//			QUnit.test("test sap.ui.core controls", function(assert) {
 				//				fnMemoryLeakCheckLibrary(assert, "sap.ui.core");
 				//			});
 
-				QUnit.test("test sap.m controls", function(assert) {
-					fnMemoryLeakCheckLibrary(assert, "sap.m");
-					fnMemoryLeakCheckLibrary(assert, "sap.m");
-					fnMemoryLeakCheckLibrary(assert, "sap.m");
+				QUnit.test("test sap.m controls", async function(assert) {
+					await fnMemoryLeakCheckLibrary(assert, "sap.m");
+					await fnMemoryLeakCheckLibrary(assert, "sap.m");
+					await fnMemoryLeakCheckLibrary(assert, "sap.m");
 				});
 
 				/*				QUnit.test("test sap.ui.unified controls", function(assert) {

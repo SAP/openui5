@@ -1,31 +1,33 @@
 sap.ui.define([
-	"sap/ui/core/IconPool",
-	"sap/m/ObjectAttribute",
-	"sap/m/ObjectStatus",
-	"sap/m/List",
-	"sap/m/ObjectListItem",
-	"sap/ui/core/library",
-	"sap/m/ObjectMarker",
-	"sap/m/library",
 	"sap/m/App",
-	"sap/m/Page",
-	"sap/m/CheckBox",
 	"sap/m/Button",
-	"sap/m/Label"
+	"sap/m/CheckBox",
+	"sap/m/Label",
+	"sap/m/library",
+	"sap/m/List",
+	"sap/m/ObjectAttribute",
+	"sap/m/ObjectListItem",
+	"sap/m/ObjectMarker",
+	"sap/m/ObjectStatus",
+	"sap/m/Page",
+	"sap/ui/core/Element",
+	"sap/ui/core/IconPool",
+	"sap/ui/core/library"
 ], function(
-	IconPool,
-	ObjectAttribute,
-	ObjectStatus,
-	List,
-	ObjectListItem,
-	coreLibrary,
-	ObjectMarker,
-	mobileLibrary,
 	App,
-	Page,
-	CheckBox,
 	Button,
-	Label
+	CheckBox,
+	Label,
+	mobileLibrary,
+	List,
+	ObjectAttribute,
+	ObjectListItem,
+	ObjectMarker,
+	ObjectStatus,
+	Page,
+	Element,
+	IconPool,
+	coreLibrary
 ) {
 	"use strict";
 
@@ -54,10 +56,10 @@ sap.ui.define([
 		],
 		firstStatus: new ObjectStatus({text: "Critical Status", state: "Error"}),
 		markers: [
-					 new ObjectMarker({type: ObjectMarkerType.Favorite}),
-					 new ObjectMarker({type: ObjectMarkerType.Flagged}),
-					 new ObjectMarker({type: ObjectMarkerType.Draft})
-				 ]
+			new ObjectMarker({type: ObjectMarkerType.Favorite}),
+			new ObjectMarker({type: ObjectMarkerType.Flagged}),
+			new ObjectMarker({type: ObjectMarkerType.Draft})
+		]
 	});
 	list.addItem(newMarkers);
 
@@ -72,10 +74,11 @@ sap.ui.define([
 			new ObjectAttribute({text: "Second Attribute"})
 		],
 		firstStatus: new ObjectStatus({text: "Critical Status", state: "Error"}),
-		showMarkers: true,
-		markFlagged: true,
-		markFavorite: true,
-		markLocked: true
+		markers: [
+			new ObjectMarker({type: ObjectMarkerType.Locked}),
+			new ObjectMarker({type: ObjectMarkerType.Favorite}),
+			new ObjectMarker({type: ObjectMarkerType.Flagged})
+		]
 	});
 	list.addItem(lockedItem);
 
@@ -92,9 +95,10 @@ sap.ui.define([
 		firstStatus: new ObjectStatus({text: "+359 04 05 06", state: "Success", textDirection: TextDirection.LTR }),
 		secondStatus: new ObjectStatus({title: "לִהְיוֹת לָכֶם לֵאלֹהִים",
 			text: "+359 04 05 06", state: "Warning", textDirection: TextDirection.LTR }),
-		showMarkers: true,
-		markFlagged: true,
-		markFavorite: true,
+		markers: [
+			new ObjectMarker({type: ObjectMarkerType.Favorite}),
+			new ObjectMarker({type: ObjectMarkerType.Flagged})
+		],
 		titleTextDirection: TextDirection.LTR,
 		introTextDirection: TextDirection.LTR,
 		numberTextDirection: TextDirection.LTR
@@ -118,9 +122,10 @@ sap.ui.define([
 		attributes: worstCaseAttrs,
 		firstStatus: new ObjectStatus({text: "Positive Ñagçyfox", state: "Success"}),
 		secondStatus: new ObjectStatus({text: "Negative Ñagçyfox", state: "Error"}),
-		showMarkers: true,
-		markFlagged: true,
-		markFavorite: true
+		markers: [
+			new ObjectMarker({type: ObjectMarkerType.Favorite}),
+			new ObjectMarker({type: ObjectMarkerType.Flagged})
+		]
 	});
 	list.addItem(worstCase);
 
@@ -133,9 +138,10 @@ sap.ui.define([
 		numberState : ValueState.Success,
 		attributes: [new ObjectAttribute({text: "attribute text 1 attribute text 1"})],
 		firstStatus: new ObjectStatus({text: "Positive Ñagçyfox", state: "Success"}),
-		showMarkers: true,
-		markFlagged: true,
-		markFavorite: true
+		markers: [
+			new ObjectMarker({type: ObjectMarkerType.Favorite}),
+			new ObjectMarker({type: ObjectMarkerType.Flagged})
+		]
 	});
 	list.addItem(longWordTitle);
 
@@ -145,9 +151,10 @@ sap.ui.define([
 		title: "123456789012345678901234567890123456789012345678901234567890 This long word should be wrapped to another line",
 		attributes: [new ObjectAttribute({text: "attribute text 1 attribute text 1"})],
 		firstStatus: new ObjectStatus({text: "Positive Ñagçyfox", state: "Success"}),
-		showMarkers: true,
-		markFlagged: true,
-		markFavorite: true
+		markers: [
+			new ObjectMarker({type: ObjectMarkerType.Favorite}),
+			new ObjectMarker({type: ObjectMarkerType.Flagged})
+		]
 	});
 	list.addItem(longWordTitleNoNumber);
 
@@ -155,9 +162,10 @@ sap.ui.define([
 		title: "123456789012345678901234567890123456789012345678901234567890 This long word should be wrapped to another line",
 		attributes: [new ObjectAttribute({text: "attribute text 1 attribute text 1"})],
 		firstStatus: new ObjectStatus({text: "Positive Ñagçyfox", state: "Success"}),
-		showMarkers: true,
-		markFlagged: true,
-		markFavorite: true
+		markers: [
+			new ObjectMarker({type: ObjectMarkerType.Favorite}),
+			new ObjectMarker({type: ObjectMarkerType.Flagged})
+		]
 	});
 	list.addItem(longWordTitleOnly);
 
@@ -366,9 +374,10 @@ sap.ui.define([
 		title: "All possible markers shown initially, no attributes",
 		number: "12",
 		numberUnit: "Milo",
-		showMarkers: true,
-		markFlagged: true,
-		markFavorite: true
+		markers: [
+			new ObjectMarker({type: ObjectMarkerType.Favorite}),
+			new ObjectMarker({type: ObjectMarkerType.Flagged})
+		]
 	});
 	list.addItem(allMarkersShown);
 
@@ -379,8 +388,9 @@ sap.ui.define([
 		title: "Flagged only",
 		number: "12",
 		numberUnit: "Milo",
-		showMarkers: true,
-		markFlagged: true
+		markers: [
+			new ObjectMarker({type: ObjectMarkerType.Flagged})
+		]
 	});
 	list.addItem(flagMarkerOnly);
 
@@ -391,8 +401,9 @@ sap.ui.define([
 		title: "Favorite only",
 		number: "12",
 		numberUnit: "Milo",
-		showMarkers: true,
-		markFavorite: true
+		markers: [
+			new ObjectMarker({type: ObjectMarkerType.Favorite})
+		]
 	});
 	list.addItem(favoriteMarkerOnly);
 
