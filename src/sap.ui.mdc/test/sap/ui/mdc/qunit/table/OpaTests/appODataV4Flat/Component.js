@@ -16,6 +16,7 @@ sap.ui.define([
 
 	return UIComponent.extend("sap.ui.mdc.table.OpaTests.appODataV4Flat.Component", {
 		metadata: {
+			manifest: "json",
 			interfaces: ["sap.ui.core.IAsyncContentCreation"]
 		},
 		init: function() {

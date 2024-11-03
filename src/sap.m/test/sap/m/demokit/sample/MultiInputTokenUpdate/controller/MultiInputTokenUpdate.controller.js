@@ -47,10 +47,6 @@ sap.ui.define([
 			return this.getWaitForAsyncValidation();
 		},
 
-		_onTokenChange: function() {
-			Log.debug("here");
-		},
-
 		_onTokenUpdate: function(oEvent) {
 			var aTokens,
 				sTokensText = "",

@@ -1,12 +1,13 @@
 sap.ui.define([
   "sap/ui/core/mvc/XMLView",
+  "sap/ui/core/mvc/Controller",
   "sap/m/Button",
   "sap/m/List",
   "sap/m/StandardListItem",
+  "sap/ui/core/CustomData",
   "sap/m/SplitApp",
-  "sap/ui/thirdparty/jquery",
-  "sap/ui/core/mvc/Controller"
-], async function(XMLView, Button, List, StandardListItem, SplitApp, jQuery) {
+  "sap/ui/thirdparty/jquery"
+], async function(XMLView, Controller, Button, List, StandardListItem, CustomData, SplitApp, jQuery) {
   "use strict";
   // INFO VIEW
 
@@ -15,7 +16,7 @@ sap.ui.define([
 	  definition:jQuery('#info').html()
   });
 
-  sap.ui.controller("vboxController", {
+  const VBoxController = Controller.extend("vboxController", {
 	  onInit: function() {
 		  var byId = function (id) {
 			  return this.getView().byId(id);
@@ -51,10 +52,11 @@ sap.ui.define([
   });
   var vbox = await XMLView.create({
 	  id: 'vbox',
-	  definition:jQuery('#vbox').html()
+	  definition: document.getElementById('vbox').textContent,
+	  controller: new VBoxController()
   });
 
-  sap.ui.controller("analyticalTableController", {
+  const AnalyticalTableController = Controller.extend("analyticalTableController", {
 	  onInit: function() {
 		  var byId = function (id) {
 			  return this.getView().byId(id);
@@ -74,10 +76,11 @@ sap.ui.define([
   });
   var analyticalTable = await XMLView.create({
 	  id: 'analyticalTable',
-	  definition:jQuery('#analyticalTable').html()
+	  definition: document.getElementById('analyticalTable').textContent,
+	  controller: new AnalyticalTableController()
   });
 
-  sap.ui.controller("iconTabBarAnalyticalTableController", {
+  const IconTabBarAnalyticalTableController = Controller.extend("iconTabBarAnalyticalTableController", {
 	  onInit: function() {
 		  var byId = function (id) {
 			  return this.getView().byId(id);
@@ -97,7 +100,8 @@ sap.ui.define([
   });
   var iconTabBarAnalyticalTable = await XMLView.create({
 	  id: 'iconTabBarAnalyticalTable',
-	  definition:jQuery('#iconTabBarAnalyticalTable').html()
+	  definition: document.getElementById('iconTabBarAnalyticalTable').textContent,
+	  controller: new IconTabBarAnalyticalTableController()
   });
 
   var masterPage = new List({
@@ -110,38 +114,34 @@ sap.ui.define([
 			  new StandardListItem({
 				  title: "Info",
 				  type: "Active",
-				  customData: {
-					  Type:"sap.ui.core.CustomData",
+				  customData: new CustomData({
 					  key:"to",
 					  value:"info"
-				  }
+				  })
 			  }),
 			  new StandardListItem({
 				  title: "VBox",
 				  type: "Active",
-				  customData: {
-					  Type:"sap.ui.core.CustomData",
+				  customData: new CustomData({
 					  key:"to",
 					  value:"vbox"
-				  }
+				  })
 			  }),
 			  new StandardListItem({
 				  title: "Analytical Table",
 				  type: "Active",
-				  customData: {
-					  Type:"sap.ui.core.CustomData",
+				  customData: new CustomData({
 					  key:"to",
 					  value:"analyticalTable"
-				  }
+				  })
 			  }),
 			  new StandardListItem({
 				  title: "IconTabBar > Analytical Table",
 				  type: "Active",
-				  customData: {
-					  Type:"sap.ui.core.CustomData",
+				  customData: new CustomData({
 					  key:"to",
 					  value:"iconTabBarAnalyticalTable"
-				  }
+				  })
 			  })
 		  ]
 	  });

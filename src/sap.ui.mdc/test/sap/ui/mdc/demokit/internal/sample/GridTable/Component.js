@@ -6,7 +6,9 @@ sap.ui.define([
 	"use strict";
 
 	return BaseComponent.extend("sap.ui.mdc.sample.GridTable.Component",  {
-
+		metadata: {
+			manifest: "json"
+		}
 	});
 
 });

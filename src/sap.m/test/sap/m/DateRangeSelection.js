@@ -2,7 +2,6 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/m/Bar",
 	"sap/m/Button",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/library",
 	"sap/ui/unified/DateTypeRange",
@@ -20,7 +19,6 @@ sap.ui.define([
 	Localization,
 	Bar,
 	Button,
-	oCore,
 	Element,
 	coreLibrary,
 	DateTypeRange,
@@ -82,9 +80,6 @@ sap.ui.define([
 		var bPressed = oEvent.getParameter("pressed"),
 			oDRS = Element.getElementById("DRS2");
 
-		if (!DateTypeRange) {
-			oCore.loadLibrary("sap.ui.unified");
-		}
 		if (!oLegend) {
 			oLegend = new CalendarLegend("Legend1", {
 				items: [

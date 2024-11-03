@@ -6,6 +6,9 @@ sap.ui.define([
 	"use strict";
 
 	var Component = UIComponent.extend("sap.f.cardsdemo.cardcontent.componentCard.componentWithNoData.Component", {
+		metadata: {
+			manifest: "json"
+		},
 		onCardReady: function (oCard) {
 			oCard.showLoadingPlaceholders();
 

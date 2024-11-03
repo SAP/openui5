@@ -2214,8 +2214,7 @@ sap.ui.define([
 				var groupHeader = oContext.getProperty("groupHeader");
 				if (groupHeader) {
 					return new GroupHeaderListItem({
-						title: groupHeader,
-						upperCase: false
+						title: groupHeader
 					});
 				} else {
 					return new ColumnListItem({
