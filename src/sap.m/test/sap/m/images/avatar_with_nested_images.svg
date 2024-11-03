@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
+	<defs>
+		<pattern id="light" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
+			<image x="0" y="0" width="50" height="50" href="avatar_light_theme.svg"/>
+		</pattern>
+		<pattern id="dark" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
+			<image x="0" y="0" width="50" height="50" href="avatar_dark_theme.svg"/>
+		</pattern>
+	</defs>
+	<path d="M0 .5 L49.5 50 L0 50 z" fill="url(#light)"/>
+	<path d="M.5 0 L50 49.5 L50 0 z" fill="url(#dark)"/>
+</svg>
