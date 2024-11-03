@@ -6,21 +6,19 @@
 	<script id="sap-ui-bootstrap"
 			data-sap-ui-async="true"
 			data-sap-ui-compat-version="edge"
-			data-sap-ui-theme="sap_bluecrystal"
-			data-sap-ui-noConflict="true"
-			data-sap-ui-resourceroots='{"sap.m.test.rta": "./"}'
+			data-sap-ui-flexibility-services = '[{"connector": "LocalStorageConnector"}]'
 			data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.dt, sap.ui.rta"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-resourceroots='{
+				"sap.m.test.rta": "./"
+			}'
 			src="../../../resources/sap-ui-core.js">
 	</script>
 
 	<script type="text/javascript">
 	sap.ui.require([
 		"sap/ui/rta/RuntimeAuthoring",
-		"sap/ui/fl/FakeLrepConnectorLocalStorage"
-	], function(_RuntimeAuthoring, FakeLrepConnectorLocalStorage) {
-
-		// Create the FakeLrep with localStorage
-		FakeLrepConnectorLocalStorage.enableFakeConnector();
+	], function(_RuntimeAuthoring) {
 
 		var MyComponent = sap.ui.core.UIComponent.extend("MyComponent", {
 			createContent: function () {
@@ -110,7 +108,7 @@
 										title: new sap.ui.core.Title({text: "Form Title", tooltip: "Title tooltip"}),
 										tooltip: "Form tooltip",
 										editable: true,
-										layout: new sap.ui.layout.form.ResponsiveLayout(),
+										layout: new sap.ui.layout.form.ResponsiveGridLayout(),
 										formContainers: [
 											new sap.ui.layout.form.FormContainer("C1", {
 												title: "contact data",

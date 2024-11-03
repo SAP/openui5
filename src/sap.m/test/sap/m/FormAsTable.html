@@ -124,7 +124,7 @@
 			columns : [
 				new sap.m.Column({
 					styleClass : "key",
-					valign : "Center",
+					vAlign : "Middle",
 					width : "35%",
 					hAlign : "Right"
 				}),
@@ -162,11 +162,7 @@
 						new sap.m.Label({
 							text : "Birthday"
 						}),
-						new sap.m.DateTimeInput({
-							displayFormat : "dd-mm-yyyy",
-							placeholder : "dd-mm-yyyy",
-							valueFormat : "dd-mm-yyyy"
-						})
+						new sap.m.DatePicker()
 					]
 				}),
 				new sap.m.ColumnListItem({

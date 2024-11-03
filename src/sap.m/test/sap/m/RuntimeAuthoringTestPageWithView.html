@@ -5,10 +5,17 @@
 
 	<script id="sap-ui-bootstrap"
 			data-sap-ui-theme="sap_belize"
-			type="text/javascript"
+			data-sap-ui-flexibility-services = '[
+				{
+					"connector": "ObjectPathConnector",
+					"path": "./mockdata/FakeLrepConnector.json"
+				},
+				{
+					"connector": "LocalStorageConnector"
+				}
+			]'
 			data-sap-ui-noConflict="true"
-			data-sap-ui-resourceroots='{"sap.m.test.rta": "./"}'
-			data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.dt, sap.ui.rta"
+			data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.fl, sap.ui.dt, sap.ui.rta"
 			src="../../../resources/sap-ui-core.js">
 	</script>
 
@@ -16,18 +23,6 @@
 		jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
 
 		// Create the FakeLrep with localStorage
-		(function _createFakeLrep() {
-			sap.ui.require(["sap/ui/fl/FakeLrepConnector"], function (FakeLrepConnector) {
-				if (/[&?](sap-rta-clear-cache-lrep=(true|x)[&#]?)+/i.test(window.location.search)) {
-
-					jQuery.extend(FakeLrepConnector.prototype, FakeLrepConnectorLocalStorage);
-					FakeLrepConnector.deleteChanges();
-				}
-
-				jQuery.extend(FakeLrepConnector.prototype);
-				FakeLrepConnector.enableFakeConnector(sap.ui.require.toUrl("sap/m/test/rta/mockdata/FakeLrepConnector.json"));
-			});
-		}());
 
 		sap.ui.controller("my.own.controller", {
 			onInit: function(){

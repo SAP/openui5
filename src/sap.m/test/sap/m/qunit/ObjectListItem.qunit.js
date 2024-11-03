@@ -161,7 +161,6 @@ sap.ui.define([
 			title: "Title",
 			number: "3",
 			numberUnit: "EUR",
-			markFlagged: true,
 			attributes: [new ObjectAttribute({id: "oAttrsAndStatuseListItemId-firstAttr", text: "First attribute text"})],
 			firstStatus: new ObjectStatus({id: "oAttrsAndStatuseListItemId-status1", text: "First status info"}),
 			secondStatus: new ObjectStatus({id: "oAttrsAndStatuseListItemId-status2", text: "Second status info"}),

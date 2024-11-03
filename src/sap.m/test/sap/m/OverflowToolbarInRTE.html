@@ -12,9 +12,7 @@
 	</script>
 
 	<script>
-		var oCore = sap.ui.getCore();
-
-		oCore.attachInit(function () {
+		sap.ui.getCore().attachInit(function () {
 			function _buildLayout(App, Page, aContent) {
 				var oApp = new App("myApp", {
 					initialPage: "myPage"
