@@ -70,11 +70,11 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], functi
 
     function setDefaultParameters(oData) {
         var sName;
-        var oUriParameters = jQuery.sap.getUriParameters();
+        var oUriParameters = new URLSearchParams(window.location.search);
 
         for (sName in oData) {
             if (oData.hasOwnProperty(sName) && typeof oData[sName] === 'string') {
-                if (oUriParameters.get(sName) !== null) {
+                if (oUriParameters.has(sName)) {
                     oData[sName] = oUriParameters.get(sName);
                 }
             }

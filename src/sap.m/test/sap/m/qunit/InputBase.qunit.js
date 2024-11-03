@@ -1452,7 +1452,9 @@ sap.ui.define([
 		this.clock = sinon.useFakeTimers();
 		// system under test
 		var InputSubclass = InputBase.extend("InputSubclass", {
-			renderer: {}
+			renderer: {
+				apiVersion: 2
+			}
 		});
 
 		InputSubclass.prototype.getChangeEventParams = function() {
@@ -2031,6 +2033,7 @@ sap.ui.define([
 		// arrange
 		var CustomInput = InputBase.extend("CustomInput", {
 			renderer: {
+				apiVersion: 2,
 				getDescribedByAnnouncement: function() {
 					return "lorem ipsum";
 				}
@@ -2069,7 +2072,9 @@ sap.ui.define([
 					}
 				}
 			},
-			renderer: {}
+			renderer: {
+				apiVersion: 2
+			}
 		});
 
 		// system under test
@@ -2104,6 +2109,7 @@ sap.ui.define([
 				}
 			},
 			renderer: {
+				apiVersion :2,
 				getAriaRole: function() {
 					return "combobox";
 				},

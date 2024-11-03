@@ -122,8 +122,9 @@
 		numberUnit: "Euro",
 		attributes: oAttrs3,
 		firstStatus: new sap.m.ObjectStatus({text: "Positive Ñagçyfox", state: "Success", tooltip: "Status tip"}),
-		showMarkers: true,
-		markFavorite: true
+		markers: [
+			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite}),
+		]
 	});
 	oList.addItem(oOli);
 
