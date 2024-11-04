@@ -19,7 +19,12 @@ sap.ui.define([
 				: {source : "metadata.xml"},
 			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/metadata.json"
 				: {source : "metadata.json"}
+		},
+		fnGetOrCreateRetryAfterPromise = function () {
+			return null;
 		};
+
+	function mustBeMocked() { throw new Error("Must be mocked"); }
 
 	/**
 	 * Creates a mock for jQuery's XHR wrapper.
@@ -127,10 +132,9 @@ sap.ui.define([
 			}
 
 			// code under test
-			oMetadataRequestor
-				= _MetadataRequestor.create(mHeaders, sODataVersion,
-						/*bIgnoreAnnotationsFromMetadata*/false, mQueryParams,
-						/*bWithCredentials*/true);
+			oMetadataRequestor = _MetadataRequestor.create(mHeaders, sODataVersion,
+				/*bIgnoreAnnotationsFromMetadata*/false, mQueryParams,
+				/*bWithCredentials*/true, fnGetOrCreateRetryAfterPromise);
 
 			// code under test
 			return oMetadataRequestor.read(sUrl).then(function (oResult) {
@@ -150,7 +154,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read: success with Date, ETag and Last-Modified", function (assert) {
+	QUnit.test("read: success with Date, ETag and Last-Modified", async function (assert) {
 		var sDate = "Tue, 18 Apr 2017 14:40:29 GMT",
 			sETag = 'W/"19700101000000.0000000"',
 			sLastModified = "Fri, 07 Apr 2017 11:21:50 GMT",
@@ -167,10 +171,28 @@ sap.ui.define([
 			},
 			oExpectedXml = {},
 			mHeaders = {},
-			oMetadataRequestor = _MetadataRequestor.create(mHeaders, "4.0"),
+			fnResolve,
+			oRetryAfterPromise = new Promise(function (resolve) {
+				fnResolve = resolve;
+			}),
+			oMetadataRequestor = _MetadataRequestor.create(mHeaders, "4.0", undefined, null, false,
+				function () {
+					return oRetryAfterPromise;
+				}),
 			sUrl = "/~/";
 
-		this.mock(jQuery).expects("ajax")
+		const oJQueryMock = this.mock(jQuery);
+		oJQueryMock.expects("ajax").never();
+
+		// code under test
+		const oPromise = oMetadataRequestor.read(sUrl);
+
+		await new Promise(function (resolve) {
+			setTimeout(resolve, 5);
+		});
+
+		fnResolve();
+		oJQueryMock.expects("ajax")
 			.withExactArgs(sUrl, {
 				headers : sinon.match.same(mHeaders),
 				method : "GET"
@@ -179,9 +201,26 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oExpectedXml), sUrl, undefined)
 			.returns(oExpectedJson);
 
+		const oResult = await oPromise;
+
+		assert.deepEqual(oResult, oExpectedResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("read: oRetryAfterPromise rejects", function (assert) {
+		const oMetadataRequestor = _MetadataRequestor.create({}, "4.0", undefined, null, false,
+			function () {
+				return Promise.reject("~oError~");
+			});
+		this.mock(jQuery).expects("ajax").never();
+		// Note: if oRetryAfterPromise rejects, "app" is broken and we don't care about other
+		// features of read()
+
 		// code under test
-		return oMetadataRequestor.read(sUrl).then(function (oResult) {
-			assert.deepEqual(oResult, oExpectedResult);
+		return oMetadataRequestor.read("n/a").then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.strictEqual(oError, "~oError~");
 		});
 	});
 
@@ -212,7 +251,8 @@ sap.ui.define([
 		oHelperMock.expects("buildQuery")
 			.withExactArgs(sinon.match.same(mQueryParams))
 			.returns(sQuery1);
-		oMetadataRequestor = _MetadataRequestor.create(mHeaders, "4.0", true, mQueryParams);
+		oMetadataRequestor = _MetadataRequestor.create(mHeaders, "4.0", true, mQueryParams,
+			false, fnGetOrCreateRetryAfterPromise);
 		oJQueryMock.expects("ajax")
 			.withExactArgs(sAnnotationUrl, {
 				headers : sinon.match.same(mHeaders),
@@ -267,7 +307,8 @@ sap.ui.define([
 			sLastModified = "Fri, 07 Apr 2017 11:21:50 GMT",
 			oExpectedXml = {},
 			mHeaders = {},
-			oMetadataRequestor = _MetadataRequestor.create(mHeaders, "4.0"),
+			oMetadataRequestor = _MetadataRequestor.create(mHeaders, "4.0", undefined, null, false,
+				fnGetOrCreateRetryAfterPromise),
 			sUrl = "/~/";
 
 		oJQueryMock.expects("ajax")
@@ -335,31 +376,96 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read: failure", function (assert) {
-		var jqXHR = {},
-			oExpectedError = new Error("404 Not Found"),
-			oMetadataRequestor = _MetadataRequestor.create({}, "4.0"),
-			sUrl = "/foo/$metadata";
-
+[404, 503].forEach((iStatus) => {
+	QUnit.test("read: failure, status=" + iStatus, function (assert) {
+		const oObject = {
+			getOrCreateRetryAfterPromise : mustBeMocked
+		};
+		const oObjectMock = this.mock(oObject);
+		oObjectMock.expects("getOrCreateRetryAfterPromise").withExactArgs().returns(null); // get
+		const oMetadataRequestor = _MetadataRequestor.create({}, "4.0", false, null, false,
+			oObject.getOrCreateRetryAfterPromise);
+		const jqXHR = {
+			status : iStatus,
+			getResponseHeader : mustBeMocked
+		};
+		this.mock(jqXHR).expects("getResponseHeader").exactly(iStatus === 503 ? 1 : 0)
+			.withExactArgs("Retry-After").returns(""); // "" is a very near miss :-)
 		this.mock(jQuery).expects("ajax")
 			.returns(createMock(jqXHR, true)); // true = fail
+		const oExpectedError = new Error("Intentionally failed");
 		this.mock(_Helper).expects("createError")
 			.withExactArgs(sinon.match.same(jqXHR), "Could not load metadata")
 			.returns(oExpectedError);
 		this.oLogMock.expects("error")
-			.withExactArgs("GET " + sUrl, oExpectedError.message,
+			.withExactArgs("GET " + "/foo/$metadata", oExpectedError.message,
 				"sap.ui.model.odata.v4.lib._MetadataRequestor");
 
-		return oMetadataRequestor.read(sUrl).then(function () {
+		return oMetadataRequestor.read("/foo/$metadata").then(function () {
 			assert.ok(false);
 		}, function (oError) {
 			assert.strictEqual(oError, oExpectedError);
 		});
 	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach((bRepeat) => {
+	QUnit.test("read: 503 failure, repeat: " + bRepeat, function (assert) {
+		const oObject = {
+			getOrCreateRetryAfterPromise : mustBeMocked
+		};
+		const oObjectMock = this.mock(oObject);
+		oObjectMock.expects("getOrCreateRetryAfterPromise").withExactArgs().returns(null); // get
+		const oMetadataRequestor = _MetadataRequestor.create({}, "4.0", false, null, false,
+			oObject.getOrCreateRetryAfterPromise);
+		const oJQueryMock = this.mock(jQuery);
+		const jqXHR = {
+			status : 503,
+			getResponseHeader : mustBeMocked
+		};
+		oJQueryMock.expects("ajax").withExactArgs("/foo/$metadata", sinon.match.object)
+			.returns(createMock(jqXHR, true)); // true = fail
+		const oRetryAfterError = new Error("DB migration in progress");
+		this.mock(_Helper).expects("createError")
+			.withExactArgs(sinon.match.same(jqXHR), "Could not load metadata")
+			.returns(oRetryAfterError);
+		this.mock(jqXHR).expects("getResponseHeader").withExactArgs("Retry-After").returns("42");
+		oObjectMock.expects("getOrCreateRetryAfterPromise")
+			.withExactArgs(sinon.match.same(oRetryAfterError)).returns("truthy"); // create
+		const oRetryAfterPromise = bRepeat ? Promise.resolve() : Promise.reject("~oError~");
+		oObjectMock.expects("getOrCreateRetryAfterPromise")
+			.withExactArgs().returns(oRetryAfterPromise); // get
+		const oExpectedJson = {};
+		if (bRepeat) {
+			oJQueryMock.expects("ajax").withExactArgs("/foo/$metadata", sinon.match.object)
+				.returns(createMock("~oData~"));
+			this.mock(_V4MetadataConverter.prototype).expects("convertXMLMetadata")
+				.withExactArgs("~oData~", "/foo/$metadata", false)
+				.returns(oExpectedJson);
+		} else {
+			this.mock(_V4MetadataConverter.prototype).expects("convertXMLMetadata").never();
+			// Note: if oRetryAfterPromise rejects, "app" is broken and we don't care about other
+			// features of read()
+		}
+
+		oRetryAfterPromise.catch(() => {}); // avoid random(?) "global failure"
+
+		// code under test
+		return oMetadataRequestor.read("/foo/$metadata").then(function (oResult) {
+			assert.ok(bRepeat);
+			assert.strictEqual(oResult, oExpectedJson);
+		}, function (oError) {
+			assert.ok(!bRepeat);
+			assert.strictEqual(oError, "~oError~");
+		});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("read: test service", function (assert) {
-		var oMetadataRequestor = _MetadataRequestor.create({}, "4.0");
+		var oMetadataRequestor = _MetadataRequestor.create({}, "4.0", false, null, false,
+				fnGetOrCreateRetryAfterPromise);
 
 		return Promise.all([
 			oMetadataRequestor.read(
@@ -372,7 +478,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("read: test service; ignoreAnnotationsFromMetadata", function (assert) {
-		var oMetadataRequestor = _MetadataRequestor.create({}, "4.0", true, {});
+		var oMetadataRequestor = _MetadataRequestor.create({}, "4.0", true, {}, false,
+				fnGetOrCreateRetryAfterPromise);
 
 		return Promise.all([
 			oMetadataRequestor.read(

@@ -28,17 +28,20 @@ sap.ui.define([
 		 *   is deleted(!) after the first <code>read</code> for a metadata document.
 		 * @param {boolean} [bWithCredentials]
 		 *   Whether the XHR should be called with <code>withCredentials</code>
+		 * @param {function} fnGetOrCreateRetryAfterPromise
+		 *   A function that returns or creates the "Retry-After" promise
 		 * @returns {object}
 		 *   A new MetadataRequestor object
 		 */
 		create : function (mHeaders, sODataVersion, bIgnoreAnnotationsFromMetadata, mQueryParams,
-			bWithCredentials) {
+				bWithCredentials, fnGetOrCreateRetryAfterPromise) {
 			var mUrl2Promise = {},
 				sQuery = _Helper.buildQuery(mQueryParams);
 
 			return {
 				/**
-				 * Reads a metadata document from the given URL.
+				 * Reads a metadata document from the given URL, taking care of "Retry-After".
+				 *
 				 * @param {string} sUrl
 				 *   The URL of a metadata document, it must not contain a query string or a
 				 *   fragment part
@@ -84,38 +87,53 @@ sap.ui.define([
 						delete mUrl2Promise[sUrl];
 					} else {
 						oPromise = new Promise(function (fnResolve, fnReject) {
-							const oAjaxSettings = {
-									method : "GET",
-									headers : mHeaders
-								};
-							if (bWithCredentials) {
-								oAjaxSettings.xhrFields = {withCredentials : true};
+							function send() {
+								const oAjaxSettings = {
+										method : "GET",
+										headers : mHeaders
+									};
+								if (bWithCredentials) {
+									oAjaxSettings.xhrFields = {withCredentials : true};
+								}
+								jQuery.ajax(bAnnotations ? sUrl : sUrl + sQuery, oAjaxSettings)
+								.then(function (oData, _sTextStatus, jqXHR) {
+									var sDate = jqXHR.getResponseHeader("Date"),
+										sETag = jqXHR.getResponseHeader("ETag"),
+										oJSON = {$XML : oData},
+										sLastModified = jqXHR.getResponseHeader("Last-Modified");
+
+									if (sDate) {
+										oJSON.$Date = sDate;
+									}
+									if (sETag) {
+										oJSON.$ETag = sETag;
+									}
+									if (sLastModified) {
+										oJSON.$LastModified = sLastModified;
+									}
+									fnResolve(oJSON);
+								}, function (jqXHR) {
+									var oError
+										= _Helper.createError(jqXHR, "Could not load metadata");
+
+									if (jqXHR.status === 503
+											&& jqXHR.getResponseHeader("Retry-After")
+											&& fnGetOrCreateRetryAfterPromise(oError)) {
+										fnGetOrCreateRetryAfterPromise().then(send, fnReject);
+									} else {
+										Log.error("GET " + sUrl, oError.message,
+											"sap.ui.model.odata.v4.lib._MetadataRequestor");
+										fnReject(oError);
+									}
+								});
 							}
 
-							jQuery.ajax(bAnnotations ? sUrl : sUrl + sQuery, oAjaxSettings)
-							.then(function (oData, _sTextStatus, jqXHR) {
-								var sDate = jqXHR.getResponseHeader("Date"),
-									sETag = jqXHR.getResponseHeader("ETag"),
-									oJSON = {$XML : oData},
-									sLastModified = jqXHR.getResponseHeader("Last-Modified");
-
-								if (sDate) {
-									oJSON.$Date = sDate;
-								}
-								if (sETag) {
-									oJSON.$ETag = sETag;
-								}
-								if (sLastModified) {
-									oJSON.$LastModified = sLastModified;
-								}
-								fnResolve(oJSON);
-							}, function (jqXHR, _sTextStatus, _sErrorMessage) {
-								var oError = _Helper.createError(jqXHR, "Could not load metadata");
-
-								Log.error("GET " + sUrl, oError.message,
-									"sap.ui.model.odata.v4.lib._MetadataRequestor");
-								fnReject(oError);
-							});
+							const oRetryAfterPromise = fnGetOrCreateRetryAfterPromise();
+							if (oRetryAfterPromise) {
+								oRetryAfterPromise.then(send, fnReject);
+							} else {
+								send();
+							}
 							if (!bAnnotations
 								&& mQueryParams && "sap-context-token" in mQueryParams) {
 								delete mQueryParams["sap-context-token"];
