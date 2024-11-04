@@ -3656,6 +3656,8 @@ sap.ui.define([
 	// BCP: 2070470932: see that sap-client is handled properly
 	// JIRA: CPOUI5ODATAV4-1671: See that dataRequested/dataReceived events are fired for late
 	//   property requests
+	//
+	// See that late properties are also refreshed (JIRA: CPOUI5ODATAV4-2773)
 	QUnit.test("ODCB: late property", function (assert) {
 		var bChange = false,
 			iDataReceived = 0,
@@ -3792,6 +3794,28 @@ sap.ui.define([
 		}).then(function () {
 			assert.strictEqual(iDataRequested, 2);
 			assert.strictEqual(iDataReceived, 2);
+
+			that.expectRequest("SalesOrderList('1')/SO_2_BP?sap-client=123"
+					+ "&$select=Address/City,Address/GeoLocation/Longitude,BusinessPartnerID"
+						+ ",CompanyName", {
+					"@odata.etag" : "etag",
+					Address : {
+						City : "Heidelberg",
+						GeoLocation : {
+							Longitude : "8.72"
+						}
+					},
+					BusinessPartnerID : "2",
+					CompanyName : "SAP"
+				})
+				.expectChange("longitude1", "8.720000000000")
+				.expectChange("longitude2", "8.720000000000")
+				.expectChange("longitude3", "8.720000000000");
+
+			return Promise.all([
+				oFormContext.requestRefresh(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -3965,6 +3989,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: relative ODCB without cache; late property must be added to the parent cache.
 	// BCP: 2080093480
+	//
+	// See that this property is also refreshed (JIRA: CPOUI5ODATAV4-2773)
 	QUnit.test("ODCB w/o cache: late property", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -4019,11 +4045,12 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
-					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,LegalForm)", {
 					SalesOrderID : "1",
 					SO_2_BP : {
 						BusinessPartnerID : "2",
-						CompanyName : "TECUM (refreshed)"
+						CompanyName : "TECUM (refreshed)",
+						LegalForm : "Ltd"
 					}
 				})
 				.expectChange("companyName", "TECUM (refreshed)");
