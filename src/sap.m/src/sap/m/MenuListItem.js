@@ -208,6 +208,18 @@ sap.ui.define([
 			return iIndex > 0 && aItems[iIndex - 1] && aItems[iIndex - 1].getAssociation("_group") !== oMenuItem.getAssociation("_group");
 		};
 
+		MenuListItem.prototype._hasEndContent = function() {
+			var oMenuItem = Element.getElementById(this.getMenuItem());
+
+			return !!oMenuItem?.getEndContent().length;
+		};
+
+		MenuListItem.prototype._getEndContent = function() {
+			var oMenuItem = Element.getElementById(this.getMenuItem());
+
+			return oMenuItem?.getEndContent();
+		};
+
 		return MenuListItem;
 	});
 
