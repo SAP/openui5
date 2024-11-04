@@ -12,4 +12,7 @@
 			class="sapUiDemoIconExplorer"/>
 		<core:Fragment id="footerFragment" fragmentName="sap.ui.demo.iconexplorer.view.browse.Footer" type="XML" />
 	</VBox>
+	<core:HTML visible="{view>/bShowTAConsent}"
+	content='&lt;div id="consent_blackbar"&gt;&lt;/div&gt;&lt;div id="teconsent"&gt;&lt;/div&gt;&lt;script async="async" src="https://consent.trustarc.com/notice?domain=ui5.sap.com&amp;c=teconsent&amp;gtm=1&amp;pcookie&amp;js=nj&amp;noticeType=bb&amp;pn=1-0&amp;privacypolicylink=https%3A%2F%2Fwww.sap.com%2Fabout%2Flegal%2Fprivacy.html&amp;text=true&amp;gtm=1" crossorigin&gt;&lt;/script&gt;'>
+	</core:HTML>
 </mvc:View>
