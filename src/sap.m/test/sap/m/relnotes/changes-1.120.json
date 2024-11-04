@@ -1011,5 +1011,15 @@
         "text": " sap.m.ObjectStatus: adjust tooltip announcement"
       }
     ]
+  },
+  "1.120.23": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "f7a9cb6309914c8a9a912c7369b620ea48023b37",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: fix cursor position when there is mask and no entry"
+      }
+    ]
   }
 }

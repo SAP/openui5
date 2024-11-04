@@ -256,5 +256,25 @@
         "text": " sap.uxap.ObjectPageHeaderContent: correct box-shadow styles"
       }
     ]
+  },
+  "1.120.23": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "0ec215e79fff07bd9b1c4fed0d05c95c04691fde",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Fixed Breadcrumbs item focus clip"
+      },
+      {
+        "id": "94f70341abe3aa5d0aecb0165aa4d02a25f84461",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: fixed active ObjectStatus focus"
+      },
+      {
+        "id": "7145b4ceae9be5361be798e90d01d8127ec8c7f9",
+        "type": "FIX",
+        "text": " m.Table: bottom border in horizon_dark"
+      }
+    ]
   }
 }

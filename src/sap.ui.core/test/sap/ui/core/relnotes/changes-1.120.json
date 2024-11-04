@@ -893,5 +893,15 @@
         "text": " core/Element: use duck typing to check DOM element in 'closestTo'"
       }
     ]
+  },
+  "1.120.23": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "9c07b007c3c99998ca95548a68b2d00b0a97db5c",
+        "type": "FIX",
+        "text": " sap/ui/model/analytics/AnalyticalBinding#updateAnalyticalInfo: keep attribute properties in additional select"
+      }
+    ]
   }
 }
