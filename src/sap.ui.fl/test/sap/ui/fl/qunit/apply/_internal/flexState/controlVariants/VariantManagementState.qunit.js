@@ -1674,7 +1674,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("lazy load variants", {
+	QUnit.module("lazy load variant", {
 		async beforeEach() {
 			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {
 				changes: [{ fileName: "change1" }],
@@ -1691,10 +1691,10 @@ sap.ui.define([
 			const oUpdateSpy = sandbox.spy(FlexState, "updateWithDataProvided");
 			const oResponse = await fetch("test-resources/sap/ui/fl/qunit/testResources/TestVariantsConnectorResponse.json");
 			const oJson = await oResponse.json();
-			sandbox.stub(Storage, "loadFlVariants").resolves(oJson);
-			await VariantManagementState.loadVariants({
+			sandbox.stub(Storage, "loadFlVariant").resolves(oJson);
+			await VariantManagementState.loadVariant({
 				reference: sReference,
-				variantReferences: [sVariantManagementReference]
+				variantReference: sVariantManagementReference
 			});
 			assert.ok(oUpdateSpy.calledOnce, "then the storage response is updated");
 			assert.strictEqual(oUpdateSpy.lastCall.args[0].reference, sReference, "with the correct reference");
