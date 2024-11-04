@@ -99,7 +99,28 @@ sap.ui.define(['./InputBase', './MaskEnabler', './MaskInputRenderer'], function(
 						 */
 						previousValue: {type : "string"}
 					}
+				},
+				/**
+				 * This event is fired when user presses the <kbd>Enter</kbd> key on the Mask input.
+				 *
+				 * <b>Notes:</b>
+				 * <ul>
+				 * <li>The event is fired independent of whether there was a change before or not. If a change was performed, the event is fired after the change event.</li>
+				 * <li>The event is only fired on an input which allows text input (<code>editable</code> and <code>enabled</code>).</li>
+				 * </ul>
+				 *
+				 * @since 1.131.0
+				 */
+				submit : {
+					parameters: {
+
+						/**
+						 * The new value of the Mask input.
+						 */
+						value: { type: "string" }
+					}
 				}
+
 			},
 			dnd: { draggable: false, droppable: true }
 		},
@@ -153,6 +174,15 @@ sap.ui.define(['./InputBase', './MaskEnabler', './MaskInputRenderer'], function(
 		this._bCheckForLiveChange = true;
 		this.updateDomValue(this._oTempValue.toString());
 		this._setCursorPosition(Math.max(this._iUserInputStartPosition, iStart));
+	};
+
+	MaskInput.prototype.onsapenter = function(oEvent) {
+		const bFireSubmit = this.getEnabled() && this.getEditable();
+
+		if (bFireSubmit) {
+			InputBase.prototype.onsapenter.apply(this, arguments);
+			this.fireSubmit({value: this.getValue()});
+		}
 	};
 
 	return MaskInput;
