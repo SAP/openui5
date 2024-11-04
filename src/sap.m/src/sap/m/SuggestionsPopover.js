@@ -308,7 +308,7 @@ sap.ui.define([
 			return aSelectableItems[iSelectedItemIndex + 1];
 		}
 
-		if (bFocusInInput && bHasValueStateHeader) {
+		if (bFocusInInput && bHasValueStateHeader && !bTypeAhead) {
 			this.setValueStateActiveState(true);
 			return undefined;
 		}
