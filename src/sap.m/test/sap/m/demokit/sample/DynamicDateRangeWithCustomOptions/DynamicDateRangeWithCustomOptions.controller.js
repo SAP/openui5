@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/Device',
 	'./CustomPreviousXWeekend',
 	'./CustomPreviousXWorkWeek',
+	'./CustomLastChristmas',
 	'sap/ui/core/date/UI5Date'
 ], function(
 	Controller,
@@ -21,15 +22,18 @@ sap.ui.define([
 	Device,
 	CustomPreviousXWeekend,
 	CustomPreviousXWorkWeek,
+	CustomLastChristmas,
 	UI5Date
 ) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
-	var ValueState = coreLibrary.ValueState;
+	const ValueState = coreLibrary.ValueState;
+
+	const iCurrentYear = UI5Date.getInstance().getFullYear();
 
 	function getIcrementedDateFromToday(iDays, iMonths, iYears) {
-		var oResultingDate = UI5Date.getInstance();
+		const oResultingDate = UI5Date.getInstance();
 
 		oResultingDate.setFullYear(oResultingDate.getFullYear() + iYears);
 		oResultingDate.setMonth(oResultingDate.getMonth() + iMonths);
@@ -38,7 +42,16 @@ sap.ui.define([
 		return oResultingDate;
 	}
 
-	var aOrders = [
+	function getChristmasDay(iYear) {
+		const oCurrentDate = UI5Date.getInstance();
+		const iCurrentHour = oCurrentDate.getHours();
+		const iCurrentMinute = oCurrentDate.getMinutes();
+		const iCurrentSeconds = oCurrentDate.getSeconds();
+
+		return UI5Date.getInstance(iYear, 11, 25, iCurrentHour, iCurrentMinute, iCurrentSeconds);
+	}
+
+	const aOrders = [
 		{
 			productType: "Water",
 			orderTime: getIcrementedDateFromToday(-1, 0 ,0),
@@ -227,44 +240,57 @@ sap.ui.define([
 			productPrice: 5.34,
 			productQuantity: 1,
 			currency: "EUR"
+		},
+		{
+			productType: "Turkey",
+			orderTime: getChristmasDay(iCurrentYear - 1),
+			productPrice: 20.00,
+			productQuantity: 1,
+			currency: "EUR"
 		}
 	];
 
-	var DynamicDateRangeController = Controller.extend(".sample.DynamicDateRangeWithCustomOptions.DynamicDateRangeWithCustomOptions", {
+	const DynamicDateRangeController = Controller.extend(".sample.DynamicDateRangeWithCustomOptions.DynamicDateRangeWithCustomOptions", {
 
 		onInit: function() {
 			aOrders.forEach(function(x) {
 				x.totalPrice = x.productQuantity * x.productPrice;
 			});
-			var oView = this.getView();
-			var oDynamicDateRange = oView.byId("dynamic-range");
+			const oView = this.getView();
+			const oDynamicDateRange = oView.byId("dynamic-range");
 			oDynamicDateRange.addGroup("Custom", "Custom Options");
-			var oCustomPreviousXWeekendOption = new CustomPreviousXWeekend({
+			const oCustomPreviousXWeekendOption = new CustomPreviousXWeekend({
 				key: "X To Last Weekend",
 				valueTypes: ["int"]
 			});
-			var oCustomPreviousXWorkWeekOption = new CustomPreviousXWorkWeek({
+			const oCustomPreviousXWorkWeekOption = new CustomPreviousXWorkWeek({
 				key: "X To Last Work Week",
 				valueTypes: ["int"]
 			});
+			const oCustomLastChristmasOption = new CustomLastChristmas({
+				key: "Last Christmas",
+				valueTypes: ['date']
+			});
 			oDynamicDateRange.addAggregation("customOptions", oCustomPreviousXWeekendOption);
 			oDynamicDateRange.addAggregation("customOptions", oCustomPreviousXWorkWeekOption);
-			var oModel = new JSONModel({
+			oDynamicDateRange.addAggregation("customOptions", oCustomLastChristmasOption);
+
+			const oModel = new JSONModel({
 					orders: aOrders
-				}),
-				oEnvModel = new JSONModel({
+				});
+
+			const oEnvModel = new JSONModel({
 					filterInputWidth: !Device.system.phone ? '300px' : "auto"
-				}),
-				oView = this.getView();
+				});
 
 			oView.setModel(oModel);
 			oView.setModel(oEnvModel, "env");
 		},
 
 		onChange: function(oEvent) {
-			var oDynamicDateRange = oEvent.getSource(),
-				bValid = oEvent.getParameter("valid"),
-				oTableItemsBinding, oValue, oTable, oFilter;
+			const oDynamicDateRange = oEvent.getSource(),
+				bValid = oEvent.getParameter("valid");
+				let oTableItemsBinding, oValue, oTable, oFilter;
 
 			if (bValid) {
 				oTable = this.getView().byId("orders-table");
@@ -280,7 +306,7 @@ sap.ui.define([
 
 		_createFilter: function(oValue, oDynamicDateRange) {
 			if (oValue) {
-				var aDates = oDynamicDateRange.toDates(oValue);
+				const aDates = oDynamicDateRange.toDates(oValue);
 				if (oValue.operator === "FROM" || oValue.operator === "FROMDATETIME") {
 					return new Filter("PerfomDateTime", FilterOperator.GT, aDates[0]);
 				} else if (oValue.operator === "TO" || oValue.operator === "TODATETIME") {
