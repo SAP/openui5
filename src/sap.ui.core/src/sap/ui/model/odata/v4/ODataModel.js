@@ -355,10 +355,11 @@ sap.ui.define([
 		this.mMetadataHeaders = {"Accept-Language" : sLanguageTag};
 
 		mQueryParams = Object.assign({}, mUriParameters, mParameters.metadataUrlParams);
+		const fnGetOrCreateRetryAfterPromise = this.getOrCreateRetryAfterPromise.bind(this);
 		this.oMetaModel = new ODataMetaModel(
 			_MetadataRequestor.create(this.mMetadataHeaders, sODataVersion,
 				mParameters.ignoreAnnotationsFromMetadata, mQueryParams,
-				mParameters.withCredentials),
+				mParameters.withCredentials, fnGetOrCreateRetryAfterPromise),
 			this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
 			mParameters.supportReferences, mQueryParams["sap-language"]);
 		this.oInterface = {
@@ -372,10 +373,8 @@ sap.ui.define([
 			getGroupProperty : this.getGroupProperty.bind(this),
 			getMessagesByPath : this.getMessagesByPath.bind(this),
 			getOptimisticBatchEnabler : this.getOptimisticBatchEnabler.bind(this),
+			getOrCreateRetryAfterPromise : fnGetOrCreateRetryAfterPromise,
 			getReporter : this.getReporter.bind(this),
-			getRetryAfterHandler : function () {
-				return that.fnRetryAfter;
-			},
 			isIgnoreETag : function () {
 				return that.bIgnoreETag;
 			},
@@ -428,6 +427,7 @@ sap.ui.define([
 		// ensure the events are respectively fired once for a GET request
 		this.mPath2DataRequestedCount = {};
 		this.fnRetryAfter = null;
+		this.oRetryAfterPromise = null;
 	}
 
 	/**
@@ -1642,6 +1642,8 @@ sap.ui.define([
 		this.oRequestor.destroy();
 		this.mHeaders = undefined;
 		this.mMetadataHeaders = undefined;
+		this.oRetryAfterPromise = undefined;
+
 		return Model.prototype.destroy.apply(this, arguments);
 	};
 
@@ -2090,6 +2092,35 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.getOptimisticBatchEnabler = function () {
 		return this.fnOptimisticBatchEnabler;
+	};
+
+	/**
+	 * Returns the promise that is currently being used for "Retry-After" handling. Returns
+	 * <code>null</code> if no "Retry-After" is currently known. Creates a new promise if there is
+	 * none, an error is given, and a {@link #setRetryAfterHandler handler} is known.
+	 *
+	 * @param {Error} [oRetryAfterError] - A "Retry-After" error from a backend call
+	 * @returns {Promise|null} The current "Retry-After" promise
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.getOrCreateRetryAfterPromise = function (oRetryAfterError) {
+		if (!this.oRetryAfterPromise && this.fnRetryAfter && oRetryAfterError) {
+			this.oRetryAfterPromise = this.fnRetryAfter(oRetryAfterError);
+			this.oRetryAfterPromise.finally(() => {
+				this.oRetryAfterPromise = null;
+			}).catch(() => { /* catch is only needed due to finally */ });
+			this.oRetryAfterPromise.catch((oError) => {
+				// own error reason is not reported to the message model
+				if (oError === oRetryAfterError) {
+					this.reportError(oError.message, sClassName, oError);
+				} else {
+					oError.$reported = true;
+				}
+			});
+		}
+
+		return this.oRetryAfterPromise;
 	};
 
 	/**

@@ -119,10 +119,10 @@ sap.ui.define([
 			.withExactArgs({}, false, true).returns({"sap-client" : "279"});
 		this.mock(Supportability).expects("isStatisticsEnabled")
 			.withExactArgs().returns(bStatistics);
-		this.mock(_MetadataRequestor).expects("create")
+		const oExpectation = this.mock(_MetadataRequestor).expects("create")
 			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", undefined, bStatistics
 				? {"sap-client" : "279", "sap-statistics" : true}
-				: {"sap-client" : "279"}, undefined)
+				: {"sap-client" : "279"}, undefined, sinon.match.func)
 			.returns(oMetadataRequestor);
 		this.mock(ODataMetaModel.prototype).expects("fetchEntityContainer").withExactArgs(true);
 		this.mock(ODataModel.prototype).expects("initializeSecurityToken").withExactArgs();
@@ -154,6 +154,8 @@ sap.ui.define([
 		assert.deepEqual(oModel.mPath2DataRequestedCount, {});
 		assert.deepEqual(oModel.mPath2DataReceivedError, {});
 		assert.strictEqual(oModel.fnRetryAfter, null);
+		assert.strictEqual(oModel.oRetryAfterPromise, null);
+		assert.strictEqual(oExpectation.args[0][5], oModel.oInterface.getOrCreateRetryAfterPromise);
 	});
 });
 
@@ -172,7 +174,7 @@ sap.ui.define([
 				"sap-client" : "279",
 				"sap-context-token" : "20200716120000",
 				"sap-language" : "EN"
-			}, undefined);
+			}, undefined, sinon.match.func);
 		this.mock(_Requestor).expects("create")
 			.withExactArgs(sServiceUrl, sinon.match.object, {"Accept-Language" : "ab-CD"},
 				{"sap-client" : "279", "sap-context-token" : "n/a"}, "4.0", undefined)
@@ -246,7 +248,7 @@ sap.ui.define([
 				});
 			oMetadataRequestorCreateExpectation = this.mock(_MetadataRequestor).expects("create")
 				.withExactArgs({"Accept-Language" : "ab-CD"}, sODataVersion, undefined,
-					sinon.match.object, undefined)
+					sinon.match.object, undefined, sinon.match.func)
 				.returns({});
 
 			// code under test
@@ -445,7 +447,7 @@ sap.ui.define([
 		this.mock(_MetadataRequestor).expects("create")
 			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0",
 				/*bIngnoreAnnotationsFromMetadata*/undefined, /*mQueryParams*/{},
-				/*bWithCredentials*/bWithCredentials);
+				/*bWithCredentials*/bWithCredentials, sinon.match.func);
 		this.mock(_Requestor).expects("create")
 			.withExactArgs(sServiceUrl, {
 					fetchEntityContainer : sinon.match.func,
@@ -456,8 +458,8 @@ sap.ui.define([
 					getGroupProperty : sinon.match.func,
 					getMessagesByPath : sinon.match.func,
 					getOptimisticBatchEnabler : sinon.match.func,
+					getOrCreateRetryAfterPromise : sinon.match.func,
 					getReporter : sinon.match.func,
-					getRetryAfterHandler : sinon.match.func,
 					isIgnoreETag : sinon.match.func,
 					onCreateGroup : sinon.match.func,
 					onHttpResponse : sinon.match.func,
@@ -484,15 +486,6 @@ sap.ui.define([
 	QUnit.test("Model creates _Requestor, sap-statistics=" + bStatistics, function (assert) {
 		var oExpectedBind0,
 			oExpectedBind1,
-			oExpectedBind2,
-			oExpectedBind3,
-			oExpectedBind4,
-			oExpectedBind5,
-			oExpectedBind6,
-			oExpectedBind7,
-			oExpectedBind8,
-			oExpectedBind9,
-			oExpectedBind10,
 			oExpectedCreate = this.mock(_Requestor).expects("create"),
 			oModel,
 			oModelInterface,
@@ -514,8 +507,8 @@ sap.ui.define([
 					getGroupProperty : "~fnGetGroupProperty~",
 					getMessagesByPath : "~fnGetMessagesByPath~",
 					getOptimisticBatchEnabler : "~fnGetOptimisticBatchEnabler~",
+					getOrCreateRetryAfterPromise : "~fnGetOrCreateRetryAfterPromise~",
 					getReporter : "~fnGetReporter~",
-					getRetryAfterHandler : sinon.match.func,
 					isIgnoreETag : sinon.match.func,
 					onCreateGroup : sinon.match.func,
 					onHttpResponse : sinon.match.func,
@@ -534,24 +527,28 @@ sap.ui.define([
 			.returns("~fnFetchEntityContainer~");
 		oExpectedBind1 = this.mock(ODataMetaModel.prototype.fetchObject).expects("bind")
 			.returns("~fnFetchMetadata~");
-		oExpectedBind2 = this.mock(ODataModel.prototype.fireDataReceived).expects("bind")
-			.returns("~fnFireDataReceived~");
-		oExpectedBind3 = this.mock(ODataModel.prototype.fireDataRequested).expects("bind")
-			.returns("~fnFireDataRequested~");
-		oExpectedBind4 = this.mock(ODataModel.prototype.getGroupProperty).expects("bind")
-			.returns("~fnGetGroupProperty~");
-		oExpectedBind5 = this.mock(ODataModel.prototype.getMessagesByPath).expects("bind")
-			.returns("~fnGetMessagesByPath~");
-		oExpectedBind6 = this.mock(ODataModel.prototype.getOptimisticBatchEnabler).expects("bind")
-			.returns("~fnGetOptimisticBatchEnabler~");
-		oExpectedBind7 = this.mock(ODataModel.prototype.getReporter).expects("bind")
-			.returns("~fnGetReporter~");
-		oExpectedBind8 = this.mock(ODataModel.prototype.reportTransitionMessages).expects("bind")
-			.returns("~fnReportTransitionMessages~");
-		oExpectedBind9 = this.mock(ODataModel.prototype.reportStateMessages).expects("bind")
-			.returns("~fnReportStateMessages~");
-		oExpectedBind10 = this.mock(ODataModel.prototype.reportError).expects("bind")
-			.returns("~fnReportError~");
+		const aExpectedBindOnModel = [
+			this.mock(ODataModel.prototype.fireDataReceived).expects("bind")
+				.returns("~fnFireDataReceived~"),
+			this.mock(ODataModel.prototype.fireDataRequested).expects("bind")
+				.returns("~fnFireDataRequested~"),
+			this.mock(ODataModel.prototype.getGroupProperty).expects("bind")
+				.returns("~fnGetGroupProperty~"),
+			this.mock(ODataModel.prototype.getMessagesByPath).expects("bind")
+				.returns("~fnGetMessagesByPath~"),
+			this.mock(ODataModel.prototype.getOptimisticBatchEnabler).expects("bind")
+				.returns("~fnGetOptimisticBatchEnabler~"),
+			this.mock(ODataModel.prototype.getOrCreateRetryAfterPromise).expects("bind")
+				.returns("~fnGetOrCreateRetryAfterPromise~"),
+			this.mock(ODataModel.prototype.getReporter).expects("bind")
+				.returns("~fnGetReporter~"),
+			this.mock(ODataModel.prototype.reportTransitionMessages).expects("bind")
+				.returns("~fnReportTransitionMessages~"),
+			this.mock(ODataModel.prototype.reportStateMessages).expects("bind")
+				.returns("~fnReportStateMessages~"),
+			this.mock(ODataModel.prototype.reportError).expects("bind")
+				.returns("~fnReportError~")
+		];
 
 		// code under test
 		oModel = this.createModel("?sap-client=123", {}, true);
@@ -560,15 +557,9 @@ sap.ui.define([
 		assert.strictEqual(oModel.oRequestor, oRequestor);
 		assert.strictEqual(oExpectedBind0.firstCall.args[0], oModel.oMetaModel);
 		assert.strictEqual(oExpectedBind1.firstCall.args[0], oModel.oMetaModel);
-		assert.strictEqual(oExpectedBind2.firstCall.args[0], oModel);
-		assert.strictEqual(oExpectedBind3.firstCall.args[0], oModel);
-		assert.strictEqual(oExpectedBind4.firstCall.args[0], oModel);
-		assert.strictEqual(oExpectedBind5.firstCall.args[0], oModel);
-		assert.strictEqual(oExpectedBind6.firstCall.args[0], oModel);
-		assert.strictEqual(oExpectedBind7.firstCall.args[0], oModel);
-		assert.strictEqual(oExpectedBind8.firstCall.args[0], oModel);
-		assert.strictEqual(oExpectedBind9.firstCall.args[0], oModel);
-		assert.strictEqual(oExpectedBind10.firstCall.args[0], oModel);
+		aExpectedBindOnModel.forEach((oExpectedBind) => {
+			assert.strictEqual(oExpectedBind.firstCall.args[0], oModel);
+		});
 		oModelInterface = oExpectedCreate.firstCall.args[1];
 		assert.strictEqual(oModelInterface, oModel.oInterface);
 
@@ -633,9 +624,6 @@ sap.ui.define([
 		oModel.setRetryAfterHandler("~fnRetryAfter~");
 
 		assert.strictEqual(oModel.fnRetryAfter, "~fnRetryAfter~");
-
-		// code under test
-		assert.strictEqual(oModelInterface.getRetryAfterHandler(), "~fnRetryAfter~");
 	});
 });
 
@@ -1233,6 +1221,7 @@ sap.ui.define([
 
 		assert.strictEqual(oModel.mHeaders, undefined);
 		assert.strictEqual(oModel.mMetadataHeaders, undefined);
+		assert.strictEqual(oModel.oRetryAfterPromise, undefined);
 	});
 
 	//*********************************************************************************************
@@ -3581,6 +3570,83 @@ sap.ui.define([
 			assert.strictEqual(sPredicate, "~keyPredicate~");
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getOrCreateRetryAfterPromise: get", function (assert) {
+		const oModel = this.createModel();
+
+		oModel.oRetryAfterPromise = "~oRetryAfterPromise~";
+		oModel.fnRetryAfter = mustBeMocked; // must not be called
+
+		// code under test
+		assert.strictEqual(oModel.getOrCreateRetryAfterPromise("n/a"), "~oRetryAfterPromise~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getOrCreateRetryAfterPromise: create, resolves", async function (assert) {
+		const oModel = this.createModel();
+
+		// code under test
+		assert.strictEqual(oModel.getOrCreateRetryAfterPromise(), null, "initially");
+
+		oModel.fnRetryAfter = mustBeMocked;
+
+		// code under test
+		assert.strictEqual(oModel.getOrCreateRetryAfterPromise(), null, "no error, no create");
+
+		const oRetryAfterPromise = Promise.resolve();
+		this.mock(oModel).expects("fnRetryAfter").withExactArgs("~oRetryAfterError~")
+			.returns(oRetryAfterPromise);
+
+		assert.strictEqual(
+			// code under test
+			oModel.getOrCreateRetryAfterPromise("~oRetryAfterError~"),
+			oRetryAfterPromise);
+
+		// code under test
+		assert.strictEqual(oModel.getOrCreateRetryAfterPromise(), oRetryAfterPromise, "get");
+		assert.strictEqual(oModel.getOrCreateRetryAfterPromise("n/a"), oRetryAfterPromise,
+			"no new promise");
+
+		await oRetryAfterPromise;
+
+		// code under test
+		assert.strictEqual(oModel.getOrCreateRetryAfterPromise(), null, "cleaned up");
+	});
+
+	//*********************************************************************************************
+[false, true].forEach((bOwnError) => {
+	const sTitle = "getOrCreateRetryAfterPromise: create, rejects w/ own error = " + bOwnError;
+
+	QUnit.test(sTitle, async function (assert) {
+		const oModel = this.createModel();
+
+		oModel.fnRetryAfter = mustBeMocked;
+		const oError = new Error("Some error message");
+		const oRetryAfterPromise = Promise.reject(oError);
+		const oRetryAfterError = bOwnError ? "~oRetryAfterError~" : oError;
+		this.mock(oModel).expects("fnRetryAfter").withExactArgs(sinon.match.same(oRetryAfterError))
+			.returns(oRetryAfterPromise);
+		this.mock(oModel).expects("reportError").exactly(bOwnError ? 0 : 1)
+			.withExactArgs("Some error message", sClassName, sinon.match.same(oError));
+
+		assert.strictEqual(
+			// code under test
+			oModel.getOrCreateRetryAfterPromise(oRetryAfterError),
+			oRetryAfterPromise);
+
+		await oRetryAfterPromise.catch(() => {});
+
+		// code under test
+		assert.strictEqual(oModel.getOrCreateRetryAfterPromise(), null, "cleaned up");
+
+		if (bOwnError) {
+			assert.strictEqual(oError.$reported, true);
+		} else {
+			assert.notOk("$reported" in oError);
+		}
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("getKeyPredicate, requestKeyPredicate", function (assert) {
