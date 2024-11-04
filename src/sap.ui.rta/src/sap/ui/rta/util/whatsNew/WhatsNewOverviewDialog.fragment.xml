@@ -6,7 +6,7 @@
 	xmlns:util="sap.ui.fl.util">
 	<Dialog
 		id="sapUiRtaWhatsNewOverviewDialog"
-		title="What's New in Key User Adaptation"
+		title="{i18n>TIT_WHATS_NEW_DIALOG_OVERVIEW}"
 		contentWidth="50rem"
 		contentHeight="33rem"
 		horizontalScrolling="false">
