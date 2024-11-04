@@ -71,6 +71,8 @@ sap.ui.define([
 				iDuration -= (iTimeCell - iTimePart);
 			} else if (oNonWorkingPartDate.getHours() === oCellStartDate.getHours() && oNonWorkingPartDate.getMinutes() > 0) {
 				iDuration = oNonWorkingPart.getDurationInMinutes() + iCurrentPointInMinutes > 60 ? iMinutesInOneHours - iCurrentPointInMinutes : oNonWorkingPart.getDurationInMinutes();
+			} else if (oNonWorkingPartDate.getHours() === oCellStartDate.getHours() && oNonWorkingPart.getEndDate().getHours() <= oCellStartDate.getHours() + 1) {
+				iDuration = oNonWorkingPart.getDurationInMinutes();
 			} else {
 				iDuration = iMinutesInOneHours - iCurrentPointInMinutes;
 			}
