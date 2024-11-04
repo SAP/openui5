@@ -23,7 +23,7 @@ sap.ui.define([
 	const ChartDelegate = Object.assign({}, AggregationBaseDelegate, FilterIntegrationDefault);
 
 	/**
-	 * Returns filters to be applied when updating the chart's binding based on the
+	 * Gets the filters to be applied when updating the chart's binding based on the
 	 * filter conditions of the chart itself and it's associated {@link sap.ui.mdc.IFilterSource IFilterSource}.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
@@ -73,7 +73,7 @@ sap.ui.define([
 	ChartDelegate.getZoomState = function(oChart) { };
 
 	/**
-	 * Returns the filter delegate of the chart that provides basic filter functionality, such as adding filter fields.
+	 * Gets the filter delegate of the chart that provides basic filter functionality, such as adding filter fields.
 	 * <b>Note:</b> The functionality provided in this delegate acts as a subset of a <code>FilterBarDelegate</code> to enable the chart for inbuilt
 	 * filtering.
 	 *
@@ -181,7 +181,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Returns the event handler for <code>SelectionDetails</code> as an object.
+	 * Gets the event handler for <code>SelectionDetails</code> as an object.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @returns {sap.ui.mdc.chart.SelectionDetails} Event handler for SelectionDetails
@@ -250,7 +250,7 @@ sap.ui.define([
 	ChartDelegate.createInitialChartContent = function(oChart) { };
 
 	/**
-	 * Returns the instance of the inner chart.
+	 * Gets the instance of the inner chart.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
 	 * @returns {sap.ui.core.Control} Instance of the inner chart
@@ -272,7 +272,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Returns the current chart type.
+	 * Gets the current chart type.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
 	 * @returns {sap.ui.mdc.chart.ChartTypeObject[]} Information about the current chart type
@@ -314,7 +314,7 @@ sap.ui.define([
 	ChartDelegate.getChartTypeLayoutConfig = function() { };
 
 	/**
-	 * Returns the current drilling stack of the inner chart.<br>
+	 * Gets the current drilling stack of the inner chart.<br>
 	 * The returned objects need at least a <code>label</code> and a <code>name</code> property.<br>
 	 * Also, a <code>dimension</code> array containing the dimension drill stack at the current level is required.
 	 *
@@ -326,7 +326,7 @@ sap.ui.define([
 	ChartDelegate.getDrillStack = function(oChart) { };
 
 	/**
-	 * Returns all sorted dimensions of an inner chart.
+	 * Gets all sorted dimensions of an inner chart.
 	 * This is used to determine possible drill-down dimensions in the drill-down popover of the chart.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
@@ -337,7 +337,7 @@ sap.ui.define([
 	ChartDelegate.getSortedDimensions = function(oChart) { };
 
 	/**
-	 * Determines which MDC items are drillable and returns them.
+	 * Gets the drillable items.
 	 * This function is used by the breadcrumb navigation.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
@@ -399,7 +399,7 @@ sap.ui.define([
 	ChartDelegate.rebind = function(oChart, oBindingInfo) { };
 
 	/**
-	 * Returns the information whether the inner chart is currently bound.
+	 * Gets the information whether the inner chart is currently bound.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @returns {boolean} <code>true</code> if inner chart is bound; <code>false</code> if not
@@ -410,7 +410,7 @@ sap.ui.define([
 
 
 	/**
-	 * Returns the binding info for given chart.
+	 * Gets the binding info for given chart.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @returns {sap.ui.base.ManagedObject.AggregationBindingInfo} BindingInfo object
@@ -443,8 +443,9 @@ sap.ui.define([
 	 */
 	ChartDelegate.setChartTooltipVisibility = function(oChart, bVisible) { };
 
+    //TODO: Think about a better function name or at least make sure the description is clearly understandable.
 	/**
-	 * This function returns an ID that should be used in the internal chart for the Measure/Dimension.<br>
+	 * Gets an ID that should be used in the internal chart for the Measure/Dimension.<br>
 	 * For standard cases, this is just the ID of the property.<br>
 	 * If it is necessary to use another ID internally inside the chart (for example, for duplicate property IDs) this method can be overwritten.<br>
 	 * In this case, <code>getPropertyFromNameAndKind</code> needs to be overwritten as well.
@@ -458,8 +459,9 @@ sap.ui.define([
 	 */
 	ChartDelegate.getInternalChartNameFromPropertyNameAndKind = function(sName, sKind, oChart) { };
 
+    //TODO: Think about a better function name or at least make sure the description is clearly understandable.
 	/**
-	 * Maps an ID of an internal chart dimension/measure and type of a property to its corresponding property entry.
+	 * Gets a PropertyInfo object based on an internal chart dimension/measure and type of a property.
 	 *
 	 * @param {string} sName ID of internal chart measure/dimension
 	 * @param {string} sKind Kind of the property
@@ -471,7 +473,7 @@ sap.ui.define([
 	ChartDelegate.getPropertyFromNameAndKind = function(sName, sKind, oChart) { };
 
 	/**
-	 * Returns the relevant property info based on the metadata used with the chart instance.
+	 * Gets the relevant PropertyInfos based on the metadata used with the chart instance.
 	 *
 	 * <b>Note:</b>
 	 * The result of this function must be kept stable throughout the lifecycle of your application.
@@ -489,7 +491,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds/Removes the busy overlay shown above the inner chart.
+	 * Adds/Removes the busy overlay shown over the inner chart.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @param {boolean} bShow Shows overlay if set to <code>true</code>
@@ -500,6 +502,7 @@ sap.ui.define([
 
 	/**
 	 * Determines if a given <code>SelectionDetailsItem</code> is enabled.
+         *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @param {array} mData The data array of the selected item
 	 * @param {sap.ui.model.Context | undefined} oContext Binding context of the item in the selection. This is undefined if no binding is used

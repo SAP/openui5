@@ -321,7 +321,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the event handler for SelectionDetails as an object:
+	 * Gets the event handler for SelectionDetails as an object:
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
 	 * @returns {sap.ui.mdc.chart.SelectionDetails} Event handler for SelectionDetails
@@ -904,7 +904,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the instance of the inner chart for a given MDC chart.
+	 * Gets the instance of the inner chart for a given MDC chart.
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
 	 * @returns {sap.ui.core.Control} Inner chart instance
 	 *
@@ -1175,7 +1175,7 @@ sap.ui.define([
 
 
 	/**
-	 * Returns the current chart type in form:
+	 * Gets the current chart type in the form of:
 	 * {
 	 *  icon : string,
 	 *  text: string
@@ -1235,7 +1235,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the current drill stack of the inner chart.
+	 * Gets the current drill stack of the inner chart.
 	 * The returned objects need at least a label and a name property.
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
 	 * @returns {array} Array containing the drill stack
@@ -1265,7 +1265,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * This returns all sorted dimensions of an inner chart as property.
+	 * Gets all sorted dimensions of an inner chart as property.
 	 * This is used to determine possible drill-down dimensions in the drill-down popover of the MDC chart.
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
 	 * @returns {Promise} <code>Promise</code> containing an array of dimensions that are sorted
@@ -1304,7 +1304,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines which MDC items are drillable and returns them.
+	 * Gets the drillable items.
 	 * Used by breadcrumbs of MDC charts.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart MDC chart to get the items from
@@ -1336,7 +1336,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates the inner data set for the inner chart.
+	 * Creates the content for the inner chart and triggers the initial data binding.
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
 	 * @param {function} fnCallbackDataLoaded Callback for when data is loaded in the inner chart
 	 * @returns {Promise} Resolved once inner chart has been created
@@ -1416,7 +1416,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Performs the initial binding for the inner chart.
+	 * Performs the initial binding of the inner chart.
 	 * It is used for the vizFrame to make sure that the inner chart is correctly initialized upon creation.
 	 * Otherwise the chart will go into an error loop. <br><b>Note:</b> You must not override this setting.
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
@@ -1570,7 +1570,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the aggreagted name for given propertyInfo.
+	 * Gets the aggregated name for given propertyInfo.
 	 * @param {object} oProperty PropertyInfo object
 	 * @returns {string} Name for inner chart
 	 *
@@ -1636,7 +1636,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the binding info for given chart.
+	 * Gets the binding info for given chart.
 	 * If no binding info exists yet, a new one will be created.
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
 	 * @returns {object} BindingInfo object
@@ -1660,7 +1660,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns whether the inner chart is currently bound.
+	 * Gets whether the inner chart is currently bound or not.
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
 	 * @returns {boolean} <code>true</code> if inner chart is bound; <code>false</code> if not
 	 *
@@ -1720,7 +1720,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Returns sorters available for the data.
+	 * Gets sorters available for the data.
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
 	 * @returns {array} Array containing available sorters
 	 *
@@ -1762,11 +1762,11 @@ sap.ui.define([
 	ChartDelegate._getAggregatedMeasureNameForMDCItem = function(oItem) {
 		return this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "aggregatable", oItem.getParent());
 	};
-
+    //TODO: Think about a better function name or at least make sure the description is clearly understandable.
 	/**
-	 * This function returns an ID that is used in the internal chart for the measure/dimension.
-	 * In the standard case, this is just the ID of the property.
-	 * If it is necessary to use another ID internally inside the chart (for example, on duplicate property IDs) this method can be overwritten.
+	 * Gets an ID that should be used in the internal chart for the Measure/Dimension.<br>
+	 * For the standard case, this is just the ID of the property.<br>
+	 * If it is necessary to use another ID internally inside the chart (for example, on duplicate property IDs) this method can be overwritten.<br>
 	 * In this case, <code>getPropertyFromNameAndKind</code> needs to be overwritten as well.
 	 * @param {string} sName ID of the property
 	 * @param {string} sKind Kind of the Property (Measure/Dimension)
@@ -1779,9 +1779,9 @@ sap.ui.define([
 	ChartDelegate.getInternalChartNameFromPropertyNameAndKind = function(sName, sKind, oChart) {
 		return sName;
 	};
-
+    //TODO: Think about a better function name or at least make sure the description is clearly understandable
 	/**
-	 * This maps an ID of an internal chart dimension/measure & kind of a property to its corresponding property entry.
+	 * Gets a PropertyInfo object based on an internal chart dimension/measure and type of a property.
 	 * @param {string} sName ID of internal chart measure/dimension
 	 * @param {string} sKind Kind of the property
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
@@ -1858,7 +1858,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the propertyHelper used for the chart delegate.
+	 * Gets the propertyHelper used for the chart delegate.
 	 * @returns {Promise} <code>Promise</code> with the property helper reference
 	 */
 	ChartDelegate.getPropertyHelperClass = function() {
