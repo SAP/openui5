@@ -59,11 +59,23 @@ sap.ui.define([
 		fnAssertNumericContentHasRendered(assert);
 	});
 
-	QUnit.test("Numeric Content Focus.", function (assert) {
+	QUnit.test("Numeric Content Focus.", async function (assert) {
+		function Parameters_getAsync(key, oElement) {
+			return new Promise((resolve) => {
+				const sParameter = Parameters.get({
+					name: key,
+					scopeElement: oElement,
+					callback: resolve
+				});
+				if (sParameter !== undefined) {
+					resolve(sParameter);
+				}
+			});
+		}
 		this.oNumericContent.$().focus();
-		assert.ok(getComputedStyle(this.oNumericContent.$().get(0)).outline.indexOf(Parameters.get("sapUiContentFocusStyle")), "Focus Style applied.");
-		assert.ok(getComputedStyle(this.oNumericContent.$().get(0)).outline.indexOf(Parameters.get("sapUiContentFocusColor")), "Focus Color applied.");
-		assert.ok(getComputedStyle(this.oNumericContent.$().get(0)).outline.indexOf(Parameters.get("sapUiContentFocusWidth")), "Focus Width applied.");
+		assert.ok(getComputedStyle(this.oNumericContent.$().get(0)).outline.indexOf(await Parameters_getAsync("sapUiContentFocusStyle")), "Focus Style applied.");
+		assert.ok(getComputedStyle(this.oNumericContent.$().get(0)).outline.indexOf(await Parameters_getAsync("sapUiContentFocusColor")), "Focus Color applied.");
+		assert.ok(getComputedStyle(this.oNumericContent.$().get(0)).outline.indexOf(await Parameters_getAsync("sapUiContentFocusWidth")), "Focus Width applied.");
 	});
 
 	QUnit.test("Fire Event Not triggered when pressing enter key", async function(assert) {

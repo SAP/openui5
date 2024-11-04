@@ -1,4 +1,4 @@
-sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery", "sap/m/library", "sap/m/ActionSheet", "sap/m/Button", "sap/m/MessageToast", "sap/ui/model/json/JSONModel", "sap/m/NumericContent", "sap/m/TileContent", "sap/m/GenericTile", "sap/m/NewsContent", "sap/m/FeedContent", "sap/suite/ui/microchart/ColumnMicroChart", "sap/suite/ui/microchart/ColumnMicroChartData", "sap/m/Input", "sap/m/Label", "sap/m/Slider", "sap/m/Select", "sap/ui/core/Item", "sap/m/CheckBox", "sap/ui/layout/Grid", "sap/ui/layout/form/SimpleForm", "sap/ui/core/Title", "sap/m/Page", "sap/m/App", "sap/ui/util/Mobile", "sap/base/util/UriParameters"], function(Localization, jQuery, mobileLibrary, ActionSheet, Button, MessageToast, JSONModel, NumericContent, TileContent, GenericTile, NewsContent, FeedContent, ColumnMicroChart, ColumnMicroChartData, Input, Label, Slider, Select, Item, CheckBox, Grid, SimpleForm, Title, Page, App, Mobile, UriParameters) {
+sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery", "sap/m/library", "sap/m/ActionSheet", "sap/m/Button", "sap/m/MessageToast", "sap/ui/model/json/JSONModel", "sap/m/NumericContent", "sap/m/TileContent", "sap/m/GenericTile", "sap/m/NewsContent", "sap/m/FeedContent", "sap/suite/ui/microchart/ColumnMicroChart", "sap/suite/ui/microchart/ColumnMicroChartData", "sap/m/Input", "sap/m/Label", "sap/m/Slider", "sap/m/Select", "sap/ui/core/Item", "sap/m/CheckBox", "sap/ui/layout/Grid", "sap/ui/layout/form/SimpleForm", "sap/ui/core/Title", "sap/m/Page", "sap/m/App", "sap/ui/util/Mobile"], function(Localization, jQuery, mobileLibrary, ActionSheet, Button, MessageToast, JSONModel, NumericContent, TileContent, GenericTile, NewsContent, FeedContent, ColumnMicroChart, ColumnMicroChartData, Input, Label, Slider, Select, Item, CheckBox, Grid, SimpleForm, Title, Page, App, Mobile) {
     "use strict";
 
     // shortcut for sap.m.InputType
@@ -95,11 +95,11 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery", "sap/m/
 
     function setDefaultParameters(oData) {
         var sName;
-        var oUriParameters = UriParameters.fromQuery(window.location.search);
+        var oUriParameters = new URLSearchParams(window.location.search);
 
         for (sName in oData) {
             if (oData.hasOwnProperty(sName) && typeof oData[sName] === 'string') {
-                if (oUriParameters.get(sName) !== null) {
+                if (oUriParameters.has(sName)) {
                     oData[sName] = oUriParameters.get(sName);
                 }
             }
