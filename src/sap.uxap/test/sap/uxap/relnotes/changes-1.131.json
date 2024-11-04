@@ -1,7 +1,12 @@
 {
   "1.131.0": {
-    "date": "October 2024",
+    "date": "November 2024",
     "notes": [
+      {
+        "id": "c153aa5547255d9dbf3c49775d49953ab9da0593",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix scrolling when switching tabs"
+      },
       {
         "id": "6f77ec4a9b159b444a8d183c6041facf809f8c83",
         "type": "FIX",

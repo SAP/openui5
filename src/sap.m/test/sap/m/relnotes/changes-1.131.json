@@ -1,7 +1,72 @@
 {
   "1.131.0": {
-    "date": "October 2024",
+    "date": "November 2024",
     "notes": [
+      {
+        "id": "af171ba7e487cdd35c50eb4086ac0a99f821997e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendarLegend: adjust accessibility semantics"
+      },
+      {
+        "id": "546254262ad6b2f33dc9718b08768bed8f067412",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Fixed active toolbar focus jump"
+      },
+      {
+        "id": "a680ee1a1ca5ae4eed40bc087e0451abac54d019",
+        "type": "FIX",
+        "text": " We now ensure that the video source or the url setting uses the template strings correctly"
+      },
+      {
+        "id": "1e16c6857cab24a72e0c0e68513826d86c6001a3",
+        "type": "FIX",
+        "text": " sap.m.MessageToast: Fix unstable qUnit test"
+      },
+      {
+        "id": "73ac3469398676ad48d916e6019269c6f4a6dc70",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: adjust loading facet list announcement"
+      },
+      {
+        "id": "620b3d88e34370ea0984ae99cf07bbc59a23ed20",
+        "type": "FIX",
+        "text": " We now ensure that the Uploadset illustrated message properties are correctly updated when they are bound with a model"
+      },
+      {
+        "id": "e7b855470515a8c626da0867306ee48481b5e1f0",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Supports Custom header with height bigger than one line"
+      },
+      {
+        "id": "6167c32defef8c18693756fe7532bf1e73f7da57",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: adjust grid cell description"
+      },
+      {
+        "id": "d191deb738e14ebf17543afd6547fa93be0f003a",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: adjust keyboard navigation via TAB"
+      },
+      {
+        "id": "07e9b1f304f29a91e4ca19c2b92e23a59703b1d7",
+        "type": "FIX",
+        "text": " sap.m.Popover: Calling openBy on invisible popover no longer throws an error"
+      },
+      {
+        "id": "8a6fb2e2ded171d7c309ae46ee728bc0d7de2540",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: fixed focus after pressing the Reset button"
+      },
+      {
+        "id": "c928f0c531a32d3d805fe7c2f937d29e7eac1c81",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: remove console error"
+      },
+      {
+        "id": "e79acca3588eada6b91886a3e0aeffa35f705b5a",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: update appointment styling"
+      },
       {
         "id": "cec4d21337c79f7d470755298b456e1f5448fe9c",
         "type": "FIX",

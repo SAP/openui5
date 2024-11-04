@@ -1,7 +1,12 @@
 {
   "1.131.0": {
-    "date": "October 2024",
+    "date": "November 2024",
     "notes": [
+      {
+        "id": "88cb2af48fb277e935984f019384e6364feb00e6",
+        "type": "FIX",
+        "text": " Demo Kit: Correct filtering when both deprecated and experimental are checked"
+      },
       {
         "id": "402b0c223ad4e740f82bb4b082c2ff4673d171b2",
         "type": "FIX",

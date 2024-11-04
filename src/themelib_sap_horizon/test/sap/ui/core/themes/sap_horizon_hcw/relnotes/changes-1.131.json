@@ -1,11 +1,16 @@
 {
   "1.131.0": {
-    "date": "October 2024",
+    "date": "November 2024",
     "notes": [
       {
         "id": "f7e611a81a6d19007eff761a377a1335a2a85600",
         "type": "FIX",
         "text": " sap.m.ObjectStatus: fixed active ObjectStatus focus"
+      },
+      {
+        "id": "1b8d87a29cc201dba3007889b968a7f9efa26500",
+        "type": "FEATURE",
+        "text": " sap.tnt.ToolPage: update visual design for Horizon themes"
       },
       {
         "id": "e207a1344cd90603249653a380a8c6d8104eacd7",

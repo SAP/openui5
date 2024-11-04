@@ -1,0 +1,17 @@
+{
+  "1.131.0": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "b0b6f6fe91329f1c61adb3eb3516032acb392f05",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: remove border when used inside sap.tnt.ToolPage"
+      },
+      {
+        "id": "1b8d87a29cc201dba3007889b968a7f9efa26500",
+        "type": "FEATURE",
+        "text": " sap.tnt.ToolPage: update visual design for Horizon themes"
+      }
+    ]
+  }
+}

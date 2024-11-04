@@ -1,7 +1,12 @@
 {
   "1.131.0": {
-    "date": "October 2024",
+    "date": "November 2024",
     "notes": [
+      {
+        "id": "e7b855470515a8c626da0867306ee48481b5e1f0",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Supports Custom header with height bigger than one line"
+      },
       {
         "id": "889987b58b1cf4868a4be8b054974c17c16ebe76",
         "type": "FEATURE",

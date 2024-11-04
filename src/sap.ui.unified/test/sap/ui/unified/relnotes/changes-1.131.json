@@ -1,7 +1,27 @@
 {
   "1.131.0": {
-    "date": "October 2024",
+    "date": "November 2024",
     "notes": [
+      {
+        "id": "af171ba7e487cdd35c50eb4086ac0a99f821997e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendarLegend: adjust accessibility semantics"
+      },
+      {
+        "id": "141369e21fae1951ccef5045c2243c5981ef31c8",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: prevent unnecessary focusin events"
+      },
+      {
+        "id": "27c6b618c8aa064a418ffd05ecd154325ba54226",
+        "type": "FIX",
+        "text": " sap.ui.unified.RecurrenceNonWorkingPeriod: nonWorkingPeriods shown correctly"
+      },
+      {
+        "id": "e79acca3588eada6b91886a3e0aeffa35f705b5a",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: update appointment styling"
+      },
       {
         "id": "885239806d61a08de6b21b4d214b15fec46e4c95",
         "type": "FIX",
