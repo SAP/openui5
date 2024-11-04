@@ -1791,5 +1791,15 @@
         "text": " sap.m.DynamicDateRange: align current week calculations"
       }
     ]
+  },
+  "1.108.37": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "704b527e488622ac6d5e38f3fd283bab80ea6826",
+        "type": "FIX",
+        "text": " sap.m.MessagePage: Icon ignored from screen readers"
+      }
+    ]
   }
 }

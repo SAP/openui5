@@ -672,5 +672,15 @@
         "text": " sap.m.DynamicDateRange: align current week calculations"
       }
     ]
+  },
+  "1.108.37": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "f6ac68c1b9676216a368cc1d66238eb31c84cd5b",
+        "type": "FIX",
+        "text": " sap/ui/model/analytics/AnalyticalBinding#updateAnalyticalInfo: keep attribute properties in additional select"
+      }
+    ]
   }
 }
