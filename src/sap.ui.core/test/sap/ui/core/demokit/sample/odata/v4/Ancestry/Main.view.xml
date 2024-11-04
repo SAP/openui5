@@ -12,13 +12,13 @@
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" level="H1" text="{header>$count} Ancestors"/>
-				<m:Button icon="sap-icon://excel-attachment" press="onExport"
+				<m:Button icon="sap-icon://excel-attachment" press=".onExport"
 					tooltip="Export To Spreadsheet"/>
 				<m:ToolbarSpacer/>
-				<m:Button icon="sap-icon://refresh" press="onRefresh" tooltip="Refresh"/>
-				<m:Button icon="sap-icon://synchronize" press="onSynchronize"
+				<m:Button icon="sap-icon://refresh" press=".onRefresh" tooltip="Refresh"/>
+				<m:Button icon="sap-icon://synchronize" press=".onSynchronize"
 					tooltip="Synchronize"/>
-				<m:SearchField placeholder="Hobby contains..." search="onFilter"
+				<m:SearchField placeholder="Hobby contains..." search=".onFilter"
 					value="{ui>/sFilter}" width="40%"/>
 			</m:Toolbar>
 		</extension>
@@ -50,7 +50,7 @@
 			</template>
 		</Column>
 		<Column>
-			<m:Button icon="{ui>/sIcon}" iconFirst="false" press="onSort" text="Date Of Birth"/>
+			<m:Button icon="{ui>/sIcon}" iconFirst="false" press=".onSort" text="Date Of Birth"/>
 			<template>
 				<m:Text text="{date_of_birth}" wrapping="false"/>
 			</template>

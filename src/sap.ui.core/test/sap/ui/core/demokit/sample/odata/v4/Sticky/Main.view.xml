@@ -14,14 +14,14 @@
 				<Toolbar>
 				<Title id="Sticky::Title" level="H1" text="Sticky Types"/>
 				<ToolbarSpacer/>
-				<Button enabled="{= !${ui>/bSticky} }" id="prepare" press="onPrepare" text="Edit"
+				<Button enabled="{= !${ui>/bSticky} }" id="prepare" press=".onPrepare" text="Edit"
 					tooltip="Edit selected entry"/>
-				<Button enabled="{= ${ui>/bSticky} }" id="save" press="onSave" text="Save"
+				<Button enabled="{= ${ui>/bSticky} }" id="save" press=".onSave" text="Save"
 					tooltip="Save Changes"/>
-				<Button enabled="{= ${ui>/bSticky} }" id="discard" press="onDiscard" text="Discard"
+				<Button enabled="{= ${ui>/bSticky} }" id="discard" press=".onDiscard" text="Discard"
 					tooltip="Discard Session"/>
 				<Button id="messagesButton" icon="sap-icon://message-popup" tooltip="Show messages"
-					press="onToggleMessagePopover" text="{ui>/iMessages}"
+					press=".onToggleMessagePopover" text="{ui>/iMessages}"
 					type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
 			</Toolbar>
 			</headerToolbar>

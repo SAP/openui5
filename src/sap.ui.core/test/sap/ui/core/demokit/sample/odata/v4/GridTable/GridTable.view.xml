@@ -13,7 +13,8 @@
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" level="H1" text="Employees"/>
 				<m:ToolbarSpacer/>
-				<m:Button icon="sap-icon://synchronize" press="onSynchronize" tooltip="Synchronize"/>
+				<m:Button icon="sap-icon://synchronize" press=".onSynchronize"
+					tooltip="Synchronize"/>
 			</m:Toolbar>
 		</extension>
 		<rowMode>
@@ -34,7 +35,7 @@
 		<Column>
 			<m:Label text="Name"/>
 			<template>
-				<m:Input value="{Name}" change="onNameChanged"/>
+				<m:Input value="{Name}" change=".onNameChanged"/>
 			</template>
 		</Column>
 		<Column>
