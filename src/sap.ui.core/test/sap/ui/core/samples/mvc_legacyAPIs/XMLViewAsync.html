@@ -15,15 +15,15 @@
 			], function(Element, sinon) {
 				"use strict";
 
-				// this test page is not below "resources", but "test-resources"
-				// usually this redirect is NOT needed - but possible if useful
-				sap.ui.loader.config({paths: {"sap/ui/core/mvctest": "../../../../../../test-resources/sap/ui/core/samples/mvc/"}});
+				sap.ui.loader.config({
+					paths: {"sap/ui/core/mvctest": "./"}
+				});
 
 				const _setTimeout = globalThis.setTimeout;
 
 				var sXml;
 				jQuery.ajax({
-					url : "../../../../../../test-resources/sap/ui/core/samples/mvc/views/Async.view.xml",
+					url : "../../../../../../test-resources/sap/ui/core/samples/mvc_legacyAPIs/views/Async.view.xml",
 					success : function(data) {
 						sXml = new XMLSerializer().serializeToString(data);
 					},
@@ -33,7 +33,7 @@
 				var xhr = sinon.useFakeXMLHttpRequest();
 				xhr.useFilters = true;
 				xhr.addFilter(function(method, url) {
-					return url.indexOf("sap/ui/core/samples/mvc/views/Async.view.xml") == -1;
+					return url.indexOf("sap/ui/core/samples/mvc_legacyAPIs/views/Async.view.xml") == -1;
 				});
 				xhr.onCreate = function(request) {
 					request.onSend = function() {
