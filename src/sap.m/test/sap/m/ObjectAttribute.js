@@ -5,6 +5,8 @@ sap.ui.define([
   "sap/m/List",
   "sap/m/ObjectListItem",
   "sap/m/ObjectStatus",
+  "sap/m/ObjectMarker",
+  "sap/m/library",
   "sap/uxap/ObjectPageLayout",
   "sap/uxap/ObjectPageHeader",
   "sap/m/MessageToast",
@@ -13,7 +15,6 @@ sap.ui.define([
   "sap/ui/model/json/JSONModel",
   "sap/m/VBox",
   "sap/m/Table",
-  "sap/m/library",
   "sap/m/Column",
   "sap/m/Text",
   "sap/m/ColumnListItem",
@@ -26,6 +27,8 @@ sap.ui.define([
   List,
   ObjectListItem,
   ObjectStatus,
+  ObjectMarker,
+  mobileLibrary,
   ObjectPageLayout,
   ObjectPageHeader,
   MessageToast,
@@ -34,7 +37,6 @@ sap.ui.define([
   JSONModel,
   VBox,
   Table,
-  mobileLibrary,
   Column,
   Text,
   ColumnListItem,
@@ -48,6 +50,9 @@ sap.ui.define([
 
   // shortcut for sap.m.BackgroundDesign
   const BackgroundDesign = mobileLibrary.BackgroundDesign;
+
+  // shortcut for sap.m.ObjectMarkerType
+  const ObjectMarkerType = mobileLibrary.ObjectMarkerType;
 
   // Note: the HTML page 'ObjectAttribute.html' loads this module via data-sap-ui-on-init
 
@@ -162,8 +167,9 @@ sap.ui.define([
 	  numberUnit: "Euro",
 	  attributes: oAttrs3,
 	  firstStatus: new ObjectStatus({text: "Positive Ñagçyfox", state: "Success", tooltip: "Status tip"}),
-	  showMarkers: true,
-	  markFavorite: true
+	  markers: [
+		  new ObjectMarker({type: ObjectMarkerType.Favorite}),
+	  ]
   });
   oList.addItem(oOli);
 

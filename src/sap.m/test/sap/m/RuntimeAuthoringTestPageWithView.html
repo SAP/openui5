@@ -5,10 +5,18 @@
 
 	<script id="sap-ui-bootstrap"
 			src="../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.dt, sap.ui.rta"
+			data-sap-ui-flexibility-services='[
+				{
+					"connector": "ObjectPathConnector",
+					"path": "./mockdata/FakeLrepConnector.json"
+				},
+				{
+					"connector": "LocalStorageConnector"
+				}
+			]'
+			data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.fl, sap.ui.dt, sap.ui.rta"
 			data-sap-ui-on-init="module:local/RuntimeAuthoringTestPageWithView"
 			data-sap-ui-resource-roots='{
-				"sap.m.test.rta": "./",
 				"local": "./"
 			}'
 	>

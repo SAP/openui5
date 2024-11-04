@@ -84,6 +84,19 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 		}
 	};
 
+	function Parameters_getAsync(key, oElement) {
+		return new Promise((resolve) => {
+			const sParameter = Parameters.get({
+				name: key,
+				scopeElement: oElement,
+				callback: resolve
+			});
+			if (sParameter !== undefined) {
+				resolve(sParameter);
+			}
+		});
+	}
+
 	/*------------------------------------------------------------------------------------*/
 	QUnit.module("Breadcrumbs - API", {
 		beforeEach: function () {
@@ -379,7 +392,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 		}
 	});
 
-	QUnit.test("Breadcrumbs in OverflowToolbar", function (assert) {
+	QUnit.test("Breadcrumbs in OverflowToolbar", async function (assert) {
 		// Arrange
 		this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(4, "Loooooooooooooooooooooooooong current location text");
 		var oOFT = new OverflowToolBar({
@@ -392,12 +405,8 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 
 		// Assert
 		sMinWidth = this.oStandardBreadCrumbsControl.$().css("min-width");
-		assert.ok(parseInt(sMinWidth) > DomUnitsRem.toPx(Parameters.get({
-				name: "_sap_m_Toolbar_ShrinkItem_MinWidth",
-				callback: function(sValue) {
-					return sValue;
-				}
-			})),
+		assert.ok(parseInt(sMinWidth) > DomUnitsRem.toPx(
+			await Parameters_getAsync("_sap_m_Toolbar_ShrinkItem_MinWidth")),
 			"Min-width is bigger than the standart 2.5rem/40px width of OFT's shrikable items");
 		assert.ok(oSpy.calledWith("_minWidthChange"), "Invalidation event is fired for the OFT");
 	});
@@ -442,7 +451,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 		assert.ok(oSpy.calledOnce, "_resetControl is called, when currentLocationText is changed");
 	});
 
-	QUnit.test("Only links", function (assert) {
+	QUnit.test("Only links", async function (assert) {
 		this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(4);
 		helpers.renderObject(this.oStandardBreadCrumbsControl);
 		assert.ok(!this.oStandardBreadCrumbsControl.getCurrentLocation().getDomRef(), "Current location has no dom ref");
@@ -450,7 +459,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 
 		assert.ok($lastSeparator.length, "There is a '/' separator after last link");
 		assert.strictEqual(Math.ceil(parseFloat($lastSeparator.css("fontSize"))),
-			DomUnitsRem.toPx(Parameters.get("sapMFontMediumSize")),
+			DomUnitsRem.toPx(await Parameters_getAsync("sapMFontMediumSize")),
 			"Font-size of the separator is 14px");
 	});
 

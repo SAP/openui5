@@ -24,7 +24,7 @@ sap.ui.define([
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/layout/form/Form",
 	"sap/ui/core/Title",
-	"sap/ui/layout/form/ResponsiveLayout",
+	"sap/ui/layout/form/ResponsiveGridLayout",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
 	"sap/m/Toolbar",
@@ -40,14 +40,11 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/ui/core/ComponentContainer"
-], function(Element, _RuntimeAuthoring, UIComponent, App, Page, Text, Bar, ListBase, CustomListItem, Switch, StandardListItem, InputListItem, VerticalLayout, Label, RadioButton, CheckBox, RatingIndicator, Button, Input, MultiInput, HorizontalLayout, Form, Title, ResponsiveLayout, FormContainer, FormElement, Toolbar, OverflowToolbar, OverflowToolbarLayoutData, mobileLibrary, ScrollContainer, MTitle, Panel, Slider, Grid, Table, Column, ColumnListItem, ComponentContainer) {
+], function(Element, _RuntimeAuthoring, UIComponent, App, Page, Text, Bar, ListBase, CustomListItem, Switch, StandardListItem, InputListItem, VerticalLayout, Label, RadioButton, CheckBox, RatingIndicator, Button, Input, MultiInput, HorizontalLayout, Form, Title, ResponsiveGridLayout, FormContainer, FormElement, Toolbar, OverflowToolbar, OverflowToolbarLayoutData, mobileLibrary, ScrollContainer, MTitle, Panel, Slider, Grid, Table, Column, ColumnListItem, ComponentContainer) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
 	const OverflowToolbarPriority = mobileLibrary.OverflowToolbarPriority;
-
-	// Create the FakeLrep with localStorage
-	undefined/*FakeLrepConnectorLocalStorage*/.enableFakeConnector();
 
 	var MyComponent = UIComponent.extend("MyComponent", {
 		createContent: function () {
@@ -137,7 +134,7 @@ sap.ui.define([
 									title: new Title({text: "Form Title", tooltip: "Title tooltip"}),
 									tooltip: "Form tooltip",
 									editable: true,
-									layout: new ResponsiveLayout(),
+									layout: new ResponsiveGridLayout(),
 									formContainers: [
 										new FormContainer("C1", {
 											title: "contact data",

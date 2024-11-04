@@ -827,12 +827,12 @@ sap.ui.define([
 											  src: "sap-icon://employee-rejections"
 										  }),
 										  new Icon({
-											  blocked: true,
-											  src: "sap-icon://doctor"
+											  src: "sap-icon://doctor",
+											  color: "gray"
 										  }),
 										  new Icon({
-											  blocked: true,
-											  src: "sap-icon://add-employee"
+											  src: "sap-icon://add-employee",
+											  color: "gray"
 										  })
 									  ]
 								  })

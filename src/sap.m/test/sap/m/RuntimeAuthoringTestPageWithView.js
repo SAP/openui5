@@ -23,7 +23,6 @@ sap.ui.define([
   "sap/m/App",
   "sap/m/Page",
   "sap/ui/core/ComponentContainer",
-  "sap/ui/thirdparty/jquery",
   "sap/ui/core/mvc/JSView",
   "sap/ui/core/mvc/Controller"
 ], async function(
@@ -50,23 +49,11 @@ sap.ui.define([
   UIComponent,
   App,
   Page,
-  ComponentContainer,
-  jQuery
+  ComponentContainer
 ) {
   "use strict";
 
   // Create the FakeLrep with localStorage
-  (function _createFakeLrep() {
-	  sap.ui.require(["sap/ui/fl/FakeLrepConnector"], function (FakeLrepConnector) {
-		  if (/[&?](sap-rta-clear-cache-lrep=(true|x)[&#]?)+/i.test(window.location.search)) {
-
-			  jQuery.extend(FakeLrepConnector.prototype, FakeLrepConnectorLocalStorage);
-			  FakeLrepConnector.deleteChanges();
-		  }
-
-		  jQuery.extend(FakeLrepConnector.prototype);
-	  });
-  }());
 
   sap.ui.controller("my.own.controller", {
 	  onInit: function(){

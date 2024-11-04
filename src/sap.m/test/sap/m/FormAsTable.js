@@ -6,7 +6,7 @@ sap.ui.define([
   "sap/m/ColumnListItem",
   "sap/m/Label",
   "sap/m/Input",
-  "sap/m/DateTimeInput",
+  "sap/m/DatePicker",
   "sap/m/Select",
   "sap/ui/core/Item",
   "sap/m/HBox",
@@ -24,7 +24,7 @@ sap.ui.define([
   ColumnListItem,
   Label,
   Input,
-  DateTimeInput,
+  DatePicker,
   Select,
   Item,
   HBox,
@@ -49,7 +49,7 @@ sap.ui.define([
 		  columns : [
 			  new Column({
 				  styleClass : "key",
-				  valign : "Center",
+				  vAlign : "Middle",
 				  width : "35%",
 				  hAlign : "Right"
 			  }),
@@ -87,11 +87,7 @@ sap.ui.define([
 					  new Label({
 						  text : "Birthday"
 					  }),
-					  new DateTimeInput({
-						  displayFormat : "dd-mm-yyyy",
-						  placeholder : "dd-mm-yyyy",
-						  valueFormat : "dd-mm-yyyy"
-					  })
+					  new DatePicker()
 				  ]
 			  }),
 			  new ColumnListItem({
