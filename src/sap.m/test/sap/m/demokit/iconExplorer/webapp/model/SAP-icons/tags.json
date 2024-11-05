@@ -40,7 +40,9 @@
 	},
 	"account": {
 		"tags": [
+			"account",
 			"menu",
+			"person",
 			"settings",
 			"user"
 		]
@@ -404,6 +406,7 @@
 	"along-stacked-chart": {
 		"tags": [
 			"analytics",
+			"bar",
 			"chart",
 			"data",
 			"display"
@@ -638,6 +641,7 @@
 		"tags": [
 			"analytics",
 			"chart",
+			"column",
 			"data",
 			"display"
 		]
@@ -659,10 +663,12 @@
 	},
 	"batch-payments": {
 		"tags": [
+			"bills",
 			"documents",
 			"folder",
 			"money",
-			"open"
+			"open",
+			"payments"
 		]
 	},
 	"bbyd-active-sales": {
@@ -908,10 +914,15 @@
 	"business-objects-experience": {
 		"tags": [
 			"analytics",
+			"bar",
 			"business objects experience",
 			"chart",
+			"column",
+			"combination",
 			"data",
-			"display"
+			"display",
+			"line-chart",
+			"vertical"
 		]
 	},
 	"business-objects-explorer": {
@@ -1494,8 +1505,10 @@
 		"tags": [
 			"aggregate",
 			"arrow",
+			"arrow-right",
 			"arrows-right",
 			"combine",
+			"combine-split",
 			"glue",
 			"interflow",
 			"join",
@@ -1503,6 +1516,7 @@
 			"merge",
 			"runtime adaptation",
 			"runtime authoring",
+			"settings",
 			"together",
 			"ui adaptation",
 			"unite"
@@ -1559,6 +1573,7 @@
 			"comparison",
 			"justice",
 			"law",
+			"legal",
 			"measure",
 			"scale",
 			"weight"
@@ -1571,6 +1586,7 @@
 			"comparison",
 			"justice",
 			"law",
+			"legal",
 			"measure",
 			"scale",
 			"weight"
@@ -1986,6 +2002,7 @@
 			"cancel",
 			"close",
 			"decline",
+			"delete",
 			"reject",
 			"remove",
 			"x"
@@ -2247,9 +2264,18 @@
 	"drop-down-list": {
 		"tags": [
 			"arrow",
+			"drop down",
 			"dropdown",
+			"filter",
+			"group",
 			"list",
-			"megamenu"
+			"megamenu",
+			"settings",
+			"sort",
+			"table",
+			"view",
+			"view settings",
+			"view-settings"
 		]
 	},
 	"dropdown": {
@@ -2581,8 +2607,10 @@
 	},
 	"fallback": {
 		"tags": [
+			"directory",
 			"fallback",
 			"folder",
+			"library",
 			"marked",
 			"object"
 		]
@@ -2597,7 +2625,6 @@
 	"family-protection": {
 		"tags": [
 			"family",
-			"family",
 			"house",
 			"people",
 			"protection",
@@ -2608,7 +2635,10 @@
 		"tags": [
 			"favorite",
 			"favourite",
-			"star"
+			"filled",
+			"full",
+			"star",
+			"starred"
 		]
 	},
 	"favorite-list": {
@@ -2755,7 +2785,9 @@
 	"folder": {
 		"tags": [
 			"details",
-			"folder"
+			"directory",
+			"folder",
+			"library"
 		]
 	},
 	"folder-2": {
@@ -2772,13 +2804,20 @@
 	"folder-blank": {
 		"tags": [
 			"blank",
-			"folder"
+			"directory",
+			"folder",
+			"library"
 		]
 	},
 	"folder-full": {
 		"tags": [
+			"content",
+			"contents",
+			"detail",
+			"directory",
 			"folder",
-			"full"
+			"full",
+			"library"
 		]
 	},
 	"form": {
@@ -2848,6 +2887,19 @@
 			"future",
 			"hereafter",
 			"time"
+		]
+	},
+	"fx": {
+		"tags": [
+			"calculation",
+			"conditions",
+			"effects",
+			"formula",
+			"function",
+			"fx",
+			"letters",
+			"mathematics",
+			"sum"
 		]
 	},
 	"gantt-bars": {
@@ -3552,6 +3604,7 @@
 	"key": {
 		"tags": [
 			"data",
+			"foreign",
 			"important",
 			"key",
 			"lock"
@@ -4033,6 +4086,7 @@
 	},
 	"megamenu": {
 		"tags": [
+			"arrow",
 			"arrow-down",
 			"arrows-down",
 			"down",
@@ -4805,7 +4859,8 @@
 			"analytics",
 			"chart",
 			"data",
-			"display"
+			"display",
+			"kebab"
 		]
 	},
 	"pixelate": {
@@ -5287,11 +5342,13 @@
 	},
 	"s4hana": {
 		"tags": [
+			"HANA",
 			"hana",
 			"product",
 			"product switch",
 			"S/4",
 			"S/4HANA",
+			"s4",
 			"s4hana",
 			"switch"
 		]
@@ -5522,6 +5579,16 @@
 			"show"
 		]
 	},
+	"show-edit": {
+		"tags": [
+			"detail",
+			"find",
+			"form",
+			"look up",
+			"search",
+			"view"
+		]
+	},
 	"signature": {
 		"tags": [
 			"pen",
@@ -5706,8 +5773,10 @@
 			"runtime adaptation",
 			"runtime authoring",
 			"separate",
+			"settings",
 			"split",
-			"ui adaptation"
+			"ui adaptation",
+			"user"
 		]
 	},
 	"status-critical": {
@@ -5935,7 +6004,12 @@
 		"tags": [
 			"cancel",
 			"clear",
+			"error",
+			"message",
+			"message-error",
+			"notification",
 			"remove",
+			"status",
 			"x"
 		]
 	},
@@ -5943,15 +6017,27 @@
 		"tags": [
 			"cancel",
 			"clear",
+			"error",
+			"filled",
+			"message",
+			"message-error",
+			"notification",
 			"remove",
+			"status",
 			"x"
 		]
 	},
 	"sys-enter": {
 		"tags": [
 			"affirmative",
+			"check",
+			"checkmark",
 			"correct",
 			"enter",
+			"message",
+			"positive",
+			"status",
+			"success",
 			"system",
 			"tick"
 		]
@@ -5959,8 +6045,20 @@
 	"sys-enter-2": {
 		"tags": [
 			"affirmative",
+			"available",
+			"check",
+			"checkmark",
 			"correct",
 			"enter",
+			"filled",
+			"me",
+			"message",
+			"notification",
+			"online",
+			"positive",
+			"present",
+			"status",
+			"success",
 			"system",
 			"tick"
 		]
@@ -6005,6 +6103,7 @@
 	"sys-help-2": {
 		"tags": [
 			"circle",
+			"filled",
 			"help",
 			"question",
 			"system"
@@ -6578,7 +6677,13 @@
 	},
 	"unfavorite": {
 		"tags": [
+			"add to favorite",
+			"empty",
+			"no favorite",
+			"not favorite at the moment",
+			"not starred",
 			"remove",
+			"removed",
 			"star",
 			"unfavorite"
 		]
@@ -6601,6 +6706,15 @@
 			"money",
 			"rejected",
 			"unpaid leave"
+		]
+	},
+	"unsynchronize": {
+		"tags": [
+			"arrow",
+			"disconnect",
+			"unsync",
+			"unsynchronize",
+			"x"
 		]
 	},
 	"unwired": {
@@ -6637,9 +6751,11 @@
 		"tags": [
 			"analytics",
 			"chart",
+			"column",
 			"data",
 			"display",
-			"upstacked"
+			"upstacked",
+			"vertical"
 		]
 	},
 	"user-edit": {
@@ -6715,6 +6831,7 @@
 			"analytics",
 			"bar",
 			"chart",
+			"column",
 			"data",
 			"display",
 			"vertical"
@@ -6724,6 +6841,7 @@
 		"tags": [
 			"analytics",
 			"chart",
+			"column",
 			"data",
 			"display",
 			"vertical bar chart"
