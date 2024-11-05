@@ -502,11 +502,22 @@ sap.ui.define([
 				weekNumber: oEvent.getParameter("weekNumber"),
 				weekDays: oWeekDays
 			}),
-			iSelectedWeekMonth = oWeekDays.getStartDate() && oWeekDays.getStartDate().getMonth(),
-			iCurrentMonth = oEvent.getSource().getDate() && oEvent.getSource().getDate().getMonth();
-		var bOtherMonth = iSelectedWeekMonth !== iCurrentMonth;
+			iSelectedWeekMonth = oWeekDays && oWeekDays.getStartDate().getMonth(),
+			iCurrentMonth = oEvent.getSource().getDate() && oEvent.getSource().getDate().getMonth(),
+			aMonth = this.getAggregation("month"),
+			oFirstMonthStartDate = CalendarDate.fromLocalJSDate(aMonth[0].getDate()),
+			oLastMonthEndDate = CalendarDate.fromLocalJSDate(aMonth[aMonth.length - 1].getDate());
 
-		this._focusDate(CalendarDate.fromLocalJSDate(oWeekDays.getStartDate(), this.getPrimaryCalendarType()), bOtherMonth, false, false);
+			oFirstMonthStartDate.setDate(1);
+			oLastMonthEndDate.setDate(1);
+			oLastMonthEndDate.setMonth(oLastMonthEndDate.getMonth() + 1);
+			oLastMonthEndDate.setDate(0);
+
+		var bOtherMonth = aMonth.length >= 2 ?
+			!CalendarUtils._isBetween(CalendarDate.fromLocalJSDate(oEvent.getSource().getDate()), oFirstMonthStartDate, oLastMonthEndDate, true) :
+			iSelectedWeekMonth !== iCurrentMonth;
+
+		oWeekDays && this._focusDate(CalendarDate.fromLocalJSDate(oWeekDays.getStartDate(), this.getPrimaryCalendarType()), bOtherMonth, false, false);
 
 		if (!bExecuteDefault) {
 			oEvent.preventDefault();
