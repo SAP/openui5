@@ -90,7 +90,14 @@ sap.ui.define([
 				/**
 				 * Defines the sub-items contained within this element.
 				 */
-				items: { type: "sap.m.IMenuItem", multiple: true, singularName: "item", bindable: "bindable" }
+				items: { type: "sap.m.IMenuItem", multiple: true, singularName: "item", bindable: "bindable" },
+
+				/**
+				 * Defines the content that is displayed at the end of a menu item. This aggregation allows for the addition of custom elements, such as icons and buttons.
+				 * @experimental
+	 			 * @since 1.131
+				 */
+				endContent: { type: "sap.ui.core.Control", multiple : true }
 
 			},
 			associations : {
@@ -187,6 +194,9 @@ sap.ui.define([
 			if (sAggregationName === 'customData' && oVisualItemId) {
 				oVisualItem = Element.getElementById(oVisualItemId);
 				this._addCustomData(oVisualItem, oObject);
+			} else if (sAggregationName === "endContent" && oVisualItemId){
+				oVisualItem = Element.getElementById(oVisualItemId);
+				this._addEndContent(oVisualItem, oObject);
 			}
 
 			this.fireEvent("aggregationChanged", { aggregationName: sAggregationName, methodName: "add", methodParams: { item: oObject } }, false, true);
@@ -204,6 +214,10 @@ sap.ui.define([
 				oVisualItem = Element.getElementById(oVisualItemId);
 				oVisualItem.insertCustomData(oObject.clone(MenuItem.UNIFIED_MENU_ITEMS_ID_SUFFIX), iIndex);
 				this._observeCustomDataChanges(oObject);
+			} else if (sAggregationName === "endContent" && oVisualItemId) {
+				oVisualItem = Element.getElementById(oVisualItemId);
+				oVisualItem.insertEndContent(oObject.clone(MenuItem.UNIFIED_MENU_ITEMS_ID_SUFFIX), iIndex);
+				this._observeEndContentChanges(oObject);
 			}
 
 			this.fireEvent("aggregationChanged", { aggregationName: sAggregationName, methodName: "insert", methodParams: { item: oObject, index: iIndex }}, false, true);
@@ -222,6 +236,16 @@ sap.ui.define([
 						properties: ["value"]
 					});
 				}
+			} else if (sAggregationName === "endContent") {
+				if (this.getEndContent().length === 1) {
+					this._disconnectAndDestroyEndContentObserver();
+				} else if (vObject && this._oEndContentObserver) {
+					if (!this.getEndContent().length) {
+						this._oEndContentObserver.unobserve(vObject, {
+							aggregations: ["endContent"]
+						});
+					}
+				}
 			}
 
 			this.fireEvent("aggregationChanged", { aggregationName: sAggregationName, methodName: "remove", methodParams: { item: oObject }}, false, true);
@@ -234,6 +258,8 @@ sap.ui.define([
 
 			if (sAggregationName === 'customData') {
 				this._disconnectAndDestroyCustomDataObserver();
+			} else if (sAggregationName === "endContent") {
+				this._disconnectAndDestroyEndContentObserver();
 			}
 
 			this.fireEvent("aggregationChanged", { aggregationName: sAggregationName, methodName: "removeall", methodParams: { items: aObjects }}, false, true);
@@ -244,6 +270,8 @@ sap.ui.define([
 		MenuItem.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
 			if (sAggregationName === 'customData') {
 				this._disconnectAndDestroyCustomDataObserver();
+			} else if (sAggregationName === "endContent") {
+				this._disconnectAndDestroyEndContentObserver();
 			}
 
 			this.fireEvent("aggregationChanged", { aggregationName: sAggregationName, methodName: "destroy"}, false, true);
@@ -315,6 +343,18 @@ sap.ui.define([
 		};
 
 		/**
+		 * Observes the endContent aggregation of the passed menu item
+		 *
+		 * @param {sap.ui.unified.MenuItem} oVisualItem the sap.ui.unified.MenuItem, which aggregation will be observed
+		 * @param {sap.ui.core.Control} oEndContent A control that will be added to the endContent aggregation
+		 * @private
+		 */
+		MenuItem.prototype._addEndContent = function (oVisualItem, oEndContent) {
+			oVisualItem.addEndContent(oEndContent.clone(MenuItem.UNIFIED_MENU_ITEMS_ID_SUFFIX, undefined, { bCloneChildren: false, bCloneBindings: true }));
+			this._observeEndContentChanges(oEndContent);
+		};
+
+		/**
 		 * Observes the value property of the passed menu item
 		 *
 		 * @param {sap.ui.core.CustomData} oCustomData the custom data, which property will be observed
@@ -327,13 +367,35 @@ sap.ui.define([
 		};
 
 		/**
+		 * Observes the endContent aggregation of the passed menu item
+		 *
+		 * @param {sap.ui.core.Control} oEndContent the control that is observed for property changes
+		 * @private
+		 */
+		MenuItem.prototype._observeEndContentChanges = function (oEndContent) {
+			this._getEndContentObserver().observe(oEndContent, {
+				properties: true
+			});
+		};
+
+		/**
+		 * Sets the value property of the inner sap.ui.unified.MenuItem
+		 *
+		 * @param {object} oChanges the changes detected by the ManagedObjectObservers
+		 * @private
+		 */
+		MenuItem.prototype._customDataObserverCallbackFunction = function (oChanges) {
+			Element.getElementById(oChanges.object.getId() + "-" + MenuItem.UNIFIED_MENU_ITEMS_ID_SUFFIX).setValue(oChanges.current);
+		};
+
+		/**
 		 * Sets the value property of the inner sap.ui.unified.MenuItem
 		 *
 		 * @param {object} oChanges the detected from the ManagedObjectObserver changes
 		 * @private
 		 */
-		MenuItem.prototype._customDataObserverCallbackFunction = function (oChanges) {
-			Element.getElementById(oChanges.object.getId() + "-" + MenuItem.UNIFIED_MENU_ITEMS_ID_SUFFIX).setValue(oChanges.current);
+		MenuItem.prototype._endContentObserverCallbackFunction = function (oChanges) {
+			Element.getElementById(oChanges.object.getId() + "-" + MenuItem.UNIFIED_MENU_ITEMS_ID_SUFFIX).setProperty(oChanges.name, oChanges.current);
 		};
 
 		/**
@@ -350,6 +412,19 @@ sap.ui.define([
 		};
 
 		/**
+		 * Returns the ManagedObjectObserver for the end content
+		 *
+		 * @return {sap.ui.base.ManagedObjectObserver} the end content observer object
+		 * @private
+		 */
+		MenuItem.prototype._getEndContentObserver = function () {
+			if (!this._oEndContentObserver) {
+				this._oEndContentObserver = new ManagedObjectObserver(this._endContentObserverCallbackFunction);
+			}
+			return this._oEndContentObserver;
+		};
+
+		/**
 		 * Disconnects and destroys the ManagedObjectObserver observing the menu items
 		 *
 		 * @private
@@ -359,6 +434,19 @@ sap.ui.define([
 				this._oCustomDataObserver.disconnect();
 				this._oCustomDataObserver.destroy();
 				this._oCustomDataObserver = null;
+			}
+		};
+
+		/**
+		 * Disconnects and destroys the ManagedObjectObserver observing the menu items
+		 *
+		 * @private
+		 */
+		MenuItem.prototype._disconnectAndDestroyEndContentObserver = function () {
+			if (this._oEndContentObserver) {
+				this._oEndContentObserver.disconnect();
+				this._oEndContentObserver.destroy();
+				this._oEndContentObserver = null;
 			}
 		};
 

@@ -1,16 +1,5 @@
-var oMockedDate = new Date(2015,0,1,6);
-/*global Date:true */
-Date = class extends Date {
-	constructor(options) {
-		if (options) {
-			super(options);
-		} else {
-			super(oMockedDate);
-		}
-	}
-};
-
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/m/VBox",
@@ -18,10 +7,11 @@ sap.ui.define([
 	"sap/m/DynamicDateRange",
 	"sap/m/DynamicDateUtil",
 	"sap/m/Button",
+	"sap/ui/core/Element",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/library",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/library"
 ], function(
+	Localization,
 	App,
 	Page,
 	VBox,
@@ -29,14 +19,26 @@ sap.ui.define([
 	DynamicDateRange,
 	DynamicDateUtil,
 	Button,
+	Element,
 	UI5Date,
-	coreLibrary,
-	Configuration
+	coreLibrary
 ) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
 	const ValueState = coreLibrary.ValueState;
+
+	var oMockedDate = new Date(2015,0,1,6);
+	/*global Date:true */
+	Date = class extends Date {
+		constructor(options) {
+			if (options) {
+				super(options);
+			} else {
+				super(oMockedDate);
+			}
+		}
+	};
 
 	function handleChange(oEvent) {
 		var oDDR = oEvent.oSource;
@@ -47,6 +49,11 @@ sap.ui.define([
 		} else {
 			oDDR.setValueState(ValueState.Error);
 		}
+	}
+
+	function handleTimezoneButtonPress(e) {
+		Localization.setTimezone(e.getSource().getText());
+		Element.getElementById("DDR5").setValue(null);
 	}
 
 	new App({
@@ -127,8 +134,3 @@ sap.ui.define([
 		]
 	}).placeAt("body");
 });
-
-function handleTimezoneButtonPress(e) {
-	Configuration.setTimezone(e.getSource().getText())/*Not inside AMD call*/;
-	sap.ui.getCore().byId("DDR5")/*Not inside AMD call*/.setValue(null);
-}

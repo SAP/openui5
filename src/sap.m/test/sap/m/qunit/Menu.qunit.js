@@ -1367,6 +1367,83 @@ sap.ui.define([
 		oMenu.destroy();
 	});
 
+	QUnit.module("EndContent accessibility functions", {
+		beforeEach: function () {
+			this.oMenu = new Menu();
+		},
+		afterEach: async function () {
+			this.oMenu.destroy();
+			this.oMenu = null;
+			await nextUIUpdate(this.clock);
+
+		}
+	});
+
+	QUnit.test("EndContent is propagated properly", function (oAssert) {
+		var oItem = new MenuItem(),
+			oUfdItem;
+
+		// Arrange
+		oItem.addEndContent(new Button({
+			icon: "sap-icon://open-folder"
+		}));
+		oUfdItem = this.oMenu._createVisualMenuItemFromItem(oItem);
+
+		// Assert
+		oAssert.strictEqual(oUfdItem.getEndContent()[0].getIcon(), "sap-icon://open-folder", "Button icon is propagated properly to the Unified menu item");
+	});
+
+	QUnit.test("EndContent is propagated properly when binding with binding string", async function (oAssert) {
+		// Arrange
+		var oModel = new JSONModel([{
+				icon : 'sap-icon://open-folder'
+			},{
+				icon : 'sap-icon://open-folder'
+			}]),
+			oMenu = new Menu({
+				id: "menu",
+				items: {
+					path:"myModel>/",
+					template:new MenuItem({
+						text:"test",
+						endContent : [
+							new Button({
+								icon:"{path:'myModel>icon'}"
+							})
+						]
+					})
+				}
+			}),
+			oItemEndContent,
+			oUnfdItemEndContent,
+			oButton = new Button();
+
+		oMenu.setModel(oModel, "myModel");
+
+		oButton.placeAt('qunit-fixture');
+		await nextUIUpdate(this.clock);
+
+		// Act
+		oMenu.openBy(oButton);
+		oItemEndContent = oMenu.getItems()[0].getEndContent()[0];
+		oUnfdItemEndContent = oMenu._getMenu().getItems()[0].getEndContent()[0];
+
+		// Assert
+		oAssert.strictEqual(oUnfdItemEndContent.getIcon(), oItemEndContent.getIcon(), "Source data is propagated property to the target data");
+		oAssert.strictEqual(oItemEndContent.getIcon(), oModel.getData()[0].icon, "Source data is propagated property to the target data");
+
+		// Act
+		oMenu.getItems()[0].getEndContent()[0].setIcon("sap-icon://home");
+
+		// Assert
+		oAssert.strictEqual(oUnfdItemEndContent.getIcon(), oItemEndContent.getIcon(), "Source data is propagated property to the target data");
+		oAssert.strictEqual(oItemEndContent.getIcon(), "sap-icon://home", "Source data is propagated property to the target data");
+
+		// Destroy
+		oButton.destroy();
+		oMenu.destroy();
+	});
+
 	QUnit.module('MenuItem Shortcut', {
 		beforeEach: async function () {
 			this.sut = new Menu({

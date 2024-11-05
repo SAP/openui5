@@ -15,7 +15,7 @@
 	<template:alias name="label" value="AH.label">
 	<VBox>
 		<HBox>
-			<ToggleButton icon="sap-icon://syntax" press="onSourceCode"
+			<ToggleButton icon="sap-icon://syntax" press=".onSourceCode"
 				text="Source Code after Templating"/>
 		</HBox>
 		<Panel expandable="false" visible="{ui>/bCodeVisible}"
@@ -67,7 +67,7 @@
 					<headerToolbar>
 						<Toolbar>
 							<Title text="Entity Sets" titleStyle="H2"/>
-							<ToggleButton text="Sort" press="onSort"/>
+							<ToggleButton text="Sort" press=".onSort"/>
 						</Toolbar>
 					</headerToolbar>
 					<columns>

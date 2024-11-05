@@ -42,7 +42,11 @@ CalendarTimeIntervalRenderer.render = function(oRm, oCal){
 	var mAccProps = {labelledby: {value: "", append: false}}; // render on Month
 	if (oCal._bPoupupMode) {
 		mAccProps["role"] = "dialog";
+	} else {
+		mAccProps["role"] = "group";
+		mAccProps["roledescription"] = rb.getText("CALENDAR_DIALOG");
 	}
+
 	oRm.accessibilityState(oCal, mAccProps);
 
 	if (sTooltip) {

@@ -5,23 +5,29 @@
 
 .sapMObjectMarker {
 	display: inline-block;
+
 	.sapUiIcon {
 		font-size: 1rem;
-		color: @sapUiContentMarkerIconColor;
-		&:before {
+		color: var(--sapContent_MarkerIconColor);
+
+		&::before {
 			vertical-align: middle;
 		}
+
 		&:not([data-sap-ui-icon-content]) {
 			display: none;
 		}
 	}
+
 	.sapMLnk {
 		overflow: visible;
 		padding-bottom: 1px;
 	}
+
 	.sapMText {
-		color: @sapUiContentLabelColor;
+		color: var(--sapContent_LabelColor);
 	}
+
 	&.sapMObjectMarkerIcon.sapMObjectMarkerText .sapUiIcon {
 		margin-right: 0.25rem;
 	}
@@ -29,16 +35,18 @@
 
 .sapUiTableCellInner .sapMObjectMarkerIcon,
 .sapMListTbl .sapMObjectMarkerIcon {
+
 	.sapMText {
-		padding-top: 0; //Icon in table should not be padded
+		padding-top: 0; /* Icon in table should not be padded */
 	}
-	.sapUiIcon:before {
-		vertical-align: inherit;//Icon in table should not be vertically aligned
+
+	.sapUiIcon::before {
+		vertical-align: inherit; /* Icon in table should not be vertically aligned */
 	}
 }
 
 .sapMListTbl .sapMObjectMarker .sapMText {
-	color: @sapUiContentLabelColor;
+	color: var(--sapContent_LabelColor);
 }
 
 .sapMListTbl .sapMObjectMarker {

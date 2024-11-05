@@ -16,11 +16,11 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/ui/core/Theming",
 	"sap/ui/core/Title",
+	"sap/ui/core/TooltipBase",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/Integer",
-	"sap/ui/util/Mobile",
-	"sap/ui/ux3/QuickView"
+	"sap/ui/util/Mobile"
 ], function(
 	App,
 	Button,
@@ -39,11 +39,11 @@ sap.ui.define([
 	Item,
 	Theming,
 	Title,
+	TooltipBase,
 	SimpleForm,
 	JSONModel,
 	Integer,
-	Mobile,
-	QuickView
+	Mobile
 ) {
 	"use strict";
 
@@ -58,6 +58,43 @@ sap.ui.define([
 
 	// shortcut for sap.m.DeviationIndicator
 	var DeviationIndicator = mobileLibrary.DeviationIndicator;
+
+	/*
+	 * a simple Tooltip control, inheriting from TooltipBase
+	 */
+	var MyTooltip = TooltipBase.extend("sap.m.test.MyToolTip", {
+		metadata: {
+			library: "sap.m",
+			aggregations: {
+				content: {
+					multiple: false
+				}
+			}
+		},
+		renderer: {
+			apiVersion: 2,
+			render: function (rm, ctrl) {
+				rm.openStart("div", ctrl)
+					.style("background", "white")
+					.style("border", "1px solid black")
+					.style("padding", "0.5rem")
+					.openEnd();
+
+					rm.openStart("div").openEnd();
+						if (ctrl.getContent()) {
+							rm.renderControl(ctrl.getContent());
+						}
+					rm.close("div");
+
+					rm.openStart("div").openEnd();
+						rm.icon("sap-icon://flag");
+						rm.icon("sap-icon://favorite");
+					rm.close("div");
+
+				rm.close("div");
+			}
+		}
+	});
 
 	function setBackgroundColor(oAnyObject) {
 		var oColors = {
@@ -331,7 +368,7 @@ sap.ui.define([
 		name : "QuickView tooltip",
 		change : function(oEvent) {
 			var bState = oEvent.getParameter("state");
-			oNumericContent.setTooltip(bState ? new QuickView({
+			oNumericContent.setTooltip(bState ? new MyTooltip({
 				content : new MText({
 					text : oTooltipInput.getValue().split("{AltText}")
 							.join(oNumericContent.getAltText())

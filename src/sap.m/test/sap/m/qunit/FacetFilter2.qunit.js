@@ -2501,6 +2501,22 @@ sap.ui.define([
 		oFF.destroy();
 	});
 
+	QUnit.test("FacetFilterItem has content announcement", function(assert) {
+		// arrange
+		var oFFItem1 = new FacetFilterItem({
+			text: "Item 1",
+			key: "item1"
+		}),
+		oFFItem2 = new FacetFilterItem({
+			key: "item2"
+		});
+
+		// act
+		// assert
+		assert.strictEqual(oFFItem1.getContentAnnouncement(), "Item 1 . ", "Content announcement is correct");
+		assert.strictEqual(oFFItem2.getContentAnnouncement(), "", "There is no content announcement");
+	});
+
 	// Helper functions
 
 	var oSCHelper = {

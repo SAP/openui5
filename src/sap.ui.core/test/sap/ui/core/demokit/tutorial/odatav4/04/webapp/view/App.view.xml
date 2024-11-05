@@ -34,9 +34,9 @@
 											press=".onRefresh"/>
 										<Button
 											id="sortUsersButton"
-											press="onSort"
+											icon="sap-icon://sort"
 											tooltip="{i18n>sortButtonText}"
-											icon="sap-icon://sort"/>
+											press=".onSort"/>
 									</content>
 								</OverflowToolbar>
 							</headerToolbar>

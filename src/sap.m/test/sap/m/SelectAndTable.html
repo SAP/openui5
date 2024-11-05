@@ -2,70 +2,70 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
+	<meta charset="utf-8">
 
-  <title>Mobile App with XML View with JSON Data</title>
+	<title>Mobile App with XML View with JSON Data</title>
 
-  <script id="sap-ui-bootstrap"
-          src="../../../resources/sap-ui-core.js"
-          data-sap-ui-libs="sap.m, sap.ui.table"
-          data-sap-ui-on-init="module:local/SelectAndTable"
-          data-sap-ui-resource-roots='{
-          	"local": "./"
-          }'
-  ></script>
+	<script id="sap-ui-bootstrap"
+			src="../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m, sap.ui.table"
+			data-sap-ui-on-init="module:local/SelectAndTable"
+			data-sap-ui-resource-roots='{
+				"local": "./"
+			}'
+	></script>
 
-  <script id="myXml" type="text/xml">
-			<mvc:View
-              xmlns:core="sap.ui.core"
-              xmlns:mvc="sap.ui.core.mvc"
-              controllerName="myController"
-              xmlns="sap.m"
-              xmlns:f="sap.ui.layout.form"
-              xmlns:pa="PA.Controls"
-              xmlns:table="sap.ui.table"
-              height="100%" width="100%"
-            >
-				<App>
-					<Page title="Hello">
+	<script id="myXml" type="text/xml">
+<mvc:View
+  xmlns:core="sap.ui.core"
+  xmlns:mvc="sap.ui.core.mvc"
+  controllerName="myController"
+  xmlns="sap.m"
+  xmlns:f="sap.ui.layout.form"
+  xmlns:pa="PA.Controls"
+  xmlns:table="sap.ui.table"
+  height="100%" width="100%"
+>
+	<App>
+		<Page title="Hello">
 
-						<table:Table id="planningLevel"
-              rows="{/Categories}"
-              selectionMode="MultiToggle"
-              visibleRowCount="7"
-              >
-                <table:columns>
+			<table:Table id="planningLevel"
+			  rows="{/Categories}"
+			  selectionMode="MultiToggle"
+			  visibleRowCount="7"
+			  >
+				<table:columns>
 
-                  <table:Column width="auto">
-                      <Label text="Name" />
-                      <table:template>
-                          <Text text="{Name}"></Text>
-                      </table:template>
-                  </table:Column>
+					<table:Column width="auto">
+						<Label text="Name" />
+						<table:template>
+							<Text text="{Name}"></Text>
+						</table:template>
+					</table:Column>
 
-                  <table:Column width="auto">
-                    <Label text="Name2" />
-                    <table:template>
-                      <Select
-                        forceSelection="false"
-                        resetOnMissingKey="true"
-                        selectedKey="{Category}"
-                        items="{/SelectList}">
+					<table:Column width="auto">
+						<Label text="Name2" />
+						<table:template>
+							<Select
+								forceSelection="false"
+								resetOnMissingKey="true"
+								selectedKey="{Category}"
+								items="{/SelectList}">
 
-                        <core:Item text="{Name}" key="{Name}"/>
+								<core:Item text="{Name}" key="{Name}"/>
 
-                      </Select>
-                    </table:template>
-                  </table:Column>
+							</Select>
+						</table:template>
+					</table:Column>
 
-                </table:columns>
-              </table:Table>
-					</Page>
-				</App>
-			</mvc:View>
-		</script>
+				</table:columns>
+			</table:Table>
+		</Page>
+	</App>
+</mvc:View>
+	</script>
 
-  
+	
 
 </head>
 

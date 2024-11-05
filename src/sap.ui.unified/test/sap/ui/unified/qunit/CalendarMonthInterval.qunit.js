@@ -139,6 +139,25 @@ sap.ui.define([
 		assert.equal(jQuery("#Cal2--MonthsRow-20151101").attr("aria-label"), "November 2015; Type 2", "201511 has special days tooltip");
 	});
 
+	QUnit.test("Month interval root element accessibility semantics", function(assert) {
+		// prepare
+		var oCal = new CalendarMonthInterval(),
+			oCalDomRef;
+
+		oCal.placeAt("qunit-fixture");
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		oCalDomRef = oCal.getDomRef();
+
+		// act
+		// assert
+		assert.strictEqual(oCalDomRef.getAttribute("aria-roledescription"), "Calendar", "aria-roledescription attribute corretly set");
+		assert.strictEqual(oCalDomRef.getAttribute("role"), "group", "role attribute corretly set");
+
+		// clean
+		oCal.destroy();
+	});
+
 	QUnit.module("change date via API", {
 		beforeEach: function () {
 			this.oCal1 = new CalendarMonthInterval("Cal1").placeAt("qunit-fixture");

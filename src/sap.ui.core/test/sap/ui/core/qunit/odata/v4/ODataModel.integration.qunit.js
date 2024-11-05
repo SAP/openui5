@@ -3653,6 +3653,8 @@ sap.ui.define([
 	// BCP: 2070470932: see that sap-client is handled properly
 	// JIRA: CPOUI5ODATAV4-1671: See that dataRequested/dataReceived events are fired for late
 	//   property requests
+	//
+	// See that late properties are also refreshed (JIRA: CPOUI5ODATAV4-2773)
 	QUnit.test("ODCB: late property", function (assert) {
 		var bChange = false,
 			iDataReceived = 0,
@@ -3789,6 +3791,28 @@ sap.ui.define([
 		}).then(function () {
 			assert.strictEqual(iDataRequested, 2);
 			assert.strictEqual(iDataReceived, 2);
+
+			that.expectRequest("SalesOrderList('1')/SO_2_BP?sap-client=123"
+					+ "&$select=Address/City,Address/GeoLocation/Longitude,BusinessPartnerID"
+						+ ",CompanyName", {
+					"@odata.etag" : "etag",
+					Address : {
+						City : "Heidelberg",
+						GeoLocation : {
+							Longitude : "8.72"
+						}
+					},
+					BusinessPartnerID : "2",
+					CompanyName : "SAP"
+				})
+				.expectChange("longitude1", "8.720000000000")
+				.expectChange("longitude2", "8.720000000000")
+				.expectChange("longitude3", "8.720000000000");
+
+			return Promise.all([
+				oFormContext.requestRefresh(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -3962,6 +3986,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: relative ODCB without cache; late property must be added to the parent cache.
 	// BCP: 2080093480
+	//
+	// See that this property is also refreshed (JIRA: CPOUI5ODATAV4-2773)
 	QUnit.test("ODCB w/o cache: late property", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -4016,11 +4042,12 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
-					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,LegalForm)", {
 					SalesOrderID : "1",
 					SO_2_BP : {
 						BusinessPartnerID : "2",
-						CompanyName : "TECUM (refreshed)"
+						CompanyName : "TECUM (refreshed)",
+						LegalForm : "Ltd"
 					}
 				})
 				.expectChange("companyName", "TECUM (refreshed)");
@@ -75194,6 +75221,83 @@ sap.ui.define([
 			"/SalesOrderList('2')",
 			"/SalesOrderList('1')"
 		], [["6"], ["4"], ["3"], ["2"], ["1"]]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: A table has a list of created persisted (previously inactive) items which
+	// completely fills the given viewport. When doing a side-effects refresh, the list is directly
+	// available due to the created items which are kept on client side, but additionally the
+	// refresh request is sent. The table need not wait for the response, therefore no
+	// dataRequested/dataReceived events are fired.
+	// SNOW: DINC0278304
+	QUnit.test("DINC0278304", async function (assert) {
+		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" growing="true" growingThreshold="2" items="{/SalesOrderList}">
+	<Text id="note" text="{Note}"/>
+</Table>`;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=2", {
+				value : []
+			})
+			.expectChange("note", []);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oListBinding = oTable.getBinding("items");
+
+		this.expectChange("note", ["", ""]);
+
+		const oSalesOrder1 = oListBinding.create({}, true, false, /*bInactive*/true);
+		const oSalesOrder2 = oListBinding.create({}, true, false, /*bInactive*/true);
+
+		await this.waitForChanges(assert, "create inactive items");
+
+		this.expectChange("note", ["bar", "foo"])
+			.expectRequest({
+				method : "POST",
+				url : "SalesOrderList",
+				payload : {Note : "foo"}
+			}, {
+				Note : "foo",
+				SalesOrderID : "1"
+			})
+			.expectRequest({
+				method : "POST",
+				url : "SalesOrderList",
+				payload : {Note : "bar"}
+			}, {
+				Note : "bar",
+				SalesOrderID : "2"
+			});
+
+		oSalesOrder1.setProperty("Note", "foo");
+		oSalesOrder2.setProperty("Note", "bar");
+
+		await this.waitForChanges(assert, "persist items");
+
+		oListBinding.attachDataRequested(() => { throw new Error("unexpected dataRequested"); });
+		oListBinding.attachDataReceived(() => { throw new Error("unexpected dataReceived"); });
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+				+ "&$filter=SalesOrderID eq '1' or SalesOrderID eq '2'&$top=2", {
+				value : [
+					{Note : "foo - side effect", SalesOrderID : "1"},
+					{Note : "bar - side effect", SalesOrderID : "2"}
+				]
+			})
+			.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+				+ "&$filter=not (SalesOrderID eq '1' or SalesOrderID eq '2')&$skip=0&$top=2", {
+				value : []
+			})
+			.expectChange("note", ["bar - side effect", "foo - side effect"]);
+
+		await Promise.all([
+			// code under test
+			oListBinding.getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "side-effects refresh")
+		]);
 	});
 
 	//*********************************************************************************************

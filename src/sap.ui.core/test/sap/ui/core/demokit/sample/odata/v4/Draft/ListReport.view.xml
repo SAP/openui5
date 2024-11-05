@@ -12,7 +12,7 @@
 							$$getKeepAliveContext : true,
 							$$patchWithoutSideEffects : true
 						}}"
-				mode="SingleSelectMaster" selectionChange="onProductSelect">
+				mode="SingleSelectMaster" selectionChange=".onProductSelect">
 			<headerToolbar>
 				<Toolbar id="productsToolbar">
 					<Title id="productsTitle" level="H1"
@@ -22,7 +22,7 @@
 						</layoutData>
 					</Title>
 					<Button id="showMessages" icon="sap-icon://message-popup"
-							tooltip="Show messages" press="onToggleMessagePopover"
+							tooltip="Show messages" press=".onToggleMessagePopover"
 							text="{ui>/iMessages} Messages"
 							type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
 					<Link text="Read Me" target="_blank"

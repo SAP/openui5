@@ -86,7 +86,6 @@ sap.ui.define([
 		enableScrolling: true,
 		title:"Mobile Search Field Control",
 		customHeader: new Bar("P1Header", {
-			enableFlexBox: false,
 			contentLeft: [
 				new Button({
 					text : "To Page 2",
@@ -210,7 +209,6 @@ sap.ui.define([
 		title:"Search Field: Page 2",
 		enableScrolling: false,
 		customHeader: new Bar({
-			enableFlexBox: false,
 			contentRight: [
 				new Button({
 					text : "To Page 1",

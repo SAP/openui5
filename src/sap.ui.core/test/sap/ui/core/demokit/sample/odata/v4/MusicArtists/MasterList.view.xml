@@ -19,13 +19,13 @@
 			<headerToolbar>
 				<Toolbar>
 					<ToolbarSpacer/>
-					<Button press="onCreate" text="Create"/>
+					<Button press=".onCreate" text="Create"/>
 					<ToolbarSeparator/>
-					<Button press="onRefresh" text="Refresh"/>
+					<Button press=".onRefresh" text="Refresh"/>
 				</Toolbar>
 			</headerToolbar>
 			<items>
-				<ObjectListItem number="{FoundingYear}" press="onSelect" title="{Name}"
+				<ObjectListItem number="{FoundingYear}" press=".onSelect" title="{Name}"
 					type="Active">
 				<firstStatus>
 					<ObjectStatus state="None"

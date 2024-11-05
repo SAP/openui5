@@ -29,9 +29,9 @@
 				</layoutData>
 			</Input>
 			<Button icon="sap-icon://refresh"
-				press="onRefreshFavoriteProduct" tooltip="Refresh favorite product"/>
+				press=".onRefreshFavoriteProduct" tooltip="Refresh favorite product"/>
 			<Button enabled="false" icon="sap-icon://hello-world"
-				press="onUpdateFavoriteProduct" tooltip="Update with current time as HH:mm"/>
+				press=".onUpdateFavoriteProduct" tooltip="Update with current time as HH:mm"/>
 			<Button enabled="{ui>/bRealOData}" icon="sap-icon://message-error"
 				press="produceTechnicalError" tooltip="Provoke read error"/>
 			<ToolbarSpacer/>
@@ -47,22 +47,22 @@
 				</layoutData>
 			</Input>
 			<Button ariaDescribedBy="favoriteProductId::Label" icon="sap-icon://accept"
-				id="setBindingContext" press="onSetBindingContext"
+				id="setBindingContext" press=".onSetBindingContext"
 				tooltip="Get favorite product ID"/>
 			<ToolbarSpacer/>
-			<Button press="onRefreshAll" id="refreshAll" text="Refresh All"/>
+			<Button press=".onRefreshAll" id="refreshAll" text="Refresh All"/>
 			<Button enabled="false"
 				icon="{:= ${ui>/bRealOData} ? 'sap-icon://building' : 'sap-icon://record' }"
 				tooltip="{:= ${ui>/bRealOData} ? 'Real OData Service' : 'Mock OData Service' }"
 				type="Transparent"/>
 			<Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show Messages"
-				press="onToggleMessagePopover" text="{ui>/iMessages}"
+				press=".onToggleMessagePopover" text="{ui>/iMessages}"
 				type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
 			<dependents>
 				<Dialog id="createSalesOrderDialog" title="Create Sales Order">
 					<buttons>
 						<Button id="confirmCreateSalesOrder" text="OK"
-							press="onCloseSalesOrderDialog" type="Accept"/>
+							press=".onCloseSalesOrderDialog" type="Accept"/>
 					</buttons>
 					<form:SimpleForm ariaLabelledBy="createSalesOrderDialog" editable="true"
 						layout="ResponsiveGridLayout">
@@ -87,17 +87,17 @@
 							id="CurrencyCode::new" value="{CurrencyCode}"/>
 					</form:SimpleForm>
 				</Dialog>
-				<Dialog id="onStrictMessagesDialog"
+				<Dialog id="strictMessagesDialog"
 						title="Messages during order confirmation, do you want to continue?"
 						resizable="true" contentHeight="50%" contentWidth="50%"
 						verticalScrolling="false" state="Warning">
 					<buttons>
 						<Button id="confirmStrictMode" text="Yes"
 								tooltip="Ignore warnings and confirm anyhow"
-							press="onConfirmStrictMessages"/>
+							press=".onConfirmStrictMessages"/>
 						<Button id="cancelStrictMode" text="No"
 								tooltip="Cancel confirmation"
-							press="onCancelStrictMessages" type="Emphasized"/>
+							press=".onCancelStrictMessages" type="Emphasized"/>
 					</buttons>
 					<MessageView items="{ui>/aStrictMessages}">
 						<MessageItem
@@ -129,7 +129,7 @@
 					}
 				}"
 			mode="{= ${ui>/bCreateItemPending} ? 'None' : 'SingleSelectMaster' }"
-			selectionChange="onSalesOrdersSelect">
+			selectionChange=".onSalesOrdersSelect">
 			<dependents>
 				<plugins:DataStateIndicator/>
 			</dependents>
@@ -142,19 +142,19 @@
 						</layoutData>
 					</Title>
 					<Button enabled="{!${ui>/bCreateItemPending}"
-						icon="sap-icon://add" id="createSalesOrder" press="onCreateSalesOrder"
+						icon="sap-icon://add" id="createSalesOrder" press=".onCreateSalesOrder"
 						tooltip="Create sales order"/>
 					<Button
 						enabled="{= ${ui>/bSalesOrderSelected} }"
 						icon="sap-icon://delete"
-						id="deleteSalesOrder" press="onDeleteSalesOrder"
+						id="deleteSalesOrder" press=".onDeleteSalesOrder"
 						tooltip="Delete selected sales order"/>
 					<Button
 						enabled="{= ${ui>/bSalesOrderSelected}
 							&amp;&amp; !${ui>/bSelectedSalesOrderTransient}
 							&amp;&amp; !${ui>/bCreateItemPending} }"
 						icon="sap-icon://synchronize"
-						id="refreshSelectedSalesOrder" press="onRefreshSelectedSalesOrder"
+						id="refreshSelectedSalesOrder" press=".onRefreshSelectedSalesOrder"
 						tooltip="Refresh selected sales order"/>
 					<Button
 						enabled="{= ${ui>/bSalesOrderSelected}
@@ -162,12 +162,12 @@
 							&amp;&amp; !${ui>/bCreateItemPending} }"
 						id="confirmSalesOrder"
 						icon="sap-icon://accept"
-						press="onConfirmSalesOrder" tooltip="Confirm selected sales order"/>
+						press=".onConfirmSalesOrder" tooltip="Confirm selected sales order"/>
 					<Button
 						enabled="{= ${ui>/bSalesOrderSelected}
 							&amp;&amp; !${ui>/bSelectedSalesOrderTransient} }"
 						id="cancelSelectedSalesOrderChanges" icon="sap-icon://reset"
-						press="onCancelSelectedSalesOrderChanges"
+						press=".onCancelSelectedSalesOrderChanges"
 						tooltip="Reset changes for selected sales order"/>
 					<Button
 							enabled="{= ${ui>/bSalesOrderSelected}
@@ -175,18 +175,18 @@
 								&amp;&amp; !${ui>/bCreateItemPending} }"
 							id="openSimulateDiscountDialog"
 							icon="sap-icon://simulate"
-							press="onOpenSimulateDiscountDialog"
+							press=".onOpenSimulateDiscountDialog"
 							tooltip="Simulate discount for selected sales order">
 						<dependents>
 							<Dialog id="SimulateDiscountDialog" title="Simulate Discount">
 								<buttons>
 									<Button icon="sap-icon://simulate" text="Simulate"
 										id="invokeSimulateDiscount"
-										press="onInvokeSimulateDiscount" type="Accept"
+										press=".onInvokeSimulateDiscount" type="Accept"
 										tooltip="Invoke discount simulation"/>
 									<Button id="closeSimulateDiscountDialog"
 										icon="sap-icon://sys-cancel-2" text="Close"
-										press="onCloseSimulateDiscountDialog"/>
+										press=".onCloseSimulateDiscountDialog"/>
 								</buttons>
 								<form:SimpleForm ariaLabelledBy="SimulateDiscountDialog"
 										id="SimulateDiscountForm" layout="ResponsiveGridLayout"
@@ -220,21 +220,21 @@
 					</Button>
 					<ToolbarSeparator/>
 					<Button icon="sap-icon://refresh" id="refreshSalesOrders"
-						press="onRefreshSalesOrdersList" tooltip="Refresh sales orders"/>
+						press=".onRefreshSalesOrdersList" tooltip="Refresh sales orders"/>
 					<Button icon="sap-icon://save" id="saveSalesOrders"
-						press="onSaveSalesOrderList" tooltip="Save sales orders"/>
+						press=".onSaveSalesOrderList" tooltip="Save sales orders"/>
 					<Button id="cancelSalesOrderListChanges" icon="sap-icon://sys-cancel-2"
-						press="onCancelSalesOrderListChanges"
+						press=".onCancelSalesOrderListChanges"
 						tooltip="Cancel sales order list changes"/>
 					<Button enabled="{= ${ui>/bSalesOrderDeleted} }"
-						id="undoSalesOrderDeletion" press="onUndoSalesOrderDeletion"
+						id="undoSalesOrderDeletion" press=".onUndoSalesOrderDeletion"
 							icon="sap-icon://undo" tooltip="Undo sales order deletion"/>
 					<ToolbarSpacer/>
 					<SearchField id="filterGrossAmount"
 						placeholder="Filter by gross amount greater than"
 						value="{path : 'ui>/filterValue', type : 'sap.ui.model.odata.type.Decimal',
 							constraints : {precision : 15, scale : 2, nullable : false}}"
-						visible="{ui>/bRealOData}" width="50%" search="onFilter">
+						visible="{ui>/bRealOData}" width="50%" search=".onFilter">
 						<layoutData>
 							<ToolbarLayoutData shrinkable="false"/>
 						</layoutData>
@@ -245,7 +245,7 @@
 				<Column hAlign="Right" width="9em">
 					<Button enabled="{ui>/bRealOData}" id="sortBySalesOrderId"
 						icon="{ui>/sSortSalesOrderIDIcon}" iconFirst="false"
-						press="onSortBySalesOrderID" text="Sales Order ID"/>
+						press=".onSortBySalesOrderID" text="Sales Order ID"/>
 				</Column>
 				<Column width="8em">
 					<Text text="Buyer Name"/>
@@ -253,7 +253,7 @@
 				<Column hAlign="Right" width="8em">
 					<Button enabled="{ui>/bRealOData}" id="sortByGrossAmount"
 						icon="{ui>/sSortGrossAmountIcon}" iconFirst="false"
-						press="onSortByGrossAmount" text="Gross Amount"/>
+						press=".onSortByGrossAmount" text="Gross Amount"/>
 				</Column>
 				<Column width="5em">
 					<Text text="Currency"/>
@@ -297,13 +297,13 @@
 					<Toolbar design="Transparent">
 						<Title id="objectPageTitle" text="Sales Order Details" level="H2"/>
 						<!--Button icon="sap-icon://refresh"
-							press="onRefreshSalesOrderDetails"/-->
+							press=".onRefreshSalesOrderDetails"/-->
 						<Button icon="sap-icon://calendar" id="showSalesOrderSchedules"
-							press="onSalesOrderSchedules" tooltip="Show sales order schedules"/>
-						<Button icon="sap-icon://save" id="saveSalesOrder" press="onSaveSalesOrder"
+							press=".onSalesOrderSchedules" tooltip="Show sales order schedules"/>
+						<Button icon="sap-icon://save" id="saveSalesOrder" press=".onSaveSalesOrder"
 							tooltip="Save sales order"/>
 						<Button id="cancelSalesOrderChanges" icon="sap-icon://sys-cancel-2"
-							press="onCancelSalesOrderChanges"
+							press=".onCancelSalesOrderChanges"
 							tooltip="Cancel sales order changes"/>
 						<dependents>
 							<Dialog class="sapUiSizeCompact"
@@ -317,20 +317,20 @@
 									</Title>
 									<Button enabled="{ui>/bScheduleSelected}"
 										id="deleteSalesOrderSchedules"
-										icon="sap-icon://delete" press="onDeleteSalesOrderSchedules"
+										icon="sap-icon://delete" press=".onDeleteSalesOrderSchedules"
 										tooltip="Delete selected sales order schedules"/>
 								</Toolbar>
 								<buttons>
 									<Button icon="sap-icon://sys-cancel-2"
 										id="closeSalesOrderSchedules"
-										press="onCloseSalesOrderSchedules" text="Close"
+										press=".onCloseSalesOrderSchedules" text="Close"
 										tooltip="Close Dialog"/>
 								</buttons>
 								<Table id="SO_2_SCHDL" items="{path : 'SO_2_SCHDL',
 											parameters : {$$ownRequest : true}}"
 										mode="MultiSelect"
 										rememberSelections="false"
-										selectionChange="onSalesOrderScheduleSelect">
+										selectionChange=".onSalesOrderScheduleSelect">
 									<columns>
 										<Column>
 											<Text text="Schedule Key"/>
@@ -364,14 +364,14 @@
 				<Toolbar design="Transparent" id="SO_2_BP::detail" binding="{SO_2_BP}">
 					<Title text="Business Partner" level="H2"/>
 					<Button enabled="{:= !${ui>/bRealOData} }" icon="sap-icon://delete"
-						id="deleteBusinessPartner" press="onDeleteBusinessPartner"
+						id="deleteBusinessPartner" press=".onDeleteBusinessPartner"
 						tooltip="Delete business partner"/>
 				</Toolbar>
 				<Label text="Business Partner ID"/>
 				<Input value="{SO_2_BP/BusinessPartnerID}" editable="false"/>
 				<Label text="Company Name"/>
 				<Input id="CompanyName::detail" value="{SO_2_BP/CompanyName}"
-					change="onCompanyNameChanged"/>
+					change=".onCompanyNameChanged"/>
 				<Label text="Phone Number"/>
 				<Input id="PhoneNumber::detail" value="{SO_2_BP/PhoneNumber}"/>
 				<Label text="City"/>
@@ -413,7 +413,7 @@
 						},
 						path : 'SO_2_SOITEM'
 					}" mode="SingleSelectMaster"
-				selectionChange="onSalesOrderLineItemSelect">
+				selectionChange=".onSalesOrderLineItemSelect">
 				<dependents>
 					<plugins:DataStateIndicator/>
 				</dependents>
@@ -423,19 +423,19 @@
 							text="{headerContext>$count} Sales Order Line Items"
 							level="H2"/>
 						<Button icon="sap-icon://add" id="createSalesOrderLineItem"
-							press="onCreateSalesOrderLineItem"
+							press=".onCreateSalesOrderLineItem"
 							tooltip="Create sales order line item"/>
 						<Button
 							enabled="{ui>/bLineItemSelected}" icon="sap-icon://delete"
-							id="deleteSalesOrderLineItem" press="onDeleteSalesOrderLineItem"
+							id="deleteSalesOrderLineItem" press=".onDeleteSalesOrderLineItem"
 							tooltip="Delete sales order line item"/>
 						<ToolbarSpacer/>
 						<Button enabled="{ui>/bRealOData}" icon="sap-icon://trend-up"
 							id="increaseSalesOrderItemsQuantity"
-							press="onIncreaseSalesOrderItemsQuantity"
+							press=".onIncreaseSalesOrderItemsQuantity"
 							tooltip="Increase all sales order items' quantities by 1"/>
 						<Label labelFor="itemFilter" text="Filter"/>
-						<Select change="onFilterMessages" id="itemFilter"
+						<Select change=".onFilterMessages" id="itemFilter"
 							items="{ui>/itemFilter}" selectedKey="Show all">
 							<core:ListItem icon="{ui>icon}" key="{ui>type}" text="{ui>text}"/>
 						</Select>
@@ -443,7 +443,7 @@
 							enabled="{ui>/bRealOData}"
 							placeholder="Filter by ProductID"
 							value="{ui>/filterProductID}"
-							width="50%" search="onFilterItems"/>
+							width="50%" search=".onFilterItems"/>
 					</Toolbar>
 				</headerToolbar>
 				<columns>
@@ -488,7 +488,7 @@
 					<Text text="{SalesOrderID}"/>
 					<Text text="{ItemPosition}"/>
 					<demo:ValueHelp id="SO_2_SOITEM:ProductID" value="{ProductID}"
-						selectionChanged="onProductIDChanged" qualifier="additional"/>
+						selectionChanged=".onProductIDChanged" qualifier="additional"/>
 					<Text id="SOITEM_2_PRODUCT:Name" text="{SOITEM_2_PRODUCT/Name}"/>
 					<demo:ValueHelp id="SOITEM_2_PRODUCT:Category"
 						value="{SOITEM_2_PRODUCT/Category}" enabled="{= %{ItemPosition} !== '' }"/>
