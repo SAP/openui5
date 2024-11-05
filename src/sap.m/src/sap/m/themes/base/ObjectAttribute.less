@@ -8,7 +8,7 @@
 .sapMObjectAttributeDiv .sapMObjectAttributeColon,
 .sapMObjectAttributeDiv .sapMObjectAttributeText {
 	font-size: .875rem;
-	color: @sapUiContentLabelColor;
+	color: var(--sapContent_LabelColor);
 }
 
 .sapMObjectAttributeDiv .sapMText {
@@ -17,6 +17,7 @@
 
 .sapMObjectAttributeActive {
 	pointer-events: none;
+
 	.sapMObjectAttributeColon {
 		vertical-align: top;
 	}
@@ -25,7 +26,7 @@
 .sapMListTbl .sapMObjectAttributeActive .sapMText,
 .sapMObjectAttributeActive .sapMText,
 .sapMObjectAttributeActive .sapMObjectAttributeText {
-	color: @sapUiLink;
+	color: var(--sapLinkColor);
 	cursor: pointer;
 	pointer-events: auto;
 }
@@ -52,9 +53,10 @@
 	text-overflow: ellipsis;
 }
 
-.sapMObjectAttributeActive{
+.sapMObjectAttributeActive {
 	white-space: normal;
 	word-break: break-word;
+
 	.sapMObjectAttributeTitle,
 	.sapMObjectAttributeText {
 		white-space: normal;
@@ -76,13 +78,13 @@
 	vertical-align: top;
 }
 
-.sapMObjectAttributeDiv{
+.sapMObjectAttributeDiv {
 	font-size: @sapMFontMediumSize;
 }
 
 .sapMLIBActive .sapMObjectAttributeText,
-.sapMLIBActive .sapMObjectAttributeDiv{
-	color: @sapUiListActiveTextColor;
+.sapMLIBActive .sapMObjectAttributeDiv {
+	color: var(--sapList_Active_TextColor);
 }
 
 .sapMObjectAttributeActive > span:only-of-type {
@@ -96,10 +98,10 @@
 .sapMOHR .sapMOHRAttr .sapMObjectAttributeTitle,
 .sapMOHR .sapMOHRAttr .sapMObjectAttributeText {
 	display: inline-block;
-	font-family: @sapUiFontFamily;
+	font-family: var(--sapFontFamily);
 	font-size: @sapMFontMediumSize;
 	font-weight: normal;
-	color: @sapUiContentLabelColor;
+	color: var(--sapContent_LabelColor);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -119,10 +121,10 @@
 
 .sapMOHR .sapMOHRAttr .sapMObjectAttributeColon {
 	display: inline-block;
-	font-family: @sapUiFontFamily;
+	font-family: var(--sapFontFamily);
 	font-size: @sapMFontMediumSize;
 	font-weight: normal;
-	color: @sapUiContentLabelColor;
+	color: var(--sapContent_LabelColor);
 	white-space: pre;
 	margin-left: -0.5rem;
 	overflow: auto;
@@ -130,7 +132,7 @@
 }
 
 .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText {
-	color: @sapLinkColor;
+	color: var(--sapLinkColor);
 	cursor: pointer;
 }
 
@@ -159,14 +161,14 @@
 .sapMOH .sapMOHAttr .sapMObjectAttributeTitle,
 .sapMOH .sapMOHAttr .sapMObjectAttributeText,
 .sapMOH .sapMOHAttr .sapMObjectAttributeColon {
-	font-family: @sapUiFontFamily;
+	font-family: var(--sapFontFamily);
 	font-size: @sapMFontMediumSize;
 	font-weight: normal;
-	color: @sapUiContentLabelColor;
+	color: var(--sapContent_LabelColor);
 }
 
 .sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText {
-	color: @sapLinkColor;
+	color: var(--sapLinkColor);
 	cursor: pointer;
 }
 

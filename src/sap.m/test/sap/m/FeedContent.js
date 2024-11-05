@@ -13,12 +13,11 @@ sap.ui.define([
 	"sap/m/TextArea",
 	"sap/ui/core/Item",
 	"sap/ui/core/Title",
+	"sap/ui/core/TooltipBase",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/Integer",
-	"sap/ui/util/Mobile",
-	"sap/ui/ux3/QuickView",
-	"sap/ui/base/ManagedObject"
+	"sap/ui/util/Mobile"
 ], function(
 	App,
 	FeedContent,
@@ -34,12 +33,11 @@ sap.ui.define([
 	TextArea,
 	Item,
 	Title,
+	TooltipBase,
 	SimpleForm,
 	JSONModel,
 	Integer,
-	Mobile,
-	QuickView,
-	ManagedObject
+	Mobile
 ) {
 	"use strict";
 
@@ -48,6 +46,43 @@ sap.ui.define([
 
 	// shortcut for sap.m.ValueColor
 	var ValueColor = mobileLibrary.ValueColor;
+
+	/*
+	 * a simple Tooltip control, inheriting from TooltipBase
+	 */
+	var MyTooltip = TooltipBase.extend("sap.m.test.MyToolTip", {
+		metadata: {
+			library: "sap.m",
+			aggregations: {
+				content: {
+					multiple: false
+				}
+			}
+		},
+		renderer: {
+			apiVersion: 2,
+			render: function (rm, ctrl) {
+				rm.openStart("div", ctrl)
+					.style("background", "white")
+					.style("border", "1px solid black")
+					.style("padding", "0.5rem")
+					.openEnd();
+
+					rm.openStart("div").openEnd();
+						if (ctrl.getContent()) {
+							rm.renderControl(ctrl.getContent());
+						}
+					rm.close("div");
+
+					rm.openStart("div").openEnd();
+						rm.icon("sap-icon://flag");
+						rm.icon("sap-icon://favorite");
+					rm.close("div");
+
+				rm.close("div");
+			}
+		}
+	});
 
 	function setBackgroundColor(oAnyObject) {
 		var oColors = {
@@ -81,7 +116,6 @@ sap.ui.define([
 	};
 
 	var oConfModel = new JSONModel(oConfData);
-	ManagedObject.setModel(oConfModel);
 
 	var fnPress = function(oEvent) {
 		MessageToast.show("The feed content is pressed.");
@@ -159,7 +193,7 @@ sap.ui.define([
 		name : "QuickView tooltip",
 		change : function(oEvent) {
 			var bState = oEvent.getParameter("state");
-			oFeedContent.setTooltip(bState ? new QuickView({
+			oFeedContent.setTooltip(bState ? new MyTooltip({
 				content : new MText({
 					text : oTooltipInput.getValue().split("{AltText}").join(oFeedContent.getAltText())
 				})
@@ -250,7 +284,8 @@ sap.ui.define([
 
 	//create a mobile App embedding the page and place the App into the HTML document
 	new App("myApp", {
-		pages : [oPage]
+		pages : [oPage],
+		models: oConfModel
 	}).placeAt("content");
 	setBackgroundColor(oPage);
 });

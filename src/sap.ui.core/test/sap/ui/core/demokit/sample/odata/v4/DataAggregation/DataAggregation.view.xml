@@ -18,11 +18,11 @@
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" level="H1" text="Sales Amount by Account Responsible"/>
 				<m:ToolbarSpacer/>
-				<m:SearchField id="search" placeholder="Search for anything..." search="onSearch"
+				<m:SearchField id="search" placeholder="Search for anything..." search=".onSearch"
 					value="{ui>/sSearch}" width="40%"/>
-				<m:Button icon="sap-icon://download" press="onDownload" tooltip="Download"/>
+				<m:Button icon="sap-icon://download" press=".onDownload" tooltip="Download"/>
 				<m:Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
-					press="onToggleMessagePopover" text="{ui>/iMessages}"
+					press=".onToggleMessagePopover" text="{ui>/iMessages}"
 					type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
 			</m:Toolbar>
 		</extension>

@@ -47,7 +47,6 @@ TimesRowRenderer.render = function(oRm, oTimesRow){
 	var oDate = oTimesRow._getStartDate();
 	var sTooltip = oTimesRow.getTooltip_AsString();
 	var sId = oTimesRow.getId();
-	var oAriaLabel = {value: sId + "-Descr", append: true};
 
 	oRm.openStart("div", oTimesRow);
 	oRm.class("sapUiCalTimesRow");
@@ -57,23 +56,12 @@ TimesRowRenderer.render = function(oRm, oTimesRow){
 		oRm.attr("title", sTooltip);
 	}
 
-	if (oTimesRow._getShowHeader()) {
-		oAriaLabel.value = oAriaLabel.value + " " + sId + "-Head";
-	}
-
 	oRm.accessibilityState(oTimesRow, {
 		role: "grid",
 		readonly: "true",
 		multiselectable: !oTimesRow.getSingleSelection() || oTimesRow.getIntervalSelection(),
-		labelledby: oAriaLabel
+		labelledby: oTimesRow._getShowHeader() ? {value: sId + "-Head", append: true} : undefined
 	});
-
-	oRm.openEnd(); // div element
-	oRm.openStart("span", sId + "-Descr");
-	oRm.style("display", "none");
-	oRm.openEnd();
-	oRm.text(oTimesRow._rb.getText("CALENDAR_DIALOG"));
-	oRm.close("span");
 
 	if (oTimesRow.getIntervalSelection()) {
 		oRm.openStart("span", sId + "-Start");

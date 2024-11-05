@@ -30,17 +30,17 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	font-family: @sapUiFontFamily;
-	color: @sapUiContentLabelColor;
+	font-family: var(--sapFontFamily);
+	color: var(--sapContent_LabelColor);
 	font-size: @sapMFontMediumSize;
-	padding-bottom: .75rem;
+	padding-bottom: 0.75rem;
 }
 
 .sapMText.sapMObjLTitle {
 	vertical-align: top;
 	word-break: break-word;
-	color: @sapUiGroupTitleTextColor;
-	font-size: @sapMFontHeader4Size;
+	color: var(--sapGroup_TitleTextColor);
+	font-size: var(--sapFontHeader4Size);
 	font-weight: @sapUiFontHeaderWeight;
 	line-height: 1.5rem;
 }
@@ -56,8 +56,6 @@ html .sapUiContainer-Narrow .sapMText.sapMObjLTitle {
 .sapMOHTitle:not(.sapMOHRTitleNoWordBreak) > .sapMText {
 	/* to break all words even browser does not know the width */
 	word-break: break-word;
-	-webkit-hyphens: auto;
-	-moz-hyphens: auto;
 	hyphens: auto;
 }
 
@@ -71,11 +69,11 @@ html .sapUiContainer-Narrow .sapMText.sapMObjLTitle {
 }
 
 .sapMObjLNumberDiv .sapMObjectNumber.sapMObjectNumberStatusNone {
-	color: @sapUiGroupTitleTextColor;
+	color: var(--sapGroup_TitleTextColor);
 }
 
 .sapMObjLNumberDiv .sapMObjectNumber .sapMObjectNumberText {
-	font-family: @sapUiFontHeaderFamily;
+	font-family: var(--sapFontHeaderFamily);
 	font-size: 1.375rem;
 	line-height: 1.375rem;
 	font-weight: @sapUiFontHeaderWeight;
@@ -88,11 +86,11 @@ html .sapUiContainer-Narrow .sapMText.sapMObjLTitle {
 }
 
 .sapMObjLBottomRow {
-	margin-top: .25rem;
+	margin-top: 0.25rem;
 }
 
 .sapMObjLAttrRow {
-	padding-top: .313rem;
+	padding-top: 0.313rem;
 }
 
 .sapMObjLAttrDiv {
@@ -112,7 +110,9 @@ html[dir=rtl] .sapMObjLAttrDiv {
 	white-space: nowrap;
 	overflow: hidden;
 	width: 100%;
+
 	&.sapMObjectAttributeActive {
+
 		.sapMObjectAttributeTitle,
 		.sapMObjectAttributeText {
 			text-overflow: ellipsis;
@@ -120,7 +120,9 @@ html[dir=rtl] .sapMObjLAttrDiv {
 			overflow: hidden;
 			max-width: 50%;
 		}
+
 		&.sapMObjectAttributeTextOnly {
+
 			.sapMObjectAttributeTitle,
 			.sapMObjectAttributeText {
 				max-width: 100%;
@@ -131,8 +133,8 @@ html[dir=rtl] .sapMObjLAttrDiv {
 }
 
 /* First and second attributes get one line with ellipsis */
-.sapMObjLAttrRow:nth-child(1)>.sapMObjLAttrDiv .sapMObjectAttributeDiv,
-.sapMObjLAttrRow:nth-child(2)>.sapMObjLAttrDiv .sapMObjectAttributeDiv{
+.sapMObjLAttrRow:nth-child(1) > .sapMObjLAttrDiv .sapMObjectAttributeDiv,
+.sapMObjLAttrRow:nth-child(2) > .sapMObjLAttrDiv .sapMObjectAttributeDiv {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -163,12 +165,13 @@ html[dir=rtl] .sapMObjLStatusDiv {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	width: 100%;
+
 	.sapMObjStatusText {
 		word-break: normal;
 	}
 }
 
-// invertedStatus in ObjectListItem
+/* invertedStatus in ObjectListItem */
 .sapMObjLAttrRow .sapMObjStatusInverted {
 	min-height: 1rem;
 	line-height: 0.75rem;
@@ -179,22 +182,17 @@ html[dir=rtl] .sapMObjLStatusDiv {
 }
 
 .sapMObjLItem > .sapMLIBContent {
-	-webkit-box-flex: 1;
 	flex: 1 1 auto;
 }
 
 .sapMObjLListModeDiv {
-	display: -webkit-box;
 	display: flex;
-	-webkit-box-orient: horizontal;
-	-webkit-box-align: center;
 	flex-direction: row;
 	align-items: center;
 }
 
 /* overwrite transform for the markers favorite and flag icon */
 html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
-	-webkit-transform: none; /* Chrome, Safari, Opera */
 	transform: none;
 }
 
@@ -213,27 +211,27 @@ html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
 	font-size: 0.875rem;
 }
 
-.sapMObjLItem .sapMObjStatusMarker .sapUiIcon:before {
+.sapMObjLItem .sapMObjStatusMarker .sapUiIcon::before {
 	vertical-align: top;
 }
 
 .sapMObjLIcon {
 	margin-top: 2px;
-	color: @sapUiContentIconColor;
+	color: var(--sapContent_IconColor);
 }
 
 .sapMLIBActive .sapMObjLIcon {
-	color: @sapUiContentContrastIconColor;
+	color: var(--sapContent_ContrastIconColor);
 }
 
 .sapMLIBActive .sapMObjLNumberDiv .sapMObjectNumber,
 .sapMLIBActive .sapMObjStatusMarker .sapMObjectMarker .sapUiIcon {
-	color: @sapUiListActiveTextColor;
+	color: var(--sapList_Active_TextColor);
 }
 
 .sapMObjLIconDiv {
 	float: left;
-	margin-right: .75rem;
+	margin-right: 0.75rem;
 	width: 3rem;
 	height: 3rem;
 	text-align: center;
@@ -241,13 +239,13 @@ html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
 }
 
 .sapMObjLItem .sapMObjLAttrDiv {
-	color: @sapUiContentLabelColor;
+	color: var(--sapContent_LabelColor);
 }
 
 .sapMObjLAdditAttribs {
-	color: @sapUiContentLabelColor;
+	color: var(--sapContent_LabelColor);
 }
 
 .sapMObjLAttrDiv.sapMObjAttrWithMarker {
-	padding-top: .1875rem
+	padding-top: 0.1875rem
 }

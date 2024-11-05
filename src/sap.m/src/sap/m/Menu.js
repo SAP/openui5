@@ -536,7 +536,8 @@ sap.ui.define([
 		Menu.prototype._createVisualMenuItemFromItem = function(oItem) {
 			var sUfdMenuItemId = this._generateUnifiedMenuItemId(oItem.getId()),
 				oUfdMenuItem = Element.getElementById(sUfdMenuItemId),
-				aCustomData = oItem.getCustomData();
+				aCustomData = oItem.getCustomData(),
+				aEndContent = oItem.getEndContent();
 
 			if (oUfdMenuItem) {
 				return oUfdMenuItem;
@@ -557,6 +558,10 @@ sap.ui.define([
 			for (var i = 0; i < aCustomData.length; i++) {
 				oItem._addCustomData(oUfdMenuItem, aCustomData[i]);
 			}
+
+			aEndContent.forEach((oEndContent) => {
+				oItem._addEndContent(oUfdMenuItem, oEndContent);
+			});
 
 			oItem.aDelegates.forEach(function(oDelegateObject) {
 				oUfdMenuItem.addEventDelegate(oDelegateObject.oDelegate, oDelegateObject.vThis);

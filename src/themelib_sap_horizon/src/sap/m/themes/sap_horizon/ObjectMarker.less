@@ -6,12 +6,14 @@
 @_sap_m_ObjectMarker_LinkShadowColor: none;
 
 .sapMObjectMarker {
+
 	.sapMLnk {
 		text-shadow: @_sap_m_ObjectMarker_LinkShadowColor;
 
 		&:focus {
+
 			.sapUiIcon {
-				color: @sapUiContentContrastTextColor;
+				color: var(--sapContent_ContrastTextColor);
 			}
 		}
 	}

@@ -18,7 +18,7 @@
 					<Link text="Read Me" target="_blank"
 						href="test-resources/sap/ui/core/demokit/sample/odata/v4/DeepCreate/README.html"/>
 					<ToolbarSpacer/>
-					<Button icon="sap-icon://add" id="create" press="onCreateSalesOrder"
+					<Button icon="sap-icon://add" id="create" press=".onCreateSalesOrder"
 						text="Create" tooltip="Create Sales Order"/>
 				</Toolbar>
 			</headerToolbar>

@@ -84,6 +84,50 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("One segments of non-work periods within an hour(start in 00min)", (assert) => {
+		// Prepare
+		const aNonWorkingPeriods = [];
+		const oCellStartDate = UI5Date.getInstance(2024, 0, 1, 1, 0, 0);
+		const iExpectDuration = 15;
+		const iMinutesInOneHours = 60;
+
+		aNonWorkingPeriods.push(createNonWorkingPeriod(oCellStartDate, "01:00", "01:15"));
+
+		// Act
+		const aResult = RecurrenceUtils.getWorkingAndNonWorkingSegments(oCellStartDate, aNonWorkingPeriods);
+
+		// Assert
+		assert.strictEqual(aResult.length, 2, "two items need to be filtered for this hour");
+
+		assert.strictEqual(aResult[0].type, "non-working", "The type must be defined as non-working");
+		assert.strictEqual(aResult[0].duration, iExpectDuration, "The duration of the period is correct");
+
+		assert.strictEqual(aResult[1].type, "working", "The type must be defined as working");
+		assert.strictEqual(aResult[1].duration, iMinutesInOneHours - iExpectDuration, "The duration of the period is correct");
+	});
+
+	QUnit.test("One segments of non-work periods within an hour(end in 00min)", (assert) => {
+		// Prepare
+		const aNonWorkingPeriods = [];
+		const oCellStartDate = UI5Date.getInstance(2024, 0, 1, 1, 0, 0);
+		const iExpectDuration = 45;
+		const iMinutesInOneHours = 60;
+
+		aNonWorkingPeriods.push(createNonWorkingPeriod(oCellStartDate, "01:45", "02:00"));
+
+		// Act
+		const aResult = RecurrenceUtils.getWorkingAndNonWorkingSegments(oCellStartDate, aNonWorkingPeriods);
+
+		// Assert
+		assert.strictEqual(aResult.length, 2, "two items need to be filtered for this hour");
+
+		assert.strictEqual(aResult[0].type, "working", "The type must be defined as working");
+		assert.strictEqual(aResult[0].duration, iExpectDuration, "The duration of the period is correct");
+
+		assert.strictEqual(aResult[1].type, "non-working", "The type must be defined as non-working");
+		assert.strictEqual(aResult[1].duration, iMinutesInOneHours - iExpectDuration, "The duration of the period is correct");
+	});
+
 	QUnit.test("A non-work period extending over three consecutive hours", function (assert) {
 		// Prepare
 		const aNonWorkingPeriods = [];

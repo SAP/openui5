@@ -22,7 +22,7 @@
 				<Label text="sap.m.DateTimePicker" />
 				<DateTimePicker value="{Timestamp}" />
 				<Button text="Use JSON Model with sap.ui.model.odata.type.DateTimeOffset Type"
-					press="onDialogOpen">
+					press=".onDialogOpen">
 					<layoutData>
 						<layout:GridData indent="XL3 L3 M3 S0" linebreak="true"
 							span="XL6 L6 M6 S12"/>
@@ -61,9 +61,9 @@
 			<Dialog contentWidth="50em" id="dialog"
 				title="Use JSON Model with sap.ui.model.odata.type.DateTimeOffset Type">
 				<buttons>
-					<Button press="onDialogTakeValues" text="OK"
+					<Button press=".onDialogTakeValues" text="OK"
 						tooltip="Transfer the values to the OData Model" />
-					<Button press="onDialogClose" text="Close" />
+					<Button press=".onDialogClose" text="Close" />
 				</buttons>
 				<form:SimpleForm columnsL="1" columnsM="1" editable="true"
 					labelSpanL="4" labelSpanM="4" layout="ResponsiveGridLayout">

@@ -5,7 +5,7 @@
 		},
 		"samplesRef": {
 			"namespace": "sap.ui.unified.sample",
-			"ref": "test-resources/sap/ui/unified/sample"
+			"ref": "test-resources/sap/ui/unified/demokit/sample"
 		},
 		"entities": [
 			{

@@ -12,7 +12,7 @@
 			width="100%">
 			<l:content>
 				<VBox>
-					<Label text="Link rendered as Text" />
+					<Label text="Link rendered as Text" wrapping="true" />
 					<mdc:Field value="{products>/product1/productId}" editMode="Display">
 						<mdc:fieldInfo>
 							<mdc:Link delegate="{ 'name': 'mdc/sample/delegate/JSONLinkDelegate', payload: { 'product': 'product1', 'displayAs': 'Text' }}">
@@ -21,7 +21,7 @@
 					</mdc:Field>
 				</VBox>
 				<VBox>
-					<Label text="Link opening a Panel. Clicking the panel links will not navigate directly to other apps or pages." />
+					<Label text="Link opening a Panel. Clicking the panel links will not navigate directly to other apps or pages." wrapping="true" />
 					<mdc:Field value="{products>/product2/productId}" editMode="Display">
 						<mdc:fieldInfo>
 							<mdc:Link delegate="{ 'name': 'mdc/sample/delegate/JSONLinkDelegate', payload: { 'product': 'product2', 'displayAs': 'Popover' }}">
@@ -30,7 +30,7 @@
 					</mdc:Field>
 				</VBox>
 				<VBox>
-					<Label text="Link opening a Panel. Clicking the panel links will navigate directly to other apps or pages." />
+					<Label text="Link opening a Panel. Clicking the panel links will navigate directly to other apps or pages." wrapping="true" />
 					<mdc:Field value="{products>/product3/productId}" editMode="Display">
 						<mdc:fieldInfo>
 							<mdc:Link delegate="{ 'name': 'mdc/sample/delegate/JSONLinkDelegate', payload: { 'product': 'product3', 'displayAs': 'Popover', 'alwaysNavigate': true }}">
@@ -39,7 +39,7 @@
 					</mdc:Field>
 				</VBox>
 				<VBox>
-					<Label text="Link with confirmation dialog that navigates directly to other apps or pages when clicked" />
+					<Label text="Link with confirmation dialog that navigates directly to other apps or pages when clicked" wrapping="true" />
 					<mdc:Field value="{products>/product4/productId}" editMode="Display">
 						<mdc:fieldInfo>
 							<mdc:Link delegate="{ 'name': 'mdc/sample/delegate/JSONLinkDelegate', payload: { 'product': 'product4', 'displayAs': 'DirectLink' }}">

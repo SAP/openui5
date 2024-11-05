@@ -11,7 +11,7 @@
 		<form:toolbar>
 			<Toolbar>
 				<Title id="teamTitle" text="Team" level="H3"/>
-				<Select ariaLabelledBy="teamTitle" id="TeamSelect" change="onTeamSelect"
+				<Select ariaLabelledBy="teamTitle" id="TeamSelect" change=".onTeamSelect"
 					autoAdjustWidth="true"
 					items="{
 						events : {
@@ -100,16 +100,16 @@
 	</form:SimpleForm>
 	<Table id="Employees" growing="true" growingThreshold="1"
 		items="{TEAM_2_EMPLOYEES}"
-		mode="SingleSelectMaster" selectionChange="onEmployeeSelect">
+		mode="SingleSelectMaster" selectionChange=".onEmployeeSelect">
 		<headerToolbar>
 			<Toolbar>
 				<Title text="Employees" level="H4"/>
 				<ToolbarSpacer/>
 				<Button icon="sap-icon://sys-cancel-2" text="Cancel"
-					press="onCancel"/>
+					press=".onCancel"/>
 				<Button enabled="{ui>/bRealOData}" icon="sap-icon://save" text="Save"
-					press="onSave"/>
-				<Button icon="sap-icon://refresh" id="refreshEmployees" press="onRefresh"
+					press=".onSave"/>
+				<Button icon="sap-icon://refresh" id="refreshEmployees" press=".onRefresh"
 					text="Refresh"/>
 			</Toolbar>
 		</headerToolbar>
@@ -117,7 +117,7 @@
 			<Column>
 				<Button app:sorterPath="Name" app:sorterControlId="Employees"
 					enabled="{ui>/bRealOData}" icon="{ui>/Employees/Name/icon}" iconFirst="false"
-					press="onSort" text="Employee Name"/>
+					press=".onSort" text="Employee Name"/>
 			</Column>
 			<Column minScreenWidth="Medium" demandPopin="true">
 				<Text text="Employee ID"/>
@@ -128,11 +128,11 @@
 			<Column minScreenWidth="Small" demandPopin="true">
 				<Button app:sorterPath="AGE" app:sorterControlId="Employees"
 					enabled="{ui>/bRealOData}" icon="{ui>/Employees/AGE/icon}" iconFirst="false"
-					press="onSort" text="Age"/>
+					press=".onSort" text="Age"/>
 			</Column>
 			<Column minScreenWidth="Medium" demandPopin="true">
 				<Button enabled="false" icon="sap-icon://sort-ascending" iconFirst="false"
-					press="onSort" text="City"/>
+					press=".onSort" text="City"/>
 			</Column>
 			<Column minScreenWidth="Large" demandPopin="true">
 				<Text text="Entry Date"/>
@@ -153,7 +153,7 @@
 			<Input value="{ENTRYDATE}"/>
 			<!-- Note: automatic type determination cannot work here and invokes a warning -->
 			<Text text="{path : '@odata.etag', type : 'sap.ui.model.odata.type.String'}"/>
-			<Button icon="sap-icon://delete" text="Delete" press="onDeleteEmployee"/>
+			<Button icon="sap-icon://delete" text="Delete" press=".onDeleteEmployee"/>
 		</ColumnListItem>
 	</Table>
 	<Table id="EmployeeEquipments" headerText="Employee Equipments"
@@ -257,29 +257,29 @@
 					</Title>
 					<ToolbarSpacer width="1em"/>
 					<Button enabled="false" icon="sap-icon://refresh" text="Refresh"
-						press="onEquipmentsRefresh"/>
+						press=".onEquipmentsRefresh"/>
 				</Toolbar>
 			</headerToolbar>
 			<columns>
 				<Column>
 					<Button app:sorterPath="Category" app:sorterControlId="Equipments"
 						enabled="{ui>/bRealOData}" icon="{ui>/Equipments/Category/icon}"
-						iconFirst="false" press="onSort" text="Category"/>
+						iconFirst="false" press=".onSort" text="Category"/>
 				</Column>
 				<Column>
 					<Button app:sorterPath="ID" app:sorterControlId="Equipments"
 						enabled="{ui>/bRealOData}" icon="{ui>/Equipments/ID/icon}"
-						iconFirst="false" press="onSort" text="ID"/>
+						iconFirst="false" press=".onSort" text="ID"/>
 				</Column>
 				<Column>
 					<Button app:sorterPath="Name" app:sorterControlId="Equipments"
 						enabled="{ui>/bRealOData}" icon="{ui>/Equipments/Name/icon}"
-						iconFirst="false" press="onSort" text="Name"/>
+						iconFirst="false" press=".onSort" text="Name"/>
 				</Column>
 				<Column>
 					<Button app:sorterPath="EmployeeId" app:sorterControlId="Equipments"
 						enabled="{ui>/bRealOData}" icon="{ui>/Equipments/EmployeeId/icon}"
-						iconFirst="false" press="onSort" text="EmployeeId"/>
+						iconFirst="false" press=".onSort" text="EmployeeId"/>
 				</Column>
 			</columns>
 			<ColumnListItem>

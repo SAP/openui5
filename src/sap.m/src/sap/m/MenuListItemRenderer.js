@@ -125,11 +125,21 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/m/library'
 		// arrow right if there is a sub-menu
 		if (oLI._hasSubItems()) {
 			rm.renderControl(oLI._getIconArrowRight());
-		} else if (oLI._getItemSelectionMode() !== ItemSelectionMode.None && oLI.getProperty("selected")) {
-			rm.openStart("div", oLI.getId() + "-sel");
-			rm.class("sapMMenuLISel");
-			rm.openEnd();
-			rm.close("div");
+		} else if ((oLI._getItemSelectionMode() !== ItemSelectionMode.None && oLI.getProperty("selected")) || oLI._hasEndContent() ) {
+			if (oLI._getItemSelectionMode() !== ItemSelectionMode.None && oLI.getProperty("selected")) {
+				rm.openStart("div", oLI.getId() + "-sel");
+				rm.class("sapMMenuLISel");
+				rm.openEnd();
+				rm.close("div");
+			}
+
+			if (oLI?._getEndContent().length) {
+				rm.openStart("div", oLI.getId() + "-endContent");
+				rm.class("sapUiMnuEndContent");
+				rm.openEnd();
+				oLI._getEndContent().forEach((oEndContent) => rm.renderControl(oEndContent));
+				rm.close("div");
+			}
 		}
 
 	};

@@ -77,6 +77,14 @@ sap.ui.define(['./ListItemBase', './library', './FacetFilterItemRenderer'],
 	 };
 
 	 /**
+	  * @protected
+	  * @override
+	  */
+	 FacetFilterItem.prototype.getContentAnnouncement = function(oBundle) {
+		 return this.getText() ? this.getText().concat(" . ") : "";
+	 };
+
+	 /**
 	  * @private
 	  */
 	 FacetFilterItem.prototype._itemTextChange = function (oEvent) {

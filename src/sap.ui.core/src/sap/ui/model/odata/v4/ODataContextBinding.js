@@ -1563,6 +1563,11 @@ sap.ui.define([
 				bHasChangeListeners = oCache.hasChangeListeners();
 				// remove all cached Caches before fetching a new one
 				that.removeCachesAndMessages(sResourcePathPrefix);
+				if (that.mLateQueryOptions) {
+					// with a refresh, late properties become regular properties
+					that.mAggregatedQueryOptions = that.mLateQueryOptions;
+					that.mLateQueryOptions = undefined;
+				}
 				that.fetchCache(that.oContext, false, /*bKeepQueryOptions*/false,
 					bKeepCacheOnError ? sGroupId : undefined);
 				// Do not fire a change event, or else ManagedObject destroys and recreates the
