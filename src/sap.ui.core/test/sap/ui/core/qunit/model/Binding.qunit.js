@@ -307,4 +307,43 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oBinding.isDestroyed(), true);
 	});
+
+	//*********************************************************************************************
+	QUnit.test(`attachChange, detachChange: return this`, function (assert) {
+		const oBinding = new Binding("~oModel", "/~sPath");
+		const oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("hasListeners").withExactArgs("change").returns(true);
+		oBindingMock.expects("attachEvent").withExactArgs("change", "~fnFunction", "~oListener").returns("~this");
+
+		// code under test
+		assert.strictEqual(oBinding.attachChange("~fnFunction", "~oListener"), "~this");
+
+		oBindingMock.expects("detachEvent").withExactArgs("change", "~fnFunction", "~oListener").returns("~notUsed");
+		oBindingMock.expects("hasListeners").withExactArgs("change").returns(true);
+
+		// code under test
+		assert.strictEqual(oBinding.detachChange("~fnFunction", "~oListener"), oBinding);
+	});
+
+	//*********************************************************************************************
+["AggregatedDataStateChange", "DataStateChange", "dataReceived", "dataRequested", "refresh"].forEach((sEvent) => {
+	const sAttach = "attach" + sEvent[0].toUpperCase() + sEvent.slice(1);
+	const sDetach = "detach" + sEvent[0].toUpperCase() + sEvent.slice(1);
+
+	QUnit.test(`${sAttach}, ${sDetach}: return this`, function (assert) {
+		const oBinding = new Binding("~oModel", "/~sPath");
+		const oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("attachEvent").withExactArgs(sEvent, "~fnFunction", "~oListener").returns("~this");
+
+		// code under test
+		assert.strictEqual(oBinding[sAttach]("~fnFunction", "~oListener"), "~this");
+
+		oBindingMock.expects("detachEvent").withExactArgs(sEvent, "~fnFunction", "~oListener").returns("~this");
+
+		// code under test
+		assert.strictEqual(oBinding[sDetach]("~fnFunction", "~oListener"), "~this");
+	});
+});
 });
