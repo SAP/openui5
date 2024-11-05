@@ -51,6 +51,7 @@ sap.ui.define([
 
 		exit : function () {
 			this.oUiModel.destroy();
+			this.getModel().restoreSandbox();
 		}
 	});
 });

@@ -18,6 +18,10 @@ sap.ui.define([
 			manifest : "json"
 		},
 
+		exit : function () {
+			this.getModel().restoreSandbox();
+		},
+
 		init : function () {
 			UIComponent.prototype.init.apply(this, arguments);
 			this.setModel(this.getModel(), "parameterContext");

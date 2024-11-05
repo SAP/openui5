@@ -77,6 +77,10 @@ sap.ui.define([
 				inlineCreationRows : {type : "int", defaultValue : 0}
 			},
 			version : "1.0"
+		},
+
+		exit : function () {
+			this.getModel().restoreSandbox();
 		}
 	});
 });
