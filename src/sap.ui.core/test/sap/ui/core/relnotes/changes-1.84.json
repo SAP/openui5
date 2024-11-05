@@ -840,5 +840,15 @@
         "text": " sap/ui/core/.library: Remove wrong component for sap/ui/core/util/MockServer"
       }
     ]
+  },
+  "1.84.48": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "8f039d919704e6d736eea306dfa4f18275447a10",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: align current week calculations"
+      }
+    ]
   }
 }

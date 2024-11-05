@@ -2257,5 +2257,30 @@
         "text": " sap.m.Input: Stop initial re-rendering of the input field when type password and clear icon are set"
       }
     ]
+  },
+  "1.84.48": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "265028d6779984fff944c23414478bbb914f69bc",
+        "type": "FIX",
+        "text": " sap.m.MessagePage: Icon ignored from screen readers"
+      },
+      {
+        "id": "62f0851a19299ace0bed1ede2b12b9c3b1ac8a5c",
+        "type": "FIX",
+        "text": " sap.m.Link: prevent default before press on mobile"
+      },
+      {
+        "id": "376be6088f3ff3b6349a20ceadfad6609dc8c7af",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: fix cursor position when there is mask and no entry"
+      },
+      {
+        "id": "46a0dba4e94bd87c3da3af85760b7f78c4603553",
+        "type": "FIX",
+        "text": " sap.m.Fiori20Adapter: Performance issue fixed"
+      }
+    ]
   }
 }
