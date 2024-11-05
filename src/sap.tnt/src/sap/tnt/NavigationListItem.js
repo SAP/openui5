@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/core/Renderer",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/library",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/util/openWindow",
 	"sap/ui/util/defaultLinkTypes",
 	"./NavigationListItemBase"
@@ -20,6 +21,7 @@ sap.ui.define([
 	Renderer,
 	IconPool,
 	coreLibrary,
+	KeyCodes,
 	openWindow,
 	defaultLinkTypes,
 	NavigationListItemBase
@@ -279,8 +281,44 @@ sap.ui.define([
 		}
 	};
 
-	NavigationListItem.prototype.onsapenter = NavigationListItem.prototype.ontap;
-	NavigationListItem.prototype.onsapspace = NavigationListItem.prototype.ontap;
+	NavigationListItem.prototype.onkeydown = function (oEvent) {
+		if (oEvent.isMarked("subItem")) {
+			return;
+		}
+
+		const bHasModifierKey = this._hasModifierKey(oEvent);
+
+		if ((oEvent.key ? oEvent.key === "Enter" : oEvent.keyCode === KeyCodes.ENTER) && !bHasModifierKey) {
+			this.getDomRef().classList.add("sapTntNLIActive");
+			this.ontap(oEvent);
+		} else if ((oEvent.key ? oEvent.key === " " : oEvent.keyCode === KeyCodes.SPACE) && !bHasModifierKey) {
+			this.getDomRef().classList.add("sapTntNLIActive");
+		}
+
+		NavigationListItemBase.prototype.onkeydown.apply(this, arguments);
+	};
+
+	NavigationListItemBase.prototype.onkeyup = function (oEvent) {
+		if (oEvent.isMarked("subItem")) {
+			return;
+		}
+
+		const bHasModifierKey = this._hasModifierKey(oEvent);
+
+		if ((oEvent.key ? oEvent.key === "Enter" : oEvent.keyCode === KeyCodes.ENTER) && !bHasModifierKey) {
+			this.getDomRef().classList.remove("sapTntNLIActive");
+		} else if ((oEvent.key ? oEvent.key === " " : oEvent.keyCode === KeyCodes.SPACE)) {
+			this.getDomRef().classList.remove("sapTntNLIActive");
+
+			if (!bHasModifierKey) {
+				this.ontap(oEvent);
+			}
+		}
+
+		if (oEvent.srcControl.getLevel() === 1) {
+			oEvent.setMarked("subItem");
+		}
+	};
 
 	/**
 	 * Renders the item.
@@ -760,6 +798,10 @@ sap.ui.define([
 	};
 
 	NavigationListItem.prototype.onmouseover = NavigationListItem.prototype.onfocusout;
+
+	NavigationListItem.prototype._hasModifierKey = 	function hasModifierKeys(oEvent) {
+		return oEvent.shiftKey || oEvent.altKey || oEvent.ctrlKey || oEvent.metaKey;
+	};
 
 	return NavigationListItem;
 });

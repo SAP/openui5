@@ -329,10 +329,12 @@
 }
 
 .sapTntNLI:not(.sapTntNLIDisabled).sapTntNLIActive,
+.sapTntNLIActive .sapTntNLIFirstLevel.sapTntNLI:not(.sapTntNLIDisabled),
 .sapTntNLCollapsed.sapTntNLIFirstLevel.sapTntNLISelected,
 .sapTntNL .sapTntNLGroup.sapTntNLI:not(.sapTntNLIDisabled):active,
 .sapTntNL .sapTntNLIFirstLevel.sapTntNLI:not(.sapTntNLIDisabled):active,
-.sapTntNL .sapTntNLISecondLevel.sapTntNLI:not(.sapTntNLIDisabled):active {
+.sapTntNL .sapTntNLISecondLevel.sapTntNLI:not(.sapTntNLIDisabled):active,
+.sapTntNL .sapTntNLISecondLevel.sapTntNLI:not(.sapTntNLIDisabled).sapTntNLIActive {
 	background: @sapUiListActiveBackground;
 
 	&::before {

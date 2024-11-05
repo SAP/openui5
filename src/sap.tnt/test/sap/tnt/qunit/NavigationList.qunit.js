@@ -1008,6 +1008,83 @@ sap.ui.define([
 		oStub.restore();
 	});
 
+	QUnit.test("select group with Enter", function (assert) {
+		// Arrange
+		const fnEventSpy = sinon.spy();
+		const oStub = sinon.stub(NavigationListItem.prototype, "_openUrl", function () { });
+		const oTargetItem = this.navigationList.getItems()[3];
+		this.navigationList.attachItemSelect(fnEventSpy);
+
+		// Assert
+		assert.notOk(oTargetItem.getDomRef().classList.contains("sapTntNLIActive"), "sapTntNLIActive class is not set");
+
+		// Act
+		QUnitUtils.triggerKeydown(oTargetItem.getDomRef().querySelector(".sapTntNLI"), KeyCodes.ENTER);
+
+		// Assert
+		assert.ok(oTargetItem.getDomRef().classList.contains("sapTntNLIActive"), "sapTntNLIActive class is set");
+		assert.strictEqual(fnEventSpy.callCount, 1, "should fire select event once");
+		fnEventSpy.reset();
+
+		// Act
+		QUnitUtils.triggerKeyup(oTargetItem.getDomRef().querySelector(".sapTntNLI"), KeyCodes.ENTER);
+
+		// Assert
+		assert.notOk(oTargetItem.getDomRef().classList.contains("sapTntNLIActive"), "sapTntNLIActive class is NOT set");
+		assert.strictEqual(fnEventSpy.callCount, 0, "select event should NOT be fired");
+
+		// Clean up
+		oStub.restore();
+	});
+
+	QUnit.test("select group with Space", function (assert) {
+		// Arrange
+		const fnEventSpy = sinon.spy();
+		const oStub = sinon.stub(NavigationListItem.prototype, "_openUrl", function () { });
+		const oTargetItem = this.navigationList.getItems()[3];
+		this.navigationList.attachItemSelect(fnEventSpy);
+
+		// Assert
+		assert.notOk(oTargetItem.getDomRef().classList.contains("sapTntNLIActive"), "sapTntNLIActive class is not set");
+
+		// Act
+		QUnitUtils.triggerKeydown(oTargetItem.getDomRef().querySelector(".sapTntNLI"), KeyCodes.SPACE);
+
+		// Assert
+		assert.ok(oTargetItem.getDomRef().classList.contains("sapTntNLIActive"), "sapTntNLIActive class is set");
+		assert.strictEqual(fnEventSpy.callCount, 0, "select event should NOT be fired");
+
+		// Act
+		QUnitUtils.triggerKeyup(oTargetItem.getDomRef().querySelector(".sapTntNLI"), KeyCodes.SPACE);
+
+		// Assert
+		assert.notOk(oTargetItem.getDomRef().classList.contains("sapTntNLIActive"), "sapTntNLIActive class is NOT set");
+		assert.strictEqual(fnEventSpy.callCount, 1, "should fire select event once");
+
+		// Clean up
+		oStub.restore();
+	});
+
+	QUnit.test("Default action of Space keydown is prevented", function (assert) {
+		// Arrange
+		const oStub = sinon.stub(NavigationListItem.prototype, "_openUrl", function () { });
+		const oTargetItem = this.navigationList.getItems()[3];
+		const oFakeEvent = new KeyboardEvent("keydown", {
+			keyCode: KeyCodes.SPACE,
+			bubbles: true,
+			cancelable: true
+		});
+
+		// Act
+		oTargetItem.getDomRef().querySelector(".sapTntNLI").dispatchEvent(oFakeEvent);
+
+		// Assert
+		assert.ok(oFakeEvent.defaultPrevented, "Default action of Space keydown is prevented");
+
+		// Clean up
+		oStub.restore();
+	});
+
 	QUnit.test("select group item", async function (assert) {
 
 		var bPassedArg,
