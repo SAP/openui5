@@ -170,6 +170,16 @@ sap.ui.define([
 			var oFilterRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.FilterRestrictions"];
 			var oFilterRestrictionsInfo = ODataMetaModelUtil.getFilterRestrictionsInfo(oFilterRestrictions);
 
+			let oState = this._getState(oChart);
+			if (!oState) {
+				oState = {};
+			}
+			const aConfigurationForVizchart = oState.configForVizchart;
+			if (!aConfigurationForVizchart || aConfigurationForVizchart.length === 0) {
+				oState.configForVizchart = [];
+				this._setState(oChart, oState);
+			}
+
 			for (var sKey in oEntityType) {
 				var oObj = oEntityType[sKey];
 
@@ -183,7 +193,7 @@ sap.ui.define([
 						continue;
 					}
 
-					var oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
+					const oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
 
 					if (sKey === "modifiedAt" || sKey === "createdAt" || sKey === "currency_code") {
 						oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"] = true;
@@ -201,13 +211,12 @@ sap.ui.define([
 					}
 
 					if (oPropertyAnnotations["@Org.OData.Aggregation.V1.Aggregatable"]) {
-						aProperties = aProperties.concat(this._createPropertyInfosForAggregatable(sKey, oPropertyAnnotations, oObj, oFilterRestrictionsInfo, oSortRestrictionsInfo));
+						aProperties = aProperties.concat(this._createPropertyInfosForAggregatable(oChart, sKey, oPropertyAnnotations, oObj, oFilterRestrictionsInfo, oSortRestrictionsInfo));
 					}
 
 					if (oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"]) {
 
-						var sTextProperty = oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"] ? oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"].$Path : null;
-
+						let sTextProperty = oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"]?.$Path || null;
 						if (sTextProperty && sTextProperty.indexOf("/") > -1) {
 							sTextProperty = null; //Expand is not supported
 						}
@@ -229,11 +238,17 @@ sap.ui.define([
 							// visible: sKey !== "modifiedAt", via visible a dimension can be removed from the settings dialog.
 							constraints: vConstraints,
 							dataType: oObj.$Type,
-							role: ChartItemRoleType.category, //standard, normally this should be interpreted from UI.Chart annotation
-							textProperty: sTextProperty,
-							textFormatter: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.UI.v1.TextArrangement"] || null
+							role: ChartItemRoleType.category //standard, normally this should be interpreted from UI.Chart annotation
 						});
 
+						const oState = this._getState(oChart);
+						const aConfigurationForVizchart = oState.configForVizchart;
+						aConfigurationForVizchart.push({
+							key: sKey,
+							aggregationMethod : null,
+							textProperty: sTextProperty, // oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"]?.$Path || null, //To be implemented by FE
+							textFormatter: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.UI.v1.TextArrangement"] || null
+						});
 					}
 				}
 			}
