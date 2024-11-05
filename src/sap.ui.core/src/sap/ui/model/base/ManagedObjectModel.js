@@ -1033,7 +1033,7 @@ sap.ui.define([
 			fnFilter = this.fnFilter === fnFilter ? fnFilter : undefined; // if different filter or no filter set -> use no filter
 			this.fnFilter = undefined;
 		}
-		var aBindings = this.aBindings.slice(0);
+		var aBindings = this.getBindings();
 		aBindings.forEach(function (oBinding) {
 			if (!fnFilter || fnFilter(oBinding)) {
 				oBinding.checkUpdate(bForceUpdate);
