@@ -364,9 +364,13 @@ sap.ui.define([
 				setCursorPosition(iCarretPosition, oControl);
 			}
 
+			return this.justDel(sKey, oControl);
+		},
+		justDel: function (sKey, oControl) {
 			qutils.triggerKeydown(oControl.getDomRef(), KeyCodes[sKey.toUpperCase()]);
 			return getMaskInputDomValue(oControl);
 		}
+
 	});
 
 	QUnit.test("Del button", function (assert){
@@ -375,6 +379,19 @@ sap.ui.define([
 		assert.strictEqual(this.setAndDel('delete', 'aaaaa', 'abcd', 4), "abcd_", "Try deleting non existing character");
 		assert.strictEqual(this.setAndDel('delete', '9a-9-aa', '2b-2-de', 1), '2_-2-de', "Delete parameter before immutable character");
 		assert.strictEqual(this.setAndDel('delete', 'aaaaa', 'abcde', 0, 3), "___de", "Delete selection");
+	});
+
+	QUnit.test("Del BUTTON deletes more than one character", function(assert) {
+		// Prepare
+		this.oMaskInput.setPlaceholderSymbol('_');
+
+		// Assert
+		assert.strictEqual(this.setAndDel('delete', 'aaaaa', 'abcde', 0), "_bcde", "Delete first character");
+		assert.strictEqual(this.justDel('delete', this.oMaskInput), "__cde", "Delete second character");
+		assert.strictEqual(this.justDel('delete', this.oMaskInput), "___de", "Delete third character");
+		assert.strictEqual(this.justDel('delete', this.oMaskInput), "____e", "Delete fourth character");
+		assert.strictEqual(this.justDel('delete', this.oMaskInput), "_____", "Delete fifth character");
+		assert.strictEqual(this.justDel('delete', this.oMaskInput), "_____", "Nothing to delete, no change");
 	});
 
 	QUnit.test("Backspace button", function (assert){
