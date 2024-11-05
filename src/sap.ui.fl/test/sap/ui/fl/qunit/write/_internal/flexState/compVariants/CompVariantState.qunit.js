@@ -858,9 +858,9 @@ sap.ui.define([
 			sandbox.stub(CompVariantUtils, "getPersistencyKey").returns(this.sPersistencyKey);
 
 			const aVariants = [{
-				getId: () => this.sVariantId1
+				getVariantId: () => this.sVariantId1
 			}, {
-				getId: () => this.sVariantId2
+				getVariantId: () => this.sVariantId2
 			}];
 
 			CompVariantState.setDefault({
