@@ -5746,7 +5746,7 @@
 		"islamic-tbla"
 	],
 	"sap-calendarWeek": {
-		"narrow": "CW {0}",
-		"wide": "Minggu Kalender {0}"
+		"narrow": "KM {0}",
+		"wide": "Kalender Minggu {0}"
 	}
 }

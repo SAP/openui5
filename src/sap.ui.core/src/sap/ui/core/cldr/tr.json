@@ -6000,7 +6000,7 @@
 		"islamic-tbla"
 	],
 	"sap-calendarWeek": {
-		"narrow": "CW {0}",
+		"narrow": "TH {0}",
 		"wide": "Takvim haftası {0}"
 	}
 }
