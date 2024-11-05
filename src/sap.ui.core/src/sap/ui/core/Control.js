@@ -865,7 +865,6 @@ sap.ui.define([
 		}
 	};
 
-
 	/**
 	 * Add busy indicator to DOM
 	 *
@@ -902,12 +901,18 @@ sap.ui.define([
 				this._oBusyBlockState = this._oBlockState;
 
 			} else {
-				// BusyIndicator is the first blocking element created (and )
+				// BusyIndicator is the first blocking element created
 				fnAddStandaloneBusyIndicator.call(this);
 			}
 		} else {
 			// Standalone busy indicator
 			fnAddStandaloneBusyIndicator.call(this);
+		}
+
+		// Move focus to the busy indicator if the focus is currently within the busy control's DOM.
+		if (this.getDomRef().contains(document.activeElement)) {
+			this._oBusyBlockState.lastFocusPosition = document.activeElement;
+			this._oBusyBlockState.$blockLayer.get(0).focus();
 		}
 	}
 
@@ -960,9 +965,22 @@ sap.ui.define([
 			return;
 		}
 
-		var $this = this.$(this._sBusySection);
+		// Restore focus on last focus position, if possible
+		let oLastFocusedElement;
+		if (this._oBusyBlockState) {
+			const oBlockLayerDOM = this._oBusyBlockState.$blockLayer.get(0);
 
+			// Focus might be moved from the busy indicator
+			// If it is still on the busy indicator, we restore the focus. Otherwise do nothing.
+			if (oBlockLayerDOM === document.activeElement) {
+				oLastFocusedElement = Element.closestTo(this._oBusyBlockState.lastFocusPosition) || this;
+				oLastFocusedElement.focus();
+			}
+		}
+
+		const $this = this.$(this._sBusySection);
 		$this.removeClass('sapUiLocalBusy');
+		$this.removeAttr("aria-busy");
 
 		if (this._sBlockSection === this._sBusySection) {
 			if (!this.getBlocked() && !this.getBusy()) {

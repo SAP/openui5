@@ -4,11 +4,10 @@
 
 // Provides utility class sap.ui.core.BlockLayerUtils
 sap.ui.define([
-	'sap/ui/events/jquery/EventTriggerHook',
+	"sap/ui/events/jquery/EventTriggerHook",
 	"sap/base/Log",
-	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery"
-], function(EventTriggerHook, Log, Library, jQuery) {
+], function(EventTriggerHook, Log, jQuery) {
 	"use strict";
 
 	/**
@@ -113,31 +112,9 @@ sap.ui.define([
 			// deregister handlers and :before and :after tabbable spans
 			fnHandleInteraction.call(oBlockState, false);
 
-			// restore focus back to control when blocklayer currently has the focus
-			if (oBlockState.control && oBlockState.$blockLayer[0] && oBlockState.$blockLayer[0].contains(document.activeElement)) {
-				oBlockState.control.focus();
-			}
-
 			// remove blocklayer from dom
 			oBlockState.$blockLayer.remove();
 		}
-	};
-
-	/**
-	 * Adds the necessary ARIA attributes to the given DOM element.
-	 * @param {object} oDOM The DOM element on which the ARIA attributes should be added.
-	 * @private
-	 */
-	BlockLayerUtils.addAriaAttributes = function(oDOM) {
-		var oResourceBundle = Library.getResourceBundleFor("sap.ui.core");
-
-		oDOM.setAttribute("role", "progressbar");
-		oDOM.setAttribute("aria-valuemin", "0");
-		oDOM.setAttribute("aria-valuemax", "100");
-		oDOM.setAttribute("aria-valuetext", oResourceBundle.getText("BUSY_VALUE_TEXT"));
-		oDOM.setAttribute("alt", "");
-		oDOM.setAttribute("tabindex", "0");
-		oDOM.setAttribute("title", oResourceBundle.getText("BUSY_TEXT"));
 	};
 
 	/**
@@ -174,7 +151,8 @@ sap.ui.define([
 		oContainer.id = sBlockedLayerId;
 		oContainer.className = "sapUiBlockLayer ";
 
-		BlockLayerUtils.addAriaAttributes(oContainer);
+		// Make the blockLayer tabbable
+		oContainer.setAttribute("tabindex", "0");
 
 		oBlockSection.appendChild(oContainer);
 
@@ -233,6 +211,7 @@ sap.ui.define([
 			var bTargetIsBlockLayer = oEvent.target === this.$blockLayer.get(0),
 				oTabbable;
 
+			// Handle keydown event within block layer and 'Tab' key
 			if (bTargetIsBlockLayer && oEvent.type === 'keydown' && oEvent.keyCode === 9) {
 				// Special handling for "tab" keydown: redirect to next element before or after busy section
 				Log.debug("Local Busy Indicator Event keydown handled: " + oEvent.type);
@@ -245,12 +224,21 @@ sap.ui.define([
 				oTabbable.setAttribute("tabindex", 0);
 				oEvent.stopImmediatePropagation();
 
-			} else if (bTargetIsBlockLayer && (oEvent.type === 'mousedown' || oEvent.type === 'touchstart')) {
-				// Do not "preventDefault" to allow to focus busy indicator
-				Log.debug("Local Busy Indicator click handled on busy area: " + oEvent.target.id);
-				oEvent.stopImmediatePropagation();
+				return;
+			}
 
-			} else {
+			// Handle mousedown or touchstart event within block layer
+			if (bTargetIsBlockLayer && ["mousedown", "touchstart"].includes(oEvent.type)) {
+				Log.debug("Local Busy Indicator click handled on busy area: " + oEvent.target.id);
+				// Do not "preventDefault" to allow to focus busy indicator
+				oEvent.stopImmediatePropagation();
+				return;
+
+			}
+
+			const bArrowAndTabKey = oEvent.type == "keydown" && [9, 37, 38, 39, 40].includes(oEvent.keyCode);
+			// Suppress non-arrow and non-tab keys
+			if (!bArrowAndTabKey){
 				Log.debug("Local Busy Indicator Event Suppressed: " + oEvent.type);
 				oEvent.preventDefault();
 				oEvent.stopImmediatePropagation();
