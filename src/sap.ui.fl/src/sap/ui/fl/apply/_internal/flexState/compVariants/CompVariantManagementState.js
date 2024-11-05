@@ -38,7 +38,8 @@ sap.ui.define([
 		parentDataSelector: FlexState.getFlexObjectsDataSelector(),
 		executeFunction(aFlexObjects, mPropertyBag) {
 			return aFlexObjects.filter((oFlexObject) =>
-				isSetDefaultChange(oFlexObject) && oFlexObject.getSelector().persistencyKey === mPropertyBag.persistencyKey
+				isSetDefaultChange(oFlexObject)
+				&& String(oFlexObject.getSelector()?.persistencyKey) === mPropertyBag.persistencyKey
 			);
 		},
 		checkInvalidation(mParameters, oUpdateInfo) {
@@ -74,9 +75,10 @@ sap.ui.define([
 	 */
 	CompVariantManagementState.getDefaultVariantId = (mPropertyBag) => {
 		const aVariants = mPropertyBag.variants;
-		const aVariantIds = aVariants.map((oVariant) => oVariant.getId());
+		const aVariantIds = aVariants.map((oVariant) => oVariant.getVariantId());
 		aVariantIds.push(CompVariant.STANDARD_VARIANT_ID);
 
+		mPropertyBag.persistencyKey = String(mPropertyBag.persistencyKey);
 		const aDefaultChanges = [...oSetDefaultDataSelector.get(mPropertyBag)].reverse();
 		const aDefaultVariantIds = aDefaultChanges.map((oChange) => oChange.getContent().defaultVariantName);
 
@@ -96,6 +98,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl
 	 */
 	CompVariantManagementState.getDefaultChanges = (mPropertyBag) => {
+		mPropertyBag.persistencyKey = String(mPropertyBag.persistencyKey);
 		return oSetDefaultDataSelector.get(mPropertyBag);
 	};
 
