@@ -1683,6 +1683,86 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Select and deselect a week by clicking on the week number, and the intervalSelection value is true", (assert) => {
+		// Prepare
+		const oCal = new Calendar({months: 4, intervalSelection: true});
+
+		// initial setup
+		oCal.placeAt("content");
+		oCal.focusDate(UI5Date.getInstance(2021, 4, 1));
+		oCore.applyChanges();
+
+		const aMonth = oCal.getAggregation("month");
+		const aWeekNumbers = aMonth[0].getDomRef().querySelectorAll(".sapUiCalWeekNum");
+		const oMockedEvent = {
+			target: aWeekNumbers[1]
+		};
+
+		// Act
+		aMonth[0].onmousedown(oMockedEvent);
+		oCore.applyChanges();
+		let oDateCell = aWeekNumbers[1].nextElementSibling;
+
+		// assert
+		for (let i = 0; i < 7; i++) {
+			assert.ok(oDateCell.classList.contains("sapUiCalItemSel"), `${oDateCell.dataset.sapDay} is the correctly selected date`);
+			oDateCell = oDateCell.nextElementSibling;
+		}
+
+		// Act
+		aMonth[0].onmousedown(oMockedEvent);
+		oCore.applyChanges();
+		oDateCell = aWeekNumbers[1].nextElementSibling;
+
+		for (let i = 0; i < 7; i++) {
+			assert.notOk(oDateCell.classList.contains("sapUiCalItemSel"), `${oDateCell.dataset.sapDay} is the correctly unselected date`);
+			oDateCell = oDateCell.nextElementSibling;
+		}
+
+		// cleanup
+		oCal.destroy();
+		oCore.applyChanges();
+	});
+
+	QUnit.test("Selecting a week that continues into the next month", (assert) => {
+		// Prepare
+		const oFocusDate = UI5Date.getInstance(2021, 4, 1);
+		const iStartMont = oFocusDate.getMonth();
+		const oCal = new Calendar({months: 4, singleSelection: false});
+
+		// initial setup
+		oCal.placeAt("content");
+		oCal.focusDate(oFocusDate);
+		oCore.applyChanges();
+
+		const aMonth = oCal.getAggregation("month");
+		const aSecondMonthWeekNumbers = aMonth[1].getDomRef().querySelectorAll(".sapUiCalWeekNum");
+		const oLastWeekNumber = aSecondMonthWeekNumbers[aSecondMonthWeekNumbers.length - 1];
+
+		// assert
+		assert.ok(oLastWeekNumber.parentElement.lastChild.classList.contains("sapUiCalItemOtherMonth"), "The selected week should continue into the next month");
+		for (let i = 0; i < aMonth.length; i++) {
+			assert.strictEqual(aMonth[i].getDate().getMonth(), iStartMont + i, "The displayed months should be consecutive in relation to the focused date.");
+		}
+
+		// Act
+		const oMockedEvent = {
+			target: oLastWeekNumber
+		};
+		aMonth[1].onmousedown(oMockedEvent);
+		oCore.applyChanges();
+
+		// assert
+		for (let i = 0; i < aMonth.length; i++) {
+			assert.strictEqual(aMonth[i].getDate().getMonth(), iStartMont + i, "Selecting a week that continues into the next month should not trigger navigation");
+		}
+
+		// cleanup
+		oCal.destroy();
+		oCore.applyChanges();
+	});
+
+
 	QUnit.test("Do not rerender on calendarWeekSelection in multi months scenario", function (assert) {
 		// Prepare
 		var oCal = new Calendar({
@@ -2672,6 +2752,7 @@ sap.ui.define([
 			};
 		// Act
 		// Get one of the internal months and just fire it's weekNumberSelect directly
+		oCore.applyChanges();
 		oCal3.getAggregation("month")[0].fireWeekNumberSelect(oFakeEvent);
 
 		// Assert
@@ -2702,12 +2783,16 @@ sap.ui.define([
 				}
 			},
 			oFocusDateSpy = this.spy(oCal, "_focusDate");
+		oCal.placeAt("qunit-fixture");
+		oCore.applyChanges();
 
 		// act
 		oCal._handleWeekNumberSelect(oFakeEvent);
 
 		// assert
 		assert.ok(oFocusDateSpy.calledWith(oCalendarDate), "Calendar.prototype._focusDate is called");
+
+		oCal.destroy();
 	});
 
 	QUnit.test("onkeydown handler when F4 is pressed", function(assert) {
