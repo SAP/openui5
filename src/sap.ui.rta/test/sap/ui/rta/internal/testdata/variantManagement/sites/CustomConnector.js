@@ -59,8 +59,9 @@ sap.ui.define([
 		});
 		const oReturn = {};
 		oReturn.variants = aFlexObjects.filter((oFlexObject) => {
-			return mPropertyBag.variantReferences.includes(oFlexObject.fileName) ||
-			mPropertyBag.variantReferences.includes(oFlexObject.variantReference);
+			return oFlexObject.fileType === "ctrl_variant" &&
+				(mPropertyBag.variantReferences.includes(oFlexObject.fileName) ||
+				mPropertyBag.variantReferences.includes(oFlexObject.variantReference));
 		});
 		const aBaseVariantIds = oReturn.variants.map((oVariant) => oVariant.variantReference);
 		const aBaseVariants = aFlexObjects.filter((oFlexObject) => aBaseVariantIds.includes(oFlexObject.fileName));
