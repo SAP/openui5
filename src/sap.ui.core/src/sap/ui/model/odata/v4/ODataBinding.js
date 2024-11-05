@@ -411,6 +411,7 @@ sap.ui.define([
 		this.oCache = null;
 		this.oCachePromise = SyncPromise.resolve(null); // be nice to #withCache
 		this.mCacheQueryOptions = undefined;
+		this.mLateQueryOptions = undefined;
 		// resolving functions e.g. for oReadPromise in #checkUpdateInternal may run after destroy
 		// of this binding and must not access the context
 		this.oContext = undefined;
