@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/TextArea",
 	"sap/ui/core/Core",
+	"sap/ui/core/IconPool",
 	"sap/ui/core/Item",
 	"sap/ui/core/Theming",
 	"sap/ui/core/Title",
@@ -38,6 +39,7 @@ sap.ui.define([
 	MText,
 	TextArea,
 	oCore,
+	_IconPool, // no direct usages, but needed for rm.icon()
 	Item,
 	Theming,
 	Title,
