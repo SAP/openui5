@@ -13,7 +13,7 @@
 			title="{Name}"
 			unread="{
 				path: 'Name',
-				formatter: 'sap.m.sample.ListUnread.Formatter.randomBoolean'
+				formatter: '.formatter.randomBoolean'
 			}"
 			description="{ProductId}"
 			icon="{ProductPicUrl}"

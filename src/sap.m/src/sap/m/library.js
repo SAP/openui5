@@ -2330,6 +2330,7 @@ sap.ui.define([
 		S : "S"
 
 	};
+	DataType.registerEnum("sap.m.InputListItemContentSize", thisLib.InputListItemContentSize);
 
 	/**
 	 *

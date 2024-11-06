@@ -1,26 +1,28 @@
-sap.ui.define(function() {
+sap.ui.define([
+	"sap/ui/core/library"
+], function(coreLibrary) {
 	"use strict";
 
-	var Formatter = {
+	const {ValueState} = coreLibrary;
 
-		weightState :  function (fValue) {
+	const Formatter = {
+		weightState(fValue) {
 			try {
 				fValue = parseFloat(fValue);
 				if (fValue < 0) {
-					return "None";
-				} else if (fValue < 1000) {
-					return "Success";
-				} else if (fValue < 2000) {
-					return "Warning";
+					return ValueState.None;
+				} else if (fValue < 10) {
+					return ValueState.Success;
+				} else if (fValue < 20) {
+					return ValueState.Warning;
 				} else {
-					return "Error";
+					return ValueState.Error;
 				}
 			} catch (err) {
-				return "None";
+				return ValueState.None;
 			}
 		}
 	};
 
 	return Formatter;
-
-}, /* bExport= */ true);
+});

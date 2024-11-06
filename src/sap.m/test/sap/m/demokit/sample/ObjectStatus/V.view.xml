@@ -5,7 +5,7 @@
 	xmlns="sap.m">
 	<l:VerticalLayout
 		width="100%">
-		<l:BlockLayout background="transparent">
+		<l:BlockLayout>
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell>
 					<l:VerticalLayout class="sapUiContentPadding" width="100%">
@@ -100,7 +100,7 @@
 		</l:BlockLayout>
 	</l:VerticalLayout>
 	<l:VerticalLayout class="sapUiContentPadding" width="100%">
-		<l:BlockLayout background="transparent">
+		<l:BlockLayout>
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell>
 					<Label text="ObjectStatus with different indication states." design="Bold" wrapping="true" class="sapUiSmallMarginBottom"/>

@@ -9,10 +9,12 @@ sap.ui.define([
 		'sap/m/MessageToast',
 		'sap/ui/core/Fragment',
 		'./Formatter'
-	], function(Controller, Device , Filter, Sorter, JSONModel, Menu, MenuItem, MessageToast, Fragment /*, Formatter*/) {
+	], function(Controller, Device , Filter, Sorter, JSONModel, Menu, MenuItem, MessageToast, Fragment, Formatter) {
 	"use strict";
 
 	var SettingsDialogController = Controller.extend("sap.m.sample.TableViewSettingsDialog.SettingsDialogController", {
+
+		formatter: Formatter,
 
 		onInit: function () {
 			var oView = this.getView();

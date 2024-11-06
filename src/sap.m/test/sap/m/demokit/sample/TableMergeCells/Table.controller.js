@@ -7,6 +7,8 @@ sap.ui.define([
 
 	var TableController = Controller.extend("sap.m.sample.TableMergeCells.Table", {
 
+		formatter: Formatter,
+
 		onInit: function () {
 
 			// set explored app's demo model on this sample
@@ -17,5 +19,4 @@ sap.ui.define([
 
 
 	return TableController;
-
 });
