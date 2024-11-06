@@ -7,6 +7,8 @@ sap.ui.define([
 
 	var ListController = Controller.extend("sap.m.sample.ListUnread.List", {
 
+		formatter: Formatter,
+
 		onInit : function (evt) {
 			// set explored app's demo model on this sample
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
@@ -16,5 +18,4 @@ sap.ui.define([
 
 
 	return ListController;
-
 });

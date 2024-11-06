@@ -15,7 +15,7 @@
 				<Button text="Toggle Modify View" press="onPress"/>
 			</OverflowToolbar>
 		</headerToolbar>
-				
+
 		<f:DynamicPage id="dynamicPage">
 			<f:title>
 				<f:DynamicPageTitle>
@@ -38,8 +38,8 @@
 									rename="false"
 									changeable="false"
 									remove="false"
-									sharing="public" />
-								<VariantItem key="2" title="Entry2"							
+									sharing="Public" />
+								<VariantItem key="2" title="Entry2"
 									author="A"
 									favorite="true"
 									visible="true"
@@ -47,8 +47,8 @@
 									rename="true"
 									changeable="true"
 									remove="true"
-									sharing="private" />
-								<VariantItem key="3" title="Entry3"								
+									sharing="Private" />
+								<VariantItem key="3" title="Entry3"
 									author="A"
 									favorite="true"
 									visible="true"
@@ -56,8 +56,8 @@
 									rename="true"
 									changeable="true"
 									remove="true"
-									sharing="private" />
-								<VariantItem key="4" title="Entry4"								
+									sharing="Private" />
+								<VariantItem key="4" title="Entry4"
 									author="A"
 									favorite="false"
 									visible="true"
@@ -65,7 +65,7 @@
 									rename="false"
 									changeable="true"
 									remove="false"
-									sharing="public" />
+									sharing="Public" />
 							</items>
 						</VariantManagement>
 

@@ -177,13 +177,13 @@ sap.ui.define([
 				/**
 				 * Row configuration information for each uploadItem in the model.
 				 */
-                rowConfiguration: {type: "sap.m.upload.UploadItemConfiguration", multiple: false},
+				rowConfiguration: {type: "sap.m.upload.UploadItemConfiguration", multiple: false},
 				/**
 			 	 * An illustrated message is displayed when no data is loaded.
 				 */
 				noDataIllustration: { type: "sap.m.IllustratedMessage", multiple: false }
 			},
-            defaultAggregation: "rowConfiguration",
+			defaultAggregation: "rowConfiguration",
 			associations: {
 				/**
 				 * Dialog with a carousel to preview files uploaded.
@@ -371,7 +371,7 @@ sap.ui.define([
 				/**
 				 * This event is fired when plugin is activated.
 				 */
-                onActivated: {
+				onActivated: {
 					parameters: {
 						/**
 						 * The activated plugin instance.
@@ -394,7 +394,7 @@ sap.ui.define([
 		}
 	});
 
-    var UploadState = Library.UploadState;
+	var UploadState = Library.UploadState;
 	var UploadSetwithTableActionPlaceHolder = Library.UploadSetwithTableActionPlaceHolder;
 
 	UploadSetwithTable.findOn = PluginBase.findOn;
@@ -420,7 +420,7 @@ sap.ui.define([
 		this.getConfig("setPluginInstance", this);
 		this.getConfig("setControlInstance", this.getControl());
 		this.getConfig("setPluginDefaultSettings");
-        this._setActions();
+		this._setActions();
 
 		this.fireOnActivated({oPlugin: this});
 	};
@@ -441,7 +441,7 @@ sap.ui.define([
 
 	// Overriden Setter methods
 
-    UploadSetwithTable.prototype.setFileTypes = function (aNewTypes) {
+	UploadSetwithTable.prototype.setFileTypes = function (aNewTypes) {
 		var aTypes = aNewTypes || null;
 		if (typeof aTypes === "string") {
 			aTypes = aTypes.split(",");
@@ -543,13 +543,13 @@ sap.ui.define([
 
 	// Public API's
 
-    /**
+	/**
 	 * Returns an instance of the default <code>sap.ui.unified.FileUploader</code> icon/button, used for adding files
 	 * from the open file dialog of the operating system. It can be customized, for example made invisible or assigned a different icon.
 	 * @return {sap.ui.unified.FileUploader} Instance of the default <code>sap.ui.unified.FileUploader</code>.
 	 * @public
 	 */
-    UploadSetwithTable.prototype.getDefaultFileUploader = function () {
+	UploadSetwithTable.prototype.getDefaultFileUploader = function () {
 		var sTooltip = "Upload";
 		if (!this._oFileUploader) {
 			this._oFileUploader = new FileUploader(this.getId() + "-uploader", {
@@ -567,11 +567,11 @@ sap.ui.define([
 				mimeType: this.getMediaTypes(),
 				maximumFilenameLength: this.getMaxFileNameLength(),
 				maximumFileSize: this.getMaxFileSize(),
-                multiple: this.getDirectory() ? false : this.getMultiple(),
+				multiple: this.getDirectory() ? false : this.getMultiple(),
 				useMultipart: false,
 				sendXHR: true,
 				change: [this._onFileUploaderChange, this],
-                typeMissmatch: [this._fireFileTypeMismatch, this],
+				typeMissmatch: [this._fireFileTypeMismatch, this],
 				fileSizeExceed: [this._fireFileSizeExceed, this],
 				filenameLengthExceed: [this._fireFilenameLengthExceed, this],
 				visible: !this.getUploadButtonInvisible(),
@@ -582,7 +582,7 @@ sap.ui.define([
 		return this._oFileUploader;
 	};
 
-    /**
+	/**
 	 * Returns sap icon based on the passed mediaType and filename
 	 * @param {string} mediaType The media type of the selected file
 	 * @param {string} fileName The name of the selected file
@@ -590,8 +590,8 @@ sap.ui.define([
 	 * @returns {string} sap icon.
 	 */
 	UploadSetwithTable.getIconForFileType = function (mediaType, fileName) {
-        return UploadItem._getIconByMimeType(mediaType, fileName);
-    };
+		return UploadItem._getIconByMimeType(mediaType, fileName);
+	};
 
 	/**
 	 * Attaches all necessary handlers to the given uploader instance, so that the progress and status of the upload can be
@@ -625,8 +625,8 @@ sap.ui.define([
 	 */
 	UploadSetwithTable.getFileSizeWithUnits = function(iFileSize) {
 		var iKilobyte = 1024;
-        var iMegabyte = iKilobyte * 1024;
-        var iGigabyte = iMegabyte * 1024;
+		var iMegabyte = iKilobyte * 1024;
+		var iGigabyte = iMegabyte * 1024;
 		if (typeof iFileSize === "number") {
 			if (iFileSize < iMegabyte) {
 				return (iFileSize / iKilobyte).toFixed(2) + " KB";
@@ -749,7 +749,7 @@ sap.ui.define([
 		const iFileExtensionLength = oSplit.extension ? oSplit.extension.length + 1 : 0;
 			iMaxLength = iMaxLength ? iMaxLength : 0;
 		let iNameMaxLength = iMaxLength - iFileExtensionLength;
-		    iNameMaxLength = iNameMaxLength < 0 ? 0 : iNameMaxLength;
+			iNameMaxLength = iNameMaxLength < 0 ? 0 : iNameMaxLength;
 
 		// Input field
 		const oInput = new Input({
@@ -903,8 +903,8 @@ sap.ui.define([
 		}
 	};
 
-    UploadSetwithTable.prototype._onFileUploaderChange = function (oEvent) {
-        var oFiles = oEvent.getParameter("files");
+	UploadSetwithTable.prototype._onFileUploaderChange = function (oEvent) {
+		var oFiles = oEvent.getParameter("files");
 
 		if (oFiles && oFiles.length) {
 			// var aSelectedItems = this.getConfig("getSelectedItems", oControl);
@@ -919,7 +919,7 @@ sap.ui.define([
 		}
 	};
 
-    UploadSetwithTable.prototype._processSelectedFileObjects = function (oFiles) {
+	UploadSetwithTable.prototype._processSelectedFileObjects = function (oFiles) {
 		var aFiles = [];
 
 		// Need to explicitly copy the file list, FileUploader deliberately resets its form completely
@@ -972,8 +972,8 @@ sap.ui.define([
 		});
 	};
 
-    UploadSetwithTable.prototype._fireFileTypeMismatch = function (oItem) {
-        var aMediaTypes = this.getMediaTypes();
+	UploadSetwithTable.prototype._fireFileTypeMismatch = function (oItem) {
+		var aMediaTypes = this.getMediaTypes();
 		var aFileTypes = this.getFileTypes();
 
 		var sFileType = oItem.getParameter("fileType");
@@ -999,19 +999,19 @@ sap.ui.define([
 		} else if (bFileRestricted){
 			this.fireFileTypeMismatch({item: oMismatchItem});
 		}
-    };
+	};
 
-    UploadSetwithTable.prototype._fireFilenameLengthExceed = function (oItem) {
+	UploadSetwithTable.prototype._fireFilenameLengthExceed = function (oItem) {
 		var oTargetItem = new UploadItem();
 		oTargetItem.setFileName(oItem.getParameter('fileName'));
-        this.fireFileNameLengthExceeded({item: oTargetItem});
-    };
+		this.fireFileNameLengthExceeded({item: oTargetItem});
+	};
 
-    UploadSetwithTable.prototype._fireFileSizeExceed = function (oItem) {
+	UploadSetwithTable.prototype._fireFileSizeExceed = function (oItem) {
 		var oTargetItem = new UploadItem();
 		oTargetItem.setFileName(oItem.getParameter('fileName'));
-        this.fireFileSizeExceeded({item: oTargetItem});
-    };
+		this.fireFileSizeExceeded({item: oTargetItem});
+	};
 
 	UploadSetwithTable.prototype._onUploadStarted = function (oEvent) {
 		var oItem = oEvent.getParameter("item");
@@ -1072,7 +1072,7 @@ sap.ui.define([
 		return this._oUploader;
 	};
 
-    UploadSetwithTable.prototype._initateItemUpload = function(oItem) {
+	UploadSetwithTable.prototype._initateItemUpload = function(oItem) {
 		this.fireBeforeInitiatingItemUpload({item: oItem});
 		if (this._oItemToUpdate) {
 			// Registering item to be update with selected file contents post successful upload.
@@ -1588,7 +1588,7 @@ sap.ui.define([
 	};
 
 
-    PluginBase.setConfigs({
+	PluginBase.setConfigs({
 	 "sap.ui.mdc.Table": {
 		_oPluginInstance: null,
 		_oControlInstance: null,
@@ -1674,7 +1674,7 @@ sap.ui.define([
 					oPlugin._illustratedMessage = oNoDataIllustration;
 				}
 				oControl.setNoData(oPlugin._illustratedMessage);
-        }
+		}
 		},
 		cleanupPluginInstanceSettings: function() {
 			const oPlugin = this.getPluginInstance();
@@ -1814,7 +1814,7 @@ sap.ui.define([
 					oPlugin._illustratedMessage = oNoDataIllustration;
 				}
 				oControl.setNoData(oPlugin._illustratedMessage);
-        }
+		}
 		},
 		cleanupPluginInstanceSettings: function() {
 			const oPlugin = this.getPluginInstance();
@@ -1949,7 +1949,7 @@ sap.ui.define([
 					oPlugin._illustratedMessage = oNoDataIllustration;
 				}
 				oControl.setNoData(oPlugin._illustratedMessage);
-        }
+		}
 		},
 		cleanupPluginInstanceSettings: function() {
 			const oPlugin = this.getPluginInstance();
@@ -2002,7 +2002,7 @@ sap.ui.define([
 			return oTable?.getBinding("rows")?.getCurrentContexts() || null;
 		}
 	 }
-    }, UploadSetwithTable);
+	}, UploadSetwithTable);
 
 	return UploadSetwithTable;
 });

@@ -13,8 +13,7 @@
 		beforeNavigate="onBeforeNavigate"
 		useIconTabBar="true"
 		showTitleInHeaderContent="true"
-		upperCaseAnchorBar="false"
-		sectionChange="onSectionChange">
+		upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>
 				<expandedHeading>

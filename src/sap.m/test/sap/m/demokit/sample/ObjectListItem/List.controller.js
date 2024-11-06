@@ -8,6 +8,8 @@ sap.ui.define([
 
 	return Controller.extend("sap.m.sample.ObjectListItem.List", {
 
+		formatter: Formatter,
+
 		onInit: function () {
 			// set explored app's demo model on this sample
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
@@ -18,5 +20,4 @@ sap.ui.define([
 			MessageToast.show("Pressed : " + oEvent.getSource().getTitle());
 		}
 	});
-
 });

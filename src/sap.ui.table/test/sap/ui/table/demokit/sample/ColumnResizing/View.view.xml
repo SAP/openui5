@@ -43,7 +43,6 @@
 					</Column>
 					<Column
 						width="{ui>/widths/image}"
-						flexible="false"
 						resizable="false">
 						<m:Label text="Image" />
 						<template>
