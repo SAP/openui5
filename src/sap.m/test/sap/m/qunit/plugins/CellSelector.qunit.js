@@ -175,6 +175,29 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("selection works with cellSelector added later", function (assert) {
+		this.oTable.removeDependent(this.oCellSelector);
+		var done = assert.async();
+
+		this.oTable.attachEventOnce("rowsUpdated", () => {
+			setTimeout(() => {
+				this.oTable.addDependent(this.oCellSelector);
+				Core.applyChanges();
+
+				var oCell = getCell(this.oTable, 1, 0); // first cell of first row
+				qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+				qutils.triggerKeyup(oCell, KeyCodes.SPACE);
+				assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
+
+				// oCell = getCell(this.oTable, 2, 0);
+				qutils.triggerKeydown(oCell, KeyCodes.ARROW_DOWN, true);
+				qutils.triggerKeyup(oCell, KeyCodes.ARROW_DOWN, true);
+				assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 2, colIndex: 0}});
+				done();
+			}, 1000);
+		});
+	});
+
 	QUnit.test("Selection with mouse only with left-click", function(assert) {
 		this.oTable.addDependent(this.oCellSelector);
 		var done = assert.async();

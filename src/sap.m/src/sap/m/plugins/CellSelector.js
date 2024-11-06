@@ -3,11 +3,12 @@
  */
 sap.ui.define([
 	"./PluginBase",
+	"sap/base/i18n/Localization",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/base/Log"
-], function (PluginBase, KeyCodes, Core, Element, Log) {
+], function (PluginBase, Localization, KeyCodes, Core, Element, Log) {
 	"use strict";
 
 	var DIRECTION = {
@@ -236,6 +237,19 @@ sap.ui.define([
 
 		this._deregisterEvents();
 		this._onSelectableChange();
+	};
+
+	function getRTL() {
+		return Localization.getRTL() ? -1 : 1;
+	}
+
+	CellSelector.prototype.init = function() {
+		this._iRtl = getRTL();
+	};
+
+	CellSelector.prototype.onLocalizationChanged = function() {
+		this._iRtl = getRTL();
+		this.removeSelection();
 	};
 
 	CellSelector.prototype.exit = function() {
