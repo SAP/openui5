@@ -566,6 +566,42 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
+	QUnit.test("Prevent Dialog Opening", function (assert) {
+		// Arrange
+		this.oDialog.attachBeforeOpen(function (oEvent) {
+			oEvent.preventDefault();
+		});
+
+		this.oButton.firePress();
+		assert.notOk(this.oDialog.isOpen(), "Dialog is not open");
+	});
+
+	QUnit.test("Prevent Dialog Closing", function (assert) {
+		var bPreventDefault = true;
+
+		// Arrange
+		this.oDialog.attachBeforeClose(function (oEvent) {
+			if (bPreventDefault) {
+				oEvent.preventDefault();
+				bPreventDefault = false;
+			}
+		});
+
+		this.oButton.firePress();
+
+		assert.ok(this.oDialog.isOpen(), "Dialog is open");
+
+		this.oDialog.close();
+		this.clock.tick(500);
+
+		assert.ok(this.oDialog.isOpen(), "Dialog is still open");
+
+		this.oDialog.close();
+		this.clock.tick(500);
+
+		assert.notOk(this.oDialog.isOpen(), "Dialog is closed");
+	});
+
 	QUnit.module("Message dialog");
 
 	QUnit.test("Footer rendering", function (assert) {
