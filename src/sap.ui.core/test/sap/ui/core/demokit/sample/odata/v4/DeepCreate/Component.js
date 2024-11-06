@@ -17,6 +17,10 @@ sap.ui.define([
 			manifest : "json"
 		},
 
+		exit : function () {
+			this.getModel().restoreSandbox();
+		},
+
 		init : function () {
 			// call the super function
 			UIComponent.prototype.init.apply(this, arguments);

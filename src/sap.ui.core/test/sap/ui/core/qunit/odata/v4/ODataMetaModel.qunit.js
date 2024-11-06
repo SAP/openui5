@@ -4780,63 +4780,80 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_mergeAnnotations: without annotation files", function (assert) {
-		// Note: target elements have been omitted for brevity
-		var mExpectedAnnotations = {
-				"same.target" : {
-					"@Common.Description" : "",
-					"@Common.Label" : {
-						old : true // Note: no aggregation of properties here!
-					},
-					"@Common.Text" : ""
-				},
-				"another.target" : {
-					"@Common.Label" : ""
-				}
-			},
-			mScope0 = {
+	[false, true].forEach(function (bAnnotationFiles) {
+		QUnit.test("_mergeAnnotations: bAnnotationFiles=" + bAnnotationFiles, function (assert) {
+			const mScope0 = {
 				"A." : {
 					$kind : "Schema",
-					$Annotations : {
-						"same.target" : {
-							"@Common.Label" : {
-								old : true
-							},
-							"@Common.Text" : ""
-						}
-					}
+					$Annotations : {}
+				},
+				"A.Container" : {
+					$kind : "EntityContainer"
 				},
 				"B." : {
 					$kind : "Schema",
-					$Annotations : {
-						"same.target" : {
-							"@Common.Description" : "",
-							"@Common.Label" : { // illegal overwrite within $metadata, ignored!
-								new : true
-							}
-						},
-						"another.target" : {
-							"@Common.Label" : ""
-						}
-					}
+					$Annotations : {}
 				},
 				"B.B" : {}
 			};
+			const mAnnotationScope1 = {
+				$Version : "4.0",
+				"foo." : {
+					$kind : "Schema",
+					$Annotations : {}
+				},
+				"foo.Container" : {
+					$kind : "EntityContainer"
+				}
+			};
+			const mAnnotationScope2 = {
+				$Version : "4.0",
+				"bar." : {
+					$kind : "Schema",
+					$Annotations : {}
+				}
+			};
 
-		this.oMetaModelMock.expects("validate")
-			.withExactArgs(this.oMetaModel.sUrl, mScope0);
-		assert.deepEqual(this.oMetaModel.mSchema2MetadataUrl, {});
+			this.oMetaModel.aAnnotationUris = ["/URI/1", "/URI/2"];
 
-		// code under test
-		this.oMetaModel._mergeAnnotations(mScope0, []);
+			const aMergeExpectations = [];
+			this.oMetaModelMock.expects("validate")
+				.withExactArgs(this.oMetaModel.sUrl, mScope0);
+			aMergeExpectations.push(this.oMetaModelMock.expects("_doMergeAnnotations")
+				.withExactArgs(sinon.match.same(mScope0["A."]), {}));
+			aMergeExpectations.push(this.oMetaModelMock.expects("_doMergeAnnotations")
+				.withExactArgs(sinon.match.same(mScope0["B."]), sinon.match.object));
+			if (bAnnotationFiles) {
+				this.oMetaModelMock.expects("validate")
+					.withExactArgs("/URI/1", sinon.match.same(mAnnotationScope1));
+				this.oMetaModelMock.expects("validate")
+					.withExactArgs("/URI/2", sinon.match.same(mAnnotationScope2));
+				aMergeExpectations.push(this.oMetaModelMock.expects("_doMergeAnnotations")
+					.withExactArgs(sinon.match.same(mAnnotationScope1["foo."]), sinon.match.object,
+						true));
+				aMergeExpectations.push(this.oMetaModelMock.expects("_doMergeAnnotations")
+					.withExactArgs(sinon.match.same(mAnnotationScope2["bar."]), sinon.match.object,
+						true));
+			}
+			assert.deepEqual(this.oMetaModel.mSchema2MetadataUrl, {});
 
-		assert.deepEqual(mScope0.$Annotations, mExpectedAnnotations,
-			"$Annotations have been shifted and merged from schemas to root");
-		assert.notOk("$Annotations" in mScope0["A."], "$Annotations removed from schema");
-		assert.notOk("$Annotations" in mScope0["B."], "$Annotations removed from schema");
-		assert.deepEqual(this.oMetaModel.mSchema2MetadataUrl, {
-			"A." : {"/a/b/c/d/e/$metadata" : false},
-			"B." : {"/a/b/c/d/e/$metadata" : false}
+			// code under test
+			this.oMetaModel._mergeAnnotations(mScope0,
+				bAnnotationFiles ? [mAnnotationScope1, mAnnotationScope2] : []);
+
+			aMergeExpectations.forEach(function (oMergeExpectation) {
+				assert.strictEqual(oMergeExpectation.args[0][1], mScope0.$Annotations);
+			});
+			sinon.assert.callOrder(...aMergeExpectations);
+			assert.deepEqual(this.oMetaModel.mSchema2MetadataUrl, bAnnotationFiles ? {
+				"A." : {"/a/b/c/d/e/$metadata" : false},
+				"B." : {"/a/b/c/d/e/$metadata" : false},
+				"bar." : {"/URI/2" : false},
+				"foo." : {"/URI/1" : false}
+			} : {
+				"A." : {"/a/b/c/d/e/$metadata" : false},
+				"B." : {"/a/b/c/d/e/$metadata" : false}
+			});
 		});
 	});
 
@@ -4943,6 +4960,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// TODO This test is only kept for the last c.u.t. which tests #_getOrFetchSchema. It should
+	//      be removed once #_getOrFetchSchema is tested in a more appropriate way.
 	QUnit.test("_mergeAnnotations: with annotation files", function (assert) {
 		var mScope0 = {
 				$EntityContainer : "tea_busi.DefaultContainer",
@@ -5213,6 +5232,8 @@ sap.ui.define([
 				};
 
 			this.oMetaModel.aAnnotationUris = ["n/a", "/my/annotation.xml"];
+			this.mock(this.oMetaModel).expects("_doMergeAnnotations")
+				.withExactArgs(sinon.match.same(oMetadata["tea_busi."]), {});
 			this.mock(this.oMetaModel.oModel).expects("reportError")
 				.withExactArgs(sMessage, sODataMetaModel, sinon.match({
 						message : oError.message,
@@ -5226,6 +5247,86 @@ sap.ui.define([
 			}, new Error("/my/annotation.xml: " + sMessage));
 		}
 	);
+
+	//*********************************************************************************************
+	QUnit.test("_doMergeAnnotations: no changes", function (assert) {
+		const oSchema = {
+			$Annotations : {
+				target1 : {
+					"@foo" : "n/a"
+				}
+			}
+		};
+		const mAnnotations = {
+			target1 : {
+				"@foo" : "old"
+
+			}
+		};
+
+		// code under test
+		assert.strictEqual(this.oMetaModel._doMergeAnnotations(oSchema, mAnnotations), false);
+
+		assert.deepEqual(oSchema, {});
+		assert.deepEqual(mAnnotations, {
+			target1 : {
+				"@foo" : "old"
+			}
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bPrivileged) {
+		QUnit.test("_doMergeAnnotations: changes, bPrivileged=" + bPrivileged, function (assert) {
+			const oSchema = {
+				$Annotations : {
+					target1 : {
+						"@foo" : {new : true},
+						"@bar" : "new"
+					},
+					target2 : {
+						"@array" : ["new"],
+						"@baz" : "new",
+						"@boolean" : true
+					},
+					target3 : {
+						"@qux" : "new"
+					}
+				}
+			};
+			const mAnnotations = {
+				target1 : {
+					"@foo" : {old : true} // Note: no aggregation of properties here!
+				},
+				target2 : {
+					"@array" : ["old"], // Note: no aggregation of array elements here!
+					"@baz" : "old",
+					"@boolean" : false
+				}
+			};
+
+			// code under test
+			assert.strictEqual(
+				this.oMetaModel._doMergeAnnotations(oSchema, mAnnotations, bPrivileged),
+				true);
+
+			assert.deepEqual(oSchema, {});
+			assert.deepEqual(mAnnotations, {
+				target1 : {
+					"@foo" : bPrivileged ? {new : true} : {old : true},
+					"@bar" : "new"
+				},
+				target2 : {
+					"@array" : bPrivileged ? ["new"] : ["old"],
+					"@baz" : bPrivileged ? "new" : "old",
+					"@boolean" : bPrivileged
+				},
+				target3 : {
+					"@qux" : "new"
+				}
+			});
+		});
+	});
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bMetaModelForAnnotations) {

@@ -27,13 +27,9 @@ sap.ui.define([
 			}], "/sap/demo/ZUI5_EDM_TYPES/");
 
 		oModel = new ODataModel(mParameters);
-		oModel.destroy = function () {
-			if (oSandbox) { // may be called twice
-				oSandbox.restore();
-				oSandbox = undefined;
-			}
-
-			return ODataModel.prototype.destroy.apply(this);
+		oModel.restoreSandbox = () => {
+			oSandbox?.restore();
+			oSandbox = undefined;
 		};
 
 		return oModel;

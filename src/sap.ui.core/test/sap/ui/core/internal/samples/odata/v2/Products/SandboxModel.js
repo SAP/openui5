@@ -46,13 +46,11 @@ sap.ui.define([
 		}
 
 		oModel = new ODataModel(mParameters);
-		oModel.destroy = function () {
-			if (oSandbox) {
-				oSandbox.restore();
-				oSandbox = undefined;
-			}
-			return ODataModel.prototype.destroy.apply(this, arguments);
+		oModel.restoreSandbox = () => {
+			oSandbox?.restore();
+			oSandbox = undefined;
 		};
+
 		return oModel;
 	}
 	fnSandboxModel.getMetadata = ODataModel.getMetadata;

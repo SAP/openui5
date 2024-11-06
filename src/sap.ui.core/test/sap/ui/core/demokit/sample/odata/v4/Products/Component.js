@@ -69,6 +69,10 @@ sap.ui.define([
 			});
 
 			return oLayout;
+		},
+
+		exit : function () {
+			this.getModel().restoreSandbox();
 		}
 	});
 });

@@ -252,9 +252,11 @@ sap.ui.define([
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 			var oShowMessageToastStub = sandbox.stub(MessageToast, "show");
 
+			assert.notOk(this.oRta.getPlugins().toolHooks.getVersionWasActivated(), "then the version activated flag is set to false");
 			sandbox.stub(this.oRta.getCommandStack(), "removeAllCommands").callsFake(function() {
 				assert.strictEqual(this.oSaveStub.callCount, 1, "the commands were saved");
 				assert.strictEqual(this.oActivateStub.callCount, 1, "then the activate() method is called once");
+				assert.ok(this.oRta.getPlugins().toolHooks.getVersionWasActivated(), "then the version activated flag is set to true");
 				var oActivationCallPropertyBag = this.oActivateStub.getCall(0).args[0];
 				assert.strictEqual(oActivationCallPropertyBag.control, this.oRta.getRootControlInstance(), "with the correct control");
 				assert.strictEqual(oActivationCallPropertyBag.layer, this.oRta.getLayer(), "and layer");

@@ -12,6 +12,10 @@ sap.ui.define([
 	"use strict";
 
 	return UIComponent.extend("sap.ui.core.internal.samples.odata.v2.Products.Component", {
+		exit: function () {
+			this.getModel().restoreSandbox();
+		},
+
 		metadata : {
 			interfaces : ["sap.ui.core.IAsyncContentCreation"],
 			manifest : "json"
