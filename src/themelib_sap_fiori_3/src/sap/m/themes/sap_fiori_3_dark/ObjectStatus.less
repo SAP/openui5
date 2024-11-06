@@ -9,6 +9,7 @@
 }
 
 .sapMObjectStatusLarge {
+
 	.sapMObjStatusTitle,
 	.sapMObjStatusText,
 	.sapMObjStatusIcon {
@@ -16,18 +17,21 @@
 		line-height: 2rem;
 		min-height: 2rem;
 	}
+
 	.sapMObjStatusIcon > .sapUiIcon {
 		font-size: 1.5rem;
 	}
 }
 
 .sapMObjectStatusLarge.sapMObjStatusInverted {
+
 	.sapMObjStatusIcon > .sapUiIcon {
 		vertical-align: bottom;
 		font-size: 1.25rem;
 		padding-left: 0;
 		padding-right: 0;
 	}
+
 	.sapMObjStatusIcon:not(.sapMObjStatusIconOnly) {
 		padding-left: 0;
 		padding-right: 0;
@@ -39,24 +43,25 @@
 }
 
 .sapMObjStatusWrapper {
-	border-radius: @sapUiElementBorderCornerRadius;
+	border-radius: var(--sapElement_BorderCornerRadius);
 }
 
 .sapMObjStatusInverted .sapMObjStatusText,
 .sapMObjStatusInverted .sapMObjStatusIcon {
-	color: @sapUiContentContrastTextColor;
+	color: var(--sapContent_ContrastTextColor);
 }
 
 .sapMObjStatusNone:not(.sapMObjStatusInverted) {
+
 	.sapUxAPObjectPageContainer &,
 	.sapUxAPObjectPageHeaderContentItem &,
 	&.sapUxAPObjectPageHeaderContentItem,
 	.sapUxAPObjectPageHeaderDetails .sapFDynamicPageHeaderContent & {
+
 		.sapMObjStatusText,
 		.sapMObjStatusIcon {
-			color: @sapNeutralTextColor;
+			color: var(--sapNeutralTextColor);
 		}
-
 	}
 }
 
@@ -72,7 +77,7 @@
 .sapMObjStatusInverted .sapMObjStatusIcon,
 .sapMObjStatusInverted .sapMObjStatusLink:active .sapMObjStatusText,
 .sapMObjStatusInverted .sapMObjStatusLink:active .sapMObjStatusIcon {
-	text-shadow: @sapUiContentContrastTextShadow;
+	text-shadow: var(--sapContent_ContrastTextShadow);
 }
 
 /*  Second set of inverted indication colors regular state */
@@ -96,7 +101,7 @@
 .sapMObjStatusInverted.sapMObjStatusIndication19 .sapMObjStatusIcon,
 .sapMObjStatusInverted.sapMObjStatusIndication20 .sapMObjStatusText,
 .sapMObjStatusInverted.sapMObjStatusIndication20 .sapMObjStatusIcon {
-	text-shadow: @sapUiContentTextShadow;
+	text-shadow: var(--sapContent_TextShadow);
 }
 
 .sapMObjStatusInverted.sapMObjStatusIndication11 .sapMObjStatusLink:active .sapMObjStatusText,
@@ -119,5 +124,5 @@
 .sapMObjStatusInverted.sapMObjStatusIndication19 .sapMObjStatusLink:active .sapMObjStatusIcon,
 .sapMObjStatusInverted.sapMObjStatusIndication20 .sapMObjStatusLink:active .sapMObjStatusText,
 .sapMObjStatusInverted.sapMObjStatusIndication20 .sapMObjStatusLink:active .sapMObjStatusIcon {
-	text-shadow: @sapUiContentContrastTextShadow;
+	text-shadow: var(--sapContent_ContrastTextShadow);
 }
