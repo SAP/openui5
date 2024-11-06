@@ -44,9 +44,10 @@ sap.ui.define([
 		return new jQuery(document.getElementById(id));
 	}
 
-	//Declare a simple test controls
-
-	var TestControl = Control.extend("TestControl", {
+	/**
+	 * @deprecated As of 1.92 (String based rendering is replaced with the Semantic Rendering)
+	 */
+	var TestControl = Control.extend("TestControl", { //Declare a simple test controls
 		renderer: {
 			render: function(oRM, oControl) {
 				oRM.write("<div");
@@ -74,6 +75,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated As of 1.92 (String based rendering is replaced with the Semantic Rendering)
+	 */
 	var ACCTestControl = TestControl.extend("ACCTestControl", {
 		metadata: {
 			properties: {
@@ -507,8 +511,13 @@ sap.ui.define([
 		checkACCOutput(sOutput, "aria-labelledby=\"" + sText + "\"");
 	});
 
-	// DOM rendering methods
-
+	/**
+	 * Although the tests in this module uses the semantic syntax, it still
+	 * falls back to the string based rendering because no 'apiVersion: 2' is
+	 * set and it renders with a manually created RenderManager instance.
+	 *
+	 * @deprecated As of 1.92
+	 */
 	QUnit.module("Writer API: Semantic Syntax (DOM) Rendering Methods");
 
 	QUnit.test("RenderManager.openStart", function (assert) {
@@ -1129,236 +1138,7 @@ sap.ui.define([
 		assert.equal(iCounter, 0, "Number of rerenderings of Ctrl2");
 	});
 
-	var TestControlSemanticRendering = Control.extend("TestControlSemanticRendering", {
-		renderer: {
-			render: function(rm, oControl) {
-				rm.openStart("div", oControl);
-				rm.openEnd();
-				rm.text("[" + oControl.getId() + "]");
-				rm.close("div");
-			}
-		},
-		onBeforeRendering: function() {
-			if (this.doBeforeRendering) {
-				this.doBeforeRendering();
-			}
-		},
-		onAfterRendering: function() {
-			if (this.doAfterRendering) {
-				this.doAfterRendering();
-			}
-		}
-	});
-
-
-	QUnit.module("Non Renderer Functions - Semantic Rendering", {
-		before: function() {
-			var aSemanticRenderingControls = [];
-			for (var i = 0; i < 8; i++) {
-				aSemanticRenderingControls.push(new TestControlSemanticRendering("SRControl" + i));
-			}
-			this.controls = aSemanticRenderingControls;
-		},
-		after: function() {
-			this.controls.forEach(function(oControl) {
-				oControl.destroy();
-			});
-		}
-	});
-
-
-	QUnit.test("RenderManager.destroy", function(assert) {
-		var rm = new RenderManager();
-		var oControl5 = new TestControlSemanticRendering("TestContr5");
-		rm.renderControl(oControl5);
-		assert.ok(rm.aBuffer.length != 0, "HTML Buffer is filled after some writing");
-		assert.ok(rm.aRenderedControls != 0, "Rendered Control Buffer is filled after some writing");
-		rm.destroy();
-		assert.ok(rm.aBuffer.length == 0, "HTML Buffer cleared after destroy");
-		assert.ok(rm.aRenderedControls == 0, "Rendered Control Buffer cleared after destroy");
-	});
-
-
-	QUnit.test("RenderManager.render (Initial Rendering)", function(assert) {
-		var rm = new RenderManager().getInterface(),
-			aControls = this.controls,
-			pDone;
-
-		//Initial Rendering
-		pDone = checkRendering(assert, [aControls[0], aControls[1], aControls[2]], "area1", false, function(oTargetDomNode, aCtrls) {
-			rm.render(aCtrls[0], oTargetDomNode);
-			rm.render(aCtrls[1], oTargetDomNode);
-			rm.render(aCtrls[2], oTargetDomNode);
-		});
-
-		checkChildOrder(assert, "area1", [aControls[0].getId(), aControls[1].getId(), aControls[2].getId()]);
-		return pDone;
-	});
-
-	QUnit.test("RenderManager.render (Rerendering to same parent DOM node)", function(assert) {
-		var rm = new RenderManager().getInterface(),
-			aControls = this.controls,
-			pDone;
-
-		//Rerendering to same parent DOM node
-		pDone = checkRendering(assert, [aControls[1]], "area1", true, function(oTargetDomNode, aCtrls) {
-			rm.render(aCtrls[0], oTargetDomNode);
-		});
-
-		checkChildOrder(assert, "area1", [aControls[0].getId(), aControls[1].getId(), aControls[2].getId()]);
-		return pDone;
-	});
-
-	QUnit.test("RenderManager.render (Move to different parent DOM node)", function(assert) {
-		var rm = new RenderManager().getInterface(),
-			aControls = this.controls,
-			pDone;
-
-		//Move to different parent DOM node
-		pDone = checkRendering(assert, [aControls[1]], "area3", true, function(oTargetDomNode, aCtrls) {
-			rm.render(aCtrls[0], oTargetDomNode);
-		}, "area1");
-
-		checkChildOrder(assert, "area1", [aControls[0].getId(), aControls[2].getId()]);
-		checkChildOrder(assert, "area3", [aControls[1].getId()]);
-		return pDone;
-	});
-
-	QUnit.test("RenderManager.flush(Initial Rendering)", function(assert) {
-		var rm = new RenderManager().getInterface(),
-			aControls = this.controls,
-			pDone;
-
-		//Initial Rendering
-		pDone = checkRendering(assert, [aControls[3], aControls[4]], "area2", false, function(oTargetDomNode, aCtrls) {
-			rm.renderControl(aCtrls[0]);
-			rm.openStart("div");
-			rm.attr("id", "divider");
-			rm.openEnd();
-			rm.text("|");
-			rm.close("div");
-			rm.renderControl(aCtrls[1]);
-			rm.flush(oTargetDomNode);
-		});
-
-		checkChildOrder(assert, "area2", [aControls[3].getId(), "divider", aControls[4].getId()]);
-		return pDone;
-	});
-
-	QUnit.test("RenderManager.flush(Rerendering to same parent DOM node)", function(assert) {
-		var rm = new RenderManager().getInterface(),
-			aControls = this.controls,
-			pDone;
-
-		//Rerendering to same parent DOM node
-		pDone = checkRendering(assert, [aControls[3], aControls[4]], "area2", true, function(oTargetDomNode, aCtrls) {
-			rm.renderControl(aCtrls[1]);
-			rm.openStart("div");
-			rm.attr("id", "divider");
-			rm.openEnd();
-			rm.text("|");
-			rm.close("div");
-			rm.renderControl(aCtrls[0]);
-			rm.flush(oTargetDomNode);
-		});
-
-		checkChildOrder(assert, "area2", [aControls[4].getId(), "divider", aControls[3].getId()]);
-		return pDone;
-	});
-
-	QUnit.test("RenderManager.flush(Move to different parent DOM node)", function(assert) {
-		var rm = new RenderManager().getInterface(),
-			aControls = this.controls,
-			pDone;
-
-		//Move to different parent DOM node
-		pDone = checkRendering(assert, [aControls[3]], "area4", true, function(oTargetDomNode, aCtrls) {
-			rm.renderControl(aCtrls[0]);
-			rm.openStart("div");
-			rm.attr("id", "divider2");
-			rm.openEnd();
-			rm.text("|");
-			rm.close("div");
-			rm.flush(oTargetDomNode);
-		}, "area2");
-
-		checkChildOrder(assert, "area2", [aControls[4].getId(), "divider"]);
-		checkChildOrder(assert, "area4", [aControls[3].getId(), "divider2"]);
-		return pDone;
-	});
-
-	QUnit.test("RenderManager.flush(insert at certain position)", function(assert) {
-		var rm = new RenderManager().getInterface(),
-			aControls = this.controls,
-			done = assert.async();
-
-		rm.renderControl(aControls[5]);
-		rm.flush(document.getElementById("area2"), false, 1);
-		rm.destroy();
-
-		window.setTimeout(function() { // for delayed rendering in Safari
-			checkChildOrder(assert, "area2", [aControls[4].getId(), aControls[5].getId(), "divider"]);
-			done();
-		}, Device.browser.safari ? 500 : 0);
-	});
-
-	QUnit.test("RenderManager.flush(insert at certain position < 0)", function(assert) {
-		var rm = new RenderManager().getInterface(),
-			aControls = this.controls,
-			done = assert.async();
-
-		rm.renderControl(aControls[6]);
-		rm.flush(document.getElementById("area2"), false, -1);
-		rm.destroy();
-
-		window.setTimeout(function() { // for delayed rendering in Safari
-			checkChildOrder(assert, "area2", [aControls[6].getId(), aControls[4].getId(), aControls[5].getId(), "divider"]);
-			done();
-		}, Device.browser.safari ? 500 : 0);
-	});
-
-	QUnit.test("RenderManager.flush(insert at certain position > #items)", function(assert) {
-		var rm = new RenderManager().getInterface(),
-			aControls = this.controls,
-			done = assert.async();
-
-		rm.renderControl(aControls[7]);
-		rm.flush(document.getElementById("area2"), false, 42);
-		rm.destroy();
-
-		window.setTimeout(function() { // for delayed rendering in Safari
-			checkChildOrder(assert, "area2", [aControls[6].getId(), aControls[4].getId(), aControls[5].getId(), "divider", aControls[7].getId()]);
-			done();
-		}, Device.browser.safari ? 500 : 0);
-	});
-
-	QUnit.test("RenderManager lock", async function(assert) {
-		var oCtrl1 = new TestControlSemanticRendering();
-		var oCtrl2 = new TestControlSemanticRendering();
-
-		oCtrl1.placeAt("area5");
-		oCtrl2.placeAt("area5");
-		await nextUIUpdate();
-
-		oCtrl1.doBeforeRendering = function() {
-			UIArea.rerenderControl(oCtrl2);
-		};
-
-		oCtrl1.doAfterRendering = function() {
-			UIArea.rerenderControl(oCtrl2);
-		};
-
-		var iCounter = 0;
-
-		oCtrl2.doAfterRendering = function() {
-			iCounter++;
-		};
-
-		oCtrl1.invalidate();
-		await nextUIUpdate();
-
-		assert.equal(iCounter, 0, "Number of rerenderings of Ctrl2");
-	});
+	QUnit.module("RenderManager.prototype.icon");
 
 	QUnit.test("RenderManager.prototype.icon with Icon URL", function(assert) {
 		var rm = new RenderManager().getInterface();
@@ -1491,7 +1271,7 @@ sap.ui.define([
 		document.getElementById("area6").innerHTML = "";
 	});
 
-	QUnit.test("RenderManager writeIcon with Image URL", function(assert) {
+	QUnit.test("RenderManager.prototype.icon with Image URL", function(assert) {
 		var rm = new RenderManager().getInterface(),
 			sImgURL = sap.ui.require.toUrl("sap/ui/core/themes/base/img/Busy.gif");
 
@@ -1535,6 +1315,8 @@ sap.ui.define([
 		document.getElementById("area7").innerHTML = "";
 	});
 
+	QUnit.module("Edge cases");
+
 	QUnit.test("RenderManager should not break for controls with invalid renderer", async function(assert) {
 
 		var Log = sap.ui.require("sap/base/Log");
@@ -1566,7 +1348,6 @@ sap.ui.define([
 		// check the error message
 		assert.equal("The renderer for class " + oMetadata.getName() + " is not defined or does not define a render function! Rendering of " + oControl.getId() + " will be skipped!", oSpy.getCall(0).args[0], "Error should be reported in the console!");
 	});
-
 
 
 	QUnit.module("Events", {
@@ -1698,6 +1479,28 @@ sap.ui.define([
 		await nextUIUpdate();
 	});
 
+	var TestControlSemanticRendering = Control.extend("TestControlSemanticRendering", {
+		renderer: {
+			apiVersion: 2,
+			render: function(rm, oControl) {
+				rm.openStart("div", oControl);
+				rm.openEnd();
+				rm.text("[" + oControl.getId() + "]");
+				rm.close("div");
+			}
+		},
+		onBeforeRendering: function() {
+			if (this.doBeforeRendering) {
+				this.doBeforeRendering();
+			}
+		},
+		onAfterRendering: function() {
+			if (this.doAfterRendering) {
+				this.doAfterRendering();
+			}
+		}
+	});
+
 	QUnit.module("Invisible - Semantic Rendering");
 
 	QUnit.test("Render visible control", async function(assert) {
@@ -1788,7 +1591,7 @@ sap.ui.define([
 			defaultAggregation: "content"
 		},
 		renderer: {
-			apiVersion :1,
+			apiVersion: 2,
 			render: function(oRm, oControl) {
 				oRm.openStart("div", oControl);
 				oRm.openEnd();
@@ -1884,6 +1687,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated As of 1.92 (String based rendering is replaced with the Semantic Rendering)
+	 */
 	QUnit.test("default rendering (string)", async function(assert) {
 		TestContainer.getMetadata().getRenderer().apiVersion = 1;
 		await this.executeTest(assert, async function(value) {
@@ -1894,6 +1700,9 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	/**
+	 * @deprecated As of 1.92 (String based rendering is replaced with the Semantic Rendering)
+	 */
 	QUnit.test("custom rendering (string)", async function(assert) {
 		TestContainer.getMetadata().getRenderer().apiVersion = 1;
 		await this.executeTest(assert, function(value) {
