@@ -912,7 +912,6 @@
 		  "samples": [
 			"sap.m.sample.ObjectHeader",
 			"sap.m.sample.ObjectHeaderCondensed",
-			"sap.m.sample.ObjectHeaderFavFlag",
 			"sap.m.sample.ObjectHeaderImage",
 			"sap.m.sample.ObjectHeaderCircleImage",
 			"sap.m.sample.ObjectHeaderTitleActive",
@@ -972,7 +971,6 @@
 		  "since": "1.12",
 		  "samples": [
 			"sap.m.sample.ObjectListItem",
-			"sap.m.sample.ObjectListItemMarkLocked",
 			"sap.m.sample.ObjectListItemMarkers"
 		  ]
 		},

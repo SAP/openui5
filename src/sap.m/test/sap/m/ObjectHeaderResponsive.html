@@ -127,9 +127,6 @@
 				numberUnit: "Euro",
 				numberTextDirection: sap.ui.core.TextDirection.LTR,
 				fullScreenOptimized: true,
-				showMarkers: false,
-				markFlagged: true,
-				markFavorite: true,
 				numberState: sap.ui.core.ValueState.Success,
 				attributes: [
 					new sap.m.ObjectAttribute({
@@ -198,9 +195,6 @@
 				number: "624,00",
 				numberUnit: "Euro",
 				fullScreenOptimized: false,
-				showMarkers: false,
-				markFlagged: true,
-				markFavorite: true,
 				numberState: sap.ui.core.ValueState.Success,
 				attributes: [
 					new sap.m.ObjectAttribute({
@@ -272,9 +266,10 @@
 				number: "33233333.624,00",
 				numberUnit: "שֶׁקֶל חָדָשׁ",
 				numberTextDirection : sap.ui.core.TextDirection.RTL,
-				showMarkers: true,
-				markFlagged: true,
-				markFavorite: true,
+				markers: [
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite}),
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+				],
 				numberState: sap.ui.core.ValueState.Success
 			});
 
@@ -489,7 +484,6 @@
 				popover.openBy(domRef);
 			};
 
-
 			var oh3 = new sap.m.ObjectHeader("oh3", {
 				responsive: true,
 				title: "An apple a day keeps the doctor away An apple a day keeps the doctor away",
@@ -499,13 +493,14 @@
 				numberUnit: "here we have a long currency Euro",
 				showTitleSelector : true,
 				titleSelectorPress : titleSelectorEventHandler,
-				showMarkers: true,
-				markFlagged: true,
-				markFavorite: true,
+				markers: [
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite}),
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+				],
 				numberState: sap.ui.core.ValueState.Success
 			});
 			oh3.addStyleClass("sapUiResponsivePadding--header");
-			
+
 			var itb3 = new sap.m.IconTabBar("itb3", {
 				selectedKey: "key13",
 				items: [
@@ -597,8 +592,9 @@
 				introHref: "http://www.google.com",
 				introTarget: "_blank",
 				fullScreenOptimized: true,
-				showMarkers: true,
-				markFlagged: true,
+				markers: [
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+				],
 				numberState: sap.ui.core.ValueState.Success,
 				statuses : [ new sap.m.ObjectStatus({
 					text : "Order Shipping slow"
@@ -677,8 +673,9 @@
 				titleActive: true,
 				titlePress: function(){ alert('you click the title');},
 				fullScreenOptimized: false,
-				showMarkers: true,
-				markFlagged: true,
+				markers: [
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+				],
 				numberState: sap.ui.core.ValueState.Success,
 				statuses : [ new sap.m.ObjectStatus({
 					text : "Order Shipping slow"
@@ -749,9 +746,10 @@
 				title: "Short title",
 				number: "331,00",
 				numberUnit: "Dollar",
-				showMarkers: true,
-				markFlagged: true,
-				markFavorite: true,
+				markers: [
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite}),
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+				],
 				numberState: sap.ui.core.ValueState.Success,
 				attributes: [
 					new sap.m.ObjectAttribute({
@@ -818,9 +816,10 @@
 				number: "1.684,00",
 				numberUnit: "Euro",
 				backgroundDesign: "Translucent",
-				showMarkers: true,
-				markFlagged: true,
-				markFavorite: true,
+				markers: [
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite}),
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+				],
 				numberState: sap.ui.core.ValueState.Success,
 				attributes: [
 					new sap.m.ObjectAttribute({
@@ -847,9 +846,10 @@
 				icon: "sap-icon://nutrition-activity",
 				number: "1.684,00",
 				numberUnit: "Euro",
-				showMarkers: true,
-				markFlagged: true,
-				markFavorite: true,
+				markers: [
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite}),
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+				],
 				numberState: sap.ui.core.ValueState.Success,
 				attributes: [
 					new sap.m.ObjectAttribute({
@@ -1071,9 +1071,10 @@
 				responsive: true,
 				intro: "On behalf of John Smith Ñagçyfox",
 				title: "11 This is a title",
-				showMarkers: true,
-				markFlagged: true,
-				markFavorite: true,
+				markers: [
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite}),
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+				],
 				attributes: [
 					new sap.m.ObjectAttribute({
 						title: "Manufacturer",
@@ -1201,9 +1202,10 @@
 				responsive: true,
 				number: "1.684,00",
 				numberUnit: "Euro",
-				showMarkers: true,
-				markFlagged: true,
-				markFavorite: true,
+				markers: [
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite}),
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+				],
 				numberState: sap.ui.core.ValueState.Success,
 				attributes: [
 					new sap.m.ObjectAttribute({
@@ -1384,9 +1386,10 @@
 				number: "1.684,00",
 				numberUnit: "Euro",
 				showTitleSelector : true,
-				showMarkers: true,
-				markFlagged: true,
-				markFavorite: true,
+				markers: [
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite}),
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+				],
 				numberState: sap.ui.core.ValueState.Success
 			});
 			oh14.addStyleClass("sapUiResponsivePadding--header");
