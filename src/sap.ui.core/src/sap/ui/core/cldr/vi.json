@@ -5794,7 +5794,7 @@
 		}
 	},
 	"sap-calendarWeek": {
-		"narrow": "Lịch tuần {0}",
-		"wide": "Lịch tuần {0}"
+		"narrow": "Tuần theo lịch {0}",
+		"wide": "Tuần theo lịch {0}"
 	}
 }

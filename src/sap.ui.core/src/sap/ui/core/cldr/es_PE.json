@@ -5785,7 +5785,7 @@
 		}
 	},
 	"sap-calendarWeek": {
-		"narrow": "SC {0}",
-		"wide": "Semana de calendario {0}"
+		"narrow": "SN {0}",
+		"wide": "Semana natural {0}"
 	}
 }
