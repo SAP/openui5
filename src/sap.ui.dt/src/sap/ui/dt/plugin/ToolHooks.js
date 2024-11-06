@@ -23,7 +23,12 @@ sap.ui.define([
 	var ToolHooks = Plugin.extend("sap.ui.dt.plugin.ToolHooks", /** @lends sap.ui.dt.plugin.ToolHooks.prototype */ {
 		metadata: {
 			library: "sap.ui.dt",
-			properties: {},
+			properties: {
+				versionWasActivated: {
+					type: "boolean",
+					defaultValue: false
+				}
+			},
 			associations: {},
 			events: {}
 		}
@@ -45,7 +50,10 @@ sap.ui.define([
 	 * @override
 	 */
 	ToolHooks.prototype.deregisterElementOverlay = function(oOverlay) {
-		oOverlay.getDesignTimeMetadata().getToolHooks().stop(oOverlay.getElement());
+		oOverlay
+		.getDesignTimeMetadata()
+		.getToolHooks()
+		.stop(oOverlay.getElement(), {versionWasActivated: this.getVersionWasActivated()});
 	};
 
 	return ToolHooks;

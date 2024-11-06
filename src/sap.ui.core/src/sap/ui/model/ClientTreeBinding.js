@@ -2,7 +2,7 @@
   * ${copyright}
  */
 /*eslint-disable max-len */
-// Provides the JSON model implementation of a list binding
+// Provides the client model implementation of a tree binding
 sap.ui.define([
 	"./ChangeReason",
 	"./TreeBinding",
@@ -73,12 +73,14 @@ sap.ui.define([
 	});
 
 	/**
-	 * Return root contexts for the tree
+	 * Return root contexts for the tree.
 	 *
-	 * @return {object[]} the contexts array
+	 * @param {int} [iStartIndex=0] the index from which to start the retrieval of contexts
+	 * @param {int} [iLength] determines how many contexts to retrieve, beginning from the start index. Defaults to the
+	 *   model's size limit; see {@link sap.ui.model.Model#setSizeLimit}.
+	 * @returns {sap.ui.model.Context[]} the context's array
+	 *
 	 * @protected
-	 * @param {int} iStartIndex the startIndex where to start the retrieval of contexts
-	 * @param {int} iLength determines how many contexts to retrieve beginning from the start index.
 	 */
 	ClientTreeBinding.prototype.getRootContexts = function(iStartIndex, iLength) {
 		if (!iStartIndex) {
@@ -123,11 +125,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Return node contexts for the tree
+	 * Return node contexts for the tree.
+	 *
 	 * @param {sap.ui.model.Context} oContext to use for retrieving the node contexts
-	 * @param {int} iStartIndex the startIndex where to start the retrieval of contexts
-	 * @param {int} iLength determines how many contexts to retrieve beginning from the start index.
-	 * @return {sap.ui.model.Context[]} the contexts array
+	 * @param {int} [iStartIndex=0] the index from which to start the retrieval of contexts
+	 * @param {int} [iLength] determines how many contexts to retrieve, beginning from the start index. Defaults to the
+	 *   model's size limit; see {@link sap.ui.model.Model#setSizeLimit}.
+	 * @returns {sap.ui.model.Context[]} the context's array
+	 *
 	 * @protected
 	 */
 	ClientTreeBinding.prototype.getNodeContexts = function(oContext, iStartIndex, iLength) {
@@ -180,8 +185,8 @@ sap.ui.define([
 	/**
 	 * Returns if the node has child nodes.
 	 *
-	 * @param {object} oContext the context element of the node
-	 * @return {boolean} true if node has children
+	 * @param {sap.ui.model.Context} oContext the context element of the node
+	 * @returns {boolean} <code>true</code> if the node has children
 	 *
 	 * @public
 	 */
@@ -198,7 +203,8 @@ sap.ui.define([
 	 * Calling it with no arguments or 'null' returns the number of root level nodes.
 	 *
 	 * @param {sap.ui.model.Context} oContext the context for which the child count should be retrieved
-	 * @return {int} the number of children for the given context
+	 * @returns {int} the number of children for the given context
+	 *
 	 * @public
 	 * @override
 	 */
@@ -264,7 +270,6 @@ sap.ui.define([
 	 * All filters belonging to a group (=have the same path) are ORed and after that the
 	 * results of all groups are ANDed.
 	 *
-	 * @see sap.ui.model.TreeBinding.prototype.filter
 	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} [aFilters=[]]
 	 *   The filters to use; in case of type {@link sap.ui.model.FilterType.Application} this replaces the filters given
 	 *   in {@link sap.ui.model.ClientModel#bindTree}; a falsy value is treated as an empty array and thus removes all
@@ -273,12 +278,13 @@ sap.ui.define([
 	 *   The type of the filter to replace; if no type is given, all filters previously configured with type
 	 *   {@link sap.ui.model.FilterType.Application} are cleared, and the given filters are used as filters of type
 	 *   {@link sap.ui.model.FilterType.Control}
-	 * @return {this} <code>this</code> to facilitate method chaining
+	 * @returns {this} <code>this</code> to facilitate method chaining
 	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
 	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in
 	 *   <code>aFilters</code> together with other filters
 	 *
 	 * @public
+	 * @see sap.ui.model.TreeBinding.prototype.filter
 	 */
 	ClientTreeBinding.prototype.filter = function(aFilters, sFilterType){
 		// The filtering is applied recursively through the tree and stores all filtered contexts and its parent contexts in an array.
@@ -314,6 +320,7 @@ sap.ui.define([
 
 	/**
 	 * Apply the current defined filters on the existing dataset.
+	 *
 	 * @private
 	 */
 	ClientTreeBinding.prototype.applyFilter = function () {
@@ -327,7 +334,10 @@ sap.ui.define([
 	/**
 	 * Filters the tree recursively.
 	 * Performs the real filtering and stores all filtered contexts and its parent context into an array.
-	 * @param {object} [oParentContext] the context where to start. The children of this node context are then filtered recursively.
+	 *
+	 * @param {sap.ui.model.Context} [oParentContext] the context where to start. The children of this node context are
+	 *   then filtered recursively.
+	 *
 	 * @private
 	 */
 	ClientTreeBinding.prototype._applyFilterRecursive = function(oParentContext){
@@ -386,8 +396,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} [aSorters=[]]
 	 *   The sorters to use; they replace the sorters given in {@link sap.ui.model.ClientModel#bindTree}; a falsy value
 	 *   is treated as an empty array and thus removes all sorters
+	 * @returns {this} Returns <code>this</code> to facilitate method chaining
 	 *
-	 * @return {this} Returns <code>this</code> to facilitate method chaining
 	 * @public
 	 */
 	ClientTreeBinding.prototype.sort = function (aSorters) {
@@ -400,8 +410,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * internal function to apply the defined this.aSorters for the given array
-	 * @param {array} aContexts the context array which should be sorted (inplace)
+	 * Internal function to apply this.aSorters to the given array of contexts.
+	 *
+	 * @param {sap.ui.model.Context[]} aContexts the context array which should be sorted (inplace)
 	 */
 	ClientTreeBinding.prototype._applySorter = function (aContexts) {
 		var that = this;
@@ -419,7 +430,7 @@ sap.ui.define([
 	 * Called by get*Contexts() to keep track of the child count (after filtering).
 	 *
 	 * @param {string} sKey The cache entry to set the length for
-	 * @param {number} iLength The new length
+	 * @param {int} iLength The new length
 	 */
 	ClientTreeBinding.prototype._setLengthCache = function (sKey, iLength) {
 		// keep track of the child count for each context (after filtering)
@@ -447,6 +458,7 @@ sap.ui.define([
 	 *
 	 * @returns {number|undefined} The count of entries in the tree, or <code>undefined</code> if
 	 *   the binding is not resolved
+	 *
 	 * @public
 	 * @since 1.108.0
 	 */
@@ -475,6 +487,7 @@ sap.ui.define([
 	 *   Whether the given data is the root of the tree
 	 * @returns {number}
 	 *   The total count of objects in the given data
+	 *
 	 * @private
 	 */
 	ClientTreeBinding._getTotalNodeCount = function (vData, aArrayNames, bRoot) {

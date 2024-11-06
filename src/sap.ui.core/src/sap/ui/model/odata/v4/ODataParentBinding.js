@@ -642,10 +642,12 @@ sap.ui.define([
 	 * @since 1.61
 	 */
 	ODataParentBinding.prototype.destroy = function () {
-		// this.mAggregatedQueryOptions = undefined;
+		this.mAggregatedQueryOptions = undefined;
 		this.aChildCanUseCachePromises = [];
 		this.removeReadGroupLock();
+		this.oRefreshPromise = undefined;
 		this.oResumePromise = undefined;
+		this.mCanUseCachePromiseByChildPath = undefined;
 
 		asODataBinding.prototype.destroy.call(this);
 	};

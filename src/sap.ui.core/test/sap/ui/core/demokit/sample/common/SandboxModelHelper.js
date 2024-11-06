@@ -84,15 +84,11 @@ sap.ui.define([
 						oMockData.sSourceBase, oMockData.sFilterBase, oMockData.aRegExps);
 				}
 				oModel = new ODataModel(mModelParameters);
-				if (oSandbox) {
-					oModel.destroy = function () {
-						if (oSandbox) { // may be called twice
-							oSandbox.restore();
-							oSandbox = undefined;
-						}
-						return ODataModel.prototype.destroy.apply(this, mModelParameters);
-					};
-				}
+				oModel.restoreSandbox = () => {
+					oSandbox?.restore();
+					oSandbox = undefined;
+				};
+
 				return oModel;
 			}
 		};

@@ -9,6 +9,10 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 		metadata: {
 			interfaces: ["sap.ui.core.IAsyncContentCreation"],
 			manifest: "json"
+		},
+
+		exit: function () {
+			this.getModel().restoreSandbox();
 		}
 	});
 });

@@ -1,6 +1,0 @@
-<mvc:View controllerName="sap.ui.core.mvctest.controller.Dummy"
-	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
-
-	<Button text="View" press=""/>
-
-</mvc:View>

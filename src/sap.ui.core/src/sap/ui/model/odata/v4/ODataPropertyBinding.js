@@ -386,6 +386,7 @@ sap.ui.define([
 		this.oModel.bindingDestroyed(this);
 		this.oCheckUpdateCallToken = undefined;
 		this.mQueryOptions = undefined;
+		this.mScope = undefined;
 		this.vValue = undefined;
 
 		asODataBinding.prototype.destroy.call(this);

@@ -1205,6 +1205,7 @@ sap.ui.define([
 				displayedVersion: sDisplayedVersion
 			});
 			showMessageToast.call(this, "MSG_DRAFT_ACTIVATION_SUCCESS");
+			this.getPluginManager().getPlugin("toolHooks").setVersionWasActivated(true);
 			this.bInitialResetEnabled = true;
 			this._oToolbarControlsModel.setProperty("/restore/enabled", true);
 			this.getCommandStack().removeAllCommands();

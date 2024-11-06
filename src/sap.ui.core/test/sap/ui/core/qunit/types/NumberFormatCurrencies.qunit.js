@@ -2192,8 +2192,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// SNOW: DINC0239044
-	// If no code list customizing is given (e.g. in case of CAP scenarios) a fallback to the CLDR
-	// configuration, regarding the decimals, has to happen when formatting currencies.
+	// If no code list customizing is given (e.g. in case of CAP scenarios) a fallback to the CLDR configuration,
+	// regarding the decimals, has to happen when formatting currencies.
 	// Both variants should behave the same when it comes to calculating the number for decimals.
 [{
 	// preserveDecimals results in no loss of decimals
@@ -2224,14 +2224,13 @@ sap.ui.define([
 	oFormatOptions: {maxFractionDigits: 1},
 	sExpectedResult: "USD\xa0100.0"
 }, {
-	// The minimum of CLDRDecimals and maxFractionDigits is chosen as the number of decimals
-	// minFractionDigits do not have an effect on the result
-	// (This specific case can occur but is considered to be a configuration issue)
+	// The minimum of CLDRDecimals and maxFractionDigits is chosen as the number of decimals minFractionDigits
+	// do not have an effect on the result (This specific case can occur but is considered to be a configuration issue)
 	oFormatOptions: {maxFractionDigits: 0, minFractionDigits: 4},
 	sExpectedResult: "USD\xa0100"
 }, {
-	// The decimals provided in the customCurrencies are selected to determine the minimum between
-	// decimals and the maxFractionDigits which are then chosen as the number of decimal places for formatting
+	// The decimals provided in the customCurrencies are selected to determine the minimum between decimals and
+	// the maxFractionDigits which are then chosen as the number of decimal places for formatting
 	oFormatOptions: {
 		customCurrencies: {"USD": {"decimals": 2}},
 		decimals: 4,
@@ -2240,20 +2239,13 @@ sap.ui.define([
 	},
 	sExpectedResult: "USD\xa0100.00"
 }, {
-	// If customCurrencies are provided but do not define decimals for the currency,
-	// the minimum of the given decimals and the maxFractionDigits is used for formatting
-	oFormatOptions: {
-		customCurrencies: {"USD": {}},
-		decimals: 4,
-		maxFractionDigits: 10,
-		minFractionDigits: 2
-	},
+	// If customCurrencies are provided but do not define decimals for the currency, the minimum of the given decimals
+	// and the maxFractionDigits is used for formatting
+	oFormatOptions: {customCurrencies: {"USD": {}}, decimals: 4, maxFractionDigits: 10, minFractionDigits: 2},
 	sExpectedResult: "USD\xa0100.0000"
 }, {
 	// If decimals is set explicitly to 0, no fallback to the CLDR must happen
-	oFormatOptions: {
-		decimals: 0
-	},
+	oFormatOptions: {decimals: 0},
 	sExpectedResult: "USD\xa0100"
 }].forEach(({oFormatOptions, sExpectedResult}, i) => {
 	QUnit.test(`Currency type with no currency customizing and decimal options fall back to CLDR ${i}`,
@@ -2288,16 +2280,14 @@ sap.ui.define([
 			iMin: 3,
 			sStyle: sStyle
 		}
-	].forEach(function({oCustomCurrencies, iDecimals, sExpected, iMax, iMin, iPrecision, sStyle}, i) {
+	].forEach(function({oCustomCurrencies, iDecimals, sExpected, iMax, iMin, sStyle}, i) {
 		QUnit.test(`Currency format does not use customizing for decimals when style "${sStyle}" is set ${i}`,
 				function (assert) {
 			const oFormat = getCurrencyInstance({
 					customCurrencies: oCustomCurrencies,
 					decimals: iDecimals,
-					ignorePrecision: false,
 					maxFractionDigits: iMax,
 					minFractionDigits: iMin,
-					precision: iPrecision,
 					style: sStyle
 				}, new Locale("en"));
 
@@ -2311,39 +2301,37 @@ sap.ui.define([
 ["short", "long"].forEach((sStyle) => {
 	[
 		// No fallback to the CLDR data in case "style: short/long" is set
-		{sExpected: "USD\xa0123.000", iMax: 3, iMin: 3, sStyle: sStyle},
+		{sExpected: "USD\xa0123.456", iMax: 3, iMin: 3, sStyle: sStyle},
 		{sExpected: "USD\xa0123", iMax: undefined, iMin: undefined,  sStyle: sStyle},
 		{sExpected: "USD\xa0123", iMax: 0, iMin: 0,  sStyle: sStyle},
 		{sExpected: "USD\xa0123", iMax: 0, iMin: undefined,  sStyle: sStyle},
 		{sExpected: "USD\xa0123", iMax: undefined, iMin: 0,  sStyle: sStyle},
 		// No usage of the customCurrencies decimals in case "style: short/long" is set
-		{oCustomCurrencies: {USD: {decimals: 2}}, sExpected: "USD\xa0123.000", iMax: 3, iMin: 3,  sStyle: sStyle},
+		{oCustomCurrencies: {USD: {decimals: 2}}, sExpected: "USD\xa0123.456", iMax: 3, iMin: 3,  sStyle: sStyle},
 		// Usage of the decimals as they are explicitly set in the format options
-		{iDecimals: 2, sExpected: "USD\xa0123.00", iMax: 3, iMin: 3,  sStyle: sStyle},
+		{iDecimals: 2, sExpected: "USD\xa0123.46", iMax: 3, iMin: 3,  sStyle: sStyle},
 		{
 			oCustomCurrencies: {USD: {decimals: 4}},
 			iDecimals: 2,
-			sExpected: "USD\xa0123.00",
+			sExpected: "USD\xa0123.46",
 			iMax: 3,
 			iMin: 3,
 			sStyle: sStyle
 		}
-	].forEach(function({oCustomCurrencies, iDecimals, sExpected, iMax, iMin, iPrecision, sStyle}, i) {
+	].forEach(function({oCustomCurrencies, iDecimals, sExpected, iMax, iMin, sStyle}, i) {
 		const sTitle = `Currency format does not use customizing for decimals when style "${sStyle}"`
 			+ ` even for small numbers ${i}`;
 		QUnit.test(sTitle, function (assert) {
 			const oFormat = getCurrencyInstance({
 					customCurrencies: oCustomCurrencies,
 					decimals: iDecimals,
-					ignorePrecision: false,
 					maxFractionDigits: iMax,
 					minFractionDigits: iMin,
-					precision: iPrecision,
 					style: sStyle
 				}, new Locale("en"));
 
 			// code under test
-			assert.strictEqual(oFormat.format(["123", "USD"]), sExpected);
+			assert.strictEqual(oFormat.format(["123.456", "USD"]), sExpected);
 		});
 	});
 });

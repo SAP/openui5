@@ -1285,6 +1285,18 @@ sap.ui.define([
 					};
 				}
 
+				this._oPopup.attachBeforeOpen(function() {
+					var oValue = this.getValue(),
+						oItem;
+					if (!oValue) {
+						return;
+					}
+					oItem = this._determineOptionFocus(oValue);
+					if (oItem && oValue.operator !== "PARSEERROR") {
+						oItem.setSelected(true);
+					}
+				}, this);
+
 				this._oPopup.attachAfterOpen(function() {
 					var oToPage = this._oNavContainer.getPages()[0];
 					this._applyNavContainerPageFocus(oToPage);
@@ -1669,10 +1681,6 @@ sap.ui.define([
 			if (!oElementToFocus) {
 				// jQuery Plugin "firstFocusableDomRef"
 				oElementToFocus = jQuery(oToPage.getDomRef().querySelector("section")).firstFocusableDomRef();
-			}
-
-			if (oValue && oValue.operator !== "PARSEERROR" && oElementToFocus) {
-				oElementToFocus.setSelected && oElementToFocus.setSelected(true);
 			}
 
 			if (oElementToFocus) {

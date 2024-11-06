@@ -108,6 +108,7 @@ sap.ui.define([
 		oBinding.mCacheQueryOptions = {};
 		oBinding.oContext = {}; // @see sap.ui.model.Binding's c'tor
 		oBinding.oFetchCacheCallToken = {};
+		oBinding.mLateQueryOptions = {};
 		this.mock(oBinding).expects("deregisterChangeListener").withExactArgs();
 		this.mock(oCache).expects("setActive").withExactArgs(false);
 
@@ -121,6 +122,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
 		assert.strictEqual(oBinding.oContext, undefined);
 		assert.strictEqual(oBinding.oFetchCacheCallToken, undefined);
+		assert.strictEqual(oBinding.mLateQueryOptions, undefined);
 
 		return oPromise;
 	});
@@ -128,6 +130,19 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("destroy binding w/o cache", function (assert) {
 		var oBinding = new ODataBinding();
+
+		// code under test
+		oBinding.destroy();
+
+		assert.strictEqual(oBinding.oCachePromise.getResult(), null);
+		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("destroy binding w/ rejected cache promise", function (assert) {
+		var oBinding = new ODataBinding();
+
+		oBinding.oCachePromise = SyncPromise.reject(new Error());
 
 		// code under test
 		oBinding.destroy();
@@ -183,19 +198,6 @@ sap.ui.define([
 		return oPromise.catch(function () {
 			sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.same(oError));
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("destroy binding w/ rejected cache promise", function (assert) {
-		var oBinding = new ODataBinding();
-
-		oBinding.oCachePromise = SyncPromise.reject(new Error());
-
-		// code under test
-		oBinding.destroy();
-
-		assert.strictEqual(oBinding.oCachePromise.getResult(), null);
-		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), true);
 	});
 
 	//*********************************************************************************************
