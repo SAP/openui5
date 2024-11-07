@@ -24,8 +24,8 @@ sap.ui.define([
 			 * @param childrenField - the field which holds the array with the node's children
 			 * @private
 			 */
-			_initTreeUtil: function (nodeIdField, childrenField) {
-				this._oTreeUtil = new TreeUtil(nodeIdField, childrenField);
+			_initTreeUtil: function (treeType, nodeIdField, childrenField) {
+				this._oTreeUtil = TreeUtil.getInstance(treeType, nodeIdField, childrenField);
 			},
 
 			/**

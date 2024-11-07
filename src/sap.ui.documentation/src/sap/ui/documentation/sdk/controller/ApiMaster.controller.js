@@ -10,7 +10,8 @@ sap.ui.define([
 		"sap/ui/model/FilterOperator",
 		"sap/ui/documentation/sdk/controller/util/APIInfo",
 		"sap/ui/model/json/JSONModel",
-		"sap/ui/documentation/sdk/controller/util/Highlighter"
+		"sap/ui/documentation/sdk/controller/util/Highlighter",
+		"sap/ui/documentation/sdk/controller/util/TreeUtil"
 	], function (
 		Device,
 		MasterTreeBaseController,
@@ -19,7 +20,8 @@ sap.ui.define([
 		FilterOperator,
 		APIInfo,
 		JSONModel,
-		Highlighter
+		Highlighter,
+		TreeUtil
 	) {
 		"use strict";
 
@@ -71,7 +73,7 @@ sap.ui.define([
 						this.buildAndApplyFilters();
 
 						// Init tree util
-						this._initTreeUtil("name", "nodes");
+						this._initTreeUtil(TreeUtil.treeTypes.ApiReference, "name", "nodes");
 					}.bind(this));
 			},
 
