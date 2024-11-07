@@ -5,109 +5,112 @@
 
 .sapMOTAPopover {
 
-  &:focus{
-	outline: none;
-  }
-
-  .sapMBtn .sapMBtnInner {
-	justify-content: flex-start;
-  }
-
-  &.sapMPopover .sapMPopoverCont .sapMPopoverScroll {
-	padding: 0.25rem 0.5rem;
-
-	/* Disappear */
-	&> .sapMOTAPHidden {
-	  display: none;
+	&:focus {
+		outline: none;
 	}
 
-	/* All elements inside must have display block */
-	&> :not(.sapMOTAPHidden) {
-	  display: block;
+	.sapMBtn .sapMBtnInner {
+		justify-content: flex-start;
 	}
 
-	&> .sapMTBSeparator.sapMTBSeparatorOverflowToolbar {
-		&:first-child,
-		&:last-child {
+	&.sapMPopover .sapMPopoverCont .sapMPopoverScroll {
+		padding: 0.25rem 0.5rem;
+
+		/* Disappear */
+		& > .sapMOTAPHidden {
 			display: none;
 		}
-	}
 
-	/* Button, ToggleButton, OverflowToolbarButton */
-	&> button.sapMBtn {
-	  width: 100% !important;
-	  max-width: 100% !important;
+		/* All elements inside must have display block */
+		& > :not(.sapMOTAPHidden) {
+			display: block;
+		}
 
-	  /* Button alignment */
-	  &> .sapMBtnInner {
-		text-align: start;
-	  }
-	}
+		& > .sapMTBSeparator.sapMTBSeparatorOverflowToolbar {
 
-	/* Select */
-	&> div.sapMSlt {
-	  width: auto !important;
-	}
+			&:first-child,
+			&:last-child {
+				display: none;
+			}
+		}
 
-	/* SegmentedButton - select form */
-	&> div.sapMSegBSelectWrapper {
-	  width: 100% !important;
-	  &> div.sapMSlt {
-		width: 100% !important;
-		max-width: 100% !important;
-	  }
-	}
+		/* Button, ToggleButton, OverflowToolbarButton */
+		& > button.sapMBtn {
+			width: 100% !important;
+			max-width: 100% !important;
 
-	/* ComboBox */
-	&> div.sapMComboBox {
-	  width: auto !important;
-	  max-width: auto !important;
-	}
+			/* Button alignment */
+			& > .sapMBtnInner {
+				text-align: start;
+			}
+		}
 
-	/* SearchField */
-	&> div.sapMSF {
-	  width: 100% !important;
-	  max-width: 100% !important;
-	}
+		/* Select */
+		& > div.sapMSlt {
+			width: auto !important;
+		}
 
-	/* Input */
-	&> div.sapMInput {
-	  width: 100% !important;
-	  max-width: 100% !important;
-	}
+		/* SegmentedButton - select form */
+		& > div.sapMSegBSelectWrapper {
+			width: 100% !important;
 
-	/* DateTimeInput */
-	&> div.sapMDTI {
-	  width: 100% !important;
-	  max-width: 100% !important;
-	}
+			& > div.sapMSlt {
+				width: 100% !important;
+				max-width: 100% !important;
+			}
+		}
 
-	/* Menu Button */
-	&> .sapMMenuBtn {
-		max-width: 100% !important;
+		/* ComboBox */
+		& > div.sapMComboBox {
+			width: auto !important;
+			max-width: auto !important;
+		}
+
+		/* SearchField */
+		& > div.sapMSF {
+			width: 100% !important;
+			max-width: 100% !important;
+		}
+
+		/* Input */
+		& > div.sapMInput {
+			width: 100% !important;
+			max-width: 100% !important;
+		}
+
+		/* DateTimeInput */
+		& > div.sapMDTI {
+			width: 100% !important;
+			max-width: 100% !important;
+		}
+
+		/* Menu Button */
+		& > .sapMMenuBtn {
+			max-width: 100% !important;
+		}
 	}
-  }
 }
 
 /* Compact mode overrides */
-.sapUiSizeCompact{
+.sapUiSizeCompact {
 
-  .sapMOTAPopover {
+	.sapMOTAPopover {
 
-	&.sapMPopover .sapMPopoverCont .sapMPopoverScroll {
-	  padding: 0.1875rem 0.375rem;
+		&.sapMPopover .sapMPopoverCont .sapMPopoverScroll {
+			padding: 0.1875rem 0.375rem;
+		}
+
+		.sapMBtnInner.sapMBtnIconFirst:not(.sapMBtnBack) {
+			padding-left: 0.5rem;
+			padding-right: 0.5rem;
+		}
 	}
-
-	.sapMBtnInner.sapMBtnIconFirst:not(.sapMBtnBack) {
-	  padding-left: 0.5rem;
-	  padding-right: 0.5rem;
-	}
-  }
 }
 
 /* Phone mode overrides */
 html.sap-phone {
+
 	.sapMOTAPopover {
-	  overflow: hidden !important;
+		overflow: hidden !important;
 	}
 }
