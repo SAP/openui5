@@ -1257,5 +1257,60 @@ sap.ui.define([
 		oFeedListItem = null;
 		oList = null;
 	});
+        QUnit.module("Rendering phone", {
+		beforeEach: function() {
+				var oSystem = {
+					desktop: false,
+					phone: true,
+					tablet: false
+				};
+				this.stub(Device, "system").value(oSystem);
+				jQuery("html").addClass("sap-phone");
+				this.oFeedListItemTemp = new sap.m.FeedListItem({
+					icon: "sap-icon://person-placeholder",
+					sender: "John Doe",
+					timestamp: "Just now"
+				});
+				this.oFeedListItemTemp.placeAt("qunit-fixture");
+				oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oFeedListItemTemp.destroy();
+		}
+	});
 
+	QUnit.test('Rendering of the time stamp', function(assert) {
+		var done = assert.async();
+		this.applyTheme = function(sTheme, fnCallback) {
+			this.sRequiredTheme = sTheme;
+			if (oCore.getConfiguration().getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+				if (typeof fnCallback === "function") {
+					fnCallback.bind(this)();
+					fnCallback = undefined;
+				}
+			} else {
+				oCore.attachThemeChanged(fnThemeApplied.bind(this));
+				oCore.applyTheme(sTheme);
+			}
+
+			function fnThemeApplied(oEvent) {
+				oCore.detachThemeChanged(fnThemeApplied);
+				if (oCore.getConfiguration().getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+					if (typeof fnCallback === "function") {
+						fnCallback.bind(this)();
+						fnCallback = undefined;
+					}
+				} else {
+					setTimeout(fnThemeApplied.bind(this, oEvent), 1500);
+				}
+			}
+		};
+
+		this.applyTheme("sap_horizon", function() {
+			this.oFeedListItemTemp.invalidate();
+			oCore.applyChanges();
+			assert.ok(window.getComputedStyle(document.querySelector('.sapMFeedListItemTimestamp')).marginTop, '-4px', 'No trimming of timestamp');
+			done();
+		}.bind(this));
+	});
 });
