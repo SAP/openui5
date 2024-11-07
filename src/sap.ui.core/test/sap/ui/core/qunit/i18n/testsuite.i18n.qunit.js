@@ -28,7 +28,7 @@ sap.ui.define(function() {
 			},
 			"CalendarWeekNumbering": {
 				coverage: {
-					only: "sap/ui/core/date/CalendarWeekNumbering"
+					only: "sap/base/i18n/date/CalendarWeekNumbering"
 				}
 			},
 			"Buddhist": {

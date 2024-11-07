@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/Lib",
 	"sap/ui/core/UIAreaRegistry",
 	"sap/ui/qunit/QUnitUtils",
@@ -18,7 +19,6 @@ sap.ui.define([
 	"sap/ui/model/type/Date",
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/core/CalendarType",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
 	"sap/ui/core/InvisibleText",
@@ -45,6 +45,7 @@ sap.ui.define([
 ], function(
 	Formatting,
 	Localization,
+	CalendarType,
 	Library,
 	UIAreaRegistry,
 	qutils,
@@ -61,7 +62,6 @@ sap.ui.define([
 	TypeDate,
 	DateTime,
 	ODataModel,
-	CalendarType,
 	KeyCodes,
 	Device,
 	InvisibleText,

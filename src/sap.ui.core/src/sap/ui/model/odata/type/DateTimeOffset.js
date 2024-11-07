@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/CalendarType",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",

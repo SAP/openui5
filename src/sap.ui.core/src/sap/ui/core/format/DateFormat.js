@@ -7,22 +7,22 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
+	"sap/base/i18n/date/CalendarType",
+	"sap/base/i18n/date/CalendarWeekNumbering",
 	"sap/base/i18n/date/TimezoneUtils",
 	"sap/base/strings/formatMessage",
 	"sap/base/util/deepEqual",
 	"sap/base/util/extend",
-	"sap/ui/core/CalendarType",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/Supportability",
 	"sap/ui/core/date/CalendarUtils",
-	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/format/FormatUtils"
-], function(Log, Formatting, Localization, TimezoneUtils, formatMessage, deepEqual, extend, CalendarType,
-		Library, Locale, LocaleData, Supportability, CalendarUtils, CalendarWeekNumbering, UI5Date,
+], function(Log, Formatting, Localization, CalendarType, CalendarWeekNumbering, TimezoneUtils, formatMessage,
+		deepEqual, extend, Library, Locale, LocaleData, Supportability, CalendarUtils, UI5Date,
 		UniversalDate, FormatUtils) {
 	"use strict";
 
@@ -224,7 +224,7 @@ sap.ui.define([
 	 * Get a date instance of the DateFormat, which can be used for formatting.
 	 *
 	 * @param {object} [oFormatOptions] Object which defines the format options
-	 * @param {sap.ui.core.date.CalendarWeekNumbering} [oFormatOptions.calendarWeekNumbering] since 1.108.0 specifies the calendar week numbering.
+	 * @param {module:sap/base/i18n/date/CalendarWeekNumbering} [oFormatOptions.calendarWeekNumbering] since 1.108.0 specifies the calendar week numbering.
 	 *   If specified, this overwrites <code>oFormatOptions.firstDayOfWeek</code> and <code>oFormatOptions.minimalDaysInFirstWeek</code>.
 	 * @param {int} [oFormatOptions.firstDayOfWeek] since 1.105.0 specifies the first day of the week starting with <code>0</code> (which is Sunday); if not defined, the value taken from the locale is used
 	 * @param {int} [oFormatOptions.minimalDaysInFirstWeek] since 1.105.0 minimal days at the beginning of the year which define the first calendar week; if not defined, the value taken from the locale is used
@@ -248,7 +248,7 @@ sap.ui.define([
 	 *   "Jan 10 – Feb 12, 2008" becomes "Jan 10, 2008...Feb 12, 2008".
 	 * @param {boolean} [oFormatOptions.singleIntervalValue=false] Only relevant if oFormatOptions.interval is set to 'true'. This allows to pass an array with only one date object to the {@link sap.ui.core.format.DateFormat#format format} method.
 	 * @param {boolean} [oFormatOptions.UTC] if true, the date is formatted and parsed as UTC instead of the local timezone
-	 * @param {sap.ui.core.CalendarType} [oFormatOptions.calendarType] The calender type which is used to format and parse the date. This value is by default either set in configuration or calculated based on current locale.
+	 * @param {module:sap/base/i18n/date/CalendarType} [oFormatOptions.calendarType] The calender type which is used to format and parse the date. This value is by default either set in configuration or calculated based on current locale.
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to ask for locale specific texts/settings
 	 * @ui5-omissible-params oFormatOptions
 	 * @return {sap.ui.core.format.DateFormat} date instance of the DateFormat
@@ -268,7 +268,7 @@ sap.ui.define([
 	 * Get a datetime instance of the DateFormat, which can be used for formatting.
 	 *
 	 * @param {object} [oFormatOptions] Object which defines the format options
-	 * @param {sap.ui.core.date.CalendarWeekNumbering} [oFormatOptions.calendarWeekNumbering] since 1.108.0 specifies the calendar week numbering.
+	 * @param {module:sap/base/i18n/date/CalendarWeekNumbering} [oFormatOptions.calendarWeekNumbering] since 1.108.0 specifies the calendar week numbering.
 	 *   If specified, this overwrites <code>oFormatOptions.firstDayOfWeek</code> and <code>oFormatOptions.minimalDaysInFirstWeek</code>.
 	 * @param {int} [oFormatOptions.firstDayOfWeek] since 1.105.0 specifies the first day of the week starting with <code>0</code> (which is Sunday); if not defined, the value taken from the locale is used
 	 * @param {int} [oFormatOptions.minimalDaysInFirstWeek] since 1.105.0 minimal days at the beginning of the year which define the first calendar week; if not defined, the value taken from the locale is used
@@ -292,7 +292,7 @@ sap.ui.define([
 	 *   "Jan 10, 2008, 9:15 – 11:45 AM" becomes "Jan 10, 2008, 9:15 AM...Jan 10, 2008, 11:45 AM".
 	 * @param {boolean} [oFormatOptions.singleIntervalValue=false] Only relevant if oFormatOptions.interval is set to 'true'. This allows to pass an array with only one date object to the {@link sap.ui.core.format.DateFormat#format format} method.
 	 * @param {boolean} [oFormatOptions.UTC] if true, the date is formatted and parsed as UTC instead of the local timezone
-	 * @param {sap.ui.core.CalendarType} [oFormatOptions.calendarType] The calender type which is used to format and parse the date. This value is by default either set in configuration or calculated based on current locale.
+	 * @param {module:sap/base/i18n/date/CalendarType} [oFormatOptions.calendarType] The calender type which is used to format and parse the date. This value is by default either set in configuration or calculated based on current locale.
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to ask for locale specific texts/settings
 	 * @ui5-omissible-params oFormatOptions
 	 * @return {sap.ui.core.format.DateFormat} datetime instance of the DateFormat
@@ -421,7 +421,7 @@ sap.ui.define([
 	 * Get a datetimeWithTimezone instance of the DateFormat, which can be used for formatting.
 	 *
 	 * @param {object} [oFormatOptions] An object which defines the format options
-	 * @param {sap.ui.core.date.CalendarWeekNumbering} [oFormatOptions.calendarWeekNumbering] since 1.108.0 specifies the calendar week numbering.
+	 * @param {module:sap/base/i18n/date/CalendarWeekNumbering} [oFormatOptions.calendarWeekNumbering] since 1.108.0 specifies the calendar week numbering.
 	 *   If specified, this overwrites <code>oFormatOptions.firstDayOfWeek</code> and <code>oFormatOptions.minimalDaysInFirstWeek</code>.
 	 * @param {int} [oFormatOptions.firstDayOfWeek] since 1.105.0 specifies the first day of the week starting with <code>0</code> (which is Sunday); if not defined, the value taken from the locale is used
 	 * @param {int} [oFormatOptions.minimalDaysInFirstWeek] since 1.105.0 minimal days at the beginning of the year which define the first calendar week; if not defined, the value taken from the locale is used
@@ -441,7 +441,7 @@ sap.ui.define([
 	 * @param {int[]} [oFormatOptions.relativeRange] The day range used for relative formatting. If <code>oFormatOptions.relativeScale</code> is set to the default value 'day', the <code>relativeRange<code> is by default [-6, 6], which means that only the previous 6 and the following 6 days are formatted relatively. If <code>oFormatOptions.relativeScale</code> is set to 'auto', all dates are formatted relatively.
 	 * @param {string} [oFormatOptions.relativeScale] If 'auto' is set, a new relative time format is switched on for all Date/Time instances. The default value depends on <code>showDate</code> and <code>showTime</code> options.
 	 * @param {string} [oFormatOptions.relativeStyle="wide"] The style of the relative format. The valid values are "wide", "short", "narrow"
-	 * @param {sap.ui.core.CalendarType} [oFormatOptions.calendarType] The calendar type which is used to format and parse the date. This value is by default either set in the configuration or calculated based on the current locale.
+	 * @param {module:sap/base/i18n/date/CalendarType} [oFormatOptions.calendarType] The calendar type which is used to format and parse the date. This value is by default either set in the configuration or calculated based on the current locale.
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to ask for locale-specific texts/settings
 	 * @ui5-omissible-params oFormatOptions
 	 * @throws {TypeError} If an invalid configuration was supplied, i.e. when the
@@ -492,7 +492,7 @@ sap.ui.define([
 	 * Get a time instance of the DateFormat, which can be used for formatting.
 	 *
 	 * @param {object} [oFormatOptions] Object which defines the format options
-	 * @param {sap.ui.core.date.CalendarWeekNumbering} [oFormatOptions.calendarWeekNumbering] since 1.108.0 specifies the calendar week numbering.
+	 * @param {module:sap/base/i18n/date/CalendarWeekNumbering} [oFormatOptions.calendarWeekNumbering] since 1.108.0 specifies the calendar week numbering.
 	 *   If specified, this overwrites <code>oFormatOptions.firstDayOfWeek</code> and <code>oFormatOptions.minimalDaysInFirstWeek</code>.
 	 * @param {int} [oFormatOptions.firstDayOfWeek] since 1.105.0 specifies the first day of the week starting with <code>0</code> (which is Sunday); if not defined, the value taken from the locale is used
 	 * @param {int} [oFormatOptions.minimalDaysInFirstWeek] since 1.105.0 minimal days at the beginning of the year which define the first calendar week; if not defined, the value taken from the locale is used
@@ -516,7 +516,7 @@ sap.ui.define([
 	 *   "09:15 – 11:45 AM" becomes "9:15 AM...11:45 AM".
 	 * @param {boolean} [oFormatOptions.singleIntervalValue=false] Only relevant if oFormatOptions.interval is set to 'true'. This allows to pass an array with only one date object to the {@link sap.ui.core.format.DateFormat#format format} method.
 	 * @param {boolean} [oFormatOptions.UTC] if true, the time is formatted and parsed as UTC instead of the local timezone
-	 * @param {sap.ui.core.CalendarType} [oFormatOptions.calendarType] The calender type which is used to format and parse the date. This value is by default either set in configuration or calculated based on current locale.
+	 * @param {module:sap/base/i18n/date/CalendarType} [oFormatOptions.calendarType] The calender type which is used to format and parse the date. This value is by default either set in configuration or calculated based on current locale.
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to ask for locale specific texts/settings
 	 * @ui5-omissible-params oFormatOptions
 	 * @return {sap.ui.core.format.DateFormat} time instance of the DateFormat
@@ -744,7 +744,7 @@ sap.ui.define([
 	 * instances are used as fallback formats of another DateFormat instances.
 	 *
 	 * @param {Object[]} aFallbackFormatOptions the options for creating the fallback DateFormat
-	 * @param {sap.ui.core.CalendarType} sCalendarType the type of the current calendarType
+	 * @param {module:sap/base/i18n/date/CalendarType} sCalendarType the type of the current calendarType
 	 * @param {sap.ui.core.Locale} oLocale Locale to ask for locale specific texts/settings
 	 * @param {Object} oInfo The default info object of the current date type
 	 * @param {object} oParentFormatOptions the format options, relevant are: interval, showDate, showTime and showTimezone
@@ -2700,9 +2700,9 @@ sap.ui.define([
 	 * Retrieves the parameter for the calendar week configuration from the DateFormat's format
 	 * options
 	 *
-	 * @param {{firstDayOfWeek: int, minimalDaysInFirstWeek: int, calendarWeekNumbering: sap.ui.core.date.CalendarWeekNumbering}} oFormatOptions
+	 * @param {{firstDayOfWeek: int, minimalDaysInFirstWeek: int, calendarWeekNumbering: module:sap/base/i18n/date/CalendarWeekNumbering}} oFormatOptions
 	 *   The format options with which the DateFormat instance was created
-	 * @returns {sap.ui.core.date.CalendarWeekNumbering|{firstDayOfWeek: int, minimalDaysInFirstWeek: int}|undefined}
+	 * @returns {module:sap/base/i18n/date/CalendarWeekNumbering|{firstDayOfWeek: int, minimalDaysInFirstWeek: int}|undefined}
 	 *   The parameter for the calendar week configuration
 	 */
 	function getCalendarWeekParameter (oFormatOptions) {

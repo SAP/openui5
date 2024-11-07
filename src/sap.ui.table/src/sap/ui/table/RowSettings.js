@@ -40,13 +40,13 @@ sap.ui.define([
 				/**
 				 * The highlight state of the rows.
 				 *
-				 * If the highlight is set to {@link sap.ui.core.MessageType sap.ui.core.MessageType.None} (default), no highlights are visible.
-				 * Valid values for the <code>highlight</code> property are values of the enumerations {@link sap.ui.core.MessageType} or
+				 * If the highlight is set to {@link module:sap/ui/core/message/MessageType MessageType.None} (default), no highlights are visible.
+				 * Valid values for the <code>highlight</code> property are values of the enumerations {@link module:sap/ui/core/message/MessageType} or
 				 * {@link sap.ui.core.IndicationColor} (only values of <code>Indication01</code> to <code>Indication10</code> are supported
 				 * for accessibility contrast reasons).
 				 *
 				 * Accessibility support is provided through the associated {@link sap.ui.table.RowSettings#setHighlightText highlightText} property.
-				 * If the <code>highlight</code> property is set to a value of {@link sap.ui.core.MessageType}, the <code>highlightText</code>
+				 * If the <code>highlight</code> property is set to a value of {@link module:sap/ui/core/message/MessageType}, the <code>highlightText</code>
 				 * property does not need to be set because a default text is used. However, the default text can be overridden by setting the
 				 * <code>highlightText</code> property.
 				 * In all other cases the <code>highlightText</code> property must be set.
@@ -81,8 +81,8 @@ sap.ui.define([
 			return Element.prototype.validateProperty.apply(this, arguments);
 		}
 
-		if (!DataType.getType("sap.ui.core.MessageType").isValid(oValue) && !DataType.getType("sap.ui.core.IndicationColor").isValid(oValue)) {
-			throw new Error("\"" + oValue + "\" is of type " + typeof oValue + ", expected is a value of the enums sap.ui.core.MessageType or sap.ui.core.IndicationColor"
+		if (!DataType.getType("sap.ui.core.message.MessageType").isValid(oValue) && !DataType.getType("sap.ui.core.IndicationColor").isValid(oValue)) {
+			throw new Error("\"" + oValue + "\" is of type " + typeof oValue + ", expected is a value of the enums sap/ui/core/message/MessageType or sap.ui.core.IndicationColor"
 				+ " for property \"" + sPropertyName + "\" of " + this);
 		}
 		return oValue;

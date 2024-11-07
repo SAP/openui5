@@ -18,6 +18,7 @@
 		sap.ui.getCore().attachInit(() => {
 			jQuery.sap.require("sap.ui.model.type.Date");
 			var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
+			const CalendarType = sap.ui.requireSync("sap/base/i18n/date/CalendarType");
 
 			// load Button, Label and Text synchronously to avoid async/sync conflicts when the form loads them async
 			// UI5 2.0 transformation will convert this to dependencies
@@ -25,9 +26,9 @@
 			jQuery.sap.require("sap.m.Label");
 			jQuery.sap.require("sap.m.Text");
 
-			var oCalendars = new sap.ui.model.json.JSONModel(sap.ui.core.CalendarType);
+			var oCalendars = new sap.ui.model.json.JSONModel(CalendarType);
 
-			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sap.ui.core.CalendarType.Gregorian});
+			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: CalendarType.Gregorian});
 
 			var aSpecialDays = [["20160101",undefined,"Neujahr",1],
 				["20160106",undefined,"Heilige Drei Könige",1],

@@ -4,7 +4,8 @@
 
 // Provides control sap.m.StandardDynamicDateOption.
 sap.ui.define([
-	"sap/ui/core/Lib",
+	'sap/base/i18n/date/CalendarWeekNumbering',
+	'sap/ui/core/Lib',
 	'sap/ui/core/library',
 	'sap/ui/core/Item',
 	'./DynamicDateOption',
@@ -19,6 +20,7 @@ sap.ui.define([
 	'./library'
 ],
 	function(
+		_CalendarWeekNumbering, // type of `calendarWeekNumbering`
 		Library,
 		coreLibrary,
 		Item,
@@ -64,7 +66,7 @@ sap.ui.define([
 					 * If not set, the calendar week numbering of the global configuration is used.
 					 * @since 1.111.0
 					 */
-					calendarWeekNumbering: { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
+					calendarWeekNumbering: { type : "sap.base.i18n.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
 				}
 			}
 		});

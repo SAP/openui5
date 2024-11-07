@@ -5,10 +5,10 @@
 // Provides type sap.ui.core.date.CalendarUtils.
 sap.ui.define([
 	"sap/base/i18n/Formatting",
+	"sap/base/i18n/date/CalendarWeekNumbering",
 	"sap/ui/core/Locale",
-	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/LocaleData"
-], function(Formatting, Locale, CalendarWeekNumbering, LocaleData) {
+], function(Formatting, CalendarWeekNumbering, Locale, LocaleData) {
 	"use strict";
 
 	/**
@@ -32,7 +32,7 @@ sap.ui.define([
 		 *   which define the first calendar week</li>
 		 * </ul>
 		 *
-		 * @param {sap.ui.core.date.CalendarWeekNumbering} [sCalendarWeekNumbering]
+		 * @param {module:sap/base/i18n/date/CalendarWeekNumbering} [sCalendarWeekNumbering]
 		 *   The calendar week numbering; if omitted, the calendar week numbering of the configuration
 		 *   is used; see
 		 *   {@link module:sap/base/i18n/Formatting.getCalendarWeekNumbering Formatting.getCalendarWeekNumbering}.
@@ -44,7 +44,7 @@ sap.ui.define([
 		 *   Is only used when <code>sCalendarWeekNumbering</code> is set to <code>Default</code>.
 		 * @returns {{firstDayOfWeek: int, minimalDaysInFirstWeek: int}|undefined}
 		 *   The calendar week configuration, or <code>undefined<code> for an invalid value of
-		 *   <code>sap.ui.core.date.CalendarWeekNumbering</code>.
+		 *   <code>module:sap/base/i18n/date/CalendarWeekNumbering</code>.
 		 * @public
 		 * @since 1.108.0
 		 */

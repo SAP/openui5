@@ -32,7 +32,7 @@ sap.ui.define([
 		 *     <li>CalendarDate(oCalendarDate) - Creates new CalendarDate by copying it from other CalendarDate</li>
 		 *
 		 *     <li>CalendarDate(oCalendarDate, sCalendarType) - Creates new CalendarDate by copying it from the given
-		 *     CalendarDate, but for the given sCalendarType. For calendar types, check sap.ui.core.CalendarType</li>
+		 *     CalendarDate, but for the given sCalendarType. For calendar types, check sap/base/i18n/date/CalendarType</li>
 		 *
 		 *     <li>CalendarDate(iYear, iMonth, iDate) - Creates new CalendarDate for the given year, month(0 based) and
 		 *     date. The parameters are considered as Gregorian. Once the CalendarDate is created, getters for year, month
@@ -185,7 +185,7 @@ sap.ui.define([
 
 		/**
 		 * Retrieves the calendar type associated with this instance;
-		 * @returns {sap.ui.core.CalendarType} the calendar type
+		 * @returns {module:sap/base/i18n/date/CalendarType} the calendar type
 		 */
 		CalendarDate.prototype.getCalendarType = function() {
 			return this._oUDate.sCalendarType;
@@ -301,7 +301,7 @@ sap.ui.define([
 		 * For example, if this method is called with UI5Date or JavaScript Date "2017-12-21 01:00:00 GMT +02:00", the returned result would be "2017-12-21"
 		 * despite that the given UI5Date or JavaScript Date corresponds to "2017-12-20 23:00:00 GMT".
 		 * @param {Date|module:sap/ui/core/date/UI5Date} oJSDate a date instance
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] to be used. If not specified, the calendar type from configuration will be used.
+		 * @param {module:sap/base/i18n/date/CalendarType} [sCalendarType] to be used. If not specified, the calendar type from configuration will be used.
 		 * For more details on the Configuration, please check sap.ui.core.Configuration#getCalendarType
 		 * @returns {sap.ui.unified.calendar.CalendarDate} the calendar date corresponding to the given UI5Date or JavaScript Date.
 		 */
@@ -327,7 +327,7 @@ sap.ui.define([
 		/**
 		 * Creates an UniversalDate corresponding to the given date and calendar type.
 		 * @param {Date|module:sap/ui/core/date/UI5Date} oDate date instance to create the UniversalDate from. Local date information is used.
-		 * @param {sap.ui.core.CalendarType} sCalendarType The type to be used. If not specified, the calendar type from configuration will be used.
+		 * @param {module:sap/base/i18n/date/CalendarType} sCalendarType The type to be used. If not specified, the calendar type from configuration will be used.
 		 * For more details on the Configuration, please check sap.ui.core.Configuration#getCalendarType
 		 * @returns {sap.ui.core.date.UniversalDate} The created date
 		 */

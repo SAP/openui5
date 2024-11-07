@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/m/ScrollContainer",
 	"sap/m/SelectList",
 	"sap/m/ToggleButton",
-	"sap/ui/core/CalendarType",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/Element",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/Item",

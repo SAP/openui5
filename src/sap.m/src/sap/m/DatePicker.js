@@ -16,14 +16,12 @@ sap.ui.define([
 	'sap/ui/core/date/UniversalDate',
 	'./library',
 	'sap/ui/core/Control',
-	'sap/ui/core/library',
 	"./DatePickerRenderer",
 	"sap/base/util/deepEqual",
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/ui/core/IconPool",
 	"./InstanceManager",
-	// jQuery Plugin "cursorPos"
 	"sap/ui/unified/Calendar",
 	"sap/ui/unified/DateRange",
 	'sap/ui/unified/DateTypeRange',
@@ -33,7 +31,8 @@ sap.ui.define([
 	"sap/ui/unified/library",
 	"sap/ui/unified/calendar/CalendarUtils",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/date/CalendarWeekNumbering",
+	"sap/base/i18n/date/CalendarType",
+	"sap/base/i18n/date/CalendarWeekNumbering",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/dom/jquery/cursorPos"
 ],
@@ -50,7 +49,6 @@ sap.ui.define([
 		UniversalDate,
 		library,
 		Control,
-		coreLibrary,
 		DatePickerRenderer,
 		deepEqual,
 		assert,
@@ -66,14 +64,12 @@ sap.ui.define([
 		unifiedLibrary,
 		CalendarUtils,
 		UI5Date,
+		CalendarType,
 		CalendarWeekNumbering,
 		InvisibleText
 	) {
 	"use strict";
 
-
-	// shortcut for sap.ui.core.CalendarType
-	var CalendarType = coreLibrary.CalendarType;
 
 	var oResourceBundle = Library.getResourceBundleFor("sap.m");
 
@@ -204,8 +200,8 @@ sap.ui.define([
 
 				/**
 				 * Displays date in this given type in input field. Default value is taken from locale settings.
-				 * Accepted are values of <code>sap.ui.core.CalendarType</code> or an empty string. If no type is set, the default type of the
-				 * configuration is used.
+				 * Accepted are values of {@link module:sap/base/i18n/date/CalendarType} or an empty string.
+				 * If no type is set, the default type of the configuration is used.
 				 * <b>Note:</b> If data binding on <code>value</code> property with type <code>sap.ui.model.type.Date</code> is used, this property will be ignored.
 				 * @since 1.28.6
 				 */
@@ -216,7 +212,7 @@ sap.ui.define([
 				 * If not set, the dates are only displayed in the primary calendar type
 				 * @since 1.34.1
 				 */
-				secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"},
+				secondaryCalendarType : {type : "sap.base.i18n.date.CalendarType", group : "Appearance"},
 
 				/**
 				 * Minimum date that can be shown and selected in the <code>DatePicker</code>. This must be a UI5Date or JavaScript Date object.
@@ -273,7 +269,7 @@ sap.ui.define([
 				 * If not set, the calendar week numbering of the global configuration is used.
 				 * @since 1.108.0
 				 */
-				calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
+				calendarWeekNumbering : { type : "sap.base.i18n.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
 
 			},
 

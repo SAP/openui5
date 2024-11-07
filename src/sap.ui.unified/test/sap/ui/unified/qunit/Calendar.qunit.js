@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegend",
 	"sap/ui/unified/CalendarLegendRenderer",
 	"sap/ui/unified/CalendarLegendItem",
-	"sap/ui/core/CalendarType",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/HTML",

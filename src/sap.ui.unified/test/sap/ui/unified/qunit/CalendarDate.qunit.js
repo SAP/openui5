@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/ui/unified/calendar/CalendarDate",
-	"sap/ui/core/CalendarType",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/date/UI5Date",
 	// load all required calendars in advance
 	"sap/ui/core/date/Gregorian",

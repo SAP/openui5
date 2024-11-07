@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
@@ -17,7 +18,6 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/library",
-	"sap/ui/core/CalendarType",
 	"sap/ui/core/InvisibleText",
 	'sap/ui/events/KeyCodes',
 	"sap/ui/model/json/JSONModel",
@@ -29,6 +29,7 @@ sap.ui.define([
 ], function(
 	Formatting,
 	Localization,
+	CalendarType,
 	Element,
 	nextUIUpdate,
 	jQuery,
@@ -44,7 +45,6 @@ sap.ui.define([
 	CalendarLegendItem,
 	DateTypeRange,
 	unifiedLibrary,
-	CalendarType,
 	InvisibleText,
 	KeyCodes,
 	JSONModel,

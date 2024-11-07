@@ -2,13 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/i18n/date/CalendarWeekNumbering",
 	"sap/ui/core/date/CalendarWeekNumbering"
-], function(CalendarWeekNumbering) {
+], function(CalendarWeekNumbering, LegacyCalenderWeekNumbering) {
 	/*global QUnit */
 	"use strict";
 
 	//*********************************************************************************************
-	QUnit.module("sap.ui.core.date.CalendarWeekNumbering");
+	QUnit.module("sap.base.i18n.date.CalendarWeekNumbering");
 
 	//*********************************************************************************************
 	QUnit.test("CalendarWeekNumbering - getWeekConfigurationValues", function (assert) {
@@ -44,5 +45,12 @@ sap.ui.define([
 			});
 		assert.deepEqual(CalendarWeekNumbering.getWeekConfigurationValues(CalendarWeekNumbering.Default), undefined);
 		assert.deepEqual(CalendarWeekNumbering.getWeekConfigurationValues(), undefined);
+	});
+
+	/**
+	 * @deprecated As of Version 1.120
+	 */
+	QUnit.test("Legacy CalendarWeekNumbering", function(assert) {
+		assert.strictEqual(LegacyCalenderWeekNumbering, CalendarWeekNumbering);
 	});
 });
