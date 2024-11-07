@@ -11,8 +11,13 @@
 			"type": "XML",
 			"async": true
 		},
-		"libs": {
-			"sap.ui.unified": {}
+		"dependencies": {
+			"libs": {
+				"sap.f": {},
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
 		},
 		"config": {
 			"sample": {
