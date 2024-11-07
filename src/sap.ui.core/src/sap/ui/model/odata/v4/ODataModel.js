@@ -2592,10 +2592,15 @@ sap.ui.define([
 	 *   The resource path of the cache that saw the messages; used to resolve the longtext URL and
 	 *   for adjusting a message target in case it is an operation parameter, except the binding
 	 *   parameter
+	 * @param {boolean} [bSilent]
+	 *   Whether the created UI5 messages should only be returned without reporting them
+	 * @returns {sap.ui.core.message.Message[]|undefined}
+	 *   An array of <code>aMessages</code> transformed to UI5 message instances, or
+	 *   <code>undefined</code> in case there are no messages
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.reportTransitionMessages = function (aMessages, sResourcePath) {
+	ODataModel.prototype.reportTransitionMessages = function (aMessages, sResourcePath, bSilent) {
 		var sContextPath, oOperationMetadata;
 
 		if (!aMessages.length) {
@@ -2615,7 +2620,7 @@ sap.ui.define([
 			}
 		}
 
-		Messaging.updateMessages(undefined, aMessages.map((oMessage) => {
+		const aUI5Messages = aMessages.map((oMessage) => {
 			const oOriginalMessage = oMessage;
 			if (oOperationMetadata) {
 				oMessage = _Helper.clone(oMessage);
@@ -2625,7 +2630,12 @@ sap.ui.define([
 			oMessage.transition = true;
 
 			return this.createUI5Message(oMessage, sResourcePath, undefined, oOriginalMessage);
-		}));
+		});
+		if (!bSilent) {
+			Messaging.updateMessages(undefined, aUI5Messages);
+		}
+
+		return aUI5Messages;
 	};
 
 	/**

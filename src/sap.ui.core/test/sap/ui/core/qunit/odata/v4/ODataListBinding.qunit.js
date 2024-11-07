@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/Messaging",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Filter",
@@ -22,9 +23,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (Log, SyncPromise, Binding, ChangeReason, Filter, FilterOperator, FilterProcessor,
-		FilterType, ListBinding, Sorter, OperationMode, Context, ODataListBinding, ODataModel,
-		asODataParentBinding, _AggregationCache, _AggregationHelper, _Cache, _GroupLock, _Helper) {
+], function (Log, SyncPromise, Messaging, Binding, ChangeReason, Filter, FilterOperator,
+		FilterProcessor, FilterType, ListBinding, Sorter, OperationMode, Context, ODataListBinding,
+		ODataModel, asODataParentBinding, _AggregationCache, _AggregationHelper, _Cache, _GroupLock,
+		_Helper) {
 	/*eslint no-sparse-arrays: 0 */
 	"use strict";
 
@@ -1428,9 +1430,12 @@ sap.ui.define([
 		oSetCollectionMock = this.mock(oCache).expects("setPersistedCollection")
 			.exactly(oFixture.elements ? 1 : 0)
 			.withExactArgs(sinon.match.same(oFixture.elements));
+		this.mock(ODataListBinding.prototype.fireSeparateReceived).expects("bind")
+			.withExactArgs(sinon.match.same(oBinding))
+			.returns("~fnFireSeparateReceived~");
 		oReadMock = this.mock(oCache).expects("read")
 			.withExactArgs(1, 2, 3, sinon.match.same(oGroupLock),
-				sinon.match.same(fnDataRequested))
+				sinon.match.same(fnDataRequested), undefined, "~fnFireSeparateReceived~")
 			.returns(SyncPromise.resolve(Promise.resolve(oData)));
 
 		// code under test
@@ -3428,7 +3433,8 @@ sap.ui.define([
 			"patchCompleted",
 			"patchSent",
 			"refresh",
-			"selectionChanged"
+			"selectionChanged",
+			"separateReceived"
 		].forEach(function (sEvent) {
 			oBindingMock.expects("attachEvent")
 				.withExactArgs(sEvent, sinon.match.same(mEventParameters)).returns(oReturn);
@@ -12637,7 +12643,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("setResetViaSideEffects ", function (assert) {
+	QUnit.test("setResetViaSideEffects", function (assert) {
 		const oBinding = this.bindList("/SalesOrderList");
 
 		assert.strictEqual(oBinding.bResetViaSideEffects, undefined);
@@ -12654,6 +12660,47 @@ sap.ui.define([
 		oBinding.setResetViaSideEffects(true);
 		assert.strictEqual(oBinding.bResetViaSideEffects, false, "true must not win over false");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("fireSeparateReceived", function () {
+		const oBinding = this.bindList("/SalesOrderList");
+		this.mock(oBinding.oModel).expects("reportTransitionMessages").never();
+		this.mock(oBinding).expects("fireEvent").withExactArgs("separateReceived", {
+				property : "~sProperty~",
+				start : 42,
+				length : 23
+			}, true)
+			.returns(true); // do not expect preventDefault in this case
+		this.mock(Messaging).expects("updateMessages").never();
+
+		// code under test
+		oBinding.fireSeparateReceived("~sProperty~", 42, 42 + 23);
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bDefaultAction) {
+	QUnit.test("fireSeparateReceived: error, bDefaultAction=" + bDefaultAction, function () {
+		const oBinding = this.bindList("/SalesOrderList");
+		const oError = {resourcePath : "~resourcePath~"};
+		this.mock(_Helper).expects("extractMessages").withExactArgs(sinon.match.same(oError))
+			.returns("~aMessages~");
+		this.mock(oBinding.oModel).expects("reportTransitionMessages")
+			.withExactArgs("~aMessages~", "~resourcePath~", true)
+			.returns(["~errorMessage~"]);
+		this.mock(oBinding).expects("fireEvent").withExactArgs("separateReceived", {
+				property : "~sProperty~",
+				start : 42,
+				length : 23,
+				errorMessage : "~errorMessage~"
+			}, true)
+			.returns(bDefaultAction);
+		this.mock(Messaging).expects("updateMessages").exactly(bDefaultAction ? 1 : 0)
+			.withExactArgs(undefined, ["~errorMessage~"]);
+
+		// code under test
+		oBinding.fireSeparateReceived("~sProperty~", 42, 42 + 23, oError);
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("insertContext: use index", function (assert) {
