@@ -13,8 +13,7 @@ sap.ui.define([
 	"sap/m/plugins/PluginBase",
 	"sap/ui/core/Lib",
 	"sap/ui/core/format/ListFormat",
-	"sap/ui/core/message/MessageType",
-	"sap/ui/base/ManagedObjectObserver"
+	"sap/ui/core/message/MessageType"
 ], (
 	TableDelegate,
 	V4AnalyticsPropertyHelper,
@@ -26,12 +25,9 @@ sap.ui.define([
 	PluginBase,
 	Lib,
 	ListFormat,
-	MessageType,
-	ManagedObjectObserver
+	MessageType
 ) => {
 	"use strict";
-
-	const TableMap = new window.WeakMap(); // To store table-related information for easy access in the delegate.
 
 	/**
 	 * Base delegate for {@link sap.ui.mdc.Table} and <code>ODataV4</code>. Extend this object in your project to use all functionalities of the
@@ -162,6 +158,11 @@ sap.ui.define([
 	 * @override
 	 */
 	Delegate.updateBinding = function(oTable, oBindingInfo, oBinding, mSettings) {
+		// Custom $$aggregation is not supported if analytical features are enabled.
+		if (isAnalyticsEnabled(oTable)) {
+			updateAggregation(oTable, oBindingInfo);
+		}
+
 		if (!oBinding || oBinding.getPath() != oBindingInfo.path) {
 			this.rebind(oTable, oBindingInfo);
 			return;
@@ -176,16 +177,7 @@ sap.ui.define([
 				oRootBinding.suspend();
 			}
 
-			// Multiple setAggregation calls with different parameters can lead to an unnecessary request. For example, if the aggregation is set
-			// to undefined and then to the previous value, it's basically a refresh.
-			// Custom $$aggregation is not supported in analytical scenarios.
-
-			if (isAnalyticsEnabled(oTable)) {
-				setAggregation(oTable, oBindingInfo);
-			} else {
-				oBinding.setAggregation(oBindingInfo.parameters?.$$aggregation);
-			}
-
+			oBinding.setAggregation(oBindingInfo.parameters?.$$aggregation);
 			oBinding.changeParameters((() => {
 				const mParameters = {...oBindingInfo.parameters};
 				delete mParameters.$$aggregation;
@@ -209,14 +201,6 @@ sap.ui.define([
 				oRootBinding.resume();
 			}
 		}
-	};
-
-	/**
-	 * @inheritDoc
-	 */
-	Delegate.rebind = function(oTable, oBindingInfo) {
-		setAggregation(oTable, oBindingInfo);
-		TableDelegate.rebind.apply(this, arguments);
 	};
 
 	Delegate.fetchExpandAndCollapseConfiguration = function(oTable) {
@@ -271,8 +255,8 @@ sap.ui.define([
 	 * If a property is complex, the properties it references are taken into account.<br>
 	 * If <code>autoExpandSelect</code> of the {@link sap.ui.model.odata.v4.ODataModel} is not enabled, this method must return an empty array.
 	 * If the table type is {@link sap.ui.mdc.table.GridTableType GridTable} and <code>p13nMode</code> <code>Group</code> or <code>p13nMode</code>
-	 * <code>Aggregate</code> is enabled, referenced properties, for example, properties that are referenced via <code>text</code> or
-	 * <code>unit</code>, are also included in the result. Please also see the restrictions in the description of the {@link module:sap/ui/mdc/odata/v4/TableDelegate TableDelegate}.<br>
+	 * <code>Aggregate</code> is enabled, also see the restrictions in the description of the
+	 * {@link module:sap/ui/mdc/odata/v4/TableDelegate TableDelegate}.<br>
 	 * For more information about properties, see {@link sap.ui.mdc.odata.v4.TablePropertyInfo PropertyInfo}.
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the table
@@ -421,16 +405,25 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	Delegate.initializeContent = function(oTable) {
-		return TableDelegate.initializeContent.apply(this, arguments).then(() => {
-			if (!TableMap.has(oTable)) {
-				TableMap.set(oTable, {});
-			}
-			return configureInnerTable(oTable);
-		}).then(() => {
-			setAggregation(oTable);
-		});
+	Delegate.initializeContent = async function(oTable) {
+		await TableDelegate.initializeContent.apply(this, arguments);
+
+		if (oTable._isOfType(TableType.Table)) {
+			await configureGridTable(oTable);
+		}
 	};
+
+	async function configureGridTable(oTable) {
+		const [V4AggregationPlugin] = await loadModules("sap/ui/table/plugins/V4Aggregation");
+
+		oTable._oTable.addDependent(new V4AggregationPlugin({
+			groupHeaderFormatter: function(oContext) {
+				const aGroupedPropertyKeys = oTable._getGroupedProperties().map((mGroupLevel) => mGroupLevel.name);
+				const sGroupLevelKey = aGroupedPropertyKeys[oContext.getProperty("@$ui5.node.level") - 1];
+				return oTable.getControlDelegate().formatGroupHeader(oTable, oContext, sGroupLevelKey);
+			}
+		}));
+	}
 
 	/**
 	 * @inheritDoc
@@ -515,39 +508,29 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the aggregation info if the plugin is enabled.
+	 * Sets the $$aggregation binding parameter to the binding info and updates the table, for example, to prepare it for displaying the grand total.
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the table
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} [oBindingInfo] The binding info object to be used to bind the table to the model
 	 */
-	function setAggregation(oTable, oBindingInfo) {
-		const oPlugin = TableMap.get(oTable).plugin;
+	function updateAggregation(oTable, oBindingInfo) {
+		const mAggregation = create$$Aggregation(oTable);
+		const sSearch = oBindingInfo.parameters.$search;
 
-		if (!oPlugin || oPlugin.isDestroyed()) {
-			return;
+		if (mAggregation && sSearch) {
+			delete oBindingInfo.parameters.$search;
+			mAggregation.search = sSearch;
 		}
 
-		const aInResultPropertyKeys = Array.from(new Set([
-			...getVisiblePropertyKeys(oTable),
-			...getInResultPropertyKeys(oTable)
-		]));
-		const aGroupLevels = oTable._getGroupedProperties().map((mGroupLevel) => mGroupLevel.name);
-		const aAggregates = Object.keys(oTable._getAggregatedProperties());
-		const mColumnState = getColumnState(oTable, aAggregates);
-		const sSearch = oBindingInfo?.parameters["$search"];
+		oBindingInfo.parameters.$$aggregation = mAggregation;
 
-		if (sSearch) {
-			delete oBindingInfo.parameters["$search"];
-		}
-
-		oPlugin.setAggregationInfo({
-			visible: aInResultPropertyKeys,
-			groupLevels: aGroupLevels,
-			grandTotal: aAggregates,
-			subtotals: aAggregates,
-			columnState: mColumnState,
-			search: sSearch
+		const bHasGrandTotal = Object.keys(mAggregation.aggregate).some((sKey) => {
+			return mAggregation.aggregate[sKey].grandTotal;
 		});
+		oTable.getModel("$sap.ui.mdc.Table").setProperty("/@custom/hasGrandTotal", bHasGrandTotal);
+
+		const V4AggregationPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
+		V4AggregationPlugin?.declareColumnsHavingTotals(getColumnsWithTotals(oTable).map((oColumn) => oColumn.getInnerColumn()));
 	}
 
 	function getVisiblePropertyKeys(oTable) {
@@ -558,45 +541,26 @@ sap.ui.define([
 		return getSimplePropertyKeys(oTable, oTable.getControlDelegate().getInResultPropertyKeys(oTable));
 	}
 
-	function getColumnState(oTable, aAggregatedPropertyNames) {
-		const mColumnState = {};
+	function getColumnsWithTotals(oTable) {
+		const aTotaledPropertyKeys = Object.keys(oTable._getAggregatedProperties());
+		const oColumnsWithTotals = new Set();
 
-		oTable.getColumns().forEach((oColumn) => {
-			let sInnerColumnId = oColumn.getId() + "-innerColumn";
-			const aAggregatedProperties = getAggregatedColumnProperties(oTable, oColumn, aAggregatedPropertyNames);
-			const bColumnIsAggregated = aAggregatedProperties.length > 0;
-
-			if (sInnerColumnId in mColumnState) {
-				// If there already is a state for this column, it is a unit column that inherited the state from the amount column.
-				// The values in the state may be overridden from false to true, but not the other way around.
-				mColumnState[sInnerColumnId].subtotals = bColumnIsAggregated || mColumnState[sInnerColumnId].subtotals;
-				mColumnState[sInnerColumnId].grandTotal = bColumnIsAggregated || mColumnState[sInnerColumnId].grandTotal;
-				return;
-			}
-
-			mColumnState[sInnerColumnId] = {
-				subtotals: bColumnIsAggregated,
-				grandTotal: bColumnIsAggregated
-			};
-
-			findUnitColumns(oTable, aAggregatedProperties).forEach((oUnitColumn) => {
-				sInnerColumnId = oUnitColumn.getId() + "-innerColumn";
-
-				if (sInnerColumnId in mColumnState) {
-					// If there already is a state for this column, it is a unit column that inherited the state from the amount column.
-					// The values in the state may be overridden from false to true, but not the other way around.
-					mColumnState[sInnerColumnId].subtotals = bColumnIsAggregated || mColumnState[sInnerColumnId].subtotals;
-					mColumnState[sInnerColumnId].grandTotal = bColumnIsAggregated || mColumnState[sInnerColumnId].grandTotal;
-				} else {
-					mColumnState[sInnerColumnId] = {
-						subtotals: bColumnIsAggregated,
-						grandTotal: bColumnIsAggregated
-					};
-				}
+		for (const oColumn of oTable.getColumns()) {
+			const aRelevantColumnProperties = getColumnProperties(oTable, oColumn).filter((oProperty) => {
+				return aTotaledPropertyKeys.includes(oProperty.name);
 			});
-		});
+			const bColumnHasTotals = aRelevantColumnProperties.length > 0;
 
-		return mColumnState;
+			if (bColumnHasTotals) {
+				oColumnsWithTotals.add(oColumn);
+
+				findUnitColumns(oTable, aRelevantColumnProperties).forEach((oUnitColumn) => {
+					oColumnsWithTotals.add(oUnitColumn);
+				});
+			}
+		}
+
+		return Array.from(oColumnsWithTotals);
 	}
 
 	// TODO: Move this to TablePropertyHelper for reuse?
@@ -628,24 +592,18 @@ sap.ui.define([
 		}
 	}
 
-	function getAggregatedColumnProperties(oTable, oColumn, aAggregatedProperties) {
-		return getColumnProperties(oTable, oColumn).filter((oProperty) => {
-			return aAggregatedProperties.includes(oProperty.name);
-		});
-	}
-
 	function findUnitColumns(oTable, aProperties) {
-		const aUnitProperties = [];
+		const aUnitPropertyKeys = [];
 
 		aProperties.forEach((oProperty) => {
-			if (oProperty.unitProperty) {
-				aUnitProperties.push(oProperty.unitProperty);
+			if (oProperty.unit) {
+				aUnitPropertyKeys.push(oProperty.unit);
 			}
 		});
 
 		return oTable.getColumns().filter((oColumn) => {
 			return getColumnProperties(oTable, oColumn).some((oProperty) => {
-				return aUnitProperties.includes(oProperty);
+				return aUnitPropertyKeys.includes(oProperty.key);
 			});
 		});
 	}
@@ -679,7 +637,7 @@ sap.ui.define([
 	 * @private
 	 */
 	function mergeValidationResults(oBaseState, oValidationState) {
-		const oSeverity = { Error: 1, Warning: 2, Information: 3, None: 4 };
+		const oSeverity = {Error: 1, Warning: 2, Information: 3, None: 4};
 
 		if (!oValidationState || oSeverity[oValidationState.validation] - oSeverity[oBaseState.validation] > 0) {
 			return oBaseState;
@@ -697,75 +655,180 @@ sap.ui.define([
 	 */
 	function isAnalyticsEnabled(oTable) {
 		return oTable._isOfType(TableType.Table) && (oTable.getGroupConditions() || oTable.isGroupingEnabled() ||
-				oTable.getAggregateConditions() || oTable.isAggregationEnabled());
+			oTable.getAggregateConditions() || oTable.isAggregationEnabled());
 	}
 
-	/**
-	 * Configures the inner table to support the personalization settings of the table.
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @return {Promise} A <code>Promise</code> that resolves when the inner table is configured
-	 */
-	function configureInnerTable(oTable) {
-		if (oTable._isOfType(TableType.Table)) {
-			return (isAnalyticsEnabled(oTable) ? enableGridTablePlugin(oTable) : disableGridTablePlugin(oTable)).then(() => {
-				return setUpTableObserver(oTable);
-			});
-		}
-		return Promise.resolve();
-	}
+	function create$$Aggregation(oTable) {
+		const aVisiblePropertyKeys = getVisiblePropertyKeys(oTable);
 
-	function enableGridTablePlugin(oTable) {
-		const mTableMap = TableMap.get(oTable);
-		let oPlugin = mTableMap.plugin;
-
-		if (oPlugin && !oPlugin.isDestroyed()) {
-			oPlugin.activate();
-			return Promise.resolve();
+		if (aVisiblePropertyKeys.length === 0) {
+			return undefined;
 		}
 
-		// The property helper is initialized after the table "initialized" promise resolves. So we can only wait for the property helper.
-		return Promise.all([
-			oTable.awaitPropertyHelper(), loadModules("sap/ui/table/plugins/V4Aggregation")
-		]).then((aResult) => {
-			const V4AggregationPlugin = aResult[1][0];
-			const oDelegate = oTable.getControlDelegate();
+		const oPropertyHelper = oTable.getPropertyHelper();
+		const aGroupedPropertyKeys = oTable._getGroupedProperties().map((mGroupLevel) => mGroupLevel.name);
+		const aTotaledPropertyKeys = Object.keys(oTable._getAggregatedProperties());
+		const mAggregation = {
+			group: {},
+			groupLevels: [],
+			aggregate: {},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true
+		};
 
-			oPlugin = new V4AggregationPlugin({
-				groupHeaderFormatter: function(oContext, sProperty) {
-					return oDelegate.formatGroupHeader(oTable, oContext, sProperty);
+		// Add key properties to prevent data aggregation on leafs.
+		addKeyPropertiesTo$$Aggregation(mAggregation, oTable);
+
+		addInResultPropertiesTo$$Aggregation(mAggregation, oTable);
+
+		// We need to consider group levels as visible properties, to add them in the query properly if they have additional properties.
+		aGroupedPropertyKeys.forEach((sPropertyKey) => {
+			if (aVisiblePropertyKeys.indexOf(sPropertyKey) < 0) {
+				aVisiblePropertyKeys.push(sPropertyKey);
+			}
+		});
+
+		for (const sPropertyKey of aVisiblePropertyKeys) {
+			const oProperty = oPropertyHelper.getProperty(sPropertyKey);
+
+			if (!oProperty.extension.technicallyGroupable && !oProperty.extension.technicallyAggregatable) {
+				continue;
+			}
+
+			// Skip text property if its ID is visible.
+			const oAdditionalProperty = oPropertyHelper.getProperty(oProperty.extension.additionalProperties?.[0]);
+			if (oAdditionalProperty?.text === oProperty.key && aVisiblePropertyKeys.includes(oAdditionalProperty.key)) {
+				continue;
+			}
+
+			if (oProperty.groupable) {
+				mAggregation.group[oProperty.path] = {};
+			}
+
+			if (oProperty.aggregatable) {
+				mAggregation.aggregate[oProperty.path] = {};
+
+				if (aTotaledPropertyKeys.includes(oProperty.key)) {
+					mAggregation.aggregate[oProperty.path].grandTotal = true;
+					mAggregation.aggregate[oProperty.path].subtotals = true;
 				}
-			});
-			oPlugin.setPropertyInfos(oTable.getPropertyHelper().getPropertiesForPlugin());
-			oTable.propertiesFinalized().then(() => {
-				oPlugin.setPropertyInfos(oTable.getPropertyHelper().getPropertiesForPlugin());
-			});
-			oTable._oTable.addDependent(oPlugin);
-			mTableMap.plugin = oPlugin;
+
+				if (oProperty.unit) {
+					const oUnitPropertyInfo = oPropertyHelper.getProperty(oProperty.unit);
+					if (oUnitPropertyInfo) {
+						mAggregation.aggregate[oProperty.path].unit = oUnitPropertyInfo.path;
+					}
+				}
+
+				if (!oProperty.extension.additionalProperties?.length && oProperty.extension.customAggregate?.contextDefiningProperties) {
+					oProperty.extension.customAggregate.contextDefiningProperties.forEach((sContextDefiningPropertyKey) => {
+						const oDefiningPropertyInfo = oPropertyHelper.getProperty(sContextDefiningPropertyKey);
+						if (oDefiningPropertyInfo) {
+							mAggregation.group[oDefiningPropertyInfo.path] = {};
+						}
+					});
+				}
+			}
+
+			const aAdditionalPropertyPaths = getAdditionalPropertyPaths(oProperty, oPropertyHelper);
+
+			if (oProperty.aggregatable) {
+				for (const sPropertyPath of aAdditionalPropertyPaths) {
+					mAggregation.group[sPropertyPath] = {};
+				}
+			} else if (oProperty.groupable && oProperty.path in mAggregation.group) {
+				mAggregation.group[oProperty.path].additionally = aAdditionalPropertyPaths;
+			}
+		}
+
+		// Visual grouping (expandable groups)
+		aGroupedPropertyKeys.forEach((sPropertyKey) => {
+			const oProperty = oPropertyHelper.getProperty(sPropertyKey);
+			if (oProperty) {
+				mAggregation.groupLevels.push(oProperty.path);
+			}
+		});
+
+		if (!Object.keys(mAggregation.group).length && !Object.keys(mAggregation.aggregate).length) {
+			return undefined;
+		}
+
+		sanitize$$Aggregation(mAggregation);
+
+		return mAggregation;
+	}
+
+	function getAdditionalPropertyPaths(oProperty, oPropertyHelper) {
+		const oPropertyPaths = new Set();
+
+		if (oProperty.text) {
+			const oTextProperty = oPropertyHelper.getProperty(oProperty.text);
+			oPropertyPaths.add(oTextProperty.path);
+		}
+
+		for (const sPropertyKey of oProperty.extension.additionalProperties ?? []) {
+			const oAdditionalProperty = oPropertyHelper.getProperty(sPropertyKey);
+			oPropertyPaths.add(oAdditionalProperty.path);
+		}
+
+		return Array.from(oPropertyPaths);
+	}
+
+	function addKeyPropertiesTo$$Aggregation(mAggregation, oTable) {
+		oTable.getPropertyHelper().getProperties().forEach((oProperty) => {
+			if (oProperty.isKey) {
+				mAggregation.group[oProperty.path] = {};
+			}
 		});
 	}
 
-	function disableGridTablePlugin(oTable) {
-		const mTableMap = TableMap.get(oTable);
+	function addInResultPropertiesTo$$Aggregation(mAggregation, oTable) {
+		const oPropertyHelper = oTable.getPropertyHelper();
 
-		if (mTableMap.plugin) {
-			mTableMap.plugin.deactivate();
+		for (const sPropertyKey of getInResultPropertyKeys(oTable)) {
+			const oProperty = oPropertyHelper.getProperty(sPropertyKey);
+
+			if (oProperty.extension.technicallyGroupable) {
+				mAggregation.group[oProperty.path] = {};
+			} else if (oProperty.extension.technicallyAggregatable) {
+				mAggregation.aggregate[oProperty.path] = {};
+			}
 		}
-
-		return Promise.resolve();
 	}
 
-	function setUpTableObserver(oTable) {
-		const mTableMap = TableMap.get(oTable);
+	function sanitize$$Aggregation(mAggregation) {
+		dedupe$$AggregationGroupAndAggregate(mAggregation); // A property must not be in both "group" and "aggregate".
+		dedupe$$AggregationAdditionally(mAggregation); // A property must not be in "group" if it is in "group.additionally".
+	}
 
-		if (!mTableMap.observer) {
-			mTableMap.observer = new ManagedObjectObserver((oChange) => {
-				configureInnerTable(oTable);
-			});
+	function dedupe$$AggregationGroupAndAggregate(mAggregation) {
+		for (const sPath in mAggregation.group) {
+			if (sPath in mAggregation.aggregate) {
+				// To get the totals, the property needs to be in "aggregate".
+				if (mAggregation.aggregate[sPath].grandTotal || mAggregation.aggregate[sPath].subtotals) {
+					delete mAggregation.group[sPath];
+				} else {
+					delete mAggregation.aggregate[sPath];
+				}
+			}
+		}
+	}
 
-			mTableMap.observer.observe(oTable, {
-				properties: ["p13nMode", "groupConditions", "aggregateConditions"]
-			});
+	function dedupe$$AggregationAdditionally(mAggregation) {
+		const oAllAdditionalPropertyPaths = new Set();
+
+		for (const sPath in mAggregation.group) {
+			mAggregation.group[sPath].additionally?.forEach((sPath) => oAllAdditionalPropertyPaths.add(sPath));
+		}
+
+		// If the table is visually grouped by a property (the property is in groupLevels), its additional properties also need to be available in the
+		// group header context. For this, they need to be in "additionally" of the grouped property and therefore have to be removed from "group".
+		// If that leads to missing (additional) properties, the issue is unsupported nesting of additional properties. If X has additional property
+		// Y, and Y has additional property Z, then Z must be an additional property of X as well.
+		for (const sPath of oAllAdditionalPropertyPaths) {
+			if (sPath in mAggregation.group) {
+				delete mAggregation.group[sPath];
+			}
 		}
 	}
 
