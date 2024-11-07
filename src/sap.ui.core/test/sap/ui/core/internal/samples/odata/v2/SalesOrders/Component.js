@@ -11,9 +11,10 @@ sap.ui.define([
 	"sap/ui/core/Messaging",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/message/MessageType",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/MessageScope"
-], function (Messaging, UIComponent, MessageType, JSONModel, MessageScope) {
+], function (Messaging, UIComponent, MessageType, XMLView, JSONModel, MessageScope) {
 	"use strict";
 	var aItemFilter = [{
 			icon : "",
@@ -44,16 +45,12 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.core.internal.samples.odata.v2.SalesOrders.Component", {
 		constructor : function(mParameters) {
 			var sInlineCreationRows =
-					new URLSearchParams(window.location.search).get("inlineCreationRows"),
-				oModel;
+					new URLSearchParams(window.location.search).get("inlineCreationRows");
 
 			UIComponent.apply(this, arguments);
 			if (sInlineCreationRows) { // overwrite component configuration if URL parameter is used
 				this.setInlineCreationRows(parseInt(sInlineCreationRows) || 0);
 			}
-			oModel = this.getModel();
-			oModel.setDeferredGroups(["changes", "FixQuantity"]);
-			oModel.setMessageScope(MessageScope.BusinessObject);
 
 			this.setModel(new JSONModel({
 				inlineCreationRows : this.getInlineCreationRows(),
@@ -77,6 +74,17 @@ sap.ui.define([
 				inlineCreationRows : {type : "int", defaultValue : 0}
 			},
 			version : "1.0"
+		},
+
+		createContent : function () {
+			const oModel = this.getModel();
+			return oModel.ready.then(() => { // only create view when component model's mock data is loaded
+				oModel.setDeferredGroups(["changes", "FixQuantity"]);
+				oModel.setMessageScope(MessageScope.BusinessObject);
+				return XMLView.create({
+					viewName : "sap.ui.core.internal.samples.odata.v2.SalesOrders.Main"
+				});
+			});
 		},
 
 		exit : function () {

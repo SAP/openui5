@@ -47,11 +47,6 @@
 				"type" : "sap.ui.core.internal.samples.odata.v2.SalesOrders.SandboxModel",
 				"uriSettingName" : "serviceUrl"
 			}
-		},
-		"rootView" : {
-			"id" : "SalesOrdersMain",
-			"type" : "XML",
-			"viewName" : "sap.ui.core.internal.samples.odata.v2.SalesOrders.Main"
 		}
 	}
 }
