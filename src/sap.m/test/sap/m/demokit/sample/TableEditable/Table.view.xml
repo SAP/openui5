@@ -41,22 +41,22 @@
 							<ObjectIdentifier title="{Name}" text="{ProductId}" />
 							<ObjectNumber
 								number="{
-								path:'Quantity',
-								type: 'sap.ui.model.type.String',
-								formatOptions: {showMeasure: false}
-							}"
+									path:'Quantity',
+									type: 'sap.ui.model.type.String',
+									formatOptions: {showMeasure: false}
+								}"
 								unit="{UoM}" />
 							<ObjectNumber number="{WeightMeasure}" unit="{WeightUnit}"
 								state="{
-							path: 'WeightMeasure',
-							formatter: 'sap.m.sample.TableEditable.Formatter.weightState'
-						}" />
+									path: 'WeightMeasure',
+									formatter: '.formatter.weightState'
+								}" />
 							<ObjectNumber
 								number="{
-								parts:[{path:'Price'},{path:'CurrencyCode'}],
-								type: 'sap.ui.model.type.Currency',
-								formatOptions: {showMeasure: false}
-							}"
+									parts:[{path:'Price'},{path:'CurrencyCode'}],
+									type: 'sap.ui.model.type.Currency',
+									formatOptions: {showMeasure: false}
+								}"
 								unit="{CurrencyCode}" />
 						</cells>
 					</ColumnListItem>

@@ -7,6 +7,8 @@ sap.ui.define([
 
 	var ListController = Controller.extend("sap.m.sample.StandardListItemInfo.List", {
 
+		formatter: Formatter,
+
 		onInit : function (evt) {
 
 			// set explored app's demo model on this sample

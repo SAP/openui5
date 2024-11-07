@@ -385,7 +385,9 @@ function(
 				/**
 				 * This event will be fired before the Dialog is opened.
 				 */
-				beforeOpen: {},
+				beforeOpen: {
+					allowPreventDefault: true
+				},
 
 				/**
 				 * This event will be fired after the Dialog is opened.
@@ -396,6 +398,7 @@ function(
 				 * This event will be fired before the Dialog is closed.
 				 */
 				beforeClose: {
+					allowPreventDefault: true,
 					parameters: {
 
 						/**
@@ -706,10 +709,14 @@ function(
 			default:
 		}
 
+		if (!this.fireBeforeOpen()) {
+			return this;
+		}
+
 		//reset the close trigger
 		this._oCloseTrigger = null;
 
-		this.fireBeforeOpen();
+
 		oPopup.attachOpened(this._handleOpened, this);
 
 		// reset scroll fix check
@@ -736,22 +743,29 @@ function(
 	 */
 	Dialog.prototype.close = function () {
 		this._bOpenAfterClose = false;
-		this._deregisterWithinAreaResizeObserver();
 
 		var oPopup = this.oPopup;
 
 		var eOpenState = this.oPopup.getOpenState();
-		if (!(eOpenState === OpenState.CLOSED || eOpenState === OpenState.CLOSING)) {
-			library.closeKeyboard();
-			this.fireBeforeClose({origin: this._oCloseTrigger});
-			oPopup.attachClosed(this._handleClosed, this);
-			this._bDisableRepositioning = false;
-			//reset the drag and/or resize
-			this._oManuallySetPosition = null;
-			this._oManuallySetSize = null;
-			oPopup.close();
-			this._deregisterResizeObserver();
+		if (eOpenState === OpenState.CLOSED || eOpenState === OpenState.CLOSING) {
+			return this;
 		}
+
+		if (!this.fireBeforeClose({origin: this._oCloseTrigger})) {
+			return this;
+		}
+
+		this._deregisterWithinAreaResizeObserver();
+
+		library.closeKeyboard();
+		oPopup.attachClosed(this._handleClosed, this);
+		this._bDisableRepositioning = false;
+		//reset the drag and/or resize
+		this._oManuallySetPosition = null;
+		this._oManuallySetSize = null;
+		oPopup.close();
+		this._deregisterResizeObserver();
+
 		return this;
 	};
 

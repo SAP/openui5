@@ -18,18 +18,17 @@
 				uploadUrl="../../../../upload"
 				items="{path: '/items', templateShareable: false}"
 				mode="MultiSelect"
-				selectionChanged="onSelectionChange"
 				directory="true"
 				afterItemRemoved="onAfterItemRemoved">
 			<upload:toolbar>
 				<OverflowToolbar>
 					<ToolbarSpacer/>
 					 <SegmentedButton accessibleName="Upload modes" selectionChange="handleSelectionChange">
-                        <items>
-                            <SegmentedButtonItem text="Directory Mode" pressed="true"></SegmentedButtonItem>
-                            <SegmentedButtonItem text="File Mode"></SegmentedButtonItem>
-                        </items>
-                    </SegmentedButton>
+						<items>
+							<SegmentedButtonItem text="Directory Mode" pressed="true"></SegmentedButtonItem>
+							<SegmentedButtonItem text="File Mode"></SegmentedButtonItem>
+						</items>
+					</SegmentedButton>
 				</OverflowToolbar>
 			</upload:toolbar>
 			<upload:items>

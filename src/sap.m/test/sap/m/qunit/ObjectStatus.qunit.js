@@ -953,6 +953,23 @@ sap.ui.define([
 		assert.ok(!this.oActiveStat._isClickable(oEvent), "The 'Status' is not clickable");
 	});
 
+	QUnit.test("When icon has no ID", function(assert) {
+		// Arrange
+		var oEvent = {
+			target: {
+				id: ""
+			},
+			srcControl: {
+				getId: () => {
+					return this.oActiveStat.getId() + "-icon";
+				}
+			}
+		};
+
+		this.oStub.withArgs().returns(true);
+		// Act
+		assert.ok(this.oActiveStat._isClickable(oEvent), "The icon is clickable");
+	});
 
 	QUnit.module("Events", {
 		beforeEach: function () {

@@ -5976,7 +5976,7 @@
 		}
 	},
 	"sap-calendarWeek": {
-		"narrow": "Setmana natural {0}",
+		"narrow": "SN {0}",
 		"wide": "Setmana natural {0}"
 	}
 }

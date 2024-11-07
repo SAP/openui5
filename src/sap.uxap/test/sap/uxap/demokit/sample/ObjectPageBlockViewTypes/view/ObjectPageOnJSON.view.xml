@@ -8,7 +8,6 @@
 					  enableLazyLoading="false"
 					  showTitleInHeaderContent="true"
 					  showEditHeaderButton="true"
-					  editHeaderButtonPress="handleEditBtnPress"
 					  upperCaseAnchorBar="false">
 		<landmarkInfo>
 			<ObjectPageAccessibleLandmarkInfo

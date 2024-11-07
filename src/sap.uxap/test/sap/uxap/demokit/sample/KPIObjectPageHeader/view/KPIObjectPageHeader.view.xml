@@ -14,7 +14,7 @@
 
 				<actions>
 					<ObjectPageHeaderActionButton icon="sap-icon://action" text="Open in..." tooltip="action"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://refresh" press="changeDesign" text="change design" tooltip="refresh"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://refresh" text="change design" tooltip="refresh"/>
 				</actions>
 			</ObjectPageHeader>
 		</headerTitle>

@@ -12,8 +12,8 @@
 			<ObjectPageDynamicHeaderTitle>
 				<breadcrumbs>
 					<m:Breadcrumbs>
-						<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
-						<m:Link text="Page 2 long link" press="handleLink2Press"/>
+						<m:Link text="Page 1 a very long link"/>
+						<m:Link text="Page 2 long link"/>
 					</m:Breadcrumbs>
 				</breadcrumbs>
 

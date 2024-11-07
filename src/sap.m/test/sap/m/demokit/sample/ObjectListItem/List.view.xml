@@ -20,7 +20,7 @@
 					text="{Status}"
 					state="{
 						path: 'Status',
-						formatter: 'sap.m.sample.ObjectListItem.Formatter.status'
+						formatter: '.formatter.status'
 					}" />
 			</firstStatus>
 			<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />

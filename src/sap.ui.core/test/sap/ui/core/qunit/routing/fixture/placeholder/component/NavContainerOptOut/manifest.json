@@ -13,8 +13,7 @@
 			"config": {
 				"controlId": "navContainer",
 				"controlAggregation": "pages",
-				"routerClass": "sap.m.routing.Router",
-				"viewType": "JS"
+				"routerClass": "sap.m.routing.Router"
 			},
 			"routes": [
 				{

@@ -121,10 +121,6 @@ sap.ui.define([
 				// create the views based on the url/hash
 				this.getRouter().initialize();
 			}.bind(this));
-
-			this.getCookiesManagement().then(function(oCookieMgmtComponent) {
-				oCookieMgmtComponent.enable(this.getRootControl());
-			}.bind(this));
 		},
 
 		/**

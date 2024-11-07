@@ -40,7 +40,6 @@
 							<FeedListItem
 									sender="{Author}"
 									icon="{AuthorPicUrl}"
-									iconDensityAware="false"
 									info="{Type}"
 									timestamp="{Date}"
 									text="{Text}" />
