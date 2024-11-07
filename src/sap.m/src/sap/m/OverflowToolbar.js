@@ -761,7 +761,7 @@ sap.ui.define([
 			}
 
 			// Add the overflow button only if there is at least one control, which will be shown in the Popover.
-			if (this._getControlPriority(vMovableControl) !== OverflowToolbarPriority.Disappear) {
+			if (this._getControlPriority(vMovableControl) !== OverflowToolbarPriority.Disappear && !vMovableControl.isA?.("sap.m.ToolbarSeparator")) {
 				this._addOverflowButton();
 			}
 
