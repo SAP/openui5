@@ -771,6 +771,7 @@ sap.ui.define([
 		 * @private
 		 */
 		Popover.prototype.exit = function () {
+			this._removeDocumentEventListeners();
 			this._deregisterContentResizeHandler();
 
 			Device.resize.detachHandler(this._fnOrientationChange);
@@ -892,6 +893,7 @@ sap.ui.define([
 				this._oOpenBy = oControl;
 			}
 
+			this._addDocumentEventListeners();
 			this.fireBeforeOpen({openBy: this._oOpenBy});
 
 			oPopup.attachOpened(this._handleOpened, this);
@@ -966,6 +968,7 @@ sap.ui.define([
 				return this;
 			}
 
+			this._removeDocumentEventListeners();
 			this.fireBeforeClose({openBy: this._oOpenBy});
 
 			// beforeCloseEvent is already fired here, the parameter true needs to be passed into the popup's close method.
@@ -2884,6 +2887,26 @@ sap.ui.define([
 		 */
 		Popover.prototype._applyContextualSettings = function () {
 			Control.prototype._applyContextualSettings.call(this);
+		};
+
+		Popover.prototype._addDocumentEventListeners = function () {
+			if (!this._bDocumentListenersAdded) {
+				this._bDocumentListenersAdded = true;
+
+				this._fnHandleDocumentKeydown = () => {
+					this.close();
+				};
+
+				document.addEventListener("keydown", this._fnHandleDocumentKeydown);
+			}
+		};
+
+		Popover.prototype._removeDocumentEventListeners = function () {
+			if (this._bDocumentListenersAdded) {
+				this._bDocumentListenersAdded = false;
+
+				document.removeEventListener("keydown", this._fnHandleDocumentKeydown);
+			}
 		};
 
 		return Popover;
