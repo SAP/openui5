@@ -1280,14 +1280,18 @@ function(
 			}
 
 			var $dialog = this.$(),
-				$dialogContent = this.$('cont'),
-				sContentWidth = this.getContentWidth(),
-				iMaxDialogWidth = this._calcMaxSizes().maxWidth; // 90% of the max screen size
+			$dialogContent = this.$('cont'),
+			sContentWidth = this.getContentWidth(),
+			iMaxDialogWidth = this._calcMaxSizes().maxWidth, // 90% of the max screen size
+			oSubHeaderDomRef = this.getSubHeader()?.getDomRef(),
+			oHeaderDomRef = (this.getCustomHeader() || this._header)?.getDomRef();
 
-			if (this.getCustomHeader() && this.getCustomHeader().getDomRef()) {
-				const  sCustomHeaderHeight = this.getCustomHeader().getDomRef().getBoundingClientRect().height + "px";
-				this.getDomRef().style.paddingTop =  sCustomHeaderHeight;
-			}
+		if (oHeaderDomRef || oSubHeaderDomRef) {
+			const iHeaderHeight = oHeaderDomRef ? oHeaderDomRef.getBoundingClientRect().height : 0;
+			const iSubHeaderHeight = oSubHeaderDomRef ? oSubHeaderDomRef.getBoundingClientRect().height : 0;
+
+			this.getDomRef().style.paddingTop = iHeaderHeight + iSubHeaderHeight + "px";
+		}
 
 			//if height is set by manually resizing return;
 			if (this._oManuallySetSize) {

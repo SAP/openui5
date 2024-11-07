@@ -228,17 +228,10 @@ html.sap-desktop .sapMDialog {
 	.sapMDialog {
 		min-height: @_sap_m_Dialog_BarCompactHeight;
 		padding-bottom: @_sap_m_Dialog_BarCompactHeight;
-		padding-top: @_sap_m_Dialog_BarCompactHeight;
 
 		&.sapMDialogWithSubHeader {
-			padding-top: @_sap_m_Dialog_BarCompactHeight + @_sap_m_Dialog_SubHeaderCompactHeight;
-
-			&.sapMDialogSubHeaderInfoBar {
-				padding-top: @_sap_m_Dialog_BarCompactHeight + @_sap_m_Dialog_InfoDesignBarHeight;
-			}
 
 			&.sapMDialog-NoHeader {
-				padding-top: @_sap_m_Dialog_SubHeaderCompactHeight;
 
 				& .sapMDialogSubHeader {
 					top: 0;
@@ -303,7 +296,6 @@ html.sap-desktop .sapMDialog {
 	box-sizing: content-box;
 	min-height: @_sap_m_Dialog_BarHeight;
 	padding-bottom: @_sap_m_Dialog_BarHeight;
-	padding-top: @_sap_m_Dialog_BarHeight;
 
 	footer {
 		.sapMTB.sapMFooter-CTX {
@@ -315,15 +307,9 @@ html.sap-desktop .sapMDialog {
 		padding-bottom: 0;
 	}
 
-	&.sapMDialog-NoHeader {
-		padding-top: 0;
-	}
-
 	&.sapMDialogWithSubHeader {
-		padding-top: @_sap_m_Dialog_BarHeight + @_sap_m_Dialog_SubHeaderHeight;
 
 		&.sapMDialogSubHeaderInfoBar {
-			padding-top: @_sap_m_Dialog_BarHeight + @_sap_m_Dialog_InfoDesignBarHeight;
 
 			.sapMDialogSubHeader {
 				height: @_sap_m_Dialog_InfoDesignBarHeight;
@@ -331,7 +317,6 @@ html.sap-desktop .sapMDialog {
 		}
 
 		&.sapMDialog-NoHeader {
-			padding-top: @_sap_m_Dialog_SubHeaderHeight;
 
 			.sapMDialogSubHeader {
 				top: 0;

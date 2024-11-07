@@ -1730,6 +1730,7 @@ sap.ui.define([
 
 		var oDialog = new Dialog({
 			customHeader: oToolbar,
+			contentHeight: "100px",
 			content: [
 				new Text({text: "Here comes the content..."})
 			]
@@ -1740,12 +1741,12 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assert
-		assert.strictEqual(oDialog.getDomRef().offsetHeight, 124, "Dialog is with the correct height");
+		assert.strictEqual(oDialog.getDomRef().offsetHeight, 176, "Dialog is with the correct height");
 
 		oToolbar.setHeight("20rem");
 		oDialog.rerender();
 
-		assert.strictEqual(oDialog.getDomRef().offsetHeight, 368, "Dialog is with the correct height");
+		assert.strictEqual(oDialog.getDomRef().offsetHeight, 420, "Dialog is with the correct height");
 
 		// cleanup
 		oDialog.destroy();
