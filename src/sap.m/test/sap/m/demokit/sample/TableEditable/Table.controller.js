@@ -11,6 +11,8 @@ sap.ui.define([
 
 	var TableController = Controller.extend("sap.m.sample.TableEditable.Table", {
 
+		formatter: Formatter,
+
 		onInit: function(evt) {
 			this.oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.oTable = this.byId("idProductsTable");
@@ -84,5 +86,4 @@ sap.ui.define([
 	});
 
 	return TableController;
-
 });

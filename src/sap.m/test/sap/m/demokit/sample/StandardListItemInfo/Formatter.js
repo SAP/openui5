@@ -1,21 +1,23 @@
-sap.ui.define(function() {
+sap.ui.define([
+	"sap/ui/core/library"
+], function(coreLibrary) {
 	"use strict";
 
-	var Formatter = {
+	const {ValueState} = coreLibrary;
 
-		status :  function (sStatus) {
-				if (sStatus === "Available") {
-					return "Success";
-				} else if (sStatus === "Out of Stock") {
-					return "Warning";
-				} else if (sStatus === "Discontinued"){
-					return "Error";
-				} else {
-					return "None";
-				}
+	const Formatter = {
+		status(sStatus) {
+			if (sStatus === "Available") {
+				return ValueState.Success;
+			} else if (sStatus === "Out of Stock") {
+				return ValueState.Warning;
+			} else if (sStatus === "Discontinued"){
+				return ValueState.Error;
+			} else {
+				return ValueState.None;
+			}
 		}
 	};
 
 	return Formatter;
-
 });

@@ -420,7 +420,7 @@ sap.ui.define([
 	};
 
 	ObjectStatus.prototype._isClickable = function(oEvent) {
-		var sSourceId = oEvent.target.id;
+		var sSourceId = oEvent.target.id || oEvent.srcControl.getId();
 
 		//event should only be fired if the click is on the text, link or icon
 		return this._isActive() && (sSourceId === this.getId() + "-link" || sSourceId === this.getId() + "-text" || sSourceId === this.getId() + "-statusIcon" || sSourceId === this.getId() + "-icon");

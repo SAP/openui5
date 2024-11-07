@@ -6089,7 +6089,7 @@
 		}
 	},
 	"sap-calendarWeek": {
-		"narrow": "Vk {0}",
+		"narrow": "KV {0}",
 		"wide": "Kalenteriviikko {0}"
 	}
 }

@@ -16,7 +16,7 @@
 				info="{Status}"
 				infoState="{
 					path: 'Status',
-					formatter: 'sap.m.sample.StandardListItemInfo.Formatter.status'
+					formatter: '.formatter.status'
 				}"
 				 />
 		</items>

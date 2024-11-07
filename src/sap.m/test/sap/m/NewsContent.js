@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/TextArea",
 	"sap/m/TileContent",
+	"sap/ui/core/IconPool",
 	"sap/ui/core/Title",
 	"sap/ui/core/TooltipBase",
 	"sap/ui/layout/form/SimpleForm",
@@ -29,6 +30,7 @@ sap.ui.define([
 	MText,
 	TextArea,
 	TileContent,
+	_IconPool, // no direct usages, but needed for rm.icon()
 	Title,
 	TooltipBase,
 	SimpleForm,

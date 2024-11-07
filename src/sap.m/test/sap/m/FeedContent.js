@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/m/Switch",
 	"sap/m/Text",
 	"sap/m/TextArea",
+	"sap/ui/core/IconPool",
 	"sap/ui/core/Item",
 	"sap/ui/core/Title",
 	"sap/ui/core/TooltipBase",
@@ -31,6 +32,7 @@ sap.ui.define([
 	Switch,
 	MText,
 	TextArea,
+	_IconPool, // no direct usages, but needed for rm.icon()
 	Item,
 	Title,
 	TooltipBase,

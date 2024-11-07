@@ -6274,6 +6274,6 @@
 	},
 	"sap-calendarWeek": {
 		"narrow": "KT {0}",
-		"wide": "Kalendářní týdny{0}"
+		"wide": "Kalendářní týden {0}"
 	}
 }

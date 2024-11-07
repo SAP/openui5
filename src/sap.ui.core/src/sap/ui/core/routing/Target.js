@@ -4,14 +4,14 @@
 
 
 sap.ui.define([
-	'sap/ui/core/Control',
+	'sap/ui/core/Element',
 	'sap/ui/base/EventProvider',
 	'sap/ui/core/mvc/View',
 	'sap/ui/core/routing/async/Target',
 	"sap/base/Log"
 ],
 	function(
-		Control,
+		Element,
 		EventProvider,
 		View,
 		asyncTarget,
@@ -26,9 +26,9 @@ sap.ui.define([
 		 * @param {object} mSettings configuration object for the TitleProvider
 		 * @param {object} mSettings.target Target for which the TitleProvider is created
 		 * @private
-		 * @extends sap.ui.core.Control
+		 * @extends sap.ui.core.Element
 		 */
-		var TitleProvider = Control.extend("sap.ui.core.routing.Target.TitleProvider", /** @lends sap.ui.core.routing.TitleProvider.prototype */ {
+		var TitleProvider = Element.extend("sap.ui.core.routing.Target.TitleProvider", /** @lends sap.ui.core.routing.TitleProvider.prototype */ {
 			metadata: {
 				library: "sap.ui.core",
 				properties: {
@@ -45,7 +45,7 @@ sap.ui.define([
 			constructor: function(mSettings) {
 				this._oTarget = mSettings.target;
 				delete mSettings.target;
-				Control.prototype.constructor.call(this, mSettings);
+				Element.prototype.constructor.call(this, mSettings);
 			},
 			setTitle: function(sTitle) {
 				// Setting title property should not trigger two way change in model

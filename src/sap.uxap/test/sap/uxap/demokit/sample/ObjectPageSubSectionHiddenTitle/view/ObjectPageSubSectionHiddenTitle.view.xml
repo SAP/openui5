@@ -75,8 +75,7 @@
 										<Title text="Products" level="H2"/>
 										<ToolbarSpacer />
 										<ComboBox id="idPopinLayout"
-											placeholder="Popin layout options"
-											change="onPopinLayoutChanged">
+											placeholder="Popin layout options">
 											<items>
 												<core:Item  text="Block"
 													key="Block"/>
@@ -87,15 +86,11 @@
 											</items>
 										</ComboBox>
 										<Label text="Sticky options:" />
-										<CheckBox text="ColumnHeaders"
-											select="onSelect"/>
-										<CheckBox text="HeaderToolbar"
-											select="onSelect"/>
-										<CheckBox text="InfoToolbar"
-											select="onSelect"/>
+										<CheckBox text="ColumnHeaders"/>
+										<CheckBox text="HeaderToolbar"/>
+										<CheckBox text="InfoToolbar"/>
 										<ToggleButton id="toggleInfoToolbar"
-											text="Hide/Show InfoToolbar"
-											press="onToggleInfoToolbar" />
+											text="Hide/Show InfoToolbar"/>
 									</content>
 								</OverflowToolbar>
 							</headerToolbar>

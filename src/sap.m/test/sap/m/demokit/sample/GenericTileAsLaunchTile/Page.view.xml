@@ -7,7 +7,7 @@
 		<Input id="loadingMinSeconds" width="8rem" type="Number" description="seconds" value="-1"/>
 		<Button text="Start loading" type="Emphasized" press="onFormSubmit"/>
 	</form:SimpleForm>	
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Country-Specific Profit Margin"  press="onPress"
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Country-Specific Profit Margin" press="press"
 		frameType="OneByHalf" subheader="Subtitle">
 		<TileContent>
 			<ImageContent src="test-resources/sap/m/demokit/sample/GenericTileAsLaunchTile/images/SAPLogoLargeTile_28px_height.png" />

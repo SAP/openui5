@@ -17,8 +17,7 @@
 						src="{0/ProductPicUrl}"
 						displayShape="Square"
 						imageFitType="Cover"
-						showBorder="true"
-						press="onPress" />
+						showBorder="true"/>
 					</avatar>
 			</StandardListItem>
 			<!-- set this item's description be empty -->
@@ -30,8 +29,7 @@
 				<avatar>
 					<Avatar
 						src="{1/ProductPicUrl}"
-						showBorder="true"
-						press="onPress"/>
+						showBorder="true"/>
 				</avatar>
 			</StandardListItem>
 			<StandardListItem
@@ -44,8 +42,7 @@
 					<Avatar
 						src="{2/ProductPicUrl}"
 						displayShape="Square"
-						showBorder="true"
-						press="onPress"/>
+						showBorder="true"/>
 				</avatar>
 			</StandardListItem>
 			<!-- don't specify a description for this item -->

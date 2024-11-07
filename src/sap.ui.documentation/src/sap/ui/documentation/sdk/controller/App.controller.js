@@ -29,7 +29,8 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/ui/documentation/sdk/util/Resources",
 	'sap/base/util/LoaderExtensions',
-	"sap/ui/documentation/sdk/controller/util/ThemePicker"
+	"sap/ui/documentation/sdk/controller/util/ThemePicker",
+	"sap/ui/thirdparty/URI"
 ], function(
 	Localization,
 	Element,
@@ -57,7 +58,8 @@ sap.ui.define([
 	Toolbar,
 	ResourcesUtil,
 	LoaderExtensions,
-	ThemePicker
+	ThemePicker,
+	URI
 ) {
 	"use strict";
 
@@ -126,6 +128,7 @@ sap.ui.define([
 
 			var oViewModel = new JSONModel({
 				bCNICPShow: window.location.href.includes("sapui5.platform.sapcloud.cn"),
+				bShowTAConsent: false,
 				busy: false,
 				delay: 0,
 				device: Device,
@@ -181,6 +184,12 @@ sap.ui.define([
 				}
 
 			}.bind(this));
+
+			//setup cookie query parsing
+			var oUri = new URI(window.location.href);
+			if (oUri.hasQuery("sap-ui-xx-tracking") && oUri.query(true)["sap-ui-xx-tracking"] === "aa") {
+				oViewModel.setProperty("/bShowTAConsent", true);
+			}
 
 			// Config routes
 			this.oRouter = this.getRouter();
@@ -248,9 +257,13 @@ sap.ui.define([
 				this._applyDefaultConfiguration(this._aConfiguration);
 			}
 
-			oComponent.getCookiesManagement().then(function (oCookieMgmtComponent) {
-				oCookieMgmtComponent.enable(oComponent.getRootControl());
-			});
+			var bExternalCookiesManager = oViewModel.getProperty("/bShowTAConsent");
+
+			if (!bExternalCookiesManager) {
+				oComponent.getCookiesManagement().then(function(oCookieMgmtComponent) {
+					oCookieMgmtComponent.enable(oComponent.getRootControl());
+				});
+			}
 
 			// Handle page resize
 			ResizeHandler.register(this._demoKitPage, this.onPageResize.bind(this));

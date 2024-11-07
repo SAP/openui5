@@ -26,7 +26,6 @@
 			class="sapUiSmallMarginTop"
 			title= "My Calendar"
 			viewChange="handleViewChange"
-			headerDateSelect="handleHeaderDateSelect"
 			selectedDatesChange="handleSelectedDateChange"
 			weekNumberPress="handleWeekSelection"
 			startDateChange="handleStartDateChange"

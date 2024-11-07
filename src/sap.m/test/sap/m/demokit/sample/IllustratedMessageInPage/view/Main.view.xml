@@ -61,15 +61,15 @@
 				<MenuButton text="File">
 					<menu>
 						<Menu>
-							<MenuItem text="Edit" icon="sap-icon://edit" press="onPress">
+							<MenuItem text="Edit" icon="sap-icon://edit">
 								<customData>
 									<core:CustomData
 										key="target"
 										value="p1" />
 								</customData>
 							</MenuItem>
-							<MenuItem text="Save" icon="sap-icon://save" press="onPress" />
-							<MenuItem text="Open" icon="sap-icon://open-folder" press="onPress" />
+							<MenuItem text="Save" icon="sap-icon://save"/>
+							<MenuItem text="Open" icon="sap-icon://open-folder"/>
 						</Menu>
 					</menu>
 				</MenuButton>
