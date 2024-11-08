@@ -2,12 +2,22 @@
  * ! ${copyright}
  */
 
-sap.ui.define([], function() {
+sap.ui.define(["sap/ui/test/Opa5", "sap/ui/core/InvisibleRenderer"], function(Opa5, InvisibleRenderer) {
 	"use strict";
 
 	function getPlugin(oTable, sPlugin) {
 		return oTable.getDependents().filter((oDependent) => oDependent.isA(sPlugin))[0]
 			|| oTable.findElements(false, (oElement) => oElement.isA(sPlugin))[0];
+	}
+
+	function getCellDOM(oCell, sClasses) {
+		let oCellRef = oCell?.$().closest(sClasses)[0];
+
+		if (!oCellRef) {
+			const oInvisibleCell = Opa5.getWindow().document.getElementById(InvisibleRenderer.createInvisiblePlaceholderId(oCell));
+			oCellRef = oInvisibleCell?.closest(sClasses);
+		}
+		return oCellRef;
 	}
 
 	return {
@@ -51,29 +61,23 @@ sap.ui.define([], function() {
 			return oTable.getItems()[iRow].$();
 		},
 		getCell: function(oTable, iRow, iCol) {
-			var oRow;
+			let oRow, oColumn;
 			if (oTable.isA("sap.ui.table.Table")) {
 				oRow = oTable.getRows().find(function(oRow) {
 					return oRow.getIndex() == iRow;
 				});
-				var aColumns = oTable.getColumns().filter(function(oColumn) {
+				const aColumns = oTable.getColumns().filter(function(oColumn) {
 					return oColumn.getDomRef();
 				});
-				var oColumn = aColumns[iCol];
+				oColumn = aColumns[iCol];
 
 				if (oColumn) {
-					return oRow.getCells()[iCol].$().closest(".sapUiTableDataCell")[0];
+					const oCellRef = getCellDOM(oRow.getCells()[iCol], ".sapUiTableCell");
+					return oCellRef;
 				}
 			} else if (oTable.isA("sap.m.Table")) {
-				oRow = oTable.getItems()[iRow];
-				return oRow.getCells()[iCol].$().closest(".sapMTblCellFocusable")[0];
-			}
-		},
-		getCellRef: function(oTable, oCell) {
-			if (oTable.isA("sap.ui.table.Table")) {
-				return oCell.$().closest(".sapUiTableDataCell")[0];
-			} else if (oTable.isA("sap.m.Table")) {
-				return oCell.$().closest(".sapMTblCellFocusable")[0];
+				const oCellRef = getCellDOM(oTable.getItems()[iRow].getCells()[iCol], ".sapMListTblCell");
+				return oCellRef;
 			}
 		},
 		getCellSelectionState: function(oCellRef) {
