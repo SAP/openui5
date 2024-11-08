@@ -132,7 +132,7 @@
 			<Table
 				id="table"
 				inset="false"
-				items="{path: '/Data'}"
+				items="{path: '/Data', templateShareable: true}"
 				class="alignment"
 				mode= "SingleSelectMaster"
 				ariaLabelledBy="title">
