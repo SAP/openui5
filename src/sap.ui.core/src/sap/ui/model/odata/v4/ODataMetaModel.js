@@ -2522,7 +2522,7 @@ sap.ui.define([
 				serviceUrl : sUrl,
 				sharedRequests : true
 			});
-			oSharedModel.getMetaModel()._copyAnnotations(this);
+			oSharedModel.getMetaModel()._copyAnnotations(this.oMetaModelForAnnotations ?? this);
 
 			mSharedModelByUrl.set(sCacheKey, oSharedModel);
 		}
