@@ -1308,7 +1308,9 @@ sap.ui.define([
 		 *   aggregates. The third one is special in that it has to be applied before data
 		 *   aggregation via the special syntax "$these/aggregate(...)" because it relates to
 		 *   aggregates; it is present only when grand totals are used, but "grandTotal like 1.84"
-		 *   is not.
+		 *   is not. When the third one is present, then there is an additional fourth element which
+		 *   again is an array of filters: those exceptions where the special syntax is not
+		 *   applicable (for example, a currency filter that accompanies its amount).
 		 * @param {object} [oEntityType]
 		 *   The metadata for the entity type; needed only in case of aggregates
 		 *
@@ -1316,10 +1318,11 @@ sap.ui.define([
 		 */
 		splitFilter : function (oFilter, oAggregation, oEntityType) {
 			var aFiltersNoAggregate = [],
+				aFiltersNoThese = [],
 				aFiltersOnAggregate = [];
 
 			/*
-			 * Tells whether the given filter relates to an aggregate
+			 * Tells whether the given filter relates to an aggregate.
 			 *
 			 * @param {sap.ui.model.Filter} oFilter
 			 *   A filter
@@ -1333,6 +1336,20 @@ sap.ui.define([
 			}
 
 			/*
+			 * Tells whether the given filter path relates to an aggregate's unit.
+			 *
+			 * @param {string} sPath
+			 *   A filter's path (must not be <code>undefined</code>!)
+			 * @returns {boolean}
+			 *   Whether the filter path relates to an aggregate's unit
+			 */
+			function isRelatedToUnit(sPath) {
+				return Object.keys(oAggregation.aggregate).some((sAlias) => {
+						return oAggregation.aggregate[sAlias].unit === sPath;
+					});
+			}
+
+			/*
 			 * Splits the given filter tree along AND operations into filters that must be applied
 			 * with or without "$these/aggregate(...)".
 			 *
@@ -1342,6 +1359,10 @@ sap.ui.define([
 			function split(oFilter0) {
 				if (oFilter0.aFilters && oFilter0.bAnd) {
 					oFilter0.aFilters.forEach(split);
+				} else if (oFilter0.sPath && isRelatedToUnit(oFilter0.sPath)) {
+					aFiltersNoAggregate.push(oFilter0);
+					aFiltersNoThese.push(oFilter0); // avoid "$these/..." here
+					aFiltersOnAggregate.push(oFilter0);
 				} else {
 					(isRelatedToAggregate(oFilter0) ? aFiltersOnAggregate : aFiltersNoAggregate)
 						.push(oFilter0);
@@ -1377,7 +1398,7 @@ sap.ui.define([
 					.some((oDetails) => oDetails.subtotals);
 
 				if (bHasSubtotals || _AggregationHelper.hasGrandTotal(oAggregation.aggregate)) {
-					aResult = [undefined, aResult[1], aResult[0]];
+					aResult = [undefined, aResult[1], aResult[0], aFiltersNoThese];
 				}
 			}
 
