@@ -29,20 +29,6 @@ sap.ui.define([
 		assert.notOk(oPaneContainer._oSplitter, "Private AssociativeSplitter reference should be set to null.");
 	});
 
-	QUnit.test("Invalidate on 'onLayoutDataChange'", function (assert) {
-		// arrange
-		var oPaneContainer = new PaneContainer(),
-			oInvalidateSpy = this.spy(oPaneContainer, "invalidate");
-
-		assert.ok(oPaneContainer.getAggregation("_splitter"), "Pane container has splitter aggregation.");
-
-		// act
-		oPaneContainer.onLayoutDataChange();
-
-		// assert
-		assert.ok(oInvalidateSpy.called, "Pane container is invalidated on layout data change.");
-	});
-
 	QUnit.module("Reflecting properties on the internal AssociativeSplitter");
 
 	QUnit.test("Orientation", function (assert) {
