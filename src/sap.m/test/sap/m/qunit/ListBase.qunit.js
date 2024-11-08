@@ -2572,7 +2572,7 @@ sap.ui.define([
 				assert.ok(oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlight" + sHighlight), sHighlight + " Highlight is rendered");
 			};
 
-			const aHighlightColors = ["Error", "Warning", "Success", "Information", "Indication01", "Indication02", "Indication03", "Indication04", "Indication05"];
+			const aHighlightColors = ["Error", "Warning", "Success", "Information", "Indication01", "Indication02", "Indication03", "Indication04", "Indication05", "Indication06", "Indication07", "Indication08", "Indication09", "Indication10"];
 			for (let i = 0; i < aHighlightColors.length; i++) {
 				await fnTestHighlight(aHighlightColors[i]);
 			}
