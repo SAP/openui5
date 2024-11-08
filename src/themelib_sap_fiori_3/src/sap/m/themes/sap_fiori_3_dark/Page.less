@@ -4,11 +4,11 @@
 /* =================================== */
 
 .sapMPageBgStandard {
-	background-color: @sapUiBaseBG;
+	background-color: var(--sapBackgroundColor);
 }
 
 .sapMPageBgSolid {
-	background-color: @sapUiBaseBG;
+	background-color: var(--sapBackgroundColor);
 }
 
 .sapMPageBgTransperant {
@@ -16,7 +16,7 @@
 }
 
 .sapMPageBgList {
-	background-color: @sapUiGroupContentBackground;
+	background-color: var(--sapGroup_ContentBackground);
 }
 
 /* The following overrides for sap_belize/sap_belize_plus are only intended for apps inside FLP (Ushell) */
@@ -24,7 +24,7 @@
 
 	/* In sap_belize_plus backgroundDesign=Standard maps to Solid */
 	.sapMPageBgStandard {
-		background-color: @sapUiBaseBG;
+		background-color: var(--sapBackgroundColor);
 	}
 
 	/* For the pages in the master part of sap.m.SplitApp backgroundDesign=Standard maps to Transparent */
@@ -44,26 +44,32 @@
 	opacity: 1;
 
 	.sapMIBar-CTX.sapMFooter-CTX {
-		box-shadow: @sapUiContentShadow1;
+		box-shadow: var(--sapContent_Shadow1);
 		border: none;
 	}
 }
 
 html[data-sap-ui-animation='on'] .sapMPageWithFloatingFooter {
+
 	@keyframes bounceShow {
+
 		0% {
 			transform: translateY(100%);
 			opacity: 0;
 		}
+
 		100% {
 			opacity: 1;
 		}
 	}
+
 	@keyframes bounceHide {
+
 		0% {
 			transform: translateY(-5%);
 			opacity: 1;
 		}
+
 		100% {
 			transform: translateY(100%);
 			opacity: 0;
@@ -72,6 +78,7 @@ html[data-sap-ui-animation='on'] .sapMPageWithFloatingFooter {
 }
 
 .sapMPage.sapF2CollapsedHeader > .sapMPageHeader {
+
 	& + section,
 	& + .sapUiHiddenPlaceholder + section {
 		top: 0;
@@ -83,6 +90,7 @@ html[data-sap-ui-animation='on'] .sapMPageWithFloatingFooter {
 }
 
 .sapMPage.sapF2CollapsedHeader > .sapMPageHeader {
+
 	& + section,
 	& + .sapUiHiddenPlaceholder + section {
 		top: 0;
@@ -99,6 +107,7 @@ html[data-sap-ui-animation='on'] .sapMPageWithFloatingFooter {
 }
 
 .sapMPage {
+
 	> .sapMPageHeader + section,
 	> .sapMPageSubHeader + section,
 	> .sapMPageHeader + .sapUiHiddenPlaceholder + section {
@@ -115,41 +124,55 @@ html[data-sap-ui-animation='on'] .sapMPageWithFloatingFooter {
 }
 
 .sapUiSizeCompact .sapF2CollapsedHeader.sapMPageWithHeader {
+
 	> section {
 		top: 0;
 	}
+
 	&.sapMPageWithSubHeader > section {
 		top: 2rem;
 	}
 }
 
 .sapMPageWithHeader {
+
 	&.sapFShellBar-CTX > section {
 		top: 2.75rem;
 	}
+
 	&.sapMPageWithSubHeader.sapFShellBar-CTX > section {
 		top: 5.5rem;
 	}
 }
 
-.sapMPageHeader, .sapMPageSubHeader, .sapMPageFooter {
-	.sapUi-Std-PaddingS, .sapUi-Std-PaddingM,
-	.sapUi-Std-PaddingL, .sapUi-Std-PaddingXL {
+.sapMPageHeader,
+.sapMPageSubHeader,
+.sapMPageFooter {
+
+	.sapUi-Std-PaddingS,
+	.sapUi-Std-PaddingM,
+	.sapUi-Std-PaddingL,
+	.sapUi-Std-PaddingXL {
+
 		&.sapMBar {
 			box-sizing: border-box;
+
 			.sapMBarLeft {
 				padding-left: inherit;
 			}
+
 			.sapMBarRight {
 				padding-right: inherit;
 			}
 		}
 	}
 }
+
 .sapUi-Std-PaddingS,
 .sapUi-Std-PaddingM,
 .sapUi-Std-PaddingL,
 .sapUi-Std-PaddingXL {
+
 	&.sapMPageFloatingFooter.sapMPageFooter {
 		margin: 0.5rem 0;
 		width: auto;
@@ -173,9 +196,11 @@ html[data-sap-ui-animation='on'] .sapMPageWithFloatingFooter {
 	}
 
 	.sapMPageWithHeader {
+
 		&.sapFShellBar-CTX > section {
 			top: 2.75rem;
 		}
+
 		&.sapMPageWithSubHeader.sapFShellBar-CTX > section {
 			top: 5.25rem;
 		}
