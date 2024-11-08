@@ -15,8 +15,7 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/RenderManager',
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Theming"
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		_SplitterRegistry,
@@ -31,8 +30,7 @@ sap.ui.define([
 		ResizeHandler,
 		RenderManager,
 		Log,
-		jQuery,
-		Theming
+		jQuery
 	) {
 	"use strict";
 
@@ -181,7 +179,6 @@ sap.ui.define([
 			min          : this._onKeyboardResize.bind(this, "min", 20)
 		};
 		this._enableKeyboardListeners();
-		this._handleThemeAppliedBound = this._handleThemeApplied.bind(this);
 	};
 
 	Splitter.prototype.exit = function() {
@@ -205,10 +202,6 @@ sap.ui.define([
 		_SplitterRegistry.addInstance(this);
 		this._$SplitterOverlay = this.$("overlay");
 		this._$SplitterOverlayBar = this.$("overlayBar");
-
-		if (!this._bThemeApplied) {
-			Theming.attachApplied(this._handleThemeAppliedBound);
-		}
 
 		// Calculate and apply correct sizes to the Splitter contents
 		this._resize();
@@ -699,12 +692,6 @@ sap.ui.define([
 		return (iPx * 100) / iFullSize + "%";
 	};
 
-	Splitter.prototype._handleThemeApplied = function () {
-		Theming.detachApplied(this._handleThemeAppliedBound);
-		this._bThemeApplied = true;
-		this._resize();
-	};
-
 	////////////////////////////////////////// Private Methods /////////////////////////////////////////
 
 	/**
@@ -760,10 +747,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Splitter.prototype._resize = function() {
-		if (!this._bThemeApplied) {
-			return;
-		}
-
 		var oDomRef = this.getDomRef();
 
 		// Do not attempt to resize the content areas in case the splitter
