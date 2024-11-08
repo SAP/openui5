@@ -36,12 +36,14 @@ sap.ui.define([
 	"sap/m/Popover",
 	"sap/m/OverflowToolbarAssociativePopover",
 	"sap/m/OverflowToolbarAssociativePopoverControls",
+	"sap/m/ToolbarSeparator",
 	"sap/m/MenuButton",
 	"sap/m/FlexItemData",
 	"sap/m/Title",
 	"sap/m/SegmentedButton",
 	"sap/m/SegmentedButtonItem",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Library,
 	DomUnitsRem,
@@ -77,12 +79,14 @@ sap.ui.define([
 	Popover,
 	OverflowToolbarAssociativePopover,
 	OverflowToolbarAssociativePopoverControls,
+	ToolbarSeparator,
 	MenuButton,
 	FlexItemData,
 	Title,
 	SegmentedButton,
 	SegmentedButtonItem,
-	oCore
+	oCore,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -3990,6 +3994,26 @@ sap.ui.define([
 		//Clean up
 		this.otb.destroy();
 	});
+
+	QUnit.test("Overflow button is not visible if only ToolbarSeparators are moved to Popover", async function (assert) {
+		// Arrange
+		var oOtb = new OverflowToolbar({
+			content: [
+				new ToolbarSeparator(),
+				new Button({text: "Button 1", width: "100%"}).setLayoutData(new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.NeverOverflow})),
+				new ToolbarSeparator()
+			]
+		});
+
+		oOtb.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oOtb._getOverflowButton().$().is(":visible"), false, "Overflow button is not visible");
+
+		//Cleanup
+		oOtb.destroy();
+	 });
 
 	QUnit.module("Associative popover");
 
