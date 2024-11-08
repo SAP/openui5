@@ -24,7 +24,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 *
-	 * @extends sap.ui.core.Control
+	 * @extends sap.f.cards.loading.PlaceholderBase
 	 *
 	 * @author SAP SE
 	 * @version ${version}

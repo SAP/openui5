@@ -53,7 +53,7 @@ sap.ui.define([
 		 * The instance-specific read delegate is returned if available.
 		 *
 		 * @param {object} mPropertyBag - Property bag
-		 * @param {sap.ui.core.Element|DomNode} mPropertyBag.control - Control for which the corresponding delegate should be returned
+		 * @param {sap.ui.core.Element|Element} mPropertyBag.control - Control for which the corresponding delegate should be returned
 		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Control tree modifier
 		 * @param {string} [mPropertyBag.modelType] - Model type; required in case you passed the <code>XmlTreeModifier</code>
 		 * @returns {Promise.<sap.ui.core.util.reflection.FlexDelegateInfo>} Delegate information including the lazy loaded instance of the delegate
@@ -75,7 +75,7 @@ sap.ui.define([
 	 	 * The instance-specific write delegate is returned if available.
 		 *
 		 * @param {object} mPropertyBag - Property bag
-		 * @param {sap.ui.core.Element|DomNode} mPropertyBag.control - Control for which the corresponding delegate should be returned
+		 * @param {sap.ui.core.Element|Element} mPropertyBag.control - Control for which the corresponding delegate should be returned
 		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Control tree modifier
 		 * @returns {Promise.<sap.ui.core.util.reflection.FlexDelegateInfo>} Delegate information including the lazy loaded instance of the delegate
 		 *
