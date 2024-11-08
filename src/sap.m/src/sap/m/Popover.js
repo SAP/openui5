@@ -2893,8 +2893,10 @@ sap.ui.define([
 			if (!this._bDocumentListenersAdded) {
 				this._bDocumentListenersAdded = true;
 
-				this._fnHandleDocumentKeydown = () => {
-					this.close();
+				this._fnHandleDocumentKeydown = (oEvent) => {
+					if (this.oPopup.isTopmost() && oEvent.which === KeyCodes.ESCAPE) {
+						this.close();
+					}
 				};
 
 				document.addEventListener("keydown", this._fnHandleDocumentKeydown);
