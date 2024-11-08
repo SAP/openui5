@@ -2480,14 +2480,21 @@ sap.ui.define([
 		destroyFF(oFF);
 	});
 
-	QUnit.test("FacetFilter's dialog has an ariaLabelledBy set", function(assert) {
+	QUnit.test("FacetFilter's dialog has an ariaLabelledBy set", async function(assert) {
 		// arrange
-		var oFF = new FacetFilter(),
+		var oFF = new FacetFilter({
+				showPersonalization: true,
+				lists: [new FacetFilterList({ title: "Products" })]
+			}),
 			oDialog,
 			aLabelledBy;
 
+		oFF.placeAt("content");
+		await nextUIUpdate();
+
 		// act
 		oDialog = oFF._getFacetDialog();
+		oFF.openFilterDialog();
 		aLabelledBy = oDialog.getAriaLabelledBy();
 
 		// assert
@@ -2496,6 +2503,18 @@ sap.ui.define([
 		assert.strictEqual(aLabelledBy[0],
 			InvisibleText.getStaticId("sap.m", "FACETFILTER_AVAILABLE_FILTER_NAMES"),
 			"it is the right id");
+
+		// act
+		var oNavContainer = oDialog.getContent()[0];
+		oFF._navToFilterItemsPage(oNavContainer.getPages()[0].getContent()[0].getItems()[0]);
+		aLabelledBy = oDialog.getAriaLabelledBy();
+
+		// assert
+		assert.strictEqual(aLabelledBy.length, 2, "There are two ids");
+		assert.strictEqual(aLabelledBy[0],
+			InvisibleText.getStaticId("sap.m", "FACETFILTER_AVAILABLE_FILTER_NAMES"),
+			"it is the right id");
+		assert.strictEqual(Element.getElementById(aLabelledBy[1]).getText(), "Products", "Dialog title is referenced with labelledby");
 
 		// clean
 		oFF.destroy();

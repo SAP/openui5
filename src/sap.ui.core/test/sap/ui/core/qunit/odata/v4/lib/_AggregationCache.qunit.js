@@ -1808,10 +1808,16 @@ sap.ui.define([
 	iExpectedStart : 0,
 	iExpectedLength : 4
 }, { // oFirstLevel already requested data
-	bHasGrandTotal : false,
-	bHasRequestedData : true,
+	bSentRequest : true,
 	iFirstLevelIndex : 0,
 	iFirstLevelLength : 3,
+	iExpectedStart : 0,
+	iExpectedLength : 23
+}, { // oFirstLevel already requested data and out-of-place nodes are present
+	bSentRequest : true,
+	iFirstLevelIndex : 0,
+	iFirstLevelLength : 3,
+	iOutOfPlaceCount : 1,
 	iExpectedStart : 0,
 	iExpectedLength : 23
 }].forEach(function (oFixture, i) {
@@ -1834,7 +1840,8 @@ sap.ui.define([
 			iOffset = oFixture.bHasGrandTotal && oFixture.grandTotalAtBottomOnly !== true ? 1 : 0,
 			oReadResult = {
 				value : []
-			};
+			},
+			bSkipResponse = oFixture.bSentRequest && oFixture.iOutOfPlaceCount;
 
 		if (oFixture.iExpandTo) { // unrealistic combination, but never mind
 			oAggregation.expandTo = oFixture.iExpandTo;
@@ -1849,7 +1856,7 @@ sap.ui.define([
 			oCache.oGrandTotalPromise = SyncPromise.resolve(oGrandTotal);
 			_Helper.setPrivateAnnotation(oGrandTotal, "copy", oGrandTotalCopy);
 		}
-		oCache.oFirstLevel.bSentRequest = oFixture.bHasRequestedData;
+		oCache.oFirstLevel.bSentRequest = oFixture.bSentRequest;
 		for (let j = 0; j < Math.min(iExpectedLength, 42); j += 1) {
 			oReadResult.value.push({});
 		}
@@ -1857,13 +1864,15 @@ sap.ui.define([
 		this.mock(oCache.oTreeState).expects("getOutOfPlaceCount").withExactArgs()
 			.returns(oFixture.iOutOfPlaceCount ?? 0);
 		this.mock(oCache.oFirstLevel).expects("read")
-			.withExactArgs(iExpectedStart, iExpectedLength, 0, "~oGroupLock~", "~fnDataRequested~")
+			.withExactArgs(iExpectedStart, iExpectedLength, 0,
+				bSkipResponse ? sinon.match.same(_GroupLock.$cached) : "~oGroupLock~",
+				"~fnDataRequested~")
 			.callsFake(function () {
 				oCache.oFirstLevel.bSentRequest = true;
 				return SyncPromise.resolve(Promise.resolve(oReadResult));
 			});
 		this.mock(oCache).expects("requestOutOfPlaceNodes")
-			.exactly(oFixture.bHasRequestedData ? 0 : 1).withExactArgs("~oGroupLock~")
+			.exactly(oFixture.bSentRequest ? 0 : 1).withExactArgs("~oGroupLock~")
 			.returns([Promise.resolve("~outOfPlaceResult0~"),
 				Promise.resolve("~outOfPlaceResult1~"), Promise.resolve("~outOfPlaceResult2~")]);
 		if (oFixture.bHasGrandTotal) {
@@ -1890,6 +1899,7 @@ sap.ui.define([
 			}
 		}
 		const oAddElementsExpectation = oCacheMock.expects("addElements")
+			.exactly(bSkipResponse ? 0 : 1)
 			.withExactArgs(sinon.match.same(oReadResult.value), iExpectedStart + iOffset,
 				sinon.match.same(oCache.oFirstLevel), iExpectedStart)
 			.callsFake(addElements); // so that oCache.aElements is actually filled
@@ -1900,12 +1910,13 @@ sap.ui.define([
 				.returns("~placeholder~" + j);
 		}
 		for (let j = iExpectedStart + iExpectedLength; j < 42; j += 1) {
-			oAggregationHelperMock.expects("createPlaceholder")
+			oAggregationHelperMock.expects("createPlaceholder").exactly(bSkipResponse ? 0 : 1)
 				.withExactArgs(iExpectedLevel, j, sinon.match.same(oCache.oFirstLevel))
 				.returns("~placeholder~" + j);
 		}
 		const oHandleOutOfPlaceNodesExpectation = this.mock(oCache).expects("handleOutOfPlaceNodes")
-			.withExactArgs(oFixture.bHasRequestedData
+			.exactly(bSkipResponse ? 0 : 1)
+			.withExactArgs(oFixture.bSentRequest
 				? []
 				: ["~outOfPlaceResult0~", "~outOfPlaceResult1~", "~outOfPlaceResult2~"]
 			);
@@ -1914,6 +1925,12 @@ sap.ui.define([
 		return oCache.readFirst(oFixture.iFirstLevelIndex, oFixture.iFirstLevelLength,
 				oFixture.iPrefetchLength ?? 20, "~oGroupLock~", "~fnDataRequested~")
 			.then(function () {
+				if (bSkipResponse) {
+					assert.strictEqual(oCache.aElements.length, 0, "unchanged");
+					assert.strictEqual(oCache.aElements.$count, undefined, "unchanged");
+					return;
+				}
+
 				// check placeholders before and after real read results
 				for (let j = 0; j < iExpectedStart; j += 1) {
 					assert.strictEqual(oCache.aElements[iOffset + j], "~placeholder~" + j);
@@ -5245,7 +5262,8 @@ sap.ui.define([
 		const oCollapseExpectation = oCacheMock.expects("collapse").exactly(bChildExpanded ? 1 : 0)
 			.withExactArgs("('23')").returns("~collapseCount~");
 		oCacheMock.expects("expand").exactly(bNewParentExpanded === false ? 1 : 0)
-			.withExactArgs(_GroupLock.$cached, "('42')").returns(SyncPromise.resolve(47));
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "('42')")
+			.returns(SyncPromise.resolve(47));
 		oHelperMock.expects("updateAll")
 			.exactly(oParentNode && bNewParentExpanded === undefined ? 1 : 0)
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('42')",

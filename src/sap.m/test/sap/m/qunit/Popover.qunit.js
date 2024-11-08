@@ -86,9 +86,7 @@ sap.ui.define([
 
 	var page = new Page("myFirstPage", {
 		title: "Test",
-		showNavButton: true,
-		verticalScrolling: true,
-		horizontalScrolling: true
+		showNavButton: true
 	});
 
 	app.addPage(page).placeAt("content");
@@ -397,6 +395,26 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// Assert
+		assert.strictEqual(this.oPopover.isOpen(), false, "The Popover should be closed.");
+	});
+
+	QUnit.test("ESCAPE press while the popover hasn't applied initial focus yet", function (assert) {
+		// Arrange
+		const oCloseSpy = this.spy(this.oPopover, "close");
+		const oRemoveEventListenersSpy = this.spy(this.oPopover, "_removeDocumentEventListeners");
+
+		// Act
+		this.oPopover.openBy(this.oButton);
+		document.activeElement.dispatchEvent(new KeyboardEvent("keydown", {
+			keyCode: KeyCodes.ESCAPE,
+			bubbles: true
+		}));
+
+		// Assert
+		assert.ok(oCloseSpy.called, "'close' should be called");
+		assert.ok(oRemoveEventListenersSpy.called, "'_removeDocumentEventListeners' should be called");
+
+		this.clock.tick(500);
 		assert.strictEqual(this.oPopover.isOpen(), false, "The Popover should be closed.");
 	});
 

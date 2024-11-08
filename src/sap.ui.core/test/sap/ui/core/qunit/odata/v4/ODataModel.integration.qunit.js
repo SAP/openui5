@@ -37003,7 +37003,8 @@ sap.ui.define([
 	//     moving New1 to its out-of-place position; Beta is already read in-place, but shifted
 	//     when moving New1 and New3; Gamma is only placeholder when moving New5).
 	//     Additionally request the first row in parallel just like the tree table occasionally
-	//     does, this must not cause further requests.
+	//     does (simulate TreeBindingProxy#getContextByIndex, see JIRA: CPOUI5ODATAV4-2729), this
+	//     must not cause further requests.
 	// (4) Check all contexts
 	// (5) Delete New1 (no longer requested as out-of-place node afterward)
 	// (6) Side-effects refresh (moves New3 below Gamma)
@@ -38138,6 +38139,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2454
 	//
 	// Siblings of out-of-place nodes (JIRA: CPOUI5ODATAV4-2652)
+	// Simulate TreeBindingProxy#getContextByIndex (JIRA: CPOUI5ODATAV4-2729)
 	QUnit.test("Recursive Hierarchy: out of place, root, expandTo > 1", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sCountUrl = "EMPLOYEES/$count?$filter=AGE gt 20&custom=foo&$search=covfefe";
@@ -38407,6 +38409,11 @@ sap.ui.define([
 
 		await Promise.all([
 			oBinding.getHeaderContext().requestSideEffects([""]),
+			oBinding.requestContexts(2, 1).then((aContexts) => {
+				assert.deepEqual(aContexts.map(getPath), [
+					"/EMPLOYEES('1')"
+				], "JIRA: CPOUI5ODATAV4-2729");
+			}),
 			this.waitForChanges(assert, "(3) side-effects refresh")
 		]);
 
@@ -38460,6 +38467,8 @@ sap.ui.define([
 	//
 	// After a side-effects refresh, the new root nodes are still out of place.
 	// SNOW: DINC0197354
+	//
+	// Simulate TreeBindingProxy#getContextByIndex (JIRA: CPOUI5ODATAV4-2729)
 	QUnit.test("Recursive Hierarchy: out of place, root, expandTo=1", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sUrl = "EMPLOYEES"
@@ -38590,6 +38599,11 @@ sap.ui.define([
 		await Promise.all([
 			// code under test
 			oListBinding.getHeaderContext().requestSideEffects([""]),
+			oListBinding.requestContexts(2, 1).then((aContexts) => {
+				assert.deepEqual(aContexts.map(getPath), [
+					"/EMPLOYEES('1')"
+				], "JIRA: CPOUI5ODATAV4-2729");
+			}),
 			this.waitForChanges(assert, "side-effects refresh")
 		]);
 
