@@ -199,7 +199,7 @@ sap.ui.define([
 					{type: "removeFlexObject", updatedObject: oDefaultVariantChange}
 				]
 			);
-			assert.strictEqual(oClearCacheSpy.callCount, 1, "then the cache has been invalidated");
+			assert.equal(oClearCacheSpy.callCount, 1, "then the cache has been invalidated");
 		});
 
 		QUnit.test("when just invalid updateInfos are provided", function(assert) {
@@ -216,7 +216,50 @@ sap.ui.define([
 					{type: "anotherType"}
 				]
 			);
-			assert.strictEqual(oClearCacheSpy.callCount, 0, "then the cache has not been invalidated");
+			assert.equal(oClearCacheSpy.callCount, 0, "then the cache has not been invalidated");
+		});
+	});
+
+	QUnit.module("CompVariantManagementState.getDefaultVariantId", {
+		async beforeEach() {
+			await initializeFlexState();
+		},
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when called an no default changes are stored", function(assert) {
+			const sDefaultVariantId = CompVariantManagementState.getDefaultVariantId({
+				persistencyKey: sPersistencyKey,
+				reference: "myApp",
+				variants: []
+			});
+			assert.equal(sDefaultVariantId, "", "then '' is returned");
+		});
+
+		QUnit.test("when called an default changes is stored with an 'undefined' key and is requested", function(assert) {
+			const sDefaultVariantName = "expectedDefaultVariantName";
+
+			const oSetDefaultChange = FlexObjectFactory.createFromFileContent({
+				reference: "myApp",
+				fileType: "change",
+				changeType: "defaultVariant",
+				layer: Layer.CUSTOMER,
+				content: {
+					defaultVariantName: sDefaultVariantName
+				}
+			});
+			stubFlexObjectsSelector([oSetDefaultChange]);
+
+			const sDefaultVariantId = CompVariantManagementState.getDefaultVariantId({
+				persistencyKey: "undefined",
+				reference: "myApp",
+				variants: [{
+					getVariantId: () => sDefaultVariantName
+				}],
+				includeUndefined: true
+			});
+			assert.equal(sDefaultVariantId, sDefaultVariantName, "then the key is returned");
 		});
 	});
 
