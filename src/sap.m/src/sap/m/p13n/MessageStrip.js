@@ -34,6 +34,7 @@ sap.ui.define([
 	 */
 	const AccessibleMessageStrip = MessageStrip.extend("sap.m.p13n.MessageStrip", {
 		metadata: {
+			library: "sap.m",
 			properties: {
 				/**
 				 * Defines whether the message strip should be announced when initalized.

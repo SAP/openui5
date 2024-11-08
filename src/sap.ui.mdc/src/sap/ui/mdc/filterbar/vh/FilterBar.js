@@ -24,7 +24,7 @@ sap.ui.define([
 		 * The <code>FilterBar</code> control creates and handles the filters based on the provided metadata information.
 		 * The metadata information is provided via the {@link module:sap/ui/mdc/FilterBarDelegate FilterBarDelegate} implementation. This implementation has to be provided by the application.<br>
 		 * <b>Note:</b> The <code>FilterBar</code> can only be used for a {@link sap.ui.mdc.valuehelp.Dialog Dialog} and not on its own.
-		 * @extends sap.ui.mdc.filterbar.FilterBarBase
+		 * @extends sap.ui.mdc.valuehelp.FilterBar
 		 * @author SAP SE
 		 * @version ${version}
 		 * @constructor
@@ -34,6 +34,9 @@ sap.ui.define([
 		 * @deprecated since 1.124.0 - Please use the <code>sap.ui.mdc.valuehelp.FilterBar</code> control instead.
 		 */
 		const FilterBar = ValueHelpFilterBar.extend("sap.ui.mdc.filterbar.vh.FilterBar",{
+			metadata: {
+				library: "sap.ui.mdc"
+			},
 			renderer: FilterBarBaseRenderer
 		});
 

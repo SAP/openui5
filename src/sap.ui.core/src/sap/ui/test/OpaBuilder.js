@@ -783,7 +783,7 @@ sap.ui.define(
          * Executes the definition on the given or previously defined Opa5 instance.
          *
          * @param {sap.ui.test.Opa5} [oOpaInstance] the Opa5 instance to call {@link sap.ui.test.Opa5#waitFor} on
-         * @returns {sap.ui.test.Opa5.Chain} an object extending a jQuery promise, corresponding to the result of {@link sap.ui.test.Opa5#waitFor}
+         * @returns {sap.ui.test.Opa5} an object extending a jQuery promise, corresponding to the result of {@link sap.ui.test.Opa5#waitFor}
          * @public
          */
         OpaBuilder.prototype.execute = function (oOpaInstance) {

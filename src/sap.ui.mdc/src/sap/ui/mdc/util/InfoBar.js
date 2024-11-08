@@ -31,6 +31,7 @@ sap.ui.define([
 	 */
 	const InfoBar = Control.extend("sap.ui.mdc.util.InfoBar", {
 		metadata: {
+			library: "sap.ui.mdc",
 			properties: {
 				infoText: {
 					type: "string"

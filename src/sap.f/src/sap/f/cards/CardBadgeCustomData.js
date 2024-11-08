@@ -25,7 +25,7 @@ sap.ui.define([
 	 * For more information, see {@link sap.ui.core.Element#data Element.prototype.data}
 	 * and {@link topic:91f0c3ee6f4d1014b6dd926db0e91070 Custom Data - Attaching Data Objects to Controls}.
 	 *
-	 * @extends sap..ui.core.CustomData
+	 * @extends sap.ui.core.CustomData
 	 * @since 1.128
 	 *
 	 * @public
