@@ -252,7 +252,7 @@ sap.ui.define([
 		/**
 		 * Attach to the theme applied event
 		 *
-		 * @param {function(module:sap/ui/core/Theming.$appliedEvent)} fnCallback The event handler
+		 * @param {function(module:sap/ui/core/Theming$AppliedEvent)} fnCallback The event handler
 		 * @private
 		 * @ui5-restricted sap.ui.core
 		 */
@@ -262,7 +262,7 @@ sap.ui.define([
 		/**
 		 * Detach from the theme applied event
 		 *
-		 * @param {function(module:sap/ui/core/Theming.$appliedEvent)} fnCallback The event handler
+		 * @param {function(module:sap/ui/core/Theming$AppliedEvent)} fnCallback The event handler
 		 * @private
 		 * @ui5-restricted sap.ui.core
 		 */

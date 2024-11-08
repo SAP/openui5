@@ -41,7 +41,7 @@ sap.ui.define([
 		 * Returns the delegate object for the requested control.
 		 *
 		 * @param {object} mPropertyBag - Property bag
-		 * @param {sap.ui.core.Element|DomNode} mPropertyBag.control - Control for which the corresponding delegate should be returned
+		 * @param {sap.ui.core.Element|Element} mPropertyBag.control - Control for which the corresponding delegate should be returned
 		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Control tree modifier
 		 * @param {string} [mPropertyBag.modelType] - Model type; required in case you passed the <code>XmlTreeModifier</code>
 		 * @param {boolean} [mPropertyBag.supportsDefault] - Include default delegate if no instance specific delegate is available
@@ -69,9 +69,9 @@ sap.ui.define([
 		 * If it is not a default delegate, an empty list is returned.
 		 *
 		 * @param {object} mPropertyBag - Property bag
-		 * @param {string} mPropertyBag.sDelegateName - Name of the delegate
-		 * @param {sap.ui.core.Element} mPropertyBag.oControl - Control for which the corresponding delegate was returned
-		 * @param {string} [mPropertyBag.sModelType] - Model type, if none is provided the default model of oControl is taken instead
+		 * @param {string} mPropertyBag.delegateName - Name of the delegate
+		 * @param {sap.ui.core.Element} mPropertyBag.control - Control for which the corresponding delegate was returned
+		 * @param {string} [mPropertyBag.modelType] - Model type, if none is provided the default model of oControl is taken instead
 		 * @returns {string[]} Required libraries
 		 */
 		getRequiredLibrariesForDefaultDelegate(mPropertyBag) {
