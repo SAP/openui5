@@ -221,6 +221,38 @@ sap.ui.define([
 		}, 1000);
 	});
 
+	QUnit.test("Inline Svg with relative links renders correctly", async function(assert) {
+		// Arrange
+		var oImage = createImage({
+				src: (IMAGE_PATH + "avatar_with_nested_images.svg"),
+				mode: "InlineSvg"
+			}),
+			fnDone = assert.async(),
+			oSpy = this.spy(oImage, "_toAbsoluteUrl"),
+			iRerenderingCount = 0;
+
+		assert.expect(2);
+
+		oImage.addEventDelegate({
+			onAfterRendering: function () {
+				if (iRerenderingCount === 1) { // we need the second rerendering, as inline-svg images invalidate the control before final rendering
+					// Assert
+					assert.ok(oSpy.calledWithMatch("avatar_light_theme.svg"));
+					assert.ok(oSpy.calledWithMatch("avatar_dark_theme.svg"));
+
+					// Clean up
+					oImage.destroy();
+					fnDone();
+				}
+				iRerenderingCount++;
+			}
+		});
+
+		// System under test
+		oImage.placeAt("qunit-fixture");
+		await await nextUIUpdate();
+	});
+
 	QUnit.test("Svg data is cached, so upon rerendering svg is not requested twice, but it is still rendered inline", async function(assert) {
 		// Arrange
 		var oImage = createImage({

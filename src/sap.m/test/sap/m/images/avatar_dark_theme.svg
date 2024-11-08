@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
+	<rect x="0" y="0" width="50" height="50" fill="#12171c"/>
+	<rect x="0" y="0" width="50" height="10" fill="#1d232a"/>
+	<circle cx="7.5" cy="5" r="3" stroke="#0070f2" fill="transparent"/>
+	<line x1="17" y1="5" x2="27" y2="5" stroke-width="3" stroke-linecap="round" stroke="#eaecee"/>
+	<rect x="40" y="2" width="99999" height="6" rx="3" stroke="#a9b4be" fill="#161c22"/>
+	<rect x="0" y="10" width="50" height="10" fill="#1d232a"/>
+	<line x1="5.5" y1="15" x2="13" y2="15" stroke-width="3" stroke-linecap="round" stroke="#4db1ff"/>
+	<line x1="4" y1="19" x2="14.5" y2="19" stroke-width="1.5" stroke-linecap="butt" stroke="#4db1ff"/>
+	<line x1="19.5" y1="15" x2="27" y2="15" stroke-width="3" stroke-linecap="round" stroke="#eaecee"/>
+	<line x1="33.5" y1="15" x2="41" y2="15" stroke-width="3" stroke-linecap="round" stroke="#eaecee"/>
+	<line x1="0" y1="20" x2="50" y2="20" stroke-width=".5" stroke-linecap="round" stroke="rgba(0,0,0,0.8)"/>
+	<line x1="5.5" y1="25" x2="24" y2="25" stroke-width="3" stroke-linecap="round" stroke="#eaecee"/>
+	<rect x="4.5" y="30" width="34" height="99999" rx="3" stroke="rgba(0,0,0,0.8)" fill="#1d232a"/>
+	<line x1="11" y1="36" x2="25" y2="36" stroke-width="3" stroke-linecap="round" stroke="#eaecee"/>
+	<line x1="10.5" y1="42" x2="32" y2="42" stroke-width="2" stroke-linecap="round" stroke="#8396a8"/>
+	<rect x="42" y="30" width="34" height="99999" rx="3" stroke="rgba(0,0,0,0.8)" fill="#1d232a"/>
+	<line x1="48" y1="36" x2="99999" y2="36" stroke-width="3" stroke-linecap="round" stroke="#eaecee"/>
+	<line x1="47.5" y1="42" x2="99999" y2="42" stroke-width="2" stroke-linecap="round" stroke="#8396a8"/>
+</svg>

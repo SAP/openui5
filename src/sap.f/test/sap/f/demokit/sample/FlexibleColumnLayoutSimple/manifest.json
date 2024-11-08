@@ -14,6 +14,7 @@
 		"dependencies": {
 			"libs": {
 				"sap.f": {},
+				"sap.m": {},
 				"sap.ui.core": {}
 			}
 		},

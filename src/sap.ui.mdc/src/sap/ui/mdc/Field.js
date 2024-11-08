@@ -108,7 +108,11 @@ sap.ui.define([
 						value: { type: "string" },
 
 						/**
-						 * Flag that indicates if the entered <code>value</code> is valid
+						 * Flag that indicates if the entered <code>value</code> is valid.
+						 *
+						 * This flag is only set if the user input is parsed and validated synchronously.
+						 * If there is some asynchronous parsing or validation, for example, via request to a back-end system, the validation result will be returned in the <code>promise</code>
+						 * parameter.
 						 */
 						valid: { type: "boolean" },
 
@@ -116,6 +120,7 @@ sap.ui.define([
 						 * Returns a <code>Promise</code> for the change. The <code>Promise</code> returns the value if it is resolved.
 						 * If the <code>change</code> event is synchronous, the <code>Promise</code> has already been already resolved. If it is asynchronous,
 						 * it will be resolved after the value has been updated.
+						 * If the user input is not valid, the <code>Promise</code> will be rejected with the corresponding exception.
 						 *
 						 * The <code>Field</code> should be set to busy during the parsing to prevent user input.
 						 * As there might be a whole group of fields that needs to be busy, this cannot be done automatically.

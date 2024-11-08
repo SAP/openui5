@@ -478,6 +478,8 @@ sap.ui.define([
 
 		var oDialog = this._getFacetDialog();
 		var oNavContainer = this._getFacetDialogNavContainer();
+		oDialog.removeAllAriaLabelledBy();
+		oDialog.addAriaLabelledBy(InvisibleText.getStaticId("sap.m", "FACETFILTER_AVAILABLE_FILTER_NAMES"));
 		oDialog.addContent(oNavContainer);
 
 		this.getLists().forEach(function (oList) {
@@ -573,6 +575,11 @@ sap.ui.define([
 
 		if (this._oAllCheckBoxBar) {
 			this._oAllCheckBoxBar = undefined;
+		}
+
+		if (this._oInvisibleTitleElement) {
+			this._oInvisibleTitleElement.destroy();
+			this._oInvisibleTitleElement = null;
 		}
 	};
 
@@ -1461,6 +1468,21 @@ sap.ui.define([
 		oNavContainer.addPage(oFacetPage);
 		oNavContainer.setInitialPage(oFacetPage);
 
+		oNavContainer.attachNavigate(function(oEvent) {
+			var oToPage = oEvent.getParameters()["to"],
+				oDialog = this.getAggregation("dialog"),
+				oInvisibleTitleElement = this._getInvisibleTitleElement();
+
+			if (oToPage !== oFacetPage) {
+				oDialog.addAriaLabelledBy(oInvisibleTitleElement.getId());
+				oInvisibleTitleElement.setText(oToPage.getTitle());
+			} else {
+				oDialog.removeAriaLabelledBy(oInvisibleTitleElement.getId());
+				oInvisibleTitleElement.setText("");
+			}
+			oDialog.setInitialFocus(oToPage);
+		}, this);
+
 		oNavContainer.attachAfterNavigate(function(oEvent) {
 
 			// Clean up transient filter items page controls. This must be done here instead of navFromFacetFilterList
@@ -1532,6 +1554,18 @@ sap.ui.define([
 			content : [ oFacetList ]
 		});
 		return oPage;
+	};
+
+	/**
+	 * Creates an invisible text element for the facet filter dialog title.
+	 * @returns {sap.ui.core.InvisibleText} oInvisibleTitleElement
+	 * @private
+	 */
+	FacetFilter.prototype._getInvisibleTitleElement = function() {
+		if (!this._oInvisibleTitleElement) {
+			this._oInvisibleTitleElement = new InvisibleText().toStatic();
+		}
+		return this._oInvisibleTitleElement;
 	};
 
 	/**
@@ -1666,8 +1700,7 @@ sap.ui.define([
 				}),
 				// limit the dialog height on desktop and tablet in case there are many filter items (don't
 				// want the dialog height growing according to the number of filter items)
-				contentHeight : "500px",
-				ariaLabelledBy: [InvisibleText.getStaticId("sap.m", "FACETFILTER_AVAILABLE_FILTER_NAMES")]
+				contentHeight : "500px"
 			});
 
 			oDialog.addStyleClass("sapMFFDialog");
