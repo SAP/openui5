@@ -5500,7 +5500,7 @@ sap.ui.define([
 		// Note: "ab-CD" is derived from Localization.getLanguageTag here, not from mHeaders!
 		this.mock(_MetadataRequestor).expects("create")
 			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", undefined,
-				{"sap-language" : "~sLanguage~"}, undefined);
+				{"sap-language" : "~sLanguage~"}, undefined, sinon.match.func);
 		const oCopyAnnotationsExpectation
 			= this.mock(ODataMetaModel.prototype).expects("_copyAnnotations")
 				.withExactArgs(sinon.match.same(oMetaModel));
@@ -5545,7 +5545,8 @@ sap.ui.define([
 			.withArgs(false + "/Foo1/ValueListService/").callThrough();
 		// observe metadataUrlParams NOT being passed along
 		this.mock(_MetadataRequestor).expects("create")
-			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", undefined, {}, undefined);
+			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", undefined, {}, undefined,
+				sinon.match.func);
 
 		// code under test
 		oSharedModel = oMetaModel.getOrCreateSharedModel("../ValueListService/$metadata",
