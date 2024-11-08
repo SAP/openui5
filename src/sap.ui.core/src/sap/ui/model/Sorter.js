@@ -111,6 +111,28 @@ sap.ui.define([
 		 */
 		getGroupFunction : function() {
 			return this.fnGroup && this.fnGroup.bind(this);
+		},
+
+		/**
+		 * Returns the binding path for this sorter; see the path parameter of {@link sap.ui.model.Sorter#constructor}.
+		 *
+		 * @returns {string} The binding path
+		 * @public
+		 * @since 1.131.0
+		 */
+		getPath() {
+			return this.sPath;
+		},
+
+		/**
+		 * Whether to sort in descending order; see the descending parameter of {@link sap.ui.model.Sorter#constructor}.
+		 *
+		 * @returns {boolean} Whether to sort in descending order
+		 * @public
+		 * @since 1.131.0
+		 */
+		isDescending() {
+			return this.bDescending;
 		}
 
 	});
