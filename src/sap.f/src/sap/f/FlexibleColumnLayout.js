@@ -811,6 +811,21 @@ sap.ui.define([
 		return oNavContainer;
 	};
 
+	FlexibleColumnLayout.prototype.setLandmarkInfo = function (oLandmarkInfo) {
+		this.setAggregation("landmarkInfo", oLandmarkInfo);
+		oLandmarkInfo?.attachEvent("_changeColumnsLabel", this._onColumnsLabelChanged, this);
+
+		return this;
+	};
+
+	FlexibleColumnLayout.prototype.destroyLandmarkInfo = function () {
+		var oLandmarkInfo = this.getLandmarkInfo();
+
+		oLandmarkInfo?.detachEvent("_changeColumnsLabel", this._onColumnsLabelChanged, this);
+
+		return this.destroyAggregation("landmarkInfo");
+	};
+
 	/**
 	 * Formats <code>FlexibleColumnLayoutAccessibleLandmarkInfo</code> role and label of the provided <code>FlexibleColumnLayout</code> column.
 	 *
@@ -829,6 +844,14 @@ sap.ui.define([
 			role: "region",
 			label: sLabel || FlexibleColumnLayout._getResourceBundle().getText(FlexibleColumnLayout.DEFAULT_COLUMN_LABELS[sColumnName])
 		};
+	};
+
+	FlexibleColumnLayout.prototype._onColumnsLabelChanged = function (oEvent) {
+		var sColumn = oEvent.getParameter("column"),
+			sLabel = oEvent.getParameter("label"),
+			$Column = this._$columns[sColumn];
+
+		$Column.attr("aria-label", sLabel);
 	};
 
 	/**

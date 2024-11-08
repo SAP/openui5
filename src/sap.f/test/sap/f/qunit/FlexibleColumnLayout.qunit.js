@@ -1439,6 +1439,40 @@ function(
 		assert.strictEqual(fnGetLabelText("endColumn"), sTestLastColumnLabel, "End column has its label changed by the Landmark Info");
 	});
 
+	QUnit.test("Setting columns' Landmark Info labels does not lead to rerendering", async function (assert) {
+		// Arrange
+		var sTestNewFirstColumnLabel = "This is test first column label",
+			sTestNewMiddleColumnLabel = "This is custom middle column label",
+			sTestNewLastColumnLabel = "This is custom last column label",
+			oLandmarkInfo = new FlexibleColumnLayoutAccessibleLandmarkInfo({
+				firstColumnLabel: "first column label",
+				middleColumnLabel: "middle column label",
+				lastColumnLabel: "last column label"
+			}),
+			oSpy;
+
+		// Act
+		this.oFCL.setLandmarkInfo(oLandmarkInfo);
+		await nextUIUpdate();
+		oSpy = this.spy(this.oFCL, "invalidate");
+
+		// Helper function
+		var fnGetLabelText = function (sColumnName) {
+			return this.oFCL.$(sColumnName).attr("aria-label");
+		}.bind(this);
+
+		oLandmarkInfo.setFirstColumnLabel(sTestNewFirstColumnLabel);
+		oLandmarkInfo.setMiddleColumnLabel(sTestNewMiddleColumnLabel);
+		oLandmarkInfo.setLastColumnLabel(sTestNewLastColumnLabel);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 0, "Setting Landmark Info labels does not lead to rerendering");
+		assert.strictEqual(fnGetLabelText("beginColumn"), sTestNewFirstColumnLabel, "Begin column has its label changed by the Landmark Info");
+		assert.strictEqual(fnGetLabelText("midColumn"), sTestNewMiddleColumnLabel, "Middle column has its label changed by the Landmark Info");
+		assert.strictEqual(fnGetLabelText("endColumn"), sTestNewLastColumnLabel, "End column has its label changed by the Landmark Info");
+	});
+
 	QUnit.module("FlexibleColumnLayoutSemanticHelper");
 
 	QUnit.test("SemanticHelper cleans destroyed FCL instance data", function (assert) {
