@@ -4,22 +4,20 @@
 
 sap.ui.define([
 	"sap/ui/core/Element",
-	"sap/ui/dt/Util",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/fl/Utils",
+	"sap/ui/dt/Util",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/fl/Utils"
 ], function(
 	Element,
-	DtUtil,
 	OverlayRegistry,
-	FlexUtils,
+	DtUtil,
 	FlexRuntimeInfoAPI,
 	ChangesWriteAPI,
 	PersistenceWriteAPI,
-	jQuery
+	FlexUtils
 ) {
 	"use strict";
 
@@ -36,25 +34,12 @@ sap.ui.define([
 	*/
 
 	return function(oRta) {
-		function makeAjaxCall(sPath) {
-			return new Promise(function(resolve, reject) {
-				var sUrl;
-				jQuery.ajax({
-					url: sUrl = `${sap.ui.require.toUrl(sPath)}.js`,
-					async: true,
-					success(data) {
-						resolve(data);
-					},
-					error(xhr, textStatus, error) {
-						var oError = new Error(`resource ${sPath} could not be loaded from ${sUrl}. Check for 'file not found' or parse errors. Reason: ${error}`);
-						oError.status = textStatus;
-						oError.error = error;
-						oError.statusCode = xhr.status;
-						reject(error);
-					},
-					dataType: "text"
-				});
-			});
+		async function fetchTemplate(sPath) {
+			const oResponse = await fetch(`${sap.ui.require.toUrl(sPath)}.js`);
+			if (!oResponse.ok) {
+				throw new Error(`resource ${sPath} could not be loaded from ${sPath}. Check for 'file not found' or parse errors. Reason: ${oResponse.statusText}`);
+			}
+			return oResponse.text();
 		}
 
 		return {
@@ -126,9 +111,9 @@ sap.ui.define([
 					}
 
 					var sControllerExtensionTemplatePath = oViewOverlay.getDesignTimeMetadata().getControllerExtensionTemplate();
-					return makeAjaxCall(`${sControllerExtensionTemplatePath}-dbg`)
+					return fetchTemplate(`${sControllerExtensionTemplatePath}-dbg`)
 					.catch(function() {
-						return makeAjaxCall(sControllerExtensionTemplatePath);
+						return fetchTemplate(sControllerExtensionTemplatePath);
 					});
 				}
 			}

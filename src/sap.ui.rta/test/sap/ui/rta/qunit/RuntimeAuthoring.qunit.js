@@ -18,7 +18,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/command/BaseCommand",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/Stack",
@@ -45,7 +44,6 @@ sap.ui.define([
 	VersionsAPI,
 	Versions,
 	nextUIUpdate,
-	QUnitUtils,
 	RTABaseCommand,
 	CommandFactory,
 	Stack,
@@ -74,7 +72,7 @@ sap.ui.define([
 		oParams.altKey = bAltKey;
 		oParams.metaKey = bMetaKey;
 		oParams.ctrlKey = bCtrlKey;
-		QUnitUtils.triggerEvent("keydown", oTargetDomRef, oParams);
+		document.dispatchEvent(new KeyboardEvent("keydown", oParams));
 	}
 
 	function cleanInfoSessionStorage() {
