@@ -42,10 +42,10 @@
 
 			var handleStartDateChange = function(oEvent){
 
-				var oRow = oEvent.oSource;
+				var oRow = oEvent.getSource();
 				var oStartDate = oRow.getStartDate();
-				var oTF = sap.ui.getCore().byId("TF1");
-				oTF.setValue(oFormatYyyyMMddHHmm.format(oStartDate));
+				var oInput = sap.ui.getCore().byId("Input1");
+				oInput.setValue(oFormatYyyyMMddHHmm.format(oStartDate));
 
 			};
 
@@ -297,22 +297,21 @@
 			});
 			oRow1.addIntervalHeader(oApp);
 
-			new sap.m.Label({text: "start date", labelFor: "TF1"}).placeAt("event1");
-			new sap.m.Input("TF1",{
+			new sap.m.Label({text: "start date", labelFor: "Input1"}).placeAt("event1");
+			new sap.m.Input("Input1",{
 				width:"10rem",
 				value: oFormatYyyyMMddHHmm.format(oRow1.getStartDate()),
-				editable: true,
 				placeholder: "yyyyMMddHHmm",
 				change: function(oEvent){
-					var oTF = oEvent.oSource;
+					var oInput = oEvent.getSource();
 					var sValue = oEvent.getParameter('newValue');
 					var oRow = sap.ui.getCore().byId("Row1");
 					var oDate = oFormatYyyyMMddHHmm.parse(sValue);
 					if (oDate) {
 						oRow.setStartDate(oDate);
-						oTF.setValueState(sap.ui.core.ValueState.None);
+						oInput.setValueState(sap.ui.core.ValueState.None);
 					} else {
-						oTF.setValueState(sap.ui.core.ValueState.Error);
+						oInput.setValueState(sap.ui.core.ValueState.Error);
 					}
 				}
 			}).placeAt("event1");
@@ -335,20 +334,19 @@
 				}
 			}).placeAt("event1");
 
-			new sap.m.Label({text: "intervals", labelFor: "TF2"}).placeAt("event1");
-			new sap.m.Input("TF2",{
+			new sap.m.Label({text: "intervals", labelFor: "Input2"}).placeAt("event1");
+			new sap.m.Input("Input2",{
 				value: oRow1.getIntervals(),
 				width: "10rem",
-				editable: true,
 				placeholder: "Number",
 				change: function(oEvent){
-					var oTF = oEvent.oSource;
+					var oInput = oEvent.getSource();
 					var sValue = oEvent.getParameter('newValue');
 					var oRow = sap.ui.getCore().byId("Row1");
 					if (isNaN(sValue)) {
-						oTF.setValueState(sap.ui.core.ValueState.Error);
+						oInput.setValueState(sap.ui.core.ValueState.Error);
 					} else {
-						oTF.setValueState(sap.ui.core.ValueState.None);
+						oInput.setValueState(sap.ui.core.ValueState.None);
 						oRow.setIntervals(parseInt(sValue));
 					}
 				}
@@ -451,7 +449,7 @@
 								new sap.ui.core.Item("I-1",{text:"Standard", key: sap.ui.unified.CalendarAppointmentVisualization.Standard}),
 								new sap.ui.core.Item("I-2",{text:"Filled", key: sap.ui.unified.CalendarAppointmentVisualization.Filled})
 								],
-				change: function(oEvent){
+				selectionChange: function(oEvent){
 					var sKey = oEvent.getSource().getSelectedKey();
 					oRow1.setAppointmentsVisualization(sKey);
 				}
@@ -463,7 +461,7 @@
 					new sap.ui.core.Item("GAM-I-1",{text:"Collapsed", key: sap.ui.unified.GroupAppointmentsMode.Collapsed}),
 					new sap.ui.core.Item("GAM-I-2",{text:"Expanded", key: sap.ui.unified.GroupAppointmentsMode.Expanded})
 				],
-				change: function(oEvent){
+				selectionChange: function(oEvent){
 					var sKey = oEvent.getSource().getSelectedKey();
 					oRow1.setGroupAppointmentsMode(sKey);
 				}

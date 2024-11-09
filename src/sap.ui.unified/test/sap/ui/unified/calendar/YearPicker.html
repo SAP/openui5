@@ -8,33 +8,32 @@
 
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="sap_bluecrystal"
-				data-sap-ui-trace="false"
-				data-sap-ui-libs="sap.ui.commons, sap.ui.unified"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-libs="sap.m, sap.ui.unified"
 				src="../../../../../resources/sap-ui-core.js"
 		>
 		</script>
 		<script>
-
+		sap.ui.getCore().attachInit(() => {
 			jQuery.sap.require("sap.ui.core.date.UniversalDate");
 			var UniversalDate = sap.ui.core.date.UniversalDate;
 			var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
 
 			new sap.ui.unified.calendar.YearPicker("YP1",{
 				select: function(oEvent){
-					var oTF = sap.ui.getCore().byId("TF1");
-					var oYP = oEvent.oSource;
+					var oInput = sap.ui.getCore().byId("Input1");
+					var oYP = oEvent.getSource();
 					var oDate = new UniversalDate(oYP.getDate());
-					oTF.setValue(oDate.getFullYear());
+					oInput.setValue(oDate.getFullYear());
 				}
 			}).placeAt("sample1");
 
-			new sap.ui.commons.Label({text: "selected Year", labelFor: "TF1"}).placeAt("event1");
-			new sap.ui.commons.TextField("TF1",{
-				editable: true,
+			new sap.m.Label({text: "selected Year", labelFor: "Input1"}).placeAt("event1");
+			new sap.m.Input("Input1",{
 				change: function(oEvent){
-					var oTF = oEvent.oSource;
-					var sValue = oEvent.getParameter('newValue');
+					var oInput = oEvent.getSource();
+					var sValue = oEvent.getParameter('value');
 					var oYP = sap.ui.getCore().byId("YP1");
 					if (sValue && !isNaN(sValue)) {
 						var iYear = parseInt(sValue);
@@ -57,19 +56,18 @@
 				columns: 0,
 				date: oDate,
 				select: function(oEvent){
-					var oTF = sap.ui.getCore().byId("TF2");
-					var oYP = oEvent.oSource;
+					var oInput = sap.ui.getCore().byId("Input2");
+					var oYP = oEvent.getSource();
 					var oDate = new UniversalDate(oYP.getDate());
-					oTF.setValue(oDate.getFullYear());
+					oInput.setValue(oDate.getFullYear());
 				}
 			}).placeAt("sample2");
 
-			new sap.ui.commons.Label({text: "selected Year", labelFor: "TF2"}).placeAt("event2");
-			new sap.ui.commons.TextField("TF2",{
-				editable: true,
+			new sap.m.Label({text: "selected Year", labelFor: "Input2"}).placeAt("event2");
+			new sap.m.Input("Input2",{
 				change: function(oEvent){
-					var oTF = oEvent.oSource;
-					var sValue = oEvent.getParameter('newValue');
+					var oInput = oEvent.getSource();
+					var sValue = oEvent.getParameter('value');
 					var oYP = sap.ui.getCore().byId("YP2");
 					if (sValue && !isNaN(sValue)) {
 						var iYear = parseInt(sValue);
@@ -85,7 +83,7 @@
 					}
 				}
 			}).placeAt("event2");
-
+		});
 		</script>
 
 	</head>
@@ -95,10 +93,10 @@
 		<br>
 		<div>
 		<h2>Default YearPicker</h2>
-		<div id="sample1" style="display:inline-block;"></div>
+		<div id="sample1"></div>
 		<div id="event1" style="display:inline-block; vertical-align: top;"></div>
 		<h2>one line YearPicker</h2>
-		<div id="sample2" style="display:inline-block;"></div>
+		<div id="sample2"></div>
 		<div id="event2" style="display:inline-block; vertical-align: top;"></div>
 		</div>
 

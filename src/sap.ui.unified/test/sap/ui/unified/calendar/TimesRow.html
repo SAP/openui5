@@ -8,14 +8,14 @@
 
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="sap_bluecrystal"
-				data-sap-ui-trace="false"
-				data-sap-ui-libs="sap.ui.commons, sap.ui.unified"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-libs="sap.m, sap.ui.unified"
 				src="../../../../../resources/sap-ui-core.js"
 		>
 		</script>
 		<script>
-
+		sap.ui.getCore().attachInit(() => {
 			jQuery.sap.require("sap.ui.model.type.Date");
 			var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
 
@@ -58,77 +58,74 @@
 
 			new sap.ui.unified.calendar.TimesRow("TR1",{
 				focus: function(oEvent){
-					var oTF = sap.ui.getCore().byId("TF2");
-					var oTimesRow = oEvent.oSource;
+					var oInput = sap.ui.getCore().byId("Input2");
+					var oTimesRow = oEvent.getSource();
 					var oDate = oEvent.getParameter("date");
 					if (oDate) {
-						oTF.setValue(oFormatYyyyMMddHHmmss.format(oDate));
+						oInput.setValue(oFormatYyyyMMddHHmmss.format(oDate));
 					} else {
-						oTF.setValue("");
+						oInput.setValue("");
 					}
 					if (!oEvent.getParameter("notVisible")) {
-						oTF.setValueState(sap.ui.core.ValueState.None);
+						oInput.setValueState(sap.ui.core.ValueState.None);
 					} else {
-						oTF.setValueState(sap.ui.core.ValueState.Error);
+						oInput.setValueState(sap.ui.core.ValueState.Error);
 					}
 				},
 				select: function(oEvent){
-					var oTF = sap.ui.getCore().byId("TF3");
-					var oTimesRow = oEvent.oSource;
+					var oInput = sap.ui.getCore().byId("Input3");
+					var oTimesRow = oEvent.getSource();
 					var aSelectedDates = oTimesRow.getSelectedDates();
 					var oDate;
 					if (aSelectedDates.length > 0 ) {
 						oDate = aSelectedDates[0].getStartDate();
-						oTF.setValue(oFormatYyyyMMddHHmmss.format(oDate));
+						oInput.setValue(oFormatYyyyMMddHHmmss.format(oDate));
 					} else {
-						oTF.setValue("");
+						oInput.setValue("");
 					}
 				}
 			}).placeAt("sample1");
 
-			new sap.ui.commons.Label({text: "start date", labelFor: "TF1"}).placeAt("event1");
-			new sap.ui.commons.TextField("TF1",{
-				editable: true,
+			new sap.m.Label({text: "start date", labelFor: "Input1"}).placeAt("event1");
+			new sap.m.Input("Input1",{
 				placeholder: "yyyymmddHHmmss",
 				change: function(oEvent){
-					var oTF = oEvent.oSource;
-					var sValue = oEvent.getParameter('newValue');
+					var oInput = oEvent.getSource();
+					var sValue = oEvent.getParameter('value');
 					var oDatesRow = sap.ui.getCore().byId("TR1");
 					var oDate = oFormatYyyyMMddHHmmss.parse(sValue);
 					if (oDate) {
 						oDatesRow.setStartDate(oDate);
-						oTF.setValueState(sap.ui.core.ValueState.None);
+						oInput.setValueState(sap.ui.core.ValueState.None);
 					} else {
-						oTF.setValueState(sap.ui.core.ValueState.Error);
+						oInput.setValueState(sap.ui.core.ValueState.Error);
 					}
 				}
 			}).placeAt("event1");
 
-			new sap.ui.commons.Label({text: "focused date", labelFor: "TF2"}).placeAt("event1");
-			new sap.ui.commons.TextField("TF2",{
-				editable: true,
+			new sap.m.Label({text: "focused date", labelFor: "Input2"}).placeAt("event1");
+			new sap.m.Input("Input2",{
 				placeholder: "yyyymmddHHmmss",
 				change: function(oEvent){
-					var oTF = oEvent.oSource;
-					var sValue = oEvent.getParameter('newValue');
+					var oInput = oEvent.getSource();
+					var sValue = oEvent.getParameter('value');
 					var oTimesRow = sap.ui.getCore().byId("TR1");
 					var oDate = oFormatYyyyMMddHHmmss.parse(sValue);
 					if (oDate) {
 						oTimesRow.setDate(oDate);
-						oTF.setValueState(sap.ui.core.ValueState.None);
+						oInput.setValueState(sap.ui.core.ValueState.None);
 					} else {
-						oTF.setValueState(sap.ui.core.ValueState.Error);
+						oInput.setValueState(sap.ui.core.ValueState.Error);
 					}
 				}
 			}).placeAt("event1");
 
-			new sap.ui.commons.Label({text: "selected date", labelFor: "TF3"}).placeAt("event1");
-			new sap.ui.commons.TextField("TF3",{
-				editable: true,
+			new sap.m.Label({text: "selected date", labelFor: "Input3"}).placeAt("event1");
+			new sap.m.Input("Input3",{
 				placeholder: "yyyymmddHHmmss",
 				change: function(oEvent){
-					var oTF = oEvent.oSource;
-					var sValue = oEvent.getParameter('newValue');
+					var oInput = oEvent.getSource();
+					var sValue = oEvent.getParameter('value');
 					var oTimesRow = sap.ui.getCore().byId("TR1");
 					var oDate = oFormatYyyyMMddHHmmss.parse(sValue);
 					if (oDate) {
@@ -147,7 +144,7 @@
 				}
 			}).placeAt("event1");
 
-			new sap.ui.commons.ToggleButton({
+			new sap.m.ToggleButton({
 				text: "special days",
 				press: function(oEvent){
 					var bPressed = oEvent.getParameter("pressed");
@@ -214,37 +211,37 @@
 				intervalMinutes: 30,
 				startDate: oStartDate,
 				select: function(oEvent){
-					var oTF1 = sap.ui.getCore().byId("TF2-start");
-					var oTF2 = sap.ui.getCore().byId("TF2-end");
-					var oTimesRow = oEvent.oSource;
+					var oInput1 = sap.ui.getCore().byId("Input2-start");
+					var oInput2 = sap.ui.getCore().byId("Input2-end");
+					var oTimesRow = oEvent.getSource();
 					var aSelectedDates = oTimesRow.getSelectedDates();
 					var oDate;
 					if (aSelectedDates.length > 0 ) {
 						oDate = aSelectedDates[0].getStartDate();
 						if (oDate) {
-							oTF1.setValue(oFormatYyyyMMddHHmmss.format(oDate));
+							oInput1.setValue(oFormatYyyyMMddHHmmss.format(oDate));
 						} else {
-							oTF1.setValue("");
+							oInput1.setValue("");
 						}
 						oDate = aSelectedDates[0].getEndDate();
 						if (oDate) {
-							oTF2.setValue(oFormatYyyyMMddHHmmss.format(oDate));
+							oInput2.setValue(oFormatYyyyMMddHHmmss.format(oDate));
 						} else {
-							oTF2.setValue("");
+							oInput2.setValue("");
 						}
 					} else {
-						oTF1.setValue("");
-						oTF2.setValue("");
+						oInput1.setValue("");
+						oInput2.setValue("");
 					}
 				}
 			}).placeAt("sample2");
 
-			new sap.ui.commons.Label({text: "selected date from", labelFor: "TF2-start"}).placeAt("event2");
-			new sap.ui.commons.TextField("TF2-start",{
+			new sap.m.Label({text: "selected date from", labelFor: "Input2-start"}).placeAt("event2");
+			new sap.m.Input("Input2-start",{
 				editable: false
 			}).placeAt("event2");
-			new sap.ui.commons.Label({text: "to", labelFor: "TF2-end"}).placeAt("event2");
-			new sap.ui.commons.TextField("TF2-end",{
+			new sap.m.Label({text: "to", labelFor: "Input2-end"}).placeAt("event2");
+			new sap.m.Input("Input2-end",{
 				editable: false
 			}).placeAt("event2");
 
@@ -255,8 +252,8 @@
 				items: 18,
 				intervalMinutes: 120,
 				select: function(oEvent){
-					var oLB = sap.ui.getCore().byId("LB");
-					var oTimesRow = oEvent.oSource;
+					var oLB = sap.ui.getCore().byId("Select");
+					var oTimesRow = oEvent.getSource();
 					var aSelectedDates = oTimesRow.getSelectedDates();
 					var oDate;
 					if (aSelectedDates.length > 0) {
@@ -288,13 +285,12 @@
 				}
 			}).placeAt("sample3");
 
-			new sap.ui.commons.Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
-			new sap.ui.commons.ListBox("LB",{
+			new sap.m.Label({text: "selected dates", labelFor: "Select"}).placeAt("event3");
+			new sap.m.Select("Select",{
 				editable: false,
-				visibleItems: 10,
 				width: "10em"
 			}).placeAt("event3");
-
+		});
 		</script>
 
 	</head>
@@ -304,21 +300,21 @@
 		<div>Single day Selection</div>
 		<br>
 		<div>
-		<div id="sample1" style="display:inline-block;"></div>
+		<div id="sample1"></div>
 		<div id="event1" style="display:inline-block; vertical-align: top;"></div>
 		</div>
 		<br>
 		<div>Single interval Selection</div>
 		<br>
 		<div>
-		<div id="sample2" style="display:inline-block;" class="sapUiSizeCompact"></div>
+		<div id="sample2" class="sapUiSizeCompact"></div>
 		<div id="event2" style="display:inline-block; vertical-align: top;"></div>
 		</div>
 		<br>
 		<div>multiple day Selection</div>
 		<br>
 		<div>
-		<div id="sample3" style="display:inline-block;"></div>
+		<div id="sample3"></div>
 		<div id="event3" style="display:inline-block; vertical-align: top;"></div>
 		</div>
 

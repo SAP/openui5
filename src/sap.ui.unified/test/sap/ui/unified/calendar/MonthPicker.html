@@ -8,29 +8,28 @@
 
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="sap_bluecrystal"
-				data-sap-ui-trace="false"
-				data-sap-ui-libs="sap.ui.commons, sap.ui.unified"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-libs="sap.m, sap.ui.unified"
 				src="../../../../../resources/sap-ui-core.js"
 		>
 		</script>
 		<script>
-
+		sap.ui.getCore().attachInit(() => {
 			var oMonthPicker = new sap.ui.unified.calendar.MonthPicker("MP1",{
 				select: function(oEvent){
-					var oTF = sap.ui.getCore().byId("TF1");
-					var oMP = oEvent.oSource;
+					var oInput = sap.ui.getCore().byId("Input1");
+					var oMP = oEvent.getSource();
 					var iMonth = oMP.getMonth();
-					oTF.setValue(iMonth);
+					oInput.setValue(iMonth);
 				}
 			}).placeAt("sample1");
 
-			new sap.ui.commons.Label({text: "selected month", labelFor: "TF1"}).placeAt("event1");
-			new sap.ui.commons.TextField("TF1",{
-				editable: true,
+			new sap.m.Label({text: "selected month", labelFor: "Input1"}).placeAt("event1");
+			new sap.m.Input("Input1",{
 				change: function(oEvent){
-					var oTF = oEvent.oSource;
-					var sValue = oEvent.getParameter('newValue');
+					var oInput = oEvent.getSource();
+					var sValue = oEvent.getParameter('value');
 					var oMP = sap.ui.getCore().byId("MP1");
 					if (sValue && !isNaN(sValue)) {
 						var iMonth = parseInt(sValue);
@@ -49,19 +48,18 @@
 				months: 4,
 				columns: 0,
 				select: function(oEvent){
-					var oTF = sap.ui.getCore().byId("TF2");
-					var oMP = oEvent.oSource;
+					var oInput = sap.ui.getCore().byId("Input2");
+					var oMP = oEvent.getSource();
 					var iMonth = oMP.getMonth();
-					oTF.setValue(iMonth);
+					oInput.setValue(iMonth);
 				}
 			}).placeAt("sample2");
 
-			new sap.ui.commons.Label({text: "selected month", labelFor: "TF2"}).placeAt("event2");
-			new sap.ui.commons.TextField("TF2",{
-				editable: true,
+			new sap.m.Label({text: "selected month", labelFor: "Input2"}).placeAt("event2");
+			new sap.m.Input("Input2",{
 				change: function(oEvent){
-					var oTF = oEvent.oSource;
-					var sValue = oEvent.getParameter('newValue');
+					var oInput = oEvent.getSource();
+					var sValue = oEvent.getParameter('value');
 					var oMP = sap.ui.getCore().byId("MP2");
 					if (sValue && !isNaN(sValue)) {
 						var iMonth = parseInt(sValue);
@@ -74,7 +72,7 @@
 					}
 				}
 			}).placeAt("event2");
-
+		});
 		</script>
 
 	</head>
@@ -84,10 +82,10 @@
 		<br>
 		<div>
 		<h2>Default MonthPicker</h2>
-		<div id="sample1" style="display:inline-block;"></div>
+		<div id="sample1"></div>
 		<div id="event1" style="display:inline-block; vertical-align: top;"></div>
 		<h2>one line MonthPicker</h2>
-		<div id="sample2" style="display:inline-block;"></div>
+		<div id="sample2"></div>
 		<div id="event2" style="display:inline-block; vertical-align: top;"></div>
 		</div>
 

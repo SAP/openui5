@@ -8,16 +8,23 @@
 
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
 				data-sap-ui-trace="false"
-				data-sap-ui-libs="sap.ui.commons, sap.ui.unified, sap.ui.layout"
+				data-sap-ui-libs="sap.m, sap.ui.unified, sap.ui.layout"
 				src="../../../../../resources/sap-ui-core.js"
 		>
 		</script>
 		<script>
-
+		sap.ui.getCore().attachInit(() => {
 			jQuery.sap.require("sap.ui.model.type.Date");
 			var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
+
+			// load Button, Label and Text synchronously to avoid async/sync conflicts when the form loads them async
+			// UI5 2.0 transformation will convert this to dependencies
+			jQuery.sap.require("sap.m.Button");
+			jQuery.sap.require("sap.m.Label");
+			jQuery.sap.require("sap.m.Text");
 
 			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sap.ui.core.CalendarType.Gregorian});
 
@@ -70,34 +77,35 @@
 					{
 						date: UI5Date.getInstance(2016, 0, 1) /* to make sure special dates are in visible range */,
 						focus: function (oEvent) {
-							var oTF = sap.ui.getCore().byId("TF1");
+							var oInput = sap.ui.getCore().byId("Input1");
 							var oDate = oEvent.getParameter("date");
 							if (oDate) {
-								oTF.setValue(oFormatYyyymmdd.format(oDate));
+								oInput.setValue(oFormatYyyymmdd.format(oDate));
 							} else {
-								oTF.setValue("");
+								oInput.setValue("");
 							}
 							if (!oEvent.getParameter("otherMonth")) {
-								oTF.setValueState(sap.ui.core.ValueState.None);
+								oInput.setValueState(sap.ui.core.ValueState.None);
 							} else {
-								oTF.setValueState(sap.ui.core.ValueState.Error);
+								oInput.setValueState(sap.ui.core.ValueState.Error);
 							}
 						},
 						select: function (oEvent) {
-							var oTF = sap.ui.getCore().byId("TF2");
-							var oMonth = oEvent.oSource;
+							var oInput = sap.ui.getCore().byId("Input2");
+							var oMonth = oEvent.getSource();
 							var aSelectedDates = oMonth.getSelectedDates();
 							var oDate;
 							if (aSelectedDates.length > 0) {
 								oDate = aSelectedDates[0].getStartDate();
-								oTF.setValue(oFormatYyyymmdd.format(oDate));
+								oInput.setValue(oFormatYyyymmdd.format(oDate));
 							} else {
-								oTF.setValue("");
+								oInput.setValue("");
 							}
 						}
 					}).placeAt("sample1");
 
 			var oForm = new sap.ui.layout.form.Form("F1", {
+				editable: true,
 				layout: new sap.ui.layout.form.ResponsiveGridLayout("L1", {
 					breakpointM: 350,
 					labelSpanL: 6,
@@ -111,7 +119,7 @@
 			oForm.addFormContainer(oFormContainer);
 
 			var oFormElement = new sap.ui.layout.form.FormElement("F1E1", {
-				fields: [ new sap.ui.commons.ToggleButton({
+				fields: [ new sap.m.ToggleButton({
 										text: "special days",
 										press: function(oEvent){
 											var bPressed = oEvent.getParameter("pressed");
@@ -136,7 +144,7 @@
 											}
 										}
 									}),
-									new sap.ui.commons.ToggleButton({
+									new sap.m.ToggleButton({
 										text: "disable days",
 										press: function(oEvent){
 											var bPressed = oEvent.getParameter("pressed");
@@ -171,16 +179,15 @@
 
 			oFormElement = new sap.ui.layout.form.FormElement("F1E2", {
 				label: "focused date",
-				fields: [ new sap.ui.commons.TextField("TF1",{
-										editable: true,
+				fields: [ new sap.m.Input("Input1",{
 										placeholder: "yyyyMMdd",
 										change: function(oEvent){
-											var oTF = oEvent.oSource;
-											var sValue = oEvent.getParameter('newValue');
+											var oInput = oEvent.getSource();
+											var sValue = oEvent.getParameter('value');
 											var oMonth = sap.ui.getCore().byId("Month1");
 											var oDate = oFormatYyyymmdd.parse(sValue);
 											oMonth.setDate(oDate);
-											oTF.setValueState(sap.ui.core.ValueState.None);
+											oInput.setValueState(sap.ui.core.ValueState.None);
 										}
 									})
 					]
@@ -189,12 +196,11 @@
 
 			oFormElement = new sap.ui.layout.form.FormElement("F1E3", {
 				label: "selected date",
-				fields: [ new sap.ui.commons.TextField("TF2",{
-										editable: true,
+				fields: [ new sap.m.Input("Input2",{
 										placeholder: "yyyyMMdd",
 										change: function(oEvent){
-											var oTF = oEvent.oSource;
-											var sValue = oEvent.getParameter('newValue');
+											var oInput = oEvent.getSource();
+											var sValue = oEvent.getParameter('value');
 											var oMonth = sap.ui.getCore().byId("Month1");
 											if (sValue.length == 8 && !isNaN(sValue)) {
 												var oDate = oFormatYyyymmdd.parse(sValue);
@@ -218,15 +224,14 @@
 
 			oFormElement = new sap.ui.layout.form.FormElement("F1E4", {
 				label: "primary calendar type",
-				fields: [ new sap.ui.commons.ComboBox("CB1",{
-										editable: true,
+				fields: [ new sap.m.ComboBox("CB1",{
 										items: [
 														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Gregorian, key: sap.ui.core.CalendarType.Gregorian}),
 														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Islamic, key: sap.ui.core.CalendarType.Islamic}),
 														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Japanese, key: sap.ui.core.CalendarType.Japanese})
 														],
-										change: function(oEvent){
-											var oCB = oEvent.oSource;
+										selectionChange: function(oEvent){
+											var oCB = oEvent.getSource();
 											var oItem = oEvent.getParameter('selectedItem');
 											var oMonth = sap.ui.getCore().byId("Month1");
 											var sKey = "";
@@ -242,15 +247,14 @@
 
 			oFormElement = new sap.ui.layout.form.FormElement("F1E5", {
 				label: "secondary calendar type",
-				fields: [ new sap.ui.commons.ComboBox("CB2",{
-										editable: true,
+				fields: [ new sap.m.ComboBox("CB2",{
 										items: [
 														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Gregorian, key: sap.ui.core.CalendarType.Gregorian}),
 														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Islamic, key: sap.ui.core.CalendarType.Islamic}),
 														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Japanese, key: sap.ui.core.CalendarType.Japanese})
 														],
-										change: function(oEvent){
-											var oCB = oEvent.oSource;
+										selectionChange: function(oEvent){
+											var oCB = oEvent.getSource();
 											var oItem = oEvent.getParameter('selectedItem');
 											var oMonth = sap.ui.getCore().byId("Month1");
 											var sKey = "";
@@ -268,37 +272,37 @@
 			new sap.ui.unified.calendar.Month("Month2",{
 				intervalSelection: true,
 				select: function(oEvent){
-					var oTF1 = sap.ui.getCore().byId("TF2-start");
-					var oTF2 = sap.ui.getCore().byId("TF2-end");
-					var oMonth = oEvent.oSource;
+					var oInput1 = sap.ui.getCore().byId("Input2-start");
+					var oInput2 = sap.ui.getCore().byId("Input2-end");
+					var oMonth = oEvent.getSource();
 					var aSelectedDates = oMonth.getSelectedDates();
 					var oDate;
 					if (aSelectedDates.length > 0 ) {
 						oDate = aSelectedDates[0].getStartDate();
 						if (oDate) {
-							oTF1.setValue(oFormatYyyymmdd.format(oDate));
+							oInput1.setValue(oFormatYyyymmdd.format(oDate));
 						} else {
-							oTF1.setValue("");
+							oInput1.setValue("");
 						}
 						oDate = aSelectedDates[0].getEndDate();
 						if (oDate) {
-							oTF2.setValue(oFormatYyyymmdd.format(oDate));
+							oInput2.setValue(oFormatYyyymmdd.format(oDate));
 						} else {
-							oTF2.setValue("");
+							oInput2.setValue("");
 						}
 					} else {
-						oTF1.setValue("");
-						oTF2.setValue("");
+						oInput1.setValue("");
+						oInput2.setValue("");
 					}
 				}
 			}).placeAt("sample2");
 
-			new sap.ui.commons.Label({text: "selected date from", labelFor: "TF2-start"}).placeAt("event2");
-			new sap.ui.commons.TextField("TF2-start",{
+			new sap.m.Label({text: "selected date from", labelFor: "Input2-start"}).placeAt("event2");
+			new sap.m.Input("Input2-start",{
 				editable: false
 			}).placeAt("event2");
-			new sap.ui.commons.Label({text: "to", labelFor: "TF2-end"}).placeAt("event2");
-			new sap.ui.commons.TextField("TF2-end",{
+			new sap.m.Label({text: "to", labelFor: "Input2-end"}).placeAt("event2");
+			new sap.m.Input("Input2-end",{
 				editable: false
 			}).placeAt("event2");
 
@@ -310,7 +314,7 @@
 				nonWorkingDays: [3, 5],
 				select: function(oEvent){
 					var oLB = sap.ui.getCore().byId("LB");
-					var oMonth = oEvent.oSource;
+					var oMonth = oEvent.getSource();
 					var aSelectedDates = oMonth.getSelectedDates();
 					var oDate;
 					if (aSelectedDates.length > 0 ) {
@@ -342,21 +346,20 @@
 				}
 			}).placeAt("sample3");
 
-			new sap.ui.commons.Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
-			var oListBox = new sap.ui.commons.ListBox("LB",{
+			new sap.m.Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
+			var oListBox = new sap.m.Select("LB",{
 				editable: false,
-				visibleItems: 10,
 				width: "8em"
 			}).placeAt("event3");
 
-			var oBtn = new sap.ui.commons.ToggleButton("button4",{
+			var oBtn = new sap.m.ToggleButton("button4",{
 				text : "Toggle week numbers",
 				press: function (oEvent) {
 					var oMonth = sap.ui.getCore().byId("Month3");
 					oMonth.setShowWeekNumbers(!oMonth.getShowWeekNumbers());
 				}
 			}).placeAt("event3");
-
+		});
 		</script>
 
 	</head>

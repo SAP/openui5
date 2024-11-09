@@ -99,30 +99,29 @@ sap.ui.define([
 		width: "320px",
 		legend: "Legend1",
 		select: function(oEvent){
-			var oTF = Element.getElementById("TF1");
-			var oCalendar = oEvent.oSource;
+			var oInput = Element.getElementById("Input1");
+			var oCalendar = oEvent.getSource();
 			var aSelectedDates = oCalendar.getSelectedDates();
 			var oDate;
 			if (aSelectedDates.length > 0 ) {
 				oDate = aSelectedDates[0].getStartDate();
-				oTF.setValue(oFormatYyyymmdd.format(oDate));
+				oInput.setValue(oFormatYyyymmdd.format(oDate));
 			} else {
-				oTF.setValue("");
+				oInput.setValue("");
 			}
 		},
 		cancel: function(oEvent){
 			MessageToast.show("Cancel");
 		},
 		startDateChange: function(oEvent){
-			var oTF = Element.getElementById("TF2");
-			var oCalendar = oEvent.oSource;
+			var oInput = Element.getElementById("Input2");
+			var oCalendar = oEvent.getSource();
 			var oDate = oCalendar.getStartDate();
-			oTF.setValue(oFormatYyyymmdd.format(oDate));
+			oInput.setValue(oFormatYyyymmdd.format(oDate));
 		}
 	});
 
-	var oSel = new Input("TF1", {
-		editable: true,
+	var oSel = new Input("Input1", {
 		width: "100%",
 		placeholder: "yyyyMMdd",
 		change: function(oEvent){
@@ -145,26 +144,24 @@ sap.ui.define([
 		}
 	}).addStyleClass("leftMargin");
 
-	var oStart = new Input("TF2", {
-		editable: true,
+	var oStart = new Input("Input2", {
 		width: "100%",
 		placeholder: "yyyyMMdd",
 		change: function(oEvent){
-			var oTF = oEvent.oSource;
+			var oInput = oEvent.getSource();
 			var sValue = oEvent.getParameter('newValue');
 			var oCalendar = Element.getElementById("Cal1");
 			var oDate = oFormatYyyymmdd.parse(sValue);
 			if (oDate) {
 				oCalendar.setStartDate(oDate);
-				oTF.setValueState(ValueState.None);
+				oInput.setValueState(ValueState.None);
 			} else {
-				oTF.setValueState(ValueState.Error);
+				oInput.setValueState(ValueState.Error);
 			}
 		}
 	}).addStyleClass("leftMargin");
 
-	var oMin = new Input("TF-min", {
-		editable: true,
+	var oMin = new Input("Input-min", {
 		width: "100%",
 		placeholder: "yyyyMMdd",
 		change: function(oEvent){
@@ -178,8 +175,7 @@ sap.ui.define([
 		}
 	}).addStyleClass("leftMargin");
 
-	var oMax = new Input("TF-max", {
-		editable: true,
+	var oMax = new Input("Input-max", {
 		width: "100%",
 		placeholder: "yyyyMMdd",
 		change: function(oEvent){
@@ -204,10 +200,10 @@ sap.ui.define([
 								text: "focus today",
 								press: function(oEvent){
 									Element.getElementById("Cal1").focusDate(UI5Date.getInstance());
-									var oTF = Element.getElementById("TF2");
+									var oInput = Element.getElementById("Input2");
 									var oCalendar = Element.getElementById("Cal1");
 									var oDate = oCalendar.getStartDate();
-									oTF.setValue(oFormatYyyymmdd.format(oDate));
+									oInput.setValue(oFormatYyyymmdd.format(oDate));
 								}
 							}),
 							new ToggleButton({
@@ -324,34 +320,34 @@ sap.ui.define([
 		days: 7,
 		intervalSelection: true,
 		select: function(oEvent){
-			var oTF1 = Element.getElementById("TF2-start");
-			var oTF2 = Element.getElementById("TF2-end");
-			var oCalendar = oEvent.oSource;
+			var oInput1 = Element.getElementById("Input2-start");
+			var oInput2 = Element.getElementById("Input2-end");
+			var oCalendar = oEvent.getSource();
 			var aSelectedDates = oCalendar.getSelectedDates();
 			if (aSelectedDates.length > 0 ) {
 				var oDate = aSelectedDates[0].getStartDate();
 				if (oDate) {
-					oTF1.setValue(oFormatYyyymmdd.format(oDate));
+					oInput1.setValue(oFormatYyyymmdd.format(oDate));
 				} else {
-					oTF1.setValue("");
+					oInput1.setValue("");
 				}
 				oDate = aSelectedDates[0].getEndDate();
 				if (oDate) {
-					oTF2.setValue(oFormatYyyymmdd.format(oDate));
+					oInput2.setValue(oFormatYyyymmdd.format(oDate));
 				} else {
-					oTF2.setValue("");
+					oInput2.setValue("");
 				}
 			} else {
-				oTF1.setValue("");
-				oTF2.setValue("");
+				oInput1.setValue("");
+				oInput2.setValue("");
 			}
 		}
 	});
 
-	oStart  = new Input("TF2-start", {
-		editable: false
+	oStart  = new Input("Input2-start", {
+	editable: false
 	});
-	var oEnd = new Input("TF2-end", {
+	var oEnd = new Input("Input2-end", {
 		editable: false
 	});
 
@@ -379,7 +375,7 @@ sap.ui.define([
 		singleSelection: false,
 		select: function(oEvent){
 			var oLB = Element.getElementById("LB");
-			var oCalendar = oEvent.oSource;
+			var oCalendar = oEvent.getSource();
 			var aSelectedDates = oCalendar.getSelectedDates();
 			var oDate;
 			if (aSelectedDates.length > 0 ) {

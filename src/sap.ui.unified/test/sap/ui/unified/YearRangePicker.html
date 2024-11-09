@@ -13,6 +13,7 @@
 				src="../../../../resources/sap-ui-core.js">
 		</script>
 		<script>
+		sap.ui.getCore().attachInit(function() {
 			sap.ui.require([
 				"sap/m/App",
 				"sap/m/Page",
@@ -41,7 +42,7 @@
 								new Input("I1", {
 									placeholder: "Enter a year...",
 									change: function(oEvent){
-										var oInput = oEvent.oSource,
+										var oInput = oEvent.getSource(),
 											sValue = oEvent.getParameter('newValue'),
 											oYRP = sap.ui.getCore().byId("YRP1"),
 											iYear, oDate;
@@ -60,7 +61,7 @@
 								new YearRangePicker("YRP1", {
 									select: function(oEvent) {
 										var oInput = sap.ui.getCore().byId("I1"),
-											oYRP = oEvent.oSource,
+											oYRP = oEvent.getSource(),
 											oDate = new UniversalDate(oYRP.getDate());
 
 										oInput.setValue(oDate.getFullYear());
@@ -73,7 +74,7 @@
 
 				new App().addPage(oPage).placeAt("body");
 			});
-
+		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody"></body>
