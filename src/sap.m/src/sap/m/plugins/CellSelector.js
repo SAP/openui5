@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Element",
-	"sap/m/library"
-], function (PluginBase, Localization, deepEqual, KeyCodes, Element, library) {
+	"sap/m/library",
+	"sap/ui/core/InvisibleRenderer"
+], function (PluginBase, Localization, deepEqual, KeyCodes, Element, library, InvisibleRenderer) {
 	"use strict";
 
 	const ListMode = library.ListMode;
@@ -1135,8 +1136,14 @@ sap.ui.define([
 		return aRows.find((oRow) => fnGetIndex(oRow) == iRow);
 	}
 
-	function getCellDOM(aCells, iCol, sClasses) {
-		return aCells[iCol]?.$().closest(sClasses)[0];
+	function getCellDOM(oCell, sClasses) {
+		let oCellRef = oCell?.$().closest(sClasses)[0];
+
+		if (!oCellRef && !oCell.getVisible()) {
+			const oInvisibleCell = document.getElementById(InvisibleRenderer.createInvisiblePlaceholderId(oCell));
+			oCellRef = oInvisibleCell?.closest(sClasses);
+		}
+		return oCellRef;
 	}
 
 	/**
@@ -1221,18 +1228,18 @@ sap.ui.define([
 			 * Retrieve the cell reference for a given position
 			 * @param {sap.ui.table.Table} oTable table instance
 			 * @param {sap.m.plugins.CellSelector.CellPosition} mPosition position of cell
-			 * @param {boolean} bRange
+			 * @param {boolean} bRange whether the cell is part of a range
 			 * @returns {HTMLElement|undefined} cell's DOM element or undefined if the row or column index are invalid
 			 */
 			getCellRef: function (oTable, mPosition, bRange) {
 				const oRow = getRow(oTable.getRows(), mPosition.rowIndex, bRange, (oRow) => oRow?.getIndex());
+				const oColumn = this.getVisibleColumns(oTable)[mPosition.colIndex];
 
-				if (!oRow) {
-					return;
+				if (!oRow || !oColumn) {
+					return null;
 				}
 
-				const oColumn = this.getVisibleColumns(oTable)[mPosition.colIndex];
-				return oColumn && getCellDOM(oRow.getCells(), mPosition.colIndex, this.selectableCells);
+				return getCellDOM(oRow.getCells()[mPosition.colIndex], this.selectableCells);
 			},
 			/**
 			 * Retrieve cell information for a given DOM element.
@@ -1492,15 +1499,16 @@ sap.ui.define([
 			 * Retrieves the cell reference for a given position.
 			 * @param {sap.m.Table} oTable Table instance
 			 * @param {sap.m.plugins.CellSelector.CellPosition} mPosition Position of cell
-			 * @param {boolean} bRange
+			 * @param {boolean} bRange Whether the cell is part of a range
 			 * @returns {HTMLElement|undefined} DOM reference of the cell, or undefined if the row or column index is invalid
 			 */
 			getCellRef: function (oTable, mPosition, bRange) {
 				const aRows = this._getVisibleItems(oTable);
 				const oRow = getRow(oTable.getItems(), mPosition.rowIndex, bRange, (oRow) => aRows.indexOf(oRow));
+				const oColumn = this.getVisibleColumns(oTable)[mPosition.colIndex];
 
-				if (!oRow) {
-					return;
+				if (!oRow || !oColumn) {
+					return null;
 				}
 
 				if (oRow.isGroupHeader()) {
@@ -1511,8 +1519,7 @@ sap.ui.define([
 					return oRow.$Popin()[0].querySelector(".sapMListTblSubRowCell");
 				}
 
-				const oColumn = this.getVisibleColumns(oTable)[mPosition.colIndex];
-				return oColumn && getCellDOM(oRow.getCells(), oColumn.getInitialOrder(), this.selectableCells);
+				return getCellDOM(oRow.getCells()[oColumn.getInitialOrder()], this.selectableCells);
 			},
 			/**
 			 * Retrieves cell information for a given DOM element.

@@ -37,7 +37,7 @@ sap.ui.define([
 
 	/**
 	 * @namespace sap.ui.fl.apply._internal.preprocessors.ComponentLifecycleHooks
-	 * @since Since 1.114
+	 * @since 1.114
 	 * @author SAP SE
 	 *
 	 * @private

@@ -13,7 +13,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Eventing
+	 * @class A simple eventing implementation that manages listeners and can fire events.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -21,6 +21,7 @@ sap.ui.define([
 	 * @since 1.120.0
 	 * @private
 	 * @ui5-restricted sap.ui.core sap/base/i18n
+	 * @alias module:sap/base/Eventing
 	 */
 	class Eventing {
 		#mEventRegistry = {};

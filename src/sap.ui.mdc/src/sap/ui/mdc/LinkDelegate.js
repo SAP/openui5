@@ -123,7 +123,7 @@ sap.ui.define([
 	 * @public
 	 * @param {sap.ui.mdc.Link} oLink Instance of the <code>Link</code>
 	 * @param {sap.ui.mdc.link.Panel} oPanel Instance of the <code>Panel</code>
-	 * @returns {Promise<{string, sap.ui.core.Control}>} Once resolved, an <code>Object</code> containing the title string and an <code>Control</code> which is referenced as arialabelledBy.
+	 * @returns {Promise<{sTitle: string, oLabelledByControl: sap.ui.core.Control}>} Once resolved, an <code>Object</code> containing the title string and an <code>Control</code> which is referenced as arialabelledBy.
 	 */
 	LinkDelegate.fetchPopoverTitle = function(oLink, oPanel) {
 		if (!oLink) {

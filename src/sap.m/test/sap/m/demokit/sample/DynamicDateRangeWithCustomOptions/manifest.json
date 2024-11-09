@@ -23,6 +23,7 @@
 				"files": [
 					"CustomPreviousXWeekend.js",
 					"CustomPreviousXWorkWeek.js",
+					"CustomLastChristmas.js",
 					"DynamicDateRangeWithCustomOptions.view.xml",
 					"DynamicDateRangeWithCustomOptions.controller.js",
 					"manifest.json"

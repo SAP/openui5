@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Theming",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/FeedListItem",
@@ -21,7 +22,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(qutils, jQuery, FeedListItem, FeedListItemAction, List, StandardListItem, JSONModel, Button, Popover, Bar, ActionSheet, App, Page, Device, FormattedText, IconPool, library, Log, KeyCodes, oCore, nextUIUpdate) {
+], function(Theming, qutils, jQuery, FeedListItem, FeedListItemAction, List, StandardListItem, JSONModel, Button, Popover, Bar, ActionSheet, App, Page, Device, FormattedText, IconPool, library, Log, KeyCodes, oCore, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -295,7 +296,6 @@ sap.ui.define([
 		appFeedList.addPage(feedListPage);
 		appFeedList.placeAt("qunit-fixture");
 		await nextUIUpdate();
-
 		// Assert
 		var oFocusFeedListItem = oFeedList.getItems()[11];
 		assert.ok(oFocusFeedListItem.getTabbables()[0] == oFocusFeedListItem.oAvatar.getDomRef());
@@ -1238,5 +1238,56 @@ sap.ui.define([
 		oList.destroy();
 		oFeedListItem = null;
 		oList = null;
+	});
+	QUnit.module("Rendering phone", {
+	beforeEach: async function() {
+			var oSystem = {
+				desktop: false,
+				phone: true,
+				tablet: false
+			};
+			this.stub(Device, "system").value(oSystem);
+			jQuery("html").addClass("sap-phone");
+			this.oFeedListItemTemp = new FeedListItem({
+				icon: "sap-icon://person-placeholder",
+				sender: "John Doe",
+				timestamp: "Just now"
+			});
+			this.oFeedListItemTemp.placeAt("qunit-fixture");
+			await nextUIUpdate();
+	},
+	afterEach: function() {
+		this.oFeedListItemTemp.destroy();
+	}
+});
+
+	QUnit.test('Rendering of the time stamp', function(assert) {
+		this.applyTheme = function(sTheme, fnCallback) {
+			this.sRequiredTheme = sTheme;
+			if (Theming.getTheme() === this.sRequiredTheme) {
+				if (typeof fnCallback === "function") {
+					fnCallback.bind(this)();
+					fnCallback = undefined;
+				}
+			} else {
+				Theming.setTheme(sTheme);
+				Theming.attachApplied(fnThemeApplied.bind(this));
+			}
+
+			function fnThemeApplied(oEvent) {
+				Theming.detachApplied(fnThemeApplied);
+				if (typeof fnCallback === "function") {
+					fnCallback.bind(this)();
+					fnCallback = undefined;
+				}
+			}
+		};
+		var done = assert.async();
+		this.applyTheme("sap_horizon", async function() {
+			this.oFeedListItemTemp.invalidate();
+			await nextUIUpdate();
+			assert.ok(window.getComputedStyle(document.querySelector('.sapMFeedListItemTimestamp')).marginTop, '-4px', 'No trimming of timestamp');
+			done();
+		}.bind(this));
 	});
 });

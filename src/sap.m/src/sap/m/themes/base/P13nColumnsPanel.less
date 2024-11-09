@@ -3,26 +3,25 @@
 /* Base theme                              */
 /* ======================================= */
 
-.sapMP13nColumnsPanel{
-  color: @sapUiBaseText;
+.sapMP13nColumnsPanel {
+	color: var(--sapTextColor);
 }
 
 .sapMP13nColumnsPanel .sapMLIB.sapMLIBSelected,
 .sapMP13nColumnsPanel .sapMLIB.sapMLIBSelected > td {
-  background-color: transparent;
+	background-color: transparent;
 }
 
 .sapMP13nColumnsPanel .sapMListBGTranslucent .sapMLIB.sapMListTblRow.sapMP13nColumnsPanelItemSelected,
 .sapMP13nColumnsPanel .sapMListBGTranslucent .sapMLIB.sapMListTblRow.sapMP13nColumnsPanelItemSelected:focus,
 .sapMP13nColumnsPanel .sapMListBGTranslucent .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover).sapMListTblRow.sapMP13nColumnsPanelItemSelected,
-.sapMP13nColumnsPanel .sapMListBGTranslucent .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover).sapMListTblRow.sapMP13nColumnsPanelItemSelected:focus
-{
-	background-color: @sapUiListSelectionBackgroundColor;
+.sapMP13nColumnsPanel .sapMListBGTranslucent .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover).sapMListTblRow.sapMP13nColumnsPanelItemSelected:focus {
+	background-color: var(--sapList_SelectionBackgroundColor);
 }
 
 .sapMP13nColumnsPanel .sapMLIBActive .sapMText,
 .sapMP13nColumnsPanel .sapMLIBActive .sapMListTblCell .sapMText {
-	color: @sapUiListTextColor;
+	color: var(--sapList_TextColor);
 }
 
 .sapMP13nColumnsPanel .sapMLIBActive .sapMCbBg,
@@ -35,14 +34,14 @@
 .sapMP13nColumnsPanel .sapMLIBActive .sapMCbBg.sapMCbMarkChecked,
 .sapMP13nColumnsPanel .sapMLIBActive .sapMCbBg.sapMCbBgDis,
 .sapMP13nColumnsPanel .sapMLIBActive .sapMCbBg.sapMCbBgDis.sapMCbMarkChecked {
-	border-color: @sapUiFieldBorderColor;
+	border-color: var(--sapField_BorderColor);
 }
 
 .sapMP13nColumnsPanel .sapMLIBActive .sapMCbBg.sapMCbMarkChecked::before {
-	color: @sapUiSelected;
+	color: var(--sapSelectedColor);
 }
 
 html.sap-desktop .sapMP13nColumnsPanel .sapMLIBSelected:not(.sapMLIBActive):not(.sapMALI):hover,
 html.sap-desktop .sapMP13nColumnsPanel .sapMLIBSelected:not(.sapMLIBActive):not(.sapMALI):hover > td {
-	background-color: @sapUiListHoverBackground;
+	background-color: var(--sapList_Hover_Background);
 }

@@ -9474,6 +9474,86 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: "Retry-After" handling: A request for $metadata is the 1st to encounter 503.
+	// JIRA: CPOUI5ODATAV4-2770
+	QUnit.test('503, "Retry-After" handling: $metadata', async function (assert) {
+		const aBatchPayloads = [];
+		TestUtils.onRequest((sPayload, sRequestLine) => {
+			aBatchPayloads.push(sPayload || sRequestLine);
+		});
+
+		let bAnswerWith503 = false;
+		const oModel = this.createModel(sTeaBusi, {}, {
+			// initial GET works just fine
+			[sTeaBusi + "$metadata"] : {source : "odata/v4/data/metadata.xml"},
+			"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
+				: [{ // cross-service reference may fail at first try
+					code : 503,
+					headers : {"Retry-After" : "42"},
+					ifMatch : () => bAnswerWith503,
+					message : {
+						error : {code : "DB_MIGRATION", message : "DB migration in progress"}
+					}
+				}, {
+					source : "odata/v4/data/metadata_tea_busi_product.xml"
+				}]
+		});
+		oModel.$keepSend = true; // do not stub sendBatch/-Request
+
+		let iCallbackCount = 0;
+		let fnResolveRetryAfter;
+		oModel.setRetryAfterHandler((oError) => {
+			iCallbackCount += 1;
+			assert.ok(oError instanceof Error);
+			assert.strictEqual(oError.message, "DB migration in progress");
+			const iSeconds = (oError.retryAfter.getTime() - Date.now()) / 1000;
+			assert.ok(iSeconds > 41 && iSeconds < 43, `${iSeconds} roughly 42 seconds`);
+			return new Promise((resolve) => {
+				fnResolveRetryAfter = resolve;
+			});
+		});
+
+		await this.createView(assert, "", oModel);
+
+		assert.deepEqual(aBatchPayloads, [], "no requests yet");
+
+		assert.strictEqual(
+			await oModel.getMetaModel().requestObject("/TEAMS/MEMBER_COUNT/$Type"),
+			"Edm.Int32");
+
+		assert.strictEqual(aBatchPayloads.shift(), "GET " + sTeaBusi + "$metadata",
+			"main $metadata");
+		assert.deepEqual(aBatchPayloads, []);
+
+		bAnswerWith503 = true;
+
+		// code under test
+		const oPromise = oModel.getMetaModel().requestObject(
+			"/TEAMS/TEAM_2_EMPLOYEES/EMPLOYEE_2_EQUIPMENTS/EQUIPMENT_2_PRODUCT/ID/$Type");
+
+		await resolveLater(undefined, /*iDelay*/10); // autoRespondAfter defaults to 10ms
+
+		const sExpectedRequestLine
+			= "GET /sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata";
+		assert.strictEqual(aBatchPayloads.shift(), sExpectedRequestLine,
+			"cross-service reference $metadata failed at first try");
+		assert.deepEqual(aBatchPayloads, []);
+		assert.strictEqual(iCallbackCount, 1);
+
+		bAnswerWith503 = false;
+		fnResolveRetryAfter();
+
+		assert.strictEqual(await oPromise, "Edm.Int32");
+
+		assert.strictEqual(aBatchPayloads.shift(), sExpectedRequestLine,
+			"cross-service reference $metadata succeeded at second try");
+		assert.deepEqual(aBatchPayloads, []);
+		assert.strictEqual(iCallbackCount, 1, "not called again");
+
+		TestUtils.onRequest(null);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Table gets a binding context for which data was already loaded and then a refresh
 	// is performed synchronously.
 	// SNOW: CS20240007657519

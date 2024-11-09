@@ -49,4 +49,15 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(Sorter.defaultComparator("ä", "z"), 1);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getPath, isDescending", function (assert) {
+		const oSorter = new Sorter("~path", "~descending");
+
+		// code under test
+		assert.strictEqual(oSorter.getPath(), "~path");
+
+		// code under test
+		assert.strictEqual(oSorter.isDescending(), "~descending");
+	});
 });
