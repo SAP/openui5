@@ -1,4 +1,4 @@
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/m/library",
 	"sap/ui/layout/form/Form",
@@ -84,11 +84,13 @@ sap.ui.require([
 			});
 			break;
 
+		/** @deprecated */
 		case "RL":
 			oLayout = new ResponsiveLayout("RL", {
 			});
 			break;
 
+		/** @deprecated */
 		case "GL":
 			var bSingleColumn = Element.getElementById("CB-singleColumn").getSelected();
 			oLayout = new GridLayout("GL", {
@@ -135,10 +137,14 @@ sap.ui.require([
 				if (i == 1){
 					// for second field use LayoutData
 					oControl.setLayoutData(new VariantLayoutData({
-						multipleLayoutData: [new GridElementData({hCells: "3"}),
-						                     new GridData({span: "XL3 L3 M3 S3"}),
-						                     new ResponsiveFlowLayoutData({weight: 3}),
-						                     new ColumnElementData({cellsLarge: 3, cellsSmall: 3})]}));
+						multipleLayoutData: [
+							/** @deprecated */
+							new GridElementData({hCells: "3"}),
+							new GridData({span: "XL3 L3 M3 S3"}),
+							new ResponsiveFlowLayoutData({weight: 3}),
+							new ColumnElementData({cellsLarge: 3, cellsSmall: 3})
+						]})
+					);
 				}
 				oElement.addField(oControl);
 			}
@@ -156,10 +162,14 @@ sap.ui.require([
 					new FormElement({
 						label: "Layout",
 						fields: [new Select("Sel_Layout",{ selectedKey: "RGL",
-							items: [new ListItem({key: "RGL", text: "ResponsiveGridLayout"}),
-											new ListItem({key: "RL", text: "ResponsiveLayout"}),
-											new ListItem({key: "GL", text: "Grid"}),
-											new ListItem({key: "CL", text: "ColumnLayout"})],
+							items: [
+								new ListItem({key: "RGL", text: "ResponsiveGridLayout"}),
+								/** @deprecated */
+								new ListItem({key: "RL", text: "ResponsiveLayout"}),
+								/** @deprecated */
+								new ListItem({key: "GL", text: "Grid"}),
+								new ListItem({key: "CL", text: "ColumnLayout"})
+							],
 							change: handleLayoutChange
 						})]
 					}),
@@ -319,6 +329,7 @@ sap.ui.require([
 					})
 				]
 			}),
+			/** @deprecated */
 			new FormContainer("C-RL",{
 				title: "Layout parameter",
 				visible: false,
@@ -332,6 +343,7 @@ sap.ui.require([
 					})
 				]
 			}),
+			/** @deprecated */
 			new FormContainer("C-GL",{
 				title: "Layout parameter",
 				visible: false,

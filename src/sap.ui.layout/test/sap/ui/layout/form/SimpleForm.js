@@ -1,4 +1,4 @@
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Element",
 	"sap/ui/layout/library",
@@ -70,19 +70,24 @@ sap.ui.require([
 
 	var oButtonLayout = new SegmentedButton("MyLayout", {
 		selectedKey: "L3", // to test default
-		items: [ new SegmentedButtonItem({key: "L1", text: "ResponsiveLayout"}),
-		         new SegmentedButtonItem({key: "L2", text: "GridLayout"}),
-		         new SegmentedButtonItem({key: "L3", text: "ResponsiveGridLayout"}),
-		         new SegmentedButtonItem({key: "L4", text: "ColumnLayout"})
-		        ],
+		items: [
+			/** @deprecated */
+			new SegmentedButtonItem({key: "L1", text: "ResponsiveLayout"}),
+			/** @deprecated */
+			new SegmentedButtonItem({key: "L2", text: "GridLayout"}),
+			new SegmentedButtonItem({key: "L3", text: "ResponsiveGridLayout"}),
+			new SegmentedButtonItem({key: "L4", text: "ColumnLayout"})
+		],
 		selectionChange: function(oEvent) {
 			var oItem = oEvent.getParameter("item");
 			switch (oItem.getKey()) {
+			/** @deprecated */
 			case "L1":
 				oSimpleForm1.setLayout(LayoutLib.form.SimpleFormLayout.ResponsiveLayout);
 				oSimpleForm2.setLayout(LayoutLib.form.SimpleFormLayout.ResponsiveLayout);
 				break;
 
+			/** @deprecated */
 			case "L2":
 				oSimpleForm1.setLayout(LayoutLib.form.SimpleFormLayout.GridLayout);
 				oSimpleForm2.setLayout(LayoutLib.form.SimpleFormLayout.GridLayout);
@@ -120,6 +125,7 @@ sap.ui.require([
 					new Input("I2",{value:"Value 2/1"}),
 					new Input("I3",{value:"Value 2/2",
 						layoutData: new VariantLayoutData({multipleLayoutData: [
+						                                   /** @deprecated */
 						                                   new GridElementData({hCells: "1"}),
 						                                   new GridData({span: "L2 M2 S2"}),
 						                                   new ColumnElementData({cellsSmall: 2, cellsLarge: 2})]})}),
@@ -243,6 +249,7 @@ sap.ui.require([
 			new Text("T2",{text:"Value 2/1"}),
 			new Text("T3",{text:"Value 2/2",
 				layoutData: new VariantLayoutData({multipleLayoutData: [
+					/** @deprecated */
 					new GridElementData({hCells: "1"}),
 					new GridData({span: "L2 M2 S2"}),
 					new ColumnElementData({cellsSmall: 2, cellsLarge: 2})]})}),

@@ -1,4 +1,4 @@
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Element",
 	"sap/ui/layout/library",

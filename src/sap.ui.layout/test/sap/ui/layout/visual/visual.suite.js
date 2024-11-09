@@ -9,9 +9,11 @@ module.exports = [
 	"DynamicSideContent.spec.js",
 	"ResponsiveColumnLayout.spec.js",
 	"ResponsiveGridLayoutVisual.spec.js",
+	/** @deprecated */
 	"ResponsiveLayoutVisual.spec.js",
 	"ResponsiveSplitter.spec.js",
 	"ResponsiveSplitterDefaultPane.spec.js",
+	/** @deprecated */
 	"GridLayoutVisual.spec.js",
 	"ColumnLayoutVisual.spec.js",
 	"HorizontalLayout.spec.js",

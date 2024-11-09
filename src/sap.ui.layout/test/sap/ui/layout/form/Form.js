@@ -1,4 +1,4 @@
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Element",
 	"sap/ui/layout/library",
@@ -92,12 +92,15 @@ sap.ui.require([
 
 	var oButtonLayout = new SegmentedButton("MyLayout", {
 		selectedKey: "L1",
-		items: [ new SegmentedButtonItem({key: "L1", text: "FormLayout"}),
-		         new SegmentedButtonItem({key: "L2", text: "ResponsiveLayout"}),
-		         new SegmentedButtonItem({key: "L3", text: "GridLayout"}),
-		         new SegmentedButtonItem({key: "L4", text: "ResponsiveGridLayout"}),
-		         new SegmentedButtonItem({key: "L5", text: "ColumnLayout"})
-		        ],
+		items: [
+			new SegmentedButtonItem({key: "L1", text: "FormLayout"}),
+			/** @deprecated */
+			new SegmentedButtonItem({key: "L2", text: "ResponsiveLayout"}),
+			/** @deprecated */
+			new SegmentedButtonItem({key: "L3", text: "GridLayout"}),
+			new SegmentedButtonItem({key: "L4", text: "ResponsiveGridLayout"}),
+			new SegmentedButtonItem({key: "L5", text: "ColumnLayout"})
+		],
 		selectionChange: function(oEvent) {
 			var oItem = oEvent.getParameter("item");
 			switch (oItem.getKey()) {
@@ -107,12 +110,14 @@ sap.ui.require([
 				oForm3.setLayout(oLayoutA3);
 				break;
 
+			/** @deprecated */
 			case "L2":
 				oForm1.setLayout(oLayout2);
 				oForm2.setLayout(oLayoutB);
 				oForm3.setLayout(oLayoutB3);
 				break;
 
+			/** @deprecated */
 			case "L3":
 				oForm1.setLayout(oLayout3);
 				oForm2.setLayout(oLayoutC);
@@ -145,7 +150,9 @@ sap.ui.require([
 	});
 
 	var oLayout1 = new FormLayout("L1");
+	/** @deprecated */
 	var oLayout2 = new ResponsiveLayout("L2");
+	/** @deprecated */
 	var oLayout3 = new GridLayout("L3");
 	var oLayout4 = new ResponsiveGridLayout("L4");
 	var oLayout5 = new ColumnLayout("L5");
@@ -195,13 +202,19 @@ sap.ui.require([
 				formElements: [
 					new FormElement({
 						label: new Label({text:"Street"}),
-						fields: [new Input(),
-						         new Input({
-													layoutData: new VariantLayoutData({
-														multipleLayoutData: [new GridElementData({hCells: "1"}),
-														                     new GridData({span: "L2 M2 S2"}),
-														                     new ColumnElementData({cellsSmall: 2, cellsLarge: 2})]})
-						         })]
+						fields: [
+							new Input(),
+							new Input({
+								layoutData: new VariantLayoutData({
+									multipleLayoutData: [
+										/** @deprecated */
+										new GridElementData({hCells: "1"}),
+										new GridData({span: "L2 M2 S2"}),
+										new ColumnElementData({cellsSmall: 2, cellsLarge: 2})
+									]
+								})
+							})
+						]
 					}),
 					new FormElement({
 						label: "City",
@@ -209,12 +222,18 @@ sap.ui.require([
 					}),
 					new FormElement({
 						label: new Label({text: "Post code"}),
-						fields: [new Input({
-													layoutData: new VariantLayoutData({
-														multipleLayoutData: [new GridElementData({hCells: "2"}),
-														                     new GridData({span: "L2 M2 S2"}),
-														                     new ColumnElementData({cellsSmall: 2, cellsLarge: 2})]})
-											})]
+						fields: [
+							new Input({
+								layoutData: new VariantLayoutData({
+									multipleLayoutData: [
+										/** @deprecated */
+										new GridElementData({hCells: "2"}),
+										new GridData({span: "L2 M2 S2"}),
+										new ColumnElementData({cellsSmall: 2, cellsLarge: 2})
+									]
+								})
+							})
+						]
 					}),
 					new FormElement({
 						label: "Country",
@@ -225,8 +244,12 @@ sap.ui.require([
 						})]
 					})
 				],
+				/** @deprecated */
 				layoutData: new VariantLayoutData({
-					multipleLayoutData: [new GridContainerData({halfGrid: true})]})
+					multipleLayoutData: [
+						new GridContainerData({halfGrid: true})
+					]
+				})
 			}),
 			new FormContainer("C3",{
 				title: new Title({text: "Education", emphasized: true}),
@@ -251,6 +274,7 @@ sap.ui.require([
 						fields: [new Input({value: 'you shold not see me'})]
 					})
 				],
+				/** @deprecated */
 				layoutData: new VariantLayoutData({
 					multipleLayoutData: [new GridContainerData({halfGrid: true})]})
 			}),
@@ -268,8 +292,12 @@ sap.ui.require([
 															oForm1.insertFormContainer(oContainer, 0);
 														}
 													},
+													/** @deprecated */
 													layoutData: new VariantLayoutData({
-														multipleLayoutData: [new GridElementData({hCells: "2"})]})
+														multipleLayoutData: [
+															new GridElementData({hCells: "2"})
+														]
+													})
 											}),
 											new ToggleButton({text: 'move element',
 												press: function(oEvent) {
@@ -283,6 +311,7 @@ sap.ui.require([
 														oContainer.insertFormElement(oElement, 0);
 													}
 												},
+												/** @deprecated */
 													layoutData: new VariantLayoutData({
 														multipleLayoutData: [new GridElementData({hCells: "2"})]})
 											}),
@@ -295,11 +324,13 @@ sap.ui.require([
 														oForm1.removeStyleClass("sapUiFormLblColon");
 													}
 												},
+												/** @deprecated */
 													layoutData: new VariantLayoutData({
 														multipleLayoutData: [new GridElementData({hCells: "2"})]})
 											})]
 					})
 				],
+				/** @deprecated */
 				layoutData: new VariantLayoutData({
 					multipleLayoutData: [new GridContainerData({halfGrid: true})]})
 			}),
@@ -345,7 +376,9 @@ sap.ui.require([
 	//////////////// Form 2 ////////////////////////////////////////////////////////////////////////////////////////
 
 	var oLayoutA = new FormLayout("L_A");
+	/** @deprecated */
 	var oLayoutB = new ResponsiveLayout("L_B");
+	/** @deprecated */
 	var oLayoutC = new GridLayout("L_C");
 	var oLayoutD = new ResponsiveGridLayout("L_D");
 	var oLayoutE = new ColumnLayout("L_E", {columnsM: 2, columnsL: 3, columnsXL: 4});
@@ -397,6 +430,7 @@ sap.ui.require([
 						label: "Automatic transmission",
 						fields: [new Switch({state: true})]
 						})],
+				/** @deprecated */
 				layoutData: new VariantLayoutData({
 					multipleLayoutData: [new GridContainerData({halfGrid: true})]})
 			}),
@@ -433,6 +467,7 @@ sap.ui.require([
 						fields: [new Input()]
 					})
 				],
+				/** @deprecated */
 				layoutData: new VariantLayoutData({
 					multipleLayoutData: [new GridContainerData({halfGrid: true})]})
 			})
@@ -442,7 +477,9 @@ sap.ui.require([
 	//////////////// Form 3 ////////////////////////////////////////////////////////////////////////////////////////
 
 	var oLayoutA3 = new FormLayout("L_A3");
+	/** @deprecated */
 	var oLayoutB3 = new ResponsiveLayout("L_B3");
+	/** @deprecated */
 	var oLayoutC3 = new GridLayout("L_C3");
 	var oLayoutD3 = new ResponsiveGridLayout("L_D3");
 	var oLayoutE3 = new ColumnLayout("L_E3");
@@ -471,8 +508,10 @@ sap.ui.require([
 										oContainer.setTitle();
 									}
 								}
-							})]
-						})]
+							}
+						)]
+					})
+				]
 			})
 		]
 	});

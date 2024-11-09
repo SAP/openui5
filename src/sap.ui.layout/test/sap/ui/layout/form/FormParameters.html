@@ -1,18 +1,22 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-
+		<meta charset="utf-8">
 		<meta name='viewport' content='width=device-width, initial-scale=1.0'>
 		<title>Form - sap.ui.layout.form</title>
 		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.layout.form.Form.gif">
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
 				data-sap-ui-libs="sap.ui.layout, sap.m"
+				data-sap-ui-on-init="module:local/FormParameters"
+				data-sap-ui-resource-roots='{
+					"local": "./"
+				}'
 				src="../../../../../resources/sap-ui-core.js"></script>
-
-		<script src="FormParameters.js"></script>
-
 	</head>
+
 	<body class="sapUiBody">
 
 		<h1 id="header">Test Page for <code>sap.ui.layout.form.Form</code></h1>
