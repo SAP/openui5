@@ -406,6 +406,15 @@ sap.ui.define([
 		// Act
 		this.oPopover.openBy(this.oButton);
 		document.activeElement.dispatchEvent(new KeyboardEvent("keydown", {
+			keyCode: KeyCodes.F4,
+			bubbles: true
+		}));
+
+		// Assert
+		assert.notOk(oCloseSpy.called, "'close' should not be called");
+
+		// Act
+		document.activeElement.dispatchEvent(new KeyboardEvent("keydown", {
 			keyCode: KeyCodes.ESCAPE,
 			bubbles: true
 		}));

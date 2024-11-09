@@ -42,12 +42,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 			/**
 			 * The panes to be split. The control will show n-1 splitter bars between n controls in this aggregation.
 			 */
-			panes: { type: "sap.ui.core.Element", multiple: true, singularName: "pane" },
-
-			/**
-			 * The panes's splitter.
-			 */
-			_splitter: { type: "sap.ui.layout.AssociativeSplitter", multiple: false, visibility: "hidden" }
+			panes: { type: "sap.ui.core.Element", multiple: true, singularName: "pane" }
 		},
 		events: {
 			/**
@@ -78,8 +73,6 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 			height: "100%",
 			resize: this._onSplitterResize.bind(this)
 		});
-
-		this.setAggregation("_splitter", this._oSplitter);
 	};
 
 	PaneContainer.prototype.exit = function () {
@@ -130,13 +123,6 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 	 */
 	PaneContainer.prototype.getLayoutData = function() {
 		return this._oSplitter.getLayoutData();
-	};
-
-	/**
-	 * Invalidate on layout data change to properly resize the panes
-	 */
-	PaneContainer.prototype.onLayoutDataChange = function () {
-		this.invalidate();
 	};
 
 	PaneContainer.prototype.insertPane = function (oObject, iIndex) {

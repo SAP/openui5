@@ -40,7 +40,7 @@ sap.ui.define([
 		/**
 		 * The theme scoping change Event.
 		 *
-		 * @typedef {Object<string,string>} module:sap/ui/core/ControlBehavior$ChangeEvent
+		 * @typedef {object} module:sap/ui/core/ControlBehavior$ChangeEvent
 		 * @property {string} animationMode Whether the animation mode should be active or not.
 		 * @private
 		 * @ui5-restricted sap.ui.core.theming.ThemeManager

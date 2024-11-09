@@ -118,7 +118,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.SimpleType} oSettings.valueType Configured type for a value
 	 * @param {sap.ui.model.SimpleType} oSettings.additionalValueType Configured type for an additional value
 	 * @returns {Array<sap.ui.mdc.condition.ConditionObject|string>|Promise<array<sap.ui.mdc.condition.ConditionObject|string>>} Array of <code>ConditionObject</code>/<code>string</code> values. If it is not available right away, a <code>Promise</code> is returned.
-	 * @throws {Exception} if the pasted data cannot be converted to conditions
+	 * @throws {Error} if the pasted data cannot be converted to conditions
 	 * @protected
 	 * @since 1.124
 	 */

@@ -33,7 +33,7 @@ sap.ui.define([
 	 *
 	 * @class
 	 * Represents a navigation list menu item.
-	 * @extends sap.ui.unified.MenuItemBase
+	 * @extends sap.ui.unified.MenuItem
 	 *
 	 * @author SAP SE
 	 * @version ${version}

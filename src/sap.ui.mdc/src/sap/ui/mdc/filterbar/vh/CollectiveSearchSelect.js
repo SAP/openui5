@@ -13,7 +13,7 @@ sap.ui.define([
 	 * @param {string} [sId] - ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] - Initial settings for the new control
 	 * @class Can be used to manage the <code>CollectiveSearchSelect</code> control search items.
-	 * @extends sap.m.VariantManagement
+	 * @extends sap.ui.mdc.valuehelp.CollectiveSearchSelect
 	 * @constructor
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
@@ -22,6 +22,9 @@ sap.ui.define([
 	 * @deprecated since 1.124.0 - Please use the <code>sap.ui.mdc.valuehelp.CollectiveSearchSelect</code> control instead.
 	 */
 	const CollectiveSearchSelect = ValueHelpCollectiveSearchSelect.extend("sap.ui.mdc.filterbar.vh.CollectiveSearchSelect", /** @lends sap.ui.mdc.valuehelp.CollectiveSearchSelect.prototype */ {
+		metadata: {
+			library: "sap.ui.mdc"
+		},
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 * @param {sap.ui.core.RenderManager} oRm - <code>RenderManager</code> that can be used for writing to the render output buffer

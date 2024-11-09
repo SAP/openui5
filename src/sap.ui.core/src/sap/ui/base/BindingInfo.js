@@ -197,8 +197,10 @@ sap.ui.define([
 			/**
 			 * Checks whether a BindingInfo is ready to create its Binding.
 			 *
-			 * @param {sap.ui.core.PropertyBindingInfo | sap.ui.core.AggregationBindingInfo | sap.ui.core.ObjectBindingInfo} oBindingInfo The BindingInfo to check
-			 * @param {sap.ui.core.ManagedObject} oObject The bound ManagedObject
+			 * @param {sap.ui.base.ManagedObject.PropertyBindingInfo
+			 *         | sap.ui.base.ManagedObject.AggregationBindingInfo
+			 *         | sap.ui.base.ManagedObject.ObjectBindingInfo} oBindingInfo The BindingInfo to check
+			 * @param {sap.ui.base.ManagedObject} oObject The bound ManagedObject
 			 * @returns {boolean} if the BindingInfo is ready or not
 			 * @private
 			 * @ui5-restricted sap.ui.base, sap.ui.core, sap.ui.model

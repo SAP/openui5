@@ -192,6 +192,7 @@ sap.ui.define([
 		oModelInterface = {
 			fireSessionTimeout : function () {},
 			getGroupProperty : defaultGetGroupProperty,
+			getOrCreateRetryAfterPromise : function () {},
 			isIgnoreETag : function () {},
 			onCreateGroup : function () {},
 			onHttpResponse : function () {},

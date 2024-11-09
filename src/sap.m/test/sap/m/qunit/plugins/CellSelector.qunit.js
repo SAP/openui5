@@ -52,7 +52,7 @@ sap.ui.define([
 			columns: [
 				new GridColumn({ template: new Text({text: "{ProductId}"}) }),
 				new GridColumn({ template: new Text({text: "{Name}"}) }),
-				new GridColumn({ template: new Text({text: "{Category}"}) }),
+				new GridColumn({ template: new Text({text: "{Category}", visible: false}) }),
 				new GridColumn({ template: new Input()}),
 				new GridColumn({ template: new ComboBox()})
 			],
@@ -69,7 +69,7 @@ sap.ui.define([
 			columns: [
 				new MColumn({ header: new Text({text: "ProductId"}) }),
 				new MColumn({ header: new Text({text: "Name"}) }),
-				new MColumn({ header: new Text({text: "Category"}) })
+				new MColumn({ header: new Text({text: "Category"}), visible: false })
 			],
 			items: {
 				path: "/Products",

@@ -89,7 +89,6 @@ sap.ui.define([
 		this.oModelInterface = oModelInterface;
 		this.oOptimisticBatch = null; // optimistic batch processing off
 		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
-		this.oRetryAfterPromise = null;
 		this.mRunningChangeRequests = {}; // map from group ID to a SyncPromise[]
 		this.iSessionTimer = 0;
 		this.iSerialNumber = 0;
@@ -2080,26 +2079,9 @@ sap.ui.define([
 							send(true);
 						}, fnReject);
 					} else if (jqXHR.status === 503 && jqXHR.getResponseHeader("Retry-After")
-							&& (that.oRetryAfterPromise
-								|| that.oModelInterface.getRetryAfterHandler())) {
-						if (!that.oRetryAfterPromise) {
-							const oRetryAfterError = _Helper.createError(jqXHR, "");
-							that.oRetryAfterPromise = that.oModelInterface.getRetryAfterHandler()(
-								oRetryAfterError);
-							that.oRetryAfterPromise.finally(() => {
-								that.oRetryAfterPromise = null;
-							}).catch(() => { /* catch is only needed due to finally */ });
-							that.oRetryAfterPromise.catch((oError) => {
-								// own error reason is not reported to the message model
-								if (oError === oRetryAfterError) {
-									that.oModelInterface
-										.reportError(oError.message, sClassName, oError);
-								} else {
-									oError.$reported = true;
-								}
-							});
-						}
-						that.oRetryAfterPromise.then(send, fnReject);
+							&& that.oModelInterface.getOrCreateRetryAfterPromise(
+								_Helper.createError(jqXHR, ""))) {
+						that.oModelInterface.getOrCreateRetryAfterPromise().then(send, fnReject);
 					} else {
 						sMessage = "Communication error";
 						if (sContextId) {
@@ -2119,8 +2101,9 @@ sap.ui.define([
 				});
 			}
 
-			if (that.oRetryAfterPromise) {
-				that.oRetryAfterPromise.then(send, fnReject);
+			const oRetryAfterPromise = that.oModelInterface.getOrCreateRetryAfterPromise();
+			if (oRetryAfterPromise) {
+				oRetryAfterPromise.then(send, fnReject);
 			} else if (that.oSecurityTokenPromise && sMethod !== "GET") {
 				that.oSecurityTokenPromise.then(send);
 			} else {
@@ -2335,13 +2318,12 @@ sap.ui.define([
 	 * @param {function} oModelInterface.getOptimisticBatchEnabler
 	 *   A function that returns a callback function which controls the optimistic batch handling,
 	 *   see also {@link sap.ui.model.odata.v4.ODataModel#setOptimisticBatchEnabler}
+	 * @param {function} oModelInterface.getOrCreateRetryAfterPromise
+	 *   A function that returns or creates the "Retry-After" promise
 	 * @param {function} oModelInterface.getReporter
 	 *   A catch handler function expecting an <code>Error</code> instance. This function will call
 	 *   {@link sap.ui.model.odata.v4.ODataModel#reportError} if the error has not been reported
 	 *   yet
-	 * @param {function} oModelInterface.getRetryAfterHandler
-	 *   A function that returns the "Retry-After" handler,
-	 *   see also {@link sap.ui.model.odata.v4.ODataModel#setRetryAfterHandler}
 	 * @param {function():boolean} oModelInterface.isIgnoreETag
 	 *   Tells whether an entity's ETag should be actively ignored (If-Match:*) for PATCH requests.
 	 * @param {function} oModelInterface.onCreateGroup

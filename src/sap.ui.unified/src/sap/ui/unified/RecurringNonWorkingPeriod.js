@@ -21,7 +21,7 @@ sap.ui.define([
 	 * A <code>RecurringNonWorkingPeriod</code> for use in a <code>PlanningCalendar</code> and <code>SinglePlanningCalendar</code>.
 	 *
 	 * Applications can inherit from this element to add own fields.
-	 * @extends sap.ui.unified.
+	 * @extends sap.ui.unified.NonWorkingPeriod
 	 * @version ${version}
 	 *
 	 * @constructor

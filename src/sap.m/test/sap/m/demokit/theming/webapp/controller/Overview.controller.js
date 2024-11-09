@@ -133,9 +133,9 @@ sap.ui.define([
 
 			// cache the parameter metadata
 			let aParameterMetadata = [];
-			this.getParameterMetadata().then((aLoadedParameterMetadata) => {
+			this.getParameterMetadata().then(async (aLoadedParameterMetadata) => {
 				aParameterMetadata = aLoadedParameterMetadata;
-				var oData = this.createDataStructure(aParameterMetadata);
+				var oData = await this.createDataStructure(aParameterMetadata);
 				oModel.setData(oData);
 			});
 
@@ -234,10 +234,21 @@ sap.ui.define([
 		},
 
 		//Creates the Data Structure for the table
-		createDataStructure: function (aParameterMetadata) {
+		async createDataStructure(aParameterMetadata) {
 			const oData = {};
 			const oClass = this.getView().getModel('class').getData();
-			const oThemeParameters = Parameters.get();
+
+			const oThemeParameters = await new Promise((resolve) => {
+				const params = Parameters.get({
+					name: aParameterMetadata.map(({name}) => name.trim()),
+					callback(params) {
+						resolve(params);
+					}
+				});
+				if ( params !== undefined ) {
+					resolve(params);
+				}
+			});
 
 			// create the Data structure for the table
 			oData.Data = aParameterMetadata.map((oParam) => {
