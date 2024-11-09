@@ -671,8 +671,8 @@
 						</mdc:selectionDetailsActions>
 
 						<mdc:items>
-							<mdcc:Item id="dim1" type="groupable" name="language_code" role="category" label="Languages"/>
-							<mdcc:Item id="meas1" type="aggregatable" name="averagemetricsWords" role="axis1" label="Words (average)"/>
+							<mdcc:Item id="dim1" type="groupable" propertyKey="language_code" role="category" label="Languages"/>
+							<mdcc:Item id="meas1" type="aggregatable" propertyKey="averagemetricsWords" role="axis1" label="Words (average)"/>
 						</mdc:items>
 					</mdc:Chart>
 
@@ -692,8 +692,8 @@
 						</mdc:noData>
 
 						<mdc:items>
-							<mdcc:Item id="dim1-chart3" type="groupable" name="title" role="category" label="Title"/>
-							<mdcc:Item id="meas1-chart3" type="aggregatable" name="maxmetricsWords" role="axis1" label="Words (max)"/>
+							<mdcc:Item id="dim1-chart3" type="groupable" propertyKey="title" role="category" label="Title"/>
+							<mdcc:Item id="meas1-chart3" type="aggregatable" propertyKey="maxmetricsWords" role="axis1" label="Words (max)"/>
 						</mdc:items>
 					</mdc:Chart>
 
@@ -726,8 +726,8 @@
 						</mdc:selectionDetailsActions>
 
 						<mdc:items>
-							<mdcc:Item id="dim1-chart2" type="groupable" name="title" role="category" label="Title"/>
-							<mdcc:Item id="meas1-chart2" type="aggregatable" name="maxmetricsWords" role="axis1" label="Words (max)"/>
+							<mdcc:Item id="dim1-chart2" type="groupable" propertyKey="title" role="category" label="Title"/>
+							<mdcc:Item id="meas1-chart2" type="aggregatable" propertyKey="maxmetricsWords" role="axis1" label="Words (max)"/>
 						</mdc:items>
 					</mdc:Chart>
 				</VBox>
