@@ -1,4 +1,4 @@
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Element",
 	"sap/ui/layout/library",
@@ -6,8 +6,6 @@ sap.ui.require([
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/layout/GridData",
 	"sap/ui/layout/ResponsiveFlowLayoutData",
-	"sap/ui/layout/form/GridElementData",
-	"sap/ui/layout/form/GridContainerData",
 	"sap/ui/layout/form/ColumnElementData",
 	"sap/ui/layout/form/ColumnContainerData",
 	"sap/ui/core/VariantLayoutData",
@@ -31,7 +29,7 @@ sap.ui.require([
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/m/Bar"
-	],
+],
 	function(
 		CoreLib,
 		Element,
@@ -40,8 +38,6 @@ sap.ui.require([
 		SimpleForm,
 		GridData,
 		ResponsiveFlowLayoutData,
-		GridElementData,
-		GridContainerData,
 		ColumnElementData,
 		ColumnContainerData,
 		VariantLayoutData,
@@ -65,39 +61,26 @@ sap.ui.require([
 		App,
 		Page,
 		Bar
-		) {
+	) {
 	"use strict";
 
 	var oButtonLayout = new SegmentedButton("MyLayout", {
 		selectedKey: "L3", // to test default
-		items: [ new SegmentedButtonItem({key: "L1", text: "ResponsiveLayout"}),
-		         new SegmentedButtonItem({key: "L2", text: "GridLayout"}),
-		         new SegmentedButtonItem({key: "L3", text: "ResponsiveGridLayout"}),
-		         new SegmentedButtonItem({key: "L4", text: "ColumnLayout"})
-		        ],
+		items: [
+			new SegmentedButtonItem({key: "L3", text: "ResponsiveGridLayout"}),
+			new SegmentedButtonItem({key: "L4", text: "ColumnLayout"})
+		],
 		selectionChange: function(oEvent) {
 			var oItem = oEvent.getParameter("item");
 			switch (oItem.getKey()) {
-			case "L1":
-				oSimpleForm1.setLayout(LayoutLib.form.SimpleFormLayout.ResponsiveLayout);
-				oSimpleForm2.setLayout(LayoutLib.form.SimpleFormLayout.ResponsiveLayout);
-				break;
-
-			case "L2":
-				oSimpleForm1.setLayout(LayoutLib.form.SimpleFormLayout.GridLayout);
-				oSimpleForm2.setLayout(LayoutLib.form.SimpleFormLayout.GridLayout);
-				break;
-
 			case "L3":
 				oSimpleForm1.setLayout(LayoutLib.form.SimpleFormLayout.ResponsiveGridLayout);
 				oSimpleForm2.setLayout(LayoutLib.form.SimpleFormLayout.ResponsiveGridLayout);
 				break;
-
 			case "L4":
 				oSimpleForm1.setLayout(LayoutLib.form.SimpleFormLayout.ColumnLayout);
 				oSimpleForm2.setLayout(LayoutLib.form.SimpleFormLayout.ColumnLayout);
 				break;
-
 			default:
 				break;
 			}
@@ -120,9 +103,9 @@ sap.ui.require([
 					new Input("I2",{value:"Value 2/1"}),
 					new Input("I3",{value:"Value 2/2",
 						layoutData: new VariantLayoutData({multipleLayoutData: [
-						                                   new GridElementData({hCells: "1"}),
-						                                   new GridData({span: "L2 M2 S2"}),
-						                                   new ColumnElementData({cellsSmall: 2, cellsLarge: 2})]})}),
+							new GridData({span: "L2 M2 S2"}),
+							new ColumnElementData({cellsSmall: 2, cellsLarge: 2})
+						]})}),
 					new Label({text:"Label 3"}),
 					new Input({value:"Value 3/1"}),
 					new Input({value:"Value 3/2"}),
@@ -243,9 +226,9 @@ sap.ui.require([
 			new Text("T2",{text:"Value 2/1"}),
 			new Text("T3",{text:"Value 2/2",
 				layoutData: new VariantLayoutData({multipleLayoutData: [
-					new GridElementData({hCells: "1"}),
 					new GridData({span: "L2 M2 S2"}),
-					new ColumnElementData({cellsSmall: 2, cellsLarge: 2})]})}),
+					new ColumnElementData({cellsSmall: 2, cellsLarge: 2})
+				]})}),
 			new OverflowToolbar("TB3", {
 				content: [
 					new mTitle("SF2C2-Title", {text: "Title 2", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H6, tooltip: "Title tooltip"}),

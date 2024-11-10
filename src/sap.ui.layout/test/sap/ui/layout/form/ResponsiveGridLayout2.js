@@ -1,4 +1,4 @@
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",

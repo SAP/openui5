@@ -1,18 +1,14 @@
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/m/library",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
 	"sap/ui/layout/form/FormLayout",
-	"sap/ui/layout/form/ResponsiveLayout",
 	"sap/ui/layout/form/ResponsiveGridLayout",
-	"sap/ui/layout/form/GridLayout",
 	"sap/ui/layout/form/ColumnLayout",
 	"sap/ui/layout/GridData",
 	"sap/ui/layout/ResponsiveFlowLayoutData",
-	"sap/ui/layout/form/GridElementData",
-	"sap/ui/layout/form/GridContainerData",
 	"sap/ui/layout/form/ColumnElementData",
 	"sap/ui/layout/form/ColumnContainerData",
 	"sap/ui/core/VariantLayoutData",
@@ -20,7 +16,7 @@ sap.ui.require([
 	"sap/m/Select",
 	"sap/ui/core/ListItem",
 	"sap/m/CheckBox"
-	],
+],
 	function(
 		Element,
 		MLib,
@@ -28,14 +24,10 @@ sap.ui.require([
 		FormContainer,
 		FormElement,
 		FormLayout,
-		ResponsiveLayout,
 		ResponsiveGridLayout,
-		GridLayout,
 		ColumnLayout,
 		GridData,
 		ResponsiveFlowLayoutData,
-		GridElementData,
-		GridContainerData,
 		ColumnElementData,
 		ColumnContainerData,
 		VariantLayoutData,
@@ -43,7 +35,7 @@ sap.ui.require([
 		Select,
 		ListItem,
 		CheckBox
-		) {
+	) {
 	"use strict";
 
 	var handleLayoutChange = function(oEvent){
@@ -83,23 +75,6 @@ sap.ui.require([
 				breakpointXL: parseInt(Element.getElementById("I-breakpointXL").getValue())
 			});
 			break;
-
-		case "RL":
-			oLayout = new ResponsiveLayout("RL", {
-			});
-			break;
-
-		case "GL":
-			var bSingleColumn = Element.getElementById("CB-singleColumn").getSelected();
-			oLayout = new GridLayout("GL", {
-				singleColumn: bSingleColumn
-			});
-			var aContainers = oForm.getFormContainers();
-			for (var i = 0; i < aContainers.length; i++){
-				aContainers[i].setLayoutData(new GridContainerData({halfGrid: true}));
-			}
-			break;
-
 		case "CL":
 			oLayout = new ColumnLayout("CL", {
 				columnsM: parseInt(Element.getElementById("I-columnsM-CL").getValue()),
@@ -109,7 +84,6 @@ sap.ui.require([
 				emptyCellsLarge: parseInt(Element.getElementById("I-emptyCellsLarge").getValue())
 			});
 			break;
-
 		default:
 			oLayout = null;
 			break;
@@ -135,10 +109,12 @@ sap.ui.require([
 				if (i == 1){
 					// for second field use LayoutData
 					oControl.setLayoutData(new VariantLayoutData({
-						multipleLayoutData: [new GridElementData({hCells: "3"}),
-						                     new GridData({span: "XL3 L3 M3 S3"}),
-						                     new ResponsiveFlowLayoutData({weight: 3}),
-						                     new ColumnElementData({cellsLarge: 3, cellsSmall: 3})]}));
+						multipleLayoutData: [
+							new GridData({span: "XL3 L3 M3 S3"}),
+							new ResponsiveFlowLayoutData({weight: 3}),
+							new ColumnElementData({cellsLarge: 3, cellsSmall: 3})
+						]})
+					);
 				}
 				oElement.addField(oControl);
 			}
@@ -156,10 +132,10 @@ sap.ui.require([
 					new FormElement({
 						label: "Layout",
 						fields: [new Select("Sel_Layout",{ selectedKey: "RGL",
-							items: [new ListItem({key: "RGL", text: "ResponsiveGridLayout"}),
-											new ListItem({key: "RL", text: "ResponsiveLayout"}),
-											new ListItem({key: "GL", text: "Grid"}),
-											new ListItem({key: "CL", text: "ColumnLayout"})],
+							items: [
+								new ListItem({key: "RGL", text: "ResponsiveGridLayout"}),
+								new ListItem({key: "CL", text: "ColumnLayout"})
+							],
 							change: handleLayoutChange
 						})]
 					}),
@@ -315,34 +291,6 @@ sap.ui.require([
 												var oLayout = Element.getElementById("RGL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setBreakpointXL(parseInt(sValue));
-											}})]
-					})
-				]
-			}),
-			new FormContainer("C-RL",{
-				title: "Layout parameter",
-				visible: false,
-				formElements: [
-					new FormElement({
-						label: "no properties",
-						fields: [new Input({enabled: false,
-											change: function(oEvent){
-//												var oLayout = Element.getElementById("RL");
-											}})]
-					})
-				]
-			}),
-			new FormContainer("C-GL",{
-				title: "Layout parameter",
-				visible: false,
-				formElements: [
-					new FormElement({
-						label: "singleColumn",
-						fields: [new CheckBox("CB-singleColumn", {selected: false,
-											select: function(oEvent){
-												var oLayout = Element.getElementById("GL");
-												var bSelected = oEvent.getParameter("selected");
-												oLayout.setSingleColumn(bSelected);
 											}})]
 					})
 				]
