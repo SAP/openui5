@@ -22,9 +22,10 @@ sap.ui.define([
 	"sap/ui/layout/BlockLayout",
 	"sap/ui/layout/BlockLayoutCell",
 	"sap/ui/layout/BlockLayoutRow",
+	"sap/ui/layout/form/ColumnLayout", // to avoid lazy loading of the layout
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/layout/library"
-], function(App, Button, CheckBox, DatePicker, Input, Label, mobileLibrary, Link, List, Page, Select, SplitApp, StandardListItem, Text, TextArea, Element, Icon, Item, Title, Device, BlockLayout, BlockLayoutCell, BlockLayoutRow, SimpleForm, layoutLibrary) {
+], function(App, Button, CheckBox, DatePicker, Input, Label, mobileLibrary, Link, List, Page, Select, SplitApp, StandardListItem, Text, TextArea, Element, Icon, Item, Title, Device, BlockLayout, BlockLayoutCell, BlockLayoutRow, _ColumnLayout, SimpleForm, layoutLibrary) {
 	"use strict";
 
 	var BackgroundDesign = layoutLibrary.BackgroundDesign;
@@ -37,7 +38,7 @@ sap.ui.define([
 		return new SimpleForm({
 			editable: true,
 			backgroundDesign: BackgroundDesign.Transparent,
-			layout: SimpleFormLayout.GridLayout,
+			layout: SimpleFormLayout.ColumnLayout,
 			content: [
 				new Title({ // this starts a new group
 					text: "Editable Form"
