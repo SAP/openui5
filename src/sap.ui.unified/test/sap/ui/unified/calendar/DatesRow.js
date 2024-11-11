@@ -5,13 +5,13 @@ sap.ui.define([
   "sap/ui/core/CalendarType",
   "sap/ui/unified/calendar/DatesRow",
   "sap/ui/core/library",
-  "sap/ui/commons/Label",
-  "sap/ui/commons/TextField",
+  "sap/m/Label",
+  "sap/m/Input",
   "sap/ui/unified/DateRange",
-  "sap/ui/commons/ToggleButton",
+  "sap/m/ToggleButton",
   "sap/ui/unified/DateTypeRange",
   "sap/ui/core/Item",
-  "sap/ui/commons/ListBox"
+  "sap/m/Select"
 ], function(
   Element,
   TypeDate,
@@ -20,12 +20,12 @@ sap.ui.define([
   DatesRow,
   coreLibrary,
   Label,
-  TextField,
+  Input,
   DateRange,
   ToggleButton,
   DateTypeRange,
   Item,
-  ListBox
+  Select
 ) {
   "use strict";
 
@@ -81,65 +81,65 @@ sap.ui.define([
 
   new DatesRow("DR1",{
 	  focus: function(oEvent){
-		  var oTF = Element.getElementById("TF2");
+		  var oInput = Element.getElementById("Input2");
+		  oEvent.getSource();
 		  var oDate = oEvent.getParameter("date");
 		  if (oDate) {
-			  oTF.setValue(oFormatYyyymmdd.format(oDate));
+			  oInput.setValue(oFormatYyyymmdd.format(oDate));
 		  } else {
-			  oTF.setValue("");
+			  oInput.setValue("");
 		  }
 		  if (!oEvent.getParameter("otherMonth")) {
-			  oTF.setValueState(ValueState.None);
+			  oInput.setValueState(ValueState.None);
 		  } else {
-			  oTF.setValueState(ValueState.Error);
+			  oInput.setValueState(ValueState.Error);
 		  }
 	  },
 	  select: function(oEvent){
-		  var oTF = Element.getElementById("TF3");
-		  var oDatesRow = oEvent.oSource;
+		  var oInput = Element.getElementById("Input3");
+		  var oDatesRow = oEvent.getSource();
 		  var aSelectedDates = oDatesRow.getSelectedDates();
 		  var oDate;
 		  if (aSelectedDates.length > 0 ) {
 			  oDate = aSelectedDates[0].getStartDate();
-			  oTF.setValue(oFormatYyyymmdd.format(oDate));
+			  oInput.setValue(oFormatYyyymmdd.format(oDate));
 		  } else {
-			  oTF.setValue("");
+			  oInput.setValue("");
 		  }
 	  }
   }).placeAt("sample1");
 
-  new Label({text: "start date", labelFor: "TF1"}).placeAt("event1");
-  new TextField("TF1",{
-	  editable: true,
+  new Label({text: "start date", labelFor: "Input1"}).placeAt("event1");
+  new Input("Input1",{
 	  placeholder: "yyyyMMdd",
 	  change: function(oEvent){
-		  var sValue = oEvent.getParameter('newValue');
+		  oEvent.getSource();
+		  var sValue = oEvent.getParameter('value');
 		  var oDatesRow = Element.getElementById("DR1");
 		  var oDate = oFormatYyyymmdd.parse(sValue);
 		  oDatesRow.setStartDate(oDate);
 	  }
   }).placeAt("event1");
 
-  new Label({text: "focused date", labelFor: "TF2"}).placeAt("event1");
-  new TextField("TF2",{
-	  editable: true,
+  new Label({text: "focused date", labelFor: "Input2"}).placeAt("event1");
+  new Input("Input2",{
 	  placeholder: "yyyyMMdd",
 	  change: function(oEvent){
-		  var oTF = oEvent.oSource;
-		  var sValue = oEvent.getParameter('newValue');
+		  var oInput = oEvent.getSource();
+		  var sValue = oEvent.getParameter('value');
 		  var oDatesRow = Element.getElementById("DR1");
 		  var oDate = oFormatYyyymmdd.parse(sValue);
 		  oDatesRow.setDate(oDate);
-		  oTF.setValueState(ValueState.None);
+		  oInput.setValueState(ValueState.None);
 	  }
   }).placeAt("event1");
 
-  new Label({text: "selected date", labelFor: "TF3"}).placeAt("event1");
-  new TextField("TF3",{
-	  editable: true,
+  new Label({text: "selected date", labelFor: "Input3"}).placeAt("event1");
+  new Input("Input3",{
 	  placeholder: "yyyyMMdd",
 	  change: function(oEvent){
-		  var sValue = oEvent.getParameter('newValue');
+		  oEvent.getSource();
+		  var sValue = oEvent.getParameter('value');
 		  var oDatesRow = Element.getElementById("DR1");
 		  if (sValue.length == 8 && !isNaN(sValue)) {
 			  var oDate = oFormatYyyymmdd.parse(sValue);
@@ -189,37 +189,37 @@ sap.ui.define([
 	  intervalSelection: true,
 	  days: 14,
 	  select: function(oEvent){
-		  var oTF1 = Element.getElementById("TF2-start");
-		  var oTF2 = Element.getElementById("TF2-end");
-		  var oDatesRow = oEvent.oSource;
+		  var oInput1 = Element.getElementById("Input2-start");
+		  var oInput2 = Element.getElementById("Input2-end");
+		  var oDatesRow = oEvent.getSource();
 		  var aSelectedDates = oDatesRow.getSelectedDates();
 		  var oDate;
 		  if (aSelectedDates.length > 0 ) {
 			  oDate = aSelectedDates[0].getStartDate();
 			  if (oDate) {
-				  oTF1.setValue(oFormatYyyymmdd.format(oDate));
+				  oInput1.setValue(oFormatYyyymmdd.format(oDate));
 			  } else {
-				  oTF1.setValue("");
+				  oInput1.setValue("");
 			  }
 			  oDate = aSelectedDates[0].getEndDate();
 			  if (oDate) {
-				  oTF2.setValue(oFormatYyyymmdd.format(oDate));
+				  oInput2.setValue(oFormatYyyymmdd.format(oDate));
 			  } else {
-				  oTF2.setValue("");
+				  oInput2.setValue("");
 			  }
 		  } else {
-			  oTF1.setValue("");
-			  oTF2.setValue("");
+			  oInput1.setValue("");
+			  oInput2.setValue("");
 		  }
 	  }
   }).placeAt("sample2");
 
-  new Label({text: "selected date from", labelFor: "TF2-start"}).placeAt("event2");
-  new TextField("TF2-start",{
+  new Label({text: "selected date from", labelFor: "Input2-start"}).placeAt("event2");
+  new Input("Input2-start",{
 	  editable: false
   }).placeAt("event2");
-  new Label({text: "to", labelFor: "TF2-end"}).placeAt("event2");
-  new TextField("TF2-end",{
+  new Label({text: "to", labelFor: "Input2-end"}).placeAt("event2");
+  new Input("Input2-end",{
 	  editable: false
   }).placeAt("event2");
 
@@ -229,8 +229,8 @@ sap.ui.define([
 	  showHeader: true,
 	  days: 35,
 	  select: function(oEvent){
-		  var oLB = Element.getElementById("LB");
-		  var oDatesRow = oEvent.oSource;
+		  var oLB = Element.getElementById("Select");
+		  var oDatesRow = oEvent.getSource();
 		  var aSelectedDates = oDatesRow.getSelectedDates();
 		  var oDate;
 		  if (aSelectedDates.length > 0 ) {
@@ -262,11 +262,10 @@ sap.ui.define([
 	  }
   }).placeAt("sample3");
 
-  new Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
+  new Label({text: "selected dates", labelFor: "Select"}).placeAt("event3");
 
-  new ListBox("LB",{
+  new Select("Select",{
 	  editable: false,
-	  visibleItems: 10,
 	  width: "8em"
   }).placeAt("event3");
 

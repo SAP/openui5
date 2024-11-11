@@ -2,6 +2,8 @@ sap.ui.define([
   "sap/ui/core/Element",
   "sap/ui/model/type/Date",
   "sap/m/Button",
+  "sap/m/Label",
+  "sap/m/Text",
   "sap/ui/core/Popup",
   "sap/ui/model/json/JSONModel",
   "sap/ui/core/CalendarType",
@@ -12,18 +14,17 @@ sap.ui.define([
   "sap/ui/layout/library",
   "sap/ui/layout/form/FormContainer",
   "sap/ui/layout/form/FormElement",
-  "sap/ui/commons/Button",
-  "sap/ui/commons/ToggleButton",
+  "sap/m/ToggleButton",
   "sap/ui/unified/DateTypeRange",
   "sap/ui/unified/DateRange",
-  "sap/ui/commons/TextField",
-  "sap/ui/commons/ComboBox",
+  "sap/m/Input",
+  "sap/m/ComboBox",
   "sap/ui/core/ListItem",
-  "sap/ui/commons/Label",
   "sap/ui/core/Item",
-  "sap/ui/commons/ListBox",
+  "sap/m/Select",
   "sap/ui/core/library",
-  "sap/ui/commons/RadioButtonGroup",
+  "sap/m/RadioButtonGroup",
+  "sap/m/RadioButton",
   "sap/ui/unified/CalendarLegend",
   "sap/ui/unified/CalendarLegendItem",
   "sap/ui/unified/library"
@@ -31,6 +32,8 @@ sap.ui.define([
   Element,
   TypeDate,
   Button,
+  Label,
+  Text,
   Popup,
   JSONModel,
   CalendarType,
@@ -41,18 +44,17 @@ sap.ui.define([
   layoutLibrary,
   FormContainer,
   FormElement,
-  CommonsButton,
   ToggleButton,
   DateTypeRange,
   DateRange,
-  TextField,
+  Input,
   ComboBox,
   ListItem,
-  Label,
   Item,
-  ListBox,
+  Select,
   coreLibrary,
   RadioButtonGroup,
+  RadioButton,
   CalendarLegend,
   CalendarLegendItem,
   unifiedLibrary
@@ -69,6 +71,7 @@ sap.ui.define([
   const BackgroundDesign = layoutLibrary.BackgroundDesign;
 
   var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
+
   var oCalendars = new JSONModel(CalendarType);
 
   var oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: CalendarType.Gregorian});
@@ -124,29 +127,30 @@ sap.ui.define([
 	  legend: "Legend1",
 	  showCurrentDateButton: true,
 	  select: function(oEvent){
-		  var oTF = Element.getElementById("TF1");
-		  var oCalendar = oEvent.oSource;
+		  var oInput = Element.getElementById("Input1");
+		  var oCalendar = oEvent.getSource();
 		  var aSelectedDates = oCalendar.getSelectedDates();
 		  var oDate;
 		  if (aSelectedDates.length > 0 ) {
 			  oDate = aSelectedDates[0].getStartDate();
-			  oTF.setValue(oFormatYyyymmdd.format(oDate));
+			  oInput.setValue(oFormatYyyymmdd.format(oDate));
 		  } else {
-			  oTF.setValue("");
+			  oInput.setValue("");
 		  }
 	  },
 	  cancel: function(oEvent){
 		  alert("Cancel");
 	  },
 	  startDateChange: function(oEvent){
-		  var oTF = Element.getElementById("TF2");
-		  var oCalendar = oEvent.oSource;
+		  var oInput = Element.getElementById("Input2");
+		  var oCalendar = oEvent.getSource();
 		  var oDate = oCalendar.getStartDate();
-		  oTF.setValue(oFormatYyyymmdd.format(oDate));
+		  oInput.setValue(oFormatYyyymmdd.format(oDate));
 	  }
   }).placeAt("sample1");
 
   var oForm = new Form("F1", {
+	  editable: true,
 	  layout: new ResponsiveGridLayout("L1", {
 		  breakpointM: 350,
 		  labelSpanL: 6,
@@ -160,14 +164,14 @@ sap.ui.define([
   oForm.addFormContainer(oFormContainer);
 
   var oFormElement = new FormElement("F1E1", {
-	  fields: [ new CommonsButton({
+	  fields: [ new Button({
 		  text: "focus today",
 		  press: function(oEvent){
 			  Element.getElementById("Cal1").focusDate(UI5Date.getInstance());
-			  var oTF = Element.getElementById("TF2");
+			  var oInput = Element.getElementById("Input2");
 			  var oCalendar = Element.getElementById("Cal1");
 			  var oDate = oCalendar.getStartDate();
-			  oTF.setValue(oFormatYyyymmdd.format(oDate));
+			  oInput.setValue(oFormatYyyymmdd.format(oDate));
 		  }
 	  }),
 		  new ToggleButton({
@@ -230,12 +234,12 @@ sap.ui.define([
 
   oFormElement = new FormElement("F1E2", {
 	  label: "selected date",
-	  fields: [ new TextField("TF1",{
-		  editable: true,
+	  fields: [ new Input("Input1",{
 		  width: "9em",
 		  placeholder: "yyyyMMdd",
 		  change: function(oEvent){
-			  var sValue = oEvent.getParameter('newValue');
+			  oEvent.getSource();
+			  var sValue = oEvent.getParameter('value');
 			  var oCalendar = Element.getElementById("Cal1");
 			  if (sValue.length == 8 && !isNaN(sValue)) {
 				  var oDate = oFormatYyyymmdd.parse(sValue);
@@ -259,7 +263,7 @@ sap.ui.define([
 
   oFormElement = new FormElement("F1E3", {
 	  label: "start date",
-	  fields: [ new TextField("TF2",{
+	  fields: [ new Input("Input2",{
 		  editable: false,
 		  width: "9em",
 		  placeholder: "yyyyMMdd",
@@ -273,13 +277,13 @@ sap.ui.define([
 	  label: "primary calendar type",
 	  fields: [ new ComboBox("CB1",{
 		  models: oCalendars,
-		  editable: true,
 		  width: "9em",
 		  items: {
 			  path: "/",
 			  template: new ListItem({text:"{}", key:"{}"})
 		  },
-		  change: function(oEvent){
+		  selectionChange: function(oEvent){
+			  oEvent.getSource();
 			  var oItem = oEvent.getParameter('selectedItem');
 			  var oCal = Element.getElementById("Cal1");
 			  var sKey = "";
@@ -297,13 +301,13 @@ sap.ui.define([
 	  label: "secondary calendar type",
 	  fields: [ new ComboBox("CB2",{
 		  models: oCalendars,
-		  editable: true,
 		  width: "9em",
 		  items: {
 			  path: "/",
 			  template: new ListItem({text:"{}", key:"{}"})
 		  },
-		  change: function(oEvent){
+		  selectionChange: function(oEvent){
+			  oEvent.getSource();
 			  var oItem = oEvent.getParameter('selectedItem');
 			  var oCal = Element.getElementById("Cal1");
 			  var sKey = "";
@@ -319,11 +323,11 @@ sap.ui.define([
 
   oFormElement = new FormElement("F1E6", {
 	  label: "width",
-	  fields: [ new TextField("TF3",{
-		  editable: true,
+	  fields: [ new Input("Input3",{
 		  width: "9em",
 		  change: function(oEvent){
-			  var sValue = oEvent.getParameter('newValue');
+			  oEvent.getSource();
+			  var sValue = oEvent.getParameter('value');
 			  var oCalendar = Element.getElementById("Cal1");
 			  oCalendar.setWidth(sValue);
 		  }
@@ -334,12 +338,12 @@ sap.ui.define([
 
   oFormElement = new FormElement("F1E7", {
 	  label: "min. date",
-	  fields: [ new TextField("TF-min",{
-		  editable: true,
+	  fields: [ new Input("Input-min",{
 		  width: "9em",
 		  placeholder: "yyyyMMdd",
 		  change: function(oEvent){
-			  var sValue = oEvent.getParameter('newValue');
+			  oEvent.getSource();
+			  var sValue = oEvent.getParameter('value');
 			  var oCalendar = Element.getElementById("Cal1");
 			  var oDate;
 			  if (sValue.length == 8 && !isNaN(sValue)) {
@@ -354,12 +358,12 @@ sap.ui.define([
 
   oFormElement = new FormElement("F1E8", {
 	  label: "max. date",
-	  fields: [ new TextField("TF-max",{
-		  editable: true,
+	  fields: [ new Input("Input-max",{
 		  width: "9em",
 		  placeholder: "yyyyMMdd",
 		  change: function(oEvent){
-			  var sValue = oEvent.getParameter('newValue');
+			  oEvent.getSource();
+			  var sValue = oEvent.getParameter('value');
 			  var oCalendar = Element.getElementById("Cal1");
 			  var oDate;
 			  if (sValue.length == 8 && !isNaN(sValue)) {
@@ -377,37 +381,37 @@ sap.ui.define([
 	  intervalSelection: true,
 	  ariaLabelledBy: ["H-C2"],
 	  select: function(oEvent){
-		  var oTF1 = Element.getElementById("TF2-start");
-		  var oTF2 = Element.getElementById("TF2-end");
-		  var oCalendar = oEvent.oSource;
+		  var oInput1 = Element.getElementById("Input2-start");
+		  var oInput2 = Element.getElementById("Input2-end");
+		  var oCalendar = oEvent.getSource();
 		  var aSelectedDates = oCalendar.getSelectedDates();
 		  var oDate;
 		  if (aSelectedDates.length > 0 ) {
 			  oDate = aSelectedDates[0].getStartDate();
 			  if (oDate) {
-				  oTF1.setValue(oFormatYyyymmdd.format(oDate));
+				  oInput1.setValue(oFormatYyyymmdd.format(oDate));
 			  } else {
-				  oTF1.setValue("");
+				  oInput1.setValue("");
 			  }
 			  oDate = aSelectedDates[0].getEndDate();
 			  if (oDate) {
-				  oTF2.setValue(oFormatYyyymmdd.format(oDate));
+				  oInput2.setValue(oFormatYyyymmdd.format(oDate));
 			  } else {
-				  oTF2.setValue("");
+				  oInput2.setValue("");
 			  }
 		  } else {
-			  oTF1.setValue("");
-			  oTF2.setValue("");
+			  oInput1.setValue("");
+			  oInput2.setValue("");
 		  }
 	  }
   }).placeAt("sample2");
 
-  new Label({text: "selected date from", labelFor: "TF2-start"}).placeAt("event2");
-  new TextField("TF2-start",{
+  new Label({text: "selected date from", labelFor: "Input2-start"}).placeAt("event2");
+  new Input("Input2-start",{
 	  editable: false
   }).placeAt("event2");
-  new Label({text: "to", labelFor: "TF2-end"}).placeAt("event2");
-  new TextField("TF2-end",{
+  new Label({text: "to", labelFor: "Input2-end"}).placeAt("event2");
+  new Input("Input2-end",{
 	  editable: false
   }).placeAt("event2");
 
@@ -418,7 +422,7 @@ sap.ui.define([
 	  nonWorkingDays: [3, 5],
 	  select: function(oEvent){
 		  var oLB = Element.getElementById("LB");
-		  var oCalendar = oEvent.oSource;
+		  var oCalendar = oEvent.getSource();
 		  var aSelectedDates = oCalendar.getSelectedDates();
 		  var oDate;
 		  if (aSelectedDates.length > 0) {
@@ -452,9 +456,8 @@ sap.ui.define([
 
   new Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
 
-  new ListBox("LB",{
+  new Select("LB",{
 	  editable: false,
-	  visibleItems: 10,
 	  width: "8em"
   }).placeAt("event3");
 
@@ -469,15 +472,15 @@ sap.ui.define([
   oCal = new Calendar("Cal4",{
 	  months: 2,
 	  select: function(oEvent){
-		  var oTF = Element.getElementById("TF4");
-		  var oCalendar = oEvent.oSource;
+		  var oInput = Element.getElementById("Input4");
+		  var oCalendar = oEvent.getSource();
 		  var aSelectedDates = oCalendar.getSelectedDates();
 		  var oDate;
 		  if (aSelectedDates.length > 0 ) {
 			  oDate = aSelectedDates[0].getStartDate();
-			  oTF.setValue(oFormatYyyymmdd.format(oDate));
+			  oInput.setValue(oFormatYyyymmdd.format(oDate));
 		  } else {
-			  oTF.setValue("");
+			  oInput.setValue("");
 		  }
 	  },
 	  cancel: function(oEvent){
@@ -500,11 +503,11 @@ sap.ui.define([
 
   oFormElement = new FormElement("F4E1", {
 	  label: new Label({text: "selected date"}),
-	  fields: [ new TextField("TF4",{
-		  editable: true,
+	  fields: [ new Input("Input4",{
 		  placeholder: "yyyyMMdd",
 		  change: function(oEvent){
-			  var sValue = oEvent.getParameter('newValue');
+			  oEvent.getSource();
+			  var sValue = oEvent.getParameter('value');
 			  var oCalendar = Element.getElementById("Cal4");
 			  if (sValue.length == 8 && !isNaN(sValue)) {
 				  var oDate = oFormatYyyymmdd.parse(sValue);
@@ -522,7 +525,7 @@ sap.ui.define([
 			  }
 		  }
 	  }),
-		  new CommonsButton({
+		  new Button({
 			  text: "focus today",
 			  press: function(oEvent){
 				  Element.getElementById("Cal4").focusDate(UI5Date.getInstance());
@@ -534,21 +537,20 @@ sap.ui.define([
 
   oFormElement = new FormElement("F4E2", {
 	  label: new Label({text: "displayed months"}),
-	  fields: [ new TextField("TF4-2",{
-		  editable: true,
+	  fields: [ new Input("Input4-2",{
 		  value: "2",
 		  width: "4em",
 		  placeholder: "integer",
 		  change: function(oEvent){
-			  var oTF = oEvent.oSource;
-			  var sValue = oEvent.getParameter('newValue');
+			  var oInput = oEvent.getSource();
+			  var sValue = oEvent.getParameter('value');
 			  var oCalendar = Element.getElementById("Cal4");
 			  var iMonths = parseInt(sValue);
 			  if (iMonths > 0) {
 				  oCalendar.setMonths(iMonths);
-				  oTF.setValueState(ValueState.None);
+				  oInput.setValueState(ValueState.None);
 			  } else {
-				  oTF.setValueState(ValueState.Error);
+				  oInput.setValueState(ValueState.Error);
 			  }
 		  }
 	  })
@@ -558,11 +560,11 @@ sap.ui.define([
 
   oFormElement = new FormElement("F4E3", {
 	  label: new Label({text: "width"}),
-	  fields: [ new TextField("TF4-3",{
-		  editable: true,
+	  fields: [ new Input("Input4-3",{
 		  width: "9em",
 		  change: function(oEvent){
-			  var sValue = oEvent.getParameter('newValue');
+			  oEvent.getSource();
+			  var sValue = oEvent.getParameter('value');
 			  var oCalendar = Element.getElementById("Cal4");
 			  oCalendar.setWidth(sValue);
 		  }
@@ -575,14 +577,15 @@ sap.ui.define([
 	  label: new Label({text: "Single/multiple selection"}),
 	  fields: [
 		  new RadioButtonGroup({
-			  items : [ new Item({
+			  buttons : [
+				  new RadioButton({
 				  text : "Single Selection"
-			  }), new Item({
+			  }), new RadioButton({
 				  text : "Multiple Selection"
 			  })
 			  ],
 			  select: function (oEvent) {
-				  var bSingleSelection = this.getSelectedItem().getText() === "Single Selection" ? true : false;
+				  var bSingleSelection = this.getSelectedIndex() === 0 ? true : false;
 				  Element.getElementById("Cal4").setSingleSelection(bSingleSelection);
 			  }
 		  })
@@ -617,7 +620,7 @@ sap.ui.define([
 		  text: "2) Remove Date",
 		  enabled: false,
 		  press: function (oEvent) {
-			  oEvent.oSource.setEnabled(false);
+			  oEvent.getSource().setEnabled(false);
 			  oCalRemove.removeSelectedDate(oDateRange);
 			  oButton1.invalidate();// to let UIArea think Calendar is rendered with Button
 		  }

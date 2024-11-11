@@ -100,29 +100,30 @@ sap.ui.define([
 		legend: "Legend1",
 		ariaLabelledBy: ["H-C1"],
 		select: function(oEvent){
-			var oTF = Element.getElementById("TF1");
-			var oCalendar = oEvent.oSource;
+			var oInput = Element.getElementById("Input1");
+			var oCalendar = oEvent.getSource();
 			var aSelectedDates = oCalendar.getSelectedDates();
 			var oDate;
 			if (aSelectedDates.length > 0 ) {
 				oDate = aSelectedDates[0].getStartDate();
-				oTF.setValue(oFormatYyyyMMddHHmmss.format(oDate));
+				oInput.setValue(oFormatYyyyMMddHHmmss.format(oDate));
 			} else {
-				oTF.setValue("");
+				oInput.setValue("");
 			}
 		},
 		cancel: function(oEvent){
 			MessageToast.show("Cancel");
 		},
 		startDateChange: function(oEvent){
-			var oTF = Element.getElementById("TF2");
-			var oCalendar = oEvent.oSource;
+			var oInput = Element.getElementById("Input2");
+			var oCalendar = oEvent.getSource();
 			var oDate = oCalendar.getStartDate();
-			oTF.setValue(oFormatYyyyMMddHHmmss.format(oDate));
+			oInput.setValue(oFormatYyyyMMddHHmmss.format(oDate));
 		}
 	});
 
 	var oForm = new Form("F1", {
+		editable: true,
 		title: new Title({text: "Control's actions", level: TitleLevel.H2}),
 		layout: new ResponsiveGridLayout("L1", {
 			breakpointM: 350,
@@ -208,8 +209,7 @@ sap.ui.define([
 	oFormElement = new FormElement("F1E2", {
 		label: "selected date",
 		fields: [
-			new Input("TF1",{
-				editable: true,
+			new Input("Input1",{
 				width: "10rem",
 				placeholder: "yyyyMMddHHmmss",
 				change: function(oEvent){
@@ -238,20 +238,19 @@ sap.ui.define([
 	oFormElement = new FormElement("F1E3", {
 		label: "start date",
 		fields: [
-			new Input("TF2", {
-				editable: true,
+			new Input("Input2", {
 				width: "10rem",
 				placeholder: "yyyyMMddHHmmss",
 				change: function(oEvent){
-					var oTF = oEvent.oSource;
+					var oInput = oEvent.getSource();
 					var sValue = oEvent.getParameter('newValue');
 					var oCalendar = Element.getElementById("Cal1");
 					var oDate = oFormatYyyyMMddHHmmss.parse(sValue);
 					if (oDate){
 						oCalendar.setStartDate(oDate);
-						oTF.setValueState(ValueState.None);
+						oInput.setValueState(ValueState.None);
 					} else {
-						oTF.setValueState(ValueState.Error);
+						oInput.setValueState(ValueState.Error);
 					}
 				}
 			})
@@ -262,8 +261,7 @@ sap.ui.define([
 	oFormElement = new FormElement("F1E4", {
 		label: "minimum date",
 		fields: [
-			new Input("TF-min",{
-				editable: true,
+			new Input("Input-min",{
 				width: "10rem",
 				placeholder: "yyyyMMddHHmmss",
 				change: function(oEvent){
@@ -283,8 +281,7 @@ sap.ui.define([
 	oFormElement = new FormElement("F1E5", {
 		label: "maximum date",
 		fields: [
-			new Input("TF-max",{
-				editable: true,
+			new Input("Input-max",{
 				width: "20rem",
 				placeholder: "yyyyMMddHHmmss",
 				change: function(oEvent){
@@ -313,38 +310,38 @@ sap.ui.define([
 		intervalSelection: true,
 		ariaLabelledBy: ["H-C2"],
 		select: function(oEvent){
-			var oTF1 = Element.getElementById("TF2-start");
-			var oTF2 = Element.getElementById("TF2-end");
-			var oCalendar = oEvent.oSource;
+			var oInput1 = Element.getElementById("Input2-start");
+			var oInput2 = Element.getElementById("Input2-end");
+			var oCalendar = oEvent.getSource();
 			var aSelectedDates = oCalendar.getSelectedDates();
 			if (aSelectedDates.length > 0 ) {
 				var oDate = aSelectedDates[0].getStartDate();
 				if (oDate) {
-					oTF1.setValue(oFormatYyyyMMddHHmmss.format(oDate));
+					oInput1.setValue(oFormatYyyyMMddHHmmss.format(oDate));
 				} else {
-					oTF1.setValue("");
+					oInput1.setValue("");
 				}
 				oDate = aSelectedDates[0].getEndDate();
 				if (oDate) {
-					oTF2.setValue(oFormatYyyyMMddHHmmss.format(oDate));
+					oInput2.setValue(oFormatYyyyMMddHHmmss.format(oDate));
 				} else {
-					oTF2.setValue("");
+					oInput2.setValue("");
 				}
 			} else {
-				oTF1.setValue("");
-				oTF2.setValue("");
+				oInput1.setValue("");
+				oInput2.setValue("");
 			}
 		}
 	});
 
-	var oStartDateLabel = new Label({text: "selected start date from", labelFor: "TF2-start"});
-	var oStartDateInput = new Input("TF2-start",{
+	var oStartDateLabel = new Label({text: "selected start date from", labelFor: "Input2-start"});
+	var oStartDateInput = new Input("Input2-start",{
 		width: "10rem",
 		editable: false
 	});
 
-	var oEndDateLabel = new Label({text: "to end date", labelFor: "TF2-end"});
-	var oEndDateInput = new Input("TF2-end",{
+	var oEndDateLabel = new Label({text: "to end date", labelFor: "Input2-end"});
+	var oEndDateInput = new Input("Input2-end",{
 		width: "10rem",
 		editable: false
 	});
@@ -359,7 +356,7 @@ sap.ui.define([
 		ariaLabelledBy: ["H-C3"],
 		select: function(oEvent){
 			var oLB = Element.getElementById("LB");
-			var oCalendar = oEvent.oSource;
+			var oCalendar = oEvent.getSource();
 			var aSelectedDates = oCalendar.getSelectedDates();
 			var oDate;
 			if (aSelectedDates.length > 0 ) {

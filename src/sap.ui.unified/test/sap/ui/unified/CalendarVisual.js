@@ -6,6 +6,8 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/ui/unified/Calendar",
+	"sap/ui/unified/DateRange",
+	"sap/ui/unified/DateTypeRange",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout"
 ], function(
@@ -16,14 +18,14 @@ sap.ui.define([
 	App,
 	Page,
 	Calendar,
+	DateRange,
+	DateTypeRange,
 	Button,
 	VerticalLayout
 ) {
 	"use strict";
 	var CalendarType = coreLibrary.CalendarType,
 		CalendarDayType = unifiedLibrary.CalendarDayType,
-		DateRange = unifiedLibrary.DateRange,
-		DateTypeRange = unifiedLibrary.DateTypeRange,
 		oCalendar1,
 		oButton1 = new Button("B1", {
 			text : "Single",

@@ -958,6 +958,7 @@ sap.ui.define([
 		assert.equal(oItem.getLabel(), "", "Default 'label':");
 		assert.equal(oItem.getIcon(), "", "Default 'icon':");
 		assert.equal(oItem.getValue(), "", "Default 'value':");
+		// ui5lint-disable-next-line no-deprecated-api
 		assert.equal(oItem.getSubmenu(), null, "Default 'submenu':");
 	});
 
@@ -966,6 +967,7 @@ sap.ui.define([
 		assert.equal(oItem.getLabel(), "Hallo", "Custom 'label':");
 		assert.equal(oItem.getIcon(), "../images/help.gif", "Custom 'icon':");
 		assert.equal(oItem.getValue(), "Value", "Custom 'value':");
+		// ui5lint-disable-next-line no-deprecated-api
 		assert.equal(oItem.getSubmenu(), null, "Custom 'submenu':");
 	});
 
