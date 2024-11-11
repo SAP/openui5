@@ -58,7 +58,7 @@ sap.ui.define([
 	 * @typedef {object} sap.ui.mdc.chart.ZoomState
 	 * @property {boolean} enabled Zooming is enabled if set to <code>true</code>
 	 * @property {number} currentZoomLevel Current zoom level of the chart in percent (between 0 and 1)
-	 * @experimental As of version 1.80
+	 *
 	 * @public
 	 */
 
@@ -111,9 +111,6 @@ sap.ui.define([
 			 * @param {Object} mPropertyBag Instance of property bag from the SAPUI5 flexibility API
 			 * @returns {Promise} <code>Promise</code> that resolves once the properyInfo property has been updated
 			 *
-			 * @experimental
-			 * @private
-			 * @ui5-restricted sap.fe, sap.ui.mdc
 			 */
 			addCondition: function(oControl, sPropertyName, mPropertyBag) {
 				return Promise.resolve();
@@ -128,9 +125,6 @@ sap.ui.define([
 			 * @param {Object} mPropertyBag Instance of property bag from the SAPUI5 flexibility API
 			 * @returns {Promise} <code>Promise</code> that resolves once the properyInfo property has been updated
 			 *
-			 * @experimental
-			 * @private
-			 * @ui5-restricted sap.fe, sap.ui.mdc
 			 */
 			removeCondition: function(oControl, sPropertyName, mPropertyBag) {
 				return Promise.resolve();
@@ -171,12 +165,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * This iterates over all items of the MDC chart to make sure all necessary information is available on them.
+	 * If something is missing, this method updates the item accordingly. This is the last check before the inner chart is rendered.
+	 * @param {sap.ui.mdc.Chart} oChart MDC chart to check the items on
+	 * @returns {Promise} Resolves once check is complete
+	 *
+	 * @public
+	 */
+	ChartDelegate.checkAndUpdateMDCItems = function(oChart) { };
+
+	/**
 	 * Event handler for <code>SelectionDetails</code> popover.
 	 *
 	 * @typedef {object} sap.ui.mdc.chart.SelectionDetails
 	 * @property {string} eventId  ID of the selection event
 	 * @property {sap.ui.core.Control} listener Reference to inner chart
-	 * @experimental As of version 1.80
+	 *
 	 * @public
 	 */
 
@@ -266,8 +270,7 @@ sap.ui.define([
 	 * @property {string} key Unique key of the chart type
 	 * @property {sap.ui.core.URI} icon URI for the icon for the current chart type
 	 * @property {string} text Name of the current chart type
-	 * @property {boolean} selected Whether the chart type is the one currently used
-	 * @experimental As of version 1.80
+	 *
 	 * @public
 	 */
 
@@ -275,7 +278,12 @@ sap.ui.define([
 	 * Gets the current chart type.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
-	 * @returns {sap.ui.mdc.chart.ChartTypeObject[]} Information about the current chart type
+	 * @returns {object} Information about the current chart type
+	 * The object has the following properties:
+	 * <ul>
+	 * 	<li><code>icon</code> defines the path to the <code>icon</code> </li>
+	 * 	<li><code>text</code> (optional) defines tooltip of the chart type</li>
+	 * </ul>
 	 * @throws {Error} Error thrown if inner chart is not initialized yet
 	 *
 	 * @public
@@ -292,14 +300,13 @@ sap.ui.define([
 	 */
 	ChartDelegate.getAvailableChartTypes = function(oChart) { };
 
-
 	/**
 	 * Chart <code>ChartTypeLayoutConfig</code> type.
 	 *
 	 * @typedef {object} sap.ui.mdc.chart.ChartTypeLayoutConfig
 	 * @property {string} key identifier for the chart type
-	 * @property {string[]} allowedLayoutOptions Layout configuration of chart type
-	 * @experimental As of version 1.80
+	 * @property {sap.ui.mdc.enums.ChartItemRoleType[]} allowedLayoutOptions Layout configuration of chart type
+	 *
 	 * @public
 	 */
 
@@ -319,7 +326,7 @@ sap.ui.define([
 	 * Also, a <code>dimension</code> array containing the dimension drill stack at the current level is required.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
-	 * @returns {array} Array containing the drill stack
+	 * @returns {object[]} Array containing the drill stack
 	 *
 	 * @public
 	 */
@@ -330,7 +337,7 @@ sap.ui.define([
 	 * This is used to determine possible drill-down dimensions in the drill-down popover of the chart.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
-	 * @returns {Promise<sap.ui.mdc.chart.Item[]>} <code>Promise</code> containing an array of dimensions that is sorted
+	 * @returns {Promise<sap.ui.mdc.chart.PropertyInfo[]>} <code>Promise</code> containing an array of dimensions propertyInfo objects that is sorted
 	 *
 	 * @public
 	 */
@@ -341,7 +348,7 @@ sap.ui.define([
 	 * This function is used by the breadcrumb navigation.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
-	 * @returns {sap.ui.mdc.chart.Item[]} Array of MDC items that are drillable
+	 * @returns {sap.ui.mdc.chart.Item[]} Array of items that are drillable
 	 *
 	 * @public
 	 */
@@ -362,10 +369,11 @@ sap.ui.define([
 	 * This method is called to update the no data structure.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
+	 * @param {sap.ui.core.Control} oControl noDataControl which should be used
 	 *
 	 * @public
 	 */
-	ChartDelegate.changedNoDataStruct = function(oChart) { };
+	ChartDelegate.changedNoDataStruct = function(oChart, oControl) { };
 
 	/**
 	 * Sets a "No Data" text for the inner chart.
@@ -383,10 +391,21 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @param {function} fnCallbackDataLoaded Callback function when data is loaded
 	 *
+	 * @returns {Promise} Resolved once inner chart has been created
+	 *
 	 * @public
 	 */
-	ChartDelegate.createInnerChartContent = function(oChart, fnCallbackDataLoaded) { };
+	ChartDelegate.createInnerChartContent = function(oChart, fnCallbackDataLoaded) {
+		return Promise.resolve();
+	};
 
+	/**
+	 * Requests a toolbar update once the inner chart is ready.
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
+	 *
+	 * @public
+	 */
+	ChartDelegate.requestToolbarUpdate = function(oChart) {	};
 
 	/**
 	 * Checks the binding of the chart and rebinds it if required.
@@ -420,7 +439,8 @@ sap.ui.define([
 	ChartDelegate.getBindingInfo = function(oChart) { };
 
 	/**
-	 * Updates the binding info with the relevant filters.<br>
+ 	 * Updates the binding info with the relevant filters and sorters.<br>
+	 *
 	 * By default, this method updates a given {@link sap.ui.base.ManagedObject.AggregationBindingInfo AggregationBindingInfo} with the return value from the delegate's own {@link module:sap/ui/mdc/ChartDelegate.getFilters getFilters}.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
@@ -443,7 +463,6 @@ sap.ui.define([
 	 */
 	ChartDelegate.setChartTooltipVisibility = function(oChart, bVisible) { };
 
-    //TODO: Think about a better function name or at least make sure the description is clearly understandable.
 	/**
 	 * Gets an ID that should be used in the internal chart for the Measure/Dimension.<br>
 	 * For standard cases, this is just the ID of the property.<br>
@@ -502,12 +521,14 @@ sap.ui.define([
 
 	/**
 	 * Determines if a given <code>SelectionDetailsItem</code> is enabled.
-         *
+     *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @param {array} mData The data array of the selected item
 	 * @param {sap.ui.model.Context | undefined} oContext Binding context of the item in the selection. This is undefined if no binding is used
 	 * @returns {boolean} Boolean value that is forwarded to the enableNav property of the <code>SelectionDetailsItem</code>
-	*/
+	 *
+	 * @public
+ 	 */
 	ChartDelegate.determineEnableNavForDetailsItem = (oChart, mData, oContext) => {
 		return false;
 	};
@@ -520,6 +541,8 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.chart.ChartSelectionDetails} oSelectionDetails Instance of the {@link sap.ui.mdc.chart.ChartSelectionDetails}
 	 * @param {sap.ui.model.Context} oBindingContext Binding context of the <code>SelectionDetailsItem</code> to which is navigated
 	 * @returns {Promise<Map<string, sap.ui.mdc.field.FieldInfoBase>>} Promise resolving in a <code>Map</code> containing a Name as key and a {@link sap.ui.mdc.field.FieldInfoBase} as value
+	 *
+	 * @public
 	 */
 	ChartDelegate.fetchFieldInfos = (oChart, oSelectionDetails, oBindingContext) => {
 		return {};
