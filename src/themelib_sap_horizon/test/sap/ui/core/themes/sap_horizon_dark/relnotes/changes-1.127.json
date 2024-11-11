@@ -23,5 +23,15 @@
         "text": " sap.m.SinglePlanningCalendarGrid: update appointment styling"
       }
     ]
+  },
+  "1.127.4": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "68927ee16719a2b396ebf8583a86329bdd3d484f",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Fixed Breadcrumbs item focus clip"
+      }
+    ]
   }
 }
