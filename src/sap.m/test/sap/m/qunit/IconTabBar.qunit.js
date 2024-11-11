@@ -4515,8 +4515,10 @@ sap.ui.define([
 
 		// Assert
 		var $itbf = oIconTabBar.getItems()[0].$();
+		var $icon = $itbf.find("span.sapMITBInlineIcon");
 
-		assert.ok($itbf.find("span.sapMITBInlineIcon").length, "The icon is rendered");
+		assert.ok($icon.length, "The icon is rendered");
+		assert.notOk($icon.attr("aria-label"), "aria-label is not set");
 
 		// Clean up
 		oIconTabBar.destroy();
