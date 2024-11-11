@@ -1742,10 +1742,8 @@ sap.ui.define([
 			var $nowMarker = this.$("nowMarker"),
 				$nowMarkerText = this.$("nowMarkerText"),
 				$nowMarkerAMPM = this.$("nowMarkerAMPM"),
-				bCurrentHourNotVisible = !this._isVisibleHour(oDate.getHours()),
 				oMarkerDate = UI5Date.getInstance(oDate.getTime());
 
-			$nowMarker.toggleClass("sapMSinglePCNowMarkerHidden", bCurrentHourNotVisible);
 			$nowMarker.css("top", this._calculateTopPosition(oMarkerDate) + "rem");
 			$nowMarkerText.text(this._formatTimeAsString(oDate));
 			$nowMarkerAMPM.text(this._addAMPM(oDate));
