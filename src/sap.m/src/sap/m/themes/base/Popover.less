@@ -93,6 +93,10 @@
 	min-height: 2rem;
 }
 
+.sapMPopover:not(:has(.sapMPopoverArr,.sapMPopoverResizeHandle)) {
+	overflow: hidden;
+}
+
 html[data-sap-ui-animation='on'] .sapMPopover {
 	-webkit-transition: opacity 0.2s linear;
 	transition: opacity 0.2s linear;
