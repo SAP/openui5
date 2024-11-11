@@ -1097,9 +1097,9 @@ sap.ui.define([
 				specificMonth: new RangeOperator({
 					name: OperatorName.SPECIFICMONTH,
 					longText: oMessageBundleM.getText("DYNAMIC_DATE_SPECIFICMONTH_TITLE", undefined, true),
-					tokenText: _getText(OperatorName.SPECIFICMONTH, false),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_SPECIFICMONTH_FORMAT", undefined, true),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", constraints: { minimum: 0, maximum: 11 } }],
-					paramTypes: ["(.+)"],
+					paramTypes: [_getMonthRegExp.call(this)],
 					additionalInfo: "",
 					label: [oMessageBundle.getText("operators.SPECIFICMONTH_MONTH.label")],
 					defaultValues: function() {
@@ -1115,7 +1115,7 @@ sap.ui.define([
 						return UniversalDateUtils.getRange(0, "MONTH", oDate);
 					},
 					format: function(oCondition, oType, sDisplayFormat, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes) {
-						const iValue = oCondition.values[0];
+						const [iValue] = oCondition.values;
 						const sTokenText = this.tokenFormat;
 						const sReplace = _getMonths.apply(this)[iValue];
 
@@ -1159,9 +1159,9 @@ sap.ui.define([
 				specificMonthInYear: new RangeOperator({
 					name: OperatorName.SPECIFICMONTHINYEAR,
 					longText: oMessageBundleM.getText("DYNAMIC_DATE_SPECIFICMONTHINYEAR_TITLE", undefined, true),
-					tokenText: _getText(OperatorName.SPECIFICMONTHINYEAR, false),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_SPECIFICMONTHINYEAR_FORMAT", undefined, true),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", constraints: { minimum: 0, maximum: 11 } }, { name: "sap.ui.model.type.Integer", constraints: { minimum: 1, maximum: 9999 } }],
-					paramTypes: ["(.+)", "(.+)"],
+					paramTypes: [_getMonthRegExp.call(this), "(.+)"],
 					additionalInfo: "",
 					label: [oMessageBundle.getText("operators.SPECIFICMONTHINYEAR_MONTH.label"), oMessageBundle.getText("operators.SPECIFICMONTHINYEAR_YEAR.label")],
 					defaultValues: function() {
@@ -1178,8 +1178,7 @@ sap.ui.define([
 						return UniversalDateUtils.getRange(0, "MONTH", oDate);
 					},
 					format: function(oCondition, oType, sDisplayFormat, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes) {
-						const iValue = oCondition.values[0];
-						const iYear = oCondition.values[1];
+						const [iValue, iYear] = oCondition.values;
 						let sTokenText = this.tokenFormat;
 						const sReplace = _getMonths.apply(this)[iValue];
 
@@ -2416,6 +2415,13 @@ sap.ui.define([
 			return iIndex;
 		}
 
+		function _getMonthRegExp() {
+			if (!this._sMonthRegExp) {
+				const aMonths = _getMonths.apply(this);
+				this._sMonthRegExp = "(" + aMonths.join("|") + "|[1-9]|1[0-2])";
+			}
+			return this._sMonthRegExp;
+		}
 
 		let bCreatingMonthValueHelp = false;
 

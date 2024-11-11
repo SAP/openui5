@@ -1553,19 +1553,22 @@ sap.ui.define([
 
 			[OperatorName.SPECIFICMONTH]: [{
 				formatArgs: [Condition.createCondition(OperatorName.SPECIFICMONTH, [4])],
-				formatValue: mdcMessageBundle.getText("operators.SPECIFICMONTH.tokenText", ["May"]),
+				formatValue: mMessageBundle.getText("DYNAMIC_DATE_SPECIFICMONTH_FORMAT", ["May"]),
 				parsedValue: "4",
 				condition: Condition.createCondition(OperatorName.SPECIFICMONTH, [4], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
 				longText: mMessageBundle.getText("DYNAMIC_DATE_SPECIFICMONTH_TITLE"),
-				tokenText: mdcMessageBundle.getText("operators.SPECIFICMONTH.tokenText")
+				tokenText: mMessageBundle.getText("DYNAMIC_DATE_SPECIFICMONTH_FORMAT"),
+				oType: oDateTimeOffsetType,
+				baseType: BaseType.DateTime,
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20240501-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20240531-235959000", "string")}
 			},
-			{
+			{// only real valid if tokenText contains more that month
 				formatArgs: [Condition.createCondition(OperatorName.SPECIFICMONTH, [4]), undefined, undefined, true],
 				formatValue: "May",
-				parseArgs: ["May", undefined, undefined, true],
+				parseArgs: ["5", undefined, undefined, true], // also numbers needs to be parsed
 				parsedValue: "4",
 				condition: Condition.createCondition(OperatorName.SPECIFICMONTH, [4], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
@@ -1574,14 +1577,17 @@ sap.ui.define([
 			}],
 			[OperatorName.SPECIFICMONTHINYEAR]: [{
 				formatArgs: [Condition.createCondition(OperatorName.SPECIFICMONTHINYEAR, [4, 2000])],
-				formatValue: mdcMessageBundle.getText("operators.SPECIFICMONTHINYEAR.tokenText", ["May", 2000]),
+				formatValue: mMessageBundle.getText("DYNAMIC_DATE_SPECIFICMONTHINYEAR_FORMAT", ["May", 2000]),
 				parsedValue: "42000",
 				condition: Condition.createCondition(OperatorName.SPECIFICMONTHINYEAR, [4, 2000], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: false,
 				longText: mMessageBundle.getText("DYNAMIC_DATE_SPECIFICMONTHINYEAR_TITLE"),
-				tokenText: mdcMessageBundle.getText("operators.SPECIFICMONTHINYEAR.tokenText")
+				tokenText: mMessageBundle.getText("DYNAMIC_DATE_SPECIFICMONTHINYEAR_FORMAT"),
+				oType: oDateTimeOffsetType,
+				baseType: BaseType.DateTime,
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20000501-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20000531-235959000", "string")}
 			}],
 
 			"MyToToday": [{
