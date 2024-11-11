@@ -19,44 +19,52 @@ sap.ui.define([
 	 *
 	 * Instances of this class define the sort order for a list binding.
 	 *
-	 *
-	 * @param {string} sPath the binding path used for sorting
-	 * @param {boolean} [bDescending=false] whether the sort order should be descending
-	 * @param {boolean|function} [vGroup] configure grouping of the content, can either be true to
-	 *   enable grouping based on the raw model property value, or a function which calculates the
-	 *   group value out of the context (e.g. oContext.getProperty("date").getYear() for year
-	 *   grouping). The control needs to implement the grouping behaviour for the aggregation which
-	 *   you want to group. In case a function is provided it must either return a primitive type
-	 *   value as the group key or an object containing a "key" property and additional properties
-	 *   needed for group visualization. This object or the object with the primitive type return
-	 *   value as "key" property is passed to the <code>groupHeaderFactory</code> function that has
-	 *   been specified to create the group header for the control aggregation; see
-	 *   {@link sap.ui.base.ManagedObject#bindAggregation}.
-	 *   <b>Note:</b> Grouping via <code>vGroup=true</code> is only possible (and only makes sense)
-	 *   for the primary sort property. A more complicated grouping is possible by providing a
-	 *   grouping function. The sort order needs to fit to the grouping also in this case. See also
-	 *   {@link topic:ec79a5d5918f4f7f9cbc2150e66778cc Sorting, Grouping, and Filtering for List
-	 *   Binding}.
-	 * @param {function} [fnComparator] A custom comparator function, which is used for client-side
-	 *   sorting instead of the default comparator method. Information about parameters and expected
-	 *   return values of such a method can be found in the
+	 * @param {string|object} vSorterInfo
+	 *   The binding path used for sorting or the sorter info object; if a sorter info object is given, the other
+	 *   constructor parameters are ignored
+	 * @param {function} [vSorterInfo.comparator]
+	 *   See <code>fnComparator</code> parameter
+	 * @param {boolean} [vSorterInfo.descending=false]
+	 *   See <code>bDescending</code> parameter
+	 * @param {boolean|function} [vSorterInfo.group]
+	 *   See <code>vGroup</code> parameter
+	 * @param {string} [vSorterInfo.path]
+	 *   The binding path for this sorter
+	 * @param {boolean} [bDescending=false]
+	 *   Whether the sort order is descending
+	 * @param {boolean|function} [vGroup]
+	 *   Configure grouping of the content, can either be <code>true</code> to enable grouping based on the raw model
+	 *   property value, or a function which calculates the group value out of the context (e.g.
+	 *   <code>oContext.getProperty("date").getYear()</code> for year grouping). The control needs to implement the
+	 *   grouping behaviour. In case a function is provided it must either return a primitive type value as the group
+	 *   key or an object containing a "key" property and additional properties needed for group visualization. This
+	 *   object or the object with the primitive type return value as "key" property is passed to the
+	 *   <code>groupHeaderFactory</code> function that has been specified to create the group header for the control
+	 *   aggregation; see {@link sap.ui.base.ManagedObject#bindAggregation}.
+	 *   <b>Note:</b> Grouping via <code>vGroup=true</code> is only possible (and only makes sense) for the primary
+	 *   sort property. A more complicated grouping is possible by providing a grouping function. The sort order needs
+	 *   to fit to the grouping also in this case. See also
+	 *   {@link topic:ec79a5d5918f4f7f9cbc2150e66778cc Sorting, Grouping, and Filtering for List Binding}.
+	 * @param {function} [fnComparator]
+	 *   A custom comparator function, which is used for client-side sorting instead of the default comparator method;
+	 *   information about parameters and expected return values of such a method can be found in the
 	 *   {@link #.defaultComparator default comparator} documentation.
-	 *   <b>Note:</b> Custom comparator functions are meant to be used on the client. Models that
-	 *   implement sorting in the backend usually don't support custom comparator functions. Consult
-	 *   the documentation of the specific model implementation.
+	 *   <b>Note:</b> Custom comparator functions are meant to be used on the client. Models that implement sorting in
+	 *   the backend usually don't support custom comparator functions. Consult the documentation of the specific model
+	 *   implementation.
 	 * @public
 	 * @alias sap.ui.model.Sorter
 	 * @extends sap.ui.base.Object
 	 */
 	var Sorter = BaseObject.extend("sap.ui.model.Sorter", /** @lends sap.ui.model.Sorter.prototype */ {
 
-		constructor : function(sPath, bDescending, vGroup, fnComparator){
-			if (typeof sPath === "object") {
-				var oSorterData = sPath;
-				sPath = oSorterData.path;
-				bDescending = oSorterData.descending;
-				vGroup = oSorterData.group;
-				fnComparator = oSorterData.comparator;
+		constructor : function(vSorterInfo, bDescending, vGroup, fnComparator) {
+			let sPath = vSorterInfo;
+			if (typeof vSorterInfo === "object") {
+				sPath = vSorterInfo.path;
+				bDescending = vSorterInfo.descending;
+				vGroup = vSorterInfo.group;
+				fnComparator = vSorterInfo.comparator;
 			}
 			this.sPath = sPath;
 

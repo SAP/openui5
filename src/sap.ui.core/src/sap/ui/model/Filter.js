@@ -118,7 +118,8 @@ sap.ui.define([
 	 * Filter for the list binding.
 	 *
 	 * @param {object|string|sap.ui.model.Filter[]} vFilterInfo
-	 *   Filter info object or a path or an array of filters
+	 *   Filter info object or a path or an array of filters; if a filter info object is given, the
+	 *   other constructor parameters are ignored
 	 * @param {string} [vFilterInfo.path]
 	 *   Binding path for this filter
 	 * @param {function(any):boolean} [vFilterInfo.test]
