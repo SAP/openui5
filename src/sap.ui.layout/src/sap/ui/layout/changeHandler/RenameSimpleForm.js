@@ -21,7 +21,6 @@ sap.ui.define([
 	 * @version ${version}
 	 * @since 1.40
 	 * @private
-	 * @experimental Since 1.40. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var RenameForm = { };
 
