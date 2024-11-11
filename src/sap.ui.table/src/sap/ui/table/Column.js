@@ -617,7 +617,6 @@ sap.ui.define([
 		return !!(this.getSortProperty() && this.getShowSortMenuEntry());
 	};
 
-	// eslint-disable-next-line valid-jsdoc
 	/**
 	 * This function checks whether a grouping column menu item will be created. Although it evaluates some column
 	 * properties, it does not check the metadata. Since a property of the table must be checked, this function will
@@ -683,7 +682,6 @@ sap.ui.define([
 		return oHeaderMenu?.isOpen() || false;
 	};
 
-	// eslint-disable-next-line valid-jsdoc
 	/**
 	 * @deprecated As of version 1.118.
 	 * @private
@@ -709,7 +707,6 @@ sap.ui.define([
 		this.sort(this.getSorted() && this.getSortOrder() === SortOrder.Ascending);
 	};
 
-	// eslint-disable-next-line valid-jsdoc
 	/**
 	 * Sorts the current column ascending or descending.
 	 *

@@ -427,7 +427,6 @@ sap.ui.define([
 		sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 5, 10, oTable.getThreshold());
 		assert.equal(oTable._bScrolled, false, "Scroll flag was reset");
 
-		// eslint-disable-next-line max-len
 		oTable.getBinding().create({
 			"ProductId": "id_17",
 			"Name": "Turbo Scan",

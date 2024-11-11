@@ -528,7 +528,7 @@ sap.ui.define([
 		oTable.setEnableColumnReordering(false);
 		await nextUIUpdate();
 
-		// eslint-disable-next-line
+		// eslint-disable-next-line require-atomic-updates
 		bColumnReorderingTriggered = false;
 		oOpenContextMenuSpy.resetHistory();
 
