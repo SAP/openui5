@@ -641,5 +641,15 @@
         "text": " sap.ui.unified.Calendar: Header buttons are displayed correctly in two months view"
       }
     ]
+  },
+  "1.71.68": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "dc4fda71ba4dd4d33e2bb81180f60868ed3d440e",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: add tooltips for calendar legend types"
+      }
+    ]
   }
 }

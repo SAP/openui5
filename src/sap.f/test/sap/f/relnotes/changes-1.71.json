@@ -232,5 +232,15 @@
         ]
       }
     ]
+  },
+  "1.71.68": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "ce95333c5b07310c0e646d0f9f545926815413a8",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Qunit in IE fixed"
+      }
+    ]
   }
 }

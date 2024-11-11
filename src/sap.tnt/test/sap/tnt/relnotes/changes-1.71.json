@@ -98,5 +98,26 @@
         ]
       }
     ]
+  },
+  "1.71.68": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "9e01b93403f62f0926f82b109f8e6ba1d20b0872",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Add tooltip to the up and down arrow buttons"
+      },
+      {
+        "id": "b2bad2b2368e735a0b7b3d684a71416ade8dd65c",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: ARIA roles are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070219317"
+          }
+        ]
+      }
+    ]
   }
 }

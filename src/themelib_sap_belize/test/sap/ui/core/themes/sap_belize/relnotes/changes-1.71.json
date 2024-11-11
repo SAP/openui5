@@ -210,5 +210,15 @@
         ]
       }
     ]
+  },
+  "1.71.68": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "db4499a137343c51c7aed5b62ec29b486f14aa5c",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Inverted status is correctly displayed in HCB and HCW belize theme"
+      }
+    ]
   }
 }
