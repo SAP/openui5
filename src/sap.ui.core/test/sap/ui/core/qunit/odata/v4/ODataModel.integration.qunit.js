@@ -61803,7 +61803,7 @@ make root = ${bMakeRoot}`;
 	// JIRA: CPOUI5ODATAV4-344
 	//
 	// Add and modify annotations for the value list model via local annotation files, including one
-	// in a referenced scope.
+	// in a referenced scope and one in a nested value list model.
 	// JIRA: CPOUI5ODATAV4-2732
 [false, true].forEach(function (bAutoExpandSelect) {
 	var sTitle = "$$sharedRequest and ODMM#getOrCreateSharedModel, bAutoExpandSelect = "
@@ -61818,8 +61818,12 @@ make root = ${bMakeRoot}`;
 				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TYPE_CODE%27/$metadata"
 					: {source : "odata/v4/data/VH_ProductTypeCode.xml"},
 				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv-ext/0001/$metadata"
-					: {source : "odata/v4/data/VH_ProductTypeCode_ext.xml"}
+					: {source : "odata/v4/data/VH_ProductTypeCode_ext.xml"},
+				// fake "nested" value help
+				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv/0001;ps=%27N_A%27;va=%27com.sap.gateway.f4.d_pr_type-fv.v0001.D_PR_TYPE_FV.FIELD_VALUE%27/$metadata"
+					: {source : "odata/v4/data/VH_FIELD_VALUE.xml"}
 			}),
+			oValueListModel,
 			sView = '\
 <FlexBox binding="{/ProductList(\'1\')}">\
 	<Text id="typeCode1" text="{TypeCode}"/>\
@@ -61852,7 +61856,7 @@ make root = ${bMakeRoot}`;
 			return that.oView.byId("typeCode1").getBinding("text")
 				.requestValueListInfo(bAutoExpandSelect);
 		}).then(function (mValueListInfo) {
-			var oValueListModel = mValueListInfo[""].$model;
+			oValueListModel = mValueListInfo[""].$model;
 
 			assert.throws(function () {
 				oValueListModel.setAnnotationChangePromise(Promise.resolve([]));
@@ -61896,6 +61900,14 @@ make root = ${bMakeRoot}`;
 					}),
 				that.waitForChanges(assert)
 			]);
+		}).then(async function () {
+			const mValueListInfo = await oValueListModel.getMetaModel()
+				.requestValueListInfo("/D_PR_TYPE_FV_SET/FIELD_VALUE");
+			const oNestedValueListModel = mValueListInfo[""].$model;
+			const sLabel = await oNestedValueListModel.getMetaModel()
+				.requestObject("/com.sap.gateway.f4.FIELD_VALUE.v0001.D_PR_TYPE_FV/DESCRIPTION"
+					+ "@com.sap.vocabularies.Common.v1.Label");
+			assert.strictEqual(sLabel, "Description's NESTED New Label");
 		});
 	});
 });
