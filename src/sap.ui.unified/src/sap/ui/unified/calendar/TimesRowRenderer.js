@@ -62,6 +62,8 @@ sap.ui.define([
 			labelledby: oTimesRow._getShowHeader() ? {value: sId + "-Head", append: true} : undefined
 		});
 
+		oRm.openEnd();
+
 		if (oTimesRow.getIntervalSelection()) {
 			oRm.openStart("span", sId + "-Start");
 			oRm.style("display", "none");

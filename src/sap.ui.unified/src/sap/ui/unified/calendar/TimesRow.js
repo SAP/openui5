@@ -640,7 +640,7 @@ sap.ui.define([
 		if (oParent && oParent.getLegend) {
 			return oParent.getLegend();
 		} else {
-			return this.getAssociation("ariaLabelledBy", []);
+			return this.getAssociation("legend");
 		}
 
 	};
