@@ -137,7 +137,6 @@ sap.ui.define([
 				bPhoneSize: false,
 				bDesktopSize: false,
 				bShowVersionSwitchButton: false,
-				bDarkThemeActive: false,
 				bLandscape: Device.orientation.landscape,
 				bHasMaster: false,
 				bSearchMode: false,
@@ -242,7 +241,6 @@ sap.ui.define([
 			// Subscribe to events
 			this.bus = EventBus.getInstance();
 			this.bus.subscribe("newsChanged", "onDemoKitNewsChanged", this._syncNewsModelWithNewsInfo, this);
-			this.bus.subscribe("themeChanged", "onThemeChanged", this._onThemeChanged, this);
 
 			// Init cookie settings
 			this._oConfigUtil = this.getOwnerComponent().getConfigUtil();
@@ -1682,22 +1680,6 @@ sap.ui.define([
 			this._demoKitSubHeader.setSelectedKey(sKey);
 			this._demoKitSideNavigation.setSelectedKey(sKey);
 			this._sKey = sKey;
-		},
-
-		/**
-		 * Handles the theme changed event.
-		 *
-		 * @param {string} sChannelId - The channel ID of the event.
-		 * @param {string} sEventId - The event ID.
-		 * @param {Object} oData - The data associated with the event.
-		 * @returns {void}
-		 */
-		_onThemeChanged: function (sChannelId, sEventId, oData) {
-			var oViewModel = this.getModel("appView"),
-				sActiveTheme = oData.sThemeActive,
-				bDarkThemeActive = sActiveTheme && (sActiveTheme.includes("dark") || sActiveTheme.includes("hcb"));
-
-			oViewModel.setProperty("/bDarkThemeActive", bDarkThemeActive);
 		},
 
 		/**
