@@ -55237,6 +55237,71 @@ make root = ${bMakeRoot}`;
 	//  currency are in two different fields in draft scenario (no save button)?
 
 	//*********************************************************************************************
+	// Scenario: Two different models for the same service. Both models request currency codes from
+	// the same common service. See that currency codes are fetched only once and are the same
+	// (because they are shared between models).
+	// JIRA: CPOUI5ODATAV4-2803
+	QUnit.test("CPOUI5ODATAV4-2803: Code list sharing", async function (assert) {
+		// #createModel can be used only once in a QUnit test. However, the request fixture is
+		// shared with other models.
+		const oModel0 = this.createModel(sSalesOrderService, {
+			autoExpandSelect : true
+		}, {
+			"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata"
+				: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
+			"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/$metadata"
+				: {source : "odata/v4/data/metadata_codelist.xml"}
+		});
+		const oModel1 = new ODataModel({
+			serviceUrl : sSalesOrderService
+		});
+
+		let iRequestCount = 0;
+		TestUtils.onRequest((_, sRequestLine) => {
+			if (sRequestLine.includes("zui5_epm_sample")) {
+				assert.ok(true, sRequestLine); // metadata for the service itself
+			} else if (sRequestLine.includes("iwbep")) {
+				iRequestCount += 1; // metadata for the code lists
+				assert.strictEqual(iRequestCount, 1, sRequestLine);
+			} else {
+				assert.ok(false, "unexpected request: " + sRequestLine);
+			}
+		});
+
+		await this.createView(assert, "", oModel0);
+
+		// Note: #expectRequest can handle different models (because the _Requestor is intercepted
+		// at the prototype in #createView)
+		this.expectRequest("Currencies?$select=CurrencyCode,DecimalPlaces,Text,ISOCode", {
+				// must have all properties, but actual values are irrelevant
+				value : [{
+					CurrencyCode : "EUR",
+					DecimalPlaces : 2,
+					ISOCode : "EUR",
+					Text : "Euro"
+				}]
+			});
+
+		const [mCodeList0, mCodeList1] = await Promise.all([
+			// code under test
+			oModel0.getMetaModel().requestCurrencyCodes(),
+			oModel1.getMetaModel().requestCurrencyCodes(),
+			this.waitForChanges(assert)
+		]);
+
+		assert.deepEqual(mCodeList0, {
+			EUR : {
+				StandardCode : "EUR",
+				Text : "Euro",
+				UnitSpecificScale : 2
+			}
+		});
+		assert.strictEqual(mCodeList1, mCodeList0);
+
+		TestUtils.onRequest(null);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Request value list information for an action's parameter.
 	// BCP: 1970116818
 	// JIRA: CPOUI5UISERVICESV3-1744
@@ -61802,6 +61867,9 @@ make root = ${bMakeRoot}`;
 	// Scenario: A value list model is used multiple times, but the request is shared.
 	// JIRA: CPOUI5ODATAV4-344
 	//
+	// Observe that the request for the metadata of the value list is made only once.
+	// JIRA: CPOUI5ODATAV4-2803
+	//
 	// Add and modify annotations for the value list model via local annotation files, including one
 	// in a referenced scope and one in a nested value list model.
 	// JIRA: CPOUI5ODATAV4-2732
@@ -61853,10 +61921,28 @@ make root = ${bMakeRoot}`;
 			.expectChange("typeCode2", "PR");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			return that.oView.byId("typeCode1").getBinding("text")
-				.requestValueListInfo(bAutoExpandSelect);
-		}).then(function (mValueListInfo) {
-			oValueListModel = mValueListInfo[""].$model;
+			let iRequestCount = 0;
+			TestUtils.onRequest((_, sRequestLine) => {
+				if (sRequestLine.includes("ET-PRODUCT.TYPE_CODE")) {
+					iRequestCount += 1; // metadata for the value list
+					assert.strictEqual(iRequestCount, 1, sRequestLine);
+				} else {
+					assert.ok(false, "unexpected request: " + sRequestLine);
+				}
+			});
+
+			// code under test (JIRA: CPOUI5ODATAV4-2803)
+			return Promise.all([
+				that.oView.byId("typeCode1").getBinding("text")
+					.requestValueListInfo(bAutoExpandSelect),
+				that.oView.byId("typeCode2").getBinding("text")
+					.requestValueListInfo(bAutoExpandSelect)
+			]);
+		}).then(function ([mValueListInfo1, mValueListInfo2]) {
+			TestUtils.onRequest(null);
+
+			oValueListModel = mValueListInfo1[""].$model;
+			assert.strictEqual(oValueListModel, mValueListInfo2[""].$model);
 
 			assert.throws(function () {
 				oValueListModel.setAnnotationChangePromise(Promise.resolve([]));
