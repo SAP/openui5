@@ -3,6 +3,11 @@
     "date": "November 2024",
     "notes": [
       {
+        "id": "b16acae5a6c842c54740808d0c039071321818d2",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationListItem: Selection now happens on Spacebar onkeyup event (not onkeydown)"
+      },
+      {
         "id": "b0b6f6fe91329f1c61adb3eb3516032acb392f05",
         "type": "FIX",
         "text": " sap.m.IconTabBar: remove border when used inside sap.tnt.ToolPage"

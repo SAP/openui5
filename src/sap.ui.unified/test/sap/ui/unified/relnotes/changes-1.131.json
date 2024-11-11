@@ -3,6 +3,21 @@
     "date": "November 2024",
     "notes": [
       {
+        "id": "3854f29dd6b29f4ebf4ecbfb00aabfe5346aaae3",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarMonthInterval: adjust accessibility semantics"
+      },
+      {
+        "id": "e78f8aa2d37c6420fa1fc7ce527bf0cc839a278e",
+        "type": "FIX",
+        "text": " sap.ui.unified: Fix editing of DemoKit Samples"
+      },
+      {
+        "id": "1bd79239e617b5580c40352f14f673fa80a1dcec",
+        "type": "FIX",
+        "text": " sap.ui.unified.RecurrenceUtils: Correct positioning of non-work periods."
+      },
+      {
         "id": "af171ba7e487cdd35c50eb4086ac0a99f821997e",
         "type": "FIX",
         "text": " sap.m.PlanningCalendarLegend: adjust accessibility semantics"

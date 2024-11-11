@@ -3,6 +3,11 @@
     "date": "November 2024",
     "notes": [
       {
+        "id": "3492440f528a78ec537197f65d102659616470eb",
+        "type": "FIX",
+        "text": " sap.m.Dialog: The sub-header is now taken into account when calculating the top padding"
+      },
+      {
         "id": "e7b855470515a8c626da0867306ee48481b5e1f0",
         "type": "FIX",
         "text": " sap.m.Dialog: Supports Custom header with height bigger than one line"

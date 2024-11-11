@@ -3,6 +3,11 @@
     "date": "November 2024",
     "notes": [
       {
+        "id": "b4e46f1abe1697137f359bb2c02b88532b732963",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.10 and v4.22"
+      },
+      {
         "id": "f7e611a81a6d19007eff761a377a1335a2a85600",
         "type": "FIX",
         "text": " sap.m.ObjectStatus: fixed active ObjectStatus focus"

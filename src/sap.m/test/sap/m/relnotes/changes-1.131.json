@@ -3,6 +3,81 @@
     "date": "November 2024",
     "notes": [
       {
+        "id": "d9063a7631183e347b27e0a3c583ed02ee1c5ed2",
+        "type": "FIX",
+        "text": " sap.m.Popover: Popover can now be opened by the keyboard"
+      },
+      {
+        "id": "aae0a9db6709a92998069c8b4d4837433b2d8492",
+        "type": "FIX",
+        "text": " We've now fixed the truncation of timestamp issue in the feedListItem"
+      },
+      {
+        "id": "28eacd2f3e3bf8f39a5946d42ad6863e731e2069",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Do not show empty Popover"
+      },
+      {
+        "id": "6917a976be70c451b3f05552daf2205fd90a0964",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: Add custom option sample"
+      },
+      {
+        "id": "3492440f528a78ec537197f65d102659616470eb",
+        "type": "FIX",
+        "text": " sap.m.Dialog: The sub-header is now taken into account when calculating the top padding"
+      },
+      {
+        "id": "966e075f153abc176264fd1f19b7d767f5cb550f",
+        "type": "FIX",
+        "text": " sap.m.Image: Inline svg rendering issue corrected"
+      },
+      {
+        "id": "768d5b74109c0fef803a90bd69b505a2f833676a",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: adjust dialog header announcement"
+      },
+      {
+        "id": "7615225f8fd40e3eddfcdb00c0aafb294f14d390",
+        "type": "FIX",
+        "text": " sap.m.MaskInput: 'Del' key now deletes more than one character"
+      },
+      {
+        "id": "b0ca064edf41885d581177cf2334e47742448d88",
+        "type": "FEATURE",
+        "text": " sap.m.Dialog: beforeOpen/beforeClose events are now preventable"
+      },
+      {
+        "id": "b4e46f1abe1697137f359bb2c02b88532b732963",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.10 and v4.22"
+      },
+      {
+        "id": "6e4489c3348a8896a917368d6687d8a25391f116",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: icon only link is now clickable"
+      },
+      {
+        "id": "2ff484205a80cbf39cf14c4ecc9c4d99685f24c0",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: announce option's selected state"
+      },
+      {
+        "id": "01a6995eda3fd44b55b0c0bfc5cf36cbb6ed141e",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: add content announcement"
+      },
+      {
+        "id": "764b28f8cf832ce8f9d5cbf1f8cb9bdeaad34761",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: added hours/minutes/seconds buttons tooltips"
+      },
+      {
+        "id": "00d800311664f936e9f810f7b8964c92554d4716",
+        "type": "FIX",
+        "text": "sap.m.ComboBox, sap.m.SuggestionsPopover: Adjust arrow down behavior with value state"
+      },
+      {
         "id": "af171ba7e487cdd35c50eb4086ac0a99f821997e",
         "type": "FIX",
         "text": " sap.m.PlanningCalendarLegend: adjust accessibility semantics"
@@ -16,6 +91,11 @@
         "id": "a680ee1a1ca5ae4eed40bc087e0451abac54d019",
         "type": "FIX",
         "text": " We now ensure that the video source or the url setting uses the template strings correctly"
+      },
+      {
+        "id": "9814483b335b65005c33eefe1afbb5fda8249ad0",
+        "type": "FIX",
+        "text": " sap.m.Popover: Close popover on Escape key press before its initial focus is applied"
       },
       {
         "id": "1e16c6857cab24a72e0c0e68513826d86c6001a3",
