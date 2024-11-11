@@ -1,5 +1,3 @@
-// Note: the HTML page 'YearRangePicker.html' loads this module via data-sap-ui-on-init
-
 sap.ui.define([
 	"sap/m/App",
 	"sap/m/Page",
@@ -35,6 +33,8 @@ sap.ui.define([
 								iYear,
 								oDate;
 
+							oEvent.getSource();
+
 							if (sValue && !isNaN(sValue)) {
 								iYear = parseInt(sValue);
 								oDate = new UniversalDate();
@@ -49,7 +49,7 @@ sap.ui.define([
 					new YearRangePicker("YRP1", {
 						select: function(oEvent) {
 							var oInput = Element.getElementById("I1"),
-								oYRP = oEvent.oSource,
+								oYRP = oEvent.getSource(),
 								oDate = new UniversalDate(oYRP.getDate());
 
 							oInput.setValue(oDate.getFullYear());

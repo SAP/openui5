@@ -1,10 +1,10 @@
 sap.ui.define([
   "sap/ui/core/Element",
   "sap/ui/unified/calendar/Header",
-  "sap/ui/commons/Label",
-  "sap/ui/commons/TextField",
-  "sap/ui/commons/ToggleButton"
-], function(Element, Header, Label, TextField, ToggleButton) {
+  "sap/m/Label",
+  "sap/m/Input",
+  "sap/m/ToggleButton"
+], function(Element, Header, Label, Input, ToggleButton) {
   "use strict";
 
   new Header("H1",{
@@ -28,41 +28,41 @@ sap.ui.define([
 	  }
   }).placeAt("sample1");
 
-  new Label({text: "Text 1", labelFor: "TF1"}).placeAt("event1");
-  new TextField("TF1",{
-	  editable: true,
+  new Label({text: "Text 1", labelFor: "Input1"}).placeAt("event1");
+  new Input("Input1",{
 	  change: function(oEvent){
-		  var sValue = oEvent.getParameter('newValue');
+		  oEvent.getSource();
+		  var sValue = oEvent.getParameter('value');
 		  var oHeader = Element.getElementById("H1");
 		  oHeader.setTextButton1(sValue);
 	  }
   }).placeAt("event1");
 
-  new Label({text: "additional text 1", labelFor: "TF2"}).placeAt("event1");
-  new TextField("TF2",{
-	  editable: true,
+  new Label({text: "additional text 1", labelFor: "Input2"}).placeAt("event1");
+  new Input("Input2",{
 	  change: function(oEvent){
-		  var sValue = oEvent.getParameter('newValue');
+		  oEvent.getSource();
+		  var sValue = oEvent.getParameter('value');
 		  var oHeader = Element.getElementById("H1");
 		  oHeader.setAdditionalTextButton1(sValue);
 	  }
   }).placeAt("event1");
 
-  new Label({text: "Text 2", labelFor: "TF3"}).placeAt("event1");
-  new TextField("TF3",{
-	  editable: true,
+  new Label({text: "Text 2", labelFor: "Input3"}).placeAt("event1");
+  new Input("Input3",{
 	  change: function(oEvent){
-		  var sValue = oEvent.getParameter('newValue');
+		  oEvent.getSource();
+		  var sValue = oEvent.getParameter('value');
 		  var oHeader = Element.getElementById("H1");
 		  oHeader.setTextButton2(sValue);
 	  }
   }).placeAt("event1");
 
-  new Label({text: "additional text 2", labelFor: "TF4"}).placeAt("event1");
-  new TextField("TF4",{
-	  editable: true,
+  new Label({text: "additional text 2", labelFor: "Input4"}).placeAt("event1");
+  new Input("Input4",{
 	  change: function(oEvent){
-		  var sValue = oEvent.getParameter('newValue');
+		  oEvent.getSource();
+		  var sValue = oEvent.getParameter('value');
 		  var oHeader = Element.getElementById("H1");
 		  oHeader.setAdditionalTextButton2(sValue);
 	  }

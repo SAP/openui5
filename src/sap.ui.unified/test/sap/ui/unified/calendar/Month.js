@@ -1,6 +1,9 @@
 sap.ui.define([
   "sap/ui/core/Element",
   "sap/ui/model/type/Date",
+  "sap/m/Button",
+  "sap/m/Label",
+  "sap/m/Text",
   "sap/ui/core/format/DateFormat",
   "sap/ui/core/CalendarType",
   "sap/ui/unified/calendar/Month",
@@ -10,18 +13,20 @@ sap.ui.define([
   "sap/ui/layout/library",
   "sap/ui/layout/form/FormContainer",
   "sap/ui/layout/form/FormElement",
-  "sap/ui/commons/ToggleButton",
+  "sap/m/ToggleButton",
   "sap/ui/unified/DateTypeRange",
   "sap/ui/unified/DateRange",
-  "sap/ui/commons/TextField",
-  "sap/ui/commons/ComboBox",
+  "sap/m/Input",
+  "sap/m/ComboBox",
   "sap/ui/core/ListItem",
-  "sap/ui/commons/Label",
   "sap/ui/core/Item",
-  "sap/ui/commons/ListBox"
+  "sap/m/Select"
 ], function(
   Element,
   TypeDate,
+  Button,
+  Label,
+  Text,
   DateFormat,
   CalendarType,
   Month,
@@ -34,12 +39,11 @@ sap.ui.define([
   ToggleButton,
   DateTypeRange,
   DateRange,
-  TextField,
+  Input,
   ComboBox,
   ListItem,
-  Label,
   Item,
-  ListBox
+  Select
 ) {
   "use strict";
 
@@ -102,34 +106,35 @@ sap.ui.define([
 		  {
 			  date: UI5Date.getInstance(2016, 0, 1) /* to make sure special dates are in visible range */,
 			  focus: function (oEvent) {
-				  var oTF = Element.getElementById("TF1");
+				  var oInput = Element.getElementById("Input1");
 				  var oDate = oEvent.getParameter("date");
 				  if (oDate) {
-					  oTF.setValue(oFormatYyyymmdd.format(oDate));
+					  oInput.setValue(oFormatYyyymmdd.format(oDate));
 				  } else {
-					  oTF.setValue("");
+					  oInput.setValue("");
 				  }
 				  if (!oEvent.getParameter("otherMonth")) {
-					  oTF.setValueState(ValueState.None);
+					  oInput.setValueState(ValueState.None);
 				  } else {
-					  oTF.setValueState(ValueState.Error);
+					  oInput.setValueState(ValueState.Error);
 				  }
 			  },
 			  select: function (oEvent) {
-				  var oTF = Element.getElementById("TF2");
-				  var oMonth = oEvent.oSource;
+				  var oInput = Element.getElementById("Input2");
+				  var oMonth = oEvent.getSource();
 				  var aSelectedDates = oMonth.getSelectedDates();
 				  var oDate;
 				  if (aSelectedDates.length > 0) {
 					  oDate = aSelectedDates[0].getStartDate();
-					  oTF.setValue(oFormatYyyymmdd.format(oDate));
+					  oInput.setValue(oFormatYyyymmdd.format(oDate));
 				  } else {
-					  oTF.setValue("");
+					  oInput.setValue("");
 				  }
 			  }
 		  }).placeAt("sample1");
 
   var oForm = new Form("F1", {
+	  editable: true,
 	  layout: new ResponsiveGridLayout("L1", {
 		  breakpointM: 350,
 		  labelSpanL: 6,
@@ -203,16 +208,15 @@ sap.ui.define([
 
   oFormElement = new FormElement("F1E2", {
 	  label: "focused date",
-	  fields: [ new TextField("TF1",{
-							  editable: true,
+	  fields: [ new Input("Input1",{
 							  placeholder: "yyyyMMdd",
 							  change: function(oEvent){
-								  var oTF = oEvent.oSource;
-								  var sValue = oEvent.getParameter('newValue');
+								  var oInput = oEvent.getSource();
+								  var sValue = oEvent.getParameter('value');
 								  var oMonth = Element.getElementById("Month1");
 								  var oDate = oFormatYyyymmdd.parse(sValue);
 								  oMonth.setDate(oDate);
-								  oTF.setValueState(ValueState.None);
+								  oInput.setValueState(ValueState.None);
 							  }
 						  })
 		  ]
@@ -221,11 +225,11 @@ sap.ui.define([
 
   oFormElement = new FormElement("F1E3", {
 	  label: "selected date",
-	  fields: [ new TextField("TF2",{
-							  editable: true,
+	  fields: [ new Input("Input2",{
 							  placeholder: "yyyyMMdd",
 							  change: function(oEvent){
-								  var sValue = oEvent.getParameter('newValue');
+								  oEvent.getSource();
+								  var sValue = oEvent.getParameter('value');
 								  var oMonth = Element.getElementById("Month1");
 								  if (sValue.length == 8 && !isNaN(sValue)) {
 									  var oDate = oFormatYyyymmdd.parse(sValue);
@@ -250,13 +254,13 @@ sap.ui.define([
   oFormElement = new FormElement("F1E4", {
 	  label: "primary calendar type",
 	  fields: [ new ComboBox("CB1",{
-							  editable: true,
 							  items: [
 											  new ListItem({text: CalendarType.Gregorian, key: CalendarType.Gregorian}),
 											  new ListItem({text: CalendarType.Islamic, key: CalendarType.Islamic}),
 											  new ListItem({text: CalendarType.Japanese, key: CalendarType.Japanese})
 											  ],
-							  change: function(oEvent){
+							  selectionChange: function(oEvent){
+								  oEvent.getSource();
 								  var oItem = oEvent.getParameter('selectedItem');
 								  var oMonth = Element.getElementById("Month1");
 								  var sKey = "";
@@ -273,13 +277,13 @@ sap.ui.define([
   oFormElement = new FormElement("F1E5", {
 	  label: "secondary calendar type",
 	  fields: [ new ComboBox("CB2",{
-							  editable: true,
 							  items: [
 											  new ListItem({text: CalendarType.Gregorian, key: CalendarType.Gregorian}),
 											  new ListItem({text: CalendarType.Islamic, key: CalendarType.Islamic}),
 											  new ListItem({text: CalendarType.Japanese, key: CalendarType.Japanese})
 											  ],
-							  change: function(oEvent){
+							  selectionChange: function(oEvent){
+								  oEvent.getSource();
 								  var oItem = oEvent.getParameter('selectedItem');
 								  var oMonth = Element.getElementById("Month1");
 								  var sKey = "";
@@ -297,37 +301,37 @@ sap.ui.define([
   new Month("Month2",{
 	  intervalSelection: true,
 	  select: function(oEvent){
-		  var oTF1 = Element.getElementById("TF2-start");
-		  var oTF2 = Element.getElementById("TF2-end");
-		  var oMonth = oEvent.oSource;
+		  var oInput1 = Element.getElementById("Input2-start");
+		  var oInput2 = Element.getElementById("Input2-end");
+		  var oMonth = oEvent.getSource();
 		  var aSelectedDates = oMonth.getSelectedDates();
 		  var oDate;
 		  if (aSelectedDates.length > 0 ) {
 			  oDate = aSelectedDates[0].getStartDate();
 			  if (oDate) {
-				  oTF1.setValue(oFormatYyyymmdd.format(oDate));
+				  oInput1.setValue(oFormatYyyymmdd.format(oDate));
 			  } else {
-				  oTF1.setValue("");
+				  oInput1.setValue("");
 			  }
 			  oDate = aSelectedDates[0].getEndDate();
 			  if (oDate) {
-				  oTF2.setValue(oFormatYyyymmdd.format(oDate));
+				  oInput2.setValue(oFormatYyyymmdd.format(oDate));
 			  } else {
-				  oTF2.setValue("");
+				  oInput2.setValue("");
 			  }
 		  } else {
-			  oTF1.setValue("");
-			  oTF2.setValue("");
+			  oInput1.setValue("");
+			  oInput2.setValue("");
 		  }
 	  }
   }).placeAt("sample2");
 
-  new Label({text: "selected date from", labelFor: "TF2-start"}).placeAt("event2");
-  new TextField("TF2-start",{
+  new Label({text: "selected date from", labelFor: "Input2-start"}).placeAt("event2");
+  new Input("Input2-start",{
 	  editable: false
   }).placeAt("event2");
-  new Label({text: "to", labelFor: "TF2-end"}).placeAt("event2");
-  new TextField("TF2-end",{
+  new Label({text: "to", labelFor: "Input2-end"}).placeAt("event2");
+  new Input("Input2-end",{
 	  editable: false
   }).placeAt("event2");
 
@@ -339,7 +343,7 @@ sap.ui.define([
 	  nonWorkingDays: [3, 5],
 	  select: function(oEvent){
 		  var oLB = Element.getElementById("LB");
-		  var oMonth = oEvent.oSource;
+		  var oMonth = oEvent.getSource();
 		  var aSelectedDates = oMonth.getSelectedDates();
 		  var oDate;
 		  if (aSelectedDates.length > 0 ) {
@@ -373,9 +377,8 @@ sap.ui.define([
 
   new Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
 
-  new ListBox("LB",{
+  new Select("LB",{
 	  editable: false,
-	  visibleItems: 10,
 	  width: "8em"
   }).placeAt("event3");
 

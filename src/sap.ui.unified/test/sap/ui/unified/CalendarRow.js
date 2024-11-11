@@ -76,10 +76,10 @@ sap.ui.define([
 
   var handleStartDateChange = function(oEvent){
 
-	  var oRow = oEvent.oSource;
+	  var oRow = oEvent.getSource();
 	  var oStartDate = oRow.getStartDate();
-	  var oTF = Element.getElementById("TF1");
-	  oTF.setValue(oFormatYyyyMMddHHmm.format(oStartDate));
+	  var oInput = Element.getElementById("Input1");
+	  oInput.setValue(oFormatYyyyMMddHHmm.format(oStartDate));
 
   };
 
@@ -331,22 +331,21 @@ sap.ui.define([
   });
   oRow1.addIntervalHeader(oApp);
 
-  new Label({text: "start date", labelFor: "TF1"}).placeAt("event1");
-  new Input("TF1",{
+  new Label({text: "start date", labelFor: "Input1"}).placeAt("event1");
+  new Input("Input1",{
 	  width:"10rem",
 	  value: oFormatYyyyMMddHHmm.format(oRow1.getStartDate()),
-	  editable: true,
 	  placeholder: "yyyyMMddHHmm",
 	  change: function(oEvent){
-		  var oTF = oEvent.oSource;
+		  var oInput = oEvent.getSource();
 		  var sValue = oEvent.getParameter('newValue');
 		  var oRow = Element.getElementById("Row1");
 		  var oDate = oFormatYyyyMMddHHmm.parse(sValue);
 		  if (oDate) {
 			  oRow.setStartDate(oDate);
-			  oTF.setValueState(ValueState.None);
+			  oInput.setValueState(ValueState.None);
 		  } else {
-			  oTF.setValueState(ValueState.Error);
+			  oInput.setValueState(ValueState.Error);
 		  }
 	  }
   }).placeAt("event1");
@@ -369,20 +368,19 @@ sap.ui.define([
 	  }
   }).placeAt("event1");
 
-  new Label({text: "intervals", labelFor: "TF2"}).placeAt("event1");
-  new Input("TF2",{
+  new Label({text: "intervals", labelFor: "Input2"}).placeAt("event1");
+  new Input("Input2",{
 	  value: oRow1.getIntervals(),
 	  width: "10rem",
-	  editable: true,
 	  placeholder: "Number",
 	  change: function(oEvent){
-		  var oTF = oEvent.oSource;
+		  var oInput = oEvent.getSource();
 		  var sValue = oEvent.getParameter('newValue');
 		  var oRow = Element.getElementById("Row1");
 		  if (isNaN(sValue)) {
-			  oTF.setValueState(ValueState.Error);
+			  oInput.setValueState(ValueState.Error);
 		  } else {
-			  oTF.setValueState(ValueState.None);
+			  oInput.setValueState(ValueState.None);
 			  oRow.setIntervals(parseInt(sValue));
 		  }
 	  }
@@ -484,7 +482,7 @@ sap.ui.define([
 					  new Item("I-1",{text:"Standard", key: CalendarAppointmentVisualization.Standard}),
 					  new Item("I-2",{text:"Filled", key: CalendarAppointmentVisualization.Filled})
 					  ],
-	  change: function(oEvent){
+	  selectionChange: function(oEvent){
 		  var sKey = oEvent.getSource().getSelectedKey();
 		  oRow1.setAppointmentsVisualization(sKey);
 	  }
@@ -497,7 +495,7 @@ sap.ui.define([
 		  new Item("GAM-I-1",{text:"Collapsed", key: GroupAppointmentsMode.Collapsed}),
 		  new Item("GAM-I-2",{text:"Expanded", key: GroupAppointmentsMode.Expanded})
 	  ],
-	  change: function(oEvent){
+	  selectionChange: function(oEvent){
 		  var sKey = oEvent.getSource().getSelectedKey();
 		  oRow1.setGroupAppointmentsMode(sKey);
 	  }

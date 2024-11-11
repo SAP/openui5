@@ -1,20 +1,56 @@
 sap.ui.define([
-  "sap/ui/core/Theming",
+  "sap/ui/core/TooltipBase",
   "sap/ui/unified/Menu",
   "sap/ui/unified/MenuItem",
   "sap/ui/unified/MenuTextFieldItem",
-  "sap/ui/commons/MenuButton",
-  "sap/ui/commons/RichTooltip",
+  "sap/m/ToggleButton",
+  "sap/ui/core/Popup",
+  "sap/m/Text",
   "sap/m/Dialog",
   "sap/m/Button",
   "sap/ui/thirdparty/jquery"
-], function(Theming, Menu, MenuItem, MenuTextFieldItem, MenuButton, RichTooltip, Dialog, Button, jQuery) {
+], function(TooltipBase, Menu, MenuItem, MenuTextFieldItem, ToggleButton, Popup, Text, Dialog, Button, jQuery) {
   "use strict";
-  // Note: the HTML page 'Menu.html' loads this module via data-sap-ui-on-init
-
   var idCounter = 0;
   var aMenus = [];
   var bMenuEventingEnabled = false;
+
+  /*
+   * a simple Tooltip control, inheriting from TooltipBase
+   */
+  var MyTooltip = TooltipBase.extend("sap.m.test.MyToolTip", {
+	  metadata: {
+		  library: "sap.m",
+		  aggregations: {
+			  content: {
+				  multiple: false
+			  }
+		  }
+	  },
+	  renderer: {
+		  apiVersion: 2,
+		  render: function (rm, ctrl) {
+			  rm.openStart("div", ctrl)
+				  .style("background", "white")
+				  .style("border", "1px solid black")
+				  .style("padding", "0.5rem")
+				  .openEnd();
+
+				  rm.openStart("div").openEnd();
+					  if (ctrl.getContent()) {
+						  rm.renderControl(ctrl.getContent());
+					  }
+				  rm.close("div");
+
+				  rm.openStart("div").openEnd();
+					  rm.icon("sap-icon://flag");
+					  rm.icon("sap-icon://favorite");
+				  rm.close("div");
+
+			  rm.close("div");
+		  }
+	  }
+  });
 
   function createSetting(sLabel, oDefaultValue, aValues, fnHandler){
 	  var sDom, fnHandle;
@@ -51,9 +87,9 @@ sap.ui.define([
 		  return null;
 	  }
 
-	  jQuery(document.getElementById("settings")).append("<div id='" + sId + "-frame' style='margin-top:5px;'><div style='display:inline-block;width:200px;'>" + sLabel + ":</div>" + sDom + "</div>");
+	  jQuery("#settings").append("<div id='" + sId + "-frame' style='margin-top:5px;'><div style='display:inline-block;width:200px;'>" + sLabel + ":</div>" + sDom + "</div>");
 
-	  jQuery(document.getElementById(sId)).on("change", fnHandle);
+	  jQuery("#" + sId).on("change", fnHandle); // sId is safe by construction!
 
 	  return sId;
   }
@@ -67,19 +103,6 @@ sap.ui.define([
 			  }
 		  }
 	  });
-
-	  //Dark Design
-	  function setDarkDesign(bEnable) {
-		  for (var i = 0; i < aMenus.length; i++) {
-			  if (aMenus[i].getRootMenu() === aMenus[i]) {
-				  aMenus[i].setRootMenuTopStyle(bEnable);
-			  }
-		  }
-	  }
-	  var sDarkDesign = createSetting("Dark Design", false, null, function(oEvent, val){
-		  setDarkDesign(val);
-	  });
-	  jQuery(document.getElementById(sDarkDesign + "-frame")).toggleClass("SettingHidden", Theming.getTheme() != "sap_goldreflection");
 
 	  //No Icons
 	  createSetting("No Icons", false, null, function(oEvent, val){
@@ -103,7 +126,7 @@ sap.ui.define([
 	  var sAvoidClosing = createSetting("Debug - Avoid Closing", false, null, function(oEvent, val){
 		  Menu._dbg = !!val;
 	  });
-	  jQuery(document.getElementById(sAvoidClosing + "-frame")).toggleClass("SettingHidden");
+	  jQuery("#" + sAvoidClosing + "-frame").toggleClass("SettingHidden");
 
 	  //Debug: Rerendering: Add/Remove items when menu is open
 	  var sRerendering = createSetting("Debug - Rerendering", false, null, function(oEvent, val){
@@ -138,22 +161,15 @@ sap.ui.define([
 
 		  customize(oRerenderingButton.getMenu(), val);
 	  });
-	  jQuery(document.getElementById(sRerendering + "-frame")).toggleClass("SettingHidden");
+	  jQuery("#" + sRerendering + "-frame").toggleClass("SettingHidden");
 
 	  jQuery(document.body).on("keydown", function(e) {
 		  if ( e.keyCode == 68 /*D*/ && e.shiftKey && e.altKey && e.ctrlKey ) {
-			  jQuery(document.getElementById(sAvoidClosing + "-frame")).toggleClass("SettingHidden");
-			  jQuery(document.getElementById(sRerendering + "-frame")).toggleClass("SettingHidden");
+			  jQuery("#" + sAvoidClosing + "-frame").toggleClass("SettingHidden");
+			  jQuery("#" + sRerendering + "-frame").toggleClass("SettingHidden");
 		  }
 	  });
   });
-
-  try {
-	  sap.ui.getCore().loadLibrary("sap.ui.commons");
-  } catch (e) {
-	  alert("This test page requires the library 'sap.ui.commons' which is not available.");
-	  throw e;
-  }
 
   function createTest(sText, oMenuConfig) {
 	  var iMessageClearTime = 3000;
@@ -212,8 +228,31 @@ sap.ui.define([
 		  return oMenu;
 	  }
 
-	  var aButton = new MenuButton({text: sText, menu: createMenuStructure(oMenuConfig)});
-	  return aButton;
+	  const menu = createMenuStructure(oMenuConfig);
+
+	  // Note: sap.m.MenuButton cannot be used with a sap.ui.unified.Menu, it requires a sap.m.Menu
+	  // This page therefore uses a sap.m.ToggleButton with a primitive press handler as replacement
+	  var oButton = new ToggleButton({
+		  text: sText,
+		  press: function(oEvent) {
+			  const button = oEvent.getSource();
+			  if ( button.getPressed() ) {
+				  menu.open(false, // bWithKeyboard
+					  button, // oOpenerRef
+					  Popup.Dock.BeginBottom,
+					  Popup.Dock.BeginTop,
+					  button, // of
+					  "0 +2" // offsets
+				  );
+				  menu.attachClosed(() => button.setPressed(false));
+			  } else {
+				  menu.close();
+			  }
+		  }
+	  });
+	  oButton.getMenu = () => menu;
+
+	  return oButton;
   }
 
   //***************************************************
@@ -350,9 +389,12 @@ sap.ui.define([
   };
 
   function createRichTooltip(sTitle) {
-	  return new RichTooltip({
-		  text : "some tooltip text",
-		  title: sTitle
+	  return new MyTooltip({
+		  content: [
+			  new Text({
+				  text: "some tooltip text"
+			  })
+		  ]
 	  });
   }
 
