@@ -251,36 +251,30 @@ sap.ui.define([
 
 		return fnTest(TableType.Table, {
 			p13nModes: ["Column", "Sort", "Filter"],
-			"export": true,
-			expandAllRows: false,
-			collapseAllRows: false
+			"export": true
 		}).then(function() {
 			return fnTest(TableType.TreeTable, {
 				p13nModes: ["Column", "Sort", "Filter"],
-				"export": true,
-				expandAllRows: false,
-				collapseAllRows: false
+				"export": true
 			});
 		}).then(function() {
 			return fnTest(TableType.ResponsiveTable, {
 				p13nModes: ["Column", "Sort", "Filter", "Group"],
-				"export": true,
-				expandAllRows: false,
-				collapseAllRows: false
+				"export": true
 			});
 		});
 	});
 
-	QUnit.test("#expandAllRows", function(assert) {
-		assert.throws(() => {
-			TableDelegate.expandAllRows(this.oTable);
-		}, Error("Unsupported operation: TableDelegate.expandAllRows"));
-	});
+	QUnit.test("fetchExpandAndCollapseConfiguration", async function(assert) {
+		const fnTest = async (sTableType) => {
+			await this.oTable.setType(sTableType).initialized();
+			const oExpandCollapseConfig = await this.oTable.getControlDelegate().fetchExpandAndCollapseConfiguration(this.oTable);
+			assert.deepEqual(oExpandCollapseConfig, {}, "No expand/collapse configuration returned");
+		};
 
-	QUnit.test("#collapseAllRows", function(assert) {
-		assert.throws(() => {
-			TableDelegate.collapseAllRows(this.oTable);
-		}, Error("Unsupported operation: TableDelegate.collapseAllRows"));
+		await fnTest(TableType.Table);
+		await fnTest(TableType.TreeTable);
+		await fnTest(TableType.ResponsiveTable);
 	});
 
 	QUnit.module("Selection", {

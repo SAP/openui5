@@ -219,46 +219,28 @@ sap.ui.define([
 		TableDelegate.rebind.apply(this, arguments);
 	};
 
-	/**
-	 * Expands all rows.
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @throws {Error} If
-	 *     <ul>
-	 *       <li>the table type is not {@link sap.ui.mdc.table.TreeTableType TreeTable}</li>
-	 *       <li>{@link sap.ui.model.odata.v4.ODataListBinding#setAggregation} throws an error</li>
-	 *       <li>{@link sap.ui.model.odata.v4.ODataListBinding#refresh} throws an error</li>
-	 *     </ul>
-	 * @protected
-	 * @override
-	 */
-	Delegate.expandAllRows = function(oTable) {
-		if (!this.getSupportedFeatures(oTable).expandAllRows) {
-			throw Error("Unsupported operation: Not supported for the current table type");
+	Delegate.fetchExpandAndCollapseConfiguration = function(oTable) {
+		if (!oTable._isOfType(TableType.TreeTable)) {
+			return Promise.resolve({});
 		}
 
-		expandRowsToLevel(oTable, Number.MAX_SAFE_INTEGER);
-	};
-
-	/**
-	 * Collapses all rows.
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @throws {Error} If
-	 *     <ul>
-	 *       <li>the table type is not {@link sap.ui.mdc.table.TreeTableType TreeTable}</li>
-	 *       <li>{@link sap.ui.model.odata.v4.ODataListBinding#setAggregation} throws an error</li>
-	 *       <li>{@link sap.ui.model.odata.v4.ODataListBinding#refresh} throws an error</li>
-	 *     </ul>
-	 * @protected
-	 * @override
-	 */
-	Delegate.collapseAllRows = function(oTable) {
-		if (!this.getSupportedFeatures(oTable).collapseAllRows) {
-			throw Error("Unsupported operation: Not supported for the current table type");
-		}
-
-		expandRowsToLevel(oTable, 1);
+		return Promise.resolve({
+			expandAll: function(oTable) {
+				expandRowsToLevel(oTable, Number.MAX_SAFE_INTEGER);
+			},
+			collapseAll: function(oTable) {
+				expandRowsToLevel(oTable, 1);
+			},
+			expandAllFromNode: function(oTable, oContext) {
+				oContext.expand(Number.MAX_SAFE_INTEGER);
+			},
+			collapseAllFromNode: function(oTable, oContext) {
+				oContext.collapse(true);
+			},
+			isNodeExpanded: function(oTable, oContext) {
+				return oContext.getProperty("@$ui5.node.isExpanded");
+			}
+		});
 	};
 
 	function expandRowsToLevel(oTable, iLevel) {
@@ -306,7 +288,6 @@ sap.ui.define([
 	 */
 	Delegate.getSupportedFeatures = function(oTable) {
 		const mSupportedFeatures = TableDelegate.getSupportedFeatures.apply(this, arguments);
-		const bIsTreeTable = oTable._isOfType(TableType.TreeTable);
 
 		if (oTable._isOfType(TableType.Table)) {
 			const aP13nModes = mSupportedFeatures.p13nModes;
@@ -320,9 +301,7 @@ sap.ui.define([
 		}
 
 		return {
-			...mSupportedFeatures,
-			expandAllRows: bIsTreeTable,
-			collapseAllRows: bIsTreeTable
+			...mSupportedFeatures
 		};
 	};
 
