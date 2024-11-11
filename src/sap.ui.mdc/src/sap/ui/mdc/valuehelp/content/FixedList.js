@@ -656,6 +656,11 @@ sap.ui.define([
 		_updateSelection.call(this);
 	};
 
+	FixedList.prototype.destroyItems = function () {
+		const oList = _getList.call(this);
+		oList?.destroyItems(); // directly destroy all internal items and it's bindings to prevent step-by-step removement from ManagedObjectModel
+		return this.destroyAggregation("items");
+	};
 
 	return FixedList;
 });

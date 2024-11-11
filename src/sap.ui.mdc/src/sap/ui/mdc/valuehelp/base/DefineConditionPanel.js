@@ -1104,15 +1104,18 @@ sap.ui.define([
 
 		const sFixedListId = this._sOperatorHelpId + "-pop-fl";
 		const oFixedList = Element.getElementById(sFixedListId);
+		const oBindingInfo = oFixedList.getBindingInfo("items");
+		let oTemplate = oBindingInfo?.template;
 
-		let oTemplate;
-		if (bHasMultipleGroups) {
-			oTemplate = new FixedListItem({ key: "{om>key}", text: "{om>text}", additionalText: "{om>additionalText}", groupKey: "{om>groupId}", groupText: "{om>groupText}" });
-		} else {
-			oTemplate = new FixedListItem({ key: "{om>key}", text: "{om>text}", additionalText: "{om>additionalText}" });
+		if (!oTemplate || oFixedList.getGroupable() !== bHasMultipleGroups) {
+			if (bHasMultipleGroups) {
+				oTemplate = new FixedListItem({ key: "{om>key}", text: "{om>text}", additionalText: "{om>additionalText}", groupKey: "{om>groupId}", groupText: "{om>groupText}" });
+			} else {
+				oTemplate = new FixedListItem({ key: "{om>key}", text: "{om>text}", additionalText: "{om>additionalText}" });
+			}
+			oFixedList.bindAggregation("items", { path: 'om>/', templateShareable: false, template: oTemplate });
+			oFixedList.setGroupable(bHasMultipleGroups);
 		}
-		oFixedList.bindAggregation("items", { path: 'om>/', templateShareable: false, template: oTemplate });
-		oFixedList.setGroupable(bHasMultipleGroups);
 
 		for (const sOperator of aOperators) {
 			const oOperator = FilterOperatorUtil.getOperator(sOperator);
@@ -1147,6 +1150,8 @@ sap.ui.define([
 			});
 		}
 
+		oFixedList.destroyItems(); // to destroy old bindings and internal items and let them create new.
+		this.oOperatorModel.setData(); // to make sure taht model data changed
 		this.oOperatorModel.setData(aOperatorsData);
 	}
 
