@@ -110,8 +110,6 @@ function(
 
 		// Assert
 		assert.ok(fnUpdateInternalSpy.calledOnce, "_updateInternalIllustrationSetAndType called once on init");
-		assert.ok(fnUpdateInternalSpy.calledWithExactly(this.oIllustratedMessage.getIllustrationType()),
-			"_updateInternalIllustrationSetAndType called width the illustrationType");
 	});
 
 	QUnit.test("onBeforeRendering", function (assert) {
@@ -180,8 +178,6 @@ function(
 
 		// Assert
 		assert.ok(fnUpdateInternalSpy.calledOnce, "_updateInternalIllustrationSetAndType called once on setIllustrationType");
-		assert.ok(fnUpdateInternalSpy.calledWithExactly(sNewType),
-			"_updateInternalIllustrationSetAndType called with the new IllustratedMessageType.UnableToLoad illustrationType");
 
 		// Act
 		this.oIllustratedMessage.setIllustrationType(undefined);
@@ -197,6 +193,33 @@ function(
 
 		assert.ok(sUseHrefValue.includes("Connection"),
 			"The new expected illustration type " + "Connection" + " IS reflected in the reference to illustration via href: " + sUseHrefValue
+		);
+	});
+
+	QUnit.test("setSrc", function (assert) {
+		// Arrange
+		var fnUpdateInternalSpy = this.spy(this.oIllustratedMessage, "_updateInternalIllustrationSetAndType");
+
+		// Act
+		this.oIllustratedMessage.setSrc("sap-illustration://NoData");
+
+		// Assert
+		assert.ok(fnUpdateInternalSpy.calledOnce, "_updateInternalIllustrationSetAndType called once on setSrc");
+
+		// Act
+		this.oIllustratedMessage.setSrc(undefined);
+		assert.ok(fnUpdateInternalSpy.calledOnce, "_updateInternalIllustrationSetAndType isn't called second time if the type isn't string");
+
+		this.oIllustratedMessage.setSrc("sap-illustration://NoMail");
+		Core.applyChanges();
+
+		var sUseHrefValue = this.oIllustratedMessage
+			.getDomRef()
+			.querySelector("use")
+			.getAttribute("href");
+
+		assert.ok(sUseHrefValue.includes("NoMail"),
+			"The new expected illustration type " + "NoMail" + " IS reflected in the reference to illustration via href: " + sUseHrefValue
 		);
 	});
 
@@ -428,7 +451,7 @@ function(
 			sIllustrationType = aValues[1];
 
 		// Act
-		this.oIllustratedMessage._updateInternalIllustrationSetAndType(sNewType);
+		this.oIllustratedMessage.setIllustrationType(sNewType);
 
 		// Assert
 		assert.strictEqual(this.oIllustratedMessage._sIllustrationSet, sIllustrationSet,
