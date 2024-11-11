@@ -132,7 +132,17 @@ sap.ui.define([
 					/**
 					 * Fired when the menu is closed.
 					 */
-					closed: {}
+					closed: {},
+
+					/**
+					 * Fired before the menu is closed.
+					 * This event can be prevented which effectively prevents the menu from closing.
+					 * @since 1.131
+					 */
+					beforeClose : {
+						allowPreventDefault : true
+					}
+
 				}
 			},
 			renderer: null // this is a popup control without a renderer
@@ -190,6 +200,10 @@ sap.ui.define([
 		 * Called from parent if the control is destroyed.
 		 */
 		Menu.prototype.exit = function() {
+			var oMenu = this._getMenu(),
+				oPopup = oMenu && oMenu.getPopup(),
+				oDialog = this._getDialog();
+
 			if (this._navContainerId) {
 				this._navContainerId = null;
 			}
@@ -197,8 +211,13 @@ sap.ui.define([
 				this._bIsInitialized = null;
 			}
 
-			if (this._getMenu() && this._getMenu().getPopup()) {
-				this._getMenu().getPopup().detachClosed(this._menuClosed, this);
+			if (oPopup) {
+				oPopup.detachClosed(this._menuClosed, this);
+				oMenu.detachBeforeClose(this._handleVisualParentClose, this);
+			}
+
+			if (oDialog) {
+				oDialog.detachBeforeClose(this._handleVisualParentClose, this);
 			}
 		};
 
@@ -303,6 +322,7 @@ sap.ui.define([
 			oDialog.addStyleClass("sapUiNoContentPadding");
 			this.setAggregation("_dialog", oDialog, true);
 			oDialog.attachAfterClose(this._menuClosed, this);
+			oDialog.attachBeforeClose(this._handleVisualParentClose, this);
 		};
 
 		/**
@@ -349,6 +369,8 @@ sap.ui.define([
 
 		Menu.prototype._initMenuForItems = function(aItems, oParentMenuItem) {
 			var oMenu = new UfdMenu();
+
+			oMenu.attachBeforeClose(this._handleVisualParentClose, this);
 			oMenu._setCustomEnhanceAccStateFunction(this._fnEnhanceUnifiedMenuAccState);
 			oMenu.isCozy = this._isMenuCozy.bind(this, oMenu);
 
@@ -380,6 +402,12 @@ sap.ui.define([
 			}
 
 			oMenu.attachItemSelect(this._handleMenuItemSelect, this);
+		};
+
+		Menu.prototype._handleVisualParentClose = function(oEvent) {
+			if (!this.fireBeforeClose()) {
+				oEvent.preventDefault();
+			}
 		};
 
 		Menu.prototype._menuClosed = function() {

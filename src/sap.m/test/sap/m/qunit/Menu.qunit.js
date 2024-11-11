@@ -271,6 +271,39 @@ sap.ui.define([
 		fnSetBackButtonTooltipForPageWithParentSpy.restore();
 	});
 
+	QUnit.test('beforeClose event (phone)', function (assert) {
+		var fnFireBeforeCloseSpy = sinon.spy(this.sut, "fireBeforeClose"),
+			oDialog,
+			oCancelButton;
+
+		// Act
+		this.sut.openBy();
+		this.clock.tick(1000);
+		oDialog = this.sut._getDialog();
+		oCancelButton = oDialog.getButtons()[0];
+		oCancelButton.firePress();
+		this.clock.tick(1000);
+
+		// Assert
+		assert.strictEqual(fnFireBeforeCloseSpy.calledOnce, true, "beforeClose event is fired when the inner Dialog tries to close.");
+		assert.notOk(oDialog.isOpen(), "Dialog is closed.");
+
+		// Act
+		this.sut.attachBeforeClose(function(oEvent) {
+			oEvent.preventDefault();
+		});
+		this.sut.openBy();
+		this.clock.tick(1000);
+		this.sut._getDialog().getButtons()[0].firePress();
+		this.clock.tick(1000);
+
+		// Assert
+		assert.strictEqual(fnFireBeforeCloseSpy.calledTwice, true, "beforeClose event is fired when the inner Dialog tries to close.");
+		assert.ok(oDialog.isOpen(), "Dialog is not closed.");
+
+		fnFireBeforeCloseSpy.restore();
+	});
+
 	QUnit.module('Basics', {
 		beforeEach: function () {
 			initMenu.call(this);
@@ -357,6 +390,38 @@ sap.ui.define([
 		assert.strictEqual(fnFireItemSelectedSpy.calledOnce, true, "Item selected event is fired when item is clicked.");
 
 		fnFireItemSelectedSpy.restore();
+	});
+
+	QUnit.test('beforeClose event (non-phone)', function (assert) {
+		var fnFireBeforeCloseSpy = sinon.spy(this.sut, "fireBeforeClose"),
+			fnCloseSpy;
+
+		// Act
+		this.sut.openBy();
+		this.clock.tick(1000);
+		fnCloseSpy = sinon.spy(this.sut._getVisualParent(), "close");
+		this.sut._getVisualParent().getItems()[1].$().trigger("click");
+		this.clock.tick(1000);
+
+		// Assert
+		assert.strictEqual(fnFireBeforeCloseSpy.calledOnce, true, "beforeClose event is fired when item is clicked.");
+		assert.strictEqual(fnCloseSpy.calledOnce, true, "close method is called when item is clicked.");
+
+		// Act
+		this.sut.attachBeforeClose(function(oEvent) {
+			oEvent.preventDefault();
+		});
+		this.sut.openBy();
+		this.clock.tick(1000);
+		this.sut._getVisualParent().getItems()[1].$().trigger("click");
+		this.clock.tick(1000);
+
+		// Assert
+		assert.strictEqual(fnFireBeforeCloseSpy.calledTwice, true, "beforeClose event is fired when item is clicked.");
+		assert.strictEqual(fnCloseSpy.calledOnce, true, "close method is not called when beforeClose event is prevented.");
+
+		fnFireBeforeCloseSpy.restore();
+		fnCloseSpy.restore();
 	});
 
 	QUnit.test('MenuItem press event', function (assert) {
