@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /*global QUnit, sinon */
 sap.ui.define([
 	"../i18n/helper/_timezones",
@@ -559,6 +560,9 @@ sap.ui.define([
 				// code under test
 				assert.strictEqual(TimezoneUtils.getLocalTimezone(), sABAP_ID, sCLDR_ID + " -> " + sABAP_ID);
 			}
+
+			// ensure that no wrong timezone is cached
+			TimezoneUtils._clearLocalTimezoneCache();
 		});
 
 		QUnit.test("only retrieve timezone if cache is empty (string)", function (assert) {
@@ -570,6 +574,9 @@ sap.ui.define([
 			assert.strictEqual(TimezoneUtils.getLocalTimezone(), undefined);
 			assert.strictEqual(TimezoneUtils.getLocalTimezone(), undefined,
 				"second call uses cache, does not call Intl.DateTimeFormat API again");
+
+			// ensure that no wrong timezone is cached
+			TimezoneUtils._clearLocalTimezoneCache();
 		});
 
 		QUnit.test("convert from UTC to UTC, with fixed date end of January", function (assert) {
