@@ -258,10 +258,83 @@ sap.ui.define([
 		assert.strictEqual(this._oColumn.getSortOrder(), "Descending", "sortOrder property");
 	});
 
+	/**
+	 * @deprecated As of version 1.118.
+	 */
+	QUnit.test("_setGrouped", function(assert) {
+		const oTable = new Table({
+			columns: this._oColumn
+		});
+		oTable.setEnableGrouping(true);
+
+		const oSetGroupedSpy = sinon.spy(oTable, "setGroupBy");
+
+		this._oColumn._setGrouped(true);
+		assert.ok(oSetGroupedSpy.calledOnce, "setGroupBy is called");
+		assert.ok(oSetGroupedSpy.calledWithExactly(this._oColumn), "setGroupBy is called with the correct parameter");
+
+		this._oColumn._setGrouped(false);
+		assert.ok(oSetGroupedSpy.calledTwice, "setGroupBy is called");
+		assert.ok(oSetGroupedSpy.calledWithExactly(null), "setGroupBy is called with the correct parameter");
+
+		oTable.destroy();
+	});
+
+	QUnit.test("_getFilterState", function(assert) {
+		this._oColumn.setFilterValue("A");
+
+		assert.equal(this._oColumn._getFilterState(), "None", "FilterState None");
+		this._oColumn.setFilterType(new IntegerType());
+		assert.equal(this._oColumn._getFilterState(), "Error", "FilterState Error");
+	});
+
+	QUnit.test("setFilterType", function(assert) {
+		let vType = new IntegerType();
+		this._oColumn.setFilterType(vType);
+		assert.equal(this._oColumn.getFilterType(), vType, "Column Type is Integer");
+
+		vType = "sap.ui.model.type.Date";
+		this._oColumn.setFilterType(vType);
+
+		/** @deprecated As of version 1.120 */
+		if (this._oColumn.getFilterType()) {
+			assert.ok(this._oColumn.getFilterType().isA("sap.ui.model.type.Date"), "Column type is Date.");
+		}
+
+		// Will be tested in UI5 2.0
+		if (!this._oColumn.getFilterType() && sap.ui.require(vType.replaceAll(".", "/"))) {
+			assert.equal(this._oColumn.getFilterType(), undefined, "Column type is undefined.");
+		}
+
+		vType = "sap.ui.model.type.Integer";
+		this._oColumn.setFilterType(vType);
+		assert.ok(sap.ui.require(vType.replaceAll(".", "/")), "Integer type is loaded");
+		assert.ok(this._oColumn.getFilterType().isA("sap.ui.model.type.Integer"), "Column type is Integer.");
+
+		vType = "sap/ui/model/type/Integer";
+		this._oColumn.setFilterType(vType);
+		assert.ok(this._oColumn.getFilterType().isA("sap.ui.model.type.Integer"), "Column type is Integer.");
+
+		vType = "\{type: 'sap.ui.model.type.Integer', formatOptions: \{maxIntegerDigits: 2\} \}";
+		this._oColumn.setFilterType(vType);
+		assert.ok(sap.ui.require("sap/ui/model/type/Integer"), "Integer type is loaded");
+		assert.ok(this._oColumn.getFilterType().isA("sap.ui.model.type.Integer"), "Column type is Integer.");
+		assert.equal(this._oColumn.getFilterType().formatValue("13", "string"), "13", "Format options applied.");
+		assert.equal(this._oColumn.getFilterType().formatValue("123", "string"), "??", "Format options applied.");
+
+		vType = function(oValue) {
+			return oValue === 1;
+		};
+		this._oColumn.setFilterType(vType);
+		assert.equal(typeof this._oColumn.getFilterType(), "function", "Type is a function");
+		this._oColumn.setFilterValue("1");
+		assert.equal(this._oColumn._getFilterState(), "None", "FilterState None");
+	});
+
 	QUnit.module("#autoResize", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oColumnResizeHandler = this.spy();
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1),
 				columnResize: (oEvent) => {
@@ -1709,10 +1782,12 @@ sap.ui.define([
 			this.oColumn2.setFilterProperty("G");
 			this.oColumn2.setHeaderMenu(this.oMenu2);
 
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				columns: [this.oColumn1, this.oColumn2]
 			});
 			this.oTable.setEnableColumnFreeze(true);
+
+			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oMenu1.destroy();
@@ -1772,78 +1847,6 @@ sap.ui.define([
 
 	QUnit.test("aria-haspopup", function(assert) {
 		assert.equal(this.oColumn1.$().attr("aria-haspopup"), "dialog", "aria-haspopup was set correctly");
-	});
-
-	/**
-	 * @deprecated As of version 1.118.
-	 */
-	QUnit.test("_setGrouped", function(assert) {
-		this.oTable.setEnableGrouping(true);
-
-		const oColumn = this.oColumn1;
-		const oSetGroupedSpy = sinon.spy(this.oTable, "setGroupBy");
-
-		oColumn._setGrouped(true);
-		assert.ok(oSetGroupedSpy.calledOnce, "setGroupBy is called");
-		assert.ok(oSetGroupedSpy.calledWithExactly(oColumn), "setGroupBy is called with the correct parameter");
-
-		oColumn._setGrouped(false);
-		assert.ok(oSetGroupedSpy.calledTwice, "setGroupBy is called");
-		assert.ok(oSetGroupedSpy.calledWithExactly(null), "setGroupBy is called with the correct parameter");
-	});
-
-	QUnit.test("_getFilterState", function(assert) {
-		const oColumn1 = this.oColumn1;
-		oColumn1.setFilterValue("A");
-
-		assert.equal(oColumn1._getFilterState(), "None", "FilterState None");
-		oColumn1.setFilterType(new IntegerType());
-		assert.equal(oColumn1._getFilterState(), "Error", "FilterState Error");
-	});
-
-	QUnit.test("setFilterType", function(assert) {
-		const oColumn1 = this.oColumn1;
-
-		let vType = new IntegerType();
-		oColumn1.setFilterType(vType);
-		assert.equal(oColumn1.getFilterType(), vType, "Column Type is Integer");
-
-		vType = "sap.ui.model.type.Date";
-		oColumn1.setFilterType(vType);
-
-		/** @deprecated As of version 1.120 */
-		if (oColumn1.getFilterType()) {
-			assert.ok(oColumn1.getFilterType().isA("sap.ui.model.type.Date"), "Column type is Date.");
-		}
-
-		// Will be tested in UI5 2.0
-		if (!oColumn1.getFilterType() && sap.ui.require(vType.replaceAll(".", "/"))) {
-			assert.equal(oColumn1.getFilterType(), undefined, "Column type is undefined.");
-		}
-
-		vType = "sap.ui.model.type.Integer";
-		oColumn1.setFilterType(vType);
-		assert.ok(sap.ui.require(vType.replaceAll(".", "/")), "Integer type is loaded");
-		assert.ok(oColumn1.getFilterType().isA("sap.ui.model.type.Integer"), "Column type is Integer.");
-
-		vType = "sap/ui/model/type/Integer";
-		oColumn1.setFilterType(vType);
-		assert.ok(oColumn1.getFilterType().isA("sap.ui.model.type.Integer"), "Column type is Integer.");
-
-		vType = "\{type: 'sap.ui.model.type.Integer', formatOptions: \{maxIntegerDigits: 2\} \}";
-		oColumn1.setFilterType(vType);
-		assert.ok(sap.ui.require("sap/ui/model/type/Integer"), "Integer type is loaded");
-		assert.ok(oColumn1.getFilterType().isA("sap.ui.model.type.Integer"), "Column type is Integer.");
-		assert.equal(oColumn1.getFilterType().formatValue("13", "string"), "13", "Format options applied.");
-		assert.equal(oColumn1.getFilterType().formatValue("123", "string"), "??", "Format options applied.");
-
-		vType = function(oValue) {
-			return oValue === 1;
-		};
-		oColumn1.setFilterType(vType);
-		assert.equal(typeof oColumn1.getFilterType(), "function", "Type is a function");
-		oColumn1.setFilterValue("1");
-		assert.equal(oColumn1._getFilterState(), "None", "FilterState None");
 	});
 
 	QUnit.module("FieldHelp support", {

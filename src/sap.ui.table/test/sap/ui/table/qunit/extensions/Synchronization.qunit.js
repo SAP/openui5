@@ -22,8 +22,8 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Lifecycle", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable();
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -66,8 +66,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Synchronization hooks", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 3
 				}),
@@ -320,8 +320,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Synchronization methods", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 3
 				}),
@@ -355,30 +355,29 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Sync row hover", function(assert) {
-		const oTable = this.oTable;
+	QUnit.test("Sync row hover", async function(assert) {
+		const isRowHovered = (iIndex) => {
+			return this.oTable.getRows()[iIndex].getDomRef().classList.contains("sapUiTableRowHvr");
+		};
 
-		function isRowHovered(iIndex) {
-			return oTable.getRows()[iIndex].getDomRef().classList.contains("sapUiTableRowHvr");
-		}
+		await this.oTable.qunit.whenRenderingFinished();
+		const oSyncInterface = await this.oTable._enableSynchronization();
 
-		return oTable._enableSynchronization().then(function(oSyncInterface) {
-			oTable.setFirstVisibleRow(1);
-			oSyncInterface.syncRowHover(1, true);
-			assert.ok(!isRowHovered(0), "The first rendered row is not hovered");
-			assert.ok(isRowHovered(1), "The second rendered row is hovered");
-			assert.ok(!isRowHovered(2), "The third rendered row is not hovered");
+		this.oTable.setFirstVisibleRow(1);
+		oSyncInterface.syncRowHover(1, true);
+		assert.ok(!isRowHovered(0), "The first rendered row is not hovered");
+		assert.ok(isRowHovered(1), "The second rendered row is hovered");
+		assert.ok(!isRowHovered(2), "The third rendered row is not hovered");
 
-			oSyncInterface.syncRowHover(2, true);
-			assert.ok(!isRowHovered(0), "The first rendered row is not hovered");
-			assert.ok(isRowHovered(1), "The second rendered row is hovered");
-			assert.ok(isRowHovered(2), "The third rendered row is hovered");
+		oSyncInterface.syncRowHover(2, true);
+		assert.ok(!isRowHovered(0), "The first rendered row is not hovered");
+		assert.ok(isRowHovered(1), "The second rendered row is hovered");
+		assert.ok(isRowHovered(2), "The third rendered row is hovered");
 
-			oSyncInterface.syncRowHover(1, false);
-			assert.ok(!isRowHovered(0), "The first rendered row is not hovered");
-			assert.ok(!isRowHovered(1), "The second rendered row is not hovered");
-			assert.ok(isRowHovered(2), "The third rendered row is hovered");
-		});
+		oSyncInterface.syncRowHover(1, false);
+		assert.ok(!isRowHovered(0), "The first rendered row is not hovered");
+		assert.ok(!isRowHovered(1), "The second rendered row is not hovered");
+		assert.ok(isRowHovered(2), "The third rendered row is hovered");
 	});
 
 	QUnit.test("Register vertical scrolling", function(assert) {

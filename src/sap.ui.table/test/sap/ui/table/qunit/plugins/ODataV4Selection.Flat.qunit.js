@@ -30,8 +30,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Basic checks", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable();
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
 			this.oSelectionPlugin = this.oTable.getDependents()[0];
 			return this.oTable.qunit.whenRenderingFinished();
 		},
@@ -99,8 +99,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Change binding or model instance", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable();
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
 			this.oSelectionPlugin = this.oTable.getDependents()[0];
 			return this.oTable.qunit.whenRenderingFinished();
 		},
@@ -209,8 +209,8 @@ sap.ui.define([
 		before: function() {
 			this.oShowNotification = sinon.spy(TableUtils, "showNotificationPopoverAtIndex");
 		},
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable();
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
 			this.oSelectionPlugin = this.oTable.getDependents()[0];
 			this.oSelectionChangeHandler = this.spy();
 			this.oSelectionPlugin.attachSelectionChange(this.oSelectionChangeHandler);
@@ -763,8 +763,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Binding selection API", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable();
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
 			this.oSelectionPlugin = this.oTable.getDependents()[0];
 			this.oSelectionChangeHandler = this.spy();
 			this.oSelectionPlugin.attachSelectionChange(this.oSelectionChangeHandler);
@@ -929,8 +929,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Header selector icon", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable();
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
 			this.oSelectionPlugin = this.oTable.getDependents()[0];
 			return this.oTable.qunit.whenRenderingFinished();
 		},

@@ -37,8 +37,8 @@ sap.ui.define([
 			this.mDefaultSettings = TableQUnitUtils.getDefaultSettings();
 			TableQUnitUtils.setDefaultSettings();
 		},
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				visibleRowCountMode: "Fixed",
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
@@ -60,8 +60,8 @@ sap.ui.define([
 			"The table creates an instance of sap.ui.table.rowmodes.Fixed");
 	});
 
-	QUnit.test("Property getters", async function(assert) {
-		const oTable = await TableQUnitUtils.createTable({
+	QUnit.test("Property getters", function(assert) {
+		const oTable = TableQUnitUtils.createTable({
 			visibleRowCountMode: "Fixed",
 			visibleRowCount: 5,
 			fixedRowCount: 1,
@@ -197,8 +197,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Hide empty rows", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				columns: [
 					new Column({template: new HeightTestControl({height: "1px"})}),
 					new Column({template: new HeightTestControl({height: "1px"})})
@@ -271,8 +271,8 @@ sap.ui.define([
 			}
 			this.oGetContextsSpy.restore();
 		},
-		createTable: async function(bVariableRowHeightEnabled) {
-			this.oTable = await TableQUnitUtils.createTable({
+		createTable: function(bVariableRowHeightEnabled) {
+			this.oTable = TableQUnitUtils.createTable({
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
 				_bVariableRowHeightEnabled: bVariableRowHeightEnabled
 			});
@@ -281,8 +281,8 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Initialization", async function(assert) {
-		const oTable = await this.createTable();
+	QUnit.test("Initialization", function(assert) {
+		const oTable = this.createTable();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			/*
@@ -300,8 +300,8 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Initialization; Variable row heights", async function(assert) {
-		const oTable = await this.createTable(true);
+	QUnit.test("Initialization; Variable row heights", function(assert) {
+		const oTable = this.createTable(true);
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			/*
@@ -319,8 +319,8 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Change row count", async function(assert) {
-		const oTable = await this.createTable();
+	QUnit.test("Change row count", function(assert) {
+		const oTable = this.createTable();
 		const oGetContextsSpy = this.oGetContextsSpy;
 
 		oTable.setFirstVisibleRow(10);

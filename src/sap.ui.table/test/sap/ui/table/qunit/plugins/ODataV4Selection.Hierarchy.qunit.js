@@ -44,8 +44,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Selection API", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable(TreeTable, {}, function(oTable) {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable(TreeTable, {}, function(oTable) {
 				oTable._oProxy._bEnableV4 = true;
 				oTable.getBinding().resume();
 			});
@@ -108,8 +108,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Header selector icon", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable(TreeTable, {}, function(oTable) {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable(TreeTable, {}, function(oTable) {
 				oTable._oProxy._bEnableV4 = true;
 				oTable.getBinding().resume();
 			});

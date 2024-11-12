@@ -168,8 +168,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Load data", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable(AnalyticalTable, {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable(AnalyticalTable, {
 				columns: new AnalyticalColumn({
 					leadingProperty: "CostCenter",
 					template: new TableQUnitUtils.TestControl({text: {path: "CostCenter"}})
@@ -205,8 +205,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Load data with grand total", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable(AnalyticalTable, {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable(AnalyticalTable, {
 				columns: [
 					new AnalyticalColumn({
 						leadingProperty: "CostCenter",

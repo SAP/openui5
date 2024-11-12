@@ -43,8 +43,8 @@ sap.ui.define([
 	};
 
 	QUnit.module("Lifecycle", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable();
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -64,8 +64,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Scrollbars", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				width: "500px",
 				columns: [TableQUnitUtils.createTextColumn().setWidth("800px")],
 				rows: {path: "/"},
@@ -215,8 +215,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Extension methods", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 5,
 					fixedTopRowCount: 1,
@@ -565,8 +565,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Horizontal scrolling", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(10),
 				columns: [
@@ -1054,14 +1054,14 @@ sap.ui.define([
 
 			return Math.min(1000000, iScrollHeight) - iScrollbarHeight;
 		},
-		createTable: async function(mSettings, fnBeforePlaceAt) {
+		createTable: function(mSettings, fnBeforePlaceAt) {
 			this.destroyTable();
 
 			mSettings = Object.assign({
 				rowMode: this.mTestedRowModes.FixedRowMode
 			}, mSettings);
 
-			await TableQUnitUtils.createTable(mSettings, function(oTable, mSettings) {
+			TableQUnitUtils.createTable(mSettings, function(oTable, mSettings) {
 				this.oTable = oTable;
 
 				oTable._getBaseRowHeight = function() {
@@ -1629,10 +1629,10 @@ sap.ui.define([
 		return pTestSequence;
 	});
 
-	QUnit.test("Initial scroll position; Large data; Fixed row heights; Floating point precision edge case", async function(assert) {
+	QUnit.test("Initial scroll position; Large data; Fixed row heights; Floating point precision edge case", function(assert) {
 		const that = this;
 		const iBindingLength = 1000000000;
-		const oTable = await this.createTable({
+		const oTable = this.createTable({
 			rowMode: this.mTestedRowModes.FixedRowMode.setRowCount(18),
 			firstVisibleRow: iBindingLength,
 			bindingLength: iBindingLength
@@ -1647,10 +1647,10 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Initial scroll position; Large data; Variable row heights; Floating point precision edge case", async function(assert) {
+	QUnit.test("Initial scroll position; Large data; Variable row heights; Floating point precision edge case", function(assert) {
 		const that = this;
 		const iBindingLength = 1000000000;
-		const oTable = await this.createTable({
+		const oTable = this.createTable({
 			rowMode: this.mTestedRowModes.FixedRowMode.setRowCount(18),
 			firstVisibleRow: iBindingLength,
 			bindingLength: iBindingLength,
@@ -2810,9 +2810,9 @@ sap.ui.define([
 		return pTestSequence;
 	});
 
-	QUnit.test("Scroll with mouse wheel; Small data; Fixed row heights", async function(assert) {
+	QUnit.test("Scroll with mouse wheel; Small data; Fixed row heights", function(assert) {
 		const that = this;
-		const oTable = await this.createTable();
+		const oTable = this.createTable();
 		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
 		const iMaxScrollTop = this.getMaxScrollTop();
 
@@ -2842,9 +2842,9 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Scroll with mouse wheel; Small data; Variable row heights", async function(assert) {
+	QUnit.test("Scroll with mouse wheel; Small data; Variable row heights", function(assert) {
 		const that = this;
-		const oTable = await this.createTable({
+		const oTable = this.createTable({
 			_bVariableRowHeightEnabled: true
 		});
 		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
@@ -2894,10 +2894,10 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Scroll with mouse wheel; Large data; Fixed row heights", async function(assert) {
+	QUnit.test("Scroll with mouse wheel; Large data; Fixed row heights", function(assert) {
 		const that = this;
 		const iBindingLength = 1000000000;
-		const oTable = await this.createTable({
+		const oTable = this.createTable({
 			bindingLength: iBindingLength
 		});
 		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength);
@@ -2955,10 +2955,10 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Scroll with mouse wheel when the table is inside a scrollable container", async function(assert) {
+	QUnit.test("Scroll with mouse wheel when the table is inside a scrollable container", function(assert) {
 		const that = this;
 		const iBindingLength = 20;
-		const oTable = await this.createTable({
+		const oTable = this.createTable({
 			bindingLength: iBindingLength
 		});
 
@@ -3024,10 +3024,10 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Scroll with mouse wheel; Large data; Variable row heights", async function(assert) {
+	QUnit.test("Scroll with mouse wheel; Large data; Variable row heights", function(assert) {
 		const that = this;
 		const iBindingLength = 1000000000;
-		const oTable = await this.createTable({
+		const oTable = this.createTable({
 			bindingLength: iBindingLength,
 			_bVariableRowHeightEnabled: true
 		});
@@ -3087,10 +3087,10 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Handling of mouse wheel events that do scroll", async function(assert) {
+	QUnit.test("Handling of mouse wheel events that do scroll", function(assert) {
 		const done = assert.async();
 		const that = this;
-		const oTable = await this.createTable({
+		const oTable = this.createTable({
 			fixedColumnCount: 1,
 			rowActionCount: 1,
 			rowActionTemplate: TableQUnitUtils.createRowAction()
@@ -3134,11 +3134,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Handling of mouse wheel events that do not scroll", async function(assert) {
+	QUnit.test("Handling of mouse wheel events that do not scroll", function(assert) {
 		const done = assert.async();
 		const that = this;
 
-		const oTable = await this.createTable({
+		const oTable = this.createTable({
 			title: "test",
 			extension: [new HeightControl()],
 			footer: new HeightControl()
@@ -3204,7 +3204,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Scroll with touch; Small data; Fixed row heights", async function(assert) {
+	QUnit.test("Scroll with touch; Small data; Fixed row heights", function(assert) {
 		const that = this;
 		const bOriginalPointerSupport = Device.support.pointer;
 		const bOriginalTouchSupport = Device.support.touch;
@@ -3212,7 +3212,7 @@ sap.ui.define([
 		Device.support.pointer = false;
 		Device.support.touch = true;
 
-		const oTable = await this.createTable();
+		const oTable = this.createTable();
 		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
 		const iMaxScrollTop = this.getMaxScrollTop();
 
@@ -3246,7 +3246,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Scroll with touch; Small data; Variable row heights", async function(assert) {
+	QUnit.test("Scroll with touch; Small data; Variable row heights", function(assert) {
 		const that = this;
 		const bOriginalPointerSupport = Device.support.pointer;
 		const bOriginalTouchSupport = Device.support.touch;
@@ -3254,7 +3254,7 @@ sap.ui.define([
 		Device.support.pointer = false;
 		Device.support.touch = true;
 
-		const oTable = await this.createTable({
+		const oTable = this.createTable({
 			_bVariableRowHeightEnabled: true
 		});
 		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
@@ -3294,7 +3294,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Scroll with touch; Large data; Fixed row heights;", async function(assert) {
+	QUnit.test("Scroll with touch; Large data; Fixed row heights;", function(assert) {
 		const that = this;
 		const bOriginalPointerSupport = Device.support.pointer;
 		const bOriginalTouchSupport = Device.support.touch;
@@ -3303,7 +3303,7 @@ sap.ui.define([
 		Device.support.touch = true;
 
 		const iBindingLength = 1000000000;
-		const oTable = await this.createTable({
+		const oTable = this.createTable({
 			bindingLength: iBindingLength
 		});
 		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength);
@@ -3345,7 +3345,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Scroll with touch; Large data; Variable row heights", async function(assert) {
+	QUnit.test("Scroll with touch; Large data; Variable row heights", function(assert) {
 		const that = this;
 		const bOriginalPointerSupport = Device.support.pointer;
 		const bOriginalTouchSupport = Device.support.touch;
@@ -3354,7 +3354,7 @@ sap.ui.define([
 		Device.support.touch = true;
 
 		const iBindingLength = 1000000000;
-		const oTable = await this.createTable({
+		const oTable = this.createTable({
 			bindingLength: iBindingLength,
 			_bVariableRowHeightEnabled: true
 		});
@@ -3395,7 +3395,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Handling of touch events that do scroll", async function(assert) {
+	QUnit.test("Handling of touch events that do scroll", function(assert) {
 		const done = assert.async();
 		const that = this;
 		const bOriginalPointerSupport = Device.support.pointer;
@@ -3404,7 +3404,7 @@ sap.ui.define([
 		Device.support.pointer = false;
 		Device.support.touch = true;
 
-		const oTable = await this.createTable({
+		const oTable = this.createTable({
 			fixedColumnCount: 1,
 			rowActionCount: 1,
 			rowActionTemplate: TableQUnitUtils.createRowAction()
@@ -3481,7 +3481,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Handling of touch events that do not scroll", async function(assert) {
+	QUnit.test("Handling of touch events that do not scroll", function(assert) {
 		const done = assert.async();
 		const that = this;
 		const bOriginalPointerSupport = Device.support.pointer;
@@ -3490,7 +3490,7 @@ sap.ui.define([
 		Device.support.pointer = false;
 		Device.support.touch = true;
 
-		const oTable = await this.createTable({
+		const oTable = this.createTable({
 			title: "test",
 			extension: [new HeightControl()],
 			footer: new HeightControl()
@@ -3735,8 +3735,8 @@ sap.ui.define([
 		return pTestSequence;
 	});
 
-	QUnit.test("Scroll row-wise with #scrollVertically; Small data; Fixed row heights", async function(assert) {
-		const oTable = await this.createTable();
+	QUnit.test("Scroll row-wise with #scrollVertically; Small data; Fixed row heights", function(assert) {
+		const oTable = this.createTable();
 		const that = this;
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
@@ -3749,8 +3749,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Scroll row-wise with #scrollVertically; Small data; Variable row heights", async function(assert) {
-		const oTable = await this.createTable({
+	QUnit.test("Scroll row-wise with #scrollVertically; Small data; Variable row heights", function(assert) {
+		const oTable = this.createTable({
 			_bVariableRowHeightEnabled: true
 		});
 		const that = this;
@@ -3765,8 +3765,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Scroll page-wise with #scrollVertically; Small data; Fixed row heights", async function(assert) {
-		const oTable = await this.createTable();
+	QUnit.test("Scroll page-wise with #scrollVertically; Small data; Fixed row heights", function(assert) {
+		const oTable = this.createTable();
 		const that = this;
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
@@ -3779,8 +3779,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Scroll page-wise with #scrollVertically; Small data; Variable row heights", async function(assert) {
-		const oTable = await this.createTable({
+	QUnit.test("Scroll page-wise with #scrollVertically; Small data; Variable row heights", function(assert) {
+		const oTable = this.createTable({
 			_bVariableRowHeightEnabled: true
 		});
 		const that = this;
@@ -3795,8 +3795,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Scroll to top and bottom with #scrollVerticallyMax; Small data; Fixed row heights", async function(assert) {
-		const oTable = await this.createTable();
+	QUnit.test("Scroll to top and bottom with #scrollVerticallyMax; Small data; Fixed row heights", function(assert) {
+		const oTable = this.createTable();
 		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
 		const iMaxScrollTop = this.getMaxScrollTop();
 		const that = this;
@@ -3811,8 +3811,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Scroll to top and bottom with #scrollVerticallyMax; Small data; Variable row heights", async function(assert) {
-		const oTable = await this.createTable({
+	QUnit.test("Scroll to top and bottom with #scrollVerticallyMax; Small data; Variable row heights", function(assert) {
+		const oTable = this.createTable({
 			_bVariableRowHeightEnabled: true
 		});
 		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
@@ -4878,9 +4878,9 @@ sap.ui.define([
 		return pTestSequence;
 	});
 
-	QUnit.test("Restore scroll position after changing the row count on resize; Small data; Fixed row heights", async function(assert) {
+	QUnit.test("Restore scroll position after changing the row count on resize; Small data; Fixed row heights", function(assert) {
 		const that = this;
-		const oTable = await this.createTable({
+		const oTable = this.createTable({
 			rowMode: this.mTestedRowModes.AutoRowMode.setMinRowCount(8)
 		});
 		let iFirstVisibleRow;
@@ -5549,8 +5549,8 @@ sap.ui.define([
 		return pTestSequence;
 	});
 
-	QUnit.test("The table's DOM is removed without notifying the table", async function(assert) {
-		const oTable = await this.createTable();
+	QUnit.test("The table's DOM is removed without notifying the table", function(assert) {
+		const oTable = this.createTable();
 		const oScrollExtension = oTable._getScrollExtension();
 		let oTableElement;
 		let oTableParentElement;
@@ -5611,7 +5611,7 @@ sap.ui.define([
 
 	QUnit.module("Special cases");
 
-	QUnit.test("Scrolling inside the cell", async function(assert) {
+	QUnit.test("Scrolling inside the cell", function(assert) {
 		const DummyControl = Control.extend("sap.ui.table.test.DummyControl", {
 			renderer: {
 				apiVersion: 2,
@@ -5642,7 +5642,7 @@ sap.ui.define([
 			}
 		});
 
-		const oTable = await TableQUnitUtils.createTable({
+		const oTable = TableQUnitUtils.createTable({
 			columns: [
 				new Column({template: new DummyControl(), width: "20px"}),
 				new Column({template: new DummyControl(), width: "20px"})
@@ -5677,8 +5677,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Leave action mode on scrolling", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				width: "500px",
 				columns: [TableQUnitUtils.createInteractiveTextColumn().setWidth("800px")],
 				rows: {path: "/"},

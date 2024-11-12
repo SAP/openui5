@@ -20,8 +20,8 @@ sap.ui.define([
 
 			return this.oDataModel.metadataLoaded();
 		},
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rows: {path: "/Products"},
 				models: this.oDataModel
 			});
@@ -105,8 +105,8 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Initialization", async function(assert) {
-		const oTable = await TableQUnitUtils.createTable();
+	QUnit.test("Initialization", function(assert) {
+		const oTable = TableQUnitUtils.createTable();
 		const oGetContextsSpy = this.oGetContextsSpy;
 
 		// refreshRows, render, updateRows
@@ -117,8 +117,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Initialization; With fixed rows", async function(assert) {
-		const oTable = await TableQUnitUtils.createTable({
+	QUnit.test("Initialization; With fixed rows", function(assert) {
+		const oTable = TableQUnitUtils.createTable({
 			fixedRowCount: 1,
 			fixedBottomRowCount: 1
 		});
@@ -139,8 +139,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Initialization; With fixed rows, firstVisibleRow = 1, threshold = 1", async function(assert) {
-		const oTable = await TableQUnitUtils.createTable({
+	QUnit.test("Initialization; With fixed rows, firstVisibleRow = 1, threshold = 1", function(assert) {
+		const oTable = TableQUnitUtils.createTable({
 			visibleRowCount: 5,
 			fixedRowCount: 1,
 			fixedBottomRowCount: 1,
@@ -171,8 +171,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Refresh", async function(assert) {
-		const oTable = await TableQUnitUtils.createTable();
+	QUnit.test("Refresh", function(assert) {
+		const oTable = TableQUnitUtils.createTable();
 		const oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
@@ -185,8 +185,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Refresh; With fixed rows", async function(assert) {
-		const oTable = await TableQUnitUtils.createTable({
+	QUnit.test("Refresh; With fixed rows", function(assert) {
+		const oTable = TableQUnitUtils.createTable({
 			fixedRowCount: 1,
 			fixedBottomRowCount: 1
 		});
@@ -204,8 +204,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Refresh; With fixed rows, firstVisibleRow = 1, threshold = 1", async function(assert) {
-		const oTable = await TableQUnitUtils.createTable({
+	QUnit.test("Refresh; With fixed rows, firstVisibleRow = 1, threshold = 1", function(assert) {
+		const oTable = TableQUnitUtils.createTable({
 			visibleRowCount: 5,
 			fixedRowCount: 1,
 			fixedBottomRowCount: 1,
@@ -247,8 +247,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Sort", async function(assert) {
-		const oTable = await TableQUnitUtils.createTable();
+	QUnit.test("Sort", function(assert) {
+		const oTable = TableQUnitUtils.createTable();
 		const oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
@@ -261,8 +261,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Sort; With fixed rows", async function(assert) {
-		const oTable = await TableQUnitUtils.createTable({
+	QUnit.test("Sort; With fixed rows", function(assert) {
+		const oTable = TableQUnitUtils.createTable({
 			fixedRowCount: 1,
 			fixedBottomRowCount: 1
 		});
@@ -286,8 +286,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Sort; With fixed rows, firstVisibleRow = 1, threshold = 1", async function(assert) {
-		const oTable = await TableQUnitUtils.createTable({
+	QUnit.test("Sort; With fixed rows, firstVisibleRow = 1, threshold = 1", function(assert) {
+		const oTable = TableQUnitUtils.createTable({
 			visibleRowCount: 5,
 			fixedRowCount: 1,
 			fixedBottomRowCount: 1,
@@ -334,9 +334,9 @@ sap.ui.define([
 
 			return this.oDataModel.metadataLoaded();
 		},
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oGetContextsSpy.resetHistory();
-			this.oTable = await TableQUnitUtils.createTable();
+			this.oTable = TableQUnitUtils.createTable();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -849,8 +849,8 @@ sap.ui.define([
 
 			return this.oDataModel.metadataLoaded();
 		},
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable();
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
 			this.iNoDataVisibilityChanges = 0;
 
 			return this.oTable.qunit.whenRenderingFinished().then(function() {
@@ -887,11 +887,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("After rendering with data", async function(assert) {
+	QUnit.test("After rendering with data", function(assert) {
 		const done = assert.async();
 
 		this.oTable.destroy();
-		this.oTable = await TableQUnitUtils.createTable(function(oTable) {
+		this.oTable = TableQUnitUtils.createTable(function(oTable) {
 			new Promise(function(resolve) {
 				TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
 					TableQUnitUtils.assertNoDataVisible(assert, oTable, true); // Initial rendering has no data
@@ -904,11 +904,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("After rendering without data", async function(assert) {
+	QUnit.test("After rendering without data", function(assert) {
 		const done = assert.async();
 
 		this.oTable.destroy();
-		this.oTable = await TableQUnitUtils.createTable({
+		this.oTable = TableQUnitUtils.createTable({
 			rows: {path: "/Products", filters: [new Filter({path: "Name", operator: "EQ", value1: "DoesNotExist"})]}
 		}, function(oTable) {
 			new Promise(function(resolve) {
