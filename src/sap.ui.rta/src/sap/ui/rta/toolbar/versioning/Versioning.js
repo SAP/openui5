@@ -27,6 +27,7 @@ sap.ui.define([
 
 	var DRAFT_ACCENT_COLOR = "sapUiRtaDraftVersionAccent";
 	var ACTIVE_ACCENT_COLOR = "sapUiRtaActiveVersionAccent";
+	var VERSION_COLOR = "sapUiRtaVersionColor";
 
 	/**
 	 * Controller for the <code>sap.ui.rta.toolbar.versioning.Versioning</code> controls.
@@ -146,12 +147,15 @@ sap.ui.define([
 			case Version.Type.Draft:
 				oVersionButton.addStyleClass(DRAFT_ACCENT_COLOR);
 				oVersionButton.removeStyleClass(ACTIVE_ACCENT_COLOR);
+				oVersionButton.removeStyleClass(VERSION_COLOR);
 				break;
 			case Version.Type.Active:
 				oVersionButton.addStyleClass(ACTIVE_ACCENT_COLOR);
 				oVersionButton.removeStyleClass(DRAFT_ACCENT_COLOR);
+				oVersionButton.removeStyleClass(VERSION_COLOR);
 				break;
 			default:
+				oVersionButton.addStyleClass(VERSION_COLOR);
 				oVersionButton.removeStyleClass(ACTIVE_ACCENT_COLOR);
 				oVersionButton.removeStyleClass(DRAFT_ACCENT_COLOR);
 		}
