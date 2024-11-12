@@ -105,6 +105,8 @@ sap.ui.define([
 			}),
 			new Image({
 				src: "./images/SAP_Logo.png",
+				width: "60px",
+				height: "30px",
 				tooltip: "SAP logo",
 				press: function () {},
 				decorative: false,
@@ -128,14 +130,7 @@ sap.ui.define([
 			new ToolbarSpacer(),
 			new SearchField({
 				id: "searchField",
-				width: "16rem",
-				layoutData: new OverflowToolbarLayoutData({
-					priority: OverflowToolbarPriority.Low,
-					group: 1
-				})
-			}),
-			new ToolbarSpacer({
-				id: "spacer",
+				width: "25rem",
 				layoutData: new OverflowToolbarLayoutData({
 					priority: OverflowToolbarPriority.Low,
 					group: 1
@@ -147,6 +142,15 @@ sap.ui.define([
 				type: ButtonType.Transparent,
 				icon: "sap-icon://search",
 				visible: false
+			}),
+			new OverflowToolbarButton({
+				icon: "sap-icon://da",
+				type: ButtonType.Transparent,
+				tooltip: "Joule",
+				layoutData: new OverflowToolbarLayoutData({
+					priority: OverflowToolbarPriority.Low
+				})
+
 			}),
 			new OverflowToolbarButton({
 				tooltip: "Action 1",
@@ -162,11 +166,6 @@ sap.ui.define([
 				text: "Action 2",
 				type: ButtonType.Transparent,
 				icon: "sap-icon://card",
-				layoutData: new OverflowToolbarLayoutData({
-					group: 2
-				})
-			}),
-			new ToolbarSeparator({
 				layoutData: new OverflowToolbarLayoutData({
 					group: 2
 				})
@@ -191,9 +190,11 @@ sap.ui.define([
 					})
 				]
 			}),
-			new ToolHeaderUtilitySeparator(),
-			new ToolbarSpacer({
-				width: "1.125rem"
+			new OverflowToolbarButton({
+				text: "My products",
+				icon: "sap-icon://grid",
+				type: ButtonType.Transparent,
+				tooltip: "My products"
 			}),
 			new Avatar({
 				tooltip: "Profile",
@@ -218,6 +219,8 @@ sap.ui.define([
 			new Image({
 				src: "./images/SAP_Logo.png",
 				tooltip: "SAP logo",
+				width: "60px",
+				height: "30px",
 				press: function () {},
 				decorative: false,
 				layoutData: new OverflowToolbarLayoutData({
@@ -258,7 +261,9 @@ sap.ui.define([
 				width: '20px'
 			}),
 			new Image({
-				src: "./images/SAP_Logo.png"
+				src: "./images/SAP_Logo.png",
+				width: "60px",
+				height: "30px"
 			}),
 			new Text({
 				text: "Tool Header Text"
@@ -856,7 +861,6 @@ sap.ui.define([
 				Element.getElementById("productName").setVisible(true);
 				Element.getElementById("secondTitle").setVisible(true);
 				Element.getElementById("searchField").setVisible(true);
-				Element.getElementById("spacer").setVisible(true);
 				Element.getElementById("searchButton").setVisible(false);
 				Log.info("Screen width is corresponding to Large Desktop");
 				break;
@@ -866,7 +870,6 @@ sap.ui.define([
 				Element.getElementById("productName").setVisible(true);
 				Element.getElementById("secondTitle").setVisible(false);
 				Element.getElementById("searchField").setVisible(true);
-				Element.getElementById("spacer").setVisible(true);
 				Element.getElementById("searchButton").setVisible(false);
 				Log.info("Screen width is corresponding to Desktop");
 				break;
@@ -877,14 +880,12 @@ sap.ui.define([
 				Element.getElementById("secondTitle").setVisible(true);
 				Element.getElementById("searchButton").setVisible(true);
 				Element.getElementById("searchField").setVisible(false);
-				Element.getElementById("spacer").setVisible(false);
 				Log.info("Screen width is corresponding to Tablet");
 				break;
 
 			case "Phone":
 				Element.getElementById("searchButton").setVisible(true);
 				Element.getElementById("searchField").setVisible(false);
-				Element.getElementById("spacer").setVisible(false);
 				Element.getElementById("productName").setVisible(false);
 				Element.getElementById("secondTitle").setVisible(false);
 				Log.info("Screen width is corresponding to Phone");
