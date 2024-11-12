@@ -141,7 +141,6 @@ sap.ui.define([
 				return this;
 			}
 		},
-		oLineItemsModel,
 		iTimesSaved = 0;
 
 	/**
@@ -170,10 +169,11 @@ sap.ui.define([
 	}
 
 	/**
-	 * Reads and returns the line items, each one has the specific note added.
+	 * Returns a copy of the given line item data after applying the given callback to modify the data and the
+	 * given skip and top.
 	 *
-	 * @param {string} sFilePath
-	 *   The path to the file in the data folder
+	 * @param {object} oOriginalLineItems
+	 *   The original data for the line items
 	 * @param {function} [fnModifyData]
 	 *   Function which modifies the data to fit the current testcase. Gets passed an array with
 	 *   the line items
@@ -184,21 +184,11 @@ sap.ui.define([
 	 * @return {object}
 	 *   The OData response for the SalesOrderLineItemSet considering the given skip and top
 	 */
-	function getLineItems(sFilePath, fnModifyData, iSkip, iTop) {
-		var oLineItems,
-			sPrefix = "test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/data/";
-
-		if (!oLineItemsModel || oLineItemsModel.getProperty("/path") !== sFilePath) {
-			oLineItemsModel = new JSONModel();
-			oLineItemsModel.loadData(sPrefix + sFilePath, "", false);
-			oLineItemsModel.setProperty("/path", sFilePath);
-		}
-		oLineItems = merge({}, oLineItemsModel.getObject("/"));
-
+	function getLineItems(oOriginalLineItems, fnModifyData, iSkip, iTop) {
+		const oLineItems = merge({}, oOriginalLineItems);
 		if (fnModifyData) {
 			fnModifyData(oLineItems.d.results);
 		}
-
 		if (iSkip || iTop) {
 			iSkip = iSkip || 0;
 			iTop = iSkip + (iTop || 4);
@@ -227,12 +217,39 @@ sap.ui.define([
 		};
 	}
 
+	const oMetadataFixture = {
+		regExp : /GET .*\/\$metadata/,
+		response : {
+			source : "../../../../../../qunit/odata/v2/data/ZUI5_GWSAMPLE_BASIC.metadata.xml"
+		}
+	};
+
 	/**
 	 * Gets the fixtures for the mock server.
 	 *
-	 * @returns {object} The fixture and the RegExp fixture for the mock server
+	 * @returns {Promise<object>} A promise resolving with the fixture and the RegExp fixture for the mock server
 	 */
-	function getMockServerFixtures() {
+	async function requestMockServerFixtures() {
+		const mPath2Data = {};
+		const aMockDataPromises = [
+			// all mock data files which are preprocessed in getLineItems to create mock server fixtures
+			"Messages/TC1/SalesOrderSet-ToLineItems.json",
+			"Messages/TC2/SalesOrderSet-ToLineItems.json",
+			"Messages/TC2/SalesOrderSet-ToLineItems-2.json",
+			"Messages/TC3/SalesOrderSet-ToLineItems.json",
+			"Messages/TC4/SalesOrderSet-ToLineItems.json",
+			"Messages/TC5/SalesOrderSet-ToLineItems.json",
+			"Messages/TC9/SalesOrderSet-ToLineItems.json"
+		].map((sFilePath) => {
+			const sPrefix = "test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/data/";
+			const oModel = new JSONModel();
+			return oModel.loadData(sPrefix + sFilePath).then(() => {
+				mPath2Data[sFilePath] = oModel.getObject("/");
+			});
+		});
+
+		await Promise.all(aMockDataPromises);
+
 		return {
 			mFixture : {
 				/* Messages: Test Case I */
@@ -241,49 +258,49 @@ sap.ui.define([
 				},
 				"SalesOrderSet('101')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : [{
 					ifMatch : ithCall.bind(null, 1),
-					message : getLineItems("Messages/TC1/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC1/SalesOrderSet-ToLineItems.json"],
 						function (aItems) {
 							aItems[0].Note = mMessageKey2MessageData["error"].message;
 						})
 				}, {
 					ifMatch : ithCall.bind(null, 2),
-					message : getLineItems("Messages/TC1/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC1/SalesOrderSet-ToLineItems.json"],
 						function (aItems) {
 							aItems[0].Note = "No message";
 						})
 				}, {
 					ifMatch : ithCall.bind(null, 3),
-					message : getLineItems("Messages/TC1/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC1/SalesOrderSet-ToLineItems.json"],
 						function (aItems) {
 							aItems[0].Note = mMessageKey2MessageData["warning"].message;
 						})
 				}, {
 					ifMatch : ithCall.bind(null, 4),
-					message : getLineItems("Messages/TC1/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC1/SalesOrderSet-ToLineItems.json"],
 						function (aItems) {
 							aItems[0].Note = "No message";
 						})
 				}, {
 					ifMatch : ithCall.bind(null, 5),
-					message : getLineItems("Messages/TC1/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC1/SalesOrderSet-ToLineItems.json"],
 						function (aItems) {
 							aItems[0].Note = mMessageKey2MessageData["info"].message;
 						})
 				}, {
 					ifMatch : ithCall.bind(null, 6),
-					message : getLineItems("Messages/TC1/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC1/SalesOrderSet-ToLineItems.json"],
 						function (aItems) {
 							aItems[0].Note = "No message";
 						})
 				}, {
 					ifMatch : ithCall.bind(null, 7),
-					message : getLineItems("Messages/TC1/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC1/SalesOrderSet-ToLineItems.json"],
 						function (aItems) {
 							aItems[0].Note = mMessageKey2MessageData["success"].message;
 						})
 				}, {
 					ifMatch : ithCall.bind(null, 8),
-					message : getLineItems("Messages/TC1/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC1/SalesOrderSet-ToLineItems.json"],
 						function (aItems) {
 							aItems[0].Note = "No message";
 						})
@@ -340,20 +357,20 @@ sap.ui.define([
 				},
 				"SalesOrderSet('102')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : [{
 					ifMatch : ithCall.bind(null, 1),
-					message : getLineItems("Messages/TC2/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC2/SalesOrderSet-ToLineItems.json"],
 						function (aItems) {
 							aItems[0].Note = mMessageKey2MessageData["info"].message;
 						})
 				}, {
 					ifMatch : ithCall.bind(null, 2),
-					message : getLineItems("Messages/TC2/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC2/SalesOrderSet-ToLineItems.json"],
 						function (aItems) {
 							aItems[0].Note = mMessageKey2MessageData["info"].message;
 							aItems[1].Quantity = "1";
 						})
 				}, {
 					ifMatch : ithCall.bind(null, 3),
-					message : getLineItems("Messages/TC2/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC2/SalesOrderSet-ToLineItems.json"],
 						function (aItems) {
 							aItems[0].Note = mMessageKey2MessageData["info"].message;
 							aItems[1].Quantity = "1";
@@ -398,7 +415,7 @@ sap.ui.define([
 				},
 				"SalesOrderSet('102.2')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : [{
 					ifMatch : ithCall.bind(null, 1),
-					message : getLineItems("Messages/TC2/SalesOrderSet-ToLineItems-2.json",
+					message : getLineItems(mPath2Data["Messages/TC2/SalesOrderSet-ToLineItems-2.json"],
 						function (aItems) {
 							aItems[0].Note = "My error Message";
 						})
@@ -430,7 +447,7 @@ sap.ui.define([
 						.add("successFixAll", "(SalesOrderID='103',ItemPosition='050')/Quantity")
 					),
 					ifMatch : increaseSaveCount.bind(),
-					message : getLineItems("Messages/TC3/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC3/SalesOrderSet-ToLineItems.json"],
 						function (aItems) {
 							aItems.splice(3, 1);
 							aItems.splice(1, 1);
@@ -480,15 +497,15 @@ sap.ui.define([
 					source : "Messages/TC5/SalesOrderSet-ToLineItems.json"
 				},
 				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4&$filter=(SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27020%27)%20or%20(SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27030%27)&$inlinecount=allpages" : {
-					message : getLineItems("Messages/TC5/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC5/SalesOrderSet-ToLineItems.json"],
 						undefined, 1, 2)
 				},
 				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4&$filter=SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27020%27&$inlinecount=allpages" : {
-					message : getLineItems("Messages/TC5/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC5/SalesOrderSet-ToLineItems.json"],
 						undefined, 1, 1)
 				},
 				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4&$filter=SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27030%27&$inlinecount=allpages" : {
-					message : getLineItems("Messages/TC5/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC5/SalesOrderSet-ToLineItems.json"],
 						undefined, 2, 1)
 				},
 
@@ -580,7 +597,7 @@ sap.ui.define([
 				},
 				"SalesOrderSet('109')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : [{
 					ifMatch : ithCall.bind(null, 1),
-					message : getLineItems("Messages/TC9/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC9/SalesOrderSet-ToLineItems.json"],
 						function (aItems) { aItems[0].Quantity = "1"; })
 				}, {
 					source : "Messages/TC9/SalesOrderSet-ToLineItems.json"
@@ -845,12 +862,7 @@ sap.ui.define([
 					source : "ODLB.create/TC4/SalesOrderSet('245')_after_save.json"
 				}
 			},
-			aRegExpFixture : [{
-				regExp : /GET .*\/\$metadata/,
-				response : {
-					source : "../../../../../../qunit/odata/v2/data/ZUI5_GWSAMPLE_BASIC.metadata.xml"
-				}
-			}, {
+			aRegExpFixture : [oMetadataFixture, {
 				regExp : /GET .*\/SAP__Currencies\?/,
 				response : {
 					source : "../../../../../../qunit/odata/v2/data/SAP__Currencies.json"
@@ -869,7 +881,7 @@ sap.ui.define([
 						applySkipTopCount(aMatch, oResponse);
 					},
 					ifMatch : ithCall.bind(null, 1),
-					message : getLineItems("Messages/TC3/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC3/SalesOrderSet-ToLineItems.json"],
 						function (aItems) { aItems[4].Quantity = "2"; })
 				}, {
 					buildResponse : function (aMatch, oResponse) {
@@ -892,7 +904,7 @@ sap.ui.define([
 						applySkipTopCount(aMatch, oResponse);
 					},
 					ifMatch : ithCall.bind(null, 1),
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC4/SalesOrderSet-ToLineItems.json"],
 						function (aItems) {
 							aItems[0].Note = mMessageKey2MessageData["error"].message;
 						})
@@ -919,7 +931,7 @@ sap.ui.define([
 							request["requestHeaders"]["sap-messages"] === "transientOnly";
 						return iTimesSaved == 2 && !transientOnly;
 					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC4/SalesOrderSet-ToLineItems.json"],
 						function (aItems) {
 							aItems[0].Note = mMessageKey2MessageData["error"].message;
 							aItems[4].Note = mMessageKey2MessageData["warning"].message;
@@ -933,7 +945,7 @@ sap.ui.define([
 							request["requestHeaders"]["sap-messages"] === "transientOnly";
 						return iTimesSaved == 2 && transientOnly;
 					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
+					message : getLineItems(mPath2Data["Messages/TC4/SalesOrderSet-ToLineItems.json"],
 						function (aItems) {
 							aItems[0].Note = mMessageKey2MessageData["error"].message;
 							aItems[4].Note = mMessageKey2MessageData["warning"].message;
@@ -1035,14 +1047,20 @@ sap.ui.define([
 	}
 
 	function fnSandboxModel(mParameters) {
-		var oMockServerFixtures, oModel, sParameter, oSandbox, oUriParameters;
+		var oModel, sParameter, oSandbox, oUriParameters;
 
+		let oReadyPromise = Promise.resolve();
 		if (!TestUtils.isRealOData()) {
-			oMockServerFixtures = getMockServerFixtures();
 			oSandbox = sinon.sandbox.create();
-			TestUtils.setupODataV4Server(oSandbox, oMockServerFixtures.mFixture,
+			TestUtils.setupODataV4Server(oSandbox, {}, // mock metadata initially so that model can be constructed
 				"sap/ui/core/internal/samples/odata/v2/SalesOrders/data",
-				"/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/", oMockServerFixtures.aRegExpFixture);
+				"/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/", [oMetadataFixture]);
+			oReadyPromise = requestMockServerFixtures().then((oMockServerFixtures) => {
+				oSandbox.restore();
+				TestUtils.setupODataV4Server(oSandbox, oMockServerFixtures.mFixture,
+					"sap/ui/core/internal/samples/odata/v2/SalesOrders/data",
+					"/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/", oMockServerFixtures.aRegExpFixture);
+			});
 		} else {
 			mParameters = Object.assign({}, mParameters);
 			oUriParameters = new URLSearchParams(window.location.search);
@@ -1058,6 +1076,7 @@ sap.ui.define([
 
 		iTimesSaved = 0; // reset global counter on model construction
 		oModel = new ODataModel(mParameters);
+		oModel.ready = oReadyPromise;
 		oModel.restoreSandbox = () => {
 			oSandbox?.restore();
 			oSandbox = undefined;
