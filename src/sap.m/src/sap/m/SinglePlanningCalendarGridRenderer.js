@@ -743,10 +743,6 @@ sap.ui.define([
 		oRm.style("top", oControl._calculateTopPosition(oDate) + "rem");
 		oRm.class("sapMSinglePCNowMarker");
 
-		if (!oControl._isVisibleHour(oDate.getHours())) {
-			oRm.class("sapMSinglePCNowMarkerHidden");
-		}
-
 		oRm.openEnd();
 		oRm.openStart("span", oControl.getId() + "-nowMarkerText");
 		oRm.class("sapMSinglePCNowMarkerText");

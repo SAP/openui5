@@ -43,7 +43,9 @@ sap.ui.define([
 					{highlight: IndicationColor.Indication05},
 					{highlight: IndicationColor.Indication06},
 					{highlight: IndicationColor.Indication07},
-					{highlight: IndicationColor.Indication08}
+					{highlight: IndicationColor.Indication08},
+					{highlight: IndicationColor.Indication09},
+					{highlight: IndicationColor.Indication10}
 				]),
 				columns: TableQUnitUtils.createTextColumn(),
 				rowMode: new FixedRowMode({
@@ -160,6 +162,12 @@ sap.ui.define([
 							break;
 						case IndicationColor.Indication08:
 							sRGBBackgroundColor = this.getColorRgb("sapUiIndication8");
+							break;
+						case IndicationColor.Indication09:
+							sRGBBackgroundColor = this.getColorRgb("sapUiIndication9");
+							break;
+						case IndicationColor.Indication10:
+							sRGBBackgroundColor = this.getColorRgb("sapUiIndication10");
 							break;
 						default:
 							sRGBBackgroundColor = "transparent"; // transparent
@@ -316,6 +324,10 @@ sap.ui.define([
 				sCSSClassName += "Indication07";
 			} else if (iRowIndex === 12) {
 				sCSSClassName += "Indication08";
+			} else if (iRowIndex === 13) {
+				sCSSClassName += "Indication09";
+			} else if (iRowIndex === 14) {
+				sCSSClassName += "Indication10";
 			}
 
 			assert.strictEqual(oRowSettings._getHighlightCSSClassName(), sCSSClassName,

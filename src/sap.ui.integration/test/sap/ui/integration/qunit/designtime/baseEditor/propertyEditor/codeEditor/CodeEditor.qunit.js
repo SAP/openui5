@@ -24,6 +24,7 @@ sap.ui.define([
 	function setCodeEditorValue (oCodeEditor, sInput) {
 		oCodeEditor.setValue(sInput);
 		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
+		oCodeEditor.getInternalEditorInstance().getSession().setUseWorker(true);
 	}
 
 	QUnit.module("Code Editor: Given an editor config", {
@@ -170,11 +171,13 @@ sap.ui.define([
 			// Edit the error in the dialog
 			this.oCodeEditorElement.attachValueHelpRequest(function () {
 				this.oCodeEditor._openCodeEditor.returnValues[0].then(function (oDialog) {
-					oDialog.getContent()[0].getInternalEditorInstance().getSession().on("changeAnnotation", function () {
-						assert.ok(oDialog.getContent()[0].getValue().length > 0, "Then an error is displayed in the editor dialog");
-						oDialog.getContent()[0].getInternalEditorInstance().getSession().removeAllListeners("changeAnnotation");
+					var oCodeEditor = oDialog.getContent()[0];
+					oCodeEditor.getInternalEditorInstance().getSession().on("changeAnnotation", function () {
+						assert.ok(oCodeEditor.getValue().length > 0, "Then an error is displayed in the editor dialog");
+						oCodeEditor.getInternalEditorInstance().getSession().removeAllListeners("changeAnnotation");
 						fnDone();
 					});
+					oCodeEditor.getInternalEditorInstance().getSession().setUseWorker(true);
 				});
 			}.bind(this));
 

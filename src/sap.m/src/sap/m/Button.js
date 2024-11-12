@@ -524,7 +524,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Button.prototype.ontouchend = function(oEvent) {
-		var sEndingTagId;
+		var sEndingTagId, bShouldSimulateTap,
+			bIsRightClick = oEvent.which === 3 || (oEvent.ctrlKey && oEvent.which === 1);
 
 		this._buttonPressed = oEvent.originalEvent && oEvent.originalEvent.buttons & 1;
 
@@ -534,7 +535,6 @@ sap.ui.define([
 		if (this._bRenderActive) {
 			delete this._bRenderActive;
 
-			const bIsRightClick = oEvent.which === 3 || (oEvent.ctrlKey && oEvent.which === 1);
 			if (!bIsRightClick) {
 				this.ontap(oEvent, true);
 			}
@@ -543,11 +543,13 @@ sap.ui.define([
 		// get the tag ID where the touch event ended
 		sEndingTagId = oEvent.target.id.replace(this.getId(), '');
 		// there are some cases when tap event won't come. Simulate it:
-		if (this._buttonPressed === 0
-			&& ((this._sTouchStartTargetId === "-BDI-content"
-				&& (sEndingTagId === '-content' || sEndingTagId === '-inner' || sEndingTagId === '-img'))
-				|| (this._sTouchStartTargetId === "-content" && (sEndingTagId === '-inner' || sEndingTagId === '-img'))
-				|| (this._sTouchStartTargetId === '-img' && sEndingTagId !== '-img'))) {
+		bShouldSimulateTap = this._buttonPressed === 0 && !bIsRightClick && (
+			(this._sTouchStartTargetId === "-BDI-content" && ['-content', '-inner', '-img'].includes(sEndingTagId)) ||
+			(this._sTouchStartTargetId === "-content" && ['-inner', '-img'].includes(sEndingTagId)) ||
+			(this._sTouchStartTargetId === '-img' && sEndingTagId !== '-img')
+		);
+
+		if (bShouldSimulateTap) {
 			this.ontap(oEvent, true);
 		}
 

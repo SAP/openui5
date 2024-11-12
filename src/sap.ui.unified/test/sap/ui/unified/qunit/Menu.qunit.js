@@ -1735,4 +1735,43 @@ sap.ui.define([
 		// clean
 		oMenu.destroy();
 	});
+
+	QUnit.test("'beforeClose' event", async function(assert) {
+
+		var oMenu = new Menu("mainMenu", {
+				items: [
+					new MenuItem("mainItem", {
+						text: "Item 1"
+					})
+				]
+			}),
+			oSpyMenuCloseFn = sinon.spy(oMenu, "close");
+
+		oMenu.placeAt("qunit-fixture");
+
+		// Act
+		oMenu.open();
+		await nextUIUpdate();
+		oMenu.selectItem(oMenu.getItems()[0], true);
+
+		// Assert
+		assert.ok(oSpyMenuCloseFn.calledOnce, "Menu `close` method is called when the `beforeClose` event is not prevented");
+
+		await nextUIUpdate();
+		oMenu.attachBeforeClose(function(oEvent) {
+			oEvent.preventDefault();
+		});
+
+		// Act
+		oMenu.open();
+		await nextUIUpdate();
+		oMenu.selectItem(oMenu.getItems()[0], true);
+
+		// Assert
+		assert.ok(oSpyMenuCloseFn.calledOnce, "Menu `close` method is not called when the `beforeClose` event is prevented");
+
+		oMenu.destroy();
+		oSpyMenuCloseFn.restore();
+	});
+
 });

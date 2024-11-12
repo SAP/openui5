@@ -148,32 +148,36 @@ sap.ui.define([
 					assert.ok(mParameters1.configuration, "configuration correct");
 					assert.ok(mParameters1.configuration.form, "configuration.form correct");
 					assert.ok(mParameters1.configuration.form.items, "configuration.form.items correct");
-					assert.deepEqual(mParameters1.configuration.form.items.myParameter1, {
-						"manifestpath": "/sap.card/configuration/parameters/myParameter1/value",
-						"type": "string",
-						"defaultValue": "myParameter1DefaultValue"
-					}, "myParameter1 default configuration correct");
-					assert.deepEqual(mParameters1.configuration.form.items.myParameter2, {
-						"manifestpath": "/sap.card/configuration/parameters/myParameter2/value",
-						"type": "int",
-						"defaultValue": 6
-					}, "myParameter2 default configuration correct");
+					assert.deepEqual(mParameters1.configuration.form.items, {
+						"myParameter1": {
+							"manifestpath": "/sap.card/configuration/parameters/myParameter1/value",
+							"type": "string",
+							"defaultValue": "myParameter1DefaultValue"
+						},
+						"myParameter2": {
+							"manifestpath": "/sap.card/configuration/parameters/myParameter2/value",
+							"type": "int",
+							"defaultValue": 6
+						}
+					}, "items default configuration correct");
 					this.oBASEditor.attachEventOnce("configurationChange", function (oEvent) {
 						var mParameters2 = oEvent.getParameters();
 						assert.ok(mParameters2.configuration, "configuration correct");
 						assert.ok(mParameters2.configuration.form, "configuration.form correct");
 						assert.ok(mParameters2.configuration.form.items, "configuration.form.items correct");
-						assert.deepEqual(mParameters2.configuration.form.items.myParameter1, {
-							"manifestpath": "/sap.card/configuration/parameters/myParameter1/value",
-							"type": "string",
-							"defaultValue": "myParameter1DefaultValue",
-							"label": "new Label"
-						}, "myParameter1 configuration updated correct");
-						assert.deepEqual(mParameters2.configuration.form.items.myParameter2, {
-							"manifestpath": "/sap.card/configuration/parameters/myParameter2/value",
-							"type": "int",
-							"defaultValue": 6
-						}, "myParameter2 default configuration correct");
+						assert.deepEqual(mParameters1.configuration.form.items, {
+							"myParameter1": {
+								"manifestpath": "/sap.card/configuration/parameters/myParameter1/value",
+								"type": "string",
+								"defaultValue": "myParameter1DefaultValue",
+								"label": "new Label"
+							},
+							"myParameter2": {
+								"manifestpath": "/sap.card/configuration/parameters/myParameter2/value",
+								"type": "int",
+								"defaultValue": 6
+							}
+						}, "items configuration updated correct");
 						resolve();
 					});
 					var oConfiguration = this.oBASEditor.getConfiguration();

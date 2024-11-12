@@ -4,7 +4,11 @@
 		<Schema Namespace="foo">
 			<Annotations Target="com.sap.gateway.f4.d_pr_type-fv.v0001.D_PR_TYPE_FV/DESCRIPTION">
 				<Annotation Term="com.sap.vocabularies.Common.v1.Label"
-						String="Description's New Label"/>
+					String="Description's New Label"/>
+			</Annotations>
+			<Annotations Target="com.sap.gateway.f4.FIELD_VALUE.v0001.D_PR_TYPE_FV/DESCRIPTION">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label"
+					String="Description's NESTED New Label"/>
 			</Annotations>
 			<Annotations Target="com.sap.gateway.f4.d_pr_type-fv.v0001.D_PR_TYPE_FV/FIELD_VALUE">
 				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Field Value"/>

@@ -112,6 +112,18 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Represents the expand and collapse configuration object.
+	 *
+	 * @typedef {object} sap.ui.mdc.TableDelegate.ExpandAndCollapseConfiguration
+	 *
+	 * @property {function(sap.ui.mdc.Table): void} [expandAll] Function to expand all rows
+	 * @property {function(sap.ui.mdc.Table): void} [collapseAll] Function to collapse all rows
+	 * @property {function(sap.ui.mdc.Table, sap.ui.model.Context): void} [expandAllFromNode] Function to expand all rows from a specific node
+	 * @property {function(sap.ui.mdc.Table, sap.ui.model.Context): void} [collapseAllFromNode] Function to collapse all rows from a specific node
+	 * @property {function(sap.ui.mdc.Table, sap.ui.model.Context): void} [isNodeExpanded] Function to check if a specific node is expanded
+	 */
+
+	/**
 	 * Updates the binding info object that is used to bind the table in {@link module:sap/ui/mdc/TableDelegate.updateBinding updateBinding}.
 	 *
 	 * By default, filters and sorters are added to the binding info. Please see {@link module:sap/ui/mdc/TableDelegate.getFilters getFilters},
@@ -340,25 +352,37 @@ sap.ui.define([
 	};
 
 	/**
-	 * Expands all rows.
+	 * Returns the feature set for expanding or collapsing in the table.
 	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @throws {Error} If the delegate does not support this operation
+	 * By default, this method returns an empty object.
+	 *
+	 * The configuration object needs to contain the following functions to enable specific functionalities:
+	 * <ul>
+	 *   <li>To enable the <b>expand all</b> functionality, you need to implement the <code>expandAll</code> function in the configuration object.</li>
+	 *   <li>To enable the <b>collapse all</b> functionality, you need to implement the <code>collapseAll</code> function in the configuration object.</li>
+	 *   <li>To enable the <b>expand all from a specific node</b> functionality, you need to implement the <code>expandAllFromNode</code> and the <code>isNodeExpanded</code> function in the configuration object.</li>
+	 *   <li>To enable the <b>collapse all from a specific node</b> functionality, you need to implement the <code>collapseAllFromNode</code> and the <code>isNodeExpanded</code> function in the configuration object.</li>
+	 * <ul>
+	 *
+	 * <b>Note:</b> Expand and collapse all from a specific node is only supported, if the table rows are selectable.
+	 *
+	 * @example
+	 * TableDelegate.fetchExpandAndCollapseConfiguration = function(oTable) {
+	 * 		return Promise.resolve({
+	 * 			expandAll: function(oTable) {
+	 * 				// Implement expandAll functionality
+	 * 			},
+	 * 			collapseAll: function(oTable) {
+	 * 				// Implement collapseAll functionality
+	 * 			}
+	 * 		});
+	 * }
+	 * @param {sap.ui.mdc.Table} oTable table instance
+	 * @returns {Promise<sap.ui.mdc.TableDelegate.ExpandAndCollapseConfiguration>} A <code>Promise</code> that resolves with an object containing the expand and collapse functions
 	 * @protected
 	 */
-	TableDelegate.expandAllRows = function(oTable) {
-		throw Error("Unsupported operation: TableDelegate.expandAllRows");
-	};
-
-	/**
-	 * Collapses all rows.
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @throws {Error} If the delegate does not support this operation
-	 * @protected
-	 */
-	TableDelegate.collapseAllRows = function(oTable) {
-		throw Error("Unsupported operation: TableDelegate.collapseAllRows");
+	TableDelegate.fetchExpandAndCollapseConfiguration = function(oTable) {
+		return Promise.resolve({});
 	};
 
 	/**
@@ -379,9 +403,7 @@ sap.ui.define([
 
 		return {
 			p13nModes: aSupportedP13nModes,
-			"export": true,
-			expandAllRows: false,
-			collapseAllRows: false
+			"export": true
 		};
 	};
 

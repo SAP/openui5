@@ -5021,6 +5021,7 @@ sap.ui.define([
 
 					return pSequence;
 				});
+				/*eslint-enable no-loop-func*/
 			}
 
 			return test(true, true).then(function() {

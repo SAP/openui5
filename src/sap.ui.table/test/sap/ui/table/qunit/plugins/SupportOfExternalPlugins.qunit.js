@@ -12,11 +12,10 @@ sap.ui.define([
 		let bTableSupportsDataStateIndicator;
 
 		try {
-			/* eslint-disable no-new */
+			/* eslint-disable-next-line no-new */
 			new Table({
 				dependents: new DataStateIndicator()
 			});
-			/* eslint-enable no-new */
 
 			bTableSupportsDataStateIndicator = true;
 		} catch (e) {
