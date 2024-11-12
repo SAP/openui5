@@ -494,7 +494,7 @@ sap.ui.define([
 	};
 
 	SelectionPanel.prototype._createInnerListControl = function() {
-		return new Table(this.getId() + "-innerSelectionPanelTable", Object.assign({
+		const oTable = new Table(this.getId() + "-innerSelectionPanelTable", Object.assign({
 			growing: false,
 			growingThreshold: 25,
 			growingScrollToLoad: true,
@@ -508,6 +508,18 @@ sap.ui.define([
 				}
 			}
 		}, this._getListControlConfig()));
+
+		// this is required to update the reorder buttons very early. Otherwise a screenreader might not announce the correct cell content.
+		const orgFocusIn = oTable.onItemFocusIn;
+		oTable.onItemFocusIn = function(oItem, oFocusedControl) {
+			if (this.getEnableReorder()) {
+				this._handleActivated(oItem);
+			}
+
+			orgFocusIn.apply(oTable, arguments);
+		}.bind(this);
+
+		return oTable;
 	};
 
 	SelectionPanel.prototype.filterContent = function(aFilter) {

@@ -164,6 +164,16 @@ sap.ui.define([
 		const oTable = new Table(sId, Object.assign(this._getListControlConfig(), {}));
 		this.setEnableReorder(true); //We always want reordering to be active in this panel
 
+		// this is required to update the reorder buttons very early. Otherwise a screenreader might not announce the correct cell content.
+		const orgFocusIn = oTable.onItemFocusIn;
+		oTable.onItemFocusIn = function(oItem, oFocusedControl) {
+			if (this.getEnableReorder()) {
+				this._handleActivated(oItem);
+			}
+
+			orgFocusIn.apply(oTable, arguments);
+		}.bind(this);
+
 		oTable.addEventDelegate({
 			onAfterRendering: this._onAfterTableRender.bind(this)
 		});
@@ -419,7 +429,6 @@ sap.ui.define([
 
 		oListItem.addEventDelegate({
 			onmouseover: this._hoverHandler.bind(this),
-			onfocusin: this._focusHandler.bind(this),
 			onkeydown: this._keydownHandler.bind(this)
 		});
 
@@ -487,7 +496,6 @@ sap.ui.define([
 
 		oListItem.addEventDelegate({
 			onmouseover: this._hoverHandler.bind(this),
-			onfocusin: this._focusHandler.bind(this),
 			onkeydown: this._keydownHandler.bind(this)
 		});
 
@@ -518,18 +526,6 @@ sap.ui.define([
 			BasePanel.prototype._keydownHandler.apply(this, arguments);
 		}
 
-	};
-
-	ChartItemPanel.prototype._focusHandler = function(oEvt) {
-
-		const oTarget = Element.getElementById(oEvt.target.id);
-
-		//Don't handle focus on button presses as this messes up event propagation
-		if (oTarget instanceof Button) {
-			return;
-		}
-
-		BasePanel.prototype._focusHandler.apply(this, arguments);
 	};
 
 	ChartItemPanel.prototype._handleActivated = function(oHoveredItem) {
@@ -641,7 +637,7 @@ sap.ui.define([
 
 		const bIgnore = this._getP13nModel().getProperty(oTableItem.getBindingContextPath()) ? this._getP13nModel().getProperty(oTableItem.getBindingContextPath()).template : true;
 
-		if (oTableItem.getCells() && (oTableItem.getCells().length === 2 || oTableItem.getCells().length === 3) && !bIgnore) {
+		if (oTableItem.getCells && oTableItem.getCells() && (oTableItem.getCells().length === 2 || oTableItem.getCells().length === 3) && !bIgnore) {
 			if (this._bMobileMode) {
 				oTableItem.getCells()[1].insertItem(this._getMoveDownButton(), 0);
 				oTableItem.getCells()[1].insertItem(this._getMoveUpButton(), 0);
