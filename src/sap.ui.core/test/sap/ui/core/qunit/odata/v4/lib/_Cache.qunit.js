@@ -6234,11 +6234,12 @@ sap.ui.define([
 			.returns("~oUnlockedCopy~");
 		this.mock(oCache).expects("requestElements").exactly(iCount)
 			.withExactArgs(iStart, 23, "~oUnlockedCopy~", bTransient ? 2 : 0,
-				sinon.match.same(fnDataRequested));
+				sinon.match.same(fnDataRequested), "~fnSeparateReceived~");
 		oUnlockExpectation = this.mock(oGroupLock).expects("unlock").withExactArgs();
 
 		// code under test
-		oSyncPromise = oCache.read(0, 100, iPrefetchLength, oGroupLock, fnDataRequested);
+		oSyncPromise = oCache.read(0, 100, iPrefetchLength, oGroupLock, fnDataRequested, false,
+			"~fnSeparateReceived~");
 
 		if (iCount) {
 			assert.deepEqual(oSyncPromise.getResult(), {
@@ -6401,13 +6402,14 @@ sap.ui.define([
 		this.mock(oCache).expects("requestElements").never();
 
 		// code under test
-		oPromise = oCache.read(10, 20, 30, oGroupLock, fnDataRequested, "~bIndexIsSkip~");
+		oPromise = oCache.read(10, 20, 30, oGroupLock, fnDataRequested, "~bIndexIsSkip~",
+			"~fnSeparateReceived~");
 
 		assert.strictEqual(oPromise.isPending(), true);
 
 		this.mock(oCache).expects("read")
 			.withExactArgs(10, 20, 30, sinon.match.same(oGroupLock),
-				sinon.match.same(fnDataRequested), "~bIndexIsSkip~")
+				sinon.match.same(fnDataRequested), "~bIndexIsSkip~", "~fnSeparateReceived~")
 			.returns(42);
 		fnResolve();
 
@@ -7797,7 +7799,8 @@ sap.ui.define([
 					sinon.match.same(oResult), "~iFiltered~"); // .returns(undefined)
 			const oRequestSeparatePropertiesExpectation
 				= oCacheMock.expects("requestSeparateProperties")
-					.withExactArgs(iStart, iEnd, sinon.match.instanceOf(SyncPromise));
+					.withExactArgs(iStart, iEnd, sinon.match.instanceOf(SyncPromise),
+						"~fnSeparateReceived~");
 			oCacheMock.expects("fill")
 				.withExactArgs(sinon.match(function (oSyncPromise) {
 					oPromise = oSyncPromise;
@@ -7809,7 +7812,7 @@ sap.ui.define([
 
 			// code under test
 			oCache.requestElements(iStart, iEnd, oGroupLock, "~iTransientElements~",
-				fnDataRequested);
+				fnDataRequested, "~fnSeparateReceived~");
 
 			assert.strictEqual(oCache.bSentRequest, true);
 			assert.strictEqual(oCache.aElements.$tail, bTail ? oPromise : undefined);
@@ -7863,12 +7866,14 @@ sap.ui.define([
 			.withExactArgs("~oGroupLock~", 0, iStart, iEnd, "~oResult~", "~iFiltered~");
 		const oRequestSeparatePropertiesExpectation
 			= oCacheMock.expects("requestSeparateProperties")
-				.withExactArgs(iStart, iEnd, sinon.match.instanceOf(SyncPromise));
+				.withExactArgs(iStart, iEnd, sinon.match.instanceOf(SyncPromise),
+					"~fnSeparateReceived~");
 		oFillExpectation = oCacheMock.expects("fill")
 			.withExactArgs(sinon.match.instanceOf(SyncPromise), iStart, iEnd);
 
 		// code under test
-		oPromise = oCache.requestElements(iStart, iEnd, "~oGroupLock~", 0, "~fnDataRequested~");
+		oPromise = oCache.requestElements(iStart, iEnd, "~oGroupLock~", 0, "~fnDataRequested~",
+			"~fnSeparateReceived~");
 
 		assert.deepEqual(oCache.aReadRequests, [{iStart, iEnd, bObsolete : false}]);
 		if (bSuccess === undefined) {
@@ -7913,7 +7918,8 @@ sap.ui.define([
 		oCacheMock.expects("fetchTypes").withExactArgs().returns(SyncPromise.resolve("~mTypes~"));
 		const oRequestSeparatePropertiesExpectation
 			= oCacheMock.expects("requestSeparateProperties")
-				.withExactArgs(iStart, iEnd, sinon.match.instanceOf(SyncPromise));
+				.withExactArgs(iStart, iEnd, sinon.match.instanceOf(SyncPromise),
+					"~fnSeparateReceived~");
 		oFillExpectation = oCacheMock.expects("fill")
 			.withExactArgs(sinon.match.instanceOf(SyncPromise), iStart, iEnd);
 		Promise.resolve().then(function () { // must be called asynchronously
@@ -7927,7 +7933,8 @@ sap.ui.define([
 		});
 
 		// code under test
-		oPromise = oCache.requestElements(iStart, iEnd, "~oGroupLock~", 0, "~fnDataRequested~");
+		oPromise = oCache.requestElements(iStart, iEnd, "~oGroupLock~", 0, "~fnDataRequested~",
+			"~fnSeparateReceived~");
 
 		assert.deepEqual(oCache.aReadRequests, [{iStart, iEnd, bObsolete : false}]);
 
@@ -8085,11 +8092,13 @@ sap.ui.define([
 		this.mock(oCache).expects("requestElements").never(); // not yet
 
 		// code under test
-		oPromise = oCache.read(0, 10, 42, "group", fnDataRequested, "~bIndexIsSkip~");
+		oPromise = oCache.read(0, 10, 42, "group", fnDataRequested, "~bIndexIsSkip~",
+			"~fnSeparateReceived~");
 
 		// expect "back to start" in order to repeat check for $tail
 		this.mock(oCache).expects("read")
-			.withExactArgs(0, 10, 42, "group", sinon.match.same(fnDataRequested), "~bIndexIsSkip~")
+			.withExactArgs(0, 10, 42, "group", sinon.match.same(fnDataRequested), "~bIndexIsSkip~",
+				"~fnSeparateReceived~")
 			.returns(oNewPromise);
 		fnResolve();
 
@@ -10060,10 +10069,12 @@ sap.ui.define([
 				.returns(oUnlockedCopy);
 			that.mock(oGroupLock0).expects("unlock").withExactArgs();
 			that.mock(oCache).expects("requestElements")
-				.withExactArgs(3, 13, sinon.match.same(oUnlockedCopy), 0, undefined);
+				.withExactArgs(3, 13, sinon.match.same(oUnlockedCopy), 0, undefined,
+					"~fnSeparateReceived~");
 
 			// code under test
-			return oCache.read(0, 3, 10, oGroupLock0).then(function (oResult0) {
+			return oCache.read(0, 3, 10, oGroupLock0, undefined, false, "~fnSeparateReceived~")
+			.then(function (oResult0) {
 				assert.strictEqual(oResult0.value.length, 3);
 				assert.ok(_Helper.getPrivateAnnotation(oResult0.value[0], "transient"));
 				assert.strictEqual(oResult0.value[0].name, "John Doe");
@@ -13054,7 +13065,7 @@ sap.ui.define([
 		const oGetUnlockedCopyExpectation = this.mock(oGroupLock).expects("getUnlockedCopy")
 			.withExactArgs().returns("~unlockedCopy~");
 		this.mock(oCache).expects("requestElements")
-			.withExactArgs(5, 15, "~unlockedCopy~", 0, "~fnDataRequested~")
+			.withExactArgs(5, 15, "~unlockedCopy~", 0, "~fnDataRequested~", "~fnSeparateReceived~")
 			.callsFake(() => {
 				// just at the edge, there is a promise we need to wait for
 				oCache.aElements[14] = Promise.resolve();
@@ -13064,7 +13075,8 @@ sap.ui.define([
 		const oUnlockExpectation = this.mock(oGroupLock).expects("unlock").withExactArgs();
 
 		// code under test
-		const oSyncPromise = oCache.read(0, 5, 10, oGroupLock, "~fnDataRequested~");
+		const oSyncPromise = oCache.read(0, 5, 10, oGroupLock, "~fnDataRequested~", false,
+			"~fnSeparateReceived~");
 
 		assert.ok(oSyncPromise.isPending());
 		sinon.assert.callOrder(oGetUnlockedCopyExpectation, oUnlockExpectation);
@@ -13096,7 +13108,8 @@ sap.ui.define([
 		const oGetUnlockedCopyExpectation = this.mock(oGroupLock).expects("getUnlockedCopy")
 			.withExactArgs().returns("~unlockedCopy~");
 		this.mock(oCache).expects("requestElements")
-			.withExactArgs(iStart, 20, "~unlockedCopy~", 0, "~fnDataRequested~")
+			.withExactArgs(iStart, 20, "~unlockedCopy~", 0, "~fnDataRequested~",
+				"~fnSeparateReceived~")
 			.callsFake(() => {
 				switch (iPrefetchLength) {
 					case 10:
@@ -13120,7 +13133,8 @@ sap.ui.define([
 		const oUnlockExpectation = this.mock(oGroupLock).expects("unlock").withExactArgs();
 
 		// code under test
-		const oSyncPromise = oCache.read(20, 5, iPrefetchLength, oGroupLock, "~fnDataRequested~");
+		const oSyncPromise = oCache.read(20, 5, iPrefetchLength, oGroupLock, "~fnDataRequested~",
+			false, "~fnSeparateReceived~");
 
 		assert.ok(oSyncPromise.isPending());
 		sinon.assert.callOrder(oGetUnlockedCopyExpectation, oUnlockExpectation);
@@ -13336,8 +13350,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[true, false].forEach(function (bMainSuccessful, i) {
-	QUnit.test("CollectionCache#requestSeparateProperties #" + i, async function (assert) {
+[true, false].forEach(function (bMainSuccessful) {
+	const sTitle = "CollectionCache#requestSeparateProperties: main successful = "
+		+ bMainSuccessful;
+
+	QUnit.test(sTitle, async function (assert) {
 		const oCache = _Cache.create(this.oRequestor, "SalesOrders", undefined, undefined,
 			undefined, undefined, ["foo", "bar"]);
 
@@ -13350,9 +13367,10 @@ sap.ui.define([
 
 		const oCacheMock = this.mock(oCache);
 		oCacheMock.expects("fetchTypes").withExactArgs().returns(oTypesPromise);
+		const fnSeparateReceived = this.spy();
 
 		// code under test
-		const oResult = oCache.requestSeparateProperties(3, 5, oMainPromise);
+		const oResult = oCache.requestSeparateProperties(3, 5, oMainPromise, fnSeparateReceived);
 
 		assert.ok(oResult instanceof Promise);
 
@@ -13394,17 +13412,18 @@ sap.ui.define([
 		// irrelevant, but processing is delayed until main promise is resolved
 		fnResolveBar(oBarResult);
 
-		oCacheMock.expects("visitResponse")
+		const iCallCount = bMainSuccessful ? 1 : 0;
+		oCacheMock.expects("visitResponse").exactly(iCallCount)
 			.withExactArgs(sinon.match.same(oBarResult), "~types~", undefined, undefined, 3);
 		const oHelperMock = this.mock(_Helper);
-		oHelperMock.expects("getPrivateAnnotation").withExactArgs("bar0", "predicate")
-			.returns("('bar0')");
-		oHelperMock.expects("updateSelected")
+		oHelperMock.expects("getPrivateAnnotation").exactly(iCallCount)
+			.withExactArgs("bar0", "predicate").returns("('bar0')");
+		oHelperMock.expects("updateSelected").exactly(iCallCount)
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('bar0')", "~bar0~", "bar0",
 				["bar"]);
-		oHelperMock.expects("getPrivateAnnotation").withExactArgs("bar1", "predicate")
-			.returns("('bar1')");
-		oHelperMock.expects("updateSelected")
+		oHelperMock.expects("getPrivateAnnotation").exactly(iCallCount)
+			.withExactArgs("bar1", "predicate").returns("('bar1')");
+		oHelperMock.expects("updateSelected").exactly(iCallCount)
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('bar1')", "~bar1~", "bar1",
 				["bar"]);
 
@@ -13413,6 +13432,8 @@ sap.ui.define([
 			"('bar1')" : "~bar1~",
 			"('foo0')" : "~foo0~"
 		};
+
+		sinon.assert.callCount(fnSeparateReceived, 0);
 
 		// code under test: resolve/reject oMainPromise (state is irrelevant, but must not be
 		// pending), earlier separate promise "bar" starts processing
@@ -13424,34 +13445,47 @@ sap.ui.define([
 			foo : [{start : 3, end : 5}, "~range~"],
 			bar : ["~range~"]
 		});
+		if (bMainSuccessful) {
+			sinon.assert.callCount(fnSeparateReceived, 1);
+			sinon.assert.calledWithExactly(fnSeparateReceived, "bar", 3, 5);
+			fnSeparateReceived.resetHistory();
+		}
 
 		const oFooResult = {value : ["foo0", "unknown"]};
-		oCacheMock.expects("visitResponse")
+		oCacheMock.expects("visitResponse").exactly(iCallCount)
 			.withExactArgs(sinon.match.same(oFooResult), "~types~", undefined, undefined, 3);
-		oHelperMock.expects("getPrivateAnnotation").withExactArgs("foo0", "predicate")
-			.returns("('foo0')");
-		oHelperMock.expects("updateSelected")
+		oHelperMock.expects("getPrivateAnnotation").exactly(iCallCount)
+			.withExactArgs("foo0", "predicate").returns("('foo0')");
+		oHelperMock.expects("updateSelected").exactly(iCallCount)
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('foo0')", "~foo0~", "foo0",
 				["foo"]);
-		oHelperMock.expects("getPrivateAnnotation").withExactArgs("unknown", "predicate")
-			.returns("('unknown')");
+		oHelperMock.expects("getPrivateAnnotation").exactly(iCallCount)
+			.withExactArgs("unknown", "predicate").returns("('unknown')");
 
 		// code under test: resolve separate promise for "foo"
 		fnResolveFoo(oFooResult);
 		await oFooPromise;
+		await "next tick";
 		await "next tick";
 
 		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {
 			foo : ["~range~"],
 			bar : ["~range~"]
 		});
+		if (bMainSuccessful) {
+			sinon.assert.callCount(fnSeparateReceived, 1);
+			sinon.assert.calledWithExactly(fnSeparateReceived, "foo", 3, 5);
+		} else {
+			sinon.assert.callCount(fnSeparateReceived, 0);
+		}
 
 		return oResult;
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#requestSeparateProperties: reports error", async function () {
+	QUnit.test("CollectionCache#requestSeparateProperties: separate failed",
+			async function (assert) {
 		const oCache = _Cache.create(this.oRequestor, "SalesOrders", undefined, undefined,
 			undefined, undefined, ["foo", "bar"]);
 
@@ -13476,23 +13510,44 @@ sap.ui.define([
 			.returns(oBarPromise);
 		oCacheMock.expects("visitResponse").never();
 		this.mock(_Helper).expects("updateSelected").never();
+		this.oModelInterfaceMock.expects("reportError").never();
+		const fnSeparateReceived = this.spy();
 
-		// code under test
-		await oCache.requestSeparateProperties(3, 5, /*oMainPromise*/Promise.resolve());
+		// code under test (oMainPromise must not have an influence)
+		await oCache.requestSeparateProperties(3, 5, /*oMainPromise*/null, fnSeparateReceived);
 
-		this.oModelInterfaceMock.expects("reportError")
-			.withExactArgs("Loading $$separate property 'foo' failed", sClassName, "~fooError~");
+		// simulate other simultaneous request ranges, proof the deleting index is dynamic
+		oCache.mSeparateProperty2ReadRequest.foo.push("~range~");
+		oCache.mSeparateProperty2ReadRequest.bar.unshift("~range~");
+
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {
+			foo : [{start : 3, end : 5}, "~range~"],
+			bar : ["~range~", {start : 3, end : 5}]
+		}, "no cleanup");
+		sinon.assert.callCount(fnSeparateReceived, 0);
 
 		// code under test: reject separate promise for "foo"
 		fnRejectFoo("~fooError~");
 		await oFooPromise.catch(() => { /* avoid "unhandled rejection" */ });
 
-		this.oModelInterfaceMock.expects("reportError")
-			.withExactArgs("Loading $$separate property 'bar' failed", sClassName, "~barError~");
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {
+			foo : [{start : 3, end : 5}, "~range~"],
+			bar : ["~range~", {start : 3, end : 5}]
+		}, "no cleanup");
+		sinon.assert.callCount(fnSeparateReceived, 1);
+		sinon.assert.calledWithExactly(fnSeparateReceived, "foo", 3, 5, "~fooError~");
+		fnSeparateReceived.resetHistory();
 
 		// code under test: reject separate promise for "bar"
 		fnRejectBar("~barError~");
 		await oBarPromise.catch(() => { /* avoid "unhandled rejection" */ });
+
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {
+			foo : [{start : 3, end : 5}, "~range~"],
+			bar : ["~range~", {start : 3, end : 5}]
+		}, "no cleanup");
+		sinon.assert.callCount(fnSeparateReceived, 1);
+		sinon.assert.calledWithExactly(fnSeparateReceived, "bar", 3, 5, "~barError~");
 	});
 
 	//*********************************************************************************************
