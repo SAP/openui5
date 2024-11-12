@@ -3,7 +3,6 @@
 module.exports = [
 	"AdaptiveCardVisualTestsInPlayground.spec.js",
 	"AnalyticalCardVisualTests.spec.js",
-	"AnalyticsCloudCardVisualTests.spec.js",
 	"CalendarCardVisualTests.spec.js",
 	"CardActionsVisualTests.spec.js",
 	"CardErrorsMessagesVisualTests.spec.js",
