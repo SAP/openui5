@@ -842,10 +842,23 @@ sap.ui.define([
 
 	MTable.prototype.isNavigationEnabled = function(iStep) {
 
-		if (iStep === 1 || (iStep === -1 && (this.isSingleSelect() || !this.getParent().isOpen()))) { // prevent arrow-up navigation to end on multi-selection or
-			return true;
+		if (iStep === 1 || iStep === -1) {
+			if (iStep === 1 || (iStep === -1 && (this.isSingleSelect() || !this.getParent().isOpen()))) { // prevent arrow-up navigation to end on multi-selection on opened table
+				return true;
+			} else {
+				return false;
+			}
+		} else if (this.isSingleSelect()) { // prevent Home/End navigation to end on multi-selection on opened and closed table
+			const oListBinding = this.getListBinding();
+			const oBindingInfo = this.getListBindingInfo();
+			if ((oListBinding?.isLengthFinal() || oBindingInfo.length) && !oListBinding?.isSuspended()) { // if all relevant items known, allow Home/End...
+				// TODO: what if ListBinding pending?
+				return true;
+			} else {
+				return false;
+			}
 		} else {
-			return false; // TODO: check if everything already loaded?
+			return false;
 		}
 
 	};
