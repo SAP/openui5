@@ -1,20 +1,26 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/mdc/Field",
 	"sap/ui/mdc/condition/Condition",
+	"sap/ui/mdc/enums/FieldDisplay",
 	"sap/ui/mdc/enums/FieldEditMode",
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/library",
 	"sap/m/MessageToast",
+	"sap/m/Label",
 	"sap/base/i18n/Formatting"
 ], function(
 	Controller,
 	JSONModel,
+	Field,
 	Condition,
+	FieldDisplay,
 	FieldEditMode,
 	OperatorName,
 	mobileLibrary,
 	MessageToast,
+	Label,
 	Formatting
 ) {
 	"use strict";
@@ -61,6 +67,35 @@ sap.ui.define([
 								   ]
 			});
 			this.getView().setModel(oViewModel, "view");
+
+			// add Field via code
+			const oSimpleForm = oView.byId("SF0");
+			let oLabel = new Label("MyLabel", {text: "Float field created in Controller"});
+			let oField = new Field("MyFloatField", {
+				value: {path: 'Quantity', type: 'sap.ui.model.type.Float', formatOptions: {groupingEnabled: false}, constraints: {minimum: 0, maximum: 100}},
+				delegate: {name: "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"},
+				change: this.handleChange.bind(this),
+				liveChange: this.handleLiveChange.bind(this),
+				submit: this.handleSubmit.bind(this)
+			});
+			oSimpleForm.addContent(oLabel);
+			oSimpleForm.addContent(oField);
+
+			oField = oView.byId("F7a");
+			const iIndex = oSimpleForm.indexOfContent(oField);
+			oLabel = new Label("MyLabel2", {text: "Field with additional value created in Controller"});
+			oField = new Field("MyStringField", {
+				value: {path: 'ProductId', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 50}},
+				additionalValue: {path: 'Name', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 100}},
+				display: FieldDisplay.ValueDescription,
+				delegate: {name: "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"},
+				change: this.handleChange.bind(this),
+				liveChange: this.handleLiveChange.bind(this),
+				submit: this.handleSubmit.bind(this)
+			});
+			oSimpleForm.insertContent(oLabel, iIndex + 1);
+			oSimpleForm.insertContent(oField, iIndex + 2);
+
 		},
 
 		handleChange: function(oEvent) {

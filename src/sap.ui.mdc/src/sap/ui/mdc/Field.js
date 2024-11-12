@@ -171,21 +171,31 @@ sap.ui.define([
 		let oDataType;
 		let aTypes;
 		let i = 0;
+		const sTypeName = typeof oBindingInfo.type === "string" ? oBindingInfo.type : oBindingInfo.type?.getMetadata().getName();
+		const oFormatOptions = typeof oBindingInfo.type === "string" ? oBindingInfo.formatOptions : oBindingInfo.type?.getFormatOptions();
+		const oConstraints = typeof oBindingInfo.type === "string" ? oBindingInfo.constraints : oBindingInfo.type?.getConstraints();
 
 		if (sName === "value" && !oBindingInfo.formatter) { // not if a formatter is used, as this needs to be executed
 			oBindingInfo.targetType = "raw"; // provide internal value to inner control
 			oDataType = this.getContentFactory().getDataType();
 			if (oBindingInfo.type && (!oDataType ||
-				oDataType.getMetadata().getName() !== oBindingInfo.type.getMetadata().getName() ||
-				!deepEqual(oDataType.getFormatOptions(), oBindingInfo.type.getFormatOptions()) ||
-				!deepEqual(oDataType.getConstraints(), oBindingInfo.type.getConstraints()) ||
+				oDataType.getMetadata().getName() !== sTypeName ||
+				!deepEqual(oDataType.getFormatOptions(), oFormatOptions) ||
+				!deepEqual(oDataType.getConstraints(), oConstraints) ||
 				oDataType._bCreatedByOperator !== oBindingInfo.type._bCreatedByOperator)
 			) {
-				this.getContentFactory().setDataType(oBindingInfo.type);
+				if (typeof oBindingInfo.type === "string") {
+					// reuse hidden properties (like in FilterField)
+					this.setDataType(sTypeName);
+					this.setDataTypeFormatOptions(oFormatOptions);
+					this.setDataTypeConstraints(oConstraints);
+				} else {
+					this.getContentFactory().setDataType(oBindingInfo.type);
+				}
 				this.getContentFactory().setDateOriginalType(undefined);
 				this.getContentFactory().setUnitOriginalType(undefined);
 				this.getContentFactory().setIsMeasure(false);
-				if (oBindingInfo.type.isA("sap.ui.model.CompositeType") && oBindingInfo.parts) {
+				if (oBindingInfo.parts && oBindingInfo.type.isA("sap.ui.model.CompositeType")) {
 					aTypes = [];
 					for (i = 0; i < oBindingInfo.parts.length; i++) {
 						aTypes.push(oBindingInfo.parts[i].type);
@@ -199,13 +209,15 @@ sap.ui.define([
 			oBindingInfo.targetType = "raw"; // provide internal value to inner control
 			oDataType = this.getContentFactory().getAdditionalDataType();
 			if (oBindingInfo.type && (!oDataType ||
-				oDataType.getMetadata().getName() !== oBindingInfo.type.getMetadata().getName() ||
-				!deepEqual(oDataType.getFormatOptions(), oBindingInfo.type.getFormatOptions()) ||
-				!deepEqual(oDataType.getConstraints(), oBindingInfo.type.getConstraints()) ||
+				oDataType.getMetadata().getName() !== sTypeName ||
+				!deepEqual(oDataType.getFormatOptions(), oFormatOptions) ||
+				!deepEqual(oDataType.getConstraints(), oConstraints) ||
 				oDataType._bCreatedByOperator !== oBindingInfo.type._bCreatedByOperator)
 			) {
-				this.getContentFactory().setAdditionalDataType(oBindingInfo.type);
-				if (oBindingInfo.type.isA("sap.ui.model.CompositeType") && oBindingInfo.parts) {
+				if (typeof oBindingInfo.type !== "string") {
+					this.getContentFactory().setAdditionalDataType(oBindingInfo.type);
+				}
+				if (oBindingInfo.parts && oBindingInfo.type.isA("sap.ui.model.CompositeType")) {
 					aTypes = [];
 					for (i = 0; i < oBindingInfo.parts.length; i++) {
 						aTypes.push(oBindingInfo.parts[i].type);
@@ -667,7 +679,18 @@ sap.ui.define([
 	Field.prototype.getAdditionalDataTypeConfiguration = function() {
 
 		const oBinding = this.getBinding("additionalValue");
-		return oBinding && oBinding.getType();
+		if (oBinding) {
+			return oBinding.getType();
+		} else {
+			const oBindingInfo = this.getBindingInfo("additionalValue");
+			if (oBindingInfo?.type) {
+				if (typeof oBindingInfo.type === "string") {
+					return {name: oBindingInfo.type, formatOptions: oBindingInfo.formatOptions, constraints: oBindingInfo.constraints};
+				} else {
+					return oBindingInfo.type;
+				}
+			}
+		}
 
 	};
 

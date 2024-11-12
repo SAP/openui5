@@ -961,6 +961,7 @@ sap.ui.define([
 	let oType4;
 	let oField5;
 	let oType5;
+	let oField6;
 	const ODataCurrencyCodeList = {
 		"EUR": { Text: "Euro", UnitSpecificScale: 2 },
 		"USD": { Text: "US-Dollar", UnitSpecificScale: 2 },
@@ -1009,7 +1010,7 @@ sap.ui.define([
 			oType3._bMyType = true;
 			oAdditionalType = new StringType({parseKeepsEmptyString: true}, { maxLength: 20 });
 			oAdditionalType._bMyType = true;
-			const oBindingContext = oModel.getContext("/items/0/");
+			let oBindingContext = oModel.getContext("/items/0/");
 			oField3 = new Field("F3", {
 				value: { path: "key", type: oType3 },
 				additionalValue: { path: "description", type: oAdditionalType, mode: "OneWay" },
@@ -1039,7 +1040,17 @@ sap.ui.define([
 				change: _myChangeHandler
 			}).placeAt("content");
 			oField5.setModel(oModel);
+
+			oBindingContext = oModel.getContext("/items/1/");
+			oField6 = new Field("F6", {
+				value: { path: "key", type: "sap.ui.model.type.String", constraints: { maxLength: 1 } },
+				additionalValue: { path: "description", type: "sap.ui.model.type.String", formatOptions: {parseKeepsEmptyString: true}, constraints: { maxLength: 20 }, mode: "OneWay" },
+				display: FieldDisplay.DescriptionValue,
+				change: _myChangeHandler
+			}).placeAt("content");
+			oField6.setBindingContext(oBindingContext);
 			await nextUIUpdate();
+			oField6.setModel(oModel); // set Model after inner control is created, to not use type from Binding
 		},
 		afterEach: function() {
 			FieldBaseDelegateODataDefaultTypes.disable();
@@ -1053,6 +1064,8 @@ sap.ui.define([
 			oField4 = undefined;
 			oField5.destroy();
 			oField5 = undefined;
+			oField6.destroy();
+			oField6 = undefined;
 			oModel.destroy();
 			oModel = undefined;
 			oType.destroy();
@@ -1235,6 +1248,30 @@ sap.ui.define([
 			fnDone();
 		}, 0);
 
+	});
+
+	QUnit.test("using given type - provided as string", function(assert) {
+
+		const oType = oField6._oContentFactory.getDataType();
+		const oAdditionalType = oField6._oContentFactory.getAdditionalDataType();
+		const oBinding = oField6.getBinding("value");
+		const oAdditionalBinding = oField6.getBinding("additionalValue");
+
+		assert.equal(oType.getMetadata().getName(), "sap.ui.model.type.String", "used Type");
+		assert.deepEqual(oType.getConstraints(), { maxLength: 1 }, "used Constraints");
+		assert.notEqual(oType, oBinding.getType(), "Type from Binding not used");
+		assert.equal(oAdditionalType.getMetadata().getName(), "sap.ui.model.type.String", "used AdditionalType");
+		assert.deepEqual(oAdditionalType.getFormatOptions(), {parseKeepsEmptyString: true}, "used Additional-FormatOptions");
+		assert.deepEqual(oAdditionalType.getConstraints(), { maxLength: 20 }, "used Additional-Constraints");
+		assert.notEqual(oAdditionalType, oAdditionalBinding.getType(), "Type from Additional-Binding not used");
+		const aContent = oField6.getAggregation("_content");
+		const oContent = aContent?.length > 0 && aContent[0];
+		const oBindingInfo = oContent?.getBindingInfo("value");
+		const oConditionsType = oBindingInfo?.type;
+		const oMyType = oConditionsType?.getFormatOptions().valueType;
+		const oMyAdditionalType = oConditionsType?.getFormatOptions().additionalValueType;
+		assert.equal(oMyType, oType, "Given Type is used in Binding for Input");
+		assert.equal(oMyAdditionalType, oAdditionalType, "Given AdditionalType is used in Binding for Input");
 	});
 
 	QUnit.test("BindingContext change to same value on wrong input", function(assert) {

@@ -14,7 +14,7 @@
 
 	<m:App id="MyApp" defaultTransitionName="show" validateFieldGroup="validateFieldGroup">
 		<m:Page id="P0" title="Simple Fields" titleLevel="H1">
-			<form:SimpleForm layout="ColumnLayout" editable="true"
+			<form:SimpleForm id="SF0" layout="ColumnLayout" editable="true"
 				labelSpanXL="5" labelSpanL="5" labelSpanM="4" columnsXL="3" columnsL="2" columnsM="1"
 				singleContainerFullSize="false" adjustLabelSpan="false">
 				<c:Title text="normal Fields"></c:Title>
