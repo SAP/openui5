@@ -274,9 +274,9 @@ sap.ui.define([
 
 		QUnit.test("when calling 'activateVariant' with an unavailable variant", async function(assert) {
 			stubUpdateCurrentVariant.call(this);
-			const oLazyLoadStub = sandbox.stub(VariantManagementState, "loadVariants").callsFake((mPropertyBag) => {
+			const oLazyLoadStub = sandbox.stub(VariantManagementState, "loadVariant").callsFake((mPropertyBag) => {
 				assert.strictEqual(mPropertyBag.reference, "myReference", "then the reference is passed");
-				assert.deepEqual(mPropertyBag.variantReferences, ["notYetLoadedVariant"], "then the variant reference is passed");
+				assert.deepEqual(mPropertyBag.variantReference, "notYetLoadedVariant", "then the variant reference is passed");
 
 				// simulate what would happen if the variant was loaded and added to the model
 				this.oModel.getData().variantMgmtId1.variants.push({
@@ -295,7 +295,7 @@ sap.ui.define([
 		QUnit.test("when calling 'activateVariant' with an unavailable variant, but the variant can't be loaded", async function(assert) {
 			assert.expect(4);
 			const oUpdateVariantStub = sandbox.stub(this.oModel, "updateCurrentVariant");
-			const oLazyLoadStub = sandbox.stub(VariantManagementState, "loadVariants")
+			const oLazyLoadStub = sandbox.stub(VariantManagementState, "loadVariant")
 			.rejects(new Error("Variant with reference 'notYetLoadedVariant' could not be found"));
 			const bLogStub = sandbox.stub(Log, "error");
 

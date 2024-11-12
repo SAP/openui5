@@ -232,31 +232,31 @@ sap.ui.define([
 	};
 
 	/**
-	 * Loads the flex objects for the given variant references
+	 * Loads the flex objects for the given variant reference
 	 *
 	 * @param {object} mPropertyBag - Object with the necessary properties
 	 * @param {string} mPropertyBag.reference - Flexibility reference
-	 * @param {string[]} mPropertyBag.variantReferences - List of variant references to be loaded
-	 * @returns {Promise<object>} Resolves with the data for the variants
+	 * @param {string} mPropertyBag.variantReference - Variant reference to be loaded
+	 * @returns {Promise<object>} Resolves with the data for the variant
 	 */
-	Storage.loadFlVariants = async function(mPropertyBag) {
+	Storage.loadFlVariant = async function(mPropertyBag) {
 		const aConnectors = await StorageUtils.getLoadConnectors();
 		const aResponses = [];
 		for (const oConnectorConfig of aConnectors) {
-			if (oConnectorConfig?.loadConnectorModule?.loadFlVariants) {
+			if (oConnectorConfig?.loadConnectorModule?.loadFlVariant) {
 				const oConnectorSpecificPropertyBag = {
 					...mPropertyBag,
 					url: oConnectorConfig.url,
 					layers: oConnectorConfig.layers
 				};
 				try {
-					aResponses.push(await oConnectorConfig.loadConnectorModule.loadFlVariants(oConnectorSpecificPropertyBag));
+					aResponses.push(await oConnectorConfig.loadConnectorModule.loadFlVariant(oConnectorSpecificPropertyBag));
 				} catch (oError) {
 					aResponses.push({});
 				}
 			}
 		}
-		const aRelevantKeys = ["variants", "variantChanges", "variantDependentControlChanges", "variantManagementChanges"];
+		const aRelevantKeys = ["variants", "variantChanges", "variantDependentControlChanges"];
 		return aResponses.reduce((oResult, oResponse) => {
 			aRelevantKeys.forEach((sKey) => {
 				if (oResponse[sKey]) {
