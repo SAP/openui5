@@ -860,6 +860,11 @@ sap.ui.define([
 		const oSuggestControl = oField.getControlForSuggestion();
 		assert.equal(oSuggestControl, oContent2, "Unit control is used for suggestion");
 
+		oContent1.focus();
+		sinon.spy(oField, "onsapfocusleave");
+		oContent2.focus();
+		assert.ok(oField.onsapfocusleave.notCalled, "onsapfocusleafe on Field not called on switching between numer and currency");
+
 		// in display mode only one control
 		oContent1 = undefined; oContent2 = undefined;
 		oField.setEditMode(FieldEditMode.Display);

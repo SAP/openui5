@@ -3415,24 +3415,31 @@ sap.ui.define([
 	function _handleContentOnsapfocusleave(oEvent) {
 
 		const oValueHelp = _getValueHelp.call(this);
+		const aContent = this.getCurrentContent();
 		const oContent = this.getControlForSuggestion();
 		const oSourceControl = oEvent.srcControl;
 
-		if (oValueHelp && oContent === oSourceControl) { // in unit case only handle content with assigned value help
+		if (aContent.length > 1 || (oValueHelp && oContent === oSourceControl)) {
 			const oFocusedControl = Element.getElementById(oEvent.relatedControlId);
 			if (oFocusedControl) {
-				if (containsOrEquals(oValueHelp.getDomRef(), oFocusedControl.getFocusDomRef())) {
+				if (aContent.indexOf(oFocusedControl) >= 0) { // switch betweeen number and unit inside same Field
 					oEvent.stopPropagation(); // to prevent focusleave on Field itself
-					oEvent.stopImmediatePropagation(true); // to prevent focusleave on content
-					if (oContent.bValueHelpRequested) {
-						oContent.bValueHelpRequested = false; // to enable change-event after closing value help
+					_clearFocusTimer.call(this); // prevent opening of value help on other part
+					_clearLiveChangeTimer.call(this); // prevent typeahead-suggestion on other part
+				} else if (oValueHelp && oContent === oSourceControl) { // in unit case only handle content with assigned value help
+					if (containsOrEquals(oValueHelp.getDomRef(), oFocusedControl.getFocusDomRef())) {
+						oEvent.stopPropagation(); // to prevent focusleave on Field itself
+						oEvent.stopImmediatePropagation(true); // to prevent focusleave on content
+						if (oContent.bValueHelpRequested) {
+							oContent.bValueHelpRequested = false; // to enable change-event after closing value help
+						}
+						if (this._sFilterValue) { // remove Autocomplete as selection is not shown if focus goes to ValueHelp
+							oContent.setDOMValue(this._sFilterValue);
+						}
+						this._oFocusInHelp = oEvent; // as focus can be set to table header in popover, here on closing input might be validated.
+					} else {
+						oValueHelp.skipOpening();
 					}
-					if (this._sFilterValue) { // remove Autocomplete as selection is not shown if focus goes to ValueHelp
-						oContent.setDOMValue(this._sFilterValue);
-					}
-					this._oFocusInHelp = oEvent; // as focus can be set to table header in popover, here on closing input might be validated.
-				} else {
-					oValueHelp.skipOpening();
 				}
 			}
 		}
