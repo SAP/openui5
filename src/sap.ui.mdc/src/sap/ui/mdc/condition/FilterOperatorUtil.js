@@ -585,7 +585,8 @@ sap.ui.define([
 				 */
 				yesterday: new RangeOperator({
 					name: OperatorName.YESTERDAY,
-					longText: _getText(OperatorName.YESTERDAY, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_YESTERDAY_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_YESTERDAY_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.yesterday();
@@ -599,7 +600,8 @@ sap.ui.define([
 				 */
 				today: new RangeOperator({
 					name: OperatorName.TODAY,
-					longText: _getText(OperatorName.TODAY, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_TODAY_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_TODAY_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.today();
@@ -613,7 +615,8 @@ sap.ui.define([
 				 */
 				tomorrow: new RangeOperator({
 					name: OperatorName.TOMORROW,
-					longText: _getText(OperatorName.TOMORROW, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_TOMORROW_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_TOMORROW_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.tomorrow();
@@ -640,7 +643,8 @@ sap.ui.define([
 				 */
 				firstDayWeek: new RangeOperator({
 					name: OperatorName.FIRSTDAYWEEK,
-					longText: _getText(OperatorName.FIRSTDAYWEEK, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_FIRSTDAYWEEK_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_FIRSTDAYWEEK_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.firstDayOfWeek();
@@ -654,7 +658,8 @@ sap.ui.define([
 				 */
 				lastDayWeek: new RangeOperator({
 					name: OperatorName.LASTDAYWEEK,
-					longText: _getText(OperatorName.LASTDAYWEEK, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_LASTDAYWEEK_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTDAYWEEK_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.lastDayOfWeek();
@@ -668,7 +673,8 @@ sap.ui.define([
 				 */
 				firstDayMonth: new RangeOperator({
 					name: OperatorName.FIRSTDAYMONTH,
-					longText: _getText(OperatorName.FIRSTDAYMONTH, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_FIRSTDAYMONTH_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_FIRSTDAYMONTH_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.firstDayOfMonth();
@@ -682,7 +688,8 @@ sap.ui.define([
 				 */
 				lastDayMonth: new RangeOperator({
 					name: OperatorName.LASTDAYMONTH,
-					longText: _getText(OperatorName.LASTDAYMONTH, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_LASTDAYMONTH_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTDAYMONTH_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.lastDayOfMonth();
@@ -696,7 +703,8 @@ sap.ui.define([
 				 */
 				firstDayQuarter: new RangeOperator({
 					name: OperatorName.FIRSTDAYQUARTER,
-					longText: _getText(OperatorName.FIRSTDAYQUARTER, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_FIRSTDAYQUARTER_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_FIRSTDAYQUARTER_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.firstDayOfQuarter();
@@ -710,7 +718,8 @@ sap.ui.define([
 				 */
 				lastDayQuarter: new RangeOperator({
 					name: OperatorName.LASTDAYQUARTER,
-					longText: _getText(OperatorName.LASTDAYQUARTER, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_LASTDAYQUARTER_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTDAYQUARTER_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.lastDayOfQuarter();
@@ -724,7 +733,8 @@ sap.ui.define([
 				 */
 				firstDayYear: new RangeOperator({
 					name: OperatorName.FIRSTDAYYEAR,
-					longText: _getText(OperatorName.FIRSTDAYYEAR, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_FIRSTDAYYEAR_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_FIRSTDAYYEAR_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.firstDayOfYear();
@@ -738,7 +748,8 @@ sap.ui.define([
 				 */
 				lastDayYear: new RangeOperator({
 					name: OperatorName.LASTDAYYEAR,
-					longText: _getText(OperatorName.LASTDAYYEAR, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_LASTDAYYEAR_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTDAYYEAR_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.lastDayOfYear();
@@ -752,7 +763,8 @@ sap.ui.define([
 				 */
 				todayFromTo: new RangeOperator({
 					name: OperatorName.TODAYFROMTO,
-					tokenText: _getText(OperatorName.TODAYFROMTO, false),
+					tokenText: _getText(OperatorName.TODAYFROMTO, false), // sap.m texts don't include "+" and "-", so own text needed
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_TODAYFROMTO_TITLE", undefined, true), // to have the same longText like in sap m (if changed there)
 					valueTypes: [
 						{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null } }, { name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null } }
 					],
@@ -788,7 +800,8 @@ sap.ui.define([
 				 */
 				lastWeek: new RangeOperator({
 					name: OperatorName.LASTWEEK,
-					longText: _getText(OperatorName.LASTWEEK, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_LASTWEEK_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTWEEK_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.lastWeek();
@@ -799,7 +812,8 @@ sap.ui.define([
 				 */
 				thisWeek: new RangeOperator({
 					name: OperatorName.THISWEEK,
-					longText: _getText(OperatorName.THISWEEK, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_THISWEEK_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_THISWEEK_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.currentWeek();
@@ -810,7 +824,8 @@ sap.ui.define([
 				 */
 				nextWeek: new RangeOperator({
 					name: OperatorName.NEXTWEEK,
-					longText: _getText(OperatorName.NEXTWEEK, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTWEEK_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTWEEK_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.nextWeek();
@@ -847,7 +862,8 @@ sap.ui.define([
 				 */
 				lastMonth: new RangeOperator({
 					name: OperatorName.LASTMONTH,
-					longText: _getText(OperatorName.LASTMONTH, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_LASTMONTH_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTMONTH_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.lastMonth();
@@ -858,7 +874,8 @@ sap.ui.define([
 				 */
 				thisMonth: new RangeOperator({
 					name: OperatorName.THISMONTH,
-					longText: _getText(OperatorName.THISMONTH, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_THISMONTH_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_THISMONTH_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.currentMonth();
@@ -869,7 +886,8 @@ sap.ui.define([
 				 */
 				nextMonth: new RangeOperator({
 					name: OperatorName.NEXTMONTH,
-					longText: _getText(OperatorName.NEXTMONTH, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTMONTH_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTMONTH_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.nextMonth();
@@ -906,7 +924,8 @@ sap.ui.define([
 				 */
 				lastQuarter: new RangeOperator({
 					name: OperatorName.LASTQUARTER,
-					longText: _getText(OperatorName.LASTQUARTER, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_LASTQUARTER_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTQUARTER_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.lastQuarter();
@@ -917,7 +936,8 @@ sap.ui.define([
 				 */
 				thisQuarter: new RangeOperator({
 					name: OperatorName.THISQUARTER,
-					longText: _getText(OperatorName.THISQUARTER, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_THISQUARTER_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_THISQUARTER_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.currentQuarter();
@@ -928,7 +948,8 @@ sap.ui.define([
 				 */
 				nextQuarter: new RangeOperator({
 					name: OperatorName.NEXTQUARTER,
-					longText: _getText(OperatorName.NEXTQUARTER, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTQUARTER_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTQUARTER_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.nextQuarter();
@@ -965,7 +986,8 @@ sap.ui.define([
 				 */
 				quarter1: new RangeOperator({
 					name: OperatorName.QUARTER1,
-					longText: _getText(OperatorName.QUARTER1, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_QUARTER1_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_QUARTER1_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.quarter(1);
@@ -976,7 +998,8 @@ sap.ui.define([
 				 */
 				quarter2: new RangeOperator({
 					name: OperatorName.QUARTER2,
-					longText: _getText(OperatorName.QUARTER2, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_QUARTER2_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_QUARTER2_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.quarter(2);
@@ -987,7 +1010,8 @@ sap.ui.define([
 				 */
 				quarter3: new RangeOperator({
 					name: OperatorName.QUARTER3,
-					longText: _getText(OperatorName.QUARTER3, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_QUARTER3_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_QUARTER3_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.quarter(3);
@@ -998,7 +1022,8 @@ sap.ui.define([
 				 */
 				quarter4: new RangeOperator({
 					name: OperatorName.QUARTER4,
-					longText: _getText(OperatorName.QUARTER4, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_QUARTER4_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_QUARTER4_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.quarter(4);
@@ -1009,7 +1034,8 @@ sap.ui.define([
 				 */
 				lastYear: new RangeOperator({
 					name: OperatorName.LASTYEAR,
-					longText: _getText(OperatorName.LASTYEAR, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_LASTYEAR_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_LASTYEAR_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.lastYear();
@@ -1020,7 +1046,8 @@ sap.ui.define([
 				 */
 				thisYear: new RangeOperator({
 					name: OperatorName.THISYEAR,
-					longText: _getText(OperatorName.THISYEAR, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_THISYEAR_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_THISYEAR_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.currentYear();
@@ -1031,7 +1058,8 @@ sap.ui.define([
 				 */
 				nextYear: new RangeOperator({
 					name: OperatorName.NEXTYEAR,
-					longText: _getText(OperatorName.NEXTYEAR, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTYEAR_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_NEXTYEAR_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.nextYear();
@@ -1068,7 +1096,7 @@ sap.ui.define([
 				 */
 				specificMonth: new RangeOperator({
 					name: OperatorName.SPECIFICMONTH,
-					longText: _getText(OperatorName.SPECIFICMONTH, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_SPECIFICMONTH_TITLE", undefined, true),
 					tokenText: _getText(OperatorName.SPECIFICMONTH, false),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", constraints: { minimum: 0, maximum: 11 } }],
 					paramTypes: ["(.+)"],
@@ -1130,7 +1158,7 @@ sap.ui.define([
 				 */
 				specificMonthInYear: new RangeOperator({
 					name: OperatorName.SPECIFICMONTHINYEAR,
-					longText: _getText(OperatorName.SPECIFICMONTHINYEAR, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_SPECIFICMONTHINYEAR_TITLE", undefined, true),
 					tokenText: _getText(OperatorName.SPECIFICMONTHINYEAR, false),
 					valueTypes: [{ name: "sap.ui.model.type.Integer", constraints: { minimum: 0, maximum: 11 } }, { name: "sap.ui.model.type.Integer", constraints: { minimum: 1, maximum: 9999 } }],
 					paramTypes: ["(.+)", "(.+)"],
@@ -1212,7 +1240,8 @@ sap.ui.define([
 				 */
 				yearToDate: new RangeOperator({
 					name: OperatorName.YEARTODATE,
-					longText: _getText(OperatorName.YEARTODATE, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_YEARTODATE_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_YEARTODATE_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.yearToDate();
@@ -1223,7 +1252,8 @@ sap.ui.define([
 				 */
 				dateToYear: new RangeOperator({
 					name: OperatorName.DATETOYEAR,
-					longText: _getText(OperatorName.DATETOYEAR, true),
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_DATETOYEAR_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_DATETOYEAR_FORMAT", undefined, true),
 					valueTypes: [OperatorValueType.Static],
 					calcRange: function() {
 						return UniversalDateUtils.ranges.dateToYear();
