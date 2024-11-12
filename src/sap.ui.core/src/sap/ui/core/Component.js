@@ -554,7 +554,6 @@ sap.ui.define([
 	 * @returns {string} component preload mode
 	 * @private
 	 * @ui5-restricted sap.ui.core, sap.ui.fl
-	 * @experimental Might change completely.
 	 * @since 1.120.0
 	 */
 	Component.getComponentPreloadMode = function() {
