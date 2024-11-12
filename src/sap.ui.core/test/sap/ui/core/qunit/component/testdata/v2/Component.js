@@ -2,6 +2,7 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 	function(UIComponent) {
 	"use strict";
 
+	// ui5lint-disable-next-line async-component-flags
 	var Component = UIComponent.extend("testdata.v2.Component", {
 
 		metadata: {

@@ -247,7 +247,7 @@ sap.ui.define([
 		var fnAssertSpy = this.stub(console, "assert"); // eslint-disable-line no-console
 
 		Control.extend("test.ControlWithUndefinedRenderFunction", {
-			// ui5lint-disable-next-line no-deprecated-control-renderer-declaration
+			// ui5lint-disable-next-line no-deprecated-api
 			renderer: {
 				render: undefined
 			}
