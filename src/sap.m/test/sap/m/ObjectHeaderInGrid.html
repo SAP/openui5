@@ -12,8 +12,6 @@
 <script>
 	jQuery.sap.require("sap.ui.core.IconPool");
 
-
-
 	var marginStyle = jQuery.device.is.phone ? "sapUiSmallMargin" : "sapUiMediumMargin";
 
 	var attrs = [ new sap.m.ObjectAttribute({
@@ -27,14 +25,12 @@
 		text : "Contract #D1234567890 Ñagçyfox",
 		active : true,
 		press : function() {
-
 			attrs2[0].setText("Ñagçyfox #D1234567890 Contract");
 		}
 	}), new sap.m.ObjectAttribute({
 		text : "Created by: John Doe Ñagçyfox",
 		active : true,
 		press : function() {
-
 			attrs2[0].setText("Ñagçyfox Contract #D1234567890");
 		}
 	}) ];
@@ -86,7 +82,6 @@
 			"oh2",
 			{
 				title : "Ñagçyfox Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
-
 				statuses : [ new sap.m.ObjectStatus({
 					text : ""
 				}), new sap.m.ObjectStatus({}) ],
@@ -139,10 +134,12 @@
 					text : "This one is invisible",
 					visible : false
 				}),
-				    new sap.m.ObjectAttribute({
+				new sap.m.ObjectAttribute({
 					text : "Ñagçyfox Contract #D1234567890"
 				}) ],
-				markFavorite : true
+				markers: [
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite})
+				]
 			});
 
 	var oh4PressHandler = function(oEvent) {
@@ -208,9 +205,6 @@
 		content: [headerGrid, facetGrid],
 		showNavButton: true
 	});
-
-
-
 
 	// put all the testing object header objects on the testing page
 	var app = new sap.m.App();

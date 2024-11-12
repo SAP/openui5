@@ -374,17 +374,6 @@
 		]
 	});
 
-	var oh15 = new sap.m.ObjectHeader({
-		title : "Object for testing flag and favorite changes",
-		number : "3.628.000",
-		numberUnit : "EUR",
-		numberState : sap.ui.core.ValueState.Error,
-		markers: [
-			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite}),
-			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
-		]
-	});
-
 	//test popover title
 	var oh16EventHandler = function(oEvent) {
 		const header = oEvent.getSource();
@@ -761,33 +750,50 @@
 	addToPage(oh13);
 	addToPage(oh14);
 
-	detail.addContent(oh15);
+	/**
+	 * @deprecated As of version 1.42.0, showMarkers, markFavorite and markFlagged are replaced by markers aggregation.
+	 */
+	var oh15 = new sap.m.ObjectHeader({
+		title : "Object for testing flag and favorite changes",
+		number : "3.628.000",
+		numberUnit : "EUR",
+		numberState : sap.ui.core.ValueState.Error,
+		markFavorite : true,
+		markFlagged : true,
+		showMarkers : true
+	});
 
-	detail.addContent(new sap.m.CheckBox({
-		text : "Show Markers",
-		selected : oh15.getShowMarkers(),
-		select : function() {
+	/**
+	 * @deprecated As of version 1.42.0, showMarkers, markFavorite and markFlagged are replaced by markers aggregation.
+	 */
+	(() => {
+		detail.addContent(oh15);
 
-			oh15.setShowMarkers(this.getSelected());
-		}
-	}));
+		detail.addContent(new sap.m.CheckBox({
+			text : "Show Markers",
+			selected : oh15.getShowMarkers(),
+			select : function() {
+				oh15.setShowMarkers(this.getSelected());
+			}
+		}));
 
-	detail.addContent(new sap.m.Button({
-		id : "flag-button",
-		text : "Flag",
-		press : function() {
+		detail.addContent(new sap.m.Button({
+			id : "flag-button",
+			text : "Flag",
+			press : function() {
+				oh15.setMarkFlagged(!oh15.getMarkFlagged());
+			}
+		}));
 
-			oh15.setMarkFlagged(!oh15.getMarkFlagged());
-		}
-	}));
-	detail.addContent(new sap.m.Button({
-		id : "favorite-button",
-		text : sap.m.ObjectMarkerType.Favorite,
-		press : function() {
+		detail.addContent(new sap.m.Button({
+			id : "favorite-button",
+			text : sap.m.ObjectMarkerType.Favorite,
+			press : function() {
+				oh15.setMarkFavorite(!oh15.getMarkFavorite());
+			}
+		}));
+	})();
 
-			oh15.setMarkFavorite(!oh15.getMarkFavorite());
-		}
-	}));
 	detail.addContent(new sap.ui.core.HTML({
 		content : "<div style='width:100%;height:2px;background-color:blue'/>"
 	}));

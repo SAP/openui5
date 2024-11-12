@@ -22,9 +22,10 @@
 			numberUnit: "Euro",
 			numberTextDirection: sap.ui.core.TextDirection.LTR,
 			fullScreenOptimized: true,
-			showMarkers: true,
-			markFlagged: true,
-			markFavorite: true,
+			markers: [
+				new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite}),
+				new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+			],
 			numberState: sap.ui.core.ValueState.Success,
 			attributes: [
 				new sap.m.ObjectAttribute({
