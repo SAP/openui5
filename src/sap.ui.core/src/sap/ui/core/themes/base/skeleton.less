@@ -1,11 +1,11 @@
 // /**
 // * Copyright (c) 2012-2024 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine 14.0.23
-// * data:{"sModified":"2024-10-02T13:14:44Z"}
+// * Theming Engine 14.1.4
+// * data:{"sModified":"2024-11-04T10:14:03Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/baseTheme/skeleton.less (Version 11.19.0) *******************/
+/******************* FILE /Base/baseLib/baseTheme/skeleton.less (Version 11.22.0) *******************/
 
 /*!SAP_POSTPROCESS_REDUCE_START*/
 
@@ -123,6 +123,7 @@
   --sapContent_Selected_Hover_Background: @sapContent_Selected_Hover_Background;
   --sapContent_Selected_ForegroundColor: @sapContent_Selected_ForegroundColor;
   --sapContent_ForcedColorAdjust: @sapContent_ForcedColorAdjust;
+  --sapContent_Lite_Shadow: @sapContent_Lite_Shadow;
   --sapContent_Illustrative_Color1: @sapContent_Illustrative_Color1;
   --sapContent_Illustrative_Color2: @sapContent_Illustrative_Color2;
   --sapContent_Illustrative_Color3: @sapContent_Illustrative_Color3;
@@ -154,6 +155,27 @@
   --sapContent_Illustrative_Color29: @sapContent_Illustrative_Color29;
   --sapContent_Illustrative_Color30: @sapContent_Illustrative_Color30;
   --sapContent_Illustrative_Color31: @sapContent_Illustrative_Color31;
+  --sapContent_Space_S: @sapContent_Space_S;
+  --sapContent_Space_M: @sapContent_Space_M;
+  --sapContent_Space_L: @sapContent_Space_L;
+  --sapContent_Space_XL: @sapContent_Space_XL;
+  --sapContent_Space_Tiny: @sapContent_Space_Tiny;
+  --sapContent_Space_Small: @sapContent_Space_Small;
+  --sapContent_Space_Medium: @sapContent_Space_Medium;
+  --sapContent_Space_Large: @sapContent_Space_Large;
+  --sapContent_Margin_Tiny: @sapContent_Margin_Tiny;
+  --sapContent_Margin_Small: @sapContent_Margin_Small;
+  --sapContent_Margin_Medium: @sapContent_Margin_Medium;
+  --sapContent_Margin_Large: @sapContent_Margin_Large;
+  --sapContent_Padding_S: @sapContent_Padding_S;
+  --sapContent_Padding_M: @sapContent_Padding_M;
+  --sapContent_Padding_L: @sapContent_Padding_L;
+  --sapContent_Padding_XL: @sapContent_Padding_XL;
+  --sapContent_Gap: @sapContent_Gap;
+  --sapContent_Success_HeaderShadow: @sapContent_Success_HeaderShadow;
+  --sapContent_Warning_HeaderShadow: @sapContent_Warning_HeaderShadow;
+  --sapContent_Error_HeaderShadow: @sapContent_Error_HeaderShadow;
+  --sapContent_Information_HeaderShadow: @sapContent_Information_HeaderShadow;
   --sapFontLightFamily: @sapFontLightFamily;
   --sapFontBoldFamily: @sapFontBoldFamily;
   --sapFontSemiboldFamily: @sapFontSemiboldFamily;
@@ -273,6 +295,18 @@
   --sapShell_Category_16_BorderColor: @sapShell_Category_16_BorderColor;
   --sapShell_Category_16_TextColor: @sapShell_Category_16_TextColor;
   --sapShell_Category_16_TextShadow: @sapShell_Category_16_TextShadow;
+  --sapShell_Space_S: @sapShell_Space_S;
+  --sapShell_Space_M: @sapShell_Space_M;
+  --sapShell_Space_L: @sapShell_Space_L;
+  --sapShell_Space_XL: @sapShell_Space_XL;
+  --sapShell_Gap_S: @sapShell_Gap_S;
+  --sapShell_Gap_M: @sapShell_Gap_M;
+  --sapShell_Gap_L: @sapShell_Gap_L;
+  --sapShell_Gap_XL: @sapShell_Gap_XL;
+  --sapShell_GroupGap_S: @sapShell_GroupGap_S;
+  --sapShell_GroupGap_M: @sapShell_GroupGap_M;
+  --sapShell_GroupGap_L: @sapShell_GroupGap_L;
+  --sapShell_GroupGap_XL: @sapShell_GroupGap_XL;
   --sapAssistant_Color1: @sapAssistant_Color1;
   --sapAssistant_Color2: @sapAssistant_Color2;
   --sapAssistant_BackgroundGradient: @sapAssistant_BackgroundGradient;
@@ -331,6 +365,9 @@
   --sapAvatar_10_BorderColor: @sapAvatar_10_BorderColor;
   --sapAvatar_10_TextColor: @sapAvatar_10_TextColor;
   --sapAvatar_10_Hover_Background: @sapAvatar_10_Hover_Background;
+  --sapAvatar_Lite_BorderColor: @sapAvatar_Lite_BorderColor;
+  --sapAvatar_Lite_Background: @sapAvatar_Lite_Background;
+  --sapAvatar_Hover_BorderColor: @sapAvatar_Hover_BorderColor;
   --sapButton_Background: @sapButton_Background;
   --sapButton_BorderColor: @sapButton_BorderColor;
   --sapButton_BorderWidth: @sapButton_BorderWidth;
@@ -499,6 +536,10 @@
   --sapButton_Handle_Positive_Hover_BorderColor: @sapButton_Handle_Positive_Hover_BorderColor;
   --sapButton_TokenBackground: @sapButton_TokenBackground;
   --sapButton_TokenBorderColor: @sapButton_TokenBorderColor;
+  --sapButton_TokenBorderCornerRadius: @sapButton_TokenBorderCornerRadius;
+  --sapButton_Selected_TokenBorderWidth: @sapButton_Selected_TokenBorderWidth;
+  --sapButton_ReadOnly_TokenBackground: @sapButton_ReadOnly_TokenBackground;
+  --sapButton_Segment_BorderCornerRadius: @sapButton_Segment_BorderCornerRadius;
   --sapField_Background: @sapField_Background;
   --sapField_BackgroundStyle: @sapField_BackgroundStyle;
   --sapField_TextColor: @sapField_TextColor;
@@ -552,12 +593,20 @@
   --sapField_InformationBorderWidth: @sapField_InformationBorderWidth;
   --sapField_InformationBorderStyle: @sapField_InformationBorderStyle;
   --sapField_InformationShadow: @sapField_InformationShadow;
+  --sapField_Selector_Hover_Background: @sapField_Selector_Hover_Background;
+  --sapField_Selector_Hover_InvalidBackground: @sapField_Selector_Hover_InvalidBackground;
+  --sapField_Selector_Hover_WarningBackground: @sapField_Selector_Hover_WarningBackground;
+  --sapField_Selector_Hover_SuccessBackground: @sapField_Selector_Hover_SuccessBackground;
+  --sapField_Selector_Hover_InformationBackground: @sapField_Selector_Hover_InformationBackground;
+  --sapField_Picker_BorderColor: @sapField_Picker_BorderColor;
+  --sapField_Picker_BorderWidth: @sapField_Picker_BorderWidth;
   --sapField_Selector_BorderStyle: @sapField_Selector_BorderStyle;
   --sapField_Selector_ReadOnly_BorderStyle: @sapField_Selector_ReadOnly_BorderStyle;
   --sapField_Selector_InvalidBorderStyle: @sapField_Selector_InvalidBorderStyle;
   --sapField_Selector_WarningBorderStyle: @sapField_Selector_WarningBorderStyle;
   --sapField_Selector_SuccessBorderStyle: @sapField_Selector_SuccessBorderStyle;
   --sapField_Selector_InformationBorderStyle: @sapField_Selector_InformationBorderStyle;
+  --sapGroup_TitleBorderWidth: @sapGroup_TitleBorderWidth;
   --sapGroup_TitleBackground: @sapGroup_TitleBackground;
   --sapGroup_TitleBorderColor: @sapGroup_TitleBorderColor;
   --sapGroup_TitleTextColor: @sapGroup_TitleTextColor;
@@ -593,6 +642,8 @@
   --sapList_FooterTextColor: @sapList_FooterTextColor;
   --sapList_TableFooterBorder: @sapList_TableFooterBorder;
   --sapList_TableFixedBorderColor: @sapList_TableFixedBorderColor;
+  --sapList_TableFixedColumnBorderWidth: @sapList_TableFixedColumnBorderWidth;
+  --sapList_TableFixedRowBorderWidth: @sapList_TableFixedRowBorderWidth;
   --sapMessage_ErrorBorderColor: @sapMessage_ErrorBorderColor;
   --sapMessage_WarningBorderColor: @sapMessage_WarningBorderColor;
   --sapMessage_SuccessBorderColor: @sapMessage_SuccessBorderColor;
@@ -668,6 +719,7 @@
   --sapObjectHeader_Title_FontFamily: @sapObjectHeader_Title_FontFamily;
   --sapObjectHeader_Subtitle_TextColor: @sapObjectHeader_Subtitle_TextColor;
   --sapBlockLayer_Background: @sapBlockLayer_Background;
+  --sapBlockLayer_Opacity: @sapBlockLayer_Opacity;
   --sapTile_Background: @sapTile_Background;
   --sapTile_Hover_Background: @sapTile_Hover_Background;
   --sapTile_Active_Background: @sapTile_Active_Background;
@@ -680,6 +732,8 @@
   --sapTile_Interactive_BorderColor: @sapTile_Interactive_BorderColor;
   --sapTile_OverlayBackground: @sapTile_OverlayBackground;
   --sapTile_OverlayForegroundColor: @sapTile_OverlayForegroundColor;
+  --sapTile_Hover_ContentBackground: @sapTile_Hover_ContentBackground;
+  --sapTile_Active_ContentBackground: @sapTile_Active_ContentBackground;
   --sapAccentColor1: @sapAccentColor1;
   --sapAccentColor2: @sapAccentColor2;
   --sapAccentColor3: @sapAccentColor3;
@@ -1418,6 +1472,10 @@
   --sapFontUrl_72Mono_Bold_woff: @sapFontUrl_72Mono_Bold_woff;
   --sapFontUrl_72Mono_Bold_full_woff2: @sapFontUrl_72Mono_Bold_full_woff2;
   --sapFontUrl_72Mono_Bold_full_woff: @sapFontUrl_72Mono_Bold_full_woff;
+  --sapBreakpoint_S_Min: @sapBreakpoint_S_Min;
+  --sapBreakpoint_M_Min: @sapBreakpoint_M_Min;
+  --sapBreakpoint_L_Min: @sapBreakpoint_L_Min;
+  --sapBreakpoint_XL_Min: @sapBreakpoint_XL_Min;
 }
 /*<SAP_FREETEXT_LESS>*/
 .sapCss_BackgroundImage_sapCompanyLogo() {
