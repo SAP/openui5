@@ -3,14 +3,12 @@
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/integration/cards/actions/CardActions",
-	"sap/ui/integration/cards/actions/NavigationAction"
+	"qunit/testResources/nextCardReadyEvent"
 ],
 	function(
 		Card,
 		nextUIUpdate,
-		CardActions,
-		NavigationAction
+		nextCardReadyEvent
 	) {
 		"use strict";
 
@@ -31,13 +29,16 @@ sap.ui.define([
 								"title": sLongText,
 								"subTitle": sLongText
 							},
-							"content": { }
+							"content": {
+								"groups": []
+							}
 						}
 					}
 				});
 
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
 				await nextUIUpdate();
+				await nextCardReadyEvent(this.oCard);
 			},
 			afterEach: function() {
 				this.oCard.destroy();
@@ -65,13 +66,16 @@ sap.ui.define([
 								"title": sLongText,
 								"subTitle": sLongText
 							},
-							"content": { }
+							"content": {
+								"groups": []
+							}
 						}
 					}
 				});
 
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
 				await nextUIUpdate();
+				await nextCardReadyEvent(this.oCard);
 			},
 			afterEach: function() {
 				this.oCard.destroy();
@@ -81,7 +85,7 @@ sap.ui.define([
 		QUnit.test("Testing attributes", function (assert) {
 			// Assert
 			assert.ok(this.oCard.getSemanticRole(), "ListItem", "Card role is listitem");
-			assert.ok(this.oCard.getDomRef().getAttribute("tabindex"), "0", "Card should have tabindex");
+			assert.strictEqual(this.oCard.getDomRef().getAttribute("tabindex"), "0", "Card should have tabindex");
 			assert.ok(this.oCard.getDomRef().classList["value"].indexOf("sapFCardInteractive") === -1, "Card should not have interactive styles");
 		});
 	}
