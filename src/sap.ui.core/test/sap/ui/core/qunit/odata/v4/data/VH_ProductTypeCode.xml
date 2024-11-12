@@ -42,6 +42,15 @@
 			<Annotations Target="SAP__self.D_PR_TYPE_FV/DESCRIPTION">
 				<Annotation Term="SAP__common.Label" String="Description"/>
 			</Annotations>
+			<Annotations Target="SAP__self.D_PR_TYPE_FV/FIELD_VALUE">
+				<Annotation Term="SAP__common.Label" String="Type Code" />
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/d_pr_type-fv/0001;ps='N_A';va='com.sap.gateway.f4.d_pr_type-fv.v0001.D_PR_TYPE_FV.FIELD_VALUE'/$metadata</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues" />
+			</Annotations>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>

@@ -113,7 +113,8 @@ function(
 				 * Defines the highlight state of the list items.
 				 *
 				 * Valid values for the <code>highlight</code> property are values of the enumerations {@link sap.ui.core.MessageType} or
-				 * {@link sap.ui.core.IndicationColor}.
+				 * {@link sap.ui.core.IndicationColor} (only values of <code>Indication01</code> to <code>Indication10</code> are supported
+				 * for accessibility contrast reasons).
 				 *
 				 * Accessibility support is provided through the associated {@link sap.m.ListItemBase#setHighlightText highlightText} property.
 				 * If the <code>highlight</code> property is set to a value of {@link sap.ui.core.MessageType}, the <code>highlightText</code>

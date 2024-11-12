@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/qunit/QUnitUtils",
@@ -689,6 +689,44 @@ sap.ui.define([
 		this.clock.tick(1000);
 		assert.ok(!this.oChangeListenerPassedEvent, "Change event must not be called");
 	});
+
+	QUnit.test("Submit Event", async function(assert) {
+		var oMaskInput = new MaskInput(),
+			oFireSubmitFn = sinon.spy(oMaskInput, "fireSubmit");
+
+		oMaskInput.placeAt("content");
+		await nextUIUpdate(this.clock);
+
+		// Act
+		oMaskInput.onfocusin();
+		await nextUIUpdate(this.clock);
+		qutils.triggerKeydown(oMaskInput.getDomRef("inner"), KeyCodes.ENTER);
+
+		// Assert
+		assert.ok(oFireSubmitFn.calledOnce, "Submit event fired");
+
+		// Act
+		oMaskInput.setEnabled(false);
+		await nextUIUpdate(this.clock);
+		qutils.triggerKeydown(oMaskInput.getDomRef("inner"), KeyCodes.ENTER);
+
+		// Assert
+		assert.ok(oFireSubmitFn.calledOnce, "Submit event is not fired on disabled MaskInput");
+
+		// Act
+		oMaskInput.setEnabled(true);
+		oMaskInput.setEditable(false);
+		await nextUIUpdate(this.clock);
+		qutils.triggerKeydown(oMaskInput.getDomRef("inner"), KeyCodes.ENTER);
+
+		// Assert
+		assert.ok(oFireSubmitFn.calledOnce, "Submit event is not fired on non-editable MaskInput");
+
+		// Clean up
+		oFireSubmitFn.restore();
+		oMaskInput.destroy();
+	});
+
 
 	QUnit.module("RTL support", {
 		beforeEach: async function () {

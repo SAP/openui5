@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/base/util/restricted/_pick",
+	"sap/base/util/isPlainObject",
 	"sap/base/util/ObjectPath",
 	"sap/ui/fl/apply/_internal/flexObjects/AnnotationChange",
 	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
@@ -20,6 +21,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils"
 ], function(
 	_pick,
+	isPlainObject,
 	ObjectPath,
 	AnnotationChange,
 	AppDescriptorChange,
@@ -48,6 +50,10 @@ sap.ui.define([
 		UPDATABLE_CHANGE: UpdatableChange
 	};
 
+	function cloneIfObject(oValue) {
+		return isPlainObject(oValue) ? { ...oValue } : oValue;
+	}
+
 	function getFlexObjectClass(oNewFileContent) {
 		if (oNewFileContent.fileType === "variant") {
 			return FLEX_OBJECT_TYPES.COMP_VARIANT_OBJECT;
@@ -65,7 +71,8 @@ sap.ui.define([
 		return FLEX_OBJECT_TYPES.UI_CHANGE;
 	}
 
-	function createBasePropertyBag(mProperties) {
+	function createBasePropertyBag(mOriginalProperties) {
+		const mProperties = cloneIfObject(mOriginalProperties);
 		const sChangeType = mProperties.type || mProperties.changeType;
 		const sFileName = mProperties.fileName || mProperties.id || Utils.createDefaultFileName(sChangeType);
 		const sUser = mProperties.user ||
@@ -76,11 +83,11 @@ sap.ui.define([
 			id: sFileName,
 			adaptationId: mProperties.adaptationId,
 			layer: mProperties.layer,
-			content: mProperties.content,
-			texts: mProperties.texts,
+			content: cloneIfObject(mProperties.content),
+			texts: cloneIfObject(mProperties.texts),
 			supportInformation: {
 				service: mProperties.ODataService,
-				oDataInformation: mProperties.oDataInformation,
+				oDataInformation: cloneIfObject(mProperties.oDataInformation),
 				command: mProperties.command,
 				compositeCommand: mProperties.compositeCommand,
 				generator: mProperties.generator,
@@ -207,18 +214,19 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlVariant} Variant instance
 	 */
 	FlexObjectFactory.createFlVariant = function(mPropertyBag) {
-		mPropertyBag.generator ||= "FlexObjectFactory.createFlVariant";
-		const mProperties = createBasePropertyBag(mPropertyBag);
-		mProperties.variantManagementReference = mPropertyBag.variantManagementReference;
-		mProperties.variantReference = mPropertyBag.variantReference;
-		mProperties.contexts = mPropertyBag.contexts;
+		const mPropertyBagClone = cloneIfObject(mPropertyBag);
+		mPropertyBagClone.generator ||= "FlexObjectFactory.createFlVariant";
+		const mProperties = createBasePropertyBag(mPropertyBagClone);
+		mProperties.variantManagementReference = mPropertyBagClone.variantManagementReference;
+		mProperties.variantReference = mPropertyBagClone.variantReference;
+		mProperties.contexts = mPropertyBagClone.contexts;
 		mProperties.texts = {
 			variantName: {
-				value: mPropertyBag.variantName,
+				value: mPropertyBagClone.variantName,
 				type: "XFLD"
 			}
 		};
-		mProperties.author = getVariantAuthor(mProperties.supportInformation.user, mProperties.layer, mPropertyBag.authors);
+		mProperties.author = getVariantAuthor(mProperties.supportInformation.user, mProperties.layer, mPropertyBagClone.authors);
 		return new FlVariant(mProperties);
 	};
 
@@ -254,21 +262,23 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} Created comp variant object
 	 */
 	FlexObjectFactory.createCompVariant = function(oFileContent, mAuthors) {
-		oFileContent.generator ||= "FlexObjectFactory.createCompVariant";
-		oFileContent.user = ObjectPath.get("support.user", oFileContent);
-		const mCompVariantContent = createBasePropertyBag(oFileContent);
+		const oFileContentClone = cloneIfObject(oFileContent);
+		oFileContentClone.generator ||= "FlexObjectFactory.createCompVariant";
+		oFileContentClone.user = ObjectPath.get("support.user", oFileContentClone);
+		const mCompVariantContent = createBasePropertyBag(oFileContentClone);
 
-		mCompVariantContent.variantId = oFileContent.variantId || mCompVariantContent.id;
-		mCompVariantContent.contexts = oFileContent.contexts;
-		mCompVariantContent.favorite = oFileContent.favorite;
-		mCompVariantContent.persisted = oFileContent.persisted;
-		mCompVariantContent.persistencyKey = oFileContent.persistencyKey || ObjectPath.get("selector.persistencyKey", oFileContent);
+		mCompVariantContent.variantId = oFileContentClone.variantId || mCompVariantContent.id;
+		mCompVariantContent.contexts = oFileContentClone.contexts;
+		mCompVariantContent.favorite = oFileContentClone.favorite;
+		mCompVariantContent.persisted = oFileContentClone.persisted;
+		mCompVariantContent.persistencyKey = oFileContentClone.persistencyKey ||
+			ObjectPath.get("selector.persistencyKey", oFileContentClone);
 
-		if (oFileContent.layer === Layer.VENDOR || oFileContent.layer === Layer.CUSTOMER_BASE) {
+		if (oFileContentClone.layer === Layer.VENDOR || oFileContentClone.layer === Layer.CUSTOMER_BASE) {
 			mCompVariantContent.favorite = true;
 		}
-		if (oFileContent.executeOnSelection !== undefined) {
-			mCompVariantContent.executeOnSelection = oFileContent.executeOnSelection;
+		if (oFileContentClone.executeOnSelection !== undefined) {
+			mCompVariantContent.executeOnSelection = oFileContentClone.executeOnSelection;
 		} else {
 			// Legacy changes contains 'executeOnSelect' information inside content structure
 			mCompVariantContent.executeOnSelection = mCompVariantContent.content && (

@@ -69,20 +69,21 @@ describe("sap.m.Carousel", function() {
 	});
 
 	it("should check arrows visibility over content", function() {
+		_moveToCarousel();
+		// go to last page
+		element(by.id("myCarousel-arrow-next")).click();
+		browser.sleep(1000);
+		element(by.id("myCarousel-arrow-next")).click();
 		// set loop to false
 		element(by.id("RB-No-Loop")).click();
 
 		_moveToCarousel();
 
-		// go to first page
-		element(by.id("myCarousel-arrow-previous")).click();
-		element(by.id("myCarousel-arrow-previous")).click();
-
-		expect(takeScreenshot(myCarousel)).toLookAs("5_1_arrow_visibility_content");
+                expect(takeScreenshot(myCarousel)).toLookAs("5_1_arrow_visibility_content");
 
 		// go back to third page
-		element(by.id("myCarousel-arrow-next")).click();
-		element(by.id("myCarousel-arrow-next")).click();
+		element(by.id("myCarousel-arrow-previous")).click();
+		element(by.id("myCarousel-arrow-previous")).click();
 	});
 
 	// change arrows position

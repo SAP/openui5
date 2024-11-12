@@ -31,9 +31,13 @@ sap.ui.define([
 		Then.onTheAppMDCTable.iCheckColumnPosition(sTableId, `${sTableId}-ID`, 0);
 	});
 
-	QUnit.module("Expand/Collapse");
+	QUnit.module("No Selection - Expand/Collapse");
 
 	opaTest("Collapse all", function(Given, When, Then) {
+		When.onTheApp.iGetTheTableInstance(sTableId, function(oTable) {
+			oTable.setSelectionMode("None");
+		});
+
 		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 6);
 		When.onTheAppMDCTable.iClickOnCollapseAllRowsButton(sTableId);
 		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 1);
@@ -55,6 +59,55 @@ sap.ui.define([
 		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 17);
 		Then.onTheAppMDCTable.iCheckRowData(sTableId, {index: 8, data: {ID: "5.1.1"}});
 		When.onTheAppMDCTable.iClickOnExpandAllRowsButton(sTableId);
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 24);
+	});
+
+	QUnit.module("With Selection - Expand/Collapse");
+
+	opaTest("Collapse all", function(Given, When, Then) {
+		When.onTheApp.iGetTheTableInstance(sTableId, function(oTable) {
+			oTable.setSelectionMode("Multi");
+		});
+
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 6);
+		When.onTheAppMDCTable.iClickOnCollapseAllRowsMenuButton(sTableId, true);
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 1);
+		Then.onTheAppMDCTable.iCheckRowData(sTableId, {index: 0, data: {ID: "0"}});
+		Then.onTheAppMDCTable.iCheckRowIsEmpty(sTableId, {index: 1});
+
+		When.onTheAppMDCTable.iPressExpandRowButton(sTableId, {index: 0, data: {ID: "0"}});
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 6);
+		Then.onTheAppMDCTable.iCheckRowData(sTableId, {index: 1, data: {ID: "1"}});
+
+		When.onTheAppMDCTable.iPressExpandRowButton(sTableId, {index: 1, data: {ID: "1"}});
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 8);
+
+		When.onTheAppMDCTable.iClickOnRowSelectCheckBox(sTableId, 1, 1);
+		When.onTheAppMDCTable.iClickOnCollapseAllRowsMenuButton(sTableId, false);
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 6);
+		Then.onTheAppMDCTable.iCheckRowData(sTableId, {index: 1, data: {ID: "1"}});
+
+		When.onTheAppMDCTable.iClickOnRowSelectCheckBox(sTableId, 1, 1);
+		When.onTheAppMDCTable.iClickOnCollapseAllRowsMenuButton(sTableId, true);
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 1);
+		Then.onTheAppMDCTable.iCheckRowIsEmpty(sTableId, {index: 1});
+	});
+
+	opaTest("Expand all", function(Given, When, Then) {
+		When.onTheAppMDCTable.iClickOnExpandAllRowsMenuButton(sTableId, true);
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 24);
+		Then.onTheAppMDCTable.iCheckRowData(sTableId, {index: 8, data: {ID: "1.2.3"}});
+
+		When.onTheAppMDCTable.iClickOnRowSelectCheckBox(sTableId, 1, 1);
+		When.onTheAppMDCTable.iClickOnCollapseAllRowsMenuButton(sTableId, false);
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 17);
+		When.onTheAppMDCTable.iClickOnExpandAllRowsMenuButton(sTableId, false);
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 24);
+
+		When.onTheAppMDCTable.iClickOnCollapseAllRowsMenuButton(sTableId, false);
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 17);
+
+		When.onTheAppMDCTable.iClickOnExpandAllRowsMenuButton(sTableId, true);
 		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 24);
 	});
 });

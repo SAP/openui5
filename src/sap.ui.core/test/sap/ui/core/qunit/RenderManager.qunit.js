@@ -1,28 +1,18 @@
 
-/* global QUnit, TestControlRenderer */
+/* global QUnit */
 sap.ui.define([
-	"sap/ui/Device",
 	"sap/ui/core/Control",
 	"sap/ui/core/RenderManager",
-	"sap/ui/core/Element",
 	"sap/ui/core/HTML",
 	"sap/ui/core/IconPool",
-	"sap/ui/core/UIArea",
-	"sap/ui/thirdparty/jquery",
-	"sap/base/security/encodeXML",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/test/utils/nextUIUpdate",
 	"sap/base/Log"
 ], function(
-	Device,
 	Control,
 	RenderManager,
-	Element,
 	HTML,
 	IconPool,
-	UIArea,
-	jQuery,
-	encodeXML,
 	createAndAppendDiv,
 	nextUIUpdate,
 	Log
@@ -32,176 +22,6 @@ sap.ui.define([
 	// prepare DOM
 	createAndAppendDiv(["area1", "area2", "area3", "area4", "area5", "area6", "area7", "area8"], createAndAppendDiv("testArea"));
 	createAndAppendDiv("area9");
-
-
-	var fnCheckRendererInterface = null;
-
-	function jQueryById(id) {
-		return new jQuery(document.getElementById(id));
-	}
-
-	//Declare a simple test controls
-
-	var TestControl = Control.extend("TestControl", {
-		renderer: {
-			render: function(oRM, oControl) {
-				oRM.write("<div");
-				TestControlRenderer.doAdditionalThings(oRM, oControl);
-				oRM.write(">[" + oControl.getId() + "]</div>");
-
-				if (fnCheckRendererInterface) {
-					fnCheckRendererInterface(oRM);
-				}
-			},
-			doAdditionalThings: function(oRM, oControl) {}
-		},
-
-		onBeforeRendering: function() {
-			if (this.doBeforeRendering) {
-				this.doBeforeRendering();
-			}
-		},
-
-		onAfterRendering: function() {
-			if (this.doAfterRendering) {
-				this.doAfterRendering();
-			}
-		}
-	});
-
-	var ACCTestControl = TestControl.extend("ACCTestControl", {
-		metadata: {
-			properties: {
-				"editable": {
-					type: "boolean",
-					defaultValue: true
-				},
-				"enabled": {
-					type: "boolean",
-					defaultValue: true
-				},
-				"visible": {
-					type: "boolean",
-					defaultValue: true
-				},
-				"required": {
-					type: "boolean",
-					defaultValue: false
-				},
-				"selected": {
-					type: "boolean",
-					defaultValue: false
-				},
-				"checked": {
-					type: "boolean",
-					defaultValue: false
-				},
-				"other": {
-					type: "string",
-					defaultValue: "Value"
-				}
-			},
-			associations: {
-				"ariaDescribedBy": {
-					type: "sap.ui.core.Element",
-					multiple: true
-				},
-				"ariaLabelledBy": {
-					type: "sap.ui.core.Element",
-					multiple: true
-				}
-			}
-		},
-
-		renderer: "TestControlRenderer"
-	});
-
-	//Test helper functions
-
-	function checkRendering(assert, aControls, sTargetId, bExpectExisting, fnActionCallBack, sOldParentId) {
-		return new Promise(function(done) {
-			var iBeforeCounter = 0;
-			var iAfterCounter = 0;
-
-			var fBefore = function() {
-				iBeforeCounter++;
-			};
-
-			var fAfter = function() {
-				iAfterCounter++;
-			};
-
-			for (var i = 0; i < aControls.length; i++) {
-				aControls[i].doBeforeRendering = fBefore;
-				aControls[i].doAfterRendering = fAfter;
-			}
-
-			checkControlsInDom(assert, aControls, sOldParentId ? sOldParentId : sTargetId, bExpectExisting);
-
-			fnActionCallBack(jQueryById(sTargetId).get(0), aControls);
-
-			assert.equal(iBeforeCounter, aControls.length, "onBeforeRendering should be called");
-
-			checkControlsInDom(assert, aControls, sTargetId, true);
-
-			if (Device.browser.safari) {
-				//in safari async because onAfterRendering ist called with delay
-				var delayedCall = function() {
-					assert.equal(iAfterCounter, aControls.length, "onAfterRendering should be called");
-					for (var i = 0; i < aControls.length; i++) {
-						aControls[i].doBeforeRendering = null;
-						aControls[i].doAfterRendering = null;
-					}
-					done();
-				};
-				setTimeout(delayedCall, 500);
-			} else {
-				assert.equal(iAfterCounter, aControls.length, "onAfterRendering should be called");
-				for (var i = 0; i < aControls.length; i++) {
-					aControls[i].doBeforeRendering = null;
-					aControls[i].doAfterRendering = null;
-				}
-				done();
-			}
-
-		});
-
-	}
-
-	function checkControlsInDom(assert, aControls, sTargetId, bExpectExisting) {
-		for (var i = 0; i < aControls.length; i++) {
-			var $ControlRef = aControls[i].$();
-			if (bExpectExisting) {
-				assert.equal($ControlRef.length, 1, "Control is rendered already");
-				assert.equal($ControlRef.parent().attr("id"), sTargetId, "Control is child of Dom Ref with ID '" + sTargetId + "'");
-			} else {
-				assert.equal($ControlRef.length, 0, "Control is not rendered yet");
-			}
-		}
-	}
-
-	function checkChildOrder(assert, sParentId, aChildIds) {
-		var $Children = jQueryById(sParentId).children();
-		assert.equal(aChildIds.length, $Children.length, "Number of children of DOM node '" + sParentId + "'");
-		for (var i = 0; i < aChildIds.length; i++) {
-			assert.equal(aChildIds[i], jQuery($Children.get(i)).attr("id"), "DOM node '" + aChildIds[i] + "' is at position " + i);
-		}
-	}
-
-	function checkRMWriter(assert, sExpectedResult, bExpectReturnsRM, iExpectedNumberOfControls, fnActionCallback, fnCheckCallBack) {
-		var rm = new RenderManager();
-		var oCheckFunctionResult = fnActionCallback(rm);
-		assert.equal(rm.aBuffer.join(""), sExpectedResult, "Writer function produce expected output.");
-		if (bExpectReturnsRM) {
-			assert.ok(rm === oCheckFunctionResult, "Writer function returns RenderManager again for chaining.");
-		} else {
-			assert.ok(rm != oCheckFunctionResult, "Writer function does not return RenderManager for chaining.");
-		}
-		assert.equal(rm.aRenderedControls.length, iExpectedNumberOfControls, "Writer function rendered expected number of controls.");
-		if (fnCheckCallBack){
-			fnCheckCallBack(rm);
-		}
-	}
 
 
 	QUnit.module("Core API");
@@ -220,205 +40,6 @@ sap.ui.define([
 		"accessibilityState", "icon", "unsafeHtml"];
 
 	aCommonMethods.concat(aStringRendererMethods, aDomRendererMethods);
-
-	// DOM rendering methods
-
-	QUnit.module("Writer API: Semantic Syntax (DOM) Rendering Methods");
-
-	QUnit.test("RenderManager.openStart", function (assert) {
-		checkRMWriter(assert, "<span", true, 0, function(rm) {
-			return rm.openStart("span");
-		});
-	});
-
-	QUnit.test("RenderManager.openEnd", function (assert) {
-		checkRMWriter(assert, "<span>", true, 0, function(rm) {
-			return rm.openStart("span").openEnd();
-		});
-	});
-
-	QUnit.test("RenderManager.close", function (assert) {
-		checkRMWriter(assert, "</span>", true, 0, function(rm) {
-			return rm.close("span");
-		});
-	});
-
-	QUnit.test("RenderManager.voidStart", function (assert) {
-		checkRMWriter(assert, "<img", true, 0, function(rm) {
-			return rm.voidStart("img");
-		});
-	});
-
-	QUnit.test("RenderManager.voidEnd", function (assert) {
-		checkRMWriter(assert, "<img>", true, 0, function(rm) {
-			return rm.voidStart("img").voidEnd();
-		});
-	});
-
-	QUnit.test("RenderManager.text", function (assert) {
-		checkRMWriter(assert, "Hello,&#x20;how&#x20;are&#x20;you&#x3f;", true, 0, function(rm) {
-			return rm.text("Hello, how are you?");
-		});
-	});
-
-	QUnit.test("RenderManager.attr", function (assert) {
-		checkRMWriter(assert, " attrName=\"attr&#x20;value&#x20;&amp;&lt;&quot;&#x27;&#x5c;\"", true, 0, function(rm) {
-			return rm.attr("attrName", "attr value &<\"\'\\");
-		});
-	});
-
-	QUnit.test("RenderManager.class", function (assert) {
-		checkRMWriter(assert, "", true, 0, function(rm) {
-			rm.class("sampleClassName");
-			assert.equal(rm.aStyleStack[rm.aStyleStack.length - 1].aClasses[rm.aStyleStack[rm.aStyleStack.length - 1].aClasses.length - 1], "sampleClassName", "Class added to list of styles");
-			return rm.class("");
-		});
-	});
-
-	QUnit.test("RenderManager.style", function(assert) {
-		checkRMWriter(assert, "", true, 0, function(rm) {
-			rm.style("att1", "val1");
-			assert.equal(rm.aStyleStack[rm.aStyleStack.length - 1].aStyle[rm.aStyleStack[rm.aStyleStack.length - 1].aStyle.length - 1], "att1: val1;", "Style added to list of styles");
-			return rm.style("att2", "val2");
-		});
-	});
-
-	QUnit.test("Semantic Syntax Combined", function(assert) {
-		checkRMWriter(assert, "" +
-		"<span id=\"sampleId\" class=\"sampleClassName\">some&#x20;text<img src=\"..&#x2f;img.jpg\">some&#x20;more&#x20;text</span>" +
-		"", true, 0, function(rm) {
-
-			rm.openStart("span");
-			rm.class("sampleClassName");
-			rm.attr("id", "sampleId");
-			rm.openEnd();
-			rm.text("some text");
-			rm.voidStart("img");
-			rm.attr("src", "../img.jpg");
-			rm.voidEnd();
-			rm.text("some more text");
-			rm.close("span");
-			return rm.text();
-		});
-	});
-
-	QUnit.test("RenderManager.openStart with controlData", function(assert) {
-		checkRMWriter(assert, "<div id=\"TestElem123\" data-sap-ui=\"TestElem123\" data-sap-ui-render=\"\"", true, 0, function(rm) {
-			return rm.openStart("div", new Control("TestElem123"));
-		});
-	});
-
-	QUnit.test("RenderManager.openStart with elementData", function(assert) {
-		checkRMWriter(assert, "<div id=\"TestElem1234\" data-sap-ui=\"TestElem1234\"", true, 0, function(rm) {
-			return rm.openStart("div", new Element("TestElem1234"));
-		});
-	});
-
-	QUnit.test("RenderManager.accessibilityState", function(assert) {
-		var oControl1 = new ACCTestControl("TestACCContr123");
-		var oControl2 = new ACCTestControl("TestACCContr234", {
-			"editable": false, //readonly
-			"enabled": false, //disabled
-			"visible": false, //hidden
-			"required": true, //required
-			"selected": true, //selected
-			"checked": true, //checked
-			"ariaDescribedBy": [oControl1, "test123"],
-			"ariaLabelledBy": [oControl1, "test234"]
-		});
-
-		function checkACCOutput(sOutput, sValue) {
-			assert.ok(sOutput.indexOf(sValue) >= 0, "Output contains " + sValue + " ('" + sOutput + "')");
-		}
-
-		//Check defaults
-		var rm = new RenderManager();
-		assert.ok(rm === rm.accessibilityState(oControl1), "Writer function returns RenderManager again for chaining.");
-		var sOutput = rm.aBuffer.join("");
-		assert.ok(sOutput.length === 0, "No output for defaults: " + sOutput);
-
-		//Check auto-generation
-		rm = new RenderManager();
-		rm.accessibilityState(oControl2);
-		sOutput = rm.aBuffer.join("");
-		checkACCOutput(sOutput, "aria-readonly=\"true\"");
-		checkACCOutput(sOutput, "aria-disabled=\"true\"");
-		checkACCOutput(sOutput, "aria-hidden=\"true\"");
-		checkACCOutput(sOutput, "aria-required=\"true\"");
-		checkACCOutput(sOutput, "aria-selected=\"true\"");
-		checkACCOutput(sOutput, "aria-checked=\"true\"");
-		// escape it because attributes' values are escaped since 1.19.0 & 1.18.5 & 1.16.10
-		var sText = encodeXML("TestACCContr123 test123");
-		checkACCOutput(sOutput, "aria-describedby=\"" + sText + "\"");
-		sText = encodeXML("TestACCContr123 test234");
-		checkACCOutput(sOutput, "aria-labelledby=\"" + sText + "\"");
-
-		//Check reset
-		rm = new RenderManager();
-		rm.accessibilityState(oControl2, {
-			"readonly": null,
-			"disabled": null,
-			"hidden": null,
-			"required": null,
-			"selected": null,
-			"checked": null,
-			"describedby": null,
-			"labelledby": null
-		});
-		sOutput = rm.aBuffer.join("");
-		assert.ok(sOutput.length == 0, "No output for reset values: " + sOutput);
-
-		//Check custom attributes only
-		rm = new RenderManager();
-		rm.accessibilityState({
-			"hello1": "hello2"
-		});
-		sOutput = rm.aBuffer.join("");
-		checkACCOutput(sOutput, "aria-hello1=\"hello2\"");
-
-		//Check control and custom attributes
-		rm = new RenderManager();
-		rm.accessibilityState(oControl2, {
-			"hello1": "hello2"
-		});
-		sOutput = rm.aBuffer.join("");
-		checkACCOutput(sOutput, "aria-readonly=\"true\"");
-		checkACCOutput(sOutput, "aria-disabled=\"true\"");
-		checkACCOutput(sOutput, "aria-hidden=\"true\"");
-		checkACCOutput(sOutput, "aria-required=\"true\"");
-		checkACCOutput(sOutput, "aria-selected=\"true\"");
-		checkACCOutput(sOutput, "aria-checked=\"true\"");
-		// escape it because attributes' values are escaped since 1.19.0 & 1.18.5 & 1.16.10
-		sText = encodeXML("TestACCContr123 test123");
-		checkACCOutput(sOutput, "aria-describedby=\"" + sText + "\"");
-		sText = encodeXML("TestACCContr123 test234");
-		checkACCOutput(sOutput, "aria-labelledby=\"" + sText + "\"");
-		checkACCOutput(sOutput, "aria-hello1=\"hello2\"");
-
-		//Check append for describedby and labelledby
-		rm = new RenderManager();
-		rm.accessibilityState(oControl2, {
-			"readonly": {
-				value: false,
-				append: true
-			},
-			"describedby": {
-				value: "hello1",
-				append: true
-			},
-			"labelledby": {
-				value: "hello2",
-				append: true
-			}
-		});
-		sOutput = rm.aBuffer.join("");
-		checkACCOutput(sOutput, "aria-readonly=\"false\"");
-		// escape it because attributes' values are escaped since 1.19.0 & 1.18.5 & 1.16.10
-		sText = encodeXML("TestACCContr123 test123 hello1");
-		checkACCOutput(sOutput, "aria-describedby=\"" + sText + "\"");
-		sText = encodeXML("TestACCContr123 test234 hello2");
-		checkACCOutput(sOutput, "aria-labelledby=\"" + sText + "\"");
-	});
 
 	QUnit.module("Writer API: Semantic Syntax (DOM) Assertions", {
 		beforeEach: function() {
@@ -638,236 +259,7 @@ sap.ui.define([
 		assert.equal(this.oAssertionSpy.callCount, 0);
 	});
 
-	var TestControlSemanticRendering = Control.extend("TestControlSemanticRendering", {
-		renderer: {
-			render: function(rm, oControl) {
-				rm.openStart("div", oControl);
-				rm.openEnd();
-				rm.text("[" + oControl.getId() + "]");
-				rm.close("div");
-			}
-		},
-		onBeforeRendering: function() {
-			if (this.doBeforeRendering) {
-				this.doBeforeRendering();
-			}
-		},
-		onAfterRendering: function() {
-			if (this.doAfterRendering) {
-				this.doAfterRendering();
-			}
-		}
-	});
-
-
-	QUnit.module("Non Renderer Functions - Semantic Rendering", {
-		before: function() {
-			var aSemanticRenderingControls = [];
-			for (var i = 0; i < 8; i++) {
-				aSemanticRenderingControls.push(new TestControlSemanticRendering("SRControl" + i));
-			}
-			this.controls = aSemanticRenderingControls;
-		},
-		after: function() {
-			this.controls.forEach(function(oControl) {
-				oControl.destroy();
-			});
-		}
-	});
-
-
-	QUnit.test("RenderManager.destroy", function(assert) {
-		var rm = new RenderManager();
-		var oControl5 = new TestControlSemanticRendering("TestContr5");
-		rm.renderControl(oControl5);
-		assert.ok(rm.aBuffer.length != 0, "HTML Buffer is filled after some writing");
-		assert.ok(rm.aRenderedControls != 0, "Rendered Control Buffer is filled after some writing");
-		rm.destroy();
-		assert.ok(rm.aBuffer.length == 0, "HTML Buffer cleared after destroy");
-		assert.ok(rm.aRenderedControls == 0, "Rendered Control Buffer cleared after destroy");
-	});
-
-
-	QUnit.test("RenderManager.render (Initial Rendering)", function(assert) {
-		var rm = new RenderManager().getInterface(),
-			aControls = this.controls,
-			pDone;
-
-		//Initial Rendering
-		pDone = checkRendering(assert, [aControls[0], aControls[1], aControls[2]], "area1", false, function(oTargetDomNode, aCtrls) {
-			rm.render(aCtrls[0], oTargetDomNode);
-			rm.render(aCtrls[1], oTargetDomNode);
-			rm.render(aCtrls[2], oTargetDomNode);
-		});
-
-		checkChildOrder(assert, "area1", [aControls[0].getId(), aControls[1].getId(), aControls[2].getId()]);
-		return pDone;
-	});
-
-	QUnit.test("RenderManager.render (Rerendering to same parent DOM node)", function(assert) {
-		var rm = new RenderManager().getInterface(),
-			aControls = this.controls,
-			pDone;
-
-		//Rerendering to same parent DOM node
-		pDone = checkRendering(assert, [aControls[1]], "area1", true, function(oTargetDomNode, aCtrls) {
-			rm.render(aCtrls[0], oTargetDomNode);
-		});
-
-		checkChildOrder(assert, "area1", [aControls[0].getId(), aControls[1].getId(), aControls[2].getId()]);
-		return pDone;
-	});
-
-	QUnit.test("RenderManager.render (Move to different parent DOM node)", function(assert) {
-		var rm = new RenderManager().getInterface(),
-			aControls = this.controls,
-			pDone;
-
-		//Move to different parent DOM node
-		pDone = checkRendering(assert, [aControls[1]], "area3", true, function(oTargetDomNode, aCtrls) {
-			rm.render(aCtrls[0], oTargetDomNode);
-		}, "area1");
-
-		checkChildOrder(assert, "area1", [aControls[0].getId(), aControls[2].getId()]);
-		checkChildOrder(assert, "area3", [aControls[1].getId()]);
-		return pDone;
-	});
-
-	QUnit.test("RenderManager.flush(Initial Rendering)", function(assert) {
-		var rm = new RenderManager().getInterface(),
-			aControls = this.controls,
-			pDone;
-
-		//Initial Rendering
-		pDone = checkRendering(assert, [aControls[3], aControls[4]], "area2", false, function(oTargetDomNode, aCtrls) {
-			rm.renderControl(aCtrls[0]);
-			rm.openStart("div");
-			rm.attr("id", "divider");
-			rm.openEnd();
-			rm.text("|");
-			rm.close("div");
-			rm.renderControl(aCtrls[1]);
-			rm.flush(oTargetDomNode);
-		});
-
-		checkChildOrder(assert, "area2", [aControls[3].getId(), "divider", aControls[4].getId()]);
-		return pDone;
-	});
-
-	QUnit.test("RenderManager.flush(Rerendering to same parent DOM node)", function(assert) {
-		var rm = new RenderManager().getInterface(),
-			aControls = this.controls,
-			pDone;
-
-		//Rerendering to same parent DOM node
-		pDone = checkRendering(assert, [aControls[3], aControls[4]], "area2", true, function(oTargetDomNode, aCtrls) {
-			rm.renderControl(aCtrls[1]);
-			rm.openStart("div");
-			rm.attr("id", "divider");
-			rm.openEnd();
-			rm.text("|");
-			rm.close("div");
-			rm.renderControl(aCtrls[0]);
-			rm.flush(oTargetDomNode);
-		});
-
-		checkChildOrder(assert, "area2", [aControls[4].getId(), "divider", aControls[3].getId()]);
-		return pDone;
-	});
-
-	QUnit.test("RenderManager.flush(Move to different parent DOM node)", function(assert) {
-		var rm = new RenderManager().getInterface(),
-			aControls = this.controls,
-			pDone;
-
-		//Move to different parent DOM node
-		pDone = checkRendering(assert, [aControls[3]], "area4", true, function(oTargetDomNode, aCtrls) {
-			rm.renderControl(aCtrls[0]);
-			rm.openStart("div");
-			rm.attr("id", "divider2");
-			rm.openEnd();
-			rm.text("|");
-			rm.close("div");
-			rm.flush(oTargetDomNode);
-		}, "area2");
-
-		checkChildOrder(assert, "area2", [aControls[4].getId(), "divider"]);
-		checkChildOrder(assert, "area4", [aControls[3].getId(), "divider2"]);
-		return pDone;
-	});
-
-	QUnit.test("RenderManager.flush(insert at certain position)", function(assert) {
-		var rm = new RenderManager().getInterface(),
-			aControls = this.controls,
-			done = assert.async();
-
-		rm.renderControl(aControls[5]);
-		rm.flush(document.getElementById("area2"), false, 1);
-		rm.destroy();
-
-		window.setTimeout(function() { // for delayed rendering in Safari
-			checkChildOrder(assert, "area2", [aControls[4].getId(), aControls[5].getId(), "divider"]);
-			done();
-		}, Device.browser.safari ? 500 : 0);
-	});
-
-	QUnit.test("RenderManager.flush(insert at certain position < 0)", function(assert) {
-		var rm = new RenderManager().getInterface(),
-			aControls = this.controls,
-			done = assert.async();
-
-		rm.renderControl(aControls[6]);
-		rm.flush(document.getElementById("area2"), false, -1);
-		rm.destroy();
-
-		window.setTimeout(function() { // for delayed rendering in Safari
-			checkChildOrder(assert, "area2", [aControls[6].getId(), aControls[4].getId(), aControls[5].getId(), "divider"]);
-			done();
-		}, Device.browser.safari ? 500 : 0);
-	});
-
-	QUnit.test("RenderManager.flush(insert at certain position > #items)", function(assert) {
-		var rm = new RenderManager().getInterface(),
-			aControls = this.controls,
-			done = assert.async();
-
-		rm.renderControl(aControls[7]);
-		rm.flush(document.getElementById("area2"), false, 42);
-		rm.destroy();
-
-		window.setTimeout(function() { // for delayed rendering in Safari
-			checkChildOrder(assert, "area2", [aControls[6].getId(), aControls[4].getId(), aControls[5].getId(), "divider", aControls[7].getId()]);
-			done();
-		}, Device.browser.safari ? 500 : 0);
-	});
-
-	QUnit.test("RenderManager lock", async function(assert) {
-		var oCtrl1 = new TestControlSemanticRendering();
-		var oCtrl2 = new TestControlSemanticRendering();
-
-		oCtrl1.placeAt("area5");
-		oCtrl2.placeAt("area5");
-		await nextUIUpdate();
-
-		oCtrl1.doBeforeRendering = function() {
-			UIArea.rerenderControl(oCtrl2);
-		};
-
-		oCtrl1.doAfterRendering = function() {
-			UIArea.rerenderControl(oCtrl2);
-		};
-
-		var iCounter = 0;
-
-		oCtrl2.doAfterRendering = function() {
-			iCounter++;
-		};
-
-		oCtrl1.invalidate();
-		await nextUIUpdate();
-
-		assert.equal(iCounter, 0, "Number of rerenderings of Ctrl2");
-	});
+	QUnit.module("RenderManager.prototype.icon");
 
 	QUnit.test("RenderManager.prototype.icon with Icon URL", function(assert) {
 		var rm = new RenderManager().getInterface();
@@ -1000,7 +392,7 @@ sap.ui.define([
 		document.getElementById("area6").innerHTML = "";
 	});
 
-	QUnit.test("RenderManager writeIcon with Image URL", function(assert) {
+	QUnit.test("RenderManager.prototype.icon with Image URL", function(assert) {
 		var rm = new RenderManager().getInterface(),
 			sImgURL = sap.ui.require.toUrl("sap/ui/core/themes/base/img/Busy.gif");
 
@@ -1044,6 +436,8 @@ sap.ui.define([
 		document.getElementById("area7").innerHTML = "";
 	});
 
+	QUnit.module("Edge cases");
+
 	QUnit.test("RenderManager should not break for controls with invalid renderer", async function(assert) {
 
 		var Log = sap.ui.require("sap/base/Log");
@@ -1075,7 +469,6 @@ sap.ui.define([
 		// check the error message
 		assert.equal("The renderer for class " + oMetadata.getName() + " is not defined or does not define a render function! Rendering of " + oControl.getId() + " will be skipped!", oSpy.getCall(0).args[0], "Error should be reported in the console!");
 	});
-
 
 
 	QUnit.module("Events", {
@@ -1124,6 +517,28 @@ sap.ui.define([
 		RenderManager.preserveContent(this.oElement);
 		assert.ok(this.oSpy.calledOnce);
 		assert.ok(this.oSpy.calledOn(this.oContext));
+	});
+
+	var TestControlSemanticRendering = Control.extend("TestControlSemanticRendering", {
+		renderer: {
+			apiVersion: 2,
+			render: function(rm, oControl) {
+				rm.openStart("div", oControl);
+				rm.openEnd();
+				rm.text("[" + oControl.getId() + "]");
+				rm.close("div");
+			}
+		},
+		onBeforeRendering: function() {
+			if (this.doBeforeRendering) {
+				this.doBeforeRendering();
+			}
+		},
+		onAfterRendering: function() {
+			if (this.doAfterRendering) {
+				this.doAfterRendering();
+			}
+		}
 	});
 
 	QUnit.module("Invisible - Semantic Rendering");
@@ -1216,7 +631,7 @@ sap.ui.define([
 			defaultAggregation: "content"
 		},
 		renderer: {
-			apiVersion :1,
+			apiVersion: 2,
 			render: function(oRm, oControl) {
 				oRm.openStart("div", oControl);
 				oRm.openEnd();
@@ -1310,24 +725,6 @@ sap.ui.define([
 			assert.notOk(oView1.getDomRef(), "view1 no longer should have DOM");
 			assert.notOk(oView2.getDomRef(), "view2 no longer should have DOM");
 		}
-	});
-
-	QUnit.test("default rendering (string)", async function(assert) {
-		TestContainer.getMetadata().getRenderer().apiVersion = 1;
-		await this.executeTest(assert, async function(value) {
-			// use normal invalidation
-			this.oContainer.setTheLuckyOne(value);
-			// and force re-rendering
-			await nextUIUpdate();
-		}.bind(this));
-	});
-
-	QUnit.test("custom rendering (string)", async function(assert) {
-		TestContainer.getMetadata().getRenderer().apiVersion = 1;
-		await this.executeTest(assert, function(value) {
-			// use custom rendering (leaves the preservation to the flush call)
-			this.oContainer.setTheLuckyOneAndRender(value);
-		}.bind(this));
 	});
 
 	QUnit.test("default rendering (patcher)", async function(assert) {

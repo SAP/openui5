@@ -2077,7 +2077,7 @@ sap.ui.define([
 	 * <code>null</code> if no "Retry-After" is currently known. Creates a new promise if there is
 	 * none, an error is given, and a {@link #setRetryAfterHandler handler} is known.
 	 *
-	 * @param {Error} [oRetryAfterError] - A "Retry-After" error from a backend call
+	 * @param {Error} [oRetryAfterError] - A "Retry-After" error from a back-end call
 	 * @returns {Promise|null} The current "Retry-After" promise
 	 *
 	 * @private

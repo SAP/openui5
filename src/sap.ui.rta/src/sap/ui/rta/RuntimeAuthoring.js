@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/Lib",
@@ -55,7 +54,6 @@ sap.ui.define([
 	Log,
 	MessageBox,
 	MessageToast,
-	jQuery,
 	ManagedObject,
 	BusyIndicator,
 	Lib,
@@ -480,13 +478,8 @@ sap.ui.define([
 				await this.getToolbar().show();
 			}
 
-			if (Device.browser.name === "ff") {
-				// in FF shift+f10 also opens a browser context menu.
-				// It seems that the only way to get rid of it is to completely turn off context menu in ff..
-				jQuery(document).on("contextmenu", ffContextMenuHandler);
-			}
 			this.fnKeyDown = onKeyDown.bind(this);
-			jQuery(document).on("keydown", this.fnKeyDown);
+			document.addEventListener("keydown", this.fnKeyDown);
 			this.fnOnPersonalizationChangeCreation = onPersonalizationChangeCreation.bind(this);
 			ControlPersonalizationWriteAPI.attachChangeCreation(
 				oRootControl,
@@ -736,7 +729,7 @@ sap.ui.define([
 			this._oDesignTime = null;
 
 			// detach browser events
-			jQuery(document).off("keydown", this.fnKeyDown);
+			document.removeEventListener("keydown", this.fnKeyDown);
 
 			if (this.fnOnPersonalizationChangeCreation) {
 				ControlPersonalizationWriteAPI.detachChangeCreation(
@@ -751,10 +744,6 @@ sap.ui.define([
 		}
 
 		this.setCommandStack(null);
-
-		if (Device.browser.name === "ff") {
-			jQuery(document).off("contextmenu", ffContextMenuHandler);
-		}
 
 		window.onbeforeunload = this._oldUnloadHandler;
 
@@ -978,10 +967,6 @@ sap.ui.define([
 		if (oRootControl) {
 			oRootControl[bAdd ? "addStyleClass" : "removeStyleClass"]("sapUiRtaRoot");
 		}
-	}
-
-	function ffContextMenuHandler() {
-		return false;
 	}
 
 	/**

@@ -2316,29 +2316,72 @@ sap.ui.define([
 		});
 	};
 
-	Table.prototype._isCollapseAllEnabled = function() {
-		return this.isControlDelegateInitialized() && this.getControlDelegate().getSupportedFeatures(this).collapseAllRows;
+	Table.prototype.setSelectionMode = function(sSelectionMode) {
+		const sOldSelectionMode = this.getSelectionMode();
+
+		this.setProperty("selectionMode", sSelectionMode, true);
+
+		if (sOldSelectionMode !== sSelectionMode) {
+			this._updateExpandAllButton(true);
+			this._updateCollapseAllButton(true);
+		}
+
+		return this;
+	};
+
+	/**
+	 * Checks if collapse capabilities are enabled.
+	 *
+	 * @returns {boolean} whether collapse capabilities are enabled
+	 */
+	Table.prototype._isCollapseEnabled = async function() {
+		if (!this.isControlDelegateInitialized()) {
+			return false;
+		}
+		const oConfig =  await this.getControlDelegate().fetchExpandAndCollapseConfiguration(this);
+		let bAvailable = false;
+
+		if ("collapseAll" in oConfig) {
+			if (typeof oConfig.collapseAll !== "function") {
+				throw new Error("TableDelegate#collapseAll: collapseAll needs to be a function");
+			}
+			bAvailable = true;
+		}
+
+		if ("collapseAllFromNode" in oConfig && "isNodeExpanded" in oConfig) {
+			if (typeof oConfig.collapseAllFromNode !== "function") {
+				throw new Error("TableDelegate#fetchExpandAndCollapseConfiguration: collapseAllFromNode needs to be a function");
+			}
+
+			if (typeof oConfig.isNodeExpanded !== "function") {
+				throw new Error("TableDelegate#isNodeExpanded: isNodeExpanded needs to be a function");
+			}
+
+			bAvailable = true;
+		}
+
+		return bAvailable;
 	};
 
 	/**
 	 * Retrieves the "Collapse All" button. Creates the button if necessary.
 	 *
-	 * @returns {sap.m.MenuButton} button for "Expand All"
+	 * @param {boolean} bRecreate Whether the button should be recreated
 	 * @private
 	 */
-	Table.prototype._updateCollapseAllButton = function() {
-		const bNeedCollapseAllButton = this._oToolbar != null && this._isCollapseAllEnabled();
+	Table.prototype._updateCollapseAllButton = async function(bRecreate) {
+		const bCollapseAllAvailable = await this._isCollapseEnabled();
+		const bNeedCollapseAllButton = this._oToolbar != null && bCollapseAllAvailable;
 
-		if (bNeedCollapseAllButton && !this._oCollapseAllButton) {
-			this._oCollapseAllButton = TableSettings.createExpandCollapseAllButton(this.getId(), [
-				function() {
-					try {
-						this.getControlDelegate().collapseAllRows(this);
-					} catch (oError) {
-						Log.error("CollapseAll could not be performed", oError, this);
-					}
-				}, this
-			], false);
+		if (bNeedCollapseAllButton && (!this._oCollapseAllButton || bRecreate)) {
+			if (this._oCollapseAllButton) {
+				if (this._oToolbar && this._oToolbar.getEnd().includes(this._oCollapseAllButton)) {
+					this._oToolbar.removeEnd(this._oCollapseAllButton);
+				}
+				this._oCollapseAllButton.destroy();
+				this._oCollapseAllButton = null;
+			}
+			this._oCollapseAllButton = await this._createCollapseButton();
 		}
 
 		if (!this._oCollapseAllButton) {
@@ -2350,32 +2393,62 @@ sap.ui.define([
 		}
 
 		this._oCollapseAllButton.setEnabled(!MTableUtil.isEmpty(this.getRowBinding()));
-		this._oCollapseAllButton.setVisible(this._isCollapseAllEnabled());
+		this._oCollapseAllButton.setVisible(bCollapseAllAvailable);
 	};
 
-	Table.prototype._isExpandAllEnabled = function() {
-		return this.isControlDelegateInitialized() && this.getControlDelegate().getSupportedFeatures(this).expandAllRows;
+	/**
+	 * Checks if expand capabilities are enabled.
+	 *
+	 * @returns {boolean} whether expand capabilities are enabled
+	 */
+	Table.prototype._isExpandEnabled = async function() {
+		if (!this.isControlDelegateInitialized()) {
+			return false;
+		}
+		const oConfig =  await this.getControlDelegate().fetchExpandAndCollapseConfiguration(this);
+		let bAvailable = false;
+
+		if ("expandAll" in oConfig) {
+			if (typeof oConfig.expandAll !== "function") {
+				throw new Error("TableDelegate#expandAll: expandAll needs to be a function");
+			}
+			bAvailable = true;
+		}
+
+		if ("expandAllFromNode" in oConfig && "isNodeExpanded" in oConfig) {
+			if (typeof oConfig.expandAllFromNode !== "function") {
+				throw new Error("TableDelegate#fetchExpandAndCollapseConfiguration: expandAllFromNode needs to be a function");
+			}
+
+			if (typeof oConfig.isNodeExpanded !== "function") {
+				throw new Error("TableDelegate#isNodeExpanded: isNodeExpanded needs to be a function");
+			}
+
+			bAvailable = true;
+		}
+
+		return bAvailable;
 	};
 
 	/**
 	 * Retrieves the "Collapse All" button. Creates the button if necessary.
 	 *
-	 * @returns {sap.m.MenuButton} button for "Expand All"
+	 * @param {boolean} bRecreate Whether the button should be recreated
 	 * @private
 	 */
-	Table.prototype._updateExpandAllButton = function() {
-		const bNeedExpandAllButton = this._oToolbar != null && this._isExpandAllEnabled();
+	Table.prototype._updateExpandAllButton = async function(bRecreate) {
+		const bExpandAllAvailable = await this._isExpandEnabled();
+		const bNeedExpandAllButton = this._oToolbar != null && bExpandAllAvailable;
 
-		if (bNeedExpandAllButton && !this._oExpandAllButton) {
-			this._oExpandAllButton = TableSettings.createExpandCollapseAllButton(this.getId(), [
-				function() {
-					try {
-						this.getControlDelegate().expandAllRows(this);
-					} catch (oError) {
-						Log.error("ExpandAll could not be performed", oError, this);
-					}
-				}, this
-			], true);
+		if (bNeedExpandAllButton && (!this._oExpandAllButton || bRecreate)) {
+			if (this._oExpandAllButton) {
+				if (this._oToolbar && this._oToolbar.getEnd().includes(this._oExpandAllButton)) {
+					this._oToolbar.removeEnd(this._oExpandAllButton);
+				}
+				this._oExpandAllButton.destroy();
+				this._oExpandAllButton = null;
+			}
+			this._oExpandAllButton = await this._createExpandButton();
 		}
 
 		if (!this._oExpandAllButton) {
@@ -2387,7 +2460,74 @@ sap.ui.define([
 		}
 
 		this._oExpandAllButton.setEnabled(!MTableUtil.isEmpty(this.getRowBinding()));
-		this._oExpandAllButton.setVisible(this._isExpandAllEnabled());
+		this._oExpandAllButton.setVisible(bExpandAllAvailable);
+	};
+
+	/**
+	 * Create an expand button for the toolbar.
+	 *
+	 * @returns {sap.m.Button|sap.m.MenuButton} either a button or a menu button
+	 */
+	Table.prototype._createExpandButton = async function() {
+		const oConfiguration = await this.getControlDelegate().fetchExpandAndCollapseConfiguration(this);
+		return this._createExpandCollapseButton(true, {
+			tree: oConfiguration.expandAll,
+			node: oConfiguration.expandAllFromNode,
+			isExpanded: oConfiguration.isNodeExpanded
+		});
+	};
+
+	/**
+	 * Create a collapse button for the toolbar.
+	 *
+	 * @returns {sap.m.Button|sap.m.MenuButton} either a button or a menu button
+	 */
+	Table.prototype._createCollapseButton = async function() {
+		const oConfiguration = await this.getControlDelegate().fetchExpandAndCollapseConfiguration(this);
+		return this._createExpandCollapseButton(false, {
+			tree: oConfiguration.collapseAll,
+			node: oConfiguration.collapseAllFromNode,
+			isExpanded: oConfiguration.isNodeExpanded
+		});
+	};
+
+	/**
+	 * Creates either an expand or collapse button as button or menu button.
+	 *
+	 * @param {*} bIsExpand whether the button should expand or collapse
+	 * @param {object} mConfig configuration map that contains the expand/collapse methods
+	 * @param {function} mConfig.tree method to expand/collapse the whole tree
+	 * @param {function} mConfig.node method to expand/collapse a single node
+	 * @param {function} mConfig.isExpanded method to check if a node is expanded
+	 *
+	 * @returns {sap.m.Button|sap.m.MenuButton} either a button or a menu button
+	 * @private
+	 */
+	Table.prototype._createExpandCollapseButton = function(bIsExpand, mConfig) {
+		const { tree: fnTree, node: fnNode, isExpanded: fnIsExpanded } = mConfig;
+
+		if (this.getSelectionMode() === "None" || typeof fnNode !== "function" || typeof fnIsExpanded !== "function") {
+			return TableSettings.createExpandCollapseButton(this.getId(), bIsExpand, () => fnTree(this));
+		}
+
+		const oMenuButton = TableSettings.createExpandCollapseMenuButton(this.getId(), bIsExpand, {
+			"tree": () => fnTree(this),
+			"node": () => {
+				const aContexts = this.getSelectedContexts();
+				return aContexts.length === 1 && fnNode(this, aContexts[0]);
+			}
+		});
+
+		oMenuButton.attachBeforeMenuOpen(() => {
+			const aContexts = this.getSelectedContexts();
+			// Node needs to be expanded to collapse it and vice versa
+			const bShowNodeOption = aContexts.length === 1 && fnIsExpanded(this, aContexts[0]) === !bIsExpand;
+
+			oMenuButton.getMenu().getItems()[0].setEnabled(fnTree != undefined);
+			oMenuButton.getMenu().getItems()[1].setEnabled(bShowNodeOption);
+		});
+
+		return oMenuButton;
 	};
 
 	/**

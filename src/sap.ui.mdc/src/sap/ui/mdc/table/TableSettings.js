@@ -111,24 +111,47 @@ sap.ui.define([
 
 			return oMenuButton;
 		},
-		createExpandCollapseAllButton: function(sIdPrefix, aEventInfo, bIsExpand) {
+		createExpandCollapseButton: function(sIdPrefix, bIsExpand, fnPressEvent) {
 			if (!oRb) {
 				this._loadResourceBundle();
 			}
 
 			const sId = bIsExpand ? sIdPrefix + "-expandAll" : sIdPrefix + "-collapseAll",
-				sText = bIsExpand ? oRb.getText("table.EXPAND_ALL") : oRb.getText("table.COLLAPSE_ALL");
+				sText = bIsExpand ? oRb.getText("table.EXPAND_TREE") : oRb.getText("table.COLLAPSE_TREE");
 
 			const oButton = this._createButton(sId, {
 				icon: bIsExpand ? "sap-icon://expand-all" : "sap-icon://collapse-all",
 				text: sText,
-				press: aEventInfo,
+				press: fnPressEvent,
 				tooltip: sText
 			});
 
 			FESRHelper.setSemanticStepname(oButton, "press", "mdc:tbl:" + (bIsExpand ? "expandAll" : "collapseAll"));
 
 			return oButton;
+		},
+		createExpandCollapseMenuButton: function(sIdPrefix, bIsExpand, mItemEventInfo) {
+			if (!oRb) {
+				this._loadResourceBundle();
+			}
+
+			const sId = bIsExpand ? sIdPrefix + "-expandAll" : sIdPrefix + "-collapseAll",
+				sTree = bIsExpand ? oRb.getText("table.EXPAND_TREE") : oRb.getText("table.COLLAPSE_TREE"),
+				sNode = bIsExpand ? oRb.getText("table.EXPAND_NODE") : oRb.getText("table.COLLAPSE_NODE"),
+				sText = bIsExpand ? oRb.getText("table.EXPAND_MENU_BUTTON_TEXT") : oRb.getText("table.COLLAPSE_MENU_BUTTON_TEXT");
+
+			const oMenuButton = new OverflowToolbarMenuButton(sId, {
+				icon: bIsExpand ? "sap-icon://expand-all" : "sap-icon://collapse-all",
+				tooltip: sText,
+				menu: new Menu({
+					items: [
+						new MenuItem({text: sTree, press: mItemEventInfo.tree}),
+						new MenuItem({text: sNode, press: mItemEventInfo.node})
+					]
+				})
+			});
+
+			return oMenuButton;
 		},
 		_createButton: function(sId, mSettings) {
 			return new OverflowToolbarButton(sId, mSettings);

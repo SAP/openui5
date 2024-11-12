@@ -1299,7 +1299,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("destroy", function (assert) {
-		this.oMetaModel.oMetaModelForAnnotations = "~metaModelForAnnotations~";
+		this.oMetaModel.oMetaModelForAnnotations = "~oMetaModelForAnnotations~";
 
 		this.mock(MetaModel.prototype).expects("destroy").on(this.oMetaModel).withExactArgs();
 
@@ -5462,7 +5462,11 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[true, false].forEach(function (bAutoExpandSelect) {
-		QUnit.test("getOrCreateSharedModel, bAutoExpandSelect=" + bAutoExpandSelect, function (assert) {
+		[false, true].forEach(function (bHasMetaModelForAnnotations) {
+			const sTitle = "getOrCreateSharedModel, bAutoExpandSelect=" + bAutoExpandSelect
+				+ ", bHasMetaModelForAnnotations=" + bHasMetaModelForAnnotations;
+
+		QUnit.test(sTitle, function (assert) {
 			var mHeaders = {"Accept-Language" : "ab-CD", "X-CSRF-Token" : "xyz"},
 				oMapGetExpectation,
 				oMapSetExpectation,
@@ -5471,6 +5475,9 @@ sap.ui.define([
 				oMetaModelMock = this.mock(oMetaModel),
 				oSharedModel;
 
+			oMetaModel.oMetaModelForAnnotations = bHasMetaModelForAnnotations
+				? "~oMetaModelForAnnotations~"
+				: null;
 			oMetaModel.sLanguage = "~sLanguage~";
 			oMetaModelMock.expects("getAbsoluteServiceUrl")
 				.withExactArgs("../ValueListService/$metadata")
@@ -5490,7 +5497,9 @@ sap.ui.define([
 					{"sap-language" : "~sLanguage~"}, undefined, sinon.match.func);
 			const oCopyAnnotationsExpectation
 				= this.mock(ODataMetaModel.prototype).expects("_copyAnnotations")
-					.withExactArgs(sinon.match.same(oMetaModel));
+					.withExactArgs(bHasMetaModelForAnnotations
+						? "~oMetaModelForAnnotations~"
+						: sinon.match.same(oMetaModel));
 
 			// code under test
 			oSharedModel = oMetaModel.getOrCreateSharedModel("../ValueListService/$metadata",
@@ -5511,6 +5520,9 @@ sap.ui.define([
 				oSharedModel);
 
 			assert.ok(oMapGetExpectation.alwaysCalledOn(oMapSetExpectation.thisValues[0]));
+
+			oMapSetExpectation.thisValues[0].clear(); // clean up static map!
+		});
 		});
 	});
 

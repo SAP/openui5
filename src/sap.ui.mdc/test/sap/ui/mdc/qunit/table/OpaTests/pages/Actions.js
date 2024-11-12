@@ -162,6 +162,41 @@ sap.ui.define([
 		},
 
 		/**
+		 * Emulates a click action on the expand all rows button.
+		 *
+		 * @function
+		 * @name iClickOnExpandAllRowsButton
+		 * @param {String|sap.ui.mdc.Table} vControl Id or control instance of the MDCTable
+		 * @param {boolean} bExpandAll Flag to expand all rows or single node
+		 * @returns {Promise} OPA waitFor
+		 * @private
+		 */
+		iClickOnExpandAllRowsMenuButton: function(vControl, bExpandAll) {
+			const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
+
+			return waitForTable.call(this, vControl, {
+				success: function(oTable) {
+					return this.waitFor({
+						id: oTable.getId() + "-expandAll",
+						controlType: "sap.m.MenuButton",
+						actions: new Press(),
+						success: function() {
+							return this.waitFor({
+								controlType: "sap.ui.unified.MenuItem",
+								matchers: new PropertyStrictEquals({
+									name: "text",
+									value: bExpandAll ? oResourceBundle.getText("table.EXPAND_TREE") : oResourceBundle.getText("table.EXPAND_NODE")
+								}),
+								actions: new Press()
+							});
+						},
+						errorMessage: "Could not press Expand Menu Button"
+					});
+				}
+			});
+		},
+
+		/**
 		 * Emulates a click action on the collapse all rows button.
 		 *
 		 * @function
@@ -181,6 +216,43 @@ sap.ui.define([
 							Opa5.assert.ok(true, "Pressed Collapse All Rows button");
 						},
 						errorMessage: "Could not press Collapse Button"
+					});
+				}
+			});
+		},
+
+
+
+		/**
+		 * Emulates a click action on the expand all rows button.
+		 *
+		 * @function
+		 * @name iClickOnExpandAllRowsButton
+		 * @param {String|sap.ui.mdc.Table} vControl Id or control instance of the MDCTable
+		 * @param {boolean} bCollapseAll Flag to expand all rows or single node
+		 * @returns {Promise} OPA waitFor
+		 * @private
+		 */
+		iClickOnCollapseAllRowsMenuButton: function(vControl, bCollapseAll) {
+			const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
+
+			return waitForTable.call(this, vControl, {
+				success: function(oTable) {
+					return this.waitFor({
+						id: oTable.getId() + "-collapseAll",
+						controlType: "sap.m.MenuButton",
+						actions: new Press(),
+						success: function() {
+							return this.waitFor({
+								controlType: "sap.ui.unified.MenuItem",
+								matchers: new PropertyStrictEquals({
+									name: "text",
+									value: bCollapseAll ? oResourceBundle.getText("table.COLLAPSE_TREE") : oResourceBundle.getText("table.COLLAPSE_NODE")
+								}),
+								actions: new Press()
+							});
+						},
+						errorMessage: "Could not press Collapse Menu Button"
 					});
 				}
 			});

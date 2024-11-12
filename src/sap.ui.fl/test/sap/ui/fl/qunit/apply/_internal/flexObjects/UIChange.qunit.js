@@ -80,6 +80,8 @@ sap.ui.define([
 			assert.strictEqual(oUIChange.isInInitialState(), true, "the isInInitialState function returns true");
 			assert.strictEqual(oUIChange.isValidForDependencyMap(), true, "with a selector the function returns true");
 			assert.strictEqual(oUIChange.hasRevertData(), false, "no revert data available yet");
+			assert.deepEqual(oUIChange.getContent(), oFileContent.content, "the content is set correctly");
+			assert.notEqual(oUIChange.getContent(), oFileContent.content, "the content is a copy");
 
 			oUIChange.setRevertData("foo");
 			assert.strictEqual(oUIChange.hasRevertData(), true, "revert data available");

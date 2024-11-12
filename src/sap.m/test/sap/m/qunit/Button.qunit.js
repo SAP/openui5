@@ -580,6 +580,30 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
+	QUnit.test("Right click should not trigger press event: Scenario 2", async function(assert) {
+		// Arrange
+		var pressSpy = this.spy(),
+			oTouchEndEvent = { setMarked: function() { }, which: 3, originalEvent: { type: "mouseup" }, target: { id: "btn1-inner" } },
+			oButton = new Button("btn1", {
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		// This is simulating a button with an icon, that removes its icon on right click
+		// Causing the IDs to be different between the touchstart and touchend events.
+		oButton._sTouchStartTargetId = '-img';
+
+		await nextUIUpdate(this.clock);
+
+		// Act
+		oButton.ontouchend(oTouchEndEvent);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
+
+		// Clean
+		oButton.destroy();
+	});
+
 	QUnit.test("_activeButton _inactiveButton", async function(assert) {
 		//sut
 		var sIconURI = 'sap-icon://slim-arrow-down',

@@ -28,7 +28,6 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var server;
 
 	function before() {
 		QUnit.config.fixture = null;
@@ -177,12 +176,31 @@ sap.ui.define([
 		});
 	});
 
+	function fakeFetch(oFetchStub, aConfigs) {
+		oFetchStub.callsFake((sPath) => {
+			if (sPath === aConfigs[0].path) {
+				const oResponse = new window.Response(aConfigs[0].value, {
+					status: aConfigs[0].status || 200,
+					headers: { "Content-type": "html/text" }
+				});
+				return Promise.resolve(oResponse);
+			} else if (sPath === aConfigs[1].path) {
+				const oResponse = new window.Response(aConfigs[1].value, {
+					status: aConfigs[1].status || 200,
+					headers: { "Content-type": "html/text" }
+				});
+				return Promise.resolve(oResponse);
+			}
+			// eslint-disable-next-line prefer-rest-params
+			return oFetchStub.wrappedMethod.apply(this, arguments);
+		});
+	}
+
 	QUnit.module("Given that RuntimeAuthoring and ControllerExtension service are created and 'getTemplate' is called", {
 		before,
 		after,
 		beforeEach() {
-			server = sinon.fakeServer.create();
-			server.respondImmediately = true;
+			this.oFetchStub = sandbox.stub(window, "fetch");
 
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfoFromSession").returns({
 				isResetEnabled: true,
@@ -204,14 +222,13 @@ sap.ui.define([
 		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
-			server.restore();
 		}
 	}, function() {
 		QUnit.test("with a template available in debug sources", function(assert) {
 			var sPath = "sap/ui/rta/service/ControllerExtension";
 			sandbox.stub(this.oViewOverlay.getDesignTimeMetadata(), "getControllerExtensionTemplate").returns(sPath);
-
-			server.respondWith(`${sap.ui.require.toUrl(sPath)}-dbg.js`, [200, {"Content-Type": "html/text"}, "abc"]);
+			const sUrl = `${sap.ui.require.toUrl(sPath)}-dbg.js`;
+			fakeFetch(this.oFetchStub, [{path: sUrl, value: "abc"}, {}]);
 			return this.oControllerExtension.getTemplate(this.oView.getId()).then(function(sTemplate) {
 				assert.equal(sTemplate, "abc", "the service returned the template");
 			});
@@ -220,8 +237,10 @@ sap.ui.define([
 		QUnit.test("with a template available, but no debug sources", function(assert) {
 			var sPath = "sap/ui/rta/service/ControllerExtension";
 			sandbox.stub(this.oViewOverlay.getDesignTimeMetadata(), "getControllerExtensionTemplate").returns(sPath);
-			server.respondWith(`${sap.ui.require.toUrl(sPath)}-dbg.js`, [404, {}, ""]);
-			server.respondWith(`${sap.ui.require.toUrl(sPath)}.js`, [200, {"Content-Type": "html/text"}, "def"]);
+			fakeFetch(this.oFetchStub, [
+				{path: `${sap.ui.require.toUrl(sPath)}-dbg.js`, status: 400},
+				{path: `${sap.ui.require.toUrl(sPath)}.js`, value: "def"}
+			]);
 
 			return this.oControllerExtension.getTemplate(this.oView.getId()).then(function(sTemplate) {
 				assert.equal(sTemplate, "def", "the service returned the template");
@@ -239,9 +258,10 @@ sap.ui.define([
 
 		QUnit.test("with template available that can't be found", function(assert) {
 			sandbox.stub(this.oViewOverlay.getDesignTimeMetadata(), "getControllerExtensionTemplate").returns("undefined");
-			server.respondWith(`${sap.ui.require.toUrl("undefined")}-dbg.js`, [404, {}, ""]);
-			server.respondWith(`${sap.ui.require.toUrl("undefined")}.js`, [404, {}, ""]);
-
+			fakeFetch(this.oFetchStub, [
+				{path: `${sap.ui.require.toUrl("undefined")}-dbg.js`, status: 404},
+				{path: `${sap.ui.require.toUrl("undefined")}.js`, status: 404}
+			]);
 			return this.oControllerExtension.getTemplate(this.oView.getId())
 			.then(function() {
 				assert.ok(false, "should not go in here");

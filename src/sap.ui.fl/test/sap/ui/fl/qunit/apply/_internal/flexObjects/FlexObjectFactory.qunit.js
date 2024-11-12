@@ -66,6 +66,11 @@ sap.ui.define([
 				this.oBackendResponse.content,
 				"then object properties are set"
 			);
+			assert.notEqual(
+				oFlexObject.getContent(),
+				this.oBackendResponse.content,
+				"then the reference to the original object is not the same as the one in the FlexObject"
+			);
 			assert.strictEqual(
 				oFlexObject.getSupportInformation().sapui5Version,
 				this.oBackendResponse.support.sapui5Version,

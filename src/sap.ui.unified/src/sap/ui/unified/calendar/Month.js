@@ -789,7 +789,7 @@ sap.ui.define([
 		if (oParent && oParent.getLegend) {
 			return oParent.getLegend();
 		} else {
-			return this.getAssociation("legend", []);
+			return this.getAssociation("legend");
 		}
 
 	};
