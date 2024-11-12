@@ -4006,7 +4006,7 @@ sap.ui.define([
 			bProcessedStarOperator = false,
 			oPromise,
 			mQueryOptionsFromParameters = {
-				$select : ["foo", "bar", "qualified.Name", "namespace.*", "*"],
+				$select : ["foo", "bar", "qualified.Name", "name/*", "namespace.*", "*"],
 				$expand : {}
 			},
 			mQueryOptionsAsString = JSON.stringify(mQueryOptionsFromParameters),
@@ -4037,6 +4037,8 @@ sap.ui.define([
 					.callsFake(function () {
 						bProcessedFoo = true;
 					});
+
+				return "~oProperty~";
 			}));
 		oHelperMock.expects("fetchPropertyAndType")
 			.withExactArgs("fnFetchMetadata", "/meta/path/bar")
@@ -4052,6 +4054,8 @@ sap.ui.define([
 					.callsFake(function () {
 						bProcessedBar = true;
 					});
+
+				return "~oProperty~";
 			}));
 		oHelperMock.expects("fetchPropertyAndType")
 			.withExactArgs("fnFetchMetadata", "/meta/path/qualified.Name")
@@ -4064,6 +4068,22 @@ sap.ui.define([
 					.callsFake(function () {
 						bProcessedQualifiedName = true;
 					});
+
+				return "~oProperty~";
+			}));
+		oHelperMock.expects("fetchPropertyAndType")
+			.withExactArgs("fnFetchMetadata", "/meta/path/name/*")
+			.returns(Promise.resolve().then(function () {
+				oHelperMock.expects("wrapChildQueryOptions")
+					.withExactArgs("/meta/path", "name/*", {}, "fnFetchMetadata")
+					.returns(undefined);
+				oHelperMock.expects("addToSelect")
+					.withExactArgs(sinon.match.same(mResolvedQueryOptions), ["name/*"])
+					.callsFake(function () {
+						bProcessedQualifiedName = true;
+					});
+
+				return undefined;
 			}));
 		oHelperMock.expects("fetchPropertyAndType")
 			.withExactArgs("fnFetchMetadata", "/meta/path/namespace.")
@@ -4076,6 +4096,8 @@ sap.ui.define([
 					.callsFake(function () {
 						bProcessedNamespace = true;
 					});
+
+				return "~oProperty~";
 			}));
 		oHelperMock.expects("fetchPropertyAndType")
 			.withExactArgs("fnFetchMetadata", "/meta/path/*")
@@ -4088,6 +4110,8 @@ sap.ui.define([
 					.callsFake(function () {
 						bProcessedStarOperator = true;
 					});
+
+				return undefined;
 			}));
 
 		// code under test
@@ -4104,6 +4128,48 @@ sap.ui.define([
 			assert.strictEqual(bProcessedStarOperator, true);
 			assert.strictEqual(JSON.stringify(mQueryOptionsFromParameters), mQueryOptionsAsString,
 				"original query options unchanged");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchResolvedQueryOptions: invalid path", function (assert) {
+		const oBinding = new ODataParentBinding({
+			getQueryOptionsFromParameters : mustBeMocked,
+			oModel : {
+				bAutoExpandSelect : true,
+				oInterface : {
+					fetchMetadata : "~fnFetchMetadata~"
+				},
+				resolve : mustBeMocked
+			},
+			sPath : "/path"
+		});
+		const mQueryOptionsFromParameters = {
+			$select : ["invalid"]
+		};
+
+		this.mock(oBinding).expects("getQueryOptionsFromParameters").withExactArgs()
+			.returns(mQueryOptionsFromParameters);
+		this.mock(oBinding.oModel).expects("resolve")
+			.withExactArgs(oBinding.sPath, "~oContext~")
+			.returns("/resolved/path");
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("/resolved/path")
+			.returns("/meta/path");
+		this.mock(_Helper).expects("fetchPropertyAndType")
+			.withExactArgs("~fnFetchMetadata~", "/meta/path/invalid")
+			.resolves(undefined);
+
+		// code under test
+		const oPromise = oBinding.fetchResolvedQueryOptions("~oContext~");
+
+		assert.strictEqual(oPromise.isPending(), true);
+
+		return oPromise.then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.strictEqual(oError.message,
+				"Invalid (navigation) property 'invalid' in $select of"
+					+ " sap.ui.model.odata.v4.ODataParentBinding: /path");
 		});
 	});
 

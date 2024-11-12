@@ -14376,6 +14376,8 @@ sap.ui.define([
 	// Scenario: A context binding contains a $select with a navigation property which must be
 	// converted to $expand, but this conversion is asynchronous.
 	// BCP: 2070020773
+	//
+	// Ensure a meaningful error for an invalid $select in parameters (SNOW: DINC0263565)
 	QUnit.test("ODCB: asynchronous $select to $expand", function (assert) {
 		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
@@ -14401,6 +14403,15 @@ sap.ui.define([
 				that.oView.byId("form").getBindingContext()
 					.getProperty("EQUIPMENT_2_PRODUCT/SupplierIdentifier"),
 				42);
+
+			// SNOW: DINC0263565
+			that.oLogMock.expects("error").withArgs("Invalid (navigation) property 'name' in"
+				+ " $select of sap.ui.model.odata.v4.ODataContextBinding: /EMPLOYEES('1')");
+
+			// code under test
+			const oBinding = oModel.bindContext("/EMPLOYEES('1')", undefined, {$select : "name"});
+
+			return resolveLater(() => { oBinding.destroy(); }); // properly destroy oReadGroupLock
 		});
 	});
 
@@ -14408,6 +14419,8 @@ sap.ui.define([
 	// Scenario: A list binding contains a dynamic filter and a $select with a navigation property
 	// which must be converted to $expand. (The scenario from the incident.)
 	// BCP: 2070020773
+	//
+	// Ensure a meaningful error for an invalid $select in parameters (SNOW: DINC0263565)
 	QUnit.test("ODLB: dynamic filter and $select to $expand", function (assert) {
 		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
@@ -14434,6 +14447,17 @@ sap.ui.define([
 				that.oView.byId("table").getItems()[0].getBindingContext()
 					.getProperty("EMPLOYEE_2_TEAM/Name"),
 				"Team #01");
+
+			// SNOW: DINC0263565
+			that.oLogMock.expects("error").withArgs("Invalid (navigation) property"
+				+ " '_TO_TEAM/TEAM_2_MANAGER' in $select of sap.ui.model.odata.v4.ODataListBinding:"
+				+ " /EMPLOYEES");
+
+			// code under test - "_TO_TEAM" instead of "EMPLOYEE_2_TEAM"
+			const oBinding = oModel.bindList("/EMPLOYEES", undefined, undefined, undefined,
+				{$select : "_TO_TEAM/TEAM_2_MANAGER"});
+
+			return resolveLater(() => { oBinding.destroy(); }); // properly destroy oReadGroupLock
 		});
 	});
 

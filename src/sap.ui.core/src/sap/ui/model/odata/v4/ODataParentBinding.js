@@ -969,7 +969,8 @@ sap.ui.define([
 			mConvertedQueryOptions,
 			sMetaPath,
 			oModel = this.oModel,
-			mQueryOptions = this.getQueryOptionsFromParameters();
+			mQueryOptions = this.getQueryOptionsFromParameters(),
+			that = this;
 
 		if (!(oModel.bAutoExpandSelect && mQueryOptions.$select)) {
 			return SyncPromise.resolve(mQueryOptions);
@@ -985,16 +986,22 @@ sap.ui.define([
 				sMetaSelectPath = sMetaSelectPath.slice(0, -1);
 			}
 
-			return _Helper.fetchPropertyAndType(fnFetchMetadata, sMetaSelectPath).then(function () {
-				var mWrappedQueryOptions = _Helper.wrapChildQueryOptions(
+			return _Helper.fetchPropertyAndType(fnFetchMetadata, sMetaSelectPath)
+				.then(function (oProperty) {
+					if (!oProperty && !sMetaSelectPath.endsWith("/*")) {
+						throw new Error("Invalid (navigation) property '" + sSelectPath
+							+ "' in $select of " + that);
+					}
+
+					const mWrappedQueryOptions = _Helper.wrapChildQueryOptions(
 						sMetaPath, sSelectPath, {}, fnFetchMetadata);
 
-				if (mWrappedQueryOptions) {
-					_Helper.aggregateExpandSelect(mConvertedQueryOptions, mWrappedQueryOptions);
-				} else {
-					_Helper.addToSelect(mConvertedQueryOptions, [sSelectPath]);
-				}
-			});
+					if (mWrappedQueryOptions) {
+						_Helper.aggregateExpandSelect(mConvertedQueryOptions, mWrappedQueryOptions);
+					} else {
+						_Helper.addToSelect(mConvertedQueryOptions, [sSelectPath]);
+					}
+				});
 		})).then(function () {
 			return mConvertedQueryOptions;
 		});
