@@ -140,14 +140,74 @@ sap.ui.define([
 		setTimeout(function() {
 			var oBusyIndicatorDOM = $LB.children('.sapUiLocalBusyIndicator')[0];
 			assert.equal($LB.children().length, iChildren + 1, 'Busy Indicator added to DOM tree');
-			assert.ok(!$LB[0].hasAttribute("aria-busy"), "ARIA busy isn't set to Control");
+			assert.ok($LB[0].hasAttribute("aria-busy"), "ARIA busy is set to Control");
 			assert.equal(oBusyIndicatorDOM.getAttribute("role"), "progressbar", 'ARIA role "progressbar" is set to busy indicator');
-			assert.ok(oBusyIndicatorDOM.hasAttribute("title"), 'title is set to busy indicator');
 			assert.ok(oBusyIndicatorDOM.hasAttribute("aria-valuemin"), 'aria-valuemin is set to busy indicator');
 			assert.ok(oBusyIndicatorDOM.hasAttribute("aria-valuemax"), 'aria-valuemax is set to busy indicator');
 			assert.ok(oBusyIndicatorDOM.hasAttribute("aria-valuetext"), 'aria-valuetext is set to busy indicator');
+			assert.ok(oBusyIndicatorDOM.hasAttribute("title"), 'title attribute is set to busy indicator');
 			done();
 		}, 1200);
+	});
+
+	QUnit.test("Focus Restoration", function(assert) {
+		const $LB = this.oListBox.$();
+		this.oListBox.setBusyIndicatorDelay(0);
+		this.oListBox.focus(); // set initial focus
+		const oLastFocusPosition = document.activeElement; // remember last focus position
+
+		this.oListBox.setBusy(true);
+		const oBusyIndicatorDOM = $LB.children('.sapUiLocalBusyIndicator')[0];
+		assert.equal(oBusyIndicatorDOM, document.activeElement, "setBusy(true): Focus moved to busy indicator.");
+		assert.ok($LB.attr("aria-busy"), "'aria-busy' attribute should be defined on the busy control.");
+
+
+		this.oListBox.setBusy(false);
+		assert.equal(oLastFocusPosition, document.activeElement, "setBusy(false): Focus restored correctly to last focus position.");
+		assert.notOk($LB.attr("aria-busy"), "'aria-busy' attribute should be removed again.");
+
+	});
+
+	QUnit.test("Focus Restoration Advanced", function(assert) {
+		const $LB = this.oListBox.$();
+		this.oListBox.setBusyIndicatorDelay(0);
+		this.oListBox.focus(); // set initial focus
+
+		this.oListBox.setBusy(true);
+		const oBusyIndicatorDOM = $LB.children('.sapUiLocalBusyIndicator')[0];
+		assert.equal(oBusyIndicatorDOM, document.activeElement, "setBusy(true): Focus moved to busy indicator.");
+		assert.ok($LB.attr("aria-busy"), "'aria-busy' attribute should be defined on the busy control.");
+
+		this.oSlider.focus(); // Move focus away from busy area
+		const oSliderFocus = document.activeElement;
+		assert.ok(this.oSlider.getDomRef().contains(oSliderFocus), "Focus moved away from busy area to the slider");
+
+		this.oListBox.setBusy(false);
+		assert.equal(oSliderFocus, document.activeElement, "setBusy(false): Focus shouldn't be restored.");
+		assert.notOk($LB.attr("aria-busy"), "'aria-busy' attribute should be removed again.");
+	});
+
+	QUnit.test("Focus Restoration after navigating back to the BusyIndicator", function(assert) {
+		const $LB = this.oListBox.$();
+		this.oListBox.setBusyIndicatorDelay(0);
+		this.oListBox.focus(); // set initial focus
+
+		this.oListBox.setBusy(true);
+		const oBusyIndicatorDOM = $LB.children('.sapUiLocalBusyIndicator')[0];
+		assert.equal(oBusyIndicatorDOM, document.activeElement, "setBusy(true): Focus moved to busy indicator.");
+		assert.ok($LB.attr("aria-busy"), "'aria-busy' attribute should be defined on the busy control.");
+
+		this.oSlider.focus(); // Move focus away from busy area
+		assert.ok(this.oSlider.getDomRef().contains(document.activeElement), "Focus moved away from busy area to the slider");
+		this.oSlider.setBusyIndicatorDelay(0);
+		this.oSlider.setBusy(true); // set initial focus
+
+		// move the focus back to the busy indicator of the ListBox
+		oBusyIndicatorDOM.focus();
+
+		this.oListBox.setBusy(false);
+		assert.ok(this.oListBox.getDomRef().contains(document.activeElement), "setBusy(false): Focus should be restored because its BusyIndicator got focus again");
+		assert.notOk($LB.attr("aria-busy"), "'aria-busy' attribute should be removed again.");
 	});
 
 	QUnit.test("tab chain - busy delay 0", function(assert) {

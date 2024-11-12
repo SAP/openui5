@@ -3,8 +3,11 @@
  */
 
 // Provides utility class sap.ui.core.BusyIndicatorUtils
-sap.ui.define(['./BlockLayerUtils', 'sap/ui/core/library'],
-	function(BlockLayerUtils, coreLibrary) {
+sap.ui.define([
+	'./BlockLayerUtils',
+	"sap/ui/core/Lib",
+	'sap/ui/core/library'],
+	function(BlockLayerUtils, Library, coreLibrary) {
 	"use strict";
 
 	// Static class
@@ -50,7 +53,7 @@ sap.ui.define(['./BlockLayerUtils', 'sap/ui/core/library'],
 		var oContainer = document.createElement("div");
 		oContainer.className = "sapUiLocalBusyIndicator " + sSizeClass + " sapUiLocalBusyIndicatorFade";
 
-		BlockLayerUtils.addAriaAttributes(oContainer);
+		BusyIndicatorUtils.addAriaAttributes(oContainer);
 
 		addAnimation(oContainer);
 
@@ -86,6 +89,31 @@ sap.ui.define(['./BlockLayerUtils', 'sap/ui/core/library'],
 			oAnimation.className = "sapUiLocalBusyIndicatorAnimation sapUiLocalBusyIndicatorAnimSmall";
 		}
 	}
+
+	/**
+	 * Adds the necessary ARIA attributes to the given DOM element.
+	 * @param {object} oDOM The DOM which gets added for the busy animation
+	 * @private
+	 */
+	BusyIndicatorUtils.addAriaAttributes = function(oDOM, oControl) {
+		const oResourceBundle = Library.getResourceBundleFor("sap.ui.core");
+
+		// make the blockLayer tabbable
+		oDOM.setAttribute("tabindex", "0");
+
+		// attributes for inderterminate progressbar
+		oDOM.setAttribute("role", "progressbar");
+		oDOM.setAttribute("aria-valuemin", "0");
+		oDOM.setAttribute("aria-valuemax", "100");
+		oDOM.setAttribute("aria-valuetext", oResourceBundle.getText("BUSY_VALUE_TEXT"));
+
+		// message to describe current state to screen readers
+		oDOM.setAttribute("title", oResourceBundle.getText("BUSY_TEXT"));
+
+		// TODO: tooltip: Check if control provides aria-describedby attribute?
+		const oDomRef = oControl?.getDomRef();
+		oDomRef?.setAttribute("aria-busy", "true");
+	};
 
 	/**
 	 * Adds the DOM element for the BusyIndicator animation to the contained DOM element in the given block-state.
@@ -127,6 +155,9 @@ sap.ui.define(['./BlockLayerUtils', 'sap/ui/core/library'],
 
 		var oParentDOM = oBusyBlockState.$parent.get(0),
 			oBlockLayerDOM = oBusyBlockState.$blockLayer.get(0);
+
+		// aria attribtues
+		BusyIndicatorUtils.addAriaAttributes(oBlockLayerDOM, oBusyBlockState.control);
 
 		oParentDOM.className += " sapUiLocalBusy";
 		oBlockLayerDOM.className += " sapUiLocalBusyIndicator " + sSizeClass + " sapUiLocalBusyIndicatorFade";

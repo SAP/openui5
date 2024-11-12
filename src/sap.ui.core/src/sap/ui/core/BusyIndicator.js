@@ -106,20 +106,7 @@ sap.ui.define([
 		var oRootDomRef = document.createElement("div");
 		oRootDomRef.id = this.sDOM_ID;
 
-		var oBusyContainer = document.createElement("div");
-		this._oResBundle = Library.getResourceBundleFor("sap.ui.core");
-		var sTitle = this._oResBundle.getText("BUSY_TEXT");
-		delete this._oResBundle;
-
-		oBusyContainer.className = "sapUiBusy";
-		oBusyContainer.setAttribute("tabindex", "0");
-		oBusyContainer.setAttribute("role", "progressbar");
-		oBusyContainer.setAttribute("alt", "");
-		oBusyContainer.setAttribute("title", sTitle);
-		oRootDomRef.appendChild(oBusyContainer);
-
-		var oBusyElement = BusyIndicatorUtils.getElement(BusyIndicatorSize.Large);
-		oBusyElement.setAttribute("title", sTitle);
+		const oBusyElement = BusyIndicatorUtils.getElement(BusyIndicatorSize.Large);
 		oRootDomRef.appendChild(oBusyElement);
 
 		this.oDomRef = oRootDomRef;
