@@ -2011,6 +2011,29 @@ sap.ui.define([
 		}), true, "After destruction");
 	});
 
+
+	QUnit.test("throwInvalidPropertyError", function(assert) {
+		assert.throws(() => {
+			_PropertyHelper.throwInvalidPropertyError = function() { };
+		}, "Trying to override the function throws an error");
+
+		assert.throws(() => {
+			_PropertyHelper.throwInvalidPropertyError();
+		}, new Error("Invalid property definition: undefined"), "No arguments");
+
+		assert.throws(() => {
+			_PropertyHelper.throwInvalidPropertyError("Oh no...");
+		}, new Error("Invalid property definition: Oh no..."), "Error message");
+
+		assert.throws(() => {
+			_PropertyHelper.throwInvalidPropertyError("Oh no...", this.oPropertyHelper.getProperties()[0]);
+		}, new Error("Invalid property definition: Oh no...\n"
+			+ '{"key":"propA","label":"Property A","dataType":"String","path":"propAPath","unit":"propB","groupLabel":"Property A group label",'
+			+ '"exportSettings":{"width":20,"label":"Property A export label"},"maxConditions":2,"name":"propA","tooltip":"",'
+			+ '"visible":true,"formatOptions":null,"constraints":null,"group":"","caseSensitive":true,"filterable":true,"sortable":true}'
+		), "Error message and property");
+	});
+
 	QUnit.test("getSortableProperties", function(assert) {
 		assert.deepEqual(this.oPropertyHelper.getSortableProperties(), [
 			this.aProperties[0]
