@@ -25,16 +25,7 @@ sap.ui.define([
 		return FilterBarDelegate;
 	};
 
-	/**
-	 * Returns the relevant property infos based on the metadata used with the MDC chart instance.
-	 *
-	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
-	 * @returns {array} Array of the property infos to be used within MDC chart
-	 * @experimental
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 */
-	 ChartDelegate.fetchProperties = function (oChart) {
+	ChartDelegate.fetchProperties = function (oChart) {
 
 		var oModel = this._getModel(oChart);
 		var pCreatePropertyInfos;
@@ -51,12 +42,7 @@ sap.ui.define([
 			pCreatePropertyInfos = this._createPropertyInfos(oChart, oModel);
 		}
 
-		return pCreatePropertyInfos.then(function (aProperties) {
-			if (oChart.data) {
-				oChart.data("$mdcChartPropertyInfo", aProperties);
-			}
-			return aProperties;
-		});
+		return pCreatePropertyInfos;
 	};
 
 	function onModelContextChange(oEvent, oData) {
