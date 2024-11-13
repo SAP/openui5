@@ -38,7 +38,7 @@ sap.ui.define([
 				oDRS4End: UI5Date.getInstance(2019, 9, 17),
 
 				oDRS5Start: UI5Date.getInstance(2009, 1, 2),
-				oDRS5End: UI5Date.getInstance(2015, 1, 17)
+				oDRS5End: UI5Date.getInstance(2025, 1, 17)
 			});
 			this.getView().setModel(oModel);
 
