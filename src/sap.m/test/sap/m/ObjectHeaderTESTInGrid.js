@@ -4,11 +4,16 @@ sap.ui.define([
   "sap/m/ObjectHeader",
   "sap/ui/core/library",
   "sap/m/ObjectStatus",
+  "sap/m/ObjectMarker",
+  "sap/m/library",
   "sap/m/App",
   "sap/m/Page",
   "sap/ui/Device"
-], function(IconPool, ObjectAttribute, ObjectHeader, coreLibrary, ObjectStatus, App, Page, Device) {
+], function(IconPool, ObjectAttribute, ObjectHeader, coreLibrary, ObjectStatus, ObjectMarker, mobileLibrary, App, Page, Device) {
   "use strict";
+
+  // shortcut for sap.m.ObjectMarkerType
+  const ObjectMarkerType = mobileLibrary.ObjectMarkerType;
 
   // shortcut for sap.ui.core.ValueState
   const ValueState = coreLibrary.ValueState;
@@ -26,14 +31,12 @@ sap.ui.define([
 	  text : "Attribute2",
 	  active : true,
 	  press : function() {
-
 		  attrs2[0].setText("Ñagçyfox Attribute2");
 	  }
   }), new ObjectAttribute({
 	  text : "Created by: John Doe Ñagçyfox",
 	  active : true,
 	  press : function() {
-
 		  attrs2[0].setText("Ñagçyfox Contract #D1234567890");
 	  }
   }) ];
@@ -53,9 +56,10 @@ sap.ui.define([
 				  icon : IconPool.getIconURI("inbox"),
 				  state : ValueState.Error
 			  }) ],
-			  markFavorite : true,
-			  markFlagged : true,
-			  showMarkers : true
+			  markers: [
+				  new ObjectMarker({type: ObjectMarkerType.Favorite}),
+				  new ObjectMarker({type: ObjectMarkerType.Flagged})
+			  ]
 		  });
 
   var oh1Icon = new ObjectHeader("oh1-with-icon",{
@@ -84,69 +88,6 @@ sap.ui.define([
 			  })]
 		  });
 
-  /*	var oh2 = new sap.m.ObjectHeader(
-			  "oh2",
-			  {
-				  title : "Ñagçyfox Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
-
-				  statuses : [ new sap.m.ObjectStatus({
-					  text : ""
-				  }), new sap.m.ObjectStatus({}) ],
-				  attributes : [ new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), ]
-			  });
-
-	  var oh3 = new sap.m.ObjectHeader(
-			  "oh3",
-			  {
-				  title : "Ñagçyfox Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
-				  number : "3.624.000.000,00",
-				  numberUnit : "Euro",
-				  statuses : [ new sap.m.ObjectStatus({
-					  text : "Ñgçy Positive Text Ñgçy",
-					  state : sap.ui.core.ValueState.Success
-				  }), new sap.m.ObjectStatus({
-					  text : "Negative Text Ñgçy",
-					  state : sap.ui.core.ValueState.Error
-				  }) ]
-			  });
-
-	  var oh3_1 = new sap.m.ObjectHeader(
-			  "oh3_1",
-			  {
-				  title : "Ñagçyfox Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
-				  number : "6,00",
-				  numberUnit : "Euro",
-				  numberState : sap.ui.core.ValueState.Error,
-				  statuses : [ new sap.m.ObjectStatus({
-					  text : "Negative Text Ñgçy",
-					  state : sap.ui.core.ValueState.Error
-				  }) ]
-			  });
-
-	  var oh3_2 = new sap.m.ObjectHeader(
-			  "oh3_2",
-			  {
-				  title : "Ñagçyfox Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
-				  number : "3.624",
-				  numberUnit : "EUR",
-				  numberState : sap.ui.core.ValueState.Warning,
-				  statuses : [ new sap.m.ObjectStatus({
-					  text : "Ñgçy Positive Text Ñgçy",
-					  state : sap.ui.core.ValueState.Success
-				  }), new sap.m.ObjectStatus({
-					  text : "Negative Text Ñgçy",
-					  state : sap.ui.core.ValueState.Error
-				  }) ],
-				  attributes : [ new sap.m.ObjectAttribute({
-					  text : "This one is invisible",
-					  visible : false
-				  }),
-					  new sap.m.ObjectAttribute({
-					  text : "Ñagçyfox Contract #D1234567890"
-				  }) ],
-				  markFavorite : true
-			  });
-  */
   var oh4PressHandler = function(oEvent) {
 
 	  if (oh4.getIcon()) {
@@ -177,43 +118,6 @@ sap.ui.define([
 	  iconPress : oh4PressHandler
   });
 
-
-  /*	var scrollContainer = new sap.m.ScrollContainer({
-		  width : "100%",
-		  horizontal : sap.ui.Device.system.phone,
-		  content: [new sap.m.Label({text: "This label is displayed on the Object Header's right hand side"})]
-	  });
-
-	  var facetGrid = new sap.ui.layout.Grid({
-		  defaultSpan: "L6 M12 S12",
-		  hSpacing: 1,
-		  vSpacing: 1,
-		  width: "auto",
-		  content: [oh1, oh2, oh3, oh4]
-	  });
-
-	  var gridOHeader = new sap.m.ObjectHeader ({
-		  title: "Create fictitious vendor and initiate payment to the vendor [Vendor Management]",
-		  condensed: true });
-	  gridOHeader.addAttribute(new sap.m.ObjectAttribute({ text: "P001" }));
-
-	  var headerGrid = new sap.ui.layout.Grid({
-		  hSpacing: 0,
-		  vSpacing: 0,
-		  content: [
-			  gridOHeader,
-			  scrollContainer
-		  ]
-	  });
-
-	  var masterPage = new sap.m.Page({
-		  content: [headerGrid, facetGrid],
-		  showNavButton: true,
-	  });
-
-
-	  */
-
   // put all the testing object header objects on the testing page
   var app = new App("myApp", {initialPage:"page1"});
   var page1 = new Page("page1", {
@@ -225,9 +129,5 @@ sap.ui.define([
   page1.addContent(oh4);
   app.addPage(page1);
 
-  /*	var app = new sap.m.App();
-	  app.setInitialPage(masterPage.getId());
-	  app.addPage(masterPage);
-  */
   app.placeAt('body');
 });

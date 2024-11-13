@@ -75424,6 +75424,8 @@ sap.ui.define([
 	// the response data is reflected to the table and the object page.
 	// JIRA: CPOUI5ODATAV4-2691
 	// JIRA: CPOUI5ODATAV4-2692
+	//
+	// The "separateReceived" event is fired for each separate request (JIRA: CPOUI5ODATAV4-2792)
 	[false, true].forEach(function (bAutoExpandSelect) {
 		QUnit.test("$$separate: autoExpandSelect=" + bAutoExpandSelect, async function (assert) {
 			const oModel = this.createSpecialCasesModel({autoExpandSelect : bAutoExpandSelect});
@@ -75529,17 +75531,33 @@ sap.ui.define([
 
 			await this.createView(assert, sView, oModel);
 
+			const oListBinding = this.oView.byId("table").getBinding("items");
+			const aEventParameters = [];
+			oListBinding.attachEvent("separateReceived", function (oEvent) {
+				aEventParameters.push(oEvent.getParameters());
+			});
+			const checkEvents = (aParameters) => {
+				aParameters.forEach(function (oParameters) {
+					assert.deepEqual(aEventParameters.shift(), oParameters);
+				});
+				assert.deepEqual(aEventParameters, []);
+			};
+
 			this.expectChange("friend", ["Friend A", "Friend B"]);
 
 			fnResolveBestFriend();
 
 			await this.waitForChanges(assert, "$$separate response: BestFriend");
 
+			checkEvents([{property : "BestFriend", start : 0, length : 2}]);
+
 			this.expectChange("sibling", ["Sibling A", "Sibling B"]);
 
 			fnResolveSiblingEntity();
 
 			await this.waitForChanges(assert, "$$separate response: SiblingEntity");
+
+			checkEvents([{property : "SiblingEntity", start : 0, length : 2}]);
 
 			let fnResolveMain;
 			this.expectRequest({
@@ -75584,6 +75602,8 @@ sap.ui.define([
 
 			await this.waitForChanges(assert, "load more items: main request is delayed");
 
+			checkEvents([]);
+
 			this.expectChange("name", [,, "Artist C"])
 				.expectChange("publicationCurrency", [,, "JPY"])
 				.expectChange("friend", [,, "Friend C"])
@@ -75592,6 +75612,11 @@ sap.ui.define([
 			fnResolveMain();
 
 			await this.waitForChanges(assert, "delayed main response");
+
+			checkEvents([
+				{property : "BestFriend", start : 2, length : 1},
+				{property : "SiblingEntity", start : 2, length : 1}
+			]);
 
 			this.expectRequest({
 					batchNo : 7,
@@ -75665,6 +75690,11 @@ sap.ui.define([
 
 			await this.waitForChanges(assert, "separate response with unexpected entity");
 
+			checkEvents([
+				{property : "BestFriend", start : 3, length : 2},
+				{property : "SiblingEntity", start : 3, length : 2}
+			]);
+
 			let fnResolveBestFriend60;
 			this.expectRequest({
 					batchNo : 11,
@@ -75711,6 +75741,8 @@ sap.ui.define([
 
 			await this.waitForChanges(assert, "load item 60, delayed BestFriend");
 
+			checkEvents([{property : "SiblingEntity", start : 5, length : 1}]);
+
 			this.expectRequest({
 					batchNo : 14,
 					url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
@@ -75754,6 +75786,11 @@ sap.ui.define([
 
 			await this.waitForChanges(assert, "load item 70, overtakes 60's BestFriend");
 
+			checkEvents([
+				{property : "BestFriend", start : 6, length : 1},
+				{property : "SiblingEntity", start : 6, length : 1}
+			]);
+
 			this.expectChange("detailName", "Artist F")
 				.expectChange("detailFriendName", null);
 
@@ -75768,6 +75805,8 @@ sap.ui.define([
 			fnResolveBestFriend60();
 
 			await this.waitForChanges(assert, "resolve 60's BestFriend");
+
+			checkEvents([{property : "BestFriend", start : 5, length : 1}]);
 		});
 	});
 
@@ -75896,9 +75935,19 @@ sap.ui.define([
 	// response of the separate request is ignored. If the separate request fails, the column for
 	// the separate data remains empty. In both cases the error is reported as UI5 message.
 	// JIRA: CPOUI5ODATAV4-2776
+	//
+	// The UI5 message of the failed separate request is also provided as "errorMessage" parameter
+	// to the "separateReceived" event. Calling preventDefault on this event prevents that this UI5
+	// message is automatically reported to the message model.
+	// JIRA: CPOUI5ODATAV4-2792
 	[/*main failed*/false, true].forEach(function (bSeparateFailed) {
-		const sTitle = "$$separate: error handling, " + (bSeparateFailed ? "separate" : "main")
-			+ " request failed";
+		[false, true].forEach(function (bPreventDefault) {
+			if (!bSeparateFailed && bPreventDefault) {
+				return;
+			}
+
+			const sTitle = "$$separate: error handling, " + (bSeparateFailed ? "separate" : "main")
+				+ " request failed" + (bPreventDefault ? ", call preventDefault" : "");
 
 		QUnit.test(sTitle, async function (assert) {
 			const oModel = this.createTeaBusiModel({autoExpandSelect : true});
@@ -75908,16 +75957,28 @@ sap.ui.define([
 				path : '/EMPLOYEES',
 				parameters : {
 					$$separate : ['EMPLOYEE_2_TEAM']
-				}
+				},
+				suspended : true
 			}">
 		<Text id="name" text="{Name}"/>
 		<Text id="team" text="{EMPLOYEE_2_TEAM/Name}"/>
 	</Table>`;
 
-			if (bSeparateFailed) {
-				this.oLogMock.expects("error")
-					.withArgs("Loading $$separate property 'EMPLOYEE_2_TEAM' failed");
-			} else {
+			this.expectChange("name", [])
+				.expectChange("team", []);
+
+			await this.createView(assert, sView, oModel);
+
+			const oListBinding = this.oView.byId("table").getBinding("items");
+			const aEventParameters = [];
+			oListBinding.attachEvent("separateReceived", function (oEvent) {
+				aEventParameters.push(oEvent.getParameters());
+				if (bPreventDefault) {
+					oEvent.preventDefault();
+				}
+			});
+
+			if (!bSeparateFailed) {
 				this.oLogMock.expects("error").twice()
 					.withArgs("Failed to get contexts for " + sTeaBusi + "EMPLOYEES with start index 0"
 						+ " and length 2");
@@ -75948,17 +76009,37 @@ sap.ui.define([
 						Name : "Employee 1"
 					}]
 				} : oError)
-				.expectMessage({
+				.expectMessages(bPreventDefault ? [] : [{
 					code : "CODE",
 					message : "Request intentionally failed",
 					persistent : true,
 					technical : true,
 					type : "Error"
-				})
+				}])
 				.expectChange("name", bSeparateFailed ? ["Employee 0", "Employee 1"] : [])
 				.expectChange("team", bSeparateFailed ? [null, null] : []);
 
-			await this.createView(assert, sView, oModel);
+			oListBinding.resume();
+
+			await this.waitForChanges(assert, "resume binding");
+
+			if (bSeparateFailed) {
+				const oParameters = aEventParameters.shift();
+				assert.strictEqual(oParameters.property, "EMPLOYEE_2_TEAM");
+				assert.strictEqual(oParameters.start, 0);
+				assert.strictEqual(oParameters.length, 2);
+				assert.strictEqual(oParameters.errorMessage.getCode(), "CODE");
+				assert.strictEqual(oParameters.errorMessage.getMessage(),
+					"Request intentionally failed");
+				assert.strictEqual(oParameters.errorMessage.getPersistent(), true);
+				assert.strictEqual(oParameters.errorMessage.getType(), "Error");
+				if (!bPreventDefault) {
+					assert.strictEqual(oParameters.errorMessage,
+						Messaging.getMessageModel().getObject("/")[0]);
+				}
+			}
+			assert.deepEqual(aEventParameters, []);
+		});
 		});
 	});
 });

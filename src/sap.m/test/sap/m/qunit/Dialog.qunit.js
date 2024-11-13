@@ -1453,7 +1453,8 @@ sap.ui.define([
 			$containerContent;
 
 		// Act
-		oContainer.placeAt("qunit-fixture");
+		oContainer.open();
+		this.clock.tick(500);
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$().find(sContentSelector);
@@ -1649,7 +1650,7 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
-	QUnit.test("Heading rendering when 'customHeader' aggregation is with bigger than one line height", function(assert) {
+	QUnit.test("Heading rendering when 'customHeader' aggregation is with bigger than one line height", async function(assert) {
 		// arrange
 		var oToolbar = new Toolbar({
 			height: "76px",
@@ -1675,7 +1676,9 @@ sap.ui.define([
 		assert.strictEqual(oDialog.getDomRef().offsetHeight, 176, "Dialog is with the correct height");
 
 		oToolbar.setHeight("20rem");
-		oDialog.invalidate();
+		await nextUIUpdate(this.clock);
+		oDialog._onResize();
+
 
 		assert.strictEqual(oDialog.getDomRef().offsetHeight, 420, "Dialog is with the correct height");
 

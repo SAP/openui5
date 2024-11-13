@@ -55,17 +55,17 @@ sap.ui.define([], function() {
 		},
 
 		/**
-		 * Fetches all flex objects related to the given variant references
+		 * Fetches all flex objects related to the given variant reference
 		 *
 		 * @param {object} mPropertyBag - Property bag
 		 * @param {string} mPropertyBag.reference - Flexibility reference
-		 * @param {string[]} mPropertyBag.variantReferences - List of variant references to be loaded
+		 * @param {string} mPropertyBag.variantReference - Variant reference to be loaded
 		 * @param {string} [mPropertyBag.url] - Configured URL for the connector
 		 * @param {sap.ui.fl.Layer} [mPropertyBag.layer] - Layer of the objects to be loaded
-		 * @returns {Promise<object>} Resolves with the data for variants
+		 * @returns {Promise<object>} Resolves with the data for variant
 		 */
-		loadFlVariants() {
-			return Promise.reject("loadFlVariants is not implemented");
+		loadFlVariant() {
+			return Promise.reject("loadFlVariant is not implemented");
 		}
 	};
 

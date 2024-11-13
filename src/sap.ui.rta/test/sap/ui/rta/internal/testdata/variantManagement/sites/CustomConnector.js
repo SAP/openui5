@@ -24,7 +24,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Connector extending the LocalStorageConnector with the capability to lazy load variants.
+	 * Connector extending the LocalStorageConnector with the capability to lazy load variant.
 	 * Withholds all variant related flex objects if the URL parameter "sap-ui-fl-xx-lazyLoadVariants" is set to "true".
 	 *
 	 * @namespace sap.ui.rta.test.CustomConnector
@@ -44,7 +44,6 @@ sap.ui.define([
 				// eslint-disable-next-line no-console
 				console.warn(oFlexData.variants.map((oVariant) => oVariant.fileName));
 				oFlexData.variants = [];
-				oFlexData.variantManagementChanges = [];
 				oFlexData.variantChanges = [];
 				oFlexData.variantDependentControlChanges = [];
 			});
@@ -52,7 +51,7 @@ sap.ui.define([
 		return aResponses;
 	};
 
-	CustomConnector.loadFlVariants = async function(mPropertyBag) {
+	CustomConnector.loadFlVariant = async function(mPropertyBag) {
 		const aFlexObjects = await loadDataFromStorage({
 			storage: this.storage,
 			reference: mPropertyBag.reference
@@ -60,21 +59,18 @@ sap.ui.define([
 		const oReturn = {};
 		oReturn.variants = aFlexObjects.filter((oFlexObject) => {
 			return oFlexObject.fileType === "ctrl_variant" &&
-				(mPropertyBag.variantReferences.includes(oFlexObject.fileName) ||
-				mPropertyBag.variantReferences.includes(oFlexObject.variantReference));
+				(mPropertyBag.variantReference === oFlexObject.fileName ||
+				mPropertyBag.variantReference === oFlexObject.variantReference);
 		});
 		const aBaseVariantIds = oReturn.variants.map((oVariant) => oVariant.variantReference);
 		const aBaseVariants = aFlexObjects.filter((oFlexObject) => aBaseVariantIds.includes(oFlexObject.fileName));
 		oReturn.variants = [...oReturn.variants, ...aBaseVariants];
-		const aAllNeededVariantIds = [...mPropertyBag.variantReferences, ...aBaseVariantIds];
+		const aAllNeededVariantIds = [mPropertyBag.variantReference, ...aBaseVariantIds];
 		oReturn.variantDependentControlChanges = aFlexObjects.filter((oFlexObject) => {
 			return oFlexObject.fileType === "change" && aAllNeededVariantIds.includes(oFlexObject.variantReference);
 		});
 		oReturn.variantChanges = aFlexObjects.filter((oFlexObject) => {
 			return aAllNeededVariantIds.includes(oFlexObject.selector?.id);
-		});
-		oReturn.variantManagementChanges = aFlexObjects.filter((oFlexObject) => {
-			return aAllNeededVariantIds.includes(oFlexObject.content?.defaultVariant);
 		});
 		return oReturn;
 	};

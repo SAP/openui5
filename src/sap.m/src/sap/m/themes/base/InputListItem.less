@@ -9,7 +9,7 @@
 
 .sapMILILabel {
 	font-size: 1.125rem;
-	color: @sapUiListTextColor;
+	color: var(--sapList_TextColor);
 }
 
 .sapMLIBActionable .sapMILILabel {
@@ -24,6 +24,7 @@
 
 .sapMILIContentWrapperL {
 	flex-wrap: wrap;
+
 	& > .sapMILILabel {
 		flex: 1 1 auto;
 	}
@@ -38,12 +39,12 @@
 	text-align: right;
 }
 
-html[dir=rtl] .sapMILIDiv {
+html[dir='rtl'] .sapMILIDiv {
 	text-align: left;
 }
 
 .sapMLIBActive .sapMILILabel {
-	color: @sapUiListActiveTextColor;
+	color: var(--sapList_Active_TextColor);
 }
 
 /* Compact size */

@@ -47,17 +47,16 @@ sap.ui.define([
 		BusyIndicator.show(0);
 
 		assert.equal(jQuery(this.sClass).length, 1, "BusyIndicator should exist after immediate show");
-		assert.equal(BusyIndicator.oDomRef.children.length, 2, "DOM contains container and busy element");
+		assert.equal(BusyIndicator.oDomRef.children.length, 1, "DOM contains container and busy element");
 
 		var $Container = jQuery(BusyIndicator.oDomRef.children[0]);
-		assert.ok($Container.hasClass("sapUiBusy"), "DOM contains the busy container");
 
 		var oStatic = StaticArea.getUIArea();
 		// first parent -> root node of BusyIndicator
 		// second parent -> UI-area
 		assert.equal(oStatic.getRootNode(), $Container.parent().parent().get(0), "Busy indicator attached to static UI-area");
 
-		var $BusyElement = jQuery(BusyIndicator.oDomRef.children[1]);
+		var $BusyElement = jQuery(BusyIndicator.oDomRef.children[0]);
 		assert.ok($BusyElement.hasClass("sapUiLocalBusyIndicator"), "DOM contains the busy element");
 
 		var $AnimationContainer = jQuery($BusyElement.children());

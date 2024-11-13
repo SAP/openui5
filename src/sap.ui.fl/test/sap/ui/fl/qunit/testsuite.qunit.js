@@ -92,6 +92,13 @@ sap.ui.define([
 				}
 			},
 
+			"initial/_internal/connectors/BtpServiceConnector": {
+				group: "Initial Internal",
+				coverage: {
+					only: ["sap/ui/fl/initial/_internal/connectors/BtpServiceConnector"]
+				}
+			},
+
 			"initial/_internal/connectors/Utils": {
 				group: "Initial Internal",
 				coverage: {

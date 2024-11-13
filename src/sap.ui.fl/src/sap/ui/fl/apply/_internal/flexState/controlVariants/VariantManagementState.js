@@ -461,15 +461,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Loads the flex objects for the given variant references and adds them to the FlexState.
+	 * Loads the flex objects for a given variant reference and adds them to the FlexState.
 	 *
 	 * @param {object} mPropertyBag - Object with the necessary properties
 	 * @param {string} mPropertyBag.reference - Flexibility reference
-	 * @param {string[]} mPropertyBag.variantReferences - List of variant references to be loaded
+	 * @param {string} mPropertyBag.variantReference - Variant reference to be loaded
 	 */
-	VariantManagementState.loadVariants = async function(mPropertyBag) {
-		const oStorageResponse = await Storage.loadFlVariants({
-			variantReferences: mPropertyBag.variantReferences,
+	VariantManagementState.loadVariant = async function(mPropertyBag) {
+		const oStorageResponse = await Storage.loadFlVariant({
+			variantReference: mPropertyBag.variantReference,
 			reference: mPropertyBag.reference
 		});
 		FlexState.updateWithDataProvided({

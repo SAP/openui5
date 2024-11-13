@@ -1,8 +1,5 @@
 sap.ui.define([
 	"sap/m/App",
-	"sap/m/Button",
-	"sap/m/CheckBox",
-	"sap/m/Label",
 	"sap/m/library",
 	"sap/m/List",
 	"sap/m/ObjectAttribute",
@@ -15,9 +12,6 @@ sap.ui.define([
 	"sap/ui/core/library"
 ], function(
 	App,
-	Button,
-	CheckBox,
-	Label,
 	mobileLibrary,
 	List,
 	ObjectAttribute,
@@ -425,19 +419,6 @@ sap.ui.define([
 	});
 	list.addItem(emptyFirstStatus);
 
-	var markersAndStatuses = new ObjectListItem({
-
-		type: "Active",
-		intro: "On behalf of John Smith, Ñagçyfox",
-		title: "Markers and statuses, no attributes",
-		number: "12",
-		numberUnit: "Milo",
-		firstStatus: new ObjectStatus({text: "First status info"}),
-		secondStatus: new ObjectStatus({text: "Second status info"}),
-		showMarkers: true
-	});
-	list.addItem(markersAndStatuses);
-
 	var app = new App();
 	var page = new Page("testPage", {
 		title: "Object List Item Test",
@@ -447,32 +428,4 @@ sap.ui.define([
 	page.setEnableScrolling(true);
 	app.addPage(page);
 	page.addContent(list);
-
-	page.addContent(new Label({
-		text: "Show Markers",
-		labelFor: "showMarkersCheckbox"
-	}));
-
-	page.addContent(new CheckBox("showMarkersCheckbox", {
-		text: "Show Markers",
-		selected: false,
-		select: function() {}
-	}));
-
-	page.addContent(new Button({
-		id: "flag-button",
-		text: "Flag",
-		press: function() {}
-	}));
-	page.addContent(new Button({
-		id: "favorite-button",
-		text: "Favorite",
-		press: function() {}
-	}));
-	page.addContent(new Button({
-		id: "locked-button",
-		text: "Locked",
-		press: function() {}
-	}));
-	app.placeAt('body');
 });

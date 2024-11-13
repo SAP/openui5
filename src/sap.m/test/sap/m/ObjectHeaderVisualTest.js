@@ -2,16 +2,20 @@ sap.ui.define([
   "sap/m/ObjectHeader",
   "sap/m/library",
   "sap/ui/core/library",
+  "sap/m/ObjectMarker",
   "sap/m/ObjectAttribute",
   "sap/m/ObjectStatus",
   "sap/m/Button",
   "sap/m/Input",
   "sap/m/HeaderContainer"
-], function(ObjectHeader, mobileLibrary, coreLibrary, ObjectAttribute, ObjectStatus, Button, Input, HeaderContainer) {
+], function(ObjectHeader, mobileLibrary, coreLibrary, ObjectMarker, ObjectAttribute, ObjectStatus, Button, Input, HeaderContainer) {
   "use strict";
 
   // shortcut for sap.ui.core.ValueState
   const ValueState = coreLibrary.ValueState;
+
+  // shortcut for sap.m.ObjectMarkerType
+  const ObjectMarkerType = mobileLibrary.ObjectMarkerType;
 
   // shortcut for sap.ui.core.TextDirection
   const TextDirection = coreLibrary.TextDirection;
@@ -35,9 +39,10 @@ sap.ui.define([
 	  numberUnit: "Euro",
 	  numberTextDirection: TextDirection.LTR,
 	  fullScreenOptimized: true,
-	  showMarkers: true,
-	  markFlagged: true,
-	  markFavorite: true,
+	  markers: [
+		  new ObjectMarker({type: ObjectMarkerType.Favorite}),
+		  new ObjectMarker({type: ObjectMarkerType.Flagged})
+	  ],
 	  numberState: ValueState.Success,
 	  attributes: [
 		  new ObjectAttribute({

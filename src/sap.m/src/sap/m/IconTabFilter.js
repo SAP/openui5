@@ -787,7 +787,8 @@ sap.ui.define([
 
 			oRM.icon(oIcon, aClasses, {
 				id: this.getId() + "-icon",
-				"aria-hidden": true
+				"aria-hidden": true,
+				"aria-label": null
 			});
 		} else {
 			oRM.openStart("span").class("sapUiIcon").openEnd().close("span");

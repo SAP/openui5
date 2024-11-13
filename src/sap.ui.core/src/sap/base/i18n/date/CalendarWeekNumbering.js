@@ -3,7 +3,7 @@
  */
 
 // Provides type module:sap/base/i18n/date/CalendarWeekNumbering.
-sap.ui.define([], function() {
+sap.ui.define(["sap/base/i18n/date/_EnumHelper"], function(_EnumHelper) {
 	"use strict";
 
 	/**
@@ -66,6 +66,8 @@ sap.ui.define([], function() {
 		 */
 		WesternTraditional : "WesternTraditional"
 	};
+
+	_EnumHelper.register("sap.base.i18n.date.CalendarWeekNumbering", CalendarWeekNumbering);
 
 	/**
 	 * Returns an object containing the week configuration values for the given calendar week

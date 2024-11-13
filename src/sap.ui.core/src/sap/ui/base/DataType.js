@@ -9,8 +9,9 @@ sap.ui.define([
 	'sap/base/future',
 	"sap/base/assert",
 	"sap/base/util/isPlainObject",
-	'sap/base/util/resolveReference'
-], function(future, assert, isPlainObject, resolveReference) {
+	'sap/base/util/resolveReference',
+	"sap/base/i18n/date/_EnumHelper"
+], function(future, assert, isPlainObject, resolveReference, _EnumHelper) {
 	"use strict";
 
 	/**
@@ -700,6 +701,10 @@ sap.ui.define([
 		},
 		DataType.getType('string')
 	);
+
+	// The enum helper receives the final registerEnum function and ensures
+	// that all early collected enums are correctly registered
+	_EnumHelper.inject(DataType.registerEnum);
 
 	return DataType;
 

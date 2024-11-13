@@ -4,14 +4,33 @@ sap.ui.define([
   "sap/m/ObjectHeader",
   "sap/ui/core/library",
   "sap/m/ObjectStatus",
+  "sap/m/ObjectMarker",
+  "sap/m/library",
   "sap/m/ScrollContainer",
   "sap/ui/Device",
   "sap/m/Label",
   "sap/ui/layout/Grid",
   "sap/m/Page",
   "sap/m/App"
-], function(IconPool, ObjectAttribute, ObjectHeader, coreLibrary, ObjectStatus, ScrollContainer, Device, Label, Grid, Page, App) {
+], function(
+  IconPool,
+  ObjectAttribute,
+  ObjectHeader,
+  coreLibrary,
+  ObjectStatus,
+  ObjectMarker,
+  mobileLibrary,
+  ScrollContainer,
+  Device,
+  Label,
+  Grid,
+  Page,
+  App
+) {
   "use strict";
+
+  // shortcut for sap.m.ObjectMarkerType
+  const ObjectMarkerType = mobileLibrary.ObjectMarkerType;
 
   // shortcut for sap.ui.core.ValueState
   const ValueState = coreLibrary.ValueState;
@@ -29,14 +48,12 @@ sap.ui.define([
 	  text : "Contract #D1234567890 Ñagçyfox",
 	  active : true,
 	  press : function() {
-
 		  attrs2[0].setText("Ñagçyfox #D1234567890 Contract");
 	  }
   }), new ObjectAttribute({
 	  text : "Created by: John Doe Ñagçyfox",
 	  active : true,
 	  press : function() {
-
 		  attrs2[0].setText("Ñagçyfox Contract #D1234567890");
 	  }
   }) ];
@@ -88,7 +105,6 @@ sap.ui.define([
 		  "oh2",
 		  {
 			  title : "Ñagçyfox Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
-
 			  statuses : [ new ObjectStatus({
 				  text : ""
 			  }), new ObjectStatus({}) ],
@@ -141,10 +157,12 @@ sap.ui.define([
 				  text : "This one is invisible",
 				  visible : false
 			  }),
-				  new ObjectAttribute({
+			  new ObjectAttribute({
 				  text : "Ñagçyfox Contract #D1234567890"
 			  }) ],
-			  markFavorite : true
+			  markers: [
+				  new ObjectMarker({type: ObjectMarkerType.Favorite})
+			  ]
 		  });
 
   var oh4PressHandler = function(oEvent) {
@@ -210,9 +228,6 @@ sap.ui.define([
 	  content: [headerGrid, facetGrid],
 	  showNavButton: true
   });
-
-
-
 
   // put all the testing object header objects on the testing page
   var app = new App();
