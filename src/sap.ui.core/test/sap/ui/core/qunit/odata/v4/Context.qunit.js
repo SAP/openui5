@@ -2836,7 +2836,7 @@ sap.ui.define([
 			oContext = Context.create({/*oModel*/}, oBinding, "/TEAMS('42')"),
 			bSideEffectsRequested = false,
 			oPromise = new Promise(function (resolve) {
-				window.setTimeout(function () {
+				setTimeout(function () {
 					bSideEffectsRequested = true;
 					resolve();
 				});
@@ -2999,7 +2999,7 @@ sap.ui.define([
 			oContext = Context.create({}, oBinding, "/.../TEAM_2_MANAGER/Manager_to_Team"),
 			bSideEffectsRequested = false,
 			oPromise = new Promise(function (resolve) {
-				window.setTimeout(function () {
+				setTimeout(function () {
 					bSideEffectsRequested = true;
 					resolve();
 				});
@@ -3056,7 +3056,7 @@ sap.ui.define([
 			oHelperMock = this.mock(_Helper),
 			bSideEffectsRequested = false,
 			oPromise1 = new Promise(function (resolve) {
-				window.setTimeout(function () {
+				setTimeout(function () {
 					bSideEffectsRequested = true;
 					resolve();
 				});
