@@ -3,6 +3,22 @@
     "date": "November 2024",
     "notes": [
       {
+        "id": "df1b251ae757de8884b5737ff3d30216d96d1949",
+        "type": "FIX",
+        "text": " MTABLE: activate Home/End key navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "81f2a7627daee0b58600aa4bf78f10801baf75b5",
+        "type": "FEATURE",
+        "text": " MDCTable: Add expand/collapse all for single nodes"
+      },
+      {
         "id": "d90fd3cbceb44affbf5dc6e1ca9db1143a577e82",
         "type": "FEATURE",
         "text": " FilterField: add new operators for DynamicDateRange"

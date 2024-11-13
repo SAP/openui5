@@ -3,6 +3,31 @@
     "date": "November 2024",
     "notes": [
       {
+        "id": "0c0de1ccdd895a42b611469841d9259ab7e3974c",
+        "type": "FIX",
+        "text": " sap.m.Dialog: QUnit test fixed"
+      },
+      {
+        "id": "df513f18d58d51561c87b476c22cf9247aeb1b77",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Remove icon aria-label attribute"
+      },
+      {
+        "id": "0679e6c52d6b0a6e5b2760e4deb37f7bdc94016e",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Now marker is always displayed"
+      },
+      {
+        "id": "80241d65e4af2a8fdbe0b0142bf1cea73a621cd2",
+        "type": "FEATURE",
+        "text": " sap.m.Menu: add preventable beforeClose event"
+      },
+      {
+        "id": "e221b3d1debc5d97bfcdefc37f8cc5f368c03d7d",
+        "type": "FIX",
+        "text": " sap.m.Popover: Popover is correctly placed in the ComboBox"
+      },
+      {
         "id": "d9063a7631183e347b27e0a3c583ed02ee1c5ed2",
         "type": "FIX",
         "text": " sap.m.Popover: Popover can now be opened by the keyboard"
@@ -11,6 +36,11 @@
         "id": "aae0a9db6709a92998069c8b4d4837433b2d8492",
         "type": "FIX",
         "text": " We've now fixed the truncation of timestamp issue in the feedListItem"
+      },
+      {
+        "id": "2150a43949f6132a66916ec325eb8f60793ed14d",
+        "type": "FIX",
+        "text": " sap.m.Button: prevent right click from firing press event"
       },
       {
         "id": "28eacd2f3e3bf8f39a5946d42ad6863e731e2069",
@@ -31,6 +61,11 @@
         "id": "966e075f153abc176264fd1f19b7d767f5cb550f",
         "type": "FIX",
         "text": " sap.m.Image: Inline svg rendering issue corrected"
+      },
+      {
+        "id": "e5b88587ae0176a0a0748c8845046ad190834df2",
+        "type": "FEATURE",
+        "text": " sap.m.MaskInput: added 'submit' event"
       },
       {
         "id": "768d5b74109c0fef803a90bd69b505a2f833676a",

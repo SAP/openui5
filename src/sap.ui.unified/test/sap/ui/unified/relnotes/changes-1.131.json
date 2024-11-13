@@ -3,6 +3,11 @@
     "date": "November 2024",
     "notes": [
       {
+        "id": "80241d65e4af2a8fdbe0b0142bf1cea73a621cd2",
+        "type": "FEATURE",
+        "text": " sap.m.Menu: add preventable beforeClose event"
+      },
+      {
         "id": "3854f29dd6b29f4ebf4ecbfb00aabfe5346aaae3",
         "type": "FIX",
         "text": " sap.ui.unified.CalendarMonthInterval: adjust accessibility semantics"
