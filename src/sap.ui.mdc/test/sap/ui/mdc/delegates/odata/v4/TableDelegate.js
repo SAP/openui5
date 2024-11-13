@@ -211,6 +211,7 @@ sap.ui.define([
 						Log.error(error);
 					}
 
+					const bIsKey = oEntityType.$Key.indexOf(sKey) > -1;
 					var oPropertyInfo = {
 						name: sKey,
 						path: sKey,
@@ -220,10 +221,10 @@ sap.ui.define([
 						dataType: oType,
 						constraints : mConstraints,
 						maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo[sKey]?.allowedExpressions) ? -1 : 1,
-						groupable: oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"] || false,
+						groupable: bIsKey || oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"] || false,
 						unit: !bUnitIsFromNavigationProperty && oUnitAnnotation?.$Path || "",
 						text: bTextIsFromNavigationProperty && oTextAnnotation?.$Path || "",
-						isKey: oEntityType.$Key.indexOf(sKey) > -1,
+						isKey: bIsKey,
 						caseSensitive : !bIsUpperCase
 					};
 

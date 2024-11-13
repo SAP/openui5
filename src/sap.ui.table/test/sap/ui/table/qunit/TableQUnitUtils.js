@@ -1012,6 +1012,7 @@ sap.ui.define([
 		return mDefaultSettings;
 	};
 
+	// TODO: This method should not be async. It should return the table synchronously and tests should wait for rendering if required.
 	TableQUnitUtils.createTable = async function(TableClass, mSettings, fnBeforePlaceAt) {
 		if (typeof TableClass === "function" && TableClass !== Table && TableClass !== TreeTable && TableClass !== AnalyticalTable) {
 			fnBeforePlaceAt = TableClass;
@@ -1027,20 +1028,14 @@ sap.ui.define([
 		mSettings = Object.assign({}, deepCloneSettings(this.getDefaultSettings()), mSettings);
 		TableClass = TableClass == null ? Table : TableClass;
 
-		const oHelperPlugin = new HelperPlugin();
-
-		if ("dependents" in mSettings) {
-			mSettings.dependents.push(oHelperPlugin);
-		} else {
-			mSettings.dependents = [oHelperPlugin];
-		}
-
 		const oTable = new TableClass(createTableSettings(TableClass, mSettings));
+		const oHelperPlugin = new HelperPlugin();
 
 		Object.defineProperty(oTable, "qunit", {
 			value: {}
 		});
 
+		oTable.addAggregation("_hiddenDependents", oHelperPlugin);
 		setExperimentalSettings(oTable, mSettings);
 		addAsyncHelpers(oTable, oHelperPlugin);
 		addHelpers(oTable);

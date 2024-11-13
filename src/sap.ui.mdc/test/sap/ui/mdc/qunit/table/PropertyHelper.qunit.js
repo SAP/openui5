@@ -32,6 +32,26 @@ sap.ui.define([
 		},  "Error thrown");
 	});
 
+	QUnit.test("Simple property with both 'text' and 'unit'", function(assert) {
+		assert.throws(function () {
+			new PropertyHelper([{
+				key: "prop",
+				label: "Property",
+				dataType: "String",
+				text: "textProp",
+				unit: "unitProp"
+			}, {
+				key: "textProp",
+				label: "Text Property",
+				dataType: "String"
+			}, {
+				key: "unitProp",
+				label: "Unit Property",
+				dataType: "String"
+			}]).destroy();
+		}, new Error("Invalid property definition: A property must not have both a text and a unit."));
+	});
+
 	QUnit.test("Complex property with attribute 'groupable'", function(assert) {
 		assert.throws(function () {
 			new PropertyHelper([{
