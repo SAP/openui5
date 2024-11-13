@@ -763,14 +763,47 @@ sap.ui.define([
 				 */
 				todayFromTo: new RangeOperator({
 					name: OperatorName.TODAYFROMTO,
-					tokenText: _getText(OperatorName.TODAYFROMTO, false), // sap.m texts don't include "+" and "-", so own text needed
-					longText: oMessageBundleM.getText("DYNAMIC_DATE_TODAYFROMTO_TITLE", undefined, true), // to have the same longText like in sap m (if changed there)
+					longText: oMessageBundleM.getText("DYNAMIC_DATE_TODAYFROMTO_TITLE", undefined, true),
+					tokenText: oMessageBundleM.getText("DYNAMIC_DATE_TODAYFROMTO_FORMAT", undefined, true),
 					valueTypes: [
 						{ name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null } }, { name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null } }
 					],
 					paramTypes: ["([-+]?\\d+)", "([-+]?\\d+)"],
 					//label:["x", "y"],
 					additionalInfo: "",
+					format: function(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, sCustomFormat) {
+						// format numbers into strings with leading "+" and "-"
+						let sTokenText = sCustomFormat || this.tokenFormat;
+						const iFrom = (oCondition.values[0] || 0) * -1;
+						const iTo = oCondition.values[1] || 0;
+						let sFrom = iFrom < 0 ? "" : "+";
+						sFrom = sFrom + this._formatValue(iFrom, this._createLocalType(this.valueTypes[0], oType));
+						let sTo = iTo < 0 ? "" : "+";
+						sTo = sTo + this._formatValue(iTo, this._createLocalType(this.valueTypes[1], oType));
+
+						if (iFrom <= iTo) {
+							sTokenText = sTokenText.replace(new RegExp("\\$" + 0 + "|" + 0 + "\\$" + "|" + "\\{" + 0 + "\\}", "g"), sFrom);
+							sTokenText = sTokenText.replace(new RegExp("\\$" + 1 + "|" + 1 + "\\$" + "|" + "\\{" + 1 + "\\}", "g"), sTo);
+						} else {
+							sTokenText = sTokenText.replace(new RegExp("\\$" + 0 + "|" + 0 + "\\$" + "|" + "\\{" + 0 + "\\}", "g"), sTo);
+							sTokenText = sTokenText.replace(new RegExp("\\$" + 1 + "|" + 1 + "\\$" + "|" + "\\{" + 1 + "\\}", "g"), sFrom);
+						}
+
+						return sTokenText;
+					},
+					parse: function(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, bHideOperator) {
+						const aValues = this.getValues(sText, sDisplayFormat, bDefaultOperator, bHideOperator);
+						let iFrom = this._parseValue(aValues[0], this._createLocalType(this.valueTypes[0], oType));
+						let iTo = this._parseValue(aValues[1], this._createLocalType(this.valueTypes[1], oType));
+
+						if (iFrom > iTo) {
+							const iTemp = iFrom;
+							iFrom = iTo;
+							iTo = iTemp;
+						}
+						iFrom = iFrom * -1;
+						return [iFrom, iTo];
+					},
 					calcRange: function(xDays, yDays) {
 						let oStart = xDays >= 0 ? UniversalDateUtils.ranges.lastDays(xDays)[0] : UniversalDateUtils.ranges.nextDays(-xDays)[1];
 						let oEnd = yDays >= 0 ? UniversalDateUtils.ranges.nextDays(yDays)[1] : UniversalDateUtils.ranges.lastDays(-yDays)[0];

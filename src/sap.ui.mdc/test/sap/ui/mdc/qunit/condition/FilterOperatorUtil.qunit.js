@@ -1574,7 +1574,7 @@ sap.ui.define([
 		const oFormatTest = {
 			[OperatorName.TODAYFROMTO]: [{
 				formatArgs: [Condition.createCondition(OperatorName.TODAYFROMTO, [4, 6])],
-				formatValue: mdcMessageBundle.getText("operators.TODAYFROMTO.tokenText", [4, 6]),
+				formatValue: mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_FORMAT", ["-4", "+6"]),
 				formatValueCheckValues: ["4", "6"],
 				parsedValue: "46",
 				condition: Condition.createCondition(OperatorName.TODAYFROMTO, [4, 6], undefined, undefined, ConditionValidated.NotValidated),
@@ -1582,17 +1582,49 @@ sap.ui.define([
 				valid: true,
 				isSingleValue: false,
 				longText: mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_TITLE"),
-				tokenText: mdcMessageBundle.getText("operators.TODAYFROMTO.tokenText")
+				tokenText: mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_FORMAT"),
+				oType: oDateTimeOffsetType,
+				baseType: BaseType.DateTime,
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20241014-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20241024-235959000", "string")}
 			},
 			{
-				formatArgs: [Condition.createCondition(OperatorName.TODAYFROMTO, [4, 6]), undefined, undefined, true],
-				formatValue: mdcMessageBundle.getText("operators.TODAYFROMTO.tokenText", [4, 6]),
-				parseArgs: [mdcMessageBundle.getText("operators.TODAYFROMTO.tokenText", [4, 6]), undefined, undefined, true],
-				parsedValue: "46",
-				condition: Condition.createCondition(OperatorName.TODAYFROMTO, [4, 6], undefined, undefined, ConditionValidated.NotValidated),
+				formatArgs: [Condition.createCondition(OperatorName.TODAYFROMTO, [-4, 6]), undefined, undefined, true],
+				formatValue: mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_FORMAT", ["+4", "+6"]),
+				parseArgs: [mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_FORMAT", ["+4", "+6"]), undefined, undefined, true],
+				parsedValue: "-46",
+				condition: Condition.createCondition(OperatorName.TODAYFROMTO, [-4, 6], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
-				isSingleValue: false
+				isSingleValue: false,
+				oType: oDateTimeOffsetType,
+				baseType: BaseType.DateTime,
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20241022-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20241024-235959000", "string")}
+			},
+			{
+				formatArgs: [Condition.createCondition(OperatorName.TODAYFROMTO, [4, -6]), undefined, undefined, true],
+				formatValue: mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_FORMAT", ["-6", "-4"]),
+				parseArgs: [mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_FORMAT", ["-4", "-6"]), undefined, undefined, true],
+				parsedValue: "6-4",
+				condition: Condition.createCondition(OperatorName.TODAYFROMTO, [6, -4], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: false,
+				oType: oDateTimeOffsetType,
+				baseType: BaseType.DateTime,
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20241012-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20241014-235959000", "string")}
+			},
+			{
+				formatArgs: [Condition.createCondition(OperatorName.TODAYFROMTO, [-4, -6])],
+				formatValue: mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_FORMAT", ["-6", "+4"]),
+				parseArgs: [mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_FORMAT", ["+4", "-6"])],
+				parsedValue: "64",
+				condition: Condition.createCondition(OperatorName.TODAYFROMTO, [6, 4], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: false,
+				oType: oDateTimeOffsetType,
+				baseType: BaseType.DateTime,
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20241012-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20241022-235959000", "string")}
 			}],
 
 			[OperatorName.SPECIFICMONTH]: [{
