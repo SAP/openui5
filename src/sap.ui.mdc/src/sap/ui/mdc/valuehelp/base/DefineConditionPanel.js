@@ -820,8 +820,8 @@ sap.ui.define([
 		let oCondition;
 
 		// if type of operator changed -> remove binding and create it new later on
-		if (sKey && sOldKey) {
-			const oOperator = FilterOperatorUtil.getOperator(sKey);
+		if (sOldKey) {
+			const oOperator = sKey && FilterOperatorUtil.getOperator(sKey);
 			const oOperatorOld = FilterOperatorUtil.getOperator(sOldKey);
 			const oGrid = oField.getParent();
 			let oValue0Field;
@@ -830,15 +830,15 @@ sap.ui.define([
 
 			// find fields and initialize error state
 			oValue0Field = oGrid.getContent()[iIndex + 2];
-			if (oValue0Field && oValue0Field.hasOwnProperty("_iValueIndex") && oValue0Field._iValueIndex === 0) {
-				if (oValue0Field instanceof Field && !oValue0Field.isInvalidInput()) { // TODO: better was to find out parsing error // TODO: handle custom controls
+			if (oValue0Field?.hasOwnProperty("_iValueIndex") && oValue0Field._iValueIndex === 0) {
+				if (oValue0Field instanceof Field && !oValue0Field.isInvalidInput()) { // TODO: better way to find out parsing error // TODO: handle custom controls
 					// if Field is in parsing error state, don't remove error
 					oValue0Field.setValueState(ValueState.None);
 					oValue0Field.setValueStateText();
 				}
 				oValue1Field = oGrid.getContent()[iIndex + 3]; // second field only exists if first field exist
-				if (oValue1Field && oValue1Field.hasOwnProperty("_iValueIndex") && oValue1Field._iValueIndex === 1) {
-					if (oValue1Field instanceof Field && !oValue1Field.isInvalidInput()) { // TODO: better was to find out parsing error // TODO: handle custom controls
+				if (oValue1Field?.hasOwnProperty("_iValueIndex") && oValue1Field._iValueIndex === 1) {
+					if (oValue1Field instanceof Field && !oValue1Field.isInvalidInput()) { // TODO: better way to find out parsing error // TODO: handle custom controls
 						// if Field is in parsing error state, don't remove error
 						oValue1Field.setValueState(ValueState.None);
 						oValue1Field.setValueStateText();
@@ -850,36 +850,29 @@ sap.ui.define([
 				oValue0Field = undefined;
 			}
 
-			if (_operatorSupportsValueHelp(sKey)) {
+			let sValueHelp;
+			if (sKey && _operatorSupportsValueHelp(sKey)) {
 				// enable the ValueHelp for the used value fields
-				const sValueHelp = this._getValueHelp();
-				oValue0Field && oValue0Field.setValueHelp && oValue0Field.setValueHelp(sValueHelp);
-				oValue1Field && oValue1Field.setValueHelp && oValue1Field.setValueHelp(sValueHelp);
-			} else {
-				// remove the ValueHelp for the used value fields
-				oValue0Field && oValue0Field.setValueHelp && oValue0Field.setValueHelp();
-				oValue1Field && oValue1Field.setValueHelp && oValue1Field.setValueHelp();
+				sValueHelp = this._getValueHelp();
 			}
+			oValue0Field?.setValueHelp?.(sValueHelp);
+			oValue1Field?.setValueHelp?.(sValueHelp);
 
-			if (oOperator.createControl || oOperatorOld.createControl) {
+			if (oOperator?.createControl || oOperatorOld?.createControl) {
 				// custom control used -> needs to be created new
-				if (oValue0Field) {
-					oValue0Field.destroy();
-				}
-				if (oValue1Field) {
-					oValue1Field.destroy();
-				}
+				oValue0Field?.destroy();
+				oValue1Field?.destroy();
 			} else {
-				if (oValue0Field && oOperator.valueTypes[0] !== oOperatorOld.valueTypes[0]) {
+				if (oValue0Field && oOperator?.valueTypes[0] !== oOperatorOld?.valueTypes[0]) {
 					oValue0Field.unbindProperty("value");
 				}
-				if (oValue1Field && oOperator.valueTypes[1] !== oOperatorOld.valueTypes[1] && oOperatorOld.valueTypes[1]) { // 2nd Field only exist if there was a valueType defined
+				if (oValue1Field && oOperator?.valueTypes[1] !== oOperatorOld?.valueTypes[1] && oOperatorOld?.valueTypes[1]) { // 2nd Field only exist if there was a valueType defined
 					oValue1Field.unbindProperty("value");
 				}
 			}
 		}
 
-		if (!sKey) { // TODO: remove? Because cannot longer happen as Field don't allow empty input because of used data type constraints
+		if (!sKey) { // happens if conditions cleared via Binding
 			// key must not be empty
 			oCondition = oField.getBindingContext("$this").getObject();
 			if (oCondition) { // condition might be deleted before Field instance is deleted
