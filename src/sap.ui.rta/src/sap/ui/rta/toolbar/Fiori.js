@@ -62,8 +62,7 @@ function(
 
 			if (this._oFioriHeader.getShowLogo() && sLogoPath) {
 				// Unstable: if FLP changes ID of <img> element, logo could be not found
-				// $() is still needed because this._oFioriHeader does not offer a getDomRef method
-				const oLogo = this._oFioriHeader.$().find("#shell-header-icon").get(0);
+				const oLogo = this._oFioriHeader.getDomRef().querySelector("#shell-header-icon");
 				let iWidth;
 				let iHeight;
 
