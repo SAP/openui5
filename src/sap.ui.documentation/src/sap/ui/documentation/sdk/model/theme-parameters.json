@@ -1,4 +1,4 @@
 {
-	"darkLogo": "./resources/sap/ui/documentation/sdk/images/ui5-logo-dark.svg",
-	"lightLogo": "./resources/sap/ui/documentation/sdk/images/ui5-logo-light.svg"
+	"SAPUI5Logo": "./resources/sap/ui/documentation/sdk/images/sap-ui5-logo.svg",
+	"OpenUI5Logo": "./resources/sap/ui/documentation/sdk/images/open-ui5-logo.svg"
 }

@@ -1624,8 +1624,16 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isNavigationEnabled", function(assert) {
+	QUnit.test("isNavigationEnabled - singleSelect and closed", function(assert) {
 
+		const oListBinding = oMTable.getListBinding();
+		const oBindingInfo = oMTable.getListBindingInfo();
+		bIsOpen = false;
+		sinon.stub(oListBinding, "isLengthFinal").returns(false);
+		sinon.stub(oListBinding, "isSuspended").returns(false);
+		oBindingInfo.length = undefined;
+
+		// not all items known
 		assert.ok(oMTable.isNavigationEnabled(1), "Navigation is enabled for 1");
 		assert.ok(oMTable.isNavigationEnabled(-1), "Navigation is enabled for -1");
 		assert.notOk(oMTable.isNavigationEnabled(9999), "Navigation is disabled for 9999");
@@ -1633,8 +1641,176 @@ sap.ui.define([
 		assert.notOk(oMTable.isNavigationEnabled(10), "Navigation is disabled for 10");
 		assert.notOk(oMTable.isNavigationEnabled(-10), "Navigation is disabled for -10");
 
+		// fixed length
+		oBindingInfo.length = 5;
+		assert.ok(oMTable.isNavigationEnabled(1), "Navigation is enabled for 1");
+		assert.ok(oMTable.isNavigationEnabled(-1), "Navigation is enabled for -1");
+		assert.ok(oMTable.isNavigationEnabled(9999), "Navigation is enabled for 9999");
+		assert.ok(oMTable.isNavigationEnabled(-9999), "Navigation is enabled for -9999");
+		assert.ok(oMTable.isNavigationEnabled(10), "Navigation is enabled for 10");
+		assert.ok(oMTable.isNavigationEnabled(-10), "Navigation is enabled for -10");
+
+		// all items loaded
+		oBindingInfo.length = undefined;
+		oListBinding.isLengthFinal.returns(true);
+		assert.ok(oMTable.isNavigationEnabled(1), "Navigation is enabled for 1");
+		assert.ok(oMTable.isNavigationEnabled(-1), "Navigation is enabled for -1");
+		assert.ok(oMTable.isNavigationEnabled(9999), "Navigation is enabled for 9999");
+		assert.ok(oMTable.isNavigationEnabled(-9999), "Navigation is enabled for -9999");
+		assert.ok(oMTable.isNavigationEnabled(10), "Navigation is enabled for 10");
+		assert.ok(oMTable.isNavigationEnabled(-10), "Navigation is enabled for -10");
+
+		// suspended
+		oListBinding.isSuspended.returns(true);
+		assert.ok(oMTable.isNavigationEnabled(1), "Navigation is enabled for 1");
+		assert.ok(oMTable.isNavigationEnabled(-1), "Navigation is enabled for -1");
+		assert.notOk(oMTable.isNavigationEnabled(9999), "Navigation is disabled for 9999");
+		assert.notOk(oMTable.isNavigationEnabled(-9999), "Navigation is disabled for -9999");
+		assert.notOk(oMTable.isNavigationEnabled(10), "Navigation is disabled for 10");
+		assert.notOk(oMTable.isNavigationEnabled(-10), "Navigation is disabled for -10");
+
+	});
+
+	QUnit.test("isNavigationEnabled - singleSelect and opened", function(assert) {
+
+		const oListBinding = oMTable.getListBinding();
+		const oBindingInfo = oMTable.getListBindingInfo();
+		bIsOpen = true;
+		sinon.stub(oListBinding, "isLengthFinal").returns(false);
+		sinon.stub(oListBinding, "isSuspended").returns(false);
+		oBindingInfo.length = undefined;
+
+		// not all items known
+		assert.ok(oMTable.isNavigationEnabled(1), "Navigation is enabled for 1");
+		assert.ok(oMTable.isNavigationEnabled(-1), "Navigation is enabled for -1");
+		assert.notOk(oMTable.isNavigationEnabled(9999), "Navigation is disabled for 9999");
+		assert.notOk(oMTable.isNavigationEnabled(-9999), "Navigation is disabled for -9999");
+		assert.notOk(oMTable.isNavigationEnabled(10), "Navigation is disabled for 10");
+		assert.notOk(oMTable.isNavigationEnabled(-10), "Navigation is disabled for -10");
+
+		// fixed length
+		oBindingInfo.length = 5;
+		assert.ok(oMTable.isNavigationEnabled(1), "Navigation is enabled for 1");
+		assert.ok(oMTable.isNavigationEnabled(-1), "Navigation is enabled for -1");
+		assert.ok(oMTable.isNavigationEnabled(9999), "Navigation is enabled for 9999");
+		assert.ok(oMTable.isNavigationEnabled(-9999), "Navigation is enabled for -9999");
+		assert.ok(oMTable.isNavigationEnabled(10), "Navigation is enabled for 10");
+		assert.ok(oMTable.isNavigationEnabled(-10), "Navigation is enabled for -10");
+
+		// all items loaded
+		oBindingInfo.length = undefined;
+		oListBinding.isLengthFinal.returns(true);
+		assert.ok(oMTable.isNavigationEnabled(1), "Navigation is enabled for 1");
+		assert.ok(oMTable.isNavigationEnabled(-1), "Navigation is enabled for -1");
+		assert.ok(oMTable.isNavigationEnabled(9999), "Navigation is enabled for 9999");
+		assert.ok(oMTable.isNavigationEnabled(-9999), "Navigation is enabled for -9999");
+		assert.ok(oMTable.isNavigationEnabled(10), "Navigation is enabled for 10");
+		assert.ok(oMTable.isNavigationEnabled(-10), "Navigation is enabled for -10");
+
+		// suspended
+		oListBinding.isSuspended.returns(true);
+		assert.ok(oMTable.isNavigationEnabled(1), "Navigation is enabled for 1");
+		assert.ok(oMTable.isNavigationEnabled(-1), "Navigation is enabled for -1");
+		assert.notOk(oMTable.isNavigationEnabled(9999), "Navigation is disabled for 9999");
+		assert.notOk(oMTable.isNavigationEnabled(-9999), "Navigation is disabled for -9999");
+		assert.notOk(oMTable.isNavigationEnabled(10), "Navigation is disabled for 10");
+		assert.notOk(oMTable.isNavigationEnabled(-10), "Navigation is disabled for -10");
+
+	});
+
+	QUnit.test("isNavigationEnabled - multiSelect and closed", function(assert) {
+
+		const oListBinding = oMTable.getListBinding();
+		const oBindingInfo = oMTable.getListBindingInfo();
 		oTable.setMode(ListMode.MultiSelect);
-		assert.notOk(oMTable.isNavigationEnabled(-1), "Navigation is disabled for -1 on multi-select");
+		bIsOpen = false;
+		sinon.stub(oListBinding, "isLengthFinal").returns(false);
+		sinon.stub(oListBinding, "isSuspended").returns(false);
+		oBindingInfo.length = undefined;
+
+		// not all items known
+		assert.ok(oMTable.isNavigationEnabled(1), "Navigation is enabled for 1");
+		assert.ok(oMTable.isNavigationEnabled(-1), "Navigation is enabled for -1");
+		assert.notOk(oMTable.isNavigationEnabled(9999), "Navigation is disabled for 9999");
+		assert.notOk(oMTable.isNavigationEnabled(-9999), "Navigation is disabled for -9999");
+		assert.notOk(oMTable.isNavigationEnabled(10), "Navigation is disabled for 10");
+		assert.notOk(oMTable.isNavigationEnabled(-10), "Navigation is disabled for -10");
+
+		// fixed length
+		oBindingInfo.length = 5;
+		assert.ok(oMTable.isNavigationEnabled(1), "Navigation is enabled for 1");
+		assert.ok(oMTable.isNavigationEnabled(-1), "Navigation is enabled for -1");
+		assert.notOk(oMTable.isNavigationEnabled(9999), "Navigation is disabled for 9999");
+		assert.notOk(oMTable.isNavigationEnabled(-9999), "Navigation is disabled for -9999");
+		assert.notOk(oMTable.isNavigationEnabled(10), "Navigation is disabled for 10");
+		assert.notOk(oMTable.isNavigationEnabled(-10), "Navigation is disabled for -10");
+
+		// all items loaded
+		oBindingInfo.length = undefined;
+		oListBinding.isLengthFinal.returns(true);
+		assert.ok(oMTable.isNavigationEnabled(1), "Navigation is enabled for 1");
+		assert.ok(oMTable.isNavigationEnabled(-1), "Navigation is enabled for -1");
+		assert.notOk(oMTable.isNavigationEnabled(9999), "Navigation is disabled for 9999");
+		assert.notOk(oMTable.isNavigationEnabled(-9999), "Navigation is disabled for -9999");
+		assert.notOk(oMTable.isNavigationEnabled(10), "Navigation is disabled for 10");
+		assert.notOk(oMTable.isNavigationEnabled(-10), "Navigation is disabled for -10");
+
+		// suspended
+		oListBinding.isSuspended.returns(true);
+		assert.ok(oMTable.isNavigationEnabled(1), "Navigation is enabled for 1");
+		assert.ok(oMTable.isNavigationEnabled(-1), "Navigation is enabled for -1");
+		assert.notOk(oMTable.isNavigationEnabled(9999), "Navigation is disabled for 9999");
+		assert.notOk(oMTable.isNavigationEnabled(-9999), "Navigation is disabled for -9999");
+		assert.notOk(oMTable.isNavigationEnabled(10), "Navigation is disabled for 10");
+		assert.notOk(oMTable.isNavigationEnabled(-10), "Navigation is disabled for -10");
+
+	});
+
+	QUnit.test("isNavigationEnabled - multiSelect and opened", function(assert) {
+
+		const oListBinding = oMTable.getListBinding();
+		const oBindingInfo = oMTable.getListBindingInfo();
+		oTable.setMode(ListMode.MultiSelect);
+		bIsOpen = true;
+		sinon.stub(oListBinding, "isLengthFinal").returns(false);
+		sinon.stub(oListBinding, "isSuspended").returns(false);
+		oBindingInfo.length = undefined;
+
+		// not all items known
+		assert.ok(oMTable.isNavigationEnabled(1), "Navigation is enabled for 1");
+		assert.notOk(oMTable.isNavigationEnabled(-1), "Navigation is disabled for -1");
+		assert.notOk(oMTable.isNavigationEnabled(9999), "Navigation is disabled for 9999");
+		assert.notOk(oMTable.isNavigationEnabled(-9999), "Navigation is disabled for -9999");
+		assert.notOk(oMTable.isNavigationEnabled(10), "Navigation is disabled for 10");
+		assert.notOk(oMTable.isNavigationEnabled(-10), "Navigation is disabled for -10");
+
+		// fixed length
+		oBindingInfo.length = 5;
+		assert.ok(oMTable.isNavigationEnabled(1), "Navigation is enabled for 1");
+		assert.notOk(oMTable.isNavigationEnabled(-1), "Navigation is disabled for -1");
+		assert.notOk(oMTable.isNavigationEnabled(9999), "Navigation is disabled for 9999");
+		assert.notOk(oMTable.isNavigationEnabled(-9999), "Navigation is disabled for -9999");
+		assert.notOk(oMTable.isNavigationEnabled(10), "Navigation is disabled for 10");
+		assert.notOk(oMTable.isNavigationEnabled(-10), "Navigation is disabled for -10");
+
+		// all items loaded
+		oBindingInfo.length = undefined;
+		oListBinding.isLengthFinal.returns(true);
+		assert.ok(oMTable.isNavigationEnabled(1), "Navigation is enabled for 1");
+		assert.notOk(oMTable.isNavigationEnabled(-1), "Navigation is disabled for -1");
+		assert.notOk(oMTable.isNavigationEnabled(9999), "Navigation is disabled for 9999");
+		assert.notOk(oMTable.isNavigationEnabled(-9999), "Navigation is disabled for -9999");
+		assert.notOk(oMTable.isNavigationEnabled(10), "Navigation is disabled for 10");
+		assert.notOk(oMTable.isNavigationEnabled(-10), "Navigation is disabled for -10");
+
+		// suspended
+		oListBinding.isSuspended.returns(true);
+		assert.ok(oMTable.isNavigationEnabled(1), "Navigation is enabled for 1");
+		assert.notOk(oMTable.isNavigationEnabled(-1), "Navigation is disabled for -1");
+		assert.notOk(oMTable.isNavigationEnabled(9999), "Navigation is disabled for 9999");
+		assert.notOk(oMTable.isNavigationEnabled(-9999), "Navigation is disabled for -9999");
+		assert.notOk(oMTable.isNavigationEnabled(10), "Navigation is disabled for 10");
+		assert.notOk(oMTable.isNavigationEnabled(-10), "Navigation is disabled for -10");
 
 	});
 

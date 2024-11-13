@@ -1788,7 +1788,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("reportTransitionMessages", function () {
+	QUnit.test("reportTransitionMessages", function (assert) {
 		var oModel = this.createModel(),
 			oModelMock = this.mock(oModel),
 			aMessages = [{}, {}],
@@ -1817,17 +1817,18 @@ sap.ui.define([
 			}), sResourcePath, undefined, sinon.match.same(aMessages[1]))
 			.returns("~UI5msg1~");
 		this.mock(Messaging).expects("updateMessages")
-			.withExactArgs(undefined, sinon.match(["~UI5msg0~", "~UI5msg1~"]));
+			.withExactArgs(undefined, ["~UI5msg0~", "~UI5msg1~"]);
 
 		// code under test
-		oModel.reportTransitionMessages(aMessages, sResourcePath);
+		assert.deepEqual(oModel.reportTransitionMessages(aMessages, sResourcePath),
+			["~UI5msg0~", "~UI5msg1~"]);
 
 		// code under test
-		oModel.reportTransitionMessages([], sResourcePath);
+		assert.strictEqual(oModel.reportTransitionMessages([], sResourcePath), undefined);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("reportTransitionMessages: w/o resourcePath", function () {
+	QUnit.test("reportTransitionMessages: w/o resourcePath, silent", function (assert) {
 		var oModel = this.createModel(),
 			oModelMock = this.mock(oModel),
 			aMessages = [{}, {}];
@@ -1844,15 +1845,16 @@ sap.ui.define([
 				return oMessage === aMessages[1] && oMessage.transition === true;
 			}), undefined, undefined, sinon.match.same(aMessages[1]))
 			.returns("~UI5msg1~");
-		this.mock(Messaging).expects("updateMessages")
-			.withExactArgs(undefined, sinon.match(["~UI5msg0~", "~UI5msg1~"]));
+		this.mock(Messaging).expects("updateMessages").never();
 
 		// code under test
-		oModel.reportTransitionMessages(aMessages);
+		assert.deepEqual(oModel.reportTransitionMessages(aMessages, undefined, true),
+			["~UI5msg0~", "~UI5msg1~"]);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("reportTransitionMessages: operationMetadata is used to adjustTargets", function () {
+	QUnit.test("reportTransitionMessages: operationMetadata is used to adjustTargets",
+			function (assert) {
 		const oModel = this.createModel();
 		const oModelMock = this.mock(oModel);
 		const oMetaModel = {
@@ -1891,11 +1893,11 @@ sap.ui.define([
 			}), "resource/path/operation?~queryOptions~", undefined, "~message1~")
 			.returns("~UI5msg1~");
 		this.mock(Messaging).expects("updateMessages")
-			.withExactArgs(undefined, sinon.match(["~UI5msg0~", "~UI5msg1~"]));
+			.withExactArgs(undefined, ["~UI5msg0~", "~UI5msg1~"]);
 
 		// code under test
-		oModel.reportTransitionMessages(["~message0~", "~message1~"],
-			"resource/path/operation?~queryOptions~");
+		assert.deepEqual(oModel.reportTransitionMessages(["~message0~", "~message1~"],
+			"resource/path/operation?~queryOptions~"), ["~UI5msg0~", "~UI5msg1~"]);
 	});
 
 	//*********************************************************************************************

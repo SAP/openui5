@@ -20,7 +20,6 @@ sap.ui.define([
   "sap/m/SplitApp",
   "sap/m/Button",
   "sap/m/Page",
-  "sap/m/CheckBox",
   "sap/base/Log",
   "sap/ui/Device"
 ], function(
@@ -45,7 +44,6 @@ sap.ui.define([
   SplitApp,
   Button,
   Page,
-  CheckBox,
   Log,
   Device
 ) {
@@ -431,17 +429,6 @@ sap.ui.define([
 	  ]
   });
 
-  var oh15 = new ObjectHeader({
-	  title : "Object for testing flag and favorite changes",
-	  number : "3.628.000",
-	  numberUnit : "EUR",
-	  numberState : ValueState.Error,
-	  markers: [
-		  new ObjectMarker({type: ObjectMarkerType.Favorite}),
-		  new ObjectMarker({type: ObjectMarkerType.Flagged})
-	  ]
-  });
-
   //test popover title
   var oh16EventHandler = function(oEvent) {
 	  const header = oEvent.getSource();
@@ -818,33 +805,6 @@ sap.ui.define([
   addToPage(oh13);
   addToPage(oh14);
 
-  detail.addContent(oh15);
-
-  detail.addContent(new CheckBox({
-	  text : "Show Markers",
-	  selected : oh15.getShowMarkers(),
-	  select : function() {
-
-		  oh15.setShowMarkers(this.getSelected());
-	  }
-  }));
-
-  detail.addContent(new Button({
-	  id : "flag-button",
-	  text : "Flag",
-	  press : function() {
-
-		  oh15.setMarkFlagged(!oh15.getMarkFlagged());
-	  }
-  }));
-  detail.addContent(new Button({
-	  id : "favorite-button",
-	  text : ObjectMarkerType.Favorite,
-	  press : function() {
-
-		  oh15.setMarkFavorite(!oh15.getMarkFavorite());
-	  }
-  }));
   detail.addContent(new HTML({
 	  content : "<div style='width:100%;height:2px;background-color:blue'/>"
   }));

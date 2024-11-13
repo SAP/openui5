@@ -1503,7 +1503,7 @@ sap.ui.define([
 			valueTypes: [OperatorValueType.Static],
 			filterOperator: FilterOperator.LE,
 			calcRange: function() {
-				// the second entry in the returned is the end of the dsy (for time containing data types)
+				// the second entry in the returned is the end of the day (for time containing data types)
 				return [UniversalDateUtils.ranges.today()[1]];
 			}
 		}));
@@ -1525,136 +1525,19 @@ sap.ui.define([
 
 		const oDateTimeOffsetType = new DateTimeOffsetType({pattern: "yyyyMMdd-HHmmssSSS"}, {V4: true});
 		const oDateType = new DateType({pattern: "yyyyMMdd"}, {});
-		const sTodayStart = oDateTimeOffsetType.parseValue("20241018-000000000", "string"); // Today start
 		const sTodayEnd = oDateTimeOffsetType.parseValue("20241018-235959999", "string"); // Today end
 
 		const oFormatTest = {
-			[OperatorName.YESTERDAY]: [{
-				formatArgs: [Condition.createCondition(OperatorName.YESTERDAY, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.YESTERDAY.longText"),
-				//parseArgs: ["Yesterday"],
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.YESTERDAY, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			[OperatorName.TODAY]: [{
-				formatArgs: [Condition.createCondition(OperatorName.TODAY, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.TODAY.longText"),
-				//parseArgs: ["Today"],
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.TODAY, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true,
-				oType: oDateTimeOffsetType,
-				baseType: BaseType.DateTime,
-				filter: {path: "test", operator: FilterOperator.BT, value1 : sTodayStart, value2: sTodayEnd}
-			}],
-			[OperatorName.TOMORROW]: [{
-				formatArgs: [Condition.createCondition(OperatorName.TOMORROW, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.TOMORROW.longText"),
-				//parseArgs: ["Tomorrow"],
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.TOMORROW, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true,
-				longText: mdcMessageBundle.getText("operators.TOMORROW.longText"),
-				tokenText: ""
-			}],
-			[OperatorName.FIRSTDAYWEEK]: [{
-				formatArgs: [Condition.createCondition(OperatorName.FIRSTDAYWEEK, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.FIRSTDAYWEEK.longText"),
-				parseArgs: [mdcMessageBundle.getText("operators.FIRSTDAYWEEK.longText")],
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.FIRSTDAYWEEK, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			[OperatorName.LASTTDAYWEEK]: [{
-				formatArgs: [Condition.createCondition(OperatorName.LASTTDAYWEEK, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.LASTDAYWEEK.longText"),
-				parseArgs: [mdcMessageBundle.getText("operators.LASTDAYWEEK.longText")],
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.LASTTDAYWEEK, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			[OperatorName.FIRSTDAYMONTH]: [{
-				formatArgs: [Condition.createCondition(OperatorName.FIRSTDAYMONTH, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.FIRSTDAYMONTH.longText"),
-				parseArgs: [mdcMessageBundle.getText("operators.FIRSTDAYMONTH.longText")],
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.FIRSTDAYMONTH, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			[OperatorName.LASTTDAYMONTH]: [{
-				formatArgs: [Condition.createCondition(OperatorName.LASTTDAYMONTH, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.LASTDAYMONTH.longText"),
-				parseArgs: [mdcMessageBundle.getText("operators.LASTDAYMONTH.longText")],
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.LASTTDAYMONTH, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			[OperatorName.FIRSTDAYQUARTER]: [{
-				formatArgs: [Condition.createCondition(OperatorName.FIRSTDAYQUARTER, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.FIRSTDAYQUARTER.longText"),
-				parseArgs: [mdcMessageBundle.getText("operators.FIRSTDAYQUARTER.longText")],
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.FIRSTDAYQUARTER, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			[OperatorName.LASTTDAYQUARTER]: [{
-				formatArgs: [Condition.createCondition(OperatorName.LASTTDAYQUARTER, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.LASTDAYQUARTER.longText"),
-				parseArgs: [mdcMessageBundle.getText("operators.LASTDAYQUARTER.longText")],
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.LASTTDAYQUARTER, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			[OperatorName.FIRSTDAYYEAR]: [{
-				formatArgs: [Condition.createCondition(OperatorName.FIRSTDAYYEAR, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.FIRSTDAYYEAR.longText"),
-				parseArgs: [mdcMessageBundle.getText("operators.FIRSTDAYYEAR.longText")],
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.FIRSTDAYYEAR, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			[OperatorName.LASTTDAYYEAR]: [{
-				formatArgs: [Condition.createCondition(OperatorName.LASTTDAYYEAR, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.LASTDAYYEAR.longText"),
-				parseArgs: [mdcMessageBundle.getText("operators.LASTDAYYEAR.longText")],
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.LASTTDAYYEAR, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
 			[OperatorName.TODAYFROMTO]: [{
 				formatArgs: [Condition.createCondition(OperatorName.TODAYFROMTO, [4, 6])],
 				formatValue: mdcMessageBundle.getText("operators.TODAYFROMTO.tokenText", [4, 6]),
 				formatValueCheckValues: ["4", "6"],
-				//parseArgs: ["Last 4 days"],
 				parsedValue: "46",
 				condition: Condition.createCondition(OperatorName.TODAYFROMTO, [4, 6], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: false,
-				longText: mdcMessageBundle.getText("operators.TODAYFROMTO.tokenText").replace(/\{0\}/g, "X").replace(/\{1\}/g, "Y"),
+				longText: mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_TITLE"),
 				tokenText: mdcMessageBundle.getText("operators.TODAYFROMTO.tokenText")
 			},
 			{
@@ -1667,76 +1550,25 @@ sap.ui.define([
 				valid: true,
 				isSingleValue: false
 			}],
-			[OperatorName.LASTWEEK]: [{
-				formatArgs: [Condition.createCondition(OperatorName.LASTWEEK, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.LASTWEEK.longText"),
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.LASTWEEK, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			[OperatorName.THISWEEK]: [{
-				formatArgs: [Condition.createCondition(OperatorName.THISWEEK, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.THISWEEK.longText"),
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.THISWEEK, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			[OperatorName.NEXTWEEK]: [{
-				formatArgs: [Condition.createCondition(OperatorName.NEXTWEEK, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.NEXTWEEK.longText"),
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.NEXTWEEK, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
 
-			[OperatorName.LASTMONTH]: [{
-				formatArgs: [Condition.createCondition(OperatorName.LASTMONTH, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.LASTMONTH.longText"),
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.LASTMONTH, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			[OperatorName.THISMONTH]: [{
-				formatArgs: [Condition.createCondition(OperatorName.THISMONTH, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.THISMONTH.longText"),
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.THISMONTH, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			[OperatorName.NEXTMONTH]: [{
-				formatArgs: [Condition.createCondition(OperatorName.NEXTMONTH, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.NEXTMONTH.longText"),
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.NEXTMONTH, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
 			[OperatorName.SPECIFICMONTH]: [{
 				formatArgs: [Condition.createCondition(OperatorName.SPECIFICMONTH, [4])],
-				formatValue: mdcMessageBundle.getText("operators.SPECIFICMONTH.tokenText", ["May"]),
+				formatValue: mMessageBundle.getText("DYNAMIC_DATE_SPECIFICMONTH_FORMAT", ["May"]),
 				parsedValue: "4",
 				condition: Condition.createCondition(OperatorName.SPECIFICMONTH, [4], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: mdcMessageBundle.getText("operators.SPECIFICMONTH.longText"),
-				tokenText: mdcMessageBundle.getText("operators.SPECIFICMONTH.tokenText")
+				longText: mMessageBundle.getText("DYNAMIC_DATE_SPECIFICMONTH_TITLE"),
+				tokenText: mMessageBundle.getText("DYNAMIC_DATE_SPECIFICMONTH_FORMAT"),
+				oType: oDateTimeOffsetType,
+				baseType: BaseType.DateTime,
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20240501-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20240531-235959000", "string")}
 			},
-			{
+			{// only real valid if tokenText contains more that month
 				formatArgs: [Condition.createCondition(OperatorName.SPECIFICMONTH, [4]), undefined, undefined, true],
 				formatValue: "May",
-				parseArgs: ["May", undefined, undefined, true],
+				parseArgs: ["5", undefined, undefined, true], // also numbers needs to be parsed
 				parsedValue: "4",
 				condition: Condition.createCondition(OperatorName.SPECIFICMONTH, [4], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
@@ -1745,127 +1577,19 @@ sap.ui.define([
 			}],
 			[OperatorName.SPECIFICMONTHINYEAR]: [{
 				formatArgs: [Condition.createCondition(OperatorName.SPECIFICMONTHINYEAR, [4, 2000])],
-				formatValue: mdcMessageBundle.getText("operators.SPECIFICMONTHINYEAR.tokenText", ["May", 2000]),
+				formatValue: mMessageBundle.getText("DYNAMIC_DATE_SPECIFICMONTHINYEAR_FORMAT", ["May", 2000]),
 				parsedValue: "42000",
 				condition: Condition.createCondition(OperatorName.SPECIFICMONTHINYEAR, [4, 2000], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: false,
-				longText: mdcMessageBundle.getText("operators.SPECIFICMONTHINYEAR.longText"),
-				tokenText: mdcMessageBundle.getText("operators.SPECIFICMONTHINYEAR.tokenText")
-			}],
-			[OperatorName.LASTQUARTER]: [{
-				formatArgs: [Condition.createCondition(OperatorName.LASTQUARTER, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.LASTQUARTER.longText"),
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.LASTQUARTER, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			[OperatorName.THISQUARTER]: [{
-				formatArgs: [Condition.createCondition(OperatorName.THISQUARTER, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.THISQUARTER.longText"),
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.THISQUARTER, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			[OperatorName.NEXTQUARTER]: [{
-				formatArgs: [Condition.createCondition(OperatorName.NEXTQUARTER, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.NEXTQUARTER.longText"),
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.NEXTQUARTER, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
+				longText: mMessageBundle.getText("DYNAMIC_DATE_SPECIFICMONTHINYEAR_TITLE"),
+				tokenText: mMessageBundle.getText("DYNAMIC_DATE_SPECIFICMONTHINYEAR_FORMAT"),
+				oType: oDateTimeOffsetType,
+				baseType: BaseType.DateTime,
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20000501-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20000531-235959000", "string")}
 			}],
 
-			[OperatorName.LASTYEAR]: [{
-				formatArgs: [Condition.createCondition(OperatorName.LASTYEAR, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.LASTYEAR.longText"),
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.LASTYEAR, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			[OperatorName.THISYEAR]: [{
-				formatArgs: [Condition.createCondition(OperatorName.THISYEAR, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.THISYEAR.longText"),
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.THISYEAR, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			[OperatorName.NEXTYEAR]: [{
-				formatArgs: [Condition.createCondition(OperatorName.NEXTYEAR, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.NEXTYEAR.longText"),
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.NEXTYEAR, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-
-			[OperatorName.QUARTER1]: [{
-				formatArgs: [Condition.createCondition(OperatorName.QUARTER1, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.QUARTER1.longText"),
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.QUARTER1, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			[OperatorName.QUARTER2]: [{
-				formatArgs: [Condition.createCondition(OperatorName.QUARTER2, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.QUARTER2.longText"),
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.QUARTER2, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			[OperatorName.QUARTER3]: [{
-				formatArgs: [Condition.createCondition(OperatorName.QUARTER3, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.QUARTER3.longText"),
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.QUARTER3, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			[OperatorName.QUARTER4]: [{
-				formatArgs: [Condition.createCondition(OperatorName.QUARTER4, [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.QUARTER4.longText"),
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.QUARTER4, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-
-			[OperatorName.YEARTODATE]: [{
-				formatArgs: [Condition.createCondition(OperatorName.YEARTODATE, [undefined])],
-				formatValue:  mdcMessageBundle.getText("operators.YEARTODATE.longText"),
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.YEARTODATE, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-
-			[OperatorName.DATETOYEAR]: [{
-				formatArgs: [Condition.createCondition(OperatorName.DATETOYEAR, [undefined])],
-				formatValue:  mdcMessageBundle.getText("operators.DATETOYEAR.longText"),
-				parsedValue: "",
-				condition: Condition.createCondition(OperatorName.DATETOYEAR, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
 			"MyToToday": [{
 				formatArgs: [Condition.createCondition("MyToToday", [undefined]), oDateTimeOffsetType],
 				formatValue: "to Today (" + oDateTimeOffsetType.formatValue(sTodayEnd, "string") + ")",
@@ -1882,7 +1606,70 @@ sap.ui.define([
 
 		};
 
-		const aDateTimeOperators = [
+		// static operators
+		let aDateTimeOperators = [
+			{name: OperatorName.YESTERDAY, dateTime: {start: "20241017-000000000", end: "20241017-235959999"}, date: {start: "20241017", end: "20241017"}},
+			{name: OperatorName.TODAY, dateTime: {start: "20241018-000000000", end: "20241018-235959999"}, date: {start: "20241018", end: "20241018"}},
+			{name: OperatorName.TOMORROW, dateTime: {start: "20241019-000000000", end: "20241019-235959999"}, date: {start: "20241019", end: "20241019"}},
+			{name: OperatorName.FIRSTDAYWEEK, dateTime: {start: "20241013-000000000", end: "20241013-235959999"}, date: {start: "20241013", end: "20241013"}},
+			{name: OperatorName.LASTDAYWEEK, dateTime: {start: "20241019-000000000", end: "20241019-235959999"}, date: {start: "20241019", end: "20241019"}},
+			{name: OperatorName.FIRSTDAYMONTH, dateTime: {start: "20241001-000000000", end: "20241001-235959999"}, date: {start: "20241001", end: "20241001"}},
+			{name: OperatorName.LASTDAYMONTH, dateTime: {start: "20241031-000000000", end: "20241031-235959999"}, date: {start: "20241031", end: "20241031"}},
+			{name: OperatorName.FIRSTDAYQUARTER, dateTime: {start: "20241001-000000000", end: "20241001-235959999"}, date: {start: "20241001", end: "20241001"}},
+			{name: OperatorName.LASTDAYQUARTER, dateTime: {start: "20241231-000000000", end: "20241231-235959999"}, date: {start: "20241231", end: "20241231"}},
+			{name: OperatorName.FIRSTDAYYEAR, dateTime: {start: "20240101-000000000", end: "20240101-235959999"}, date: {start: "20240101", end: "20240101"}},
+			{name: OperatorName.LASTDAYYEAR, dateTime: {start: "20241231-000000000", end: "20241231-235959999"}, date: {start: "20241231", end: "20241231"}},
+			{name: OperatorName.LASTWEEK, dateTime: {start: "20241006-000000000", end: "20241012-235959999"}, date: {start: "20241006", end: "20241012"}},
+			{name: OperatorName.THISWEEK, dateTime: {start: "20241013-000000000", end: "20241019-235959999"}, date: {start: "20241013", end: "20241019"}},
+			{name: OperatorName.NEXTWEEK, dateTime: {start: "20241020-000000000", end: "20241026-235959999"}, date: {start: "20241020", end: "20241026"}},
+			{name: OperatorName.LASTMONTH, dateTime: {start: "20240901-000000000", end: "20240930-235959999"}, date: {start: "20240901", end: "20240930"}},
+			{name: OperatorName.THISMONTH, dateTime: {start: "20241001-000000000", end: "20241031-235959999"}, date: {start: "20241001", end: "20241031"}},
+			{name: OperatorName.NEXTMONTH, dateTime: {start: "20241101-000000000", end: "20241130-235959999"}, date: {start: "20241101", end: "20241130"}},
+			{name: OperatorName.LASTQUARTER, dateTime: {start: "20240701-000000000", end: "20240930-235959999"}, date: {start: "20240701", end: "20240930"}},
+			{name: OperatorName.THISQUARTER, dateTime: {start: "20241001-000000000", end: "20241231-235959999"}, date: {start: "20241001", end: "20241231"}},
+			{name: OperatorName.NEXTQUARTER, dateTime: {start: "20250101-000000000", end: "20250331-235959999"}, date: {start: "20250101", end: "20250331"}},
+			{name: OperatorName.LASTYEAR, dateTime: {start: "20230101-000000000", end: "20231231-235959999"}, date: {start: "20230101", end: "20231231"}},
+			{name: OperatorName.THISYEAR, dateTime: {start: "20240101-000000000", end: "20241231-235959999"}, date: {start: "20240101", end: "20241231"}},
+			{name: OperatorName.NEXTYEAR, dateTime: {start: "20250101-000000000", end: "20251231-235959999"}, date: {start: "20250101", end: "20251231"}},
+			{name: OperatorName.QUARTER1, dateTime: {start: "20240101-000000000", end: "20240331-235959999"}, date: {start: "20240101", end: "20240331"}},
+			{name: OperatorName.QUARTER2, dateTime: {start: "20240401-000000000", end: "20240630-235959999"}, date: {start: "20240401", end: "20240630"}},
+			{name: OperatorName.QUARTER3, dateTime: {start: "20240701-000000000", end: "20240930-235959999"}, date: {start: "20240701", end: "20240930"}},
+			{name: OperatorName.QUARTER4, dateTime: {start: "20241001-000000000", end: "20241231-235959999"}, date: {start: "20241001", end: "20241231"}},
+			{name: OperatorName.YEARTODATE, dateTime: {start: "20240101-000000000", end: "20241018-235959999"}, date: {start: "20240101", end: "20241018"}},
+			{name: OperatorName.DATETOYEAR, dateTime: {start: "20241018-000000000", end: "20241231-235959999"}, date: {start: "20241018", end: "20241231"}}
+		];
+		for (let i = 0; i < aDateTimeOperators.length; i++) {
+			const sName = aDateTimeOperators[i].name;
+			if (!oFormatTest.hasOwnProperty(sName)) {
+				oFormatTest[sName] = [];
+			}
+			oFormatTest[sName].push({
+				formatArgs: [Condition.createCondition(sName, [undefined])],
+				formatValue: mMessageBundle.getText("DYNAMIC_DATE_" + sName + "_FORMAT"),
+				parseArgs: [mMessageBundle.getText("DYNAMIC_DATE_" + sName + "_FORMAT")],
+				parsedValue: "",
+				condition: Condition.createCondition(sName, [], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true,
+				longText: mMessageBundle.getText("DYNAMIC_DATE_" + sName + "_TITLE"),
+				tokenText: mMessageBundle.getText("DYNAMIC_DATE_" + sName + "_FORMAT"),
+				oType: oDateTimeOffsetType,
+				baseType: BaseType.DateTime,
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue(aDateTimeOperators[i].dateTime.start, "string"), value2 : oDateTimeOffsetType.parseValue(aDateTimeOperators[i].dateTime.end, "string")}
+			});
+			if (aDateTimeOperators[i].date) { // check filter for Date
+				oFormatTest[sName].push({
+					formatArgs: [Condition.createCondition(sName, [])],
+					isEmpty: false,
+					oType: oDateType,
+					baseType: BaseType.Date,
+					filter: {path: "test", operator: FilterOperator.BT, value1 : oDateType.parseValue(aDateTimeOperators[i].date.start, "string"), value2 : oDateType.parseValue(aDateTimeOperators[i].date.end, "string")}
+				});
+			}
+		}
+		// operators with one integer
+		aDateTimeOperators = [
 			{name: OperatorName.LASTMINUTES, dateTime: {start: "20241018-101930000", end: "20241018-102230000"}},
 			{name: OperatorName.LASTMINUTESINCLUDED, dateTime: {start: "20241018-102000000", end: "20241018-102230000"}},
 			{name: OperatorName.NEXTMINUTES, dateTime: {start: "20241018-102230000", end: "20241018-102530000"}},

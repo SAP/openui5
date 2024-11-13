@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/connectors/PersonalizationConnector",
+	"sap/ui/fl/initial/_internal/connectors/BtpServiceConnector",
 	"sap/ui/fl/initial/_internal/connectors/StaticFileConnector",
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/initial/_internal/StorageUtils",
@@ -27,6 +28,7 @@ sap.ui.define([
 	KeyUserConnector,
 	LrepConnector,
 	PersonalizationConnector,
+	BtpServiceConnector,
 	StaticFileConnector,
 	Storage,
 	StorageUtils,
@@ -1069,7 +1071,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("loadFlVariants", {
+	QUnit.module("loadFlVariant", {
 		beforeEach() {
 		},
 		afterEach() {
@@ -1080,39 +1082,27 @@ sap.ui.define([
 			const sUrl = "some/url";
 			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{
-					connector: "LrepConnector",
+					connector: "BtpServiceConnector",
 					url: sUrl,
-					layers: []
+					layers: [Layer.PUBLIC, Layer.CUSTOMER]
 				},
-				// the JsObjectConnector does not extend the BaseLoadConnector and has no loadFlVariants function
+				// the JsObjectConnector does not extend the BaseLoadConnector and has no loadFlVariant function
 				{
 					connector: "JsObjectConnector",
 					layers: [Layer.CUSTOMER]
-				},
-				{
-					connector: "PersonalizationConnector",
-					url: sUrl,
-					layers: [Layer.USER]
 				}
 			]);
-			sandbox.stub(LrepConnector, "loadFlVariants").resolves({
+			sandbox.stub(BtpServiceConnector, "loadFlVariant").resolves({
 				variants: [{fileName: "variant1"}],
-				variantDependentControlChanges: [{fileName: "change1"}],
-				variantChanges: [{fileName: "variantChange1"}],
-				variantManagementChanges: [{fileName: "vmChange1"}]
-			});
-			sandbox.stub(PersonalizationConnector, "loadFlVariants").resolves({
-				variants: [{fileName: "variant2"}],
-				variantDependentControlChanges: [{fileName: "change2"}],
-				variantChanges: [{fileName: "variantChange2"}],
-				variantManagementChanges: [{fileName: "vmChange2"}]
-			});
-			const oResult = await Storage.loadFlVariants({reference: sFlexReference, variantReferences: ["variant1", "variant2"]});
-			assert.deepEqual(oResult, {
-				variants: [{fileName: "variant1"}, {fileName: "variant2"}],
 				variantDependentControlChanges: [{fileName: "change1"}, {fileName: "change2"}],
 				variantChanges: [{fileName: "variantChange1"}, {fileName: "variantChange2"}],
-				variantManagementChanges: [{fileName: "vmChange1"}, {fileName: "vmChange2"}]
+				changes: [{fileName: "change1"}]
+			});
+			const oResult = await Storage.loadFlVariant({reference: sFlexReference, variantReference: "variant1"});
+			assert.deepEqual(oResult, {
+				variants: [{fileName: "variant1"}],
+				variantDependentControlChanges: [{fileName: "change1"}, {fileName: "change2"}],
+				variantChanges: [{fileName: "variantChange1"}, {fileName: "variantChange2"}]
 			}, "the result is correct");
 		});
 	});

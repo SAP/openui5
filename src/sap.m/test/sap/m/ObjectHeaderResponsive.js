@@ -12,12 +12,13 @@ sap.ui.define([
   "sap/m/ObjectStatus",
   "sap/m/IconTabBar",
   "sap/m/IconTabFilter",
+  "sap/m/ObjectMarker",
+  "sap/m/library",
   "sap/m/Input",
   "sap/m/Link",
   "sap/m/RatingIndicator",
   "sap/m/Text",
   "sap/m/Popover",
-  "sap/m/library",
   "sap/m/List",
   "sap/m/StandardListItem",
   "sap/m/ActionListItem",
@@ -39,12 +40,13 @@ sap.ui.define([
   ObjectStatus,
   IconTabBar,
   IconTabFilter,
+  ObjectMarker,
+  mobileLibrary,
   Input,
   Link,
   RatingIndicator,
   Text,
   Popover,
-  mobileLibrary,
   List,
   StandardListItem,
   ActionListItem,
@@ -60,6 +62,9 @@ sap.ui.define([
 
   // shortcut for sap.m.PlacementType
   const PlacementType = mobileLibrary.PlacementType;
+
+  // shortcut for sap.m.ObjectMarkerType
+  const ObjectMarkerType = mobileLibrary.ObjectMarkerType;
 
   // shortcut for sap.ui.core.IconColor
   const IconColor = coreLibrary.IconColor;
@@ -174,9 +179,6 @@ sap.ui.define([
 	  numberUnit: "Euro",
 	  numberTextDirection: TextDirection.LTR,
 	  fullScreenOptimized: true,
-	  showMarkers: false,
-	  markFlagged: true,
-	  markFavorite: true,
 	  numberState: ValueState.Success,
 	  attributes: [
 		  new ObjectAttribute({
@@ -245,9 +247,6 @@ sap.ui.define([
 	  number: "624,00",
 	  numberUnit: "Euro",
 	  fullScreenOptimized: false,
-	  showMarkers: false,
-	  markFlagged: true,
-	  markFavorite: true,
 	  numberState: ValueState.Success,
 	  attributes: [
 		  new ObjectAttribute({
@@ -319,9 +318,10 @@ sap.ui.define([
 	  number: "33233333.624,00",
 	  numberUnit: "שֶׁקֶל חָדָשׁ",
 	  numberTextDirection : TextDirection.RTL,
-	  showMarkers: true,
-	  markFlagged: true,
-	  markFavorite: true,
+	  markers: [
+		  new ObjectMarker({type: ObjectMarkerType.Favorite}),
+		  new ObjectMarker({type: ObjectMarkerType.Flagged})
+	  ],
 	  numberState: ValueState.Success
   });
 
@@ -535,7 +535,6 @@ sap.ui.define([
 	  popover.openBy(domRef);
   };
 
-
   var oh3 = new ObjectHeader("oh3", {
 	  responsive: true,
 	  title: "An apple a day keeps the doctor away An apple a day keeps the doctor away",
@@ -545,9 +544,10 @@ sap.ui.define([
 	  numberUnit: "here we have a long currency Euro",
 	  showTitleSelector : true,
 	  titleSelectorPress : titleSelectorEventHandler,
-	  showMarkers: true,
-	  markFlagged: true,
-	  markFavorite: true,
+	  markers: [
+		  new ObjectMarker({type: ObjectMarkerType.Favorite}),
+		  new ObjectMarker({type: ObjectMarkerType.Flagged})
+	  ],
 	  numberState: ValueState.Success
   });
   oh3.addStyleClass("sapUiResponsivePadding--header");
@@ -643,8 +643,9 @@ sap.ui.define([
 	  introHref: "http://www.google.com",
 	  introTarget: "_blank",
 	  fullScreenOptimized: true,
-	  showMarkers: true,
-	  markFlagged: true,
+	  markers: [
+		  new ObjectMarker({type: ObjectMarkerType.Flagged})
+	  ],
 	  numberState: ValueState.Success,
 	  statuses : [ new ObjectStatus({
 		  text : "Order Shipping slow"
@@ -723,8 +724,9 @@ sap.ui.define([
 	  titleActive: true,
 	  titlePress: function(){ alert('you click the title');},
 	  fullScreenOptimized: false,
-	  showMarkers: true,
-	  markFlagged: true,
+	  markers: [
+		  new ObjectMarker({type: ObjectMarkerType.Flagged})
+	  ],
 	  numberState: ValueState.Success,
 	  statuses : [ new ObjectStatus({
 		  text : "Order Shipping slow"
@@ -795,9 +797,10 @@ sap.ui.define([
 	  title: "Short title",
 	  number: "331,00",
 	  numberUnit: "Dollar",
-	  showMarkers: true,
-	  markFlagged: true,
-	  markFavorite: true,
+	  markers: [
+		  new ObjectMarker({type: ObjectMarkerType.Favorite}),
+		  new ObjectMarker({type: ObjectMarkerType.Flagged})
+	  ],
 	  numberState: ValueState.Success,
 	  attributes: [
 		  new ObjectAttribute({
@@ -863,9 +866,10 @@ sap.ui.define([
 	  number: "1.684,00",
 	  numberUnit: "Euro",
 	  backgroundDesign: "Translucent",
-	  showMarkers: true,
-	  markFlagged: true,
-	  markFavorite: true,
+	  markers: [
+		  new ObjectMarker({type: ObjectMarkerType.Favorite}),
+		  new ObjectMarker({type: ObjectMarkerType.Flagged})
+	  ],
 	  numberState: ValueState.Success,
 	  attributes: [
 		  new ObjectAttribute({
@@ -892,9 +896,10 @@ sap.ui.define([
 	  icon: "sap-icon://nutrition-activity",
 	  number: "1.684,00",
 	  numberUnit: "Euro",
-	  showMarkers: true,
-	  markFlagged: true,
-	  markFavorite: true,
+	  markers: [
+		  new ObjectMarker({type: ObjectMarkerType.Favorite}),
+		  new ObjectMarker({type: ObjectMarkerType.Flagged})
+	  ],
 	  numberState: ValueState.Success,
 	  attributes: [
 		  new ObjectAttribute({
@@ -1116,9 +1121,10 @@ sap.ui.define([
 	  responsive: true,
 	  intro: "On behalf of John Smith Ñagçyfox",
 	  title: "11 This is a title",
-	  showMarkers: true,
-	  markFlagged: true,
-	  markFavorite: true,
+	  markers: [
+		  new ObjectMarker({type: ObjectMarkerType.Favorite}),
+		  new ObjectMarker({type: ObjectMarkerType.Flagged})
+	  ],
 	  attributes: [
 		  new ObjectAttribute({
 			  title: "Manufacturer",
@@ -1246,9 +1252,10 @@ sap.ui.define([
 	  responsive: true,
 	  number: "1.684,00",
 	  numberUnit: "Euro",
-	  showMarkers: true,
-	  markFlagged: true,
-	  markFavorite: true,
+	  markers: [
+		  new ObjectMarker({type: ObjectMarkerType.Favorite}),
+		  new ObjectMarker({type: ObjectMarkerType.Flagged})
+	  ],
 	  numberState: ValueState.Success,
 	  attributes: [
 		  new ObjectAttribute({
@@ -1429,9 +1436,10 @@ sap.ui.define([
 	  number: "1.684,00",
 	  numberUnit: "Euro",
 	  showTitleSelector : true,
-	  showMarkers: true,
-	  markFlagged: true,
-	  markFavorite: true,
+	  markers: [
+		  new ObjectMarker({type: ObjectMarkerType.Favorite}),
+		  new ObjectMarker({type: ObjectMarkerType.Flagged})
+	  ],
 	  numberState: ValueState.Success
   });
   oh14.addStyleClass("sapUiResponsivePadding--header");

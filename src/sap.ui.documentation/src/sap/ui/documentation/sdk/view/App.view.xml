@@ -44,7 +44,7 @@
 							visible="{appView>/bPhoneSize}" />
 
 						<Image
-							src="{= ${appView>/bDarkThemeActive} ? ${theme>/darkLogo} : ${theme>/lightLogo} }"
+							src="{= ${versionData>/isOpenUI5} ? ${theme>/OpenUI5Logo} : ${theme>/SAPUI5Logo} }"
 							alt="{i18n>APP_HEADER_LOGO_ALT}"
 							class="sapUiDemokitMainHeaderLogo"
 							height="2rem"

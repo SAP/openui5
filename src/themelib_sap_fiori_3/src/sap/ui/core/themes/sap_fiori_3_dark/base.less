@@ -1,11 +1,11 @@
 // /**
 // * Copyright (c) 2012-2024 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine 14.0.23
-// * data:{"sModified":"2024-10-02T13:14:44Z"}
+// * Theming Engine 14.1.4
+// * data:{"sModified":"2024-11-04T10:14:04Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/sap_fiori_3_dark/base.less (Version 11.19.0) *******************/
+/******************* FILE /Base/baseLib/sap_fiori_3_dark/base.less (Version 11.22.0) *******************/
 
 
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
@@ -515,6 +515,10 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapContent_Lite_Shadow: @sapContent_Shadow1;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapContent_Illustrative_Color1: #9b015d;
 
 // [Tags "!Protected"]
@@ -636,6 +640,90 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapContent_Illustrative_Color31: #ffab92;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Space_S: 1rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Space_M: 2rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Space_L: 2rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Space_XL: 3rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Space_Tiny: 2rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Space_Small: 1rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Space_Medium: 2rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Space_Large: 3rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Margin_Tiny: 0 0 1rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Margin_Small: 1rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Margin_Medium: 1rem 2rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Margin_Large: 1rem 3rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Gap: 1rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Padding_S: 0rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Padding_M: 2rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Padding_L: 2rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Padding_XL: 3rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Success_HeaderShadow: 0 0.125rem 0.125rem 0 fade(@sapContent_ShadowColor, 20), inset 0 -0.0625rem 0 0 @sapSuccessBorderColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Warning_HeaderShadow: 0 0.125rem 0.125rem 0 fade(@sapContent_ShadowColor, 20), inset 0 -0.0625rem 0 0 @sapWarningBorderColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Error_HeaderShadow: 0 0.125rem 0.125rem 0 fade(@sapContent_ShadowColor, 20), inset 0 -0.0625rem 0 0 @sapErrorBorderColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapContent_Information_HeaderShadow: 0 0.125rem 0.125rem 0 fade(@sapContent_ShadowColor, 20), inset 0 -0.0625rem 0 0 @sapInformationBorderColor;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -962,6 +1050,54 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapShell_Space_S: 0.5rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapShell_Space_M: 2rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapShell_Space_L: 2rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapShell_Space_XL: 3rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapShell_Gap_S: 0.5rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapShell_Gap_M: 1rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapShell_Gap_L: 1rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapShell_Gap_XL: 1rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapShell_GroupGap_S: 2rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapShell_GroupGap_M: 3rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapShell_GroupGap_L: 3rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapShell_GroupGap_XL: 3rem;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapAssistant_Color1: #5d36ff;
 
 // [Tags "!Protected"]
@@ -1191,6 +1327,18 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapAvatar_10_Hover_Background: @sapAvatar_10_Background;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAvatar_Lite_BorderColor: transparent;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAvatar_Lite_Background: transparent;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAvatar_Hover_BorderColor: fade(@sapField_BorderColor, 25);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -1866,6 +2014,22 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapButton_TokenBorderCornerRadius: 0.25 * @sapContent_GridSize;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapButton_Selected_TokenBorderWidth: 0;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapButton_ReadOnly_TokenBackground: @sapField_ReadOnly_Background;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapButton_Segment_BorderCornerRadius: 0;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapField_Background: @sapBaseColor;
 
 // [Tags "!Protected"]
@@ -2048,6 +2212,34 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapField_Selector_Hover_Background: @sapField_Background;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapField_Selector_Hover_InvalidBackground: sapField_InvalidBackground;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapField_Selector_Hover_WarningBackground: @sapField_WarningBackground;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapField_Selector_Hover_SuccessBackground: @sapField_SuccessBackground;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapField_Selector_Hover_InformationBackground: @sapField_InformationBackground;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapField_Picker_BorderColor: @sapField_BorderColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapField_Picker_BorderWidth: 0.0625 * @sapContent_GridSize;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapField_Selector_BorderStyle: solid;
 
 // [Tags "!Protected"]
@@ -2069,6 +2261,10 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapField_Selector_InformationBorderStyle: solid;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapGroup_TitleBorderWidth: @sapElement_BorderWidth;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -2209,6 +2405,14 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapList_TableFixedBorderColor: lighten(@sapList_BorderColor, 30);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapList_TableFixedColumnBorderWidth: @sapElement_BorderWidth;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapList_TableFixedRowBorderWidth: 0.125 * @sapContent_GridSize;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -2512,6 +2716,10 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapBlockLayer_Opacity: 0.2;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapTile_Background: @sapBaseColor;
 
 // [Tags "!Protected"]
@@ -2557,6 +2765,14 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapTile_OverlayForegroundColor: contrast(@sapTile_OverlayBackground, @sapTitleColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapTile_Hover_ContentBackground: @sapTile_Hover_Background;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapTile_Active_ContentBackground: @sapTile_Active_Background;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -2893,11 +3109,29 @@
 @sapIndicationColor_8b: #4c005b;
 @sapIndicationColor_8b_BorderColor: @sapIndicationColor_8b;
 @sapIndicationColor_8b_Hover_Background: lighten(@sapIndicationColor_8b, 5);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_9: #f2f2f2;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_9_Background: @sapIndicationColor_9;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_9_BorderColor: @sapIndicationColor_9;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_9_TextColor: contrast(@sapIndicationColor_9_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_9_Hover_Background: lighten(@sapIndicationColor_9, 5);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_9_Active_Background: lighten(@sapIndicationColor_9, 10);
 @sapIndicationColor_9_Active_BorderColor: @sapIndicationColor_9_BorderColor;
 @sapIndicationColor_9_Active_TextColor: contrast(@sapIndicationColor_9_Active_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
@@ -2907,11 +3141,29 @@
 @sapIndicationColor_9b: #1d232a;
 @sapIndicationColor_9b_BorderColor: lighten(@sapIndicationColor_9b, 16);
 @sapIndicationColor_9b_Hover_Background: lighten(@sapIndicationColor_9b, 5);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_10: #d8d8d8;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_10_Background: @sapIndicationColor_10;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_10_BorderColor: @sapIndicationColor_10;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_10_TextColor: contrast(@sapIndicationColor_10_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_10_Hover_Background: lighten(@sapIndicationColor_10, 5);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_10_Active_Background: lighten(@sapIndicationColor_10, 10);
 @sapIndicationColor_10_Active_BorderColor: @sapIndicationColor_10_BorderColor;
 @sapIndicationColor_10_Active_TextColor: contrast(@sapIndicationColor_10_Active_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
@@ -3772,3 +4024,19 @@
 @sapBackgroundColorDefault: darken(@sapPrimary3, 6);
 @sapList_HighlightColor: @sapHighlightColor;
 @sapShell_BackgroundGradient: linear-gradient(to bottom, darken(@sapShell_Background, 5), lighten(@sapShell_Background, 2));
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapBreakpoint_S_Min: 0;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapBreakpoint_M_Min: 600px;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapBreakpoint_L_Min: 1024px;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapBreakpoint_XL_Min: 1440px;

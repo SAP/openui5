@@ -159,9 +159,9 @@ sap.ui.define([
 			// if the variant management reference is not available, the variant is not yet loaded
 			if (!oVariantModel.getVariantManagementReference(mPropertyBag.variantReference).variantManagementReference) {
 				try {
-					await VariantManagementState.loadVariants({
+					await VariantManagementState.loadVariant({
 						reference: oVariantModel.sFlexReference,
-						variantReferences: [mPropertyBag.variantReference]
+						variantReference: mPropertyBag.variantReference
 					});
 				} catch (oError) {
 					return logAndReject(Error(`Variant with reference '${mPropertyBag.variantReference}' could not be found`));
