@@ -7,9 +7,13 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/UIComponent",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/DesignTimeStatus",
 	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/fl/apply/_internal/changes/Utils",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/changeHandler/condenser/Classification",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer",
@@ -26,9 +30,13 @@ sap.ui.define([
 	XMLView,
 	ComponentContainer,
 	UIComponent,
+	JsControlTreeModifier,
 	DesignTime,
 	DesignTimeStatus,
 	OverlayRegistry,
+	ChangesUtils,
+	FlexObjectStates,
+	CondenserClassification,
 	Settings,
 	PersistenceWriteAPI,
 	Layer,
@@ -183,21 +191,42 @@ sap.ui.define([
 			}.bind(this));
 		}
 
-		function buildAndExecuteCommands(assert) {
+		function buildAndExecuteCommands(assert, mCreateCasePropertyBag) {
 			const aActions = [].concat(
 				mOptions.previousActions || [],
 				mOptions.action
 			);
 			const aCommands = [];
 
-			return aActions.reduce(function(oLastPromise, oAction) {
-				return oLastPromise
-				.then(buildCommand.bind(this, assert, oAction))
-				.then(function(oCommand) {
-					aCommands.push(oCommand);
-					// Execute commands one by one to allow change dependencies
-					return oCommand.execute();
-				});
+			async function fnReduce(oAction, bLastAction) {
+				const oCommand = await buildCommand.call(this, assert, oAction);
+				aCommands.push(oCommand);
+				await oCommand.execute();
+
+				if (
+					bLastAction // exclude previous actions from duplicate change check
+					&& mCreateCasePropertyBag?.relevantForDuplicateChangeCheck
+					&& await isCreateCaseAvailable.call(this, oCommand, oAction)
+				) {
+					await waitForDtSync(this.oDesignTime);
+					mCreateCasePropertyBag.duplicateChangeCheckActive = true;
+					const oSecondCommand = await buildCommand.call(this, assert, oAction);
+					aCommands.push(oSecondCommand);
+					try {
+						await oSecondCommand.execute();
+					} catch (oError) {
+						assert.strictEqual(
+							oSecondCommand.getPreparedChange()?.hasApplyProcessFailed(),
+							true,
+							`then on second application of the same action returns the following error message: ${oError.message || oError}`
+						);
+					}
+				}
+				await waitForDtSync(this.oDesignTime);
+			}
+
+			return aActions.reduce(function(oLastPromise, oAction, iIndex) {
+				return oLastPromise.then(fnReduce.bind(this, oAction, (iIndex === aActions.length - 1)));
 			}.bind(this), Promise.resolve())
 			.then(function() {
 				return aCommands;
@@ -397,6 +426,13 @@ sap.ui.define([
 			}, Promise.resolve());
 		}
 
+		async function undoDuplicateCommand(aCommands, mCreateCasePropertyBag) {
+			if (mCreateCasePropertyBag?.duplicateChangeCheckActive) {
+				const oLastCommand = aCommands[aCommands.length - 1];
+				await oLastCommand.undo();
+			}
+		}
+
 		function destroyCommands(aCommands) {
 			aCommands.forEach((oCommand) => {
 				oCommand.destroy();
@@ -518,12 +554,40 @@ sap.ui.define([
 			return Promise.all(aPromises);
 		}
 
-		async function applyChangeOnXML(assert) {
-			await createViewInComponent.call(this, SYNC);
-			await buildCommandsAndApplyChangesOnXML.call(this, assert);
+		async function isCreateCaseAvailable(oCommand, mAction) {
+			let oCondenserInfo;
+			const oControl = await getControlFromActionMap.call(this, mAction);
+			const oChange = oCommand.getPreparedChange();
+			oChange.setRevertData(oChange.getRevertData() || {});
+			const mPropertyBag = {
+				modifier: JsControlTreeModifier,
+				appComponent: oCommand.getAppComponent()
+			};
+
+			try {
+				const oChangeHandler = await ChangesUtils.getChangeHandler(
+					oChange,
+					{
+						control: oControl,
+						controlType: oControl.getMetadata().getName()
+					},
+					mPropertyBag
+				);
+				if (oChangeHandler && typeof oChangeHandler.getCondenserInfo === "function") {
+					oCondenserInfo = await oChangeHandler.getCondenserInfo(oChange, mPropertyBag);
+				}
+				return oCondenserInfo?.classification === CondenserClassification.Create;
+			} catch (oError) {
+				return false;
+			}
 		}
 
-		function buildCommandsAndApplyChangesOnXML(assert) {
+		async function applyChangeOnXML(assert, mCreateCasePropertyBag) {
+			await createViewInComponent.call(this, SYNC);
+			await buildCommandsAndApplyChangesOnXML.call(this, assert, mCreateCasePropertyBag);
+		}
+
+		function buildCommandsAndApplyChangesOnXML(assert, mCreateCasePropertyBag) {
 			const aActions = [].concat(
 				mOptions.previousActions || [],
 				mOptions.action
@@ -531,20 +595,42 @@ sap.ui.define([
 			const aCommands = [];
 			let oAppComponent;
 
-			return aActions.reduce(function(oLastPromise, oAction) {
-				return oLastPromise
-				.then(buildCommand.bind(this, assert, oAction))
-				.then(function(oCommand) {
-					aCommands.push(oCommand);
-					oAppComponent = oCommand.getAppComponent();
+			async function fnReduce(oAction, bLastAction) {
+				const oCommand = await buildCommand.call(this, assert, oAction);
+				aCommands.push(oCommand);
+				oAppComponent = oCommand.getAppComponent();
+				let oSecondCommand;
 
-					// Destroy and recreate component and view to get the changes applied
-					// Wait for each change to be applied individually to allow dependencies
-					// between changes of different actions
-					this.oUiComponentContainer.destroy();
-					PersistenceWriteAPI.add({change: oCommand.getPreparedChange(), selector: oAppComponent});
-					return createViewInComponent.call(this, ASYNC);
-				}.bind(this));
+				// Check for duplicate change errors when applying change with creation case
+				if (
+					bLastAction // exclude previous actions from duplicate change check
+					&& mCreateCasePropertyBag?.relevantForDuplicateChangeCheck // Activates duplicate change checks
+					&& await isCreateCaseAvailable.call(this, oCommand, oAction)
+				) {
+					mCreateCasePropertyBag.duplicateChangeCheckActive = true;
+					oSecondCommand = await buildCommand.call(this, assert, oAction);
+					aCommands.push(oSecondCommand);
+				}
+
+				// Destroy and recreate component and view to get the changes applied
+				// Wait for each change to be applied individually to allow dependencies
+				// between changes of different actions
+				this.oUiComponentContainer.destroy();
+				PersistenceWriteAPI.add({
+					change: oCommand.getPreparedChange(),
+					selector: oAppComponent
+				});
+				if (oSecondCommand) {
+					PersistenceWriteAPI.add({
+						change: oSecondCommand.getPreparedChange(),
+						selector: oAppComponent
+					});
+				}
+				return await createViewInComponent.call(this, ASYNC);
+			}
+
+			return aActions.reduce(function(oLastPromise, oAction, iIndex) {
+				return oLastPromise.then(fnReduce.bind(this, oAction, (iIndex === aActions.length - 1)));
 			}.bind(this), Promise.resolve())
 			.then(function() {
 				this.aCommands = aCommands;
@@ -602,6 +688,15 @@ sap.ui.define([
 					await executeCommands(this.aRemainingCommands);
 					await nextUIUpdate();
 					await mOptions.afterRedo(this.oUiComponent, this.oView, assert);
+				});
+
+				QUnit.test("When executing on XML and applying the create change twice (check for duplicate change errors) and reverting just one change in JS", async function(assert) {
+					const mCreateCasePropertyBag = { relevantForDuplicateChangeCheck: true };
+					await applyChangeOnXML.call(this, assert, mCreateCasePropertyBag);
+					await undoDuplicateCommand(this.aCommands, mCreateCasePropertyBag);
+					await cleanUpAfterUndo(this.aCommands);
+					nextUIUpdate();
+					await mOptions.afterAction(this.oUiComponent, this.oView, assert);
 				});
 			});
 		}
@@ -671,6 +766,19 @@ sap.ui.define([
 
 				await nextUIUpdate();
 				await mOptions.afterRedo(this.oUiComponent, this.oView, assert);
+			});
+
+			QUnit.test("When executing and applying the create change twice (check for duplicate change errors) and undoing just one command", async function(assert) {
+				this.oUiComponentContainer.destroy();
+				await createViewInComponent.call(this, SYNC);
+				const mCreateCasePropertyBag = { relevantForDuplicateChangeCheck: true };
+				const aCommands = await buildAndExecuteCommands.call(this, assert, mCreateCasePropertyBag);
+				this.aCommands = aCommands;
+				await waitForDtSync(this.oDesignTime);
+				await undoDuplicateCommand(this.aCommands, mCreateCasePropertyBag);
+				await cleanUpAfterUndo(this.aCommands);
+				nextUIUpdate();
+				await mOptions.afterAction(this.oUiComponent, this.oView, assert);
 			});
 		});
 	}
