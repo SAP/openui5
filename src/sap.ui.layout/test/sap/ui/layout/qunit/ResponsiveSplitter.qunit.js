@@ -9,7 +9,9 @@ sap.ui.define([
 	'sap/m/Button',
 	'sap/m/Text',
 	'sap/m/ScrollContainer',
-	'sap/ui/core/HTML'
+	'sap/ui/core/HTML',
+	'sap/ui/qunit/QUnitUtils',
+	'sap/ui/core/Core'
 ], function(
 	qutils,
 	jQuery,
@@ -20,7 +22,9 @@ sap.ui.define([
 	Button,
 	Text,
 	ScrollContainer,
-	HTML
+	HTML,
+	QunitUtils,
+	Core
 ) {
 	"use strict";
 
@@ -329,6 +333,47 @@ sap.ui.define([
 		this.triggerKeyOnPaginator(0, jQuery.sap.KeyCodes.ARROW_RIGHT);
 		this.triggerKeyOnPaginator(1, jQuery.sap.KeyCodes.ARROW_RIGHT);
 		assert.strictEqual(document.activeElement, this.getButtonByIndex(1), "Should not move the focus");
+	});
+
+
+	QUnit.test("Left arrow when there is nested PaneContainer", function (assert) {
+		// Arrange
+		this.clock.restore();
+		var done = assert.async();
+		var oResponsiveSplitter = new ResponsiveSplitter({
+			rootPaneContainer: new PaneContainer({
+				panes: [
+					new SplitPane({
+						content: new Button()
+					}),
+					new PaneContainer({
+						layoutData: new SplitterLayoutData({
+							size: "100px"
+						}),
+						panes: [
+							new SplitPane({
+								content: new Button()
+							})
+						]
+					})
+				]
+			})
+		});
+
+		oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		var oBarDomRef = oResponsiveSplitter.getRootPaneContainer()._oSplitter.getDomRef("splitbar-0");
+
+		oResponsiveSplitter.getRootPaneContainer()._oSplitter.attachResize(function (e) {
+			assert.ok(true, "resize event is fired");
+			assert.strictEqual(e.getParameter("oldSizes")[1], 100, "Old size of nested PaneContainer is correct");
+			assert.strictEqual(e.getParameter("newSizes")[1], 120, "New size of nested PaneContainer is correct");
+			done();
+		});
+
+		// Act
+		QunitUtils.triggerKeydown(oBarDomRef, jQuery.sap.KeyCodes.ARROW_LEFT);
 	});
 
 	QUnit.module("SplitPane API", {

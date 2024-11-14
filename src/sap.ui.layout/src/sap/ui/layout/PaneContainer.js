@@ -33,7 +33,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 		library : "sap.ui.layout",
 		properties : {
 			/**
-			 The orientation of the Splitter
+			 * The orientation of the Splitter
 			 */
 			orientation : { type : "sap.ui.core.Orientation", group : "Behavior", defaultValue : Orientation.Horizontal }
 		},

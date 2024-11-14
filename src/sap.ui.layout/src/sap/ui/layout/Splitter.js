@@ -11,7 +11,8 @@ sap.ui.define([
 	'./SplitterRenderer',
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/layout/SplitterLayoutData"
+	"sap/ui/layout/SplitterLayoutData",
+	"sap/ui/core/Core"
 ],
 	function(
 		Control,
@@ -22,7 +23,8 @@ sap.ui.define([
 		SplitterRenderer,
 		Log,
 		jQuery,
-		SplitterLayoutData
+		SplitterLayoutData,
+		Core
 	) {
 	"use strict";
 
@@ -167,6 +169,7 @@ sap.ui.define([
 			min          : this._onKeyboardResize.bind(this, "min", 20)
 		};
 		this._enableKeyboardListeners();
+		this._handleThemeAppliedBound = this._handleThemeApplied.bind(this);
 	};
 
 	Splitter.prototype.exit = function() {
@@ -187,6 +190,14 @@ sap.ui.define([
 	Splitter.prototype.onAfterRendering = function() {
 		this._$SplitterOverlay = this.$("overlay");
 		this._$SplitterOverlayBar = this.$("overlayBar");
+
+		if (!this._bThemeApplied && Core.isThemeApplied()) {
+			this._bThemeApplied = true;
+		}
+
+		if (!Core.isThemeApplied()) {
+			Core.attachThemeChanged(this._handleThemeAppliedBound);
+		}
 
 		// Calculate and apply correct sizes to the Splitter contents
 		this._resize();
@@ -628,9 +639,17 @@ sap.ui.define([
 			// Live-Resize, resize contents in Dom
 			$Cnt1.css(this._sizeType, iNewSize1 + "px");
 			$Cnt2.css(this._sizeType, iNewSize2 + "px");
+
+			this._delayedResize();
 		}
 	};
 
+
+	Splitter.prototype._handleThemeApplied = function () {
+		Core.detachThemeChanged(this._handleThemeAppliedBound);
+		this._bThemeApplied = true;
+		this._resize();
+	};
 
 	////////////////////////////////////////// Private Methods /////////////////////////////////////////
 
@@ -687,6 +706,10 @@ sap.ui.define([
 	 * @private
 	 */
 	Splitter.prototype._resize = function() {
+		if (!this._bThemeApplied) {
+			return;
+		}
+
 		var oDomRef = this.getDomRef();
 		if (!oDomRef || RenderManager.getPreserveAreaRef().contains(oDomRef)) {
 			// Do not attempt to resize the content areas in case we are in the preserved area

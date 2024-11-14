@@ -1,17 +1,20 @@
 <mvc:View
+	displayBlock="true"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<l:Splitter>
-		<Text text="Content 1">
-			<layoutData>
-				<l:SplitterLayoutData size="30%" resizable="false" />
-			</layoutData>
-		</Text>
-		<Text text="Content 2">
-			<layoutData>
-				<l:SplitterLayoutData size="auto" />
-			</layoutData>
-		</Text>
-	</l:Splitter>
+	<App>
+		<l:Splitter>
+			<Text text="Content 1">
+				<layoutData>
+					<l:SplitterLayoutData size="30%" resizable="false" />
+				</layoutData>
+			</Text>
+			<Text text="Content 2">
+				<layoutData>
+					<l:SplitterLayoutData size="auto" />
+				</layoutData>
+			</Text>
+		</l:Splitter>
+	</App>
 </mvc:View>
