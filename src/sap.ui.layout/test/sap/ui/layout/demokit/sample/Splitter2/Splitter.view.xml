@@ -1,17 +1,20 @@
 <mvc:View
+	displayBlock="true"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<l:Splitter height="500px">
-		<Button width="100%" text="Content 1">
-			<layoutData>
-				<l:SplitterLayoutData size="300px" />
-			</layoutData>
-		</Button>
-		<Button width="100%" text="Content 2">
-			<layoutData>
-				<l:SplitterLayoutData size="auto" />
-			</layoutData>
-		</Button>
-	</l:Splitter>
+	<App>
+		<l:Splitter height="500px">
+			<Button width="100%" text="Content 1">
+				<layoutData>
+					<l:SplitterLayoutData size="300px" />
+				</layoutData>
+			</Button>
+			<Button width="100%" text="Content 2">
+				<layoutData>
+					<l:SplitterLayoutData size="auto" />
+				</layoutData>
+			</Button>
+		</l:Splitter>
+	</App>
 </mvc:View>
