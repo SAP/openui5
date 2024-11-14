@@ -435,24 +435,28 @@ sap.ui.define([
 			path: "RegionPath",
 			label: "Region",
 			dataType: "String",
-			groupable: true,
-			text: "RegionText"
+			text: "RegionText",
+			extension: {
+				technicallyGroupable: true
+			}
 		}, {
 			key: "RegionText",
 			path: "RegionTextPath",
 			label: "RegionText",
 			dataType: "String",
-			groupable: true,
 			extension: {
-				additionalProperties: ["Region"]
+				additionalProperties: ["Region"],
+				technicallyGroupable: true
 			}
 		}, {
 			key: "SalesAmount",
 			path: "SalesAmountPath",
 			label: "SalesAmount",
 			dataType: "String",
-			aggregatable: true,
-			unit: "Currency"
+			unit: "Currency",
+			extension: {
+				technicallyAggregatable: true
+			}
 		}, {
 			key: "Currency",
 			path: "CurrencyPath",
