@@ -5,13 +5,13 @@
 
 @_sap_f_Card_BoxShadow: @sapUiContentShadow0;
 @_sap_f_Card_HeaderBorder: 0.0625rem solid @sapUiTileSeparatorColor; // used as top or bottom border
-@_sap_f_Card_HeaderFocusBorderRadius: none;
+@_sap_f_Card_FocusBorderRadius: none;
 @_sap_f_Card_BorderRadius: @sapUiElementBorderCornerRadius;
 @_sap_f_Card_ContentPadding: 1rem;
-@_sap_f_Card_HeaderFocusBorderBottomOffset: 1px;
-@_sap_f_Card_HeaderFocusBorderTopOffset: 1px;
-@_sap_f_Card_HeaderFocusBorderLeftOffset: 1px;
-@_sap_f_Card_HeaderFocusBorderRightOffset: 1px;
+@_sap_f_Card_FocusBorderBottomOffset: 1px;
+@_sap_f_Card_FocusBorderTopOffset: 1px;
+@_sap_f_Card_FocusBorderLeftOffset: 1px;
+@_sap_f_Card_FocusBorderRightOffset: 1px;
 @_sap_f_Card_Badge_Background: @sapUiBrand;
 @_sap_f_Card_Badge_Color: @sapUiContentContrastTextColor;
 @_sap_f_Card_Badge_Border: 0.0625rem solid @sapUiButtonLiteBorderColor;
@@ -499,12 +499,12 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 	content: '';
 	display: block;
 	position: absolute;
-	left: @_sap_f_Card_HeaderFocusBorderLeftOffset;
-	bottom: @_sap_f_Card_HeaderFocusBorderBottomOffset;
-	right: @_sap_f_Card_HeaderFocusBorderRightOffset;
-	top: @_sap_f_Card_HeaderFocusBorderTopOffset;
+	left: @_sap_f_Card_FocusBorderLeftOffset;
+	bottom: @_sap_f_Card_FocusBorderBottomOffset;
+	right: @_sap_f_Card_FocusBorderRightOffset;
+	top: @_sap_f_Card_FocusBorderTopOffset;
 	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
-	border-radius: @_sap_f_Card_HeaderFocusBorderRadius;
+	border-radius: @_sap_f_Card_FocusBorderRadius;
 	pointer-events: none;
 }
 
@@ -515,12 +515,12 @@ ui-integration-card.sapFCardFocusFullCard > [data-sap-ui-area] > .sapFCard {
 		content: '';
 		display: block;
 		position: absolute;
-		left: @_sap_f_Card_HeaderFocusBorderLeftOffset;
-		bottom: @_sap_f_Card_HeaderFocusBorderBottomOffset;
-		right: @_sap_f_Card_HeaderFocusBorderRightOffset;
-		top: @_sap_f_Card_HeaderFocusBorderTopOffset;
+		left: @_sap_f_Card_FocusBorderLeftOffset;
+		bottom: @_sap_f_Card_FocusBorderBottomOffset;
+		right: @_sap_f_Card_FocusBorderRightOffset;
+		top: @_sap_f_Card_FocusBorderTopOffset;
 		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
-		border-radius: @_sap_f_Card_HeaderFocusBorderRadius;
+		border-radius: @_sap_f_Card_FocusBorderRadius;
 		pointer-events: none;
 		z-index: 1;
 	}

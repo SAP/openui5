@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/m/Text",
-	"sap/f/cards/util/addTooltipIfTruncated"
+	"sap/f/cards/util/addTooltipIfTruncated",
+	"sap/m/BarInPageEnabler"
 ], function (
 	Control,
 	IntervalTrigger,
@@ -20,7 +21,8 @@ sap.ui.define([
 	coreLibrary,
 	mLibrary,
 	Text,
-	addTooltipIfTruncated
+	addTooltipIfTruncated,
+	BarInPageEnabler
 ) {
 	"use strict";
 
@@ -45,6 +47,7 @@ sap.ui.define([
 	 * Provides basic functionality for header controls that can be used in <code>sap.f.Card</code.
 	 *
 	 * @extends sap.ui.core.Control
+	 * @implements sap.m.IBar
 	 * @abstract
 	 *
 	 * @author SAP SE
@@ -58,6 +61,7 @@ sap.ui.define([
 	var BaseHeader = Control.extend("sap.f.cards.BaseHeader", {
 		metadata: {
 			library: "sap.f",
+			interfaces: ["sap.m.IBar"],
 			"abstract" : true,
 			properties: {
 				/**
@@ -159,6 +163,11 @@ sap.ui.define([
 			}
 		}
 	});
+
+
+	BaseHeader.prototype._setRootAccessibilityRole  = BarInPageEnabler.prototype._setRootAccessibilityRole;
+	BaseHeader.prototype._setRootAriaLevel = BarInPageEnabler.prototype._setRootAriaLevel;
+	BaseHeader.prototype._applyContextClassFor = BarInPageEnabler.prototype._applyContextClassFor;
 
 	BaseHeader.prototype.init = function () {
 		this._oRb = Library.getResourceBundleFor("sap.f");

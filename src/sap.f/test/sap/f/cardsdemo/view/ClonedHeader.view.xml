@@ -1,0 +1,249 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:cards="sap.f.cards"
+	xmlns:f="sap.f"
+	controllerName="sap.f.cardsdemo.controller.ClonedHeader"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}" id="testPage">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Cloned Header" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+		<Panel backgroundDesign="Transparent">
+			<VBox>
+				<Title text="sap.ui.integration.Header" level="H2" class="sapUiSmallMarginTopBottom" />
+				<VBox>
+					<HBox renderType="Bare" alignItems="Center" wrap="Wrap" id="iHeaderContainer-card1">
+						<w:Card id="card1"
+							dataMode="Active"
+							manifest="{manifests>/defaultHeader/card1}"
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+							width="300px"
+							class="sapUiSmallMargin">
+						</w:Card>
+					</HBox>
+
+					<HBox renderType="Bare" alignItems="Center" wrap="Wrap" id="iHeaderContainer-card2">
+						<w:Card	id="card2"
+							dataMode="Active"
+							manifest="{manifests>/defaultHeader/card2}"
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+							width="300px"
+							class="sapUiSmallMargin">
+						</w:Card>
+					</HBox>
+
+					<HBox renderType="Bare" alignItems="Center" wrap="Wrap" id="iHeaderContainer-card3">
+						<w:Card	id="card3"
+							dataMode="Active"
+							manifest="{manifests>/defaultHeader/card3}"
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+							width="300px"
+							height="200px"
+							class="sapUiSmallMargin">
+						</w:Card>
+					</HBox>
+
+					<HBox renderType="Bare" alignItems="Center" wrap="Wrap" id="iHeaderContainer-card4">
+						<w:Card	id="card4"
+							dataMode="Active"
+							manifest="{manifests>/defaultHeader/card4}"
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+							width="320px"
+							class="sapUiSmallMargin">
+						</w:Card>
+					</HBox>
+
+					<HBox renderType="Bare" alignItems="Center" wrap="Wrap" id="iHeaderContainer-card5">
+						<w:Card id="card5"
+							dataMode="Active"
+							manifest="{manifests>/defaultHeader/card5}"
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+							width="320px"
+							class="sapUiSmallMargin">
+						</w:Card>
+					</HBox>
+
+					<HBox renderType="Bare" alignItems="Center" wrap="Wrap" id="iHeaderContainer-dataTimestamp">
+						<w:Card id="dataTimestamp"
+							dataMode="Active"
+							manifest="{manifests>/defaultHeader/defaultDataTimestamp}"
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+							width="320px"
+							class="sapUiSmallMargin">
+						</w:Card>
+					</HBox>
+
+					<HBox alignItems="Center" wrap="Wrap" id="iHeaderContainer-hiddenStatus">
+						<w:Card id="hiddenStatus"
+							dataMode="Active"
+							manifest="{manifests>/defaultHeader/hiddenStatus}"
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+							width="320px"
+							class="sapUiSmallMargin">
+						</w:Card>
+					</HBox>
+
+					<HBox alignItems="Center" wrap="Wrap" id="iHeaderContainer-hiddenIconWithSrc">
+						<w:Card id="hiddenIconWithSrc"
+							dataMode="Active"
+							manifest="{manifests>/defaultHeader/hiddenIconWithSrc}"
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+							width="320px"
+							class="sapUiSmallMargin">
+						</w:Card>
+					</HBox>
+
+					<HBox alignItems="Center" wrap="Wrap" id="iHeaderContainer-withLargeIcon">
+						<w:Card id="withLargeIcon"
+							dataMode="Active"
+							manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample4.json"
+							width="320px"
+							class="sapUiSmallMargin">
+						</w:Card>
+					</HBox>
+
+					<HBox alignItems="Center" wrap="Wrap" id="iHeaderContainer-hyphenated">
+						<w:Card id="hyphenated"
+							dataMode="Active"
+							manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample7.json"
+							width="320px"
+							class="sapUiSmallMargin">
+						</w:Card>
+					</HBox>
+
+				</VBox>
+			</VBox>
+
+			<VBox>
+				<Title text="sap.ui.integration.NumericHeader" level="H2" class="sapUiSmallMarginTopBottom" />
+				<VBox>
+					<HBox alignItems="Center" wrap="Wrap" id="iNumericHeaderContainer-kpicard1">
+						<w:Card id="kpicard1"
+							dataMode="Active"
+							width="400px"
+							manifest="{manifests>/kpiManifests/kpicard1}"
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+						</w:Card>
+					</HBox>
+
+					<HBox alignItems="Center" wrap="Wrap" id="iNumericHeaderContainer-kpicard2">
+						<w:Card	id="kpicard2"
+							dataMode="Active"
+							width="400px"
+							manifest="{manifests>/kpiManifests/kpicard2}" 
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+						</w:Card>
+					</HBox>
+
+					<HBox alignItems="Center" wrap="Wrap" id="iNumericHeaderContainer-kpicard3">
+						<w:Card	id="kpicard3"
+							dataMode="Active"
+							width="400px"
+							manifest="{manifests>/kpiManifests/kpicard3}" 
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+						</w:Card>
+					</HBox>
+
+					<HBox alignItems="Center" wrap="Wrap" id="iNumericHeaderContainer-kpicard6">
+						<w:Card	id="kpicard6"
+							dataMode="Active"
+							width="400px"
+							manifest="{manifests>/kpiManifests/kpicard6}" 
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+						</w:Card>
+					</HBox>
+
+					<HBox alignItems="Center" wrap="Wrap" id="iNumericHeaderContainer-tablecard123">
+						<w:Card	id="tablecard123"
+							dataMode="Active"
+							width="400px"
+							manifest="{manifests>/kpiManifests/tablecard123}" 
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+						</w:Card>
+					</HBox>
+
+					<HBox alignItems="Center" wrap="Wrap" id="iNumericHeaderContainer-unitOfMeasurementOnly">
+						<w:Card	id="unitOfMeasurementOnly"
+							dataMode="Active"
+							width="400px"
+							manifest="{manifests>/kpiManifests/unitOfMeasurementOnly}" 
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+						</w:Card>
+					</HBox>
+
+					<HBox alignItems="Center" wrap="Wrap" id="iNumericHeaderContainer-indicators1">
+						<w:Card id="indicators1"
+							dataMode="Active"
+							width="400px"
+							manifest="{manifests>/kpiManifests/indicatorsVisibility1}"
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+						</w:Card>
+					</HBox>
+
+					<HBox alignItems="Center" wrap="Wrap" id="iNumericHeaderContainer-indicators2">
+						<w:Card id="indicators2"
+							dataMode="Active"
+							width="400px"
+							manifest="{manifests>/kpiManifests/indicatorsVisibility2}"
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+						</w:Card>
+					</HBox>
+
+					<HBox alignItems="Center" wrap="Wrap" id="iNumericHeaderContainer-indicators3">
+						<w:Card id="indicators3"
+							dataMode="Active"
+							width="400px"
+							manifest="{manifests>/kpiManifests/indicatorsVisibility3}"
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+						</w:Card>
+					</HBox>
+
+					<HBox alignItems="Center" wrap="Wrap" id="iNumericHeaderContainer-indicators4">
+						<w:Card id="indicators4"
+							dataMode="Active"
+							width="400px"
+							manifest="{manifests>/kpiManifests/indicatorsVisibility4}"
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+						</w:Card>
+					</HBox>
+
+					<HBox alignItems="Center" wrap="Wrap" id="iNumericHeaderContainer-indicators5">
+						<w:Card id="indicators5"
+							dataMode="Active"
+							width="400px"
+							manifest="{manifests>/kpiManifests/indicatorsVisibility5}"
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+						</w:Card>
+					</HBox>
+				</VBox>
+			</VBox>
+
+			<VBox>
+				<Title text="sap.f.cards.Header" level="H2" class="sapUiSmallMarginTopBottom" />
+				<HBox id="fHeaderContainer"
+					displayInline="true"
+					wrap="Wrap"
+					alignItems="Start"
+					justifyContent="Start">
+				
+				</HBox>
+			</VBox>
+
+			<VBox>
+				<Title text="sap.f.cards.NumericHeader" level="H2" class="sapUiSmallMarginTopBottom" />
+				<HBox id="fNumericHeaderContainer"
+					displayInline="true"
+					wrap="Wrap"
+					alignItems="Start"
+					justifyContent="Start">
+				</HBox>
+			</VBox>
+		</Panel>
+	</Page>
+</mvc:View>

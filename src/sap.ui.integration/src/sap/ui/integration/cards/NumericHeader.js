@@ -52,101 +52,6 @@ sap.ui.define([
 	 * @alias sap.ui.integration.cards.NumericHeader
 	 */
 	var NumericHeader = FNumericHeader.extend("sap.ui.integration.cards.NumericHeader", {
-
-		constructor: function (sId, mConfiguration, oActionsToolbar, oIconFormatter) {
-
-			mConfiguration = mConfiguration || {};
-
-			var mSettings = {
-				title: mConfiguration.title,
-				titleMaxLines: mConfiguration.titleMaxLines,
-				subtitle: mConfiguration.subTitle,
-				subtitleMaxLines: mConfiguration.subTitleMaxLines,
-				dataTimestamp: mConfiguration.dataTimestamp,
-				visible: mConfiguration.visible,
-				wrappingType: mConfiguration.wrappingType
-			};
-
-			if (mConfiguration.status && mConfiguration.status.text && !mConfiguration.status.text.format) {
-				mSettings.statusText = mConfiguration.status.text;
-				mSettings.statusVisible = mConfiguration.status.visible;
-			}
-
-			// @todo move to common place with Header.js
-			if (mConfiguration.icon) {
-				var vInitials = mConfiguration.icon.initials || mConfiguration.icon.text;
-				var sBackgroundColor = mConfiguration.icon.backgroundColor || (vInitials ? AvatarColor.Accent6 : AvatarColor.Transparent);
-
-				mSettings.iconSrc = mConfiguration.icon.src;
-				mSettings.iconDisplayShape = mConfiguration.icon.shape;
-				mSettings.iconInitials = vInitials;
-				mSettings.iconAlt = mConfiguration.icon.alt;
-				mSettings.iconBackgroundColor = sBackgroundColor;
-				mSettings.iconVisible = mConfiguration.icon.visible;
-				mSettings.iconFitType = mConfiguration.icon.fitType;
-			}
-
-			if (mSettings.iconSrc) {
-				mSettings.iconSrc = BindingHelper.formattedProperty(mSettings.iconSrc, function (sValue) {
-					return oIconFormatter.formatSrc(sValue);
-				});
-			}
-
-			extend(mSettings, {
-				unitOfMeasurement: mConfiguration.unitOfMeasurement,
-				details: mConfiguration.details?.text ?? mConfiguration.details,
-				detailsMaxLines: mConfiguration.details?.maxLines || mConfiguration.detailsMaxLines,
-				sideIndicatorsAlignment: mConfiguration.sideIndicatorsAlignment
-			});
-
-			if (mConfiguration.details?.state) {
-				mSettings.detailsState = mConfiguration.details.state;
-			}
-
-			if (mConfiguration.mainIndicator) {
-				mSettings.number = mConfiguration.mainIndicator.number;
-				mSettings.scale = mConfiguration.mainIndicator.unit;
-				mSettings.trend = mConfiguration.mainIndicator.trend;
-				mSettings.state = mConfiguration.mainIndicator.state; // TODO convert ValueState to ValueColor
-				mSettings.numberVisible = mConfiguration.mainIndicator.visible;
-			}
-
-			if (mConfiguration.sideIndicators) {
-				mSettings.sideIndicators = mConfiguration.sideIndicators.map(function (mIndicator) { // TODO validate that it is an array and with no more than 2 elements
-					return new NumericSideIndicator(mIndicator);
-				});
-			}
-
-			if (mConfiguration.banner) {
-				mSettings.bannerLines = mConfiguration.banner.map(function (mBannerLine) { // TODO validate that it is an array and with no more than 2 elements
-					var oBannerLine = new Text({
-						text: mBannerLine.text,
-						visible: mBannerLine.visible
-					});
-
-					if (mBannerLine.diminished) {
-						oBannerLine.addStyleClass("sapFCardHeaderBannerLineDiminished");
-					}
-
-					return oBannerLine;
-				});
-			}
-
-			mSettings.toolbar = oActionsToolbar;
-
-			if (mConfiguration.chart) {
-				Microchart.loadDependencies().then(() => {
-					this.setMicroChart(Microchart.create(mConfiguration.chart, true));
-				});
-
-				if (mConfiguration.sideIndicators) {
-					this.addStyleClass("sapFCardNumericHeaderSIMC");
-				} else {
-					this.addStyleClass("sapFCardNumericHeaderMC");
-				}
-			}
-			FNumericHeader.call(this, sId, mSettings);
-		},
 		metadata: {
 			library: "sap.ui.integration",
 			properties: {
@@ -167,6 +72,103 @@ sap.ui.define([
 		},
 		renderer: FNumericHeaderRenderer
 	});
+
+	NumericHeader.create = function (sId, mConfiguration, oActionsToolbar, oIconFormatter) {
+		mConfiguration = mConfiguration || {};
+
+		var mSettings = {
+			title: mConfiguration.title,
+			titleMaxLines: mConfiguration.titleMaxLines,
+			subtitle: mConfiguration.subTitle,
+			subtitleMaxLines: mConfiguration.subTitleMaxLines,
+			dataTimestamp: mConfiguration.dataTimestamp,
+			visible: mConfiguration.visible,
+			wrappingType: mConfiguration.wrappingType
+		};
+
+		if (mConfiguration.status && mConfiguration.status.text && !mConfiguration.status.text.format) {
+			mSettings.statusText = mConfiguration.status.text;
+			mSettings.statusVisible = mConfiguration.status.visible;
+		}
+
+		// @todo move to common place with Header.js
+		if (mConfiguration.icon) {
+			var vInitials = mConfiguration.icon.initials || mConfiguration.icon.text;
+			var sBackgroundColor = mConfiguration.icon.backgroundColor || (vInitials ? AvatarColor.Accent6 : AvatarColor.Transparent);
+
+			mSettings.iconSrc = mConfiguration.icon.src;
+			mSettings.iconDisplayShape = mConfiguration.icon.shape;
+			mSettings.iconInitials = vInitials;
+			mSettings.iconAlt = mConfiguration.icon.alt;
+			mSettings.iconBackgroundColor = sBackgroundColor;
+			mSettings.iconVisible = mConfiguration.icon.visible;
+			mSettings.iconFitType = mConfiguration.icon.fitType;
+		}
+
+		if (mSettings.iconSrc) {
+			mSettings.iconSrc = BindingHelper.formattedProperty(mSettings.iconSrc, function (sValue) {
+				return oIconFormatter.formatSrc(sValue);
+			});
+		}
+
+		extend(mSettings, {
+			unitOfMeasurement: mConfiguration.unitOfMeasurement,
+			details: mConfiguration.details?.text ?? mConfiguration.details,
+			detailsMaxLines: mConfiguration.details?.maxLines || mConfiguration.detailsMaxLines,
+			sideIndicatorsAlignment: mConfiguration.sideIndicatorsAlignment
+		});
+
+		if (mConfiguration.details?.state) {
+			mSettings.detailsState = mConfiguration.details.state;
+		}
+
+		if (mConfiguration.mainIndicator) {
+			mSettings.number = mConfiguration.mainIndicator.number;
+			mSettings.scale = mConfiguration.mainIndicator.unit;
+			mSettings.trend = mConfiguration.mainIndicator.trend;
+			mSettings.state = mConfiguration.mainIndicator.state; // TODO convert ValueState to ValueColor
+			mSettings.numberVisible = mConfiguration.mainIndicator.visible;
+		}
+
+		if (mConfiguration.sideIndicators) {
+			mSettings.sideIndicators = mConfiguration.sideIndicators.map(function (mIndicator) { // TODO validate that it is an array and with no more than 2 elements
+				return new NumericSideIndicator(mIndicator);
+			});
+		}
+
+		if (mConfiguration.banner) {
+			mSettings.bannerLines = mConfiguration.banner.map(function (mBannerLine) { // TODO validate that it is an array and with no more than 2 elements
+				var oBannerLine = new Text({
+					text: mBannerLine.text,
+					visible: mBannerLine.visible
+				});
+
+				if (mBannerLine.diminished) {
+					oBannerLine.addStyleClass("sapFCardHeaderBannerLineDiminished");
+				}
+
+				return oBannerLine;
+			});
+		}
+
+		mSettings.toolbar = oActionsToolbar;
+
+		const oHeader = new NumericHeader(sId, mSettings);
+
+		if (mConfiguration.chart) {
+			Microchart.loadDependencies().then(() => {
+				this.setMicroChart(Microchart.create(mConfiguration.chart, true));
+			});
+
+			if (mConfiguration.sideIndicators) {
+				this.addStyleClass("sapFCardNumericHeaderSIMC");
+			} else {
+				this.addStyleClass("sapFCardNumericHeaderMC");
+			}
+		}
+
+		return oHeader;
+	};
 
 	/**
 	 * Initialization hook.

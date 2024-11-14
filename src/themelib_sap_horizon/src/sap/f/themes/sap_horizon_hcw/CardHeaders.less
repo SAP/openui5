@@ -1,0 +1,28 @@
+/* ======================================== */
+/* CSS for control sap.f.cards/BaseHeader	*/
+/* Horizon High Contrast White theme		*/
+/* ======================================== */
+
+.sapFCardHeader.sapFCardSectionClickable {
+	&:hover {
+		.sapFCardNumericIndicatorsMain {
+			.sapMNCValue,
+			.sapMNCIndicator,
+			.sapMNCScale,
+			.sapMNCIndIcon {
+				color: @sapUiContentContrastTextColor;
+			}
+		}
+	}
+
+	&:active {
+		.sapFCardNumericIndicatorsMain {
+			.sapMNCValue,
+			.sapMNCIndicator,
+			.sapMNCScale,
+			.sapMNCIndIcon {
+				color: @sapUiContentContrastTextColor;
+			}
+		}
+	}
+}

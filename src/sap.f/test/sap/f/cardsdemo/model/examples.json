@@ -160,6 +160,12 @@
 		"group": "Header and Footer"
 	},
 	{
+		"title": "Cloned Header",
+		"description": "Example page for sap.f.cards.Header outside a card and cloned Default and Numeric Headers from integration cards",
+		"route": "clonedHeader",
+		"group": "Header and Footer"
+	},
+	{
 		"title": "Micro Charts",
 		"description": "Example page for Card with Micro Charts in Header",
 		"route": "microCharts",

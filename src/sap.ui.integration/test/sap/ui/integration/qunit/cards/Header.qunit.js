@@ -580,4 +580,48 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(this.oCard.getCardHeader().getWrappingType(), WrappingType.Hyphenated, "Card Header has wrappingType: Hyphenated.");
 	});
+
+	QUnit.test("Cloning and rendering card header outside of a card", async function (assert) {
+		const oManifest = {
+			"sap.app": {
+				"id": "test.card.cardClone1"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "L3 Request list content Card",
+					"subTitle": "Card subtitle",
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"status": {
+						"text": "100 of 200"
+					},
+					"dataTimestamp": "2021-03-18T12:00:00Z"
+				}
+			}
+		};
+		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		const oClonedHeader = this.oCard.getCardHeader().clone();
+
+		// Act
+		oClonedHeader.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(oClonedHeader.getDomRef(), "Cloned header is rendered outside of the card");
+		assert.ok(oClonedHeader.getAggregation("_title") && oClonedHeader.getAggregation("_title").getDomRef(), "Cloned header title should be created and rendered.");
+		assert.ok(oClonedHeader.getAggregation("_subtitle") && oClonedHeader.getAggregation("_subtitle").getDomRef(), "Cloned header subtitle should be created and rendered.");
+		assert.ok(oClonedHeader.getAggregation("_avatar") && oClonedHeader.getAggregation("_avatar").getDomRef(), "Cloned header avatar should be created and rendered.");
+		assert.ok(oClonedHeader.getAggregation("_dataTimestamp") && oClonedHeader.getAggregation("_dataTimestamp").getDomRef(), "Cloned header dataTimestamp should be created and rendered.");
+		assert.equal(oClonedHeader.getAggregation("_title").getText(), oManifest["sap.card"].header.title, "Cloned header title should be correct.");
+		assert.equal(oClonedHeader.getAggregation("_subtitle").getText(), oManifest["sap.card"].header.subTitle, "Cloned header subtitle should be correct.");
+		assert.equal(oClonedHeader.getAggregation("_avatar").getSrc(), oManifest["sap.card"].header.icon.src, "Cloned header icon src should be correct.");
+		assert.equal(oClonedHeader.getStatusText(), oManifest["sap.card"].header.status.text, "Cloned header status should be correct.");
+		assert.equal(oClonedHeader.getDataTimestamp(), oManifest["sap.card"].header.dataTimestamp, "Cloned header dataTimestamp should be correct.");
+	});
 });
