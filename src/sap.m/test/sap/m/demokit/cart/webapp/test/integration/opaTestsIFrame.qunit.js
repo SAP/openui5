@@ -1,6 +1,6 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"Startup",
+	"./arrangements/iframe/Startup",
 	"./WelcomeJourney",
 	"./NavigationJourney",
 	"./DeleteProductJourney",
