@@ -520,7 +520,7 @@ function(
 	};
 
 	WebComponent.prototype.__attachCustomEventsListeners = function() {
-		var oEvents = this.getMetadata().getEvents();
+		var oEvents = this.getMetadata().getAllEvents();
 		for (var sEventName in oEvents) {
 			var sCustomEventName = hyphenate(sEventName);
 			this.getDomRef().addEventListener(sCustomEventName, this.__handleCustomEventBound);
@@ -533,7 +533,7 @@ function(
 			return;
 		}
 
-		var oEvents = this.getMetadata().getEvents();
+		var oEvents = this.getMetadata().getAllEvents();
 		for (var sEventName in oEvents) {
 			if (oEvents.hasOwnProperty(sEventName)) {
 				var sCustomEventName = hyphenate(sEventName);
