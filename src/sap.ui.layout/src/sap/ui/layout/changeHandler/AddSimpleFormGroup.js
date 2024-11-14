@@ -16,7 +16,6 @@ sap.ui.define([
 		* @alias sap.ui.layout.changeHandler.AddSimpleFormGroup
 		* @author SAP SE
 		* @version ${version}
-		* @experimental Since 1.27.0
 		*/
 	var AddSimpleFormGroup = {};
 
