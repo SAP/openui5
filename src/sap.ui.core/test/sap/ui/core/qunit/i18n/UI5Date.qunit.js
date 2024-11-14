@@ -600,6 +600,7 @@ sap.ui.define([
 		this.mock(oUI5Date).expects("_getPart").withExactArgs("year").returns(2000);
 
 		// code under test
+		// ui5lint-disable-next-line no-deprecated-api
 		assert.strictEqual(UI5Date.prototype.getYear.call(oUI5Date), 100);
 	});
 
@@ -738,6 +739,7 @@ sap.ui.define([
 			.returns("~TimeStamp");
 
 		// code under test
+		// ui5lint-disable-next-line no-deprecated-api
 		assert.strictEqual(UI5Date.prototype.setYear.call(oUI5Date, oFixture.iYear), "~TimeStamp");
 	});
 });

@@ -41,6 +41,33 @@ sap.ui.define([
 		}, new Error("Invalid property definition: A property cannot be aggregatable when not technically aggregatable."));
 	});
 
+	QUnit.skip("isKey=true and technicallyGroupable=false", function(assert) {
+		assert.throws(function() {
+			new PropertyHelper([{
+				key: "prop",
+				label: "Property",
+				dataType: "String",
+				isKey: true
+			}]);
+		}, new Error("Invalid property definition: A key property must be technically groupable."));
+	});
+
+	QUnit.test("isKey=true and technicallyAggregatable=true", function(assert) {
+		assert.throws(function() {
+			new PropertyHelper([{
+				key: "prop",
+				label: "Property",
+				dataType: "String",
+				isKey: true,
+				groupable: true,
+				aggregatable: false,
+				extension: {
+					technicallyAggregatable: true
+				}
+			}]);
+		}, new Error("Invalid property definition: A key property must not be technically aggregatable."));
+	});
+
 	QUnit.test("additionalProperties is not empty and technicallyGroupable=false & technicallyAggregatable=false", function(assert) {
 		assert.throws(function() {
 			new PropertyHelper([{
@@ -55,7 +82,7 @@ sap.ui.define([
 					additionalProperties: ["prop"]
 				}
 			}]);
-		}, new Error("Invalid property definition: 'additionalProperties' may not contain property keys if the property is neither technically"
+		}, new Error("Invalid property definition: 'additionalProperties' must not contain property keys if the property is neither technically"
 			+ " groupable nor technically aggregatable."));
 	});
 
@@ -121,7 +148,7 @@ sap.ui.define([
 					additionalProperties: ["idProperty"]
 				}
 			}]);
-		}, new Error("Invalid property definition: 'additionalProperties' may not contain the text."));
+		}, new Error("Invalid property definition: 'additionalProperties' must not contain the text."));
 	});
 
 	QUnit.test("additionalProperties contains the unit", function(assert) {
@@ -140,7 +167,42 @@ sap.ui.define([
 				label: "Unit Property",
 				dataType: "String"
 			}]);
-		}, new Error("Invalid property definition: 'additionalProperties' may not contain the unit."));
+		}, new Error("Invalid property definition: 'additionalProperties' must not contain the unit."));
+	});
+
+	QUnit.test("additionalProperties nesting", function(assert) {
+		assert.throws(function() {
+			new PropertyHelper([{
+				key: "prop",
+				label: "Property",
+				dataType: "String",
+				aggregatable: true,
+				extension: {
+					additionalProperties: ["additionalPropA", "additionalPropB"] // Is missing additionalPropC
+				}
+			}, {
+				key: "additionalPropA",
+				label: "Additional Property A",
+				dataType: "String",
+				aggregatable: true,
+				extension: {
+					additionalProperties: ["additionalPropB"]
+				}
+			}, {
+				key: "additionalPropB",
+				label: "Additional Property B",
+				dataType: "String",
+				aggregatable: true,
+				extension: {
+					additionalProperties: ["additionalPropC"]
+				}
+			}, {
+				key: "additionalPropC",
+				label: "Additional Property C",
+				dataType: "String"
+			}]);
+		}, new Error("Invalid property definition: 'additionalProperties' must contain all nested additionalProperties (additionalProperties"
+				+ " of additionalProperties)."));
 	});
 
 	QUnit.test("Complex property with attribute 'aggregatable'", function(assert) {
@@ -351,16 +413,9 @@ sap.ui.define([
 				path: "propAPath",
 				label: "Property A",
 				dataType: "String",
-				unit: "unit",
 				groupable: true,
-				aggregatable: true,
 				isKey: true,
-				text: "propB",
-				extension: {
-					customAggregate: {
-						contextDefiningProperties: ["propB"]
-					}
-				}
+				text: "propB"
 			}, {
 				key: "propB",
 				label: "Property B",
@@ -375,6 +430,7 @@ sap.ui.define([
 				label: "Property C",
 				dataType: "String",
 				aggregatable: true,
+				unit: "unit",
 				extension: {
 					technicallyGroupable: true,
 					customAggregate: {}
@@ -405,61 +461,11 @@ sap.ui.define([
 
 	QUnit.test("getAggregatableProperties", function(assert) {
 		assert.deepEqual(this.oPropertyHelper.getAggregatableProperties(), [
-			this.aProperties[0], this.aProperties[2]
+			this.aProperties[2]
 		]);
 
 		this.oPropertyHelper.destroy();
 		assert.deepEqual(this.oPropertyHelper.getAggregatableProperties(), [], "After destruction");
-	});
-
-	QUnit.test("getPropertiesForPlugin", function(assert) {
-		assert.deepEqual(this.oPropertyHelper.getPropertiesForPlugin(), [{
-			key: "propA",
-			aggregatable: true,
-			aggregationDetails: {
-				customAggregate: {
-					contextDefiningProperties: ["propB"]
-				}
-			},
-			groupable: true,
-			isKey: true,
-			path: "propAPath",
-			text: "propB",
-			unit: "unit",
-			additionalProperties: []
-		}, {
-			key: "propB",
-			aggregatable: true,
-			groupable: true,
-			isKey: false,
-			path: "",
-			text: "",
-			unit: "",
-			additionalProperties: ["propA"]
-		}, {
-			key: "propC",
-			aggregatable: true,
-			aggregationDetails: {
-				customAggregate: {
-					contextDefiningProperties: []
-				}
-			},
-			groupable: true,
-			isKey: false,
-			path: "",
-			text: "",
-			unit: "",
-			additionalProperties: []
-		}, {
-			key: "unit",
-			aggregatable: false,
-			groupable: false,
-			isKey: false,
-			path: "",
-			text: "",
-			unit: "",
-			additionalProperties: []
-		}]);
 	});
 
 	QUnit.module("Property");

@@ -1,796 +1,414 @@
-/*global QUnit */
+/*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/table/qunit/TableQUnitUtils.ODataV4",
 	"sap/ui/table/plugins/V4Aggregation",
-	"sap/ui/table/utils/TableUtils"
+	"sap/ui/table/Column",
+	"sap/ui/table/rowmodes/Fixed"
 ], function(
 	TableQUnitUtils,
 	V4Aggregation,
-	TableUtils
+	Column,
+	FixedRowMode
 ) {
 	"use strict";
 
-	TableUtils.getResourceBundle();
+	TableQUnitUtils.setDefaultSettings({
+		dependents: new V4Aggregation(),
+		rows: {
+			path: "/BusinessPartners",
+			parameters: {
+				$count: true,
+				$orderby: "Country desc,Region desc,Segment,AccountResponsible",
+				$$aggregation: {
+					aggregate: {
+						SalesAmountLocalCurrency: {
+							grandTotal: true,
+							subtotals: true,
+							unit: "LocalCurrency"
+						},
+						SalesNumber: {}
+					},
+					grandTotalAtBottomOnly: false,
+					subtotalsAtBottomOnly: false,
+					group: {
+						AccountResponsible: {},
+						Country_Code: {additionally: ["Country"]}
+					},
+					groupLevels: ["Country_Code", "Region", "Segment"]
+				}
+			},
+			suspended: true
+		},
+		columns: [
+			new Column({
+				label: "Country",
+				template: new Text({text: "{Country}"})
+			}),
+			new Column({
+				label: "Region",
+				template: new Text({text: "{Region}"})
+			}),
+			new Column({
+				label: "SalesAmount",
+				template: new Text({
+					text: "{parts: ['SalesAmountLocalCurrency', 'LocalCurrency', {mode: 'OneTime', path: '/##@@requestCurrencyCodes', " +
+							"targetType: 'any'}], type: 'sap.ui.model.odata.type.Currency', formatOptions: {showMeasure: false}}"
+				})
+			}),
+			new Column({
+				label: "Local Currency",
+				template: new Text({text: "{LocalCurrency}"})
+			})
+		],
+		models: TableQUnitUtils.createModelForDataAggregationService(),
+		rowMode: new FixedRowMode({
+			rowCount: 5
+		}),
+		threshold: 0
+	});
 
-	QUnit.module("Aggregation info", {
-		beforeEach: function() {
-			this.oPlugin = new V4Aggregation();
-
-			this.oPlugin.setPropertyInfos([{
-				key: "Property1",
-				path: "prop1",
-				isKey: true,
-				additionally: ["prop4"]
-			}, {
-				key: "Property2",
-				path: "prop2",
-				isKey: true,
-				groupable: true
-			}, {
-				key: "Property3",
-				path: "prop3",
-				groupable: true,
-				text: "Property4"
-			}, {
-				key: "Property4",
-				path: "prop4",
-				groupable: true
-			}, {
-				key: "Property5",
-				path: "prop5",
-				aggregatable: true,
-				aggregationDetails: {
-					customAggregate: {}
-				}
-			}, {
-				key: "Property6",
-				path: "prop6",
-				aggregatable: true,
-				aggregationDetails: {
-					customAggregate: {}
-				},
-				unit: "Property4"
-			}, {
-				key: "Property7",
-				path: "prop7",
-				aggregatable: true,
-				aggregationDetails: {
-					customAggregate: {}
-				},
-				groupable: true
-			}, {
-				key: "Property8",
-				path: "prop8",
-				aggregatable: true,
-				aggregationDetails: {
-					customAggregate: {
-						contextDefiningProperties: ["Property1", "Property3", "Property4"]
-					}
-				}
-			}, {
-				key: "Property9",
-				path: "prop9",
-				unit: "Property3",
-				aggregatable: true,
-				aggregationDetails: {
-					customAggregate: {
-						contextDefiningProperties: []
-					}
-				}
-			}, {
-				key: "Property10",
-				path: "prop10",
-				aggregatable: true,
-				aggregationDetails: {
-					customAggregate: {
-						contextDefiningProperties: ["Property4", "Property5"]
-					}
-				}
-			}, {
-				key: "Property11",
-				path: "prop11",
-				groupable: true,
-				text: "Property12"
-			}, {
-				key: "Property12",
-				path: "prop12",
-				groupable: true,
-				additionalProperties: ["Property11"]
-			}, {
-				key: "Property13",
-				path: "prop13",
-				aggregatable: true,
-				groupable: true,
-				unit: "Property4",
-				additionalProperties: ["Property5"]
-			}]);
+	QUnit.module("API", {
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable((oTable) => {
+				oTable.getBinding().resume();
+			});
+			this.oPlugin = this.oTable.getDependents()[0];
 		},
 		afterEach: function() {
-			this.oPlugin.destroy();
+			this.oTable.destroy();
 		}
 	});
 
-	const aTestData = [{
-		label: "Empty aggregation info",
-		aggregationInfo: {},
-		expectedGroup: undefined,
-		expectedAggregate: undefined,
-		expectedGroupLevels: undefined
-	}, {
-		label: "null aggregation info",
-		aggregationInfo: null,
-		expectedGroup: undefined,
-		expectedAggregate: undefined,
-		expectedGroupLevels: undefined
-	}, {
-		label: "undefined aggregation info",
-		aggregationInfo: {},
-		expectedGroup: undefined,
-		expectedAggregate: undefined,
-		expectedGroupLevels: undefined
-	}, {
-		label: "1 grouped property",
-		aggregationInfo: {
-			visible: ["Property3"]
-		},
-		expectedGroup: {prop1: {}, prop2: {}, prop3: {additionally: ["prop4"]}},
-		expectedAggregate: {},
-		expectedGroupLevels: []
-	}, {
-		label: "2 grouped properties",
-		aggregationInfo: {
-			visible: ["Property3", "Property4"]
-		},
-		expectedGroup: {prop1: {}, prop2: {}, prop3: {additionally: ["prop4"]}},
-		expectedAggregate: {},
-		expectedGroupLevels: []
-	}, {
-		label: "Only grouped keys",
-		aggregationInfo: {
-			visible: ["Property2"]
-		},
-		expectedGroup: {prop1: {}, prop2: {additionally: []}},
-		expectedAggregate: {},
-		expectedGroupLevels: []
-	}, {
-		label: "1 aggregated property",
-		aggregationInfo: {
-			visible: ["Property5"]
-		},
-		expectedGroup: {prop1: {}, prop2: {}},
-		expectedAggregate: {prop5: {}},
-		expectedGroupLevels: []
-	}, {
-		label: "2 aggregated property",
-		aggregationInfo: {
-			visible: ["Property5", "Property6"]
-		},
-		expectedGroup: {prop1: {}, prop2: {}},
-		expectedAggregate: {prop5: {}, prop6: {unit: "prop4"}},
-		expectedGroupLevels: []
-	}, {
-		label: "2 aggregated property with totals",
-		aggregationInfo: {
-			visible: ["Property3", "Property5", "Property6"],
-			subtotals: ["Property5", "Property6"],
-			grandTotal: ["Property6"]
-		},
-		expectedGroup: {prop1: {}, prop2: {}, prop3: {additionally: ["prop4"]}},
-		expectedAggregate: {prop5: {subtotals: true}, prop6: {grandTotal: true, subtotals: true, unit: "prop4"}},
-		expectedGroupLevels: []
-	}, {
-		label: "1 property aggregated and grouped",
-		aggregationInfo: {
-			visible: ["Property7"]
-		},
-		expectedGroup: {prop1: {}, prop2: {}, prop7: {}},
-		expectedAggregate: {},
-		expectedGroupLevels: []
-	}, {
-		label: "Aggregated property with context-defining properties",
-		aggregationInfo: {
-			visible: ["Property8", "Property10"],
-			groupLevels: []
-		},
-		expectedGroup: {prop1: {}, prop2: {}, prop3: {}, prop4: {}, prop5: {}},
-		expectedAggregate: {prop8: {}, prop10: {}},
-		expectedGroupLevels: []
-	}, {
-		label: "Aggregated property with additional properties",
-		aggregationInfo: {
-			visible: ["Property13"]
-		},
-		expectedGroup: {prop1: {}, prop2: {}, prop5: {}, prop13: {}},
-		expectedAggregate: {},
-		expectedGroupLevels: []
-	}, {
-		label: "Aggregated property with additional properties and totals",
-		aggregationInfo: {
-			visible: ["Property13"],
-			grandTotal: ["Property13"]
-		},
-		expectedGroup: {prop1: {}, prop2: {}, prop5: {}},
-		expectedAggregate: {prop13: {grandTotal: true, unit: "prop4"}},
-		expectedGroupLevels: []
-	}, {
-		label: "Aggregated property with unit and empty context-defining properties",
-		aggregationInfo: {
-			visible: ["Property9"],
-			groupLevels: []
-		},
-		expectedGroup: {prop1: {}, prop2: {}},
-		expectedAggregate: {prop9: {unit: "prop3"}},
-		expectedGroupLevels: []
-	}, {
-		label: "Group levels",
-		aggregationInfo: {
-			visible: ["Property3", "Property7"],
-			groupLevels: ["Property7", "Property3"]
-		},
-		expectedGroup: {prop1: {}, prop2: {}, prop3: {additionally: ["prop4"]}, prop7: {}},
-		expectedAggregate: {},
-		expectedGroupLevels: ["prop7", "prop3"]
-	}, {
-		label: "Totals for an aggregatable property that is also groupable",
-		aggregationInfo: {
-			visible: ["Property2", "Property7"],
-			subtotals: ["Property7"],
-			grandTotal: ["Property7"]
-		},
-		expectedGroup: {prop1: {}, prop2: {additionally: []}},
-		expectedAggregate: {prop7: {grandTotal: true, subtotals: true}},
-		expectedGroupLevels: []
-	}, {
-		label: "Group level that isn't visible",
-		aggregationInfo: {
-			visible: ["Property7"],
-			groupLevels: ["Property3"]
-		},
-		expectedGroup: {prop1: {}, prop2: {}, prop7: {}, prop3: {additionally: ["prop4"]}},
-		expectedAggregate: {},
-		expectedGroupLevels: ["prop3"]
-	}, {
-		label: "ID<->Text; ID visible",
-		aggregationInfo: {
-			visible: ["Property11"]
-		},
-		expectedGroup: {prop1: {}, prop2: {}, prop11: {additionally: ["prop12"]}},
-		expectedAggregate: {},
-		expectedGroupLevels: []
-	}, {
-		label: "ID<->Text; Text visible",
-		aggregationInfo: {
-			visible: ["Property12"]
-		},
-		expectedGroup: {prop1: {}, prop2: {}, prop12: {additionally: ["prop11"]}},
-		expectedAggregate: {},
-		expectedGroupLevels: []
-	}, {
-		label: "ID<->Text; Both visible",
-		aggregationInfo: {
-			visible: ["Property11", "Property12"]
-		},
-		expectedGroup: {prop1: {}, prop2: {}, prop11: {additionally: ["prop12"]}},
-		expectedAggregate: {},
-		expectedGroupLevels: []
-	}, {
-		label: "Search",
-		testData: [{
-			aggregationInfo: {
-				visible: ["Property1", "Property2"],
-				search: "Property"
-			},
-			expectedGroup: {prop1: {}, prop2: {additionally: []}},
-			expectedAggregate: {},
-			expectedGroupLevels: [],
-			expectedSearch: "Property"
-		}, {
-			aggregationInfo: {
-				visible: ["Property1", "Property2"]
-			},
-			expectedGroup: {prop1: {}, prop2: {additionally: []}},
-			expectedAggregate: {},
-			expectedGroupLevels: []
-		}]
-	}];
-
-	aTestData.forEach(function(oData) {
-		QUnit.test(oData.label, function(assert) {
-			const aTestData = oData.testData || [oData];
-
-			aTestData.forEach(function(oData) {
-				const bEmptyAggregationInfo = oData.aggregationInfo == null || Object.keys(oData.aggregationInfo).length === 0;
-				const bExpectedTotalsSetting = bEmptyAggregationInfo ? undefined : true;
-				const oUpdateAggregationSpy = this.spy(this.oPlugin, "updateAggregation");
-
-				this.oPlugin.setAggregationInfo(oData.aggregationInfo);
-
-				const mAggregationInfo = this.oPlugin.getAggregationInfo();
-				assert.equal(oUpdateAggregationSpy.callCount, 1, "updateAggregation is called only once");
-
-				if (bEmptyAggregationInfo) {
-					assert.equal(mAggregationInfo, undefined, "aggregation info is undefined");
-				} else {
-					assert.deepEqual(mAggregationInfo.group, oData.expectedGroup, "grouped properties");
-					assert.deepEqual(mAggregationInfo.aggregate, oData.expectedAggregate, "aggregated properties");
-					assert.deepEqual(mAggregationInfo.groupLevels, oData.expectedGroupLevels, "group levels");
-					assert.strictEqual(mAggregationInfo.grandTotalAtBottomOnly, bExpectedTotalsSetting, "grandTotalAtBottomOnly");
-					assert.strictEqual(mAggregationInfo.subtotalsAtBottomOnly, bExpectedTotalsSetting, "subtotalsAtBottomOnly");
-					assert.strictEqual(mAggregationInfo.search, oData.expectedSearch, "search parameter");
-				}
-
-				oUpdateAggregationSpy.restore();
-			}, this);
-		});
-	});
-
-	QUnit.test("Property 'groupSummary'", function(assert) {
-		const mExpectedAggregationInfo = {
-			group: {prop1: {}, prop2: {}},
-			groupLevels: [],
-			aggregate: {prop5: {grandTotal: true}},
-			grandTotalAtBottomOnly: true,
-			search: undefined
-		};
-
-		this.oPlugin.setGroupSummary("None");
-		this.oPlugin.setAggregationInfo({
-			visible: ["Property5"],
-			subtotals: ["Property5"],
-			grandTotal: ["Property5"]
-		});
-		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change to 'None' before setting aggregation info");
-
-		this.oPlugin.setGroupSummary("Top");
-		mExpectedAggregationInfo.aggregate.prop5.subtotals = true;
-		mExpectedAggregationInfo.subtotalsAtBottomOnly = undefined;
-		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change to 'Top'");
-
-		this.oPlugin.setGroupSummary("Bottom");
-		mExpectedAggregationInfo.subtotalsAtBottomOnly = true;
-		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change to 'Bottom'");
-
-		this.oPlugin.setGroupSummary("TopAndBottom");
-		mExpectedAggregationInfo.subtotalsAtBottomOnly = false;
-		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change to 'TopAndBottom'");
-	});
-
-	QUnit.test("Properties 'totalSummaryOnTop' and 'totalSummaryOnBottom'", function(assert) {
-		const mExpectedAggregationInfo = {
-			group: {prop1: {}, prop2: {}},
-			groupLevels: [],
-			aggregate: {prop5: {subtotals: true}},
-			subtotalsAtBottomOnly: true,
-			search: undefined
-		};
-
-		this.oPlugin.setTotalSummaryOnTop("Off");
-		this.oPlugin.setTotalSummaryOnBottom("Off");
-		this.oPlugin.setAggregationInfo({
-			visible: ["Property5"],
-			subtotals: ["Property5"],
-			grandTotal: ["Property5"]
-		});
-		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change both to 'Off' before setting aggregation info");
-
-		this.oPlugin.setTotalSummaryOnTop("On");
-		mExpectedAggregationInfo.aggregate.prop5.grandTotal = true;
-		mExpectedAggregationInfo.grandTotalAtBottomOnly = undefined;
-		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change 'totalSummaryOnTop' to 'On'");
-
-		this.oPlugin.setTotalSummaryOnBottom("On");
-		mExpectedAggregationInfo.grandTotalAtBottomOnly = false;
-		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change 'totalSummaryOnBottom' to 'On'");
-
-		this.oPlugin.setTotalSummaryOnTop("Off");
-		mExpectedAggregationInfo.grandTotalAtBottomOnly = true;
-		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change 'totalSummaryOnTop' to 'Off'");
-
-		this.oPlugin.setTotalSummaryOnBottom("Off");
-		delete mExpectedAggregationInfo.aggregate.prop5.grandTotal;
-		delete mExpectedAggregationInfo.grandTotalAtBottomOnly;
-		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change 'totalSummaryOnBottom' to 'Off'");
-
-		this.oPlugin.setTotalSummaryOnTop("Fixed");
-		mExpectedAggregationInfo.aggregate.prop5.grandTotal = true;
-		mExpectedAggregationInfo.grandTotalAtBottomOnly = undefined;
-		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change 'totalSummaryOnTop' to 'Fixed'");
-
-		this.oPlugin.setTotalSummaryOnBottom("Fixed");
-		mExpectedAggregationInfo.grandTotalAtBottomOnly = false;
-		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change 'totalSummaryOnBottom' to 'Fixed'");
-
-		this.oPlugin.setTotalSummaryOnTop("Off");
-		mExpectedAggregationInfo.grandTotalAtBottomOnly = true;
-		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change 'totalSummaryOnTop' to 'Off'");
-	});
-
-	QUnit.module("Row count constraints", {
-		beforeEach: function() {
-			this.oPlugin = new V4Aggregation();
-
-			this.oPlugin.setPropertyInfos([{
-				key: "Property1",
-				path: "prop1",
-				aggregatable: true,
-				aggregationDetails: {
-					customAggregate: {}
-				}
-			}]);
-		},
-		afterEach: function() {
-			this.oPlugin.destroy();
-		}
-	});
-
-	["Defaults", {
-		totalSummaryOnTop: "On",
-		totalSummaryOnBottom: "On"
-	}, {
-		totalSummaryOnTop: "Fixed",
-		totalSummaryOnBottom: "Off"
-	}, {
-		totalSummaryOnTop: "Off",
-		totalSummaryOnBottom: "Fixed"
-	}, {
-		totalSummaryOnTop: "Fixed",
-		totalSummaryOnBottom: "Fixed"
-	}].forEach(function(mTestData) {
-		QUnit.test(JSON.stringify(mTestData), function(assert) {
-			const oSetRowCountConstraints = this.spy(this.oPlugin, "setRowCountConstraints");
-
-			this.oPlugin.setTotalSummaryOnTop(mTestData.totalSummaryOnTop);
-			this.oPlugin.setTotalSummaryOnBottom(mTestData.totalSummaryOnBottom);
-			this.stub(this.oPlugin, "getTableBinding").returns({setAggregation: function() {}});
-
-			const bFixedTopEnabled = this.oPlugin.getTotalSummaryOnTop() === "Fixed";
-			const bFixedBottomEnabled = this.oPlugin.getTotalSummaryOnBottom() === "Fixed";
-
-			this.oPlugin.setAggregationInfo({
-				visible: ["Property1"],
-				subtotals: ["Property1"],
-				grandTotal: ["Property1"]
-			});
-			assert.ok(oSetRowCountConstraints.calledOnceWithExactly({
-				fixedTop: bFixedTopEnabled,
-				fixedBottom: bFixedBottomEnabled
-			}), "GrandTotal + Subtotals");
-
-			oSetRowCountConstraints.resetHistory();
-			this.oPlugin.setAggregationInfo({
-				visible: ["Property1"],
-				grandTotal: ["Property1"]
-			});
-			assert.ok(oSetRowCountConstraints.calledOnceWithExactly({
-				fixedTop: bFixedTopEnabled,
-				fixedBottom: bFixedBottomEnabled
-			}), "GrandTotal");
-
-			oSetRowCountConstraints.resetHistory();
-			this.oPlugin.setAggregationInfo({
-				visible: ["Property1"],
-				subtotals: ["Property1"]
-			});
-			assert.ok(oSetRowCountConstraints.calledOnceWithExactly({
-				fixedTop: false,
-				fixedBottom: false
-			}), "Subtotals");
-
-			oSetRowCountConstraints.resetHistory();
-			this.oPlugin.setAggregationInfo({
-				visible: ["Property1"]
-			});
-			assert.ok(oSetRowCountConstraints.calledOnceWithExactly({
-				fixedTop: false,
-				fixedBottom: false
-			}), "No totals");
-		});
+	QUnit.test(".findOn", function(assert) {
+		assert.ok(V4Aggregation.findOn(this.oTable) === this.oPlugin, "Plugin found in dependents aggregation");
 	});
 
 	QUnit.module("Row state calculation", {
-		beforeEach: function() {
-			this.oPlugin = new V4Aggregation();
-
-			this.oPlugin.setPropertyInfos([{
-				key: "Property1",
-				path: "prop1",
-				label: "Property 1",
-				text: "Property2"
-			}, {
-				key: "Property2",
-				path: "prop2",
-				label: "Property 2"
-			}, {
-				key: "Property3",
-				path: "prop3",
-				label: "Property 3",
-				groupingDetails: {
-					formatter: function(oContext, sPropertyName) { return "Property3 > " + sPropertyName; }
-				}
-			}]);
-
-			this.oPlugin.setAggregationInfo({
-				visible: ["Property1", "Property2", "Property3"],
-				groupLevels: ["Property1", "Property2", "Property3"]
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable((oTable) => {
+				oTable.getBinding().resume();
 			});
-
-			this.oGroupHeaderFormatter = this.stub().callsFake(function(oContext, sProperty) {
-				if (sProperty === "Property3") {
-					return "Property 3 > prop3_value";
-				}
-			});
-			this.oPlugin.setGroupHeaderFormatter(this.oGroupHeaderFormatter);
+			this.oPlugin = this.oTable.getDependents()[0];
+			await this.oTable.qunit.whenBindingChange();
 		},
 		afterEach: function() {
-			this.oPlugin.destroy();
+			this.oTable.destroy();
+		},
+		assertRowState: function(oRow, mState) {
+			QUnit.assert.deepEqual({
+				type: oRow.getType(),
+				level: oRow.getLevel(),
+				expandable: oRow.isExpandable(),
+				expanded: oRow.isExpanded(),
+				title: oRow.getTitle()
+			}, mState, `State of row ${oRow.getId()}`);
 		}
 	});
 
-	const aTestData2 = [{
-		label: "Leaf row",
-		context: {},
-		expectedType: undefined,
-		expectedLevel: undefined,
-		expectedExpandable: false,
-		expectedExpanded: false
-	}, {
-		label: "Summary row (Grand total)",
-		context: {"@$ui5.node.isTotal": true, "@$ui5.node.level": 0},
-		expectedType: "Summary",
-		expectedLevel: 1,
-		expectedExpandable: false,
-		expectedExpanded: false
-	}, {
-		label: "Summary row (Subtotal)",
-		context: {"@$ui5.node.isTotal": true, "@$ui5.node.level": 1},
-		expectedType: "Summary",
-		expectedLevel: 2,
-		expectedExpandable: false,
-		expectedExpanded: false
-	}, {
-		label: "Group header row - default format for a property with a text property",
-		context: {"@$ui5.node.level": 1, "@$ui5.node.isExpanded": false},
-		expectedType: "GroupHeader",
-		expectedLevel: 1,
-		expectedTitle: TableUtils.getResourceText("TBL_ROW_GROUP_TITLE_FULL", ["Property 1", "prop1_value", "prop2_value"]),
-		expectedTitleProperty: "Property1",
-		expectedExpandable: true,
-		expectedExpanded: false
-	}, {
-		label: "Group header row - default format for a property without a text property",
-		context: {"@$ui5.node.level": 2, "@$ui5.node.isExpanded": false, "@$ui5.node.isTotal": true},
-		expectedType: "GroupHeader",
-		expectedLevel: 2,
-		expectedTitle: TableUtils.getResourceText("TBL_ROW_GROUP_TITLE", ["Property 2", "prop2_value"]),
-		expectedTitleProperty: "Property2",
-		expectedExpandable: true,
-		expectedExpanded: false
-	}, {
-		label: "Group header row (expanded) - default format for a property without a text property",
-		context: {"@$ui5.node.level": 2, "@$ui5.node.isExpanded": true},
-		expectedType: "GroupHeader",
-		expectedLevel: 2,
-		expectedTitle: TableUtils.getResourceText("TBL_ROW_GROUP_TITLE", ["Property 2", "prop2_value"]),
-		expectedTitleProperty: "Property2",
-		expectedExpandable: true,
-		expectedExpanded: true
-	}, {
-		label: "Group header row - custom format",
-		context: {"@$ui5.node.level": 3, "@$ui5.node.isExpanded": false},
-		expectedType: "GroupHeader",
-		expectedLevel: 3,
-		expectedTitle: "Property 3 > prop3_value",
-		expectedTitleProperty: "Property3",
-		expectedExpandable: true,
-		expectedExpanded: false
-	}, {
-		label: "Group header row (expanded) - custom format",
-		context: {"@$ui5.node.level": 3, "@$ui5.node.isExpanded": true},
-		expectedType: "GroupHeader",
-		expectedLevel: 3,
-		expectedTitle: "Property 3 > prop3_value",
-		expectedTitleProperty: "Property3",
-		expectedExpandable: true,
-		expectedExpanded: true
-	}];
+	QUnit.test("Grand total at top and collapsed group header", function(assert) {
+		const aRows = this.oTable.getRows();
 
-	aTestData2.forEach(function(oData) {
-		QUnit.test(oData.label, function(assert) {
-			const oContext = {
-				getProperty: function(sPath) {
-					return sPath.startsWith("@$ui5") ? oData.context[sPath] : sPath + "_value";
-				}
-			};
-
-			const oState = {context: oContext, Type: {Summary: "Summary", GroupHeader: "GroupHeader"}};
-			this.oPlugin.updateRowState(oState);
-			assert.equal(oState.type, oData.expectedType, "check row type: " + oData.expectedType);
-			assert.equal(oState.level, oData.expectedLevel, "check row level: " + oData.expectedLevel);
-			assert.equal(oState.expandable, oData.expectedExpandable, "check row expandable: " + oData.expectedExpandable);
-			assert.equal(oState.expanded, oData.expectedExpanded, "check row expanded: " + oData.expectedExpanded);
-
-			assert.equal(oState.title, oData.expectedTitle, "check row title: '" + oData.expectedTitle + "'");
-			if (oData.expectedTitle !== undefined) {
-				assert.ok(this.oGroupHeaderFormatter.calledOnceWithExactly(oContext, oData.expectedTitleProperty),
-					"Calling the groupHeaderFormatter");
-			} else {
-				assert.equal(this.oGroupHeaderFormatter.callCount, 0, "Calling the groupHeaderFormatter");
-			}
+		this.assertRowState(aRows[0], {
+			type: "Summary",
+			level: 1,
+			expandable: false,
+			expanded: false,
+			title: ""
+		});
+		this.assertRowState(aRows[2], {
+			type: "GroupHeader",
+			level: 1,
+			expandable: true,
+			expanded: false,
+			title: "2"
+		});
+		this.assertRowState(aRows[3], {
+			type: "GroupHeader",
+			level: 1,
+			expandable: true,
+			expanded: false,
+			title: "3"
 		});
 	});
 
-	QUnit.test("Invalid return value of the group header formatter", function(assert) {
-		const oContextData = {"@$ui5.node.level": 1, "@$ui5.node.isExpanded": false};
-		const oContext = {
-			getProperty: function(sPath) {
-				return oContextData[sPath];
-			}
-		};
-		const oState = {context: oContext, Type: {Summary: "Summary", GroupHeader: "GroupHeader"}};
-		const oExpectedError = new Error("The group header title must be a string or undefined");
-		const that = this;
+	QUnit.test("Expand", async function(assert) {
+		const aRows = this.oTable.getRows();
 
-		this.oPlugin.setGroupHeaderFormatter(function() {
-			return null;
-		});
-		assert.throws(function() {
-			that.oPlugin.updateRowState(oState);
-		}, oExpectedError, "'null'");
+		aRows[3].getBindingContext().expand();
+		await this.oTable.qunit.whenBindingChange();
 
-		this.oPlugin.setGroupHeaderFormatter(function() {
-			return {};
+		this.assertRowState(aRows[3], {
+			type: "GroupHeader",
+			level: 1,
+			expandable: true,
+			expanded: true,
+			title: "3"
 		});
-		assert.throws(function() {
-			that.oPlugin.updateRowState(oState);
-		}, oExpectedError, "object");
+		this.assertRowState(aRows[4], {
+			type: "GroupHeader",
+			level: 2,
+			expandable: true,
+			expanded: false,
+			title: "Saxony"
+		});
+	});
 
-		this.oPlugin.setGroupHeaderFormatter(function() {
-			return true;
+	QUnit.test("Expand and scroll", async function(assert) {
+		const aRows = this.oTable.getRows();
+
+		aRows[3].getBindingContext().expand();
+		await this.oTable.qunit.whenBindingChange();
+		this.oTable.setFirstVisibleRow(6);
+		await this.oTable.qunit.whenBindingChange();
+		await this.oTable.qunit.whenRenderingFinished();
+		aRows[4].getBindingContext().expand();
+		await this.oTable.qunit.whenBindingChange();
+		this.oTable.setFirstVisibleRow(9);
+		await this.oTable.qunit.whenRenderingFinished();
+
+		this.assertRowState(aRows[1], {
+			type: "GroupHeader",
+			level: 2,
+			expandable: true,
+			expanded: true,
+			title: "Baden-Württemberg"
 		});
-		assert.throws(function() {
-			that.oPlugin.updateRowState(oState);
-		}, oExpectedError, "boolean");
+		this.assertRowState(aRows[4], {
+			type: "GroupHeader",
+			level: 3,
+			expandable: true,
+			expanded: false,
+			title: "Small"
+		});
+	});
+
+	QUnit.test("Standard row, subtotals, and grand total at bottom", async function(assert) {
+		const aRows = this.oTable.getRows();
+
+		aRows[3].getBindingContext().expand();
+		await this.oTable.qunit.whenBindingChange();
+		this.oTable.setFirstVisibleRow(6);
+		await this.oTable.qunit.whenBindingChange();
+		await this.oTable.qunit.whenRenderingFinished();
+		aRows[4].getBindingContext().expand();
+		await this.oTable.qunit.whenBindingChange();
+		this.oTable.setFirstVisibleRow(9);
+		await this.oTable.qunit.whenRenderingFinished();
+		aRows[4].getBindingContext().expand();
+		await this.oTable.qunit.whenBindingChange();
+		this.oTable.setFirstVisibleRow(20);
+		await this.oTable.qunit.whenRenderingFinished();
+
+		this.assertRowState(aRows[0], {
+			type: "Standard",
+			level: 4,
+			expandable: false,
+			expanded: false,
+			title: ""
+		});
+		this.assertRowState(aRows[1], {
+			type: "Summary",
+			level: 4,
+			expandable: false,
+			expanded: false,
+			title: ""
+		});
+		this.assertRowState(aRows[2], {
+			type: "Summary",
+			level: 3,
+			expandable: false,
+			expanded: false,
+			title: ""
+		});
+		this.assertRowState(aRows[3], {
+			type: "Summary",
+			level: 2,
+			expandable: false,
+			expanded: false,
+			title: ""
+		});
+		this.assertRowState(aRows[4], {
+			type: "Summary",
+			level: 1,
+			expandable: false,
+			expanded: false,
+			title: ""
+		});
+	});
+
+	QUnit.test("Custom group header formatter", async function(assert) {
+		const aRows = this.oTable.getRows();
+		const oFormatter = this.stub().returns("My Custom Group Header Title");
+
+		this.oPlugin.setGroupHeaderFormatter(oFormatter);
+		await this.oTable.qunit.whenRenderingFinished();
+		this.assertRowState(aRows[1], {
+			type: "GroupHeader",
+			level: 1,
+			expandable: true,
+			expanded: false,
+			title: "My Custom Group Header Title"
+		});
+		this.assertRowState(aRows[2], {
+			type: "GroupHeader",
+			level: 1,
+			expandable: true,
+			expanded: false,
+			title: "My Custom Group Header Title"
+		});
+		assert.equal(oFormatter.callCount, 3, "Formatter calls");
+		sinon.assert.calledWithExactly(oFormatter.getCall(0), aRows[1].getBindingContext(), "Country_Code");
+		sinon.assert.calledWithExactly(oFormatter.getCall(1), aRows[2].getBindingContext(), "Country_Code");
+		sinon.assert.calledWithExactly(oFormatter.getCall(2), aRows[3].getBindingContext(), "Country_Code");
+
+		oFormatter.resetHistory();
+		oFormatter.returns("My Custom Group Header Title 2");
+		aRows[3].getBindingContext().expand();
+		await this.oTable.qunit.whenBindingChange();
+		this.assertRowState(aRows[4], {
+			type: "GroupHeader",
+			level: 2,
+			expandable: true,
+			expanded: false,
+			title: "My Custom Group Header Title 2"
+		});
+		assert.equal(oFormatter.callCount, 4, "Formatter calls");
+		sinon.assert.calledWithExactly(oFormatter.getCall(3), aRows[4].getBindingContext(), "Region");
+
+		this.oPlugin.setGroupHeaderFormatter(() => "Formatter changed");
+		await this.oTable.qunit.whenRenderingFinished();
+		this.assertRowState(aRows[4], {
+			type: "GroupHeader",
+			level: 2,
+			expandable: true,
+			expanded: false,
+			title: "Formatter changed"
+		});
 	});
 
 	QUnit.module("Cell content visibility", {
 		beforeEach: async function() {
 			this.oTable = await TableQUnitUtils.createTable({
-				columns: (function() {
+				columns: (() => {
 					const aColumns = [];
-					for (let i = 0; i < 7; i++) {
+					for (let i = 0; i < 6; i++) {
 						const oColumn = TableQUnitUtils.createTextColumn({id: "col" + i});
 						this.spy(oColumn, "_setCellContentVisibilitySettings");
 						aColumns.push(oColumn);
 					}
 					return aColumns;
-				}.bind(this))()
+				})()
+			}, (oTable) => {
+				oTable.getBinding().resume();
 			});
-
-			this.oPlugin = new V4Aggregation();
-			this.oTable.addDependent(this.oPlugin);
+			this.oPlugin = this.oTable.getDependents()[0];
 		},
 		afterEach: function() {
 			this.oTable.destroy();
 		},
-		assertColumnCellVisibilitySettings: function(assert, mExpectedSettings, sTitle, bSkipReset) {
-			this.oPlugin.getTable().getColumns().forEach(function(oColumn) {
+		assertColumnCellVisibilitySettings: function(assert, mExpectedSettings) {
+			this.oTable.getColumns().forEach(function(oColumn) {
 				const sColumnId = oColumn.getId();
 				const oSpy = oColumn._setCellContentVisibilitySettings;
-				let sMessagePrefix = sTitle ? sTitle + ": " : "";
+				const sMessagePrefix = sColumnId + " - ";
 
-				sMessagePrefix += sColumnId + " - ";
+				assert.equal(oSpy.callCount, 1, sMessagePrefix + "Settings set");
 
-				if (mExpectedSettings && mExpectedSettings[sColumnId]) {
-					assert.ok(oSpy.calledOnceWithExactly(mExpectedSettings[sColumnId]), sMessagePrefix + "set settings");
-					assert.deepEqual(oSpy.firstCall.args[0], mExpectedSettings[sColumnId], sMessagePrefix + "settings");
-				} else if (!bSkipReset) {
-					assert.ok(oSpy.calledOnceWithExactly(), sMessagePrefix + "reset settings");
+				if (mExpectedSettings?.[sColumnId]) {
+					sinon.assert.calledWithExactly(oSpy, mExpectedSettings[sColumnId]);
+				} else {
+					sinon.assert.calledWithExactly(oSpy);
 				}
-
-				oSpy.resetHistory();
+			});
+			this.resetSpies();
+		},
+		resetSpies: function() {
+			this.oTable.getColumns().forEach(function(oColumn) {
+				oColumn._setCellContentVisibilitySettings.resetHistory();
 			});
 		}
 	});
 
-	QUnit.test("findOn", function(assert) {
-		assert.ok(V4Aggregation.findOn(this.oTable) === this.oPlugin, "Plugin found on dependents aggregation via V4Aggregation.findOn");
+	QUnit.test("Initial", function(assert) {
+		this.oTable.getColumns().forEach(function(oColumn) {
+			assert.ok(oColumn._setCellContentVisibilitySettings.notCalled,
+				`Column#_setCellContentVisibilitySettings not called (${oColumn.getId()})`);
+		});
 	});
 
-	QUnit.test("No column state", function(assert) {
-		this.oPlugin.setAggregationInfo({
-			visible: []
-		});
-		this.assertColumnCellVisibilitySettings(assert);
-	});
-
-	QUnit.test("Set column state", function(assert) {
-		this.oPlugin.setAggregationInfo({
-			visible: [],
-			columnState: {
-				col0: {},
-				col1: {subtotals: true, grandTotal: false},
-				col2: {subtotals: false, grandTotal: true},
-				col4: {subtotals: true},
-				col5: {grandTotal: true}
-			}
-		});
+	QUnit.test("Declare which columns have totals", function(assert) {
+		this.oPlugin.declareColumnsHavingTotals([
+			this.oTable.getColumns()[0],
+			this.oTable.getColumns()[2],
+			this.oTable.getColumns()[4]
+		]);
 
 		this.assertColumnCellVisibilitySettings(assert, {
 			col0: {
-				groupHeader: {expanded: false, collapsed: false},
-				summary: {group: false, total: false}
+				groupHeader: true,
+				summary: true
 			},
 			col1: {
-				groupHeader: {expanded: false, collapsed: true},
-				summary: {group: true, total: false}
+				groupHeader: false,
+				summary: false
 			},
 			col2: {
-				groupHeader: {expanded: false, collapsed: false},
-				summary: {group: false, total: true}
+				groupHeader: true,
+				summary: true
+			},
+			col3: {
+				groupHeader: false,
+				summary: false
 			},
 			col4: {
-				groupHeader: {expanded: false, collapsed: true},
-				summary: {group: true, total: false}
+				groupHeader: true,
+				summary: true
 			},
 			col5: {
-				groupHeader: {expanded: false, collapsed: false},
-				summary: {group: false, total: true}
+				groupHeader: false,
+				summary: false
 			}
 		});
-	});
 
-	QUnit.test("Property 'groupSummary'", function(assert) {
-		const mExpectedSettings = {
-			col0: {
-				groupHeader: {expanded: false, collapsed: false},
-				summary: {group: false, total: false}
-			},
-			col1: {
-				groupHeader: {expanded: false, collapsed: false},
-				summary: {group: true, total: true}
-			}
-		};
+		this.oPlugin.declareColumnsHavingTotals([
+			this.oTable.getColumns()[2]
+		]);
 
-		this.oPlugin.setGroupSummary("None");
-		this.oPlugin.setAggregationInfo({
-			visible: [],
-			columnState: {
-				col0: {subtotals: false, grandTotal: false},
-				col1: {subtotals: true, grandTotal: true}
-			}
-		});
-		this.assertColumnCellVisibilitySettings(assert, mExpectedSettings, "Change to 'None' before setting aggregation info", true);
-
-		this.oPlugin.setGroupSummary("Top");
-		mExpectedSettings.col1.groupHeader.expanded = true;
-		this.assertColumnCellVisibilitySettings(assert, mExpectedSettings, "Change to 'Top'", true);
-
-		this.oPlugin.setGroupSummary("Bottom");
-		mExpectedSettings.col1.groupHeader.collapsed = true;
-		mExpectedSettings.col1.groupHeader.expanded = false;
-		this.assertColumnCellVisibilitySettings(assert, mExpectedSettings, "Change to 'Bottom'", true);
-
-		this.oPlugin.setGroupSummary("TopAndBottom");
-		mExpectedSettings.col1.groupHeader.expanded = true;
-		this.assertColumnCellVisibilitySettings(assert, mExpectedSettings, "Change to 'TopAndBottom'", true);
-	});
-
-	QUnit.skip("Plugin deactivation", function(assert) { // Can't be tested, because the plugin cannot be activated (needs a table with V4 binding).
-		this.oPlugin.setAggregationInfo({
-			visible: [],
-			columnState: {
-				col0: {type: "groupable"}
-			}
-		});
 		this.assertColumnCellVisibilitySettings(assert, {
 			col0: {
-				groupHeader: {expanded: false, collapsed: false},
-				summary: {group: false, total: false}
+				groupHeader: false,
+				summary: false
+			},
+			col1: {
+				groupHeader: false,
+				summary: false
+			},
+			col2: {
+				groupHeader: true,
+				summary: true
+			},
+			col3: {
+				groupHeader: false,
+				summary: false
+			},
+			col4: {
+				groupHeader: false,
+				summary: false
+			},
+			col5: {
+				groupHeader: false,
+				summary: false
 			}
-		}, "Before destruction");
+		});
+	});
 
+	QUnit.test("Plugin deactivation", function(assert) {
+		this.oPlugin.declareColumnsHavingTotals([
+			this.oTable.getColumns()[2]
+		]);
+		this.resetSpies();
 		this.oPlugin.deactivate();
-		this.assertColumnCellVisibilitySettings(assert, "After destruction");
+		this.assertColumnCellVisibilitySettings(assert);
 	});
 });
