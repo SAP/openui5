@@ -287,6 +287,18 @@ sap.ui.define([
 			oDataSelector.checkUpdate();
 			assert.strictEqual(FlexObjectState.getDirtyFlexObjects(sReference).length, 3, "then there are three dirty changes");
 		});
+
+		QUnit.test("getDirtyFlexObjects with created and delete in one session", function(assert) {
+			const oDataSelector = FlexState.getFlexObjectsDataSelector();
+			const aFlexObjects = oDataSelector.get({reference: sReference});
+			assert.strictEqual(FlexObjectState.getDirtyFlexObjects(sReference).length, 0, "initially there are no dirty changes");
+			aFlexObjects[0].setState(States.LifecycleState.DELETED);
+			aFlexObjects[0]._sPreviousState = States.LifecycleState.NEW;
+			aFlexObjects[2].setState(States.LifecycleState.NEW);
+			aFlexObjects[4].setState(States.LifecycleState.UPDATED);
+			oDataSelector.checkUpdate();
+			assert.strictEqual(FlexObjectState.getDirtyFlexObjects(sReference).length, 2, "then there are two dirty changes");
+		});
 	});
 
 	QUnit.module("waitForChangesToBeApplied is called with a control ", {

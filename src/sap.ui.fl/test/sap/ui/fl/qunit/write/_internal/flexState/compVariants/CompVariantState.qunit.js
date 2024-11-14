@@ -591,6 +591,7 @@ sap.ui.define([
 
 		QUnit.test("Given persist is called for a variant that was created and removed before persisting", function(assert) {
 			var sPersistencyKey = "persistency.key";
+			assert.equal(CompVariantState.hasDirtyChanges(sComponentId), false, "hasDirtyChanges is false");
 			var oVariant = CompVariantState.addVariant({
 				changeSpecificData: {
 					type: "pageVariant",
@@ -604,13 +605,14 @@ sap.ui.define([
 					}
 				}
 			});
+			assert.equal(CompVariantState.hasDirtyChanges(sComponentId), true, "hasDirtyChanges is true after add variant");
 			CompVariantState.removeVariant({
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey,
 				id: oVariant.getId(),
 				layer: Layer.CUSTOMER
 			});
-
+			assert.equal(CompVariantState.hasDirtyChanges(sComponentId), false, "hasDirtyChanges is false after remove variant");
 			var oWriteStub = sandbox.stub(Storage, "write").resolves();
 			var oUpdateStub = sandbox.stub(Storage, "update").resolves();
 			var oRemoveStub = sandbox.stub(Storage, "remove").resolves();
