@@ -1,9 +1,8 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"./D3Chart",
-	"sap/ui/thirdparty/d3",
-	"sap/ui/core/theming/Parameters"
-], function($, D3Chart, d3, Parameters) {
+	"sap/ui/thirdparty/d3"
+], function($, D3Chart, d3) {
 	"use strict";
 
 	return D3Chart.extend("sap.ui.demo.toolpageapp.control.D3ComparisonChart", {
@@ -31,11 +30,11 @@ sap.ui.define([
 			var selRects = selContainer.selectAll("rect").data(aData);
 
 			selRects.enter().append("rect");
-			selContainer.select("rect:nth-child(1)").style("fill", Parameters.get("sapUiChart1"));
-			selContainer.select("rect:nth-child(2)").style("fill", Parameters.get("sapUiChart2"));
-			selContainer.select("rect:nth-child(3)").style("fill", Parameters.get("sapUiChart3"));
-			selContainer.select("rect:nth-child(4)").style("fill", Parameters.get("sapUiChart4"));
-			selContainer.select("rect:nth-child(5)").style("fill", Parameters.get("sapUiChart5"));
+			selContainer.select("rect:nth-child(1)").style("fill", "var(--sapChart_OrderedColor_1)");
+			selContainer.select("rect:nth-child(2)").style("fill", "var(--sapChart_OrderedColor_2)");
+			selContainer.select("rect:nth-child(3)").style("fill", "var(--sapChart_OrderedColor_3)");
+			selContainer.select("rect:nth-child(4)").style("fill", "var(--sapChart_OrderedColor_4)");
+			selContainer.select("rect:nth-child(5)").style("fill", "var(--sapChart_OrderedColor_5)");
 
 			selContainer.selectAll("text").each(function (d) {
 				var bVisible = Math.abs(d.v) > 50 && $(this).parent().width() > 150;
@@ -63,16 +62,15 @@ sap.ui.define([
 				.append("text").text(function (d) {
 				return d.v;
 			}).attr("font-size", "0.875rem")
-				.attr("fill", Parameters.get("sapUiTextInverted"));
+				.attr("fill", "var(--sapChart_Sequence_1_TextColor)");
 
 			selTexts.attr("y", function (d, i) {
 				return i * (iSpaceWidth + iBarWidth) + iBarWidth * 0.5 + 5;
 			}).attr("x", function (d, i) {
 				var iNegativeModifier = 0;
-				var iTextWidth = $(this).width();
 				var iSpace = 5;
 				if (d.v < 0) {
-					iNegativeModifier = iTextWidth * -1.5;
+					iNegativeModifier = -this.getBoundingClientRect().width;
 					iSpace *= -1;
 				}
 				return iLowestValue * iWidth / (iLowestValue + iHighestValue) + iSpace + iNegativeModifier;
