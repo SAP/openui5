@@ -347,6 +347,8 @@ sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/third
 				oLd1.setSize(sFinalSize1);
 				oLd2.setSize(sFinalSize2);
 			}
+
+			this._delayedResize();
 		} else {
 			// Live-Resize, resize contents in Dom
 			sFinalSize1 = this._pxToPercent(iNewSize1, iSplitterSize);

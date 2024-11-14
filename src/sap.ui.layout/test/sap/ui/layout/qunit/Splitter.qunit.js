@@ -419,6 +419,45 @@ sap.ui.define([
 		oSplitter.destroy();
 	});
 
+	QUnit.test("Sizes are calculated after the theme is applied", function (assert) {
+		// Arrange
+		var fnThemeAppliedCb;
+
+		this.stub(sap.ui.getCore(), "attachThemeChanged").callsFake(function (cb) {
+			fnThemeAppliedCb = cb;
+		});
+
+		this.stub(sap.ui.getCore(), "isThemeApplied").callsFake(function () {
+			return false;
+		});
+
+		var oSplitter = new Splitter({
+			contentAreas: [
+				new Button(),
+				new Button()
+			]
+		});
+
+		var oResizeBarsSpy = this.spy(oSplitter, "_resizeBars");
+
+		oSplitter.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oResizeBarsSpy.notCalled, "Bars size calculations should NOT happen if the theme is not applied");
+		assert.notOk(oSplitter._bThemeApplied, "'_bThemeApplied' is false");
+
+		// Act
+		fnThemeAppliedCb();
+
+		// Assert
+		assert.ok(oResizeBarsSpy.called, "Bars size calculations should happen if the theme is applied");
+		assert.ok(oSplitter._bThemeApplied, "'_bThemeApplied' is true");
+
+		// Clean up
+		oSplitter.destroy();
+	});
+
 	QUnit.module("Content areas");
 
 	QUnit.test("addContentArea", function (assert) {

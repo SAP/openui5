@@ -34,14 +34,14 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 		library : "sap.ui.layout",
 		properties : {
 			/**
-			 The orientation of the Splitter
+			 * The orientation of the Splitter
 			 */
 			orientation : { type : "sap.ui.core.Orientation", group : "Behavior", defaultValue : Orientation.Horizontal }
 		},
 		defaultAggregation : "panes",
 		aggregations : {
 			/**
-			 The Pane that will be shown when there is no suitable pane for ResponsiveSplitter's current width.
+			 * The Pane that will be shown when there is no suitable pane for ResponsiveSplitter's current width.
 			 */
 			panes: { type: "sap.ui.core.Element", multiple: true, singularName: "pane" }
 		}
